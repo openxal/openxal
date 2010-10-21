@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project basedir="." default="all" name="xal">
+	<description>
+		Builds Open XAL Core
+	</description>
+	
+	
+    <target name="init">
+		<xmlproperty file="build-properties.xml" collapseAttributes="true" keepRoot="false" />
+
+        <property name="buildroot" value="${xal.path.buildroot}" />
+        <property name="installroot" value="${xal.path.installroot}" />
+		
+        <mkdir dir="${buildroot}" />
+    </target>
+	
+	
+	<!-- Macro to compile the core XAL classes using the specified compiler flag -->
+	<macrodef name="compile-flagged">
+		<attribute name="flag" default="-Xlint:none" />
+		<sequential>
+			<mkdir dir="${buildroot}/compile" />
+			<javac debug="true" source="1.6" target="1.6" includeAntRuntime="no" deprecation="true" destdir="${buildroot}/compile" srcdir="src" sourcepath="">
+				<classpath>
+					<pathelement location="${buildroot}/compile" />
+					<pathelement location="${buildroot}/jar/lib.jar" />
+				</classpath>
+				<compilerarg value="@{flag}" />
+			</javac>
+		</sequential>
+	</macrodef>
+	
+	
+	<!-- Compile the core XAL classes using the lint flag to show some recommended warnings -->
+    <target name="compile-warn" depends="init, jar-lib" >
+		<compile-flagged flag="-Xlint:unchecked" />
+    </target>
+	
+	
+	<!-- Compile the core XAL classes using the lint flag to show all recommended warnings -->
+    <target name="compile-warn-all" depends="init, jar-lib" >
+		<compile-flagged flag="-Xlint" />
+    </target>
+	
+	
+	<!-- Compile the core XAL classes reporting only mandated warnings -->
+    <target name="compile" depends="init, jar-lib" >
+		<compile-flagged />
+    </target>
+    
+	
+	<!-- Jar the core XAL classes -->
+    <target  name="jar-core" depends="init, compile">
+        <mkdir dir="${buildroot}/jar" />
+        <jar compress="true" jarfile="${buildroot}/jar/xal-core.jar" index="true">
+			<manifest>
+			  <attribute name="Manifest-Version" value="1.0" />
+			  <attribute name="Class-Path" value="./xal-lib.jar" />
+			</manifest>
+
+			<fileset dir="${buildroot}/compile">
+				<exclude name="**/datasource/" />
+			</fileset>
+			<fileset dir="src/xal">
+				<exclude name="**/package.html" />
+				<include name="**/*.css" />
+				<include name="**/*.gif" />
+				<include name="**/*.html" />
+				<include name="**/*.jpeg" />
+				<include name="**/*.png" />
+				<include name="**/*.pdf" />
+				<include name="**/*.properties" />
+				<include name="**/*.bricks" />
+				<include name="**/*.xml" />
+			</fileset>
+       </jar>
+    </target>
+    
+	
+	<!-- Jar the core datasource placeholder classes -->
+    <target  name="jar-datasource" depends="init, compile">
+        <mkdir dir="${buildroot}/jar" />
+        <jar compress="true" jarfile="${buildroot}/jar/xal-datasource.jar" index="true">
+			<manifest>
+			  <attribute name="Manifest-Version" value="1.0" />
+			  <attribute name="Class-Path" value="./xal-lib.jar" />
+			</manifest>
+
+			<fileset dir="${buildroot}/compile">
+				<exclude name="**/*" />
+				<include name="**/datasource/" />
+			</fileset>
+			<fileset dir="src/xal">
+				<exclude name="**/package.html" />
+				<include name="**/datasource/" />
+				<exclude name="**/datasource/**/*.java" />
+			</fileset>
+       </jar>
+    </target>
+	
+	
+	<!-- Join the third party jars into a common external jar file -->
+    <target name="jar-lib" depends="init">
+        <mkdir dir="${buildroot}/jar" />
+        <jar compress="true" jarfile="${buildroot}/jar/xal-lib.jar" index="true" duplicate="preserve">
+			<zipgroupfileset dir="lib">
+				<patternset>
+					<include name="*.jar" />
+				</patternset>
+			</zipgroupfileset>
+        </jar>
+    </target>
+	
+	
+	<!-- merge the external jars and build XAL core -->
+    <target name="all" depends="jar-lib,jar-core,jar-datasource" description="Build everything." >
+        <echo message="Everything built. " />
+    </target>
+	
+	
+	<!-- Build everything and install in the the installation location -->
+    <target name="install" depends="all" description="Build everything and install in the installation location." >
+        <mkdir dir="${installroot}" />
+		<copy todir="${installroot}">
+			<fileset dir="${buildroot}/jar" />
+		</copy>
+        <echo message="XAL built and installed. " />
+    </target>
+	
+	
+	<!-- Javadoc the XAL core -->
+    <target name="doc" depends="init" description="Javadoc XAL core." >
+        <mkdir dir="${buildroot}/javadoc" />
+        <javadoc destdir="${buildroot}/javadoc" packagenames="xal.*" author="false" version="false" maxmemory="512m">
+            <sourcepath>
+                <pathelement location="." />
+            </sourcepath>
+            <classpath>
+                <pathelement location="${buildroot}/jar/xal-core.jar" />
+                <pathelement location="${buildroot}/jar/xal-lib.jar" />
+                <pathelement location="${buildroot}/compile" />
+            </classpath>
+        </javadoc>
+    </target>
+	
+	
+	<!-- clean compiled products -->
+    <target name="clean" depends="init" description="Clean all build products." >
+        <delete dir="${buildroot}/compile" />
+    </target>
+	
+	
+	<!-- purge build products -->
+    <target name="purge" depends="init" description="Clean all build products." >
+        <delete dir="${buildroot}" />
+    </target>
+	
+	
+	<!-- provide guidance on the various targets -->
+    <target name="help">
+		<echo message="Build the XAL project" />
+		<echo message="Usage: ant [ant options] target1 [target2 | target3 | ... ]" />
+		<echo message="" />
+		<echo message="  where target(s) can be:" />
+		<echo message="    help ............... Print this message." />
+		<echo message="    all ................ Compile the core XAL classes and assemble the jar products." />
+		<echo message="    clean .............. Clean compiled classes" />
+		<echo message="    compile ............ Compile the core XAL classes reporting only mandated warnings." />
+		<echo message="    compile-warn: ...... Compile the core XAL classes reporting unchecked conversions." />
+		<echo message="    compile-warn-all: .. Compile the core XAL classes reporting all recommended warnings." />
+		<echo message="    doc: ............... Generate documentation for the core." />
+		<echo message="    jar-lib: ........... Assemble the external jar files into a single library, xal-lib.jar" />
+		<echo message="    jar-datasource: .... Assemble the datasource classes and resources into xal-datasource.jar" />
+		<echo message="    jar-core: .......... Assemble the core XAL classes and resources into xal-core.jar" />
+		<echo message="    purge: ............. Purge the build directory." />
+    </target>
+</project>
+

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xal-properties>
+	<xal>
+		<path>
+		 	<buildroot>build</buildroot>
+			<installroot>build/deploy</installroot>
+		</path>
+  	</xal>
+</xal-properties>
