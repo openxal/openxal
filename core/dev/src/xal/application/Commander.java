@@ -478,13 +478,7 @@ public class Commander {
 	
 	/** get the item's property for the specified field */
 	private String getItemFieldProperty( final String itemID, final String field ) {
-		final String itemFieldID = itemID + "_" + field;	// support old format for backward compatibility and check to avoid conflicts with overriden items
-		if ( _controlMap.containsKey( itemFieldID ) ) {
-			return _controlMap.get( itemFieldID );
-		}
-		else {
-			return _controlMap.get( itemID + "." + field );	// if the old items are not found, then look for the new format
-		}
+        return _controlMap.get( itemID + "." + field );
 	}
 	
 	
