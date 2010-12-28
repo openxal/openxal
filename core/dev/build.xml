@@ -23,7 +23,7 @@
 			<javac debug="true" source="1.6" target="1.6" includeAntRuntime="no" deprecation="true" destdir="${buildroot}/compile" srcdir="src" sourcepath="">
 				<classpath>
 					<pathelement location="${buildroot}/compile" />
-					<pathelement location="${buildroot}/jar/lib.jar" />
+					<pathelement location="${buildroot}/jar/xal-lib.jar" />
 				</classpath>
 				<compilerarg value="@{flag}" />
 			</javac>
