@@ -2,7 +2,7 @@
 <xal-properties>
 	<xal>
 		<path>
-		 	<buildroot>../../build/dev</buildroot>
+		 	<buildroot>../../build/core/dev</buildroot>
 			<installroot>build/deploy</installroot>
 		</path>
   	</xal>
