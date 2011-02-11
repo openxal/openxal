@@ -1,0 +1,9 @@
+<project name="config" basedir="." default="all">        
+    <dirname property="xalhome" file="${ant.file.config}" />
+	<property name="buildroot" value="${xalhome}/build" />
+	<property name="installroot" value="${buildroot}/dist" />
+
+    <target name="demo">
+        <echo message="Build root: ${buildroot}" />
+    </target>
+</project>

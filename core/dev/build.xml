@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project basedir="." default="all" name="xal">
-	<description>
-		Builds Open XAL Core
-	</description>
-	
+	<import file="../../config.xml"/>
+    
+	<description>Builds Open XAL Core</description>
 	
     <target name="init">
-		<xmlproperty file="build-properties.xml" collapseAttributes="true" keepRoot="false" />
+<!--		
+        <xmlproperty file="build-properties.xml" collapseAttributes="true" keepRoot="false" />
 
         <property name="buildroot" value="${xal.path.buildroot}" />
         <property name="installroot" value="${xal.path.installroot}" />
-		
+-->
         <mkdir dir="${buildroot}" />
     </target>
 	
@@ -61,7 +61,7 @@
 			<fileset dir="${buildroot}/compile">
 				<exclude name="**/datasource/" />
 			</fileset>
-			<fileset dir="src/xal">
+			<fileset dir="src">
 				<exclude name="**/package.html" />
 				<include name="**/*.css" />
 				<include name="**/*.gif" />

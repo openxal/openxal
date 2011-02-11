@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- Build the application whose name matches that of the project. -->
+<project name="demobricks" basedir="." default="all">
+    <property environment="env"/>
+	
+	<import file="../../../config.xml"/>		
+</project>
