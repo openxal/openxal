@@ -112,20 +112,4 @@ public class IconLib {
 	static public Icon getIcon( final String group, final String iconName ) {
 		return new ImageIcon( getIconURL( group, iconName ) );
 	}
-
-	/**
-	 * Returns an <code>ImageIcon</code> object created from the image file
-	 * specified in the arguments.
-	 * 
-	 * @param group the group of icon, i.e. one of "development", "general", "media", "navigation", "table", "text"
-	 * @param iconName the name of the icon to fetch, e.g. "Cut24.gif"
-	 * 
-	 * @return The URL to the specified icon
-	 * 
-	 * @author Christopher K. Allen
-	 * @since  Jul 29, 2009
-	 */
-	static public ImageIcon getImageIcon( final String group, final String iconName ) {
-	    return new ImageIcon( getIconURL( group, iconName ) );
-	}
 }
