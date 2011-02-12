@@ -1,0 +1,81 @@
+/* Common Styles */
+
+body {
+    margin: 2em;
+    background-color: ivory;
+    position: relative;
+}
+
+
+.title {
+    font-size: xx-large;
+    font-weight: bold;
+    margin-bottom: 1em;
+    text-align: center;
+}
+
+
+.introduction {
+    font-size: x-large;
+    margin-top: 1em;
+    margin-bottom: 1em;
+    padding: 1em;
+    background-color: white;
+    border: thin solid orange;
+    -moz-border-radius: 5px; -webkit-border-radius: 5px; border-radius: 5px;
+	box-shadow: 5px 5px 5px gray; -webkit-box-shadow: 5px 5px 5px gray; -moz-box-shadow: 5px 5px 5px gray; 
+}
+
+
+.section {
+    font-size: large;
+    margin-top: 1em;
+    margin-bottom: 1em;
+    padding: 1em;
+    background-color: white;
+    border: thin solid gray;
+    -moz-border-radius: 5px; -webkit-border-radius: 5px; border-radius: 5px;
+	box-shadow: 5px 5px 5px gray; -webkit-box-shadow: 5px 5px 5px gray; -moz-box-shadow: 5px 5px 5px gray; 
+}
+
+
+.section .heading {
+    color: #248;
+    font-weight: bold;
+    border-bottom: thin solid #88f;
+    margin-bottom: 0.5em;
+}
+
+
+ul { margin: 0 0 0 1em; padding-left: 1em; }
+
+
+table.data { 
+	background-color: #EEE;
+	border-collapse: collapse; 
+}
+
+table.data th, table.data td { 
+	margin: 5px; border-style: solid;
+	border-width: 1.0px;
+	border-color: black;
+	padding-left: 10px;
+	padding-right: 10px;
+}
+
+table.data th { 
+	padding-left: 2em;
+	padding-right: 2em;
+	background-color: #CCC;
+}
+
+table.data td.numeric { 
+	text-align: right;
+	color: maroon;
+	padding-left: 2em;
+}
+
+table.data td.plain { 
+	margin: 0px;
+	border-style: none;
+}

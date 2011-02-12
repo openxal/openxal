@@ -1,0 +1,267 @@
+<html>
+<head>
+    <title>Open XAL</title>
+    <link rel="icon" type="image/png" href="images/Open XAL Icon.png" />
+    <link rel="stylesheet" type="text/css" href="common.css" media="all" />
+    <style>
+        .tasks .done { background-color: #afa; }
+        .tasks .progress { background-color: #ffa; }
+        .tasks .paused { background-color: #faa; }
+        .tasks .pending { background-color: white; }
+        .tasks { font-size: smaller; }
+        table.tasks { margin: 1em; }
+        table.tasks td.numeric { color: black; }
+        table.tasks td.warning { background-color: red; }
+        ul.features li { list-style-type: circle }
+        .footer { font-style: italic; }
+    </style>
+</head>
+<body>
+    <div class="title">Open XAL</div>
+    
+    <div class="introduction">
+        <img src="images/Open XAL Icon.png" style="height: 3em; float: left;" />
+        Open XAL is an open source development environment used for creating accelerator physics applications, scripts and services. This project is a collaboration among SNS, ESS, GANIL, TRIUMF, SLAC/LCLS and FRIB. Visit the <a href="http://sourceforge.net/projects/xaldev/">project page</a> to access the source code in the Git repository.
+    </div>
+    
+    <div class="section">
+        <div class="heading">Features</div>
+        Open XAL is designed to be a flexible application framework for developing accelerator physics applications with the following features:
+        <ul class="features">
+            <li>Open Source collaboration with dozens of developers across several sites</li>
+            <li>Pure Java for cross platform development and deployment</li>
+            <li>Application Framework for rapidly developing modern applications</li>
+            <li>Toolbox of Java packages</li>
+            <li>Collection of applications (over four dozen) and services</li>
+            <li>EPICS Channel Access support</li>
+            <li>Ant based build system independent of IDE</li>
+        </ul>
+    </div>
+    
+    <div class="section">
+        <div class="heading">Documentation and History</div>
+        Open XAL documenation will be available when the project progresses sufficiently.
+        <ul class="features">
+            <li><a target="_blank" href="http://www.ornl.gov/~t6p/Main/XAL_files/Introduction.pdf">Introduction</a> - XAL Introduction (old but a good overview)</li>
+            <li><a target="_blank" href="meetings/2010/XAL Workshop.pdf">Quick Start</a> - Open XAL Workshop Guide</li>
+            <li><a target="_blank" href="http://xaldev.git.sourceforge.net/git/gitweb.cgi?p=xaldev/openxal">Browse Latest Source Code</a></li>
+            <li><a target="_blank" href="http://www.ornl.gov/~t6p/resources/xal/javadoc/index.html">Old SNS Core API Javadoc</a> - Migration Source Foundation for Open XAL</li>
+        </ul>
+    </div>
+    
+    <div class="section">
+        <div class="heading">Meetings</div>
+        The first Open XAL Workshop was held May 3 to 5, 2010. The primary goals were to review the current status of XAL and to develop a roadmap for active collaboration on Open XAL.
+        <ul class="grouplist">
+            <li><a target="_blank" href="meetings/2010/XAL Workshop.pdf">XAL Workshop Guide</a></li>
+            <li>Collaboration Roadmap</li>
+            <ul class="presentations">
+                <li><a target="_blank" href="meetings/2010/Open Discussion.pdf">Open Discussion</a></li>
+                <li><a target="_blank" href="meetings/2010/HLA_Plan_D.pdf">High Level Application Plan</a></li>
+                <li><a target="_blank" href="meetings/2010/Some Disorganized Thoughts.pdf">High Level Application Thoughts</a></li>
+                <li><a href="meetings/2010/XAL Tasks.pdf">XAL Tasks</a></li>
+            </ul>
+            <li>XAL Demos</li>
+            <ul>
+                <li><a target="_blank" href="meetings/2010/Plotting_2010_05_03_Shishlo.pdf">XAL Plotting Package</a></li>
+                <li><a target="_blank" href="meetings/2010/XalOnlineModelPrimer.pdf">XAL Online Model Primer</a></li>
+                <li><a target="_blank" href="meetings/2010/Scan1D_2D_2010_05_03_Shishlo.pdf">Scan Packages</a></li>
+                <li><a target="_blank" href="meetings/2010/tutorial.zip">Tutorial Code</a></li>
+            </uL>
+            <li>Featured Presentations</li>
+            <ul>
+                <li><a target="_blank" href="meetings/2010/XALOnlineModelUpgradePlans.pdf">XAL Online Model Upgrade Plans</a></li>
+                <li><a target="_blank" href="meetings/2010/Spiral 2 SNS.pdf">High Level Applications for Spiral 2</a></li>
+                <li><a target="_blank" href="meetings/2010/WorkshopXal SNS2010 GILLETTE.pdf">XAL at Spiral 2</a></li>
+                <li><a target="_blank" href="meetings/2010/XAL Challenges.pdf">Current XAL Challenges</a></li>
+            </ul>
+    </div>
+    
+    <div class="section">
+        <div class="heading">Specifications</div>
+        The following specifications are being implemented.
+        <ul class="features">
+            <li><a target="_blank" href="specs/Database Abstraction.pdf">Database Abstraction</a></li>
+            <li><a target="_blank" href="specs/OpenXALProjectStructure-Cka.pdf">Project Structure</a></li>
+            <li><a target="_blank" href="specs/Versioning.pdf">Versioning</a></li>
+            <li><a target="_blank" href="specs/Localization.pdf">Localization</a></li>
+            <li><a target="_blank" href="specs/XAL_Devices.pdf">XAL Devices</a></li>
+        </ul>
+    </div>
+    
+    <div class="section">
+        <div class="heading">Roadmap</div>
+        Open XAL Phase II Tasks are in progress. The goal is to migrate the current version of XAL used at SNS to a new project more suitable for collaborative development.
+        <table class="data tasks">
+            <tr>
+                <th>Start Date</th>
+                <th>Due Date</th>
+                <th>Progress</th>
+                <th>Task</th>
+                <th>Lead</th>
+                <th>Comment</th>
+            </tr>
+            <tr>
+                <td>Sep 21, 2010</td>
+                <td>Oct 31, 2010</td>
+                <td class="numeric done">100%</td>
+                <td>
+                    Project Creation
+                    <ul>
+                        <li>Push current SNS modifications to XALDEV.</li>
+                        <li>Create new repository trunk and move XALDEV aside.</li>
+                        <li>Create new project skeleton in repository.</li>
+                        <li>Identify third party jars to retain in core and copy to new repository.</li>
+                        <li>Create Ant tasks for building core and database sections.</li>
+                    </ul>
+                </td>
+                <td>Tom Pelaia</td>
+                <td>Creates a skeleton project for Open XAL.</td>
+            </tr>
+            <tr>
+                <td>Oct 1, 2010</td>
+                <td>Dec 31, 2010</td>
+                <td class="numeric done">100%</td>
+                <td>
+                    Website Development
+                    <ul>
+                        <li>Design and publish Open XAL website.</li>
+                    </ul>
+                </td>
+                <td>Tom Pelaia</td>
+                <td>Ongoing maintenance and content updates continue after due date.</td>
+            </tr>
+            <tr>
+                <td>Nov 1, 2010</td>
+                <td>Feb 15, 2011</td>
+                <td class="numeric progress">50%</td>
+                <td>
+                    Application Framework Migration
+                    <ul>
+                        <li>Determine Application Framework modifications and copy to core.</li>
+                    </ul>
+                </td>
+                <td>Tom Pelaia</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>Nov 1, 2010</td>
+                <td>Mar 31, 2011</td>
+                <td class="numeric paused">1%</td>
+                <td>
+                    Common Package Migration
+                    <ul>
+                        <li>Determine which core packages will be retained, modified (e.g. for database abstraction, removal of deprecated APIs) and where they will reside in the new project structure.</li>
+                        <li>Copy retained, unmodified packages to new repository trunk using new package naming convention and project structure</li>
+                        <li>Modify and copy remaining retained core packages to new repository.</li>
+                    </ul>
+                </td>
+                <td class="warning">Unassigned</td>
+                <td>These packages should exclude services, application framework, online model, devices and test suites.</td>
+            </tr>
+            <tr>
+                <td>Nov 1, 2010</td>
+                <td>Mar 31, 2011</td>
+                <td class="numeric progress">10%</td>
+                <td>
+                    Online Model Development
+                    <ul>
+                        <li>Design and implement new XAL online model.</li>
+                    </ul>
+                </td>
+                <td>Christopher Allen</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>Nov 1, 2010</td>
+                <td>Mar 31, 2011</td>
+                <td class="numeric progress">0%</td>
+                <td>
+                    Device Migration and Development
+                    <ul>
+                        <li>Develop strategy for managing devices and integrate with new online mode.</li>
+                    </ul>
+                </td>
+                <td>Carla Benatti</td>
+                <td>This task should be coordinated with online model development.</td>
+            </tr>
+            <tr>
+                <td>Nov 1, 2010</td>
+                <td>June 4, 2011</td>
+                <td class="numeric progress">40%</td>
+                <td>
+                    JSON Framework Development
+                    <ul>
+                        <li>Design and implement JSON based services framework.</li>
+                    </ul>
+                </td>
+                <td>Tom Pelaia</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>Nov 1, 2010</td>
+                <td>June 30, 2011</td>
+                <td class="numeric pending">0%</td>
+                <td>
+                    Test Suite Development
+                    <ul>
+                        <li>Implement test suites for core.</li>
+                    </ul>
+                </td>
+                <td>Jaka Bobnar</td>
+                <td>This work should shadow the core package migration and development.</td>
+            </tr>
+            <tr>
+                <td>Mar 1, 2011</td>
+                <td>Dec 31, 2011</td>
+                <td class="numeric pending">0%</td>
+                <td>
+                    Common Application Migration
+                    <ul>
+                        <li>Identify common applications to retain in common app section.</li>
+                        <li>Modify these applications and copy to common app section using new package naming convention.</li>
+                    </ul>
+                </td>
+                <td class="warning">Unassigned</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>June 15, 2011</td>
+                <td>Dec 31, 2011</td>
+                <td class="numeric pending">0%</td>
+                <td>
+                    Services Migration
+                    <ul>
+                        <li>Identify, modify and copy retained services to the common services section using new package naming convention.</li>
+                    </ul>
+                </td>
+                <td class="warning">Unassigned</td>
+                <td></td>
+            </tr>
+        </table>
+        
+        
+        <table class="data tasks">
+            <tr>
+                <td class="pending">Pending</td>
+                <td class="paused">Paused</td>
+                <td class="progress">Progress</td>
+                <td class="done">Done</td>
+            </tr>
+        </table>
+    </div>
+    
+    
+    <div class="section">
+        <div class="heading">External Resources</div>
+        <ul class="features">
+            <li><a target="_blank" href="https://wiki.ornl.gov/sites/xaldocs/PHYS798X%20Course%20Material/Forms/AllItems.aspx">XAL Course Material</a> - U.S. Particle Accelerator School 2008</li>
+            <li><a target="_blank" href="http://www.aps.anl.gov/epics/">EPICS</a></li>
+            <li><a target="_blank" href="http://jca.cosylab.com/downloads.html">JCA/JNI</a></li>
+            <li><a target="_blank" href="http://caj.cosylab.com/">JCA/CAJ</a></li>
+        </ul>
+    </div>
+    
+    <div class="footer">Last updated Jan. 4, 2011 by Tom Pelaia</div>
+</body>
+</html>
