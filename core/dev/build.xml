@@ -5,12 +5,6 @@
 	<description>Builds Open XAL Core</description>
 	
     <target name="init">
-<!--		
-        <xmlproperty file="build-properties.xml" collapseAttributes="true" keepRoot="false" />
-
-        <property name="buildroot" value="${xal.path.buildroot}" />
-        <property name="installroot" value="${xal.path.installroot}" />
--->
         <mkdir dir="${buildroot}" />
     </target>
 	
@@ -20,7 +14,7 @@
 		<attribute name="flag" default="-Xlint:none" />
 		<sequential>
 			<mkdir dir="${buildroot}/compile" />
-			<javac debug="true" source="1.6" target="1.6" includeAntRuntime="no" deprecation="true" destdir="${buildroot}/compile" srcdir="src" sourcepath="">
+			<javac debug="true" source="1.6" target="1.6" includeAntRuntime="no" deprecation="true" destdir="${buildroot}/compile" srcdir="xal" sourcepath="">
 				<classpath>
 					<pathelement location="${buildroot}/compile" />
 					<pathelement location="${buildroot}/jar/xal-lib.jar" />
@@ -61,17 +55,17 @@
 			<fileset dir="${buildroot}/compile">
 				<exclude name="**/datasource/" />
 			</fileset>
-			<fileset dir="src">
-				<exclude name="**/package.html" />
-				<include name="**/*.css" />
-				<include name="**/*.gif" />
-				<include name="**/*.html" />
-				<include name="**/*.jpeg" />
-				<include name="**/*.png" />
-				<include name="**/*.pdf" />
-				<include name="**/*.properties" />
-				<include name="**/*.bricks" />
-				<include name="**/*.xml" />
+			<fileset dir=".">
+				<exclude name="xal/**/package.html" />
+				<include name="xal/**/*.css" />
+				<include name="xal/**/*.gif" />
+				<include name="xal/**/*.html" />
+				<include name="xal/**/*.jpeg" />
+				<include name="xal/**/*.png" />
+				<include name="xal/**/*.pdf" />
+				<include name="xal/**/*.properties" />
+				<include name="xal/**/*.bricks" />
+				<include name="xal/**/*.xml" />
 			</fileset>
        </jar>
     </target>
@@ -90,7 +84,7 @@
 				<exclude name="**/*" />
 				<include name="**/datasource/" />
 			</fileset>
-			<fileset dir="src/xal">
+			<fileset dir="xal">
 				<exclude name="**/package.html" />
 				<include name="**/datasource/" />
 				<exclude name="**/datasource/**/*.java" />

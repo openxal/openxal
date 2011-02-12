@@ -6,7 +6,7 @@
 
 package xal.application;
 
-import xal.tools.apputils.iconlib.IconLib;
+import xal.tools.IconLib;
 
 import java.io.*;
 import javax.swing.*;

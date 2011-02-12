@@ -14,7 +14,7 @@ import java.net.*;
 import java.util.logging.*;
 
 import xal.application.*;
-import xal.tools.apputils.iconlib.IconLib;
+import xal.tools.IconLib;
 
 
 /**

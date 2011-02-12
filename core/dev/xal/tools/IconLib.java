@@ -6,7 +6,7 @@
 //  Copyright 2006 Oak Ridge National Lab. All rights reserved.
 //
 
-package xal.tools.apputils.iconlib;
+package xal.tools;
 
 import java.net.URL;
 import javax.swing.Icon;

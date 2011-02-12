@@ -11,7 +11,7 @@ package xal.tools.bricks;
 import javax.swing.ImageIcon;
 import java.net.URL;
 
-import xal.tools.apputils.iconlib.IconLib;
+import xal.tools.IconLib;
 
 
 /** Icon identified by a URL */

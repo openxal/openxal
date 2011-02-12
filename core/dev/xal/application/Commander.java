@@ -6,8 +6,8 @@
 
 package xal.application;
 
-import xal.tools.apputils.iconlib.IconLib;
-import xal.tools.apputils.iconlib.IconLib.*;
+import xal.tools.IconLib;
+import xal.tools.IconLib.*;
 
 import javax.swing.*;
 import javax.swing.JToggleButton.ToggleButtonModel;
