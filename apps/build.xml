@@ -17,7 +17,7 @@
             <fileset dir="." includes="*/build.xml" />
         </subant>
         
-        <delete dir="${buildroot}/compile/xal/app"/>
+        <delete dir="${buildroot}/compile/apps"/>
         <delete dir="${buildroot}/jar/apps"/>
     </target>
     

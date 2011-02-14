@@ -15,12 +15,12 @@
 		<property name="mainclass" value="${app-prefix}.${appname}.Main" />
         <property name="app-ref" value="${appname}" />
         <property name="approot" value="${apps-srcroot}/${app-ref}" />
-        <property name="apps-buildroot" value="${buildroot}/compile" />
+        <property name="apps-buildroot" value="${buildroot}/compile/apps" />
         <property name="app-buildroot" value="${apps-buildroot}" />
         <property name="app-relative-path" value="xal/app/${appname}" />
         
         <mkdir dir="${buildroot}" />
-        <mkdir dir="${buildroot}/compile/" />
+        <mkdir dir="${apps-buildroot}" />
     </target>
 
 
@@ -78,7 +78,7 @@
     </target>
 
     <target name="clean" depends="init" description="Clean all build products.">
-        <delete dir="${buildroot}/compile/${app-relative-path}"/>
+        <delete dir="${apps-buildroot}/${app-relative-path}"/>
         <delete file="${buildroot}/jar/apps/${appname}.jar"/>
         <delete dir="${buildroot}/javadoc/apps/${appname}"/>
     </target>

@@ -14,16 +14,16 @@
 	<macrodef name="compile-flagged">
 		<attribute name="flag" default="-Xlint:none" />
 		<sequential>
-			<mkdir dir="${buildroot}/compile" />
-			<javac debug="true" source="1.6" target="1.6" includeAntRuntime="no" deprecation="true" destdir="${buildroot}/compile" srcdir="${srcroot}" sourcepath="">
+			<mkdir dir="${compile-coreroot}" />
+			<javac debug="true" source="1.6" target="1.6" includeAntRuntime="no" deprecation="true" destdir="${compile-coreroot}" srcdir="${srcroot}" sourcepath="">
 				<classpath>
-					<pathelement location="${buildroot}/compile" />
+					<pathelement location="${compile-coreroot}" />
 					<pathelement location="${buildroot}/jar/xal-lib.jar" />
 				</classpath>
 				<compilerarg value="@{flag}" />
 			</javac>
                         
-            <copy todir="${buildroot}/compile/xal/resources">
+            <copy todir="${compile-coreroot}/xal/resources">
                 <fileset dir="resources" />
             </copy>
 
@@ -58,7 +58,7 @@
 			  <attribute name="Class-Path" value="./xal-lib.jar" />
 			</manifest>
 
-			<fileset dir="${buildroot}/compile">
+			<fileset dir="${compile-coreroot}">
 				<exclude name="**/datasource/" />
 			</fileset>
        </jar>
