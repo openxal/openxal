@@ -435,7 +435,6 @@ public class PropertyValueEditorFactory {
 			/** get the cell editor value */
 			public Icon getEditorValue( final BricksContext context ) {
 				try {
-					System.out.println( "context URL: " + context.getSourceURL() );
 					final JTextField textField = (JTextField)getEditorComponent();
 					final String text = textField.getText().trim();
 					final String[] valueStrings = text.split( ":", 2 );
