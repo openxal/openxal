@@ -13,7 +13,7 @@
         <property name="appname" value="${ant.project.name}" />
 		<property name="app-prefix" value="xal.app" />
 		<property name="mainclass" value="${app-prefix}.${appname}.Main" />
-        <property name="app-ref" value="xal/app/${appname}" />
+        <property name="app-ref" value="${appname}" />
         <property name="app-srcroot" value="${apps-srcroot}/${app-ref}" />
         <property name="app-buildroot" value="${buildroot}/compile/apps/${appname}" />
         
@@ -31,9 +31,14 @@
 	
     <target name="compile" depends="init">
         <mkdir dir="${app-buildroot}"/>
+        
         <javac srcdir="${app-srcroot}/src" destdir="${app-buildroot}" debug="true" source="1.6" target="1.6" includeAntRuntime="no" deprecation="true">
 			<classpath refid="${classpath-ref}"/>
         </javac>
+        
+        <copy todir="${app-buildroot}/xal/app/${appname}/resources">
+            <fileset dir="${app-srcroot}/resources" />
+        </copy>
     </target>
 
     <target name="jar" depends="init,compile">
@@ -46,13 +51,7 @@
               <attribute name="Class-Path" value="${manifest-classpath}"/>
             </manifest>
             
-            <fileset dir=".">
-              <include name="xal/app/${appname}/**/*.class"/>
-            </fileset>
-            
-            <fileset dir="${apps-srcroot}">
-				<include name="xal/app/${appname}/resources/**/*" />
-			</fileset>
+            <fileset dir="." />
         </jar>
     </target>
     
