@@ -15,7 +15,8 @@
 		<property name="mainclass" value="${app-prefix}.${appname}.Main" />
         <property name="app-ref" value="${appname}" />
         <property name="app-srcroot" value="${apps-srcroot}/${app-ref}" />
-        <property name="app-buildroot" value="${buildroot}/compile/apps/${appname}" />
+        <property name="apps-buildroot" value="${buildroot}/compile/apps" />
+        <property name="app-buildroot" value="${apps-buildroot}" />
         
         <mkdir dir="${buildroot}" />
         <mkdir dir="${buildroot}/compile/" />
@@ -51,7 +52,9 @@
               <attribute name="Class-Path" value="${manifest-classpath}"/>
             </manifest>
             
-            <fileset dir="." />
+            <fileset dir=".">
+                <include name="xal/app/${appname}/**/*"/>
+            </fileset>
         </jar>
     </target>
     
