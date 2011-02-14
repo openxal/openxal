@@ -5,6 +5,7 @@
 	<description>Builds Open XAL Core</description>
 	
     <target name="init">
+        <property name="srcroot" value="src" />
         <mkdir dir="${buildroot}" />
     </target>
 	
@@ -14,7 +15,7 @@
 		<attribute name="flag" default="-Xlint:none" />
 		<sequential>
 			<mkdir dir="${buildroot}/compile" />
-			<javac debug="true" source="1.6" target="1.6" includeAntRuntime="no" deprecation="true" destdir="${buildroot}/compile" srcdir="xal" sourcepath="">
+			<javac debug="true" source="1.6" target="1.6" includeAntRuntime="no" deprecation="true" destdir="${buildroot}/compile" srcdir="${srcroot}" sourcepath="">
 				<classpath>
 					<pathelement location="${buildroot}/compile" />
 					<pathelement location="${buildroot}/jar/xal-lib.jar" />
@@ -55,17 +56,9 @@
 			<fileset dir="${buildroot}/compile">
 				<exclude name="**/datasource/" />
 			</fileset>
-			<fileset dir=".">
-				<exclude name="xal/**/package.html" />
-				<include name="xal/**/*.css" />
-				<include name="xal/**/*.gif" />
-				<include name="xal/**/*.html" />
-				<include name="xal/**/*.jpeg" />
-				<include name="xal/**/*.png" />
-				<include name="xal/**/*.pdf" />
-				<include name="xal/**/*.properties" />
-				<include name="xal/**/*.bricks" />
-				<include name="xal/**/*.xml" />
+            
+			<fileset dir="../">
+				<include name="xal/resources/**/*" />
 			</fileset>
        </jar>
     </target>
@@ -83,11 +76,6 @@
 			<fileset dir="${buildroot}/compile">
 				<exclude name="**/*" />
 				<include name="**/datasource/" />
-			</fileset>
-			<fileset dir="xal">
-				<exclude name="**/package.html" />
-				<include name="**/datasource/" />
-				<exclude name="**/datasource/**/*.java" />
 			</fileset>
        </jar>
     </target>
