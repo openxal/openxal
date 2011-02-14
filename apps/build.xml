@@ -2,7 +2,8 @@
 
 <!-- Process all the applications. -->
 <project name="apps" basedir="." default="all">
-    
+    <import file="../common.xml"/>		
+
     <!-- Build all the applications. -->
     <target name="all">
         <subant target="all">
@@ -15,6 +16,9 @@
         <subant target="clean">
             <fileset dir="." includes="*/build.xml" />
         </subant>
+        
+        <delete dir="${buildroot}/compile/xal/app"/>
+        <delete dir="${buildroot}/jar/apps"/>
     </target>
     
 </project>
