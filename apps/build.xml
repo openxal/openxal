@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- Process all the applications. -->
+<project name="apps" basedir="." default="all">
+    
+    <!-- Build all the applications. -->
+    <target name="all">
+        <subant target="all">
+            <fileset dir="." includes="*/build.xml" />
+        </subant>
+    </target>
+    
+    <!-- Clean all the applications. -->
+    <target name="clean">
+        <subant target="clean">
+            <fileset dir="." includes="*/build.xml" />
+        </subant>
+    </target>
+    
+</project>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <project name="apps_config" basedir="." default="all">
-    <import file="../config.xml" />
+    <import file="../common.xml" />
     
     <dirname property="apps-srcroot" file="${ant.file.apps_config}" />
 
@@ -15,7 +15,7 @@
 		<property name="mainclass" value="${app-prefix}.${appname}.Main" />
         <property name="app-ref" value="${appname}" />
         <property name="app-srcroot" value="${apps-srcroot}/${app-ref}" />
-        <property name="apps-buildroot" value="${buildroot}/compile/apps" />
+        <property name="apps-buildroot" value="${buildroot}/compile" />
         <property name="app-buildroot" value="${apps-buildroot}" />
         
         <mkdir dir="${buildroot}" />
@@ -77,7 +77,7 @@
     </target>
 
     <target name="clean" depends="init" description="Clean all build products.">
-        <delete dir="${buildroot}/compile/apps/${appname}"/>
+        <delete dir="${buildroot}/compile/xal/app/${appname}"/>
         <delete file="${buildroot}/jar/apps/${appname}.jar"/>
         <delete dir="${buildroot}/javadoc/apps/${appname}"/>
     </target>

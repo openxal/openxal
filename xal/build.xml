@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project basedir="." default="all" name="xal">
-	<import file="../config.xml"/>
+	<import file="../common.xml"/>
     
 	<description>Builds Open XAL Core</description>
 	
