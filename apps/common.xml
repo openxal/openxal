@@ -17,6 +17,7 @@
         <property name="app-srcroot" value="${apps-srcroot}/${app-ref}" />
         <property name="apps-buildroot" value="${buildroot}/compile" />
         <property name="app-buildroot" value="${apps-buildroot}" />
+        <property name="app-relative-path" value="xal/app/${appname}" />
         
         <mkdir dir="${buildroot}" />
         <mkdir dir="${buildroot}/compile/" />
@@ -37,7 +38,7 @@
 			<classpath refid="${classpath-ref}"/>
         </javac>
         
-        <copy todir="${app-buildroot}/xal/app/${appname}/resources">
+        <copy todir="${app-buildroot}/${app-relative-path}/resources">
             <fileset dir="${app-srcroot}/resources" />
         </copy>
     </target>
@@ -53,7 +54,7 @@
             </manifest>
             
             <fileset dir=".">
-                <include name="xal/app/${appname}/**/*"/>
+                <include name="${app-relative-path}/**/*"/>
             </fileset>
         </jar>
     </target>
@@ -77,7 +78,7 @@
     </target>
 
     <target name="clean" depends="init" description="Clean all build products.">
-        <delete dir="${buildroot}/compile/xal/app/${appname}"/>
+        <delete dir="${buildroot}/compile/${app-relative-path}"/>
         <delete file="${buildroot}/jar/apps/${appname}.jar"/>
         <delete dir="${buildroot}/javadoc/apps/${appname}"/>
     </target>
