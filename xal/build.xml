@@ -22,6 +22,11 @@
 				</classpath>
 				<compilerarg value="@{flag}" />
 			</javac>
+                        
+            <copy todir="${buildroot}/compile/xal/resources">
+                <fileset dir="resources" />
+            </copy>
+
 		</sequential>
 	</macrodef>
 	
@@ -55,10 +60,6 @@
 
 			<fileset dir="${buildroot}/compile">
 				<exclude name="**/datasource/" />
-			</fileset>
-            
-			<fileset dir="../">
-				<include name="xal/resources/**/*" />
 			</fileset>
        </jar>
     </target>
