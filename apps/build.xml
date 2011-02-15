@@ -29,8 +29,8 @@
             <fileset dir="." includes="${build.path.pattern}" />
         </subant>
         
-        <delete dir="${buildroot}/compile/apps"/>
-        <delete dir="${buildroot}/jar/apps"/>
+        <delete dir="${build.root}/compile/apps"/>
+        <delete dir="${build.root}/jar/apps"/>
     </target>
     
 </project>

@@ -15,8 +15,8 @@
 		<property name="mainclass" value="${app-prefix}.${appname}.Main" />
         <property name="app-ref" value="${appname}" />
         <property name="approot" value="${apps-srcroot}/${app-ref}" />
-        <property name="apps-buildroot" value="${buildroot}/compile/apps" />
-        <property name="app-buildroot" value="${apps-buildroot}" />
+        <property name="apps-build.root" value="${build.root}/compile/apps" />
+        <property name="app.build.root" value="${apps-build.root}" />
         <property name="app-relative-path" value="xal/app/${appname}" />
         
         <!-- determine whether building should be allowed -->
@@ -38,36 +38,36 @@
             </not>
         </condition>
         
-        <mkdir dir="${buildroot}" />
-        <mkdir dir="${apps-buildroot}" />
+        <mkdir dir="${build.root}" />
+        <mkdir dir="${apps-build.root}" />
         
         <echo message="Conditionally processing ${appname}" />
     </target>
 
 
 	<path id="default.classpath">
-		<pathelement location="${buildroot}/jar/xal-core.jar" />
-		<pathelement location="${buildroot}/jar/xal-lib.jar" />
-		<pathelement location="${buildroot}/jar/xal-datasource.jar" />
+		<pathelement location="${build.root}/jar/xal-core.jar" />
+		<pathelement location="${build.root}/jar/xal-lib.jar" />
+		<pathelement location="${build.root}/jar/xal-datasource.jar" />
 	</path>
 
 	
     <target name="compile" depends="init" if="allows.build">
-        <mkdir dir="${app-buildroot}"/>
+        <mkdir dir="${app.build.root}"/>
         
-        <javac srcdir="${approot}/src" destdir="${app-buildroot}" debug="true" source="1.6" target="1.6" includeAntRuntime="no" deprecation="true">
+        <javac srcdir="${approot}/src" destdir="${app.build.root}" debug="true" source="1.6" target="1.6" includeAntRuntime="no" deprecation="true">
 			<classpath refid="${classpath-ref}"/>
         </javac>
         
-        <copy todir="${app-buildroot}/${app-relative-path}/resources">
+        <copy todir="${app.build.root}/${app-relative-path}/resources">
             <fileset dir="${approot}/resources" />
         </copy>
     </target>
 
     <target name="jar" depends="init,compile" if="allows.build">
-        <mkdir dir="${buildroot}/jar"/>
-        <mkdir dir="${buildroot}/jar/apps"/>
-        <jar jarfile="${buildroot}/jar/apps/${appname}.jar" compress="true" basedir="${app-buildroot}" >
+        <mkdir dir="${build.root}/jar"/>
+        <mkdir dir="${build.root}/jar/apps"/>
+        <jar jarfile="${build.root}/jar/apps/${appname}.jar" compress="true" basedir="${app.build.root}" >
             <manifest>
               <attribute name="Manifest-Version" value="1.0"/>
               <attribute name="Main-Class" value="${mainclass}"/>
@@ -81,7 +81,7 @@
     </target>
     
     <target name="run" depends="init" description="Run application.">
-    	<java jar="${buildroot}/jar/apps/${appname}.jar" fork="true">
+    	<java jar="${build.root}/jar/apps/${appname}.jar" fork="true">
 	</java> 
     </target>
     
@@ -90,18 +90,18 @@
     </target>
     
     <target name="javadoc" depends="init" description="Javadoc for ${appname} app. API.">
-        <mkdir dir="${buildroot}/javadoc"/>
-        <javadoc packagenames="${apps}.${appname}" destdir="${buildroot}/javadoc">
+        <mkdir dir="${build.root}/javadoc"/>
+        <javadoc packagenames="${apps}.${appname}" destdir="${build.root}/javadoc">
             <sourcepath>
-                <pathelement location="${xalhome}"/>
+                <pathelement location="${xal.home}"/>
             </sourcepath>
         </javadoc>
     </target>
 
     <target name="clean" depends="init" description="Clean all build products.">
-        <delete dir="${apps-buildroot}/${app-relative-path}"/>
-        <delete file="${buildroot}/jar/apps/${appname}.jar"/>
-        <delete dir="${buildroot}/javadoc/apps/${appname}"/>
+        <delete dir="${apps-build.root}/${app-relative-path}"/>
+        <delete file="${build.root}/jar/apps/${appname}.jar"/>
+        <delete dir="${build.root}/javadoc/apps/${appname}"/>
     </target>
 
 </project>
