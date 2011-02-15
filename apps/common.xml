@@ -2,17 +2,20 @@
 
 <project name="apps_config" basedir="." default="all">
     <import file="../common.xml" />
-    
-    <dirname property="apps.src.root" file="${ant.file.apps_config}" />
 
+    <!-- the value for these properties are overriden if specified in the beginning of the app's build file before any tasks are defined -->
 	<property name="classpath.ref" value="default.classpath" />
-	<property name="manifest.classpath" value="../xal-core.jar ../xal-lib.jar ../xal-datasource.jar" />
-
+	<property name="manifest.classpath" value="../xal-core.jar ../xal-lib.jar ../xal-datasource.jar" />    
+    <property name="mainclass.base" value="Main" />
+    
+    
     <target name="init">
+        <dirname property="apps.src.root" file="${ant.file.apps_config}" />
+        
         <property environment="env" />
         <property name="appname" value="${ant.project.name}" />
 		<property name="app.package.prefix" value="xal.app" />
-		<property name="mainclass" value="${app.package.prefix}.${appname}.Main" />
+		<property name="mainclass" value="${app.package.prefix}.${appname}.${mainclass.base}" />
         <property name="app.ref" value="${appname}" />
         <property name="app.src.root" value="${apps.src.root}/${app.ref}" />
         <property name="apps.build.root" value="${build.root}/compile/apps" />
@@ -64,6 +67,7 @@
         </copy>
     </target>
 
+    
     <target name="jar" depends="init,compile" if="allows.build">
         <mkdir dir="${build.root}/jar"/>
         <mkdir dir="${build.root}/jar/apps"/>
@@ -80,14 +84,17 @@
         </jar>
     </target>
     
+    
     <target name="run" depends="init" description="Run application.">
     	<java jar="${build.root}/jar/apps/${appname}.jar" fork="true">
 	</java> 
     </target>
     
+    
     <target name="all" depends="init,jar" description="Build everything." if="allows.build">
         <echo message="${appname} built!"/>
     </target>
+    
     
     <target name="javadoc" depends="init" description="Javadoc for ${appname} app. API.">
         <mkdir dir="${build.root}/javadoc"/>
@@ -98,6 +105,7 @@
         </javadoc>
     </target>
 
+    
     <target name="clean" depends="init" description="Clean all build products.">
         <delete dir="${apps.build.root}/${app.relative.path}"/>
         <delete file="${build.root}/jar/apps/${appname}.jar"/>
