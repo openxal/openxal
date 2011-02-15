@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- Build the core and all applications. -->
+<project basedir="." default="all" name="xal">    
+    <import file="common.xml"/>
+    
+    <property name="build.path.pattern" value="*/build.xml" />
+
+    
+    <!-- Build the core and all the applications which allow batch building. -->
+    <target name="all" depends="core,apps" />
+    
+    
+    <!-- Install the core and all the applications which allow batch building. -->
+    <target name="install" depends="install-core,install-apps" />
+    
+    
+    <!-- Clean the core and all the applications. -->
+    <target name="clean">
+        <subant target="clean">
+            <fileset dir=".">
+                <include name="core/build.xml" />
+                <include name="apps/build.xml" />
+            </fileset>
+        </subant>
+    </target>
+    
+    
+    <!-- Clean the core and all the applications. -->
+    <target name="purge-install">
+        <subant target="purge-install">
+            <fileset dir=".">
+                <include name="core/build.xml" />
+                <include name="apps/build.xml" />
+            </fileset>
+        </subant>
+    </target>
+    
+    
+    <!-- Build the core. -->
+    <target name="core">
+        <subant target="all">
+            <fileset dir=".">
+                <include name="core/build.xml" />
+            </fileset>
+        </subant>
+    </target>
+    
+    
+    <!-- Build all the applications which allow batch building. -->
+    <target name="apps" depends="core">
+        <subant target="all">
+            <fileset dir=".">
+                <include name="apps/build.xml" />
+            </fileset>
+        </subant>
+    </target>
+    
+    
+    <!-- Install the core. -->
+    <target name="install-core">
+        <subant target="install">
+            <fileset dir=".">
+                <include name="core/build.xml" />
+            </fileset>
+        </subant>
+    </target>
+    
+    
+    <!-- Install all the applications which allow batch building. -->
+    <target name="install-apps" depends="install-core">
+        <subant target="install">
+            <fileset dir=".">
+                <include name="apps/build.xml" />
+            </fileset>
+        </subant>
+    </target>
+
+</project>
