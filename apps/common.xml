@@ -20,7 +20,11 @@
         <property name="app.src.root" value="${apps.src.root}/${app.ref}" />
         <property name="apps.build.compile.root" value="${build.root}/compile/apps" />
         <property name="app.build.compile.root" value="${apps.build.compile.root}" />
+        <property name="apps.build.jar.root" value="${build.jar.root}/apps" />
+        <property name="app.build.jar" value="${apps.build.jar.root}/${appname}.jar" />
         <property name="app.relative.path" value="xal/app/${appname}" />
+        <property name="apps.install.root" value="${install.root}/apps" />
+        <property name="app.install.jar" value="${apps.install.root}/${appname}.jar" />
         
         <!-- determine whether building should be allowed -->
         <!-- don't build if the build is a batch build and this project explicitly excludes batch building -->
@@ -35,9 +39,9 @@
         
         <!-- determine whether deployment should be allowed -->
         <!-- don't deploy if this project explicitly excludes batch building -->
-        <condition property="allows.deploy">
+        <condition property="allows.install">
             <not>
-                <isset property="exclude.deploy" />
+                <isset property="exclude.install" />
             </not>
         </condition>
         
@@ -69,24 +73,38 @@
 
     
     <target name="jar" depends="init,compile" if="allows.build">
-        <mkdir dir="${build.root}/jar"/>
-        <mkdir dir="${build.root}/jar/apps"/>
-        <jar jarfile="${build.root}/jar/apps/${appname}.jar" compress="true" basedir="${app.build.compile.root}" >
+        <mkdir dir="${build.jar.root}" />
+        <mkdir dir="${apps.build.jar.root}" />
+        <jar jarfile="${app.build.jar}" compress="true" basedir="${app.build.compile.root}">
             <manifest>
-              <attribute name="Manifest-Version" value="1.0"/>
-              <attribute name="Main-Class" value="${mainclass}"/>
-              <attribute name="Class-Path" value="${manifest.classpath}"/>
+              <attribute name="Manifest-Version" value="1.0" />
+              <attribute name="Main-Class" value="${mainclass}" />
+              <attribute name="Class-Path" value="${manifest.classpath}" />
             </manifest>
             
             <fileset dir=".">
-                <include name="${app.relative.path}/**/*"/>
+                <include name="${app.relative.path}/**/*" />
             </fileset>
         </jar>
     </target>
     
     
+    <target name="install" depends="all" if="allows.install">
+        <mkdir dir="${app.install.root}" />
+        <copy file="${app.build.jar}" todir="${apps.install.root}" />
+        <echo message="${appname} installed!"/>
+    </target>
+    
+    
+    <!-- Purge the application from the install root. -->
+    <target name="purge-install" depends="init">
+        <delete file="${app.install.jar}" quiet="true" />
+        <echo message="Purged: ${app.install.jar}"/>
+    </target>
+    
+    
     <target name="run" depends="init" description="Run application.">
-    	<java jar="${build.root}/jar/apps/${appname}.jar" fork="true">
+    	<java jar="${app.build.jar}" fork="true">
 	</java> 
     </target>
     
@@ -108,7 +126,7 @@
     
     <target name="clean" depends="init" description="Clean all build products.">
         <delete dir="${apps.build.compile.root}/${app.relative.path}"/>
-        <delete file="${build.root}/jar/apps/${appname}.jar"/>
+        <delete file="${app.build.jar}"/>
         <delete dir="${build.root}/javadoc/apps/${appname}"/>
     </target>
 

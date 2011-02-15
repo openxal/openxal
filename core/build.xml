@@ -103,11 +103,22 @@
 	
 	<!-- Build everything and install in the the installation location -->
     <target name="install" depends="all" description="Build everything and install in the installation location." >
-        <mkdir dir="${installroot}" />
-		<copy todir="${installroot}">
-			<fileset dir="${build.jar.root}" />
+        <mkdir dir="${install.root}" />
+		<copy todir="${install.root}">
+			<fileset dir="${build.jar.root}">
+                <include name="xal-core.jar" />
+                <include name="xal-lib.jar" />
+            </fileset>
 		</copy>
         <echo message="XAL built and installed. " />
+    </target>
+	
+	
+	<!-- Build everything and install in the the installation location -->
+    <target name="purge-install" depends="init" description="Build everything and install in the installation location." >
+        <delete file="${install.root}/xal-core.jar" quiet="true" />
+        <delete file="${install.root}/xal-lib.jar" quiet="true" />
+        <echo message="Purged core installation!"/>
     </target>
 	
 	

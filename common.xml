@@ -9,7 +9,7 @@
 	<property name="build.compile.core.root" value="${build.compile.root}/core" />
 	<property name="build.jar.root" value="${build.root}/jar" />
     
-    <!-- Determine the installation directory using the environment variable is defined, and otherwise the dist directory under the build root -->
+    <!-- Determine the installation directory using the environment variable if defined, and otherwise the dist directory under the build root -->
     <condition property="install.root" value="${env.XAL_INSTALL_ROOT}" else="${build.root}/dist">
         <isset property="env.XAL_INSTALL_ROOT" />
     </condition>

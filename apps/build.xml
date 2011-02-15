@@ -23,6 +23,14 @@
     </target>
     
     
+    <!-- Install all the applications which allow installation. -->
+    <target name="install">
+        <subant target="install">
+            <fileset dir="." includes="${build.path.pattern}" />
+        </subant>
+    </target>
+    
+    
     <!-- Clean all the applications. -->
     <target name="clean">
         <subant target="clean">
@@ -31,6 +39,16 @@
         
         <delete dir="${build.root}/compile/apps"/>
         <delete dir="${build.root}/jar/apps"/>
+    </target>
+    
+    
+    <!-- Purge the applications install root. -->
+    <target name="purge-install">
+        <subant target="purge-install">
+            <fileset dir="." includes="${build.path.pattern}" />
+        </subant>
+        
+        <echo message="Purged application installation!" />
     </target>
     
 </project>
