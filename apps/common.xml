@@ -3,21 +3,21 @@
 <project name="apps_config" basedir="." default="all">
     <import file="../common.xml" />
     
-    <dirname property="apps-srcroot" file="${ant.file.apps_config}" />
+    <dirname property="apps.src.root" file="${ant.file.apps_config}" />
 
-	<property name="classpath-ref" value="default.classpath" />
-	<property name="manifest-classpath" value="../xal-core.jar ../xal-lib.jar ../xal-datasource.jar" />
+	<property name="classpath.ref" value="default.classpath" />
+	<property name="manifest.classpath" value="../xal-core.jar ../xal-lib.jar ../xal-datasource.jar" />
 
     <target name="init">
         <property environment="env" />
         <property name="appname" value="${ant.project.name}" />
-		<property name="app-prefix" value="xal.app" />
-		<property name="mainclass" value="${app-prefix}.${appname}.Main" />
-        <property name="app-ref" value="${appname}" />
-        <property name="approot" value="${apps-srcroot}/${app-ref}" />
-        <property name="apps-build.root" value="${build.root}/compile/apps" />
-        <property name="app.build.root" value="${apps-build.root}" />
-        <property name="app-relative-path" value="xal/app/${appname}" />
+		<property name="app.package.prefix" value="xal.app" />
+		<property name="mainclass" value="${app.package.prefix}.${appname}.Main" />
+        <property name="app.ref" value="${appname}" />
+        <property name="app.src.root" value="${apps.src.root}/${app.ref}" />
+        <property name="apps.build.root" value="${build.root}/compile/apps" />
+        <property name="app.build.root" value="${apps.build.root}" />
+        <property name="app.relative.path" value="xal/app/${appname}" />
         
         <!-- determine whether building should be allowed -->
         <!-- don't build if the build is a batch build and this project explicitly excludes batch building -->
@@ -39,7 +39,7 @@
         </condition>
         
         <mkdir dir="${build.root}" />
-        <mkdir dir="${apps-build.root}" />
+        <mkdir dir="${apps.build.root}" />
         
         <echo message="Conditionally processing ${appname}" />
     </target>
@@ -55,12 +55,12 @@
     <target name="compile" depends="init" if="allows.build">
         <mkdir dir="${app.build.root}"/>
         
-        <javac srcdir="${approot}/src" destdir="${app.build.root}" debug="true" source="1.6" target="1.6" includeAntRuntime="no" deprecation="true">
-			<classpath refid="${classpath-ref}"/>
+        <javac srcdir="${app.src.root}/src" destdir="${app.build.root}" debug="true" source="1.6" target="1.6" includeAntRuntime="no" deprecation="true">
+			<classpath refid="${classpath.ref}"/>
         </javac>
         
-        <copy todir="${app.build.root}/${app-relative-path}/resources">
-            <fileset dir="${approot}/resources" />
+        <copy todir="${app.build.root}/${app.relative.path}/resources">
+            <fileset dir="${app.src.root}/resources" />
         </copy>
     </target>
 
@@ -71,11 +71,11 @@
             <manifest>
               <attribute name="Manifest-Version" value="1.0"/>
               <attribute name="Main-Class" value="${mainclass}"/>
-              <attribute name="Class-Path" value="${manifest-classpath}"/>
+              <attribute name="Class-Path" value="${manifest.classpath}"/>
             </manifest>
             
             <fileset dir=".">
-                <include name="${app-relative-path}/**/*"/>
+                <include name="${app.relative.path}/**/*"/>
             </fileset>
         </jar>
     </target>
@@ -99,7 +99,7 @@
     </target>
 
     <target name="clean" depends="init" description="Clean all build products.">
-        <delete dir="${apps-build.root}/${app-relative-path}"/>
+        <delete dir="${apps.build.root}/${app.relative.path}"/>
         <delete file="${build.root}/jar/apps/${appname}.jar"/>
         <delete dir="${build.root}/javadoc/apps/${appname}"/>
     </target>
