@@ -19,6 +19,25 @@
         <property name="app-buildroot" value="${apps-buildroot}" />
         <property name="app-relative-path" value="xal/app/${appname}" />
         
+        <!-- determine whether building should be allowed -->
+        <!-- don't build if the build is a batch build and this project explicitly excludes batch building -->
+        <condition property="allows.build">
+            <not>
+                <and>
+                    <isset property="batch.app.build" />
+                    <isset property="exclude.batch.build" />
+                </and>
+            </not>
+        </condition>
+        
+        <!-- determine whether deployment should be allowed -->
+        <!-- don't deploy if this project explicitly excludes batch building -->
+        <condition property="allows.deploy">
+            <not>
+                <isset property="exclude.deploy" />
+            </not>
+        </condition>
+        
         <mkdir dir="${buildroot}" />
         <mkdir dir="${apps-buildroot}" />
     </target>
@@ -31,7 +50,7 @@
 	</path>
 
 	
-    <target name="compile" depends="init">
+    <target name="compile" depends="init" if="allows.build">
         <mkdir dir="${app-buildroot}"/>
         
         <javac srcdir="${approot}/src" destdir="${app-buildroot}" debug="true" source="1.6" target="1.6" includeAntRuntime="no" deprecation="true">
@@ -43,7 +62,7 @@
         </copy>
     </target>
 
-    <target name="jar" depends="init,compile">
+    <target name="jar" depends="init,compile" if="allows.build">
         <mkdir dir="${buildroot}/jar"/>
         <mkdir dir="${buildroot}/jar/apps"/>
         <jar jarfile="${buildroot}/jar/apps/${appname}.jar" compress="true" basedir="${app-buildroot}" >
@@ -64,10 +83,10 @@
 	</java> 
     </target>
     
-    <target name="all" depends="init,jar" description="Build everything.">
+    <target name="all" depends="init,jar" description="Build everything." if="allows.build">
         <echo message="${appname} built!"/>
     </target>
-
+    
     <target name="javadoc" depends="init" description="Javadoc for ${appname} app. API.">
         <mkdir dir="${buildroot}/javadoc"/>
         <javadoc packagenames="${apps}.${appname}" destdir="${buildroot}/javadoc">

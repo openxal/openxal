@@ -7,6 +7,7 @@
     <!-- Build all the applications. -->
     <target name="all">
         <subant target="all">
+            <property name="batch.app.build" value="true" />
             <fileset dir="." includes="*/build.xml" />
         </subant>
     </target>

@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <!-- Build the application whose name matches that of the project. -->
-<project name="bricks" basedir="." default="all">
-    <property environment="env"/>
-	
+<project name="bricks" basedir="." default="all">	
 	<import file="../common.xml"/>		
 </project>
