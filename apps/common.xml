@@ -18,8 +18,8 @@
 		<property name="mainclass" value="${app.package.prefix}.${appname}.${mainclass.base}" />
         <property name="app.ref" value="${appname}" />
         <property name="app.src.root" value="${apps.src.root}/${app.ref}" />
-        <property name="apps.build.root" value="${build.root}/compile/apps" />
-        <property name="app.build.root" value="${apps.build.root}" />
+        <property name="apps.build.compile.root" value="${build.root}/compile/apps" />
+        <property name="app.build.compile.root" value="${apps.build.compile.root}" />
         <property name="app.relative.path" value="xal/app/${appname}" />
         
         <!-- determine whether building should be allowed -->
@@ -42,7 +42,7 @@
         </condition>
         
         <mkdir dir="${build.root}" />
-        <mkdir dir="${apps.build.root}" />
+        <mkdir dir="${apps.build.compile.root}" />
         
         <echo message="Conditionally processing ${appname}" />
     </target>
@@ -56,13 +56,13 @@
 
 	
     <target name="compile" depends="init" if="allows.build">
-        <mkdir dir="${app.build.root}"/>
+        <mkdir dir="${app.build.compile.root}"/>
         
-        <javac srcdir="${app.src.root}/src" destdir="${app.build.root}" debug="true" source="1.6" target="1.6" includeAntRuntime="no" deprecation="true">
+        <javac srcdir="${app.src.root}/src" destdir="${app.build.compile.root}" debug="true" source="1.6" target="1.6" includeAntRuntime="no" deprecation="true">
 			<classpath refid="${classpath.ref}"/>
         </javac>
         
-        <copy todir="${app.build.root}/${app.relative.path}/resources">
+        <copy todir="${app.build.compile.root}/${app.relative.path}/resources">
             <fileset dir="${app.src.root}/resources" />
         </copy>
     </target>
@@ -71,7 +71,7 @@
     <target name="jar" depends="init,compile" if="allows.build">
         <mkdir dir="${build.root}/jar"/>
         <mkdir dir="${build.root}/jar/apps"/>
-        <jar jarfile="${build.root}/jar/apps/${appname}.jar" compress="true" basedir="${app.build.root}" >
+        <jar jarfile="${build.root}/jar/apps/${appname}.jar" compress="true" basedir="${app.build.compile.root}" >
             <manifest>
               <attribute name="Manifest-Version" value="1.0"/>
               <attribute name="Main-Class" value="${mainclass}"/>
@@ -107,7 +107,7 @@
 
     
     <target name="clean" depends="init" description="Clean all build products.">
-        <delete dir="${apps.build.root}/${app.relative.path}"/>
+        <delete dir="${apps.build.compile.root}/${app.relative.path}"/>
         <delete file="${build.root}/jar/apps/${appname}.jar"/>
         <delete dir="${build.root}/javadoc/apps/${appname}"/>
     </target>

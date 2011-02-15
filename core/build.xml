@@ -14,16 +14,16 @@
 	<macrodef name="compile-flagged">
 		<attribute name="flag" default="-Xlint:none" />
 		<sequential>
-			<mkdir dir="${compile.core.root}" />
-			<javac debug="true" source="1.6" target="1.6" includeAntRuntime="no" deprecation="true" destdir="${compile.core.root}" srcdir="${srcroot}" sourcepath="">
+			<mkdir dir="${build.compile.core.root}" />
+			<javac debug="true" source="1.6" target="1.6" includeAntRuntime="no" deprecation="true" destdir="${build.compile.core.root}" srcdir="${srcroot}" sourcepath="">
 				<classpath>
-					<pathelement location="${compile.core.root}" />
-					<pathelement location="${build.root}/jar/xal-lib.jar" />
+					<pathelement location="${build.compile.core.root}" />
+					<pathelement location="${build.jar.root}/xal-lib.jar" />
 				</classpath>
 				<compilerarg value="@{flag}" />
 			</javac>
                         
-            <copy todir="${compile.core.root}/xal/resources">
+            <copy todir="${build.compile.core.root}/xal/resources">
                 <fileset dir="resources" />
             </copy>
 
@@ -51,14 +51,14 @@
 	
 	<!-- Jar the core XAL classes -->
     <target  name="jar-core" depends="init, compile">
-        <mkdir dir="${build.root}/jar" />
-        <jar compress="true" jarfile="${build.root}/jar/xal-core.jar" index="true">
+        <mkdir dir="${build.jar.root}" />
+        <jar compress="true" jarfile="${build.jar.root}/xal-core.jar" index="true">
 			<manifest>
 			  <attribute name="Manifest-Version" value="1.0" />
 			  <attribute name="Class-Path" value="./xal-lib.jar" />
 			</manifest>
 
-			<fileset dir="${compile.core.root}">
+			<fileset dir="${build.compile.core.root}">
 				<exclude name="**/datasource/" />
 			</fileset>
        </jar>
@@ -67,8 +67,8 @@
 	
 	<!-- Jar the core datasource placeholder classes -->
     <target  name="jar-datasource" depends="init, compile">
-        <mkdir dir="${build.root}/jar" />
-        <jar compress="true" jarfile="${build.root}/jar/xal-datasource.jar" index="true">
+        <mkdir dir="${build.jar.root}" />
+        <jar compress="true" jarfile="${build.jar.root}/xal-datasource.jar" index="true">
 			<manifest>
 			  <attribute name="Manifest-Version" value="1.0" />
 			  <attribute name="Class-Path" value="./xal-lib.jar" />
@@ -84,8 +84,8 @@
 	
 	<!-- Join the third party jars into a common external jar file -->
     <target name="jar-lib" depends="init">
-        <mkdir dir="${build.root}/jar" />
-        <jar compress="true" jarfile="${build.root}/jar/xal-lib.jar" index="true" duplicate="preserve">
+        <mkdir dir="${build.jar.root}" />
+        <jar compress="true" jarfile="${build.jar.root}/xal-lib.jar" index="true" duplicate="preserve">
 			<zipgroupfileset dir="lib">
 				<patternset>
 					<include name="*.jar" />
@@ -105,7 +105,7 @@
     <target name="install" depends="all" description="Build everything and install in the installation location." >
         <mkdir dir="${installroot}" />
 		<copy todir="${installroot}">
-			<fileset dir="${build.root}/jar" />
+			<fileset dir="${build.jar.root}" />
 		</copy>
         <echo message="XAL built and installed. " />
     </target>
@@ -119,8 +119,8 @@
                 <pathelement location="." />
             </sourcepath>
             <classpath>
-                <pathelement location="${build.root}/jar/xal-core.jar" />
-                <pathelement location="${build.root}/jar/xal-lib.jar" />
+                <pathelement location="${build.jar.root}/xal-core.jar" />
+                <pathelement location="${build.jar.root}/xal-lib.jar" />
                 <pathelement location="${build.root}/compile" />
             </classpath>
         </javadoc>
