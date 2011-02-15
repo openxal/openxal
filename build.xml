@@ -35,6 +35,13 @@
             </fileset>
         </subant>
     </target>
+	
+	
+	<!-- purge build products -->
+    <target name="purge-build" description="Purge all build products." >
+        <delete dir="${build.root}" />
+        <echo message="Purged the build directory!" />
+    </target>
     
     
     <!-- Build the core. -->

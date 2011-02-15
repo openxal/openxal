@@ -140,13 +140,12 @@
 	
 	<!-- clean compiled products -->
     <target name="clean" depends="init" description="Clean all build products." >
-        <delete dir="${build.root}/compile" />
-    </target>
-	
-	
-	<!-- purge build products -->
-    <target name="purge" depends="init" description="Clean all build products." >
-        <delete dir="${build.root}" />
+        <delete dir="${build.compile.core.root}" />
+        <delete file="${build.jar.root}/xal-core.jar" quiet="true" />
+        <delete file="${build.jar.root}/xal-lib.jar" quiet="true" />
+        <delete file="${build.jar.root}/xal-datasource.jar" quiet="true" />
+        
+        <echo message="Core cleaned!" />
     </target>
 	
 	
