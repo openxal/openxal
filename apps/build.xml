@@ -2,20 +2,31 @@
 
 <!-- Process all the applications. -->
 <project name="apps" basedir="." default="all">
-    <import file="../common.xml"/>		
+    <import file="../common.xml"/>
+    
+    <property name="build.path.pattern" value="*/build.xml" />
 
-    <!-- Build all the applications. -->
+    <!-- Build all the applications which allow batch building. -->
     <target name="all">
         <subant target="all">
             <property name="batch.app.build" value="true" />
-            <fileset dir="." includes="*/build.xml" />
+            <fileset dir="." includes="${build.path.pattern}" />
         </subant>
     </target>
+    
+    
+    <!-- Build all the applications including those excluded from batch building. -->
+    <target name="force-all">
+        <subant target="all">
+            <fileset dir="." includes="${build.path.pattern}" />
+        </subant>
+    </target>
+    
     
     <!-- Clean all the applications. -->
     <target name="clean">
         <subant target="clean">
-            <fileset dir="." includes="*/build.xml" />
+            <fileset dir="." includes="${build.path.pattern}" />
         </subant>
         
         <delete dir="${buildroot}/compile/apps"/>
