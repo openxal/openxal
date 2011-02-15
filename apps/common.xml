@@ -41,7 +41,7 @@
         <mkdir dir="${buildroot}" />
         <mkdir dir="${apps-buildroot}" />
         
-        <echo message="Conditionally building ${appname}" />
+        <echo message="Conditionally processing ${appname}" />
     </target>
 
 
