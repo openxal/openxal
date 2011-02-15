@@ -50,5 +50,20 @@
         
         <echo message="Purged application installation!" />
     </target>
+	
+	
+	<!-- provide guidance on the various targets -->
+    <target name="help">
+		<echo message="Build the XAL common applications" />
+		<echo message="Usage: ant [ant options] target1 [target2 | target3 | ... ]" />
+		<echo message="" />
+		<echo message="  where target(s) can be:" />
+		<echo message="    help ....................... Print this message." />
+		<echo message="    all ........................ Compile the applications which allow batch building and assemble the jar products." />
+		<echo message="    force-all .................. Compile all applications (regardless of whether they allow batch building) and assemble the jar products." />
+		<echo message="    clean ...................... Clean compiled classes and build products" />
+		<echo message="    install: ................... Install all build products intended for distribution." />
+		<echo message="    purge-install: ............. Purge installed applications." />
+    </target>
     
 </project>
