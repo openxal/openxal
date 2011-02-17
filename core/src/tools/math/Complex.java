@@ -6,7 +6,7 @@
 //  Copyright 2008 __MyCompanyName__. All rights reserved.
 //
 
-package gov.sns.tools.math;
+package xal.tools.math;
 
 
 /** representation of a complex number */

@@ -7,7 +7,7 @@
 //
 
 
-package gov.sns.tools.math;
+package xal.tools.math;
 
 
 /**

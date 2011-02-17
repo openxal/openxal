@@ -8,7 +8,7 @@
 * Oak Ridge, TN 37830
 */
 
-package gov.sns.tools.math;
+package xal.tools.math;
 
 
 /**
