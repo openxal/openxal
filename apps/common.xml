@@ -90,7 +90,6 @@
     
     
     <target name="install" depends="all" if="allows.install">
-        <mkdir dir="${app.install.root}" />
         <copy file="${app.build.jar}" todir="${apps.install.root}" />
         <echo message="${appname} installed!"/>
     </target>
