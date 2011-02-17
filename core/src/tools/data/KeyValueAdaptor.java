@@ -6,7 +6,7 @@
 //  Copyright 2009 Oak Ridge National Lab. All rights reserved.
 //
 
-package xal.data;
+package xal.tools.data;
 
 import java.lang.reflect.*;
 import java.util.*;

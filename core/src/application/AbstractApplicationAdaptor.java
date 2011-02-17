@@ -172,7 +172,7 @@ abstract public class AbstractApplicationAdaptor implements ApplicationListener 
     
     /**
 	 * Subclasses should override this method if the resources folder path is in a location other than the default one.  The default file path is a subfolder called <code>resources</code> 
-     * located within the same folder where the runtime subclass of ApplicationAdaptor resides. Java package path notation is used. For example "xal.apps.Myapp.resources".
+     * located within the same folder where the runtime subclass of ApplicationAdaptor resides. Java package path notation is used. For example "xal.app.Myapp.resources".
      * @return The resource path in classpath notation
      */
     public String getResourcesPath() {
@@ -183,8 +183,8 @@ abstract public class AbstractApplicationAdaptor implements ApplicationListener 
     
     /**
 	 * Get the path to the specified named resource which resides in the the resource folder path as specified by the getResourcesPath() method.  For example if 
-	 * the resources path is xal.apps.Myapp.resources and we wish to get the resource path to the menudef.properties file, the resourceName to specify 
-	 * would simply be "menudef" and the method would return "xal.apps.Myapp.resources.menudef".
+	 * the resources path is xal.app.Myapp.resources and we wish to get the resource path to the menudef.properties file, the resourceName to specify 
+	 * would simply be "menudef" and the method would return "xal.app.Myapp.resources.menudef".
 	 * @param resourceName The name of the resource for which to get the path
      * @return The resource definition properties file path in classpath notation
 	 * @see #getResourcesPath
@@ -207,7 +207,7 @@ abstract public class AbstractApplicationAdaptor implements ApplicationListener 
     /**
 	 * Subclasses should override this method if the menudefinition properties file is in a location other than the default one.  The default file path is 
      * a properties file called <code>"menudef.properties"</code> located in the resources folder.  Java package path notation is used.  The file's suffix is excluded from the path.
-     * For example "xal.apps.Myapp.resources.menudef".
+     * For example "xal.app.Myapp.resources.menudef".
      * @return The menu definition properties file path in classpath notation
      */
     public String getMenuDefinitionPath() {
@@ -218,7 +218,7 @@ abstract public class AbstractApplicationAdaptor implements ApplicationListener 
     /**
 	 * Subclasses should override this method if the application information properties (displayed in the "About" box) file is in a location other than the default one.  
      * The default file path is a properties file called <code>"About.properties"</code> located in the resources folder.  Java package path notation is used.  The file's 
-     * suffix is excluded from the path. For example "xal.apps.Myapp.resources.About".
+     * suffix is excluded from the path. For example "xal.app.Myapp.resources.About".
      * @return The application information properties file path in classpath notation
      */
     public String getApplicationInfoPath() {
