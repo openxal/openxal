@@ -8,6 +8,16 @@
         <property name="srcroot" value="src" />
         <mkdir dir="${build.root}" />
     </target>
+    
+    
+    <!-- Build the core and run the tests. -->
+    <target name="run-tests" depends="all">
+        <subant target="run-tests">
+            <fileset dir="test">
+                <include name="build.xml" />
+            </fileset>
+        </subant>
+    </target>
 	
 	
 	<!-- Macro to compile the core XAL classes using the specified compiler flag -->

@@ -7,7 +7,7 @@
 	<property name="build.root" value="${xal.home}/build" />
 	<property name="build.compile.root" value="${build.root}/compile" />
 	<property name="build.compile.core.root" value="${build.compile.root}/core" />
-	<property name="build.compile.core.test.root" value="${build.compile.root}/test" />
+	<property name="build.compile.core.test.root" value="${build.compile.root}/test/core" />
 	<property name="build.jar.root" value="${build.root}/jar" />
     
 	<property name="junit.classpath" value="/usr/share/java/junit.jar" />

@@ -15,6 +15,21 @@
     <target name="install" depends="install-core,install-apps" />
     
     
+    <!-- Build all and run the tests. -->
+    <target name="run-tests" depends="test-core">
+    </target>
+    
+    
+    <!-- Build the core and run the tests. -->
+    <target name="test-core" depends="core">
+        <subant target="run-tests">
+            <fileset dir="core">
+                <include name="build.xml" />
+            </fileset>
+        </subant>
+    </target>
+    
+    
     <!-- Clean the core and all the applications. -->
     <target name="clean">
         <subant target="clean">

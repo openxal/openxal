@@ -48,20 +48,10 @@
             <fileset dir="resources" />
         </copy>
 	</target>
-
 	
-	<!-- Jar the test XAL classes -->
-    <target  name="jar" depends="init, compile">
-        <mkdir dir="${build.jar.root}" />
-        <jar compress="true" jarfile="${build.jar.root}/xal-test-core.jar" index="true">
-			<fileset dir="${build.compile.core.test.root}">
-			</fileset>
-        </jar>
-    </target>
-	
-	
+    
 	<!-- merge the external jars and build XAL test core -->
-    <target name="all" depends="init,compile,jar" description="Build everything." >
+    <target name="all" depends="init,compile" description="Build everything." >
         <echo message="Everything built. " />
     </target>
 	
