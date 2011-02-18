@@ -10,9 +10,14 @@
 	<property name="build.compile.core.test.root" value="${build.compile.root}/test/core" />
 	<property name="build.jar.root" value="${build.root}/jar" />
     
-	<property name="junit.classpath" value="/usr/share/java/junit.jar" />
+	<property name="junit.jar.path" value="/usr/share/java/junit.jar" />
     
-    <!-- Determine the installation directory using the environment variable if defined, and otherwise the dist directory under the build root -->
+    <!-- Determine the path to the junit jar, otherwise use the standard UNIX location. -->
+    <condition property="junit.jar.path" value="${env.JUNIT_JAR_PATH}" else="/usr/share/java/junit.jar">
+        <isset property="env.JUNIT_JAR_PATH" />
+    </condition>
+    
+    <!-- Determine the installation directory using the environment variable if defined, otherwise place the dist directory under the build root -->
     <condition property="install.root" value="${env.XAL_INSTALL_ROOT}" else="${build.root}/dist">
         <isset property="env.XAL_INSTALL_ROOT" />
     </condition>
