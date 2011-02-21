@@ -33,7 +33,7 @@
 				<compilerarg value="@{flag}" />
 			</javac>
                         
-            <copy todir="${build.compile.core.root}/xal/resources">
+            <copy todir="${build.compile.core.root}/resources/xal">
                 <fileset dir="resources" />
             </copy>
 
@@ -68,9 +68,11 @@
 			  <attribute name="Class-Path" value="./xal-lib.jar" />
 			</manifest>
 
-			<fileset dir="${build.compile.core.root}">
+			<fileset dir="${build.compile.core.root}" includes="xal/**/*">
 				<exclude name="**/datasource/" />
 			</fileset>
+            
+			<fileset dir="${build.compile.core.root}/resources" />
        </jar>
     </target>
     

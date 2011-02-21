@@ -110,7 +110,7 @@ class ComboSequenceComposer {
 		
 		final List<AcceleratorSeq> sequences = accelerator.getSequences();
 		
-		final URL uiURL = ComboSequenceComposer.class.getResource( "resources/ui.bricks" );
+		final URL uiURL = ComboSequenceComposer.class.getResource( "ui.bricks" );
 		final WindowReference windowReference = new WindowReference( uiURL, "ComboSequenceComposer", owner, "Combo Sequence Composer" );
 		final JDialog dialog = (JDialog)windowReference.getWindow();
 		

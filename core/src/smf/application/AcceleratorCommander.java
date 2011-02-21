@@ -33,7 +33,7 @@ public class AcceleratorCommander extends Commander {
      */
     protected void loadDefaultBundle() {
         super.loadDefaultBundle();
-        loadBundle( "xal.resources.smf.application.menudef" );
+        loadBundle( "xal.smf.application.menudef" );
     }
     
     

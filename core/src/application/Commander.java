@@ -109,7 +109,7 @@ public class Commander {
     
     /** Load the default bundle. */
     protected void loadDefaultBundle() {
-        loadBundle( "xal.resources.application.menudef" );
+        loadBundle( "xal.application.menudef" );
     }
     
     

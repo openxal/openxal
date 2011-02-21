@@ -37,7 +37,7 @@ public class KeyValueRecordSelector<T> {
 	
 	/** Primary Constructor */
 	protected KeyValueRecordSelector( final KeyValueFilteredTableModel<T> tableModel, final JFrame owner, final String title, final String filterPrompt ) {
-		final URL uiURL = KeyValueRecordSelector.class.getResource( "/xal/resources/tools/swing/RecordSelector.bricks" );
+		final URL uiURL = KeyValueRecordSelector.class.getResource( "RecordSelector.bricks" );
 		final WindowReference windowReference = new WindowReference( uiURL, "RecordSelectorDialog", owner, title );
 		DIALOG = (JDialog)windowReference.getWindow();
 		DIALOG.setTitle( title );
