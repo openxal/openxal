@@ -15,8 +15,8 @@ import xal.ca.*;
 import xal.tools.data.*;
 import xal.tools.statistics.*;
 import xal.tools.messaging.MessageCenter;
-//import xal.xal.smf.NodeChannelRef;
-//import xal.xal.smf.Accelerator;
+import xal.smf.NodeChannelRef;
+import xal.smf.Accelerator;
 
 
 /** model for the histogram document */
@@ -76,7 +76,7 @@ class ChannelHistogram implements DataListener {
 	private boolean _autoLimits;
 	
 	/** accelerator used to get node channel references */
-//	private Accelerator _accelerator;
+	private Accelerator _accelerator;
 	
 	
 	// static initializer
@@ -136,8 +136,7 @@ class ChannelHistogram implements DataListener {
 			setManualValueRange( range );
 		}
 		
-//		final ChannelSource channelSource = ChannelSource.getChannelSource( adaptor, _accelerator );
-		final ChannelSource channelSource = ChannelSource.getChannelSource( adaptor );
+		final ChannelSource channelSource = ChannelSource.getChannelSource( adaptor, _accelerator );
 		setChannelSource( channelSource );
     }
     
@@ -157,9 +156,9 @@ class ChannelHistogram implements DataListener {
 	
 	
 	/** set the accelerator */
-//	public void setAccelerator( final Accelerator accelerator ) {
-//		_accelerator = accelerator;
-//	}
+	public void setAccelerator( final Accelerator accelerator ) {
+		_accelerator = accelerator;
+	}
 	
 	
 	/** set whether or not to use auto limits */
@@ -290,9 +289,9 @@ class ChannelHistogram implements DataListener {
 	
 	
 	/** set the channel source from a node channel reference */
-//	public void setChannelSource( final NodeChannelRef channelRef ) {
-//		setChannelSource( ChannelSource.getInstance( channelRef ) );
-//	}
+	public void setChannelSource( final NodeChannelRef channelRef ) {
+		setChannelSource( ChannelSource.getInstance( channelRef ) );
+	}
 	
 	
 	/** set the channel source from a node channel reference */

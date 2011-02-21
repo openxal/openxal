@@ -13,7 +13,7 @@ import java.net.*;
 import java.util.logging.*;
 
 import xal.application.*;
-//import xal.xal.smf.application.*;
+import xal.smf.application.*;
 
 /**
  * Application adaptor for the PV Histogram application.
@@ -79,8 +79,7 @@ public class Main extends ApplicationAdaptor {
         try {
             System.out.println( "Launching PV Histogram application..." );
 			Logger.getLogger( "global" ).log( Level.INFO, "Launching the application..." );
-//            AcceleratorApplication.launch( new Main() );
-            Application.launch( new Main() );
+            AcceleratorApplication.launch( new Main() );
         }
         catch(Exception exception) {
             System.err.println( exception.getMessage() );

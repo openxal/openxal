@@ -17,14 +17,14 @@ import javax.swing.event.*;
 import java.text.DecimalFormat;
 
 import xal.application.*;
-//import xal.xal.smf.application.*;
-//import xal.xal.smf.*;
+import xal.smf.application.*;
+import xal.smf.*;
 import xal.tools.apputils.*;
 import xal.tools.xml.XmlDataAdaptor;
-//import xal.xal.smf.data.XMLDataManager;
+import xal.smf.data.XMLDataManager;
 import xal.tools.data.*;
 import xal.tools.bricks.WindowReference;
-//import xal.xal.tools.widgets.NodeChannelSelector;
+import xal.smf.widgets.NodeChannelSelector;
 import xal.tools.plot.*;
 import xal.tools.statistics.UnivariateStatistics;
 import xal.ca.Channel;
@@ -34,8 +34,7 @@ import xal.ca.Channel;
  * HistogramDocument represents the document for the PV Histogram application.
  * @author  t6p
  */
-//public class HistogramDocument extends AcceleratorDocument implements DataListener, ChannelHistogramListener {
-public class HistogramDocument extends XalDocument implements DataListener, ChannelHistogramListener {
+public class HistogramDocument extends AcceleratorDocument implements DataListener, ChannelHistogramListener {
  	/** the data adaptor label used for reading and writing this document */
 	static public final String DATA_LABEL = "HistogramDocument";
 	
@@ -177,7 +176,7 @@ public class HistogramDocument extends XalDocument implements DataListener, Chan
     
     /** Handle the accelerator changed event by displaying the elements of the accelerator in the main window. */
     public void acceleratorChanged() {
-		//MODEL.setAccelerator( getAccelerator() );
+		MODEL.setAccelerator( getAccelerator() );
 		setHasChanges( true );
 	}
     
@@ -196,15 +195,15 @@ public class HistogramDocument extends XalDocument implements DataListener, Chan
     
     /** Instructs the receiver to update its data based on the given adaptor. */
     public void update( final DataAdaptor adaptor ) {
-//		if ( adaptor.hasAttribute( "acceleratorPath" ) ) {
-//			final String acceleratorPath = adaptor.stringValue( "acceleratorPath" );
-//			final Accelerator accelerator = applySelectedAcceleratorWithDefaultPath( acceleratorPath );
-//			
-//			if ( accelerator != null && adaptor.hasAttribute( "sequence" ) ) {
-//				final String sequenceID = adaptor.stringValue( "sequence" );
-//				setSelectedSequence( getAccelerator().findSequence( sequenceID ) );
-//			}
-//		}
+		if ( adaptor.hasAttribute( "acceleratorPath" ) ) {
+			final String acceleratorPath = adaptor.stringValue( "acceleratorPath" );
+			final Accelerator accelerator = applySelectedAcceleratorWithDefaultPath( acceleratorPath );
+			
+			if ( accelerator != null && adaptor.hasAttribute( "sequence" ) ) {
+				final String sequenceID = adaptor.stringValue( "sequence" );
+				setSelectedSequence( getAccelerator().findSequence( sequenceID ) );
+			}
+		}
 		
 		final DataAdaptor modelAdaptor = adaptor.childAdaptor( ChannelHistogram.DATA_LABEL );
 		if ( modelAdaptor != null )  MODEL.update( modelAdaptor );
@@ -218,14 +217,14 @@ public class HistogramDocument extends XalDocument implements DataListener, Chan
 		
 		adaptor.writeNode( MODEL );
 		
-//		if ( getAccelerator() != null ) {
-//			adaptor.setValue( "acceleratorPath", getAcceleratorFilePath() );
-//			
-//			final AcceleratorSeq sequence = getSelectedSequence();
-//			if ( sequence != null ) {
-//				adaptor.setValue( "sequence", sequence.getId() );
-//			}
-//		}
+		if ( getAccelerator() != null ) {
+			adaptor.setValue( "acceleratorPath", getAcceleratorFilePath() );
+			
+			final AcceleratorSeq sequence = getSelectedSequence();
+			if ( sequence != null ) {
+				adaptor.setValue( "sequence", sequence.getId() );
+			}
+		}
     }
 	
 	
@@ -278,21 +277,21 @@ public class HistogramDocument extends XalDocument implements DataListener, Chan
 	private ActionListener newChannelAddHandler( final JTextField channelField ) { 
 		return new ActionListener() {
 			public void actionPerformed( final ActionEvent event ) {
-//				final AcceleratorSeq selectedSequence = getSelectedSequence();
-//				final AcceleratorSeq sequence = selectedSequence != null ? selectedSequence : getAccelerator();
-//				if ( sequence != null ) {
-//					final List<AcceleratorNode> nodes = sequence.getAllInclusiveNodes( true );
-//					final NodeChannelSelector channelRefSelector = NodeChannelSelector.getInstanceFromNodes( nodes, getAcceleratorWindow(), "Select Channel" );
-//					final List<NodeChannelRef> channelRefs = channelRefSelector.showDialog( ListSelectionModel.SINGLE_SELECTION );
-//					if ( channelRefs != null && channelRefs.size() > 0 ) {
-//						final NodeChannelRef channelRef = channelRefs.get( 0 );	// get the selected channel reference
-//						MODEL.setChannelSource( channelRef );
-//					}
-//				}
-//				else {
-//					// should display a warning dialog
-//					getAcceleratorWindow().displayError( "PV Selection Error", "You must first select an accelerator sequence from which the PVs will be supplied." );
-//				}
+				final AcceleratorSeq selectedSequence = getSelectedSequence();
+				final AcceleratorSeq sequence = selectedSequence != null ? selectedSequence : getAccelerator();
+				if ( sequence != null ) {
+					final List<AcceleratorNode> nodes = sequence.getAllInclusiveNodes( true );
+					final NodeChannelSelector channelRefSelector = NodeChannelSelector.getInstanceFromNodes( nodes, getAcceleratorWindow(), "Select Channel" );
+					final List<NodeChannelRef> channelRefs = channelRefSelector.showDialog( ListSelectionModel.SINGLE_SELECTION );
+					if ( channelRefs != null && channelRefs.size() > 0 ) {
+						final NodeChannelRef channelRef = channelRefs.get( 0 );	// get the selected channel reference
+						MODEL.setChannelSource( channelRef );
+					}
+				}
+				else {
+					// should display a warning dialog
+					getAcceleratorWindow().displayError( "PV Selection Error", "You must first select an accelerator sequence from which the PVs will be supplied." );
+				}
 			}
 		};		
 	}

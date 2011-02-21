@@ -11,8 +11,8 @@ package xal.app.pvhistogram;
 import xal.tools.data.*;
 import xal.ca.Channel;
 import xal.ca.ChannelFactory;
-//import xal.xal.smf.Accelerator;
-//import xal.xal.smf.NodeChannelRef;
+import xal.smf.Accelerator;
+import xal.smf.NodeChannelRef;
 
 
 /** channel source for a direct PV or a node channel reference */
@@ -30,14 +30,13 @@ abstract class ChannelSource {
 	
 	
 	/** factory method to get a channel source for the specified node channel reference */
-//	static public ChannelSource getInstance( final NodeChannelRef channelRef ) {
-//		return new NodeChannelSource( channelRef );
-//	}	
+	static public ChannelSource getInstance( final NodeChannelRef channelRef ) {
+		return new NodeChannelSource( channelRef );
+	}	
 	
 	
 	/** Get the source for the specified adaptor */
-	//static public ChannelSource getChannelSource( final DataAdaptor adaptor, final Accelerator accelerator ) {
-    static public ChannelSource getChannelSource( final DataAdaptor adaptor ) {
+	static public ChannelSource getChannelSource( final DataAdaptor adaptor, final Accelerator accelerator ) {
 		if ( adaptor.hasAttribute( "pv" ) ) {
 			final String pv = adaptor.stringValue( "pv" );
 			if ( pv != null ) {
@@ -49,8 +48,7 @@ abstract class ChannelSource {
 		}
 		else if ( adaptor.hasAttribute( "channelRef" ) ) {
 			final String channelRefID = adaptor.stringValue( "channelRef" );
-//			return new NodeChannelSource( accelerator, channelRefID );
-            return null;
+			return new NodeChannelSource( accelerator, channelRefID );
 		}
 		else {
 			return null;
@@ -103,33 +101,33 @@ class DirectChannelSource extends ChannelSource {
 
 
 /** channel source for a node channel reference */
-//class NodeChannelSource extends ChannelSource {
-//	/** node channel reference */
-//	final private NodeChannelRef NODE_CHANNEL_REF;
-//	
-//	
-//	/** Constructor */
-//	public NodeChannelSource( final NodeChannelRef channelRef ) {
-//		NODE_CHANNEL_REF = channelRef;
-//	}
-//	
-//	
-//	/** Constructor */
-//	public NodeChannelSource( final Accelerator accelerator, final String channelRefID ) {
-//		this( NodeChannelRef.getInstance( accelerator, channelRefID ) );
-//	}
-//		
-//	
-//	/** get the channel */
-//	public Channel getChannel() {
-//		return NODE_CHANNEL_REF.getChannel();
-//	}
-//	
-//	
-//	/** write the channel source to the data adaptor */
-//	public void write( final DataAdaptor adaptor ) {
-//		if ( NODE_CHANNEL_REF != null ) {
-//			adaptor.setValue( "channelRef", NODE_CHANNEL_REF.toString() );
-//		}
-//	}	
-//}
+class NodeChannelSource extends ChannelSource {
+	/** node channel reference */
+	final private NodeChannelRef NODE_CHANNEL_REF;
+	
+	
+	/** Constructor */
+	public NodeChannelSource( final NodeChannelRef channelRef ) {
+		NODE_CHANNEL_REF = channelRef;
+	}
+	
+	
+	/** Constructor */
+	public NodeChannelSource( final Accelerator accelerator, final String channelRefID ) {
+		this( NodeChannelRef.getInstance( accelerator, channelRefID ) );
+	}
+		
+	
+	/** get the channel */
+	public Channel getChannel() {
+		return NODE_CHANNEL_REF.getChannel();
+	}
+	
+	
+	/** write the channel source to the data adaptor */
+	public void write( final DataAdaptor adaptor ) {
+		if ( NODE_CHANNEL_REF != null ) {
+			adaptor.setValue( "channelRef", NODE_CHANNEL_REF.toString() );
+		}
+	}	
+}
