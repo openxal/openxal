@@ -75,16 +75,12 @@
     <target name="jar" depends="init,compile" if="allows.build">
         <mkdir dir="${build.jar.root}" />
         <mkdir dir="${apps.build.jar.root}" />
-        <jar jarfile="${app.build.jar}" compress="true" basedir="${app.build.compile.root}">
+        <jar jarfile="${app.build.jar}" compress="true" basedir="${app.build.compile.root}" includes="${app.relative.path}/**/*">
             <manifest>
               <attribute name="Manifest-Version" value="1.0" />
               <attribute name="Main-Class" value="${mainclass}" />
               <attribute name="Class-Path" value="${manifest.classpath}" />
             </manifest>
-            
-            <fileset dir=".">
-                <include name="${app.relative.path}/**/*" />
-            </fileset>
         </jar>
     </target>
     
