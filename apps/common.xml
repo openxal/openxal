@@ -59,16 +59,39 @@
 	</path>
 
 	
+	<!-- Macro to compile the core XAL classes using the specified compiler flag -->
+	<macrodef name="compile-flagged">
+		<attribute name="flag" default="-Xlint:none" />
+		<sequential>
+            <mkdir dir="${app.build.compile.root}"/>
+            <javac srcdir="${app.src.root}/src" destdir="${app.build.compile.root}" debug="true" source="1.6" target="1.6" includeAntRuntime="no" deprecation="true">
+                <classpath refid="${classpath.ref}"/>
+                <compilerarg value="@{flag}" />
+            </javac>
+            
+            <copy todir="${app.build.compile.root}/${app.relative.path}/resources">
+                <fileset dir="${app.src.root}/resources" />
+            </copy>
+            
+		</sequential>
+	</macrodef>
+	
+	
+	<!-- Compile the core XAL classes using the lint flag to show some recommended warnings -->
+    <target name="compile-warn" depends="init" if="allows.build">
+		<compile-flagged flag="-Xlint:unchecked" />
+    </target>
+	
+	
+	<!-- Compile the core XAL classes using the lint flag to show all recommended warnings -->
+    <target name="compile-warn-all" depends="init" if="allows.build">
+		<compile-flagged flag="-Xlint" />
+    </target>
+	
+	
+	<!-- Compile the core XAL classes reporting only mandated warnings -->
     <target name="compile" depends="init" if="allows.build">
-        <mkdir dir="${app.build.compile.root}"/>
-        
-        <javac srcdir="${app.src.root}/src" destdir="${app.build.compile.root}" debug="true" source="1.6" target="1.6" includeAntRuntime="no" deprecation="true">
-			<classpath refid="${classpath.ref}"/>
-        </javac>
-        
-        <copy todir="${app.build.compile.root}/${app.relative.path}/resources">
-            <fileset dir="${app.src.root}/resources" />
-        </copy>
+		<compile-flagged />
     </target>
 
     

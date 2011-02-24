@@ -14,6 +14,22 @@
         </subant>
     </target>
     
+    <!-- Compile all the applications with only recommended warnings. -->
+    <target name="compile-warn">
+        <subant target="compile-warn">
+            <property name="batch.app.build" value="true" />
+            <fileset dir="." includes="${build.path.pattern}" />
+        </subant>
+    </target>
+    
+    <!-- Compile all the applications with all warnings. -->
+    <target name="compile-warn-all">
+        <subant target="compile-warn-all">
+            <property name="batch.app.build" value="true" />
+            <fileset dir="." includes="${build.path.pattern}" />
+        </subant>
+    </target>
+    
     
     <!-- Build all the applications including those excluded from batch building. -->
     <target name="force-all">
