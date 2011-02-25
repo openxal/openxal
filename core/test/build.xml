@@ -14,7 +14,7 @@
     <target name="run-tests" depends="all">
         <junit printsummary="yes">
             <classpath>
-                <pathelement location="${build.compile.core.test.root}" />
+                <pathelement location="${build.jar.root}/xal-test.jar" />
                 <pathelement location="${build.jar.root}/xal-core.jar" />
                 <pathelement location="${build.jar.root}/xal-lib.jar" />
                 <pathelement location="${junit.jar.path}" />
@@ -37,21 +37,32 @@
         <mkdir dir="${build.compile.core.test.root}" />
         <javac debug="true" source="1.6" target="1.6" includeAntRuntime="no" deprecation="true" destdir="${build.compile.core.test.root}" srcdir="${srcroot}" sourcepath="">
             <classpath>
-                <pathelement location="${build.compile.core.test.root}" />
+                <pathelement location="${build.compile.core.test.root}/xal" />
+                <pathelement location="${build.compile.core.test.root}/resources/xal" />
                 <pathelement location="${build.jar.root}/xal-core.jar" />
                 <pathelement location="${build.jar.root}/xal-lib.jar" />
                 <pathelement location="${junit.jar.path}" />
             </classpath>
         </javac>
         
-        <copy todir="${build.compile.core.test.root}/xal/resources">
+        <copy todir="${build.compile.core.test.root}/resources/xal">
             <fileset dir="resources" />
         </copy>
 	</target>
+    
 	
+	<!-- Jar the core XAL classes -->
+    <target  name="jar" depends="init, compile">
+        <mkdir dir="${build.jar.root}" />
+        <jar compress="false" jarfile="${build.jar.root}/xal-test.jar" index="true">
+			<fileset dir="${build.compile.core.test.root}" includes="xal/**/*" />
+			<fileset dir="${build.compile.core.test.root}/resources" />
+        </jar>
+    </target>
+
     
 	<!-- merge the external jars and build XAL test core -->
-    <target name="all" depends="init,compile" description="Build everything." >
+    <target name="all" depends="init,compile,jar" description="Build everything." >
         <echo message="Everything built. " />
     </target>
 	
@@ -59,7 +70,7 @@
 	<!-- clean compiled products -->
     <target name="clean" depends="init" description="Clean all build products." >
         <delete dir="${build.compile.core.test.root}" />
-        <delete file="${build.jar.root}/xal-test-core.jar" quiet="true" />
+        <delete file="${build.jar.root}/xal-test.jar" quiet="true" />
         
         <echo message="Core test cleaned!" />
     </target>
