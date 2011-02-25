@@ -24,10 +24,9 @@ import xal.smf.NoSuchChannelException;
 import xal.smf.impl.qualify.ElementTypeManager;
 import xal.smf.scada.BadStructDefinition;
 import xal.smf.scada.Scada;
-import xal.smf.scada.XalPvDescriptor;
 import xal.smf.scada.ScadaPacket;
 import xal.smf.scada.ScadaPacket.FieldDescriptor;
-import xal.smf.scada.ScadaPacket.IFieldDescriptor;
+import xal.smf.scada.XalPvDescriptor;
 
 import java.lang.reflect.Field;
 
