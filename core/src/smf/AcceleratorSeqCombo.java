@@ -234,10 +234,9 @@ public class AcceleratorSeqCombo extends AcceleratorSeq {
 		List<AcceleratorSeq> sequences = new ArrayList<AcceleratorSeq>();
 		
         // read all sequence references
-        Iterator sequenceIter = adaptor.childAdaptorIterator( "sequence" );
-        while ( sequenceIter.hasNext() ) {
-			DataAdaptor sequenceAdaptor = (DataAdaptor)sequenceIter.next();
-			String sequenceID = sequenceAdaptor.stringValue( "id" );
+        final List<DataAdaptor> sequenceAdaptors = adaptor.childAdaptors( "sequence" );
+        for ( final DataAdaptor sequenceAdaptor : sequenceAdaptors ) {
+			final String sequenceID = sequenceAdaptor.stringValue( "id" );
 			sequences.add( accelerator.getSequence( sequenceID ) );
         }
 		return sequences;

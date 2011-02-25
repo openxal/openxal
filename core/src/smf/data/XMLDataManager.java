@@ -471,9 +471,8 @@ public class XMLDataManager {
             acceleratorManager.setOpticsUrlSpec( opticsUrl );
             
             // fetch the optics extra references
-            final Iterator opticsExtraAdaptorIter = sourcesAdaptor.childAdaptorIterator( OPTICS_EXTRA_TAG );
-            while( opticsExtraAdaptorIter.hasNext() ) {
-                final DataAdaptor extraAdaptor = (DataAdaptor)opticsExtraAdaptorIter.next();
+            final List<DataAdaptor> extraAdaptors = sourcesAdaptor.childAdaptors( OPTICS_EXTRA_TAG );
+            for( final DataAdaptor extraAdaptor : extraAdaptors ) {
                 final String extraUrl = extraAdaptor.stringValue( OPTICS_URL_KEY );
                 acceleratorManager.addExtraUrlSpec( extraUrl );
             }
@@ -516,12 +515,11 @@ public class XMLDataManager {
 			}
             
             // fetch the table group references
-            Iterator tableAdaptorIter = sourcesAdaptor.childAdaptorIterator( TABLE_GROUP_TAG );
+            final List<DataAdaptor> tableAdaptors = sourcesAdaptor.childAdaptors( TABLE_GROUP_TAG );
             tableManager.clear();
-            while( tableAdaptorIter.hasNext() ) { 
-                DataAdaptor tableAdaptor = (DataAdaptor)tableAdaptorIter.next();
-                String tableGroup = tableAdaptor.stringValue( TABLE_GROUP_KEY );
-                String tableGroupUrl = tableAdaptor.stringValue( TABLE_GROUP_URL_KEY );
+            for( final DataAdaptor tableAdaptor : tableAdaptors ) { 
+                final String tableGroup = tableAdaptor.stringValue( TABLE_GROUP_KEY );
+                final String tableGroupUrl = tableAdaptor.stringValue( TABLE_GROUP_URL_KEY );
 
                 tableManager.setUrlSpecForTableGroup( tableGroupUrl, tableGroup );
             }

@@ -153,10 +153,9 @@ public class DataTable {
                 _keyTable = new KeyTable();
 
                 // read generic records
-                Iterator recordAdaptorIter = adaptor.childAdaptorIterator("record");
-                while ( recordAdaptorIter.hasNext() ) {
+                final List<DataAdaptor> recordAdaptors = adaptor.childAdaptors( "record" );
+                for ( final DataAdaptor recordAdaptor : recordAdaptors ) {
                     try {
-                        DataAdaptor recordAdaptor = (DataAdaptor)recordAdaptorIter.next();
                         Constructor constructor = _recordClass.getConstructor( new Class[] {DataTable.class} );
 
                         GenericRecord record = (GenericRecord)constructor.newInstance(new Object[] {DataTable.this});

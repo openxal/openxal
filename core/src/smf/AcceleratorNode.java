@@ -146,16 +146,15 @@ public abstract class AcceleratorNode implements /* IElement, */ ElementType, Da
         }
         
         // read the attribute buckets
-        Iterator parserIter = adaptor.childAdaptorIterator("attributes");
-        while ( parserIter.hasNext() ) {
-            DataAdaptor parserAdaptor = (DataAdaptor)parserIter.next();
-            Collection buckets = getBuckets();
-            BucketParser parser = new BucketParser(buckets);
-            parser.update(parserAdaptor);
+        final List<DataAdaptor> parserAdaptors = adaptor.childAdaptors( "attributes" );
+        for ( final DataAdaptor parserAdaptor : parserAdaptors ) {
+            final Collection buckets = getBuckets();
+            final BucketParser parser = new BucketParser( buckets );
+            parser.update( parserAdaptor );
             
             // get the attribute buckets from the parser
-            Collection bucketList = parser.getBuckets();
-            Iterator bucketIterator = bucketList.iterator();
+            final Collection bucketList = parser.getBuckets();
+            final Iterator bucketIterator = bucketList.iterator();
             while ( bucketIterator.hasNext() ) {
                 AttributeBucket bucket = (AttributeBucket)bucketIterator.next();
                 // add the bucket only if it already hasn't been added

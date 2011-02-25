@@ -69,10 +69,9 @@ public class AcceleratorSeq extends AcceleratorNode implements DataListener {
 		final AcceleratorNodeFactory nodeFactory = accelerator.getNodeFactory();
         
         // read all child sequences
-        final Iterator<DataAdaptor> sequenceIter = adaptor.childAdaptorIterator( "sequence" );
-        while ( sequenceIter.hasNext() ) {
+        final List<DataAdaptor> sequenceAdaptors = adaptor.childAdaptors( "sequence" );
+        for ( final DataAdaptor sequenceAdaptor : sequenceAdaptors ) {
             try {
-                final DataAdaptor sequenceAdaptor = sequenceIter.next();
 				if ( sequenceAdaptor.hasAttribute( "exclude" ) ) {
 					if ( sequenceAdaptor.booleanValue( "exclude" ) ) {
 						final String nodeID = sequenceAdaptor.stringValue( "id" );
@@ -93,10 +92,9 @@ public class AcceleratorSeq extends AcceleratorNode implements DataListener {
         }
 
         // read all of the child accelerator nodes
-        final Iterator<DataAdaptor> nodeIter = adaptor.childAdaptorIterator( "node" );
-        while ( nodeIter.hasNext() ) {
+        final List<DataAdaptor> nodeAdaptors = adaptor.childAdaptors( "node" );
+        for ( final DataAdaptor nodeAdaptor : nodeAdaptors ) {
             try {
-                final DataAdaptor nodeAdaptor = nodeIter.next();
 				if ( nodeAdaptor.hasAttribute( "exclude" ) ) {
 					if ( nodeAdaptor.booleanValue( "exclude" ) ) {
 						final String nodeID = nodeAdaptor.stringValue( "id" );

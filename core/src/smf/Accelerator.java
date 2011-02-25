@@ -74,11 +74,10 @@ public class Accelerator extends AcceleratorSeq implements /* IElement, */ DataL
         super.update(adaptor);
 		
         // read all pre defined combo sequences
-        Iterator comboIter = adaptor.childAdaptorIterator("comboseq");
-        while ( comboIter.hasNext() ) {
+        final List<DataAdaptor> comboAdaptors = adaptor.childAdaptors( "comboseq" );
+        for ( final DataAdaptor comboAdaptor : comboAdaptors ) {
             try {
-                DataAdaptor comboAdaptor = (DataAdaptor)comboIter.next();
-                addComboSequence(comboAdaptor);
+                addComboSequence( comboAdaptor );
             }
             catch (ClassNotFoundException excpt) {
                 System.err.println(excpt);
@@ -93,9 +92,8 @@ public class Accelerator extends AcceleratorSeq implements /* IElement, */ DataL
      * @param adaptor The adaptor for the accelerator power supplies
      */
     protected void updatePowerSupplies( final DataAdaptor adaptor ) {
-        Iterator powerSupplyIter = adaptor.childAdaptorIterator("ps");
-        while ( powerSupplyIter.hasNext() ) {
-            DataAdaptor powerSupplyAdaptor = (DataAdaptor)powerSupplyIter.next();
+        final List<DataAdaptor> powerSupplyAdaptors = adaptor.childAdaptors( "ps" );
+        for ( final DataAdaptor powerSupplyAdaptor : powerSupplyAdaptors ) {
             String powerSupplyType = powerSupplyAdaptor.stringValue("type");
             String powerSupplyId = powerSupplyAdaptor.stringValue("id");
             if ( powerSupplyType.equals("main") ) {

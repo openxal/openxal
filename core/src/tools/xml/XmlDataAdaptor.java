@@ -14,6 +14,8 @@ import javax.xml.parsers.*;
 import org.w3c.dom.*;
 
 import xal.tools.data.*;
+import xal.tools.StringJoiner;
+
 
 /**
  * XmlDataAdaptor is a DataAdaptor that specifically supports (reading/writing)
@@ -184,60 +186,6 @@ public class XmlDataAdaptor implements DataAdaptor {
         }
     }
     
-    /**
-     * Returns the value of an attribute as an array of doubles.  The
-     * attribute value must be stored as a string of comma separated 
-     * values (CSVs).  The values are parsed into doubles and packed into
-     * the returned array.
-     *
-     * @param strAttr   the attribute name
-     * 
-     * @return  Array of double values as parsed from the value string.
-     *          A <code>null</code> value is returned if the value string is empty.
-     * 
-     * @throws NumberFormatException    at least one value was malformed, 
-     *                                  or the CSV string was malformed 
-     * 
-     * @since  Mar 12, 2010
-     * @author Christopher K. Allen
-     */
-    public double[] doubleArrayValue(final String strAttr) throws NumberFormatException {
-        String strValues = this.rawValue(strAttr);
-        
-        if (strValues == null)
-            return null;
-        
-        strValues = strValues.trim();
-
-        if (strValues.length() == 0)
-            return null;
-        
-        String strErrMsg = "For XML node " + name() + 
-                        ", Error parsing as type double the attribute: " + strAttr + 
-                        ", from string: " + strValues + ", for XML node: " + name();
-        
-            try {
-                String[]        arrTokens = strValues.split(",");
-                double[]        arrVals = new double[arrTokens.length];
-                
-                int     index = 0;
-                for (String strVal : arrTokens) {
-                    double      dblVal = Double.parseDouble(strVal);
-                    
-                    arrVals[index] = dblVal;
-                    index++;
-                }
-                
-                return arrVals;
-                
-            } catch (PatternSyntaxException e) {
-                throw new NumberFormatException(strErrMsg);
-                
-            } catch(java.lang.NumberFormatException e) {
-                throw new NumberFormatException(strErrMsg);
-            }
-    }
-    
     
     /** return the long value associated with the attribute */
     public long longValue(final String attribute) throws NumberFormatException {
@@ -295,7 +243,30 @@ public class XmlDataAdaptor implements DataAdaptor {
             throw new NumberFormatException(message);
         }            
     }
-	
+    
+    
+    /**
+     * Returns the value of an attribute as an array of doubles.  
+     * @param attribute   the attribute name
+     * @return  Array of double values, a <code>null</code> value is returned if the value string is empty.
+     */
+    public double[] doubleArrayValue( final String attribute ) throws NumberFormatException {
+        final String strValue = rawValue( attribute );
+        try {
+            final String[] tokens = strValue.split( "," );
+            final double[] array = new double[ tokens.length ];
+            int index = 0;
+            for ( final String token : tokens ) {
+                array[index++] = Double.parseDouble( token );
+            }
+            return array;
+        }
+        catch ( java.lang.NumberFormatException exception ) {
+            final String message = "Error parsing as double array attribute: " + attribute + ", from string: " + strValue + ", for XML node: " + name();
+            throw new NumberFormatException( message );
+        }
+    }
+
 	
 	/**
 	 * Set the string value to associate with the attribute and allow DOM to escape special characters as necessary.
@@ -355,27 +326,16 @@ public class XmlDataAdaptor implements DataAdaptor {
         setValue(attribute, strValue);
     }
     
-
+    
     /**
-     * Sets the attribute (name,value) pair for the given arguments.  
-     * The value here is a double array which is stored as a string 
-     * of comma separated values.
-     *
-     * @since 	Mar 11, 2010
-     * @author  Christopher K. Allen
-     *
-     * @see xal.tools.data.DataAdaptor#setValue(java.lang.String, double[])
+     * Stores the value of the given <code>double[]</code> object in the data adaptor backing store.
+     * @param attribute   attribute name
+     * @param array    attribute value
      */
-    @Override
-    public void setValue(String strAttr, double[] arrVal) {
-        StringBuffer    bufVals = new StringBuffer(arrVal.length);
-        
-        for (double dblVal : arrVal) {
-            bufVals.append(dblVal);
-            bufVals.append(", ");
-        }
-        
-        this.setValue( strAttr, bufVals.toString().trim() );
+    public void setValue( final String attribute, final double[] array ) {
+        final StringJoiner joiner = new StringJoiner( ", " );
+        joiner.append( array );
+        setValue( attribute, joiner.toString() );
     }
 
 
@@ -428,15 +388,6 @@ public class XmlDataAdaptor implements DataAdaptor {
         return childAdaptors;
     }
     
-
-    /** 
-     * Create an iterator for a list of child adaptors (one adaptor for each non-null child node).
-	 * @return an iterator of child adaptors
-     */
-    public Iterator<DataAdaptor> childAdaptorIterator() {
-        return childAdaptors().iterator();
-    }
-    
     
     /** 
      * Create a list of child adaptors (one adaptor for each non-null child node whose tag name is equal to the specified label).
@@ -453,16 +404,6 @@ public class XmlDataAdaptor implements DataAdaptor {
 		}
 
         return childAdaptors;
-    }
-    
-    
-    /** 
-     * Create an iterator for a list of child adaptors (one adaptor for each non-null child node whose tag equals the specified label).
-	 * @param label the label which identifies the tag of the nodes to fetch
-	 * @return an iterator of data adaptors corresponding to the specified child nodes
-     */
-    public Iterator<DataAdaptor> childAdaptorIterator( final String label ) {
-        return childAdaptors( label ).iterator();
     }
 
     

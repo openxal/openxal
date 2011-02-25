@@ -55,9 +55,8 @@ public class BucketParser implements DataListener {
     
     /** DataListener interface support */
     public void update(DataAdaptor adaptor) throws NumberFormatException {
-        Iterator bucketIter = adaptor.childAdaptorIterator();
-        while ( bucketIter.hasNext() ) {
-			DataAdaptor bucketAdaptor = (DataAdaptor)bucketIter.next();
+        final List<DataAdaptor> bucketAdaptors = adaptor.childAdaptors();
+        for ( final DataAdaptor bucketAdaptor : bucketAdaptors ) {
 			String name = bucketAdaptor.name();
 			AttributeBucket bucket = getBucket(name);
 			if ( bucket == null ) {

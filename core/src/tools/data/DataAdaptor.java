@@ -33,85 +33,80 @@ public interface DataAdaptor {
     
     
     /** returns true iff the node has the specified attribute */
-    public boolean hasAttribute( String attribute );
+    public boolean hasAttribute( final String attribute );
+    
     
     /** string value associated with the specified attribute */
-    public String stringValue( String attribute );
+    public String stringValue( final String attribute );
+    
     
     /** double value associated with the specified attribute */
-    public double doubleValue( String attribute );
+    public double doubleValue( final String attribute );
+    
 	
     /** long value associated with the specified attribute */
-    public long longValue( String attribute );
+    public long longValue( final String attribute );
+    
     
     /** integer value associated with the specified attribute */
-    public int intValue( String attribute );
+    public int intValue( final String attribute );
+    
     
     /** boolean value associated with the specified attribute */
-    public boolean booleanValue( String attribute );
-      
+    public boolean booleanValue( final String attribute );
+    
+    
     /**
      * Returns the value of an attribute as an array of doubles.  
-     *
-     * @param strAttr   the attribute name
-     * 
-     * @return  Array of double values,
-     *          a <code>null</code> value is returned if the value string is empty.
-     * 
-     * @since  Mar 12, 2010
-     * @author Christopher K. Allen
+     * @param attribute   the attribute name
+     * @return  Array of double values, a <code>null</code> value is returned if the value string is empty.
      */
-    public double[] doubleArrayValue(final String strAttr);
-
+    public double[] doubleArrayValue( final String attribute );
+    
         
     /** set the value of the specified attribute to the specified value */
-    public void setValue( String attribute, String value );
+    public void setValue( final String attribute, final String value );
+    
 
     /** set the value of the specified attribute to the specified value */
-    public void setValue( String attribute, double value );
+    public void setValue( final String attribute, final double value );
+    
 
     /** set the value of the specified attribute to the specified value */
-    public void setValue( String attribute, long value );
+    public void setValue( final String attribute, final long value );
 
+    
     /** set the value of the specified attribute to the specified value */    
-    public void setValue( String attribute, int value );
+    public void setValue( final String attribute, final int value );
 
+    
     /** set the value of the specified attribute to the specified value */    
-    public void setValue( String attribute, boolean value );
+    public void setValue( final String attribute, final boolean value );
+    
     
     /** set the value of the specified attribute to the specified value */
-    public void setValue( String attribute, Object value );
+    public void setValue( final String attribute, final Object value );
+    
     
     /**
-     * Stores the value of the given <code>double[]</code> object
-     * in the data adaptor backing store.
-     *
-     * @param strAttr   attribute name
-     * @param arrVal    attribute value
-     * 
-     * @since  Mar 11, 2010
-     * @author Christopher K. Allen
+     * Stores the value of the given <code>double[]</code> object in the data adaptor backing store.
+     * @param attribute   attribute name
+     * @param array    attribute value
      */
-    public void setValue(String strAttr, double[] arrVal);
+    public void setValue( final String attribute, final double[] array );
+    
     
     /** return the array of all attributes */
     public String[] attributes();
     
     
-    /** return the number of child node adaptors */
-    public int nodeCount();
-    
     /** return all child adaptors */
     public List<DataAdaptor> childAdaptors();
+    
     
     /** return all child adaptors of the specified node name */
     public List<DataAdaptor> childAdaptors( String label );
     
-    /** return an iterator of all child adaptors */
-    public Iterator<DataAdaptor> childAdaptorIterator();
-    
-    /** return an iterator of all child adaptors of the specified name */
-    public Iterator<DataAdaptor> childAdaptorIterator( String label );
     
     /** Convenience method to get a single child adaptor when only one is expected */
     public DataAdaptor childAdaptor( String label );

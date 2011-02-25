@@ -35,9 +35,8 @@ public class SignalSuite {
      * @param adaptor The adaptor from which to update the data
      */
     public void update( final DataAdaptor adaptor ) {
-        Iterator channelIter = adaptor.childAdaptorIterator("channel");
-        while ( channelIter.hasNext() ) {
-            final DataAdaptor channelAdaptor = (DataAdaptor)channelIter.next();
+        final List<DataAdaptor> channelAdaptors = adaptor.childAdaptors( "channel" );
+        for ( final DataAdaptor channelAdaptor : channelAdaptors  ) {
             final String handle = channelAdaptor.stringValue("handle");
 			
 			if ( !hasHandle( handle ) ) {
