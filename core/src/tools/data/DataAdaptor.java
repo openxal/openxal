@@ -61,7 +61,7 @@ public interface DataAdaptor {
      * @param attribute   the attribute name
      * @return  Array of double values, a <code>null</code> value is returned if the value string is empty.
      */
-    public double[] doubleArrayValue( final String attribute );
+    public double[] doubleArray( final String attribute );
     
         
     /** set the value of the specified attribute to the specified value */

@@ -250,7 +250,7 @@ public class XmlDataAdaptor implements DataAdaptor {
      * @param attribute   the attribute name
      * @return  Array of double values, a <code>null</code> value is returned if the value string is empty.
      */
-    public double[] doubleArrayValue( final String attribute ) throws NumberFormatException {
+    public double[] doubleArray( final String attribute ) throws NumberFormatException {
         final String strValue = rawValue( attribute );
         try {
             final String[] tokens = strValue.split( "," );

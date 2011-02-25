@@ -608,7 +608,7 @@ public abstract class ScadaPacket implements DataListener {
 
                 if (typDataFld == double[].class) {
                     
-                    double[] arrVals = daptVals.doubleArrayValue(strFldName);
+                    double[] arrVals = daptVals.doubleArray(strFldName);
 
                     fldDataFld.set(this, arrVals);
                     
