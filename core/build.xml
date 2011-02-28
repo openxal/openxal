@@ -5,7 +5,7 @@
 	<description>Builds Open XAL Core</description>
 	
     <target name="init">
-        <property name="srcroot" value="src" />
+        <property name="srcroot" value="xal" />
         <mkdir dir="${build.root}" />
     </target>
     
@@ -63,11 +63,6 @@
     <target  name="jar-core" depends="init, compile">
         <mkdir dir="${build.jar.root}" />
         <jar compress="true" jarfile="${build.jar.root}/xal-core.jar" index="true">
-			<manifest>
-			  <attribute name="Manifest-Version" value="1.0" />
-			  <attribute name="Class-Path" value="./xal-lib.jar" />
-			</manifest>
-
 			<fileset dir="${build.compile.core.root}" includes="xal/**/*">
 				<exclude name="**/datasource/" />
 			</fileset>
@@ -81,11 +76,6 @@
     <target  name="jar-datasource" depends="init, compile">
         <mkdir dir="${build.jar.root}" />
         <jar compress="true" jarfile="${build.jar.root}/xal-datasource.jar" index="true">
-			<manifest>
-			  <attribute name="Manifest-Version" value="1.0" />
-			  <attribute name="Class-Path" value="./xal-lib.jar" />
-			</manifest>
-
 			<fileset dir="${build.root}/compile">
 				<exclude name="**/*" />
 				<include name="**/datasource/" />
@@ -142,9 +132,8 @@
                 <pathelement location="." />
             </sourcepath>
             <classpath>
-                <pathelement location="${build.jar.root}/xal-core.jar" />
+                <pathelement location="${build.compile.core.root}" />
                 <pathelement location="${build.jar.root}/xal-lib.jar" />
-                <pathelement location="${build.root}/compile" />
             </classpath>
         </javadoc>
     </target>
