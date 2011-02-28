@@ -22,6 +22,106 @@ public class MacAdaptor {
 		System.setProperty( "apple.laf.useScreenMenuBar", "true" );
 		
 		try {
+            // modern quit handler
+			final Class macQuitHandlerClass = Class.forName( "com.apple.eawt.QuitHandler" );
+            
+            // modern about handler
+			final Class macAboutHandlerClass = Class.forName( "com.apple.eawt.AboutHandler" );
+            
+			// get the Mac application instance
+			final Class macApplicationClass = Class.forName( "com.apple.eawt.Application" );
+			final Method appMethod = macApplicationClass.getMethod( "getApplication" );
+			final Object macApplication = appMethod.invoke( null );
+			
+			// register the quit handler to handle Mac quit events through XAL
+			final Object quitProxy = Proxy.newProxyInstance( MacAdaptor.class.getClassLoader(), new Class[] { macQuitHandlerClass }, new MacQuitHandler() );
+			final Method quitRegistrationMethod = macApplicationClass.getMethod( "setQuitHandler", new Class[] { macQuitHandlerClass } );
+			quitRegistrationMethod.invoke( macApplication, quitProxy );
+			
+			// register the about box handler to handle Mac about box events through XAL
+			final Object aboutProxy = Proxy.newProxyInstance( MacAdaptor.class.getClassLoader(), new Class[] { macAboutHandlerClass }, new MacAboutHandler() );
+			final Method aboutRegistrationMethod = macApplicationClass.getMethod( "setAboutHandler", new Class[] { macAboutHandlerClass } );
+			aboutRegistrationMethod.invoke( macApplication, aboutProxy );
+		}
+		catch ( ClassNotFoundException exception ) {
+            initializeFallback();
+		}
+		catch ( NoSuchMethodException exception ) {
+			exception.printStackTrace();
+		}
+		catch ( IllegalAccessException exception ) {
+			exception.printStackTrace();
+		}
+		catch ( IllegalArgumentException exception ) {
+			exception.printStackTrace();
+		}
+		catch ( InvocationTargetException exception ) {
+			exception.printStackTrace();
+		}
+	}
+	
+    
+	
+	/** handle the Mac quit event */
+	private static class MacQuitHandler implements InvocationHandler {
+		public Object invoke( final Object proxy, final Method method, final Object[] args ) {
+			try {
+				final String methodName = method.getName();
+				final Object event = args[0];
+                final Object response = args[1];
+				
+				// get the XAL application
+				final xal.application.Application xalApp = xal.application.Application.getApp();
+                
+				// attempt to quit the application using the default XAL behavior
+				if ( methodName.equals( "handleQuitRequestWith" ) ) {
+					xalApp.quit();
+                    response.getClass().getMethod( "cancelQuit" ).invoke( response );
+				}
+			}
+			catch ( NoSuchMethodException exception ) {
+				exception.printStackTrace();
+			}
+			catch ( IllegalAccessException exception ) {
+				exception.printStackTrace();
+			}
+			catch ( IllegalArgumentException exception ) {
+				exception.printStackTrace();
+			}
+			catch ( InvocationTargetException exception ) {
+				exception.printStackTrace();
+			}
+			finally {
+				return null;
+			}
+		}
+	}
+	
+    
+	
+	/** handle the Mac about event */
+	private static class MacAboutHandler implements InvocationHandler {
+		public Object invoke( final Object proxy, final Method method, final Object[] args ) {
+            final String methodName = method.getName();
+            final Object event = args[0];
+            
+            // get the XAL application
+            final xal.application.Application xalApp = xal.application.Application.getApp();
+            
+            // show the about box if the method matches this request
+            if ( methodName.equals( "handleAbout" ) ) {
+                xalApp.showAboutBox();
+            }
+            
+            return null;
+		}
+	}
+    
+    
+    
+    /** Perform initialization for the fallback event sytem. Called when the modern event system is not present. This method should be removed at a reasonable time in the future. */
+    private static void initializeFallback() {
+		try {
 			// dynamically get the Mac specific extensions
 			final Class macApplicationClass = Class.forName( "com.apple.eawt.Application" );
 			final Class macEventListenerClass = Class.forName( "com.apple.eawt.ApplicationListener" );
@@ -50,12 +150,11 @@ public class MacAdaptor {
 		catch ( InvocationTargetException exception ) {
 			exception.printStackTrace();
 		}
-	}
+    }
 	
 	
-	
-	/** handle Mac Events (quit and show about box) ignoring other events */
-	static class MacEventHandler implements InvocationHandler {
+	/** Obsolete class to handle old style Mac Events (quit and show about box) ignoring other events. This class should be removed at a reasonable time in the future. */
+	private static class MacEventHandler implements InvocationHandler {
 		public Object invoke( final Object proxy, final Method method, final Object[] args ) {
 			try {
 				final String methodName = method.getName();
