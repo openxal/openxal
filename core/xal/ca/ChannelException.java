@@ -22,7 +22,7 @@ public class ChannelException extends java.lang.Exception {
 
     /**
      * Constructs an <code>ChannelException</code> with the specified detail message.
-     * @param msg the detail message.
+     * @param message the detail message.
      */
     public ChannelException( final String message ) {
         super( message );

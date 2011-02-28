@@ -153,8 +153,6 @@ public class WireScanner extends AcceleratorNode {
         /**
          * Create a new <code>WireScanner.ParameterSet</code> object.
          *
-         * @param arrPfdDataSet
-         *
          * @since     Dec 18, 2009
          * @author    Christopher K. Allen
          */
@@ -165,7 +163,7 @@ public class WireScanner extends AcceleratorNode {
         /**
          * Create a new <code>WireScanner.ParameterSet</code> object.
          *
-         * @param arrPfdDataSet
+         * @param ws
          *
          * @since     Dec 18, 2009
          * @author    Christopher K. Allen
