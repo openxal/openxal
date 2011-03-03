@@ -15,13 +15,8 @@
     <target name="install" depends="install-core,install-apps" />
     
     
-    <!-- Build all and run the tests. -->
-    <target name="run-tests" depends="test-core">
-    </target>
-    
-    
-    <!-- Build the core and run the tests. -->
-    <target name="test-core" depends="core">
+    <!-- Build and run all unit tests. -->
+    <target name="run-tests" depends="">
         <subant target="run-tests">
             <fileset dir="core">
                 <include name="build.xml" />
@@ -107,10 +102,13 @@
 		<echo message="  where target(s) can be:" />
 		<echo message="    help ....................... Print this message." />
 		<echo message="    all ........................ Compile the core XAL classes and applications and assemble the jar products." />
+		<echo message="    apps ....................... Compile the applications and assemble the jar products." />
 		<echo message="    clean ...................... Clean compiled classes and build products" />
+		<echo message="    core ....................... Compile the core XAL classes and assemble the jar products." />
 		<echo message="    install: ................... Install all build products intended for distribution." />
 		<echo message="    purge-build: ............... Purge all build products." />
 		<echo message="    purge-install: ............. Purge all installed products." />
+		<echo message="    run-tests: ................. Build and run unit tests." />
     </target>
 
 </project>

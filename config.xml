@@ -10,6 +10,8 @@
 	<property name="build.compile.core.test.root" value="${build.compile.root}/test/core" />
 	<property name="build.jar.root" value="${build.root}/jar" />
 	<property name="build.tests.root" value="${build.root}/tests" />
+    
+	<property name="common.root" value="${xal.home}/common" />
         
     <!-- Determine the path to the junit jar, otherwise use the standard UNIX location. -->
     <condition property="junit.jar.path" value="${env.JUNIT_JAR_PATH}" else="/usr/share/java/junit.jar">

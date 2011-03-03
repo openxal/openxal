@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- Build the core and all applications. -->
+<project basedir="." default="all" name="main.build">    
+    <import file="config.xml"/>
+    
+    
+    <!-- Install everything. -->
+    <target name="install" depends="">
+        <subant target="install">
+            <fileset dir="${common.root}">
+                <include name="build.xml" />
+            </fileset>
+        </subant>
+    </target>
+    
+    
+    <!-- Run tests. -->
+    <target name="run-tests">
+        <subant target="run-tests">
+            <fileset dir="${common.root}">
+                <include name="build.xml" />
+            </fileset>
+        </subant>
+    </target>
+    
+    
+    <!-- Clean everything. -->
+    <target name="clean">
+        <subant target="clean">
+            <fileset dir="${common.root}">
+                <include name="build.xml" />
+            </fileset>
+        </subant>
+    </target>
+    
+    
+    <!-- Clean the core and all the applications. -->
+    <target name="purge-install">
+        <subant target="purge-install">
+            <fileset dir="${common.root}">
+                <include name="build.xml" />
+            </fileset>
+        </subant>
+    </target>
+	
+	
+	<!-- purge build products -->
+    <target name="purge-build" description="Purge all build products." >
+        <delete dir="${build.root}" />
+        <echo message="Purged the build directory!" />
+    </target>
+    
+    
+    <!-- Build everything. -->
+    <target name="all">
+        <subant target="all">
+            <fileset dir="${common.root}">
+                <include name="build.xml" />
+            </fileset>
+        </subant>
+    </target>
+	
+	
+	<!-- provide guidance on the various targets -->
+    <target name="help">
+		<echo message="Build the XAL project" />
+		<echo message="Usage: ant [ant options] target1 [target2 | target3 | ... ]" />
+		<echo message="" />
+		<echo message="  where target(s) can be:" />
+		<echo message="    help ....................... Print this message." />
+		<echo message="    all ........................ Compile the core XAL classes and applications and assemble the jar products." />
+		<echo message="    clean ...................... Clean compiled classes and build products" />
+		<echo message="    install: ................... Install all build products intended for distribution." />
+		<echo message="    purge-build: ............... Purge all build products." />
+		<echo message="    purge-install: ............. Purge all installed products." />
+		<echo message="    run-tests: ................. Build and run unit tests." />
+    </target>
+    
+</project>
