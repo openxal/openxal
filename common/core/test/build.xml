@@ -5,7 +5,7 @@
 	<description>Test Open XAL Core</description>
 	
     <target name="init">
-        <property name="srcroot" value="src" />
+        <property name="srcroot" value="xal" />
         <mkdir dir="${build.root}" />
     </target>
     
