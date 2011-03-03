@@ -168,6 +168,7 @@
 		<echo message="    jar-datasource: ............ Assemble the datasource classes and resources into xal-datasource.jar" />
 		<echo message="    jar-core: .................. Assemble the core XAL classes and resources into xal-core.jar" />
 		<echo message="    purge-install: ............. Purge the core installation." />
+		<echo message="    run-tests .................. Build and run the test cases." />
     </target>
 </project>
 
