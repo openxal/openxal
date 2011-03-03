@@ -12,6 +12,7 @@
     
     <!-- run junit tests -->
     <target name="run-tests" depends="all">
+        <mkdir dir="${build.tests.root}" />
         <junit printsummary="yes">
             <classpath>
                 <pathelement location="${build.jar.root}/xal-test.jar" />
@@ -22,11 +23,13 @@
             
             <formatter type="plain" usefile="false" />
             
-            <batchtest>
+            <batchtest todir="${build.tests.root}">
                 <fileset dir="${build.compile.core.test.root}"> 
                     <include name="**/*Test*.class"/> 
                     <exclude name="xal/resources/**/*"/> 
                 </fileset> 
+                
+                <formatter type="plain" usefile="true"/>
             </batchtest>
         </junit>
     </target>
@@ -70,6 +73,7 @@
 	<!-- clean compiled products -->
     <target name="clean" depends="init" description="Clean all build products." >
         <delete dir="${build.compile.core.test.root}" />
+        <delete dir="${build.tests.root}" />
         <delete file="${build.jar.root}/xal-test.jar" quiet="true" />
         
         <echo message="Core test cleaned!" />
