@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project basedir="." default="all" name="xal.core.test">
+<project basedir="." default="run-tests" name="xal.core.test">
 	<import file="../../common.xml"/>
     
 	<description>Test Open XAL Core</description>
@@ -83,10 +83,11 @@
 		<echo message="" />
 		<echo message="  where target(s) can be:" />
 		<echo message="    help ....................... Print this message." />
-		<echo message="    all ........................ Compile the core XAL classes and assemble the jar products." />
+		<echo message="    all ........................ Build and run the test cases." />
 		<echo message="    clean ...................... Clean compiled classes and build products" />
 		<echo message="    compile .................... Compile the core XAL classes reporting only mandated warnings." />
-		<echo message="    jar: .................. Assemble the core XAL classes and resources into xal-core.jar" />
+		<echo message="    jar: ....................... Assemble the core XAL classes and resources into xal-core.jar" />
+		<echo message="    run-tests .................. Build and run the test cases." />
     </target>
 </project>
 
