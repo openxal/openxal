@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <!-- Build the core and all applications. -->
-<project basedir="." default="all" name="xal">    
+<project basedir="." default="all" name="xal.common">    
     <import file="common.xml"/>
     
     <property name="build.path.pattern" value="*/build.xml" />

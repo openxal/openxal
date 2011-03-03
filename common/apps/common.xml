@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<project name="apps_config" basedir="." default="all">
+<project name="common.apps.config" basedir="." default="all">
     <import file="../common.xml" />
 
     <!-- the value for these properties are overriden if specified in the beginning of the app's build file before any tasks are defined -->
@@ -10,7 +10,7 @@
     
     
     <target name="init">
-        <dirname property="apps.src.root" file="${ant.file.apps_config}" />
+        <dirname property="apps.src.root" file="${ant.file.common.apps.config}" />
         
         <property environment="env" />
         <property name="appname" value="${ant.project.name}" />

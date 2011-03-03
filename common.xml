@@ -1,4 +1,4 @@
-<project name="config" basedir="." default="all">
+<project name="config">
     <!-- XAL Home is where this file resides -->
     <dirname property="xal.home" file="${ant.file.config}" />
     
@@ -19,8 +19,4 @@
     <condition property="install.root" value="${env.XAL_INSTALL_ROOT}" else="${build.root}/dist">
         <isset property="env.XAL_INSTALL_ROOT" />
     </condition>
-
-    <target name="demo">
-        <echo message="Build root: ${build.root}" />
-    </target>
 </project>
