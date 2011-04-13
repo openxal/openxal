@@ -32,7 +32,7 @@ public abstract class AttributeBucket implements java.io.Serializable, DataListe
     
     
     /** implement DataListener interface */
-    public void update(DataAdaptor adaptor) throws NumberFormatException {
+    public void update(IDataAdaptor adaptor) throws NumberFormatException {
         String[] attributeArray = adaptor.attributes();
         
         for ( int index = 0 ; index < attributeArray.length ; index++ ) {
@@ -44,7 +44,7 @@ public abstract class AttributeBucket implements java.io.Serializable, DataListe
     
     
     /** implement DataListener interface */
-    public void write(DataAdaptor adaptor) {
+    public void write(IDataAdaptor adaptor) {
         String[] attributeNames = getAttrNames();
         int numAttributes = attributeNames.length;
         

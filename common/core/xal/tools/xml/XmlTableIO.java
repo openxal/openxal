@@ -38,7 +38,7 @@ public class XmlTableIO {
     
     /** Read the table group from the URL file into editContext with the specified XML validation flag. */
     static public void readTableGroupFromUrl( final EditContext editContext, final String tableGroup, final String urlSpec, final boolean isValidating ) {
-        final DataAdaptor docAdaptor = XmlDataAdaptor.adaptorForUrl( urlSpec, isValidating );
+        final IDataAdaptor docAdaptor = XmlDataAdaptor.adaptorForUrl( urlSpec, isValidating );
 		editContext.importTablesFromDataAdaptor( docAdaptor, tableGroup );
     }
 

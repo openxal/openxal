@@ -205,10 +205,10 @@ public class RootBrick extends Brick implements ViewNodeContainer, DataListener 
 	 * Update the data based on the information provided by the data provider.
      * @param adaptor The adaptor from which to update the data
      */
-    public void update( final DataAdaptor adaptor ) {
-		final List<DataAdaptor> nodeAdaptors = adaptor.childAdaptors( ViewNode.DATA_LABEL );
+    public void update( final IDataAdaptor adaptor ) {
+		final List<IDataAdaptor> nodeAdaptors = adaptor.childAdaptors( ViewNode.DATA_LABEL );
 		final List<BeanNode> nodes = new ArrayList<BeanNode>( nodeAdaptors.size() );
-		for ( final DataAdaptor nodeAdaptor : nodeAdaptors ) {
+		for ( final IDataAdaptor nodeAdaptor : nodeAdaptors ) {
 			nodeAdaptor.setValue( "contextURL", adaptor.stringValue( "contextURL" ) );
 			nodes.add( ViewNode.getInstance( nodeAdaptor ) );
 		}
@@ -220,7 +220,7 @@ public class RootBrick extends Brick implements ViewNodeContainer, DataListener 
 	 * Write data to the data adaptor for storage.
      * @param adaptor The adaptor to which the receiver's data is written
      */
-    public void write( final DataAdaptor adaptor ) {
+    public void write( final IDataAdaptor adaptor ) {
         adaptor.writeNodes( WINDOW_NODES );
 	}
 	

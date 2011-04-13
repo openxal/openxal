@@ -86,7 +86,7 @@ public class WindowReference {
 	
 	/** load the window from the resource */
 	protected Window loadWindow( final URL url, final String tag, final Object[] windowParameters ) {
-		final DataAdaptor windowAdaptor = getWindowAdaptor( url, tag );
+		final IDataAdaptor windowAdaptor = getWindowAdaptor( url, tag );
 		if ( windowAdaptor != null ) {
 			final Window window = (Window)getView( windowAdaptor, windowParameters );
 			
@@ -107,13 +107,13 @@ public class WindowReference {
 	
 	
 	/** load the resources */
-	protected DataAdaptor getWindowAdaptor( final URL url, final String tag ) {
+	protected IDataAdaptor getWindowAdaptor( final URL url, final String tag ) {
         if ( url != null ) {
-			final DataAdaptor documentAdaptor = XmlDataAdaptor.adaptorForUrl( url, false );
-			final DataAdaptor mainAdaptor = documentAdaptor.childAdaptor( "BricksDocument" );
-			final DataAdaptor rootAdaptor = mainAdaptor.childAdaptor( RootBrick.DATA_LABEL );
-			final List<DataAdaptor> windowAdaptors = rootAdaptor.childAdaptors( ViewNode.DATA_LABEL );
-			for ( final DataAdaptor windowAdaptor : windowAdaptors ) {
+			final IDataAdaptor documentAdaptor = XmlDataAdaptor.adaptorForUrl( url, false );
+			final IDataAdaptor mainAdaptor = documentAdaptor.childAdaptor( "BricksDocument" );
+			final IDataAdaptor rootAdaptor = mainAdaptor.childAdaptor( RootBrick.DATA_LABEL );
+			final List<IDataAdaptor> windowAdaptors = rootAdaptor.childAdaptors( ViewNode.DATA_LABEL );
+			for ( final IDataAdaptor windowAdaptor : windowAdaptors ) {
 				final String windowTag = windowAdaptor.stringValue( "tag" );
 				if ( windowTag.equals( tag ) )  return windowAdaptor;
 			}
@@ -123,8 +123,8 @@ public class WindowReference {
 	
 	
 	/** process adaptors to get components */
-	protected Component getView( final DataAdaptor adaptor, final Object... viewParameters ) {
-		final DataAdaptor proxyAdaptor = adaptor.childAdaptor( ViewProxy.DATA_LABEL );
+	protected Component getView( final IDataAdaptor adaptor, final Object... viewParameters ) {
+		final IDataAdaptor proxyAdaptor = adaptor.childAdaptor( ViewProxy.DATA_LABEL );
 		final ViewProxy viewProxy = ViewProxy.getInstance( proxyAdaptor );
 		final String tag = adaptor.stringValue( "tag" );
 		
@@ -159,21 +159,21 @@ public class WindowReference {
 		registerView( view, tag );
 		
 		if ( viewProxy.isContainer() ) {
-			final List<DataAdaptor> viewAdaptors = adaptor.childAdaptors( ViewNode.DATA_LABEL );
-			for ( final DataAdaptor viewAdaptor : viewAdaptors ) {
+			final List<IDataAdaptor> viewAdaptors = adaptor.childAdaptors( ViewNode.DATA_LABEL );
+			for ( final IDataAdaptor viewAdaptor : viewAdaptors ) {
 				final Component subView = getView( viewAdaptor );
 				viewProxy.getContainer( view ).add( subView );
 			}
 		}
 		
-		final DataAdaptor borderAdaptor = adaptor.childAdaptor( BorderNode.DATA_LABEL );
+		final IDataAdaptor borderAdaptor = adaptor.childAdaptor( BorderNode.DATA_LABEL );
 		if ( view instanceof JComponent && borderAdaptor != null ) {
 			final Border border = getBorder( borderAdaptor );
 			((JComponent)view).setBorder( border );
 		}
 		
-		final List<DataAdaptor> beanAdaptors = adaptor.childAdaptors( BeanNode.BEAN_DATA_LABEL );
-		for ( final DataAdaptor beanAdaptor : beanAdaptors ) {
+		final List<IDataAdaptor> beanAdaptors = adaptor.childAdaptors( BeanNode.BEAN_DATA_LABEL );
+		for ( final IDataAdaptor beanAdaptor : beanAdaptors ) {
 			beanAdaptor.setValue( "contextURL", CONTEXT.getSourceURL().toString() );
 		}
 		applyBeanPropertiesTo( view, beanAdaptors );
@@ -223,8 +223,8 @@ public class WindowReference {
 	
 	
 	/** process adaptors to get borders */
-	protected Border getBorder( final DataAdaptor adaptor ) {
-		final DataAdaptor proxyAdaptor = adaptor.childAdaptor( BorderProxy.DATA_LABEL );
+	protected Border getBorder( final IDataAdaptor adaptor ) {
+		final IDataAdaptor proxyAdaptor = adaptor.childAdaptor( BorderProxy.DATA_LABEL );
 		final BorderProxy borderProxy = BorderProxy.getInstance( proxyAdaptor );
 		final String tag = adaptor.stringValue( "tag" );
 		
@@ -242,7 +242,7 @@ public class WindowReference {
 		final Border border = (Border)borderProxy.getBeanInstance( borderClass );
 		registerView( border, tag );
 		
-		final List<DataAdaptor> beanAdaptors = adaptor.childAdaptors( BeanNode.BEAN_DATA_LABEL );
+		final List<IDataAdaptor> beanAdaptors = adaptor.childAdaptors( BeanNode.BEAN_DATA_LABEL );
 		applyBeanPropertiesTo( border, beanAdaptors );
 		
 		return border;
@@ -250,17 +250,17 @@ public class WindowReference {
 	
 	
 	/** apply property settings to the bean object */
-	static protected void applyBeanPropertiesTo( final Object object, final List<DataAdaptor> beanAdaptors ) {
+	static protected void applyBeanPropertiesTo( final Object object, final List<IDataAdaptor> beanAdaptors ) {
 		final Map<String,PropertyDescriptor>descriptorTable = getProperyDescriptorTable( object );
 		
-		for ( final DataAdaptor beanAdaptor : beanAdaptors ) {
+		for ( final IDataAdaptor beanAdaptor : beanAdaptors ) {
 			applyBeanPropertyTo( object, beanAdaptor, descriptorTable );
 		}
 	}
 	
 	
 	/** Apply the property settings to the specified bean object */
-	static protected void applyBeanPropertyTo( final Object object, final DataAdaptor beanAdaptor, final Map<String,PropertyDescriptor>descriptorTable ) {
+	static protected void applyBeanPropertyTo( final Object object, final IDataAdaptor beanAdaptor, final Map<String,PropertyDescriptor>descriptorTable ) {
 		try {
 			final PropertyValueEditorManager editorManager = PropertyValueEditorManager.getDefaultManager();
 			final String name = beanAdaptor.stringValue( "name" );

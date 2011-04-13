@@ -8,7 +8,7 @@ package xal.tools.data;
 
 /**
  * DataListener is a generic interface for an object that (receives/writes)
- * data (from/to) a generic DataAdaptor.
+ * data (from/to) a generic IDataAdaptor.
  * 
  * @author  tap
  */
@@ -25,13 +25,13 @@ public interface DataListener {
      * Update the data based on the information provided by the data provider.
      * @param adaptor The adaptor from which to update the data
      */
-    public void update(DataAdaptor adaptor);
+    public void update(IDataAdaptor adaptor);
     
     
     /**
      * Write data to the data adaptor for storage.
      * @param adaptor The adaptor to which the receiver's data is written
      */
-    public void write(DataAdaptor adaptor);
+    public void write(IDataAdaptor adaptor);
 }
 

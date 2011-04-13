@@ -35,7 +35,7 @@ public class DataAttribute {
     }
 
     
-    public DataAttribute( DataAdaptor adaptor ) {
+    public DataAttribute( IDataAdaptor adaptor ) {
         DataListener reader = readerWriter();
         reader.update(adaptor);
     }
@@ -73,7 +73,7 @@ public class DataAttribute {
     
     /*
      * ReaderWriter is responsible for reading and writing a DataAttribute 
-     * object based on a DataAdaptor adaptor.
+     * object based on a IDataAdaptor adaptor.
      */
     private class ReaderWriter implements DataListener {
         public String dataLabel() {
@@ -81,7 +81,7 @@ public class DataAttribute {
         }
         
         
-        public void update( DataAdaptor adaptor ) {
+        public void update( IDataAdaptor adaptor ) {
             name = adaptor.stringValue("name");
             try {
                 String typeName = adaptor.stringValue("type");
@@ -106,7 +106,7 @@ public class DataAttribute {
         }
         
         
-        public void write( DataAdaptor adaptor ) {
+        public void write( IDataAdaptor adaptor ) {
             adaptor.setValue("name", name);
             
             String typeName = type.getName();

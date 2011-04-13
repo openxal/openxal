@@ -67,7 +67,7 @@ public class Sextupole extends Electromagnet {
      * sextupole type can be one of "SH", "SV", "SSH" or "SSV".
      * @param adaptor The data provider.
      */
-    public void update( final DataAdaptor adaptor ) {
+    public void update( final IDataAdaptor adaptor ) {
         if ( adaptor.hasAttribute( "type" ) ) {
             _type = adaptor.stringValue( "type" );
         }

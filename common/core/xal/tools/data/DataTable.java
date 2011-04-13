@@ -71,7 +71,7 @@ public class DataTable {
 	 * Constructor
 	 * @param adaptor the adaptor from which to construct the data table
 	 */
-    public DataTable( final DataAdaptor adaptor ) {
+    public DataTable( final IDataAdaptor adaptor ) {
         MESSAGE_CENTER = new MessageCenter( "Data Table" );
         NOTICE_PROXY = MESSAGE_CENTER.registerSource( this, DataTableListener.class );
 		
@@ -121,7 +121,7 @@ public class DataTable {
 
 
 			/** Update the table from the data adaptor */
-            public void update( final DataAdaptor adaptor ) {
+            public void update( final IDataAdaptor adaptor ) {
                 _name = adaptor.stringValue( NAME_ATTRIBUTE );
 
                 if ( adaptor.hasAttribute( RECORD_CLASS_ATTRIBUTE ) ) {
@@ -145,7 +145,7 @@ public class DataTable {
 
                 // There can only be one schema
                 List schemaList = adaptor.childAdaptors( "schema" );
-                DataAdaptor schemaAdaptor = (DataAdaptor)schemaList.get(0);
+                IDataAdaptor schemaAdaptor = (IDataAdaptor)schemaList.get(0);
 				_schema = new Schema();
 				_schema.update( schemaAdaptor );					
 
@@ -153,8 +153,8 @@ public class DataTable {
                 _keyTable = new KeyTable();
 
                 // read generic records
-                final List<DataAdaptor> recordAdaptors = adaptor.childAdaptors( "record" );
-                for ( final DataAdaptor recordAdaptor : recordAdaptors ) {
+                final List<IDataAdaptor> recordAdaptors = adaptor.childAdaptors( "record" );
+                for ( final IDataAdaptor recordAdaptor : recordAdaptors ) {
                     try {
                         Constructor constructor = _recordClass.getConstructor( new Class[] {DataTable.class} );
 
@@ -171,7 +171,7 @@ public class DataTable {
 
 
 			/** Archive this instance to the data adaptor. */
-			public void write( final DataAdaptor adaptor) {
+			public void write( final IDataAdaptor adaptor) {
                 adaptor.setValue( "name", _name );
                 adaptor.setValue( "recordClass", _recordClass.getName() );
 
@@ -777,9 +777,9 @@ public class DataTable {
         
         
 		/** Update the schema from the data adaptor. */
-        public void update( final DataAdaptor schemaAdaptor ) throws MissingPrimaryKeyException {
-			final List<DataAdaptor> attributeAdaptors = schemaAdaptor.childAdaptors( "attribute" );
-			for ( final DataAdaptor attributeAdaptor : attributeAdaptors ) {
+        public void update( final IDataAdaptor schemaAdaptor ) throws MissingPrimaryKeyException {
+			final List<IDataAdaptor> attributeAdaptors = schemaAdaptor.childAdaptors( "attribute" );
+			for ( final IDataAdaptor attributeAdaptor : attributeAdaptors ) {
                 final DataAttribute attribute = new DataAttribute( attributeAdaptor );  
                 addAttribute( attribute );
             }
@@ -788,7 +788,7 @@ public class DataTable {
         
         
 		/** Write the schema out to the data adaptor. */
-        public void write( final DataAdaptor schemaAdaptor ) throws MissingPrimaryKeyException {
+        public void write( final IDataAdaptor schemaAdaptor ) throws MissingPrimaryKeyException {
             validatePrimaryKeys();
             
             final Collection<DataAttribute> attributes = attributes();

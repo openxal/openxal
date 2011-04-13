@@ -51,7 +51,7 @@ public class AcceleratorSeqCombo extends AcceleratorSeq {
 	
 	
     /** Constructor */
-    public AcceleratorSeqCombo( final String strID, final Accelerator accelerator, final DataAdaptor adaptor ) {
+    public AcceleratorSeqCombo( final String strID, final Accelerator accelerator, final IDataAdaptor adaptor ) {
         this( strID, getSequences( accelerator, adaptor ) );
     }
 	
@@ -74,7 +74,7 @@ public class AcceleratorSeqCombo extends AcceleratorSeq {
 	 * @param adaptor the data adaptor for specifying the sequences to combine
 	 * @return a new AcceleratorSeqCombo instance if the sequences do not form a ring and a Ring if they do
 	 */
-	static public AcceleratorSeqCombo getInstance( final String strID, final Accelerator accelerator, final DataAdaptor adaptor ) {
+	static public AcceleratorSeqCombo getInstance( final String strID, final Accelerator accelerator, final IDataAdaptor adaptor ) {
 		List sequences = getSequences( accelerator, adaptor );
 		return getInstance( strID, sequences ); 
 	}
@@ -86,7 +86,7 @@ public class AcceleratorSeqCombo extends AcceleratorSeq {
 	 * @param adaptor the data adaptor for specifying the sequences to combine
 	 * @return a new AcceleratorSeqCombo instance if the sequences do not form a ring and a Ring if they do
 	 */
-	static public AcceleratorSeqCombo getInstance( final Accelerator accelerator, final DataAdaptor adaptor ) {
+	static public AcceleratorSeqCombo getInstance( final Accelerator accelerator, final IDataAdaptor adaptor ) {
 		final String ID = adaptor.stringValue( "id" );
 		return getInstance( ID, accelerator, adaptor );
 	}
@@ -230,12 +230,12 @@ public class AcceleratorSeqCombo extends AcceleratorSeq {
 	 * @param accelerator the accelerator from which to get the sequences
 	 * @param adaptor the combo sequence adaptor
 	 */
-	static protected List<AcceleratorSeq> getSequences( final Accelerator accelerator, final DataAdaptor adaptor ) {
+	static protected List<AcceleratorSeq> getSequences( final Accelerator accelerator, final IDataAdaptor adaptor ) {
 		List<AcceleratorSeq> sequences = new ArrayList<AcceleratorSeq>();
 		
         // read all sequence references
-        final List<DataAdaptor> sequenceAdaptors = adaptor.childAdaptors( "sequence" );
-        for ( final DataAdaptor sequenceAdaptor : sequenceAdaptors ) {
+        final List<IDataAdaptor> sequenceAdaptors = adaptor.childAdaptors( "sequence" );
+        for ( final IDataAdaptor sequenceAdaptor : sequenceAdaptors ) {
 			final String sequenceID = sequenceAdaptor.stringValue( "id" );
 			sequences.add( accelerator.getSequence( sequenceID ) );
         }
@@ -247,13 +247,13 @@ public class AcceleratorSeqCombo extends AcceleratorSeq {
 	 * Write this sequence's definition to a data adaptor.
 	 * @param adaptor the adaptor to which to write out this combo sequence's definition.
 	 */
-	public void write( final DataAdaptor adaptor ) {
+	public void write( final IDataAdaptor adaptor ) {
 		adaptor.setValue( "id", getId() );
 		
 		final Iterator sequenceIter = getConstituents().iterator();
 		while( sequenceIter.hasNext() ) {
 			final AcceleratorSeq sequence = (AcceleratorSeq)sequenceIter.next();
-			final DataAdaptor constituentAdaptor = adaptor.createChild( "sequence" );
+			final IDataAdaptor constituentAdaptor = adaptor.createChild( "sequence" );
 			constituentAdaptor.setValue( "id" , sequence.getId() );
 		}
 	}

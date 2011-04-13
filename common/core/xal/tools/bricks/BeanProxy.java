@@ -246,7 +246,7 @@ abstract public class BeanProxy<T> implements DataListener {
 	 * Update the data based on the information provided by the data provider.
      * @param adaptor The adaptor from which to update the data
      */
-    public void update( final DataAdaptor adaptor ) {		
+    public void update( final IDataAdaptor adaptor ) {		
 	}
     
     
@@ -254,7 +254,7 @@ abstract public class BeanProxy<T> implements DataListener {
 	 * Write data to the data adaptor for storage.
      * @param adaptor The adaptor to which the receiver's data is written
      */
-    public void write( final DataAdaptor adaptor ) {
+    public void write( final IDataAdaptor adaptor ) {
 		adaptor.setValue( "type", getType() );
 	}
 	

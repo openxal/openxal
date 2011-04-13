@@ -103,7 +103,7 @@ public abstract class AcceleratorNode implements /* IElement, */ ElementType, Da
     
     
     /** implement DataListener interface */
-    public void update(DataAdaptor adaptor) throws NumberFormatException {
+    public void update(IDataAdaptor adaptor) throws NumberFormatException {
         // set the id only the first time
         if ( m_strId == null ) {
             m_strId = adaptor.stringValue("id");
@@ -140,14 +140,14 @@ public abstract class AcceleratorNode implements /* IElement, */ ElementType, Da
         }
         
         // read the channel suites
-        DataAdaptor suiteAdaptor = adaptor.childAdaptor("channelsuite");
+        IDataAdaptor suiteAdaptor = adaptor.childAdaptor("channelsuite");
         if ( suiteAdaptor != null ) {
             channelSuite.update(suiteAdaptor);
         }
         
         // read the attribute buckets
-        final List<DataAdaptor> parserAdaptors = adaptor.childAdaptors( "attributes" );
-        for ( final DataAdaptor parserAdaptor : parserAdaptors ) {
+        final List<IDataAdaptor> parserAdaptors = adaptor.childAdaptors( "attributes" );
+        for ( final IDataAdaptor parserAdaptor : parserAdaptors ) {
             final Collection buckets = getBuckets();
             final BucketParser parser = new BucketParser( buckets );
             parser.update( parserAdaptor );
@@ -167,7 +167,7 @@ public abstract class AcceleratorNode implements /* IElement, */ ElementType, Da
     
     
     /** implement DataListener interface */
-    public void write(DataAdaptor adaptor) {
+    public void write(IDataAdaptor adaptor) {
         adaptor.setValue( "id", m_strId );
         adaptor.setValue( "type", getType() );
 		if ( getSoftType() != null ) {

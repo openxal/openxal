@@ -26,7 +26,7 @@ abstract public class BorderProxy<T extends Border> extends BeanProxy<T> {
 	
 	
 	/** generator */
-	static public BorderProxy getInstance( final DataAdaptor adaptor ) {
+	static public BorderProxy getInstance( final IDataAdaptor adaptor ) {
 		return BorderProxyFactory.getBorderProxy( adaptor.stringValue( "type" ) );
 	}
 	

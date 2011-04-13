@@ -34,9 +34,9 @@ public class SignalSuite {
      * Update the data based on the information provided by the data provider.
      * @param adaptor The adaptor from which to update the data
      */
-    public void update( final DataAdaptor adaptor ) {
-        final List<DataAdaptor> channelAdaptors = adaptor.childAdaptors( "channel" );
-        for ( final DataAdaptor channelAdaptor : channelAdaptors  ) {
+    public void update( final IDataAdaptor adaptor ) {
+        final List<IDataAdaptor> channelAdaptors = adaptor.childAdaptors( "channel" );
+        for ( final IDataAdaptor channelAdaptor : channelAdaptors  ) {
             final String handle = channelAdaptor.stringValue("handle");
 			
 			if ( !hasHandle( handle ) ) {
@@ -58,8 +58,8 @@ public class SignalSuite {
 			}
         }
         
-		final List<DataAdaptor> transformAdaptors = adaptor.childAdaptors( "transform" );
-		for ( final DataAdaptor transformAdaptor : transformAdaptors ) {
+		final List<IDataAdaptor> transformAdaptors = adaptor.childAdaptors( "transform" );
+		for ( final IDataAdaptor transformAdaptor : transformAdaptors ) {
             final String name = transformAdaptor.stringValue( "name" );
             final ValueTransform transform = TransformFactory.getTransform( transformAdaptor );
             _transformTable.put( name, transform );
@@ -71,11 +71,11 @@ public class SignalSuite {
      * Write data to the data adaptor for storage.
      * @param adaptor The adaptor to which the receiver's data is written
      */
-    public void write( final DataAdaptor adaptor ) {
+    public void write( final IDataAdaptor adaptor ) {
         final Collection channels = _signalMap.entrySet();
         final Iterator channelIter = channels.iterator();
         while ( channelIter.hasNext() ) {
-            final DataAdaptor channelAdaptor = adaptor.createChild("channel");
+            final IDataAdaptor channelAdaptor = adaptor.createChild("channel");
             final Map.Entry entry = (Map.Entry)channelIter.next();
             final SignalEntry signalEntry = (SignalEntry)entry.getValue();
             

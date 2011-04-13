@@ -17,7 +17,7 @@ import xal.tools.transforms.*;
 
 
 /**
- * TransformFactory generates a <code>ValueTransform</code> from a <code>DataAdaptor</code>.
+ * TransformFactory generates a <code>ValueTransform</code> from a <code>IDataAdaptor</code>.
  *
  * @author  tap
  */
@@ -39,10 +39,10 @@ public class TransformFactory {
      * @return A value transform with the properties specified by the adaptor.
      * @throws xal.smf.NoSuchTransformException if the transform of the specified type cannot be generated.
      */
-    static public ValueTransform getTransform(DataAdaptor adaptor) throws NoSuchTransformException {
+    static public ValueTransform getTransform(IDataAdaptor adaptor) throws NoSuchTransformException {
         String type = adaptor.stringValue("type");
         String methodName = type + "Transform";
-        Selector selector = new Selector(methodName, DataAdaptor.class);
+        Selector selector = new Selector(methodName, IDataAdaptor.class);
         
         try {
             return (ValueTransform)selector.invokeStatic(TransformFactory.class, adaptor);
@@ -58,7 +58,7 @@ public class TransformFactory {
      * @param adaptor The adaptor defining the transform.
      * @return A value transform with the properties specified by the adaptor.
      */
-    static public ValueTransform doubleScaleTransform(final DataAdaptor adaptor) {
+    static public ValueTransform doubleScaleTransform(final IDataAdaptor adaptor) {
         double scale = adaptor.doubleValue("scale");
         return DataTransformFactory.doubleScaleTransform(scale).valueTransform();
     }
@@ -70,7 +70,7 @@ public class TransformFactory {
      * @param adaptor The adaptor defining the transform.
      * @return A value transform with the properties specified by the adaptor.
      */
-    static public ValueTransform doubleTranslationTransform(final DataAdaptor adaptor) {
+    static public ValueTransform doubleTranslationTransform(final IDataAdaptor adaptor) {
         double offset = adaptor.doubleValue("offset");
         return DataTransformFactory.doubleTranslationTransform(offset).valueTransform();
     }
@@ -82,7 +82,7 @@ public class TransformFactory {
      * @param adaptor The adaptor defining the transform.
      * @return A value transform with the properties specified by the adaptor.
      */
-    static public ValueTransform doubleLinearTransform(final DataAdaptor adaptor) {
+    static public ValueTransform doubleLinearTransform(final IDataAdaptor adaptor) {
         double scale = adaptor.doubleValue("scale");
         double offset = adaptor.doubleValue("offset");
         return DataTransformFactory.doubleLinearTransform(scale, offset).valueTransform();
@@ -94,7 +94,7 @@ public class TransformFactory {
      * @param adaptor The adaptor defining the transform.
      * @return A value transform with the properties specified by the adaptor.
      */
-    static public ValueTransform doubleArrayScaleTransform(final DataAdaptor adaptor) {
+    static public ValueTransform doubleArrayScaleTransform(final IDataAdaptor adaptor) {
         double scale = adaptor.doubleValue("scale");
         return DataTransformFactory.doubleArrayScaleTransform(scale).valueTransform();
     }
@@ -106,7 +106,7 @@ public class TransformFactory {
      * @param adaptor The adaptor defining the transform.
      * @return A value transform with the properties specified by the adaptor.
      */
-    static public ValueTransform doubleArrayTranslationTransform(final DataAdaptor adaptor) {
+    static public ValueTransform doubleArrayTranslationTransform(final IDataAdaptor adaptor) {
         double offset = adaptor.doubleValue("offset");
         return DataTransformFactory.doubleArrayTranslationTransform(offset).valueTransform();
     }
@@ -118,7 +118,7 @@ public class TransformFactory {
      * @param adaptor The adaptor defining the transform.
      * @return A value transform with the properties specified by the adaptor.
      */
-    static public ValueTransform doubleArrayLinearTransform(final DataAdaptor adaptor) {
+    static public ValueTransform doubleArrayLinearTransform(final IDataAdaptor adaptor) {
         double scale = adaptor.doubleValue("scale");
         double offset = adaptor.doubleValue("offset");
         return DataTransformFactory.doubleArrayLinearTransform(scale, offset).valueTransform();

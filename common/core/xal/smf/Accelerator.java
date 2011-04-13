@@ -43,7 +43,7 @@ public class Accelerator extends AcceleratorSeq implements /* IElement, */ DataL
 	private AcceleratorNodeFactory _nodeFactory;
 
     
-    // DataAdaptor interface ----------------------
+    // IDataAdaptor interface ----------------------
     
     /** 
      * dataLabel() provides the name used to identify the accelerator in an 
@@ -57,7 +57,7 @@ public class Accelerator extends AcceleratorSeq implements /* IElement, */ DataL
      * Instructs the accelerator to update its data based on the given adaptor.
      * @param adaptor The adaptor from which to update the accelerator's data
      */
-    public void update( final DataAdaptor adaptor ) throws NumberFormatException {
+    public void update( final IDataAdaptor adaptor ) throws NumberFormatException {
         // only the primary optics should supply this data
         if ( adaptor.hasAttribute("System") ) {
             m_strSysId = adaptor.stringValue("system");
@@ -66,7 +66,7 @@ public class Accelerator extends AcceleratorSeq implements /* IElement, */ DataL
             m_strVer = adaptor.stringValue("ver");
         }
         
-        DataAdaptor powerSuppliesAdaptor = adaptor.childAdaptor("powersupplies");
+        IDataAdaptor powerSuppliesAdaptor = adaptor.childAdaptor("powersupplies");
         if ( powerSuppliesAdaptor != null ) {
             updatePowerSupplies(powerSuppliesAdaptor);
         }
@@ -74,8 +74,8 @@ public class Accelerator extends AcceleratorSeq implements /* IElement, */ DataL
         super.update(adaptor);
 		
         // read all pre defined combo sequences
-        final List<DataAdaptor> comboAdaptors = adaptor.childAdaptors( "comboseq" );
-        for ( final DataAdaptor comboAdaptor : comboAdaptors ) {
+        final List<IDataAdaptor> comboAdaptors = adaptor.childAdaptors( "comboseq" );
+        for ( final IDataAdaptor comboAdaptor : comboAdaptors ) {
             try {
                 addComboSequence( comboAdaptor );
             }
@@ -91,9 +91,9 @@ public class Accelerator extends AcceleratorSeq implements /* IElement, */ DataL
      * Update the power supplies given the power supply adaptor
      * @param adaptor The adaptor for the accelerator power supplies
      */
-    protected void updatePowerSupplies( final DataAdaptor adaptor ) {
-        final List<DataAdaptor> powerSupplyAdaptors = adaptor.childAdaptors( "ps" );
-        for ( final DataAdaptor powerSupplyAdaptor : powerSupplyAdaptors ) {
+    protected void updatePowerSupplies( final IDataAdaptor adaptor ) {
+        final List<IDataAdaptor> powerSupplyAdaptors = adaptor.childAdaptors( "ps" );
+        for ( final IDataAdaptor powerSupplyAdaptor : powerSupplyAdaptors ) {
             String powerSupplyType = powerSupplyAdaptor.stringValue("type");
             String powerSupplyId = powerSupplyAdaptor.stringValue("id");
             if ( powerSupplyType.equals("main") ) {
@@ -117,7 +117,7 @@ public class Accelerator extends AcceleratorSeq implements /* IElement, */ DataL
      * storage.
      * @param adaptor The adaptor to which the accelerator's data is written
      */
-    public void write(DataAdaptor adaptor) {
+    public void write(IDataAdaptor adaptor) {
         adaptor.setValue("system", m_strSysId);
         adaptor.setValue("ver", m_strVer);     // what if several inputs?
 
@@ -134,7 +134,7 @@ public class Accelerator extends AcceleratorSeq implements /* IElement, */ DataL
 	 * Add a combo sequence generated from the comboAdaptor
 	 * @param comboAdaptor The data adaptor from which to generate the combo sequence
 	 */
-    private void addComboSequence(DataAdaptor comboAdaptor) throws ClassNotFoundException {
+    private void addComboSequence(IDataAdaptor comboAdaptor) throws ClassNotFoundException {
         String comboType = comboAdaptor.stringValue("type");
 		String comboID = comboAdaptor.stringValue("id");
 		// check if we already have the sequence
@@ -158,13 +158,13 @@ public class Accelerator extends AcceleratorSeq implements /* IElement, */ DataL
 	 * @param comboID the ID of the combo sequence
 	 * @param comboAdaptor the data adaptor that defines the combo sequence
 	 */
-	private AcceleratorSeqCombo instantiateComboSequence(String comboType, String comboID, DataAdaptor comboAdaptor) throws ClassNotFoundException {
+	private AcceleratorSeqCombo instantiateComboSequence(String comboType, String comboID, IDataAdaptor comboAdaptor) throws ClassNotFoundException {
 		if ( comboType == null || comboType == "" ) {
 			return AcceleratorSeqCombo.getInstance(comboID, this, comboAdaptor);
 		}
 		try {
 			Class comboClass = Class.forName(comboType);
-			Constructor constructor = comboClass.getConstructor(new Class[] {String.class, Accelerator.class, DataAdaptor.class});
+			Constructor constructor = comboClass.getConstructor(new Class[] {String.class, Accelerator.class, IDataAdaptor.class});
 			return (AcceleratorSeqCombo)constructor.newInstance(new Object[] {comboID, this, comboAdaptor});
 		}
 		catch(Exception exception) {
@@ -175,7 +175,7 @@ public class Accelerator extends AcceleratorSeq implements /* IElement, */ DataL
 	}
 	
 	
-    // end DataAdaptor interface ----------------------
+    // end IDataAdaptor interface ----------------------
     
 
     // empty constructor added by tap  2/25/2002

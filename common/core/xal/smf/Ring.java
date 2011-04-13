@@ -35,7 +35,7 @@ public class Ring extends AcceleratorSeqCombo {
 	
 	
     /** Constructor */
-    public Ring(String strID, Accelerator accelerator, DataAdaptor adaptor) {
+    public Ring(String strID, Accelerator accelerator, IDataAdaptor adaptor) {
         this(strID, getSequences(accelerator, adaptor));
     }
     

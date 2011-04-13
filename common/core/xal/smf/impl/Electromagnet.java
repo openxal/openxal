@@ -59,9 +59,9 @@ abstract public class Electromagnet extends Magnet {
      * Update the node with data from the provided adaptor.
 	 * @param adaptor The data provider
      */
-    public void update( final DataAdaptor adaptor ) throws NumberFormatException {
+    public void update( final IDataAdaptor adaptor ) throws NumberFormatException {
         super.update(adaptor);
-        final DataAdaptor powerSupplyAdaptor = adaptor.childAdaptor( "ps" );
+        final IDataAdaptor powerSupplyAdaptor = adaptor.childAdaptor( "ps" );
         if ( powerSupplyAdaptor != null ) {
             updatePowerSupplies( powerSupplyAdaptor );
         }
@@ -73,7 +73,7 @@ abstract public class Electromagnet extends Magnet {
      * power supply information.
      * @param powerSupplyAdaptor The data provider of power supply information.
      */
-    protected void updatePowerSupplies( final DataAdaptor powerSupplyAdaptor ) {
+    protected void updatePowerSupplies( final IDataAdaptor powerSupplyAdaptor ) {
         mainSupplyId = powerSupplyAdaptor.stringValue( "main" );
     }
     
@@ -83,9 +83,9 @@ abstract public class Electromagnet extends Magnet {
      * support for power supplies.
      * @param adaptor The data store
      */
-    public void write( final DataAdaptor adaptor ) {
+    public void write( final IDataAdaptor adaptor ) {
         super.write(adaptor);
-        DataAdaptor powerSupplyAdaptor = adaptor.createChild( "ps" );
+        IDataAdaptor powerSupplyAdaptor = adaptor.createChild( "ps" );
         writePowerSupplies( powerSupplyAdaptor );
     }
     
@@ -95,7 +95,7 @@ abstract public class Electromagnet extends Magnet {
      * the main power supply into the data adaptor.
      * @param powerSupplyAdaptor The data sink for the power supply information
      */
-    protected void writePowerSupplies( final DataAdaptor powerSupplyAdaptor ) {
+    protected void writePowerSupplies( final IDataAdaptor powerSupplyAdaptor ) {
         powerSupplyAdaptor.setValue( "main", mainSupplyId );
     }
 	

@@ -1,5 +1,5 @@
 /*
- * DataAdaptor.java
+ * IDataAdaptor.java
  *
  * Created on February 11, 2002, 2:26 PM
  */
@@ -7,27 +7,26 @@
 package xal.tools.data;
 
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 
 
 /**
- * DataAdaptor is a generic interface to an external data source.  A specific
+ * IDataAdaptor is a generic interface to an external data source.  A specific
  * data adaptor (e.g. XmlDataAdaptor) will implement this interface to 
  * advertise its data in a generic way for reading and writing to a specific
- * data source (e.g. XML file).  DataAdaptor is intended to be a generic
+ * data source (e.g. XML file).  IDataAdaptor is intended to be a generic
  * wrapper for specific data adaptors.  Data adaptors do not have any knowledge
  * about the objects that read and write data.  Such data receivers and writers
  * must implement the DataListener interface.
  *
- * A DataAdaptor instance is generated for each node in a hierarchical data
+ * A IDataAdaptor instance is generated for each node in a hierarchical data
  * tree and advertises information about the node and provides accessors
  * to its children.  Information about a node is in the form of attributes
  * which represent key/value pairs of primitive data.
  *
  * @author  tap
  */
-public interface DataAdaptor {
+public interface IDataAdaptor {
     /** name for the particular node in the data tree */
     public String name();
     
@@ -101,19 +100,19 @@ public interface DataAdaptor {
     
     
     /** return all child adaptors */
-    public List<DataAdaptor> childAdaptors();
+    public List<IDataAdaptor> childAdaptors();
     
     
     /** return all child adaptors of the specified node name */
-    public List<DataAdaptor> childAdaptors( String label );
+    public List<IDataAdaptor> childAdaptors( String label );
     
     
     /** Convenience method to get a single child adaptor when only one is expected */
-    public DataAdaptor childAdaptor( String label );
+    public IDataAdaptor childAdaptor( String label );
     
     
     /** Create an new empty child adaptor with label */
-    public DataAdaptor createChild( String label );
+    public IDataAdaptor createChild( String label );
     
     
     /** write the listener as a new node and append it to the data tree */

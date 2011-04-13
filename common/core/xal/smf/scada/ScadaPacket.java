@@ -12,7 +12,7 @@ import xal.ca.ConnectionException;
 import xal.ca.ConnectionListener;
 import xal.ca.GetException;
 import xal.ca.PutException;
-import xal.tools.data.DataAdaptor;
+import xal.tools.data.IDataAdaptor;
 import xal.tools.data.DataListener;
 import xal.smf.AcceleratorNode;
 
@@ -580,12 +580,12 @@ public abstract class ScadaPacket implements DataListener {
      * @throws  MissingResourceException        a data field was missing from the data source
      * @throws BadStructDefinition  data structure fields are ill-defined/incompatible
      *  
-     * @see xal.tools.data.DataListener#update(xal.tools.data.DataAdaptor)
+     * @see xal.tools.data.DataListener#update(xal.tools.data.IDataAdaptor)
      */
     @Override
-    public void update(DataAdaptor daptSrc) throws MissingResourceException, BadStructDefinition {
+    public void update(IDataAdaptor daptSrc) throws MissingResourceException, BadStructDefinition {
         String          strLabel = this.dataLabel();
-        DataAdaptor     daptVals = daptSrc.childAdaptor(strLabel);
+        IDataAdaptor     daptVals = daptSrc.childAdaptor(strLabel);
 
         // Read in the data structure field values one by one
         //      the field names are the attributes in the data adaptor
@@ -653,7 +653,7 @@ public abstract class ScadaPacket implements DataListener {
 
     /**
      * Save the data structure field values to the given data sink behind
-     * the <code>DataAdaptor</code> interface.  Each value is stored
+     * the <code>IDataAdaptor</code> interface.  Each value is stored
      * as the value of an attribute being the field name.
      *
      * @throws  TypeNotPresentException  Bad structure definition
@@ -663,12 +663,12 @@ public abstract class ScadaPacket implements DataListener {
      *
      * @throws BadStructDefinition  data structure fields are ill-defined/incompatible
      *  
-     * @see xal.tools.data.DataListener#write(xal.tools.data.DataAdaptor)
+     * @see xal.tools.data.DataListener#write(xal.tools.data.IDataAdaptor)
      */
     @Override
-    public void write(DataAdaptor daptSink) throws BadStructDefinition {
+    public void write(IDataAdaptor daptSink) throws BadStructDefinition {
         String          strLabel = this.dataLabel();
-        DataAdaptor     daptVals = daptSink.createChild(strLabel);
+        IDataAdaptor     daptVals = daptSink.createChild(strLabel);
         
         // Write out the fields of this data structure one by one
         //      we use the field name as the attribute and then store the value

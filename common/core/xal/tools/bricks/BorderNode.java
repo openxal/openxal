@@ -58,8 +58,8 @@ public class BorderNode extends BeanNode<Border> {
 	
 	
 	/** generator */
-	static public BorderNode getInstance( final DataAdaptor adaptor ) {		
-		final DataAdaptor proxyAdaptor = adaptor.childAdaptor( BorderProxy.DATA_LABEL );
+	static public BorderNode getInstance( final IDataAdaptor adaptor ) {		
+		final IDataAdaptor proxyAdaptor = adaptor.childAdaptor( BorderProxy.DATA_LABEL );
 		final BorderProxy borderProxy = BorderProxy.getInstance( proxyAdaptor );
 		final String tag = adaptor.stringValue( "tag" );
 		final BorderNode node = new BorderNode( borderProxy, null, tag );

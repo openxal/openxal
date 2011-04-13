@@ -62,15 +62,15 @@ public class AcceleratorSeq extends AcceleratorNode implements DataListener {
     
     
     /** Update this sequence from the specified data adaptor */ 
-    public void update( final DataAdaptor adaptor )  throws NumberFormatException {
+    public void update( final IDataAdaptor adaptor )  throws NumberFormatException {
         super.update( adaptor );
 		
 		final Accelerator accelerator = getAccelerator();
 		final AcceleratorNodeFactory nodeFactory = accelerator.getNodeFactory();
         
         // read all child sequences
-        final List<DataAdaptor> sequenceAdaptors = adaptor.childAdaptors( "sequence" );
-        for ( final DataAdaptor sequenceAdaptor : sequenceAdaptors ) {
+        final List<IDataAdaptor> sequenceAdaptors = adaptor.childAdaptors( "sequence" );
+        for ( final IDataAdaptor sequenceAdaptor : sequenceAdaptors ) {
             try {
 				if ( sequenceAdaptor.hasAttribute( "exclude" ) ) {
 					if ( sequenceAdaptor.booleanValue( "exclude" ) ) {
@@ -92,8 +92,8 @@ public class AcceleratorSeq extends AcceleratorNode implements DataListener {
         }
 
         // read all of the child accelerator nodes
-        final List<DataAdaptor> nodeAdaptors = adaptor.childAdaptors( "node" );
-        for ( final DataAdaptor nodeAdaptor : nodeAdaptors ) {
+        final List<IDataAdaptor> nodeAdaptors = adaptor.childAdaptors( "node" );
+        for ( final IDataAdaptor nodeAdaptor : nodeAdaptors ) {
             try {
 				if ( nodeAdaptor.hasAttribute( "exclude" ) ) {
 					if ( nodeAdaptor.booleanValue( "exclude" ) ) {
@@ -117,7 +117,7 @@ public class AcceleratorSeq extends AcceleratorNode implements DataListener {
     
     
     /** support for dataListener */
-    private void addChildSequence( final DataAdaptor sequenceAdaptor, final Accelerator accelerator, final AcceleratorNodeFactory nodeFactory ) throws ClassNotFoundException {
+    private void addChildSequence( final IDataAdaptor sequenceAdaptor, final Accelerator accelerator, final AcceleratorNodeFactory nodeFactory ) throws ClassNotFoundException {
         String sequenceType = sequenceAdaptor.stringValue( "type" );
         if ( sequenceType == null || sequenceType == "" ) {   // it's just a plain sequence
             String sequenceId = sequenceAdaptor.stringValue( "id" );
@@ -141,7 +141,7 @@ public class AcceleratorSeq extends AcceleratorNode implements DataListener {
     
     
     /** support for dataListener */
-    private void addChildNode( final DataAdaptor nodeAdaptor, final Accelerator accelerator, final AcceleratorNodeFactory nodeFactory ) throws ClassNotFoundException {
+    private void addChildNode( final IDataAdaptor nodeAdaptor, final Accelerator accelerator, final AcceleratorNodeFactory nodeFactory ) throws ClassNotFoundException {
         String nodeId = nodeAdaptor.stringValue("id");
         // see if we already have the accelerator node
         AcceleratorNode node = getNodeWithId( nodeId );
@@ -162,14 +162,14 @@ public class AcceleratorSeq extends AcceleratorNode implements DataListener {
 	 * write this sequence's child accelerator nodes deeply traversing each branch.  
 	 * Some applications call this method since Combo sequence overrides the write method to provide only the constituents.
 	 */
-	public void writeDeeply( final DataAdaptor adaptor ) {
+	public void writeDeeply( final IDataAdaptor adaptor ) {
         super.write( adaptor );
         adaptor.writeNodes( m_arrNodes );
 	}
         
 
     /** write the acceleratorSeq to the data adaptor */
-    public void write( final DataAdaptor adaptor ) {
+    public void write( final IDataAdaptor adaptor ) {
 		writeDeeply( adaptor );
     }
         

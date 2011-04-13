@@ -60,7 +60,7 @@ public class Marker extends AcceleratorNode {
  	 * set the marker type since a marker type can be "Foil", "VIW" "Tgt", etc.
       * @param adaptor The data provider.
       */
-     public void update( final DataAdaptor adaptor ) {
+     public void update( final IDataAdaptor adaptor ) {
          if ( adaptor.hasAttribute( "type" ) ) {
              _type = adaptor.stringValue( "type" );
          }

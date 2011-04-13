@@ -81,7 +81,7 @@ class TimingDataManager {
 	protected void updateTimingCenter(TimingCenter timingCenter) {
 		if ( _urlSpec != null ) {
 			XmlDataAdaptor documentAdaptor = XmlDataAdaptor.adaptorForUrl(_urlSpec, false);
-			DataAdaptor timingAdaptor = documentAdaptor.childAdaptor(TimingCenter.DATA_LABEL);
+			IDataAdaptor timingAdaptor = documentAdaptor.childAdaptor(TimingCenter.DATA_LABEL);
 			timingCenter.update(timingAdaptor);
 		}
 	}

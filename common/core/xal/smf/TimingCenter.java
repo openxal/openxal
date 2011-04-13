@@ -123,9 +123,9 @@ public class TimingCenter implements DataListener {
      * Update the data based on the information provided by the data provider.
      * @param adaptor The adaptor from which to update the data
      */
-    public void update(DataAdaptor adaptor) {		
+    public void update(IDataAdaptor adaptor) {		
         // read the channel suites
-        DataAdaptor suiteAdaptor = adaptor.childAdaptor(ChannelSuite.DATA_LABEL);
+        IDataAdaptor suiteAdaptor = adaptor.childAdaptor(ChannelSuite.DATA_LABEL);
         if ( suiteAdaptor != null ) {
             _channelSuite.update(suiteAdaptor);
         }
@@ -136,7 +136,7 @@ public class TimingCenter implements DataListener {
      * Write data to the data adaptor for storage.
      * @param adaptor The adaptor to which the receiver's data is written
      */
-    public void write(DataAdaptor adaptor) {
+    public void write(IDataAdaptor adaptor) {
         adaptor.writeNode(_channelSuite);
 	}
 	

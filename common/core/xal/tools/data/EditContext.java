@@ -73,12 +73,12 @@ public class EditContext {
 	
     
     /** Import the tables from the data adaptor and assign them to the specified group in this edit context. */
-	public void importTablesFromDataAdaptor( final DataAdaptor docAdaptor, final String tableGroup ) {
+	public void importTablesFromDataAdaptor( final IDataAdaptor docAdaptor, final String tableGroup ) {
         final Collection<DataTable> tableSet = new HashSet<DataTable>();
 		
-        final DataAdaptor tableGroupAdaptor = docAdaptor.childAdaptor( EditContext.GROUP_TAG );
-        final List<DataAdaptor> tableAdaptors = tableGroupAdaptor.childAdaptors( DataTable.DATA_LABEL );
-        for( final DataAdaptor tableAdaptor : tableAdaptors ) {
+        final IDataAdaptor tableGroupAdaptor = docAdaptor.childAdaptor( EditContext.GROUP_TAG );
+        final List<IDataAdaptor> tableAdaptors = tableGroupAdaptor.childAdaptors( DataTable.DATA_LABEL );
+        for( final IDataAdaptor tableAdaptor : tableAdaptors ) {
             try {
                 final DataTable table = new DataTable( tableAdaptor );
 				
@@ -97,13 +97,13 @@ public class EditContext {
 	
     
     /** Write all tables associated with the specified group to the specified data adaptor. */
-	public void writeGroupToDataAdaptor( final DataAdaptor docAdaptor, final String group ) {
-        final DataAdaptor tablegroupAdaptor = docAdaptor.createChild( GROUP_TAG );
+	public void writeGroupToDataAdaptor( final IDataAdaptor docAdaptor, final String group ) {
+        final IDataAdaptor tablegroupAdaptor = docAdaptor.createChild( GROUP_TAG );
 		
         final Collection<DataTable> tables = getTablesForGroup( group );
         for ( final DataTable table : tables ) {
             final DataListener handler = table.dataHandler();
-            final DataAdaptor tableAdaptor = tablegroupAdaptor.createChild( DataTable.DATA_LABEL );
+            final IDataAdaptor tableAdaptor = tablegroupAdaptor.createChild( DataTable.DATA_LABEL );
             try {
                 handler.write( tableAdaptor );
             }
