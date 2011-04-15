@@ -58,6 +58,19 @@
     <br/>
     &middot; &nbsp; The element position attribute in the Algorithm object should be moved to the Probe
                     object.  The probe object already contains a lattice position attribute.
+    <br/>
+    &middot; &nbsp; Need to break out the closed orbit correction in the TransferMap probe to a 
+                    separate probe.
+    <br/>
+    &middot; &nbsp; Need to model refactor the probe mechanism with generics.
+    <br/>
+    &middot; &nbsp; Change the name of CorrelationMatrix to CovarianceMatrix.
+    <br/>
+    &middot; &nbsp; Clean up the PMQ mechanism.  Maybe use a different model later,
+                    after the current one workds and an be tested.
+    <br/>
+    &middot; &nbsp; Clean up IdealRfGap.  A lot of stuff was in the wrong place - code was moved to 
+                    difference locations but never deleted from IdealRfGap, just deprecated.
     </p>
     <p>
     <h1>Classes that should be destroyed</h1>
