@@ -1,0 +1,109 @@
+package xal.model.probe.traj;
+
+import xal.tools.data.IDataAdaptor;
+import xal.model.probe.DiagnosticProbe;
+import xal.model.xml.ParsingException;
+
+/**
+ * Encapsulates the state of a <code>DiagnosticProbe</code> at a particular
+ * point in time.
+ * 
+ * @author Craig McChesney
+ * @version $id:
+ * 
+ */
+public class DiagnosticProbeState extends ProbeState {
+		
+    /** The accumulator for counting the model elements traversed by the probe at this state */
+	private int elementsVisited;
+	
+	
+	// *********** constructors
+	
+	
+	/**
+	 * Creates a new <code>DiagnosticProbeState</code>.
+	 *
+	 * @author  Christopher K. Allen
+	 * @since   Apr 19, 2011
+	 */
+	public DiagnosticProbeState() {
+	}
+	
+    /**
+     * Creates a new <code>DiagnosticProbeState</code> with the
+     * state initialized from the given <code>DiagnosticProbe</code>.
+     *
+     * @author  Christopher K. Allen
+     * @since   Apr 19, 2011
+     */
+	public DiagnosticProbeState(DiagnosticProbe probe) {
+		super(probe);
+		this.elementsVisited = probe.getElementsVisited();
+	}
+	
+	
+	// *********** diagnostic probe state accessing
+	
+	
+    /**
+     * Returns the number of elements traversed by probe at this state.
+     *
+     * @return number of model elements propagated by probe
+     *
+     * @author Christopher K. Allen
+     * @since  Apr 19, 2011
+     */
+	public int getElementsVisited() {
+		return elementsVisited;
+	}
+	
+    /**
+     * Set the element count to the given number.
+     *
+     * @param n     new value for the element traversed accumulator
+     *
+     * @author Christopher K. Allen
+     * @since  Apr 19, 2011
+     */
+	public void setElementsVisited(int n) {
+		elementsVisited = n;
+	}
+
+	
+	// ************* I/O support
+
+	
+    private static final String DIAG_LABEL = "diagnostic";
+	private static final String COUNT_LABEL = "count";
+	
+	@Override
+    protected void addPropertiesTo(IDataAdaptor container) {
+		super.addPropertiesTo(container);
+        
+        IDataAdaptor diagNode = container.createChild(DIAG_LABEL);
+		diagNode.setValue(COUNT_LABEL, String.valueOf(getElementsVisited()));
+	}
+	
+	@Override
+    protected void readPropertiesFrom(IDataAdaptor container) 
+			throws ParsingException {
+        super.readPropertiesFrom(container);
+        
+        IDataAdaptor diagNode = container.childAdaptor(DIAG_LABEL);
+        if (diagNode == null)
+            throw new ParsingException("DiagnosticProbeState#readPropertiesFrom(): no child element = " + DIAG_LABEL);
+
+		setElementsVisited(diagNode.intValue(COUNT_LABEL));
+	}
+	
+	
+	// ************** Object overrides
+	
+	
+	@Override
+    public String toString() {
+		return super.toString() + " count: " + getElementsVisited();
+	}
+		
+}
