@@ -8,10 +8,9 @@ package xal.model;
  * 
  * @author Craig McChesney
  * 
- * @deprecated  I don't believe this interface is used, but I'm deprecating first before
- *              everything is migrated in.
+ * deprecated  I don't believe this interface is used, but I'm deprecating first before
+ *             everything is migrated in.
  */
-@Deprecated
 public interface IModelDataSource {
 
 }
