@@ -346,6 +346,7 @@ public class PhaseMatrix implements IArchive, java.io.Serializable {
     {
         return this.getMatrix().get(iRow.val(), iCol.val());
     }
+    
 
     /**
      *  Check if matrix is symmetric.  

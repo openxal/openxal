@@ -352,7 +352,7 @@ public class BeamEllipsoid {
      *  The after rotation the (x,y,z) coordinate are somewhat arbitrary
      *  and no longer coincide with the original laboratory coordinates.
      *  
-     *  @return     1st nomalized defocusing constant knx
+     *  @return     1st normalized defocusing constant knx
      *  
      *  @see    BeamEllipsoid#getDefocusingConstants()
      */
@@ -365,7 +365,7 @@ public class BeamEllipsoid {
      *  The after rotation the (x,y,z) coordinate are somewhat arbitrary
      *  and no longer coincide with the original laboratory coordinates.
      *  
-     *  @return     2nd nomalized defocusing constant knx
+     *  @return     2nd normalized defocusing constant knx
      *  
      *  @see    BeamEllipsoid#getDefocusingConstants()
      */
@@ -378,28 +378,33 @@ public class BeamEllipsoid {
      *  The after rotation the (x,y,z) coordinate are somewhat arbitrary
      *  and no longer coincide with the original laboratory coordinates.
      *  
-     *  @return     3rd nomalized defocusing constant knz
+     *  @return     3rd normalized defocusing constant knz
      *  
      *  @see    BeamEllipsoid#getDefocusingConstants()
      */
     public double   getDefocusingConstantZ()    { return this.arrDefocus[2]; };
     
     /**
+     * <p>
      * Return all the normalized space-charge defocusing constants
      * for the beam ellipsoid.  These are the inverses of the normalized defocal
      * lengths (fnx,fny,fnz) and are used to construct the space charge 
      * generator matrix and space charge transfer matrix.  The unnormalized 
      * focal lengths <i>f</i> are given by
-     * 
+     * <br/>
+     * <br/>
      *      f = ds*K*fn
-     *      
+     * <br/>
+     * <br/>     
      * where <i>ds</i> is the increment path length over which the space charge 
      * kick is being applied, <i>K</i> is the generalized (3D) beam perveance,
      * and <i>fn</n> is the normalized defocal length.  The normalized defocal 
-     * lenth is given by
-     * 
+     * length is given by
+     * <br/>
+     * <br/>
      *      fn = 1/kn^2
-     *      
+     * <br/>
+     * <br/>     
      * where <i>kn^2</i> is the normalized (squared) focusing constant, i.e., the value
      * returned by this method.
      * 
@@ -449,17 +454,22 @@ public class BeamEllipsoid {
     }
     
     /**
-     * Get orthogonal rotation matrix <b>R</b> in SO(7) that rotates the ellipsoid
+     * <p>
+     * Get orthogonal rotation matrix <b>R</b> in <i>SO</i>(7) that rotates the ellipsoid
      * spatial semi-axes onto the spatial coordinate axes.
-     * 
+     * </p>
+     * <p>
      * The rotation <b>R</b> is actually the cartesian product of a single rotation 
-     * <b>r</b> from SO(3) that rotates the ellipsoid's spatial coordinates onto the 
+     * <b>r</b> from <i>SO</i>(3) that rotates the ellipsoid's spatial coordinates onto the 
      * coordinate axes.  That is,
-     * 
-     *      <b>R</b> = <b>r</b>x<b>r</b> contained in SO(7) contained in R7x7
-     *      
+     * <br/>
+     * <br/>
+     *      <b>R</b> = <b>r</b> &times; <b>r</b> contained in SO(7) contained in <b>R</b><sup>7&times;7</sup>
+     * <br/>
+     * <br/>     
      * In this manner the momentum coordinates at each point (x,y,z) are rotated 
      * by an equal amount and so velocities are mapped accordingly.
+     * </p>
      * 
      * @return  rotation matrix in SO(7) moving the ellipsoid into standard position
      */
