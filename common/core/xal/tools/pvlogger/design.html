@@ -1,0 +1,67 @@
+<html>
+<title>Machine Snapshot Tool</title>
+<body>
+
+<center><u>Machine Snapshot Service Proposal</u></center>
+<p/>
+<strong>Initial Version: </strong> November 20, 2003 <br>
+<strong>Latest Revision: </strong> December 12, 2003 <br>
+<strong>Author: </strong> Tom Pelaia
+<p/>
+<strong>Abstract: </strong>  The Machine Snapshot Service is a proposed service for archiving snapshots of the present machine state to facilitate machine state recovery and offline analysis.  The machine state in the form of about a thousand PVs will be archived at regular intervals (once a minute) and clients may also request archiviving of the machine state on demand.  An API will be provided for on demand archiving as well as fetching the machine state.  Support for saveset taking and restoration will also be included in the design.  The Machine Snapshot Service needs to be operational in time for the March 2004 commissioning.  Our efforts will pave the way for other similar efforts here at SNS.
+<p/>
+<strong>Requirements: </strong>
+<ul>
+<li>archive thousands of PVs (scalar and array of type double) once a minute (depending on machine state?)</li>
+<li>timestamp the machine state snapshot</li>
+<li>provide an API for on-demand archiving from applications</li>
+<li>log on-demand snapshots as timestamp and comment in ELog</li>
+<li>support for savesets</li>
+<li>allow users to add comments to the archive when the snapshot is requested</li>
+<li>allow users to archive without login when performed within the controls firewall</li>
+<li>fetch snapshots by timestamp</li>
+<li>high archiving reliability</li>
+<li>integration with present database</li>
+<li>alias the PV so if the PV address changes the latest PV address is used
+</ul>
+<p/>
+<hr/>
+<center><u>Proposed Architecture Summary</u></center>
+<p/>
+We propose to deploy our service on the physics server and arrange for the snapshot service to recover if it goes down for any reason.  We will investigate possibly using JBoss for deployment.  The service will be accessible by clients on our local network using the service support we built into XAL.  In this way, clients can request that on-demand snapshots be taken and archived. The archive will be stored in the Oracle database and integrated with existing tables and views as appropriate.  Jeff Patton will provide database support.
+<p/>
+Java channel access through our XAL interface will provide the means for monitoring PVs.  We will not attempt to correlate PVs.  Rather we will rely on wall clock time, to timestamp the machine snapshot.  Additionally the PV timestamps will also be recorded for each PV.
+<p/>
+PV sets will be defined.  A PV set would define the set of PV readback and setting pairs (or just readback or setting PV).  One of those sets will be the set that gets archived regularly.  Other sets may be specific to certain applications.  In this way a client can request that a particular PV set be archived.
+<p/>
+In principle the implementation should be straight forward.  However there will most likely be challenges related to scalability, so we must perform adequate testing in advance of operations.
+<p/>
+<hr/>
+<center><u>Proposed Database Schema</u></center>
+<p/>
+This database schema is just a pseudo schema.  I will hand the request to Jeff and he will fit this into the present database schema with proper names and using existing tables as appropriate.
+<p/>
+<center><table border=1>
+<tr><th rowspan=2>Entity</th><th colspan=3>Column</th></tr>
+<tr><th>Attribute</th><th>Type</th><th>Primary Key</th></tr>
+
+<tr><td rowspan=1 valign=top>PV</td><td>address</td><td>varchar2</td><td><center>yes</center></td></tr>
+
+<tr><td rowspan=5 valign=top>MACHINE_SNAPSHOT</td><td>pkey</td><td>long</td><td><center>yes</center></td></tr>
+<tr><td>timestamp</td><td>datetime</td></tr>
+<tr><td>requestor</td><td>varchar2</td></tr>
+<tr><td>score</td><td>short</td></tr>
+<tr><td>comment</td><td>varchar2</td></tr>
+
+<tr><td rowspan=6 valign=top>PV_SNAPSHOT</td><td>machine_snapshot</td><td>long</td><td><center>yes</center></td></tr>
+<tr><td>pv</td><td>varchar2</td><td><center>yes</center></td></tr>
+<tr><td>timestamp</td><td>long-datetime</td></tr>
+<tr><td>values</td><td>VARRAY</td></tr>
+<tr><td>status</td><td>short</td></tr>
+<tr><td>severity</td><td>short</td></tr>
+
+</table></center>
+
+</body>
+</html>
+
