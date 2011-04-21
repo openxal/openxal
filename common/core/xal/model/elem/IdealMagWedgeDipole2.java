@@ -398,15 +398,19 @@ public class IdealMagWedgeDipole2 extends ElementSeq implements IElectromagnet {
 
 
     /**
+     * <p>
      * Return the magnetic field index of the magnet evaluated at the design
      * orbit.   The field index is defined as
-     * 
-     *      n := -(R0/B0)(dB/dR)
-     * 
-     * where R0 is the radius of the design orbit, B0 is the field at the
-     * design orbit (@see IdealMagSectorDipole#getField), and dB/dR is the
+     * <br/>
+     * <br/>
+     * &nbsp; &nbsp; <i>n</i> &equiv; -(<i>R</i><sub>0</sub>/<i>B</i><sub>0</sub>)(<i>dB/dR</i>)
+     * <br/>
+     * <br/>
+     * where <i>R</i><sub>0</sub> is the radius of the design orbit, <i>B</i><sub>0</sub>
+     * is the field at the
+     * design orbit (see {@link IdealMagSectorDipole2#getFieldIndex()}), and <i>dB/dR</i> is the
      * derivative of the field with respect to the path deflection - evaluated
-     * at the design radius R0.
+     * at the design radius <i>R</i><sub>0</sub>.
      * 
      * @return  field index of the magnet at the design orbit (unitless)     
      */

@@ -14,13 +14,13 @@ import xal.model.probe.EnvelopeProbe;
 import xal.model.probe.Probe;
 import xal.model.probe.traj.EnvelopeProbeState;
 import xal.model.probe.traj.ProbeState;
-import xal.model.source.PVLoggerDataSource;
 import xal.model.xml.ParsingException;
 import xal.model.xml.ProbeXmlParser;
 import xal.model.xml.ProbeXmlWriter;
 
 import xal.sim.scenario.Scenario;
 import xal.sim.slg.LatticeError;
+import xal.sim.sync.PVLoggerDataSource;
 import xal.sim.sync.SynchronizationException;
 
 import xal.smf.AcceleratorNode;
