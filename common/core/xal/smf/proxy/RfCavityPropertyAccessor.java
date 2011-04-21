@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import xal.model.scenario.Scenario;
+import xal.sim.scenario.Scenario;
 import xal.smf.AcceleratorNode;
 import xal.smf.impl.RfCavity;
 

@@ -8,8 +8,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import xal.model.scenario.ModelInput;
-import xal.model.sync.SynchronizationManager;
+import xal.sim.scenario.ModelInput;
+import xal.sim.sync.SynchronizationManager;
 import xal.smf.AcceleratorNode;
 import xal.smf.impl.Electromagnet;
 import xal.smf.impl.RfCavity;

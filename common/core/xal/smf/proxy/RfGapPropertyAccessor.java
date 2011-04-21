@@ -7,8 +7,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import xal.model.scenario.Scenario;
-import xal.model.sync.SynchronizationManager;
+import xal.sim.scenario.Scenario;
+import xal.sim.sync.SynchronizationManager;
 import xal.smf.AcceleratorNode;
 import xal.smf.impl.RfGap;
 
