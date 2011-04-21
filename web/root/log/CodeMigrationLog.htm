@@ -56,6 +56,9 @@
     <p>
     <h1>Future Tasks</h1>
     <br/>
+    &middot &nbsp; We need better separation between the model and the SMF components.  There are more than a 
+                   few instances of one making direct calls to the other.
+    <br/>
     &middot; &nbsp; The element position attribute in the Algorithm object should be moved to the Probe
                     object.  The probe object already contains a lattice position attribute.
     <br/>
@@ -72,8 +75,24 @@
     &middot; &nbsp; Clean up IdealRfGap.  A lot of stuff was in the wrong place - code was moved to 
                     difference locations but never deleted from IdealRfGap, just deprecated.
     </p>
+    &middot; &nbsp; Move xal.model.IArchive to xal.tools.data.
     <p>
+    &middot; &nbsp; Eradicate the class <code>xal.tools.em.EllipsoidalCharge</code>.  Right now 
+                    Trace3dTracker and EnvelopeTrackerAdapt still use it, and it has many bugs.
+    </p>
+    <p>
+    &middot; &nbsp; <code>EnvelopeTrackerBase</code> uses some deprecated code, especially for 
+                    computing emittance growth from phase spread.  Fix it.
+    </p>
     <h1>Classes that should be destroyed</h1>
+    <br/>
+    &middot; &nbsp; <code>xal.tools.beam.RmsEnvelope</code>
+    <br/>
+    &middot; &nbsp; <code>xal.tools.beam.BunchDescriptor</code>
+    <br/>
+    &middot; &nbsp; <code>xal.tools.beam.ParameterConverter</code>
+    <br/>
+    &middot; &nbsp; <code>xal.tools.beam.TranslationMatrix</code>
     <br/>
     &middot; &nbsp; <code>xal.model.IModelDataSource</code>
     <br/>
