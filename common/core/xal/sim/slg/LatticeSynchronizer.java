@@ -6,7 +6,7 @@
 
 package xal.sim.slg;
 
-import xal.tools.data.IDataAdaptor;
+import xal.tools.data.DataAdaptor;
 import xal.tools.xml.XmlDataAdaptor;
 import xal.tools.xml.XmlWriter;
 import xal.tools.xml.XmlDataAdaptor.WriteException;
@@ -33,11 +33,11 @@ import org.w3c.dom.Document;
  */
 public class LatticeSynchronizer implements Visitor {
 	private XmlDataAdaptor docAdptr; //root adaptor for xml-document
-	private IDataAdaptor latAdptr; //adaptor for lattice tag
-	private IDataAdaptor seqAdptr; //adaptor for sequence tag
-	private IDataAdaptor elmAdptr; //adaptor for element tag
-	private IDataAdaptor parAdptr; //adaptor for parameter tag
-	private IDataAdaptor comAdptr; //adaptor for comment tag
+	private DataAdaptor latAdptr; //adaptor for lattice tag
+	private DataAdaptor seqAdptr; //adaptor for sequence tag
+	private DataAdaptor elmAdptr; //adaptor for element tag
+	private DataAdaptor parAdptr; //adaptor for parameter tag
+	private DataAdaptor comAdptr; //adaptor for comment tag
 	private String paramSrc;
 //	private static ModelTypeLookUp modelType; //look-up for LANL types
 	private static NumberFormat fmt; //number formater

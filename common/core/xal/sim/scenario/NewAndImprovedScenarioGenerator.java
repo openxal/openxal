@@ -9,7 +9,7 @@ import java.util.HashMap;
 import xal.model.ModelException;
 import xal.model.Sector;
 import xal.model.elem.IElectromagnet;
-import xal.model.elem.RfCavity;
+import xal.model.elem.RfCavityStruct;
 import xal.model.source.RfCavityDataSource;
 import xal.model.xml.LatticeXmlParser;
 
@@ -366,7 +366,7 @@ public class NewAndImprovedScenarioGenerator
 			processNewElementMapping(e, xalRfGap);
 		}
 		
-//		private RfCavity cavityFor(RFGap gapSlg) {
+//		private RfCavityStruct cavityFor(RFGap gapSlg) {
 //			
 //			// get AcceleratorNode gap
 //			xal.smf.impl.RfGap gapSmf = 
@@ -379,7 +379,7 @@ public class NewAndImprovedScenarioGenerator
 //			// see if the model element cavity has been created yet
 //			if (mapRfCavity.get(cavitySmf) == null) {
 //				//create model element cavity and add map entry
-//				RfCavity cavityXal = new RfCavity();
+//				RfCavityStruct cavityXal = new RfCavityStruct();
 //				cavityXal.setId(cavitySmf.getId());
 //				System.out.println("Created new cavity for: " + gapSmf.getId());
 //				try {
@@ -391,10 +391,10 @@ public class NewAndImprovedScenarioGenerator
 //				mapRfCavity.put(cavitySmf, cavityXal);
 //				elementContainer.addChild(cavityXal);				
 //			} else {
-//				System.out.println("using existing cavity: " + ((RfCavity)mapRfCavity.get(cavitySmf)).getId() + " for: " + gapSmf.getId());
+//				System.out.println("using existing cavity: " + ((RfCavityStruct)mapRfCavity.get(cavitySmf)).getId() + " for: " + gapSmf.getId());
 //			}
 //			
-//			return (RfCavity) mapRfCavity.get(cavitySmf);
+//			return (RfCavityStruct) mapRfCavity.get(cavitySmf);
 //		}
 
 		private Sector sequenceFor(xal.smf.AcceleratorNode nodeSmf) {
@@ -407,7 +407,7 @@ public class NewAndImprovedScenarioGenerator
 			xal.smf.AcceleratorSeq seqSmf =
 				(xal.smf.AcceleratorSeq) nodeSmf.getParent();
 				
-			// if not an RfCavity sequence parent, add to the root seq
+			// if not an RfCavityStruct sequence parent, add to the root seq
 //			if (! (seqSmf instanceof xal.smf.impl.RfCavity)) {
 				currentSeq = rootSeq;
 				return rootSeq;
@@ -419,7 +419,7 @@ public class NewAndImprovedScenarioGenerator
 //				//create model element sequence and add map entry
 //				Sector seqXal = null;
 ////				if (seqSmf instanceof xal.smf.impl.RfCavity) {
-//					seqXal = new RfCavity();
+//					seqXal = new RfCavityStruct();
 //					System.out.println("Created new cavity for: " + seqSmf.getId());
 //					try {
 //						seqXal.initializeFrom((RfCavityDataSource) seqSmf);
