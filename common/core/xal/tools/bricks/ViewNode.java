@@ -88,8 +88,8 @@ public class ViewNode extends BeanNode<Component> implements ViewNodeContainer {
 	
 	
 	/** generator */
-	static public ViewNode getInstance( final IDataAdaptor adaptor ) {		
-		final IDataAdaptor proxyAdaptor = adaptor.childAdaptor( ViewProxy.DATA_LABEL );
+	static public ViewNode getInstance( final DataAdaptor adaptor ) {		
+		final DataAdaptor proxyAdaptor = adaptor.childAdaptor( ViewProxy.DATA_LABEL );
 		final ViewProxy viewProxy = ViewProxy.getInstance( proxyAdaptor );
 		final String tag = adaptor.stringValue( "tag" );
 		final ViewNode node = new ViewNode( viewProxy, null, tag );
@@ -579,16 +579,16 @@ public class ViewNode extends BeanNode<Component> implements ViewNodeContainer {
 	 * Update the data based on the information provided by the data provider.
      * @param adaptor The adaptor from which to update the data
      */
-    public void update( final IDataAdaptor adaptor ) {		
-		final IDataAdaptor borderAdaptor = adaptor.childAdaptor( BorderNode.DATA_LABEL );
+    public void update( final DataAdaptor adaptor ) {		
+		final DataAdaptor borderAdaptor = adaptor.childAdaptor( BorderNode.DATA_LABEL );
 		if ( borderAdaptor != null ) {
 			final BorderNode borderNode = BorderNode.getInstance( borderAdaptor );
 			setBorderNode( borderNode );
 		}
 		
-		final List<IDataAdaptor> nodeAdaptors = adaptor.childAdaptors( ViewNode.DATA_LABEL );
+		final List<DataAdaptor> nodeAdaptors = adaptor.childAdaptors( ViewNode.DATA_LABEL );
 		final List<BeanNode> nodes = new ArrayList<BeanNode>( nodeAdaptors.size() );
-		for ( final IDataAdaptor nodeAdaptor : nodeAdaptors ) {
+		for ( final DataAdaptor nodeAdaptor : nodeAdaptors ) {
 			nodeAdaptor.setValue( "contextURL", adaptor.stringValue( "contextURL" ) );
 			nodes.add( ViewNode.getInstance( nodeAdaptor ) );
 		}
@@ -608,7 +608,7 @@ public class ViewNode extends BeanNode<Component> implements ViewNodeContainer {
 	 * Write data to the data adaptor for storage.
      * @param adaptor The adaptor to which the receiver's data is written
      */
-    public void write( final IDataAdaptor adaptor ) {
+    public void write( final DataAdaptor adaptor ) {
 		super.write( adaptor );
 		
 		if ( isWindow() ) {

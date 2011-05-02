@@ -9,7 +9,7 @@
 package xal.tools.database;
 
 import xal.tools.xml.XmlDataAdaptor;
-import xal.tools.data.IDataAdaptor;
+import xal.tools.data.DataAdaptor;
 
 import java.io.*;
 import java.net.*;
@@ -163,30 +163,30 @@ public class DBConfiguration {
 	
 	/** load a configuration from the specified URL */
 	static public DBConfiguration getInstance( final URL configURL ) {
-		final IDataAdaptor documentAdaptor = XmlDataAdaptor.adaptorForUrl( configURL, false );
+		final DataAdaptor documentAdaptor = XmlDataAdaptor.adaptorForUrl( configURL, false );
 		return getInstance( documentAdaptor );
 	}
 	
 	
 	/** load a configuration from the specified configuration document adaptor */
-	static public DBConfiguration getInstance( final IDataAdaptor documentAdaptor ) {
-		final IDataAdaptor configAdaptor = documentAdaptor.childAdaptor( "dbconfig" );
+	static public DBConfiguration getInstance( final DataAdaptor documentAdaptor ) {
+		final DataAdaptor configAdaptor = documentAdaptor.childAdaptor( "dbconfig" );
 		
-		final IDataAdaptor dbAdaptorGroup = configAdaptor.childAdaptor( "adaptors" );
+		final DataAdaptor dbAdaptorGroup = configAdaptor.childAdaptor( "adaptors" );
 		final String defaultDBAdaptorName = dbAdaptorGroup.hasAttribute( "default" ) ? dbAdaptorGroup.stringValue( "default" ) : null;
-		final List<IDataAdaptor> dbAdaptors = dbAdaptorGroup.childAdaptors( "adaptor" );
+		final List<DataAdaptor> dbAdaptors = dbAdaptorGroup.childAdaptors( "adaptor" );
 		final Map<String,String> dbAdaptorTable = new HashMap<String,String>();
-		for ( final IDataAdaptor dbAdaptor : dbAdaptors ) {
+		for ( final DataAdaptor dbAdaptor : dbAdaptors ) {
 			final String name = dbAdaptor.stringValue( "name" );
 			final String className = dbAdaptor.stringValue( "class" );
 			dbAdaptorTable.put( name, className );
 		}
 		
-		final IDataAdaptor serverGroup = configAdaptor.childAdaptor( "servers" );
+		final DataAdaptor serverGroup = configAdaptor.childAdaptor( "servers" );
 		final String defaultServerName = serverGroup.hasAttribute( "default" ) ? serverGroup.stringValue( "default" ) : null;
-		final List<IDataAdaptor> serverAdaptors = serverGroup.childAdaptors( "server" );
+		final List<DataAdaptor> serverAdaptors = serverGroup.childAdaptors( "server" );
 		final Map<String,DBServerConfig> serverTable = new HashMap<String,DBServerConfig>();
-		for ( final IDataAdaptor serverAdaptor : serverAdaptors ) {
+		for ( final DataAdaptor serverAdaptor : serverAdaptors ) {
 			final String name = serverAdaptor.stringValue( "name" );
 			final String url = serverAdaptor.stringValue( "url" );
 			final String dbAdaptorName = serverAdaptor.hasAttribute( "adaptor" ) ? serverAdaptor.stringValue( "adaptor" ) : defaultDBAdaptorName;
@@ -195,11 +195,11 @@ public class DBConfiguration {
 			serverTable.put( name, serverConfig );
 		}
 		
-		final IDataAdaptor accountGroup = configAdaptor.childAdaptor( "accounts" );
+		final DataAdaptor accountGroup = configAdaptor.childAdaptor( "accounts" );
 		final String defaultAccountName = accountGroup.hasAttribute( "default" ) ? accountGroup.stringValue( "default" ) : null;
-		final List<IDataAdaptor> accountAdaptors = accountGroup.childAdaptors( "account" );
+		final List<DataAdaptor> accountAdaptors = accountGroup.childAdaptors( "account" );
 		final Map<String,DBAccountConfig> accountTable = new HashMap<String,DBAccountConfig>();
-		for ( final IDataAdaptor accountAdaptor : accountAdaptors ) {
+		for ( final DataAdaptor accountAdaptor : accountAdaptors ) {
 			final String name = accountAdaptor.stringValue( "name" );
 			final String user = accountAdaptor.stringValue( "user" );
 			final String password = accountAdaptor.hasAttribute( "password" ) ? accountAdaptor.stringValue( "password" ) : null;

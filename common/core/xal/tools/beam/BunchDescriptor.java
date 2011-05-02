@@ -3,7 +3,7 @@
  */
 package xal.tools.beam;
 
-import xal.tools.data.IDataAdaptor;
+import xal.tools.data.DataAdaptor;
 import xal.tools.data.DataFormatException;
 import xal.model.IArchive;
 
@@ -95,14 +95,14 @@ public class BunchDescriptor implements IArchive {
     
     /**
      * Initializing Constructor: Create a new <code>BunchDescriptor</code> object
-     * and initialize it with data from the data source behind the <code>IDataAdaptor</code>
+     * and initialize it with data from the data source behind the <code>DataAdaptor</code>
      * interface.
      * 
      * @param   daSource    data source containing initializing data
      * 
      * @throws  DataFormatException parsing error of data source
      */
-    public BunchDescriptor(IDataAdaptor daSource) throws DataFormatException {
+    public BunchDescriptor(DataAdaptor daSource) throws DataFormatException {
         this.load(daSource);
     }
     
@@ -251,12 +251,12 @@ public class BunchDescriptor implements IArchive {
      * 
      *  @param  daSink   data sink represented by <code>DataAdaptor</code> interface
      */
-    public void save(IDataAdaptor daSink) {
+    public void save(DataAdaptor daSink) {
         
-        IDataAdaptor daDist = daSink.createChild(BunchDescriptor.LABEL_DISTRIBUTION);
+        DataAdaptor daDist = daSink.createChild(BunchDescriptor.LABEL_DISTRIBUTION);
         daDist.setValue(BunchDescriptor.ATTR_PROFILE, this.getProfile().val());
         
-        IDataAdaptor daCent = daDist.createChild(BunchDescriptor.LABEL_CENTROID);
+        DataAdaptor daCent = daDist.createChild(BunchDescriptor.LABEL_CENTROID);
         daCent.setValue(BunchDescriptor.ATTR_VALUE, this.getCentroid().toString());
 
         this.getTwiss().save(daSink);
@@ -281,10 +281,10 @@ public class BunchDescriptor implements IArchive {
      * 
      *  @exception DataFormatException     state information in data source is malformatted
      */
-    public void load(IDataAdaptor daSource) throws DataFormatException  {
+    public void load(DataAdaptor daSource) throws DataFormatException  {
         
         // Recover the distribution node and load the profile index
-        IDataAdaptor daDist = daSource.childAdaptor(BunchDescriptor.LABEL_DISTRIBUTION);
+        DataAdaptor daDist = daSource.childAdaptor(BunchDescriptor.LABEL_DISTRIBUTION);
         if (daDist == null)
             throw new DataFormatException("BunchDescriptor#load(): no child element = " + LABEL_DISTRIBUTION);
         if (daDist.hasAttribute(BunchDescriptor.ATTR_PROFILE)) {
@@ -293,7 +293,7 @@ public class BunchDescriptor implements IArchive {
         }
         
         // Recover the centroid node and load it
-        IDataAdaptor daCent = daDist.childAdaptor(BunchDescriptor.LABEL_CENTROID);
+        DataAdaptor daCent = daDist.childAdaptor(BunchDescriptor.LABEL_CENTROID);
         if (daCent == null)
             throw new DataFormatException("BunchDescriptor#load(): no child element = " + LABEL_CENTROID);
         if (daCent.hasAttribute(BunchDescriptor.ATTR_VALUE))    {

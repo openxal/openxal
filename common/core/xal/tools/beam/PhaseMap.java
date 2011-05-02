@@ -6,7 +6,7 @@
 
 package xal.tools.beam;
 
-import xal.tools.data.IDataAdaptor;
+import xal.tools.data.DataAdaptor;
 import xal.tools.data.DataFormatException;
 
 import xal.model.IArchive;
@@ -176,13 +176,13 @@ public class PhaseMap implements IArchive {
      * 
      * @param daptArchive   interface to data sink 
      * 
-     * @see xal.model.IArchive#save(xal.tools.data.IDataAdaptor)
+     * @see xal.model.IArchive#save(xal.tools.data.DataAdaptor)
      */
-    public void save(IDataAdaptor daptArchive) {
-        IDataAdaptor daptZero = daptArchive.createChild(PhaseMap.LABEL_ZERO);
+    public void save(DataAdaptor daptArchive) {
+        DataAdaptor daptZero = daptArchive.createChild(PhaseMap.LABEL_ZERO);
         this.getZeroOrder().save(daptZero);
         
-        IDataAdaptor daptOne = daptArchive.createChild(PhaseMap.LABEL_ONE);  
+        DataAdaptor daptOne = daptArchive.createChild(PhaseMap.LABEL_ONE);  
         this.getFirstOrder().save(daptOne);      
     }
 
@@ -195,16 +195,16 @@ public class PhaseMap implements IArchive {
      * @throws DataFormatException      malformed data
      * @throws IllegalArgumentException wrong number of string tokens
      * 
-     * @see xal.model.IArchive#load(xal.tools.data.IDataAdaptor)
+     * @see xal.model.IArchive#load(xal.tools.data.DataAdaptor)
      */
-    public void load(IDataAdaptor daptArchive) 
+    public void load(DataAdaptor daptArchive) 
         throws DataFormatException, IllegalArgumentException 
     {
-        IDataAdaptor daptZero = daptArchive.childAdaptor(PhaseMap.LABEL_ZERO);
+        DataAdaptor daptZero = daptArchive.childAdaptor(PhaseMap.LABEL_ZERO);
         if (daptZero != null)
             this.getZeroOrder().load(daptZero);
             
-        IDataAdaptor daptOne = daptArchive.childAdaptor(PhaseMap.LABEL_ONE);
+        DataAdaptor daptOne = daptArchive.childAdaptor(PhaseMap.LABEL_ONE);
         if (daptOne != null)
             this.getFirstOrder().load(daptOne);
     }

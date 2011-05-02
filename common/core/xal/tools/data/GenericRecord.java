@@ -216,7 +216,7 @@ public class GenericRecord implements KeyedRecord, DataListener {
      * Update the data based on the information provided by the data provider.
      * @param adaptor The adaptor from which to update the data
      */
-    public void update( final IDataAdaptor adaptor ) throws ParseException {
+    public void update( final DataAdaptor adaptor ) throws ParseException {
         Collection attributes = table.attributes();
         Iterator attributeIter = attributes.iterator();
         
@@ -292,7 +292,7 @@ public class GenericRecord implements KeyedRecord, DataListener {
      * Write data to the data adaptor for storage.
      * @param adaptor The adaptor to which the receiver's data is written
      */
-    public void write( final IDataAdaptor adaptor ) {
+    public void write( final DataAdaptor adaptor ) {
         Set keys = keys();
         Iterator keyIter = keys.iterator();
         

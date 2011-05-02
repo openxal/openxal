@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import xal.tools.data.IDataAdaptor;
+import xal.tools.data.DataAdaptor;
 import xal.tools.database.ConnectionDictionary;
 import xal.tools.database.DatabaseAdaptor;
 
@@ -42,7 +42,7 @@ class SnapshotPublisher {
 	
 	
 	/** Primary Constructor */
-	protected SnapshotPublisher( final IDataAdaptor adaptor, final PersistentStore persistentStore, final ConnectionDictionary connectionDictionary ) {
+	protected SnapshotPublisher( final DataAdaptor adaptor, final PersistentStore persistentStore, final ConnectionDictionary connectionDictionary ) {
 		PERSISTENT_STORE = persistentStore;
 		
 		setConnectionDictionary( connectionDictionary );

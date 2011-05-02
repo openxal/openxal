@@ -287,15 +287,15 @@ abstract public class BeanNode<T> extends Brick implements DataListener {
 	 * Update the data based on the information provided by the data provider.
      * @param adaptor The adaptor from which to update the data
      */
-    public void update( final IDataAdaptor adaptor ) {
+    public void update( final DataAdaptor adaptor ) {
 		if ( adaptor.hasAttribute( "customBeanClass" ) ) {
 			setCustomBeanClassName( adaptor.stringValue( "customBeanClass" ) );
 		}
 		
 		final PropertyValueEditorManager editorManager = PropertyValueEditorManager.getDefaultManager();
 		final Map<String,PropertyDescriptor> descriptorTable = getProperyDescriptorTable();
-		final List<IDataAdaptor> beanAdaptors = adaptor.childAdaptors( BEAN_DATA_LABEL );
-		for ( final IDataAdaptor beanAdaptor : beanAdaptors ) {
+		final List<DataAdaptor> beanAdaptors = adaptor.childAdaptors( BEAN_DATA_LABEL );
+		for ( final DataAdaptor beanAdaptor : beanAdaptors ) {
 			try {
 				beanAdaptor.setValue( "contextURL", adaptor.stringValue( "contextURL" ) );
 				final String name = beanAdaptor.stringValue( "name" );
@@ -316,7 +316,7 @@ abstract public class BeanNode<T> extends Brick implements DataListener {
 		* Write data to the data adaptor for storage.
      * @param adaptor The adaptor to which the receiver's data is written
      */
-    public void write( final IDataAdaptor adaptor ) {
+    public void write( final DataAdaptor adaptor ) {
 		adaptor.setValue( "tag", _tag );
 		
 		if ( _customBeanClassName != null ) {
@@ -350,7 +350,7 @@ abstract public class BeanNode<T> extends Brick implements DataListener {
 			 * Update the data based on the information provided by the data provider.
 			 * @param adaptor The adaptor from which to update the data
 			 */
-			public void update( final IDataAdaptor adaptor ) {
+			public void update( final DataAdaptor adaptor ) {
 			}
 			
 			
@@ -358,7 +358,7 @@ abstract public class BeanNode<T> extends Brick implements DataListener {
 			 * Write data to the data adaptor for storage.
 			 * @param adaptor The adaptor to which the receiver's data is written
 			 */
-			public void write( final IDataAdaptor adaptor ) {
+			public void write( final DataAdaptor adaptor ) {
 				final PropertyValueEditor editor = PropertyValueEditorManager.getDefaultManager().getEditor( value.getClass() );
 				editor.writeValue( name, value, adaptor );
 			}			

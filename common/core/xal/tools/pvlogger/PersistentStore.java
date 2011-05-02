@@ -40,7 +40,7 @@ class PersistentStore {
 	
 	
 	/** Constructor */
-	public PersistentStore( final IDataAdaptor storeAdaptor ) {
+	public PersistentStore( final DataAdaptor storeAdaptor ) {
 		final Map<String,DBTableConfiguration> tableConfigurations = loadTableConfigurations( storeAdaptor );
 		SNAPSHOT_GROUP_CHANNEL_TABLE = new SnapshotGroupChannelTable( tableConfigurations.get( "SnapshotGroupChannel" ) );
 		SNAPSHOT_GROUP_TABLE = new SnapshotGroupTable( tableConfigurations.get( "SnapshotGroup" ), SNAPSHOT_GROUP_CHANNEL_TABLE );
@@ -53,10 +53,10 @@ class PersistentStore {
 	
 	
 	/** get the table configurations from the configuration */
-	static private Map<String,DBTableConfiguration> loadTableConfigurations( final IDataAdaptor storeAdaptor ) {
-		final List<IDataAdaptor> tableAdaptors = storeAdaptor.childAdaptors( "dbtable" );
+	static private Map<String,DBTableConfiguration> loadTableConfigurations( final DataAdaptor storeAdaptor ) {
+		final List<DataAdaptor> tableAdaptors = storeAdaptor.childAdaptors( "dbtable" );
 		final Map<String,DBTableConfiguration> tableConfigurations = new HashMap<String,DBTableConfiguration>(2);
-		for ( final IDataAdaptor tableAdaptor : tableAdaptors ) {
+		for ( final DataAdaptor tableAdaptor : tableAdaptors ) {
 			final String entity = tableAdaptor.stringValue( "entity" );
 			tableConfigurations.put( entity, new DBTableConfiguration( tableAdaptor ) );
 		}
@@ -66,12 +66,12 @@ class PersistentStore {
 	
 	
 	/** load the machine snapshot tables from the configuration */
-	static private Map<String,ChannelSnapshotTable> loadChannelSnapshotTables( final IDataAdaptor storeAdaptor ) {
+	static private Map<String,ChannelSnapshotTable> loadChannelSnapshotTables( final DataAdaptor storeAdaptor ) {
 		final Map<String,ChannelSnapshotTable> channelSnapshotTables = new HashMap<String,ChannelSnapshotTable>();
-		final List<IDataAdaptor> serviceAdaptors = storeAdaptor.childAdaptors( "service" );
-		for ( final IDataAdaptor serviceAdaptor : serviceAdaptors ) {
+		final List<DataAdaptor> serviceAdaptors = storeAdaptor.childAdaptors( "service" );
+		for ( final DataAdaptor serviceAdaptor : serviceAdaptors ) {
 			final String serviceID = serviceAdaptor.stringValue( "name" );
-			final IDataAdaptor tableAdaptor = serviceAdaptor.childAdaptor( "dbtable" );
+			final DataAdaptor tableAdaptor = serviceAdaptor.childAdaptor( "dbtable" );
 			final ChannelSnapshotTable channelSnapshotTable = new ChannelSnapshotTable( new DBTableConfiguration( tableAdaptor ) );
 			channelSnapshotTables.put( serviceID, channelSnapshotTable );
 		}

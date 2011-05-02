@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Set;
 import java.net.URL;
 
-import xal.tools.data.IDataAdaptor;
+import xal.tools.data.DataAdaptor;
 import xal.tools.xml.XmlDataAdaptor;
 
 
@@ -30,9 +30,9 @@ public class LoggerConfiguration {
 	/** Constructor */
 	public LoggerConfiguration( final Connection connection ) {
 		final URL configurationURL = getClass().getResource( "resources/configuration.xml" );
-		final IDataAdaptor configurationAdaptor = XmlDataAdaptor.adaptorForUrl( configurationURL, false ).childAdaptor( "Configuration" );
+		final DataAdaptor configurationAdaptor = XmlDataAdaptor.adaptorForUrl( configurationURL, false ).childAdaptor( "Configuration" );
 		
-		final IDataAdaptor persistentStoreAdaptor = configurationAdaptor.childAdaptor( "persistentStore" );
+		final DataAdaptor persistentStoreAdaptor = configurationAdaptor.childAdaptor( "persistentStore" );
 		PERSISTENT_STORE = new PersistentStore( persistentStoreAdaptor );
 		
 		setConnection( connection );

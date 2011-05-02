@@ -41,14 +41,14 @@ public class PropertyValueEditorFactory {
 			
 			
 			/** write to a data adaptor */
-			public void writeValue( final String name, final Object value, final IDataAdaptor adaptor ) {
+			public void writeValue( final String name, final Object value, final DataAdaptor adaptor ) {
 				super.writeValue( name, value, adaptor );
 				adaptor.setValue( "value", value.toString() );
 			}
 			
 			
 			/** read from a data adaptor */
-			public String readValue( final IDataAdaptor adaptor ) {
+			public String readValue( final DataAdaptor adaptor ) {
 				return adaptor.stringValue( "value" );
 			}
 		};
@@ -66,14 +66,14 @@ public class PropertyValueEditorFactory {
 			
 			
 			/** write to a data adaptor */
-			public void writeValue( final String name, final Object value, final IDataAdaptor adaptor ) {
+			public void writeValue( final String name, final Object value, final DataAdaptor adaptor ) {
 				super.writeValue( name, value, adaptor );
 				adaptor.setValue( "value", (Double)value );
 			}
 			
 			
 			/** read from a data adaptor */
-			public Double readValue( final IDataAdaptor adaptor ) {
+			public Double readValue( final DataAdaptor adaptor ) {
 				return adaptor.doubleValue( "value" );
 			}
 		};
@@ -91,14 +91,14 @@ public class PropertyValueEditorFactory {
 			
 			
 			/** write to a data adaptor */
-			public void writeValue( final String name, final Object value, final IDataAdaptor adaptor ) {
+			public void writeValue( final String name, final Object value, final DataAdaptor adaptor ) {
 				super.writeValue( name, value, adaptor );
 				adaptor.setValue( "value", (Integer)value );
 			}
 			
 			
 			/** read from a data adaptor */
-			public Integer readValue( final IDataAdaptor adaptor ) {
+			public Integer readValue( final DataAdaptor adaptor ) {
 				return adaptor.intValue( "value" );
 			}
 		};
@@ -121,7 +121,7 @@ public class PropertyValueEditorFactory {
 			
 			
 			/** read from a data adaptor */
-			public String readValue( final IDataAdaptor adaptor ) {
+			public String readValue( final DataAdaptor adaptor ) {
 				return null;
 			}
 		};
@@ -162,14 +162,14 @@ public class PropertyValueEditorFactory {
 			
 			
 			/** write to a data adaptor */
-			public void writeValue( final String name, final Object value, final IDataAdaptor adaptor ) {
+			public void writeValue( final String name, final Object value, final DataAdaptor adaptor ) {
 				super.writeValue( name, value, adaptor );
 				adaptor.setValue( "value", (Boolean)value );
 			}
 			
 			
 			/** read from a data adaptor */
-			public Boolean readValue( final IDataAdaptor adaptor ) {
+			public Boolean readValue( final DataAdaptor adaptor ) {
 				return adaptor.booleanValue( "value" );
 			}
 		};
@@ -223,7 +223,7 @@ public class PropertyValueEditorFactory {
 			
 			
 			/** write to a data adaptor */
-			public void writeValue( final String name, final Object rawValue, final IDataAdaptor adaptor ) {
+			public void writeValue( final String name, final Object rawValue, final DataAdaptor adaptor ) {
 				final Font value = (Font)rawValue;
 				super.writeValue( name, value, adaptor );
 				adaptor.setValue( "fontName", value.getName() );
@@ -233,7 +233,7 @@ public class PropertyValueEditorFactory {
 			
 			
 			/** read from a data adaptor */
-			public Font readValue( final IDataAdaptor adaptor ) {
+			public Font readValue( final DataAdaptor adaptor ) {
 				final String fontName = adaptor.stringValue( "fontName" );
 				final int style = adaptor.intValue( "style" );
 				final int size = adaptor.intValue( "size" );
@@ -283,7 +283,7 @@ public class PropertyValueEditorFactory {
 			
 			
 			/** write to a data adaptor */
-			public void writeValue( final String name, final Object rawValue, final IDataAdaptor adaptor ) {
+			public void writeValue( final String name, final Object rawValue, final DataAdaptor adaptor ) {
 				final Dimension value = (Dimension)rawValue;
 				super.writeValue( name, value, adaptor );
 				adaptor.setValue( "width", value.width );
@@ -292,7 +292,7 @@ public class PropertyValueEditorFactory {
 			
 			
 			/** read from a data adaptor */
-			public Dimension readValue( final IDataAdaptor adaptor ) {
+			public Dimension readValue( final DataAdaptor adaptor ) {
 				final int width = adaptor.intValue( "width" );
 				final int height = adaptor.intValue( "height" );
 				return new Dimension( width, height );
@@ -343,7 +343,7 @@ public class PropertyValueEditorFactory {
 			
 			
 			/** write to a data adaptor */
-			public void writeValue( final String name, final Object rawValue, final IDataAdaptor adaptor ) {
+			public void writeValue( final String name, final Object rawValue, final DataAdaptor adaptor ) {
 				final Rectangle value = (Rectangle)rawValue;
 				super.writeValue( name, value, adaptor );
 				adaptor.setValue( "x", value.x );
@@ -354,7 +354,7 @@ public class PropertyValueEditorFactory {
 			
 			
 			/** read from a data adaptor */
-			public Rectangle readValue( final IDataAdaptor adaptor ) {
+			public Rectangle readValue( final DataAdaptor adaptor ) {
 				final int x = adaptor.intValue( "x" );
 				final int y = adaptor.intValue( "y" );
 				final int width = adaptor.intValue( "width" );
@@ -407,7 +407,7 @@ public class PropertyValueEditorFactory {
 			
 			
 			/** write to a data adaptor */
-			public void writeValue( final String name, final Object rawValue, final IDataAdaptor adaptor ) {
+			public void writeValue( final String name, final Object rawValue, final DataAdaptor adaptor ) {
 				final Insets value = (Insets)rawValue;
 				super.writeValue( name, value, adaptor );
 				adaptor.setValue( "top", value.top );
@@ -418,7 +418,7 @@ public class PropertyValueEditorFactory {
 			
 			
 			/** read from a data adaptor */
-			public Insets readValue( final IDataAdaptor adaptor ) {
+			public Insets readValue( final DataAdaptor adaptor ) {
 				final int top = adaptor.intValue( "top" );
 				final int left = adaptor.intValue( "left" );
 				final int bottom = adaptor.intValue( "bottom" );
@@ -478,7 +478,7 @@ public class PropertyValueEditorFactory {
 			
 			
 			/** write to a data adaptor */
-			public void writeValue( final String name, final Object rawValue, final IDataAdaptor adaptor ) {
+			public void writeValue( final String name, final Object rawValue, final DataAdaptor adaptor ) {
 				final IconResource value = (IconResource)rawValue;
 				super.writeValue( name, value, adaptor );
 				adaptor.setValue( "group", value.getGroup() );
@@ -487,7 +487,7 @@ public class PropertyValueEditorFactory {
 			
 			
 			/** read from a data adaptor */
-			public Icon readValue( final IDataAdaptor adaptor ) {
+			public Icon readValue( final DataAdaptor adaptor ) {
 				final String group = adaptor.stringValue( "group" );
 				final String iconName = adaptor.stringValue( "iconName" );
 				final String contextURLSpec = adaptor.stringValue( "contextURL" );
@@ -570,7 +570,7 @@ class PropertyValueColorEditor extends PropertyValueEditor<Color> {
 	
 	
 	/** write to a data adaptor */
-	public void writeValue( final String name, final Object rawValue, final IDataAdaptor adaptor ) {
+	public void writeValue( final String name, final Object rawValue, final DataAdaptor adaptor ) {
 		final Color value = (Color)rawValue;
 		super.writeValue( name, value, adaptor );
 		adaptor.setValue( "red", value.getRed() );
@@ -581,7 +581,7 @@ class PropertyValueColorEditor extends PropertyValueEditor<Color> {
 	
 	
 	/** read from a data adaptor */
-	public Color readValue( final IDataAdaptor adaptor ) {
+	public Color readValue( final DataAdaptor adaptor ) {
 		final int red = adaptor.intValue( "red" );
 		final int green = adaptor.intValue( "green" );
 		final int blue = adaptor.intValue( "blue" );

@@ -41,13 +41,13 @@ abstract public class PropertyValueEditor<T> {
 	
 	
 	/** write to a data adaptor */
-	public void writeValue( final String name, final Object value, final IDataAdaptor adaptor ) {
+	public void writeValue( final String name, final Object value, final DataAdaptor adaptor ) {
 		adaptor.setValue( "name", name );
 	}
 	
 	
 	/** write to a data adaptor */
-	abstract public T readValue( final IDataAdaptor adaptor );
+	abstract public T readValue( final DataAdaptor adaptor );
 	
 	
 	/** Determine if the component supports editing */

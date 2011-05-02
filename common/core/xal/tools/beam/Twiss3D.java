@@ -6,7 +6,7 @@
  */
 package xal.tools.beam;
 
-import xal.tools.data.IDataAdaptor;
+import xal.tools.data.DataAdaptor;
 import xal.tools.data.DataFormatException;
 import xal.model.IArchive;
 
@@ -92,14 +92,14 @@ public class Twiss3D implements IArchive {
     
     /**
      * Initializing Constructor: Create a new <code>Twiss3D</code> object
-     * and initialize it with data from the data source behind the <code>IDataAdaptor</code>
+     * and initialize it with data from the data source behind the <code>DataAdaptor</code>
      * interface.
      * 
      * @param   daSource    data source containing initializing data
      * 
      * @throws  DataFormatException parsing error of data source
      */
-    public Twiss3D(IDataAdaptor daSource) throws DataFormatException {
+    public Twiss3D(DataAdaptor daSource) throws DataFormatException {
         this.load(daSource);
     }
     
@@ -171,16 +171,16 @@ public class Twiss3D implements IArchive {
     
     
     /**
-     * Save the state of this object to the data sink behind the <code>IDataAdaptor</code>
+     * Save the state of this object to the data sink behind the <code>DataAdaptor</code>
      * interface.
      * 
-     * @param  daSink   data sink represented by <code>IDataAdaptor</code> interface
+     * @param  daSink   data sink represented by <code>DataAdaptor</code> interface
      * 
-     * @see xal.model.IArchive#save(xal.tools.data.IDataAdaptor)
+     * @see xal.model.IArchive#save(xal.tools.data.DataAdaptor)
      */
-    public void save(IDataAdaptor daSink) {
+    public void save(DataAdaptor daSink) {
         
-        IDataAdaptor daTwiss = daSink.createChild(Twiss3D.LABEL_TWISS);
+        DataAdaptor daTwiss = daSink.createChild(Twiss3D.LABEL_TWISS);
         daTwiss.setValue(Twiss3D.ATTR_ALPHA_X, this.getTwiss(SpaceIndex3D.X).getAlpha());
         daTwiss.setValue(Twiss3D.ATTR_BETA_X, this.getTwiss(SpaceIndex3D.X).getBeta());
         daTwiss.setValue(Twiss3D.ATTR_EMIT_X, this.getTwiss(SpaceIndex3D.X).getEmittance());
@@ -196,16 +196,16 @@ public class Twiss3D implements IArchive {
      * Recover the state values particular to <code>BunchDistribution</code> objects 
      * from the data source.
      *
-     * @param  daSource   data source represented by a <code>IDataAdaptor</code> interface
+     * @param  daSource   data source represented by a <code>DataAdaptor</code> interface
      * 
      * @exception DataFormatException     state information in data source is malformatted
      *  
-     * @see xal.model.IArchive#load(xal.tools.data.IDataAdaptor)
+     * @see xal.model.IArchive#load(xal.tools.data.DataAdaptor)
      */
-    public void load(IDataAdaptor daSource) throws DataFormatException  {
+    public void load(DataAdaptor daSource) throws DataFormatException  {
         
         // Recover the Twiss parameter node and load them
-        IDataAdaptor daTwiss = daSource.childAdaptor(Twiss3D.LABEL_TWISS); 
+        DataAdaptor daTwiss = daSource.childAdaptor(Twiss3D.LABEL_TWISS); 
         if (daTwiss == null)
             throw new DataFormatException("Twiss3D#load(): no child element = " + LABEL_TWISS);
         if (daTwiss.hasAttribute(Twiss3D.ATTR_ALPHA_X)) {

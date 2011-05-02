@@ -12,7 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import xal.tools.data.IDataAdaptor;
+import xal.tools.data.DataAdaptor;
 
 
 
@@ -32,7 +32,7 @@ class DBTableConfiguration {
 	
 	
 	/** Constructor */
-	protected DBTableConfiguration( final IDataAdaptor tableAdaptor ) {
+	protected DBTableConfiguration( final DataAdaptor tableAdaptor ) {
 		TABLE_NAME = tableAdaptor.stringValue( "name" );
 		COLUMN_ATTRIBUTE_MAP = getColumnAttributeMap( tableAdaptor );
 		QUERY_MAP = getQueryMap( tableAdaptor );
@@ -41,7 +41,7 @@ class DBTableConfiguration {
 	
 	
 	/** get a new instance of the database table configuraton */
-	static public DBTableConfiguration getInstance( final IDataAdaptor adaptor ) {
+	static public DBTableConfiguration getInstance( final DataAdaptor adaptor ) {
 		return new DBTableConfiguration( adaptor );
 	}
 	
@@ -90,11 +90,11 @@ class DBTableConfiguration {
 	 * @param tableAdaptor the adaptor for the database table
 	 * @return map of columns keyed by attributes
 	 */
-	static protected Map<String,String> getColumnAttributeMap( final IDataAdaptor tableAdaptor ) {
-		final List<IDataAdaptor> columnAdaptors = tableAdaptor.childAdaptors( "column" );
+	static protected Map<String,String> getColumnAttributeMap( final DataAdaptor tableAdaptor ) {
+		final List<DataAdaptor> columnAdaptors = tableAdaptor.childAdaptors( "column" );
 		final Map<String,String> map = new HashMap<String,String>( columnAdaptors.size() );
 		
-		for ( final IDataAdaptor columnAdaptor : columnAdaptors ) {
+		for ( final DataAdaptor columnAdaptor : columnAdaptors ) {
 			map.put( columnAdaptor.stringValue( "attribute" ), columnAdaptor.stringValue( "column" ) );
 		}
 		
@@ -107,11 +107,11 @@ class DBTableConfiguration {
 	 * @param tableAdaptor the adaptor for the database table
 	 * @return map of SQL keyed by query name
 	 */
-	static protected Map<String,String> getQueryMap( final IDataAdaptor tableAdaptor ) {
-		final List<IDataAdaptor> queryAdaptors = tableAdaptor.childAdaptors( "query" );
+	static protected Map<String,String> getQueryMap( final DataAdaptor tableAdaptor ) {
+		final List<DataAdaptor> queryAdaptors = tableAdaptor.childAdaptors( "query" );
 		final Map<String,String> map = new HashMap<String,String>( queryAdaptors.size() );
 		
-		for ( final IDataAdaptor queryAdaptor : queryAdaptors ) {
+		for ( final DataAdaptor queryAdaptor : queryAdaptors ) {
 			map.put( queryAdaptor.stringValue( "name" ), queryAdaptor.stringValue( "sql" ) );
 		}
 		
@@ -124,11 +124,11 @@ class DBTableConfiguration {
 	 * @param tableAdaptor the adaptor for the database table
 	 * @return map of database data types keyed by name
 	 */
-	static protected Map<String,String> getDataTypes( final IDataAdaptor tableAdaptor ) {
-		final List<IDataAdaptor> typeAdaptors = tableAdaptor.childAdaptors( "datatype" );
+	static protected Map<String,String> getDataTypes( final DataAdaptor tableAdaptor ) {
+		final List<DataAdaptor> typeAdaptors = tableAdaptor.childAdaptors( "datatype" );
 		final Map<String,String> map = new HashMap<String,String>( typeAdaptors.size() );
 		
-		for ( final IDataAdaptor typeAdaptor : typeAdaptors ) {
+		for ( final DataAdaptor typeAdaptor : typeAdaptors ) {
 			map.put( typeAdaptor.stringValue( "name" ), typeAdaptor.stringValue( "type" ) );
 		}
 		

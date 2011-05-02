@@ -19,7 +19,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
-import xal.tools.data.IDataAdaptor;
+import xal.tools.data.DataAdaptor;
 import xal.tools.database.ConnectionDictionary;
 import xal.tools.xml.XmlDataAdaptor;
 
@@ -47,12 +47,12 @@ public class PVLogger {
 		LOGGER_SESSIONS = new HashMap<String,LoggerSession>();
 
 		final URL configurationURL = getClass().getResource( "resources/configuration.xml" );
-		final IDataAdaptor configurationAdaptor = XmlDataAdaptor.adaptorForUrl( configurationURL, false ).childAdaptor( "Configuration" );
+		final DataAdaptor configurationAdaptor = XmlDataAdaptor.adaptorForUrl( configurationURL, false ).childAdaptor( "Configuration" );
 
-		final IDataAdaptor persistentStoreAdaptor = configurationAdaptor.childAdaptor( "persistentStore" );
+		final DataAdaptor persistentStoreAdaptor = configurationAdaptor.childAdaptor( "persistentStore" );
 		PERSISTENT_STORE = new PersistentStore( persistentStoreAdaptor );
 
-		final IDataAdaptor publisherAdaptor = configurationAdaptor.childAdaptor( "publisher" );
+		final DataAdaptor publisherAdaptor = configurationAdaptor.childAdaptor( "publisher" );
 		SNAPSHOT_PUBLISHER = new SnapshotPublisher( publisherAdaptor, PERSISTENT_STORE, connectionDictionary );
 
 		setConnectionDictionary( connectionDictionary );

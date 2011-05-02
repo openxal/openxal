@@ -40,7 +40,7 @@ abstract public class ViewProxy<T extends Component> extends BeanProxy<T> {
 	
 	
 	/** generator */
-	static public ViewProxy getInstance( final IDataAdaptor adaptor ) {
+	static public ViewProxy getInstance( final DataAdaptor adaptor ) {
 		return ViewProxyFactory.getViewProxy( adaptor.stringValue( "type" ) );
 	}
 	

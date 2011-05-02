@@ -1,5 +1,5 @@
 /*
- * IDataAdaptor.java
+ * DataAdaptor.java
  *
  * Created on February 11, 2002, 2:26 PM
  */
@@ -11,22 +11,50 @@ import java.util.List;
 
 
 /**
- * IDataAdaptor is a generic interface to an external data source.  A specific
- * data adaptor (e.g. XmlDataAdaptor) will implement this interface to 
+ * <p>
+ * <code>DataAdaptor</code> is a generic interface to an external data source.  
+ * A specific data adaptor (e.g. <code>XmlDataAdaptor</code>) will implement this interface to 
  * advertise its data in a generic way for reading and writing to a specific
- * data source (e.g. XML file).  IDataAdaptor is intended to be a generic
- * wrapper for specific data adaptors.  Data adaptors do not have any knowledge
+ * data source (e.g. XML file).  <code>DataAdaptor</code> is intended to be a generic
+ * wrapper for specific data sources and sinks.  Data adaptors do not have any knowledge
  * about the objects that read and write data.  Such data receivers and writers
- * must implement the DataListener interface.
- *
- * A IDataAdaptor instance is generated for each node in a hierarchical data
+ * should implement the <code>{@link DataListener}</code> interface (or the 
+ * <code>{@link xal.model.IArchive}</code> interface for model persistence).
+ * </p>
+ * <p>
+ * A <code>DataAdaptor</code> instance is generated for each node in a hierarchical data
  * tree and advertises information about the node and provides accessors
  * to its children.  Information about a node is in the form of attributes
- * which represent key/value pairs of primitive data.
- *
- * @author  tap
+ * which represent key/value pairs of primitive data.  The node also contains
+ * a text string which represents the data node "content".
+ * </p>
+ * <p>
+ * The general structure of the data should be tree based, analogous to that of
+ * the XML DOM structure.  Data is distributed by nodes in a tree, each node having
+ * a data label (see <code>{@link DataAdaptor#name()}</code>), attributes, and possibly some 
+ * type of string content (see <code>DataAdaptor#getContent()</code> - <em>currently unimplimented</em>).
+ * There are potentially child data nodes of each node (see <code>{@link DataAdaptor#createChild(String)}</code> 
+ * and <code>{@link DataAdaptor#childAdaptor(String)}</code>).  
+ * <p>
+ * </p>
+ * Any object that is able to read and write from <code>DataAdaptor</code> interfaces
+ * can implement the <code>DataListener</code> interface.  The idea is that such an 
+ * object should know, itself, how to load and save data from this interface, and expect
+ * to receive the appropriate <code>DataAdaptor</code> object for doing so.  Finally, 
+ * note that the <code>update(DataAdaptor)</code> and <code>write(DataAdaptor)</code> 
+ * methods of the 
+ * <code>IDataAware</code> interface expect <code>IDataAdaptors</code> in different
+ * positions on the data tree.  This must be the case for proper logistical implementation.
+ * The <code>update()</code> method expects to be synchronized to the current data node while
+ * the <code>write()</code> method expects to be given the parent of the data node it is to
+ * populate.  See the documentation for the <code>{@link DataListener}</code> interface for more
+ * information.
+ * 
+ * @author  Tom Pelaia
+ * @author  Christopher K. Allen
+ * 
  */
-public interface IDataAdaptor {
+public interface DataAdaptor {
     /** name for the particular node in the data tree */
     public String name();
     
@@ -100,19 +128,19 @@ public interface IDataAdaptor {
     
     
     /** return all child adaptors */
-    public List<IDataAdaptor> childAdaptors();
+    public List<DataAdaptor> childAdaptors();
     
     
     /** return all child adaptors of the specified node name */
-    public List<IDataAdaptor> childAdaptors( String label );
+    public List<DataAdaptor> childAdaptors( String label );
     
     
     /** Convenience method to get a single child adaptor when only one is expected */
-    public IDataAdaptor childAdaptor( String label );
+    public DataAdaptor childAdaptor( String label );
     
     
     /** Create an new empty child adaptor with label */
-    public IDataAdaptor createChild( String label );
+    public DataAdaptor createChild( String label );
     
     
     /** write the listener as a new node and append it to the data tree */

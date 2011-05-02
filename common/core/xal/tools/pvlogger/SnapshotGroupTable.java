@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import xal.tools.data.IDataAdaptor;
+import xal.tools.data.DataAdaptor;
 
 
 
@@ -45,7 +45,7 @@ class SnapshotGroupTable {
 	
 	
 	/** Constructor */
-	public SnapshotGroupTable( final IDataAdaptor tableAdaptor, final SnapshotGroupChannelTable groupChannelTable ) {
+	public SnapshotGroupTable( final DataAdaptor tableAdaptor, final SnapshotGroupChannelTable groupChannelTable ) {
 		this( DBTableConfiguration.getInstance( tableAdaptor ), groupChannelTable );
 	}
 	

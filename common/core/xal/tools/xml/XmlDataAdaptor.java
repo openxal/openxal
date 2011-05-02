@@ -18,11 +18,11 @@ import xal.tools.StringJoiner;
 
 
 /**
- * XmlDataAdaptor is a IDataAdaptor that specifically supports (reading/writing)
- * (from/to) XML.  While the IDataAdaptor provides methods for getting and 
+ * XmlDataAdaptor is a DataAdaptor that specifically supports (reading/writing)
+ * (from/to) XML.  While the DataAdaptor provides methods for getting and 
  * setting properties of nodes and getting and setting nodes in a tree of 
  * data, XmlDataAdaptor uses an XML backing store for the data.  In particular, 
- * you can use the methods of IDataAdaptor for all data manipulation.  You need to 
+ * you can use the methods of DataAdaptor for all data manipulation.  You need to 
  * specifically use XmlDataAdaptor when creating a new document, writing an XML 
  * document to a file or loading an XML document from a file.
  *
@@ -31,7 +31,7 @@ import xal.tools.StringJoiner;
  *
  * You can populate the document by adding child nodes.  You can only add a single node to the 
  * top document node, but otherwise you can add and nest as many nodes as needed. Each 
- * such node is returned as a IDataAdaptor.  For example, to add a node to the top 
+ * such node is returned as a DataAdaptor.  For example, to add a node to the top 
  * document node, invoke:
  * <code> childAdaptor = document_adaptor.createChild("nodeName") </code>
  *
@@ -53,7 +53,7 @@ import xal.tools.StringJoiner;
  * You can fetch named child nodes from a parent node.  Some examples are:
  * <code> List xAdaptors = parentAdaptor.childAdaptors("X") </code>
  * <code> List allAdaptors = parentAdaptor.childAdaptors() </code>
- * <code> IDataAdaptor yAdaptor = parentAdaptor.childAdaptor("Y") </code>
+ * <code> DataAdaptor yAdaptor = parentAdaptor.childAdaptor("Y") </code>
  * 
  * You can test if a node defines an attribute:
  * <code> boolean status = adaptor.hasAttribute("attribute"); </code>
@@ -61,12 +61,12 @@ import xal.tools.StringJoiner;
  * You can read the value of an attribute:
  * <code> double value = adaptor.doubleValue("attr2"); </code>
  * 
- * There are several more methods available for IDataAdaptor and XmlDataAdaptor, but 
+ * There are several more methods available for DataAdaptor and XmlDataAdaptor, but 
  * the examples listed above should provide an overview and foundation.
  *
  * @author  tap
  */
-public class XmlDataAdaptor implements IDataAdaptor {
+public class XmlDataAdaptor implements DataAdaptor {
     private Document document;  // root document
     private Node mainNode;      // could be a document or an element
     private NodeList nodeList;  // child nodes
@@ -377,8 +377,8 @@ public class XmlDataAdaptor implements IDataAdaptor {
      * Create a list of child adaptors (one adaptor for each non-null child node).
 	 * @return a list of child adaptors
      */
-    public List<IDataAdaptor> childAdaptors() {
-        List<IDataAdaptor> childAdaptors = new ArrayList<IDataAdaptor>();
+    public List<DataAdaptor> childAdaptors() {
+        List<DataAdaptor> childAdaptors = new ArrayList<DataAdaptor>();
         
 		for ( Node node : childNodes ) {
             XmlDataAdaptor adaptor = newAdaptor( node );
@@ -394,8 +394,8 @@ public class XmlDataAdaptor implements IDataAdaptor {
 	 * @param label the label for which to match the node's tag
 	 * @return a list of child adaptors
      */
-    public List<IDataAdaptor> childAdaptors( final String label ) {
-        List<IDataAdaptor> childAdaptors = new ArrayList<IDataAdaptor>();
+    public List<DataAdaptor> childAdaptors( final String label ) {
+        List<DataAdaptor> childAdaptors = new ArrayList<DataAdaptor>();
 		
 		for ( Node node : childNodes ) {
             if ( nameForNode( node ).equals( label ) ) {
@@ -412,14 +412,14 @@ public class XmlDataAdaptor implements IDataAdaptor {
 	 * @param label the label which identifies the tag of the nodes to fetch
 	 * @return a data adaptor for the specified child node
      */
-    public IDataAdaptor childAdaptor( final String label ) {
-        final List<IDataAdaptor> adaptors = childAdaptors( label );
+    public DataAdaptor childAdaptor( final String label ) {
+        final List<DataAdaptor> adaptors = childAdaptors( label );
         return adaptors.isEmpty() ? null : adaptors.get( 0 );
     }
     
     
-    /** Create a new offspring IDataAdaptor given the tagName */
-    public IDataAdaptor createChild(String tagName) {
+    /** Create a new offspring DataAdaptor given the tagName */
+    public DataAdaptor createChild(String tagName) {
         Node node = document.createElement(tagName);
         XmlDataAdaptor childAdaptor = newAdaptor(node);
 
@@ -436,7 +436,7 @@ public class XmlDataAdaptor implements IDataAdaptor {
     public void writeNode(DataListener listener) {
         String tagName = listener.dataLabel();
         
-        IDataAdaptor adaptor = createChild(tagName);
+        DataAdaptor adaptor = createChild(tagName);
         listener.write(adaptor);
     }
     
