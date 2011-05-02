@@ -34,8 +34,12 @@ import xal.tools.data.DataFormatException;
  *
  * @author  Christopher Allen
  *
- * @see xal.tools.data.IDataAdaptor
+ * @see xal.tools.data.DataAdaptor
+ * 
+ * @deprecated  This class is being phased out since it requires "registration."  Currently
+ *              there are no references to it and can be deleted.
  */
+@Deprecated
 public class ElementFactory {
     /** map of class type-string to data adaptor constructors */
     static private      Map<String, Constructor<? extends IElement>> s_mapCtors =

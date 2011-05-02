@@ -46,8 +46,6 @@ public abstract class ElementSeq implements IComposite {
     /** default number of element positions to reserve in list array */
     public static final int         s_szDefReserve = 10;
     
-//    /** the string type identifier for all Sequence objects */
-//    public static final String      s_strType = "Sequence";
     
     
     
@@ -81,20 +79,6 @@ public abstract class ElementSeq implements IComposite {
 
 
 
-//    /*
-//     *  Settings
-//     */
-//
-//    /**
-//     * The element string identifier where actual propagation is to begin
-//     */
-//    private IElement      m_ifcElemStart = null;
-//    
-//    /**
-//     * The element string identifier where propagation is to stop
-//     */
-//    private IElement      m_ifcElemStop = null;
-//
     
 
 
@@ -102,26 +86,21 @@ public abstract class ElementSeq implements IComposite {
      * Initialization
      */    
      
-//     
-//    /**
-//     *  Creates a new instance of ElementSeq without a 
-//     *  sequence identifier.
-//     */
-//    public ElementSeq() {
-//        this(s_strType, "NULLID", s_szDefReserve);
-//    }
-// 
     /**
-     *  Creates a new instance of ElementSeq without a 
-     *  sequence identifier.
+     *  Creates a new instance of <code>ElementSeq</code> without of the
+     *  given soft type but without a sequence identifier.
+     *  
+     *  @param  strType     soft type of the sequence (defined by the child class)
      */
     public ElementSeq(String strType) {
         this(strType, null , s_szDefReserve);
     }
  
     /**
-     *  Creates a new instance of ElementSeq
+     *  Creates a new instance of <code>ElementSeq</code> with the
+     *  given soft type and sequence identifier.
      *
+     *  @param  strType     soft type of the sequence (defined by the child class)
      *  @param  strId       identifier of the sequence
      */
     public ElementSeq(String strType, String strId) {
@@ -129,9 +108,13 @@ public abstract class ElementSeq implements IComposite {
     }
  
     /**
-     *  Creates a new instance of ElementSeq and reserves space for a 
-     *  szReserve length sequence.
+     *  Creates a new instance of <code>ElementSeq</code> with the
+     *  given soft type and sequence identifier.
+     *  Also reserves space for a the sequence elements.
+     *  This saves a little CPU time if the relative size of the
+     *  sequence is known <i>a priori</i>.
      *
+     *  @param  strType     soft type of the sequence (defined by the child class)
      *  @param  strId       identifier of the sequence
      *  @param  szReserve   number of Element spaces to reserve
      */
@@ -169,101 +152,6 @@ public abstract class ElementSeq implements IComposite {
      * Probe Propagation
      */
 
-//    /**
-//     * Set the element where probe propagation begins (via the method 
-//     * <code>propagate(IProbe)</code>).  If no starting element is 
-//     * provide (i.e., this method is not called) propagation starts at
-//     * the first element in the sequence.
-//     * 
-//     * @param ifcElem   interface of the element where propagation begins
-//     * 
-//     * @see #propagate(IProbe)
-//     */
-//    public void setStartPropElement(IElement ifcElem) {
-//        m_ifcElemStart = ifcElem;
-//    }
-//
-//    /**
-//     * Set the element where propagation stops (via the method 
-//     * <code>propagate(IProbe)</code>).  If no stopping element
-//     * is provided propagation continues until the last element
-//     * in the sequence.
-//     * 
-//     * @param ifcElem   interface of the element where propagation stops
-//     * 
-//     * @see #propagate(IProbe)
-//     */
-//    public void setStopPropElement(IElement ifcElem) {
-//        m_ifcElemStop = ifcElem;
-//    }
-//
-//    /**
-//     * Return the element in the sequence where probe propagation begins.
-//     * If no starting element is set then the method returns <code>null</code>.
-//     * 
-//     * @return  element where propagation starts
-//     * 
-//     * @see ElementSeq#setStartPropElement
-//     */
-//    public IElement getStartPropElement() {
-//        return m_ifcElemStart;
-//    }
-//
-//    /**
-//     * Return the element in the sequence where probe propagation ends.
-//     * If no stopping element is seq then the method returns <code>null</code>.
-//     *  
-//     * @return  element where propagation ends
-//     * 
-//     * @see #setStopPropElement
-//     */
-//    public IElement getStopPropElement() {
-//        return m_ifcElemStop;
-//    }
-
-
-    
-//    /**
-//     *  Insert an IElement object at the sequence position specified.  
-//     *  Any previous IElement is pushed toward the tail.
-//     *
-//     *  @param  indSeq  lattice position to insert element
-//     *  @param  elem    new lattice element 
-//     */
-//    public void addChild(int indSeq, IElement elem)   {
-//        this.getArray().add(indSeq, elem);
-//    }
-//    
-//    /**
-//     *  Insert an IElement at the specified position within sequence.  
-//     *  Any previous IElement at the position is pushed toward the tail.
-//     *
-//     *  The position dblPos=0 is the entrance to the sequence.  The position 
-//     *  refers to the beginning of the IElement.
-//     *
-//     *  @param  dblPos  lattice position to insert IElement object
-//     *  @param  elem    new lattice element 
-//     */
-//    public void addChild(double dblPos, IElement elem)   {
-//        int         indElem;
-//        IElement    elemCurr;
-//        
-//        int         cntElems    = this.getChildCount();
-//        double      dblPosCurr  = 0.0;
-//        
-//        for (indElem=0; indElem<cntElems; indElem++) {
-//            
-//            elemCurr    = this.getChild(indElem);
-//            dblPosCurr += elem.getLength();
-//
-//            if (dblPos < dblPosCurr)    {
-//                this.addChild(indElem, elem);
-//                return;
-//            }
-//        }
-//        this.addChild(elem);
-//    }
-    
 
 
     /*
@@ -738,6 +626,11 @@ public abstract class ElementSeq implements IComposite {
         }
     }
 
+    
+    
+    /*
+     * Internal Support
+     */
     
     /**
      *  Return the internal list of components

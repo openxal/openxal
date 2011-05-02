@@ -192,6 +192,7 @@ public class ThickDipole extends ThickElement implements IElectromagnet {
      * @author  Christopher K. Allen 
      */
     public void setEntranceAngle(double dblAng) { this.entranceAngle = dblAng; }
+    
     /**
      * Gets the entrance angle of the beam into the dipole.
      * @author  J. Galambos 

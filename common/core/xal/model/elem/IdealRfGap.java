@@ -233,7 +233,7 @@ public class IdealRfGap extends ThinElement implements IRfGap {
      *  The actual energy gain from the gap is given by qETLcos(dblPhi) where dbkPhi is
      *  the phase delay.
      *
-     *  @param  dblPhase    phase delay of the RF w.r.t. synchonouse particle (in <bold>radians</bold>).
+     *  @param  dblPhase    phase delay of the RF w.r.t. synchronous particle (in <bold>radians</bold>).
      */
     public void setPhase(double dblPhase)   { m_dblPhase = dblPhase; };
      
