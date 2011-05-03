@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="US-ASCII" ?>
+
+
+<!-- XAL MODEL PROBE DEFINITION
+  -       Document Type Definition
+  -
+  -  Version   : 1.0.0
+  -  Author    : Christopher K. Allen
+  -  Modified  : April, 2003
+  -
+  -->
+
+
+<!-- ################################################################### -->
+<!-- XAL MODEL PROBE -->
+
+<!ELEMENT probe ( comment?, (algorithm | species | beam | state) )>
+
+
+<!ATTLIST probe type   NMTOKEN #REQUIRED>
+<!ATTLIST probe id     ID      #IMPLIED>
+<!ATTLIST probe author CDATA   #IMPLIED>
+
+
+<!ELEMENT comment EMPTY>
+<!ATTLIST comment author CDATA  #IMPLIED>
+<!ATTLIST comment date   CDATA  #IMPLIED>
+<!ATTLIST comment text   CDATA  #IMPLIED>
+
+<!ELEMENT algorithm EMPTY>
+<!ATTLIST algorithm type NMTOKEN #REQUIRED>
+
+
+<!ELEMENT species EMPTY>
+<!ATTLIST species q  NMTOKEN #REQUIRED>
+<!ATTLIST species Er NMTOKEN #REQUIRED>
+
+<!ELEMENT beam EMPTY>
+<!ATTLIST beam Q NMTOKEN #REQUIRED>
+<!ATTLIST beam I NMTOKEN #REQUIRED>
+
+<!ELEMENT state ( Element?, (coordinates | correlation | ensemble )+ ) >
+<!ATTLIST state pos  NMTOKEN        #REQUIRED>
+<!ATTLIST state W    NMTOKEN        #REQUIRED>
+
+
+
