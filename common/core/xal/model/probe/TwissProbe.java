@@ -13,7 +13,7 @@ import xal.tools.beam.PhaseVector;
 import xal.tools.beam.SpaceIndex3D;
 import xal.tools.beam.Twiss;
 import xal.tools.beam.Twiss3D;
-import xal.tools.data.IDataAdaptor;
+import xal.tools.data.DataAdaptor;
 import xal.tools.data.DataFormatException;
 import xal.model.probe.traj.ProbeState;
 import xal.model.probe.traj.TwissProbeState;
@@ -101,7 +101,7 @@ public class TwissProbe extends BunchProbe {
      * 
      * @throws  DataFormatException     unable to parse, bad data format
      */
-    public TwissProbe(IDataAdaptor daSource)  
+    public TwissProbe(DataAdaptor daSource)  
         throws DataFormatException
     {
         this();
@@ -387,7 +387,7 @@ public class TwissProbe extends BunchProbe {
 //
     
     @Override
-    protected ProbeState readStateFrom(IDataAdaptor container) throws ParsingException {
+    protected ProbeState readStateFrom(DataAdaptor container) throws ParsingException {
         TwissProbeState state = new TwissProbeState();
         state.load(container);
         return state;

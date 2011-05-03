@@ -3,7 +3,7 @@ package xal.model.probe.traj;
 import xal.tools.math.r3.R3;
 import xal.tools.beam.CorrelationMatrix;
 import xal.tools.beam.ens.Ensemble;
-import xal.tools.data.IDataAdaptor;
+import xal.tools.data.DataAdaptor;
 import xal.model.probe.EnsembleProbe;
 import xal.model.xml.ParsingException;
 
@@ -174,13 +174,13 @@ public class EnsembleProbeState extends BunchProbeState {
      * Save the state values particular to <code>EnsembleProbeState</code> objects
      * to the data sink.
      * 
-     *  @param  container   data sink represented by <code>IDataAdaptor</code> interface
+     *  @param  container   data sink represented by <code>DataAdaptor</code> interface
      */
     @Override
-    protected void addPropertiesTo(IDataAdaptor container) {
+    protected void addPropertiesTo(DataAdaptor container) {
         super.addPropertiesTo(container);
         
-        IDataAdaptor ensNode = container.createChild(ENSEMBLE_LABEL);
+        DataAdaptor ensNode = container.createChild(ENSEMBLE_LABEL);
         ensNode.setValue(CALC_LABEL, getFieldCalculation());
         ensNode.setValue(FILE_LABEL, getEnsemble().toString());
     }
@@ -189,16 +189,16 @@ public class EnsembleProbeState extends BunchProbeState {
      * Recover the state values particular to <code>EnsembleProbeState</code> objects 
      * from the data source.
      *
-     *  @param  container   data source represented by a <code>IDataAdaptor</code> interface
+     *  @param  container   data source represented by a <code>DataAdaptor</code> interface
      * 
      *  @exception ParsingException     state information in data source is malformatted
      */
     @Override
-    protected void readPropertiesFrom(IDataAdaptor container) 
+    protected void readPropertiesFrom(DataAdaptor container) 
             throws ParsingException {
         super.readPropertiesFrom(container);
 
-        IDataAdaptor ensNode = container.childAdaptor(ENSEMBLE_LABEL);
+        DataAdaptor ensNode = container.childAdaptor(ENSEMBLE_LABEL);
         if (ensNode == null)
             throw new ParsingException("EnsembleProbeState#readPropertiesFrom(): no child element = " + ENSEMBLE_LABEL);
 

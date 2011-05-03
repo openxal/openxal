@@ -12,7 +12,7 @@
 
 package xal.model.probe.traj;
 
-import xal.tools.data.IDataAdaptor;
+import xal.tools.data.DataAdaptor;
 import xal.tools.math.r3.R3;
 
 import xal.model.probe.BunchProbe;
@@ -313,12 +313,12 @@ public abstract class BunchProbeState extends ProbeState /* implements IPhaseSta
      * Save the state values particular to <code>BunchProbeState</code> objects
      * to the data sink.
      * 
-     *  @param  daSink   data sink represented by <code>IDataAdaptor</code> interface
+     *  @param  daSink   data sink represented by <code>DataAdaptor</code> interface
      */
     @Override
-    protected void addPropertiesTo(IDataAdaptor daSink) {
+    protected void addPropertiesTo(DataAdaptor daSink) {
         super.addPropertiesTo(daSink);
-        IDataAdaptor datBunch = daSink.createChild(ELEM_BEAM);
+        DataAdaptor datBunch = daSink.createChild(ELEM_BEAM);
         datBunch.setValue(ATTR_BUNCHFREQ,   getBunchFrequency());
         datBunch.setValue(ATTR_BEAMCURRENT, getBeamCurrent());
         datBunch.setValue(ATTR_BETAPHASE,   getBetatronPhase().toString());
@@ -334,11 +334,11 @@ public abstract class BunchProbeState extends ProbeState /* implements IPhaseSta
      *  @exception ParsingException     state information in data source is malformatted
      */
     @Override
-    protected void readPropertiesFrom(IDataAdaptor daSource) 
+    protected void readPropertiesFrom(DataAdaptor daSource) 
             throws ParsingException {
         super.readPropertiesFrom(daSource);
         
-        IDataAdaptor daBunch = daSource.childAdaptor(ELEM_BEAM);
+        DataAdaptor daBunch = daSource.childAdaptor(ELEM_BEAM);
         if (daBunch == null)
             throw new ParsingException("BunchProbeState#readPropertiesFrom(): no child element = " + ELEM_BEAM);
 

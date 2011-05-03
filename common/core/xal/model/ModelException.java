@@ -34,4 +34,19 @@ public class ModelException extends XalException {
     public ModelException(String strMsg) {
         super(strMsg);
     };
+    
+    /**
+     * Create a new <code>ModelException</code> object which
+     * is spawned (in principle) by the given exception object
+     * and has the given explanation message.
+     * 
+     * @param strMsg    explanation message for the exception
+     * @param excSrc    originating cause for the exception
+     *
+     * @author  Christopher K. Allen
+     * @since   Apr 27, 2011
+     */
+    public ModelException(String strMsg, Exception excSrc) {
+        super(strMsg, excSrc);
+    }
 }

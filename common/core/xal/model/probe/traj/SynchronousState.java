@@ -6,7 +6,7 @@
  */
 package xal.model.probe.traj;
 
-import xal.tools.data.IDataAdaptor;
+import xal.tools.data.DataAdaptor;
 import xal.tools.math.r3.R3;
 import xal.model.probe.SynchronousProbe;
 import xal.model.xml.ParsingException;
@@ -127,37 +127,37 @@ public class SynchronousState extends ProbeState {
 
     /**
      * Save the probe state values to a data store represented by the 
-     * <code>IDataAdaptor</code> interface.
+     * <code>DataAdaptor</code> interface.
      * 
      * @param daptState     data sink to receive state information
      * 
-     * @see gov.sns.xal.model.probe.traj.ProbeState#addPropertiesTo(gov.sns.tools.data.IDataAdaptor)
+     * @see gov.sns.xal.model.probe.traj.ProbeState#addPropertiesTo(gov.DataAdaptor.tools.data.IDataAdaptor)
      */
     @Override
-    protected void addPropertiesTo(IDataAdaptor daptSink) {
+    protected void addPropertiesTo(DataAdaptor daptSink) {
         super.addPropertiesTo(daptSink);
 
-        IDataAdaptor daptSync = daptSink.createChild(SynchronousState.LABEL_SYNCH);
+        DataAdaptor daptSync = daptSink.createChild(SynchronousState.LABEL_SYNCH);
         daptSync.setValue(SynchronousState.ATTR_PHASEBETA, this.getBetatronPhase().toString());
         daptSync.setValue(SynchronousState.ATTR_PHASERF, this.getRfPhase());
     }
 
     /**
      * Restore the state values for this probe state object from the data store
-     * represented by the <code>IDataAdaptor</code> interface.
+     * represented by the <code>DataAdaptor</code> interface.
      * 
      * @param   daptSrc             data source for probe state information
      * @throws  ParsingException    error in data format
      * 
-     * @see gov.sns.xal.model.probe.traj.ProbeState#readPropertiesFrom(gov.sns.tools.data.IDataAdaptor)
+     * @see gov.sns.xal.model.probe.traj.ProbeState#readPropertiesFrom(gov.DataAdaptor.tools.data.IDataAdaptor)
      */
     @Override
-    protected void readPropertiesFrom(IDataAdaptor daptSrc)
+    protected void readPropertiesFrom(DataAdaptor daptSrc)
         throws ParsingException 
     {
         super.readPropertiesFrom(daptSrc);
 
-        IDataAdaptor daptSync = daptSrc.childAdaptor(SynchronousState.LABEL_SYNCH);
+        DataAdaptor daptSync = daptSrc.childAdaptor(SynchronousState.LABEL_SYNCH);
         if (daptSync == null)
             throw new ParsingException("SynchronousState#readPropertiesFrom(): no child element = " + LABEL_SYNCH);
         

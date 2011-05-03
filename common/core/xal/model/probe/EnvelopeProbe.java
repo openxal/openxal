@@ -10,7 +10,7 @@ import xal.tools.beam.CorrelationMatrix;
 import xal.tools.beam.PhaseMatrix;
 import xal.tools.beam.PhaseVector;
 import xal.tools.beam.Twiss;
-import xal.tools.data.IDataAdaptor;
+import xal.tools.data.DataAdaptor;
 
 import xal.model.ModelException;
 import xal.model.alg.EnvTrackerAdapt;
@@ -234,7 +234,7 @@ public class EnvelopeProbe extends BunchProbe {
      * 
      * @param   bolSaveTwiss    Twiss parameter save flag
      * 
-     * @see Probe#save(IDataAdaptor)
+     * @see Probe#save(DataAdaptor)
      * @see Probe#applyState(ProbeState)
      * 
      * @deprecated
@@ -390,7 +390,7 @@ public class EnvelopeProbe extends BunchProbe {
 
     /**
      * Return the save Twiss parameters flag.  If this flag is set then
-     * only the Twiss parameters are saved to a <code>IDataAdaptor</code>
+     * only the Twiss parameters are saved to a <code>DataAdaptor</code>
      * object.
      * NOTES: 
      * This can be dangerous as we have the 
@@ -401,7 +401,7 @@ public class EnvelopeProbe extends BunchProbe {
      * 
      * @return Twiss parameter save flag
      * 
-     * @see Probe#save(IDataAdaptor)
+     * @see Probe#save(DataAdaptor)
      * @see Probe#applyState(ProbeState)
      * 
      * @deprecated
@@ -542,9 +542,9 @@ public class EnvelopeProbe extends BunchProbe {
      * the load()/save() methods do, but you cannot restore an <code>EnvelopeProbe</code>
      * object from these data in general.
      * 
-     *  @param  daSink   data sink represented by <code>IDataAdaptor</code> interface
+     *  @param  daSink   data sink represented by <code>DataAdaptor</code> interface
      */
-    public void saveStateAsTwiss(IDataAdaptor daSink) {
+    public void saveStateAsTwiss(DataAdaptor daSink) {
         EnvelopeProbeState state = this.createProbeState();
         
         state.saveStateAsTwiss(daSink);
@@ -553,13 +553,13 @@ public class EnvelopeProbe extends BunchProbe {
     
     /**
      *  Save the contents of a probe to a data archive represented by a 
-     *  <code>IDataAdaptor</code> interface.
+     *  <code>DataAdaptor</code> interface.
      *
      *  @param  daSink      data archive to receive probe information
      */
-    public void saveAsTwiss(IDataAdaptor daSink) {
+    public void saveAsTwiss(DataAdaptor daSink) {
         
-        IDataAdaptor daProbe = daSink.createChild(Probe.PROBE_LABEL);
+        DataAdaptor daProbe = daSink.createChild(Probe.PROBE_LABEL);
         
         // Save the probe type information and time stamp
         DateFormat  frmDate = DateFormat.getDateTimeInstance();
@@ -571,7 +571,7 @@ public class EnvelopeProbe extends BunchProbe {
         daProbe.setValue(Probe.TIME_LABEL, frmDate.format( this.getTimestamp() ) );
         
         // Save the comment
-        IDataAdaptor daptComm = daProbe.createChild(Probe.COMMENT_LABEL);
+        DataAdaptor daptComm = daProbe.createChild(Probe.COMMENT_LABEL);
         daptComm.setValue(Probe.TEXT_LABEL, this.getComment() );
         
         // Save the algorithm type
@@ -711,7 +711,7 @@ public class EnvelopeProbe extends BunchProbe {
     }
     
     @Override
-    protected ProbeState readStateFrom(IDataAdaptor container) throws ParsingException {
+    protected ProbeState readStateFrom(DataAdaptor container) throws ParsingException {
         EnvelopeProbeState state = new EnvelopeProbeState();
         state.load(container);
         return state;

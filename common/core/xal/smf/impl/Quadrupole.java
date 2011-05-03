@@ -88,7 +88,7 @@ public class Quadrupole extends Electromagnet {
 	 * set the quadrupole type since a quadrupole type can be either "QH" or "QV".
      * @param adaptor The data provider.
      */
-    public void update( final IDataAdaptor adaptor ) {
+    public void update( final DataAdaptor adaptor ) {
         if ( adaptor.hasAttribute( "type" ) ) {
             _type = adaptor.stringValue( "type" );
         }

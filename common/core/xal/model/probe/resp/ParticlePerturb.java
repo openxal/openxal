@@ -7,7 +7,7 @@
 package xal.model.probe.resp;
 
 import xal.tools.beam.PhaseMatrix;
-import xal.tools.data.IDataAdaptor;
+import xal.tools.data.DataAdaptor;
 
 import xal.model.probe.resp.traj.ParticlePerturbProbeState;
 import xal.model.probe.resp.traj.ParticlePerturbProbeTrajectory;
@@ -76,7 +76,7 @@ public class ParticlePerturb extends Perturbation {
 	}
 	
     @Override
-    protected ProbeState readStateFrom(IDataAdaptor container) throws ParsingException {
+    protected ProbeState readStateFrom(DataAdaptor container) throws ParsingException {
         ParticlePerturbProbeState state = new ParticlePerturbProbeState();
         state.load(container);
         return state;

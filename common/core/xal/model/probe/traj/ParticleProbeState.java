@@ -1,7 +1,7 @@
 package xal.model.probe.traj;
 
 import xal.tools.beam.PhaseVector;
-import xal.tools.data.IDataAdaptor;
+import xal.tools.data.DataAdaptor;
 
 import xal.model.probe.ParticleProbe;
 import xal.model.xml.ParsingException;
@@ -136,10 +136,10 @@ public class ParticleProbeState extends ProbeState implements ICoordinateState {
      *  @param  container   data sink represented by <code>DataAdaptor</code> interface
      */
     @Override
-    protected void addPropertiesTo(IDataAdaptor container) {
+    protected void addPropertiesTo(DataAdaptor container) {
         super.addPropertiesTo(container);
         
-        IDataAdaptor partNode = container.createChild(PARTICLE_LABEL);
+        DataAdaptor partNode = container.createChild(PARTICLE_LABEL);
         partNode.setValue(VALUE_LABEL, phaseCoordinates().toString());
     }
     
@@ -152,11 +152,11 @@ public class ParticleProbeState extends ProbeState implements ICoordinateState {
      *  @exception ParsingException     state information in data source is malformatted
      */
     @Override
-    protected void readPropertiesFrom(IDataAdaptor container) 
+    protected void readPropertiesFrom(DataAdaptor container) 
             throws ParsingException {
         super.readPropertiesFrom(container);
         
-        IDataAdaptor partNode = container.childAdaptor(PARTICLE_LABEL);
+        DataAdaptor partNode = container.childAdaptor(PARTICLE_LABEL);
         if (partNode == null)
             throw new ParsingException("ParticleProbeState#readPropertiesFrom(): no child element = " + PARTICLE_LABEL);
         

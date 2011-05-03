@@ -5,7 +5,7 @@ import xal.tools.beam.RelativisticParameterConverter;
 import xal.tools.beam.PhaseVector;
 import xal.tools.beam.PhaseMatrix;
 import xal.tools.beam.Twiss;
-import xal.tools.data.IDataAdaptor;
+import xal.tools.data.DataAdaptor;
 
 import xal.model.probe.EnvelopeProbe;
 import xal.model.probe.Probe;
@@ -169,7 +169,7 @@ public class EnvelopeProbeState extends BunchProbeState implements IPhaseState {
      * 
      * @param   bolSaveTwiss    behavior of save state methods 
      * 
-     * @see EnvelopeProbeState#addPropertiesTo(IDataAdaptor)
+     * @see EnvelopeProbeState#addPropertiesTo(DataAdaptor)
      * 
      * @deprecated
      */
@@ -313,7 +313,7 @@ public class EnvelopeProbeState extends BunchProbeState implements IPhaseState {
     
     /**
      * Return the save Twiss parameters flag.  If this flag is set then
-     * only the Twiss parameters are saved to a <code>IDataAdaptor</code>
+     * only the Twiss parameters are saved to a <code>DataAdaptor</code>
      * object.
      * 
      * NOTES: 
@@ -325,7 +325,7 @@ public class EnvelopeProbeState extends BunchProbeState implements IPhaseState {
      * 
      * @return Twiss parameter save flag
      * 
-     * @see Probe#save(IDataAdaptor)
+     * @see Probe#save(DataAdaptor)
      * @see Probe#applyState(ProbeState)
      * 
      * @deprecated  associated with the redundant state variable <code>twissParams</code>
@@ -465,17 +465,17 @@ public class EnvelopeProbeState extends BunchProbeState implements IPhaseState {
      * object from these data in general.
      * </p>
      * 
-     *  @param  daSink   data sink represented by <code>IDataAdaptor</code> interface
+     *  @param  daSink   data sink represented by <code>DataAdaptor</code> interface
      */
-    public void saveStateAsTwiss(IDataAdaptor daSink) {
-    	IDataAdaptor stateNode = daSink.createChild(STATE_LABEL);
+    public void saveStateAsTwiss(DataAdaptor daSink) {
+    	DataAdaptor stateNode = daSink.createChild(STATE_LABEL);
         stateNode.setValue(TYPE_LABEL, getClass().getName());
         stateNode.setValue("id", this.getElementId());
         
         super.addPropertiesTo(stateNode);
         
         
-        IDataAdaptor envNode = stateNode.createChild(EnvelopeProbeState.ENVELOPE_LABEL);
+        DataAdaptor envNode = stateNode.createChild(EnvelopeProbeState.ENVELOPE_LABEL);
         //sako this is bad for dispersion (2008/07/07) envNode.setValue(EnvelopeProbeState.RESP_LABEL, this.getResponseMatrix().toString());
         //sako this is unnecessary  (2008/07/07) envNode.setValue(EnvelopeProbeState.PERTURB_LABEL, this.getPerturbationMatrix().toString());
         
@@ -504,13 +504,13 @@ public class EnvelopeProbeState extends BunchProbeState implements IPhaseState {
      * Save the state values particular to <code>EnvelopeProbeState</code> objects
      * to the data sink.
      * 
-     *  @param  container   data sink represented by <code>IDataAdaptor</code> interface
+     *  @param  container   data sink represented by <code>DataAdaptor</code> interface
      */
     @Override
-    protected void addPropertiesTo(IDataAdaptor container) {
+    protected void addPropertiesTo(DataAdaptor container) {
         super.addPropertiesTo(container);
         
-        IDataAdaptor envNode = container.createChild(EnvelopeProbeState.ENVELOPE_LABEL);
+        DataAdaptor envNode = container.createChild(EnvelopeProbeState.ENVELOPE_LABEL);
         //sako this is bad for dispersion (2008/07/07) envNode.setValue(EnvelopeProbeState.RESP_LABEL, this.getResponseMatrix().toString());
 //      sako this is unnecessary  (2008/07/07) envNode.setValue(EnvelopeProbeState.PERTURB_LABEL, this.getPerturbationMatrix().toString());
         
@@ -541,17 +541,17 @@ public class EnvelopeProbeState extends BunchProbeState implements IPhaseState {
      * Recover the state values particular to <code>EnvelopeProbeState</code> objects 
      * from the data source.
      *
-     *  @param  container   data source represented by a <code>IDataAdaptor</code> interface
+     *  @param  container   data source represented by a <code>DataAdaptor</code> interface
      * 
      *  @exception ParsingException     state information in data source is malformatted
      */
     @Override
-    protected void readPropertiesFrom(IDataAdaptor container) 
+    protected void readPropertiesFrom(DataAdaptor container) 
         throws ParsingException 
     {
         super.readPropertiesFrom(container);
         
-        IDataAdaptor envNode = container.childAdaptor(EnvelopeProbeState.ENVELOPE_LABEL);
+        DataAdaptor envNode = container.childAdaptor(EnvelopeProbeState.ENVELOPE_LABEL);
         if (envNode == null)
             throw new ParsingException("EnvelopeProbeState#readPropertiesFrom(): no child element = " + ENVELOPE_LABEL);
         
@@ -567,7 +567,7 @@ public class EnvelopeProbeState extends BunchProbeState implements IPhaseState {
                     envNode.doubleValue(EnvelopeProbeState.BETA_Z_LABEL),
                     envNode.doubleValue(EnvelopeProbeState.EMIT_Z_LABEL));
             this.setTwiss(twiss);
-            IDataAdaptor parNode = container.childAdaptor(EnvelopeProbeState.CENTROID_LABEL);
+            DataAdaptor parNode = container.childAdaptor(EnvelopeProbeState.CENTROID_LABEL);
             if (parNode == null) {
                 this.setCorrelation(CorrelationMatrix.buildCorrelation(twiss[0], twiss[1], twiss[2]));
 //              throw new ParsingException("EnvelopeProbeState#readPropertiesFrom(): no child element = " + EnvelopeProbeState.PARTICLE_LABEL);

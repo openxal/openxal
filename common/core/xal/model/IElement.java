@@ -41,30 +41,6 @@ public interface IElement extends IComponent {
 
 
     
-//    /**
-//     *  Get the type identifier for the element
-//     *
-//     *  @return     type identifier for this element
-//     */
-//    public String   getType();
-//    
-//    /**
-//     *  Get the element identifier of the element
-//     *
-//     *  @return     string identifier
-//     */
-//    public String  getId();
-//    
-//    
-//    
-//    
-//    /**
-//     *  Return the length of the element.
-//     *
-//     *  @return     length of the element (in <bold>meters</bold>)
-//     */
-//    public double getLength();
-    
     
     /*
      * Dynamics

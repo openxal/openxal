@@ -1,7 +1,7 @@
 /*
  * Created on Mar 3, 2004
  */
-package xal.sim.latgen.ptree;
+package xal.sim.latgen.atree;
 
 import xal.sim.latgen.GenerationException;
 
@@ -29,24 +29,24 @@ public interface IAssocTreeVisitor {
 //    public void process(ThinHardware pxyNode) throws GenerationException;
 
     /**
-     * Accept an association-tree node of type <code>ThickHardware</code> and perform
+     * Accept an association-tree node of and perform
      * any visitor specific processing of the node argument.
      * 
-     * @param pxyNode                current association-tree node being visited
+     * @param node                current association-tree node being visited
      * 
      * @throws GenerationException   unable to process node (visitor specific)
      */
-    public void process(TreeNode pxyNode) throws GenerationException;
+    public void process(TreeNode node) throws GenerationException;
     
-    /**
-     * Accept an association-tree node of type <code>DriftSpace</code> and perform
-     * any visitor specific processing of the node argument.
-     * 
-     * @param pxyNode                current association-tree node being visited
-     * 
-     * @throws GenerationException   unable to process node (visitor specific)
-     */
-    public void process(DriftSpace pxyNode) throws GenerationException;
+//    /**
+//     * Accept an association-tree node of type <code>DriftSpace</code> and perform
+//     * any visitor specific processing of the node argument.
+//     * 
+//     * @param pxyNode                current association-tree node being visited
+//     * 
+//     * @throws GenerationException   unable to process node (visitor specific)
+//     */
+//    public void process(DriftSpace pxyNode) throws GenerationException;
     
     
     

@@ -57,7 +57,7 @@ public class TrimmedQuadrupole extends Quadrupole implements TrimmedMagnet {
      * Update data from the power supply data adaptor.
      * @param powerSupplyAdaptor The data provider of power supply information.
      */
-    protected void updatePowerSupplies( final IDataAdaptor powerSupplyAdaptor ) {
+    protected void updatePowerSupplies( final DataAdaptor powerSupplyAdaptor ) {
         super.updatePowerSupplies( powerSupplyAdaptor );
         _trimSupplyID = powerSupplyAdaptor.stringValue( "trim" );
     }
@@ -67,7 +67,7 @@ public class TrimmedQuadrupole extends Quadrupole implements TrimmedMagnet {
      * Write data to the power supply data adaptor.
      * @param powerSupplyAdaptor The data sink for the power supply information
      */
-    protected void writePowerSupplies( final IDataAdaptor powerSupplyAdaptor ) {
+    protected void writePowerSupplies( final DataAdaptor powerSupplyAdaptor ) {
         super.writePowerSupplies( powerSupplyAdaptor );
         powerSupplyAdaptor.setValue( "trim", _trimSupplyID );
     }

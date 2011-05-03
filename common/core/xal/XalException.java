@@ -35,6 +35,38 @@ public class XalException extends java.lang.Exception {
     public XalException(String msg) {
         super(msg);
     }
+
+
+    /**
+     * Create a new <code>XalException</code> object which
+     * is spawned (in principle) by the given exception object
+     * and has the given explanation message.
+     * 
+     * @param strMsg    explanation message for the exception
+     * @param excSrc    originating cause for the exception
+     *
+     * @author  Christopher K. Allen
+     * @since   Apr 27, 2011
+     */
+    public XalException(String strMsg, Throwable excSrc) {
+        super(strMsg, excSrc);
+    }
+
+
+    /**
+     * Create a new <code>XalException</code> object which
+     * is spawned (in principle) by the given exception object.
+     * 
+     * @param excSrc    originating cause for the exception
+     *
+     * @author  Christopher K. Allen
+     * @since   Apr 27, 2011
+     */
+    public XalException(Throwable excSrc) {
+        super(excSrc);
+    }
+    
+    
 }
 
 

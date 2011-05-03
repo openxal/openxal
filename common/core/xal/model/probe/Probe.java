@@ -7,7 +7,7 @@
 package xal.model.probe;
 
 
-import xal.tools.data.IDataAdaptor;
+import xal.tools.data.DataAdaptor;
 import xal.tools.data.DataFormatException;
 import xal.tools.data.TransientDataAdaptor;
 
@@ -152,17 +152,17 @@ public abstract class Probe implements IProbe, IArchive {
     
     
     /**
-     * Read the contents of the supplied <code>IDataAdaptor</code> and return
+     * Read the contents of the supplied <code>DataAdaptor</code> and return
      * an instance of the appropriate Probe species.
      * 
-     * @param container <code>IDataAdaptor</code> to read a Probe from
-     * @return a Probe for the contents of the IDataAdaptor
-     * @throws ParsingException error encountered reading the IDataAdaptor
+     * @param container <code>DataAdaptor</code> to read a Probe from
+     * @return a Probe for the contents of the DataAdaptor
+     * @throws ParsingException error encountered reading the DataAdaptor
      */
-    public static Probe readFrom(IDataAdaptor container)
+    public static Probe readFrom(DataAdaptor container)
             throws ParsingException {
                 
-        IDataAdaptor daptProbe = container.childAdaptor(Probe.PROBE_LABEL);
+        DataAdaptor daptProbe = container.childAdaptor(Probe.PROBE_LABEL);
         if (daptProbe == null)
             throw new ParsingException("Probe#readFrom() - no Probe data node.");
             
@@ -250,7 +250,7 @@ public abstract class Probe implements IProbe, IArchive {
     /**
      *  <p>
      *  Load the "state" information of a particle from a data archive represented by a
-     *  <code>IDataAdaptor</code> interface.  Each derived class should know how to load
+     *  <code>DataAdaptor</code> interface.  Each derived class should know how to load
      *  its particular state information.
      *  </p>
      *  <p>
@@ -260,7 +260,7 @@ public abstract class Probe implements IProbe, IArchive {
      *
      *  @param  daptState   the "state" parent adaptor containing probe data
      */
-//    abstract public void loadState(IDataAdaptor daptState) throws DataFormatException;
+//    abstract public void loadState(DataAdaptor daptState) throws DataFormatException;
     
     /**
      *  <p>
@@ -270,7 +270,7 @@ public abstract class Probe implements IProbe, IArchive {
      *
      *  @param  daptState   the "state" parent adaptor to receive probe data
      */
-//    abstract public void saveState(IDataAdaptor daptState);
+//    abstract public void saveState(DataAdaptor daptState);
 
     
     
@@ -645,19 +645,19 @@ public abstract class Probe implements IProbe, IArchive {
     
     /** 
      *  Load the contents of a probe from an data archive represented by
-     *  a <code>IDataAdaptor</code> interface.
+     *  a <code>DataAdaptor</code> interface.
      *
      *  @param  daptSource   data archive containing probe info
      *
      *  @exception  DataFormatException     bad probe type, missing child data node, or bad number format
      */
-    public void load(IDataAdaptor daptSource) throws DataFormatException {
+    public void load(DataAdaptor daptSource) throws DataFormatException {
         
         // Make sure we have the correct data source
         String strDataName = daptSource.name();
         if ( !strDataName.equals(Probe.PROBE_LABEL) )
             throw new DataFormatException("Probe#load() - not a probe data source " + strDataName);
-        IDataAdaptor daptProbe = daptSource;
+        DataAdaptor daptProbe = daptSource;
             
         // Check for proper probe type 
         String  strType = daptProbe.stringValue(Probe.TYPE_LABEL);
@@ -681,7 +681,7 @@ public abstract class Probe implements IProbe, IArchive {
 //        }
         
         // Load any comments
-        IDataAdaptor daptComm = daptProbe.childAdaptor(Probe.COMMENT_LABEL);
+        DataAdaptor daptComm = daptProbe.childAdaptor(Probe.COMMENT_LABEL);
         if (daptComm != null) {
             String strAuth = daptComm.stringValue(Probe.AUTHOR_LABEL);
             String strDate = daptComm.stringValue(Probe.DATE_LABEL);
@@ -694,7 +694,7 @@ public abstract class Probe implements IProbe, IArchive {
         
         
         // Load the probe algorithm
-        IDataAdaptor daptAlg = daptProbe.childAdaptor(Probe.NODETAG_ALG);
+        DataAdaptor daptAlg = daptProbe.childAdaptor(Probe.NODETAG_ALG);
         if (daptAlg == null)
             throw new DataFormatException("Probe#load() - no algorithm data");
             
@@ -703,7 +703,7 @@ public abstract class Probe implements IProbe, IArchive {
             
         
         // Load state data
-        IDataAdaptor daptState   = daptProbe.childAdaptor(ProbeState.STATE_LABEL);
+        DataAdaptor daptState   = daptProbe.childAdaptor(ProbeState.STATE_LABEL);
         if (daptState == null) 
             throw new DataFormatException("Probe#load() - no state data");
         ProbeState state;
@@ -716,14 +716,14 @@ public abstract class Probe implements IProbe, IArchive {
     };
     
     /**
-     * Read the contents of the supplied <code>IDataAdaptor</code> and return
+     * Read the contents of the supplied <code>DataAdaptor</code> and return
      * an instance of the appropriate Trajectory species.
      * 
-     * @param container <code>IDataAdaptor</code> to read a Trajectory from
-     * @return a ProbeState for the contents of the IDataAdaptor
-     * @throws ParsingException error encountered reading the IDataAdaptor
+     * @param container <code>DataAdaptor</code> to read a Trajectory from
+     * @return a ProbeState for the contents of the DataAdaptor
+     * @throws ParsingException error encountered reading the DataAdaptor
      */
-    protected abstract ProbeState readStateFrom(IDataAdaptor container) throws ParsingException;
+    protected abstract ProbeState readStateFrom(DataAdaptor container) throws ParsingException;
     
   
 //
@@ -731,14 +731,14 @@ public abstract class Probe implements IProbe, IArchive {
 //
 //    /**
 //     *  Save the contents of a probe to a data archive represented by a 
-//     *  <code>IDataAdaptor</code> interface.
+//     *  <code>DataAdaptor</code> interface.
 //     *
 //     *  @param  daSink   data archive to receive probe information
 //     *  @param  useTwiss    If want to dump Twiss parameters instead of correlation matrix, set it to 'true'
 //     */
-//    public void save(IDataAdaptor daSink, boolean useTwiss)  { // CKA - we do not know if probe has twis parameters
+//    public void save(DataAdaptor daSink, boolean useTwiss)  { // CKA - we do not know if probe has twis parameters
 //        
-//    	IDataAdaptor daProbe = daSink.createChild(Probe.PROBE_LABEL);
+//    	DataAdaptor daProbe = daSink.createChild(Probe.PROBE_LABEL);
 //    	
 //        // Save the probe type information and time stamp
 //        DateFormat  frmDate = DateFormat.getDateTimeInstance();
@@ -750,7 +750,7 @@ public abstract class Probe implements IProbe, IArchive {
 //        daProbe.setValue(Probe.TIME_LABEL, frmDate.format( this.getTimestamp() ) );
 //        
 //        // Save the comment
-//        IDataAdaptor daptComm = daProbe.createChild(Probe.COMMENT_LABEL);
+//        DataAdaptor daptComm = daProbe.createChild(Probe.COMMENT_LABEL);
 //        daptComm.setValue(Probe.TEXT_LABEL, this.getComment() );
 //        
 //        // Save the algorithm type
@@ -763,13 +763,13 @@ public abstract class Probe implements IProbe, IArchive {
     
     /**
      *  Save the contents of a probe to a data archive represented by a 
-     *  <code>IDataAdaptor</code> interface.
+     *  <code>DataAdaptor</code> interface.
      *
      *  @param  daSink      data archive to receive probe information
      */
-    public void save(IDataAdaptor daSink) {
+    public void save(DataAdaptor daSink) {
         
-        IDataAdaptor daProbe = daSink.createChild(Probe.PROBE_LABEL);
+        DataAdaptor daProbe = daSink.createChild(Probe.PROBE_LABEL);
         
         // Save the probe type information and time stamp
         DateFormat  frmDate = DateFormat.getDateTimeInstance();
@@ -781,7 +781,7 @@ public abstract class Probe implements IProbe, IArchive {
         daProbe.setValue(Probe.TIME_LABEL, frmDate.format( this.getTimestamp() ) );
         
         // Save the comment
-        IDataAdaptor daptComm = daProbe.createChild(Probe.COMMENT_LABEL);
+        DataAdaptor daptComm = daProbe.createChild(Probe.COMMENT_LABEL);
         daptComm.setValue(Probe.TEXT_LABEL, this.getComment() );
         
         // Save the algorithm type

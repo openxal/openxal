@@ -7,7 +7,7 @@
 package xal.model.alg;
 
 
-import xal.tools.data.IDataAdaptor;
+import xal.tools.data.DataAdaptor;
 import xal.tools.data.DataFormatException;
 
 import xal.model.IAlgorithm;
@@ -89,11 +89,11 @@ public final class AlgorithmFactory {
      * 
      * @see AlgorithmFactory#createEmpty
      */
-    public static IAlgorithm    createFrom(IDataAdaptor daptArchive) 
+    public static IAlgorithm    createFrom(DataAdaptor daptArchive) 
         throws DataFormatException  
     {
 
-        IDataAdaptor daptAlg = daptArchive;
+        DataAdaptor daptAlg = daptArchive;
                 
         
         // Create the IAlgorithm object 

@@ -17,7 +17,7 @@ import xal.tools.beam.CorrelationMatrix;
 import xal.tools.beam.PhaseMap;
 import xal.tools.beam.PhaseMatrix;
 import xal.tools.beam.Twiss;
-import xal.tools.data.IDataAdaptor;
+import xal.tools.data.DataAdaptor;
 import xal.tools.data.DataFormatException;
 import xal.tools.data.DataTable;
 import xal.tools.data.EditContext;
@@ -718,13 +718,13 @@ public class EnvTrackerAdapt extends Tracker {
      * The superclass <code>load</code> method is called first, then the properties
      * particular to <code>EnvTrackerAdapt<code> are loaded.
      * 
-     * @see xal.model.IArchive#load(xal.tools.data.IDataAdaptor)
+     * @see xal.model.IArchive#load(xal.tools.data.DataAdaptor)
      */
     @Override
-    public void load(IDataAdaptor daptArchive) throws DataFormatException {
+    public void load(DataAdaptor daptArchive) throws DataFormatException {
         super.load(daptArchive);
         
-        IDataAdaptor daptAdapt = daptArchive.childAdaptor(EnvTrackerAdapt.NODETAG_ADAPT);
+        DataAdaptor daptAdapt = daptArchive.childAdaptor(EnvTrackerAdapt.NODETAG_ADAPT);
         if (daptAdapt == null)
             throw new DataFormatException("EnvTrackerAdapt#load() - missing data node " + EnvTrackerAdapt.NODETAG_ADAPT);
             
@@ -755,14 +755,14 @@ public class EnvTrackerAdapt extends Tracker {
      * 
      * @param   daptArchive     data sink exposing <code>IArchive</code> interface
      * 
-     * @see xal.model.IArchive#save(xal.tools.data.IDataAdaptor)
+     * @see xal.model.IArchive#save(xal.tools.data.DataAdaptor)
      */
     @Override
-    public void save(IDataAdaptor daptArchive) {
+    public void save(DataAdaptor daptArchive) {
         super.save(daptArchive);
         
-        IDataAdaptor daptAlg = daptArchive.childAdaptor(Tracker.NODETAG_ALG);
-        IDataAdaptor daptAdapt = daptAlg.createChild(EnvTrackerAdapt.NODETAG_ADAPT);
+        DataAdaptor daptAlg = daptArchive.childAdaptor(Tracker.NODETAG_ALG);
+        DataAdaptor daptAdapt = daptAlg.createChild(EnvTrackerAdapt.NODETAG_ADAPT);
         daptAdapt.setValue(ATTRTAG_ORDER, this.getAccuracyOrder());
         daptAdapt.setValue(ATTRTAG_ERRTOL, this.getErrorTolerance());
         daptAdapt.setValue(ATTRTAG_INITSTEP, this.getStepSize());

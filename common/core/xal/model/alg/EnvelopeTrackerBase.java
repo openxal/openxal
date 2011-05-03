@@ -13,7 +13,7 @@ import xal.tools.beam.PhaseIndexHom;
 import xal.tools.beam.PhaseMatrix;
 import xal.tools.beam.PhaseVector;
 import xal.tools.beam.em.BeamEllipsoid;
-import xal.tools.data.IDataAdaptor;
+import xal.tools.data.DataAdaptor;
 import xal.tools.data.DataFormatException;
 import xal.tools.data.DataTable;
 import xal.tools.data.EditContext;
@@ -471,13 +471,13 @@ public abstract class EnvelopeTrackerBase extends Tracker {
      * The superclass <code>load</code> method is called first, then the properties
      * particular to <code>EnvTrackerAdapt<code> are loaded.
      * 
-     * @see xal.model.IArchive#load(xal.tools.data.IDataAdaptor)
+     * @see xal.model.IArchive#load(xal.tools.data.DataAdaptor)
      */
     @Override
-    public void load(IDataAdaptor daptArchive) {
+    public void load(DataAdaptor daptArchive) {
         super.load(daptArchive);
         
-        IDataAdaptor daEnv = daptArchive.childAdaptor(LABEL_OPTIONS);
+        DataAdaptor daEnv = daptArchive.childAdaptor(LABEL_OPTIONS);
         if (daEnv != null)  {
             if (daEnv.hasAttribute(ATTR_SCHEFF)) {
                 this.setUseSpacecharge( daEnv.booleanValue(ATTR_SCHEFF) );
@@ -495,31 +495,31 @@ public abstract class EnvelopeTrackerBase extends Tracker {
 
     /**
      * Save the state and settings of this algorithm to a data source 
-     * exposing the <code>IDataAdaptor</code> interface.  Subclasses should
+     * exposing the <code>DataAdaptor</code> interface.  Subclasses should
      * override this method to store the data particular to there own 
      * operation.
      * 
      * @param   daptArchive     data source to receive algorithm configuration
      * 
-     * @see xal.model.IArchive#save(xal.tools.data.IDataAdaptor)
+     * @see xal.model.IArchive#save(xal.tools.data.DataAdaptor)
      */
     @Override
-    public void save(IDataAdaptor daptArchive) {
+    public void save(DataAdaptor daptArchive) {
 
-        //        IDataAdaptor daptAlg = daptArchive.createChild(NODETAG_ALG);
+        //        DataAdaptor daptAlg = daptArchive.createChild(NODETAG_ALG);
         //        daptAlg.setValue(ATTRTAG_TYPE, this.getType());
         //        daptAlg.setValue(ATTRTAG_VER, this.getVersion());
         //        
-        //        IDataAdaptor daptTrack = daptAlg.createChild(NODETAG_TRACKER);
+        //        DataAdaptor daptTrack = daptAlg.createChild(NODETAG_TRACKER);
         //        daptTrack.setValue(ATTRTAG_DEBUG, this.getDebugMode());
         //        daptTrack.setValue(ATTRTAG_UPDATE, this.getProbeUpdatePolicy());
         //        daptTrack.setValue(ATTRTAG_RFGAP_PHASE, this.useRfGapPhaseCalculation());
 
         super.save(daptArchive);
 
-        IDataAdaptor daptAlg = daptArchive.childAdaptor(NODETAG_ALG);
+        DataAdaptor daptAlg = daptArchive.childAdaptor(NODETAG_ALG);
 
-        IDataAdaptor daptOpt = daptAlg.createChild(LABEL_OPTIONS);
+        DataAdaptor daptOpt = daptAlg.createChild(LABEL_OPTIONS);
         daptOpt.setValue(ATTR_SCHEFF, this.getSpaceChargeFlag());
         daptOpt.setValue(ATTR_STEPSIZE, this.getStepSize());
         daptOpt.setValue(ATTR_EMITGROWTH, this.getEmittanceGrowthFlag());

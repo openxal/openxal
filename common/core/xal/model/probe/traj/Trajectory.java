@@ -1,7 +1,7 @@
 package xal.model.probe.traj;
 
 import xal.tools.RealNumericIndexer;
-import xal.tools.data.IDataAdaptor;
+import xal.tools.data.DataAdaptor;
 import xal.tools.data.DataFormatException;
 import xal.model.IArchive;
 import xal.model.probe.Probe;
@@ -66,18 +66,18 @@ public abstract class Trajectory implements IArchive {
 
 
     /**
-     * Read the contents of the supplied <code>IDataAdaptor</code> and return
+     * Read the contents of the supplied <code>DataAdaptor</code> and return
      * an instance of the appropriate Trajectory species.
      * 
-     * @param container <code>IDataAdaptor</code> to read a Trajectory from
-     * @return a Trajectory for the contents of the IDataAdaptor
-     * @throws ParsingException error encountered reading the IDataAdaptor
+     * @param container <code>DataAdaptor</code> to read a Trajectory from
+     * @return a Trajectory for the contents of the DataAdaptor
+     * @throws ParsingException error encountered reading the DataAdaptor
      */
-    public static Trajectory readFrom(IDataAdaptor container)
+    public static Trajectory readFrom(DataAdaptor container)
         throws ParsingException {
-        IDataAdaptor daptTraj = container.childAdaptor(Trajectory.TRAJ_LABEL);
+        DataAdaptor daptTraj = container.childAdaptor(Trajectory.TRAJ_LABEL);
         if (daptTraj == null)
-            throw new ParsingException("Trajectory#readFrom() - IDataAdaptor contains no trajectory node");
+            throw new ParsingException("Trajectory#readFrom() - DataAdaptor contains no trajectory node");
         
         String type = container.stringValue(Trajectory.TYPE_LABEL);
         Trajectory trajectory;
@@ -110,18 +110,18 @@ public abstract class Trajectory implements IArchive {
      * the output.  Subclass implementations should call super.addPropertiesTo
      * so that superclass implementations are executed.
      * 
-     * @param container the <code>IDataAdaptor</code> to add properties to
+     * @param container the <code>DataAdaptor</code> to add properties to
      */
-    protected void addPropertiesTo(IDataAdaptor container) {}
+    protected void addPropertiesTo(DataAdaptor container) {}
 
     /**
      * Allow subclasses to read subclass-specific properties from the <code>
-     * IDataAdaptor</code>.  Implementations should call super.readPropertiesFrom
+     * DataAdaptor</code>.  Implementations should call super.readPropertiesFrom
      * to ensure that superclass implementations are executed.
      * 
-     * @param container <code>IDataAdaptor</code> to read properties from
+     * @param container <code>DataAdaptor</code> to read properties from
      */
-    protected void readPropertiesFrom(IDataAdaptor container) throws ParsingException {}
+    protected void readPropertiesFrom(DataAdaptor container) throws ParsingException {}
 
 
 
@@ -405,11 +405,11 @@ public abstract class Trajectory implements IArchive {
 
 
     /**
-     * Adds a representation of this Trajectory and its state history to the supplied <code>IDataAdaptor</code>.
-     * @param container <code>IDataAdaptor</code> in which to add <code>Trajectory</code> data
+     * Adds a representation of this Trajectory and its state history to the supplied <code>DataAdaptor</code>.
+     * @param container <code>DataAdaptor</code> in which to add <code>Trajectory</code> data
      */
-    public void save(IDataAdaptor container) {
-        IDataAdaptor trajNode = container.createChild(TRAJ_LABEL);
+    public void save(DataAdaptor container) {
+        DataAdaptor trajNode = container.createChild(TRAJ_LABEL);
         trajNode.setValue(TYPE_LABEL, getClass().getName());
         trajNode.setValue(TIMESTAMP_LABEL, new Double(getTimestamp().getTime()));
         if (getDescription().length() > 0)
@@ -420,17 +420,17 @@ public abstract class Trajectory implements IArchive {
 
     /**
      * Load the current <code>Trajectory</code> object with the state history
-     * information in the <code>IDataAdaptor</code> object.
+     * information in the <code>DataAdaptor</code> object.
      * 
-     *  @param  container   <code>IDataAdaptor</code> from which state history is extracted
+     *  @param  container   <code>DataAdaptor</code> from which state history is extracted
      * 
-     *  @exception  DataFormatException     malformated data in <code>IDataAdaptor</code>
+     *  @exception  DataFormatException     malformated data in <code>DataAdaptor</code>
      */
-    public void load(IDataAdaptor container) throws DataFormatException {
-//        IDataAdaptor daptTraj = container.childAdaptor(Trajectory.TRAJ_LABEL);
+    public void load(DataAdaptor container) throws DataFormatException {
+//        DataAdaptor daptTraj = container.childAdaptor(Trajectory.TRAJ_LABEL);
 //        if (daptTraj == null)
-//            throw new DataFormatException("Trajectory#load() - IDataAdaptor contains no trajectory node");
-        IDataAdaptor daptTraj = container;
+//            throw new DataFormatException("Trajectory#load() - DataAdaptor contains no trajectory node");
+        DataAdaptor daptTraj = container;
 
         long time =
             new Double(daptTraj.doubleValue(TIMESTAMP_LABEL)).longValue();
@@ -455,15 +455,15 @@ public abstract class Trajectory implements IArchive {
     /**
      * Iterates over child nodes, asking the concrete Trajectory subclass to
      * create a <code>ProbeState</code> of the appropriate species, initialized
-     * from the contents of the supplied <code>IDataAdaptor</code>
+     * from the contents of the supplied <code>DataAdaptor</code>
      * 
-     * @param container <code>IDataAdaptor</code> containing the child state nodes
+     * @param container <code>DataAdaptor</code> containing the child state nodes
      */
-    private void readStatesFrom(IDataAdaptor container)
+    private void readStatesFrom(DataAdaptor container)
         throws ParsingException {
-        Iterator<? extends IDataAdaptor> childNodes = container.childAdaptors().iterator();
+        Iterator<? extends DataAdaptor> childNodes = container.childAdaptors().iterator();
         while (childNodes.hasNext()) {
-            IDataAdaptor childNode = childNodes.next();
+            DataAdaptor childNode = childNodes.next();
             if (!childNode.name().equals(ProbeState.STATE_LABEL)) {
                 throw new ParsingException(
                     "Expected state element, got: " + childNode.name());
@@ -475,10 +475,10 @@ public abstract class Trajectory implements IArchive {
     }
 
     /**
-     * Save the current trajectory information in the proper trajectory format to the target <code>IDataAdaptor</code> object.
-     * @param container     <code>IDataAdaptor</code> to receive trajectory history
+     * Save the current trajectory information in the proper trajectory format to the target <code>DataAdaptor</code> object.
+     * @param container     <code>DataAdaptor</code> to receive trajectory history
      */
-    private void addStatesTo(IDataAdaptor container) {
+    private void addStatesTo(DataAdaptor container) {
         Iterator<ProbeState> it = stateIterator();
         while (it.hasNext()) {
             ProbeState ps = it.next();

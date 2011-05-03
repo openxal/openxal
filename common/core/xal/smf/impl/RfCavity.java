@@ -15,7 +15,7 @@ import xal.smf.AcceleratorSeq;
 import xal.smf.attr.AttributeBucket;
 import xal.smf.attr.RfCavityBucket;
 import xal.smf.impl.qualify.ElementTypeManager;
-import xal.tools.data.IDataAdaptor;
+import xal.tools.data.DataAdaptor;
 import xal.tools.math.poly.UnivariateRealPolynomial;
 
 
@@ -48,9 +48,18 @@ public class RfCavity extends AcceleratorSeq implements RfCavityDataSource {
     public static final String      s_strType = "RF";
     
     /** RF Cavity parameters */
-    protected RfCavityBucket           m_bucRfCavity;           // RfCavity parameters
+    protected RfCavityBucket           m_bucRfCavity;           // RfCavityStruct parameters
 	
-    /** container of the enclosed RfGap(s) in this cavity sorted by position */
+    /**<p> 
+     * container of the enclosed RfGap(s) in this cavity sorted by position 
+     * </p>
+     * <p>
+     * <h4>NOTE:</h4> I don't understand the point of this, an 
+     * <code>RfCavityStruct</code> is an <code>AcceleratorSeq</code> which is
+     * already an ordered list of <code>AcceleratorNode</code>s.  This
+     * attribute and any reliance on it seems dangerously redundant.
+     * </p>
+     */
     protected List<RfGap> _gaps;  // rf gaps within this multi-gap device
 	
 	
@@ -86,7 +95,7 @@ public class RfCavity extends AcceleratorSeq implements RfCavityDataSource {
     
 
     /** Collect all of the enclosed rf gaps for convenience */
-    public void update( final IDataAdaptor adaptor ) {
+    public void update( final DataAdaptor adaptor ) {
         super.update( adaptor );
         final List<AcceleratorNode> nodes = getNodesOfType( RfGap.s_strType, true );
         _gaps = new ArrayList<RfGap>( nodes.size() );
@@ -136,7 +145,7 @@ public class RfCavity extends AcceleratorSeq implements RfCavityDataSource {
         super.addBucket(buc); 
     }    
     
-    /** Override AcceleratorNode implementation to check for a RfCavity Bucket */
+    /** Override AcceleratorNode implementation to check for a RfCavityStruct Bucket */
     public void addBucket(AttributeBucket buc)  {
 
         if (buc.getClass().equals( RfCavityBucket.class )) 

@@ -4,7 +4,7 @@
  */
 package xal.model.probe;
 
-import xal.tools.data.IDataAdaptor;
+import xal.tools.data.DataAdaptor;
 import xal.tools.math.r3.R3;
 import xal.model.probe.traj.ProbeState;
 import xal.model.probe.traj.SynchronousState;
@@ -170,7 +170,7 @@ public class SynchronousProbe extends Probe {
     }
     
     @Override
-    protected ProbeState readStateFrom(IDataAdaptor container) throws ParsingException {
+    protected ProbeState readStateFrom(DataAdaptor container) throws ParsingException {
         SynchronousState state = new SynchronousState();
         state.load(container);
         return state;

@@ -1,7 +1,7 @@
 package xal.model.probe.resp.traj;
 
 import xal.tools.beam.PhaseMatrix;
-import xal.tools.data.IDataAdaptor;
+import xal.tools.data.DataAdaptor;
 import xal.model.probe.resp.ParticlePerturb;
 import xal.model.probe.traj.ProbeState;
 import xal.model.xml.ParsingException;
@@ -57,19 +57,19 @@ public class ParticlePerturbProbeState extends ProbeState {
 	private static final String VALUE_LABEL = "matrix";
 
 	@Override
-    protected void addPropertiesTo(IDataAdaptor container) {
+    protected void addPropertiesTo(DataAdaptor container) {
 		super.addPropertiesTo(container);
 
-		IDataAdaptor partNode = container.createChild(RESPONSE_LABEL);
+		DataAdaptor partNode = container.createChild(RESPONSE_LABEL);
 		partNode.setValue(VALUE_LABEL, m_matResp.toString());
 	}
 
 	@Override
-    protected void readPropertiesFrom(IDataAdaptor container)
+    protected void readPropertiesFrom(DataAdaptor container)
 		throws ParsingException {
 		super.readPropertiesFrom(container);
 
-		IDataAdaptor child = container.childAdaptor(RESPONSE_LABEL);
+		DataAdaptor child = container.childAdaptor(RESPONSE_LABEL);
 		if (child == null)
 			throw new ParsingException(
 				"ParticlePerturbProbeState#readPropertiesFrom(): no child element = "

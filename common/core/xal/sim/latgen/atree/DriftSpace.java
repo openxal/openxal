@@ -2,7 +2,7 @@
  * Created on Feb 25, 2004
  *
  */
-package xal.sim.latgen.ptree;
+package xal.sim.latgen.atree;
 
 import xal.sim.latgen.GenerationException;
 import xal.tools.math.Interval;

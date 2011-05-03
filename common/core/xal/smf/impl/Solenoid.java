@@ -1,6 +1,6 @@
 package xal.smf.impl;
 
-import xal.tools.data.IDataAdaptor;
+import xal.tools.data.DataAdaptor;
 import xal.smf.impl.qualify.ElementTypeManager;
 import xal.smf.impl.qualify.MagnetType;
 
@@ -33,7 +33,7 @@ public class Solenoid extends Electromagnet {
 		return s_strType;
 	}
 
-/*	public void update(IDataAdaptor adaptor) {
+/*	public void update(DataAdaptor adaptor) {
 		
 	}
 */    

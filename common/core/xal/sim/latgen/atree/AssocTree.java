@@ -1,14 +1,11 @@
 /*
  * Created on Feb 25, 2004
  */
-package xal.sim.latgen.ptree;
+package xal.sim.latgen.atree;
 
-import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 
 import xal.sim.latgen.GenerationException;
-
 import xal.smf.AcceleratorNode;
 import xal.smf.AcceleratorSeq;
 import xal.tools.math.Interval;
@@ -74,14 +71,14 @@ public class AssocTree {
     
     
     
-    /** ordered list of all subsequences */
-    private List                    m_lstSeq = new LinkedList();
-    
-    /** ordered list of all thick elements */
-    private List                    m_lstThick = new LinkedList();
-    
-    /** ordered list of all thin elements */
-    private List                    m_lstThin = new LinkedList(); 
+//    /** ordered list of all subsequences */
+//    private List                    m_lstSeq = new LinkedList();
+//    
+//    /** ordered list of all thick elements */
+//    private List                    m_lstThick = new LinkedList();
+//    
+//    /** ordered list of all thin elements */
+//    private List                    m_lstThin = new LinkedList(); 
     
 
 
@@ -176,10 +173,12 @@ public class AssocTree {
       * 
       * @param iVisitor  visitor object implementing <code>IAssocTreeVisitor</code> interface
       * 
-      * @see xal.sim.latgen.ptree.TreeNode#distributeVisitor(IAssocTreeVisitor)
+      * @see xal.sim.latgen.atree.TreeNode#distributeVisitor(IAssocTreeVisitor)
       */
-     public void disseminateVisitor(IAssocTreeVisitor iVisitor) throws GenerationException {
+     public void distributVistor(IAssocTreeVisitor iVisitor) throws GenerationException {
 
+         iVisitor.entering(this);
+         
          this.nodeRoot.distributeVisitor(iVisitor);
 
          iVisitor.leaving(this);
@@ -242,34 +241,34 @@ public class AssocTree {
          }
      }
 
-     /**
-      * Parse the given <code>AcceleratorSeq</code> object identifying the 
-      * sequence nodes into subsequences, thick elements, and thin elements.
-      * After identification the nodes are placed into their respective
-      * container for subsequence processing.
-      * 
-      * @param   smfRoot      hardware object to be parsed
-      */
-     private void    parseSequence(AcceleratorSeq smfSeq)    {
-
-         Iterator        iterNode = smfSeq.getNodes().iterator();
-         while (iterNode.hasNext())  {
-             AcceleratorNode     smfNode = (AcceleratorNode)iterNode.next();
-
-             if (smfNode instanceof AcceleratorSeq) {        // check if node is a sequence
-                 m_lstSeq.add(smfNode);
-
-             } else if (smfNode.getLength() > 0.0   )    {   // check if node is thick
-                 m_lstThick.add(smfNode);
-
-             } else  {                                       // default - node must be thin
-                 m_lstThin.add(smfNode);
-
-             }
-         }                    
-     }
-
-
+//     /**
+//      * Parse the given <code>AcceleratorSeq</code> object identifying the 
+//      * sequence nodes into subsequences, thick elements, and thin elements.
+//      * After identification the nodes are placed into their respective
+//      * container for subsequence processing.
+//      * 
+//      * @param   smfRoot      hardware object to be parsed
+//      */
+//     private void    parseSequence(AcceleratorSeq smfSeq)    {
+//
+//         Iterator        iterNode = smfSeq.getNodes().iterator();
+//         while (iterNode.hasNext())  {
+//             AcceleratorNode     smfNode = (AcceleratorNode)iterNode.next();
+//
+//             if (smfNode instanceof AcceleratorSeq) {        // check if node is a sequence
+//                 m_lstSeq.add(smfNode);
+//
+//             } else if (smfNode.getLength() > 0.0   )    {   // check if node is thick
+//                 m_lstThick.add(smfNode);
+//
+//             } else  {                                       // default - node must be thin
+//                 m_lstThin.add(smfNode);
+//
+//             }
+//         }                    
+//     }
+//
+//
 //     /**
 //      * Creates <code>AssocTree</code> nodes for hardware objects representing
 //      * composite elements.  Populates the <code>AssocTree</code> with these
@@ -362,29 +361,29 @@ public class AssocTree {
 //             this.addChild(pxyThin);
 //         }                    
 //     }
-
-     /**
-      * Kluge for computing the true length of any <code>AcceleratorSeq</code> 
-      * object.  Apparently an <code>AcceleratorSeq</code> object that has
-      * children only of type <code>AcceleratorSeq</code> has a (mistaken)
-      * length of zero.
-      * 
-      * @param   seq     target <code>AcceleratorSeq</code> object
-      * @return          the length of <code>seq</code>
-      */    
-     double compSeqLen(AcceleratorSeq seq)   {
-         double len = seq.getLength();
-
-         if (len > 0.0)  return len;
-
-         Iterator    iterSub = seq.getSequences().iterator();
-         while (iterSub.hasNext())   {
-             AcceleratorSeq  seqSub = (AcceleratorSeq)iterSub.next();
-             len += this.compSeqLen(seqSub);
-         }
-         return len;
-
-     }
+//
+//     /**
+//      * Kluge for computing the true length of any <code>AcceleratorSeq</code> 
+//      * object.  Apparently an <code>AcceleratorSeq</code> object that has
+//      * children only of type <code>AcceleratorSeq</code> has a (mistaken)
+//      * length of zero.
+//      * 
+//      * @param   seq     target <code>AcceleratorSeq</code> object
+//      * @return          the length of <code>seq</code>
+//      */    
+//     double compSeqLen(AcceleratorSeq seq)   {
+//         double len = seq.getLength();
+//
+//         if (len > 0.0)  return len;
+//
+//         Iterator    iterSub = seq.getSequences().iterator();
+//         while (iterSub.hasNext())   {
+//             AcceleratorSeq  seqSub = (AcceleratorSeq)iterSub.next();
+//             len += this.compSeqLen(seqSub);
+//         }
+//         return len;
+//
+//     }
 
 }
 

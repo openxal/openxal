@@ -11,7 +11,7 @@ import xal.tools.beam.Twiss;
 import xal.tools.beam.PhaseMatrix;
 import xal.tools.beam.PhaseMap;
 import xal.tools.beam.PhaseVector;
-import xal.tools.data.IDataAdaptor;
+import xal.tools.data.DataAdaptor;
 
 import xal.model.probe.Probe;
 import xal.model.probe.TransferMapProbe;
@@ -415,30 +415,30 @@ public class TransferMapState extends ProbeState implements IPhaseState {
 
 
     /**
-     * Save the probe state values to a data store represented by the <code>IDataAdaptor</code> interface.
+     * Save the probe state values to a data store represented by the <code>DataAdaptor</code> interface.
      * @param daptSink    data sink to receive state information
-     * @see gov.sns.xal.model.probe.traj.ProbeState#addPropertiesTo(gov.sns.tools.data.IDataAdaptor)
+     * @see gov.sns.xal.model.probe.traj.ProbeState#addPropertiesTo(gov.DataAdaptor.tools.data.IDataAdaptor)
      */
     @Override
-    protected void addPropertiesTo(IDataAdaptor daptSink) {
+    protected void addPropertiesTo(DataAdaptor daptSink) {
         super.addPropertiesTo(daptSink);
 
-        IDataAdaptor daptMap = daptSink.createChild(TransferMapState.LABEL_STATE);
+        DataAdaptor daptMap = daptSink.createChild(TransferMapState.LABEL_STATE);
         this.getTransferMap().save(daptMap);
     }
 
     /**
      * Restore the state values for this probe state object from the data store
-     * represented by the <code>IDataAdaptor</code> interface.
+     * represented by the <code>DataAdaptor</code> interface.
      * @param   daptSrc             data source for probe state information
      * @throws  ParsingException    error in data format
-     * @see gov.sns.xal.model.probe.traj.ProbeState#readPropertiesFrom(gov.sns.tools.data.IDataAdaptor)
+     * @see gov.sns.xal.model.probe.traj.ProbeState#readPropertiesFrom(gov.DataAdaptor.tools.data.IDataAdaptor)
      */
     @Override
-    protected void readPropertiesFrom(IDataAdaptor daptSrc) throws ParsingException {
+    protected void readPropertiesFrom(DataAdaptor daptSrc) throws ParsingException {
         super.readPropertiesFrom(daptSrc);
 
-        IDataAdaptor daptMap = daptSrc.childAdaptor(TransferMapState.LABEL_STATE);
+        DataAdaptor daptMap = daptSrc.childAdaptor(TransferMapState.LABEL_STATE);
         if (daptMap == null)
             throw new ParsingException("TransferMapState#readPropertiesFrom(): no child element = " + LABEL_STATE);
         this.getTransferMap().load(daptMap);

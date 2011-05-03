@@ -13,7 +13,7 @@ import java.util.StringTokenizer;
 
 import org.w3c.dom.Document;
 
-import xal.tools.data.IDataAdaptor;
+import xal.tools.data.DataAdaptor;
 import xal.tools.xml.XmlDataAdaptor;
 import xal.model.IComponent;
 import xal.model.IComposite;
@@ -105,8 +105,8 @@ public class LatticeXmlWriter {
 	 * @param lattice The Lattice to write as XML
 	 * @param container The XMLDataAdaptor representing the XML file
 	 */
-	private void writeLatticeObject(Lattice lattice, IDataAdaptor container) {
-		IDataAdaptor latticeNode = container.createChild(LATTICE_LABEL);
+	private void writeLatticeObject(Lattice lattice, DataAdaptor container) {
+		DataAdaptor latticeNode = container.createChild(LATTICE_LABEL);
 		// the following four attributes are optional, so only add them if not null
 		if (lattice.getId() != null)
 			latticeNode.setValue(ID_LABEL, lattice.getId());
@@ -137,8 +137,8 @@ public class LatticeXmlWriter {
 	 * the String specified in the parser
 	 * @param container The XML document node that contains the comment element
 	 */
-	private void writeCommentObject(String comment, IDataAdaptor container) {
-		IDataAdaptor commentNode = container.createChild(COMMENT_LABEL);
+	private void writeCommentObject(String comment, DataAdaptor container) {
+		DataAdaptor commentNode = container.createChild(COMMENT_LABEL);
 		StringTokenizer st = new StringTokenizer(comment, COMMENT_DELIMITER);
 		if (st.countTokens() == 3) {
 			commentNode.setValue(AUTHOR_LABEL, st.nextToken());
@@ -156,8 +156,8 @@ public class LatticeXmlWriter {
      * @param sequence the <code>ElementSeq</code> to write as XML
      * @param container the XML document node containing this sequence
      */
-    private void writeCompositeObject(IComposite sequence, IDataAdaptor container) {
-        IDataAdaptor sequenceNode = container.createChild(SEQUENCE_LABEL);
+    private void writeCompositeObject(IComposite sequence, DataAdaptor container) {
+        DataAdaptor sequenceNode = container.createChild(SEQUENCE_LABEL);
         sequenceNode.setValue(ID_LABEL, sequence.getId());
         // comment element is optional, so only add if not null
 //        if (sequence.getComments() != null)
@@ -174,7 +174,7 @@ public class LatticeXmlWriter {
      * @param sequence the <code>ElementSeq</code> whose contents to write
      * @param container the XML document node corresponding to the sequence
      */
-    private void writeCompositeContents(IComposite sequence, IDataAdaptor container) {
+    private void writeCompositeContents(IComposite sequence, DataAdaptor container) {
         Iterator<IComponent> iter = sequence.localIterator();        
         while (iter.hasNext())  {
             IComponent ifc = iter.next();            
@@ -205,8 +205,8 @@ public class LatticeXmlWriter {
 	 * @param container The XML document node for the element's containing
 	 * <code>ElementSeq</code>
 	 */
-	private void writeElementObject(IElement elem, IDataAdaptor container) {
-		IDataAdaptor elementNode = container.createChild(ELEMENT_LABEL);
+	private void writeElementObject(IElement elem, DataAdaptor container) {
+		DataAdaptor elementNode = container.createChild(ELEMENT_LABEL);
 		elementNode.setValue(TYPE_LABEL, elem.getType());
 		// ID attribute is optional, so don't add if null
 		if (elem.getId() != null)
@@ -226,7 +226,7 @@ public class LatticeXmlWriter {
 				if (getter != null) {
 					Object val = getter.invoke(elem, (Object[])null);
 					if (val != null) {
-						IDataAdaptor paramNode = elementNode.createChild(PARAM_LABEL);
+						DataAdaptor paramNode = elementNode.createChild(PARAM_LABEL);
 						paramNode.setValue(NAME_LABEL, propDesc.getName());
 						paramNode.setValue(TYPE_LABEL, propDesc.getPropertyType().getName());
 						paramNode.setValue(VALUE_LABEL, val.toString());

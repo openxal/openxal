@@ -8,7 +8,7 @@ package xal.model.probe;
 
 import xal.tools.beam.PhaseMap;
 import xal.tools.beam.PhaseVector;
-import xal.tools.data.IDataAdaptor;
+import xal.tools.data.DataAdaptor;
 
 import xal.model.probe.traj.ProbeState;
 import xal.model.probe.traj.TransferMapState;
@@ -175,7 +175,7 @@ public class TransferMapProbe extends Probe {
     }
     
     @Override
-    protected ProbeState readStateFrom(IDataAdaptor container) throws ParsingException {
+    protected ProbeState readStateFrom(DataAdaptor container) throws ParsingException {
         TransferMapState state = new TransferMapState();
         state.load(container);
         return state;

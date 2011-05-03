@@ -220,7 +220,7 @@ public class XALSynopticPanel extends JPanel
 				if (el instanceof Bend || el instanceof Quadrupole
 				    || el instanceof PermQuadrupole 
 //                    || el instanceof RfGap
-//				    || el instanceof RfCavity
+//				    || el instanceof RfCavityStruct
                     ) {
 					newThick.add(el);
 				} else {
@@ -386,7 +386,7 @@ public class XALSynopticPanel extends JPanel
 //					addLabel(i, name);
 //				}
 //			} 
-//			else if (el instanceof RfCavity) {
+//			else if (el instanceof RfCavityStruct) {
 //				g.setColor(Color.gray);
 //				
 //				if (l < 3) {

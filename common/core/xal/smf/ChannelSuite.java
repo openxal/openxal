@@ -63,7 +63,7 @@ public class ChannelSuite implements DataListener {
      * Update the data based on the information provided by the data provider.
      * @param adaptor The adaptor from which to update the data
      */
-    public void update(IDataAdaptor adaptor) {
+    public void update(DataAdaptor adaptor) {
         signalSuite.update(adaptor);
     }
     
@@ -72,7 +72,7 @@ public class ChannelSuite implements DataListener {
      * Write data to the data adaptor for storage.
      * @param adaptor The adaptor to which the receiver's data is written
      */
-    public void write(IDataAdaptor adaptor) {
+    public void write(DataAdaptor adaptor) {
         signalSuite.write(adaptor);
     }
     

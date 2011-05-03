@@ -8,7 +8,7 @@ import xal.tools.math.poly.UnivariateRealPolynomial;
 import xal.model.IModelDataSource;
 
 /**
- * Specifies interface for sources used to create RfCavity model elements.
+ * Specifies interface for sources used to create RfCavityStruct model elements.
  * 
  * @author Craig McChesney
  */

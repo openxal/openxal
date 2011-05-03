@@ -7,7 +7,7 @@
 package xal.model.alg;
 
 
-import xal.tools.data.IDataAdaptor;
+import xal.tools.data.DataAdaptor;
 import xal.tools.data.DataFormatException;
 import xal.tools.data.DataTable;
 import xal.tools.data.EditContext;
@@ -194,7 +194,7 @@ public abstract class Tracker implements IAlgorithm, IArchive {
      * 
      * @throws DataFormatException  bad data format, error reading data
      */
-    public static IAlgorithm newInstance(IDataAdaptor daSource)
+    public static IAlgorithm newInstance(DataAdaptor daSource)
             throws DataFormatException 
     {
         // Make sure this is an algorithm node
@@ -633,7 +633,7 @@ public abstract class Tracker implements IAlgorithm, IArchive {
 
     /**
      * Load the state and settings of this algorithm from a data source
-     * exposing the <code>IDataAdaptor</code> interface.  Subclasses should
+     * exposing the <code>DataAdaptor</code> interface.  Subclasses should
      * override this method to recover the data particular to there own
      * operation.
      * 
@@ -641,9 +641,9 @@ public abstract class Tracker implements IAlgorithm, IArchive {
      * 
      * @throws  DataFormatException     bad format in algorithm data
      * 
-     * @see xal.model.IArchive#load(xal.tools.data.IDataAdaptor)
+     * @see xal.model.IArchive#load(xal.tools.data.DataAdaptor)
      */
-    public void load(IDataAdaptor daSource) throws DataFormatException {
+    public void load(DataAdaptor daSource) throws DataFormatException {
         
         // Make sure we have proper data source
         String  strDataName = daSource.name();
@@ -651,7 +651,7 @@ public abstract class Tracker implements IAlgorithm, IArchive {
             throw new DataFormatException("Tracker#load() - wrong data source " + strDataName);
 
         // Get the data node for the base class parameters
-        IDataAdaptor daTracker = daSource.childAdaptor(NODETAG_TRACKER);
+        DataAdaptor daTracker = daSource.childAdaptor(NODETAG_TRACKER);
         if (daTracker == null)
             throw new DataFormatException("Tracker#load() - missing data node " + Tracker.NODETAG_TRACKER);
         
@@ -673,15 +673,15 @@ public abstract class Tracker implements IAlgorithm, IArchive {
      * 
      * @param   daptArchive     data source to receive algorithm configuration
      * 
-     * @see xal.model.IArchive#save(xal.tools.data.IDataAdaptor)
+     * @see xal.model.IArchive#save(xal.tools.data.DataAdaptor)
      */
-    public void save(IDataAdaptor daptArchive) {
+    public void save(DataAdaptor daptArchive) {
         
-        IDataAdaptor daptAlg = daptArchive.createChild(NODETAG_ALG);
+        DataAdaptor daptAlg = daptArchive.createChild(NODETAG_ALG);
         daptAlg.setValue(ATTRTAG_TYPE, this.getType());
         daptAlg.setValue(ATTRTAG_VER, this.getVersion());
         
-        IDataAdaptor daptTrack = daptAlg.createChild(NODETAG_TRACKER);
+        DataAdaptor daptTrack = daptAlg.createChild(NODETAG_TRACKER);
         daptTrack.setValue(ATTRTAG_DEBUG, this.getDebugMode());
         daptTrack.setValue(ATTRTAG_UPDATE, this.getProbeUpdatePolicy());
         daptTrack.setValue(ATTRTAG_RFGAP_PHASE, this.useRfGapPhaseCalculation());

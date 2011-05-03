@@ -1,7 +1,7 @@
 /*
  * Created on Feb 25, 2004
  */
-package xal.sim.latgen.ptree;
+package xal.sim.latgen.atree;
 
 
 import xal.sim.latgen.GenerationException;
@@ -120,7 +120,7 @@ public class HardwareNode extends TreeNode {
     
     /**
      * @since Apr 29, 2011
-     * @see xal.sim.latgen.ptree.TreeNode#processVisitor(xal.sim.latgen.ptree.IAssocTreeVisitor)
+     * @see xal.sim.latgen.atree.TreeNode#processVisitor(xal.sim.latgen.atree.IAssocTreeVisitor)
      */
     @Override
     public void processVisitor(IAssocTreeVisitor iVisitor)
@@ -128,6 +128,11 @@ public class HardwareNode extends TreeNode {
         // TODO Auto-generated method stub
         
     }
+    
+    
+    /*
+     * Attributes
+     */
     
     /**
       * Return the hardware object represented by this node.
@@ -137,7 +142,6 @@ public class HardwareNode extends TreeNode {
      public AcceleratorNode getHardwareRef()  {
          return this.smfHware;
      }
-
 
     /**
      * Returns the position of the referenced hardware in
@@ -152,6 +156,11 @@ public class HardwareNode extends TreeNode {
         return this.smfHware.getPosition();
     }
 
+    
+    /*
+     * Operations
+     */
+    
     /**
      * <p>
      * The given node is inserted into this hardware node.  In doing so,
@@ -178,7 +187,7 @@ public class HardwareNode extends TreeNode {
      * 
      * @author Christopher K. Allen
      * @since Apr 29, 2011
-//     * @see xal.sim.latgen.ptree.TreeNode#insert(xal.sim.latgen.ptree.HardwareNode)
+//     * @see xal.sim.latgen.atree.TreeNode#insert(xal.sim.latgen.atree.HardwareNode)
      */
     public HardwareNode insert(TreeNode node, double dblPos) throws GenerationException {
 

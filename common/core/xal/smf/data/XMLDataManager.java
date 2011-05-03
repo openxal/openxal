@@ -462,30 +462,30 @@ public class XMLDataManager {
          */
         public void refresh() {
             final String mainUrlSpec = mainUrlSpec();
-            final IDataAdaptor mainAdaptor = XmlDataAdaptor.adaptorForUrl( mainUrlSpec, false );
-            final IDataAdaptor sourcesAdaptor = mainAdaptor.childAdaptor( SOURCE_TAG );
+            final DataAdaptor mainAdaptor = XmlDataAdaptor.adaptorForUrl( mainUrlSpec, false );
+            final DataAdaptor sourcesAdaptor = mainAdaptor.childAdaptor( SOURCE_TAG );
 
             // fetch the optics reference
-            final IDataAdaptor opticsAdaptor = sourcesAdaptor.childAdaptor( OPTICS_TAG );
+            final DataAdaptor opticsAdaptor = sourcesAdaptor.childAdaptor( OPTICS_TAG );
             final String opticsUrl = opticsAdaptor.stringValue( OPTICS_URL_KEY );
             acceleratorManager.setOpticsUrlSpec( opticsUrl );
             
             // fetch the optics extra references
-            final List<IDataAdaptor> extraAdaptors = sourcesAdaptor.childAdaptors( OPTICS_EXTRA_TAG );
-            for( final IDataAdaptor extraAdaptor : extraAdaptors ) {
+            final List<DataAdaptor> extraAdaptors = sourcesAdaptor.childAdaptors( OPTICS_EXTRA_TAG );
+            for( final DataAdaptor extraAdaptor : extraAdaptors ) {
                 final String extraUrl = extraAdaptor.stringValue( OPTICS_URL_KEY );
                 acceleratorManager.addExtraUrlSpec( extraUrl );
             }
 			
 			// fetch the hardware status reference
-			final IDataAdaptor hardwareStatusRefAdaptor = sourcesAdaptor.childAdaptor( HARDWARE_STATUS_TAG );
+			final DataAdaptor hardwareStatusRefAdaptor = sourcesAdaptor.childAdaptor( HARDWARE_STATUS_TAG );
 			if ( hardwareStatusRefAdaptor != null ) {
                 final String hardwareStatusURLSpec = hardwareStatusRefAdaptor.stringValue( OPTICS_URL_KEY );
                 acceleratorManager.setHardwareStatusURLSpec( hardwareStatusURLSpec );
 			}
             
             // fetch the timing reference
-            final IDataAdaptor timingReferenceAdaptor = sourcesAdaptor.childAdaptor( TIMING_TAG );
+            final DataAdaptor timingReferenceAdaptor = sourcesAdaptor.childAdaptor( TIMING_TAG );
 			if ( timingReferenceAdaptor != null ) {
 				final String timingRelativeURL = timingReferenceAdaptor.stringValue( TIMING_URL_KEY );
 				
@@ -500,7 +500,7 @@ public class XMLDataManager {
 			}
 			
 			// fetch the device mapping
-            final IDataAdaptor deviceMappingReferenceAdaptor = sourcesAdaptor.childAdaptor( DEVICEMAPPING_TAG );
+            final DataAdaptor deviceMappingReferenceAdaptor = sourcesAdaptor.childAdaptor( DEVICEMAPPING_TAG );
 			if ( deviceMappingReferenceAdaptor != null ) {
 				final String deviceMappingURL = deviceMappingReferenceAdaptor.stringValue( DEVICEMAPPING_URL_KEY );
 				
@@ -515,9 +515,9 @@ public class XMLDataManager {
 			}
             
             // fetch the table group references
-            final List<IDataAdaptor> tableAdaptors = sourcesAdaptor.childAdaptors( TABLE_GROUP_TAG );
+            final List<DataAdaptor> tableAdaptors = sourcesAdaptor.childAdaptors( TABLE_GROUP_TAG );
             tableManager.clear();
-            for( final IDataAdaptor tableAdaptor : tableAdaptors ) { 
+            for( final DataAdaptor tableAdaptor : tableAdaptors ) { 
                 final String tableGroup = tableAdaptor.stringValue( TABLE_GROUP_KEY );
                 final String tableGroupUrl = tableAdaptor.stringValue( TABLE_GROUP_URL_KEY );
 
@@ -530,7 +530,7 @@ public class XMLDataManager {
         public void write() {
             XmlDataAdaptor docAdaptor = XmlDataAdaptor.newEmptyDocumentAdaptor();
 
-            IDataAdaptor sourceAdaptor = docAdaptor.createChild( SOURCE_TAG );
+            DataAdaptor sourceAdaptor = docAdaptor.createChild( SOURCE_TAG );
 
             writeOpticsRef( sourceAdaptor );
             writeTableGroupRefs( sourceAdaptor );
@@ -540,8 +540,8 @@ public class XMLDataManager {
         
         
 		/** write the optics reference */
-        private void writeOpticsRef( final IDataAdaptor parentAdaptor ) {
-            IDataAdaptor adaptor = parentAdaptor.createChild( OPTICS_TAG );
+        private void writeOpticsRef( final DataAdaptor parentAdaptor ) {
+            DataAdaptor adaptor = parentAdaptor.createChild( OPTICS_TAG );
 
             adaptor.setValue( OPTICS_NAME_KEY, OPTICS_NAME );
 
@@ -551,14 +551,14 @@ public class XMLDataManager {
         
         
 		/** write the table group references */
-        private void writeTableGroupRefs( final IDataAdaptor parentAdaptor ) {
+        private void writeTableGroupRefs( final DataAdaptor parentAdaptor ) {
             Collection tableGroups = getTableGroups();
             
             Iterator tableGroupIter = tableGroups.iterator();
             while ( tableGroupIter.hasNext() ) {
                 String tableGroup = (String)tableGroupIter.next();
                 String tableGroupUrl = urlSpecForTableGroup( tableGroup );
-                IDataAdaptor adaptor = parentAdaptor.createChild( TABLE_GROUP_TAG );
+                DataAdaptor adaptor = parentAdaptor.createChild( TABLE_GROUP_TAG );
                 
                 adaptor.setValue( TABLE_GROUP_KEY, tableGroup );
                 adaptor.setValue( TABLE_GROUP_URL_KEY, tableGroupUrl );
@@ -659,7 +659,7 @@ public class XMLDataManager {
 			
             dtdUrlSpec = docType.getSystemId();
             
-            IDataAdaptor accelAdaptor = adaptor.childAdaptor( acceleratorTag );
+            DataAdaptor accelAdaptor = adaptor.childAdaptor( acceleratorTag );
             Accelerator accelerator = new Accelerator();
 			
 			accelerator.setNodeFactory( DEVICE_MANAGER.getNodeFactory() );
@@ -711,7 +711,7 @@ public class XMLDataManager {
             
             String acceleratorTag = accelerator.dataLabel();
             
-            IDataAdaptor accelAdaptor = adaptor.childAdaptor( acceleratorTag );
+            DataAdaptor accelAdaptor = adaptor.childAdaptor( acceleratorTag );
             accelerator.update( accelAdaptor ); 
         }
         
@@ -755,12 +755,12 @@ public class XMLDataManager {
 		
     	public void setURL( final URL url ) {
     		final XmlDataAdaptor deviceMappingDocumentAdaptor = XmlDataAdaptor.adaptorForUrl( url, false );
-			final IDataAdaptor deviceMappingAdaptor = deviceMappingDocumentAdaptor.childAdaptor( DeviceManager.DEVICE_MAPPING );
+			final DataAdaptor deviceMappingAdaptor = deviceMappingDocumentAdaptor.childAdaptor( DeviceManager.DEVICE_MAPPING );
 			
-			final List<IDataAdaptor> deviceAdaptors = deviceMappingAdaptor.childAdaptors( DEVICE_TAG );
+			final List<DataAdaptor> deviceAdaptors = deviceMappingAdaptor.childAdaptors( DEVICE_TAG );
 			
 			final AcceleratorNodeFactory nodeFactory = new AcceleratorNodeFactory();
-			for ( final IDataAdaptor deviceAdaptor : deviceAdaptors ) {
+			for ( final DataAdaptor deviceAdaptor : deviceAdaptors ) {
 				try {
 					final String deviceType = deviceAdaptor.stringValue( "type" );
 					final String softType = deviceAdaptor.hasAttribute( "softType" ) ? deviceAdaptor.stringValue( "softType" ) : null;

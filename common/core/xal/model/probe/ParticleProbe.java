@@ -8,7 +8,7 @@ package xal.model.probe;
 
 
 import xal.tools.beam.PhaseVector;
-import xal.tools.data.IDataAdaptor;
+import xal.tools.data.DataAdaptor;
 
 import xal.model.probe.traj.ParticleProbeState;
 import xal.model.probe.traj.ParticleTrajectory;
@@ -137,7 +137,7 @@ public class ParticleProbe extends Probe {
     }
     
     @Override
-    protected ProbeState readStateFrom(IDataAdaptor container) throws ParsingException {
+    protected ProbeState readStateFrom(DataAdaptor container) throws ParsingException {
         ParticleProbeState state = new ParticleProbeState();
         state.load(container);
         return state;

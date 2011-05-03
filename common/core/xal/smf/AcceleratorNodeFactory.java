@@ -100,8 +100,8 @@ public final class AcceleratorNodeFactory {
     }
     
     
-    /** create an accelerator node based on a IDataAdaptor */
-    public AcceleratorNode createNode( final IDataAdaptor adaptor ) throws ClassNotFoundException {
+    /** create an accelerator node based on a DataAdaptor */
+    public AcceleratorNode createNode( final DataAdaptor adaptor ) throws ClassNotFoundException {
         final String nodeID = adaptor.stringValue( "id" );
         final String deviceType = adaptor.stringValue( "type" );
 		final String softType = adaptor.hasAttribute( "softType" ) ? adaptor.stringValue( "softType" ) : null;

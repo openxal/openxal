@@ -1,7 +1,7 @@
 /*
  * Created on Feb 25, 2004
  */
-package xal.sim.latgen.ptree;
+package xal.sim.latgen.atree;
 
 import java.util.Collections;
 import java.util.Iterator;
@@ -86,8 +86,8 @@ public abstract class TreeNode implements Comparable<TreeNode> {
 //     * @see TreeNode#addChild
 //     */
 //    abstract public <T extends HardwareNode> void   insert(TreeNode node) throws GenerationException;
-    
-
+//    
+//
     /**
      * Each concrete association node (derived type) must provide an action when 
      * presented with an object exposing the <code>IAssocTreeVisitor</code> 
@@ -311,7 +311,7 @@ public abstract class TreeNode implements Comparable<TreeNode> {
      *
      * @author Christopher K. Allen
      * @since Apr 29, 2011
-     * @see xal.sim.latgen.ptree.TreeNode#compareTo(xal.sim.latgen.ptree.TreeNode)
+     * @see xal.sim.latgen.atree.TreeNode#compareTo(xal.sim.latgen.atree.TreeNode)
      */
     @Override
     public int compareTo(TreeNode nodeThat) {

@@ -11,12 +11,12 @@ import java.util.Stack;
 import xal.model.Sector;
 import xal.model.elem.IdealDrift;
 
-import xal.sim.latgen.ptree.DriftSpace;
-import xal.sim.latgen.ptree.IAssocTreeVisitor;
-import xal.sim.latgen.ptree.AssocTree;
-import xal.sim.latgen.ptree.ThickHardware;
-import xal.sim.latgen.ptree.ThinHardware;
-import xal.sim.latgen.ptree.TreeNode;
+import xal.sim.latgen.atree.AssocTree;
+import xal.sim.latgen.atree.DriftSpace;
+import xal.sim.latgen.atree.IAssocTreeVisitor;
+import xal.sim.latgen.atree.ThickHardware;
+import xal.sim.latgen.atree.ThinHardware;
+import xal.sim.latgen.atree.TreeNode;
 
 import xal.sim.sync.SynchronizationManager;
 
@@ -116,7 +116,7 @@ public class SequenceGenerator implements IAssocTreeVisitor {
         
         AssocTree       pxyModel = new AssocTree(smfSeq);
         
-        pxyModel.disseminateVisitor(this);
+        pxyModel.distributVistor(this);
         
         return this.getMasterSector();     
     }
@@ -360,7 +360,7 @@ public class SequenceGenerator implements IAssocTreeVisitor {
 
     /**
      * @since May 2, 2011
-     * @see xal.sim.latgen.ptree.IAssocTreeVisitor#process(xal.sim.latgen.ptree.TreeNode)
+     * @see xal.sim.latgen.atree.IAssocTreeVisitor#process(xal.sim.latgen.atree.TreeNode)
      */
     @Override
     public void process(TreeNode pxyNode) throws GenerationException {

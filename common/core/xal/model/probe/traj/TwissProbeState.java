@@ -16,7 +16,7 @@ import xal.tools.beam.PhaseMatrix;
 import xal.tools.beam.Twiss;
 import xal.tools.beam.Twiss3D;
 
-import xal.tools.data.IDataAdaptor;
+import xal.tools.data.DataAdaptor;
 import xal.tools.data.DataFormatException;
 
 import xal.model.probe.TwissProbe;
@@ -383,22 +383,22 @@ public class TwissProbeState extends BunchProbeState implements IPhaseState {
      * Save the state values particular to <code>TwissProbeState</code> objects
      * to the data sink.
      * 
-     *  @param  daSink   data sink represented by <code>IDataAdaptor</code> interface
+     *  @param  daSink   data sink represented by <code>DataAdaptor</code> interface
      */
     @Override
-    protected void addPropertiesTo(IDataAdaptor daSink) {
+    protected void addPropertiesTo(DataAdaptor daSink) {
         super.addPropertiesTo(daSink);
         
-        IDataAdaptor daProbe = daSink.createChild(TwissProbeState.LABEL_TWISSPROBE);
+        DataAdaptor daProbe = daSink.createChild(TwissProbeState.LABEL_TWISSPROBE);
         
-        IDataAdaptor daCent = daProbe.createChild(TwissProbeState.LABEL_CENT);
+        DataAdaptor daCent = daProbe.createChild(TwissProbeState.LABEL_CENT);
         this.getCentroid().save(daCent);
         
-        IDataAdaptor daResp = daProbe.createChild(TwissProbeState.LABEL_RESP);
+        DataAdaptor daResp = daProbe.createChild(TwissProbeState.LABEL_RESP);
         this.getResponseMatrix().save(daResp);
 
         this.getTwiss3D().save(daProbe);
-//        IDataAdaptor daTwiss = daProbe.createChild(TwissProbeState.LABEL_TWISS);
+//        DataAdaptor daTwiss = daProbe.createChild(TwissProbeState.LABEL_TWISS);
 //        this.getTwiss3D().save(daTwiss);
     }
         
@@ -406,34 +406,34 @@ public class TwissProbeState extends BunchProbeState implements IPhaseState {
      * Recover the state values particular to <code>TwissProbeState</code> objects 
      * from the data source.
      *
-     *  @param  daSource   data source represented by a <code>IDataAdaptor</code> interface
+     *  @param  daSource   data source represented by a <code>DataAdaptor</code> interface
      * 
      *  @exception ParsingException     state information in data source is malformatted
      */
     @Override
-    protected void readPropertiesFrom(IDataAdaptor daSource) 
+    protected void readPropertiesFrom(DataAdaptor daSource) 
         throws ParsingException 
     {
         super.readPropertiesFrom(daSource);
         
-        IDataAdaptor daProbe = daSource.childAdaptor(TwissProbeState.LABEL_TWISSPROBE);
+        DataAdaptor daProbe = daSource.childAdaptor(TwissProbeState.LABEL_TWISSPROBE);
         if (daProbe == null)
             throw new ParsingException("TwissProbeState#readPropertiesFrom(): no child element = " + LABEL_TWISSPROBE);
         
         try {
-            IDataAdaptor daCent = daProbe.childAdaptor(TwissProbeState.LABEL_CENT);
+            DataAdaptor daCent = daProbe.childAdaptor(TwissProbeState.LABEL_CENT);
             if (daCent != null) {
                 PhaseVector vecCent = new PhaseVector(daCent);
                 this.setCentroid(vecCent);
             }
             
-            IDataAdaptor daResp = daProbe.childAdaptor(TwissProbeState.LABEL_RESP);
+            DataAdaptor daResp = daProbe.childAdaptor(TwissProbeState.LABEL_RESP);
             if (daResp != null) {
                 PhaseMatrix matResp = new PhaseMatrix(daResp);
                 this.setResponseMatrix(matResp);
             }
             
-//            IDataAdaptor daTwiss = daProbe.childAdaptor(TwissProbeState.LABEL_TWISS);
+//            DataAdaptor daTwiss = daProbe.childAdaptor(TwissProbeState.LABEL_TWISS);
 //            if (daTwiss != null)   {
 //                Twiss3D envTwiss = new Twiss3D(daTwiss);
 //                this.setTwiss(envTwiss);

@@ -94,7 +94,7 @@ public class LatticeXmlParser {
      * @return the lattice object described by the XML file
      * @exception  ParsingException An exception was encountered in parsing
      */
-    public static Lattice parseDataAdaptor(IDataAdaptor adaptor) 
+    public static Lattice parseDataAdaptor(DataAdaptor adaptor) 
     	throws ParsingException 
     {
     	LatticeXmlParser parser = new LatticeXmlParser();
@@ -137,9 +137,9 @@ public class LatticeXmlParser {
      * @author Christopher K. Allen
      * @since  Apr 13, 2011
      */
-    public Lattice parseAdaptor(IDataAdaptor adaptor) throws ParsingException {
+    public Lattice parseAdaptor(DataAdaptor adaptor) throws ParsingException {
     	
-        IDataAdaptor     daptLat = adaptor.childAdaptor(s_strElemLatt);
+        DataAdaptor     daptLat = adaptor.childAdaptor(s_strElemLatt);
         
         
         // Extract lattice attributes and set them
@@ -198,7 +198,7 @@ public class LatticeXmlParser {
      *  @exception  InstantiationException  unable to instantiate an IElement instance
      *  @exception  NoSuchMethodException   unknown or invalid Parameter for an Element was encountered
      */
-    protected ElementSeq buildSequence(IDataAdaptor daptSeq)
+    protected ElementSeq buildSequence(DataAdaptor daptSeq)
         throws DataFormatException, NumberFormatException, ClassNotFoundException, InstantiationException, NoSuchMethodException
     {
         // Create a new ElementSeq instance
@@ -220,7 +220,7 @@ public class LatticeXmlParser {
      *
      *  @exception  MissingDataException    an attribute was missing from the comment
      */
-    protected String buildComment(IDataAdaptor daptComm)   {
+    protected String buildComment(DataAdaptor daptComm)   {
         String      strAuth;        // author of comment
         String      strDate;        // date of comment
         String      strText;        // user comments for sequence
@@ -246,19 +246,38 @@ public class LatticeXmlParser {
      *  @exception  InstantiationException  unable to instantiate an IElement instance
      *  @exception  ClassNotFoundException  an unknown IElement type was encountered
      *  @exception  DataFormatException     bad parameter format encountered
-     *  @exception  NumberFormatException   bad number format encountered in parameter value
      *  @exception  NoSuchMethodException   unknown or invalid Parameter for an IElement was encountered
      */
-    protected IElement buildElement(IDataAdaptor daptElem)  
-        throws InstantiationException, ClassNotFoundException, DataFormatException, NoSuchMethodException, NumberFormatException
+    protected IElement buildElement(DataAdaptor daptElem)  
+        throws InstantiationException, ClassNotFoundException, DataFormatException, NoSuchMethodException
     {
-        // Create new element instance whose type is specified by the typeid
-        String      strType = attrValue(daptElem, s_strAttrType);
-        IElement    elemNew = ElementFactory.createIElement(strType);
+//        // Create new element instance whose type is specified by the typeid
+//        String      strType = attrValue(daptElem, s_strAttrType);
+//        IElement    elemNew = ElementFactory.createIElement(strType);
+        
+        // Create a new element instance whose type is specified by its class type
+        String      strType  = attrValue(daptElem, s_strAttrType);
+        Class<?>    clsElem  = Class.forName(strType);
+        
+        Constructor<?> ctorElem = clsElem.getConstructor((Class<?>[])null); 
+        IElement elemNew;
+        try {
+            elemNew = (IElement) ctorElem.newInstance((Object[])null);
+            
+        } catch (IllegalArgumentException e) {
+            throw new InstantiationException("No default element contructor.");
+
+        } catch (IllegalAccessException e) {
+            throw new InstantiationException("Unable to access element constructor");
+            
+        } catch (InvocationTargetException e) {
+            throw new InstantiationException("Unable to instantiate element.");
+            
+        }
 
 
         // Set the optional element attributes
-        if (daptElem.hasAttribute(s_strAttrId)) {
+        if (daptElem.hasAttribute(s_strAttrId) && elemNew instanceof Element) {
             String  strId   = daptElem.stringValue(s_strAttrId);
             ((Element)elemNew).setId(strId);
         }
@@ -284,13 +303,13 @@ public class LatticeXmlParser {
      *  @exception  NumberFormatException   bad number format in parameter value
      *  @exception  NoSuchMethodException   unknown or invalid Parameter for an Element was encountered
      */
-    protected void loadComposite(IComposite secNew, IDataAdaptor daptSeq)    
+    protected void loadComposite(IComposite secNew, DataAdaptor daptSeq)    
         throws DataFormatException, NumberFormatException, ClassNotFoundException, NoSuchMethodException, InstantiationException
     {
         // Build the sequence from its components
-        Iterator<? extends IDataAdaptor> iterChild = daptSeq.childAdaptors().iterator();
+        Iterator<? extends DataAdaptor> iterChild = daptSeq.childAdaptors().iterator();
         while (iterChild.hasNext()) {
-            IDataAdaptor     daptChild = iterChild.next();
+            DataAdaptor     daptChild = iterChild.next();
             
             
             // Comments - Load any comments associated with sequence
@@ -330,16 +349,16 @@ public class LatticeXmlParser {
      *  @exception  NumberFormatException   numeric value was malformed and unparseable
      *  @exception  NoSuchMethodException   unknown or invalid Parameter for an Element was encountered
      */
-    protected void loadElement(IElement elem, IDataAdaptor daptElem) 
+    protected void loadElement(IElement elem, DataAdaptor daptElem) 
         throws  DataFormatException, NoSuchMethodException, NumberFormatException
     {
         
         // Iterate through all parameter elements
-        Iterator<? extends IDataAdaptor> iterParam = daptElem.childAdaptors(s_strElemParam).iterator();
+        Iterator<? extends DataAdaptor> iterParam = daptElem.childAdaptors(s_strElemParam).iterator();
         while (iterParam.hasNext()) {
 
             // Get the name, type, and value of the parameter
-            IDataAdaptor daptParam = iterParam.next();
+            DataAdaptor daptParam = iterParam.next();
             
             String  strName = daptParam.stringValue(s_strAttrName);
             String  strType = daptParam.stringValue(s_strAttrType);
@@ -434,7 +453,7 @@ public class LatticeXmlParser {
      *
      *  @exception  MissingDataException     specified attribute not present in DataAdaptor
      */
-    protected String    attrValue(IDataAdaptor dapt, String strAttrName)  
+    protected String    attrValue(DataAdaptor dapt, String strAttrName)  
         throws MissingDataException
     {
         if (!dapt.hasAttribute(strAttrName))
@@ -447,8 +466,8 @@ public class LatticeXmlParser {
     /**
      *  Add a parameter child to a DataAdaptor
      */
-     protected static void addParameter(IDataAdaptor dapt, String strName, String strType, String strValue) {
-        IDataAdaptor daptParam = dapt.createChild("Parameter");
+     protected static void addParameter(DataAdaptor dapt, String strName, String strType, String strValue) {
+        DataAdaptor daptParam = dapt.createChild("Parameter");
         
         daptParam.setValue("name", strName);
         daptParam.setValue("type", strType);

@@ -1,6 +1,6 @@
 package xal.model.probe.traj;
 
-import xal.tools.data.IDataAdaptor;
+import xal.tools.data.DataAdaptor;
 import xal.model.probe.DiagnosticProbe;
 import xal.model.xml.ParsingException;
 
@@ -78,19 +78,19 @@ public class DiagnosticProbeState extends ProbeState {
 	private static final String COUNT_LABEL = "count";
 	
 	@Override
-    protected void addPropertiesTo(IDataAdaptor container) {
+    protected void addPropertiesTo(DataAdaptor container) {
 		super.addPropertiesTo(container);
         
-        IDataAdaptor diagNode = container.createChild(DIAG_LABEL);
+        DataAdaptor diagNode = container.createChild(DIAG_LABEL);
 		diagNode.setValue(COUNT_LABEL, String.valueOf(getElementsVisited()));
 	}
 	
 	@Override
-    protected void readPropertiesFrom(IDataAdaptor container) 
+    protected void readPropertiesFrom(DataAdaptor container) 
 			throws ParsingException {
         super.readPropertiesFrom(container);
         
-        IDataAdaptor diagNode = container.childAdaptor(DIAG_LABEL);
+        DataAdaptor diagNode = container.childAdaptor(DIAG_LABEL);
         if (diagNode == null)
             throw new ParsingException("DiagnosticProbeState#readPropertiesFrom(): no child element = " + DIAG_LABEL);
 

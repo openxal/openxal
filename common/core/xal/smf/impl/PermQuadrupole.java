@@ -80,7 +80,7 @@ public class PermQuadrupole extends PermanentMagnet {
      * quadrupole type can be either "PMQH" or "PMQV".
      * @param adaptor The data provider.
      */
-    public void update(IDataAdaptor adaptor) {
+    public void update(DataAdaptor adaptor) {
         if ( adaptor.hasAttribute("type") ) {
             type = adaptor.stringValue("type");
         }

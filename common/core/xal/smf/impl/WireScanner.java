@@ -17,7 +17,7 @@ import xal.ca.IEventSinkValue;
 import xal.ca.Monitor;
 import xal.ca.MonitorException;
 import xal.ca.PutException;
-import xal.tools.data.IDataAdaptor;
+import xal.tools.data.DataAdaptor;
 import xal.tools.data.DataListener;
 import xal.smf.AcceleratorNode;
 import xal.smf.NoSuchChannelException;
@@ -447,7 +447,7 @@ public class WireScanner extends AcceleratorNode {
          * @since     Mar 17, 2010
          * @author    Christopher K. Allen
          */
-        public DaqConfig(IDataAdaptor daptSrc) {
+        public DaqConfig(DataAdaptor daptSrc) {
             super();
             this.update(daptSrc);
         }
@@ -753,7 +753,7 @@ public class WireScanner extends AcceleratorNode {
          * @since     Mar 17, 2010
          * @author    Christopher K. Allen
          */
-        public ActrConfig(IDataAdaptor daptSrc) {
+        public ActrConfig(DataAdaptor daptSrc) {
             super();
             this.update(daptSrc);
         }
@@ -1017,7 +1017,7 @@ public class WireScanner extends AcceleratorNode {
          * @since     Mar 17, 2010
          * @author    Christopher K. Allen
          */
-        public ScanConfig(IDataAdaptor daptSrc) {
+        public ScanConfig(DataAdaptor daptSrc) {
             super();
             this.update(daptSrc);
         }
@@ -1220,7 +1220,7 @@ public class WireScanner extends AcceleratorNode {
          * @since     Mar 17, 2010
          * @author    Christopher K. Allen
          */
-        public PrcgConfig(IDataAdaptor daptSrc) {
+        public PrcgConfig(DataAdaptor daptSrc) {
             super();
         }
 
@@ -1559,7 +1559,7 @@ public class WireScanner extends AcceleratorNode {
          * @since     Mar 17, 2010
          * @author    Christopher K. Allen
          */
-        public TrgConfig(IDataAdaptor daptSrc) {
+        public TrgConfig(DataAdaptor daptSrc) {
             super();
         }
 
@@ -2314,11 +2314,11 @@ public class WireScanner extends AcceleratorNode {
          * @since       Mar 4, 2010
          * @author  Christopher K. Allen
          *
-         * @see xal.tools.data.DataListener#update(xal.tools.data.IDataAdaptor)
+         * @see xal.tools.data.DataListener#update(xal.tools.data.DataAdaptor)
          */
         @Override
-        public void update(IDataAdaptor adaptor) {
-            IDataAdaptor daptSig = adaptor.childAdaptor( this.dataLabel() );
+        public void update(DataAdaptor adaptor) {
+            DataAdaptor daptSig = adaptor.childAdaptor( this.dataLabel() );
 
             hor.update(daptSig);
             ver.update(daptSig);
@@ -2334,11 +2334,11 @@ public class WireScanner extends AcceleratorNode {
          * @since       Mar 4, 2010
          * @author  Christopher K. Allen
          *
-         * @see xal.tools.data.DataListener#write(xal.tools.data.IDataAdaptor)
+         * @see xal.tools.data.DataListener#write(xal.tools.data.DataAdaptor)
          */
         @Override
-        public void write(IDataAdaptor adaptor) {
-            IDataAdaptor daptSig = adaptor.createChild( this.dataLabel() );
+        public void write(DataAdaptor adaptor) {
+            DataAdaptor daptSig = adaptor.createChild( this.dataLabel() );
 
             hor.write(daptSig);
             ver.write(daptSig);
@@ -2578,7 +2578,7 @@ public class WireScanner extends AcceleratorNode {
          * @since     Mar 17, 2010
          * @author    Christopher K. Allen
          */
-        public DataLive(IDataAdaptor daptSrc) {
+        public DataLive(DataAdaptor daptSrc) {
             super(getPosValPair(ANGLE.HOR), getPosValPair(ANGLE.VER), getPosValPair(ANGLE.DIA));
             this.update(daptSrc);
         }
@@ -2698,7 +2698,7 @@ public class WireScanner extends AcceleratorNode {
          * @since     Mar 17, 2010
          * @author    Christopher K. Allen
          */
-        public DataRaw(IDataAdaptor daptSrc) {
+        public DataRaw(DataAdaptor daptSrc) {
             super(getPosValPair(ANGLE.HOR), getPosValPair(ANGLE.VER), getPosValPair(ANGLE.DIA));
             this.update(daptSrc);
         }
@@ -2812,7 +2812,7 @@ public class WireScanner extends AcceleratorNode {
          * @since     Mar 17, 2010
          * @author    Christopher K. Allen
          */
-        public DataFit(IDataAdaptor daptSrc) {
+        public DataFit(DataAdaptor daptSrc) {
             super(getPosValPair(ANGLE.HOR), getPosValPair(ANGLE.VER), getPosValPair(ANGLE.DIA));
             this.update(daptSrc);
         }
@@ -2875,7 +2875,7 @@ public class WireScanner extends AcceleratorNode {
             
             /**
              * Returns the label used to identify the fields of this
-             * class in a <code>{@link IDataAdaptor}</code> data store.
+             * class in a <code>{@link DataAdaptor}</code> data store.
              *
              * @since 	Jun 9, 2010
              * @author  Christopher K. Allen
@@ -2928,7 +2928,7 @@ public class WireScanner extends AcceleratorNode {
              * @since     Jun 10, 2010
              * @author    Christopher K. Allen
              */
-            protected TimeStep(IDataAdaptor daptSrc) {
+            protected TimeStep(DataAdaptor daptSrc) {
                 this();
                 this.update(daptSrc);
             }
@@ -3041,10 +3041,10 @@ public class WireScanner extends AcceleratorNode {
          * @since       Jun 9, 2010
          * @author  Christopher K. Allen
          *
-         * @see xal.smf.impl.WireScanner.Data#update(xal.tools.data.IDataAdaptor)
+         * @see xal.smf.impl.WireScanner.Data#update(xal.tools.data.DataAdaptor)
          */
         @Override
-        public void update(IDataAdaptor adaptor) {
+        public void update(DataAdaptor adaptor) {
             this.dt.update(adaptor);
             super.update(adaptor);
         }
@@ -3057,10 +3057,10 @@ public class WireScanner extends AcceleratorNode {
          * @since       Jun 9, 2010
          * @author  Christopher K. Allen
          *
-         * @see xal.smf.impl.WireScanner.Data#write(xal.tools.data.IDataAdaptor)
+         * @see xal.smf.impl.WireScanner.Data#write(xal.tools.data.DataAdaptor)
          */
         @Override
-        public void write(IDataAdaptor adaptor) {
+        public void write(DataAdaptor adaptor) {
             this.dt.write(adaptor);
             super.write(adaptor);
         }
@@ -3094,7 +3094,7 @@ public class WireScanner extends AcceleratorNode {
          * @since     Mar 17, 2010
          * @author    Christopher K. Allen
          */
-        public Trace(IDataAdaptor daptSrc) {
+        public Trace(DataAdaptor daptSrc) {
             super(getPosValPair(ANGLE.HOR), getPosValPair(ANGLE.VER), getPosValPair(ANGLE.DIA));
             
             this.dt = new TimeStep(daptSrc);
@@ -3449,11 +3449,11 @@ public class WireScanner extends AcceleratorNode {
          * @since       Mar 4, 2010
          * @author  Christopher K. Allen
          *
-         * @see xal.tools.data.DataListener#update(xal.tools.data.IDataAdaptor)
+         * @see xal.tools.data.DataListener#update(xal.tools.data.DataAdaptor)
          */
         @Override
-        public void update(IDataAdaptor adaptor) {
-            IDataAdaptor daptSig = adaptor.childAdaptor( this.dataLabel() );
+        public void update(DataAdaptor adaptor) {
+            DataAdaptor daptSig = adaptor.childAdaptor( this.dataLabel() );
 
             hor.update(daptSig);
             ver.update(daptSig);
@@ -3469,11 +3469,11 @@ public class WireScanner extends AcceleratorNode {
          * @since       Mar 4, 2010
          * @author  Christopher K. Allen
          *
-         * @see xal.tools.data.DataListener#write(xal.tools.data.IDataAdaptor)
+         * @see xal.tools.data.DataListener#write(xal.tools.data.DataAdaptor)
          */
         @Override
-        public void write(IDataAdaptor adaptor) {
-            IDataAdaptor daptSig = adaptor.createChild( this.dataLabel() );
+        public void write(DataAdaptor adaptor) {
+            DataAdaptor daptSig = adaptor.createChild( this.dataLabel() );
 
             hor.write(daptSig);
             ver.write(daptSig);
@@ -3635,7 +3635,7 @@ public class WireScanner extends AcceleratorNode {
          * @since     Mar 17, 2010
          * @author    Christopher K. Allen
          */
-        public GaussFitAttrSet(IDataAdaptor daptSrc) {
+        public GaussFitAttrSet(DataAdaptor daptSrc) {
             super(ARR_PFD_HOR, ARR_PFD_VER, ARR_PFD_DIA);
             this.update(daptSrc);
         }
@@ -3755,7 +3755,7 @@ public class WireScanner extends AcceleratorNode {
          * @since     Mar 17, 2010
          * @author    Christopher K. Allen
          */
-        public DblGaussFitAttrSet(IDataAdaptor daptSrc) {
+        public DblGaussFitAttrSet(DataAdaptor daptSrc) {
             super(ARR_PFD_HOR, ARR_PFD_VER, ARR_PFD_DIA);
             this.update(daptSrc);
         }
@@ -3875,7 +3875,7 @@ public class WireScanner extends AcceleratorNode {
          * @since     Mar 17, 2010
          * @author    Christopher K. Allen
          */
-        public StatisticalAttrSet(IDataAdaptor daptSrc) {
+        public StatisticalAttrSet(DataAdaptor daptSrc) {
             super(ARR_PFD_HOR, ARR_PFD_VER, ARR_PFD_DIA);
             this.update(daptSrc);
         }

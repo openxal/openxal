@@ -1,6 +1,6 @@
 package xal.model.probe.traj;
 
-import xal.tools.data.IDataAdaptor;
+import xal.tools.data.DataAdaptor;
 import xal.tools.data.DataFormatException;
 
 import xal.model.probe.Probe;
@@ -298,14 +298,14 @@ public abstract class ProbeState implements IProbeState {
 //    
 //    /**
 //     * Save the state information to a data sink represented by 
-//     * a <code>IDataAdaptor</code> interface
+//     * a <code>DataAdaptor</code> interface
 //     * 
 //     * @param   container   data source to receive state information
 //     * @param  bolSaveTwiss    If want to dump Twiss parameters instead of correlation matrix, set it to 'true'
 //     */
-//    public void save(IDataAdaptor container, boolean useTwiss) {
+//    public void save(DataAdaptor container, boolean useTwiss) {
 //        
-//        IDataAdaptor stateNode = container.createChild(STATE_LABEL);
+//        DataAdaptor stateNode = container.createChild(STATE_LABEL);
 //        stateNode.setValue(TYPE_LABEL, getClass().getName());
 //        stateNode.setValue("id", this.getElementId());
 //        
@@ -315,13 +315,13 @@ public abstract class ProbeState implements IProbeState {
     
     /**
      * Save the state information to a data sink represented by 
-     * a <code>IDataAdaptor</code> interface
+     * a <code>DataAdaptor</code> interface
      * 
      * @param   daSink   data source to receive state information
      */
-    public final void save(IDataAdaptor daSink) {
+    public final void save(DataAdaptor daSink) {
         
-        IDataAdaptor stateNode = daSink.createChild(STATE_LABEL);
+        DataAdaptor stateNode = daSink.createChild(STATE_LABEL);
         stateNode.setValue(TYPE_LABEL, getClass().getName());
         stateNode.setValue("id", this.getElementId());
         
@@ -330,13 +330,13 @@ public abstract class ProbeState implements IProbeState {
 
     /**
      * Recovers the state information from a data source represented
-     * by a <code>IDataAdaptor</code> interface.
+     * by a <code>DataAdaptor</code> interface.
      * 
      * @param   container   data source containing state information
      * 
      *  @exception DataFormatException  data in <code>container</code> is malformated
      */    
-    public final void load(IDataAdaptor container) throws DataFormatException {
+    public final void load(DataAdaptor container) throws DataFormatException {
         try {
             readPropertiesFrom(container);
         } catch (ParsingException e) {
@@ -352,16 +352,16 @@ public abstract class ProbeState implements IProbeState {
      */    
      
     /**
-     * Save the state information to a <code>IDataAdaptor</code> interface.
+     * Save the state information to a <code>DataAdaptor</code> interface.
      * 
-     * @param  container   data sink with <code>IDataAdaptor</code> interface
+     * @param  container   data sink with <code>DataAdaptor</code> interface
      */
-    protected void addPropertiesTo(IDataAdaptor container) {
-        IDataAdaptor  specNode = container.createChild(SPECIES_LABEL);
+    protected void addPropertiesTo(DataAdaptor container) {
+        DataAdaptor  specNode = container.createChild(SPECIES_LABEL);
         specNode.setValue(PARTCHARGE_LABEL, getSpeciesCharge());
         specNode.setValue(PARTRESTENERGY_LABEL, getSpeciesRestEnergy());
 
-        IDataAdaptor locNode = container.createChild(LOCATION_LABEL);
+        DataAdaptor locNode = container.createChild(LOCATION_LABEL);
         locNode.setValue(ELEMENT_LABEL, getElementId());
         locNode.setValue(POSITION_LABEL, getPosition());
         locNode.setValue(TIME_LABEL, getTime());
@@ -369,17 +369,17 @@ public abstract class ProbeState implements IProbeState {
     }
     
     /**
-     * Recover the state information from a <code>IDataAdaptor</code> interface.
+     * Recover the state information from a <code>DataAdaptor</code> interface.
      * 
-     * @param container             data source with <code>IDataAdaptor</code> interface
+     * @param container             data source with <code>DataAdaptor</code> interface
      * 
      * @throws ParsingException     data source is malformatted
      */
-    protected void readPropertiesFrom(IDataAdaptor container) 
+    protected void readPropertiesFrom(DataAdaptor container) 
     		throws ParsingException 
     {
         // Read particle species data
-        IDataAdaptor specNode = container.childAdaptor(SPECIES_LABEL);
+        DataAdaptor specNode = container.childAdaptor(SPECIES_LABEL);
         if (specNode == null)
             throw new ParsingException("ProbeState#readPropertiesFrom(): no child element = " + SPECIES_LABEL);
         
@@ -390,7 +390,7 @@ public abstract class ProbeState implements IProbeState {
 
 
         // Read state data
-        IDataAdaptor locNode = container.childAdaptor(LOCATION_LABEL);
+        DataAdaptor locNode = container.childAdaptor(LOCATION_LABEL);
         if (locNode == null)
             throw new ParsingException("ProbeState#readPropertiesFrom(): no child element = " + LOCATION_LABEL);
 

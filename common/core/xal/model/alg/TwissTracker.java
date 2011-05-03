@@ -19,7 +19,7 @@ import xal.tools.beam.TraceXalUnitConverter;
 import xal.tools.beam.Twiss;
 import xal.tools.beam.Twiss3D;
 import xal.tools.beam.em.BeamEllipsoid;
-import xal.tools.data.IDataAdaptor;
+import xal.tools.data.DataAdaptor;
 import xal.tools.data.DataFormatException;
 import xal.tools.data.DataTable;
 import xal.tools.data.EditContext;
@@ -303,13 +303,13 @@ public class TwissTracker extends Tracker {
      * 
      * @param   daSource     data source containing state data
      * 
-     * @see xal.model.IArchive#load(xal.tools.data.IDataAdaptor)
+     * @see xal.model.IArchive#load(xal.tools.data.DataAdaptor)
      */
     @Override
-    public void load(IDataAdaptor daSource) {
+    public void load(DataAdaptor daSource) {
         super.load(daSource);
         
-        IDataAdaptor daTwiss = daSource.childAdaptor(LABEL_OPTIONS);
+        DataAdaptor daTwiss = daSource.childAdaptor(LABEL_OPTIONS);
         
         if (daTwiss != null)  {
             if (daTwiss.hasAttribute(ATTR_EMITGROWTH))
@@ -332,31 +332,31 @@ public class TwissTracker extends Tracker {
     
     /**
      * Save the state and settings of this algorithm to a data source 
-     * exposing the <code>IDataAdaptor</code> interface.  Subclasses should
+     * exposing the <code>DataAdaptor</code> interface.  Subclasses should
      * override this method to store the data particular to there own 
      * operation.
      * 
      * @param   daSink     data source to receive algorithm configuration
      * 
-     * @see xal.model.IArchive#save(xal.tools.data.IDataAdaptor)
+     * @see xal.model.IArchive#save(xal.tools.data.DataAdaptor)
      */
     @Override
-    public void save(IDataAdaptor daSink) {
+    public void save(DataAdaptor daSink) {
         
-//        IDataAdaptor daptAlg = daptArchive.createChild(NODETAG_ALG);
+//        DataAdaptor daptAlg = daptArchive.createChild(NODETAG_ALG);
 //        daptAlg.setValue(ATTRTAG_TYPE, this.getType());
 //        daptAlg.setValue(ATTRTAG_VER, this.getVersion());
 //        
-//        IDataAdaptor daptTrack = daptAlg.createChild(NODETAG_TRACKER);
+//        DataAdaptor daptTrack = daptAlg.createChild(NODETAG_TRACKER);
 //        daptTrack.setValue(ATTRTAG_DEBUG, this.getDebugMode());
 //        daptTrack.setValue(ATTRTAG_UPDATE, this.getProbeUpdatePolicy());
 //        daptTrack.setValue(ATTRTAG_RFGAP_PHASE, this.useRfGapPhaseCalculation());
 
         super.save(daSink);
         
-        IDataAdaptor daptAlg = daSink.childAdaptor(NODETAG_ALG);
+        DataAdaptor daptAlg = daSink.childAdaptor(NODETAG_ALG);
         
-        IDataAdaptor daptOpt = daptAlg.createChild(LABEL_OPTIONS);
+        DataAdaptor daptOpt = daptAlg.createChild(LABEL_OPTIONS);
         daptOpt.setValue(ATTR_STEPSIZE, this.getStepSize());
         daptOpt.setValue(ATTR_EMITGROWTH, this.getEmittanceGrowthFlag());
         daptOpt.setValue(ATTR_SCHEFF, this.getSpaceChargeFlag());

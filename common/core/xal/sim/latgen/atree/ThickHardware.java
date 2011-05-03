@@ -2,7 +2,7 @@
  * Created on Mar 2, 2004
  *
  */
-package xal.sim.latgen.ptree;
+package xal.sim.latgen.atree;
 
 import xal.sim.latgen.GenerationException;
 import xal.smf.AcceleratorNode;
@@ -48,7 +48,7 @@ public class ThickHardware extends HardwareNode {
      * 
      * @throws GenerationException  the argument is not of type <code>ThinHardware</code>
      * 
-     * @see xal.sim.latgen.ptree.TreeNode#insert(xal.sim.latgen.ptree.TreeNode)
+     * @see xal.sim.latgen.atree.TreeNode#insert(xal.sim.latgen.atree.TreeNode)
      */
     public void insert(ThinHardware nodeThin) throws GenerationException {
         
@@ -88,7 +88,7 @@ public class ThickHardware extends HardwareNode {
      * 
      * @param iVisitor  visitor object implement <code>IAssocTreeVisitor</code> interface
      * 
-     * @see xal.sim.latgen.ptree.TreeNode#processVisitor(xal.sim.latgen.ptree.IAssocTreeVisitor)
+     * @see xal.sim.latgen.atree.TreeNode#processVisitor(xal.sim.latgen.atree.IAssocTreeVisitor)
      */
     public void processVisitor(IAssocTreeVisitor iVisitor) throws GenerationException {
         

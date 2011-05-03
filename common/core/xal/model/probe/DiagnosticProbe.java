@@ -1,6 +1,6 @@
 package xal.model.probe;
 
-import xal.tools.data.IDataAdaptor;
+import xal.tools.data.DataAdaptor;
 import xal.model.alg.DiagnosticTracker;
 import xal.model.probe.traj.DiagnosticProbeState;
 import xal.model.probe.traj.DiagnosticProbeTrajectory;
@@ -91,7 +91,7 @@ public class DiagnosticProbe extends Probe {
 	}	
 	
     @Override
-    protected ProbeState readStateFrom(IDataAdaptor container) throws ParsingException {
+    protected ProbeState readStateFrom(DataAdaptor container) throws ParsingException {
         DiagnosticProbeState state = new DiagnosticProbeState();
         state.load(container);
         return state;

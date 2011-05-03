@@ -14,7 +14,7 @@ import java.util.Iterator;
 
 import junit.framework.TestCase;
 
-import xal.tools.data.IDataAdaptor;
+import xal.tools.data.DataAdaptor;
 import xal.tools.xml.XmlDataAdaptor;
 
 import xal.model.IComponent;
@@ -181,7 +181,7 @@ public class LatticeXmlTest extends TestCase {
      * @since  Apr 13, 2011
      */
     public void testParseDataAdaptor() {
-    	IDataAdaptor adaptor = XmlDataAdaptor.adaptorForUrl(s_strUrlLattice, false);
+    	DataAdaptor adaptor = XmlDataAdaptor.adaptorForUrl(s_strUrlLattice, false);
     	try {
 			LatticeXmlParser.parseDataAdaptor(adaptor);
 		} catch (ParsingException e) {

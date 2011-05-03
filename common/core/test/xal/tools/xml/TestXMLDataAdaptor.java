@@ -21,9 +21,9 @@ public class TestXMLDataAdaptor {
     @Test
     public void testAttributeAccessors() {
         final XmlDataAdaptor documentAdaptor = XmlDataAdaptor.newEmptyDocumentAdaptor( "TestDoc", null );
-        final IDataAdaptor modelAdaptor = documentAdaptor.createChild( "model" );
+        final DataAdaptor modelAdaptor = documentAdaptor.createChild( "model" );
         
-        final IDataAdaptor pointNode = modelAdaptor.createChild( "point" );
+        final DataAdaptor pointNode = modelAdaptor.createChild( "point" );
         final double x = 2.1;
         final double y = 3.4;        
         pointNode.setValue( "x", x );
@@ -31,7 +31,7 @@ public class TestXMLDataAdaptor {
         Assert.assertTrue( x == pointNode.doubleValue( "x" ) );
         Assert.assertTrue( y == pointNode.doubleValue( "y" ) );
         
-        final IDataAdaptor boolNode = modelAdaptor.createChild( "status" );
+        final DataAdaptor boolNode = modelAdaptor.createChild( "status" );
         final boolean good = true;
         final boolean bad = false;
         boolNode.setValue( "good", good );
@@ -40,7 +40,7 @@ public class TestXMLDataAdaptor {
         Assert.assertTrue( bad == boolNode.booleanValue( "bad" ) );
         
         final double[] array = new double[] { 2.3, 4.7, 10.8, 5.2 };
-        final IDataAdaptor waveAdaptor = modelAdaptor.createChild( "waveform" );
+        final DataAdaptor waveAdaptor = modelAdaptor.createChild( "waveform" );
         waveAdaptor.setValue( "wave", array );
         final double[] waveform = waveAdaptor.doubleArray( "wave" );
         for ( int index = 0 ; index < array.length ; index++ ) {
@@ -54,11 +54,11 @@ public class TestXMLDataAdaptor {
         final URL documentURL = this.getClass().getResource( "SampleData.xml" );
         
         try {
-            final IDataAdaptor documentAdaptor = XmlDataAdaptor.adaptorForUrl( documentURL, false );
-            final IDataAdaptor bookAdaptor = documentAdaptor.childAdaptor( "book" );
+            final DataAdaptor documentAdaptor = XmlDataAdaptor.adaptorForUrl( documentURL, false );
+            final DataAdaptor bookAdaptor = documentAdaptor.childAdaptor( "book" );
             
             // read escaped characters
-            final IDataAdaptor peopleAdaptor = bookAdaptor.childAdaptor( "people" );
+            final DataAdaptor peopleAdaptor = bookAdaptor.childAdaptor( "people" );
             Assert.assertTrue( peopleAdaptor.stringValue( "comment" ).equals( "\"This & that\"" ) );
             
             // read array
@@ -68,15 +68,15 @@ public class TestXMLDataAdaptor {
             Assert.assertTrue( vec[1] == -12.477 );
             Assert.assertTrue( vec[2] == 7.9 );
             
-            final List<IDataAdaptor> personAdaptors = peopleAdaptor.childAdaptors( "person" );
+            final List<DataAdaptor> personAdaptors = peopleAdaptor.childAdaptors( "person" );
             
             // read primitive types
-            final IDataAdaptor einsteinAdaptor = personAdaptors.get( 0 );
+            final DataAdaptor einsteinAdaptor = personAdaptors.get( 0 );
             Assert.assertTrue( einsteinAdaptor.stringValue( "firstName" ).equals( "Albert" ) );
             Assert.assertTrue( einsteinAdaptor.stringValue( "lastName" ).equals( "Einstein" ) );
             Assert.assertTrue( einsteinAdaptor.intValue( "birthYear" ) == 1879 );
             
-            final IDataAdaptor fermiAdaptor = personAdaptors.get( 1 );
+            final DataAdaptor fermiAdaptor = personAdaptors.get( 1 );
             Assert.assertTrue( fermiAdaptor.stringValue( "firstName" ).equals( "Enrico" ) );
             Assert.assertTrue( fermiAdaptor.stringValue( "lastName" ).equals( "Fermi" ) );
             Assert.assertTrue( fermiAdaptor.intValue( "birthYear" ) == 1901 );

@@ -70,9 +70,9 @@ public abstract class MagnetPowerSupply implements DataListener {
      * Instructs the receiver to update its data based on the given adaptor.
      * @param adaptor The adaptor from which to update the receiver's data
      */
-    public void update(IDataAdaptor adaptor) {
+    public void update(DataAdaptor adaptor) {
         strId = adaptor.stringValue("id");
-        IDataAdaptor suiteAdaptor = adaptor.childAdaptor("channelsuite");
+        DataAdaptor suiteAdaptor = adaptor.childAdaptor("channelsuite");
         channelSuite.update(suiteAdaptor);
     }
     
@@ -82,7 +82,7 @@ public abstract class MagnetPowerSupply implements DataListener {
      * storage.
      * @param adaptor The adaptor to which the receiver's data is written
      */
-    public void write(IDataAdaptor adaptor) {
+    public void write(DataAdaptor adaptor) {
         adaptor.setValue("id", strId);
         adaptor.setValue("type", getType());
         adaptor.writeNode(channelSuite);

@@ -9,7 +9,7 @@ package xal.model.probe;
 import xal.tools.beam.CorrelationMatrix;
 import xal.tools.beam.PhaseVector;
 import xal.tools.beam.ens.Ensemble;
-import xal.tools.data.IDataAdaptor;
+import xal.tools.data.DataAdaptor;
 import xal.tools.math.r3.R3;
 import xal.model.probe.traj.EnsembleProbeState;
 import xal.model.probe.traj.EnsembleTrajectory;
@@ -214,7 +214,7 @@ public class EnsembleProbe extends BunchProbe {
     }
     
     @Override
-    protected ProbeState readStateFrom(IDataAdaptor container) throws ParsingException {
+    protected ProbeState readStateFrom(DataAdaptor container) throws ParsingException {
         EnsembleProbeState state = new EnsembleProbeState();
         state.load(container);
         return state;
