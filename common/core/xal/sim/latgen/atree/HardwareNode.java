@@ -6,6 +6,7 @@ package xal.sim.latgen.atree;
 
 import xal.sim.latgen.GenerationException;
 import xal.smf.AcceleratorNode;
+import xal.smf.AcceleratorSeq;
 import xal.tools.math.Interval;
 import xal.tools.math.MathException;
 
@@ -33,11 +34,21 @@ public class HardwareNode extends TreeNode {
     /*
      * Global Utilities
      */
-    
+
     /**
+     * <p>
      * Creates and returns an <code>Interval</code> object describing the
-     * location of the given accelerator hardware in its beamline.
-     *
+     * location of the given accelerator hardware in its beamline.  
+     * </p>
+     * <p>
+     * This operation requires a special method since the method
+     * <code>{@link AcceleratorSeq#getPosition()}</code> (inherited from
+     * <code>{@link AcceleratorNode}</code> always returns the value 0. So
+     * it is necessary to check the type of the argument: if it is an <code>
+     * AcceleratorSeq</code> object then we return the interval [0,<i>L</i>]
+     * where <i>L</i> is the length of the sequence.
+     * </p>
+     * 
      * @param smfHware   a hardware object
      * 
      * @return          interval representing the location of the hardware within beamline
@@ -46,31 +57,45 @@ public class HardwareNode extends TreeNode {
      * @since  Apr 29, 2011
      */
     public static Interval occupiedBeamline(AcceleratorNode smfHware) {
+
+
+        // If the accelerator node is straight hardware the process is straight forward
+        if ( !(smfHware instanceof AcceleratorSeq) ) {
+            double  dblLng = smfHware.getLength();
+            double  dblPos = smfHware.getPosition();
+            
+            Interval    I = Interval.createFromMidpoint(dblPos, dblLng);
+            
+            return I;
+        }
         
-        // Get the center position of the hardware and its length
-        double  dblPos = smfHware.getPosition();
-        double  dblLng = smfHware.getLength();
         
-        // Create the beamline interval and return it
+        // Get the center position (the getPosition() method of AcceleratorSeq sometimes return zero)
+        double      dblLng = smfHware.getLength();
+        double      dblPos = smfHware.getPosition();
+        
+        if (dblPos == 0.0)          // if the position is zero we'll use half the length as the 
+            dblPos = dblLng/2.0;    //      center of mass
+            
         Interval    ivlBmline = Interval.createFromMidpoint(dblPos, dblLng);
-        
+
         return ivlBmline;
     }
 
-    
-    
+
+
     /*
      * Local Attributes
      */
-     
+
     /** Reference to hardware object which this association-tree node represents */
     final private AcceleratorNode         smfHware;
-    
-    
+
+
     /*
      * Initialization
      */
-    
+
     /**
      * Initializing constructor.  Sets the hardware reference and beam path
      * interval occupied by this node directly from the position and length
@@ -80,10 +105,10 @@ public class HardwareNode extends TreeNode {
      */
     public HardwareNode(TreeNode nodeParent, AcceleratorNode smfHware)   {
         super(nodeParent, occupiedBeamline(smfHware));
-        
+
         this.smfHware  = smfHware;
     }
-    
+
     /**
      * Create a new hardware node referencing the given SMF hardware object
      * long the given interval of beamline.  That is, it is assumed that we
@@ -99,53 +124,69 @@ public class HardwareNode extends TreeNode {
         throws GenerationException
     {
         super(nodeParent, ivlBeamline);
-        
+
         this.smfHware  = smfHware;
-        
+
         // Check that the interval is valid
-        double      dblMidPt = smfHware.getPosition();
-        double      dblLng   = smfHware.getLength();
-        Interval    ivlHware = Interval.createFromMidpoint(dblMidPt, dblLng);
-        
+        Interval    ivlHware = HardwareNode.occupiedBeamline(smfHware);
+
         if ( !ivlHware.containsAE(ivlBeamline) )
             throw new GenerationException("Interval " + ivlBeamline + 
                     " is invalid for device " + smfHware.getId()
-                    );
+            );
     }
-    
-    
+
+
     /*
      * TreeNode Abstracts and Operations
      */
-    
+
     /**
      * @since Apr 29, 2011
      * @see xal.sim.latgen.atree.TreeNode#processVisitor(xal.sim.latgen.atree.IAssocTreeVisitor)
      */
     @Override
     public void processVisitor(IAssocTreeVisitor iVisitor)
-            throws GenerationException {
+    throws GenerationException {
         // TODO Auto-generated method stub
-        
+
     }
-    
-    
+
+
     /*
      * Attributes
      */
-    
+
     /**
-      * Return the hardware object represented by this node.
-      * 
-      * @return     <code>AcceleratorNode</code> object 
-      */
-     public AcceleratorNode getHardwareRef()  {
-         return this.smfHware;
-     }
+     * Return the hardware object represented by this node.
+     * 
+     * @return     <code>AcceleratorNode</code> object 
+     */
+    public AcceleratorNode getHardwareRef()  {
+        return this.smfHware;
+    }
+
+    /**
+     * Returns the length of the hardware object which this node
+     * represents, not the beamline length currently occupied by the
+     * node. 
+     *
+     * @return  hardware length referenced by this node
+     *
+     * @author Christopher K. Allen
+     * @since  May 4, 2011
+     */
+    public double  getHardwareLength() {
+        return this.smfHware.getLength();
+    }
 
     /**
      * Returns the position of the referenced hardware in
-     * the beamline.
+     * the beamline.  If the referenced hardware is an
+     * <code>{@link AcceleratorSeq}</code> object, then the returned
+     * value is half the length length.  If the referenced hardware
+     * is a <code>{@link AcceleratorNode}</code> object, then
+     * the returned value is <code>{@link AcceleratorNode#getPosition()}</code>.
      *
      * @return  the design position of the hardware within its beamline sector
      *
@@ -153,14 +194,18 @@ public class HardwareNode extends TreeNode {
      * @since  Apr 29, 2011
      */
     public double getHardwarePosition() {
-        return this.smfHware.getPosition();
+
+        if (this.smfHware instanceof AcceleratorSeq)
+            return this.smfHware.getLength()/2.0;
+        else
+            return this.smfHware.getPosition();
     }
 
-    
+
     /*
      * Operations
      */
-    
+
     /**
      * <p>
      * The given node is inserted into this hardware node.  In doing so,
@@ -198,7 +243,7 @@ public class HardwareNode extends TreeNode {
 
         // Subdivide this node on either side of the given element center position 
         //      and add to child list
-//        double      dblPosMid = node.getNodeLocation();
+        //        double      dblPosMid = node.getNodeLocation();
         double      dblPosMid = dblPos;
         double      dblPosMin = this.getInterval().getMin();
         double      dblPosMax = this.getInterval().getMax();
@@ -214,7 +259,7 @@ public class HardwareNode extends TreeNode {
             super.addChild(nodeRight);
             super.addChild(node);
             super.addChild(nodeLeft);
-            
+
             return nodeLeft;
 
         } catch (MathException e) {
@@ -234,23 +279,23 @@ public class HardwareNode extends TreeNode {
         double      dblPosMin = this.getInterval().getMin();
         double      dblPosMid = this.getInterval().midpoint();
         double      dblPosMax = this.getInterval().getMax();
-        
+
         Interval    ivlLeft  = Interval.createFromEndpoints(dblPosMin, dblPosMid);
         Interval    ivlRight = Interval.createFromEndpoints(dblPosMid, dblPosMax);
-    
+
         try {
             HardwareNode    nodeLeft  = new HardwareNode(this.getParent(), this.getHardwareRef(), ivlLeft);
             HardwareNode    nodeRight = new HardwareNode(this.getParent(), this.getHardwareRef(), ivlRight);
-    
+
             this.removeChild(this);
-            
+
             this.addChild(nodeRight);
             this.addChild(nodeLeft);
-            
+
         } catch (GenerationException e) {
             System.err.println("Serious error, this should not occur");
             e.printStackTrace();
-            
+
         }
     }
 
@@ -265,26 +310,50 @@ public class HardwareNode extends TreeNode {
         double      dblPosMin = this.getInterval().getMin();
         double      dblPosMid = dblPos;
         double      dblPosMax = this.getInterval().getMax();
-        
+
         try {
             Interval    ivlLeft  = new Interval(dblPosMin, dblPosMid);
             Interval    ivlRight = new Interval(dblPosMid, dblPosMax);
-        
+
             HardwareNode    nodeLeft  = new HardwareNode(this.getParent(), this.getHardwareRef(), ivlLeft);
             HardwareNode    nodeRight = new HardwareNode(this.getParent(), this.getHardwareRef(), ivlRight);
-    
+
             this.removeChild(this);
-            
+
             this.addChild(nodeRight);
             this.addChild(nodeLeft);
-            
+
         } catch (MathException e) {
             throw new GenerationException("Split location " + dblPos + 
-                                          " is not in interval " + this.getInterval()
-                                            );
-            
+                    " is not in interval " + this.getInterval()
+            );
+
         }
     }
 
-    
+
+
+    /*
+     * Object Overrides
+     */
+
+
+    /**
+     * Adds the identifier of the hardware that this node represents
+     * to the output string.
+     * 
+     * @return  text description of the node contents
+     * 
+     * @since May 3, 2011
+     * @see xal.sim.latgen.atree.TreeNode#toString()
+     */
+    @Override
+    public String toString() {
+        String strBuf = "ID:" + this.getHardwareRef().getId() + " " + super.toString();
+
+        return strBuf;
+    }
+
+
+
 }

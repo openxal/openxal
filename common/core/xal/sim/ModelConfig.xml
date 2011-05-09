@@ -1,0 +1,125 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<!DOCTYPE ModelConfig SYSTEM "xdxf.dtd">
+
+<model>
+    <elements >
+        <default>
+            <elem type="xal.model.elem.Marker"/>
+        </default>
+        <thin>
+            <elem type="xal.model.elem.ChargeExchangeFoil"/>
+            <elem type="xal.model.elem.Collimator"/>
+            <elem type="xal.model.elem.IdealMagDipoleFace2"/>
+            <elem type="xal.model.elem.IdealMagFringeQuadFace"/>
+            <elem type="xal.model.elem.IdealMagOctupole"/>
+            <elem type="xal.model.elem.IdealMagSextupole"/>
+            <elem type="xal.model.elem.IdealMagSteeringDipole"/>
+            <elem type="xal.model.elem.IdealRfGap"/>
+            <elem type="xal.model.elem.Marker"/>
+            <elem type="xal.model.elem.ThinLens"/>
+            <elem type="xal.model.elem.ThinMatrix"/>
+        </thin>
+    </elements>
+
+
+    <associations>
+        <map smf="xal.smf.impl.Marker" model="xal.model.elem.Marker" />
+
+        <map smf="xal.smf.impl.CurrentMonitor" model="xal.model.elem.Marker" />
+    
+        <map smf="xal.smf.impl.BLM model="xal.model.elem.Marker" />
+    
+        <map smf="xal.smf.impl.BPM.model="xal.model.elem.Marker" />
+    
+        <map smf="xal.smf.impl.BunchShapeMonitor" model="xal.model.elem.Marker" />
+
+        <map smf="xal.smf.impl.CurrentMonitor" model="xal.model.elem.Marker" />
+
+        <map smf="xal.smf.impl.ProfileMonitor" model="xal.model.elem.Marker" />
+    
+        <map smf="xal.smf.impl.WireScanner" model="xal.model.elem.Marker" />
+    
+        <map smf="xal.smf.impl.NeutronDetector" model="xal.model.elem.Marker" />
+    
+        <map smf="xal.smf.impl.HDipoleCorrector" model="xal.model.elem.IdealMagSteeringDipole" >
+            <initialize>
+                <!-- orientation values are the following: NONE=0 HOR=1 VER=2 -->
+                <parameter label="orientation" value="1" mset="setOrientation"/>
+            </initialize>
+            <synchronize>
+            </synchronize>
+        </map>
+    
+        <map smf="xal.smf.impl.VHDipoleCorrector" model="xal.model.elem.IdealMagSteeringDipole" />
+            <initialize>
+                <!-- orientation values are the following: NONE=0 HOR=1 VER=2 -->
+                <parameter label="orientation" value="2" mset="setOrientation"/>
+            </initialize>
+            <synchronize>
+            </synchronize>
+
+        <map smf="xal.smf.impl.Bend" model="xal.model.elem.IdealWedgeDipole2" sync="true">
+            <initialize>
+                <parameter label="ID"                 smfget="getId"             mset="setId"               type="java.lang.String"/>
+                <parameter label="physical length"    smfget="getLength"         mset="setPhysicalLength"   type="java.lang.double" />
+                <parameter label="design path length" smfget="getDfltPathLength" mset="setDesignPathLength" type="java.lang.double" />
+                <parameter label="B"                  smfget="getDesignField"    mset="setMagField"         type="java.lang.double"/>
+                <parameter label="field index"        smfget="getFieldIndex"     mset="setFieldIndex"       type="java.lang.double" />
+                <!-- see ScenerioGenerator#visit(Dipole e) for calculation of the field index value on the fly -->
+            </initialize>
+            <synchronize>
+                <mode id="DESIGN">
+                    <parameter label="B" smfget="getDesignField" mset="setMagField" type="java.lang.double"/>
+                </mode>
+                <mode id="LIVE">
+                    <parameter label="B" smfget="getField"       mset="setMagField" type="java.lang.double"/>
+                </mode>
+            </synchronize>
+        </association>
+    
+        <map smf="xal.smf.impl.ReBuncher" model="xal.model.elem.RfCavityStruct">
+            <initialize>
+                <parameter label="ID"        smfget="getId"          mset="setId"          type="java.lang.String"/>
+                <parameter label="Amplitude" smfget="getDfltCavAmp"  mset="setRfAmplitude" type="java.lang.double"/>
+                <parameter label="Phase"     smfget="getDftCavPhase" mset="setRfPhase"     type="java.lang.double"/>
+                <parameter label="T(k)"      smfget="getTTFFit"      mset="setT"           type="xal.tools.math.poly.UnivariateRealPolynomial"/>
+                <parameter label="T'(k)"     smfget="getTTFPrimeFit" mset="setTp"          type="xal.tools.math.poly.UnivariateRealPolynomial"/>
+                <parameter label="S(k)"      smfget="getSTFFit"      mset="setS"           type="xal.tools.math.poly.UnivariateRealPolynomial"/>
+                <parameter label="S'(k)"     smfget="getSTFPrimeFit" mset="setSp"          type="xal.tools.math.poly.UnivariateRealPolynomial"/>
+            </initialize>
+            <synchronize>
+                <mode id="DESIGN">
+                    <parameter label="Amplitude" smfval="getDfltCavAmp"       mset="setRfAmplitude" type="java.lang.double"/>
+                    <parameter label="Phase"     smfval="getDftCavPhase"      mset="setRfPhase"     type="java.lang.double"/>
+                </mode>
+                <mode id="LIVE">
+                    <parameter label="Amplitude" smfval="getCavAmpSetPoint"   mset="setRfAmplitude" type="java.lang.double"/>
+                    <parameter label="Phase"     smfval="getCavPhaseSetPoint" mset="setRfPhase"     type="java.lang.double"/>
+                </mode>
+            </synchronize>
+        </map>
+    
+        <map smf="xal.smf.impl.RfCavity" model="xal.model.elem.RfCavityStruct">
+            <initialize>
+                <parameter label="ID"        smfget="getId"          mset="setId"          type="java.lang.String"/>
+                <parameter label="Amplitude" smfget="getDfltCavAmp"  mset="setRfAmplitude" type="java.lang.double"/>
+                <parameter label="Phase"     smfget="getDftCavPhase" mset="setRfPhase"     type="java.lang.double"/>
+                <parameter label="T(k)"      smfget="getTTFFit"      mset="setT"           type="xal.tools.math.poly.UnivariateRealPolynomial"/>
+                <parameter label="T'(k)"     smfget="getTTFPrimeFit" mset="setTp"          type="xal.tools.math.poly.UnivariateRealPolynomial"/>
+                <parameter label="S(k)"      smfget="getSTFFit"      mset="setS"           type="xal.tools.math.poly.UnivariateRealPolynomial"/>
+                <parameter label="S'(k)"     smfget="getSTFPrimeFit" mset="setSp"          type="xal.tools.math.poly.UnivariateRealPolynomial"/>
+            </initialize>
+            <synchronize>
+                <mode id="DESIGN">
+                    <parameter mode="DESIGN" label="Amplitude" smfval="getDfltCavAmp"       mset="setRfAmplitude" type="java.lang.double"/>
+                    <parameter mode="DESIGN" label="Phase"     smfval="getDftCavPhase"      mset="setRfPhase"     type="java.lang.double"/>
+                </mode>
+                <mode id="LIVE">
+                    <parameter mode="LIVE" label="Amplitude" smfval="getCavAmpSetPoint"   mset="setRfAmplitude" type="java.lang.double"/>
+                    <parameter mode="LIVE" label="Phase"     smfval="getCavPhaseSetPoint" mset="setRfPhase"     type="java.lang.double"/>
+                </mode>
+            </synchronize>
+    </associations>
+
+</model>
+

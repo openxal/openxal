@@ -305,9 +305,9 @@ public abstract class TreeNode implements Comparable<TreeNode> {
      *
      * @param nodeThat  node which we are comparing this node
      * 
-     * @return          -1 if the given node is less (goes to the left),
+     * @return          -1 if the given node is less (goes downstream),
      *                   0 if the two nodes are equal (co-local),
-     *                  +1 if the given node is greater (goes to the right)
+     *                  +1 if the given node is greater (goes upstream)
      *
      * @author Christopher K. Allen
      * @since Apr 29, 2011
@@ -323,21 +323,53 @@ public abstract class TreeNode implements Comparable<TreeNode> {
         // Look at the left endpoints to order
         //  the intervals.
         if (ivlThat.getMin() < ivlThis.getMin())
-            return -1;
+            return +1;
         
         if (ivlThat.getMin() > ivlThis.getMin())
-            return +1;
+            return -1;
         
         // The interval left endpoints are co-located.
         //  The larger interval goes before the other
         if (ivlThat.measure() > ivlThis.measure())
-            return -1;
+            return +1;
         
         if (ivlThat.measure() < ivlThis.measure())
-            return +1;
+            return -1;
         
         // The intervals are identical
         return 0;
     }
+
+
+
+    /*
+     * Object Overrides
+     */
+    
+
+    /**
+     * Creates a string description of the contents of this node. String
+     * contains the beamline interval occupied by node and all its child
+     * nodes.
+     * 
+     * @return  string description  
+     * 
+     * @since May 3, 2011
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        StringBuffer    bufText = new StringBuffer();
+        
+        bufText.append("Loc:");
+        bufText.append(this.ivlBmline);
+        bufText.append(" children{" );
+        for (TreeNode nodeChild : this.getChildren()) 
+            bufText.append(nodeChild.toString());
+        bufText.append("} \n");
+        
+        return bufText.toString();
+    }
+    
     
 }

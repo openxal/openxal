@@ -126,6 +126,7 @@ public class AssocTree {
 
         // Build association tree
         this.buildTree(this.nodeRoot, this.smfRoot);
+//        this.splitSiblings(this.nodeRoot);
         
 //        this.parseSequence(smfSeq);
 //        this.processSubsequences();
@@ -185,57 +186,95 @@ public class AssocTree {
      }
 
 
+     /**
+      * Return a text description of this tree.  The
+      * description depends mostly on the implementation
+      * of <code>toString()</code> in the tree nodes.
+      * 
+      * @return     string description of this tree
+      * 
+      * @since May 3, 2011
+      * @see java.lang.Object#toString()
+      */
+     @Override
+     public String toString() {
+         String     strBuf = "Tree Hardware Sequence: " + this.getHardwareRef() + "\n";
+         
+         strBuf += this.nodeRoot.toString();
+         
+         return strBuf;
+     }
 
 
-    /*
-     * Local Support
-     */
-     
+
+
+
+     /*
+      * Local Support
+      */
+
+
+     /**
+      *
+      * @param nodeTrunk
+      * @param seqTrunk
+      *
+      * @author Christopher K. Allen
+      * @since  May 3, 2011
+      */
      private void buildTree(HardwareNode nodeTrunk, AcceleratorSeq seqTrunk) {
-         
+
          List<AcceleratorNode>  lstSmfNodes = seqTrunk.getNodes();
-         
+
          for (AcceleratorNode smfNode : lstSmfNodes) {
              HardwareNode       nodeBranch = new HardwareNode(nodeTrunk, smfNode);
-             
+
              nodeTrunk.addChild(nodeBranch);
-             
+
              if (smfNode instanceof AcceleratorSeq) {
                  AcceleratorSeq seqBranch = (AcceleratorSeq)smfNode;
-                 
+
                  this.buildTree(nodeBranch, seqBranch);
              }
-             
+
          }
      }
-     
+
+     /**
+      *
+      * @param nodeParent
+      * @throws GenerationException
+      *
+      * @author Christopher K. Allen
+      * @since  May 3, 2011
+      */
      private void splitSiblings(HardwareNode nodeParent) throws GenerationException {
-         
+
          for (TreeNode nodeChild : nodeParent.getChildren()) {
-             
+
              // Ignore non-hardware nodes
              if ( !(nodeChild instanceof HardwareNode) )
                  continue;
-             
+
              Interval       ivlChild = nodeChild.getInterval();
-             
+
              for (TreeNode nodeSibling : nodeParent.getChildren()) {
-                 
+
                  if (nodeSibling.equals(nodeChild))
                      continue;
-                 
+
                  if ( !(nodeSibling instanceof HardwareNode) )
                      continue;
-                 
+
                  double     dblPosSblg   = ((HardwareNode) nodeSibling).getHardwarePosition();
                  Interval   ivlSibling = nodeSibling.getInterval();
-                 
+
                  if ( !ivlChild.containsAE(ivlSibling) )
                      continue;
-                 
+
                  if ( !ivlChild.membership(dblPosSblg) )
                      continue;
-                 
+
                  nodeChild = ((HardwareNode)nodeChild).insert(nodeSibling, dblPosSblg);
              }
          }
