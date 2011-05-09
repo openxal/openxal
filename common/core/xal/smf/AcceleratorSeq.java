@@ -4,10 +4,6 @@ import xal.smf.impl.qualify.*;
 import xal.tools.data.*;
 import xal.smf.attr.*;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.LinkedList;
 import java.util.*;
 import java.util.logging.*;
 
@@ -30,7 +26,7 @@ public class AcceleratorSeq extends AcceleratorNode implements DataListener {
     protected List<AcceleratorNode> m_arrNodes;
 	
 	/** table of nodes keyed by ID */
-	protected Map nodeTable;
+	protected Map<String, AcceleratorNode> nodeTable;
 	
 	/** Container of immediate subsequences */
 	protected List<AcceleratorSeq> _sequences;
@@ -54,7 +50,17 @@ public class AcceleratorSeq extends AcceleratorNode implements DataListener {
     /* sets the bucket containing the twiss parameters
      *   - see attr.TwissBucket  */
 
-    public void setSequence(SequenceBucket buc)   { m_bucSequence = buc; m_mapAttrs.put(buc.getType(), buc); };
+    /**
+     *
+     * @param buc
+     *
+     * @author Christopher K. Allen
+     * @since  May 3, 2011
+     */
+    public void setSequence(SequenceBucket buc)   { 
+        m_bucSequence = buc; 
+        m_mapAttrs.put(buc.getType(), buc); 
+        };
 
 
     /** data adaptor label */
