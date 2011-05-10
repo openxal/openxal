@@ -32,7 +32,7 @@ import xal.smf.AcceleratorSeq;
 import xal.smf.data.XMLDataManager;
 
 /**
- * JUnit test cases for the class <code>{@link AssocTree}</code>.
+ * JUnit test cases for the class <code>{@link HardwareTree}</code>.
  *
  * @author Christopher K. Allen
  * @since   May 3, 2011
@@ -41,7 +41,7 @@ public class TestAssocTree {
 
     
     /** The XAL configuration file */
-    final static private String     STR_URL_CONFIG = "common/core/test/resources/xdxf/main.xal";
+    final static private String     STR_URL_CONFIG = "common/core/test/resources/config/main.xal";
     
     /** The output text dump of the association tree */
     final static private String     STR_URL_TEXT_OUT = "common/core/test/xal/sim/latgen/atree/output/atree.txt";
@@ -89,14 +89,14 @@ public class TestAssocTree {
     }
 
     /**
-     * Test method for {@link xal.sim.latgen.atree.AssocTree#AssocTree(xal.smf.AcceleratorSeq)}.
+     * Test method for {@link xal.sim.latgen.atree.HardwareTree#AssocTree(xal.smf.AcceleratorSeq)}.
      */
     @Test
     public void testAssocTree() {
         AcceleratorSeq  seqTest = ACCEL_TEST.getSequence(STR_ACCELSEQ_BUILD_TEST);
         
         try {
-            AssocTree       treTest = new AssocTree(seqTest);
+            HardwareTree       treTest = new HardwareTree(seqTest);
             String          strTest = treTest.toString();
             
             File                fileOut = new File(STR_URL_TEXT_OUT);
