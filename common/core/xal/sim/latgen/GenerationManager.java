@@ -22,6 +22,8 @@ import java.util.Set;
  */
 public class GenerationManager {
     
+    
+    
     /*
      *  Configurable Parameters 
      */
@@ -40,6 +42,7 @@ public class GenerationManager {
      *  Private Support Functions
      */
     
+
     /**
      *  Add a rule to the map of rule lists.  Create new list if necessary.
      */

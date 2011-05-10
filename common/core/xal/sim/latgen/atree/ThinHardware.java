@@ -54,11 +54,11 @@ public class ThinHardware extends HardwareNode {
      * Calls the appropriate (type sensitive) method of the visitor argument
      * upon this node.
      * 
-     * @param iVisitor  visitor object implement <code>IAssocTreeVisitor</code> interface
+     * @param iVisitor  visitor object implement <code>IHwareTreeVisitor</code> interface
      * 
-     * @see xal.sim.latgen.atree.TreeNode#processVisitor(IAssocTreeVisitor)
+     * @see xal.sim.latgen.atree.TreeNode#processVisitor(IHwareTreeVisitor)
      */
-    public void processVisitor(IAssocTreeVisitor iVisitor) throws GenerationException {
+    public void processVisitor(IHwareTreeVisitor iVisitor) throws GenerationException {
         
         iVisitor.process(this);
 

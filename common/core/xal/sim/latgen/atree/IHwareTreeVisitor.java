@@ -16,7 +16,7 @@ import xal.sim.latgen.GenerationException;
  * @version Apr 27, 2011 (formally <code>IProxyVistor</code>)
  * 
  */
-public interface IAssocTreeVisitor {
+public interface IHwareTreeVisitor {
    
 //    /**
 //     * Accept an association-tree node of type <code>ThinHardware</code> and perform
@@ -60,7 +60,7 @@ public interface IAssocTreeVisitor {
      * 
      * @throws GenerationException   unable to process node (visitor specific)
      */
-    public void entering(AssocTree pxyNode) throws GenerationException;
+    public void entering(HardwareTree pxyNode) throws GenerationException;
     
     /**
      * Event representing the completion of a association sub-tree indicated by
@@ -70,5 +70,5 @@ public interface IAssocTreeVisitor {
      * 
      * @throws GenerationException  visitor specific error in tree processing
      */
-    public void leaving(AssocTree pxyNode) throws GenerationException;
+    public void leaving(HardwareTree pxyNode) throws GenerationException;
 }

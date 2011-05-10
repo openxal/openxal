@@ -11,9 +11,9 @@ import java.util.Stack;
 import xal.model.Sector;
 import xal.model.elem.IdealDrift;
 
-import xal.sim.latgen.atree.AssocTree;
+import xal.sim.latgen.atree.HardwareTree;
 import xal.sim.latgen.atree.DriftSpace;
-import xal.sim.latgen.atree.IAssocTreeVisitor;
+import xal.sim.latgen.atree.IHwareTreeVisitor;
 import xal.sim.latgen.atree.ThickHardware;
 import xal.sim.latgen.atree.ThinHardware;
 import xal.sim.latgen.atree.TreeNode;
@@ -32,13 +32,13 @@ import xal.smf.AcceleratorSeq;
  * A proxy tree is built (@see gov.sns.xal.model.gen.ptree) which breaks the
  * hardware into nested sequences hardware components and subcomponents
  * that have model representations.  The <code>SequenceGenerator</code> class
- * implements the <code>IAssocTreeVisitor</code> interface, which means it is
+ * implements the <code>IHwareTreeVisitor</code> interface, which means it is
  * a visitor class of the proxy tree.  
  *   
  * @author Christopher K. Allen
  *
  */
-public class SequenceGenerator implements IAssocTreeVisitor {
+public class SequenceGenerator implements IHwareTreeVisitor {
 
     
     /*
@@ -114,7 +114,7 @@ public class SequenceGenerator implements IAssocTreeVisitor {
         this.m_stackSecs = new Stack();
         this.m_syncMgr = new SynchronizationManager();
         
-        AssocTree       pxyModel = new AssocTree(smfSeq);
+        HardwareTree       pxyModel = new HardwareTree(smfSeq);
         
         pxyModel.distributVistor(this);
         
@@ -124,7 +124,7 @@ public class SequenceGenerator implements IAssocTreeVisitor {
      
      
     /*
-     * IAssocTreeVisitor Interface
+     * IHwareTreeVisitor Interface
      */
 
     /**
@@ -134,7 +134,7 @@ public class SequenceGenerator implements IAssocTreeVisitor {
      * 
      * @param pxyNode   <code>ThinHardware</code> proxy-tree node
      * 
-     * @see gov.IAssocTreeVisitor.xal.model.gen.ptree.IProxyVisitor#entering(gov.sns.xal.model.gen.ptree.ThinHardware)
+     * @see gov.IHwareTreeVisitor.xal.model.gen.ptree.IProxyVisitor#entering(gov.sns.xal.model.gen.ptree.ThinHardware)
      */
     public void process(ThinHardware pxyNode) throws GenerationException {
        
@@ -153,7 +153,7 @@ public class SequenceGenerator implements IAssocTreeVisitor {
      * 
      * @param pxyNode   <code>ThickHardware</code> proxy-tree node
      * 
-     * @see gov.IAssocTreeVisitor.xal.model.gen.ptree.IProxyVisitor#entering(gov.sns.xal.model.gen.ptree.ThickHardware)
+     * @see gov.IHwareTreeVisitor.xal.model.gen.ptree.IProxyVisitor#entering(gov.sns.xal.model.gen.ptree.ThickHardware)
      */
     public void process(ThickHardware pxyNode) throws GenerationException {
 
@@ -168,7 +168,7 @@ public class SequenceGenerator implements IAssocTreeVisitor {
     /**
      * @param pxyNode
      * 
-     * @see gov.IAssocTreeVisitor.xal.model.gen.ptree.IProxyVisitor#entering(gov.sns.xal.model.gen.ptree.DriftSpace)
+     * @see gov.IHwareTreeVisitor.xal.model.gen.ptree.IProxyVisitor#entering(gov.sns.xal.model.gen.ptree.DriftSpace)
      */
     public void process(DriftSpace pxyNode) throws GenerationException {
         
@@ -183,18 +183,18 @@ public class SequenceGenerator implements IAssocTreeVisitor {
 
     /**
      * Begin building a (Sub)sequence of model elements.  We have encountered
-     * a <code>AssocTree</code> node in the proxy tree object which indicates
+     * a <code>HardwareTree</code> node in the proxy tree object which indicates
      * a child sequence.  We must create a new <code>Sector</code> object
      * and push it onto the sequence stack as the current sequence under 
      * construction.  If this is the first time this method is called on the
      * proxy tree we must set the newly created <code>Sector</code> object
      * as the master sequence for the tree.
      * 
-     * @param pxyNode   <code>AssocTree</code> object representing an <code>AcceleratorSeq</code> object
+     * @param pxyNode   <code>HardwareTree</code> object representing an <code>AcceleratorSeq</code> object
      * 
-     * @see gov.IAssocTreeVisitor.xal.model.gen.ptree.IProxyVisitor#entering(gov.AssocTree.xal.model.gen.ptree.ProxyTree)
+     * @see gov.IHwareTreeVisitor.xal.model.gen.ptree.IProxyVisitor#entering(gov.HardwareTree.xal.model.gen.ptree.ProxyTree)
      */
-    public void entering(AssocTree pxyNode) throws GenerationException {
+    public void entering(HardwareTree pxyNode) throws GenerationException {
 
         // Create a new model sequence for this tree 
         AcceleratorSeq  smfSeq = pxyNode.getHardwareRef();
@@ -217,17 +217,17 @@ public class SequenceGenerator implements IAssocTreeVisitor {
     }
 
     /**
-     * Catch the end of processing event for a <code>AssocTree</code> node.
+     * Catch the end of processing event for a <code>HardwareTree</code> node.
      * We must pop the sequence stack to return to the building of the previous 
      * <code>Sector</code> object.
      * 
-     * @param pxyNode       dummy argument indicatin we are leaving a <code>AssocTree</code> object
+     * @param pxyNode       dummy argument indicatin we are leaving a <code>HardwareTree</code> object
      * 
      * @throws GenerationException      must have been a sequence stack crash
      * 
-     * @see gov.IAssocTreeVisitor.xal.model.gen.ptree.IProxyVisitor#leaving(gov.AssocTree.xal.model.gen.ptree.ProxyTree)
+     * @see gov.IHwareTreeVisitor.xal.model.gen.ptree.IProxyVisitor#leaving(gov.HardwareTree.xal.model.gen.ptree.ProxyTree)
      */    
-    public void leaving(AssocTree pxyNode) throws GenerationException {
+    public void leaving(HardwareTree pxyNode) throws GenerationException {
         this.popSector();
     }
     
@@ -360,7 +360,7 @@ public class SequenceGenerator implements IAssocTreeVisitor {
 
     /**
      * @since May 2, 2011
-     * @see xal.sim.latgen.atree.IAssocTreeVisitor#process(xal.sim.latgen.atree.TreeNode)
+     * @see xal.sim.latgen.atree.IHwareTreeVisitor#process(xal.sim.latgen.atree.TreeNode)
      */
     @Override
     public void process(TreeNode pxyNode) throws GenerationException {

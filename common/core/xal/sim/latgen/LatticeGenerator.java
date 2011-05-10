@@ -49,37 +49,13 @@ public class LatticeGenerator {
      * registered in the GenerationManager.
      * 
      * @param seq Accelerator sequence to build a Lattice for
-     * @return a Lattice that models the supplied accelerator sequence
+     * @return    a Lattice that models the supplied accelerator sequence
      */
     public Lattice generate(AcceleratorSeq seq) {
         Lattice lat = new Lattice();
         
         GenerationManager mgrGen = new GenerationManager();
         
-//        mgrGen.setRestEnergy(seq.getRestEnergy());
-//        mgrGen.setCharge2Mass(seq.getCharge2Mass());
-        
-        
-        AcceleratorNode node;
-        LinkedList      lstNodes = null;
-        double          dblPos = - 1.0;
-        
-        
-        Iterator iterNodes = seq.getAllNodes().iterator();
-        while (iterNodes.hasNext()) {
-            node = (AcceleratorNode)iterNodes.next();
-            
-            if (node.getPosition() != dblPos)   {
-                if (lstNodes != null)
-                    buildElements(lstNodes, lat);
-
-                dblPos = node.getPosition();
-                lstNodes = new LinkedList();
-                
-            }
-            lstNodes.add(node);
-        }
-        buildElements(lstNodes, lat);
             
         return lat;
     };

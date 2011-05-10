@@ -19,7 +19,7 @@ import xal.tools.math.Interval;
  * lattice generation mechanism for the online model.  It is based upon a nested tree
  * representation of the machine hardware.  The leaves of the association tree
  * represent hardware components, or subcomponents, that may be modeled.
- * The derived class <code>AssocTree</code> contains the root node of the
+ * The derived class <code>HardwareTree</code> contains the root node of the
  * the association tree corresponding to a given <code>AcceleratorSeq</code>
  * object. Each node functions by maintaining an ordered list of any child nodes.
  * </p>
@@ -90,15 +90,15 @@ public abstract class TreeNode implements Comparable<TreeNode> {
 //
     /**
      * Each concrete association node (derived type) must provide an action when 
-     * presented with an object exposing the <code>IAssocTreeVisitor</code> 
-     * interface. Specifically, the <code>IAssocTreeVisitor</code> interface exposes
+     * presented with an object exposing the <code>IHwareTreeVisitor</code> 
+     * interface. Specifically, the <code>IHwareTreeVisitor</code> interface exposes
      * a single method corresponding to each concrete class derived from
      * the <code>TreeNode</code> hierarchy.  Thus, each concrete class should
      * call that method upon itself (using itself as an argument).
      * 
-     * @param iVisitor  object exposing <code>IAssocTreeVisitor</code> interface
+     * @param iVisitor  object exposing <code>IHwareTreeVisitor</code> interface
      */
-    public abstract void   processVisitor(IAssocTreeVisitor iVisitor) throws GenerationException;
+    public abstract void   processVisitor(IHwareTreeVisitor iVisitor) throws GenerationException;
     
     
     
@@ -239,19 +239,19 @@ public abstract class TreeNode implements Comparable<TreeNode> {
 
     
     /*
-     * IAssocTreeVisitor Operations
+     * IHwareTreeVisitor Operations
      */
     
     /**
      * Distributes the visitor object (argument implementing the <code>
-     * IAssocTreeVisitor</code> interface) to all <b>nodes</b> of the tree.
+     * IHwareTreeVisitor</code> interface) to all <b>nodes</b> of the tree.
      * The <code>processVisitor()</code> method is called on on the current
      * node first, then consecutively on each child node.
      * 
-     * @param iVisitor  visitor object implementing <code>IAssocTreeVisitor</code>
+     * @param iVisitor  visitor object implementing <code>IHwareTreeVisitor</code>
      * 
      */
-    public void distributeVisitor(IAssocTreeVisitor iVisitor) throws GenerationException  {
+    public void distributeVisitor(IHwareTreeVisitor iVisitor) throws GenerationException  {
                 
         this.processVisitor(iVisitor);
         
@@ -262,17 +262,17 @@ public abstract class TreeNode implements Comparable<TreeNode> {
     
     /**
      * Distributes the visitor object (argument implementing the 
-     * <code>IAssocTreeVisitor</code>
+     * <code>IHwareTreeVisitor</code>
      * interface) to all <b>leaves</b> of the proxy tree, whence 
      * <code>processVistor()</code> is called.  This action is implemented 
      * by distributing the visitor to all the child nodes of this node.  
      * If there are no children then we call the <code>processVisitor()</code>
      * method on this node, which must be a leaf.
      * 
-     * @param iVisitor  visitor object implementing <code>IAssocTreeVisitor</code>
+     * @param iVisitor  visitor object implementing <code>IHwareTreeVisitor</code>
      * 
      */
-    public void leafVisitor(IAssocTreeVisitor iVisitor) throws GenerationException {
+    public void leafVisitor(IHwareTreeVisitor iVisitor) throws GenerationException {
         
         // If we have no children then  this is a leaf - process this node and return
         if (this.getChildCount() == 0)  {

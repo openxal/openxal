@@ -23,7 +23,7 @@ import xal.tools.math.Interval;
  * <p>
  * This class is also the entry point for any association-tree visitor.  That is,
  * association trees support the <i>Visitor</i> design pattern.  Here, a visitor
- * class is identified by one which implements the <code>IAssocTreeVisitor</code>
+ * class is identified by one which implements the <code>IHwareTreeVisitor</code>
  * interface.
  * </p> 
  *  
@@ -32,7 +32,7 @@ import xal.tools.math.Interval;
  * @version Apr 27, 2011 (formally <code>ProxyTree</code>
  *
  */
-public class AssocTree {
+public class HardwareTree {
     
     
     /*
@@ -54,7 +54,7 @@ public class AssocTree {
      * @return  smallest length of a drift to consider 
      */
     public static double   getDriftTolerance() {
-        return AssocTree.DBL_TOL_POS;
+        return HardwareTree.DBL_TOL_POS;
     }
 
 
@@ -88,7 +88,7 @@ public class AssocTree {
      */
 
 //    /**
-//     * Since a <code>AssocTree</code> represents a sequence of hardware object
+//     * Since a <code>HardwareTree</code> represents a sequence of hardware object
 //     * this method simply delegates the control to the superclass method
 //     * <code>addChild()</code>.  The subsequent call may consequently invoke the
 //     * <code>insert()</code> method on any child objects of this node.
@@ -109,12 +109,12 @@ public class AssocTree {
      */
      
     /**
-     * Build a <code>AssocTree</code> object representing the provided 
+     * Build a <code>HardwareTree</code> object representing the provided 
      * <code>AcceleratorSeq</code> object.
      *  
      * @param smfSeq        SMF hardware sequence to be modeled 
      */
-    public AssocTree(AcceleratorSeq smfSeq)    throws GenerationException {
+    public HardwareTree(AcceleratorSeq smfSeq)    throws GenerationException {
         
         // Assign the hardware reference and build tree
         double      dblMin = 0.0;
@@ -153,18 +153,18 @@ public class AssocTree {
 
 
     /*
-     * IAssocTreeVisitor Interface
+     * IHwareTreeVisitor Interface
      */
      
      /**
       * Calls the appropriate (type sensitive) method of the visitor argument
       * upon this node.
       * 
-      * @param iVisitor  visitor object implementing <code>IAssocTreeVisitor</code> interface
+      * @param iVisitor  visitor object implementing <code>IHwareTreeVisitor</code> interface
       * 
-      * @see gov.TreeNode.xal.model.gen.ptree.ProxyNode#processVisitor(gov.IAssocTreeVisitor.xal.model.gen.ptree.IProxyVisitor)
+      * @see gov.TreeNode.xal.model.gen.ptree.ProxyNode#processVisitor(gov.IHwareTreeVisitor.xal.model.gen.ptree.IProxyVisitor)
       */
-     void processVisitor(IAssocTreeVisitor iVisitor) throws GenerationException {
+     void processVisitor(IHwareTreeVisitor iVisitor) throws GenerationException {
          
          iVisitor.entering(this);
 
@@ -172,11 +172,11 @@ public class AssocTree {
 
      /**
       * 
-      * @param iVisitor  visitor object implementing <code>IAssocTreeVisitor</code> interface
+      * @param iVisitor  visitor object implementing <code>IHwareTreeVisitor</code> interface
       * 
-      * @see xal.sim.latgen.atree.TreeNode#distributeVisitor(IAssocTreeVisitor)
+      * @see xal.sim.latgen.atree.TreeNode#distributeVisitor(IHwareTreeVisitor)
       */
-     public void distributVistor(IAssocTreeVisitor iVisitor) throws GenerationException {
+     public void distributVistor(IHwareTreeVisitor iVisitor) throws GenerationException {
 
          iVisitor.entering(this);
          
@@ -309,8 +309,8 @@ public class AssocTree {
 //
 //
 //     /**
-//      * Creates <code>AssocTree</code> nodes for hardware objects representing
-//      * composite elements.  Populates the <code>AssocTree</code> with these
+//      * Creates <code>HardwareTree</code> nodes for hardware objects representing
+//      * composite elements.  Populates the <code>HardwareTree</code> with these
 //      * subtrees.
 //      * 
 //      * @throws  GenerationException     error occurred building the tree
@@ -319,7 +319,7 @@ public class AssocTree {
 //         Iterator        iterHware = this.m_lstSeq.iterator();
 //         while (iterHware.hasNext())  {
 //             AcceleratorSeq      smfSeq = (AcceleratorSeq)iterHware.next();
-//             AssocTree           pxySeq = new AssocTree(smfSeq);
+//             HardwareTree           pxySeq = new HardwareTree(smfSeq);
 //
 //             this.addChild(pxySeq);        
 //         }                    
@@ -327,7 +327,7 @@ public class AssocTree {
 //
 //     /**
 //      * Creates <code>ThickHardware</code> nodes for hardware objects having
-//      * finite length.  Populates the <code>AssocTree</code> with these objects.
+//      * finite length.  Populates the <code>HardwareTree</code> with these objects.
 //      * 
 //      * @throws  GenerationException     error occurred building the tree
 //      */
@@ -364,7 +364,7 @@ public class AssocTree {
 //             pxyChild = (TreeNode)iterChild.next();
 //             sRight = pxyChild.getInterval().getMin();  
 //
-//             if ((sRight-sLeft) > AssocTree.getDriftTolerance()) {
+//             if ((sRight-sLeft) > HardwareTree.getDriftTolerance()) {
 //                 DriftSpace  pxyDrift = new DriftSpace(sLeft, sRight);
 //
 //                 this.addChild(pxyDrift);
@@ -376,7 +376,7 @@ public class AssocTree {
 //
 //         // Check for final drift between last element and exit of sequence
 //         sRight = this.getInterval().getMax();
-//         if ( (sRight-sLeft) > AssocTree.getDriftTolerance())    {
+//         if ( (sRight-sLeft) > HardwareTree.getDriftTolerance())    {
 //             DriftSpace  pxyDrift = new DriftSpace(sLeft, sRight);
 //
 //             this.addChild(pxyDrift);
@@ -386,7 +386,7 @@ public class AssocTree {
 //
 //     /**
 //      * Creates <code>ThinHardware</code> nodes for hardware objects having
-//      * zero length.  Populates the <code>AssocTree</code> with these objects.
+//      * zero length.  Populates the <code>HardwareTree</code> with these objects.
 //      * 
 //      * @throws  GenerationException     error occurred building the tree
 //      */
@@ -434,7 +434,7 @@ public class AssocTree {
 // * Search the AcceleratorSeq object for AcceleratorNode objects with finite
 // * length - these must be a subset of actual hardware objects.  Creates
 // * <code>HardwareNode</code> nodes for these elements or other <code>
-// * AssocTree</code> objects if the <code>AcceleratorNode</code> is also an 
+// * HardwareTree</code> objects if the <code>AcceleratorNode</code> is also an 
 // * instance of <code>AcceleratorSeq</code>.
 // * 
 // * @param   smfRoot                  
@@ -449,7 +449,7 @@ public class AssocTree {
 //        // Check if node is a sequence
 //        if (smfNode instanceof AcceleratorSeq) {
 //            AcceleratorSeq      smfComp = (AcceleratorSeq)smfNode;
-//            AssocTree           pxyComp = new AssocTree(smfComp);
+//            HardwareTree           pxyComp = new HardwareTree(smfComp);
 //                
 //            this.addChild(pxyComp);        
 //                
@@ -475,7 +475,7 @@ public class AssocTree {
 //        TreeNode   pxyChild = (TreeNode)iterChild.next();
 //        double      sRight = pxyChild.getInterval().getMin();
 //            
-//        if ((sRight-sLeft) > AssocTree.DBL_TOL_POS) {
+//        if ((sRight-sLeft) > HardwareTree.DBL_TOL_POS) {
 //            DriftSpace  pxyDrift = new DriftSpace(sLeft, sRight);
 //                
 //            this.addChild(pxyDrift);

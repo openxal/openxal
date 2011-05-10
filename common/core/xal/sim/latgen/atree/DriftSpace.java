@@ -84,11 +84,11 @@ public class DriftSpace extends TreeNode {
      * Calls the appropriate (type sensitive) method of the visitor argument
      * upon this node.
      * 
-     * @param iVisitor  visitor object implement <code>IAssocTreeVisitor</code> interface
+     * @param iVisitor  visitor object implement <code>IHwareTreeVisitor</code> interface
      * 
-     * @see TreeNode#processVisitor(IAssocTreeVisitor)
+     * @see TreeNode#processVisitor(IHwareTreeVisitor)
      */
-    public void processVisitor(IAssocTreeVisitor iVisitor) throws GenerationException {
+    public void processVisitor(IHwareTreeVisitor iVisitor) throws GenerationException {
         
         iVisitor.process(this);
 

@@ -143,10 +143,10 @@ public class HardwareNode extends TreeNode {
 
     /**
      * @since Apr 29, 2011
-     * @see xal.sim.latgen.atree.TreeNode#processVisitor(xal.sim.latgen.atree.IAssocTreeVisitor)
+     * @see xal.sim.latgen.atree.TreeNode#processVisitor(xal.sim.latgen.atree.IHwareTreeVisitor)
      */
     @Override
-    public void processVisitor(IAssocTreeVisitor iVisitor)
+    public void processVisitor(IHwareTreeVisitor iVisitor)
     throws GenerationException {
         // TODO Auto-generated method stub
 
