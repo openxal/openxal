@@ -12,12 +12,12 @@ import  java.util.StringTokenizer;
 
 import Jama.Matrix;
 
-import xal.model.IArchive;
 import xal.tools.math.r3.R3;
 import xal.tools.math.r3.R3x3.Position;
 import xal.tools.math.r3.R3x3;
 import xal.tools.data.DataAdaptor;
 import xal.tools.data.DataFormatException;
+import xal.tools.data.IArchive;
 
 
 
@@ -267,7 +267,7 @@ public class PhaseMatrix implements IArchive, java.io.Serializable {
      * 
      * @throws DataFormatException      malformed data
      * 
-     * @see xal.model.IArchive#load(xal.tools.data.DataAdaptor)
+     * @see xal.tools.data.IArchive#load(xal.tools.data.DataAdaptor)
      */
     public PhaseMatrix(DataAdaptor daSource) throws DataFormatException {
         this();
@@ -462,7 +462,7 @@ public class PhaseMatrix implements IArchive, java.io.Serializable {
      * 
      * @param daptArchive   interface to data sink 
      * 
-     * @see xal.model.IArchive#save(xal.tools.data.DataAdaptor)
+     * @see xal.tools.data.IArchive#save(xal.tools.data.DataAdaptor)
      */
     public void save(DataAdaptor daptArchive) {
         daptArchive.setValue(PhaseMatrix.ATTR_DATA, this.toString());
@@ -477,7 +477,7 @@ public class PhaseMatrix implements IArchive, java.io.Serializable {
      * @throws DataFormatException      malformed data
      * @throws IllegalArgumentException wrong number of string tokens
      * 
-     * @see xal.model.IArchive#load(xal.tools.data.DataAdaptor)
+     * @see xal.tools.data.IArchive#load(xal.tools.data.DataAdaptor)
      */
     public void load(DataAdaptor daptArchive) throws DataFormatException {
         if ( daptArchive.hasAttribute(PhaseMatrix.ATTR_DATA) )  {

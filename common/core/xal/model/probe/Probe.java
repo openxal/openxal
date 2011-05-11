@@ -9,10 +9,10 @@ package xal.model.probe;
 
 import xal.tools.data.DataAdaptor;
 import xal.tools.data.DataFormatException;
+import xal.tools.data.IArchive;
 import xal.tools.data.TransientDataAdaptor;
 
 import xal.model.IAlgorithm;
-import xal.model.IArchive;
 import xal.model.IProbe;
 import xal.model.ModelException;
 import xal.model.alg.Tracker;
@@ -613,7 +613,7 @@ public abstract class Probe implements IProbe, IArchive {
     /**
      * Return the archiving interface for this object.
      * 
-     * @see xal.model.IArchive
+     * @see xal.tools.data.IArchive
      */
     public IArchive getArchive()        { return this; };
 

@@ -4,10 +4,8 @@
  * Created on March 5, 2003, 11:21 AM
  */
 
-package xal.model;
+package xal.tools.data;
 
-import xal.tools.data.DataAdaptor;
-import xal.tools.data.DataFormatException;
 
 /**
  *  Interface for storing and restoring the state of an object via

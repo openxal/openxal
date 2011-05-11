@@ -8,8 +8,8 @@ package xal.tools.beam;
 
 import xal.tools.data.DataAdaptor;
 import xal.tools.data.DataFormatException;
+import xal.tools.data.IArchive;
 
-import xal.model.IArchive;
 
 /**
  * Represents a generalized map between homogeneous phase space coordinates.
@@ -176,7 +176,7 @@ public class PhaseMap implements IArchive {
      * 
      * @param daptArchive   interface to data sink 
      * 
-     * @see xal.model.IArchive#save(xal.tools.data.DataAdaptor)
+     * @see xal.tools.data.IArchive#save(xal.tools.data.DataAdaptor)
      */
     public void save(DataAdaptor daptArchive) {
         DataAdaptor daptZero = daptArchive.createChild(PhaseMap.LABEL_ZERO);
@@ -195,7 +195,7 @@ public class PhaseMap implements IArchive {
      * @throws DataFormatException      malformed data
      * @throws IllegalArgumentException wrong number of string tokens
      * 
-     * @see xal.model.IArchive#load(xal.tools.data.DataAdaptor)
+     * @see xal.tools.data.IArchive#load(xal.tools.data.DataAdaptor)
      */
     public void load(DataAdaptor daptArchive) 
         throws DataFormatException, IllegalArgumentException 

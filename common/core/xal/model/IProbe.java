@@ -1,5 +1,7 @@
 package xal.model;
 
+import xal.tools.data.IArchive;
+
 
 /** 
  * The root interface of physical objects and mathematical abstractions

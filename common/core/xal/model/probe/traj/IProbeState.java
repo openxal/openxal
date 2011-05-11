@@ -8,7 +8,7 @@
 
 package xal.model.probe.traj;
 
-import xal.model.IArchive;
+import xal.tools.data.IArchive;
 
 
 /**

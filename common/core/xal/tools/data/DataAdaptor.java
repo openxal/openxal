@@ -19,7 +19,7 @@ import java.util.List;
  * wrapper for specific data sources and sinks.  Data adaptors do not have any knowledge
  * about the objects that read and write data.  Such data receivers and writers
  * should implement the <code>{@link DataListener}</code> interface (or the 
- * <code>{@link xal.model.IArchive}</code> interface for model persistence).
+ * <code>{@link xal.tools.data.IArchive}</code> interface for model persistence).
  * </p>
  * <p>
  * A <code>DataAdaptor</code> instance is generated for each node in a hierarchical data

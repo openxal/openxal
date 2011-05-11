@@ -718,7 +718,7 @@ public class EnvTrackerAdapt extends Tracker {
      * The superclass <code>load</code> method is called first, then the properties
      * particular to <code>EnvTrackerAdapt<code> are loaded.
      * 
-     * @see xal.model.IArchive#load(xal.tools.data.DataAdaptor)
+     * @see xal.tools.data.IArchive#load(xal.tools.data.DataAdaptor)
      */
     @Override
     public void load(DataAdaptor daptArchive) throws DataFormatException {
@@ -755,7 +755,7 @@ public class EnvTrackerAdapt extends Tracker {
      * 
      * @param   daptArchive     data sink exposing <code>IArchive</code> interface
      * 
-     * @see xal.model.IArchive#save(xal.tools.data.DataAdaptor)
+     * @see xal.tools.data.IArchive#save(xal.tools.data.DataAdaptor)
      */
     @Override
     public void save(DataAdaptor daptArchive) {

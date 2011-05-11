@@ -5,7 +5,7 @@ package xal.tools.beam;
 
 import xal.tools.data.DataAdaptor;
 import xal.tools.data.DataFormatException;
-import xal.model.IArchive;
+import xal.tools.data.IArchive;
 
 /**
  * Encapsulation of an analytic description of a beam bunch using

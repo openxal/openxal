@@ -303,7 +303,7 @@ public class TwissTracker extends Tracker {
      * 
      * @param   daSource     data source containing state data
      * 
-     * @see xal.model.IArchive#load(xal.tools.data.DataAdaptor)
+     * @see xal.tools.data.IArchive#load(xal.tools.data.DataAdaptor)
      */
     @Override
     public void load(DataAdaptor daSource) {
@@ -338,7 +338,7 @@ public class TwissTracker extends Tracker {
      * 
      * @param   daSink     data source to receive algorithm configuration
      * 
-     * @see xal.model.IArchive#save(xal.tools.data.DataAdaptor)
+     * @see xal.tools.data.IArchive#save(xal.tools.data.DataAdaptor)
      */
     @Override
     public void save(DataAdaptor daSink) {

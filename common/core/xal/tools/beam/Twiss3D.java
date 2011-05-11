@@ -8,7 +8,7 @@ package xal.tools.beam;
 
 import xal.tools.data.DataAdaptor;
 import xal.tools.data.DataFormatException;
-import xal.model.IArchive;
+import xal.tools.data.IArchive;
 
 /**
  * Encapsulates the Twiss parameters for describing a beam bunch.  Specifically,
@@ -176,7 +176,7 @@ public class Twiss3D implements IArchive {
      * 
      * @param  daSink   data sink represented by <code>DataAdaptor</code> interface
      * 
-     * @see xal.model.IArchive#save(xal.tools.data.DataAdaptor)
+     * @see xal.tools.data.IArchive#save(xal.tools.data.DataAdaptor)
      */
     public void save(DataAdaptor daSink) {
         
@@ -200,7 +200,7 @@ public class Twiss3D implements IArchive {
      * 
      * @exception DataFormatException     state information in data source is malformatted
      *  
-     * @see xal.model.IArchive#load(xal.tools.data.DataAdaptor)
+     * @see xal.tools.data.IArchive#load(xal.tools.data.DataAdaptor)
      */
     public void load(DataAdaptor daSource) throws DataFormatException  {
         

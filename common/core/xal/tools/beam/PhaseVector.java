@@ -13,9 +13,9 @@ import  java.util.StringTokenizer;
 
 import xal.tools.data.DataAdaptor;
 import xal.tools.data.DataFormatException;
+import xal.tools.data.IArchive;
 import xal.tools.math.r3.R3;
 
-import xal.model.IArchive;
 
 
 /**
@@ -193,7 +193,7 @@ public class PhaseVector implements java.io.Serializable, IArchive {
      * 
      * @throws DataFormatException      malformed data
      * 
-     * @see xal.model.IArchive#load(xal.tools.data.DataAdaptor)
+     * @see xal.tools.data.IArchive#load(xal.tools.data.DataAdaptor)
      */
     public PhaseVector(DataAdaptor daSource) throws DataFormatException {
         this();
@@ -438,7 +438,7 @@ public class PhaseVector implements java.io.Serializable, IArchive {
      * 
      * @param daptArchive   interface to data sink 
      * 
-     * @see xal.model.IArchive#save(xal.tools.data.DataAdaptor)
+     * @see xal.tools.data.IArchive#save(xal.tools.data.DataAdaptor)
      */
     public void save(DataAdaptor daptArchive) {
         daptArchive.setValue(PhaseVector.ATTR_DATA, this.toString());
@@ -452,7 +452,7 @@ public class PhaseVector implements java.io.Serializable, IArchive {
      * 
      * @throws DataFormatException      malformed data
      * 
-     * @see xal.model.IArchive#load(xal.tools.data.DataAdaptor)
+     * @see xal.tools.data.IArchive#load(xal.tools.data.DataAdaptor)
      */
     public void load(DataAdaptor daptArchive) throws DataFormatException {
         if ( daptArchive.hasAttribute(PhaseVector.ATTR_DATA) )  {

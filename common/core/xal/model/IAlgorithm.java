@@ -1,5 +1,6 @@
 package xal.model;
 
+import xal.tools.data.IArchive;
 import xal.tools.data.IContextAware;
 
 

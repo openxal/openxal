@@ -3,7 +3,7 @@ package xal.model.probe.traj;
 import xal.tools.RealNumericIndexer;
 import xal.tools.data.DataAdaptor;
 import xal.tools.data.DataFormatException;
-import xal.model.IArchive;
+import xal.tools.data.IArchive;
 import xal.model.probe.Probe;
 import xal.model.xml.ParsingException;
 

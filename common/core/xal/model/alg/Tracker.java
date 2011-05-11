@@ -12,9 +12,9 @@ import xal.tools.data.DataFormatException;
 import xal.tools.data.DataTable;
 import xal.tools.data.EditContext;
 import xal.tools.data.GenericRecord;
+import xal.tools.data.IArchive;
 
 import xal.model.IAlgorithm;
-import xal.model.IArchive;
 import xal.model.IElement;
 import xal.model.IProbe;
 import xal.model.ModelException;
@@ -641,7 +641,7 @@ public abstract class Tracker implements IAlgorithm, IArchive {
      * 
      * @throws  DataFormatException     bad format in algorithm data
      * 
-     * @see xal.model.IArchive#load(xal.tools.data.DataAdaptor)
+     * @see xal.tools.data.IArchive#load(xal.tools.data.DataAdaptor)
      */
     public void load(DataAdaptor daSource) throws DataFormatException {
         
@@ -673,7 +673,7 @@ public abstract class Tracker implements IAlgorithm, IArchive {
      * 
      * @param   daptArchive     data source to receive algorithm configuration
      * 
-     * @see xal.model.IArchive#save(xal.tools.data.DataAdaptor)
+     * @see xal.tools.data.IArchive#save(xal.tools.data.DataAdaptor)
      */
     public void save(DataAdaptor daptArchive) {
         
