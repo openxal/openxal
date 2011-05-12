@@ -19,18 +19,18 @@ public interface IArchive {
     /**
      *  Save the state of the object to a data adaptor for later reconstruction.
      *
-     *  @param  daptArchive     DataAdaptor interface to an archive
+     *  @param  daArchive     DataAdaptor interface to a data archive
      */
-    public void save(DataAdaptor daptArchive);
+    public void save(DataAdaptor daArchive);
     
 
     /**
      *  Recover an object's state from an archived data source.
      *
-     *  @param  daptArchive     DataAdaptor interface to an archive
+     *  @param  daSource     DataAdaptor interface to a data source
      *
      *  @exception  DataFormatException     data format of the adaptor is corrupt
      */
-    public void load(DataAdaptor daptArchive) throws DataFormatException;
+    public void load(DataAdaptor daSource) throws DataFormatException;
     
 }

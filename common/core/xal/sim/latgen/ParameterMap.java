@@ -37,7 +37,7 @@ import xal.tools.data.IArchive;
  * @author Christopher K. Allen
  * @since   May 10, 2011
  */
-public class ParameterMap implements IArchive{
+public class ParameterMap implements IArchive {
 
     
     
@@ -45,11 +45,6 @@ public class ParameterMap implements IArchive{
      * Global Constants
      */
     
-//    /** The data label used to identify <code>ParameterMap</code> data (XML element name)*/
-//    static final public String      STR_PRM_LBL = "parameter";
-//    
-//    /** Array of XML attributes for the <code>ParameterMap</code> data */
-//    static final public String[]    ARR_STR_PRM_ATTR = { "name", "smfget", "mset", "type" }; 
 
     /**
      * An enumeration of the attributes of a <code>ParameterMap</code>
@@ -183,6 +178,24 @@ public class ParameterMap implements IArchive{
     private Class<?>    typPrm;
     
     
+    
+    /*
+     * Initialization
+     */
+    
+    
+    /**
+     * 
+     * @param daSource
+     * 
+     * @throws DataFormatException
+     *
+     * @author  Christopher K. Allen
+     * @since   May 12, 2011
+     */
+    public ParameterMap(DataAdaptor daSource) throws DataFormatException {
+        this.load(daSource);
+    }
     
     /**
      * Creates a new <code>ParameterMap</code> object with the given
