@@ -183,6 +183,28 @@ public class Association implements IArchive {
     
     
     /**
+     * Creates a new <code>Association</code> object and initializes
+     * it with the data provided by the source with the <code>DataAdaptor</code>
+     * interface.  The new object is initialized with a call to the 
+     * <code>IArchive</code> method <code>{@link #load(DataAdaptor)}</code>.
+     * 
+     * @param daSource  source of initializing data defining the new association
+     * 
+     * @throws DataFormatException  the data source has an unreadable data format
+     *
+     * @author  Christopher K. Allen
+     * @since   May 12, 2011
+     * 
+     * @see Association#load(DataAdaptor)
+     */
+    public Association(DataAdaptor daSource) throws DataFormatException {
+        this();
+        
+        this.load(daSource);
+    }
+    
+    /**
+     * Creates a new, uninitialized <code>Association</code> object.
      * 
      *
      * @author  Christopher K. Allen
@@ -232,7 +254,7 @@ public class Association implements IArchive {
 
 
     /**
-     * Load the properties of this associate from the data source
+     * Load the properties of this association from the data source
      * with the <code>DataAdaptor</code> interface.
      * 
      * @param daSource data source defining a new association
