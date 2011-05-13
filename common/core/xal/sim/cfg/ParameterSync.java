@@ -12,12 +12,13 @@
  * @author  Christopher K. Allen
  * @since	May 11, 2011
  */
-package xal.sim.latgen;
+package xal.sim.cfg;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import xal.model.IElement;
+import xal.sim.latgen.GenerationException;
 import xal.smf.AcceleratorNode;
 
 /**

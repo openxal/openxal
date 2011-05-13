@@ -12,12 +12,9 @@
  * @author  Christopher K. Allen
  * @since	May 10, 2011
  */
-package xal.sim.latgen;
+package xal.sim.cfg;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -25,7 +22,6 @@ import xal.model.IElement;
 import xal.smf.AcceleratorNode;
 import xal.tools.data.DataAdaptor;
 import xal.tools.data.DataFormatException;
-import xal.tools.data.DataListener;
 import xal.tools.data.IArchive;
 
 /**
@@ -56,7 +52,7 @@ public class Association implements IArchive {
         /**
          * The class name of the SMF accelerator node hardware device.
          */
-        SMF("smf"),
+        SMF("hware"),
         
         /**
          * The class name of the online modeling element corresponding 
