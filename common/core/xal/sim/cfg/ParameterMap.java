@@ -12,13 +12,9 @@
  * @author  Christopher K. Allen
  * @since	May 11, 2011
  */
-package xal.sim.latgen;
+package xal.sim.cfg;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-
-import xal.model.IElement;
-import xal.smf.AcceleratorNode;
+import xal.sim.latgen.GenerationException;
 import xal.tools.data.DataAdaptor;
 import xal.tools.data.DataFormatException;
 import xal.tools.data.IArchive;
@@ -65,13 +61,13 @@ public class ParameterMap implements IArchive {
          * SMF device method name which is source of the parameter values 
          * (i.e., "getter").
          */
-        SOURCE("smfget"),
+        HSRC("hget"),
         
         /**
          * Modeling element method name which is the sink of parameter values
          * (i.e., "setter").
          */
-        SINK("mset"),
+        MSNK("mset"),
         
         /**
          * Data type of the underlying parameter values.
@@ -145,8 +141,8 @@ public class ParameterMap implements IArchive {
         }
 
         String  strName   = daSrc.stringValue( ATTR.NAME.getXmlAttributeName() );
-        String  strSmfget = daSrc.stringValue( ATTR.SOURCE.getXmlAttributeName() );
-        String  strMset   = daSrc.stringValue( ATTR.SINK.getXmlAttributeName() );
+        String  strSmfget = daSrc.stringValue( ATTR.HSRC.getXmlAttributeName() );
+        String  strMset   = daSrc.stringValue( ATTR.MSNK.getXmlAttributeName() );
         String  strType   = daSrc.stringValue( ATTR.TYPE.getXmlAttributeName() );
         
         try {
@@ -320,8 +316,8 @@ public class ParameterMap implements IArchive {
         DataAdaptor daPrm = daArchive.createChild( ATTR.getXmlElementName() );
         
         daPrm.setValue(ATTR.NAME.getXmlAttributeName(), this.getName() );
-        daPrm.setValue(ATTR.SOURCE.getXmlAttributeName(), this.getSourceName() );
-        daPrm.setValue(ATTR.SINK.getXmlAttributeName(), this.getSinkName() );
+        daPrm.setValue(ATTR.HSRC.getXmlAttributeName(), this.getSourceName() );
+        daPrm.setValue(ATTR.MSNK.getXmlAttributeName(), this.getSinkName() );
         daPrm.setValue(ATTR.TYPE.getXmlAttributeName(), this.getDataType().getName() );
     }
 
@@ -348,8 +344,8 @@ public class ParameterMap implements IArchive {
 
         // Load the attribute values
         this.strPrmNm = daSrc.stringValue(ATTR.NAME.getXmlAttributeName());
-        this.strSrcNm = daSrc.stringValue(ATTR.SOURCE.getXmlAttributeName());
-        this.strSnkNm = daSrc.stringValue(ATTR.SINK.getXmlAttributeName());
+        this.strSrcNm = daSrc.stringValue(ATTR.HSRC.getXmlAttributeName());
+        this.strSnkNm = daSrc.stringValue(ATTR.MSNK.getXmlAttributeName());
 
         String  strTypeName = daSrc.stringValue(ATTR.TYPE.getXmlAttributeName());
 

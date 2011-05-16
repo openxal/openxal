@@ -12,7 +12,7 @@
  * @author  Christopher K. Allen
  * @since	May 12, 2011
  */
-package xal.sim.latgen;
+package xal.sim.cfg;
 
 import java.util.LinkedList;
 import java.util.List;

@@ -100,7 +100,8 @@ public class IdealMagSteeringDipole extends ThinElement implements IElectromagne
     }
     
     /** 
-     *  Creates a new instance of IdealMagSteeringDipole.  Only the  
+     *  Creates a new instance of <code>IdealMagSteeringDipole</code>.  
+     *  The action of the kicker is completely unspecified.  
      *
      *  @param  strId       string identifier of element
      *  @param  dblFld      field strength (in <b>Tesla</b>)
