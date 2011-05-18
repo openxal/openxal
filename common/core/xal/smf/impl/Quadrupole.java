@@ -96,7 +96,7 @@ public class Quadrupole extends Electromagnet {
     }
     
     
-    /*
+    /**
      * Determine whether this magnet is of the pole specified.
      * @param compPole The pole against which this magnet is being compared.
      * @return true if this magnet matches the specified pole.

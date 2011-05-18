@@ -127,7 +127,7 @@ public abstract class Magnet extends AcceleratorNode implements MagnetType {
     }
     
     
-    /*
+    /**
      * Determine whether this magnet is oriented horizontally.
      * @return true if this magnet is oriented horizontally; false otherwise.
      */
@@ -136,7 +136,7 @@ public abstract class Magnet extends AcceleratorNode implements MagnetType {
     }
     
     
-    /*
+    /**
      * Determine whether this magnet is oriented vertically.
      * @return true if this magnet is oriented vertically; false otherwise.
      */
