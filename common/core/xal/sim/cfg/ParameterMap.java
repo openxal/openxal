@@ -144,15 +144,17 @@ public class ParameterMap implements IArchive {
         String  strSmfget = daSrc.stringValue( ATTR.HSRC.getXmlAttributeName() );
         String  strMset   = daSrc.stringValue( ATTR.MSNK.getXmlAttributeName() );
         String  strType   = daSrc.stringValue( ATTR.TYPE.getXmlAttributeName() );
+
+        return new ParameterMap(strType, strSmfget, strMset, strName);
         
-        try {
-            ParameterMap   prm = new ParameterMap(strType, strSmfget, strMset, strName);
-            
-            return prm;
-            
-        } catch (GenerationException e) {
-            throw new DataFormatException("Unknown underlying data type in parameter", e);
-        }
+//        try {
+//            ParameterMap   prm = new ParameterMap(strType, strSmfget, strMset, strName);
+//            
+//            return prm;
+//            
+//        } catch (GenerationException e) {
+//            throw new DataFormatException("Unknown underlying data type in parameter", e);
+//        }
     }
     
     
@@ -171,7 +173,7 @@ public class ParameterMap implements IArchive {
     private String      strSnkNm;
     
     /** The data type of the parameter */
-    private Class<?>    typPrm;
+    private String      strClsTyp;
     
     
     
@@ -217,29 +219,30 @@ public class ParameterMap implements IArchive {
      * Creates a new association <code>ParameterMap</code> object according to
      * the given specifications.
      * 
-     * @param strTypeName   The data type (class type) of the parameter
+     * @param strTypeNm   The data type (class type) of the parameter
      * @param strSrcNm     Name of the getter method on the hardware device
      * @param strSnkNm     Name of the setter method on the modeling element
      * @param strPrmNm   Name of this parameter, that is, its label
      * 
-     * @throws GenerationException  The data type is undefined  
+//     * @throws GenerationException  The data type is undefined  
      * 
      * @author  Christopher K. Allen
      * @since   May 10, 2011
      */
-    public ParameterMap(String strTypeName, String strSrcNm, String strSnkNm, String strPrmNm) 
-        throws GenerationException 
+    public ParameterMap(String strTypeNm, String strSrcNm, String strSnkNm, String strPrmNm) 
+//        throws GenerationException 
     {
-        this.strPrmNm = strPrmNm;
-        this.strSrcNm = strSrcNm;
-        this.strSnkNm = strSnkNm;
+        this.strClsTyp = strTypeNm;
+        this.strPrmNm  = strPrmNm;
+        this.strSrcNm  = strSrcNm;
+        this.strSnkNm  = strSnkNm;
         
-        try {
-            this.typPrm  = Class.forName(strTypeName);
-
-        } catch (ClassNotFoundException e) {
-            throw new GenerationException("Unable to identify parameter type", e);
-        }
+//        try {
+//            this.strClsTyp  = Class.forName(strTypeNm);
+//
+//        } catch (ClassNotFoundException e) {
+//            throw new GenerationException("Unable to identify parameter type", e);
+//        }
     }
     
     /**
@@ -291,10 +294,23 @@ public class ParameterMap implements IArchive {
      * @author Christopher K. Allen
      * @since  May 11, 2011
      */
-    public Class<?> getDataType() {
-        return this.typPrm;
+    public String  getDataType() {
+        return this.strClsTyp;
     }
     
+//    /**
+//     * Returns the data type (class type) of the underlying
+//     * parameter values.
+//     *
+//     * @return  data type of this parameter
+//     *
+//     * @author Christopher K. Allen
+//     * @since  May 11, 2011
+//     */
+//    public Class<?> getDataType() {
+//        return this.strClsTyp;
+//    }
+//    
     
     
     /*
@@ -318,7 +334,7 @@ public class ParameterMap implements IArchive {
         daPrm.setValue(ATTR.NAME.getXmlAttributeName(), this.getName() );
         daPrm.setValue(ATTR.HSRC.getXmlAttributeName(), this.getSourceName() );
         daPrm.setValue(ATTR.MSNK.getXmlAttributeName(), this.getSinkName() );
-        daPrm.setValue(ATTR.TYPE.getXmlAttributeName(), this.getDataType().getName() );
+        daPrm.setValue(ATTR.TYPE.getXmlAttributeName(), this.getDataType() );
     }
 
     /**
@@ -343,21 +359,22 @@ public class ParameterMap implements IArchive {
 
 
         // Load the attribute values
-        this.strPrmNm = daSrc.stringValue(ATTR.NAME.getXmlAttributeName());
-        this.strSrcNm = daSrc.stringValue(ATTR.HSRC.getXmlAttributeName());
-        this.strSnkNm = daSrc.stringValue(ATTR.MSNK.getXmlAttributeName());
+        this.strClsTyp = daSrc.stringValue(ATTR.TYPE.getXmlAttributeName()); 
+        this.strPrmNm  = daSrc.stringValue(ATTR.NAME.getXmlAttributeName());
+        this.strSrcNm  = daSrc.stringValue(ATTR.HSRC.getXmlAttributeName());
+        this.strSnkNm  = daSrc.stringValue(ATTR.MSNK.getXmlAttributeName());
 
-        String  strTypeName = daSrc.stringValue(ATTR.TYPE.getXmlAttributeName());
-
-        
-        // Get the class type of the parameter
-        try {
-            this.typPrm  = Class.forName(strTypeName);
-
-        } catch (ClassNotFoundException e) {
-            throw new DataFormatException("Unable to identify parameter type", e);
-            
-        }
+//        String  strTypeName = daSrc.stringValue(ATTR.TYPE.getXmlAttributeName());
+//
+//        
+//        // Get the class type of the parameter
+//        try {
+//            this.strClsTyp  = Class.forName(strTypeName);
+//
+//        } catch (ClassNotFoundException e) {
+//            throw new DataFormatException("Unable to identify parameter type", e);
+//            
+//        }
         
     }
     

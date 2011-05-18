@@ -1,5 +1,5 @@
 /**
- * Association.java
+ * AssociationDef.java
  *
  * @author Christopher K. Allen
  * @since  May 10, 2011
@@ -7,7 +7,7 @@
  */
 
 /**
- * Association.java
+ * AssociationDef.java
  *
  * @author  Christopher K. Allen
  * @since	May 10, 2011
@@ -25,7 +25,7 @@ import xal.tools.data.DataFormatException;
 import xal.tools.data.IArchive;
 
 /**
- * An <code>Association</code> object is a mapping between a hardware
+ * An <code>AssociationDef</code> object is a mapping between a hardware
  * device derived from <code>{@link AcceleratorNode}</code> to its
  * corresponding modeling element which exposes the 
  * <code>{@link IElement}</code> interface.
@@ -34,7 +34,7 @@ import xal.tools.data.IArchive;
  * @author Christopher K. Allen
  * @since   May 10, 2011
  */
-public class Association implements IArchive {
+public class AssociationDef implements IArchive {
 
     
         
@@ -52,7 +52,7 @@ public class Association implements IArchive {
         /**
          * The class name of the SMF accelerator node hardware device.
          */
-        SMF("hware"),
+        SMF("smf"),
         
         /**
          * The class name of the online modeling element corresponding 
@@ -162,14 +162,7 @@ public class Association implements IArchive {
     private String      strClsModel;
     
     
-    /** The data type of the SMF hardware device */
-    private Class<? extends AcceleratorNode>        typHware;
-    
-    /** the data type of the modeling element */
-    private Class<? extends IElement>               typModel;
-    
-    
-    /** map of (SyncMode,{ParameterMap}), a list of parameter mappings for synchronization mode */
+    /** map of (SyncModeId,SynchronizationMap), storing the synchronization maps by their IDs*/
     final private Map<String, SynchronizationMap>   mapSyncMode;
 
 
@@ -179,7 +172,7 @@ public class Association implements IArchive {
     
     
     /**
-     * Creates a new <code>Association</code> object and initializes
+     * Creates a new <code>AssociationDef</code> object and initializes
      * it with the data provided by the source with the <code>DataAdaptor</code>
      * interface.  The new object is initialized with a call to the 
      * <code>IArchive</code> method <code>{@link #load(DataAdaptor)}</code>.
@@ -191,22 +184,22 @@ public class Association implements IArchive {
      * @author  Christopher K. Allen
      * @since   May 12, 2011
      * 
-     * @see Association#load(DataAdaptor)
+     * @see AssociationDef#load(DataAdaptor)
      */
-    public Association(DataAdaptor daSource) throws DataFormatException {
+    public AssociationDef(DataAdaptor daSource) throws DataFormatException {
         this();
         
         this.load(daSource);
     }
     
     /**
-     * Creates a new, uninitialized <code>Association</code> object.
+     * Creates a new, uninitialized <code>AssociationDef</code> object.
      * 
      *
      * @author  Christopher K. Allen
      * @since   May 12, 2011
      */
-    public Association() {
+    public AssociationDef() {
         this.mapSyncMode = new HashMap<String, SynchronizationMap>();
     }
     
@@ -216,17 +209,23 @@ public class Association implements IArchive {
      */
     
     /**
-     * @return the typHware
+     * Returns the Java class name of the hardware class
+     * constituting this association.
+     * 
+     * @return the class name of the hardware type
      */
-    public Class<? extends AcceleratorNode> getHardwareType() {
-        return typHware;
+    public String   getHardwareClassName() {
+        return this.strClsHware;
     }
 
     /**
-     * @return the typModel
+     * Returns the Java class name of the modeling class
+     * constituting this association.
+     * 
+     * @return class name of the modeling element
      */
-    public Class<? extends IElement> getModelType() {
-        return typModel;
+    public String getModelClassName() {
+        return this.strClsModel;
     }
 
 
