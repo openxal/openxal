@@ -18,6 +18,7 @@ import xal.tools.StringJoiner;
 
 
 /**
+ * <p>
  * XmlDataAdaptor is a DataAdaptor that specifically supports (reading/writing)
  * (from/to) XML.  While the DataAdaptor provides methods for getting and 
  * setting properties of nodes and getting and setting nodes in a tree of 
@@ -25,45 +26,71 @@ import xal.tools.StringJoiner;
  * you can use the methods of DataAdaptor for all data manipulation.  You need to 
  * specifically use XmlDataAdaptor when creating a new document, writing an XML 
  * document to a file or loading an XML document from a file.
- *
+ * </p>
+ * <p>
  * To create a new, empty XML document simply invoke:
+ * <br/>
+ * <br/>
  * <code> document_adaptor = XmlDataAdaptor.newEmptyDocumentAdaptor(); </code>
- *
+ * </p>
+ * <p>
  * You can populate the document by adding child nodes.  You can only add a single node to the 
  * top document node, but otherwise you can add and nest as many nodes as needed. Each 
  * such node is returned as a DataAdaptor.  For example, to add a node to the top 
  * document node, invoke:
+ * <br/>
+ * <br/>
  * <code> childAdaptor = document_adaptor.createChild("nodeName") </code>
- *
+ * <br/>
+ * </p>
+ * <p>
  * You can set attributes of nodes with some basic types such as boolean, integer, double
  * and string where you supply the name of the attribute and the value.  If you add an Object
  * as a value, then toString() is invoked to fetch the value as a string.  Some examples:
+ * <br/>
+ * <br/>
  * <code> adaptor.setValue("attribute", "some string"); </code>
+ * <br/>
  * <code> adaptor.setValue("attr2", 3.14); </code>
- *
+ * </p>
+ * <p>
  * You can write an XML document to a URL, a file or generally to a java.io.Writer.
  * For example, to write an XML document to a file invoke:
  * <code> document_adaptor.writeTo( new File("file_path") ); </code>
- *
+ * </p>
+ * <p>
  * You can read an XML document from a string of XML text, a URL or a file.  You may 
  * specify whether or not to use DTD validation.
  * For example, to read an XML document from a file invoke:
  * <code> document_adaptor = XmlDataAdaptor.adaptorForFile( new File("file_path"), false ); </code>
- *
+ * </p>
+ * <p>
  * You can fetch named child nodes from a parent node.  Some examples are:
+ * <br/>
+ * <br/>
  * <code> List xAdaptors = parentAdaptor.childAdaptors("X") </code>
+ * <br/>
  * <code> List allAdaptors = parentAdaptor.childAdaptors() </code>
+ * <br/>
  * <code> DataAdaptor yAdaptor = parentAdaptor.childAdaptor("Y") </code>
- * 
+ * </p>
+ * <p>
  * You can test if a node defines an attribute:
+ * <br/>
+ * <br/>
  * <code> boolean status = adaptor.hasAttribute("attribute"); </code>
- *
+ * </p>
+ * <p>
  * You can read the value of an attribute:
+ * <br/>
+ * <br/>
  * <code> double value = adaptor.doubleValue("attr2"); </code>
- * 
+ * </p>
+ * <p>
  * There are several more methods available for DataAdaptor and XmlDataAdaptor, but 
  * the examples listed above should provide an overview and foundation.
- *
+ * </p>
+ * 
  * @author  tap
  */
 public class XmlDataAdaptor implements DataAdaptor {
