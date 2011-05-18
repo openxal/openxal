@@ -44,7 +44,7 @@ public class TestAssocTree {
     final static private String     STR_URL_CONFIG = "common/core/test/resources/config/main.xal";
     
     /** The output text dump of the association tree */
-    final static private String     STR_URL_TEXT_OUT = "common/core/test/xal/sim/latgen/atree/output/atree.txt";
+    final static private String     STR_URL_TEXT_OUT = "common/core/test/output/xal/sim/latgen/atree/atree.txt";
     
     
     /** The accelerator object used for testing */
