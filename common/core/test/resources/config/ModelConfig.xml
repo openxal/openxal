@@ -6,6 +6,7 @@
         <default type="xal.model.elem.Marker"/>
         <drift type="xal.model.elem.IdealDrift"/>
     </elements>
+    
     <hardware>
         <thin type="xal.smf.impl.HDipoleCorr"/>
         <thin type="xal.smf.impl.VDipoleCorr"/>
@@ -18,41 +19,65 @@
         <thin type="xal.smf.impl.WireScanner"/>
         <thin type="xal.smf.impl.ProfileMonitor"/>
         <thin type="xal.smf.impl.Marker"/>
+        
+        <thick type="xal.smf.impl.Bend"/>
+        <thick type="xal.smf.impl.Sextupole"/>
+        <thick type="xal.smf.impl.Quadrupole"/>
+        
+        <split>
+        </split>
     </hardware>
 
 
     <associations>
-        <map hware="xal.smf.impl.Marker" model="xal.model.elem.Marker" />
+        <map smf="xal.smf.impl.Marker" model="xal.model.elem.Marker">
+            <!-- <static> blocks describe model properties that do not change - they are set at construction -->
+            <static>
+                <property name="test" value="1"/>
+            </static>
+        </map>
 
-        <map hware="xal.smf.impl.CurrentMonitor" model="xal.model.elem.Marker" />
+        <map smf="xal.smf.impl.CurrentMonitor" model="xal.model.elem.Marker" />
     
-        <map hware="xal.smf.impl.BLM" model="xal.model.elem.Marker" />
+        <map smf="xal.smf.impl.BLM" model="xal.model.elem.Marker" />
     
-        <map hware="xal.smf.impl.BPM" model="xal.model.elem.Marker" />
+        <map smf="xal.smf.impl.BPM" model="xal.model.elem.Marker" />
     
-        <map hware="xal.smf.impl.BunchShapeMonitor" model="xal.model.elem.Marker" />
+        <map smf="xal.smf.impl.BunchShapeMonitor" model="xal.model.elem.Marker" />
 
-        <map hware="xal.smf.impl.CurrentMonitor" model="xal.model.elem.Marker" />
+        <map smf="xal.smf.impl.CurrentMonitor" model="xal.model.elem.Marker" />
 
-        <map hware="xal.smf.impl.ProfileMonitor" model="xal.model.elem.Marker" />
+        <map smf="xal.smf.impl.ProfileMonitor" model="xal.model.elem.Marker" />
     
-        <map hware="xal.smf.impl.WireScanner" model="xal.model.elem.Marker" />
+        <map smf="xal.smf.impl.WireScanner" model="xal.model.elem.Marker" />
     
-        <map hware="xal.smf.impl.NeutronDetector" model="xal.model.elem.Marker" />
+        <map smf="xal.smf.impl.NeutronDetector" model="xal.model.elem.Marker" />
     
-        <map hware="xal.smf.impl.HDipoleCorrector" model="xal.model.elem.IdealHorMagSteeringDipole" >
+        <map smf="xal.smf.impl.HDipoleCorrector" model="xal.model.elem.IdealHorMagSteeringDipole" >
             <synchronize mode="INIT">
-                <parameter name="orientation" hget="getField" mset="setMagField" type=java.lang.double/>
+                <parameter name="B" hget="getField"       mset="setMagField" type="java.lang.double"/>
+            </synchronize>
+            <synchronize mode="DESIGN">
+                <parameter name="B" hget="getDesignField" mset="setMagField" type="java.lang.double"/>
+            </synchronize>
+            <synchronize mode="LIVE">
+                    <parameter name="B" hget="getField"   mset="setMagField" type="java.lang.double"/>
             </synchronize>
         </map>
     
-        <map hware="xal.smf.impl.VHDipoleCorrector" model="xal.model.elem.IdealVerMagSteeringDipole">
+        <map smf="xal.smf.impl.VHDipoleCorrector" model="xal.model.elem.IdealVerMagSteeringDipole">
             <synchronize mode="INIT">
-                <parameter name="orientation" hget="getField" mset="setMagField" type=java.lang.double/>
+                <parameter name="B"     hget="getField"       mset="setMagField" type="java.lang.double"/>
+            </synchronize>
+            <synchronize mode="DESIGN">
+                <parameter name="B"     hget="getDesignField" mset="setMagField" type="java.lang.double"/>
+            </synchronize>
+            <synchronize mode="LIVE">
+                    <parameter name="B" hget="getField"        mset="setMagField" type="java.lang.double"/>
             </synchronize>
         </map>
 
-        <map hware="xal.smf.impl.Bend" model="xal.model.elem.IdealWedgeDipole2" sync="true">
+        <map smf="xal.smf.impl.Bend" model="xal.model.elem.IdealWedgeDipole2">
             <synchronize mode="INIT">
                 <parameter name="ID"                 hget="getId"             mset="setId"               type="java.lang.String"/>
                 <parameter name="physical length"    hget="getLength"         mset="setPhysicalLength"   type="java.lang.double" />
@@ -70,8 +95,16 @@
                     <parameter name="B" hget="getField"       mset="setMagField" type="java.lang.double"/>
             </synchronize>
         </map>
+        
+        <map smf="xal.smf.impl.Quadrupole" model="xal.model.elem.IdealMagQuad">
+            <synchronize mode="INIT">
+                <parameter name="orientation"        hget="getOrientation"    mset="setOrientation" type="java.lang.int"/>
+                <parameter name="ID"                 hget="getId"             mset="setId"          type="java.lang.String"/>
+                <parameter name="B"                  hget="getDesignField"    mset="setMagField"    type="java.lang.double"/>
+            </synchronize>
+        </map>
 
-        <map hware="xal.smf.impl.ReBuncher" model="xal.model.elem.RfCavityStruct">
+        <map smf="xal.smf.impl.ReBuncher" model="xal.model.elem.RfCavityStruct">
             <synchronize mode="INIT">
                 <parameter name="ID"        hget="getId"          mset="setId"          type="java.lang.String"/>
                 <parameter name="Amplitude" hget="getDfltCavAmp"  mset="setRfAmplitude" type="java.lang.double"/>
@@ -83,17 +116,17 @@
             </synchronize>
             
             <synchronize mode="DESIGN">
-                <parameter name="Amplitude" smfval="getDfltCavAmp"       mset="setRfAmplitude" type="java.lang.double"/>
-                <parameter name="Phase"     smfval="getDftCavPhase"      mset="setRfPhase"     type="java.lang.double"/>
+                <parameter name="Amplitude" hget="getDfltCavAmp"       mset="setRfAmplitude" type="java.lang.double"/>
+                <parameter name="Phase"     hget="getDftCavPhase"      mset="setRfPhase"     type="java.lang.double"/>
             </synchronize>
             
             <synchronize mode="LIVE">
-                <parameter name="Amplitude" smfval="getCavAmpSetPoint"   mset="setRfAmplitude" type="java.lang.double"/>
-                <parameter name="Phase"     smfval="getCavPhaseSetPoint" mset="setRfPhase"     type="java.lang.double"/>
+                <parameter name="Amplitude" hget="getCavAmpSetPoint"   mset="setRfAmplitude" type="java.lang.double"/>
+                <parameter name="Phase"     hget="getCavPhaseSetPoint" mset="setRfPhase"     type="java.lang.double"/>
             </synchronize>
         </map>
     
-        <map hware="xal.smf.impl.RfCavity" model="xal.model.elem.RfCavityStruct">
+        <map smf="xal.smf.impl.RfCavity" model="xal.model.elem.RfCavityStruct">
             <synchronize mode="INIT">
                 <parameter name="ID"        hget="getId"          mset="setId"          type="java.lang.String"/>
                 <parameter name="Amplitude" hget="getDfltCavAmp"  mset="setRfAmplitude" type="java.lang.double"/>
@@ -103,18 +136,18 @@
                 <parameter name="S(k)"      hget="getSTFFit"      mset="setS"           type="xal.tools.math.poly.UnivariateRealPolynomial"/>
                 <parameter name="S'(k)"     hget="getSTFPrimeFit" mset="setSp"          type="xal.tools.math.poly.UnivariateRealPolynomial"/>
             </synchronize>
+            
             <synchronize mode="DESIGN">
-                <parameter mode="DESIGN" name="Amplitude" hget="getDfltCavAmp"       mset="setRfAmplitude" type="java.lang.double"/>
-                <parameter mode="DESIGN" name="Phase"     hget="getDftCavPhase"      mset="setRfPhase"     type="java.lang.double"/>
+                <parameter name="Amplitude" hget="getDfltCavAmp"       mset="setRfAmplitude" type="java.lang.double"/>
+                <parameter name="Phase"     hget="getDftCavPhase"      mset="setRfPhase"     type="java.lang.double"/>
             </synchronize>
                 
             <synchronize mode="LIVE">
-                <parameter mode="LIVE" name="Amplitude" hget="getCavAmpSetPoint"   mset="setRfAmplitude" type="java.lang.double"/>
-                <parameter mode="LIVE" name="Phase"     hget="getCavPhaseSetPoint" mset="setRfPhase"     type="java.lang.double"/>
+                <parameter name="Amplitude" hget="getCavAmpSetPoint"   mset="setRfAmplitude" type="java.lang.double"/>
+                <parameter name="Phase"     hget="getCavPhaseSetPoint" mset="setRfPhase"     type="java.lang.double"/>
             </synchronize>
         </map>
         
     </associations>
 
 </configuration>
-
