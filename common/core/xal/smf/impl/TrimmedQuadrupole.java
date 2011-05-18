@@ -6,12 +6,15 @@
 
 package xal.smf.impl;
 
-import xal.smf.*;
-import xal.smf.impl.qualify.*;
-import xal.ca.*;
-import xal.tools.data.*;
+import java.util.Collection;
+import java.util.HashSet;
 
-import java.util.*;
+import xal.ca.Channel;
+import xal.ca.ConnectionException;
+import xal.ca.GetException;
+import xal.ca.PutException;
+import xal.smf.impl.qualify.ElementTypeManager;
+import xal.tools.data.DataAdaptor;
 
 /**
  * TrimmedQuadrupole is a subclass of Quadrupole that has a trim power supply in addition to a main power supply.
