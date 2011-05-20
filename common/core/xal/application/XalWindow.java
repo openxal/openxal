@@ -252,11 +252,16 @@ public abstract class XalWindow extends JFrame implements XalDocumentView, XalDo
 			final String protocol = source.getProtocol();
 			
 			if ( protocol != null && protocol.equals( "file" ) ) {
-				final String filePath = source.getPath();
-				final java.io.File file = new File( filePath );
-				if ( file.exists() ) {
-					getRootPane().putClientProperty( "Window.documentFile", file );
-				}
+                try { 
+                    final File file = new File( source.toURI() );
+                    
+                    if ( file.exists() ) {
+                        getRootPane().putClientProperty( "Window.documentFile", file );
+                    }
+                }
+                catch( Exception exception ) {
+                    exception.printStackTrace();
+                }
 			}
 		}
     }
