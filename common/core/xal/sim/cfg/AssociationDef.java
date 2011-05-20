@@ -36,13 +36,35 @@ import xal.tools.data.IArchive;
  */
 public class AssociationDef implements IArchive {
 
-    
+
+    /*
+     * Global Operations
+     */
         
     /**
-     * An enumeration of association attributes.  This is
-     * also a central location to keep the XML attribute
-     * names used in the configuration file, and also the
-     * element name for associations.
+     * Returns the XML element name used for the association
+     * in the configuration file.
+     *
+     * @return  XML element name for associations
+     *
+     * @author Christopher K. Allen
+     * @since  May 12, 2011
+     */
+    static public String    getXmlElementName() {
+        return "map";
+    }
+    
+    
+    /*
+     * Global Types
+     */
+    
+
+    /**
+     * An enumeration of the attributes for the association 
+     * and its child nodes. This is
+     * a central location to keep the XML attribute
+     * names used in the configuration file.
      *
      * @author Christopher K. Allen
      * @since   May 12, 2011
@@ -60,19 +82,11 @@ public class AssociationDef implements IArchive {
          */
         MDL("model");
         
+//        /**
+//         * Mode name for a synchronization map included in the association.
+//         */
+//        MODE("mode");
         
-        /**
-         * Returns the XML element name used for the association
-         * in the configuration file.
-         *
-         * @return  XML element name for associations
-         *
-         * @author Christopher K. Allen
-         * @since  May 12, 2011
-         */
-        static public String    getXmlElementName() {
-            return "map";
-        }
         
         /**
          * Returns the XML attribute name used for the association
@@ -100,55 +114,6 @@ public class AssociationDef implements IArchive {
     }
     
     
-//    /**
-//     * Enumeration of the child elements of an association.
-//     * Used as a central location for the names used in the
-//     * XML configuration file. 
-//     *
-//     * @author Christopher K. Allen
-//     * @since   May 12, 2011
-//     */
-//    public enum ELEM {
-//        
-//        /**
-//         * The initialization parameters for an association 
-//         */
-//        INIT("initialize"),
-//        
-//        /**
-//         *  The synchronization section of an association 
-//         */
-//        SYNC("synchronize"),
-//        
-//        /**
-//         *  Definition of a synchronization mode
-//         */
-//        MODE("mode");
-//
-//        /**
-//         * Returns the XML attribute name used for the association
-//         * attribute in the configuration file.
-//         *
-//         * @return  XML attribute name with the association
-//         *
-//         * @author Christopher K. Allen
-//         * @since  May 12, 2011
-//         */
-//        public String   getXmlName() {
-//            return this.strElemNm;
-//        }
-//        
-//        
-//        /* Private */
-//        
-//        /** The XML attribute name used in the configuration file */
-//        final private String    strElemNm;
-//        
-//        /** Sets the attribute name */
-//        private ELEM(String strElemNm) {
-//            this.strElemNm  = strElemNm;
-//        }
-//    }
         
     
     /*
@@ -239,12 +204,23 @@ public class AssociationDef implements IArchive {
      * 
      * @param daArchive data archive receiving the association definition
      * 
+     * @author Christopher K. Allen
      * @since May 12, 2011
+     * 
      * @see xal.tools.data.IArchive#save(xal.tools.data.DataAdaptor)
      */
     @Override
     public void save(DataAdaptor daArchive) {
+        DataAdaptor daAssoc = daArchive.createChild( AssociationDef.getXmlElementName() );
+
+        daAssoc.setValue( ATTR.SMF.getXmlAttributeName(), this.strClsHware);
+        daAssoc.setValue( ATTR.MDL.getXmlAttributeName(), this.strClsModel);
         
+        for (Map.Entry<String,SynchronizationMap> entry : this.mapSyncMode.entrySet()) {
+            SynchronizationMap  smpModeDef = entry.getValue();
+            
+            smpModeDef.save(daAssoc);
+        }
     }
 
 
@@ -256,7 +232,9 @@ public class AssociationDef implements IArchive {
      * 
      * @throws DataFormatException  <var>daSource</var> has unreadable data format
      * 
+     * @author Christopher K. Allen
      * @since May 12, 2011
+     * 
      * @see xal.tools.data.IArchive#load(xal.tools.data.DataAdaptor)
      */
     @Override

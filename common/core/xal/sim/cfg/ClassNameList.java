@@ -1,5 +1,5 @@
 /**
- * TypeList.java
+ * ClassNameList.java
  *
  * @author Christopher K. Allen
  * @since  May 18, 2011
@@ -7,7 +7,7 @@
  */
 
 /**
- * TypeList.java
+ * ClassNameList.java
  *
  * @author  Christopher K. Allen
  * @since	May 18, 2011
@@ -27,7 +27,7 @@ import xal.tools.data.IArchive;
  * @author Christopher K. Allen
  * @since   May 18, 2011
  */
-public class TypeList  implements IArchive {
+public class ClassNameList  implements IArchive {
 
     
     /*
@@ -45,9 +45,9 @@ public class TypeList  implements IArchive {
      */
     
     
-    /** String id of the type collection */
-    final private String            strId;
-    
+//    /** String id of the type collection */
+//    final private String            strId;
+//    
     /** Data node name (XML element name) of data nodes containing type information */
     final private String            strElemNm;
     
@@ -62,50 +62,51 @@ public class TypeList  implements IArchive {
     
     
     /**
-     * Creates a new, empty <code>TypeList</code> object with the given
+     * Creates a new, empty <code>ClassNameList</code> object with the given
      * identifier.
      * 
-     * @param strId         string identifier of this type list
+//     * @param strId         string identifier of this type list
      * @param strElemNm     element names for the nodes containing the type values
      *
      * @author  Christopher K. Allen
      * @since   May 18, 2011
      */
-    public TypeList(String strId, String strElemNm) {
-        this.strId     = strId;
+    public ClassNameList(/*String strId,*/ String strElemNm) {
+//        this.strId     = strId;
         this.strElemNm = strElemNm;
         this.lstTypes  = new LinkedList<String>();
     }
     
     /**
-     * Initializing constructor - both id and the full list of
+     * Initializing constructor - both element name and the full list of
      * types are defined.
      * 
-     * @param strId     ID of type collection
+//     * @param strId     ID of type collection
      * @param strElemNm element names for the nodes containing the type values
      * @param lstTypes  list of type names (Java class names)
      *
      * @author  Christopher K. Allen
      * @since   May 18, 2011
      */
-    public TypeList(String strId, String strElemNm, List<String> lstTypes) {
+    public ClassNameList(/*String strId, */ String strElemNm, List<String> lstTypes) {
         super();
-        this.strId     = strId;
+//        this.strId     = strId;
         this.strElemNm = strElemNm;
         this.lstTypes  = lstTypes;
     }
     
     /**
+     * Create a new class name list and initialize it from the given
+     * data source.
      * 
-     * @param strId
      * @param strElemNm     element names for the nodes containing the type values
-     * @param daSource
+     * @param daSource      data source containing class name list
      *
      * @author  Christopher K. Allen
      * @since   May 18, 2011
      */
-    public TypeList(String strId, String strElemNm, DataAdaptor daSource) {
-        this(strId, strElemNm);
+    public ClassNameList(/*String strId,*/ String strElemNm, DataAdaptor daSource) {
+        this(strElemNm);
 
         this.load(daSource);
     }
@@ -116,17 +117,17 @@ public class TypeList  implements IArchive {
      * Operations
      */
 
-    /**
-     * Returns the ID of the Java class type collection.
-     *
-     * @return  type list string identifier
-     *
-     * @author Christopher K. Allen
-     * @since  May 18, 2011
-     */
-    public String   getId() {
-        return this.strId;
-    }
+//    /**
+//     * Returns the ID of the Java class type collection.
+//     *
+//     * @return  type list string identifier
+//     *
+//     * @author Christopher K. Allen
+//     * @since  May 18, 2011
+//     */
+//    public String   getId() {
+//        return this.strId;
+//    }
 
     /**
      * Returns the list of Java class names managed by this
@@ -201,6 +202,8 @@ public class TypeList  implements IArchive {
      * as type names.
      *
      * @param daSource      data source of type values
+     * 
+     * @throws DataFormatException  unreadable or bad data format in data source 
      *
      * @author Christopher K. Allen
      * @since  May 18, 2011

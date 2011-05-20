@@ -69,7 +69,7 @@ public class SynchronizationMap implements IArchive {
          * @since  May 12, 2011
          */
         static public String    getXmlElementName() {
-            return "synchronization";
+            return "synchronize";
         }
         
         /**

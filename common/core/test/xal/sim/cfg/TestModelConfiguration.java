@@ -14,15 +14,18 @@
  */
 package xal.sim.cfg;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.fail;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.net.MalformedURLException;
 
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import xal.smf.Accelerator;
+import xal.tools.xml.XmlDataAdaptor;
 import xal.tools.xml.XmlDataAdaptor.ParseException;
 import xal.tools.xml.XmlDataAdaptor.ResourceNotFoundException;
 
@@ -39,7 +42,7 @@ public class TestModelConfiguration {
     final static private String     STR_URL_CONFIG = "common/core/test/resources/config/ModelConfig.xml";
     
     /** The output text dump of the association tree */
-    final static private String     STR_URL_TEXT_OUT = "common/core/test/output/xal/sim/cfg/ModelConfig.txt";
+    final static private String     STR_URL_TEXT_OUT = "common/core/test/output/xal/sim/cfg/TestModelConfig.txt";
     
     
     
@@ -71,9 +74,17 @@ public class TestModelConfiguration {
      * Test method for {@link xal.sim.cfg.ModelConfiguration#ModelConfiguration(java.lang.String)}.
      */
     @Test
-    public void testModelConfigurationString() {
+    public void testModelConfigurationPersistence() {
         try {
             ModelConfiguration      mcTest = new ModelConfiguration( STR_URL_CONFIG );
+            
+            File                    fileOut = new File(STR_URL_TEXT_OUT);
+//            FileOutputStream        fosOut = new FileOutputStream(STR_URL_TEXT_OUT);
+//            OutputStreamWriter      oswOut = new OutputStreamWriter(fosOut);
+            
+            XmlDataAdaptor  daArchive = XmlDataAdaptor.newEmptyDocumentAdaptor();
+            mcTest.save(daArchive);
+            daArchive.writeTo(fileOut);
             
         } catch (MalformedURLException e) {
             e.printStackTrace();
@@ -90,6 +101,16 @@ public class TestModelConfiguration {
             System.err.println(e.getClass().getName() + ": " + e.getMessage());
             fail("The model configuration XML file failed to load: " + e.getMessage());
             
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            System.err.println(e.getClass().getName() + ": " + e.getMessage());
+            fail("The model configuration XML file failed to store: " + e.getMessage());
+            
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.err.println(e.getClass().getName() + ": " + e.getMessage());
+            fail("The model configuration XML file failed to store: " + e.getMessage());
+
         }
     }
 

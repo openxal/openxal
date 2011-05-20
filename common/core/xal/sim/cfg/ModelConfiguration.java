@@ -55,8 +55,11 @@ public class ModelConfiguration implements IArchive {
         /** Section containing information on the accelerator hardware */
         HWARE("hardware"),
         
-        /** Set of associations be the hardware devices and the modeling elements */
-        ASSOC("associations");
+        /** Set of associations between the hardware devices and the modeling elements */
+        ASSOC("associations"),
+        
+        /** The association definition for the hardware-modeling element pair */ 
+        MAP("map");
         
         
         
@@ -91,6 +94,12 @@ public class ModelConfiguration implements IArchive {
         
         /** Construct a new enumeration constant with the given name */
         private DOC(String strName) { this.strName = strName; };
+    }
+    
+    
+    public enum MODEL {
+        
+        ;
     }
     
     
@@ -154,13 +163,13 @@ public class ModelConfiguration implements IArchive {
      */
     
     /** List of thin hardware types (class names) */
-    private List<String>          lstThnHware;
+    private ClassNameList                   lstThnHware;
     
     /** List of thick hardware types (class names) */
-    private List<String>          lstThkHware;
+    private ClassNameList                   lstThkHware;
     
     /** List of association classes between hardware and modeling elements */
-    private List<AssociationDef>  lstAssoc;
+    private ArchiveItemList<AssociationDef> lstAssocs;
 
     
     
@@ -176,8 +185,8 @@ public class ModelConfiguration implements IArchive {
      * @param strUrlCfgFile             URL of the configuration file
      * 
      * @throws MalformedURLException        bad URL format
-     * @throws  ResourceNotFoundException   the configuration file was not located at the given URL
-     * @throws  ParseException              general XML parsing exception - could not read file
+     * @throws ResourceNotFoundException    the configuration file was not located at the given URL
+     * @throws ParseException               general XML parsing exception - could not read file
      * 
      * @author  Christopher K. Allen
      * @since   May 16, 2011
@@ -225,20 +234,20 @@ public class ModelConfiguration implements IArchive {
     public ModelConfiguration(URL urlCfgFile) throws ResourceNotFoundException, ParseException {
         super();
 
+//        this.lstThnHware = new ClassNameList(HWARE.getXmlTypeAttr(), HWARE.THN.getElementName() );
+//        this.lstThkHware = new ClassNameList(HWARE.getXmlTypeAttr(), HWARE.THK.getElementName() );
+        this.lstThnHware = new ClassNameList(HWARE.THN.getElementName() );
+        this.lstThkHware = new ClassNameList(HWARE.THK.getElementName() );
+        this.lstAssocs   = new ArchiveItemList<AssociationDef>( 
+                                    AssociationDef.class, 
+                                    DOC.ASSOC.getXmlElementName(), 
+                                    DOC.MAP.getXmlElementName() 
+                                    );
+        
         DataAdaptor daDoc = XmlDataAdaptor.adaptorForUrl(urlCfgFile, false);
         DataAdaptor daCfg = daDoc.childAdaptor( DOC.getXmlDocumentName() );
 
         this.load(daCfg);
-        
-//        DataAdaptor daDoc = XmlDataAdaptor.adaptorForUrl(urlCfgFile, false);
-//        DataAdaptor daCfg = daDoc.childAdaptor( DOC.getXmlDocumentName() );
-//
-//        DataAdaptor daHware = daCfg.childAdaptor( DOC.HWARE.getXmlElementName() );
-//        this.lstThnHware = this.loadThinHardware(daHware);
-//        this.lstThkHware = this.loadThickHardware(daHware);
-//        
-//        DataAdaptor daAssoc = daCfg.childAdaptor( DOC.ASSOC.getXmlElementName() );
-//        this.lstAssoc    = this.loadAssociations(daAssoc);
     }
     
     
@@ -260,6 +269,11 @@ public class ModelConfiguration implements IArchive {
     public void save(DataAdaptor daArchive) {
         DataAdaptor daCfg = daArchive.createChild( DOC.getXmlDocumentName() );
         
+        this.lstAssocs.save(daCfg);
+        
+        DataAdaptor daHware = daCfg.createChild( DOC.HWARE.getXmlElementName() );
+        this.lstThnHware.save(daHware);
+        this.lstThkHware.save(daHware);
     }
 
     /**
@@ -276,14 +290,12 @@ public class ModelConfiguration implements IArchive {
     @Override
     public void load(DataAdaptor daSource) throws DataFormatException {
 
-        DataAdaptor daCfg = daSource.childAdaptor( DOC.getXmlDocumentName() );
-
-        DataAdaptor daHware = daCfg.childAdaptor( DOC.HWARE.getXmlElementName() );
-        this.lstThnHware = this.loadThinHardware(daHware);
-        this.lstThkHware = this.loadThickHardware(daHware);
+        DataAdaptor daCfg = daSource;
+        this.lstAssocs.load(daCfg);
         
-        DataAdaptor daAssoc = daCfg.childAdaptor( DOC.ASSOC.getXmlElementName() );
-        this.lstAssoc    = this.loadAssociations(daAssoc);
+        DataAdaptor daHware = daCfg.childAdaptor( DOC.HWARE.getXmlElementName() );
+        this.lstThnHware.load(daHware);
+        this.lstThkHware.load(daHware);
     }
     
     
@@ -293,102 +305,102 @@ public class ModelConfiguration implements IArchive {
      * Support Methods
      */
     
-    /**
-     * Loads the list of hardware devices that are to be treated
-     * as thin (indivisible, or "atomic") modeling elements given
-     * the <code>DataAdaptor</code> for the <code>hardware</code>
-     * section of the XML configuration file.  The returned list
-     * list is simply the set of hardware class names of SMF devices.
-     *
-     * @param daHware   hardware node of the configuration file
-     * 
-     * @return          list of hardware type names to be treated as thin elements
-     *
-     * @author Christopher K. Allen
-     * @since  May 16, 2011
-     */
-    private List<String>    loadThinHardware(DataAdaptor daHware) {
-        
-        // Create the new list
-        List<String>    lstTypNms = new LinkedList<String>();
-        
-        // Get the list of thin hardware elements
-        List<DataAdaptor>   lstThnDas = daHware.childAdaptors( HWARE.THN.getElementName() );
-        
-        for (DataAdaptor da : lstThnDas) 
-            if ( da.hasAttribute(HWARE.getXmlTypeAttr()) ) {
-                String  strTypNm = da.stringValue( HWARE.getXmlTypeAttr() );
-                
-                lstTypNms.add(strTypNm);
-            }
-        
-        
-        return lstTypNms;
-    }
-    
-    /**
-     * Loads the list of hardware devices that are to be treated
-     * as thick (i.e., may be divided) modeling elements given
-     * the <code>DataAdaptor</code> for the <code>hardware</code>
-     * section of the XML configuration file.  The returned list
-     * list is the set of hardware class names of SMF devices which
-     * are thick.
-     *
-     * @param daHware   hardware node of the configuration file
-     * 
-     * @return          list of hardware type names to be treated as thick elements
-     *
-     * @author Christopher K. Allen
-     * @since  May 16, 2011
-     */
-    private List<String>    loadThickHardware(DataAdaptor daHware) {
-        
-        // Create the new list
-        List<String>    lstTypNms = new LinkedList<String>();
-        
-        // Get the list of thin hardware elements
-        List<DataAdaptor>   lstThkDas = daHware.childAdaptors( HWARE.THK.getElementName() );
-        
-        for (DataAdaptor da : lstThkDas) 
-            if ( da.hasAttribute(HWARE.getXmlTypeAttr()) ) {
-                String  strTypNm = da.stringValue( HWARE.getXmlTypeAttr() );
-                
-                lstTypNms.add(strTypNm);
-            }
-        
-        
-        return lstTypNms;
-    }
-    
-    /**
-     * Loads the list of associations between hardware devices 
-     * and modeling elements given the <code>DataAdaptor</code> 
-     * for the <code>associations</code>
-     * section of the XML configuration file.  
-     *
-     * @param daAssoc   association node of the configuration file
-     * 
-     * @return          list of hardware device to modeling element associations
-     *
-     * @author Christopher K. Allen
-     * @since  May 16, 2011
-     */
-    private List<AssociationDef>    loadAssociations(DataAdaptor daAssoc) {
-        
-        // Create the new list
-        List<AssociationDef>    lstAsses = new LinkedList<AssociationDef>();
-        
-        // Get the list of thin hardware elements
-        List<DataAdaptor>   lstAssDas = daAssoc.childAdaptors( AssociationDef.ATTR.getXmlElementName() );
-        
-        for (DataAdaptor da : lstAssDas) {
-            AssociationDef assoc = new AssociationDef(da);
-            
-            lstAsses.add(assoc);
-        }
-        
-        
-        return lstAsses;
-    }
+//    /**
+//     * Loads the list of hardware devices that are to be treated
+//     * as thin (indivisible, or "atomic") modeling elements given
+//     * the <code>DataAdaptor</code> for the <code>hardware</code>
+//     * section of the XML configuration file.  The returned list
+//     * list is simply the set of hardware class names of SMF devices.
+//     *
+//     * @param daHware   hardware node of the configuration file
+//     * 
+//     * @return          list of hardware type names to be treated as thin elements
+//     *
+//     * @author Christopher K. Allen
+//     * @since  May 16, 2011
+//     */
+//    private List<String>    loadThinHardware(DataAdaptor daHware) {
+//        
+//        // Create the new list
+//        List<String>    lstTypNms = new LinkedList<String>();
+//        
+//        // Get the list of thin hardware elements
+//        List<DataAdaptor>   lstThnDas = daHware.childAdaptors( HWARE.THN.getElementName() );
+//        
+//        for (DataAdaptor da : lstThnDas) 
+//            if ( da.hasAttribute(HWARE.getXmlTypeAttr()) ) {
+//                String  strTypNm = da.stringValue( HWARE.getXmlTypeAttr() );
+//                
+//                lstTypNms.add(strTypNm);
+//            }
+//        
+//        
+//        return lstTypNms;
+//    }
+//    
+//    /**
+//     * Loads the list of hardware devices that are to be treated
+//     * as thick (i.e., may be divided) modeling elements given
+//     * the <code>DataAdaptor</code> for the <code>hardware</code>
+//     * section of the XML configuration file.  The returned list
+//     * list is the set of hardware class names of SMF devices which
+//     * are thick.
+//     *
+//     * @param daHware   hardware node of the configuration file
+//     * 
+//     * @return          list of hardware type names to be treated as thick elements
+//     *
+//     * @author Christopher K. Allen
+//     * @since  May 16, 2011
+//     */
+//    private List<String>    loadThickHardware(DataAdaptor daHware) {
+//        
+//        // Create the new list
+//        List<String>    lstTypNms = new LinkedList<String>();
+//        
+//        // Get the list of thin hardware elements
+//        List<DataAdaptor>   lstThkDas = daHware.childAdaptors( HWARE.THK.getElementName() );
+//        
+//        for (DataAdaptor da : lstThkDas) 
+//            if ( da.hasAttribute(HWARE.getXmlTypeAttr()) ) {
+//                String  strTypNm = da.stringValue( HWARE.getXmlTypeAttr() );
+//                
+//                lstTypNms.add(strTypNm);
+//            }
+//        
+//        
+//        return lstTypNms;
+//    }
+//    
+//    /**
+//     * Loads the list of associations between hardware devices 
+//     * and modeling elements given the <code>DataAdaptor</code> 
+//     * for the <code>associations</code>
+//     * section of the XML configuration file.  
+//     *
+//     * @param daAssoc   association node of the configuration file
+//     * 
+//     * @return          list of hardware device to modeling element associations
+//     *
+//     * @author Christopher K. Allen
+//     * @since  May 16, 2011
+//     */
+//    private List<AssociationDef>    loadAssociations(DataAdaptor daAssoc) {
+//        
+//        // Create the new list
+//        List<AssociationDef>    lstAsses = new LinkedList<AssociationDef>();
+//        
+//        // Get the list of thin hardware elements
+//        List<DataAdaptor>   lstAssDas = daAssoc.childAdaptors( AssociationDef.getXmlElementName() );
+//        
+//        for (DataAdaptor da : lstAssDas) {
+//            AssociationDef assoc = new AssociationDef(da);
+//            
+//            lstAsses.add(assoc);
+//        }
+//        
+//        
+//        return lstAsses;
+//    }
 
 }
