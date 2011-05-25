@@ -8,6 +8,7 @@
     </elements>
     
     <hardware>
+        <thin type="xal.smf.impl.NeutronDetector"/>
         <thin type="xal.smf.impl.HDipoleCorr"/>
         <thin type="xal.smf.impl.VDipoleCorr"/>
         <thin type="xal.smf.impl.ExtractionKicker"/>

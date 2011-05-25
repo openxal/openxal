@@ -1,5 +1,5 @@
 /**
- * TestAssocTree.java
+ * TestHardwareTree.java
  *
  * @author Christopher K. Allen
  * @since  May 3, 2011
@@ -7,7 +7,7 @@
  */
 
 /**
- * TestAssocTree.java
+ * TestHardwareTree.java
  *
  * @author  Christopher K. Allen
  * @since	May 3, 2011
@@ -37,7 +37,7 @@ import xal.smf.data.XMLDataManager;
  * @author Christopher K. Allen
  * @since   May 3, 2011
  */
-public class TestAssocTree {
+public class TestHardwareTree {
 
     
     /** The XAL configuration file */
@@ -89,15 +89,15 @@ public class TestAssocTree {
     }
 
     /**
-     * Test method for {@link xal.sim.latgen.atree.HardwareTree#AssocTree(xal.smf.AcceleratorSeq)}.
+     * Test method for {@link xal.sim.latgen.atree.HardwareTree#HardwareTree(AcceleratorSeq)}
      */
     @Test
-    public void testAssocTree() {
+    public void testHardwareTree() {
         AcceleratorSeq  seqTest = ACCEL_TEST.getSequence(STR_ACCELSEQ_BUILD_TEST);
         
         try {
-            HardwareTree       treTest = new HardwareTree(seqTest);
-            String          strTest = treTest.toString();
+            HardwareTree        hwtTest = new HardwareTree(seqTest);
+            String              strTest = hwtTest.toString();
             
             File                fileOut = new File(STR_URL_TEXT_OUT);
             FileOutputStream    fosOut  = new FileOutputStream(fileOut);

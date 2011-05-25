@@ -17,7 +17,10 @@ package xal.sim.cfg;
 import static org.junit.Assert.*;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -133,21 +136,39 @@ public class TestDataItem {
         DataAdaptor daDoc    = daSource.childAdaptor("doc");
         
         try { 
-            DataItem<TEST>    datTest = new DataItem<TEST>(TEST.class, daDoc);
+            DataItem<TEST>    datTest = new DataItem<TEST>(TEST.class, DataItem.extractEnumName(TEST.class), daDoc);
             
-            System.out.println("Contents of Data Node " + DataItem.extractEnumName(TEST.class));
+            File                fileOut = new File(STR_URL_TEXT_OUT);
+            FileOutputStream    fos     = new FileOutputStream(fileOut);
+            OutputStreamWriter  osw     = new OutputStreamWriter(fos);
+            
+            osw.write("Contents of Data Node " + DataItem.extractEnumName(TEST.class) + "\n");
             for (TEST attr : TEST.values()) {
                 String  strAtt = attr.name();
                 String  strVal = datTest.getValString(attr);
                 
-                System.out.println("  " + strAtt + " = " + strVal);
+                osw.write("  " + strAtt + " = " + strVal + "\n");
             }
+            
+            osw.close();
         
         } catch (DataFormatException e) {
+            String  strMsg = "Unable to read data file " + STR_URL_XML_TEST + ": " + e.getMessage();
             e.printStackTrace();
-            System.err.println("Unable to read data file " + STR_URL_XML_TEST + ": " + e.getMessage());
-            fail("Unable to read data file " + STR_URL_XML_TEST + ": " + e.getMessage());
+            System.err.println(strMsg);
+            fail(strMsg);
             
+        } catch (FileNotFoundException e) {
+            String  strMsg = "Unable to open output data file " + STR_URL_TEXT_OUT + ": " + e.getMessage();
+            e.printStackTrace();
+            System.err.println(strMsg);
+            fail(strMsg);
+            
+        } catch (IOException e) {
+            String  strMsg = "Unable to open write to output data file " + STR_URL_TEXT_OUT + ": " + e.getMessage();
+            e.printStackTrace();
+            System.err.println(strMsg);
+            fail(strMsg);
         }
     }
 

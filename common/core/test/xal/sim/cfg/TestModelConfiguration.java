@@ -79,8 +79,6 @@ public class TestModelConfiguration {
             ModelConfiguration      mcTest = new ModelConfiguration( STR_URL_CONFIG );
             
             File                    fileOut = new File(STR_URL_TEXT_OUT);
-//            FileOutputStream        fosOut = new FileOutputStream(STR_URL_TEXT_OUT);
-//            OutputStreamWriter      oswOut = new OutputStreamWriter(fosOut);
             
             XmlDataAdaptor  daArchive = XmlDataAdaptor.newEmptyDocumentAdaptor();
             mcTest.save(daArchive);
@@ -111,7 +109,13 @@ public class TestModelConfiguration {
             System.err.println(e.getClass().getName() + ": " + e.getMessage());
             fail("The model configuration XML file failed to store: " + e.getMessage());
 
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+            System.err.println(e.getClass().getName() + ": " + e.getMessage());
+            fail("The model configuration file had an unrecognized class");
+            
         }
+        
     }
 
 }
