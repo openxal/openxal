@@ -312,16 +312,21 @@ public class HardwareNode extends TreeNode {
         double      dblPosMax = this.getInterval().getMax();
 
         try {
+            // Create the new nodes
             Interval    ivlLeft  = new Interval(dblPosMin, dblPosMid);
             Interval    ivlRight = new Interval(dblPosMid, dblPosMax);
 
-            HardwareNode    nodeLeft  = new HardwareNode(this.getParent(), this.getHardwareRef(), ivlLeft);
-            HardwareNode    nodeRight = new HardwareNode(this.getParent(), this.getHardwareRef(), ivlRight);
+            TreeNode        nodeParent = this.getParent();
+            HardwareNode    nodeLeft   = new HardwareNode(nodeParent, this.getHardwareRef(), ivlLeft);
+            HardwareNode    nodeRight  = new HardwareNode(nodeParent, this.getHardwareRef(), ivlRight);
+            
 
-            this.removeChild(this);
+            // Remove the pre-divided node from the parent and replace with the two
+            //  sub-divided ones.
+            nodeParent.removeChild(this);
 
-            this.addChild(nodeRight);
-            this.addChild(nodeLeft);
+            nodeParent.addChild(nodeRight);
+            nodeParent.addChild(nodeLeft);
 
         } catch (MathException e) {
             throw new GenerationException("Split location " + dblPos + 

@@ -12,7 +12,7 @@ import xal.model.Sector;
 import xal.model.elem.IdealDrift;
 
 import xal.sim.latgen.atree.HardwareTree;
-import xal.sim.latgen.atree.DriftSpace;
+import xal.sim.latgen.atree.DriftSpaceNode;
 import xal.sim.latgen.atree.IHwareTreeVisitor;
 import xal.sim.latgen.atree.ThickHardware;
 import xal.sim.latgen.atree.ThinHardware;
@@ -22,6 +22,7 @@ import xal.sim.sync.SynchronizationManager;
 
 import xal.smf.AcceleratorNode;
 import xal.smf.AcceleratorSeq;
+import xal.tools.math.MathException;
 
 /**
  * This class build model sequences (<code>Sector</code> objects) from 
@@ -67,7 +68,7 @@ public class SequenceGenerator implements IHwareTreeVisitor {
      * @throws  GenerationException     unable to build model
      */
     public static Sector    buildModelSector(AcceleratorSeq smfSeq)
-        throws GenerationException 
+        throws GenerationException, MathException
     {
         SequenceGenerator   genSeq = new SequenceGenerator();
         
@@ -107,7 +108,7 @@ public class SequenceGenerator implements IHwareTreeVisitor {
      * @throws  GenerationException     unable to build model
      */ 
     public Sector   genModelSector(AcceleratorSeq smfSeq)    
-        throws GenerationException
+        throws GenerationException, MathException
     {
         this.m_cntDrift = 1;
         this.setMasterSector(null);
@@ -168,9 +169,9 @@ public class SequenceGenerator implements IHwareTreeVisitor {
     /**
      * @param pxyNode
      * 
-     * @see gov.IHwareTreeVisitor.xal.model.gen.ptree.IProxyVisitor#entering(gov.sns.xal.model.gen.ptree.DriftSpace)
+     * @see gov.IHwareTreeVisitor.xal.model.gen.ptree.IProxyVisitor#entering(gov.DriftSpaceNode.xal.model.gen.ptree.DriftSpace)
      */
-    public void process(DriftSpace pxyNode) throws GenerationException {
+    public void process(DriftSpaceNode pxyNode) throws GenerationException {
         
         if (pxyNode.getChildCount() > 0) return;
             

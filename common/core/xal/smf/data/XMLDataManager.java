@@ -6,10 +6,13 @@
 
 package xal.smf.data;
 
+import xal.sim.cfg.ModelConfiguration;
 import xal.smf.Accelerator;
 import xal.smf.AcceleratorNodeFactory;
 import xal.smf.TimingCenter;
 import xal.tools.xml.*;
+import xal.tools.xml.XmlDataAdaptor.ParseException;
+import xal.tools.xml.XmlDataAdaptor.ResourceNotFoundException;
 import xal.tools.data.*;
 import xal.tools.UrlTool;
 
@@ -40,6 +43,9 @@ public class XMLDataManager {
 	/** manage the bindings of device types to AcceleratorNode subclasses */
 	final private DeviceManager DEVICE_MANAGER;
 	
+	/** Loads the model configuration information */
+	final private ModelConfigLoader   ldrModelConfig;
+	
     private MainManager mainManager;
     private AcceleratorManager acceleratorManager;
     private TableManager tableManager;
@@ -49,6 +55,7 @@ public class XMLDataManager {
     /** Primary Constructor */
     public XMLDataManager( final String urlPath ) {
 		DEVICE_MANAGER = new DeviceManager();
+		ldrModelConfig = new ModelConfigLoader();
 		_timingManager = new TimingDataManager();
         acceleratorManager = new AcceleratorManager();
         tableManager = new TableManager();
@@ -398,20 +405,29 @@ public class XMLDataManager {
      */
     private class MainManager {
         static final private String SOURCE_TAG = "sources";
+        
         static final private String OPTICS_TAG = "optics_source";
         static final private String OPTICS_URL_KEY = "url";
         static final private String OPTICS_NAME_KEY = "name";
         static final private String OPTICS_NAME = "optics";
         static final private String OPTICS_EXTRA_TAG = "optics_extra";
+        
 		static final private String HARDWARE_STATUS_TAG = "hardware_status";
+		
 		static final private String TIMING_TAG = "timing_source";
 		static final private String TIMING_URL_KEY = "url";
 		static final private String TIMING_NAME_KEY = "name";
+		
 		static final private String DEVICEMAPPING_TAG = "deviceMapping_source";
 		static final private String DEVICEMAPPING_URL_KEY = "url";
+		
+		static final private String MODELCONFIG_TAG = "modelConfig_source";
+		static final private String MODELCONFIG_URL_KEY = "url";
+		
         static final private String TABLE_GROUP_TAG = "tablegroup_source";
         static final private String TABLE_GROUP_KEY = "name";
         static final private String TABLE_GROUP_URL_KEY = "url";
+        
         
         protected URL mainUrl;   /** URL of main XML source */
 		
@@ -513,6 +529,22 @@ public class XMLDataManager {
 					excpt.printStackTrace();
 				}
 			}
+			
+			// fetch the model configuration
+			final DataAdaptor daModelConfig = sourcesAdaptor.childAdaptor( MODELCONFIG_TAG );
+			if ( daModelConfig != null ) {
+			    final String strUrlModelCfg = daModelConfig.stringValue( MODELCONFIG_URL_KEY );
+
+			    try {
+			        final URL urlModelConfig = new URL( mainUrl, strUrlModelCfg );
+			        ldrModelConfig.setURL( urlModelConfig );
+			    }
+			    catch ( MalformedURLException excpt ){
+			        System.err.println( excpt );
+			        excpt.printStackTrace();
+			    }
+			}
+
             
             // fetch the table group references
             final List<DataAdaptor> tableAdaptors = sourcesAdaptor.childAdaptors( TABLE_GROUP_TAG );
@@ -664,6 +696,8 @@ public class XMLDataManager {
 			
 			accelerator.setNodeFactory( DEVICE_MANAGER.getNodeFactory() );
 			
+			accelerator.setModelConfiguration( ldrModelConfig.getModelConfiguration() );
+			
 			EditContext editContext = tableManager.readEditContext( isValidating );
 			accelerator.setEditContext( editContext );
 			
@@ -749,9 +783,9 @@ public class XMLDataManager {
 		}
     	
 		
-    	public Map<String, String> getDeviceMap() {
-    		return _deviceMap;
-    	}
+//    	public Map<String, String> getDeviceMap() {
+//    		return _deviceMap;
+//    	}
 		
     	public void setURL( final URL url ) {
     		final XmlDataAdaptor deviceMappingDocumentAdaptor = XmlDataAdaptor.adaptorForUrl( url, false );
@@ -777,6 +811,89 @@ public class XMLDataManager {
     	}
     }
 	
+    /**
+     * Loads the model configuration description from a given
+     * URL specifying the configuration file (see <code>{@link #setURL(URL)}</code>.  
+     * The configuration information is encapsulated as a 
+     * <code>{@link ModelConfiguration}</code> object.  This object
+     * is instantiated then attached to the SMF accelerator object.
+     *
+     * @author Christopher K. Allen
+     * @since   May 24, 2011
+     */
+    private class ModelConfigLoader {
+        
+        /*
+         * Local Attributes
+         */
+        
+        /** The (global) model configuration manager */
+        public ModelConfiguration       mgrMdlCfg;
+        
+        
+        /*
+         * Initialization
+         */
+        
+        /**
+         * Creates a new <code>ModelConfigLoader</code> model
+         * configuration loading class.
+         *
+         * @author  Christopher K. Allen
+         * @since   May 24, 2011
+         */
+        public ModelConfigLoader() {
+        }
+        
+        
+        /*
+         * Operations
+         */
+        
+        /**
+         * Returns the online model configuration manager, presumably after it 
+         * has been loaded with the call to <code>{@link #setURL(URL)}</code>.
+         *
+         * @return  online model configuration manager
+         *
+         * @author Christopher K. Allen
+         * @since  May 24, 2011
+         */
+        public ModelConfiguration   getModelConfiguration() {
+            return this.mgrMdlCfg;
+        }
+        
+        /**
+         * Loads the the model configuration information from the file with
+         * the given URL.  The model configuration information is encapsulated
+         * in a class object <code>{@link ModelConfiguration}</code> which may
+         * be recover with the method <code>{@link #getModelConfiguration()}</code>.
+         *
+         * @param url   model configuration file location
+         *
+         * @author Christopher K. Allen
+         * @since  May 24, 2011
+         */
+        public void setURL( final URL url ) {
+            
+            try {
+                this.mgrMdlCfg = new ModelConfiguration(url);
+                
+            } catch (ResourceNotFoundException e) {
+                System.err.println("Unable to find model configuration file: " + url);
+                e.printStackTrace();
+                
+            } catch (ParseException e) {
+                System.err.println("Unable to find model configuration file: " + url);
+                e.printStackTrace();
+
+            } catch (ClassNotFoundException e) {
+                System.err.println("Unknown class in model configuration file: " + e.getMessage());
+                e.printStackTrace();
+            }
+        }
+        
+    }
     
     /***************************************************************************
 	 * Handle read/write for the Table XML sources (dynamic table files). Each

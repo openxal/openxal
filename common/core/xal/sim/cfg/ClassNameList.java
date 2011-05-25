@@ -14,6 +14,7 @@
  */
 package xal.sim.cfg;
 
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -30,13 +31,18 @@ import xal.tools.data.IArchive;
 public class ClassNameList  implements IArchive {
 
     
-    /*
-     * Global Constants
+    /**
+     * Enumeration for {@link DataItem} class that defines
+     * the data node structure.
+     *
+     * @author Christopher K. Allen
+     * @since   May 23, 2011
      */
-    
-    /** The XML attribute name used to identify the Java class name in the data node */
-    final static private String     STR_ATTR_TYPE = "type";
-    
+    public enum ATTRS {
+        
+        /** attribute name for the Java class name value */
+        type;
+    }
     
     
     
@@ -45,14 +51,11 @@ public class ClassNameList  implements IArchive {
      */
     
     
-//    /** String id of the type collection */
-//    final private String            strId;
-//    
     /** Data node name (XML element name) of data nodes containing type information */
-    final private String            strElemNm;
+    final private String                    strElemNm;
     
     /** List of the data types */
-    final private List<String>      lstTypes;
+    final private List<DataItem<ATTRS>>     lstItems;
     
     
     
@@ -65,34 +68,59 @@ public class ClassNameList  implements IArchive {
      * Creates a new, empty <code>ClassNameList</code> object with the given
      * identifier.
      * 
-//     * @param strId         string identifier of this type list
      * @param strElemNm     element names for the nodes containing the type values
      *
      * @author  Christopher K. Allen
      * @since   May 18, 2011
      */
-    public ClassNameList(/*String strId,*/ String strElemNm) {
-//        this.strId     = strId;
+    public ClassNameList(String strElemNm) {
         this.strElemNm = strElemNm;
-        this.lstTypes  = new LinkedList<String>();
+        this.lstItems  = new LinkedList< DataItem<ATTRS> >();
     }
     
     /**
      * Initializing constructor - both element name and the full list of
      * types are defined.
      * 
-//     * @param strId     ID of type collection
-     * @param strElemNm element names for the nodes containing the type values
-     * @param lstTypes  list of type names (Java class names)
+     * @param strElemNm   element names for the nodes containing the type values
+     * @param lstTypeNms  list of type names (Java class names)
      *
      * @author  Christopher K. Allen
      * @since   May 18, 2011
      */
-    public ClassNameList(/*String strId, */ String strElemNm, List<String> lstTypes) {
-        super();
-//        this.strId     = strId;
-        this.strElemNm = strElemNm;
-        this.lstTypes  = lstTypes;
+    public ClassNameList(String strElemNm, Collection<String> lstTypeNms) {
+        this(strElemNm);
+        
+        for (String strTypeNm : lstTypeNms) {
+            DataItem<ATTRS> datNode = new DataItem<ATTRS>(ATTRS.class, strElemNm);
+            
+            datNode.setValue(ATTRS.type, strTypeNm);
+            
+            this.lstItems.add(datNode);
+        }
+    }
+    
+    /**
+     * Initializing constructor - both element name and the full list of
+     * types are defined.
+     * 
+     * @param strElemNm   element names for the nodes containing the type values
+     * @param lstTypeCls  list of type classes (Java <code>Class</code> objects)
+     *
+     * @author  Christopher K. Allen
+     * @since   May 18, 2011
+     */
+    public ClassNameList(String strElemNm, List< Class<?> > lstTypeCls) {
+        this(strElemNm);
+        
+        for (Class<?> clsType : lstTypeCls) {
+            DataItem<ATTRS> datNode   = new DataItem<ATTRS>(ATTRS.class, strElemNm);
+            String          strTypeNm = clsType.getName();
+            
+            datNode.setValue(ATTRS.type, strTypeNm);
+            
+            this.lstItems.add(datNode);
+        }
     }
     
     /**
@@ -105,7 +133,7 @@ public class ClassNameList  implements IArchive {
      * @author  Christopher K. Allen
      * @since   May 18, 2011
      */
-    public ClassNameList(/*String strId,*/ String strElemNm, DataAdaptor daSource) {
+    public ClassNameList(String strElemNm, DataAdaptor daSource) {
         this(strElemNm);
 
         this.load(daSource);
@@ -117,18 +145,6 @@ public class ClassNameList  implements IArchive {
      * Operations
      */
 
-//    /**
-//     * Returns the ID of the Java class type collection.
-//     *
-//     * @return  type list string identifier
-//     *
-//     * @author Christopher K. Allen
-//     * @since  May 18, 2011
-//     */
-//    public String   getId() {
-//        return this.strId;
-//    }
-
     /**
      * Returns the list of Java class names managed by this
      * class (this is the basic state data).
@@ -138,8 +154,16 @@ public class ClassNameList  implements IArchive {
      * @author Christopher K. Allen
      * @since  May 18, 2011
      */
-    public List<String> getTypeList() {
-        return this.lstTypes;
+    public List<String> createTypeNameList() {
+        List<String>    lstTypeNms = new LinkedList<String>();
+        
+        for (DataItem<ATTRS> item : this.lstItems) {
+            String  strTypeNm = item.getValString(ATTRS.type);
+            
+            lstTypeNms.add(strTypeNm);
+        }
+            
+        return lstTypeNms;
     }
     
     /**
@@ -157,8 +181,8 @@ public class ClassNameList  implements IArchive {
     public List< Class<?> > createClassList() throws ClassNotFoundException {
         List< Class<?> >    lstClsTypes = new LinkedList< Class<?> >();
         
-        for (String strClsNm : this.lstTypes) {
-            Class<?>    clsType = Class.forName(strClsNm);
+        for (DataItem<ATTRS> item : this.lstItems) {
+            Class<?>    clsType = item.getValClass(ATTRS.type);
             
             lstClsTypes.add(clsType);
         }
@@ -174,8 +198,8 @@ public class ClassNameList  implements IArchive {
     /**
      * Saves the list of class types to the given data archive with
      * the <code>{@link DataAdaptor}</code> interface.  The type values
-     * are stored with the attribute name <code>{@link #STR_ATTR_TYPE}</code>
-     * (which is {@value #STR_ATTR_TYPE}).  The attribute is part of the
+     * are stored with the attribute name <code>{@link ATTRS}</code>
+     * (which is {@value ATTRS#type}).  The attribute is part of the
      * (XML-like) element node with element name <code>strElemNm</code>.
      * 
      * @param daArchive     data archive receiving the type information of the list
@@ -187,10 +211,9 @@ public class ClassNameList  implements IArchive {
      */
     @Override
     public void save(DataAdaptor daArchive) {
-        for (String strType : this.lstTypes) {
-            DataAdaptor daElem = daArchive.createChild(this.strElemNm);
+        for (DataItem<ATTRS> datItem : this.lstItems) {
             
-            daElem.setValue(STR_ATTR_TYPE, strType);
+            datItem.save(daArchive);
         }
     }
 
@@ -198,7 +221,7 @@ public class ClassNameList  implements IArchive {
      * Loads the list of class types from the given data source with the
      * <code>{@link DataAdaptor}</code> interface.  All the data elements
      * named "<code>strElemNm</code>" will be loaded and the attribute
-     * with the value of <code>{@link #STR_ATTR_TYPE}</code> are read in
+     * with the value of <code>{@link ATTRS}</code> are read in
      * as type names.
      *
      * @param daSource      data source of type values
@@ -215,11 +238,12 @@ public class ClassNameList  implements IArchive {
         
         List<DataAdaptor>   lstDas = daSource.childAdaptors(this.strElemNm);
 
-        this.lstTypes.clear();
+        this.lstItems.clear();
         for (DataAdaptor da : lstDas) {
-            String  strType = da.stringValue(STR_ATTR_TYPE);
+
+            DataItem<ATTRS> item = new DataItem<ATTRS>(ATTRS.class, this.strElemNm, da);
             
-            this.lstTypes.add(strType);
+            this.lstItems.add(item);
         }
     }
     

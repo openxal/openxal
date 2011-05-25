@@ -117,8 +117,12 @@ public class DataItem<E extends Enum<E>> implements IArchive {
 
     /**
      * Create a new <code>DataItem</code> object configured to load and
-     * store values defined by the given enumeration class.  
-     * Note the data value are not yest set.
+     * store values defined by the given enumeration class.  <b>IMPORTANT</b>
+     * The XML element
+     * name for the data node is take as the <em>class name</em> of the enumeration
+     * <code>E</code>.  This is in contrast to the constructor {@link #DataItem(Class, String)}
+     * where the element name is set explicitly.
+     * Note the data value are not yet set.
      * 
      * @param clsEnmAttrs  Java type class for the enumeration defining the data node
      *
@@ -126,8 +130,27 @@ public class DataItem<E extends Enum<E>> implements IArchive {
      * @since   May 19, 2011
      */
     public DataItem(Class<E> clsEnmAttrs) {
-        this.strElemNm   = DataItem.extractEnumName(clsEnmAttrs);
         this.ArrEnmAttrs = clsEnmAttrs.getEnumConstants();
+        this.strElemNm   = DataItem.extractEnumName(clsEnmAttrs);
+        
+        this.mapVals   = new HashMap<E,String>();
+    }
+
+    /**
+     * Create a new <code>DataItem</code> object configured to load and
+     * store values defined by the given enumeration class.  The name of the
+     * XML element is given as an argument.
+     * Note the data value are not yet set.
+     * 
+     * @param clsEnmAttrs  Java type class for the enumeration defining the data node
+     * @param strElemNm    XML element name of the data node
+     *
+     * @author  Christopher K. Allen
+     * @since   May 19, 2011
+     */
+    public DataItem(Class<E> clsEnmAttrs, String strElemNm) {
+        this.ArrEnmAttrs = clsEnmAttrs.getEnumConstants();
+        this.strElemNm   = strElemNm;
         
         this.mapVals   = new HashMap<E,String>();
     }
@@ -147,9 +170,10 @@ public class DataItem<E extends Enum<E>> implements IArchive {
      * @author  Christopher K. Allen
      * @since   May 19, 2011
      */
-    public DataItem(Class<E> clsEnmAttrs, DataAdaptor daSource) throws DataFormatException {
-        this(clsEnmAttrs);
-        
+    public DataItem(Class<E> clsEnmAttrs, String strElemNm, DataAdaptor daSource) 
+        throws DataFormatException 
+    {
+        this(clsEnmAttrs, strElemNm);
         this.load(daSource);
     }
 
@@ -308,6 +332,29 @@ public class DataItem<E extends Enum<E>> implements IArchive {
         return bolVal;
     }
     
+    /**
+     * Returns the value of the given attribute as a
+     * <code>Class</code> object.  Specifically, the data
+     * attribute value is treated as a Java class name,
+     * then the <code>Class</code> object for that name is 
+     * requested (from the class loader) and returned.
+     *
+     * @param enmAttr   data attribute
+     * 
+     * @return          the class corresponding to the data attribute value when
+     *                  interpreted as a Java class name
+     * 
+     * @throws ClassNotFoundException   the data attribute value does not represent any known classes
+     *
+     * @author Christopher K. Allen
+     * @since  May 23, 2011
+     */
+    public Class<?> getValClass(E enmAttr) throws ClassNotFoundException {
+        String      strVal = this.getValString(enmAttr);
+        Class<?>    clsVal = Class.forName(strVal);
+        
+        return clsVal;
+    }
     
     
     

@@ -39,14 +39,14 @@ public interface IHwareTreeVisitor {
     public void process(TreeNode node) throws GenerationException;
     
 //    /**
-//     * Accept an association-tree node of type <code>DriftSpace</code> and perform
+//     * Accept an association-tree node of type <code>DriftSpaceNode</code> and perform
 //     * any visitor specific processing of the node argument.
 //     * 
 //     * @param pxyNode                current association-tree node being visited
 //     * 
 //     * @throws GenerationException   unable to process node (visitor specific)
 //     */
-//    public void process(DriftSpace pxyNode) throws GenerationException;
+//    public void process(DriftSpaceNode pxyNode) throws GenerationException;
     
     
     

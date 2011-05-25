@@ -3,12 +3,16 @@
  */
 package xal.sim.latgen.atree;
 
+import java.util.LinkedList;
 import java.util.List;
 
+import xal.sim.cfg.ModelConfiguration;
 import xal.sim.latgen.GenerationException;
+import xal.smf.Accelerator;
 import xal.smf.AcceleratorNode;
 import xal.smf.AcceleratorSeq;
 import xal.tools.math.Interval;
+import xal.tools.math.MathException;
 
 /**
  * <p>
@@ -64,10 +68,16 @@ public class HardwareTree {
      */
      
     /** hardware sequence object represented by this tree */
-    final private AcceleratorSeq    smfRoot;
+    final private AcceleratorSeq        smfRoot;
+    
+    /** the parent accelerator object of the accelerator sequence */
+    final private Accelerator           smfAccel;
+    
+    /** The online model configuration manager for the accelerator */
+    final private ModelConfiguration    mgrMdlCfg;
     
     /** Root of the association tree */
-    final private HardwareNode      nodeRoot;
+    final private HardwareNode          nodeRoot;
     
     
     
@@ -122,17 +132,14 @@ public class HardwareTree {
         Interval    ivlSeq = Interval.createFromEndpoints(dblMin, dblLng);
 
         this.smfRoot   = smfSeq;
+        this.smfAccel  = smfSeq.getAccelerator();
+        this.mgrMdlCfg = smfSeq.getAccelerator().getModelConfiguration();
         this.nodeRoot  = new HardwareNode(null, smfSeq, ivlSeq);
 
         // Build association tree
         this.buildTree(this.nodeRoot, this.smfRoot);
-//        this.splitSiblings(this.nodeRoot);
-        
-//        this.parseSequence(smfSeq);
-//        this.processSubsequences();
-//        this.processThickElements();
-//        this.processDriftSpaces();
-//        this.processThinElements();        
+        this.splitHardware(this.nodeRoot);
+//        this.applyDriftSpaces(0, nodeRoot);
     }
 
     
@@ -162,9 +169,9 @@ public class HardwareTree {
       * 
       * @param iVisitor  visitor object implementing <code>IHwareTreeVisitor</code> interface
       * 
-      * @see gov.TreeNode.xal.model.gen.ptree.ProxyNode#processVisitor(gov.IHwareTreeVisitor.xal.model.gen.ptree.IProxyVisitor)
+      * @see xal.sim.latgen.atree.IHwareTreeVisitor#process(TreeNode)
       */
-     void processVisitor(IHwareTreeVisitor iVisitor) throws GenerationException {
+     public void processVisitor(IHwareTreeVisitor iVisitor) throws GenerationException {
          
          iVisitor.entering(this);
 
@@ -185,6 +192,10 @@ public class HardwareTree {
          iVisitor.leaving(this);
      }
 
+     
+     /*
+      * Object Overrides
+      */
 
      /**
       * Return a text description of this tree.  The
@@ -215,9 +226,20 @@ public class HardwareTree {
 
 
      /**
-      *
-      * @param nodeTrunk
-      * @param seqTrunk
+      * <p>
+      * Builds up the hardware tree from the root <code>AcceleratorSeq</code>
+      * object.  The location of the hardware nodes in relation to the 
+      * SMF hardware position is given by the sorting algorithm in 
+      * <code>TreeNode#compareTo(TreeNode)</code>.
+      * </p>
+      * <p>
+      * Note this is a recursive function.  By calling initially with the root
+      * node of the hardware tree and the top-level <code>AcceleratorSeq</code>
+      * object being modeled, the hardware tree is built.
+      * </p>
+      * 
+      * @param nodeTrunk    The current tree node - initially the root node
+      * @param seqTrunk     The accelerator sequence beam modeled
       *
       * @author Christopher K. Allen
       * @since  May 3, 2011
@@ -240,45 +262,162 @@ public class HardwareTree {
          }
      }
 
+     
+
      /**
+      * <p>
+      * Splits the hardware nodes representing thick hardware wherever
+      * a thin hardware device is co-located (within tolerance).  This
+      * action is in preparation for the generation of a model lattice
+      * that contains thin elements within finite length elements.
+      * </p>
+      * <p>
+      * This is a recursive function which propagations through the
+      * tree calling itself on each valid tree node.
+      * </p> 
       *
-      * @param nodeParent
-      * @throws GenerationException
+      * @param nodeParent           the tree root node upon initial call
+      * 
+      * @throws GenerationException failure occurred attempting to split a hardware node
       *
       * @author Christopher K. Allen
-      * @since  May 3, 2011
+      * @since  May 25, 2011
+      * 
+      * TODO Currently this method does not work.
       */
-     private void splitSiblings(HardwareNode nodeParent) throws GenerationException {
+     private void splitHardware(TreeNode nodeParent) throws GenerationException {
 
+         // We need a double loop to do this - an order N^2 operation
+         //     the outer loop: for each child node
+         //     the inner loop: for each sibling of the current child
          for (TreeNode nodeChild : nodeParent.getChildren()) {
+
+             // If this child also has children we need to process them
+             //     This is done recursively
+             if ( nodeChild.getChildCount() > 0 )
+                 this.splitHardware(nodeChild);
+
+
+             // Ignore non-hardware nodes
+             if ( !(nodeChild instanceof HardwareNode) )
+                 continue;
+
+             HardwareNode                     hwnChild = (HardwareNode)nodeChild;
+             AcceleratorNode                  smfChild = hwnChild.getHardwareRef();
+             Class<? extends AcceleratorNode> clsChild = smfChild.getClass();
+
+
+             // Only look at thick hardware
+             if ( !this.mgrMdlCfg.isThickHardwareType(clsChild) )
+                 continue;
+
+             Interval   ivlChild = nodeChild.getInterval();
+
+
+             // Inner loop now looks at all siblings of the current child node
+             //     Siblings should be thin hardware to warrant action
+             //     Since we will be modifying the siblings while traversing the
+             //     sibling list, we need to snapshot the original list. 
+             List<TreeNode> lstSiblings = new LinkedList<TreeNode>( nodeParent.getChildren() );
+
+             for (TreeNode nodeSibling : lstSiblings ) {
+
+                 // Ignore non-hardware nodes
+                 if ( !(nodeSibling instanceof HardwareNode) )
+                     continue;
+
+                 HardwareNode                       hwnSibling = (HardwareNode)nodeSibling;
+                 AcceleratorNode                    smfSibling = hwnSibling.getHardwareRef();
+                 Class<? extends AcceleratorNode>   clsSibling = smfSibling.getClass();
+
+                 // Only look at thin hardware
+                 if ( !this.mgrMdlCfg.isThinHardwareType(clsSibling) ) 
+                     continue;
+
+                 double dblPos = smfSibling.getPosition();
+
+                 // We apply a tolerance to avoid fine splitting
+                 //     That is, we are not shaving off small sections of hardware at the ends
+                 if ( !ivlChild.membership(dblPos + DBL_TOL_POS) )
+                     continue;
+                 if ( !ivlChild.membership(dblPos - DBL_TOL_POS) )
+                     continue;
+
+                 // Okay, we split the thick hardware in two so the thin one lives in between
+                 //     Then we break the loop because nodeChild no longer exists, but its
+                 //     two mitosis twins are children of the parent.
+                 hwnSibling.split(dblPos);
+                 break;
+             }
+         }
+     }
+
+     /**
+      * <p>
+      * Looks for regions of drift in the hardware tree (i.e., positions
+      * of no hardware), then creates drift nodes of the appropriate length
+      * and inserts them.  The result is a hardware tree which contains a 
+      * contiguous collection of objects along the beamline, suitable for
+      * generating a modeling lattice.
+      * </p>
+      * <p>
+      * This is a recursive function which propagations through the
+      * tree calling itself on each valid tree node.
+      * </p>
+      *
+      * @param dblPosLt     the current left most position in the beamline (from where we are looking)
+      * @param nodeParent   the root node of the tree on the initial call
+      * 
+      * @return             the left most position after processing 
+      * 
+      * @throws GenerationException   Failed to create an <code>{@link Interval}</code> object for the drift space
+      *
+      * @author Christopher K. Allen
+      * @since  May 25, 2011
+      */
+     private double applyDriftSpaces(double dblPosLt, TreeNode nodeParent) throws GenerationException {
+         // We need a single loop to do this with a recursive application over
+         //     each tree level.
+         for (TreeNode nodeChild : nodeParent.getChildren()) {
+
+             
+             // If this child also has children we need to process them
+             //     This is done recursively
+             if ( nodeChild.getChildCount() > 0 )
+                 dblPosLt = this.applyDriftSpaces(dblPosLt, nodeChild);
+
 
              // Ignore non-hardware nodes
              if ( !(nodeChild instanceof HardwareNode) )
                  continue;
 
              Interval       ivlChild = nodeChild.getInterval();
-
-             for (TreeNode nodeSibling : nodeParent.getChildren()) {
-
-                 if (nodeSibling.equals(nodeChild))
-                     continue;
-
-                 if ( !(nodeSibling instanceof HardwareNode) )
-                     continue;
-
-                 double     dblPosSblg   = ((HardwareNode) nodeSibling).getHardwarePosition();
-                 Interval   ivlSibling = nodeSibling.getInterval();
-
-                 if ( !ivlChild.containsAE(ivlSibling) )
-                     continue;
-
-                 if ( !ivlChild.membership(dblPosSblg) )
-                     continue;
-
-                 nodeChild = ((HardwareNode)nodeChild).insert(nodeSibling, dblPosSblg);
+             double         dblPosRt = ivlChild.getMin();
+             
+             
+             // Check if the right-most point of the hardware is greater the
+             //     the current left position.  If so, we have a drift space between.
+             if (dblPosLt > dblPosRt - DBL_TOL_POS)
+                 continue;
+             
+             try {
+             Interval       ivlDrift  = new Interval(dblPosLt, dblPosRt);
+             DriftSpaceNode nodeDrift = new DriftSpaceNode(nodeParent, ivlDrift);
+             
+             nodeParent.addChild(nodeDrift);
+             dblPosLt = dblPosRt;
+             
+             } catch (MathException e) {
+                 throw new GenerationException("Unable to create drift space interval ", e);
+                 
              }
+
          }
+         
+         return dblPosLt;
+         
      }
+
 
 //     /**
 //      * Parse the given <code>AcceleratorSeq</code> object identifying the 
@@ -365,7 +504,7 @@ public class HardwareTree {
 //             sRight = pxyChild.getInterval().getMin();  
 //
 //             if ((sRight-sLeft) > HardwareTree.getDriftTolerance()) {
-//                 DriftSpace  pxyDrift = new DriftSpace(sLeft, sRight);
+//                 DriftSpaceNode  pxyDrift = new DriftSpaceNode(sLeft, sRight);
 //
 //                 this.addChild(pxyDrift);
 //             }
@@ -377,7 +516,7 @@ public class HardwareTree {
 //         // Check for final drift between last element and exit of sequence
 //         sRight = this.getInterval().getMax();
 //         if ( (sRight-sLeft) > HardwareTree.getDriftTolerance())    {
-//             DriftSpace  pxyDrift = new DriftSpace(sLeft, sRight);
+//             DriftSpaceNode  pxyDrift = new DriftSpaceNode(sLeft, sRight);
 //
 //             this.addChild(pxyDrift);
 //         }
@@ -476,7 +615,7 @@ public class HardwareTree {
 //        double      sRight = pxyChild.getInterval().getMin();
 //            
 //        if ((sRight-sLeft) > HardwareTree.DBL_TOL_POS) {
-//            DriftSpace  pxyDrift = new DriftSpace(sLeft, sRight);
+//            DriftSpaceNode  pxyDrift = new DriftSpaceNode(sLeft, sRight);
 //                
 //            this.addChild(pxyDrift);
 //        }

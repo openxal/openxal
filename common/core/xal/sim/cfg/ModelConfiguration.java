@@ -17,9 +17,9 @@ package xal.sim.cfg;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.LinkedList;
 import java.util.List;
 
+import xal.smf.AcceleratorNode;
 import xal.tools.data.DataAdaptor;
 import xal.tools.data.DataFormatException;
 import xal.tools.data.IArchive;
@@ -97,11 +97,6 @@ public class ModelConfiguration implements IArchive {
     }
     
     
-    public enum MODEL {
-        
-        ;
-    }
-    
     
     /**
      * Enumeration of hardware nodes in the lattice generation configuration
@@ -163,13 +158,19 @@ public class ModelConfiguration implements IArchive {
      */
     
     /** List of thin hardware types (class names) */
-    private ClassNameList                   lstThnHware;
+    final private ClassNameList     lstThnHwNms;
     
     /** List of thick hardware types (class names) */
-    private ClassNameList                   lstThkHware;
+    final private ClassNameList     lstThkHwNms;
+    
+    /** List of thin hardware types - these are built at construction to avoid later exceptions */
+    final private List< Class<?> >  lstThnHwTypes;
+    
+    /** List of thick hardware types - these are built at construction to avoid later exceptions */
+    final private List< Class<?> >  lstThkHwTypes;
     
     /** List of association classes between hardware and modeling elements */
-    private ArchiveItemList<AssociationDef> lstAssocs;
+    final private ArchiveItemList<AssociationDef> lstAssocs;
 
     
     
@@ -187,12 +188,13 @@ public class ModelConfiguration implements IArchive {
      * @throws MalformedURLException        bad URL format
      * @throws ResourceNotFoundException    the configuration file was not located at the given URL
      * @throws ParseException               general XML parsing exception - could not read file
+     * @throws ClassNotFoundException       An undefined class was encountered in the configuration file. 
      * 
      * @author  Christopher K. Allen
      * @since   May 16, 2011
      */
     public ModelConfiguration(String strUrlCfgFile) 
-        throws MalformedURLException, ResourceNotFoundException, ParseException  
+        throws MalformedURLException, ResourceNotFoundException, ParseException, ClassNotFoundException  
     {
         this( new File(strUrlCfgFile) );
     }
@@ -204,16 +206,16 @@ public class ModelConfiguration implements IArchive {
      * 
      * @param  fileCfg                  URL of the configuration file
      * 
-     * @throws  ResourceNotFoundException   the configuration file was not located at the given URL
-     * @throws  ParseException              general XML parsing exception - could not read file
-     * 
-     * @throws MalformedURLException    bad URL format
+     * @throws ResourceNotFoundException    the configuration file was not located at the given URL
+     * @throws MalformedURLException        bad URL format
+     * @throws ParseException               general XML parsing exception - could not read file
+     * @throws ClassNotFoundException       An undefined class was encountered in the configuration file. 
      *
      * @author  Christopher K. Allen
      * @since   May 16, 2011
      */
     public ModelConfiguration(File fileCfg) 
-        throws MalformedURLException, ResourceNotFoundException, ParseException  
+        throws MalformedURLException, ResourceNotFoundException, ParseException, ClassNotFoundException  
     {
         this( fileCfg.toURI().toURL() );
     }
@@ -227,17 +229,18 @@ public class ModelConfiguration implements IArchive {
      * 
      * @throws  ResourceNotFoundException   the configuration file was not located at the given URL
      * @throws  ParseException              general XML parsing exception - could not read file
+     * @throws ClassNotFoundException       An undefined class was encountered in the configuration file. 
      * 
      * @author  Christopher K. Allen
      * @since   May 16, 2011
      */
-    public ModelConfiguration(URL urlCfgFile) throws ResourceNotFoundException, ParseException {
+    public ModelConfiguration(URL urlCfgFile) 
+        throws ResourceNotFoundException, ParseException, ClassNotFoundException 
+    {
         super();
 
-//        this.lstThnHware = new ClassNameList(HWARE.getXmlTypeAttr(), HWARE.THN.getElementName() );
-//        this.lstThkHware = new ClassNameList(HWARE.getXmlTypeAttr(), HWARE.THK.getElementName() );
-        this.lstThnHware = new ClassNameList(HWARE.THN.getElementName() );
-        this.lstThkHware = new ClassNameList(HWARE.THK.getElementName() );
+        this.lstThnHwNms = new ClassNameList(HWARE.THN.getElementName() );
+        this.lstThkHwNms = new ClassNameList(HWARE.THK.getElementName() );
         this.lstAssocs   = new ArchiveItemList<AssociationDef>( 
                                     AssociationDef.class, 
                                     DOC.ASSOC.getXmlElementName(), 
@@ -248,8 +251,79 @@ public class ModelConfiguration implements IArchive {
         DataAdaptor daCfg = daDoc.childAdaptor( DOC.getXmlDocumentName() );
 
         this.load(daCfg);
+        
+        this.lstThkHwTypes = this.lstThkHwNms.createClassList();
+        this.lstThnHwTypes = this.lstThnHwNms.createClassList();
+    }
+
+    
+    
+    /*
+     * Operations
+     */
+    
+    /**
+     * Returns a list of class types which are the declared "thick hardware" devices.
+     * That is, these devices are modeled as having finite propagation distance.  Thus,
+     * the beam can experience space charge effects through these devices.  More importantly,
+     * they can be subdivided, unlike thin hardware devices.
+     *
+     * @return  list of Java class types for the SMF hardware which can be modeled as a 
+     *          "thick element"
+     *
+     * @author Christopher K. Allen
+     * @since  May 24, 2011
+     */
+    public List< Class<?> > getThickHardwareTypes() {
+        return this.lstThkHwTypes;
     }
     
+    /**
+     * Returns the list of class types which are declared to be "thin hardware"
+     * devices.  Here the device can be modeled as an element with zero propagation 
+     * distance.  The device's effect is model as an impulse of some type.  As
+     * such, the device should not be subdivided.
+     *
+     * @return  list of "thin element" hardware devices.
+     *
+     * @author Christopher K. Allen
+     * @since  May 24, 2011
+     */
+    public List< Class<?> > getThinHardwareTypes() {
+        return this.lstThnHwTypes;
+    }
+    
+    /**
+     * Confirms whether or not the given class is a member of the list
+     * of <b>thick</b> hardware types.
+     *
+     * @param clsType   class type to be identified as thick hardware or not
+     * 
+     * @return          <code>true</code> if class type is in the thick hardware list,
+     *                  <code>false</code> otherwise.
+     *
+     * @author Christopher K. Allen
+     * @since  May 25, 2011
+     */
+    public boolean isThickHardwareType( Class<?> clsType) {
+        return this.lstThkHwTypes.contains(clsType);
+    }
+    
+    /**
+     * Confirms whether or not the given class is a member of the list
+     * of <b>thin</b> hardware types.
+     *
+     * @param clsType   class type to be identified as thin hardware or not
+     * 
+     * @return          <code>true</code> if class type is in the thin hardware list,
+     *                  <code>false</code> otherwise.
+     *
+     * @author Christopher K. Allen
+     * @since  May 25, 2011
+     */
+    public boolean isThinHardwareType( Class<?> clsType) {
+        return this.lstThnHwTypes.contains(clsType);
+    }
     
     
     /*
@@ -267,13 +341,13 @@ public class ModelConfiguration implements IArchive {
      */
     @Override
     public void save(DataAdaptor daArchive) {
+
         DataAdaptor daCfg = daArchive.createChild( DOC.getXmlDocumentName() );
-        
         this.lstAssocs.save(daCfg);
         
         DataAdaptor daHware = daCfg.createChild( DOC.HWARE.getXmlElementName() );
-        this.lstThnHware.save(daHware);
-        this.lstThkHware.save(daHware);
+        this.lstThnHwNms.save(daHware);
+        this.lstThkHwNms.save(daHware);
     }
 
     /**
@@ -294,8 +368,8 @@ public class ModelConfiguration implements IArchive {
         this.lstAssocs.load(daCfg);
         
         DataAdaptor daHware = daCfg.childAdaptor( DOC.HWARE.getXmlElementName() );
-        this.lstThnHware.load(daHware);
-        this.lstThkHware.load(daHware);
+        this.lstThnHwNms.load(daHware);
+        this.lstThkHwNms.load(daHware);
     }
     
     

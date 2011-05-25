@@ -223,7 +223,7 @@ public abstract class TreeNode implements Comparable<TreeNode> {
      * 
      * @return      ordered list of direct child nodes 
      */
-    public final List<TreeNode> getChildren()   {
+    public List<TreeNode> getChildren()   {
         return this.lstChildren;
     }
 

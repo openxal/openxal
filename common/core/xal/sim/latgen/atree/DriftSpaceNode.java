@@ -23,76 +23,7 @@ import xal.tools.math.MathException;
  * 
  * @author Christopher K. Allen
  */
-public class DriftSpace extends TreeNode {
-
-
-    /*
-     * TreeNode Protocol
-     */
-
-
-//    /**
-//     * The method creates two child <code>DriftSpace</code>
-//     * objects, representing the upstream and downstream  portions 
-//     * (with respect to the argument) of the current drift.  The 
-//     * argument is inserted between these "partial drifts" so that the 
-//     * result is the creation of three child nodes.
-//     * 
-//     * If this node already has children (it is previously be subdivided) then
-//     * the argument is given added to the child list.  Consequently it is 
-//     * possible that this method gets called on one of the children.
-//     * 
-//     * The argument of this method is assumed to be of type 
-//     * <code>ThinHardware</code>. If not a <code>GenerationException</code> 
-//     * exception is thrown.  
-//     * 
-//     * @param pxyNode               thin element to be inserted within this node
-//     * 
-//     * @throws GenerationException  the argument is not of type <code>ThinHardware</code>
-//     * 
-//     * @see gov.TreeNode.xal.model.gen.ptree.ProxyNode#insert(gov.TreeNode.xal.model.gen.ptree.ProxyNode)
-//     */
-//    void insert(HardwareNode pxyNode) throws GenerationException {
-//        
-//        // Enforce condition that new child must be type ThinHardware
-//        if (! (pxyNode instanceof ThinHardware) )
-//            throw new GenerationException("DriftSpace#insert() - may only insert ThinElements");
-//        ThinHardware pxyThin = (ThinHardware)pxyNode;
-//
-//
-//        // If this node has already been subdivided
-//        //      Then add thin element to child list or subdivide child node
-//        if (this.getChildCount() > 0)   {
-//            super.addChild(pxyThin);
-//            return;
-//        }
-//        
-//        // Subdivide this node on either side of the thin element and add to child list
-//        double      dblPosMid = pxyThin.getHardwarePosition();
-//        double      dblPosMin = this.getInterval().getMin();
-//        double      dblPosMax = this.getInterval().getMax();
-//
-//        DriftSpace  drftLeft  = new DriftSpace(dblPosMin, dblPosMid);
-//        DriftSpace  drftRight = new DriftSpace(dblPosMid, dblPosMax);
-//     
-//        super.addChild(drftRight);
-//        super.addChild(pxyNode);
-//        super.addChild(drftLeft);    
-//    }
-
-    /**
-     * Calls the appropriate (type sensitive) method of the visitor argument
-     * upon this node.
-     * 
-     * @param iVisitor  visitor object implement <code>IHwareTreeVisitor</code> interface
-     * 
-     * @see TreeNode#processVisitor(IHwareTreeVisitor)
-     */
-    public void processVisitor(IHwareTreeVisitor iVisitor) throws GenerationException {
-        
-        iVisitor.process(this);
-
-    }
+public class DriftSpaceNode extends TreeNode {
 
 
     /*
@@ -105,7 +36,7 @@ public class DriftSpace extends TreeNode {
      * 
      * @param ivlBeamline   beam path interval occupied by drift space
      */
-    public DriftSpace(TreeNode nodeParent, Interval ivlBeamline)  {
+    public DriftSpaceNode(TreeNode nodeParent, Interval ivlBeamline)  {
         super(nodeParent, ivlBeamline );
     }
 
@@ -163,8 +94,8 @@ public class DriftSpace extends TreeNode {
             Interval  ivlLeft  = new Interval(dblPosMin, dblPosMid);
             Interval  ivlRight = new Interval(dblPosMid, dblPosMax);
 
-            DriftSpace      nodeLeft  = new DriftSpace(this.getParent(), ivlLeft);
-            DriftSpace      nodeRight = new DriftSpace(this.getParent(), ivlRight);
+            DriftSpaceNode      nodeLeft  = new DriftSpaceNode(this.getParent(), ivlLeft);
+            DriftSpaceNode      nodeRight = new DriftSpaceNode(this.getParent(), ivlRight);
 
             this.removeChild(this);
             this.addChild(nodeRight);
@@ -193,8 +124,8 @@ public class DriftSpace extends TreeNode {
         Interval    ivlLeft  = Interval.createFromEndpoints(dblPosMin, dblPosMid);
         Interval    ivlRight = Interval.createFromEndpoints(dblPosMid, dblPosMax);
 
-        DriftSpace    nodeLeft  = new DriftSpace(this.getParent(), ivlLeft);
-        DriftSpace    nodeRight = new DriftSpace(this.getParent(), ivlRight);
+        DriftSpaceNode    nodeLeft  = new DriftSpaceNode(this.getParent(), ivlLeft);
+        DriftSpaceNode    nodeRight = new DriftSpaceNode(this.getParent(), ivlRight);
 
         this.removeChild(this);
 
@@ -222,8 +153,8 @@ public class DriftSpace extends TreeNode {
             Interval    ivlLeft  = new Interval(dblPosMin, dblPosMid);
             Interval    ivlRight = new Interval(dblPosMid, dblPosMax);
         
-            DriftSpace    nodeLeft  = new DriftSpace(this.getParent(), ivlLeft);
-            DriftSpace    nodeRight = new DriftSpace(this.getParent(), ivlRight);
+            DriftSpaceNode    nodeLeft  = new DriftSpaceNode(this.getParent(), ivlLeft);
+            DriftSpaceNode    nodeRight = new DriftSpaceNode(this.getParent(), ivlRight);
     
             this.removeChild(this);
             
@@ -237,5 +168,50 @@ public class DriftSpace extends TreeNode {
             
         }
     }
+
+    
+    
+    /*
+     * TreeNode Protocol
+     */
+
+
+
+    /**
+     * Calls the appropriate (type sensitive) method of the visitor argument
+     * upon this node.
+     * 
+     * @param iVisitor  visitor object implement <code>IHwareTreeVisitor</code> interface
+     * 
+     * @see TreeNode#processVisitor(IHwareTreeVisitor)
+     */
+    public void processVisitor(IHwareTreeVisitor iVisitor) throws GenerationException {
+        
+        iVisitor.process(this);
+
+    }
+
+    /*
+     * Object Overrides
+     */
+
+    /**
+     * Adds the identifier of the hardware that this node represents
+     * to the output string.
+     * 
+     * @return  text description of the node contents
+     * 
+     * @since May 3, 2011
+     * @see xal.sim.latgen.atree.TreeNode#toString()
+     */
+    @Override
+    public String toString() {
+        String strBuf = "Drift Space: " + super.toString();
+
+        return strBuf;
+    }
+
+
+
 
 }
