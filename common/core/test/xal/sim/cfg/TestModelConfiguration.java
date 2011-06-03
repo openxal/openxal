@@ -42,7 +42,7 @@ public class TestModelConfiguration {
     final static private String     STR_URL_CONFIG = "common/core/test/resources/config/ModelConfig.xml";
     
     /** The output text dump of the association tree */
-    final static private String     STR_URL_TEXT_OUT = "common/core/test/output/xal/sim/cfg/TestModelConfig.txt";
+    final static private String     STR_URL_TEXT_OUT = "build/tests/output/xal/sim/cfg/TestModelConfig.txt";
     
     
     

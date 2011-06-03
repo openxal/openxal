@@ -34,15 +34,15 @@ import junit.textui.TestRunner;
 public class ProbeXmlTest extends TestCase {
 
 	private static final String DIAGNOSTIC = 
-		"ProbeXmlWriterTest.Diagnostic.probe.mod.xal.xml";
+		"build/tests/output/xal/model/xml/ProbeXmlWriterTest.Diagnostic.probe.mod.xal.xml";
 	private static final String PARTICLE = 
-		"ProbeXmlWriterTest.Particle.probe.mod.xal.xml";
+		"build/tests/output/xal/model/xml/ProbeXmlWriterTest.Particle.probe.mod.xal.xml";
 	private static final String ENVELOPE = 
-		"ProbeXmlWriterTest.Envelope.probe.mod.xal.xml";
+		"build/tests/output/xal/model/xml/ProbeXmlWriterTest.Envelope.probe.mod.xal.xml";
 	private static final String ENSEMBLE = 
-		"ProbeXmlWriterTest.Ensemble.probe.mod.xal.xml";
+		"build/tests/output/xal/model/xml/ProbeXmlWriterTest.Ensemble.probe.mod.xal.xml";
 	private static final String PARTICLE_PERTURB = 
-		"ProbeXmlWriterTest.ParticlePerturb.probe.mod.xal.xml";
+		"build/tests/output/xal/model/xml/ProbeXmlWriterTest.ParticlePerturb.probe.mod.xal.xml";
 
 	/**
 	 * Entry point for the JUnit 3 test suite.

@@ -43,7 +43,7 @@ public class TestDataItem {
     final static private String     STR_URL_XML_TEST = "common/core/test/resources/xal/sim/cfg/TestDataItem.xml";
     
     /** The output text dump of the data node */
-    final static private String     STR_URL_TEXT_OUT = "common/core/test/output/xal/sim/cfg/TestDataItem.txt";
+    final static private String     STR_URL_TEXT_OUT = "build/tests/output/xal/sim/cfg/TestDataItem.txt";
     
     
     

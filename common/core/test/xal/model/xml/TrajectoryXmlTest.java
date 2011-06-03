@@ -43,15 +43,15 @@ public class TrajectoryXmlTest extends TestCase {
 	private static final String LATTICE = 
 		"xml/SimpleTestLattice.lat.mod.xal.xml";
 	private static final String DIAGNOSTIC = 
-		"TrajectoryXmlTest.Diagnostic.trajectory.mod.xal.xml";
+		"build/tests/output/xal/model/xml/TrajectoryXmlTest.Diagnostic.trajectory.mod.xal.xml";
 	private static final String PARTICLE = 
-		"TrajectoryXmlTest.Particle.trajectory.mod.xal.xml";
+		"build/tests/output/xal/model/xml/TrajectoryXmlTest.Particle.trajectory.mod.xal.xml";
 	private static final String ENVELOPE = 
-		"TrajectoryXmlTest.Envelope.trajectory.mod.xal.xml";
+		"build/tests/output/xal/model/xml/TrajectoryXmlTest.Envelope.trajectory.mod.xal.xml";
 	private static final String ENSEMBLE = 
-        "TrajectoryXmlTest.Ensemble.trajectory.mod.xal.xml";
+        "build/tests/output/xal/model/xml/TrajectoryXmlTest.Ensemble.trajectory.mod.xal.xml";
 	private static final String PARTICLE_PERTURB = 
-		"TrajectoryXmlTest.ParticlePerturb.trajectory.mod.xal.xml";
+		"build/tests/output/xal/model/xml/TrajectoryXmlTest.ParticlePerturb.trajectory.mod.xal.xml";
 
 	private Lattice lattice;
 

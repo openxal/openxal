@@ -18,7 +18,7 @@ import junit.framework.TestSuite;
 public class LatticeXmlWriterTest extends TestCase {
 	
 	private static final String XML_IN = "xml/ModelValidation.lat.mod.xal.xml";
-	private static final String XML_OUT = "LatticeXmlWriterTest.ModelValidation.lat.mod.xal.xml";
+	private static final String XML_OUT = "build/tests/output/xal/model/xml/LatticeXmlWriterTest.ModelValidation.lat.mod.xal.xml";
 
 	public static void main(String[] args) {
 		junit.textui.TestRunner.run (suite());

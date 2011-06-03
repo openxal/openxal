@@ -40,13 +40,13 @@ public class LatticeXmlTest extends TestCase {
     public static final String      s_strUrlLattice = "xml/MEBT_LANL_lattice.xml";
 
     /** lattice debug dump output file */
-    public static final String      s_strUrlContents = "LatticeXmlTest.dmp.txt";
+    public static final String      s_strUrlContents = "build/tests/output/xal/model/xml/LatticeXmlTest.dmp.txt";
     
     /** element position output file */
-    public static final String      s_strUrlElemPos = "LatticXmlTest.pos.txt";
+    public static final String      s_strUrlElemPos = "build/tests/output/xal/model/xml/LatticXmlTest.pos.txt";
 
     /** lattice xml writer output file */
-    public static final String      s_strUrlLattDbg = "LatticeXmlTest.lat.mod.xal.xml"; 
+    public static final String      s_strUrlLattDbg = "build/tests/output/xal/model/xml/LatticeXmlTest.lat.mod.xal.xml"; 
     
 
 

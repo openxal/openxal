@@ -1,4 +1,0 @@
-Contents of Data Node TEST
-  ATTR1 = value1
-  ATTR2 = value2
-  ATTR3 = value3
