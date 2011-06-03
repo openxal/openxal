@@ -3,8 +3,10 @@
  */
 package xal.sim.latgen.atree;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import xal.sim.cfg.ModelConfiguration;
 import xal.sim.latgen.GenerationException;
@@ -48,18 +50,127 @@ public class HardwareTree {
     
     
     
+    /**
+     * Active data structure which maintains the locations of
+     * intended split points for hardware nodes.
+     *
+     * @author Christopher K. Allen
+     * @since   May 27, 2011
+     */
+    private class SplitLocations {
+        
+        
+        /*
+         * Local Attributes
+         */
+        
+        /** table of (node,{location}) values */
+        final private  Map<HardwareNode, List<Double>>    mapSplitPos;
+
+        
+        /**
+         * Create a new <code>SplitLocations</code> data structure.
+         *
+         * @author  Christopher K. Allen
+         * @since   May 27, 2011
+         */
+        public SplitLocations() {
+            this.mapSplitPos = new HashMap<HardwareNode, List<Double>>();
+        }
+        
+        
+        /**
+         * Adds the given beamline position to the list of split locations for 
+         * the given hardware node.
+         *
+         * @param node      node to be split
+         * @param dblPos    beamline location for additional element split
+         *
+         * @author Christopher K. Allen
+         * @since  May 27, 2011
+         */
+        public void addSplitLocation(HardwareNode node, double dblPos) {
+            
+            // Get the list of split location entries for the node
+            List<Double>    lstLocs = this.mapSplitPos.get(node);
+            
+            
+            // Check if this node has no previous entries
+            //   If not, we need to create the entry list
+            if (lstLocs == null) {
+                lstLocs = new LinkedList<Double>();
+                
+                this.mapSplitPos.put(node, lstLocs);
+            }
+            
+            
+            // Add the new position to the list of split locations
+            lstLocs.add(dblPos);
+        }
+        
+        /**
+         * Returns the list of beam axis locations where the (thick) hardware node
+         * is scheduled to be split.
+         *
+         * @param node      the hardware node being split
+         * 
+         * @return          list of split positions along the beamline
+         *
+         * @author Christopher K. Allen
+         * @since  May 27, 2011
+         */
+        public List<Double> getSplitLocations(HardwareNode node) {
+            List<Double>    lstLocs = this.mapSplitPos.get(node);
+            
+            return lstLocs;
+        }
+        
+        
+        /*
+         * Object Overrides
+         */
+        
+        /**
+         * Writes out the contents of this data structure in human
+         * readable text.
+         * 
+         * @return  text description of this data structure
+         * 
+         * @since May 27, 2011
+         * @see java.lang.Object#toString()
+         */
+        @Override
+        public String   toString() {
+            StringBuffer    bufOut = new StringBuffer();
+            
+            for (Map.Entry<HardwareNode, List<Double>> entry : this.mapSplitPos.entrySet()) {
+                HardwareNode    hwnDev = entry.getKey();
+                List<Double>    lstPos = entry.getValue();
+                
+                bufOut.append(hwnDev.getHardwareRef().getId());
+                bufOut.append(" split at ");
+                bufOut.append(lstPos.toString());
+                bufOut.append("\n");
+            }
+
+            return bufOut.toString();
+        }
+    }
+    
+    
+    
     /*
      * Global Operations
      */
-
-    /**
-     * Get the smallest possible drift space length
-     * 
-     * @return  smallest length of a drift to consider 
-     */
-    public static double   getDriftTolerance() {
-        return HardwareTree.DBL_TOL_POS;
-    }
+//
+//    /**
+//     * Get the smallest possible drift space length
+//     * 
+//     * @return  smallest length of a drift to consider 
+//     */
+//    public static double   getDriftTolerance() {
+//        return HardwareTree.DBL_TOL_POS;
+//    }
 
 
 
@@ -78,6 +189,9 @@ public class HardwareTree {
     
     /** Root of the association tree */
     final private HardwareNode          nodeRoot;
+    
+    /** Set of nodes to be subdivided and the locations where */
+    final private SplitLocations        locDivs;
     
     
     
@@ -135,10 +249,12 @@ public class HardwareTree {
         this.smfAccel  = smfSeq.getAccelerator();
         this.mgrMdlCfg = smfSeq.getAccelerator().getModelConfiguration();
         this.nodeRoot  = new HardwareNode(null, smfSeq, ivlSeq);
+        this.locDivs   = new SplitLocations();
 
         // Build association tree
         this.buildTree(this.nodeRoot, this.smfRoot);
-        this.splitHardware(this.nodeRoot);
+        this.splitHardware(this.nodeRoot, this.locDivs);
+        
 //        this.applyDriftSpaces(0, nodeRoot);
     }
 
@@ -210,8 +326,10 @@ public class HardwareTree {
      @Override
      public String toString() {
          String     strBuf = "Tree Hardware Sequence: " + this.getHardwareRef() + "\n";
+         strBuf += this.nodeRoot.toString() + "\n";
          
-         strBuf += this.nodeRoot.toString();
+         strBuf += "\nSplit locations: \n";
+         strBuf += this.locDivs.toString() + "\n";
          
          return strBuf;
      }
@@ -264,6 +382,101 @@ public class HardwareTree {
 
      
 
+//     /**
+//      * <p>
+//      * Splits the hardware nodes representing thick hardware wherever
+//      * a thin hardware device is co-located (within tolerance).  This
+//      * action is in preparation for the generation of a model lattice
+//      * that contains thin elements within finite length elements.
+//      * </p>
+//      * <p>
+//      * This is a recursive function which propagations through the
+//      * tree calling itself on each valid tree node.
+//      * </p> 
+//      *
+//      * @param nodeParentOrg           the tree root node upon initial call
+//      * 
+//      * @throws GenerationException failure occurred attempting to split a hardware node
+//      *
+//      * @author Christopher K. Allen
+//      * @since  May 25, 2011
+//      * 
+//      */
+//     private TreeNode splitHardware2(TreeNode nodeParentOrg) throws GenerationException {
+//
+//         if ( !(nodeParentOrg instanceof HardwareNode) )
+//             return nodeParentOrg;
+//
+//         HardwareNode   hwnParentOrg = (HardwareNode)nodeParentOrg;
+//         HardwareNode   hwnParentCpy = hwnParentOrg.copy();
+//         
+//         // We need a double loop to do this - an order N^2 operation
+//         //     the outer loop: for each child node
+//         //     the inner loop: for each sibling of the current child
+//         for (TreeNode nodeChildOrg : nodeParentOrg.getChildren()) {
+//
+//             // If this child also has children we need to process them
+//             //     This is done recursively
+//             if ( nodeChildOrg.getChildCount() > 0 )
+//                 nodeChildOrg = this.splitHardware2(nodeChildOrg);
+//
+//
+//             // Ignore non-hardware nodes
+//             if ( !(nodeChildOrg instanceof HardwareNode) )
+//                 continue;
+//
+//             HardwareNode                     hwnChildOrg = (HardwareNode)nodeChildOrg;
+//             AcceleratorNode                  smfChildOrg = hwnChildOrg.getHardwareRef();
+//             Class<? extends AcceleratorNode> clsChildOrg = smfChildOrg.getClass();
+//
+//
+//             // Only look at thick hardware
+//             if ( !this.mgrMdlCfg.isThickHardwareType(clsChildOrg) ) {
+//                 continue;
+//             }
+//
+//             Interval   ivlChild = nodeChildOrg.getInterval();
+//
+//
+//             // Inner loop now looks at all siblings of the current child node
+//             //     Siblings should be thin hardware to warrant action
+//             //     Since we will be modifying the siblings while traversing the
+//             //     sibling list, we need to snapshot the original list. 
+//             List<TreeNode> lstSiblings = new LinkedList<TreeNode>( nodeParentOrg.getChildren() );
+//
+//             for (TreeNode nodeSibling : lstSiblings ) {
+//
+//                 // Ignore non-hardware nodes
+//                 if ( !(nodeSibling instanceof HardwareNode) )
+//                     continue;
+//
+//                 HardwareNode                       hwnSibling = (HardwareNode)nodeSibling;
+//                 AcceleratorNode                    smfSibling = hwnSibling.getHardwareRef();
+//                 Class<? extends AcceleratorNode>   clsSibling = smfSibling.getClass();
+//
+//                 // Only look at thin hardware
+//                 if ( !this.mgrMdlCfg.isThinHardwareType(clsSibling) ) 
+//                     continue;
+//
+//                 double dblPos = smfSibling.getPosition();
+//
+//                 // We apply a tolerance to avoid fine splitting
+//                 //     That is, we are not shaving off small sections of hardware at the ends
+//                 if ( !ivlChild.membership(dblPos + DBL_TOL_POS) )
+//                     continue;
+//                 if ( !ivlChild.membership(dblPos - DBL_TOL_POS) )
+//                     continue;
+//
+//                 // Okay, we split the thick hardware in two so the thin one lives in between
+//                 //     Then we break the loop because nodeChild no longer exists, but its
+//                 //     two mitosis twins are children of the parent.
+//                 hwnChildOrg.split(dblPos);
+//                 break;
+//             }
+//         }
+//     }
+
+     
      /**
       * <p>
       * Splits the hardware nodes representing thick hardware wherever
@@ -283,9 +496,13 @@ public class HardwareTree {
       * @author Christopher K. Allen
       * @since  May 25, 2011
       * 
-      * TODO Currently this method does not work.
+      * 
+//      * @deprecated Currently this method does not work.  I'm working on
+//      *             another version.  Let's hope.
       */
-     private void splitHardware(TreeNode nodeParent) throws GenerationException {
+     private void splitHardware(TreeNode nodeParent, SplitLocations locSplit) 
+         throws GenerationException 
+     {
 
          // We need a double loop to do this - an order N^2 operation
          //     the outer loop: for each child node
@@ -295,7 +512,7 @@ public class HardwareTree {
              // If this child also has children we need to process them
              //     This is done recursively
              if ( nodeChild.getChildCount() > 0 )
-                 this.splitHardware(nodeChild);
+                  this.splitHardware(nodeChild, locSplit);
 
 
              // Ignore non-hardware nodes
@@ -316,11 +533,7 @@ public class HardwareTree {
 
              // Inner loop now looks at all siblings of the current child node
              //     Siblings should be thin hardware to warrant action
-             //     Since we will be modifying the siblings while traversing the
-             //     sibling list, we need to snapshot the original list. 
-             List<TreeNode> lstSiblings = new LinkedList<TreeNode>( nodeParent.getChildren() );
-
-             for (TreeNode nodeSibling : lstSiblings ) {
+             for (TreeNode nodeSibling : nodeParent.getChildren() ) {
 
                  // Ignore non-hardware nodes
                  if ( !(nodeSibling instanceof HardwareNode) )
@@ -344,14 +557,13 @@ public class HardwareTree {
                      continue;
 
                  // Okay, we split the thick hardware in two so the thin one lives in between
-                 //     Then we break the loop because nodeChild no longer exists, but its
-                 //     two mitosis twins are children of the parent.
-                 hwnSibling.split(dblPos);
-                 break;
+                 locSplit.addSplitLocation(hwnChild, dblPos);
              }
          }
      }
 
+
+     
      /**
       * <p>
       * Looks for regions of drift in the hardware tree (i.e., positions

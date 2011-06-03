@@ -135,7 +135,36 @@ public class HardwareNode extends TreeNode {
                     " is invalid for device " + smfHware.getId()
             );
     }
+    
 
+    /*
+     * Operations
+     */
+    
+    /**
+     * Returns a shallow copy of the current <code>HardwareNode</code>.  The
+     * returned node shares all the same internal objects as this node. 
+     * Copying the parent would require creation of a whole new tree and 
+     * copying of the accelerator device leaves a dangerous redundancy.
+     *
+     * @return  shallow copy of the current <code>HardwareNode</code>
+     *
+     * @author Christopher K. Allen
+     * @since  May 27, 2011
+     */
+    public HardwareNode copy()  {
+        try {
+            HardwareNode    hwnCpy = new HardwareNode(this.getParent(), this.getHardwareRef(), this.getInterval());
+
+            return hwnCpy;
+            
+        } catch (GenerationException e) {
+            System.err.println("Serious Error: This should never occur");
+            
+            return null;
+        }
+    }
+    
 
     /*
      * TreeNode Abstracts and Operations
