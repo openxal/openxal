@@ -48,33 +48,21 @@ class BrowserWindow extends XalWindow implements SwingConstants {
 		_model = model;
 
 		makeContents();
-		handleWindowEvents();
 	}
-
-
-	/** Handle window events. When the window opens, request a connection.  */
-	protected void handleWindowEvents() {
-		addWindowListener(
-			new WindowAdapter() {
-				public void windowOpened( WindowEvent event ) {
-					try {
-						final ConnectionDictionary dictionary = ConnectionDictionary.getPreferredInstance( "reports" );
-						if ( dictionary != null && dictionary.hasRequiredInfo() ) {
-							_model.connect();
-						}
-						else {
-							requestUserConnection();
-						}
-					}
-					catch ( Exception exception ) {
-						requestUserConnection();
-					}
-					finally {
-						updateTitle();
-					}
-				}
-			} );
-	}
+    
+    
+    /** show the connection request */
+    void showConnectionRequest() {
+        try {
+            requestUserConnection();
+        }
+        catch ( Exception exception ) {
+            requestUserConnection();
+        }
+        finally {
+            updateTitle();
+        }
+    }
 
 
 	/**
