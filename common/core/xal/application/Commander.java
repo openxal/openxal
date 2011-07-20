@@ -603,6 +603,7 @@ public class Commander {
     private void registerDefaultCommands() {
         // file actions
         registerAction( ActionFactory.newAction() );
+        registerAction( ActionFactory.newDocumentFromTemplateAction() );
 		registerAction( ActionFactory.newDocumentByTypeAction() );
         registerAction( ActionFactory.openDocumentAction() );
         registerMenuHandler( ActionFactory.openRecentHandler(), "open-recent-handler" );
@@ -699,6 +700,7 @@ public class Commander {
      */
     private void registerDefaultCommands( final XalDocument document ) {
         // file actions
+        registerAction( ActionFactory.openDocumentVersionAction( document ) );
         registerAction( ActionFactory.closeDocumentAction( document ) );
         registerAction( ActionFactory.saveDocumentAction( document ) );
         registerAction( ActionFactory.saveAsDocumentAction( document ) );
@@ -720,7 +722,7 @@ public class Commander {
     
     
     /**
-		* Register the default document commands
+     * Register the default document commands
      * @param document The document for which some commands may need to be associated
      */
     private void registerDefaultCommands( final XalInternalDocument document ) {
@@ -850,7 +852,7 @@ public class Commander {
         
         Action selectAllAction = getAction( "select-all" );
         if ( selectAllAction != null ) {
-            selectAllAction.putValue( Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke( KeyEvent.VK_A, ActionFactory.menuKeyShortcutMask ) );
+            selectAllAction.putValue( Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke( KeyEvent.VK_A, ActionFactory.MENU_KEY_SHORTCUT_MASK ) );
         }
     }    
 }

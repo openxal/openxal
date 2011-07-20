@@ -6,6 +6,8 @@
 
 package xal.application;
 
+import xal.tools.URLReference;
+
 import javax.swing.*;
 import javax.swing.event.*;
 import java.awt.event.*;
@@ -13,6 +15,7 @@ import java.awt.Component;
 import java.awt.KeyboardFocusManager;
 import java.awt.Toolkit;
 import java.awt.Window;
+import java.net.URL;
 import java.util.*;
 import java.beans.*;
 
@@ -28,7 +31,7 @@ import java.beans.*;
  * @author  t6p
  */
 public class ActionFactory {
-    static final int menuKeyShortcutMask = java.awt.Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
+    static final int MENU_KEY_SHORTCUT_MASK = java.awt.Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
     
     
     /** Creates a new instance of ActionFactory */
@@ -50,7 +53,27 @@ public class ActionFactory {
         };
         
         action.putValue( Action.NAME, "new-document" );
-        action.putValue( Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke( KeyEvent.VK_N, menuKeyShortcutMask ) );
+        action.putValue( Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke( KeyEvent.VK_N, MENU_KEY_SHORTCUT_MASK ) );
+        
+        return action;
+    }
+    
+    
+    /**
+     * Make an action that creates a new document from a user selected template.  
+     * This action is usually associated with the "New from Template..." menu item in the "File" menu.
+     * @return An action that creates a new document from a user selected template
+     */
+    static Action newDocumentFromTemplateAction() {
+        Action action = new AbstractAction() {
+            public void actionPerformed( final ActionEvent event ) {
+                Application.getApp().newDocumentFromTemplate();
+            }
+        };
+        
+        action.putValue( Action.NAME, "new-document-from-template" );
+        final int keyMask = MENU_KEY_SHORTCUT_MASK | java.awt.event.InputEvent.SHIFT_MASK;  // shortcut key plus shift key
+        action.putValue( Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke( KeyEvent.VK_N, keyMask ) );
         
         return action;
     }
@@ -88,7 +111,7 @@ public class ActionFactory {
             }
         };
         
-        action.putValue( Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke( KeyEvent.VK_O, menuKeyShortcutMask ) );
+        action.putValue( Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke( KeyEvent.VK_O, MENU_KEY_SHORTCUT_MASK ) );
 		
 		action.setEnabled( Application.getAdaptor().readableDocumentTypes().length > 0 );
         
@@ -133,19 +156,16 @@ public class ActionFactory {
                 final JMenu menu = (JMenu)event.getSource();
                 menu.removeAll();
 				
-                String[] recentURLSpecs = Application.getApp().getRecentURLSpecs();
+                final URL defaultFolder = Application.getApp().getDefaultDocumentFolderURL();
+                final String[] recentURLSpecs = Application.getApp().getRecentURLSpecs();
                 for ( int index = 0 ; index < recentURLSpecs.length ; index++ ) {
-                    String urlSpec  = recentURLSpecs[index];
-                    JMenuItem menuItem = new JMenuItem( urlSpec );
+                    final String urlSpec  = recentURLSpecs[index];
+                    final URLReference urlRef = URLReference.getInstance( defaultFolder, urlSpec );
+                    JMenuItem menuItem = new JMenuItem( urlRef.toString() );
                     menu.add( menuItem );
                     menuItem.setAction( openURLAction( urlSpec ) );
-                    menuItem.setText( urlSpec );
-                    try {
-                        new java.net.URL( urlSpec ).openStream();     // test if the file really exists
-                    }
-                    catch( java.io.IOException exception ) {
-                        menuItem.setEnabled( false );     // since this file no longer exists
-                    }
+                    menuItem.setText( urlRef.toString() );
+                    menuItem.setEnabled( urlRef.isValid() );
                 }
 				
                 menu.addSeparator();
@@ -174,6 +194,36 @@ public class ActionFactory {
     
     
     /**
+     * Make an action that presents the user with an open dialog to select a version of the current document to open
+     * @param document The document for which to open a version.
+     * @return An action that opens the document version
+     */
+    static Action openDocumentVersionAction( final XalDocument document ) {
+        final Action action = new AbstractAction( "open-version" ) {
+            public void actionPerformed( final ActionEvent event ) {
+                Application.getApp().openDocumentVersion( document );
+            }
+        };
+        
+        
+        // listen if the document has changes to be saved
+        document.addXalDocumentListener( new XalDocumentListener() {
+            public void titleChanged( final XalDocument document, final String newTitle ) {
+                action.setEnabled( document.getSource() != null );
+            }
+            
+            public void hasChangesChanged( final XalDocument document, final boolean newHasChangesStatus ) {}
+            public void documentWillClose( final XalDocument document ) {}
+            public void documentHasClosed( final XalDocument document ) {}
+        });
+        
+        action.setEnabled( document.getSource() != null );
+        
+        return action;
+    }
+
+    
+    /**
      * Make an action that closes the document where the from which the menu item was selected.
      * This action is usually associated with the "Close" menu item in the "File" menu.
      * @param document The document to close
@@ -186,7 +236,7 @@ public class ActionFactory {
             }
         };
         
-        action.putValue( Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke( KeyEvent.VK_W, menuKeyShortcutMask ) );
+        action.putValue( Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke( KeyEvent.VK_W, MENU_KEY_SHORTCUT_MASK ) );
         
         return action;
     }
@@ -199,7 +249,7 @@ public class ActionFactory {
      * @return An action that closes all documents in the application
      */
     static Action closeAllDocumentsAction() {
-        Action action = new AbstractAction( "close-all-documents" ) {
+        final Action action = new AbstractAction( "close-all-documents" ) {
             public void actionPerformed( final ActionEvent event ) {
                 Application.getApp().closeAllDocuments();
             }
@@ -239,7 +289,7 @@ public class ActionFactory {
             public void documentHasClosed( final XalDocument document ) {}
         });
         
-        action.putValue( Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke( KeyEvent.VK_S, menuKeyShortcutMask ) );
+        action.putValue( Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke( KeyEvent.VK_S, MENU_KEY_SHORTCUT_MASK ) );
         action.setEnabled( document.hasChanges() );
 
         return action;
@@ -278,7 +328,7 @@ public class ActionFactory {
 			public void documentDeactivated( XalInternalDocument document ) {}
 		});
         
-        action.putValue( Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke( KeyEvent.VK_S, menuKeyShortcutMask ) );
+        action.putValue( Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke( KeyEvent.VK_S, MENU_KEY_SHORTCUT_MASK ) );
         action.setEnabled( document.hasChanges() );
 		
         return action;
@@ -410,7 +460,7 @@ public class ActionFactory {
             }
         };
         
-        action.putValue( Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke( KeyEvent.VK_P, menuKeyShortcutMask ) );
+        action.putValue( Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke( KeyEvent.VK_P, MENU_KEY_SHORTCUT_MASK ) );
         
         return action;
     }
@@ -442,7 +492,7 @@ public class ActionFactory {
             }
         };
         
-        action.putValue( Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke( KeyEvent.VK_Q, menuKeyShortcutMask ) );
+        action.putValue( Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke( KeyEvent.VK_Q, MENU_KEY_SHORTCUT_MASK ) );
         
         return action;
     }
@@ -475,7 +525,7 @@ public class ActionFactory {
             }
         };
 		
-		action.putValue( Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke( KeyEvent.VK_C, ActionFactory.menuKeyShortcutMask ) );
+		action.putValue( Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke( KeyEvent.VK_C, ActionFactory.MENU_KEY_SHORTCUT_MASK ) );
 		action.setEnabled( canPerformCopyOnComponent( focusTracker.getLastFocusedComponent() ) );
  		
 		KeyboardFocusManager.getCurrentKeyboardFocusManager().addPropertyChangeListener( "permanentFocusOwner", new PropertyChangeListener() {
@@ -529,7 +579,7 @@ public class ActionFactory {
             }
         };
 		
-		action.putValue( Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke( KeyEvent.VK_X, ActionFactory.menuKeyShortcutMask ) );
+		action.putValue( Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke( KeyEvent.VK_X, ActionFactory.MENU_KEY_SHORTCUT_MASK ) );
 		action.setEnabled( canPerformCutOnComponent( focusTracker.getLastFocusedComponent() ) );
 		
 		KeyboardFocusManager.getCurrentKeyboardFocusManager().addPropertyChangeListener( "permanentFocusOwner", new PropertyChangeListener() {
@@ -576,7 +626,7 @@ public class ActionFactory {
             }
         };
 		
-		action.putValue( Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke( KeyEvent.VK_V, ActionFactory.menuKeyShortcutMask ) );
+		action.putValue( Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke( KeyEvent.VK_V, ActionFactory.MENU_KEY_SHORTCUT_MASK ) );
 		action.setEnabled( canPerformPasteOnComponent( focusTracker.getLastFocusedComponent() ) );
 		
 		KeyboardFocusManager.getCurrentKeyboardFocusManager().addPropertyChangeListener( "permanentFocusOwner", new PropertyChangeListener() {
@@ -778,7 +828,7 @@ public class ActionFactory {
             }
         };
         
-        action.putValue( Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke( KeyEvent.VK_H, menuKeyShortcutMask ) );
+        action.putValue( Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke( KeyEvent.VK_H, MENU_KEY_SHORTCUT_MASK ) );
         
         return action;        
     }

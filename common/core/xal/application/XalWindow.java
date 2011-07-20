@@ -49,16 +49,8 @@ public abstract class XalWindow extends JFrame implements XalDocumentView, XalDo
 	
 	/** position this window relative to the currently active window */
 	private void positionWindow() {
-		final Window activeWindow = Application.getActiveWindow();
-		final XalWindow selectedWindow = activeWindow instanceof XalWindow ? (XalWindow)activeWindow : null;
-		// offset this window relative to the active window if any
-		if ( selectedWindow != null && selectedWindow.isVisible() ) {
-			final java.awt.Container contentPane = selectedWindow.getContentPane();
-			final int offset = (int) ( 1.5 * ( contentPane.getLocationOnScreen().y - selectedWindow.getLocationOnScreen().y ) );
-			final Point location = new Point( selectedWindow.getLocation() );
-			location.translate( offset, offset );
-			setLocation( location );
-		}		
+        Application.getApp().updateNextDocumentOpenLocation();
+        setLocation( Application.getApp().getNextDocumentOpenLocation() );
 	}
     
 
@@ -254,7 +246,7 @@ public abstract class XalWindow extends JFrame implements XalDocumentView, XalDo
 			if ( protocol != null && protocol.equals( "file" ) ) {
                 try { 
                     final File file = new File( source.toURI() );
-                    
+
                     if ( file.exists() ) {
                         getRootPane().putClientProperty( "Window.documentFile", file );
                     }
