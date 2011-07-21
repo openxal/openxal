@@ -68,4 +68,8 @@ abstract public class ChannelSystem {
 	 * @param timeout the maximum time to wait for successful handling of the request
 	 */
     abstract public void pendEvent( final double timeout );
+    
+    
+    /** Print information about this system */
+    abstract public void printInfo();
 }

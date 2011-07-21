@@ -16,16 +16,16 @@ import xal.ca.*;
  */
 public class JcaChannelFactory extends ChannelFactory {
 	/** JCA channel system */
-	protected JcaSystem _jcaSystem;
+	final private JcaSystem JCA_SYSTEM;
 	
 	/** cache of native JCA channels */
-	protected JcaNativeChannelCache _nativeChannelCache;
+	final private JcaNativeChannelCache NATIVE_CHANNEL_CACHE;
 	
 	
 	/** Constructor */
 	public JcaChannelFactory() {
-		_jcaSystem = new JcaSystem();
-		_nativeChannelCache = new JcaNativeChannelCache( _jcaSystem );
+		JCA_SYSTEM = new JcaSystem();
+		NATIVE_CHANNEL_CACHE = new JcaNativeChannelCache( JCA_SYSTEM );
 	}
 	
 	
@@ -34,7 +34,7 @@ public class JcaChannelFactory extends ChannelFactory {
 	 * @return true if the initialization was successful and false if not
 	 */
 	public boolean init() {
-		return _jcaSystem.init();
+		return JCA_SYSTEM.init();
 	}
 	
 	
@@ -43,7 +43,7 @@ public class JcaChannelFactory extends ChannelFactory {
 	 * @param signalName The name of the PV signal
 	 */
     protected Channel newChannel( final String signalName ) {
-        return new JcaChannel( signalName, _jcaSystem.getJcaContext(), _nativeChannelCache );
+        return new JcaChannel( signalName, JCA_SYSTEM.getJcaContext(), NATIVE_CHANNEL_CACHE );
     }
     
     
@@ -52,6 +52,12 @@ public class JcaChannelFactory extends ChannelFactory {
 	 * @return the JCA channel system
 	 */
     protected ChannelSystem channelSystem() {
-        return _jcaSystem;
+        return JCA_SYSTEM;
+    }
+    
+    
+    /** print information about this channel factory */
+    public void printInfo() {
+        JCA_SYSTEM.printInfo();
     }
 }
