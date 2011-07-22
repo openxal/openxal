@@ -85,6 +85,13 @@ class BrowserDocument extends XalDocument {
     public void makeMainWindow() {
         mainWindow = new BrowserWindow(this, _model);
     }
+    
+    
+    /** Hook indicating that the window was opened. */
+    protected void windowOpened() {
+        final BrowserWindow window = (BrowserWindow)mainWindow;
+        window.showConnectionRequest();
+    }
 
     
     /**

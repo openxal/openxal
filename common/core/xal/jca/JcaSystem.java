@@ -22,8 +22,11 @@ import java.util.prefs.Preferences;
  * @author  tap
  */
 class JcaSystem extends ChannelSystem {
-	protected Context _jcaContext;
-	protected JCALibrary _library;
+    /** Java Channel Access Context */
+    private Context JCA_CONTEXT;
+    
+    /** Native Java Channel Access Library */
+    private JCALibrary JCA_LIBRARY;
 	
 	
     /** Constructor */
@@ -38,10 +41,10 @@ class JcaSystem extends ChannelSystem {
 	 */
     public JcaSystem( final String contextName ) {
 		try {
-			_library = JCALibrary.getInstance();
+			JCA_LIBRARY = JCALibrary.getInstance();
 			
 			final String contextType = ( contextName != null ) ? contextName : defaultJCAContextType();
-			_jcaContext = _library.createContext( contextType );
+			JCA_CONTEXT = JCA_LIBRARY.createContext( contextType );
 		}
 		catch(CAException exception) {
 			exception.printStackTrace();
@@ -53,14 +56,14 @@ class JcaSystem extends ChannelSystem {
 	 * Determine the user's preferred JCA Context otherwise defaulting to JCALibrary.CHANNEL_ACCESS_JAVA 
 	 * @return the string identifying the JCA Context to use
 	 */
-	private String defaultJCAContextType() {
+	static private String defaultJCAContextType() {
 		final String userJCAContext = fetchUserJCAContext();
 		return getJCAContextType( userJCAContext );
 	}
 	
 	
 	/** Determine the user's preferred JCA Context first checking for a Java property, then an environment variable and finally a user preference */
-	private String fetchUserJCAContext() {
+	static private String fetchUserJCAContext() {
 		// This try should not be required, but is added as a work around for some strange Matlab behavior (jdg, 1/05/05)
 		try {
 			// first check if the user has set a command line property
@@ -76,7 +79,7 @@ class JcaSystem extends ChannelSystem {
 				}
 				else {
 					// check the user's preferences
-					final Preferences prefs = Preferences.userNodeForPackage( this.getClass() );
+					final Preferences prefs = Preferences.userNodeForPackage( JcaSystem.class );
 					final String preferredContext = prefs.get( "Context", "" );
 					return preferredContext;
 				}
@@ -87,6 +90,12 @@ class JcaSystem extends ChannelSystem {
 			return System.getProperty( "xal.jca.Context" );
 		}		
 	}
+    
+    
+    /** Print information about the context */
+    public void printInfo() {
+        JCA_CONTEXT.printInfo();
+    }
 	
 	
 	/**
@@ -107,7 +116,7 @@ class JcaSystem extends ChannelSystem {
 		try {
 			// since Context.initialize() only can be called once and we have no way of knowing if
 			// it has already been called, run testIO() as a way to safely induce initialization
-			_jcaContext.testIO();
+			JCA_CONTEXT.testIO();
 			return true;
 		}
 		catch(CAException exception) {
@@ -122,7 +131,7 @@ class JcaSystem extends ChannelSystem {
 	 * @return the JCA context.
 	 */
 	Context getJcaContext() {
-		return _jcaContext;
+		return JCA_CONTEXT;
 	}
     
     
@@ -138,7 +147,7 @@ class JcaSystem extends ChannelSystem {
 	/** Flush the IO buffers */
 	public void flushIO() {
 		try {
-			_jcaContext.flushIO();
+			JCA_CONTEXT.flushIO();
 		}
 		catch ( CAException exception ) {
 			throw new RuntimeException( "Exception flushing IO requests.", exception );
@@ -153,7 +162,7 @@ class JcaSystem extends ChannelSystem {
 	 */
     public boolean pendIO( final double timeout ) {
         try { 
-            _jcaContext.pendIO( timeout );
+            JCA_CONTEXT.pendIO( timeout );
         } 
         catch ( CAException exception ) { 
             return false; 
@@ -172,7 +181,7 @@ class JcaSystem extends ChannelSystem {
 	 */
     public void pendEvent( final double timeout ) {
 		try {
-			_jcaContext.pendEvent( timeout );
+			JCA_CONTEXT.pendEvent( timeout );
 		}
 		catch( CAException exception ) {
 			System.err.println( exception );

@@ -64,22 +64,9 @@
         <mkdir dir="${build.jar.root}" />
         <jar compress="true" jarfile="${build.jar.root}/xal-core.jar" index="true">
 			<fileset dir="${build.compile.core.root}" includes="xal/**/*">
-				<exclude name="**/datasource/" />
 			</fileset>
             
 			<fileset dir="${build.compile.core.root}/resources" />
-       </jar>
-    </target>
-    
-	
-	<!-- Jar the core datasource placeholder classes -->
-    <target  name="jar-datasource" depends="init, compile">
-        <mkdir dir="${build.jar.root}" />
-        <jar compress="true" jarfile="${build.jar.root}/xal-datasource.jar" index="true">
-			<fileset dir="${build.root}/compile">
-				<exclude name="**/*" />
-				<include name="**/datasource/" />
-			</fileset>
        </jar>
     </target>
 	
@@ -98,7 +85,7 @@
 	
 	
 	<!-- merge the external jars and build XAL core -->
-    <target name="all" depends="jar-lib,jar-core,jar-datasource" description="Build everything." >
+    <target name="all" depends="jar-lib,jar-core" description="Build everything." >
         <echo message="Everything built. " />
     </target>
 	
@@ -144,7 +131,6 @@
         <delete dir="${build.compile.core.root}" />
         <delete file="${build.jar.root}/xal-core.jar" quiet="true" />
         <delete file="${build.jar.root}/xal-lib.jar" quiet="true" />
-        <delete file="${build.jar.root}/xal-datasource.jar" quiet="true" />
         
         <echo message="Core cleaned!" />
     </target>
@@ -165,7 +151,6 @@
 		<echo message="    doc: ....................... Generate documentation for the core." />
 		<echo message="    install: ................... Install the core products intended for distribution." />
 		<echo message="    jar-lib: ................... Assemble the external jar files into a single library, xal-lib.jar" />
-		<echo message="    jar-datasource: ............ Assemble the datasource classes and resources into xal-datasource.jar" />
 		<echo message="    jar-core: .................. Assemble the core XAL classes and resources into xal-core.jar" />
 		<echo message="    purge-install: ............. Purge the core installation." />
 		<echo message="    run-tests .................. Build and run the test cases." />

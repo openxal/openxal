@@ -17,13 +17,14 @@ import java.util.*;
 import java.util.logging.*;
 import java.net.*;
 import java.io.*;
+import java.nio.channels.FileChannel;
 import java.util.prefs.Preferences;
 
 import xal.tools.StringJoiner;
 import xal.tools.apputils.files.*;
 import xal.tools.messaging.MessageCenter;
 import xal.tools.services.*;
-
+import xal.tools.URLReference;
 
 /**
  * The Application class handles defines the core of an application.  It is often 
@@ -50,7 +51,7 @@ abstract public class Application {
     
     // instance variables
     protected AbstractApplicationAdaptor _applicationAdaptor;  // custom application adaptor
-    protected List _openDocuments;         // list of open documents
+    protected List<XalAbstractDocument> _openDocuments;         // list of open documents
 	protected Commander _commander;
 	
     private JFileChooser _openFileChooser;   // file chooser for open 
@@ -64,6 +65,15 @@ abstract public class Application {
     // messaging instance variables
     private MessageCenter _messageCenter;        // local message center
     protected ApplicationListener _noticeProxy;    // proxy for broadcasting ApplicationListener events
+    
+    /** location of the next document to open */
+    private Point _nextDocumentOpenLocation;
+    
+    /** template folder */
+    private File _templateFolder;
+    
+    /** default folder */
+    private File _defaultDocumentFolder;
     
 	
 	/** static initializer */
@@ -95,9 +105,11 @@ abstract public class Application {
 	 * @param urls An array of document URLs to open upon startup. 
 	 */
     protected Application( final AbstractApplicationAdaptor adaptor, final URL[] urls ) {
+        _nextDocumentOpenLocation = new Point( 0, 0 );
+        
 		_launchTime = ( (double)new Date().getTime() ) / 1000;
         _applicationAdaptor = adaptor;
-        _openDocuments = new LinkedList();
+        _openDocuments = new LinkedList<XalAbstractDocument>();
         
         // assign the global application instance before the setup since it is referenced there (among other places).
         Application._application = this;
@@ -185,6 +197,25 @@ abstract public class Application {
         return _commander;
     }
     
+    
+    /** Determine whether this application can open documents */
+    protected boolean canOpenDocuments() {
+        return _applicationAdaptor.canOpenDocuments();
+    }
+    
+    
+    /** Indicates whether the welcome dialog should be displayed at launch */
+    protected boolean showsWelcomeDialogAtLaunch() {
+        return _applicationAdaptor.showsWelcomeDialogAtLaunch();
+    }
+    
+    
+    /** show the welcome dialog which offers to open a new document, template or existing document. */
+    protected void showWelcomeDialog() {
+        // todo: should get the position from a Java property (e.g. passed by the launcher)
+        new WelcomeController( getNextDocumentOpenLocation() );
+    }
+
     
     // --------- Application Initializers --------------------------------------
     
@@ -292,6 +323,54 @@ abstract public class Application {
     }
     
     
+    /** get the location of the next document to open */
+    protected Point getNextDocumentOpenLocation() {
+        return _nextDocumentOpenLocation;
+    }
+    
+    
+    /** Set the next document open location */
+    protected void setNextDocumentOpenLocation( final Point location ) {
+        _nextDocumentOpenLocation = location;
+    }
+    
+    
+    /** Set the location of the next document to open based on the location of the active application document window */
+    protected void updateNextDocumentOpenLocation() {
+        final Window activeWindow = getActiveWindow();
+		final XalWindow selectedWindow = activeWindow instanceof XalWindow ? (XalWindow)activeWindow : null;
+		// offset this window relative to the active window if any
+		if ( selectedWindow != null && selectedWindow.isVisible() ) {
+			final java.awt.Container contentPane = selectedWindow.getContentPane();
+			final int offset = (int) ( 1.5 * ( contentPane.getLocationOnScreen().y - selectedWindow.getLocationOnScreen().y ) );
+			final Point location = new Point( selectedWindow.getLocationOnScreen() );
+			location.translate( offset, offset );
+            setNextDocumentOpenLocation( location );
+		}
+    }
+    
+    
+    /** update the next location offset from document */
+    private void updateNextDocumentOpenLocationOffsetFrom( final XalAbstractDocument document ) {
+        if ( document instanceof XalDocument ) {
+            final XalWindow window = ((XalDocument)document).getMainWindow();
+            if ( window != null ) {
+                updateNextDocumentOpenLocationOffsetFrom( window );
+            }
+        }
+    }
+    
+    
+    /** update the next location offset from window */
+    private void updateNextDocumentOpenLocationOffsetFrom( final XalWindow window ) {
+        final java.awt.Container contentPane = window.getContentPane();
+        final int offset = (int) ( 1.5 * ( contentPane.getLocationOnScreen().y - window.getLocationOnScreen().y ) );
+        final Point location = new Point( window.getLocationOnScreen() );
+        location.translate( offset, offset );
+        setNextDocumentOpenLocation( location );
+    }
+    
+    
     // --------- Event registration --------------------------------------------
     
     /** 
@@ -331,7 +410,7 @@ abstract public class Application {
      * Get the list of all open documents.
      * @return An immutable list of the open documents.
      */
-    public List getDocuments() {
+    public List<XalAbstractDocument> getDocuments() {
         return Collections.unmodifiableList( _openDocuments );
     }
     
@@ -358,16 +437,40 @@ abstract public class Application {
 	 * @param type the type of document to create.
 	 */
     abstract protected void newDocument( final String type );
+    
+    
+    /** Create a new document based on a user selected document */
+    protected void newDocumentFromTemplate() {
+        updateNextDocumentOpenLocation();
+        
+        final File defaultFolder = getDefaultDocumentFolder();
+        final File templateFolder = getTemplateFolder();
+        final File chooserFolder = templateFolder != null && templateFolder.exists() ? templateFolder : defaultFolder;
+        final JFileChooser templateChooser = new JFileChooser( chooserFolder );
+        FileFilterFactory.applyFileFilters( templateChooser, _applicationAdaptor.readableDocumentTypes() );
+        templateChooser.setMultiSelectionEnabled( true );
+        templateChooser.setDialogTitle( "Open Template" );
+        templateChooser.setApproveButtonText( "Open Template" );
+        templateChooser.setApproveButtonToolTipText( "Open new copies of the selected templates" );
+        
+        openDocuments( templateChooser, true, false, false );
+    }
 	
+    
+    /** Show the file chooser */
+    private int showOpenFileChooser( final JFileChooser fileChooser ) {
+        return fileChooser.showOpenDialog( getActiveWindow() );
+    }
+    
 	
 	/**
 	 * Show the save file chooser.
 	 * @return the user's option (e.g. cancel, approve, error) for the file chooser.
 	 */
 	protected int showOpenFileChooser() {
-		final int status = _openFileChooser.showOpenDialog( getActiveWindow() );
+		final int status = showOpenFileChooser( _openFileChooser );
 		
-		// reconcile current director for open and save file choosers
+		// reconcile current directory for open and save file choosers
 		_saveFileChooser.setCurrentDirectory( _openFileChooser.getCurrentDirectory() );
 		
 		return status;
@@ -378,14 +481,31 @@ abstract public class Application {
      * Handle the "Open" action by opening a new document.
      */
     protected void openDocument() {
-        final int status = showOpenFileChooser();
+        updateNextDocumentOpenLocation();
+        openDocuments( _openFileChooser, false, true, true );
+    }
+    
+    
+    /**
+     * Handle the "Open" action by opening a new document.
+     * @param fileChooser the file chooser to use for file selection
+     * @param copyDocument indicates whether to copy the document (e.g. as in opening a template)
+     * @param syncSaveChooser synchronize the current directory of the save file chooser with that of the specified file chooser
+     * @param trackRecent indicates whether to track the document for recent activity 
+     */
+    private void openDocuments( final JFileChooser fileChooser, final boolean copyDocument, final boolean syncSaveChooser, final boolean trackRecent ) {
+        final int status = showOpenFileChooser( fileChooser );
+        
+        if ( syncSaveChooser ) {
+            _saveFileChooser.setCurrentDirectory( fileChooser.getCurrentDirectory() );
+        }
         
         switch( status ) {
             case JFileChooser.CANCEL_OPTION:
                 break;
             case JFileChooser.APPROVE_OPTION:
-                File[] fileSelections = _openFileChooser.getSelectedFiles();
-                openFiles( fileSelections );
+                File[] fileSelections = fileChooser.getSelectedFiles();
+                openFiles( fileSelections, copyDocument, trackRecent );
                 break;
             case JFileChooser.ERROR_OPTION:
                 break;
@@ -398,9 +518,20 @@ abstract public class Application {
      * @param urlSpec The URL specification of the file to open.
      */
     protected void openURL( final String urlSpec ) {
+        openURL( urlSpec, false, true );
+    }
+    
+    
+    /**
+     * Support method for opening a new document with the URL specification
+     * @param urlSpec The URL specification of the file to open.
+     * @param copySource indicates whether to make a fresh copy of the source (e.g. as if opening from a template)
+     * @param trackRecent indicates whether to track the document for recent activity
+     */
+    private void openURL( final String urlSpec, final boolean copySource, final boolean trackRecent ) {
         try {
-            URL url = new URL( urlSpec );
-            openDocument( url );
+            final URL url = new URL( urlSpec );
+            openDocument( url, copySource, trackRecent );
         }
         catch(MalformedURLException exception) {
 			Logger.getLogger("global").log( Level.WARNING, "Error opening URL: " + urlSpec, exception );
@@ -416,9 +547,21 @@ abstract public class Application {
      * @see #openFiles
      */
     protected void openFile( final File file ) {
+        openFile( file, false, true );
+    }
+    
+    
+    /**
+     * Support method for opening a new document given a file.
+     * @param file The file to open.
+     * @param copySource indicates whether to make a fresh copy of the source (e.g. as if opening from a template)
+     * @param trackRecent indicates whether to track the document for recent activity 
+     * @see #openFiles
+     */
+    private void openFile( final File file, final boolean copySource, final boolean trackRecent ) {
         try {
-            URL url = file.toURI().toURL();
-            openDocument( url );
+            final URL url = file.toURI().toURL();
+            openDocument( url, copySource, trackRecent );
         }
         catch( MalformedURLException exception ) {
 			Logger.getLogger("global").log( Level.WARNING, "Error opening file: " + file, exception );
@@ -434,9 +577,21 @@ abstract public class Application {
      * @see #openDocument()
      */
     protected void openFiles( final File[] files ) {
+        openFiles( files, false, true );
+    }
+    
+    
+    /**
+     * Support method for opening an array of files.
+     * @param files The files to open.
+     * @param copySource indicates whether to make a fresh copy of the source (e.g. as if opening from a template)
+     * @param trackRecent indicates whether to track the document for recent activity 
+     * @see #openDocument()
+     */
+    private void openFiles( final File[] files, final boolean copySource, final boolean trackRecent ) {
         for ( int index = 0 ; index < files.length ; index++ ) {
             File file = files[index];
-            openFile( file );
+            openFile( file, copySource, trackRecent );
         }
     }
     
@@ -448,10 +603,25 @@ abstract public class Application {
      * @see #openFile
      */
     public void openDocument( final URL url ) {
+        openDocument( url, false, true );
+    }
+    
+    
+    /**
+     * Support method for opening a document with the specified URL.
+     * @param url The URL of the file to open.
+     * @param copyDocument indicates whether to make a new independent copy of the document at the specified URL (e.g. as if opening from a template)
+     * @param trackRecent indicates whether to track the document for recent activity 
+     * @see #openURL
+     * @see #openFile
+     */
+    private void openDocument( final URL url, final boolean copyDocument, final boolean trackRecent ) {
         try {
             XalAbstractDocument document = _applicationAdaptor.generateDocument( url );
+            if ( copyDocument )  document.setSource( null );    // mark the document as independent form the source URL (e.g. opened from template)
 			produceDocument( document );
-            registerRecentURL( url );
+            if ( trackRecent && !URLReference.isRootedIn( getTemplateFolderURL(), url ) )  registerRecentURL( url );    // never track files under the template folder regardless of the flag
+            updateNextDocumentOpenLocationOffsetFrom( document );
         }
         catch(Exception exception) { 
 			Logger.getLogger("global").log( Level.WARNING, "Error opening document: " + url, exception );
@@ -472,12 +642,10 @@ abstract public class Application {
     
     
     /** Handle the "Close All" action by closing all open documents and opening a new empty document. */
-    protected void closeAllDocuments() {
-        LinkedList docList = new LinkedList( _openDocuments );
-        ListIterator iterator = docList.listIterator();
+    protected void closeAllDocuments() {        
+        final LinkedList<XalAbstractDocument> docList = new LinkedList<XalAbstractDocument>( _openDocuments );
 	
-		while( iterator.hasNext() ) {
-			XalAbstractDocument document = (XalAbstractDocument)iterator.next();
+		for( final XalAbstractDocument document : docList ) {
 			closeDocument( document );
 		}
     }
@@ -512,23 +680,92 @@ abstract public class Application {
         
         if ( document.getSource() != null ) {
             document.saveDocument();
+            saveDocumentVersion( document );
         }
         else {
             saveAsDocument( document );
+        }        
+    }
+    
+    
+    /** present the user with a dialog box to open a version of the specified document */
+    protected void openDocumentVersion( final XalAbstractDocument document ) {
+        updateNextDocumentOpenLocation();
+
+        final FileVersionInfo versionInfo = getSourceVersionInfo( document );
+        if ( versionInfo != null ) {
+            final File currentFolder = versionInfo.getCurrentFolder();
+            final File latestFolder = currentFolder.exists() ? currentFolder : currentFolder.getParentFile();
+            if ( latestFolder.exists() ) {
+                // present a file chooser and open the document selected by the user
+                final JFileChooser versionChooser = new JFileChooser( latestFolder );
+                FileFilterFactory.applyFileFilters( versionChooser, _applicationAdaptor.readableDocumentTypes() );
+                versionChooser.setMultiSelectionEnabled( true );
+                openDocuments( versionChooser, false, false, false );
+            }
+            else {
+                document.displayWarning( "Can't open version", "No versions exist for this document." );
+            }
+        }
+        else {
+            document.displayWarning( "Can't open version", "Nothing to open." );
+        }
+    }
+    
+    
+    /** get the source file version info for the document */
+    private FileVersionInfo getSourceVersionInfo( final XalAbstractDocument document ) {
+        try {
+            final Date now = new Date();
+            final URL sourceURL = document.getSource();
+            if ( sourceURL != null ) {
+                final File sourceFile = new File( sourceURL.toURI() );
+                final File defaultFolder = _defaultFolderAccessory.getDefaultFolder();
+                final FileVersionInfo info = new FileVersionInfo( sourceFile, defaultFolder, now );
+                return info;
+            }
+            else {
+                return null;
+            }
+        }
+        catch( Exception exception ) {
+            exception.printStackTrace();
+            throw new RuntimeException( "Exception generating source version info for document.", exception );
+        }
+    }
+    
+    
+    /** save a copy of the document to the versions folder: documents/appname/.versions/basename/year/basename_@timestamp.extension */
+    private void saveDocumentVersion( final XalAbstractDocument document ) {
+        try {
+            final FileVersionInfo versionInfo = getSourceVersionInfo( document );
+            if ( versionInfo != null ) {
+                final File yearFolder = versionInfo.getCurrentFolder();
+                if ( yearFolder != null && ( yearFolder.exists() || yearFolder.mkdirs() ) ) {
+                    final String baseName = versionInfo.getBaseName();
+                    final String targetName = baseName.replaceFirst( "\\.", new java.text.SimpleDateFormat( "_@yyyyMMdd'T'HHmmss@" ).format( versionInfo.getTimestamp() ) + "." );;
+                    final File targetFile = new File( yearFolder, targetName );
+                    targetFile.createNewFile();
+                    copyFile( versionInfo.getSourceFile(), targetFile );
+                    targetFile.setReadOnly();
+                }
+            }
+        }
+        catch( Exception exception ) {
+            System.err.println( "Exception saving document version..." );
+            exception.printStackTrace();
         }
     }
     
     
     /**
-     * Handle the "Save As" action by saving the specified document to the 
-     * location chosen by the user.  Displays a dialog box to allow the user
-     * to select a location.
+     * Handle the "Save As" action by saving the specified document to the location chosen by the user.  Displays a dialog box to allow the user to select a location.
      * @param document The document to save.
      */
     protected void saveAsDocument( final XalAbstractDocument document ) {
-		String defaultName = document.getFileNameForSaving();
-		File defaultFolder = _saveFileChooser.getCurrentDirectory();
-		File defaultFile = new File( defaultFolder, defaultName );
+		final String defaultName = document.getFileNameForSaving();
+		final File defaultFolder = _saveFileChooser.getCurrentDirectory();
+		final File defaultFile = new File( defaultFolder, defaultName );
 		
 		_saveFileChooser.setSelectedFile( defaultFile );
         final int status = showSaveFileChooser( document );
@@ -557,10 +794,7 @@ abstract public class Application {
      * Handle the "Save All" action by saving all open documents.
      */
     protected void saveAllDocuments() {
-        Iterator iterator = _openDocuments.iterator();
-        
-        while ( iterator.hasNext() ) {
-            XalAbstractDocument document = (XalAbstractDocument)iterator.next();
+        for ( final XalAbstractDocument document : _openDocuments ) {
             saveDocument( document );
         }
     }
@@ -573,10 +807,13 @@ abstract public class Application {
      */
     protected void saveDocumentToFile( final XalAbstractDocument document, final File file ) {
         try {
-            URL url = file.toURI().toURL();
+            final URL url = file.toURI().toURL();
             document.saveDocumentAs( url );
             document.setSource( url );
-            registerRecentURL( url );
+            if ( !URLReference.isRootedIn( getTemplateFolderURL(), url ) ) {
+                registerRecentURL( url );
+            }
+            saveDocumentVersion( document );
         }
         catch( MalformedURLException exception ) {
 			Logger.getLogger("global").log( Level.WARNING, "Failed to save document to file: " + file, exception );
@@ -675,10 +912,7 @@ abstract public class Application {
      * un-collapsed as necessary.
      */
     protected void showAllWindows() {
-        Iterator iterator = _openDocuments.iterator();
-        
-        while ( iterator.hasNext() ) {
-            XalAbstractDocument document = (XalAbstractDocument)iterator.next();
+        for ( final XalAbstractDocument document : _openDocuments ) {
             document.showDocument();
         }
     }
@@ -691,9 +925,7 @@ abstract public class Application {
     protected void hideAllWindows() {
         Console.hide();     // hide the console
         
-        Iterator iterator = _openDocuments.iterator();
-        while ( iterator.hasNext() ) {
-            XalAbstractDocument document = (XalAbstractDocument)iterator.next();
+        for ( final XalAbstractDocument document : _openDocuments ) {
             document.hideDocument();
         }
     }
@@ -752,13 +984,50 @@ abstract public class Application {
 		_recentFileTracker.clearCache();
     }
     
-	
+    
+    /** Get this application's template folder creating it if possible and necessary */
+    private File getTemplateFolder() {
+        if ( _templateFolder == null ) {
+            final File defaultFolder = getDefaultDocumentFolder();
+            final File templateFolder = defaultFolder != null && defaultFolder.exists() ? new File( defaultFolder, "Templates" ) : null;
+            
+            // attempt to make the template folder if it doesn't already exist but the default folder does
+            if ( templateFolder != null && !templateFolder.exists() ) {
+                if ( defaultFolder.canWrite() ) {
+                    templateFolder.mkdir();
+                }
+            }
+            
+            _templateFolder = templateFolder;
+        }
+        
+        return _templateFolder;
+    }
+    
+    
+    /** Get the URL to this application's template folder creating it if possible and necessary */
+    private URL getTemplateFolderURL() {
+        final File templateFolder = getTemplateFolder();
+        try {
+            return templateFolder != null ? templateFolder.toURI().toURL() : null;
+        }
+        catch( Exception exception ) {
+            exception.printStackTrace();
+            throw new RuntimeException( "Exception getting the template URL", exception );
+        }
+    }
+    
+    
 	/**
 	 * Get the default document folder.
 	 * @return the default folder for documents or null if none has been set.
 	 */
 	public File getDefaultDocumentFolder() {
-		return _defaultFolderAccessory.getDefaultFolder();
+        if ( _defaultDocumentFolder == null ) {
+            _defaultDocumentFolder = _defaultFolderAccessory.getDefaultFolder();
+        }
+        
+        return _defaultDocumentFolder;
 	}
     
 	
@@ -784,7 +1053,8 @@ abstract public class Application {
             if ( adaptor.getDocURLs().length > 0 ) {
                 launch( adaptor, adaptor.getDocURLs() );				
 			}
-        } catch ( NullPointerException exception ) {
+        } 
+        catch ( NullPointerException exception ) {
             launch( adaptor, new URL[]{} );
         }
     }
@@ -850,6 +1120,24 @@ abstract public class Application {
     
     
     //------------------- Convenience methods -----------------------------------
+    
+    
+    /** Copy the source file to the target file */
+    static private void copyFile( final File sourceFile, final File targetFile ) {
+        try {
+            final FileChannel sourceChannel = new FileInputStream( sourceFile ).getChannel();
+            final FileChannel targetChannel = new FileOutputStream( targetFile ).getChannel();
+            
+            sourceChannel.transferTo( 0, sourceChannel.size(), targetChannel );
+            
+            sourceChannel.close();
+            targetChannel.close();
+        }
+        catch( Exception exception ) {
+            exception.printStackTrace();
+            throw new RuntimeException( "Exception attempting to copy the source file to the target file.", exception );
+        }
+    }
 	
 	
 	/**
@@ -947,5 +1235,267 @@ abstract public class Application {
         Toolkit.getDefaultToolkit().beep();
         String message = prefix + "\n" + "Exception: " + exception.getClass().getName() + "\n" + exception.getMessage();
         JOptionPane.showMessageDialog( getActiveWindow(), message, title, JOptionPane.ERROR_MESSAGE );
+    }
+    
+    
+    
+    /** manage the welcome dialog */
+    private class WelcomeController {
+        /** Open a new empty document */
+        final private int NEW_MODE = 0;
+        
+        /** Open a document for read/write */
+        final private int DOCUMENT_MODE = NEW_MODE + 1;
+        
+        /** Create a new document based on a template */
+        final private int TEMPLATE_MODE = DOCUMENT_MODE + 1;
+        
+        /** Open a recently viewed document */
+        final private int RECENT_MODE = TEMPLATE_MODE + 1;
+        
+        /** DOCUMENT_CHOOSER for the display */
+        final private JFileChooser DOCUMENT_CHOOSER;
+        
+        /** indicates the mode for which to open a document */
+        private int _openMode;
+        
+        
+        /** Constructor */
+        private WelcomeController( final Point location ) {            
+            final Box accessory = new Box( BoxLayout.Y_AXIS );
+            
+            final JButton newButton = new JButton( "New Empty" );
+            newButton.setToolTipText( "Create a new, empty document" );
+            
+            final JButton openButton = new JButton( "Documents..." );
+            openButton.setToolTipText( "Display documents to open for editing" );
+            
+            final JButton templateButton = new JButton( "Templates..." );
+            templateButton.setToolTipText( "Display documents for which to open new copies" );
+            
+            final JButton recentButton = new JButton( "Recent..." );
+            recentButton.setToolTipText( "Display recently opened documents to open for editing" );
+            
+            accessory.add( newButton );
+            accessory.add( openButton );
+            accessory.add( templateButton );
+            accessory.add( recentButton );
+            
+            final URLReference[] recentURLReferences = getValidRecentURLReferences();
+            if ( recentURLReferences == null || recentURLReferences.length == 0 ) recentButton.setEnabled( false );
+            
+            DOCUMENT_CHOOSER = new WelcomeFileChooser( location );
+            DOCUMENT_CHOOSER.setAccessory( accessory );
+            DOCUMENT_CHOOSER.setMultiSelectionEnabled( true );
+            DOCUMENT_CHOOSER.setDialogTitle( "Select " + getAdaptor().applicationName() + " documents to open" );
+            FileFilterFactory.applyFileFilters( DOCUMENT_CHOOSER, _applicationAdaptor.readableDocumentTypes() );
+            
+            final File templateFolder = getTemplateFolder();
+            final File documentFolder = getDefaultDocumentFolder();
+            
+            setOpenMode( TEMPLATE_MODE );
+            
+            if ( templateFolder != null && templateFolder.exists() && templateFolder.isDirectory() && templateFolder.list().length > 0 ) {
+                DOCUMENT_CHOOSER.setCurrentDirectory( templateFolder );
+                setOpenMode( TEMPLATE_MODE );
+            }
+            else if ( documentFolder != null && documentFolder.exists() && documentFolder.isDirectory() ) {
+                DOCUMENT_CHOOSER.setCurrentDirectory( documentFolder );
+                setOpenMode( DOCUMENT_MODE );
+            }
+            else {
+                setOpenMode( DOCUMENT_MODE );
+            }
+            
+            newButton.addActionListener( new ActionListener() {
+                public void actionPerformed( final ActionEvent event ) {
+                    setOpenMode( NEW_MODE );
+                    DOCUMENT_CHOOSER.approveSelection();
+                }
+            });
+            
+            openButton.addActionListener( new ActionListener() {
+                public void actionPerformed( final ActionEvent event ) {
+                    DOCUMENT_CHOOSER.setCurrentDirectory( documentFolder );
+                    setOpenMode( DOCUMENT_MODE );
+                }
+            });
+            
+            templateButton.addActionListener( new ActionListener() {
+                public void actionPerformed( final ActionEvent event ) {
+                    DOCUMENT_CHOOSER.setCurrentDirectory( templateFolder );
+                    setOpenMode( TEMPLATE_MODE );
+                }
+            });
+            
+            recentButton.addActionListener( new ActionListener() {
+                public void actionPerformed( final ActionEvent event ) {
+                    final URLReference selection = (URLReference)JOptionPane.showInputDialog( DOCUMENT_CHOOSER, "Open the selected document", "Recent Documents", JOptionPane.PLAIN_MESSAGE, null, recentURLReferences, null );
+                    if ( selection != null ) {
+                        setOpenMode( RECENT_MODE );
+                        DOCUMENT_CHOOSER.approveSelection();
+                        openURL( selection.getFullURLSpec() );
+                    }
+                }
+            });
+            
+            int status = DOCUMENT_CHOOSER.showOpenDialog( null );
+            
+            switch( status ) {
+                case JFileChooser.CANCEL_OPTION:
+                    System.exit( 0 );
+                    break;
+                case JFileChooser.APPROVE_OPTION:
+                    processSelections( DOCUMENT_CHOOSER.getSelectedFiles() );
+                    break;
+                default:
+                    newDocument();
+                    break;
+            }
+        }
+        
+        
+        /** Set the open mode */
+        private void setOpenMode( final int mode ) {
+            _openMode = mode;
+            
+            switch( mode ) {
+                case TEMPLATE_MODE:
+                    DOCUMENT_CHOOSER.setApproveButtonText( "Open Template" );
+                    DOCUMENT_CHOOSER.setApproveButtonToolTipText( "Open new copies of the selected templates" );
+                    break;
+                case DOCUMENT_MODE:
+                    DOCUMENT_CHOOSER.setApproveButtonText( "Open" );
+                    DOCUMENT_CHOOSER.setApproveButtonToolTipText( "Open the documents for editing" );
+                    break;
+                default:
+                    break;
+            }
+        }
+        
+        
+        /** perform the operation indicated by the mode */
+        private void processSelections( final File[] selections ) {            
+            if ( _openMode != RECENT_MODE && ( selections == null || selections.length == 0 ) ) {
+                newDocument();
+                return;
+            }
+            
+            switch( _openMode ) {
+                case NEW_MODE:
+                    newDocument();
+                    break;
+                case TEMPLATE_MODE:
+                    openFiles( selections, true, false );   // open templates
+                    break;
+                case DOCUMENT_MODE:
+                    openFiles( selections );    // open documents
+                    break;
+                default:
+                    break;
+            }
+        }
+        
+        
+        /** get those recent URL specs which are valid */
+        private URLReference[] getValidRecentURLReferences() {
+            return URLReference.getValidReferences( getDefaultDocumentFolderURL(), getRecentURLSpecs() );
+        }
+    }
+    
+    
+    
+    /** custom file chooser for the welcome window */
+    private class WelcomeFileChooser extends JFileChooser {
+        /** initial location for the dialog */
+        final Point INITIAL_LOCATION;
+        
+        
+        /** constructor */
+        public WelcomeFileChooser( final Point location ) {
+            super();
+            
+            INITIAL_LOCATION = location;
+        }
+        
+        
+        /** Create the dialog */
+        protected JDialog createDialog( final java.awt.Component parent ) throws java.awt.HeadlessException {
+            final JDialog dialog = super.createDialog( parent );
+            dialog.setLocation( INITIAL_LOCATION );
+            
+            dialog.addComponentListener( new java.awt.event.ComponentAdapter() {
+                public void componentMoved( final java.awt.event.ComponentEvent event ) {
+                    setNextDocumentOpenLocation( dialog.getLocationOnScreen() );
+                }
+            });
+            
+            return dialog;
+        }
+    }
+}
+
+
+
+
+/** constainer of file versions info */
+class FileVersionInfo {
+    final private String BASE_NAME;
+    final private File CURRENT_FOLDER;
+    final private Date TIMESTAMP;
+    final private File SOURCE_FILE;
+    
+    /** Constructor */
+    public FileVersionInfo( final File sourceFile, final File defaultFolder, final Date timestamp ) {
+        TIMESTAMP = timestamp;
+        SOURCE_FILE = sourceFile;
+        
+        if ( sourceFile.exists() && sourceFile.canRead() ) {
+            BASE_NAME = getBaseNameStrippingTimestamp( sourceFile );
+            if ( defaultFolder != null && defaultFolder.exists() ) {
+                final File versionsFolder = new File( defaultFolder, ".versions" );
+                final File baseFolder = new File( versionsFolder, BASE_NAME );
+                
+                final String yearString = new java.text.SimpleDateFormat( "yyyy" ).format( timestamp );
+                CURRENT_FOLDER = new File( baseFolder, yearString );
+            }
+            else {
+                CURRENT_FOLDER = null;
+            }
+        }
+        else {
+            BASE_NAME = null;
+            CURRENT_FOLDER = null;
+        }
+    }
+    
+    
+    /** get the source file */
+    public File getSourceFile() {
+        return SOURCE_FILE;
+    }
+    
+    
+    /** versions base name for the source file */
+    public String getBaseName() {
+        return BASE_NAME;
+    }
+    
+    
+    /** current folder to hold the latest version */
+    public File getCurrentFolder() {
+        return CURRENT_FOLDER;
+    }
+    
+    
+    /** get the timestamp */
+    public Date getTimestamp() {
+        return TIMESTAMP;
+    }
+    
+    
+    /** Get the base name of a file stripping timestamp tags if any */
+    private String getBaseNameStrippingTimestamp( final File file ) {
+        return file.getName().replaceFirst( "_@.*@", "" );
     }
 }

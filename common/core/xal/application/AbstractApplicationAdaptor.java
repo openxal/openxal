@@ -53,6 +53,19 @@ abstract public class AbstractApplicationAdaptor implements ApplicationListener 
      */
     abstract public String[] writableDocumentTypes();
     
+    
+    /** Determine whether this application can open documents */
+    final protected boolean canOpenDocuments() {
+        final String[] documentTypes = readableDocumentTypes();
+        return documentTypes != null && documentTypes.length > 0;
+    }
+    
+    
+    /** Indicates whether the welcome dialog should be displayed at launch. By default, this returns true if the application can open documents. */
+    protected boolean showsWelcomeDialogAtLaunch() {
+        return canOpenDocuments();
+    }
+    
 	
     /**
 	 * Generate a new empty document of the specified type.

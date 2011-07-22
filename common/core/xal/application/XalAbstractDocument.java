@@ -210,11 +210,7 @@ abstract class XalAbstractDocument implements Pageable {
 	 * @return file name for a new file
 	 */
 	protected String getNewFileName() {
-		final String applicationName = Application.getApp().getApplicationAdaptor().applicationName();
-		final Date now = new Date();
-		final String baseName = getNewFileNamePrefix().replace( " ", "" ) + "_" + new SimpleDateFormat("yyyyMMdd'T'HHmmss").format( now );
-		
-		return getNewDocumentName( baseName );
+		return getNewDocumentName( "Untitled" );
 	}
 	
 	
@@ -321,16 +317,22 @@ abstract class XalAbstractDocument implements Pageable {
 	 * Dispose of custom document resources.  Subclasses should override this method
 	 * to provide custom disposal of resources.  The default implementation does nothing.
 	 */
-	protected void freeCustomResources() {
-	}
+	protected void freeCustomResources() {}
     
     
     /**
 	 * Called when the document will be closed.  The default implementation does nothing.
      * Subclasses should override this method if they need to handle this event.
      */
-    protected void willClose() {
-    }
+    protected void willClose() {}
+    
+    
+    /** Hook indicating that the window will be opened. Called after the window is created but before it is displayed by the document. */
+    protected void windowWillOpen() {}
+    
+    
+    /** Hook indicating that the window was opened. */
+    protected void windowOpened() {}
     
     
     /**
@@ -351,12 +353,12 @@ abstract class XalAbstractDocument implements Pageable {
 	}
     
     
-    /**
-	 * Make this document's window visible.
-     */
+    /** Make this document's window visible. */
     public void showDocument() {
         initMainWindow();
+        windowWillOpen();
         getDocumentView().showWindow();
+        windowOpened();
     }
     
     

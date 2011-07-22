@@ -78,7 +78,12 @@ public class FrameApplication extends Application implements XalDocumentListener
 					_noticeProxy.applicationWillOpenInitialDocuments();
 
 					if ( urls == null || urls.length == 0 ) {
-						newDocument();
+                        if ( showsWelcomeDialogAtLaunch() ) {
+                            showWelcomeDialog();
+                        }
+                        else {
+                            newDocument();
+                        }
 					}
 					else {
 						for ( int index = 0 ; index < urls.length ; index++ ) {
@@ -124,6 +129,7 @@ public class FrameApplication extends Application implements XalDocumentListener
 	
     /** Create and open a new empty document. */
     protected void newDocument() {
+        updateNextDocumentOpenLocation();
 		newDocument("");
     }
 	
@@ -171,16 +177,11 @@ public class FrameApplication extends Application implements XalDocumentListener
     
     /** Handle the "Close All" action by closing all open documents and opening a new empty document. */
     protected void closeAllDocuments() {
-        LinkedList docList = new LinkedList( _openDocuments );
-        ListIterator iterator = docList.listIterator();
-        
 		try {
 			retainApp();
-			while( iterator.hasNext() ) {
-				XalAbstractDocument document = (XalAbstractDocument)iterator.next();
-				closeDocument( document );
-			}
-			newDocument();
+            updateNextDocumentOpenLocation();
+            super.closeAllDocuments();
+            showWelcomeDialog();
 		}
 		finally {
 			releaseApp();

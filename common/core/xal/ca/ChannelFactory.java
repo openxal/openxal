@@ -132,4 +132,8 @@ abstract public class ChannelFactory {
     static protected ChannelFactory newFactory() {
         return new xal.jca.JcaChannelFactory();
     }
+    
+    
+    /** Print information about this factory */
+    abstract public void printInfo();
 }
