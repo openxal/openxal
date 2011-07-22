@@ -104,6 +104,16 @@ public class HardwareTree {
             }
             
             
+            
+            // Check if position is already in location list (w/in tolerance) 
+            for (double dblSpLoc : lstLocs) {
+            
+                Interval    ivlSpPos = Interval.createFromMidpoint(dblSpLoc, DBL_TOL_POS);
+                
+                if (ivlSpPos.membership(dblPos))
+                    return;
+            }
+            
             // Add the new position to the list of split locations
             lstLocs.add(dblPos);
         }
@@ -253,7 +263,7 @@ public class HardwareTree {
 
         // Build association tree
         this.buildTree(this.nodeRoot, this.smfRoot);
-        this.splitHardware(this.nodeRoot, this.locDivs);
+        this.generateSplitLocations(this.nodeRoot, this.locDivs);
         
 //        this.applyDriftSpaces(0, nodeRoot);
     }
@@ -500,7 +510,7 @@ public class HardwareTree {
 //      * @deprecated Currently this method does not work.  I'm working on
 //      *             another version.  Let's hope.
       */
-     private void splitHardware(TreeNode nodeParent, SplitLocations locSplit) 
+     private void generateSplitLocations(TreeNode nodeParent, SplitLocations locSplit) 
          throws GenerationException 
      {
 
@@ -511,8 +521,8 @@ public class HardwareTree {
 
              // If this child also has children we need to process them
              //     This is done recursively
-             if ( nodeChild.getChildCount() > 0 )
-                  this.splitHardware(nodeChild, locSplit);
+             if ( nodeChild.hasChildren() )
+                  this.generateSplitLocations(nodeChild, locSplit);
 
 
              // Ignore non-hardware nodes
@@ -563,6 +573,26 @@ public class HardwareTree {
      }
 
 
+     private void splitHardwareNodes(TreeNode nodeParent, SplitLocations locSplit) {
+         
+         for (TreeNode nodeChild : nodeParent.getChildren()) {
+             
+             // If this child also has children we need to process them
+             //     This is done recursively
+             if ( nodeChild.hasChildren() )
+                  this.splitHardwareNodes(nodeChild, locSplit);
+
+
+             // Ignore non-hardware nodes
+             if ( !(nodeChild instanceof HardwareNode) )
+                 continue;
+
+             HardwareNode                     hwnChild = (HardwareNode)nodeChild;
+             AcceleratorNode                  smfChild = hwnChild.getHardwareRef();
+             Class<? extends AcceleratorNode> clsChild = smfChild.getClass();
+             
+         }
+     }
      
      /**
       * <p>

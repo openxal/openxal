@@ -66,7 +66,7 @@ public class IdealRfGap extends ThinElement implements IRfGap {
     
 
 //	/**
-//	 * flag to calclulate Emmittance Growth factor (from Trace3D)
+//	 * flag to calculate Emittance Growth factor (from Trace3D)
 //	 */
 //	private static final boolean calcPhaseSpread = true;
  
@@ -106,11 +106,11 @@ public class IdealRfGap extends ThinElement implements IRfGap {
     static private double upstreamExitPhase = 0.;
     
     /** the time the probe leaves the upstream gap. Used to 
-    ^ calculaate the phasew advance when gaps hace drifts between them.
+    * calculate the phasew advance when gaps have drifts between them.
     */
     static private double upstreamExitTime = 0.;   
     
-    /** the seperation of the gap center from the cell center (m) */
+    /** the separation of the gap center from the cell center (m) */
     private double gapOffset = 0.;
     
     /** the on axis accelerating field (V) */

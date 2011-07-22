@@ -179,6 +179,25 @@ public abstract class TreeNode implements Comparable<TreeNode> {
     public int      getChildCount() {
         return this.getChildren().size();
     }
+    
+    /**
+     * <p>
+     * Convenience method for determining whether or not the tree node
+     * has children.  We simply execute the statement
+     * <br/>
+     * <br/>
+     * &nbsp; &nbsp;  return {@link #getChildCount()} > 0;
+     * </p> 
+     *
+     * @return  <code>true</code> if this node has child nodes,
+     *          <code>false</code> if none
+     *
+     * @author Christopher K. Allen
+     * @since  Jul 22, 2011
+     */
+    public boolean  hasChildren() {
+        return (this.getChildCount() > 0);
+    }
 
     
     
