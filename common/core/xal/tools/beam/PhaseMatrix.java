@@ -90,14 +90,14 @@ public class PhaseMatrix implements IArchive, java.io.Serializable {
     
     
     /** matrix element parsing format - fixed */
-    final static private DecimalFormat FIXED_FORMAT = new DecimalFormat("####.########");
+    final static private DecimalFormat FIXED_FORMAT = new DecimalFormat("####.########"); //$NON-NLS-1$
     
     /** matrix element parsing format - scientific */
-    final static private DecimalFormat SCI_FORMAT = new DecimalFormat("0.00000000E00");
+    final static private DecimalFormat SCI_FORMAT = new DecimalFormat("0.00000000E00"); //$NON-NLS-1$
     
     
     /** attribute marker for data */
-    public static final String     ATTR_DATA   = "values";
+    public static final String     ATTR_DATA   = "values"; //$NON-NLS-1$
     
     
     
@@ -180,20 +180,26 @@ public class PhaseMatrix implements IArchive, java.io.Serializable {
     }
       
     /**
+     * <p>
      * Compute the rotation matrix in phase space that is essentially the 
-     * cartesian product of the given rotation matrix in SO(3).  That is,
+     * Cartesian product of the given rotation matrix in SO(3).  That is,
      * if the given argument is R, the returned matrix M is the M = RxRxI embedding
      * into homogeneous phase space R6x{1} and, thus, M is in SO(6) contained
      * in SO(7) contained in R6x{1}.   
-     *
+     * </p>
+     * <p>
      * Viewing phase-space as a 6D manifold built as the tangent bundle over
      * R3 configuration space, then the fibers of 3D configuration space at a 
-     * point (x,y,z) are represented by the cartesian planes (x',y',z').  The returned
+     * point (x,y,z) are represented by the Cartesian planes (x',y',z').  The returned
      * phase matrix rotates these fibers in the same manner as their base point (x,y,z).  
-     * 
+     * </p>
+     * <p>
      * This is a convenience method to build the above rotation matrix in SO(7).
+     * </p>
      * 
-     * @return  rotation matrix in S0(7) which is direct product of rotations in S0(3) 
+     * @param matSO3    a rotation matrix in three dimensions, i.e., a member of <i>SO</i>(3) &sub; <b>R</b><sup>3&times;3</sup> 
+     * 
+     * @return  rotation matrix in <i>S0</i>(7) which is direct product of rotations in <i>S0</i>(3) 
      */
     public static PhaseMatrix  rotationProduct(R3x3 matSO3)  {
 
@@ -225,6 +231,8 @@ public class PhaseMatrix implements IArchive, java.io.Serializable {
      *  column (ala FORTRAN).
      *
      *  @param  strTokens   token vector of 7x7=49 numeric values
+     *  
+     *  @return             phase matrix with elements initialized by the given numeric tokens 
      *
      *  @exception  IllegalArgumentException    wrong number of token strings
      *  @exception  NumberFormatException       bad number format, unparseable
@@ -327,6 +335,8 @@ public class PhaseMatrix implements IArchive, java.io.Serializable {
      *  @param  i       row index
      *  @param  j       column index
      *
+     *  @return         the element value at the given index
+     *  
      *  @exception  ArrayIndexOutOfBoundsException  index must be in {0,1,2,3,4,5,6}
      */
     public double getElem(int i, int j) 
@@ -341,6 +351,7 @@ public class PhaseMatrix implements IArchive, java.io.Serializable {
      *  @param  iRow    row index
      *  @param  iCol    column index
      *
+     *  @return         the matrix element value at the given index
      */
     public double getElem(PhaseIndexHom iRow, PhaseIndexHom iCol) 
     {
@@ -370,11 +381,11 @@ public class PhaseMatrix implements IArchive, java.io.Serializable {
      */
     
     /**
-     *  Parsing assigment - set the <code>PhaseMatrix</code> value
+     *  Parsing assignment - set the <code>PhaseMatrix</code> value
      *  according to a token string of element values.  
      *
      *  The token string argument is assumed to be one-dimensional and packed by
-     *  column (ala FORTRAN).
+     *  column (aka FORTRAN).
      *
      *  @param  strValues   token vector of 7x7=49 numeric values
      *
@@ -382,14 +393,14 @@ public class PhaseMatrix implements IArchive, java.io.Serializable {
      *  @exception  NumberFormatException       bad number format, unparseable
      */
     public void setMatrix(String strValues)
-        throws DataFormatException, IllegalArgumentException
+        throws NumberFormatException, IllegalArgumentException
     {
         
         // Error check the number of token strings
-        StringTokenizer     tokArgs = new StringTokenizer(strValues, " ,()[]{}");
+        StringTokenizer     tokArgs = new StringTokenizer(strValues, " ,()[]{}"); //$NON-NLS-1$
         
         if (tokArgs.countTokens() != 49)
-            throw new IllegalArgumentException("PhaseMatrix#setMatrix - wrong number of token strings: " + strValues);
+            throw new IllegalArgumentException("PhaseMatrix#setMatrix - wrong number of token strings: " + strValues); //$NON-NLS-1$
         
         
         // Extract initial phase coordinate values
@@ -537,6 +548,9 @@ public class PhaseMatrix implements IArchive, java.io.Serializable {
      * Compute and return the betatron phase advance for a particle produced
      * by this matrix when used as a transfer matrix.
      * 
+     * @param   twissOld    Twiss parameter before application of matrix
+     * @param   twissNew    Twiss parameter after application of matrix
+     * 
      * @return  vector (sigx,sigy,sigz) of phase advances in <b>radians</b>
      */
     public R3   compPhaseAdvance(Twiss[] twissOld, Twiss[] twissNew)  {
@@ -620,6 +634,8 @@ public class PhaseMatrix implements IArchive, java.io.Serializable {
     * matrix and <code>b</code> is the 6th column excluding the longitudinal row element.  The reason for this is that the
     * fixed point is defined by the point for which the transfer map maps to the same point.  This is
     * <code>M * v = v</code>.  
+    * 
+    * @param    gamma   I think it's the relativistic factor (CKA)
     * 
     * @return the dispersion vector
     */
@@ -972,9 +988,9 @@ public class PhaseMatrix implements IArchive, java.io.Serializable {
         StringBuffer strBuf = new StringBuffer(size);
         
         synchronized(strBuf) { // get lock once instead of once per append
-            strBuf.append("{ ");
+            strBuf.append("{ "); //$NON-NLS-1$
             for (int i=0; i<DIM; i++) {
-                strBuf.append("{ ");
+                strBuf.append("{ "); //$NON-NLS-1$
                 for (int j=0; j<DIM; j++) {
 //                  strBuf.append(this.getElem(i,j));
                     // gov.sns.tools.text.DoubleToString.append(strBuf, this.getElem(i,j)); // DoubleToString is much more efficient that jdk
@@ -984,11 +1000,11 @@ public class PhaseMatrix implements IArchive, java.io.Serializable {
                         strBuf.append( FIXED_FORMAT.format( num ) );
                     else
                         strBuf.append( SCI_FORMAT.format( num ) );
-                    strBuf.append(" ");
+                    strBuf.append(" "); //$NON-NLS-1$
                 }
-                strBuf.append("}");
+                strBuf.append("}"); //$NON-NLS-1$
             }
-            strBuf.append(" }");
+            strBuf.append(" }"); //$NON-NLS-1$
         }
         
         return strBuf.toString();
@@ -1012,7 +1028,7 @@ public class PhaseMatrix implements IArchive, java.io.Serializable {
      */
     public void print(PrintWriter os)   {
 //        m_matPhase.print(os, DIM, DIM);
-        m_matPhase.print(os, new DecimalFormat("0.#####E0"), DIM);
+        m_matPhase.print(os, new DecimalFormat("0.#####E0"), DIM); //$NON-NLS-1$
     }
     
     
