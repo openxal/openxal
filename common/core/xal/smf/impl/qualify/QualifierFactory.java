@@ -39,7 +39,9 @@ public class QualifierFactory {
 	static public TypeQualifier getSoftTypeQualifier( final String softType ) {
 		return new TypeQualifier() {
 			public boolean match( final AcceleratorNode node ) {
-				return node.getSoftType() == softType;
+                final String nodeSoftType = node.getSoftType();
+                // if neither soft type is null, then compare strings for equality for best reliability otherwise compare pointers
+                return nodeSoftType != null && softType != null ? nodeSoftType.equals( softType ) : nodeSoftType == softType;
 			}
 		};
 	}
