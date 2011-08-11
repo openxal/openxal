@@ -187,7 +187,10 @@ abstract public class AcceleratorDocument extends XalDocument {
 		else {
 			OpticsSwitcher switcher = new OpticsSwitcher(getAcceleratorWindow(), true);
 			switcher.showNearOwner();
-			if ( switcher.getDefaultOpticsPath() != null ) {
+            if ( switcher.isCanceled() ) {
+                return false;
+            }
+			else if ( switcher.getDefaultOpticsPath() != null ) {
 				return loadDefaultAccelerator();
 			}
 		}
