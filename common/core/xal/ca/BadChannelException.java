@@ -14,6 +14,8 @@ package xal.ca;
 
 
 public class BadChannelException extends ChannelException {
+    /** required for serializable objects */
+    private static final long serialVersionUID = 1L;
 
     /**
      * Creates new <code>BadChannelException</code> without detail message.

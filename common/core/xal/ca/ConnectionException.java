@@ -10,6 +10,9 @@ package xal.ca;
  * @author  CKAllen
  */
 public class ConnectionException extends ChannelException {
+    /** required for serializable objects */
+    private static final long serialVersionUID = 1L;
+    
     private Channel _channel;
 
     /**

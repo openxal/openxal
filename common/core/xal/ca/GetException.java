@@ -10,7 +10,10 @@ package xal.ca;
  * @author  CKAllen
  */
 public class GetException extends ChannelException {
+    /** required for serializable objects */
+    private static final long serialVersionUID = 1L;
 
+    
     /**
      * Creates new <code>GetException</code> without detail message.
      */

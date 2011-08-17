@@ -10,6 +10,8 @@ package xal.ca;
  * @author  CKAllen
  */
 public class MonitorException extends ChannelException {
+    /** required for serializable objects */
+    private static final long serialVersionUID = 1L;
 
     /**
      * Creates new <code>MonitorException</code> without detail message.
