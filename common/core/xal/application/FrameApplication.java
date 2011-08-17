@@ -93,7 +93,7 @@ public class FrameApplication extends Application implements XalDocumentListener
 					
 					// if multiple documents are opened then cascade them
 					if ( _openDocuments.size() > 1 ) {
-						cascadeWindowsAbout( (XalAbstractDocument)_openDocuments.get(0) );
+						cascadeWindowsAbout( _openDocuments.get(0) );
 					}					
 				}
 			});

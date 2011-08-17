@@ -77,7 +77,7 @@ public class Commander {
 		_buttonModelMap = new HashMap();
 		
 		loadCustomDocumentBundle( document );		// document additions
-		registerCustomCommands( (XalInternalDocument)document );
+		registerCustomCommands( document );
     }
     
     

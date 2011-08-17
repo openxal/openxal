@@ -47,7 +47,7 @@ abstract public class XalDocument extends XalAbstractDocument {
     /** Register this document as a source of DocumentListener events. */
     protected void registerEvents() {
 		super.registerEvents();
-        documentListenerProxy = (XalDocumentListener)_messageCenter.registerSource(this, XalDocumentListener.class);
+        documentListenerProxy = _messageCenter.registerSource(this, XalDocumentListener.class);
     }
     
     

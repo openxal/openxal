@@ -379,7 +379,7 @@ abstract public class Application {
      */
     protected void registerEvents() {
         _messageCenter = new MessageCenter();
-        _noticeProxy = (ApplicationListener)_messageCenter.registerSource( this, ApplicationListener.class );
+        _noticeProxy = _messageCenter.registerSource( this, ApplicationListener.class );
         
         addApplicationListener( _applicationAdaptor );
     }
