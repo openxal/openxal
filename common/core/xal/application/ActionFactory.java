@@ -46,7 +46,9 @@ public class ActionFactory {
      * @return An action that creates a new document
      */
     static Action newAction() {
-        Action action = new AbstractAction() {
+        final Action action = new AbstractAction() {
+            private static final long serialVersionUID = 1L;
+            
             public void actionPerformed( final ActionEvent event ) {
                 Application.getApp().newDocument();
             }
@@ -65,7 +67,9 @@ public class ActionFactory {
      * @return An action that creates a new document from a user selected template
      */
     static Action newDocumentFromTemplateAction() {
-        Action action = new AbstractAction() {
+        final Action action = new AbstractAction() {
+            private static final long serialVersionUID = 1L;
+            
             public void actionPerformed( final ActionEvent event ) {
                 Application.getApp().newDocumentFromTemplate();
             }
@@ -84,7 +88,9 @@ public class ActionFactory {
      * @return An action that produces a new document of the appropriate type.
      */
     static Action newDocumentByTypeAction() {
-        Action action = new AbstractAction() {
+        final Action action = new AbstractAction() {
+            private static final long serialVersionUID = 1L;
+            
             public void actionPerformed( final ActionEvent event ) {
 				final JMenuItem menuItem = (JMenuItem)event.getSource();
                 Application.getApp().newDocument( menuItem.getText() );
@@ -105,7 +111,9 @@ public class ActionFactory {
      * @return An action that opens a document
      */
     static Action openDocumentAction() {
-        Action action = new AbstractAction( "open-document" ) {
+        final Action action = new AbstractAction( "open-document" ) {
+            private static final long serialVersionUID = 1L;
+            
             public void actionPerformed( final ActionEvent event ) {
                 Application.getApp().openDocument();
             }
@@ -130,7 +138,9 @@ public class ActionFactory {
      * @see #openRecentHandler
      */
     static protected Action openURLAction( final String urlSpec ) {
-        Action action = new AbstractAction( "open-file" ) {
+        final Action action = new AbstractAction( "open-file" ) {
+            private static final long serialVersionUID = 1L;
+            
             public void actionPerformed( final ActionEvent event ) {
                 Application.getApp().openURL( urlSpec );
             }
@@ -172,6 +182,8 @@ public class ActionFactory {
 				
                 final JMenuItem clearItem = new JMenuItem( "Clear" );
                 clearItem.setAction( new AbstractAction() {
+                    private static final long serialVersionUID = 1L;
+                    
                     public void actionPerformed( final ActionEvent event ) {
                         Application.getApp().clearRecentItems();
                     }
@@ -200,6 +212,8 @@ public class ActionFactory {
      */
     static Action openDocumentVersionAction( final XalDocument document ) {
         final Action action = new AbstractAction( "open-version" ) {
+            private static final long serialVersionUID = 1L;
+            
             public void actionPerformed( final ActionEvent event ) {
                 Application.getApp().openDocumentVersion( document );
             }
@@ -229,8 +243,10 @@ public class ActionFactory {
      * @param document The document to close
      * @return An action that closes the document
      */
-    static Action closeDocumentAction( final XalAbstractDocument document ) {
-        Action action = new AbstractAction( "close-document" ) {
+    static Action closeDocumentAction( final XalAbstractDocument document ) {        
+        final Action action = new AbstractAction( "close-document" ) {
+            private static final long serialVersionUID = 1L;
+            
             public void actionPerformed( final ActionEvent event ) {
                 Application.getApp().closeDocument( document );
             }
@@ -250,6 +266,8 @@ public class ActionFactory {
      */
     static Action closeAllDocumentsAction() {
         final Action action = new AbstractAction( "close-all-documents" ) {
+            private static final long serialVersionUID = 1L;
+            
             public void actionPerformed( final ActionEvent event ) {
                 Application.getApp().closeAllDocuments();
             }
@@ -272,6 +290,8 @@ public class ActionFactory {
      */
     static Action saveDocumentAction( final XalDocument document ) {
         final Action action = new AbstractAction( "save-document" ) {
+            private static final long serialVersionUID = 1L;
+            
             public void actionPerformed( final ActionEvent event ) {
                 Application.getApp().saveDocument( document );
             }
@@ -307,8 +327,10 @@ public class ActionFactory {
      * @return An action that saves a document
      * @see Application#saveDocument
      */
-    static Action saveDocumentAction( final XalInternalDocument document ) {
+    static Action saveDocumentAction( final XalInternalDocument document ) {        
         final Action action = new AbstractAction( "save-document" ) {
+            private static final long serialVersionUID = 1L;
+            
             public void actionPerformed( final ActionEvent event ) {
                 Application.getApp().saveDocument( document );
             }
@@ -345,7 +367,9 @@ public class ActionFactory {
      * @see Application#saveDocument
      */
     static Action saveAsDocumentAction( final XalAbstractDocument document ) {
-        Action action = new AbstractAction( "save-as-document" ) {
+        final Action action = new AbstractAction( "save-as-document" ) {
+            private static final long serialVersionUID = 1L;
+            
             public void actionPerformed( final ActionEvent event ) {
                 Application.getApp().saveAsDocument( document );
             }
@@ -363,7 +387,9 @@ public class ActionFactory {
      * @see #saveDocumentAction
      */
     static Action saveAllDocumentsAction() {
-        Action action = new AbstractAction( "save-all-documents" ) {
+        final Action action = new AbstractAction( "save-all-documents" ) {
+            private static final long serialVersionUID = 1L;
+            
             public void actionPerformed( final ActionEvent event ) {
                 Application.getApp().saveAllDocuments();
             }
@@ -383,6 +409,8 @@ public class ActionFactory {
      */
     static Action revertToSavedAction( final XalDocument document ) {
         final Action action = new AbstractAction( "revert-to-saved" ) {
+            private static final long serialVersionUID = 1L;
+            
             public void actionPerformed( final ActionEvent event ) {
                 Application.getApp().revertToSaved( document );
             }
@@ -418,6 +446,8 @@ public class ActionFactory {
      */
     static Action revertToSavedAction( final XalInternalDocument document ) {
         final Action action = new AbstractAction( "revert-to-saved" ) {
+            private static final long serialVersionUID = 1L;
+            
             public void actionPerformed( final ActionEvent event ) {
                 Application.getApp().revertToSaved( document );
             }
@@ -454,7 +484,9 @@ public class ActionFactory {
      * @return An action for showing a standard page-setup dialog box
      */
     static Action printAction( final XalAbstractDocument document ) {
-        Action action = new AbstractAction( "print-document" ) {
+        final Action action = new AbstractAction( "print-document" ) {
+            private static final long serialVersionUID = 1L;
+            
             public void actionPerformed( final ActionEvent event ) {
                 PrintManager.defaultManager().print( document );
             }
@@ -471,13 +503,13 @@ public class ActionFactory {
      * @return An action for showing a standard page-setup dialog box
      */
     static Action pageSetupAction() {
-        Action action = new AbstractAction( "page-setup" ) {
+        return new AbstractAction( "page-setup" ) {
+            private static final long serialVersionUID = 1L;
+            
             public void actionPerformed( final ActionEvent event ) {
                 PrintManager.defaultManager().pageSetup();
             }
         };
-        
-        return action;
     }
     
     
@@ -486,7 +518,9 @@ public class ActionFactory {
      * @return An action for quitting the application
      */
     static Action quitAction() {
-        Action action = new AbstractAction( "quit-application" ) {
+        final Action action = new AbstractAction( "quit-application" ) {
+            private static final long serialVersionUID = 1L;
+            
             public void actionPerformed( final ActionEvent event ) {
                 Application.getApp().quit();
             }
@@ -510,6 +544,8 @@ public class ActionFactory {
 		final ComponentFocusTracker focusTracker = new ComponentFocusTracker();
 		
         final Action action = new AbstractAction( "copy-to-clipboard" ) {
+            private static final long serialVersionUID = 1L;
+            
             public void actionPerformed( final ActionEvent event ) {
 				final TransferHandler transferHandler = focusTracker.getLastTransferHandler();
 				if ( transferHandler != null ) {
@@ -563,7 +599,9 @@ public class ActionFactory {
 	static Action cutAction() {
  		final ComponentFocusTracker focusTracker = new ComponentFocusTracker();
 		
-       final Action action = new AbstractAction( "cut-to-clipboard" ) {
+        final Action action = new AbstractAction( "cut-to-clipboard" ) {
+           private static final long serialVersionUID = 1L;
+           
             public void actionPerformed( final ActionEvent event ) {
 				final TransferHandler transferHandler = focusTracker.getLastTransferHandler();
 				if ( transferHandler != null ) {
@@ -618,12 +656,14 @@ public class ActionFactory {
 	   final ComponentFocusTracker focusTracker = new ComponentFocusTracker();
 		
        final Action action = new AbstractAction( "paste-from-clipboard" ) {
-            public void actionPerformed( final ActionEvent event ) {
-				final TransferHandler transferHandler = focusTracker.getLastTransferHandler();
-				if ( transferHandler != null ) {
-					transferHandler.importData( focusTracker.getLastFocusedComponent(), Toolkit.getDefaultToolkit().getSystemClipboard().getContents( this ) );
-				}
-            }
+           private static final long serialVersionUID = 1L;
+           
+           public void actionPerformed( final ActionEvent event ) {
+               final TransferHandler transferHandler = focusTracker.getLastTransferHandler();
+               if ( transferHandler != null ) {
+                   transferHandler.importData( focusTracker.getLastFocusedComponent(), Toolkit.getDefaultToolkit().getSystemClipboard().getContents( this ) );
+               }
+           }
         };
 		
 		action.putValue( Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke( KeyEvent.VK_V, ActionFactory.MENU_KEY_SHORTCUT_MASK ) );
@@ -661,7 +701,9 @@ public class ActionFactory {
      * @return An action for editing a preference panel
      */
     static Action editPreferencesAction( final XalDocument document ) {
-        Action action = new AbstractAction( "edit-preferences" ) {
+        final Action action = new AbstractAction( "edit-preferences" ) {
+            private static final long serialVersionUID = 1L;
+            
             public void actionPerformed( final ActionEvent event ) {
                 ((ApplicationAdaptor)Application.getAdaptor()).editPreferences( document );
             }
@@ -683,7 +725,9 @@ public class ActionFactory {
      * @return An action for editing a preference panel
      */
     static Action editPreferencesAction( final XalInternalDocument document ) {
-        Action action = new AbstractAction( "edit-preferences" ) {
+        final Action action = new AbstractAction( "edit-preferences" ) {
+            private static final long serialVersionUID = 1L;
+            
             public void actionPerformed( final ActionEvent event ) {
                 ((DesktopApplicationAdaptor)Application.getAdaptor()).editPreferences( document );
             }
@@ -710,6 +754,8 @@ public class ActionFactory {
      */
     static Action showConsoleAction() {
         return new AbstractAction( "show-console" ) {
+            private static final long serialVersionUID = 1L;
+            
             public void actionPerformed( final ActionEvent event ) {
                 Console.showNear( Application.getActiveWindow() );
             }
@@ -723,6 +769,8 @@ public class ActionFactory {
      */
     static Action showLoggerAction() {
         return new AbstractAction( "show-logger" ) {
+            private static final long serialVersionUID = 1L;
+            
             public void actionPerformed( final ActionEvent event ) {
                 LoggerWindow.getDefault().showFirstTimeNear( Application.getActiveWindow() );
             }
@@ -775,13 +823,13 @@ public class ActionFactory {
      * @see #documentsHandler
      */
     static protected Action showDocumentAction( final XalAbstractDocument document ) {
-        Action action = new AbstractAction( "show-document" ) {
+        return new AbstractAction( "show-document" ) {
+            private static final long serialVersionUID = 1L;
+            
             public void actionPerformed( final ActionEvent event ) {
                 document.showDocument();
             }
         };
-        
-        return action;        
     }
     
 
@@ -792,13 +840,13 @@ public class ActionFactory {
      * @return An action that cascades all windows in the application 
      */
     static protected Action cascadeWindowsAction( final XalAbstractDocument document ) {
-        Action action = new AbstractAction( "cascade-windows" ) {
+        return new AbstractAction( "cascade-windows" ) {
+            private static final long serialVersionUID = 1L;
+            
             public void actionPerformed( final ActionEvent event ) {
                 Application.getApp().cascadeWindowsAbout( document );
             }
         };
-        
-        return action;        
     }
     
 
@@ -807,13 +855,13 @@ public class ActionFactory {
      * @return An action that displays the main window for each open document
      */
     static Action showAllWindowsAction() {
-        Action action = new AbstractAction( "show-all-windows" ) {
+        return new AbstractAction( "show-all-windows" ) {
+            private static final long serialVersionUID = 1L;
+            
             public void actionPerformed( final ActionEvent event ) {
                 Application.getApp().showAllWindows();
             }
         };
-        
-        return action;        
     }
     
     
@@ -822,7 +870,9 @@ public class ActionFactory {
      * @return An action that hides all windows.
      */
     static Action hideAllWindowsAction() {
-        Action action = new AbstractAction( "hide-all-windows" ) {
+        final Action action = new AbstractAction( "hide-all-windows" ) {
+            private static final long serialVersionUID = 1L;
+            
             public void actionPerformed( final ActionEvent event ) {
                 Application.getApp().hideAllWindows();
             }
@@ -841,13 +891,13 @@ public class ActionFactory {
      * @return An action that captures the main window as a PNG image
      */
     static public Action captureWindowAsImageAction( final XalAbstractDocument document ) {
-        Action action = new AbstractAction( "capture-as-image" ) {
+        return new AbstractAction( "capture-as-image" ) {
+            private static final long serialVersionUID = 1L;
+            
             public void actionPerformed( final ActionEvent event ) {
                 document.getDocumentView().captureAsImage();
             }
         };
-        
-        return action;        
     }
     
     
@@ -859,7 +909,9 @@ public class ActionFactory {
      * @return An action that shows the about box
      */
     static Action showAboutBoxAction() {
-        Action action = new AbstractAction( "show-about-box" ) {
+        final Action action = new AbstractAction( "show-about-box" ) {
+            private static final long serialVersionUID = 1L;
+            
             public void actionPerformed( final ActionEvent event ) {
                 Application.showAboutBox();
             }
@@ -876,7 +928,9 @@ public class ActionFactory {
      * @return An action that shows the help window
      */
     static Action showHelpWindow() {
-        Action action = new AbstractAction( "show-help-contents" ) {
+        final Action action = new AbstractAction( "show-help-contents" ) {
+            private static final long serialVersionUID = 1L;
+            
             public void actionPerformed( final ActionEvent event ) {
                 HelpWindow.showNear( Application.getActiveWindow() );
             }

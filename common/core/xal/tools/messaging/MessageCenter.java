@@ -16,6 +16,9 @@ import java.util.*;
  * @author  tap
  */
 public class MessageCenter implements java.io.Serializable {
+    /** required for serializable objects */
+    private static final long serialVersionUID = 1L;
+    
 	/** forward events on the invoking thread */
 	static final public int SYNCHRONOUS = 0;
 	
@@ -358,6 +361,8 @@ public class MessageCenter implements java.io.Serializable {
     
     /** Generic class for all MessageCenter related exceptions  */
     public class MessageCenterException extends java.lang.RuntimeException {
+        /** required for serializable objects */
+        private static final long serialVersionUID = 1L;
         
         /** Creates new MessageCenterException */
         public MessageCenterException() {
@@ -374,6 +379,8 @@ public class MessageCenter implements java.io.Serializable {
 
     /** Exception when an attempt is made to register a null source */
     public class NullTargetException extends MessageCenterException {
+        /** required for serializable objects */
+        private static final long serialVersionUID = 1L;
         
         /** Creates new NullSourceException */
         public NullTargetException(final Object source, final Class protocol) {
@@ -397,7 +404,9 @@ public class MessageCenter implements java.io.Serializable {
     
     /** Exception when an attempt is made to register a null source */
     public class NullSourceException extends MessageCenterException {
-        
+        /** required for serializable objects */
+        private static final long serialVersionUID = 1L;
+
         /** Creates new NullSourceException */
         public NullSourceException() {
             this( "Attempt to register a null source with MessageCenter: " + MessageCenter.this.name() );
@@ -413,7 +422,9 @@ public class MessageCenter implements java.io.Serializable {
     
     /** Exception when an attempt is made to register a target for a protocol not implemented by its class. */
     public class UnimplementedProtocolException extends MessageCenterException {
-		
+        /** required for serializable objects */
+        private static final long serialVersionUID = 1L;
+
         /** Creates new UnimplementedProtocolException */
         public UnimplementedProtocolException() {
             super();
