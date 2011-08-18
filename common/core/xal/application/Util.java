@@ -29,8 +29,8 @@ public class Util {
      * @return The map equivalent of the resource bundle
      * @throws java.util.MissingResourceException If the resource bundle cannot be found.
      */
-    static public Map loadResourceBundle( final String path ) throws MissingResourceException {
-        final Map infoMap = new HashMap();
+    static public Map<String,String> loadResourceBundle( final String path ) throws MissingResourceException {
+        final Map<String,String> infoMap = new HashMap<String,String>();
         final ResourceBundle bundle = ResourceBundle.getBundle( path );
         
         final Enumeration<String> keyEnum = bundle.getKeys();

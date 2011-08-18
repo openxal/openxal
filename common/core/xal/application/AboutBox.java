@@ -60,7 +60,7 @@ class AboutBox {
 	 * @return the generated message
      */
     private String generateMessage( final String infoSource ) {
-        Map appInfo = loadApplicationInfo( infoSource );
+        final Map<String,String> appInfo = loadApplicationInfo( infoSource );
         
         StringBuffer message = new StringBuffer( "<html>" );
         message.append( "<head>" );
@@ -118,8 +118,8 @@ class AboutBox {
      * @param appInfo The map containing keyed application information
      * @return The information
      */
-    private String getValue( final String key, final Map appInfo ) {
-        String value = (String)appInfo.get( key );
+    private String getValue( final String key, final Map<String,String> appInfo ) {
+        String value = appInfo.get( key );
         if ( value == null ) {
             value = "Unspecified";
         }
@@ -135,8 +135,8 @@ class AboutBox {
      * @param path Path to the source information.
      * @return The map containing the application information
      */
-    private Map loadApplicationInfo( final String path ) {
-        Map infoMap;
+    private Map<String,String> loadApplicationInfo( final String path ) {
+        Map<String,String> infoMap;
         
         try {
             infoMap = Util.loadResourceBundle( path );
@@ -147,7 +147,7 @@ class AboutBox {
             System.err.println( message );
             
             // substitute with default information
-            infoMap = new HashMap();
+            infoMap = new HashMap<String,String>();
             infoMap.put( "name", Application.getAdaptor().getClass().getName() );
         }
         
