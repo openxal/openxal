@@ -91,9 +91,8 @@ public class MacAdaptor {
 			catch ( InvocationTargetException exception ) {
 				exception.printStackTrace();
 			}
-			finally {
-				return null;
-			}
+            
+            return null;
 		}
 	}
 	
@@ -188,9 +187,8 @@ public class MacAdaptor {
 			catch ( InvocationTargetException exception ) {
 				exception.printStackTrace();
 			}
-			finally {
-				return null;
-			}
+            
+            return null;
 		}
 	}
 }
