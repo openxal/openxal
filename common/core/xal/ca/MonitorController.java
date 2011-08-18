@@ -54,7 +54,7 @@ public class MonitorController {
 		_eventLock = new Object();
 		_channel = channel;
 		_messageCenter = new MessageCenter();
-		_eventProxy = (MonitorEventListener)_messageCenter.registerSource( this, MonitorEventListener.class );
+		_eventProxy = _messageCenter.registerSource( this, MonitorEventListener.class );
 		_lastRecord = null;
 	}
 	

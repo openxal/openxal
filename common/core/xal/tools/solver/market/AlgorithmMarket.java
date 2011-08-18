@@ -59,7 +59,7 @@ public class AlgorithmMarket implements AlgorithmScheduleListener, SolutionJudge
 		_strategies = new ArrayList();
 		
 		_messageCenter = new MessageCenter("Algorithm Market");
-		_eventProxy = (AlgorithmMarketListener)_messageCenter.registerSource( this, AlgorithmMarketListener.class );
+		_eventProxy = _messageCenter.registerSource( this, AlgorithmMarketListener.class );
 		
 		setAlgorithmPool( pool );
 		setAlgorithmStrategies( strategies );

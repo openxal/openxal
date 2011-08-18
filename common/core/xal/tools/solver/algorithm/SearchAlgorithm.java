@@ -36,7 +36,7 @@ public abstract class SearchAlgorithm implements AlgorithmScheduleListener, Solu
 	/** Empty constructor. */
 	public SearchAlgorithm() {
 		_messageCenter = new MessageCenter( "Search Algorithm" );
-		_eventProxy = (SearchAlgorithmListener)_messageCenter.registerSource( this, SearchAlgorithmListener.class );
+		_eventProxy = _messageCenter.registerSource( this, SearchAlgorithmListener.class );
 	}
 	
 	

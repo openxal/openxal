@@ -47,7 +47,7 @@ public class BinAgent implements BinUpdate, StateNotice {
     /** Register events for this bin agent */
     synchronized public void registerEvents() {
         /** Register this bin agent as a poster of bin events */
-        binProxy = (BinListener)_localCenter.registerSource(this, BinListener.class);        
+        binProxy = _localCenter.registerSource( this, BinListener.class );
     }
     
     

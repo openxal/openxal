@@ -44,7 +44,7 @@ public class MonitorCache {
 		_latestRecord = null;
 		
 		_messageCenter = new MessageCenter( "Monitor Event Cache" );
-		_eventProxy = (IEventSinkValTime)_messageCenter.registerSource( this, IEventSinkValTime.class );
+		_eventProxy = _messageCenter.registerSource( this, IEventSinkValTime.class );
 		
 		_monitorEventHandler = new MonitorEventHandler();
 		_connectionHandler = new ConnectionEventHandler();

@@ -62,7 +62,7 @@ abstract public class Correlator {
         localCenter = new MessageCenter("Internal Correlator Messaging");
         
         /** register to broadcast changes of state */
-        stateProxy = (StateNotice)localCenter.registerSource(this, StateNotice.class);
+        stateProxy = localCenter.registerSource( this, StateNotice.class );
     }
     
     
@@ -394,7 +394,7 @@ abstract public class Correlator {
 		 */
 		public CorrelationPoster() {        
 			postCenter = new MessageCenter("Correlator Poster");      // external poster
-			postProxy = (CorrelationNotice)postCenter.registerSource(this, CorrelationNotice.class);
+			postProxy = postCenter.registerSource(this, CorrelationNotice.class);
 		}
 		
 		

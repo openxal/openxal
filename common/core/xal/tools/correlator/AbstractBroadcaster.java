@@ -38,7 +38,7 @@ abstract class AbstractBroadcaster implements BinListener, StateNotice {
         localCenter.registerTarget(this, BinListener.class);
         
         // register to broadcast correlations
-        correlationProxy = (CorrelationNotice)broadcastCenter.registerSource(this, CorrelationNotice.class);
+        correlationProxy = broadcastCenter.registerSource(this, CorrelationNotice.class);
     }
     
     

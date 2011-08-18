@@ -34,7 +34,7 @@ public abstract class SolutionJudge {
 	/** Creates a new instance of SolutionJudge */
 	public SolutionJudge() {
 		_messageCenter = new MessageCenter( "Solution Judge" );
-		_eventProxy = (SolutionJudgeListener)_messageCenter.registerSource( this, SolutionJudgeListener.class );
+		_eventProxy = _messageCenter.registerSource( this, SolutionJudgeListener.class );
 		reset();
 	}
 

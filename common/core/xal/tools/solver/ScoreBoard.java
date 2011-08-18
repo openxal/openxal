@@ -59,7 +59,7 @@ public class ScoreBoard implements AlgorithmScheduleListener, SolutionJudgeListe
 	 */
 	public ScoreBoard( final SolutionJudge solutionJudge ) {
 		_messageCenter = new MessageCenter( "Scoreboard" );
-		_eventProxy = (ScoreBoardListener)_messageCenter.registerSource( this, ScoreBoardListener.class );
+		_eventProxy = _messageCenter.registerSource( this, ScoreBoardListener.class );
 		
 		setSolutionJudge( solutionJudge );
 		reset();

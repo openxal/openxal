@@ -52,7 +52,7 @@ public class AlgorithmSchedule {
 	 */
 	public AlgorithmSchedule( final Solver solver, final AlgorithmMarket market, final Stopper stopper ) {
 		_messageCenter = new MessageCenter( "Algorithm Schedule" );
-		_eventProxy = (AlgorithmScheduleListener)_messageCenter.registerSource( this, AlgorithmScheduleListener.class );
+		_eventProxy = _messageCenter.registerSource( this, AlgorithmScheduleListener.class );
 		
 		_solver = solver;
 		_market = market;

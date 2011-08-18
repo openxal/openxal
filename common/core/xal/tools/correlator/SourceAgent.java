@@ -42,7 +42,7 @@ abstract public class SourceAgent implements StateNotice {
     
     
     private void registerEvents() {        
-        binUpdateProxy = (BinUpdate)localCenter.registerSource(this, BinUpdate.class);
+        binUpdateProxy = localCenter.registerSource(this, BinUpdate.class);
         localCenter.registerTarget(this, StateNotice.class);
     }
     

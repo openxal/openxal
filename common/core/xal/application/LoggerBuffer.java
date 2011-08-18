@@ -42,7 +42,7 @@ class LoggerBuffer extends Handler {
 	/** Constructor */
 	public LoggerBuffer() {
 		_messageCenter = new MessageCenter( "Logger Buffer" );
-		_eventProxy = (LoggerBufferListener)_messageCenter.registerSource( this, LoggerBufferListener.class );
+		_eventProxy = _messageCenter.registerSource( this, LoggerBufferListener.class );
 
 		_records = new ArrayList();
 	}

@@ -61,7 +61,7 @@ public class BrowserModel {
 	/** BrowserModel constructor  */
 	public BrowserModel() {
 		_messageCenter = new MessageCenter( "Browser Model" );
-		_proxy = (BrowserModelListener)_messageCenter.registerSource( this, BrowserModelListener.class );
+		_proxy = _messageCenter.registerSource( this, BrowserModelListener.class );
 
 		_user = "";
 		_databaseURL = "";

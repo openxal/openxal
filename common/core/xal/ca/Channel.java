@@ -158,7 +158,7 @@ abstract public class Channel {
     /** Add a listener of connection changes */
     public void addConnectionListener(ConnectionListener listener) {
         if ( connectionProxy == null ) {
-            connectionProxy = (ConnectionListener)messageCenter.registerSource(this, ConnectionListener.class);
+            connectionProxy = messageCenter.registerSource(this, ConnectionListener.class);
         }
         messageCenter.registerTarget(listener, this, ConnectionListener.class);
 		if ( isConnected() )  listener.connectionMade(this);	// immediately post to new listener

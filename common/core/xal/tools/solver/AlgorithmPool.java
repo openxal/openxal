@@ -45,7 +45,7 @@ public class AlgorithmPool implements SearchAlgorithmListener, SolutionJudgeList
 		_availableAlgorithms = new HashSet();
 
 		_messageCenter = new MessageCenter( "Algorithm Pool" );
-		_proxy = (AlgorithmPoolListener)_messageCenter.registerSource( this, AlgorithmPoolListener.class );
+		_proxy = _messageCenter.registerSource( this, AlgorithmPoolListener.class );
 
 		addAlgorithms( algorithms );
 	}
