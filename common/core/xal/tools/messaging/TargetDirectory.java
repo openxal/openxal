@@ -15,6 +15,9 @@ import java.util.*;
  * @author  tap
  */
 class TargetDirectory implements java.io.Serializable {
+    /** serialization ID */
+    private static final long serialVersionUID = 1L;
+    
     private Map protocolTable;
     
 

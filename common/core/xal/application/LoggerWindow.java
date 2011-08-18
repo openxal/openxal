@@ -25,6 +25,9 @@ import java.util.logging.*;
  * @since    Sep 14, 2004
  */
 class LoggerWindow extends JFrame {
+    /** serialization ID */
+    private static final long serialVersionUID = 1L;
+    
 	/** default logger window */
 	protected static LoggerWindow _defaultWindow;
 
@@ -232,6 +235,8 @@ class LoggerWindow extends JFrame {
 
 /** LogTableModel is a table model for displaying the log records in a table. */
 class LogTableModel extends AbstractTableModel implements LoggerBufferListener {
+    /** serialization ID */
+    private static final long serialVersionUID = 1L;
 
 	final static int LEVEL_COLUMN = 0;
 	final static int TIMESTAMP_COLUMN = 1;

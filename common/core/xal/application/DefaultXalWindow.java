@@ -11,6 +11,9 @@ package xal.application;
 
 /** provides a default implementation of the XAL window */
 public class DefaultXalWindow extends XalWindow {
+    /** serialization ID */
+    private static final long serialVersionUID = 1L;
+    
     /** Constructor */
     public DefaultXalWindow( final XalDocument aDocument ) {
 		super( aDocument );

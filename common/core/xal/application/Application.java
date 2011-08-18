@@ -1407,6 +1407,9 @@ abstract public class Application {
     
     /** custom file chooser for the welcome window */
     private class WelcomeFileChooser extends JFileChooser {
+        /** serialization ID */
+        private static final long serialVersionUID = 1L;
+        
         /** initial location for the dialog */
         final Point INITIAL_LOCATION;
         

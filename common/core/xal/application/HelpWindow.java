@@ -26,6 +26,9 @@ import java.util.logging.*;
  * @author  tap
  */
 class HelpWindow extends JFrame implements SwingConstants {
+    /** serialization ID */
+    private static final long serialVersionUID = 1L;
+    
     // -------- static variables -----------------------------------------------
 	final static private URL _homePage;
     static private HelpWindow _helpWindow;

@@ -16,6 +16,9 @@ import java.util.logging.*;
  * @author  tap
  */
 class MessageHandlerTable implements java.io.Serializable {
+    /** serialization ID */
+    private static final long serialVersionUID = 1L;
+    
     private Map protocolTable;
 
     
