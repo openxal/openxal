@@ -100,6 +100,7 @@ class MessageHandlerTable implements java.io.Serializable {
     
     
     /** get the handler (if any) associated with the source and protocol */
+    @SuppressWarnings( "unchecked" )
     public <T> MessageHandler<T> getHandler( final Object source, final Class<T> protocol ) {
         Object protocolKey = protocolKey( protocol );
         
