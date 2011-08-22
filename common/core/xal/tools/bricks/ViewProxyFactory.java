@@ -172,7 +172,7 @@ public class ViewProxyFactory {
 					final int viewIndex = node.getViewIndex( (ViewNode)beanNode );
 					if ( viewIndex >= 0 ) {
 						((JTabbedPane)node.getView()).setTitleAt( viewIndex, value.toString() );
-						((ViewNode)node).refreshDisplay();
+						node.refreshDisplay();
 					}
 				}
 			}

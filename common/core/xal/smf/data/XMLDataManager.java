@@ -915,7 +915,7 @@ public class XMLDataManager {
     
         /** get the url associated with the specified group */
         public String urlSpecForTableGroup(String tableGroup) {
-            return (String)tableGroupUrlMap.get(tableGroup);
+            return tableGroupUrlMap.get(tableGroup);
         }
 
 

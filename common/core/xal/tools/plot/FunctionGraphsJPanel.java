@@ -377,7 +377,7 @@ public class FunctionGraphsJPanel extends JPanel implements MouseListener, Mouse
 			} else {
 				graphColorV.add(null);
 			}
-			lgd.registerInContainer((FunctionGraphsJPanel) this);
+			lgd.registerInContainer( this );
 			updateData();
 			return graphDataV.size() - 1;
 		}
@@ -2235,7 +2235,7 @@ public class FunctionGraphsJPanel extends JPanel implements MouseListener, Mouse
 		if (cmp == null) {
 			return null;
 		}
-		return (Component) cmp;
+		return cmp;
 	}
 
 

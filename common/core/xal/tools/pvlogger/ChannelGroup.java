@@ -162,7 +162,7 @@ public class ChannelGroup {
 			wrappers.add(wrapper);
 		}
 		
-		_channelWrappers = (ChannelWrapper[])wrappers.toArray(new ChannelWrapper[wrappers.size()]);
+		_channelWrappers = wrappers.toArray( new ChannelWrapper[wrappers.size()] );
 	}
 	
 	

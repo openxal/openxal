@@ -395,7 +395,7 @@ public class RfCavity extends AcceleratorSeq implements RfCavityDataSource {
      * @param phase new design phase (deg)
      */
     public void updateDesignPhase(double phase) {
-	    RfCavityBucket rfCavBuc = (RfCavityBucket) this.getRfField();
+	    RfCavityBucket rfCavBuc = this.getRfField();
 	    rfCavBuc.setPhase(phase);
     }
     
@@ -403,55 +403,55 @@ public class RfCavity extends AcceleratorSeq implements RfCavityDataSource {
     * @param amp new design amplitude (kV)
     */
     public void updateDesignAmp(double amp) {
-	    RfCavityBucket rfCavBuc = (RfCavityBucket) this.getRfField();
+	    RfCavityBucket rfCavBuc = this.getRfField();
 	    rfCavBuc.setAmplitude(amp);
     }
     
     /** return a polynomial fit of the transit time factor as a function of beta */  
     public UnivariateRealPolynomial getTTFFit() { 
-	    RfCavityBucket rfCavBuc = (RfCavityBucket) this.getRfField();
+	    RfCavityBucket rfCavBuc = this.getRfField();
 	    return new UnivariateRealPolynomial(rfCavBuc.getTTFCoefs());
     }
 
     /** return a polynomial fit of the transit time factor prime as a function of beta */  
     public UnivariateRealPolynomial getTTFPrimeFit() { 
-	    RfCavityBucket rfCavBuc = (RfCavityBucket) this.getRfField();
+	    RfCavityBucket rfCavBuc = this.getRfField();
 	    return new UnivariateRealPolynomial(rfCavBuc.getTTFPrimeCoefs());
     }   
     
     /** return a polynomial fit of the "S" transit time factor as a function of beta */  
     public UnivariateRealPolynomial getSTFFit() { 
-	    RfCavityBucket rfCavBuc = (RfCavityBucket) this.getRfField();
+	    RfCavityBucket rfCavBuc = this.getRfField();
 	    return new UnivariateRealPolynomial(rfCavBuc.getSTFCoefs());
     }
 
     /** return a polynomial fit of the "S" transit time factor prime as a function of beta */  
     public UnivariateRealPolynomial getSTFPrimeFit() { 
-	    RfCavityBucket rfCavBuc = (RfCavityBucket) this.getRfField();
+	    RfCavityBucket rfCavBuc = this.getRfField();
 	    return new UnivariateRealPolynomial(rfCavBuc.getSTFPrimeCoefs());
     } 
       
    /** return a polynomial fit of the transit time factor for end cells as a function of beta */  
     public UnivariateRealPolynomial getTTFFitEnd() { 
-	    RfCavityBucket rfCavBuc = (RfCavityBucket) this.getRfField();
+	    RfCavityBucket rfCavBuc = this.getRfField();
 	    return new UnivariateRealPolynomial(rfCavBuc.getTTF_endCoefs());
     }
 
     /** return a polynomial fit of the transit time factor prime for end cells as a function of beta */  
     public UnivariateRealPolynomial getTTFPrimeFitEnd() { 
-	    RfCavityBucket rfCavBuc = (RfCavityBucket) this.getRfField();
+	    RfCavityBucket rfCavBuc = this.getRfField();
 	    return new UnivariateRealPolynomial(rfCavBuc.getTTFPrime_endCoefs());
     }   
     
     /** return a polynomial fit of the "S" transit time factor for end cells as a function of beta */  
     public UnivariateRealPolynomial getSTFFitEnd() { 
-	    RfCavityBucket rfCavBuc = (RfCavityBucket) this.getRfField();
+	    RfCavityBucket rfCavBuc = this.getRfField();
 	    return new UnivariateRealPolynomial(rfCavBuc.getSTF_endCoefs());
     }
 
     /** return a polynomial fit of the "S" transit time factor prime for end cells as a function of beta */  
     public UnivariateRealPolynomial getSTFPrimeFitEnd() { 
-	    RfCavityBucket rfCavBuc = (RfCavityBucket) this.getRfField();
+	    RfCavityBucket rfCavBuc = this.getRfField();
 	    return new UnivariateRealPolynomial(rfCavBuc.getSTFPrime_endCoefs());
     } 
     
@@ -460,7 +460,7 @@ public class RfCavity extends AcceleratorSeq implements RfCavityDataSource {
 	*/
 	
 	public double getStructureMode() {
-		RfCavityBucket rfCavBuc = (RfCavityBucket) this.getRfField();
+		RfCavityBucket rfCavBuc = this.getRfField();
 		return rfCavBuc.getStructureMode();
 	}  
 	
