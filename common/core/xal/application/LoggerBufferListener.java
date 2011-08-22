@@ -10,6 +10,7 @@
 package xal.application;
 
 import java.util.*;
+import java.util.logging.*;
 
 
 /**
@@ -25,6 +26,6 @@ interface LoggerBufferListener {
 	 * @param buffer   the buffer whose records have changed
 	 * @param records  the new records in the buffer
 	 */
-	public void recordsChanged( LoggerBuffer buffer, List records );
+	public void recordsChanged( LoggerBuffer buffer, List<LogRecord> records );
 }
 

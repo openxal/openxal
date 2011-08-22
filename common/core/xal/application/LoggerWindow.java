@@ -246,10 +246,10 @@ class LogTableModel extends AbstractTableModel implements LoggerBufferListener {
 	final static int EXCEPTION_COLUMN = 5;
 
 	/** log records */
-	protected List _records;
+	protected List<LogRecord> _records;
 
 	/** Map of level colors keyed by level */
-	protected static Map _levelColors;
+	protected static Map<Level,String> _levelColors;
 
 	/** static initializer */
 	static {
@@ -259,13 +259,13 @@ class LogTableModel extends AbstractTableModel implements LoggerBufferListener {
 
 	/** Constructor */
 	public LogTableModel() {
-		_records = new ArrayList();
+		_records = new ArrayList<LogRecord>();
 	}
 
 
 	/** Populate the map of HTML colors corresponding to each log level. */
 	protected static void populateLevelColors() {
-		_levelColors = new HashMap();
+		_levelColors = new HashMap<Level,String>();
 
 		_levelColors.put( Level.CONFIG, "purple" );
 		_levelColors.put( Level.FINE, "blue" );
@@ -392,7 +392,7 @@ class LogTableModel extends AbstractTableModel implements LoggerBufferListener {
 	 * @return       The HTML color to use for the specified level
 	 */
 	protected static String getColor( final Level level ) {
-		return (String)_levelColors.get( level );
+		return _levelColors.get( level );
 	}
 
 
@@ -405,7 +405,7 @@ class LogTableModel extends AbstractTableModel implements LoggerBufferListener {
 	public LogRecord getRecord( final int index ) {
 		synchronized ( _records ) {
 			try {
-				return (LogRecord)_records.get( index );
+				return _records.get( index );
 			}
 			catch ( ArrayIndexOutOfBoundsException exception ) {
 				return null;
@@ -420,7 +420,7 @@ class LogTableModel extends AbstractTableModel implements LoggerBufferListener {
 	 * @param buffer   the buffer whose records have changed
 	 * @param records  the new records in the buffer
 	 */
-	public void recordsChanged( LoggerBuffer buffer, List records ) {
+	public void recordsChanged( LoggerBuffer buffer, List<LogRecord> records ) {
 		synchronized ( _records ) {
 			_records.clear();
 			_records.addAll( records );
