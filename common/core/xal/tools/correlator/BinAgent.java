@@ -25,7 +25,7 @@ public class BinAgent implements BinUpdate, StateNotice {
     private double earliestTimestamp, latestTimestamp;      // time spread for current correlation
     private MutableUnivariateStatistics timeStatistics;     // time statistics for current correlation
     private double _timespan;                               // time window restriction
-    private Map recordTable;                    // table of correlated records
+    private Map<String,Object> recordTable;                    // table of correlated records
     private BinListener binProxy;               // proxy for posting bin events
     private MessageCenter _localCenter;         // internal message center for the correlator
     private CorrelationTester correlationTester;
@@ -38,7 +38,7 @@ public class BinAgent implements BinUpdate, StateNotice {
         correlationTester = tester;
         _localCenter = localCenter;
         timeStatistics = new MutableUnivariateStatistics();
-        recordTable = new HashMap();
+        recordTable = new HashMap<String,Object>();
         
         registerEvents();
     }

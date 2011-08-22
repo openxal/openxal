@@ -35,14 +35,14 @@ class HelpWindow extends JFrame implements SwingConstants {
     static private JTextPane _textPane;
     
     // -------- instance variables ---------------------------------------------
-    protected boolean _neverShown;
-	protected LinkedList _history;
-	protected int _historyIndex;
+    private boolean _neverShown;
+	private LinkedList<URL> _pageHistory;
+	private int _pageHistoryIndex;
 	
 	// visual components
-	protected JButton _backButton;
-	protected JButton _forwardButton;
-	protected JButton _homeButton;
+	private JButton _backButton;
+	private JButton _forwardButton;
+	private JButton _homeButton;
     
     
     static {
@@ -52,7 +52,7 @@ class HelpWindow extends JFrame implements SwingConstants {
 
     /** Creates new form HelpWindow */
     public HelpWindow() {
-		_history = new LinkedList();
+		_pageHistory = new LinkedList<URL>();
 		
         makeView();
         _neverShown = true;
@@ -69,8 +69,8 @@ class HelpWindow extends JFrame implements SwingConstants {
         try {
             _textPane.setPage( _homePage );
             _textPane.setEditable( false );
-			_history.add( _homePage );
-			_historyIndex = 0;
+			_pageHistory.add( _homePage );
+			_pageHistoryIndex = 0;
 			updateView();
         }
         catch( java.io.IOException exception ) {
@@ -87,7 +87,7 @@ class HelpWindow extends JFrame implements SwingConstants {
 	 * @return true if we can navigate forward in history and false if not.
 	 */
 	public boolean canNavigateForward() {
-		return _historyIndex < ( _history.size() - 1 );
+		return _pageHistoryIndex < ( _pageHistory.size() - 1 );
 	}
 	
 	
@@ -96,7 +96,7 @@ class HelpWindow extends JFrame implements SwingConstants {
 	 * @return true if we can navigate back in history and false if not.
 	 */
 	public boolean canNavigateBack() {
-		return _historyIndex > 0;
+		return _pageHistoryIndex > 0;
 	}
 	
 	
@@ -105,14 +105,14 @@ class HelpWindow extends JFrame implements SwingConstants {
 	 * @param index The history index of the page to load.
 	 */
 	public void goToPage( final int index ) {
-		final URL link = (URL)_history.get( index );
+		final URL link = _pageHistory.get( index );
 		
 		final Cursor lastCursor = getCursor();
 		try {
 			setCursor( new Cursor( Cursor.WAIT_CURSOR ) );
 			_textPane.setPage( link );
 			EditorKit editorKit = _textPane.getEditorKit();
-			_historyIndex = index;
+			_pageHistoryIndex = index;
 			updateView();
 		}
 		catch(java.io.IOException exception) {
@@ -134,7 +134,7 @@ class HelpWindow extends JFrame implements SwingConstants {
 	 * @param increment the offset from the present history index.
 	 */
 	public void incrementPage( final int increment ) {
-		goToPage( _historyIndex + increment );
+		goToPage( _pageHistoryIndex + increment );
 	}
 	
 	
@@ -143,9 +143,9 @@ class HelpWindow extends JFrame implements SwingConstants {
 	 * @param link The URL of the link to load.
 	 */
 	public void loadLink( final URL link ) {
-		_history = new LinkedList( _history.subList( 0, _historyIndex + 1 ) );
-		_history.add( link );
-		goToPage( _historyIndex + 1 );
+		_pageHistory = new LinkedList<URL>( _pageHistory.subList( 0, _pageHistoryIndex + 1 ) );
+		_pageHistory.add( link );
+		goToPage( _pageHistoryIndex + 1 );
 	}
     
     

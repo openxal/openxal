@@ -28,7 +28,10 @@ abstract public class Correlator {
     protected CorrelationTester correlationTester;
 	
     // one binQueue for each channel
-    private Map sourceAgentTable;
+    
+    /** map of source agents keyed by name */
+    private Map<String,SourceAgent> sourceAgentTable;
+    
     private StateNotice stateProxy;
     private volatile boolean isMonitoring;     // actively monitoring channels
     private AbstractBroadcaster broadcaster;
@@ -44,7 +47,7 @@ abstract public class Correlator {
 	/** Correlator constructor */
     public Correlator(double aBinTimespan, CorrelationFilter aFilter) {
         isMonitoring = false;
-        sourceAgentTable = new Hashtable();
+        sourceAgentTable = new Hashtable<String,SourceAgent>();
         correlationTester = new CorrelationTester(0, aFilter);
         
         registerEvents();
@@ -185,19 +188,19 @@ abstract public class Correlator {
     
     
     /** Get all of the channel agents managed by this correlator */
-    protected Collection getSourceAgents() {
+    protected Collection<SourceAgent> getSourceAgents() {
         return sourceAgentTable.values();
     }
     
     
     /** Get a channel agent by name managed by this correlator */
     SourceAgent getSourceAgent(String sourceName) {
-        return (SourceAgent)sourceAgentTable.get(sourceName);
+        return sourceAgentTable.get(sourceName);
     }
     
     
     /** Get all the names of all the sources managed by this correlator */
-    synchronized public Collection getNamesOfSources() {
+    synchronized public Collection<String> getNamesOfSources() {
         return sourceAgentTable.keySet();
     }
     
@@ -210,7 +213,7 @@ abstract public class Correlator {
     
     /** See if we already manage this channel */
     public boolean hasSource(String sourceName) {
-        return sourceAgentTable.containsKey(sourceName);
+        return sourceAgentTable.containsKey( sourceName );
     }
     
     
@@ -219,8 +222,8 @@ abstract public class Correlator {
      * be unique to that source.
      * Subclasses need to wrap this method to enforce the source type.
      */
-    protected void addSource(Object source, String sourceName) {
-        addSource(source, sourceName, null);
+    protected void addSource( final Object source, final String sourceName ) {
+        addSource( source, sourceName, null );
     }
     
     
@@ -237,7 +240,7 @@ abstract public class Correlator {
         
         SourceAgent sourceAgent = newSourceAgent(source, sourceName, recordFilter);
 
-        sourceAgentTable.put(sourceName, sourceAgent);
+        sourceAgentTable.put( sourceName, sourceAgent );
         sourceAgent.setBinTimespan(_binTimespan);
         int numSources = numSources();
         if ( isMonitoring ) {
@@ -254,7 +257,7 @@ abstract public class Correlator {
     /** Stop managing the specified source. */
     synchronized public void removeSource(String sourceName) {
         SourceAgent sourceAgent = getSourceAgent(sourceName);
-        sourceAgentTable.remove(sourceName);
+        sourceAgentTable.remove( sourceName );
         int numSources = numSources();
         stateProxy.sourceRemoved(this, sourceName, numSources);
         correlationTester.setFullCount(numSources);
@@ -264,12 +267,9 @@ abstract public class Correlator {
     
     /** Stop managing all registered sources */
     synchronized public void removeAllSources() {
-        Collection sourceNames = new ArrayList( getNamesOfSources() );
-        Iterator sourceIter = sourceNames.iterator();
-        
-        while ( sourceIter.hasNext() ) {
-            String sourceName = (String)sourceIter.next();
-            removeSource(sourceName);
+        final Collection<String> sourceNames = new ArrayList<String>( getNamesOfSources() );
+        for ( final String sourceName : sourceNames ) {
+            removeSource( sourceName );
         }
     }
     

@@ -48,7 +48,7 @@ public class Util {
 	 * @param map the map into which the resources should be merged
 	 * @param path the path to the resource bundle
 	 */
-    static public void mergeResourceBundle( final Map map, final String path ) throws MissingResourceException {
+    static public void mergeResourceBundle( final Map<String,String> map, final String path ) throws MissingResourceException {
         final ResourceBundle bundle = ResourceBundle.getBundle( path );
 		
         final Enumeration<String> keyEnum = bundle.getKeys();

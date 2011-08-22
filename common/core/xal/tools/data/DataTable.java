@@ -48,7 +48,7 @@ public class DataTable {
     /** 
 	 * Constructor 
 	 */
-    public DataTable( final String aName, final Collection attributes ) {
+    public DataTable( final String aName, final Collection<DataAttribute> attributes ) {
         this( aName, attributes, GenericRecord.class );
     }
     
@@ -56,7 +56,7 @@ public class DataTable {
 	/**
 	 * Primary constructor
 	 */
-    public DataTable( final String aName, final Collection attributes, final Class aRecordClass ) {
+    public DataTable( final String aName, final Collection<DataAttribute> attributes, final Class aRecordClass ) {
         MESSAGE_CENTER = new MessageCenter( "Data Table" );
         NOTICE_PROXY = MESSAGE_CENTER.registerSource( this, DataTableListener.class );
 		
@@ -177,7 +177,7 @@ public class DataTable {
 
 				adaptor.writeNode( _schema );					
 
-				Collection records = records();
+				final Collection<GenericRecord> records = records();
 				adaptor.writeNodes( records );
             }
         };
@@ -393,12 +393,12 @@ public class DataTable {
 			final Iterator<ValueHash> valueHashIter = valueHashes.iterator();
 						
 			// every value hash contains all records, so we only need one
-			return valueHashes.isEmpty() ? Collections.EMPTY_SET : valueHashIter.next().records();				
+			return valueHashes.isEmpty() ? Collections.<GenericRecord>emptySet() : valueHashIter.next().records();				
         }
         
         
         /** Get a record matching all of the primary key bindings. Bindings should include all primary keys to ensure a unique record. */
-        public GenericRecord record( final Map<String,Object> bindings ) throws NonUniqueRecordException {
+        public GenericRecord record( final Map bindings ) throws NonUniqueRecordException {
             final Collection<GenericRecord> records = records( bindings );
             
             if ( records.size() > 1 ) {
@@ -420,14 +420,14 @@ public class DataTable {
         
         
 		/** Fetch all records matching the primary key bindings. You may use a subset of primary keys since multiple records may be returned. */
-        public Collection<GenericRecord> records( final Map<String,Object> bindings ) {
+        public Collection<GenericRecord> records( final Map bindings ) {
             final Collection<GenericRecord> records = new HashSet<GenericRecord>();
-            final Set<Map.Entry<String,Object>> entries = bindings.entrySet();
+            final Set<Map.Entry> entries = bindings.entrySet();
             
-            if ( entries.size() == 0 )  return Collections.EMPTY_SET;
+            if ( entries.size() == 0 )  return Collections.<GenericRecord>emptySet();
             
-            final Iterator<Map.Entry<String,Object>> entryIter = entries.iterator();
-			Map.Entry<String,Object> entry = entryIter.next();
+            final Iterator<Map.Entry> entryIter = entries.iterator();
+			Map.Entry entry = entryIter.next();
 			Collection<GenericRecord> entryRecords = records( entry );
             records.addAll( entryRecords );
             while ( entryIter.hasNext() && !records.isEmpty() ) {
@@ -441,15 +441,15 @@ public class DataTable {
         
         
 		/** Fetch the records matching the key/value pair specified in the entry. */
-        private Collection<GenericRecord> records( final Map.Entry<String,Object> entry ) {
-            final String key = entry.getKey();
+        private Collection<GenericRecord> records( final Map.Entry entry ) {
+            final String key = (String)entry.getKey();
             final Object value = entry.getValue();
             return records( key, value );
         }
         
         
 		/** Get all of the records matching the specified primary key/value pair */
-        public Collection records( final String key, final Object value ) {
+        public Collection<GenericRecord> records( final String key, final Object value ) {
 			return valueTable( key ).records( value );				
         }
         
@@ -472,7 +472,7 @@ public class DataTable {
         
 		/** Get the primary key bindings associated with the specified record. */
         private Map<String,Object> primaryBindings( final GenericRecord record ) {
-            final Map<String,Object> bindings = new HashMap();
+            final Map<String,Object> bindings = new HashMap<String,Object>();
 			for ( final String key : _schema.primaryKeys() ) {
 				final Object value = record.valueForKey( key );
 				bindings.put( key, value );
@@ -581,7 +581,7 @@ public class DataTable {
 		/** Get all records whose primary key matches the specified value */
         final public Set<GenericRecord> records( final Object value ) {
             final Set<GenericRecord> records = RECORD_SET_TABLE.get( value );
-            return records != null ? records : Collections.EMPTY_SET;
+            return records != null ? records : Collections.<GenericRecord>emptySet();
         }
         
         
@@ -696,7 +696,7 @@ public class DataTable {
         
 		/** Empty Constructor */
         public Schema() {
-            this( Collections.EMPTY_SET );
+            this( Collections.<DataAttribute>emptySet() );
         }
         
         

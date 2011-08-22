@@ -31,7 +31,7 @@ public class WindowReference {
 	final private BricksContext CONTEXT;
 	
 	/** table of views tagged by their tag */
-	final private Map<String,List> VIEW_TABLE;
+	final private Map<String,List<Object>> VIEW_TABLE;
 	
 	/** the window reference */
 	final private Window WINDOW;
@@ -40,7 +40,7 @@ public class WindowReference {
 	/** Constructor */
 	public WindowReference( final URL url, final String tag, Object... windowParameters ) {
 		CONTEXT = new BricksContext( url );
-		VIEW_TABLE = new HashMap<String,List>();
+		VIEW_TABLE = new HashMap<String,List<Object>>();
 		WINDOW = loadWindow( url, tag, windowParameters );
 	}
 	
@@ -72,7 +72,7 @@ public class WindowReference {
 	
 	/** register the view with the table */
 	protected void registerView( final Object view, final String tag ) {
-		List views;
+		final List<Object> views;
 		if ( VIEW_TABLE.containsKey( tag ) ) {
 			views = VIEW_TABLE.get( tag );
 		}
