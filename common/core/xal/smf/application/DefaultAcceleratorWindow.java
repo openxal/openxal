@@ -13,6 +13,9 @@ import xal.application.*;
 
 /** provides a default implementation of the XAL Accelerator window */
 public class DefaultAcceleratorWindow extends AcceleratorWindow {
+    /** serialization ID */
+    private static final long serialVersionUID = 1L;
+    
     /** Constructor */
     public DefaultAcceleratorWindow( final XalDocument aDocument ) {
 		super( aDocument );

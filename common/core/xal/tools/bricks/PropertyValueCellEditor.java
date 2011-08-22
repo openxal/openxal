@@ -25,6 +25,9 @@ import javax.swing.event.*;
 
 /** cell editor for property values */
 public class PropertyValueCellEditor extends AbstractCellEditor implements TableCellEditor, TableCellRenderer {
+    /** serialization ID */
+    private static final long serialVersionUID = 1L;
+    
 	/** context in which bricks is run */
 	final private BricksContext CONTEXT;
 	

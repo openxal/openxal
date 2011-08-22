@@ -311,6 +311,9 @@ public class GenericRecord implements KeyedRecord, DataListener {
 	 * the appropriate type.
 	 */
 	public class ParseException extends RuntimeException {
+        /** serialization ID */
+        private static final long serialVersionUID = 1L;
+        
 		public ParseException(String description) {
 			super(description);
 		}

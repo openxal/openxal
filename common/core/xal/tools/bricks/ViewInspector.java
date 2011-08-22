@@ -28,6 +28,9 @@ import java.util.ArrayList;
 
 /** Inspector for setting view properites */
 public class ViewInspector extends Box {
+    /** serialization ID */
+    private static final long serialVersionUID = 1L;
+    
 	/** table of property settings */
 	final protected JTable PARAMETER_TABLE;
 	

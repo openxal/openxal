@@ -18,6 +18,9 @@ package xal.tools.services;
  * @since Jul 08, 2004
  */
 public class ServiceException extends RuntimeException {
+    /** serialization ID */
+    private static final long serialVersionUID = 1L;
+    
 	/**
 	 * Primary constructor
 	 */

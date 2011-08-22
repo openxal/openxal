@@ -17,6 +17,9 @@ package xal.tools.services;
  * @author  tap
  */
 public class RemoteMessageException extends RuntimeException {
+    /** serialization ID */
+    private static final long serialVersionUID = 1L;
+    
 	public RemoteMessageException(Throwable cause) {
 		super(cause);
 	}

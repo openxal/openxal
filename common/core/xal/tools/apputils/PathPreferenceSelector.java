@@ -25,6 +25,9 @@ import java.text.*;
  * @author  tap
  */
 public class PathPreferenceSelector extends JDialog implements ScrollPaneConstants {
+    /** serialization ID */
+    private static final long serialVersionUID = 1L;
+    
 	/** indicates whether the user saved changes */
 	private boolean _userSavedChanges;
 	
@@ -307,6 +310,9 @@ public class PathPreferenceSelector extends JDialog implements ScrollPaneConstan
  * The custom file chooser which allows the user to select the default file. 
  */
 class CustomChooser extends JFileChooser {
+    /** serialization ID */
+    private static final long serialVersionUID = 1L;
+    
 	// constants
 	final protected Preferences DEFAULTS;
 	final protected String URL_KEY;

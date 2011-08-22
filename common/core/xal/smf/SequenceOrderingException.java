@@ -17,6 +17,9 @@ import java.util.Collections;
  * @author  tap
  */
 public class SequenceOrderingException extends RuntimeException {
+    /** serialization ID */
+    private static final long serialVersionUID = 1L;
+    
     Collection _sequences;
     
     /** Creates a new instance of SequenceOrderingException */

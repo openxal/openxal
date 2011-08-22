@@ -16,6 +16,9 @@ import xal.tools.IconLib;
 
 /** Icon identified by a URL */
 public class IconResource extends ImageIcon {
+    /** serialization ID */
+    private static final long serialVersionUID = 1L;
+    
 	/** URL of the image for the icon */
 	final private URL IMAGE_URL;
 	

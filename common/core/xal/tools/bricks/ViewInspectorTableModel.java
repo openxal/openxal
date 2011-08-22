@@ -30,6 +30,9 @@ import xal.application.Application;
 
 /** Inspector table model */
 class ViewInspectorTableModel extends AbstractTableModel implements PropertyTableModel {
+    /** serialization ID */
+    private static final long serialVersionUID = 1L;
+    
 	final static public int NAME_COLUMN = 0;
 	final static public int VALUE_COLUMN = 1;
 	

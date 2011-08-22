@@ -629,6 +629,9 @@ public class DataTable {
      * with bindings and more than one record matches the criteria.
      */
     static public class NonUniqueRecordException extends RuntimeException {
+        /** serialization ID */
+        private static final long serialVersionUID = 1L;
+
         private Map bindings;
         
 		
@@ -657,6 +660,9 @@ public class DataTable {
      * primary key(s) already exist in the table.
      */
     public class AddRecordException extends RuntimeException {
+        /** serialization ID */
+        private static final long serialVersionUID = 1L;
+        
         private GenericRecord record;
 
         

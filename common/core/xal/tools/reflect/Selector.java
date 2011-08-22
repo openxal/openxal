@@ -24,7 +24,7 @@ import java.util.Arrays;
  *
  * @author  tap
  */
-public class Selector {
+public class Selector {    
     protected String _methodName;       /** name of the method */
     protected Class[] _argumentTypes;   /** argument classes */
 
@@ -240,6 +240,10 @@ public class Selector {
      * the method name and argument types.
      */
     public class MethodNotFoundException extends RuntimeException {
+        /** serialization ID */
+        private static final long serialVersionUID = 1L;
+        
+        
         public MethodNotFoundException(String message) {
             super(message);
         }
@@ -251,6 +255,10 @@ public class Selector {
      * Exception that wraps an exception thrown during invocation.
      */
     public class InvocationException extends RuntimeException {
+        /** serialization ID */
+        private static final long serialVersionUID = 1L;
+        
+        
         private InvocationTargetException _exception;
         public InvocationException(InvocationTargetException exception) {
             _exception = exception;
@@ -272,6 +280,10 @@ public class Selector {
      * such that the method is inaccessible on that target.
      */
     public class AccessException extends RuntimeException {
+        /** serialization ID */
+        private static final long serialVersionUID = 1L;
+
+        
         public AccessException(IllegalAccessException excpt) {
             super( excpt.getMessage() );
         }

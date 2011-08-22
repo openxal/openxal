@@ -16,6 +16,8 @@ package xal.smf.attr;
 
 
 public class SequenceBucket extends AttributeBucket {
+    /** serialization ID */
+    private static final long serialVersionUID = 1L;
 
     
     /*

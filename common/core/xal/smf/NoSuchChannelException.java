@@ -8,7 +8,10 @@ import xal.smf.impl.MagnetPowerSupply;
  * handle and either a node or a power supply and no such channel is found.
  */
 public class NoSuchChannelException extends RuntimeException {
+    /** serialization ID */
+    private static final long serialVersionUID = 1L;
 
+    
     /**
      * Creates new <code>NoSuchChannelException</code> without detail message.
      */

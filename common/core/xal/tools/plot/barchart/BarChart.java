@@ -483,65 +483,68 @@ public class BarChart {
    *@author     shishlo
    *created    October 10, 2005
    */
-  class MarkerFormat extends DecimalFormat {
-
-    private Vector barColumns = null;
-
-
-    /**
-     *  Constructor for the MarkerFormat object
-     *
-     *@param  barColumnsIn  Description of the Parameter
-     */
-    public MarkerFormat(Vector barColumnsIn) {
-      barColumns = barColumnsIn;
-    }
-
-
-    /**
-     *  The overridden format method of the DecimalFormat class.
-     *
-     *@param  val         The value to format
-     *@param  toAppendTo  The string buffer to add to
-     *@param  pos         The position where to add
-     *@return             The formated string
-     */
-    public StringBuffer format(double val, StringBuffer toAppendTo, FieldPosition pos) {
-      StringBuffer strb = new StringBuffer(" ");
-      if (barColumns != null && barColumns.size() > 0) {
-        int ind = (int) Math.round(val - 1.0);
-        //System.out.println("debug ind=" + ind);
-        if (ind >= 0 && ind < barColumns.size()) {
-          strb.append(((BarColumn) barColumns.get(ind)).marker());
-        } else {
-          strb.append(emptyStr);
+    class MarkerFormat extends DecimalFormat {
+        /** serialization ID */
+        private static final long serialVersionUID = 1L;
+        
+        
+        private Vector barColumns = null;
+        
+        
+        /**
+         *  Constructor for the MarkerFormat object
+         *
+         *@param  barColumnsIn  Description of the Parameter
+         */
+        public MarkerFormat(Vector barColumnsIn) {
+            barColumns = barColumnsIn;
         }
-      } else {
-        strb.append(emptyStr);
-      }
-
-      //System.out.println("debug strb=" + strb);
-
-      strb.append(" ");
-
-      return strb;
+        
+        
+        /**
+         *  The overridden format method of the DecimalFormat class.
+         *
+         *@param  val         The value to format
+         *@param  toAppendTo  The string buffer to add to
+         *@param  pos         The position where to add
+         *@return             The formated string
+         */
+        public StringBuffer format(double val, StringBuffer toAppendTo, FieldPosition pos) {
+            StringBuffer strb = new StringBuffer(" ");
+            if (barColumns != null && barColumns.size() > 0) {
+                int ind = (int) Math.round(val - 1.0);
+                //System.out.println("debug ind=" + ind);
+                if (ind >= 0 && ind < barColumns.size()) {
+                    strb.append(((BarColumn) barColumns.get(ind)).marker());
+                } else {
+                    strb.append(emptyStr);
+                }
+            } else {
+                strb.append(emptyStr);
+            }
+            
+            //System.out.println("debug strb=" + strb);
+            
+            strb.append(" ");
+            
+            return strb;
+        }
+        
+        
+        /**
+         *  The overridden method of the DecimalFormat that delegates formatting to
+         *  the specific inner formatter
+         *
+         *@param  val         The integer value to be formatted
+         *@param  toAppendTo  Where the text is to be appended
+         *@param  pos         On input: an alignment field, if desired. On output:
+         *      the offsets of the alignment field
+         *@return             The text that will be displayed
+         */
+        public StringBuffer format(long val, StringBuffer toAppendTo, FieldPosition pos) {
+            return format((double) val, toAppendTo, pos);
+        }
     }
-
-
-    /**
-     *  The overridden method of the DecimalFormat that delegates formatting to
-     *  the specific inner formatter
-     *
-     *@param  val         The integer value to be formatted
-     *@param  toAppendTo  Where the text is to be appended
-     *@param  pos         On input: an alignment field, if desired. On output:
-     *      the offsets of the alignment field
-     *@return             The text that will be displayed
-     */
-    public StringBuffer format(long val, StringBuffer toAppendTo, FieldPosition pos) {
-      return format((double) val, toAppendTo, pos);
-    }
-  }
 
 
   /**

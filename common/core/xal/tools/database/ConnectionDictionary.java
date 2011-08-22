@@ -25,6 +25,9 @@ import java.net.*;
  * @author  tap
  */
 public class ConnectionDictionary extends Properties {
+    /** serialization ID */
+    private static final long serialVersionUID = 1L;
+    
 	// public dictionary keys
 	static final public String USER_KEY = "user";
 	static final public String PASSWORD_KEY = "password";

@@ -27,6 +27,9 @@ import java.text.*;
  * @since May 28, 2004
  */
 public class OpticsSwitcher extends JDialog {
+    /** serialization ID */
+    private static final long serialVersionUID = 1L;
+    
 	// GUI components
     protected AcceleratorChooser accelChooser;
 	protected JTextField pathField;
@@ -306,6 +309,9 @@ public class OpticsSwitcher extends JDialog {
  * Display an open dialog box so the user can pick an accelerator input file 
  */
 class AcceleratorChooser extends JFileChooser {
+    /** serialization ID */
+    private static final long serialVersionUID = 1L;
+    
 	/** global accelerator chooser */
     static protected AcceleratorChooser chooser;
     protected int status;

@@ -104,6 +104,9 @@ public class AcceleratorActionFactory {
      */
     public static Action loadDefaultAcceleratorAction( final AcceleratorDocument document ) {
         final Action action = new AbstractAction() {
+            /** serialization ID */
+            private static final long serialVersionUID = 1L;
+            
             public void actionPerformed( final ActionEvent event ) {
 				try {
 					document.loadDefaultAccelerator();
@@ -129,6 +132,9 @@ public class AcceleratorActionFactory {
      */
     public static Action loadAcceleratorAction( final AcceleratorDocument document ) {
         final Action action = new AbstractAction() {
+            /** serialization ID */
+            private static final long serialVersionUID = 1L;
+            
             public void actionPerformed( final ActionEvent event ) {
 				final JFileChooser fileChooser = ((AcceleratorApplication)AcceleratorApplication.getApp()).getAcceleratorFileChooser();
 				int status = fileChooser.showOpenDialog( document.getMainWindow() );
@@ -170,6 +176,9 @@ public class AcceleratorActionFactory {
         final String label = sequence.getId();
         final JRadioButtonMenuItem menuItem = new JRadioButtonMenuItem( label );
         menuItem.setAction( new AbstractAction() {
+            /** serialization ID */
+            private static final long serialVersionUID = 1L;
+            
             public void actionPerformed( final ActionEvent event ) {
                 document.setSelectedSequence( sequence );
             }
@@ -189,6 +198,9 @@ public class AcceleratorActionFactory {
         final String label = "New Combo Sequence";
         final JMenuItem menuItem = new JMenuItem( label );
         menuItem.setAction( new AbstractAction() {
+            /** serialization ID */
+            private static final long serialVersionUID = 1L;
+            
             public void actionPerformed( final ActionEvent event ) {
 				final AcceleratorSeqCombo comboSequence = ComboSequenceComposer.composeComboSequence( document.getAccelerator(), document.getMainWindow() );
 				if ( comboSequence != null ) {

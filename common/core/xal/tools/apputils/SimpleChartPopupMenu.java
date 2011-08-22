@@ -32,6 +32,9 @@ import java.io.*;
  * @author  tap
  */
 public class SimpleChartPopupMenu extends JPopupMenu implements MouseListener {
+    /** serialization ID */
+    private static final long serialVersionUID = 1L;
+    
 	// action ID constants
 	static final public String SCALE_ONCE_ID = "scale-once";
 	static final public String X_AUTOSCALE_ID = "x-autoscale";
@@ -151,6 +154,9 @@ public class SimpleChartPopupMenu extends JPopupMenu implements MouseListener {
 	protected void defineActions() {
         // scale the X and Y axes once
         scaleOnceAction = new AbstractAction("Scale X and Y Once")  {
+            /** serialization ID */
+            private static final long serialVersionUID = 1L;
+            
             public void actionPerformed(java.awt.event.ActionEvent event) {
                 chartAdaptor.scaleXandY();
             }
@@ -159,6 +165,9 @@ public class SimpleChartPopupMenu extends JPopupMenu implements MouseListener {
         
         // toggle x auto scale
         xAutoScaleAction = new AbstractAction("Autoscale X") {
+            /** serialization ID */
+            private static final long serialVersionUID = 1L;
+            
             public void actionPerformed(java.awt.event.ActionEvent event) {
                 chartAdaptor.setXAutoScale( !chartAdaptor.isXAutoScale() );
             }
@@ -167,6 +176,9 @@ public class SimpleChartPopupMenu extends JPopupMenu implements MouseListener {
         
         // toggle y auto scale
         yAutoScaleAction = new AbstractAction("Autoscale Y") {
+            /** serialization ID */
+            private static final long serialVersionUID = 1L;
+            
             public void actionPerformed(java.awt.event.ActionEvent event) {
                 chartAdaptor.setYAutoScale( !chartAdaptor.isYAutoScale() );
             }
@@ -175,6 +187,9 @@ public class SimpleChartPopupMenu extends JPopupMenu implements MouseListener {
         
         // define x grid menu item action
         xGridAction = new AbstractAction("Show X Grid") {
+            /** serialization ID */
+            private static final long serialVersionUID = 1L;
+            
             public void actionPerformed(java.awt.event.ActionEvent event) {
                 chartAdaptor.setXGridVisible( !chartAdaptor.isXGridVisible() );
             }
@@ -183,6 +198,9 @@ public class SimpleChartPopupMenu extends JPopupMenu implements MouseListener {
         
         // define y grid menu item action
         yGridAction = new AbstractAction("Show Y Grid") {
+            /** serialization ID */
+            private static final long serialVersionUID = 1L;
+            
             public void actionPerformed(java.awt.event.ActionEvent event) {
                 chartAdaptor.setYGridVisible( !chartAdaptor.isYGridVisible() );
             }
@@ -191,6 +209,9 @@ public class SimpleChartPopupMenu extends JPopupMenu implements MouseListener {
         
         // define options menu item action
         optionsAction = new AbstractAction("Options...") {
+            /** serialization ID */
+            private static final long serialVersionUID = 1L;
+            
             public void actionPerformed(java.awt.event.ActionEvent event) {
                 getChartDialog().showDialog();
             }
@@ -199,6 +220,9 @@ public class SimpleChartPopupMenu extends JPopupMenu implements MouseListener {
         
         // define options menu item action
         imageCaptureAction = new AbstractAction("Save as PNG") {
+            /** serialization ID */
+            private static final long serialVersionUID = 1L;
+            
             public void actionPerformed(java.awt.event.ActionEvent event) {
                 try {
                     ImageCaptureManager.defaultManager().saveSnapshot( chartAdaptor.getChartComponent() );

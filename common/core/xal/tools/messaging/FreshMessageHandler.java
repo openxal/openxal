@@ -17,6 +17,9 @@ import java.lang.reflect.*;
 
 /** Asynchronous Message Handler which posts only the most recent pending event and drops earlier ones. */
 class FreshMessageHandler<T> extends MessageHandler<T> implements java.io.Serializable {
+    /** serialization ID */
+    private static final long serialVersionUID = 1L;
+    
 	/** event processor which processes the most recent pending event on of a single thread */
 	final private FreshProcessor EVENT_PROCESSOR;
 	
