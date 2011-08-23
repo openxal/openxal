@@ -29,14 +29,14 @@ public class Ring extends AcceleratorSeqCombo {
 	/**
 	 * Primary Constructor
 	 */
-    public Ring(String strID, List segments) {
-		super(strID, segments);
+    public Ring( final String strID, final List<AcceleratorSeq> segments) {
+		super( strID, segments );
 	}
 	
 	
     /** Constructor */
-    public Ring(String strID, Accelerator accelerator, DataAdaptor adaptor) {
-        this(strID, getSequences(accelerator, adaptor));
+    public Ring( final String strID, final Accelerator accelerator, final DataAdaptor adaptor ) {
+        this( strID, getSequences(accelerator, adaptor) );
     }
     
     

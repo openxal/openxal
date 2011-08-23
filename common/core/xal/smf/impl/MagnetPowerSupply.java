@@ -207,14 +207,12 @@ public abstract class MagnetPowerSupply implements DataListener {
      * @param trialNodes The collection of nodes from which to check for matches.
      * @return The collection of nodes that use this supply.
      */
-    public Collection getNodes(Collection trialNodes) {
-        Collection nodes = new HashSet();
-        
-        Iterator nodeIter = trialNodes.iterator();
-        while ( nodeIter.hasNext() ) {
-            AcceleratorNode node = (AcceleratorNode)nodeIter.next();
-            if ( suppliesNode(node) ) {
-                nodes.add(node);
+    public <NodeType extends AcceleratorNode> Collection<NodeType> getNodes( final Collection<NodeType> trialNodes ) {
+        final Collection<NodeType> nodes = new HashSet<NodeType>();
+                
+        for ( final NodeType trialNode : trialNodes ) {
+            if ( suppliesNode( trialNode ) ) {
+                nodes.add( trialNode );
             }
         }
         

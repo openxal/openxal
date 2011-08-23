@@ -191,7 +191,7 @@ public class AcceleratorSeq extends AcceleratorNode implements DataListener {
         super( strId );
         m_arrNodes = new ArrayList<AcceleratorNode>( intReserve );
 		_sequences = new ArrayList<AcceleratorSeq>();
-		nodeTable = new HashMap( intReserve );
+		nodeTable = new HashMap<String, AcceleratorNode>( intReserve );
     }
     
 	
@@ -631,7 +631,7 @@ public class AcceleratorSeq extends AcceleratorNode implements DataListener {
 	 * @return the ordered list of sequences
      */
     static public List<AcceleratorSeq> orderSequences( final Collection<AcceleratorSeq> sequences ) throws SequenceOrderingException {
-        final Map sequenceMap = new HashMap( sequences.size() );
+        final Map<String,AcceleratorSeq> sequenceMap = new HashMap<String,AcceleratorSeq>( sequences.size() );
         Iterator sequenceIter = sequences.iterator();
          
         AcceleratorSeq sequence = null;
@@ -640,7 +640,7 @@ public class AcceleratorSeq extends AcceleratorNode implements DataListener {
             sequenceMap.put( sequence.getId(), sequence );
         }
          
-        if ( sequence == null )  return Collections.EMPTY_LIST;
+        if ( sequence == null )  return Collections.<AcceleratorSeq>emptyList();
          
         final LinkedList<AcceleratorSeq> orderedSequences = new LinkedList<AcceleratorSeq>();
         sequence.addSequenceChain( orderedSequences, sequenceMap );
@@ -674,7 +674,7 @@ public class AcceleratorSeq extends AcceleratorNode implements DataListener {
             }
         }
          
-        return new ArrayList( orderedSequences );
+        return new ArrayList<AcceleratorSeq>( orderedSequences );
     }
     
     

@@ -29,10 +29,15 @@ import java.util.*;
  */
 public class ChannelSuite implements DataListener {
 	static final public String DATA_LABEL = "channelsuite";
+    
+    /** map of channels keyed by handle */
+    final private Map<String,Channel> CHANNEL_HANDLE_MAP;
 	
-	protected ChannelFactory _channelFactory;
-    protected SignalSuite signalSuite;
-    protected Map channelMap;
+    /** channel factory for getting channels */
+	final private ChannelFactory CHANNEL_FACTORY;
+    
+    /** Signal Suite */
+    final private SignalSuite SIGNAL_SUITE;
     
     
     /** Creates a new instance of ChannelSuite */
@@ -44,10 +49,10 @@ public class ChannelSuite implements DataListener {
 	/**
 	 * Primary constructor for creating an instance of channel suite
 	 */
-	public ChannelSuite(ChannelFactory channelFactory) {
-		_channelFactory = channelFactory;
-        channelMap = new HashMap();
-        signalSuite = new SignalSuite();
+	public ChannelSuite( final ChannelFactory channelFactory ) {
+		CHANNEL_FACTORY = channelFactory;
+        CHANNEL_HANDLE_MAP = new HashMap<String,Channel>();
+        SIGNAL_SUITE = new SignalSuite();
 	}
     
     
@@ -63,8 +68,8 @@ public class ChannelSuite implements DataListener {
      * Update the data based on the information provided by the data provider.
      * @param adaptor The adaptor from which to update the data
      */
-    public void update(DataAdaptor adaptor) {
-        signalSuite.update(adaptor);
+    public void update( final DataAdaptor adaptor ) {
+        SIGNAL_SUITE.update( adaptor );
     }
     
     
@@ -72,8 +77,8 @@ public class ChannelSuite implements DataListener {
      * Write data to the data adaptor for storage.
      * @param adaptor The adaptor to which the receiver's data is written
      */
-    public void write(DataAdaptor adaptor) {
-        signalSuite.write(adaptor);
+    public void write( final DataAdaptor adaptor ) {
+        SIGNAL_SUITE.write( adaptor );
     }
     
     
@@ -82,8 +87,8 @@ public class ChannelSuite implements DataListener {
      * @param signal The PV signal to check for availability.
      * @return true if the PV signal is available and false if not.
      */
-    protected boolean hasSignal(String signal) {
-        return signalSuite.hasSignal(signal);
+    protected boolean hasSignal( final String signal ) {
+        return SIGNAL_SUITE.hasSignal( signal );
     }
     
     
@@ -92,8 +97,8 @@ public class ChannelSuite implements DataListener {
      * @param handle The handle to check for availability.
      * @return true if the handle is available and false if not.
      */
-    final public boolean hasHandle(String handle) {
-        return signalSuite.hasHandle(handle);
+    final public boolean hasHandle( final String handle ) {
+        return SIGNAL_SUITE.hasHandle( handle );
     }
     
     
@@ -102,7 +107,7 @@ public class ChannelSuite implements DataListener {
      * @return The handles managed by this channel suite.
      */
     final public Collection<String> getHandles() {
-        return signalSuite.getHandles();
+        return SIGNAL_SUITE.getHandles();
     }
     
     
@@ -111,8 +116,8 @@ public class ChannelSuite implements DataListener {
      * @param handle The handle for which to get the PV signal name.
      * @return Get the PV signal name associated with the specified handle or null if it is not found.
      */
-    final public String getSignal(String handle) {
-        return signalSuite.getSignal(handle);
+    final public String getSignal( final String handle ) {
+        return SIGNAL_SUITE.getSignal( handle );
     }
     
     
@@ -121,8 +126,8 @@ public class ChannelSuite implements DataListener {
      * @param handle The handle for which to get the transform.
      * @return The transform for the specified handle.
      */
-    final public ValueTransform getTransform(String handle) {
-        return signalSuite.getTransform(handle);
+    final public ValueTransform getTransform( final String handle ) {
+        return SIGNAL_SUITE.getTransform( handle );
     }
     
     
@@ -131,25 +136,25 @@ public class ChannelSuite implements DataListener {
      * @param handle The handle for which to get the associated Channel.
      * @return The channel associated with the specified handle.
      */
-    public Channel getChannel(String handle) {
+    public Channel getChannel( final String handle ) {
         // first see if we have ever cached the channel
-        Channel channel = (Channel)channelMap.get(handle);
+        Channel channel = CHANNEL_HANDLE_MAP.get( handle );
         
         if ( channel == null ) {                    // if the channel was never cached ...
-            String signal = getSignal(handle);      // lookup the signal
+            String signal = getSignal( handle );      // lookup the signal
             if ( signal != null ) {                 // get the channel from the channel factory
-                ValueTransform transform = getTransform(handle);
+                ValueTransform transform = getTransform( handle );
                 if ( transform != null ) {
-                    channel = _channelFactory.getChannel(signal, transform);
+                    channel = CHANNEL_FACTORY.getChannel( signal, transform );
                 }
                 else {
-                    channel = _channelFactory.getChannel(signal);
+                    channel = CHANNEL_FACTORY.getChannel( signal );
                 }
             }
             
             // if we have a channel, cache it for future access
             if ( channel != null ) {
-                channelMap.put(handle, channel);
+                CHANNEL_HANDLE_MAP.put( handle, channel );
             }
         }
         
