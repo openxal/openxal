@@ -106,10 +106,7 @@ public class DataTable {
     
     /** Handle reading and writing from a data adaptor */
     public DataListener dataHandler() throws MissingPrimaryKeyException {
-        /*
-         * Anonymous class responsible for reading and writing an instance of DataTable with 
-         * the data store
-         */
+        /* Anonymous class responsible for reading and writing an instance of DataTable with the data store */
         return new DataListener() {
             final static private String NAME_ATTRIBUTE = "name";
             final static private String RECORD_CLASS_ATTRIBUTE = "recordClass";
@@ -121,6 +118,7 @@ public class DataTable {
 
 
 			/** Update the table from the data adaptor */
+            @SuppressWarnings( "unchecked" )
             public void update( final DataAdaptor adaptor ) {
                 _name = adaptor.stringValue( NAME_ATTRIBUTE );
 
@@ -266,7 +264,7 @@ public class DataTable {
      * must be one or more of the primary keys.  If the record is not unique,
      * an exception will be thrown.
      */
-    public GenericRecord record( final Map bindings ) throws NonUniqueRecordException {
+    public <ValueType extends Object> GenericRecord record( final Map<String,ValueType> bindings ) throws NonUniqueRecordException {
 		return _keyTable.record( bindings );			
     }
     
@@ -287,7 +285,7 @@ public class DataTable {
 	 * @param bindings The map of key/value pairs where the keys correspond to a subset of primary keys and the values are the ones we want to match.
 	 * @return The matching records.
      */
-    public Collection<GenericRecord> records( final Map bindings ) {
+    public <ValueType extends Object> Collection<GenericRecord> records( final Map<String,ValueType> bindings ) {
 		return _keyTable.records( bindings );			
     }
 	
@@ -299,7 +297,7 @@ public class DataTable {
 	 * @param ordering The sort ordering used to sort the records.
 	 * @return The matching records sorted according to the ordering.
 	 */
-	public List<GenericRecord> getRecords( final Map bindings, final SortOrdering ordering ) {
+	public <ValueType extends Object> List<GenericRecord> getRecords( final Map<String,ValueType> bindings, final SortOrdering ordering ) {
 		return orderRecords( records( bindings ), ordering );
 	}
     
@@ -398,7 +396,7 @@ public class DataTable {
         
         
         /** Get a record matching all of the primary key bindings. Bindings should include all primary keys to ensure a unique record. */
-        public GenericRecord record( final Map bindings ) throws NonUniqueRecordException {
+        public <ValueType extends Object> GenericRecord record( final Map<String,ValueType> bindings ) throws NonUniqueRecordException {
             final Collection<GenericRecord> records = records( bindings );
             
             if ( records.size() > 1 ) {
@@ -420,14 +418,14 @@ public class DataTable {
         
         
 		/** Fetch all records matching the primary key bindings. You may use a subset of primary keys since multiple records may be returned. */
-        public Collection<GenericRecord> records( final Map bindings ) {
+        public <ValueType extends Object> Collection<GenericRecord> records( final Map<String,ValueType> bindings ) {
             final Collection<GenericRecord> records = new HashSet<GenericRecord>();
-            final Set<Map.Entry> entries = bindings.entrySet();
+            final Set<Map.Entry<String,ValueType>> entries = bindings.entrySet();
             
             if ( entries.size() == 0 )  return Collections.<GenericRecord>emptySet();
             
-            final Iterator<Map.Entry> entryIter = entries.iterator();
-			Map.Entry entry = entryIter.next();
+            final Iterator<Map.Entry<String,ValueType>> entryIter = entries.iterator();
+            Map.Entry<String,ValueType> entry = entryIter.next();
 			Collection<GenericRecord> entryRecords = records( entry );
             records.addAll( entryRecords );
             while ( entryIter.hasNext() && !records.isEmpty() ) {
@@ -441,8 +439,8 @@ public class DataTable {
         
         
 		/** Fetch the records matching the key/value pair specified in the entry. */
-        private Collection<GenericRecord> records( final Map.Entry entry ) {
-            final String key = (String)entry.getKey();
+        private <ValueType extends Object> Collection<GenericRecord> records( final Map.Entry<String,ValueType> entry ) {
+            final String key = entry.getKey();
             final Object value = entry.getValue();
             return records( key, value );
         }

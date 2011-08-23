@@ -75,22 +75,34 @@ public class SortOrdering implements Comparator<KeyedRecord> {
 	
 	
 	/**
-	 * Compare two records.  The sort ordering compares records based on their values associated with 
-	 * the sort ordering keys.  These associated values must be comparable (i.e. their class must
-	 * implement the Comparable interface).  The comparison is made starting with the first key
-	 * and considers successive keys as necessary until the records can be ordered or all keys are
-	 * exhausted resulting in equality.
+	 * Compare two records.  The sort ordering compares records based on their values associated with the sort ordering keys.  These associated values must be comparable (i.e. their class must implement the
+	 * Comparable interface).  The comparison is made starting with the first key and considers successive keys as necessary until the records can be ordered or all keys are exhausted resulting in equality.
 	 * @param record1 The first record of the comparison.
 	 * @param record2 The second record of the comparison.
 	 * @return 0 if the records are equal, negative if record2 > record1 and positive if record1 > record2
 	 */
+    @SuppressWarnings( "unchecked" )
 	public int compare( final KeyedRecord record1, final KeyedRecord record2 ) {
 		int comparison = 0;
 		
 		for ( int index = 0 ; index < _keys.length ; index++ ) {
-			String key = _keys[index];
-			comparison = ((Comparable)record1.valueForKey( key )).compareTo( (Comparable)record2.valueForKey( key ) );
-			if ( comparison != 0 )  return comparison; 
+			final String key = _keys[index];
+            final Object value1 = record1.valueForKey( key );
+            final Object value2 = record2.valueForKey( key );
+            if ( value1 instanceof Comparable && value2 instanceof Comparable ) {
+                final Comparable comp1 = (Comparable)value1;
+                final Comparable comp2 = (Comparable)value2;
+                comparison = comp1.compareTo( comp2 );
+                if ( comparison != 0 )  return comparison; 
+            }
+            else {
+                if ( !( value1 instanceof Comparable ) ) {
+                    throw new IllegalArgumentException( "Record comparison failed because value 1: " + value1 + " is not comparable..." );
+                }
+                else { 
+                    throw new IllegalArgumentException( "Record comparison failed because value 2: " + value2 + " is not comparable..." );
+                }
+            }
 		}
 		return comparison;
 	}

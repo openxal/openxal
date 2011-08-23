@@ -220,15 +220,15 @@ public class EditContext {
     
     
     /** Get the records from the table where the bindings map is valid. */
-    public Collection records(String tableName, Map bindings) {
-        DataTable table = getTable(tableName);
-        return table.records(bindings);
+    public <ValueType extends Object> Collection<GenericRecord> records( final String tableName, final Map<String,ValueType> bindings ) {
+        final DataTable table = getTable( tableName );
+        return table.records( bindings );
     }
     
     
     /** Get the records from the table where the bindings map is valid. */
-    public Collection records(DataTable table, Map bindings) {
-        return table.records(bindings);
+    public <ValueType extends Object> Collection<GenericRecord> records( final DataTable table, final Map<String,ValueType> bindings ) {
+        return table.records( bindings );
     }
     
     
