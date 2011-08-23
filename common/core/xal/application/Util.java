@@ -94,8 +94,8 @@ public class Util {
      * @throws java.util.MissingResourceException If the resource bundle cannot be found.
 	 * @see #loadResourceBundle
 	 */
-	static public Map getPropertiesFromResource(String propertyFile) throws MissingResourceException {
-		return loadResourceBundle(Application.getAdaptor().getResourcesPath() + "." + propertyFile);
+	static public Map<String,String> getPropertiesFromResource(String propertyFile) throws MissingResourceException {
+		return loadResourceBundle( Application.getAdaptor().getResourcesPath() + "." + propertyFile );
 	}
     
     

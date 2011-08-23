@@ -59,7 +59,7 @@ class MessageHandlerTable implements java.io.Serializable {
         final Object source = handler.getSource();
         
         if ( PROTOCOL_TABLE.containsKey( protocolKey ) ) {
-            final Map sourceTable = PROTOCOL_TABLE.get( protocolKey );
+            final Map<Object,MessageHandler> sourceTable = PROTOCOL_TABLE.get( protocolKey );
             sourceTable.remove( source );
         }    
     }

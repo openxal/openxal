@@ -18,7 +18,10 @@ import java.util.*;
 public class InitialDelta extends DomainHint {
 	final static public String TYPE = "InitialDelta";
 	
-	final protected Map _variableDeltas;
+    /** delta keyed by variable */
+	final protected Map<Variable,Double> VARIABLE_DELTAS;
+    
+    /** default delta */
 	final protected double _defaultDelta;
 	
 	
@@ -28,7 +31,7 @@ public class InitialDelta extends DomainHint {
 
 		_defaultDelta = delta;
 		
-		_variableDeltas = new HashMap();
+		VARIABLE_DELTAS = new HashMap<Variable,Double>();
 	}
 	
 	
@@ -49,19 +52,19 @@ public class InitialDelta extends DomainHint {
 	
 	/** Determine if there is an entry for the variable */
 	public boolean hasVariable( final Variable variable ) {
-		return _variableDeltas.containsKey( variable );
+		return VARIABLE_DELTAS.containsKey( variable );
 	}
 	
 	
 	/** add the initial delta for the specified variable */
 	public void addInitialDelta( final Variable variable, final double delta ) {
-		_variableDeltas.put( variable, new Double( delta ) );
+		VARIABLE_DELTAS.put( variable, new Double( delta ) );
 	}
 	
 	
 	/** Get the domain for the specified variable. */
 	public double[] getRange( final Variable variable ) {
-		final Double deltaD = (Double)_variableDeltas.get( variable );
+		final Double deltaD = VARIABLE_DELTAS.get( variable );
 		
 		if ( deltaD != null ) {
 			return getRange( variable, deltaD.doubleValue() );

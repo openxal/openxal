@@ -26,23 +26,23 @@
  public class SatisfactionSumJudge extends SolutionJudge {
 	 protected final double DEFAULT_WEIGHT = 1.0;
 	 protected double _bestWeightedSum;
-	 protected List _optimalSolution;
-	 protected Map _objectiveWeightMap;
+	 protected List<Trial> _optimalSolutions;
+	 protected Map<Objective,Double> _objectiveWeightMap;
 	 
 	 
 	 /**Creates a new SatisfactionJudge instance*/
 	 public SatisfactionSumJudge() {
 		 _bestWeightedSum = 0.0;
-		 _objectiveWeightMap = new HashMap();
-		 _optimalSolution = new ArrayList();		 
+		 _objectiveWeightMap = new HashMap<Objective,Double>();
+		 _optimalSolutions = new ArrayList<Trial>();		 
 	 }
 	 
 	 
 	 /** Reset the satisfaction sum judge. */
 	 public void reset() {
 		 _bestWeightedSum = 0.0;
-		 _optimalSolution = new ArrayList();
-		 _objectiveWeightMap = new HashMap();
+		 _optimalSolutions = new ArrayList<Trial>();
+		 _objectiveWeightMap = new HashMap<Objective,Double>();
 	 }
 		 
 	 
@@ -52,7 +52,7 @@
 	 * @param weight The weight to give the objective.
 	 */
 	 public void setWeight( final Objective objective, final double weight ) {
-		 _objectiveWeightMap.put( objective, new Double( weight ) );
+		 _objectiveWeightMap.put( objective, weight );
 	 }
 	 
 	 
@@ -61,7 +61,7 @@
 	 * @return The weight of the specified objective
 	 */
 	 private double getWeight( final Objective objective ) {
-		 final Double weight = (Double)_objectiveWeightMap.get( objective );
+		 final Double weight = _objectiveWeightMap.get( objective );
 		 return ( weight == null ) ? DEFAULT_WEIGHT : weight.doubleValue();		 
 	 } 
 		 
@@ -71,7 +71,7 @@
 	 * @return A list of solutions
 	 */
 	 public List getOptimalSolutions() {
-		 return _optimalSolution;	 	 
+		 return _optimalSolutions;	 	 
 	 }
 	 
 	 
@@ -96,14 +96,14 @@
 		 trial.setSatisfaction( weightedSum );
 		 
 		 if( weightedSum == _bestWeightedSum ) {
-			 _optimalSolution.add(trial);
-			 _eventProxy.foundNewOptimalSolution( this, _optimalSolution, trial );
+			 _optimalSolutions.add( trial );
+			 _eventProxy.foundNewOptimalSolution( this, _optimalSolutions, trial );
 		 }
 		 else if( weightedSum > _bestWeightedSum ) {
 			 _bestWeightedSum = weightedSum;
-			 _optimalSolution.clear();
-			 _optimalSolution.add( trial );
-			 _eventProxy.foundNewOptimalSolution( this, _optimalSolution, trial );
+			 _optimalSolutions.clear();
+			 _optimalSolutions.add( trial );
+			 _eventProxy.foundNewOptimalSolution( this, _optimalSolutions, trial );
 		 }
 	 }
  }

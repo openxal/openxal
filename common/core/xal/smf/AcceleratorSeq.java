@@ -685,7 +685,7 @@ public class AcceleratorSeq extends AcceleratorNode implements DataListener {
 	 * @param orderedSequences the list of ordered sequences to append the next sequence
 	 * @param sequenceMap the table of sequences from which to fetch the next sequence
      */
-    protected List<AcceleratorSeq> addSequenceChain( final LinkedList<AcceleratorSeq> orderedSequences, final Map sequenceMap ) {
+    protected List<AcceleratorSeq> addSequenceChain( final LinkedList<AcceleratorSeq> orderedSequences, final Map<String,AcceleratorSeq> sequenceMap ) {
         orderedSequences.addFirst( this );
         sequenceMap.remove( this.getId() );
 		

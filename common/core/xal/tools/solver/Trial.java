@@ -39,7 +39,7 @@ public class Trial {
 	protected TrialVeto _veto;
 	
 	/** table of objective scores */
-	protected final Map _scores;
+	protected final Map<Objective,Score> OBJECTIVE_SCORES;
 	
 	/** overall satisfaction provided by some solution judges */
 	protected double _satisfaction;
@@ -60,7 +60,7 @@ public class Trial {
 		_trialPoint = trialPoint;
 		_searchAlgorithm = algorithm;
 		_algorithmStrategy = strategy;
-		_scores = new HashMap();
+		OBJECTIVE_SCORES = new HashMap<Objective,Score>();
 		_veto = null;
 	}
 	
@@ -108,7 +108,7 @@ public class Trial {
 	 */
 	public void setScore( final Score score ) {
 		Objective objective = score.getObjective();
-		_scores.put( objective, score );
+		OBJECTIVE_SCORES.put( objective, score );
 	}
 
 
@@ -128,8 +128,7 @@ public class Trial {
 	 * @return             The score of the specified objective.
 	 */
 	public Score getScore( final Objective objective ) {
-		Score score = (Score)_scores.get( objective );
-		return score;
+		return OBJECTIVE_SCORES.get( objective );
 	}
 
 
@@ -139,7 +138,7 @@ public class Trial {
 	 * @return             The satisfaction.
 	 */
 	public double getSatisfaction( final Objective objective ) {
-		Score score = (Score)_scores.get( objective );
+		final Score score = OBJECTIVE_SCORES.get( objective );
 		return score.getSatisfaction();
 	}
 	
@@ -199,11 +198,11 @@ public class Trial {
 
 
 	/**
-	 * Get the scores.
-	 * @return   The map of scores.
+	 * Get the scores keyed by objective
+	 * @return   Table of scores keyed by objective.
 	 */
-	public Map getScores() {
-		return _scores;
+	public Map<Objective,Score> getScores() {
+		return OBJECTIVE_SCORES;
 	}
 	
 	
@@ -233,7 +232,7 @@ public class Trial {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append( "\nTrial Point: " + _trialPoint + "\n " );
 		buffer.append( "Satisfaction: " + _satisfaction + "\n" );
-		buffer.append( "Scores: " + _scores + "\n" );
+		buffer.append( "Scores: " + OBJECTIVE_SCORES + "\n" );
 
 		return buffer.toString();
 	}

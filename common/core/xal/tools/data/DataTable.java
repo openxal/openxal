@@ -630,14 +630,14 @@ public class DataTable {
         /** serialization ID */
         private static final long serialVersionUID = 1L;
 
-        private Map bindings;
+        private Map<String,Object> bindings;
         
 		
 		/**
 		 * Constructor
 		 */
-        public NonUniqueRecordException( final Map theBindings ) {
-            bindings = theBindings;
+        public <ValueType> NonUniqueRecordException( final Map<String,ValueType> theBindings ) {
+            bindings = (Map<String,Object>)theBindings;
         }
         
         
