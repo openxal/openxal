@@ -390,16 +390,13 @@ public class AcceleratorSeq extends AcceleratorNode implements DataListener {
 	 * @param qualifier the qualifier used to filter the nodes
 	 * @return the list of nodes matching the qualifier criteria
 	 */
-    @SuppressWarnings( "unchecked" )    // we must cast to NodeType
+    @SuppressWarnings( "unchecked" )    // we must cast to NodeType, but we can't verify it
     static public <BaseType extends AcceleratorNode, NodeType extends BaseType> List<NodeType> getNodesWithQualifier( final List<BaseType> sourceNodes, final TypeQualifier qualifier ) {
         final List<NodeType> matchedNodes = new ArrayList<NodeType>();    // returned list
-     
+        
 		for ( final BaseType node : sourceNodes ) {
 			if ( qualifier.match( node ) ) {
-                try {   // unfortunately there is no way to test whether a node conforms to NodeType so we just skip the ones that throw a cast exception
-                    matchedNodes.add( (NodeType)node );
-                }
-                catch ( ClassCastException exception ) {}
+                matchedNodes.add( (NodeType)node );     // warning: there is no way to verify the type at runtime
             }
 		}
 		        

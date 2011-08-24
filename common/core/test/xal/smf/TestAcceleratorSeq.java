@@ -1,8 +1,8 @@
 //
-//  TestComplex.java
+//  TestAcceleratorSeq.java
 //  xal
 //
-//  Created by Tom Pelaia on 2/17/2011.
+//  Created by Tom Pelaia on 8/24/2011.
 //  Copyright 2011 Oak Ridge National Lab. All rights reserved.
 //
 
@@ -10,12 +10,13 @@ package xal.smf;
 
 import xal.smf.data.XMLDataManager;
 import xal.smf.impl.*;
+import xal.smf.impl.qualify.*;
 
 import java.util.*;
 import org.junit.*;
 
 
-/** test the complex number class */
+/** test the AcceleratorSeq class */
 public class TestAcceleratorSeq {
     /** default accelerator */
     final private Accelerator DEFAULT_ACCELERATOR;
@@ -47,10 +48,13 @@ public class TestAcceleratorSeq {
     
     
     @Test
-    /** test fetching nodes by type using a strong typing during the fetch */
+    /** test fetching nodes by qualifier using a strong typing during the fetch */
     public void testNodeFetchingByStrongType() {
         final AcceleratorSeq ring = DEFAULT_ACCELERATOR.findSequence( "Ring" );
         final List<BPM> nodes = ring.<BPM>getNodesOfType( "BPM" );
         Assert.assertTrue( nodes.size() > 0 );
+        for ( final BPM node : nodes ) {
+            Assert.assertTrue( node instanceof BPM );
+        }
     }
 }
