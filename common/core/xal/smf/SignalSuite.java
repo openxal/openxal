@@ -148,7 +148,7 @@ public class SignalSuite {
      * @return The transform for the specified handle.
      */
     public ValueTransform getTransform(String handle) {
-        final SignalEntry signalEntry = (SignalEntry)_signalMap.get(handle);
+        final SignalEntry signalEntry = _signalMap.get(handle);
 		return signalEntry != null ? _transformTable.get( signalEntry.getTransformKey() ) : null;
     }
 }

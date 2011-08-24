@@ -11,7 +11,10 @@ package xal.tools.data;
  * @author  Christopher Allen
  */
 public class MissingDataException extends DataFormatException {
+    /** serialization identifier */
+    private static final long serialVersionUID = 1L;
     
+
     /**
      * Creates a new instance of <code>MissingAttributeException</code> without detail message.
      */

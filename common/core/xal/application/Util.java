@@ -59,7 +59,7 @@ public class Util {
 			// if the key begins with "+" then prepend the new assignment onto the existing assignment
 			if ( key.startsWith( "+" ) ) {
 				final String baseKey = key.substring( 1 );
-				final String initialAssignment = (String)map.get( baseKey );
+				final String initialAssignment = map.get( baseKey );
 				if ( initialAssignment != null ) {
 					map.put( baseKey, assignment + " - " + initialAssignment );
 				}
@@ -70,7 +70,7 @@ public class Util {
 			// if the key ends with "+" then append the new assignment onto the existing assignment
 			else if ( key.endsWith( "+" ) ) {
 				final String baseKey = key.substring( 0, key.length() - 1 );
-				final String initialAssignment = (String)map.get( baseKey );
+				final String initialAssignment = map.get( baseKey );
 				if ( initialAssignment != null ) {
 					map.put( baseKey, initialAssignment + " - " + assignment );
 				}

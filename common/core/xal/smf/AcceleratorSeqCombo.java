@@ -305,7 +305,7 @@ public class AcceleratorSeqCombo extends AcceleratorSeq {
 		
 		if ( baseConstituents.size() <= 0 )  return null;
 		
-		final AcceleratorSeq sequence = (AcceleratorSeq)baseConstituents.get(0);
+		final AcceleratorSeq sequence = baseConstituents.get(0);
 		
 		return sequence.getEntranceID();
 	}

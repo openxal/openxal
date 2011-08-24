@@ -144,7 +144,7 @@ public class Accelerator extends AcceleratorSeq implements /* IElement, */ DataL
         String comboType = comboAdaptor.stringValue("type");
 		String comboID = comboAdaptor.stringValue("id");
 		// check if we already have the sequence
-		AcceleratorSeqCombo comboSequence = (AcceleratorSeqCombo)getComboSequence(comboID);
+		AcceleratorSeqCombo comboSequence = getComboSequence( comboID );
 		// if the sequence doesn't already exist, create a new one
 		// and add the new sequence to the accelerator root sequence
 		if ( comboSequence == null ) {

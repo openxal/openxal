@@ -125,7 +125,7 @@ abstract public class SourceAgent implements StateNotice {
         BinAgent nextBin;
         
         synchronized( binAgents ) {
-            nextBin = (BinAgent)binAgents.removeFirst();
+            nextBin = binAgents.removeFirst();
             binAgents.addLast( nextBin );
         }
         

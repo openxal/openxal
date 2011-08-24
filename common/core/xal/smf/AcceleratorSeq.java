@@ -231,7 +231,7 @@ public class AcceleratorSeq extends AcceleratorNode implements DataListener {
      * @param iIndex the index for the node of interest (indexing starts with 0)
      */
     public AcceleratorNode  getNodeAt( final int iIndex ) { 
-		return (AcceleratorNode) getNodes().get( iIndex );
+		return getNodes().get( iIndex );
 	}
       
     
@@ -243,7 +243,7 @@ public class AcceleratorSeq extends AcceleratorNode implements DataListener {
     protected int indexToAddNode( final AcceleratorNode newNode ) {
         int insertIndex = 0;
         for ( int index = m_arrNodes.size()-1 ; index >= 0 ; index-- ) {
-            AcceleratorNode node = (AcceleratorNode)m_arrNodes.get(index);
+            AcceleratorNode node = m_arrNodes.get(index);
             if ( newNode.m_dblPos >= node.m_dblPos ) {
                 insertIndex = index + 1;
                 break;
@@ -367,7 +367,7 @@ public class AcceleratorSeq extends AcceleratorNode implements DataListener {
 		}
 		// else check if immediate children are matches
 		else if ( nodeTable.containsKey(label) ) {
-			return (AcceleratorNode)nodeTable.get(label);
+			return nodeTable.get(label);
 		}
         
         // If we still haven't found the node, search deeply
@@ -692,7 +692,7 @@ public class AcceleratorSeq extends AcceleratorNode implements DataListener {
         final String[] predecessors = getPredecessors();
         for ( int index = 0 ; index < predecessors.length ; index++ ) {
             final String predecessor = predecessors[index];
-            final AcceleratorSeq preSequence = (AcceleratorSeq)sequenceMap.get( predecessor );
+            final AcceleratorSeq preSequence = sequenceMap.get( predecessor );
             if ( preSequence != null ) {
                  return preSequence.addSequenceChain( orderedSequences, sequenceMap );
             }         

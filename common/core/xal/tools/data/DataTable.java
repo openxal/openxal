@@ -633,9 +633,8 @@ public class DataTable {
         private Map<String,Object> bindings;
         
 		
-		/**
-		 * Constructor
-		 */
+		/** Constructor */
+        @SuppressWarnings( "unchecked" )    // exception classes don't support generics so we have no choice but to cast
         public <ValueType> NonUniqueRecordException( final Map<String,ValueType> theBindings ) {
             bindings = (Map<String,Object>)theBindings;
         }
