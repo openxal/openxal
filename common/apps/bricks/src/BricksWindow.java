@@ -33,6 +33,9 @@ import java.beans.*;
  * @author  tap
  */
 class BricksWindow extends XalWindow implements SwingConstants, BrickListener {
+    /** serialization identifier */
+    private static final long serialVersionUID = 1L;
+    
 	/** tree model of view nodes */
 	final protected DefaultTreeModel VIEW_NODE_TREE_MODEL;
 	
@@ -132,6 +135,9 @@ class BricksWindow extends XalWindow implements SwingConstants, BrickListener {
      */
     protected void customizeCommands( final Commander commander ) {		
         final Action moveDownViewAction = new AbstractAction( "move-down-view" ) {
+            /** serialization identifier */
+            private static final long serialVersionUID = 1L;
+            
             public void actionPerformed( final ActionEvent event ) {
 				moveDownSelection( VIEW_TREE );
 			}
@@ -139,6 +145,9 @@ class BricksWindow extends XalWindow implements SwingConstants, BrickListener {
         commander.registerAction( moveDownViewAction );
 		
         final Action moveUpViewAction = new AbstractAction( "move-up-view" ) {
+            /** serialization identifier */
+            private static final long serialVersionUID = 1L;
+            
             public void actionPerformed( final ActionEvent event ) {
 				moveUpSelection( VIEW_TREE );
 			}
@@ -146,6 +155,9 @@ class BricksWindow extends XalWindow implements SwingConstants, BrickListener {
         commander.registerAction( moveUpViewAction );
 		
         final Action toggleViewPaletteAction = new AbstractAction( "toggle-view-palette" ) {
+            /** serialization identifier */
+            private static final long serialVersionUID = 1L;
+            
             public void actionPerformed( final ActionEvent event ) {
 				BUILDER_VIEW.setDividerLocation( BUILDER_VIEW.getDividerLocation() <= BUILDER_VIEW.getDividerSize() ? BUILDER_VIEW.getLastDividerLocation() : 0 );
 			}
@@ -394,6 +406,9 @@ class BricksWindow extends XalWindow implements SwingConstants, BrickListener {
 	
 	/** View nodes transfer handler */
 	class ViewNodesTransferHandler extends TransferHandler {
+        /** serialization identifier */
+        private static final long serialVersionUID = 1L;
+        
 		/** transfer view nodes */
 		protected Transferable createTransferable( final JComponent component ) {
 			final JTree nodeTree = (JTree)component;

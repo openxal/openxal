@@ -110,6 +110,9 @@ public class Main extends ApplicationAdaptor {
     protected void customizeCommands(Commander commander) {
         // define the "start run" demo action
         startAction = new AbstractAction( "start-run" ) {
+            /** serialization identifier */
+            private static final long serialVersionUID = 1L;
+            
             public void actionPerformed(ActionEvent event) {
                 isRunning = true;
                 isPaused = false;
@@ -122,6 +125,9 @@ public class Main extends ApplicationAdaptor {
         
         // define the "pause run" demo action
         pauseAction = new AbstractAction( "pause-run" ) {
+            /** serialization identifier */
+            private static final long serialVersionUID = 1L;
+            
             public void actionPerformed(ActionEvent event) {
                 isRunning = false;
                 isPaused = true;
@@ -135,6 +141,9 @@ public class Main extends ApplicationAdaptor {
         
         // define the "stop run" demo action
         stopAction = new AbstractAction( "stop-run" ) {
+            /** serialization identifier */
+            private static final long serialVersionUID = 1L;
+            
             public void actionPerformed(ActionEvent event) {
                 isRunning = false;
                 isPaused = false;

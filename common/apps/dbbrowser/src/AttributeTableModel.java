@@ -20,6 +20,9 @@ import java.util.*;
  * @author  tap
  */
 public class AttributeTableModel extends AbstractTableModel implements BrowserModelListener {
+    /** serialization identifier */
+    private static final long serialVersionUID = 1L;
+    
 	/** enum for the name column */
 	final static protected int NAME_COLUMN = 0;
 	

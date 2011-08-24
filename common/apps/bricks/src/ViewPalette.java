@@ -26,6 +26,9 @@ import java.util.Vector;
 
 /** Palette of views which can be dropped onto a window. */
 public class ViewPalette extends JTabbedPane {
+    /** serialization identifier */
+    private static final long serialVersionUID = 1L;
+    
 	/** Constructor */
 	public ViewPalette() {
 		super( JTabbedPane.LEFT );
@@ -164,6 +167,9 @@ public class ViewPalette extends JTabbedPane {
 	
 	/** Knob list transfer handler */
 	class ViewTransferHandler extends TransferHandler {
+        /** serialization identifier */
+        private static final long serialVersionUID = 1L;
+        
 		final protected JList VIEW_LIST;
 		
 		
@@ -195,6 +201,9 @@ public class ViewPalette extends JTabbedPane {
 
 /** render the view as an icon */
 class ViewCellRenderer extends JLabel implements ListCellRenderer {
+    /** serialization identifier */
+    private static final long serialVersionUID = 1L;
+    
 	public Component getListCellRendererComponent( final JList list, final Object value, final int index, boolean isSelected, boolean cellHasFocus ) {
 		if ( value instanceof ViewProxy ) {
 			final BeanProxy proxy = (BeanProxy)value;

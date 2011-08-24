@@ -29,6 +29,9 @@ import java.sql.*;
  * @author  tap
  */
 public class QueryWindow extends XalWindow implements SwingConstants {
+    /** serialization identifier */
+    private static final long serialVersionUID = 1L;
+    
 	protected JTextArea _resultsView;
 	protected JTextArea _queryView;
 	protected Connection _databaseConnection;
@@ -73,6 +76,9 @@ public class QueryWindow extends XalWindow implements SwingConstants {
 		buttonBox.add( Box.createHorizontalGlue() );
 		final JButton executeButton = new JButton( "Execute" );
 		executeButton.addActionListener( new AbstractAction() {
+            /** serialization identifier */
+            private static final long serialVersionUID = 1L;
+            
 			public void actionPerformed( final ActionEvent event ) {
 				executeQuery();
 			}
@@ -99,6 +105,9 @@ public class QueryWindow extends XalWindow implements SwingConstants {
 		// define the "execute query" action
 		
         commander.registerAction( new AbstractAction( "execute-query" ) {
+            /** serialization identifier */
+            private static final long serialVersionUID = 1L;
+            
             public void actionPerformed( final ActionEvent event ) {
 				executeQuery();
             }

@@ -22,6 +22,9 @@ import java.util.*;
  * @author  tap
  */
 public class DataWindow extends JDialog implements ScrollPaneConstants {
+    /** serialization identifier */
+    private static final long serialVersionUID = 1L;
+    
 	/**
 	 * DataWindow Constructor
 	 */
@@ -90,6 +93,9 @@ public class DataWindow extends JDialog implements ScrollPaneConstants {
      */
     private TableCellRenderer getNumericCellRenderer() {
         return new DefaultTableCellRenderer() {
+            /** serialization identifier */
+            private static final long serialVersionUID = 1L;
+            
             public java.awt.Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
                 JLabel label = (JLabel)super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
                 label.setHorizontalAlignment(RIGHT);

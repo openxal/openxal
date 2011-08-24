@@ -24,6 +24,9 @@ import xal.application.*;
  * @author  t6p
  */
 public class MyWindow extends XalWindow {
+    /** serialization identifier */
+    private static final long serialVersionUID = 1L;
+    
     protected JTextArea textView;
     
     

@@ -19,6 +19,9 @@ import javax.swing.*;
  * @author  tap
  */
 public class SchemaListModel extends AbstractListModel {
+    /** serialization identifier */
+    private static final long serialVersionUID = 1L;
+    
 	/** Browser model providing the list of database tables */
 	protected BrowserModel _model;
 	

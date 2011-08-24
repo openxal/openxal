@@ -77,6 +77,9 @@ public class CodeAssistant {
 	public void registerActions( final Commander commander ) {
         // define the "copy tag" action
         _copyTagAction = new AbstractAction( "copy-tag") {
+            /** serialization identifier */
+            private static final long serialVersionUID = 1L;
+            
             public void actionPerformed( final ActionEvent event ) {
 				final BeanNode node = TreeUtility.getSelectedBeanNode( _viewTree );
 				if ( node != null ) {
@@ -89,6 +92,9 @@ public class CodeAssistant {
 
 		// define the "copy java declaration" action
         _copyJavaDeclarationAction = new AbstractAction( "copy-java-declaration") {
+            /** serialization identifier */
+            private static final long serialVersionUID = 1L;
+            
             public void actionPerformed( final ActionEvent event ) {
 				final BeanNode[] nodes = TreeUtility.getSelectedBeanNodes( _viewTree );
 				if ( nodes.length > 0 ) {
@@ -106,6 +112,9 @@ public class CodeAssistant {
 		
 		// define the "copy java declaration" action
         _copyJavaReferenceAction = new AbstractAction( "copy-java-reference") {
+            /** serialization identifier */
+            private static final long serialVersionUID = 1L;
+            
             public void actionPerformed( final ActionEvent event ) {
 				final BeanNode[] nodes = TreeUtility.getSelectedBeanNodes( _viewTree );
 				if ( nodes.length > 0 ) {
@@ -123,6 +132,9 @@ public class CodeAssistant {
 		
 		// define the "copy java declaration" action
         _copyXALReferenceAction = new AbstractAction( "copy-xal-reference") {
+            /** serialization identifier */
+            private static final long serialVersionUID = 1L;
+            
             public void actionPerformed( final ActionEvent event ) {
 				final BeanNode[] nodes = TreeUtility.getSelectedBeanNodes( _viewTree );
 				if ( nodes.length > 0 ) {
@@ -140,6 +152,9 @@ public class CodeAssistant {
 		
 		// define the "copy jython declaration" action
         _copyJythonReferenceAction = new AbstractAction( "copy-jython-reference") {
+            /** serialization identifier */
+            private static final long serialVersionUID = 1L;
+            
             public void actionPerformed( final ActionEvent event ) {
 				final BeanNode[] nodes = TreeUtility.getSelectedBeanNodes( _viewTree );
 				if ( nodes.length > 0 ) {
@@ -157,6 +172,9 @@ public class CodeAssistant {
 		
 		// define the "copy java import" action
         _copyJavaImportAction = new AbstractAction( "copy-java-import") {
+            /** serialization identifier */
+            private static final long serialVersionUID = 1L;
+            
             public void actionPerformed( final ActionEvent event ) {
 				final StringBuffer buffer = new StringBuffer();
 				buffer.append( "import xal.tools.bricks.WindowReference;" );
@@ -169,6 +187,9 @@ public class CodeAssistant {
 		
 		// define the "copy jython import" action
         _copyJythonImportAction = new AbstractAction( "copy-jython-import") {
+            /** serialization identifier */
+            private static final long serialVersionUID = 1L;
+            
             public void actionPerformed( final ActionEvent event ) {
 				final StringBuffer buffer = new StringBuffer();
 				buffer.append( "from xal.tools.bricks import WindowReference" );

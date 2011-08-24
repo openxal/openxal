@@ -28,6 +28,9 @@ import java.sql.Connection;
  * @author   t6p
  */
 class BrowserWindow extends XalWindow implements SwingConstants {
+    /** serialization identifier */
+    private static final long serialVersionUID = 1L;
+    
 	/** browser model */
 	protected BrowserModel _model;
 
@@ -99,6 +102,9 @@ class BrowserWindow extends XalWindow implements SwingConstants {
 		// define the "database connect" action
 		Action connectAction =
 			new AbstractAction( "connect-database" ) {
+                /** serialization identifier */
+                private static final long serialVersionUID = 1L;
+                
 				public void actionPerformed( ActionEvent event ) {
 					requestUserConnection();
 				}
@@ -108,6 +114,9 @@ class BrowserWindow extends XalWindow implements SwingConstants {
 		// define the "fetch records" action
 		fetchRecordsAction =
 			new AbstractAction( "fetch-records" ) {
+                /** serialization identifier */
+                private static final long serialVersionUID = 1L;
+                
 				public void actionPerformed( ActionEvent event ) {
 					fetchRecords();
 				}
@@ -118,6 +127,9 @@ class BrowserWindow extends XalWindow implements SwingConstants {
 		// define the "display query tool" action
 		commander.registerAction(
 			new AbstractAction( "display-query-tool" ) {
+                /** serialization identifier */
+                private static final long serialVersionUID = 1L;
+            
 				public void actionPerformed( ActionEvent event ) {
 					Application.getApp().produceDocument( new QueryDocument( _model.getDatabaseConnection() ) );
 				}
@@ -278,6 +290,9 @@ class BrowserWindow extends XalWindow implements SwingConstants {
 	private TableCellRenderer getNumericCellRenderer() {
 		return
 			new DefaultTableCellRenderer() {
+                /** serialization identifier */
+                private static final long serialVersionUID = 1L;
+                
 				public java.awt.Component getTableCellRendererComponent( JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column ) {
 					JLabel label = (JLabel)super.getTableCellRendererComponent( table, value, isSelected, hasFocus, row, column );
 					label.setHorizontalAlignment( RIGHT );
