@@ -40,7 +40,7 @@ public class AttributeTableModel extends AbstractTableModel implements BrowserMo
 	protected BrowserModel _browserModel;
 	
 	/** List of the attributes to display */
-	protected List _attributes;
+	protected List<TableAttribute> _attributes;
 	
 	
 	/**
@@ -112,15 +112,15 @@ public class AttributeTableModel extends AbstractTableModel implements BrowserMo
     public Object getValueAt(int row, int column) {
         switch(column) {
             case NAME_COLUMN:
-                return ((TableAttribute)_attributes.get(row)).name;
+                return _attributes.get(row).name;
             case TYPE_COLUMN:
-                return ((TableAttribute)_attributes.get(row)).type;
+                return _attributes.get(row).type;
             case WIDTH_COLUMN:
-                return new Integer( ((TableAttribute)_attributes.get(row)).width );
+                return new Integer( _attributes.get(row).width );
             case NULLABLE_COLUMN:
-                return ((TableAttribute)_attributes.get(row)).nullable;
+                return _attributes.get(row).nullable;
             case PRIMARY_KEY_COLUMN:
-                return new Boolean( ((TableAttribute)_attributes.get(row)).isPrimaryKey );
+                return new Boolean( _attributes.get(row).isPrimaryKey );
             default:
                 return "";
         }
@@ -133,7 +133,7 @@ public class AttributeTableModel extends AbstractTableModel implements BrowserMo
      * @param column The index of the column.
      * @return The title for the specified column.
      */
-    public String getColumnName(int column) {
+    public String getColumnName( final int column ) {
         switch(column) {
             case NAME_COLUMN:
                 return "Name";

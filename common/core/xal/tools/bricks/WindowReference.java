@@ -58,14 +58,14 @@ public class WindowReference {
 	
 	
 	/** get the views with the associated tag */
-	public List getViews( final String tag ) {
+	public List<Object> getViews( final String tag ) {
 		return VIEW_TABLE.get( tag );
 	}
 	
 	
 	/** get a view with the associated tag */
 	public Object getView( final String tag ) {
-		final List views = getViews( tag );
+		final List<Object> views = getViews( tag );
 		return views != null && views.size() > 0 ? views.get( 0 ) : null;
 	}
 	

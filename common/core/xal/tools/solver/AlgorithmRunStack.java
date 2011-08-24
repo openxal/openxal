@@ -27,13 +27,13 @@ public class AlgorithmRunStack {
 	protected AlgorithmStrategy _strategy;
 	
 	/** the list of runs */
-	protected LinkedList _runs;
+	protected LinkedList<AlgorithmRun> _runs;
 		
 	
 	/** Primary Constructor */
 	public AlgorithmRunStack( final AlgorithmStrategy strategy ) {
 		_strategy = strategy;
-		_runs = new LinkedList();
+		_runs = new LinkedList<AlgorithmRun>();
 	}
 	
 	
@@ -94,7 +94,7 @@ public class AlgorithmRunStack {
 	 * Get the algorithm runs.
 	 * @return   The list of algorithm runs.
 	 */
-	public List getAlgorithmRuns() {
+	public List<AlgorithmRun> getAlgorithmRuns() {
 		return _runs;
 	}
 	
@@ -113,7 +113,7 @@ public class AlgorithmRunStack {
 	 * @return   A search algorithm.
 	 */
 	public AlgorithmRun popAlgorithmRun() {
-		return (AlgorithmRun)_runs.removeLast();
+		return _runs.removeLast();
 	}
 }
 

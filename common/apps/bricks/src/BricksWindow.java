@@ -344,6 +344,7 @@ class BricksWindow extends XalWindow implements SwingConstants, BrickListener {
 		
 		
 		/** process the dropping of a view node */
+        @SuppressWarnings( "unchecked" )    // transferables don't support generics
 		void processViewNodeDrop( final DropTargetDropEvent event ) throws Exception {
 			final JTree tree = (JTree)event.getDropTargetContext().getComponent();
 			final List<BeanNode> nodes = (List<BeanNode>)event.getTransferable().getTransferData( ViewNodeTransferable.VIEW_NODE_FLAVOR );
@@ -359,6 +360,7 @@ class BricksWindow extends XalWindow implements SwingConstants, BrickListener {
 		
 		
 		/** process the dropping of a view */
+        @SuppressWarnings( "unchecked" )    // transferables don't support generics
 		void processViewDrop( final DropTargetDropEvent event ) throws Exception {
 			final JTree tree = (JTree)event.getDropTargetContext().getComponent();
 			final List<BeanProxy> views = (List<BeanProxy>)event.getTransferable().getTransferData( ViewTransferable.VIEW_FLAVOR );
@@ -421,6 +423,7 @@ class BricksWindow extends XalWindow implements SwingConstants, BrickListener {
 		
 		
 		/** import the transferable */
+        @SuppressWarnings( "unchecked" )    // transferables don't support generics
 		public boolean importData( final JComponent component, final Transferable transferable ) {
 			try {
 				final JTree nodeTree = (JTree)component;
@@ -444,6 +447,7 @@ class BricksWindow extends XalWindow implements SwingConstants, BrickListener {
 		
 		
 		/** perform cleanup operations */
+        @SuppressWarnings( "unchecked" )    // transferables don't support generics
 		protected void exportDone( final JComponent component, Transferable transferable, int action ) {
 			switch( action ) {
 				case TransferHandler.MOVE:

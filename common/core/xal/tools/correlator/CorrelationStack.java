@@ -23,7 +23,7 @@ import java.util.*;
  */
 public class CorrelationStack {
     /** buffer is a LILO stack of correlations with the oldest correlations having the smallest indices. */
-    protected LinkedList buffer;
+    protected LinkedList<Correlation> buffer;
     protected int stackSize;
 	protected Correlation lastCorrelation;
     
@@ -34,17 +34,17 @@ public class CorrelationStack {
     /** Creates a new instance of CorrelationStack */
     public CorrelationStack(Correlator aCorrelator, int aStackSize) {
         stackSize = aStackSize;
-        buffer = new LinkedList();
+        buffer = new LinkedList<Correlation>();
 		lastCorrelation = null;
 		
         correlator = aCorrelator;
 		correlator.usePatientBroadcaster();
 		correlator.addListener( new CorrelationNotice() {
-			public void newCorrelation(Object sender, Correlation correlation) {
-				push(correlation);
+			public void newCorrelation( final Object sender, final Correlation correlation ) {
+				push( correlation );
 			}
 			
-			public void noCorrelationCaught(Object sender) {}
+			public void noCorrelationCaught( final Object sender ) {}
 		});
     }
     
@@ -54,7 +54,7 @@ public class CorrelationStack {
      * @return The number of correlations on the stack.
      */
     public int getCorrelationCount() {
-        synchronized(buffer) {
+        synchronized( buffer ) {
             return buffer.size();
         }
     }
@@ -65,7 +65,7 @@ public class CorrelationStack {
      * @return true if there are no correlations on the stack and false otherwise.
      */
     public boolean isEmpty() {
-        synchronized(buffer) {
+        synchronized( buffer ) {
             return buffer.isEmpty();
         }
     }
@@ -75,7 +75,7 @@ public class CorrelationStack {
 	 * Empty all correlations from the buffer.
 	 */
 	public void clearBuffer() {
-		synchronized(buffer) {
+		synchronized( buffer ) {
 			buffer.clear();
 		}
 	}
@@ -87,8 +87,8 @@ public class CorrelationStack {
      * @throws java.util.NoSuchElementException if there are no correlations on the stack.
      */
     public Correlation popCorrelation() throws NoSuchElementException {
-        synchronized(buffer) {
-            return (Correlation)buffer.removeFirst();
+        synchronized( buffer ) {
+            return buffer.removeFirst();
         }
     }
 	
@@ -97,10 +97,10 @@ public class CorrelationStack {
      * Pop all correlations from the stack.
      * @return all correlations on the stack.
      */
-    public List popAllCorrelations() {
-        synchronized(buffer) {
-            List correlations = new ArrayList(buffer);
-            buffer.removeAll(correlations);
+    public List<Correlation> popAllCorrelations() {
+        synchronized( buffer ) {
+            final List<Correlation> correlations = new ArrayList( buffer );
+            buffer.removeAll( correlations );
 			
 			return correlations;
         }
@@ -111,9 +111,9 @@ public class CorrelationStack {
      * Push a correlation onto the stack.
      * @param correlation The correlation to push onto the stack.
      */
-    protected void push(Correlation correlation) {
-        synchronized(buffer) {
-            buffer.addLast(correlation);
+    protected void push( final Correlation correlation ) {
+        synchronized( buffer ) {
+            buffer.addLast( correlation );
             trimBuffer();
         }
     }
@@ -124,7 +124,7 @@ public class CorrelationStack {
      * correlations.
      */
     protected void trimBuffer() {
-        synchronized(buffer) {
+        synchronized( buffer ) {
             while ( buffer.size() > stackSize ) {
                 buffer.removeFirst();
             }

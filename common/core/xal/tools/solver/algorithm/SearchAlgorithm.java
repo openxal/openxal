@@ -165,6 +165,6 @@ public abstract class SearchAlgorithm implements AlgorithmScheduleListener, Solu
 	 * @param solutions  The list of solutions.
 	 * @param solution   The new optimal solution.
 	 */
-	public void foundNewOptimalSolution( final SolutionJudge source, final List solutions, final Trial solution ) { }
+	public void foundNewOptimalSolution( final SolutionJudge source, final List<Trial> solutions, final Trial solution ) { }
 }
 

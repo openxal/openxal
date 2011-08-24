@@ -127,7 +127,7 @@ public class XmlWriter {
         Node rootNode;      // the node being written
         int nestLevel;      // nesting level of this node in the document tree
         String indent;      // leading indent based on nest level
-        List childNodes;    // list of children of the root node
+        List<Node> childNodes;    // list of children of the root node
         
         /** create a new NodeWriter */
         public NodeWriter(Node newRoot, int newLevel) {
@@ -141,14 +141,14 @@ public class XmlWriter {
         /** get the children nodes associated with the rootNode */
         protected void readChildren() {
             NodeList nodeList = rootNode.getChildNodes();
-            childNodes = new ArrayList();
+            childNodes = new ArrayList<Node>();
             
             int numChildren = nodeList.getLength();
             for ( int index = 0 ; index < numChildren ; index++ ) {
                 Node node = nodeList.item(index);
                 String nodeName = node.getNodeName();
                 if ( nodeName != null ) {
-                    childNodes.add(node);
+                    childNodes.add( node );
                 }
             }
         }
@@ -212,14 +212,10 @@ public class XmlWriter {
         
         /** write child nodes */
         protected void writeChildren() throws java.io.IOException {
-            Iterator childIter = childNodes.iterator();
-            
-            while ( childIter.hasNext() ) {
-                Node nextNode = (Node)childIter.next();
+            for ( final Node nextNode : childNodes ) {
                 if ( !(nextNode instanceof Element) )  continue;
                 Element element = (Element)nextNode;
-                ElementWriter elementWriter = 
-                    new ElementWriter(element, nestLevel+1);
+                ElementWriter elementWriter = new ElementWriter( element, nestLevel+1 );
                 elementWriter.write();
             }
             

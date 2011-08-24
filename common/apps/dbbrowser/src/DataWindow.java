@@ -25,17 +25,17 @@ public class DataWindow extends JDialog implements ScrollPaneConstants {
 	/**
 	 * DataWindow Constructor
 	 */
-	public DataWindow( final JFrame owner, final String title, final List<Map> records, final List<TableAttribute> attributes ) {
+	public DataWindow( final JFrame owner, final String title, final List<Map<String,Object>> records, final List<TableAttribute> attributes ) {
 		super(owner, title, false);
 		setLocationRelativeTo(owner);
-		makeContents(records, attributes);
+		makeContents( records, attributes );
 	}
 	
 	
 	/**
 	 * Make the contents of the data window
 	 */
-	protected void makeContents( final List<Map> records, final List<TableAttribute> attributes ) {
+	protected void makeContents( final List<Map<String,Object>> records, final List<TableAttribute> attributes ) {
 		setSize( 700, 500 );
 		final Box mainView = new Box( BoxLayout.Y_AXIS );
 		getContentPane().add( mainView );
@@ -53,7 +53,7 @@ public class DataWindow extends JDialog implements ScrollPaneConstants {
 		for ( int attributeIndex = 0 ; attributeIndex < attributeCount ; attributeIndex++ ) {
 			keyPaths[attributeIndex] = attributes.get( attributeIndex ).name;
 		}
-		final KeyValueFilteredTableModel<Map> tableModel = new KeyValueFilteredTableModel<Map>( records, keyPaths );
+		final KeyValueFilteredTableModel<Map<String,Object>> tableModel = new KeyValueFilteredTableModel<Map<String,Object>>( records, keyPaths );
 		tableModel.setInputFilterComponent( filterField );
 		final JTable dataTable = new JTable( tableModel );
 		dataTable.setAutoCreateRowSorter( true );
@@ -66,7 +66,7 @@ public class DataWindow extends JDialog implements ScrollPaneConstants {
 		// right justify numeric values
         final TableColumnModel columnModel = dataTable.getColumnModel();
 		for ( int index = 0 ; index < attributeCount ; index++ ) {
-			final TableAttribute attribute = (TableAttribute)attributes.get(index);
+			final TableAttribute attribute = attributes.get(index);
 			switch( attribute.dataType ) {
 				case java.sql.Types.NUMERIC: 
 				case java.sql.Types.INTEGER: 

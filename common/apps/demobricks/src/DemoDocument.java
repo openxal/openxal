@@ -83,7 +83,7 @@ public class DemoDocument extends XalDocument {
 			graphData.addPoint( x, Math.sin( x ) );
 		}
 		
-		final Vector series = new Vector(1);
+		final Vector<BasicGraphData> series = new Vector<BasicGraphData>(1);
 		series.add( graphData );
 		plot.addGraphData( series );		
 	}

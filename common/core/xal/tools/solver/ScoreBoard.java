@@ -223,7 +223,7 @@ public class ScoreBoard implements AlgorithmScheduleListener, SolutionJudgeListe
 	 * @param solutions  The list of solutions.
 	 * @param solution   Description of the Parameter
 	 */
-	public void foundNewOptimalSolution( final SolutionJudge source, final List solutions, final Trial solution ) {
+	public void foundNewOptimalSolution( final SolutionJudge source, final List<Trial> solutions, final Trial solution ) {
 		++_optimalSolutionsFound;
 		_bestSolution = solution;
 		_eventProxy.newOptimalSolution( this, solution );

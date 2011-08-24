@@ -301,7 +301,7 @@ public class AcceleratorSeqCombo extends AcceleratorSeq {
 	 * @return the ID of first base constituent sequence
 	 */
 	public String getEntranceID() {
-		final List baseConstituents = getBaseConstituents();
+		final List<AcceleratorSeq> baseConstituents = getBaseConstituents();
 		
 		if ( baseConstituents.size() <= 0 )  return null;
 		

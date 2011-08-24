@@ -40,7 +40,7 @@ public class BrowserModel {
 	protected String _schema;
 	
 	/** list of tables in the schema selection */
-	protected List _tables;
+	protected List<String> _tables;
 	
 	/** current table selection */
 	protected String _table;
@@ -83,10 +83,10 @@ public class BrowserModel {
 	/** Reset the data to what it is before any fetches  */
 	protected void resetData() {
 		_schema = null;
-		_schemas = Collections.EMPTY_LIST;
+		_schemas = Collections.<String>emptyList();
 		_table = null;
-		_tables = Collections.EMPTY_LIST;
-		_tableAttributes = Collections.EMPTY_LIST;
+		_tables = Collections.<String>emptyList();
+		_tableAttributes = Collections.<TableAttribute>emptyList();
 	}
 
 
@@ -191,11 +191,11 @@ public class BrowserModel {
 	 * @exception DatabaseException                      Description of the Exception
 	 * @throws xal.tools.database.DatabaseException  if the table fetch fails
 	 */
-	public void setSchema( String newSchema ) throws DatabaseException {
+	public void setSchema( final String newSchema ) throws DatabaseException {
 		if ( newSchema != _schema ) {
 			_schema = newSchema;
 			_table = null;
-			_tableAttributes = Collections.EMPTY_LIST;
+			_tableAttributes = Collections.<TableAttribute>emptyList();
 			_tables = fetchTables( _schema );
 			_proxy.schemaChanged( this, _schema );
 		}
@@ -239,7 +239,7 @@ public class BrowserModel {
 	 * Get the list of database table names for this model's selected schema
 	 * @return   the list of database table names for this model's selected schema
 	 */
-	public List getTables() {
+	public List<String> getTables() {
 		return _tables;
 	}
 
@@ -248,7 +248,7 @@ public class BrowserModel {
 	 * Set the table attributes for this model's selected table
 	 * @param tableAttributes  The table attributes
 	 */
-	protected void setTableAttributes( List tableAttributes ) {
+	protected void setTableAttributes( final List<TableAttribute> tableAttributes ) {
 		_tableAttributes = tableAttributes;
 	}
 
@@ -257,7 +257,7 @@ public class BrowserModel {
 	 * Get the table attributes for this model's selected table
 	 * @return   the table attributes for this model's selected table
 	 */
-	public List getTableAttributes() {
+	public List<TableAttribute> getTableAttributes() {
 		return _tableAttributes;
 	}
 
@@ -312,11 +312,11 @@ public class BrowserModel {
 	 * @exception DatabaseException                      Description of the Exception
 	 * @throws xal.tools.database.DatabaseException  if the schema fetch fails
 	 */
-	public List fetchTables( String schema ) throws DatabaseException {
+	public List<String> fetchTables( final String schema ) throws DatabaseException {
 		try {
-			List tables = new ArrayList();
-			DatabaseMetaData metaData = _connection.getMetaData();
-			ResultSet result = metaData.getTables( null, schema, null, null );
+			final List<String> tables = new ArrayList<String>();
+			final DatabaseMetaData metaData = _connection.getMetaData();
+			final ResultSet result = metaData.getTables( null, schema, null, null );
 			while ( result.next() ) {
 				String name = result.getString( "TABLE_NAME" );
 				tables.add( name );
@@ -339,7 +339,7 @@ public class BrowserModel {
 	 */
 	public List<TableAttribute> fetchAttributes( final String schema, final String table ) throws DatabaseException {
 		try {
-			final List attributes = new ArrayList();
+			final List<TableAttribute> attributes = new ArrayList<TableAttribute>();
 			final DatabaseMetaData metaData = _connection.getMetaData();
 			final ResultSet result = metaData.getColumns( null, schema, table, null );
 			while ( result.next() ) {
@@ -373,13 +373,13 @@ public class BrowserModel {
 	 * @return                       a list of the primary keys as column names
 	 * @exception DatabaseException  Description of the Exception
 	 */
-	protected List fetchPrimaryKeys( final String schema, final String table ) throws DatabaseException {
+	protected List<String> fetchPrimaryKeys( final String schema, final String table ) throws DatabaseException {
 		try {
-			List primaryKeys = new ArrayList();
+			final List<String> primaryKeys = new ArrayList<String>();
 			DatabaseMetaData metaData = _connection.getMetaData();
 			ResultSet result = metaData.getPrimaryKeys( null, schema, table );
 			while ( result.next() ) {
-				String column = result.getString( "COLUMN_NAME" );
+				final String column = result.getString( "COLUMN_NAME" );
 				primaryKeys.add( column );
 			}
 
@@ -395,9 +395,9 @@ public class BrowserModel {
 	 * Fetch records from the present schema-table and key the record's values by the column names
 	 * @return   The list of records
 	 */
-	public List<Map> fetchRecords() {
+	public List<Map<String,Object>> fetchRecords() {
 		try {
-			final List<Map> records = new ArrayList();
+			final List<Map<String,Object>> records = new ArrayList<Map<String,Object>>();
 			final Statement statement = _connection.createStatement();
 			final String fullTableName = _schema + "." + _table;
 			final ResultSet resultSet = statement.executeQuery( "select * from " + fullTableName );

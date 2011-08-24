@@ -36,7 +36,7 @@ public class AlgorithmMarket implements AlgorithmScheduleListener, SolutionJudge
 	static final private long RANDOM_SEED = 12345678901234L;
 	
 	/** the list of strategies in the market sorted by efficiency so the most efficient strategies appear first */
-	protected List _strategies;
+	protected List<AlgorithmStrategy> _strategies;
 	
 	/** the pool of algorithms from which to pick an algorithm */
 	protected AlgorithmPool _algorithmPool;
@@ -53,10 +53,10 @@ public class AlgorithmMarket implements AlgorithmScheduleListener, SolutionJudge
 	 * @param pool        the pool of algorithms
 	 * @param strategies  the list of strategies
 	 */
-	public AlgorithmMarket( final AlgorithmPool pool, final List strategies ) {
+	public AlgorithmMarket( final AlgorithmPool pool, final List<AlgorithmStrategy> strategies ) {
 		RANDOM_GENERATOR = new Random( RANDOM_SEED );
 		
-		_strategies = new ArrayList();
+		_strategies = new ArrayList<AlgorithmStrategy>();
 		
 		_messageCenter = new MessageCenter("Algorithm Market");
 		_eventProxy = _messageCenter.registerSource( this, AlgorithmMarketListener.class );
@@ -105,7 +105,7 @@ public class AlgorithmMarket implements AlgorithmScheduleListener, SolutionJudge
 	 * Constructor
 	 * @param strategies  the list of strategies
 	 */
-	public AlgorithmMarket( final List strategies ) {
+	public AlgorithmMarket( final List<AlgorithmStrategy> strategies ) {
 		this( new AlgorithmPool(), strategies );
 	}
 
@@ -164,7 +164,7 @@ public class AlgorithmMarket implements AlgorithmScheduleListener, SolutionJudge
 	 * Get the algorithm strategies.
 	 * @return   The list of strategies.
 	 */
-	public List getStrategies() {
+	public List<AlgorithmStrategy> getStrategies() {
 		return _strategies;
 	}
 
@@ -173,7 +173,7 @@ public class AlgorithmMarket implements AlgorithmScheduleListener, SolutionJudge
 	 * Set the list of strategies.
 	 * @param strategies  The list of strategies.
 	 */
-	public void setAlgorithmStrategies( final List strategies ) {
+	public void setAlgorithmStrategies( final List<AlgorithmStrategy> strategies ) {
 		_strategies.clear();
 		_strategies.addAll( strategies );
 	}
@@ -184,7 +184,7 @@ public class AlgorithmMarket implements AlgorithmScheduleListener, SolutionJudge
 	 * @param strategy  The algorithm strategy to set the list with.
 	 */
 	public void setAlgorithmStrategy( final AlgorithmStrategy strategy ) {
-		setAlgorithmStrategies( Collections.singletonList( strategy ) );
+		setAlgorithmStrategies( Collections.<AlgorithmStrategy>singletonList( strategy ) );
 	}
 
 
@@ -217,7 +217,7 @@ public class AlgorithmMarket implements AlgorithmScheduleListener, SolutionJudge
 		Collections.sort( _strategies, AlgorithmStrategy.EFFICIENCY_COMPARATOR );
 		final int count = _strategies.size();
 		final int selectedIndex = (int)( Math.log( 1.0 - RANDOM_GENERATOR.nextDouble() * ( 1.0 - Math.pow( PROBABILITY_RATIO, count ) ) ) / PROBABILITY_RATIO_LOG );
-		return (AlgorithmStrategy)_strategies.get( Math.min( selectedIndex, count - 1 ) );
+		return _strategies.get( Math.min( selectedIndex, count - 1 ) );
 	}
 	
 	
@@ -265,7 +265,7 @@ public class AlgorithmMarket implements AlgorithmScheduleListener, SolutionJudge
 	 * @param solutions  The list of solutions.
 	 * @param solution   The new optimal solution.
 	 */
-	public void foundNewOptimalSolution( final SolutionJudge source, final List solutions, final Trial solution ) { 
+	public void foundNewOptimalSolution( final SolutionJudge source, final List<Trial> solutions, final Trial solution ) { 
 		_algorithmPool.foundNewOptimalSolution( source, solutions, solution );
 	}
 }

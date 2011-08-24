@@ -400,19 +400,12 @@ public class Accelerator extends AcceleratorSeq implements /* IElement, */ DataL
 
     /** 
 	 * Returns the AcceleratorNode with a requsted name
-     * @param strId - the name to match 
+     * @param nodeID - the name to match 
      */
-    public AcceleratorNode  getNode(String strId)   {
-        List                lstAllNodes;    // list of all the nodes
-        Iterator            iterNodes;      // node iterator
-        AcceleratorNode     node;           // current node
-     
-        lstAllNodes = getAllNodes();
-        iterNodes   = lstAllNodes.iterator();
-        while (iterNodes.hasNext()) {
-            node = (AcceleratorNode)iterNodes.next();
-            
-            if (node.getId().equals(strId))
+    public AcceleratorNode  getNode( final String nodeID )   {
+        final List<AcceleratorNode> allNodes = getAllNodes();
+        for ( final AcceleratorNode node : allNodes ) {
+            if ( node.getId().equals( nodeID ) )
                 return node;
         }
         

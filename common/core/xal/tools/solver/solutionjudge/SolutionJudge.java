@@ -74,7 +74,7 @@ public abstract class SolutionJudge {
 	 * Get the optimal solutions.
 	 * @return   A list of solutions.
 	 */
-	public abstract List getOptimalSolutions();
+	public abstract List<Trial> getOptimalSolutions();
 
 
 	/**

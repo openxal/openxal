@@ -142,8 +142,8 @@ public class DataTable {
                 }
 
                 // There can only be one schema
-                List schemaList = adaptor.childAdaptors( "schema" );
-                DataAdaptor schemaAdaptor = (DataAdaptor)schemaList.get(0);
+                final List<DataAdaptor> schemaList = adaptor.childAdaptors( "schema" );
+                final DataAdaptor schemaAdaptor = schemaList.get(0);
 				_schema = new Schema();
 				_schema.update( schemaAdaptor );					
 

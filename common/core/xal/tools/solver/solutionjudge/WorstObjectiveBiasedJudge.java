@@ -31,7 +31,7 @@ public class WorstObjectiveBiasedJudge extends SolutionJudge {
 	protected double _totalWeight;
 	
 	/** the current list of the most optimal solutions */
-	protected List _optimalSolutions;
+	protected List<Trial> _optimalSolutions;
 	
 	
 	/** Constructor */
@@ -45,7 +45,7 @@ public class WorstObjectiveBiasedJudge extends SolutionJudge {
 		BIAS_WEIGHT = biasWeight;
 		_bestSatisfaction = 0.0;
 		_totalWeight = 0.0;
-		_optimalSolutions = new ArrayList();
+		_optimalSolutions = new ArrayList<Trial>();
 	}
 	
 	
@@ -55,7 +55,7 @@ public class WorstObjectiveBiasedJudge extends SolutionJudge {
 	public void reset() {
 		_bestSatisfaction = 0.0;
 		_totalWeight = 0.0;
-		_optimalSolutions = new ArrayList();
+		_optimalSolutions = new ArrayList<Trial>();
 	}
 	
 	
@@ -63,7 +63,7 @@ public class WorstObjectiveBiasedJudge extends SolutionJudge {
 	 * Get the optimal solutions.
 	 * @return a list of solutions
 	 */
-	public List getOptimalSolutions() {
+	public List<Trial> getOptimalSolutions() {
 		return _optimalSolutions;	 	 
 	}
 	
@@ -73,25 +73,23 @@ public class WorstObjectiveBiasedJudge extends SolutionJudge {
 	 * @param trial The trial with which to update the solution judge.
 	 */
 	public void judge( final Trial trial ) {
-		final List objectives = trial.getProblem().getObjectives();
+		final List<Objective> objectives = trial.getProblem().getObjectives();
 		final int numObjectives = objectives.size();
-		final List satisfactions = new ArrayList( numObjectives );
+		final List<Double> satisfactions = new ArrayList( numObjectives );
 		
 		// collect the list of each satisfaction
-		final Iterator objectiveIter = objectives.iterator();		 
-		while( objectiveIter.hasNext() ) {
-			final Objective objective = (Objective)objectiveIter.next();
+        for ( final Objective objective : objectives ) {
 			final double satisfaction = trial.getScore( objective ).getSatisfaction();
-			satisfactions.add( new Double( satisfaction ) );
+			satisfactions.add( satisfaction );
 		}
 		Collections.sort( satisfactions );		// sort satisfactions from worst to best
 		
 		// weight each satisfaction with most weight for the worst satisfaction and exponentially decreasing from there
 		double weightedSum = 0.0;
 		double weight = 1.0;
-		final Iterator satisfactionIter = satisfactions.iterator();
+		final Iterator<Double> satisfactionIter = satisfactions.iterator();
 		while ( satisfactionIter.hasNext() ) {
-			final double satisfaction = ((Double)satisfactionIter.next()).doubleValue();
+			final double satisfaction = satisfactionIter.next().doubleValue();
 			weightedSum += weight * satisfaction;
 			weight *= BIAS_WEIGHT;	// weight the worst satisfactions most
 		}

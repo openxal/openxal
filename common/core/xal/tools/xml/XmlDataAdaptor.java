@@ -68,9 +68,9 @@ import xal.tools.StringJoiner;
  * You can fetch named child nodes from a parent node.  Some examples are:
  * <br/>
  * <br/>
- * <code> List xAdaptors = parentAdaptor.childAdaptors("X") </code>
+ * <code> List<DataAdaptor> xAdaptors = parentAdaptor.childAdaptors("X") </code>
  * <br/>
- * <code> List allAdaptors = parentAdaptor.childAdaptors() </code>
+ * <code> List<DataAdaptor> allAdaptors = parentAdaptor.childAdaptors() </code>
  * <br/>
  * <code> DataAdaptor yAdaptor = parentAdaptor.childAdaptor("Y") </code>
  * </p>

@@ -73,12 +73,10 @@ public class RandomShrinkSearch extends SearchAlgorithm {
 
 	/** Reset the trial point's variables to their starting values.  */
 	protected void resetBestPoint() {
-		final List variables = _problem.getVariables();
+		final List<Variable> variables = _problem.getVariables();
 		final MutableTrialPoint trialPoint = new MutableTrialPoint( variables.size() );
-
-		final Iterator variableIter = variables.iterator();
-		while ( variableIter.hasNext() ) {
-			final Variable variable = (Variable)variableIter.next();
+        
+        for ( final Variable variable : variables ) {
 			final double value = variable.getInitialValue();
 			trialPoint.setValue( variable, value );
 		}
@@ -148,7 +146,7 @@ public class RandomShrinkSearch extends SearchAlgorithm {
 	 * @param solutions  The list of solutions.
 	 * @param solution   The new optimal solution.
 	 */
-	public void foundNewOptimalSolution( final SolutionJudge source, final List solutions, final Trial solution ) {
+	public void foundNewOptimalSolution( final SolutionJudge source, final List<Trial> solutions, final Trial solution ) {
 		final TrialPoint newPoint = solution.getTrialPoint();
 
 		if ( _bestPoint == null ) {
@@ -403,11 +401,10 @@ public class RandomShrinkSearch extends SearchAlgorithm {
 				hint = new InitialDelta();
 			}
 			
-			final List variables = _problem.getVariables();
+			final List<Variable> variables = _problem.getVariables();
 			_variableWindows = new HashMap<Variable,VariableWindow>( variables.size() );
-			Iterator variableIter = variables.iterator();
-			while ( variableIter.hasNext() ) {
-				final Variable variable = (Variable)variableIter.next();
+            
+            for ( final Variable variable : variables ) {
 				final double[] limits = hint.getRange( variable );				
 				VariableWindow window = new VariableWindow( limits[DomainHint.LOWER_IND], limits[DomainHint.UPPER_IND] );
 				_variableWindows.put( variable, window );

@@ -70,7 +70,7 @@
 	 * Get the optimal solutions.
 	 * @return A list of solutions
 	 */
-	 public List getOptimalSolutions() {
+	 public List<Trial> getOptimalSolutions() {
 		 return _optimalSolutions;	 	 
 	 }
 	 
