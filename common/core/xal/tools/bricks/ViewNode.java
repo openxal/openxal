@@ -389,7 +389,7 @@ public class ViewNode extends BeanNode<Component> implements ViewNodeContainer {
 			for ( int index = 0 ; index < nodeCount ; index++ ) {
 				final int viewIndex = index - treeIndexViewIndexOffset;
 				if ( viewIndex >= 0 ) {
-					final TreeNode treeNode = (TreeNode)TREE_NODE.getChildAt( index );
+					final TreeNode treeNode = TREE_NODE.getChildAt( index );
 					if ( treeNode instanceof DefaultMutableTreeNode ) {
 						final ViewNode viewNode = (ViewNode)((DefaultMutableTreeNode)treeNode).getUserObject();
 						container.add( viewNode.getView() );

@@ -68,9 +68,9 @@ import xal.tools.StringJoiner;
  * You can fetch named child nodes from a parent node.  Some examples are:
  * <br/>
  * <br/>
- * <code> List xAdaptors = parentAdaptor.childAdaptors("X") </code>
+ * <code> List<DataAdaptor> xAdaptors = parentAdaptor.childAdaptors("X") </code>
  * <br/>
- * <code> List allAdaptors = parentAdaptor.childAdaptors() </code>
+ * <code> List<DataAdaptor> allAdaptors = parentAdaptor.childAdaptors() </code>
  * <br/>
  * <code> DataAdaptor yAdaptor = parentAdaptor.childAdaptor("Y") </code>
  * </p>
@@ -504,6 +504,9 @@ public class XmlDataAdaptor implements DataAdaptor {
      *    java.net.MalformedURLException
      */
     static public class WriteException extends xal.tools.ExceptionWrapper {
+        /** serialization ID */
+        private static final long serialVersionUID = 1L;
+        
         public WriteException(Exception excpt) {
             super(excpt);
         }
@@ -590,6 +593,10 @@ public class XmlDataAdaptor implements DataAdaptor {
      * Exception to wrap any exceptions thrown by adaptorForUrl()
      */
     static public class ParseException extends xal.tools.ExceptionWrapper {
+        /** serialization ID */
+        private static final long serialVersionUID = 1L;
+        
+        
         public ParseException(Exception excpt) {
             super(excpt);
         }
@@ -600,6 +607,10 @@ public class XmlDataAdaptor implements DataAdaptor {
      * Exception when the source of the URL does not exist
      */
     static public class ResourceNotFoundException extends xal.tools.ExceptionWrapper {
+        /** serialization ID */
+        private static final long serialVersionUID = 1L;
+        
+        
         public ResourceNotFoundException(Exception excpt) {
             super(excpt);
         }
@@ -671,6 +682,10 @@ public class XmlDataAdaptor implements DataAdaptor {
      * Exception to wrap any DOM exceptions
      */
     static public class CreationException extends xal.tools.ExceptionWrapper {
+        /** serialization ID */
+        private static final long serialVersionUID = 1L;
+        
+
         public CreationException(Exception excpt) {
             super(excpt);
         }

@@ -20,14 +20,17 @@ import java.lang.reflect.*;
  * @author  tap
  */
 public class GenericRecord implements KeyedRecord, DataListener {
-    protected DataTable table;
-    protected Map attributeTable;
+    /** data table to which this record belongs */
+    final protected DataTable DATA_TABLE;
+    
+    /** table of attributes by attribute ID */
+    final protected Map<String,Object> ATTRIBUTE_TABLE;
 
 	
     /** Creates new GenericRecord */
     public GenericRecord( final DataTable aTable ) {
-        table = aTable;
-        attributeTable = new HashMap();
+        DATA_TABLE = aTable;
+        ATTRIBUTE_TABLE = new HashMap<String,Object>();
     }
 
 	
@@ -35,9 +38,9 @@ public class GenericRecord implements KeyedRecord, DataListener {
 	 * Get the keys used in this record.
 	 * @return The keys used in this record.
 	 */
-    public Set keys() {
-		synchronized ( attributeTable ) {
-			return attributeTable.keySet();			
+    public Set<String> keys() {
+		synchronized ( ATTRIBUTE_TABLE ) {
+			return ATTRIBUTE_TABLE.keySet();			
 		}
     }
     
@@ -46,9 +49,9 @@ public class GenericRecord implements KeyedRecord, DataListener {
 	 * Get the collection of values held in this record.
 	 * @return The collection of values held in this record.
 	 */
-    public Collection values() {
-		synchronized ( attributeTable ) {
-			return attributeTable.values();			
+    public Collection<Object> values() {
+		synchronized ( ATTRIBUTE_TABLE ) {
+			return ATTRIBUTE_TABLE.values();			
 		}
     }
     
@@ -59,8 +62,8 @@ public class GenericRecord implements KeyedRecord, DataListener {
 	 * @return The value as an Object.
 	 */
     public Object valueForKey( final String key ) {
-		synchronized ( attributeTable ) {
-			return attributeTable.get(key);			
+		synchronized ( ATTRIBUTE_TABLE ) {
+			return ATTRIBUTE_TABLE.get( key );			
 		}
     }
     
@@ -73,11 +76,11 @@ public class GenericRecord implements KeyedRecord, DataListener {
 	 */
     public void setValueForKey( final Object value, final String key) {
 		final Object oldValue = valueForKey(key);
-		synchronized ( attributeTable ) {
-			attributeTable.put(key, value);			
+		synchronized ( ATTRIBUTE_TABLE ) {
+			ATTRIBUTE_TABLE.put( key, value );			
 		}
-		if( table != null ) {
-			table.reIndex( this, key, oldValue );
+		if( DATA_TABLE != null ) {
+			DATA_TABLE.reIndex( this, key, oldValue );
 		}
     }
     
@@ -89,7 +92,7 @@ public class GenericRecord implements KeyedRecord, DataListener {
 	 * @throws java.lang.ClassCastException if the value cannot be cast as a Number. 
 	 */
     public Number numberForKey( final String key ) {
-        return (Number)valueForKey(key);
+        return (Number)valueForKey( key );
     }
     
     
@@ -100,7 +103,7 @@ public class GenericRecord implements KeyedRecord, DataListener {
 	 * @throws java.lang.ClassCastException if the value cannot be cast as a Boolean. 
 	 */
     public boolean booleanValueForKey( final String key ) {
-        Boolean booleanObject = (Boolean)valueForKey(key);
+        final Boolean booleanObject = (Boolean)valueForKey( key );
         return booleanObject.booleanValue();
     }
     
@@ -111,7 +114,7 @@ public class GenericRecord implements KeyedRecord, DataListener {
 	 * @param key The key for which to associated the new value.
 	 */
     public void setValueForKey( final boolean value, final String key ) {
-        setValueForKey(new Boolean(value), key);
+        setValueForKey( new Boolean( value ), key );
     }
     
     
@@ -122,7 +125,7 @@ public class GenericRecord implements KeyedRecord, DataListener {
 	 * @throws java.lang.ClassCastException if the value cannot be cast as a Number. 
 	 */
     public int intValueForKey( final String key ) {
-        Number number = numberForKey(key);
+        Number number = numberForKey( key );
         return number.intValue();
     }
     
@@ -133,7 +136,7 @@ public class GenericRecord implements KeyedRecord, DataListener {
 	 * @param key The key for which to associated the new value.
 	 */
     public void setValueForKey( final int value, final String key ) {
-        setValueForKey( new Integer(value), key );
+        setValueForKey( new Integer( value ), key );
     }
     
     
@@ -144,7 +147,7 @@ public class GenericRecord implements KeyedRecord, DataListener {
 	 * @throws java.lang.ClassCastException if the value cannot be cast as a Number. 
 	 */
     public long longValueForKey( final String key ) {
-        Number number = numberForKey(key);
+        Number number = numberForKey( key );
         return number.intValue();
     }
     
@@ -155,7 +158,7 @@ public class GenericRecord implements KeyedRecord, DataListener {
 	 * @param key The key for which to associated the new value.
 	 */
     public void setValueForKey( final long value, final String key ) {
-        setValueForKey(new Long(value), key);
+        setValueForKey( new Long( value ), key );
     }
     
     
@@ -166,7 +169,7 @@ public class GenericRecord implements KeyedRecord, DataListener {
 	 * @throws java.lang.ClassCastException if the value cannot be cast as a Number. 
 	 */
     public double doubleValueForKey( final String key ) {
-        Number number = numberForKey(key);
+        Number number = numberForKey( key );
         return number.doubleValue();
     }
     
@@ -177,7 +180,7 @@ public class GenericRecord implements KeyedRecord, DataListener {
 	 * @param key The key for which to associated the new value.
 	 */
     public void setValueForKey( final double value, final String key ) {
-        setValueForKey( new Double(value), key );
+        setValueForKey( new Double( value ), key );
     }
     
     
@@ -188,7 +191,7 @@ public class GenericRecord implements KeyedRecord, DataListener {
 	 * @throws java.lang.ClassCastException if the value cannot be cast as a String. 
 	 */
     public String stringValueForKey( final String key ) {
-        return (String)valueForKey(key);
+        return (String)valueForKey( key );
     }
     // --- end value conversions
     
@@ -198,7 +201,7 @@ public class GenericRecord implements KeyedRecord, DataListener {
 	 * @return The string representation of the record.
 	 */
     public String toString() {
-        return attributeTable.toString();
+        return ATTRIBUTE_TABLE.toString();
     }
     
     
@@ -217,7 +220,7 @@ public class GenericRecord implements KeyedRecord, DataListener {
      * @param adaptor The adaptor from which to update the data
      */
     public void update( final DataAdaptor adaptor ) throws ParseException {
-        Collection attributes = table.attributes();
+        Collection attributes = DATA_TABLE.attributes();
         Iterator attributeIter = attributes.iterator();
         
         // read the value of each attribute
@@ -226,29 +229,28 @@ public class GenericRecord implements KeyedRecord, DataListener {
             final String key = attribute.name();
             final Class type = attribute.type();
 			
-			final String stringValue = adaptor.hasAttribute(key) ? adaptor.stringValue(key) : attribute.getDefaultStringValue();
-			final Object value = valueOfTypeFromString(type, stringValue);
-            setValueForKey(value, key);
+			final String stringValue = adaptor.hasAttribute( key ) ? adaptor.stringValue( key ) : attribute.getDefaultStringValue();
+			final Object value = valueOfTypeFromString( type, stringValue );
+            setValueForKey( value, key );
         }
     }
     
     
 	/**
-	 * Parses the given string value as appropriate for the specified type and returns
-	 * the object.  All such types must implement the <code>valueOf</code> method which 
-	 * should complement the object's <code>toString()</code> method.  This method is called
-	 * internally and is used by the update() method for decoding a data adaptor.
+	 * Parses the given string value as appropriate for the specified type and returns the object.  All such types must implement the <code>valueOf</code> method which 
+	 * should complement the object's <code>toString()</code> method.  This method is called internally and is used by the update() method for decoding a data adaptor.
 	 * @param type The class of the Object.
 	 * @param stringValue The Object's string representation.
 	 * @return The Object from the specified string.
 	 */
+    @SuppressWarnings( "unchecked" )
     private Object valueOfTypeFromString( final Class type, final String stringValue ) throws ParseException {
         if ( type.equals(String.class) )  return stringValue;
         
         Object value = null;
         
 		try {
-			Method valueOfMethod = type.getMethod("valueOf", new Class[] {java.lang.String.class});
+			Method valueOfMethod = type.getMethod( "valueOf", new Class[] {java.lang.String.class} );
 			// convert the value to the Object of the appropriate class
 			value = valueOfMethod.invoke(null, new Object[] {stringValue});
 		}
@@ -311,6 +313,9 @@ public class GenericRecord implements KeyedRecord, DataListener {
 	 * the appropriate type.
 	 */
 	public class ParseException extends RuntimeException {
+        /** serialization ID */
+        private static final long serialVersionUID = 1L;
+        
 		public ParseException(String description) {
 			super(description);
 		}

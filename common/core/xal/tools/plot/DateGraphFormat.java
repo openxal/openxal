@@ -19,6 +19,9 @@ import java.text.*;
  * @author  shishlo
  */                                                                                         
 public class DateGraphFormat extends DecimalFormat{
+    /** serialization ID */
+    private static final long serialVersionUID = 1L;
+    
 
     private DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
     

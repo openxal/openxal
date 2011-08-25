@@ -34,7 +34,7 @@ public abstract class SolutionJudge {
 	/** Creates a new instance of SolutionJudge */
 	public SolutionJudge() {
 		_messageCenter = new MessageCenter( "Solution Judge" );
-		_eventProxy = (SolutionJudgeListener)_messageCenter.registerSource( this, SolutionJudgeListener.class );
+		_eventProxy = _messageCenter.registerSource( this, SolutionJudgeListener.class );
 		reset();
 	}
 
@@ -74,7 +74,7 @@ public abstract class SolutionJudge {
 	 * Get the optimal solutions.
 	 * @return   A list of solutions.
 	 */
-	public abstract List getOptimalSolutions();
+	public abstract List<Trial> getOptimalSolutions();
 
 
 	/**

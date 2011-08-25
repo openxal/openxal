@@ -15,6 +15,10 @@ package xal.tools;
  * @author  tap
  */
 public class ExceptionWrapper extends RuntimeException {
+    /** serialization ID */
+    private static final long serialVersionUID = 1L;
+    
+    
     /** Creates new ExceptionWrapper */
     public ExceptionWrapper(Exception cause) {
 		super(cause);

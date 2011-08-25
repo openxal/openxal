@@ -22,6 +22,9 @@ import javax.swing.table.AbstractTableModel;
 
 /** Table Model whose records are arbitrary objects and whose values are obtained through the Key-Value adaptor */
 public class KeyValueTableModel<T> extends AbstractTableModel {
+    /** serialization ID */
+    private static final long serialVersionUID = 1L;
+    
 	/** pattern for matching a lower case letter followed immediately by an upper case letter */
 	final static private Pattern LOWER_UPPER_PATTERN;
 	

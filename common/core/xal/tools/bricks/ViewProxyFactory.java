@@ -172,7 +172,7 @@ public class ViewProxyFactory {
 					final int viewIndex = node.getViewIndex( (ViewNode)beanNode );
 					if ( viewIndex >= 0 ) {
 						((JTabbedPane)node.getView()).setTitleAt( viewIndex, value.toString() );
-						((ViewNode)node).refreshDisplay();
+						node.refreshDisplay();
 					}
 				}
 			}
@@ -230,6 +230,9 @@ public class ViewProxyFactory {
 			/** Create an instance of the specified view */
 			public void setupPrototype( final JTable table ) {
 				table.setModel( new AbstractTableModel() {
+                    /** serialization ID */
+                    private static final long serialVersionUID = 1L;
+                    
 					public int getRowCount() {
 						return 50;
 					}

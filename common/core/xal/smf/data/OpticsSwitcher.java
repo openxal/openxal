@@ -27,11 +27,17 @@ import java.text.*;
  * @since May 28, 2004
  */
 public class OpticsSwitcher extends JDialog {
+    /** serialization ID */
+    private static final long serialVersionUID = 1L;
+    
 	// GUI components
     protected AcceleratorChooser accelChooser;
 	protected JTextField pathField;
 	protected JButton revertButton;
 	protected JButton commitButton;
+    
+    /** indicates whether the dialog was canceled */
+    private boolean isCanceled;
 	
     
     /** Constructor */
@@ -87,6 +93,7 @@ public class OpticsSwitcher extends JDialog {
 	 * Setup the switcher with the default title
 	 */
 	protected void setup() {
+        isCanceled = false;
 		setup("Set the Default Optics");
 	}
 	
@@ -107,6 +114,7 @@ public class OpticsSwitcher extends JDialog {
 	 * @param view the view near which to show this dialog
 	 */
 	public void showNear(Component view) {
+        isCanceled = false;
 		setLocationRelativeTo(view);
 		setVisible( true );
 	}
@@ -127,6 +135,12 @@ public class OpticsSwitcher extends JDialog {
 	public String getDefaultOpticsPath() {
 		return AcceleratorChooser.defaultPath(); 
 	}
+    
+    
+    /** determine whether the dialog was canceled */
+    public boolean isCanceled() {
+        return isCanceled;
+    }
     
     
     /** 
@@ -185,8 +199,21 @@ public class OpticsSwitcher extends JDialog {
 		final Box commitRow = new Box(BoxLayout.X_AXIS);
 		mainView.add(commitRow);
 		commitRow.add( Box.createHorizontalGlue() );
-        		
-		// add a cancel button
+        
+        
+        // add a cancel button
+        final JButton cancelButton = new JButton( "Cancel" );
+		cancelButton.setToolTipText( "Cancel the dialog without applying any uncommitted changes and without selecting an accelerator." );
+		commitRow.add( cancelButton );
+		cancelButton.addActionListener( new ActionListener() {
+			public void actionPerformed(ActionEvent event) {
+                isCanceled = true;
+				dispose();
+			}
+		});
+        
+        
+		// add a close button (close with no changes)
 		JButton closeButton = new JButton("Close");
 		closeButton.setToolTipText("Close the dialog without applying any uncommitted changes.");
 		commitRow.add(closeButton);
@@ -282,6 +309,9 @@ public class OpticsSwitcher extends JDialog {
  * Display an open dialog box so the user can pick an accelerator input file 
  */
 class AcceleratorChooser extends JFileChooser {
+    /** serialization ID */
+    private static final long serialVersionUID = 1L;
+    
 	/** global accelerator chooser */
     static protected AcceleratorChooser chooser;
     protected int status;
@@ -377,8 +407,8 @@ class AcceleratorChooser extends JFileChooser {
     
     
 	/**
-	 * Determine if the file selection was cancelled by the user
-	 * @return true if the user cancelled the file selection and false if not
+	 * Determine if the file selection was canceled by the user
+	 * @return true if the user canceled the file selection and false if not
 	 */
     public boolean canceled() {
         return status == JFileChooser.CANCEL_OPTION;

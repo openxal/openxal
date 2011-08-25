@@ -430,7 +430,7 @@ public class Gaussian {
 	 *@return    The Gauss function value
 	 */
 	public double getValue(double x) {
-		return ((ModelFunction1D) mf).getValue(x, a);
+		return mf.getValue(x, a);
 	}
 
 

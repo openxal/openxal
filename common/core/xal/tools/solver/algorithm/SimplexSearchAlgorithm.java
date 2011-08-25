@@ -182,7 +182,7 @@ public class SimplexSearchAlgorithm extends SearchAlgorithm {
 	 *@param  solutions  The list of solutions.
 	 *@param  solution   The new optimal solution.
 	 */
-	public void foundNewOptimalSolution(final SolutionJudge source, final List solutions, final Trial solution) {
+	public void foundNewOptimalSolution(final SolutionJudge source, final List<Trial> solutions, final Trial solution) {
 		TrialPoint newPoint = solution.getTrialPoint();
 		_bestPoint = newPoint;
 		SearchAlgorithm s_a = solution.getAlgorithm();
@@ -391,24 +391,21 @@ class SimplexSearcher {
 
 
 	/**
-	 *  Sets the problem
-	 *
-	 *@param  problem  The problem to solve
+	 * Sets the problem
+	 * @param  problem  The problem to solve
 	 */
-	protected void setProblem(Problem problem) {
+	protected void setProblem( final Problem problem ) {
 		_problem = problem;
 
-		final List variables = _problem.getVariables();
+		final List<Variable> variables = _problem.getVariables();
 		final MutableTrialPoint trialPoint = new MutableTrialPoint(variables.size());
-
-		final Iterator variableIter = variables.iterator();
-		while (variableIter.hasNext()) {
-			final Variable variable = (Variable) variableIter.next();
+        
+        for ( final Variable variable : variables ) {
 			final double value = variable.getInitialValue();
-			trialPoint.setValue(variable, value);
+			trialPoint.setValue( variable, value );
 		}
 
-		reset(trialPoint.getTrialPoint());
+		reset( trialPoint.getTrialPoint() );
 	}
 
 

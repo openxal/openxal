@@ -112,25 +112,26 @@ abstract public class AbstractApplicationAdaptor implements ApplicationListener 
 	
     /**
 	 * Define some flags for launching the application, such as pre-load a default accelerator.
+     * todo: this code needs to be reviewed to determine its value and logic
      */
     protected static void setOptions( String[] args ){
         if (args.length > 0){
             
-            String[] tempString = args;
-            java.util.ArrayList tempList = new java.util.ArrayList();
-            for (int i = 0; i < args.length; i++) {
-                if (!tempString[i].substring(0, 1).equals("-")) {
-                    tempList.add(tempString[i]);
+            final java.util.ArrayList<String> docPaths = new java.util.ArrayList<String>();
+            for ( final String arg : args ) {
+                if ( !arg.startsWith( "-" ) ) {
+                    docPaths.add( arg );
                 }
             }
-            if (tempList.size() > 0) {
-                docURLs = new URL[tempList.size()];
-                for (int i = 0; i < tempList.size(); i++) {
+            if ( docPaths.size() > 0 ) {
+                docURLs = new URL[docPaths.size()];
+                for ( int index = 0; index < docPaths.size(); index++ ) {
                     try {
-                        docURLs[i] = new URL("file://" + (String) (tempList.get(i)));
-                    } catch (MalformedURLException exception) {
+                        docURLs[index] = new URL( "file://" + docPaths.get( index ) );
+                    } 
+                    catch ( MalformedURLException exception ) {
 						Logger.getLogger("global").log( Level.WARNING, "Error setting the documents to open passed by the user.", exception );
-                        System.err.println(exception);
+                        System.err.println( exception );
                     }
                 }
             }

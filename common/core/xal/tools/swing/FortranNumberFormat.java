@@ -24,6 +24,9 @@ import java.text.*;
  *@version    1.0
  */
 public class FortranNumberFormat extends DecimalFormat {
+    /** serialization ID */
+    private static final long serialVersionUID = 1L;
+    
 
     private int sgnDigits = 3;
 

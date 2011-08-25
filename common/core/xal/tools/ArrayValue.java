@@ -369,6 +369,9 @@ abstract class NumericStore extends ArrayValue {
 
 /** Native byte storage */
 final class ByteStore extends NumericStore {
+    /** serialization ID */
+    private static final long serialVersionUID = 1L;
+    
 	/** Constructor */
     public ByteStore( final byte[] newArray ) {
         super( newArray );
@@ -404,6 +407,9 @@ final class ByteStore extends NumericStore {
 
 /** Native short storage */
 final class ShortStore extends NumericStore {
+    /** serialization ID */
+    private static final long serialVersionUID = 1L;
+    
     public ShortStore( final short[] newArray ) {
         super( newArray );
         final int count = newArray.length;
@@ -438,6 +444,9 @@ final class ShortStore extends NumericStore {
 
 /** Native int storage */
 final class IntStore extends NumericStore {
+    /** serialization ID */
+    private static final long serialVersionUID = 1L;
+    
     public IntStore( final int[] newArray ) {
         super( newArray );
         final int count = newArray.length;
@@ -472,6 +481,9 @@ final class IntStore extends NumericStore {
 
 /** Native long storage */
 final class LongStore extends NumericStore {
+    /** serialization ID */
+    private static final long serialVersionUID = 1L;
+    
     public LongStore( final long[] newArray ) {
         super( newArray );
         final int count = newArray.length;
@@ -506,6 +518,9 @@ final class LongStore extends NumericStore {
 
 /** Native float storage */
 final class FloatStore extends NumericStore {
+    /** serialization ID */
+    private static final long serialVersionUID = 1L;
+    
     public FloatStore( final float[] newArray ) {
         super( newArray );
         final int count = newArray.length;
@@ -540,6 +555,9 @@ final class FloatStore extends NumericStore {
 
 /** Native double storage */
 final class DoubleStore extends NumericStore {
+    /** serialization ID */
+    private static final long serialVersionUID = 1L;
+    
     public DoubleStore( final double[] newArray ) {
         super( newArray );
         final int count = newArray.length;
@@ -573,6 +591,9 @@ final class DoubleStore extends NumericStore {
 
 /** Native String storage */
 final class StringStore extends ArrayValue {
+    /** serialization ID */
+    private static final long serialVersionUID = 1L;
+    
     public StringStore( final String[] newArray ) {
         super( newArray );
         final int count = newArray.length;

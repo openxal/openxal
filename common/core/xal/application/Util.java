@@ -29,8 +29,8 @@ public class Util {
      * @return The map equivalent of the resource bundle
      * @throws java.util.MissingResourceException If the resource bundle cannot be found.
      */
-    static public Map loadResourceBundle( final String path ) throws MissingResourceException {
-        final Map infoMap = new HashMap();
+    static public Map<String,String> loadResourceBundle( final String path ) throws MissingResourceException {
+        final Map<String,String> infoMap = new HashMap<String,String>();
         final ResourceBundle bundle = ResourceBundle.getBundle( path );
         
         final Enumeration<String> keyEnum = bundle.getKeys();
@@ -48,7 +48,7 @@ public class Util {
 	 * @param map the map into which the resources should be merged
 	 * @param path the path to the resource bundle
 	 */
-    static public void mergeResourceBundle( final Map map, final String path ) throws MissingResourceException {
+    static public void mergeResourceBundle( final Map<String,String> map, final String path ) throws MissingResourceException {
         final ResourceBundle bundle = ResourceBundle.getBundle( path );
 		
         final Enumeration<String> keyEnum = bundle.getKeys();
@@ -59,7 +59,7 @@ public class Util {
 			// if the key begins with "+" then prepend the new assignment onto the existing assignment
 			if ( key.startsWith( "+" ) ) {
 				final String baseKey = key.substring( 1 );
-				final String initialAssignment = (String)map.get( baseKey );
+				final String initialAssignment = map.get( baseKey );
 				if ( initialAssignment != null ) {
 					map.put( baseKey, assignment + " - " + initialAssignment );
 				}
@@ -70,7 +70,7 @@ public class Util {
 			// if the key ends with "+" then append the new assignment onto the existing assignment
 			else if ( key.endsWith( "+" ) ) {
 				final String baseKey = key.substring( 0, key.length() - 1 );
-				final String initialAssignment = (String)map.get( baseKey );
+				final String initialAssignment = map.get( baseKey );
 				if ( initialAssignment != null ) {
 					map.put( baseKey, initialAssignment + " - " + assignment );
 				}
@@ -94,8 +94,8 @@ public class Util {
      * @throws java.util.MissingResourceException If the resource bundle cannot be found.
 	 * @see #loadResourceBundle
 	 */
-	static public Map getPropertiesFromResource(String propertyFile) throws MissingResourceException {
-		return loadResourceBundle(Application.getAdaptor().getResourcesPath() + "." + propertyFile);
+	static public Map<String,String> getPropertiesFromResource(String propertyFile) throws MissingResourceException {
+		return loadResourceBundle( Application.getAdaptor().getResourcesPath() + "." + propertyFile );
 	}
     
     

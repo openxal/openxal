@@ -28,7 +28,7 @@ public class AcceleratorSeqCombo extends AcceleratorSeq {
     public static final String    s_strType = "sequenceCombo";
 
 	/** map of dummy sequences keyed by constituent sequences */
-	private Map _dummyMap;
+	private Map<AcceleratorSeq,AcceleratorSeq> _dummyMap;
 
     /** total length of all primary sequences combined */
     private double totalLen;
@@ -75,7 +75,7 @@ public class AcceleratorSeqCombo extends AcceleratorSeq {
 	 * @return a new AcceleratorSeqCombo instance if the sequences do not form a ring and a Ring if they do
 	 */
 	static public AcceleratorSeqCombo getInstance( final String strID, final Accelerator accelerator, final DataAdaptor adaptor ) {
-		List sequences = getSequences( accelerator, adaptor );
+		final List<AcceleratorSeq> sequences = getSequences( accelerator, adaptor );
 		return getInstance( strID, sequences ); 
 	}
 	
@@ -178,8 +178,8 @@ public class AcceleratorSeqCombo extends AcceleratorSeq {
 		boolean match;
 		totalLen = 0.;
 		constituentNames = new ArrayList<String>();
-		_constituents = new ArrayList();
-		_dummyMap = new HashMap();
+		_constituents = new ArrayList<AcceleratorSeq>();
+		_dummyMap = new HashMap<AcceleratorSeq,AcceleratorSeq>();
 	
 		// Loop through the list of sequences:
 	
@@ -290,7 +290,7 @@ public class AcceleratorSeqCombo extends AcceleratorSeq {
         if( m_arrNodes == null || m_arrNodes.isEmpty() )  return m_dblPos + node.m_dblPos;
 
 		final AcceleratorSeq baseSequence = node.getPrimaryAncestor();
-		final AcceleratorSeq dummySequence = (AcceleratorSeq)_dummyMap.get( baseSequence );
+		final AcceleratorSeq dummySequence = _dummyMap.get( baseSequence );
 		
 		return dummySequence.getPosition() + baseSequence.getPosition( node );
     }
@@ -301,11 +301,11 @@ public class AcceleratorSeqCombo extends AcceleratorSeq {
 	 * @return the ID of first base constituent sequence
 	 */
 	public String getEntranceID() {
-		final List baseConstituents = getBaseConstituents();
+		final List<AcceleratorSeq> baseConstituents = getBaseConstituents();
 		
 		if ( baseConstituents.size() <= 0 )  return null;
 		
-		final AcceleratorSeq sequence = (AcceleratorSeq)baseConstituents.get(0);
+		final AcceleratorSeq sequence = baseConstituents.get(0);
 		
 		return sequence.getEntranceID();
 	}
@@ -379,10 +379,17 @@ public class AcceleratorSeqCombo extends AcceleratorSeq {
      */
     public List<AcceleratorSeq> getConstituentsWithQualifier( final TypeQualifier qualifier ) {
         final List<AcceleratorSeq> dummySequences = super.getSequences();
-        final List constituents = new ArrayList();
+        final List<AcceleratorSeq> constituents = new ArrayList<AcceleratorSeq>();
 		
 		for ( AcceleratorSeq dummySequence : dummySequences ) {
-            constituents.addAll( dummySequence.getNodesWithQualifier( qualifier ) );			
+            final List<AcceleratorNode> matchingNodes = dummySequence.getNodesWithQualifier( qualifier );
+            final List<AcceleratorSeq> matchingSequences = new ArrayList<AcceleratorSeq>();
+            for ( final AcceleratorNode node : matchingNodes ) {
+                if ( node instanceof AcceleratorSeq ) {
+                    matchingSequences.add( (AcceleratorSeq)node );
+                }
+            }
+            constituents.addAll( matchingSequences );
 		}
 		
         return Collections.unmodifiableList( new ArrayList<AcceleratorSeq>( constituents ) );

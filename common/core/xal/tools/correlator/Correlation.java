@@ -16,14 +16,14 @@ import java.util.*;
  * @author  tap
  */
 public class Correlation {
-    private Map recordTable;
+    private Map<String,Object> recordTable;
     private UnivariateStatistics timeStatistics;
     
 	
     /** Creates new Correlation */
-    public Correlation(Map newRecordTable, UnivariateStatistics newTimeStatistics) {
-        recordTable = Collections.unmodifiableMap(new HashMap(newRecordTable));
-        timeStatistics = new UnivariateStatistics(newTimeStatistics);
+    public Correlation( final Map<String,Object> newRecordTable, final UnivariateStatistics newTimeStatistics ) {
+        recordTable = Collections.<String,Object>unmodifiableMap( new HashMap<String,Object>( newRecordTable ) );
+        timeStatistics = new UnivariateStatistics( newTimeStatistics );
     }
     
     
@@ -32,8 +32,8 @@ public class Correlation {
 	 * @param sourceName A name uniquely identifying a source (and record) 
 	 * @return true if the sourceName identifies a record in this correlation and false otherwise.
 	 */
-    public boolean isCorrelated(String sourceName) {
-        return names().contains(sourceName);
+    public boolean isCorrelated( final String sourceName ) {
+        return names().contains( sourceName );
     }
     
     
@@ -50,7 +50,7 @@ public class Correlation {
 	 * Get the collection of names each of which identifies a record.
 	 * @return The collection of names for correlated records.
 	 */
-    public Collection names() {
+    public Collection<String> names() {
         return recordTable.keySet();
     }
     
@@ -60,7 +60,7 @@ public class Correlation {
      * @return Collection of records in the correlation.
      * @see #getRecord
      */
-    final public Collection getRecords() {
+    final public Collection<Object> getRecords() {
         return recordTable.values();
     }
     
@@ -73,8 +73,8 @@ public class Correlation {
 	 * @param name The name that identifies the desired record.
 	 * @return The record corresponding to the specified name.
      */
-    final public Object getRecord(String name) {
-        return recordTable.get(name);
+    final public Object getRecord( final String name ) {
+        return recordTable.get( name );
     }
 	
 	
@@ -83,7 +83,7 @@ public class Correlation {
 	 * @param correlation The correlation to test for being contained within <code>this</code>
 	 * @return true if this correlation contains all of the records of the specified correlation and false otherwise.
 	 */
-	public boolean contains(Correlation correlation) {
+	public boolean contains( final Correlation correlation ) {
 		return getRecords().containsAll( correlation.getRecords() );
 	}
 	
@@ -114,15 +114,13 @@ public class Correlation {
 	 * @return The string representation of this correlation.
 	 */
     public String toString() {
-        StringBuffer buffer = new StringBuffer();
-        Collection recordEntries = recordTable.entrySet();
-        Iterator recordEntryIter = recordEntries.iterator();
+        final StringBuffer buffer = new StringBuffer();
+        final Set<Map.Entry<String,Object>> recordEntries = recordTable.entrySet();
         
-        while ( recordEntryIter.hasNext() ) {
-            Map.Entry entry = (Map.Entry)recordEntryIter.next();
-            buffer.append("name: " + entry.getKey() + ", ");
-            buffer.append(entry.getValue());
-            buffer.append("\n");
+        for ( final Map.Entry<String,Object> entry : recordEntries ) {
+            buffer.append( "name: " + entry.getKey() + ", " );
+            buffer.append( entry.getValue() );
+            buffer.append( "\n" );
         }
         
         return buffer.toString();

@@ -158,7 +158,7 @@ abstract public class Channel {
     /** Add a listener of connection changes */
     public void addConnectionListener(ConnectionListener listener) {
         if ( connectionProxy == null ) {
-            connectionProxy = (ConnectionListener)messageCenter.registerSource(this, ConnectionListener.class);
+            connectionProxy = messageCenter.registerSource(this, ConnectionListener.class);
         }
         messageCenter.registerTarget(listener, this, ConnectionListener.class);
 		if ( isConnected() )  listener.connectionMade(this);	// immediately post to new listener
@@ -208,26 +208,6 @@ abstract public class Channel {
     public void setChannelName(String strNameChan)  { 
         m_strId = strNameChan; 
     }
-
-    
-     /**
-     * Set synchronized request queueing (via pendX() functions)
-     * @param  syncFlag     turn external request queueing on/off
-	 * @deprecated
-     */
-    public static void setSyncRequest( final boolean syncFlag ) {
-        channelSystem.setSyncRequest( syncFlag );
-    }
-    
-    
-	/**
-	 * Determine whether requests are synchronized or not
-     * @return true if requests are synchronized and false if not
-	 * @deprecated
-     */
-    public static boolean getSyncRequest() { 
-        return channelSystem.willSyncRequest(); 
-    }
     
     
     public static synchronized void setDebugMode(boolean bDebug) {
@@ -258,32 +238,6 @@ abstract public class Channel {
      *  @return       event timeout
      */
     public double getEventTimeout()   { return m_dblTmEvt; }
-    
-        
-    /**
-	 * Request a connection and continue without waiting if the channel system is set to sycn requests or wait if it is not.
-     * @return false if connection could not be established or the channel system is set to sync requests
-	 * @deprecated use connectAndWait() or requestConnection() instead
-     */
-    public boolean connect() {
-        if ( channelSystem.willSyncRequest() ) {
-			requestConnection();
-			return false;
-		}
-		else {
-			return connectAndWait( m_dblTmIO );
-		}
-    }
-	
-   
-    /**
-	 * Same as connect()
-     * @return false if connection could not be established
-	 * @deprecated use connectAndWait() or requestConnection() instead
-     */
-    public boolean connect_async()   {
-		return connect();
-    }
 	
 	
 	/**
@@ -330,7 +284,7 @@ abstract public class Channel {
     
     /** Checks for process variable channel connection and throws a ConnectionException if absent. */
     public void checkConnection() throws ConnectionException  {
-        if ( !connect() ) {
+        if ( !connectAndWait() ) {
             throw new ConnectionException(this, "Channel Error - The channel \"" + m_strId + "\" must be connected to use this feature.");
         }
     }
@@ -353,7 +307,7 @@ abstract public class Channel {
     protected void checkConnection( final String methodName, final boolean attemptConnection ) throws ConnectionException  {
 		if ( !isConnected() ) {
 			if ( attemptConnection ) {
-				connect();
+				connectAndWait();
 				checkConnection( methodName, false );
 			}
 			else {

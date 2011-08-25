@@ -270,7 +270,7 @@ final public class ServiceDirectory {
 	 * @see #addServiceListener
 	 */
 	public ServiceRef[] findServicesWithType( final String serviceType, final long timeout ) throws ServiceException {
-		final Map serviceTable = new Hashtable();
+		final Map<String,ServiceRef> serviceTable = new Hashtable<String,ServiceRef>();
 		
 		final ServiceListener listener = new ServiceListener() {
 			public void serviceAdded( final ServiceDirectory directory, final ServiceRef serviceRef ) {
@@ -288,12 +288,12 @@ final public class ServiceDirectory {
 			removeServiceListener( listener );
 			
 			ServiceRef[] services = new ServiceRef[serviceTable.size()];
-			Set serviceEntries = serviceTable.entrySet();
-			Iterator entryIter = serviceEntries.iterator();
+			Set<Map.Entry<String,ServiceRef>> serviceEntries = serviceTable.entrySet();
+			Iterator<Map.Entry<String,ServiceRef>> entryIter = serviceEntries.iterator();
 			int index = 0;
 			while ( entryIter.hasNext() ) {
-				Map.Entry entry = (Map.Entry)entryIter.next();
-				services[index] = (ServiceRef)entry.getValue();
+				Map.Entry<String,ServiceRef> entry = entryIter.next();
+				services[index] = entry.getValue();
 				++index;
 			}
 			

@@ -11,6 +11,9 @@ package xal.tools.solver;
 
 /** Exception indicating that a run has been terminated */
 public class RunTerminationException extends RuntimeException {
+    /** serialization ID */
+    private static final long serialVersionUID = 1L;
+    
 	/** Primary Constructor */
 	public RunTerminationException( final String text ) {
 		super( text );

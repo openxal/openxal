@@ -16,6 +16,9 @@ import java.awt.event.*;
  *@version    1.0
  */
 public class FunctionGraphsJPanel extends JPanel implements MouseListener, MouseMotionListener {
+    /** serialization ID */
+    private static final long serialVersionUID = 1L;
+    
 
 	/**
 	 *  The static field that defines HORIZONTAL line on a graph panel
@@ -374,7 +377,7 @@ public class FunctionGraphsJPanel extends JPanel implements MouseListener, Mouse
 			} else {
 				graphColorV.add(null);
 			}
-			lgd.registerInContainer((FunctionGraphsJPanel) this);
+			lgd.registerInContainer( this );
 			updateData();
 			return graphDataV.size() - 1;
 		}
@@ -2232,7 +2235,7 @@ public class FunctionGraphsJPanel extends JPanel implements MouseListener, Mouse
 		if (cmp == null) {
 			return null;
 		}
-		return (Component) cmp;
+		return cmp;
 	}
 
 
@@ -4058,6 +4061,9 @@ public class FunctionGraphsJPanel extends JPanel implements MouseListener, Mouse
 	 *@version    July 22, 2004
 	 */
 	private class gridLimitsPanel extends JPanel {
+        /** serialization ID */
+        private static final long serialVersionUID = 1L;
+        
 
 		private FunctionGraphsJPanel fgp = null;
 

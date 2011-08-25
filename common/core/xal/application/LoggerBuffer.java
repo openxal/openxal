@@ -25,7 +25,7 @@ class LoggerBuffer extends Handler {
 	protected static LoggerBuffer _rootHandler;
 
 	/** list of captured records */
-	protected List _records;
+	protected List<LogRecord> _records;
 
 	/** message center for dispatching messages to registered listeners */
 	protected MessageCenter _messageCenter;
@@ -42,9 +42,9 @@ class LoggerBuffer extends Handler {
 	/** Constructor */
 	public LoggerBuffer() {
 		_messageCenter = new MessageCenter( "Logger Buffer" );
-		_eventProxy = (LoggerBufferListener)_messageCenter.registerSource( this, LoggerBufferListener.class );
+		_eventProxy = _messageCenter.registerSource( this, LoggerBufferListener.class );
 
-		_records = new ArrayList();
+		_records = new ArrayList<LogRecord>();
 	}
 
 
@@ -56,7 +56,7 @@ class LoggerBuffer extends Handler {
 	public void addLoggerBufferListener( final LoggerBufferListener listener ) {
 		_messageCenter.registerTarget( listener, this, LoggerBufferListener.class );
 		synchronized( _records ) {
-			listener.recordsChanged( this, new ArrayList( _records ) );
+			listener.recordsChanged( this, new ArrayList<LogRecord>( _records ) );
 		}
 	}
 
@@ -103,7 +103,7 @@ class LoggerBuffer extends Handler {
 	public void clear() {
 		synchronized( _records ) {
 			_records.clear();
-			_eventProxy.recordsChanged( this, Collections.EMPTY_LIST );
+			_eventProxy.recordsChanged( this, Collections.<LogRecord>emptyList() );
 		}
 	}
 
@@ -125,7 +125,7 @@ class LoggerBuffer extends Handler {
 	public void publish( final LogRecord record ) {
 		synchronized ( _records ) {
 			_records.add( record );
-			_eventProxy.recordsChanged( this, new ArrayList(_records) );
+			_eventProxy.recordsChanged( this, new ArrayList<LogRecord>(_records) );
 		}
 	}
 }

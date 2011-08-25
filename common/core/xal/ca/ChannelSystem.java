@@ -16,13 +16,8 @@ package xal.ca;
  * @author  tap
  */
 abstract public class ChannelSystem {
-    protected volatile boolean willSyncRequest;
-    
-	
     /** Creates a new instance of ChannelSystem */
-    protected ChannelSystem() {
-        willSyncRequest = false;
-    }
+    protected ChannelSystem() {}
     
     
 	/**
@@ -30,26 +25,6 @@ abstract public class ChannelSystem {
 	 * @param debugFlag True to enable debug mode and false to disable debug mode.
 	 */
     abstract public void setDebugMode( final boolean debugFlag );
-    
-    
-	/**
-	 * Set whether the requests are handled synchronously or asynchronously
-	 * @param newStatus true for synchronous mode and false for asynchronous mode
-	 * @deprecated We no longer support global synchronization flags since they are not thread safe
-	 */
-    public void setSyncRequest( final boolean newStatus ) {
-        willSyncRequest = newStatus;
-    }
-    
-    
-	/**
-	 * Determine whether requests will be handled synchronously
-	 * @return true if requests are handled synchronously
-	 * @deprecated We no longer support global synchronization flags since they are not thread safe
-	 */
-    public boolean willSyncRequest() {
-        return willSyncRequest;
-    }
 	
 	
 	/** flush requests to the server */

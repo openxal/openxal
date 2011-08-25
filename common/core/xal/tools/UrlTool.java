@@ -72,6 +72,9 @@ public class UrlTool {
      * Exception for bad file path specification.
      */
     static public class FilePathException extends RuntimeException {
+        /** serialization ID */
+        private static final long serialVersionUID = 1L;
+        
         private String filePath;
         
         public FilePathException(String newFilePath) {
@@ -93,6 +96,9 @@ public class UrlTool {
      * Exception for bad file path specification.
      */
     static public class UrlSpecException extends RuntimeException {
+        /** serialization ID */
+        private static final long serialVersionUID = 1L;
+        
         private String urlSpec;
         
         public UrlSpecException(String newUrlPath) {

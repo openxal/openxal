@@ -21,18 +21,19 @@ abstract public class SourceAgent implements StateNotice {
 	/** number of bins to store events for correlation comparison */
     final private int BIN_POOL_SIZE = 10;
 	
+    private final MessageCenter MESSAGE_CENTER;
+    
     protected String _name;
-    protected MessageCenter localCenter;
-    private LinkedList binAgents;        // bins sorted by timestamp
+    private LinkedList<BinAgent> binAgents;        // bins sorted by timestamp
     protected BinUpdate binUpdateProxy;
     private CorrelationTester correlationTester;
 
     
     /** Creates new ChannelAgent */
-    public SourceAgent(MessageCenter newLocalCenter, String name, RecordFilter recordFilter, CorrelationTester tester) {
+    public SourceAgent( final MessageCenter newLocalCenter, final String name, final RecordFilter recordFilter, final CorrelationTester tester ) {
         _name = name;
         correlationTester = tester;
-        localCenter = newLocalCenter;
+        MESSAGE_CENTER = newLocalCenter;
         
         setupEventHandler(recordFilter);
         
@@ -42,14 +43,14 @@ abstract public class SourceAgent implements StateNotice {
     
     
     private void registerEvents() {        
-        binUpdateProxy = (BinUpdate)localCenter.registerSource(this, BinUpdate.class);
-        localCenter.registerTarget(this, StateNotice.class);
+        binUpdateProxy = MESSAGE_CENTER.registerSource( this, BinUpdate.class );
+        MESSAGE_CENTER.registerTarget( this, StateNotice.class );
     }
     
     
     private void unregisterEvents() {
-        localCenter.removeSource(this, BinUpdate.class);
-        localCenter.removeTarget(this, StateNotice.class);
+        MESSAGE_CENTER.removeSource( this, BinUpdate.class );
+        MESSAGE_CENTER.removeTarget( this, StateNotice.class );
     }
     
     
@@ -59,15 +60,12 @@ abstract public class SourceAgent implements StateNotice {
      * is captured and it passes the filter test, this method should call postEvent().
      * @see #postEvent
      */
-    abstract protected void setupEventHandler(RecordFilter recordFilter);
+    abstract protected void setupEventHandler( final RecordFilter recordFilter );
     
     
     /** clear memory of all events */
     public void reset() {
-        Iterator binIter = binAgents.iterator();
-        
-        while( binIter.hasNext() ) {
-            BinAgent binAgent = (BinAgent)binIter.next();
+        for ( final BinAgent binAgent : binAgents ) {
             binAgent.reset();
         }
     }
@@ -75,18 +73,15 @@ abstract public class SourceAgent implements StateNotice {
 
     /** set the timespan to each bin */
     public void setBinTimespan(double timespan) {
-        Iterator binIter = binAgents.iterator();
-        
-        while( binIter.hasNext() ) {
-            BinAgent binAgent = (BinAgent)binIter.next();
-            binAgent.setTimespan(timespan);
+        for ( final BinAgent binAgent : binAgents ) {
+            binAgent.setTimespan( timespan );
         }
     }
     
     
     /** Create a pool of bins that form a circular buffer */
     private void createBins() {
-        binAgents = new LinkedList();
+        binAgents = new LinkedList<BinAgent>();
         
         for ( int index = 0 ; index < BIN_POOL_SIZE ; index++ ) {
             createNewBin();
@@ -96,22 +91,19 @@ abstract public class SourceAgent implements StateNotice {
     
     /** Create a new bin.  Register each bin for events. */
     private void createNewBin() {
-        BinAgent binAgent = new BinAgent(localCenter, correlationTester);
+        BinAgent binAgent = new BinAgent( MESSAGE_CENTER, correlationTester );
         
-        localCenter.registerTarget(binAgent, BinUpdate.class);
-        localCenter.registerTarget(binAgent, StateNotice.class);
-        binAgents.add(binAgent);
+        MESSAGE_CENTER.registerTarget( binAgent, BinUpdate.class );
+        MESSAGE_CENTER.registerTarget( binAgent, StateNotice.class );
+        binAgents.add( binAgent );
     }
     
     
     /** deallocate the bins when they are no longer needed */
     private void removeBins() {
-        synchronized(binAgents) {
-            Iterator binIter = binAgents.iterator();
-
-            while ( binIter.hasNext() ) {
-                BinAgent binAgent = (BinAgent)binIter.next();
-                removeBin(binAgent);
+        synchronized( binAgents ) {
+            for ( final BinAgent binAgent : binAgents ) {
+                removeBin( binAgent );
             }
 
             binAgents.clear();
@@ -120,9 +112,9 @@ abstract public class SourceAgent implements StateNotice {
     
     
     /** Remove a bin */
-    private void removeBin(BinAgent binAgent) {
-        localCenter.removeTarget(binAgent, BinUpdate.class);
-        localCenter.removeTarget(binAgent, StateNotice.class);
+    private void removeBin( final BinAgent binAgent ) {
+        MESSAGE_CENTER.removeTarget( binAgent, BinUpdate.class );
+        MESSAGE_CENTER.removeTarget( binAgent, StateNotice.class );
         
         binAgent.shutdown();
     }
@@ -132,9 +124,9 @@ abstract public class SourceAgent implements StateNotice {
     private BinAgent nextBin() {
         BinAgent nextBin;
         
-        synchronized(binAgents) {
-            nextBin = (BinAgent)binAgents.removeFirst();
-            binAgents.addLast(nextBin);
+        synchronized( binAgents ) {
+            nextBin = binAgents.removeFirst();
+            binAgents.addLast( nextBin );
         }
         
         return nextBin;

@@ -17,17 +17,22 @@ import java.util.*;
  * @author  tap
  */
 abstract public class ChannelFactory {
-    static protected ChannelFactory defaultFactory;
-    protected Map channelMap;
+    /** default channel factory instance */
+    static final private ChannelFactory DEFAULT_FACTORY;
+    
+    
+    /** map of channels keyed by signal name */
+    private final Map<String,Channel> CHANNEL_MAP;
+    
     
     static {
-        defaultFactory = newFactory();
+        DEFAULT_FACTORY = newFactory();
     }
     
     
     /** Creates a new instance of ChannelFactory */
     protected ChannelFactory() {
-        channelMap = new Hashtable();
+        CHANNEL_MAP = new Hashtable<String,Channel>();
     }
 	
 	
@@ -47,12 +52,12 @@ abstract public class ChannelFactory {
     public Channel getChannel( final String signalName ) {
         Channel channel;
         
-        if ( !channelMap.containsKey( signalName ) ) {
+        if ( !CHANNEL_MAP.containsKey( signalName ) ) {
             channel = newChannel( signalName );
-            channelMap.put( signalName, channel );
+            CHANNEL_MAP.put( signalName, channel );
         }
         else {
-            channel = (Channel)channelMap.get( signalName );
+            channel = CHANNEL_MAP.get( signalName );
         }
         
         return channel;
@@ -68,13 +73,13 @@ abstract public class ChannelFactory {
      */
     public Channel getChannel( final String signalName, final ValueTransform transform ) {
 		final String channelID = Channel.generateId( signalName,  transform );
-		if ( !channelMap.containsKey( channelID ) ) {
+		if ( !CHANNEL_MAP.containsKey( channelID ) ) {
             final Channel channel = newChannel( signalName, transform );
-            channelMap.put( channelID, channel );
+            CHANNEL_MAP.put( channelID, channel );
 			return channel;
         }
         else {
-            final Channel channel = (Channel)channelMap.get( channelID );
+            final Channel channel = CHANNEL_MAP.get( channelID );
 			return channel;
         }
     }
@@ -105,7 +110,7 @@ abstract public class ChannelFactory {
      * @return The default channel factory
      */
     static public ChannelFactory defaultFactory() {
-        return defaultFactory;
+        return DEFAULT_FACTORY;
     }
     
     
@@ -121,7 +126,7 @@ abstract public class ChannelFactory {
 	 * @return the channel system associated with the default channel factory
 	 */
     static ChannelSystem defaultSystem() {
-        return defaultFactory.channelSystem();
+        return DEFAULT_FACTORY.channelSystem();
     }
     
     

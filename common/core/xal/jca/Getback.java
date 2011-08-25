@@ -32,7 +32,7 @@ class Getback implements GetListener {
      *  @throws  xal.ca.ConnectionException  if channel is not connected
      */
     protected Getback(JcaChannel chan, IEventSinkValue aListener) throws ConnectionException, GetException {        
-        channel = (JcaChannel)chan;
+        channel = chan;
         listener = aListener;
 		
         // launch the get callback operation

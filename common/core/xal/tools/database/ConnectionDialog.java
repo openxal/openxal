@@ -30,6 +30,9 @@ import java.sql.Connection;
  * @author   tap
  */
 public class ConnectionDialog extends JDialog {
+    /** serialization ID */
+    private static final long serialVersionUID = 1L;
+    
 	/** label for the submit button */
 	private final String SUBMIT_LABEL;
 

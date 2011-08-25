@@ -847,7 +847,7 @@ class JcaChannel extends Channel {
      */
     protected ChannelRecord getRawValueRecord( final int pvType )  throws ConnectionException, GetException {
         connectAndWait();
-        DBR dbr = (DBR)this.getVal( pvType );
+        DBR dbr = this.getVal( pvType );
         ChannelRecord record;
         
         synchronized( dbr ) {

@@ -7,7 +7,6 @@
  *  Oak Ridge National Laboratory
  *  Oak Ridge, TN 37830
  *
- *  revision $Id: ProbeFactory.java 2 2006-08-17 12:20:30 +0000 (Thursday, 17 8 2006) t6p $
  */
 package xal.model.probe;
 

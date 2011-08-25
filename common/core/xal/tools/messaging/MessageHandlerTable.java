@@ -16,28 +16,32 @@ import java.util.logging.*;
  * @author  tap
  */
 class MessageHandlerTable implements java.io.Serializable {
-    private Map protocolTable;
+    /** serialization ID */
+    private static final long serialVersionUID = 1L;
+    
+    /** table keyed by protocol name and mapped to the source table */
+    final private Map<String,Map<Object,MessageHandler>> PROTOCOL_TABLE;
 
     
     /** Creates new MessageHandlerTable */
     public MessageHandlerTable() {
-        protocolTable = new Hashtable();
+        PROTOCOL_TABLE = new Hashtable<String,Map<Object,MessageHandler>>();
     }
     
     
     /** add the handler to the table */
     public void addHandler( final MessageHandler handler ) {
-        Class protocol = handler.getProtocol();
-        Object protocolKey = protocolKey( protocol );
-        Object source = handler.getSource();
-        Map sourceTable;
+        final Class protocol = handler.getProtocol();
+        final String protocolKey = protocolKey( protocol );
+        final Object source = handler.getSource();
+        Map<Object,MessageHandler> sourceTable;     // table of handlers keyed by source
         
-        if ( protocolTable.containsKey( protocolKey ) ) {
-            sourceTable = (Map)protocolTable.get( protocolKey );
+        if ( PROTOCOL_TABLE.containsKey( protocolKey ) ) {
+            sourceTable = PROTOCOL_TABLE.get( protocolKey );
         }
         else {
-            sourceTable = new HashMap();
-            protocolTable.put( protocolKey, sourceTable );
+            sourceTable = new HashMap<Object,MessageHandler>();
+            PROTOCOL_TABLE.put( protocolKey, sourceTable );
         }
         
         if ( sourceTable.containsKey( source ) ) {
@@ -50,12 +54,12 @@ class MessageHandlerTable implements java.io.Serializable {
     
     /** remove the handler from the table */ 
     public void removeHandler( final MessageHandler handler ) {
-        Class protocol = handler.getProtocol();
-        Object source = handler.getSource();
-        Object protocolKey = protocolKey( protocol );
+        final Class protocol = handler.getProtocol();
+        final String protocolKey = protocolKey( protocol );
+        final Object source = handler.getSource();
         
-        if ( protocolTable.containsKey( protocolKey ) ) {
-            Map sourceTable = (Map)protocolTable.get( protocolKey );
+        if ( PROTOCOL_TABLE.containsKey( protocolKey ) ) {
+            final Map<Object,MessageHandler> sourceTable = PROTOCOL_TABLE.get( protocolKey );
             sourceTable.remove( source );
         }    
     }
@@ -63,7 +67,7 @@ class MessageHandlerTable implements java.io.Serializable {
     
     /** remove from the table the handler associated with the source and protocol */
     public <T> void removeHandler( final Object source, final Class<T> protocol ) {
-        MessageHandler<T> handler = getHandler( source, protocol );
+        final MessageHandler<T> handler = getHandler( source, protocol );
         if ( handler != null ) {
             removeHandler( handler );
         }
@@ -76,15 +80,15 @@ class MessageHandlerTable implements java.io.Serializable {
     
     
     /** get all handler associated with the protocol */
-    public Set getHandlers( final Class protocol ) {
-        Object protocolKey = protocolKey( protocol );
+    public Set<Map.Entry<Object,MessageHandler>> getHandlers( final Class protocol ) {
+        final String protocolKey = protocolKey( protocol );
         
-        if ( protocolTable.containsKey(protocolKey) ) {
-            Map sourceTable = (Map)protocolTable.get(protocolKey);
+        if ( PROTOCOL_TABLE.containsKey( protocolKey ) ) {
+            final Map<Object,MessageHandler> sourceTable = PROTOCOL_TABLE.get( protocolKey );
             return sourceTable.entrySet();
         }
         else {
-            return new HashSet();
+            return new HashSet<Map.Entry<Object,MessageHandler>>();
         }
      }
     
@@ -96,11 +100,12 @@ class MessageHandlerTable implements java.io.Serializable {
     
     
     /** get the handler (if any) associated with the source and protocol */
+    @SuppressWarnings( "unchecked" )
     public <T> MessageHandler<T> getHandler( final Object source, final Class<T> protocol ) {
         Object protocolKey = protocolKey( protocol );
         
-        if ( protocolTable.containsKey( protocolKey ) ) {
-            Map sourceTable = (Map)protocolTable.get( protocolKey );
+        if ( PROTOCOL_TABLE.containsKey( protocolKey ) ) {
+            final Map<Object,MessageHandler> sourceTable = PROTOCOL_TABLE.get( protocolKey );
             return (MessageHandler<T>)sourceTable.get( source );
         }
         else {
@@ -109,7 +114,7 @@ class MessageHandlerTable implements java.io.Serializable {
     }
     
     
-    private Object protocolKey( final Class protocol ) {
+    private String protocolKey( final Class protocol ) {
         return protocol.getName();
     }
 }

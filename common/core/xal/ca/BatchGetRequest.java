@@ -59,7 +59,7 @@ public class BatchGetRequest {
 	
 	/** Constructor */
 	public BatchGetRequest() {
-		this( Collections.EMPTY_SET );
+		this( Collections.<Channel>emptySet() );
 	}
 	
 	

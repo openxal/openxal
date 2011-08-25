@@ -12,6 +12,8 @@ package xal.ca;
  * @author  tapsns
  */
 public class ChannelException extends java.lang.Exception {
+    /** required for serializable objects */
+    private static final long serialVersionUID = 1L;
 
     /**
      * Creates new <code>ChannelException</code> without detail message.

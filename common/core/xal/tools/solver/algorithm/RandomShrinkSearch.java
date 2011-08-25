@@ -73,12 +73,10 @@ public class RandomShrinkSearch extends SearchAlgorithm {
 
 	/** Reset the trial point's variables to their starting values.  */
 	protected void resetBestPoint() {
-		final List variables = _problem.getVariables();
+		final List<Variable> variables = _problem.getVariables();
 		final MutableTrialPoint trialPoint = new MutableTrialPoint( variables.size() );
-
-		final Iterator variableIter = variables.iterator();
-		while ( variableIter.hasNext() ) {
-			final Variable variable = (Variable)variableIter.next();
+        
+        for ( final Variable variable : variables ) {
 			final double value = variable.getInitialValue();
 			trialPoint.setValue( variable, value );
 		}
@@ -148,7 +146,7 @@ public class RandomShrinkSearch extends SearchAlgorithm {
 	 * @param solutions  The list of solutions.
 	 * @param solution   The new optimal solution.
 	 */
-	public void foundNewOptimalSolution( final SolutionJudge source, final List solutions, final Trial solution ) {
+	public void foundNewOptimalSolution( final SolutionJudge source, final List<Trial> solutions, final Trial solution ) {
 		final TrialPoint newPoint = solution.getTrialPoint();
 
 		if ( _bestPoint == null ) {
@@ -195,17 +193,19 @@ public class RandomShrinkSearch extends SearchAlgorithm {
 
 		/** Description of the Field */
 		protected Random _randomGenerator;
+        
 		/** Description of the Field */
 		protected double _changeProbabilityBase;
-		/** Description of the Field */
-		protected Map _values;
+        
+		/** Map of values keyed by variable */
+		protected Map<Variable,Number> _values;
 
 
 		/** Constructor  */
 		public RandomSearcher() {
 			NUM_VARIABLES = _problem.getVariables().size();
 			_changeProbabilityBase = 1 / (double)NUM_VARIABLES;
-			_values = new HashMap( NUM_VARIABLES );
+			_values = new HashMap<Variable,Number>( NUM_VARIABLES );
 			_randomGenerator = new Random( 0 );
 		}
 
@@ -307,7 +307,7 @@ public class RandomShrinkSearch extends SearchAlgorithm {
 	 */
 	protected class ShrinkSearcher extends RandomSearcher {
 		/** Description of the Field */
-		protected Map _variableWindows;
+		protected Map<Variable,VariableWindow> _variableWindows;
 
 
 		/** Constructor  */
@@ -329,7 +329,7 @@ public class RandomShrinkSearch extends SearchAlgorithm {
 		 * @return          the variable's search window
 		 */
 		public VariableWindow getSearchWindow( final Variable variable ) {
-			return (VariableWindow)_variableWindows.get( variable );
+			return _variableWindows.get( variable );
 		}
 		
 		
@@ -401,11 +401,10 @@ public class RandomShrinkSearch extends SearchAlgorithm {
 				hint = new InitialDelta();
 			}
 			
-			final List variables = _problem.getVariables();
-			_variableWindows = new HashMap( variables.size() );
-			Iterator variableIter = variables.iterator();
-			while ( variableIter.hasNext() ) {
-				final Variable variable = (Variable)variableIter.next();
+			final List<Variable> variables = _problem.getVariables();
+			_variableWindows = new HashMap<Variable,VariableWindow>( variables.size() );
+            
+            for ( final Variable variable : variables ) {
 				final double[] limits = hint.getRange( variable );				
 				VariableWindow window = new VariableWindow( limits[DomainHint.LOWER_IND], limits[DomainHint.UPPER_IND] );
 				_variableWindows.put( variable, window );

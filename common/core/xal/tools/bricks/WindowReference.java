@@ -31,7 +31,7 @@ public class WindowReference {
 	final private BricksContext CONTEXT;
 	
 	/** table of views tagged by their tag */
-	final private Map<String,List> VIEW_TABLE;
+	final private Map<String,List<Object>> VIEW_TABLE;
 	
 	/** the window reference */
 	final private Window WINDOW;
@@ -40,7 +40,7 @@ public class WindowReference {
 	/** Constructor */
 	public WindowReference( final URL url, final String tag, Object... windowParameters ) {
 		CONTEXT = new BricksContext( url );
-		VIEW_TABLE = new HashMap<String,List>();
+		VIEW_TABLE = new HashMap<String,List<Object>>();
 		WINDOW = loadWindow( url, tag, windowParameters );
 	}
 	
@@ -58,26 +58,26 @@ public class WindowReference {
 	
 	
 	/** get the views with the associated tag */
-	public List getViews( final String tag ) {
+	public List<Object> getViews( final String tag ) {
 		return VIEW_TABLE.get( tag );
 	}
 	
 	
 	/** get a view with the associated tag */
 	public Object getView( final String tag ) {
-		final List views = getViews( tag );
+		final List<Object> views = getViews( tag );
 		return views != null && views.size() > 0 ? views.get( 0 ) : null;
 	}
 	
 	
 	/** register the view with the table */
 	protected void registerView( final Object view, final String tag ) {
-		List views;
+		final List<Object> views;
 		if ( VIEW_TABLE.containsKey( tag ) ) {
 			views = VIEW_TABLE.get( tag );
 		}
 		else {
-			views = new ArrayList();
+			views = new ArrayList<Object>();
 			VIEW_TABLE.put( tag, views );
 		}
 		views.add( view );
@@ -123,6 +123,7 @@ public class WindowReference {
 	
 	
 	/** process adaptors to get components */
+    @SuppressWarnings( "unchecked" )
 	protected Component getView( final DataAdaptor adaptor, final Object... viewParameters ) {
 		final DataAdaptor proxyAdaptor = adaptor.childAdaptor( ViewProxy.DATA_LABEL );
 		final ViewProxy viewProxy = ViewProxy.getInstance( proxyAdaptor );
@@ -183,14 +184,14 @@ public class WindowReference {
 	
 	
 	/** Find a constructor that matches the specified parameters */
-	private static Constructor findConstructor( final Class theClass, final Object[] parameters ) {
+	private static <ClassType> Constructor findConstructor( final Class<ClassType> theClass, final Object[] parameters ) {
 		final Class[] parameterTypes = new Class[parameters.length];
 		for ( int index = 0 ; index < parameters.length ; index++ ) {
 			parameterTypes[index] = parameters[index].getClass();
 		}
 		
 		try {
-			final Constructor constructor = theClass.getConstructor( parameterTypes );
+			final Constructor<ClassType> constructor = theClass.getConstructor( parameterTypes );
 			constructor.setAccessible( true );
 			return constructor;
 		}
@@ -223,6 +224,7 @@ public class WindowReference {
 	
 	
 	/** process adaptors to get borders */
+    @SuppressWarnings( "unchecked" )
 	protected Border getBorder( final DataAdaptor adaptor ) {
 		final DataAdaptor proxyAdaptor = adaptor.childAdaptor( BorderProxy.DATA_LABEL );
 		final BorderProxy borderProxy = BorderProxy.getInstance( proxyAdaptor );

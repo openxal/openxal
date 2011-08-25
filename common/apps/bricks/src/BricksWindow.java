@@ -33,6 +33,9 @@ import java.beans.*;
  * @author  tap
  */
 class BricksWindow extends XalWindow implements SwingConstants, BrickListener {
+    /** serialization identifier */
+    private static final long serialVersionUID = 1L;
+    
 	/** tree model of view nodes */
 	final protected DefaultTreeModel VIEW_NODE_TREE_MODEL;
 	
@@ -132,6 +135,9 @@ class BricksWindow extends XalWindow implements SwingConstants, BrickListener {
      */
     protected void customizeCommands( final Commander commander ) {		
         final Action moveDownViewAction = new AbstractAction( "move-down-view" ) {
+            /** serialization identifier */
+            private static final long serialVersionUID = 1L;
+            
             public void actionPerformed( final ActionEvent event ) {
 				moveDownSelection( VIEW_TREE );
 			}
@@ -139,6 +145,9 @@ class BricksWindow extends XalWindow implements SwingConstants, BrickListener {
         commander.registerAction( moveDownViewAction );
 		
         final Action moveUpViewAction = new AbstractAction( "move-up-view" ) {
+            /** serialization identifier */
+            private static final long serialVersionUID = 1L;
+            
             public void actionPerformed( final ActionEvent event ) {
 				moveUpSelection( VIEW_TREE );
 			}
@@ -146,6 +155,9 @@ class BricksWindow extends XalWindow implements SwingConstants, BrickListener {
         commander.registerAction( moveUpViewAction );
 		
         final Action toggleViewPaletteAction = new AbstractAction( "toggle-view-palette" ) {
+            /** serialization identifier */
+            private static final long serialVersionUID = 1L;
+            
             public void actionPerformed( final ActionEvent event ) {
 				BUILDER_VIEW.setDividerLocation( BUILDER_VIEW.getDividerLocation() <= BUILDER_VIEW.getDividerSize() ? BUILDER_VIEW.getLastDividerLocation() : 0 );
 			}
@@ -344,6 +356,7 @@ class BricksWindow extends XalWindow implements SwingConstants, BrickListener {
 		
 		
 		/** process the dropping of a view node */
+        @SuppressWarnings( "unchecked" )    // transferables don't support generics
 		void processViewNodeDrop( final DropTargetDropEvent event ) throws Exception {
 			final JTree tree = (JTree)event.getDropTargetContext().getComponent();
 			final List<BeanNode> nodes = (List<BeanNode>)event.getTransferable().getTransferData( ViewNodeTransferable.VIEW_NODE_FLAVOR );
@@ -359,6 +372,7 @@ class BricksWindow extends XalWindow implements SwingConstants, BrickListener {
 		
 		
 		/** process the dropping of a view */
+        @SuppressWarnings( "unchecked" )    // transferables don't support generics
 		void processViewDrop( final DropTargetDropEvent event ) throws Exception {
 			final JTree tree = (JTree)event.getDropTargetContext().getComponent();
 			final List<BeanProxy> views = (List<BeanProxy>)event.getTransferable().getTransferData( ViewTransferable.VIEW_FLAVOR );
@@ -392,6 +406,9 @@ class BricksWindow extends XalWindow implements SwingConstants, BrickListener {
 	
 	/** View nodes transfer handler */
 	class ViewNodesTransferHandler extends TransferHandler {
+        /** serialization identifier */
+        private static final long serialVersionUID = 1L;
+        
 		/** transfer view nodes */
 		protected Transferable createTransferable( final JComponent component ) {
 			final JTree nodeTree = (JTree)component;
@@ -421,6 +438,7 @@ class BricksWindow extends XalWindow implements SwingConstants, BrickListener {
 		
 		
 		/** import the transferable */
+        @SuppressWarnings( "unchecked" )    // transferables don't support generics
 		public boolean importData( final JComponent component, final Transferable transferable ) {
 			try {
 				final JTree nodeTree = (JTree)component;
@@ -444,6 +462,7 @@ class BricksWindow extends XalWindow implements SwingConstants, BrickListener {
 		
 		
 		/** perform cleanup operations */
+        @SuppressWarnings( "unchecked" )    // transferables don't support generics
 		protected void exportDone( final JComponent component, Transferable transferable, int action ) {
 			switch( action ) {
 				case TransferHandler.MOVE:

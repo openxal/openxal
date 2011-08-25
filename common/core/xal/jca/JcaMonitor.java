@@ -108,7 +108,7 @@ class JcaMonitorValTime extends JcaMonitor {
     
     // capture an event, wrap the dbr into a channel record and notify the sink
     public void monitorChanged( final MonitorEvent evt ) {
-        final DBR dbr = (DBR)evt.getDBR();
+        final DBR dbr = evt.getDBR();
 		if ( dbr != null ) {
 			synchronized(dbr) {
 				final TimeAdaptor adaptor = new DbrTimeAdaptor( dbr );
@@ -151,7 +151,7 @@ class JcaMonitorValStatus extends JcaMonitor {
     
     // capture an event, wrap the dbr into a channel record and notify the sink
     public void monitorChanged( final MonitorEvent evt ) {
-        final DBR dbr = (DBR)evt.getDBR();
+        final DBR dbr = evt.getDBR();
 		if ( dbr != null ) {
 			synchronized(dbr) {
 				final StatusAdaptor adaptor = new DbrStatusAdaptor( dbr );
@@ -196,7 +196,7 @@ class JcaMonitorValue extends JcaMonitor {
     
     // capture an event, wrap the dbr into a channel record and notify the sink
     public void monitorChanged( final MonitorEvent evt ) {
-        final DBR dbr = (DBR)evt.getDBR();
+        final DBR dbr = evt.getDBR();
 		if ( dbr != null ) {
 			synchronized(dbr) {
 				final ValueAdaptor adaptor = new DbrValueAdaptor( dbr );

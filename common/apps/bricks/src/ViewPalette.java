@@ -26,6 +26,9 @@ import java.util.Vector;
 
 /** Palette of views which can be dropped onto a window. */
 public class ViewPalette extends JTabbedPane {
+    /** serialization identifier */
+    private static final long serialVersionUID = 1L;
+    
 	/** Constructor */
 	public ViewPalette() {
 		super( JTabbedPane.LEFT );
@@ -48,7 +51,7 @@ public class ViewPalette extends JTabbedPane {
 	
 	
 	/** add a tab of views to the tabbed pane */
-	private void addTab( final JTabbedPane tabbedPane, final String name, final Vector<ViewProxy> views ) {
+	private void addTab( final JTabbedPane tabbedPane, final String name, final Vector<? extends BeanProxy> views ) {
 		final JList list = new JList();
 		
 		list.setDragEnabled( true );
@@ -74,7 +77,7 @@ public class ViewPalette extends JTabbedPane {
 	
 	
 	/** make the controls views */
-	private Vector makeControlsViews() {
+	private Vector<ViewProxy> makeControlsViews() {
 		final Vector<ViewProxy> views = new Vector<ViewProxy>();
 		
 		views.add( ViewProxyFactory.getViewProxy( "JButton" ) );
@@ -91,7 +94,7 @@ public class ViewPalette extends JTabbedPane {
 	
 	
 	/** make the controls views */
-	private Vector makeTextViews() {
+	private Vector<ViewProxy> makeTextViews() {
 		final Vector<ViewProxy> views = new Vector<ViewProxy>();
 		
 		views.add( ViewProxyFactory.getViewProxy( "JLabel" ) );
@@ -107,7 +110,7 @@ public class ViewPalette extends JTabbedPane {
 	
 	
 	/** make the controls views */
-	private Vector makeDataViews() {
+	private Vector<ViewProxy> makeDataViews() {
 		final Vector<ViewProxy> views = new Vector<ViewProxy>();
 		
 		views.add( ViewProxyFactory.getViewProxy( "JList" ) );
@@ -120,7 +123,7 @@ public class ViewPalette extends JTabbedPane {
 	
 	
 	/** make the containers */
-	private Vector makeContainers() {
+	private Vector<ViewProxy> makeContainers() {
 		final Vector<ViewProxy> views = new Vector<ViewProxy>();
 		
 		views.add( ViewProxyFactory.getViewProxy( "JScrollPane" ) );
@@ -138,7 +141,7 @@ public class ViewPalette extends JTabbedPane {
 	
 	
 	/** make the windows */
-	private Vector makeWindows() {
+	private Vector<ViewProxy> makeWindows() {
 		final Vector<ViewProxy> views = new Vector<ViewProxy>();
 
 		views.add( ViewProxyFactory.getViewProxy( "JFrame" ) );
@@ -149,7 +152,7 @@ public class ViewPalette extends JTabbedPane {
 	
 	
 	/** make the controls views */
-	private Vector makeBorders() {
+	private Vector<BorderProxy> makeBorders() {
 		final Vector<BorderProxy> views = new Vector<BorderProxy>();
 		
 		views.add( BorderProxyFactory.getBorderProxy( "EtchedBorder" ) );
@@ -164,6 +167,9 @@ public class ViewPalette extends JTabbedPane {
 	
 	/** Knob list transfer handler */
 	class ViewTransferHandler extends TransferHandler {
+        /** serialization identifier */
+        private static final long serialVersionUID = 1L;
+        
 		final protected JList VIEW_LIST;
 		
 		
@@ -195,6 +201,9 @@ public class ViewPalette extends JTabbedPane {
 
 /** render the view as an icon */
 class ViewCellRenderer extends JLabel implements ListCellRenderer {
+    /** serialization identifier */
+    private static final long serialVersionUID = 1L;
+    
 	public Component getListCellRendererComponent( final JList list, final Object value, final int index, boolean isSelected, boolean cellHasFocus ) {
 		if ( value instanceof ViewProxy ) {
 			final BeanProxy proxy = (BeanProxy)value;

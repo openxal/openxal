@@ -87,17 +87,16 @@ public class ChannelCorrelator extends Correlator {
     
     
     /** 
-     * Get the names of channels that are not being monitored due to connection 
-     * or monitor failure or simply not monitoried.
+     * Get the names of channels that are not being monitored due to connection or monitor failure or simply not monitoried.
      * @return The collection of names of channels that are not active.
      */
-    synchronized public Collection inactiveChannelsByName() {
-        Collection failedChannels = new HashSet();
-        Collection allSources = getSourceAgents();
-        Iterator sourceIter = allSources.iterator();
+    synchronized public Collection<String> inactiveChannelsByName() {
+        final Collection<String> failedChannels = new HashSet<String>();
+        final Collection allSources = getSourceAgents();
+        final Iterator sourceIter = allSources.iterator();
         
         while ( sourceIter.hasNext() ) {
-            ChannelAgent channelAgent = (ChannelAgent)sourceIter.next();
+            final ChannelAgent channelAgent = (ChannelAgent)sourceIter.next();
             if ( !channelAgent.isActive() ) {
                 failedChannels.add( channelAgent.name() );
             }

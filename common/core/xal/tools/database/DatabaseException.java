@@ -21,6 +21,10 @@ import java.sql.SQLException;
  * @author  tap
  */
 public class DatabaseException extends RuntimeException {
+    /** serialization ID */
+    private static final long serialVersionUID = 1L;
+
+    
 	/**
 	 * Constructor to wrap an SQLException
 	 * @param message The exception message

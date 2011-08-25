@@ -176,7 +176,7 @@ public class InMemoryDataAdaptor implements DataAdaptor {
     
     /** return all child adaptors */
     public List<DataAdaptor> childAdaptors() {
-        final List subnodes = new ArrayList<DataAdaptor>();
+        final List<DataAdaptor> subnodes = new ArrayList<DataAdaptor>();
         for ( final Collection<DataAdaptor> adaptors : SUBNODE_MAP.values() ) {
             subnodes.addAll( adaptors );
         }

@@ -61,8 +61,11 @@ import javax.swing.JPanel;
  * TODO Add element selection dialog for choosing singel from multiple selection
  * TODO Implement SNS official color code
  */
-public class XALSynopticPanel extends JPanel
-{
+public class XALSynopticPanel extends JPanel {
+    /** serialization ID */
+    private static final long serialVersionUID = 1L;
+    
+
 	private double startPosition;
 	private double endPosition;
 	private AcceleratorSeq acceleratorSequence;

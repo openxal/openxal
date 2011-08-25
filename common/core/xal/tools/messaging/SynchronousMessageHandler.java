@@ -20,6 +20,9 @@ import java.lang.reflect.*;
  * @author  tap
  */
 class SynchronousMessageHandler<T> extends MessageHandler<T> implements java.io.Serializable {
+    /** serialization ID */
+    private static final long serialVersionUID = 1L;
+    
     /** Creates new SynchronousMessageHandler */
     public SynchronousMessageHandler( final TargetDirectory directory, final Class<T> newInterface, final int threadPoolSize ) {
         this( directory, null, newInterface, threadPoolSize );

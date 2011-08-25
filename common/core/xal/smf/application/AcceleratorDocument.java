@@ -17,16 +17,14 @@ import javax.swing.JFileChooser;
 
 
 /**
- * AcceleratorDocument is a subclass of XalDocument for accelerator based 
- * applications.
- *
+ * AcceleratorDocument is a subclass of XalDocument for accelerator based applications.
  * @author  tap
  */
 abstract public class AcceleratorDocument extends XalDocument {
     protected Accelerator accelerator;
     protected AcceleratorSeq selectedSequence;
     protected String acceleratorFilePath;
-    protected java.util.List selectedSequenceList;
+    protected List<AcceleratorSeq> selectedSequenceList;
     
 	
     /** Creates a new instance of AcceleratorDocument */
@@ -34,7 +32,7 @@ abstract public class AcceleratorDocument extends XalDocument {
         super();
         accelerator = null;
 		acceleratorFilePath = null;
-		selectedSequenceList = new ArrayList();
+		selectedSequenceList = new ArrayList<AcceleratorSeq>();
      }
 	
 	
@@ -122,9 +120,9 @@ abstract public class AcceleratorDocument extends XalDocument {
      */
     public void setAccelerator( final Accelerator newAccelerator, final String newPath ) {
         selectedSequence = null;
-		selectedSequenceList = new ArrayList();
+		selectedSequenceList = new ArrayList<AcceleratorSeq>();
         accelerator = newAccelerator;
-        setAcceleratorFilePath(newPath);
+        setAcceleratorFilePath( newPath );
         acceleratorChanged();       // hook for possible further processing
     }
 	
@@ -187,7 +185,10 @@ abstract public class AcceleratorDocument extends XalDocument {
 		else {
 			OpticsSwitcher switcher = new OpticsSwitcher(getAcceleratorWindow(), true);
 			switcher.showNearOwner();
-			if ( switcher.getDefaultOpticsPath() != null ) {
+            if ( switcher.isCanceled() ) {
+                return false;
+            }
+			else if ( switcher.getDefaultOpticsPath() != null ) {
 				return loadDefaultAccelerator();
 			}
 		}
@@ -201,7 +202,7 @@ abstract public class AcceleratorDocument extends XalDocument {
      */
     public void setSelectedSequence( final AcceleratorSeq selection ) {
         selectedSequence = selection;
-		final List sequences = new ArrayList();
+		final List<AcceleratorSeq> sequences = new ArrayList<AcceleratorSeq>();
 		if ( selection != null ) {
 			sequences.add( selection );
 		}
@@ -215,7 +216,7 @@ abstract public class AcceleratorDocument extends XalDocument {
 	 * Set a list of selected sequences
 	 * @param seqList The list of selected sequences
 	 */
-    public void setSelectedSequenceList( final java.util.List seqList ) {
+    public void setSelectedSequenceList( final List<AcceleratorSeq> seqList ) {
         selectedSequenceList = seqList;
     }
     
@@ -233,7 +234,7 @@ abstract public class AcceleratorDocument extends XalDocument {
 	 * Get the selected sequence list
 	 * @return the selected sequence list
 	 */
-    public java.util.List getSelectedSequenceList() {
+    public List<AcceleratorSeq> getSelectedSequenceList() {
         return selectedSequenceList;
     }
     

@@ -20,20 +20,19 @@ import oracle.sql.BLOB;
 
 
 /**
- * OracleDatabaseAdaptor is a concrete subclass of DatabaseAdaptor for implementing methods
- * specifically for the Oracle database.
+ * OracleDatabaseAdaptor is a concrete subclass of DatabaseAdaptor for implementing methods specifically for the Oracle database.
  *
  * @author  tap
  */
 public class OracleDatabaseAdaptor extends DatabaseAdaptor {
-	protected Map arrayDescriptorMap;
+	final private Map<String,ArrayDescriptor> ARRAY_DESCRIPTOR_TABLE;
 	
 	
 	/**
 	 * Public Constructor
 	 */
 	public OracleDatabaseAdaptor() {
-		arrayDescriptorMap = new HashMap();
+		ARRAY_DESCRIPTOR_TABLE = new HashMap();
 	}
 	
 	
@@ -113,10 +112,10 @@ public class OracleDatabaseAdaptor extends DatabaseAdaptor {
 	 * @return the SQL array which wraps the primitive array
 	 * @throws xal.tools.database.DatabaseException if a database exception is thrown
 	 */
-	public Array getArray(String type, Connection connection, Object array) throws DatabaseException {
+	public Array getArray( final String type, final Connection connection, final Object array ) throws DatabaseException {
 		try {
-			final ArrayDescriptor descriptor = getArrayDescriptor(type, connection);
-			return new ARRAY(descriptor, connection, array);
+			final ArrayDescriptor descriptor = getArrayDescriptor( type, connection );
+			return new ARRAY( descriptor, connection, array );
 		}
 		catch(SQLException exception) {
 			Logger.getLogger("global").log( Level.SEVERE, "Error instantiating an SQL array of type: " + type, exception );
@@ -132,13 +131,13 @@ public class OracleDatabaseAdaptor extends DatabaseAdaptor {
 	 * @return the array descriptor for the array type
 	 * @throws java.sql.SQLException if a database exception is thrown
 	 */
-	private ArrayDescriptor getArrayDescriptor(final String type, final Connection connection) throws SQLException {
-		if ( arrayDescriptorMap.containsKey(type) ) {
-			return (ArrayDescriptor)arrayDescriptorMap.get(type);
+	private ArrayDescriptor getArrayDescriptor( final String type, final Connection connection ) throws SQLException {
+		if ( ARRAY_DESCRIPTOR_TABLE.containsKey(type) ) {
+			return ARRAY_DESCRIPTOR_TABLE.get( type );
 		}
 		else {
-			ArrayDescriptor descriptor = ArrayDescriptor.createDescriptor(type, connection);
-			arrayDescriptorMap.put(type, descriptor);
+			final ArrayDescriptor descriptor = ArrayDescriptor.createDescriptor( type, connection );
+			ARRAY_DESCRIPTOR_TABLE.put( type, descriptor );
 			return descriptor;
 		}		
 	}

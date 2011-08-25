@@ -22,7 +22,7 @@ import java.lang.reflect.Constructor;
 
 public final class AcceleratorNodeFactory {
 	/** map of constructors keyed by node type */
-	private Map<String,Constructor> _constructors = new HashMap();
+	private Map<String,Constructor<? extends Object>> _constructors = new HashMap<String,Constructor<? extends Object>>();
 	
 	/** map of classes keyed by node type */
 	private Map<String,Class> _classTable;
@@ -30,7 +30,7 @@ public final class AcceleratorNodeFactory {
 	
 	/** Constructor */
 	public AcceleratorNodeFactory() {
-		_constructors = new HashMap<String,Constructor>();
+		_constructors = new HashMap<String,Constructor<? extends Object>>();
 		_classTable = new HashMap<String,Class>();
 	}
 	
@@ -41,7 +41,7 @@ public final class AcceleratorNodeFactory {
 	 *  @param  softType    software type (null indicates there is no software type)
      *  @param  nodeClass   Class class for the AcceleratorNode
      */
-    public void registerNodeClass( final String deviceType, final String softType, final Class nodeClass )   {
+    public <T> void registerNodeClass( final String deviceType, final String softType, final Class<T> nodeClass )   {
 		final String nodeType = softType != null ? deviceType + "." + softType : deviceType;
 		registerNodeClass( nodeType, nodeClass );
     }
@@ -52,11 +52,11 @@ public final class AcceleratorNodeFactory {
 	 *  @param  nodeType    fully qualified node type (e.g. deviceType.softType)
      *  @param  nodeClass   Class class for the AcceleratorNode
      */
-    private void registerNodeClass( final String nodeType, final Class nodeClass )   {
+    private <T> void registerNodeClass( final String nodeType, final Class<T> nodeClass )   {
         _classTable.put( nodeType, nodeClass );
 		
         try {
-            final Constructor constructor = nodeClass.getConstructor( new Class[] { String.class } );
+            final Constructor<T> constructor = nodeClass.getConstructor( new Class[] { String.class } );
             _constructors.put( nodeType, constructor );
         }
 		catch ( NoSuchMethodException exception ) {

@@ -48,7 +48,7 @@ public class DataTable {
     /** 
 	 * Constructor 
 	 */
-    public DataTable( final String aName, final Collection attributes ) {
+    public DataTable( final String aName, final Collection<DataAttribute> attributes ) {
         this( aName, attributes, GenericRecord.class );
     }
     
@@ -56,7 +56,7 @@ public class DataTable {
 	/**
 	 * Primary constructor
 	 */
-    public DataTable( final String aName, final Collection attributes, final Class aRecordClass ) {
+    public DataTable( final String aName, final Collection<DataAttribute> attributes, final Class aRecordClass ) {
         MESSAGE_CENTER = new MessageCenter( "Data Table" );
         NOTICE_PROXY = MESSAGE_CENTER.registerSource( this, DataTableListener.class );
 		
@@ -106,10 +106,7 @@ public class DataTable {
     
     /** Handle reading and writing from a data adaptor */
     public DataListener dataHandler() throws MissingPrimaryKeyException {
-        /*
-         * Anonymous class responsible for reading and writing an instance of DataTable with 
-         * the data store
-         */
+        /* Anonymous class responsible for reading and writing an instance of DataTable with the data store */
         return new DataListener() {
             final static private String NAME_ATTRIBUTE = "name";
             final static private String RECORD_CLASS_ATTRIBUTE = "recordClass";
@@ -121,6 +118,7 @@ public class DataTable {
 
 
 			/** Update the table from the data adaptor */
+            @SuppressWarnings( "unchecked" )
             public void update( final DataAdaptor adaptor ) {
                 _name = adaptor.stringValue( NAME_ATTRIBUTE );
 
@@ -144,8 +142,8 @@ public class DataTable {
                 }
 
                 // There can only be one schema
-                List schemaList = adaptor.childAdaptors( "schema" );
-                DataAdaptor schemaAdaptor = (DataAdaptor)schemaList.get(0);
+                final List<DataAdaptor> schemaList = adaptor.childAdaptors( "schema" );
+                final DataAdaptor schemaAdaptor = schemaList.get(0);
 				_schema = new Schema();
 				_schema.update( schemaAdaptor );					
 
@@ -177,7 +175,7 @@ public class DataTable {
 
 				adaptor.writeNode( _schema );					
 
-				Collection records = records();
+				final Collection<GenericRecord> records = records();
 				adaptor.writeNodes( records );
             }
         };
@@ -266,7 +264,7 @@ public class DataTable {
      * must be one or more of the primary keys.  If the record is not unique,
      * an exception will be thrown.
      */
-    public GenericRecord record( final Map bindings ) throws NonUniqueRecordException {
+    public <ValueType extends Object> GenericRecord record( final Map<String,ValueType> bindings ) throws NonUniqueRecordException {
 		return _keyTable.record( bindings );			
     }
     
@@ -287,7 +285,7 @@ public class DataTable {
 	 * @param bindings The map of key/value pairs where the keys correspond to a subset of primary keys and the values are the ones we want to match.
 	 * @return The matching records.
      */
-    public Collection<GenericRecord> records( final Map bindings ) {
+    public <ValueType extends Object> Collection<GenericRecord> records( final Map<String,ValueType> bindings ) {
 		return _keyTable.records( bindings );			
     }
 	
@@ -299,7 +297,7 @@ public class DataTable {
 	 * @param ordering The sort ordering used to sort the records.
 	 * @return The matching records sorted according to the ordering.
 	 */
-	public List<GenericRecord> getRecords( final Map bindings, final SortOrdering ordering ) {
+	public <ValueType extends Object> List<GenericRecord> getRecords( final Map<String,ValueType> bindings, final SortOrdering ordering ) {
 		return orderRecords( records( bindings ), ordering );
 	}
     
@@ -393,12 +391,12 @@ public class DataTable {
 			final Iterator<ValueHash> valueHashIter = valueHashes.iterator();
 						
 			// every value hash contains all records, so we only need one
-			return valueHashes.isEmpty() ? Collections.EMPTY_SET : valueHashIter.next().records();				
+			return valueHashes.isEmpty() ? Collections.<GenericRecord>emptySet() : valueHashIter.next().records();				
         }
         
         
         /** Get a record matching all of the primary key bindings. Bindings should include all primary keys to ensure a unique record. */
-        public GenericRecord record( final Map<String,Object> bindings ) throws NonUniqueRecordException {
+        public <ValueType extends Object> GenericRecord record( final Map<String,ValueType> bindings ) throws NonUniqueRecordException {
             final Collection<GenericRecord> records = records( bindings );
             
             if ( records.size() > 1 ) {
@@ -420,14 +418,14 @@ public class DataTable {
         
         
 		/** Fetch all records matching the primary key bindings. You may use a subset of primary keys since multiple records may be returned. */
-        public Collection<GenericRecord> records( final Map<String,Object> bindings ) {
+        public <ValueType extends Object> Collection<GenericRecord> records( final Map<String,ValueType> bindings ) {
             final Collection<GenericRecord> records = new HashSet<GenericRecord>();
-            final Set<Map.Entry<String,Object>> entries = bindings.entrySet();
+            final Set<Map.Entry<String,ValueType>> entries = bindings.entrySet();
             
-            if ( entries.size() == 0 )  return Collections.EMPTY_SET;
+            if ( entries.size() == 0 )  return Collections.<GenericRecord>emptySet();
             
-            final Iterator<Map.Entry<String,Object>> entryIter = entries.iterator();
-			Map.Entry<String,Object> entry = entryIter.next();
+            final Iterator<Map.Entry<String,ValueType>> entryIter = entries.iterator();
+            Map.Entry<String,ValueType> entry = entryIter.next();
 			Collection<GenericRecord> entryRecords = records( entry );
             records.addAll( entryRecords );
             while ( entryIter.hasNext() && !records.isEmpty() ) {
@@ -441,7 +439,7 @@ public class DataTable {
         
         
 		/** Fetch the records matching the key/value pair specified in the entry. */
-        private Collection<GenericRecord> records( final Map.Entry<String,Object> entry ) {
+        private <ValueType extends Object> Collection<GenericRecord> records( final Map.Entry<String,ValueType> entry ) {
             final String key = entry.getKey();
             final Object value = entry.getValue();
             return records( key, value );
@@ -449,7 +447,7 @@ public class DataTable {
         
         
 		/** Get all of the records matching the specified primary key/value pair */
-        public Collection records( final String key, final Object value ) {
+        public Collection<GenericRecord> records( final String key, final Object value ) {
 			return valueTable( key ).records( value );				
         }
         
@@ -472,7 +470,7 @@ public class DataTable {
         
 		/** Get the primary key bindings associated with the specified record. */
         private Map<String,Object> primaryBindings( final GenericRecord record ) {
-            final Map<String,Object> bindings = new HashMap();
+            final Map<String,Object> bindings = new HashMap<String,Object>();
 			for ( final String key : _schema.primaryKeys() ) {
 				final Object value = record.valueForKey( key );
 				bindings.put( key, value );
@@ -581,7 +579,7 @@ public class DataTable {
 		/** Get all records whose primary key matches the specified value */
         final public Set<GenericRecord> records( final Object value ) {
             final Set<GenericRecord> records = RECORD_SET_TABLE.get( value );
-            return records != null ? records : Collections.EMPTY_SET;
+            return records != null ? records : Collections.<GenericRecord>emptySet();
         }
         
         
@@ -629,14 +627,16 @@ public class DataTable {
      * with bindings and more than one record matches the criteria.
      */
     static public class NonUniqueRecordException extends RuntimeException {
-        private Map bindings;
+        /** serialization ID */
+        private static final long serialVersionUID = 1L;
+
+        private Map<String,Object> bindings;
         
 		
-		/**
-		 * Constructor
-		 */
-        public NonUniqueRecordException( final Map theBindings ) {
-            bindings = theBindings;
+		/** Constructor */
+        @SuppressWarnings( "unchecked" )    // exception classes don't support generics so we have no choice but to cast
+        public <ValueType> NonUniqueRecordException( final Map<String,ValueType> theBindings ) {
+            bindings = (Map<String,Object>)theBindings;
         }
         
         
@@ -657,6 +657,9 @@ public class DataTable {
      * primary key(s) already exist in the table.
      */
     public class AddRecordException extends RuntimeException {
+        /** serialization ID */
+        private static final long serialVersionUID = 1L;
+        
         private GenericRecord record;
 
         
@@ -690,7 +693,7 @@ public class DataTable {
         
 		/** Empty Constructor */
         public Schema() {
-            this( Collections.EMPTY_SET );
+            this( Collections.<DataAttribute>emptySet() );
         }
         
         

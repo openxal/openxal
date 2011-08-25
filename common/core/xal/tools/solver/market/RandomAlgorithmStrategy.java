@@ -64,9 +64,9 @@ public class RandomAlgorithmStrategy extends AlgorithmStrategy {
 	 * @param algorithms  The list of algorithms from which to pick a random algorithm
 	 * @return            Description of the Return Value
 	 */
-	private SearchAlgorithm randomAlgorithm( final List algorithms ) {
+	private SearchAlgorithm randomAlgorithm( final List<SearchAlgorithm> algorithms ) {
 		final int index = _randomGenerator.nextInt( algorithms.size() );
-		return (SearchAlgorithm)algorithms.get( index );
+		return algorithms.get( index );
 	}
 }
 

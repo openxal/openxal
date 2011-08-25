@@ -52,7 +52,7 @@ abstract public class XalInternalDocument extends XalAbstractDocument {
     /** Register this document as a source of DocumentListener events. */
     protected void registerEvents() {
 		super.registerEvents();
-        _documentListenerProxy = (XalInternalDocumentListener)_messageCenter.registerSource( this, XalInternalDocumentListener.class );
+        _documentListenerProxy = _messageCenter.registerSource( this, XalInternalDocumentListener.class );
     }
     
     

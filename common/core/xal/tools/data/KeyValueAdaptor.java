@@ -208,6 +208,9 @@ public class KeyValueAdaptor {
 	
 	/** Exception thrown to indicate that an accessor cannot be found for the specified target/key pair. */
 	public class InvalidAccessorException extends RuntimeException {
+        /** serialization ID */
+        private static final long serialVersionUID = 1L;
+        
 		/** key which identifies the desired accessor method */
 		final private String KEY;
 		
@@ -239,6 +242,9 @@ public class KeyValueAdaptor {
 	
 	/** Exception thrown to indicate that a setter cannot be found for the specified target/key/value group. */
 	public class InvalidSetterException extends RuntimeException {
+        /** serialization ID */
+        private static final long serialVersionUID = 1L;
+        
 		/** key which identifies the desired accessor method */
 		final private String KEY;
 		
@@ -281,6 +287,9 @@ public class KeyValueAdaptor {
 
 /** Exception for a bad accessor or setter attempt */
 class InvalidKeyException extends Exception {
+    /** serialization ID */
+    private static final long serialVersionUID = 1L;
+    
 	public InvalidKeyException( final Throwable cause ) {
 		super( cause );
 	}

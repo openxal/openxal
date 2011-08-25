@@ -64,6 +64,7 @@ abstract class MessageHandler<T> implements InvocationHandler, java.io.Serializa
     
     
     /** create the proxy for this handler to message */
+    @SuppressWarnings( "unchecked" )
     private void createProxy() {
 		ClassLoader loader = this.getClass().getClassLoader();
         Class[] protocols = new Class[] {_protocol};
@@ -85,15 +86,15 @@ abstract class MessageHandler<T> implements InvocationHandler, java.io.Serializa
         
     
     /** get all targets associated with the source and protocol and just the protocol */
-    protected Set targets() {
-        Set targetSet = new HashSet();
+    protected Set<T> targets() {
+        final Set<T> targetSet = new HashSet<T>();
         
         // add targets directly associated with the protocol and the target
-        Set directTargets = targetDirectory.targets( source, _protocol );
+        final Set<T> directTargets = targetDirectory.targets( source, _protocol );
         targetSet.addAll( directTargets );
         
         // add targets associated with the protocol but no target
-        Set anonymousTargets = targetDirectory.targets( null, _protocol );
+        final Set<T> anonymousTargets = targetDirectory.targets( null, _protocol );
         targetSet.addAll( anonymousTargets );
 
         return targetSet;

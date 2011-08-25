@@ -19,9 +19,7 @@ import java.util.logging.*;
 
 
 /**
- * AcceleratorActionFactory provides factory methods specific to the accelerator
- * based application theme.
- *
+ * AcceleratorActionFactory provides factory methods specific to the accelerator based application theme.
  * @author  tap
  */
 public class AcceleratorActionFactory {
@@ -64,11 +62,11 @@ public class AcceleratorActionFactory {
 				menu.addSeparator();
                 
 				// fetch the pre-defined combo sequences and make sure we don't overwrite the list
-				final List comboSequences = (accelerator != null) ? new ArrayList(accelerator.getComboSequences()) : Collections.EMPTY_LIST;
+				final List<AcceleratorSeqCombo> comboSequences = (accelerator != null) ? new ArrayList<AcceleratorSeqCombo>( accelerator.getComboSequences() ) : Collections.<AcceleratorSeqCombo>emptyList();
 				
                 // If the selected sequence is a combo sequence make sure there is an appropriate menu item
-                if ( selectedSequence != null && selectedSequence instanceof AcceleratorSeqCombo && !comboSequences.contains(selectedSequence) ) {
-                    comboSequences.add(selectedSequence);
+                if ( selectedSequence != null && selectedSequence instanceof AcceleratorSeqCombo && !comboSequences.contains( selectedSequence ) ) {
+                    comboSequences.add( (AcceleratorSeqCombo)selectedSequence );
                 }
 				
 				final Iterator comboIter = comboSequences.iterator();
@@ -104,6 +102,9 @@ public class AcceleratorActionFactory {
      */
     public static Action loadDefaultAcceleratorAction( final AcceleratorDocument document ) {
         final Action action = new AbstractAction() {
+            /** serialization ID */
+            private static final long serialVersionUID = 1L;
+            
             public void actionPerformed( final ActionEvent event ) {
 				try {
 					document.loadDefaultAccelerator();
@@ -129,6 +130,9 @@ public class AcceleratorActionFactory {
      */
     public static Action loadAcceleratorAction( final AcceleratorDocument document ) {
         final Action action = new AbstractAction() {
+            /** serialization ID */
+            private static final long serialVersionUID = 1L;
+            
             public void actionPerformed( final ActionEvent event ) {
 				final JFileChooser fileChooser = ((AcceleratorApplication)AcceleratorApplication.getApp()).getAcceleratorFileChooser();
 				int status = fileChooser.showOpenDialog( document.getMainWindow() );
@@ -170,6 +174,9 @@ public class AcceleratorActionFactory {
         final String label = sequence.getId();
         final JRadioButtonMenuItem menuItem = new JRadioButtonMenuItem( label );
         menuItem.setAction( new AbstractAction() {
+            /** serialization ID */
+            private static final long serialVersionUID = 1L;
+            
             public void actionPerformed( final ActionEvent event ) {
                 document.setSelectedSequence( sequence );
             }
@@ -189,6 +196,9 @@ public class AcceleratorActionFactory {
         final String label = "New Combo Sequence";
         final JMenuItem menuItem = new JMenuItem( label );
         menuItem.setAction( new AbstractAction() {
+            /** serialization ID */
+            private static final long serialVersionUID = 1L;
+            
             public void actionPerformed( final ActionEvent event ) {
 				final AcceleratorSeqCombo comboSequence = ComboSequenceComposer.composeComboSequence( document.getAccelerator(), document.getMainWindow() );
 				if ( comboSequence != null ) {

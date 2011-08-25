@@ -45,7 +45,7 @@ public class AlgorithmPool implements SearchAlgorithmListener, SolutionJudgeList
 		_availableAlgorithms = new HashSet();
 
 		_messageCenter = new MessageCenter( "Algorithm Pool" );
-		_proxy = (AlgorithmPoolListener)_messageCenter.registerSource( this, AlgorithmPoolListener.class );
+		_proxy = _messageCenter.registerSource( this, AlgorithmPoolListener.class );
 
 		addAlgorithms( algorithms );
 	}
@@ -280,7 +280,7 @@ public class AlgorithmPool implements SearchAlgorithmListener, SolutionJudgeList
 	 * @param solutions  The list of solutions.
 	 * @param solution   The new optimal solution.
 	 */
-	public void foundNewOptimalSolution( final SolutionJudge source, final List solutions, final Trial solution ) {
+	public void foundNewOptimalSolution( final SolutionJudge source, final List<Trial> solutions, final Trial solution ) {
 		final Iterator algorithmIter = _algorithms.iterator();
 		while ( algorithmIter.hasNext() ) {
 			final SearchAlgorithm algorithm = (SearchAlgorithm)algorithmIter.next();

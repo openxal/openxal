@@ -26,13 +26,13 @@ public class Accelerator extends AcceleratorSeq implements /* IElement, */ DataL
     
 
 	/** Map of predefined combo sequences mapped by combo sequence ID */
-	protected Map _comboSequences;    
+	private Map<String,AcceleratorSeqCombo> _comboSequences;    
     
     /** Map of main power supplies keyed by the power supply id */
-    protected Map magnetMainSupplies;
+    private Map<String,MagnetMainSupply> magnetMainSupplies;
     
     /** Map of trim power supplies keyed by the power supply id */
-    protected Map magnetTrimSupplies;
+    private Map<String,MagnetTrimSupply> magnetTrimSupplies;
         
     /** edit context holds the dynamic data */
     private EditContext editContext;
@@ -106,13 +106,13 @@ public class Accelerator extends AcceleratorSeq implements /* IElement, */ DataL
                 MagnetMainSupply powerSupply = getMagnetMainSupply(powerSupplyId);
                 if ( powerSupply == null )  powerSupply = new MagnetMainSupply(this);
                 powerSupply.update(powerSupplyAdaptor);
-                magnetMainSupplies.put(powerSupply.getId(), powerSupply);
+                magnetMainSupplies.put( powerSupply.getId(), powerSupply );
             }
             else if ( powerSupplyType.equals("trim") ) {
                 MagnetTrimSupply powerSupply = getMagnetTrimSupply(powerSupplyId);
                 if ( powerSupply == null )  powerSupply = new MagnetTrimSupply(this);
                 powerSupply.update(powerSupplyAdaptor);
-                magnetTrimSupplies.put(powerSupply.getId(), powerSupply);
+                magnetTrimSupplies.put( powerSupply.getId(), powerSupply );
             }
         }
     }
@@ -144,7 +144,7 @@ public class Accelerator extends AcceleratorSeq implements /* IElement, */ DataL
         String comboType = comboAdaptor.stringValue("type");
 		String comboID = comboAdaptor.stringValue("id");
 		// check if we already have the sequence
-		AcceleratorSeqCombo comboSequence = (AcceleratorSeqCombo)getComboSequence(comboID);
+		AcceleratorSeqCombo comboSequence = getComboSequence( comboID );
 		// if the sequence doesn't already exist, create a new one
 		// and add the new sequence to the accelerator root sequence
 		if ( comboSequence == null ) {
@@ -164,6 +164,7 @@ public class Accelerator extends AcceleratorSeq implements /* IElement, */ DataL
 	 * @param comboID the ID of the combo sequence
 	 * @param comboAdaptor the data adaptor that defines the combo sequence
 	 */
+    @SuppressWarnings( "unchecked" )
 	private AcceleratorSeqCombo instantiateComboSequence(String comboType, String comboID, DataAdaptor comboAdaptor) throws ClassNotFoundException {
 		if ( comboType == null || comboType == "" ) {
 			return AcceleratorSeqCombo.getInstance(comboID, this, comboAdaptor);
@@ -195,11 +196,11 @@ public class Accelerator extends AcceleratorSeq implements /* IElement, */ DataL
         super( sysId );
         
         m_strSysId = sysId;
-		_comboSequences = new HashMap();
+		_comboSequences = new HashMap<String,AcceleratorSeqCombo>();
 
         // Create hash maps to hold the main and trim power supplies
-        magnetMainSupplies = new HashMap();
-        magnetTrimSupplies = new HashMap();
+        magnetMainSupplies = new HashMap<String,MagnetMainSupply>();
+        magnetTrimSupplies = new HashMap<String,MagnetTrimSupply>();
         
         // Create an edit context to hold dynamic data -tap 6/7/2002
         editContext = new EditContext();
@@ -327,7 +328,7 @@ public class Accelerator extends AcceleratorSeq implements /* IElement, */ DataL
 	 * @return the combo sequence for the ID or null if none matches
 	 */
 	public AcceleratorSeqCombo getComboSequence( final String comboID ) {
-		return (AcceleratorSeqCombo)_comboSequences.get( comboID );
+		return _comboSequences.get( comboID );
 	}
 	
 	
@@ -335,16 +336,15 @@ public class Accelerator extends AcceleratorSeq implements /* IElement, */ DataL
 	 * Get the list of predefined combo sequences ordered by ID.
 	 * @return the list of predefined combo sequences ordered by ID.
 	 */
-	public List getComboSequences() {
-		List sequences = new ArrayList(_comboSequences.values());
-		Collections.sort(sequences, new Comparator() {
-			public int compare(Object item1, Object item2) {
-				AcceleratorSeqCombo combo1 = (AcceleratorSeqCombo)item1;
-				AcceleratorSeqCombo combo2 = (AcceleratorSeqCombo)item2;
-				return combo1.getId().compareTo(combo2.getId()); 
+	public List<AcceleratorSeqCombo> getComboSequences() {
+		final List<AcceleratorSeqCombo> sequences = new ArrayList<AcceleratorSeqCombo>( _comboSequences.values() );
+		Collections.sort( sequences, new Comparator<AcceleratorSeqCombo>() {
+			public int compare( final AcceleratorSeqCombo combo1, final AcceleratorSeqCombo combo2 ) {
+				return combo1.getId().compareTo( combo2.getId() ); 
 			}
-			public boolean equals(Object comparator) {
-				return false;
+            
+			public boolean equals( final Object comparator ) {
+				return this.equals( comparator );
 			}
 		});
 		return sequences;
@@ -356,8 +356,8 @@ public class Accelerator extends AcceleratorSeq implements /* IElement, */ DataL
 	 * @param ringID the ID of the ring to get
 	 * @return the ring in this accelerator with the specified ID or null if none exists
 	 */
-	public Ring getRing(String ringID) {
-		return (Ring)getComboSequence(ringID);
+	public Ring getRing( final String ringID ) {
+		return (Ring)getComboSequence( ringID );
 	}
 	
 	
@@ -365,14 +365,13 @@ public class Accelerator extends AcceleratorSeq implements /* IElement, */ DataL
 	 * Get the list of all rings in the accelerator
 	 * @return a list of all rings in the accelerator
 	 */
-	public List getRings() {
-		List comboSequences = getComboSequences();
-		List rings = new ArrayList();
-		Iterator comboIter = comboSequences.iterator();
-		while ( comboIter.hasNext() ) {
-			Object candidate = comboIter.next();
-			if ( candidate instanceof Ring )  rings.add(candidate);
-		}
+	public List<Ring> getRings() {
+		final List<AcceleratorSeqCombo> comboSequences = getComboSequences();
+		final List<Ring> rings = new ArrayList<Ring>();
+        
+        for ( final AcceleratorSeqCombo candidate : comboSequences ) {
+			if ( candidate instanceof Ring ) rings.add( (Ring)candidate );
+        }
 		
 		return rings;
 	}
@@ -401,19 +400,12 @@ public class Accelerator extends AcceleratorSeq implements /* IElement, */ DataL
 
     /** 
 	 * Returns the AcceleratorNode with a requsted name
-     * @param strId - the name to match 
+     * @param nodeID - the name to match 
      */
-    public AcceleratorNode  getNode(String strId)   {
-        List                lstAllNodes;    // list of all the nodes
-        Iterator            iterNodes;      // node iterator
-        AcceleratorNode     node;           // current node
-     
-        lstAllNodes = getAllNodes();
-        iterNodes   = lstAllNodes.iterator();
-        while (iterNodes.hasNext()) {
-            node = (AcceleratorNode)iterNodes.next();
-            
-            if (node.getId().equals(strId))
+    public AcceleratorNode  getNode( final String nodeID )   {
+        final List<AcceleratorNode> allNodes = getAllNodes();
+        for ( final AcceleratorNode node : allNodes ) {
+            if ( node.getId().equals( nodeID ) )
                 return node;
         }
         
@@ -425,7 +417,7 @@ public class Accelerator extends AcceleratorSeq implements /* IElement, */ DataL
 	 * Get the set of all magnet main supplies
 	 * @return the set of all magnet main supplies
 	 */
-	public Collection getMagnetMainSupplies() {
+	public Collection<MagnetMainSupply> getMagnetMainSupplies() {
 		return magnetMainSupplies.values();
 	}
     
@@ -436,7 +428,7 @@ public class Accelerator extends AcceleratorSeq implements /* IElement, */ DataL
      * @return The main power supply or null if the supplyId is not found
      */
     public MagnetMainSupply getMagnetMainSupply(String supplyId) {
-        return (MagnetMainSupply)magnetMainSupplies.get(supplyId);
+        return magnetMainSupplies.get( supplyId );
     }
 	
 	
@@ -444,7 +436,7 @@ public class Accelerator extends AcceleratorSeq implements /* IElement, */ DataL
 	 * Get the set of all magnet trim supplies
 	 * @return the set of all magnet trim supplies
 	 */
-	public Collection getMagnetTrimSupplies() {
+	public Collection<MagnetTrimSupply> getMagnetTrimSupplies() {
 		return magnetTrimSupplies.values();
 	}
     
@@ -455,6 +447,6 @@ public class Accelerator extends AcceleratorSeq implements /* IElement, */ DataL
      * @return The main power supply or null if the supplyId is not found
      */
     public MagnetTrimSupply getMagnetTrimSupply(String supplyId) {
-        return (MagnetTrimSupply)magnetTrimSupplies.get(supplyId);
+        return magnetTrimSupplies.get(supplyId);
     }
 }

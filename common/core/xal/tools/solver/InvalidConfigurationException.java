@@ -11,6 +11,9 @@ package xal.tools.solver;
 
 /** Exception indicating an invalid solver configuration */
 public class InvalidConfigurationException extends RuntimeException {
+    /** serialization ID */
+    private static final long serialVersionUID = 1L;
+    
 	/** Constructor */
 	public InvalidConfigurationException( final String message ) {
 		super( message );

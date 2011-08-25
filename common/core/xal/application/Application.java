@@ -379,7 +379,7 @@ abstract public class Application {
      */
     protected void registerEvents() {
         _messageCenter = new MessageCenter();
-        _noticeProxy = (ApplicationListener)_messageCenter.registerSource( this, ApplicationListener.class );
+        _noticeProxy = _messageCenter.registerSource( this, ApplicationListener.class );
         
         addApplicationListener( _applicationAdaptor );
     }
@@ -1407,6 +1407,9 @@ abstract public class Application {
     
     /** custom file chooser for the welcome window */
     private class WelcomeFileChooser extends JFileChooser {
+        /** serialization ID */
+        private static final long serialVersionUID = 1L;
+        
         /** initial location for the dialog */
         final Point INITIAL_LOCATION;
         

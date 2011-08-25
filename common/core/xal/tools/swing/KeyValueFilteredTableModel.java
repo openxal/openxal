@@ -18,6 +18,9 @@ import javax.swing.event.*;
 
 /** Key Value Table Model with built in support for filtering through a text input document */
 public class KeyValueFilteredTableModel<T> extends KeyValueTableModel<T> {
+    /** serialization ID */
+    private static final long serialVersionUID = 1L;
+    
 	/** handles the input events and filters the table records accordingly */
 	final private InputFilterHandler INPUT_FILTER_HANDLER;
 	

@@ -96,7 +96,7 @@ public class DesktopApplication extends Application implements XalInternalDocume
 					
 					// if multiple documents are opened then cascade them
 					if ( _openDocuments.size() > 1 ) {
-						cascadeWindowsAbout( (XalAbstractDocument)_openDocuments.get(0) );
+						cascadeWindowsAbout( _openDocuments.get(0) );
 					}					
 				}
 			});
@@ -242,7 +242,7 @@ public class DesktopApplication extends Application implements XalInternalDocume
 	 * @param document The document that has closed.
 	 */
     public void documentHasClosed( final XalInternalDocument document ) {
-        ((XalInternalDocument)document).removeXalInternalDocumentListener( this );
+        document.removeXalInternalDocumentListener( this );
         _openDocuments.remove( document );
         _noticeProxy.documentClosed( document );
     }

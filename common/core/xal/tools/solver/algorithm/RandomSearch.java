@@ -135,6 +135,6 @@ public class RandomSearch extends SearchAlgorithm {
 	 * @param solutions  The list of solutions.
 	 * @param solution   The new optimal solution.
 	 */
-	public void foundNewOptimalSolution( SolutionJudge source, List solutions, Trial solution ) { }
+	public void foundNewOptimalSolution( SolutionJudge source, List<Trial> solutions, Trial solution ) { }
 }
 

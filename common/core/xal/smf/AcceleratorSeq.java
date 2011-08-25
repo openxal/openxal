@@ -191,7 +191,7 @@ public class AcceleratorSeq extends AcceleratorNode implements DataListener {
         super( strId );
         m_arrNodes = new ArrayList<AcceleratorNode>( intReserve );
 		_sequences = new ArrayList<AcceleratorSeq>();
-		nodeTable = new HashMap( intReserve );
+		nodeTable = new HashMap<String, AcceleratorNode>( intReserve );
     }
     
 	
@@ -231,7 +231,7 @@ public class AcceleratorSeq extends AcceleratorNode implements DataListener {
      * @param iIndex the index for the node of interest (indexing starts with 0)
      */
     public AcceleratorNode  getNodeAt( final int iIndex ) { 
-		return (AcceleratorNode) getNodes().get( iIndex );
+		return getNodes().get( iIndex );
 	}
       
     
@@ -243,7 +243,7 @@ public class AcceleratorSeq extends AcceleratorNode implements DataListener {
     protected int indexToAddNode( final AcceleratorNode newNode ) {
         int insertIndex = 0;
         for ( int index = m_arrNodes.size()-1 ; index >= 0 ; index-- ) {
-            AcceleratorNode node = (AcceleratorNode)m_arrNodes.get(index);
+            AcceleratorNode node = m_arrNodes.get(index);
             if ( newNode.m_dblPos >= node.m_dblPos ) {
                 insertIndex = index + 1;
                 break;
@@ -367,7 +367,7 @@ public class AcceleratorSeq extends AcceleratorNode implements DataListener {
 		}
 		// else check if immediate children are matches
 		else if ( nodeTable.containsKey(label) ) {
-			return (AcceleratorNode)nodeTable.get(label);
+			return nodeTable.get(label);
 		}
         
         // If we still haven't found the node, search deeply
@@ -390,11 +390,14 @@ public class AcceleratorSeq extends AcceleratorNode implements DataListener {
 	 * @param qualifier the qualifier used to filter the nodes
 	 * @return the list of nodes matching the qualifier criteria
 	 */
-    static public <T extends AcceleratorNode> List<T> getNodesWithQualifier( final List<T> sourceNodes, final TypeQualifier qualifier ) {
-        final List<T> matchedNodes = new ArrayList<T>();    // returned list
-     
-		for ( T node : sourceNodes ) {
-			if ( qualifier.match( node ) )  matchedNodes.add( node );
+    @SuppressWarnings( "unchecked" )    // we must cast to NodeType, but we can't verify it
+    static public <BaseType extends AcceleratorNode, NodeType extends BaseType> List<NodeType> getNodesWithQualifier( final List<BaseType> sourceNodes, final TypeQualifier qualifier ) {
+        final List<NodeType> matchedNodes = new ArrayList<NodeType>();    // returned list
+        
+		for ( final BaseType node : sourceNodes ) {
+			if ( qualifier.match( node ) ) {
+                matchedNodes.add( (NodeType)node );     // warning: there is no way to verify the type at runtime
+            }
 		}
 		        
         return matchedNodes;        
@@ -407,7 +410,7 @@ public class AcceleratorSeq extends AcceleratorNode implements DataListener {
 	* @param statusFilter the status for which to filter nodes
 	* @return the list of nodes matching the status criterion
 	*/
-    static public <T extends AcceleratorNode> List<T> filterNodesByStatus( final List<T> nodes, final boolean statusFilter ) {
+    static public <NodeType extends AcceleratorNode> List<NodeType> filterNodesByStatus( final List<NodeType> nodes, final boolean statusFilter ) {
         return getNodesWithQualifier( nodes, QualifierFactory.getStatusQualifier( statusFilter ) );        
     }
 	
@@ -421,8 +424,8 @@ public class AcceleratorSeq extends AcceleratorNode implements DataListener {
 	 * @param strTypeId type identifier of the nodes to fetch
 	 * @return a list of this sequence's nodes which match the specified type
 	 */
-    public List<AcceleratorNode> getNodesOfType( final String strTypeId )    {
-        return getNodesWithQualifier( new KindQualifier( strTypeId ) );
+    public <NodeType extends AcceleratorNode> List<NodeType> getNodesOfType( final String strTypeId )    {
+        return this.<NodeType>getNodesWithQualifier( new KindQualifier( strTypeId ) );
     }
 	
     
@@ -436,8 +439,8 @@ public class AcceleratorSeq extends AcceleratorNode implements DataListener {
 	* @param statusFilter the status for which to filter the nodes
 	* @return a list of this sequence's nodes which match the specified type
 	*/
-    public List<AcceleratorNode> getNodesOfType( final String strTypeId, final boolean statusFilter )    {
-        return getNodesWithQualifier( new AndTypeQualifier().and( strTypeId ).and( QualifierFactory.getStatusQualifier( statusFilter ) ) );
+    public <NodeType extends AcceleratorNode> List<NodeType> getNodesOfType( final String strTypeId, final boolean statusFilter )    {
+        return this.<NodeType>getNodesWithQualifier( new AndTypeQualifier().and( strTypeId ).and( QualifierFactory.getStatusQualifier( statusFilter ) ) );
     }
     
     
@@ -447,8 +450,8 @@ public class AcceleratorSeq extends AcceleratorNode implements DataListener {
 	 * @param qualifier the qualifier used to filter nodes
 	 * @return a list of this sequence's nodes which match the qualifier criteria
 	 */
-    public List<AcceleratorNode> getNodesWithQualifier( final TypeQualifier qualifier ) {
-        return getNodesWithQualifier( getNodes(), qualifier );
+    public <NodeType extends AcceleratorNode> List<NodeType> getNodesWithQualifier( final TypeQualifier qualifier ) {
+        return this.<AcceleratorNode,NodeType>getNodesWithQualifier( getNodes(), qualifier );
     }
         
     
@@ -460,8 +463,8 @@ public class AcceleratorSeq extends AcceleratorNode implements DataListener {
 	 * @param strTypeId the type of node for which we are fetching
 	 * @return the list of all inclusive nodes which match the qualifier criteria
 	 */
-    public List<AcceleratorNode> getAllNodesOfType( final String strTypeId ) {
-        return getAllNodesWithQualifier( new KindQualifier( strTypeId ) );
+    public <NodeType extends AcceleratorNode> List<NodeType> getAllNodesOfType( final String strTypeId ) {
+        return this.<NodeType>getAllNodesWithQualifier( new KindQualifier( strTypeId ) );
     }
         
     
@@ -472,8 +475,8 @@ public class AcceleratorSeq extends AcceleratorNode implements DataListener {
 	 * @param qualifier the qualifier for filtering the nodes
 	 * @return the list of all inclusive nodes which match the qualifier criteria
 	 */
-    public List<AcceleratorNode> getAllNodesWithQualifier( final TypeQualifier qualifier ) {
-        return getNodesWithQualifier( getAllNodes(), qualifier );
+    public <NodeType extends AcceleratorNode> List<NodeType> getAllNodesWithQualifier( final TypeQualifier qualifier ) {
+        return this.<AcceleratorNode,NodeType>getNodesWithQualifier( getAllNodes(), qualifier );
     }
     
     
@@ -503,15 +506,13 @@ public class AcceleratorSeq extends AcceleratorNode implements DataListener {
     
     
     /** 
-	 * Fetch all nodes whose type is matched through the qualifier and 
-	 * are also contained in this sequence looking deeply through its
-	 * nested child sequences.  This sequence itself is among the nodes that
+	 * Fetch all nodes whose type is matched through the qualifier and are also contained in this sequence looking deeply through its nested child sequences.  This sequence itself is among the nodes that
 	 * will be tested against the qualifier, hence the "Inclusive" nature of this method.
 	 * @param qualifier the qualifier for filtering the nodes
 	 * @return the list of all inclusive nodes which match the qualifier criteria
 	 */
-    public List<AcceleratorNode> getAllInclusiveNodesWithQualifier( final TypeQualifier qualifier ) {
-        return getNodesWithQualifier( getAllInclusiveNodes(), qualifier );
+    public <NodeType extends AcceleratorNode> List<NodeType> getAllInclusiveNodesWithQualifier( final TypeQualifier qualifier ) {
+        return this.<AcceleratorNode,NodeType>getNodesWithQualifier( getAllInclusiveNodes(), qualifier );
     }
     
     
@@ -529,7 +530,7 @@ public class AcceleratorSeq extends AcceleratorNode implements DataListener {
 	 * @return a list of this sequence's immediate child nodes
 	 */
     public List<AcceleratorNode> getNodes() {
-        return Collections.unmodifiableList( m_arrNodes );
+        return Collections.<AcceleratorNode>unmodifiableList( m_arrNodes );
     }
 	
 	
@@ -631,7 +632,7 @@ public class AcceleratorSeq extends AcceleratorNode implements DataListener {
 	 * @return the ordered list of sequences
      */
     static public List<AcceleratorSeq> orderSequences( final Collection<AcceleratorSeq> sequences ) throws SequenceOrderingException {
-        final Map sequenceMap = new HashMap( sequences.size() );
+        final Map<String,AcceleratorSeq> sequenceMap = new HashMap<String,AcceleratorSeq>( sequences.size() );
         Iterator sequenceIter = sequences.iterator();
          
         AcceleratorSeq sequence = null;
@@ -640,7 +641,7 @@ public class AcceleratorSeq extends AcceleratorNode implements DataListener {
             sequenceMap.put( sequence.getId(), sequence );
         }
          
-        if ( sequence == null )  return Collections.EMPTY_LIST;
+        if ( sequence == null )  return Collections.<AcceleratorSeq>emptyList();
          
         final LinkedList<AcceleratorSeq> orderedSequences = new LinkedList<AcceleratorSeq>();
         sequence.addSequenceChain( orderedSequences, sequenceMap );
@@ -674,7 +675,7 @@ public class AcceleratorSeq extends AcceleratorNode implements DataListener {
             }
         }
          
-        return new ArrayList( orderedSequences );
+        return new ArrayList<AcceleratorSeq>( orderedSequences );
     }
     
     
@@ -685,14 +686,14 @@ public class AcceleratorSeq extends AcceleratorNode implements DataListener {
 	 * @param orderedSequences the list of ordered sequences to append the next sequence
 	 * @param sequenceMap the table of sequences from which to fetch the next sequence
      */
-    protected List<AcceleratorSeq> addSequenceChain( final LinkedList<AcceleratorSeq> orderedSequences, final Map sequenceMap ) {
+    protected List<AcceleratorSeq> addSequenceChain( final LinkedList<AcceleratorSeq> orderedSequences, final Map<String,AcceleratorSeq> sequenceMap ) {
         orderedSequences.addFirst( this );
         sequenceMap.remove( this.getId() );
 		
         final String[] predecessors = getPredecessors();
         for ( int index = 0 ; index < predecessors.length ; index++ ) {
             final String predecessor = predecessors[index];
-            final AcceleratorSeq preSequence = (AcceleratorSeq)sequenceMap.get( predecessor );
+            final AcceleratorSeq preSequence = sequenceMap.get( predecessor );
             if ( preSequence != null ) {
                  return preSequence.addSequenceChain( orderedSequences, sequenceMap );
             }         

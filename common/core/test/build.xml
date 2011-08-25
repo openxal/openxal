@@ -36,7 +36,7 @@
 	
 	
 	<!-- Macro to compile the core test XAL classes using the specified compiler flag -->
-	<target name="compile">
+	<target name="compile" depends="init">
         <mkdir dir="${build.compile.core.test.root}" />
         <javac debug="true" source="1.6" target="1.6" includeAntRuntime="no" deprecation="true" destdir="${build.compile.core.test.root}" srcdir="${srcroot}" sourcepath="">
             <classpath>

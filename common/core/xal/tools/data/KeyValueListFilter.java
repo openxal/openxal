@@ -18,18 +18,18 @@ import java.util.Map;
 
 
 /** filter a list of objects according to the values associated with the specified keys */
-public class KeyValueListFilter<T> {
+public class KeyValueListFilter<RecordType> {
 	/** Key Value adaptor for getting keyed values from an object */
 	final private KeyValueAdaptor KEY_VALUE_ADAPTOR;
 	
 	/** index of keyed values as strings for all records */
-	final private List<RecordIndex<T>> RECORD_INDEXES;
+	final private List<RecordIndex<RecordType>> RECORD_INDEXES;
 	
 	/** keys corresponding to an object's keyed values to use for matching */
 	private String[] _matchingKeyPaths;
 	
 	/** list of records to filter */
-	private List<T> _allRecords;
+	private List<RecordType> _allRecords;
 	
 	
 	/** 
@@ -38,16 +38,16 @@ public class KeyValueListFilter<T> {
 	 * @param allRecords all of the objects to filter
 	 * @param matchingKeyPaths the key paths corresponding to an object's keyed values to use for matching
 	 */
-	public KeyValueListFilter( final KeyValueAdaptor adaptor, final List<T> allRecords, final String ... matchingKeyPaths ) {
+	public KeyValueListFilter( final KeyValueAdaptor adaptor, final List<RecordType> allRecords, final String ... matchingKeyPaths ) {
 		KEY_VALUE_ADAPTOR = adaptor;
-		RECORD_INDEXES = new ArrayList<RecordIndex<T>>( allRecords.size() );
+		RECORD_INDEXES = new ArrayList<RecordIndex<RecordType>>( allRecords.size() );
 		setMatchingKeyPaths( matchingKeyPaths );
 		setAllRecords( allRecords );
 	}
 	
 	
 	/** Set the list of all objects to filter */
-	public void setAllRecords( final List<T> allRecords ) {
+	public void setAllRecords( final List<RecordType> allRecords ) {
 		_allRecords = allRecords;
 		indexRecords();
 	}
@@ -63,10 +63,10 @@ public class KeyValueListFilter<T> {
 	/** index all records by the keyed values in the list */
 	public void indexRecords() {
 		RECORD_INDEXES.clear();
-		final List<T> records = _allRecords;
+		final List<RecordType> records = _allRecords;
 		final String[] matchingKeyPaths = _matchingKeyPaths;
 		if ( records != null ) {
-			for ( final T record : records ) {
+			for ( final RecordType record : records ) {
 				RECORD_INDEXES.add( RecordIndex.getInstance( record, KEY_VALUE_ADAPTOR, matchingKeyPaths ) );
 			}
 		}
@@ -74,7 +74,7 @@ public class KeyValueListFilter<T> {
 	
 	
 	/** re-index the specified record (e.g. if a value in the record has changed ) */
-	public void reIndexRecord( final T record ) {
+	public void reIndexRecord( final RecordType record ) {
 		final String[] matchingKeyPaths = _matchingKeyPaths;
 		final int count = RECORD_INDEXES.size();
 		for ( int index = 0 ; index < count ; index++ ) {
@@ -94,13 +94,13 @@ public class KeyValueListFilter<T> {
 	 * @param text the text whose every word is matched against each record
 	 * @param matchingRecords the container (first gets cleared) into which the matching records are placed preserving order
 	 */
-	public void filterRecordsTo( final String text, final List matchingRecords ) {
+	public void filterRecordsTo( final String text, final List<RecordType> matchingRecords ) {
 		matchingRecords.clear();
 		
 		final String lowerText = text != null ? text.toLowerCase() : "";
 		final String[] words = lowerText.split( "\\s" );
 		
-		for ( final RecordIndex recordIndex : RECORD_INDEXES ) {
+		for ( final RecordIndex<RecordType> recordIndex : RECORD_INDEXES ) {
 			if ( recordIndex.matchesAllWords( words ) ) {
 				matchingRecords.add( recordIndex.getRecord() );
 			}
@@ -113,8 +113,8 @@ public class KeyValueListFilter<T> {
 	 * @param text the text whose every word is matched against each record
 	 * @return the list of matching records preserving order
 	 */
-	public List filterRecords( final String text ) {
-		final List matchingRecords = new ArrayList();
+	public List<RecordType> filterRecords( final String text ) {
+		final List<RecordType> matchingRecords = new ArrayList<RecordType>();
 		filterRecordsTo( text, matchingRecords );
 		return matchingRecords;
 	}
@@ -123,23 +123,23 @@ public class KeyValueListFilter<T> {
 
 
 /** index of an object's values (as lower case strings) for the specified key paths */
-class RecordIndex<T> {
+class RecordIndex<RecordType> {
 	/** record which is indexed */
-	final private T RECORD;
+	final private RecordType RECORD;
 	
 	/** string of indexed words */
 	final private String INDEXED_WORDS;
 	
 	
 	/** Constructor */
-	private RecordIndex( final T record, final String indexedWords ) {
+	private RecordIndex( final RecordType record, final String indexedWords ) {
 		RECORD = record;
 		INDEXED_WORDS = indexedWords;
 	}
 	
 	
 	/** index values of the specified record corresponding to the specified keys */
-	static public <T> RecordIndex<T> getInstance( final T record, final KeyValueAdaptor adaptor, final String[] keyPaths ) {
+	static public <RecordType> RecordIndex<RecordType> getInstance( final RecordType record, final KeyValueAdaptor adaptor, final String[] keyPaths ) {
 		final StringJoiner buffer = new StringJoiner( " " );	// store words using a space to separate them from each other
 		for ( final String keyPath : keyPaths ) {
 			final Object value = adaptor.valueForKeyPath( record, keyPath );
@@ -151,7 +151,7 @@ class RecordIndex<T> {
 	
 	
 	/** get the record */
-	public T getRecord() {
+	public RecordType getRecord() {
 		return RECORD;
 	}
 	

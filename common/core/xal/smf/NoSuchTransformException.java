@@ -19,6 +19,9 @@ package xal.smf;
  * @author  tap
  */
 public class NoSuchTransformException extends RuntimeException {
+    /** serialization ID */
+    private static final long serialVersionUID = 1L;
+
     
     /** Creates a new instance of NoSuchTransformException */
     public NoSuchTransformException(String type) {

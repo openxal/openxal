@@ -103,20 +103,20 @@ public class RecentFileTracker {
 	 * Cache the URL
 	 * @param urlSpec the URL Spec to cache.
 	 */
-	public void cacheURL(final String urlSpec) {
+	public void cacheURL( final String urlSpec ) {
         final String[] recentURLSpecArray = getRecentURLSpecs();
-        List recentSpecs = new ArrayList(RECENT_URLS_BUFFER_SIZE);
-        recentSpecs.add(urlSpec);
+        final List<String> recentSpecs = new ArrayList<String>( RECENT_URLS_BUFFER_SIZE );
+        recentSpecs.add( urlSpec );
         for ( int index = 0 ; index < recentURLSpecArray.length && recentSpecs.size() < RECENT_URLS_BUFFER_SIZE ; index++ ) {
-            Object recentURLSpec = recentURLSpecArray[index];
-            if ( !recentSpecs.contains(recentURLSpec) ) {
-                recentSpecs.add(recentURLSpec);
+            final String recentURLSpec = recentURLSpecArray[index];
+            if ( !recentSpecs.contains( recentURLSpec ) ) {
+                recentSpecs.add( recentURLSpec );
             }
         }
         
         StringJoiner joiner = new StringJoiner(",");
         joiner.append( recentSpecs.toArray() );
-        PREFS.put(PREFERENCE_ID, joiner.toString());
+        PREFS.put( PREFERENCE_ID, joiner.toString() );
 	}
     
     

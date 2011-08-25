@@ -24,7 +24,7 @@ public class MutableTrialPoint extends TrialPoint {
 	 *
 	 * @param values  The new values used to map trial points
 	 */
-	public MutableTrialPoint( final Map values ) {
+	public MutableTrialPoint( final Map<Variable,Number> values ) {
 		super( values );
 	}
 
@@ -72,7 +72,7 @@ public class MutableTrialPoint extends TrialPoint {
 	 * @param value     The value of the specified variable
 	 */
 	public void setValue( final Variable variable, final double value ) {
-		_values.put( variable, new Double( value ) );
+		_values.put( variable, value );
 	}
 }
 

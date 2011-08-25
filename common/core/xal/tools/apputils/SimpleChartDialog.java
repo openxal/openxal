@@ -26,6 +26,9 @@ import java.text.DecimalFormat;
  * @author  tap
  */
 public class SimpleChartDialog extends javax.swing.JDialog implements MouseListener, SwingConstants {
+    /** serialization ID */
+    private static final long serialVersionUID = 1L;
+    
     protected ChartPopupAdaptor chartAdaptor;
     protected Component _parent;
 	

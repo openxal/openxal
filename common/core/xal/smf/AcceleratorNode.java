@@ -37,7 +37,7 @@ public abstract class AcceleratorNode implements /* IElement, */ ElementType, Da
     protected Accelerator       m_objAccel;
     
     /**   all attribute buckets for node   */
-    protected HashMap           m_mapAttrs;
+    protected Map<String,AttributeBucket>   m_mapAttrs;
     
     /**   alignment attribute bucket for node */
     protected AlignmentBucket   m_bucAlign;
@@ -86,7 +86,7 @@ public abstract class AcceleratorNode implements /* IElement, */ ElementType, Da
         m_bolStatus = true;
         m_bolValid = true;
         
-        m_mapAttrs = new HashMap();
+        m_mapAttrs = new HashMap<String,AttributeBucket>();
         
         setAlign(new AlignmentBucket());
         setAper(new ApertureBucket());
@@ -342,11 +342,11 @@ public abstract class AcceleratorNode implements /* IElement, */ ElementType, Da
         }
         
         // List of all attribute buckets
-        m_mapAttrs.put(buc.getType(), buc);
+        m_mapAttrs.put( buc.getType(), buc );
     };
     
-    public Collection       getBuckets()            { return m_mapAttrs.values(); };
-    public AttributeBucket  getBucket(String type)  { return (AttributeBucket) m_mapAttrs.get(type); };
+    public Collection<AttributeBucket>       getBuckets()            { return m_mapAttrs.values(); };
+    public AttributeBucket  getBucket(String type)  { return m_mapAttrs.get(type); };
     public boolean hasBucket(AttributeBucket bucket) {
         String bucketType = bucket.getType();
         return bucket == getBucket(bucketType);

@@ -17,6 +17,7 @@ public class MacAdaptor {
 	
 	
 	/** perform Mac initialization */
+    @SuppressWarnings( "unchecked" )
 	static void initialize() {
 		// display the menu bar at the top of the screen consistent with the Mac look and feel
 		System.setProperty( "apple.laf.useScreenMenuBar", "true" );
@@ -91,9 +92,8 @@ public class MacAdaptor {
 			catch ( InvocationTargetException exception ) {
 				exception.printStackTrace();
 			}
-			finally {
-				return null;
-			}
+            
+            return null;
 		}
 	}
 	
@@ -120,6 +120,7 @@ public class MacAdaptor {
     
     
     /** Perform initialization for the fallback event sytem. Called when the modern event system is not present. This method should be removed at a reasonable time in the future. */
+    @SuppressWarnings( "unchecked" )
     private static void initializeFallback() {
 		try {
 			// dynamically get the Mac specific extensions
@@ -188,9 +189,8 @@ public class MacAdaptor {
 			catch ( InvocationTargetException exception ) {
 				exception.printStackTrace();
 			}
-			finally {
-				return null;
-			}
+            
+            return null;
 		}
 	}
 }

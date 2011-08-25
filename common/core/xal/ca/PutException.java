@@ -11,7 +11,10 @@ package xal.ca;
  * @author  CKAllen
  */
 public class PutException extends ChannelException {
+    /** required for serializable objects */
+    private static final long serialVersionUID = 1L;
 
+    
     /**
      * Creates new <code>PutException</code> without detail message.
      */

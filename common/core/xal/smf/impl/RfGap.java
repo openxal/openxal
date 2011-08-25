@@ -117,7 +117,7 @@ public class RfGap extends AcceleratorNode implements RfGapDataSource {
     /** return the RF amplitude in the gap (kV/m) */
     public double getGapDfltAmp() {
         final RfCavity rfCav = (RfCavity) this.getParent();
-		final RfCavityBucket rfCavBuc = (RfCavityBucket) rfCav.getRfField();
+		final RfCavityBucket rfCavBuc = rfCav.getRfField();
         return toGapAmpFromCavityAmp( rfCavBuc.getAmplitude() );	
     }
     
@@ -153,7 +153,7 @@ public class RfGap extends AcceleratorNode implements RfGapDataSource {
     /** return the RF phase in the gap  (deg) */
     public double getGapDfltPhase() {
         final RfCavity rfCav = (RfCavity) this.getParent();
-		final RfCavityBucket rfCavBuc = (RfCavityBucket) rfCav.getRfField();
+		final RfCavityBucket rfCavBuc = rfCav.getRfField();
         return  toGapPhaseFromCavityPhase( rfCavBuc.getPhase() );
     }
     
@@ -161,7 +161,7 @@ public class RfGap extends AcceleratorNode implements RfGapDataSource {
     /** return the RF fundamental frequency */
     public double getGapDfltFrequency() {
         final RfCavity rfCav = (RfCavity) this.getParent();
-		final RfCavityBucket rfCavBuc = (RfCavityBucket) rfCav.getRfField();
+		final RfCavityBucket rfCavBuc = rfCav.getRfField();
         return rfCavBuc.getFrequency();
     }
 	

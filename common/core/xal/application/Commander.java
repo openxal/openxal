@@ -37,20 +37,20 @@ import java.net.URL;
  */
 public class Commander {
 	/** map equivalent of the resource bundle properties */
-    protected Map<String,String> _controlMap;
+    private Map<String,String> _controlMap;
 	
-	/** (action-name, action) map */
-    protected Map _commands;
+	/** (action-name, event listener) map */
+    private Map<String,EventListener> _commands;
 	
 	/** (action-name, button model) map */
-	protected Map _buttonModelMap;
+	private Map<String,ButtonModel> _buttonModelMap;
     
 	
     /** Primary Constructor for generating a document commander. */
     protected Commander( final Commander appCommander, final XalAbstractDocument document ) {
         _controlMap = new HashMap<String,String>( appCommander._controlMap );
-        _commands = new HashMap( appCommander._commands );
-		_buttonModelMap = new HashMap( appCommander._buttonModelMap );
+        _commands = new HashMap<String,EventListener>( appCommander._commands );
+		_buttonModelMap = new HashMap<String,ButtonModel>( appCommander._buttonModelMap );
         
 		loadCustomBundle( document );		// document additions
     }
@@ -73,19 +73,19 @@ public class Commander {
     /** Constructor for generating a document commander. */
     protected Commander( final XalInternalDocument document ) {
         _controlMap = new HashMap<String,String>();
-        _commands = new HashMap();
-		_buttonModelMap = new HashMap();
+        _commands = new HashMap<String,EventListener>();
+		_buttonModelMap = new HashMap<String,ButtonModel>();
 		
 		loadCustomDocumentBundle( document );		// document additions
-		registerCustomCommands( (XalInternalDocument)document );
+		registerCustomCommands( document );
     }
     
     
     /** Constructor for generating an application commander. */
     protected Commander( final Application application ) {
         _controlMap = new HashMap<String,String>();
-        _commands = new HashMap();
-		_buttonModelMap = new HashMap();
+        _commands = new HashMap<String,EventListener>();
+		_buttonModelMap = new HashMap<String,ButtonModel>();
         
         loadDefaultBundle();
         loadCustomBundle( application );
@@ -97,8 +97,8 @@ public class Commander {
     /** Constructor for generating a desktop application commander. */
     protected Commander( final DesktopApplication application ) {
         _controlMap = new HashMap<String,String>();
-        _commands = new HashMap();
-		_buttonModelMap = new HashMap();
+        _commands = new HashMap<String,EventListener>();
+		_buttonModelMap = new HashMap<String,ButtonModel>();
         
         loadDefaultBundle();
         loadCustomBundle( application );
@@ -230,7 +230,7 @@ public class Commander {
                 
                 final String actionKey = getItemFieldProperty( buttonKey, "action" );
                 if ( actionKey != null ) {
-					final ButtonModel model =  (ButtonModel)_buttonModelMap.get( actionKey );
+					final ButtonModel model = _buttonModelMap.get( actionKey );
                     final Action action = (Action)_commands.get( actionKey );
 					
 					if ( model != null ) {
@@ -308,7 +308,7 @@ public class Commander {
 				final Action action = (Action)_commands.get( actionKey );
 				button.setAction( action );
 				
-				final ButtonModel model =  (ButtonModel)_buttonModelMap.get( actionKey );
+				final ButtonModel model = _buttonModelMap.get( actionKey );
 				if ( model != null && ( model instanceof ToggleButtonModel ) ) {
 					button.setModel( model );
 					buttonGroup.add( button );
@@ -396,7 +396,7 @@ public class Commander {
 				final String actionKey = ( explicitActionKey != null ) ? explicitActionKey : defaultActionKey;
 				
 				if ( actionKey != null ) {
-					final ButtonModel model =  (ButtonModel)_buttonModelMap.get( actionKey );
+					final ButtonModel model = _buttonModelMap.get( actionKey );
 					
 					if ( model != null ) {
 						if ( model instanceof ToggleButtonModel ) {
@@ -472,7 +472,7 @@ public class Commander {
 	 * @return the button model.
 	 */
 	public ButtonModel getModel( final String actionKey ) {
-		return (ButtonModel)_buttonModelMap.get( actionKey );
+		return _buttonModelMap.get( actionKey );
 	}
 	
 	
@@ -572,7 +572,7 @@ public class Commander {
 				menuItem.setAction( action );
 				menuItem.setText( label );
 				
-				final ButtonModel model =  (ButtonModel)_buttonModelMap.get( actionKey );
+				final ButtonModel model = _buttonModelMap.get( actionKey );
 				if ( model != null && ( model instanceof ToggleButtonModel ) ) {
 					menuItem.setModel( model );
 					buttonGroup.add( menuItem );

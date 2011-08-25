@@ -17,12 +17,17 @@ import java.util.Collections;
  * @author  tap
  */
 public class SequenceOrderingException extends RuntimeException {
-    Collection _sequences;
+    /** serialization ID */
+    private static final long serialVersionUID = 1L;
+    
+    /** sequences for which the ordering exception was thrown */
+    final private Collection<AcceleratorSeq> SEQUENCES;
+    
     
     /** Creates a new instance of SequenceOrderingException */
-    public SequenceOrderingException(Collection sequences) {
+    public SequenceOrderingException( final Collection<AcceleratorSeq> sequences ) {
         super();
-        _sequences = Collections.unmodifiableCollection(sequences);
+        SEQUENCES = Collections.unmodifiableCollection( sequences );
     }
     
     
@@ -34,7 +39,7 @@ public class SequenceOrderingException extends RuntimeException {
     
     
     /** Get the sequences that were attempted to be ordered */
-    public Collection getSequences() {
-        return _sequences;
+    public Collection<AcceleratorSeq> getSequences() {
+        return SEQUENCES;
     }
 }

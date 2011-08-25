@@ -915,7 +915,7 @@ public class XMLDataManager {
     
         /** get the url associated with the specified group */
         public String urlSpecForTableGroup(String tableGroup) {
-            return (String)tableGroupUrlMap.get(tableGroup);
+            return tableGroupUrlMap.get(tableGroup);
         }
 
 
@@ -1040,10 +1040,12 @@ public class XMLDataManager {
 
     
     /** 
-     *  Exception thrown when a URL has not been specified for the given group and an attempt is made to read
-     *  or write the group.
+     *  Exception thrown when a URL has not been specified for the given group and an attempt is made to read or write the group.
      */
     protected class MissingUrlForGroup extends RuntimeException {
+        /** serialization ID */
+        private static final long serialVersionUID = 1L;
+        
         public MissingUrlForGroup(String note) {
             super(note);
         }
