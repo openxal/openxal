@@ -273,7 +273,10 @@ public class ModelProxy {
 		
 		if (probe instanceof EnvelopeProbe) {
 			initProbeState = (EnvelopeProbeState) probe.createProbeState();
-			initTwiss = ((EnvelopeProbe) probe).getTwiss();
+
+			// Corrected 8/2011 - CKA
+//			initTwiss = ((EnvelopeProbe) probe).getTwiss();
+			initTwiss = initProbeState.twissParameters();
 		}
 
 		// notify the new probe

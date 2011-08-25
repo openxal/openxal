@@ -124,7 +124,7 @@ public class EnvelopeBacktracker extends EnvelopeTrackerBase {
 
     
       /** 
-     * <h1>Implementation of Abstract Tracker#doPropagation(IProbe, IElement)</h1>
+     * <h2>Implementation of Abstract Tracker#doPropagation(IProbe, IElement)</h2>
      *
      * <p>
      * This method is essentially the same implementation as the method
@@ -138,9 +138,8 @@ public class EnvelopeBacktracker extends EnvelopeTrackerBase {
      * @author Christopher K. Allen
      * @since Feb 9, 2009
      *
-     * @see gov.sns.xal.model.alg.Tracker#retractProbe(IProbe, IElement, double)
-     * @see gov.sns.xal.model.alg.Tracker#propagate(gov.sns.xal.model.IProbe, gov.sns.xal.model.IElement)
-     * @see gov.sns.xal.model.alg.EnvelopeTracker#doPropagation(IProbe, IElement)
+     * @see xal.model.alg.Tracker#propagate(xal.model.IProbe, xal.model.IElement)
+     * @see xal.model.alg.EnvelopeTracker#doPropagation(IProbe, IElement)
      */
     @Override
     public void doPropagation(IProbe probe, IElement elem)
@@ -221,9 +220,6 @@ public class EnvelopeBacktracker extends EnvelopeTrackerBase {
         PhaseMatrix matResp1 = matPhi.times( matResp0 );
         PhaseMatrix matTau1  = matTau0.conjugateTrans( matPhi );
 
-        // TODO remove debugging
-//        System.out.println("at s=" + probe.getPosition() + ", z_2=" + matTau1.getElem(4, 4));
-        
         // Save the new state variables in the probe
         probe.setResponseMatrix(matResp1);
         probe.setCurrentResponseMatrix(matPhi);
@@ -299,9 +295,6 @@ public class EnvelopeBacktracker extends EnvelopeTrackerBase {
                 double      dphi     = this.effPhaseSpread(probe, elemRfGap);
                 
                 matPhiI = super.modTransferMatrixForEmitGrowth(dphi, matPhiI);
-//                matPhiI = this.modTransferMatrixForEmitReduction(dphi, matPhiI);
-                // TODO - remove debugging
-//                System.out.println("Emit Growth in RF Gap id=" + elemRfGap.getId() + ", at W=" + W);
             }
             matPhi = matPhiI.inverse();
             probe.setKineticEnergy(W);
@@ -310,10 +303,6 @@ public class EnvelopeBacktracker extends EnvelopeTrackerBase {
         }
 
             
-//            // TODO - remove debug
-//            System.out.println("Emit Growth in RF Gap id=" + elemRfGap.getId());
-//        }
-//
         if (dblLen==0.0)    {
             matPhi = ifcElem.transferMap(probe, dblLen).getFirstOrder();
 
@@ -564,30 +553,30 @@ public class EnvelopeBacktracker extends EnvelopeTrackerBase {
         //  (emittance growth coefficients)
         double  dxp_2;      // transverse divergence angle augmentation factor
         double  dzp_2;      // longitudinal divergence angle augmentation factor
-        
-        if (this.getEmitGrowthModel() == EmitGrowthModel.TRACE3D) {
-            
-            dxp_2 = this.emitGrowthCoefTrans(probe, elemRfGap);
-            dzp_2 = this.emitGrowthCoefLong(probe, elemRfGap);
-    
-        } else {
-            
-            double  Gt    = this.compEmitGrowthFunction(PhasePlane.TRANSVERSE, phi_s, dphi);
-            double  kt    = elemRfGap.compTransFocusing(probe);
-            dxp_2 = kt*kt*Gt;
-    
-            double  Gz    = this.compEmitGrowthFunction(PhasePlane.LONGITUDINAL, phi_s, dphi);
-            double  kz    = elemRfGap.compLongFocusing(probe);
-            double  gf    = elemRfGap.gammaFinal(probe);
-            double  gf_2  = gf*gf;
-//            dzp_2 = kz*kz*Gz/(gf_2*gf_2);
-//            dzp_2 = gf_2*gf_2*kz*kz*Gz;
-            dzp_2 = kz*kz*Gz;
-    
-        }
-    
+
+        //        if (this.getEmitGrowthModel() == EmitGrowthModel.TRACE3D) {
+        //            
+        //            dxp_2 = this.emitGrowthCoefTrans(probe, elemRfGap);
+        //            dzp_2 = this.emitGrowthCoefLong(probe, elemRfGap);
+        //    
+        //        } else {
+
+        double  Gt    = this.compEmitGrowthFunction(PhasePlane.TRANSVERSE, phi_s, dphi);
+        double  kt    = elemRfGap.compTransFocusing(probe);
+        dxp_2 = kt*kt*Gt;
+
+        double  Gz    = this.compEmitGrowthFunction(PhasePlane.LONGITUDINAL, phi_s, dphi);
+        double  kz    = elemRfGap.compLongFocusing(probe);
+        //            double  gf    = elemRfGap.gammaFinal(probe);
+        //            double  gf_2  = gf*gf;
+        //            dzp_2 = kz*kz*Gz/(gf_2*gf_2);
+        //            dzp_2 = gf_2*gf_2*kz*kz*Gz;
+        dzp_2 = kz*kz*Gz;
+
+        //        }
+
         probe.setKineticEnergy(W);
-        
+
         // Compute new correlation matrix
         //      Transverse planes
         double x_2    = matTau.getElem(0,0);

@@ -101,6 +101,7 @@ public class HardwareNode extends TreeNode {
      * interval occupied by this node directly from the position and length
      * of the hardware object.
      * 
+     * @param nodeParent    the parent node of this node within the tree 
      * @param   smfHware     hardware object that this node represents  
      */
     public HardwareNode(TreeNode nodeParent, AcceleratorNode smfHware)   {
@@ -114,8 +115,11 @@ public class HardwareNode extends TreeNode {
      * long the given interval of beamline.  That is, it is assumed that we
      * are not referencing the entire hardware object, only a portion of it.
      * 
+     * @param nodeParent    the parent node of this node within the tree 
      * @param smfHware      hardware object (or portion thereof) referenced by this node
      * @param ivlBeamline   section of beamline we are referencing the hardware
+     * 
+     * @throws  GenerationException     the given interval is not contained with the hardware location
      *
      * @author  Christopher K. Allen
      * @since   Apr 28, 2011
@@ -226,8 +230,8 @@ public class HardwareNode extends TreeNode {
 
         if (this.smfHware instanceof AcceleratorSeq)
             return this.smfHware.getLength()/2.0;
-        else
-            return this.smfHware.getPosition();
+
+        return this.smfHware.getPosition();
     }
 
 
@@ -253,7 +257,8 @@ public class HardwareNode extends TreeNode {
      * have multiple nodes referring to the same hardware object.
      * </p>
      * 
-     * @param   node    node that is inserted between the split components of this node
+     * @param node    node that is inserted between the split components of this node
+     * @param dblPos  beamline location where the node is to be inserted 
      * 
      * @return          the left-most half of the resulting split hardware node
      * 
@@ -284,10 +289,10 @@ public class HardwareNode extends TreeNode {
             HardwareNode    nodeLeft  = new HardwareNode(this.getParent(), this.getHardwareRef(), ivlLeft);
             HardwareNode    nodeRight = new HardwareNode(this.getParent(), this.getHardwareRef(), ivlRight);
 
-            super.removeChild(this);
-            super.addChild(nodeRight);
-            super.addChild(node);
-            super.addChild(nodeLeft);
+            this.getParent().removeChild(this);
+            this.getParent().addChild(nodeRight);
+            this.getParent().addChild(node);
+            this.getParent().addChild(nodeLeft);
 
             return nodeLeft;
 
@@ -332,6 +337,10 @@ public class HardwareNode extends TreeNode {
      * Replaces this <code>HardwareNode</code> object by two equal-length hardware
      * nodes reference to the same hardware object.
      * 
+     * @param dblPos    position to split this hardware node
+     * 
+     * @throws GenerationException  the given split location is not within the hardware location
+     *  
      * @author Christopher K. Allen
      * @since  Apr 29, 2011
      */

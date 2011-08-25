@@ -561,30 +561,6 @@ public abstract class EnvelopeTrackerBase extends Tracker {
      * @since Feb 20, 2009, version 2
      */
     protected PhaseMatrix modTransferMatrixForDisplError(double dx, double dy, double dz, PhaseMatrix matPhi) {
-        //T = Translation Matrix by Chris Allen
-        // |1 0 0 0 0 0 dx|
-        // |0 1 0 0 0 0  0|
-        // |0 0 1 0 0 0 dy|
-        // |0 0 0 1 0 0  0|
-        // |0 0 0 0 1 0 dz|
-        // |0 0 0 0 0 1  0|
-        // |0 0 0 0 0 0  1|
-        // T(d)r = r+dr
-        // where
-        // r = |x |
-        //     |x'|
-        //     |y |
-        //     |y'|
-        //     |z |
-        //     |z'|
-        //     |1 |
-        // dr = |dx |
-        //      |0  |
-        //      |dy |
-        //      |0  |
-        //      |dz |
-        //      |0  |
-        //      |0  |
         
         if ((dx != 0)||(dy != 0)||(dz !=0)) {
             PhaseMatrix T  = PhaseMatrix.identity();
@@ -602,10 +578,10 @@ public abstract class EnvelopeTrackerBase extends Tracker {
             
             return matPhiDspl;
             
-        } else {
-    
-            return matPhi;
-        }
+        } 
+
+        return matPhi;
+
     }
 
     /**
@@ -1486,7 +1462,7 @@ public abstract class EnvelopeTrackerBase extends Tracker {
     //
     
     /**
-     * <h2>Longitudinal Fourier Transform given by Trace3D </h2>
+     * <h2>Transverse Fourier Transform given by Trace3D </h2>
      * <p>
      * This method returns the longitudinal Fourier-Bessel transform needed
      * to compute emittance growth from finite phase spread in an
@@ -1495,21 +1471,55 @@ public abstract class EnvelopeTrackerBase extends Tracker {
      * a uniform beam in three spatial dimensions.  
      * </p>
      * <p>
-     * The value returned by this method is exactly that given
-     * by the deprecated method {@link #momentSine(double)}.  
-     * In fact, this method is currently implemented as a call 
-     * to that deprecated method.
+     * The method computes the kluge of &lt;sin(&phi;)&gt;.  In this calculation
+     * we assume that the transverse and longitudinal phase planes are 
+     * uncorrelated and that the beam distribution is a uniform ellipsoid
+     * (that's why the sinc() function pops up).  Pretty restrictive - Sacherer's 
+     * theorem does not apply here.
      * </p>
      * <p>
+     * This quantity is used when computing the transverse emittance increase
+     * in an RF gap due to a finite phase spread in the beam.
+     * <p>
      * <strong>NOTES</strong>: (CKA)
+     * <br/>
+     * &middot; This method is used to approximate &lt;x<sup>2</sup>sin(&phi;)&gt;, 
+     * which is at least third order in the phase coordinates.
+     * <br/>
+     * 
+     * &middot; The assumption that <i>x</i> and <i>z</i> are not correlated 
+     * yields the result
+     * <br/>
+     * <br/>
+     *  &nbsp; &lt;x<sup>2</sup>sin(&phi;)&gt; = &lt;x<sup>2</sup>&gt; <i>f</i>(<i>d&phi;</i>)
+     * <br/>
+     * <br/>
+     * where <i>f</i>(<i>d&phi;</i>) &equiv; &lt;sin(<i>d&phi;</i>)is this method, 
+     * and <i>d&phi;</i> is the "<em>phase spread</em>" of
+     * the distribution.  The phase spread is defined
+     * <br/>
+     * <br/>
+     * &nbsp;   <i>d&phi;</i> = &lt;(<i>&phi; - &phi;<sub>s</sub></i>)<sup>2</sup>&gt;<sup>1/2</sup>
+     * <br/>
+     * <br/>
+     * where <i>&phi;<sub>s</sub></i> is the synchronous particle phase.
      * </p>
+     * <p>
+     * See K.R. Crandall and D.P. Rusthoi, 
+     *          <ul>
+     *          “Trace 3-D Documentation”, 
+     *          LANL Report LA-UR-97-887 (1997), Appendix F.
+     *          </ul>
+     * </p>
+     * 
      *
      * @param   dphi    effective phase spread &Delta;<i>&phi;</i> (half-width) 
      *                  of equivalent uniform beam in <b>radians</b>
      * 
+     * 
      * @return  The value of transform <i>F<sub>t</sub></i>(&Delta;<i>&phi;</i>) 
-     *          given by Trace3D. 
-     *
+     *          given by Trace3D which is the value of &lt;sin(<i>&phi;</i>)&gt; 
+     *          = <i>f</i>(<var>dp</var>).
      * 
      * @author Christopher K. Allen
      * @since  Feb 17, 2009
@@ -1521,9 +1531,21 @@ public abstract class EnvelopeTrackerBase extends Tracker {
      */
     protected double fourierTransTrace3d(double dphi)   {
             
-        double Ft = this.momentSine(dphi);
-        
-        return Ft;
+      double dp_2 = dphi*dphi;
+      
+          if (dphi < 0.1) { 
+              // Avoid singularity at zero - Taylor expansion
+              return 1.0 - dp_2/14.0 + dp_2*dp_2/504.0;
+      
+          }
+          
+          // Use full expression
+          double T    = 3.0/dp_2;
+
+          double sinc = ElementaryFunction.sinc(dphi);
+          double cos  = Math.cos(dphi);
+
+          return (5.0*T)*(sinc*(T-1.0) - cos*T);
     }
 
     /**
@@ -1651,16 +1673,15 @@ public abstract class EnvelopeTrackerBase extends Tracker {
             double      x_6 = x_2*x_4;
     
             return  1.0 - x_2/7.0 + x_4/168.0 - x_6/8316.0;
-        } else {
-            
-            // Numerically stable, compute exact expresson
-            double dphi_2 = dphi*dphi;
-            double j2     = BesselFunction.j2(dphi);
-            double j3     = BesselFunction.j3(dphi);
-            double Fz     = 15.0*(j2/dphi_2 - j3/dphi);
-    
-            return Fz;
         }
+
+        // Numerically stable, compute exact expresson
+        double dphi_2 = dphi*dphi;
+        double j2     = BesselFunction.j2(dphi);
+        double j3     = BesselFunction.j3(dphi);
+        double Fz     = 15.0*(j2/dphi_2 - j3/dphi);
+
+        return Fz;
     }
 
     /**
@@ -1720,15 +1741,14 @@ public abstract class EnvelopeTrackerBase extends Tracker {
             
             return  1.0 - x_2/14.0 + x_4/504.0 - x_6/33264.0;
     
-        }   else    {
-            
-            // Numerically stable, compute exact expression
-            double dphi_2 = dphi*dphi;
-            double j2     = BesselFunction.j2(dphi);
-            double Ft     = 15.0*j2/dphi_2;
-    
-            return Ft;
-        }
+        }  
+
+        // Numerically stable, compute exact expression
+        double dphi_2 = dphi*dphi;
+        double j2     = BesselFunction.j2(dphi);
+        double Ft     = 15.0*j2/dphi_2;
+
+        return Ft;
     }
 
     /**
@@ -1886,15 +1906,15 @@ public abstract class EnvelopeTrackerBase extends Tracker {
             
             return  1.0 - x_2/8.0 + x_4/192.0 - x_6/9216.0;
     
-        }   else    {
-            
-            // Numerically stable, compute exact expression
-            double J1     = BesselFunction.J1(dphi);
-            double Ft     = 2.0*J1/dphi;
-    
-            return Ft;
-        }
+        }   
+
+        // Numerically stable, compute exact expression
+        double J1     = BesselFunction.J1(dphi);
+        double Ft     = 2.0*J1/dphi;
+
+        return Ft;
     }
+
 
     /**
      * <h2>Longitudinal Fourier Transform for Single Phase Plane</h2>
@@ -1953,16 +1973,15 @@ public abstract class EnvelopeTrackerBase extends Tracker {
             
             return  1.0 - x_2/4.0 + 5.0*x_4/384.0 - 7.0*x_6/23040.0;
     
-        }   else    {
-            
-            // Numerically stable, compute exact expression
-            double dphi_2 = dphi*dphi;
-            double J2     = BesselFunction.Jn(2,dphi);
-            double J3     = BesselFunction.Jn(3, dphi);
-            double Fz     = 8.0*(J2/dphi_2 - J3/dphi);
-    
-            return Fz;
-        }
+        } 
+
+        // Numerically stable, compute exact expression
+        double dphi_2 = dphi*dphi;
+        double J2     = BesselFunction.Jn(2,dphi);
+        double J3     = BesselFunction.Jn(3, dphi);
+        double Fz     = 8.0*(J2/dphi_2 - J3/dphi);
+
+        return Fz;
     }
 
     /**
@@ -2167,272 +2186,272 @@ public abstract class EnvelopeTrackerBase extends Tracker {
     //        return Math.sqrt(emitz*betaz)*2*Math.PI/360.0; //radian
         }
 
-    /**
-     * <p>
-     * Calculation of the emittance growth factor of an RF gap
-     * in the transverse plane.  The emittance growth is caused 
-     * by a finite longitudinal phase spread of the beam.
-     * </p>
-     * <p>
-     * The calculation is based upon the results of M. Weiss for
-     * the transverse case.  This is also the same value used
-     * in Trace3d (RfGap.f).  
-     * </p>
-     * <p>
-     * Consider the <i>x</i> phase plane.  The emittance growth 
-     * effect is achieved
-     * by first multiplying the element &lt;x'|x&gt; of the RF gap transfer
-     * matrix <b>&Phi;</b> by the factor <i>F<sub>t</sub></i>(&Delta;&phi;)
-     * returned by method <code>momentSine(double)</code>.  Once the 
-     * covariance matrix <b>&tau;</b> is propagated by the modified transfer 
-     * matrix <b>&Phi;</b>, the moment &lt;<i>x</i><sup>2</sup>&gt; is 
-     * augmented by the result of this function.
-     * </p>
-     * <p>
-     * <strong>References</strong>
-     * <br/>
-     * [1] M. Weiss,
-     *      "Bunching of Intense Proton Beams with Six-Dimensional
-     *       Matching to the Linac Acceptance", CERN/MPS/LI report 73-2,
-     *       Geneva, Switzerland (1978).
-     * </p>
-     * 
-     * @param   probe   probe containing covariance moment data
-     * @param   elem    RF Gap producing emittance growth 
-     * 
-     * @return  transverse emittance growth factor 
-     * 
-     * @see gov.sns.xal.model.elem.IdealRfGap
-     * 
-     * @deprecated  The functionality of this method has been replaced by
-     *              {@link #compEmitGrowthFunction(PhasePlane, double, double)}
-     */
-    protected double emitGrowthCoefTrans(EnvelopeProbe probe, IdealRfGap elem) {
-    //        double  bf  = elem.betaFinal(probe);
-    //        double  gf  = elem.gammaFinal(probe);
-    //        double  k   = elem.compTransFocusing(probe)/(bf*gf);
-            double  k   = elem.compTransFocusing(probe);
-            double  k_2 = k*k;
-            
-            double  ps  = elem.getPhase();
-            double  dp  = this.effPhaseSpread(probe, elem);
-            double  f   = this.momentSine(dp);
-            double  g   = this.momentSineSquared(ps, dp);
-            double  fsin = f*Math.sin(ps);
-            
-            double  T = g - fsin*fsin;
-            
-            return k_2*T;
-        }
+//    /**
+//     * <p>
+//     * Calculation of the emittance growth factor of an RF gap
+//     * in the transverse plane.  The emittance growth is caused 
+//     * by a finite longitudinal phase spread of the beam.
+//     * </p>
+//     * <p>
+//     * The calculation is based upon the results of M. Weiss for
+//     * the transverse case.  This is also the same value used
+//     * in Trace3d (RfGap.f).  
+//     * </p>
+//     * <p>
+//     * Consider the <i>x</i> phase plane.  The emittance growth 
+//     * effect is achieved
+//     * by first multiplying the element &lt;x'|x&gt; of the RF gap transfer
+//     * matrix <b>&Phi;</b> by the factor <i>F<sub>t</sub></i>(&Delta;&phi;)
+//     * returned by method <code>momentSine(double)</code>.  Once the 
+//     * covariance matrix <b>&tau;</b> is propagated by the modified transfer 
+//     * matrix <b>&Phi;</b>, the moment &lt;<i>x</i><sup>2</sup>&gt; is 
+//     * augmented by the result of this function.
+//     * </p>
+//     * <p>
+//     * <strong>References</strong>
+//     * <br/>
+//     * [1] M. Weiss,
+//     *      "Bunching of Intense Proton Beams with Six-Dimensional
+//     *       Matching to the Linac Acceptance", CERN/MPS/LI report 73-2,
+//     *       Geneva, Switzerland (1978).
+//     * </p>
+//     * 
+//     * @param   probe   probe containing covariance moment data
+//     * @param   elem    RF Gap producing emittance growth 
+//     * 
+//     * @return  transverse emittance growth factor 
+//     * 
+//     * @see gov.sns.xal.model.elem.IdealRfGap
+//     * 
+//     * @deprecated  The functionality of this method has been replaced by
+//     *              {@link #compEmitGrowthFunction(PhasePlane, double, double)}
+//     */
+//    protected double emitGrowthCoefTrans(EnvelopeProbe probe, IdealRfGap elem) {
+//    //        double  bf  = elem.betaFinal(probe);
+//    //        double  gf  = elem.gammaFinal(probe);
+//    //        double  k   = elem.compTransFocusing(probe)/(bf*gf);
+//            double  k   = elem.compTransFocusing(probe);
+//            double  k_2 = k*k;
+//            
+//            double  ps  = elem.getPhase();
+//            double  dp  = this.effPhaseSpread(probe, elem);
+//            double  f   = this.momentSine(dp);
+//            double  g   = this.momentSineSquared(ps, dp);
+//            double  fsin = f*Math.sin(ps);
+//            
+//            double  T = g - fsin*fsin;
+//            
+//            return k_2*T;
+//        }
+//
+//    /**
+//         * <p>
+//         * Calculation of the emittance growth factor of an RF gap
+//         * in the longitudinal plane.  The emittance growth is caused 
+//         * by a finite longitudinal phase spread of the beam.
+//         * </p>
+//         * <p>
+//         * The calculation is the same as that performed in Trace3D
+//         * for the longitudinal case.
+//         * </p>
+//         * <p>
+//         * The emittance growth effect is achieved
+//         * by first multiplying the element &lt;z'|z&gt; of the RF gap transfer
+//         * matrix <b>&Phi;</b> by the factor <i>F<sub>t</sub></i>(&Delta;&phi;)
+//         * returned by method <code>momentSine(double)</code>.  Once the 
+//         * covariance matrix <b>&tau;</b> is propagated by the modified transfer 
+//         * matrix <b>&Phi;</b>, the moment &lt;<i>z</i><sup>2</sup>&gt; is 
+//         * augmented by the result of this function.
+//         * </p>
+//         * <p>
+//         * <strong>NOTES</strong>: (CKA)
+//         * <br/>
+//         * &middot; <strong>Important</strong>: This method returns a second-order
+//         * Taylor expansion about the point &Delta;&phi; = 0.  Because this type
+//         * of approximation is parabolic in the phase spread &Delta;&phi; it has no 
+//         * limit as &Delta;&phi; &rarr; &infin;.
+//         * <br/>
+//         * &middot; The method for calculating this result is not explained in the
+//         * Trace3D manual, only presented.
+//         * &middot; There is a descrepancy between the manual
+//         * and the Trace3D code. This method returns the result given in the
+//         * Trace3D code.
+//         * <p>
+//         * See K.R. Crandall and D.P. Rusthoi, 
+//         *          <ul>
+//         *          “Trace 3-D Documentation”, 
+//         *          LANL Report LA-UR-97-887 (1997), Appendix F.
+//         *          </ul>
+//         * </p>
+//         * 
+//         * @param   probe   probe containing moment data
+//         * @param   elem    RF Gap producing emittance growth (type IdealRfGap)
+//         * 
+//         * @return  longitudinal growth factor
+//         * 
+//         * @see gov.sns.xal.model.elem.IdealRfGap
+//         * 
+//         * @deprecated  The functionality of this method has been replaced by
+//         *              {@link #compEmitGrowthFunction(PhasePlane, double, double)}
+//         */
+//        protected double emitGrowthCoefLong(EnvelopeProbe probe, IdealRfGap elem) {
+//        
+////                double  gf   = elem.gammaFinal(probe);
+//        //        double  bf   = elem.betaFinal(probe);
+//        //        double  bgf  = bf*gf;
+////                double  gf_2 = gf*gf;
+//                double  ga   = elem.gammaMidGap(probe);
+//                
+//                double  k    = -2.0*elem.compTransFocusing(probe)*ga*ga;
+//        //        k = k/(bgf);
+//                
+//                double  ps  = elem.getPhase();
+//                double  dp  = this.effPhaseSpread(probe, elem);
+//                double  sin = dp*Math.sin(ps);
+//                double  cos = Math.cos(ps);
+//                
+//    //            double  T    = cos*cos/8.0 + sin/576.0;
+//                double  T    = cos*cos/8.0 + sin*sin/576.0;
+//                double  kdp  = k*dp;
+//                
+//    //            return kdp*kdp*T /(gf_2*gf_2);
+//                return kdp*kdp*T;
+//            }
+//
+//    /**
+//     * <p>
+//     * Function for computing the kluge of &lt;sin(&phi;)&gt;.  In this calculation
+//     * we assume that the transverse and longitudinal phase planes are 
+//     * uncorrelated and that the beam distribution is a uniform ellipsoid
+//     * (that's why the sinc() function pops up).  Pretty restrictive - Sacherer's 
+//     * theorem does not apply here.
+//     * </p>
+//     * <p>
+//     * This quantity is used when computing the transverse emittance increase
+//     * in an RF gap due to a finite phase spread in the beam.
+//     * <p>
+//     * <strong>NOTES</strong>: (CKA)
+//     * <br/>
+//     * &middot; This method is used to approximate &lt;x<sup>2</sup>sin(&phi;)&gt;, 
+//     * which is at least third order in the phase coordinates.
+//     * <br/>
+//     * 
+//     * &middot; The assumption that <i>x</i> and <i>z</i> are not correlated 
+//     * yields the result
+//     * <br/>
+//     * <br/>
+//     *  &nbsp; &lt;x<sup>2</sup>sin(&phi;)&gt; = &lt;x<sup>2</sup>&gt; <i>f</i>(<i>d&phi;</i>)
+//     * <br/>
+//     * <br/>
+//     * where <i>f</i>(<i>d&phi;</i>) &equiv; &lt;sin(<i>d&phi;</i>)is this method, 
+//     * and <i>d&phi;</i> is the "<em>phase spread</em>" of
+//     * the distribution.  The phase spread is defined
+//     * <br/>
+//     * <br/>
+//     * &nbsp;   <i>d&phi;</i> = &lt;(<i>&phi; - &phi;<sub>s</sub></i>)<sup>2</sup>&gt;<sup>1/2</sup>
+//     * <br/>
+//     * <br/>
+//     * where <i>&phi;<sub>s</sub></i> is the synchronous particle phase.
+//     * </p>
+//     * <p>
+//     * See K.R. Crandall and D.P. Rusthoi, 
+//     *          <ul>
+//     *          “Trace 3-D Documentation”, 
+//     *          LANL Report LA-UR-97-887 (1997), Appendix F.
+//     *          </ul>
+//     * </p>
+//     * 
+//     *
+//     * @param   dp      phase spread half-width in <b>radians</b>
+//     * 
+//     * @return  the value of &lt;sin(<i>&phi;</i>)&gt; = <i>f</i>(<var>dp</var>) 
+//     *
+//     * 
+//     * @author Christopher K. Allen
+//     * 
+//     * @see gov.sns.xal.model.elem.IdealRfGap
+//     * @see EnvelopeTrackerBase#compTransFourierTransform(double)
+//     * 
+//     * @deprecated  This method is replaced by the method 
+//     *              <code>transFourierBesselTransformUniform(double)</code>
+//     *              which computes
+//     *              exactly the same result but is a theoretic generalization.
+//     */
+//    protected double momentSine(double dp) {
+//        double dp_2 = dp*dp;
+//    
+//        if (dp < 0.1) { // Avoid singularity at zero - Taylor expansion
+//            return 1.0 - dp_2/14.0 + dp_2*dp_2/504.0;
+//    
+//        } else {        // Full expression
+//            double T    = 3.0/dp_2;
+//            
+//            double sinc = ElementaryFunction.sinc(dp);
+//            double cos  = Math.cos(dp);
+//            
+//            return (5.0*T)*(sinc*(T-1.0) - cos*T);
+//            
+//        }
+//    }
 
-    /**
-         * <p>
-         * Calculation of the emittance growth factor of an RF gap
-         * in the longitudinal plane.  The emittance growth is caused 
-         * by a finite longitudinal phase spread of the beam.
-         * </p>
-         * <p>
-         * The calculation is the same as that performed in Trace3D
-         * for the longitudinal case.
-         * </p>
-         * <p>
-         * The emittance growth effect is achieved
-         * by first multiplying the element &lt;z'|z&gt; of the RF gap transfer
-         * matrix <b>&Phi;</b> by the factor <i>F<sub>t</sub></i>(&Delta;&phi;)
-         * returned by method <code>momentSine(double)</code>.  Once the 
-         * covariance matrix <b>&tau;</b> is propagated by the modified transfer 
-         * matrix <b>&Phi;</b>, the moment &lt;<i>z</i><sup>2</sup>&gt; is 
-         * augmented by the result of this function.
-         * </p>
-         * <p>
-         * <strong>NOTES</strong>: (CKA)
-         * <br/>
-         * &middot; <strong>Important</strong>: This method returns a second-order
-         * Taylor expansion about the point &Delta;&phi; = 0.  Because this type
-         * of approximation is parabolic in the phase spread &Delta;&phi; it has no 
-         * limit as &Delta;&phi; &rarr; &infin;.
-         * <br/>
-         * &middot; The method for calculating this result is not explained in the
-         * Trace3D manual, only presented.
-         * &middot; There is a descrepancy between the manual
-         * and the Trace3D code. This method returns the result given in the
-         * Trace3D code.
-         * <p>
-         * See K.R. Crandall and D.P. Rusthoi, 
-         *          <ul>
-         *          “Trace 3-D Documentation”, 
-         *          LANL Report LA-UR-97-887 (1997), Appendix F.
-         *          </ul>
-         * </p>
-         * 
-         * @param   probe   probe containing moment data
-         * @param   elem    RF Gap producing emittance growth (type IdealRfGap)
-         * 
-         * @return  longitudinal growth factor
-         * 
-         * @see gov.sns.xal.model.elem.IdealRfGap
-         * 
-         * @deprecated  The functionality of this method has been replaced by
-         *              {@link #compEmitGrowthFunction(PhasePlane, double, double)}
-         */
-        protected double emitGrowthCoefLong(EnvelopeProbe probe, IdealRfGap elem) {
-        
-//                double  gf   = elem.gammaFinal(probe);
-        //        double  bf   = elem.betaFinal(probe);
-        //        double  bgf  = bf*gf;
-//                double  gf_2 = gf*gf;
-                double  ga   = elem.gammaMidGap(probe);
-                
-                double  k    = -2.0*elem.compTransFocusing(probe)*ga*ga;
-        //        k = k/(bgf);
-                
-                double  ps  = elem.getPhase();
-                double  dp  = this.effPhaseSpread(probe, elem);
-                double  sin = dp*Math.sin(ps);
-                double  cos = Math.cos(ps);
-                
-    //            double  T    = cos*cos/8.0 + sin/576.0;
-                double  T    = cos*cos/8.0 + sin*sin/576.0;
-                double  kdp  = k*dp;
-                
-    //            return kdp*kdp*T /(gf_2*gf_2);
-                return kdp*kdp*T;
-            }
-
-    /**
-     * <p>
-     * Function for computing the kluge of &lt;sin(&phi;)&gt;.  In this calculation
-     * we assume that the transverse and longitudinal phase planes are 
-     * uncorrelated and that the beam distribution is a uniform ellipsoid
-     * (that's why the sinc() function pops up).  Pretty restrictive - Sacherer's 
-     * theorem does not apply here.
-     * </p>
-     * <p>
-     * This quantity is used when computing the transverse emittance increase
-     * in an RF gap due to a finite phase spread in the beam.
-     * <p>
-     * <strong>NOTES</strong>: (CKA)
-     * <br/>
-     * &middot; This method is used to approximate &lt;x<sup>2</sup>sin(&phi;)&gt;, 
-     * which is at least third order in the phase coordinates.
-     * <br/>
-     * 
-     * &middot; The assumption that <i>x</i> and <i>z</i> are not correlated 
-     * yields the result
-     * <br/>
-     * <br/>
-     *  &nbsp; &lt;x<sup>2</sup>sin(&phi;)&gt; = &lt;x<sup>2</sup>&gt; <i>f</i>(<i>d&phi;</i>)
-     * <br/>
-     * <br/>
-     * where <i>f</i>(<i>d&phi;</i>) &equiv; &lt;sin(<i>d&phi;</i>)is this method, 
-     * and <i>d&phi;</i> is the "<em>phase spread</em>" of
-     * the distribution.  The phase spread is defined
-     * <br/>
-     * <br/>
-     * &nbsp;   <i>d&phi;</i> = &lt;(<i>&phi; - &phi;<sub>s</sub></i>)<sup>2</sup>&gt;<sup>1/2</sup>
-     * <br/>
-     * <br/>
-     * where <i>&phi;<sub>s</sub></i> is the synchronous particle phase.
-     * </p>
-     * <p>
-     * See K.R. Crandall and D.P. Rusthoi, 
-     *          <ul>
-     *          “Trace 3-D Documentation”, 
-     *          LANL Report LA-UR-97-887 (1997), Appendix F.
-     *          </ul>
-     * </p>
-     * 
-     *
-     * @param   dp      phase spread half-width in <b>radians</b>
-     * 
-     * @return  the value of &lt;sin(<i>&phi;</i>)&gt; = <i>f</i>(<var>dp</var>) 
-     *
-     * 
-     * @author Christopher K. Allen
-     * 
-     * @see gov.sns.xal.model.elem.IdealRfGap
-     * @see EnvelopeTrackerBase#compTransFourierTransform(double)
-     * 
-     * @deprecated  This method is replaced by the method 
-     *              <code>transFourierBesselTransformUniform(double)</code>
-     *              which computes
-     *              exactly the same result but is a theoretic generalization.
-     */
-    protected double momentSine(double dp) {
-        double dp_2 = dp*dp;
-    
-        if (dp < 0.1) { // Avoid singularity at zero - Taylor expansion
-            return 1.0 - dp_2/14.0 + dp_2*dp_2/504.0;
-    
-        } else {        // Full expression
-            double T    = 3.0/dp_2;
-            
-            double sinc = ElementaryFunction.sinc(dp);
-            double cos  = Math.cos(dp);
-            
-            return (5.0*T)*(sinc*(T-1.0) - cos*T);
-            
-        }
-    }
-
-    /**
-     * <p>
-     * Function for computing the kluge of &lt;sin<sup>2</sup>(&phi;)&gt;.  
-     * In this calculation
-     * we assume that the transverse and longitudinal phase planes are 
-     * uncorrelated and that the beam distribution is a uniform ellipsoid
-     * (that's why the sinc() function pops up).  Pretty restrictive - Sacherer's 
-     * theorem does not apply here.
-     * </p>
-     * <p>
-     * This quantity is used when computing the transverse emittance increase
-     * in an RF gap due to a finite phase spread in the beam.
-     * <p>
-     * <p>
-     * <strong>NOTES</strong>: (CKA)
-     * <br/>
-     * &middot; This method is used to approximate
-     * &lt;<i>x</i><sup>2</sup>sin<sup>2</sup>(<i>&phi;</i>)&gt;, which
-     * is at least fourth order in the phase coordinates
-     * <br/>
-     * &middot; The assumption that <i>x</i> and <i>z</i> are not correlated 
-     * yields the result
-     * <br/>
-     * <br/>
-     * &nbsp;  &lt;<i>x</i><sup>2</sup>sin<sup>2</sup>(<i>&phi;</i>)> = &lt;<i>x</i><sup>2</sup>&gt;<i>g</i>(<i>d&phi;</i>)
-     * <br/>
-     * <br/>
-     * where <i>g</i>(<i>d&phi;</i>) &equiv; &lt;sin<sup>2</sup>(<i>&phi;</i>)&gt; 
-     * is this method, and <i>d&phi;</i> is the 
-     * "<em>phase spread</em>" of
-     * the distribution.  The phase spread is given by
-     * <br/>
-     * <br/>
-     * &nbsp; <i>d&phi;</i> = &lt;(<i>&phi; - &phi;<sub>s</sub></i>)<sup>2</sup>&gt;<sup>1/2</sup>
-     * <br/>
-     * <br/>
-     * where <i>&phi;<sub>s</sub></i> is the synchronous particle phase.
-     * </p>
-     *
-     * @param   ps      synchronous particle phase 
-     * @param   dp      phase spread half-width in <b>radians</b>
-     * 
-     * @return  the value of &lt;sin<sup>2</sup>(<i>&phi;</i>)&gt; = <i>g</i>(<i>d&phi;</i>)  
-     * 
-     * @author Christopher K. Allen
-     * 
-     * @see Appendix F of the Trace3D manual.
-     * @see gov.sns.xal.model.elem.IdealRfGap
-     * 
-     * @deprecated  This method will no longer be necessary once 
-     *              {@link #compTransFourierTransform(double)}
-     *              is used.
-     */
-    protected double momentSineSquared(double ps, double dp) {
-        double  f   = this.momentSine(2.0*dp);
-        double  cos = Math.cos(2.0*ps);
-        
-        return 0.5*(1.0 - cos*f);
-    }
+//    /**
+//     * <p>
+//     * Function for computing the kluge of &lt;sin<sup>2</sup>(&phi;)&gt;.  
+//     * In this calculation
+//     * we assume that the transverse and longitudinal phase planes are 
+//     * uncorrelated and that the beam distribution is a uniform ellipsoid
+//     * (that's why the sinc() function pops up).  Pretty restrictive - Sacherer's 
+//     * theorem does not apply here.
+//     * </p>
+//     * <p>
+//     * This quantity is used when computing the transverse emittance increase
+//     * in an RF gap due to a finite phase spread in the beam.
+//     * <p>
+//     * <p>
+//     * <strong>NOTES</strong>: (CKA)
+//     * <br/>
+//     * &middot; This method is used to approximate
+//     * &lt;<i>x</i><sup>2</sup>sin<sup>2</sup>(<i>&phi;</i>)&gt;, which
+//     * is at least fourth order in the phase coordinates
+//     * <br/>
+//     * &middot; The assumption that <i>x</i> and <i>z</i> are not correlated 
+//     * yields the result
+//     * <br/>
+//     * <br/>
+//     * &nbsp;  &lt;<i>x</i><sup>2</sup>sin<sup>2</sup>(<i>&phi;</i>)> = &lt;<i>x</i><sup>2</sup>&gt;<i>g</i>(<i>d&phi;</i>)
+//     * <br/>
+//     * <br/>
+//     * where <i>g</i>(<i>d&phi;</i>) &equiv; &lt;sin<sup>2</sup>(<i>&phi;</i>)&gt; 
+//     * is this method, and <i>d&phi;</i> is the 
+//     * "<em>phase spread</em>" of
+//     * the distribution.  The phase spread is given by
+//     * <br/>
+//     * <br/>
+//     * &nbsp; <i>d&phi;</i> = &lt;(<i>&phi; - &phi;<sub>s</sub></i>)<sup>2</sup>&gt;<sup>1/2</sup>
+//     * <br/>
+//     * <br/>
+//     * where <i>&phi;<sub>s</sub></i> is the synchronous particle phase.
+//     * </p>
+//     *
+//     * @param   ps      synchronous particle phase 
+//     * @param   dp      phase spread half-width in <b>radians</b>
+//     * 
+//     * @return  the value of &lt;sin<sup>2</sup>(<i>&phi;</i>)&gt; = <i>g</i>(<i>d&phi;</i>)  
+//     * 
+//     * @author Christopher K. Allen
+//     * 
+//     * @see Appendix F of the Trace3D manual.
+//     * @see gov.sns.xal.model.elem.IdealRfGap
+//     * 
+//     * @deprecated  This method will no longer be necessary once 
+//     *              {@link #compTransFourierTransform(double)}
+//     *              is used.
+//     */
+//    protected double momentSineSquared(double ps, double dp) {
+//        double  f   = this.momentSine(2.0*dp);
+//        double  cos = Math.cos(2.0*ps);
+//        
+//        return 0.5*(1.0 - cos*f);
+//    }
 
 }

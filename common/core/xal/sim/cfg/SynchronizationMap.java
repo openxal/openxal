@@ -32,7 +32,7 @@ import xal.tools.data.IArchive;
  * <p>
  * It is also assumed that this class will be instantiated
  * according to the configuration file used by the modeling 
- * scenario generator.  Thus, the lack of initiailizing
+ * scenario generator.  Thus, the lack of initializing
  * methods.
  * </p>
  *

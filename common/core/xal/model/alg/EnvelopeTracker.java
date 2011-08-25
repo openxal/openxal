@@ -503,45 +503,45 @@ public class EnvelopeTracker extends EnvelopeTrackerBase {
         double  phi_s = elemRfGap.getPhase();
         double  dphi  = this.effPhaseSpread(probe, elemRfGap);
 
-        
+
         // Compute the divergence angle increment coefficients 
         //  (emittance growth coefficients)
         double  dxp_2;      // transverse divergence angle augmentation factor
         double  dzp_2;      // longitudinal divergence angle augmentation factor
-        
-        if (this.getEmitGrowthModel() == EmitGrowthModel.TRACE3D) {
-            
-            dxp_2 = this.emitGrowthCoefTrans(probe, elemRfGap);
-            dzp_2 = this.emitGrowthCoefLong(probe, elemRfGap);
 
-        } else {
-            
-            double  Gt    = this.compEmitGrowthFunction(PhasePlane.TRANSVERSE, phi_s, dphi);
-            double  kt    = elemRfGap.compTransFocusing(probe);
-            dxp_2 = kt*kt*Gt;
+        //        if (this.getEmitGrowthModel() == EmitGrowthModel.TRACE3D) {
+        //            
+        //            dxp_2 = this.emitGrowthCoefTrans(probe, elemRfGap);
+        //            dzp_2 = this.emitGrowthCoefLong(probe, elemRfGap);
+        //
+        //        } else {
 
-            double  Gz    = this.compEmitGrowthFunction(PhasePlane.LONGITUDINAL, phi_s, dphi);
-            double  kz    = elemRfGap.compLongFocusing(probe);
-            double  gf    = elemRfGap.gammaFinal(probe);
-            double  gf_2  = gf*gf;
-//            dzp_2 = kz*kz*Gz/(gf_2*gf_2);
-            dzp_2 = kz*kz*Gz;
+        double  Gt    = this.compEmitGrowthFunction(PhasePlane.TRANSVERSE, phi_s, dphi);
+        double  kt    = elemRfGap.compTransFocusing(probe);
+        dxp_2 = kt*kt*Gt;
 
-        }
+        double  Gz    = this.compEmitGrowthFunction(PhasePlane.LONGITUDINAL, phi_s, dphi);
+        double  kz    = elemRfGap.compLongFocusing(probe);
+        //    double  gf    = elemRfGap.gammaFinal(probe);
+        //    double  gf_2  = gf*gf;
+        //            dzp_2 = kz*kz*Gz/(gf_2*gf_2);
+        dzp_2 = kz*kz*Gz;
 
-        
+        //        }
+
+
         // Compute new correlation matrix
         //      Transverse planes
         double x_2    = matTau.getElem(0,0);
         double xp_2   = matTau.getElem(1,1);
         double xp_2eg = dxp_2*x_2 + xp_2; 
         matTau.setElem(1,1,xp_2eg);
-        
+
         double y_2    = matTau.getElem(2,2);
         double yp_2   = matTau.getElem(3,3);
         double yp_2eg = dxp_2*y_2 + yp_2; 
         matTau.setElem(3,3,yp_2eg);
-        
+
         //      Longitudinal plane
         double z_2    = matTau.getElem(4,4);
         double zp_2   = matTau.getElem(5,5);

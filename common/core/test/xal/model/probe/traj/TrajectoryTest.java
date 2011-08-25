@@ -3,19 +3,14 @@ package xal.model.probe.traj;
 import java.io.PrintWriter;
 import java.util.Iterator;
 
-import xal.model.Lattice;
-import xal.model.ModelException;
-import xal.model.alg.resp.ParticleResponse;
-import xal.model.probe.DiagnosticProbe;
-import xal.model.probe.resp.ParticlePerturb;
-import xal.model.probe.resp.traj.ParticlePerturbProbeState;
-import xal.model.probe.resp.traj.ParticlePerturbProbeTrajectory;
-import xal.model.xml.LatticeXmlParser;
-import xal.model.xml.ParsingException;
-
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+import xal.model.Lattice;
+import xal.model.ModelException;
+import xal.model.probe.DiagnosticProbe;
+import xal.model.xml.LatticeXmlParser;
+import xal.model.xml.ParsingException;
 
 /**
  * class comment
@@ -67,6 +62,7 @@ public class TrajectoryTest extends TestCase {
 		} catch (ParsingException e) {
 			e.printStackTrace();
 			fail("Lattice Parsing Exception: " + e.getMessage());
+			return;
 		}
 		DiagnosticProbe probe = null;
 		try {
@@ -91,48 +87,6 @@ public class TrajectoryTest extends TestCase {
 		}
 	}
 	
-	/**
-	 * Test the particle perturbation state
-	 * retrieval.
-	 *
-	 * @author Christopher K. Allen
-	 * @since  Apr 19, 2011
-	 */
-	@SuppressWarnings("deprecation")
-	public void testParticlePerturbStateResponse() {
-		LatticeXmlParser parser = new LatticeXmlParser();
-		Lattice lattice = null;
-		try {
-			lattice = parser.parseUrl(XML_IN, false);
-		} catch (ParsingException e) {
-			e.printStackTrace();
-			fail("Lattice Parsing Exception: " + e.getMessage());
-		}
-		ParticlePerturb probe = null;
-		try {
-			probe = new ParticlePerturb();
-			probe.setAlgorithm(new ParticleResponse());
-			probe.setSpeciesRestEnergy(939.3014e+6);
-			probe.setSpeciesCharge(-1.602e-19);
-			probe.setKineticEnergy(2.5e+6);	
-			lattice.propagate(probe);
-		} catch (ModelException e) {
-			fail("ModelException propagating DiagnosticProbe through Lattice");
-		}
-		ParticlePerturbProbeTrajectory trajectory = 
-			(ParticlePerturbProbeTrajectory) probe.getTrajectory();
-			
-		Iterator<ProbeState> stIt = trajectory.stateIterator();
-		while (stIt.hasNext()) {
-			ParticlePerturbProbeState state = (ParticlePerturbProbeState) stIt.next();
-			PrintWriter out = new PrintWriter(System.out);
-			state.getResponse().print(out);	
-			out.flush();
-			System.out.println();
-		}
-		
-	}
-
 		
 	
 }

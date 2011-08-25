@@ -18,7 +18,6 @@ import java.util.List;
 import java.util.Map;
 
 import xal.model.IAlgorithm;
-import xal.model.probe.resp.ParticlePerturb;
 import xal.smf.Accelerator;
 import xal.smf.AcceleratorSeq;
 import xal.tools.beam.Twiss;
@@ -65,40 +64,40 @@ public class ProbeFactory {
 	protected final static String MASS_PARAM = "mass";
 
 
-	/**
-	 * Generate a ParticlePerturb probe initialized with the default entrance parameters for the
-	 * specified sequence.  The location used defaults to the sequence's entrance ID.
-	 *
-	 * @param sequence   the sequence for which to initialize the probe
-	 * @param algorithm  the online model algorithm to use
-	 * @return           the initialized particle perturb probe
-	 */
-    @SuppressWarnings("deprecation")
-	public static ParticlePerturb getParticlePerturb( final AcceleratorSeq sequence, final IAlgorithm algorithm ) {
-		return getParticlePerturb( sequence.getEntranceID(), sequence, algorithm );
-	}
-	
-	
-	/**
-	 * Generate a ParticlePerturb probe initialized with the entrance parameters for the specified location.
-	 *
-	 * @param locationID the location ID of the entrance parameters to use
-	 * @param sequence   the sequence for which to initialize the probe
-	 * @param algorithm  the online model algorithm to use
-	 * @return           the initialized particle perturb probe
-	 */
-	@SuppressWarnings("deprecation")
-	public static ParticlePerturb getParticlePerturb( final String locationID, final AcceleratorSeq sequence, final IAlgorithm algorithm ) {
-		final ParticlePerturb probe = new ParticlePerturb();
-		
-		if ( !probe.setAlgorithm( algorithm ) ) {
-			return null;
-		}
-		
-		boolean success = initializeLocation( probe, locationID, sequence, algorithm );
-		
-		return success ? probe : null;
-	}
+//	/**
+//	 * Generate a ParticlePerturb probe initialized with the default entrance parameters for the
+//	 * specified sequence.  The location used defaults to the sequence's entrance ID.
+//	 *
+//	 * @param sequence   the sequence for which to initialize the probe
+//	 * @param algorithm  the online model algorithm to use
+//	 * @return           the initialized particle perturb probe
+//	 */
+//    @SuppressWarnings("deprecation")
+//	public static ParticlePerturb getParticlePerturb( final AcceleratorSeq sequence, final IAlgorithm algorithm ) {
+//		return getParticlePerturb( sequence.getEntranceID(), sequence, algorithm );
+//	}
+//	
+//	
+//	/**
+//	 * Generate a ParticlePerturb probe initialized with the entrance parameters for the specified location.
+//	 *
+//	 * @param locationID the location ID of the entrance parameters to use
+//	 * @param sequence   the sequence for which to initialize the probe
+//	 * @param algorithm  the online model algorithm to use
+//	 * @return           the initialized particle perturb probe
+//	 */
+//	@SuppressWarnings("deprecation")
+//	public static ParticlePerturb getParticlePerturb( final String locationID, final AcceleratorSeq sequence, final IAlgorithm algorithm ) {
+//		final ParticlePerturb probe = new ParticlePerturb();
+//		
+//		if ( !probe.setAlgorithm( algorithm ) ) {
+//			return null;
+//		}
+//		
+//		boolean success = initializeLocation( probe, locationID, sequence, algorithm );
+//		
+//		return success ? probe : null;
+//	}
 	
 
 	/**
@@ -207,6 +206,9 @@ public class ProbeFactory {
 	
 	/**
 	 * Get the list of available location IDs ordered alpha-numerically.
+	 * 
+	 * @param accelerator  accelerator object to parse
+	 *  
 	 * @return a list of available location IDs.
 	 */
 	static public List<String> getLocationIDs( final Accelerator accelerator ) {
@@ -225,6 +227,9 @@ public class ProbeFactory {
 	
 	/**
 	 * Get the list of available location records ordered by name.
+     * 
+     * @param accelerator  accelerator object to parse
+     *  
 	 * @return a list of available location records.
 	 */
 	static public List<GenericRecord> getLocationRecords( final Accelerator accelerator ) {
@@ -239,6 +244,7 @@ public class ProbeFactory {
 	 * Initialize the location parameters of the probe with the specified sequence and algorithm.
 	 *
 	 * @param probe      the probe to initialize
+	 * @param locationID location within the acceleration where the probe is initialized
 	 * @param sequence   the sequence for which to initialize the probe
 	 * @param algorithm  the online model algorithm to use
 	 * @return           true for successful initialization and false if it fails
@@ -307,6 +313,7 @@ public class ProbeFactory {
 	 * Initialize the twiss parameters of the probe with the specified sequence and algorithm.
 	 *
 	 * @param probe      the probe to initialize
+     * @param locationID location within the acceleration where the probe is initialized
 	 * @param sequence   the sequence for which to initialize the probe
 	 * @param algorithm  the online model algorithm to use
 	 * @return           true for successful initialization and false if it fails
@@ -335,6 +342,8 @@ public class ProbeFactory {
 	
 	/**
 	 * Generate a Twiss instance from a record containing alpha, beta and emittance.
+	 * 
+	 * @param record   data object containing Courant-Snyder parameters 
 	 *
 	 * @return an instance of Twiss for the alpha, beta and emittance from the twiss record.
 	 */

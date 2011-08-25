@@ -17,11 +17,11 @@ import xal.tools.math.MathException;
  * 
  * @author Christopher K. Allen
  * 
- * @deprecated  I don't think this is really necessary any more
+// * @deprecated  I don't think this is really necessary any more
  *
  */
 
-@Deprecated
+//@Deprecated
 public class ThickHardware extends HardwareNode {
 
 
@@ -47,8 +47,6 @@ public class ThickHardware extends HardwareNode {
      * @param nodeThin              thin element to be inserted within this node
      * 
      * @throws GenerationException  the argument is not of type <code>ThinHardware</code>
-     * 
-     * @see xal.sim.latgen.atree.TreeNode#insert(xal.sim.latgen.atree.TreeNode)
      */
     public void insert(ThinHardware nodeThin) throws GenerationException {
         
@@ -70,10 +68,10 @@ public class ThickHardware extends HardwareNode {
             ThickHardware    nodeLeft  = new ThickHardware(this.getParent(), this.getHardwareRef(), ivlLeft);
             ThickHardware    nodeRight = new ThickHardware(this.getParent(), this.getHardwareRef(), ivlRight);
 
-            super.removeChild(this);
-            super.addChild(nodeRight);
-            super.addChild(nodeThin);
-            super.addChild(nodeLeft);
+            this.getParent().removeChild(this);
+            this.getParent().addChild(nodeRight);
+            this.getParent().addChild(nodeThin);
+            this.getParent().addChild(nodeLeft);
 
         } catch (MathException e) {
             throw new GenerationException("The left and right intervals are bad", e);

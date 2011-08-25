@@ -15,9 +15,9 @@ import xal.smf.AcceleratorNode;
  * 
  * @author Christopher K. Allen
  *
- * @deprecated  I don't think this is really necessary any more.
+// * @deprecated  I don't think this is really necessary any more.
  */
-@Deprecated
+//@Deprecated
 public class ThinHardware extends HardwareNode {
 
 
@@ -25,8 +25,8 @@ public class ThinHardware extends HardwareNode {
      * Local Attributes
      */
     
-    /** Position of thin element in its beamline */
-    private double      dblPos;
+//    /** Position of thin element in its beamline */
+//    private double      dblPos;
     
     
 
@@ -40,9 +40,9 @@ public class ThinHardware extends HardwareNode {
      * doing so throws a <code>GenerationException</code>.
      * 
      * @param   node                    dummy argument
+     * 
      * @throws  GenerationException     this method was called
      * 
-     * @see xal.sim.latgen.atree.HardwareNode#insert(xal.sim.latgen.atree.HardwareNode)
      */
     public void insert(TreeNode node) throws GenerationException {
 
@@ -72,27 +72,29 @@ public class ThinHardware extends HardwareNode {
     /**
      * Initializing constructor.  
      * 
+     * @param   nodeParent          parent node of this node (as a tree component)
      * @param   smfNode             hardware object having zero effective length
+     * 
      * @throws  GenerationException <code>smfNode</code> has finite length
      */
     ThinHardware(TreeNode nodeParent, AcceleratorNode smfNode) throws GenerationException {
         super(nodeParent, smfNode);
-        this.setPosition( smfNode.getPosition() );
+//        this.setPosition( smfNode.getPosition() );
         
         if (smfNode.getLength() > 0.0)
             throw new GenerationException("ThinHardware(AcceleratorNode node) - node has finite length" );
     }
     
-    /**
-     * Set position of the <code>ThinHardware</code> object.  The interval
-     * occupied by this element gets set to the zero length, single point
-     * interval.
-     *  
-     * @param   dblPos      position along the beam path of this element
-     */
-    void    setPosition(double  dblPos) {
-        this.dblPos = dblPos;
-    }
+//    /**
+//     * Set position of the <code>ThinHardware</code> object.  The interval
+//     * occupied by this element gets set to the zero length, single point
+//     * interval.
+//     *  
+//     * @param   dblPos      position along the beam path of this element
+//     */
+//    void    setPosition(double  dblPos) {
+//        this.dblPos = dblPos;
+//    }
 
 
     /*
