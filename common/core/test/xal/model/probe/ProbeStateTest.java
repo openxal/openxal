@@ -1,6 +1,6 @@
 package xal.model.probe;
 
-import xal.tools.beam.CorrelationMatrix;
+import xal.tools.beam.CovarianceMatrix;
 import xal.tools.beam.PhaseMatrix;
 import xal.tools.beam.PhaseVector;
 import xal.tools.beam.ens.Ensemble;
@@ -136,7 +136,7 @@ public class ProbeStateTest extends TestCase {
 //		probe.setBeamCharge(CHARGE);
         probe.setBunchFrequency(FREQUENCY);
 		probe.setBeamCurrent(CURRENT);
-		probe.setCorrelation((CorrelationMatrix)PhaseMatrix.zero());
+		probe.setCorrelation((CovarianceMatrix)PhaseMatrix.zero());
 		ProbeState state = probe.createProbeState();
 		
 		//compare the snapshot to the probe

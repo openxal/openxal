@@ -6,7 +6,7 @@
  */
 package xal.model;
 
-import xal.tools.beam.CorrelationMatrix;
+import xal.tools.beam.CovarianceMatrix;
 import xal.tools.beam.PhaseMap;
 
 import java.util.ArrayList;
@@ -248,7 +248,7 @@ public class RingModel extends ElementSeq {
      * 
      * @return  This method simply returns the zero matrix
      */
-    public  CorrelationMatrix compClosedOrbit(SynchronousProbe  probe)  {
-        return CorrelationMatrix.newZero();
+    public  CovarianceMatrix compClosedOrbit(SynchronousProbe  probe)  {
+        return CovarianceMatrix.newZero();
     }
 }

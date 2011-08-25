@@ -13,7 +13,7 @@
 package xal.model.alg;
 
 
-import xal.tools.beam.CorrelationMatrix;
+import xal.tools.beam.CovarianceMatrix;
 import xal.tools.beam.PhaseMap;
 import xal.tools.beam.PhaseMatrix;
 import xal.tools.beam.Twiss;
@@ -35,15 +35,13 @@ import xal.model.probe.traj.EnvelopeProbeState;
 import xal.model.probe.traj.ProbeState;
 
 
-import xal.tools.beam.em.EllipsoidalCharge;
-
-
+import xal.tools.beam.em.BeamEllipsoid;
 import java.io.PrintWriter;
 
 /**
  * <p>
  * Tracking algorithm for <code>EnvelopeProbe</code>'s.  The <code>EnvelopeProbe</code>'s
- * state, which is a <code>CorrelationMatrix</code> object, is advanced using the linear
+ * state, which is a <code>CovarianceMatrix</code> object, is advanced using the linear
  * dynamics portion of any beamline element (<code>IElement</code> exposing object) transfer
  * map.  The linear portion is represented as a matrix, thus, the state advance is accomplished
  * with a transpose conjugation with this matrix.
@@ -66,7 +64,7 @@ import java.io.PrintWriter;
  * TODO: Replace <code>EllipsoidalCharge</code> with <code>BeamEllipsoid</code>.
  * </p>
  *
- * @see gov.sns.tools.beam.em.EllipsoidalCharge 
+ * @see xal.tools.beam.em.BeamEllipsoid
  * @see <a href="http://lib-www.lanl.gov/cgi-bin/getfile?00796950.pdf">Theory and Technique
  *      of Beam Envelope Simulation</a>
  *
@@ -681,10 +679,10 @@ public class EnvTrackerAdapt extends Tracker {
          
         // Get the algorithm class name from the EditContext
         DataTable     tblAlgorithm = ecTableData.getTable( EnvTrackerAdapt.TBL_LBL_ENVTRACKERADAPT);
-        GenericRecord recTracker = tblAlgorithm.record( EnvTrackerAdapt.TBL_PRIM_KEY_NAME,  strPrimKeyVal );
+        GenericRecord recTracker = tblAlgorithm.record( Tracker.TBL_PRIM_KEY_NAME,  strPrimKeyVal );
 
         if ( recTracker == null ) {
-            recTracker = tblAlgorithm.record( EnvTrackerAdapt.TBL_PRIM_KEY_NAME, "default" );  // just use the default record
+            recTracker = tblAlgorithm.record( Tracker.TBL_PRIM_KEY_NAME, "default" );  // just use the default record
         }
 
         final double errorTolerance = recTracker.doubleValueForKey( ATTRTAG_ERRTOL );
@@ -806,7 +804,7 @@ public class EnvTrackerAdapt extends Tracker {
         R3                  phs0 = probe.getBetatronPhase();
 	//obsolete Twiss [] twissOld = probe.getTwiss();
         Twiss [] twissOld = probe.getCorrelation().computeTwiss();
-	CorrelationMatrix   chi0 = probe.getCorrelation(); // chi0 = sigma matrix(raw)
+	CovarianceMatrix   chi0 = probe.getCorrelation(); // chi0 = sigma matrix(raw)
         
         // Get properties of the element
         double      L    = dblLen;
@@ -823,7 +821,7 @@ public class EnvTrackerAdapt extends Tracker {
        
     //sako emittance growth effect for RFGap
 
-//    CorrelationMatrix cor2 = null;
+//    CovarianceMatrix cor2 = null;
 
     if (ifcElem instanceof IdealRfGap) {
 	/*
@@ -860,13 +858,13 @@ public class EnvTrackerAdapt extends Tracker {
 
 	TraceXalUnitConverter converter = TraceXalUnitConverter.newConverter(freq,Er,Wi);
 
-	CorrelationMatrix cor1 = new CorrelationMatrix(chi1raw);
+	CovarianceMatrix cor1 = new CovarianceMatrix(chi1raw);
 	Twiss[] twissXal = cor1.twissParameters();
 	Twiss twissT3dX = converter.xalToTraceTransverse(twissXal[0]);
 	Twiss twissT3dY = converter.xalToTraceTransverse(twissXal[1]);
 	Twiss twissT3dZ = converter.xalToTraceLongitudinal(twissXal[2]);
 
-	CorrelationMatrix chiT3d = CorrelationMatrix.buildCorrelation(twissT3dX,twissT3dY,twissT3dZ);
+	CovarianceMatrix chiT3d = CovarianceMatrix.buildCorrelation(twissT3dX,twissT3dY,twissT3dZ);
 
     	double s11t3d = chiT3d.getElem(1,1)+sigmaCorTrans*chiT3d.getElem(0,0);
 	chiT3d.setElem(1,1,s11t3d);
@@ -909,11 +907,11 @@ public class EnvTrackerAdapt extends Tracker {
         if (cor2 != null) {
 	    probe.setCorrelation(cor2);
 	} else {
-	    probe.setCorrelation(new CorrelationMatrix(chi1));
+	    probe.setCorrelation(new CovarianceMatrix(chi1));
 	    }
 	*/
 	//default
-	probe.setCorrelation(new CorrelationMatrix(chi1));
+	probe.setCorrelation(new CovarianceMatrix(chi1));
 	probe.advanceTwiss(Phi, ifcElem.energyGain(probe, dblLen) );//Phi=transferemap
    
 	// phase update:
@@ -981,13 +979,13 @@ public class EnvTrackerAdapt extends Tracker {
 	
        
         
-	probe.setCorrelation( new CorrelationMatrix(matChi) );
+	probe.setCorrelation( new CovarianceMatrix(matChi) );
 
 	//sako new (this must be used for correct RFGap implementation!!!)
 	/*
         if (elem instanceof IdealRfGap) {
 
-	    CorrelationMatrix matCor = probe.getCorrelation();
+	    CovarianceMatrix matCor = probe.getCorrelation();
 
 	    double sigmaCorTrans = ((IdealRfGap)elem).correctTransSigmaPhaseSpread(probe);
 	    double sigmaCorLong  = ((IdealRfGap)elem).correctLongSigmaPhaseSpread(probe);
@@ -1045,7 +1043,7 @@ public class EnvTrackerAdapt extends Tracker {
         // Get the initial state
         R3                  vecPhs0 = probe.getBetatronPhase();
         PhaseMatrix         matRes0 = probe.getResponseMatrix();
-        CorrelationMatrix   matChi0 = probe.getCorrelation();
+        CovarianceMatrix   matChi0 = probe.getCorrelation();
 	Twiss [] twissOld = probe.getCorrelation().computeTwiss();
 	//obsolete Twiss [] twissOld = probe.getTwiss();
             
@@ -1060,7 +1058,7 @@ public class EnvTrackerAdapt extends Tracker {
         PhaseMatrix matChi2 = matChi0.conjugateTrans( matPhi2 );
 
         probe.setResponseMatrix( matRes2 );        
-        probe.setCorrelation( new CorrelationMatrix(matChi2) );
+        probe.setCorrelation( new CovarianceMatrix(matChi2) );
 	Twiss [] twissNew = probe.getCorrelation().computeTwiss();
 	//obsolete Twiss [] twissNew = probe.getTwiss();
         R3 vecPhs2 = vecPhs0.plus( matPhi2.compPhaseAdvance(twissOld, twissNew) );       
@@ -1264,6 +1262,16 @@ public class EnvTrackerAdapt extends Tracker {
 
 
     //sako, only for drift with pmq, this is necessary.... 
+    /**
+     * sako, only for drift with pmq, this is necessary....
+     * 
+     * @param h
+     * @param matRes
+     * @return
+     *
+     * @author Christopher K. Allen
+     * @since  Aug 25, 2011
+     */
     private double  compNewStepSizeDriftPmq(double h, PhaseMatrix matRes)   {
         
         double      toler = this.getErrorTolerance();
@@ -1313,7 +1321,7 @@ public class EnvTrackerAdapt extends Tracker {
      * 
      * @return              an extrapolated value of the probe state
      */
-    private CorrelationMatrix   compInternExtrap(PhaseMatrix matRes, PhaseMatrix matState)   {
+    private CovarianceMatrix   compInternExtrap(PhaseMatrix matRes, PhaseMatrix matState)   {
         PhaseMatrix matChi;     // the extrapolated matrix
 
         if (this.getAccuracyOrder() == ACCUR_ORDER1)
@@ -1321,7 +1329,7 @@ public class EnvTrackerAdapt extends Tracker {
         else            
             matChi = matRes.times(1./3.).plus( matState );
             
-        return new CorrelationMatrix(matChi);
+        return new CovarianceMatrix(matChi);
     }
     
     
@@ -1331,7 +1339,7 @@ public class EnvTrackerAdapt extends Tracker {
      * The returned transfer matrix is first-order accurate and includes 
      * both the effects of the <code>IElement</code> and the effects of space charge.
      * 
-     * @param   s       distance for which transfer matrix will propagate probe
+     * @param   h       distance for which transfer matrix will propagate probe
      * @param   probe   the <code>IProbe</code> object for which the transfer matrix is valid
      * @param   elem    the <code>IElement</code> object
      * 
@@ -1372,7 +1380,7 @@ public class EnvTrackerAdapt extends Tracker {
      * Computes the linear transfer matrix for space charge effects to
      * second order in h.  Note that this transfer matrix is valid only 
      * for the current shape of the beam charge as described by the
-     * <code>CorrelationMatrix</code> in the <code>probe</code> argument.
+     * <code>CovarianceMatrix</code> in the <code>probe</code> argument.
      * As the beam propagates the shape changes (due, in part, to the space
      * charge transfer matrix) and new transfer matrices must be computed.
      * 
@@ -1384,20 +1392,19 @@ public class EnvTrackerAdapt extends Tracker {
     private PhaseMatrix compScheffTransMatrix(double h, EnvelopeProbe probe)    {
 
         // Build transfer matrix generator for space charge effects
-        double              K      = probe.beamPerveance();
-        CorrelationMatrix   matChi = probe.getCorrelation();
+        double              K       = probe.beamPerveance();
+        CovarianceMatrix   matChi   = probe.getCorrelation();
         
-//      BeamEllipsoid       rho    = new BeamEllipsoid(K, matChi);
-//      
-//      PhaseMatrix         matGenSc  = rho.computeScheffGenerator(K);
+        BeamEllipsoid      rho      = new BeamEllipsoid(K, matChi);
+        PhaseMatrix        matGenSc = rho.computeScheffGenerator(K);
 
-        EllipsoidalCharge   rho    = new EllipsoidalCharge(K, matChi);
+//      EllipsoidalCharge   rho    = new EllipsoidalCharge(K, matChi);
+//      PhaseMatrix         matGenSc  = rho.compTransMatrixGen();
+
 
         // jdg - skip if no spacecharge:
         if (K == 0.) return PhaseMatrix.identity();
         
-        PhaseMatrix         matGenSc  = rho.compTransMatrixGen();
-
 
         // Debug - display the ellipsoid rotation matrix
         //        if (this.getDebugMode() == true)    {
@@ -1422,17 +1429,45 @@ public class EnvTrackerAdapt extends Tracker {
     }
     
     
+    /**
+     * <p>
+     * Computes the space charge transfer matrix for the given length and the given
+     * beam when the beam ellipsoid is aligned to the laboratory coordinate system.
+     * In that case the beam covariance matrix takes a particularly simple form where
+     * the envelope properties can be read off directly.  The space charge calculations
+     * can be expedited in this case due to the easy access of the beam ellipsoid
+     * parameters and the idempotency of the Lie generator matrix for the transfer
+     * matrix.
+     * </p>
+     * <p>
+     * <h4>NOTES:</h4>
+     * &middot; This method was converted from using the deprecated 
+     * <code>EllipsoidalCharge</code> class to the newer <code>BeamEllipsoid</code>
+     * class.  CKA: Aug, 2011.
+     * <br/>
+     * &middot; Since then this method has not yet been tested and debugged!
+     * </p>
+     *
+     * @param h         distance along beamline (meters)
+     * @param probe     beam probe being propagated
+     * 
+     * @return          The transfer matrix <b>M</b> for space charge effects
+     *
+     * @author Christopher K. Allen
+     * @since  Aug 25, 2011
+     */
     @SuppressWarnings("unused")
     private PhaseMatrix compScheffTransMatrixWhenAligned(double h, EnvelopeProbe probe) {
 
         // Get the probe parameters
-        double              K      = probe.beamPerveance();
-        CorrelationMatrix   matChi = probe.getCorrelation();
+        double              K       = probe.beamPerveance();
+        double             dblGamma = probe.getGamma();
+        CovarianceMatrix   matSigma   = probe.getCorrelation();
         
         // Build the displacement vector
-        double  xm = matChi.getMeanX();
-        double  ym = matChi.getMeanY();
-        double  zm = matChi.getMeanZ();
+        double  xm = matSigma.getMeanX();
+        double  ym = matSigma.getMeanY();
+        double  zm = matSigma.getMeanZ();
         
         R3      vecDispl = new R3(xm, ym, zm);
         
@@ -1442,17 +1477,22 @@ public class EnvTrackerAdapt extends Tracker {
  //       double  covYY = matChi.getCovYY();
  //       double  covZZ = matChi.getCovZZ();
         
-        double a = matChi.getSigmaX();
-        double b = matChi.getSigmaY();
-        double c = matChi.getSigmaZ();
+        double a = matSigma.getSigmaX();
+        double b = matSigma.getSigmaY();
+        double c = matSigma.getSigmaZ();
+        
+        R3  vecSig = new R3(a, b, c);
+        
         
         // Build charge aligned to beam coordinate system
-        EllipsoidalCharge   rho    = new EllipsoidalCharge(K, a, b, c);
-        rho.setDisplacement(vecDispl);
+//        EllipsoidalCharge   rho    = new EllipsoidalCharge(K, a, b, c);
+//        rho.setDisplacement(vecDispl);
+        
+        BeamEllipsoid       rho = new BeamEllipsoid(dblGamma, vecDispl, vecSig.squared());
         
         // Build the transfer matrix up to second order in h
         // We are lucky - due to the structure of the generator matrix all powers >=2 are zero        
-        PhaseMatrix         matGenSc = rho.compTransMatrixGen();
+        PhaseMatrix         matGenSc = rho.computeScheffGenerator(K);
         PhaseMatrix         matPhiSc = PhaseMatrix.identity();
         
         matPhiSc.plusEquals( matGenSc.times(h) );

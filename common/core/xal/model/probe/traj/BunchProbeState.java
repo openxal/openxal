@@ -82,7 +82,7 @@ public abstract class BunchProbeState extends ProbeState /* implements IPhaseSta
 //     *
 //     *  @see    gov.sns.tools.beam.PhaseMatrix
 //     */
-//    public abstract CorrelationMatrix phaseCorrelation();
+//    public abstract CovarianceMatrix phaseCorrelation();
 
 
 
@@ -211,7 +211,7 @@ public abstract class BunchProbeState extends ProbeState /* implements IPhaseSta
 
 //
 //    /*
-//     * CorrelationMatrix Properties
+//     * CovarianceMatrix Properties
 //     */
 //
 //    
@@ -221,7 +221,7 @@ public abstract class BunchProbeState extends ProbeState /* implements IPhaseSta
 //     * 
 //     * @return      <zz^T> - <z><z>^T
 //     */
-//    public  CorrelationMatrix phaseCovariance()   {
+//    public  CovarianceMatrix phaseCovariance()   {
 //        return phaseCorrelation().getCovariance();
 //    }
 //    

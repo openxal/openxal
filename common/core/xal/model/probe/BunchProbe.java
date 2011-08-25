@@ -73,7 +73,7 @@ public abstract class BunchProbe extends Probe {
 //     *
 //     *  @see    gov.sns.tools.beam.PhaseMatrix
 //     */
-//    public abstract CorrelationMatrix getCorrelation();
+//    public abstract CovarianceMatrix getCorrelation();
 //    
     
     
@@ -315,7 +315,7 @@ public abstract class BunchProbe extends Probe {
 //*
 //*  @return     <(z-<z>)*(z-<z>)^T> = <z*z^T> - <z>*<z>^T
 //*/
-//public CorrelationMatrix  phaseCovariance() {
+//public CovarianceMatrix  phaseCovariance() {
 // return getCorrelation().getCovariance();
 //}
 //

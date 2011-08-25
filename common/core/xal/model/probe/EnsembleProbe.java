@@ -6,7 +6,7 @@
 
 package xal.model.probe;
 
-import xal.tools.beam.CorrelationMatrix;
+import xal.tools.beam.CovarianceMatrix;
 import xal.tools.beam.PhaseVector;
 import xal.tools.beam.ens.Ensemble;
 import xal.tools.data.DataAdaptor;
@@ -105,7 +105,7 @@ public class EnsembleProbe extends BunchProbe {
      *
      *  @see    xal.tools.beam.PhaseMatrix
      */
-    public CorrelationMatrix  getCorrelation()    {
+    public CovarianceMatrix  getCorrelation()    {
         return getEnsemble().phaseCorrelation();
     }
     

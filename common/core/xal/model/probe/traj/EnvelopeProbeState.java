@@ -1,6 +1,6 @@
 package xal.model.probe.traj;
 
-import xal.tools.beam.CorrelationMatrix;
+import xal.tools.beam.CovarianceMatrix;
 import xal.tools.beam.RelativisticParameterConverter;
 import xal.tools.beam.PhaseVector;
 import xal.tools.beam.PhaseMatrix;
@@ -74,7 +74,7 @@ public class EnvelopeProbeState extends BunchProbeState implements IPhaseState {
     private PhaseMatrix         m_matRespNoSpaceCharge;
 
     /** envelope state */
-    private CorrelationMatrix   m_matCorrel;
+    private CovarianceMatrix   m_matCorrel;
 
     
     
@@ -132,7 +132,7 @@ public class EnvelopeProbeState extends BunchProbeState implements IPhaseState {
         this.m_matPert = PhaseMatrix.identity();
         this.m_matResp = PhaseMatrix.identity();
         this.m_matRespNoSpaceCharge = PhaseMatrix.identity();
-    	this.m_matCorrel = new CorrelationMatrix();
+    	this.m_matCorrel = new CovarianceMatrix();
     }
 	
     /**
@@ -212,9 +212,9 @@ public class EnvelopeProbeState extends BunchProbeState implements IPhaseState {
      *
      *  @param  matTau    new phase space covariance matrix of this probe
      *
-     *  @see xal.tools.beam.CorrelationMatrix
+     *  @see xal.tools.beam.CovarianceMatrix
      */
-    public void setCorrelation(CorrelationMatrix matTau) {
+    public void setCorrelation(CovarianceMatrix matTau) {
         m_matCorrel = matTau;
     }
 
@@ -278,7 +278,7 @@ public class EnvelopeProbeState extends BunchProbeState implements IPhaseState {
      * 
      * @return  7x7 matrix <zz^T> in homogeneous coordinates
      */
-    public CorrelationMatrix getCorrelationMatrix()   {
+    public CovarianceMatrix getCorrelationMatrix()   {
         return m_matCorrel;
     }
     
@@ -350,9 +350,9 @@ public class EnvelopeProbeState extends BunchProbeState implements IPhaseState {
      * 
      * @return  &lt;<b>zz</b><sup><i>T</i></sup>&gt; - &lt;<b>z</b>&gt;&lt;<b>z</b>&gt;<sup><i>T</i></sup>
      * 
-     * @see xal.tools.beam.CorrelationMatrix#computeCovariance()
+     * @see xal.tools.beam.CovarianceMatrix#computeCovariance()
      */
-    public  CorrelationMatrix phaseCovariance()   {
+    public  CovarianceMatrix phaseCovariance()   {
         return getCorrelationMatrix().computeCovariance();
     }
     
@@ -409,7 +409,7 @@ public class EnvelopeProbeState extends BunchProbeState implements IPhaseState {
      *
      *  @return         &lt;z&gt; = (&lt;x&gt;, &lt;xp&gt;, &lt;y&gt;, &lt;yp&gt;, &lt;z&gt;, &lt;zp&gt;, 1)^T
      *  
-     *  @see    xal.tools.beam.CorrelationMatrix#getMean()
+     *  @see    xal.tools.beam.CovarianceMatrix#getMean()
      */
     public PhaseVector phaseMean()  {
         return getCorrelationMatrix().getMean();
@@ -569,7 +569,7 @@ public class EnvelopeProbeState extends BunchProbeState implements IPhaseState {
             this.setTwiss(twiss);
             DataAdaptor parNode = container.childAdaptor(EnvelopeProbeState.CENTROID_LABEL);
             if (parNode == null) {
-                this.setCorrelation(CorrelationMatrix.buildCorrelation(twiss[0], twiss[1], twiss[2]));
+                this.setCorrelation(CovarianceMatrix.buildCorrelation(twiss[0], twiss[1], twiss[2]));
 //              throw new ParsingException("EnvelopeProbeState#readPropertiesFrom(): no child element = " + EnvelopeProbeState.PARTICLE_LABEL);
             } else {
 //                if (parNode.hasAttribute(EnvelopeProbeState.X_LABEL)) {
@@ -581,19 +581,19 @@ public class EnvelopeProbeState extends BunchProbeState implements IPhaseState {
 //                    phaseV.setz(parNode.doubleValue(EnvelopeProbeState.Z_LABEL));
 //                    phaseV.setzp(parNode.doubleValue(EnvelopeProbeState.ZP_LABEL));
 //                
-//                    this.setCorrelation(CorrelationMatrix.buildCorrelation(twiss[0], twiss[1], twiss[2], phaseV));
+//                    this.setCorrelation(CovarianceMatrix.buildCorrelation(twiss[0], twiss[1], twiss[2], phaseV));
 //                }
                 if (parNode.hasAttribute(EnvelopeProbeState.VALUE_LABEL))   {
                     String      strCent = parNode.stringValue(EnvelopeProbeState.VALUE_LABEL);
                     PhaseVector vecCent = new PhaseVector(strCent);
                     
-                    this.setCorrelation(CorrelationMatrix.buildCorrelation(twiss[0], twiss[1], twiss[2], vecCent));
+                    this.setCorrelation(CovarianceMatrix.buildCorrelation(twiss[0], twiss[1], twiss[2], vecCent));
                 }
                 
             }
             
         } else if (envNode.hasAttribute(EnvelopeProbeState.CORR_LABEL))   {
-            CorrelationMatrix matChi = new CorrelationMatrix(envNode.stringValue(EnvelopeProbeState.CORR_LABEL));
+            CovarianceMatrix matChi = new CovarianceMatrix(envNode.stringValue(EnvelopeProbeState.CORR_LABEL));
             this.setCorrelation(matChi);
             // initialize the state twiss parameters from the correlation matrix
             this.setTwiss(matChi.computeTwiss());

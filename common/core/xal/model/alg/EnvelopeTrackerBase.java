@@ -8,7 +8,7 @@
  */
 package xal.model.alg;
 
-import xal.tools.beam.CorrelationMatrix;
+import xal.tools.beam.CovarianceMatrix;
 import xal.tools.beam.PhaseIndexHom;
 import xal.tools.beam.PhaseMatrix;
 import xal.tools.beam.PhaseVector;
@@ -775,18 +775,18 @@ public abstract class EnvelopeTrackerBase extends Tracker {
         // Get probe parameters
         double              gamma  = probe.getGamma();
         double              K      = probe.beamPerveance();
-        CorrelationMatrix   tau0   = probe.getCorrelation();
+        CovarianceMatrix   tau0   = probe.getCorrelation();
         
         
         // Compute the space charge matrix 
         //      Compute the correlations in configuration space
-        double sigXX = tau0.computeCovXX();
-        double sigYY = tau0.computeCovYY();
-        double sigZZ = tau0.computeCovZZ();
+        double sigXX = tau0.computeCentralCovXX();
+        double sigYY = tau0.computeCentralCovYY();
+        double sigZZ = tau0.computeCentralCovZZ();
         
-        double sigXY = tau0.computeCovXY();
-        double sigXZ = tau0.computeCovXZ();
-        double sigYZ = tau0.computeCovYZ();
+        double sigXY = tau0.computeCentralCovXY();
+        double sigXZ = tau0.computeCentralCovXZ();
+        double sigYZ = tau0.computeCentralCovYZ();
         
         double corr = (sigXY*sigXY)/(sigXX*sigYY) 
                     + (sigXZ*sigXZ)/(sigXX*sigZZ) 
@@ -840,7 +840,7 @@ public abstract class EnvelopeTrackerBase extends Tracker {
 //                    // Get probe parameters
 //                    double              gamma  = probe.getGamma();
 //                    double              K      = probe.beamPerveance();
-//                    CorrelationMatrix   tau0   = probe.getCorrelation();
+//                    CovarianceMatrix   tau0   = probe.getCorrelation();
 //                    
 //                    
 //                    // Get element transfer matrix for a half step
@@ -850,7 +850,7 @@ public abstract class EnvelopeTrackerBase extends Tracker {
 //                    
 //                    // Move the covariance matrix forward a half step
 //                    PhaseMatrix         matTau1   = tau0.conjugateTrans(matPhi);
-//                    CorrelationMatrix   tau1      = new CorrelationMatrix(matTau1);
+//                    CovarianceMatrix   tau1      = new CovarianceMatrix(matTau1);
 //            
 //                    
 //                    // Compute the space charge matrix at center of step dblLen

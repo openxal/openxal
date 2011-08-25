@@ -10,7 +10,7 @@ package xal.model.alg;
 
 import xal.tools.math.r3.R3;
 
-import xal.tools.beam.CorrelationMatrix;
+import xal.tools.beam.CovarianceMatrix;
 import xal.tools.beam.PhaseIndexHom;
 import xal.tools.beam.PhaseMap;
 import xal.tools.beam.PhaseMatrix;
@@ -34,7 +34,7 @@ import xal.model.probe.traj.ProbeState;
  * <p>
  * This tracker object is based
  * The <code>EnvelopeProbe</code>'s
- * state, which is a <code>CorrelationMatrix</code> object, is advanced using the linear
+ * state, which is a <code>CovarianceMatrix</code> object, is advanced using the linear
  * dynamics portion of any beamline element (<code>IElement</code> exposing object) transfer
  * map.  The linear portion is represented as a matrix, thus, the state advance is accomplished
  * with a transpose conjugation with this matrix.
@@ -227,7 +227,7 @@ public class EnvelopeBacktracker extends EnvelopeTrackerBase {
         // Save the new state variables in the probe
         probe.setResponseMatrix(matResp1);
         probe.setCurrentResponseMatrix(matPhi);
-        probe.setCorrelation(new CorrelationMatrix(matTau1));
+        probe.setCorrelation(new CovarianceMatrix(matTau1));
 //        probe.advanceTwiss(matPhi, ifcElem.energyGain(probe, dblLen) );
         
         // phase update:
@@ -338,13 +338,13 @@ public class EnvelopeBacktracker extends EnvelopeTrackerBase {
             PhaseMatrix matPhi0  = mapElem0.getFirstOrder();
 
             // Get the RMS envelopes at probe location
-            CorrelationMatrix covTau0  = probe.getCorrelation();    // covariance matrix at entrance
+            CovarianceMatrix covTau0  = probe.getCorrelation();    // covariance matrix at entrance
 
 
             // Move probe back a half step for position-dependent transfer maps
             double            pos     = probe.getPosition() - dblLen/2.0;
             PhaseMatrix       matTau1 = covTau0.conjugateTrans(matPhi0);
-            CorrelationMatrix covTau1 = new CorrelationMatrix(matTau1);
+            CovarianceMatrix covTau1 = new CovarianceMatrix(matTau1);
 
             probe.setPosition(pos);
             probe.setCorrelation(covTau1);

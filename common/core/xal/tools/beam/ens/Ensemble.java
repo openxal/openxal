@@ -25,7 +25,7 @@ import java.util.Iterator;
 import java.util.Comparator;
 
 
-import xal.tools.beam.CorrelationMatrix;
+import xal.tools.beam.CovarianceMatrix;
 import xal.tools.beam.IConstants;
 import xal.tools.beam.PhaseMatrix;
 import xal.tools.beam.PhaseVector;
@@ -213,9 +213,9 @@ public class Ensemble implements Serializable {
      *
      *  @return         the 7x7 correlation matrix of the ensemble distribution
      */
-    public CorrelationMatrix phaseCorrelation()    {
+    public CovarianceMatrix phaseCorrelation()    {
         int             N        = this.getCount();
-        CorrelationMatrix     matSigma = new CorrelationMatrix();
+        CovarianceMatrix     matSigma = new CovarianceMatrix();
         Iterator<Particle> iter = this.iterator();
         
         while (iter.hasNext()) {

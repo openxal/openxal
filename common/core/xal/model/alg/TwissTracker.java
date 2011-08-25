@@ -8,7 +8,7 @@
  
 package xal.model.alg;
 
-import xal.tools.beam.CorrelationMatrix;
+import xal.tools.beam.CovarianceMatrix;
 import xal.tools.beam.PhaseIndexHom;
 import xal.tools.beam.PhaseMap;
 import xal.tools.beam.PhaseMatrix;
@@ -404,7 +404,7 @@ public class TwissTracker extends Tracker {
         
         if(this.getSpaceChargeFlag()) {            // Get the space charge kick
             double              K = probe.beamPerveance();
-            CorrelationMatrix   matTau = CorrelationMatrix.buildCorrelation(probe.getTwiss());
+            CovarianceMatrix   matTau = CovarianceMatrix.buildCorrelation(probe.getTwiss());
             BeamEllipsoid       ellipsoid = new BeamEllipsoid(gamma, matTau);
             PhaseMatrix         matPhiSC  = ellipsoid.computeScheffMatrix(dblLen/2.0, K);
             

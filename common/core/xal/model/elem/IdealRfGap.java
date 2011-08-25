@@ -20,7 +20,7 @@ import xal.tools.beam.RelativisticParameterConverter;
 import xal.tools.beam.TraceXalUnitConverter;
 import xal.tools.beam.Twiss;
 
-import xal.tools.beam.CorrelationMatrix;
+import xal.tools.beam.CovarianceMatrix;
 
 import xal.tools.math.poly.UnivariateRealPolynomial;
 
@@ -865,7 +865,7 @@ public class IdealRfGap extends ThinElement implements IRfGap {
             
             double wavel = clight/freq;
             
-            CorrelationMatrix     matCorXAL  = (probe).getCorrelation();//this need to be convert to t3d unit
+            CovarianceMatrix     matCorXAL  = (probe).getCorrelation();//this need to be convert to t3d unit
             
 //            double lambda = wavel;
 //            double gammai = 1.0 + (Wi / Er);
@@ -877,7 +877,7 @@ public class IdealRfGap extends ThinElement implements IRfGap {
             
             //      Twiss t3dtwissx = t3dxal.xalToTraceTransverse(twiss[0]);
             //      Twiss t3dtwissy = t3dxal.xalToTraceTransverse(twiss[1]);
-            //      CorrelationMatrix matCor = CorrelationMatrix.buildCorrelation(t3dtwissx,t3dtwissy,t3dtwissz);
+            //      CovarianceMatrix matCor = CovarianceMatrix.buildCorrelation(t3dtwissx,t3dtwissy,t3dtwissz);
             
             
             double sigma55 = matCorXAL.getElem(4,4);

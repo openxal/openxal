@@ -509,7 +509,7 @@ public class ImpactXalUnitConverter {
      * @see #traceToXalLongitudinal
      * @see #traceToXalTransverse
      */
-    public CorrelationMatrix correlationMatrixFromT3d(Twiss t3dX, Twiss t3dY, Twiss t3dZ) {
+    public CovarianceMatrix correlationMatrixFromT3d(Twiss t3dX, Twiss t3dY, Twiss t3dZ) {
 
         // Convert to MKS units
         Twiss xalX = impactToXalTransverse(t3dX);
@@ -517,7 +517,7 @@ public class ImpactXalUnitConverter {
         Twiss xalZ = impactToXalLongitudinal(t3dZ);
 
         // Build correlation matrix and return
-        return CorrelationMatrix.buildCorrelation(xalX, xalY, xalZ);
+        return CovarianceMatrix.buildCorrelation(xalX, xalY, xalZ);
     }
 
     /**
@@ -577,7 +577,7 @@ public class ImpactXalUnitConverter {
      * @see #traceToXalLongitudinal
      * @see #traceToXalTransverse
      */
-    public CorrelationMatrix correlationMatrixFromT3d(
+    public CovarianceMatrix correlationMatrixFromT3d(
         Twiss t3dX,
         Twiss t3dY,
         Twiss t3dZ,
@@ -591,7 +591,7 @@ public class ImpactXalUnitConverter {
         PhaseVector xalMean = centroid;
 
         // Build correlation matrix and return
-        return CorrelationMatrix.buildCorrelation(xalX, xalY, xalZ, xalMean);
+        return CovarianceMatrix.buildCorrelation(xalX, xalY, xalZ, xalMean);
     }
 
     /**
@@ -606,7 +606,7 @@ public class ImpactXalUnitConverter {
      *
      *  @see #xalToTraceCoordinates
      */
-    public PhaseVector  centroidFromXal(CorrelationMatrix matCorrel)    {
+    public PhaseVector  centroidFromXal(CovarianceMatrix matCorrel)    {
         PhaseVector vecCentroid = matCorrel.getMean();
 
         return this.xalToImpactCoordinates(vecCentroid);
@@ -634,7 +634,7 @@ public class ImpactXalUnitConverter {
      *              array[2] = Twiss parameters in z plane<br/>
      *
      */
-    public Twiss[]  twissParametersFromXal(CorrelationMatrix mat) {
+    public Twiss[]  twissParametersFromXal(CovarianceMatrix mat) {
         // Twiss[]     arrTwissXal = mat.twissParameters();
 
         Twiss[]     arrTwissXal = mat.computeTwiss();

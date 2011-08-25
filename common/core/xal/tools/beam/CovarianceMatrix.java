@@ -6,8 +6,8 @@ import Jama.Matrix;
 
 /**
  * <p>
- * A <code>CorrelationMatrix</code> in homogeneous coordinates represents
- * all momements of a phase space distribution up to and include second order.  This is 
+ * A <code>CovarianceMatrix</code> in homogeneous coordinates represents
+ * all moments of a phase space distribution up to and include second order.  This is 
  * seen by taken the moment of the outer product of two phase vectors.  We find
  * <pre>
  * &lt;z*z'&gt;  = | &lt;x*x&gt;   &lt;x*xp   &lt;x*y&gt;   &lt;x*yp&gt;  &lt;x*z&gt;   &lt;x*zp&gt;  &lt;x&gt;  |
@@ -18,14 +18,23 @@ import Jama.Matrix;
  *           | &lt;zp*x&gt;  &lt;zp*xp&gt; &lt;zp*y&gt;  &lt;zp*yp&gt; &lt;zp*z&gt;  &lt;zp*zp&gt; &lt;zp&gt; |
  *           | &lt;x&gt;     &lt;xp&gt;    &lt;y&gt;     &lt;yp&gt;    &lt;z&gt;     &lt;zp&gt;    &lt;1&gt;  |
  * </pre>
+ * where <i>xp, yp, zp</i> represent the momentum coordinate in the <i>x, y,</i> and <i>z</i>
+ * directions, respectively.
  * </p>
- *
+ * <p>
+ * Note that the covariance matrix is not necessarily centralized.  Specifically, if the
+ * beam is off axis, then at least one of the moments 
+ * &lt;<i>x</i>&gt;, &lt;<i>y</i>&gt;, &lt;<i>z</i>&gt; is non-zero and the corresponding 
+ * second-order moments will be skewed.  Likewise, if the beam has a coherent drift in
+ * some direction, then the moments &lt;<i>xp</i>&gt;, &lt;<i>yp</i>&gt;, &lt;<i>zp</i>&gt;
+ * will have at least one nonlinear value.  There are methods in this class for returning
+ * centralized moments when such quantities are needed.
+ * </p>
  * 
  * @author Christopher K. Allen
  * @author Craig McChesney
- * (mostly Chris)
  */
-public class CorrelationMatrix extends PhaseMatrix {
+public class CovarianceMatrix extends PhaseMatrix {
 
     
     /*
@@ -48,8 +57,8 @@ public class CorrelationMatrix extends PhaseMatrix {
      *
      *  @return         zero vector
      */
-    public static CorrelationMatrix  newZero()   {
-        return new CorrelationMatrix( new Jama.Matrix(DIM, DIM, 0.0) );
+    public static CovarianceMatrix  newZero()   {
+        return new CovarianceMatrix( new Jama.Matrix(DIM, DIM, 0.0) );
     }
     
     /**
@@ -57,8 +66,8 @@ public class CorrelationMatrix extends PhaseMatrix {
      *
      *  @return         7x7 real identity matrix
      */
-    public static CorrelationMatrix  newIdentity()   {
-        return new CorrelationMatrix( Jama.Matrix.identity(DIM,DIM) );
+    public static CovarianceMatrix  newIdentity()   {
+        return new CovarianceMatrix( Jama.Matrix.identity(DIM,DIM) );
     }
     
     /**
@@ -66,24 +75,23 @@ public class CorrelationMatrix extends PhaseMatrix {
      * (centroid location).  The returned matrix can be subtracted from
      * a covariance matrix to produce a <i>central</i> covariance matrix.
      *  </p>  
-     *
      *  <p>
      *  <l>NOTE:</l>
      *  The returned matrix is the outer product of the given argument.
-     *  Specifically <b>sigma</b> = <b>v*v'</b>.
+     *  Specifically <b>&sigma;</b> = <b>v*v'</b>.
      *  
      *  @param  vecCen mean value vector of the phase space coordinates, i.e., <z>
      *
      *  @return     center matrix corresponding to mean value vector
      */
-    public static CorrelationMatrix newCenter(PhaseVector vecCen) {
+    public static CovarianceMatrix newCenter(PhaseVector vecCen) {
         
         // Add the average value squared to the covariance matrix to form the correlation matrix        
         PhaseMatrix     matCen;
          
         matCen = vecCen.outerProd(vecCen);
 
-        return new CorrelationMatrix(matCen);
+        return new CovarianceMatrix(matCen);
     }        
 
     
@@ -94,17 +102,17 @@ public class CorrelationMatrix extends PhaseMatrix {
 
 
     /**
-     * Create and return a <code>CorrelationMatrix</code> built according to the
+     * Create and return a <code>CovarianceMatrix</code> built according to the
      * given set of Twiss parameters.
      * 
      * @param   envTwiss    twiss parameter set describing RMS envelope
      * 
      * @return  correlation matrix with statistical properties of argument
      * 
-     * @see CorrelationMatrix#buildCorrelation(Twiss, Twiss, Twiss)
+     * @see CovarianceMatrix#buildCorrelation(Twiss, Twiss, Twiss)
      */
-    public static CorrelationMatrix buildCorrelation(Twiss3D envTwiss)  {
-        return CorrelationMatrix.buildCorrelation(
+    public static CovarianceMatrix buildCorrelation(Twiss3D envTwiss)  {
+        return CovarianceMatrix.buildCorrelation(
                                     envTwiss.getTwiss(SpaceIndex3D.X), 
                                     envTwiss.getTwiss(SpaceIndex3D.Y),
                                     envTwiss.getTwiss(SpaceIndex3D.Z)
@@ -144,9 +152,9 @@ public class CorrelationMatrix extends PhaseMatrix {
      *
      *  @return     correlation matrix corresponding to the above twiss parameters
      */
-    public static CorrelationMatrix buildCorrelation(Twiss twissX, Twiss twissY, Twiss twissZ) {
+    public static CovarianceMatrix buildCorrelation(Twiss twissX, Twiss twissY, Twiss twissZ) {
         
-        CorrelationMatrix matCorr = new CorrelationMatrix(PhaseMatrix.zero());
+        CovarianceMatrix matCorr = new CovarianceMatrix(PhaseMatrix.zero());
 
         // Fill in x plane block
         double[][] Rxx = twissX.correlationMatrix();
@@ -166,7 +174,7 @@ public class CorrelationMatrix extends PhaseMatrix {
     };
 
     /**
-     *  Create a CorrelationMatrix corresponding to the given Twiss parameters and 
+     *  Create a CovarianceMatrix corresponding to the given Twiss parameters and 
      *  having the given mean values (centroid location).  
      *
      *  NOTE:
@@ -189,10 +197,10 @@ public class CorrelationMatrix extends PhaseMatrix {
      *
      *  @return     correlation matrix corresponding to the above twiss parameters and mean value vector
      */
-    public static CorrelationMatrix buildCorrelation(Twiss twissX, Twiss twissY, Twiss twissZ, PhaseVector vecCen) {
+    public static CovarianceMatrix buildCorrelation(Twiss twissX, Twiss twissY, Twiss twissZ, PhaseVector vecCen) {
         
         // Build the covariance matrix
-        CorrelationMatrix   matSig;
+        CovarianceMatrix   matSig;
         
         matSig = buildCorrelation(twissX, twissY, twissZ);
         matSig.setElem(PhaseIndexHom.HOM, PhaseIndexHom.HOM, 0.0);
@@ -205,7 +213,7 @@ public class CorrelationMatrix extends PhaseMatrix {
         matCen = vecCen.outerProd(vecCen);
         matTau = matSig.plus(matCen);
 
-        return new CorrelationMatrix(matTau);
+        return new CovarianceMatrix(matTau);
     }        
 
 
@@ -216,30 +224,30 @@ public class CorrelationMatrix extends PhaseMatrix {
      */
 
     /**
-     * Constructor for CorrelationMatrix. Creates a  zero values correlation
+     * Constructor for CovarianceMatrix. Creates a  zero values correlation
      * matrix.
      */
-    public CorrelationMatrix() {
+    public CovarianceMatrix() {
     	super();
     }
 
     /** 
-     * Constructor for CorrelationMatrix.  Creates an initialized correlation
+     * Constructor for CovarianceMatrix.  Creates an initialized correlation
      * matrix from a symmetric <code>PhaseMatrix</code> argument.
      * 
      * @param matInit  symmetric <code>PhaseMatrix</code> object to initial this
      * 
      * @exception   IllegalArgumentException  initializing matrix is not symmetric
      */
-    public CorrelationMatrix(PhaseMatrix matInit) throws IllegalArgumentException {
+    public CovarianceMatrix(PhaseMatrix matInit) throws IllegalArgumentException {
         super(matInit);
 
 //        if (!this.checkSymmetry(this))
-//            throw new IllegalArgumentException("CorrelationMatrix(PhaseMatrix) - argument not symmetric.");
+//            throw new IllegalArgumentException("CovarianceMatrix(PhaseMatrix) - argument not symmetric.");
     }
 
     /**
-     * Constructor for CorrelationMatrix.  Takes a formatted text string containing
+     * Constructor for CovarianceMatrix.  Takes a formatted text string containing
      * the initial values of the matrix.
      * 
      * @param strTokens     initial values of matrix in Mathematica format
@@ -249,28 +257,28 @@ public class CorrelationMatrix extends PhaseMatrix {
      * 
      * @see PhaseMatrix#PhaseMatrix(String)
      */
-    public CorrelationMatrix(String strTokens)
+    public CovarianceMatrix(String strTokens)
         throws IllegalArgumentException, NumberFormatException 
     {
         super(strTokens);
 
         if (!this.checkSymmetry(this))
-            throw new IllegalArgumentException("CorrelationMatrix(PhaseMatrix) - argument not symmetric.");
+            throw new IllegalArgumentException("CovarianceMatrix(PhaseMatrix) - argument not symmetric.");
     }
 
     /**
-     * Constructor for CorrelationMatrix.  Takes a symmetric <code>Jama Matrix</code> 
+     * Constructor for CovarianceMatrix.  Takes a symmetric <code>Jama Matrix</code> 
      * object to initialize the correlation matrix.
      * 
      * @param matInit symmetric <code>Jama Matrix</code> object for initial value
      * 
      * @exception IllegalArgumentException  initializing matrix is not symmetric
      */
-    public CorrelationMatrix(Matrix matInit) throws IllegalArgumentException {
+    public CovarianceMatrix(Matrix matInit) throws IllegalArgumentException {
         super(matInit);
 
         if (!this.checkSymmetry(this))
-            throw new IllegalArgumentException("CorrelationMatrix(PhaseMatrix) - argument not symmetric.");
+            throw new IllegalArgumentException("CovarianceMatrix(PhaseMatrix) - argument not symmetric.");
     }
 
     /**
@@ -385,7 +393,7 @@ public class CorrelationMatrix extends PhaseMatrix {
      * 
      * @return  the value &lt;x^2&gt;-&lt;x&gt;^2
      */
-    public double   computeCovXX()  {
+    public double   computeCentralCovXX()  {
         double x  = this.getMeanX();
         double xx = this.getElem(IND_X, IND_X);
         
@@ -398,7 +406,7 @@ public class CorrelationMatrix extends PhaseMatrix {
      * 
      *  @return     the value &lt;xy&gt;-&lt;x&gt;&lt;y&gt;
      */
-    public double   computeCovXY()   {
+    public double   computeCentralCovXY()   {
         double  x = this.getMeanX();
         double  y = this.getMeanY();
         
@@ -413,7 +421,7 @@ public class CorrelationMatrix extends PhaseMatrix {
      * 
      * @return  the value &lt;y^2&gt;-&lt;y&gt;^2
      */
-    public double   computeCovYY()  {
+    public double   computeCentralCovYY()  {
         double y  = this.getMeanY();
         double yy = this.getElem(IND_Y, IND_Y);
         
@@ -426,7 +434,7 @@ public class CorrelationMatrix extends PhaseMatrix {
      * 
      *  @return     the value &lt;yz&gt;-&lt;y&gt;&lt;z&gt;
      */
-    public double   computeCovYZ()   {
+    public double   computeCentralCovYZ()   {
         double  y = this.getMeanY();
         double  z = this.getMeanZ();
         
@@ -441,7 +449,7 @@ public class CorrelationMatrix extends PhaseMatrix {
      * 
      * @return  the value &lt;z^2&gt;-&lt;z&gt;^2
      */
-    public double   computeCovZZ()  {
+    public double   computeCentralCovZZ()  {
         double z  = this.getMeanZ();
         double zz = this.getElem(IND_Z, IND_Z);
         
@@ -454,7 +462,7 @@ public class CorrelationMatrix extends PhaseMatrix {
      * 
      *  @return     the value &lt;xz&gt;-&lt;x&gt;&lt;z&gt;
      */
-    public double   computeCovXZ()   {
+    public double   computeCentralCovXZ()   {
         double  x = this.getMeanX();
         double  z = this.getMeanZ();
         
@@ -465,7 +473,7 @@ public class CorrelationMatrix extends PhaseMatrix {
 
     
     /**
-     * Compute and return the 3x3 symmetric matrix of all spatial covariance
+     * Compute and return the 3x3 symmetric matrix of all centralized spatial covariance
      * values.  Recall that the covariance matrix <b>sig</b> is the matrix of 
      * central second moments and is related to the correlation matrix <<b>zz</b>> 
      * according to
@@ -481,17 +489,17 @@ public class CorrelationMatrix extends PhaseMatrix {
      *      | <xz>-<x><z>  <yz>-<x><z>  <zz>-<z><z> |
      *      
      *      
-     * @return  3x3 symmetric matrix of spatial covariance moments 
+     * @return  3x3 symmetric matrix of central, spatial covariance moments 
      */
     public R3x3 computeSpatialCovariance()  {
         
         // Get all the matrix elements
-        double  covXX = this.computeCovXX();
-        double  covXY = this.computeCovXY();
-        double  covYY = this.computeCovYY();
-        double  covYZ = this.computeCovYZ();
-        double  covZZ = this.computeCovZZ();
-        double  covXZ = this.computeCovXZ();
+        double  covXX = this.computeCentralCovXX();
+        double  covXY = this.computeCentralCovXY();
+        double  covYY = this.computeCentralCovYY();
+        double  covYZ = this.computeCentralCovYZ();
+        double  covZZ = this.computeCentralCovZZ();
+        double  covXZ = this.computeCentralCovXZ();
         
         
         // Assemble the matrix and return it
@@ -507,26 +515,29 @@ public class CorrelationMatrix extends PhaseMatrix {
     
     /**
      * Compute and return the standard deviation of the <i>x</i> phase variable
+     * 
      * @return  sqrt( &lt;x^2&gt; - &lt;x&gt;^2 ) 
      */
     public double   getSigmaX() {
-        return Math.sqrt( computeCovXX() );
+        return Math.sqrt( computeCentralCovXX() );
     }
 
     /**
      * Compute and return the standard deviation of the <i>y</i> phase variable 
+     * 
      * @return  sqrt( &lt;y^2&gt; - &lt;y&gt;^2 ) 
      */
     public double   getSigmaY() {
-        return Math.sqrt( computeCovYY() );
+        return Math.sqrt( computeCentralCovYY() );
     }
 
     /**
      * Compute and return the standard deviation of the <i>z</i> phase variable
+     * 
      * @return  sqrt( &lt;z^2&gt; - &lt;z&gt;^2 ) 
      */
     public double   getSigmaZ() {
-        return Math.sqrt( computeCovZZ() );
+        return Math.sqrt( computeCentralCovZZ() );
     }
 
 
@@ -540,11 +551,11 @@ public class CorrelationMatrix extends PhaseMatrix {
      * 
      *  @return     &lt;(z-&lt;z&gt;)*(z-&lt;z&gt;)^T&gt; = &lt;z*z^T&gt; - &lt;z&gt;*&lt;z&gt;^T
      */
-    public CorrelationMatrix computeCovariance() {
+    public CovarianceMatrix computeCovariance() {
         PhaseVector vecMean = this.getMean();
         PhaseMatrix matCorrel = this;
         PhaseMatrix matAve2 = vecMean.outerProd(vecMean);
-        CorrelationMatrix   matCov = new CorrelationMatrix(matCorrel.minus(matAve2));
+        CovarianceMatrix   matCov = new CovarianceMatrix(matCorrel.minus(matAve2));
         
         matCov.setElem(IND_HOM,IND_HOM, 1.0);   // set the unity homogeneous diagonal
         return matCov;        
@@ -570,7 +581,7 @@ public class CorrelationMatrix extends PhaseMatrix {
      */
     public double[] computeRmsEmittances() {
     	//        PhaseMatrix matSig = this.phaseCorrelation();
-        CorrelationMatrix matSig = this.computeCovariance();
+        CovarianceMatrix matSig = this.computeCovariance();
 	
         double ex_2 =
                 matSig.getElem(0, 0) * matSig.getElem(1, 1)
@@ -609,7 +620,7 @@ public class CorrelationMatrix extends PhaseMatrix {
      */
     public Twiss[] computeTwiss() {
     //        return twissParameters(this.phaseCorrelation());
-        CorrelationMatrix matSig = this.computeCovariance();
+        CovarianceMatrix matSig = this.computeCovariance();
 	
         double[] arrEmit; // array of rms emittance values
 
@@ -663,14 +674,14 @@ public class CorrelationMatrix extends PhaseMatrix {
      *  Check matrix for symmetry.  Correlation matrices must be
      *  symmetric.
      * 
-     *  @param  matCorr <code>CorrelationMatrix</code> object to check
+     *  @param  matCorr <code>CovarianceMatrix</code> object to check
      * 
      *  @return     true if symmtric, false if not
      * 
      * @author ckallen
      *
      */
-    private boolean checkSymmetry(CorrelationMatrix matCorr)    {
+    private boolean checkSymmetry(CovarianceMatrix matCorr)    {
         int     i,j;        //loop control variables
         
         for (i=0; i<7; i++)

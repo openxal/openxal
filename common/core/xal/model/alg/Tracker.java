@@ -75,8 +75,6 @@ import java.util.List;
  * @author Craig McChesney
  * 
  * @see #doPropagation(IProbe, IElement)
- * @see #advanceProbe(IProbe, IElement, double)
- * @see #retractProbe(IProbe, IElement, double)
  * 
  * @see xal.model.IAlgorithm
  */
@@ -109,7 +107,6 @@ public abstract class Tracker implements IAlgorithm, IArchive {
      *
      *  @exception  ModelException  invalid probe type or error in advancing probe
      * 
-     *  @see  Tracker#advanceProbe(IProbe, IElement, double)
      *  @see  Tracker#validProbe(IProbe)
      */
     public abstract void doPropagation(IProbe probe, IElement elem) throws ModelException;
@@ -467,23 +464,31 @@ public abstract class Tracker implements IAlgorithm, IArchive {
     /** 
      * Indicates whether to calculate the beam phase in multi gap Rf cavities,
      * (a la Parmila) rather than use default values (a  la Trace   3D)
+     * 
+     * @return <code>true</code> if phase calculations are made, <code>false</code> otherwise
      */
     public boolean useRfGapPhaseCalculation() { return m_bolCalcRfGapPhase;}
 
 
     /** 
      * Toggle the RF phase calculation on or off. 
+     * 
+     * @param   tf  flag for turning on/off the phase calculations
      */
     public void setRfGapPhaseCalculation(boolean tf) { m_bolCalcRfGapPhase=tf;}
     
     
     /**
      *  Return the algorithm type.
+     *  
+     *  @return     name of the integration algorithm
      */
     public String getType() { return m_strType; };
     
     /** 
      *  Returns the version number of this algorithm
+     *  
+     *  @return     version number of the integration algorithm 
      */
     public int getVersion() { return m_intVersion; };
     
@@ -544,7 +549,7 @@ public abstract class Tracker implements IAlgorithm, IArchive {
     }
 
     /**
-     * <h1>Propagates the probe through the element</h1>
+     * <h3>Propagates the probe through the element</h3>
      * 
      * <p>
      * <strong>NOTE:</strong> &nbsp; CKA
@@ -562,8 +567,6 @@ public abstract class Tracker implements IAlgorithm, IArchive {
      *  @param  elem    element acting on probe
      *
      *  @exception  ModelException  invalid probe type or error in advancing probe
-     *  
-     *  @see    #validElement(IElement)
      */
     public void propagate(IProbe probe, IElement elem) throws ModelException {
         
@@ -756,6 +759,12 @@ public abstract class Tracker implements IAlgorithm, IArchive {
      * must override the <code>propagate</code> method, since it default
      * implementation forward propagates the probe.
      * </p>
+     * 
+     * @param probe     beam probe to propagate backwards 
+     * @param elem      element through which beam is backwards propagated
+     * @param dblLen    distance to backward propagate the beam
+     * 
+     * @throws ModelException error occured while trying to update the probe values (unlikely)
      *
      * @author Christopher K. Allen
      * @since Feb 3, 2009

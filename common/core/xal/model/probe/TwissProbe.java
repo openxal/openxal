@@ -125,7 +125,7 @@ public class TwissProbe extends BunchProbe {
 //    public void initFromTwiss(Twiss[] twiss) {
 //        this.arrTwiss = twiss;
 //        PhaseVector pv = getCorrelation().getMean();
-//        CorrelationMatrix cMat = CorrelationMatrix.buildCorrelation(twiss[0],
+//        CovarianceMatrix cMat = CovarianceMatrix.buildCorrelation(twiss[0],
 //                twiss[1], twiss[2], pv);
 //        this.setCorrelation(cMat);
 //    }

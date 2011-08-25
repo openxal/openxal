@@ -1,7 +1,7 @@
 package xal.model.probe.traj;
 
 import xal.tools.math.r3.R3;
-import xal.tools.beam.CorrelationMatrix;
+import xal.tools.beam.CovarianceMatrix;
 import xal.tools.beam.ens.Ensemble;
 import xal.tools.data.DataAdaptor;
 import xal.model.probe.EnsembleProbe;
@@ -129,9 +129,9 @@ public class EnsembleProbeState extends BunchProbeState {
      *
      *  @return     symmetric 7x7 covariance matrix in homogeneous coordinates
      *
-     *  @see    xal.tools.beam.CorrelationMatrix
+     *  @see    xal.tools.beam.CovarianceMatrix
      */
-    public CorrelationMatrix phaseCorrelation() {
+    public CovarianceMatrix phaseCorrelation() {
         return getEnsemble().phaseCorrelation();
     }
     

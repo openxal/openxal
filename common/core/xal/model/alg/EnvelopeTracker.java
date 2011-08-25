@@ -14,7 +14,7 @@ package xal.model.alg;
 
 import  xal.tools.math.r3.R3;
 
-import xal.tools.beam.CorrelationMatrix;
+import xal.tools.beam.CovarianceMatrix;
 import xal.tools.beam.PhaseMap;
 import xal.tools.beam.PhaseMatrix;
 import xal.tools.beam.Twiss;
@@ -35,7 +35,7 @@ import xal.model.probe.traj.ProbeState;
  * </p>
  * 
  * <p>
- * The <code>EnvelopeProbe</code>'s state, which is a <code>CorrelationMatrix</code> 
+ * The <code>EnvelopeProbe</code>'s state, which is a <code>CovarianceMatrix</code> 
  * object, is propagated using the linear optics portion for any beamline 
  * element (<code>IElement</code> exposing object) transfer map.  The linear 
  * portion is represented as a matrix, thus, the state evolution is accomplished
@@ -200,7 +200,7 @@ public class EnvelopeTracker extends EnvelopeTrackerBase {
         Twiss[]             twiss0   = probe.getCorrelation().computeTwiss();
         PhaseMatrix         matRnsp0 = probe.getResponseMatrixNoSpaceCharge();
         PhaseMatrix         matResp0 = probe.getResponseMatrix();
-        CorrelationMatrix   matTau0  = probe.getCorrelation();
+        CovarianceMatrix   matTau0  = probe.getCorrelation();
         
         // Compute the transfer matrix
         PhaseMatrix matPhi_op  = ifcElem.transferMap(probe, dblLen).getFirstOrder(); 
@@ -222,7 +222,7 @@ public class EnvelopeTracker extends EnvelopeTrackerBase {
         probe.setResponseMatrixNoSpaceCharge(matRnsp1);
         probe.setResponseMatrix(matResp1);
         probe.setCurrentResponseMatrix(matPhi_sc);
-        probe.setCorrelation(new CorrelationMatrix(matTau1));
+        probe.setCorrelation(new CovarianceMatrix(matTau1));
         probe.advanceTwiss(matPhi_sc, ifcElem.energyGain(probe, dblLen) );
         
         // phase update:
@@ -292,13 +292,13 @@ public class EnvelopeTracker extends EnvelopeTrackerBase {
             PhaseMatrix       matPhi0  = mapElem0.getFirstOrder();  
             
             // Get the RMS envelopes at probe location
-            CorrelationMatrix covTau0  = probe.getCorrelation();    // covariance matrix at entrance
+            CovarianceMatrix covTau0  = probe.getCorrelation();    // covariance matrix at entrance
             
             
             // Advance probe a half step for position depend transfer maps
             double            pos     = probe.getPosition() + dblLen/2.0;
             PhaseMatrix       matTau1 = covTau0.conjugateTrans(matPhi0);
-            CorrelationMatrix covTau1 = new CorrelationMatrix(matTau1);
+            CovarianceMatrix covTau1 = new CovarianceMatrix(matTau1);
 
             probe.setPosition(pos);
             probe.setCorrelation(covTau1);

@@ -26,7 +26,7 @@ import xal.model.xml.ParsingException;
 import xal.model.xml.ProbeXmlParser;
 import xal.model.xml.ProbeXmlWriter;
 import xal.model.xml.TrajectoryXmlWriter;
-import xal.tools.beam.CorrelationMatrix;
+import xal.tools.beam.CovarianceMatrix;
 import xal.tools.beam.PhaseVector;
 import xal.tools.beam.Twiss;
 import xal.tools.data.DataFormatException;
@@ -385,8 +385,8 @@ public class ModelValidationTest extends TestCase {
         while (iterState.hasNext()) {
             EnvelopeProbeState state = (EnvelopeProbeState)iterState.next();
 
-//            CorrelationMatrix matCorr = state.getCorrelationMatrix();   
-			CorrelationMatrix matCov  = state.phaseCovariance();
+//            CovarianceMatrix matCorr = state.getCorrelationMatrix();   
+			CovarianceMatrix matCov  = state.phaseCovariance();
             
             matCov.print(os);
             os.println("");                     

@@ -55,7 +55,7 @@ import xal.tools.data.IArchive;
  *
  *  @see    Jama.Matrix
  *  @see    PhaseVector
- *  @see    CorrelationMatrix
+ *  @see    CovarianceMatrix
  */
 public class PhaseMatrix implements IArchive, java.io.Serializable {
     
@@ -124,47 +124,55 @@ public class PhaseMatrix implements IArchive, java.io.Serializable {
     }
     
     /**
+     * <p>
      * Create a phase matrix representing a linear translation
      * operator on homogeneous phase space.  Multiplication by the 
      * returned <code>PhaseMatrix</code> object is equivalent to
      * translation by the given <code>PhaseVector</code> argument.
-     * Specifically, if the argument <b>dv</b> has coordinates
+     * Specifically, if the argument <b>&Delta;</b> has coordinates
+     * <br/>
+     * <br/>
+     * &nbsp; &nbsp;  <b>&Delta;</b> = (<i>&Delta;x, &Delta;x', &Delta;dy, &Delta;dy', 
+     *                                     &Delta;dz, &Delta;dz'</i>, 1)<sup><i>T</i></sup>
+     * <br/>
+     * <br/>
+     * then the returned matrix <b>T</b>(<b>&Delta;</b>) has the form
+     * <pre>
      * 
-     *      dv = (dx,dx',dy,dy',dz,dz',1)^T
-     *      
-     * then the returned matrix T(dv) has the form
-     * 
-     *          |1 0 0 0 0 0 dx |
-     *          |0 1 0 0 0 0 dx'|
-     *  T(dv) = |0 0 1 0 0 0 dy |
-     *          |0 0 0 1 0 0 dy'|
-     *          |0 0 0 0 1 0 dz |
-     *          |0 0 0 0 0 1 dz'|
+     *          |1 0 0 0 0 0 <i>&Delta;x</i> |
+     *          |0 1 0 0 0 0 <i>&Delta;x</i>'|
+     *   <b>T</b>(<b>&Delta;</b>) = |0 0 1 0 0 0 <i>&Delta;y</i> |
+     *          |0 0 0 1 0 0 <i>&Delta;y</i>'|
+     *          |0 0 0 0 1 0 <i>&Delta;z</i> |
+     *          |0 0 0 0 0 1 <i>&Delta;z</i>'|
      *          |0 0 0 0 0 0  1 |
-     *
+     * </pre>
      * Consequently, given a phase vector <b>v</b> of the form
-     *
-     *      v = |x |
-     *          |x'|
-     *          |y |
-     *          |y'|
-     *          |z |
-     *          |z'|
+     * <pre>
+     *          |<i>x</i> |
+     *          |<i>x'</i>|
+     *      <b>v</b> = |<i>y</i> |
+     *          |<i>y'</i>|
+     *          |<i>z</i> |
+     *          |<i>z'</i>|
      *          |1 |
-     *          
-     * Then operation on <b>v</b> by T(dv) has the result
+     * </pre>         
+     * Then operation on <b>v</b> by <b>T</b>(<b>&Delta;</b>) has the result
+     * <pre>
+     *           |<i>x + &Delta;x</i> |
+     *           |<i>x'+ &Delta;x'</i>|
+     *   <b>T</b>(<b>&Delta;</b>)<b>v</b> = |<i>y + &Delta;y</i> |
+     *           |<i>y'+ &Delta;y'</i>|
+     *           |<i>z + &Delta;z</i> |
+     *           |<i>z'+ &Delta;z'</i>|
+     *           |  1    |
+     * </pre>
+     * which we see is equivalent to the simple vector addition <b>v</b> + <b>&Delta;</b>.
+     * </p>
      * 
-     *  T(dv)v = |x + dx |
-     *           |x'+ dx'|
-     *           |y + dy |
-     *           |y'+ dy'|
-     *           |z + dz |
-     *           |z'+ dz'|
-     *           |1      |
-     *
-     *  @param  vecTrans    translation vector
+     *  @param  vecTrans    translation vector <b>&Delta;</b>
      *  
-     *  @return             translation operator as a phase matrix     
+     *  @return             translation operator <b>T</b>(<b>&Delta;</b>) as a phase matrix     
      */
     public static PhaseMatrix  translation(PhaseVector vecTrans)   {
         PhaseMatrix     matTrans = PhaseMatrix.identity();
@@ -175,6 +183,63 @@ public class PhaseMatrix implements IArchive, java.io.Serializable {
         matTrans.setElem(PhaseMatrix.IND_YP, PhaseMatrix.IND_HOM, vecTrans.getyp());
         matTrans.setElem(PhaseMatrix.IND_Z,  PhaseMatrix.IND_HOM, vecTrans.getz());
         matTrans.setElem(PhaseMatrix.IND_ZP, PhaseMatrix.IND_HOM, vecTrans.getzp());
+        
+        return matTrans;
+    }
+    
+    /**
+     * <p>
+     * Create a phase matrix representing a linear translation
+     * operator on homogeneous phase space that only affects the
+     * spatial coordinates.  Multiplication by the 
+     * returned <code>PhaseMatrix</code> object is equivalent to
+     * translation by the given <code>R3</code> argument projected
+     * into phase space.
+     * Specifically, if the argument <b>&Delta;</b> has coordinates
+     * <br/>
+     * <br/>
+     * &nbsp; &nbsp;  <b>&Delta;</b> = (<i>&Delta;x, &Delta;dy, &Delta;dz</i>)<sup><i>T</i></sup>
+     * <br/>
+     * <br/>
+     * then the returned matrix <b>T</b>(<b>dv</b>) has the form
+     * <pre>
+     * 
+     *          |1 0 0 0 0 0 <i>&Delta;x</i>|
+     *          |0 1 0 0 0 0 0 |
+     *  <b>T</b>(<b>dv</b>) = |0 0 1 0 0 0 <i>&Delta;y</i>|
+     *          |0 0 0 1 0 0 0 |
+     *          |0 0 0 0 1 0 <i>&Delta;z</i>|
+     *          |0 0 0 0 0 1 0 |
+     *          |0 0 0 0 0 0  1|
+     * </pre>
+     * which is the translation operator in phase space restricted to the
+     * spatial coordinates.
+     * </p>
+     * <p>
+     * See <code>{@link PhaseMatrix#translation(PhaseVector)}</code> for further
+     * discussion of translation operators and their representation by 
+     * homogeneous phase-space matrices.
+     * </p>
+     *
+     * @param vecDispl      the spatial displacement vector <b>&Delta;</b>
+     * 
+     * @return              the translation operator matrix representation <b>T</b>(<b>&Delta;</b>)
+     *
+     * @author Christopher K. Allen
+     * @since  Aug 25, 2011
+     * 
+     * @see PhaseMatrix#translation(PhaseVector)
+     */
+    public static PhaseMatrix   spatialTranslation(R3 vecDispl) {
+        
+        PhaseMatrix     matTrans = PhaseMatrix.identity();
+        
+        matTrans.setElem(PhaseMatrix.IND_X,  PhaseMatrix.IND_HOM, vecDispl.getx());
+        matTrans.setElem(PhaseMatrix.IND_XP, PhaseMatrix.IND_HOM, 0);
+        matTrans.setElem(PhaseMatrix.IND_Y,  PhaseMatrix.IND_HOM, vecDispl.gety());
+        matTrans.setElem(PhaseMatrix.IND_YP, PhaseMatrix.IND_HOM, 0);
+        matTrans.setElem(PhaseMatrix.IND_Z,  PhaseMatrix.IND_HOM, vecDispl.getz());
+        matTrans.setElem(PhaseMatrix.IND_ZP, PhaseMatrix.IND_HOM, 0);
         
         return matTrans;
     }
@@ -768,7 +833,9 @@ public class PhaseMatrix implements IArchive, java.io.Serializable {
     }
     
     /**
-     *  Nondestructive Matrix-Vector multiplication.
+     * Non-destructive Matrix-Vector multiplication.
+     *  
+     * @param vec   right-hand argument of the matrix-vector product 
      *
      *  @return     this*vec
      */
@@ -1033,8 +1100,14 @@ public class PhaseMatrix implements IArchive, java.io.Serializable {
     
     
     
+    /*
+     * Debugging
+     */
+    
     /**
      *  Testing Driver
+     *  
+     * @param arrArgs   command line arguments 
      */
     public static void main(String arrArgs[])   {
         PrintWriter     os = new PrintWriter(System.out);

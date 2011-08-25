@@ -64,6 +64,8 @@ public class R3 implements java.io.Serializable {
      * where x, y, z are floating point representations.
      *
      * @param  strTokens   six-token string representing values phase coordinates
+     * 
+     * @return             3-vector built from the given string representation 
      *
      * @exception  IllegalArgumentException    wrong number of tokens in argument (must be 6)
      * @exception  NumberFormatException       bad numeric value, unparseable
@@ -193,6 +195,8 @@ public class R3 implements java.io.Serializable {
      * 
      * @param i     element index 0<=i<=2
      * @param val   new element value
+     * 
+     * @throws ArrayIndexOutOfBoundsException   the index <var>i</var> was greater than 2 
      */
     public void set(int i, double val)  throws ArrayIndexOutOfBoundsException {
         
@@ -218,38 +222,52 @@ public class R3 implements java.io.Serializable {
     
     /**
      *  Set first coordinate value.
+     *  
+     * @param x1    first coordinate of 3-vector
      */
     public void set1(double x1)  { this.x1 = x1; }
     
     /**
      *  Set second coordinate value.
+     *  
+     * @param x2    second coordinate of 3-vector 
      */
     public void set2(double x2)  { this.x2 = x2; }
     
     /**
      *  Set third coordinate value.
+     *  
+     * @param x3    third coordinate of 3-vector 
      */
     public void set3(double x3)  { this.x3 = x3; }
     
 
     /**
      *  Set first coordinate value.
+     *  
+     *  @param  x   first coordinate of 3-vector
      */
     public void setx(double x)  { this.x1 = x; }
     
     /**
      *  Set second coordinate value.
+     *  
+     *  @param  y   second coordinate of 3-vector
      */
     public void sety(double y)  { this.x2 = y; }
     
     /**
      *  Set third coordinate value.
+     *  
+     *  @param  z   first coordinate of 3-vector
      */
     public void setz(double z)  { this.x3 = z; }
     
     
     /**
      *  Set all coordinates to value
+     *  
+     *  @param  s   new value of all vector coordinates
      */
     public void set(double s)   { this.x1 = this.x2 = this.x3 = s; };
     
@@ -261,8 +279,9 @@ public class R3 implements java.io.Serializable {
 	
 	
 	/**
-	 * Get the values as an array over the modes.
-	 * @return the values as an array.
+	 * Get all the vector values as a 3-array.
+	 * 
+	 * @return     the array {<i>x</i><sub>1</sub>, <i>x</i><sub>2</sub>, <i>x</i><sub>3</sub>}.
 	 */
 	public double[] toArray() {
 		return new double[] { x1, x2, x3 };
@@ -291,16 +310,22 @@ public class R3 implements java.io.Serializable {
     
     /**
      *  Return first coordinate value.
+     *  
+     * @return  the first vector coordinate 
      */
     public double get1() { return x1; }
     
     /**
      *  Return second coordinate value.
+     *  
+     *  @return the second coordinate vector
      */
     public double get2() { return x2; }
     
     /**
      *  Return third coordinate value.
+     *  
+     *  @return the third coordinate vector
      */
     public double get3() { return x3; }
     
@@ -308,16 +333,22 @@ public class R3 implements java.io.Serializable {
     
     /**
      *  Return first coordinate value.
+     *  
+     * @return the first coordinate vector
      */
     public double getx() { return x1; }
     
     /**
      *  Return second coordinate value.
+     *  
+     *  @return the second coordinate vector
      */
     public double gety() { return x2; }
     
     /**
      *  Return third coordinate value.
+     *  
+     *  @return the third coordinate vector
      */
     public double getz() { return x3; }
     
@@ -457,14 +488,29 @@ public class R3 implements java.io.Serializable {
     
     
     /**
-     *  Compute the l2 norm of the vector in R3.
+     *  Compute the <i>l</i><sub>2</sub> norm of the vector in R3.
      *
-     *  @return         l2 norm = (x1^2 + x2^2 + x2^2)^1/2
+     *  @return         <i>l</i><sub>2</sub> norm &equiv; (<i>x</i><sub>1</sub><sup>2</sup> 
+     *                                            + <i>x</i><sub>2</sub><sup>2</sup>  
+     *                                            + <i>x</i><sub>3</sub><sup>2</sup>)<sup>1/2</sup>
      */
     public double norm2() {
         return Math.sqrt(x1*x1 + x2*x2 + x3*x3);
     }
     
+    /**
+     * Returns the vector of squared elements.
+     *
+     * @return  the vector (<i>x</i><sub>1</sub><sup>2</sup>, 
+     *                      <i>x</i><sub>2</sub><sup>2</sup>, 
+     *                      <i>x</i><sub>3</sub><sup>2</sup>) 
+     *
+     * @author Christopher K. Allen
+     * @since  Aug 25, 2011
+     */
+    public R3 squared() { 
+        return new R3(x1*x1, x2*x2, x3*x3);
+    }
     
     
     

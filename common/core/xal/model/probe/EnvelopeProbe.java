@@ -6,7 +6,7 @@
 
 package xal.model.probe;
 
-import xal.tools.beam.CorrelationMatrix;
+import xal.tools.beam.CovarianceMatrix;
 import xal.tools.beam.PhaseMatrix;
 import xal.tools.beam.PhaseVector;
 import xal.tools.beam.Twiss;
@@ -99,7 +99,7 @@ public class EnvelopeProbe extends BunchProbe {
     private PhaseMatrix        matPert;
 
 	/** envelope state */
-	private CorrelationMatrix  matTau;
+	private CovarianceMatrix  matTau;
 
     /** 
      * <p>
@@ -155,7 +155,7 @@ public class EnvelopeProbe extends BunchProbe {
 		this.matResp = PhaseMatrix.identity();
 		this.matRespNoSpaceCharge = PhaseMatrix.identity();
 		this.matPert = PhaseMatrix.identity();
-		this.matTau = CorrelationMatrix.newIdentity();
+		this.matTau = CovarianceMatrix.newIdentity();
 	};
 
 	/**
@@ -190,7 +190,7 @@ public class EnvelopeProbe extends BunchProbe {
     public void initFromTwiss(Twiss[] twiss) {
         this.arrTwiss = twiss;
         PhaseVector pv = getCorrelation().getMean();
-        CorrelationMatrix cMat = CorrelationMatrix.buildCorrelation(twiss[0],
+        CovarianceMatrix cMat = CovarianceMatrix.buildCorrelation(twiss[0],
                 twiss[1], twiss[2], pv);
         this.setCorrelation(cMat);
     }
@@ -250,9 +250,9 @@ public class EnvelopeProbe extends BunchProbe {
 	 * 
 	 * @param matTau  new phase space covariance matrix of this probe
 	 * 
-	 * @see xal.tools.beam.CorrelationMatrix
+	 * @see xal.tools.beam.CovarianceMatrix
 	 */
-	public void setCorrelation(CorrelationMatrix matTau) {
+	public void setCorrelation(CovarianceMatrix matTau) {
 		this.matTau = matTau;
 	};
 
@@ -325,7 +325,7 @@ public class EnvelopeProbe extends BunchProbe {
      * 
      * @return  the 7x7 matrix <z*z^T> in homogeneous coordinates
      */
-    public CorrelationMatrix getCorrelation() {
+    public CovarianceMatrix getCorrelation() {
         return matTau;
     }
 	/**
@@ -423,7 +423,7 @@ public class EnvelopeProbe extends BunchProbe {
      *
      *  @return     <(z-<z>)*(z-<z>)^T> = <z*z^T> - <z>*<z>^T
      */
-    public CorrelationMatrix  phaseCovariance() {
+    public CovarianceMatrix  phaseCovariance() {
         return getCorrelation().computeCovariance();
     }
     
@@ -684,7 +684,7 @@ public class EnvelopeProbe extends BunchProbe {
 
     
     /**
-     * hs new method to update twiss using CorrelationMatrix
+     * hs new method to update twiss using CovarianceMatrix
      * 
      * CKA NOTES:
      * This method is talking the Twiss parameters directly from
@@ -693,7 +693,7 @@ public class EnvelopeProbe extends BunchProbe {
      * @deprecated
      */
     @Deprecated
-    public void updateTwiss(CorrelationMatrix Cor) {
+    public void updateTwiss(CovarianceMatrix Cor) {
         
     	//obsolete Twiss[] twissOld = getTwiss();
     	Twiss[] twissOld = this.getCorrelation().computeTwiss();

@@ -11,22 +11,22 @@
 
 package xal.model.alg;
 
-import xal.tools.beam.CorrelationMatrix;
-import xal.tools.beam.PhaseMap;
-import xal.tools.beam.PhaseMatrix;
-import xal.tools.beam.em.EllipsoidalCharge;
-import xal.tools.math.r3.R3;
-
 import xal.model.IElement;
 import xal.model.IProbe;
 import xal.model.ModelException;
 import xal.model.probe.EnvelopeProbe;
+import xal.tools.beam.CovarianceMatrix;
+import xal.tools.beam.PhaseIndexHom;
+import xal.tools.beam.PhaseMap;
+import xal.tools.beam.PhaseMatrix;
+import xal.tools.beam.em.BeamEllipsoid;
+import xal.tools.math.r3.R3;
 
 
 /**
  * <p>
  * Tracking algorithm for <code>EnvelopeProbe</code>'s.  The <code>EnvelopeProbe</code>'s
- * state, which is a <code>CorrelationMatrix</code> object, is advanced using the linear
+ * state, which is a <code>CovarianceMatrix</code> object, is advanced using the linear
  * dynamics portion of any beamline element (<code>IElement</code> exposing object) transfer
  * map.  The linear portion is represented as a matrix, thus, the state advance is accomplished
  * with a transpose conjugation with this matrix.
@@ -42,7 +42,7 @@ import xal.model.probe.EnvelopeProbe;
  * below.
  * </p>
  * <p>
- * TODO: Replace <code>EllipsoidalCharge</code> with <code>BeamEllipsoid</code>.
+ * Completed: Replace <code>EllipsoidalCharge</code> with <code>BeamEllipsoid</code>.
  * </p>
  * 
  * @see xal.tools.beam.em.BeamEllipsoid
@@ -51,7 +51,6 @@ import xal.model.probe.EnvelopeProbe;
  *
  * @author Christopher K. Allen
  * @author Craig McChesney
- * (cool math stuff by Chris)
  */
 public class Trace3dTracker extends Tracker {
 
@@ -101,6 +100,8 @@ public class Trace3dTracker extends Tracker {
     /**
      * Returns the maximum element subsection length (in meters) that the probe 
      * may be advanced before applying a space charge kick.
+     * 
+     * @return  maximum step size for numerical integration 
      */
     private double getMaxStepSize() {
     	return s_dblMaxStep;
@@ -162,7 +163,7 @@ public class Trace3dTracker extends Tracker {
         // Get initial conditions of probe
         double              gamma = probe.getGamma();
         double              K    = probe.beamPerveance();
-        CorrelationMatrix   chi0 = probe.getCorrelation();
+        CovarianceMatrix   chi0 = probe.getCorrelation();
         
         // Get properties of the element
         double      L    = dblLen;
@@ -178,7 +179,7 @@ public class Trace3dTracker extends Tracker {
         
         
         // Save the new state variables in the probe
-        probe.setCorrelation(new CorrelationMatrix(chi1));
+        probe.setCorrelation(new CovarianceMatrix(chi1));
     };
 
     /** 
@@ -204,24 +205,35 @@ public class Trace3dTracker extends Tracker {
      * 
      *  @author Christopher K. Allen
      */
-    private PhaseMatrix spaceChargeMatrix(double K, double dL, double gamma, CorrelationMatrix matChi)    {
+    private PhaseMatrix spaceChargeMatrix(double K, double dL, double gamma, CovarianceMatrix matChi)    {
         
         // Check for zero-space charge case
         if (K==0.0 || dL==0.0) 
             return PhaseMatrix.identity();
 
         // Build the beam charge density object and compute (de)focusing strengths from space charge
-        EllipsoidalCharge   rho = new EllipsoidalCharge(K, matChi);
+//        EllipsoidalCharge   rho = new EllipsoidalCharge(K, matChi);
+        BeamEllipsoid       rho = new BeamEllipsoid(gamma, matChi);
         
-        R3  vecFocus = rho.compDefocusConstantsAlaTrace3D();
+//        R3  vecFocus = rho.compDefocusConstantsAlaTrace3D();
+        double[] arrFocus = BeamEllipsoid.compDefocusConstantsAlaTrace3D(gamma, rho.get2ndMoments());
+        R3       vecFocus = new R3(arrFocus); 
         
         double kX = (K*dL)/vecFocus.getx();
         double kY = (K*dL)/vecFocus.gety();
         double kZ = (K*dL)/vecFocus.getz();
 
         // Get the beam displacement from the origin and the rotation matrix
-        R3          vecDis = rho.getDisplacement();
-        PhaseMatrix matRot = rho.compPhaseRotation();
+//        R3          vecDis = rho.getDisplacement();
+        PhaseMatrix matDis = rho.getTranslation();
+        R3          vecDis = new R3(
+                matDis.getElem(PhaseIndexHom.X, PhaseIndexHom.HOM),
+                matDis.getElem(PhaseIndexHom.Y, PhaseIndexHom.HOM),
+                matDis.getElem(PhaseIndexHom.Z, PhaseIndexHom.HOM)
+                );
+
+//        PhaseMatrix matRot = rho.compPhaseRotation();
+        PhaseMatrix matRot = rho.getRotation();
         
         // Convert to class BeamEllipsoid
 //        BeamEllipsoid   rho = new BeamEllipsoid(K, matChi);
@@ -279,7 +291,7 @@ public class Trace3dTracker extends Tracker {
 //     * 
 //     *  @author Christopher K. Allen
 //     */
-//    private PhaseMatrix spaceChargeMatrix(double K, double dL, double gamma, CorrelationMatrix matChi)    {
+//    private PhaseMatrix spaceChargeMatrix(double K, double dL, double gamma, CovarianceMatrix matChi)    {
 //        
 //        // Check for zero-space charge case
 //        if (K==0.0 || dL==0.0) 
