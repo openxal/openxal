@@ -19,10 +19,7 @@ import java.util.Set;
  *
  * @author  CKAllen
  * 
- * @deprecated  Deprecated because there is no difference between this and the class
- *              <code>{@link IRule}</code>.
  */
-@Deprecated
 public interface IGenerationRule {
     
     /**
