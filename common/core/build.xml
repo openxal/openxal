@@ -132,6 +132,12 @@
         <delete file="${build.jar.root}/xal-core.jar" quiet="true" />
         <delete file="${build.jar.root}/xal-lib.jar" quiet="true" />
         
+        <subant target="clean">
+            <fileset dir=".">
+                <include name="test/build.xml" />
+            </fileset>
+        </subant>
+        
         <echo message="Core cleaned!" />
     </target>
 	
