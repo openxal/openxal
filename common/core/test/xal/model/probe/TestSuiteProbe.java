@@ -21,6 +21,13 @@ import junit.framework.TestSuite;
  */
 public class TestSuiteProbe {
 
+    /**
+     *
+     * @return  a test suite for probe objects
+     *
+     * @author Christopher K. Allen
+     * @since  Aug 26, 2011
+     */
     public static Test suite() {
         TestSuite suite = new TestSuite("Test suite for gov.sns.xal.model.probe.tests");
         //$JUnit-BEGIN$
