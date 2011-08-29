@@ -13,6 +13,7 @@ import xal.smf.impl.*;
 import xal.smf.impl.qualify.*;
 
 import java.util.*;
+import java.net.URL;
 import org.junit.*;
 
 
@@ -24,7 +25,8 @@ public class TestAcceleratorSeq {
     
     /** Constructor */
     public TestAcceleratorSeq() {
-        DEFAULT_ACCELERATOR = XMLDataManager.loadDefaultAccelerator();
+        final URL opticsURL = getClass().getResource( "/xal/config/main.xal" );
+        DEFAULT_ACCELERATOR = opticsURL != null ? XMLDataManager.getInstance( opticsURL ).getAccelerator() : null;
     }
     
     
