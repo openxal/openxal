@@ -385,18 +385,80 @@ public class AcceleratorSeq extends AcceleratorNode implements DataListener {
     
     
     /** 
+	 * Filter nodes from the source list which can be cast to the specified result class.
+     * @param resultClass filters the returned nodes to those which can be cast to this class
+	 * @param sourceNodes the list of nodes to filter
+	 * @return the list of nodes matching the qualifier criteria
+	 */
+    @SuppressWarnings( "unchecked" )    // we do check the class cast, but the compiler has no way of knowing
+    static public <SourceType extends AcceleratorNode,NodeType extends SourceType> List<NodeType> filterNodesByClass( final Class<NodeType> resultClass, final List<SourceType> sourceNodes ) {
+        final List<NodeType> matchedNodes = new ArrayList<NodeType>();    // returned list
+        
+		for ( final SourceType node : sourceNodes ) {
+            if ( resultClass.isInstance( node ) ) {
+                matchedNodes.add( (NodeType)node );     // the cast is only for compile since generics are stripped at runtime
+            }
+		}
+        
+        return matchedNodes;
+    }
+    
+    
+    /** 
+	 * Filter nodes from the source list using the specified qualifier.
+     * @param resultClass filters the returned nodes to those which can be cast to this class
+	 * @param sourceNodes the list of nodes to filter
+	 * @param qualifier the qualifier used to filter the nodes
+	 * @return the list of nodes matching the qualifier criteria
+	 */
+    @SuppressWarnings( "unchecked" )    // we do check the class cast, but the compiler has no way of knowing
+    static public <SourceType extends AcceleratorNode,NodeType extends SourceType> List<NodeType> getNodesOfClassWithQualifier( final Class<NodeType> resultClass, final List<SourceType> sourceNodes, final TypeQualifier qualifier ) {
+        final List<NodeType> matchedNodes = new ArrayList<NodeType>();    // returned list
+        
+		for ( final SourceType node : sourceNodes ) {
+            if ( resultClass.isInstance( node ) && qualifier.match( node ) ) {
+                matchedNodes.add( (NodeType)node );     // the cast is only for compile since generics are stripped at runtime
+            }
+		}
+        
+        return matchedNodes;
+    }
+    
+    
+    /** 
+	 * Get nodes using the specified qualifier.
+     * @param resultClass filters the returned nodes to those which can be cast to this class
+	 * @param qualifier the qualifier used to filter the nodes
+	 * @return the list of nodes matching the qualifier criteria
+	 */
+    public <SourceType extends AcceleratorNode,NodeType extends SourceType> List<NodeType> getNodesOfClassWithQualifier( final Class<NodeType> resultClass, final TypeQualifier qualifier ) {
+        return getNodesOfClassWithQualifier( resultClass, getNodes(), qualifier );
+    }
+    
+    
+    /** 
+	 * Get nodes of the specified class with the specified status.
+     * @param resultClass filters the returned nodes to those which can be cast to this class
+     * @param statusFilter the status for which to filter nodes
+	 * @return the list of nodes matching the qualifier criteria
+	 */
+    public <SourceType extends AcceleratorNode,NodeType extends SourceType> List<NodeType> getNodesOfClassWithStatus( final Class<NodeType> resultClass, final boolean statusFilter ) {
+        return getNodesOfClassWithQualifier( resultClass, getNodes(), QualifierFactory.getStatusQualifier( statusFilter ) );
+    }
+    
+    
+    /** 
 	 * Filter nodes from the source list using the specified qualifier.
 	 * @param sourceNodes the list of nodes to filter
 	 * @param qualifier the qualifier used to filter the nodes
 	 * @return the list of nodes matching the qualifier criteria
 	 */
-    @SuppressWarnings( "unchecked" )    // we must cast to NodeType, but we can't verify it
-    static public <BaseType extends AcceleratorNode, NodeType extends BaseType> List<NodeType> getNodesWithQualifier( final List<BaseType> sourceNodes, final TypeQualifier qualifier ) {
+    static public <NodeType extends AcceleratorNode> List<NodeType> getNodesWithQualifier( final List<NodeType> sourceNodes, final TypeQualifier qualifier ) {
         final List<NodeType> matchedNodes = new ArrayList<NodeType>();    // returned list
         
-		for ( final BaseType node : sourceNodes ) {
+		for ( final NodeType node : sourceNodes ) {
 			if ( qualifier.match( node ) ) {
-                matchedNodes.add( (NodeType)node );     // warning: there is no way to verify the type at runtime
+                matchedNodes.add( node );
             }
 		}
 		        
@@ -416,67 +478,57 @@ public class AcceleratorSeq extends AcceleratorNode implements DataListener {
 	
     
     /** 
-	 * Shallow fetch of nodes whose type is given by the string.  Only nodes that
-	 * are immediate children of this sequence are filtered.  A node will be considered
-	 * as a match if the specified type matches either the node directly or that of 
-	 * one of the node's superclasses.  For example, a quadrupole would match both
-	 * the "Q" type and the "magnet" type.
+	 * Shallow fetch of nodes whose type is given by the string.  Only nodes that are immediate children of this sequence are filtered.  A node will be considered as a match
+	 * if the specified type matches either the node directly or that of one of the node's superclasses.  For example, a quadrupole would match both the "Q" type and the "magnet" type.
 	 * @param strTypeId type identifier of the nodes to fetch
 	 * @return a list of this sequence's nodes which match the specified type
 	 */
-    public <NodeType extends AcceleratorNode> List<NodeType> getNodesOfType( final String strTypeId )    {
-        return this.<NodeType>getNodesWithQualifier( new KindQualifier( strTypeId ) );
+    public List<AcceleratorNode> getNodesOfType( final String strTypeId )    {
+        return getNodesWithQualifier( new KindQualifier( strTypeId ) );
     }
 	
     
     /** 
-	* Shallow fetch of nodes whose type is given by the string.  Only nodes that
-	* are immediate children of this sequence are filtered.  A node will be considered
-	* as a match if the specified type matches either the node directly or that of 
-	* one of the node's superclasses.  For example, a quadrupole would match both
-	* the "Q" type and the "magnet" type.
+	* Shallow fetch of nodes whose type is given by the string.  Only nodes that are immediate children of this sequence are filtered.  A node will be considered as a match if the specified
+	* type matches either the node directly or that of one of the node's superclasses.  For example, a quadrupole would match both the "Q" type and the "magnet" type.
 	* @param strTypeId type identifier of the nodes to fetch
 	* @param statusFilter the status for which to filter the nodes
 	* @return a list of this sequence's nodes which match the specified type
 	*/
-    public <NodeType extends AcceleratorNode> List<NodeType> getNodesOfType( final String strTypeId, final boolean statusFilter )    {
-        return this.<NodeType>getNodesWithQualifier( new AndTypeQualifier().and( strTypeId ).and( QualifierFactory.getStatusQualifier( statusFilter ) ) );
+    public List<AcceleratorNode> getNodesOfType( final String strTypeId, final boolean statusFilter )    {
+        return getNodesWithQualifier( new AndTypeQualifier().and( strTypeId ).and( QualifierFactory.getStatusQualifier( statusFilter ) ) );
     }
     
     
     /** 
-	 * Shallow fetch of nodes that are matched by the qualifier. Only nodes that
-	 * are immediate children of this sequence are filtered.
+	 * Shallow fetch of nodes that are matched by the qualifier. Only nodes that are immediate children of this sequence are filtered.
 	 * @param qualifier the qualifier used to filter nodes
 	 * @return a list of this sequence's nodes which match the qualifier criteria
 	 */
-    public <NodeType extends AcceleratorNode> List<NodeType> getNodesWithQualifier( final TypeQualifier qualifier ) {
-        return this.<AcceleratorNode,NodeType>getNodesWithQualifier( getNodes(), qualifier );
+    public List<AcceleratorNode> getNodesWithQualifier( final TypeQualifier qualifier ) {
+        return getNodesWithQualifier( getNodes(), qualifier );
     }
         
     
     /** 
-	 * Fetch all nodes whose type is matched through the qualifier and 
-	 * are also contained in this sequence looking deeply through its
-	 * nested child sequences.  This sequence itself is not among the nodes 
-	 * that will be tested against the qualifier.
+	 * Fetch all nodes whose type is matched through the qualifier and are also contained in this sequence looking deeply through its
+	 * nested child sequences.  This sequence itself is not among the nodes that will be tested against the qualifier.
 	 * @param strTypeId the type of node for which we are fetching
 	 * @return the list of all inclusive nodes which match the qualifier criteria
 	 */
-    public <NodeType extends AcceleratorNode> List<NodeType> getAllNodesOfType( final String strTypeId ) {
-        return this.<NodeType>getAllNodesWithQualifier( new KindQualifier( strTypeId ) );
+    public List<AcceleratorNode> getAllNodesOfType( final String strTypeId ) {
+        return getAllNodesWithQualifier( new KindQualifier( strTypeId ) );
     }
         
     
     /** 
-	 * Fetch all nodes whose type is matched through the qualifier and 
-	 * are also contained in this sequence or one of its nested child sequences.
+	 * Fetch all nodes whose type is matched through the qualifier and are also contained in this sequence or one of its nested child sequences.
 	 * This sequence itself is not among the nodes that will be tested against the qualifier.
 	 * @param qualifier the qualifier for filtering the nodes
 	 * @return the list of all inclusive nodes which match the qualifier criteria
 	 */
-    public <NodeType extends AcceleratorNode> List<NodeType> getAllNodesWithQualifier( final TypeQualifier qualifier ) {
-        return this.<AcceleratorNode,NodeType>getNodesWithQualifier( getAllNodes(), qualifier );
+    public List<AcceleratorNode> getAllNodesWithQualifier( final TypeQualifier qualifier ) {
+        return getNodesWithQualifier( getAllNodes(), qualifier );
     }
     
     
@@ -511,8 +563,8 @@ public class AcceleratorSeq extends AcceleratorNode implements DataListener {
 	 * @param qualifier the qualifier for filtering the nodes
 	 * @return the list of all inclusive nodes which match the qualifier criteria
 	 */
-    public <NodeType extends AcceleratorNode> List<NodeType> getAllInclusiveNodesWithQualifier( final TypeQualifier qualifier ) {
-        return this.<AcceleratorNode,NodeType>getNodesWithQualifier( getAllInclusiveNodes(), qualifier );
+    public List<AcceleratorNode> getAllInclusiveNodesWithQualifier( final TypeQualifier qualifier ) {
+        return getNodesWithQualifier( getAllInclusiveNodes(), qualifier );
     }
     
     

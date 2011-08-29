@@ -53,7 +53,7 @@ public class TestAcceleratorSeq {
     /** test fetching nodes by qualifier using a strong typing during the fetch */
     public void testNodeFetchingByStrongType() {
         final AcceleratorSeq ring = DEFAULT_ACCELERATOR.findSequence( "Ring" );
-        final List<BPM> nodes = ring.<BPM>getNodesOfType( "BPM" );
+        final List<BPM> nodes = ring.getNodesOfClassWithStatus( BPM.class, true );
         Assert.assertTrue( nodes.size() > 0 );
         for ( final BPM node : nodes ) {
             Assert.assertTrue( node instanceof BPM );
