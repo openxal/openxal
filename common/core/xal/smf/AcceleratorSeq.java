@@ -406,7 +406,7 @@ public class AcceleratorSeq extends AcceleratorNode implements DataListener {
     
     /** 
 	 * Filter nodes from the source list using the specified qualifier.
-     * @param resultClass filters the returned nodes to those which can be cast to this class
+     * @param resultClass filters the returned nodes to those which can be cast to this class (assumes AcceleratorNode if null)
 	 * @param sourceNodes the list of nodes to filter
 	 * @param qualifier the qualifier used to filter the nodes
 	 * @return the list of nodes matching the qualifier criteria
@@ -415,11 +415,21 @@ public class AcceleratorSeq extends AcceleratorNode implements DataListener {
     static public <SourceType extends AcceleratorNode,NodeType extends SourceType> List<NodeType> getNodesOfClassWithQualifier( final Class<NodeType> resultClass, final List<SourceType> sourceNodes, final TypeQualifier qualifier ) {
         final List<NodeType> matchedNodes = new ArrayList<NodeType>();    // returned list
         
-		for ( final SourceType node : sourceNodes ) {
-            if ( resultClass.isInstance( node ) && qualifier.match( node ) ) {
-                matchedNodes.add( (NodeType)node );     // the cast is only for compile since generics are stripped at runtime
+        // for performance reasons, we handle NodeType for Accelerator nodes separately from AcceleratorNode subclasses
+        if ( resultClass == null || AcceleratorNode.class.equals( resultClass ) ) {     // we don't need to check the node class since the source nodes are all accelerator nodes
+            for ( final SourceType node : sourceNodes ) {
+                if ( qualifier.match( node ) ) {
+                    matchedNodes.add( (NodeType)node );     // the cast is only for compile since generics are stripped at runtime
+                }
             }
-		}
+        }
+        else {
+            for ( final SourceType node : sourceNodes ) {
+                if ( resultClass.isInstance( node ) && qualifier.match( node ) ) {
+                    matchedNodes.add( (NodeType)node );     // the cast is only for compile since generics are stripped at runtime
+                }
+            }
+        }
         
         return matchedNodes;
     }
@@ -454,15 +464,7 @@ public class AcceleratorSeq extends AcceleratorNode implements DataListener {
 	 * @return the list of nodes matching the qualifier criteria
 	 */
     static public <NodeType extends AcceleratorNode> List<NodeType> getNodesWithQualifier( final List<NodeType> sourceNodes, final TypeQualifier qualifier ) {
-        final List<NodeType> matchedNodes = new ArrayList<NodeType>();    // returned list
-        
-		for ( final NodeType node : sourceNodes ) {
-			if ( qualifier.match( node ) ) {
-                matchedNodes.add( node );
-            }
-		}
-		        
-        return matchedNodes;        
+        return getNodesOfClassWithQualifier( null, sourceNodes, qualifier );
     }
     
     
