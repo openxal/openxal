@@ -720,9 +720,14 @@ abstract public class Application {
             final URL sourceURL = document.getSource();
             if ( sourceURL != null ) {
                 final File sourceFile = new File( sourceURL.toURI() );
-                final File defaultFolder = _defaultFolderAccessory.getDefaultFolder();
-                final FileVersionInfo info = new FileVersionInfo( sourceFile, defaultFolder, now );
-                return info;
+                final File defaultFolder = getDefaultDocumentFolder();
+                if ( defaultFolder != null ) {
+                    return new FileVersionInfo( sourceFile, defaultFolder, now );
+                }
+                else {
+                    System.err.println( "Can't get source version info because no default documents directory has been specified!" );
+                    return null;
+                }
             }
             else {
                 return null;

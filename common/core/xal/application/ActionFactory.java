@@ -223,7 +223,7 @@ public class ActionFactory {
         // listen if the document has changes to be saved
         document.addXalDocumentListener( new XalDocumentListener() {
             public void titleChanged( final XalDocument document, final String newTitle ) {
-                action.setEnabled( document.getSource() != null );
+                action.setEnabled( document.getSource() != null && Application.getApp().getDefaultDocumentFolder() != null );
             }
             
             public void hasChangesChanged( final XalDocument document, final boolean newHasChangesStatus ) {}
@@ -231,7 +231,8 @@ public class ActionFactory {
             public void documentHasClosed( final XalDocument document ) {}
         });
         
-        action.setEnabled( document.getSource() != null );
+        // to open a version for a document, the document must have a backing source and the default document folder must be set since versions are stored under that tree
+        action.setEnabled( document.getSource() != null && Application.getApp().getDefaultDocumentFolder() != null );
         
         return action;
     }
