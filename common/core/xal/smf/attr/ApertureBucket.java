@@ -14,6 +14,9 @@ package xal.smf.attr;
 
 
 public class ApertureBucket extends AttributeBucket {
+    /** ID for serializable version */
+    private static final long serialVersionUID = 1L;
+    
 
     
     /*

@@ -13,6 +13,9 @@ package xal.tools.math.r3;
  * @author  Christopher Allen
  */
 public class Sphere implements java.io.Serializable {
+    /** ID for serializable version */
+    private static final long serialVersionUID = 1L;
+    
     
     /** center of the sphere */
     private R3      m_ptOrg;

@@ -10,6 +10,9 @@ import java.util.Date;
  * @author klotz
  */
 public class MPXStopWatch extends Date {
+    /** ID for serializable version */
+    private static final long serialVersionUID = 1L;
+    
 	private static MPXStopWatch instance = null;
 	private static boolean beQuiet = false;
 

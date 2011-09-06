@@ -214,6 +214,9 @@ public abstract class AttributeBucket implements java.io.Serializable, DataListe
     
     
     public static class MissingAttributeException extends RuntimeException {
+        /** ID for serializable version */
+        private static final long serialVersionUID = 1L;
+        
         public MissingAttributeException(String message) {
             super(message);
         }

@@ -18,7 +18,10 @@ package xal.smf.attr;
 
 
 public class RfGapBucket extends AttributeBucket {
+    /** ID for serializable version */
+    private static final long serialVersionUID = 1L;
     
+
     
     /*
      *  Constants

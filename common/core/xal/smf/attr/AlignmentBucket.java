@@ -16,6 +16,8 @@ package xal.smf.attr;
 
 
 public class AlignmentBucket extends AttributeBucket  {
+    /** ID for serializable version */
+    private static final long serialVersionUID = 1L;
     
     
     /*

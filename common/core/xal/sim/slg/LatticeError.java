@@ -10,6 +10,9 @@ package xal.sim.slg;
  * @author  wdklotz
  */
 public class LatticeError extends java.lang.Exception {   
+    /** ID for serializable version */
+    private static final long serialVersionUID = 1L;
+    
     private String message="Lattice-Error";
     
     /**

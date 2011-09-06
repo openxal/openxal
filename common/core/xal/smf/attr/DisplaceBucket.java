@@ -13,7 +13,10 @@ package xal.smf.attr;
 
 
 public class DisplaceBucket extends AttributeBucket  {
+    /** ID for serializable version */
+    private static final long serialVersionUID = 1L;
     
+
     
     /*
      *  Constants

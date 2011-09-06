@@ -18,6 +18,10 @@ package xal.tools.beam;
  */
 @Deprecated
 public class TranslationMatrix extends PhaseMatrix {
+    /** ID for serializable version */
+    private static final long serialVersionUID = 1L;
+    
+    
 	public TranslationMatrix(double dx, double dy, double dz) {
 		super();
 		//make the identity matrix

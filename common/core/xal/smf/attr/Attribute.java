@@ -20,6 +20,9 @@ import xal.tools.StringJoiner;
 
 
 public final class Attribute extends Object implements java.io.Serializable {
+    /** ID for serializable version */
+    private static final long serialVersionUID = 1L;
+    
 
     
     /*

@@ -10,7 +10,10 @@ package xal.smf.proxy;
  * @author Craig McChesney
  */
 public class ProxyException extends Exception {
-	
+    /** ID for serializable version */
+    private static final long serialVersionUID = 1L;
+    
+
 	
 	// Constructors ============================================================
 	

@@ -20,7 +20,9 @@ import Jama.Matrix;
  */
 
 public class Vector extends Jama.Matrix implements java.io.Serializable {
-
+    /** ID for serializable version */
+    private static final long serialVersionUID = 1L;
+    
     
     /** Generate a vector with uniformly distributed random elements
      *  @param  nSize   size of created vector

@@ -34,7 +34,10 @@ package xal.tools.math.r3;
  * @author  Christopher Allen
  */
 public class PoissonGrid extends Grid implements java.io.Serializable {
+    /** ID for serializable version */
+    private static final long serialVersionUID = 1L;
     
+
 
     /*
      *  Grid Point Type Enumerations
@@ -67,6 +70,9 @@ public class PoissonGrid extends Grid implements java.io.Serializable {
      *  Contains the values stored at grid points
      */
     private class Point extends Grid.GridPt implements java.io.Serializable {
+        /** ID for serializable version */
+        private static final long serialVersionUID = 1L;
+        
         
         /** grid point type */
         int     type = PT_UNDEFINED;
@@ -82,6 +88,8 @@ public class PoissonGrid extends Grid implements java.io.Serializable {
      *  Grid cell data structure
      */
     private class Cell extends Grid.GridCell implements java.io.Serializable {
+        /** ID for serializable version */
+        private static final long serialVersionUID = 1L;        
     }
     
 

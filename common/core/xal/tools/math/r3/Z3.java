@@ -14,6 +14,8 @@ package xal.tools.math.r3;
  * @author  Christopher Allen
  */
 public class Z3 implements java.io.Serializable {
+    /** ID for serializable version */
+    private static final long serialVersionUID = 1L;
     
     
     /*

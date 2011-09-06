@@ -19,6 +19,9 @@ package xal.smf.attr;
  * @author  Paul C. Chu
  */
 public class MagnetBucket extends AttributeBucket {
+    /** ID for serializable version */
+    private static final long serialVersionUID = 1L;
+    
 
     
     /*

@@ -11,7 +11,10 @@ package xal.smf.attr;
 
 
 public class TwissBucket extends AttributeBucket {
+    /** ID for serializable version */
+    private static final long serialVersionUID = 1L;
     
+
     
     
     /*
