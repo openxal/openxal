@@ -479,14 +479,16 @@ public class RingBPM extends BPM {
 			case 2:
 				start = getStage1Len() + 2;
 				end = start + getStage2Len() - 1;
+                break;  // tap added this break statement as it seems to be the intent
 			case 3:
 				start = getStage1Len() + getStage2Len() + 5;
 				end = start + getStage3Len() - 1;
+                break;  // tap added this break statement as it seems to be the intent
 			case 4:
 				start = getStage1Len() + getStage2Len() + getStage3Len() + 8;
 				end = start + getStage4Len() - 1;
-			case 1:
-			default:
+                break;  // tap added this break statement as it seems to be the intent
+			default:    // implicitly includes stage 1
 				end = getStage1Len() - 1;
 		}
 		
@@ -525,13 +527,15 @@ public class RingBPM extends BPM {
 			case 2:
 				start = getStage1Len() + 2;
 				end = start + getStage2Len() - 1;
+                break;  // tap added this break statement as it seems to be the intent
 			case 3:
 				start = getStage1Len() + getStage2Len() + 5;
 				end = start + getStage3Len() - 1;
+                break;  // tap added this break statement as it seems to be the intent
 			case 4:
 				start = getStage1Len() + getStage2Len() + getStage3Len() + 8;
 				end = start + getStage4Len() - 1;
-			case 1:
+                break;  // tap added this break statement as it seems to be the intent
 			default:
 				end = getStage1Len() - 1;
 		}

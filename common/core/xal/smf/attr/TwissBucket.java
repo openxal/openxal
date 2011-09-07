@@ -259,53 +259,53 @@ public class TwissBucket extends AttributeBucket {
     
     public void  setCentroid(int iPlane, double dblVal)  {
         switch (iPlane) { 
-            case iXPlane: setX(dblVal); 
-            case iYPlane: setY(dblVal);
+            case iXPlane: setX(dblVal); break;  // tap added this break statement as it seems to be the intent
+            case iYPlane: setY(dblVal); break;  // tap added this break statement as it seems to be the intent
         }
     };    
 
     public void setAlpha(int iPlane, double dblVal) { 
         switch (iPlane) {
-            case iXPlane: setAlphaX(dblVal);
-            case iYPlane: setAlphaY(dblVal);
-            case iZPlane: setAlphaZ(dblVal);
+            case iXPlane: setAlphaX(dblVal); break;  // tap added this break statement as it seems to be the intent
+            case iYPlane: setAlphaY(dblVal); break;  // tap added this break statement as it seems to be the intent
+            case iZPlane: setAlphaZ(dblVal); break;  // tap added this break statement as it seems to be the intent
         }
     };
         
     public void setBeta(int iPlane, double dblVal)  { 
         switch (iPlane) {
-            case iXPlane: setBetaX(dblVal);
-            case iYPlane: setBetaY(dblVal);
-            case iZPlane: setBetaZ(dblVal);
+            case iXPlane: setBetaX(dblVal); break;  // tap added this break statement as it seems to be the intent
+            case iYPlane: setBetaY(dblVal); break;  // tap added this break statement as it seems to be the intent
+            case iZPlane: setBetaZ(dblVal); break;  // tap added this break statement as it seems to be the intent
         }
     };
 
     public void setEmit(int iPlane, double dblVal)  { 
         switch (iPlane) {
-            case iXPlane: setEmitX(dblVal);
-            case iYPlane: setEmitY(dblVal);
-            case iZPlane: setEmitZ(dblVal);
+            case iXPlane: setEmitX(dblVal); break;  // tap added this break statement as it seems to be the intent
+            case iYPlane: setEmitY(dblVal); break;  // tap added this break statement as it seems to be the intent
+            case iZPlane: setEmitZ(dblVal); break;  // tap added this break statement as it seems to be the intent
         }
     };
     
     public void setEta(int iPlane, double dblVal) {
         switch (iPlane) {
-	    case iXPlane: setEtaX(dblVal);
-	    case iYPlane: setEtaY(dblVal);
+	    case iXPlane: setEtaX(dblVal); break;  // tap added this break statement as it seems to be the intent
+	    case iYPlane: setEtaY(dblVal); break;  // tap added this break statement as it seems to be the intent
         }
     };
 
     public void getEtaP(int iPlane, double dblVal) {
         switch (iPlane) {
-	    case iXPlane: setEtaPx(dblVal);
-	    case iYPlane: setEtaPy(dblVal);
+	    case iXPlane: setEtaPx(dblVal); break;  // tap added this break statement as it seems to be the intent
+	    case iYPlane: setEtaPy(dblVal); break;  // tap added this break statement as it seems to be the intent
         }
     };
 
     public void getMu(int iPlane, double dblVal) {
         switch (iPlane) {
-	    case iXPlane: setMuX(dblVal);
-	    case iYPlane: setMuY(dblVal);
+	    case iXPlane: setMuX(dblVal); break;  // tap added this break statement as it seems to be the intent
+	    case iYPlane: setMuY(dblVal); break;  // tap added this break statement as it seems to be the intent
         }
     };
 

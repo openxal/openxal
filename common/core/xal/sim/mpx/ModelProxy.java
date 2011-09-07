@@ -151,8 +151,10 @@ public class ModelProxy {
 					break;
 				case ModelProxyListener.RESULTS_CHANGED :
 					mpxLs[i].modelResultsChanged(this);
+                    break;  // tap added this break statement as it seems to be the intent
 				case ModelProxyListener.MISSING_INPUT :
 					mpxLs[i].missingInputToRunModel(this);
+                    break;  // tap added this break statement as it seems to be the intent
 				default :
 					break;
 			}
