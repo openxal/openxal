@@ -99,7 +99,7 @@ public class CorrelationStack {
      */
     public List<Correlation> popAllCorrelations() {
         synchronized( buffer ) {
-            final List<Correlation> correlations = new ArrayList( buffer );
+            final List<Correlation> correlations = new ArrayList<Correlation>( buffer );
             buffer.removeAll( correlations );
 			
 			return correlations;

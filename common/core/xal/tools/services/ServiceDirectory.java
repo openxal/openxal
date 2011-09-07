@@ -149,7 +149,7 @@ final public class ServiceDirectory {
 	 * @return a new service reference for successful registration and null otherwise.
      */
     public ServiceRef registerService( final String serviceType, final String name, final Object provider ) throws ServiceException {
-		return registerService( serviceType, name, provider, new Hashtable() );
+		return registerService( serviceType, name, provider, new Hashtable<String,String>() );
     }
 	
     
@@ -161,7 +161,7 @@ final public class ServiceDirectory {
 	 * @param properties Properties.
 	 * @return a new service reference for successful registration and null otherwise.
      */
-    public ServiceRef registerService( final String serviceType, final String serviceName, final Object provider, final Hashtable properties ) {
+    public ServiceRef registerService( final String serviceType, final String serviceName, final Object provider, final Hashtable<String,String> properties ) {
 		properties.put( ServiceRef.serviceKey, serviceName );
 		
 		try {

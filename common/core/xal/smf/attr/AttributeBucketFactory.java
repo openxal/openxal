@@ -17,8 +17,8 @@ public final class AttributeBucketFactory {
      *  Global Attributes
      */
     
-    static private HashSet                  m_setBuckTypes;     // set of all AttributeBucket derived classes
-    static private HashMap                  m_mapCtors;         // map of node type ids to constructors
+    static private HashSet<AttributeBucket>                  m_setBuckTypes;     // set of all AttributeBucket derived classes
+    static private HashMap<String,Constructor>                  m_mapCtors;         // map of node type ids to constructors
     
     
     
@@ -106,7 +106,7 @@ public final class AttributeBucketFactory {
 
     private static void registerClass(AttributeBucket objInst)   {
         if (m_setBuckTypes == null)
-            m_setBuckTypes = new HashSet();
+            m_setBuckTypes = new HashSet<AttributeBucket>();
 
         m_setBuckTypes.add(objInst);
     };
@@ -115,7 +115,7 @@ public final class AttributeBucketFactory {
     private static void buildCtorMap()  {
         Iterator              iter;     // nodetype set iterator
 
-        m_mapCtors = new HashMap();
+        m_mapCtors = new HashMap<String,Constructor>();
         
         iter = m_setBuckTypes.iterator();
         while (iter.hasNext())  {
@@ -123,9 +123,9 @@ public final class AttributeBucketFactory {
             try {
                 
                 AttributeBucket bucType = (AttributeBucket)iter.next();
-                Class           clsType = bucType.getClass();
+                Class<?>           clsType = bucType.getClass();
                 String          strType = bucType.getType();
-                Constructor     ctrType = clsType.getConstructor(new Class[] { });
+                Constructor<?>     ctrType = clsType.getConstructor(new Class[] { });
 
                 m_mapCtors.put(strType, ctrType);
                 

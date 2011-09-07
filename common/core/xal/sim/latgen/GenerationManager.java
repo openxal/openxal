@@ -29,7 +29,7 @@ public class GenerationManager {
      */
     
     /** Map of available IGenerationRule's */
-    private HashMap     m_mapRules;
+    private HashMap<Integer,List<IGenerationRule>>     m_mapRules;
     
     
     
@@ -51,10 +51,10 @@ public class GenerationManager {
         Integer intNodes = new Integer(cntNodes);
         
         if (!m_mapRules.containsKey(intNodes))   {
-            LinkedList lstNew = new LinkedList();
+            LinkedList<IGenerationRule> lstNew = new LinkedList<IGenerationRule>();
             m_mapRules.put(intNodes, lstNew);
         }
-        List lst = (List)m_mapRules.get(intNodes);
+        List<IGenerationRule> lst = m_mapRules.get(intNodes);
         lst.add(rule);
     };
     
@@ -69,7 +69,7 @@ public class GenerationManager {
         if (!m_mapRules.containsKey(intNodes))
             throw new GenerationException("GenerationManager::getRule() - no rule available for node type set.");
         
-        List lstRules = (List)m_mapRules.get(intNodes);
+        List<IGenerationRule> lstRules = m_mapRules.get(intNodes);
         
         return selectRule(setNodeTypes, lstRules);
     };
@@ -79,10 +79,11 @@ public class GenerationManager {
      *  Selects a valid IGenerationRule object from a list of rules corresponding to the same number 
      *  of node types.
      */
-    private IGenerationRule selectRule(Set setNodeTypes, List lstRules) throws GenerationException   {
-        Iterator iterRules = lstRules.iterator();
+    @SuppressWarnings( "unchecked" )    // it isn't clear what the types are supposed to be especially since the GenerationManager doesn't seem to be used anywhere (just instantiated)
+    private IGenerationRule selectRule(Set setNodeTypes, List<IGenerationRule> lstRules) throws GenerationException   {
+        Iterator<IGenerationRule> iterRules = lstRules.iterator();
         while (iterRules.hasNext()) {
-            IGenerationRule rule = (IGenerationRule)iterRules.next();
+            IGenerationRule rule = iterRules.next();
             Set setNodeComb = rule.getNodeSet();
             if (setNodeComb.containsAll(setNodeTypes))
                 return rule;

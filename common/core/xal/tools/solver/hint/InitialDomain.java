@@ -26,7 +26,7 @@ public class InitialDomain extends DomainHint {
 	protected InitialDomain( final VariableDomain domain ) {
 		super( "Initial Domain" );
 		_defaultDomain = domain;
-		_variableDomains = new HashMap();
+		_variableDomains = new HashMap<Variable, VariableDomain>();
 	}
 	
 	

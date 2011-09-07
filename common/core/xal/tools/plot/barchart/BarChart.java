@@ -24,7 +24,7 @@ public class BarChart {
 
   private BarColumnColor bcColor = new BarColumnColor();
 
-  private Vector barColumns = new java.util.Vector();
+  private Vector<BarColumn> barColumns = new java.util.Vector<BarColumn>();
 
   private TitledBorder border = null;
 
@@ -38,7 +38,7 @@ public class BarChart {
   private volatile int width = 3;
 
   //internal curve data
-  private Vector cvV = new Vector();
+  private Vector<CurveData> cvV = new Vector<CurveData>();
 
   private String emptyStr = new String(" ");
 
@@ -71,9 +71,9 @@ public class BarChart {
 
           int nClmns = barColumns.size();
           int nMaxLines = 0;
-          java.util.Iterator itr = barColumns.iterator();
+          java.util.Iterator<BarColumn> itr = barColumns.iterator();
           while (itr.hasNext()) {
-            BarColumn bc = (BarColumn) itr.next();
+            BarColumn bc = itr.next();
             if (nMaxLines < bc.size()) {
               nMaxLines = bc.size();
             }
@@ -238,7 +238,7 @@ public class BarChart {
   public void updateChart() {
     double val_min = Double.MAX_VALUE;
     double val_max = -Double.MAX_VALUE;
-    Vector cdV = new Vector();
+    Vector<CurveData> cdV = new Vector<CurveData>();
 
     int maxMarkLength = 1;
     int nClmns = barColumns.size();
@@ -290,7 +290,7 @@ public class BarChart {
     }
 
     //make line from
-    CurveData cd = (CurveData) cvV.get(0);
+    CurveData cd = cvV.get(0);
     if (nClmns > 0) {
       cd.clear();
       cd.addPoint(0., 0.);
@@ -312,7 +312,7 @@ public class BarChart {
         for (int j = 0; j < nL; j++) {
           if (bc.show(j)) {
 	    if(cvCount < cvV.size()){
-            cd = (CurveData) cvV.get(cvCount);
+            cd = cvV.get(cvCount);
 	    }
 	    else{
 	      cd = new CurveData();
@@ -406,7 +406,7 @@ public class BarChart {
 
     int nCol = 15;
     final int nLines = 5;
-    Vector barsV = new Vector();
+    Vector<BarColumn> barsV = new Vector<BarColumn>();
     for (int i = 0; i < nCol; i++) {
       BarColumn bc =
         new BarColumn() {

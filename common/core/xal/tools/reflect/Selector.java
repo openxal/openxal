@@ -29,19 +29,19 @@ public class Selector {
     protected Class[] _argumentTypes;   /** argument classes */
 
     /** Constructor for a method that takes no arguments */
-    public Selector(String methodName) {
+    public Selector( final String methodName ) {
         this(methodName, new Class[0]);
     }
     
     
     /** Constructor for a method that takes a single argument */
-    public Selector(String methodName, Class argumentType) {
+    public Selector( final String methodName, final Class argumentType ) {
         this(methodName, new Class[]{argumentType});
     }
 
     
     /** Constructor for a method that takes multiple arguments */
-    public Selector(String methodName, Class[] argumentTypes) {
+    public Selector( final String methodName, final Class[] argumentTypes ) {
         _methodName = methodName;
         int argumentCount = argumentTypes.length;
         if ( argumentTypes.length > 0 ) {
@@ -61,7 +61,7 @@ public class Selector {
     
     
     /** Test if the target will respond to the selector */
-    public boolean invokesOn(Object target) {
+    public boolean invokesOn( final Object target ) {
         try {
             methodForObject(target);
             return true;
@@ -73,9 +73,9 @@ public class Selector {
     
     
     /** Test if the target will respond to the selector */
-    public boolean invokesStaticOn(Class targetClass) {
+    public <TargetType> boolean invokesStaticOn( final Class<TargetType> targetClass ) {
         try {
-            Method method = methodForClass(targetClass);
+            Method method = methodForClass( targetClass );
             return Modifier.isStatic( method.getModifiers() );
         }
         catch(Exception excpt) {
@@ -124,24 +124,24 @@ public class Selector {
     
     
     /** Invoke the appropriate static method on the specified class */
-    public Object invokeStatic(Class targetClass) throws IllegalArgumentException, AccessException, InvocationException, MethodNotFoundException {        
-        return invokeStatic(targetClass, new Object[0]);
+    public <TargetType> Object invokeStatic( final Class<TargetType> targetClass ) throws IllegalArgumentException, AccessException, InvocationException, MethodNotFoundException {        
+        return invokeStatic( targetClass, new Object[0] );
     }
     
     
     /** Invoke the appropriate static method on the specified class */
-    public Object invokeStatic(Class targetClass, Object argument) throws IllegalArgumentException, AccessException, InvocationException, MethodNotFoundException {        
-        return invokeStatic(targetClass, new Object[]{argument});
+    public <TargetType> Object invokeStatic( final Class<TargetType> targetClass, final Object argument ) throws IllegalArgumentException, AccessException, InvocationException, MethodNotFoundException {        
+        return invokeStatic( targetClass, new Object[]{argument} );
     }
     
     
     /** Invoke the appropriate static method on the specified class */
-    public Object invokeStatic(Class targetClass, Object[] arguments) throws IllegalArgumentException, AccessException, InvocationException, MethodNotFoundException {
-        Method method = methodForClass(targetClass);
+    public <TargetType> Object invokeStatic( final Class<TargetType> targetClass, final Object[] arguments ) throws IllegalArgumentException, AccessException, InvocationException, MethodNotFoundException {
+        Method method = methodForClass( targetClass );
         Object result = null;
         
         try {
-            result = method.invoke(null, arguments);
+            result = method.invoke( null, arguments );
         }
         catch(IllegalAccessException excpt) {
             throw new AccessException(excpt);
@@ -180,7 +180,7 @@ public class Selector {
      * Invoke a multi-argument method on the target.  This is a convenience static
      * method that creates an internal Selector on the fly.
      */
-    static public Object invokeMethod(String methodName, Class[] argumentTypes, Object target, Object[] arguments)
+    static public Object invokeMethod( final String methodName, final Class[] argumentTypes, final Object target, final Object[] arguments )
     throws IllegalArgumentException, AccessException, InvocationException, MethodNotFoundException {
         Selector selector = new Selector(methodName, argumentTypes);
         return selector.invoke(target, arguments);
@@ -188,35 +188,33 @@ public class Selector {
     
     
     /** Invoke the static method with the specified arguments on the specified target class */
-    static public Object invokeStaticMethod(String methodName, Class[] argumentTypes, Class targetClass, Object[] arguments) 
+    static public <TargetType> Object invokeStaticMethod( final String methodName, final Class[] argumentTypes, final Class<TargetType> targetClass, final Object[] arguments ) 
     throws IllegalArgumentException, AccessException, InvocationException, MethodNotFoundException {
         Selector selector = new Selector(methodName, argumentTypes);
-        return selector.invokeStatic(targetClass, arguments);
+        return selector.invokeStatic( targetClass, arguments );
     }
     
     
     /** Invoke the static method with the specified arguments on the specified target class */
-    static public Object invokeStaticMethod(String methodName, Class argumentType, Class targetClass, Object argument) 
-    throws IllegalArgumentException, AccessException, InvocationException, MethodNotFoundException {
-        Selector selector = new Selector(methodName, argumentType);
-        return selector.invokeStatic(targetClass, argument);
+    static public <TargetType> Object invokeStaticMethod( final String methodName, final Class argumentType, final Class<TargetType> targetClass, final Object argument ) throws IllegalArgumentException, AccessException, InvocationException, MethodNotFoundException {
+        final Selector selector = new Selector( methodName, argumentType );
+        return selector.invokeStatic( targetClass, argument );
     }
     
     
     /** Invoke the static method with the specified arguments on the specified target class */
-    static public Object invokeStaticMethod(String methodName, Class targetClass) 
-    throws IllegalArgumentException, AccessException, InvocationException, MethodNotFoundException {
-        Selector selector = new Selector(methodName);
-        return selector.invokeStatic(targetClass);
+    static public <TargetType> Object invokeStaticMethod( final String methodName, final Class<TargetType> targetClass ) throws IllegalArgumentException, AccessException, InvocationException, MethodNotFoundException {
+        final Selector selector = new Selector( methodName );
+        return selector.invokeStatic( targetClass );
     }
     
     
     /** Return a Method instance that binds the selector to a target class. */
-    public Method methodForClass(Class targetClass) throws MethodNotFoundException, SecurityException {
+    public <TargetType> Method methodForClass( final Class<TargetType> targetClass ) throws MethodNotFoundException, SecurityException {
         Method method;
         
         try {
-            method = targetClass.getMethod(_methodName, _argumentTypes);
+            method = targetClass.getMethod( _methodName, _argumentTypes );
         }
         catch(NoSuchMethodException except) {
             String message = "Method: \"" + _methodName + "\" with parameters: " +

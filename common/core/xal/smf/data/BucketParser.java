@@ -20,11 +20,11 @@ import xal.tools.data.*;
  * @author  tap
  */
 public class BucketParser implements DataListener {
-    private Map bucketTable;
+    private Map<String,AttributeBucket> bucketTable;
 
     /** Creates new BucketParser */
     public BucketParser() {
-        bucketTable = new HashMap();
+        bucketTable = new HashMap<String,AttributeBucket>();
     }
     
     

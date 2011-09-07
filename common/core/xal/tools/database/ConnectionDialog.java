@@ -176,7 +176,7 @@ public class ConnectionDialog extends JDialog {
 		_configuration = configuration;
 		String selectedServerItem = null;
 		if ( configuration != null ) {
-			final List<String> servers = new Vector( configuration.getServerNames() );
+			final List<String> servers = new Vector<String>( configuration.getServerNames() );
 			servers.add( 0, "Custom" );
 			SERVER_MENU.removeAllItems();
 			for ( final String server : servers ) {

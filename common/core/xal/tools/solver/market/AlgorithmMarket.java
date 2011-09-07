@@ -71,7 +71,7 @@ public class AlgorithmMarket implements AlgorithmScheduleListener, SolutionJudge
 	 * @param pool the pool of algorithms
 	 */
 	public AlgorithmMarket( final AlgorithmPool pool ) {
-		this( pool, Collections.EMPTY_LIST );
+		this( pool, Collections.<AlgorithmStrategy>emptyList() );
 		
 		final Iterator algorithmIter = pool.getAlgorithms().iterator();
 		while ( algorithmIter.hasNext() ) {
@@ -96,7 +96,7 @@ public class AlgorithmMarket implements AlgorithmScheduleListener, SolutionJudge
 	 * @param algorithm  the only algorithm to use which also implies the single algorithm strategy
 	 */
 	public AlgorithmMarket( final SearchAlgorithm algorithm ) {
-		this( new AlgorithmPool( algorithm ), Collections.EMPTY_LIST );
+		this( new AlgorithmPool( algorithm ), Collections.<AlgorithmStrategy>emptyList() );
 		setAlgorithmStrategy( new SingleAlgorithmStrategy( _algorithmPool, algorithm ) );
 	}
 

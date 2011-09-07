@@ -21,7 +21,7 @@ import org.w3c.dom.*;
 public class Lattice implements Cloneable {
 	private String name; 																//the lattice name
 	private double base;															//the base position
-	private ArrayList elements; 													//the element list
+	private List<Element> elements; 													//the element list
 	private PrintStream cout; 														//console
 	public static final double EPS; 											//precision limit for position calculations
 	private boolean debug; 														// print flag
@@ -42,7 +42,7 @@ public class Lattice implements Cloneable {
 	public Lattice(String name, double base) {
 		this.name= name;
 		this.base= base;
-		elements= new ArrayList();
+		elements= new ArrayList<Element>();
 		cout= System.out;
 		debug= false;
 		verbose= false;
@@ -84,7 +84,7 @@ public class Lattice implements Cloneable {
 		try {
 			Lattice cloned= (Lattice) super.clone();
 			//make a deep copy of the list of lattice elements
-			cloned.elements= new ArrayList();
+			cloned.elements= new ArrayList<Element>();
 			LatticeIterator liter= latticeIterator();
 			while (liter.hasNext()) {
 				Element elm= (Element) liter.next().clone();
@@ -114,7 +114,7 @@ public class Lattice implements Cloneable {
 		part3.elements.addAll(last,part2.elements);  //add all from 2nd part
 		last = part3.len()-1;
 		//update position of END marker
-		((Element)part3.elements.get(last)).setPosition(part1.getLength()+part2.getLength());
+		(part3.elements.get(last)).setPosition(part1.getLength()+part2.getLength());
 		return part3;
 	}
 
@@ -129,7 +129,7 @@ public class Lattice implements Cloneable {
 	 * Get element at 'index' from lattice.
 	 */
 	public Element getItem(int index) {
-		return (Element) elements.get(index);
+		return elements.get(index);
 	}
 
 	/**
@@ -194,7 +194,7 @@ public class Lattice implements Cloneable {
 			cout.println(
 				"append: " + element.getName() + ", pos= " + element.getPosition() + ", len= " + element.getLength());
 		}
-		Element lattice_end= (Element) elements.remove(len() - 1);
+		Element lattice_end= elements.remove(len() - 1);
 		Element last= getItem(len() - 1);
 		double start_pos= element.getStartPosition();
 		//is there space to fill up with drift space ?
@@ -269,7 +269,7 @@ public class Lattice implements Cloneable {
 		int between= after - 1;
 		//        if(false) {cout.println("(before,between,after)=("+before+", "+between+", "+after+")");}
 		Element to_split= (Element) elements.remove(between);
-		ArrayList to_insert= to_split.split(element);
+		ArrayList<Element> to_insert= to_split.split(element);
 		elements.addAll(between, to_insert);
 		if (debug & verbose) {
 			cout.println(
@@ -280,9 +280,9 @@ public class Lattice implements Cloneable {
 					+ ", l= "
 					+ to_split.getLength()
 					+ " with");
-			ListIterator lit= to_insert.listIterator();
+			ListIterator<Element> lit= to_insert.listIterator();
 			while (lit.hasNext()) {
-				Element el= (Element) lit.next();
+				Element el= lit.next();
 				cout.println("\t" + el.getName() + ", p= " + el.getPosition() + ", l= " + el.getLength());
 			}
 		}
@@ -314,7 +314,7 @@ public class Lattice implements Cloneable {
 	 * Join neighbouring drift spaces into a single one.
 	 */
 	public void joinDrifts() {
-		ArrayList lattice= new ArrayList();
+		ArrayList<Element> lattice= new ArrayList<Element>();
 		//pass1
 		Element end= getItem(len() - 1);
 		int ix= 0;

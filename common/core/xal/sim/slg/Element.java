@@ -240,11 +240,11 @@ public abstract class Element implements VisitorListener, Cloneable {
         this.len=length;
     }
     
-    protected ArrayList split(Element insert) throws LatticeError {
+    protected ArrayList<Element> split(Element insert) throws LatticeError {
         //The slice (and replace) operation. The thick element (this)
         //is cut into an upstream and a downstream part and then element 'insert'
         //is inserted (with limiting markers) into the lattice.
-        ArrayList retval=new ArrayList();
+        final ArrayList<Element> retval=new ArrayList<Element>();
         Object[] args=new Object[3];
         Element upstream=null, downstream=null;
         

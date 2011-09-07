@@ -21,7 +21,7 @@ import javax.swing.table.AbstractTableModel;
 
 
 /** Table Model whose records are arbitrary objects and whose values are obtained through the Key-Value adaptor */
-public class KeyValueTableModel<T> extends AbstractTableModel {
+public class KeyValueTableModel<RecordType> extends AbstractTableModel {
     /** serialization ID */
     private static final long serialVersionUID = 1L;
     
@@ -32,7 +32,7 @@ public class KeyValueTableModel<T> extends AbstractTableModel {
 	final private MessageCenter MESSAGE_CENTER;
 	
 	/** proxy for events to be forwarded to registered listeners */
-	final private KeyValueRecordListener<KeyValueTableModel,T> EVENT_PROXY;
+	final private KeyValueRecordListener<KeyValueTableModel,RecordType> EVENT_PROXY;
 	
 	/** key value adaptor to get the value from a record (row) for the specified key path (column property) */
 	final protected KeyValueAdaptor KEY_VALUE_ADAPTOR;
@@ -44,10 +44,10 @@ public class KeyValueTableModel<T> extends AbstractTableModel {
 	final private Map<String,Class> COLUMN_CLASS_MAP;
 	
 	/** column edit indicator map keyed by key path */
-	final private Map<String,ColumnEditRule> COLUMN_EDITABLE_MAP;
+	final private Map<String,ColumnEditRule<RecordType>> COLUMN_EDITABLE_MAP;
 	
 	/** list of records to display (one record for each table row) */
-	private List<T> _records;
+	private List<RecordType> _records;
 	
 	/** array of key paths to get the data to display (one key path for each column) */
 	private String[] _keyPaths;
@@ -64,7 +64,8 @@ public class KeyValueTableModel<T> extends AbstractTableModel {
 	 * @param records the list of objects (one record for each table row)
 	 * @param keyPaths specifies the array of key paths to get the data to display (one key path for each column)
 	 */
-	public KeyValueTableModel( final List<T> records, final String ... keyPaths ) {
+    @SuppressWarnings( "unchecked" )    // Java static fields don't support generics so we can't use them to strongly type KeyValueRecordListener.class
+	public KeyValueTableModel( final List<RecordType> records, final String ... keyPaths ) {
 		MESSAGE_CENTER = new MessageCenter( "KeyValueTableModel" );
 		EVENT_PROXY = MESSAGE_CENTER.registerSource( this, KeyValueRecordListener.class );
 		
@@ -72,7 +73,7 @@ public class KeyValueTableModel<T> extends AbstractTableModel {
 		
 		COLUMN_NAME_MAP = new HashMap<String,String>();
 		COLUMN_CLASS_MAP = new HashMap<String,Class>();
-		COLUMN_EDITABLE_MAP = new HashMap<String,ColumnEditRule>();
+		COLUMN_EDITABLE_MAP = new HashMap<String,ColumnEditRule<RecordType>>();
 		
 		setDataSource( records, keyPaths );
 	}
@@ -80,7 +81,7 @@ public class KeyValueTableModel<T> extends AbstractTableModel {
 	
 	/** Empty Constructor */
 	public KeyValueTableModel() {
-		this( new java.util.ArrayList<T>(), "toString" );
+		this( new java.util.ArrayList<RecordType>(), "toString" );
 	}
 	
 	
@@ -88,7 +89,7 @@ public class KeyValueTableModel<T> extends AbstractTableModel {
 	 * Add the specified listener as a receiver of record modification events from this instance.
 	 * @param listener object to receive events
 	 */
-	public void addKeyValueRecordListener( final KeyValueRecordListener<KeyValueTableModel,T> listener ) {
+	public void addKeyValueRecordListener( final KeyValueRecordListener<KeyValueTableModel,RecordType> listener ) {
 		MESSAGE_CENTER.registerTarget( listener, this, KeyValueRecordListener.class );
 	}
 	
@@ -97,7 +98,7 @@ public class KeyValueTableModel<T> extends AbstractTableModel {
 	 * Remove the specified listener from receiving record modification events from this instance.
 	 * @param listener object to be removed from receiving events
 	 */
-	public void removeKeyValueRecordListener( final KeyValueRecordListener<KeyValueTableModel,T> listener ) {
+	public void removeKeyValueRecordListener( final KeyValueRecordListener<KeyValueTableModel,RecordType> listener ) {
 		MESSAGE_CENTER.removeTarget( listener, this, KeyValueRecordListener.class );
 	}
 	
@@ -107,14 +108,14 @@ public class KeyValueTableModel<T> extends AbstractTableModel {
 	 * @param records the list of objects (one record for each table row)
 	 * @param keyPaths specifies the array of key paths to get the data to display (one key path for each column)
 	 */
-	public void setDataSource( final List<T> records, final String ... keyPaths ) {
+	public void setDataSource( final List<RecordType> records, final String ... keyPaths ) {
 		setRecords( records );
 		setKeyPaths( keyPaths );
 	}
 	
 	
 	/** Get the record at the specified row index */
-	public T getRecordAtRow( final int row ) {
+	public RecordType getRecordAtRow( final int row ) {
 		return _records.get( row );
 	}
 	
@@ -123,7 +124,7 @@ public class KeyValueTableModel<T> extends AbstractTableModel {
 	 * Set the records (row)
 	 * @param records the list of objects (one record for each table row)
 	 */
-	public void setRecords( final List<T> records ) {
+	public void setRecords( final List<RecordType> records ) {
 		_records = records;
 		fireTableDataChanged();
 	}
@@ -230,7 +231,7 @@ public class KeyValueTableModel<T> extends AbstractTableModel {
 	
 	/** Set whether the column associated with the specified key path is editable */
 	public void setColumnEditable( final String keyPath, final boolean allowsEdit ) {
-		COLUMN_EDITABLE_MAP.put( keyPath, new SimpleColumnEditRule( allowsEdit ) );
+		COLUMN_EDITABLE_MAP.put( keyPath, new SimpleColumnEditRule<RecordType>( allowsEdit ) );
 		fireTableDataChanged();
 	}
 	
@@ -252,7 +253,7 @@ public class KeyValueTableModel<T> extends AbstractTableModel {
 	 * @param negation indicates whether to reverse the boolean indication of the edit column
 	 */
 	public void setColumnEditKeyPath( final String columnKeyPath, final String editKeyPath, final boolean negation ) {
-		COLUMN_EDITABLE_MAP.put( columnKeyPath, new KeyedColumnEditRule( editKeyPath, negation ) );
+		COLUMN_EDITABLE_MAP.put( columnKeyPath, new KeyedColumnEditRule<RecordType>( editKeyPath, negation ) );
 		fireTableDataChanged();
 	}
 	
@@ -260,10 +261,10 @@ public class KeyValueTableModel<T> extends AbstractTableModel {
 	/** Determine whether the cell is editable */
 	public boolean isCellEditable( final int row, final int column ) {
 		final String keyPath = _keyPaths[column];
-		final ColumnEditRule editRule = COLUMN_EDITABLE_MAP.get( keyPath );
-		final List<T> records = _records;
+		final ColumnEditRule<RecordType> editRule = COLUMN_EDITABLE_MAP.get( keyPath );
+		final List<RecordType> records = _records;
 		if ( row < records.size() ) {
-			final T record = records.get( row );
+			final RecordType record = records.get( row );
 			return editRule != null && editRule.isCellEditable( record );
 		}
 		else {
@@ -274,9 +275,9 @@ public class KeyValueTableModel<T> extends AbstractTableModel {
 	
 	/** get the value for the specified cell */
 	public Object getValueAt( final int row, final int column ) {
-		final List<T> records = _records;
+		final List<RecordType> records = _records;
 		if ( row < records.size() ) {
-			final T record = records.get( row );
+			final RecordType record = records.get( row );
 			return KEY_VALUE_ADAPTOR.valueForKeyPath( record, _keyPaths[column] );
 		}
 		else {
@@ -287,9 +288,9 @@ public class KeyValueTableModel<T> extends AbstractTableModel {
 	
 	/** Set the value of the specified cell */
 	public void setValueAt( final Object value, final int row, final int column ) {
-		final List<T> records = _records;
+		final List<RecordType> records = _records;
 		if ( row < records.size() ) {
-			final T record = records.get( row );
+			final RecordType record = records.get( row );
 			KEY_VALUE_ADAPTOR.setValueForKeyPath( record, _keyPaths[column], value );
 			EVENT_PROXY.recordModified( this, record, _keyPaths[column], value );
 		}
@@ -298,15 +299,15 @@ public class KeyValueTableModel<T> extends AbstractTableModel {
 	
 	
 	/** rule to determine whether a column's cell is editable for a specific record */
-	private interface ColumnEditRule<T> {
+	private interface ColumnEditRule<RecordType> {
 		/** indicates whether the column's cell for the specified record is editable */
-		public boolean isCellEditable( final T record );
+		public boolean isCellEditable( final RecordType record );
 	}
 	
 	
 	
 	/** rule to determine whether a column's cells are editable regardless of the record */
-	private class SimpleColumnEditRule<T> implements ColumnEditRule<T> {
+	private class SimpleColumnEditRule<RecordType> implements ColumnEditRule<RecordType> {
 		/** indicates whether the column's cells are editable */
 		final private boolean EDITABLE;
 		
@@ -316,7 +317,7 @@ public class KeyValueTableModel<T> extends AbstractTableModel {
 		}
 		
 		/** indicates whether the column's cell for the specified record is editable */
-		public boolean isCellEditable( final T record ) {
+		public boolean isCellEditable( final RecordType record ) {
 			return EDITABLE;
 		}
 	}
@@ -324,7 +325,7 @@ public class KeyValueTableModel<T> extends AbstractTableModel {
 	
 	
 	/** rule to determine whether a column's cells are editable based on a specified keyed value of the record */
-	private class KeyedColumnEditRule<T> implements ColumnEditRule<T> {
+	private class KeyedColumnEditRule<RecordType> implements ColumnEditRule<RecordType> {
 		/** record key whose corresponding value determines whether a cell is editable */
 		final private String EDIT_KEYPATH;
 		
@@ -338,7 +339,7 @@ public class KeyValueTableModel<T> extends AbstractTableModel {
 		}
 		
 		/** indicates whether the column's cell for the specified record is editable */
-		public boolean isCellEditable( final T record ) {
+		public boolean isCellEditable( final RecordType record ) {
 			try {
 				final Object value = KEY_VALUE_ADAPTOR.valueForKeyPath( record, EDIT_KEYPATH );
 				return value != null && value instanceof Boolean ? NEGATION ^ ((Boolean)value).booleanValue() : false;

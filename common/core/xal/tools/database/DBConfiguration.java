@@ -71,7 +71,7 @@ public class DBConfiguration {
 	/** get an alpha-numerically ordered list of account names */
 	public List<String> getAccountNames() {
 		final Set<String> nameSet = ACCOUNTS.keySet();
-		final List<String> names = new ArrayList( nameSet );
+		final List<String> names = new ArrayList<String>( nameSet );
 		Collections.sort( names );
 		return names;
 	}
@@ -80,7 +80,7 @@ public class DBConfiguration {
 	/** get an alpha-numerically ordered list of server names */
 	public List<String> getServerNames() {
 		final Set<String> nameSet = SERVERS.keySet();
-		final List<String> names = new ArrayList( nameSet );
+		final List<String> names = new ArrayList<String>( nameSet );
 		Collections.sort( names );
 		return names;
 	}

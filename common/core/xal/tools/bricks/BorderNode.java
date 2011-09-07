@@ -32,6 +32,7 @@ public class BorderNode extends BeanNode<Border> {
 	public static String DATA_LABEL = "BorderNode";
 	
 	/** Primary Constructor */
+    @SuppressWarnings( "unchecked" )    // nothing we can do to type BorderNode any tighter without introducing a type on BorderNode
 	public BorderNode( final BorderProxy borderProxy, final Map<String,Object> beanSettings, final String tag ) {
 		super( borderProxy, beanSettings, tag );		
 	}

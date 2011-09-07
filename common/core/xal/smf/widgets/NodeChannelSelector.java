@@ -23,7 +23,7 @@ import java.util.Collections;
 /** display a view that allows users to select channels associtiated with nodes */
 public class NodeChannelSelector extends KeyValueRecordSelector<NodeChannelRef> {
 	/** Primary Constructor */
-	protected NodeChannelSelector( final KeyValueFilteredTableModel tableModel, final JFrame owner, final String title ) {
+	protected NodeChannelSelector( final KeyValueFilteredTableModel<NodeChannelRef> tableModel, final JFrame owner, final String title ) {
 		super( tableModel, owner, title, "Channel Filter" );
 	}
 	
@@ -35,7 +35,7 @@ public class NodeChannelSelector extends KeyValueRecordSelector<NodeChannelRef> 
 	 * @param title the title of the dialog window
 	 */
 	static public NodeChannelSelector getInstance( final List<NodeChannelRef> channelRefs, final JFrame owner, final String title ) {
-		final KeyValueFilteredTableModel tableModel = new KeyValueFilteredTableModel( channelRefs, "node.id", "node.class.simpleName", "handle" );
+		final KeyValueFilteredTableModel<NodeChannelRef> tableModel = new KeyValueFilteredTableModel<NodeChannelRef>( channelRefs, "node.id", "node.class.simpleName", "handle" );
 		tableModel.setColumnName( "node.id", "Node" );
 		tableModel.setColumnName( "node.class.simpleName", "Device Type" );
 		tableModel.setColumnName( "handle", "Channel Handle" );

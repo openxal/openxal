@@ -87,8 +87,8 @@ public abstract class ThinElement extends Element {
     /**
      * Return the slim element as a tuple (drift,element,drift).
      */
-    public ArrayList asTuple() {
-        ArrayList retval=new ArrayList();
+    public ArrayList<Element> asTuple() {
+        ArrayList<Element> retval=new ArrayList<Element>();
         retval.add(getUpstreamDrift());
         retval.add(this);
         retval.add(getDownstreamDrift());
@@ -99,8 +99,8 @@ public abstract class ThinElement extends Element {
      * Split the thin element means insert it behind this.
      */
     @Override
-    public ArrayList split(Element insert) {
-        ArrayList retval=new ArrayList();
+    public ArrayList<Element> split(Element insert) {
+        ArrayList<Element> retval=new ArrayList<Element>();
         retval.add(this);
         retval.add(insert);
         return retval;

@@ -14,11 +14,11 @@ import java.util.Map;
  *
  * @author  wdklotz
  */
-public class ModelTypeLookUp implements Map {
-    private final static Map map;
+public class ModelTypeLookUp implements Map<String,String> {
+    private final static Map<String,String> map;
     
     static {
-        map=new HashMap();
+        map=new HashMap<String,String>();
         map.put("marker","Marker");
         map.put("pmarker","Marker");
         map.put("VIW", "Marker");
@@ -56,11 +56,11 @@ public class ModelTypeLookUp implements Map {
         return map.containsValue(obj);
     }
     
-    public java.util.Set entrySet() {
+    public java.util.Set<Map.Entry<String,String>> entrySet() {
         return map.entrySet();
     }
     
-    public Object get(Object key) {
+    public String get( final Object key ) {
         return map.get(key);
     }
     
@@ -68,18 +68,18 @@ public class ModelTypeLookUp implements Map {
         return map.isEmpty();
     }
     
-    public java.util.Set keySet() {
+    public java.util.Set<String> keySet() {
         return map.keySet();
     }
     
-    public Object put(Object obj, Object obj1) {
+    public String put(String obj, String obj1) {
         return  null;
     }
     
-    public void putAll(java.util.Map map) {
+    public void putAll(java.util.Map<? extends String,? extends String> map) {
     }
     
-    public Object remove(Object obj) {
+    public String remove(Object obj) {
         return null;
     }
     
@@ -87,12 +87,12 @@ public class ModelTypeLookUp implements Map {
         return map.size();
     }
     
-    public java.util.Collection values() {
+    public java.util.Collection<String> values() {
         return map.values();
     }
     
     public String ValueForKey(String key) {
-        return (String)get(key);
+        return get(key);
     }
     
 }

@@ -39,7 +39,7 @@ public class AcceleratorActionFactory {
             /** MenuListener interface */
             public void menuSelected( final MenuEvent event ) {
                 final Accelerator accelerator = document.getAccelerator();
-                final List<AcceleratorSeq> sequences = accelerator != null ? new ArrayList<AcceleratorSeq>( accelerator.getSequences() ) : Collections.EMPTY_LIST;
+                final List<AcceleratorSeq> sequences = accelerator != null ? new ArrayList<AcceleratorSeq>( accelerator.getSequences() ) : Collections.<AcceleratorSeq>emptyList();
                 
                 final JMenu menu = (JMenu)event.getSource();
                 menu.removeAll();

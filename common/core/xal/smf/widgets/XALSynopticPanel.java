@@ -69,8 +69,8 @@ public class XALSynopticPanel extends JPanel {
 	private double startPosition;
 	private double endPosition;
 	private AcceleratorSeq acceleratorSequence;
-	private ArrayList thick = new ArrayList();
-	private ArrayList thin = new ArrayList();
+	private ArrayList<AcceleratorNode> thick = new ArrayList<AcceleratorNode>();
+	private ArrayList<AcceleratorNode> thin = new ArrayList<AcceleratorNode>();
 	private Insets margin;
 	private String[] labels = new String[0];
 	private double _wrapShift;	// relevant for rings; it specifies the shift in wrap location where negative numbers start
@@ -194,7 +194,7 @@ public class XALSynopticPanel extends JPanel {
 			return;
 		}
 
-		List list = acceleratorSequence.getAllNodes();
+		final List<AcceleratorNode> list = acceleratorSequence.getAllNodes();
 		
 		// set initial size from sequence
 		if (list.size() > 0 && startPosition==endPosition) {
@@ -206,8 +206,8 @@ public class XALSynopticPanel extends JPanel {
 		}
 		
 		
-		ArrayList newThick = new ArrayList(list.size());
-		ArrayList newThin = new ArrayList(list.size());
+		final ArrayList<AcceleratorNode> newThick = new ArrayList<AcceleratorNode>(list.size());
+		final ArrayList<AcceleratorNode> newThin = new ArrayList<AcceleratorNode>(list.size());
 
 		Iterator it = list.iterator();
 

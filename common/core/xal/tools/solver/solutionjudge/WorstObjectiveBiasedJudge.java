@@ -75,7 +75,7 @@ public class WorstObjectiveBiasedJudge extends SolutionJudge {
 	public void judge( final Trial trial ) {
 		final List<Objective> objectives = trial.getProblem().getObjectives();
 		final int numObjectives = objectives.size();
-		final List<Double> satisfactions = new ArrayList( numObjectives );
+		final List<Double> satisfactions = new ArrayList<Double>( numObjectives );
 		
 		// collect the list of each satisfaction
         for ( final Objective objective : objectives ) {

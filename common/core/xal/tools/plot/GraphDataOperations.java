@@ -679,7 +679,7 @@ public class  GraphDataOperations{
     static public Vector getDataInsideRectangle(Vector gdV,
 						double xMin, double xMax, 
 						double yMin, double yMax){
-	Vector rezV = new Vector();
+	Vector<BasicGraphData> rezV = new Vector<BasicGraphData>();
         BasicGraphData gd = null;
         for(int i = 0, n = gdV.size(); i < n; i++){
 	    gd = (BasicGraphData) gdV.get(i);

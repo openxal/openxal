@@ -23,16 +23,16 @@ public class PropertyProxy {
 	
 	// Constructors ============================================================
 	
-	protected PropertyProxy(Class aClass, String accessor) {
+	protected PropertyProxy(Class<?> aClass, String accessor) {
 		initMethod(aClass, accessor);
 	}
 	
-	protected PropertyProxy(Class aClass, String accessor, boolean absFlag) {
+	protected PropertyProxy(Class<?> aClass, String accessor, boolean absFlag) {
 		makePositive = absFlag;
 		initMethod(aClass, accessor);
 	}
 	
-	protected PropertyProxy(Class aClass, String accessor, double scale) {
+	protected PropertyProxy(Class<?> aClass, String accessor, double scale) {
 		scalingFactor = scale;
 		initMethod(aClass, accessor);
 	}
@@ -68,7 +68,7 @@ public class PropertyProxy {
 	
 	// Private Support =========================================================
 	
-	private void initMethod(Class objClass, String methodName) {
+	private void initMethod(Class<?> objClass, String methodName) {
 		Method method = null;
 		try {
 			method = objClass.getMethod(methodName, (Class[])null);

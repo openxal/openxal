@@ -53,7 +53,7 @@ public class RandomAlgorithmStrategy extends AlgorithmStrategy {
 	 * @return      An algorithm run stack representing the proposed runs.
 	 */
 	protected AlgorithmRunStack proposeRuns() {
-		final SearchAlgorithm algorithm = randomAlgorithm( new ArrayList( _pool.getAlgorithms() ) );
+		final SearchAlgorithm algorithm = randomAlgorithm( new ArrayList<SearchAlgorithm>( _pool.getAlgorithms() ) );
 		return new AlgorithmRunStack( new AlgorithmRun( algorithm, this, getRunCount( 25, algorithm ) ) );
 	}
 

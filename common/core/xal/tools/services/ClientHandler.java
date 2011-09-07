@@ -18,15 +18,13 @@ import java.lang.reflect.*;
 
 
 /**
- * ClientHandler handles messages sent to the proxy by forwarding them to 
- * to the service associated with the proxy.
- *
+ * ClientHandler handles messages sent to the proxy by forwarding them to the service associated with the proxy.
  * @author  tap
  */
- class ClientHandler<T> implements InvocationHandler {
+ class ClientHandler<ProxyType> implements InvocationHandler {
     final protected Class PROTOCOL;
     final protected String SERVICE_NAME;
-    final protected T PROXY;
+    final protected ProxyType PROXY;
 //    final protected XmlRpcClient REMOTE_CLIENT;
     
     
@@ -37,11 +35,10 @@ import java.lang.reflect.*;
 	 * @param name  The name of the service.
 	 * @param newProtocol  The interface the service provides.
 	 */
-    public ClientHandler( final String host, final int port, final String name, final Class<T> newProtocol ) {
+    public ClientHandler( final String host, final int port, final String name, final Class<ProxyType> newProtocol ) {
         PROTOCOL = newProtocol;
         SERVICE_NAME = name;
         PROXY = createProxy();
-//		REMOTE_CLIENT = createClient( host, port );
     }
     
     
@@ -87,7 +84,7 @@ import java.lang.reflect.*;
      * Get the proxy that will forward requests to the remote service.
      * @return The proxy that will forward requests to the remote service.
      */
-    public T getProxy() {
+    public ProxyType getProxy() {
         return PROXY;
     }
     
@@ -96,34 +93,13 @@ import java.lang.reflect.*;
 	 * Create the proxy for this handler to message. 
 	 * @return The proxy that will forward requests to the remote service.
 	 */
-    private T createProxy() {
+     @SuppressWarnings( "unchecked" )   // we have not choice but to cast since newProxyInstance does not support generics
+    private ProxyType createProxy() {
 		ClassLoader loader = this.getClass().getClassLoader();
         Class[] protocols = new Class[] {PROTOCOL};
         
-        return (T)Proxy.newProxyInstance( loader, protocols, this );
+        return (ProxyType)Proxy.newProxyInstance( loader, protocols, this );
     }
-	
-	
-	/**
-	 * Create an RPC client
-	 * @param host  The host where the service is running.
-	 * @param port  The port through which the service is provided.
-	 * @return the client
-	 */
-     /*
-	private XmlRpcClient createClient( final String host, final int port ) {
-        try {
-            // need to add code here to lookup the port number
-            return new XmlRpcClient( host, port );
-        }
-        catch( Exception exception ) {
-			Logger.getLogger("global").log( Level.SEVERE, "Error instantiating RPC client for \"" + host + ":" + port + "\"", exception );
-            System.err.println( exception );
-            exception.printStackTrace();
-			return null;
-        }
-	}
-      */
 	
     
     /** 
@@ -137,29 +113,18 @@ import java.lang.reflect.*;
      */
     synchronized public Object invoke( final Object proxy, final Method method, final Object[] args ) throws RemoteMessageException {
         try {
-			Vector params;
+            Vector<Object> params;
 			if ( args != null ) {
-				params = new Vector(args.length);
+				params = new Vector<Object>(args.length);
 				for ( int index = 0 ; index < args.length ; index++ ) {
 					params.add( args[index] );
 				}
 			}
 			else {
-				params = new Vector(0);
+				params = new Vector<Object>(0);
 			}
             
             final String message = SERVICE_NAME + "." + method.getName();
-//            try {
-//				synchronized( REMOTE_CLIENT ) {
-//					return REMOTE_CLIENT.execute( message, params );
-//				}
-//            }
-//            catch(Exception exception) {
-//				final String ERROR_MESSAGE = "Invocation of remote message: \"" + message + "\" failed for client at " + REMOTE_CLIENT.getURL();
-//				Logger.getLogger("global").log( Level.SEVERE, ERROR_MESSAGE, exception );
-//				System.err.println(exception);
-//				throw new RemoteMessageException(exception);
-//            }
             return null;
         }
         catch(IllegalArgumentException exception) {

@@ -44,6 +44,7 @@ public class KeyValueSorting {
 	static public Comparator comparatorForKeyPath( final KeyValueAdaptor adaptor, final String keyPath, final int order ) {
 		return new Comparator() {
 			/** compares the two items for order */
+            @SuppressWarnings( "unchecked" )    // no way to predetermine the value types
 			public int compare( final Object item1, final Object item2 ) {
 				final Comparable value1 = (Comparable)adaptor.valueForKeyPath( item1, keyPath );
 				final Comparable value2 = (Comparable)adaptor.valueForKeyPath( item2, keyPath );
@@ -66,6 +67,7 @@ public class KeyValueSorting {
 	static public Comparator compoundComparator( final Comparator ... comparators ) {
 		return new Comparator() {
 			/** compares the two items for order */
+            @SuppressWarnings( "unchecked" )    // no way to predetermine the item types
 			public int compare( final Object item1, final Object item2 ) {
 				for ( final Comparator comparator : comparators ) {
 					final int ordering = comparator.compare( item1, item2 );

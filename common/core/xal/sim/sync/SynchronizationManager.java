@@ -34,10 +34,10 @@ public class SynchronizationManager {
 	
 	// Class Variables =========================================================
 	
-	private static HashMap nodeSynchronizerMap = new HashMap();
+	private static Map<Class,Synchronizer> nodeSynchronizerMap = new HashMap<Class,Synchronizer>();
 	// key = element class, value = synchronization factory class
 
-	private static ArrayList syncModes = new ArrayList();
+	private static List<String> syncModes = new ArrayList<String>();
 		
 	
 	// Static Initialization ===================================================
@@ -57,17 +57,17 @@ public class SynchronizationManager {
 	
 	// Static Accessors ========================================================
 	
-	public static List syncModes() {
+	public static List<String> syncModes() {
 		return syncModes;
 	}
 	
 	
 	// Instance Variables ======================================================
 
-	private HashMap synchronizedNodeElems = new HashMap();
+	private Map<AcceleratorNode,List<IElement>> synchronizedNodeElems = new HashMap<AcceleratorNode,List<IElement>>();
 	// key = accelerator node, value = list of elements sync'ed to that node
 	
-	private HashMap allNodeElems = new HashMap();
+	private Map<AcceleratorNode,List<IElement>> allNodeElems = new HashMap<AcceleratorNode,List<IElement>>();
 	// a map of all accelerator nodes and a list of the elements corresponding
 	// to them, whether synchronized or not
 	
@@ -205,29 +205,29 @@ public class SynchronizationManager {
 	// Node - Element Mapping ==================================================
 	
 	private void addElementMappedTo(IElement anElem, AcceleratorNode aNode) {
-		List elems = allElementsMappedTo(aNode);
+		List<IElement> elems = allElementsMappedTo(aNode);
 		if (elems == null) {
-			elems = new ArrayList();
+			elems = new ArrayList<IElement>();
 			allNodeElems.put(aNode, elems);
 		}
 		elems.add(anElem);
 	}
 	
-	public List allElementsMappedTo(AcceleratorNode aNode) {
-		return (List) allNodeElems.get(aNode);
+	public List<IElement> allElementsMappedTo(AcceleratorNode aNode) {
+		return allNodeElems.get(aNode);
 	}
 	
 	private void addSynchronizedElementMappedTo(IElement anElem, AcceleratorNode aNode) {
-		List elems = synchronizedElementsMappedTo(aNode);
+		List<IElement> elems = synchronizedElementsMappedTo(aNode);
 		if (elems == null) {
-			elems = new ArrayList();
+			elems = new ArrayList<IElement>();
 			synchronizedNodeElems.put(aNode, elems);
 		}
 		elems.add(anElem);
 	}
 	
-	protected List synchronizedElementsMappedTo(AcceleratorNode aNode) {
-		return (List) synchronizedNodeElems.get(aNode);
+	protected List<IElement> synchronizedElementsMappedTo(AcceleratorNode aNode) {
+		return synchronizedNodeElems.get(aNode);
 	}
 	
 	

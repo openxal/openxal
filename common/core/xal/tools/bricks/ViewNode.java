@@ -36,6 +36,7 @@ public class ViewNode extends BeanNode<Component> implements ViewNodeContainer {
 	
 	
 	/** Primary Constructor */
+    @SuppressWarnings( "unchecked" )    // nothing we can do to type ViewProxy any tighter without typing ViewNode
 	public ViewNode( final ViewProxy viewProxy, final Map<String,Object> beanSettings, final String tag ) {
 		super( viewProxy, beanSettings, tag );
 		
@@ -154,6 +155,7 @@ public class ViewNode extends BeanNode<Component> implements ViewNodeContainer {
 	 * Get the container.
 	 * @return the view as a container
 	 */
+    @SuppressWarnings( "unchecked" )    // can't type this anymore since the ViewNode isn't typed
 	public Container getContainer() {
 		final ViewProxy viewProxy = getViewProxy();
 		return viewProxy.isContainer() ? viewProxy.getContainer( getView() ) : null;
@@ -646,6 +648,7 @@ public class ViewNode extends BeanNode<Component> implements ViewNodeContainer {
 	protected class DropHandler extends DropTargetAdapter {
 		public void dragEnter( final DropTargetDragEvent event ) {}
 		
+        @SuppressWarnings( "unchecked" )    // we have no choice but to cast the transfered data
 		public void drop( final DropTargetDropEvent event ) {
 			try {
 				final List<BeanProxy> beanProxies = (List<BeanProxy>)event.getTransferable().getTransferData( ViewTransferable.VIEW_FLAVOR );

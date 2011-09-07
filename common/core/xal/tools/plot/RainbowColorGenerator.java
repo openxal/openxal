@@ -14,7 +14,7 @@ import java.util.*;
 
 public class RainbowColorGenerator implements ColorGenerator{
 
-    private Vector colorV;
+    private Vector<Color> colorV;
     private int nColorMax;
     private int index;
 
@@ -34,10 +34,10 @@ public class RainbowColorGenerator implements ColorGenerator{
 	Color cl;
 
 	nColorMax = 1000;
-	colorV = new Vector(nColorMax);
+	colorV = new Vector<Color>(nColorMax);
 
 	int nColorMaxInner = 65;
-	Vector colorInnerV = new Vector(nColorMaxInner);
+	Vector<Color> colorInnerV = new Vector<Color>(nColorMaxInner);
 	float xh;
 	for( int i = 0; i < nColorMaxInner; i++){
 	    xh = ((float)(nColorMaxInner - i))/100.0f;

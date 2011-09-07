@@ -21,7 +21,7 @@ import javax.swing.ListSelectionModel.*;
 
 
 /** display a dialog that allows users to select records from a table */
-public class KeyValueRecordSelector<T> {
+public class KeyValueRecordSelector<RecordType> {
 	/** dialog box for channel selection */
 	final private JDialog DIALOG;
 	
@@ -29,14 +29,14 @@ public class KeyValueRecordSelector<T> {
 	final private JTable RECORD_TABLE;
 	
 	/** table model for the records to display */
-	final private KeyValueFilteredTableModel<T> RECORD_TABLE_MODEL;
+	final private KeyValueFilteredTableModel<RecordType> RECORD_TABLE_MODEL;
 	
 	/** indicates whether the user confirmed the selections */
 	private volatile boolean _isConfirmed;
 	
 	
 	/** Primary Constructor */
-	protected KeyValueRecordSelector( final KeyValueFilteredTableModel<T> tableModel, final JFrame owner, final String title, final String filterPrompt ) {
+	protected KeyValueRecordSelector( final KeyValueFilteredTableModel<RecordType> tableModel, final JFrame owner, final String title, final String filterPrompt ) {
 		final URL uiURL = KeyValueRecordSelector.class.getResource( "RecordSelector.bricks" );
 		final WindowReference windowReference = new WindowReference( uiURL, "RecordSelectorDialog", owner, title );
 		DIALOG = (JDialog)windowReference.getWindow();
@@ -66,7 +66,7 @@ public class KeyValueRecordSelector<T> {
 	
 	
 	/** Constructor with default filter prompt */
-	protected KeyValueRecordSelector( final KeyValueFilteredTableModel<T> tableModel, final JFrame owner, final String title ) {
+	protected KeyValueRecordSelector( final KeyValueFilteredTableModel<RecordType> tableModel, final JFrame owner, final String title ) {
 		this( tableModel, owner, title, "Record filter" );
 	}
 	
@@ -77,8 +77,8 @@ public class KeyValueRecordSelector<T> {
 	 * @param owner the window that owns the dialog window
 	 * @param title the title of the dialog window
 	 */
-	static public <T> KeyValueRecordSelector<T> getInstance( final KeyValueFilteredTableModel<T> tableModel, final JFrame owner, final String title ) {
-		return new KeyValueRecordSelector( tableModel, owner, title );
+	static public <RecordType> KeyValueRecordSelector<RecordType> getInstance( final KeyValueFilteredTableModel<RecordType> tableModel, final JFrame owner, final String title ) {
+		return new KeyValueRecordSelector<RecordType>( tableModel, owner, title );
 	}
 	
 	
@@ -89,8 +89,8 @@ public class KeyValueRecordSelector<T> {
 	 * @param title the title of the dialog window
 	 * @param keyPaths are the key paths applied to each record to supply the table's column data
 	 */
-	static public <T> KeyValueRecordSelector<T> getInstance( final List<T> records, final JFrame owner, final String title, final String ... keyPaths ) {
-		return new KeyValueRecordSelector( new KeyValueFilteredTableModel<T>( records, keyPaths ), owner, title );
+	static public <RecordType> KeyValueRecordSelector<RecordType> getInstance( final List<RecordType> records, final JFrame owner, final String title, final String ... keyPaths ) {
+		return new KeyValueRecordSelector<RecordType>( new KeyValueFilteredTableModel<RecordType>( records, keyPaths ), owner, title );
 	}
 	
 	
@@ -101,8 +101,8 @@ public class KeyValueRecordSelector<T> {
 	 * @param title the title of the dialog window
 	 * @param filterPrompt the prompt to appear as a placeholder in the filter field
 	 */
-	static public <T> KeyValueRecordSelector<T> getInstanceWithFilterPrompt( final KeyValueFilteredTableModel<T> tableModel, final JFrame owner, final String title, final String filterPrompt ) {
-		return new KeyValueRecordSelector( tableModel, owner, title, filterPrompt );
+	static public <RecordType> KeyValueRecordSelector<RecordType> getInstanceWithFilterPrompt( final KeyValueFilteredTableModel<RecordType> tableModel, final JFrame owner, final String title, final String filterPrompt ) {
+		return new KeyValueRecordSelector<RecordType>( tableModel, owner, title, filterPrompt );
 	}
 	
 	
@@ -114,8 +114,8 @@ public class KeyValueRecordSelector<T> {
 	 * @param filterPrompt the prompt to appear as a placeholder in the filter field
 	 * @param keyPaths are the key paths applied to each record to supply the table's column data
 	 */
-	static public <T> KeyValueRecordSelector<T> getInstanceWithFilterPrompt( final List<T> records, final JFrame owner, final String title, final String filterPrompt, final String ... keyPaths ) {
-		return new KeyValueRecordSelector( new KeyValueFilteredTableModel<T>( records, keyPaths ), owner, title, filterPrompt );
+	static public <RecordType> KeyValueRecordSelector<RecordType> getInstanceWithFilterPrompt( final List<RecordType> records, final JFrame owner, final String title, final String filterPrompt, final String ... keyPaths ) {
+		return new KeyValueRecordSelector<RecordType>( new KeyValueFilteredTableModel<RecordType>( records, keyPaths ), owner, title, filterPrompt );
 	}
 	
 	
@@ -126,7 +126,7 @@ public class KeyValueRecordSelector<T> {
 	
 	
 	/** get the table model for displaying the records */
-	public KeyValueFilteredTableModel<T> getRecordTableModel() {
+	public KeyValueFilteredTableModel<RecordType> getRecordTableModel() {
 		return RECORD_TABLE_MODEL;
 	}
 	
@@ -135,8 +135,8 @@ public class KeyValueRecordSelector<T> {
 	 * Show the dialog with single record selection allowed and return the selected record if any.
 	 * @return the selected record or null if no record was selected or the dialog was canceled
 	 */
-	public T showSingleSelectionDialog() {
-		final List<T> records = showDialog( ListSelectionModel.SINGLE_SELECTION );
+	public RecordType showSingleSelectionDialog() {
+		final List<RecordType> records = showDialog( ListSelectionModel.SINGLE_SELECTION );
 		return records != null && records.size() > 0 ? records.get( 0 ) : null;
 	}
 	
@@ -145,7 +145,7 @@ public class KeyValueRecordSelector<T> {
 	 * Show the dialog with arbitrary record selection allowed and return a list of selected records. 
 	 * @return the selected records or null if the dialog was canceled
 	 */
-	public List<T> showDialog() {
+	public List<RecordType> showDialog() {
 		return showDialog( ListSelectionModel.MULTIPLE_INTERVAL_SELECTION );
 	}
 	
@@ -155,7 +155,7 @@ public class KeyValueRecordSelector<T> {
 	 * @param selectionMode record selection mode: ListSelectionModel.SINGLE_SELECTION, ListSelectionModel.SINGLE_INTERVAL_SELECTION or ListSelectionModel.MULTIPLE_INTERVAL_SELECTION
 	 * @return the selected records or null if the dialog was canceled
 	 */
-	public List<T> showDialog( final int selectionMode ) {
+	public List<RecordType> showDialog( final int selectionMode ) {
 		_isConfirmed = false;
 		
 		RECORD_TABLE.setSelectionMode( selectionMode );
@@ -175,10 +175,10 @@ public class KeyValueRecordSelector<T> {
 	
 	
 	/** get the list of selected records */
-	protected List<T> getSelectedRecords() {
+	protected List<RecordType> getSelectedRecords() {
 		final RowSorter sorter = RECORD_TABLE.getRowSorter();
 		final int[] selectedRows = RECORD_TABLE.getSelectedRows();
-		final List<T> records = new ArrayList<T>( selectedRows.length );
+		final List<RecordType> records = new ArrayList<RecordType>( selectedRows.length );
 		for ( final int row : selectedRows ) {
 			final int modelRow = sorter.convertRowIndexToModel( row );
 			records.add( RECORD_TABLE_MODEL.getRecordAtRow( modelRow ) );

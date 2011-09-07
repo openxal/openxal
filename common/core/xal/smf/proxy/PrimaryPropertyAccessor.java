@@ -24,10 +24,10 @@ public class PrimaryPropertyAccessor {
 	private static final boolean DEBUG = false;
 	
 	/** map of property accessors keyed by node */
-	private static HashMap nodeAccessorMap = new HashMap();
+	private static Map<Class,PropertyAccessor> nodeAccessorMap = new HashMap<Class,PropertyAccessor>();
 	
 	// key = accelerator node, value = list of inputs for that node
-	private HashMap nodeInputMap = new HashMap();
+	private Map<AcceleratorNode,Map<String,ModelInput>> nodeInputMap = new HashMap<AcceleratorNode,Map<String,ModelInput>>();
 	
 	/** cache of values (excluding model inputs) for node properties keyed by node and the subsequent map is keyed by property to get the value */
 	final private Map<AcceleratorNode, Map<String,Double>> PROPERTY_VALUE_CACHE;
@@ -36,9 +36,9 @@ public class PrimaryPropertyAccessor {
 	// static initializer
 	static {
 		// Accessor Registration
-		registerAccessorInstance(Electromagnet.class, new ElectromagnetPropertyAccessor());
-		registerAccessorInstance(RfGap.class, new RfGapPropertyAccessor());
-		registerAccessorInstance(RfCavity.class, new RfCavityPropertyAccessor());
+		registerAccessorInstance( Electromagnet.class, new ElectromagnetPropertyAccessor() );
+		registerAccessorInstance( RfGap.class, new RfGapPropertyAccessor() );
+		registerAccessorInstance( RfCavity.class, new RfCavityPropertyAccessor() );
 	}
 	
 	
@@ -164,22 +164,21 @@ public class PrimaryPropertyAccessor {
 		return getAccessorFor(aNode) != null;
 	}
 	
-	private static void registerAccessorInstance(Class nodeClass, 
-			PropertyAccessor accessor) {
-		nodeAccessorMap.put(nodeClass, accessor);
+	private static void registerAccessorInstance( final Class nodeClass, final PropertyAccessor accessor ) {
+		nodeAccessorMap.put( nodeClass, accessor );
 	}
 
 
 	// Model Input Data: Node Property Overrides ===============================
 
-	private void addInputOverrides( final AcceleratorNode aNode, final Map valueMap ) {
+	private void addInputOverrides( final AcceleratorNode aNode, final Map<String,Double> valueMap ) {
 		Map inputs = inputsForNode(aNode);
 		if (inputs == null) return;
 		Iterator inputIt = inputs.values().iterator();
 		while (inputIt.hasNext()) {
 			ModelInput input = (ModelInput) inputIt.next();
-			String property = input.getProperty();
-			valueMap.put(property, new Double(input.getDoubleValue()));
+			final String property = input.getProperty();
+			valueMap.put( property, input.getDoubleValue() );
 		}
 	}
 	
@@ -269,14 +268,14 @@ public class PrimaryPropertyAccessor {
 		else return null;
 	}
 	
-	protected void addInput(ModelInput anInput) {
-		AcceleratorNode node = anInput.getAcceleratorNode();
-		Map inputs = inputsForNode(node);
+	protected void addInput( final ModelInput anInput ) {
+		final AcceleratorNode node = anInput.getAcceleratorNode();
+		Map<String,ModelInput> inputs = inputsForNode(node);
 		if (inputs == null) {
-			inputs = new HashMap();
-			nodeInputMap.put(node, inputs);
+			inputs = new HashMap<String,ModelInput>();
+			nodeInputMap.put( node, inputs );
 		}
-		inputs.put(anInput.getProperty(), anInput);		
+		inputs.put( anInput.getProperty(), anInput );		
 	}
 	
 	
@@ -331,8 +330,8 @@ public class PrimaryPropertyAccessor {
 	}
 	
 	
-	private Map inputsForNode(AcceleratorNode aNode) {
-		return (Map) nodeInputMap.get(aNode);
+	private Map<String,ModelInput> inputsForNode( final AcceleratorNode aNode ) {
+		return nodeInputMap.get( aNode );
 	}
 	
 	

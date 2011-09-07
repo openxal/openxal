@@ -22,7 +22,7 @@ public class ElementTypeManager {
     final private static ElementTypeManager DEFAULT_MANAGER;
 
     // instance variables
-    private Map<String,Collection<Class>> _typeTable;
+    private Map<String,Collection<Class<?>>> _typeTable;
     
     
 	// static initializer
@@ -33,7 +33,7 @@ public class ElementTypeManager {
     
     /** Creates new ElementTypeManager */
     public ElementTypeManager() {
-        _typeTable = new Hashtable<String,Collection<Class>>();
+        _typeTable = new Hashtable<String,Collection<Class<?>>>();
     }
     
     
@@ -48,9 +48,9 @@ public class ElementTypeManager {
     /** Register the type to specified class to be of the specified type */
     public void registerType( final Class theClass, final String type ) {
         final String lowerType = type.toLowerCase();
-        Collection<Class> classSet = getClassSet( lowerType );
+        Collection<Class<?>> classSet = getClassSet( lowerType );
         if ( classSet == null ) {
-            classSet = new HashSet<Class>();
+            classSet = new HashSet<Class<?>>();
             _typeTable.put( lowerType, classSet );
         }
         classSet.add( theClass );
@@ -67,9 +67,9 @@ public class ElementTypeManager {
     
     
     /** Check if the class or one of its superclasses is associated with the type. */
-    public boolean match( final Class theClass, final String type ) {
+    public <NodeType> boolean match( final Class<NodeType> theClass, final String type ) {
         final String lowerType = type.toLowerCase();
-        final Collection<Class> classSet = getClassSet( lowerType );
+        final Collection<Class<?>> classSet = getClassSet( lowerType );
         
         if ( classSet == null ) {
             return false;   // no match since no classes registered
@@ -80,7 +80,7 @@ public class ElementTypeManager {
             return true;
         }
 
-        for ( Class regClass : classSet ) {
+        for ( Class<?> regClass : classSet ) {
             if ( regClass.isAssignableFrom( theClass ) ) {
                 return true;    // theClass is a subclass of regClass
             }
@@ -97,7 +97,7 @@ public class ElementTypeManager {
     
     
     /** Get the set of classes associated with the specified type */
-    private Collection<Class> getClassSet( final String type ) {
+    private Collection<Class<?>> getClassSet( final String type ) {
         return _typeTable.get( type );
     }
 }

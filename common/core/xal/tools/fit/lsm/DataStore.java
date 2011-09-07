@@ -10,7 +10,7 @@ import java.util.*;
 public class DataStore {
 
 	private int n_args = 0;
-	private Vector recordV = new Vector();
+	private Vector<double[]> recordV = new Vector<double[]>();
 	private double[] x_tmp_arr = new double[1];
 
 
@@ -65,7 +65,7 @@ public class DataStore {
 			for (int j = 0; j < n_args; j++) {
 				arr[j + 2] = x[i][j];
 			}
-			recordV.add((Object) arr);
+			recordV.add( arr );
 		}
 	}
 
@@ -97,7 +97,7 @@ public class DataStore {
 	 *@return    The y value
 	 */
 	public double getY(int i) {
-		double[] arr = (double[]) recordV.get(i);
+		double[] arr = recordV.get(i);
 		return arr[0];
 	}
 
@@ -109,7 +109,7 @@ public class DataStore {
 	 *@return    The y error value
 	 */
 	public double getErrY(int i) {
-		double[] arr = (double[]) recordV.get(i);
+		double[] arr = recordV.get(i);
 		return arr[1];
 	}
 
@@ -121,7 +121,7 @@ public class DataStore {
 	 *@return    The array with x-values
 	 */
 	public double[] getArrX(int i) {
-		double[] arr = (double[]) recordV.get(i);
+		double[] arr = recordV.get(i);
 		double[] arrX = new double[n_args];
 		System.arraycopy(arr, 2, arrX, 0, n_args);
 		return arrX;
@@ -179,7 +179,7 @@ public class DataStore {
 			for (int j = 0; j < n_args; j++) {
 				arr[j + 2] = x[j];
 			}
-			recordV.add((Object) arr);
+			recordV.add( arr );
 		}
 	}
 

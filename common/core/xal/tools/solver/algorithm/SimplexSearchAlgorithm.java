@@ -244,7 +244,7 @@ class SimplexSearcher {
 	private double sigma = 0.5;
 
 	//vertexes
-	private Vector vertexesV = new Vector();
+	private Vector<Vertex> vertexesV = new Vector<Vertex>();
 	private double[] stepArr = new double[0];
 
 	private double[] coord_r = new double[0];
@@ -347,7 +347,7 @@ class SimplexSearcher {
 		}
 
 		//define steps and cooordinates for first vertex
-		Vertex centerVertex = (Vertex) vertexesV.firstElement();
+		Vertex centerVertex = vertexesV.firstElement();
 		List variables = _problem.getVariables();
 		//use initial delta hint
 		InitialDelta hint = (InitialDelta) _problem.getHint(InitialDelta.TYPE);
@@ -369,11 +369,11 @@ class SimplexSearcher {
 
 		//prepare the coordinates of the others vertexes
 		for (int iv = 1; iv <= nD; iv++) {
-			Vertex vr = (Vertex) vertexesV.get(iv);
+			Vertex vr = vertexesV.get(iv);
 			for (int i = 0; i < nD; i++) {
 				vr.getCoords()[i] = 0.;
 				for (int ivf = 0; ivf < iv; ivf++) {
-					Vertex vrf = (Vertex) vertexesV.get(ivf);
+					Vertex vrf = vertexesV.get(ivf);
 					vr.getCoords()[i] = vr.getCoords()[i] + vrf.getCoords()[i] / iv;
 				}
 			}
@@ -438,7 +438,7 @@ class SimplexSearcher {
 		Collections.sort(vertexesV, comparator);
 
 		//sort simplex, set best solution
-		bestScore = ((Vertex) vertexesV.get(0)).getScore();
+		bestScore = vertexesV.get(0).getScore();
 
 		//Stage 2. Reflect ==============
 		reflectVertex(rho, coord_r);
@@ -452,7 +452,7 @@ class SimplexSearcher {
 		double score_r = vt_r.getScore();
 
 		//if f_r < f(n) i.e. f(n) - it is not last
-		if (score_r < ((Vertex) vertexesV.get(nD - 1)).getScore()) {
+		if (score_r < vertexesV.get(nD - 1).getScore()) {
 			//Stage 3. Expand
 			reflectVertex(rho * chi, coord_e);
 			vt_e.setCoords(coord_e);
@@ -462,7 +462,7 @@ class SimplexSearcher {
 			}
 			double score_e = vt_e.getScore();
 
-			if (score_r < ((Vertex) vertexesV.get(0)).getScore() && score_e <= score_r) {
+			if (score_r < vertexesV.get(0).getScore() && score_e <= score_r) {
 				setLastVertex(coord_e, score_e);
 				//System.out.println("debug  ==Stage 3. Expand coord_e");
 			} else {
@@ -473,7 +473,7 @@ class SimplexSearcher {
 
 			boolean goToShrink = false;
 
-			if (score_r < ((Vertex) vertexesV.get(nD)).getScore()) {
+			if (score_r < vertexesV.get(nD).getScore()) {
 				//Stage 4.a Contract
 				reflectVertex(rho * gamma, coord_oc);
 				vt_oc.setCoords(coord_oc);
@@ -499,7 +499,7 @@ class SimplexSearcher {
 				}
 				double score_ic = vt_ic.getScore();
 
-				if (score_ic < ((Vertex) vertexesV.get(nD)).getScore()) {
+				if (score_ic < vertexesV.get(nD).getScore()) {
 					setLastVertex(coord_ic, score_ic);
 					//System.out.println("debug  ==Stage 4b. Contract");
 				} else {
@@ -521,7 +521,7 @@ class SimplexSearcher {
 
 		//sort simplex, set best solution and coord. steps
 		Collections.sort(vertexesV, comparator);
-		bestScore = ((Vertex) vertexesV.get(0)).getScore();
+		bestScore = vertexesV.get(0).getScore();
 
 		if (shrinkCount > nShrinkMax) {
 			setWantToStop(true);
@@ -577,7 +577,7 @@ class SimplexSearcher {
 	 */
 	private boolean findScores(AlgorithmRun algorithmRun) {
 		for (int iv = 0; iv <= nD; iv++) {
-			Vertex vr = (Vertex) vertexesV.get(iv);
+			Vertex vr = vertexesV.get(iv);
 			if (getWantToStop() || !findScore(vr, algorithmRun)) {
 				return false;
 			}
@@ -596,7 +596,7 @@ class SimplexSearcher {
 	 */
 	private boolean findScores0(AlgorithmRun algorithmRun) {
 		for (int iv = 1; iv <= nD; iv++) {
-			Vertex vr = (Vertex) vertexesV.get(iv);
+			Vertex vr = vertexesV.get(iv);
 			if (getWantToStop() || !findScore(vr, algorithmRun)) {
 				return false;
 			}
@@ -624,9 +624,9 @@ class SimplexSearcher {
 	 *  Description of the Method
 	 */
 	private void shrinkSimplex() {
-		Vertex vr0 = (Vertex) vertexesV.get(0);
+		Vertex vr0 = vertexesV.get(0);
 		for (int iv = 1; iv <= nD; iv++) {
-			Vertex vr = (Vertex) vertexesV.get(iv);
+			Vertex vr = vertexesV.get(iv);
 			for (int i = 0; i < nD; i++) {
 				vr.getCoords()[i] = sigma * vr.getCoords()[i] + (1.0 - sigma) * vr0.getCoords()[i];
 			}
@@ -643,11 +643,11 @@ class SimplexSearcher {
 	 */
 	private void reflectVertex(double coeff, double[] resArr) {
 		double coeff0 = (1.0 + coeff) / nD;
-		Vertex vrN = (Vertex) vertexesV.get(nD);
+		Vertex vrN = vertexesV.get(nD);
 		for (int i = 0; i < nD; i++) {
 			resArr[i] = 0.;
 			for (int iv = 0; iv < nD; iv++) {
-				Vertex vr = (Vertex) vertexesV.get(iv);
+				Vertex vr = vertexesV.get(iv);
 				resArr[i] += coeff0 * vr.getCoords()[i];
 			}
 			resArr[i] -= coeff * vrN.getCoords()[i];
@@ -665,7 +665,7 @@ class SimplexSearcher {
 	 */
 	private void reflectSimplex(double coeff, double[] resArr) {
 		reflectVertex(coeff, resArr);
-		Vertex vrN = (Vertex) vertexesV.get(nD);
+		Vertex vrN = vertexesV.get(nD);
 		for (int i = 0; i < nD; i++) {
 			vrN.getCoords()[i] = resArr[i];
 		}
@@ -679,7 +679,7 @@ class SimplexSearcher {
 	 *@param  score   The new lastVertex value
 	 */
 	private void setLastVertex(double[] resArr, double score) {
-		Vertex vrN = (Vertex) vertexesV.get(nD);
+		Vertex vrN = vertexesV.get(nD);
 		for (int i = 0; i < nD; i++) {
 			vrN.getCoords()[i] = resArr[i];
 		}
@@ -694,7 +694,7 @@ class SimplexSearcher {
 	 *@return         The firstVertexCoords value
 	 */
 	private double getFirstVertexCoords(double[] resArr) {
-		Vertex vrI = (Vertex) vertexesV.get(0);
+		Vertex vrI = vertexesV.get(0);
 		for (int i = 0; i < nD; i++) {
 			resArr[i] = vrI.getCoords()[i];
 		}
@@ -708,7 +708,7 @@ class SimplexSearcher {
 	private void printSimplex() {
 		System.out.println("----simplex----");
 		for (int iv = 0; iv <= nD; iv++) {
-			Vertex vr = (Vertex) vertexesV.get(iv);
+			Vertex vr = vertexesV.get(iv);
 			String str = "n=" + iv + " ";
 			for (int i = 0; i < nD; i++) {
 				str = str + " i=" + i + " coor=" + vr.getCoords()[i] + "  ";
@@ -1004,7 +1004,7 @@ class SimplexSearcher {
 	 *
 	 *@author    shishlo
 	 */
-	class CompareVertex implements Comparator {
+	class CompareVertex implements Comparator<Vertex> {
 
 		/**
 		 *  Compare two vertexes
@@ -1013,11 +1013,11 @@ class SimplexSearcher {
 		 *@param  obj2  The second vertex
 		 *@return       result of comparison
 		 */
-		public int compare(Object obj1, Object obj2) {
-			if ((((Vertex) obj1).getScore()) > (((Vertex) obj2).getScore())) {
+		public int compare( final Vertex obj1, final Vertex obj2 ) {
+			if ( obj1.getScore() > obj2.getScore() ) {
 				return 1;
 			}
-			if ((((Vertex) obj1).getScore()) < (((Vertex) obj2).getScore())) {
+			else if ( obj1.getScore() < obj2.getScore() ) {
 				return -1;
 			}
 			return 0;

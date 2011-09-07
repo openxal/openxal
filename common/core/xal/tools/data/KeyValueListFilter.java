@@ -80,7 +80,7 @@ public class KeyValueListFilter<RecordType> {
 		for ( int index = 0 ; index < count ; index++ ) {
 			final RecordIndex recordIndex = RECORD_INDEXES.get( index );
 			if ( record == recordIndex.getRecord() ) {
-				final RecordIndex newRecordIndex = RecordIndex.getInstance( record, KEY_VALUE_ADAPTOR, matchingKeyPaths );
+				final RecordIndex<RecordType> newRecordIndex = RecordIndex.getInstance( record, KEY_VALUE_ADAPTOR, matchingKeyPaths );
 				RECORD_INDEXES.remove( index );
 				RECORD_INDEXES.add( index, newRecordIndex );
 				return;
@@ -146,7 +146,7 @@ class RecordIndex<RecordType> {
 			final String stringValue = value != null ? value.toString().toLowerCase() : null;
 			if ( stringValue != null ) buffer.append( stringValue );
 		}
-		return new RecordIndex( record, buffer.toString() );
+		return new RecordIndex<RecordType>( record, buffer.toString() );
 	}
 	
 	

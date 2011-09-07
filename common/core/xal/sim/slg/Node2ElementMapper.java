@@ -18,13 +18,13 @@ import xal.smf.*;
  * @author  wdklotz
  */
 public class Node2ElementMapper implements Visitor {
-	private Map node2ElementMap; //dictionary (key,value)=(node,element)
-	private Map id2NodeMap; //dictionary (key,value)=(node ID,node)
+	private Map<AcceleratorNode,Element> node2ElementMap; //dictionary (key,value)=(node,element)
+	private Map<String,AcceleratorNode> id2NodeMap; //dictionary (key,value)=(node ID,node)
 
 	/** Creates a new instance of Node2ElementMapper */
 	Node2ElementMapper() {
-		node2ElementMap= new HashMap();
-		id2NodeMap= new HashMap();
+		node2ElementMap= new HashMap<AcceleratorNode,Element>();
+		id2NodeMap= new HashMap<String,AcceleratorNode>();
 	}
 	/**
 	 * Returns a set view of the mappings contained in this map.  
@@ -42,9 +42,9 @@ public class Node2ElementMapper implements Visitor {
 
 	public String NodeId2ElementId(String nodeId) throws LatticeError {
 		try {
-			Object node= id2NodeMap.get(nodeId);
-			Object element= node2ElementMap.get(node);
-			String elementId= ((Element) element).getName();
+			AcceleratorNode node= id2NodeMap.get(nodeId);
+			Element element= node2ElementMap.get(node);
+			String elementId= element.getName();
 			return elementId;
 		} catch (Throwable t) {
 			throw new LatticeError(nodeId+": not a lattice element!");
@@ -52,18 +52,18 @@ public class Node2ElementMapper implements Visitor {
 	}
 
 	public Element NodeId2Element(String nodeId) {
-		Object node= id2NodeMap.get(nodeId);
-		return (Element) node2ElementMap.get(node);
+		AcceleratorNode node= id2NodeMap.get(nodeId);
+		return node2ElementMap.get(node);
 	}
 
 	public String Node2ElementId(AcceleratorNode node) {
-		Object element= node2ElementMap.get(node);
-		String elementId= ((Element) element).getName();
+		Element element= node2ElementMap.get(node);
+		String elementId= element.getName();
 		return elementId;
 	}
 
 	public Element Node2Element(AcceleratorNode node) {
-		return (Element) node2ElementMap.get(node);
+		return node2ElementMap.get(node);
 	}
 
 	/** visit a RFGap lattice element  */

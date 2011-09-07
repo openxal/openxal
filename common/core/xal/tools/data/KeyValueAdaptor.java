@@ -548,6 +548,7 @@ class KeyedMapAccessor implements KeyedAccessing {
 	 * Get the target's value for the specified accessor key by simply calling the target's get method and passing the key as the argument. 
 	 * @param target object from which to get the value
 	 */
+    @SuppressWarnings( "unchecked" )    // no way to predetermine the target class, so we must suppress this warning
 	public Object valueForTarget( final Object target ) throws InvalidKeyException {
 		try {
 			final Map<String,Object> targetMap = (Map<String,Object>)target;
@@ -584,6 +585,7 @@ class KeyedMapSetter implements KeyedSetting {
 	 * @param target object from which to get the value
 	 * @param value the value to set
 	 */
+    @SuppressWarnings( "unchecked" )    // no way to predetermine the target class, so we must suppress this warning
 	public void setValueForTarget( final Object target, final Object value ) throws InvalidKeyException {
 		try {
 			final Map<String,Object> targetMap = (Map<String,Object>)target;

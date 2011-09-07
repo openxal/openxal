@@ -12,7 +12,7 @@ import java.util.*;
 
 public class CubicSplineGraphData extends BasicGraphData{
 
-    private Vector cY;
+    private Vector<Cubic> cY;
 
     /**  data set constructor */ 
     public CubicSplineGraphData(){
@@ -78,7 +78,7 @@ public class CubicSplineGraphData extends BasicGraphData{
         double[]    z = new double[n1];
 
         if(cY == null){ 
-	    cY= new Vector(this.getCapacity());
+	    cY= new Vector<Cubic>(this.getCapacity());
 	}
 
         if(cY.size() < n1 ){
@@ -110,7 +110,7 @@ public class CubicSplineGraphData extends BasicGraphData{
         } 
 
         for ( i = 0; i < n; i++) {
-	    ((Cubic) cY.get(i)).setCoeff(z[i], D[i], 3*(z[i+1] - z[i]) - 2*D[i] - D[i+1],
+	    cY.get(i).setCoeff(z[i], D[i], 3*(z[i+1] - z[i]) - 2*D[i] - D[i+1],
 					 2*(z[i] - z[i+1]) + D[i] + D[i+1]);
         }       
     }

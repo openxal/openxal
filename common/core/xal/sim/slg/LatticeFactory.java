@@ -205,7 +205,7 @@ public class LatticeFactory {
 		if (debug) {
 			cout.println("processing THICK elements");
 		}
-		ArrayList<Object> allElements = new ArrayList<Object>();
+		ArrayList<Element> allElements = new ArrayList<Element>();
 		//walk the XAL object tree to get all nodes of a given kind
 		nodesOfKind(sequence, thickKinds, allElements);
 		//sort all Elements by their position
@@ -238,7 +238,7 @@ public class LatticeFactory {
 		if (debug) {
 			cout.println("processing THIN elements");
 		}
-		ArrayList<Object> allElements = new ArrayList<Object>();
+		ArrayList<Element> allElements = new ArrayList<Element>();
 		//walk the XAL object tree to get all nodes of a given kind
 		nodesOfKind(sequence, thinKinds, allElements);
 		//sort all Elements by their position
@@ -264,7 +264,7 @@ public class LatticeFactory {
 	private void nodesOfKind(
 		AcceleratorSeq sequence,
 		ArrayList kinds,
-		ArrayList<Object> result)
+		ArrayList<Element> result)
 		throws LatticeError {
 		//        double position_base=sequence.getPosition();
 		for (ListIterator itk = kinds.listIterator(); itk.hasNext();) {
@@ -320,7 +320,7 @@ public class LatticeFactory {
 	 *@param result the list to which the lattice elements are added.
 	 * @throws LatticeError
 	 */
-	private void nodeToElement(AcceleratorNode node, ArrayList<Object> result)
+	private void nodeToElement(AcceleratorNode node, ArrayList<Element> result)
 		throws LatticeError {
 		String name = node.getId();
 //		String type = node.getType();
@@ -356,7 +356,7 @@ public class LatticeFactory {
 				PermMarker center =
 					new PermMarker(position, 0.d, "ELEMENT_CENTER:" + name);
 				center.setAcceleratorNode(node);
-				ArrayList half = dipole.split(center);
+				ArrayList<Element> half = dipole.split(center);
 				result.add(half.get(0));
 				result.add(half.get(2));
 				result.add(half.get(4));
@@ -377,7 +377,7 @@ public class LatticeFactory {
 		        PermMarker    slgMarkCtr = new PermMarker(position, 0.0d, "ELEMENT_CENTER:" + name);
 		        slgMarkCtr.setAcceleratorNode(node);
 		        
-                ArrayList     lstElems = slgElem.split(slgMarkCtr);
+                ArrayList<Element>     lstElems = slgElem.split(slgMarkCtr);
                 
                 result.add(lstElems.get(0));
                 result.add(lstElems.get(2));
@@ -399,7 +399,7 @@ public class LatticeFactory {
 				PermMarker center =
 					new PermMarker(position, 0.d, "ELEMENT_CENTER:" + name);
 				center.setAcceleratorNode(node);
-				ArrayList half = quadrupole.split(center);
+				ArrayList<Element> half = quadrupole.split(center);
 				result.add(half.get(0));
 				result.add(half.get(2));
 				result.add(half.get(4));
@@ -417,7 +417,7 @@ public class LatticeFactory {
 				PermMarker center =
 					new PermMarker(position, 0.d, "ELEMENT_CENTER:" + name);
 				center.setAcceleratorNode(node);
-				ArrayList half = quadrupole.split(center);
+				ArrayList<Element> half = quadrupole.split(center);
 				result.add(half.get(0));
 				result.add(half.get(2));
 				result.add(half.get(4));
@@ -433,7 +433,7 @@ public class LatticeFactory {
 				PermMarker center =
 					new PermMarker(position, 0.d, "ELEMENT_CENTER:" + name);
 				center.setAcceleratorNode(node);
-				ArrayList half = sextupole.split(center);
+				ArrayList<Element> half = sextupole.split(center);
 				result.add(half.get(0));
 				result.add(half.get(2));
 				result.add(half.get(4));
@@ -453,7 +453,7 @@ public class LatticeFactory {
 				PermMarker center =
 					new PermMarker(position, 0.d, "ELEMENT_CENTER:" + name);
 				center.setAcceleratorNode(node);
-				ArrayList half = solenoid.split(center);
+				ArrayList<Element> half = solenoid.split(center);
 				result.add(half.get(0));
 				result.add(half.get(2));
 				result.add(half.get(4));
@@ -561,12 +561,12 @@ public class LatticeFactory {
 	 * @param allElements the list of 
 	 * (@link gov.sns.xal.slg.Element lattice elements} to be sorted. 
 	 */
-	private void sortElementsByPosition(ArrayList allElements) {
-		Collections.sort(allElements, new Comparator() {
+	private void sortElementsByPosition(ArrayList<Element> allElements) {
+		Collections.sort(allElements, new Comparator<Element>() {
 			/** Comparator for the sortElementsByPosition member function. */
-			public int compare(Object obj1, Object obj2) {
-				double p1 = ((Element) obj1).getPosition();
-				double p2 = ((Element) obj2).getPosition();
+			public int compare(Element obj1, Element obj2) {
+				double p1 = obj1.getPosition();
+				double p2 = obj2.getPosition();
 				return Double.compare(p1, p2);
 			}
 		});

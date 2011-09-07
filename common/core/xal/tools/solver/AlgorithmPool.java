@@ -24,10 +24,10 @@ import java.util.*;
  */
 public class AlgorithmPool implements SearchAlgorithmListener, SolutionJudgeListener, AlgorithmScheduleListener {
 	/** The list of all algorithms */
-	protected Collection _algorithms;
+	protected Collection<SearchAlgorithm> _algorithms;
 	
 	/** The list of algorithms available for scheduling */
-	protected Collection _availableAlgorithms;
+	protected Collection<SearchAlgorithm> _availableAlgorithms;
 	
 	/** Message center for dispatching events to registerd listeners */
 	protected MessageCenter _messageCenter;
@@ -41,8 +41,8 @@ public class AlgorithmPool implements SearchAlgorithmListener, SolutionJudgeList
 	 * @param algorithms  the collection of algorithms to populate the pool
 	 */
 	public AlgorithmPool( final Collection algorithms ) {
-		_algorithms = new HashSet();
-		_availableAlgorithms = new HashSet();
+		_algorithms = new HashSet<SearchAlgorithm>();
+		_availableAlgorithms = new HashSet<SearchAlgorithm>();
 
 		_messageCenter = new MessageCenter( "Algorithm Pool" );
 		_proxy = _messageCenter.registerSource( this, AlgorithmPoolListener.class );
@@ -71,7 +71,7 @@ public class AlgorithmPool implements SearchAlgorithmListener, SolutionJudgeList
 	 * @return The default set of algorithms
 	 */
 	public static Collection generateDefaultAlgorithms() {
-		final Collection allAlgorithms = new HashSet();
+		final Collection<SearchAlgorithm> allAlgorithms = new HashSet<SearchAlgorithm>();
 		
 		allAlgorithms.add( new RandomSearch() );
 		allAlgorithms.add( new RandomShrinkSearch() );
@@ -84,9 +84,7 @@ public class AlgorithmPool implements SearchAlgorithmListener, SolutionJudgeList
 
 	/** Reset the algorithm pool by resetting all the algorithms. */
 	public void reset() {
-		Iterator iter = _algorithms.iterator();
-		while ( iter.hasNext() ) {
-			SearchAlgorithm algorithm = (SearchAlgorithm)iter.next();
+        for ( final SearchAlgorithm algorithm : _algorithms ) {
 			algorithm.reset();
 		}
 	}
@@ -97,9 +95,7 @@ public class AlgorithmPool implements SearchAlgorithmListener, SolutionJudgeList
 	 * @param problem the problem to solve
 	 */
 	public void setProblem( final Problem problem ) {
-		Iterator iter = _algorithms.iterator();
-		while ( iter.hasNext() ) {
-			SearchAlgorithm algorithm = (SearchAlgorithm)iter.next();
+        for ( final SearchAlgorithm algorithm : _algorithms ) {
 			algorithm.setProblem( problem );
 		}
 	}
@@ -184,7 +180,7 @@ public class AlgorithmPool implements SearchAlgorithmListener, SolutionJudgeList
 	
 	/** Remove all algorithms. */
 	public void removeAllAlgorithms() {
-		removeAlgorithms( new HashSet(_algorithms) );
+		removeAlgorithms( new HashSet<SearchAlgorithm>(_algorithms) );
 	}
 
 
@@ -193,8 +189,8 @@ public class AlgorithmPool implements SearchAlgorithmListener, SolutionJudgeList
 	 * Get the algorithm list.
 	 * @return   The list of algorithms.
 	 */
-	public Collection getAlgorithms() {
-		return new HashSet( _algorithms );
+	public Collection<SearchAlgorithm> getAlgorithms() {
+		return new HashSet<SearchAlgorithm>( _algorithms );
 	}
 
 
@@ -202,8 +198,8 @@ public class AlgorithmPool implements SearchAlgorithmListener, SolutionJudgeList
 	 * Get the available algorithms.
 	 * @return   The list of available algorithm.
 	 */
-	public Collection getAvailableAlgorithms() {
-		return new HashSet( _availableAlgorithms );
+	public Collection<SearchAlgorithm> getAvailableAlgorithms() {
+		return new HashSet<SearchAlgorithm>( _availableAlgorithms );
 	}
 	
 	
@@ -258,7 +254,7 @@ public class AlgorithmPool implements SearchAlgorithmListener, SolutionJudgeList
 	 * data it needs to propose a new trial.
 	 * @param source  The source of the available algorithm.
 	 */
-	public void algorithmAvailable( SearchAlgorithm source ) {
+	public void algorithmAvailable( final SearchAlgorithm source ) {
 		_availableAlgorithms.add( source );
 		_proxy.algorithmAvailable( this, source );
 	}

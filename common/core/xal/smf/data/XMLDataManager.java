@@ -799,7 +799,7 @@ public class XMLDataManager {
 					final String deviceType = deviceAdaptor.stringValue( "type" );
 					final String softType = deviceAdaptor.hasAttribute( "softType" ) ? deviceAdaptor.stringValue( "softType" ) : null;
 					final String deviceClassName = deviceAdaptor.stringValue( "class" );
-					final Class deviceClass = Class.forName( deviceClassName );
+					final Class<?> deviceClass = Class.forName( deviceClassName );
 					nodeFactory.registerNodeClass( deviceType, softType, deviceClass );
 					_deviceMap.put( deviceType, deviceClassName );
 				}

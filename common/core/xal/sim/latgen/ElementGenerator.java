@@ -32,7 +32,7 @@ public class ElementGenerator {
 	public static final String s_strFileConfigDef = "Config\\xal\\ModelGenNodeMap.txt";
 
 	/** key is accelerator node class, model element class */
-	private static Hashtable<String, String> s_mapDefault;
+	private static Hashtable<Object, Object> s_mapDefault;
 
 	/*
 	 * Local Attributes
@@ -90,7 +90,7 @@ public class ElementGenerator {
 	 * 
 	 * @return map of hardware object to modeling element
 	 */
-	private static Hashtable loadConfiguration(String strFileConfig)
+	private static Hashtable<Object,Object> loadConfiguration(String strFileConfig)
 			throws GenerationException {
 
 		Properties map = new Properties();
@@ -215,7 +215,8 @@ public class ElementGenerator {
 	 * @return true if there is a mapping for smfNode, false otherwise
 	 */
 	private static String mappingFor(Object classSource) {
-		return s_mapDefault.get(classSource.getClass().getName());
+		final Object mapValue = s_mapDefault.get(classSource.getClass().getName());
+        return mapValue != null ? mapValue.toString() : null;
 	}
 
 	/*
@@ -248,7 +249,7 @@ public class ElementGenerator {
 	 * 
 	 * @return default configuration mapping
 	 */
-	private static Hashtable getDefaultMapping() {
+	private static Hashtable<Object,Object> getDefaultMapping() {
 		return ElementGenerator.s_mapDefault;
 	}
 

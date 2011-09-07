@@ -491,7 +491,7 @@ public class ViewProxyFactory {
 				for ( double x = 0.0 ; x < 20.0 ; x++ ) {
 					graphData.addPoint( x, x*x );
 				}
-				final Vector series = new Vector(1);
+				final Vector<BasicGraphData> series = new Vector<BasicGraphData>(1);
 				series.add( graphData );
 				plot.addGraphData( series );
 			}

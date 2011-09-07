@@ -28,7 +28,7 @@ public class PropertyValueEditorManager {
 	
 	/** Constructor */
 	public PropertyValueEditorManager() {
-		EDITOR_TABLE = new HashMap();
+		EDITOR_TABLE = new HashMap<String, PropertyValueEditor>();
 		DEFAULT_EDITOR = PropertyValueEditorFactory.getSimpleRenderer();
 		
 		register( String.class, PropertyValueEditorFactory.getStringEditor() );

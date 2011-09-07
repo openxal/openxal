@@ -49,16 +49,16 @@ public class RfGapPropertyAccessor implements PropertyAccessor {
 	
 	// Static Variables ========================================================
 	
-	private static ArrayList propertyNames;
+	private static ArrayList<String> propertyNames;
 	
-	private static HashMap liveProxies;
-	private static HashMap designProxies;
+	private static HashMap<String,PropertyProxy> liveProxies;
+	private static HashMap<String,PropertyProxy> designProxies;
 	
 	
 	// Static Initialization ===================================================
 	
 	static {
-		propertyNames = new ArrayList();
+		propertyNames = new ArrayList<String>();
 		propertyNames.add(PROPERTY_ETL);
 		propertyNames.add(PROPERTY_PHASE);
 		propertyNames.add(PROPERTY_FREQUENCY);
@@ -70,7 +70,7 @@ public class RfGapPropertyAccessor implements PropertyAccessor {
 	}
 	
 	private static void initLiveProxies() {
-		liveProxies = new HashMap(propertyNames.size());
+		liveProxies = new HashMap<String,PropertyProxy>(propertyNames.size());
 		liveProxies.put(PROPERTY_ETL, 
 			new PropertyProxy(RfGap.class, METHOD_LIVE_ETL, SCALE_ETL));
 		liveProxies.put(PROPERTY_PHASE,
@@ -82,7 +82,7 @@ public class RfGapPropertyAccessor implements PropertyAccessor {
 	}
 	
 	private static void initDesignProxies() {
-		designProxies = new HashMap(propertyNames.size());
+		designProxies = new HashMap<String,PropertyProxy>(propertyNames.size());
 		designProxies.put(PROPERTY_ETL, 
 			new PropertyProxy(RfGap.class, METHOD_DESIGN_ETL, SCALE_ETL));
 		designProxies.put(PROPERTY_PHASE,
@@ -117,8 +117,9 @@ public class RfGapPropertyAccessor implements PropertyAccessor {
 	
 	// Accessing ===============================================================
 	
-	public List propertyNames() {
-		return (List) propertyNames.clone();
+    @SuppressWarnings( "unchecked" )    // clone doesn't support generics, so we must cast
+	public List<String> propertyNames() {
+		return (List<String>) propertyNames.clone();
 	}
 
 }

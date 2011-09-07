@@ -31,15 +31,15 @@ public class RfCavityPropertyAccessor implements PropertyAccessor {	// Static Va
 
 	// Class Variables =========================================================
 	
-	private static ArrayList propertyNames;	
-	private static HashMap liveProxies;
-	private static HashMap designProxies;
+	private static ArrayList<String> propertyNames;	
+	private static HashMap<String,PropertyProxy> liveProxies;
+	private static HashMap<String,PropertyProxy> designProxies;
 	
 	
 	// Class Initialization ===================================================
 	
 	static {
-		propertyNames = new ArrayList();
+		propertyNames = new ArrayList<String>();
 		propertyNames.add(PROPERTY_PHASE);
 		propertyNames.add(PROPERTY_AMPLITUDE);
 		
@@ -49,7 +49,7 @@ public class RfCavityPropertyAccessor implements PropertyAccessor {	// Static Va
 	}
 	
 	private static void initLiveProxies() {
-		liveProxies = new HashMap(propertyNames.size());
+		liveProxies = new HashMap<String,PropertyProxy>(propertyNames.size());
 		liveProxies.put(PROPERTY_PHASE, 
 			new PropertyProxy(RfCavity.class, METHOD_LIVE_PHASE));
 		liveProxies.put(PROPERTY_AMPLITUDE, 
@@ -57,7 +57,7 @@ public class RfCavityPropertyAccessor implements PropertyAccessor {	// Static Va
 	}
 	
 	private static void initDesignProxies() {
-		designProxies = new HashMap(propertyNames.size());
+		designProxies = new HashMap<String,PropertyProxy>(propertyNames.size());
 		designProxies.put(PROPERTY_PHASE, 
 			new PropertyProxy(RfCavity.class, METHOD_DESIGN_PHASE));
 		designProxies.put(PROPERTY_AMPLITUDE, 
@@ -67,15 +67,14 @@ public class RfCavityPropertyAccessor implements PropertyAccessor {	// Static Va
 	
 	// PropertyAccessor Interface ==============================================
 
-	public double doubleValueFor(AcceleratorNode node, String property, String mode) 
-			throws ProxyException {
+	public double doubleValueFor(AcceleratorNode node, String property, String mode) throws ProxyException {
 		PropertyProxy proxy = null;
 		if (mode.equals(Scenario.SYNC_MODE_LIVE)) {
-			proxy = (PropertyProxy) liveProxies.get(property);
+			proxy = liveProxies.get(property);
 		} else if (mode.equals(Scenario.SYNC_MODE_DESIGN)) {
-			proxy = (PropertyProxy) designProxies.get(property);
-				} else if (mode.equals(Scenario.SYNC_MODE_RF_DESIGN)) {
-						proxy = (PropertyProxy) designProxies.get(property);
+			proxy = designProxies.get(property);
+        } else if (mode.equals(Scenario.SYNC_MODE_RF_DESIGN)) {
+            proxy = designProxies.get(property);
 		} else {
 			throw new IllegalArgumentException("Unknown mode: " + mode);
 		}
@@ -87,8 +86,9 @@ public class RfCavityPropertyAccessor implements PropertyAccessor {	// Static Va
 	
 	// Accessing ===============================================================
 	
-	public List propertyNames() {
-		return (List) propertyNames.clone();
+    @SuppressWarnings( "unchecked" )    // clone doesn't support generics, so we must cast
+	public List<String> propertyNames() {
+		return (List<String>) propertyNames.clone();
 	}
 
 }

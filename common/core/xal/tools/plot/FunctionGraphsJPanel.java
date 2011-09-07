@@ -30,9 +30,9 @@ public class FunctionGraphsJPanel extends JPanel implements MouseListener, Mouse
 	 */
 	public static int VERTICAL = 1;
 
-	private Vector graphDataV = new Vector();
-	private Vector graphColorV = new Vector();
-	private Vector curveDataV = new Vector();
+	private Vector<BasicGraphData> graphDataV = new Vector<BasicGraphData>();
+	private Vector<Color> graphColorV = new Vector<Color>();
+	private Vector<CurveData> curveDataV = new Vector<CurveData>();
 	private ColorSurfaceData colorSurfaceData = null;
 
 	private int nTotalGraphPoints = 0;
@@ -74,10 +74,10 @@ public class FunctionGraphsJPanel extends JPanel implements MouseListener, Mouse
 	private double numbMarkScaleY = 1.0;
 
 	// Vertical and horizontal lines (vector includes Double with y and x coordinates)
-	private Vector vLinesV = new Vector();
-	private Vector hLinesV = new Vector();
-	private Vector vLinesColorV = new Vector();
-	private Vector hLinesColorV = new Vector();
+	private Vector<Double> vLinesV = new Vector<Double>();
+	private Vector<Double> hLinesV = new Vector<Double>();
+	private Vector<Color> vLinesColorV = new Vector<Color>();
+	private Vector<Color> hLinesColorV = new Vector<Color>();
 
 	private Color defaultVerticalLineColor = Color.cyan;
 	private Color defaultHorizontLineColor = Color.cyan;
@@ -86,7 +86,7 @@ public class FunctionGraphsJPanel extends JPanel implements MouseListener, Mouse
 	private GridLimits innerGridLimits = new SmartGridLimits();
 	private boolean useSmartGridLimits = true;
 	private GridLimits externalGridLimits = null;
-	private Vector zoomGridLimitsV = new Vector();
+	private Vector<GridLimits> zoomGridLimitsV = new Vector<GridLimits>();
 
 	//off screen image
 	private Image offScreenImage_ = null;
@@ -170,8 +170,8 @@ public class FunctionGraphsJPanel extends JPanel implements MouseListener, Mouse
 	private Polygon triangleMarkerRight;
 
 	//Change in VERTICAL and HORIZONTAL limits listeners
-	private Vector horLimListenersV = new Vector();
-	private Vector verLimListenersV = new Vector();
+	private Vector<ActionListener> horLimListenersV = new Vector<ActionListener>();
+	private Vector<ActionListener> verLimListenersV = new Vector<ActionListener>();
 	private ActionEvent horLimEvent = null;
 	private ActionEvent verLimEvent = null;
 
@@ -548,8 +548,8 @@ public class FunctionGraphsJPanel extends JPanel implements MouseListener, Mouse
 	 *
 	 *@return    The vector with refernces to all BasicGraphData objects
 	 */
-	public Vector getAllGraphData() {
-		Vector tmp = new Vector();
+	public Vector<BasicGraphData> getAllGraphData() {
+		Vector<BasicGraphData> tmp = new Vector<BasicGraphData>();
 		synchronized (graphDataV) {
 			for (int i = 0; i < graphDataV.size(); i++) {
 				tmp.add(graphDataV.get(i));
@@ -619,7 +619,7 @@ public class FunctionGraphsJPanel extends JPanel implements MouseListener, Mouse
 	 *@return    The curveData value
 	 */
 	public CurveData getCurveData(int i) {
-		return (CurveData) curveDataV.get(i);
+		return curveDataV.get(i);
 	}
 
 
@@ -628,8 +628,8 @@ public class FunctionGraphsJPanel extends JPanel implements MouseListener, Mouse
 	 *
 	 *@return    The allCurveData value
 	 */
-	public Vector getAllCurveData() {
-		return new Vector(curveDataV);
+	public Vector<CurveData> getAllCurveData() {
+		return new Vector<CurveData>(curveDataV);
 	}
 
 
@@ -2295,8 +2295,8 @@ public class FunctionGraphsJPanel extends JPanel implements MouseListener, Mouse
 	 *
 	 *@return    The horLimitsListeners value
 	 */
-	public Vector getHorLimitsListeners() {
-		return new Vector(horLimListenersV);
+	public Vector<ActionListener> getHorLimitsListeners() {
+		return new Vector<ActionListener>(horLimListenersV);
 	}
 
 
@@ -2305,8 +2305,8 @@ public class FunctionGraphsJPanel extends JPanel implements MouseListener, Mouse
 	 *
 	 *@return    The verLimitsListeners value
 	 */
-	public Vector getVerLimitsListeners() {
-		return new Vector(verLimListenersV);
+	public Vector<ActionListener> getVerLimitsListeners() {
+		return new Vector<ActionListener>(verLimListenersV);
 	}
 
 

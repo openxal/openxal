@@ -29,16 +29,16 @@ public class ElectromagnetPropertyAccessor implements PropertyAccessor {
 	
 	// Static Variables ========================================================
 	
-	private static ArrayList propertyNames;
+	private static ArrayList<String> propertyNames;
 	
-	private static HashMap liveProxies;
-	private static HashMap designProxies;
+	private static HashMap<String,PropertyProxy> liveProxies;
+	private static HashMap<String,PropertyProxy> designProxies;
 	
 	
 	// Static Initialization ===================================================
 	
 	static {
-		propertyNames = new ArrayList();
+		propertyNames = new ArrayList<String>();
 		propertyNames.add(PROPERTY_FIELD);
 		
 		initLiveProxies();
@@ -47,13 +47,13 @@ public class ElectromagnetPropertyAccessor implements PropertyAccessor {
 	}
 	
 	private static void initLiveProxies() {
-		liveProxies = new HashMap(propertyNames.size());
+		liveProxies = new HashMap<String,PropertyProxy>(propertyNames.size());
 		liveProxies.put(PROPERTY_FIELD, 
 			new PropertyProxy(Electromagnet.class, METHOD_LIVE_FIELD));
 	}
 	
 	private static void initDesignProxies() {
-		designProxies = new HashMap(propertyNames.size());
+		designProxies = new HashMap<String,PropertyProxy>(propertyNames.size());
 		designProxies.put(PROPERTY_FIELD, 
 			new PropertyProxy(Electromagnet.class, METHOD_DESIGN_FIELD));
 	}
@@ -62,15 +62,15 @@ public class ElectromagnetPropertyAccessor implements PropertyAccessor {
 	// PropertyAccessor Interface ==============================================
 
 	public double doubleValueFor(AcceleratorNode node, String property, 
-			String mode) throws ProxyException {
-				
+                                 String mode) throws ProxyException {
+        
 		PropertyProxy proxy = null;
 		if (mode.equals(Scenario.SYNC_MODE_LIVE)) { 
-			proxy = (PropertyProxy) liveProxies.get(property);
+			proxy = liveProxies.get(property);
 		} else if (mode.equals(Scenario.SYNC_MODE_DESIGN)) {
-			proxy = (PropertyProxy) designProxies.get(property);
-                } else if (mode.equals(Scenario.SYNC_MODE_RF_DESIGN)) {
-                        proxy = (PropertyProxy) liveProxies.get(property);
+			proxy = designProxies.get(property);
+        } else if (mode.equals(Scenario.SYNC_MODE_RF_DESIGN)) {
+            proxy = liveProxies.get(property);
 		} else {
 			throw new IllegalArgumentException("Unknown mode: " + mode);
 		}
@@ -82,8 +82,9 @@ public class ElectromagnetPropertyAccessor implements PropertyAccessor {
 	
 	// Accessing ===============================================================
 	
-	public List propertyNames() {
-		return (List) propertyNames.clone();
+    @SuppressWarnings( "unchecked" )    // clone doesn't support generics, so we must cast
+	public List<String> propertyNames() {
+		return (List<String>) propertyNames.clone();
 	}
 
 }

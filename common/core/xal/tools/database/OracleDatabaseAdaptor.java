@@ -32,7 +32,7 @@ public class OracleDatabaseAdaptor extends DatabaseAdaptor {
 	 * Public Constructor
 	 */
 	public OracleDatabaseAdaptor() {
-		ARRAY_DESCRIPTOR_TABLE = new HashMap();
+		ARRAY_DESCRIPTOR_TABLE = new HashMap<String,ArrayDescriptor>();
 	}
 	
 	

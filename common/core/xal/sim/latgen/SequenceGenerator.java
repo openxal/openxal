@@ -89,7 +89,7 @@ public class SequenceGenerator implements IHwareTreeVisitor {
     private Sector                  m_secMaster;
     
     /** the sequence stack */
-    private Stack                   m_stackSecs;
+    private Stack<Sector>                   m_stackSecs;
 
     /** synchronization manager for master sequence under construction */
     private SynchronizationManager  m_syncMgr;
@@ -112,7 +112,7 @@ public class SequenceGenerator implements IHwareTreeVisitor {
     {
         this.m_cntDrift = 1;
         this.setMasterSector(null);
-        this.m_stackSecs = new Stack();
+        this.m_stackSecs = new Stack<Sector>();
         this.m_syncMgr = new SynchronizationManager();
         
         HardwareTree       pxyModel = new HardwareTree(smfSeq);
@@ -289,7 +289,7 @@ public class SequenceGenerator implements IHwareTreeVisitor {
         if (this.m_stackSecs.size() <= 0)
             throw new GenerationException("SequenceGenerator#popSequence() - stack frame underflow");
             
-        return (Sector)this.m_stackSecs.pop();
+        return this.m_stackSecs.pop();
     }
     
     /**
@@ -309,7 +309,7 @@ public class SequenceGenerator implements IHwareTreeVisitor {
      * @return  the current sector, an <code>Sector</code> object
      */
     private Sector  getCurrentSector() {
-        return (Sector)this.m_stackSecs.peek();
+        return this.m_stackSecs.peek();
     }
     
     

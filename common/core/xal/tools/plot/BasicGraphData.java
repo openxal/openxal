@@ -22,7 +22,7 @@ public class BasicGraphData {
 	/**
 	 *  Description of the Field
 	 */
-	protected HashMap propertyMap = new HashMap();
+	protected HashMap<Object,Object> propertyMap = new HashMap<Object,Object>();
 
 	/**
 	 *  Description of the Field
@@ -36,7 +36,7 @@ public class BasicGraphData {
 	/**
 	 *  Description of the Field
 	 */
-	protected Vector graphDataContainerV;
+	protected Vector<Object> graphDataContainerV;
 
 	/**
 	 *  Description of the Field
@@ -46,12 +46,12 @@ public class BasicGraphData {
 	/**
 	 *  Description of the Field
 	 */
-	protected Vector xyPointV;
+	protected Vector<XYpoint> xyPointV;
 
 	/**
 	 *  Description of the Field
 	 */
-	protected Vector xyInterpPointV;
+	protected Vector<XYpoint> xyInterpPointV;
 
 	/**
 	 *  Description of the Field
@@ -146,9 +146,9 @@ public class BasicGraphData {
 	 *@param  nInterpPoints  Description of the Parameter
 	 */
 	protected void init(int nPoint, int nInterpPoints) {
-		graphDataContainerV = new Vector();
-		xyPointV = new Vector(nPoint, 50);
-		xyInterpPointV = new Vector(nInterpPoints, 50);
+		graphDataContainerV = new Vector<Object>();
+		xyPointV = new Vector<XYpoint>(nPoint, 50);
+		xyInterpPointV = new Vector<XYpoint>(nInterpPoints, 50);
 		xMax = -Double.MAX_VALUE;
 		xMin = Double.MAX_VALUE;
 		yMax = -Double.MAX_VALUE;
@@ -178,7 +178,7 @@ public class BasicGraphData {
 	public void addPoint(double x, double y, double err) {
 		synchronized (lockUpObj) {
 			xyPointV.add(new XYpoint(x, y, err));
-			Collections.sort((java.util.List) xyPointV, (Comparator) new CompareX());
+			Collections.sort( xyPointV, new CompareX() );
 			this.calculateRepresentation();
 			this.updateData();
 		}
@@ -198,7 +198,7 @@ public class BasicGraphData {
 			for (int i = 0; i < x.length; i++) {
 				xyPointV.add(new XYpoint(x[i], y[i], 0.0));
 			}
-			Collections.sort((java.util.List) xyPointV, (Comparator) new CompareX());
+			Collections.sort( xyPointV, new CompareX() );
 			this.calculateRepresentation();
 			this.updateData();
 		}
@@ -219,7 +219,7 @@ public class BasicGraphData {
 			for (int i = 0; i < x.length; i++) {
 				xyPointV.add(new XYpoint(x[i], y[i], Math.abs(err[i])));
 			}
-			Collections.sort((java.util.List) xyPointV, (Comparator) new CompareX());
+			Collections.sort( xyPointV, new CompareX() );
 			this.calculateRepresentation();
 			this.updateData();
 		}
@@ -249,7 +249,7 @@ public class BasicGraphData {
 					((XYpoint) xyPointV.get(i)).setXY(x[i], y[i], Math.abs(err[i]));
 				}
 			}
-			Collections.sort((java.util.List) xyPointV, (Comparator) new CompareX());
+			Collections.sort( xyPointV, new CompareX() );
 			this.calculateRepresentation();
 			this.updateData();
 		}
@@ -278,7 +278,7 @@ public class BasicGraphData {
 					((XYpoint) xyPointV.get(i)).setXY(x[i], y[i], 0.);
 				}
 			}
-			Collections.sort((java.util.List) xyPointV, (Comparator) new CompareX());
+			Collections.sort( xyPointV, new CompareX() );
 			this.calculateRepresentation();
 			this.updateData();
 		}
@@ -360,7 +360,7 @@ public class BasicGraphData {
 			}
 			xyPointV.remove(index);
 			xyPointV.add(new XYpoint(x, y, 0.0));
-			Collections.sort((java.util.List) xyPointV, (Comparator) new CompareX());
+			Collections.sort( xyPointV, new CompareX() );
 			this.calculateRepresentation();
 			this.updateData();
 		}
@@ -383,7 +383,7 @@ public class BasicGraphData {
 			}
 			xyPointV.remove(index);
 			xyPointV.add(new XYpoint(x, y, err));
-			Collections.sort((java.util.List) xyPointV, (Comparator) new CompareX());
+			Collections.sort( xyPointV, new CompareX() );
 			this.calculateRepresentation();
 			this.updateData();
 		}
@@ -681,7 +681,7 @@ public class BasicGraphData {
 
 		xMin = ((XYpoint) xyPointV.firstElement()).getX();
 		xMax = ((XYpoint) xyPointV.lastElement()).getX();
-		XYpoint pMaxErr = (XYpoint) Collections.max((java.util.List) xyPointV, (Comparator) new CompareErr());
+		XYpoint pMaxErr = (XYpoint) Collections.max( xyPointV, new CompareErr() );
 		errYmax = pMaxErr.getYerr();
 
 		//------------------------------------------------------------------------
@@ -1239,7 +1239,7 @@ public class BasicGraphData {
 	 *@author     shishlo
 	 *@version    August 3, 2004
 	 */
-	protected class CompareX implements Comparator {
+	protected class CompareX implements Comparator<XYpoint> {
 		/**
 		 *  Description of the Method
 		 *
@@ -1247,11 +1247,11 @@ public class BasicGraphData {
 		 *@param  obj2  Description of the Parameter
 		 *@return       Description of the Return Value
 		 */
-		public int compare(Object obj1, Object obj2) {
-			if ((((XYpoint) obj1).getX()) > (((XYpoint) obj2).getX())) {
+		public int compare( final XYpoint obj1, final XYpoint obj2 ) {
+			if ( obj1.getX() > obj2.getX() ) {
 				return 1;
 			}
-			if ((((XYpoint) obj1).getX()) < (((XYpoint) obj2).getX())) {
+			else if ( obj1.getX() < obj2.getX() ) {
 				return -1;
 			}
 			return 0;
@@ -1265,7 +1265,7 @@ public class BasicGraphData {
 	 *@author     shishlo
 	 *@version    August 3, 2004
 	 */
-	protected class CompareY implements Comparator {
+	protected class CompareY implements Comparator<XYpoint> {
 		/**
 		 *  Description of the Method
 		 *
@@ -1273,11 +1273,11 @@ public class BasicGraphData {
 		 *@param  obj2  Description of the Parameter
 		 *@return       Description of the Return Value
 		 */
-		public int compare(Object obj1, Object obj2) {
-			if ((((XYpoint) obj1).getY()) > (((XYpoint) obj2).getY())) {
+		public int compare( final XYpoint obj1, final XYpoint obj2 ) {
+			if ( obj1.getY() > obj2.getY() ) {
 				return 1;
 			}
-			if ((((XYpoint) obj1).getY()) < (((XYpoint) obj2).getY())) {
+			else if ( obj1.getY() < obj2.getY() ) {
 				return -1;
 			}
 			return 0;
@@ -1291,7 +1291,7 @@ public class BasicGraphData {
 	 *@author     shishlo
 	 *@version    August 3, 2004
 	 */
-	protected class CompareErr implements Comparator {
+	protected class CompareErr implements Comparator<XYpoint> {
 		/**
 		 *  Description of the Method
 		 *
@@ -1299,11 +1299,11 @@ public class BasicGraphData {
 		 *@param  obj2  Description of the Parameter
 		 *@return       Description of the Return Value
 		 */
-		public int compare(Object obj1, Object obj2) {
-			if ((((XYpoint) obj1).getYerr()) > (((XYpoint) obj2).getYerr())) {
+		public int compare( final XYpoint obj1, final XYpoint obj2 ) {
+			if ( obj1.getYerr() > obj2.getYerr() ) {
 				return 1;
 			}
-			if ((((XYpoint) obj1).getYerr()) < (((XYpoint) obj2).getYerr())) {
+			else if ( obj1.getYerr() < obj2.getYerr() ) {
 				return -1;
 			}
 			return 0;
