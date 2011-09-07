@@ -85,6 +85,7 @@ public class SCLCavity extends RfCavity {
      *             <code>sclcavity</code>.
 	 * 
 	 */
+    @Deprecated()
 	public double getFieldWithCavityOff(double current, double energy,
 			double resErr, double plsWdth) {
 //		// minimum energy for this calculation is 60MeV
@@ -127,6 +128,7 @@ public class SCLCavity extends RfCavity {
 	 *             completely hard coded for the SNS SCL.  We must get rid of
 	 *             <code>sclcavity</code>.
 	 */
+    @Deprecated()
 	public double getFieldWithCavityOff(double current, double energy,
 			double resErr, double[] plsArry, double sampleRate) {
 //		double plsWdth = sampleRate * plsArry.length;
@@ -181,7 +183,7 @@ public class SCLCavity extends RfCavity {
 	* 
 	*  @deprecated Read the comments about being a hard coded kluge job.
 	*/
-	
+    @Deprecated()
 	public double getAvgTTF(double beta) {
 		double ttf = 0.;
 		int cavNum = (new Integer(getId().substring(10,12))).intValue();
