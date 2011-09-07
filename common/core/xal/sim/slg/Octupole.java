@@ -50,7 +50,7 @@ public class Octupole extends Element {
      *@param v the Visitor which wants to visit this object.
      */
     public void accept(Visitor v) {
-        v.visit((Octupole)this);
+        v.visit( this );
     }
     
 }

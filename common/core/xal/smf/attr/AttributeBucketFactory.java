@@ -84,7 +84,7 @@ public final class AttributeBucketFactory {
         Object[]            arrArgs;    // constructor arguments
         AttributeBucket     buck;       // the returned object
 
-        ctor    = (Constructor)m_mapCtors.get(strType);
+        ctor    = m_mapCtors.get(strType);
         arrArgs = null;
         
         try {

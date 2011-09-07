@@ -242,7 +242,7 @@ public class SynchronizationManager {
 		while (elemClassIt.hasNext()) {
 			Class cl = (Class) elemClassIt.next();
 			if (cl.isInstance(anElem)) {
-				return (Synchronizer) nodeSynchronizerMap.get(cl);
+				return nodeSynchronizerMap.get(cl);
 			}
 		}
 		return null;

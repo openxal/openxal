@@ -63,12 +63,12 @@ public class RainbowColorGenerator implements ColorGenerator{
 	    if(i0 > (nColorMaxInner-2)) i0 = nColorMaxInner-2; 
 	    i1 = i0 + 1;
 	    cof = (val - i0*stepInner)/stepInner;
-	    rI0 = ((Color) colorInnerV.get(i0)).getRed();
-	    gI0 = ((Color) colorInnerV.get(i0)).getGreen();
-	    bI0 = ((Color) colorInnerV.get(i0)).getBlue();
-	    rI1 = ((Color) colorInnerV.get(i1)).getRed();
-	    gI1 = ((Color) colorInnerV.get(i1)).getGreen();
-	    bI1 = ((Color) colorInnerV.get(i1)).getBlue();
+	    rI0 = colorInnerV.get(i0).getRed();
+	    gI0 = colorInnerV.get(i0).getGreen();
+	    bI0 = colorInnerV.get(i0).getBlue();
+	    rI1 = colorInnerV.get(i1).getRed();
+	    gI1 = colorInnerV.get(i1).getGreen();
+	    bI1 = colorInnerV.get(i1).getBlue();
 	    rI = (int) ((1.f-cof)*rI0 + (cof)*rI1);
 	    gI = (int) ((1.f-cof)*gI0 + (cof)*gI1);
 	    bI = (int) ((1.f-cof)*bI0 + (cof)*bI1);
@@ -86,14 +86,14 @@ public class RainbowColorGenerator implements ColorGenerator{
     public Color getColor(float value){
 	index = (int) (nColorMax*value);
 	if(index < 0 ){
-	    return (Color) colorV.get(0);
+	    return colorV.get(0);
 	}
 	else{
 	    if(index < nColorMax){
-		return (Color) colorV.get(index);
+		return colorV.get(index);
 	    }
 	}
-	return (Color) colorV.get(nColorMax-1);
+	return colorV.get(nColorMax-1);
     }
 
     /** Implementation of the ColorGenerator interface.
@@ -104,14 +104,14 @@ public class RainbowColorGenerator implements ColorGenerator{
     public Color getColor(double value){
 	index = (int) (nColorMax*value);
 	if(index < 0 ){
-	    return (Color) colorV.get(0);
+	    return colorV.get(0);
 	}
 	else{
 	    if(index < nColorMax){
-		return (Color) colorV.get(index);
+		return colorV.get(index);
 	    }
 	}
-	return (Color) colorV.get(nColorMax-1);
+	return colorV.get(nColorMax-1);
     }
 
         

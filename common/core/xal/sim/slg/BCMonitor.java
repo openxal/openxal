@@ -89,7 +89,7 @@ public class BCMonitor extends ThinElement {
 	 *@param v the Visitor which wants to visit this object.
 	 */
 	public void accept(Visitor v) {
-		v.visit((BCMonitor) this);
+		v.visit( this );
 	}
 
 }

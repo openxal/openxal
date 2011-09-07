@@ -197,12 +197,12 @@ public class NewAndImprovedScenarioGenerator
 			xalDipole.setKQuad(magnet.getQuadComponent());
 					// get dipole entrance and exit angles and convert them from degrees to radians
 			if (dipoleInd == 0) {
-					   xalDipole.setEntranceAngle(((Bend)magnet).getEntrRotAngle()*Math.PI/180.);
+					   xalDipole.setEntranceAngle(magnet.getEntrRotAngle()*Math.PI/180.);
 			   xalDipole.setExitAngle(0.);
 			   dipoleInd = 1;
 			} else {
 			   xalDipole.setEntranceAngle(0.);
-					   xalDipole.setExitAngle(((Bend)magnet).getExitRotAngle()*Math.PI/180.);
+					   xalDipole.setExitAngle(magnet.getExitRotAngle()*Math.PI/180.);
 			   dipoleInd = 0;
 			}
 
@@ -404,8 +404,7 @@ public class NewAndImprovedScenarioGenerator
 			} 
 			
 			// get AcceleratorNode sequence for node
-			xal.smf.AcceleratorSeq seqSmf =
-				(xal.smf.AcceleratorSeq) nodeSmf.getParent();
+			xal.smf.AcceleratorSeq seqSmf = nodeSmf.getParent();
 				
 			// if not an RfCavityStruct sequence parent, add to the root seq
 //			if (! (seqSmf instanceof xal.smf.impl.RfCavity)) {

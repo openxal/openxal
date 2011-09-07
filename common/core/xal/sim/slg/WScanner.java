@@ -60,7 +60,7 @@ public class WScanner extends ThinElement {
      *@param v the Visitor which wants to visit this object.
      */
     public void accept(Visitor v) {
-        v.visit((WScanner)this);
+        v.visit( this );
     }
     
 }

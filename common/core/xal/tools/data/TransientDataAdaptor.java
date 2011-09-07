@@ -377,7 +377,7 @@ public class TransientDataAdaptor implements DataAdaptor {
         Iterator<DataAdaptor>    iter = this.childAdaptorIterator();
         
         while (iter.hasNext())  {
-            DataAdaptor daptChild = (DataAdaptor)iter.next();
+            DataAdaptor daptChild = iter.next();
             
             if ( daptChild.name().equals(strLabel) )
                 lst.add(daptChild);

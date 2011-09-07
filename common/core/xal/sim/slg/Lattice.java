@@ -268,7 +268,7 @@ public class Lattice implements Cloneable {
 		//slice the element between the two markers
 		int between= after - 1;
 		//        if(false) {cout.println("(before,between,after)=("+before+", "+between+", "+after+")");}
-		Element to_split= (Element) elements.remove(between);
+		Element to_split= elements.remove(between);
 		ArrayList<Element> to_insert= to_split.split(element);
 		elements.addAll(between, to_insert);
 		if (debug & verbose) {

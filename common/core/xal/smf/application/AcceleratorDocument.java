@@ -96,8 +96,10 @@ abstract public class AcceleratorDocument extends XalDocument {
 				loadDefaultAccelerator();
 				return accelerator;
 			case 1:
-				selectAccelerator();
-			case JOptionPane.CLOSED_OPTION: case 2:
+				return selectAccelerator();
+            case 2:
+                return null;
+			case JOptionPane.CLOSED_OPTION:
 				return null;
 			default:
 				return null;

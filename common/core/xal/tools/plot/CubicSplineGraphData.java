@@ -31,17 +31,17 @@ public class CubicSplineGraphData extends BasicGraphData{
     public double getValueY(double x){
 	synchronized(lockUpObj){
 	    if( xyPointV.size() == 0 ) return (-Double.MAX_VALUE);
-	    if( xyPointV.size() == 1 ) return ((XYpoint) xyPointV.get(0)).getY();
+	    if( xyPointV.size() == 1 ) return xyPointV.get(0).getY();
 	    int i = 0;
 	    for( i = 0; i < xyPointV.size(); i++){
-		if( x < ((XYpoint) xyPointV.get(i)).getX()) break;
+		if( x < xyPointV.get(i).getX() ) break;
 	    }
 	    if( i == 0) i = 1;
 	    if( i == xyPointV.size()) i = xyPointV.size() - 1;
-	    XYpoint p1 =  (XYpoint) xyPointV.get(i-1); 
-	    XYpoint p2 =  (XYpoint) xyPointV.get(i);
+	    XYpoint p1 =  xyPointV.get(i-1); 
+	    XYpoint p2 =  xyPointV.get(i);
 	    double u = (x-p1.getX())/(p2.getX() - p1.getX()); 
-	    return ((Cubic) cY.get(i-1)).eval(u);
+	    return cY.get(i-1).eval(u);
 	}
     }
 
@@ -52,14 +52,14 @@ public class CubicSplineGraphData extends BasicGraphData{
 	    if( xyPointV.size() == 1 ) return 0.0;
 	    int i = 0;
 	    for( i = 0; i < xyPointV.size(); i++){
-		if( x < ((XYpoint) xyPointV.get(i)).getX()) break;
+		if( x < xyPointV.get(i).getX()) break;
 	    }
 	    if( i == 0) i = 1;
 	    if( i == xyPointV.size()) i = xyPointV.size() - 1;
-	    XYpoint p1 =  (XYpoint) xyPointV.get(i-1); 
-	    XYpoint p2 =  (XYpoint) xyPointV.get(i); 
+	    XYpoint p1 =  xyPointV.get(i-1); 
+	    XYpoint p2 =  xyPointV.get(i); 
 	    double u = (x-p1.getX())/(p2.getX() - p1.getX());
-	    return ((Cubic) cY.get(i-1)).evalDerivative(u)/(p2.getX() - p1.getX()); 
+	    return cY.get(i-1).evalDerivative(u)/(p2.getX() - p1.getX()); 
 	}       
     }
 

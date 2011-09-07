@@ -278,13 +278,13 @@ public class ScenarioGenerator implements Visitor {
                     
                 case HALF_DN:
                     dblAngEntr = 0.0;
-                    dblAngExit = magnet.getExitRotAngle()*Math.PI/180.0;;
+                    dblAngExit = magnet.getExitRotAngle()*Math.PI/180.0;
                     break;
                     
                 case WHOLE:
                     dblAngEntr = magnet.getEntrRotAngle()*Math.PI/180.0;
-                    dblAngExit = magnet.getExitRotAngle()*Math.PI/180.0;;
-
+                    dblAngExit = magnet.getExitRotAngle()*Math.PI/180.0;
+                        break;
                 default:
                     dblAngEntr = 0.0;
                     dblAngExit = 0.0;

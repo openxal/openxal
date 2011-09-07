@@ -394,7 +394,7 @@ public class FunctionGraphsJPanel extends JPanel implements MouseListener, Mouse
 		synchronized (graphDataV) {
 			synchronized (graphColorV) {
 				if (index < graphDataV.size()) {
-					BasicGraphData lgd = (BasicGraphData) graphDataV.get(index);
+					BasicGraphData lgd = graphDataV.get(index);
 					lgd.removeContainer(this);
 					graphDataV.remove(index);
 					graphColorV.remove(index);
@@ -463,7 +463,7 @@ public class FunctionGraphsJPanel extends JPanel implements MouseListener, Mouse
 			synchronized (graphDataV) {
 				synchronized (graphColorV) {
 					for (int i = 0, n = graphDataV.size(); i < n; i++) {
-						lgd = (BasicGraphData) graphDataV.get(i);
+						lgd = graphDataV.get(i);
 						lgd.removeContainer(this);
 					}
 					graphDataV.clear();
@@ -499,7 +499,7 @@ public class FunctionGraphsJPanel extends JPanel implements MouseListener, Mouse
 					if (index < 0) {
 						continue;
 					}
-					lgd = (BasicGraphData) graphDataV.get(index);
+					lgd = graphDataV.get(index);
 					lgd.removeContainer(this);
 					graphDataV.remove(index);
 					graphColorV.remove(index);
@@ -517,7 +517,7 @@ public class FunctionGraphsJPanel extends JPanel implements MouseListener, Mouse
 		synchronized (graphDataV) {
 			synchronized (graphColorV) {
 				for (int i = 0, n = graphDataV.size(); i < n; i++) {
-					BasicGraphData lgd = (BasicGraphData) graphDataV.get(i);
+					BasicGraphData lgd = graphDataV.get(i);
 					lgd.removeContainer(this);
 				}
 				graphDataV.clear();
@@ -536,7 +536,7 @@ public class FunctionGraphsJPanel extends JPanel implements MouseListener, Mouse
 	 */
 	public BasicGraphData getInstanceOfGraphData(int index) {
 		if (graphDataV.size() > index) {
-			return (BasicGraphData) graphDataV.get(index);
+			return graphDataV.get(index);
 		}
 		return null;
 	}
@@ -779,7 +779,7 @@ public class FunctionGraphsJPanel extends JPanel implements MouseListener, Mouse
 	 */
 	public Color getGraphColor(int index) {
 		if (graphColorV.size() > index) {
-			return (Color) graphColorV.get(index);
+			return graphColorV.get(index);
 		}
 		return null;
 	}
@@ -976,7 +976,7 @@ public class FunctionGraphsJPanel extends JPanel implements MouseListener, Mouse
 			double xCurrMax = getCurrentMaxX();
 			double yCurrMax = getCurrentMaxY();
 			for (int i = 0, ni = graphDataV.size(); i < ni; i++) {
-				gd = (BasicGraphData) graphDataV.get(i);
+				gd = graphDataV.get(i);
 				synchronized (gd) {
 					for (int j = 0, nj = gd.getNumbOfPoints(); j < nj; j++) {
 						xG = gd.getX(j);
@@ -1123,7 +1123,7 @@ public class FunctionGraphsJPanel extends JPanel implements MouseListener, Mouse
 				return externalGridLimits;
 			}
 		} else {
-			return (GridLimits) zoomGridLimitsV.lastElement();
+			return zoomGridLimitsV.lastElement();
 		}
 	}
 
@@ -1219,7 +1219,7 @@ public class FunctionGraphsJPanel extends JPanel implements MouseListener, Mouse
 				return externalGridLimits.getMinX();
 			}
 		} else {
-			GridLimits gl = (GridLimits) zoomGridLimitsV.lastElement();
+			GridLimits gl = zoomGridLimitsV.lastElement();
 			if (gl.isSetXmin() == false) {
 				return getInnerMinX();
 			}
@@ -1241,7 +1241,7 @@ public class FunctionGraphsJPanel extends JPanel implements MouseListener, Mouse
 				return externalGridLimits.getMaxX();
 			}
 		} else {
-			GridLimits gl = (GridLimits) zoomGridLimitsV.lastElement();
+			GridLimits gl = zoomGridLimitsV.lastElement();
 			if (gl.isSetXmax() == false) {
 				return getInnerMaxX();
 			}
@@ -1263,7 +1263,7 @@ public class FunctionGraphsJPanel extends JPanel implements MouseListener, Mouse
 				return externalGridLimits.getMinY();
 			}
 		} else {
-			GridLimits gl = (GridLimits) zoomGridLimitsV.lastElement();
+			GridLimits gl = zoomGridLimitsV.lastElement();
 			if (gl.isSetYmin() == false) {
 				return getInnerMinY();
 			}
@@ -1285,7 +1285,7 @@ public class FunctionGraphsJPanel extends JPanel implements MouseListener, Mouse
 				return externalGridLimits.getMaxY();
 			}
 		} else {
-			GridLimits gl = (GridLimits) zoomGridLimitsV.lastElement();
+			GridLimits gl = zoomGridLimitsV.lastElement();
 			if (gl.isSetYmax() == false) {
 				return getInnerMaxY();
 			}
@@ -1906,7 +1906,7 @@ public class FunctionGraphsJPanel extends JPanel implements MouseListener, Mouse
 	 */
 	public synchronized double getVerticalValue(int index) {
 		if (index < vLinesV.size() && index >= 0) {
-			return ((Double) vLinesV.get(index)).doubleValue();
+			return vLinesV.get(index).doubleValue();
 		}
 		return -Double.MAX_VALUE;
 	}
@@ -1920,7 +1920,7 @@ public class FunctionGraphsJPanel extends JPanel implements MouseListener, Mouse
 	 */
 	public synchronized double getHorizontalValue(int index) {
 		if (index < hLinesV.size() && index >= 0) {
-			return ((Double) hLinesV.get(index)).doubleValue();
+			return hLinesV.get(index).doubleValue();
 		}
 		return -Double.MAX_VALUE;
 	}
@@ -2116,7 +2116,7 @@ public class FunctionGraphsJPanel extends JPanel implements MouseListener, Mouse
 			d_minG = yMin;
 			d_maxG = yMax;
 			for (int i = 0; i < hLinesV.size(); i++) {
-				d = ((Double) hLinesV.get(i)).doubleValue();
+				d = hLinesV.get(i).doubleValue();
 				if (d < d_minG) {
 					d = d_minG;
 				}
@@ -2154,7 +2154,7 @@ public class FunctionGraphsJPanel extends JPanel implements MouseListener, Mouse
 			d_minG = xMin;
 			d_maxG = xMax;
 			for (int i = 0; i < vLinesV.size(); i++) {
-				d = ((Double) vLinesV.get(i)).doubleValue();
+				d = vLinesV.get(i).doubleValue();
 				if (d < d_minG) {
 					d = d_minG;
 				}
@@ -2478,7 +2478,7 @@ public class FunctionGraphsJPanel extends JPanel implements MouseListener, Mouse
 				double d;
 				BasicGraphData grD = null;
 				for (int i = 0; i < graphDataV.size(); i++) {
-					grD = ((BasicGraphData) graphDataV.get(i));
+					grD = graphDataV.get(i);
 					if (grD.getNumbOfPoints() > 0) {
 						d = grD.getMinX();
 						if (d < xMinIn) {
@@ -2522,7 +2522,7 @@ public class FunctionGraphsJPanel extends JPanel implements MouseListener, Mouse
 
 				if (curveDataV.size() > 0) {
 					for (int i = 0; i < curveDataV.size(); i++) {
-						CurveData crvD = (CurveData) curveDataV.get(i);
+						CurveData crvD = curveDataV.get(i);
 						if(crvD.getSize() > 0){
 							d = crvD.getMinX();
 							if (d < xMinIn) {
@@ -2699,11 +2699,11 @@ public class FunctionGraphsJPanel extends JPanel implements MouseListener, Mouse
 		if (zoomGridLimitsV.size() > 0) {
 			if (mouseDrugged && mouseDraggedTaskType == 0) {
 				if (zoomGridLimitsV.size() > 1) {
-					currentGridLimitsIn = (GridLimits) zoomGridLimitsV.get(zoomGridLimitsV.size() - 2);
+					currentGridLimitsIn = zoomGridLimitsV.get(zoomGridLimitsV.size() - 2);
 					currentGridLimitsIn.setGridLimitsSwitch(true);
 				}
 			} else {
-				currentGridLimitsIn = (GridLimits) zoomGridLimitsV.lastElement();
+				currentGridLimitsIn = zoomGridLimitsV.lastElement();
 				currentGridLimitsIn.setGridLimitsSwitch(true);
 			}
 		}
@@ -2970,7 +2970,7 @@ public class FunctionGraphsJPanel extends JPanel implements MouseListener, Mouse
 			int pointW;
 			Stroke strokeIniCurve = g.getStroke();
 			for (int i = 0; i < curveDataV.size(); i++) {
-				CurveData crvD = (CurveData) curveDataV.get(i);
+				CurveData crvD = curveDataV.get(i);
 				g.setStroke(crvD.getStroke());
 				g.setColor(crvD.getColor());
 				if (crvD.getSize() > 1) {
@@ -3003,7 +3003,7 @@ public class FunctionGraphsJPanel extends JPanel implements MouseListener, Mouse
 		//draw interpolated points graph
 		//------------------------------
 		for (int i = 0, n = graphDataV.size(); i < n; i++) {
-			BasicGraphData lgd = (BasicGraphData) graphDataV.get(i);
+			BasicGraphData lgd = graphDataV.get(i);
 			Object localLockObject = lgd.getLockObject();
 			synchronized (localLockObject) {
 				if (!lgd.getDrawLinesOn()) {
@@ -3013,7 +3013,7 @@ public class FunctionGraphsJPanel extends JPanel implements MouseListener, Mouse
 					continue;
 				}
 				g.setStroke(lgd.getStroke());
-				Color lineColor = (Color) graphColorV.get(i);
+				Color lineColor = graphColorV.get(i);
 				if (lineColor == null) {
 					if (lgd.getGraphColor() == null) {
 						lineColor = lineDefaultColor;
@@ -3064,7 +3064,7 @@ public class FunctionGraphsJPanel extends JPanel implements MouseListener, Mouse
 		//------------------------------
 		int ovalH;
 		for (int i = 0, n = graphDataV.size(); i < n; i++) {
-			BasicGraphData lgd = (BasicGraphData) graphDataV.get(i);
+			BasicGraphData lgd = graphDataV.get(i);
 			Object localLockObject = lgd.getLockObject();
 			synchronized (localLockObject) {
 				if (lgd.getNumbOfPoints() < 1) {
@@ -3073,7 +3073,7 @@ public class FunctionGraphsJPanel extends JPanel implements MouseListener, Mouse
 				if (!lgd.getDrawPointsOn()) {
 					continue;
 				}
-				Color lineColor = (Color) graphColorV.get(i);
+				Color lineColor = graphColorV.get(i);
 				if (lineColor == null) {
 					if (lgd.getGraphColor() == null) {
 						lineColor = lineDefaultColor;
@@ -3125,7 +3125,7 @@ public class FunctionGraphsJPanel extends JPanel implements MouseListener, Mouse
 		int yUpp;
 
 		for (int i = 0, n = graphDataV.size(); i < n; i++) {
-			BasicGraphData lgd = (BasicGraphData) graphDataV.get(i);
+			BasicGraphData lgd = graphDataV.get(i);
 			Object localLockObject = lgd.getLockObject();
 			synchronized (localLockObject) {
 				if (lgd.getNumbOfPoints() < 1) {
@@ -3138,7 +3138,7 @@ public class FunctionGraphsJPanel extends JPanel implements MouseListener, Mouse
 					continue;
 				}
 				g.setStroke(lgd.getStroke());
-				Color lineColor = (Color) graphColorV.get(i);
+				Color lineColor = graphColorV.get(i);
 				if (lineColor == null) {
 					if (lgd.getGraphColor() == null) {
 						lineColor = lineDefaultColor;
@@ -3169,7 +3169,7 @@ public class FunctionGraphsJPanel extends JPanel implements MouseListener, Mouse
 			x1 = xLOffSet;
 			x2 = screenW - xROffSet;
 			for (int i = 0, n = hLinesV.size(); i < n; i++) {
-				yP = ((Double) hLinesV.get(i)).doubleValue();
+				yP = hLinesV.get(i).doubleValue();
 				if (yP > yMaxIn) {
 					yP = yMaxIn;
 				}
@@ -3181,7 +3181,7 @@ public class FunctionGraphsJPanel extends JPanel implements MouseListener, Mouse
 				if (y1 < yUOffSet || y1 > (screenH - yBOffSet)) {
 					continue;
 				}
-				g.setColor((Color) hLinesColorV.get(i));
+				g.setColor( hLinesColorV.get(i) );
 				g.drawLine(x1, y1, x2, y2);
 			}
 		}
@@ -3190,7 +3190,7 @@ public class FunctionGraphsJPanel extends JPanel implements MouseListener, Mouse
 			y1 = yUOffSet;
 			y2 = screenH - yBOffSet;
 			for (int i = 0, n = vLinesV.size(); i < n; i++) {
-				xP = ((Double) vLinesV.get(i)).doubleValue();
+				xP = vLinesV.get(i).doubleValue();
 				if (xP > xMaxIn) {
 					xP = xMaxIn;
 				}
@@ -3202,7 +3202,7 @@ public class FunctionGraphsJPanel extends JPanel implements MouseListener, Mouse
 				if (x1 < xLOffSet || x1 > (screenW - xROffSet)) {
 					continue;
 				}
-				g.setColor((Color) vLinesColorV.get(i));
+				g.setColor( vLinesColorV.get(i) );
 				g.drawLine(x1, y1, x2, y2);
 			}
 		}
@@ -3212,7 +3212,7 @@ public class FunctionGraphsJPanel extends JPanel implements MouseListener, Mouse
 		//------------------------------
 		if (mouseDrugged) {
 			if (zoomGridLimitsV.size() > 0) {
-				GridLimits tmpGL = (GridLimits) zoomGridLimitsV.lastElement();
+				GridLimits tmpGL = zoomGridLimitsV.lastElement();
 				g.setColor(tmpGL.getColor());
 				x1 = getScreenX(tmpGL.getMinX());
 				y1 = getScreenY(tmpGL.getMaxY());
@@ -3402,7 +3402,7 @@ public class FunctionGraphsJPanel extends JPanel implements MouseListener, Mouse
 			if (hLinesV.size() > 0) {
 				x1 = xLOffSet - 2;
 				for (int i = hLinesV.size() - 1; i >= 0; i--) {
-					yP = ((Double) hLinesV.get(i)).doubleValue();
+					yP = hLinesV.get(i).doubleValue();
 					if (yP > yMaxIn) {
 						yP = yMaxIn;
 					}
@@ -3416,7 +3416,7 @@ public class FunctionGraphsJPanel extends JPanel implements MouseListener, Mouse
 					if (y1 > (screenH - yBOffSet)) {
 						y1 = (screenH - yBOffSet);
 					}
-					g.setColor((Color) hLinesColorV.get(i));
+					g.setColor( hLinesColorV.get(i) );
 					triangleMarkerLeft.translate(x1, y1);
 					g.fill(triangleMarkerLeft);
 					triangleMarkerLeft.translate(-x1, -y1);
@@ -3428,7 +3428,7 @@ public class FunctionGraphsJPanel extends JPanel implements MouseListener, Mouse
 			if (vLinesV.size() > 0) {
 				y1 = screenH - yBOffSet + 2;
 				for (int i = vLinesV.size() - 1; i >= 0; i--) {
-					xP = ((Double) vLinesV.get(i)).doubleValue();
+					xP = vLinesV.get(i).doubleValue();
 					if (xP > xMaxIn) {
 						xP = xMaxIn;
 					}
@@ -3442,7 +3442,7 @@ public class FunctionGraphsJPanel extends JPanel implements MouseListener, Mouse
 					if (x1 > (screenW - xROffSet)) {
 						x1 = (screenW - xROffSet);
 					}
-					g.setColor((Color) vLinesColorV.get(i));
+					g.setColor( vLinesColorV.get(i) );
 					triangleMarkerRight.translate(x1, y1);
 					g.fill(triangleMarkerRight);
 					triangleMarkerRight.translate(-x1, -y1);
@@ -3493,12 +3493,12 @@ public class FunctionGraphsJPanel extends JPanel implements MouseListener, Mouse
 		//commit actions for x and y-limits changes
 		if (xLimChanged) {
 			for (int k = 0, n = horLimListenersV.size(); k < n; k++) {
-				((ActionListener) horLimListenersV.get(k)).actionPerformed(horLimEvent);
+				horLimListenersV.get(k).actionPerformed(horLimEvent);
 			}
 		}
 		if (yLimChanged) {
 			for (int k = 0, n = verLimListenersV.size(); k < n; k++) {
-				((ActionListener) verLimListenersV.get(k)).actionPerformed(verLimEvent);
+				verLimListenersV.get(k).actionPerformed(verLimEvent);
 			}
 		}
 	}
@@ -3699,7 +3699,7 @@ public class FunctionGraphsJPanel extends JPanel implements MouseListener, Mouse
 				}
 			}
 			if (mouseDraggedTaskType == 0) {
-				GridLimits GL = (GridLimits) zoomGridLimitsV.lastElement();
+				GridLimits GL = zoomGridLimitsV.lastElement();
 				if (GL != null) {
 					int iX = getScreenX(GL.getMinX());
 					int eX = getScreenX(GL.getMaxX());
@@ -3785,8 +3785,8 @@ public class FunctionGraphsJPanel extends JPanel implements MouseListener, Mouse
 							gl.setNumberFormatY(numberFormatY);
 						}
 						zoomGridLimitsV.add(gl);
-						((GridLimits) zoomGridLimitsV.lastElement()).setXmin(getFromScreenX(evntIniX));
-						((GridLimits) zoomGridLimitsV.lastElement()).setYmin(getFromScreenY(evntIniY));
+						zoomGridLimitsV.lastElement().setXmin(getFromScreenX(evntIniX));
+						zoomGridLimitsV.lastElement().setYmin(getFromScreenY(evntIniY));
 					} else {
 						//legend dragging
 						mouseDraggedTaskType = 3;
@@ -3800,7 +3800,7 @@ public class FunctionGraphsJPanel extends JPanel implements MouseListener, Mouse
 			int eY = e.getY();
 
 			if (mouseDraggedTaskType == 0) {
-				GridLimits GL = (GridLimits) zoomGridLimitsV.lastElement();
+				GridLimits GL = zoomGridLimitsV.lastElement();
 				GL.initialize();
 
 				if (eX > evntIniX) {

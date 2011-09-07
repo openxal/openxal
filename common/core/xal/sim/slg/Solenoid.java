@@ -44,7 +44,7 @@ public class Solenoid extends Element {
      *@param v the Visitor which wants to visit this object.
      */
     public void accept(Visitor v) {
-        v.visit((Solenoid)this);
+        v.visit( this );
     }
     
 }

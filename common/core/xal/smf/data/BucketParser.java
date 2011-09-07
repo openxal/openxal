@@ -89,6 +89,6 @@ public class BucketParser implements DataListener {
     
     /** get a specific bucket keyed by the bucket type */
     public AttributeBucket getBucket(String bucketType) {
-        return (AttributeBucket)bucketTable.get(bucketType);
+        return bucketTable.get(bucketType);
     }
 }

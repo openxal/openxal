@@ -51,7 +51,7 @@ public class SkewSext extends Element {
      *@param v the Visitor which wants to visit this object.
      */
     public void accept(Visitor v) {
-        v.visit((SkewSext)this);
+        v.visit( this );
     }
     
 }

@@ -86,7 +86,7 @@ public class HSteerer extends ThinElement {
      *@param v the Visitor which wants to visit this object.
      */
     public void accept(Visitor v) {
-        v.visit((HSteerer)this);
+        v.visit( this );
     }
     
 }

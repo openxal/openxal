@@ -246,7 +246,7 @@ public class BasicGraphData {
 				}
 			} else {
 				for (int i = 0; i < x.length; i++) {
-					((XYpoint) xyPointV.get(i)).setXY(x[i], y[i], Math.abs(err[i]));
+					xyPointV.get(i).setXY(x[i], y[i], Math.abs(err[i]));
 				}
 			}
 			Collections.sort( xyPointV, new CompareX() );
@@ -275,7 +275,7 @@ public class BasicGraphData {
 				}
 			} else {
 				for (int i = 0; i < x.length; i++) {
-					((XYpoint) xyPointV.get(i)).setXY(x[i], y[i], 0.);
+					xyPointV.get(i).setXY(x[i], y[i], 0.);
 				}
 			}
 			Collections.sort( xyPointV, new CompareX() );
@@ -298,7 +298,7 @@ public class BasicGraphData {
 				return;
 			}
 			for (int i = 0; i < y.length; i++) {
-				((XYpoint) xyPointV.get(i)).setY(y[i], Math.abs(err[i]));
+				xyPointV.get(i).setY(y[i], Math.abs(err[i]));
 			}
 			this.calculateRepresentation();
 			this.updateData();
@@ -318,7 +318,7 @@ public class BasicGraphData {
 				return;
 			}
 			for (int i = 0; i < y.length; i++) {
-				((XYpoint) xyPointV.get(i)).setY(y[i]);
+				xyPointV.get(i).setY(y[i]);
 			}
 			this.calculateRepresentation();
 			this.updateData();
@@ -338,7 +338,7 @@ public class BasicGraphData {
 			if (index < 0 || index >= xyPointV.size()) {
 				return;
 			}
-			((XYpoint) xyPointV.get(index)).setY(y);
+			xyPointV.get(index).setY(y);
 			this.calculateRepresentation();
 			this.updateData();
 		}
@@ -450,11 +450,11 @@ public class BasicGraphData {
 				return Double.MIN_VALUE;
 			}
 			if (xyPointV.size() == 1) {
-				return ((XYpoint) xyPointV.get(0)).getY();
+				return xyPointV.get(0).getY();
 			}
 			int i = 0;
 			for (i = 0; i < xyPointV.size(); i++) {
-				if (x < ((XYpoint) xyPointV.get(i)).getX()) {
+				if (x < xyPointV.get(i).getX()) {
 					break;
 				}
 			}
@@ -464,8 +464,8 @@ public class BasicGraphData {
 			if (i == xyPointV.size()) {
 				i = xyPointV.size() - 1;
 			}
-			XYpoint p1 = (XYpoint) xyPointV.get(i - 1);
-			XYpoint p2 = (XYpoint) xyPointV.get(i);
+			XYpoint p1 = xyPointV.get(i - 1);
+			XYpoint p2 = xyPointV.get(i);
 			if (p2.getX() == p1.getX()) {
 				return (p1.getY() + p2.getY()) / 2.0;
 			}
@@ -493,7 +493,7 @@ public class BasicGraphData {
 			}
 			int i = 0;
 			for (i = 0; i < xyPointV.size(); i++) {
-				if (x < ((XYpoint) xyPointV.get(i)).getX()) {
+				if (x < xyPointV.get(i).getX()) {
 					break;
 				}
 			}
@@ -503,8 +503,8 @@ public class BasicGraphData {
 			if (i == xyPointV.size()) {
 				i = xyPointV.size() - 1;
 			}
-			XYpoint p1 = (XYpoint) xyPointV.get(i - 1);
-			XYpoint p2 = (XYpoint) xyPointV.get(i);
+			XYpoint p1 = xyPointV.get(i - 1);
+			XYpoint p2 = xyPointV.get(i);
 			if (p2.getX() == p1.getX()) {
 				return 0.0;
 			}
@@ -555,7 +555,7 @@ public class BasicGraphData {
 	 */
 	public double getX(int index) {
 		synchronized (lockUpObj) {
-			return ((XYpoint) xyPointV.get(index)).getX();
+			return xyPointV.get(index).getX();
 		}
 	}
 
@@ -567,7 +567,7 @@ public class BasicGraphData {
 	 *@return        The y value
 	 */
 	public double getY(int index) {
-		return ((XYpoint) xyPointV.get(index)).getY();
+		return xyPointV.get(index).getY();
 	}
 
 
@@ -579,7 +579,7 @@ public class BasicGraphData {
 	 */
 	public double getInterpX(int index) {
 		synchronized (lockUpObj) {
-			return ((XYpoint) xyInterpPointV.get(index)).getX();
+			return xyInterpPointV.get(index).getX();
 		}
 	}
 
@@ -592,7 +592,7 @@ public class BasicGraphData {
 	 */
 	public double getInterpY(int index) {
 		synchronized (lockUpObj) {
-			return ((XYpoint) xyInterpPointV.get(index)).getY();
+			return xyInterpPointV.get(index).getY();
 		}
 	}
 
@@ -605,7 +605,7 @@ public class BasicGraphData {
 	 */
 	public double getErr(int index) {
 		synchronized (lockUpObj) {
-			return ((XYpoint) xyPointV.get(index)).getYerr();
+			return xyPointV.get(index).getYerr();
 		}
 	}
 
@@ -679,9 +679,9 @@ public class BasicGraphData {
 			return;
 		}
 
-		xMin = ((XYpoint) xyPointV.firstElement()).getX();
-		xMax = ((XYpoint) xyPointV.lastElement()).getX();
-		XYpoint pMaxErr = (XYpoint) Collections.max( xyPointV, new CompareErr() );
+		xMin = xyPointV.firstElement().getX();
+		xMax = xyPointV.lastElement().getX();
+		XYpoint pMaxErr = Collections.max( xyPointV, new CompareErr() );
 		errYmax = pMaxErr.getYerr();
 
 		//------------------------------------------------------------------------
@@ -709,12 +709,12 @@ public class BasicGraphData {
 			if (y > yMax) {
 				yMax = y;
 			}
-			((XYpoint) xyInterpPointV.get(i)).setXY(x, y);
+			xyInterpPointV.get(i).setXY(x, y);
 		}
 
 		for (int i = 0, nPoints = xyPointV.size(); i < nPoints; i++) {
-			x = ((XYpoint) xyPointV.get(i)).getX();
-			y = ((XYpoint) xyPointV.get(i)).getY();
+			x = xyPointV.get(i).getX();
+			y = xyPointV.get(i).getY();
 			if (y < yMin) {
 				yMin = y;
 			}

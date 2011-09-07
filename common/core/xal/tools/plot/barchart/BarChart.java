@@ -91,7 +91,7 @@ public class BarChart {
             }
 
             for (int i = 1, n = Math.min(nClmns * nMaxLines + 1, cvV.size()); i < n; i++) {
-              CurveData cd = (CurveData) cvV.get(i);
+              CurveData cd = cvV.get(i);
               cd.setLineWidth(width);
             }
           }
@@ -303,7 +303,7 @@ public class BarChart {
 
     int cvCount = 1;
     for (int i = 1; i <= nClmns; i++) {
-      BarColumn bc = (BarColumn) barColumns.get(i - 1);
+      BarColumn bc = barColumns.get(i - 1);
       if (bc.show()) {
         double d_min = i - 0.35;
         double d_max = i + 0.35;

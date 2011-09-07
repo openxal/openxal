@@ -63,6 +63,6 @@ public class EKicker extends ThinElement {
      * @param v the Visitor which wants to visit this object.
      */
     public void accept( final Visitor v ) {
-        v.visit( (EKicker)this );
+        v.visit( this );
     }
 }

@@ -97,15 +97,14 @@ public class RfGapPropertyAccessor implements PropertyAccessor {
     // PropertyAccessor Interface ==============================================
 
 	@Override
-    public double doubleValueFor(AcceleratorNode node, String property, String mode) 
-            throws ProxyException {
+    public double doubleValueFor(AcceleratorNode node, String property, String mode) throws ProxyException {
         PropertyProxy proxy = null;
         if (mode.equals(Scenario.SYNC_MODE_LIVE)) {
-            proxy = (PropertyProxy) liveProxies.get(property);
+            proxy = liveProxies.get(property);
         } else if (mode.equals(Scenario.SYNC_MODE_DESIGN)) {
-            proxy = (PropertyProxy) designProxies.get(property);
-                } else if (mode.equals(Scenario.SYNC_MODE_RF_DESIGN)) {
-                        proxy = (PropertyProxy) designProxies.get(property);
+            proxy = designProxies.get(property);
+        } else if (mode.equals(Scenario.SYNC_MODE_RF_DESIGN)) {
+            proxy = designProxies.get(property);
         } else {
             throw new IllegalArgumentException("Unknown mode: " + mode);
         }

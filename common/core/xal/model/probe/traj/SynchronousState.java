@@ -161,7 +161,7 @@ public class SynchronousState extends ProbeState {
         if (daptSync == null)
             throw new ParsingException("SynchronousState#readPropertiesFrom(): no child element = " + LABEL_SYNCH);
         
-        if (daptSync.hasAttribute(SynchronousState.ATTR_PHASEBETA));   {
+        if (daptSync.hasAttribute(SynchronousState.ATTR_PHASEBETA))   {
             String  strBeta = daptSync.stringValue(SynchronousState.ATTR_PHASEBETA);
             this.setBetatronPhase( new R3( strBeta ) );
         }

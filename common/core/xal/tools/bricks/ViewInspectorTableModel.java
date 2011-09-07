@@ -192,6 +192,7 @@ class ViewInspectorTableModel extends AbstractTableModel implements PropertyTabl
 				try {
 					final PropertyDescriptor propertyDescriptor = PROPERTY_DESCRIPTORS[row];
 					BEAN_NODE.setPropertyValue( propertyDescriptor, value );
+                    break;
 				}
 				catch ( Exception exception ) {
 					exception.printStackTrace();

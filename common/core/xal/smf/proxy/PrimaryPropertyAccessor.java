@@ -147,7 +147,7 @@ public class PrimaryPropertyAccessor {
 		while (nodeClassIt.hasNext()) {
 			Class cl = (Class) nodeClassIt.next();
 			if (cl.isInstance(aNode)) {
-				return (PropertyAccessor) nodeAccessorMap.get(cl);
+				return nodeAccessorMap.get(cl);
 			}
 		}
 		return null;
