@@ -32,6 +32,7 @@ import xal.sim.latgen.GenerationException;
 import xal.smf.Accelerator;
 import xal.smf.AcceleratorSeq;
 import xal.smf.data.XMLDataManager;
+import xal.test.AcceleratorUtil;
 
 /**
  * JUnit test cases for the class <code>{@link HardwareTree}</code>.
@@ -61,8 +62,7 @@ public class TestHardwareTree {
      */
     @BeforeClass
     public static void setUpBeforeClass() throws Exception {
-        final URL configURL = TestHardwareTree.class.getResource( CONFIGURATION_RESOURCE_PATH );
-        ACCEL_TEST = XMLDataManager.getInstance( configURL ).getAccelerator();
+        ACCEL_TEST = AcceleratorUtil.getTestAccelerator();
     }
     
     

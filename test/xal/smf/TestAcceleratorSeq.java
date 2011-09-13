@@ -8,6 +8,7 @@
 
 package xal.smf;
 
+import xal.test.AcceleratorUtil;
 import xal.smf.data.XMLDataManager;
 import xal.smf.impl.*;
 import xal.smf.impl.qualify.*;
@@ -25,8 +26,7 @@ public class TestAcceleratorSeq {
     
     @BeforeClass
     public static void commonSetup() {
-        final URL opticsURL = TestAcceleratorSeq.class.getResource( "/xal/config/main.xal" );
-        DEFAULT_ACCELERATOR = opticsURL != null ? XMLDataManager.getInstance( opticsURL ).getAccelerator() : null;
+        DEFAULT_ACCELERATOR = AcceleratorUtil.getTestAccelerator();
     }
     
     
