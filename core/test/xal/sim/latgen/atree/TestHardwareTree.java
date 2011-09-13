@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.net.URL;
 
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -63,7 +64,14 @@ public class TestHardwareTree {
         final URL configURL = TestHardwareTree.class.getResource( CONFIGURATION_RESOURCE_PATH );
         ACCEL_TEST = XMLDataManager.getInstance( configURL ).getAccelerator();
     }
+    
+    
+    @AfterClass
+    public static void commonCleanup() {
+        ACCEL_TEST = null;
+    }
 
+    
     /**
      * xal.sim.latgen.atree
      *
