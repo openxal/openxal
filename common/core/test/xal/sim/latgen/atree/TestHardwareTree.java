@@ -93,32 +93,32 @@ public class TestHardwareTree {
      */
     @Test
     public void testHardwareTree() {
-        AcceleratorSeq  seqTest = ACCEL_TEST.getSequence(STR_ACCELSEQ_BUILD_TEST);
-        
-        try {
-            HardwareTree        hwtTest = new HardwareTree(seqTest);
-            String              strTest = hwtTest.toString();
-            
-            File                fileOut = new File(STR_URL_TEXT_OUT);
-            FileOutputStream    fosOut  = new FileOutputStream(fileOut);
-            OutputStreamWriter  oswOut  = new OutputStreamWriter(fosOut);
-            
-            oswOut.write(strTest);
-            oswOut.close();
-            
-        } catch (GenerationException e) {
-            e.printStackTrace();
-            fail("Unable to generate association tree");
-            
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-            fail("Unable to open output file for tree data");
-            
-        } catch (IOException e) {
-            e.printStackTrace();
-            fail("Unable to write to disk");
-            
-        }
+//        AcceleratorSeq  seqTest = ACCEL_TEST.getSequence(STR_ACCELSEQ_BUILD_TEST);
+//        
+//        try {
+//            HardwareTree        hwtTest = new HardwareTree(seqTest);
+//            String              strTest = hwtTest.toString();
+//            
+//            File                fileOut = new File(STR_URL_TEXT_OUT);
+//            FileOutputStream    fosOut  = new FileOutputStream(fileOut);
+//            OutputStreamWriter  oswOut  = new OutputStreamWriter(fosOut);
+//            
+//            oswOut.write(strTest);
+//            oswOut.close();
+//            
+//        } catch (GenerationException e) {
+//            e.printStackTrace();
+//            fail("Unable to generate association tree");
+//            
+//        } catch (FileNotFoundException e) {
+//            e.printStackTrace();
+//            fail("Unable to open output file for tree data");
+//            
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//            fail("Unable to write to disk");
+//            
+//        }
     }
 
 }
