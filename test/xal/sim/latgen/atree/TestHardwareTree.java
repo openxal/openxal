@@ -102,7 +102,8 @@ public class TestHardwareTree {
             HardwareTree        hwtTest = new HardwareTree(seqTest);
             String              strTest = hwtTest.toString();
             
-            File                fileOut = File.createTempFile( "TestHardwareTree", "txt", null );
+            File                fileOut = File.createTempFile( "TestHardwareTree", ".txt" );
+            fileOut.deleteOnExit();     // mark the output file for deletion upon exit of the process
             FileOutputStream    fosOut  = new FileOutputStream(fileOut);
             OutputStreamWriter  oswOut  = new OutputStreamWriter(fosOut);
             
