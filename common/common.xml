@@ -1,3 +1,0 @@
-<project name="common.config">
-	<import file="../config.xml"/>
-</project>

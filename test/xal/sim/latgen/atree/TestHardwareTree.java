@@ -41,7 +41,7 @@ public class TestHardwareTree {
 
     
     /** The XAL configuration file */
-    final static private String     STR_URL_CONFIG = "common/core/test/resources/config/main.xal";
+    final static private String     STR_URL_CONFIG = "core/test/resources/config/main.xal";
     
     /** The output text dump of the association tree */
     final static private String     STR_URL_TEXT_OUT = "build/tests/output/xal/sim/latgen/atree/TestHardwareTree.txt";
