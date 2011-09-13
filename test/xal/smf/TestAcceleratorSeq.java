@@ -20,13 +20,19 @@ import org.junit.*;
 /** test the AcceleratorSeq class */
 public class TestAcceleratorSeq {
     /** default accelerator */
-    final private Accelerator DEFAULT_ACCELERATOR;
+    static private Accelerator DEFAULT_ACCELERATOR;
     
     
-    /** Constructor */
-    public TestAcceleratorSeq() {
-        final URL opticsURL = getClass().getResource( "/xal/config/main.xal" );
+    @BeforeClass
+    public static void commonSetup() {
+        final URL opticsURL = TestAcceleratorSeq.class.getResource( "/xal/config/main.xal" );
         DEFAULT_ACCELERATOR = opticsURL != null ? XMLDataManager.getInstance( opticsURL ).getAccelerator() : null;
+    }
+    
+    
+    @AfterClass
+    public static void commonCleanup() {
+        DEFAULT_ACCELERATOR = null;
     }
     
     
