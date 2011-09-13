@@ -2,7 +2,7 @@
 
 <!-- Process all the applications. -->
 <project name="apps" basedir="." default="all">
-    <import file="../common.xml"/>
+    <import file="../config.xml"/>
     
     <property name="build.path.pattern" value="*/build.xml" />
 

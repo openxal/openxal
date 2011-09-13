@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <project name="common.apps.config" basedir="." default="all">
-    <import file="../common.xml" />
+    <import file="../config.xml" />
 
     <!-- the value for these properties are overriden if specified in the beginning of the app's build file before any tasks are defined -->
 	<property name="classpath.ref" value="default.classpath" />

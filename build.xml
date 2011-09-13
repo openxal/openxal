@@ -1,35 +1,36 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <!-- Build the core and all applications. -->
-<project basedir="." default="all" name="main.build">    
+<project basedir="." default="all" name="xal.common">    
     <import file="config.xml"/>
     
+    <property name="build.path.pattern" value="*/build.xml" />
+
     
-    <!-- Install everything. -->
-    <target name="install" depends="">
-        <subant target="install">
-            <fileset dir="${common.root}">
-                <include name="build.xml" />
-            </fileset>
-        </subant>
-    </target>
+    <!-- Build the core and all the applications which allow batch building. -->
+    <target name="all" depends="core,apps" />
     
     
-    <!-- Run tests. -->
-    <target name="run-tests">
+    <!-- Install the core and all the applications which allow batch building. -->
+    <target name="install" depends="install-core,install-apps" />
+    
+    
+    <!-- Build and run all unit tests. -->
+    <target name="run-tests" depends="">
         <subant target="run-tests">
-            <fileset dir="${common.root}">
+            <fileset dir="core">
                 <include name="build.xml" />
             </fileset>
         </subant>
     </target>
     
     
-    <!-- Clean everything. -->
+    <!-- Clean the core and all the applications. -->
     <target name="clean">
         <subant target="clean">
-            <fileset dir="${common.root}">
-                <include name="build.xml" />
+            <fileset dir=".">
+                <include name="core/build.xml" />
+                <include name="apps/build.xml" />
             </fileset>
         </subant>
     </target>
@@ -38,10 +39,12 @@
     <!-- Clean the core and all the applications. -->
     <target name="purge-install">
         <subant target="purge-install">
-            <fileset dir="${common.root}">
-                <include name="build.xml" />
+            <fileset dir=".">
+                <include name="core/build.xml" />
+                <include name="apps/build.xml" />
             </fileset>
         </subant>
+        <delete dir="${install.root}" />
     </target>
 	
 	
@@ -52,11 +55,41 @@
     </target>
     
     
-    <!-- Build everything. -->
-    <target name="all">
+    <!-- Build the core. -->
+    <target name="core">
         <subant target="all">
-            <fileset dir="${common.root}">
-                <include name="build.xml" />
+            <fileset dir=".">
+                <include name="core/build.xml" />
+            </fileset>
+        </subant>
+    </target>
+    
+    
+    <!-- Build all the applications which allow batch building. -->
+    <target name="apps" depends="core">
+        <subant target="all">
+            <fileset dir=".">
+                <include name="apps/build.xml" />
+            </fileset>
+        </subant>
+    </target>
+    
+    
+    <!-- Install the core. -->
+    <target name="install-core">
+        <subant target="install">
+            <fileset dir=".">
+                <include name="core/build.xml" />
+            </fileset>
+        </subant>
+    </target>
+    
+    
+    <!-- Install all the applications which allow batch building. -->
+    <target name="install-apps" depends="install-core">
+        <subant target="install">
+            <fileset dir=".">
+                <include name="apps/build.xml" />
             </fileset>
         </subant>
     </target>
@@ -70,11 +103,13 @@
 		<echo message="  where target(s) can be:" />
 		<echo message="    help ....................... Print this message." />
 		<echo message="    all ........................ Compile the core XAL classes and applications and assemble the jar products." />
+		<echo message="    apps ....................... Compile the applications and assemble the jar products." />
 		<echo message="    clean ...................... Clean compiled classes and build products" />
+		<echo message="    core ....................... Compile the core XAL classes and assemble the jar products." />
 		<echo message="    install: ................... Install all build products intended for distribution." />
 		<echo message="    purge-build: ............... Purge all build products." />
 		<echo message="    purge-install: ............. Purge all installed products." />
 		<echo message="    run-tests: ................. Build and run unit tests." />
     </target>
-    
+
 </project>
