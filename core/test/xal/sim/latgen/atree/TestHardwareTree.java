@@ -21,6 +21,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.net.URL;
 
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -40,12 +41,8 @@ import xal.smf.data.XMLDataManager;
 public class TestHardwareTree {
 
     
-    /** The XAL configuration file */
-    final static private String     STR_URL_CONFIG = "core/test/resources/config/main.xal";
-    
-    /** The output text dump of the association tree */
-    final static private String     STR_URL_TEXT_OUT = "build/tests/output/xal/sim/latgen/atree/TestHardwareTree.txt";
-    
+    /** The XAL configuration file in the test resources (absolute resource path in the test jar) */
+    final static private String     CONFIGURATION_RESOURCE_PATH = "/xal/config/main.xal";
     
     /** The accelerator object used for testing */
     static private Accelerator      ACCEL_TEST;
@@ -63,10 +60,8 @@ public class TestHardwareTree {
      */
     @BeforeClass
     public static void setUpBeforeClass() throws Exception {
-        
-        ACCEL_TEST = XMLDataManager.acceleratorWithPath(STR_URL_CONFIG);
-//        ACCEL_TEST = XMLDataManager.loadDefaultAccelerator();
-       
+        final URL configURL = TestHardwareTree.class.getResource( CONFIGURATION_RESOURCE_PATH );
+        ACCEL_TEST = XMLDataManager.getInstance( configURL ).getAccelerator();
     }
 
     /**
@@ -93,32 +88,32 @@ public class TestHardwareTree {
      */
     @Test
     public void testHardwareTree() {
-//        AcceleratorSeq  seqTest = ACCEL_TEST.getSequence(STR_ACCELSEQ_BUILD_TEST);
-//        
-//        try {
-//            HardwareTree        hwtTest = new HardwareTree(seqTest);
-//            String              strTest = hwtTest.toString();
-//            
-//            File                fileOut = new File(STR_URL_TEXT_OUT);
-//            FileOutputStream    fosOut  = new FileOutputStream(fileOut);
-//            OutputStreamWriter  oswOut  = new OutputStreamWriter(fosOut);
-//            
-//            oswOut.write(strTest);
-//            oswOut.close();
-//            
-//        } catch (GenerationException e) {
-//            e.printStackTrace();
-//            fail("Unable to generate association tree");
-//            
-//        } catch (FileNotFoundException e) {
-//            e.printStackTrace();
-//            fail("Unable to open output file for tree data");
-//            
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//            fail("Unable to write to disk");
-//            
-//        }
+        AcceleratorSeq  seqTest = ACCEL_TEST.getSequence(STR_ACCELSEQ_BUILD_TEST);
+        
+        try {
+            HardwareTree        hwtTest = new HardwareTree(seqTest);
+            String              strTest = hwtTest.toString();
+            
+            File                fileOut = File.createTempFile( "TestHardwareTree", "txt", null );
+            FileOutputStream    fosOut  = new FileOutputStream(fileOut);
+            OutputStreamWriter  oswOut  = new OutputStreamWriter(fosOut);
+            
+            oswOut.write(strTest);
+            oswOut.close();
+            
+        } catch (GenerationException e) {
+            e.printStackTrace();
+            fail("Unable to generate association tree");
+            
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            fail("Unable to open output file for tree data");
+            
+        } catch (IOException e) {
+            e.printStackTrace();
+            fail("Unable to write to disk");
+            
+        }
     }
 
 }
