@@ -8,7 +8,7 @@
 
 package xal.smf;
 
-import xal.test.AcceleratorUtil;
+import xal.test.ResourceManager;
 import xal.smf.data.XMLDataManager;
 import xal.smf.impl.*;
 import xal.smf.impl.qualify.*;
@@ -26,7 +26,7 @@ public class TestAcceleratorSeq {
     
     @BeforeClass
     public static void commonSetup() {
-        DEFAULT_ACCELERATOR = AcceleratorUtil.getTestAccelerator();
+        DEFAULT_ACCELERATOR = ResourceManager.getTestAccelerator();
     }
     
     
