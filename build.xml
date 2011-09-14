@@ -75,6 +75,16 @@
     </target>
     
     
+    <!-- Build all the applications standalone which allow batch building. -->
+    <target name="standalone-apps" depends="core">
+        <subant target="all-standalone">
+            <fileset dir=".">
+                <include name="apps/build.xml" />
+            </fileset>
+        </subant>
+    </target>
+    
+    
     <!-- Install the core. -->
     <target name="install-core">
         <subant target="install">
@@ -106,10 +116,11 @@
 		<echo message="    apps ....................... Compile the applications and assemble the jar products." />
 		<echo message="    clean ...................... Clean compiled classes and build products" />
 		<echo message="    core ....................... Compile the core XAL classes and assemble the jar products." />
-		<echo message="    install: ................... Install all build products intended for distribution." />
-		<echo message="    purge-build: ............... Purge all build products." />
-		<echo message="    purge-install: ............. Purge all installed products." />
-		<echo message="    run-tests: ................. Build and run unit tests." />
+		<echo message="    install .................... Install all build products intended for distribution." />
+		<echo message="    purge-build ................ Purge all build products." />
+		<echo message="    purge-install .............. Purge all installed products." />
+		<echo message="    run-tests .................. Build and run unit tests." />
+		<echo message="    standalone-apps ............ Build the applications which allow batch building and assemble the jar products as standalone applications." />
     </target>
 
 </project>

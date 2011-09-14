@@ -5,14 +5,14 @@
 
     <!-- the value for these properties are overriden if specified in the beginning of the app's build file before any tasks are defined -->
 	<property name="classpath.ref" value="default.classpath" />
-	<property name="manifest.classpath" value="../xal-core.jar ../xal-lib.jar ../xal-datasource.jar" />    
+	<property name="manifest.classpath" value="../xal-core.jar ../xal-lib.jar" />    
     <property name="mainclass.base" value="Main" />
     
-    
+    <!-- Initialization for the application build -->
     <target name="init">
         <dirname property="apps.src.root" file="${ant.file.common.apps.config}" />
         
-        <property environment="env" />
+        <property environment="env" />        
         <property name="appname" value="${ant.project.name}" />
 		<property name="app.package.prefix" value="xal.app" />
 		<property name="mainclass" value="${app.package.prefix}.${appname}.${mainclass.base}" />
@@ -50,12 +50,12 @@
         
         <echo message="Conditionally processing ${appname}" />
     </target>
-
-
+    
+    
+    <!-- classpath to be referenced -->
 	<path id="default.classpath">
 		<pathelement location="${build.root}/jar/xal-core.jar" />
 		<pathelement location="${build.root}/jar/xal-lib.jar" />
-		<pathelement location="${build.root}/jar/xal-datasource.jar" />
 	</path>
 
 	
@@ -63,12 +63,22 @@
 	<macrodef name="compile-flagged">
 		<attribute name="flag" default="-Xlint:none" />
 		<sequential>
-            <mkdir dir="${app.build.compile.root}"/>
+            <mkdir dir="${app.build.compile.root}" />
             <javac srcdir="${app.src.root}/src" destdir="${app.build.compile.root}" debug="true" source="1.6" target="1.6" includeAntRuntime="no" deprecation="true">
-                <classpath refid="${classpath.ref}"/>
                 <compilerarg value="@{flag}" />
+                
+                <!-- compile against the common libraries (e.g. xal-core.jar, xal-lib.jar) -->
+                <classpath refid="${classpath.ref}" />
+                
+                <!-- compile against any app specific jars in the app's lib directory -->
+                <classpath>
+                    <fileset dir="${app.src.root}">
+                        <include name="lib/*.jar" />
+                    </fileset>
+                </classpath>
             </javac>
             
+            <!-- copy the app's resources into the compile directory -->
             <copy todir="${app.build.compile.root}/${app.relative.path}/resources">
                 <fileset dir="${app.src.root}/resources" />
             </copy>
@@ -93,21 +103,56 @@
     <target name="compile" depends="init" if="allows.build">
 		<compile-flagged />
     </target>
+    
+    
+    <!-- Archive the application either referencing the common libraries or as standalone with the common libraries embedded -->
+    <macrodef name="archive">
+        <element name="embed-other" optional="yes" />
+        <sequential>
+            <mkdir dir="${build.jar.root}" />
+            <mkdir dir="${apps.build.jar.root}" />
+            <jar jarfile="${app.build.jar}" compress="true" basedir="${app.build.compile.root}" includes="${app.relative.path}/**/*">
+                <manifest>
+                    <attribute name="Manifest-Version" value="1.0" />
+                    <attribute name="Main-Class" value="${mainclass}" />
+                    <attribute name="Class-Path" value="${manifest.classpath}" />
+                </manifest>
+                
+                <!-- merge any app specific libraries in the app's lib directory into the app's jar -->
+                <zipgroupfileset dir="${app.src.root}">
+                    <patternset>
+                        <include name="lib/*.jar" />
+                    </patternset>
+                </zipgroupfileset>
+                
+                <!-- optionally embed other items into the archive -->
+                <embed-other />
+            </jar>
+        </sequential>
+    </macrodef>
 
     
+    <!-- Archive the application and any of its app specific libraries into a jar file with relative dependency on the common libraries -->
     <target name="jar" depends="init,compile" if="allows.build">
-        <mkdir dir="${build.jar.root}" />
-        <mkdir dir="${apps.build.jar.root}" />
-        <jar jarfile="${app.build.jar}" compress="true" basedir="${app.build.compile.root}" includes="${app.relative.path}/**/*">
-            <manifest>
-              <attribute name="Manifest-Version" value="1.0" />
-              <attribute name="Main-Class" value="${mainclass}" />
-              <attribute name="Class-Path" value="${manifest.classpath}" />
-            </manifest>
-        </jar>
+        <archive />
     </target>
     
     
+    <!-- Archive the application, any of its app specific libraries and the common libraries into a standalone jar file -->
+    <target name="jar-standalone" depends="init,compile" if="allows.build">
+        <archive>
+            <embed-other>
+                <!-- embed the core and external libraries into the application's archive -->
+                <zipgroupfileset dir="${build.root}/jar">
+                    <include name="xal-core.jar" />
+                    <include name="xal-lib.jar" />
+                </zipgroupfileset>
+            </embed-other>
+        </archive>
+    </target>
+    
+    
+    <!-- Install the application in the apps directory under the install directory -->
     <target name="install" depends="all" if="allows.install">
         <copy file="${app.build.jar}" todir="${apps.install.root}" />
         <echo message="${appname} installed!"/>
@@ -117,35 +162,62 @@
     <!-- Purge the application from the install root. -->
     <target name="purge-install" depends="init">
         <delete file="${app.install.jar}" quiet="true" />
-        <echo message="Purged: ${app.install.jar}"/>
+        <echo message="Purged: ${app.install.jar}" />
     </target>
     
     
-    <target name="run" depends="init" description="Run application.">
-    	<java jar="${app.build.jar}" fork="true">
-	</java> 
+    <!-- Run the application -->
+    <target name="run" depends="init,jar" description="Run application.">
+    	<java jar="${app.build.jar}" fork="true" />
     </target>
     
     
+    <!-- Build the application and place it in the apps directory under the build directory -->
     <target name="all" depends="init,jar" description="Build everything." if="allows.build">
-        <echo message="${appname} built!"/>
+        <echo message="${appname} built!" />
     </target>
     
     
+    <!-- Build the application standalone and place it in the apps directory under the build directory -->
+    <target name="all-standalone" depends="init,jar-standalone" description="Build everything." if="allows.build">
+        <echo message="${appname} built standalone!" />
+    </target>
+    
+    
+    <!-- Generate Java documentation -->
     <target name="javadoc" depends="init" description="Javadoc for ${appname} app. API.">
         <mkdir dir="${build.root}/javadoc"/>
         <javadoc packagenames="${apps}.${appname}" destdir="${build.root}/javadoc">
             <sourcepath>
-                <pathelement location="${xal.home}"/>
+                <pathelement location="${xal.home}" />
             </sourcepath>
         </javadoc>
     </target>
 
     
+    <!-- Clean the application build files -->
     <target name="clean" depends="init" description="Clean all build products.">
         <delete dir="${apps.build.compile.root}/${app.relative.path}"/>
         <delete file="${app.build.jar}"/>
-        <delete dir="${build.root}/javadoc/apps/${appname}"/>
+        <delete dir="${build.root}/javadoc/apps/${appname}" />
+    </target>
+	
+	
+	<!-- provide guidance on the various targets -->
+    <target name="help" depends="init">
+		<echo message="Help for building the ${appname} application!" />
+		<echo message="Usage: ant [ant options] target1 [target2 | target3 | ... ]" />
+		<echo message="" />
+		<echo message="  where target(s) can be:" />
+		<echo message="    help ....................... Print this message." />
+		<echo message="    all ........................ Compile the application and assemble the jar product with dependence on the common libraries." />
+		<echo message="    all-standalone ............. Compile the application and assemble the jar product as standalone application." />
+		<echo message="    clean ...................... Clean compiled classes and build product" />
+		<echo message="    compile .................... Compile the application reporting only mandated warnings." />
+		<echo message="    compile-warn ............... Compile the application reporting unchecked conversions." />
+		<echo message="    compile-warn-all ........... Compile the application reporting all recommended warnings." />
+		<echo message="    install .................... Install the application for distribution." />
+		<echo message="    purge-install .............. Purge the installed application." />
     </target>
 
 </project>
