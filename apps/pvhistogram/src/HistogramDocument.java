@@ -147,30 +147,7 @@ public class HistogramDocument extends AcceleratorDocument implements DataListen
      * @param url The URL to which the document should be saved.
      */
     public void saveDocumentAs( final URL url ) {
-        try {
-            final XmlDataAdaptor documentAdaptor = XmlDataAdaptor.newEmptyDocumentAdaptor();
-            documentAdaptor.writeNode( this );
-            documentAdaptor.writeToUrl( url );
-            setHasChanges( false );
-        }
-        catch( XmlDataAdaptor.WriteException exception ) {
-			if ( exception.getCause() instanceof java.io.FileNotFoundException ) {
-				System.err.println( exception );
-				displayError( "Save Failed!", "Save failed due to a file access exception!", exception );
-			}
-			else if ( exception.getCause() instanceof java.io.IOException ) {
-				System.err.println( exception );
-				displayError( "Save Failed!", "Save failed due to a file IO exception!", exception );
-			}
-			else {
-				exception.printStackTrace();
-				displayError( "Save Failed!", "Save failed due to an internal write exception!", exception );
-			}
-        }
-        catch(Exception exception) {
-			exception.printStackTrace();
-            displayError( "Save Failed!", "Save failed due to an internal exception!", exception );
-        }
+        writeDataTo( this, url );
     }
     
     

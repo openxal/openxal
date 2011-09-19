@@ -20,6 +20,8 @@ import java.awt.Graphics2D;
 import javax.swing.JOptionPane;
 
 import xal.tools.messaging.MessageCenter;
+import xal.tools.data.*;
+import xal.tools.xml.*;
 
 
 /** Abstract superclass of both free and internal documents.*/
@@ -266,16 +268,58 @@ abstract class XalAbstractDocument implements Pageable {
 	 * Subclasses need to implement this method for saving the document to a URL.
      * @param url The URL to which this document should be saved.
      */
-    abstract public void saveDocumentAs(URL url);
+    abstract public void saveDocumentAs( final URL url );
     
     
     /**
 	 * Save this document to its persistent storage source.
      */
     public void saveDocument() {
-        saveDocumentAs(source);
+        saveDocumentAs( source );
     }
-	
+    
+    
+    /**
+     * Convenience method typically called in saveDocumentAs() to save a document rooted in a data listener source.
+     * @param dataRoot DataListener root of the document to save
+     * @param url The URL to which the document should be saved.
+     */
+    protected void writeDataTo( final DataListener dataRoot, final URL url ) {
+        try {
+            final XmlDataAdaptor documentAdaptor = XmlDataAdaptor.newEmptyDocumentAdaptor();
+            documentAdaptor.writeNode( dataRoot );
+            documentAdaptor.writeToUrl( url );
+            handleDataWrittenTo( dataRoot, url );
+            setHasChanges( false );
+        }
+        catch( XmlDataAdaptor.WriteException exception ) {
+			if ( exception.getCause() instanceof java.io.FileNotFoundException ) {
+				System.err.println( exception );
+				displayError( "Save Failed!", "Save failed due to a file access exception!", exception );
+			}
+			else if ( exception.getCause() instanceof java.io.IOException ) {
+				System.err.println( exception );
+				displayError( "Save Failed!", "Save failed due to a file IO exception!", exception );
+			}
+			else {
+				exception.printStackTrace();
+				displayError( "Save Failed!", "Save failed due to an internal write exception!", exception );
+			}
+        }
+        catch(Exception exception) {
+			exception.printStackTrace();
+            displayError( "Save Failed!", "Save failed due to an internal exception!", exception );
+        }
+    }
+    
+    
+    /**
+     * Subclasses may override this empty method to implement custom code called by writeDataTo() after data has been successfully written to the specified URL.
+     * @param dataRoot DataListener root of the document to save
+     * @param url The URL to which the document should be saved.
+     */
+    protected void handleDataWrittenTo( final DataListener dataRoot, final URL url ) {}
+ 	
 	
     /**
 	 * This method is a request to close a document.  It may be called when, for 
