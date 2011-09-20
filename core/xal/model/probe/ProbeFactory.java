@@ -294,15 +294,13 @@ public class ProbeFactory {
 		final DataTable beamTable = editContext.getTable( BEAM_TABLE );
 		
 		final GenericRecord beamRecord = beamTable.record( "name", "default" );
-        double bunchFreq = beamRecord.doubleValueForKey("f");
-		double beamCurrent = beamRecord.doubleValueForKey( "I" );
-        String strPhase = beamRecord.stringValueForKey("phase");
-//		double beamCharge = beamRecord.doubleValueForKey( "Q" );
+        final double bunchFreq = beamRecord.doubleValueForKey( "bunchFreq" );
+		final double beamCurrent = beamRecord.doubleValueForKey( "current" );
+        final String phase = beamRecord.stringValueForKey( "phase" );
 				
         probe.setBunchFrequency( bunchFreq );
 		probe.setBeamCurrent( beamCurrent );
-        probe.setBetatronPhase( new R3(strPhase) );
-//		probe.setBeamCharge( beamCharge);
+        probe.setBetatronPhase( new R3( phase ) );
 		
 		return true;
 	}
