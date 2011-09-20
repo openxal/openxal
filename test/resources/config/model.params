@@ -35,12 +35,13 @@
 	
 	<table name="beam">
 		<schema>
-			<attribute isPrimaryKey="true" name="name" type="java.lang.String"/>
-            		<attribute isPrimaryKey="false" name="I" type="java.lang.Double"/>
-            		<attribute isPrimaryKey="false" name="Q" type="java.lang.Double"/>
+			<attribute isPrimaryKey="true" name="name" type="java.lang.String" />
+            <attribute isPrimaryKey="false" name="current" type="java.lang.Double" />
+            <attribute isPrimaryKey="false" name="bunchFreq" type="java.lang.Double" />
+            <attribute isPrimaryKey="false" name="phase" type="java.lang.String" defaultValue="(0.0,0.0,0.0)" />
 		</schema>
-		<record name="default" I="0.020" Q="4.96894E-11"/>
-		<record name="IDmp+" I="0.0" Q="0."/>
+		<record name="default" current="0.020" bunchFreq="4.025e8" />
+		<record name="IDmp+" current="0.0" bunchFreq="1.0" />
 	</table>
 	
 	<table name="adaptivetracker">
