@@ -155,7 +155,13 @@ public class KeyValueAdaptor {
 				else {	// no method accessor was found for the key
 					// if the target implements the Map interface then use the Map's get method for access
 					final KeyedAccessing mapAccessor = KeyedMapAccessor.getInstance( targetClass, key );
-					GETTER_TABLE.put( accessorID, mapAccessor );
+                    if ( mapAccessor != null ) {
+                        GETTER_TABLE.put( accessorID, mapAccessor );
+                    }
+                    else {
+                        final KeyedAccessing arrayItemAccessor = KeyedArrayItemAccessor.getInstance( targetClass, key );
+                        GETTER_TABLE.put( accessorID, arrayItemAccessor );
+                    }
 				}
 			}
 			
@@ -184,7 +190,13 @@ public class KeyValueAdaptor {
 				else {	// no method setter was found for the key
 					// if the target implements the Map interface then use the Map's put method for setting values
 					final KeyedSetting mapSetter = KeyedMapSetter.getInstance( targetClass, key, argumentClass );
-					SETTER_TABLE.put( setterID, mapSetter );
+                    if ( mapSetter != null ) {
+                        SETTER_TABLE.put( setterID, mapSetter );
+                    }
+                    else {
+                        final KeyedSetting arrayItemSetter = KeyedArrayItemSetter.getInstance( targetClass, key, argumentClass );
+                        SETTER_TABLE.put( setterID, arrayItemSetter );
+                    }
 				}
 			}
 			
@@ -595,4 +607,88 @@ class KeyedMapSetter implements KeyedSetting {
 			throw new InvalidKeyException( exception );
 		}		
 	}	
+}
+
+
+
+/** Keyed access for an item of an Array */
+class KeyedArrayItemAccessor implements KeyedAccessing {
+    /** index of the array item to access */
+    final private int ITEM_INDEX;
+    
+    
+    /** Constructor */
+    protected KeyedArrayItemAccessor( final int itemIndex ) {
+        ITEM_INDEX = itemIndex;
+    }
+    
+    
+    /** attempt to get an instance for the class if the target is a primitive array */
+    static public KeyedArrayItemAccessor getInstance( final Class targetClass, final String key ) {
+        try {
+            final int itemIndex = Integer.parseInt( key );
+            return targetClass.isArray() ? new KeyedArrayItemAccessor( itemIndex ) : null;
+        }
+        catch ( NumberFormatException exception ) {
+            return null;
+        }
+    }
+    
+    
+    /** 
+     * Get the target's array item. 
+     * @param target object from which to get the value
+     */
+    public Object valueForTarget( final Object target ) throws InvalidKeyException {
+        try {
+            return java.lang.reflect.Array.get( target, ITEM_INDEX );
+        }
+        catch ( ArrayIndexOutOfBoundsException exception ) {
+            throw new InvalidKeyException( exception );
+        }		
+    }
+}
+
+
+
+/** Keyed setter for an item of an Array */
+class KeyedArrayItemSetter implements KeyedSetting {
+    /** index of the array item to set */
+    final private int ITEM_INDEX;
+    
+    
+    /** Constructor */
+    protected KeyedArrayItemSetter( final int itemIndex ) {
+        ITEM_INDEX = itemIndex;
+    }
+    
+    
+    /** attempt to get an instance for the class if the target is a primitive array */
+    static public KeyedArrayItemSetter getInstance( final Class targetClass, final String key, final Class argumentClass ) {
+        try {
+            final int itemIndex = Integer.parseInt( key );
+            return targetClass.isArray() ? new KeyedArrayItemSetter( itemIndex ) : null;
+        }
+        catch ( NumberFormatException exception ) {
+            return null;
+        }
+    }
+    
+    
+    /** 
+     * Set the target's array item.
+     * @param target object from which to get the value
+     * @param value the value to set
+     */
+    public void setValueForTarget( final Object target, final Object value ) throws InvalidKeyException {
+        try {
+            java.lang.reflect.Array.set( target, ITEM_INDEX, value );
+        }
+        catch ( ArrayIndexOutOfBoundsException exception ) {
+            throw new InvalidKeyException( exception );
+        }		
+        catch ( IllegalArgumentException exception ) {
+            throw new InvalidKeyException( exception );
+        }		
+    }
 }
