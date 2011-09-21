@@ -85,6 +85,9 @@ public class MachineSimulatorDocument extends AcceleratorDocument implements Dat
     
     /** configure the main window */
     private void configureWindow( final WindowReference windowReference ) {
+        // configure the table model for displaying the simulation states
+        STATES_TABLE_MODEL.setKeyPaths( "elementId", "position", "kineticEnergy", "twiss.0.beta", "twiss.0.alpha", "twiss.0.gamma", "twiss.0.emittance", "twiss.0.envelopeRadius", "twiss.1.beta", "twiss.1.alpha", "twiss.0.gamma", "twiss.1.emittance", "twiss.1.envelopeRadius", "twiss.2.beta", "twiss.2.alpha", "twiss.2.gamma", "twiss.2.emittance", "twiss.2.envelopeRadius" );
+        STATES_TABLE_MODEL.setColumnClassForKeyPaths( Double.class, "position", "kineticEnergy", "twiss.0.beta", "twiss.0.alpha", "twiss.0.gamma", "twiss.0.emittance", "twiss.0.envelopeRadius", "twiss.1.beta", "twiss.1.alpha", "twiss.1.gamma", "twiss.1.emittance", "twiss.1.envelopeRadius", "twiss.2.beta", "twiss.2.alpha", "twiss.2.gamma", "twiss.2.emittance", "twiss.2.envelopeRadius" );
         STATES_TABLE_MODEL.setColumnName( "elementId", "Element" );
         STATES_TABLE_MODEL.setColumnName( "twiss.0.beta", "<html>&beta;<sub>x</sub></html>" );
         STATES_TABLE_MODEL.setColumnName( "twiss.0.alpha", "<html>&alpha;<sub>x</sub></html>" );
@@ -101,8 +104,6 @@ public class MachineSimulatorDocument extends AcceleratorDocument implements Dat
         STATES_TABLE_MODEL.setColumnName( "twiss.2.gamma", "<html>&gamma;<sub>z</sub></html>" );
         STATES_TABLE_MODEL.setColumnName( "twiss.2.emittance", "<html>&epsilon;<sub>z</sub></html>" );
         STATES_TABLE_MODEL.setColumnName( "twiss.2.envelopeRadius", "<html>&sigma;<sub>z</sub></html>" );
-        STATES_TABLE_MODEL.setColumnClassForKeyPaths( Double.class, "position", "kineticEnergy", "twiss.0.beta", "twiss.0.alpha", "twiss.0.gamma", "twiss.0.emittance", "twiss.0.envelopeRadius", "twiss.1.beta", "twiss.1.alpha", "twiss.0.gamma", "twiss.1.emittance", "twiss.1.envelopeRadius", "twiss.2.beta", "twiss.2.alpha", "twiss.2.gamma", "twiss.2.emittance", "twiss.2.envelopeRadius" );
-        STATES_TABLE_MODEL.setKeyPaths( "elementId", "position", "kineticEnergy", "twiss.0.beta", "twiss.0.alpha", "twiss.0.gamma", "twiss.0.emittance", "twiss.0.envelopeRadius", "twiss.1.beta", "twiss.1.alpha", "twiss.0.gamma", "twiss.1.emittance", "twiss.1.envelopeRadius", "twiss.2.beta", "twiss.2.alpha", "twiss.2.gamma", "twiss.2.emittance", "twiss.2.envelopeRadius" );
         
         final JTable statesTable = (JTable)windowReference.getView( "States Table" );
         statesTable.setModel( STATES_TABLE_MODEL );
@@ -111,6 +112,60 @@ public class MachineSimulatorDocument extends AcceleratorDocument implements Dat
         STATES_TABLE_MODEL.setInputFilterComponent( statesTableFilterField );
         STATES_TABLE_MODEL.setMatchingKeyPaths( "elementId" );
         
+        
+        // handle the parameter selections
+        final JCheckBox xSelectionCheckbox = (JCheckBox)windowReference.getView( "X Selection Checkbox" );
+        final JCheckBox ySelectionCheckbox = (JCheckBox)windowReference.getView( "Y Selection Checkbox" );
+        final JCheckBox zSelectionCheckbox = (JCheckBox)windowReference.getView( "Z Selection Checkbox" );
+        final JCheckBox betaCheckbox = (JCheckBox)windowReference.getView( "Beta Checkbox" );
+        final JCheckBox alphaCheckbox = (JCheckBox)windowReference.getView( "Alpha Checkbox" );
+        final JCheckBox gammaCheckbox = (JCheckBox)windowReference.getView( "Gamma Checkbox" );
+        final JCheckBox emittanceCheckbox = (JCheckBox)windowReference.getView( "Emittance Checkbox" );
+        final JCheckBox beamSizeCheckbox = (JCheckBox)windowReference.getView( "Beam Size Checkbox" );
+                
+        final ActionListener PARAMETER_HANDLER = new ActionListener() {
+            public void actionPerformed( final ActionEvent event ) {
+                final List<String> planes = new ArrayList<String>(3);
+                if ( xSelectionCheckbox.isSelected() )  planes.add( "0" );
+                if ( ySelectionCheckbox.isSelected() )  planes.add( "1" );
+                if ( zSelectionCheckbox.isSelected() )  planes.add( "2" );
+                
+                final List<String> twissParameters = new ArrayList<String>();
+                if ( betaCheckbox.isSelected() )  twissParameters.add( "beta" );
+                if ( alphaCheckbox.isSelected() )  twissParameters.add( "alpha" );
+                if ( gammaCheckbox.isSelected() )  twissParameters.add( "gamma" );
+                if ( emittanceCheckbox.isSelected() )  twissParameters.add( "emittance" );
+                if ( beamSizeCheckbox.isSelected() )  twissParameters.add( "envelopeRadius" );
+                
+                final String[] standardParameterKeys = new String[] { "elementId", "position", "kineticEnergy" };
+                
+                final String[] twissParameterKeys = new String[ planes.size() * twissParameters.size() ];
+                int index = 0;
+                for ( final String plane : planes ) {
+                    for ( final String twissParameter : twissParameters ) {
+                        twissParameterKeys[index++] = "twiss." + plane + "." + twissParameter;
+                    }
+                }
+                
+                final String[] parameterKeys = new String[standardParameterKeys.length + twissParameterKeys.length];
+                System.arraycopy( standardParameterKeys, 0, parameterKeys, 0, standardParameterKeys.length );       // add standard parameters at the start
+                System.arraycopy( twissParameterKeys, 0, parameterKeys, standardParameterKeys.length, twissParameterKeys.length );  // append twiss after the standard parameters
+                
+                STATES_TABLE_MODEL.setKeyPaths( parameterKeys );
+            }
+        };
+        
+        xSelectionCheckbox.addActionListener( PARAMETER_HANDLER );
+        ySelectionCheckbox.addActionListener( PARAMETER_HANDLER );
+        zSelectionCheckbox.addActionListener( PARAMETER_HANDLER );
+        betaCheckbox.addActionListener( PARAMETER_HANDLER );
+        alphaCheckbox.addActionListener( PARAMETER_HANDLER );
+        gammaCheckbox.addActionListener( PARAMETER_HANDLER );
+        emittanceCheckbox.addActionListener( PARAMETER_HANDLER );
+        beamSizeCheckbox.addActionListener( PARAMETER_HANDLER );
+        
+        
+        // configure the run button
         final JButton runButton = (JButton)windowReference.getView( "Run Button" );
         runButton.addActionListener( new ActionListener() {
             public void actionPerformed( final ActionEvent event ) {
@@ -119,7 +174,6 @@ public class MachineSimulatorDocument extends AcceleratorDocument implements Dat
                 STATES_TABLE_MODEL.setRecords( simulation.getStates() );
             }
         });
-
     }
     
     
