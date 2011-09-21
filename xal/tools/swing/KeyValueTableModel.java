@@ -136,12 +136,13 @@ public class KeyValueTableModel<RecordType> extends AbstractTableModel {
 	 */
 	public void setKeyPaths( final String ... keyPaths ) {
 		_keyPaths = keyPaths;
-		COLUMN_NAME_MAP.clear();
-		COLUMN_CLASS_MAP.clear();
 		if ( keyPaths != null ) {
 			for ( final String keyPath : keyPaths ) {
-				final String name = toColumnName( keyPath );
-				setColumnName( keyPath, name );
+                // generate a default column name if one has not already been set
+                if ( !COLUMN_NAME_MAP.containsKey( keyPath ) ) {
+                    final String name = toColumnName( keyPath );
+                    setColumnName( keyPath, name );
+                }
 			}
 		}
 		fireTableStructureChanged();
