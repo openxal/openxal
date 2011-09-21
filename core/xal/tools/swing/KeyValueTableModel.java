@@ -205,7 +205,19 @@ public class KeyValueTableModel<RecordType> extends AbstractTableModel {
 	 * @param columnClass the new class to assign the column
 	 */
 	public void setColumnClass( final String keyPath, final Class columnClass ) {
-		COLUMN_CLASS_MAP.put( keyPath, columnClass );
+        setColumnClassForKeyPaths( columnClass, keyPath );
+	}
+	
+	
+	/**
+	 * Set the column class for the columns specified by the key paths
+	 * @param columnClass the new class to assign the column
+	 * @param keyPaths key paths for which to assign the class
+	 */
+	public void setColumnClassForKeyPaths( final Class columnClass, final String ... keyPaths ) {
+        for ( final String keyPath : keyPaths ) {
+            COLUMN_CLASS_MAP.put( keyPath, columnClass );
+        }
 		fireTableStructureChanged();
 	}
 	
