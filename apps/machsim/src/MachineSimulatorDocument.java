@@ -85,17 +85,24 @@ public class MachineSimulatorDocument extends AcceleratorDocument implements Dat
     
     /** configure the main window */
     private void configureWindow( final WindowReference windowReference ) {
-        STATES_TABLE_MODEL.setKeyPaths( "elementId", "position", "kineticEnergy", "twiss.0.beta", "twiss.0.alpha", "twiss.0.gamma", "twiss.0.emittance", "twiss.1.beta", "twiss.1.alpha", "twiss.0.gamma", "twiss.1.emittance" );
         STATES_TABLE_MODEL.setColumnName( "elementId", "Element" );
         STATES_TABLE_MODEL.setColumnName( "twiss.0.beta", "<html>&beta;<sub>x</sub></html>" );
         STATES_TABLE_MODEL.setColumnName( "twiss.0.alpha", "<html>&alpha;<sub>x</sub></html>" );
         STATES_TABLE_MODEL.setColumnName( "twiss.0.gamma", "<html>&gamma;<sub>x</sub></html>" );
         STATES_TABLE_MODEL.setColumnName( "twiss.0.emittance", "<html>&epsilon;<sub>x</sub></html>" );
+        STATES_TABLE_MODEL.setColumnName( "twiss.0.envelopeRadius", "<html>&sigma;<sub>x</sub></html>" );
         STATES_TABLE_MODEL.setColumnName( "twiss.1.beta", "<html>&beta;<sub>y</sub></html>" );
         STATES_TABLE_MODEL.setColumnName( "twiss.1.alpha", "<html>&alpha;<sub>y</sub></html>" );
         STATES_TABLE_MODEL.setColumnName( "twiss.1.gamma", "<html>&gamma;<sub>y</sub></html>" );
         STATES_TABLE_MODEL.setColumnName( "twiss.1.emittance", "<html>&epsilon;<sub>y</sub></html>" );
-        STATES_TABLE_MODEL.setColumnClassForKeyPaths( Double.class, "position", "kineticEnergy", "twiss.0.beta", "twiss.0.alpha", "twiss.0.gamma", "twiss.0.emittance", "twiss.1.beta", "twiss.1.alpha", "twiss.0.gamma", "twiss.1.emittance" );
+        STATES_TABLE_MODEL.setColumnName( "twiss.1.envelopeRadius", "<html>&sigma;<sub>y</sub></html>" );
+        STATES_TABLE_MODEL.setColumnName( "twiss.2.beta", "<html>&beta;<sub>z</sub></html>" );
+        STATES_TABLE_MODEL.setColumnName( "twiss.2.alpha", "<html>&alpha;<sub>z</sub></html>" );
+        STATES_TABLE_MODEL.setColumnName( "twiss.2.gamma", "<html>&gamma;<sub>z</sub></html>" );
+        STATES_TABLE_MODEL.setColumnName( "twiss.2.emittance", "<html>&epsilon;<sub>z</sub></html>" );
+        STATES_TABLE_MODEL.setColumnName( "twiss.2.envelopeRadius", "<html>&sigma;<sub>z</sub></html>" );
+        STATES_TABLE_MODEL.setColumnClassForKeyPaths( Double.class, "position", "kineticEnergy", "twiss.0.beta", "twiss.0.alpha", "twiss.0.gamma", "twiss.0.emittance", "twiss.0.envelopeRadius", "twiss.1.beta", "twiss.1.alpha", "twiss.0.gamma", "twiss.1.emittance", "twiss.1.envelopeRadius", "twiss.2.beta", "twiss.2.alpha", "twiss.2.gamma", "twiss.2.emittance", "twiss.2.envelopeRadius" );
+        STATES_TABLE_MODEL.setKeyPaths( "elementId", "position", "kineticEnergy", "twiss.0.beta", "twiss.0.alpha", "twiss.0.gamma", "twiss.0.emittance", "twiss.0.envelopeRadius", "twiss.1.beta", "twiss.1.alpha", "twiss.0.gamma", "twiss.1.emittance", "twiss.1.envelopeRadius", "twiss.2.beta", "twiss.2.alpha", "twiss.2.gamma", "twiss.2.emittance", "twiss.2.envelopeRadius" );
         
         final JTable statesTable = (JTable)windowReference.getView( "States Table" );
         statesTable.setModel( STATES_TABLE_MODEL );
