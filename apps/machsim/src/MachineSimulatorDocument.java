@@ -22,6 +22,8 @@ import xal.tools.xml.XmlDataAdaptor;
 import xal.smf.data.XMLDataManager;
 import xal.tools.data.*;
 import xal.tools.bricks.WindowReference;
+import xal.tools.swing.*;
+import xal.model.probe.traj.IPhaseState;
 
 
 /**
@@ -37,6 +39,9 @@ public class MachineSimulatorDocument extends AcceleratorDocument implements Dat
     
     /** main model */
     final MachineModel MODEL;
+    
+    /** simulated states table model */
+    final KeyValueFilteredTableModel<IPhaseState> STATES_TABLE_MODEL;
 	
 	
     /** Empty Constructor */
@@ -53,6 +58,8 @@ public class MachineSimulatorDocument extends AcceleratorDocument implements Dat
         setSource( url );
 		
 		WINDOW_REFERENCE = getDefaultWindowReference( "MainWindow", this );
+        
+        STATES_TABLE_MODEL = new KeyValueFilteredTableModel<IPhaseState>();
         
         // initialize the model here
         MODEL = new MachineModel();
@@ -78,11 +85,23 @@ public class MachineSimulatorDocument extends AcceleratorDocument implements Dat
     
     /** configure the main window */
     private void configureWindow( final WindowReference windowReference ) {
+        STATES_TABLE_MODEL.setKeyPaths( "elementId", "position", "kineticEnergy" );
+        STATES_TABLE_MODEL.setColumnName( "elementId", "Element" );
+        STATES_TABLE_MODEL.setColumnClassForKeyPaths( Double.class, "position", "kineticEnergy" );
+        
+        final JTable statesTable = (JTable)windowReference.getView( "States Table" );
+        statesTable.setModel( STATES_TABLE_MODEL );
+        
+        final JTextField statesTableFilterField = (JTextField)windowReference.getView( "States Table Filter Field" );
+        STATES_TABLE_MODEL.setInputFilterComponent( statesTableFilterField );
+        STATES_TABLE_MODEL.setMatchingKeyPaths( "elementId" );
+        
         final JButton runButton = (JButton)windowReference.getView( "Run Button" );
         runButton.addActionListener( new ActionListener() {
             public void actionPerformed( final ActionEvent event ) {
                 System.out.println( "running the model..." );
-                MODEL.runSimulation();
+                final MachineSimulation simulation = MODEL.runSimulation();
+                STATES_TABLE_MODEL.setRecords( simulation.getStates() );
             }
         });
 
