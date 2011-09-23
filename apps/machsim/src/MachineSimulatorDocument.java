@@ -93,16 +93,19 @@ public class MachineSimulatorDocument extends AcceleratorDocument implements Dat
         STATES_TABLE_MODEL.setColumnName( "twiss.0.gamma", "<html>&gamma;<sub>x</sub></html>" );
         STATES_TABLE_MODEL.setColumnName( "twiss.0.emittance", "<html>&epsilon;<sub>x</sub></html>" );
         STATES_TABLE_MODEL.setColumnName( "twiss.0.envelopeRadius", "<html>&sigma;<sub>x</sub></html>" );
+        STATES_TABLE_MODEL.setColumnName( "betatronPhase.toArray.0", "<html>&phi;<sub>x</sub></html>" );
         STATES_TABLE_MODEL.setColumnName( "twiss.1.beta", "<html>&beta;<sub>y</sub></html>" );
         STATES_TABLE_MODEL.setColumnName( "twiss.1.alpha", "<html>&alpha;<sub>y</sub></html>" );
         STATES_TABLE_MODEL.setColumnName( "twiss.1.gamma", "<html>&gamma;<sub>y</sub></html>" );
         STATES_TABLE_MODEL.setColumnName( "twiss.1.emittance", "<html>&epsilon;<sub>y</sub></html>" );
         STATES_TABLE_MODEL.setColumnName( "twiss.1.envelopeRadius", "<html>&sigma;<sub>y</sub></html>" );
+        STATES_TABLE_MODEL.setColumnName( "betatronPhase.toArray.1", "<html>&phi;<sub>y</sub></html>" );
         STATES_TABLE_MODEL.setColumnName( "twiss.2.beta", "<html>&beta;<sub>z</sub></html>" );
         STATES_TABLE_MODEL.setColumnName( "twiss.2.alpha", "<html>&alpha;<sub>z</sub></html>" );
         STATES_TABLE_MODEL.setColumnName( "twiss.2.gamma", "<html>&gamma;<sub>z</sub></html>" );
         STATES_TABLE_MODEL.setColumnName( "twiss.2.emittance", "<html>&epsilon;<sub>z</sub></html>" );
         STATES_TABLE_MODEL.setColumnName( "twiss.2.envelopeRadius", "<html>&sigma;<sub>z</sub></html>" );
+        STATES_TABLE_MODEL.setColumnName( "betatronPhase.toArray.2", "<html>&phi;<sub>z</sub></html>" );
         
         final JTable statesTable = (JTable)windowReference.getView( "States Table" );
         statesTable.setModel( STATES_TABLE_MODEL );
@@ -124,6 +127,7 @@ public class MachineSimulatorDocument extends AcceleratorDocument implements Dat
         final JCheckBox gammaCheckbox = (JCheckBox)windowReference.getView( "Gamma Checkbox" );
         final JCheckBox emittanceCheckbox = (JCheckBox)windowReference.getView( "Emittance Checkbox" );
         final JCheckBox beamSizeCheckbox = (JCheckBox)windowReference.getView( "Beam Size Checkbox" );
+        final JCheckBox betatronPhaseCheckbox = (JCheckBox)windowReference.getView( "Betatron Phase Checkbox" );
                 
         final ActionListener PARAMETER_HANDLER = new ActionListener() {
             public void actionPerformed( final ActionEvent event ) {                
@@ -146,20 +150,27 @@ public class MachineSimulatorDocument extends AcceleratorDocument implements Dat
                 if ( ySelectionCheckbox.isSelected() )  planes.add( "1" );
                 if ( zSelectionCheckbox.isSelected() )  planes.add( "2" );
                 
-                // Add each selected vector parameter name to the list of parameters to display
-                final List<String> vectorParameterNames = new ArrayList<String>();
-                if ( betaCheckbox.isSelected() )  vectorParameterNames.add( "beta" );
-                if ( alphaCheckbox.isSelected() )  vectorParameterNames.add( "alpha" );
-                if ( gammaCheckbox.isSelected() )  vectorParameterNames.add( "gamma" );
-                if ( emittanceCheckbox.isSelected() )  vectorParameterNames.add( "emittance" );
-                if ( beamSizeCheckbox.isSelected() )  vectorParameterNames.add( "envelopeRadius" );
+                // Add each selected twiss parameter name to the list of parameters to display
+                final List<String> twissParameterNames = new ArrayList<String>();
+                if ( betaCheckbox.isSelected() )  twissParameterNames.add( "beta" );
+                if ( alphaCheckbox.isSelected() )  twissParameterNames.add( "alpha" );
+                if ( gammaCheckbox.isSelected() )  twissParameterNames.add( "gamma" );
+                if ( emittanceCheckbox.isSelected() )  twissParameterNames.add( "emittance" );
+                if ( beamSizeCheckbox.isSelected() )  twissParameterNames.add( "envelopeRadius" );
+                
+                int vectorParameterBaseCount = twissParameterNames.size();
+                if ( betatronPhaseCheckbox.isSelected() )  vectorParameterBaseCount++;
                 
                 // construct the full vector parameter keys from each pair of selected planes and vector parameter names
-                final String[] vectorParameterKeys = new String[ planes.size() * vectorParameterNames.size() ];
+                final String[] vectorParameterKeys = new String[ planes.size() * vectorParameterBaseCount ];
                 int vectorParameterIndex = 0;
                 for ( final String plane : planes ) {
-                    for ( final String twissParameter : vectorParameterNames ) {
+                    for ( final String twissParameter : twissParameterNames ) {
                         vectorParameterKeys[ vectorParameterIndex++ ] = "twiss." + plane + "." + twissParameter;
+                    }
+                    
+                    if ( betatronPhaseCheckbox.isSelected() ) {
+                        vectorParameterKeys[ vectorParameterIndex++ ] = "betatronPhase.toArray." + plane;
                     }
                 }
                 STATES_TABLE_MODEL.setColumnClassForKeyPaths( Double.class, vectorParameterKeys );
@@ -188,6 +199,8 @@ public class MachineSimulatorDocument extends AcceleratorDocument implements Dat
         emittanceCheckbox.addActionListener( PARAMETER_HANDLER );
         beamSizeCheckbox.addActionListener( PARAMETER_HANDLER );
         
+        betatronPhaseCheckbox.addActionListener( PARAMETER_HANDLER );
+        
         // perform the initial parameter display configuration
         PARAMETER_HANDLER.actionPerformed( null );
         
@@ -201,6 +214,12 @@ public class MachineSimulatorDocument extends AcceleratorDocument implements Dat
                 STATES_TABLE_MODEL.setRecords( simulation.getStates() );
             }
         });
+    }
+    
+    
+    // Generate the twiss parameter key from the base twiss parameter name and the plane
+    static private String toTwissParameterKey( final String twissParameterName, final int plane ) {
+        return "twiss." + plane + "." + twissParameterName;
     }
     
     

@@ -111,6 +111,12 @@
                                     <BeanProperty name="selected" value="true"/>
                                     <BeanProperty name="toolTipText" value="Display the Envelope Radius"/>
                                 </ViewNode>
+                                <ViewNode tag="Betatron Phase Checkbox">
+                                    <ViewProxy type="javax.swing.JCheckBox"/>
+                                    <BeanProperty name="text" value="&lt;html>&amp;phi;&lt;/html>"/>
+                                    <BeanProperty name="selected" value="true"/>
+                                    <BeanProperty name="toolTipText" value="Display the Betatron Phase"/>
+                                </ViewNode>
                             </ViewNode>
                             <ViewNode tag="Horizontal Glue">
                                 <ViewProxy type="javax.swing.Box_HorizontalGlue"/>
