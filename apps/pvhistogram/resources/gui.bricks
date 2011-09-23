@@ -109,10 +109,6 @@
                         <ViewNode tag="Horizontal Glue">
                             <ViewProxy type="javax.swing.Box_HorizontalGlue"/>
                         </ViewNode>
-                        <BorderNode tag="Titled Border">
-                            <BorderProxy type="javax.swing.border.TitledBorder"/>
-                            <BeanProperty name="title" value="Range"/>
-                        </BorderNode>
                     </ViewNode>
                     <ViewNode tag="StatisticsBox">
                         <ViewProxy type="javax.swing.Box_Horizontal"/>
@@ -149,10 +145,6 @@
                             <BeanProperty name="toolTipText" value="sample standard deviation of channel values in the buffer"/>
                             <BeanProperty height="50" name="maximumSize" width="250"/>
                         </ViewNode>
-                        <BorderNode tag="Titled Border">
-                            <BorderProxy type="javax.swing.border.TitledBorder"/>
-                            <BeanProperty name="title" value="Statistics"/>
-                        </BorderNode>
                     </ViewNode>
                 </ViewNode>
             </ViewNode>
