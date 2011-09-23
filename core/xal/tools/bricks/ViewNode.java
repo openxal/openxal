@@ -627,10 +627,6 @@ public class ViewNode extends BeanNode<Component> implements ViewNodeContainer {
 				adaptor.writeNode( (BeanNode)userObject );
 			}
 		}
-		
-		if ( _borderNode != null ) {
-			adaptor.writeNode( _borderNode );
-		}
 	}
 	
 	
