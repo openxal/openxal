@@ -185,31 +185,31 @@ public class FunctionGraphsJPanel extends JPanel implements MouseListener, Mouse
 	 *  The constant defining the legend position at the arbitrary place of the
 	 *  graph panel
 	 */
-	public static int LEGEND_POSITION_ARBITRARY = 0;
+	public static final int LEGEND_POSITION_ARBITRARY = 0;
 
 	/**
 	 *  The constant defining the legend position at the top left corner of the
 	 *  graph panel
 	 */
-	public static int LEGEND_POSITION_TOP_LEFT = 1;
+	public static final int LEGEND_POSITION_TOP_LEFT = 1;
 
 	/**
 	 *  The constant defining the legend position at the top right corner of the
 	 *  graph panel
 	 */
-	public static int LEGEND_POSITION_TOP_RIGHT = 2;
+	public static final int LEGEND_POSITION_TOP_RIGHT = 2;
 
 	/**
 	 *  The constant defining the legend position at the bottom left corner of the
 	 *  graph panel
 	 */
 
-	public static int LEGEND_POSITION_BOTTOM_LEFT = 3;
+	public static final int LEGEND_POSITION_BOTTOM_LEFT = 3;
 	/**
 	 *  The constant defining the legend position at the bottom right corner of the
 	 *  graph panel
 	 */
-	public static int LEGEND_POSITION_BOTTOM_RIGHT = 4;
+	public static final int LEGEND_POSITION_BOTTOM_RIGHT = 4;
 
 
 	/**
