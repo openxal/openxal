@@ -1,5 +1,5 @@
 /*
- * UrlTool.java
+ * URLUtil.java
  *
  * Created on June 19, 2002, 9:02 AM
  */
@@ -10,15 +10,15 @@ import java.net.URL;
 import java.io.File;
 
 /**
- * UrlTool is a convenience class of static methods that allow the user to 
+ * URLUtil is a convenience class of static methods that allow the user to 
  * convert between file path and URL specifications.
  *
  * @author  tap
  */
-public class UrlTool {
+public class URLUtil {
 
-    /** Creates new UrlTool */
-    protected UrlTool() {}
+    /** Creates new URLUtil */
+    protected URLUtil() {}
     
 
     /** Convert a file to a URL specification */

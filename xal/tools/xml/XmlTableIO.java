@@ -6,7 +6,7 @@
 
 package xal.tools.xml;
 
-import xal.tools.UrlTool;
+import xal.tools.URLUtil;
 import xal.tools.data.*;
 
 import java.io.*;
@@ -25,8 +25,8 @@ public class XmlTableIO {
     
     
     /** Read the table group from the specified file into editContext without XML validation. */
-    static public void readTableGroupFromFile( final EditContext editContext, final String tableGroup, final File file ) throws UrlTool.FilePathException {
-        readTableGroupFromUrl( editContext, tableGroup, UrlTool.urlSpecForFile( file ) );
+    static public void readTableGroupFromFile( final EditContext editContext, final String tableGroup, final File file ) throws URLUtil.FilePathException {
+        readTableGroupFromUrl( editContext, tableGroup, URLUtil.urlSpecForFile( file ) );
     }
     
     
@@ -44,8 +44,8 @@ public class XmlTableIO {
 
 
     /** Write all tables associated with the specified group in editContext to an XML file. */
-    static public void writeTableGroupToFile( final EditContext editContext, final String group, final File file ) throws UrlTool.FilePathException {
-        writeTableGroupToUrl(editContext, group, UrlTool.urlSpecForFile(file));
+    static public void writeTableGroupToFile( final EditContext editContext, final String group, final File file ) throws URLUtil.FilePathException {
+        writeTableGroupToUrl(editContext, group, URLUtil.urlSpecForFile(file));
     }
     
     
