@@ -14,7 +14,7 @@ import xal.tools.xml.*;
 import xal.tools.xml.XmlDataAdaptor.ParseException;
 import xal.tools.xml.XmlDataAdaptor.ResourceNotFoundException;
 import xal.tools.data.*;
-import xal.tools.UrlTool;
+import xal.tools.URLUtil;
 
 import org.w3c.dom.*;
 import java.util.*;
@@ -74,8 +74,8 @@ public class XMLDataManager {
 	 * @param filePath The file path of the accelerator data source.
 	 * @return The new XMLDataManager
 	 */
-    static public XMLDataManager managerWithFilePath( final String filePath ) throws UrlTool.FilePathException {
-        String urlSpec = UrlTool.urlSpecForFilePath( filePath );
+    static public XMLDataManager managerWithFilePath( final String filePath ) throws URLUtil.FilePathException {
+        String urlSpec = URLUtil.urlSpecForFilePath( filePath );
         return new XMLDataManager( urlSpec );
     }
 	
@@ -86,7 +86,7 @@ public class XMLDataManager {
 	 */
 	static public XMLDataManager getDefaultInstance() {
         String path = defaultPath();
-		return (path != null) ? new XMLDataManager(UrlTool.urlSpecForFilePath(path)) : null;
+		return (path != null) ? new XMLDataManager(URLUtil.urlSpecForFilePath(path)) : null;
 	}
     
     
@@ -116,7 +116,7 @@ public class XMLDataManager {
 	 * @param filePath The file path of the data source.
 	 * @return the new accelerator read from the data source.
 	 */
-    static public Accelerator acceleratorWithPath(String filePath) throws UrlTool.FilePathException {
+    static public Accelerator acceleratorWithPath(String filePath) throws URLUtil.FilePathException {
         XMLDataManager dataManager = managerWithFilePath(filePath);
         return dataManager.getAccelerator();
     }
@@ -129,7 +129,7 @@ public class XMLDataManager {
 	 * @param isValidating enable DTD validation if true and disable DTD validation if false
 	 * @return the new accelerator read from the data source
 	 */
-    static public Accelerator acceleratorWithPath(String filePath, boolean isValidating) throws UrlTool.FilePathException {
+    static public Accelerator acceleratorWithPath(String filePath, boolean isValidating) throws URLUtil.FilePathException {
         XMLDataManager dataManager = managerWithFilePath(filePath);
         return dataManager.getAccelerator(isValidating);
     }
@@ -141,7 +141,7 @@ public class XMLDataManager {
 	 */
     static public Accelerator loadDefaultAccelerator() {
         String path = defaultPath();
-        return (path != null) ? acceleratorWithUrlSpec(UrlTool.urlSpecForFilePath(path)) : null;
+        return (path != null) ? acceleratorWithUrlSpec(URLUtil.urlSpecForFilePath(path)) : null;
     }
     
     
@@ -201,8 +201,8 @@ public class XMLDataManager {
 	 * optics and other supporting data such as the edit context and optics corrections.
 	 * @param filePath The new file path to the accelerator data source.
 	 */
-    public void setMainPath(String filePath) throws UrlTool.FilePathException {
-        String urlSpec = UrlTool.urlSpecForFilePath(filePath);
+    public void setMainPath(String filePath) throws URLUtil.FilePathException {
+        String urlSpec = URLUtil.urlSpecForFilePath(filePath);
         
         setMainUrlSpec(urlSpec);
     }
