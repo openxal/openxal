@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- Process all the scripts. -->
+<project name="scripts" basedir="." default="all">
+    <import file="../config.xml"/>
+    
+    
+    <!-- Initialization for the scripts build -->
+    <target name="init">
+        <dirname property="scripts.src.root" file="${ant.file.scripts}" />
+        
+        <property environment="env" />        
+        <property name="scripts.build.root" value="${build.root}/scripts" />
+        <property name="scripts.install.root" value="${install.root}/scripts" />
+        
+        <echo message="Initialized scripts build." />
+    </target>
+    
+	
+	<!-- deploy a single script -->
+	<target name="copy.scripts">
+        <mkdir dir="${to.dir}"/>
+        
+        <copy todir="${to.dir}">
+            <fileset dir="${scripts.src.root}" excludes="build.xml" />
+        </copy>
+        <echo message="Scripts copied to ${to.dir}" />
+	</target>
+
+    
+    <!-- Copy the scripts to the scripts directory under the build directory -->
+    <target name="all" depends="init, build" description="Copy scripts to the scripts build directory.">
+        <echo message="Scripts built!" />
+    </target>
+    
+    
+    <!-- Install the scripts in the scripts directory under the install directory -->
+    <target name="build" depends="init">
+		<antcall target="copy.scripts"> 
+            <param name="to.dir" value="${scripts.build.root}" />
+        </antcall>
+    </target>
+    
+    
+    <!-- Install the scripts in the scripts directory under the install directory -->
+    <target name="clean" depends="init">
+        <delete dir="${scripts.build.root}" quiet="true" />
+        <echo message="Scripts cleaned!" />
+    </target>
+    
+    
+    <!-- Install the scripts in the scripts directory under the install directory -->
+    <target name="install" depends="init, all">
+		<antcall target="copy.scripts"> 
+            <param name="to.dir" value="${scripts.install.root}" />
+        </antcall>
+    </target>
+    
+    
+    <!-- Purge the scripts from the install root. -->
+    <target name="purge-install" depends="init">
+        <delete dir="${scripts.install.root}" quiet="true" />
+        <echo message="Purged installed scripts!" />
+    </target>
+
+	
+	<!-- provide guidance on the various targets -->
+    <target name="help">
+		<echo message="Help for building applications" />
+		<echo message="Usage: ant [ant options] target1 [target2 | target3 | ... ]" />
+		<echo message="" />
+		<echo message="  where target(s) can be:" />
+		<echo message="    help ....................... Print this message." />
+		<echo message="    all ........................ Perform the build" />
+		<echo message="    build ...................... Copy the scripts to the build directory" />
+		<echo message="    clean ...................... Clean build products" />
+		<echo message="    install .................... Install scripts for distribution." />
+		<echo message="    purge-install .............. Purge installed scripts" />
+    </target>
+    
+</project>

@@ -8,11 +8,11 @@
 
     
     <!-- Build the core and all the applications which allow batch building. -->
-    <target name="all" depends="core,apps" />
+    <target name="all" depends="core, apps, scripts" />
     
     
     <!-- Install the core and all the applications which allow batch building. -->
-    <target name="install" depends="install-core,install-apps" />
+    <target name="install" depends="install-core, install-apps, install-scripts" />
     
     
     <!-- Build and run all unit tests. -->
@@ -42,6 +42,7 @@
             <fileset dir=".">
                 <include name="core/build.xml" />
                 <include name="apps/build.xml" />
+                <include name="scripts/build.xml" />
             </fileset>
         </subant>
         <delete dir="${install.root}" />
@@ -75,6 +76,16 @@
     </target>
     
     
+    <!-- Copy scripts to the build directory. -->
+    <target name="scripts" depends="core">
+        <subant target="all">
+            <fileset dir=".">
+                <include name="scripts/build.xml" />
+            </fileset>
+        </subant>
+    </target>
+    
+    
     <!-- Build all the applications standalone which allow batch building. -->
     <target name="standalone-apps" depends="core">
         <subant target="all-standalone">
@@ -103,6 +114,16 @@
             </fileset>
         </subant>
     </target>
+    
+    
+    <!-- Install all the scripts. -->
+    <target name="install-scripts" depends="install-core">
+        <subant target="install">
+            <fileset dir=".">
+                <include name="scripts/build.xml" />
+            </fileset>
+        </subant>
+    </target>
 	
 	
 	<!-- provide guidance on the various targets -->
@@ -120,6 +141,7 @@
 		<echo message="    purge-build ................ Purge all build products." />
 		<echo message="    purge-install .............. Purge all installed products." />
 		<echo message="    run-tests .................. Build and run unit tests." />
+		<echo message="    scripts .................... Copy scripts to the build directory." />
 		<echo message="    standalone-apps ............ Build the applications which allow batch building and assemble the jar products as standalone applications." />
     </target>
 
