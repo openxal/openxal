@@ -5,7 +5,7 @@
 	<description>Builds Open XAL Core</description>
 	
     <target name="init">
-        <property name="srcroot" value="xal" />
+        <property name="srcroot" value="." />
         <mkdir dir="${build.root}" />
     </target>
     
@@ -25,7 +25,7 @@
 		<attribute name="flag" default="-Xlint:none" />
 		<sequential>
 			<mkdir dir="${build.compile.core.root}" />
-			<javac debug="true" source="1.6" target="1.6" includeAntRuntime="no" deprecation="true" destdir="${build.compile.core.root}" srcdir="${srcroot}" sourcepath="">
+			<javac debug="true" source="1.6" target="1.6" includeAntRuntime="no" deprecation="true" destdir="${build.compile.core.root}" srcdir="${srcroot}" includes="xal/**" sourcepath="">
 				<classpath>
 					<pathelement location="${build.compile.core.root}" />
 					<pathelement location="${build.jar.root}/xal-lib.jar" />
