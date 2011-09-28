@@ -86,6 +86,7 @@ public class JSONCoder {
 	
 	
 	/** encode a hash table */
+    @SuppressWarnings( "unchecked" )    // map can be of any combination of types
 	static public String encode( final Map map ) {
 		if ( map != null ) {
 			final StringBuffer buffer = new StringBuffer();
