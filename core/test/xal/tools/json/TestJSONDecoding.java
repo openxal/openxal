@@ -46,6 +46,32 @@ public class TestJSONDecoding {
     }
     
     
+    @Test
+    public void testCodingDecoding() {
+        checkCodingDecoding( null );
+        checkCodingDecoding( 56.4 );
+        checkCodingDecoding( "Hello, World" );
+        
+        final List simpleList = new ArrayList();
+        simpleList.add( "Hello" );
+        simpleList.add( "World" );
+        simpleList.add( "String with \"embedded\" string." );
+        simpleList.add( new Double( -32.7 )  );
+        checkCodingDecoding( simpleList );
+        
+        final Map simpleMap = new HashMap();
+        simpleMap.put( "x", 41.8 );
+        simpleMap.put( "y", -2.6 );
+        simpleMap.put( "comment", "Just a point" );
+        checkCodingDecoding( simpleMap );
+        
+        final Map compoundMap = new HashMap();
+        compoundMap.put( "z", 23.6 ); 
+        compoundMap.put( "simple map", simpleMap );
+        compoundMap.put( "simple list", simpleList );
+    }
+    
+    
     /** check whether the decoder can decode values */
     static private <DataType> void checkValueEquality( final DataType controlValue ) {
         final Object testValue = JSONDecoder.decode( String.valueOf( controlValue ) );
@@ -60,8 +86,16 @@ public class TestJSONDecoding {
     }
     
     
+    /** check whether a decoded encoding matches the original value */
+    static private void checkCodingDecoding( final Object controlValue ) {
+        final String coding = JSONCoder.encode( controlValue );
+        final Object testValue = JSONDecoder.decode( coding );
+        assertEquality( controlValue, testValue );
+    }
+    
+    
     /** Assert whether the control value equals the test value */
     static private void assertEquality( final Object controlValue, final Object testValue ) {
-        Assert.assertTrue( controlValue.equals( testValue ) );
+        Assert.assertTrue( controlValue == testValue || controlValue.equals( testValue ) );
     }
 }
