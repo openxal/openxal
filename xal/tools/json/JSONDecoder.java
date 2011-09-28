@@ -258,6 +258,7 @@ class ArrayDecoder extends AbstractDecoder<List> {
 	
 	
 	/** append to the items the parsed items from the array string */
+    @SuppressWarnings( "unchecked" )    // list of items can be any combination of types
 	private void appendItems( final List items, final String arrayString ) {
 		if ( arrayString != null && arrayString.length() > 0 ) {
 			try {
@@ -313,6 +314,7 @@ class DictionaryDecoder extends AbstractDecoder<Map> {
 	
 	
 	/** append to the items the parsed items from the array string */
+    @SuppressWarnings( "unchecked" )    // dictionary can be any combination of types
 	private void appendItems( final Map dictionary, final String dictionaryString ) {
 		if ( dictionaryString != null && dictionaryString.length() > 0 ) {
 			try {
