@@ -241,7 +241,7 @@ class StringDecoder extends AbstractDecoder<String> {
 
 
 /** decode an array from a source string */
-class ArrayDecoder extends AbstractDecoder<List> {
+class ArrayDecoder extends AbstractDecoder<List<Object>> {
 	/** Constructor */
 	protected ArrayDecoder( final String archive ) {
 		super( archive );
@@ -249,17 +249,16 @@ class ArrayDecoder extends AbstractDecoder<List> {
 	
 	
 	/** decode the source to extract the next object */	
-	protected List decode() {
+	protected List<Object> decode() {
 		final String arrayString = ARCHIVE.substring( 1 ).trim();	// strip the leading bracket
-		final List items = new ArrayList();
+		final List<Object> items = new ArrayList<Object>();
 		appendItems( items, arrayString );
 		return items;
 	}
 	
 	
 	/** append to the items the parsed items from the array string */
-    @SuppressWarnings( "unchecked" )    // list of items can be any combination of types
-	private void appendItems( final List items, final String arrayString ) {
+	private void appendItems( final List<Object> items, final String arrayString ) {
 		if ( arrayString != null && arrayString.length() > 0 ) {
 			try {
 				if ( arrayString.charAt( 0 ) == ']' ) {
@@ -297,7 +296,7 @@ class ArrayDecoder extends AbstractDecoder<List> {
 
 
 /** decode a dictionary from a source string */
-class DictionaryDecoder extends AbstractDecoder<Map> {
+class DictionaryDecoder extends AbstractDecoder<Map<String,Object>> {
 	/** Constructor */
 	protected DictionaryDecoder( final String archive ) {
 		super( archive );
@@ -305,17 +304,16 @@ class DictionaryDecoder extends AbstractDecoder<Map> {
 	
 	
 	/** decode the source to extract the next object */	
-	protected Map decode() {
+	protected Map<String,Object> decode() {
 		final String dictionaryString = ARCHIVE.substring( 1 ).trim();	// strip the leading brace
-		final Map dictionary = new HashMap();
+		final Map<String,Object> dictionary = new HashMap<String,Object>();
 		appendItems( dictionary, dictionaryString );
 		return dictionary;
 	}
 	
 	
 	/** append to the items the parsed items from the array string */
-    @SuppressWarnings( "unchecked" )    // dictionary can be any combination of types
-	private void appendItems( final Map dictionary, final String dictionaryString ) {
+	private void appendItems( final Map<String,Object> dictionary, final String dictionaryString ) {
 		if ( dictionaryString != null && dictionaryString.length() > 0 ) {
 			try {
 				if ( dictionaryString.charAt( 0 ) == '}' ) {
