@@ -64,7 +64,7 @@
 		<attribute name="flag" default="-Xlint:none" />
 		<sequential>
             <mkdir dir="${app.build.compile.root}" />
-            <javac srcdir="${app.src.root}/src" destdir="${app.build.compile.root}" debug="true" source="1.6" target="1.6" includeAntRuntime="no" deprecation="true">
+            <javac srcdir="${app.src.root}" includes="xal/**" destdir="${app.build.compile.root}" debug="true" source="1.6" target="1.6" includeAntRuntime="no" deprecation="true">
                 <compilerarg value="@{flag}" />
                 
                 <!-- compile against the common libraries (e.g. xal-core.jar, xal-lib.jar) -->
