@@ -88,8 +88,8 @@
 	
 	
 	<!-- Compile the core XAL classes using the lint flag to show some recommended warnings -->
-    <target name="compile-warn" depends="init" if="allows.build">
-		<compile-flagged flag="-Xlint:unchecked" />
+    <target name="compile-warn-mandatory" depends="init" if="allows.build">
+		<compile-flagged />
     </target>
 	
 	
@@ -101,7 +101,7 @@
 	
 	<!-- Compile the core XAL classes reporting only mandated warnings -->
     <target name="compile" depends="init" if="allows.build">
-		<compile-flagged />
+		<compile-flagged flag="-Xlint" />
     </target>
     
     
@@ -213,9 +213,9 @@
 		<echo message="    all ........................ Compile the application and assemble the jar product with dependence on the common libraries." />
 		<echo message="    all-standalone ............. Compile the application and assemble the jar product as standalone application." />
 		<echo message="    clean ...................... Clean compiled classes and build product" />
-		<echo message="    compile .................... Compile the application reporting only mandated warnings." />
-		<echo message="    compile-warn ............... Compile the application reporting unchecked conversions." />
+		<echo message="    compile .................... Compile the application reporting all recommended warnings." />
 		<echo message="    compile-warn-all ........... Compile the application reporting all recommended warnings." />
+		<echo message="    compile-warn-mandatory ..... Compile the application reporting only mandated warnings." />
 		<echo message="    install .................... Install the application for distribution." />
 		<echo message="    purge-install .............. Purge the installed application." />
     </target>
