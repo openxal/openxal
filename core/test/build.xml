@@ -46,6 +46,7 @@
                 <pathelement location="${build.jar.root}/xal-lib.jar" />
                 <pathelement location="${junit.jar.path}" />
             </classpath>
+            <compilerarg value="-Xlint" />
         </javac>
         
         <copy todir="${build.compile.core.test.root}/resources/xal">
