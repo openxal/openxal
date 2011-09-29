@@ -55,7 +55,7 @@ public class TestJSONCoding {
     
     @Test
     public void testListCoding() {
-        final List testList = new ArrayList();
+        final List<Object> testList = new ArrayList<Object>();
         testList.add( "Hello" );
         testList.add( "World" );
         testList.add( 1.5 );
@@ -67,7 +67,7 @@ public class TestJSONCoding {
     
     @Test
     public void testMapCoding() {
-        final Map testMap = new TreeMap();  // need to guarantee ordering so we can test against our control
+        final Map<String,Object> testMap = new TreeMap<String,Object>();  // need to guarantee ordering so we can test against our control
         testMap.put( "message", "Hello, World" );
         testMap.put( "value", 5.4 );
         testMap.put( "cities", new String[] { "Knoxville", "Oak Ridge" } );

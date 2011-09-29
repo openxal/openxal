@@ -50,25 +50,42 @@ public class TestJSONDecoding {
     public void testCodingDecoding() {
         checkCodingDecoding( null );
         checkCodingDecoding( 56.4 );
+        checkCodingDecoding( true );
+        checkCodingDecoding( false );
         checkCodingDecoding( "Hello, World" );
         
-        final List simpleList = new ArrayList();
+        final List<Object> simpleList = new ArrayList<Object>();
         simpleList.add( "Hello" );
         simpleList.add( "World" );
+        simpleList.add( true );
+        simpleList.add( false );
+        simpleList.add( null );
         simpleList.add( "String with \"embedded\" string." );
         simpleList.add( new Double( -32.7 )  );
         checkCodingDecoding( simpleList );
         
-        final Map simpleMap = new HashMap();
+        final Map<String,Object> simpleMap = new HashMap<String,Object>();
+        simpleMap.put( "info", null );
         simpleMap.put( "x", 41.8 );
         simpleMap.put( "y", -2.6 );
         simpleMap.put( "comment", "Just a point" );
         checkCodingDecoding( simpleMap );
         
-        final Map compoundMap = new HashMap();
-        compoundMap.put( "z", 23.6 ); 
+        final List<Object> compoundList = new ArrayList<Object>();
+        compoundList.add( true );
+        compoundList.add( simpleList );
+        compoundList.add( simpleMap );
+        compoundList.add( "Thing" );
+        compoundList.add( 2.5 );
+        checkCodingDecoding( compoundList );
+        
+        final Map<String,Object> compoundMap = new HashMap<String,Object>();
+        compoundMap.put( "z", 23.6 );
+        compoundMap.put( "ready", true );
+        compoundMap.put( "on", false );
         compoundMap.put( "simple map", simpleMap );
         compoundMap.put( "simple list", simpleList );
+        checkCodingDecoding( compoundMap );
     }
     
     
