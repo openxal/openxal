@@ -41,20 +41,20 @@
 	</macrodef>
 	
 	
-	<!-- Compile the core XAL classes using the lint flag to show some recommended warnings -->
-    <target name="compile-warn" depends="init, jar-lib" >
-		<compile-flagged flag="-Xlint:unchecked" />
+	<!-- Compile the core XAL classes using the lint flag to report all recommended warnings -->
+    <target name="compile" depends="init, jar-lib" >
+		<compile-flagged flag="-Xlint" />
     </target>
+		
 	
-	
-	<!-- Compile the core XAL classes using the lint flag to show all recommended warnings -->
+	<!-- Compile the core XAL classes using the lint flag to report all recommended warnings -->
     <target name="compile-warn-all" depends="init, jar-lib" >
 		<compile-flagged flag="-Xlint" />
     </target>
 	
 	
-	<!-- Compile the core XAL classes reporting only mandated warnings -->
-    <target name="compile" depends="init, jar-lib" >
+	<!-- Compile the core XAL classes reporting on the mandatory warnings -->
+    <target name="compile-warn-mandatory" depends="init, jar-lib" >
 		<compile-flagged />
     </target>
     
@@ -151,14 +151,14 @@
 		<echo message="    help ....................... Print this message." />
 		<echo message="    all ........................ Compile the core XAL classes and assemble the jar products." />
 		<echo message="    clean ...................... Clean compiled classes and build products" />
-		<echo message="    compile .................... Compile the core XAL classes reporting only mandated warnings." />
-		<echo message="    compile-warn: .............. Compile the core XAL classes reporting unchecked conversions." />
-		<echo message="    compile-warn-all: .......... Compile the core XAL classes reporting all recommended warnings." />
-		<echo message="    doc: ....................... Generate documentation for the core." />
-		<echo message="    install: ................... Install the core products intended for distribution." />
-		<echo message="    jar-lib: ................... Assemble the external jar files into a single library, xal-lib.jar" />
-		<echo message="    jar-core: .................. Assemble the core XAL classes and resources into xal-core.jar" />
-		<echo message="    purge-install: ............. Purge the core installation." />
+		<echo message="    compile .................... Compile the core XAL classes reporting all recommended warnings." />
+		<echo message="    compile-warn-all ........... Compile the core XAL classes reporting all recommended warnings." />
+		<echo message="    compile-warn-mandatory ..... Compile the core XAL classes reporting only mandated warnings." />
+		<echo message="    doc ........................ Generate documentation for the core." />
+		<echo message="    install .................... Install the core products intended for distribution." />
+		<echo message="    jar-lib .................... Assemble the external jar files into a single library, xal-lib.jar" />
+		<echo message="    jar-core ................... Assemble the core XAL classes and resources into xal-core.jar" />
+		<echo message="    purge-install .............. Purge the core installation." />
 		<echo message="    run-tests .................. Build and run the test cases." />
     </target>
 </project>
