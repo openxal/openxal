@@ -34,7 +34,7 @@ public class JSONCoder {
 	
 	
 	/** encode a list */
-	static public String encode( final List values ) {
+	static public String encode( final List<?> values ) {
 		if ( values != null ) {
 			final int count = values.size();
 			final StringBuffer buffer = new StringBuffer();
@@ -86,14 +86,13 @@ public class JSONCoder {
 	
 	
 	/** encode a hash table */
-    @SuppressWarnings( "unchecked" )    // map can be of any combination of types
-	static public String encode( final Map map ) {
+    static public <ValueType> String encode( final Map<String,ValueType> map ) {
 		if ( map != null ) {
 			final StringBuffer buffer = new StringBuffer();
 			buffer.append( "{" );
-			final Set<Map.Entry> entries = map.entrySet();
+			final Set<Map.Entry<String,ValueType>> entries = map.entrySet();
 			int index = 0;
-			for ( final Map.Entry entry : entries ) {
+			for ( final Map.Entry<String,ValueType> entry : entries ) {
 				switch ( index ) {
 					case 0:
 						break;
@@ -101,7 +100,7 @@ public class JSONCoder {
 						buffer.append( ", " );
 						break;
 				}
-				final String key = (String)entry.getKey();
+				final String key = entry.getKey();
 				final Object value = entry.getValue();
 				buffer.append( encode( key ) );
 				buffer.append( ": " );
@@ -118,6 +117,7 @@ public class JSONCoder {
 	
 	
 	/** encode an object */
+    @SuppressWarnings( "unchecked" )    // no way to guarantee at compile time that maps are keyed by string
 	static public String encode( final Object value ) {
 		if ( value == null ) {
 			return "null";
@@ -134,7 +134,7 @@ public class JSONCoder {
 		else if ( value instanceof List ) {
 			return encode( (List)value );
 		}
-		else if ( value instanceof Map ) {
+		else if ( value instanceof Map ) {  // no way to check at compile time that the key type is string
 			return encode( (Map)value );
 		}
 		else if ( value.getClass().isArray() ) {
