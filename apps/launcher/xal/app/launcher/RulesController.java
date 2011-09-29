@@ -92,6 +92,8 @@ public class RulesController {
 	/** action to delete a rule */
 	private AbstractAction deleteRuleAction() {
 		return new AbstractAction() {
+            private static final long serialVersionUID = 1L;
+            
 			public void actionPerformed( final ActionEvent event ) {
 				final int selectedRow = RULES_TABLE.getSelectedRow();
 				MODEL.deleteRuleAt( selectedRow );
@@ -104,6 +106,8 @@ public class RulesController {
 	/** action to add a new rule */
 	private AbstractAction addRuleAction() {
 		return new AbstractAction() {
+            private static final long serialVersionUID = 1L;
+            
 			public void actionPerformed( final ActionEvent event ) {
 				final int selectedRow = RULES_TABLE.getSelectedRow();
 				MODEL.addNewRuleAt( selectedRow );
@@ -116,6 +120,8 @@ public class RulesController {
 	/** action to apply the rule's pattern edits */
 	private AbstractAction rulePatternAction() {
 		return new AbstractAction() {
+            private static final long serialVersionUID = 1L;
+            
 			public void actionPerformed( final ActionEvent event ) {
 				applyRulePatternEdit();
 			}
@@ -151,6 +157,8 @@ public class RulesController {
 	/** action handling the toggle of excluding matching files */
 	private AbstractAction ruleExcludeFilesAction() {
 		return new AbstractAction() {
+            private static final long serialVersionUID = 1L;
+            
 			public void actionPerformed( final ActionEvent event ) {
 				applyRuleExclusionEdit();
 			}
@@ -161,6 +169,8 @@ public class RulesController {
 	/** action to apply the rule's kind edits */
 	private AbstractAction ruleKindAction() {
 		return new AbstractAction() {
+            private static final long serialVersionUID = 1L;
+            
 			public void actionPerformed( final ActionEvent event ) {
 				applyRuleKindEdit();
 			}
@@ -196,6 +206,8 @@ public class RulesController {
 	/** action to apply the rule's edits */
 	private AbstractAction ruleCommandAction() {
 		return new AbstractAction() {
+            private static final long serialVersionUID = 1L;
+            
 			public void actionPerformed( final ActionEvent event ) {
 				applyRuleCommandEdit();
 			}

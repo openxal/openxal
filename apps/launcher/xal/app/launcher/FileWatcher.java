@@ -107,7 +107,7 @@ public class FileWatcher implements DataListener {
 		final List<File> files = new ArrayList<File>();
 		final List<Rule> rules = MODEL.getRules();
 		
-		final List<File> folders = new ArrayList( _folders );
+		final List<File> folders = new ArrayList<File>( _folders );
 		for ( final File folder : folders ) {
 			if ( folder.exists() ) {
 				files.addAll( listFilesUnder( folder, rules, 0 ) );

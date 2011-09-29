@@ -129,6 +129,9 @@ public class HostConfigurationController {
 
 /** table model for editing the host settings */
 class HostSettingsTableModel extends AbstractTableModel {
+    /** required serialization version ID */
+    private static final long serialVersionUID = 1L;
+    
 	/** colunm for enabling the host */
 	static final public int ENABLE_COLUMN = 0;
 	

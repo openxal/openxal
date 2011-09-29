@@ -62,6 +62,8 @@ public class FileWatcherController {
 	/** action to add a new watch folder */
 	private AbstractAction addNewWatchFolderAction() {
 		return new AbstractAction() {
+            private static final long serialVersionUID = 1L;
+            
 			public void actionPerformed( final ActionEvent event ) {
 				final int status = FOLDER_CHOOSER.showOpenDialog( WATCH_FOLDER_LIST );
 				switch( status ) {
@@ -79,8 +81,10 @@ public class FileWatcherController {
 	
 	
 	/** action to delete the selected watch folders */
-	private AbstractAction deleteSelectedWatchFoldersAction() {
+	private AbstractAction deleteSelectedWatchFoldersAction() {        
 		return new AbstractAction() {
+            private static final long serialVersionUID = 1L;
+            
 			public void actionPerformed( final ActionEvent event ) {
 				final Object[] selections = WATCH_FOLDER_LIST.getSelectedValues();
 				for ( final Object selection : selections ) {

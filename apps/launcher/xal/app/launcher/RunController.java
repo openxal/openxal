@@ -102,6 +102,8 @@ public class RunController {
 	/** action to refresh the list of applications */
 	private AbstractAction refreshAppsAction() {
 		return new AbstractAction() {
+            private static final long serialVersionUID = 1L;
+            
 			public void actionPerformed( final ActionEvent event ) {
 				MODEL.refreshApplications();
 				refreshView();
@@ -113,6 +115,8 @@ public class RunController {
 	/** action to clear the filter field */
 	private AbstractAction clearFilterAction() {
 		return new AbstractAction() {
+            private static final long serialVersionUID = 1L;
+            
 			public void actionPerformed( final ActionEvent event ) {
 				FILTER_FIELD.setText( "" );
 			}
@@ -123,6 +127,8 @@ public class RunController {
 	/** action to run the selected application */
 	private AbstractAction runAction() {
 		return new AbstractAction() {
+            private static final long serialVersionUID = 1L;
+            
 			public void actionPerformed( final ActionEvent event ) {
 				runSelectedApplication();
 			}
