@@ -28,7 +28,7 @@
 			<javac debug="true" source="1.6" target="1.6" includeAntRuntime="no" deprecation="true" destdir="${build.compile.core.root}" srcdir="${srcroot}" includes="xal/**" sourcepath="">
 				<classpath>
 					<pathelement location="${build.compile.core.root}" />
-					<pathelement location="${build.jar.root}/xal-lib.jar" />
+					<pathelement location="${build.jar.lib.root}/xal-lib.jar" />
 				</classpath>
 				<compilerarg value="@{flag}" />
 			</javac>
@@ -61,8 +61,8 @@
 	
 	<!-- Jar the core XAL classes -->
     <target  name="jar-core" depends="init, compile">
-        <mkdir dir="${build.jar.root}" />
-        <jar compress="true" jarfile="${build.jar.root}/xal-core.jar" index="true">
+        <mkdir dir="${build.jar.lib.root}" />
+        <jar compress="true" jarfile="${build.jar.lib.root}/xal-core.jar" index="true">
 			<fileset dir="${build.compile.core.root}" includes="xal/**/*">
 			</fileset>
             
@@ -73,8 +73,8 @@
 	
 	<!-- Join the third party jars into a common external jar file -->
     <target name="jar-lib" depends="init">
-        <mkdir dir="${build.jar.root}" />
-        <jar compress="true" jarfile="${build.jar.root}/xal-lib.jar" index="true" duplicate="preserve">
+        <mkdir dir="${build.jar.lib.root}" />
+        <jar compress="true" jarfile="${build.jar.lib.root}/xal-lib.jar" index="true" duplicate="preserve">
 			<zipgroupfileset dir="lib">
 				<patternset>
 					<include name="*.jar" />
@@ -92,9 +92,9 @@
 	
 	<!-- Build everything and install in the the installation location -->
     <target name="install" depends="all" description="Build everything and install in the installation location." >
-        <mkdir dir="${install.root}" />
-		<copy todir="${install.root}">
-			<fileset dir="${build.jar.root}">
+        <mkdir dir="${install.lib.root}" />
+		<copy todir="${install.lib.root}">
+			<fileset dir="${build.jar.lib.root}">
                 <include name="xal-core.jar" />
                 <include name="xal-lib.jar" />
             </fileset>
@@ -105,8 +105,8 @@
 	
 	<!-- Build everything and install in the the installation location -->
     <target name="purge-install" depends="init" description="Build everything and install in the installation location." >
-        <delete file="${install.root}/xal-core.jar" quiet="true" />
-        <delete file="${install.root}/xal-lib.jar" quiet="true" />
+        <delete file="${install.lib.root}/xal-core.jar" quiet="true" />
+        <delete file="${install.lib.root}/xal-lib.jar" quiet="true" />
         <echo message="Purged core installation!"/>
     </target>
 	
@@ -120,7 +120,7 @@
             </sourcepath>
             <classpath>
                 <pathelement location="${build.compile.core.root}" />
-                <pathelement location="${build.jar.root}/xal-lib.jar" />
+                <pathelement location="${build.jar.lib.root}/xal-lib.jar" />
             </classpath>
         </javadoc>
     </target>
@@ -129,8 +129,8 @@
 	<!-- clean compiled products -->
     <target name="clean" depends="init" description="Clean all build products." >
         <delete dir="${build.compile.core.root}" />
-        <delete file="${build.jar.root}/xal-core.jar" quiet="true" />
-        <delete file="${build.jar.root}/xal-lib.jar" quiet="true" />
+        <delete file="${build.jar.lib.root}/xal-core.jar" quiet="true" />
+        <delete file="${build.jar.lib.root}/xal-lib.jar" quiet="true" />
         
         <subant target="clean">
             <fileset dir=".">

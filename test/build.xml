@@ -15,9 +15,9 @@
         <mkdir dir="${build.tests.root}" />
         <junit printsummary="yes">
             <classpath>
-                <pathelement location="${build.jar.root}/xal-test.jar" />
-                <pathelement location="${build.jar.root}/xal-core.jar" />
-                <pathelement location="${build.jar.root}/xal-lib.jar" />
+                <pathelement location="${build.jar.lib.root}/xal-test.jar" />
+                <pathelement location="${build.jar.lib.root}/xal-core.jar" />
+                <pathelement location="${build.jar.lib.root}/xal-lib.jar" />
                 <pathelement location="${junit.jar.path}" />
             </classpath>
             
@@ -42,8 +42,8 @@
             <classpath>
                 <pathelement location="${build.compile.core.test.root}/xal" />
                 <pathelement location="${build.compile.core.test.root}/resources/xal" />
-                <pathelement location="${build.jar.root}/xal-core.jar" />
-                <pathelement location="${build.jar.root}/xal-lib.jar" />
+                <pathelement location="${build.jar.lib.root}/xal-core.jar" />
+                <pathelement location="${build.jar.lib.root}/xal-lib.jar" />
                 <pathelement location="${junit.jar.path}" />
             </classpath>
             <compilerarg value="-Xlint" />
@@ -57,8 +57,8 @@
 	
 	<!-- Jar the core XAL classes -->
     <target  name="jar" depends="init, compile">
-        <mkdir dir="${build.jar.root}" />
-        <jar compress="false" jarfile="${build.jar.root}/xal-test.jar" index="true">
+        <mkdir dir="${build.jar.lib.root}" />
+        <jar compress="false" jarfile="${build.jar.lib.root}/xal-test.jar" index="true">
 			<fileset dir="${build.compile.core.test.root}" includes="xal/**/*" />
 			<fileset dir="${build.compile.core.test.root}/resources" />
         </jar>
@@ -75,7 +75,7 @@
     <target name="clean" depends="init" description="Clean all build products." >
         <delete dir="${build.compile.core.test.root}" />
         <delete dir="${build.tests.root}" />
-        <delete file="${build.jar.root}/xal-test.jar" quiet="true" />
+        <delete file="${build.jar.lib.root}/xal-test.jar" quiet="true" />
         
         <echo message="Core test cleaned!" />
     </target>
