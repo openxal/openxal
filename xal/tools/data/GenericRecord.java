@@ -229,9 +229,15 @@ public class GenericRecord implements KeyedRecord, DataListener {
             final String key = attribute.name();
             final Class type = attribute.type();
 			
-			final String stringValue = adaptor.hasAttribute( key ) ? adaptor.stringValue( key ) : attribute.getDefaultStringValue();
-			final Object value = valueOfTypeFromString( type, stringValue );
-            setValueForKey( value, key );
+            try {
+                final String stringValue = adaptor.hasAttribute( key ) ? adaptor.stringValue( key ) : attribute.getDefaultStringValue();
+                final Object value = valueOfTypeFromString( type, stringValue );
+                setValueForKey( value, key );
+            }
+            catch ( ParseException exception ) {
+                System.out.println( "Error during record upate when parsing value for \"" + key + "\" attribute in table, \"" + DATA_TABLE.name() + "\"" );
+                throw exception;
+            }
         }
     }
     
@@ -250,9 +256,9 @@ public class GenericRecord implements KeyedRecord, DataListener {
         Object value = null;
         
 		try {
-			Method valueOfMethod = type.getMethod( "valueOf", new Class[] {java.lang.String.class} );
+			final Method valueOfMethod = type.getMethod( "valueOf", new Class[] {java.lang.String.class} );
 			// convert the value to the Object of the appropriate class
-			value = valueOfMethod.invoke(null, new Object[] {stringValue});
+			value = valueOfMethod.invoke( null, new Object[] {stringValue} );
 		}
 		catch(NoSuchMethodException exception) {
 			final String message = "The valueOf() method was not found for the attribute of type:" + type;
@@ -280,7 +286,7 @@ public class GenericRecord implements KeyedRecord, DataListener {
 		}
 		catch(InvocationTargetException exception) {
 			// this exception gets called if the valueOf() method throws an exception
-			String message = "The valueOf() method for type: " + type + " threw an exception: " + exception.getTargetException();
+			String message = "The valueOf() method for type: " + type + " with value >>" + stringValue + "<< threw an exception: " + exception.getTargetException();
 			Logger.getLogger("global").log( Level.SEVERE, message, exception );
 			throw new ParseException(message);
 		}
