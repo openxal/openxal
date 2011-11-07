@@ -23,5 +23,8 @@
 	<property name="build.compile.core.root" value="${build.compile.root}/core" />
 	<property name="build.compile.core.test.root" value="${build.compile.root}/test/core" />
 	<property name="build.jar.root" value="${build.root}/jar" />
+	<property name="build.jar.lib.root" value="${build.jar.root}/lib" />
 	<property name="build.tests.root" value="${build.root}/tests" />
+    
+    <property name="install.lib.root" value="${install.root}/lib" />
 </project>
