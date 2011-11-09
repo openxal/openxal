@@ -187,7 +187,7 @@ public class MachineSimulator implements DataListener {
 	 */
 	static public Probe getDefaultProbe( final AcceleratorSeq sequence ) {
         // todo: need to configure the envelope adaptive tracker based on the model params
-		final Probe probe = ( sequence instanceof Ring ) ? (Probe)ProbeFactory.getTransferMapProbe( sequence, new TransferMapTracker() ) : (Probe)ProbeFactory.getEnvelopeProbe( sequence, new EnvTrackerAdapt() );
+		final Probe probe = ( sequence instanceof Ring ) ? (Probe)ProbeFactory.getTransferMapProbe( sequence, new TransferMapTracker() ) : (Probe)ProbeFactory.getEnvelopeProbe( sequence, new EnvelopeTracker() );
 		
 		probe.getAlgorithm().setRfGapPhaseCalculation( true );	// make sure we enable the full RF gap phase slip calculation
 		
