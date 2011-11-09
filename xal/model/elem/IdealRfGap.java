@@ -827,7 +827,7 @@ public class IdealRfGap extends ThinElement implements IRfGap {
         //      probe.updateTwiss(probe.getCorrelation(), dE);
         //obsolete probe.updateTwiss(probe.getCorrelation());
         //obsolete Twiss twiss[] = probe.getTwiss();
-        Twiss [] twiss = probe.getCorrelation().computeTwiss();
+        Twiss [] twiss = probe.getCovariance().computeTwiss();
         //sako
         double Er = probe.getSpeciesRestEnergy();
         double Wi = probe.getKineticEnergy();
@@ -865,7 +865,7 @@ public class IdealRfGap extends ThinElement implements IRfGap {
             
             double wavel = clight/freq;
             
-            CovarianceMatrix     matCorXAL  = (probe).getCorrelation();//this need to be convert to t3d unit
+            CovarianceMatrix     matCorXAL  = (probe).getCovariance();//this need to be convert to t3d unit
             
 //            double lambda = wavel;
 //            double gammai = 1.0 + (Wi / Er);

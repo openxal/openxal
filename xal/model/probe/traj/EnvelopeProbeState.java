@@ -144,12 +144,12 @@ public class EnvelopeProbeState extends BunchProbeState implements IPhaseState {
     @SuppressWarnings("deprecation")
     public EnvelopeProbeState(EnvelopeProbe probe) {
         super(probe);
-        this.setCorrelation(probe.getCorrelation());
+        this.setCorrelation(probe.getCovariance());
         this.setResponseMatrix(probe.getResponseMatrix());
         this.setResponseMatrixNoSpaceCharge(probe.getResponseMatrixNoSpaceCharge());
         this.setPerturbationMatrix(probe.getCurrentResponseMatrix());
         //obsolete this.setTwiss(probe.getTwiss());
-        this.setTwiss(probe.getCorrelation().computeTwiss());
+        this.setTwiss(probe.getCovariance().computeTwiss());
         this.setSaveTwissFlag(probe.getSaveTwissFlag());
 	//sako
 

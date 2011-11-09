@@ -171,7 +171,7 @@ public class EnvelopeProbe extends BunchProbe {
 		this.setResponseMatrixNoSpaceCharge(probe.getResponseMatrixNoSpaceCharge());
 		this.setCurrentResponseMatrix(probe.getCurrentResponseMatrix());
 		this.setBetatronPhase(probe.getBetatronPhase());
-		this.setCorrelation(probe.getCorrelation());
+		this.setCorrelation(probe.getCovariance());
 	};
     
     /**
@@ -189,7 +189,7 @@ public class EnvelopeProbe extends BunchProbe {
      */
     public void initFromTwiss(Twiss[] twiss) {
         this.arrTwiss = twiss;
-        PhaseVector pv = getCorrelation().getMean();
+        PhaseVector pv = getCovariance().getMean();
         CovarianceMatrix cMat = CovarianceMatrix.buildCorrelation(twiss[0],
                 twiss[1], twiss[2], pv);
         this.setCorrelation(cMat);
@@ -325,7 +325,7 @@ public class EnvelopeProbe extends BunchProbe {
      * 
      * @return  the 7x7 matrix <z*z^T> in homogeneous coordinates
      */
-    public CovarianceMatrix getCorrelation() {
+    public CovarianceMatrix getCovariance() {
         return matTau;
     }
 	/**
@@ -424,7 +424,7 @@ public class EnvelopeProbe extends BunchProbe {
      *  @return     <(z-<z>)*(z-<z>)^T> = <z*z^T> - <z>*<z>^T
      */
     public CovarianceMatrix  phaseCovariance() {
-        return getCorrelation().computeCovariance();
+        return getCovariance().computeCovariance();
     }
     
     /** 
@@ -433,7 +433,7 @@ public class EnvelopeProbe extends BunchProbe {
      *  @return         <z> = (<x>, <xp>, <y>, <yp>, <z>, <zp>, 1)^T
      */
     public PhaseVector phaseMean()  {
-        return getCorrelation().getMean();
+        return getCovariance().getMean();
     }
 
     
@@ -611,7 +611,7 @@ public class EnvelopeProbe extends BunchProbe {
     public void advanceTwiss(PhaseMatrix R, double dW) {
 
 		//obsolete Twiss[] twissOld = getTwiss();
-		Twiss[] twissOld = getCorrelation().computeTwiss();
+		Twiss[] twissOld = getCovariance().computeTwiss();
 		Twiss[] twissNew = new Twiss[3];
 
         // Relativistic parameter ratios
@@ -696,7 +696,7 @@ public class EnvelopeProbe extends BunchProbe {
     public void updateTwiss(CovarianceMatrix Cor) {
         
     	//obsolete Twiss[] twissOld = getTwiss();
-    	Twiss[] twissOld = this.getCorrelation().computeTwiss();
+    	Twiss[] twissOld = this.getCovariance().computeTwiss();
        	Twiss[] twissNew = new Twiss[3];   	
     	for (int i=0;i<3;i++) {
       		double emit = twissOld[i].getEmittance();

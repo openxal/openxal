@@ -197,10 +197,10 @@ public class EnvelopeTracker extends EnvelopeTrackerBase {
         
         // Get initial conditions of probe
         R3                  vecPhs0  = probe.getBetatronPhase();
-        Twiss[]             twiss0   = probe.getCorrelation().computeTwiss();
+        Twiss[]             twiss0   = probe.getCovariance().computeTwiss();
         PhaseMatrix         matRnsp0 = probe.getResponseMatrixNoSpaceCharge();
         PhaseMatrix         matResp0 = probe.getResponseMatrix();
-        CovarianceMatrix   matTau0  = probe.getCorrelation();
+        CovarianceMatrix   matTau0  = probe.getCovariance();
         
         // Compute the transfer matrix
         PhaseMatrix matPhi_op  = ifcElem.transferMap(probe, dblLen).getFirstOrder(); 
@@ -227,7 +227,7 @@ public class EnvelopeTracker extends EnvelopeTrackerBase {
         
         // phase update:
         //obsolete Twiss []    twiss1  = probe.getTwiss();
-        Twiss []    twiss1  = probe.getCorrelation().computeTwiss();
+        Twiss []    twiss1  = probe.getCovariance().computeTwiss();
         R3          vecPhs1 = vecPhs0.plus( matPhi_sc.compPhaseAdvance(twiss0, twiss1) );
         probe.setBetatronPhase(vecPhs1);
         
@@ -292,7 +292,7 @@ public class EnvelopeTracker extends EnvelopeTrackerBase {
             PhaseMatrix       matPhi0  = mapElem0.getFirstOrder();  
             
             // Get the RMS envelopes at probe location
-            CovarianceMatrix covTau0  = probe.getCorrelation();    // covariance matrix at entrance
+            CovarianceMatrix covTau0  = probe.getCovariance();    // covariance matrix at entrance
             
             
             // Advance probe a half step for position depend transfer maps

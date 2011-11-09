@@ -223,7 +223,7 @@ public abstract class Tracker implements IAlgorithm, IArchive {
     /**
      * <p>
      * Load the sequence's model parameters for the adaptive tracker from the 
-     * global XAL edit context, which is retreivable through the given
+     * global XAL edit context, which is retrievable through the given
      * <code>AcceleratorSeq</code> argument.
      * </p>
      *

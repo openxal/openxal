@@ -158,7 +158,7 @@ public class Lattice extends ElementSeq {
 
         probe.initialize();
         probe.update();
-        System.out.println("Lattice.propaget called");
+//        System.out.println("Lattice.propaget called");
         super.propagate(probe);
 		
 		probe.performPostProcessing();
@@ -274,6 +274,8 @@ public class Lattice extends ElementSeq {
      * Returns a DOM document for the lattice.
      * 
      * @return a DOM document for the lattice
+     * 
+     * @throws IOException I guess this is thrown when <code>LatticeXmlWriter</code> is unable to parse this lattice
      */
 	public Document asDocument() throws IOException {
 	   return LatticeXmlWriter.documentForLattice(this);

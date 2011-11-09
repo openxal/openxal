@@ -163,7 +163,7 @@ public class Trace3dTracker extends Tracker {
         // Get initial conditions of probe
         double              gamma = probe.getGamma();
         double              K    = probe.beamPerveance();
-        CovarianceMatrix   chi0 = probe.getCorrelation();
+        CovarianceMatrix   chi0 = probe.getCovariance();
         
         // Get properties of the element
         double      L    = dblLen;

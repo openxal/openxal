@@ -106,11 +106,11 @@ public class LineModel extends ElementSeq {
      */
     @Override
     public void propagate(IProbe probe) throws ModelException {
-        System.out.println("LineModel.propagate called");
+//        System.out.println("LineModel.propagate called");
         
         String elem0 = probe.getCurrentElement();
         if (isValidElement(elem0)) {
-            System.out.println("found valid elem0 = "+elem0);
+//            System.out.println("found valid elem0 = "+elem0);
             propagateWithElement(probe, elem0);
             
         } else {
@@ -145,6 +145,17 @@ public class LineModel extends ElementSeq {
      * Internal Support
      */
 
+    /**
+     * Just added comment - don't know what this does.
+     * 
+     * @param probe     beam representation
+     * @param elem0     modeling element identifier
+     * 
+     * @throws ModelException       I don't think this is thrown
+     *
+     * @author Christopher K. Allen
+     * @since  Nov 9, 2011
+     */
     private void propagateWithElement(IProbe probe, String elem0) throws ModelException {
         double s = 0;
         boolean started = false;
@@ -165,6 +176,17 @@ public class LineModel extends ElementSeq {
         }
     }
 
+    /**
+     * Just added comment - don't know what this does.
+     * 
+     * @param probe     beam representation
+     * @param elem0     modeling element identifier
+     * 
+     * @throws ModelException       I don't think this is thrown
+     *
+     * @author Christopher K. Allen
+     * @since  Nov 9, 2011
+     */
     private void propagateWithoutElement(IProbe probe) throws ModelException {
         double s0 = probe.getPosition();
         double s = 0;
@@ -188,6 +210,17 @@ public class LineModel extends ElementSeq {
         }
     }
 
+    /**
+     * Just added comment - obvious this is part of the back propagation mechanism.
+     * 
+     * @param probe     beam representation
+     * @param elem0     modeling element identifier
+     * 
+     * @throws ModelException       I don't think this is thrown
+     *
+     * @author Christopher K. Allen
+     * @since  Nov 9, 2011
+     */
     private void backPropagateWithElement(IProbe probe, String elem0) throws ModelException {
         double s = this.getLength();
         boolean started = false;
@@ -208,6 +241,17 @@ public class LineModel extends ElementSeq {
         }
     }
 
+    /**
+     * Just added comment - obvious this is part of the back propagation mechanism.
+     * 
+     * @param probe     beam representation
+     * @param elem0     modeling element identifier
+     * 
+     * @throws ModelException       I don't think this is thrown
+     *
+     * @author Christopher K. Allen
+     * @since  Nov 9, 2011
+     */
     private void backPropagateWithoutElement(IProbe probe) throws ModelException {
         double s0 = probe.getPosition();
         double s = this.getLength();

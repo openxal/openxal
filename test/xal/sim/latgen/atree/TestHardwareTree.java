@@ -21,7 +21,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
-import java.net.URL;
 
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -31,7 +30,6 @@ import org.junit.Test;
 import xal.sim.latgen.GenerationException;
 import xal.smf.Accelerator;
 import xal.smf.AcceleratorSeq;
-import xal.smf.data.XMLDataManager;
 import xal.test.ResourceManager;
 
 /**
@@ -66,6 +64,12 @@ public class TestHardwareTree {
     }
     
     
+    /**
+     *
+     *
+     * @author Christopher K. Allen
+     * @since  Nov 9, 2011
+     */
     @AfterClass
     public static void commonCleanup() {
         ACCEL_TEST = null;

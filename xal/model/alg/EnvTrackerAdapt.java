@@ -71,7 +71,7 @@ import java.io.PrintWriter;
  * @author Christopher K. Allen
  */
 @SuppressWarnings("deprecation")
-public class EnvTrackerAdapt extends Tracker {
+public class EnvTrackerAdapt extends EnvelopeTrackerBase {
 
 
 
@@ -803,8 +803,8 @@ public class EnvTrackerAdapt extends Tracker {
         PhaseMatrix         res0 = probe.getResponseMatrix();
         R3                  phs0 = probe.getBetatronPhase();
 	//obsolete Twiss [] twissOld = probe.getTwiss();
-        Twiss [] twissOld = probe.getCorrelation().computeTwiss();
-	CovarianceMatrix   chi0 = probe.getCorrelation(); // chi0 = sigma matrix(raw)
+        Twiss [] twissOld = probe.getCovariance().computeTwiss();
+	CovarianceMatrix   chi0 = probe.getCovariance(); // chi0 = sigma matrix(raw)
         
         // Get properties of the element
         double      L    = dblLen;
@@ -916,7 +916,7 @@ public class EnvTrackerAdapt extends Tracker {
    
 	// phase update:
 	//obsolete Twiss [] twissNew = probe.getTwiss();
-	Twiss [] twissNew = probe.getCorrelation().computeTwiss();
+	Twiss [] twissNew = probe.getCovariance().computeTwiss();
         R3  phs1 = phs0.plus( Phi.compPhaseAdvance(twissOld, twissNew) );//Phi=Transferemap
         probe.setBetatronPhase(phs1);
 
@@ -940,8 +940,8 @@ public class EnvTrackerAdapt extends Tracker {
         
         PhaseMatrix     matResp = matPhi.times( probe.getResponseMatrix() );
 
-        PhaseMatrix     matChi  = probe.getCorrelation().conjugateTrans(matPhi);
-	Twiss [] twissOld = probe.getCorrelation().computeTwiss();
+        PhaseMatrix     matChi  = probe.getCovariance().conjugateTrans(matPhi);
+	Twiss [] twissOld = probe.getCovariance().computeTwiss();
 
         probe.setResponseMatrix( matResp );
         
@@ -1001,7 +1001,7 @@ public class EnvTrackerAdapt extends Tracker {
 	}
 	*/
 
-	Twiss [] twissNew = probe.getCorrelation().computeTwiss();
+	Twiss [] twissNew = probe.getCovariance().computeTwiss();
         R3 vecPhs  = probe.getBetatronPhase().plus( matPhi.compPhaseAdvance(twissOld, twissNew) );  
         probe.setBetatronPhase( vecPhs );
  
@@ -1043,8 +1043,8 @@ public class EnvTrackerAdapt extends Tracker {
         // Get the initial state
         R3                  vecPhs0 = probe.getBetatronPhase();
         PhaseMatrix         matRes0 = probe.getResponseMatrix();
-        CovarianceMatrix   matChi0 = probe.getCorrelation();
-	Twiss [] twissOld = probe.getCorrelation().computeTwiss();
+        CovarianceMatrix   matChi0 = probe.getCovariance();
+        Twiss [] twissOld = probe.getCovariance().computeTwiss();
 	//obsolete Twiss [] twissOld = probe.getTwiss();
             
         // Compute the reference state matChi1
@@ -1059,32 +1059,32 @@ public class EnvTrackerAdapt extends Tracker {
 
         probe.setResponseMatrix( matRes2 );        
         probe.setCorrelation( new CovarianceMatrix(matChi2) );
-	Twiss [] twissNew = probe.getCorrelation().computeTwiss();
-	//obsolete Twiss [] twissNew = probe.getTwiss();
+        Twiss [] twissNew = probe.getCovariance().computeTwiss();
+        //obsolete Twiss [] twissNew = probe.getTwiss();
         R3 vecPhs2 = vecPhs0.plus( matPhi2.compPhaseAdvance(twissOld, twissNew) );       
-	probe.setBetatronPhase(vecPhs2);
+        probe.setBetatronPhase(vecPhs2);
 
- 	// update the twiss info stored in the probe & state objects
-	probe.advanceTwiss(matPhi2, elem.energyGain(probe, h/2.0));
+        // update the twiss info stored in the probe & state objects
+        probe.advanceTwiss(matPhi2, elem.energyGain(probe, h/2.0));
 
         super.advanceProbe(probe, elem, h/2.0);
 
         matPhi2 = this.compTransferMatrix(h/2.0, probe, elem);
-        
+
         matRes2 = matPhi2.times( matRes2 );
         matChi2 = matChi2.conjugateTrans( matPhi2 );           
-            
+
         // Compute the residual matrix and perform internal extrapolation for final state
         PhaseMatrix     matRes = matChi2.minus( matChi1 );
 
         probe.setResponseMatrix( matRes2 );
         probe.setCorrelation( this.compInternExtrap(matRes, matChi2) );
-	
- 	// update the twiss info stored in the probe & state objects
-	probe.advanceTwiss(matPhi2, elem.energyGain(probe, h/2.));
-	
-	Twiss [] twissNew2 = probe.getCorrelation().computeTwiss();
-	//obsolete Twiss [] twissNew2 = probe.getTwiss();
+
+        // update the twiss info stored in the probe & state objects
+        probe.advanceTwiss(matPhi2, elem.energyGain(probe, h/2.));
+
+        Twiss [] twissNew2 = probe.getCovariance().computeTwiss();
+        //obsolete Twiss [] twissNew2 = probe.getTwiss();
         vecPhs2 = vecPhs2.plus( matPhi2.compPhaseAdvance(twissNew, twissNew2) );
         probe.setBetatronPhase(vecPhs2);
 	
@@ -1351,7 +1351,7 @@ public class EnvTrackerAdapt extends Tracker {
      * @see #compScheffTransMatrix
      */
     private PhaseMatrix compTransferMatrix(double h, EnvelopeProbe probe, IElement elem) 
-    throws ModelException    
+        throws ModelException    
     {
 
         // Get the transfer matrices for the two individual effects
@@ -1360,7 +1360,8 @@ public class EnvTrackerAdapt extends Tracker {
         if (probe.bunchCharge() == 0.) return matPhiE;
 
         //        PhaseMatrix matPhiSc = this.compScheffTransMatrixWhenAligned(h, probe);
-        PhaseMatrix matPhiSc = this.compScheffTransMatrix(h, probe);
+//        PhaseMatrix matPhiSc = this.compScheffTransMatrix(h, probe);
+        PhaseMatrix matPhiSc = super.compScheffMatrix(h, probe, elem);
 
 
         // Build the composite transfer matrix up to second order
@@ -1389,11 +1390,12 @@ public class EnvTrackerAdapt extends Tracker {
      * 
      * @return  linear transfer matrix represented space charge effect to 2nd order
      */    
+    @SuppressWarnings("unused")
     private PhaseMatrix compScheffTransMatrix(double h, EnvelopeProbe probe)    {
 
         // Build transfer matrix generator for space charge effects
         double              K       = probe.beamPerveance();
-        CovarianceMatrix   matChi   = probe.getCorrelation();
+        CovarianceMatrix   matChi   = probe.getCovariance();
         
         BeamEllipsoid      rho      = new BeamEllipsoid(K, matChi);
         PhaseMatrix        matGenSc = rho.computeScheffGenerator(K);
@@ -1462,7 +1464,7 @@ public class EnvTrackerAdapt extends Tracker {
         // Get the probe parameters
         double              K       = probe.beamPerveance();
         double             dblGamma = probe.getGamma();
-        CovarianceMatrix   matSigma   = probe.getCorrelation();
+        CovarianceMatrix   matSigma   = probe.getCovariance();
         
         // Build the displacement vector
         double  xm = matSigma.getMeanX();
