@@ -150,7 +150,7 @@ public class ProbeStateTest extends TestCase {
             ((EnvelopeProbeState)state).getBunchFrequency());
 		assertTrue(probe.getBeamCurrent() == 
 			((EnvelopeProbeState)state).getBeamCurrent());
-		assertTrue(probe.getCorrelation().equals(((EnvelopeProbeState)state).getCorrelationMatrix()));
+		assertTrue(probe.getCovariance().equals(((EnvelopeProbeState)state).getCorrelationMatrix()));
 		
 		// save the state to a trajectory	
 		Trajectory trajectory = probe.createTrajectory();

@@ -11,6 +11,8 @@
 package xal.tools.beam.em;
 
 
+import java.io.PrintWriter;
+
 import xal.tools.beam.CovarianceMatrix;
 import xal.tools.beam.PhaseIndexHom;
 import xal.tools.beam.PhaseMatrix;

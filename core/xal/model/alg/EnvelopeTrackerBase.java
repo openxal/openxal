@@ -751,7 +751,7 @@ public abstract class EnvelopeTrackerBase extends Tracker {
         // Get probe parameters
         double              gamma  = probe.getGamma();
         double              K      = probe.beamPerveance();
-        CovarianceMatrix   tau0   = probe.getCorrelation();
+        CovarianceMatrix   tau0   = probe.getCovariance();
         
         
         // Compute the space charge matrix 
@@ -885,7 +885,8 @@ public abstract class EnvelopeTrackerBase extends Tracker {
 //            
 //                    // Return the space charge matrix
 //                    return matPhiSc;
-                }
+                
+    }
 
     /**
      * <h2>Emittance Growth Function for Phase Spread in RF Gap</h2>
@@ -2166,7 +2167,7 @@ public abstract class EnvelopeTrackerBase extends Tracker {
             double k    = (2.0*Math.PI)/(beta*lambda);
             
             // Compute the longitudinal phase spread 
-            double z_2  = 5.0*probe.getCorrelation().getElem(PhaseIndexHom.Z, PhaseIndexHom.Z);
+            double z_2  = 5.0*probe.getCovariance().getElem(PhaseIndexHom.Z, PhaseIndexHom.Z);
             double dphi = k * Math.sqrt(z_2);
             
             return dphi;

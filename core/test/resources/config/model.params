@@ -50,7 +50,7 @@
     <table name="Algorithm">
 	    <schema>
 			<attribute isPrimaryKey="true"  name="name"           type="java.lang.String" />
-			<attribute isPrimaryKey="false" name="algorithm"      type="java.lang.String" defaultValue="xal.model.alg.EnvelopeTracker" />
+			<attribute isPrimaryKey="false" name="type"           type="java.lang.String" defaultValue="xal.model.alg.EnvTrackerAdapt" />
 			<attribute isPrimaryKey="false" name="update" 		  type="java.lang.Integer" defaultValue="2" />
 			<attribute isPrimaryKey="false" name="debug"          type="java.lang.Boolean" defaultValue="false" />
 			<attribute isPrimaryKey="false" name="calcRfGapPhase" type="java.lang.Boolean" defaultValue="false" />
@@ -61,9 +61,10 @@
     
     <table name="EnvelopeTracker">
 	    <schema>
-			<attribute isPrimaryKey="true"  name="name"           type="java.lang.String" />
-			<attribute isPrimaryKey="false" name="useSpacecharge" type="java.lang.Boolean" defaultValue="true" />
-			<attribute isPrimaryKey="false" name="stepsize"       type="java.lang.Double" defaultValue="0.004" />
+			<attribute isPrimaryKey="true"  name="name"         type="java.lang.String" />
+			<attribute isPrimaryKey="false" name="emitgrowth"   type="java.lang.Boolean" defaultValue="false" />
+			<attribute isPrimaryKey="false" name="scheff"       type="java.lang.Boolean" defaultValue="true" />
+			<attribute isPrimaryKey="false" name="stepsize"     type="java.lang.Double" defaultValue="0.004" />
 		</schema>
 		<record name="default" />
     </table>

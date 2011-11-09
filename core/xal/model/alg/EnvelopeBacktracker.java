@@ -204,9 +204,9 @@ public class EnvelopeBacktracker extends EnvelopeTrackerBase {
         
         // Get initial conditions of probe
         R3                  vecPhs0  = probe.getBetatronPhase();
-        Twiss[]             twiss0   = probe.getCorrelation().computeTwiss();
+        Twiss[]             twiss0   = probe.getCovariance().computeTwiss();
         PhaseMatrix         matResp0 = probe.getResponseMatrix();
-        PhaseMatrix         matTau0  = probe.getCorrelation();
+        PhaseMatrix         matTau0  = probe.getCovariance();
 
         // Remove the emittance growth
         if (this.getEmittanceGrowthFlag())   
@@ -227,7 +227,7 @@ public class EnvelopeBacktracker extends EnvelopeTrackerBase {
 //        probe.advanceTwiss(matPhi, ifcElem.energyGain(probe, dblLen) );
         
         // phase update:
-        Twiss []    twiss1  = probe.getCorrelation().computeTwiss();
+        Twiss []    twiss1  = probe.getCovariance().computeTwiss();
         R3          vecPhs1 = vecPhs0.plus( matPhi.compPhaseAdvance(twiss0, twiss1) );
         probe.setBetatronPhase(vecPhs1);
         
@@ -327,7 +327,7 @@ public class EnvelopeBacktracker extends EnvelopeTrackerBase {
             PhaseMatrix matPhi0  = mapElem0.getFirstOrder();
 
             // Get the RMS envelopes at probe location
-            CovarianceMatrix covTau0  = probe.getCorrelation();    // covariance matrix at entrance
+            CovarianceMatrix covTau0  = probe.getCovariance();    // covariance matrix at entrance
 
 
             // Move probe back a half step for position-dependent transfer maps
