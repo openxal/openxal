@@ -4,9 +4,9 @@
     
     <property environment="env" />
                 
-    <!-- Determine the path to the junit jar, otherwise use the standard UNIX location. -->
-    <condition property="junit.jar.path" value="${env.JUNIT_JAR_PATH}" else="/usr/share/java/junit.jar">
-        <isset property="env.JUNIT_JAR_PATH" />
+    <!-- Determine the path to the junit jar based on JUNIT_HOME if it is defined, otherwise use the standard UNIX location. -->
+    <condition property="junit.jar.path" value="${env.JUNIT_HOME}/junit.jar" else="/usr/share/java/junit.jar">
+        <isset property="env.JUNIT_HOME" />
     </condition>
     
     <!-- Determine the build directory using the environment variable if defined, otherwise place the build root under xal home -->
