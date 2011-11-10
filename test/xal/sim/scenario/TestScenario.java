@@ -31,6 +31,7 @@ import xal.model.probe.ProbeFactory;
 import xal.smf.Accelerator;
 import xal.smf.AcceleratorSeq;
 import xal.smf.data.XMLDataManager;
+import xal.test.ResourceManager;
 import xal.tools.beam.CovarianceMatrix;
 
 /**
@@ -105,7 +106,7 @@ public class TestScenario {
      */
     @Test
     public void testRunViaNewFromEditContext() {
-        Accelerator     accel = XMLDataManager.acceleratorWithPath(STR_URL_ACCL_CFG);
+        Accelerator     accel = ResourceManager.getTestAccelerator();
         AcceleratorSeq  seq   = accel.getSequence(STR_ACCL_SEQ_ID);
         
         try {
@@ -132,7 +133,7 @@ public class TestScenario {
      */
     @Test
     public void testRunViaLoad() {
-        Accelerator     accel = XMLDataManager.acceleratorWithPath(STR_URL_ACCL_CFG);
+        Accelerator     accel = ResourceManager.getTestAccelerator();
         AcceleratorSeq  seq   = accel.getSequence(STR_ACCL_SEQ_ID);
         
         try {
