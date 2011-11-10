@@ -30,6 +30,7 @@ import xal.model.probe.ProbeFactory;
 import xal.smf.Accelerator;
 import xal.smf.AcceleratorSeq;
 import xal.smf.data.XMLDataManager;
+import xal.test.ResourceManager;
 import xal.tools.beam.CovarianceMatrix;
 import xal.test.ResourceManager;
 
