@@ -25,6 +25,7 @@ import xal.smf.Accelerator;
 import xal.smf.AcceleratorSeq;
 import xal.smf.data.XMLDataManager;
 import xal.tools.beam.CovarianceMatrix;
+import xal.test.ResourceManager;
 
 /**
  * Tests the <code>ProbeFactory</code> class factory of Open XAL.
@@ -35,10 +36,6 @@ import xal.tools.beam.CovarianceMatrix;
 public class TestProbeFactory {
     
     
-    
-    /** URL to the accelerator configuration file */
-    public static final String      STR_URL_ACCL_CFG = "core/test/resources/config/main.xal";
-
     /** Accelerator sequence used for testing */
     public static final String     STR_ACCL_SEQ_ID = "MEBT";
     
@@ -58,7 +55,7 @@ public class TestProbeFactory {
     @BeforeClass
     public static void setUpBeforeClass() throws Exception {
 
-        Accelerator     accel   = XMLDataManager.acceleratorWithPath(STR_URL_ACCL_CFG);
+        Accelerator     accel   = ResourceManager.getTestAccelerator();
         SEQ_TEST = accel.getSequence(STR_ACCL_SEQ_ID);
     }
 
