@@ -8,12 +8,10 @@
 
 package xal.test;
 
-import xal.smf.data.XMLDataManager;
+import java.net.URL;
 
 import xal.smf.Accelerator;
-
-import java.util.*;
-import java.net.URL;
+import xal.smf.data.XMLDataManager;
 
 
 /** ResourceManager is not a test suite, but rather it is a utility used by test suites to load recources from the common test resources package. */
