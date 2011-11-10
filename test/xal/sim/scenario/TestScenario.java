@@ -25,13 +25,13 @@ import xal.model.ModelException;
 import xal.model.alg.EnvTrackerAdapt;
 import xal.model.alg.EnvelopeTracker;
 import xal.model.alg.Tracker;
-import xal.model.alg.TrackerAdaptive;
 import xal.model.probe.EnvelopeProbe;
 import xal.model.probe.ProbeFactory;
 import xal.smf.Accelerator;
 import xal.smf.AcceleratorSeq;
 import xal.smf.data.XMLDataManager;
 import xal.tools.beam.CovarianceMatrix;
+import xal.test.ResourceManager;
 
 /**
  * Testing scenario generation for the Open XAL online model.
@@ -42,9 +42,6 @@ import xal.tools.beam.CovarianceMatrix;
 public class TestScenario {
 
     
-    /** URL to the accelerator configuration file */
-    public static final String      STR_URL_ACCL_CFG = "core/test/resources/config/main.xal";
-
     /** Accelerator sequence used for testing */
     public static final String     STR_ACCL_SEQ_ID = "MEBT";
     
@@ -86,7 +83,7 @@ public class TestScenario {
     @Test
     public void testNewScenarioForAcceleratorSeq() {
 
-        Accelerator     accel = XMLDataManager.acceleratorWithPath(STR_URL_ACCL_CFG);
+        Accelerator     accel = ResourceManager.getTestAccelerator();
         AcceleratorSeq  seq   = accel.getSequence(STR_ACCL_SEQ_ID);
         
         try {
@@ -105,7 +102,7 @@ public class TestScenario {
      */
     @Test
     public void testRunViaNewFromEditContext() {
-        Accelerator     accel = XMLDataManager.acceleratorWithPath(STR_URL_ACCL_CFG);
+        Accelerator     accel = ResourceManager.getTestAccelerator();
         AcceleratorSeq  seq   = accel.getSequence(STR_ACCL_SEQ_ID);
         
         try {
@@ -132,7 +129,7 @@ public class TestScenario {
      */
     @Test
     public void testRunViaLoad() {
-        Accelerator     accel = XMLDataManager.acceleratorWithPath(STR_URL_ACCL_CFG);
+        Accelerator     accel = ResourceManager.getTestAccelerator();
         AcceleratorSeq  seq   = accel.getSequence(STR_ACCL_SEQ_ID);
         
         try {
