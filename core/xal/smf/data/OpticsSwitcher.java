@@ -87,6 +87,12 @@ public class OpticsSwitcher {
     public void setDisposalHandler( final Runnable handler ) {
         SELECTION_EDITOR.setDisposalHandler( handler );
     }
+    
+    
+    /** reset editor to the default settings */
+    public void reset() {
+        SELECTION_EDITOR.reset();
+    }
 	
 	
 	/**
@@ -134,7 +140,7 @@ public class OpticsSwitcher {
 	 * @param view the view near which to show this dialog
 	 */
 	private void showDialogNear( final JDialog dialog, final Component view ) {
-        SELECTION_EDITOR.reset();
+        reset();
         
         dialog.setTitle( "Set the Default Optics" );
         dialog.getContentPane().add( SELECTION_EDITOR.getView() );  // host the editor view as the dialog's main content
