@@ -67,7 +67,7 @@ public class DifferentiableVariable extends DifferentiableSymbol {
     
     
     /** Evaluate the operation for the specified variable values using the default value if this variable is not specified in the map */
-    final public double evaluate( final Map<DifferentiableVariable,Double> valueMap, final Map<DifferentiableOperation,Double> cache ) {
+    final public double evaluate( final Map<? extends DifferentiableVariable,Double> valueMap, final Map<DifferentiableOperation,Double> cache ) {
         final Double value = valueMap != null ? valueMap.get( this ) : null;
         return value != null ? value.doubleValue() : _defaultValue;
     }

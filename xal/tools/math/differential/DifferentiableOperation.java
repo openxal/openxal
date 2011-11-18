@@ -90,7 +90,7 @@ abstract public class DifferentiableOperation {
     
     
     /** Evaluate the operation for the specified variable values using the default value if this variable is not specified in the map */
-    public double evaluate( final Map<DifferentiableVariable,Double> valueMap ) {
+    public double evaluate( final Map<? extends DifferentiableVariable,Double> valueMap ) {
         final Map<DifferentiableOperation,Double> cache = new HashMap<DifferentiableOperation,Double>();
         return evaluate( valueMap, cache );
     }
@@ -101,11 +101,11 @@ abstract public class DifferentiableOperation {
     
     
     /** Evaluate the operation for the specified variable values using the default value if this variable is not specified in the map */
-    abstract protected double evaluate( final Map<DifferentiableVariable,Double> valueMap, final Map<DifferentiableOperation,Double> cache );
+    abstract protected double evaluate( final Map<? extends DifferentiableVariable,Double> valueMap, final Map<DifferentiableOperation,Double> cache );
     
     
     /** Evaluate the operation for the specified variable values using the default value if this variable is not specified in the map */
-    final protected double evaluateWithCache( final Map<DifferentiableVariable,Double> valueMap, final Map<DifferentiableOperation,Double> cache ) {
+    final protected double evaluateWithCache( final Map<? extends DifferentiableVariable,Double> valueMap, final Map<DifferentiableOperation,Double> cache ) {
         final Double cachedValue = cache.get( this );
         if ( cachedValue != null ) {
             return cachedValue.doubleValue();
@@ -145,6 +145,7 @@ abstract public class DifferentiableOperation {
     
     
     /** add the addend to this operation returning the new operation */
+    @SuppressWarnings( "cast" )     // cast is required to call the specific method with a negation argument
     public DifferentiableOperation plus( final DifferentiableOperation addend ) {
         return addend instanceof DifferentiableZero ? this : addend instanceof DifferentiableNegation ? plus( (DifferentiableNegation)addend ) : DifferentiableAddition.add( this, addend );
     }
@@ -169,6 +170,7 @@ abstract public class DifferentiableOperation {
     
     
     /** subtract the subtrahend from this operation returning the new operation */
+    @SuppressWarnings( "cast" )     // cast is required to call the specific method with a negation argument
     public DifferentiableOperation minus( final DifferentiableOperation subtrahend ) {
         return subtrahend instanceof DifferentiableZero ? this : subtrahend instanceof DifferentiableNegation ? minus( (DifferentiableNegation)subtrahend ) : DifferentiableSubtraction.subtract( this, subtrahend );
     }
@@ -215,6 +217,7 @@ abstract public class DifferentiableOperation {
     
     
     /** multiply the multiplicand to this operation returning the new operation */
+    @SuppressWarnings( "cast" )     // cast is required to call the specific times method for zero
     public DifferentiableOperation times( final DifferentiableOperation multiplicand ) {
         return multiplicand instanceof DifferentiableZero ? times( (DifferentiableZero)multiplicand ) : multiplicand instanceof DifferentiableOne ? this : DifferentiableMultiplication.multiply( this, multiplicand );
     }
@@ -239,6 +242,7 @@ abstract public class DifferentiableOperation {
     
     
     /** Divide the operation from this */
+    @SuppressWarnings( "cast" )     // cast is required to call the specific method with a quotient argument
     public DifferentiableOperation over( final DifferentiableOperation divisor ) {
         return divisor instanceof DifferentiableOne ? this : divisor instanceof DifferentiableDivision ? over( (DifferentiableDivision)divisor ) : DifferentiableDivision.divide( this, divisor );
     }
@@ -438,7 +442,7 @@ class DifferentiableConstant extends DifferentiableSymbol {
     
     
     /** Evaluate the operation for the specified variable values using the default value if this variable is not specified in the map */
-    public double evaluate( final Map<DifferentiableVariable,Double> valueMap, final Map<DifferentiableOperation,Double> cache ) {
+    public double evaluate( final Map<? extends DifferentiableVariable,Double> valueMap, final Map<DifferentiableOperation,Double> cache ) {
         return VALUE;
     }
     
@@ -728,7 +732,7 @@ class DifferentiableAddition extends DifferentiableOperation {
     
     
     /** Evaluate the operation for the specified variable values using the default value if this variable is not specified in the map */
-    public double evaluate( final Map<DifferentiableVariable,Double> valueMap, final Map<DifferentiableOperation,Double> cache ) {
+    public double evaluate( final Map<? extends DifferentiableVariable,Double> valueMap, final Map<DifferentiableOperation,Double> cache ) {
         return SUMMAND.evaluateWithCache( valueMap, cache ) + ADDEND.evaluateWithCache( valueMap, cache );
     }
     
@@ -791,7 +795,7 @@ class DifferentiableSubtraction extends DifferentiableOperation {
     
     
     /** Evaluate the operation for the specified variable values using the default value if this variable is not specified in the map */
-    public double evaluate( final Map<DifferentiableVariable,Double> valueMap, final Map<DifferentiableOperation,Double> cache ) {
+    public double evaluate( final Map<? extends DifferentiableVariable,Double> valueMap, final Map<DifferentiableOperation,Double> cache ) {
         return MINUEND.evaluateWithCache( valueMap, cache ) - SUBTRAHEND.evaluateWithCache( valueMap, cache );
     }
     
@@ -909,7 +913,7 @@ class DifferentiableMultiplication extends DifferentiableOperation {
     
     
     /** Evaluate the operation for the specified variable values using the default value if this variable is not specified in the map */
-    public double evaluate( final Map<DifferentiableVariable,Double> valueMap, final Map<DifferentiableOperation,Double> cache ) {
+    public double evaluate( final Map<? extends DifferentiableVariable,Double> valueMap, final Map<DifferentiableOperation,Double> cache ) {
         return MULTIPLICAND.evaluateWithCache( valueMap, cache ) * MULTIPLIER.evaluateWithCache( valueMap, cache );
     }
     
@@ -984,7 +988,7 @@ class DifferentiableDivision extends DifferentiableOperation {
     
     
     /** Evaluate the operation for the specified variable values using the default value if this variable is not specified in the map */
-    public double evaluate( final Map<DifferentiableVariable,Double> valueMap, final Map<DifferentiableOperation,Double> cache ) {
+    public double evaluate( final Map<? extends DifferentiableVariable,Double> valueMap, final Map<DifferentiableOperation,Double> cache ) {
         return DIVIDEND.evaluateWithCache( valueMap, cache ) / DIVISOR.evaluateWithCache( valueMap, cache );
     }
     
@@ -1050,7 +1054,7 @@ class DifferentiableNegation extends DifferentiableOperation {
     
     
     /** Evaluate the operation for the specified variable values using the default value if this variable is not specified in the map */
-    public double evaluate( final Map<DifferentiableVariable,Double> valueMap, final Map<DifferentiableOperation,Double> cache ) {
+    public double evaluate( final Map<? extends DifferentiableVariable,Double> valueMap, final Map<DifferentiableOperation,Double> cache ) {
         return - ARGUMENT.evaluateWithCache( valueMap, cache );
     }
     
@@ -1128,7 +1132,7 @@ class DifferentiableAbsoluteValue extends DifferentiableSymbol {
     
     
     /** Evaluate the operation for the specified variable values using the default value if this variable is not specified in the map */
-    public double evaluate( final Map<DifferentiableVariable,Double> valueMap, final Map<DifferentiableOperation,Double> cache ) {
+    public double evaluate( final Map<? extends DifferentiableVariable,Double> valueMap, final Map<DifferentiableOperation,Double> cache ) {
         return Math.abs( ARGUMENT.evaluateWithCache( valueMap, cache ) );
     }
     
@@ -1194,7 +1198,7 @@ class DifferentiableSine extends DifferentiableUnaryOperation {
 
     
     /** Evaluate the operation for the specified variable values using the default value if this variable is not specified in the map */
-    public double evaluate( final Map<DifferentiableVariable,Double> valueMap, final Map<DifferentiableOperation,Double> cache ) {
+    public double evaluate( final Map<? extends DifferentiableVariable,Double> valueMap, final Map<DifferentiableOperation,Double> cache ) {
         return Math.sin( ARGUMENT.evaluateWithCache( valueMap, cache ) );
     }
 }
@@ -1248,7 +1252,7 @@ class DifferentiableCosine extends DifferentiableUnaryOperation {
     
     
     /** Evaluate the operation for the specified variable values using the default value if this variable is not specified in the map */
-    public double evaluate( final Map<DifferentiableVariable,Double> valueMap, final Map<DifferentiableOperation,Double> cache ) {
+    public double evaluate( final Map<? extends DifferentiableVariable,Double> valueMap, final Map<DifferentiableOperation,Double> cache ) {
         return Math.cos( ARGUMENT.evaluateWithCache( valueMap, cache ) );
     }
 }
@@ -1290,7 +1294,7 @@ class DifferentiableTangent extends DifferentiableUnaryOperation {
     
     
     /** Evaluate the operation for the specified variable values using the default value if this variable is not specified in the map */
-    public double evaluate( final Map<DifferentiableVariable,Double> valueMap, final Map<DifferentiableOperation,Double> cache ) {
+    public double evaluate( final Map<? extends DifferentiableVariable,Double> valueMap, final Map<DifferentiableOperation,Double> cache ) {
         return Math.tan( ARGUMENT.evaluateWithCache( valueMap, cache ) );
     }
 }
@@ -1332,7 +1336,7 @@ class DifferentiableArcSine extends DifferentiableUnaryOperation {
     
     
     /** Evaluate the operation for the specified variable values using the default value if this variable is not specified in the map */
-    public double evaluate( final Map<DifferentiableVariable,Double> valueMap, final Map<DifferentiableOperation,Double> cache ) {
+    public double evaluate( final Map<? extends DifferentiableVariable,Double> valueMap, final Map<DifferentiableOperation,Double> cache ) {
         return Math.asin( ARGUMENT.evaluateWithCache( valueMap, cache ) );
     }
 }
@@ -1374,7 +1378,7 @@ class DifferentiableArcCosine extends DifferentiableUnaryOperation {
     
     
     /** Evaluate the operation for the specified variable values using the default value if this variable is not specified in the map */
-    public double evaluate( final Map<DifferentiableVariable,Double> valueMap, final Map<DifferentiableOperation,Double> cache ) {
+    public double evaluate( final Map<? extends DifferentiableVariable,Double> valueMap, final Map<DifferentiableOperation,Double> cache ) {
         return Math.acos( ARGUMENT.evaluateWithCache( valueMap, cache ) );
     }
 }
@@ -1416,7 +1420,7 @@ class DifferentiableArcTangent extends DifferentiableUnaryOperation {
     
     
     /** Evaluate the operation for the specified variable values using the default value if this variable is not specified in the map */
-    public double evaluate( final Map<DifferentiableVariable,Double> valueMap, final Map<DifferentiableOperation,Double> cache ) {
+    public double evaluate( final Map<? extends DifferentiableVariable,Double> valueMap, final Map<DifferentiableOperation,Double> cache ) {
         return Math.atan( ARGUMENT.evaluateWithCache( valueMap, cache ) );
     }
 }
@@ -1448,7 +1452,7 @@ class DifferentiableSinh extends DifferentiableUnaryOperation {
     
     
     /** Evaluate the operation for the specified variable values using the default value if this variable is not specified in the map */
-    public double evaluate( final Map<DifferentiableVariable,Double> valueMap, final Map<DifferentiableOperation,Double> cache ) {
+    public double evaluate( final Map<? extends DifferentiableVariable,Double> valueMap, final Map<DifferentiableOperation,Double> cache ) {
         return Math.sinh( ARGUMENT.evaluateWithCache( valueMap, cache ) );
     }
     
@@ -1502,7 +1506,7 @@ class DifferentiableCosh extends DifferentiableUnaryOperation {
     
     
     /** Evaluate the operation for the specified variable values using the default value if this variable is not specified in the map */
-    public double evaluate( final Map<DifferentiableVariable,Double> valueMap, final Map<DifferentiableOperation,Double> cache ) {
+    public double evaluate( final Map<? extends DifferentiableVariable,Double> valueMap, final Map<DifferentiableOperation,Double> cache ) {
         return Math.cosh( ARGUMENT.evaluateWithCache( valueMap, cache ) );
     }
     
@@ -1544,7 +1548,7 @@ class DifferentiableTanh extends DifferentiableUnaryOperation {
     
     
     /** Evaluate the operation for the specified variable values using the default value if this variable is not specified in the map */
-    public double evaluate( final Map<DifferentiableVariable,Double> valueMap, final Map<DifferentiableOperation,Double> cache ) {
+    public double evaluate( final Map<? extends DifferentiableVariable,Double> valueMap, final Map<DifferentiableOperation,Double> cache ) {
         return Math.tanh( ARGUMENT.evaluateWithCache( valueMap, cache ) );
     }
     
@@ -1606,7 +1610,7 @@ class DifferentiableConstantPower extends DifferentiableSymbol {
     
     
     /** Evaluate the operation for the specified variable values using the default value if this variable is not specified in the map */
-    public double evaluate( final Map<DifferentiableVariable,Double> valueMap, final Map<DifferentiableOperation,Double> cache ) {
+    public double evaluate( final Map<? extends DifferentiableVariable,Double> valueMap, final Map<DifferentiableOperation,Double> cache ) {
         return Math.pow( ARGUMENT.evaluateWithCache( valueMap, cache ), POWER );
     }
     
@@ -1681,7 +1685,7 @@ class DifferentiablePower extends DifferentiableSymbol {
     
     
     /** Evaluate the operation for the specified variable values using the default value if this variable is not specified in the map */
-    public double evaluate( final Map<DifferentiableVariable,Double> valueMap, final Map<DifferentiableOperation,Double> cache ) {
+    public double evaluate( final Map<? extends DifferentiableVariable,Double> valueMap, final Map<DifferentiableOperation,Double> cache ) {
         return Math.pow( ARGUMENT.evaluateWithCache( valueMap, cache ), POWER.evaluateWithCache( valueMap, cache ) );
     }
     
@@ -1764,7 +1768,7 @@ class DifferentiableExponential extends DifferentiableUnaryOperation {
     
     
     /** Evaluate the operation for the specified variable values using the default value if this variable is not specified in the map */
-    public double evaluate( final Map<DifferentiableVariable,Double> valueMap, final Map<DifferentiableOperation,Double> cache ) {
+    public double evaluate( final Map<? extends DifferentiableVariable,Double> valueMap, final Map<DifferentiableOperation,Double> cache ) {
         return Math.exp( ARGUMENT.evaluateWithCache( valueMap, cache ) );
     }
     
@@ -1806,7 +1810,7 @@ class DifferentiableLogarithm extends DifferentiableUnaryOperation {
     
     
     /** Evaluate the operation for the specified variable values using the default value if this variable is not specified in the map */
-    public double evaluate( final Map<DifferentiableVariable,Double> valueMap, final Map<DifferentiableOperation,Double> cache ) {
+    public double evaluate( final Map<? extends DifferentiableVariable,Double> valueMap, final Map<DifferentiableOperation,Double> cache ) {
         return Math.log( ARGUMENT.evaluateWithCache( valueMap, cache ) );
     }
     
