@@ -5,7 +5,7 @@
 // Created by t6p on 3/23/2010
 //
 
-package xal.application;
+package xal.application.platform;
 
 import java.lang.reflect.*;
 

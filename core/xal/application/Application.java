@@ -20,6 +20,7 @@ import java.io.*;
 import java.nio.channels.FileChannel;
 import java.util.prefs.Preferences;
 
+import xal.application.platform.*;
 import xal.tools.StringJoiner;
 import xal.tools.apputils.files.*;
 import xal.tools.messaging.MessageCenter;
@@ -937,7 +938,7 @@ abstract public class Application {
 	
 	
 	/** show the about box */
-	static void showAboutBox() {
+	static public void showAboutBox() {
 		AboutBox.showNear( getActiveWindow() );
 	}
 	
