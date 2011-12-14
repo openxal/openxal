@@ -18,7 +18,7 @@ public class MacAdaptor {
 	
 	/** perform Mac initialization */
     @SuppressWarnings( "unchecked" )
-	static void initialize() {
+	static public void initialize() {
 		// display the menu bar at the top of the screen consistent with the Mac look and feel
 		System.setProperty( "apple.laf.useScreenMenuBar", "true" );
 		
