@@ -6,7 +6,7 @@
 // Copyright 2011 Oak Ridge National Lab. All rights reserved.
 //
 
-package xal.app.machsim;
+package xal.app.machinesimulator;
 
 import xal.smf.*;
 import xal.model.probe.*;
