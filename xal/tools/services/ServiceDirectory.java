@@ -11,10 +11,11 @@
 package xal.tools.services;
 
 import java.lang.reflect.Proxy;
+import java.util.HashMap;
 import java.util.Hashtable;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.Iterator;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.logging.Level;
@@ -68,7 +69,7 @@ final public class ServiceDirectory {
 			_rpcServer = new RpcServer();
 			_rpcServer.start();
 			try {
-				_bonjour = new JmDNS();
+				_bonjour = JmDNS.create();
 				_isLoopback = false;
 			}
 			catch( Exception exception ) {
@@ -76,7 +77,7 @@ final public class ServiceDirectory {
 				Logger.getLogger("global").log( Level.WARNING, message, exception );
 				System.err.println( message );
 				_isLoopback = true;
-				_bonjour = new JmDNS( java.net.InetAddress.getByName( "127.0.0.1" ) );
+				_bonjour = JmDNS.create( java.net.InetAddress.getByName( "127.0.0.1" ) );
 			}
 		}
 		catch( Exception exception ) {
@@ -101,8 +102,13 @@ final public class ServiceDirectory {
 	public void dispose() {
 		_listenerMap.clear();
 		if ( _bonjour != null ) {
-			_bonjour.close();
-			_bonjour = null;
+            try {
+                _bonjour.close();
+                _bonjour = null;
+            }
+            catch( java.io.IOException exception ) {
+                throw new RuntimeException( "Exception closing bonjour services.", exception );
+            }
 		}
 		if ( _rpcServer != null ) {
 			_rpcServer.shutdown();
@@ -149,7 +155,7 @@ final public class ServiceDirectory {
 	 * @return a new service reference for successful registration and null otherwise.
      */
     public ServiceRef registerService( final String serviceType, final String name, final Object provider ) throws ServiceException {
-		return registerService( serviceType, name, provider, new Hashtable<String,String>() );
+		return registerService( serviceType, name, provider, new HashMap<String,Object>() );
     }
 	
     
@@ -161,7 +167,7 @@ final public class ServiceDirectory {
 	 * @param properties Properties.
 	 * @return a new service reference for successful registration and null otherwise.
      */
-    public ServiceRef registerService( final String serviceType, final String serviceName, final Object provider, final Hashtable<String,String> properties ) {
+    public ServiceRef registerService( final String serviceType, final String serviceName, final Object provider, final Map<String,Object> properties ) {
 		properties.put( ServiceRef.serviceKey, serviceName );
 		
 		try {
@@ -171,8 +177,8 @@ final public class ServiceDirectory {
 			_rpcServer.addHandler( serviceName, provider );
 			
 			// advertise the service to the world
-			final String bonjourType = serviceType + "._tcp._local.";
-			final ServiceInfo info = new ServiceInfo( bonjourType, serviceName, port, 0, 0, properties );
+			final String bonjourType = ServiceRef.getFullType( serviceType );
+			final ServiceInfo info = ServiceInfo.create( bonjourType, serviceName, port, 0, 0, properties );
 			_bonjour.registerService( info );
 			return new ServiceRef( info );
 		}
@@ -206,9 +212,9 @@ final public class ServiceDirectory {
 	 * @return A proxy implementing the specified protocol for the specified service reference 
 	 */
 	public <T> T getProxy( final Class<T> protocol, final ServiceRef serviceRef ) {
-		final ServiceInfo info = serviceRef.getServiceInfo();
-		
-		return new ClientHandler<T>( info.getHostAddress(), info.getPort(), serviceRef.getServiceName(), protocol ).getProxy();
+        final ServiceInfo info = serviceRef.getServiceInfo();
+        final String hostAddress = serviceRef.getHostAddress();		
+		return new ClientHandler<T>( hostAddress, info.getPort(), serviceRef.getServiceName(), protocol ).getProxy();
 	}
 	
 	
