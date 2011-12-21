@@ -877,6 +877,15 @@ abstract public class Application {
 		}
         
         _noticeProxy.applicationWillQuit();
+        
+        try {
+            ServiceDirectory.defaultDirectory().dispose();  // shutdown services
+        }
+        catch ( Exception exception ) {
+            System.out.println( "Exception caught during service shutdown when quitting." );
+            exception.printStackTrace();
+        }
+        
         System.exit(0);
     }
     
