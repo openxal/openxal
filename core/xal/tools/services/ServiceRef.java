@@ -21,7 +21,7 @@ import java.util.regex.*;
  * @author  tap
  */
 public class ServiceRef {
-    /** */
+    /** standard local suffix for the service type */
     static final String LOCAL_TYPE_SUFFIX = "_tcp.local.";
     
 	/** Pattern matching the protocol and DNS part of the type */
