@@ -10,6 +10,7 @@
 
 package xal.tools.services;
 
+import java.io.IOException;
 import java.lang.reflect.Proxy;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -66,8 +67,6 @@ final public class ServiceDirectory {
 		_listenerMap = new Hashtable<ServiceListener, BonjourServiceListenerInfo>();
 		
 		try {
-			_rpcServer = new RpcServer();
-			_rpcServer.start();
 			try {
 				_bonjour = JmDNS.create();
 				_isLoopback = false;
@@ -87,6 +86,12 @@ final public class ServiceDirectory {
 			exception.printStackTrace();
 		}
 	}
+    
+    
+    /** publish services */
+    private void publishServices() {
+        
+    }
 	
 	
 	/**
@@ -106,13 +111,18 @@ final public class ServiceDirectory {
                 _bonjour.close();
                 _bonjour = null;
             }
-            catch( java.io.IOException exception ) {
+            catch( IOException exception ) {
                 throw new RuntimeException( "Exception closing bonjour services.", exception );
             }
 		}
 		if ( _rpcServer != null ) {
-			_rpcServer.shutdown();
-			_rpcServer = null;
+            try {
+                _rpcServer.shutdown();
+                _rpcServer = null;
+            }
+            catch ( IOException exception ) {
+                throw new RuntimeException( "Exception closing the server socket.", exception );
+            }
 		}
 	}
 	
@@ -136,45 +146,40 @@ final public class ServiceDirectory {
 	
 	
     /**
-     * Register a local service provider.  Convenience method used when the type is derived from the protocol's name.
+     * Register a local service provider.
 	 * @param protocol The protocol identifying the service type.
 	 * @param name The unique name of the service provider.
      * @param provider The provider which handles the service requests.
 	 * @return a new service reference for successful registration and null otherwise.
      */
-    public ServiceRef registerService( final Class protocol, final String name, final Object provider ) throws ServiceException {
-		return registerService( getDefaultType( protocol ), name, provider );
-    }
-	
-	
-    /**
-     * Register a local service provider.
-	 * @param serviceType The type of service being registered.
-	 * @param name The unique name of the service provider.
-     * @param provider The provider which handles the service requests.
-	 * @return a new service reference for successful registration and null otherwise.
-     */
-    public ServiceRef registerService( final String serviceType, final String name, final Object provider ) throws ServiceException {
-		return registerService( serviceType, name, provider, new HashMap<String,Object>() );
+    public <ProtocolType> ServiceRef registerService( final Class<ProtocolType> protocol, final String name, final ProtocolType provider ) throws ServiceException {
+		return registerService( protocol, name, provider, new HashMap<String,Object>() );
     }
 	
     
     /**
      * Register a local service provider.
-	 * @param serviceType The type of service being registered.
+	 * @param protocol The protocol identifying the service type.
 	 * @param serviceName The unique name of the service provider.
      * @param provider The provider which handles the service requests.
 	 * @param properties Properties.
 	 * @return a new service reference for successful registration and null otherwise.
      */
-    public ServiceRef registerService( final String serviceType, final String serviceName, final Object provider, final Map<String,Object> properties ) {
-		properties.put( ServiceRef.serviceKey, serviceName );
+    public <ProtocolType> ServiceRef registerService( final Class<ProtocolType> protocol, final String serviceName, final ProtocolType provider, final Map<String,Object> properties ) {
+		properties.put( ServiceRef.SERVICE_KEY, serviceName );
+        
+        final String serviceType = getDefaultType( protocol );
 		
 		try {
+            if ( _rpcServer == null ) {
+                _rpcServer = new RpcServer();
+                _rpcServer.start();
+            }
+              
 			int port = _rpcServer.getPort();
 			
 			// add the service to the RPC Server
-			_rpcServer.addHandler( serviceName, provider );
+			_rpcServer.addHandler( serviceName, protocol, provider );
 			
 			// advertise the service to the world
 			final String bonjourType = ServiceRef.getFullType( serviceType );

@@ -28,7 +28,7 @@ public class ServiceRef {
 	static final private Pattern TYPE_PATTERN;
 	
 	/** Property identifying the local service handler */
-	static final String serviceKey = "xmlrpc_service_handler";
+	static final String SERVICE_KEY = "remote_service_handler";
 	
 	/** Redezvous service info */
 	private ServiceInfo _serviceInfo;
@@ -52,7 +52,7 @@ public class ServiceRef {
 	 * @return The name of the service provided.
 	 */
 	public String getServiceName() {
-		return _serviceInfo.getPropertyString(serviceKey);
+		return _serviceInfo.getPropertyString( SERVICE_KEY );
 	}
 	
 	
