@@ -16,85 +16,230 @@ import java.io.*;
 /** test the complex number class */
 public class TestJSONCoding {
     @Test
-    public void testNullCoding() {
+    public void testNullEncoding() {
         Assert.assertTrue( "null" == JSONCoder.encode( (Object)null ) );
     }
     
     
     @Test
-    public void testDoubleCoding() {
-        checkCodingEquality( -5.3E5 );
-        checkCodingEquality( -17.8 );
-        checkCodingEquality( 5.3 );
-        checkCodingEquality( 2.5E17 );
-        checkCodingEquality( 6.2E-23 );
+    public void testDoubleEncoding() {
+        checkEncodingEquality( -5.3E5 );
+        checkEncodingEquality( -17.8 );
+        checkEncodingEquality( 5.3 );
+        checkEncodingEquality( 2.5E17 );
+        checkEncodingEquality( 6.2E-23 );
     }
     
     
     @Test
-    public void testBooleanCoding() {
-        checkCodingEquality( true );
-        checkCodingEquality( false );
+    public void testBooleanEncoding() {
+        checkEncodingEquality( true );
+        checkEncodingEquality( false );
     }
     
     
     @Test
-    public void testStringCoding() {
-        checkCodingEquality( "\"Hello, World\"", "Hello, World" );
-        checkCodingEquality( "\"String with an \\\"internal\\\" string.\"", "String with an \"internal\" string." );
+    public void testStringEncoding() {
+        checkEncodingEquality( "\"Hello, World\"", "Hello, World" );
+        checkEncodingEquality( "\"String with an \\\"internal\\\" string.\"", "String with an \"internal\" string." );
     }
     
     
     @Test
-    public void testArrayCoding() {
+    public void testArrayEncoding() {
         assertEquality( "[1.2, -17.6, 5.4E23, 1.2E-6]", JSONCoder.encode( new Double[] { 1.2, -17.6, 5.4E23, 1.2E-6 } ) );
-        checkCodingEquality( "[\"Hello\", \"World\"]", new String[] { "Hello", "World" } );
-        checkCodingEquality( "[\"Testing\", \"\\\"internal\\\" string.\"]", new String[] { "Testing", "\"internal\" string." } );
+        checkEncodingEquality( "[\"Hello\", \"World\"]", new String[] { "Hello", "World" } );
+        checkEncodingEquality( "[\"Testing\", \"\\\"internal\\\" string.\"]", new String[] { "Testing", "\"internal\" string." } );
     }
     
     
     @Test
-    public void testListCoding() {
-        final List<Object> testList = new ArrayList<Object>();
-        testList.add( "Hello" );
-        testList.add( "World" );
-        testList.add( 1.5 );
-        testList.add( 2.7 );
-        testList.add( -324.2 );
-        assertEquality( "[\"Hello\", \"World\", 1.5, 2.7, -324.2]", JSONCoder.encode( testList ) );
+    public void testNullDecoding() {
+        Assert.assertTrue( null == JSONCoder.decode( "null" ) );
     }
     
     
     @Test
-    public void testMapCoding() {
-        final Map<String,Object> testMap = new TreeMap<String,Object>();  // need to guarantee ordering so we can test against our control
-        testMap.put( "message", "Hello, World" );
-        testMap.put( "value", 5.4 );
-        testMap.put( "cities", new String[] { "Knoxville", "Oak Ridge" } );
-        // make sure the control coding lists keys in alphabetical ordering (corresponding to TreeMap)
-        final String controlCoding = "{\"cities\": [\"Knoxville\", \"Oak Ridge\"], \"message\": \"Hello, World\", \"value\": 5.4}";
-//        System.out.println( controlCoding );
-//        System.out.println( JSONCoder.encode( testMap ) );
-        assertEquality( controlCoding, JSONCoder.encode( testMap ) );
+    public void testDoubleDecoding() {
+        checkValueEquality( 5.3 );
+        checkValueEquality( 0.0 );
+        checkValueEquality( -100.0 );
+        checkValueEquality( -17.2976 );
+        checkValueEquality( -32.698E53 );
+        checkValueEquality( 7.5E-102 );
     }
     
+    
+    @Test
+    public void testBooleanDecoding() {
+        checkValueEquality( true );
+        checkValueEquality( false );
+    }
+    
+    
+    @Test
+    public void testStringDecoding() {
+        checkStringEquality( "Hello, World", "\"Hello, World\"" );
+        checkStringEquality( "String with an \"internal\" string.", "\"String with an \\\"internal\\\" string.\"" );
+    }
+    
+    
+    @Test
+    public void testNumericCodingDecoding() {
+        checkEncodingDecoding( (short)74 );
+        checkEncodingDecoding( 509674 );
+        checkEncodingDecoding( 325822043801L );
+        checkEncodingDecoding( (float)56.4 );
+        checkEncodingDecoding( 56.4 );
+    }
+    
+    
+    @Test
+    public void testBooleanCodingDecoding() {
+        checkEncodingDecoding( true );
+        checkEncodingDecoding( false );
+    }
+    
+    
+    @Test
+    public void testNullCodingDecoding() {
+        checkEncodingDecoding( null );
+    }
+    
+    
+    @Test
+    public void testStringCodingDecoding() {
+        checkEncodingDecoding( "Hello, World" );
+    }
+    
+    
+    @Test
+    public void testDateCodingDecoding() {
+        checkEncodingDecoding( new Date() );
+    }
+    
+    
+    @Test
+    public void testListCodingDecoding() {        
+        final List<Object> simpleList = new ArrayList<Object>();
+        simpleList.add( "Hello" );
+        simpleList.add( "World" );
+        simpleList.add( true );
+        simpleList.add( false );
+        simpleList.add( null );
+        simpleList.add( "String with \"embedded\" string." );
+        simpleList.add( new Double( -32.7 )  );
+        checkEncodingDecoding( simpleList );
+    }
+    
+    
+    @Test
+    public void testVectorCodingDecoding() {        
+        final Vector<Object> vector = new Vector<Object>();
+        vector.add( "Hello" );
+        vector.add( "World" );
+        vector.add( true );
+        vector.add( false );
+        vector.add( null );
+        vector.add( "String with \"embedded\" string." );
+        vector.add( 745.89  );
+        checkEncodingDecoding( vector );
+    }
+    
+    
+    @Test
+    public void testMapCodingDecoding() {        
+        final Map<String,Object> simpleMap = new HashMap<String,Object>();
+        simpleMap.put( "info", null );
+        simpleMap.put( "x", 41.8 );
+        simpleMap.put( "y", -2.6 );
+        simpleMap.put( "comment", "Just a point" );
+        checkEncodingDecoding( simpleMap );
+    }
+    
+    
+    @Test
+    public void testTableCodingDecoding() {        
+        final Map<String,Object> simpleMap = new Hashtable<String,Object>();
+        simpleMap.put( "x", 41.8 );
+        simpleMap.put( "y", -2.6 );
+        simpleMap.put( "text", "This is just a test string..." );
+        checkEncodingDecoding( simpleMap );
+    }
+    
+    
+    @Test
+    public void testCompoundCodingDecoding() {        
+        final List<Object> simpleList = new ArrayList<Object>();
+        simpleList.add( "Hello" );
+        simpleList.add( "World" );
+        simpleList.add( true );
+        simpleList.add( false );
+        simpleList.add( null );
+        simpleList.add( "String with \"embedded\" string." );
+        simpleList.add( new Double( -32.7 )  );
+        
+        final Map<String,Object> simpleMap = new HashMap<String,Object>();
+        simpleMap.put( "info", null );
+        simpleMap.put( "x", 41.8 );
+        simpleMap.put( "y", -2.6 );
+        simpleMap.put( "comment", "Just a point" );
+        
+        final List<Object> compoundList = new ArrayList<Object>();
+        compoundList.add( true );
+        compoundList.add( simpleList );
+        compoundList.add( simpleMap );
+        compoundList.add( "Thing" );
+        compoundList.add( 2.5 );
+        checkEncodingDecoding( compoundList );
+        
+        final Map<String,Object> compoundMap = new HashMap<String,Object>();
+        compoundMap.put( "z", 23.6 );
+        compoundMap.put( "ready", true );
+        compoundMap.put( "on", false );
+        compoundMap.put( "simple map", simpleMap );
+        compoundMap.put( "simple list", simpleList );
+        checkEncodingDecoding( compoundMap );
+    }
+
     
     /** check whether the coder can encode values */
-    static private <DataType> void checkCodingEquality( final DataType value ) {
+    static private <DataType> void checkEncodingEquality( final DataType value ) {
         final String controlCoding = String.valueOf( value );
-        checkCodingEquality( controlCoding, value );
+        checkEncodingEquality( controlCoding, value );
     }
     
     
     /** check whether the coder can encode values */
-    static private <DataType> void checkCodingEquality( final String controlCoding, final DataType value ) {
+    static private <DataType> void checkEncodingEquality( final String controlCoding, final DataType value ) {
         final String testCoding = JSONCoder.encode( value );
         assertEquality( controlCoding, testCoding );
+    }
+    
+    /** check whether the decoder can decode values */
+    static private <DataType> void checkValueEquality( final DataType controlValue ) {
+        final Object testValue = JSONCoder.decode( String.valueOf( controlValue ) );
+        assertEquality( controlValue, testValue );
+    }
+    
+    
+    /** check whether the decoder can decode strings */
+    static private void checkStringEquality( final String controlValue, final String testCoding ) {
+        final Object testValue = JSONCoder.decode( testCoding );
+        assertEquality( controlValue, testValue );
+    }
+    
+    
+    /** check whether a decoded encoding matches the original value */
+    static private void checkEncodingDecoding( final Object controlValue ) {
+        final String coding = JSONCoder.encode( controlValue );
+        final Object testValue = JSONCoder.decode( coding );
+        assertEquality( controlValue, testValue );
     }
     
     
     /** Assert whether the control value equals the test value */
     static private void assertEquality( final Object controlValue, final Object testValue ) {
-        Assert.assertTrue( controlValue.equals( testValue ) );
+        Assert.assertTrue( controlValue == testValue || controlValue.equals( testValue ) );
     }
 }
