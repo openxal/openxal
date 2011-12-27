@@ -85,7 +85,7 @@ public class TestJSONCoding {
     
     
     @Test
-    public void testNumericCodingDecoding() {
+    public void testNumericEncodingDecoding() {
         checkEncodingDecoding( (short)74 );
         checkEncodingDecoding( 509674 );
         checkEncodingDecoding( 325822043801L );
@@ -95,32 +95,39 @@ public class TestJSONCoding {
     
     
     @Test
-    public void testBooleanCodingDecoding() {
+    public void testBooleanEncodingDecoding() {
         checkEncodingDecoding( true );
         checkEncodingDecoding( false );
     }
     
     
     @Test
-    public void testNullCodingDecoding() {
+    public void testNullEncodingDecoding() {
         checkEncodingDecoding( null );
     }
     
     
     @Test
-    public void testStringCodingDecoding() {
+    public void testStringEncodingDecoding() {
         checkEncodingDecoding( "Hello, World" );
     }
     
     
     @Test
-    public void testDateCodingDecoding() {
+    public void testArrayEncodingDecoding() {
+        checkArrayEncodingDecoding( new Double[] { 4.78, Math.PI, -17.6, 5.4E23, 8.719E-32 } );
+        checkArrayEncodingDecoding( new String[] { "Hello", "World", "This is just a test!" } );
+    }
+    
+    
+    @Test
+    public void testDateEncodingDecoding() {
         checkEncodingDecoding( new Date() );
     }
     
     
     @Test
-    public void testListCodingDecoding() {        
+    public void testListEncodingDecoding() {        
         final List<Object> simpleList = new ArrayList<Object>();
         simpleList.add( "Hello" );
         simpleList.add( "World" );
@@ -134,7 +141,7 @@ public class TestJSONCoding {
     
     
     @Test
-    public void testVectorCodingDecoding() {        
+    public void testVectorEncodingDecoding() {        
         final Vector<Object> vector = new Vector<Object>();
         vector.add( "Hello" );
         vector.add( "World" );
@@ -148,7 +155,7 @@ public class TestJSONCoding {
     
     
     @Test
-    public void testMapCodingDecoding() {        
+    public void testMapEncodingDecoding() {        
         final Map<String,Object> simpleMap = new HashMap<String,Object>();
         simpleMap.put( "info", null );
         simpleMap.put( "x", 41.8 );
@@ -159,7 +166,7 @@ public class TestJSONCoding {
     
     
     @Test
-    public void testTableCodingDecoding() {        
+    public void testTableEncodingDecoding() {        
         final Map<String,Object> simpleMap = new Hashtable<String,Object>();
         simpleMap.put( "x", 41.8 );
         simpleMap.put( "y", -2.6 );
@@ -169,7 +176,7 @@ public class TestJSONCoding {
     
     
     @Test
-    public void testCompoundCodingDecoding() {        
+    public void testCompoundEncodingDecoding() {        
         final List<Object> simpleList = new ArrayList<Object>();
         simpleList.add( "Hello" );
         simpleList.add( "World" );
@@ -235,6 +242,19 @@ public class TestJSONCoding {
         final String coding = JSONCoder.encode( controlValue );
         final Object testValue = JSONCoder.decode( coding );
         assertEquality( controlValue, testValue );
+    }
+    
+    
+    /** check whether a decoded encoding matches the original value */
+    static private void checkArrayEncodingDecoding( final Object[] controlArray ) {
+        final String coding = JSONCoder.encode( controlArray );
+        final Object[] testArray = (Object[])JSONCoder.decode( coding );
+        
+        final int count = controlArray.length;
+        assertEquality( count, testArray.length );
+        for ( int index = 0 ; index < count ; index++ ) {
+            assertEquality( controlArray[index], testArray[index] );
+        }
     }
     
     
