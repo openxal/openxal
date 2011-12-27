@@ -128,18 +128,20 @@ public class RpcServer {
         new Thread( new Runnable() {
             public void run() {
                 try {
+                    final int BUFFER_SIZE = 4096;
+                    final char[] streamBuffer = new char[BUFFER_SIZE];
                     final BufferedReader reader = new BufferedReader( new InputStreamReader( remoteSocket.getInputStream() ) );
                     final PrintWriter output = new PrintWriter( remoteSocket.getOutputStream() );
                                         
                     final StringBuilder inputBuffer = new StringBuilder();
                     do {
-                        final int readChar = reader.read();
+                        final int readCount = reader.read( streamBuffer, 0, BUFFER_SIZE );
                         
-                        if ( readChar == -1 ) {     // the session has been closed
+                        if ( readCount == -1 ) {     // the session has been closed
                             return;
                         }
                         else {
-                            inputBuffer.append( (char)readChar );
+                            inputBuffer.append( streamBuffer, 0, readCount );
                         }
                     } while( reader.ready() );
                     

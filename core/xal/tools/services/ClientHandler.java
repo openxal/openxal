@@ -141,16 +141,18 @@ class ClientHandler<ProxyType> implements InvocationHandler {
             writer.write( jsonRequest );
             writer.flush();
             
+            final int BUFFER_SIZE = 4096;
+            final char[] streamBuffer = new char[BUFFER_SIZE];
             final BufferedReader reader = new BufferedReader( new InputStreamReader( remoteSocket.getInputStream() ) );
             final StringBuilder inputBuffer = new StringBuilder();
             do {
-                final int readChar = reader.read();
+                final int readCount = reader.read( streamBuffer, 0, BUFFER_SIZE );
                 
-                if ( readChar == -1 ) {     // the session has been closed
+                if ( readCount == -1 ) {     // the session has been closed
                     throw new RuntimeException( "Remote session has unexpectedly closed." );
                 }
                 else {
-                    inputBuffer.append( (char)readChar );
+                    inputBuffer.append( streamBuffer, 0, readCount );
                 }
             } while ( reader.ready()  );
             
