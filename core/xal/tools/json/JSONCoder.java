@@ -14,63 +14,289 @@ import java.util.regex.*;
 
 /** encode and decode objects with JSON */
 public class JSONCoder {
+    /** custom key identifying a custom type translated in terms of JSON representations */
+    static final String EXTENDED_TYPE_KEY = "__XAL_TYPE__";
+    
+    /** custom key identifying a custom value to translate in terms of JSON representations */
+    static final String EXTENDED_VALUE_KEY = "value";
+    
+    /** default coder */
+    static JSONCoder DEFAULT_CODER;
+    
+    /** adaptors between all custom types and representation JSON types */
+    final Map<String,JSONAdaptor> TYPE_EXTENSION_ADAPTORS;
+    
+    
+    // static initializer
+    static {
+        DEFAULT_CODER = new JSONCoder( true );
+    }
+    
+    
+    /** get a new JSON Coder only if you need to customize it, otherwise use the static methods to encode/decode */
+    static public JSONCoder getInstance() {
+        return new JSONCoder( false );
+    }
+    
+    
+    /** Constructor to be called for the default coder */
+    private JSONCoder( final boolean isDefault ) {
+        TYPE_EXTENSION_ADAPTORS = new HashMap<String,JSONAdaptor>();
+        
+        if ( isDefault ) {
+            registerStandardExtensions();
+        }
+        else {
+            TYPE_EXTENSION_ADAPTORS.putAll( DEFAULT_CODER.TYPE_EXTENSION_ADAPTORS );
+        }
+    }
+    
+    
+    /** Get a list of types (including JSON standard types plus standard extensions) which are supported for coding and decoding */
+    static public List<String> getStandardTypes() {
+        return DEFAULT_CODER.getSupportedTypes();
+    }
+    
+    
+    /** Get a list of all types which are supported for coding and decoding */
+    public List<String> getSupportedTypes() {
+        final List<String> types = new ArrayList<String>();
+        
+        types.add( Double.class.toString() );
+        types.add( Boolean.class.toString() );
+        types.add( String.class.toString() );
+        types.add( Map.class.toString() );
+        types.add( Object[].class.toString() );
+        
+        types.addAll( getExtendedTypes() );
+        
+        Collections.sort( types );
+        
+        return types;
+    }
+    
+    
+    /** Get a list of types which extend beyond the JSON standard types */
+    public List<String> getExtendedTypes() {
+        final List<String> types = new ArrayList<String>();
+        
+        for ( final String type : TYPE_EXTENSION_ADAPTORS.keySet() ) {
+            types.add( type );
+        }
+        
+        Collections.sort( types );
+        
+        return types;
+    }
+    
+    
+    /** register the standard type extensions (only needs to be done for the default coder) */
+    private void registerStandardExtensions() {
+        registerType( Short.class, new JSONAdaptor<Short,Double>() {
+            /** convert the custom type to a representation in terms of representation JSON constructs */
+            public Double toRepresentation( final Short custom ) {
+                return custom.doubleValue();
+            }
+            
+            
+            /** convert the JSON representation construct into the custom type */
+            public Short toCustom( final Double representation ) {
+                return representation.shortValue();
+            }
+        });
+        
+        registerType( Integer.class, new JSONAdaptor<Integer,Double>() {
+            /** convert the custom type to a representation in terms of representation JSON constructs */
+            public Double toRepresentation( final Integer custom ) {
+                return custom.doubleValue();
+            }
+            
+            
+            /** convert the JSON representation construct into the custom type */
+            public Integer toCustom( final Double representation ) {
+                return representation.intValue();
+            }
+        });
+        
+        registerType( Long.class, new JSONAdaptor<Long,Double>() {
+            /** convert the custom type to a representation in terms of representation JSON constructs */
+            public Double toRepresentation( final Long custom ) {
+                return custom.doubleValue();
+            }
+            
+            
+            /** convert the JSON representation construct into the custom type */
+            public Long toCustom( final Double representation ) {
+                return representation.longValue();
+            }
+        });
+        
+        registerType( Float.class, new JSONAdaptor<Float,Double>() {
+            /** convert the custom type to a representation in terms of representation JSON constructs */
+            public Double toRepresentation( final Float custom ) {
+                return custom.doubleValue();
+            }
+            
+            
+            /** convert the JSON representation construct into the custom type */
+            public Float toCustom( final Double representation ) {
+                return representation.floatValue();
+            }
+        });
+        
+        registerType( Date.class, new JSONAdaptor<Date,Double>() {
+            /** convert the custom type to a representation in terms of representation JSON constructs */
+            public Double toRepresentation( final Date timestamp ) {
+                return (double)timestamp.getTime();
+            }
+            
+            
+            /** convert the JSON representation construct into the custom type */
+            public Date toCustom( final Double msecFromEpoch ) {
+                return new Date( msecFromEpoch.longValue() );
+            }
+        });
+        
+        registerType( ArrayList.class, new JSONAdaptor<ArrayList,Object[]>() {
+            /** convert the custom type to a representation in terms of representation JSON constructs */
+            public Object[] toRepresentation( final ArrayList list ) {
+                return list.toArray();
+            }
+            
+            
+            /** convert the JSON representation construct into the custom type */
+            @SuppressWarnings( "unchecked" )    // list can represent any type
+            public ArrayList toCustom( final Object[] array ) {
+                final ArrayList list = new ArrayList( array.length );
+                for ( final Object item : array ) {
+                    list.add( item );
+                }
+                return list;
+            }
+        });
+        
+        registerType( Vector.class, new JSONAdaptor<Vector,Object[]>() {
+            /** convert the custom type to a representation in terms of representation JSON constructs */
+            public Object[] toRepresentation( final Vector list ) {
+                return list.toArray();
+            }
+            
+            
+            /** convert the JSON representation construct into the custom type */
+            @SuppressWarnings( "unchecked" )    // list can represent any type
+            public Vector toCustom( final Object[] array ) {
+                final Vector list = new Vector( array.length );
+                for ( final Object item : array ) {
+                    list.add( item );
+                }
+                return list;
+            }
+        });
+        
+        registerType( Hashtable.class, new JSONAdaptor<Hashtable,Map>() {
+            /** convert the custom type to a representation in terms of representation JSON constructs */
+            @SuppressWarnings( "unchecked" )    // map and table don't have compile time types
+            public Map toRepresentation( final Hashtable table ) {
+                return new HashMap( table );
+            }
+            
+            
+            /** convert the JSON representation construct into the custom type */
+            @SuppressWarnings( "unchecked" )    // list can represent any type
+            public Hashtable toCustom( final Map map ) {
+                return new Hashtable( map );
+            }
+        });
+    }
+    
+    
+    /** 
+     * Register the custom type and its associated adaptor 
+     * @param type type to identify and process for encoding and decoding
+     * @param adaptor translator between the custom type and representation JSON constructs
+     */
+    public <CustomType,RepresentationType> void registerType( final Class<CustomType> type, final JSONAdaptor<CustomType,RepresentationType> adaptor ) {
+        TYPE_EXTENSION_ADAPTORS.put( type.toString(), adaptor );
+    }
+    
+    
 	/** 
 	 * Decode the JSON string
 	 * @param archive JSON string representation of an object
 	 * @return an object with the data described in the archive
 	 */
 	public static Object decode( final String archive ) {
-		final AbstractDecoder decoder = AbstractDecoder.getInstance( archive );
-		return decoder != null ? decoder.decode() : null;
+        return DEFAULT_CODER.unarchive( archive );
 	}
+    
+    
+	/** 
+	 * Decode the JSON string
+	 * @param archive JSON string representation of an object
+	 * @return an object with the data described in the archive
+	 */
+    public Object unarchive( final String archive ) {
+        final AbstractDecoder decoder = AbstractDecoder.getInstance( archive, Collections.unmodifiableMap( TYPE_EXTENSION_ADAPTORS ) );
+		return decoder != null ? decoder.decode() : null;
+    }
     
     
 	/** encode a string */
 	static public String encode( final String value ) {
-		return value != null ? "\"" + value.replace( "\\", "\\\\" ).replace( "\"", "\\\"" ) + "\"" : "null";
+        return DEFAULT_CODER.archive( value );
 	}
 	
 	
 	/** encode a boolean */
 	static public String encode( final boolean value ) {
-		return value ? "true" : "false";
+        return DEFAULT_CODER.archive( value );
 	}
 	
 	
 	/** encode a number */
-	static public String encode( final Number value ) {
-		return value != null ? value.toString() : "null";
-	}
-	
-	
-	/** encode a list */
-	static public String encode( final List<?> values ) {
-		if ( values != null ) {
-			final int count = values.size();
-			final StringBuffer buffer = new StringBuffer();
-			buffer.append( "[" );
-			for ( int index = 0 ; index < count ; index++ ) {
-				switch ( index ) {
-					case 0:
-						break;
-					default:
-						buffer.append( ", " );
-						break;
-				}
-				final Object value = values.get( index );
-				buffer.append( encode( value ) );
-			}
-			buffer.append( "]" );
-			return buffer.toString();
-		}
-		else {
-			return "null";
-		}
+	static public String encode( final Double value ) {
+        return DEFAULT_CODER.archive( value );
 	}
 	
 	
 	/** encode an array */
 	static public String encode( final Object[] values ) {
+        return DEFAULT_CODER.archive( values );
+	}
+	
+	
+	/** encode a hash table */
+    static public <ValueType> String encode( final HashMap<String,ValueType> map ) {
+        return DEFAULT_CODER.archive( map );
+	}
+	
+	
+	/** encode an object */
+    static public String encode( final Object value ) {
+        return DEFAULT_CODER.archive( value );
+	}
+    
+    
+	/** encode a string */
+    public String archive( final String value ) {
+		return value != null ? "\"" + value.replace( "\\", "\\\\" ).replace( "\"", "\\\"" ) + "\"" : "null";
+	}
+	
+	
+	/** encode a boolean */
+    public String archive( final boolean value ) {
+		return value ? "true" : "false";
+	}
+	
+	
+	/** encode a number */
+    public String archive( final Double value ) {
+		return value != null ? value.toString() : "null";
+	}
+	
+	
+	/** encode an array */
+    public String archive( final Object[] values ) {
 		if ( values != null ) {
 			final int count = values.length;
 			final StringBuffer buffer = new StringBuffer();
@@ -96,7 +322,7 @@ public class JSONCoder {
 	
 	
 	/** encode a hash table */
-    static public <ValueType> String encode( final Map<String,ValueType> map ) {
+    public <ValueType> String archive( final HashMap<String,ValueType> map ) {
 		if ( map != null ) {
 			final StringBuffer buffer = new StringBuffer();
 			buffer.append( "{" );
@@ -128,30 +354,38 @@ public class JSONCoder {
 	
 	/** encode an object */
     @SuppressWarnings( "unchecked" )    // no way to guarantee at compile time that maps are keyed by string
-	static public String encode( final Object value ) {
+    public String archive( final Object value ) {
 		if ( value == null ) {
 			return "null";
 		}
-		else if ( value instanceof String ) {
-			return encode( (String)value );
+		else if ( value.getClass().equals( String.class ) ) {
+			return archive( (String)value );
 		}
-		else if ( value instanceof Boolean ) {
-			return encode( ((Boolean)value).booleanValue() );
+		else if ( value.getClass().equals( Boolean.class ) ) {
+			return archive( ((Boolean)value).booleanValue() );
 		}
-		else if ( value instanceof Number ) {
-			return encode( (Number)value );
+		else if ( value.getClass().equals( Double.class ) ) {
+			return archive( (Double)value );
 		}
-		else if ( value instanceof List ) {
-			return encode( (List)value );
-		}
-		else if ( value instanceof Map ) {  // no way to check at compile time that the key type is string
-			return encode( (Map)value );
+		else if ( value.getClass().equals( HashMap.class ) ) {  // no way to check at compile time that the key type is string
+			return archive( (HashMap)value );
 		}
 		else if ( value.getClass().isArray() ) {
-			return encode( (Object[])value );
+			return archive( (Object[])value );
 		}
 		else {
-			throw new RuntimeException( "No coder for encoding objects of type: " + value.getClass().toString() );
+            final String valueType = value.getClass().toString();
+            final JSONAdaptor adaptor = TYPE_EXTENSION_ADAPTORS.get( valueType );
+            if ( adaptor != null ) {
+                final Map<String,Object> valueRep = new HashMap<String,Object>();
+                final Object representationValue = adaptor.toRepresentation( value );
+                valueRep.put( EXTENDED_TYPE_KEY, valueType );
+                valueRep.put( EXTENDED_VALUE_KEY, representationValue );
+                return archive( valueRep );
+            }
+            else {
+                throw new RuntimeException( "No coder for encoding objects of type: " + valueType );
+            }
 		}
 	}
 }
@@ -194,7 +428,7 @@ abstract class AbstractDecoder<T> {
 	
 	
 	/** Get a decoder for the archive */
-	protected static AbstractDecoder getInstance( final String archive ) {
+	protected static AbstractDecoder getInstance( final String archive, final Map<String,JSONAdaptor> typeExtensionAdaptors ) {
 		final String source = archive.trim();
 		if ( source.length() > 0 ) {
 			final char firstChar = source.charAt( 0 );
@@ -209,9 +443,9 @@ abstract class AbstractDecoder<T> {
 				case '\"':
 					return new StringDecoder( source );
 				case '[':
-					return new ArrayDecoder( source );
+					return new ArrayDecoder( source, typeExtensionAdaptors );
 				case '{':
-					return new DictionaryDecoder( source );
+					return new DictionaryDecoder( source, typeExtensionAdaptors );
 				default:
 					return null;
 			}
@@ -368,19 +602,24 @@ class StringDecoder extends AbstractDecoder<String> {
 
 
 /** decode an array from a source string */
-class ArrayDecoder extends AbstractDecoder<List<Object>> {
+class ArrayDecoder extends AbstractDecoder<Object[]> {
+    /** custom type adaptors */
+    final private Map<String,JSONAdaptor> TYPE_EXTENSION_ADAPTORS;
+    
+    
 	/** Constructor */
-	protected ArrayDecoder( final String archive ) {
+	protected ArrayDecoder( final String archive, final Map<String,JSONAdaptor> typeExtensionAdaptors ) {
 		super( archive );
+        TYPE_EXTENSION_ADAPTORS = typeExtensionAdaptors;
 	}
 	
 	
 	/** decode the source to extract the next object */	
-	protected List<Object> decode() {
+	protected Object[] decode() {
 		final String arrayString = ARCHIVE.substring( 1 ).trim();	// strip the leading bracket
 		final List<Object> items = new ArrayList<Object>();
 		appendItems( items, arrayString );
-		return items;
+		return items.toArray();
 	}
 	
 	
@@ -393,7 +632,7 @@ class ArrayDecoder extends AbstractDecoder<List<Object>> {
 					return;
 				}
 				else {
-					final AbstractDecoder itemDecoder = AbstractDecoder.getInstance( arrayString );
+					final AbstractDecoder itemDecoder = AbstractDecoder.getInstance( arrayString, TYPE_EXTENSION_ADAPTORS );
 					items.add( itemDecoder.decode() );
 					final String itemRemainder = itemDecoder.getRemainder().trim();
 					final char closure = itemRemainder.charAt( 0 );
@@ -423,19 +662,35 @@ class ArrayDecoder extends AbstractDecoder<List<Object>> {
 
 
 /** decode a dictionary from a source string */
-class DictionaryDecoder extends AbstractDecoder<Map<String,Object>> {
+class DictionaryDecoder extends AbstractDecoder<Object> {
+    /** custom type adaptors */
+    final private Map<String,JSONAdaptor> TYPE_EXTENSION_ADAPTORS;
+    
+    
 	/** Constructor */
-	protected DictionaryDecoder( final String archive ) {
+	protected DictionaryDecoder( final String archive, final Map<String,JSONAdaptor> typeExtensionAdaptors ) {
 		super( archive );
+        TYPE_EXTENSION_ADAPTORS = typeExtensionAdaptors;
 	}
 	
 	
 	/** decode the source to extract the next object */	
-	protected Map<String,Object> decode() {
+    @SuppressWarnings( "unchecked" )    // no way to validate representation value and type at compile time
+	protected Object decode() {
 		final String dictionaryString = ARCHIVE.substring( 1 ).trim();	// strip the leading brace
 		final Map<String,Object> dictionary = new HashMap<String,Object>();
 		appendItems( dictionary, dictionaryString );
-		return dictionary;
+        
+        if ( dictionary.containsKey( JSONCoder.EXTENDED_TYPE_KEY ) && dictionary.containsKey( JSONCoder.EXTENDED_VALUE_KEY ) ) {
+            final String extendedType = (String)dictionary.get( JSONCoder.EXTENDED_TYPE_KEY );
+            final Object representationValue = dictionary.get( JSONCoder.EXTENDED_VALUE_KEY );
+            final JSONAdaptor adaptor = TYPE_EXTENSION_ADAPTORS.get( extendedType );
+            if ( adaptor == null )  throw new RuntimeException( "Missing JSON adaptor for type: " + extendedType );
+            return adaptor.toCustom( representationValue );
+        }
+        else {
+            return dictionary;
+        }
 	}
 	
 	
@@ -452,7 +707,7 @@ class DictionaryDecoder extends AbstractDecoder<Map<String,Object>> {
 					final String key = keyDecoder.decode();
 					final String keyRemainder = keyDecoder.getRemainder();
 					final String valueBuffer = keyRemainder.trim().substring( 1 );	// trim spaces and strip the leading colon
-					final AbstractDecoder valueDecoder = AbstractDecoder.getInstance( valueBuffer );
+					final AbstractDecoder valueDecoder = AbstractDecoder.getInstance( valueBuffer, TYPE_EXTENSION_ADAPTORS );
 					final Object value = valueDecoder.decode();
 					dictionary.put( key, value );
 					final String itemRemainder = valueDecoder.getRemainder().trim();
