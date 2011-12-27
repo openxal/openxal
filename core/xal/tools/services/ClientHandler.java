@@ -139,24 +139,20 @@ class ClientHandler<ProxyType> implements InvocationHandler {
             final Socket remoteSocket = new Socket( REMOTE_HOST, REMOTE_PORT );     // create a new cycle for each request (in the future we may consider recycling sockets)
             final PrintWriter writer = new PrintWriter( remoteSocket.getOutputStream() );
             writer.write( jsonRequest );
-            writer.write( Character.MAX_VALUE );   // mark end of input
             writer.flush();
             
             final BufferedReader reader = new BufferedReader( new InputStreamReader( remoteSocket.getInputStream() ) );
             final StringBuilder inputBuffer = new StringBuilder();
-            while( true ) {
+            do {
                 final int readChar = reader.read();
                 
                 if ( readChar == -1 ) {     // the session has been closed
                     throw new RuntimeException( "Remote session has unexpectedly closed." );
                 }
-                else if ( readChar == Character.MAX_VALUE ) {     // end of input
-                    break;
-                }
                 else {
                     inputBuffer.append( (char)readChar );
                 }
-            }
+            } while ( reader.ready()  );
             
             final String jsonResponse = inputBuffer.toString();
             Object result = null;
