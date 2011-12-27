@@ -132,19 +132,16 @@ public class RpcServer {
                     final PrintWriter output = new PrintWriter( remoteSocket.getOutputStream() );
                                         
                     final StringBuilder inputBuffer = new StringBuilder();
-                    while( true ) {
+                    do {
                         final int readChar = reader.read();
                         
                         if ( readChar == -1 ) {     // the session has been closed
                             return;
                         }
-                        else if ( readChar == Character.MAX_VALUE ) {     // end of input
-                            break;
-                        }
                         else {
                             inputBuffer.append( (char)readChar );
                         }
-                    }
+                    } while( reader.ready() );
                     
                     final String jsonRequest = inputBuffer.toString();
                                                                 
@@ -159,14 +156,13 @@ public class RpcServer {
                         // todo: call the method on the handler
                         final RemoteRequestHandler<?> handler = REMOTE_REQUEST_HANDLERS.get( serviceName );
                         final Object result = handler.evaluateRequest( message, params );
-                        
+                                                
                         final Map<String,Object> response = new HashMap<String,Object>();
                         response.put( "result", result );
                         response.put( "error", null );
                         response.put( "id", requestID );
                         final String jsonResponse = JSONCoder.encode( response );
                         output.print( jsonResponse );
-                        output.write( Character.MAX_VALUE );   // mark end of input
                         output.flush();
                     }
                 }
