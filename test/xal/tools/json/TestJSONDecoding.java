@@ -17,7 +17,7 @@ import java.io.*;
 public class TestJSONDecoding {
     @Test
     public void testNullDecoding() {
-        Assert.assertTrue( null == JSONDecoder.decode( "null" ) );
+        Assert.assertTrue( null == JSONCoder.decode( "null" ) );
     }
     
     
@@ -91,14 +91,14 @@ public class TestJSONDecoding {
     
     /** check whether the decoder can decode values */
     static private <DataType> void checkValueEquality( final DataType controlValue ) {
-        final Object testValue = JSONDecoder.decode( String.valueOf( controlValue ) );
+        final Object testValue = JSONCoder.decode( String.valueOf( controlValue ) );
         assertEquality( controlValue, testValue );
     }
     
     
     /** check whether the decoder can decode strings */
     static private void checkStringEquality( final String controlValue, final String testCoding ) {
-        final Object testValue = JSONDecoder.decode( testCoding );
+        final Object testValue = JSONCoder.decode( testCoding );
         assertEquality( controlValue, testValue );
     }
     
@@ -106,7 +106,7 @@ public class TestJSONDecoding {
     /** check whether a decoded encoding matches the original value */
     static private void checkCodingDecoding( final Object controlValue ) {
         final String coding = JSONCoder.encode( controlValue );
-        final Object testValue = JSONDecoder.decode( coding );
+        final Object testValue = JSONCoder.decode( coding );
         assertEquality( controlValue, testValue );
     }
     

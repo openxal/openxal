@@ -147,7 +147,7 @@ public class RpcServer {
                     
                     final String jsonRequest = inputBuffer.toString();
                                                                 
-                    final Object requestObject = JSONDecoder.decode( jsonRequest );
+                    final Object requestObject = JSONCoder.decode( jsonRequest );
                     if ( requestObject instanceof Map ) {
                         final Map<String,Object> request = (Map<String,Object>)requestObject;
                         final String message = (String)request.get( "message" );

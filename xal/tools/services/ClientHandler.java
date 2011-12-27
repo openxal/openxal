@@ -159,7 +159,7 @@ class ClientHandler<ProxyType> implements InvocationHandler {
             final String jsonResponse = inputBuffer.toString();
             Object result = null;
             if ( jsonRequest != null ) {                
-                final Object responseObject = JSONDecoder.decode( jsonResponse );
+                final Object responseObject = JSONCoder.decode( jsonResponse );
                 if ( responseObject instanceof Map ) {
                     final Map<String,Object> response = (Map<String,Object>)responseObject;
                     result = response.get( "result" );
