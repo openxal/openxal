@@ -8,6 +8,8 @@
 
 package xal.tools.json;
 
+import xal.tools.ConversionAdaptor;
+
 import java.util.*;
 import java.util.regex.*;
 
@@ -24,7 +26,7 @@ public class JSONCoder {
     static JSONCoder DEFAULT_CODER;
     
     /** adaptors between all custom types and representation JSON types */
-    final Map<String,JSONAdaptor> TYPE_EXTENSION_ADAPTORS;
+    final Map<String,ConversionAdaptor> TYPE_EXTENSION_ADAPTORS;
     
     
     // static initializer
@@ -41,7 +43,7 @@ public class JSONCoder {
     
     /** Constructor to be called for the default coder */
     private JSONCoder( final boolean isDefault ) {
-        TYPE_EXTENSION_ADAPTORS = new HashMap<String,JSONAdaptor>();
+        TYPE_EXTENSION_ADAPTORS = new HashMap<String,ConversionAdaptor>();
         
         if ( isDefault ) {
             registerStandardExtensions();
@@ -92,7 +94,7 @@ public class JSONCoder {
     
     /** register the standard type extensions (only needs to be done for the default coder) */
     private void registerStandardExtensions() {
-        registerType( Short.class, new JSONAdaptor<Short,Double>() {
+        registerType( Short.class, new ConversionAdaptor<Short,Double>() {
             /** convert the custom type to a representation in terms of representation JSON constructs */
             public Double toRepresentation( final Short custom ) {
                 return custom.doubleValue();
@@ -100,12 +102,12 @@ public class JSONCoder {
             
             
             /** convert the JSON representation construct into the custom type */
-            public Short toCustom( final Double representation ) {
+            public Short toNative( final Double representation ) {
                 return representation.shortValue();
             }
         });
         
-        registerType( Integer.class, new JSONAdaptor<Integer,Double>() {
+        registerType( Integer.class, new ConversionAdaptor<Integer,Double>() {
             /** convert the custom type to a representation in terms of representation JSON constructs */
             public Double toRepresentation( final Integer custom ) {
                 return custom.doubleValue();
@@ -113,12 +115,12 @@ public class JSONCoder {
             
             
             /** convert the JSON representation construct into the custom type */
-            public Integer toCustom( final Double representation ) {
+            public Integer toNative( final Double representation ) {
                 return representation.intValue();
             }
         });
         
-        registerType( Long.class, new JSONAdaptor<Long,Double>() {
+        registerType( Long.class, new ConversionAdaptor<Long,Double>() {
             /** convert the custom type to a representation in terms of representation JSON constructs */
             public Double toRepresentation( final Long custom ) {
                 return custom.doubleValue();
@@ -126,12 +128,12 @@ public class JSONCoder {
             
             
             /** convert the JSON representation construct into the custom type */
-            public Long toCustom( final Double representation ) {
+            public Long toNative( final Double representation ) {
                 return representation.longValue();
             }
         });
         
-        registerType( Float.class, new JSONAdaptor<Float,Double>() {
+        registerType( Float.class, new ConversionAdaptor<Float,Double>() {
             /** convert the custom type to a representation in terms of representation JSON constructs */
             public Double toRepresentation( final Float custom ) {
                 return custom.doubleValue();
@@ -139,12 +141,12 @@ public class JSONCoder {
             
             
             /** convert the JSON representation construct into the custom type */
-            public Float toCustom( final Double representation ) {
+            public Float toNative( final Double representation ) {
                 return representation.floatValue();
             }
         });
         
-        registerType( Date.class, new JSONAdaptor<Date,Double>() {
+        registerType( Date.class, new ConversionAdaptor<Date,Double>() {
             /** convert the custom type to a representation in terms of representation JSON constructs */
             public Double toRepresentation( final Date timestamp ) {
                 return (double)timestamp.getTime();
@@ -152,12 +154,12 @@ public class JSONCoder {
             
             
             /** convert the JSON representation construct into the custom type */
-            public Date toCustom( final Double msecFromEpoch ) {
+            public Date toNative( final Double msecFromEpoch ) {
                 return new Date( msecFromEpoch.longValue() );
             }
         });
         
-        registerType( ArrayList.class, new JSONAdaptor<ArrayList,Object[]>() {
+        registerType( ArrayList.class, new ConversionAdaptor<ArrayList,Object[]>() {
             /** convert the custom type to a representation in terms of representation JSON constructs */
             public Object[] toRepresentation( final ArrayList list ) {
                 return list.toArray();
@@ -166,7 +168,7 @@ public class JSONCoder {
             
             /** convert the JSON representation construct into the custom type */
             @SuppressWarnings( "unchecked" )    // list can represent any type
-            public ArrayList toCustom( final Object[] array ) {
+            public ArrayList toNative( final Object[] array ) {
                 final ArrayList list = new ArrayList( array.length );
                 for ( final Object item : array ) {
                     list.add( item );
@@ -175,7 +177,7 @@ public class JSONCoder {
             }
         });
         
-        registerType( Vector.class, new JSONAdaptor<Vector,Object[]>() {
+        registerType( Vector.class, new ConversionAdaptor<Vector,Object[]>() {
             /** convert the custom type to a representation in terms of representation JSON constructs */
             public Object[] toRepresentation( final Vector list ) {
                 return list.toArray();
@@ -184,7 +186,7 @@ public class JSONCoder {
             
             /** convert the JSON representation construct into the custom type */
             @SuppressWarnings( "unchecked" )    // list can represent any type
-            public Vector toCustom( final Object[] array ) {
+            public Vector toNative( final Object[] array ) {
                 final Vector list = new Vector( array.length );
                 for ( final Object item : array ) {
                     list.add( item );
@@ -193,7 +195,7 @@ public class JSONCoder {
             }
         });
         
-        registerType( Hashtable.class, new JSONAdaptor<Hashtable,Map>() {
+        registerType( Hashtable.class, new ConversionAdaptor<Hashtable,Map>() {
             /** convert the custom type to a representation in terms of representation JSON constructs */
             @SuppressWarnings( "unchecked" )    // map and table don't have compile time types
             public Map toRepresentation( final Hashtable table ) {
@@ -203,7 +205,7 @@ public class JSONCoder {
             
             /** convert the JSON representation construct into the custom type */
             @SuppressWarnings( "unchecked" )    // list can represent any type
-            public Hashtable toCustom( final Map map ) {
+            public Hashtable toNative( final Map map ) {
                 return new Hashtable( map );
             }
         });
@@ -215,7 +217,7 @@ public class JSONCoder {
      * @param type type to identify and process for encoding and decoding
      * @param adaptor translator between the custom type and representation JSON constructs
      */
-    public <CustomType,RepresentationType> void registerType( final Class<CustomType> type, final JSONAdaptor<CustomType,RepresentationType> adaptor ) {
+    public <CustomType,RepresentationType> void registerType( final Class<CustomType> type, final ConversionAdaptor<CustomType,RepresentationType> adaptor ) {
         TYPE_EXTENSION_ADAPTORS.put( type.toString(), adaptor );
     }
     
@@ -345,7 +347,7 @@ public class JSONCoder {
 		}
 		else {
             final String valueType = value.getClass().toString();
-            final JSONAdaptor adaptor = TYPE_EXTENSION_ADAPTORS.get( valueType );
+            final ConversionAdaptor adaptor = TYPE_EXTENSION_ADAPTORS.get( valueType );
             if ( adaptor != null ) {
                 final HashMap<String,Object> valueRep = new HashMap<String,Object>();
                 final Object representationValue = adaptor.toRepresentation( value );
@@ -398,7 +400,7 @@ abstract class AbstractDecoder<T> {
 	
 	
 	/** Get a decoder for the archive */
-	protected static AbstractDecoder getInstance( final String archive, final Map<String,JSONAdaptor> typeExtensionAdaptors ) {
+	protected static AbstractDecoder getInstance( final String archive, final Map<String,ConversionAdaptor> typeExtensionAdaptors ) {
 		final String source = archive.trim();
 		if ( source.length() > 0 ) {
 			final char firstChar = source.charAt( 0 );
@@ -574,11 +576,11 @@ class StringDecoder extends AbstractDecoder<String> {
 /** decode an array from a source string */
 class ArrayDecoder extends AbstractDecoder<Object[]> {
     /** custom type adaptors */
-    final private Map<String,JSONAdaptor> TYPE_EXTENSION_ADAPTORS;
+    final private Map<String,ConversionAdaptor> TYPE_EXTENSION_ADAPTORS;
     
     
 	/** Constructor */
-	protected ArrayDecoder( final String archive, final Map<String,JSONAdaptor> typeExtensionAdaptors ) {
+	protected ArrayDecoder( final String archive, final Map<String,ConversionAdaptor> typeExtensionAdaptors ) {
 		super( archive );
         TYPE_EXTENSION_ADAPTORS = typeExtensionAdaptors;
 	}
@@ -634,11 +636,11 @@ class ArrayDecoder extends AbstractDecoder<Object[]> {
 /** decode a dictionary from a source string */
 class DictionaryDecoder extends AbstractDecoder<Object> {
     /** custom type adaptors */
-    final private Map<String,JSONAdaptor> TYPE_EXTENSION_ADAPTORS;
+    final private Map<String,ConversionAdaptor> TYPE_EXTENSION_ADAPTORS;
     
     
 	/** Constructor */
-	protected DictionaryDecoder( final String archive, final Map<String,JSONAdaptor> typeExtensionAdaptors ) {
+	protected DictionaryDecoder( final String archive, final Map<String,ConversionAdaptor> typeExtensionAdaptors ) {
 		super( archive );
         TYPE_EXTENSION_ADAPTORS = typeExtensionAdaptors;
 	}
@@ -654,9 +656,9 @@ class DictionaryDecoder extends AbstractDecoder<Object> {
         if ( dictionary.containsKey( JSONCoder.EXTENDED_TYPE_KEY ) && dictionary.containsKey( JSONCoder.EXTENDED_VALUE_KEY ) ) {
             final String extendedType = (String)dictionary.get( JSONCoder.EXTENDED_TYPE_KEY );
             final Object representationValue = dictionary.get( JSONCoder.EXTENDED_VALUE_KEY );
-            final JSONAdaptor adaptor = TYPE_EXTENSION_ADAPTORS.get( extendedType );
+            final ConversionAdaptor adaptor = TYPE_EXTENSION_ADAPTORS.get( extendedType );
             if ( adaptor == null )  throw new RuntimeException( "Missing JSON adaptor for type: " + extendedType );
-            return adaptor.toCustom( representationValue );
+            return adaptor.toNative( representationValue );
         }
         else {
             return dictionary;
