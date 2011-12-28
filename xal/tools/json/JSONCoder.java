@@ -64,11 +64,11 @@ public class JSONCoder {
     public List<String> getSupportedTypes() {
         final List<String> types = new ArrayList<String>();
         
-        types.add( Double.class.toString() );
-        types.add( Boolean.class.toString() );
-        types.add( String.class.toString() );
-        types.add( Map.class.toString() );
-        types.add( Object[].class.toString() );
+        types.add( Double.class.getName() );
+        types.add( Boolean.class.getName() );
+        types.add( String.class.getName() );
+        types.add( Map.class.getName() );
+        types.add( Object[].class.getName() );
         
         types.addAll( getExtendedTypes() );
         
@@ -218,7 +218,7 @@ public class JSONCoder {
      * @param adaptor translator between the custom type and representation JSON constructs
      */
     public <CustomType,RepresentationType> void registerType( final Class<CustomType> type, final ConversionAdaptor<CustomType,RepresentationType> adaptor ) {
-        TYPE_EXTENSION_ADAPTORS.put( type.toString(), adaptor );
+        TYPE_EXTENSION_ADAPTORS.put( type.getName(), adaptor );
     }
     
     
@@ -346,7 +346,7 @@ public class JSONCoder {
 			return archiveArray( (Object[])value );
 		}
 		else {
-            final String valueType = value.getClass().toString();
+            final String valueType = value.getClass().getName();
             final ConversionAdaptor adaptor = TYPE_EXTENSION_ADAPTORS.get( valueType );
             if ( adaptor != null ) {
                 final HashMap<String,Object> valueRep = new HashMap<String,Object>();
