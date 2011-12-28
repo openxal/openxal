@@ -15,7 +15,7 @@ import java.util.regex.*;
 /** encode and decode objects with JSON */
 public class JSONCoder {
     /** custom key identifying a custom type translated in terms of JSON representations */
-    static final String EXTENDED_TYPE_KEY = "__XAL_TYPE__";
+    static final String EXTENDED_TYPE_KEY = "__XALTYPE__";
     
     /** custom key identifying a custom value to translate in terms of JSON representations */
     static final String EXTENDED_VALUE_KEY = "value";
@@ -239,36 +239,6 @@ public class JSONCoder {
         final AbstractDecoder decoder = AbstractDecoder.getInstance( archive, Collections.unmodifiableMap( TYPE_EXTENSION_ADAPTORS ) );
 		return decoder != null ? decoder.decode() : null;
     }
-    
-    
-	/** encode a string */
-	static public String encode( final String value ) {
-        return DEFAULT_CODER.archive( value );
-	}
-	
-	
-	/** encode a boolean */
-	static public String encode( final boolean value ) {
-        return DEFAULT_CODER.archive( value );
-	}
-	
-	
-	/** encode a number */
-	static public String encode( final Double value ) {
-        return DEFAULT_CODER.archive( value );
-	}
-	
-	
-	/** encode an array */
-	static public String encode( final Object[] values ) {
-        return DEFAULT_CODER.archive( values );
-	}
-	
-	
-	/** encode a hash table */
-    static public <ValueType> String encode( final HashMap<String,ValueType> map ) {
-        return DEFAULT_CODER.archive( map );
-	}
 	
 	
 	/** encode an object */
@@ -278,25 +248,25 @@ public class JSONCoder {
     
     
 	/** encode a string */
-    public String archive( final String value ) {
+    private String archiveString( final String value ) {
 		return value != null ? "\"" + value.replace( "\\", "\\\\" ).replace( "\"", "\\\"" ) + "\"" : "null";
 	}
 	
 	
 	/** encode a boolean */
-    public String archive( final boolean value ) {
+    private String archiveBoolean( final boolean value ) {
 		return value ? "true" : "false";
 	}
 	
 	
 	/** encode a number */
-    public String archive( final Double value ) {
+    private String archiveDouble( final Double value ) {
 		return value != null ? value.toString() : "null";
 	}
 	
 	
 	/** encode an array */
-    public String archive( final Object[] values ) {
+    private String archiveArray( final Object[] values ) {
 		if ( values != null ) {
 			final int count = values.length;
 			final StringBuffer buffer = new StringBuffer();
@@ -322,7 +292,7 @@ public class JSONCoder {
 	
 	
 	/** encode a hash table */
-    public <ValueType> String archive( final HashMap<String,ValueType> map ) {
+    private <ValueType> String archiveMap( final HashMap<String,ValueType> map ) {
 		if ( map != null ) {
 			final StringBuffer buffer = new StringBuffer();
 			buffer.append( "{" );
@@ -359,29 +329,29 @@ public class JSONCoder {
 			return "null";
 		}
 		else if ( value.getClass().equals( String.class ) ) {
-			return archive( (String)value );
+			return archiveString( (String)value );
 		}
 		else if ( value.getClass().equals( Boolean.class ) ) {
-			return archive( ((Boolean)value).booleanValue() );
+			return archiveBoolean( (Boolean)value );
 		}
 		else if ( value.getClass().equals( Double.class ) ) {
-			return archive( (Double)value );
+			return archiveDouble( (Double)value );
 		}
 		else if ( value.getClass().equals( HashMap.class ) ) {  // no way to check at compile time that the key type is string
-			return archive( (HashMap)value );
+			return archiveMap( (HashMap)value );
 		}
 		else if ( value.getClass().isArray() ) {
-			return archive( (Object[])value );
+			return archiveArray( (Object[])value );
 		}
 		else {
             final String valueType = value.getClass().toString();
             final JSONAdaptor adaptor = TYPE_EXTENSION_ADAPTORS.get( valueType );
             if ( adaptor != null ) {
-                final Map<String,Object> valueRep = new HashMap<String,Object>();
+                final HashMap<String,Object> valueRep = new HashMap<String,Object>();
                 final Object representationValue = adaptor.toRepresentation( value );
                 valueRep.put( EXTENDED_TYPE_KEY, valueType );
                 valueRep.put( EXTENDED_VALUE_KEY, representationValue );
-                return archive( valueRep );
+                return archiveMap( valueRep );
             }
             else {
                 throw new RuntimeException( "No coder for encoding objects of type: " + valueType );
