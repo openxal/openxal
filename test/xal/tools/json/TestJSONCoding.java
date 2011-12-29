@@ -208,7 +208,37 @@ public class TestJSONCoding {
         compoundMap.put( "simple list", simpleList );
         checkEncodingDecoding( compoundMap );
     }
-
+    
+    
+    @Test
+    @SuppressWarnings( "unchecked" )
+    public void testReferenceEncodingDecoding() {
+        final List<Object> sharedList = new ArrayList<Object>();    // list to be shared using references
+        sharedList.add( "Knoxville" );
+        sharedList.add( "Oak Ridge" );
+        sharedList.add( "Chattanooga" );
+        sharedList.add( "Nashville" );
+        sharedList.add( "Memphis" );
+        
+        final List<Object> otherList = new ArrayList<Object>( sharedList );     // list is equal to shared list but different instance
+        
+        final Map<String,Object> testMap = new HashMap<String,Object>();
+        testMap.put( "share_0", sharedList );
+        testMap.put( "other", otherList );
+        testMap.put( "share_1", sharedList );
+                
+        final String json = JSONCoder.encode( testMap );
+        
+        final Map<String,Object> control = (Map<String,Object>)JSONCoder.decode( json );
+        assertEquality( testMap, control );     // verify that we have regenerated the original map
+                
+        final Object shared_0 = control.get( "share_0" );
+        final Object other = control.get( "other" );
+        final Object shared_1 = control.get( "share_1" );
+        Assert.assertTrue( shared_0 == shared_1 );      // verify that references are preserved (objects that share the same instance prior to encoding do so when regenerated)
+        Assert.assertTrue( shared_0 != other );         // verify that different instances that are equal prior to encoding do not share the same instance after regeneration
+    }
+    
     
     /** check whether the coder can encode values */
     static private <DataType> void checkEncodingEquality( final DataType value ) {
