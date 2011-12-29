@@ -58,9 +58,8 @@ public class ApplicationStatusService implements ApplicationStatus {
 	 * @param code An unused status code.
 	 * @return The status code.
 	 */
-	public int quit(int code) {
+	public void quit( final int code ) {
 		Application.getApp().quit();
-		return code;
 	}
 	
 	
@@ -69,9 +68,8 @@ public class ApplicationStatusService implements ApplicationStatus {
 	 * @param code The status code used for halting the virtual machine.
 	 * @return The supplied status code.
 	 */
-	public int forceQuit(int code) {
+	public void forceQuit(int code) {
 		Runtime.getRuntime().exit(code);
-		return code;
 	}
 	
 	

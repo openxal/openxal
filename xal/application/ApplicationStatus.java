@@ -67,7 +67,7 @@ public interface ApplicationStatus {
 	 * @param code An unused status code.
 	 * @return The status code.
 	 */
-	public int quit( int code );
+	public void quit( final int code );
 	
 	
 	/**
@@ -75,6 +75,6 @@ public interface ApplicationStatus {
 	 * @param code The status code used for halting the virtual machine.
 	 * @return The supplied status code.
 	 */
-	public int forceQuit( int code );
+	public void forceQuit( int code );
 }
 
