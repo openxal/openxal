@@ -205,18 +205,78 @@ class RemoteRequestHandler<ProtocolType> {
         for ( int index = 0 ; index < methodParams.length ; index++ ) {
             final Object param = params.get( index );
             methodParams[index] = param;
-            methodParamTypes[index] = param != null ? param.getClass() : Object.class;
+            methodParamTypes[index] = param != null ? param.getClass() : null;
         }
+                
+        final Method method = findMethod( methodName, methodParamTypes );
         
         try {
-            final Method method = PROTOCOL.getMethod( methodName, methodParamTypes );
             return method.invoke( PROVIDER, methodParams );
-        }
-        catch ( NoSuchMethodException exception ) {
-            throw new RuntimeException( "No matching method found for <" + methodName + "" + params + ">", exception );
         }
         catch ( Exception exception ) {
             throw new RuntimeException( "Exception evaluating the remote request with the request handler.", exception );
+        }
+    }
+    
+    
+    /** Find a method in the protocol that matches the method name and parameters */
+    private Method findMethod( final String methodName, final Class<?>[] parameterTypes ) {
+        try {
+            return PROTOCOL.getMethod( methodName, parameterTypes );
+        }
+        catch ( NoSuchMethodException exception ) {
+            try {
+                final Method[] methods = PROTOCOL.getMethods();
+                final List<Method> methodCandidates = new ArrayList<Method>();
+                for ( final Method method : methods ) {
+                    if ( method.getName().equals( methodName ) && method.getParameterTypes().length == parameterTypes.length ) {
+                        methodCandidates.add( method );
+                    }
+                }
+                
+                for ( final Method method : methodCandidates ) {
+                    final Class<?>[] methodParamTypes = method.getParameterTypes();
+                    for ( int index = 0 ; index < methodParamTypes.length ; index++ ) {
+                        final Class<?> methodParamType = methodParamTypes[index];
+                        final Class<?> parameterType = parameterTypes[index];
+                        if ( parameterType == null && methodParamType.isPrimitive() ) {
+                            break;
+                        }
+                        else if ( methodParamType.isPrimitive() ) {
+                            if ( methodParamType == Integer.TYPE && parameterType == Integer.class ) {
+                                continue;
+                            }
+                            else if ( methodParamType == Long.TYPE && parameterType == Long.class ) {
+                                continue;
+                            }
+                            else if ( methodParamType == Short.TYPE && parameterType == Short.class ) {
+                                continue;
+                            }
+                            else if ( methodParamType == Float.TYPE && parameterType == Float.class ) {
+                                continue;
+                            }
+                            else if ( methodParamType == Double.TYPE && parameterType == Double.class ) {
+                                continue;
+                            }
+                            else if ( methodParamType == Boolean.TYPE && parameterType == Boolean.class ) {
+                                continue;
+                            }
+                            else {
+                                break;
+                            }
+                        }
+                        else if ( !parameterType.isAssignableFrom( methodParamType ) ) {
+                            break;
+                        }
+                    }
+                    return method;
+                }
+                
+                throw new RuntimeException( "No matching method found for <" + methodName + "" + parameterTypes + ">", exception );
+            }
+            catch ( Exception searchException ) {
+                throw new RuntimeException( "Exception evaluating the remote request with the request handler.", searchException );
+            }
         }
     }
 }
