@@ -142,7 +142,7 @@ abstract class AbstractEncoder {
         else if ( value.getClass().equals( String.class ) ) {
             final String stringValue = (String)value;
             final IdentityReference reference = StringEncoder.allowsReference( stringValue ) ? referenceStore.store( value ) : null;
-            return new StringEncoder( stringValue, reference );
+            return reference != null && reference.hasMultiple() ? new ReferenceEncoder( reference.getID() ) : new StringEncoder( stringValue, reference );
         }
         else {      // these are the ones that support references
             final IdentityReference reference = referenceStore.store( value );
