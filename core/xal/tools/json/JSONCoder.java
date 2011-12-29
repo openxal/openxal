@@ -155,19 +155,8 @@ abstract class AbstractEncoder {
             else if ( value.getClass().isArray() ) {
                 return new ArrayEncoder( (Object[])value, conversionAdaptorStore, reference, referenceStore );
             }
-            else {
-                final String valueType = value.getClass().getName();
-                final ConversionAdaptor adaptor = conversionAdaptorStore.getConversionAdaptor( valueType );
-                if ( adaptor != null ) {
-                    final HashMap<String,Object> valueRep = new HashMap<String,Object>();
-                    final Object representationValue = adaptor.toRepresentation( value );
-                    valueRep.put( ConversionAdaptorStore.EXTENDED_TYPE_KEY, valueType );
-                    valueRep.put( ConversionAdaptorStore.EXTENDED_VALUE_KEY, representationValue );
-                    return record( valueRep, conversionAdaptorStore, referenceStore );
-                }
-                else {
-                    throw new RuntimeException( "No coder for encoding objects of type: " + valueType );
-                }
+            else {  // if the type is not among the standard ones then look to extensions
+                return new ExtensionEncoder( value, conversionAdaptorStore, reference, referenceStore );
             }
         }
     }
@@ -411,6 +400,33 @@ class DictionaryEncoder extends SoftValueEncoder {
             ++index;
         }
         return encodeKeyValueStringPairs( keyValuePairs );
+    }
+}
+
+
+/** encoder for extensions which piggybacks on the dictionary encoder */
+class ExtensionEncoder extends DictionaryEncoder {
+    /** Constructor */
+    public ExtensionEncoder( final Object value, final ConversionAdaptorStore conversionAdaptorStore, final IdentityReference reference, final ReferenceStore referenceStore ) {
+        super( getValueRep( value, conversionAdaptorStore ), conversionAdaptorStore, reference, referenceStore );
+    }
+    
+    
+    /** get the value representation as a dictionary keyed for the extended type and value */
+    @SuppressWarnings( "unchecked" )
+    static private HashMap<String,Object> getValueRep( final Object value, final ConversionAdaptorStore conversionAdaptorStore ) {
+        final String valueType = value.getClass().getName();
+        final ConversionAdaptor adaptor = conversionAdaptorStore.getConversionAdaptor( valueType );
+        if ( adaptor != null ) {
+            final HashMap<String,Object> valueRep = new HashMap<String,Object>();
+            final Object representationValue = adaptor.toRepresentation( value );
+            valueRep.put( ConversionAdaptorStore.EXTENDED_TYPE_KEY, valueType );
+            valueRep.put( ConversionAdaptorStore.EXTENDED_VALUE_KEY, representationValue );
+            return valueRep;
+        }
+        else {
+            throw new RuntimeException( "No coder for encoding objects of type: " + valueType );
+        }
     }
 }
 
