@@ -37,7 +37,7 @@ public class ApplicationStatusService implements ApplicationStatus {
 	
 	
 	/** reveal the application by bringing all windows to the front */
-	public boolean showAllWIndows() {
+	public boolean showAllWindows() {
 		Application.getApp().showAllWindows();
 		return true;
 	}
