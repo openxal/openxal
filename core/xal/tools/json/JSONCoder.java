@@ -16,17 +16,11 @@ import java.util.regex.*;
 
 /** encode and decode objects with JSON */
 public class JSONCoder {
-    /** custom key identifying a custom type translated in terms of JSON representations */
-    static final String EXTENDED_TYPE_KEY = "__XALTYPE__";
-    
-    /** custom key identifying a custom value to translate in terms of JSON representations */
-    static final String EXTENDED_VALUE_KEY = "value";
-    
     /** default coder */
     static JSONCoder DEFAULT_CODER;
     
     /** adaptors between all custom types and representation JSON types */
-    final Map<String,ConversionAdaptor> TYPE_EXTENSION_ADAPTORS;
+    final MutableConversionAdaptorStore CONVERSION_ADAPTOR_STORE;
     
     
     // static initializer
@@ -43,172 +37,25 @@ public class JSONCoder {
     
     /** Constructor to be called for the default coder */
     private JSONCoder( final boolean isDefault ) {
-        TYPE_EXTENSION_ADAPTORS = new HashMap<String,ConversionAdaptor>();
-        
-        if ( isDefault ) {
-            registerStandardExtensions();
-        }
-        else {
-            TYPE_EXTENSION_ADAPTORS.putAll( DEFAULT_CODER.TYPE_EXTENSION_ADAPTORS );
-        }
+        CONVERSION_ADAPTOR_STORE = isDefault ? new MutableConversionAdaptorStore( true ) : new MutableConversionAdaptorStore( DEFAULT_CODER.CONVERSION_ADAPTOR_STORE );
     }
     
     
-    /** Get a list of types (including JSON standard types plus standard extensions) which are supported for coding and decoding */
-    static public List<String> getStandardTypes() {
+    /** Get a list of types (including JSON standard types plus default extensions) which are supported for coding and decoding */
+    static public List<String> getDefaultTypes() {
         return DEFAULT_CODER.getSupportedTypes();
     }
     
     
     /** Get a list of all types which are supported for coding and decoding */
     public List<String> getSupportedTypes() {
-        final List<String> types = new ArrayList<String>();
-        
-        types.add( Double.class.getName() );
-        types.add( Boolean.class.getName() );
-        types.add( String.class.getName() );
-        types.add( Map.class.getName() );
-        types.add( Object[].class.getName() );
-        
-        types.addAll( getExtendedTypes() );
-        
-        Collections.sort( types );
-        
-        return types;
+        return CONVERSION_ADAPTOR_STORE.getSupportedTypes();
     }
     
     
     /** Get a list of types which extend beyond the JSON standard types */
     public List<String> getExtendedTypes() {
-        final List<String> types = new ArrayList<String>();
-        
-        for ( final String type : TYPE_EXTENSION_ADAPTORS.keySet() ) {
-            types.add( type );
-        }
-        
-        Collections.sort( types );
-        
-        return types;
-    }
-    
-    
-    /** register the standard type extensions (only needs to be done for the default coder) */
-    private void registerStandardExtensions() {
-        registerType( Short.class, new ConversionAdaptor<Short,Double>() {
-            /** convert the custom type to a representation in terms of representation JSON constructs */
-            public Double toRepresentation( final Short custom ) {
-                return custom.doubleValue();
-            }
-            
-            
-            /** convert the JSON representation construct into the custom type */
-            public Short toNative( final Double representation ) {
-                return representation.shortValue();
-            }
-        });
-        
-        registerType( Integer.class, new ConversionAdaptor<Integer,Double>() {
-            /** convert the custom type to a representation in terms of representation JSON constructs */
-            public Double toRepresentation( final Integer custom ) {
-                return custom.doubleValue();
-            }
-            
-            
-            /** convert the JSON representation construct into the custom type */
-            public Integer toNative( final Double representation ) {
-                return representation.intValue();
-            }
-        });
-        
-        registerType( Long.class, new ConversionAdaptor<Long,Double>() {
-            /** convert the custom type to a representation in terms of representation JSON constructs */
-            public Double toRepresentation( final Long custom ) {
-                return custom.doubleValue();
-            }
-            
-            
-            /** convert the JSON representation construct into the custom type */
-            public Long toNative( final Double representation ) {
-                return representation.longValue();
-            }
-        });
-        
-        registerType( Float.class, new ConversionAdaptor<Float,Double>() {
-            /** convert the custom type to a representation in terms of representation JSON constructs */
-            public Double toRepresentation( final Float custom ) {
-                return custom.doubleValue();
-            }
-            
-            
-            /** convert the JSON representation construct into the custom type */
-            public Float toNative( final Double representation ) {
-                return representation.floatValue();
-            }
-        });
-        
-        registerType( Date.class, new ConversionAdaptor<Date,Double>() {
-            /** convert the custom type to a representation in terms of representation JSON constructs */
-            public Double toRepresentation( final Date timestamp ) {
-                return (double)timestamp.getTime();
-            }
-            
-            
-            /** convert the JSON representation construct into the custom type */
-            public Date toNative( final Double msecFromEpoch ) {
-                return new Date( msecFromEpoch.longValue() );
-            }
-        });
-        
-        registerType( ArrayList.class, new ConversionAdaptor<ArrayList,Object[]>() {
-            /** convert the custom type to a representation in terms of representation JSON constructs */
-            public Object[] toRepresentation( final ArrayList list ) {
-                return list.toArray();
-            }
-            
-            
-            /** convert the JSON representation construct into the custom type */
-            @SuppressWarnings( "unchecked" )    // list can represent any type
-            public ArrayList toNative( final Object[] array ) {
-                final ArrayList list = new ArrayList( array.length );
-                for ( final Object item : array ) {
-                    list.add( item );
-                }
-                return list;
-            }
-        });
-        
-        registerType( Vector.class, new ConversionAdaptor<Vector,Object[]>() {
-            /** convert the custom type to a representation in terms of representation JSON constructs */
-            public Object[] toRepresentation( final Vector list ) {
-                return list.toArray();
-            }
-            
-            
-            /** convert the JSON representation construct into the custom type */
-            @SuppressWarnings( "unchecked" )    // list can represent any type
-            public Vector toNative( final Object[] array ) {
-                final Vector list = new Vector( array.length );
-                for ( final Object item : array ) {
-                    list.add( item );
-                }
-                return list;
-            }
-        });
-        
-        registerType( Hashtable.class, new ConversionAdaptor<Hashtable,Map>() {
-            /** convert the custom type to a representation in terms of representation JSON constructs */
-            @SuppressWarnings( "unchecked" )    // map and table don't have compile time types
-            public Map toRepresentation( final Hashtable table ) {
-                return new HashMap( table );
-            }
-            
-            
-            /** convert the JSON representation construct into the custom type */
-            @SuppressWarnings( "unchecked" )    // list can represent any type
-            public Hashtable toNative( final Map map ) {
-                return new Hashtable( map );
-            }
-        });
+        return CONVERSION_ADAPTOR_STORE.getExtendedTypes();
     }
     
     
@@ -218,7 +65,13 @@ public class JSONCoder {
      * @param adaptor translator between the custom type and representation JSON constructs
      */
     public <CustomType,RepresentationType> void registerType( final Class<CustomType> type, final ConversionAdaptor<CustomType,RepresentationType> adaptor ) {
-        TYPE_EXTENSION_ADAPTORS.put( type.getName(), adaptor );
+        CONVERSION_ADAPTOR_STORE.registerType( type, adaptor );
+    }
+    
+    
+    /** Get the conversion adaptor for the given value */
+    protected ConversionAdaptor getConversionAdaptor( final String valueType ) {
+        return CONVERSION_ADAPTOR_STORE.getConversionAdaptor( valueType );
     }
     
     
@@ -227,7 +80,7 @@ public class JSONCoder {
 	 * @param archive JSON string representation of an object
 	 * @return an object with the data described in the archive
 	 */
-	public static Object decode( final String archive ) {
+	static public Object decode( final String archive ) {
         return DEFAULT_CODER.unarchive( archive );
 	}
     
@@ -238,7 +91,7 @@ public class JSONCoder {
 	 * @return an object with the data described in the archive
 	 */
     public Object unarchive( final String archive ) {
-        final AbstractDecoder decoder = AbstractDecoder.getInstance( archive, Collections.unmodifiableMap( TYPE_EXTENSION_ADAPTORS ) );
+        final AbstractDecoder decoder = AbstractDecoder.getInstance( archive, new ConversionAdaptorStore( CONVERSION_ADAPTOR_STORE ) );
 		return decoder != null ? decoder.decode() : null;
     }
 	
@@ -247,125 +100,364 @@ public class JSONCoder {
     static public String encode( final Object value ) {
         return DEFAULT_CODER.archive( value );
 	}
-    
-    
-	/** encode a string */
-    private String archiveString( final String value ) {
-		return value != null ? "\"" + value.replace( "\\", "\\\\" ).replace( "\"", "\\\"" ) + "\"" : "null";
-	}
-	
-	
-	/** encode a boolean */
-    private String archiveBoolean( final boolean value ) {
-		return value ? "true" : "false";
-	}
-	
-	
-	/** encode a number */
-    private String archiveDouble( final Double value ) {
-		return value != null ? value.toString() : "null";
-	}
-	
-	
-	/** encode an array */
-    private String archiveArray( final Object[] values ) {
-		if ( values != null ) {
-			final int count = values.length;
-			final StringBuffer buffer = new StringBuffer();
-			buffer.append( "[" );
-			for ( int index = 0 ; index < count ; index++ ) {
-				switch ( index ) {
-					case 0:
-						break;
-					default:
-						buffer.append( ", " );
-						break;
-				}
-				final Object value = values[index];
-				buffer.append( encode( value ) );
-			}
-			buffer.append( "]" );
-			return buffer.toString();
-		}
-		else {
-			return "null";
-		}
-	}
-	
-	
-	/** encode a hash table */
-    private <ValueType> String archiveMap( final HashMap<String,ValueType> map ) {
-		if ( map != null ) {
-			final StringBuffer buffer = new StringBuffer();
-			buffer.append( "{" );
-			final Set<Map.Entry<String,ValueType>> entries = map.entrySet();
-			int index = 0;
-			for ( final Map.Entry<String,ValueType> entry : entries ) {
-				switch ( index ) {
-					case 0:
-						break;
-					default:
-						buffer.append( ", " );
-						break;
-				}
-				final String key = entry.getKey();
-				final Object value = entry.getValue();
-				buffer.append( encode( key ) );
-				buffer.append( ": " );
-				buffer.append( encode( value ) );
-				++index;
-			}
-			buffer.append( "}" );
-			return buffer.toString();
-		}
-		else {
-			return "null";
-		}
-	}
 	
 	
 	/** encode an object */
-    @SuppressWarnings( "unchecked" )    // no way to guarantee at compile time that maps are keyed by string
     public String archive( final Object value ) {
-		if ( value == null ) {
-			return "null";
-		}
-		else if ( value.getClass().equals( String.class ) ) {
-			return archiveString( (String)value );
-		}
-		else if ( value.getClass().equals( Boolean.class ) ) {
-			return archiveBoolean( (Boolean)value );
-		}
-		else if ( value.getClass().equals( Double.class ) ) {
-			return archiveDouble( (Double)value );
-		}
-		else if ( value.getClass().equals( HashMap.class ) ) {  // no way to check at compile time that the key type is string
-			return archiveMap( (HashMap)value );
-		}
-		else if ( value.getClass().isArray() ) {
-			return archiveArray( (Object[])value );
-		}
-		else {
-            final String valueType = value.getClass().getName();
-            final ConversionAdaptor adaptor = TYPE_EXTENSION_ADAPTORS.get( valueType );
-            if ( adaptor != null ) {
-                final HashMap<String,Object> valueRep = new HashMap<String,Object>();
-                final Object representationValue = adaptor.toRepresentation( value );
-                valueRep.put( EXTENDED_TYPE_KEY, valueType );
-                valueRep.put( EXTENDED_VALUE_KEY, representationValue );
-                return archiveMap( valueRep );
-            }
-            else {
-                throw new RuntimeException( "No coder for encoding objects of type: " + valueType );
-            }
-		}
+        return AbstractEncoder.encode( value, new ConversionAdaptorStore( CONVERSION_ADAPTOR_STORE ) );
 	}
 }
 
 
 
+/** Base class of encoders */
+abstract class AbstractEncoder {
+    /** encode the value using the coder */
+    static public String encode( final Object value, final ConversionAdaptorStore conversionAdaptorStore ) {
+        return record( value, conversionAdaptorStore ).encode();
+    }
+    
+    /** encode the archived value to JSON */
+    abstract public String encode();
+    
+    
+    /** record the value for encoding later */
+    static public AbstractEncoder record( final Object value, final ConversionAdaptorStore conversionAdaptorStore ) {
+        return record( value, conversionAdaptorStore, new ReferenceStore() );
+    }
+    
+    
+    /** record a value for encoding later and store references in the supplied store */
+    @SuppressWarnings( "unchecked" )    // no way to guarantee at compile time conversion types
+    static protected AbstractEncoder record( final Object value, final ConversionAdaptorStore conversionAdaptorStore, final ReferenceStore referenceStore ) {
+		if ( value == null ) {
+			return NullEncoder.getInstance();
+		}
+        else if ( value.getClass().equals( Boolean.class ) ) {
+            return new BooleanEncoder( (Boolean)value );
+        }
+        else if ( value.getClass().equals( Double.class ) ) {
+            return new DoubleEncoder( (Double)value );
+        }
+        else if ( value.getClass().equals( String.class ) ) {
+            final String stringValue = (String)value;
+            final IdentityReference reference = StringEncoder.allowsReference( stringValue ) ? referenceStore.store( value ) : null;
+            return new StringEncoder( stringValue, reference );
+        }
+        else {      // these are the ones that support references
+            final IdentityReference reference = referenceStore.store( value );
+            if ( reference.hasMultiple() ) {
+                return new ReferenceEncoder( reference.getID() );
+            }
+            else if ( value.getClass().equals( HashMap.class ) ) {  // no way to check at compile time that the key type is string
+                return new DictionaryEncoder( (HashMap<String,Object>)value, conversionAdaptorStore, reference, referenceStore );
+            }
+            else if ( value.getClass().isArray() ) {
+                return new ArrayEncoder( (Object[])value, conversionAdaptorStore, reference, referenceStore );
+            }
+            else {
+                final String valueType = value.getClass().getName();
+                final ConversionAdaptor adaptor = conversionAdaptorStore.getConversionAdaptor( valueType );
+                if ( adaptor != null ) {
+                    final HashMap<String,Object> valueRep = new HashMap<String,Object>();
+                    final Object representationValue = adaptor.toRepresentation( value );
+                    valueRep.put( ConversionAdaptorStore.EXTENDED_TYPE_KEY, valueType );
+                    valueRep.put( ConversionAdaptorStore.EXTENDED_VALUE_KEY, representationValue );
+                    return record( valueRep, conversionAdaptorStore, referenceStore );
+                }
+                else {
+                    throw new RuntimeException( "No coder for encoding objects of type: " + valueType );
+                }
+            }
+        }
+    }
+}
+
+
+
+/** Base class of encoders for hard objects (not references) */
+abstract class HardEncoder<DataType> extends AbstractEncoder {
+    /** value to encode */
+    final protected DataType VALUE;
+    
+    
+    /** Constructor */
+    public HardEncoder( final DataType value ) {
+        VALUE = value;
+    }
+}
+
+
+
+/** Base class of encoders for objects that support references */
+abstract class SoftValueEncoder extends AbstractEncoder {
+    /** key identifies an object that is referenced */
+    static final public String OBJECT_ID_KEY = "__XALID";
+    
+    /** key for the referenced value */
+    static final public String VALUE_KEY = "value";
+
+    /** reference to this value */
+    final private IdentityReference REFERENCE;
+    
+    
+    /** Constructor */
+    public SoftValueEncoder( final IdentityReference reference ) {
+        REFERENCE = reference;
+    }
+    
+    
+    /** encode an object ID and value if there are multiple references to the value, otherwise just encode the value */
+    public String encode() {
+        final String valueEncoding = encodeValue();
+        if ( REFERENCE.hasMultiple() ) {
+            return DictionaryEncoder.encodeKeyValueStringPairs( new KeyValueStringPair( OBJECT_ID_KEY, DoubleEncoder.encode( (double)REFERENCE.getID() ) ), new KeyValueStringPair( VALUE_KEY, valueEncoding ) );
+        }
+        else {
+            return valueEncoding;
+        }
+    }
+    
+    
+    /** encode just the value */
+    abstract String encodeValue();
+}
+
+
+/** encoder for references */
+class ReferenceEncoder extends AbstractEncoder {
+    /** key to indicate a reference */
+    static final public String REFERENCE_KEY = "__XALREF";
+    
+    /** ID of referenced object */
+    final private long REFERENCE_ID;
+    
+    
+    /** Constructor */
+    public ReferenceEncoder( final long referenceID ) {
+        REFERENCE_ID = referenceID;
+    }
+    
+    
+    /** encode the reference to JSON */
+    public String encode() {
+        return DictionaryEncoder.encodeKeyValueStringPairs( new KeyValueStringPair( REFERENCE_KEY, DoubleEncoder.encode( (double)REFERENCE_ID ) ) );
+    }
+}
+
+
+
+/** encode a null to JSON */
+class NullEncoder extends AbstractEncoder {
+    /** encoder singleton */
+    static final private NullEncoder SHARED_ENCODER;
+    
+    
+    // static initializer
+    static {
+        SHARED_ENCODER = new NullEncoder();
+    }
+    
+    
+    /** get the shared instance */
+    static public NullEncoder getInstance() {
+        return SHARED_ENCODER;
+    }
+    
+    
+    /** Constructor */
+    private NullEncoder() {}
+    
+    
+    /** encode the archived value to JSON */
+    public String encode() {
+        return "null";
+    }
+}
+
+
+
+/** encode a string to JSON */
+class StringEncoder extends SoftValueEncoder {
+    /** value to encode */
+    final private String VALUE;
+    
+    
+    /** Constructor */
+    public StringEncoder( final String value, final IdentityReference reference ) {
+        super( reference );
+        VALUE = value;
+    }
+    
+    
+    /** determine whether the string allows referencing */
+    static public boolean allowsReference( final String value ) {
+        return value.length() > 20;     // don't bother using references unless the string is long enough to warrant the overhead
+    }
+    
+    
+    /** encode an object ID and value if there are multiple references to the value, otherwise just encode the value */
+    public String encode() {
+        return allowsReference( VALUE ) ? super.encode() : encodeValue();
+    }
+    
+    
+    /** encode the archived value to JSON */
+    public String encodeValue() {
+        return encode( VALUE );
+    }
+    
+    
+    /** encode a string */
+    static public String encode( final String value ) {
+        return "\"" + value.replace( "\\", "\\\\" ).replace( "\"", "\\\"" ) + "\"";
+    }
+}
+
+
+
+/** encode a boolean to JSON */
+class BooleanEncoder extends HardEncoder<Boolean> {
+    /** Constructor */
+    public BooleanEncoder( final Boolean value ) {
+        super( value );
+    }
+    
+    
+    /** encode the archived value to JSON */
+    public String encode() {
+		return VALUE.booleanValue() ? "true" : "false";
+    }
+}
+
+
+
+/** encode a double to JSON */
+class DoubleEncoder extends HardEncoder<Double> {
+    /** Constructor */
+    public DoubleEncoder( final Double value ) {
+        super( value );
+    }
+    
+    
+    /** encode the archived value to JSON */
+    public String encode() {
+		return encode( VALUE );
+    }
+    
+    
+    /** encode a double value */
+    static public String encode( final Double value ) {
+        return value.toString();
+    }
+}
+
+
+
+/** encode a hash map to JSON */
+class DictionaryEncoder extends SoftValueEncoder {
+    /** map of item encoders keyed by the corresponding orignal map keys */
+    final private Map<String,AbstractEncoder> ENCODER_MAP;
+    
+    
+    /** Constructor */
+    public DictionaryEncoder( final HashMap<String,Object> map, final ConversionAdaptorStore conversionAdaptorStore, final IdentityReference reference, final ReferenceStore referenceStore ) {
+        super( reference );
+        
+        ENCODER_MAP = new HashMap<String,AbstractEncoder>( map.size() );
+        final Set<Map.Entry<String,Object>> entries = map.entrySet();
+        for ( final Map.Entry<String,Object> entry : entries ) {
+            final AbstractEncoder itemEncoder = AbstractEncoder.record( entry.getValue(), conversionAdaptorStore, referenceStore );
+            ENCODER_MAP.put( entry.getKey(), itemEncoder );
+        }
+    }
+
+    
+    /** encode key value string pairs where the value is already encoded */
+    static public String encodeKeyValueStringPairs( final KeyValueStringPair ... keyValuePairs ) {
+        final StringBuffer buffer = new StringBuffer();
+        buffer.append( "{" );
+        
+        int index = 0;
+        for ( final KeyValueStringPair keyValuePair : keyValuePairs ) {
+            switch ( index ) {
+                case 0:
+                    break;
+                default:
+                    buffer.append( ", " );
+                    break;
+            }
+            buffer.append( StringEncoder.encode( keyValuePair.KEY ) );
+            buffer.append( ": " );
+            buffer.append( keyValuePair.VALUE );
+            ++index;
+        }
+        
+        buffer.append( "}" );
+        return buffer.toString();
+    }
+    
+    
+    /** encode the archived value to JSON */
+    public String encodeValue() {
+        final Set<Map.Entry<String,AbstractEncoder>> entries = ENCODER_MAP.entrySet();
+        final KeyValueStringPair[] keyValuePairs = new KeyValueStringPair[ entries.size() ];
+        int index = 0;
+        for ( final Map.Entry<String,AbstractEncoder> entry : entries ) {
+            final String key = entry.getKey();
+            final AbstractEncoder itemEncoder = entry.getValue();
+            final String value = itemEncoder.encode();
+            keyValuePairs[index] = new KeyValueStringPair( key, value );
+            ++index;
+        }
+        return encodeKeyValueStringPairs( keyValuePairs );
+    }
+}
+
+
+
+/** encode an array to JSON */
+class ArrayEncoder extends SoftValueEncoder {
+    /** array of encoders each of which corresponds to an item in the original array */
+    final private AbstractEncoder[] ITEM_ENCODERS;
+    
+    
+    /** Constructor */
+    public ArrayEncoder( final Object[] array, final ConversionAdaptorStore conversionAdaptorStore, final IdentityReference reference, final ReferenceStore referenceStore ) {
+        super( reference );
+        
+        ITEM_ENCODERS = new AbstractEncoder[ array.length ];
+        for ( int index = 0 ; index < array.length ; index++ ) {
+            ITEM_ENCODERS[index] = AbstractEncoder.record( array[index], conversionAdaptorStore, referenceStore );
+        }
+    }
+    
+    
+    /** encode the archived value to JSON */
+    public String encodeValue() {
+        final int count = ITEM_ENCODERS.length;
+        final StringBuffer buffer = new StringBuffer();
+        buffer.append( "[" );
+        for ( int index = 0 ; index < count ; index++ ) {
+            switch ( index ) {
+                case 0:
+                    break;
+                default:
+                    buffer.append( ", " );
+                    break;
+            }
+            final AbstractEncoder itemEncoder = ITEM_ENCODERS[index];
+            buffer.append( itemEncoder.encode() );
+        }
+        buffer.append( "]" );
+        return buffer.toString();
+    }
+}
+
+
+
 /** Base class of decoders */
-abstract class AbstractDecoder<T> {
+abstract class AbstractDecoder<DataType> {
 	/** archive to parse */
 	final protected String ARCHIVE;
 	
@@ -380,7 +472,7 @@ abstract class AbstractDecoder<T> {
 	
 	
 	/** decode the source to extract the next object */	
-	abstract protected T decode();
+	abstract protected DataType decode();
 	
 	
 	/** get the unparsed remainder of the source string */
@@ -400,7 +492,13 @@ abstract class AbstractDecoder<T> {
 	
 	
 	/** Get a decoder for the archive */
-	protected static AbstractDecoder getInstance( final String archive, final Map<String,ConversionAdaptor> typeExtensionAdaptors ) {
+	public static AbstractDecoder getInstance( final String archive, final ConversionAdaptorStore conversionAdaptorStore ) {
+        return AbstractDecoder.getInstance( archive, conversionAdaptorStore, new KeyedReferenceStore() );
+	}	
+	
+	
+	/** Get a decoder for the archive */
+	protected static AbstractDecoder getInstance( final String archive, final ConversionAdaptorStore conversionAdaptorStore, final KeyedReferenceStore referenceStore ) {
 		final String source = archive.trim();
 		if ( source.length() > 0 ) {
 			final char firstChar = source.charAt( 0 );
@@ -415,9 +513,9 @@ abstract class AbstractDecoder<T> {
 				case '\"':
 					return new StringDecoder( source );
 				case '[':
-					return new ArrayDecoder( source, typeExtensionAdaptors );
+					return new ArrayDecoder( source, conversionAdaptorStore, referenceStore );
 				case '{':
-					return new DictionaryDecoder( source, typeExtensionAdaptors );
+					return new DictionaryDecoder( source, conversionAdaptorStore, referenceStore );
 				default:
 					return null;
 			}
@@ -576,13 +674,17 @@ class StringDecoder extends AbstractDecoder<String> {
 /** decode an array from a source string */
 class ArrayDecoder extends AbstractDecoder<Object[]> {
     /** custom type adaptors */
-    final private Map<String,ConversionAdaptor> TYPE_EXTENSION_ADAPTORS;
+    final private ConversionAdaptorStore CONVERSION_ADAPTOR_STORE;
+    
+    /** reference store */
+    final private KeyedReferenceStore REFERENCE_STORE;
     
     
 	/** Constructor */
-	protected ArrayDecoder( final String archive, final Map<String,ConversionAdaptor> typeExtensionAdaptors ) {
+	protected ArrayDecoder( final String archive, final ConversionAdaptorStore conversionAdaptorStore, final KeyedReferenceStore referenceStore ) {
 		super( archive );
-        TYPE_EXTENSION_ADAPTORS = typeExtensionAdaptors;
+        CONVERSION_ADAPTOR_STORE = conversionAdaptorStore;
+        REFERENCE_STORE = referenceStore;
 	}
 	
 	
@@ -604,7 +706,7 @@ class ArrayDecoder extends AbstractDecoder<Object[]> {
 					return;
 				}
 				else {
-					final AbstractDecoder itemDecoder = AbstractDecoder.getInstance( arrayString, TYPE_EXTENSION_ADAPTORS );
+					final AbstractDecoder itemDecoder = AbstractDecoder.getInstance( arrayString, CONVERSION_ADAPTOR_STORE, REFERENCE_STORE );
 					items.add( itemDecoder.decode() );
 					final String itemRemainder = itemDecoder.getRemainder().trim();
 					final char closure = itemRemainder.charAt( 0 );
@@ -636,13 +738,17 @@ class ArrayDecoder extends AbstractDecoder<Object[]> {
 /** decode a dictionary from a source string */
 class DictionaryDecoder extends AbstractDecoder<Object> {
     /** custom type adaptors */
-    final private Map<String,ConversionAdaptor> TYPE_EXTENSION_ADAPTORS;
+    final private ConversionAdaptorStore CONVERSION_ADAPTOR_STORE;
     
+    /** reference store */
+    final private KeyedReferenceStore REFERENCE_STORE;
+
     
 	/** Constructor */
-	protected DictionaryDecoder( final String archive, final Map<String,ConversionAdaptor> typeExtensionAdaptors ) {
+	protected DictionaryDecoder( final String archive, final ConversionAdaptorStore conversionAdaptorStore, final KeyedReferenceStore referenceStore ) {
 		super( archive );
-        TYPE_EXTENSION_ADAPTORS = typeExtensionAdaptors;
+        CONVERSION_ADAPTOR_STORE = conversionAdaptorStore;
+        REFERENCE_STORE = referenceStore;
 	}
 	
 	
@@ -653,12 +759,25 @@ class DictionaryDecoder extends AbstractDecoder<Object> {
 		final Map<String,Object> dictionary = new HashMap<String,Object>();
 		appendItems( dictionary, dictionaryString );
         
-        if ( dictionary.containsKey( JSONCoder.EXTENDED_TYPE_KEY ) && dictionary.containsKey( JSONCoder.EXTENDED_VALUE_KEY ) ) {
-            final String extendedType = (String)dictionary.get( JSONCoder.EXTENDED_TYPE_KEY );
-            final Object representationValue = dictionary.get( JSONCoder.EXTENDED_VALUE_KEY );
-            final ConversionAdaptor adaptor = TYPE_EXTENSION_ADAPTORS.get( extendedType );
+        if ( dictionary.containsKey( ConversionAdaptorStore.EXTENDED_TYPE_KEY ) && dictionary.containsKey( ConversionAdaptorStore.EXTENDED_VALUE_KEY ) ) {
+            // decode object of extended type
+            final String extendedType = (String)dictionary.get( ConversionAdaptorStore.EXTENDED_TYPE_KEY );
+            final Object representationValue = dictionary.get( ConversionAdaptorStore.EXTENDED_VALUE_KEY );
+            final ConversionAdaptor adaptor = CONVERSION_ADAPTOR_STORE.getConversionAdaptor( extendedType );
             if ( adaptor == null )  throw new RuntimeException( "Missing JSON adaptor for type: " + extendedType );
             return adaptor.toNative( representationValue );
+        }
+        else if ( dictionary.containsKey( SoftValueEncoder.OBJECT_ID_KEY ) && dictionary.containsKey( SoftValueEncoder.VALUE_KEY ) ) {
+            // decode a referenced object definition and store it
+            final Double itemID = (Double)dictionary.get( SoftValueEncoder.OBJECT_ID_KEY );
+            final Object item = dictionary.get( SoftValueEncoder.VALUE_KEY );
+            REFERENCE_STORE.store( itemID, item );
+            return item;
+        }
+        else if ( dictionary.containsKey( ReferenceEncoder.REFERENCE_KEY ) ) {
+            // decode a reference to an object in the store
+            final Double itemID = (Double)dictionary.get( ReferenceEncoder.REFERENCE_KEY );
+            return REFERENCE_STORE.get( itemID );
         }
         else {
             return dictionary;
@@ -679,7 +798,7 @@ class DictionaryDecoder extends AbstractDecoder<Object> {
 					final String key = keyDecoder.decode();
 					final String keyRemainder = keyDecoder.getRemainder();
 					final String valueBuffer = keyRemainder.trim().substring( 1 );	// trim spaces and strip the leading colon
-					final AbstractDecoder valueDecoder = AbstractDecoder.getInstance( valueBuffer, TYPE_EXTENSION_ADAPTORS );
+					final AbstractDecoder valueDecoder = AbstractDecoder.getInstance( valueBuffer, CONVERSION_ADAPTOR_STORE, REFERENCE_STORE );
 					final Object value = valueDecoder.decode();
 					dictionary.put( key, value );
 					final String itemRemainder = valueDecoder.getRemainder().trim();
@@ -705,6 +824,365 @@ class DictionaryDecoder extends AbstractDecoder<Object> {
 			_remainder = null;
 		}
 	}
+}
+
+
+
+/** Stores referenced items keyed by ID */
+class KeyedReferenceStore {
+    /** references keyed by ID */
+    final private Map<Double,Object> REFERENCES;
+    
+    /** Constructor */
+    public KeyedReferenceStore() {
+        REFERENCES = new HashMap<Double,Object>();
+    }
+    
+    
+    /** store the value associated with the key */
+    public void store( final double key, final Object value ) {
+        REFERENCES.put( key, value );
+    }
+    
+    
+    /** get the item associated with the key */
+    public Object get( final double key ) {
+        return REFERENCES.get( key );
+    }
+}
+
+
+
+/** pair of strings representing the key and value */
+class KeyValueStringPair {
+    /** key */
+    final public String KEY;
+    
+    /** value */
+    final public String VALUE;
+    
+    
+    /** Constructor */
+    public KeyValueStringPair( final String key, final String value ) {
+        KEY = key;
+        VALUE = value;
+    }
+}
+
+
+
+/** storage of possible references */
+class ReferenceStore {
+    /** set of objects with a common equality */
+    final private Map<Object,EqualityReference<Object>> EQUALITY_REFERENCES;
+    
+    /** counter of unique objects */
+    private long _objectCounter;
+    
+    
+    /** Constructor */
+    public ReferenceStore() {
+        EQUALITY_REFERENCES = new HashMap<Object,EqualityReference<Object>>();
+        _objectCounter = 0;
+    }
+    
+    
+    /** store the item */
+    @SuppressWarnings( "unchecked" )    // no way to test type at compile time
+    public <ItemType> IdentityReference<ItemType> store( final ItemType item ) {
+        if ( !EQUALITY_REFERENCES.containsKey( item ) ) {
+            EQUALITY_REFERENCES.put( item, new EqualityReference<Object>() );
+        }
+        final EqualityReference<ItemType> equalityReference = (EqualityReference<ItemType>)EQUALITY_REFERENCES.get( item );
+        return equalityReference.add( item, ++_objectCounter );
+    }
+}
+
+
+
+/** reference to a collection of objects which are equal among themselves */
+class EqualityReference<ItemType> {
+    /** list of identity references */
+    final private List<IdentityReference<ItemType>> IDENTITY_REFERENCES;
+    
+    
+    /** Constructor */
+    public EqualityReference() {
+        IDENTITY_REFERENCES = new ArrayList<IdentityReference<ItemType>>();
+    }
+    
+    
+    /** add the object to the set of equals */
+    public IdentityReference<ItemType> add( final ItemType item, final long uniqueID ) {
+        for ( final IdentityReference<ItemType> reference : IDENTITY_REFERENCES ) {
+            if ( reference.getItem() == item ) {
+                reference.setHasMultiple( true );
+                return reference;
+            }
+        }
+        
+        final IdentityReference<ItemType> reference = new IdentityReference<ItemType>( item, uniqueID );
+        IDENTITY_REFERENCES.add( reference );
+        return reference;
+    }
+}
+
+
+
+/** reference to an object along with the count */
+class IdentityReference<ItemType> {
+    /** referenced item */
+    final private ItemType ITEM;
+    
+    /** unique ID for this object */
+    final private long ID;
+    
+    /** indicates multiple references to the item */
+    private boolean _hasMultiple;
+    
+    
+    /** Constructor */
+    public IdentityReference( final ItemType item, final long uniqueID ) {
+        ITEM = item;
+        ID = uniqueID;
+        _hasMultiple = false;
+    }
+    
+    
+    /** get the item */
+    public ItemType getItem() {
+        return ITEM;
+    }
+    
+    
+    /** get the unique ID for the item */
+    public long getID() {
+        return ID;
+    }
+    
+    
+    /** indicates whether more than one reference exists to the referenced item */
+    public boolean hasMultiple() {
+        return _hasMultiple;
+    }
+    
+    
+    /** mark whether multiple (more than one) references are made to the item */
+    public void setHasMultiple( final boolean hasMultiple ) {
+        _hasMultiple = hasMultiple;
+    }
+}
+
+
+
+/** conversion adaptors container whose contents cannot be changed */
+class ConversionAdaptorStore {
+    /** custom key identifying a custom type translated in terms of JSON representations */
+    static final public String EXTENDED_TYPE_KEY = "__XALTYPE";
+    
+    /** custom key identifying a custom value to translate in terms of JSON representations */
+    static final public String EXTENDED_VALUE_KEY = "value";
+    
+    /** adaptors between all custom types and representation JSON types */
+    final protected Map<String,ConversionAdaptor> TYPE_EXTENSION_ADAPTORS;
+    
+    
+    /** Constructor */
+    protected ConversionAdaptorStore() {
+        TYPE_EXTENSION_ADAPTORS = new HashMap<String,ConversionAdaptor>();
+    }
+    
+    
+    /** Unmodifiable Copy Constructor */
+    public ConversionAdaptorStore( final ConversionAdaptorStore sourceAdaptors ) {
+        TYPE_EXTENSION_ADAPTORS = Collections.unmodifiableMap( sourceAdaptors.TYPE_EXTENSION_ADAPTORS );
+    }
+    
+    
+    /** Get a list of all types which are supported for coding and decoding */
+    public List<String> getSupportedTypes() {
+        final List<String> types = new ArrayList<String>();
+        
+        types.add( Double.class.getName() );
+        types.add( Boolean.class.getName() );
+        types.add( String.class.getName() );
+        types.add( Map.class.getName() );
+        types.add( Object[].class.getName() );
+        
+        types.addAll( getExtendedTypes() );
+        
+        Collections.sort( types );
+        
+        return types;
+    }
+    
+    
+    /** Get a list of types which extend beyond the JSON standard types */
+    public List<String> getExtendedTypes() {
+        final List<String> types = new ArrayList<String>();
+        
+        for ( final String type : TYPE_EXTENSION_ADAPTORS.keySet() ) {
+            types.add( type );
+        }
+        
+        Collections.sort( types );
+        
+        return types;
+    }
+    
+    
+    /** Get the conversion adaptor for the given value */
+    public ConversionAdaptor getConversionAdaptor( final String valueType ) {
+        return TYPE_EXTENSION_ADAPTORS.get( valueType );
+    }
+}
+
+
+
+/** conversion adaptors container whose contents can be changed */
+class MutableConversionAdaptorStore extends ConversionAdaptorStore {    
+    /** Constructor */
+    public MutableConversionAdaptorStore( final boolean shouldRegisterStandardExtensions ) {
+        super();
+        if( shouldRegisterStandardExtensions )  registerStandardExtensions();
+    }
+    
+    
+    /** Copy Constructor */
+    public MutableConversionAdaptorStore( final MutableConversionAdaptorStore sourceAdaptors ) {
+        this( false );
+        TYPE_EXTENSION_ADAPTORS.putAll( sourceAdaptors.TYPE_EXTENSION_ADAPTORS );
+    }
+    
+    
+    /** 
+     * Register the custom type and its associated adaptor 
+     * @param type type to identify and process for encoding and decoding
+     * @param adaptor translator between the custom type and representation JSON constructs
+     */
+    public <CustomType,RepresentationType> void registerType( final Class<CustomType> type, final ConversionAdaptor<CustomType,RepresentationType> adaptor ) {
+        TYPE_EXTENSION_ADAPTORS.put( type.getName(), adaptor );
+    }
+    
+    
+    /** register the standard type extensions (only needs to be done for the default coder) */
+    private void registerStandardExtensions() {
+        registerType( Short.class, new ConversionAdaptor<Short,Double>() {
+            /** convert the custom type to a representation in terms of representation JSON constructs */
+            public Double toRepresentation( final Short custom ) {
+                return custom.doubleValue();
+            }
+            
+            
+            /** convert the JSON representation construct into the custom type */
+            public Short toNative( final Double representation ) {
+                return representation.shortValue();
+            }
+        });
+        
+        registerType( Integer.class, new ConversionAdaptor<Integer,Double>() {
+            /** convert the custom type to a representation in terms of representation JSON constructs */
+            public Double toRepresentation( final Integer custom ) {
+                return custom.doubleValue();
+            }
+            
+            
+            /** convert the JSON representation construct into the custom type */
+            public Integer toNative( final Double representation ) {
+                return representation.intValue();
+            }
+        });
+        
+        registerType( Long.class, new ConversionAdaptor<Long,Double>() {
+            /** convert the custom type to a representation in terms of representation JSON constructs */
+            public Double toRepresentation( final Long custom ) {
+                return custom.doubleValue();
+            }
+            
+            
+            /** convert the JSON representation construct into the custom type */
+            public Long toNative( final Double representation ) {
+                return representation.longValue();
+            }
+        });
+        
+        registerType( Float.class, new ConversionAdaptor<Float,Double>() {
+            /** convert the custom type to a representation in terms of representation JSON constructs */
+            public Double toRepresentation( final Float custom ) {
+                return custom.doubleValue();
+            }
+            
+            
+            /** convert the JSON representation construct into the custom type */
+            public Float toNative( final Double representation ) {
+                return representation.floatValue();
+            }
+        });
+        
+        registerType( Date.class, new ConversionAdaptor<Date,Double>() {
+            /** convert the custom type to a representation in terms of representation JSON constructs */
+            public Double toRepresentation( final Date timestamp ) {
+                return (double)timestamp.getTime();
+            }
+            
+            
+            /** convert the JSON representation construct into the custom type */
+            public Date toNative( final Double msecFromEpoch ) {
+                return new Date( msecFromEpoch.longValue() );
+            }
+        });
+        
+        registerType( ArrayList.class, new ConversionAdaptor<ArrayList,Object[]>() {
+            /** convert the custom type to a representation in terms of representation JSON constructs */
+            public Object[] toRepresentation( final ArrayList list ) {
+                return list.toArray();
+            }
+            
+            
+            /** convert the JSON representation construct into the custom type */
+            @SuppressWarnings( "unchecked" )    // list can represent any type
+            public ArrayList toNative( final Object[] array ) {
+                final ArrayList list = new ArrayList( array.length );
+                for ( final Object item : array ) {
+                    list.add( item );
+                }
+                return list;
+            }
+        });
+        
+        registerType( Vector.class, new ConversionAdaptor<Vector,Object[]>() {
+            /** convert the custom type to a representation in terms of representation JSON constructs */
+            public Object[] toRepresentation( final Vector list ) {
+                return list.toArray();
+            }
+            
+            
+            /** convert the JSON representation construct into the custom type */
+            @SuppressWarnings( "unchecked" )    // list can represent any type
+            public Vector toNative( final Object[] array ) {
+                final Vector list = new Vector( array.length );
+                for ( final Object item : array ) {
+                    list.add( item );
+                }
+                return list;
+            }
+        });
+        
+        registerType( Hashtable.class, new ConversionAdaptor<Hashtable,Map>() {
+            /** convert the custom type to a representation in terms of representation JSON constructs */
+            @SuppressWarnings( "unchecked" )    // map and table don't have compile time types
+            public Map toRepresentation( final Hashtable table ) {
+                return new HashMap( table );
+            }
+            
+            
+            /** convert the JSON representation construct into the custom type */
+            @SuppressWarnings( "unchecked" )    // list can represent any type
+            public Hashtable toNative( final Map map ) {
+                return new Hashtable( map );
+            }
+        });
+    }
 }
 
 
