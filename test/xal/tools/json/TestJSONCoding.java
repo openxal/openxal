@@ -107,7 +107,8 @@ public class TestJSONCoding {
     
     @Test
     public void testNumericEncodingDecoding() {
-        checkEncodingDecoding( (short)74 );
+        checkEncodingDecoding( (byte)89 );
+        checkEncodingDecoding( (short)7456 );
         checkEncodingDecoding( 509674 );
         checkEncodingDecoding( 325822043801L );
         checkEncodingDecoding( (float)56.4 );
@@ -144,6 +145,12 @@ public class TestJSONCoding {
     @Test
     public void testDateEncodingDecoding() {
         checkEncodingDecoding( new Date() );
+    }
+    
+    
+    @Test
+    public void testCharacterEncodingDecoding() {
+        checkEncodingDecoding( 'a' );
     }
     
     
