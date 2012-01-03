@@ -139,6 +139,9 @@ abstract class AbstractEncoder {
         else if ( value.getClass().equals( Double.class ) ) {
             return new DoubleEncoder( (Double)value );
         }
+        else if ( value.getClass().equals( Long.class ) ) {
+            return new LongEncoder( (Long)value );
+        }
         else if ( value.getClass().equals( String.class ) ) {
             final String stringValue = (String)value;
             final IdentityReference reference = StringEncoder.allowsReference( stringValue ) ? referenceStore.store( value ) : null;
@@ -200,7 +203,7 @@ abstract class SoftValueEncoder extends AbstractEncoder {
     public String encode() {
         final String valueEncoding = encodeValue();
         if ( REFERENCE.hasMultiple() ) {
-            return DictionaryEncoder.encodeKeyValueStringPairs( new KeyValueStringPair( OBJECT_ID_KEY, DoubleEncoder.encode( (double)REFERENCE.getID() ) ), new KeyValueStringPair( VALUE_KEY, valueEncoding ) );
+            return DictionaryEncoder.encodeKeyValueStringPairs( new KeyValueStringPair( OBJECT_ID_KEY, LongEncoder.encode( REFERENCE.getID() ) ), new KeyValueStringPair( VALUE_KEY, valueEncoding ) );
         }
         else {
             return valueEncoding;
@@ -230,7 +233,7 @@ class ReferenceEncoder extends AbstractEncoder {
     
     /** encode the reference to JSON */
     public String encode() {
-        return DictionaryEncoder.encodeKeyValueStringPairs( new KeyValueStringPair( REFERENCE_KEY, DoubleEncoder.encode( (double)REFERENCE_ID ) ) );
+        return DictionaryEncoder.encodeKeyValueStringPairs( new KeyValueStringPair( REFERENCE_KEY, LongEncoder.encode( REFERENCE_ID ) ) );
     }
 }
 
@@ -337,6 +340,28 @@ class DoubleEncoder extends HardEncoder<Double> {
     
     /** encode a double value */
     static public String encode( final Double value ) {
+        return value.toString();
+    }
+}
+
+
+
+/** encode a long integer to JSON */
+class LongEncoder extends HardEncoder<Long> {
+    /** Constructor */
+    public LongEncoder( final Long value ) {
+        super( value );
+    }
+    
+    
+    /** encode the archived value to JSON */
+    public String encode() {
+		return encode( VALUE );
+    }
+    
+    
+    /** encode a long value */
+    static public String encode( final Long value ) {
         return value.toString();
     }
 }
@@ -546,13 +571,13 @@ abstract class AbstractDecoder<DataType> {
 
 /** decode a number from a source string */
 class NumberDecoder extends AbstractDecoder<Number> {
-	/** pattern for matching doubles */
-	static final Pattern DOUBLE_PATTERN;
+	/** pattern for matching a number */
+	static final Pattern NUMBER_PATTERN;
 	
 	
 	// static initializer
 	static {
-		DOUBLE_PATTERN = Pattern.compile( "[+-]?((\\d+\\.?\\d*)|(\\.?\\d+))([eE][+-]?\\d+)?" );
+		NUMBER_PATTERN = Pattern.compile( "[+-]?((\\d+\\.?\\d*)|(\\.?\\d+))([eE][+-]?\\d+)?" );
 	}
 	
 	
@@ -564,8 +589,19 @@ class NumberDecoder extends AbstractDecoder<Number> {
 	
 	/** decode the source to extract the next object */	
 	protected Number decode() {
-		final String match = processMatch( DOUBLE_PATTERN );
-		return match != null ? Double.valueOf( match ) : null;
+		final String match = processMatch( NUMBER_PATTERN );
+        // doubles always have a decimal point even if the fraction is zero, so the absence of a period indicates a long integer
+        if ( match != null ) {
+            if ( match.contains( "." ) ) {
+                return Double.valueOf( match );
+            }
+            else {
+                return Long.valueOf( match );
+            }
+        }
+        else {
+            return null;
+        }
 	}
 }
 
@@ -785,14 +821,14 @@ class DictionaryDecoder extends AbstractDecoder<Object> {
         }
         else if ( dictionary.containsKey( SoftValueEncoder.OBJECT_ID_KEY ) && dictionary.containsKey( SoftValueEncoder.VALUE_KEY ) ) {
             // decode a referenced object definition and store it
-            final Double itemID = (Double)dictionary.get( SoftValueEncoder.OBJECT_ID_KEY );
+            final Long itemID = (Long)dictionary.get( SoftValueEncoder.OBJECT_ID_KEY );
             final Object item = dictionary.get( SoftValueEncoder.VALUE_KEY );
             REFERENCE_STORE.store( itemID, item );
             return item;
         }
         else if ( dictionary.containsKey( ReferenceEncoder.REFERENCE_KEY ) ) {
             // decode a reference to an object in the store
-            final Double itemID = (Double)dictionary.get( ReferenceEncoder.REFERENCE_KEY );
+            final Long itemID = (Long)dictionary.get( ReferenceEncoder.REFERENCE_KEY );
             return REFERENCE_STORE.get( itemID );
         }
         else {
@@ -1019,11 +1055,12 @@ class ConversionAdaptorStore {
     public List<String> getSupportedTypes() {
         final List<String> types = new ArrayList<String>();
         
-        types.add( Double.class.getName() );
         types.add( Boolean.class.getName() );
-        types.add( String.class.getName() );
+        types.add( Double.class.getName() );
+        types.add( Long.class.getName() );
         types.add( Map.class.getName() );
         types.add( Object[].class.getName() );
+        types.add( String.class.getName() );
         
         types.addAll( getExtendedTypes() );
         
@@ -1083,45 +1120,32 @@ class MutableConversionAdaptorStore extends ConversionAdaptorStore {
     
     /** register the standard type extensions (only needs to be done for the default coder) */
     private void registerStandardExtensions() {
-        registerType( Short.class, new ConversionAdaptor<Short,Double>() {
+        registerType( Short.class, new ConversionAdaptor<Short,Long>() {
             /** convert the custom type to a representation in terms of representation JSON constructs */
-            public Double toRepresentation( final Short custom ) {
-                return custom.doubleValue();
+            public Long toRepresentation( final Short custom ) {
+                return custom.longValue();
             }
             
             
             /** convert the JSON representation construct into the custom type */
-            public Short toNative( final Double representation ) {
+            public Short toNative( final Long representation ) {
                 return representation.shortValue();
             }
         });
         
-        registerType( Integer.class, new ConversionAdaptor<Integer,Double>() {
+        registerType( Integer.class, new ConversionAdaptor<Integer,Long>() {
             /** convert the custom type to a representation in terms of representation JSON constructs */
-            public Double toRepresentation( final Integer custom ) {
-                return custom.doubleValue();
+            public Long toRepresentation( final Integer custom ) {
+                return custom.longValue();
             }
             
             
             /** convert the JSON representation construct into the custom type */
-            public Integer toNative( final Double representation ) {
+            public Integer toNative( final Long representation ) {
                 return representation.intValue();
             }
         });
-        
-        registerType( Long.class, new ConversionAdaptor<Long,Double>() {
-            /** convert the custom type to a representation in terms of representation JSON constructs */
-            public Double toRepresentation( final Long custom ) {
-                return custom.doubleValue();
-            }
-            
-            
-            /** convert the JSON representation construct into the custom type */
-            public Long toNative( final Double representation ) {
-                return representation.longValue();
-            }
-        });
-        
+                
         registerType( Float.class, new ConversionAdaptor<Float,Double>() {
             /** convert the custom type to a representation in terms of representation JSON constructs */
             public Double toRepresentation( final Float custom ) {
@@ -1135,16 +1159,16 @@ class MutableConversionAdaptorStore extends ConversionAdaptorStore {
             }
         });
         
-        registerType( Date.class, new ConversionAdaptor<Date,Double>() {
+        registerType( Date.class, new ConversionAdaptor<Date,Long>() {
             /** convert the custom type to a representation in terms of representation JSON constructs */
-            public Double toRepresentation( final Date timestamp ) {
-                return (double)timestamp.getTime();
+            public Long toRepresentation( final Date timestamp ) {
+                return timestamp.getTime();
             }
             
             
             /** convert the JSON representation construct into the custom type */
-            public Date toNative( final Double msecFromEpoch ) {
-                return new Date( msecFromEpoch.longValue() );
+            public Date toNative( final Long msecFromEpoch ) {
+                return new Date( msecFromEpoch );
             }
         });
         

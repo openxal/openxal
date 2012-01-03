@@ -32,6 +32,16 @@ public class TestJSONCoding {
     
     
     @Test
+    public void testLongEncoding() {
+        checkEncodingEquality( 0L );
+        checkEncodingEquality( -100L );
+        checkEncodingEquality( 100L );
+        checkEncodingEquality( 127444986353848L );
+        checkEncodingEquality( -142015908198098L );
+    }
+    
+    
+    @Test
     public void testBooleanEncoding() {
         checkEncodingEquality( true );
         checkEncodingEquality( false );
@@ -67,6 +77,17 @@ public class TestJSONCoding {
         checkValueEquality( -17.2976 );
         checkValueEquality( -32.698E53 );
         checkValueEquality( 7.5E-102 );
+    }
+    
+    
+    @Test
+    public void testLongDecoding() {
+        checkValueEquality( 5L );
+        checkValueEquality( 0L );
+        checkValueEquality( -100L );
+        checkValueEquality( -17L );
+        checkValueEquality( 3268249075299837591L );
+        checkValueEquality( -751510751908751578L );
     }
     
     
