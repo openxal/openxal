@@ -149,6 +149,14 @@ public class TestJSONCoding {
     
     
     @Test
+    // arrays of a common, extended component type are efficiently encoded into an array of representations and a single type key
+    public void testArrayCommonExtensionEncodingDecoding() {
+        checkArrayEncodingDecoding( new Date[] { new Date(), new Date( new Date().getTime() - 1000 ), new Date( new Date().getTime() + 1000 ) } );
+        checkArrayEncodingDecoding( new Byte[] { 105, 74, 43, 45 });
+    }
+    
+    
+    @Test
     public void testCharacterEncodingDecoding() {
         checkEncodingDecoding( 'a' );
     }
