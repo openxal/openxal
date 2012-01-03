@@ -1137,6 +1137,19 @@ class MutableConversionAdaptorStore extends ConversionAdaptorStore {
     
     /** register the standard type extensions (only needs to be done for the default coder) */
     private void registerStandardExtensions() {
+        registerType( Character.class, new ConversionAdaptor<Character,String>() {
+            /** convert the custom type to a representation in terms of representation JSON constructs */
+            public String toRepresentation( final Character custom ) {
+                return custom.toString();
+            }
+            
+            
+            /** convert the JSON representation construct into the custom type */
+            public Character toNative( final String representation ) {
+                return representation.charAt( 0 );
+            }
+        });
+        
         registerType( Short.class, new ConversionAdaptor<Short,Long>() {
             /** convert the custom type to a representation in terms of representation JSON constructs */
             public Long toRepresentation( final Short custom ) {
@@ -1147,6 +1160,19 @@ class MutableConversionAdaptorStore extends ConversionAdaptorStore {
             /** convert the JSON representation construct into the custom type */
             public Short toNative( final Long representation ) {
                 return representation.shortValue();
+            }
+        });
+        
+        registerType( Byte.class, new ConversionAdaptor<Byte,Long>() {
+            /** convert the custom type to a representation in terms of representation JSON constructs */
+            public Long toRepresentation( final Byte custom ) {
+                return custom.longValue();
+            }
+            
+            
+            /** convert the JSON representation construct into the custom type */
+            public Byte toNative( final Long representation ) {
+                return representation.byteValue();
             }
         });
         
