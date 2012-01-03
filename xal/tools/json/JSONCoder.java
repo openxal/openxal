@@ -48,8 +48,8 @@ public class JSONCoder {
     
     
     /** Get a list of the standard types encoded directly into JSON */
-    public List<String> getStandardTypes() {
-        return CONVERSION_ADAPTOR_STORE.getStandardTypes();
+    static public List<String> getStandardTypes() {
+        return DEFAULT_CODER.CONVERSION_ADAPTOR_STORE.getStandardTypes();
     }
     
     
