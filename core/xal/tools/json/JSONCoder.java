@@ -136,19 +136,21 @@ abstract class AbstractEncoder {
     /** record a value for encoding later and store references in the supplied store */
     @SuppressWarnings( "unchecked" )    // no way to guarantee at compile time conversion types
     static protected AbstractEncoder record( final Object value, final ConversionAdaptorStore conversionAdaptorStore, final ReferenceStore referenceStore ) {
-		if ( value == null ) {
+        final Class<?> valueClass = value != null ? value.getClass() : null;
+        
+		if ( valueClass == null ) {
 			return NullEncoder.getInstance();
 		}
-        else if ( value.getClass().equals( Boolean.class ) ) {
+        else if ( valueClass.equals( Boolean.class ) ) {
             return new BooleanEncoder( (Boolean)value );
         }
-        else if ( value.getClass().equals( Double.class ) ) {
+        else if ( valueClass.equals( Double.class ) ) {
             return new DoubleEncoder( (Double)value );
         }
-        else if ( value.getClass().equals( Long.class ) ) {
+        else if ( valueClass.equals( Long.class ) ) {
             return new LongEncoder( (Long)value );
         }
-        else if ( value.getClass().equals( String.class ) ) {
+        else if ( valueClass.equals( String.class ) ) {
             final String stringValue = (String)value;
             final IdentityReference reference = StringEncoder.allowsReference( stringValue ) ? referenceStore.store( value ) : null;
             return reference != null && reference.hasMultiple() ? new ReferenceEncoder( reference.getID() ) : new StringEncoder( stringValue, reference );
@@ -158,11 +160,11 @@ abstract class AbstractEncoder {
             if ( reference.hasMultiple() ) {
                 return new ReferenceEncoder( reference.getID() );
             }
-            else if ( value.getClass().equals( HashMap.class ) ) {  // no way to check at compile time that the key type is string
+            else if ( valueClass.equals( HashMap.class ) ) {  // no way to check at compile time that the key type is string
                 return new DictionaryEncoder( (HashMap<String,Object>)value, conversionAdaptorStore, reference, referenceStore );
             }
-            else if ( value.getClass().isArray() ) {
-                return new ArrayEncoder( (Object[])value, conversionAdaptorStore, reference, referenceStore );
+            else if ( valueClass.isArray() ) {
+                return ArrayEncoder.getInstance( (Object[])value, conversionAdaptorStore, reference, referenceStore );
             }
             else {  // if the type is not among the standard ones then look to extensions
                 return new ExtensionEncoder( value, conversionAdaptorStore, reference, referenceStore );
@@ -437,6 +439,12 @@ class DictionaryEncoder extends SoftValueEncoder {
 
 /** encoder for extensions which piggybacks on the dictionary encoder */
 class ExtensionEncoder extends DictionaryEncoder {
+    /** custom key identifying a custom type translated in terms of JSON representations */
+    static final public String EXTENDED_TYPE_KEY = "__XALTYPE";
+    
+    /** custom key identifying a custom value to translate in terms of JSON representations */
+    static final public String EXTENDED_VALUE_KEY = "value";
+    
     /** Constructor */
     public ExtensionEncoder( final Object value, final ConversionAdaptorStore conversionAdaptorStore, final IdentityReference reference, final ReferenceStore referenceStore ) {
         super( getValueRep( value, conversionAdaptorStore ), conversionAdaptorStore, reference, referenceStore );
@@ -451,12 +459,46 @@ class ExtensionEncoder extends DictionaryEncoder {
         if ( adaptor != null ) {
             final HashMap<String,Object> valueRep = new HashMap<String,Object>();
             final Object representationValue = adaptor.toRepresentation( value );
-            valueRep.put( ConversionAdaptorStore.EXTENDED_TYPE_KEY, valueType );
-            valueRep.put( ConversionAdaptorStore.EXTENDED_VALUE_KEY, representationValue );
+            valueRep.put( EXTENDED_TYPE_KEY, valueType );
+            valueRep.put( EXTENDED_VALUE_KEY, representationValue );
             return valueRep;
         }
         else {
             throw new RuntimeException( "No coder for encoding objects of type: " + valueType );
+        }
+    }
+}
+
+
+/** encoder for an array of items of a common extended type which piggybacks on the dictionary encoder */
+class ArrayExtensionEncoder extends DictionaryEncoder {
+    /** key for identifying the array data of an extended type */
+    static final public String EXTENDED_ARRAY_KEY = "array";
+    
+    
+    /** Constructor */
+    public ArrayExtensionEncoder( final Object[] array, final ConversionAdaptorStore conversionAdaptorStore, final IdentityReference reference, final ReferenceStore referenceStore ) {
+        super( getArrayRep( array, conversionAdaptorStore ), conversionAdaptorStore, reference, referenceStore );
+    }
+    
+    
+    /** get the value representation as a dictionary keyed for the extended type and value */
+    @SuppressWarnings( "unchecked" )
+    static private HashMap<String,Object> getArrayRep( final Object[] array, final ConversionAdaptorStore conversionAdaptorStore ) {
+        final String itemType = array.getClass().getComponentType().getName();
+        final ConversionAdaptor adaptor = conversionAdaptorStore.getConversionAdaptor( itemType );
+        if ( adaptor != null ) {
+            final HashMap<String,Object> arrayRep = new HashMap<String,Object>();
+            final Object[] representationArray = new Object[ array.length ];
+            for ( int index = 0 ; index < array.length ; index++ ) {
+                representationArray[index] = adaptor.toRepresentation( array[index] );
+            }
+            arrayRep.put( ExtensionEncoder.EXTENDED_TYPE_KEY, itemType );
+            arrayRep.put( EXTENDED_ARRAY_KEY, representationArray );
+            return arrayRep;
+        }
+        else {
+            throw new RuntimeException( "No coder for encoding arrays of common extended type: " + itemType );
         }
     }
 }
@@ -476,6 +518,29 @@ class ArrayEncoder extends SoftValueEncoder {
         ITEM_ENCODERS = new AbstractEncoder[ array.length ];
         for ( int index = 0 ; index < array.length ; index++ ) {
             ITEM_ENCODERS[index] = AbstractEncoder.record( array[index], conversionAdaptorStore, referenceStore );
+        }
+    }
+    
+    
+    /** Get an instance that can encode arrays and efficiently arrays of extended types */
+    static public SoftValueEncoder getInstance( final Object[] array, final ConversionAdaptorStore conversionAdaptorStore, final IdentityReference reference, final ReferenceStore referenceStore ) {
+        return isArrayOfCommonExtendedType( array ) ? new ArrayExtensionEncoder( array, conversionAdaptorStore, reference, referenceStore ) : new ArrayEncoder( array, conversionAdaptorStore, reference, referenceStore );
+    }
+    
+    
+    /** Determine whether the array is of a common extended type */
+    static private boolean isArrayOfCommonExtendedType( final Object[] array ) {
+        final Class<?> itemClass = array.getClass().getComponentType();
+        final String itemType = itemClass.getName();
+        if ( JSONCoder.getStandardTypes().contains( itemType ) || array.length <= 1 ) {
+            return false;
+        }
+        else {
+            // verify whether each item of the array is exactly the component type
+            for ( final Object item : array ) {
+                if ( item.getClass() != itemClass )  return false;
+            }
+            return true;
         }
     }
     
@@ -817,13 +882,25 @@ class DictionaryDecoder extends AbstractDecoder<Object> {
 		final Map<String,Object> dictionary = new HashMap<String,Object>();
 		appendItems( dictionary, dictionaryString );
         
-        if ( dictionary.containsKey( ConversionAdaptorStore.EXTENDED_TYPE_KEY ) && dictionary.containsKey( ConversionAdaptorStore.EXTENDED_VALUE_KEY ) ) {
+        if ( dictionary.containsKey( ExtensionEncoder.EXTENDED_TYPE_KEY ) && dictionary.containsKey( ExtensionEncoder.EXTENDED_VALUE_KEY ) ) {
             // decode object of extended type
-            final String extendedType = (String)dictionary.get( ConversionAdaptorStore.EXTENDED_TYPE_KEY );
-            final Object representationValue = dictionary.get( ConversionAdaptorStore.EXTENDED_VALUE_KEY );
+            final String extendedType = (String)dictionary.get( ExtensionEncoder.EXTENDED_TYPE_KEY );
+            final Object representationValue = dictionary.get( ExtensionEncoder.EXTENDED_VALUE_KEY );
             final ConversionAdaptor adaptor = CONVERSION_ADAPTOR_STORE.getConversionAdaptor( extendedType );
             if ( adaptor == null )  throw new RuntimeException( "Missing JSON adaptor for type: " + extendedType );
             return adaptor.toNative( representationValue );
+        }
+        else if ( dictionary.containsKey( ExtensionEncoder.EXTENDED_TYPE_KEY ) && dictionary.containsKey( ArrayExtensionEncoder.EXTENDED_ARRAY_KEY ) ) {
+            // decode array of extended type
+            final String extendedType = (String)dictionary.get( ExtensionEncoder.EXTENDED_TYPE_KEY );
+            final Object[] representationArray = (Object[])dictionary.get( ArrayExtensionEncoder.EXTENDED_ARRAY_KEY );
+            final ConversionAdaptor adaptor = CONVERSION_ADAPTOR_STORE.getConversionAdaptor( extendedType );
+            if ( adaptor == null )  throw new RuntimeException( "Missing JSON adaptor for type: " + extendedType );
+            final Object[] array = new Object[ representationArray.length ];
+            for ( int index = 0 ; index < representationArray.length ; index++ ) {
+                array[index] = adaptor.toNative( representationArray[index] );
+            }
+            return array;
         }
         else if ( dictionary.containsKey( SoftValueEncoder.OBJECT_ID_KEY ) && dictionary.containsKey( SoftValueEncoder.VALUE_KEY ) ) {
             // decode a referenced object definition and store it
@@ -1034,13 +1111,7 @@ class IdentityReference<ItemType> {
 
 
 /** conversion adaptors container whose contents cannot be changed */
-class ConversionAdaptorStore {
-    /** custom key identifying a custom type translated in terms of JSON representations */
-    static final public String EXTENDED_TYPE_KEY = "__XALTYPE";
-    
-    /** custom key identifying a custom value to translate in terms of JSON representations */
-    static final public String EXTENDED_VALUE_KEY = "value";
-    
+class ConversionAdaptorStore {    
     /** adaptors between all custom types and representation JSON types */
     final protected Map<String,ConversionAdaptor> TYPE_EXTENSION_ADAPTORS;
     
