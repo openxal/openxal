@@ -47,6 +47,12 @@ public class JSONCoder {
     }
     
     
+    /** Get a list of the standard types encoded directly into JSON */
+    public List<String> getStandardTypes() {
+        return CONVERSION_ADAPTOR_STORE.getStandardTypes();
+    }
+    
+    
     /** Get a list of all types which are supported for coding and decoding */
     public List<String> getSupportedTypes() {
         return CONVERSION_ADAPTOR_STORE.getSupportedTypes();
@@ -1055,14 +1061,25 @@ class ConversionAdaptorStore {
     public List<String> getSupportedTypes() {
         final List<String> types = new ArrayList<String>();
         
+        types.addAll( getStandardTypes() );
+        types.addAll( getExtendedTypes() );
+        
+        Collections.sort( types );
+        
+        return types;
+    }
+    
+    
+    /** Get a list of all types which are supported for coding and decoding */
+    public List<String> getStandardTypes() {
+        final List<String> types = new ArrayList<String>();
+        
         types.add( Boolean.class.getName() );
         types.add( Double.class.getName() );
         types.add( Long.class.getName() );
         types.add( Map.class.getName() );
         types.add( Object[].class.getName() );
         types.add( String.class.getName() );
-        
-        types.addAll( getExtendedTypes() );
         
         Collections.sort( types );
         
