@@ -10,6 +10,7 @@ package xal.tools.json;
 
 import org.junit.*;
 import java.util.*;
+import java.lang.reflect.Array;
 import java.io.*;
 
 
@@ -52,14 +53,6 @@ public class TestJSONCoding {
     public void testStringEncoding() {
         checkEncodingEquality( "\"Hello, World\"", "Hello, World" );
         checkEncodingEquality( "\"String with an \\\"internal\\\" string.\"", "String with an \"internal\" string." );
-    }
-    
-    
-    @Test
-    public void testArrayEncoding() {
-        assertEquality( "[1.2, -17.6, 5.4E23, 1.2E-6]", JSONCoder.encode( new Double[] { 1.2, -17.6, 5.4E23, 1.2E-6 } ) );
-        checkEncodingEquality( "[\"Hello\", \"World\"]", new String[] { "Hello", "World" } );
-        checkEncodingEquality( "[\"Testing\", \"\\\"internal\\\" string.\"]", new String[] { "Testing", "\"internal\" string." } );
     }
     
     
@@ -137,8 +130,9 @@ public class TestJSONCoding {
     
     @Test
     public void testArrayEncodingDecoding() {
-        checkArrayEncodingDecoding( new Double[] { 4.78, Math.PI, -17.6, 5.4E23, 8.719E-32 } );
+        checkArrayEncodingDecoding( new double[] { 4.78, Math.PI, -17.6, 5.4E23, 8.719E-32 } );
         checkArrayEncodingDecoding( new String[] { "Hello", "World", "This is just a test!" } );
+        checkArrayEncodingDecoding( new int[] { 2, 3, 5, 7, 11 } );
     }
     
     
@@ -312,14 +306,14 @@ public class TestJSONCoding {
     
     
     /** check whether a decoded encoding matches the original value */
-    static private void checkArrayEncodingDecoding( final Object[] controlArray ) {
+    static private void checkArrayEncodingDecoding( final Object controlArray ) {
         final String coding = JSONCoder.encode( controlArray );
-        final Object[] testArray = (Object[])JSONCoder.decode( coding );
+        final Object testArray = JSONCoder.decode( coding );
         
-        final int count = controlArray.length;
-        assertEquality( count, testArray.length );
+        final int count = Array.getLength( controlArray );
+        assertEquality( count, Array.getLength( testArray ) );
         for ( int index = 0 ; index < count ; index++ ) {
-            assertEquality( controlArray[index], testArray[index] );
+            assertEquality( Array.get( controlArray, index ), Array.get( testArray, index ) );
         }
     }
     
