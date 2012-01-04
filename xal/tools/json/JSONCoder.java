@@ -50,7 +50,13 @@ public class JSONCoder {
     
     /** Get a list of the standard types encoded directly into JSON */
     static public List<String> getStandardTypes() {
-        return DEFAULT_CODER.CONVERSION_ADAPTOR_STORE.getStandardTypes();
+        return ConversionAdaptorStore.getStandardTypes();
+    }
+    
+    
+    /** Determine whether the specified type is a standard JSON type */
+    static public boolean isStandardType( final String type ) {
+        return ConversionAdaptorStore.isStandardType( type );
     }
     
     
@@ -1146,6 +1152,16 @@ class ConversionAdaptorStore {
     /** adaptors between all custom types and representation JSON types */
     final protected Map<String,ConversionAdaptor> TYPE_EXTENSION_ADAPTORS;
     
+    /** set of standard types */
+    static final private Set<String> STANDARD_TYPES;
+    
+    
+    // static initializer
+    static {
+        STANDARD_TYPES = new HashSet<String>();
+        populateStandardTypes();
+    }
+    
     
     /** Constructor */
     protected ConversionAdaptorStore() {
@@ -1159,22 +1175,9 @@ class ConversionAdaptorStore {
     }
     
     
-    /** Get a list of all types which are supported for coding and decoding */
-    public List<String> getSupportedTypes() {
-        final List<String> types = new ArrayList<String>();
-        
-        types.addAll( getStandardTypes() );
-        types.addAll( getExtendedTypes() );
-        
-        Collections.sort( types );
-        
-        return types;
-    }
-    
-    
-    /** Get a list of all types which are supported for coding and decoding */
-    public List<String> getStandardTypes() {
-        final List<String> types = new ArrayList<String>();
+    /** populate the set of standard types */
+    static private void populateStandardTypes() {
+        final Set<String> types = new HashSet<String>();
         
         types.add( Boolean.class.getName() );
         types.add( Double.class.getName() );
@@ -1182,6 +1185,31 @@ class ConversionAdaptorStore {
         types.add( Map.class.getName() );
         types.add( Object[].class.getName() );
         types.add( String.class.getName() );
+        
+        STANDARD_TYPES.addAll( types );
+    }
+    
+    
+    /** Get a list of all types which are supported for coding and decoding */
+    static public List<String> getStandardTypes() {
+        final List<String> types = new ArrayList<String>( STANDARD_TYPES );
+        Collections.sort( types );
+        return types;
+    }
+    
+    
+    /** determine whether the specified type is a standard JSON type */
+    static public boolean isStandardType( final String type ) {
+        return STANDARD_TYPES.contains( type );
+    }
+    
+    
+    /** Get a list of all types which are supported for coding and decoding */
+    public List<String> getSupportedTypes() {
+        final List<String> types = new ArrayList<String>();
+        
+        types.addAll( getStandardTypes() );
+        types.addAll( getExtendedTypes() );
         
         Collections.sort( types );
         
