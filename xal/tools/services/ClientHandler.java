@@ -130,8 +130,8 @@ class ClientHandler<ProxyType> implements InvocationHandler {
             
             final String methodName = method.getName();
             final Map<String,Object> request = new HashMap<String,Object>();
-            request.put( "message", methodName );
-            request.put( "service", SERVICE_NAME );     // deviation from the JSON-RPC spec so we can forward to the correct service handler
+            final String message = RpcServer.encodeRemoteMessage( SERVICE_NAME, methodName );
+            request.put( "message", message );
             request.put( "params", params );
             request.put( "id", new Integer( 1 ) );  // no need to provide a unique id if we don't recycle sockets
             final String jsonRequest = JSONCoder.encode( request );
