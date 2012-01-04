@@ -10,6 +10,7 @@ package xal.tools.json;
 
 import xal.tools.ConversionAdaptor;
 
+import java.lang.reflect.Array;
 import java.util.*;
 import java.util.regex.*;
 
@@ -164,7 +165,7 @@ abstract class AbstractEncoder {
                 return new DictionaryEncoder( (HashMap<String,Object>)value, conversionAdaptorStore, reference, referenceStore );
             }
             else if ( valueClass.isArray() ) {
-                return ArrayEncoder.getInstance( (Object[])value, conversionAdaptorStore, reference, referenceStore );
+                return ArrayEncoder.getInstance( value, conversionAdaptorStore, reference, referenceStore );
             }
             else {  // if the type is not among the standard ones then look to extensions
                 return new ExtensionEncoder( value, conversionAdaptorStore, reference, referenceStore );
@@ -471,35 +472,68 @@ class ExtensionEncoder extends DictionaryEncoder {
 
 
 /** encoder for an array of items of a common extended type which piggybacks on the dictionary encoder */
-class ArrayExtensionEncoder extends DictionaryEncoder {
+class TypedArrayEncoder extends DictionaryEncoder {
     /** key for identifying the array data of an extended type */
-    static final public String EXTENDED_ARRAY_KEY = "array";
+    static final public String ARRAY_ITEM_TYPE_KEY = "__XALITEMTYPE";
+    
+    /** key for identifying the array data of an extended type */
+    static final public String ARRAY_KEY = "array";
+    
+    /** primitive classes keyed by type name */
+    static final private Map<String,Class<?>> PRIMITIVE_CLASSES;
+    
+    
+    // static initializer
+    static {
+        PRIMITIVE_CLASSES = generatePrimitiveClassMap();
+    }
     
     
     /** Constructor */
-    public ArrayExtensionEncoder( final Object[] array, final ConversionAdaptorStore conversionAdaptorStore, final IdentityReference reference, final ReferenceStore referenceStore ) {
+    public TypedArrayEncoder( final Object array, final ConversionAdaptorStore conversionAdaptorStore, final IdentityReference reference, final ReferenceStore referenceStore ) {
         super( getArrayRep( array, conversionAdaptorStore ), conversionAdaptorStore, reference, referenceStore );
     }
     
     
-    /** get the value representation as a dictionary keyed for the extended type and value */
+    /** get the value representation as a dictionary keyed for the array item type and generic object array */
     @SuppressWarnings( "unchecked" )
-    static private HashMap<String,Object> getArrayRep( final Object[] array, final ConversionAdaptorStore conversionAdaptorStore ) {
+    static private HashMap<String,Object> getArrayRep( final Object array, final ConversionAdaptorStore conversionAdaptorStore ) {
         final String itemType = array.getClass().getComponentType().getName();
-        final ConversionAdaptor adaptor = conversionAdaptorStore.getConversionAdaptor( itemType );
-        if ( adaptor != null ) {
-            final HashMap<String,Object> arrayRep = new HashMap<String,Object>();
-            final Object[] representationArray = new Object[ array.length ];
-            for ( int index = 0 ; index < array.length ; index++ ) {
-                representationArray[index] = adaptor.toRepresentation( array[index] );
-            }
-            arrayRep.put( ExtensionEncoder.EXTENDED_TYPE_KEY, itemType );
-            arrayRep.put( EXTENDED_ARRAY_KEY, representationArray );
-            return arrayRep;
+        final HashMap<String,Object> arrayRep = new HashMap<String,Object>();
+        final int arrayLength = Array.getLength( array );
+        final Object[] objectArray = new Object[ arrayLength ];    // encode as a generic object array
+        for ( int index = 0 ; index < arrayLength ; index++ ) {
+            objectArray[index] = Array.get( array, index );
         }
-        else {
-            throw new RuntimeException( "No coder for encoding arrays of common extended type: " + itemType );
-        }
+        arrayRep.put( ARRAY_ITEM_TYPE_KEY, itemType );
+        arrayRep.put( ARRAY_KEY, objectArray );
+        return arrayRep;
+    }
+    
+    
+    /** get the primitive type for the specified type name */
+    static public Class<?> getPrimitiveType( final String typeName ) {
+        return PRIMITIVE_CLASSES.get( typeName );
+    }
+    
+    
+    /** generate the table of primitive classes keyed by name */
+    static private Map<String,Class<?>> generatePrimitiveClassMap() {
+        final Map<String,Class<?>> classTable = new Hashtable<String,Class<?>>();
+        registerPrimitiveType( classTable, Float.TYPE );
+        registerPrimitiveType( classTable, Double.TYPE );
+        registerPrimitiveType( classTable, Byte.TYPE );
+        registerPrimitiveType( classTable, Character.TYPE );
+        registerPrimitiveType( classTable, Short.TYPE );
+        registerPrimitiveType( classTable, Integer.TYPE );
+        registerPrimitiveType( classTable, Long.TYPE );
+        return classTable;
+    }
+    
+    
+    /** register the primitive type in the table */
+    static private void registerPrimitiveType( final Map<String,Class<?>> table, final Class<?> type ) {
+        table.put( type.getName(), type );
     }
 }
 
@@ -512,36 +546,27 @@ class ArrayEncoder extends SoftValueEncoder {
     
     
     /** Constructor */
-    public ArrayEncoder( final Object[] array, final ConversionAdaptorStore conversionAdaptorStore, final IdentityReference reference, final ReferenceStore referenceStore ) {
+    public ArrayEncoder( final Object array, final ConversionAdaptorStore conversionAdaptorStore, final IdentityReference reference, final ReferenceStore referenceStore ) {
         super( reference );
         
-        ITEM_ENCODERS = new AbstractEncoder[ array.length ];
-        for ( int index = 0 ; index < array.length ; index++ ) {
-            ITEM_ENCODERS[index] = AbstractEncoder.record( array[index], conversionAdaptorStore, referenceStore );
+        final int arrayLength = Array.getLength( array );
+        ITEM_ENCODERS = new AbstractEncoder[ arrayLength ];
+        for ( int index = 0 ; index < arrayLength ; index++ ) {
+            ITEM_ENCODERS[index] = AbstractEncoder.record( Array.get( array, index ), conversionAdaptorStore, referenceStore );
         }
     }
     
     
     /** Get an instance that can encode arrays and efficiently arrays of extended types */
-    static public SoftValueEncoder getInstance( final Object[] array, final ConversionAdaptorStore conversionAdaptorStore, final IdentityReference reference, final ReferenceStore referenceStore ) {
-        return isArrayOfCommonExtendedType( array ) ? new ArrayExtensionEncoder( array, conversionAdaptorStore, reference, referenceStore ) : new ArrayEncoder( array, conversionAdaptorStore, reference, referenceStore );
+    static public SoftValueEncoder getInstance( final Object array, final ConversionAdaptorStore conversionAdaptorStore, final IdentityReference reference, final ReferenceStore referenceStore ) {
+        return isTypedArray( array ) ? new TypedArrayEncoder( array, conversionAdaptorStore, reference, referenceStore ) : new ArrayEncoder( array, conversionAdaptorStore, reference, referenceStore );
     }
     
     
     /** Determine whether the array is of a common extended type */
-    static private boolean isArrayOfCommonExtendedType( final Object[] array ) {
+    static private boolean isTypedArray( final Object array ) {
         final Class<?> itemClass = array.getClass().getComponentType();
-        final String itemType = itemClass.getName();
-        if ( JSONCoder.getStandardTypes().contains( itemType ) || array.length <= 1 ) {
-            return false;
-        }
-        else {
-            // verify whether each item of the array is exactly the component type
-            for ( final Object item : array ) {
-                if ( item.getClass() != itemClass )  return false;
-            }
-            return true;
-        }
+        return itemClass != null && itemClass != Object.class;
     }
     
     
@@ -890,17 +915,23 @@ class DictionaryDecoder extends AbstractDecoder<Object> {
             if ( adaptor == null )  throw new RuntimeException( "Missing JSON adaptor for type: " + extendedType );
             return adaptor.toNative( representationValue );
         }
-        else if ( dictionary.containsKey( ExtensionEncoder.EXTENDED_TYPE_KEY ) && dictionary.containsKey( ArrayExtensionEncoder.EXTENDED_ARRAY_KEY ) ) {
-            // decode array of extended type
-            final String extendedType = (String)dictionary.get( ExtensionEncoder.EXTENDED_TYPE_KEY );
-            final Object[] representationArray = (Object[])dictionary.get( ArrayExtensionEncoder.EXTENDED_ARRAY_KEY );
-            final ConversionAdaptor adaptor = CONVERSION_ADAPTOR_STORE.getConversionAdaptor( extendedType );
-            if ( adaptor == null )  throw new RuntimeException( "Missing JSON adaptor for type: " + extendedType );
-            final Object[] array = new Object[ representationArray.length ];
-            for ( int index = 0 ; index < representationArray.length ; index++ ) {
-                array[index] = adaptor.toNative( representationArray[index] );
+        else if ( dictionary.containsKey( TypedArrayEncoder.ARRAY_ITEM_TYPE_KEY ) && dictionary.containsKey( TypedArrayEncoder.ARRAY_KEY ) ) {
+            // decode array of with a specified item type from a generic object array
+            final String itemType = (String)dictionary.get( TypedArrayEncoder.ARRAY_ITEM_TYPE_KEY );
+            final Object[] objectArray = (Object[])dictionary.get( TypedArrayEncoder.ARRAY_KEY );
+            
+            try {
+                final Class primitiveType = TypedArrayEncoder.getPrimitiveType( itemType );
+                final Class itemClass = primitiveType != null ? primitiveType : Class.forName( itemType );
+                final Object array = Array.newInstance( itemClass, objectArray.length );
+                for ( int index = 0 ; index < objectArray.length ; index++ ) {
+                    Array.set( array, index, objectArray[index] );
+                }
+                return array;
             }
-            return array;
+            catch( Exception exception ) {
+                throw new RuntimeException( "Exception decoding a typed array of type: " + itemType, exception );
+            }
         }
         else if ( dictionary.containsKey( SoftValueEncoder.OBJECT_ID_KEY ) && dictionary.containsKey( SoftValueEncoder.VALUE_KEY ) ) {
             // decode a referenced object definition and store it
