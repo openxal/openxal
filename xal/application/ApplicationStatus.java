@@ -10,6 +10,8 @@
 
 package xal.application;
 
+import xal.tools.services.OneWay;
+
 
 /**
  * ApplicationStatus is an interface used in remote access to advertise application status.
@@ -67,6 +69,7 @@ public interface ApplicationStatus {
 	 * @param code An unused status code.
 	 * @return The status code.
 	 */
+    @OneWay
 	public void quit( final int code );
 	
 	
@@ -75,6 +78,7 @@ public interface ApplicationStatus {
 	 * @param code The status code used for halting the virtual machine.
 	 * @return The supplied status code.
 	 */
+    @OneWay
 	public void forceQuit( int code );
 }
 

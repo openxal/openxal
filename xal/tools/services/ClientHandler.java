@@ -290,19 +290,32 @@ class ClientHandler<ProxyType> implements InvocationHandler {
             request.put( "id", requestID );
             final String jsonRequest = JSONCoder.encode( request );
             
+            // methods marked with the OneWay annotation return immediately and do not wait for a response from the service
+            final boolean waitForResponse = !method.isAnnotationPresent( OneWay.class );
+
+            
+            // configure a pending result whose value will be set upon receiving a response from the remote service
             final PendingResult pendingResult = new PendingResult();
-            PENDING_RESULTS.put( requestID, pendingResult );
-            
-            submitRemoteRequest( jsonRequest );
-            listenForRemoteMessages();
-            
-            synchronized( pendingResult ) {
-                pendingResult.wait();
+            if ( waitForResponse ) {
+                PENDING_RESULTS.put( requestID, pendingResult );
             }
             
-            PENDING_RESULTS.remove( requestID );
+            submitRemoteRequest( jsonRequest );
             
-            return pendingResult.getValue();
+            if ( waitForResponse ) {
+                listenForRemoteMessages();
+                
+                synchronized( pendingResult ) {
+                    pendingResult.wait();
+                }
+                
+                PENDING_RESULTS.remove( requestID );
+                
+                return pendingResult.getValue();
+            }
+            else {
+                return null;
+            }
         }
         catch ( IllegalArgumentException exception ) {
             throw exception;

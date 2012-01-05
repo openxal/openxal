@@ -161,17 +161,21 @@ public class RpcServer {
                             final Number requestID = (Number)request.get( "id" );
                             final List<Object> params = (List<Object>)request.get( "params" );
                             
-                            // todo: call the method on the handler
                             final RemoteRequestHandler<?> handler = REMOTE_REQUEST_HANDLERS.get( serviceName );
-                            final Object result = handler.evaluateRequest( methodName, params );
-                                                    
-                            final Map<String,Object> response = new HashMap<String,Object>();
-                            response.put( "result", result );
-                            response.put( "error", null );
-                            response.put( "id", requestID );
-                            final String jsonResponse = JSONCoder.encode( response );
-                            output.print( jsonResponse );
-                            output.flush();
+                            final EvaluationResult result = handler.evaluateRequest( methodName, params );
+                            
+                            // methods marked with the OneWay annotation return immediately and do not provide any response
+                            final boolean provideResponse = !result.isOneWay();
+                            
+                            if ( provideResponse ) {
+                                final Map<String,Object> response = new HashMap<String,Object>();
+                                response.put( "result", result.getValue() );
+                                response.put( "error", null );
+                                response.put( "id", requestID );
+                                final String jsonResponse = JSONCoder.encode( response );
+                                output.print( jsonResponse );
+                                output.flush();
+                            }
                         }
                     }
                     catch ( Exception exception ) {
@@ -248,7 +252,7 @@ class RemoteRequestHandler<ProtocolType> {
     
     
     /** Evaluate the request */
-    public Object evaluateRequest( final String methodName, final List<Object> params ) {
+    public EvaluationResult evaluateRequest( final String methodName, final List<Object> params ) {
         final Object[] methodParams = new Object[ params.size() ];
         final Class<?>[] methodParamTypes = new Class<?>[ methodParams.length ];
         for ( int index = 0 ; index < methodParams.length ; index++ ) {
@@ -260,7 +264,9 @@ class RemoteRequestHandler<ProtocolType> {
         final Method method = getMethod( methodName, methodParamTypes );
         
         try {
-            return method.invoke( PROVIDER, methodParams );
+            final Object value = method.invoke( PROVIDER, methodParams );
+            final boolean isOneWay = method.isAnnotationPresent( OneWay.class );
+            return new EvaluationResult( value, isOneWay );
         }
         catch ( Exception exception ) {
             throw new RuntimeException( "Exception evaluating the remote request with the request handler.", exception );
@@ -371,6 +377,35 @@ class RemoteRequestHandler<ProtocolType> {
         }
         
         return score;
+    }
+}
+
+
+
+/** result of evaluating the requested method */
+class EvaluationResult {
+    /** result of the method evaluation */
+    final private Object VALUE;
+    
+    /** indicates whether the method is one way (no response to remote caller) */
+    final private boolean IS_ONE_WAY;
+    
+    
+    /** Constructor */
+    public EvaluationResult( final Object value, final boolean isOneWay ) {
+        VALUE = value;
+        IS_ONE_WAY = isOneWay;
+    }
+    
+    
+    /** determine whether the call is one way */
+    public boolean isOneWay() {
+        return IS_ONE_WAY;
+    }
+    
+    /** get the value */
+    public Object getValue() {
+        return VALUE;
     }
 }
 
