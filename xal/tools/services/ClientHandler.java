@@ -15,6 +15,7 @@ import xal.tools.json.*;
 import java.io.*;
 import java.net.*;
 import java.util.*;
+import java.util.concurrent.*;
 import java.util.logging.*;
 import java.lang.reflect.*;
 import java.lang.reflect.Proxy;
@@ -25,11 +26,44 @@ import java.lang.reflect.Proxy;
  * @author  tap
  */
 class ClientHandler<ProxyType> implements InvocationHandler {
-    final private Class PROTOCOL;
+    /** queue for processing requests */
+    final static private ExecutorService REQUEST_QUEUE;
+    
+    /** single thread queue for sending remote messages */
+    final private ExecutorService REMOTE_SEND_QUEUE;
+    
+    /** single thread queue for receiving remote messages */
+    final private ExecutorService REMOTE_RECEIVE_QUEUE;
+    
+    /** socket for sending and receiving remote messages */
+    final private Socket REMOTE_SOCKET;
+    
+    /** protocol implemented by the remote service and dispatched through the proxy */
+    final private Class<ProxyType> PROTOCOL;
+    
+    /** name of the remote service */
     final private String SERVICE_NAME;
+    
+    /** proxy which forwards invocations to the remote service */
     final private ProxyType PROXY;
+    
+    /** remote host */
     final private String REMOTE_HOST;
+    
+    /** remote port */
     final private int REMOTE_PORT;
+    
+    /** request ID counter is incremented to provide a unique ID for each request */
+    private volatile int _requestIDCounter;
+    
+    /** pending results keyed by request ID */
+    final private Map<Long,PendingResult> PENDING_RESULTS;
+    
+    
+    // static initializer
+    static {
+        REQUEST_QUEUE = Executors.newCachedThreadPool();
+    }
     
     
     /** 
@@ -46,6 +80,36 @@ class ClientHandler<ProxyType> implements InvocationHandler {
         PROTOCOL = newProtocol;
         
         PROXY = createProxy();
+        
+        PENDING_RESULTS = Collections.synchronizedMap( new HashMap<Long,PendingResult>() );
+        
+        REMOTE_SEND_QUEUE = Executors.newSingleThreadExecutor();
+        REMOTE_RECEIVE_QUEUE = Executors.newSingleThreadExecutor();
+        REMOTE_SOCKET = makeRemoteSocket( host, port );
+        
+        _requestIDCounter = 0;
+        
+        listenForRemoteMessages();
+    }
+    
+    
+    /** make a new remote socket */
+    static private Socket makeRemoteSocket( final String host, final int port ) {
+        try {
+            return new Socket( host, port );
+        }
+        catch( UnknownHostException exception ) {
+            throw new RuntimeException( "Attempt to open a socket to an unknown host.", exception );
+        }
+        catch( IOException exception ) {
+            throw new RuntimeException( "IO Exception attempting to open a new socket.", exception );
+        }
+    }
+    
+    
+    /** Get the next request ID and increment it */
+    private int getNextRequestID() {
+        return _requestIDCounter++;
     }
     
     
@@ -72,8 +136,7 @@ class ClientHandler<ProxyType> implements InvocationHandler {
      * @return The host name of the remote service.
      */
     public String getHost() {
-        //        return REMOTE_CLIENT.getURL().getHost();
-        return null;
+        return REMOTE_HOST;
     }
     
     
@@ -82,8 +145,7 @@ class ClientHandler<ProxyType> implements InvocationHandler {
      * @return The port of the remote service.
      */
     public int getPort() {
-        //        return REMOTE_CLIENT.getURL().getPort();
-        return 0;
+        return REMOTE_PORT;
     }
     
     
@@ -107,6 +169,96 @@ class ClientHandler<ProxyType> implements InvocationHandler {
         
         return (ProxyType)Proxy.newProxyInstance( loader, protocols, this );
     }
+    
+    
+    /** dispose of resources */
+    public void dispose() {
+        if ( !REMOTE_SOCKET.isClosed() ) {
+            try {
+                REMOTE_SOCKET.close();
+            }
+            catch( Exception exception ) {
+                throw new RuntimeException( "Excepting closing remote client socket.", exception );
+            }
+        }
+    }
+    
+    
+    /** dispose of resources upon collection */
+    public void finalize() {
+        dispose();
+    }
+    
+    
+    /** listen for incoming messages */
+    private void listenForRemoteMessages() {
+        REMOTE_RECEIVE_QUEUE.submit( new Runnable() {
+            public void run() {
+                try {
+                    processRemoteResponse();
+                }
+                catch( Exception exception ) {
+                    exception.printStackTrace();
+                }
+            }
+        });
+    }
+    
+    
+    /** process the remote response */
+    @SuppressWarnings( "unchecked" )    // no way to know response Object type at compile time
+    private void processRemoteResponse() throws java.net.SocketException, java.io.IOException {
+        final int BUFFER_SIZE = REMOTE_SOCKET.getReceiveBufferSize();
+        final char[] streamBuffer = new char[BUFFER_SIZE];
+        final BufferedReader reader = new BufferedReader( new InputStreamReader( REMOTE_SOCKET.getInputStream() ) );
+        final StringBuilder inputBuffer = new StringBuilder();
+        do {
+            final int readCount = reader.read( streamBuffer, 0, BUFFER_SIZE );
+            
+            if ( readCount == -1 ) {     // the session has been closed
+                throw new RuntimeException( "Remote session has unexpectedly closed." );
+            }
+            else {
+                inputBuffer.append( streamBuffer, 0, readCount );
+            }
+        } while ( reader.ready()  );
+        
+        final String jsonResponse = inputBuffer.toString();
+        if ( jsonResponse != null ) {
+            final Object responseObject = JSONCoder.decode( jsonResponse );
+            if ( responseObject instanceof Map ) {
+                final Map<String,Object> response = (Map<String,Object>)responseObject;
+                final Object result = response.get( "result" );
+                final Long requestID = (Long)response.get( "id" );
+                
+                final PendingResult pendingResult = PENDING_RESULTS.get( requestID );
+                
+                if ( pendingResult != null ) {
+                    synchronized( pendingResult ) {
+                        pendingResult.setValue( result );
+                        pendingResult.notify();
+                    }
+                }
+            }
+        }
+    }
+    
+    
+    /** Submit the remote request */
+    private void submitRemoteRequest( final String jsonRequest ) {
+        REMOTE_SEND_QUEUE.submit( new Runnable() {
+            public void run() {
+                try {
+                    final PrintWriter writer = new PrintWriter( REMOTE_SOCKET.getOutputStream() );
+                    writer.write( jsonRequest );
+                    writer.flush();
+                }
+                catch( Exception exception ) {
+                    exception.printStackTrace();
+                }
+            }
+        });
+    }
 	
     
     /** 
@@ -128,50 +280,29 @@ class ClientHandler<ProxyType> implements InvocationHandler {
                 }
 			}
             
+            final long requestID = getNextRequestID();
+            
             final String methodName = method.getName();
             final Map<String,Object> request = new HashMap<String,Object>();
             final String message = RpcServer.encodeRemoteMessage( SERVICE_NAME, methodName );
             request.put( "message", message );
             request.put( "params", params );
-            request.put( "id", new Integer( 1 ) );  // no need to provide a unique id if we don't recycle sockets
+            request.put( "id", requestID );
             final String jsonRequest = JSONCoder.encode( request );
             
-            final Socket remoteSocket = new Socket( REMOTE_HOST, REMOTE_PORT );     // create a new cycle for each request (in the future we may consider recycling sockets)
-            final PrintWriter writer = new PrintWriter( remoteSocket.getOutputStream() );
-            writer.write( jsonRequest );
-            writer.flush();
+            final PendingResult pendingResult = new PendingResult();
+            PENDING_RESULTS.put( requestID, pendingResult );
             
-            final int BUFFER_SIZE = 4096;
-            final char[] streamBuffer = new char[BUFFER_SIZE];
-            final BufferedReader reader = new BufferedReader( new InputStreamReader( remoteSocket.getInputStream() ) );
-            final StringBuilder inputBuffer = new StringBuilder();
-            do {
-                final int readCount = reader.read( streamBuffer, 0, BUFFER_SIZE );
-                
-                if ( readCount == -1 ) {     // the session has been closed
-                    throw new RuntimeException( "Remote session has unexpectedly closed." );
-                }
-                else {
-                    inputBuffer.append( streamBuffer, 0, readCount );
-                }
-            } while ( reader.ready()  );
+            submitRemoteRequest( jsonRequest );
+            listenForRemoteMessages();
             
-            final String jsonResponse = inputBuffer.toString();
-            Object result = null;
-            if ( jsonRequest != null ) {                
-                final Object responseObject = JSONCoder.decode( jsonResponse );
-                if ( responseObject instanceof Map ) {
-                    final Map<String,Object> response = (Map<String,Object>)responseObject;
-                    result = response.get( "result" );
-                }
+            synchronized( pendingResult ) {
+                pendingResult.wait();
             }
             
-            remoteSocket.close();
-
-            return result;
-        }
-        catch ( IOException exception ) {
-            throw new RuntimeException( "IO Exception initiating a remote service request.", exception );
+            PENDING_RESULTS.remove( requestID );
+            
+            return pendingResult.getValue();
         }
         catch ( IllegalArgumentException exception ) {
             throw exception;
@@ -180,5 +311,25 @@ class ClientHandler<ProxyType> implements InvocationHandler {
             exception.printStackTrace();
             throw new RuntimeException( "Exception performing invocation for remote request.", exception );
         }
+    }
+}
+
+
+
+/** pending result */
+class PendingResult {
+    /** result value */
+    private Object _value;
+    
+    
+    /** set the result's value */
+    public void setValue( final Object value ) {
+        _value = value;
+    }
+    
+    
+    /** get the result's value */
+    public Object getValue() {
+        return _value;
     }
 }
