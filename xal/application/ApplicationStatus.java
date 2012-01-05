@@ -19,7 +19,7 @@ import xal.tools.services.OneWay;
  */
 public interface ApplicationStatus {
 	/** 
-	 * Get the free memory available the application instance.
+	 * Get the free memory available to the application instance.
 	 * @return The free memory available on this virtual machine.
 	 */
 	public double getFreeMemory();
@@ -50,7 +50,7 @@ public interface ApplicationStatus {
 	 * Get the launch time of the application in seconds since the epoch (midnight GMT, January 1, 1970)
 	 * @return the time at with the application was launched in seconds since the epoch
 	 */
-	public double getLaunchTime();
+	public java.util.Date getLaunchTime();
 	
 	
 	/** reveal the application by bringing all windows to the front */
