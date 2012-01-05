@@ -130,51 +130,53 @@ public class RpcServer {
     private void processRemoteEvents( final Socket remoteSocket ) {
         new Thread( new Runnable() {
             public void run() {
-                try {
-                    final int BUFFER_SIZE = 4096;
-                    final char[] streamBuffer = new char[BUFFER_SIZE];
-                    final BufferedReader reader = new BufferedReader( new InputStreamReader( remoteSocket.getInputStream() ) );
-                    final PrintWriter output = new PrintWriter( remoteSocket.getOutputStream() );
-                                        
-                    final StringBuilder inputBuffer = new StringBuilder();
-                    do {
-                        final int readCount = reader.read( streamBuffer, 0, BUFFER_SIZE );
+                while( true ) {
+                    try {
+                        final int BUFFER_SIZE = remoteSocket.getReceiveBufferSize();
+                        final char[] streamBuffer = new char[BUFFER_SIZE];
+                        final BufferedReader reader = new BufferedReader( new InputStreamReader( remoteSocket.getInputStream() ) );
+                        final PrintWriter output = new PrintWriter( remoteSocket.getOutputStream() );
                         
-                        if ( readCount == -1 ) {     // the session has been closed
-                            return;
-                        }
-                        else {
-                            inputBuffer.append( streamBuffer, 0, readCount );
-                        }
-                    } while( reader.ready() );
-                    
-                    final String jsonRequest = inputBuffer.toString();
-                                                                
-                    final Object requestObject = JSONCoder.decode( jsonRequest );
-                    if ( requestObject instanceof Map ) {
-                        final Map<String,Object> request = (Map<String,Object>)requestObject;
-                        final String message = (String)request.get( "message" );
-                        final String[] messageParts = decodeRemoteMessage( message );
-                        final String serviceName = messageParts[0];
-                        final String methodName = messageParts[1];
-                        final Number requestID = (Number)request.get( "id" );
-                        final List<Object> params = (List<Object>)request.get( "params" );
+                        final StringBuilder inputBuffer = new StringBuilder();
+                        do {
+                            final int readCount = reader.read( streamBuffer, 0, BUFFER_SIZE );
+                            
+                            if ( readCount == -1 ) {     // the session has been closed
+                                return;
+                            }
+                            else {
+                                inputBuffer.append( streamBuffer, 0, readCount );
+                            }
+                        } while( reader.ready() );
                         
-                        // todo: call the method on the handler
-                        final RemoteRequestHandler<?> handler = REMOTE_REQUEST_HANDLERS.get( serviceName );
-                        final Object result = handler.evaluateRequest( methodName, params );
-                                                
-                        final Map<String,Object> response = new HashMap<String,Object>();
-                        response.put( "result", result );
-                        response.put( "error", null );
-                        response.put( "id", requestID );
-                        final String jsonResponse = JSONCoder.encode( response );
-                        output.print( jsonResponse );
-                        output.flush();
+                        final String jsonRequest = inputBuffer.toString();
+                                                                    
+                        final Object requestObject = JSONCoder.decode( jsonRequest );
+                        if ( requestObject instanceof Map ) {
+                            final Map<String,Object> request = (Map<String,Object>)requestObject;
+                            final String message = (String)request.get( "message" );
+                            final String[] messageParts = decodeRemoteMessage( message );
+                            final String serviceName = messageParts[0];
+                            final String methodName = messageParts[1];
+                            final Number requestID = (Number)request.get( "id" );
+                            final List<Object> params = (List<Object>)request.get( "params" );
+                            
+                            // todo: call the method on the handler
+                            final RemoteRequestHandler<?> handler = REMOTE_REQUEST_HANDLERS.get( serviceName );
+                            final Object result = handler.evaluateRequest( methodName, params );
+                                                    
+                            final Map<String,Object> response = new HashMap<String,Object>();
+                            response.put( "result", result );
+                            response.put( "error", null );
+                            response.put( "id", requestID );
+                            final String jsonResponse = JSONCoder.encode( response );
+                            output.print( jsonResponse );
+                            output.flush();
+                        }
                     }
-                }
-                catch ( Exception exception ) {
-                    exception.printStackTrace();
+                    catch ( Exception exception ) {
+                        exception.printStackTrace();
+                    }
                 }
             }
         }).start();
