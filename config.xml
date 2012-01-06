@@ -26,5 +26,20 @@
 	<property name="build.jar.lib.root" value="${build.jar.root}/lib" />
 	<property name="build.tests.root" value="${build.root}/tests" />
     
+    <!-- Configure path for the common libraries  -->
     <property name="install.lib.root" value="${install.root}/lib" />
+    
+    <!-- Configure paths for services  -->
+    <property name="services.build.compile.root" value="${build.root}/compile/services" />
+    <property name="services.build.jar.root" value="${build.jar.root}/services" />
+    <property name="services.install.root" value="${install.root}/services" />
+        
+    <!-- Configure paths for apps  -->
+    <property name="apps.build.compile.root" value="${build.root}/compile/apps" />
+    <property name="apps.build.jar.root" value="${build.jar.root}/apps" />
+    <property name="apps.install.root" value="${install.root}/apps" />
+    
+    <!-- Configure paths for scripts  -->
+    <property name="scripts.build.root" value="${build.root}/scripts" />
+    <property name="scripts.install.root" value="${install.root}/scripts" />
 </project>
