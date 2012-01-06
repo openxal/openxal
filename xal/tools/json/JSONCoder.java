@@ -1383,14 +1383,14 @@ class MutableConversionAdaptorStore extends ConversionAdaptorStore {
         
         registerType( Hashtable.class, new ConversionAdaptor<Hashtable,HashMap>() {
             /** convert the custom type to a representation in terms of representation JSON constructs */
-            @SuppressWarnings( "unchecked" )    // map and table don't have compile time types
+            @SuppressWarnings( "unchecked" )
             public HashMap toRepresentation( final Hashtable table ) {
                 return new HashMap( table );
             }
             
             
             /** convert the JSON representation construct into the custom type */
-            @SuppressWarnings( "unchecked" )    // list can represent any type
+            @SuppressWarnings( "unchecked" )
             public Hashtable toNative( final HashMap map ) {
                 return new Hashtable( map );
             }
@@ -1398,7 +1398,7 @@ class MutableConversionAdaptorStore extends ConversionAdaptorStore {
         
         registerType( StackTraceElement.class, new ConversionAdaptor<StackTraceElement,HashMap>() {
             /** convert the custom type to a representation in terms of representation JSON constructs */
-            @SuppressWarnings( "unchecked" )    // map and table don't have compile time types
+            @SuppressWarnings( "unchecked" ) 
             public HashMap toRepresentation( final StackTraceElement traceElement ) {
                 final HashMap traceElementMap = new HashMap( 3 );
                 traceElementMap.put( "className", traceElement.getClassName() );
@@ -1410,13 +1410,36 @@ class MutableConversionAdaptorStore extends ConversionAdaptorStore {
             
             
             /** convert the JSON representation construct into the custom type */
-            @SuppressWarnings( "unchecked" )    // list can represent any type
+            @SuppressWarnings( "unchecked" )    
             public StackTraceElement toNative( final HashMap traceElementMap ) {
                 final String className = (String)traceElementMap.get( "className" );
                 final String methodName = (String)traceElementMap.get( "methodName" );
                 final String fileName = (String)traceElementMap.get( "fileName" );
                 final int lineNumber = (Integer)traceElementMap.get( "lineNumber" );
                 return new StackTraceElement( className, methodName, fileName, lineNumber );
+            }
+        });
+        
+        registerType( RuntimeException.class, new ConversionAdaptor<RuntimeException,HashMap>() {
+            /** convert the custom type to a representation in terms of representation JSON constructs */
+            @SuppressWarnings( "unchecked" )
+            public HashMap toRepresentation( final RuntimeException exception ) {
+                final String rawMessage = exception.getMessage();
+                final HashMap exceptionMap = new HashMap( 3 );
+                exceptionMap.put( "message", rawMessage != null ? rawMessage : exception.toString() );
+                exceptionMap.put( "stackTrace", exception.getStackTrace() );
+                return exceptionMap;
+            }
+            
+            
+            /** convert the JSON representation construct into the custom type */
+            @SuppressWarnings( "unchecked" )
+            public RuntimeException toNative( final HashMap exceptionMap ) {
+                final String message = (String)exceptionMap.get( "message" );
+                final StackTraceElement[] stackTrace = (StackTraceElement[])exceptionMap.get( "stackTrace" );
+                final RuntimeException exception = new RuntimeException( message );
+                exception.setStackTrace( stackTrace );
+                return exception;
             }
         });
     }
