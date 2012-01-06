@@ -3,7 +3,7 @@
 <project name="common.services.config" basedir="." default="all">
     <import file="../config.xml" />
 
-    <!-- the value for these properties are overriden if specified in the beginning of the app's build file before any tasks are defined -->
+    <!-- the value for these properties are overriden if specified in the beginning of the service's build file before any tasks are defined -->
 	<property name="classpath.ref" value="default.classpath" />
 	<property name="manifest.classpath" value="../lib/xal-core.jar ../lib/xal-lib.jar" />    
     <property name="mainclass.base" value="Main" />
@@ -75,8 +75,8 @@
                 </classpath>
             </javac>
             
-            <!-- copy the service's resources into the compile directory -->
-            <copy todir="${service.build.compile.root}/${service.relative.path}/resources">
+            <!-- copy the service's resources if they exist into the compile directory -->
+            <copy todir="${service.build.compile.root}/${service.relative.path}/resources" failonerror="false">
                 <fileset dir="${service.src.root}/resources" />
             </copy>
             
