@@ -318,7 +318,7 @@ class ClientHandler<ProxyType> implements InvocationHandler {
                     return pendingResult.getValue();
                 }
                 else {
-                    throw remoteException;
+                    throw new RemoteMessageException( "Exception thrown during execution of the remote request on the remote service.", remoteException );
                 }
             }
             else {
