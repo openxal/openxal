@@ -12,16 +12,15 @@ package xal.tools.services;
 
 
 /**
- * RemoteMessageException wraps the lower level exeptions thrown during exectution of a remote message.
- *
+ * RemoteMessageException wraps exeptions thrown during exectution of a remote message.
  * @author  tap
  */
 public class RemoteMessageException extends RuntimeException {
     /** serialization ID */
     private static final long serialVersionUID = 1L;
     
-	public RemoteMessageException(Throwable cause) {
-		super(cause);
+	public RemoteMessageException( final String message, final Throwable cause ) {
+		super( message, cause );
 	}
 }
 
