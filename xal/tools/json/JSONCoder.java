@@ -1381,18 +1381,42 @@ class MutableConversionAdaptorStore extends ConversionAdaptorStore {
             }
         });
         
-        registerType( Hashtable.class, new ConversionAdaptor<Hashtable,Map>() {
+        registerType( Hashtable.class, new ConversionAdaptor<Hashtable,HashMap>() {
             /** convert the custom type to a representation in terms of representation JSON constructs */
             @SuppressWarnings( "unchecked" )    // map and table don't have compile time types
-            public Map toRepresentation( final Hashtable table ) {
+            public HashMap toRepresentation( final Hashtable table ) {
                 return new HashMap( table );
             }
             
             
             /** convert the JSON representation construct into the custom type */
             @SuppressWarnings( "unchecked" )    // list can represent any type
-            public Hashtable toNative( final Map map ) {
+            public Hashtable toNative( final HashMap map ) {
                 return new Hashtable( map );
+            }
+        });
+        
+        registerType( StackTraceElement.class, new ConversionAdaptor<StackTraceElement,HashMap>() {
+            /** convert the custom type to a representation in terms of representation JSON constructs */
+            @SuppressWarnings( "unchecked" )    // map and table don't have compile time types
+            public HashMap toRepresentation( final StackTraceElement traceElement ) {
+                final HashMap traceElementMap = new HashMap( 3 );
+                traceElementMap.put( "className", traceElement.getClassName() );
+                traceElementMap.put( "methodName", traceElement.getMethodName() );
+                traceElementMap.put( "fileName", traceElement.getFileName() );
+                traceElementMap.put( "lineNumber", traceElement.getLineNumber() );
+                return traceElementMap;
+            }
+            
+            
+            /** convert the JSON representation construct into the custom type */
+            @SuppressWarnings( "unchecked" )    // list can represent any type
+            public StackTraceElement toNative( final HashMap traceElementMap ) {
+                final String className = (String)traceElementMap.get( "className" );
+                final String methodName = (String)traceElementMap.get( "methodName" );
+                final String fileName = (String)traceElementMap.get( "fileName" );
+                final int lineNumber = (Integer)traceElementMap.get( "lineNumber" );
+                return new StackTraceElement( className, methodName, fileName, lineNumber );
             }
         });
     }
