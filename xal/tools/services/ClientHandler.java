@@ -229,6 +229,7 @@ class ClientHandler<ProxyType> implements InvocationHandler {
             if ( responseObject instanceof Map ) {
                 final Map<String,Object> response = (Map<String,Object>)responseObject;
                 final Object result = response.get( "result" );
+                final RuntimeException remoteException = (RuntimeException)response.get( "error" );
                 final Long requestID = (Long)response.get( "id" );
                 
                 final PendingResult pendingResult = PENDING_RESULTS.get( requestID );
@@ -236,6 +237,7 @@ class ClientHandler<ProxyType> implements InvocationHandler {
                 if ( pendingResult != null ) {
                     synchronized( pendingResult ) {
                         pendingResult.setValue( result );
+                        pendingResult.setRemoteException( remoteException );
                         pendingResult.notify();
                     }
                 }
@@ -311,7 +313,13 @@ class ClientHandler<ProxyType> implements InvocationHandler {
                 
                 PENDING_RESULTS.remove( requestID );
                 
-                return pendingResult.getValue();
+                final RuntimeException remoteException = pendingResult.getRemoteException();
+                if ( remoteException == null ) {
+                    return pendingResult.getValue();
+                }
+                else {
+                    throw remoteException;
+                }
             }
             else {
                 return null;
@@ -334,6 +342,9 @@ class PendingResult {
     /** result value */
     private Object _value;
     
+    /** remote exception */
+    private RuntimeException _remoteException;
+    
     
     /** set the result's value */
     public void setValue( final Object value ) {
@@ -344,5 +355,17 @@ class PendingResult {
     /** get the result's value */
     public Object getValue() {
         return _value;
+    }
+    
+    
+    /** set the error message */
+    public void setRemoteException( final RuntimeException exception ) {
+        _remoteException = exception;
+    }
+    
+    
+    /** get the error message */
+    public RuntimeException getRemoteException() {
+        return _remoteException;
     }
 }

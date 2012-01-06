@@ -170,8 +170,9 @@ public class RpcServer {
                             if ( provideResponse ) {
                                 final Map<String,Object> response = new HashMap<String,Object>();
                                 response.put( "result", result.getValue() );
-                                response.put( "error", null );
-                                response.put( "id", requestID );
+                                response.put( "id", requestID );                                
+                                response.put( "error", result.getRuntimeExceptionWrapper() );
+                                
                                 final String jsonResponse = JSONCoder.encode( response );
                                 output.print( jsonResponse );
                                 output.flush();
@@ -261,15 +262,16 @@ class RemoteRequestHandler<ProtocolType> {
             methodParamTypes[index] = param != null ? param.getClass() : null;
         }
                 
-        final Method method = getMethod( methodName, methodParamTypes );
+        final Method method = getMethod( methodName, methodParamTypes );        
+        final boolean isOneWay = method.isAnnotationPresent( OneWay.class );
         
         try {
             final Object value = method.invoke( PROVIDER, methodParams );
-            final boolean isOneWay = method.isAnnotationPresent( OneWay.class );
             return new EvaluationResult( value, isOneWay );
         }
         catch ( Exception exception ) {
-            throw new RuntimeException( "Exception evaluating the remote request with the request handler.", exception );
+            exception.printStackTrace();
+            return new EvaluationResult( null, isOneWay, exception.getCause() );
         }
     }
     
@@ -390,11 +392,21 @@ class EvaluationResult {
     /** indicates whether the method is one way (no response to remote caller) */
     final private boolean IS_ONE_WAY;
     
+    /** exception */
+    final private Throwable EXCEPTION;
+    
     
     /** Constructor */
     public EvaluationResult( final Object value, final boolean isOneWay ) {
+        this( value, isOneWay, null );
+    }
+    
+    
+    /** Constructor */
+    public EvaluationResult( final Object value, final boolean isOneWay, final Throwable exception ) {
         VALUE = value;
         IS_ONE_WAY = isOneWay;
+        EXCEPTION = exception;
     }
     
     
@@ -406,6 +418,23 @@ class EvaluationResult {
     /** get the value */
     public Object getValue() {
         return VALUE;
+    }
+    
+    /** get the exception */
+    public Throwable getException() {
+        return EXCEPTION;
+    }
+    
+    /** wrap the raw exception as runtime exception */
+    public RuntimeException getRuntimeExceptionWrapper() {
+        if ( EXCEPTION != null ) {
+            final RuntimeException wrapper = new RuntimeException( EXCEPTION );
+            wrapper.setStackTrace( EXCEPTION.getStackTrace() );
+            return wrapper;
+        }
+        else {
+            return null;
+        }
     }
 }
 
