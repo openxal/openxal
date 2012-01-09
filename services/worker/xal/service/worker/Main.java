@@ -41,6 +41,7 @@ public class Main {
 	/** run the service */
 	protected void run() {
         ServiceDirectory.defaultDirectory().registerService( Working.class, "Worker", new WorkService() );
+        System.out.println( "Listening for work requests..." );
 	}
 	
 	
@@ -60,5 +61,13 @@ public class Main {
 	static public Date getLaunchTime() {
 		return LAUNCH_TIME;
 	}
+    
+    
+    /** Shutdown the applicaiton */
+    static public void shutdown( final int code ) {
+        System.out.println( "Shutting down work service..." );
+        ServiceDirectory.defaultDirectory().dispose();
+        System.exit( code );
+    }
 }
 

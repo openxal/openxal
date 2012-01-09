@@ -10,6 +10,8 @@
 
 package xal.service.worker;
 
+import xal.tools.services.OneWay;
+
 import java.util.Date;
 
 
@@ -20,5 +22,14 @@ import java.util.Date;
 public interface Working {
     /** add two numbers */
     public double add( final double summand, final double addend );
+    
+    
+    /** get the launch time */
+    public Date getLaunchTime();
+    
+    
+    /** shutdown the service */
+    @OneWay
+    public void shutdown( final int code );
 }
 

@@ -22,5 +22,17 @@ public class WorkService implements Working {
     public double add( final double summand, final double addend ) {
         return summand + addend;
     }
+
+    
+    /** get the launch time */
+    public Date getLaunchTime() {
+        return Main.getLaunchTime();
+    }
+    
+    
+    /** shutdown the service */
+    public void shutdown( final int code ) {
+        Main.shutdown( code );
+    }
 }
 
