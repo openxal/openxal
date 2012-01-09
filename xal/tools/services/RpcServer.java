@@ -100,8 +100,6 @@ public class RpcServer {
         
         for ( final Socket socket : REMOTE_SOCKETS ) {
             try {
-                socket.getInputStream().close();
-                socket.getOutputStream().close();
                 socket.close();
             }
             catch( Exception exception ) {
