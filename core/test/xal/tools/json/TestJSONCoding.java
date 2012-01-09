@@ -202,6 +202,12 @@ public class TestJSONCoding {
     
     
     @Test
+    public void testSerializationEncodingDecoding() {
+        checkEncodingDecoding( new java.math.BigInteger( "123456789012345678901234567890" ) );  // BigInteger is Serializable and not a directly supported type
+    }
+    
+    
+    @Test
     public void testRuntimeExceptionEncodingDecoding() {
         try {
             final Object nullObject = null;

@@ -13,6 +13,7 @@ import xal.tools.ConversionAdaptor;
 import java.lang.reflect.Array;
 import java.util.*;
 import java.util.regex.*;
+import java.io.*;
 
 
 /** encode and decode objects with JSON */
@@ -177,8 +178,14 @@ abstract class AbstractEncoder {
             else if ( valueClass.isArray() ) {
                 return ArrayEncoder.getInstance( value, conversionAdaptorStore, reference, referenceStore );
             }
-            else {  // if the type is not among the standard ones then look to extensions
+            else if ( conversionAdaptorStore.isExtendedClass( valueClass ) ) {  // if the type is not among the standard ones then look to extensions
                 return new ExtensionEncoder( value, conversionAdaptorStore, reference, referenceStore );
+            }
+            else if ( value instanceof Serializable ) {
+                return new SerializationEncoder( value, conversionAdaptorStore, reference, referenceStore );
+            }
+            else {
+                throw new RuntimeException( "No JSON support for the object of type: " + valueClass );
             }
         }
     }
@@ -535,6 +542,44 @@ class ExtensionEncoder extends DictionaryEncoder {
         return _isTypedCollectionItem ? getRepresentationEncoder().encode() : super.encodeValue();
     }
 }
+
+
+
+/** encoder for serialized objects which piggybacks on the dictionary encoder */
+class SerializationEncoder extends DictionaryEncoder {
+    /** custom key identifying the serialization byte array */
+    static final public String SERIALIZATION_VALUE_KEY = "__XALSERIALIZATION";
+    
+    
+    /** Constructor */
+    public SerializationEncoder( final Object value, final ConversionAdaptorStore conversionAdaptorStore, final IdentityReference reference, final ReferenceStore referenceStore ) {
+        super( getValueRep( value ), conversionAdaptorStore, reference, referenceStore );
+    }
+    
+    
+    /** get the serialization byte array */
+    @SuppressWarnings( "unchecked" )
+    static private HashMap<String,Object> getValueRep( final Object value ) {
+        try {
+            final HashMap<String,Object> valueRep = new HashMap<String,Object>();
+            final ByteArrayOutputStream byteOutStream = new ByteArrayOutputStream();
+            final ObjectOutputStream objectOutStream = new ObjectOutputStream( byteOutStream );
+            objectOutStream.writeObject( value );
+            objectOutStream.flush();
+                        
+            valueRep.put( SERIALIZATION_VALUE_KEY, byteOutStream.toByteArray() );
+            
+            objectOutStream.close();
+            byteOutStream.close();
+                        
+            return valueRep;
+        }
+        catch ( IOException exception ) {
+            throw new RuntimeException( "Exception serializing object: " + value , exception );
+        }
+    }
+}
+
 
 
 /** encoder for an array of items of a common extended type which piggybacks on the dictionary encoder */
@@ -1056,6 +1101,21 @@ class DictionaryDecoder extends AbstractDecoder<Object> {
                 throw new RuntimeException( "Exception decoding a typed array of type: " + componentType, exception );
             }
         }
+        else if ( dictionary.containsKey( SerializationEncoder.SERIALIZATION_VALUE_KEY ) ) {
+            final byte[] serializationData = (byte[])dictionary.get( SerializationEncoder.SERIALIZATION_VALUE_KEY );
+            
+            try {
+                final ByteArrayInputStream byteInputStream = new ByteArrayInputStream( serializationData );
+                final ObjectInputStream objectInputStream = new ObjectInputStream( byteInputStream );
+                final Object value = objectInputStream.readObject();
+                objectInputStream.close();
+                byteInputStream.close();
+                return value;
+            }
+            catch ( Exception exception ) {
+                throw new RuntimeException( "Exception decoding serialized object from dictionary: " + dictionary, exception );
+            }
+        }
         else if ( dictionary.containsKey( SoftValueEncoder.OBJECT_ID_KEY ) && dictionary.containsKey( SoftValueEncoder.VALUE_KEY ) ) {
             // decode a referenced object definition and store it
             final Long itemID = (Long)dictionary.get( SoftValueEncoder.OBJECT_ID_KEY );
@@ -1354,6 +1414,24 @@ class ConversionAdaptorStore {
         Collections.sort( types );
         
         return types;
+    }
+    
+    
+    /** Determine if the specified object is of an extended type */
+    public boolean isOfExtendedType( final Object value ) {
+        return isExtendedClass( value.getClass() );
+    }
+    
+    
+    /** Determine if the specified class corresponds to an extended type */
+    public boolean isExtendedClass( final Class valueClass ) {
+        return isExtendedType( valueClass.getName() );
+    }
+    
+    
+    /** Determine if the specified type is an extended type */
+    public boolean isExtendedType( final String valueType ) {
+        return TYPE_EXTENSION_ADAPTORS.containsKey( valueType );
     }
     
     
