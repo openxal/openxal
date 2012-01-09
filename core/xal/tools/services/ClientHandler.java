@@ -59,6 +59,9 @@ class ClientHandler<ProxyType> implements InvocationHandler {
     /** pending results keyed by request ID */
     final private Map<Long,PendingResult> PENDING_RESULTS;
     
+    /** coder for encoding and decoding messages for remote transport */
+    final private JSONCoder MESSAGE_CODER;
+    
     
     // static initializer
     static {
@@ -72,12 +75,14 @@ class ClientHandler<ProxyType> implements InvocationHandler {
 	 * @param port  The port through which the service is provided.
 	 * @param name  The name of the service.
 	 * @param newProtocol  The interface the service provides.
+     * @param messageCoder coder for encoding and decoding messages for remote transport
 	 */
-    public ClientHandler( final String host, final int port, final String name, final Class<ProxyType> newProtocol ) {
+    public ClientHandler( final String host, final int port, final String name, final Class<ProxyType> newProtocol, final JSONCoder messageCoder ) {
         REMOTE_HOST = host;
         REMOTE_PORT = port;
         SERVICE_NAME = name;
         PROTOCOL = newProtocol;
+        MESSAGE_CODER = messageCoder;
         
         PROXY = createProxy();
         
@@ -223,7 +228,7 @@ class ClientHandler<ProxyType> implements InvocationHandler {
         
         final String jsonResponse = inputBuffer.toString();
         if ( jsonResponse != null ) {
-            final Object responseObject = JSONCoder.decode( jsonResponse );
+            final Object responseObject = MESSAGE_CODER.unarchive( jsonResponse );
             if ( responseObject instanceof Map ) {
                 final Map<String,Object> response = (Map<String,Object>)responseObject;
                 final Object result = response.get( "result" );
@@ -288,7 +293,7 @@ class ClientHandler<ProxyType> implements InvocationHandler {
             request.put( "message", message );
             request.put( "params", params );
             request.put( "id", requestID );
-            final String jsonRequest = JSONCoder.encode( request );
+            final String jsonRequest = MESSAGE_CODER.archive( request );
             
             // methods marked with the OneWay annotation return immediately and do not wait for a response from the service
             final boolean waitForResponse = !method.isAnnotationPresent( OneWay.class );

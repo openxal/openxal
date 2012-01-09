@@ -10,13 +10,12 @@
 
 package xal.tools.services;
 
+import xal.tools.json.JSONCoder;
+import xal.tools.ConversionAdaptor;
+
 import java.io.IOException;
 import java.lang.reflect.Proxy;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.Map;
-import java.util.Set;
-import java.util.Iterator;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.logging.Level;
@@ -40,6 +39,9 @@ final public class ServiceDirectory {
 	
 	/** thread pool */
 	final private ExecutorService THREAD_POOL;
+    
+    /** coder for encoding and ecoding messages for remote transport */
+    final private JSONCoder MESSAGE_CODER;
 	
 	/** XML-RPC server used for registering services */
     private RpcServer _rpcServer;
@@ -63,6 +65,7 @@ final public class ServiceDirectory {
 	/** ServiceDirectory constructor. */
 	public ServiceDirectory() throws ServiceException {
 		THREAD_POOL = Executors.newCachedThreadPool();
+        MESSAGE_CODER = JSONCoder.getInstance();
 		
 		_listenerMap = new Hashtable<ServiceListener, BonjourServiceListenerInfo>();
 		
@@ -86,12 +89,6 @@ final public class ServiceDirectory {
 			exception.printStackTrace();
 		}
 	}
-    
-    
-    /** publish services */
-    private void publishServices() {
-        
-    }
 	
 	
 	/**
@@ -143,7 +140,29 @@ final public class ServiceDirectory {
 	public boolean isLoopback() {
 		return _isLoopback;
 	}
-	
+    
+    
+    /** Get a list of standard data types which are supported for coding and decoding */
+    public List<String> getStandardCodingTypes() {
+        return MESSAGE_CODER.getStandardTypes();
+    }
+    
+    
+    /** Get a list of all data types which are supported for coding and decoding */
+    public List<String> getSupportedCodingTypes() {
+        return MESSAGE_CODER.getSupportedTypes();
+    }
+    
+    
+    /** 
+     * Register the custom type and its associated adaptor to use for encoding and decoding objects of the custom type
+     * @param type type to identify and process for encoding and decoding
+     * @param adaptor translator between the custom type and representation constructs
+     */
+    public <CustomType,RepresentationType> void registerCodingType( final Class<CustomType> type, final ConversionAdaptor<CustomType,RepresentationType> adaptor ) {
+        MESSAGE_CODER.registerType( type, adaptor );
+    }
+
 	
     /**
      * Register a local service provider.
@@ -172,7 +191,7 @@ final public class ServiceDirectory {
 		
 		try {
             if ( _rpcServer == null ) {
-                _rpcServer = new RpcServer();
+                _rpcServer = new RpcServer( MESSAGE_CODER );
                 _rpcServer.start();
             }
               
@@ -219,7 +238,7 @@ final public class ServiceDirectory {
 	public <T> T getProxy( final Class<T> protocol, final ServiceRef serviceRef ) {
         final ServiceInfo info = serviceRef.getServiceInfo();
         final String hostAddress = serviceRef.getHostAddress();		
-		return new ClientHandler<T>( hostAddress, info.getPort(), serviceRef.getServiceName(), protocol ).getProxy();
+		return new ClientHandler<T>( hostAddress, info.getPort(), serviceRef.getServiceName(), protocol, MESSAGE_CODER ).getProxy();
 	}
 	
 	

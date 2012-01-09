@@ -37,9 +37,14 @@ public class RpcServer {
     /** remote request handlers keyed by service name */
     final private Map<String,RemoteRequestHandler<?>> REMOTE_REQUEST_HANDLERS;
     
+    /** coder for encoding and decoding messages for remote transport */
+    final private JSONCoder MESSAGE_CODER;
+    
     
     /** Constructor */
-    public RpcServer() throws java.io.IOException {
+    public RpcServer( final JSONCoder messageCoder ) throws java.io.IOException {
+        MESSAGE_CODER = messageCoder;
+        
         REMOTE_REQUEST_HANDLERS = new Hashtable<String,RemoteRequestHandler<?>>();
         SERVER_SOCKET = new ServerSocket( 0 );
         REMOTE_SOCKETS = new HashSet<Socket>();
@@ -149,7 +154,7 @@ public class RpcServer {
                         
                         final String jsonRequest = inputBuffer.toString();
                                                                     
-                        final Object requestObject = JSONCoder.decode( jsonRequest );
+                        final Object requestObject = MESSAGE_CODER.unarchive( jsonRequest );
                         if ( requestObject instanceof Map ) {
                             final Map<String,Object> request = (Map<String,Object>)requestObject;
                             final String message = (String)request.get( "message" );
@@ -171,7 +176,7 @@ public class RpcServer {
                                 response.put( "id", requestID );                                
                                 response.put( "error", result.getRuntimeExceptionWrapper() );
                                 
-                                final String jsonResponse = JSONCoder.encode( response );
+                                final String jsonResponse = MESSAGE_CODER.archive( response );
                                 output.print( jsonResponse );
                                 output.flush();
                             }
