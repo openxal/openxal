@@ -88,8 +88,6 @@ class ClientHandler<ProxyType> implements InvocationHandler {
         REMOTE_SOCKET = makeRemoteSocket( host, port );
         
         _requestIDCounter = 0;
-        
-        listenForRemoteMessages();
     }
     
     
