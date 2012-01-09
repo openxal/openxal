@@ -130,23 +130,19 @@ public class TestJSONCoding {
     
     @Test
     public void testArrayEncodingDecoding() {
-        checkArrayEncodingDecoding( new double[] { 4.78, Math.PI, -17.6, 5.4E23, 8.719E-32 } );
-        checkArrayEncodingDecoding( new String[] { "Hello", "World", "This is just a test!" } );
-        checkArrayEncodingDecoding( new int[] { 2, 3, 5, 7, 11 } );
+        checkArrayEncodingDecoding( new Object[] { "Hello, World", 2.0, 5000L } );    // Object array with standard types
+        checkArrayEncodingDecoding( new Object[] { "Hello, World", 25, new Date() } );    // Object array with extended types
+        checkArrayEncodingDecoding( new String[] { "Hello", "World", "This is just a test!" } );    // standard type array
+        checkArrayEncodingDecoding( new double[] { 4.78, Math.PI, -17.6, 5.4E23, 8.719E-32 } );     // standard primitive array
+        checkArrayEncodingDecoding( new int[] { 2, 3, 5, 7, 11 } );         // extended type primitive array
+        checkArrayEncodingDecoding( new Byte[] { 105, 74, 43, 45 });        // extended type primitive array using wrapper
+        checkArrayEncodingDecoding( new Date[] { new Date(), new Date( new Date().getTime() - 1000 ), new Date( new Date().getTime() + 1000 ) } );      // extended type array
     }
     
     
     @Test
     public void testDateEncodingDecoding() {
         checkEncodingDecoding( new Date() );
-    }
-    
-    
-    @Test
-    // arrays of a common, extended component type are efficiently encoded into an array of representations and a single type key
-    public void testArrayCommonExtensionEncodingDecoding() {
-        checkArrayEncodingDecoding( new Date[] { new Date(), new Date( new Date().getTime() - 1000 ), new Date( new Date().getTime() + 1000 ) } );
-        checkArrayEncodingDecoding( new Byte[] { 105, 74, 43, 45 });
     }
     
     
