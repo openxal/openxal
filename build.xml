@@ -27,7 +27,6 @@
 			<mkdir dir="${build.compile.core.root}" />
 			<javac debug="true" source="1.6" target="1.6" includeAntRuntime="no" deprecation="true" destdir="${build.compile.core.root}" srcdir="${srcroot}" includes="xal/**" sourcepath="">
 				<classpath>
-					<pathelement location="${build.compile.core.root}" />
 					<pathelement location="${build.jar.lib.root}/xal-lib.jar" />
 				</classpath>
 				<compilerarg value="@{flag}" />
