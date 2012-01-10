@@ -113,8 +113,8 @@
 	
 	<!-- Javadoc the XAL core -->
     <target name="doc" depends="init" description="Javadoc XAL core." >
-        <mkdir dir="${build.doc.root}" />
-        <javadoc destdir="${build.doc.root}" packagenames="xal.*" author="false" version="false" maxmemory="512m">
+        <mkdir dir="${build.javadoc.root}" />
+        <javadoc destdir="${build.javadoc.root}" packagenames="xal.*" author="false" version="false" maxmemory="512m">
             <sourcepath>
                 <pathelement location="." />
             </sourcepath>
