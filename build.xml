@@ -113,13 +113,13 @@
 	
 	<!-- Javadoc the XAL core -->
     <target name="doc" depends="init" description="Javadoc XAL core." >
-        <mkdir dir="${build.root}/javadoc" />
-        <javadoc destdir="${build.root}/javadoc" packagenames="xal.*" author="false" version="false" maxmemory="512m">
+        <mkdir dir="${build.doc.root}" />
+        <javadoc destdir="${build.doc.root}" packagenames="xal.*" author="false" version="false" maxmemory="512m">
             <sourcepath>
                 <pathelement location="." />
             </sourcepath>
             <classpath>
-                <pathelement location="${build.compile.core.root}" />
+                <pathelement location="${build.jar.lib.root}/xal-core.jar" />
                 <pathelement location="${build.jar.lib.root}/xal-lib.jar" />
             </classpath>
         </javadoc>
@@ -140,7 +140,7 @@
         
         <echo message="Core cleaned!" />
     </target>
-	
+    
 	
 	<!-- provide guidance on the various targets -->
     <target name="help">
