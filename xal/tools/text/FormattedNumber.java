@@ -66,7 +66,7 @@ public class FormattedNumber extends Number {
 	/**
 	 * Constructor with the default pattern of "0.0000E###".
 	 * This constructor is necessary to support javax.swing.text.DefaultFormatter
-	 * @param value the string to parse as a number
+	 * @param valueString the string to parse as a number
 	 */
 	public FormattedNumber( final String valueString ) {
 		this( new Double( valueString ) );
