@@ -67,7 +67,6 @@ public interface ApplicationStatus {
 	/**
 	 * Quit the application normally.
 	 * @param code An unused status code.
-	 * @return The status code.
 	 */
     @OneWay
 	public void quit( final int code );
@@ -76,7 +75,6 @@ public interface ApplicationStatus {
 	/**
 	 * Force the application to quit immediately without running any finalizers.
 	 * @param code The status code used for halting the virtual machine.
-	 * @return The supplied status code.
 	 */
     @OneWay
 	public void forceQuit( int code );
