@@ -25,10 +25,6 @@ public interface Coder {
     public <CustomType,RepresentationType> void registerType( final Class<CustomType> type, final ConversionAdaptor<CustomType,RepresentationType> adaptor );
     
     
-    /** Register the custom type by name and its associated adaptor */
-    public <CustomType,RepresentationType> void registerType( final String type, final ConversionAdaptor<CustomType,RepresentationType> adaptor );
-    
-    
     /** Get a list of all types which are supported for coding and decoding */
     public List<String> getSupportedTypes();
 }
