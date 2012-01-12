@@ -6,7 +6,7 @@
 //  Copyright 2011 Oak Ridge National Lab. All rights reserved.
 //
 
-package xal.tools.json;
+package xal.tools.coding.json;
 
 import org.junit.*;
 import java.util.*;

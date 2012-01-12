@@ -10,8 +10,8 @@
 
 package xal.tools.services;
 
-import xal.tools.json.JSONCoder;
-import xal.tools.ConversionAdaptor;
+import xal.tools.coding.json.JSONCoder;
+import xal.tools.coding.*;
 
 import java.io.IOException;
 import java.lang.reflect.Proxy;
@@ -41,7 +41,7 @@ final public class ServiceDirectory {
 	final private ExecutorService THREAD_POOL;
     
     /** coder for encoding and ecoding messages for remote transport */
-    final private JSONCoder MESSAGE_CODER;
+    final private Coder MESSAGE_CODER;
 	
 	/** XML-RPC server used for registering services */
     private RpcServer _rpcServer;
@@ -144,7 +144,7 @@ final public class ServiceDirectory {
     
     /** Get a list of standard data types which are supported for coding and decoding */
     public List<String> getStandardCodingTypes() {
-        return MESSAGE_CODER.getStandardTypes();
+        return JSONCoder.getStandardTypes();
     }
     
     
