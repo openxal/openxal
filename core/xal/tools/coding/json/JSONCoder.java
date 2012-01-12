@@ -83,16 +83,6 @@ public class JSONCoder implements Coder {
     }
     
     
-    /** 
-     * Register the custom type by name and its associated adaptor 
-     * @param type type to identify and process for encoding and decoding
-     * @param adaptor translator between the custom type and representation JSON constructs
-     */
-    public <CustomType,RepresentationType> void registerType( final String type, final ConversionAdaptor<CustomType,RepresentationType> adaptor ) {
-        CONVERSION_ADAPTOR_STORE.registerType( type, adaptor );
-    }
-    
-    
     /** Get the conversion adaptor for the given value */
     protected ConversionAdaptor getConversionAdaptor( final String valueType ) {
         return CONVERSION_ADAPTOR_STORE.getConversionAdaptor( valueType );
