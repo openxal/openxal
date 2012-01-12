@@ -1368,7 +1368,7 @@ class ConversionAdaptorStore {
         types.add( Boolean.class.getName() );
         types.add( Double.class.getName() );
         types.add( Long.class.getName() );
-        types.add( Map.class.getName() );
+        types.add( HashMap.class.getName() );
         types.add( Object[].class.getName() );
         types.add( String.class.getName() );
         
