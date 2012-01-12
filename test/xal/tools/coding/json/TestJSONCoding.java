@@ -141,6 +141,23 @@ public class TestJSONCoding {
     
     
     @Test
+    public void testMultidimensionalArrayEncodingDecoding() {
+        final int[][] controlArray = { { 2, 3, 5 }, { 7, 11, 13, 17, 19 } };
+        final String coding = JSONCoder.encode( controlArray );
+        final Object testArray = JSONCoder.decode( coding );
+        for ( int row = 0 ; row < controlArray.length ; row++ ) {
+            final int[] controlColumnArray = controlArray[row];
+            final Object testColumnArray = Array.get( testArray, row );
+            for ( int column = 0 ; column < controlColumnArray.length ; column++ ) {
+                final int controlItem = controlColumnArray[ column ];
+                final Object testItem = Array.get( testColumnArray, column );
+                assertEquality( controlItem, testItem );
+            }
+        }
+    }
+    
+    
+    @Test
     public void testDateEncodingDecoding() {
         checkEncodingDecoding( new Date() );
     }
