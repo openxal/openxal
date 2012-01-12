@@ -10,7 +10,7 @@
 
 package xal.tools.services;
 
-import xal.tools.json.*;
+import xal.tools.coding.*;
 
 import java.io.*;
 import java.lang.reflect.*;
@@ -38,11 +38,11 @@ public class RpcServer {
     final private Map<String,RemoteRequestHandler<?>> REMOTE_REQUEST_HANDLERS;
     
     /** coder for encoding and decoding messages for remote transport */
-    final private JSONCoder MESSAGE_CODER;
+    final private Coder MESSAGE_CODER;
     
     
     /** Constructor */
-    public RpcServer( final JSONCoder messageCoder ) throws java.io.IOException {
+    public RpcServer( final Coder messageCoder ) throws java.io.IOException {
         MESSAGE_CODER = messageCoder;
         
         REMOTE_REQUEST_HANDLERS = new Hashtable<String,RemoteRequestHandler<?>>();

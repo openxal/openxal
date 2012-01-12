@@ -6,9 +6,9 @@
 //  Copyright 2009 Oak Ridge National Lab. All rights reserved.
 //
 
-package xal.tools.json;
+package xal.tools.coding.json;
 
-import xal.tools.ConversionAdaptor;
+import xal.tools.coding.*;
 
 import java.lang.reflect.Array;
 import java.util.*;
@@ -17,7 +17,7 @@ import java.io.*;
 
 
 /** encode and decode objects with JSON */
-public class JSONCoder {
+public class JSONCoder implements Coder {
     /** default coder */
     static JSONCoder DEFAULT_CODER;
     
@@ -74,11 +74,21 @@ public class JSONCoder {
     
     
     /** 
-     * Register the custom type and its associated adaptor 
+     * Register the custom type by class and its associated adaptor 
      * @param type type to identify and process for encoding and decoding
      * @param adaptor translator between the custom type and representation JSON constructs
      */
     public <CustomType,RepresentationType> void registerType( final Class<CustomType> type, final ConversionAdaptor<CustomType,RepresentationType> adaptor ) {
+        CONVERSION_ADAPTOR_STORE.registerType( type, adaptor );
+    }
+    
+    
+    /** 
+     * Register the custom type by name and its associated adaptor 
+     * @param type type to identify and process for encoding and decoding
+     * @param adaptor translator between the custom type and representation JSON constructs
+     */
+    public <CustomType,RepresentationType> void registerType( final String type, final ConversionAdaptor<CustomType,RepresentationType> adaptor ) {
         CONVERSION_ADAPTOR_STORE.registerType( type, adaptor );
     }
     
@@ -1460,12 +1470,22 @@ class MutableConversionAdaptorStore extends ConversionAdaptorStore {
     
     
     /** 
-     * Register the custom type and its associated adaptor 
+     * Register the custom type by class and its associated adaptor 
      * @param type type to identify and process for encoding and decoding
      * @param adaptor translator between the custom type and representation JSON constructs
      */
     public <CustomType,RepresentationType> void registerType( final Class<CustomType> type, final ConversionAdaptor<CustomType,RepresentationType> adaptor ) {
-        TYPE_EXTENSION_ADAPTORS.put( type.getName(), adaptor );
+        registerType( type.getName(), adaptor );
+    }
+    
+    
+    /** 
+     * Register the custom type by name and its associated adaptor 
+     * @param type type to identify and process for encoding and decoding
+     * @param adaptor translator between the custom type and representation JSON constructs
+     */
+    public <CustomType,RepresentationType> void registerType( final String type, final ConversionAdaptor<CustomType,RepresentationType> adaptor ) {
+        TYPE_EXTENSION_ADAPTORS.put( type, adaptor );
     }
     
     

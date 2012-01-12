@@ -10,7 +10,7 @@
 
 package xal.tools.services;
 
-import xal.tools.json.*;
+import xal.tools.coding.*;
 
 import java.io.*;
 import java.net.*;
@@ -60,7 +60,7 @@ class ClientHandler<ProxyType> implements InvocationHandler {
     final private Map<Long,PendingResult> PENDING_RESULTS;
     
     /** coder for encoding and decoding messages for remote transport */
-    final private JSONCoder MESSAGE_CODER;
+    final private Coder MESSAGE_CODER;
     
     
     // static initializer
@@ -77,7 +77,7 @@ class ClientHandler<ProxyType> implements InvocationHandler {
 	 * @param newProtocol  The interface the service provides.
      * @param messageCoder coder for encoding and decoding messages for remote transport
 	 */
-    public ClientHandler( final String host, final int port, final String name, final Class<ProxyType> newProtocol, final JSONCoder messageCoder ) {
+    public ClientHandler( final String host, final int port, final String name, final Class<ProxyType> newProtocol, final Coder messageCoder ) {
         REMOTE_HOST = host;
         REMOTE_PORT = port;
         SERVICE_NAME = name;

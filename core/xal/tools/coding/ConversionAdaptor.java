@@ -6,7 +6,7 @@
 // Copyright 2011 Oak Ridge National Lab. All rights reserved.
 //
 
-package xal.tools;
+package xal.tools.coding;
 
 
 /** Declares methods for converting between an object of some native type and a representation suitable for a particular tool (e.g. for archiving and unarchiving objects). */
