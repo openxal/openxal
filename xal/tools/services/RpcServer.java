@@ -82,7 +82,7 @@ public class RpcServer {
         new Thread( new Runnable() {
             public void run() {
                 try {
-                    while ( true ) {
+                    while ( !SERVER_SOCKET.isClosed() ) {
                         final Socket remoteSocket = SERVER_SOCKET.accept();
                         REMOTE_SOCKETS.add( remoteSocket );
                         processRemoteEvents( remoteSocket );
@@ -133,7 +133,7 @@ public class RpcServer {
     private void processRemoteEvents( final Socket remoteSocket ) {
         new Thread( new Runnable() {
             public void run() {
-                while( true ) {
+                while( !remoteSocket.isClosed() ) {
                     try {
                         final int BUFFER_SIZE = remoteSocket.getReceiveBufferSize();
                         final char[] streamBuffer = new char[BUFFER_SIZE];
