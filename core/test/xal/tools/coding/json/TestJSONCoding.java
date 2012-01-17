@@ -18,7 +18,7 @@ import java.io.*;
 public class TestJSONCoding {
     @Test
     public void testNullEncoding() {
-        Assert.assertTrue( "null" == JSONCoder.encode( (Object)null ) );
+        Assert.assertTrue( "null" == JSONCoder.defaultEncode( (Object)null ) );
     }
     
     
@@ -58,7 +58,7 @@ public class TestJSONCoding {
     
     @Test
     public void testNullDecoding() {
-        Assert.assertTrue( null == JSONCoder.decode( "null" ) );
+        Assert.assertTrue( null == JSONCoder.defaultDecode( "null" ) );
     }
     
     
@@ -144,8 +144,8 @@ public class TestJSONCoding {
     @SuppressWarnings( "unchecked" )    // need to cast decoded object
     public void testMultidimensionalArrayEncodingDecoding() {
         final int[][] controlArray = { { 2, 3, 5 }, { 7, 11, 13, 17, 19 } };
-        final String coding = JSONCoder.encode( controlArray );
-        final int[][] testArray = (int[][])JSONCoder.decode( coding );
+        final String coding = JSONCoder.defaultEncode( controlArray );
+        final int[][] testArray = (int[][])JSONCoder.defaultDecode( coding );
         for ( int row = 0 ; row < controlArray.length ; row++ ) {
             final int[] controlColumnArray = controlArray[row];
             final int[] testColumnArray = testArray[row];
@@ -233,8 +233,8 @@ public class TestJSONCoding {
         }
         catch ( Exception exception ) {
             final RuntimeException controlValue = new RuntimeException( exception );
-            final String coding = JSONCoder.encode( controlValue );
-            final RuntimeException testValue = (RuntimeException)JSONCoder.decode( coding );
+            final String coding = JSONCoder.defaultEncode( controlValue );
+            final RuntimeException testValue = (RuntimeException)JSONCoder.defaultDecode( coding );
             assertEquality( testValue.getMessage(), controlValue.getMessage() );
             
             final StackTraceElement[] controlStackTrace = controlValue.getStackTrace();
@@ -300,9 +300,9 @@ public class TestJSONCoding {
         testMap.put( "other", otherList );
         testMap.put( "share_1", sharedList );
                 
-        final String json = JSONCoder.encode( testMap );
+        final String json = JSONCoder.defaultEncode( testMap );
         
-        final Map<String,Object> control = (Map<String,Object>)JSONCoder.decode( json );
+        final Map<String,Object> control = (Map<String,Object>)JSONCoder.defaultDecode( json );
         assertEquality( testMap, control );     // verify that we have regenerated the original map
                 
         final Object shared_0 = control.get( "share_0" );
@@ -322,36 +322,36 @@ public class TestJSONCoding {
     
     /** check whether the coder can encode values */
     static private <DataType> void checkEncodingEquality( final String controlCoding, final DataType value ) {
-        final String testCoding = JSONCoder.encode( value );
+        final String testCoding = JSONCoder.defaultEncode( value );
         assertEquality( controlCoding, testCoding );
     }
     
     /** check whether the decoder can decode values */
     static private <DataType> void checkValueEquality( final DataType controlValue ) {
-        final Object testValue = JSONCoder.decode( String.valueOf( controlValue ) );
+        final Object testValue = JSONCoder.defaultDecode( String.valueOf( controlValue ) );
         assertEquality( controlValue, testValue );
     }
     
     
     /** check whether the decoder can decode strings */
     static private void checkStringEquality( final String controlValue, final String testCoding ) {
-        final Object testValue = JSONCoder.decode( testCoding );
+        final Object testValue = JSONCoder.defaultDecode( testCoding );
         assertEquality( controlValue, testValue );
     }
     
     
     /** check whether a decoded encoding matches the original value */
     static private void checkEncodingDecoding( final Object controlValue ) {
-        final String coding = JSONCoder.encode( controlValue );
-        final Object testValue = JSONCoder.decode( coding );
+        final String coding = JSONCoder.defaultEncode( controlValue );
+        final Object testValue = JSONCoder.defaultDecode( coding );
         assertEquality( controlValue, testValue );
     }
     
     
     /** check whether a decoded encoding matches the original value */
     static private void checkArrayEncodingDecoding( final Object controlArray ) {
-        final String coding = JSONCoder.encode( controlArray );
-        final Object testArray = JSONCoder.decode( coding );
+        final String coding = JSONCoder.defaultEncode( controlArray );
+        final Object testArray = JSONCoder.defaultDecode( coding );
         
         final int count = Array.getLength( controlArray );
         assertEquality( count, Array.getLength( testArray ) );

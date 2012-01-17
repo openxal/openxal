@@ -90,12 +90,12 @@ public class JSONCoder implements Coder {
     
     
 	/** 
-	 * Decode the JSON string
+	 * Decode the JSON string using the default coder
 	 * @param archive JSON string representation of an object
 	 * @return an object with the data described in the archive
 	 */
-	static public Object decode( final String archive ) {
-        return DEFAULT_CODER.unarchive( archive );
+	static public Object defaultDecode( final String archive ) {
+        return DEFAULT_CODER.decode( archive );
 	}
     
     
@@ -104,20 +104,28 @@ public class JSONCoder implements Coder {
 	 * @param archive JSON string representation of an object
 	 * @return an object with the data described in the archive
 	 */
-    public Object unarchive( final String archive ) {
+    public Object decode( final String archive ) {
         final AbstractDecoder decoder = AbstractDecoder.getInstance( archive, new ConversionAdaptorStore( CONVERSION_ADAPTOR_STORE ) );
 		return decoder != null ? decoder.decode() : null;
     }
 	
 	
-	/** encode an object */
-    static public String encode( final Object value ) {
-        return DEFAULT_CODER.archive( value );
+	/** 
+     * Encode the object as a JSON string using the default encoder
+     * @param value the object to encode
+     * @return a JSON string representing the value
+     */
+    static public String defaultEncode( final Object value ) {
+        return DEFAULT_CODER.encode( value );
 	}
 	
 	
-	/** encode an object */
-    public String archive( final Object value ) {
+	/** 
+     * Encode the object as a JSON string 
+     * @param value the object to encode
+     * @return a JSON string representing the value
+     */
+    public String encode( final Object value ) {
         return AbstractEncoder.encode( value, new ConversionAdaptorStore( CONVERSION_ADAPTOR_STORE ) );
 	}
 }
