@@ -14,11 +14,11 @@ import java.util.List;
 /** Declares methods a coder should implement. */
 public interface Coder {
 	/** Encode an object */
-    public String archive( final Object value );
+    public String encode( final Object value );
     
     
 	/** Decode the archive */
-    public Object unarchive( final String archive );
+    public Object decode( final String archive );
     
     
     /** Register the custom type by class and its associated adaptor  */

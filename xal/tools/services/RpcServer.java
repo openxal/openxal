@@ -154,7 +154,7 @@ public class RpcServer {
                         
                         final String jsonRequest = inputBuffer.toString();
                                                                     
-                        final Object requestObject = MESSAGE_CODER.unarchive( jsonRequest );
+                        final Object requestObject = MESSAGE_CODER.decode( jsonRequest );
                         if ( requestObject instanceof Map ) {
                             final Map<String,Object> request = (Map<String,Object>)requestObject;
                             final String message = (String)request.get( "message" );
@@ -176,7 +176,7 @@ public class RpcServer {
                                 response.put( "id", requestID );                                
                                 response.put( "error", result.getRuntimeExceptionWrapper() );
                                 
-                                final String jsonResponse = MESSAGE_CODER.archive( response );
+                                final String jsonResponse = MESSAGE_CODER.encode( response );
                                 output.print( jsonResponse );
                                 output.flush();
                             }

@@ -228,7 +228,7 @@ class ClientHandler<ProxyType> implements InvocationHandler {
         
         final String jsonResponse = inputBuffer.toString();
         if ( jsonResponse != null ) {
-            final Object responseObject = MESSAGE_CODER.unarchive( jsonResponse );
+            final Object responseObject = MESSAGE_CODER.decode( jsonResponse );
             if ( responseObject instanceof Map ) {
                 final Map<String,Object> response = (Map<String,Object>)responseObject;
                 final Object result = response.get( "result" );
@@ -293,7 +293,7 @@ class ClientHandler<ProxyType> implements InvocationHandler {
             request.put( "message", message );
             request.put( "params", params );
             request.put( "id", requestID );
-            final String jsonRequest = MESSAGE_CODER.archive( request );
+            final String jsonRequest = MESSAGE_CODER.encode( request );
             
             // methods marked with the OneWay annotation return immediately and do not wait for a response from the service
             final boolean waitForResponse = !method.isAnnotationPresent( OneWay.class );
