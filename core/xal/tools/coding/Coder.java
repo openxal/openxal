@@ -1,9 +1,9 @@
 //
-// ConversionAdaptor.java
+// Coder.java
 // 
 //
-// Created by Tom Pelaia on 12/27/11
-// Copyright 2011 Oak Ridge National Lab. All rights reserved.
+// Created by Tom Pelaia on 1/12/12
+// Copyright 2012 Oak Ridge National Lab. All rights reserved.
 //
 
 package xal.tools.coding;
