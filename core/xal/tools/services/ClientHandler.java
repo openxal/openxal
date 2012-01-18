@@ -99,7 +99,9 @@ class ClientHandler<ProxyType> implements InvocationHandler {
     /** make a new remote socket */
     static private Socket makeRemoteSocket( final String host, final int port ) {
         try {
-            return new Socket( host, port );
+            final Socket remoteSocket = new Socket( host, port );
+            remoteSocket.setKeepAlive( true );
+            return remoteSocket;
         }
         catch( UnknownHostException exception ) {
             throw new RuntimeException( "Attempt to open a socket to an unknown host.", exception );

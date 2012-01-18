@@ -84,6 +84,7 @@ public class RpcServer {
                 try {
                     while ( !SERVER_SOCKET.isClosed() ) {
                         final Socket remoteSocket = SERVER_SOCKET.accept();
+                        remoteSocket.setKeepAlive( true );
                         REMOTE_SOCKETS.add( remoteSocket );
                         processRemoteEvents( remoteSocket );
                     }
