@@ -121,7 +121,7 @@ public class DifferentiableOperationMinimizer implements Runnable {
     
     
     /** Get the best solution variable value map */
-    public Map<BoundedDifferentiableVariable,Double> getBestVariableValueMap() {
+    public DifferentiableVariableValues getBestVariableValueMap() {
         return _bestSolution.getPoint().getPointMap();
     }
     
@@ -333,7 +333,7 @@ class Gradient {
     
     /** evaluate the gradient (returned as array) at the specified point */
     public double[] evaluate( final TrialPoint point ) {
-        final Map<BoundedDifferentiableVariable,Double> pointMap = point.getPointMap();
+        final DifferentiableVariableValues pointMap = point.getPointMap();
         final int dimension = getDimension();
         final double[] vector = new double[ dimension ];
         for ( int index = 0 ; index < dimension ; index++ ) {
@@ -402,7 +402,7 @@ class Hessian {
     
     /** evaluate the hessian matrix at the point and return matrix as an array of arrays */
     public double[][] evaluate( final TrialPoint point ) {
-        final Map<BoundedDifferentiableVariable,Double> pointMap = point.getPointMap();
+        final DifferentiableVariableValues pointMap = point.getPointMap();
         final int dimension = getDimension();
         final double[][] matrix = new double[dimension][dimension];
         for ( int row = 0 ; row < dimension ; row++ ) {
@@ -457,37 +457,37 @@ class Trial {
 
 /** trial point */
 class TrialPoint {
-    /** map of points keyed by variable */
-    final private Map<BoundedDifferentiableVariable,Double> POINT_MAP;
+    /** map of assigned variable values */
+    final private DifferentiableVariableValues POINT_MAP;
     
     
     /** Constructor */
     public TrialPoint() {
-        POINT_MAP = new HashMap<BoundedDifferentiableVariable,Double>();
+        POINT_MAP = DifferentiableVariableValues.getInstance();
     }
     
     
     /** set the value corresponding to the specified variable */
     public void setValue( final BoundedDifferentiableVariable variable, final double value ) {
-        POINT_MAP.put( variable, value );
+        POINT_MAP.assignValue( variable, value );
     }
     
     
     /** get the value for the specified variable */
     public double getValue( final BoundedDifferentiableVariable variable ) {
-        return POINT_MAP.get( variable ).doubleValue();
+        return POINT_MAP.getValue( variable );
     }
     
     
     /** get the map of values keyed by variable */
-    public Map<BoundedDifferentiableVariable,Double> getPointMap() {
+    public DifferentiableVariableValues getPointMap() {
         return POINT_MAP;
     }
     
     
     /** dimension of the point */
     public int dimension() {
-        return POINT_MAP.size();
+        return POINT_MAP.assignmentCount();
     }
 }
 
