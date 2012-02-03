@@ -195,10 +195,8 @@ public class App implements Comparable<App> {
 					final JarEntry entry = entryEnum.nextElement();
 					final String entryName = entry.getName();
 					if ( entryName.endsWith( "About.properties" ) ) {
-						final String urlSpec = "jar:" + file.toURI().toURL().toString() + "!" + "/" + entryName;
-						final URL url = new URL( urlSpec );
 						final Properties properties = new Properties();
-						final InputStream propertyStream = url.openStream();
+						final InputStream propertyStream = jarFile.getInputStream( entry );
 						properties.load( propertyStream );
 						try {
 							_notes = properties.getProperty( "description" );
