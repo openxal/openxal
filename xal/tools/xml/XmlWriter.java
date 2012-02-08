@@ -87,6 +87,8 @@ public class XmlWriter {
     static public void writeToFile( final Document document, final File file ) throws IOException {
         Writer fileWriter = new FileWriter( file );
         writeToWriter( document, fileWriter );
+        fileWriter.flush();
+        fileWriter.close();
     }
     
         
