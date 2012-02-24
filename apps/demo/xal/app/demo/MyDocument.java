@@ -126,7 +126,27 @@ public class MyDocument extends XalDocument {
     private MyWindow myWindow() {
         return (MyWindow)mainWindow;
     }
+        
     
+    /**
+     * Register custom actions for the document.
+     * @param commander The commander with which to register the custom commands.
+     */
+    protected void customizeCommands( final Commander commander ) {
+        // define the "Export" demo action
+        final Action exportAction = new AbstractAction( "export-data" ) {
+            /** serialization identifier */
+            private static final long serialVersionUID = 1L;
+            
+            public void actionPerformed( final ActionEvent event ) {
+                System.out.println( "Exporting data..." );
+				Logger.getLogger("global").log( Level.INFO, "Exporting data." );
+                displayConfirmDialog( "Demo Export", "Just simulating the export of data for demo. No data actually exported..." );
+            }
+        };
+        commander.registerAction( exportAction );
+    }
+
 	
     /** 
      * Instantiate a new PlainDocument that servers as the document for the text pane.
