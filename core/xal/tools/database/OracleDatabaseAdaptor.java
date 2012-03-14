@@ -37,29 +37,11 @@ public class OracleDatabaseAdaptor extends DatabaseAdaptor {
 	
 	
 	/**
-	 * Get a new database connection
-	 * @param urlSpec The URL to which to connect
-	 * @param user The user loggin into the database
-	 * @param password the user's password
-	 * @throws xal.tools.database.DatabaseException if a database exception is thrown
-	 */
-	public Connection getConnection(String urlSpec, String user, String password) throws DatabaseException {
-		try {
-			return DriverManager.getConnection(urlSpec, user, password);
-		}
-		catch(SQLException exception) {
-			Logger.getLogger("global").log( Level.SEVERE, "Error connecting to the database at URL: \"" + urlSpec + "\" as user: " + user , exception );
-			throw new DatabaseException("Exception connecting to the database.", this, exception);
-		}
-	}
-	
-	
-	/**
 	 * Fetch the list of nontrivial schemas.
 	 * @param connection database connection
 	 * @return list of nontrivial schema names
 	 */
-	public List<String> fetchNontrivialSchemas( final Connection connection ) {
+	public List<String> fetchNontrivialSchemas( final Connection connection ) throws DatabaseException {
 		try {
 			final PreparedStatement statement = connection.prepareStatement( "select owner from all_tables group by owner order by owner" );
 			final ResultSet resultSet = statement.executeQuery();
