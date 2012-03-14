@@ -289,19 +289,7 @@ public class BrowserModel {
 	 * @throws xal.tools.database.DatabaseException  if the schema fetch fails
 	 */
 	public List<String> fetchAllSchemas() throws DatabaseException {
-		try {
-			final List<String> schemas = new ArrayList<String>();
-			final DatabaseMetaData metaData = _connection.getMetaData();
-			final ResultSet result = metaData.getSchemas();
-			while ( result.next() ) {
-				schemas.add( result.getString( "TABLE_SCHEM" ) );
-			}
-
-			return schemas;
-		}
-		catch ( SQLException exception ) {
-			throw new DatabaseException( "Database exception while fetching schemas.", _databaseAdaptor, exception );
-		}
+		return _databaseAdaptor.fetchAllSchemas( _connection );
 	}
 
 
