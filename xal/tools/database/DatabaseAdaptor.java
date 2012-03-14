@@ -73,11 +73,11 @@ public abstract class DatabaseAdaptor {
 	
 	
 	/**
-	 * Get a new database adaptor using the default database adaptor
-	 * @return A new instance of the default database adaptor
+	 * Get a new database adaptor using the default database adaptor. Site specific code should provide an implementation of this method using the site specific database drivers.
+	 * @return Currently returns null, but site specific version should return a new instance of the default database adaptor
 	 */
 	static public DatabaseAdaptor getInstance() {
-		return new OracleDatabaseAdaptor();
+		return null;
 	}
 	
 	
