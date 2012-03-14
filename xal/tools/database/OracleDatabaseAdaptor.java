@@ -36,18 +36,6 @@ public class OracleDatabaseAdaptor extends DatabaseAdaptor {
 	}
 	
 	
-	// Static initializer
-	static {
-		try {
-			Class.forName( "oracle.jdbc.OracleDriver" );
-		}
-		catch( ClassNotFoundException exception ) {
-			Logger.getLogger("global").log( Level.SEVERE, "Error loading Oracle driver.", exception );
-			exception.printStackTrace();
-		}
-	}
-	
-	
 	/**
 	 * Get a new database connection
 	 * @param urlSpec The URL to which to connect
