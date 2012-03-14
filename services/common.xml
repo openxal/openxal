@@ -77,7 +77,7 @@
             
             <!-- copy the service's resources if they exist into the compile directory -->
             <copy todir="${service.build.compile.root}/${service.relative.path}/resources" failonerror="false">
-                <fileset dir="${service.src.root}/resources" />
+                <fileset dir="${service.src.root}/resources" erroronmissingdir="false" />
             </copy>
             
 		</sequential>
