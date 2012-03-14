@@ -124,7 +124,7 @@ public abstract class EnvelopeTrackerBase extends Tracker {
      *       Geneva, Switzerland (1978).
      * <br/>
      * [2] K.R. Crandall and D.P. Rusthoi, 
-     *          “Trace 3-D Documentation”, 
+     *          "Trace 3-D Documentation", 
      *          LANL Report LA-UR-97-887 (1997), Appendix F.
      * <br/>
      * [3] C.K. Allen, H. Sako, M. Ikegami, and G. Shen, "Emittance Growth
@@ -321,7 +321,7 @@ public abstract class EnvelopeTrackerBase extends Tracker {
      *       Geneva, Switzerland (1978).
      * <br/>
      * [2] K.R. Crandall and D.P. Rusthoi, 
-     *          “Trace 3-D Documentation”, 
+     *          "Trace 3-D Documentation", 
      *          LANL Report LA-UR-97-887 (1997), Appendix F.
      * <br/>
      * [3] C.K. Allen, H. Sako, M. Ikegami, and G. Shen, "Emittance Growth
@@ -408,7 +408,7 @@ public abstract class EnvelopeTrackerBase extends Tracker {
      *       Geneva, Switzerland (1978).
      * <br/>
      * [2] K.R. Crandall and D.P. Rusthoi, 
-     *          “Trace 3-D Documentation”, 
+     *          "Trace 3-D Documentation", 
      *          LANL Report LA-UR-97-887 (1997), Appendix F.
      * <br/>
      * [3] C.K. Allen, H. Sako, M. Ikegami, and G. Shen, "Emittance Growth
@@ -1024,7 +1024,7 @@ public abstract class EnvelopeTrackerBase extends Tracker {
      *       Geneva, Switzerland (1978).
      * <br/>
      * [2] K.R. Crandall and D.P. Rusthoi, 
-     *          “Trace 3-D Documentation”, 
+     *          "Trace 3-D Documentation", 
      *          LANL Report LA-UR-97-887 (1997), Appendix F.
      * <br/>
      * [3] C.K. Allen, H. Sako, M. Ikegami, and G. Shen, "Emittance Growth
@@ -1208,7 +1208,7 @@ public abstract class EnvelopeTrackerBase extends Tracker {
      *       Geneva, Switzerland (1978).
      * <br/>
      * [2] K.R. Crandall and D.P. Rusthoi, 
-     *          “Trace 3-D Documentation”, 
+     *          "Trace 3-D Documentation", 
      *          LANL Report LA-UR-97-887 (1997), Appendix F.
      * <br/>
      * [3] C.K. Allen, H. Sako, M. Ikegami, and G. Shen, "Emittance Growth
@@ -1383,7 +1383,7 @@ public abstract class EnvelopeTrackerBase extends Tracker {
      *       Geneva, Switzerland (1978).
      * <br/>
      * [2] K.R. Crandall and D.P. Rusthoi, 
-     *          “Trace 3-D Documentation”, 
+     *          "Trace 3-D Documentation", 
      *          LANL Report LA-UR-97-887 (1997), Appendix F.
      * <br/>
      * [3] C.K. Allen, H. Sako, M. Ikegami, and G. Shen, "Emittance Growth
@@ -1508,7 +1508,7 @@ public abstract class EnvelopeTrackerBase extends Tracker {
      * <p>
      * See K.R. Crandall and D.P. Rusthoi, 
      *          <ul>
-     *          “Trace 3-D Documentation”, 
+     *          "Trace 3-D Documentation", 
      *          LANL Report LA-UR-97-887 (1997), Appendix F.
      *          </ul>
      * </p>
@@ -1583,7 +1583,7 @@ public abstract class EnvelopeTrackerBase extends Tracker {
      *       Geneva, Switzerland (1978).
      * <br/>
      * [2] K.R. Crandall and D.P. Rusthoi, 
-     *          “Trace 3-D Documentation”, 
+     *          "Trace 3-D Documentation", 
      *          LANL Report LA-UR-97-887 (1997), Appendix F.
      * <br/>
      * [3] C.K. Allen, H. Sako, M. Ikegami, and G. Shen, "Emittance Growth
@@ -2280,7 +2280,7 @@ public abstract class EnvelopeTrackerBase extends Tracker {
 //         * <p>
 //         * See K.R. Crandall and D.P. Rusthoi, 
 //         *          <ul>
-//         *          “Trace 3-D Documentation”, 
+//         *          "Trace 3-D Documentation", 
 //         *          LANL Report LA-UR-97-887 (1997), Appendix F.
 //         *          </ul>
 //         * </p>
@@ -2357,7 +2357,7 @@ public abstract class EnvelopeTrackerBase extends Tracker {
 //     * <p>
 //     * See K.R. Crandall and D.P. Rusthoi, 
 //     *          <ul>
-//     *          “Trace 3-D Documentation”, 
+//     *          "Trace 3-D Documentation", 
 //     *          LANL Report LA-UR-97-887 (1997), Appendix F.
 //     *          </ul>
 //     * </p>
