@@ -14,7 +14,7 @@
  */
 package xal.sim.scenario;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.fail;
 
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -23,16 +23,13 @@ import org.junit.Test;
 import xal.model.IAlgorithm;
 import xal.model.ModelException;
 import xal.model.alg.EnvTrackerAdapt;
-import xal.model.alg.EnvelopeTracker;
 import xal.model.alg.Tracker;
-import xal.model.alg.TrackerAdaptive;
 import xal.model.probe.EnvelopeProbe;
 import xal.model.probe.ProbeFactory;
 import xal.smf.Accelerator;
 import xal.smf.AcceleratorSeq;
 import xal.smf.data.XMLDataManager;
 import xal.test.ResourceManager;
-import xal.tools.beam.CovarianceMatrix;
 
 /**
  * Testing scenario generation for the Open XAL online model.
