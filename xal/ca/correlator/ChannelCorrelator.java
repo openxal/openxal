@@ -26,7 +26,7 @@ import java.text.DateFormat;
  *
  * @author  tap
  */
-public class ChannelCorrelator extends Correlator {
+public class ChannelCorrelator extends Correlator<Channel,ChannelTimeRecord,ChannelAgent> {
     /** Creates new ChannelCorrelator */
     public ChannelCorrelator(double aBinTimespan) {
         this(aBinTimespan, null);
@@ -38,8 +38,8 @@ public class ChannelCorrelator extends Correlator {
      * @param aBinTimespan The time resolution for accepting two events as correlated.
      * @param aFilter A filter to apply to the correlation.
      */
-    public ChannelCorrelator(double aBinTimespan, CorrelationFilter aFilter) {
-        super(aBinTimespan, aFilter);
+    public ChannelCorrelator( final double aBinTimespan, final CorrelationFilter<ChannelTimeRecord> aFilter ) {
+        super( aBinTimespan, aFilter );
     }
 
     
@@ -50,11 +50,8 @@ public class ChannelCorrelator extends Correlator {
      * @param sourceName The name to be associated with the source.
      * @param recordFilter The filter to apply to the source's records.
      */
-    protected SourceAgent newSourceAgent(Object source, String sourceName, RecordFilter recordFilter) {
-        Channel channel = (Channel)source;
-        ChannelAgent channelAgent = new ChannelAgent(localCenter, channel, sourceName, recordFilter, correlationTester);
-        
-        return channelAgent;
+    protected ChannelAgent newSourceAgent( final Channel channel, final String sourceName, final RecordFilter<ChannelTimeRecord> recordFilter ) {
+        return new ChannelAgent( localCenter, channel, sourceName, recordFilter, correlationTester );
     }
     
     
@@ -74,7 +71,7 @@ public class ChannelCorrelator extends Correlator {
      */
     synchronized public int numInactiveChannels() {
         int numFailed = 0;
-        Collection allSources = getSourceAgents();
+        Collection<ChannelAgent> allSources = getSourceAgents();
         Iterator sourceIter = allSources.iterator();
         
         while ( sourceIter.hasNext() ) {
@@ -87,22 +84,21 @@ public class ChannelCorrelator extends Correlator {
     
     
     /** 
-     * Get the names of channels that are not being monitored due to connection or monitor failure or simply not monitoried.
+     * Get the names of channels that are not being monitored due to connection 
+     * or monitor failure or simply not monitoried.
      * @return The collection of names of channels that are not active.
      */
     synchronized public Collection<String> inactiveChannelsByName() {
-        final Collection<String> failedChannels = new HashSet<String>();
-        final Collection allSources = getSourceAgents();
-        final Iterator sourceIter = allSources.iterator();
+        final Collection<String> failedChannelNames = new HashSet<String>();
+        final Collection<ChannelAgent> allSources = getSourceAgents();
         
-        while ( sourceIter.hasNext() ) {
-            final ChannelAgent channelAgent = (ChannelAgent)sourceIter.next();
+		for ( final ChannelAgent channelAgent : allSources ) {
             if ( !channelAgent.isActive() ) {
-                failedChannels.add( channelAgent.name() );
+                failedChannelNames.add( channelAgent.name() );
             }
         }
         
-        return failedChannels;
+        return failedChannelNames;
     }
 
 
@@ -122,11 +118,11 @@ public class ChannelCorrelator extends Correlator {
      * @param channelId The PV name to monitor.
      * @param recordFilter The filter to apply to the channel's records.
      */
-    final public void addChannel(String channelId, RecordFilter recordFilter) {
+    final public void addChannel( final String channelId, final RecordFilter<ChannelTimeRecord> recordFilter ) {
         if ( hasSource(channelId) )  return;
         
         Channel channel = ChannelFactory.defaultFactory().getChannel(channelId);
-        addChannel(channel, recordFilter);
+        addChannel( channel, recordFilter );
     }
     
     
@@ -134,8 +130,9 @@ public class ChannelCorrelator extends Correlator {
      * Add a channel to monitor.  If we already monitor a channel, do nothing. 
      * @param channel The channel to monitor for correlations.
      */
-    final public void addChannel(Channel channel) {
-        addChannel(channel, (RecordFilter)null);
+	@SuppressWarnings( "unchecked" )	// must cast null to call the correct overloaded method
+    final public void addChannel( final Channel channel ) {
+        addChannel( channel, (RecordFilter<ChannelTimeRecord>)null );
     }
     
     
@@ -146,9 +143,9 @@ public class ChannelCorrelator extends Correlator {
      * @param channel The channel to monitor for correlations.
      * @param recordFilter The filter to apply to the channel's records.
      */
-    final public void addChannel(Channel channel, RecordFilter recordFilter) {
+    final public void addChannel( final Channel channel, final RecordFilter<ChannelTimeRecord> recordFilter ) {
         String channelId = channel.getId();
-        addChannel(channel, channelId, recordFilter);
+        addChannel( channel, channelId, recordFilter );
     }
     
     
@@ -159,8 +156,8 @@ public class ChannelCorrelator extends Correlator {
      * @param channel The channel to monitor for correlations.
      * @param channelId A unique identifier of the channel.
      */
-    final public void addChannel(Channel channel, String channelId) {
-        addChannel(channel, channelId, null);
+    final public void addChannel( final Channel channel, final String channelId ) {
+        addChannel( channel, channelId, null );
     }
     
     
@@ -173,8 +170,8 @@ public class ChannelCorrelator extends Correlator {
      * @param channel The channel to monitor for correlations.
      * @param recordFilter The filter to apply to the channel's records.
      */
-    synchronized final public void addChannel(Channel channel, String channelId, RecordFilter recordFilter) {
-        addSource(channel, channelId, recordFilter);
+    synchronized final public void addChannel( final Channel channel, final String channelId, final RecordFilter<ChannelTimeRecord> recordFilter ) {
+        addSource( channel, channelId, recordFilter );
     }
     
 
@@ -182,9 +179,9 @@ public class ChannelCorrelator extends Correlator {
      * Stop managing the specified channel. 
      * @param channel The channel we are requesting to stop monitoring and correlating.
      */
-    public void removeChannel(Channel channel) {
+    public void removeChannel( final Channel channel ) {
         String channelId = channel.getId();
-        removeChannel(channelId);
+        removeChannel( channelId );
     }
     
     
