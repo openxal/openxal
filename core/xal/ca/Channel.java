@@ -654,7 +654,11 @@ abstract public class Channel {
      * @throws xal.ca.GetException
      */
     abstract protected void getRawValueCallback( final IEventSinkValue listener, final boolean attemptConnection ) throws ConnectionException, GetException;
-    
+	
+	
+	/** Submit a non-blocking Get request with callback */
+	abstract public void getRawValueTimeCallback( final IEventSinkValTime listener, final boolean attemptConnection ) throws ConnectionException, GetException;
+
     
     /**
 	 *  Get the value of the process variable via a callback to the specified listener.
