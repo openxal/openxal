@@ -16,15 +16,15 @@ package xal.tools.correlator;
  * 
  * @author  tap
  */
-public class CorrelationTester {
+public class CorrelationTester<RecordType> {
     private volatile int _fullCount;
-    private volatile CorrelationFilter _filter;
+    private volatile CorrelationFilter<RecordType> _filter;
     
 	
     /** Creates a new instance of CorrelationTester */
-    public CorrelationTester(int fullCount, CorrelationFilter aFilter) {
+    public CorrelationTester( final int fullCount, final CorrelationFilter<RecordType> aFilter ) {
         _fullCount = fullCount;
-        setFilter(aFilter);
+        setFilter( aFilter );
     }
     
     
@@ -32,7 +32,7 @@ public class CorrelationTester {
 	 * Set the full count.
 	 * @param newCount The number of channels to monitor and correlate.
 	 */
-    public void setFullCount(int newCount) {
+    public void setFullCount( final int newCount ) {
         _fullCount = newCount;
     }
     
@@ -41,7 +41,7 @@ public class CorrelationTester {
 	 * Get the correlation filter.
 	 * @return The correlation filter.
 	 */
-    public CorrelationFilter getFilter() {
+    public CorrelationFilter<RecordType> getFilter() {
         return _filter;
     }
     
@@ -50,9 +50,9 @@ public class CorrelationTester {
 	 * Set the correlation filter.
 	 * @param newFilter The new filter to apply to correlations.
 	 */
-    public void setFilter(CorrelationFilter newFilter) {
+    public void setFilter( final CorrelationFilter<RecordType> newFilter ) {
         if ( newFilter == null ) {
-            _filter = CorrelationFilterFactory.defaultFilter();
+            _filter = CorrelationFilterFactory.<RecordType>defaultFilter();
         }
         else {
             _filter = newFilter;
@@ -65,7 +65,7 @@ public class CorrelationTester {
 	 * @param correlation The correlation to test.
 	 * @return true if the correlation passes the filter test, and false if not.
 	 */
-    public boolean accept(Correlation correlation) {
+    public boolean accept( final Correlation<RecordType> correlation ) {
         return _filter.accept(correlation, _fullCount);
     }
 }

@@ -20,32 +20,38 @@ import java.util.*;
  *
  * @author  tap
  */
-abstract class AbstractBroadcaster implements BinListener, StateNotice {
+abstract class AbstractBroadcaster<RecordType> implements BinListener<RecordType>, StateNotice<RecordType> {
+	private final MessageCenter LOCAL_CENTER;
+	
+	private final MessageCenter BROADCAST_CENTER;
+	
     transient protected int fullCount;
-    protected MessageCenter localCenter, broadcastCenter;
-    protected CorrelationNotice correlationProxy;
-    protected CorrelationFilter correlationFilter;
+	
+    protected CorrelationNotice<RecordType> correlationProxy;
+	
+    protected CorrelationFilter<RecordType> correlationFilter;
     
 	
     /** Creates a new instance of Broadcaster */
-    public AbstractBroadcaster(MessageCenter aLocalCenter) {
-        broadcastCenter = new MessageCenter("Correlator Broadcast");      // external broadcast center  
-        localCenter = aLocalCenter;     // internal correlator messaging
+	@SuppressWarnings( "unchecked" )	// must cast proxy for Generics
+    public AbstractBroadcaster( final MessageCenter localCenter ) {
+        BROADCAST_CENTER = new MessageCenter( "Correlator Broadcast" );      // external broadcast center  
+        LOCAL_CENTER = localCenter;     // internal correlator messaging
         
         fullCount = 0;
 		
         // listen for internal bin events from all of the bins registered with the local message center
-        localCenter.registerTarget(this, BinListener.class);
+        LOCAL_CENTER.registerTarget(this, BinListener.class);
         
         // register to broadcast correlations
-        correlationProxy = broadcastCenter.registerSource(this, CorrelationNotice.class);
+        correlationProxy = (CorrelationNotice<RecordType>)BROADCAST_CENTER.registerSource( this, CorrelationNotice.class );
     }
     
     
     /** Dispose of this delegate and all of its overhead */
     void dispose() {
-        broadcastCenter.removeSource(this, CorrelationNotice.class);	// stop posting correlation notices
-		localCenter.removeTarget(this, BinListener.class);				// stop listening for bin correlations
+        BROADCAST_CENTER.removeSource( this, CorrelationNotice.class );		// stop posting correlation notices
+		LOCAL_CENTER.removeTarget( this, BinListener.class );				// stop listening for bin correlations
     }
     
     
@@ -53,8 +59,8 @@ abstract class AbstractBroadcaster implements BinListener, StateNotice {
      * Register the listener as a receiver of Correlation notices from this 
      * correlator.
      */
-    public void addCorrelationNoticeListener(CorrelationNotice listener) {
-        broadcastCenter.registerTarget(listener, this, CorrelationNotice.class);
+    public void addCorrelationNoticeListener( final CorrelationNotice listener ) {
+        BROADCAST_CENTER.registerTarget( listener, this, CorrelationNotice.class );
     }
     
     
@@ -62,8 +68,8 @@ abstract class AbstractBroadcaster implements BinListener, StateNotice {
      * Unregister the listener as a receiver of Correlation notices from this 
      * correlator.
      */
-    public void removeCorrelationNoticeListener(CorrelationNotice listener) {
-        broadcastCenter.removeTarget(listener, this, CorrelationNotice.class);
+    public void removeCorrelationNoticeListener( final CorrelationNotice listener ) {
+        BROADCAST_CENTER.removeTarget( listener, this, CorrelationNotice.class );
     }
     
     
@@ -71,7 +77,7 @@ abstract class AbstractBroadcaster implements BinListener, StateNotice {
 	 * Set the full count of all channels monitored.
 	 * @param newCount The new count of all channels being monitored.
 	 */
-    synchronized void setFullCount(int newCount) {
+    synchronized void setFullCount( final int newCount ) {
         fullCount = newCount;
     }
     
@@ -89,7 +95,7 @@ abstract class AbstractBroadcaster implements BinListener, StateNotice {
 	 * Set the correlation filter.
 	 * @param newFilter The new filter to use to filter correlations.
 	 */
-    synchronized void setCorrelationFilter(CorrelationFilter newFilter) {
+    synchronized void setCorrelationFilter( final CorrelationFilter<RecordType> newFilter ) {
         correlationFilter = newFilter;
     }
     
@@ -98,8 +104,8 @@ abstract class AbstractBroadcaster implements BinListener, StateNotice {
 	 * Post the correlation.
 	 * @param correlation The correlation to post.
 	 */
-    synchronized protected void postCorrelation(Correlation correlation) {
-        correlationProxy.newCorrelation(this, correlation);
+    synchronized protected void postCorrelation( final Correlation<RecordType> correlation ) {
+        correlationProxy.newCorrelation( this, correlation );
     }
     
     
@@ -108,7 +114,7 @@ abstract class AbstractBroadcaster implements BinListener, StateNotice {
 	 * @param sender The bin agent that published the new correlation.
 	 * @param correlation The new correlation.
      */
-    abstract public void newCorrelation(BinAgent sender, Correlation correlation);
+    abstract public void newCorrelation( final BinAgent<RecordType> sender, final Correlation<RecordType> correlation );
     
     
 	/**
@@ -171,6 +177,6 @@ abstract class AbstractBroadcaster implements BinListener, StateNotice {
 	 * @param sender The correlator whose correlation filter has changed.
 	 * @param newFilter The new correlation filter to use.
 	 */
-    public void correlationFilterChanged(Correlator sender, CorrelationFilter newFilter) {
+    public void correlationFilterChanged( Correlator sender, CorrelationFilter<RecordType> newFilter ) {
 	}
 }

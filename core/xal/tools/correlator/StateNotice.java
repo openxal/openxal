@@ -13,7 +13,7 @@ package xal.tools.correlator;
  * @author  tap
  * @version 
  */
-interface StateNotice {
+interface StateNotice<RecordType> {
 	/**
 	 * Handle the source added event.
 	 * @param sender The correlator to which the source has been added.
@@ -59,6 +59,6 @@ interface StateNotice {
 	 * @param sender The correlator whose correlation filter has changed.
 	 * @param newFilter The new correlation filter to use.
 	 */
-    public void correlationFilterChanged(Correlator sender, CorrelationFilter newFilter);
+    public void correlationFilterChanged( Correlator sender, CorrelationFilter<RecordType> newFilter );
 }
 

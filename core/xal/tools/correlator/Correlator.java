@@ -22,19 +22,16 @@ import java.util.logging.*;
  *
  * @author  tap
  */
-abstract public class Correlator {
+abstract public class Correlator<SourceType, RecordType, SourceAgentType extends SourceAgent<RecordType>> {
     protected MessageCenter localCenter;
     protected double _binTimespan;
-    protected CorrelationTester correlationTester;
+    protected CorrelationTester<RecordType> correlationTester;
 	
     // one binQueue for each channel
-    
-    /** map of source agents keyed by name */
-    private Map<String,SourceAgent> sourceAgentTable;
-    
-    private StateNotice stateProxy;
+    private Map<String,SourceAgentType> sourceAgentTable;
+    private StateNotice<RecordType> stateProxy;
     private volatile boolean isMonitoring;     // actively monitoring channels
-    private AbstractBroadcaster broadcaster;
+    private AbstractBroadcaster<RecordType> broadcaster;
 	private CorrelationPoster poster;
 	
 	
@@ -45,10 +42,10 @@ abstract public class Correlator {
     
     
 	/** Correlator constructor */
-    public Correlator(double aBinTimespan, CorrelationFilter aFilter) {
+    public Correlator( final double aBinTimespan, final CorrelationFilter<RecordType> aFilter ) {
         isMonitoring = false;
-        sourceAgentTable = new Hashtable<String,SourceAgent>();
-        correlationTester = new CorrelationTester(0, aFilter);
+        sourceAgentTable = new Hashtable<String,SourceAgentType>();
+        correlationTester = new CorrelationTester<RecordType>( 0, aFilter );
         
         registerEvents();
         
@@ -60,12 +57,13 @@ abstract public class Correlator {
     
     
     /** Register for notices. */
+	@SuppressWarnings( "unchecked" )	// must cast StateNotice proxy to support Generics
     protected void registerEvents() {
         // internal correlator message center
         localCenter = new MessageCenter("Internal Correlator Messaging");
         
         /** register to broadcast changes of state */
-        stateProxy = localCenter.registerSource( this, StateNotice.class );
+        stateProxy = (StateNotice<RecordType>)localCenter.registerSource( this, StateNotice.class );
     }
     
     
@@ -91,7 +89,7 @@ abstract public class Correlator {
      * Return the broadcaster.
 	 * @return The broadcaster used by the correlator.
      */
-    AbstractBroadcaster getBroadcaster() {
+    AbstractBroadcaster<RecordType> getBroadcaster() {
         return broadcaster;
     }
 	
@@ -100,7 +98,7 @@ abstract public class Correlator {
 	 * Set the broadcaster to the specified broadcater.
 	 * @param newBroadcaster the new broadcaster to use.
 	 */
-	synchronized private void setBroadcaster(AbstractBroadcaster newBroadcaster) {
+	synchronized private void setBroadcaster( final AbstractBroadcaster<RecordType> newBroadcaster ) {
 		if ( broadcaster != null ) {
 			broadcaster.removeCorrelationNoticeListener(poster);
 			localCenter.removeTarget(broadcaster, StateNotice.class);
@@ -109,10 +107,10 @@ abstract public class Correlator {
 		
 		broadcaster = newBroadcaster;
 		broadcaster.setFullCount( numSources() );
-		localCenter.registerTarget(broadcaster, StateNotice.class);
-		broadcaster.addCorrelationNoticeListener(poster);
+		localCenter.registerTarget( broadcaster, StateNotice.class );
+		broadcaster.addCorrelationNoticeListener( poster );
 		
-		broadcaster.binTimespanChanged(this, _binTimespan);		// make sure interested broadcasters get this info
+		broadcaster.binTimespanChanged( this, _binTimespan );		// make sure interested broadcasters get this info
 	}
 	
 	
@@ -120,11 +118,11 @@ abstract public class Correlator {
 	 * Set the broadcaster to a default broadcaster.
 	 * @return The new broadcaster.
 	 */
-	DefaultBroadcaster useDefaultBroadcaster() {
+	DefaultBroadcaster<RecordType> useDefaultBroadcaster() {
 		if ( !(broadcaster instanceof DefaultBroadcaster) ) { 
-			setBroadcaster( new DefaultBroadcaster(localCenter) );
+			setBroadcaster( new DefaultBroadcaster<RecordType>( localCenter ) );
 		}
-		return (DefaultBroadcaster)broadcaster;
+		return (DefaultBroadcaster<RecordType>)broadcaster;
 	}
 	
 	
@@ -132,9 +130,10 @@ abstract public class Correlator {
 	 * Set the broadcaster to a passive broadcaster.
 	 * @return The new broadcaster.
 	 */
-	PassiveBroadcaster usePassiveBroadcaster() {
+	@SuppressWarnings( "unchecked" )	// enforces type internally
+	PassiveBroadcaster<RecordType> usePassiveBroadcaster() {
 		if ( !(broadcaster instanceof PassiveBroadcaster) ) {
-			setBroadcaster( new PassiveBroadcaster(localCenter) );
+			setBroadcaster( new PassiveBroadcaster<RecordType>( localCenter ) );
 		}
 		return (PassiveBroadcaster)broadcaster;
 	}
@@ -144,11 +143,11 @@ abstract public class Correlator {
 	 * Set the broadcaster to a patient broadcaster.
 	 * @return The new broadcaster.
 	 */
-	PatientBroadcaster usePatientBroadcaster() {
+	PatientBroadcaster<RecordType> usePatientBroadcaster() {
 		if ( !(broadcaster instanceof PatientBroadcaster) ) {
-			setBroadcaster( new PatientBroadcaster(localCenter) );
+			setBroadcaster( new PatientBroadcaster<RecordType>( localCenter ) );
 		}
-		return (PatientBroadcaster)broadcaster;
+		return (PatientBroadcaster<RecordType>)broadcaster;
 	}
 	
 	
@@ -156,11 +155,11 @@ abstract public class Correlator {
 	 * Set the broadcaster to a verbose broadcaster.
 	 * @return The new broadcaster.
 	 */
-	VerboseBroadcaster useVerboseBroadcaster() {
+	VerboseBroadcaster<RecordType> useVerboseBroadcaster() {
 		if ( !(broadcaster instanceof VerboseBroadcaster) ) {
-			setBroadcaster( new VerboseBroadcaster(localCenter) );
+			setBroadcaster( new VerboseBroadcaster<RecordType>( localCenter ) );
 		}
-		return (VerboseBroadcaster)broadcaster;
+		return (VerboseBroadcaster<RecordType>)broadcaster;
 	}
     
     
@@ -181,20 +180,20 @@ abstract public class Correlator {
 	 * Set the correlation filter to the one specified.
 	 * @param newFilter The correlation filter to use.
 	 */
-    public void setCorrelationFilter(CorrelationFilter newFilter) {
-        correlationTester.setFilter(newFilter);
-        stateProxy.correlationFilterChanged(this, correlationTester.getFilter());
+    public void setCorrelationFilter( final CorrelationFilter<RecordType> newFilter ) {
+        correlationTester.setFilter( newFilter );
+        stateProxy.correlationFilterChanged( this, correlationTester.getFilter() );
     }
     
     
     /** Get all of the channel agents managed by this correlator */
-    protected Collection<SourceAgent> getSourceAgents() {
+    protected Collection<SourceAgentType> getSourceAgents() {
         return sourceAgentTable.values();
     }
     
     
     /** Get a channel agent by name managed by this correlator */
-    SourceAgent getSourceAgent(String sourceName) {
+    SourceAgentType getSourceAgent( final String sourceName ) {
         return sourceAgentTable.get(sourceName);
     }
     
@@ -212,17 +211,16 @@ abstract public class Correlator {
     
     
     /** See if we already manage this channel */
-    public boolean hasSource(String sourceName) {
+    public boolean hasSource( final String sourceName ) {
         return sourceAgentTable.containsKey( sourceName );
     }
     
     
     /** 
-     * Add a source to monitor.  The name provided with each source must 
-     * be unique to that source.
+     * Add a source to monitor.  The name provided with each source must be unique to that source.
      * Subclasses need to wrap this method to enforce the source type.
      */
-    protected void addSource( final Object source, final String sourceName ) {
+    protected void addSource( final SourceType source, final String sourceName ) {
         addSource( source, sourceName, null );
     }
     
@@ -235,12 +233,12 @@ abstract public class Correlator {
      * create your own custom filter or use a pre-built one.
      * Subclasses need to wrap this method to enforce the source type.
      */
-    synchronized protected void addSource(Object source, String sourceName, RecordFilter recordFilter) {
+    synchronized protected void addSource( final SourceType source, final String sourceName, final RecordFilter<RecordType> recordFilter ) {
         if ( hasSource(sourceName) )  return;
         
-        SourceAgent sourceAgent = newSourceAgent(source, sourceName, recordFilter);
+        final SourceAgentType sourceAgent = newSourceAgent( source, sourceName, recordFilter );
 
-        sourceAgentTable.put( sourceName, sourceAgent );
+        sourceAgentTable.put(sourceName, sourceAgent);
         sourceAgent.setBinTimespan(_binTimespan);
         int numSources = numSources();
         if ( isMonitoring ) {
@@ -251,13 +249,13 @@ abstract public class Correlator {
     }
     
     
-    abstract protected SourceAgent newSourceAgent(Object source, String sourceName, RecordFilter recordFilter);
+    abstract protected SourceAgentType newSourceAgent( final SourceType source, final String sourceName, final RecordFilter<RecordType> recordFilter );
     
 
     /** Stop managing the specified source. */
     synchronized public void removeSource(String sourceName) {
-        SourceAgent sourceAgent = getSourceAgent(sourceName);
-        sourceAgentTable.remove( sourceName );
+        SourceAgentType sourceAgent = getSourceAgent(sourceName);
+        sourceAgentTable.remove(sourceName);
         int numSources = numSources();
         stateProxy.sourceRemoved(this, sourceName, numSources);
         correlationTester.setFullCount(numSources);
@@ -268,7 +266,8 @@ abstract public class Correlator {
     /** Stop managing all registered sources */
     synchronized public void removeAllSources() {
         final Collection<String> sourceNames = new ArrayList<String>( getNamesOfSources() );
-        for ( final String sourceName : sourceNames ) {
+        
+		for ( final String sourceName : sourceNames ) {
             removeSource( sourceName );
         }
     }
@@ -278,11 +277,12 @@ abstract public class Correlator {
      * Monitor until the timeout or until a complete correlation is found 
      * @param timeout time to wait in seconds
      */
+	@SuppressWarnings( "unchecked" )		// must cast broadcaster type 
     synchronized public void pulseMonitorWithTimeout(double timeout) {
         // make sure we stop existing monitor if any (e.g. destroy other timed task)
         stopMonitoring();
 		
-		final TimedBroadcaster timedBroadcaster = (broadcaster instanceof TimedBroadcaster) ? (TimedBroadcaster)broadcaster : new TimedBroadcaster(localCenter, timeout);
+		final TimedBroadcaster<RecordType> timedBroadcaster = (broadcaster instanceof TimedBroadcaster) ? (TimedBroadcaster<RecordType>)broadcaster : new TimedBroadcaster<RecordType>( localCenter, timeout );
 		final CorrelationNotice correlationListener = new CorrelationNotice() {
 			public void newCorrelation(Object sender, Correlation correlation) {
 				stopMonitoring();
@@ -300,7 +300,7 @@ abstract public class Correlator {
 		timedBroadcaster.setPeriod(timeout);	// in case timedBroadcaster was reused
 		
 		if ( broadcaster != timedBroadcaster ) {
-			setBroadcaster(timedBroadcaster);
+			setBroadcaster( timedBroadcaster );
 		}
 		startMonitoring();
     }
@@ -311,16 +311,17 @@ abstract public class Correlator {
      * exceeded.  The timeout is rescheduled after every post. 
      * @param timeout time to wait in seconds
      */
+	@SuppressWarnings( "unchecked" )		// must cast broadcaster type 
     synchronized public void monitorWithTimeout(double timeout) {
         // make sure we stop existing monitor if any (e.g. destroy other timed task)
         stopMonitoring();
 		
-		final TimedBroadcaster timedBroadcaster = (broadcaster instanceof TimedBroadcaster) ? (TimedBroadcaster)broadcaster : new TimedBroadcaster(localCenter, timeout);
+		final TimedBroadcaster<RecordType> timedBroadcaster = (broadcaster instanceof TimedBroadcaster) ? (TimedBroadcaster<RecordType>)broadcaster : new TimedBroadcaster<RecordType>( localCenter, timeout );
 		timedBroadcaster.setPeriod(timeout);	// in case timedBroadcaster was reused
 		timedBroadcaster.setRepeats(true);		// in case timedBroadcaster was reused
 		
 		if ( broadcaster != timedBroadcaster ) {
-			setBroadcaster(timedBroadcaster);
+			setBroadcaster( timedBroadcaster );
 		}
 		startMonitoring();
     }
@@ -384,23 +385,24 @@ abstract public class Correlator {
 	/**
 	 * Post correlations on behalf of the correlator.
 	 */
-	private class CorrelationPoster implements CorrelationNotice {
+	private class CorrelationPoster implements CorrelationNotice<RecordType> {
 		private MessageCenter postCenter;
-		private CorrelationNotice postProxy;
+		private CorrelationNotice<RecordType> postProxy;
 		
 		
 		/**
-		 *
+		 * Constructor
 		 */
+		@SuppressWarnings( "unchecked" )	// must cast postProxy for Generics
 		public CorrelationPoster() {        
 			postCenter = new MessageCenter("Correlator Poster");      // external poster
-			postProxy = postCenter.registerSource(this, CorrelationNotice.class);
+			postProxy = (CorrelationNotice<RecordType>)postCenter.registerSource(this, CorrelationNotice.class);
 		}
 		
 		
 		/** Dispose of this poster and all of its overhead */
 		void dispose() {
-			postCenter.removeSource(this, CorrelationNotice.class);
+			postCenter.removeSource( this, CorrelationNotice.class );
 		}
 		
 		
@@ -428,8 +430,8 @@ abstract public class Correlator {
 		 * @param sender The poster of the correlation event.
 		 * @param correlation The correlation that was posted.
 		 */
-		public void newCorrelation(Object sender, Correlation correlation) {
-			postProxy.newCorrelation(Correlator.this, correlation);
+		public void newCorrelation( final Object sender, final Correlation<RecordType> correlation ) {
+			postProxy.newCorrelation( Correlator.this, correlation );
 		}
 		
 		
@@ -438,7 +440,7 @@ abstract public class Correlator {
 		 * was found within some prescribed time period.
 		 * @param sender The poster of the "no correlation" event.
 		 */
-		public void noCorrelationCaught(Object sender) {
+		public void noCorrelationCaught( final Object sender ) {
 			postProxy.noCorrelationCaught(Correlator.this);
 		}
 	}
