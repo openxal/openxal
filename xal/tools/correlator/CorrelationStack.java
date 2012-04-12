@@ -12,7 +12,7 @@ import java.util.*;
 
 
 /**
- * CorrelationStack is a correlator utility that uses a fixed sized, circular buffer to collect correlations
+ * CorrelationStack is a correlator utility that uses a fixed sized, buffer to collect correlations
  * from a correlator.  An external object can then request all or the oldest 
  * correlations in which case the retrieved correlations are removed from the 
  * buffer.  Hence the CorrelationStack is a LILO stack.
@@ -21,30 +21,30 @@ import java.util.*;
  *
  * @author  tap
  */
-public class CorrelationStack {
+public class CorrelationStack<RecordType> {
     /** buffer is a LILO stack of correlations with the oldest correlations having the smallest indices. */
-    protected LinkedList<Correlation> buffer;
+    protected LinkedList<Correlation<RecordType>> buffer;
     protected int stackSize;
-	protected Correlation lastCorrelation;
+	protected Correlation<RecordType> lastCorrelation;
     
 	/** Correlator */
-    protected Correlator correlator;
+    protected Correlator<?,RecordType,?> correlator;
 	
     
     /** Creates a new instance of CorrelationStack */
-    public CorrelationStack(Correlator aCorrelator, int aStackSize) {
+    public CorrelationStack( final Correlator<?,RecordType,?> aCorrelator, final int aStackSize ) {
         stackSize = aStackSize;
-        buffer = new LinkedList<Correlation>();
+        buffer = new LinkedList<Correlation<RecordType>>();
 		lastCorrelation = null;
 		
         correlator = aCorrelator;
 		correlator.usePatientBroadcaster();
-		correlator.addListener( new CorrelationNotice() {
-			public void newCorrelation( final Object sender, final Correlation correlation ) {
+		correlator.addListener( new CorrelationNotice<RecordType>() {
+			public void newCorrelation( final Object sender, final Correlation<RecordType> correlation ) {
 				push( correlation );
 			}
 			
-			public void noCorrelationCaught( final Object sender ) {}
+			public void noCorrelationCaught( Object sender ) {}
 		});
     }
     
@@ -97,9 +97,9 @@ public class CorrelationStack {
      * Pop all correlations from the stack.
      * @return all correlations on the stack.
      */
-    public List<Correlation> popAllCorrelations() {
-        synchronized( buffer ) {
-            final List<Correlation> correlations = new ArrayList<Correlation>( buffer );
+    public List<Correlation<RecordType>> popAllCorrelations() {
+        synchronized(buffer) {
+            final List<Correlation<RecordType>> correlations = new ArrayList<Correlation<RecordType>>( buffer );
             buffer.removeAll( correlations );
 			
 			return correlations;
@@ -111,7 +111,7 @@ public class CorrelationStack {
      * Push a correlation onto the stack.
      * @param correlation The correlation to push onto the stack.
      */
-    protected void push( final Correlation correlation ) {
+    protected void push( final Correlation<RecordType> correlation ) {
         synchronized( buffer ) {
             buffer.addLast( correlation );
             trimBuffer();
@@ -120,8 +120,7 @@ public class CorrelationStack {
     
     
     /**
-     * Trim the circular buffer down to the stackSize by removing the oldest 
-     * correlations.
+     * Trim the buffer down to the stackSize by removing the oldest correlations.
      */
     protected void trimBuffer() {
         synchronized( buffer ) {

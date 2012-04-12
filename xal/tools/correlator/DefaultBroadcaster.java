@@ -18,10 +18,10 @@ import xal.tools.messaging.MessageCenter;
  *
  * @author  tap
  */
-class DefaultBroadcaster extends AbstractBroadcaster {
+class DefaultBroadcaster<RecordType> extends AbstractBroadcaster<RecordType> {
     /** Creates a new instance of Broadcaster */
-    public DefaultBroadcaster(MessageCenter aLocalCenter) {
-		super(aLocalCenter);
+    public DefaultBroadcaster( final MessageCenter aLocalCenter ) {
+		super( aLocalCenter );
 	}
 	
 	
@@ -30,9 +30,9 @@ class DefaultBroadcaster extends AbstractBroadcaster {
 	 * @param sender The bin agent that published the new correlation.
 	 * @param correlation The new correlation.
      */
-    synchronized public void newCorrelation(BinAgent sender, Correlation correlation) {
+    synchronized public void newCorrelation( final BinAgent<RecordType> sender, final Correlation<RecordType> correlation ) {
         if ( correlation.numRecords() == fullCount ) {    // broadcast the correlation
-            postCorrelation(correlation);
+            postCorrelation( correlation );
         }
     }
 }
