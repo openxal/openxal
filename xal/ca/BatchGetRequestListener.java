@@ -10,13 +10,13 @@ package xal.ca;
 
 
 /** interface for listeners of batch request events */
-public interface BatchGetRequestListener {
+public interface BatchGetRequestListener<RecordType> {
 	/** event indicating that the batch request is complete */
-	public void batchRequestCompleted( BatchGetRequest request, int recordCount, int exceptionCount );
+	public void batchRequestCompleted( AbstractBatchGetRequest request, int recordCount, int exceptionCount );
 	
 	/** event indicating that an exception has been thrown for a channel */
-	public void exceptionInBatch( BatchGetRequest request, Channel channel, Exception exception );
+	public void exceptionInBatch( AbstractBatchGetRequest request, Channel channel, Exception exception );
 	
 	/** event indicating that a get event has been completed for a channel */
-	public void recordReceivedInBatch( BatchGetRequest request, Channel channel, ChannelRecord record );
+	public void recordReceivedInBatch( AbstractBatchGetRequest request, Channel channel, RecordType record );
 }
