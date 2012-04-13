@@ -90,17 +90,11 @@ abstract public class AbstractBatchGetRequest<RecordType extends ChannelRecord> 
 		synchronized ( RECORDS ) {
 			RECORDS.clear();
 		}
-		final Collection<Callable<Channel>> tasks = new HashSet<Callable<Channel>>( channels.size() );
-		for ( final Channel channel : channels ) {
-			tasks.add( new Callable<Channel>() {
-				public Channel call() {
-					processRequest( channel );
-					return channel;
-				}
-			});
-		}
+		
 		try {
-			PROCESSING_POOL.invokeAll( tasks );
+			for ( final Channel channel : channels ) {
+				processRequest( channel );
+			}
 			Channel.flushIO();
 		}
 		catch( Exception exception ) {
@@ -110,7 +104,9 @@ abstract public class AbstractBatchGetRequest<RecordType extends ChannelRecord> 
 	
 	
 	/** 
-	 * Submit a batch of get requests and wait for the requests to be completed or timeout 
+	 * Submit a batch of get requests and wait for the requests to be completed or timeout.
+	 * Note that if this is called, within a channel access callback, requests will not be processed until the 
+	 * callback completes, so it is useless to wait. Instead, call waitForCompletion separately outside of the callback.
 	 * @param timeout the maximum time in seconds to wait for completion
 	 */
 	public boolean submitAndWait( final double timeout ) {
@@ -120,7 +116,8 @@ abstract public class AbstractBatchGetRequest<RecordType extends ChannelRecord> 
 	
 	
 	/** 
-	 * Wait up to the specified timeout for completion
+	 * Wait up to the specified timeout for completion. This method should be called outside of a Channel Access callback
+	 * otherwise events will not be processed.
 	 * @param timeout the maximum time in seconds to wait for completion
 	 */
 	public boolean waitForCompletion( final double timeout ) {
