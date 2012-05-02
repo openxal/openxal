@@ -306,17 +306,6 @@ abstract public class DispatchQueue implements DispatchOperationListener {
 	}
 	
 	
-	/** Make a callable from a runnable */
-	static private Callable<Void> makeCallable( final Runnable runnable ) {
-		return new Callable<Void>() {
-			public Void call() {
-				runnable.run();
-				return null;
-			}
-		};
-	}
-	
-	
 	/** Make a callable operation wrapper from a raw runnable operation */
 	protected <ReturnType> DispatchOperation<ReturnType> makeDispatchOperation( final Callable<ReturnType> rawOperation ) {
 		return makeDispatchOperation( rawOperation, false );
@@ -331,16 +320,13 @@ abstract public class DispatchQueue implements DispatchOperationListener {
 	
 	/** Make a callable operation wrapper from a raw runnable operation */
 	protected DispatchOperation<Void> makeDispatchOperation( final Runnable rawOperation, final boolean isBarrier ) {
-		final Callable<Void> callableOperation = makeCallable( rawOperation );
-		return makeDispatchOperation( callableOperation, isBarrier );
+		return DispatchOperation.getInstance( rawOperation, this, isBarrier );
 	}
 	
 	
 	/** Make a callable operation wrapper from a raw runnable operation */
 	protected <ReturnType> DispatchOperation<ReturnType> makeDispatchOperation( final Callable<ReturnType> rawOperation, final boolean isBarrier ) {
-		final DispatchOperation<ReturnType> operation = new DispatchOperation<ReturnType>( rawOperation, isBarrier );
-		operation.addDispatchOperationListener( this );
-		return operation;
+		return DispatchOperation.getInstance( rawOperation, this, isBarrier );
 	}
 	
 	
