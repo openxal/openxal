@@ -14,12 +14,9 @@ import java.util.concurrent.*;
 
 
 /** Wraps a operation so status can be monitored */
-class DispatchOperation<ReturnType> implements Callable<ReturnType> {
+abstract class DispatchOperation<ReturnType> implements Callable<ReturnType> {
 	/** indicates whether the taks is a barrier operation */
 	final private boolean IS_BARRIER;
-	
-	/** wrapped operation */
-	final Callable<ReturnType> RAW_OPERATION;
 	
 	/** flag indicating whether this operation is currently running */
 	private volatile boolean _isRunning;
@@ -35,11 +32,11 @@ class DispatchOperation<ReturnType> implements Callable<ReturnType> {
 	
 	
 	/** Primary Constructor */
-	public DispatchOperation( final Callable<ReturnType> rawOperation, final boolean isBarrier ) {
+	protected DispatchOperation( final DispatchOperationListener delegate, final boolean isBarrier ) {
 		IS_BARRIER = isBarrier;
-		RAW_OPERATION = rawOperation;
 		
 		EVENT_LISTENERS = new HashSet<DispatchOperationListener>();
+		addDispatchOperationListener( delegate );
 		
 		_isRunning = false;
 		_isComplete = false;
@@ -47,14 +44,20 @@ class DispatchOperation<ReturnType> implements Callable<ReturnType> {
 	}
 	
 	
-	/** Constructor for a operation which is not a barrier */
-	public DispatchOperation( final Callable<ReturnType> rawOperation ) {
-		this( rawOperation, false );
+	/** Get a new dispatch operation that wraps the specified raw operation */
+	static public DispatchOperation<Void> getInstance( final Runnable rawOperation, final DispatchOperationListener delegate, final boolean isBarrier ) {
+		return new DispatchOperationRawRunnable( rawOperation, delegate, isBarrier );
+	}
+	
+	
+	/** Get a new dispatch operation that wraps the specified raw operation */
+	static public <ReturnType> DispatchOperation<ReturnType> getInstance( final Callable<ReturnType> rawOperation, final DispatchOperationListener delegate, final boolean isBarrier ) {
+		return new DispatchOperationRawCallable<ReturnType>( rawOperation, delegate, isBarrier );
 	}
 	
 	
 	/** wait for this operation to complete */
-	public void waitForCompletion() {
+	final public void waitForCompletion() {
 		while( !_isComplete ) {
 			try {
 				synchronized( this ) {
@@ -67,40 +70,40 @@ class DispatchOperation<ReturnType> implements Callable<ReturnType> {
 	
 	
 	/** Add the event listener */
-	public void addDispatchOperationListener( final DispatchOperationListener listener ) {
+	final public void addDispatchOperationListener( final DispatchOperationListener listener ) {
 		EVENT_LISTENERS.add( listener );
 	}
 	
 	
 	/** determine whether this operation is a barrier operation */
-	public boolean isBarrier() {
+	final public boolean isBarrier() {
 		return IS_BARRIER;
 	}
 	
 	
 	/** Determine whether this operation is currently running */
-	public boolean isRunning() {
+	final public boolean isRunning() {
 		return _isRunning;
 	}
 	
 	
 	/** Determine whether this operation is done execution */
-	public boolean isComplete() {
+	final public boolean isComplete() {
 		return _isComplete;
 	}
 	
 	
 	/** Get the result */
-	public ReturnType getResult() {
+	final public ReturnType getResult() {
 		return _result;
 	}
 	
 	
 	/** perform the operation */
-	public ReturnType call() {
+	final public ReturnType call() {
 		try {
 			_isRunning = true;
-			final ReturnType result = RAW_OPERATION.call();
+			final ReturnType result = executeRawOperation();
 			_result = result;
 			return result;
 		}
@@ -126,10 +129,56 @@ class DispatchOperation<ReturnType> implements Callable<ReturnType> {
 	}
 	
 	
+	abstract protected ReturnType executeRawOperation() throws java.lang.Exception;
+	
+	
 	/** notify the queue and groups that the operation has completed */
-	public void sendCompletionNotification() {
+	private void sendCompletionNotification() {
 		for ( final DispatchOperationListener handler : EVENT_LISTENERS ) {
 			handler.operationCompleted( this );
 		}
+	}
+}
+
+
+
+/** Dispatch operation built to execute a raw runnable operation */
+class DispatchOperationRawRunnable extends DispatchOperation<Void> {
+	/** wrapped operation */
+	final private Runnable RAW_OPERATION;
+	
+	
+	/** Primary Constructor */
+	public DispatchOperationRawRunnable( final Runnable rawOperation, final DispatchOperationListener delegate, final boolean isBarrier ) {
+		super( delegate, isBarrier );
+		
+		RAW_OPERATION = rawOperation;
+	}
+	
+	
+	protected Void executeRawOperation() throws java.lang.Exception {
+		RAW_OPERATION.run();
+		return null;
+	}
+}
+
+
+
+/** Dispatch operation built to execute a raw runnable operation */
+class DispatchOperationRawCallable<ReturnType> extends DispatchOperation<ReturnType> {
+	/** wrapped operation */
+	final private Callable<ReturnType> RAW_OPERATION;
+	
+	
+	/** Primary Constructor */
+	public DispatchOperationRawCallable( final Callable<ReturnType> rawOperation, final DispatchOperationListener delegate, final boolean isBarrier ) {
+		super( delegate, isBarrier );
+		
+		RAW_OPERATION = rawOperation;
+	}
+	
+	
+	protected ReturnType executeRawOperation() throws java.lang.Exception {
+		return RAW_OPERATION.call();
 	}
 }
