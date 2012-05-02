@@ -72,7 +72,8 @@ public class DispatchGroup implements DispatchOperationListener {
 	 * @param timeout the maximum timeout in milliseconds to wait
 	 */
 	public void waitForCompletionWithTimeout( final long timeout ) {
-		while ( _pendingOperationCount > 0 ) {		// while loop protects against accidental wake since wait is not guaranteed
+		final long maxTime = new Date().getTime() + timeout;	// maximum time until expiration
+		while ( _pendingOperationCount > 0 && new Date().getTime() < maxTime ) {		// while loop protects against accidental wake since wait is not guaranteed
 			try {
 				synchronized( EMPTY_WAIT_LOCK ) {
 					EMPTY_WAIT_LOCK.wait( timeout );
