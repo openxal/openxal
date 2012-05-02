@@ -8,6 +8,9 @@
 
 package xal.tools.dispatch;
 
+import java.util.Date;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.*;
 import javax.swing.SwingUtilities;
 
@@ -249,6 +252,19 @@ abstract public class DispatchQueue implements DispatchOperationListener {
 			group.addOperationToThisGroupAndCurrentGroups( operation );
 		}
 		enqueueOperation( operation );
+	}
+	
+	
+	/** dispatch the operation after the specified time without blocking */
+	public void dispatchAfter( final Date dispatchTime, final Runnable rawOperation ) {
+		final DispatchOperation<Void> operation = makeDispatchOperation( rawOperation, false );
+		DispatchGroup.addOperationToCurrentGroups( operation );
+		final TimerTask enqueueTask = new TimerTask() {
+			public void run() {
+				enqueueOperation( operation );
+			}
+		};
+		new Timer().schedule( enqueueTask, dispatchTime );
 	}
 	
 	
