@@ -20,8 +20,8 @@ abstract public class AbstractBatchGetRequest<RecordType extends ChannelRecord> 
 	final protected MessageCenter MESSAGE_CENTER;
 	
 	/** proxy which forwards events to registered listeners */
-	final protected BatchGetRequestListener<RecordType> EVENT_PROXY;
-
+	final protected BatchGetRequestListener EVENT_PROXY;
+	
 	/** set of channels for which to request batch operations */
 	final protected Set<Channel> CHANNELS;
 	
@@ -37,12 +37,16 @@ abstract public class AbstractBatchGetRequest<RecordType extends ChannelRecord> 
 	/** executor pool for processing the get requests */
 	final protected ExecutorService PROCESSING_POOL;
 	
+	/** object used for waiting and notification */
+	final private Object COMPLETION_LOCK;
+	
 	
 	/** Primary Constructor */
-	@SuppressWarnings( "unchecked" )		// need to cast the batch request listener for the appropriate record type
 	public AbstractBatchGetRequest( final Collection<Channel> channels ) {
 		MESSAGE_CENTER = new MessageCenter( "BatchGetRequest" );
-		EVENT_PROXY = (BatchGetRequestListener<RecordType>)MESSAGE_CENTER.registerSource( this, BatchGetRequestListener.class );
+		EVENT_PROXY = MESSAGE_CENTER.registerSource( this, BatchGetRequestListener.class );
+		
+		COMPLETION_LOCK = new Object();
 		
 		RECORDS = new HashMap<Channel,RecordType>();
 		EXCEPTIONS = new HashMap<Channel,Exception>();
@@ -121,10 +125,14 @@ abstract public class AbstractBatchGetRequest<RecordType extends ChannelRecord> 
 	 * @param timeout the maximum time in seconds to wait for completion
 	 */
 	public boolean waitForCompletion( final double timeout ) {
-		final long maxTime = new Date().getTime() + (long) ( 1000 * timeout );		// time after which we should stop waiting
+		final long milliTimeout = (long) ( 1000 * timeout );		// timeout in milliseconds
+		final long maxTime = new Date().getTime() + milliTimeout;	// maximum time until expiration
 		while( !isComplete() && new Date().getTime() < maxTime ) {
+			final long remainingTime = Math.max( 0, maxTime - new Date().getTime() );
 			try {
-				Thread.yield();
+				synchronized( COMPLETION_LOCK ) {
+					COMPLETION_LOCK.wait( remainingTime );
+				}
 			}
 			catch( Exception exception ) {
 				throw new RuntimeException( "Exception waiting for the batch get requests to be completed.", exception );
@@ -237,6 +245,15 @@ abstract public class AbstractBatchGetRequest<RecordType extends ChannelRecord> 
 	/** check for the current status and post notifications if necessary */
 	protected void processCurrentStatus() {
 		if ( isComplete() ) {
+			synchronized( COMPLETION_LOCK ) {
+				try {
+					COMPLETION_LOCK.notifyAll();
+				}
+				catch( Exception exception ) {
+					System.out.println( "Excepting notifying " );
+					exception.printStackTrace();
+				}
+			}
 			EVENT_PROXY.batchRequestCompleted( this, getRecordCount(), getExceptionCount() );
 		}
 	}
