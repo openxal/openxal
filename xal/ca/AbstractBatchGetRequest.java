@@ -129,13 +129,15 @@ abstract public class AbstractBatchGetRequest<RecordType extends ChannelRecord> 
 		final long maxTime = new Date().getTime() + milliTimeout;	// maximum time until expiration
 		while( !isComplete() && new Date().getTime() < maxTime ) {
 			final long remainingTime = Math.max( 0, maxTime - new Date().getTime() );
-			try {
-				synchronized( COMPLETION_LOCK ) {
-					COMPLETION_LOCK.wait( remainingTime );
+			if ( remainingTime > 0 ) {		// remaining time must be strictly greater than zero to prevent waiting forever should it be identically zero
+				try {
+					synchronized( COMPLETION_LOCK ) {
+						COMPLETION_LOCK.wait( remainingTime );
+					}
 				}
-			}
-			catch( Exception exception ) {
-				throw new RuntimeException( "Exception waiting for the batch get requests to be completed.", exception );
+				catch( Exception exception ) {
+					throw new RuntimeException( "Exception waiting for the batch get requests to be completed.", exception );
+				}
 			}
 		}
 		
