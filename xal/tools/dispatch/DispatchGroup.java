@@ -75,12 +75,14 @@ public class DispatchGroup implements DispatchOperationListener {
 		final long maxTime = new Date().getTime() + timeout;	// maximum time until expiration
 		while ( _pendingOperationCount > 0 && new Date().getTime() < maxTime ) {		// while loop protects against accidental wake since wait is not guaranteed
 			final long remainingTime = Math.max( 0, maxTime - new Date().getTime() );
-			try {
-				synchronized( EMPTY_WAIT_LOCK ) {
-					EMPTY_WAIT_LOCK.wait( remainingTime );
-				}				
+			if ( remainingTime > 0 ) {		// remaining time must be strictly greater than zero otherwise the wait will wait forever until notified
+				try {
+					synchronized( EMPTY_WAIT_LOCK ) {
+						EMPTY_WAIT_LOCK.wait( remainingTime );
+					}				
+				}
+				catch ( Exception exception ) {}
 			}
-			catch ( Exception exception ) {}
 		}
 	}
 	
