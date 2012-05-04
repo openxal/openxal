@@ -588,7 +588,9 @@ class MainDispatchQueue extends SerialDispatchQueue {
 	
 	/** submit the operation for execution on the queue and wait for it to complete */
 	public <ReturnType> ReturnType dispatchSync( final Callable<ReturnType> rawOperation ) {
-		throw new RuntimeException( "Callable operations are not supported on the Swing thread." );
+		final CallRunnable<ReturnType> runnableOperation = new CallRunnable<ReturnType>( rawOperation );
+		dispatchSync( runnableOperation );
+		return runnableOperation.getResult();
 	}
 	
 	
@@ -610,6 +612,40 @@ class MainDispatchQueue extends SerialDispatchQueue {
 				};
 				SwingUtilities.invokeLater( runnableOperation );
 			}
+		}
+	}
+}
+
+
+
+/** Wrapper of a callable object as Runnable */
+class CallRunnable<ReturnType> implements Runnable {
+	/** result returned by the call */
+	private ReturnType _result;
+	
+	/** wrapped callable */
+	private final Callable<ReturnType> WRAPPED_CALLABLE;
+	
+	
+	/** Constructor */
+	public CallRunnable( final Callable<ReturnType> callable ) {
+		WRAPPED_CALLABLE = callable;
+	}
+	
+	
+	/** Get the result */
+	public ReturnType getResult() {
+		return _result;
+	}
+	
+	
+	/** run the call */
+	public void run() {
+		try {
+			_result = WRAPPED_CALLABLE.call();
+		}
+		catch( Exception exception ) {
+			throw new RuntimeException( exception );
 		}
 	}
 }
