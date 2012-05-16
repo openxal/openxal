@@ -295,7 +295,7 @@ public class PVLoggerDataSource {
 				if (_magnetFields.containsKey(pvName)) {
 					val = _magnetFields.get( pvName ).doubleValue();
 					// take into account of proper transform
-					val = pol * toPhysicalValue( chan, pol );
+					val = pol * toPhysicalValue( chan, val );
 				}
 				else {		// If there is no magnet field readback, use corresponding power supply field readback, instead.
 					Channel chan2 = magnet.getMainSupply().getChannel( MagnetMainSupply.FIELD_RB_HANDLE );
