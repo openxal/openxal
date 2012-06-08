@@ -134,7 +134,7 @@ abstract public class DispatchQueue implements DispatchOperationListener {
 	
 	/** 
 	 * Get the global queue corresponding to the specified priority. The global queue cannot be suspended or resumed.
-	 * @priority one of DISPATCH_QUEUE_PRIORITY_HIGH, DISPATCH_QUEUE_PRIORITY_DEFAULT, DISPATCH_QUEUE_PRIORITY_LOW, DISPATCH_QUEUE_PRIORITY_BACKGROUND
+	 * @param priority one of DISPATCH_QUEUE_PRIORITY_HIGH, DISPATCH_QUEUE_PRIORITY_DEFAULT, DISPATCH_QUEUE_PRIORITY_LOW, DISPATCH_QUEUE_PRIORITY_BACKGROUND
 	 * @return the global queue corresponding to the specified priority or null if none exists.
 	 */
 	static public DispatchQueue getGlobalQueue( final int priority ) {
