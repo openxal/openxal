@@ -44,9 +44,8 @@ public class ChannelCorrelator extends Correlator<Channel,ChannelTimeRecord,Chan
 
     
     /**
-     * Overrides the parent method to create and return a ChannelAgent as a 
-     * source agent for this correlator.
-     * @param source The new source to monitor and correlate.
+     * Overrides the parent method to create and return a ChannelAgent as a source agent for this correlator.
+     * @param channel The new channel to monitor and correlate.
      * @param sourceName The name to be associated with the source.
      * @param recordFilter The filter to apply to the source's records.
      */
