@@ -126,7 +126,7 @@ abstract public class DispatchQueue implements DispatchOperationListener {
 	}
 	
 	
-	/** Get the main queue on which Swing events are dispatched. The main queue cannot be suspended or resumed and does not support Callable operations. */
+	/** Get the main queue on which Swing events are dispatched. The main queue cannot be suspended or resumed. */
 	static public DispatchQueue getMainQueue() {
 		return MainDispatchQueue.defaultQueue();
 	}
