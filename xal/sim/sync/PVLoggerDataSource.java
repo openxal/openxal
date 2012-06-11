@@ -365,8 +365,9 @@ public class PVLoggerDataSource {
 							
 							// handle shunt PS differently
 							if (pvName1.indexOf("ShntC") > -1) {
+								final double shuntField = Math.abs( trimField );	// shunt is unipolar
 								// shunt always opposes the main field
-								field = field * trimField > 0 ? field - trimField : field + trimField;
+								field = field * trimField > 0 ? field - shuntField : field + shuntField;
 							} 
 							else {
 								field += trimField;
