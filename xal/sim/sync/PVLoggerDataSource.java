@@ -33,6 +33,9 @@ import xal.tools.transforms.ValueTransform;
  * @author Paul Chu
  */
 public class PVLoggerDataSource {
+	/** PV Logger */
+	final private PVLogger PV_LOGGER;
+	
 	private Map<String,ChannelSnapshot> SNAPSHOT_MAP;
 
 	private ChannelSnapshot[] CHANNEL_SNAPSHOTS;
@@ -46,33 +49,44 @@ public class PVLoggerDataSource {
 	/** accelerator sequence */
 	private AcceleratorSeq _sequence;
 	
-	/** PV Logger */
-	private PVLogger pvLogger;
-	
 	/** indicates whether bend fields from the PV Logger are used in the scenario */
 	private boolean _usesLoggedBendFields;
-
-	
-	/**
-	 * @param id
-	 *            the PV logger ID
-	 */
-	public PVLoggerDataSource(long id) {
+    
+    
+    /** Primary Constructor
+     * @param id the PV Logger ID
+     * @param theLogger existing, connected PV Logger to use
+     */
+    public PVLoggerDataSource( final long id, final PVLogger theLogger ) {
 		_usesLoggedBendFields = false;
 		
-		// initialize PVLogger
-		ConnectionDictionary dict = PVLogger.newBrowsingConnectionDictionary();
-
-		if (dict != null) {
-			pvLogger = new PVLogger( dict );
-		} 
-		else {
-			ConnectionPreferenceController.displayPathPreferenceSelector();
-			dict = PVLogger.newBrowsingConnectionDictionary();
-			pvLogger = new PVLogger( dict );
-		}
-		
-		updatePVLoggerId( id );
+        if ( theLogger != null ) {
+            PV_LOGGER = theLogger;
+        }
+        else {
+            // initialize PVLogger
+            ConnectionDictionary dict = PVLogger.newBrowsingConnectionDictionary();
+            
+            if (dict != null) {
+                PV_LOGGER = new PVLogger( dict );
+            } 
+            else {
+                ConnectionPreferenceController.displayPathPreferenceSelector();
+                dict = PVLogger.newBrowsingConnectionDictionary();
+                PV_LOGGER = new PVLogger( dict );
+            }
+        }
+        
+        updatePVLoggerId( id );
+    }
+    
+    
+	/**
+     * Constructor
+	 * @param id the PV logger ID
+	 */
+	public PVLoggerDataSource( final long id ) {
+        this( id, null );
 	}
 	
 	
@@ -91,21 +105,21 @@ public class PVLoggerDataSource {
 	/** close the PV Logger connection */
 	public void closeConnection() {
 		try {
-			pvLogger.closeConnection();
+			PV_LOGGER.closeConnection();
 		}
 		catch ( Exception exception ) {
 			exception.printStackTrace();
 		}
 	}
-
-
+	
+	
 	/**
 	 * Update this data source with the data from the specified PV Logger snapshot
 	 * @param id the PV logger ID
 	 */
 	public void updatePVLoggerId( final long id ) {
 		try {
-			final MachineSnapshot machineSnapshot = pvLogger.fetchMachineSnapshot( id );
+			final MachineSnapshot machineSnapshot = PV_LOGGER.fetchMachineSnapshot( id );
 			CHANNEL_SNAPSHOTS = machineSnapshot.getChannelSnapshots();
 			SNAPSHOT_MAP = populateChannelSnapshotTable();
 			_magnetFields = getMagnetMap();
@@ -115,7 +129,7 @@ public class PVLoggerDataSource {
 			throw new RuntimeException( exception );
 		}
 	}
-
+	
 	/** populate the channel snapshot table */
 	protected Map<String,ChannelSnapshot> populateChannelSnapshotTable() {
 		final Map<String,ChannelSnapshot> snapshotMap = new HashMap<String,ChannelSnapshot>( CHANNEL_SNAPSHOTS.length );
@@ -124,26 +138,26 @@ public class PVLoggerDataSource {
 		}
 		return snapshotMap;
 	}
-
-
+	
+	
 	/** get a channel snapshot for the specified PV */
 	public ChannelSnapshot getChannelSnapshot( final String pv ) {
 		return SNAPSHOT_MAP.get( pv );
 	}
-
-
+	
+	
 	/** get the value for the channel snapshot corresponding to the specified PV */
 	public double[] getChannelSnapshotValue( final String pv ) {
 		final ChannelSnapshot snapshot = getChannelSnapshot( pv );
 		return snapshot != null ? snapshot.getValue() : null;
 	}
-
 	
 	
 	
-
-	private HashMap<String, Double> getMagnetMap() {
-		HashMap<String, Double> pvMap = new HashMap<String, Double>();
+	
+	
+	public Map<String, Double> getMagnetMap() {
+		final HashMap<String, Double> pvMap = new HashMap<String, Double>();
 		
 		for (int i = 0; i < CHANNEL_SNAPSHOTS.length; i++) {
 			if (CHANNEL_SNAPSHOTS[i].getPV().indexOf("Mag:Q") > -1
@@ -155,76 +169,75 @@ public class PVLoggerDataSource {
 				|| ((CHANNEL_SNAPSHOTS[i].getPV().indexOf("_Mag:PS_DH") > -1) && (CHANNEL_SNAPSHOTS[i].getPV().indexOf(":B_Set") > -1))					
 				) {
 				double[] val = CHANNEL_SNAPSHOTS[i].getValue();
-				pvMap.put( CHANNEL_SNAPSHOTS[i].getPV(), new Double( val[0] ) );
+				pvMap.put(CHANNEL_SNAPSHOTS[i].getPV(), new Double(val[0]));
 			}
 		}
 		
 		return pvMap;
 	}
 	
-	
-	private HashMap<String, Double> getMagnetPSMap() {
-		HashMap<String, Double> pvMap = new HashMap<String, Double>();
-
+	public Map<String, Double> getMagnetPSMap() {
+		final HashMap<String, Double> pvMap = new HashMap<String, Double>();
+		
 		for (int i = 0; i < CHANNEL_SNAPSHOTS.length; i++) {
-			if ( CHANNEL_SNAPSHOTS[i].getPV().indexOf("Mag:PS_Q") > -1 || CHANNEL_SNAPSHOTS[i].getPV().indexOf("Mag:PS_DH") > -1 ) {
+			if (CHANNEL_SNAPSHOTS[i].getPV().indexOf("Mag:PS_Q") > -1) {
 				double[] val = CHANNEL_SNAPSHOTS[i].getValue();
-				pvMap.put( CHANNEL_SNAPSHOTS[i].getPV(), new Double( val[0] ) );
+				pvMap.put(CHANNEL_SNAPSHOTS[i].getPV(), new Double(val[0]));
 			}
 		}
-
+		
 		return pvMap;
 	}
-
+	
 	public HashMap<String, Double> getBPMXMap() {
 		HashMap<String, Double> bpmXMap = new HashMap<String, Double>();
-
+		
 		for (int i = 0; i < CHANNEL_SNAPSHOTS.length; i++) {
 			if (CHANNEL_SNAPSHOTS[i].getPV().indexOf(":xAvg") > -1) {
 				double[] val = CHANNEL_SNAPSHOTS[i].getValue();
 				bpmXMap.put(CHANNEL_SNAPSHOTS[i].getPV(), new Double(val[0]));
 			}
 		}
-
+		
 		return bpmXMap;
 	}
-
+	
 	public HashMap<String, Double> getBPMYMap() {
 		HashMap<String, Double> bpmYMap = new HashMap<String, Double>();
-
+		
 		for (int i = 0; i < CHANNEL_SNAPSHOTS.length; i++) {
 			if (CHANNEL_SNAPSHOTS[i].getPV().indexOf(":yAvg") > -1) {
 				double[] val = CHANNEL_SNAPSHOTS[i].getValue();
 				bpmYMap.put(CHANNEL_SNAPSHOTS[i].getPV(), new Double(val[0]));
 			}
 		}
-
+		
 		return bpmYMap;
 	}
-
+	
 	public HashMap<String, Double> getBPMAmpMap() {
 		HashMap<String, Double> bpmYMap = new HashMap<String, Double>();
-
+		
 		for (int i = 0; i < CHANNEL_SNAPSHOTS.length; i++) {
 			if (CHANNEL_SNAPSHOTS[i].getPV().indexOf(":amplitudeAvg") > -1) {
 				double[] val = CHANNEL_SNAPSHOTS[i].getValue();
 				bpmYMap.put(CHANNEL_SNAPSHOTS[i].getPV(), new Double(val[0]));
 			}
 		}
-
+		
 		return bpmYMap;
 	}
-
+	
 	public HashMap<String, Double> getBPMPhaseMap() {
 		HashMap<String, Double> bpmYMap = new HashMap<String, Double>();
-
+		
 		for (int i = 0; i < CHANNEL_SNAPSHOTS.length; i++) {
 			if (CHANNEL_SNAPSHOTS[i].getPV().indexOf(":phaseAvg") > -1) {
 				double[] val = CHANNEL_SNAPSHOTS[i].getValue();
 				bpmYMap.put(CHANNEL_SNAPSHOTS[i].getPV(), new Double(val[0]));
 			}
 		}
-
+		
 		return bpmYMap;
 	}
 	
@@ -269,9 +282,21 @@ public class PVLoggerDataSource {
 	}
 	
 	
+	/** 
+	 * PV Logger logs raw values, but optics includes channel transforms that need to be applied and conversion to field (e.g. polarity scaling). 
+	 * @param rawValue raw channel value
+	 * @return field
+	 */
+	static private double toFieldFromRaw( final Electromagnet magnet, final Channel channel, final double rawValue ) {
+		final double transformedValue = toPhysicalValue( channel, rawValue );
+		return magnet.toFieldFromCA( transformedValue );
+	}
+	
+	
 	/**
-	 * Set the model lattice with PV logger data source
-	 * @param seq accelerator sequence
+	 * set the model lattice with PV logger data source
+	 *
+	 * @param sequence accelerator sequence
 	 * @param scenario Model Scenario object
 	 * @return a new scenario with lattice from PV logger data
 	 */
@@ -282,36 +307,33 @@ public class PVLoggerDataSource {
 		for (int i = 0; i < magnets.size(); i++) {
 			final Electromagnet magnet = (Electromagnet) magnets.get(i);
 			String pvName = "";
-			double val = 0.;
+			double field = 0.;
 			
-			// get polarity so we can determine the sign
-			double pol = magnet.getPolarity();
 			// use field readback
 			if (magnet.useFieldReadback()) {
-				// System.out.println("Quad " + magnet.getId() + " use
-				// fieldReadback");
+				// System.out.println("Quad " + magnet.getId() + " use fieldReadback");
 				Channel chan = magnet.getChannel(Electromagnet.FIELD_RB_HANDLE);
 				pvName = chan.channelName();
-				if (_magnetFields.containsKey(pvName)) {
-					val = _magnetFields.get( pvName ).doubleValue();
+				if ( _magnetFields.containsKey( pvName ) ) {
+					final double rawValue = _magnetFields.get( pvName );
 					// take into account of proper transform
-					val = pol * toPhysicalValue( chan, val );
+					field = toFieldFromRaw( magnet, chan, rawValue );
 				}
 				else {		// If there is no magnet field readback, use corresponding power supply field readback, instead.
 					Channel chan2 = magnet.getMainSupply().getChannel( MagnetMainSupply.FIELD_RB_HANDLE );
 					String pvName2 = chan2.channelName();
 					if (_magnetPowerSupplyValues.containsKey(pvName2)) {
-						val = _magnetPowerSupplyValues.get( pvName2 ).doubleValue();
+						final double rawValue = _magnetPowerSupplyValues.get( pvName2 );
 						// take into account of proper transform
-						val = pol * toPhysicalValue( chan2, val );
+						field = toFieldFromRaw( magnet, chan2, rawValue );
 					}
 					else {		// if no power supply readback, use power supply fieldSet
 						chan2 = magnet.getMainSupply().getChannel( MagnetMainSupply.FIELD_SET_HANDLE );
 						pvName2 = chan2.channelName();
 						if (_magnetPowerSupplyValues.containsKey(pvName2)) {
-							val = _magnetPowerSupplyValues.get( pvName2 ).doubleValue();
+							final double rawValue = _magnetPowerSupplyValues.get( pvName2 );
 							// take into account of proper transform
-							val = pol * toPhysicalValue( chan2, val );
+							field = toFieldFromRaw( magnet, chan2, rawValue );
 						} else
 							System.out.println(pvName2 + " has no value");
 					}
@@ -319,27 +341,28 @@ public class PVLoggerDataSource {
 			}
 			else {		// use field set, we need to handle magnets with trim power supplies here. However, if no readback, we have to use field readback
 				// for main power supply
-				Channel chan = magnet.getMainSupply().getChannel( MagnetMainSupply.FIELD_SET_HANDLE );
+				final Channel chan = magnet.getMainSupply().getChannel( MagnetMainSupply.FIELD_SET_HANDLE );
 				pvName = chan.channelName();
-				if (_magnetFields.containsKey(pvName)) {
-					val = _magnetFields.get( pvName ).doubleValue();
+				if ( _magnetFields.containsKey( pvName ) ) {
+					final double rawValue = _magnetFields.get( pvName );
 					// take into account of proper transform
-					val = pol * toPhysicalValue( chan, val );
+					field = toFieldFromRaw( magnet, chan, rawValue );
 					// for trim power supply (check if it has trim first)
 					if (magnet instanceof TrimmedQuadrupole) {
 						Channel chan1 = ((TrimmedQuadrupole) magnet).getTrimSupply().getChannel( MagnetTrimSupply.FIELD_SET_HANDLE );
 						String pvName1 = chan1.channelName();
 						if (_magnetFields.containsKey(pvName1)) {
-							double trimVal = Math.abs( _magnetFields.get( pvName1 ).doubleValue() );
+							final double trimVal = _magnetFields.get( pvName1 );
 							// take into account of proper transform
-							trimVal = toPhysicalValue( chan1, trimVal );
+							final double trimField = toFieldFromRaw( magnet, chan1, trimVal );
 							
 							// handle shunt PS differently
 							if (pvName1.indexOf("ShntC") > -1) {
-								// for backward compatibility (old data), we take absolute value for the shunt field
-								val = val - trimVal;
-							} else {
-								val = val + trimVal;
+								// shunt always opposes the main field
+								field = field * trimField > 0 ? field - trimField : field + trimField;
+							} 
+							else {
+								field += trimField;
 							}
 						}
 					}
@@ -349,13 +372,13 @@ public class PVLoggerDataSource {
 					final Channel readbackChannel = magnet.getChannel( Electromagnet.FIELD_RB_HANDLE );
 					pvName = readbackChannel.channelName();
 					if ( _magnetFields.containsKey( pvName ) ) {
-						val = _magnetFields.get( pvName ).doubleValue();
-						val = toPhysicalValue( readbackChannel, val );
+						final double rawValue = _magnetFields.get( pvName );
+						field = toFieldFromRaw( magnet, readbackChannel, rawValue );
 					}
 				}
 			}
 			
-			scenario.setModelInput( magnet, ElectromagnetPropertyAccessor.PROPERTY_FIELD, val );
+			scenario.setModelInput( magnet, ElectromagnetPropertyAccessor.PROPERTY_FIELD, field );
 		}
 		
 		try {
@@ -367,11 +390,10 @@ public class PVLoggerDataSource {
 		return scenario;
 	}
 	
-
 	public void setAccelSequence(AcceleratorSeq seq) {
 		_sequence = seq;
 	}
-
+	
 	/**
 	 * get the beam current in mA, we use the first available BCM in the
 	 * sequence. If the first in the sequence is not available, use MEBT BCM02.
@@ -383,12 +405,12 @@ public class PVLoggerDataSource {
 		double current = 20.;
 		List<AcceleratorNode> bcms = _sequence.getAllNodesOfType("BCM");
 		List<AcceleratorNode> allBCMs = AcceleratorSeq.filterNodesByStatus(bcms, true);
-
+		
 		if (_sequence.getAllNodesOfType("BCM").size() > 0) {
 			String firstBCM = ((CurrentMonitor) allBCMs.get(0)).getId();
 			for (int i = 0; i < CHANNEL_SNAPSHOTS.length; i++) {
 				if (CHANNEL_SNAPSHOTS[i].getPV().indexOf(firstBCM) > -1
-						&& CHANNEL_SNAPSHOTS[i].getPV().indexOf(":currentMax") > -1) {
+					&& CHANNEL_SNAPSHOTS[i].getPV().indexOf(":currentMax") > -1) {
 					current = CHANNEL_SNAPSHOTS[i].getValue()[0];
 					return current;
 				} else if (CHANNEL_SNAPSHOTS[i].getPV().equals("MEBT_Diag:BCM02:currentMax")) {
@@ -397,10 +419,10 @@ public class PVLoggerDataSource {
 				}
 			}
 		}
-
+		
 		return current;
 	}
-
+	
 	/**
 	 * get the beam current in mA, use the BCM specified here. If it's not
 	 * available, use 20mA as default
@@ -413,14 +435,14 @@ public class PVLoggerDataSource {
 		double current = 20;
 		for (int i = 0; i < CHANNEL_SNAPSHOTS.length; i++) {
 			if (CHANNEL_SNAPSHOTS[i].getPV().indexOf(bcm) > -1
-					&& CHANNEL_SNAPSHOTS[i].getPV().indexOf(":currentMax") > -1) {
+				&& CHANNEL_SNAPSHOTS[i].getPV().indexOf(":currentMax") > -1) {
 				current = CHANNEL_SNAPSHOTS[i].getValue()[0];
 				return current;
 			}
 		}
 		return current;
 	}
-
+	
 	/**
 	 * get all the channel snapshots.
 	 *
