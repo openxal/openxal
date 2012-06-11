@@ -35,10 +35,10 @@ import xal.tools.transforms.ValueTransform;
 public class PVLoggerDataSource {
 	/** PV Logger */
 	final private PVLogger PV_LOGGER;
-	
+    
 	private Map<String,ChannelSnapshot> SNAPSHOT_MAP;
-
-	private ChannelSnapshot[] CHANNEL_SNAPSHOTS;
+	
+    private ChannelSnapshot[] CHANNEL_SNAPSHOTS;
 	
 	/** magnet values keyed by PV */
 	private Map<String,Double> _magnetFields;
@@ -153,11 +153,9 @@ public class PVLoggerDataSource {
 	}
 	
 	
-	
-	
-	
+	/** Get the value map for magnets */
 	public Map<String, Double> getMagnetMap() {
-		final HashMap<String, Double> pvMap = new HashMap<String, Double>();
+		final Map<String, Double> pvMap = new HashMap<String, Double>();
 		
 		for (int i = 0; i < CHANNEL_SNAPSHOTS.length; i++) {
 			if (CHANNEL_SNAPSHOTS[i].getPV().indexOf("Mag:Q") > -1
@@ -176,8 +174,10 @@ public class PVLoggerDataSource {
 		return pvMap;
 	}
 	
+	
+	/** Get the value map for magnet power supplies */
 	public Map<String, Double> getMagnetPSMap() {
-		final HashMap<String, Double> pvMap = new HashMap<String, Double>();
+		final Map<String, Double> pvMap = new HashMap<String, Double>();
 		
 		for (int i = 0; i < CHANNEL_SNAPSHOTS.length; i++) {
 			if (CHANNEL_SNAPSHOTS[i].getPV().indexOf("Mag:PS_Q") > -1) {
@@ -189,8 +189,10 @@ public class PVLoggerDataSource {
 		return pvMap;
 	}
 	
-	public HashMap<String, Double> getBPMXMap() {
-		HashMap<String, Double> bpmXMap = new HashMap<String, Double>();
+	
+	/** Get the value map for horizontal BPM signals */
+	public Map<String, Double> getBPMXMap() {
+		final Map<String, Double> bpmXMap = new HashMap<String, Double>();
 		
 		for (int i = 0; i < CHANNEL_SNAPSHOTS.length; i++) {
 			if (CHANNEL_SNAPSHOTS[i].getPV().indexOf(":xAvg") > -1) {
@@ -202,8 +204,10 @@ public class PVLoggerDataSource {
 		return bpmXMap;
 	}
 	
-	public HashMap<String, Double> getBPMYMap() {
-		HashMap<String, Double> bpmYMap = new HashMap<String, Double>();
+	
+	/** Get the value map for vertical BPM signals */
+	public Map<String, Double> getBPMYMap() {
+		Map<String, Double> bpmYMap = new HashMap<String, Double>();
 		
 		for (int i = 0; i < CHANNEL_SNAPSHOTS.length; i++) {
 			if (CHANNEL_SNAPSHOTS[i].getPV().indexOf(":yAvg") > -1) {
@@ -215,8 +219,10 @@ public class PVLoggerDataSource {
 		return bpmYMap;
 	}
 	
-	public HashMap<String, Double> getBPMAmpMap() {
-		HashMap<String, Double> bpmYMap = new HashMap<String, Double>();
+	
+	/** Get the value map for BPM amplitude */
+	public Map<String, Double> getBPMAmpMap() {
+		final Map<String, Double> bpmYMap = new HashMap<String, Double>();
 		
 		for (int i = 0; i < CHANNEL_SNAPSHOTS.length; i++) {
 			if (CHANNEL_SNAPSHOTS[i].getPV().indexOf(":amplitudeAvg") > -1) {
@@ -228,8 +234,10 @@ public class PVLoggerDataSource {
 		return bpmYMap;
 	}
 	
-	public HashMap<String, Double> getBPMPhaseMap() {
-		HashMap<String, Double> bpmYMap = new HashMap<String, Double>();
+	
+	/** Get the value map for BPM phase */
+	public Map<String, Double> getBPMPhaseMap() {
+		final Map<String, Double> bpmYMap = new HashMap<String, Double>();
 		
 		for (int i = 0; i < CHANNEL_SNAPSHOTS.length; i++) {
 			if (CHANNEL_SNAPSHOTS[i].getPV().indexOf(":phaseAvg") > -1) {
@@ -295,7 +303,6 @@ public class PVLoggerDataSource {
 	
 	/**
 	 * set the model lattice with PV logger data source
-	 *
 	 * @param sequence accelerator sequence
 	 * @param scenario Model Scenario object
 	 * @return a new scenario with lattice from PV logger data
