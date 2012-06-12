@@ -54,6 +54,12 @@ public class DispatchGroup implements DispatchOperationListener {
 	}
 	
 	
+	/** synonym for waitForCompletion() */
+	public void await() {
+		waitForCompletion();
+	}
+	
+	
 	/** wait indefinitely for all operations to complete */
 	public void waitForCompletion() {
 		while ( _pendingOperationCount > 0 ) {		// while loop protects against accidental wake since wait is not guaranteed
@@ -64,6 +70,12 @@ public class DispatchGroup implements DispatchOperationListener {
 			}
 			catch ( Exception exception ) {}
 		}
+	}
+	
+	
+	/** synonym for waitForCompletionWithTimeout( timeout ) */
+	public void await( final long  timeout ) {
+		waitForCompletionWithTimeout( timeout );
 	}
 	
 	
