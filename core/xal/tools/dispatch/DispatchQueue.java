@@ -58,7 +58,7 @@ abstract public class DispatchQueue implements DispatchOperationListener {
 		DISPATCH_QUEUE_PRIORITY_LOW = ( Thread.MIN_PRIORITY + Thread.NORM_PRIORITY ) / 2;
 		DISPATCH_QUEUE_PRIORITY_BACKGROUND = Thread.MIN_PRIORITY;
 	}
-		
+	
 	
 	/** Primary Constructor */
     protected DispatchQueue( final String label, final int priority ) {
@@ -84,6 +84,12 @@ abstract public class DispatchQueue implements DispatchOperationListener {
 	/** get this queue's label */
 	public String getLabel() {
 		return LABEL;
+	}
+	
+	
+	/** Determines whether this queue is suspended */
+	public boolean isSuspended() {
+		return !_isProcessingPendingOperationQueue;
 	}
 	
 	
@@ -421,7 +427,7 @@ class ConcurrentDispatchQueue extends DispatchQueue {
 		_isRunningBarrierOperation = false;		// this is correct whether the operation just completed is a barrier or another operation just completed
 		processOperationQueue();	// make sure the operation queue is processed in case other operations are awaiting completion of this operation
 	}
-
+	
 	
 	/** process the next pending operation */
 	@SuppressWarnings( "unchecked" )	// executor expects a known type but the operations are arbitrary
@@ -453,7 +459,7 @@ class GlobalDispatchQueue extends ConcurrentDispatchQueue {
 	
 	/** default priority global dispatch queue */
 	static public final GlobalDispatchQueue DEFAULT_PRIORITY_DISPATCH_QUEUE;
-
+	
 	/** low priority global dispatch queue */
 	static public final GlobalDispatchQueue LOW_PRIORITY_DISPATCH_QUEUE;
 	
@@ -476,8 +482,10 @@ class GlobalDispatchQueue extends ConcurrentDispatchQueue {
 	}
 	
 	
-	/** Suspend execution of pending operations. Overriden to do nothing since the main queue cannot be suspended or resumed. */
-	public void suspend() {}
+	/** The global dispatch queues cannot be suspended. Throws an UnsupportedOperationException. */
+	public void suspend() {
+		throw new UnsupportedOperationException( "Global dispatch queues cannot be suspended." );
+	}
 	
 	
 	/** resume execution of pending operations. Overriden to do nothing since the main queue cannot be suspended or resumed. */
@@ -489,7 +497,7 @@ class GlobalDispatchQueue extends ConcurrentDispatchQueue {
 	 * @param operation the operation to execute
 	 */
 	public void dispatchBarrierAsync( final Runnable operation ) {
-		dispatchAsync( operation );
+		throw new UnsupportedOperationException( "Global dispatch queues don't support barriers." );
 	}
 	
 	
@@ -498,7 +506,7 @@ class GlobalDispatchQueue extends ConcurrentDispatchQueue {
 	 * @param operation the operation to execute
 	 */
 	public void dispatchBarrierSync( final Runnable operation ) {
-		dispatchSync( operation );
+		throw new UnsupportedOperationException( "Global dispatch queues don't support barriers." );
 	}
 }
 
@@ -558,7 +566,7 @@ class MainDispatchQueue extends SerialDispatchQueue {
 	static {
 		MAIN_DISPATCH_QUEUE = new MainDispatchQueue();
 	}
-
+	
 	
 	/** Constructor */
 	private MainDispatchQueue() {
@@ -578,8 +586,10 @@ class MainDispatchQueue extends SerialDispatchQueue {
 	}
 	
 	
-	/** Suspend execution of pending operations. Overriden to do nothing since the main queue cannot be suspended or resumed. */
-	public void suspend() {}
+	/** The main dispatch queue cannot be suspended. Throws an UnsupportedOperationException. */
+	public void suspend() {
+		throw new UnsupportedOperationException( "The main dispatch queue cannot be suspended." );
+	}
 	
 	
 	/** resume execution of pending operations. Overriden to do nothing since the main queue cannot be suspended or resumed. */
