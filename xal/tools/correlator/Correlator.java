@@ -375,9 +375,8 @@ abstract public class Correlator<SourceType, RecordType, SourceAgentType extends
      * The resulting correlation is returned.  If no correlation was found  
      * within the timeout, null is returned.
      */
-    public Correlation fetchCorrelationWithTimeout(double aTimeout) {
-        WaitingListener listener = new WaitingListener();
-        return listener.listenWithTimeout(aTimeout);
+    public Correlation fetchCorrelationWithTimeout( final double aTimeout ) {
+        return new WaitingListener().listenWithTimeout( aTimeout );
     }
 	
 	
@@ -454,17 +453,28 @@ abstract public class Correlator<SourceType, RecordType, SourceAgentType extends
      * the timeout has expired.
      */
     private class WaitingListener implements CorrelationNotice {
+		/** latest captured correlation */
         private transient Correlation correlation;
         
+		
+		/** Constructor */
         public WaitingListener() {
             correlation = null;
         }
         
-        synchronized public Correlation listenWithTimeout(double timeout) {
+		
+		/** 
+		 * Wait and listen for a correlation 
+		 * @param timeout the maximum time (seconds) to wait for a correlation
+		 */
+		public Correlation listenWithTimeout( final double timeout ) {
             addListener( this );
             pulseMonitorWithTimeout( timeout );
+			
             try {
-                wait( (long)( 1000 * timeout ) );	// block until we get an event or the timeout has expired
+				synchronized( WaitingListener.this ) {
+					WaitingListener.this.wait( (long)( 1000 * timeout ) );	// block until we get an event or the timeout has expired
+				}
             }
             catch( InterruptedException exception ) {
 				Logger.getLogger("global").log( Level.SEVERE, "Error while waiting for a correlation.", exception );
@@ -477,13 +487,21 @@ abstract public class Correlator<SourceType, RecordType, SourceAgentType extends
             return correlation;
         }
         
-        synchronized public void newCorrelation(Object sender, Correlation newCorrelation) {
+		
+		/** Handle the latest captured correlation */
+		public void newCorrelation( final Object sender, final Correlation newCorrelation ) {
             correlation = newCorrelation;
-            this.notify();
+			synchronized( WaitingListener.this ) {
+				WaitingListener.this.notifyAll();
+			}
         }
+		
         
-        synchronized public void noCorrelationCaught(Object sender) {
-            this.notify();
+		/** No correlation was caught within the timeout */
+		public void noCorrelationCaught( final Object sender ) {
+			synchronized( WaitingListener.this ) {
+				WaitingListener.this.notifyAll();
+			}
         }        
     }
 }
