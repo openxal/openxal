@@ -12,6 +12,7 @@ import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import javax.swing.SwingUtilities;
 
 
@@ -42,7 +43,7 @@ abstract public class DispatchQueue implements DispatchOperationListener {
 	final private String LABEL;
 	
 	/** number of operations currently running */
-	protected volatile int _runningOperationCount;
+	final protected AtomicInteger RUNNING_OPERATION_COUNTER;
 	
 	/** indicates whether this queue is submitting pending operations for execution */
 	protected volatile boolean _isProcessingPendingOperationQueue;
@@ -70,8 +71,9 @@ abstract public class DispatchQueue implements DispatchOperationListener {
 		PENDING_OPERATION_QUEUE = new LinkedBlockingQueue<DispatchOperation<?>>();
 		QUEUE_PROCESSOR = Executors.newSingleThreadExecutor();
 		
+		RUNNING_OPERATION_COUNTER = new AtomicInteger( 0 );
+		
 		_isProcessingPendingOperationQueue = true;
-		_runningOperationCount = 0;
 	}
 	
 	
@@ -359,14 +361,14 @@ abstract public class DispatchQueue implements DispatchOperationListener {
 	
 	
 	/** increment the running operations count */
-	synchronized protected void incrementRunningOperationCount() {
-		++_runningOperationCount;
+	protected int incrementRunningOperationCount() {
+		return RUNNING_OPERATION_COUNTER.incrementAndGet();
 	}
 	
 	
 	/** decrement the running operations count */
-	synchronized protected void decrementRunningOperationCount() {
-		--_runningOperationCount;
+	protected int decrementRunningOperationCount() {
+		return RUNNING_OPERATION_COUNTER.decrementAndGet();
 	}
 }
 
@@ -404,7 +406,7 @@ class ConcurrentDispatchQueue extends DispatchQueue {
 				return;
 			}
 			else if ( nextOperation.isBarrier() ) {		// if the next operation is a barrier operation, wait until all currently running operations are complete
-				if ( _runningOperationCount == 0 ) {
+				if ( RUNNING_OPERATION_COUNTER.get() == 0 ) {
 					processNextPendingOperation();
 				}
 				else {
@@ -544,7 +546,7 @@ class SerialDispatchQueue extends DispatchQueue {
 	
 	/** if no process is currently running, process the next pending operation (if any) without blocking */
 	protected void processNextPendingOperation() {
-		if ( _isProcessingPendingOperationQueue && _runningOperationCount == 0 ) {
+		if ( _isProcessingPendingOperationQueue && RUNNING_OPERATION_COUNTER.get() == 0 ) {
 			final Callable<?> nextOperation = PENDING_OPERATION_QUEUE.poll();
 			if ( nextOperation != null ) {
 				incrementRunningOperationCount();
@@ -606,7 +608,7 @@ class MainDispatchQueue extends SerialDispatchQueue {
 	
 	/** process the next pending operation if any */
 	protected void processNextPendingOperation() {
-		if ( _isProcessingPendingOperationQueue && _runningOperationCount == 0 ) {
+		if ( _isProcessingPendingOperationQueue && RUNNING_OPERATION_COUNTER.get() == 0 ) {
 			final Callable<?> nextOperation = PENDING_OPERATION_QUEUE.poll();
 			if ( nextOperation != null ) {
 				incrementRunningOperationCount();
