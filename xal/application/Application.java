@@ -20,6 +20,7 @@ import java.io.*;
 import java.nio.channels.FileChannel;
 import java.util.prefs.Preferences;
 
+import xal.application.platform.*;
 import xal.tools.StringJoiner;
 import xal.tools.apputils.files.*;
 import xal.tools.messaging.MessageCenter;
@@ -44,7 +45,7 @@ abstract public class Application {
 	final static public int NO_OPTION = JOptionPane.NO_OPTION;
 	
 	// private constants
-	final private double _launchTime;
+	final private Date LAUNCH_TIME;
 	
     // static variables
     static private Application _application;
@@ -107,7 +108,8 @@ abstract public class Application {
     protected Application( final AbstractApplicationAdaptor adaptor, final URL[] urls ) {
         _nextDocumentOpenLocation = new Point( 0, 0 );
         
-		_launchTime = ( (double)new Date().getTime() ) / 1000;
+		LAUNCH_TIME = new Date();
+        
         _applicationAdaptor = adaptor;
         _openDocuments = new LinkedList<XalAbstractDocument>();
         
@@ -182,10 +184,10 @@ abstract public class Application {
 	
 	/**
 	 * Get the launch time which is the time at which the Application instance was instantiated.
-	 * @return The launch time in seconds since the epoch (midnight GMT, January 1, 1970)
+	 * @return The launch time
 	 */
-	double getLaunchTime() {
-		return _launchTime;
+	public Date getLaunchTime() {
+		return LAUNCH_TIME;
 	}
     
     
@@ -876,6 +878,15 @@ abstract public class Application {
 		}
         
         _noticeProxy.applicationWillQuit();
+        
+        try {
+            ServiceDirectory.defaultDirectory().dispose();  // shutdown services
+        }
+        catch ( Exception exception ) {
+            System.out.println( "Exception caught during service shutdown when quitting." );
+            exception.printStackTrace();
+        }
+        
         System.exit(0);
     }
     
@@ -937,7 +948,7 @@ abstract public class Application {
 	
 	
 	/** show the about box */
-	static void showAboutBox() {
+	static public void showAboutBox() {
 		AboutBox.showNear( getActiveWindow() );
 	}
 	

@@ -105,7 +105,7 @@ public class FrameApplication extends Application implements XalDocumentListener
 			throw new RuntimeException( exception );
 		}
 		
-		//registerApplicationStatusService();   // comment out application service registration until it is developed -tap
+		registerApplicationStatusService();   // comment out application service registration until it is developed -tap
 		
         _applicationAdaptor.applicationFinishedLaunching();
     }

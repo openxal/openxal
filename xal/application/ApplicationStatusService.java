@@ -19,7 +19,7 @@ package xal.application;
  */
 public class ApplicationStatusService implements ApplicationStatus {
 	/**
-	 * Get the free memory available the application instance.
+	 * Get the free memory available to the application instance.
 	 * @return The free memory available on this virtual machine in kB.
 	 */
 	public double getFreeMemory() {
@@ -37,7 +37,7 @@ public class ApplicationStatusService implements ApplicationStatus {
 	
 	
 	/** reveal the application by bringing all windows to the front */
-	public boolean showAllWIndows() {
+	public boolean showAllWindows() {
 		Application.getApp().showAllWindows();
 		return true;
 	}
@@ -56,22 +56,18 @@ public class ApplicationStatusService implements ApplicationStatus {
 	/**
 	 * Quit the application normally.
 	 * @param code An unused status code.
-	 * @return The status code.
 	 */
-	public int quit(int code) {
+	public void quit( final int code ) {
 		Application.getApp().quit();
-		return code;
 	}
 	
 	
 	/**
 	 * Force the application to quit immediately without running any finalizers.
 	 * @param code The status code used for halting the virtual machine.
-	 * @return The supplied status code.
 	 */
-	public int forceQuit(int code) {
+	public void forceQuit(int code) {
 		Runtime.getRuntime().exit(code);
-		return code;
 	}
 	
 	
@@ -102,7 +98,7 @@ public class ApplicationStatusService implements ApplicationStatus {
 	 * Get the launch time of the application in seconds since the epoch (midnight GMT, January 1, 1970)
 	 * @return the time at with the application was launched in seconds since the epoch
 	 */
-	public double getLaunchTime() {
+	public java.util.Date getLaunchTime() {
 		return Application.getApp().getLaunchTime();
 	}
 }
