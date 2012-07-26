@@ -5,7 +5,7 @@
 // Created by t6p on 3/23/2010
 //
 
-package xal.application;
+package xal.application.platform;
 
 import java.lang.reflect.*;
 
@@ -18,7 +18,7 @@ public class MacAdaptor {
 	
 	/** perform Mac initialization */
     @SuppressWarnings( "unchecked" )
-	static void initialize() {
+	static public void initialize() {
 		// display the menu bar at the top of the screen consistent with the Mac look and feel
 		System.setProperty( "apple.laf.useScreenMenuBar", "true" );
 		

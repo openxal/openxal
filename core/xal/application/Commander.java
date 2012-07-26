@@ -186,22 +186,147 @@ public class Commander {
      * @return The new menubar
      */
     public JMenuBar getMenubar() {
-        JMenuBar menuBar = new JMenuBar();
+        final JMenuBar menuBar = new JMenuBar();
         
 		final String menubarStr = _controlMap.get( "menubar" );
 		if ( menubarStr == null || menubarStr == "" )  return null;		// check if a menubar definition was found
 		
         final String[] menuKeys = Util.getTokens( menubarStr );
         
-        for ( int menuIndex = 0 ; menuIndex < menuKeys.length ; menuIndex++ ) {
-            final String menuKey = menuKeys[menuIndex];
-			if ( getState( menuKey ).isIncluded() ) {
-				JMenu menu = makeMenu( menuKey );
-				menuBar.add( menu );
-			}
-        }
+        appendMenubarMenusWithKeys( menuBar, menuKeys );
         
         return menuBar;
+    }
+    
+    
+    /** 
+     * Append to the menu bar, the menus associated with the specified keys and any preceding and following menus if specified for any of the added menus.
+     * @param menuBar the menu bar to which to append the menu
+     * @param menuKeys the menu keys identifying the menus to add
+     */
+    private void appendMenubarMenusWithKeys( final JMenuBar menuBar, final String[] menuKeys ) {
+        if ( menuKeys != null ) {
+            for ( final String menuKey : menuKeys ) {
+                appendMenubarMenuWithKey( menuBar, menuKey );
+            }
+        }
+    }
+    
+    
+    /** 
+     * Append to the menu bar, the menu associated with the specified key and any preceding and following menus if specified for the menu.
+     * @param menuBar the menu bar to which to append the menu
+     * @param menuKey the menu key identifying the menu to add
+     */
+    private void appendMenubarMenuWithKey( final JMenuBar menuBar, final String menuKey ) {
+        if ( getState( menuKey ).isIncluded() ) {
+            // add any menus preceding the new menu identified by the menu key
+            final String[] precedingMenuKeys = getItemsBefore( menuKey );
+            if ( precedingMenuKeys != null )  appendMenubarMenusWithKeys( menuBar, precedingMenuKeys );
+            
+            // add the menu identified be the menu key
+            final JMenu menu = makeMenu( menuKey );
+            menuBar.add( menu );
+            
+            // add any menus following the new menu identified by the menu key
+            final String[] followingMenuKeys = getItemsAfter( menuKey );
+            if ( followingMenuKeys != null )  appendMenubarMenusWithKeys( menuBar, followingMenuKeys );
+        }
+    }
+    
+    
+    /** 
+     * Append to the menu, the menu items associated with the specified keys and any preceding and following menu items if specified for any of the added menu items.
+     * @param menu the menu to which to append the menu items
+     * @param menuItemKeys the menu item keys identifying the menu items to add
+     * @param defaultActionKey action key for menu items that don't have an action explicitly assigned to them
+     */
+    private void appendMenuItemsWithKeys( final JMenu menu, final String[] menuItemKeys, final String defaultActionKey ) {
+        if ( menuItemKeys != null ) {
+            for ( final String menuItemKey : menuItemKeys ) {
+                appendMenuItemWithKey( menu, menuItemKey, defaultActionKey );
+            }
+        }
+    }
+    
+    
+    /** 
+     * Append to the menu bar, the menu associated with the specified key and any preceding and following menus if specified for the menu.
+     * @param menu the menu to which to append the menu item
+     * @param menuItemKey the menu item key identifying the menu item to add
+     * @param defaultActionKey action key for menu items that don't have an action explicitly assigned to them
+     */
+    private void appendMenuItemWithKey( final JMenu menu, final String menuItemKey, final String defaultActionKey ) {
+        if ( getState( menuItemKey ).isIncluded() ) {
+            // add any menu items preceding the new menu item identified by the menu item key
+            final String[] precedingMenuItemKeys = getItemsBefore( menuItemKey );
+            if ( precedingMenuItemKeys != null )  appendMenuItemsWithKeys( menu, precedingMenuItemKeys, defaultActionKey );
+            
+            // add the menu item identified be the menu item key
+            if ( menuItemKey.equals( "-" ) ) {    // dashes identify separators
+                menu.addSeparator();
+            }
+            else if ( menuItemKey.startsWith("^") ) {   // carets identify submenus
+                JMenuItem menuItem = makeMenu( menuItemKey.substring(1) );
+                menu.add( menuItem );
+            }
+			else if ( menuItemKey.startsWith("*") ) {	// an asterisk identifies a radio button group of menu items
+				addMenuItemsFromGroup( menu, menuItemKey.substring(1) );
+			}
+            else {
+                // create the menu item and assign its action and add the menu item to the menu
+                JMenuItem menuItem;
+                
+                final String explicitActionKey = getActionKey( menuItemKey );
+				final String actionKey = ( explicitActionKey != null ) ? explicitActionKey : defaultActionKey;
+				
+				if ( actionKey != null ) {
+					final ButtonModel model = _buttonModelMap.get( actionKey );
+					
+					if ( model != null ) {
+						if ( model instanceof ToggleButtonModel ) {
+							final String label = getLabel( menuItemKey );
+							menuItem = new JCheckBoxMenuItem( label );
+						}
+						else {
+							menuItem = makeMenuItem( menuItemKey );
+						}
+						menuItem.setModel( model );
+					}
+					else {
+						menuItem = makeMenuItem( menuItemKey );
+					}
+					
+					final String label = menuItem.getText();
+                    final Action action = (Action)_commands.get( actionKey );
+					if ( action != null ) {
+						menuItem.setAction( action );
+					}
+					
+					// disable the menu item if it doesn't have an action or a model
+					if ( action == null && model == null ) {
+						menuItem.setEnabled( false );
+					}
+					
+                    menuItem.setText( label );
+				}
+				else {
+					final String label = getLabel( menuItemKey );
+					menuItem = new JMenuItem( label );
+                    menuItem.setEnabled( false );
+				}
+				final Icon icon = getIcon( menuItemKey );
+				if ( icon != null ) {
+					menuItem.setIcon( icon );
+				}
+				
+                menu.add( menuItem );
+            }
+            
+            // add any menu items following the new menu item identified by the menu item key
+            final String[] followingMenuItemKeys = getItemsAfter( menuItemKey );
+            if ( followingMenuItemKeys != null )  appendMenuItemsWithKeys( menu, followingMenuItemKeys, defaultActionKey );
+        }
     }
     
     
@@ -374,69 +499,8 @@ public class Commander {
         
         // Get the list of menu item identifiers as an array and create menu items and add them to the menu
         final String[] menuItemKeys = Util.getTokens( menuItemList );
-        for ( int itemIndex = 0 ; itemIndex < menuItemKeys.length ; itemIndex++ ) {
-            final String menuItemKey = menuItemKeys[itemIndex];
-			if ( !getState( menuItemKey ).isIncluded() )  continue;		// skip items that are marked as not included
-			
-            if ( menuItemKey.equals( "-" ) ) {    // dashes identify separators
-                menu.addSeparator();
-            }
-            else if ( menuItemKey.startsWith("^") ) {   // carets identify submenus
-                JMenuItem menuItem = makeMenu( menuItemKey.substring(1) );
-                menu.add( menuItem );
-            }
-			else if ( menuItemKey.startsWith("*") ) {	// an asterisk identifies a radio button group of menu items
-				addMenuItemsFromGroup( menu, menuItemKey.substring(1) );
-			}
-            else {
-                // create the menu item and assign its action and add the menu item to the menu
-                JMenuItem menuItem;
-
-                final String explicitActionKey = getActionKey( menuItemKey );
-				final String actionKey = ( explicitActionKey != null ) ? explicitActionKey : defaultActionKey;
-				
-				if ( actionKey != null ) {
-					final ButtonModel model = _buttonModelMap.get( actionKey );
-					
-					if ( model != null ) {
-						if ( model instanceof ToggleButtonModel ) {
-							final String label = getLabel( menuItemKey );
-							menuItem = new JCheckBoxMenuItem( label );
-						}
-						else {
-							menuItem = makeMenuItem( menuItemKey );
-						}
-						menuItem.setModel( model );
-					}
-					else {
-						menuItem = makeMenuItem( menuItemKey );
-					}
-					
-					final String label = menuItem.getText();
-                    final Action action = (Action)_commands.get( actionKey );
-					if ( action != null ) {
-						menuItem.setAction( action );
-					}
-					
-					// disable the menu item if it doesn't have an action or a model
-					if ( action == null && model == null ) {
-						menuItem.setEnabled( false );
-					}
-					
-                    menuItem.setText( label );
-				}
-				else {
-					final String label = getLabel( menuItemKey );
-					menuItem = new JMenuItem( label );
-                    menuItem.setEnabled( false );
-				}
-				final Icon icon = getIcon( menuItemKey );
-				if ( icon != null ) {
-					menuItem.setIcon( icon );
-				}
-				
-                menu.add( menuItem );
-            }
+        for ( final String menuItemKey : menuItemKeys ) {
+            appendMenuItemWithKey( menu, menuItemKey, defaultActionKey );
         }
         
         return menu;
@@ -503,6 +567,30 @@ public class Commander {
 		// if the explicit label is not set then default to the item ID itself for the label
 		return ( explicitLabel == null || explicitLabel == "" ) ? itemID : explicitLabel;
 	}
+    
+    
+    /** Get the array of items preceding the specified item */
+    public String[] getItemsBefore( final String itemID ) {
+        final String itemsListString = getItemFieldProperty( itemID, "before" );
+        if ( itemsListString != null && itemsListString.length() > 0 ) {
+            return Util.getTokens( itemsListString );
+        }
+        else {
+            return null;
+        }
+    }
+    
+    
+    /** Get the array of items following the specified item */
+    public String[] getItemsAfter( final String itemID ) {
+        final String itemsListString = getItemFieldProperty( itemID, "after" );
+        if ( itemsListString != null && itemsListString.length() > 0 ) {
+            return Util.getTokens( itemsListString );
+        }
+        else {
+            return null;
+        }
+    }
 	
 	
 	/**

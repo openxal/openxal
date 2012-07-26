@@ -269,14 +269,14 @@ public class ScenarioGenerator implements Visitor {
                 double dblAngEntr = 0.0;
                 double dblAngExit = 0.0;
 
-                switch (e.getHarwareSection()) {
+                switch (e.getHardwareSection()) {
 		
-                case HALF_UP:
+                case UPSTREAM:
                     dblAngEntr = magnet.getEntrRotAngle()*Math.PI/180.0;
                     dblAngExit = 0.0;
                     break;
                     
-                case HALF_DN:
+                case DNSTREAM:
                     dblAngEntr = 0.0;
                     dblAngExit = magnet.getExitRotAngle()*Math.PI/180.0;
                     break;
@@ -284,7 +284,13 @@ public class ScenarioGenerator implements Visitor {
                 case WHOLE:
                     dblAngEntr = magnet.getEntrRotAngle()*Math.PI/180.0;
                     dblAngExit = magnet.getExitRotAngle()*Math.PI/180.0;
-                        break;
+                    break;
+                    
+                case INTERNAL:
+                    dblAngEntr = 0.0;
+                    dblAngExit = 0.0;
+                    break;
+                    
                 default:
                     dblAngEntr = 0.0;
                     dblAngExit = 0.0;

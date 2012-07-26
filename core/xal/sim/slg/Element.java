@@ -38,17 +38,17 @@ public abstract class Element implements VisitorListener, Cloneable {
         /** Element represents one point of the hardware element */
         POINT,
 
-        /** Element represents upstream half of hardware element */
-        HALF_UP,
+        /** Element represents upstream end of hardware element */
+        UPSTREAM,
         
-        /** Element represents downstream half of hardware element */
-        HALF_DN,
+        /** Element represents downstream end of hardware element */
+        DNSTREAM,
         
         /** Element represents whole hardware element */
         WHOLE,
         
-        /** Element is one of many sections of a hardware element */ 
-        MULTIPLE;
+        /** Element represent and internal portion of the hardware */ 
+        INTERNAL;
     }
     
     
@@ -133,7 +133,7 @@ public abstract class Element implements VisitorListener, Cloneable {
      * @since  Sep 2, 2009
      * @author Christopher K. Allen
      */
-    public SECTION getHarwareSection() {
+    public SECTION getHardwareSection() {
         return this.secHware;
     }
     
@@ -283,7 +283,6 @@ public abstract class Element implements VisitorListener, Cloneable {
                 args[2]=getName();
             upstream=(Element)constructor.newInstance(args);
             upstream.setAcceleratorNode(this.xalNode);
-            upstream.setHardwareSection(SECTION.HALF_UP);
             
             args[0]=new Double(positions[2]);
             args[1]=new Double(positions[3]);
@@ -296,7 +295,38 @@ public abstract class Element implements VisitorListener, Cloneable {
             
             downstream=(Element)constructor.newInstance(args);
             downstream.setAcceleratorNode(this.xalNode);
-            downstream.setHardwareSection(SECTION.HALF_DN);
+
+            // Assign the modeling element relationship to the hardware
+            switch ( this.getHardwareSection() ) {
+            case POINT:
+                upstream.setHardwareSection(SECTION.POINT);
+                downstream.setHardwareSection(SECTION.POINT);
+                break;
+                
+            case WHOLE:
+                upstream.setHardwareSection(SECTION.UPSTREAM);
+                downstream.setHardwareSection(SECTION.DNSTREAM);
+                break;
+                
+            case UPSTREAM:
+                upstream.setHardwareSection(SECTION.UPSTREAM);
+                downstream.setHardwareSection(SECTION.INTERNAL);
+                break;
+                
+            case DNSTREAM:
+                upstream.setHardwareSection(SECTION.INTERNAL);
+                downstream.setHardwareSection(SECTION.DNSTREAM);
+                break;
+                
+            case INTERNAL:
+                upstream.setHardwareSection(SECTION.INTERNAL);
+                downstream.setHardwareSection(SECTION.INTERNAL);
+                break;
+                
+            default:
+                upstream.setHardwareSection(SECTION.UNKNOWN);
+                downstream.setHardwareSection(SECTION.UNKNOWN);
+            }
             
         } catch(Exception exptn) {
             System.out.println(exptn);

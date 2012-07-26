@@ -10,6 +10,8 @@
 
 package xal.application;
 
+import xal.tools.services.OneWay;
+
 
 /**
  * ApplicationStatus is an interface used in remote access to advertise application status.
@@ -17,7 +19,7 @@ package xal.application;
  */
 public interface ApplicationStatus {
 	/** 
-	 * Get the free memory available the application instance.
+	 * Get the free memory available to the application instance.
 	 * @return The free memory available on this virtual machine.
 	 */
 	public double getFreeMemory();
@@ -48,11 +50,11 @@ public interface ApplicationStatus {
 	 * Get the launch time of the application in seconds since the epoch (midnight GMT, January 1, 1970)
 	 * @return the time at with the application was launched in seconds since the epoch
 	 */
-	public double getLaunchTime();
+	public java.util.Date getLaunchTime();
 	
 	
 	/** reveal the application by bringing all windows to the front */
-	public boolean showAllWIndows();
+	public boolean showAllWindows();
 	
 	
 	/**
@@ -65,16 +67,16 @@ public interface ApplicationStatus {
 	/**
 	 * Quit the application normally.
 	 * @param code An unused status code.
-	 * @return The status code.
 	 */
-	public int quit( int code );
+    @OneWay
+	public void quit( final int code );
 	
 	
 	/**
 	 * Force the application to quit immediately without running any finalizers.
 	 * @param code The status code used for halting the virtual machine.
-	 * @return The supplied status code.
 	 */
-	public int forceQuit( int code );
+    @OneWay
+	public void forceQuit( int code );
 }
 
