@@ -14,19 +14,17 @@ import xal.tools.messaging.MessageCenter;
 
 
 /**
- * PassiveBroadcaster maintains the most recent best correlation (as determined by count) and broadcasts the 
- * correlation (or "noCorrelationCaught()") only when instigated. 
- *
+ * PassiveBroadcaster maintains the most recent best correlation (as determined by count) and broadcasts the correlation (or "noCorrelationCaught()") only when instigated. 
  * @author  tap
  */
-class PassiveBroadcaster extends AbstractBroadcaster {
-    private Correlation bestPartialCorrelation;   // less than full count
+class PassiveBroadcaster<RecordType> extends AbstractBroadcaster<RecordType> {
+    private Correlation<RecordType> bestPartialCorrelation;   // less than full count
     private boolean isFresh;
 	
 	
     /** Creates a new instance of Broadcaster */
-    public PassiveBroadcaster(MessageCenter aLocalCenter) {
-		super(aLocalCenter);
+    public PassiveBroadcaster( final MessageCenter aLocalCenter ) {
+		super( aLocalCenter );
         isFresh = false;
         bestPartialCorrelation = null;
 	}
@@ -36,7 +34,7 @@ class PassiveBroadcaster extends AbstractBroadcaster {
 	 * Get the best partial correlation at this time.
 	 * @return the best partial correlation.
 	 */
-    synchronized Correlation getBestPartialCorrelation() {
+    synchronized Correlation<RecordType> getBestPartialCorrelation() {
         return bestPartialCorrelation;
     }
 
@@ -47,11 +45,11 @@ class PassiveBroadcaster extends AbstractBroadcaster {
      */
     synchronized void postBestPartialCorrelation() {
         if ( isFresh ) {
-            postCorrelation(bestPartialCorrelation);
+            postCorrelation( bestPartialCorrelation );
 			isFresh = false;
         }
         else {
-            correlationProxy.noCorrelationCaught(this);
+            correlationProxy.noCorrelationCaught( this );
         }
     }
 	
@@ -63,7 +61,7 @@ class PassiveBroadcaster extends AbstractBroadcaster {
 	 * @param sender The bin agent that published the new correlation.
 	 * @param correlation The new correlation.
      */
-    synchronized public void newCorrelation(BinAgent sender, Correlation correlation) {
+    synchronized public void newCorrelation( final BinAgent<RecordType> sender, Correlation<RecordType> correlation ) {
         if ( !isFresh || (correlation.numRecords() >= bestPartialCorrelation.numRecords() ) ) {
             bestPartialCorrelation = correlation;
             isFresh = true;

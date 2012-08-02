@@ -12,6 +12,6 @@ package xal.tools.correlator;
  *
  * @author  tap
  */
-public interface CorrelationFilter {
-    public boolean accept(Correlation correlation, int fullCount);
+public interface CorrelationFilter<RecordType> {
+    public boolean accept( Correlation<RecordType> correlation, int fullCount );
 }

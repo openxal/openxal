@@ -19,7 +19,7 @@ import java.util.*;
  *
  * @author  tap
  */
-public class ChannelAgent extends SourceAgent {
+public class ChannelAgent extends SourceAgent<ChannelTimeRecord> {
     private String _name;
     private Channel _channel;
     private Monitor _monitor;
@@ -30,8 +30,8 @@ public class ChannelAgent extends SourceAgent {
 
     
     /** Creates new ChannelAgent */
-    public ChannelAgent( final MessageCenter newLocalCenter, final Channel newChannel, final String newName, final RecordFilter recordFilter, final CorrelationTester tester ) {
-        super( newLocalCenter, newName, recordFilter, tester );
+    public ChannelAgent( final MessageCenter localCenter, final Channel newChannel, final String newName, final RecordFilter<ChannelTimeRecord> recordFilter, final CorrelationTester<ChannelTimeRecord> tester ) {
+        super( localCenter, newName, recordFilter, tester );
         _channel = newChannel;
 		_monitor = null;
     }
@@ -42,7 +42,7 @@ public class ChannelAgent extends SourceAgent {
      * monitor events for this channel.
      * @param recordFilter The filter to use for this channel.
      */
-    protected void setupEventHandler( final RecordFilter recordFilter ) {
+    protected void setupEventHandler( final RecordFilter<ChannelTimeRecord> recordFilter ) {
         _activeFlag = false;
 
         if ( recordFilter == null ) {
@@ -185,9 +185,9 @@ public class ChannelAgent extends SourceAgent {
      * <code>ChannelRecordFilter</code>.
      */
     protected class FilteredEventHandler extends EventHandler {
-        RecordFilter filter;
+		RecordFilter<ChannelTimeRecord> filter;
         
-        public FilteredEventHandler( final RecordFilter newFilter ) {
+        public FilteredEventHandler( final RecordFilter<ChannelTimeRecord> newFilter ) {
             filter = newFilter;
         }
         

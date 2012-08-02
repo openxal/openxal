@@ -1,9 +1,9 @@
 //
-//  BatchGetRequest.java
-//  xal
+// AbstractBatchGetRequest.java
+// xal
 //
-//  Created by Tom Pelaia on 2/22/07.
-//  Copyright 2007 Oak Ridge National Lab. All rights reserved.
+// Created by Tom Pelaia on 4/2/12
+// Copyright 2012 Oak Ridge National Lab. All rights reserved.
 //
 
 package xal.ca;
@@ -14,8 +14,8 @@ import java.util.*;
 import java.util.concurrent.*;
 
 
-/** batch of CA Get requests with convenient batch operations */
-public class BatchGetRequest {
+/** AbstractBatchGetRequest */
+abstract public class AbstractBatchGetRequest<RecordType extends ChannelRecord> {
 	/** message center for dispatching events */
 	final protected MessageCenter MESSAGE_CENTER;
 	
@@ -25,11 +25,8 @@ public class BatchGetRequest {
 	/** set of channels for which to request batch operations */
 	final protected Set<Channel> CHANNELS;
 	
-	/** request handler */
-	final protected RequestHandler REQUEST_HANDLER;
-	
 	/** table of channel records keyed by channel */
-	final protected Map<Channel,ChannelRecord> RECORDS;
+	final protected Map<Channel,RecordType> RECORDS;
 	
 	/** table of get request exceptions keyed by channel */
 	final protected Map<Channel,Exception> EXCEPTIONS;
@@ -40,26 +37,24 @@ public class BatchGetRequest {
 	/** executor pool for processing the get requests */
 	final protected ExecutorService PROCESSING_POOL;
 	
+	/** object used for waiting and notification */
+	final private Object COMPLETION_LOCK;
+	
 	
 	/** Primary Constructor */
-	public BatchGetRequest( final Collection<Channel> channels ) {
+	public AbstractBatchGetRequest( final Collection<Channel> channels ) {
 		MESSAGE_CENTER = new MessageCenter( "BatchGetRequest" );
 		EVENT_PROXY = MESSAGE_CENTER.registerSource( this, BatchGetRequestListener.class );
 		
-		REQUEST_HANDLER = new RequestHandler();
-		RECORDS = new HashMap<Channel,ChannelRecord>();
+		COMPLETION_LOCK = new Object();
+		
+		RECORDS = new HashMap<Channel,RecordType>();
 		EXCEPTIONS = new HashMap<Channel,Exception>();
 		PENDING_CHANNELS = new HashSet<Channel>();
 		PROCESSING_POOL = Executors.newCachedThreadPool();
 		
 		CHANNELS = new HashSet<Channel>( channels.size() );
 		CHANNELS.addAll( channels );
-	}
-	
-	
-	/** Constructor */
-	public BatchGetRequest() {
-		this( Collections.<Channel>emptySet() );
 	}
 	
 	
@@ -99,17 +94,11 @@ public class BatchGetRequest {
 		synchronized ( RECORDS ) {
 			RECORDS.clear();
 		}
-		final Collection<Callable<Channel>> tasks = new HashSet<Callable<Channel>>( channels.size() );
-		for ( final Channel channel : channels ) {
-			tasks.add( new Callable<Channel>() {
-				public Channel call() {
-					processRequest( channel );
-					return channel;
-				}
-			});
-		}
+		
 		try {
-			PROCESSING_POOL.invokeAll( tasks );
+			for ( final Channel channel : channels ) {
+				processRequest( channel );
+			}
 			Channel.flushIO();
 		}
 		catch( Exception exception ) {
@@ -119,19 +108,36 @@ public class BatchGetRequest {
 	
 	
 	/** 
-	 * Submit a batch of get requests and wait for the requests to be completed or timeout 
+	 * Submit a batch of get requests and wait for the requests to be completed or timeout.
+	 * Note that if this is called, within a channel access callback, requests will not be processed until the 
+	 * callback completes, so it is useless to wait. Instead, call waitForCompletion separately outside of the callback.
 	 * @param timeout the maximum time in seconds to wait for completion
 	 */
 	public boolean submitAndWait( final double timeout ) {
-		final long delay = (long) ( 1000 * Math.min( timeout, 0.1 ) );		// delay in milliseconds
-		final long maxTime = new Date().getTime() + (long) ( 1000 * timeout );		// time after which we should stop waiting
 		submit();
+		return waitForCompletion( timeout );
+	}
+	
+	
+	/** 
+	 * Wait up to the specified timeout for completion. This method should be called outside of a Channel Access callback
+	 * otherwise events will not be processed.
+	 * @param timeout the maximum time in seconds to wait for completion
+	 */
+	public boolean waitForCompletion( final double timeout ) {
+		final long milliTimeout = (long) ( 1000 * timeout );		// timeout in milliseconds
+		final long maxTime = new Date().getTime() + milliTimeout;	// maximum time until expiration
 		while( !isComplete() && new Date().getTime() < maxTime ) {
-			try {
-				Thread.sleep( delay );
-			}
-			catch( Exception exception ) {
-				throw new RuntimeException( "Exception waiting for the batch get requests to be completed.", exception );
+			final long remainingTime = Math.max( 0, maxTime - new Date().getTime() );
+			if ( remainingTime > 0 ) {		// remaining time must be strictly greater than zero to prevent waiting forever should it be identically zero
+				try {
+					synchronized( COMPLETION_LOCK ) {
+						COMPLETION_LOCK.wait( remainingTime );
+					}
+				}
+				catch( Exception exception ) {
+					throw new RuntimeException( "Exception waiting for the batch get requests to be completed.", exception );
+				}
 			}
 		}
 		
@@ -139,11 +145,15 @@ public class BatchGetRequest {
 	}
 	
 	
+	/** request to get the data for the channel */
+	abstract protected void requestChannelData( final Channel channel ) throws Exception;
+	
+	
 	/** process the get request for a single channel */
 	protected void processRequest( final Channel channel ) {
 		try {
 			if ( channel.isConnected() ) {
-				channel.getValueCallback( REQUEST_HANDLER, false );
+				requestChannelData( channel );
 			}
 			else {
 				throw new ConnectionException( channel, "Exception connecting to channel " + channel.channelName() + " during batch get request." );
@@ -195,7 +205,7 @@ public class BatchGetRequest {
 	
 	
 	/** get the record if any for the specified channel */
-	public ChannelRecord getRecord( final Channel channel ) {
+	public RecordType getRecord( final Channel channel ) {
 		synchronized ( RECORDS ) {
 			return RECORDS.get( channel );
 		}
@@ -237,23 +247,16 @@ public class BatchGetRequest {
 	/** check for the current status and post notifications if necessary */
 	protected void processCurrentStatus() {
 		if ( isComplete() ) {
-			EVENT_PROXY.batchRequestCompleted( this, getRecordCount(), getExceptionCount() );
-		}
-	}
-	
-	
-	
-	/** handle get request events */
-	protected class RequestHandler implements IEventSinkValue {
-		public void eventValue( final ChannelRecord record, final Channel channel ) {
-			synchronized ( RECORDS ) {
-				RECORDS.put( channel, record );
-				synchronized( PENDING_CHANNELS ) {
-					PENDING_CHANNELS.remove( channel );
+			synchronized( COMPLETION_LOCK ) {
+				try {
+					COMPLETION_LOCK.notifyAll();
+				}
+				catch( Exception exception ) {
+					System.out.println( "Excepting notifying " );
+					exception.printStackTrace();
 				}
 			}
-			EVENT_PROXY.recordReceivedInBatch( BatchGetRequest.this, channel, record ); 
-			processCurrentStatus();
+			EVENT_PROXY.batchRequestCompleted( this, getRecordCount(), getExceptionCount() );
 		}
 	}
 }

@@ -13,10 +13,13 @@ package xal.tools.apputils.files;
 import xal.tools.StringJoiner;
 
 import java.util.*;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 import java.util.prefs.Preferences;
 import java.net.*;
 import java.io.File;
 import javax.swing.JFileChooser;
+
 
 
 /**
@@ -26,11 +29,26 @@ import javax.swing.JFileChooser;
  * @author  tap
  */
 public class RecentFileTracker {
+	/** default buffer size for a tracker */
 	final static protected int DEFAULT_BUFFER_SIZE = 10;
 	
+	/** pattern for storing the URL spec in a string */
+	final static private Pattern URL_SPEC_STORE_PATTERN;
+	
+	/** buffer size for this tracker */
 	final protected int RECENT_URLS_BUFFER_SIZE;
+	
+	/** preferences storage */
 	final protected Preferences PREFS;
+	
+	/** ID for the preferences */
 	final protected String PREFERENCE_ID;
+	
+	
+	// static initializer
+	static {
+		URL_SPEC_STORE_PATTERN = Pattern.compile( "\"[^\"]*\"" );	// specs are enclosed within quotes
+	}
 	
 	
 	/**
@@ -104,31 +122,71 @@ public class RecentFileTracker {
 	 * @param urlSpec the URL Spec to cache.
 	 */
 	public void cacheURL( final String urlSpec ) {
-        final String[] recentURLSpecArray = getRecentURLSpecs();
-        final List<String> recentSpecs = new ArrayList<String>( RECENT_URLS_BUFFER_SIZE );
-        recentSpecs.add( urlSpec );
+        final String[] recentURLSpecArray = getRecentURLSpecs();		// get the current list of specs
+        final List<String> recentSpecs = new ArrayList<String>( RECENT_URLS_BUFFER_SIZE );		// hold the new list of specs
+        recentSpecs.add( urlSpec );		// add the new spec as the first item
+		
+		// add the original specs expect for any spec matching the new one to avoid repetitions and don't exceed the buffer size
         for ( int index = 0 ; index < recentURLSpecArray.length && recentSpecs.size() < RECENT_URLS_BUFFER_SIZE ; index++ ) {
             final String recentURLSpec = recentURLSpecArray[index];
-            if ( !recentSpecs.contains( recentURLSpec ) ) {
-                recentSpecs.add( recentURLSpec );
+            if ( !recentSpecs.contains( recentURLSpec ) ) {			// make sure we don't repeat the new spec
+                recentSpecs.add( recentURLSpec );		// add the spec
             }
         }
+		
+		// create a new array with the recent specs encoded
+		final List<String> recentEncodedSpecs = new ArrayList<String>( recentSpecs.size() );
+		for ( final String spec : recentSpecs ) {
+			recentEncodedSpecs.add( encodeItem( spec ) );
+		}
         
-        StringJoiner joiner = new StringJoiner(",");
-        joiner.append( recentSpecs.toArray() );
+		// merge the specs into a single comma delimited string
+        final StringJoiner joiner = new StringJoiner(",");
+        joiner.append( recentEncodedSpecs.toArray() );
+		
+		// record the preference
         PREFS.put( PREFERENCE_ID, joiner.toString() );
+	}
+	
+	
+	/** encode the item for caching */
+	static private String encodeItem( final String item ) {
+		return "\"" + item + "\"";		// place quotes around the item
+	}
+	
+	
+	/** decode the encoded item */
+	static private String decodeItem( final String encodedItem ) {
+		if ( encodedItem == null || encodedItem.length() == 0 )  return null;
+		final int encodedLength = encodedItem.length();
+		if ( encodedLength > 2 && encodedItem.startsWith( "\"" ) && encodedItem.endsWith( "\"" ) ) {
+			return encodedItem.substring( 1, encodedLength - 1 );	// strip the starting and ending quotes
+		}
+		else {
+			return null;
+		}
 	}
     
     
     /**
-     * Get the array of URLs corresponding to recently registered URLs.
-     * Fetch the recent items from the list saved in the user's preferences for 
-     * the preference node.
+     * Get the array of URLs corresponding to recently registered URLs. Fetch the recent items from the list saved in the user's preferences for the preference node.
      * @return The array of recent URLs.
      */
     public String[] getRecentURLSpecs() {
-        final String pathsStr = PREFS.get(PREFERENCE_ID, "");
-        return getTokens(pathsStr, ",");
+        final String pathsStr = PREFS.get( PREFERENCE_ID, "" );
+		// check whether the paths are encoded using the new format ( quotes around each URL Spec )
+		if ( pathsStr != null && pathsStr.length() > 2 && pathsStr.startsWith( "\"" ) && pathsStr.endsWith( "\"" ) ) {
+			final Matcher matcher = URL_SPEC_STORE_PATTERN.matcher( pathsStr );
+			final List<String> urlSpecs = new ArrayList<String>();
+			while ( matcher.find() ) {
+				final String encodedItem = matcher.group();
+				urlSpecs.add( decodeItem( encodedItem ) );
+			}
+			return urlSpecs.toArray( new String[urlSpecs.size()] );
+		}
+		else {
+			return getTokens( pathsStr, "," );		// old format uses comma delimited items
+		}
     }
 	
 	
@@ -210,8 +268,8 @@ public class RecentFileTracker {
      * @param string The string to parse.
      * @return The array of tokens.
      */
-    static protected String[] getTokens(String string) {
-        return getTokens(string, " \t");
+    static protected String[] getTokens( final String string ) {
+        return getTokens( string, " \t" );
     }
     
     
@@ -221,11 +279,11 @@ public class RecentFileTracker {
      * @param delim The delimiter
      * @return The array of tokens.
      */
-    static protected String[] getTokens(String string, String delim) {
-        StringTokenizer tokenizer = new StringTokenizer(string, delim);
-        int numTokens = tokenizer.countTokens();
-        String[] tokens = new String[ numTokens ];
-        
+    static protected String[] getTokens( final String string, final String delim ) {
+        final StringTokenizer tokenizer = new StringTokenizer(string, delim);
+        final int numTokens = tokenizer.countTokens();
+        final String[] tokens = new String[ numTokens ];
+		
         for ( int index = 0 ; index < numTokens ; index++ ) {
             tokens[index] = tokenizer.nextToken();
         }

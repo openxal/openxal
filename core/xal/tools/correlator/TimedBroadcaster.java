@@ -24,15 +24,15 @@ import java.awt.event.*;
  *
  * @author  tap
  */
-class TimedBroadcaster extends AbstractBroadcaster {
-	private Correlation bestPartialCorrelation;   // less than full count
+class TimedBroadcaster<RecordType> extends AbstractBroadcaster<RecordType> {
+	private Correlation<RecordType> bestPartialCorrelation;   // less than full count
     private boolean isFresh;
     protected javax.swing.Timer timer;
 	
 	
     /** Creates a new instance of Broadcaster */
-    public TimedBroadcaster(MessageCenter aLocalCenter, double period) {
-		super(aLocalCenter);
+    public TimedBroadcaster( final MessageCenter aLocalCenter, final double period ) {
+		super( aLocalCenter );
         isFresh = false;
         bestPartialCorrelation = null;
         
@@ -90,10 +90,10 @@ class TimedBroadcaster extends AbstractBroadcaster {
      */
     synchronized void postBestPartialCorrelation() {
         if ( isFresh ) {
-            postCorrelation(bestPartialCorrelation);
+            postCorrelation( bestPartialCorrelation );
         }
         else {
-            correlationProxy.noCorrelationCaught(this);
+            correlationProxy.noCorrelationCaught( this );
         }
     }
 	
@@ -105,7 +105,7 @@ class TimedBroadcaster extends AbstractBroadcaster {
 	 * @param sender The bin agent that published the new correlation.
 	 * @param correlation The new correlation.
      */
-    synchronized public void newCorrelation(BinAgent sender, Correlation correlation) {
+    synchronized public void newCorrelation( final BinAgent<RecordType> sender, final Correlation<RecordType> correlation ) {
         int numRecords = correlation.numRecords();
         
         if ( numRecords == fullCount ) {    	// broadcast a full correlation immediately
