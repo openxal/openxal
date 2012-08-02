@@ -160,18 +160,45 @@ public class ScenarioGenerator implements Visitor {
 
 	// Visitor Interface =======================================================
 
-	private void primVisit(Element e) {
+	/**
+	 * I have modified this method to actually do something.  I see that it is not
+	 * part of the <code>Visitor</code> interface but I think it originally was. Since
+	 * the online model elements now know their position within the lattice, we set
+	 * it.
+	 *
+	 * @param slgElem
+	 * @param xalElem
+	 *
+	 * @author Christopher K. Allen
+	 * @since  Aug 2, 2012
+	 */
+	private void primVisit(Element slgElem, xal.model.elem.Element xalElem) {
+	    xalElem.setId(slgElem.getName());
+	    xalElem.setPosition(slgElem.getPosition());
 //		System.out.println(
 //		"element: " + e.getName() + " position: " + e.getPosition());
+	}
+	
+	/**
+	 * Just a placeholder at the moment.  We do nothing.
+	 *
+	 * @param slgElem
+	 * @param xalSeq
+	 *
+	 * @author Christopher K. Allen
+	 * @since  Aug 2, 2012
+	 */
+	private void primVisit(Element slgElem, xal.model.elem.ElementSeq xalSeq) {
+	    // Do nothing
 	}
 
 	/*
 	 * @see gov.sns.xal.slg.Visitor#visit(gov.sns.xal.slg.BCMonitor)
 	 */
 	public void visit(BCMonitor e) {
-		primVisit(e);
-		xal.model.elem.Marker xalMarker =
-			new xal.model.elem.Marker(e.getName());
+		xal.model.elem.Marker xalMarker = new xal.model.elem.Marker(e.getName());
+		
+        this.primVisit(e, xalMarker);
 		elementContainer.addChild(xalMarker);
 		syncManager.synchronize(xalMarker, e.getAcceleratorNode());
 	}
@@ -180,9 +207,8 @@ public class ScenarioGenerator implements Visitor {
 	 * @see gov.sns.xal.slg.Visitor#visit(gov.sns.xal.slg.BPMonitor)
 	 */
 	public void visit(BPMonitor e) {
-		primVisit(e);
-		xal.model.elem.Marker xalMarker =
-			new xal.model.elem.Marker(e.getName());
+		xal.model.elem.Marker xalMarker = new xal.model.elem.Marker(e.getName());
+        primVisit(e, xalMarker);
 		elementContainer.addChild(xalMarker);
 		syncManager.synchronize(xalMarker, e.getAcceleratorNode());
 	}
@@ -191,9 +217,8 @@ public class ScenarioGenerator implements Visitor {
 	 * @see gov.sns.xal.slg.Visitor#visit(gov.sns.xal.slg.BLMonitor)
 	 */
 	public void visit(BLMonitor e) {
-		primVisit(e);
-		xal.model.elem.Marker xalMarker =
-			new xal.model.elem.Marker(e.getName());
+		xal.model.elem.Marker xalMarker = new xal.model.elem.Marker(e.getName());
+        primVisit(e, xalMarker);
 		elementContainer.addChild(xalMarker);
 		syncManager.synchronize(xalMarker, e.getAcceleratorNode());
 	}
@@ -203,8 +228,8 @@ public class ScenarioGenerator implements Visitor {
 	 * @see gov.sns.xal.slg.Visitor#visit(gov.sns.xal.slg.BSMonitor)
 	 */
 	public void visit( final BSMonitor element ) {
-		primVisit( element );
 		final xal.model.elem.Marker xalMarker = new xal.model.elem.Marker( element.getName() );
+        primVisit( element, xalMarker );
 		elementContainer.addChild( xalMarker );
 		syncManager.synchronize( xalMarker, element.getAcceleratorNode() );
 	}
@@ -215,9 +240,14 @@ public class ScenarioGenerator implements Visitor {
 	 * Note: This is for bend dipole.
 	 */
 	public void visit(Dipole e) {
-		primVisit(e);
+        xal.model.elem.IdealMagWedgeDipole2 xalDipole = new xal.model.elem.IdealMagWedgeDipole2();
+        Bend magnet                                   = (Bend) e.getAcceleratorNode();
+
+		primVisit(e, xalDipole);
+		double dblPos = e.getPosition();
+		double dblLen = e.getLength();
+		xalDipole.setPosition(dblPos, dblLen);
 		
-		Bend magnet = (Bend) e.getAcceleratorNode();
 
 //                gov.sns.xal.model.elem.ThickDipole xalDipole = 
 //		        new gov.sns.xal.model.elem.ThickDipole();
@@ -230,9 +260,6 @@ public class ScenarioGenerator implements Visitor {
 
 		// Replace ThickDipole object with an IdealMagWedgeDipole2
 		//    First retrieve all the physical parameters for a bending dipole
-                xal.model.elem.IdealMagWedgeDipole2 xalDipole = 
-                    new xal.model.elem.IdealMagWedgeDipole2();
-
                 String strId     = e.getName();
                 double len_sect  = e.getLength();
                 double fld_mag0  = magnet.getDesignField();
@@ -326,11 +353,11 @@ public class ScenarioGenerator implements Visitor {
 	 * @see gov.sns.xal.slg.Visitor#visit(gov.sns.xal.slg.Drift)
 	 */
 	public void visit(Drift e) {
-		primVisit(e);
 		// append a drift counter to the drift name for an id
 		String id = "DR" + (++driftCount);
-		xal.model.elem.IdealDrift xalDrift =
-			new xal.model.elem.IdealDrift(id, e.getLength());
+		xal.model.elem.IdealDrift xalDrift = new xal.model.elem.IdealDrift(id, e.getLength());
+        primVisit(e, xalDrift);
+        
 		elementContainer.addChild(xalDrift);
 		syncManager.synchronize(xalDrift, e.getAcceleratorNode());
 	}
@@ -340,9 +367,8 @@ public class ScenarioGenerator implements Visitor {
          * @deprecated we use visit(Dipole) instead
 	 */
 	public void visit(HSteerer e) {
-		primVisit(e);
-		xal.model.elem.IdealMagSteeringDipole xalDipole =
-			new xal.model.elem.IdealMagSteeringDipole();
+		xal.model.elem.IdealMagSteeringDipole xalDipole = new xal.model.elem.IdealMagSteeringDipole();
+        primVisit(e, xalDipole);
 		xalDipole.setId(e.getName());
 		Electromagnet magnet = (Electromagnet) e.getAcceleratorNode();
 		xalDipole.setEffLength(magnet.getEffLength());
@@ -364,9 +390,8 @@ public class ScenarioGenerator implements Visitor {
 	 * @see gov.sns.xal.slg.Visitor#visit(gov.sns.xal.slg.Marker)
 	 */
 	public void visit(Marker e) {
-		primVisit(e);
-		xal.model.elem.Marker xalMarker =
-			new xal.model.elem.Marker(e.getName());
+		xal.model.elem.Marker xalMarker = new xal.model.elem.Marker(e.getName());
+        primVisit(e, xalMarker);
 		elementContainer.addChild(xalMarker);
 		syncManager.synchronize(xalMarker, e.getAcceleratorNode());
 	}
@@ -382,9 +407,8 @@ public class ScenarioGenerator implements Visitor {
 	 * @see gov.sns.xal.slg.Visitor#visit(gov.sns.xal.slg.PermMarker)
 	 */
 	public void visit(PermMarker e) {
-		primVisit(e);
-		xal.model.elem.Marker xalMarker =
-			new xal.model.elem.Marker(e.getName());
+		xal.model.elem.Marker xalMarker = new xal.model.elem.Marker(e.getName());
+        primVisit(e, xalMarker);
 		elementContainer.addChild(xalMarker);
 		syncManager.synchronize(xalMarker, e.getAcceleratorNode());
 	}
@@ -413,7 +437,6 @@ public class ScenarioGenerator implements Visitor {
 	 * @see ScenarioGenerator#visit(SkewQuad)
 	 */
 	public void visit(Quadrupole e) {
-		primVisit(e);
 		Magnet magnet = (Magnet) e.getAcceleratorNode();
 		
 		int orientation = IElectromagnet.ORIENT_NONE;
@@ -437,6 +460,7 @@ public class ScenarioGenerator implements Visitor {
 		    
 
 		xal.model.elem.IdealMagQuad xalQuad = new xal.model.elem.IdealMagQuad();
+		this.primVisit(e, xalQuad);
 		xalQuad.setId(e.getName());
 		xalQuad.setLength(e.getLength());
 		
@@ -483,9 +507,8 @@ public class ScenarioGenerator implements Visitor {
 	 * @see gov.sns.xal.slg.Visitor#visit(gov.sns.xal.slg.Solenoid)
 	 */
 	public void visit(Solenoid e) {
-		primVisit(e);
-		xal.model.elem.IdealMagSolenoid xalSol =
-			new xal.model.elem.IdealMagSolenoid();
+		xal.model.elem.IdealMagSolenoid xalSol = new xal.model.elem.IdealMagSolenoid();
+        primVisit(e, xalSol);
 		xalSol.setId(e.getName());
 		Magnet magnet = (Magnet) e.getAcceleratorNode();
 		xalSol.setLength(e.getLength());
@@ -509,9 +532,8 @@ public class ScenarioGenerator implements Visitor {
 	 * @see gov.sns.xal.slg.Visitor#visit(gov.sns.xal.slg.RFGap)
 	 */
 	public void visit(RFGap e) {
-		primVisit(e);
-		xal.model.elem.IdealRfGap xalRfGap =
-			new xal.model.elem.IdealRfGap();
+		xal.model.elem.IdealRfGap xalRfGap = new xal.model.elem.IdealRfGap();
+        primVisit(e, xalRfGap);
 		xalRfGap.setId(e.getName());
 		RfGap rfgap = (RfGap) e.getAcceleratorNode();
 		elementContainer.addChild(xalRfGap);
@@ -528,11 +550,11 @@ public class ScenarioGenerator implements Visitor {
 	 * At this time, sextupoles are treated as drifts
 	 */
 	public void visit( final Sextupole element ) {		
-		primVisit( element );
 		final Magnet magnet = (Magnet) element.getAcceleratorNode();
 		//int orientation = magnet.isHorizontal() ? IElectromagnet.ORIENT_HOR : magnet.isVertical() ? IElectromagnet.ORIENT_VER : IElectromagnet.ORIENT_NONE;		
 		
 		xal.model.elem.IdealMagSextupole xalSextupole = new xal.model.elem.IdealMagSextupole( element.getName(), element.getLength() );
+        primVisit( element, xalSextupole );
 		// need to initialize this because Permanent Magnets aren't synchronized
 		// xalSextupole.setMagField( magnet.getDesignField() );
 		// xalSextupole.setOrientation( orientation );
@@ -557,7 +579,7 @@ public class ScenarioGenerator implements Visitor {
 	 * <code>IdealMagSkewQuad3</code> modeling element
 	 * since <code>IdealMagSkewQuad</code> will not
 	 * treat space charge correctly and 
-	 * <code>IdealMagSkewQuad2</code> produces unaesthetic simulation 
+	 * <code>IdealMagSkewQuad2</code> produces un-esthetic simulation 
 	 * data (the output with the magnet is w.r.t. natural
 	 * skew quadrupole coordinate system).
 	 * 
@@ -573,7 +595,6 @@ public class ScenarioGenerator implements Visitor {
 	 * @see gov.sns.xal.model.elem.IdealMagSkewQuad3
 	 */
 	public void visit(SkewQuad e) {
-	    primVisit(e);
 	    Magnet magnet = (Magnet) e.getAcceleratorNode();
 
 	    // TODO
@@ -588,6 +609,7 @@ public class ScenarioGenerator implements Visitor {
 	            magnet.getDesignField(), 
 	            e.getLength() 
 	    );
+        primVisit(e, xalSkwQuad);
 
 	    elementContainer.addChild(xalSkwQuad);
 	    syncManager.synchronize(xalSkwQuad, magnet);
@@ -597,7 +619,7 @@ public class ScenarioGenerator implements Visitor {
 	 * @see gov.sns.xal.slg.Visitor#visit(gov.sns.xal.slg.SkewSext)
 	 */
 	public void visit(SkewSext e) {
-		primVisit(e);
+//		primVisit(e);
 	}
 
 	/*
@@ -605,9 +627,8 @@ public class ScenarioGenerator implements Visitor {
          * @deprecated we use visit(Dipole) instead
 	 */
 	public void visit(VSteerer e) {
-		primVisit(e);
-		xal.model.elem.IdealMagSteeringDipole xalDipole =
-			new xal.model.elem.IdealMagSteeringDipole();
+		xal.model.elem.IdealMagSteeringDipole xalDipole = new xal.model.elem.IdealMagSteeringDipole();
+        primVisit(e, xalDipole);
 		xalDipole.setId(e.getName());
 		Electromagnet magnet = (Electromagnet) e.getAcceleratorNode();
 		xalDipole.setEffLength(magnet.getEffLength());
@@ -631,8 +652,8 @@ public class ScenarioGenerator implements Visitor {
 	 * @deprecated we use visit(Dipole) instead
 	 */
 	public void visit( final EKicker element ) {
-		primVisit( element );
 		final xal.model.elem.IdealMagSteeringDipole xalDipole = new xal.model.elem.IdealMagSteeringDipole();
+        primVisit( element, xalDipole );
 		xalDipole.setId( element.getName() );
 		final Electromagnet magnet = (Electromagnet)element.getAcceleratorNode();
 		xalDipole.setEffLength( magnet.getEffLength() );
@@ -655,9 +676,8 @@ public class ScenarioGenerator implements Visitor {
 	 * @see gov.sns.xal.slg.Visitor#visit(gov.sns.xal.slg.WScanner)
 	 */
 	public void visit(WScanner e) {
-		primVisit(e);
-		xal.model.elem.Marker xalMarker =
-			new xal.model.elem.Marker(e.getName());
+		xal.model.elem.Marker xalMarker = new xal.model.elem.Marker(e.getName());
+        primVisit(e, xalMarker);
 		elementContainer.addChild(xalMarker);
 		syncManager.synchronize(xalMarker, e.getAcceleratorNode());
 	}
