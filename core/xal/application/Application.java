@@ -138,9 +138,8 @@ abstract public class Application {
 			propertiesStream.close();
 						
 			// don't override existing system properties since they may have been passed at the command line
-			final Enumeration propertyEnum = userProperties.propertyNames();
-			while ( propertyEnum.hasMoreElements() ) {
-				final String name = (String)propertyEnum.nextElement();
+			final Set<String> propertyNames = userProperties.stringPropertyNames();
+			for ( final String name : propertyNames ) {
 				if ( System.getProperty( name ) == null ) {
 					System.setProperty( name, userProperties.getProperty( name ) );
 				}
@@ -857,9 +856,8 @@ abstract public class Application {
     /** Handle the "Quit" action by quitting the application. */
     public void quit() {
 		boolean warnUnsavedChanges = false;
-		Iterator documentIter = getDocuments().iterator();
-		while ( documentIter.hasNext() ) {
-			XalAbstractDocument document = (XalAbstractDocument)documentIter.next();
+		final List<XalAbstractDocument> documents = getDocuments();
+		for ( final XalAbstractDocument document : documents ) {
 			warnUnsavedChanges |= ( document.warnUserOfUnsavedChangesWhenClosing() && document.hasChanges() );
 		}
 		
@@ -901,10 +899,8 @@ abstract public class Application {
      */
     protected void cascadeWindowsAbout( final XalAbstractDocument targetDocument ) {
         final Point windowOrigin = targetDocument.getDocumentView().getLocation();
-        final Iterator documentIter = getDocuments().iterator();
-        
-        while ( documentIter.hasNext() ) {
-            final XalAbstractDocument document = (XalAbstractDocument)documentIter.next();
+		final List<XalAbstractDocument> documents = getDocuments();
+		for ( final XalAbstractDocument document : documents ) {
             final XalDocumentView window = document.getDocumentView();
 			try {	// iconified windows will throw exceptions
 				window.setVisible( true );
@@ -1066,8 +1062,10 @@ abstract public class Application {
      */
     static public void launch( final AbstractApplicationAdaptor adaptor ) {
         try {
-            if ( adaptor.getDocURLs().length > 0 ) {
-                launch( adaptor, adaptor.getDocURLs() );				
+			// get the document URLs passed at the command line
+			final URL[] docURLs = AbstractApplicationAdaptor.getDocURLs();
+            if ( docURLs.length > 0 ) {
+                launch( adaptor, docURLs );
 			}
         } 
         catch ( NullPointerException exception ) {
