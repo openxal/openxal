@@ -701,6 +701,7 @@ public class ActionFactory {
      * Make an action for editing a preference panel.
      * @return An action for editing a preference panel
      */
+	@SuppressWarnings( "rawtypes" )
     static Action editPreferencesAction( final XalDocument document ) {
         final Action action = new AbstractAction( "edit-preferences" ) {
             private static final long serialVersionUID = 1L;
@@ -711,7 +712,7 @@ public class ActionFactory {
         };
 
         try {
-            Application.getAdaptor().getClass().getDeclaredMethod( "editPreferences", new Class[] { XalDocument.class } );
+            Application.getAdaptor().getClass().getDeclaredMethod( "editPreferences", new Class[] { XalDocument.class } );		// need to suppress raw types
             action.setEnabled( true );
         }
         catch( NoSuchMethodException exception ) {
@@ -725,6 +726,7 @@ public class ActionFactory {
 	 * Make an action for editing a preference panel.
      * @return An action for editing a preference panel
      */
+	@SuppressWarnings( "rawtypes" )
     static Action editPreferencesAction( final XalInternalDocument document ) {
         final Action action = new AbstractAction( "edit-preferences" ) {
             private static final long serialVersionUID = 1L;
@@ -735,7 +737,7 @@ public class ActionFactory {
         };
 		
         try {
-            Application.getAdaptor().getClass().getDeclaredMethod( "editPreferences", new Class[] { XalInternalDocument.class } );
+            Application.getAdaptor().getClass().getDeclaredMethod( "editPreferences", new Class[] { XalInternalDocument.class } );	// need to suppress rawtypes
             action.setEnabled( true );
         }
         catch( NoSuchMethodException exception ) {
