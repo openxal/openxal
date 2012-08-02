@@ -14,6 +14,6 @@ package xal.tools.correlator;
  *
  * @author  tap
  */
-public interface RecordFilter {
-    public boolean accept(Object record);
+public interface RecordFilter<RecordType> {
+    public boolean accept( final RecordType record );
 }

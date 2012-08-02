@@ -87,21 +87,23 @@ public class XmlWriter {
     static public void writeToFile( final Document document, final File file ) throws IOException {
         Writer fileWriter = new FileWriter( file );
         writeToWriter( document, fileWriter );
+        fileWriter.flush();
+        fileWriter.close();
     }
     
         
     /** return a string representation of the XML document */
     static public String writeToString(Document newDocument) {
         Writer stringWriter = new StringWriter();
-        writeToWriter(newDocument, stringWriter);
+        writeToWriter( newDocument, stringWriter );
         return stringWriter.toString();
     }
     
    
     /** write the XML document to the specified writer */
     static public void writeToWriter(Document newDocument, Writer aWriter) {
-        XmlWriter XmlWriter = new XmlWriter(newDocument, aWriter);
-        XmlWriter.write();
+        XmlWriter xmlWriter = new XmlWriter( newDocument, aWriter );
+        xmlWriter.write();
     }
     
     

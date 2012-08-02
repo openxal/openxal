@@ -121,10 +121,10 @@ public class ErrorPropagator extends java.lang.Object {
     
     /** Calculate the operation variance propagated from a common source variance. Note that this assignment is only for the current calculation and does change the default source variances. */
     public double getVarianceWithCommonSourceVariance( final double sourceVariance ) {
-        final Map<DifferentiableVariable,Double> valueMap = new HashMap<DifferentiableVariable,Double>( SOURCE_VARIABLES.length );
+        final DifferentiableVariableValues valueMap = DifferentiableVariableValues.getInstance();
         for ( final DifferentiableVariable sourceVariable : SOURCE_VARIABLES ) {
             final DifferentiableVariable varianceVariable = getVarianceVariable( sourceVariable );
-           valueMap.put( varianceVariable, sourceVariance );
+           valueMap.assignValue( varianceVariable, sourceVariance );
         }
         return VARIANCE_PROPAGATOR.evaluate( valueMap );
     }
@@ -134,11 +134,11 @@ public class ErrorPropagator extends java.lang.Object {
     public double getVarianceWithSourceVariances( final double ... sourceVariances ) {
         if ( sourceVariances.length != SOURCE_VARIABLES.length )  throw new IllegalArgumentException( "ErrorPropagator: The count of variances: " + sourceVariances.length + " must match the count of source variables: " + SOURCE_VARIABLES.length );
         
-        final Map<DifferentiableVariable,Double> valueMap = new HashMap<DifferentiableVariable,Double>( SOURCE_VARIABLES.length );
+        final DifferentiableVariableValues valueMap = DifferentiableVariableValues.getInstance();
         for ( int variableIndex = 0 ; variableIndex < sourceVariances.length ; variableIndex++ ) {
             final DifferentiableVariable sourceVariable = SOURCE_VARIABLES[variableIndex];
             final DifferentiableVariable varianceVariable = getVarianceVariable( sourceVariable );
-            valueMap.put( varianceVariable, sourceVariances[variableIndex] );
+            valueMap.assignValue( varianceVariable, sourceVariances[variableIndex] );
         }
         
         return VARIANCE_PROPAGATOR.evaluate( valueMap );

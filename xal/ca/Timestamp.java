@@ -12,8 +12,9 @@ package xal.ca;
 
 
 import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
+import java.text.DateFormat;
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 
@@ -122,13 +123,19 @@ public class Timestamp implements Comparable {
 	}
 	
 	
+	/** Generate a string representation of this timestamp using the specified time format for the time format up to seconds. Subsecond time is appended using a decimal point. */
+	public String toString( final DateFormat timeFormat ) {
+		final long nanoseconds = _timestamp.subtract( _timestamp.setScale( 0, BigDecimal.ROUND_DOWN ) ).movePointRight(9).longValue();
+		return timeFormat.format( getDate() ) + "." + NANOSECOND_FORMATTER.format( nanoseconds );
+	}
+	
+	
 	/**
 	 * Get a string representation of the Timestamp.
 	 * @return a string representation of the Timestamp
 	 */
 	public String toString() {
-		final long nanoseconds = _timestamp.subtract( _timestamp.setScale( 0, BigDecimal.ROUND_DOWN ) ).movePointRight(9).longValue();
-		return TIME_FORMATTER.format( getDate() ) + "." + NANOSECOND_FORMATTER.format( nanoseconds );
+		return toString( TIME_FORMATTER );
 	}
 	
 	

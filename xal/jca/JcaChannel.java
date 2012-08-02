@@ -528,35 +528,42 @@ class JcaChannel extends Channel {
      * @return The native DBR type of this channel.
      */
     protected int getTimeType() throws ConnectionException, GetException {
+		final DBRType dbrType = getTimeDBRType();
+		return dbrType.getValue();		
+    }
+	
+	
+	/** Get the native time DBR Type */
+	private DBRType getTimeDBRType() throws ConnectionException, GetException {
         connectIfNeverConnected();
-
+		
         final DBRType nativeType = getJcaType();
         
         if ( nativeType.isBYTE() ) {
-			return DBRType.TIME_BYTE.getValue();
+			return DBRType.TIME_BYTE;
 		}
 		else if ( nativeType.isENUM() ) {
-			return DBRType.TIME_ENUM.getValue();
+			return DBRType.TIME_ENUM;
 		}
 		else if ( nativeType.isSHORT() ) {
-			return DBRType.TIME_SHORT.getValue();
+			return DBRType.TIME_SHORT;
 		}
 		else if ( nativeType.isINT() ) {
-			return DBRType.TIME_INT.getValue();
+			return DBRType.TIME_INT;
 		}
 		else if ( nativeType.isFLOAT() ) {
-			return DBRType.TIME_FLOAT.getValue();
+			return DBRType.TIME_FLOAT;
 		}
 		else if ( nativeType.isDOUBLE() ) {
-			return DBRType.TIME_DOUBLE.getValue();
+			return DBRType.TIME_DOUBLE;
 		}
 		else if ( nativeType.isSTRING() ) {
-			return DBRType.TIME_STRING.getValue();
+			return DBRType.TIME_STRING;
 		}
 		else {
-			throw new GetException( "No status type for type code: " + nativeType + " for pv: " + m_strId );
+			throw new GetException( "No time type for type code: " + nativeType + " for pv: " + m_strId );
 		}
-    }
+	}
     
     
     /**
@@ -993,7 +1000,27 @@ class JcaChannel extends Channel {
         new Getback( this, listener );
 		if ( listener == null )  flushGetIO();
     }
-    
+	
+	
+	/** Submit a non-blocking Get request with callback */
+	public void getRawValueTimeCallback( final IEventSinkValTime listener, final boolean attemptConnection ) throws ConnectionException, GetException {
+		checkConnection( "getRawValueTimeCallback()", attemptConnection );
+		
+		try {
+			final DBRType timeDBRType = getTimeDBRType();
+			
+			_jcaChannel.get( timeDBRType, elementCount(), new gov.aps.jca.event.GetListener() {
+				public void getCompleted( final gov.aps.jca.event.GetEvent event ) {
+					final DbrTimeAdaptor adaptor = new DbrTimeAdaptor( event.getDBR() );
+					listener.eventValue( new ChannelTimeRecord( adaptor ), JcaChannel.this );
+				}
+			});
+		}
+		catch( gov.aps.jca.CAException exception ) {
+			throw new RuntimeException( "Exception getting the time DBR type for " + m_strId, exception );
+		}
+	}
+	
     
     /**
      * Asynchronously put a raw value to the channel process variable.  Fire the specified callback when put is complete.

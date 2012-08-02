@@ -10,11 +10,12 @@
 
 package xal.tools.services;
 
+import xal.tools.coding.json.JSONCoder;
+import xal.tools.coding.*;
+
+import java.io.IOException;
 import java.lang.reflect.Proxy;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.logging.Level;
@@ -38,6 +39,9 @@ final public class ServiceDirectory {
 	
 	/** thread pool */
 	final private ExecutorService THREAD_POOL;
+    
+    /** coder for encoding and ecoding messages for remote transport */
+    final private Coder MESSAGE_CODER;
 	
 	/** XML-RPC server used for registering services */
     private RpcServer _rpcServer;
@@ -61,14 +65,13 @@ final public class ServiceDirectory {
 	/** ServiceDirectory constructor. */
 	public ServiceDirectory() throws ServiceException {
 		THREAD_POOL = Executors.newCachedThreadPool();
+        MESSAGE_CODER = JSONCoder.getInstance();
 		
 		_listenerMap = new Hashtable<ServiceListener, BonjourServiceListenerInfo>();
 		
 		try {
-			_rpcServer = new RpcServer();
-			_rpcServer.start();
 			try {
-				_bonjour = new JmDNS();
+				_bonjour = JmDNS.create();
 				_isLoopback = false;
 			}
 			catch( Exception exception ) {
@@ -76,7 +79,7 @@ final public class ServiceDirectory {
 				Logger.getLogger("global").log( Level.WARNING, message, exception );
 				System.err.println( message );
 				_isLoopback = true;
-				_bonjour = new JmDNS( java.net.InetAddress.getByName( "127.0.0.1" ) );
+				_bonjour = JmDNS.create( java.net.InetAddress.getByName( "127.0.0.1" ) );
 			}
 		}
 		catch( Exception exception ) {
@@ -101,12 +104,22 @@ final public class ServiceDirectory {
 	public void dispose() {
 		_listenerMap.clear();
 		if ( _bonjour != null ) {
-			_bonjour.close();
-			_bonjour = null;
+            try {
+                _bonjour.close();
+                _bonjour = null;
+            }
+            catch( IOException exception ) {
+                throw new RuntimeException( "Exception closing bonjour services.", exception );
+            }
 		}
 		if ( _rpcServer != null ) {
-			_rpcServer.shutdown();
-			_rpcServer = null;
+            try {
+                _rpcServer.shutdown();
+                _rpcServer = null;
+            }
+            catch ( IOException exception ) {
+                throw new RuntimeException( "Exception closing the server socket.", exception );
+            }
 		}
 	}
 	
@@ -127,52 +140,69 @@ final public class ServiceDirectory {
 	public boolean isLoopback() {
 		return _isLoopback;
 	}
-	
+    
+    
+    /** Get a list of standard data types which are supported for coding and decoding */
+    public List<String> getStandardCodingTypes() {
+        return JSONCoder.getStandardTypes();
+    }
+    
+    
+    /** Get a list of all data types which are supported for coding and decoding */
+    public List<String> getSupportedCodingTypes() {
+        return MESSAGE_CODER.getSupportedTypes();
+    }
+    
+    
+    /** 
+     * Register the custom type and its associated adaptor to use for encoding and decoding objects of the custom type
+     * @param type type to identify and process for encoding and decoding
+     * @param adaptor translator between the custom type and representation constructs
+     */
+    public <CustomType,RepresentationType> void registerCodingType( final Class<CustomType> type, final ConversionAdaptor<CustomType,RepresentationType> adaptor ) {
+        MESSAGE_CODER.registerType( type, adaptor );
+    }
+
 	
     /**
-     * Register a local service provider.  Convenience method used when the type is derived from the protocol's name.
+     * Register a local service provider.
 	 * @param protocol The protocol identifying the service type.
 	 * @param name The unique name of the service provider.
      * @param provider The provider which handles the service requests.
 	 * @return a new service reference for successful registration and null otherwise.
      */
-    public ServiceRef registerService( final Class protocol, final String name, final Object provider ) throws ServiceException {
-		return registerService( getDefaultType( protocol ), name, provider );
-    }
-	
-	
-    /**
-     * Register a local service provider.
-	 * @param serviceType The type of service being registered.
-	 * @param name The unique name of the service provider.
-     * @param provider The provider which handles the service requests.
-	 * @return a new service reference for successful registration and null otherwise.
-     */
-    public ServiceRef registerService( final String serviceType, final String name, final Object provider ) throws ServiceException {
-		return registerService( serviceType, name, provider, new Hashtable<String,String>() );
+    public <ProtocolType> ServiceRef registerService( final Class<ProtocolType> protocol, final String name, final ProtocolType provider ) throws ServiceException {
+		return registerService( protocol, name, provider, new HashMap<String,Object>() );
     }
 	
     
     /**
      * Register a local service provider.
-	 * @param serviceType The type of service being registered.
+	 * @param protocol The protocol identifying the service type.
 	 * @param serviceName The unique name of the service provider.
      * @param provider The provider which handles the service requests.
 	 * @param properties Properties.
 	 * @return a new service reference for successful registration and null otherwise.
      */
-    public ServiceRef registerService( final String serviceType, final String serviceName, final Object provider, final Hashtable<String,String> properties ) {
-		properties.put( ServiceRef.serviceKey, serviceName );
+    public <ProtocolType> ServiceRef registerService( final Class<ProtocolType> protocol, final String serviceName, final ProtocolType provider, final Map<String,Object> properties ) {
+		properties.put( ServiceRef.SERVICE_KEY, serviceName );
+        
+        final String serviceType = getDefaultType( protocol );
 		
 		try {
+            if ( _rpcServer == null ) {
+                _rpcServer = new RpcServer( MESSAGE_CODER );
+                _rpcServer.start();
+            }
+              
 			int port = _rpcServer.getPort();
 			
 			// add the service to the RPC Server
-			_rpcServer.addHandler( serviceName, provider );
+			_rpcServer.addHandler( serviceName, protocol, provider );
 			
 			// advertise the service to the world
-			final String bonjourType = serviceType + "._tcp._local.";
-			final ServiceInfo info = new ServiceInfo( bonjourType, serviceName, port, 0, 0, properties );
+			final String bonjourType = ServiceRef.getFullType( serviceType );
+			final ServiceInfo info = ServiceInfo.create( bonjourType, serviceName, port, 0, 0, properties );
 			_bonjour.registerService( info );
 			return new ServiceRef( info );
 		}
@@ -206,9 +236,9 @@ final public class ServiceDirectory {
 	 * @return A proxy implementing the specified protocol for the specified service reference 
 	 */
 	public <T> T getProxy( final Class<T> protocol, final ServiceRef serviceRef ) {
-		final ServiceInfo info = serviceRef.getServiceInfo();
-		
-		return new ClientHandler<T>( info.getHostAddress(), info.getPort(), serviceRef.getServiceName(), protocol ).getProxy();
+        final ServiceInfo info = serviceRef.getServiceInfo();
+        final String hostAddress = serviceRef.getHostAddress();		
+		return new ClientHandler<T>( hostAddress, info.getPort(), serviceRef.getServiceName(), protocol, MESSAGE_CODER ).getProxy();
 	}
 	
 	

@@ -654,7 +654,11 @@ abstract public class Channel {
      * @throws xal.ca.GetException
      */
     abstract protected void getRawValueCallback( final IEventSinkValue listener, final boolean attemptConnection ) throws ConnectionException, GetException;
-    
+	
+	
+	/** Submit a non-blocking Get request with callback */
+	abstract public void getRawValueTimeCallback( final IEventSinkValTime listener, final boolean attemptConnection ) throws ConnectionException, GetException;
+
     
     /**
 	 *  Get the value of the process variable via a callback to the specified listener.
@@ -681,7 +685,24 @@ abstract public class Channel {
             }
         }, attemptConnection );
     }
+	
     
+    /**
+	 * Get the value time record of the process variable via a callback to the specified listener.
+     * @param  listener     receiver of the callback event.
+	 * @param attemptConnection indicates whether or not to attempt a blocking connection if this channel is not connected
+     * @throws  gov.sns.ca.ConnectionException     channel is not connected
+     * @throws  gov.sns.ca.GetException            general channel access failure
+     */
+    final public void getValueTimeCallback( final IEventSinkValTime listener, final boolean attemptConnection ) throws ConnectionException, GetException {
+        getRawValueTimeCallback( new IEventSinkValTime() {
+            public void eventValue( final ChannelTimeRecord record, final Channel channel ) {
+				record.applyTransform( valueTransform );
+                listener.eventValue( record, Channel.this );
+            }
+        }, attemptConnection );
+    }
+
     
     /**
      *  Get the value of the process variable via a callback to the specified listener.

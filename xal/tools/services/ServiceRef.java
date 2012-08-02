@@ -21,18 +21,21 @@ import java.util.regex.*;
  * @author  tap
  */
 public class ServiceRef {
+    /** standard local suffix for the service type */
+    static final String LOCAL_TYPE_SUFFIX = "_tcp.local.";
+    
 	/** Pattern matching the protocol and DNS part of the type */
-	static final Pattern typePattern;
+	static final private Pattern TYPE_PATTERN;
 	
 	/** Property identifying the local service handler */
-	static final String serviceKey = "xmlrpc_service_handler";
+	static final String SERVICE_KEY = "remote_service_handler";
 	
 	/** Redezvous service info */
 	private ServiceInfo _serviceInfo;
 		
 	
 	static {
-		typePattern = Pattern.compile("(\\w++)\\._tcp\\._local\\.");
+		TYPE_PATTERN = Pattern.compile("(\\w++)\\._tcp\\.local\\.");
 	}
 
 	
@@ -49,7 +52,7 @@ public class ServiceRef {
 	 * @return The name of the service provided.
 	 */
 	public String getServiceName() {
-		return _serviceInfo.getPropertyString(serviceKey);
+		return _serviceInfo.getPropertyString( SERVICE_KEY );
 	}
 	
 	
@@ -78,6 +81,14 @@ public class ServiceRef {
 	public String getFullType() {
 		return _serviceInfo.getType();
 	}
+    
+    
+    /** get the service address given the service info */
+    private static String getHostAddress( final ServiceInfo info ) {
+        final String[] hostAddresses = info.getHostAddresses();
+        final String hostAddress = hostAddresses.length > 0 ? hostAddresses[0] : null;
+		return hostAddress;
+    }
 	
 	
 	/**
@@ -85,7 +96,7 @@ public class ServiceRef {
 	 * @return the address of the remote service
 	 */
 	public String getHostAddress() {
-		return _serviceInfo.getHostAddress();
+        return getHostAddress( _serviceInfo );
 	}
 	
 	
@@ -122,8 +133,8 @@ public class ServiceRef {
 	 * @param fullType The full rendezvous type (e.g. "greeting._tcp._local.")
 	 * @return Just the simple base type (e.g. "greeting")
 	 */
-	static protected String getBaseType(final String fullType) {
-		Matcher matcher = typePattern.matcher(fullType);
+	static protected String getBaseType( final String fullType ) {
+		Matcher matcher = TYPE_PATTERN.matcher(fullType);
 		matcher.matches();
 		return matcher.group(1);
 	}
@@ -143,12 +154,12 @@ public class ServiceRef {
 	
 	
 	/**
-	 * Internally used to construct the full rendezvous type from the simple base type.
+	 * Internally used to construct the full bonjour type from the simple base type.
 	 * @param baseType The simple base type (e.g. "greeting")
-	 * @return The full rendezvous type (e.g. "greeting._tcp._local.")
+	 * @return The full rendezvous type (e.g. "greeting._tcp.local.")
 	 */
-	static protected String getFullType(final String baseType) {
-		return baseType + "._tcp._local.";
+	static protected String getFullType( final String baseType ) {
+		return "_" + baseType.toLowerCase() + "." + LOCAL_TYPE_SUFFIX;
 	}
 }
 
