@@ -2,3 +2,6 @@
 build/**/*
 /bin
 /build
+/.classpath
+/.project
+/.gitignore

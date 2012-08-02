@@ -10,8 +10,6 @@
         <dirname property="scripts.src.root" file="${ant.file.scripts}" />
         
         <property environment="env" />        
-        <property name="scripts.build.root" value="${build.root}/scripts" />
-        <property name="scripts.install.root" value="${install.root}/scripts" />
         
         <echo message="Initialized scripts build." />
     </target>

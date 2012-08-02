@@ -8,11 +8,11 @@
 
     
     <!-- Build the core and all the applications which allow batch building. -->
-    <target name="all" depends="core, apps, scripts" />
+    <target name="all" depends="core, services, apps, scripts" />
     
     
-    <!-- Install the core and all the applications which allow batch building. -->
-    <target name="install" depends="install-core, install-apps, install-scripts" />
+    <!-- Install the core and all the applications, services and scripts which allow batch installation. -->
+    <target name="install" depends="install-core, install-services, install-apps, install-scripts" />
     
     
     <!-- Build and run all unit tests. -->
@@ -42,6 +42,7 @@
             <fileset dir=".">
                 <include name="core/build.xml" />
                 <include name="apps/build.xml" />
+                <include name="services/build.xml" />
                 <include name="scripts/build.xml" />
             </fileset>
         </subant>
@@ -76,6 +77,16 @@
     </target>
     
     
+    <!-- Build all the services which allow batch building. -->
+    <target name="services" depends="core">
+        <subant target="all">
+            <fileset dir=".">
+                <include name="services/build.xml" />
+            </fileset>
+        </subant>
+    </target>
+    
+    
     <!-- Copy scripts to the build directory. -->
     <target name="scripts" depends="core">
         <subant target="all">
@@ -96,6 +107,16 @@
     </target>
     
     
+    <!-- Build all the services standalone which allow batch building. -->
+    <target name="standalone-services" depends="core">
+        <subant target="all-standalone">
+            <fileset dir=".">
+                <include name="services/build.xml" />
+            </fileset>
+        </subant>
+    </target>
+    
+    
     <!-- Install the core. -->
     <target name="install-core">
         <subant target="install">
@@ -106,11 +127,21 @@
     </target>
     
     
-    <!-- Install all the applications which allow batch building. -->
+    <!-- Install all the applications which allow batch installation. -->
     <target name="install-apps" depends="install-core">
         <subant target="install">
             <fileset dir=".">
                 <include name="apps/build.xml" />
+            </fileset>
+        </subant>
+    </target>
+    
+    
+    <!-- Install all the services which allow batch installation. -->
+    <target name="install-services" depends="install-core">
+        <subant target="install">
+            <fileset dir=".">
+                <include name="services/build.xml" />
             </fileset>
         </subant>
     </target>
@@ -123,6 +154,26 @@
                 <include name="scripts/build.xml" />
             </fileset>
         </subant>
+    </target>
+    
+    
+    <!-- Build the javadoc. -->
+    <target name="doc">
+        <subant target="doc">
+            <fileset dir=".">
+                <include name="core/build.xml" />
+            </fileset>
+        </subant>
+    </target>
+    
+    
+	<!-- Install the javadoc -->
+    <target name="install-doc" depends="doc" description="Build and install the javadoc documentation." >
+        <mkdir dir="${install.javadoc.root}" />
+		<copy todir="${install.javadoc.root}">
+			<fileset dir="${build.javadoc.root}" />
+		</copy>
+        <echo message="XAL javadoc installed. " />
     </target>
 	
 	
@@ -137,12 +188,20 @@
 		<echo message="    apps ....................... Compile the applications and assemble the jar products." />
 		<echo message="    clean ...................... Clean compiled classes and build products" />
 		<echo message="    core ....................... Compile the core XAL classes and assemble the jar products." />
-		<echo message="    install .................... Install all build products intended for distribution." />
+		<echo message="    doc ........................ Build the javadoc." />
+		<echo message="    install .................... Install all build products which allow batch installation." />
+		<echo message="    install-apps ............... Install all apps which allow batch installation." />
+		<echo message="    install-core ............... Install the core." />
+		<echo message="    install-doc ................ Install the javadoc." />
+		<echo message="    install-scripts ............ Install all scripts." />
+		<echo message="    install-services ........... Install all services which allow batch installation." />
 		<echo message="    purge-build ................ Purge all build products." />
 		<echo message="    purge-install .............. Purge all installed products." />
 		<echo message="    run-tests .................. Build and run unit tests." />
 		<echo message="    scripts .................... Copy scripts to the build directory." />
+		<echo message="    services ................... Compile the services and assemble the jar products." />
 		<echo message="    standalone-apps ............ Build the applications which allow batch building and assemble the jar products as standalone applications." />
+		<echo message="    standalone-services ........ Build the services which allow batch building and assemble the jar products as standalone services." />
     </target>
 
 </project>

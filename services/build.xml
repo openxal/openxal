@@ -1,45 +1,45 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!-- Process all the applications. -->
-<project name="apps" basedir="." default="all">
+<!-- Process all the services. -->
+<project name="services" basedir="." default="all">
     <import file="../config.xml"/>
     
     <property name="build.path.pattern" value="*/build.xml" />
 
-    <!-- Build all the applications which allow batch building. -->
+    <!-- Build all the services which allow batch building. -->
     <target name="all">
         <subant target="all">
-            <property name="batch.app.build" value="true" />
+            <property name="batch.service.build" value="true" />
             <fileset dir="." includes="${build.path.pattern}" />
         </subant>
     </target>
     
-    <!-- Build all the applications which allow batch building. -->
+    <!-- Build all the services which allow batch building. -->
     <target name="all-standalone">
         <subant target="all-standalone">
-            <property name="batch.app.build" value="true" />
+            <property name="batch.service.build" value="true" />
             <fileset dir="." includes="${build.path.pattern}" />
         </subant>
     </target>
     
-    <!-- Compile all the applications with only recommended warnings. -->
+    <!-- Compile all the services with only recommended warnings. -->
     <target name="compile-warn">
         <subant target="compile-warn">
-            <property name="batch.app.build" value="true" />
+            <property name="batch.service.build" value="true" />
             <fileset dir="." includes="${build.path.pattern}" />
         </subant>
     </target>
     
-    <!-- Compile all the applications with all warnings. -->
+    <!-- Compile all the services with all warnings. -->
     <target name="compile-warn-all">
         <subant target="compile-warn-all">
-            <property name="batch.app.build" value="true" />
+            <property name="batch.service.build" value="true" />
             <fileset dir="." includes="${build.path.pattern}" />
         </subant>
     </target>
     
     
-    <!-- Build all the applications including those excluded from batch building. -->
+    <!-- Build all the services including those excluded from batch building. -->
     <target name="force-all">
         <subant target="all">
             <fileset dir="." includes="${build.path.pattern}" />
@@ -47,7 +47,7 @@
     </target>
     
     
-    <!-- Install all the applications which allow installation. -->
+    <!-- Install all the services which allow installation. -->
     <target name="install">
         <subant target="install">
             <fileset dir="." includes="${build.path.pattern}" />
@@ -55,42 +55,42 @@
     </target>
     
     
-    <!-- Clean all the applications. -->
+    <!-- Clean all the services. -->
     <target name="clean">
         <subant target="clean">
             <fileset dir="." includes="${build.path.pattern}" />
         </subant>
         
-        <delete dir="${apps.build.compile.root}" />
-        <delete dir="${apps.build.jar.root}" />
+        <delete dir="${services.build.compile.root}" />
+        <delete dir="${services.build.jar.root}" />
     </target>
     
     
-    <!-- Purge the applications install root. -->
+    <!-- Purge the services install root. -->
     <target name="purge-install">
         <subant target="purge-install">
             <fileset dir="." includes="${build.path.pattern}" />
         </subant>
         
-        <delete dir="${apps.install.root}" />
-
-        <echo message="Purged application installation!" />
+        <delete dir="${services.install.root}" />
+        
+        <echo message="Purged service installation!" />
     </target>
 	
 	
 	<!-- provide guidance on the various targets -->
     <target name="help">
-		<echo message="Help for building applications" />
+		<echo message="Help for building services" />
 		<echo message="Usage: ant [ant options] target1 [target2 | target3 | ... ]" />
 		<echo message="" />
 		<echo message="  where target(s) can be:" />
 		<echo message="    help ....................... Print this message." />
-		<echo message="    all ........................ Compile the applications which allow batch building and assemble the jar products with dependence on the common libraries." />
-		<echo message="    all-standalone ............. Compile the applications which allow batch building and assemble the jar products as standalone applications." />
-		<echo message="    force-all .................. Compile all applications (regardless of whether they allow batch building) and assemble the jar products." />
+		<echo message="    all ........................ Compile the services which allow batch building and assemble the jar products with dependence on the common libraries." />
+		<echo message="    all-standalone ............. Compile the services which allow batch building and assemble the jar products as standalone services." />
+		<echo message="    force-all .................. Compile all services (regardless of whether they allow batch building) and assemble the jar products." />
 		<echo message="    clean ...................... Clean compiled classes and build products" />
 		<echo message="    install .................... Install all build products intended for distribution." />
-		<echo message="    purge-install .............. Purge installed applications." />
+		<echo message="    purge-install .............. Purge installed services." />
     </target>
     
 </project>

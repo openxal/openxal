@@ -4,7 +4,7 @@
  * Created on Feb 11, 2009, 1:32 PM
  */
 
-package xal.app.machsim;
+package xal.app.machinesimulator;
 
 import javax.swing.*;
 import javax.swing.event.*;

@@ -4,7 +4,7 @@
  * Created by Tom Pelaia on 9/19/11
  */
 
-package xal.app.machsim;
+package xal.app.machinesimulator;
 
 import java.awt.event.*;
 import java.util.*;
