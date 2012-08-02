@@ -711,7 +711,7 @@ public class ActionFactory {
         };
 
         try {
-            Application.getAdaptor().getClass().getDeclaredMethod( "editPreferences", new Class[] {XalDocument.class} );
+            Application.getAdaptor().getClass().getDeclaredMethod( "editPreferences", new Class[] { XalDocument.class } );
             action.setEnabled( true );
         }
         catch( NoSuchMethodException exception ) {
@@ -735,7 +735,7 @@ public class ActionFactory {
         };
 		
         try {
-            Application.getAdaptor().getClass().getDeclaredMethod( "editPreferences", new Class[] {XalInternalDocument.class} );
+            Application.getAdaptor().getClass().getDeclaredMethod( "editPreferences", new Class[] { XalInternalDocument.class } );
             action.setEnabled( true );
         }
         catch( NoSuchMethodException exception ) {

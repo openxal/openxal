@@ -37,7 +37,7 @@ public abstract class ArrayValue extends Number {
     
     
     /** get the native type of the array */
-    final public Class getType() {
+    final public Class<?> getType() {
         return array.getClass().getComponentType();
     }
 	
@@ -220,7 +220,7 @@ public abstract class ArrayValue extends Number {
      * to create the proper kind of storage.
      */
     static public ArrayValue arrayValueFromArray( final Object newArray ) throws IllegalArgumentException {
-        final Class componentType = newArray.getClass().getComponentType();
+        final Class<?> componentType = newArray.getClass().getComponentType();
         
         if ( componentType == null ) {
             throw new IllegalArgumentException("Argument must be an array!");
