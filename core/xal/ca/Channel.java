@@ -323,7 +323,7 @@ abstract public class Channel {
     
     
     /** get the Java class associated with the native type of this channel */
-    abstract public Class elementType() throws ConnectionException;
+    abstract public Class<?> elementType() throws ConnectionException;
     
     
     /**

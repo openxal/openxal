@@ -22,7 +22,7 @@ import java.util.Date;
  * Timestamp
  * @author  tap
  */
-public class Timestamp implements Comparable {
+public class Timestamp implements Comparable<Timestamp> {
 	/** date formatter */
     static final SimpleDateFormat TIME_FORMATTER;
 	
@@ -158,8 +158,8 @@ public class Timestamp implements Comparable {
 	 * @param otherTimestamp The timestamp with which to compare this one
 	 * @return 0 if the timestamps are the same, negative if this is earlier than the supplied one and positive otherwise
 	 */
-	public int compareTo(Object otherTimestamp) {
-		return _timestamp.compareTo(((Timestamp)otherTimestamp)._timestamp);
+	public int compareTo( final Timestamp otherTimestamp ) {
+		return _timestamp.compareTo( otherTimestamp._timestamp );
 	}
 }
 
