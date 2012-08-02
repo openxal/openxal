@@ -16,12 +16,12 @@ import java.util.logging.*;
 public class DataAttribute {
 	private String DEFAULT_VALUE;
     private String name;
-    private Class type;
+    private Class<?> type;
     private boolean isPrimaryKey;
 
 	
     /** Creates new DataAttribute */
-    public DataAttribute( String aName, Class aType, boolean primaryState, String defaultValue ) {
+    public DataAttribute( String aName, Class<?> aType, boolean primaryState, String defaultValue ) {
         name = aName;
         type = aType;
         isPrimaryKey = primaryState;
@@ -30,7 +30,7 @@ public class DataAttribute {
 
 	
     /** Creates new DataAttribute */
-    public DataAttribute( String aName, Class aType, boolean primaryState ) {
+    public DataAttribute( String aName, Class<?> aType, boolean primaryState ) {
 		this( aName, aType, primaryState, null );
     }
 
@@ -51,7 +51,7 @@ public class DataAttribute {
     }
     
     
-    public Class type() {
+    public Class<?> type() {
         return type;
     }
     
