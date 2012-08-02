@@ -17,22 +17,24 @@ public class MacAdaptor {
 	
 	
 	/** perform Mac initialization */
-    @SuppressWarnings( "unchecked" )
+    @SuppressWarnings( { "unchecked", "rawtypes" } )	// no way around it since newProxyInstance takes an array of typed Class and which isn't allowed
 	static public void initialize() {
 		// display the menu bar at the top of the screen consistent with the Mac look and feel
 		System.setProperty( "apple.laf.useScreenMenuBar", "true" );
 		
 		try {
             // modern quit handler
-			final Class macQuitHandlerClass = Class.forName( "com.apple.eawt.QuitHandler" );
+			final Class<?> macQuitHandlerClass = Class.forName( "com.apple.eawt.QuitHandler" );
             
             // modern about handler
-			final Class macAboutHandlerClass = Class.forName( "com.apple.eawt.AboutHandler" );
+			final Class<?> macAboutHandlerClass = Class.forName( "com.apple.eawt.AboutHandler" );
             
 			// get the Mac application instance
-			final Class macApplicationClass = Class.forName( "com.apple.eawt.Application" );
+			final Class<?> macApplicationClass = Class.forName( "com.apple.eawt.Application" );
 			final Method appMethod = macApplicationClass.getMethod( "getApplication" );
 			final Object macApplication = appMethod.invoke( null );
+
+			final Class<?>[] array = new Class[1];
 			
 			// register the quit handler to handle Mac quit events through XAL
 			final Object quitProxy = Proxy.newProxyInstance( MacAdaptor.class.getClassLoader(), new Class[] { macQuitHandlerClass }, new MacQuitHandler() );
@@ -105,12 +107,9 @@ public class MacAdaptor {
             final String methodName = method.getName();
             final Object event = args[0];
             
-            // get the XAL application
-            final xal.application.Application xalApp = xal.application.Application.getApp();
-            
             // show the about box if the method matches this request
             if ( methodName.equals( "handleAbout" ) ) {
-                xalApp.showAboutBox();
+                xal.application.Application.showAboutBox();
             }
             
             return null;
@@ -120,12 +119,12 @@ public class MacAdaptor {
     
     
     /** Perform initialization for the fallback event sytem. Called when the modern event system is not present. This method should be removed at a reasonable time in the future. */
-    @SuppressWarnings( "unchecked" )
+    @SuppressWarnings( { "unchecked", "rawtypes" } )	// no way around it since newProxyInstance takes an array of typed Class and which isn't allowed
     private static void initializeFallback() {
 		try {
 			// dynamically get the Mac specific extensions
-			final Class macApplicationClass = Class.forName( "com.apple.eawt.Application" );
-			final Class macEventListenerClass = Class.forName( "com.apple.eawt.ApplicationListener" );
+			final Class<?> macApplicationClass = Class.forName( "com.apple.eawt.Application" );
+			final Class<?> macEventListenerClass = Class.forName( "com.apple.eawt.ApplicationListener" );
 			
 			// get the Mac application instance for our application
 			final Method appMethod = macApplicationClass.getMethod( "getApplication" );
@@ -156,6 +155,7 @@ public class MacAdaptor {
 	
 	/** Obsolete class to handle old style Mac Events (quit and show about box) ignoring other events. This class should be removed at a reasonable time in the future. */
 	private static class MacEventHandler implements InvocationHandler {
+		@SuppressWarnings( { "unchecked", "rawtypes" } )	// no way around it since getMethod takes an array of typed Class and which isn't allowed
 		public Object invoke( final Object proxy, final Method method, final Object[] args ) {
 			try {
 				final String methodName = method.getName();
@@ -170,7 +170,7 @@ public class MacAdaptor {
 					markMethod.invoke( event, false );		// if we get to this point then we haven't quit the application
 				}
 				else if ( methodName.equals( "handleAbout" ) ) {	// display the about box
-					xalApp.showAboutBox();
+					xal.application.Application.showAboutBox();
 					markMethod.invoke( event, true );
 				}
 				else {

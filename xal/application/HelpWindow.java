@@ -120,7 +120,7 @@ class HelpWindow extends JFrame implements SwingConstants {
 			Logger.getLogger("global").log( Level.WARNING, message, exception );
 			System.err.println( message );
 			exception.printStackTrace();
-			Application.getApp().displayError( "Link Error", "Error accessing link:", exception );
+			Application.displayError( "Link Error", "Error accessing link:", exception );
 		}
 		finally {
 			setCursor( lastCursor );
