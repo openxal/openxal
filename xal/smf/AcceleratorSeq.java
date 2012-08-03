@@ -336,14 +336,9 @@ public class AcceleratorSeq extends AcceleratorNode implements DataListener {
    
    
     /** Remove all nodes from the this sequence. */
-    public void removeAllNodes() {
-      
-        // Clean parent data of each node
-        Iterator            iter = m_arrNodes.iterator();
-        AcceleratorNode     node = null;
-        
-        while (iter.hasNext())  {
-            node = (AcceleratorNode)iter.next();  
+    public void removeAllNodes() {      
+        // remove parent and accelerator data for each node
+		for ( final AcceleratorNode node : m_arrNodes ) {
             node.setParent( null );
             node.setAccelerator( null );
         }
@@ -371,10 +366,8 @@ public class AcceleratorSeq extends AcceleratorNode implements DataListener {
 		}
         
         // If we still haven't found the node, search deeply
-        Iterator sequenceIter = getSequences().iterator();
-        while ( sequenceIter.hasNext() ) {
-            AcceleratorSeq sequence = (AcceleratorSeq)sequenceIter.next();
-            AcceleratorNode node = sequence.getNodeWithId(label);
+		for ( final AcceleratorSeq sequence : getSequences() ) {
+            AcceleratorNode node = sequence.getNodeWithId( label );
             if ( node != null ) {
                 return node;
             }
@@ -687,11 +680,11 @@ public class AcceleratorSeq extends AcceleratorNode implements DataListener {
      */
     static public List<AcceleratorSeq> orderSequences( final Collection<AcceleratorSeq> sequences ) throws SequenceOrderingException {
         final Map<String,AcceleratorSeq> sequenceMap = new HashMap<String,AcceleratorSeq>( sequences.size() );
-        Iterator sequenceIter = sequences.iterator();
+        Iterator<AcceleratorSeq> sequenceIter = sequences.iterator();
          
         AcceleratorSeq sequence = null;
         while ( sequenceIter.hasNext() ) {
-            sequence = (AcceleratorSeq)sequenceIter.next();
+            sequence = sequenceIter.next();
             sequenceMap.put( sequence.getId(), sequence );
         }
          
@@ -701,9 +694,9 @@ public class AcceleratorSeq extends AcceleratorNode implements DataListener {
         sequence.addSequenceChain( orderedSequences, sequenceMap );
         
         while ( !sequenceMap.isEmpty() ) {
-            Collection remainingSequences = sequenceMap.values();
+            Collection<AcceleratorSeq> remainingSequences = sequenceMap.values();
             sequenceIter = remainingSequences.iterator();
-            sequence = (AcceleratorSeq)sequenceIter.next();
+            sequence = sequenceIter.next();
             final LinkedList<AcceleratorSeq> localList = new LinkedList<AcceleratorSeq>();
             sequence.addSequenceChain( localList, sequenceMap );
             
@@ -771,10 +764,7 @@ public class AcceleratorSeq extends AcceleratorNode implements DataListener {
      * immediate child of this sequence.
      */
     public AcceleratorSeq getSequence( final String strId )    {
-        Iterator sequenceIter = getSequences().iterator();
-        
-        while ( sequenceIter.hasNext() ) {
-            AcceleratorSeq sequence = (AcceleratorSeq)sequenceIter.next();
+		for ( final AcceleratorSeq sequence : getSequences() ) {
             if ( sequence.getId().equals( strId ) )  return sequence;
         }
         

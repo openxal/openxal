@@ -29,12 +29,10 @@ public class BucketParser implements DataListener {
     
     
     /** creates a new BucketParser from a list of buckets */
-    public BucketParser(Collection bucketList) {
+    public BucketParser( final Collection<AttributeBucket> bucketList ) {
         this();
-        
-        Iterator bucketIterator = bucketList.iterator();
-        while ( bucketIterator.hasNext() ) {
-            AttributeBucket bucket = (AttributeBucket)bucketIterator.next();
+
+		for ( final AttributeBucket bucket : bucketList ) {
             add(bucket);
         }
     }
@@ -82,7 +80,7 @@ public class BucketParser implements DataListener {
     
     
     /** get a collection of all the buckets */
-    public Collection getBuckets() {
+    public Collection<AttributeBucket> getBuckets() {
         return bucketTable.values();
     }
     

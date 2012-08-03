@@ -183,14 +183,11 @@ public class AcceleratorSeqCombo extends AcceleratorSeq {
 	
 		// Loop through the list of sequences:
 	
-		Iterator litr = seqs.iterator();
 		int isFirst = 0;
 		int ii = 0;
-		AcceleratorSeq prev = null;
-	
-	
-		while (litr.hasNext()) {
-			AcceleratorSeq seq = (AcceleratorSeq) litr.next();
+		AcceleratorSeq prev = null;	
+
+		for ( final AcceleratorSeq seq : seqs ) {
 			totalLen += seq.getLength();
 	
 				// set the accelerator:
@@ -249,10 +246,8 @@ public class AcceleratorSeqCombo extends AcceleratorSeq {
 	 */
 	public void write( final DataAdaptor adaptor ) {
 		adaptor.setValue( "id", getId() );
-		
-		final Iterator sequenceIter = getConstituents().iterator();
-		while( sequenceIter.hasNext() ) {
-			final AcceleratorSeq sequence = (AcceleratorSeq)sequenceIter.next();
+
+		for ( final AcceleratorSeq sequence : getConstituents() ) {
 			final DataAdaptor constituentAdaptor = adaptor.createChild( "sequence" );
 			constituentAdaptor.setValue( "id" , sequence.getId() );
 		}
@@ -321,10 +316,7 @@ public class AcceleratorSeqCombo extends AcceleratorSeq {
 		// first check if this sequence is itself a match
 		if ( getId().equals( label ) )  return this;
 		
-		final Iterator sequenceIter = getBaseConstituents().iterator();
-		
-		while( sequenceIter.hasNext() )  {
-			final AcceleratorSeq sequence = (AcceleratorSeq)sequenceIter.next();
+		for ( final AcceleratorSeq sequence : getBaseConstituents() ) {
 			final AcceleratorNode node = sequence.getNodeWithId(label);
 			if ( node != null )  return node;
 		}
@@ -339,9 +331,7 @@ public class AcceleratorSeqCombo extends AcceleratorSeq {
      */
     public List<AcceleratorNode> getNodes() {
         final List<AcceleratorNode> nodes = new ArrayList<AcceleratorNode>();
-        final Iterator constituentIter = getBaseConstituents().iterator();
-        while ( constituentIter.hasNext() ) {
-            final AcceleratorSeq constituent = (AcceleratorSeq)constituentIter.next();
+		for ( final AcceleratorSeq constituent : getBaseConstituents() ) {
             nodes.addAll( constituent.getNodes() );
         }
         return Collections.unmodifiableList( nodes );
@@ -354,9 +344,7 @@ public class AcceleratorSeqCombo extends AcceleratorSeq {
      */
     public List<AcceleratorSeq> getSequences() {
         final List<AcceleratorSeq> sequences = new ArrayList<AcceleratorSeq>();
-        final Iterator constituentIter = getBaseConstituents().iterator();
-        while ( constituentIter.hasNext() ) {
-            final AcceleratorSeq constituent = (AcceleratorSeq)constituentIter.next();
+		for ( final AcceleratorSeq constituent : getBaseConstituents() ) {
             sequences.addAll( constituent.getSequences() );
         }
         return Collections.unmodifiableList( sequences );
@@ -403,8 +391,8 @@ public class AcceleratorSeqCombo extends AcceleratorSeq {
 		baseConstituents.addAll( getConstituentsWithQualifier( new NotTypeQualifier( comboQualifier ) ) );
 		
         final List<AcceleratorSeq> combos = getConstituentsWithQualifier( comboQualifier );
-		for ( Iterator iter = combos.iterator() ; iter.hasNext() ; ) {
-			final AcceleratorSeqCombo combo = (AcceleratorSeqCombo)iter.next();
+		for ( final AcceleratorSeq constituent : combos ) {
+			final AcceleratorSeqCombo combo = (AcceleratorSeqCombo)constituent;
 			baseConstituents.addAll( combo.getBaseConstituents() );
 		}
 		
@@ -434,8 +422,8 @@ public class AcceleratorSeqCombo extends AcceleratorSeq {
 		baseConstituents.addAll( getConstituentsWithQualifier( qualifier ) );
 		
         final List<AcceleratorSeq> combos = getConstituentsWithQualifier( comboQualifier );
-		for ( Iterator iter = combos.iterator() ; iter.hasNext() ; ) {
-			final AcceleratorSeqCombo combo = (AcceleratorSeqCombo)iter.next();
+		for ( final AcceleratorSeq constituent : combos ) {
+			final AcceleratorSeqCombo combo = (AcceleratorSeqCombo)constituent;
 			baseConstituents.addAll( combo.getBaseConstituentsWithQualifier( qualifier ) );
 		}
 				
