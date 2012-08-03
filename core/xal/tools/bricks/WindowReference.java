@@ -123,13 +123,13 @@ public class WindowReference {
 	
 	
 	/** process adaptors to get components */
-    @SuppressWarnings( "unchecked" )
+    @SuppressWarnings( { "unchecked", "rawtypes" } )
 	protected Component getView( final DataAdaptor adaptor, final Object... viewParameters ) {
 		final DataAdaptor proxyAdaptor = adaptor.childAdaptor( ViewProxy.DATA_LABEL );
 		final ViewProxy viewProxy = ViewProxy.getInstance( proxyAdaptor );
 		final String tag = adaptor.stringValue( "tag" );
 		
-		Class viewClass = viewProxy.getPrototypeClass();
+		Class<?> viewClass = viewProxy.getPrototypeClass();
 		if ( adaptor.hasAttribute( "customBeanClass" ) ) {
 			try {
 				final String customClassName = adaptor.stringValue( "customBeanClass" );
@@ -184,8 +184,9 @@ public class WindowReference {
 	
 	
 	/** Find a constructor that matches the specified parameters */
-	private static <ClassType> Constructor findConstructor( final Class<ClassType> theClass, final Object[] parameters ) {
-		final Class[] parameterTypes = new Class[parameters.length];
+	@SuppressWarnings( { "unchecked", "rawtypes" } )
+	private static <ClassType> Constructor<ClassType> findConstructor( final Class<ClassType> theClass, final Object[] parameters ) {
+		final Class<?>[] parameterTypes = new Class[parameters.length];
 		for ( int index = 0 ; index < parameters.length ; index++ ) {
 			parameterTypes[index] = parameters[index].getClass();
 		}
@@ -209,7 +210,7 @@ public class WindowReference {
 	
 	
 	/** determine if the constructor can take the specified parameters */
-	private static boolean constructorCanOperateOn( final Constructor constructor, final Object[] parameters ) {
+	private static boolean constructorCanOperateOn( final Constructor<?> constructor, final Object[] parameters ) {
 		final Class[] constructorParameterTypes = constructor.getParameterTypes();
 		if ( parameters.length != constructorParameterTypes.length ) {
 			return false;
@@ -224,13 +225,13 @@ public class WindowReference {
 	
 	
 	/** process adaptors to get borders */
-    @SuppressWarnings( "unchecked" )
+    @SuppressWarnings( { "unchecked", "rawtypes" } )
 	protected Border getBorder( final DataAdaptor adaptor ) {
 		final DataAdaptor proxyAdaptor = adaptor.childAdaptor( BorderProxy.DATA_LABEL );
 		final BorderProxy borderProxy = BorderProxy.getInstance( proxyAdaptor );
 		final String tag = adaptor.stringValue( "tag" );
 		
-		Class borderClass = borderProxy.getPrototypeClass();
+		Class<?> borderClass = borderProxy.getPrototypeClass();
 		if ( adaptor.hasAttribute( "customBeanClass" ) ) {
 			try {
 				final String customClassName = adaptor.stringValue( "customBeanClass" );
@@ -267,8 +268,8 @@ public class WindowReference {
 			final PropertyValueEditorManager editorManager = PropertyValueEditorManager.getDefaultManager();
 			final String name = beanAdaptor.stringValue( "name" );
 			final PropertyDescriptor propertyDescriptor = descriptorTable.get( name );
-			final Class propertyType = propertyDescriptor.getPropertyType();
-			final PropertyValueEditor propertyEditor = editorManager.getEditor( propertyType );
+			final Class<?> propertyType = propertyDescriptor.getPropertyType();
+			final PropertyValueEditor<?> propertyEditor = editorManager.getEditor( propertyType );
 			final Object value = propertyEditor.readValue( beanAdaptor );
 			
 			final Method method = propertyDescriptor.getWriteMethod();
