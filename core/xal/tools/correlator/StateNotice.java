@@ -20,7 +20,7 @@ interface StateNotice<RecordType> {
 	 * @param name The name identifying the new source.
 	 * @param newCount The new number of sources correlated.
 	 */
-    public void sourceAdded(Correlator sender, String name, int newCount);
+    public void sourceAdded( Correlator<?,RecordType,?> sender, String name, int newCount );
 	
 	
 	/**
@@ -29,7 +29,7 @@ interface StateNotice<RecordType> {
 	 * @param name The name identifying the new source.
 	 * @param newCount The new number of sources correlated.
 	 */
-    public void sourceRemoved(Correlator sender, String name, int newCount);
+    public void sourceRemoved( Correlator<?,RecordType,?> sender, String name, int newCount );
 	
 	
 	/**
@@ -37,21 +37,21 @@ interface StateNotice<RecordType> {
 	 * @param sender The correlator whose timespan bin has changed.
 	 * @param newTimespan The new timespan used by the correlator.
 	 */
-    public void binTimespanChanged(Correlator sender, double newTimespan);
+    public void binTimespanChanged( Correlator<?,RecordType,?> sender, double newTimespan );
 	
 	
 	/**
 	 * Handle the advance notice of the correlator stopping.
 	 * @param sender The correlator that will stop.
 	 */
-    public void willStopMonitoring(Correlator sender);
+    public void willStopMonitoring( Correlator<?,RecordType,?> sender );
 	
 	
 	/**
 	 * Handle the advance notice of the correlator starting.
 	 * @param sender The correlator that will start.
 	 */
-    public void willStartMonitoring(Correlator sender);
+    public void willStartMonitoring( Correlator<?,RecordType,?> sender );
 	
 	
 	/**
@@ -59,6 +59,6 @@ interface StateNotice<RecordType> {
 	 * @param sender The correlator whose correlation filter has changed.
 	 * @param newFilter The new correlation filter to use.
 	 */
-    public void correlationFilterChanged( Correlator sender, CorrelationFilter<RecordType> newFilter );
+    public void correlationFilterChanged( Correlator<?,RecordType,?> sender, CorrelationFilter<RecordType> newFilter );
 }
 

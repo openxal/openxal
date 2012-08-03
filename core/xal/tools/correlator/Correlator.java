@@ -71,8 +71,8 @@ abstract public class Correlator<SourceType, RecordType, SourceAgentType extends
      * Register the listener as a receiver of Correlation notices from this 
      * correlator.
      */
-    public void addListener(CorrelationNotice listener) {
-        poster.addCorrelationNoticeListener(listener);
+    public void addListener( final CorrelationNotice<RecordType> listener ) {
+        poster.addCorrelationNoticeListener( listener );
     }
     
     
@@ -80,8 +80,8 @@ abstract public class Correlator<SourceType, RecordType, SourceAgentType extends
      * Unregister the listener as a receiver of Correlation notices from this 
      * correlator.
      */
-    public void removeListener(CorrelationNotice listener) {
-        poster.removeCorrelationNoticeListener(listener);
+    public void removeListener( final CorrelationNotice<RecordType> listener ) {
+        poster.removeCorrelationNoticeListener( listener );
     }
     
     
@@ -283,15 +283,15 @@ abstract public class Correlator<SourceType, RecordType, SourceAgentType extends
         stopMonitoring();
 		
 		final TimedBroadcaster<RecordType> timedBroadcaster = (broadcaster instanceof TimedBroadcaster) ? (TimedBroadcaster<RecordType>)broadcaster : new TimedBroadcaster<RecordType>( localCenter, timeout );
-		final CorrelationNotice correlationListener = new CorrelationNotice() {
-			public void newCorrelation(Object sender, Correlation correlation) {
+		final CorrelationNotice<RecordType> correlationListener = new CorrelationNotice<RecordType>() {
+			public void newCorrelation( final Object sender, final Correlation correlation ) {
 				stopMonitoring();
-				timedBroadcaster.removeCorrelationNoticeListener(this);
+				timedBroadcaster.removeCorrelationNoticeListener( this );
 			}
 			
-			public void noCorrelationCaught(Object sender) {
+			public void noCorrelationCaught( final Object sender ) {
 				stopMonitoring();
-				timedBroadcaster.removeCorrelationNoticeListener(this);
+				timedBroadcaster.removeCorrelationNoticeListener( this );
 			}
 		};
 				
@@ -375,7 +375,7 @@ abstract public class Correlator<SourceType, RecordType, SourceAgentType extends
      * The resulting correlation is returned.  If no correlation was found  
      * within the timeout, null is returned.
      */
-    public Correlation fetchCorrelationWithTimeout( final double aTimeout ) {
+    public Correlation<RecordType> fetchCorrelationWithTimeout( final double aTimeout ) {
         return new WaitingListener().listenWithTimeout( aTimeout );
     }
 	
@@ -409,8 +409,8 @@ abstract public class Correlator<SourceType, RecordType, SourceAgentType extends
 		 * Register the listener as a receiver of Correlation notices from this 
 		 * correlator.
 		 */
-		public void addCorrelationNoticeListener(CorrelationNotice listener) {
-			postCenter.registerTarget(listener, this, CorrelationNotice.class);
+		public void addCorrelationNoticeListener( final CorrelationNotice<RecordType> listener ) {
+			postCenter.registerTarget( listener, this, CorrelationNotice.class );
 		}
 		
 		
@@ -418,8 +418,8 @@ abstract public class Correlator<SourceType, RecordType, SourceAgentType extends
 		 * Unregister the listener as a receiver of Correlation notices from this 
 		 * correlator.
 		 */
-		public void removeCorrelationNoticeListener(CorrelationNotice listener) {
-			postCenter.removeTarget(listener, this, CorrelationNotice.class);
+		public void removeCorrelationNoticeListener( final CorrelationNotice<RecordType> listener ) {
+			postCenter.removeTarget( listener, this, CorrelationNotice.class );
 		}
 		
 		
@@ -452,9 +452,9 @@ abstract public class Correlator<SourceType, RecordType, SourceAgentType extends
      * as a listener of events and waits until a correlation is found or 
      * the timeout has expired.
      */
-    private class WaitingListener implements CorrelationNotice {
+    private class WaitingListener implements CorrelationNotice<RecordType> {
 		/** latest captured correlation */
-        private transient Correlation correlation;
+        private transient Correlation<RecordType> correlation;
         
 		
 		/** Constructor */
@@ -467,7 +467,7 @@ abstract public class Correlator<SourceType, RecordType, SourceAgentType extends
 		 * Wait and listen for a correlation 
 		 * @param timeout the maximum time (seconds) to wait for a correlation
 		 */
-		public Correlation listenWithTimeout( final double timeout ) {
+		public Correlation<RecordType> listenWithTimeout( final double timeout ) {
             addListener( this );
             pulseMonitorWithTimeout( timeout );
 			
@@ -489,7 +489,7 @@ abstract public class Correlator<SourceType, RecordType, SourceAgentType extends
         
 		
 		/** Handle the latest captured correlation */
-		public void newCorrelation( final Object sender, final Correlation newCorrelation ) {
+		public void newCorrelation( final Object sender, final Correlation<RecordType> newCorrelation ) {
             correlation = newCorrelation;
 			synchronized( WaitingListener.this ) {
 				WaitingListener.this.notifyAll();

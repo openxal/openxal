@@ -70,11 +70,8 @@ public class ChannelCorrelator extends Correlator<Channel,ChannelTimeRecord,Chan
      */
     synchronized public int numInactiveChannels() {
         int numFailed = 0;
-        Collection<ChannelAgent> allSources = getSourceAgents();
-        Iterator sourceIter = allSources.iterator();
-        
-        while ( sourceIter.hasNext() ) {
-            ChannelAgent channelAgent = (ChannelAgent)sourceIter.next();
+        final Collection<ChannelAgent> allSources = getSourceAgents();
+		for ( final ChannelAgent channelAgent : allSources ) {
             numFailed += ( channelAgent.isActive() ) ? 0 : 1;
         }
         
