@@ -203,7 +203,7 @@ public class MessageCenter implements java.io.Serializable {
 	 * @param protocol The protocol identifying the message type being received
 	 */
     synchronized public <T> void removeTargetFromAllSources( final T target, final Class<T> protocol ) {
-            TARGET_DIRECTORY.removeTargetFromAllSources( target, protocol );
+		TARGET_DIRECTORY.removeTargetFromAllSources( target, protocol );
     }
 
 
@@ -214,13 +214,10 @@ public class MessageCenter implements java.io.Serializable {
 	 * @param sources The sources from which we are receiving messages
 	 * @param protocol The protocol identifying the message type being received
      */
-    synchronized public <T> void removeTarget( final T target, final Collection sources, final Class<T> protocol ) {
-            Iterator sourceIter = sources.iterator();
-
-            while ( sourceIter.hasNext() ) {
-                    Object source = sourceIter.next();
-                    removeTarget( target, source, protocol );
-            }
+    synchronized public <T> void removeTarget( final T target, final Collection<? extends Object> sources, final Class<T> protocol ) {
+		for ( final Object source : sources ) {
+			removeTarget( target, source, protocol );
+		}
     }
     
     
@@ -383,7 +380,7 @@ public class MessageCenter implements java.io.Serializable {
         private static final long serialVersionUID = 1L;
         
         /** Creates new NullSourceException */
-        public NullTargetException(final Object source, final Class protocol) {
+        public NullTargetException( final Object source, final Class<?> protocol ) {
             this( "Attempt to register a null target with MessageCenter: " + MessageCenter.this.name() +
             " for protocol: " + protocol.getName() +
             " on source: " + source);
@@ -438,7 +435,7 @@ public class MessageCenter implements java.io.Serializable {
 		
 		
 		/** Constructor */
-        public UnimplementedProtocolException( final Object target, final Class protocol ) {
+        public UnimplementedProtocolException( final Object target, final Class<?> protocol ) {
             this("Attempt to register a target, \"" + target +
                 "\" with message center, \"" +  MessageCenter.this.name() + 
                 "\" for the protocol, \"" + protocol.getName() + 

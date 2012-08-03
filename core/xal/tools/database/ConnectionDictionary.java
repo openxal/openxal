@@ -166,7 +166,7 @@ public class ConnectionDictionary extends Properties {
 		final String className = getProperty( DATABASE_ADAPTOR_KEY );
 		if ( className == null || className.equals( "" ) )  return null;
 		try {
-			final Class databaseAdaptorClass = Class.forName( className );
+			final Class<?> databaseAdaptorClass = Class.forName( className );
 			return (DatabaseAdaptor)databaseAdaptorClass.newInstance();
 		}
 		catch(Exception exception) {
@@ -181,7 +181,7 @@ public class ConnectionDictionary extends Properties {
 	 * Set the database adaptor class
 	 * @param databaseAdaptorClass the database adaptor class to use
 	 */
-	public void setDatabaseAdaptorClass( final Class databaseAdaptorClass ) {
+	public void setDatabaseAdaptorClass( final Class<?> databaseAdaptorClass ) {
 		setDatabaseAdaptorClass( databaseAdaptorClass.getName() );
 	}
 	

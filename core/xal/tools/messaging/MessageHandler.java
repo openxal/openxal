@@ -17,22 +17,22 @@ import java.util.*;
  *
  * @author  tap
  */
-abstract class MessageHandler<T> implements InvocationHandler, java.io.Serializable {
-    protected Class<T> _protocol;
+abstract class MessageHandler<ProtocolType> implements InvocationHandler, java.io.Serializable {
+    protected Class<ProtocolType> _protocol;
     protected Object source;
-    protected T proxy;
+    protected ProtocolType proxy;
     protected Thread[] threadPool;
     protected TargetDirectory targetDirectory;
     
     
     /** Creates new MessageHandler */
-    public MessageHandler( final TargetDirectory newDirectory, final Class<T> newProtocol, final int threadPoolSize ) {
+    public MessageHandler( final TargetDirectory newDirectory, final Class<ProtocolType> newProtocol, final int threadPoolSize ) {
         this( newDirectory, null, newProtocol, threadPoolSize );
     }
     
     
     /** Creates new MessageHandler */
-    public MessageHandler( final TargetDirectory newDirectory, final Object newSource, final Class<T> newProtocol, final int threadPoolSize ) {
+    public MessageHandler( final TargetDirectory newDirectory, final Object newSource, final Class<ProtocolType> newProtocol, final int threadPoolSize ) {
         targetDirectory = newDirectory;
         source = newSource;
         _protocol = newProtocol;
@@ -46,7 +46,7 @@ abstract class MessageHandler<T> implements InvocationHandler, java.io.Serializa
     
     
     /** return the interface managed by this handler */
-    public Class<T> getProtocol() {
+    public Class<ProtocolType> getProtocol() {
         return _protocol;
     }
     
@@ -58,18 +58,18 @@ abstract class MessageHandler<T> implements InvocationHandler, java.io.Serializa
     
     
     /** return the proxy that will forward messages to registered targets */
-    public T getProxy() {
+    public ProtocolType getProxy() {
         return proxy;
     }
     
     
     /** create the proxy for this handler to message */
-    @SuppressWarnings( "unchecked" )
+    @SuppressWarnings( { "unchecked", "rawtypes" } )
     private void createProxy() {
 		ClassLoader loader = this.getClass().getClassLoader();
-        Class[] protocols = new Class[] {_protocol};
+        Class[] protocols = new Class[] {_protocol};		// need to suppress the rawtypes as Generics aren't supported for array creation
         
-        proxy = (T)Proxy.newProxyInstance( loader, protocols, this );
+        proxy = (ProtocolType)Proxy.newProxyInstance( loader, protocols, this );
     }
     
     
@@ -86,15 +86,15 @@ abstract class MessageHandler<T> implements InvocationHandler, java.io.Serializa
         
     
     /** get all targets associated with the source and protocol and just the protocol */
-    protected Set<T> targets() {
-        final Set<T> targetSet = new HashSet<T>();
+    protected Set<ProtocolType> targets() {
+        final Set<ProtocolType> targetSet = new HashSet<ProtocolType>();
         
         // add targets directly associated with the protocol and the target
-        final Set<T> directTargets = targetDirectory.targets( source, _protocol );
+        final Set<ProtocolType> directTargets = targetDirectory.targets( source, _protocol );
         targetSet.addAll( directTargets );
         
         // add targets associated with the protocol but no target
-        final Set<T> anonymousTargets = targetDirectory.targets( null, _protocol );
+        final Set<ProtocolType> anonymousTargets = targetDirectory.targets( null, _protocol );
         targetSet.addAll( anonymousTargets );
 
         return targetSet;

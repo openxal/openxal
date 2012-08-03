@@ -20,7 +20,7 @@ abstract public class AbstractBatchGetRequest<RecordType extends ChannelRecord> 
 	final protected MessageCenter MESSAGE_CENTER;
 	
 	/** proxy which forwards events to registered listeners */
-	final protected BatchGetRequestListener EVENT_PROXY;
+	final protected BatchGetRequestListener<RecordType> EVENT_PROXY;
 	
 	/** set of channels for which to request batch operations */
 	final protected Set<Channel> CHANNELS;
@@ -42,6 +42,7 @@ abstract public class AbstractBatchGetRequest<RecordType extends ChannelRecord> 
 	
 	
 	/** Primary Constructor */
+	@SuppressWarnings( "unchecked" )	// No way to pass BatchGetRequestListener.class with the specified RecordType
 	public AbstractBatchGetRequest( final Collection<Channel> channels ) {
 		MESSAGE_CENTER = new MessageCenter( "BatchGetRequest" );
 		EVENT_PROXY = MESSAGE_CENTER.registerSource( this, BatchGetRequestListener.class );
@@ -59,13 +60,13 @@ abstract public class AbstractBatchGetRequest<RecordType extends ChannelRecord> 
 	
 	
 	/** add the specified listener as a receiver of batch get request events from this instance */
-	public void addBatchGetRequestListener( final BatchGetRequestListener listener ) {
+	public void addBatchGetRequestListener( final BatchGetRequestListener<RecordType> listener ) {
 		MESSAGE_CENTER.registerTarget( listener, this, BatchGetRequestListener.class );
 	}
 	
 	
 	/** remove the specified listener from receiving batch get request events from this instance */
-	public void removeBatchGetRequestListener( final BatchGetRequestListener listener ) {
+	public void removeBatchGetRequestListener( final BatchGetRequestListener<RecordType> listener ) {
 		MESSAGE_CENTER.removeTarget( listener, this, BatchGetRequestListener.class );
 	}
 	
