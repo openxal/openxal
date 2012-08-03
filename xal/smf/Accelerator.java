@@ -164,15 +164,15 @@ public class Accelerator extends AcceleratorSeq implements /* IElement, */ DataL
 	 * @param comboID the ID of the combo sequence
 	 * @param comboAdaptor the data adaptor that defines the combo sequence
 	 */
-    @SuppressWarnings( "unchecked" )
+    @SuppressWarnings( { "unchecked", "rawtypes" } )
 	private AcceleratorSeqCombo instantiateComboSequence(String comboType, String comboID, DataAdaptor comboAdaptor) throws ClassNotFoundException {
 		if ( comboType == null || comboType == "" ) {
 			return AcceleratorSeqCombo.getInstance(comboID, this, comboAdaptor);
 		}
 		try {
-			Class comboClass = Class.forName(comboType);
-			Constructor constructor = comboClass.getConstructor(new Class[] {String.class, Accelerator.class, DataAdaptor.class});
-			return (AcceleratorSeqCombo)constructor.newInstance(new Object[] {comboID, this, comboAdaptor});
+			final Class<?> comboClass = Class.forName( comboType );
+			final Constructor<?> constructor = comboClass.getConstructor( new Class[] {String.class, Accelerator.class, DataAdaptor.class} );
+			return (AcceleratorSeqCombo)constructor.newInstance( new Object[] {comboID, this, comboAdaptor} );
 		}
 		catch(Exception exception) {
 			System.err.println(exception);

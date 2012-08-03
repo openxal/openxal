@@ -74,7 +74,7 @@ abstract public class SourceAgent<RecordType> implements StateNotice<RecordType>
     
     /** clear memory of all events */
     public void reset() {
-		for ( final BinAgent binAgent : binAgents ) {
+		for ( final BinAgent<RecordType> binAgent : binAgents ) {
             binAgent.reset();
         }
     }
@@ -82,7 +82,7 @@ abstract public class SourceAgent<RecordType> implements StateNotice<RecordType>
 
     /** set the timespan to each bin */
     public void setBinTimespan( final double timespan ) {
-		for ( final BinAgent binAgent : binAgents ) {
+		for ( final BinAgent<RecordType> binAgent : binAgents ) {
             binAgent.setTimespan( timespan );
         }
     }
@@ -112,7 +112,7 @@ abstract public class SourceAgent<RecordType> implements StateNotice<RecordType>
     /** deallocate the bins when they are no longer needed */
     private void removeBins() {
         synchronized( binAgents ) {
-			for ( final BinAgent binAgent : binAgents ) {
+			for ( final BinAgent<RecordType> binAgent : binAgents ) {
                 removeBin( binAgent );
             }
 
@@ -122,7 +122,7 @@ abstract public class SourceAgent<RecordType> implements StateNotice<RecordType>
     
     
     /** Remove a bin */
-    private void removeBin( final BinAgent binAgent ) {
+    private void removeBin( final BinAgent<RecordType> binAgent ) {
         MESSAGE_CENTER.removeTarget( binAgent, BinUpdate.class );
         MESSAGE_CENTER.removeTarget( binAgent, StateNotice.class );
         
@@ -180,35 +180,35 @@ abstract public class SourceAgent<RecordType> implements StateNotice<RecordType>
     
     
     // implement StateNotice interface
-    public void sourceAdded(Correlator sender, String name, int newCount) {
+    public void sourceAdded( final Correlator<?,RecordType,?> sender, final String name, final int newCount ) {
     }
     
     
     // implement StateNotice interface
-    public void sourceRemoved(Correlator sender, String name, int newCount) {
+    public void sourceRemoved( final Correlator<?,RecordType,?> sender, final String name, final int newCount ) {
     }
     
     
     // implement StateNotice interface
-    public void binTimespanChanged(Correlator sender, double newTimespan) {
+    public void binTimespanChanged( final Correlator<?,RecordType,?> sender, final double newTimespan ) {
         setBinTimespan(newTimespan);
     }
     
     
     // implement StateNotice interface
-    public void willStopMonitoring(Correlator sender) {
+    public void willStopMonitoring( final Correlator<?,RecordType,?> sender ) {
         stopMonitor();
     }
 
     
     // implement StateNotice interface
-    public void willStartMonitoring(Correlator sender) {
+    public void willStartMonitoring( final Correlator<?,RecordType,?> sender ) {
         reset();
         startMonitor();
     }
     
     
     /** Implement StateNotice interface to listen for change of state */
-    public void correlationFilterChanged( final Correlator sender, final CorrelationFilter<RecordType> newFilter ) {
+    public void correlationFilterChanged( final Correlator<?,RecordType,?> sender, final CorrelationFilter<RecordType> newFilter ) {
     }
 }

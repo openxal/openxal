@@ -25,13 +25,13 @@ public final class AcceleratorNodeFactory {
 	private Map<String,Constructor<? extends Object>> _constructors = new HashMap<String,Constructor<? extends Object>>();
 	
 	/** map of classes keyed by node type */
-	private Map<String,Class> _classTable;
+	private Map<String,Class<?>> _classTable;
 	
 	
 	/** Constructor */
 	public AcceleratorNodeFactory() {
 		_constructors = new HashMap<String,Constructor<? extends Object>>();
-		_classTable = new HashMap<String,Class>();
+		_classTable = new HashMap<String,Class<?>>();
 	}
 	
 	
@@ -52,6 +52,7 @@ public final class AcceleratorNodeFactory {
 	 *  @param  nodeType    fully qualified node type (e.g. deviceType.softType)
      *  @param  nodeClass   Class class for the AcceleratorNode
      */
+	@SuppressWarnings( "rawtypes" )
     private <T> void registerNodeClass( final String nodeType, final Class<T> nodeClass )   {
         _classTable.put( nodeType, nodeClass );
 		
@@ -88,7 +89,7 @@ public final class AcceleratorNodeFactory {
             return node;
         }
         
-        final Constructor constructor = _constructors.get( nodeType );
+        final Constructor<?> constructor = _constructors.get( nodeType );
         final Object[] args = new Object[] { nodeID };
         
         try {

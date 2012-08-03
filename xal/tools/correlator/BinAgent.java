@@ -130,18 +130,17 @@ public class BinAgent<RecordType> implements BinUpdate<RecordType>, StateNotice<
 	
     
     /** Implement StateNotice interface to listen for change of state */
-    synchronized public void sourceAdded( Correlator sender, String name, int newCount ) {
-    }
+    synchronized public void sourceAdded( final Correlator<?,RecordType,?> sender, final String name, final int newCount ) {}
     
     
     /** Implement StateNotice interface to listen for change of state */
-    synchronized public void sourceRemoved( Correlator sender, String name, int newCount ) {
+    synchronized public void sourceRemoved( final Correlator<?,RecordType,?> sender, final String name, final int newCount ) {
         removeRecord(name);
     }
 	
     
     /** Implement StateNotice interface to listen for change of state */
-    synchronized public void binTimespanChanged( Correlator sender, double newTimespan ) {
+    synchronized public void binTimespanChanged( final Correlator<?,RecordType,?> sender, final double newTimespan ) {
         setTimespan(newTimespan);
         double range = Math.abs(latestTimestamp - earliestTimestamp);
         
@@ -153,16 +152,13 @@ public class BinAgent<RecordType> implements BinUpdate<RecordType>, StateNotice<
     
     
     /** Implement StateNotice interface to listen for change of state */
-    public void willStopMonitoring(Correlator sender) {
-    }
+    public void willStopMonitoring( final Correlator<?,RecordType,?> sender ) {}
     
     
     /** Implement StateNotice interface to listen for change of state */
-    public void willStartMonitoring(Correlator sender) {
-    }
+    public void willStartMonitoring( final Correlator<?,RecordType,?> sender ) {}
     
     
     /** Implement StateNotice interface to listen for change of state */
-    public void correlationFilterChanged(Correlator sender, CorrelationFilter newFilter) {
-    }
+    public void correlationFilterChanged( Correlator<?,RecordType,?> sender, CorrelationFilter<RecordType> newFilter ) {}
 }

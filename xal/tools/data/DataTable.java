@@ -24,7 +24,7 @@ public class DataTable {
 	static final public String DATA_LABEL = "table";
 	
     static final public String NODE_KEY = "nodeId";
-    static final private Class DEFAULT_RECORD_CLASS = GenericRecord.class;
+    static final private Class<GenericRecord> DEFAULT_RECORD_CLASS = GenericRecord.class;
 	
 	/** message center for dispatching data table notices to registered listeners */
 	final private MessageCenter MESSAGE_CENTER;
@@ -36,7 +36,7 @@ public class DataTable {
     private String _name;
 	
 	/** class of this table's records */
-    private Class _recordClass;
+    private Class<? extends GenericRecord> _recordClass;
 	
 	/** table of hashed records */
     private KeyTable _keyTable;
@@ -56,7 +56,7 @@ public class DataTable {
 	/**
 	 * Primary constructor
 	 */
-    public DataTable( final String aName, final Collection<DataAttribute> attributes, final Class aRecordClass ) {
+    public DataTable( final String aName, final Collection<DataAttribute> attributes, final Class<? extends GenericRecord> aRecordClass ) {
         MESSAGE_CENTER = new MessageCenter( "Data Table" );
         NOTICE_PROXY = MESSAGE_CENTER.registerSource( this, DataTableListener.class );
 		
@@ -101,10 +101,11 @@ public class DataTable {
 
 	
 	/** convienience method for user to detect record class */
-	public Class getRecordClass() { return _recordClass; }
+	public Class<? extends GenericRecord> getRecordClass() { return _recordClass; }
     
     
     /** Handle reading and writing from a data adaptor */
+	@SuppressWarnings( "unchecked" )	// need to cast Class forName() call
     public DataListener dataHandler() throws MissingPrimaryKeyException {
         /* Anonymous class responsible for reading and writing an instance of DataTable with the data store */
         return new DataListener() {
@@ -126,7 +127,7 @@ public class DataTable {
                     String recordClassName = "";
                     try {
                         recordClassName = adaptor.stringValue( RECORD_CLASS_ATTRIBUTE );
-                        _recordClass = Class.forName( recordClassName );
+                        _recordClass = (Class<? extends GenericRecord>)Class.forName( recordClassName );
                     }
                     catch( ClassNotFoundException exception ) {
 						final String message = "Warning, the specified record class, \"" 
@@ -347,7 +348,7 @@ public class DataTable {
 	 * @param key The primary key column whose unique values we want to fetch.
 	 * @return the unique values of the specified column.
 	 */
-	final public Collection getUniquePrimaryKeyValues( final String key ) {
+	final public Collection<Object> getUniquePrimaryKeyValues( final String key ) {
 		return _keyTable.getUniquePrimaryKeyValues( key );			
 	}
     
@@ -463,7 +464,7 @@ public class DataTable {
 		 * @param key The column whose unique values we want to fetch.
 		 * @return the unique values of the specified column.
 		 */
-		final protected Collection getUniquePrimaryKeyValues( final String key ) {
+		final protected Collection<Object> getUniquePrimaryKeyValues( final String key ) {
 			return valueTable( key ).getUniqueKeyValues();
 		}
         
@@ -558,7 +559,7 @@ public class DataTable {
 		 * Get the unique values of the primary key.
 		 * @return The unique values of the primary key.
 		 */
-		final public Collection getUniqueKeyValues() {
+		final public Collection<Object> getUniqueKeyValues() {
 			return RECORD_SET_TABLE.keySet();
 		}
         

@@ -114,12 +114,9 @@ public class Correlation<RecordType> {
 	 * @return The string representation of this correlation.
 	 */
     public String toString() {
-        StringBuffer buffer = new StringBuffer();
-        Collection recordEntries = RECORD_TABLE.entrySet();
-        Iterator recordEntryIter = recordEntries.iterator();
-        
-        while ( recordEntryIter.hasNext() ) {
-            Map.Entry entry = (Map.Entry)recordEntryIter.next();
+        final StringBuffer buffer = new StringBuffer();
+        final Collection<Map.Entry<String,RecordType>> recordEntries = RECORD_TABLE.entrySet();
+        for ( final Map.Entry<String,RecordType> entry : recordEntries ) {
             buffer.append("name: " + entry.getKey() + ", ");
             buffer.append(entry.getValue());
             buffer.append("\n");
