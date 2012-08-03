@@ -31,7 +31,7 @@ class DbrValueAdaptor implements ValueAdaptor {
     
     
     /** get the Java class corresponding to the dbr type */
-    static Class elementType( final DBRType dbrType ) {
+    static Class<?> elementType( final DBRType dbrType ) {
 		if ( dbrType.isBYTE() ) {
 			return Byte.TYPE;
 		}
@@ -60,7 +60,7 @@ class DbrValueAdaptor implements ValueAdaptor {
     
 	
     /** get the Java class of a single element of the record */
-    static Class elementType( final DBR record ) {
+    static Class<?> elementType( final DBR record ) {
         DBRType dbrType = record.getType();
         return elementType( dbrType );
     }
