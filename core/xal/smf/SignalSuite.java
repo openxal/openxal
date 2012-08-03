@@ -72,16 +72,14 @@ public class SignalSuite {
      * @param adaptor The adaptor to which the receiver's data is written
      */
     public void write( final DataAdaptor adaptor ) {
-        final Collection channels = _signalMap.entrySet();
-        final Iterator channelIter = channels.iterator();
-        while ( channelIter.hasNext() ) {
+		final Collection<Map.Entry<String,SignalEntry>> signalMapEntries = _signalMap.entrySet();
+		for ( final Map.Entry<String,SignalEntry> entry : signalMapEntries ) {
             final DataAdaptor channelAdaptor = adaptor.createChild("channel");
-            final Map.Entry entry = (Map.Entry)channelIter.next();
-            final SignalEntry signalEntry = (SignalEntry)entry.getValue();
+            final SignalEntry signalEntry = entry.getValue();
             
-            channelAdaptor.setValue("handle", (String)entry.getKey());
-            channelAdaptor.setValue("signal", signalEntry.signal());
-            channelAdaptor.setValue("settable", signalEntry.settable());
+            channelAdaptor.setValue( "handle", entry.getKey() );
+            channelAdaptor.setValue( "signal", signalEntry.signal() );
+            channelAdaptor.setValue( "settable", signalEntry.settable() );
         }
     }
     
