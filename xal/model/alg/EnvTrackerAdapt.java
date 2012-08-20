@@ -272,7 +272,7 @@ public class EnvTrackerAdapt extends EnvelopeTrackerBase {
     public void initialize() {
         super.initialize();
 //        if (dlbStepSizeInit > 0.)
-            this.setStepSize(this.getInitStepSize());
+        this.setStepSize(this.getInitStepSize());
     }
 
 //    /**
@@ -698,7 +698,7 @@ public class EnvTrackerAdapt extends EnvelopeTrackerBase {
         this.setMaxIterations( maxIter );
         
         this.setErrorTolerance( errorTolerance );
-        this.setInitStepSize(initStep);
+        this.setInitStepSize( initStep );
         this.setStepSize( initStep );
         this.setMaxStepSize( maxStep );
         this.setMaxStepSizeDriftPmq( maxStepDriftPmq );
@@ -732,7 +732,7 @@ public class EnvTrackerAdapt extends EnvelopeTrackerBase {
             this.setErrorTolerance( daptAdapt.doubleValue(ATTRTAG_ERRTOL) );
         if (daptAdapt.hasAttribute(ATTRTAG_INITSTEP)) {
             this.setStepSize( daptAdapt.doubleValue(ATTRTAG_INITSTEP));
-            setInitStepSize(daptAdapt.doubleValue(ATTRTAG_INITSTEP));
+            this.setInitStepSize(daptAdapt.doubleValue(ATTRTAG_INITSTEP));
         }
         if (daptAdapt.hasAttribute(ATTRTAG_MAXSTEP))
             this.setMaxStepSize( daptAdapt.doubleValue(ATTRTAG_MAXSTEP) );
