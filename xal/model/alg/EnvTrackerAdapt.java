@@ -213,7 +213,7 @@ public class EnvTrackerAdapt extends EnvelopeTrackerBase {
      */
 
     /** 
-     *  Creates a new, unitialized instance of <code>EnvTrackerAdapt</code> 
+     *  Creates a new, uninitialized instance of <code>EnvTrackerAdapt</code> 
      */
     public EnvTrackerAdapt() { 
         super(s_strTypeId, s_intVersion, s_clsProbeType);
@@ -262,7 +262,7 @@ public class EnvTrackerAdapt extends EnvelopeTrackerBase {
     
     
     /**
-     * Initialize the algorithm object for propogation.
+     * Initialize the algorithm object for propagation.
      * 
      * Internal state of algorithm object is initialized:
      * - Step size is set to initial step size
@@ -271,7 +271,7 @@ public class EnvTrackerAdapt extends EnvelopeTrackerBase {
     @Override
     public void initialize() {
         super.initialize();
-        if (dlbStepSizeInit > 0.)
+//        if (dlbStepSizeInit > 0.)
             this.setStepSize(this.getInitStepSize());
     }
 
