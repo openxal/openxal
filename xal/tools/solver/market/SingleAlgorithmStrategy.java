@@ -40,11 +40,11 @@ public class SingleAlgorithmStrategy extends AlgorithmStrategy {
 
 
 	/**
-	 * Return the label for the algorithm strategy.
+	 * Return the label for the algorithm strategy. It is also used for deterministic sorting (see makeEfficiencyComparator method).
 	 * @return   The label.
 	 */
 	public String getLabel() {
-		return "SingleAlgorithmStrategy";
+		return "SingleAlgorithmStrategy (" + _algorithm.getLabel() + ")";
 	}
 
 
