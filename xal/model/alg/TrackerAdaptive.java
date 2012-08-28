@@ -158,6 +158,20 @@ abstract public class TrackerAdaptive extends Tracker {
     }
     
     /**
+     * Sets the integration step size to be used at the beginning of
+     * the algorithm or after <code>{@link #initialize()}</code> is 
+     * called.
+     *
+     * @param stepSize  step size to be used after algorithm initialization
+     *
+     * @author Christopher K. Allen
+     * @since  Aug 20, 2012
+     */
+    public void setInitStepSize(double stepSize){
+        initStepSize = stepSize;
+    }
+    
+    /**
 	 * Set the maximum allowable step size.  If this value is
      * set then the step sizing algorithm will never generate
      * steps larger than the provided value regardless of the 
@@ -179,7 +193,7 @@ abstract public class TrackerAdaptive extends Tracker {
      * 
      * If the value is zero then no maximum step count is enforced.
      * 
-     * @param   intMaxIter maximum alllowable single-element step count 
+     * @param   intMaxIter maximum allowable single-element step count 
      */
     abstract public void setMaxIterations( final int intMaxIter );
 	
@@ -336,18 +350,36 @@ abstract public class TrackerAdaptive extends Tracker {
     }
     
 	
-    public void setInitStepSize(double stepSize){
-    	initStepSize = stepSize;
-    }
-    //sako, 21 jul 07
+    /**
+     * Returns the integration step size used at the initialization of the
+     * algorithm.
+     *
+     * @return  step size used after call to <code>{@link #initialize()}</code>
+     *
+     * @author Christopher K. Allen
+     * @author Sako
+     * @since  Aug 20, 2012
+     * @since    21 jul 07
+     */
     public double getInitStepSize()  {
         return this.initStepSize;
     }
     
+    
+    /*
+     * Tracker Overrides
+     */
+    
+    /**
+     * Resets the state of the algorithm object.
+     * 
+     * @since Aug 20, 2012
+     * @see xal.model.alg.Tracker#initialize()
+     */
     @Override
     public void initialize() {
     	super.initialize();
-    	if (initStepSize > 0.)
+//    	if (initStepSize > 0.)
     		setStepSize(initStepSize);
     }
 }

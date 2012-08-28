@@ -45,16 +45,16 @@
 	 
 	 
 	 /**
-	 * Propose some algorithms that should be run.
-	 * @return An algorithm run stack representing the proposed runs.
-	 */
+	  * Propose some algorithms that should be run.
+	  * @return An algorithm run stack representing the proposed runs.
+	  */
 	 abstract protected AlgorithmRunStack proposeRuns();
 	 
 	 
 	 /**
-	 * Return the label for the algorithm strategy.
-	 * @return The label.
-	 */
+	  * Return the label for the algorithm strategy. It is also used for deterministic sorting (see makeEfficiencyComparator method).
+	  * @return The label.
+	  */
 	 abstract public String getLabel();
 	 
 	 
@@ -213,7 +213,7 @@
 	 
 	 
 	 /**
-	  * Generate a new efficiency comparator which reverse sorts the strategies according to efficiency.
+	  * Generate a new efficiency comparator which reverse sorts the strategies according to efficiency and falls back to strategy label for deterministic behavior should the efficiencies be degenerate (e.g. before any evaluations).
 	  * @return a new efficiency comparator
 	  */
 	 private static Comparator<AlgorithmStrategy> makeEfficiencyComparator() {
@@ -221,10 +221,10 @@
 			 public int compare( final AlgorithmStrategy strategyA, final AlgorithmStrategy strategyB ) {
 				 final double efficiencyA = strategyA.getEfficiency();
 				 final double efficiencyB = strategyB.getEfficiency();
-				 return efficiencyA < efficiencyB ? 1 : ( efficiencyA > efficiencyB ? -1 : 0 );
+				 return efficiencyA < efficiencyB ? 1 : ( efficiencyA > efficiencyB ? -1 : strategyA.getLabel().compareTo( strategyB.getLabel() ) );
 			 }
-			 
-			 
+
+
 			 /** determine if this comparator equals the specified object */
 			 public boolean equals( final Object anObject ) {
 				 return this == anObject;

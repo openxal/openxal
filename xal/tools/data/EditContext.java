@@ -171,12 +171,9 @@ public class EditContext {
     
     
     /** Add the tables to the edit context. */
-    public void addTablesToGroup( final Collection newTables, final String group ) {
-        Iterator tableIter = newTables.iterator();
-        
-        while ( tableIter.hasNext() ) {
-            final DataTable newTable = (DataTable)tableIter.next();
-            addTableToGroup(newTable, group);
+    public void addTablesToGroup( final Collection<DataTable> newTables, final String group ) {
+		for ( final DataTable newTable : newTables ) {
+            addTableToGroup( newTable, group );
         }
     }
     
@@ -195,17 +192,15 @@ public class EditContext {
 
         
     /** Remove the table from the edit context. */
-    public void remove(DataTable aTable) {
+    public void remove( final DataTable aTable ) {
         String name = aTable.name();
         TABLE_MAP_BY_NAME.remove( name );
         
         // Now remove the table from all groups (even though it only exists in one)
-        Collection groups = getTableGroups();
-        Iterator groupIter = groups.iterator();
-        while ( groupIter.hasNext() ) {
-            String group = (String)groupIter.next();
-            Collection tableSet = tableSetForGroup(group);
-            tableSet.remove(aTable);
+        final Collection<String> groups = getTableGroups();
+		for ( final String group : groups ) {
+            Collection<DataTable> tableSet = tableSetForGroup( group );
+            tableSet.remove( aTable );
         }
 
         NOTICE_PROXY.tableRemoved( this, aTable );
@@ -213,8 +208,8 @@ public class EditContext {
 
 
     /** Get all of the records from the table given by the table name. */
-    public Collection records(String tableName) {
-        DataTable table = getTable(tableName);
+    public Collection<GenericRecord> records( final String tableName ) {
+        final DataTable table = getTable( tableName );
         return table.records();
     }
     
@@ -233,16 +228,16 @@ public class EditContext {
     
     
     /** Get the records from the table where the value for the specified key matches. */
-    public Collection records(String tableName, String key, Object value) {
-        DataTable table = getTable(tableName);
-        return table.records(key, value);
+    public Collection<GenericRecord> records(String tableName, String key, Object value) {
+        DataTable table = getTable( tableName );
+        return table.records( key, value );
     }
     
     
     /** Get the records from the table associated with the node. */
-    public Collection recordsForNode(String tableName, String nodeId) {
-        DataTable table = getTable(tableName);
-        return table.recordsForNode(nodeId);
+    public Collection<GenericRecord> recordsForNode( final String tableName, final String nodeId ) {
+        final DataTable table = getTable( tableName );
+        return table.recordsForNode( nodeId );
     }
     
     

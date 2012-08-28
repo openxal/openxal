@@ -59,7 +59,7 @@ abstract class AbstractBroadcaster<RecordType> implements BinListener<RecordType
      * Register the listener as a receiver of Correlation notices from this 
      * correlator.
      */
-    public void addCorrelationNoticeListener( final CorrelationNotice listener ) {
+    public void addCorrelationNoticeListener( final CorrelationNotice<RecordType> listener ) {
         BROADCAST_CENTER.registerTarget( listener, this, CorrelationNotice.class );
     }
     
@@ -68,7 +68,7 @@ abstract class AbstractBroadcaster<RecordType> implements BinListener<RecordType
      * Unregister the listener as a receiver of Correlation notices from this 
      * correlator.
      */
-    public void removeCorrelationNoticeListener( final CorrelationNotice listener ) {
+    public void removeCorrelationNoticeListener( final CorrelationNotice<RecordType> listener ) {
         BROADCAST_CENTER.removeTarget( listener, this, CorrelationNotice.class );
     }
     
@@ -121,8 +121,7 @@ abstract class AbstractBroadcaster<RecordType> implements BinListener<RecordType
 	 * Implement BinListener interface.  This method does nothing.
 	 * @param sender The bin agent who sent this message.
 	 */
-    public void willReset(BinAgent sender) {
-    }
+    public void willReset( final BinAgent<RecordType> sender ) {}
 	
 	
 	/**
@@ -131,8 +130,8 @@ abstract class AbstractBroadcaster<RecordType> implements BinListener<RecordType
 	 * @param name The name identifying the new source.
 	 * @param newCount The new number of sources correlated.
 	 */
-    public void sourceAdded(Correlator sender, String name, int newCount) {
-		setFullCount(newCount);
+    public void sourceAdded( final Correlator<?,RecordType,?> sender, final String name, final int newCount ) {
+		setFullCount( newCount );
 	}
 	
 	
@@ -142,7 +141,7 @@ abstract class AbstractBroadcaster<RecordType> implements BinListener<RecordType
 	 * @param name The name identifying the new source.
 	 * @param newCount The new number of sources correlated.
 	 */
-    public void sourceRemoved(Correlator sender, String name, int newCount) {
+    public void sourceRemoved( final Correlator<?,RecordType,?> sender, final String name, final int newCount ) {
 		setFullCount(newCount);
 	}
 	
@@ -152,24 +151,21 @@ abstract class AbstractBroadcaster<RecordType> implements BinListener<RecordType
 	 * @param sender The correlator whose timespan bin has changed.
 	 * @param newTimespan The new timespan used by the correlator.
 	 */
-    public void binTimespanChanged(Correlator sender, double newTimespan) {
-	}
+    public void binTimespanChanged( final Correlator<?,RecordType,?> sender, final double newTimespan ) {}
 	
 	
 	/**
 	 * Handle the advance notice of the correlator stopping.
 	 * @param sender The correlator that will stop.
 	 */
-    public void willStopMonitoring(Correlator sender) {
-	}
+    public void willStopMonitoring( final Correlator<?,RecordType,?> sender ) {}
 	
 	
 	/**
 	 * Handle the advance notice of the correlator starting.
 	 * @param sender The correlator that will start.
 	 */
-    public void willStartMonitoring(Correlator sender) {
-	}
+    public void willStartMonitoring( final Correlator<?,RecordType,?> sender ) {}
 	
 	
 	/**
@@ -177,6 +173,5 @@ abstract class AbstractBroadcaster<RecordType> implements BinListener<RecordType
 	 * @param sender The correlator whose correlation filter has changed.
 	 * @param newFilter The new correlation filter to use.
 	 */
-    public void correlationFilterChanged( Correlator sender, CorrelationFilter<RecordType> newFilter ) {
-	}
+    public void correlationFilterChanged( final Correlator<?,RecordType,?> sender, final CorrelationFilter<RecordType> newFilter ) {}
 }

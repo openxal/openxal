@@ -54,19 +54,19 @@ public class DefaultFolderAccessory implements PropertyChangeListener {
 	
 	
 	/** Constructor */
-	public DefaultFolderAccessory( final Class preferenceNode, final String preferenceID, final String subfolderName ) {
+	public DefaultFolderAccessory( final Class<?> preferenceNode, final String preferenceID, final String subfolderName ) {
 		this ( Preferences.userNodeForPackage( preferenceNode ), preferenceID, subfolderName );
 	}
 	
 	
 	/** Constructor */
-	public DefaultFolderAccessory( final Class preferenceNode, final String preferenceID ) {
+	public DefaultFolderAccessory( final Class<?> preferenceNode, final String preferenceID ) {
 		this ( Preferences.userNodeForPackage( preferenceNode ), preferenceID );
 	}
 	
 	
 	/** Constructor */
-	public DefaultFolderAccessory( final Class preferenceNode ) {
+	public DefaultFolderAccessory( final Class<?> preferenceNode ) {
 		this ( Preferences.userNodeForPackage( preferenceNode ), DEFAULT_ID );
 	}
 	

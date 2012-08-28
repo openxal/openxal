@@ -20,27 +20,27 @@ class MessageHandlerTable implements java.io.Serializable {
     private static final long serialVersionUID = 1L;
     
     /** table keyed by protocol name and mapped to the source table */
-    final private Map<String,Map<Object,MessageHandler>> PROTOCOL_TABLE;
+    final private Map<String,Map<Object,MessageHandler<?>>> PROTOCOL_TABLE;
 
     
     /** Creates new MessageHandlerTable */
     public MessageHandlerTable() {
-        PROTOCOL_TABLE = new Hashtable<String,Map<Object,MessageHandler>>();
+        PROTOCOL_TABLE = new Hashtable<String,Map<Object,MessageHandler<?>>>();
     }
     
     
     /** add the handler to the table */
-    public void addHandler( final MessageHandler handler ) {
-        final Class protocol = handler.getProtocol();
+    public <ProtocolType> void addHandler( final MessageHandler<ProtocolType> handler ) {
+        final Class<ProtocolType> protocol = handler.getProtocol();
         final String protocolKey = protocolKey( protocol );
         final Object source = handler.getSource();
-        Map<Object,MessageHandler> sourceTable;     // table of handlers keyed by source
+        Map<Object,MessageHandler<?>> sourceTable;     // table of handlers keyed by source
         
         if ( PROTOCOL_TABLE.containsKey( protocolKey ) ) {
             sourceTable = PROTOCOL_TABLE.get( protocolKey );
         }
         else {
-            sourceTable = new HashMap<Object,MessageHandler>();
+            sourceTable = new HashMap<Object,MessageHandler<?>>();
             PROTOCOL_TABLE.put( protocolKey, sourceTable );
         }
         
@@ -53,13 +53,13 @@ class MessageHandlerTable implements java.io.Serializable {
     
     
     /** remove the handler from the table */ 
-    public void removeHandler( final MessageHandler handler ) {
-        final Class protocol = handler.getProtocol();
+    public <ProtocolType> void removeHandler( final MessageHandler<ProtocolType> handler ) {
+        final Class<ProtocolType> protocol = handler.getProtocol();
         final String protocolKey = protocolKey( protocol );
         final Object source = handler.getSource();
         
         if ( PROTOCOL_TABLE.containsKey( protocolKey ) ) {
-            final Map<Object,MessageHandler> sourceTable = PROTOCOL_TABLE.get( protocolKey );
+            final Map<Object,MessageHandler<?>> sourceTable = PROTOCOL_TABLE.get( protocolKey );
             sourceTable.remove( source );
         }    
     }
@@ -80,24 +80,18 @@ class MessageHandlerTable implements java.io.Serializable {
     
     
     /** get all handler associated with the protocol */
-    public Set<Map.Entry<Object,MessageHandler>> getHandlers( final Class protocol ) {
+    public <ProtocolType> Set<Map.Entry<Object,MessageHandler<?>>> getHandlers( final Class<ProtocolType> protocol ) {
         final String protocolKey = protocolKey( protocol );
         
         if ( PROTOCOL_TABLE.containsKey( protocolKey ) ) {
-            final Map<Object,MessageHandler> sourceTable = PROTOCOL_TABLE.get( protocolKey );
+            final Map<Object,MessageHandler<?>> sourceTable = PROTOCOL_TABLE.get( protocolKey );
             return sourceTable.entrySet();
         }
         else {
-            return new HashSet<Map.Entry<Object,MessageHandler>>();
+            return new HashSet<Map.Entry<Object,MessageHandler<?>>>();
         }
-     }
-    
-    
-    // not implemented yet
-    public Set getHandlers( final Object source ) {
-        return null;
-    }
-    
+	}
+
     
     /** get the handler (if any) associated with the source and protocol */
     @SuppressWarnings( "unchecked" )
@@ -105,7 +99,7 @@ class MessageHandlerTable implements java.io.Serializable {
         Object protocolKey = protocolKey( protocol );
         
         if ( PROTOCOL_TABLE.containsKey( protocolKey ) ) {
-            final Map<Object,MessageHandler> sourceTable = PROTOCOL_TABLE.get( protocolKey );
+            final Map<Object,MessageHandler<?>> sourceTable = PROTOCOL_TABLE.get( protocolKey );
             return (MessageHandler<T>)sourceTable.get( source );
         }
         else {
@@ -114,7 +108,7 @@ class MessageHandlerTable implements java.io.Serializable {
     }
     
     
-    private String protocolKey( final Class protocol ) {
+    private <ProtocolType> String protocolKey( final Class<ProtocolType> protocol ) {
         return protocol.getName();
     }
 }

@@ -220,14 +220,10 @@ public class GenericRecord implements KeyedRecord, DataListener {
      * @param adaptor The adaptor from which to update the data
      */
     public void update( final DataAdaptor adaptor ) throws ParseException {
-        Collection attributes = DATA_TABLE.attributes();
-        Iterator attributeIter = attributes.iterator();
-        
-        // read the value of each attribute
-        while ( attributeIter.hasNext() ) {
-            final DataAttribute attribute = (DataAttribute)attributeIter.next();
+        final Collection<DataAttribute> attributes = DATA_TABLE.attributes();
+		for ( final DataAttribute attribute : attributes ) {
             final String key = attribute.name();
-            final Class type = attribute.type();
+            final Class<?> type = attribute.type();
 			
             try {
                 final String stringValue = adaptor.hasAttribute( key ) ? adaptor.stringValue( key ) : attribute.getDefaultStringValue();
@@ -249,14 +245,14 @@ public class GenericRecord implements KeyedRecord, DataListener {
 	 * @param stringValue The Object's string representation.
 	 * @return The Object from the specified string.
 	 */
-    @SuppressWarnings( "unchecked" )
-    private Object valueOfTypeFromString( final Class type, final String stringValue ) throws ParseException {
+    @SuppressWarnings( { "unchecked", "rawtypes" } )
+    private Object valueOfTypeFromString( final Class<?> type, final String stringValue ) throws ParseException {
         if ( type.equals(String.class) )  return stringValue;
         
         Object value = null;
         
 		try {
-			final Method valueOfMethod = type.getMethod( "valueOf", new Class[] {java.lang.String.class} );
+			final Method valueOfMethod = type.getMethod( "valueOf", new Class[] {java.lang.String.class} );		// suppress raw type warning since Class array can't be generic
 			// convert the value to the Object of the appropriate class
 			value = valueOfMethod.invoke( null, new Object[] {stringValue} );
 		}
@@ -301,13 +297,10 @@ public class GenericRecord implements KeyedRecord, DataListener {
      * @param adaptor The adaptor to which the receiver's data is written
      */
     public void write( final DataAdaptor adaptor ) {
-        Set keys = keys();
-        Iterator keyIter = keys.iterator();
-        
-        while ( keyIter.hasNext() ) {
-            String key = (String)keyIter.next();
-            Object value = valueForKey(key);
-            adaptor.setValue(key, value);
+        final Set<String> keys = keys();
+		for ( final String key : keys ) {
+            final Object value = valueForKey(key);
+            adaptor.setValue( key, value );
         }
     }
     // end DataListener methods

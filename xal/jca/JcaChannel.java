@@ -224,7 +224,7 @@ class JcaChannel extends Channel {
     /** Initialize channel access and increment instance count */
     protected void initChannelAccess() {
         if ( !hasInitializedCa ) {
-            this.caAddRef();    // Increment Channel instance counter
+            caAddRef();    // Increment Channel instance counter
             hasInitializedCa = true;
         }
     }
@@ -404,7 +404,7 @@ class JcaChannel extends Channel {
     
     
     /** get the Java class associated with the native type of this channel */
-    public Class elementType() throws ConnectionException {
+    public Class<?> elementType() throws ConnectionException {
         checkIfEverConnected( "elementType()" );
         
         return DbrValueAdaptor.elementType( getJcaType() );

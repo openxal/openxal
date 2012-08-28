@@ -152,10 +152,10 @@ public class IdealMagWedgeDipole2 extends ElementSeq implements IElectromagnet {
      * </p>
      * 
      * NOTE:
-     * <p>We have a bit of a logitics problem here because this is a 
+     * <p>We have a bit of a logistics problem here because this is a 
      * composite element.  So when setting the position of this element
      * we want to set the positions of all the internal elements, in 
-     * particlar, the pole faces.  Thus, we need the physical length
+     * particular, the pole faces.  Thus, we need the physical length
      * of the magnet to do this.  Either we require the length to be
      * provided when invoked this method, or this method must be invoked
      * after setting the physical length.  I opted for the former.

@@ -90,8 +90,8 @@ public class SortOrdering implements Comparator<KeyedRecord> {
             final Object value1 = record1.valueForKey( key );
             final Object value2 = record2.valueForKey( key );
             if ( value1 instanceof Comparable && value2 instanceof Comparable ) {
-                final Comparable comp1 = (Comparable)value1;
-                final Comparable comp2 = (Comparable)value2;
+                final Comparable<Object> comp1 = (Comparable<Object>)value1;
+                final Comparable<Object> comp2 = (Comparable<Object>)value2;
                 comparison = comp1.compareTo( comp2 );
                 if ( comparison != 0 )  return comparison; 
             }
