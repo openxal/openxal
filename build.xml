@@ -184,7 +184,7 @@
 		<echo message="" />
 		<echo message="  where target(s) can be:" />
 		<echo message="    help ....................... Print this message." />
-		<echo message="    all ........................ Compile the core XAL classes and applications and assemble the jar products." />
+		<echo message="    all ........................ Build the XAL core, services and applications. Copy scripts to the build directory." />
 		<echo message="    apps ....................... Compile the applications and assemble the jar products." />
 		<echo message="    clean ...................... Clean compiled classes and build products" />
 		<echo message="    core ....................... Compile the core XAL classes and assemble the jar products." />
