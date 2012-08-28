@@ -166,7 +166,7 @@ abstract public class XalInternalWindow extends JInternalFrame implements XalDoc
 			setSelected( true );
 		}
 		catch( PropertyVetoException exception ) {
-			Application.getApp().displayError( "Document Exception", "Exception attempting to display document.", exception );
+			Application.displayError( "Document Exception", "Exception attempting to display document.", exception );
 		}
     }
     
@@ -177,7 +177,7 @@ abstract public class XalInternalWindow extends JInternalFrame implements XalDoc
 			setIcon( true );     // iconify the window			
 		}
 		catch( PropertyVetoException exception ) {
-			Application.getApp().displayError( "Document Exception", "Exception attempting to iconify document.", exception );
+			Application.displayError( "Document Exception", "Exception attempting to iconify document.", exception );
 		}
     }
     

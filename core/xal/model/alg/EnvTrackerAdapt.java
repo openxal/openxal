@@ -213,7 +213,7 @@ public class EnvTrackerAdapt extends EnvelopeTrackerBase {
      */
 
     /** 
-     *  Creates a new, unitialized instance of <code>EnvTrackerAdapt</code> 
+     *  Creates a new, uninitialized instance of <code>EnvTrackerAdapt</code> 
      */
     public EnvTrackerAdapt() { 
         super(s_strTypeId, s_intVersion, s_clsProbeType);
@@ -262,7 +262,7 @@ public class EnvTrackerAdapt extends EnvelopeTrackerBase {
     
     
     /**
-     * Initialize the algorithm object for propogation.
+     * Initialize the algorithm object for propagation.
      * 
      * Internal state of algorithm object is initialized:
      * - Step size is set to initial step size
@@ -271,8 +271,8 @@ public class EnvTrackerAdapt extends EnvelopeTrackerBase {
     @Override
     public void initialize() {
         super.initialize();
-        if (dlbStepSizeInit > 0.)
-            this.setStepSize(this.getInitStepSize());
+//        if (dlbStepSizeInit > 0.)
+        this.setStepSize(this.getInitStepSize());
     }
 
 //    /**
@@ -698,7 +698,7 @@ public class EnvTrackerAdapt extends EnvelopeTrackerBase {
         this.setMaxIterations( maxIter );
         
         this.setErrorTolerance( errorTolerance );
-        this.setInitStepSize(initStep);
+        this.setInitStepSize( initStep );
         this.setStepSize( initStep );
         this.setMaxStepSize( maxStep );
         this.setMaxStepSizeDriftPmq( maxStepDriftPmq );
@@ -732,7 +732,7 @@ public class EnvTrackerAdapt extends EnvelopeTrackerBase {
             this.setErrorTolerance( daptAdapt.doubleValue(ATTRTAG_ERRTOL) );
         if (daptAdapt.hasAttribute(ATTRTAG_INITSTEP)) {
             this.setStepSize( daptAdapt.doubleValue(ATTRTAG_INITSTEP));
-            setInitStepSize(daptAdapt.doubleValue(ATTRTAG_INITSTEP));
+            this.setInitStepSize(daptAdapt.doubleValue(ATTRTAG_INITSTEP));
         }
         if (daptAdapt.hasAttribute(ATTRTAG_MAXSTEP))
             this.setMaxStepSize( daptAdapt.doubleValue(ATTRTAG_MAXSTEP) );

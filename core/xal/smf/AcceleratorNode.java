@@ -148,15 +148,13 @@ public abstract class AcceleratorNode implements /* IElement, */ ElementType, Da
         // read the attribute buckets
         final List<DataAdaptor> parserAdaptors = adaptor.childAdaptors( "attributes" );
         for ( final DataAdaptor parserAdaptor : parserAdaptors ) {
-            final Collection buckets = getBuckets();
+            final Collection<AttributeBucket> buckets = getBuckets();
             final BucketParser parser = new BucketParser( buckets );
             parser.update( parserAdaptor );
             
             // get the attribute buckets from the parser
-            final Collection bucketList = parser.getBuckets();
-            final Iterator bucketIterator = bucketList.iterator();
-            while ( bucketIterator.hasNext() ) {
-                AttributeBucket bucket = (AttributeBucket)bucketIterator.next();
+            final Collection<AttributeBucket> bucketList = parser.getBuckets();
+			for ( final AttributeBucket bucket : bucketList ) {
                 // add the bucket only if it already hasn't been added
                 if ( !hasBucket(bucket) ) {
                     addBucket(bucket);
@@ -177,7 +175,7 @@ public abstract class AcceleratorNode implements /* IElement, */ ElementType, Da
         adaptor.setValue( "pos", m_dblPos );
         adaptor.setValue( "len", m_dblLen );
         
-        Collection buckets = getBuckets();
+        Collection<AttributeBucket> buckets = getBuckets();
         adaptor.writeNode( new BucketParser(buckets) );
         
         adaptor.writeNode(channelSuite);

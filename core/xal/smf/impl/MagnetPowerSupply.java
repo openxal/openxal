@@ -197,6 +197,7 @@ public abstract class MagnetPowerSupply implements DataListener {
      * Get the accelerator nodes which are tied to this supply.
      * @return The collection of nodes that use this supply.
      */
+	@SuppressWarnings( "rawtypes" )
     public Collection getNodes() {
         return getNodes( accelerator.getAllNodesOfType(Electromagnet.s_strType) );
     }

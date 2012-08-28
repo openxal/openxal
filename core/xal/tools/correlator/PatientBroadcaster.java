@@ -92,7 +92,7 @@ public class PatientBroadcaster<RecordType> extends AbstractBroadcaster<RecordTy
 	 * @param sender The correlator whose timespan bin has changed.
 	 * @param newTimespan The new timespan used by the correlator.
 	 */
-    public void binTimespanChanged( final Correlator sender, final double newTimespan ) {
+    public void binTimespanChanged( final Correlator<?,RecordType,?> sender, final double newTimespan ) {
 		super.binTimespanChanged( sender, newTimespan );
 		binTimespan = newTimespan;
 	}

@@ -127,7 +127,7 @@ public class MagnetBucket extends AttributeBucket {
     /** set the quadrupole component for bend dipole
      * @param dblVal quadrupole component for bend dipole
      */
-    public void setDipoleQuadComponent(double dblVal)    { m_attDipoleExitRotAngle.set(dblVal); };    
+    public void setDipoleQuadComponent(double dblVal)    { m_attDipoleQuadComponent.set(dblVal); };    
     
     /*
      *  Local Attributes

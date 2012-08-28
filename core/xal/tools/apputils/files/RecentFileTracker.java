@@ -70,7 +70,7 @@ public class RecentFileTracker {
 	 * @param preferenceNode the node used for saving the preference
 	 * @param preferenceID the ID of the preference to save
 	 */
-	public RecentFileTracker(final int bufferSize, final Class preferenceNode, final String preferenceID) {
+	public RecentFileTracker(final int bufferSize, final Class<?> preferenceNode, final String preferenceID) {
 		this(bufferSize, Preferences.userNodeForPackage(preferenceNode), preferenceID);
 	}
 	
@@ -80,7 +80,7 @@ public class RecentFileTracker {
 	 * @param preferenceNode the node used for saving the preference
 	 * @param preferenceID the ID of the preference to save
 	 */
-	public RecentFileTracker(final Class preferenceNode, final String preferenceID) {
+	public RecentFileTracker(final Class<?> preferenceNode, final String preferenceID) {
 		this(DEFAULT_BUFFER_SIZE, preferenceNode, preferenceID);
 	}
 	

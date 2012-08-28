@@ -2,3 +2,5 @@
 build/**/*
 /bin
 /build
+/.classpath
+/.project

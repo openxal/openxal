@@ -21,7 +21,7 @@ abstract public class AbstractBatchGetRequest<RecordType extends ChannelRecord> 
 	
 	/** proxy which forwards events to registered listeners */
 	final protected BatchGetRequestListener<RecordType> EVENT_PROXY;
-
+	
 	/** set of channels for which to request batch operations */
 	final protected Set<Channel> CHANNELS;
 	
@@ -37,12 +37,17 @@ abstract public class AbstractBatchGetRequest<RecordType extends ChannelRecord> 
 	/** executor pool for processing the get requests */
 	final protected ExecutorService PROCESSING_POOL;
 	
+	/** object used for waiting and notification */
+	final private Object COMPLETION_LOCK;
+	
 	
 	/** Primary Constructor */
-	@SuppressWarnings( "unchecked" )		// need to cast the batch request listener for the appropriate record type
+	@SuppressWarnings( "unchecked" )	// No way to pass BatchGetRequestListener.class with the specified RecordType
 	public AbstractBatchGetRequest( final Collection<Channel> channels ) {
 		MESSAGE_CENTER = new MessageCenter( "BatchGetRequest" );
-		EVENT_PROXY = (BatchGetRequestListener<RecordType>)MESSAGE_CENTER.registerSource( this, BatchGetRequestListener.class );
+		EVENT_PROXY = MESSAGE_CENTER.registerSource( this, BatchGetRequestListener.class );
+		
+		COMPLETION_LOCK = new Object();
 		
 		RECORDS = new HashMap<Channel,RecordType>();
 		EXCEPTIONS = new HashMap<Channel,Exception>();
@@ -55,13 +60,13 @@ abstract public class AbstractBatchGetRequest<RecordType extends ChannelRecord> 
 	
 	
 	/** add the specified listener as a receiver of batch get request events from this instance */
-	public void addBatchGetRequestListener( final BatchGetRequestListener listener ) {
+	public void addBatchGetRequestListener( final BatchGetRequestListener<RecordType> listener ) {
 		MESSAGE_CENTER.registerTarget( listener, this, BatchGetRequestListener.class );
 	}
 	
 	
 	/** remove the specified listener from receiving batch get request events from this instance */
-	public void removeBatchGetRequestListener( final BatchGetRequestListener listener ) {
+	public void removeBatchGetRequestListener( final BatchGetRequestListener<RecordType> listener ) {
 		MESSAGE_CENTER.removeTarget( listener, this, BatchGetRequestListener.class );
 	}
 	
@@ -90,17 +95,11 @@ abstract public class AbstractBatchGetRequest<RecordType extends ChannelRecord> 
 		synchronized ( RECORDS ) {
 			RECORDS.clear();
 		}
-		final Collection<Callable<Channel>> tasks = new HashSet<Callable<Channel>>( channels.size() );
-		for ( final Channel channel : channels ) {
-			tasks.add( new Callable<Channel>() {
-				public Channel call() {
-					processRequest( channel );
-					return channel;
-				}
-			});
-		}
+		
 		try {
-			PROCESSING_POOL.invokeAll( tasks );
+			for ( final Channel channel : channels ) {
+				processRequest( channel );
+			}
 			Channel.flushIO();
 		}
 		catch( Exception exception ) {
@@ -110,7 +109,9 @@ abstract public class AbstractBatchGetRequest<RecordType extends ChannelRecord> 
 	
 	
 	/** 
-	 * Submit a batch of get requests and wait for the requests to be completed or timeout 
+	 * Submit a batch of get requests and wait for the requests to be completed or timeout.
+	 * Note that if this is called, within a channel access callback, requests will not be processed until the 
+	 * callback completes, so it is useless to wait. Instead, call waitForCompletion separately outside of the callback.
 	 * @param timeout the maximum time in seconds to wait for completion
 	 */
 	public boolean submitAndWait( final double timeout ) {
@@ -120,17 +121,24 @@ abstract public class AbstractBatchGetRequest<RecordType extends ChannelRecord> 
 	
 	
 	/** 
-	 * Wait up to the specified timeout for completion
+	 * Wait up to the specified timeout for completion. This method should be called outside of a Channel Access callback
+	 * otherwise events will not be processed.
 	 * @param timeout the maximum time in seconds to wait for completion
 	 */
 	public boolean waitForCompletion( final double timeout ) {
-		final long maxTime = new Date().getTime() + (long) ( 1000 * timeout );		// time after which we should stop waiting
+		final long milliTimeout = (long) ( 1000 * timeout );		// timeout in milliseconds
+		final long maxTime = new Date().getTime() + milliTimeout;	// maximum time until expiration
 		while( !isComplete() && new Date().getTime() < maxTime ) {
-			try {
-				Thread.yield();
-			}
-			catch( Exception exception ) {
-				throw new RuntimeException( "Exception waiting for the batch get requests to be completed.", exception );
+			final long remainingTime = Math.max( 0, maxTime - new Date().getTime() );
+			if ( remainingTime > 0 ) {		// remaining time must be strictly greater than zero to prevent waiting forever should it be identically zero
+				try {
+					synchronized( COMPLETION_LOCK ) {
+						COMPLETION_LOCK.wait( remainingTime );
+					}
+				}
+				catch( Exception exception ) {
+					throw new RuntimeException( "Exception waiting for the batch get requests to be completed.", exception );
+				}
 			}
 		}
 		
@@ -240,6 +248,15 @@ abstract public class AbstractBatchGetRequest<RecordType extends ChannelRecord> 
 	/** check for the current status and post notifications if necessary */
 	protected void processCurrentStatus() {
 		if ( isComplete() ) {
+			synchronized( COMPLETION_LOCK ) {
+				try {
+					COMPLETION_LOCK.notifyAll();
+				}
+				catch( Exception exception ) {
+					System.out.println( "Excepting notifying " );
+					exception.printStackTrace();
+				}
+			}
 			EVENT_PROXY.batchRequestCompleted( this, getRecordCount(), getExceptionCount() );
 		}
 	}

@@ -43,7 +43,7 @@ public class ChannelRecord {
      * Get the native type of the data as a Java class.
      * @return The native type of the data.
      */
-    public Class getType() {
+    public Class<?> getType() {
         return _store.getType();
     }
     
