@@ -408,7 +408,7 @@ class ConcurrentDispatchQueue extends DispatchQueue {
 					processNextPendingOperation();
 				}
 				else {
-					break;	// Stop processing the pending queue because nothing can process, now. An event will force the next processing cycle.
+					return;		// Stop processing the pending queue because nothing can process, now. An event will force the next processing cycle.
 				}
 			}
 		}
