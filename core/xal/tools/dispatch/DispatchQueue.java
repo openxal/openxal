@@ -400,18 +400,23 @@ class ConcurrentDispatchQueue extends DispatchQueue {
 
 	/** process the pending operations */
 	private void processPendingOperations() {
-		while ( _isProcessingPendingOperationQueue ) {		// process (in order) all pending operations which can be processed
-			final DispatchOperation nextOperation = PENDING_OPERATION_QUEUE.peek();
+		while ( _isProcessingPendingOperationQueue && PENDING_OPERATION_QUEUE.size() > 0 ) {		// process (in order) all pending operations which can be processed
+			final DispatchOperation<?> nextOperation = PENDING_OPERATION_QUEUE.peek();
 
-			if ( nextOperation != null && canRunNextOperationNow( nextOperation ) ) {
-				processNextPendingOperation();
+			if ( nextOperation != null ) {
+				if ( canRunNextOperationNow( nextOperation ) ) {
+					processNextPendingOperation();
+				}
+				else {
+					break;	// Stop processing the pending queue because nothing can process, now. An event will force the next processing cycle.
+				}
 			}
 		}
 	}
 
 
 	/** Determine whether the next operation can run now */
-	private boolean canRunNextOperationNow( final DispatchOperation nextOperation ) {
+	private boolean canRunNextOperationNow( final DispatchOperation<?> nextOperation ) {
 		if ( _isRunningBarrierOperation ) {			// make sure there is no barrier operation currently running before executing any other operation
 			return false;
 		}
@@ -435,7 +440,7 @@ class ConcurrentDispatchQueue extends DispatchQueue {
 	/** process the next pending operation */
 	@SuppressWarnings( "unchecked" )	// executor expects a known type but the operations are arbitrary
 	private void processNextPendingOperation() {
-		final DispatchOperation operation = PENDING_OPERATION_QUEUE.remove();
+		final DispatchOperation<?> operation = PENDING_OPERATION_QUEUE.remove();
 		if ( operation.isBarrier() ) {
 			_isRunningBarrierOperation = true;
 		}
