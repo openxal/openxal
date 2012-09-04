@@ -1,244 +1,297 @@
 <?xml version = '1.0' encoding = 'UTF-8'?>
-<BricksDocument date="Thu Jul 16 09:23:44 EDT 2009" version="1.0.0">
+<BricksDocument date="Wed Aug 29 11:54:48 EDT 2012" version="1.0.0">
     <RootBrick>
-        <ViewNode customBeanClass="xal.application.DefaultXalWindow" height="499" tag="MainWindow" width="861">
-            <ViewProxy type="javax.swing.JFrame"/>
-            <BeanProperty name="title" value="Launcher"/>
+        <ViewNode customBeanClass="xal.application.DefaultXalWindow" height="685" tag="MainWindow" width="1098">
+            <ViewProxy type="javax.swing.JFrame" />
+            <BeanProperty name="title" value="Launcher" />
             <ViewNode tag="MainLayout">
-                <ViewProxy type="javax.swing.Box_Vertical"/>
+                <ViewProxy type="javax.swing.Box_Vertical" />
                 <ViewNode tag="MainTabPane">
-                    <ViewProxy type="javax.swing.JTabbedPane"/>
+                    <ViewProxy type="javax.swing.JTabbedPane" />
                     <ViewNode tag="RunView">
-                        <ViewProxy type="javax.swing.Box_Vertical"/>
-                        <BeanProperty name="toolTipText" value="Run executables"/>
-                        <BeanProperty name="name" value="Run"/>
+                        <ViewProxy type="javax.swing.Box_Vertical" />
+                        <BeanProperty name="name" value="Run" />
+                        <BeanProperty name="toolTipText" value="Run executables" />
                         <ViewNode tag="RunHeader">
-                            <ViewProxy type="javax.swing.Box_Horizontal"/>
+                            <ViewProxy type="javax.swing.Box_Horizontal" />
                             <ViewNode tag="AppsRefreshButton">
-                                <ViewProxy type="javax.swing.JButton"/>
-                                <BeanProperty name="text" value=""/>
-                                <BeanProperty group="general" iconName="Refresh24.gif" name="icon"/>
-                                <BeanProperty name="toolTipText" value="Refresh application list"/>
+                                <ViewProxy type="javax.swing.JButton" />
+                                <BeanProperty group="general" iconName="Refresh24.gif" name="icon" />
+                                <BeanProperty name="text" value="" />
+                                <BeanProperty name="toolTipText" value="Refresh application list" />
                             </ViewNode>
                             <ViewNode tag="Label">
-                                <ViewProxy type="javax.swing.JLabel"/>
-                                <BeanProperty name="text" value="Filter:"/>
+                                <ViewProxy type="javax.swing.JLabel" />
+                                <BeanProperty name="text" value="Filter:" />
                             </ViewNode>
                             <ViewNode tag="AppFilterField">
-                                <ViewProxy type="javax.swing.JTextField"/>
-                                <BeanProperty name="text" value=""/>
-                                <BeanProperty name="toolTipText" value="Filter the applications"/>
-                                <BeanProperty name="columns" value="40"/>
-                                <BeanProperty height="30" name="maximumSize" width="5000"/>
+                                <ViewProxy type="javax.swing.JTextField" />
+                                <BeanProperty name="text" value="" />
+                                <BeanProperty height="30" name="maximumSize" width="5000" />
+                                <BeanProperty name="columns" value="40" />
+                                <BeanProperty name="toolTipText" value="Filter the applications" />
                             </ViewNode>
                             <ViewNode tag="AppFilterClearButton">
-                                <ViewProxy type="javax.swing.JButton"/>
-                                <BeanProperty name="text" value=""/>
-                                <BeanProperty group="custom" iconName="Clear24.gif" name="icon"/>
-                                <BeanProperty name="toolTipText" value="Clear the filter"/>
+                                <ViewProxy type="javax.swing.JButton" />
+                                <BeanProperty group="custom" iconName="Clear24.gif" name="icon" />
+                                <BeanProperty name="text" value="" />
+                                <BeanProperty name="toolTipText" value="Clear the filter" />
                             </ViewNode>
                             <ViewNode tag="Horizontal Glue">
-                                <ViewProxy type="javax.swing.Box_HorizontalGlue"/>
+                                <ViewProxy type="javax.swing.Box_HorizontalGlue" />
                             </ViewNode>
                             <ViewNode tag="AppLaunchButton">
-                                <ViewProxy type="javax.swing.JButton"/>
-                                <BeanProperty name="text" value=""/>
-                                <BeanProperty group="media" iconName="Play24.gif" name="icon"/>
-                                <BeanProperty name="toolTipText" value="Launch selected application"/>
+                                <ViewProxy type="javax.swing.JButton" />
+                                <BeanProperty group="media" iconName="Play24.gif" name="icon" />
+                                <BeanProperty name="text" value="" />
+                                <BeanProperty name="toolTipText" value="Launch selected application" />
                             </ViewNode>
                         </ViewNode>
                         <ViewNode tag="RunScrollPane">
-                            <ViewProxy type="javax.swing.JScrollPane"/>
+                            <ViewProxy type="javax.swing.JScrollPane" />
                             <ViewNode tag="AppTable">
-                                <ViewProxy type="javax.swing.JTable"/>
-                                <BeanProperty name="autoResizeMode" value="3"/>
+                                <ViewProxy type="javax.swing.JTable" />
+                                <BeanProperty name="autoResizeMode" value="3" />
                             </ViewNode>
                         </ViewNode>
                     </ViewNode>
+                    <ViewNode tag="MonitorView">
+                        <ViewProxy type="javax.swing.Box_Vertical" />
+                        <BeanProperty name="name" value="Monitor" />
+                        <BeanProperty name="toolTipText" value="" />
+                        <ViewNode tag="LiveAppsScrollPane">
+                            <ViewProxy type="javax.swing.JScrollPane" />
+                            <ViewNode tag="LiveAppsTable">
+                                <ViewProxy type="javax.swing.JTable" />
+                            </ViewNode>
+                        </ViewNode>
+                        <ViewNode tag="Monitor Controls Box">
+                            <ViewProxy type="javax.swing.Box_Horizontal" />
+                            <BeanProperty height="50" name="maximumSize" width="32964" />
+                            <BorderNode tag="Etched Border">
+                                <BorderProxy type="javax.swing.border.EtchedBorder" />
+                            </BorderNode>
+                            <ViewNode tag="LiveAppsFilterLabel">
+                                <ViewProxy type="javax.swing.JLabel" />
+                                <BeanProperty name="text" value="Filter: " />
+                            </ViewNode>
+                            <ViewNode tag="LiveAppsFilterField">
+                                <ViewProxy type="javax.swing.JTextField" />
+                                <BeanProperty name="text" value="" />
+                                <BeanProperty height="28" name="minimumSize" width="150" />
+                                <BeanProperty height="28" name="preferredSize" width="250" />
+                                <BeanProperty height="2147483647" name="maximumSize" width="500" />
+                                <BeanProperty name="toolTipText" value="Filter the apps" />
+                            </ViewNode>
+                            <ViewNode tag="LiveAppsFilterClearButton">
+                                <ViewProxy type="javax.swing.JButton" />
+                                <BeanProperty group="custom" iconName="Clear24.gif" name="icon" />
+                                <BeanProperty name="text" value="" />
+                                <BeanProperty name="toolTipText" value="Clear the filter" />
+                            </ViewNode>
+                            <ViewNode tag="Horizontal Glue">
+                                <ViewProxy type="javax.swing.Box_HorizontalGlue" />
+                            </ViewNode>
+                            <ViewNode tag="RevealAppButton">
+                                <ViewProxy type="javax.swing.JButton" />
+                                <BeanProperty name="text" value="Reveal" />
+                                <BeanProperty name="toolTipText" value="Reveal the selected applications by activating them and bringing them to the front." />
+                            </ViewNode>
+                            <ViewNode tag="ForceQuitAppButton">
+                                <ViewProxy type="javax.swing.JButton" />
+                                <BeanProperty name="text" value="Force Quit" />
+                                <BeanProperty name="toolTipText" value="Force the selected applications to quit." />
+                                <BeanProperty alpha="255" blue="0" green="0" name="foreground" red="255" />
+                            </ViewNode>
+                            <BorderNode tag="Etched Border">
+                                <BorderProxy type="javax.swing.border.EtchedBorder" />
+                            </BorderNode>
+                        </ViewNode>
+                    </ViewNode>
                     <ViewNode tag="WatchView">
-                        <ViewProxy type="javax.swing.Box_Vertical"/>
-                        <BeanProperty name="toolTipText" value="Watch paths"/>
-                        <BeanProperty name="name" value="Watch"/>
+                        <ViewProxy type="javax.swing.Box_Vertical" />
+                        <BeanProperty name="name" value="Watch" />
+                        <BeanProperty name="toolTipText" value="Watch paths" />
                         <ViewNode tag="WatchPathScrollPane">
-                            <ViewProxy type="javax.swing.JScrollPane"/>
+                            <ViewProxy type="javax.swing.JScrollPane" />
                             <ViewNode tag="WatchPathList">
-                                <ViewProxy type="javax.swing.JList"/>
+                                <ViewProxy type="javax.swing.JList" />
                             </ViewNode>
                         </ViewNode>
                         <ViewNode tag="WatchFooter">
-                            <ViewProxy type="javax.swing.Box_Horizontal"/>
+                            <ViewProxy type="javax.swing.Box_Horizontal" />
                             <ViewNode tag="DeleteWatchPathButton">
-                                <ViewProxy type="javax.swing.JButton"/>
-                                <BeanProperty name="text" value=""/>
-                                <BeanProperty group="general" iconName="Delete24.gif" name="icon"/>
-                                <BeanProperty name="toolTipText" value="Delete the selected watch paths"/>
+                                <ViewProxy type="javax.swing.JButton" />
+                                <BeanProperty group="general" iconName="Delete24.gif" name="icon" />
+                                <BeanProperty name="text" value="" />
+                                <BeanProperty name="toolTipText" value="Delete the selected watch paths" />
                             </ViewNode>
                             <ViewNode tag="AddWatchPathButton">
-                                <ViewProxy type="javax.swing.JButton"/>
-                                <BeanProperty name="text" value=""/>
-                                <BeanProperty group="general" iconName="Add24.gif" name="icon"/>
-                                <BeanProperty name="toolTipText" value="Add Watch Path"/>
+                                <ViewProxy type="javax.swing.JButton" />
+                                <BeanProperty group="general" iconName="Add24.gif" name="icon" />
+                                <BeanProperty name="text" value="" />
+                                <BeanProperty name="toolTipText" value="Add Watch Path" />
                             </ViewNode>
                             <ViewNode tag="Horizontal Glue">
-                                <ViewProxy type="javax.swing.Box_HorizontalGlue"/>
+                                <ViewProxy type="javax.swing.Box_HorizontalGlue" />
                             </ViewNode>
                         </ViewNode>
                     </ViewNode>
                     <ViewNode tag="RulesView">
-                        <ViewProxy type="javax.swing.Box_Vertical"/>
-                        <BeanProperty name="name" value="Rules"/>
+                        <ViewProxy type="javax.swing.Box_Vertical" />
+                        <BeanProperty name="name" value="Rules" />
                         <ViewNode tag="RulesView">
-                            <ViewProxy type="javax.swing.Box_Vertical"/>
+                            <ViewProxy type="javax.swing.Box_Vertical" />
                             <ViewNode tag="RulesScrollPane">
-                                <ViewProxy type="javax.swing.JScrollPane"/>
+                                <ViewProxy type="javax.swing.JScrollPane" />
                                 <ViewNode tag="RulesTable">
-                                    <ViewProxy type="javax.swing.JTable"/>
+                                    <ViewProxy type="javax.swing.JTable" />
                                 </ViewNode>
                             </ViewNode>
                             <ViewNode tag="RulesButtons">
-                                <ViewProxy type="javax.swing.Box_Horizontal"/>
+                                <ViewProxy type="javax.swing.Box_Horizontal" />
                                 <ViewNode tag="DeleteRuleButton">
-                                    <ViewProxy type="javax.swing.JButton"/>
-                                    <BeanProperty name="text" value=""/>
-                                    <BeanProperty group="table" iconName="RowDelete24.gif" name="icon"/>
-                                    <BeanProperty name="toolTipText" value="Delete the selected rules"/>
+                                    <ViewProxy type="javax.swing.JButton" />
+                                    <BeanProperty group="table" iconName="RowDelete24.gif" name="icon" />
+                                    <BeanProperty name="text" value="" />
+                                    <BeanProperty name="toolTipText" value="Delete the selected rules" />
                                 </ViewNode>
                                 <ViewNode tag="AddRuleButton">
-                                    <ViewProxy type="javax.swing.JButton"/>
-                                    <BeanProperty name="text" value=""/>
-                                    <BeanProperty group="table" iconName="RowInsertAfter24.gif" name="icon"/>
-                                    <BeanProperty name="toolTipText" value="Add Rule"/>
+                                    <ViewProxy type="javax.swing.JButton" />
+                                    <BeanProperty group="table" iconName="RowInsertAfter24.gif" name="icon" />
+                                    <BeanProperty name="text" value="" />
+                                    <BeanProperty name="toolTipText" value="Add Rule" />
                                 </ViewNode>
                                 <ViewNode tag="Horizontal Glue">
-                                    <ViewProxy type="javax.swing.Box_HorizontalGlue"/>
+                                    <ViewProxy type="javax.swing.Box_HorizontalGlue" />
                                 </ViewNode>
                             </ViewNode>
                         </ViewNode>
                         <ViewNode tag="RuleEditor">
-                            <ViewProxy type="javax.swing.Box_Vertical"/>
+                            <ViewProxy type="javax.swing.Box_Vertical" />
                             <BorderNode tag="Titled Border">
-                                <BorderProxy type="javax.swing.border.TitledBorder"/>
-                                <BeanProperty name="title" value="Selected Rule"/>
+                                <BorderProxy type="javax.swing.border.TitledBorder" />
+                                <BeanProperty name="title" value="Selected Rule" />
                             </BorderNode>
                             <ViewNode tag="PatternBox">
-                                <ViewProxy type="javax.swing.Box_Horizontal"/>
+                                <ViewProxy type="javax.swing.Box_Horizontal" />
                                 <ViewNode tag="Label">
-                                    <ViewProxy type="javax.swing.JLabel"/>
-                                    <BeanProperty name="text" value="Pattern:"/>
+                                    <ViewProxy type="javax.swing.JLabel" />
+                                    <BeanProperty name="text" value="Pattern:" />
                                 </ViewNode>
                                 <ViewNode tag="RulePatternField">
-                                    <ViewProxy type="javax.swing.JTextField"/>
-                                    <BeanProperty name="debugGraphicsOptions" value="0"/>
-                                    <BeanProperty name="caretPosition" value="0"/>
-                                    <BeanProperty name="text" value=""/>
-                                    <BeanProperty name="toolTipText" value="Application file name pattern"/>
-                                    <BeanProperty name="columns" value="40"/>
-                                    <BeanProperty height="40" name="maximumSize" width="2147483647"/>
+                                    <ViewProxy type="javax.swing.JTextField" />
+                                    <BeanProperty name="text" value="" />
+                                    <BeanProperty name="caretPosition" value="0" />
+                                    <BeanProperty height="40" name="maximumSize" width="2147483647" />
+                                    <BeanProperty name="columns" value="40" />
+                                    <BeanProperty name="toolTipText" value="Application file name pattern" />
+                                    <BeanProperty name="debugGraphicsOptions" value="0" />
                                 </ViewNode>
                                 <ViewNode tag="ExclusionCheckbox">
-                                    <ViewProxy type="javax.swing.JCheckBox"/>
-                                    <BeanProperty name="text" value="Exclude"/>
-                                    <BeanProperty name="toolTipText" value="Exclude matching files from the run list"/>
+                                    <ViewProxy type="javax.swing.JCheckBox" />
+                                    <BeanProperty name="text" value="Exclude" />
+                                    <BeanProperty name="toolTipText" value="Exclude matching files from the run list" />
                                 </ViewNode>
                                 <ViewNode tag="Label">
-                                    <ViewProxy type="javax.swing.JLabel"/>
-                                    <BeanProperty name="text" value=" Kind:"/>
+                                    <ViewProxy type="javax.swing.JLabel" />
+                                    <BeanProperty name="text" value=" Kind:" />
                                 </ViewNode>
                                 <ViewNode tag="RuleKindField">
-                                    <ViewProxy type="javax.swing.JTextField"/>
-                                    <BeanProperty name="text" value=""/>
-                                    <BeanProperty name="toolTipText" value="Application kind"/>
-                                    <BeanProperty name="columns" value="20"/>
-                                    <BeanProperty height="40" name="maximumSize" width="2147483647"/>
+                                    <ViewProxy type="javax.swing.JTextField" />
+                                    <BeanProperty name="text" value="" />
+                                    <BeanProperty height="40" name="maximumSize" width="2147483647" />
+                                    <BeanProperty name="columns" value="20" />
+                                    <BeanProperty name="toolTipText" value="Application kind" />
                                 </ViewNode>
                             </ViewNode>
                             <ViewNode tag="CommandBox">
-                                <ViewProxy type="javax.swing.Box_Horizontal"/>
+                                <ViewProxy type="javax.swing.Box_Horizontal" />
                                 <ViewNode tag="Label">
-                                    <ViewProxy type="javax.swing.JLabel"/>
-                                    <BeanProperty name="text" value="Command:"/>
+                                    <ViewProxy type="javax.swing.JLabel" />
+                                    <BeanProperty name="text" value="Command:" />
                                 </ViewNode>
                                 <ViewNode tag="RuleCommandField">
-                                    <ViewProxy type="javax.swing.JTextField"/>
-                                    <BeanProperty name="text" value=""/>
-                                    <BeanProperty name="toolTipText" value="Application file name pattern"/>
-                                    <BeanProperty height="40" name="maximumSize" width="2147483647"/>
+                                    <ViewProxy type="javax.swing.JTextField" />
+                                    <BeanProperty name="text" value="" />
+                                    <BeanProperty height="40" name="maximumSize" width="2147483647" />
+                                    <BeanProperty name="toolTipText" value="Application file name pattern" />
                                 </ViewNode>
                             </ViewNode>
                             <BorderNode tag="Titled Border">
-                                <BorderProxy type="javax.swing.border.TitledBorder"/>
-                                <BeanProperty name="title" value="Selected Rule"/>
+                                <BorderProxy type="javax.swing.border.TitledBorder" />
+                                <BeanProperty name="title" value="Selected Rule" />
                             </BorderNode>
                         </ViewNode>
                     </ViewNode>
                     <ViewNode tag="HostsView">
-                        <ViewProxy type="javax.swing.Box_Vertical"/>
-                        <BeanProperty name="toolTipText" value="Hosts on which to execute"/>
-                        <BeanProperty name="name" value="Hosts"/>
+                        <ViewProxy type="javax.swing.Box_Vertical" />
+                        <BeanProperty name="name" value="Hosts" />
+                        <BeanProperty name="toolTipText" value="Hosts on which to execute" />
                         <ViewNode tag="HostScrollPane">
-                            <ViewProxy type="javax.swing.JScrollPane"/>
+                            <ViewProxy type="javax.swing.JScrollPane" />
                             <ViewNode tag="HostTable">
-                                <ViewProxy type="javax.swing.JTable"/>
-                                <BeanProperty name="autoResizeMode" value="3"/>
+                                <ViewProxy type="javax.swing.JTable" />
+                                <BeanProperty name="autoResizeMode" value="3" />
                             </ViewNode>
                         </ViewNode>
                         <ViewNode tag="HostTableControls">
-                            <ViewProxy type="javax.swing.Box_Horizontal"/>
+                            <ViewProxy type="javax.swing.Box_Horizontal" />
                             <ViewNode tag="DeleteHostButton">
-                                <ViewProxy type="javax.swing.JButton"/>
-                                <BeanProperty name="text" value=""/>
-                                <BeanProperty group="table" iconName="RowDelete24.gif" name="icon"/>
-                                <BeanProperty name="toolTipText" value="Delete the selected hosts"/>
+                                <ViewProxy type="javax.swing.JButton" />
+                                <BeanProperty group="table" iconName="RowDelete24.gif" name="icon" />
+                                <BeanProperty name="text" value="" />
+                                <BeanProperty name="toolTipText" value="Delete the selected hosts" />
                             </ViewNode>
                             <ViewNode tag="AddHostButton">
-                                <ViewProxy type="javax.swing.JButton"/>
-                                <BeanProperty name="text" value=""/>
-                                <BeanProperty group="table" iconName="RowInsertAfter24.gif" name="icon"/>
-                                <BeanProperty name="toolTipText" value="Add Host"/>
+                                <ViewProxy type="javax.swing.JButton" />
+                                <BeanProperty group="table" iconName="RowInsertAfter24.gif" name="icon" />
+                                <BeanProperty name="text" value="" />
+                                <BeanProperty name="toolTipText" value="Add Host" />
                             </ViewNode>
                             <ViewNode tag="Horizontal Glue">
-                                <ViewProxy type="javax.swing.Box_HorizontalGlue"/>
+                                <ViewProxy type="javax.swing.Box_HorizontalGlue" />
                             </ViewNode>
                         </ViewNode>
                         <ViewNode tag="CommandBox">
-                            <ViewProxy type="javax.swing.Box_Horizontal"/>
+                            <ViewProxy type="javax.swing.Box_Horizontal" />
                             <ViewNode tag="Label">
-                                <ViewProxy type="javax.swing.JLabel"/>
-                                <BeanProperty name="text" value="Command: "/>
+                                <ViewProxy type="javax.swing.JLabel" />
+                                <BeanProperty name="text" value="Command: " />
                             </ViewNode>
                             <ViewNode tag="HostCommandField">
-                                <ViewProxy type="javax.swing.JTextField"/>
-                                <BeanProperty name="text" value=""/>
-                                <BeanProperty name="toolTipText" value="Host command template"/>
-                                <BeanProperty height="50" name="maximumSize" width="2147483647"/>
+                                <ViewProxy type="javax.swing.JTextField" />
+                                <BeanProperty name="text" value="" />
+                                <BeanProperty height="50" name="maximumSize" width="2147483647" />
+                                <BeanProperty name="toolTipText" value="Host command template" />
                             </ViewNode>
                         </ViewNode>
                     </ViewNode>
                 </ViewNode>
                 <ViewNode tag="Footer">
-                    <ViewProxy type="javax.swing.Box_Horizontal"/>
+                    <ViewProxy type="javax.swing.Box_Horizontal" />
                     <BorderNode tag="Titled Border">
-                        <BorderProxy type="javax.swing.border.TitledBorder"/>
-                        <BeanProperty name="title" value="Messages"/>
+                        <BorderProxy type="javax.swing.border.TitledBorder" />
+                        <BeanProperty name="title" value="Messages" />
                     </BorderNode>
                     <ViewNode tag="MessageScroller">
-                        <ViewProxy type="javax.swing.JScrollPane"/>
-                        <BeanProperty name="horizontalScrollBarPolicy" value="31"/>
-                        <BeanProperty height="50" name="minimumSize" width="23"/>
-                        <BeanProperty height="60" name="maximumSize" width="32000"/>
-                        <BeanProperty name="verticalScrollBarPolicy" value="20"/>
+                        <ViewProxy type="javax.swing.JScrollPane" />
+                        <BeanProperty height="50" name="minimumSize" width="23" />
+                        <BeanProperty height="60" name="maximumSize" width="32000" />
+                        <BeanProperty name="verticalScrollBarPolicy" value="20" />
+                        <BeanProperty name="horizontalScrollBarPolicy" value="31" />
                         <ViewNode tag="MessageField">
-                            <ViewProxy type="javax.swing.JTextArea"/>
-                            <BeanProperty name="editable" value="false"/>
-                            <BeanProperty name="text" value="Welcome"/>
-                            <BeanProperty name="tabSize" value="8"/>
-                            <BeanProperty height="250" name="maximumSize" width="2147483647"/>
-                            <BeanProperty name="lineWrap" value="true"/>
+                            <ViewProxy type="javax.swing.JTextArea" />
+                            <BeanProperty name="lineWrap" value="true" />
+                            <BeanProperty name="text" value="Welcome" />
+                            <BeanProperty height="250" name="maximumSize" width="2147483647" />
+                            <BeanProperty name="tabSize" value="8" />
+                            <BeanProperty name="editable" value="false" />
                         </ViewNode>
                     </ViewNode>
                     <BorderNode tag="Titled Border">
-                        <BorderProxy type="javax.swing.border.TitledBorder"/>
-                        <BeanProperty name="title" value="Messages"/>
+                        <BorderProxy type="javax.swing.border.TitledBorder" />
+                        <BeanProperty name="title" value="Messages" />
                     </BorderNode>
                 </ViewNode>
             </ViewNode>
