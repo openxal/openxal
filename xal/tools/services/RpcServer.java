@@ -85,7 +85,9 @@ public class RpcServer {
                     while ( !SERVER_SOCKET.isClosed() ) {
                         final Socket remoteSocket = SERVER_SOCKET.accept();
                         remoteSocket.setKeepAlive( true );
-                        REMOTE_SOCKETS.add( remoteSocket );
+						synchronized( REMOTE_SOCKETS ) {
+							REMOTE_SOCKETS.add( remoteSocket );
+						}
                         processRemoteEvents( remoteSocket );
                     }
                 }
@@ -103,8 +105,12 @@ public class RpcServer {
     /** shutdown the server */
     public void shutdown() throws IOException {
         SERVER_SOCKET.close();
-        
-        for ( final Socket socket : REMOTE_SOCKETS ) {
+
+		final Set<Socket> sockets = new HashSet<Socket>();
+		synchronized( REMOTE_SOCKETS ) {
+			sockets.addAll( REMOTE_SOCKETS );
+		}
+        for ( final Socket socket : sockets ) {
             try {
                 socket.close();
             }
@@ -112,10 +118,12 @@ public class RpcServer {
                 exception.printStackTrace();
             }
         }
-        
-        for ( final Socket socket : REMOTE_SOCKETS ) {
-            REMOTE_SOCKETS.remove( socket );
-        }
+
+		synchronized( REMOTE_SOCKETS ) {
+			for ( final Socket socket : REMOTE_SOCKETS ) {
+				REMOTE_SOCKETS.remove( socket );
+			}
+		}
     }
     
     
