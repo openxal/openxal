@@ -96,7 +96,10 @@ public class MonitorController implements MonitorModelListener {
 
 		REFRESH_TIMER = new DispatchTimer( DispatchQueue.getMainQueue(), new Runnable() {
 			public void run() {
-				APP_TABLE_MODEL.fireTableDataChanged();
+				final int rowCount = APP_TABLE_MODEL.getRowCount();
+				if ( rowCount > 0 ) {
+					APP_TABLE_MODEL.fireTableRowsUpdated( 0, rowCount - 1 );
+				}
 			}
 		});
 		REFRESH_TIMER.startNowWithInterval( 5000, 0 );	// refresh the table every 5 seconds
@@ -105,7 +108,11 @@ public class MonitorController implements MonitorModelListener {
 
 	/** event indicating that the list of remote apps has changed */
 	public void remoteAppsChanged( final MonitorModel model, final List<RemoteAppRecord> remoteApps ) {
-		APP_TABLE_MODEL.setRecords( remoteApps );
+		DispatchQueue.getMainQueue().dispatchAsync( new Runnable() {
+			public void run() {
+				APP_TABLE_MODEL.setRecords( remoteApps );
+			}
+		});
 	}
 
 
