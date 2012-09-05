@@ -207,7 +207,7 @@ class HostSettingsTableModel extends AbstractTableModel {
 	
 	
 	/** get the column class */
-	public Class getColumnClass( final int column  ) {
+	public Class<?> getColumnClass( final int column  ) {
 		switch( column ) {
 			case ENABLE_COLUMN:
 				return Boolean.class;
