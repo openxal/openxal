@@ -38,24 +38,31 @@ public class RemoteAppRecord implements ApplicationStatus {
 		REMOTE_PROXY = proxy;
 		CACHE_CONFIG = cacheConfig;
 
-		APPLICATION_NAME_CACHE = new RemoteDataCache<String>( new Callable<String>() {
+		APPLICATION_NAME_CACHE = createRemoteOperationCache( new Callable<String>() {
 			public String call() {
 				return REMOTE_PROXY.getApplicationName();
 			}
-		}, cacheConfig );
+		});
 
-		HOST_NAME_CACHE = new RemoteDataCache<String>( new Callable<String>() {
+		HOST_NAME_CACHE = createRemoteOperationCache( new Callable<String>() {
 			public String call() {
 				return REMOTE_PROXY.getHostName();
 			}
-		}, cacheConfig );
+		});
 
-		LAUNCH_TIME_CACHE = new RemoteDataCache<Date>( new Callable<Date>() {
+		LAUNCH_TIME_CACHE = createRemoteOperationCache( new Callable<Date>() {
 			public Date call() {
 				return REMOTE_PROXY.getLaunchTime();
 			}
-		}, cacheConfig );
+		});
     }
+
+
+
+	/** Create a remote operation cache for the given operation */
+	private <DataType> RemoteDataCache<DataType> createRemoteOperationCache( final Callable<DataType> operation ) {
+		return new RemoteDataCache<DataType>( operation, CACHE_CONFIG );
+	}
 
 	
 	/**

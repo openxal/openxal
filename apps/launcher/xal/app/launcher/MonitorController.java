@@ -14,7 +14,8 @@ import java.util.*;
 
 import xal.application.Application;
 import xal.tools.bricks.*;
-import xal.tools.swing.*;
+import xal.tools.swing.KeyValueFilteredTableModel;
+import xal.tools.dispatch.*;
 
 
 /** MonitorController */
@@ -33,6 +34,9 @@ public class MonitorController implements MonitorModelListener {
 
 	/** filter field */
 	final private JTextField FILTER_FIELD;
+
+	/** timer for refreshing the data */
+	final private DispatchTimer REFRESH_TIMER;
 
 
 	/** Constructor */
@@ -89,6 +93,13 @@ public class MonitorController implements MonitorModelListener {
 		APP_TABLE_MODEL.setColumnName( "applicationName", "Application" );
 		APP_TABLE_MODEL.setInputFilterComponent( FILTER_FIELD );
 		REMOTE_APPS_TABLE.setModel( APP_TABLE_MODEL );
+
+		REFRESH_TIMER = new DispatchTimer( DispatchQueue.getMainQueue(), new Runnable() {
+			public void run() {
+				APP_TABLE_MODEL.fireTableDataChanged();
+			}
+		});
+		REFRESH_TIMER.startNowWithInterval( 5000, 0 );	// refresh the table every 5 seconds
 	}
 
 
