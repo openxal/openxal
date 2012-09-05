@@ -74,6 +74,12 @@ public class RemoteAppRecord {
 	}
 
 
+	/** Get the timestamp of the last update */
+	public Date getLastUpdate() {
+		return APPLICATION_NAME_CACHE.getTimestamp();
+	}
+
+
 	/**
 	 * Get the total memory consumed by the application instance.
 	 * @return The total memory consumed by the application instance.
@@ -184,6 +190,12 @@ class RemoteDataCache<DataType> {
 		REMOTE_CALL_QUEUE = DispatchQueue.createSerialQueue( "Remote Calls" );
 		
 		_isFetching = false;
+	}
+
+
+	/** Get the timestamp of the last fetch */
+	public Date getTimestamp() {
+		return _cachedData != null ? _cachedData.getTimestamp() : null;
 	}
 
 
