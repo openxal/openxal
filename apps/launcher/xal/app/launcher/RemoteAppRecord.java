@@ -16,7 +16,7 @@ import xal.tools.dispatch.DispatchQueue;
 
 
 /** RemoteAppRecord wraps the remote proxy so it can be hashed and included in collections */
-public class RemoteAppRecord implements ApplicationStatus {
+public class RemoteAppRecord {
 	/** remote proxy */
 	private final ApplicationStatus REMOTE_PROXY;
 
@@ -31,6 +31,9 @@ public class RemoteAppRecord implements ApplicationStatus {
 
 	/** cache for the launch time */
 	private final RemoteDataCache<Date> LAUNCH_TIME_CACHE;
+
+	/** cache for the total memory */
+	private final RemoteDataCache<Double> TOTAL_MEMORY_CACHE;
 
 	
 	/** Constructor */
@@ -55,6 +58,12 @@ public class RemoteAppRecord implements ApplicationStatus {
 				return REMOTE_PROXY.getLaunchTime();
 			}
 		});
+
+		TOTAL_MEMORY_CACHE = createRemoteOperationCache( new Callable<Double>() {
+			public Double call() {
+				return REMOTE_PROXY.getTotalMemory();
+			}
+		});
     }
 
 
@@ -64,22 +73,14 @@ public class RemoteAppRecord implements ApplicationStatus {
 		return new RemoteDataCache<DataType>( operation, CACHE_CONFIG );
 	}
 
-	
-	/**
-	 * Get the free memory available to the application instance.
-	 * @return The free memory available on this virtual machine.
-	 */
-	public double getFreeMemory() {
-		return REMOTE_PROXY.getFreeMemory();
-	}
-
 
 	/**
 	 * Get the total memory consumed by the application instance.
 	 * @return The total memory consumed by the application instance.
 	 */
 	public double getTotalMemory() {
-		return REMOTE_PROXY.getTotalMemory();
+		final Double memory = TOTAL_MEMORY_CACHE.getValue();
+		return memory != null ? memory.doubleValue() : Double.NaN;
 	}
 
 
@@ -111,17 +112,22 @@ public class RemoteAppRecord implements ApplicationStatus {
 
 
 	/** reveal the application by bringing all windows to the front */
-	public boolean showAllWindows() {
-		return REMOTE_PROXY.showAllWindows();
+	public void showAllWindows() {
+		DispatchQueue.getGlobalDefaultPriorityQueue().dispatchAsync( new Runnable() {
+			public void run() {
+				REMOTE_PROXY.showAllWindows();
+			}
+		});
 	}
 
 
-	/**
-	 * Request that the virtual machine run the garbage collector.
-	 * @return true.
-	 */
-	public boolean collectGarbage() {
-		return REMOTE_PROXY.collectGarbage();
+	/** Request that the virtual machine run the garbage collector. */
+	public void collectGarbage() {
+		DispatchQueue.getGlobalDefaultPriorityQueue().dispatchAsync( new Runnable() {
+			public void run() {
+				REMOTE_PROXY.collectGarbage();
+			}
+		});
 	}
 
 
@@ -130,7 +136,11 @@ public class RemoteAppRecord implements ApplicationStatus {
 	 * @param code An unused status code.
 	 */
 	public void quit( final int code ) {
-		REMOTE_PROXY.quit( code );
+		DispatchQueue.getGlobalDefaultPriorityQueue().dispatchAsync( new Runnable() {
+			public void run() {
+				REMOTE_PROXY.quit( code );
+			}
+		});
 	}
 
 
@@ -138,8 +148,12 @@ public class RemoteAppRecord implements ApplicationStatus {
 	 * Force the application to quit immediately without running any finalizers.
 	 * @param code The status code used for halting the virtual machine.
 	 */
-	public void forceQuit( int code ) {
-		REMOTE_PROXY.forceQuit( code );
+	public void forceQuit( final int code ) {
+		DispatchQueue.getGlobalDefaultPriorityQueue().dispatchAsync( new Runnable() {
+			public void run() {
+				REMOTE_PROXY.forceQuit( code );
+			}
+		});
 	}
 }
 

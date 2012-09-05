@@ -88,7 +88,7 @@ public class MonitorController implements MonitorModelListener {
 		REMOTE_APPS_TABLE.setAutoCreateRowSorter( true );
 		REMOTE_APPS_TABLE.setSelectionMode( ListSelectionModel.MULTIPLE_INTERVAL_SELECTION );
 		
-		APP_TABLE_MODEL = new KeyValueFilteredTableModel<RemoteAppRecord>( new ArrayList<RemoteAppRecord>(), "applicationName", "hostName", "launchTime" );
+		APP_TABLE_MODEL = new KeyValueFilteredTableModel<RemoteAppRecord>( new ArrayList<RemoteAppRecord>(), "applicationName", "hostName", "totalMemory", "launchTime" );
 		APP_TABLE_MODEL.setMatchingKeyPaths( "applicationName", "hostName" );
 		APP_TABLE_MODEL.setColumnName( "applicationName", "Application" );
 		APP_TABLE_MODEL.setInputFilterComponent( FILTER_FIELD );
