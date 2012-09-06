@@ -30,19 +30,23 @@ public class RemoteAppRecord {
 	/** cache for the launch time */
 	private final RemoteDataCache<Date> LAUNCH_TIME_CACHE;
 
+	/** host address of the remote service */
+	private final String REMOTE_ADDRESS;
+
 	/** timestamp of last update */
 	private Date _lastUpdate;
 
 	/** indicates whether the service is reachable */
-	private volatile boolean _shouldRefresh;
+	private volatile boolean _isConnected;
 
 	
 	/** Constructor */
-    public RemoteAppRecord( final ApplicationStatus proxy ) {
+    public RemoteAppRecord( final ApplicationStatus proxy, final String remoteAddress ) {
 		REMOTE_PROXY = proxy;
+		REMOTE_ADDRESS = remoteAddress;
 		
 		_lastUpdate = null;
-		_shouldRefresh = true;	// assume so until proven otherwise
+		_isConnected = true;	// assume so until proven otherwise
 
 		// don't need to keep making remote requests for application name as it won't change
 		APPLICATION_NAME_CACHE = createRemoteOperationCache( new Callable<String>() {
@@ -80,19 +84,43 @@ public class RemoteAppRecord {
 	}
 
 
+	/** Determine whether this record is believed to be connected but don't test */
+	public boolean isConnected() {
+		return _isConnected;
+	}
+
+
+	/** Test whether this record is connected by making a request and waiting for a response */
+	public boolean testConnection() {
+		if ( _isConnected ) {	// only test if we believe it is connected
+			try {
+				REMOTE_PROXY.getApplicationName();
+				return true;
+			}
+			catch( RemoteServiceDroppedException exception ) {
+				_isConnected = false;
+				return false;
+			}
+		}
+		else {		// we already know it isn't connected
+			return false;
+		}
+	}
+
+
 	/**
 	 * Get the total memory consumed by the application instance.
 	 * @return The total memory consumed by the application instance.
 	 */
 	public double getTotalMemory() {
-		if ( _shouldRefresh ) {
+		if ( _isConnected ) {
 			try {
 				final double memory = REMOTE_PROXY.getTotalMemory();
 				_lastUpdate = new Date();
 				return memory;
 			}
 			catch ( RemoteServiceDroppedException exception ) {
-				_shouldRefresh = false;
+				_isConnected = false;
 				return Double.NaN;
 			}
 		}
@@ -116,7 +144,8 @@ public class RemoteAppRecord {
 	 * @return The name of the host where the application is running.
 	 */
 	public String getHostName() {
-		return HOST_NAME_CACHE.getValue();
+		final String hostName = HOST_NAME_CACHE.getValue();
+		return hostName != null ? hostName : REMOTE_ADDRESS;	// if we can't get the host name from the remote service something went wrong and just return the remote address so we have some information
 	}
 
 
