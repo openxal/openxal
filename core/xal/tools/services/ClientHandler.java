@@ -204,6 +204,7 @@ class ClientHandler<ProxyType> implements InvocationHandler {
                 }
                 catch( Exception exception ) {
                     exception.printStackTrace();
+					cleanupClosedSocket( exception );
                 }
             }
         });
@@ -252,12 +253,14 @@ class ClientHandler<ProxyType> implements InvocationHandler {
 
 
 	/** cleanup after discovering the socket has closed */
-	private void cleanupClosedSocket( final RuntimeException exception ) {
+	private void cleanupClosedSocket( final Exception exception ) {
+		// encapsulate the exception in a runtime exception if necessary since that is what gets passed back to the calling method
+		final RuntimeException resultException = exception instanceof RuntimeException ? (RuntimeException)exception : new RuntimeException( exception );
 		// process every pending result and assign the exception
 		final Collection<PendingResult> pendingResults = new HashSet<PendingResult>( PENDING_RESULTS.values() );		// make a local copy so we can safely loop through the entries
 		for ( final PendingResult pendingResult : pendingResults ) {
 			synchronized( pendingResult ) {
-				pendingResult.setRemoteException( exception );
+				pendingResult.setRemoteException( resultException );
 				pendingResult.notifyAll();		// make sure threads waiting on the pending result are notified
 			}
 		}
