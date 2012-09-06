@@ -9,6 +9,7 @@
 package xal.tools.dispatch;
 
 import java.util.Date;
+import java.util.NoSuchElementException;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.*;
@@ -411,6 +412,20 @@ class ConcurrentDispatchQueue extends DispatchQueue {
 					return;		// Stop processing the pending queue because nothing can process, now. An event will force the next processing cycle.
 				}
 			}
+			else {
+				// there should never be a null operation so we note if we find one and remove it from the queue
+				try {
+					throw new RuntimeException( "Null operaiton in pending operations queue of size: " + PENDING_OPERATION_QUEUE.size() );
+				}
+				catch( Exception exception ) {
+					System.err.println( exception.getMessage() );
+					exception.printStackTrace();
+				}
+				try {
+					PENDING_OPERATION_QUEUE.remove();	// remove the null operation
+				}
+				catch( NoSuchElementException exception ) {}
+			}
 		}
 	}
 
@@ -440,12 +455,15 @@ class ConcurrentDispatchQueue extends DispatchQueue {
 	/** process the next pending operation */
 	@SuppressWarnings( "unchecked" )	// executor expects a known type but the operations are arbitrary
 	private void processNextPendingOperation() {
-		final DispatchOperation<?> operation = PENDING_OPERATION_QUEUE.remove();
-		if ( operation.isBarrier() ) {
-			_isRunningBarrierOperation = true;
+		try {
+			final DispatchOperation<?> operation = PENDING_OPERATION_QUEUE.remove();
+			if ( operation.isBarrier() ) {
+				_isRunningBarrierOperation = true;
+			}
+			incrementRunningOperationCount();
+			DISPATCH_EXECUTOR.submit( operation );
 		}
-		incrementRunningOperationCount();
-		DISPATCH_EXECUTOR.submit( operation );
+		catch( NoSuchElementException exception ) {}	// nothing left to process in the queue
 	}
 
 
@@ -553,11 +571,14 @@ class SerialDispatchQueue extends DispatchQueue {
 	/** if no process is currently running, process the next pending operation (if any) without blocking */
 	protected void processNextPendingOperation() {
 		if ( _isProcessingPendingOperationQueue && RUNNING_OPERATION_COUNTER.get() == 0 ) {
-			final Callable<?> nextOperation = PENDING_OPERATION_QUEUE.poll();
-			if ( nextOperation != null ) {
-				incrementRunningOperationCount();
-				DISPATCH_EXECUTOR.submit( nextOperation );
+			try {
+				final Callable<?> nextOperation = PENDING_OPERATION_QUEUE.remove();
+				if ( nextOperation != null ) {
+					incrementRunningOperationCount();
+					DISPATCH_EXECUTOR.submit( nextOperation );
+				}
 			}
+			catch ( NoSuchElementException exception ) {}		// nothing left to process in the queue
 		}
 	}
 }
@@ -615,21 +636,24 @@ class MainDispatchQueue extends SerialDispatchQueue {
 	/** process the next pending operation if any */
 	protected void processNextPendingOperation() {
 		if ( _isProcessingPendingOperationQueue && RUNNING_OPERATION_COUNTER.get() == 0 ) {
-			final Callable<?> nextOperation = PENDING_OPERATION_QUEUE.poll();
-			if ( nextOperation != null ) {
-				incrementRunningOperationCount();
-				final Runnable runnableOperation = new Runnable() {
-					public void run() {
-						try {
-							nextOperation.call();
+			try {
+				final Callable<?> nextOperation = PENDING_OPERATION_QUEUE.remove();
+				if ( nextOperation != null ) {
+					incrementRunningOperationCount();
+					final Runnable runnableOperation = new Runnable() {
+						public void run() {
+							try {
+								nextOperation.call();
+							}
+							catch( Exception exception ) {
+								throw new RuntimeException( exception );
+							}
 						}
-						catch( Exception exception ) {
-							throw new RuntimeException( exception );
-						}
-					}
-				};
-				SwingUtilities.invokeLater( runnableOperation );
+					};
+					SwingUtilities.invokeLater( runnableOperation );
+				}
 			}
+			catch ( NoSuchElementException exception ) {}	// nothing left to process in the queue
 		}
 	}
 }
