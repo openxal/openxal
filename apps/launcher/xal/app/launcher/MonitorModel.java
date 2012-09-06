@@ -26,15 +26,10 @@ public class MonitorModel extends java.lang.Object {
 	/** proxy for dispatching events */
 	final private MonitorModelListener EVENT_PROXY;
 
-	/** cache configuration for remote data */
-	final private RemoteCacheConfig REMOTE_CACHE_CONFIG;
-
 
 	/** Constructor */
     public MonitorModel() {
 		EVENT_PROXY = MessageCenter.defaultCenter().registerSource( this, MonitorModelListener.class );
-
-		REMOTE_CACHE_CONFIG = new RemoteCacheConfig();
 		
 		REMOTE_APPS = new ArrayList<RemoteAppRecord>();
 		REMOTE_APPS_TABLE = new HashMap<String,RemoteAppRecord>();
@@ -74,7 +69,7 @@ public class MonitorModel extends java.lang.Object {
 			 */
 			public void serviceAdded( final ServiceDirectory directory, final ServiceRef serviceRef ) {
 				final ApplicationStatus proxy = directory.getProxy( ApplicationStatus.class, serviceRef );
-				final RemoteAppRecord remoteRecord = new RemoteAppRecord( proxy, REMOTE_CACHE_CONFIG );
+				final RemoteAppRecord remoteRecord = new RemoteAppRecord( proxy );
 				final String serviceID = serviceRef.getRawName();
 				
 				System.out.println( "Found remote application with ID: " + serviceID );

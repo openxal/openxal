@@ -11,6 +11,7 @@ package xal.app.launcher;
 import java.util.concurrent.Callable;
 import java.util.Date;
 
+import xal.tools.services.RemoteServiceDroppedException;
 import xal.application.ApplicationStatus;
 import xal.tools.dispatch.DispatchQueue;
 
@@ -19,9 +20,6 @@ import xal.tools.dispatch.DispatchQueue;
 public class RemoteAppRecord {
 	/** remote proxy */
 	private final ApplicationStatus REMOTE_PROXY;
-
-	/** cache configuration */
-	private final RemoteCacheConfig CACHE_CONFIG;
 
 	/** cache for the application name */
 	private final RemoteDataCache<String> APPLICATION_NAME_CACHE;
@@ -32,36 +30,38 @@ public class RemoteAppRecord {
 	/** cache for the launch time */
 	private final RemoteDataCache<Date> LAUNCH_TIME_CACHE;
 
-	/** cache for the total memory */
-	private final RemoteDataCache<Double> TOTAL_MEMORY_CACHE;
+	/** timestamp of last update */
+	private Date _lastUpdate;
+
+	/** indicates whether the service is reachable */
+	private volatile boolean _shouldRefresh;
 
 	
 	/** Constructor */
-    public RemoteAppRecord( final ApplicationStatus proxy, final RemoteCacheConfig cacheConfig ) {
+    public RemoteAppRecord( final ApplicationStatus proxy ) {
 		REMOTE_PROXY = proxy;
-		CACHE_CONFIG = cacheConfig;
+		
+		_lastUpdate = null;
+		_shouldRefresh = true;	// assume so until proven otherwise
 
+		// don't need to keep making remote requests for application name as it won't change
 		APPLICATION_NAME_CACHE = createRemoteOperationCache( new Callable<String>() {
 			public String call() {
 				return REMOTE_PROXY.getApplicationName();
 			}
 		});
 
+		// don't need to keep making remote requests for host name as it won't change
 		HOST_NAME_CACHE = createRemoteOperationCache( new Callable<String>() {
 			public String call() {
 				return REMOTE_PROXY.getHostName();
 			}
 		});
 
+		// don't need to keep making remote requests for launch time as it won't change
 		LAUNCH_TIME_CACHE = createRemoteOperationCache( new Callable<Date>() {
 			public Date call() {
 				return REMOTE_PROXY.getLaunchTime();
-			}
-		});
-
-		TOTAL_MEMORY_CACHE = createRemoteOperationCache( new Callable<Double>() {
-			public Double call() {
-				return REMOTE_PROXY.getTotalMemory();
 			}
 		});
     }
@@ -70,13 +70,13 @@ public class RemoteAppRecord {
 
 	/** Create a remote operation cache for the given operation */
 	private <DataType> RemoteDataCache<DataType> createRemoteOperationCache( final Callable<DataType> operation ) {
-		return new RemoteDataCache<DataType>( operation, CACHE_CONFIG );
+		return new RemoteDataCache<DataType>( operation );
 	}
 
 
 	/** Get the timestamp of the last update */
 	public Date getLastUpdate() {
-		return APPLICATION_NAME_CACHE.getTimestamp();
+		return _lastUpdate;
 	}
 
 
@@ -85,8 +85,20 @@ public class RemoteAppRecord {
 	 * @return The total memory consumed by the application instance.
 	 */
 	public double getTotalMemory() {
-		final Double memory = TOTAL_MEMORY_CACHE.getValue();
-		return memory != null ? memory.doubleValue() : Double.NaN;
+		if ( _shouldRefresh ) {
+			try {
+				final double memory = REMOTE_PROXY.getTotalMemory();
+				_lastUpdate = new Date();
+				return memory;
+			}
+			catch ( RemoteServiceDroppedException exception ) {
+				_shouldRefresh = false;
+				return Double.NaN;
+			}
+		}
+		else {
+			return Double.NaN;
+		}
 	}
 
 
@@ -167,29 +179,18 @@ public class RemoteAppRecord {
 
 /** cache remote data */
 class RemoteDataCache<DataType> {
-	/** queue on which to make the remote calls */
-	private final DispatchQueue REMOTE_CALL_QUEUE;
-	
-	/** cache configuration */
-	private final RemoteCacheConfig CACHE_CONFIG;
-
 	/** remote operation to perform */
 	private final Callable<DataType> REMOTE_OPERATION;
 
 	/** latest data that has been cached */
 	private volatile RemoteData<DataType> _cachedData;
 
-	/** indicates whether a fetch operation is executing */
-	private volatile boolean _isFetching;
-
 
 	/** Constructor */
-	public RemoteDataCache( final Callable<DataType> remoteOperation, final RemoteCacheConfig cacheConfig ) {
+	public RemoteDataCache( final Callable<DataType> remoteOperation ) {
 		REMOTE_OPERATION = remoteOperation;
-		CACHE_CONFIG = cacheConfig;
-		REMOTE_CALL_QUEUE = DispatchQueue.createSerialQueue( "Remote Calls" );
 		
-		_isFetching = false;
+		_cachedData = null;
 	}
 
 
@@ -199,9 +200,9 @@ class RemoteDataCache<DataType> {
 	}
 
 
-	/** Fetch the latest value if an operation is not in progress and return the latest value */
+	/** Fetch the value and cache it for future requests */
 	public DataType getValue() {
-		if ( !_isFetching ) {
+		if ( _cachedData == null ) {
 			fetchData();
 		}
 
@@ -211,22 +212,17 @@ class RemoteDataCache<DataType> {
 
 	/** Fetch the data from the remote service */
 	private void fetchData() {
-		REMOTE_CALL_QUEUE.dispatchAsync( new Runnable() {
-			public void run() {
-				_isFetching = true;		// mark the state as fetching
-
-				try {
-					final DataType result = REMOTE_OPERATION.call();
-					_cachedData = new RemoteData<DataType>( result );
-				}
-				catch( Exception exception ) {
-					exception.printStackTrace();
-					_cachedData = null;
-				}
-
-				_isFetching = false;	// we're done fetching
-			}
-		});
+		try {
+			final DataType result = REMOTE_OPERATION.call();
+			_cachedData = new RemoteData<DataType>( result );
+		}
+		catch ( RemoteServiceDroppedException exception ) {
+			_cachedData = null;
+		}
+		catch ( Exception exception ) {
+			exception.printStackTrace();
+			_cachedData = null;
+		}
 	}
 }
 
