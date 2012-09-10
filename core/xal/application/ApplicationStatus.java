@@ -54,14 +54,11 @@ public interface ApplicationStatus {
 	
 	
 	/** reveal the application by bringing all windows to the front */
-	public boolean showAllWindows();
+	public void showAllWindows();
 	
 	
-	/**
-	 * Request that the virtual machine run the garbage collector.
-	 * @return true.
-	 */
-	public boolean collectGarbage();
+	/** Request that the virtual machine run the garbage collector. */
+	public void collectGarbage();
 	
 	
 	/**
