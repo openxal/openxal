@@ -84,6 +84,12 @@ abstract public class DispatchQueue implements DispatchOperationListener {
 	}
 
 
+	/** dispose of the executors */
+	protected void finalize() throws Throwable {
+		releaseResources();		// call this method as dispose() only works for custom queues
+	}
+
+
 	/** get this queue's label */
 	public String getLabel() {
 		return LABEL;
@@ -107,6 +113,28 @@ abstract public class DispatchQueue implements DispatchOperationListener {
 		if ( !_isProcessingPendingOperationQueue ) {
 			_isProcessingPendingOperationQueue = true;
 			processOperationQueue();
+		}
+	}
+
+
+	/** dispose of this queue - can only be called on a custom queue */
+	public void dispose() {
+		releaseResources();
+	}
+
+
+	/** release allocated resources - called internally for any queue */
+	protected void releaseResources() {
+		if ( !isSuspended()	) {
+			suspend();
+		}
+
+		if ( !DISPATCH_EXECUTOR.isShutdown()	) {
+			DISPATCH_EXECUTOR.shutdown();
+		}
+
+		if ( !QUEUE_PROCESSOR.isShutdown() ) {
+			QUEUE_PROCESSOR.shutdown();
 		}
 	}
 
@@ -518,6 +546,12 @@ class GlobalDispatchQueue extends ConcurrentDispatchQueue {
 	public void resume() {}
 
 
+	/** dispose of this queue */
+	public void dispose() {
+		throw new UnsupportedOperationException( "Global dispatch queues cannot be disposed." );
+	}
+
+
 	/**
 	 * Overriden to simply call dispatchAsync() since the global queues do not support barriers.
 	 * @param operation the operation to execute
@@ -623,6 +657,12 @@ class MainDispatchQueue extends SerialDispatchQueue {
 
 	/** resume execution of pending operations. Overriden to do nothing since the main queue cannot be suspended or resumed. */
 	public void resume() {}
+
+
+	/** dispose of this queue */
+	public void dispose() {
+		throw new UnsupportedOperationException( "The main dispatch queue cannot be disposed." );
+	}
 
 
 	/** submit the operation for execution on the queue and wait for it to complete */

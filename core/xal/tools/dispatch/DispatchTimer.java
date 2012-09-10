@@ -53,7 +53,23 @@ public class DispatchTimer {
 		
 		_nextScheduledEvent = null;
     }
-	
+
+
+	/** dispose of this timer's resources */
+	public void dispose() {
+		if ( !_isSuspended ) {
+			suspend();
+		}
+
+		SCHEDULE_QUEUE.dispose();
+	}
+
+
+	/** release resources held by this timer */
+	protected void finalize() throws Throwable {
+		dispose();
+	}
+
 	
 	/** Set the event handler which is dispatched to the queue when the timer fires */
 	public void setEventHandler( final Runnable eventHandler ) {
