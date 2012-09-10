@@ -11,6 +11,7 @@
 package xal.tools.services;
 
 import xal.tools.coding.*;
+import xal.tools.dispatch.DispatchQueue;
 
 import java.io.*;
 import java.net.*;
@@ -26,14 +27,11 @@ import java.lang.reflect.Proxy;
  * @author  tap
  */
 class ClientHandler<ProxyType> implements InvocationHandler {
-    /** queue for processing requests */
-    final static private ExecutorService REQUEST_QUEUE;
-    
     /** single thread queue for sending remote messages */
-    final private ExecutorService REMOTE_SEND_QUEUE;
+    final private DispatchQueue REMOTE_SEND_QUEUE;
     
     /** single thread queue for receiving remote messages */
-    final private ExecutorService REMOTE_RECEIVE_QUEUE;
+    final private DispatchQueue REMOTE_RECEIVE_QUEUE;
     
     /** socket for sending and receiving remote messages */
     final private Socket REMOTE_SOCKET;
@@ -63,12 +61,6 @@ class ClientHandler<ProxyType> implements InvocationHandler {
     final private Coder MESSAGE_CODER;
     
     
-    // static initializer
-    static {
-        REQUEST_QUEUE = Executors.newCachedThreadPool();
-    }
-    
-    
     /** 
 	 * Creates a new ClientHandler to handle service requests.
 	 * @param host  The host where the service is running.
@@ -88,8 +80,8 @@ class ClientHandler<ProxyType> implements InvocationHandler {
         
         PENDING_RESULTS = Collections.synchronizedMap( new HashMap<Long,PendingResult>() );
         
-        REMOTE_SEND_QUEUE = Executors.newSingleThreadExecutor();
-        REMOTE_RECEIVE_QUEUE = Executors.newSingleThreadExecutor();
+        REMOTE_SEND_QUEUE = DispatchQueue.createSerialQueue( "Remote Send Queue" );
+        REMOTE_RECEIVE_QUEUE = DispatchQueue.createSerialQueue( "Remote Receive Queue" );
         REMOTE_SOCKET = makeRemoteSocket( host, port );
         
         _requestIDCounter = 0;
@@ -178,6 +170,9 @@ class ClientHandler<ProxyType> implements InvocationHandler {
     
     /** dispose of resources */
     public void dispose() {
+		REMOTE_SEND_QUEUE.dispose();
+		REMOTE_RECEIVE_QUEUE.dispose();
+		
         if ( !REMOTE_SOCKET.isClosed() ) {
             try {
                 REMOTE_SOCKET.close();
@@ -190,14 +185,14 @@ class ClientHandler<ProxyType> implements InvocationHandler {
     
     
     /** dispose of resources upon collection */
-    public void finalize() {
+    protected void finalize() throws Throwable {
         dispose();
     }
     
     
     /** listen for incoming messages */
     private void listenForRemoteMessages() {
-        REMOTE_RECEIVE_QUEUE.submit( new Runnable() {
+        REMOTE_RECEIVE_QUEUE.dispatchAsync( new Runnable() {
             public void run() {
                 try {
                     processRemoteResponse();
@@ -269,7 +264,7 @@ class ClientHandler<ProxyType> implements InvocationHandler {
     
     /** Submit the remote request */
     private void submitRemoteRequest( final String jsonRequest ) {
-        REMOTE_SEND_QUEUE.submit( new Runnable() {
+        REMOTE_SEND_QUEUE.dispatchAsync( new Runnable() {
             public void run() {
                 try {
                     final PrintWriter writer = new PrintWriter( REMOTE_SOCKET.getOutputStream() );
