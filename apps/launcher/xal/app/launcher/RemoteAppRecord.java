@@ -30,6 +30,9 @@ public class RemoteAppRecord {
 	/** cache for the launch time */
 	private final RemoteDataCache<Date> LAUNCH_TIME_CACHE;
 
+	/** cache for the total memory */
+	private final RemoteDataCache<Double> TOTAL_MEMORY_CACHE;
+
 	/** host address of the remote service */
 	private final String REMOTE_ADDRESS;
 
@@ -68,6 +71,13 @@ public class RemoteAppRecord {
 				return REMOTE_PROXY.getLaunchTime();
 			}
 		});
+
+		// insulate this call from hangs of the remote application
+		TOTAL_MEMORY_CACHE = createRemoteCyclingOperationCache( new Callable<Double>() {
+			public Double call() {
+				return REMOTE_PROXY.getTotalMemory();
+			}
+		});
     }
 
 
@@ -75,6 +85,13 @@ public class RemoteAppRecord {
 	/** Create a remote operation cache for the given operation */
 	private <DataType> RemoteDataCache<DataType> createRemoteOperationCache( final Callable<DataType> operation ) {
 		return new RemoteDataCache<DataType>( operation );
+	}
+
+
+
+	/** Create a remote cycling operation cache for the given operation */
+	private <DataType> RemoteDataCache<DataType> createRemoteCyclingOperationCache( final Callable<DataType> operation ) {
+		return new RemoteCyclingDataCache<DataType>( operation );
 	}
 
 
@@ -90,24 +107,6 @@ public class RemoteAppRecord {
 	}
 
 
-	/** Test whether this record is connected by making a request and waiting for a response */
-	public boolean testConnection() {
-		if ( _isConnected ) {	// only test if we believe it is connected
-			try {
-				REMOTE_PROXY.getApplicationName();
-				return true;
-			}
-			catch( RemoteServiceDroppedException exception ) {
-				_isConnected = false;
-				return false;
-			}
-		}
-		else {		// we already know it isn't connected
-			return false;
-		}
-	}
-
-
 	/**
 	 * Get the total memory consumed by the application instance.
 	 * @return The total memory consumed by the application instance.
@@ -115,9 +114,14 @@ public class RemoteAppRecord {
 	public double getTotalMemory() {
 		if ( _isConnected ) {
 			try {
-				final double memory = REMOTE_PROXY.getTotalMemory();
-				_lastUpdate = new Date();
-				return memory;
+				final Double memory = TOTAL_MEMORY_CACHE.getValue();
+				if ( memory != null ) {
+					_lastUpdate = TOTAL_MEMORY_CACHE.getTimestamp();
+					return memory.doubleValue();
+				}
+				else {
+					return Double.NaN;
+				}
 			}
 			catch ( RemoteServiceDroppedException exception ) {
 				_isConnected = false;
@@ -212,46 +216,102 @@ class RemoteDataCache<DataType> {
 	private final Callable<DataType> REMOTE_OPERATION;
 
 	/** latest data that has been cached */
-	private volatile RemoteData<DataType> _cachedData;
+	protected volatile RemoteData<DataType> _cachedData;
+
+	/** indicates whether the fetch request has been sent */
+	protected volatile boolean _fetchRequestSent;
 
 
 	/** Constructor */
 	public RemoteDataCache( final Callable<DataType> remoteOperation ) {
 		REMOTE_OPERATION = remoteOperation;
-		
+
+		_fetchRequestSent = false;
 		_cachedData = null;
 	}
 
 
 	/** Get the timestamp of the last fetch */
 	public Date getTimestamp() {
-		return _cachedData != null ? _cachedData.getTimestamp() : null;
+		final RemoteData<DataType> cachedData = _cachedData;
+		return cachedData != null ? cachedData.getTimestamp() : null;
 	}
 
 
 	/** Fetch the value and cache it for future requests */
 	public DataType getValue() {
-		if ( _cachedData == null ) {
+		if ( !_fetchRequestSent ) {
 			fetchData();
 		}
 
-		return _cachedData != null ? _cachedData.getValue() : null;
+		final RemoteData<DataType> cachedData = _cachedData;
+		return cachedData != null ? cachedData.getValue() : null;
 	}
 
 
 	/** Fetch the data from the remote service */
-	private void fetchData() {
-		try {
-			final DataType result = REMOTE_OPERATION.call();
-			_cachedData = new RemoteData<DataType>( result );
+	protected void fetchData() {
+		_fetchRequestSent = true;
+
+		DispatchQueue.getGlobalDefaultPriorityQueue().dispatchAsync( new Runnable() {
+			public void run() {
+				try {
+					final DataType result = REMOTE_OPERATION.call();
+					_cachedData = new RemoteData<DataType>( result );
+				}
+				catch ( RemoteServiceDroppedException exception ) {
+					_cachedData = null;
+				}
+				catch ( Exception exception ) {
+					exception.printStackTrace();
+					_cachedData = null;
+				}
+			}
+		});
+	}
+}
+
+
+
+/** data cache that clears once the value is read and resubmits a new request after the latest value is read */
+class RemoteCyclingDataCache<DataType> extends RemoteDataCache<DataType> {
+	/** latest data to return at the request */
+	private volatile RemoteData<DataType> _latestData;
+
+
+	/** Constructor */
+	public RemoteCyclingDataCache( final Callable<DataType> remoteOperation ) {
+		super( remoteOperation );
+
+		_latestData = null;
+	}
+
+
+	/** Fetch the value and cache it for future requests */
+	public DataType getValue() {
+		// if the fetch request has not been sent send it, otherwise clear it to trigger a fetch during the next call
+		if ( !_fetchRequestSent ) {
+			fetchData();
 		}
-		catch ( RemoteServiceDroppedException exception ) {
+
+		// if there is cache data, then it is must be fresh so copy it to the latestData and clear it
+		if ( _cachedData != null ) {
+			_latestData = _cachedData;
+
+			// clear the cached data and submit a new fetch request
 			_cachedData = null;
+			fetchData();
 		}
-		catch ( Exception exception ) {
-			exception.printStackTrace();
-			_cachedData = null;
-		}
+
+		final RemoteData<DataType> latestData = _latestData;
+		return latestData != null ? latestData.getValue() : null;
+	}
+
+
+	/** Get the timestamp of the last fetch */
+	public Date getTimestamp() {
+		final RemoteData<DataType> latestData = _latestData;
+		return latestData != null ? latestData.getTimestamp() : null;
 	}
 }
 
