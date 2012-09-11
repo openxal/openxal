@@ -199,7 +199,9 @@ class ClientHandler<ProxyType> implements InvocationHandler {
                 }
                 catch( Exception exception ) {
                     exception.printStackTrace();
-					cleanupClosedSocket( exception );
+					if ( REMOTE_SOCKET.isClosed() ) {
+						cleanupClosedSocket( new RemoteServiceDroppedException( "The remote socket has closed while processing the remote response..." ) );
+					}
                 }
             }
         });
@@ -217,7 +219,7 @@ class ClientHandler<ProxyType> implements InvocationHandler {
             final int readCount = reader.read( streamBuffer, 0, BUFFER_SIZE );
             
             if ( readCount == -1 ) {     // the session has been closed
-				cleanupClosedSocket( new RemoteServiceDroppedException( "The remote socket has closed while processing the remote response..." ) );
+				cleanupClosedSocket( new RemoteServiceDroppedException( "The remote socket has closed while reading the remote response..." ) );
             }
             else {
                 inputBuffer.append( streamBuffer, 0, readCount );
