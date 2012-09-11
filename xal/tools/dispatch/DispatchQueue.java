@@ -19,6 +19,9 @@ import javax.swing.SwingUtilities;
 
 /** DispatchQueue which attempts to implement a subset of the open source libdispatch library */
 abstract public class DispatchQueue implements DispatchOperationListener {
+	/** possible states of the dispatch queue */
+	public enum DispatchQueueState { PROCESSING, SUSPENDED, DISPOSED }
+
 	/** priority for a high priority queue */
 	final static public int DISPATCH_QUEUE_PRIORITY_HIGH;
 
@@ -46,8 +49,8 @@ abstract public class DispatchQueue implements DispatchOperationListener {
 	/** number of operations currently running */
 	final protected AtomicInteger RUNNING_OPERATION_COUNTER;
 
-	/** indicates whether this queue is submitting pending operations for execution */
-	protected volatile boolean _isProcessingPendingOperationQueue;
+	/** state of this queue */
+	protected volatile DispatchQueueState _queueState;
 
 	/** queue of pending operations which have not yet been submitted for execution */
 	final protected LinkedBlockingQueue<DispatchOperation<?>> PENDING_OPERATION_QUEUE;
@@ -73,8 +76,7 @@ abstract public class DispatchQueue implements DispatchOperationListener {
 		QUEUE_PROCESSOR = Executors.newSingleThreadExecutor();
 
 		RUNNING_OPERATION_COUNTER = new AtomicInteger( 0 );
-
-		_isProcessingPendingOperationQueue = true;
+		_queueState = DispatchQueueState.PROCESSING;
 	}
 
 
@@ -96,38 +98,55 @@ abstract public class DispatchQueue implements DispatchOperationListener {
 	}
 
 
-	/** Determines whether this queue is suspended */
+	/** Determines whether this queue is suspended (disposed implies suspended) */
 	public boolean isSuspended() {
-		return !_isProcessingPendingOperationQueue;
+		return _queueState != DispatchQueueState.PROCESSING;	// disposed states are also suspended
 	}
 
 
-	/** suspend execution of pending operations */
+	/** suspend execution of pending operations if processing (nothing if disposed or already suspended) */
 	public void suspend() {
-		_isProcessingPendingOperationQueue = false;
+		switch( _queueState ) {
+			case PROCESSING:
+				_queueState = DispatchQueueState.SUSPENDED;
+				break;
+			default:
+				break;
+		}
 	}
 
 
-	/** resume execution of pending operations */
+	/** resume execution of pending operations if suspended or throw an exception if attempting to resume a disposed queue */
 	public void resume() {
-		if ( !_isProcessingPendingOperationQueue ) {
-			_isProcessingPendingOperationQueue = true;
-			processOperationQueue();
+		switch( _queueState ) {
+			case SUSPENDED:
+				_queueState = DispatchQueueState.PROCESSING;
+				processOperationQueue();
+				break;
+			case DISPOSED:
+				throw new RuntimeException( "Cannot resume the disposed dispatch queue: " + LABEL );
+			default:
+				break;
 		}
 	}
 
 
 	/** dispose of this queue - can only be called on a custom queue */
 	public void dispose() {
+		_queueState = DispatchQueueState.DISPOSED;
 		releaseResources();
+	}
+
+
+	/** determine whether this queue has been disposed */
+	public boolean isDisposed() {
+		return _queueState == DispatchQueueState.DISPOSED;
 	}
 
 
 	/** release allocated resources - called internally for any queue */
 	protected void releaseResources() {
-		if ( !isSuspended()	) {
-			suspend();
-		}
+		_queueState = DispatchQueueState.DISPOSED;
 
 		if ( !DISPATCH_EXECUTOR.isShutdown()	) {
 			DISPATCH_EXECUTOR.shutdown();
@@ -429,7 +448,7 @@ class ConcurrentDispatchQueue extends DispatchQueue {
 
 	/** process the pending operations */
 	private void processPendingOperations() {
-		while ( _isProcessingPendingOperationQueue && PENDING_OPERATION_QUEUE.size() > 0 ) {		// process (in order) all pending operations which can be processed
+		while ( _queueState == DispatchQueueState.PROCESSING && PENDING_OPERATION_QUEUE.size() > 0 ) {		// process (in order) all pending operations which can be processed
 			final DispatchOperation<?> nextOperation = PENDING_OPERATION_QUEUE.peek();
 
 			if ( nextOperation != null ) {
@@ -604,7 +623,7 @@ class SerialDispatchQueue extends DispatchQueue {
 
 	/** if no process is currently running, process the next pending operation (if any) without blocking */
 	protected void processNextPendingOperation() {
-		if ( _isProcessingPendingOperationQueue && RUNNING_OPERATION_COUNTER.get() == 0 ) {
+		if ( _queueState == DispatchQueueState.PROCESSING && RUNNING_OPERATION_COUNTER.get() == 0 ) {
 			try {
 				final Callable<?> nextOperation = PENDING_OPERATION_QUEUE.remove();
 				if ( nextOperation != null ) {
@@ -675,7 +694,7 @@ class MainDispatchQueue extends SerialDispatchQueue {
 
 	/** process the next pending operation if any */
 	protected void processNextPendingOperation() {
-		if ( _isProcessingPendingOperationQueue && RUNNING_OPERATION_COUNTER.get() == 0 ) {
+		if ( _queueState == DispatchQueueState.PROCESSING && RUNNING_OPERATION_COUNTER.get() == 0 ) {
 			try {
 				final Callable<?> nextOperation = PENDING_OPERATION_QUEUE.remove();
 				if ( nextOperation != null ) {
@@ -782,11 +801,11 @@ class DispatchThread extends Thread {
 	/** constructor */
 	public DispatchThread( final DispatchQueue queue, final Runnable handler ) {
 		super( handler );
-
+		
 		QUEUE_THREAD_LOCAL.set( queue );
 	}
-
-
+	
+	
 	/** get the thread's queue */
 	public DispatchQueue getQueue() {
 		return QUEUE_THREAD_LOCAL.get();
