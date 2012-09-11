@@ -104,8 +104,10 @@ public class RpcServer {
     
     /** shutdown the server */
     public void shutdown() throws IOException {
+		// stop establishing new remote sockets
         SERVER_SOCKET.close();
 
+		// close the existing remote sockets
 		final Set<Socket> sockets = new HashSet<Socket>();
 		synchronized( REMOTE_SOCKETS ) {
 			sockets.addAll( REMOTE_SOCKETS );
@@ -119,10 +121,9 @@ public class RpcServer {
             }
         }
 
+		// clear the remote sockets
 		synchronized( REMOTE_SOCKETS ) {
-			for ( final Socket socket : REMOTE_SOCKETS ) {
-				REMOTE_SOCKETS.remove( socket );
-			}
+			REMOTE_SOCKETS.clear();
 		}
     }
     
