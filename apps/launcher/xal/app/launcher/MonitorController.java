@@ -8,8 +8,9 @@
 
 package xal.app.launcher;
 
-import javax.swing.*;
 import java.awt.event.*;
+import javax.swing.*;
+import javax.swing.event.*;
 import java.util.*;
 
 import xal.application.Application;
@@ -103,6 +104,25 @@ public class MonitorController implements MonitorModelListener {
 			}
 		});
 		REFRESH_TIMER.startNowWithInterval( 5000, 0 );	// refresh the table every 5 seconds
+
+		final Box monitorView = (Box)windowReference.getView( "MonitorView" );
+		final JTabbedPane mainTabPane = (JTabbedPane)windowReference.getView( "MainTabPane" );
+		// monitor tab pane selection changes to monitor remote applications only when the monitor pane is selected
+		mainTabPane.addChangeListener( new ChangeListener() {
+			public void stateChanged( final ChangeEvent event ) {
+				if ( mainTabPane.getSelectedComponent() == monitorView ) {
+					REFRESH_TIMER.resume();
+				}
+				else {
+					REFRESH_TIMER.suspend();
+				}
+			}
+		});
+
+		// suspend the refresh timer if the monitor is not selected to avoid unnecessary network activity
+		if ( mainTabPane.getSelectedComponent() != monitorView ) {		// future proofed in case the monitor view ever becomes the first tab open at launch
+			REFRESH_TIMER.suspend();
+		}
 	}
 
 
