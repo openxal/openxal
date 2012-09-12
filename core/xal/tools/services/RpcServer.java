@@ -126,6 +126,14 @@ public class RpcServer {
 			REMOTE_SOCKETS.clear();
 		}
     }
+
+
+	/** cleanup the remote socket which has been closed */
+	private void cleanupClosedRemoteSocket( final Socket remoteSocket ) {
+		synchronized( REMOTE_SOCKETS ) {
+			REMOTE_SOCKETS.remove( remoteSocket );
+		}
+	}
     
     
     public <ProtocolType> void addHandler( final String serviceName, final Class<ProtocolType> protocol, final ProtocolType provider ) {
@@ -155,7 +163,7 @@ public class RpcServer {
                             final int readCount = reader.read( streamBuffer, 0, BUFFER_SIZE );
                             
                             if ( readCount == -1 ) {     // the session has been closed
-                                return;
+                                throw new RemoteClientDroppedException( "Session has been closed during read..." );
                             }
                             else {
                                 inputBuffer.append( streamBuffer, 0, readCount );
@@ -193,7 +201,17 @@ public class RpcServer {
                         }
                     }
                     catch ( Exception exception ) {
-                        exception.printStackTrace();
+						if ( !remoteSocket.isClosed() ) {
+							try {
+								remoteSocket.close();
+							}
+							catch( Exception closeException ) {
+								closeException.printStackTrace();
+							}
+						}
+
+						cleanupClosedRemoteSocket( remoteSocket );
+						return;
                     }
                 }
             }
@@ -449,6 +467,17 @@ class EvaluationResult {
             return null;
         }
     }
+}
+
+
+/** indicates that a remote client connection has been dropped */
+class RemoteClientDroppedException extends RuntimeException {
+    /** serialization ID */
+    private static final long serialVersionUID = 1L;
+
+	public RemoteClientDroppedException( final String message ) {
+		super( message );
+	}
 }
 
 
