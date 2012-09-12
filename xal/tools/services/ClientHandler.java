@@ -197,12 +197,16 @@ class ClientHandler<ProxyType> implements InvocationHandler {
                 try {
                     processRemoteResponse();
                 }
+				catch( SocketException exception ) {}	// no need to flood output with socket exceptions as they will naturally occur when remote services close
                 catch( Exception exception ) {
                     exception.printStackTrace();
+                }
+				finally {
+					// if the socket closes, cleanup the connection resources and forward the exception to the client
 					if ( REMOTE_SOCKET.isClosed() ) {
 						cleanupClosedSocket( new RemoteServiceDroppedException( "The remote socket has closed while processing the remote response..." ) );
 					}
-                }
+				}
             }
         });
     }
