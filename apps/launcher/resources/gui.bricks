@@ -1,5 +1,5 @@
 <?xml version = '1.0' encoding = 'UTF-8'?>
-<BricksDocument date="Wed Aug 29 11:54:48 EDT 2012" version="1.0.0">
+<BricksDocument date="Wed Sep 12 11:59:49 EDT 2012" version="1.0.0">
     <RootBrick>
         <ViewNode customBeanClass="xal.application.DefaultXalWindow" height="685" tag="MainWindow" width="1098">
             <ViewProxy type="javax.swing.JFrame" />
@@ -96,6 +96,12 @@
                                 <ViewProxy type="javax.swing.JButton" />
                                 <BeanProperty name="text" value="Reveal" />
                                 <BeanProperty name="toolTipText" value="Reveal the selected applications by activating them and bringing them to the front." />
+                            </ViewNode>
+                            <ViewNode tag="QuitAppButton">
+                                <ViewProxy type="javax.swing.JButton" />
+                                <BeanProperty name="text" value="Quit" />
+                                <BeanProperty name="toolTipText" value="Quit the selected applications." />
+                                <BeanProperty alpha="255" blue="0" green="102" name="foreground" red="204" />
                             </ViewNode>
                             <ViewNode tag="ForceQuitAppButton">
                                 <ViewProxy type="javax.swing.JButton" />

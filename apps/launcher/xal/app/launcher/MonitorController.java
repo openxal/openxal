@@ -49,6 +49,21 @@ public class MonitorController implements MonitorModelListener {
 
 		final JButton liveAppsFilterClearButton = (JButton)windowReference.getView( "LiveAppsFilterClearButton" );
 		liveAppsFilterClearButton.addActionListener( clearFilterAction() );
+		
+		final JButton quitAppButton = (JButton)windowReference.getView( "QuitAppButton" );
+		quitAppButton.addActionListener( new ActionListener() {
+			public void actionPerformed( final ActionEvent event ) {
+				for ( final RemoteAppRecord record : getSelectedRemoteAppRecords() ) {
+					try {
+						record.quit( 0 );
+					}
+					catch ( Exception exception ) {
+						exception.printStackTrace();
+						Application.displayError( "Quit App Failed!", "Failed to quit selected apps due to an internal exception!", exception );
+					}
+				}
+			}
+		});
 
 		final JButton forceQuitAppButton = (JButton)windowReference.getView( "ForceQuitAppButton" );
 		forceQuitAppButton.addActionListener( new ActionListener() {
@@ -59,7 +74,7 @@ public class MonitorController implements MonitorModelListener {
 					}
 					catch ( Exception exception ) {
 						exception.printStackTrace();
-						Application.displayError( "Force Quit App Failed!", "Failed to force app to quit due to an internal exception!", exception );
+						Application.displayError( "Force Quit App Failed!", "Failed to force selected apps to quit due to an internal exception!", exception );
 					}
 				}
 			}
@@ -74,7 +89,7 @@ public class MonitorController implements MonitorModelListener {
 					}
 					catch ( Exception exception ) {
 						exception.printStackTrace();
-						Application.displayError( "Reveal App Failed!", "Failed to reveal app due to an internal exception!", exception );
+						Application.displayError( "Reveal App Failed!", "Failed to reveal selected apps due to an internal exception!", exception );
 					}
 				}
 			}
