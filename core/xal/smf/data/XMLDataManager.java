@@ -257,7 +257,7 @@ public class XMLDataManager {
 	 * @return the collection of table group names read from the edit context
 	 * @see xal.tools.data.EditContext
 	 */
-    public Collection getTableGroups() {
+    public Collection<String> getTableGroups() {
         return tableManager.getTableGroups();
     }
     
@@ -584,13 +584,11 @@ public class XMLDataManager {
         
 		/** write the table group references */
         private void writeTableGroupRefs( final DataAdaptor parentAdaptor ) {
-            Collection tableGroups = getTableGroups();
-            
-            Iterator tableGroupIter = tableGroups.iterator();
-            while ( tableGroupIter.hasNext() ) {
-                String tableGroup = (String)tableGroupIter.next();
-                String tableGroupUrl = urlSpecForTableGroup( tableGroup );
-                DataAdaptor adaptor = parentAdaptor.createChild( TABLE_GROUP_TAG );
+            final Collection<String> tableGroups = getTableGroups();
+
+			for ( final String tableGroup : tableGroups ) {
+                final String tableGroupUrl = urlSpecForTableGroup( tableGroup );
+                final DataAdaptor adaptor = parentAdaptor.createChild( TABLE_GROUP_TAG );
                 
                 adaptor.setValue( TABLE_GROUP_KEY, tableGroup );
                 adaptor.setValue( TABLE_GROUP_URL_KEY, tableGroupUrl );
@@ -715,9 +713,7 @@ public class XMLDataManager {
         
         /** load extra optics files if any */
         protected void loadExtraOptics( final Accelerator accelerator, final boolean isValidating ) {
-            Iterator extraOpticsIter = extraUrlSpecs.iterator();
-            while ( extraOpticsIter.hasNext() ) {
-                String urlSpec = (String)extraOpticsIter.next();
+			for ( final String urlSpec : extraUrlSpecs ) {
                 updateAccelerator( urlSpec, accelerator, isValidating );
             }
         }
@@ -952,7 +948,7 @@ public class XMLDataManager {
         
         
         /** Return the collection of all tables registered with a URL */
-        public Collection getTableGroups() {
+        public Collection<String> getTableGroups() {
             return tableGroupUrlMap.keySet();
         }
         
@@ -965,13 +961,11 @@ public class XMLDataManager {
         
         /** For each table group, read the associated XML files to get the tables */
         public EditContext readEditContext(boolean isValidating) {
-            EditContext editContext = new EditContext();
-            Collection groups = getTableGroups();
-            Iterator groupIter = groups.iterator();
-            
-            while ( groupIter.hasNext() ) {
-                String group = (String)groupIter.next();
-                readTableGroup(editContext, group, isValidating);
+            final EditContext editContext = new EditContext();
+            final Collection<String> groups = getTableGroups();
+
+			for ( final String group : groups ) {
+                readTableGroup( editContext, group, isValidating );
             }
             
             return editContext;
@@ -1015,11 +1009,8 @@ public class XMLDataManager {
         
         /** Write all table groups to XML */
         public void writeEditContext(EditContext editContext) {
-            Collection tableGroups = editContext.getTableGroups();
-            Iterator groupIter = tableGroups.iterator();
-            
-            while ( groupIter.hasNext() ) {
-                String tableGroup = (String)groupIter.next();
+            final Collection<String> tableGroups = editContext.getTableGroups();
+			for ( final String tableGroup : tableGroups ) {
                 writeTableGroup(editContext, tableGroup);
             }
         }
