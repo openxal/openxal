@@ -24,29 +24,22 @@ import java.util.Arrays;
  *
  * @author  tap
  */
-public class Selector {    
-    protected String _methodName;       /** name of the method */
-    protected Class[] _argumentTypes;   /** argument classes */
+public class Selector {
+	/** name of the method */
+    protected String _methodName;
 
-    /** Constructor for a method that takes no arguments */
-    public Selector( final String methodName ) {
-        this(methodName, new Class[0]);
-    }
-    
-    
-    /** Constructor for a method that takes a single argument */
-    public Selector( final String methodName, final Class argumentType ) {
-        this(methodName, new Class[]{argumentType});
-    }
+	/** argument classes */
+    protected Class[] _argumentTypes;
 
     
     /** Constructor for a method that takes multiple arguments */
-    public Selector( final String methodName, final Class[] argumentTypes ) {
+	@SuppressWarnings( "rawtypes" )		// cannot mix generics with arrays
+    public Selector( final String methodName, final Class<?> ... argumentTypes ) {
         _methodName = methodName;
         int argumentCount = argumentTypes.length;
         if ( argumentTypes.length > 0 ) {
             _argumentTypes = new Class[argumentCount];
-            System.arraycopy(argumentTypes, 0, _argumentTypes, 0, argumentCount);
+            System.arraycopy( argumentTypes, 0, _argumentTypes, 0, argumentCount );
         }
         else {
             _argumentTypes = new Class[0];
@@ -169,7 +162,7 @@ public class Selector {
      * Invoke a single argument method on the target.  This is a convenience static
      * method that creates an internal Selector on the fly.
      */
-    static public Object invokeMethod(String methodName, Class argumentType, Object target, Object argument)
+    static public Object invokeMethod(String methodName, Class<?> argumentType, Object target, Object argument)
     throws IllegalArgumentException, AccessException, InvocationException, MethodNotFoundException {
         Selector selector = new Selector(methodName, argumentType);
         return selector.invoke(target, argument);
@@ -196,7 +189,7 @@ public class Selector {
     
     
     /** Invoke the static method with the specified arguments on the specified target class */
-    static public <TargetType> Object invokeStaticMethod( final String methodName, final Class argumentType, final Class<TargetType> targetClass, final Object argument ) throws IllegalArgumentException, AccessException, InvocationException, MethodNotFoundException {
+    static public <TargetType> Object invokeStaticMethod( final String methodName, final Class<?> argumentType, final Class<TargetType> targetClass, final Object argument ) throws IllegalArgumentException, AccessException, InvocationException, MethodNotFoundException {
         final Selector selector = new Selector( methodName, argumentType );
         return selector.invokeStatic( targetClass, argument );
     }
