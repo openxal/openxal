@@ -25,6 +25,7 @@ public class FileWatcherController {
 	final private FileWatcher FILE_WATCHER;
 	
 	/** list of watched folders */
+	@SuppressWarnings( "rawtypes" )		// TODO: JList supports generics in Java 7 or later
 	final private JList WATCH_FOLDER_LIST;
 	
 	/** file chooser for selecting folders to watch */
@@ -53,6 +54,7 @@ public class FileWatcherController {
 	
 	
 	/** refresh the view with the model data */
+	@SuppressWarnings( "unchecked" )		// TODO: JList supports generics in Java 7 or later
 	private void refreshView() {
 		final List<File> folders = FILE_WATCHER.getFolders();
 		WATCH_FOLDER_LIST.setListData( new Vector<File>( folders ) );
@@ -81,7 +83,8 @@ public class FileWatcherController {
 	
 	
 	/** action to delete the selected watch folders */
-	private AbstractAction deleteSelectedWatchFoldersAction() {        
+	@SuppressWarnings( "deprecation" )		// TODO: JList supports generics in Java 7 or later
+	private AbstractAction deleteSelectedWatchFoldersAction() {
 		return new AbstractAction() {
             private static final long serialVersionUID = 1L;
             

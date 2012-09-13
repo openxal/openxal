@@ -18,6 +18,7 @@ import javax.swing.*;
  *
  * @author  tap
  */
+@SuppressWarnings( "rawtypes" )		// TODO: AbstractListModel supports generics in Java 7 or later
 public class SchemaListModel extends AbstractListModel {
     /** serialization identifier */
     private static final long serialVersionUID = 1L;
