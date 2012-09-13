@@ -24,7 +24,7 @@ public class PrimaryPropertyAccessor {
 	private static final boolean DEBUG = false;
 	
 	/** map of property accessors keyed by node */
-	private static Map<Class,PropertyAccessor> nodeAccessorMap = new HashMap<Class,PropertyAccessor>();
+	private static Map<Class<?>,PropertyAccessor> nodeAccessorMap = new HashMap<Class<?>,PropertyAccessor>();
 	
 	// key = accelerator node, value = list of inputs for that node
 	private Map<AcceleratorNode,Map<String,ModelInput>> nodeInputMap = new HashMap<AcceleratorNode,Map<String,ModelInput>>();
@@ -94,11 +94,9 @@ public class PrimaryPropertyAccessor {
 		if (nodeAccessor == null) {
 			throw new IllegalArgumentException( "unknown node type: " + aNode.getClass().getName() );
 		}
-		final List properties = nodeAccessor.propertyNames();
+		final List<String> properties = nodeAccessor.propertyNames();
 		final Map<String,Double> valueMap = new HashMap<String,Double>( properties.size() );
-		final Iterator propertyIt = properties.iterator();
-		while ( propertyIt.hasNext() ) {
-			final String property = (String) propertyIt.next();
+		for ( final String property : properties ) {
 			valueMap.put( property, nodeAccessor.doubleValueFor( aNode, property, mode ) );
 		}
 		PROPERTY_VALUE_CACHE.put( aNode, new HashMap<String,Double>( valueMap ) );		// need to copy it so we don't override the raw values
@@ -129,25 +127,20 @@ public class PrimaryPropertyAccessor {
 	 * @param aNode AcceleratorNode whose property names to return
 	 * @return a List of property names for aNode
 	 */
-	public List propertyNamesFor(AcceleratorNode aNode) {
-		if (aNode == null)
-			throw new IllegalArgumentException("can't get property names for null node");
-		PropertyAccessor nodeAccessor = getAccessorFor(aNode);
-		if (nodeAccessor == null)
-			throw new IllegalArgumentException(
-				"unregistered node type: " + aNode.getClass().getName());
+	public List<String> propertyNamesFor( final AcceleratorNode aNode ) {
+		if ( aNode == null )  throw new IllegalArgumentException("can't get property names for null node");
+		final PropertyAccessor nodeAccessor = getAccessorFor( aNode );
+		if (nodeAccessor == null)  throw new IllegalArgumentException( "unregistered node type: " + aNode.getClass().getName() );
 		return nodeAccessor.propertyNames();
 	}
 	
 	
 	// Node-Specific Factory Operations ========================================
-	
-	private static PropertyAccessor getAccessorFor(AcceleratorNode aNode) {
-		Iterator nodeClassIt = nodeAccessorMap.keySet().iterator();
-		while (nodeClassIt.hasNext()) {
-			Class cl = (Class) nodeClassIt.next();
-			if (cl.isInstance(aNode)) {
-				return nodeAccessorMap.get(cl);
+
+	private static PropertyAccessor getAccessorFor( final AcceleratorNode aNode ) {
+		for ( final Class<?> nodeClass : nodeAccessorMap.keySet() ) {
+			if ( nodeClass.isInstance( aNode ) ) {
+				return nodeAccessorMap.get( nodeClass );
 			}
 		}
 		return null;
@@ -164,7 +157,7 @@ public class PrimaryPropertyAccessor {
 		return getAccessorFor(aNode) != null;
 	}
 	
-	private static void registerAccessorInstance( final Class nodeClass, final PropertyAccessor accessor ) {
+	private static void registerAccessorInstance( final Class<?> nodeClass, final PropertyAccessor accessor ) {
 		nodeAccessorMap.put( nodeClass, accessor );
 	}
 
@@ -172,11 +165,9 @@ public class PrimaryPropertyAccessor {
 	// Model Input Data: Node Property Overrides ===============================
 
 	private void addInputOverrides( final AcceleratorNode aNode, final Map<String,Double> valueMap ) {
-		Map inputs = inputsForNode(aNode);
+		Map<String,ModelInput> inputs = inputsForNode( aNode );
 		if (inputs == null) return;
-		Iterator inputIt = inputs.values().iterator();
-		while (inputIt.hasNext()) {
-			ModelInput input = (ModelInput) inputIt.next();
+		for ( final ModelInput input : inputs.values() ) {
 			final String property = input.getProperty();
 			valueMap.put( property, input.getDoubleValue() );
 		}
@@ -229,9 +220,7 @@ public class PrimaryPropertyAccessor {
 	 * @param cavityAmp the new value of the cavity's amplitude
 	 */
 	private void applyCavityAmplitudeToRFGaps( final RfCavity cavity, final double cavityAmp ) {
-		final Iterator gapIter = cavity.getGaps().iterator();
-		while ( gapIter.hasNext() ) {
-			final RfGap gap = (RfGap)gapIter.next();
+		for ( final RfGap gap : cavity.getGaps() ) {
 			final double gapAmp = gap.toGapAmpFromCavityAmp( cavityAmp );
 			setModelInput( gap, RfGapPropertyAccessor.PROPERTY_E0, RfGapPropertyAccessor.SCALE_E0 * gapAmp );
 			setModelInput( gap, RfGapPropertyAccessor.PROPERTY_ETL, RfGapPropertyAccessor.SCALE_ETL * gap.toE0TLFromGapField( gapAmp ) );
@@ -246,9 +235,7 @@ public class PrimaryPropertyAccessor {
 	 * @param cavityPhase the new value of the cavity's phase
 	 */
 	private void applyCavityPhaseToRFGaps( final RfCavity cavity, final double cavityPhase ) {
-		final Iterator gapIter = cavity.getGaps().iterator();
-		while ( gapIter.hasNext() ) {
-			final RfGap gap = (RfGap)gapIter.next();
+		for ( final RfGap gap : cavity.getGaps() ) {
 			setModelInput( gap, RfGapPropertyAccessor.PROPERTY_PHASE, RfGapPropertyAccessor.SCALE_PHASE * gap.toGapPhaseFromCavityPhase( cavityPhase ) );
 		}
 	}	
@@ -262,10 +249,8 @@ public class PrimaryPropertyAccessor {
 	 * @param propName name of property to get a ModelInput for
 	 */
 	public ModelInput getInput(AcceleratorNode aNode, String propName) {
-		Map inputs = inputsForNode(aNode);
-		if (inputs != null)
-			return (ModelInput) inputs.get(propName);
-		else return null;
+		final Map<String,ModelInput> inputs = inputsForNode(aNode);
+		return inputs != null ? inputs.get( propName ) : null;
 	}
 	
 	protected void addInput( final ModelInput anInput ) {
@@ -280,9 +265,9 @@ public class PrimaryPropertyAccessor {
 	
 	
 	public void removeInput(AcceleratorNode aNode, String property) {
-		Map inputs = inputsForNode(aNode);
-		if (inputs != null) {
-			inputs.remove(property);
+		final Map<String,ModelInput> inputs = inputsForNode(aNode);
+		if ( inputs != null ) {
+			inputs.remove( property );
 			if ( aNode instanceof RfCavity )  removeRFCavityGapInputs( (RfCavity)aNode, property );
 		}
 	}
@@ -308,9 +293,7 @@ public class PrimaryPropertyAccessor {
 	 * @param cavity the cavity for which to remove the gap's inputs
 	 */
 	private void removeRFCavityGapPhaseInputs( final RfCavity cavity ) {
-		final Iterator gapIter = cavity.getGaps().iterator();
-		while ( gapIter.hasNext() ) {
-			final RfGap gap = (RfGap)gapIter.next();
+		for ( final RfGap gap : cavity.getGaps() ) {
 			removeInput( gap, RfGapPropertyAccessor.PROPERTY_PHASE );
 		}		
 	}
@@ -321,9 +304,7 @@ public class PrimaryPropertyAccessor {
 	 * @param cavity the cavity for which to remove the gap's inputs
 	 */
 	private void removeRFCavityGapAmplitudeInputs( final RfCavity cavity ) {
-		final Iterator gapIter = cavity.getGaps().iterator();
-		while ( gapIter.hasNext() ) {
-			final RfGap gap = (RfGap)gapIter.next();
+		for ( final RfGap gap : cavity.getGaps() ) {
 			removeInput( gap, RfGapPropertyAccessor.PROPERTY_E0 );
 			removeInput( gap, RfGapPropertyAccessor.PROPERTY_ETL );
 		}		
@@ -337,14 +318,14 @@ public class PrimaryPropertyAccessor {
 	
 	// Testing and Debugging ===================================================
 	
-	private static void printValueMap(AcceleratorNode aNode, Map values) {
-		System.out.println("Properties for node: " + aNode);
-		Iterator propIt = values.keySet().iterator();
-		while (propIt.hasNext()) {
-			String property = (String) propIt.next();
-			Double val = (Double) values.get(property);
+	private static void printValueMap( final AcceleratorNode aNode, final Map<String,Double> values ) {
+		System.out.println( "Properties for node: " + aNode );
+
+		for ( final String property : values.keySet() ) {
+			Double val = values.get( property );
 			System.out.println("\t" + property + ": " + val); 
 		}
+		
 		System.out.println();
 	}
 	
