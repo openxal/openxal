@@ -85,11 +85,12 @@ public class AcceleratorApplication extends FrameApplication {
      * and performing application initialization.
      * @param adaptor The custom application adaptor.
      */
-    static public void launch(ApplicationAdaptor adaptor) {
+    static public void launch( final ApplicationAdaptor adaptor ) {
         try {
-            launch(adaptor, adaptor.getDocURLs());
-        } catch (NullPointerException e) {
-            new AcceleratorApplication(adaptor, new URL[] {});
+            launch( adaptor, AbstractApplicationAdaptor.getDocURLs() );
+        }
+		catch ( NullPointerException e ) {
+            new AcceleratorApplication( adaptor, new URL[] {} );
         }        
     }
     
@@ -100,8 +101,8 @@ public class AcceleratorApplication extends FrameApplication {
      * @param adaptor The custom application adaptor.
 	 * @param urls The URLs of documents to open upon launching the application
      */
-    static public void launch(ApplicationAdaptor adaptor, URL[] urls) {
-        new AcceleratorApplication(adaptor, urls);
+    static public void launch( final ApplicationAdaptor adaptor, final URL[] urls ) {
+        new AcceleratorApplication( adaptor, urls );
     }
 	
 	
