@@ -34,12 +34,12 @@ import xal.tools.plot.*;
 /** factory for making view proxies */
 public class ViewProxyFactory {
 	/** table of proxies keyed by type */
-	static protected Map<String,ViewProxy> PROXY_TABLE;
+	static protected Map<String,ViewProxy<?>> PROXY_TABLE;
 	
 	
 	// static initializer
 	static {
-		PROXY_TABLE = new HashMap<String,ViewProxy>();
+		PROXY_TABLE = new HashMap<String,ViewProxy<?>>();
 		
 		register( getFrameProxy( "Window" ) );
 		register( getDialogProxy( "Dialog" ) );
@@ -79,13 +79,13 @@ public class ViewProxyFactory {
 	
 	
 	/** register the proxy in the proxy table */
-	static protected void register( final ViewProxy proxy ) {
+	static protected void register( final ViewProxy<?> proxy ) {
 		PROXY_TABLE.put( proxy.getType(), proxy );
 	}
 	
 	
 	/** get a border proxy with the specified type */
-	static public ViewProxy getViewProxy( final String type ) {
+	static public ViewProxy<?> getViewProxy( final String type ) {
 		if ( PROXY_TABLE.containsKey( type ) ) {
 			return PROXY_TABLE.get( type );
 		}
@@ -187,6 +187,7 @@ public class ViewProxyFactory {
 	
 	
 	/** Generate a view proxy for a combo box view */
+	@SuppressWarnings( {"unchecked", "rawtypes"} )	// TODO: JComboBox is typed in Java 7 but not earlier
 	static public ViewProxy<JComboBox> getComboBoxProxy() {
 		return new ViewProxy<JComboBox>( JComboBox.class, false, false ) {
 			public void setupPrototype( final JComboBox comboBox ) {
@@ -207,6 +208,7 @@ public class ViewProxyFactory {
 	
 	
 	/** Generate a view proxy for a list view */
+	@SuppressWarnings( { "rawtypes", "unchecked" } )	// TODO: JList is typed in Java 7 but not earlier
 	static public ViewProxy<JList> getListProxy() {
 		return new ViewProxy<JList>( JList.class, false, false ) {
 			/** setup the list data */

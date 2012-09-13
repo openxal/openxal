@@ -182,7 +182,7 @@ class BricksWindow extends XalWindow implements SwingConstants, BrickListener {
 	
 	
 	/** get the selected bean node */
-	private BeanNode getSelectedBeanNode() {
+	private BeanNode<?> getSelectedBeanNode() {
 		return TreeUtility.getSelectedBeanNode( VIEW_TREE );
 	}
 	
@@ -195,7 +195,7 @@ class BricksWindow extends XalWindow implements SwingConstants, BrickListener {
 	
 	/** inspect the selected item */
 	private void inspectSelection( final JTree tree ) {
-		final BeanNode beanNode = TreeUtility.getSelectedBeanNode( tree );
+		final BeanNode<?> beanNode = TreeUtility.getSelectedBeanNode( tree );
 		VIEW_INSPECTOR.inspect( CONTEXT, beanNode );
 	}
 	
@@ -207,8 +207,8 @@ class BricksWindow extends XalWindow implements SwingConstants, BrickListener {
 			if ( beanNodes[0] instanceof ViewNode ) {
 				final ViewNodeContainer container = ((ViewNode)beanNodes[0]).getViewNodeContainer();
 				if ( container != null ) {
-					final List<BeanNode> viewNodes = new ArrayList<BeanNode>( beanNodes.length );
-					for ( final BeanNode beanNode : beanNodes ) {
+					final List<BeanNode<?>> viewNodes = new ArrayList<BeanNode<?>>( beanNodes.length );
+					for ( final BeanNode<?> beanNode : beanNodes ) {
 						if ( beanNode instanceof ViewNode ) {
 							viewNodes.add( beanNode );
 						}
@@ -235,8 +235,8 @@ class BricksWindow extends XalWindow implements SwingConstants, BrickListener {
 			if ( beanNodes[0] instanceof ViewNode ) {
 				final ViewNodeContainer container = ((ViewNode)beanNodes[0]).getViewNodeContainer();
 				if ( container != null ) {
-					final List<BeanNode> viewNodes = new ArrayList<BeanNode>( beanNodes.length );
-					for ( final BeanNode beanNode : beanNodes ) {
+					final List<BeanNode<?>> viewNodes = new ArrayList<BeanNode<?>>( beanNodes.length );
+					for ( final BeanNode<?> beanNode : beanNodes ) {
 						if ( beanNode instanceof ViewNode ) {
 							viewNodes.add( beanNode );
 						}
@@ -258,7 +258,7 @@ class BricksWindow extends XalWindow implements SwingConstants, BrickListener {
 	
 	/** display the selected item */
 	private void displaySelection( final JTree tree ) {
-		final BeanNode beanNode = TreeUtility.getSelectedBeanNode( tree );
+		final BeanNode<?> beanNode = TreeUtility.getSelectedBeanNode( tree );
 		if ( beanNode != null ) {
 			beanNode.display();
 		}
@@ -271,7 +271,7 @@ class BricksWindow extends XalWindow implements SwingConstants, BrickListener {
 	 * @param container the node to which nodes have been added
 	 * @param nodes the nodes which have been added
 	 */
-	public void nodesAdded( final Object source, final Brick container, final List<BeanNode> nodes ) {}
+	public void nodesAdded( final Object source, final Brick container, final List<BeanNode<?>> nodes ) {}
 	
 	
 	/**
@@ -280,7 +280,7 @@ class BricksWindow extends XalWindow implements SwingConstants, BrickListener {
 	 * @param container the node from which nodes have been removed
 	 * @param nodes the nodes which have been removed
 	 */
-	public void nodesRemoved( final Object source, final Brick container, final List<BeanNode> nodes ) {}
+	public void nodesRemoved( final Object source, final Brick container, final List<BeanNode<?>> nodes ) {}
 	
 	
 	/**
@@ -289,7 +289,7 @@ class BricksWindow extends XalWindow implements SwingConstants, BrickListener {
 	 * @param propertyDescritpr the property which has changed
 	 * @param value the new value
 	 */
-	public void propertyChanged( final BeanNode beanNode, final PropertyDescriptor propertyDescriptor, final Object value ) {}
+	public void propertyChanged( final BeanNode<?> beanNode, final PropertyDescriptor propertyDescriptor, final Object value ) {}
 	
 	
 	/**
@@ -303,7 +303,7 @@ class BricksWindow extends XalWindow implements SwingConstants, BrickListener {
 	
 	
 	/** process the dropping of a view node */
-	protected static boolean processViewNodeDrop( final TreePath treePath, final List<BeanNode> nodes ) throws Exception {
+	protected static boolean processViewNodeDrop( final TreePath treePath, final List<BeanNode<?>> nodes ) throws Exception {
 		if ( treePath != null ) {
 			final DefaultMutableTreeNode dropNode = (DefaultMutableTreeNode)treePath.getLastPathComponent();
 			final Object dropComponent = dropNode.getUserObject();
@@ -359,7 +359,7 @@ class BricksWindow extends XalWindow implements SwingConstants, BrickListener {
         @SuppressWarnings( "unchecked" )    // transferables don't support generics
 		void processViewNodeDrop( final DropTargetDropEvent event ) throws Exception {
 			final JTree tree = (JTree)event.getDropTargetContext().getComponent();
-			final List<BeanNode> nodes = (List<BeanNode>)event.getTransferable().getTransferData( ViewNodeTransferable.VIEW_NODE_FLAVOR );
+			final List<BeanNode<?>> nodes = (List<BeanNode<?>>)event.getTransferable().getTransferData( ViewNodeTransferable.VIEW_NODE_FLAVOR );
 			final Point location = event.getLocation();
 			final TreePath treePath = tree.getClosestPathForLocation( location.x, location.y );
 			if ( BricksWindow.processViewNodeDrop( treePath, nodes ) ) {
@@ -375,7 +375,7 @@ class BricksWindow extends XalWindow implements SwingConstants, BrickListener {
         @SuppressWarnings( "unchecked" )    // transferables don't support generics
 		void processViewDrop( final DropTargetDropEvent event ) throws Exception {
 			final JTree tree = (JTree)event.getDropTargetContext().getComponent();
-			final List<BeanProxy> views = (List<BeanProxy>)event.getTransferable().getTransferData( ViewTransferable.VIEW_FLAVOR );
+			final List<BeanProxy<?>> views = (List<BeanProxy<?>>)event.getTransferable().getTransferData( ViewTransferable.VIEW_FLAVOR );
 			final Point location = event.getLocation();
 			final TreePath treePath = tree.getClosestPathForLocation( location.x, location.y );
 			if ( treePath != null ) {
@@ -413,9 +413,9 @@ class BricksWindow extends XalWindow implements SwingConstants, BrickListener {
 		protected Transferable createTransferable( final JComponent component ) {
 			final JTree nodeTree = (JTree)component;
 			final TreePath[] selections = nodeTree.getSelectionPaths();
-			final List<BeanNode> nodes = new ArrayList<BeanNode>( selections.length );
+			final List<BeanNode<?>> nodes = new ArrayList<BeanNode<?>>( selections.length );
 			for ( final TreePath path : selections ) {
-				final BeanNode node = (BeanNode)((DefaultMutableTreeNode)path.getLastPathComponent()).getUserObject();
+				final BeanNode<?> node = (BeanNode<?>)((DefaultMutableTreeNode)path.getLastPathComponent()).getUserObject();
 				nodes.add( node );
 			}
 			return new ViewNodeTransferable( nodes );
@@ -443,7 +443,7 @@ class BricksWindow extends XalWindow implements SwingConstants, BrickListener {
 			try {
 				final JTree nodeTree = (JTree)component;
 				final TreePath treePath = nodeTree.getSelectionPath();
-				final List<BeanNode> nodes = (List<BeanNode>)transferable.getTransferData( ViewNodeTransferable.VIEW_NODE_FLAVOR );
+				final List<BeanNode<?>> nodes = (List<BeanNode<?>>)transferable.getTransferData( ViewNodeTransferable.VIEW_NODE_FLAVOR );
 				return BricksWindow.processViewNodeDrop( treePath, nodes );
 			}
 			catch( UnsupportedFlavorException exception ) {
@@ -468,8 +468,8 @@ class BricksWindow extends XalWindow implements SwingConstants, BrickListener {
 				case TransferHandler.MOVE:
 					if ( transferable != null ) {
 						try {
-							final List<BeanNode> nodes = (List<BeanNode>)transferable.getTransferData( ViewNodeTransferable.VIEW_NODE_FLAVOR );
-							for ( final BeanNode node : nodes ) {
+							final List<BeanNode<?>> nodes = (List<BeanNode<?>>)transferable.getTransferData( ViewNodeTransferable.VIEW_NODE_FLAVOR );
+							for ( final BeanNode<?> node : nodes ) {
 								node.removeFromParent();
 							}
 						}

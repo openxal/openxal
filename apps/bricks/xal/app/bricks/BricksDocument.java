@@ -147,7 +147,7 @@ class BricksDocument extends XalDocument implements DataListener, BrickListener 
 	 * @param container the node to which nodes have been added
 	 * @param nodes the nodes which have been added
 	 */
-	public void nodesAdded( final Object source, final Brick container, final List<BeanNode> nodes ) {
+	public void nodesAdded( final Object source, final Brick container, final List<BeanNode<?>> nodes ) {
 		setHasChanges( true );
 	}
 	
@@ -158,7 +158,7 @@ class BricksDocument extends XalDocument implements DataListener, BrickListener 
 	 * @param container the node from which nodes have been removed
 	 * @param nodes the nodes which have been removed
 	 */
-	public void nodesRemoved( final Object source, final Brick container, final List<BeanNode> nodes ) {
+	public void nodesRemoved( final Object source, final Brick container, final List<BeanNode<?>> nodes ) {
 		setHasChanges( true );
 	}
 	
@@ -169,7 +169,7 @@ class BricksDocument extends XalDocument implements DataListener, BrickListener 
 	 * @param propertyDescritpr the property which has changed
 	 * @param value the new value
 	 */
-	public void propertyChanged( final BeanNode beanNode, final PropertyDescriptor propertyDescriptor, final Object value ) {
+	public void propertyChanged( final BeanNode<?> beanNode, final PropertyDescriptor propertyDescriptor, final Object value ) {
 		setHasChanges( true );
 	}
 	

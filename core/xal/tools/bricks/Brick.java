@@ -114,14 +114,14 @@ abstract public class Brick {
 	 * Determine if the brick can add the specified view
 	 * @return true if it can add the specified view and false if not
 	 */
-	abstract public boolean canAdd( final BeanProxy beanProxy );
+	abstract public boolean canAdd( final BeanProxy<?> beanProxy );
 	
 	
 	/**
 	 * Determine if the brick can be inserted in this view's parent
 	 * @return true the view can be a sibling to this view and false if not
 	 */
-	public boolean canBeSibling( final BeanProxy beanProxy ) {
+	public boolean canBeSibling( final BeanProxy<?> beanProxy ) {
 		final Brick parent = getContainingBrick();
 		return parent != null && parent.canAdd( beanProxy );
 	}
@@ -131,8 +131,8 @@ abstract public class Brick {
 	 * Determine if all views can be sibling views
 	 * @return true if all views can be siblings and false if not
 	 */
-	public boolean canAllBeSiblings( final List<BeanProxy> beanProxies ) {
-		for ( final BeanProxy beanProxy : beanProxies ) {
+	public boolean canAllBeSiblings( final List<BeanProxy<?>> beanProxies ) {
+		for ( final BeanProxy<?> beanProxy : beanProxies ) {
 			if ( !canBeSibling( beanProxy ) )  return false;
 		}
 		return true;
@@ -143,8 +143,8 @@ abstract public class Brick {
 	 * Determine if the brick can add all of the specified views
 	 * @return true if it can add the specified view and false if not
 	 */
-	public boolean canAddAll( final List<BeanProxy> views ) {
-		for ( final BeanProxy view : views ) {
+	public boolean canAddAll( final List<BeanProxy<?>> views ) {
+		for ( final BeanProxy<?> view : views ) {
 			if ( !canAdd( view ) )  return false;
 		}
 		return true;
@@ -156,7 +156,7 @@ abstract public class Brick {
 	 * @param node the node to test for addition
 	 * @return true if it can add the specified view node and false if not
 	 */
-	public boolean canAddNode( final BeanNode node ) {
+	public boolean canAddNode( final BeanNode<?> node ) {
 		// neither a node nor any of its ancestors can be added to itself
 		return ( !equals( node ) ) && ( !node.isAncestorOf( this ) ) && canAdd( node.getBeanProxy() );
 	}
@@ -166,8 +166,8 @@ abstract public class Brick {
 	 * Determine if the brick can add all of the specified view nodes
 	 * @return true if it can add all of the specified view nodes and false if not
 	 */
-	public boolean canAddAllNodes( final List<BeanNode> nodes ) {
-		for ( final BeanNode node : nodes ) {
+	public boolean canAddAllNodes( final List<BeanNode<?>> nodes ) {
+		for ( final BeanNode<?> node : nodes ) {
 			if ( !canAddNode( node ) )  return false;
 		}
 		return true;
@@ -179,7 +179,7 @@ abstract public class Brick {
 	 * @param node the node to test
 	 * @return true if the node can be added as a sibling and false if not
 	 */
-	public boolean canNodeBeSibling( final BeanNode node ) {
+	public boolean canNodeBeSibling( final BeanNode<?> node ) {
 		final Brick parent = getContainingBrick();
 		return parent != null && parent.canAddNode( node );
 	}
@@ -189,8 +189,8 @@ abstract public class Brick {
 	 * Determine if all views can be sibling views
 	 * @return true if all views can be siblings and false if not
 	 */
-	public boolean canAllNodesBeSiblings( final List<BeanNode> nodes ) {
-		for ( final BeanNode node : nodes ) {
+	public boolean canAllNodesBeSiblings( final List<BeanNode<?>> nodes ) {
+		for ( final BeanNode<?> node : nodes ) {
 			if ( !canNodeBeSibling( node ) )  return false;
 		}
 		return true;

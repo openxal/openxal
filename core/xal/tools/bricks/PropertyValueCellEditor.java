@@ -33,7 +33,7 @@ public class PropertyValueCellEditor extends AbstractCellEditor implements Table
 	
 	final protected PropertyValueEditorManager PROPERTY_EDITOR_MANAGER;
 	final protected PropertyTableModel TABLE_MODEL;
-	protected PropertyValueEditor _currentEditor;
+	protected PropertyValueEditor<?> _currentEditor;
 	
 	
 	/** Constructor */
@@ -45,9 +45,9 @@ public class PropertyValueCellEditor extends AbstractCellEditor implements Table
 	
 	
 	/** get the editor for the property corresponding to the specified table row */
-	protected PropertyValueEditor getEditor( final int row ) {
-		final Class propertyClass = TABLE_MODEL.getPropertyClass( row );
-		PropertyValueEditor editor;
+	protected PropertyValueEditor<?> getEditor( final int row ) {
+		final Class<?> propertyClass = TABLE_MODEL.getPropertyClass( row );
+		PropertyValueEditor<?> editor;
 		
 		if ( propertyClass != null && PROPERTY_EDITOR_MANAGER.hasEditor( propertyClass ) ) {
 			editor = PROPERTY_EDITOR_MANAGER.getEditor( propertyClass );
@@ -79,7 +79,7 @@ public class PropertyValueCellEditor extends AbstractCellEditor implements Table
 	 * Get the table component.
 	 */
 	final public Component getTableCellRendererComponent( final JTable table, final Object value, final boolean isSelected, final boolean hasFocus, final int row, final int column ) {
-		final PropertyValueEditor editor = getEditor( row );
+		final PropertyValueEditor<?> editor = getEditor( row );
 		final JComponent component = (JComponent)editor.getRenderingComponent();
 		editor.setRenderingValue( value );
 		component.setOpaque( isSelected );

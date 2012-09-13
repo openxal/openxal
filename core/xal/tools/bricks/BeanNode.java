@@ -300,8 +300,8 @@ abstract public class BeanNode<T> extends Brick implements DataListener {
 				beanAdaptor.setValue( "contextURL", adaptor.stringValue( "contextURL" ) );
 				final String name = beanAdaptor.stringValue( "name" );
 				final PropertyDescriptor propertyDescriptor = descriptorTable.get( name );
-				final Class propertyType = propertyDescriptor.getPropertyType();
-				final PropertyValueEditor propertyEditor = editorManager.getEditor( propertyType );
+				final Class<?> propertyType = propertyDescriptor.getPropertyType();
+				final PropertyValueEditor<?> propertyEditor = editorManager.getEditor( propertyType );
 				final Object value = propertyEditor.readValue( beanAdaptor );
 				setPropertyValue( propertyDescriptor, value );
 			}

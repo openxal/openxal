@@ -20,19 +20,20 @@ import java.util.List;
 /** utility for performing common bricks operations on the tree of bricks */
 public class TreeUtility {
 	/** get the selected bean node */
-	static BeanNode getSelectedBeanNode( final JTree tree ) {
+	static BeanNode<?> getSelectedBeanNode( final JTree tree ) {
 		final TreePath selectionPath = tree.getSelectionPath();
 		return getBeanNode( selectionPath );
 	}
 
 	
 	/** get the selected bean nodes */
+	@SuppressWarnings( "rawtypes" )		// generics are not compatible with arrays
 	static BeanNode[] getSelectedBeanNodes( final JTree tree ) {
 		final TreePath[] selectionPaths = tree.getSelectionPaths();
 		if ( selectionPaths == null )  return new BeanNode[0];
-		final List<BeanNode> nodes = new ArrayList<BeanNode>( selectionPaths.length );
+		final List<BeanNode<?>> nodes = new ArrayList<BeanNode<?>>( selectionPaths.length );
 		for ( final TreePath treePath : selectionPaths ) {
-			final BeanNode node = getBeanNode( treePath );
+			final BeanNode<?> node = getBeanNode( treePath );
 			if ( node != null ) {
 				nodes.add( node );
 			}
@@ -43,13 +44,13 @@ public class TreeUtility {
 	
 	
 	/** get the bean node from the tree path */
-	static BeanNode getBeanNode( final TreePath treePath ) {
+	static BeanNode<?> getBeanNode( final TreePath treePath ) {
 		if ( treePath != null ) {
 			final Object treeNode = treePath.getLastPathComponent();
 			if ( treeNode instanceof DefaultMutableTreeNode ) {
 				final Object userObject = ((DefaultMutableTreeNode)treeNode).getUserObject();
 				if ( userObject instanceof BeanNode ) {
-					return (BeanNode)userObject;
+					return (BeanNode<?>)userObject;
 				}
 				else {
 					return null;

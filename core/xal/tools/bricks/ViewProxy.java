@@ -20,7 +20,7 @@ import xal.tools.data.*;
 
 
 /** interface for providing view node behavior */
-abstract public class ViewProxy<T extends Component> extends BeanProxy<T> {
+abstract public class ViewProxy<ViewType extends Component> extends BeanProxy<ViewType> {
 	/** data label */
 	final static public String DATA_LABEL = "ViewProxy";
 	
@@ -32,7 +32,7 @@ abstract public class ViewProxy<T extends Component> extends BeanProxy<T> {
 	
 	
 	/** Constructor */
-	public ViewProxy( final Class<T> prototypeClass, final boolean isContainer, final boolean makeIcon ) {
+	public ViewProxy( final Class<ViewType> prototypeClass, final boolean isContainer, final boolean makeIcon ) {
 		super( prototypeClass );
 		IS_CONTAINER = isContainer;
 		MAKE_ICON = makeIcon;
@@ -40,7 +40,7 @@ abstract public class ViewProxy<T extends Component> extends BeanProxy<T> {
 	
 	
 	/** generator */
-	static public ViewProxy getInstance( final DataAdaptor adaptor ) {
+	static public ViewProxy<?> getInstance( final DataAdaptor adaptor ) {
 		return ViewProxyFactory.getViewProxy( adaptor.stringValue( "type" ) );
 	}
 	
@@ -62,13 +62,13 @@ abstract public class ViewProxy<T extends Component> extends BeanProxy<T> {
 	 * @param view the view whose container is to be gotten
 	 * @return the view's container
 	 */
-	public Container getContainer( final T view ) {
+	public Container getContainer( final ViewType view ) {
 		return view instanceof RootPaneContainer ? ((RootPaneContainer)view).getContentPane() : view instanceof Container ? (Container)view : null;
 	}
 	
 	
 	/** handle child node property change */
-	public void handleChildNodePropertyChange( final ViewNode node, final BeanNode beanNode, final PropertyDescriptor propertyDescriptor, final Object value ) {}
+	public void handleChildNodePropertyChange( final ViewNode node, final BeanNode<?> beanNode, final PropertyDescriptor propertyDescriptor, final Object value ) {}
 	
 	
 	/** Get an icon representation for the view */
