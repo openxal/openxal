@@ -78,7 +78,7 @@ public class KeyValueListFilter<RecordType> {
 		final String[] matchingKeyPaths = _matchingKeyPaths;
 		final int count = RECORD_INDEXES.size();
 		for ( int index = 0 ; index < count ; index++ ) {
-			final RecordIndex recordIndex = RECORD_INDEXES.get( index );
+			final RecordIndex<RecordType> recordIndex = RECORD_INDEXES.get( index );
 			if ( record == recordIndex.getRecord() ) {
 				final RecordIndex<RecordType> newRecordIndex = RecordIndex.getInstance( record, KEY_VALUE_ADAPTOR, matchingKeyPaths );
 				RECORD_INDEXES.remove( index );

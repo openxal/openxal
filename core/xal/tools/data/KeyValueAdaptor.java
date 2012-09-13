@@ -78,7 +78,7 @@ public class KeyValueAdaptor {
 	 */
 	public void setValueForKey( final Object target, final String key, final Object value ) {
 		try {
-			final Class argumentClass = value != null ? value.getClass() : java.lang.Object.class;
+			final Class<?> argumentClass = value != null ? value.getClass() : java.lang.Object.class;
 			final KeyedSetting setter = setterForKey( target, key, argumentClass );
 			if ( setter != null ) {
 				setter.setValueForTarget( target, value );
@@ -142,7 +142,7 @@ public class KeyValueAdaptor {
 	 * @param key accessor property
 	 */
 	private KeyedAccessing accessorForKey( final Object target, final String key ) {
-		final Class targetClass = target.getClass();
+		final Class<?> targetClass = target.getClass();
 		final String accessorID = getAccessorID( targetClass, key );	// generate a unique ID for the target class/key pair
 		
 		synchronized ( GETTER_TABLE ) {
@@ -176,8 +176,8 @@ public class KeyValueAdaptor {
 	 * @param key setter property
 	 * @param argumentClass class of the argument
 	 */
-	private KeyedSetting setterForKey( final Object target, final String key, final Class argumentClass ) {
-		final Class targetClass = target.getClass();
+	private KeyedSetting setterForKey( final Object target, final String key, final Class<?> argumentClass ) {
+		final Class<?> targetClass = target.getClass();
 		final String setterID = getSetterID( targetClass, key, argumentClass );	// generate a unique ID for the target class/key/argument class group
 		
 		synchronized ( SETTER_TABLE ) {
@@ -206,13 +206,13 @@ public class KeyValueAdaptor {
 	
 	
 	/** generate the accessor ID for the target class/key pair */
-	static private String getAccessorID( final Class targetClass, final String key ) {
+	static private String getAccessorID( final Class<?> targetClass, final String key ) {
 		return targetClass.toString() + "#" + key;
 	}
 	
 	
 	/** generate the setter ID for the target class/key/argument class group */
-	static private String getSetterID( final Class targetClass, final String key, final Class argumentClass ) {
+	static private String getSetterID( final Class<?> targetClass, final String key, final Class<?> argumentClass ) {
 		return targetClass.toString() + "#" + key + "#" + argumentClass.toString();
 	}	
 	
@@ -353,7 +353,7 @@ class KeyedMethodAccessor implements KeyedAccessing {
 	
 	
 	/** attempt to get an instance for the class and a method matching the key */
-	static public KeyedMethodAccessor getInstance( final Class targetClass, final String methodName ) {
+	static public KeyedMethodAccessor getInstance( final Class<?> targetClass, final String methodName ) {
 		final Method method = findAccessorMethodForKey( targetClass, methodName );
 		return method != null ? new KeyedMethodAccessor( method, methodName ) : null;
 	}
@@ -447,7 +447,7 @@ class KeyedMethodSetter implements KeyedSetting {
 	
 	
 	/** attempt to get an instance for the class and a method matching the key */
-	static public KeyedMethodSetter getInstance( final Class targetClass, final String methodName, final Class argumentClass ) {
+	static public KeyedMethodSetter getInstance( final Class<?> targetClass, final String methodName, final Class<?> argumentClass ) {
 		final Method method = findSetterMethodForKey( targetClass, methodName, argumentClass );
 		return method != null ? new KeyedMethodSetter( method, methodName ) : null;
 	}
@@ -551,7 +551,7 @@ class KeyedMapAccessor implements KeyedAccessing {
 	
 	
 	/** attempt to get an instance for the class if the target implements the java.util.Map interface */
-	static public KeyedMapAccessor getInstance( final Class targetClass, final String key ) {
+	static public KeyedMapAccessor getInstance( final Class<?> targetClass, final String key ) {
 		return Map.class.isAssignableFrom( targetClass ) ? new KeyedMapAccessor( key ) : null;
 	}
 	
@@ -587,7 +587,7 @@ class KeyedMapSetter implements KeyedSetting {
 	
 	
 	/** attempt to get an instance for the class if the target implements the java.util.Map interface */
-	static public KeyedMapSetter getInstance( final Class targetClass, final String key, final Class argumentClass ) {
+	static public KeyedMapSetter getInstance( final Class<?> targetClass, final String key, final Class<?> argumentClass ) {
 		return Map.class.isAssignableFrom( targetClass ) ? new KeyedMapSetter( key ) : null;
 	}
 	
@@ -624,7 +624,7 @@ class KeyedArrayItemAccessor implements KeyedAccessing {
     
     
     /** attempt to get an instance for the class if the target is a primitive array */
-    static public KeyedArrayItemAccessor getInstance( final Class targetClass, final String key ) {
+    static public KeyedArrayItemAccessor getInstance( final Class<?> targetClass, final String key ) {
         try {
             final int itemIndex = Integer.parseInt( key );
             return targetClass.isArray() ? new KeyedArrayItemAccessor( itemIndex ) : null;
@@ -664,7 +664,7 @@ class KeyedArrayItemSetter implements KeyedSetting {
     
     
     /** attempt to get an instance for the class if the target is a primitive array */
-    static public KeyedArrayItemSetter getInstance( final Class targetClass, final String key, final Class argumentClass ) {
+    static public KeyedArrayItemSetter getInstance( final Class<?> targetClass, final String key, final Class<?> argumentClass ) {
         try {
             final int itemIndex = Integer.parseInt( key );
             return targetClass.isArray() ? new KeyedArrayItemSetter( itemIndex ) : null;
