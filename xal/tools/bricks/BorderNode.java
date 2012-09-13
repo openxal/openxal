@@ -33,13 +33,13 @@ public class BorderNode extends BeanNode<Border> {
 	
 	/** Primary Constructor */
     @SuppressWarnings( "unchecked" )    // nothing we can do to type BorderNode any tighter without introducing a type on BorderNode
-	public BorderNode( final BorderProxy borderProxy, final Map<String,Object> beanSettings, final String tag ) {
+	public BorderNode( final BorderProxy<Border> borderProxy, final Map<String,Object> beanSettings, final String tag ) {
 		super( borderProxy, beanSettings, tag );		
 	}
 	
 	
 	/** Primary Constructor */
-	public BorderNode( final BorderProxy borderProxy ) {
+	public BorderNode( final BorderProxy<Border> borderProxy ) {
 		this( borderProxy, null, borderProxy.getName() );
 	}
 	
@@ -61,7 +61,7 @@ public class BorderNode extends BeanNode<Border> {
 	/** generator */
 	static public BorderNode getInstance( final DataAdaptor adaptor ) {		
 		final DataAdaptor proxyAdaptor = adaptor.childAdaptor( BorderProxy.DATA_LABEL );
-		final BorderProxy borderProxy = BorderProxy.getInstance( proxyAdaptor );
+		final BorderProxy<Border> borderProxy = BorderProxy.getInstance( proxyAdaptor );
 		final String tag = adaptor.stringValue( "tag" );
 		final BorderNode node = new BorderNode( borderProxy, null, tag );
 		
@@ -84,8 +84,8 @@ public class BorderNode extends BeanNode<Border> {
 	 * Get the border proxy
 	 * @return the border proxy
 	 */
-	public BorderProxy getBorderProxy() {
-		return (BorderProxy)BEAN_PROXY;
+	public BorderProxy<Border> getBorderProxy() {
+		return (BorderProxy<Border>)BEAN_PROXY;
 	}
 	
 	
@@ -93,14 +93,14 @@ public class BorderNode extends BeanNode<Border> {
 	 * Determine if the brick can add the specified view
 	 * @return true if it can add the specified view and false if not
 	 */
-	public boolean canAdd( final BeanProxy beanProxy ) {
+	public boolean canAdd( final BeanProxy<?> beanProxy ) {
 		return false;
 	}
 	
 	
 	/** refresh display */
 	public void refreshDisplay() {
-		final BeanNode node = (BeanNode)getContainingBrick();
+		final BeanNode<?> node = (BeanNode<?>)getContainingBrick();
 		if ( node != null ) {
 			node.refreshDisplay();
 		}

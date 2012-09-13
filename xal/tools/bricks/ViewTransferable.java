@@ -27,7 +27,7 @@ public class ViewTransferable implements Transferable {
 	static public final DataFlavor[] FLAVORS;
 	
 	/** The views being transferred */
-	protected final List<BeanProxy> VIEW_PROXIES;
+	protected final List<BeanProxy<?>> VIEW_PROXIES;
 	
 	
 	// static initializer
@@ -41,8 +41,8 @@ public class ViewTransferable implements Transferable {
 	 * Primary Constructor
 	 * @param beanProxies The views being transferred
 	 */
-	public ViewTransferable( final List<BeanProxy> beanProxies ) {
-		VIEW_PROXIES = new ArrayList<BeanProxy>( beanProxies );
+	public ViewTransferable( final List<BeanProxy<?>> beanProxies ) {
+		VIEW_PROXIES = new ArrayList<BeanProxy<?>>( beanProxies );
 	}
 	
 	
@@ -50,8 +50,9 @@ public class ViewTransferable implements Transferable {
 	 * Constructor
 	 * @param viewProxy The view to transfer
 	 */
-	public ViewTransferable( final BeanProxy viewProxy ) {
-		this( Collections.singletonList( viewProxy ) );
+	@SuppressWarnings( "unchecked" )	// must cast as singletonList returns captured type
+	public ViewTransferable( final BeanProxy<?> viewProxy ) {
+		this( (List<BeanProxy<?>>)Collections.singletonList( viewProxy ) );
 	}
 	
 	

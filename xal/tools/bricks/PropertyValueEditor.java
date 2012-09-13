@@ -26,7 +26,7 @@ import xal.tools.data.*;
 
 
 /** property value editor */
-abstract public class PropertyValueEditor<T> {
+abstract public class PropertyValueEditor<ValueType> {
 	final protected Component EDITOR_COMPONENT;
 	final protected Component RENDERING_COMPONENT;
 	
@@ -47,7 +47,7 @@ abstract public class PropertyValueEditor<T> {
 	
 	
 	/** write to a data adaptor */
-	abstract public T readValue( final DataAdaptor adaptor );
+	abstract public ValueType readValue( final DataAdaptor adaptor );
 	
 	
 	/** Determine if the component supports editing */
@@ -78,7 +78,7 @@ abstract public class PropertyValueEditor<T> {
 	
 	
 	/** get the cell editor value */
-	abstract public T getEditorValue( final BricksContext context );
+	abstract public ValueType getEditorValue( final BricksContext context );
 	
 	
 	/** set the editor value */

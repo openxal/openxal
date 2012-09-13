@@ -19,22 +19,22 @@ public interface ViewNodeContainer extends BrickListener {
 	 * Add the views to this node
 	 * @param beanProxies the views to add to this node
 	 */
-	public void add( final List<BeanProxy> beanProxies );
+	public void add( final List<BeanProxy<?>> beanProxies );
 	
 	
 	/**
 	 * Insert the views in this node beginning at the specified index
 	 * @param beanProxies the views to add to this node
 	 */
-	public void insertSiblings( final List<BeanProxy> beanProxies );
+	public void insertSiblings( final List<BeanProxy<?>> beanProxies );
 	
 	
 	/**
 	 * Add the views nodes to this node
 	 * @param nodes the nodes to add to this node
 	 */
-	public void addNodes( final List<BeanNode> nodes );
-	
+	public void addNodes( final List<BeanNode<?>> nodes );
+
 	
 	/**
 	 * Get the tree index offset from the view index
@@ -55,76 +55,76 @@ public interface ViewNodeContainer extends BrickListener {
 	 * Insert the view nodes in this node beginning at the specified index
 	 * @param nodes the nodes to add to this node
 	 */
-	public void insertSiblingNodes( final List<BeanNode> nodes );
+	public void insertSiblingNodes( final List<BeanNode<?>> nodes );
 	
 	
 	/** Move the specified nodes down */
-	public void moveDownNodes( final List<BeanNode> nodes );
+	public void moveDownNodes( final List<BeanNode<?>> nodes );
 	
 	
 	/** Move the specified nodes up */
-	public void moveUpNodes( final List<BeanNode> nodes );
+	public void moveUpNodes( final List<BeanNode<?>> nodes );
 	
 	
 	/**
 	 * Remove the view node from this container
 	 * @param node the node to remove
 	 */
-	public void removeNode( final BeanNode node );
+	public void removeNode( final BeanNode<?> node );
 	
 	
 	/**
 	 * Remove the view nodes from this container
 	 * @param nodes the nodes to remove
 	 */
-	public void removeNodes( final List<BeanNode> nodes );
+	public void removeNodes( final List<BeanNode<?>> nodes );
 	
 	
 	/**
 	 * Determine if the brick can add the specified view
 	 * @return true if it can add the specified view and false if not
 	 */
-	public boolean canAdd( final BeanProxy beanProxy );
+	public boolean canAdd( final BeanProxy<?> beanProxy );
 	
 	
 	/**
 	 * Determine if the brick can be inserted in this view's parent
 	 * @return true the view can be a sibling to this view and false if not
 	 */
-	public boolean canBeSibling( final BeanProxy beanProxy );
+	public boolean canBeSibling( final BeanProxy<?> beanProxy );
 	
 	
 	/**
 	 * Determine if all views can be sibling views
 	 * @return true if all views can be siblings and false if not
 	 */
-	public boolean canAllBeSiblings( final List<BeanProxy> beanProxies );
+	public boolean canAllBeSiblings( final List<BeanProxy<?>> beanProxies );
 	
 	
 	/**
 	 * Determine if the brick can add all of the specified views
 	 * @return true if it can add the specified view and false if not
 	 */
-	public boolean canAddAll( final List<BeanProxy> views );
+	public boolean canAddAll( final List<BeanProxy<?>> views );
 	
 	
 	/**
 	 * Determine if the brick can add the specified view node
 	 * @return true if it can add the specified view node and false if not
 	 */
-	public boolean canAddNode( final BeanNode node );
+	public boolean canAddNode( final BeanNode<?> node );
 	
 	
 	/**
 	 * Determine if the brick can add all of the specified view nodes
 	 * @return true if it can add all of the specified view nodes and false if not
 	 */
-	public boolean canAddAllNodes( final List<BeanNode> nodes );
+	public boolean canAddAllNodes( final List<BeanNode<?>> nodes );
 	
 	
 	/**
 	 * Determine if all views can be sibling views
 	 * @return true if all views can be siblings and false if not
 	 */
-	public boolean canAllNodesBeSiblings( final List<BeanNode> nodes );
+	public boolean canAllNodesBeSiblings( final List<BeanNode<?>> nodes );
 }
