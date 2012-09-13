@@ -206,10 +206,7 @@ public class XALSynopticPanel extends JPanel {
 		final ArrayList<AcceleratorNode> newThick = new ArrayList<AcceleratorNode>(list.size());
 		final ArrayList<AcceleratorNode> newThin = new ArrayList<AcceleratorNode>(list.size());
 
-		Iterator it = list.iterator();
-
-		while (it.hasNext()) {
-			AcceleratorNode el = (AcceleratorNode)it.next();
+		for ( final AcceleratorNode el : list ) {
 			double pos = acceleratorSequence.getPosition(el);
 			//System.out.println(pos + " \t" + (pos + el.getLength()) + " \t"
 			//    + el.getId() + " \t"
@@ -330,10 +327,7 @@ public class XALSynopticPanel extends JPanel {
 		final double wrapLocation = sequenceLength - _wrapShift;
 		
 		// first draw thick elements
-		Iterator it = thick.iterator();
-
-		while (it.hasNext()) {
-			AcceleratorNode el = (AcceleratorNode)it.next();
+		for ( final AcceleratorNode el : thick ) {
 			String name = el.getId();
 			double pos = acceleratorSequence.getPosition(el);
 			
@@ -403,10 +397,7 @@ public class XALSynopticPanel extends JPanel {
 		}
 		
 		// Draw thin elements
-		it = thin.iterator();
-
-		while (it.hasNext()) {
-			AcceleratorNode el = (AcceleratorNode)it.next();
+		for ( final AcceleratorNode el : thin ) {
 			String name = el.getId();
 			double pos = acceleratorSequence.getPosition(el);
 
