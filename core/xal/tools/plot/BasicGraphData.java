@@ -910,7 +910,7 @@ public class BasicGraphData {
 	 *
 	 *@return    The graphPropertyKeys value
 	 */
-	public Set getGraphPropertyKeys() {
+	public Set<Object> getGraphPropertyKeys() {
 		synchronized (lockUpObj) {
 			return propertyMap.keySet();
 		}
