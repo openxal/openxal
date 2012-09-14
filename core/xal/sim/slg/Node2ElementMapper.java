@@ -29,14 +29,14 @@ public class Node2ElementMapper implements Visitor {
 	/**
 	 * Returns a set view of the mappings contained in this map.  
 	 */
-	Set entrySet() {
+	Set<Map.Entry<AcceleratorNode,Element>> entrySet() {
 		return node2ElementMap.entrySet();
 	}
 
 	/**
 	 * Getter for the map property.
 	 */
-	Map getMap() {
+	Map<AcceleratorNode,Element> getMap() {
 		return node2ElementMap;
 	}
 

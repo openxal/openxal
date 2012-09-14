@@ -6,7 +6,10 @@
 
 package xal.sim.slg;
 
+import java.util.List;
 import java.util.ArrayList;
+
+
 /**
  * The superclass of all thin elements.
  *
@@ -87,7 +90,7 @@ public abstract class ThinElement extends Element {
     /**
      * Return the slim element as a tuple (drift,element,drift).
      */
-    public ArrayList<Element> asTuple() {
+    public List<Element> asTuple() {
         ArrayList<Element> retval=new ArrayList<Element>();
         retval.add(getUpstreamDrift());
         retval.add(this);
@@ -99,7 +102,7 @@ public abstract class ThinElement extends Element {
      * Split the thin element means insert it behind this.
      */
     @Override
-    public ArrayList<Element> split(Element insert) {
+    public List<Element> split(Element insert) {
         ArrayList<Element> retval=new ArrayList<Element>();
         retval.add(this);
         retval.add(insert);

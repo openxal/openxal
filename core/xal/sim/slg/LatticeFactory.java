@@ -29,10 +29,10 @@ import java.util.Set;
 public class LatticeFactory {
 	private static java.io.PrintStream cout = System.out;
 	private Lattice lattice;
-	private final ArrayList thickKinds;
-	private final ArrayList thinKinds;
-	private static final ArrayList<String> std_thickKinds;
-	private static final ArrayList<String> std_thinKinds;
+	private final List<String> THICK_KINDS;
+	private final List<String> THIN_KINDS;
+	private static final List<String> STANDARD_THICK_KINDS;
+	private static final List<String> STANDARD_THIN_KINDS;
 	private boolean debug;
 	private boolean verbose;
 	private boolean halfmag;
@@ -40,40 +40,40 @@ public class LatticeFactory {
 	private AcceleratorSeq accelSeq;
 
 	static {
-		std_thickKinds = new ArrayList<String>();
-		std_thinKinds = new ArrayList<String>();
+		STANDARD_THICK_KINDS = new ArrayList<String>();
+		STANDARD_THIN_KINDS = new ArrayList<String>();
 
-		std_thickKinds.add("DH");
-//		std_thickKinds.add("QH");
-//		std_thickKinds.add("QTH");
-//		std_thickKinds.add("QV");
-//		std_thickKinds.add("QTV");
-//		std_thickKinds.add("QSC");
-		std_thickKinds.add("PQ");
-		std_thickKinds.add("SH");
-		std_thickKinds.add("SV");
-		std_thickKinds.add("RG");     //slim
-		std_thickKinds.add("BCM");   //slim 
-		std_thickKinds.add("SOL");
-		std_thickKinds.add("QUAD");
+		STANDARD_THICK_KINDS.add("DH");
+//		STANDARD_THICK_KINDS.add("QH");
+//		STANDARD_THICK_KINDS.add("QTH");
+//		STANDARD_THICK_KINDS.add("QV");
+//		STANDARD_THICK_KINDS.add("QTV");
+//		STANDARD_THICK_KINDS.add("QSC");
+		STANDARD_THICK_KINDS.add("PQ");
+		STANDARD_THICK_KINDS.add("SH");
+		STANDARD_THICK_KINDS.add("SV");
+		STANDARD_THICK_KINDS.add("RG");     //slim
+		STANDARD_THICK_KINDS.add("BCM");   //slim 
+		STANDARD_THICK_KINDS.add("SOL");
+		STANDARD_THICK_KINDS.add("QUAD");
 
-//		std_thinKinds.add("SH");
-//		std_thinKinds.add("SV");
-		std_thinKinds.add("DCH");
-		std_thinKinds.add("DCV");
-		std_thinKinds.add("EKick");
-		std_thinKinds.add("RG");      //slim
-		std_thinKinds.add("BCM");    //slim
-		std_thinKinds.add("BPM");
-		std_thinKinds.add("BLM");
-		std_thinKinds.add("BSM");
-		std_thinKinds.add("WS");
-		std_thinKinds.add("Foil");
-//		std_thinKinds.add("VIW");
-//		std_thinKinds.add("Harp");
-//		std_thinKinds.add("Tgt");
-//		std_thinKinds.add("Marker");
-                std_thinKinds.add("marker");
+//		STANDARD_THIN_KINDS.add("SH");
+//		STANDARD_THIN_KINDS.add("SV");
+		STANDARD_THIN_KINDS.add("DCH");
+		STANDARD_THIN_KINDS.add("DCV");
+		STANDARD_THIN_KINDS.add("EKick");
+		STANDARD_THIN_KINDS.add("RG");      //slim
+		STANDARD_THIN_KINDS.add("BCM");    //slim
+		STANDARD_THIN_KINDS.add("BPM");
+		STANDARD_THIN_KINDS.add("BLM");
+		STANDARD_THIN_KINDS.add("BSM");
+		STANDARD_THIN_KINDS.add("WS");
+		STANDARD_THIN_KINDS.add("Foil");
+//		STANDARD_THIN_KINDS.add("VIW");
+//		STANDARD_THIN_KINDS.add("Harp");
+//		STANDARD_THIN_KINDS.add("Tgt");
+//		STANDARD_THIN_KINDS.add("Marker");
+		STANDARD_THIN_KINDS.add("marker");
 	}
 
 	/**
@@ -83,9 +83,9 @@ public class LatticeFactory {
 	 *@param thinKinds : a list of strings of thin (and slim) element kinds.
 	 * <code>Example: ["DCH","DCV","RG","BCM","BPM","WS","Foil","VacuumWindow"].</code>
 	 */
-	public LatticeFactory(ArrayList thickKinds, ArrayList thinKinds) {
-		this.thickKinds = thickKinds;
-		this.thinKinds = thinKinds;
+	public LatticeFactory( final List<String> thickKinds, final List<String> thinKinds ) {
+		this.THICK_KINDS = thickKinds;
+		this.THIN_KINDS = thinKinds;
 		this.debug = false;
 		this.verbose = false;
 		this.halfmag = true;
@@ -99,7 +99,7 @@ public class LatticeFactory {
 	 * <code>["DCH","DCV","RG","BCM","BPM","WS","Foil","VacuumWindow"].</code>
 	 */
 	public LatticeFactory() {
-		this(std_thickKinds, std_thinKinds);
+		this( STANDARD_THICK_KINDS, STANDARD_THIN_KINDS );
 	}
 
 	/**
@@ -174,12 +174,10 @@ public class LatticeFactory {
 		// & deposit the accumulated map in the lattice object
 		lattice.setNode2ElementMapper(mapper);
 		if (debug) {
-			Set entry_set = mapper.entrySet();
-			Iterator set_iter = entry_set.iterator();
-			while (set_iter.hasNext()) {
-				Map.Entry map_entry = (Map.Entry) set_iter.next();
-				AcceleratorNode node = (AcceleratorNode) map_entry.getKey();
-				Element element = (Element) map_entry.getValue();
+			final Set<Map.Entry<AcceleratorNode,Element>> entry_set = mapper.entrySet();
+			for ( final Map.Entry<AcceleratorNode,Element> map_entry : entry_set ) {
+				final AcceleratorNode node = map_entry.getKey();
+				final Element element = map_entry.getValue();
 				cout.println(
 					node.getId()
 						+ ": ==mapped to==>\t"
@@ -200,29 +198,27 @@ public class LatticeFactory {
 	 *@param sequence the XAL accelerator sequence.
 	 * @throws LatticeError
 	 */
-	private void processThickElements(AcceleratorSeq sequence)
-		throws LatticeError {
+	private void processThickElements( final AcceleratorSeq sequence ) throws LatticeError {
 		if (debug) {
 			cout.println("processing THICK elements");
 		}
 		ArrayList<Element> allElements = new ArrayList<Element>();
 		//walk the XAL object tree to get all nodes of a given kind
-		nodesOfKind(sequence, thickKinds, allElements);
+		nodesOfKind(sequence, THICK_KINDS, allElements);
 		//sort all Elements by their position
 		sortElementsByPosition(allElements);
 		//append all elements to the lattice
 		// jdg: Note - this is where the PermMarker indicator for device
 		// center must be added - but do not add any other thin elements
 		// for some reason this craps out the lattice generattion
-		for (ListIterator it = allElements.listIterator(); it.hasNext();) {
-			Element next = (Element) it.next();
-			if (next.isThick() ) {
-				lattice.append(next);
+		for ( final Element element : allElements ) {
+			if ( element.isThick() ) {
+				lattice.append( element );
 			}
 			else {
-				if(next instanceof PermMarker) {
-				lattice.insert(next);
-				}				
+				if( element instanceof PermMarker ) {
+					lattice.insert( element );
+				}
 			}
 		}
 	}
@@ -233,21 +229,19 @@ public class LatticeFactory {
 	 *@param sequence the XAL acclerator sequence.
 	 * @throws LatticeError
 	 */
-	private void processThinElements(AcceleratorSeq sequence)
-		throws LatticeError {
+	private void processThinElements(AcceleratorSeq sequence) throws LatticeError {
 		if (debug) {
 			cout.println("processing THIN elements");
 		}
 		ArrayList<Element> allElements = new ArrayList<Element>();
 		//walk the XAL object tree to get all nodes of a given kind
-		nodesOfKind(sequence, thinKinds, allElements);
+		nodesOfKind(sequence, THIN_KINDS, allElements);
 		//sort all Elements by their position
 		sortElementsByPosition(allElements);
 		//insert all elements to the lattice
-		for (ListIterator it = allElements.listIterator(); it.hasNext();) {
-			Element next = (Element) it.next();
-			if (!next.isThick()){
-				lattice.insert(next);
+		for ( final Element element : allElements ) {
+			if ( !element.isThick() ){
+				lattice.insert( element );
 			}
 		}
 	}
@@ -261,19 +255,14 @@ public class LatticeFactory {
 	 *@param result the resulting list of lattice elements that passed the kind filter.
 	 * @throws LatticeError
 	 */
-	private void nodesOfKind(
-		AcceleratorSeq sequence,
-		ArrayList kinds,
-		ArrayList<Element> result)
-		throws LatticeError {
-		//        double position_base=sequence.getPosition();
-		for (ListIterator itk = kinds.listIterator(); itk.hasNext();) {
-			String kind = (String) itk.next();
-			List nodes = sequence.getNodesOfType( kind, true );
+	private void nodesOfKind( final AcceleratorSeq sequence, final List<String> kinds, final List<Element> result ) throws LatticeError {
+		for ( final String kind : kinds ) {
+			final List<AcceleratorNode> nodes = sequence.<AcceleratorNode>getNodesOfType( kind, true );
 			if (debug) {
 				String out = sequence.getId() + ": " + kind + " [";
-				for (int itn = 0; itn < nodes.size(); itn++) {
-					AcceleratorNode node = (AcceleratorNode) nodes.get(itn);
+				final int nodeCount = nodes.size();
+				for (int itn = 0; itn < nodeCount; itn++) {
+					final AcceleratorNode node = nodes.get( itn );
 					if (itn == nodes.size() - 1) {
 						out += node.getId();
 					} else {
@@ -283,21 +272,18 @@ public class LatticeFactory {
 				out += "]";
 				cout.println(out);
 			}
-			for (ListIterator itn = nodes.listIterator(); itn.hasNext();) {
-				AcceleratorNode node = (AcceleratorNode) itn.next();
-//				double n_pos = sequence.getPosition(node);
+			for ( final AcceleratorNode node : nodes ) {
 				nodeToElement(node, result);
 			}
 		}
-		List subsequences = sequence.getSequences();
-		if (!subsequences.isEmpty()) {
-			for (ListIterator its = subsequences.listIterator();
-				its.hasNext();
-				) {
-				AcceleratorSeq s = (AcceleratorSeq) its.next();
-				nodesOfKind(s, kinds, result);
+
+		final List<AcceleratorSeq> subsequences = sequence.getSequences();
+		if ( !subsequences.isEmpty() ) {
+			for ( final AcceleratorSeq subsequence : subsequences ) {
+				nodesOfKind( subsequence, kinds, result );
 			}
-		} else {
+		}
+		else {
 			return;
 		}
 	}
@@ -320,8 +306,7 @@ public class LatticeFactory {
 	 *@param result the list to which the lattice elements are added.
 	 * @throws LatticeError
 	 */
-	private void nodeToElement(AcceleratorNode node, ArrayList<Element> result)
-		throws LatticeError {
+	private void nodeToElement( final AcceleratorNode node, final List<Element> result ) throws LatticeError {
 		String name = node.getId();
 //		String type = node.getType();
 		double position = accelSeq.getPosition(node);
@@ -356,7 +341,7 @@ public class LatticeFactory {
 				PermMarker center =
 					new PermMarker(position, 0.d, "ELEMENT_CENTER:" + name);
 				center.setAcceleratorNode(node);
-				ArrayList<Element> half = dipole.split(center);
+				final List<Element> half = dipole.split(center);
 				result.add(half.get(0));
 				result.add(half.get(2));
 				result.add(half.get(4));
@@ -377,7 +362,7 @@ public class LatticeFactory {
 		        PermMarker    slgMarkCtr = new PermMarker(position, 0.0d, "ELEMENT_CENTER:" + name);
 		        slgMarkCtr.setAcceleratorNode(node);
 		        
-                ArrayList<Element>     lstElems = slgElem.split(slgMarkCtr);
+                final List<Element>     lstElems = slgElem.split(slgMarkCtr);
                 
                 result.add(lstElems.get(0));
                 result.add(lstElems.get(2));
@@ -399,7 +384,7 @@ public class LatticeFactory {
 				PermMarker center =
 					new PermMarker(position, 0.d, "ELEMENT_CENTER:" + name);
 				center.setAcceleratorNode(node);
-				ArrayList<Element> half = quadrupole.split(center);
+				final List<Element> half = quadrupole.split(center);
 				result.add(half.get(0));
 				result.add(half.get(2));
 				result.add(half.get(4));
@@ -417,7 +402,7 @@ public class LatticeFactory {
 				PermMarker center =
 					new PermMarker(position, 0.d, "ELEMENT_CENTER:" + name);
 				center.setAcceleratorNode(node);
-				ArrayList<Element> half = quadrupole.split(center);
+				final List<Element> half = quadrupole.split(center);
 				result.add(half.get(0));
 				result.add(half.get(2));
 				result.add(half.get(4));
@@ -433,7 +418,7 @@ public class LatticeFactory {
 				PermMarker center =
 					new PermMarker(position, 0.d, "ELEMENT_CENTER:" + name);
 				center.setAcceleratorNode(node);
-				ArrayList<Element> half = sextupole.split(center);
+				final List<Element> half = sextupole.split(center);
 				result.add(half.get(0));
 				result.add(half.get(2));
 				result.add(half.get(4));
@@ -453,7 +438,7 @@ public class LatticeFactory {
 				PermMarker center =
 					new PermMarker(position, 0.d, "ELEMENT_CENTER:" + name);
 				center.setAcceleratorNode(node);
-				ArrayList<Element> half = solenoid.split(center);
+				final List<Element> half = solenoid.split(center);
 				result.add(half.get(0));
 				result.add(half.get(2));
 				result.add(half.get(4));
@@ -464,28 +449,28 @@ public class LatticeFactory {
 		}
 		
 		else if (node.isKindOf("rfgap")) {
-			RFGap rfgap = new RFGap(position, length, name);
-			if (rfgap.isThick()) {
-				for (ListIterator it = (rfgap.asTuple()).listIterator(); it.hasNext();) {
-					Element e = (Element) it.next();
-					e.setAcceleratorNode(node);
-					result.add(e);
+			final RFGap rfgap = new RFGap(position, length, name);
+			if ( rfgap.isThick() ) {
+				for ( final Element gapElement : rfgap.asTuple() ) {
+					gapElement.setAcceleratorNode( node );
+					result.add( gapElement );
 				}
-			} else {
-				rfgap.setAcceleratorNode(node);
-				result.add(rfgap);
+			}
+			else {
+				rfgap.setAcceleratorNode( node );
+				result.add( rfgap );
 			}
 		} else if (node.isKindOf("bcm")) {
 			BCMonitor bcmonitor = new BCMonitor(position, length, name);
-			if (bcmonitor.isThick()) {
-				for (ListIterator it = (bcmonitor.asTuple()).listIterator(); it.hasNext();) {
-					Element e = (Element) it.next();
-					e.setAcceleratorNode(node);
-					result.add(e);
+			if ( bcmonitor.isThick() ) {
+				for ( final Element bcmElement : bcmonitor.asTuple() ) {
+					bcmElement.setAcceleratorNode( node );
+					result.add( bcmElement );
 				}
-			} else {
-				bcmonitor.setAcceleratorNode(node);
-				result.add(bcmonitor);
+			}
+			else {
+				bcmonitor.setAcceleratorNode( node );
+				result.add( bcmonitor );
 			}
 			//thin elements
 		} else if (node.isKindOf("dch")) {
@@ -544,12 +529,10 @@ public class LatticeFactory {
 	private double calcTotalSeqLength(AcceleratorSeq seq) {
 		double total = 0.d;
 		double seql = seq.getLength();
-		List subSeqs = seq.getSequences();
+		final List<AcceleratorSeq> subSeqs = seq.getSequences();
 		if (!subSeqs.isEmpty() & seql == 0.d) {
-			Iterator ssit = subSeqs.iterator();
-			while (ssit.hasNext()) {
-				AcceleratorSeq subseq = (AcceleratorSeq) ssit.next();
-				total += calcTotalSeqLength(subseq);
+			for ( final AcceleratorSeq subseq : subSeqs ) {
+				total += calcTotalSeqLength( subseq );
 			}
 			return total;
 		}
