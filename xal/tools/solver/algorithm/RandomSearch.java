@@ -71,9 +71,7 @@ public class RandomSearch extends SearchAlgorithm {
 	 */
 	public TrialPoint nextTrialPoint() {
 		final Map<Variable,Number> values = new HashMap<Variable,Number>();
-		Iterator variableIter = _problem.getVariables().iterator();
-		while ( variableIter.hasNext() ) {
-			Variable variable = (Variable)variableIter.next();
+		for ( final Variable variable : _problem.getVariables() ) {
 			double value = generateRandomValue( variable );
 			values.put( variable, new Double( value ) );
 		}
