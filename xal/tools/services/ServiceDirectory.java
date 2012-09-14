@@ -286,7 +286,7 @@ final public class ServiceDirectory {
 	 * @return An array of services which were found within the specified timeout
 	 * @see #addServiceListener
 	 */
-	public ServiceRef[] findServicesWithType( final Class protocol, final long timeout ) throws ServiceException {
+	public ServiceRef[] findServicesWithType( final Class<?> protocol, final long timeout ) throws ServiceException {
 		return findServicesWithType( getDefaultType( protocol ), timeout );
 	}
 	
@@ -344,7 +344,7 @@ final public class ServiceDirectory {
 	 * @param protocol The protocol identifying the service type.
 	 * @param listener  The receiver of service availability events.
 	 */
-	public void addServiceListener( final Class protocol, final ServiceListener listener) throws ServiceException {
+	public void addServiceListener( final Class<?> protocol, final ServiceListener listener) throws ServiceException {
 		addServiceListener( getDefaultType( protocol ), listener );
 	}
 	
@@ -427,7 +427,7 @@ final public class ServiceDirectory {
 	 * @param protocol The protocol for which to get a valid type
 	 * @return A valid type to represent the given protocol.
 	 */
-	static protected String getDefaultType( final Class protocol ) {
+	static protected String getDefaultType( final Class<?> protocol ) {
 		String id = protocol.getName();
 		return id.replace('.', '_');
 	}
@@ -468,7 +468,7 @@ final public class ServiceDirectory {
 	 * @param proxy the proxy to the remote service
 	 * @return the interface implemented by the proxy
 	 */
-	static public Class getProtocol( final Object proxy ) {
+	static public Class<?> getProtocol( final Object proxy ) {
 		return getClientHandler( proxy ).getProtocol();
 	}
 	
@@ -478,7 +478,7 @@ final public class ServiceDirectory {
 	 * @param proxy the proxy for which we seek its client handler
 	 * @return the client handler for the proxy
 	 */
-	static protected ClientHandler getClientHandler( final Object proxy ) {
+	static protected ClientHandler<?> getClientHandler( final Object proxy ) {
 		return (ClientHandler)Proxy.getInvocationHandler( proxy );
 	}
 	
