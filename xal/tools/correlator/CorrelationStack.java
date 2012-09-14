@@ -86,7 +86,7 @@ public class CorrelationStack<RecordType> {
      * @return The oldest correlation on the stack.
      * @throws java.util.NoSuchElementException if there are no correlations on the stack.
      */
-    public Correlation popCorrelation() throws NoSuchElementException {
+    public Correlation<RecordType> popCorrelation() throws NoSuchElementException {
         synchronized( buffer ) {
             return buffer.removeFirst();
         }

@@ -125,7 +125,7 @@ class TimedBroadcaster<RecordType> extends AbstractBroadcaster<RecordType> {
 	 * Handle the advance notice of the correlator stopping.
 	 * @param sender The correlator that will stop.
 	 */
-    public void willStopMonitoring(Correlator sender) {
+    public void willStopMonitoring( final Correlator<?,RecordType,?> sender ) {
 		timer.stop();
 	}
 	
@@ -134,7 +134,7 @@ class TimedBroadcaster<RecordType> extends AbstractBroadcaster<RecordType> {
 	 * Handle the advance notice of the correlator starting.
 	 * @param sender The correlator that will start.
 	 */
-    public void willStartMonitoring(Correlator sender) {
+    public void willStartMonitoring( final Correlator<?,RecordType,?> sender ) {
 		timer.start();
 	}
 }
