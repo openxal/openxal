@@ -40,7 +40,7 @@ public class AlgorithmPool implements SearchAlgorithmListener, SolutionJudgeList
 	 * Creates a new AlgorithmPool instance Constructor that takes a list of algorithms
 	 * @param algorithms  the collection of algorithms to populate the pool
 	 */
-	public AlgorithmPool( final Collection algorithms ) {
+	public AlgorithmPool( final Collection<SearchAlgorithm> algorithms ) {
 		_algorithms = new HashSet<SearchAlgorithm>();
 		_availableAlgorithms = new HashSet<SearchAlgorithm>();
 
@@ -70,7 +70,7 @@ public class AlgorithmPool implements SearchAlgorithmListener, SolutionJudgeList
 	 * Get all the algorithms.
 	 * @return The default set of algorithms
 	 */
-	public static Collection generateDefaultAlgorithms() {
+	public static Collection<SearchAlgorithm> generateDefaultAlgorithms() {
 		final Collection<SearchAlgorithm> allAlgorithms = new HashSet<SearchAlgorithm>();
 		
 		allAlgorithms.add( new RandomSearch() );
@@ -133,10 +133,8 @@ public class AlgorithmPool implements SearchAlgorithmListener, SolutionJudgeList
 	 * Add existing algorithms to the algorithm list.
 	 * @param algorithms  The feature to be added to the Algorithms attribute
 	 */
-	public void addAlgorithms( final Collection algorithms ) {
-		Iterator algorithmIter = algorithms.iterator();
-		while ( algorithmIter.hasNext() ) {
-			SearchAlgorithm algorithm = (SearchAlgorithm)algorithmIter.next();
+	public void addAlgorithms( final Collection<SearchAlgorithm> algorithms ) {
+		for ( final SearchAlgorithm algorithm : algorithms ) {
 			addAlgorithm( algorithm );
 		}
 	}
@@ -169,10 +167,8 @@ public class AlgorithmPool implements SearchAlgorithmListener, SolutionJudgeList
 	 * Remove the specified algorithms.
 	 * @param algorithms  the algorithms to remove
 	 */
-	public void removeAlgorithms( final Collection algorithms ) {
-		Iterator algorithmIter = algorithms.iterator();
-		while ( algorithmIter.hasNext() ) {
-			SearchAlgorithm algorithm = (SearchAlgorithm)algorithmIter.next();
+	public void removeAlgorithms( final Collection<SearchAlgorithm> algorithms ) {
+		for ( final SearchAlgorithm algorithm : algorithms ) {
 			removeAlgorithm( algorithm );
 		}
 	}
@@ -209,9 +205,7 @@ public class AlgorithmPool implements SearchAlgorithmListener, SolutionJudgeList
 	 * @param trial The trial that was scored.	  
 	 */
 	public void trialScored( final AlgorithmSchedule algorithmSchedule, final Trial trial ) {
-		final Iterator algorithmIter = getAlgorithms().iterator();
-		while ( algorithmIter.hasNext() ) {
-			final SearchAlgorithm algorithm = (SearchAlgorithm)algorithmIter.next();
+		for ( final SearchAlgorithm algorithm : getAlgorithms() ) {
 			algorithm.trialScored( algorithmSchedule, trial );
 		}
 	}
@@ -223,9 +217,7 @@ public class AlgorithmPool implements SearchAlgorithmListener, SolutionJudgeList
 	 * @param trial The trial that was vetoed.
 	 */
 	public void trialVetoed( final AlgorithmSchedule algorithmSchedule, final Trial trial ) {
-		final Iterator algorithmIter = getAlgorithms().iterator();
-		while ( algorithmIter.hasNext() ) {
-			final SearchAlgorithm algorithm = (SearchAlgorithm)algorithmIter.next();
+		for ( final SearchAlgorithm algorithm : getAlgorithms() ) {
 			algorithm.trialVetoed( algorithmSchedule, trial );
 		}
 	}
@@ -277,9 +269,7 @@ public class AlgorithmPool implements SearchAlgorithmListener, SolutionJudgeList
 	 * @param solution   The new optimal solution.
 	 */
 	public void foundNewOptimalSolution( final SolutionJudge source, final List<Trial> solutions, final Trial solution ) {
-		final Iterator algorithmIter = _algorithms.iterator();
-		while ( algorithmIter.hasNext() ) {
-			final SearchAlgorithm algorithm = (SearchAlgorithm)algorithmIter.next();
+		for ( final SearchAlgorithm algorithm : _algorithms ) {
 			algorithm.foundNewOptimalSolution( source, solutions, solution );
 		}
 	}
