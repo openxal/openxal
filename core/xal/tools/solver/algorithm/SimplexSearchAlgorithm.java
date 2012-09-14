@@ -348,13 +348,10 @@ class SimplexSearcher {
 
 		//define steps and cooordinates for first vertex
 		Vertex centerVertex = vertexesV.firstElement();
-		List variables = _problem.getVariables();
 		//use initial delta hint
 		InitialDelta hint = (InitialDelta) _problem.getHint(InitialDelta.TYPE);
-		Iterator variableIter = variables.iterator();
 		int ind = 0;
-		while (variableIter.hasNext()) {
-			Variable variable = (Variable) variableIter.next();
+		for ( final Variable variable : _problem.getVariables() ) {
 			double value = variable.getInitialValue();
 			centerVertex.getCoords()[ind] = value;
 			//this is our approach - it is guess only
@@ -902,13 +899,11 @@ class SimplexSearcher {
 			int n = _problem.getVariables().size();
 			if (n == nDim) {
 
-				List variables = _problem.getVariables();
+				final List<Variable> variables = _problem.getVariables();
 				MutableTrialPoint trialPoint = new MutableTrialPoint(variables.size());
 
-				Iterator variableIter = variables.iterator();
 				int i = 0;
-				while (variableIter.hasNext()) {
-					Variable variable = (Variable) variableIter.next();
+				for ( final Variable variable : variables ) {
 					double value = coords[i];
 					if(variable.getLowerLimit() > value || variable.getUpperLimit() < value){
 						return false;

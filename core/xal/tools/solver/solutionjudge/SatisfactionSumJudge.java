@@ -84,9 +84,7 @@
 		 double totalWeight = 0.0;
 		 
 		 // Calculate the overall satisfaction which is simply the weighted sum of all the score satisfactions.
-		 final Iterator objectiveIter = trial.getProblem().getObjectives().iterator();		 		 
-		 while( objectiveIter.hasNext() ) {
-			 final Objective objective = (Objective)objectiveIter.next();
+		 for ( final Objective objective : trial.getProblem().getObjectives() ) {
 			 final double satisfaction = trial.getScore( objective ).getSatisfaction();
 			 final double weight = getWeight( objective );
 			 totalWeight += weight;
