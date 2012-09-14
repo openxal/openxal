@@ -133,6 +133,7 @@ public interface RemoteLogging {
 	 * Get a vector of group types
 	 * @return a vector of group types
 	 */
+	@SuppressWarnings( "rawtypes" )		// TODO: we'll suppress this one for now as this interface isn't yet settled
 	public Vector getGroupTypes();
 	
 	
@@ -150,6 +151,7 @@ public interface RemoteLogging {
 	 * @param groupType identifies the group by type 
 	 * @return The list channel info tables corresponding to the channels we wish to log
 	 */
+	@SuppressWarnings( "rawtypes" )		// TODO: we'll suppress this one for now as this interface isn't yet settled
 	public Vector getChannels( String groupType );
 	
 	
