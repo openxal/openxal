@@ -275,19 +275,14 @@ public class Solver implements AlgorithmPoolListener, AlgorithmMarketListener {
 	public void poolChanged( final AlgorithmMarket market, final AlgorithmPool oldPool, final AlgorithmPool newPool ) {
 		if ( oldPool != null ) {
 			oldPool.removeAlgorithmPoolListener( this );
-			Collection algorithms = oldPool.getAlgorithms();
-			Iterator iter = algorithms.iterator();
-			while ( iter.hasNext() ) {
-				SearchAlgorithm algorithm = (SearchAlgorithm)iter.next();
+			for ( final SearchAlgorithm algorithm : oldPool.getAlgorithms() ) {
 				algorithmRemoved( oldPool, algorithm );
 			}
 		}
+		
 		if ( newPool != null ) {
 			newPool.addAlgorithmPoolListener( this );
-			Collection algorithms = oldPool.getAlgorithms();
-			Iterator iter = algorithms.iterator();
-			while ( iter.hasNext() ) {
-				SearchAlgorithm algorithm = (SearchAlgorithm)iter.next();
+			for ( final SearchAlgorithm algorithm : newPool.getAlgorithms() ) {
 				algorithmAdded( newPool, algorithm );
 			}
 		}
