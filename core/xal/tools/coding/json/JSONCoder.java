@@ -84,7 +84,7 @@ public class JSONCoder implements Coder {
     
     
     /** Get the conversion adaptor for the given value */
-    protected ConversionAdaptor getConversionAdaptor( final String valueType ) {
+    protected ConversionAdaptor<?,?> getConversionAdaptor( final String valueType ) {
         return CONVERSION_ADAPTOR_STORE.getConversionAdaptor( valueType );
     }
     
@@ -105,7 +105,7 @@ public class JSONCoder implements Coder {
 	 * @return an object with the data described in the archive
 	 */
     public Object decode( final String archive ) {
-        final AbstractDecoder decoder = AbstractDecoder.getInstance( archive, new ConversionAdaptorStore( CONVERSION_ADAPTOR_STORE ) );
+        final AbstractDecoder<?> decoder = AbstractDecoder.getInstance( archive, new ConversionAdaptorStore( CONVERSION_ADAPTOR_STORE ) );
 		return decoder != null ? decoder.decode() : null;
     }
 	
@@ -172,11 +172,11 @@ abstract class AbstractEncoder {
         }
         else if ( valueClass.equals( String.class ) ) {
             final String stringValue = (String)value;
-            final IdentityReference reference = StringEncoder.allowsReference( stringValue ) ? referenceStore.store( value ) : null;
+            final IdentityReference<?> reference = StringEncoder.allowsReference( stringValue ) ? referenceStore.store( value ) : null;
             return reference != null && reference.hasMultiple() ? new ReferenceEncoder( reference.getID() ) : new StringEncoder( stringValue, reference );
         }
         else {      // these are the ones that support references
-            final IdentityReference reference = referenceStore.store( value );
+            final IdentityReference<?> reference = referenceStore.store( value );
             if ( reference.hasMultiple() ) {
                 return new ReferenceEncoder( reference.getID() );
             }
@@ -224,11 +224,11 @@ abstract class SoftValueEncoder extends AbstractEncoder {
     static final public String VALUE_KEY = "value";
 
     /** reference to this value */
-    final private IdentityReference REFERENCE;
+    final private IdentityReference<?> REFERENCE;
     
     
     /** Constructor */
-    public SoftValueEncoder( final IdentityReference reference ) {
+    public SoftValueEncoder( final IdentityReference<?> reference ) {
         REFERENCE = reference;
     }
     
@@ -316,7 +316,7 @@ class StringEncoder extends SoftValueEncoder {
     
     
     /** Constructor */
-    public StringEncoder( final String value, final IdentityReference reference ) {
+    public StringEncoder( final String value, final IdentityReference<?> reference ) {
         super( reference );
         VALUE = value;
     }
@@ -415,7 +415,7 @@ class DictionaryEncoder extends SoftValueEncoder {
     
     
     /** Constructor */
-    public DictionaryEncoder( final HashMap<String,Object> map, final ConversionAdaptorStore conversionAdaptorStore, final IdentityReference reference, final ReferenceStore referenceStore ) {
+    public DictionaryEncoder( final HashMap<String,Object> map, final ConversionAdaptorStore conversionAdaptorStore, final IdentityReference<?> reference, final ReferenceStore referenceStore ) {
         super( reference );
         
         ENCODER_MAP = new HashMap<String,AbstractEncoder>( map.size() );
@@ -491,7 +491,7 @@ class ExtensionEncoder extends DictionaryEncoder {
     
     
     /** Constructor */
-    public ExtensionEncoder( final Object value, final ConversionAdaptorStore conversionAdaptorStore, final IdentityReference reference, final ReferenceStore referenceStore ) {
+    public ExtensionEncoder( final Object value, final ConversionAdaptorStore conversionAdaptorStore, final IdentityReference<?> reference, final ReferenceStore referenceStore ) {
         super( getValueRep( value, conversionAdaptorStore ), conversionAdaptorStore, reference, referenceStore );
         _extensionType = getValueType( value );
     }
@@ -504,7 +504,7 @@ class ExtensionEncoder extends DictionaryEncoder {
     
     
     /** get the value representation as a dictionary keyed for the extended type and value */
-    @SuppressWarnings( "unchecked" )
+    @SuppressWarnings( { "unchecked", "rawtypes" } )
     static private HashMap<String,Object> getValueRep( final Object value, final ConversionAdaptorStore conversionAdaptorStore ) {
         final String valueType = getValueType( value );
         final ConversionAdaptor adaptor = conversionAdaptorStore.getConversionAdaptor( valueType );
@@ -560,7 +560,7 @@ class SerializationEncoder extends DictionaryEncoder {
     
     
     /** Constructor */
-    public SerializationEncoder( final Object value, final ConversionAdaptorStore conversionAdaptorStore, final IdentityReference reference, final ReferenceStore referenceStore ) {
+    public SerializationEncoder( final Object value, final ConversionAdaptorStore conversionAdaptorStore, final IdentityReference<?> reference, final ReferenceStore referenceStore ) {
         super( getValueRep( value ), conversionAdaptorStore, reference, referenceStore );
     }
     
@@ -613,7 +613,7 @@ class TypedArrayEncoder extends DictionaryEncoder {
     
     
     /** Constructor */
-    public TypedArrayEncoder( final Object array, final ConversionAdaptorStore conversionAdaptorStore, final IdentityReference reference, final ReferenceStore referenceStore ) {
+    public TypedArrayEncoder( final Object array, final ConversionAdaptorStore conversionAdaptorStore, final IdentityReference<?> reference, final ReferenceStore referenceStore ) {
         super( getArrayRep( array, conversionAdaptorStore ), conversionAdaptorStore, reference, referenceStore );
         final String componentType = getComponentObjectType( array );
         final ArrayEncoder arrayEncoder = (ArrayEncoder)getItemEncoderForKey( ARRAY_KEY );
@@ -645,7 +645,7 @@ class TypedArrayEncoder extends DictionaryEncoder {
     
     
     /** Get the type appropriate for an Object (e.g. wrapper for a primitive) of the specified raw type */
-    public static String getObjectTypeForClass( final Class rawClass ) {
+    public static String getObjectTypeForClass( final Class<?> rawClass ) {
         final Class<?> wrapperClass = PRIMITIVE_TYPE_WRAPPERS.get( rawClass );
         final Class<?> objectClass = wrapperClass != null ? wrapperClass : rawClass;
         return objectClass.getName();
@@ -710,7 +710,7 @@ class ArrayEncoder extends SoftValueEncoder {
     
     
     /** Constructor */
-    public ArrayEncoder( final Object array, final ConversionAdaptorStore conversionAdaptorStore, final IdentityReference reference, final ReferenceStore referenceStore ) {
+    public ArrayEncoder( final Object array, final ConversionAdaptorStore conversionAdaptorStore, final IdentityReference<?> reference, final ReferenceStore referenceStore ) {
         super( reference );
         
         final int arrayLength = Array.getLength( array );
@@ -730,7 +730,7 @@ class ArrayEncoder extends SoftValueEncoder {
     
     
     /** Get an instance that can encode arrays and efficiently arrays of extended types */
-    static public SoftValueEncoder getInstance( final Object array, final ConversionAdaptorStore conversionAdaptorStore, final IdentityReference reference, final ReferenceStore referenceStore ) {
+    static public SoftValueEncoder getInstance( final Object array, final ConversionAdaptorStore conversionAdaptorStore, final IdentityReference<?> reference, final ReferenceStore referenceStore ) {
         return isTypedArray( array ) ? new TypedArrayEncoder( array, conversionAdaptorStore, reference, referenceStore ) : new ArrayEncoder( array, conversionAdaptorStore, reference, referenceStore );
     }
     
@@ -801,13 +801,13 @@ abstract class AbstractDecoder<DataType> {
 	
 	
 	/** Get a decoder for the archive */
-	public static AbstractDecoder getInstance( final String archive, final ConversionAdaptorStore conversionAdaptorStore ) {
+	public static AbstractDecoder<?> getInstance( final String archive, final ConversionAdaptorStore conversionAdaptorStore ) {
         return AbstractDecoder.getInstance( archive, conversionAdaptorStore, new KeyedReferenceStore() );
 	}	
 	
 	
 	/** Get a decoder for the archive */
-	protected static AbstractDecoder getInstance( final String archive, final ConversionAdaptorStore conversionAdaptorStore, final KeyedReferenceStore referenceStore ) {
+	protected static AbstractDecoder<?> getInstance( final String archive, final ConversionAdaptorStore conversionAdaptorStore, final KeyedReferenceStore referenceStore ) {
 		final String source = archive.trim();
 		if ( source.length() > 0 ) {
 			final char firstChar = source.charAt( 0 );
@@ -1026,7 +1026,7 @@ class ArrayDecoder extends AbstractDecoder<Object[]> {
 					return;
 				}
 				else {
-					final AbstractDecoder itemDecoder = AbstractDecoder.getInstance( arrayString, CONVERSION_ADAPTOR_STORE, REFERENCE_STORE );
+					final AbstractDecoder<?> itemDecoder = AbstractDecoder.getInstance( arrayString, CONVERSION_ADAPTOR_STORE, REFERENCE_STORE );
 					items.add( itemDecoder.decode() );
 					final String itemRemainder = itemDecoder.getRemainder().trim();
 					final char closure = itemRemainder.charAt( 0 );
@@ -1091,8 +1091,8 @@ class DictionaryDecoder extends AbstractDecoder<Object> {
             final Object[] objectArray = (Object[])dictionary.get( TypedArrayEncoder.ARRAY_KEY );
             
             try {
-                final Class primitiveClass = TypedArrayEncoder.getPrimitiveType( componentType );
-                final Class componentClass = primitiveClass != null ? primitiveClass : Class.forName( componentType );
+                final Class<?> primitiveClass = TypedArrayEncoder.getPrimitiveType( componentType );
+                final Class<?> componentClass = primitiveClass != null ? primitiveClass : Class.forName( componentType );
                 final String componentObjectType = TypedArrayEncoder.getObjectTypeForClass( componentClass );   // this allows us to handle primitive wrappers
                 final Class<?> componentObjectClass = Class.forName( componentObjectType ); 
                 final Object array = Array.newInstance( componentClass, objectArray.length );
@@ -1143,7 +1143,7 @@ class DictionaryDecoder extends AbstractDecoder<Object> {
     
     
     /** Convert the representation value to native using the specified extension type */
-    @SuppressWarnings( "unchecked" )
+    @SuppressWarnings( {"unchecked", "rawtypes"} )
     private Object toNative( final Object representationValue, final String extendedType ) {
         final ConversionAdaptor adaptor = CONVERSION_ADAPTOR_STORE.getConversionAdaptor( extendedType );
         if ( adaptor == null )  throw new RuntimeException( "Missing JSON adaptor for type: " + extendedType );
@@ -1164,7 +1164,7 @@ class DictionaryDecoder extends AbstractDecoder<Object> {
 					final String key = keyDecoder.decode();
 					final String keyRemainder = keyDecoder.getRemainder();
 					final String valueBuffer = keyRemainder.trim().substring( 1 );	// trim spaces and strip the leading colon
-					final AbstractDecoder valueDecoder = AbstractDecoder.getInstance( valueBuffer, CONVERSION_ADAPTOR_STORE, REFERENCE_STORE );
+					final AbstractDecoder<?> valueDecoder = AbstractDecoder.getInstance( valueBuffer, CONVERSION_ADAPTOR_STORE, REFERENCE_STORE );
 					final Object value = valueDecoder.decode();
 					dictionary.put( key, value );
 					final String itemRemainder = valueDecoder.getRemainder().trim();
@@ -1344,7 +1344,7 @@ class IdentityReference<ItemType> {
 /** conversion adaptors container whose contents cannot be changed */
 class ConversionAdaptorStore {    
     /** adaptors between all custom types and representation JSON types */
-    final protected Map<String,ConversionAdaptor> TYPE_EXTENSION_ADAPTORS;
+    final protected Map<String,ConversionAdaptor<?,?>> TYPE_EXTENSION_ADAPTORS;
     
     /** set of standard types */
     static final private Set<String> STANDARD_TYPES;
@@ -1359,7 +1359,7 @@ class ConversionAdaptorStore {
     
     /** Constructor */
     protected ConversionAdaptorStore() {
-        TYPE_EXTENSION_ADAPTORS = new HashMap<String,ConversionAdaptor>();
+        TYPE_EXTENSION_ADAPTORS = new HashMap<String,ConversionAdaptor<?,?>>();
     }
     
     
@@ -1432,7 +1432,7 @@ class ConversionAdaptorStore {
     
     
     /** Determine if the specified class corresponds to an extended type */
-    public boolean isExtendedClass( final Class valueClass ) {
+    public boolean isExtendedClass( final Class<?> valueClass ) {
         return isExtendedType( valueClass.getName() );
     }
     
@@ -1444,7 +1444,7 @@ class ConversionAdaptorStore {
     
     
     /** Get the conversion adaptor for the given value */
-    public ConversionAdaptor getConversionAdaptor( final String valueType ) {
+    public ConversionAdaptor<?,?> getConversionAdaptor( final String valueType ) {
         return TYPE_EXTENSION_ADAPTORS.get( valueType );
     }
 }
@@ -1472,7 +1472,7 @@ class MutableConversionAdaptorStore extends ConversionAdaptorStore {
      * @param type type to identify and process for encoding and decoding
      * @param adaptor translator between the custom type and representation JSON constructs
      */
-    public <CustomType,RepresentationType> void registerType( final Class<CustomType> type, final ConversionAdaptor<CustomType,RepresentationType> adaptor ) {
+    public <CustomType,RepresentationType> void registerType( final Class<?> type, final ConversionAdaptor<CustomType,RepresentationType> adaptor ) {
         registerType( type.getName(), adaptor );
     }
     
@@ -1567,9 +1567,9 @@ class MutableConversionAdaptorStore extends ConversionAdaptorStore {
             }
         });
         
-        registerType( ArrayList.class, new ConversionAdaptor<ArrayList,Object[]>() {
+        this.<ArrayList<?>,Object[]>registerType( ArrayList.class, new ConversionAdaptor<ArrayList<?>,Object[]>() {
             /** convert the custom type to a representation in terms of representation JSON constructs */
-            public Object[] toRepresentation( final ArrayList list ) {
+            public Object[] toRepresentation( final ArrayList<?> list ) {
                 return list.toArray();
             }
             
@@ -1585,16 +1585,16 @@ class MutableConversionAdaptorStore extends ConversionAdaptorStore {
             }
         });
         
-        registerType( Vector.class, new ConversionAdaptor<Vector,Object[]>() {
+        this.<Vector<?>,Object[]>registerType( Vector.class, new ConversionAdaptor<Vector<?>,Object[]>() {
             /** convert the custom type to a representation in terms of representation JSON constructs */
-            public Object[] toRepresentation( final Vector list ) {
+            public Object[] toRepresentation( final Vector<?> list ) {
                 return list.toArray();
             }
             
             
             /** convert the JSON representation construct into the custom type */
             @SuppressWarnings( "unchecked" )    // list can represent any type
-            public Vector toNative( final Object[] array ) {
+            public Vector<?> toNative( final Object[] array ) {
                 final Vector list = new Vector( array.length );
                 for ( final Object item : array ) {
                     list.add( item );
@@ -1603,25 +1603,25 @@ class MutableConversionAdaptorStore extends ConversionAdaptorStore {
             }
         });
         
-        registerType( Hashtable.class, new ConversionAdaptor<Hashtable,HashMap>() {
+        this.<Hashtable<String,?>,HashMap<String,?>>registerType( Hashtable.class, new ConversionAdaptor<Hashtable<String,?>,HashMap<String,?>>() {
             /** convert the custom type to a representation in terms of representation JSON constructs */
             @SuppressWarnings( "unchecked" )
-            public HashMap toRepresentation( final Hashtable table ) {
+            public HashMap<String,?> toRepresentation( final Hashtable<String,?> table ) {
                 return new HashMap( table );
             }
             
             
             /** convert the JSON representation construct into the custom type */
             @SuppressWarnings( "unchecked" )
-            public Hashtable toNative( final HashMap map ) {
+            public Hashtable<String,?> toNative( final HashMap<String,?> map ) {
                 return new Hashtable( map );
             }
         });
         
-        registerType( StackTraceElement.class, new ConversionAdaptor<StackTraceElement,HashMap>() {
+        registerType( StackTraceElement.class, new ConversionAdaptor<StackTraceElement,HashMap<String,?>>() {
             /** convert the custom type to a representation in terms of representation JSON constructs */
             @SuppressWarnings( "unchecked" ) 
-            public HashMap toRepresentation( final StackTraceElement traceElement ) {
+            public HashMap<String,?> toRepresentation( final StackTraceElement traceElement ) {
                 final HashMap traceElementMap = new HashMap( 3 );
                 traceElementMap.put( "className", traceElement.getClassName() );
                 traceElementMap.put( "methodName", traceElement.getMethodName() );
@@ -1633,7 +1633,7 @@ class MutableConversionAdaptorStore extends ConversionAdaptorStore {
             
             /** convert the JSON representation construct into the custom type */
             @SuppressWarnings( "unchecked" )    
-            public StackTraceElement toNative( final HashMap traceElementMap ) {
+            public StackTraceElement toNative( final HashMap<String,?> traceElementMap ) {
                 final String className = (String)traceElementMap.get( "className" );
                 final String methodName = (String)traceElementMap.get( "methodName" );
                 final String fileName = (String)traceElementMap.get( "fileName" );
@@ -1642,10 +1642,10 @@ class MutableConversionAdaptorStore extends ConversionAdaptorStore {
             }
         });
         
-        registerType( RuntimeException.class, new ConversionAdaptor<RuntimeException,HashMap>() {
+        registerType( RuntimeException.class, new ConversionAdaptor<RuntimeException,HashMap<String,?>>() {
             /** convert the custom type to a representation in terms of representation JSON constructs */
             @SuppressWarnings( "unchecked" )
-            public HashMap toRepresentation( final RuntimeException exception ) {
+            public HashMap<String,?> toRepresentation( final RuntimeException exception ) {
                 final String rawMessage = exception.getMessage();
                 final HashMap exceptionMap = new HashMap( 3 );
                 exceptionMap.put( "message", rawMessage != null ? rawMessage : exception.toString() );
@@ -1656,7 +1656,7 @@ class MutableConversionAdaptorStore extends ConversionAdaptorStore {
             
             /** convert the JSON representation construct into the custom type */
             @SuppressWarnings( "unchecked" )
-            public RuntimeException toNative( final HashMap exceptionMap ) {
+            public RuntimeException toNative( final HashMap<String,?> exceptionMap ) {
                 final String message = (String)exceptionMap.get( "message" );
                 final StackTraceElement[] stackTrace = (StackTraceElement[])exceptionMap.get( "stackTrace" );
                 final RuntimeException exception = new RuntimeException( message );
