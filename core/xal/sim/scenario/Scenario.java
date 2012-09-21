@@ -145,12 +145,12 @@ public class Scenario {
             throw new ModelException("Node not found: " + nodeId);
             
         // get first element mapped to node
-        List mappedElems = elementsMappedTo(theNode);
+        List<IElement> mappedElems = elementsMappedTo(theNode);
         if (mappedElems.isEmpty())
             throw new ModelException("No model elements mapped to: " + nodeId);
             
         // set propagation to start from that element
-        IElement elemStart = (IElement) mappedElems.get(0);
+        IElement elemStart = mappedElems.get(0);
         //System.out.println("Scenario.setStartNode start at element: " + elemStart.getId());
         setStartElement(elemStart);
         
@@ -174,12 +174,12 @@ public class Scenario {
             throw new ModelException("Node not found: " + nodeId);
             
         // get first element mapped to node
-        List mappedElems = elementsMappedTo(theNode);
+        List<IElement> mappedElems = elementsMappedTo(theNode);
         if (mappedElems.isEmpty())
             throw new ModelException("No model elements mapped to: " + nodeId);
             
         // set propagation to stop after that element
-        IElement elemStop = (IElement) mappedElems.get(0);
+        IElement elemStop = mappedElems.get(0);
         //System.out.println("Scenario.setStopNode stop at element: " + elemStop.getId());
         setStopElement(elemStop);
         
@@ -297,7 +297,7 @@ public class Scenario {
      * @throws SynchronizationException if error getting properties
      * @throws IllegalArgumentException if aNode is null
      */
-    public Map propertiesForNode( final AcceleratorNode aNode ) throws SynchronizationException {
+    public Map<String,Double> propertiesForNode( final AcceleratorNode aNode ) throws SynchronizationException {
         if (aNode == null)
             throw new IllegalArgumentException(
                 "node cannot be null getting property values");
@@ -328,7 +328,7 @@ public class Scenario {
      * @param aNode node to get elements mapped to
      * @return a List of Elements mapped to the specified node
      */
-    public List elementsMappedTo( final AcceleratorNode aNode ) {
+    public List<IElement> elementsMappedTo( final AcceleratorNode aNode ) {
         return syncManager.allElementsMappedTo(aNode);
     }
     
@@ -453,7 +453,7 @@ public class Scenario {
     
     
     /** Testing Support */
-    public boolean checkSynchronization( final AcceleratorNode aNode, final Map values ) throws SynchronizationException {
+    public boolean checkSynchronization( final AcceleratorNode aNode, final Map<String,Double> values ) throws SynchronizationException {
         return syncManager.checkSynchronization(aNode, values);
     }
     

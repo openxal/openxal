@@ -898,49 +898,49 @@ public class ProfileMonitor extends AcceleratorNode {
 	correlator.addChannel(HSlopeMC);
 
 	// get all the values at once:
-	Correlation correlation = correlator.fetchCorrelationWithTimeout(10.0);
+	Correlation<ChannelTimeRecord> correlation = correlator.fetchCorrelationWithTimeout(10.0);
 
-	xFit.setMean( ( (ChannelTimeRecord) correlation.getRecord(V_MEAN_F_HANDLE)).doubleValue() );
-	xFit.setSigma( ( (ChannelTimeRecord)correlation.getRecord(V_SIGMA_F_HANDLE)).doubleValue() );
-	xFit.setAmp( ( (ChannelTimeRecord)correlation.getRecord(V_AMP_F_HANDLE)).doubleValue() );
-	xFit.setArea( ( (ChannelTimeRecord)correlation.getRecord(V_AREA_F_HANDLE)).doubleValue()  );
-	xFit.setOffset( ( (ChannelTimeRecord)correlation.getRecord(V_OFFST_F_HANDLE)).doubleValue() );
-        xFit.setSlope( ( (ChannelTimeRecord)correlation.getRecord(V_SLOPE_F_HANDLE)).doubleValue() );
+	xFit.setMean( correlation.getRecord(V_MEAN_F_HANDLE).doubleValue() );
+	xFit.setSigma( correlation.getRecord(V_SIGMA_F_HANDLE).doubleValue() );
+	xFit.setAmp( correlation.getRecord(V_AMP_F_HANDLE).doubleValue() );
+	xFit.setArea( correlation.getRecord(V_AREA_F_HANDLE).doubleValue()  );
+	xFit.setOffset( correlation.getRecord(V_OFFST_F_HANDLE).doubleValue() );
+        xFit.setSlope( correlation.getRecord(V_SLOPE_F_HANDLE).doubleValue() );
        
-	xFitM.setMean( ( (ChannelTimeRecord) correlation.getRecord(V_MEAN_M_HANDLE)).doubleValue() );
-	xFitM.setSigma( ( (ChannelTimeRecord)correlation.getRecord(V_SIGMA_M_HANDLE)).doubleValue() );
-	xFitM.setAmp( ( (ChannelTimeRecord)correlation.getRecord(V_AMP_M_HANDLE)).doubleValue() );
-	xFitM.setArea( ( (ChannelTimeRecord)correlation.getRecord(V_AREA_M_HANDLE)).doubleValue()  );
-	xFitM.setOffset( ( (ChannelTimeRecord)correlation.getRecord(V_OFFST_M_HANDLE)).doubleValue() );
-        xFitM.setSlope( ( (ChannelTimeRecord)correlation.getRecord(V_SLOPE_M_HANDLE)).doubleValue() );
+	xFitM.setMean( correlation.getRecord(V_MEAN_M_HANDLE).doubleValue() );
+	xFitM.setSigma( correlation.getRecord(V_SIGMA_M_HANDLE).doubleValue() );
+	xFitM.setAmp( correlation.getRecord(V_AMP_M_HANDLE).doubleValue() );
+	xFitM.setArea( correlation.getRecord(V_AREA_M_HANDLE).doubleValue()  );
+	xFitM.setOffset( correlation.getRecord(V_OFFST_M_HANDLE).doubleValue() );
+        xFitM.setSlope( correlation.getRecord(V_SLOPE_M_HANDLE).doubleValue() );
 
-	yFit.setMean( ( (ChannelTimeRecord) correlation.getRecord(D_MEAN_F_HANDLE)).doubleValue() );
-	yFit.setSigma( ( (ChannelTimeRecord)correlation.getRecord(D_SIGMA_F_HANDLE)).doubleValue() );
-	yFit.setAmp( ( (ChannelTimeRecord)correlation.getRecord(D_AMP_F_HANDLE)).doubleValue() );
-	yFit.setArea( ( (ChannelTimeRecord)correlation.getRecord(D_AREA_F_HANDLE)).doubleValue()  );
-	yFit.setOffset( ( (ChannelTimeRecord)correlation.getRecord(D_OFFST_F_HANDLE)).doubleValue() );
-        yFit.setSlope( ( (ChannelTimeRecord)correlation.getRecord(D_SLOPE_F_HANDLE)).doubleValue() );
+	yFit.setMean( correlation.getRecord(D_MEAN_F_HANDLE).doubleValue() );
+	yFit.setSigma( correlation.getRecord(D_SIGMA_F_HANDLE).doubleValue() );
+	yFit.setAmp( correlation.getRecord(D_AMP_F_HANDLE).doubleValue() );
+	yFit.setArea( correlation.getRecord(D_AREA_F_HANDLE).doubleValue()  );
+	yFit.setOffset( correlation.getRecord(D_OFFST_F_HANDLE).doubleValue() );
+        yFit.setSlope( correlation.getRecord(D_SLOPE_F_HANDLE).doubleValue() );
        
-	yFitM.setMean( ( (ChannelTimeRecord) correlation.getRecord(D_MEAN_M_HANDLE)).doubleValue() );
-	yFitM.setSigma( ( (ChannelTimeRecord)correlation.getRecord(D_SIGMA_M_HANDLE)).doubleValue() );
-	yFitM.setAmp( ( (ChannelTimeRecord)correlation.getRecord(D_AMP_M_HANDLE)).doubleValue() );
-	yFitM.setArea( ( (ChannelTimeRecord)correlation.getRecord(D_AREA_M_HANDLE)).doubleValue()  );
-	yFitM.setOffset( ( (ChannelTimeRecord)correlation.getRecord(D_OFFST_M_HANDLE)).doubleValue() );
-        yFitM.setSlope( ( (ChannelTimeRecord)correlation.getRecord(D_SLOPE_M_HANDLE)).doubleValue() );
+	yFitM.setMean( correlation.getRecord(D_MEAN_M_HANDLE).doubleValue() );
+	yFitM.setSigma( correlation.getRecord(D_SIGMA_M_HANDLE).doubleValue() );
+	yFitM.setAmp( correlation.getRecord(D_AMP_M_HANDLE).doubleValue() );
+	yFitM.setArea( correlation.getRecord(D_AREA_M_HANDLE).doubleValue()  );
+	yFitM.setOffset( correlation.getRecord(D_OFFST_M_HANDLE).doubleValue() );
+        yFitM.setSlope( correlation.getRecord(D_SLOPE_M_HANDLE).doubleValue() );
 
-	zFit.setMean( ( (ChannelTimeRecord) correlation.getRecord(H_MEAN_F_HANDLE)).doubleValue() );
-	zFit.setSigma( ( (ChannelTimeRecord)correlation.getRecord(H_SIGMA_F_HANDLE)).doubleValue() );
-	zFit.setAmp( ( (ChannelTimeRecord)correlation.getRecord(H_AMP_F_HANDLE)).doubleValue() );
-	zFit.setArea( ( (ChannelTimeRecord)correlation.getRecord(H_AREA_F_HANDLE)).doubleValue()  );
-	zFit.setOffset( ( (ChannelTimeRecord)correlation.getRecord(H_OFFST_F_HANDLE)).doubleValue() );
-        zFit.setSlope( ( (ChannelTimeRecord)correlation.getRecord(H_SLOPE_F_HANDLE)).doubleValue() );
+	zFit.setMean( correlation.getRecord(H_MEAN_F_HANDLE).doubleValue() );
+	zFit.setSigma( correlation.getRecord(H_SIGMA_F_HANDLE).doubleValue() );
+	zFit.setAmp( correlation.getRecord(H_AMP_F_HANDLE).doubleValue() );
+	zFit.setArea( correlation.getRecord(H_AREA_F_HANDLE).doubleValue()  );
+	zFit.setOffset( correlation.getRecord(H_OFFST_F_HANDLE).doubleValue() );
+        zFit.setSlope( correlation.getRecord(H_SLOPE_F_HANDLE).doubleValue() );
        
-	zFitM.setMean( ( (ChannelTimeRecord) correlation.getRecord(H_MEAN_M_HANDLE)).doubleValue() );
-	zFitM.setSigma( ( (ChannelTimeRecord)correlation.getRecord(H_SIGMA_M_HANDLE)).doubleValue() );
-	zFitM.setAmp( ( (ChannelTimeRecord)correlation.getRecord(H_AMP_M_HANDLE)).doubleValue() );
-	zFitM.setArea( ( (ChannelTimeRecord)correlation.getRecord(H_AREA_M_HANDLE)).doubleValue()  );
-	zFitM.setOffset( ( (ChannelTimeRecord)correlation.getRecord(H_OFFST_M_HANDLE)).doubleValue() );
-        zFitM.setSlope( ( (ChannelTimeRecord)correlation.getRecord(H_SLOPE_M_HANDLE)).doubleValue() );    
+	zFitM.setMean( correlation.getRecord(H_MEAN_M_HANDLE).doubleValue() );
+	zFitM.setSigma( correlation.getRecord(H_SIGMA_M_HANDLE).doubleValue() );
+	zFitM.setAmp( correlation.getRecord(H_AMP_M_HANDLE).doubleValue() );
+	zFitM.setArea( correlation.getRecord(H_AREA_M_HANDLE).doubleValue()  );
+	zFitM.setOffset( correlation.getRecord(H_OFFST_M_HANDLE).doubleValue() );
+        zFitM.setSlope( correlation.getRecord(H_SLOPE_M_HANDLE).doubleValue() );    
     }
 
 

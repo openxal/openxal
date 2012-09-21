@@ -9,6 +9,8 @@ package xal.sim.latgen;
 import java.util.List;
 import java.util.Set;
 
+import xal.model.IElement;
+
 
 
 
@@ -29,7 +31,7 @@ public interface IGenerationRule {
      *  
      *  @return     set (unordered) of AcceleratorNode objects that generation rule handles
      */
-    public Set getNodeSet();
+    public Set<String> getNodeSet();
     
     
     /**
@@ -38,6 +40,6 @@ public interface IGenerationRule {
      *  @param  setNodeCombin  node combination 
      *  @return                 generated modeling Element object list
      */
-    public List getElementList(Set setNodeCombin) throws GenerationException;
+    public List<IElement> getElementList(Set<String> setNodeCombin) throws GenerationException;
     
 };

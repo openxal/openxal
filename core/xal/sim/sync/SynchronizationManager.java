@@ -9,6 +9,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import xal.model.IComponent;
 import xal.model.IComposite;
 import xal.model.IElement;
 import xal.model.elem.IElectromagnet;
@@ -175,9 +176,9 @@ public class SynchronizationManager {
      * @see SynchronizationManager#synchronize(IElement, AcceleratorNode)
      */
     public void synchronize( final IComposite comp, final AcceleratorNode node ) {
-        Iterator iterComp = comp.globalIterator();
+       final Iterator<IComponent> iterComp = comp.globalIterator();
         while (iterComp.hasNext())  {
-            IElement    elem = (IElement)iterComp.next();
+            final IElement elem = (IElement)iterComp.next();
             
             if ((hasSynchronizerFor(elem)) && (propertyAccessor.hasAccessorFor(node)))
                 addSynchronizedElementMappedTo(elem, node);

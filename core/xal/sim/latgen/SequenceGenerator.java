@@ -46,6 +46,7 @@ public class SequenceGenerator implements IHwareTreeVisitor {
      * Global Attributes
      */
     /** mapping of SMF AcceleratorSeq types to MODEL Element types */
+	@SuppressWarnings( "rawtypes" )		// TODO: not clear what the key and value types should be as the map doesn't appear to be used
     private static HashMap  s_mapTypes;
     
 
