@@ -176,7 +176,7 @@ public class KeyValueRecordSelector<RecordType> {
 	
 	/** get the list of selected records */
 	protected List<RecordType> getSelectedRecords() {
-		final RowSorter sorter = RECORD_TABLE.getRowSorter();
+		final RowSorter<?> sorter = RECORD_TABLE.getRowSorter();
 		final int[] selectedRows = RECORD_TABLE.getSelectedRows();
 		final List<RecordType> records = new ArrayList<RecordType>( selectedRows.length );
 		for ( final int row : selectedRows ) {

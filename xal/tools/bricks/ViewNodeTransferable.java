@@ -27,7 +27,7 @@ public class ViewNodeTransferable implements Transferable {
 	static public final DataFlavor[] FLAVORS;
 	
 	/** The view nodes being transferred */
-	protected final List<BeanNode> _viewNodes;
+	protected final List<BeanNode<?>> _viewNodes;
 	
 	
 	// static initializer
@@ -41,8 +41,8 @@ public class ViewNodeTransferable implements Transferable {
 	 * Primary Constructor
 	 * @param nodes The nodes being transferred
 	 */
-	public ViewNodeTransferable( final List<BeanNode> nodes ) {
-		_viewNodes = new ArrayList<BeanNode>( nodes );
+	public ViewNodeTransferable( final List<BeanNode<?>> nodes ) {
+		_viewNodes = new ArrayList<BeanNode<?>>( nodes );
 	}
 	
 	
@@ -50,8 +50,9 @@ public class ViewNodeTransferable implements Transferable {
 	 * Constructor
 	 * @param node The node to transfer
 	 */
-	public ViewNodeTransferable( final BeanNode node ) {
-		this( Collections.singletonList( node ) );
+	@SuppressWarnings( "unchecked" )	// must cast from singletonList since it returns captured type
+	public ViewNodeTransferable( final BeanNode<?> node ) {
+		this( (List<BeanNode<?>>)Collections.singletonList( node ) );
 	}
 	
 	

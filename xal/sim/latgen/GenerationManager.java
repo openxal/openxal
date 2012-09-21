@@ -62,7 +62,7 @@ public class GenerationManager {
     /**
      *  Get generation rule corresponding to a set of AcceleratorNode types.
      */
-    protected IGenerationRule    getRule(Set setNodeTypes)   throws GenerationException {
+    protected IGenerationRule    getRule(Set<String> setNodeTypes)   throws GenerationException {
         int cntNodes = setNodeTypes.size();
         Integer intNodes = new Integer(cntNodes);
         
@@ -80,11 +80,11 @@ public class GenerationManager {
      *  of node types.
      */
     @SuppressWarnings( "unchecked" )    // it isn't clear what the types are supposed to be especially since the GenerationManager doesn't seem to be used anywhere (just instantiated)
-    private IGenerationRule selectRule(Set setNodeTypes, List<IGenerationRule> lstRules) throws GenerationException   {
+    private IGenerationRule selectRule(Set<String> setNodeTypes, List<IGenerationRule> lstRules) throws GenerationException   {
         Iterator<IGenerationRule> iterRules = lstRules.iterator();
         while (iterRules.hasNext()) {
             IGenerationRule rule = iterRules.next();
-            Set setNodeComb = rule.getNodeSet();
+            Set<String> setNodeComb = rule.getNodeSet();
             if (setNodeComb.containsAll(setNodeTypes))
                 return rule;
         }

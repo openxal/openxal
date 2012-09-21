@@ -226,9 +226,9 @@ public class Lattice implements Cloneable {
 	/**
 	 * Append a tuple to the lattice end.
 	 */
-	void appendTuple(ArrayList tuple) throws LatticeError {
-		for (ListIterator it= tuple.listIterator(); it.hasNext();) {
-			append((Element) it.next());
+	void appendTuple( final List<Element> tuple ) throws LatticeError {
+		for ( final Element element : tuple ) {
+			append( element );
 		}
 	}
 
@@ -269,7 +269,7 @@ public class Lattice implements Cloneable {
 		int between= after - 1;
 		//        if(false) {cout.println("(before,between,after)=("+before+", "+between+", "+after+")");}
 		Element to_split= elements.remove(between);
-		ArrayList<Element> to_insert= to_split.split(element);
+		final List<Element> to_insert= to_split.split(element);
 		elements.addAll(between, to_insert);
 		if (debug & verbose) {
 			cout.println(
@@ -453,10 +453,10 @@ public class Lattice implements Cloneable {
 	 * Implementation of iterator support for a lattice.
 	 */
 	private class LIterator implements LatticeIterator {
-		private ListIterator liter;
+		private ListIterator<Element> liter;
 
 		private LIterator() {
-			liter= elements.listIterator();
+			liter = elements.listIterator();
 		}
 
 		public boolean hasNext() {
@@ -464,7 +464,7 @@ public class Lattice implements Cloneable {
 		}
 
 		public Element next() {
-			return (Element) liter.next();
+			return liter.next();
 		}
 
 		public void remove() {

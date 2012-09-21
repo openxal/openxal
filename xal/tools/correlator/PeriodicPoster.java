@@ -21,7 +21,7 @@ import java.awt.event.*;
  */
 public class PeriodicPoster<RecordType> implements ActionListener {
     final private Correlator<?, RecordType, ? extends SourceAgent<RecordType>> CORRELATOR;
-    final private PassiveBroadcaster BROADCASTER;
+    final private PassiveBroadcaster<RecordType> BROADCASTER;
     final private javax.swing.Timer TIMER;
     
 	

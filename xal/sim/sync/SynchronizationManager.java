@@ -9,6 +9,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import xal.model.IComponent;
 import xal.model.IComposite;
 import xal.model.IElement;
 import xal.model.elem.IElectromagnet;
@@ -34,7 +35,7 @@ public class SynchronizationManager {
 	
 	// Class Variables =========================================================
 	
-	private static Map<Class,Synchronizer> nodeSynchronizerMap = new HashMap<Class,Synchronizer>();
+	private static Map<Class<?>,Synchronizer> nodeSynchronizerMap = new HashMap<Class<?>,Synchronizer>();
 	// key = element class, value = synchronization factory class
 
 	private static List<String> syncModes = new ArrayList<String>();
@@ -95,21 +96,17 @@ public class SynchronizationManager {
 	// Public Synchronization operations =======================================
 	
 	public void resync() throws SynchronizationException {
-		Iterator nodeIt = synchronizedNodeElems.keySet().iterator();
-		while (nodeIt.hasNext()) {
-			AcceleratorNode node = (AcceleratorNode) nodeIt.next();
-			Map valueMap;
+		for ( final AcceleratorNode node : synchronizedNodeElems.keySet() ) {
+			Map<String,Double> valueMap;
 			try {
-				valueMap = propertyAccessor.valueMapFor(node, syncMode);
+				valueMap = propertyAccessor.valueMapFor( node, syncMode );
 			}
 			catch ( ProxyException exception ) {
 				exception.printStackTrace();
 				throw new SynchronizationException( "ProxyException getting properties for: " + node.getId() );
 			}
-			ArrayList elems = (ArrayList) synchronizedNodeElems.get(node);
-			Iterator elemIt = elems.iterator();
-			while (elemIt.hasNext()) {
-				IElement elem = (IElement) elemIt.next();
+			
+			for ( final IElement elem : synchronizedNodeElems.get( node ) ) {
 				resync(elem, valueMap);
 			}
 		} 
@@ -118,14 +115,9 @@ public class SynchronizationManager {
 	
 	/** use the cached values modified by the model inputs and resync the model */
 	public void resyncFromCache() throws SynchronizationException {
-		Iterator nodeIt = synchronizedNodeElems.keySet().iterator();
-		while ( nodeIt.hasNext() ) {
-			final AcceleratorNode node = (AcceleratorNode) nodeIt.next();
+		for ( final AcceleratorNode node : synchronizedNodeElems.keySet() ) {
 			final Map<String,Double> valueMap = propertyAccessor.getWhatifValueMapFromCache( node );
-			final List elems = (List)synchronizedNodeElems.get( node );
-			final Iterator elemIt = elems.iterator();
-			while ( elemIt.hasNext() ) {
-				IElement elem = (IElement)elemIt.next();
+			for ( final IElement elem : synchronizedNodeElems.get( node ) ) {
 				resync( elem, valueMap );
 			}
 		} 
@@ -137,9 +129,9 @@ public class SynchronizationManager {
 	 * @param anElem element to synchronize
 	 * @param valueMap a Map whose keys are property names and values are String property values
 	 */
-	public static void resync(IElement anElem, Map valueMap) throws SynchronizationException {
-		Synchronizer synchronizer = getSynchronizer(anElem);
-		synchronizer.resync(anElem, valueMap);
+	public static void resync( final IElement anElem, final Map<String,Double> valueMap ) throws SynchronizationException {
+		Synchronizer synchronizer = getSynchronizer( anElem );
+		synchronizer.resync( anElem, valueMap );
 	}
 	
 	/**
@@ -183,10 +175,10 @@ public class SynchronizationManager {
      * 
      * @see SynchronizationManager#synchronize(IElement, AcceleratorNode)
      */
-    public void synchronize(IComposite comp, AcceleratorNode node) {
-        Iterator iterComp = comp.globalIterator();
+    public void synchronize( final IComposite comp, final AcceleratorNode node ) {
+       final Iterator<IComponent> iterComp = comp.globalIterator();
         while (iterComp.hasNext())  {
-            IElement    elem = (IElement)iterComp.next();
+            final IElement elem = (IElement)iterComp.next();
             
             if ((hasSynchronizerFor(elem)) && (propertyAccessor.hasAccessorFor(node)))
                 addSynchronizedElementMappedTo(elem, node);
@@ -198,8 +190,8 @@ public class SynchronizationManager {
 
 // Queries =================================================================
 	
-	public Map propertiesForNode(AcceleratorNode aNode) throws ProxyException {
-		return propertyAccessor.valueMapFor(aNode, syncMode);
+	public Map<String,Double> propertiesForNode( final AcceleratorNode aNode ) throws ProxyException {
+		return propertyAccessor.valueMapFor( aNode, syncMode );
 	}
 	
 	// Node - Element Mapping ==================================================
@@ -238,18 +230,16 @@ public class SynchronizationManager {
 	}
 	
 	private static Synchronizer getSynchronizer(IElement anElem) {
-		Iterator elemClassIt = nodeSynchronizerMap.keySet().iterator();
-		while (elemClassIt.hasNext()) {
-			Class cl = (Class) elemClassIt.next();
-			if (cl.isInstance(anElem)) {
-				return nodeSynchronizerMap.get(cl);
+		for ( final Class<?> cl : nodeSynchronizerMap.keySet() ) {
+			if ( cl.isInstance( anElem ) ) {
+				return nodeSynchronizerMap.get( cl );
 			}
 		}
 		return null;
 	}
 	
-	private static void registerSynchronizer(Class nodeClass, Synchronizer aSync) {
-		nodeSynchronizerMap.put(nodeClass, aSync);
+	private static void registerSynchronizer( final Class<?> nodeClass, final Synchronizer aSync ) {
+		nodeSynchronizerMap.put( nodeClass, aSync );
 	}
 	
 	
@@ -285,42 +275,29 @@ public class SynchronizationManager {
 	// Testing and Debugging ===================================================
 	
 	protected void debugPrint() {
-		
 		System.out.println("Full Node - Element Map:");
-		Iterator nodeIt = allNodeElems.keySet().iterator();
-		while (nodeIt.hasNext()) {
-			AcceleratorNode node = (AcceleratorNode) nodeIt.next();
+		for ( final AcceleratorNode node : allNodeElems.keySet() ) {
 			System.out.println("\t" + node.getId());
-			ArrayList elems = (ArrayList) allNodeElems.get(node);
-			Iterator elemIt = elems.iterator();
-			while (elemIt.hasNext()) {
-				IElement elem = (IElement) elemIt.next();
+			for ( final IElement elem : allNodeElems.get( node ) ) {
 				System.out.println("\t\t" + elem);
 			}
 		}
 		
 		System.out.println("Synchronized Node - Element Map:");
-		nodeIt = synchronizedNodeElems.keySet().iterator();
-		while (nodeIt.hasNext()) {
-			AcceleratorNode node = (AcceleratorNode) nodeIt.next();
+		for ( final AcceleratorNode node : synchronizedNodeElems.keySet() ) {
 			System.out.println("\t" + node.getId());
-			ArrayList elems = (ArrayList) synchronizedNodeElems.get(node);
-			Iterator elemIt = elems.iterator();
-			while (elemIt.hasNext()) {
-				IElement elem = (IElement) elemIt.next();
+			for ( final IElement elem : synchronizedNodeElems.get( node ) ) {
 				System.out.println("\t\t" + elem);
 			}
 		}
 	}
+
 	
-	public boolean checkSynchronization(AcceleratorNode aNode, Map values) 
-			throws SynchronizationException {
-		List elems = synchronizedElementsMappedTo(aNode);
+	public boolean checkSynchronization( final AcceleratorNode aNode, final Map<String,Double> values ) throws SynchronizationException {
+		final List<IElement> elems = synchronizedElementsMappedTo( aNode );
 		if (elems == null) return true;
-		Iterator elemIt = elems.iterator();
-		while (elemIt.hasNext()) {
-			IElement elem = (IElement) elemIt.next();
-			getSynchronizer(elem).checkSynchronization(elem, values);
+		for ( final IElement elem : elems ) {
+			getSynchronizer( elem ).checkSynchronization( elem, values );
 		}
 		return true;
 	}

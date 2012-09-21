@@ -13,8 +13,7 @@ import java.util.*;
 
 
 /**
- * ElementTypeManager keeps track of which types are associated with which 
- * subclass of AcceleratorNode.  It is used for filtering nodes by type.
+ * ElementTypeManager keeps track of which types are associated with which subclass of AcceleratorNode.  It is used for filtering nodes by type.
  * @author  tap
  */
 public class ElementTypeManager {
@@ -46,7 +45,7 @@ public class ElementTypeManager {
     
     
     /** Register the type to specified class to be of the specified type */
-    public void registerType( final Class theClass, final String type ) {
+    public void registerType( final Class<?> theClass, final String type ) {
         final String lowerType = type.toLowerCase();
         Collection<Class<?>> classSet = getClassSet( lowerType );
         if ( classSet == null ) {

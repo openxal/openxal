@@ -90,7 +90,7 @@ public class ElementFactory {
      *
      *  @return         array registered IElement class types
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings( {"unchecked", "rawtypes"})	// arrays don't mix with generics
     public static Class<? extends IElement>[] getRegisteredClasses() {
         return s_mapClass.values().toArray(new Class[s_mapClass.size()]);
     }

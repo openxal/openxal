@@ -6,6 +6,7 @@ package xal.sim.latgen;
 import xal.model.IElement;
 import xal.model.IModelDataSource;
 import xal.model.ModelException;
+import xal.smf.AcceleratorNode;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -39,7 +40,7 @@ public class ElementGenerator {
 	 */
 
 	/** map of hardware to modeling element */
-	private Hashtable m_mapSmfMod;
+	private Hashtable<Object,Object> m_mapSmfMod;
 
 	/*
 	 * Classloader Initialization
@@ -136,7 +137,7 @@ public class ElementGenerator {
 		String classNameElement = mappingFor(objectSource);
 
 		// create an instance of the corresponding element class
-		Class classElement;
+		Class<?> classElement;
 		IElement elementInstance = null;
 		if (classNameElement == null) {
 			//change this to map to marker instead of throw exception???
@@ -224,7 +225,7 @@ public class ElementGenerator {
 	 */
 
 	public ElementGenerator() {
-		Hashtable mapDef = ElementGenerator.getDefaultMapping();
+		Hashtable<Object,Object> mapDef = ElementGenerator.getDefaultMapping();
 		this.setElementMap(mapDef);
 	}
 
@@ -240,7 +241,7 @@ public class ElementGenerator {
 	 *            the new hardware to model map
 	 */
 
-	private void setElementMap(Hashtable map) {
+	private void setElementMap(Hashtable<Object,Object> map) {
 		this.m_mapSmfMod = map;
 	}
 

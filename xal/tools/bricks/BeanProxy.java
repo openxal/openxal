@@ -16,21 +16,21 @@ import xal.tools.data.*;
 
 
 /** proxy for generating a Java Bean object */
-abstract public class BeanProxy<T> implements DataListener {
+abstract public class BeanProxy<ViewType> implements DataListener {
 	/** prototype class */
-	final protected Class<T> PROTOTYPE_CLASS;
+	final protected Class<ViewType> PROTOTYPE_CLASS;
 	
 	
 	/** Constructor */
-	public BeanProxy( final Class<T> prototypeClass ) {
+	public BeanProxy( final Class<ViewType> prototypeClass ) {
 		PROTOTYPE_CLASS = prototypeClass;
 	}
 	
 	
 	/** Create an instance of the specified view */
-	public T getBeanInstance( final Class<T> theClass ) {
+	public ViewType getBeanInstance( final Class<ViewType> theClass ) {
 		try {
-			final Constructor<T> constructor = theClass.getConstructor( getConstructorParameterTypes() );
+			final Constructor<ViewType> constructor = theClass.getConstructor( getConstructorParameterTypes() );
 			final Object[] parameters = getConstructorParameters();
 			return getBeanInstance( theClass, constructor, parameters );
 		}
@@ -41,10 +41,10 @@ abstract public class BeanProxy<T> implements DataListener {
 	
 	
 	/** Create an instance of the specified view */
-	public T getBeanInstance( final Class<T> theClass, final Constructor<T> constructor, Object... parameters ) {
+	public ViewType getBeanInstance( final Class<ViewType> theClass, final Constructor<ViewType> constructor, Object... parameters ) {
 		try {
 			constructor.setAccessible( true );
-			final T object = constructor.newInstance( parameters );
+			final ViewType object = constructor.newInstance( parameters );
 			setup( object );
 			return object;
 		}
@@ -56,15 +56,15 @@ abstract public class BeanProxy<T> implements DataListener {
 	
 	
 	/** setup the instance after construction */
-	public void setup( final T object ) {}
+	public void setup( final ViewType object ) {}
 	
 	
 	/** setup the instance after construction with prototype data */
-	public void setupPrototype( final T object ) {}
+	public void setupPrototype( final ViewType object ) {}
 	
 	
 	/** Get the class of the view */
-	final public Class<T> getPrototypeClass() {
+	final public Class<ViewType> getPrototypeClass() {
 		return PROTOTYPE_CLASS;
 	}
 	
@@ -73,8 +73,8 @@ abstract public class BeanProxy<T> implements DataListener {
 	 * Get the prototype view
 	 * @return the prototype view
 	 */
-	final public T getPrototype() {
-		final T object = getBeanInstance( PROTOTYPE_CLASS );
+	final public ViewType getPrototype() {
+		final ViewType object = getBeanInstance( PROTOTYPE_CLASS );
 		setupPrototype( object );
 		return object;
 	}
@@ -84,6 +84,7 @@ abstract public class BeanProxy<T> implements DataListener {
 	 * Get the array of constructor arguments
 	 * @return the constructor arguments
 	 */
+	@SuppressWarnings( "rawtypes" )		// generics don't mix with arrays
 	public Class[] getConstructorParameterTypes() {
 		return new Class[0];
 	}
@@ -130,7 +131,7 @@ abstract public class BeanProxy<T> implements DataListener {
 	
 	
 	/** get the jython reference snippet */
-	public String getJythonReferenceSnippet( final BeanNode node ) {
+	public String getJythonReferenceSnippet( final BeanNode<?> node ) {
 		final String symbol = node.getTag().toLowerCase().replaceAll( " ", "_" );	// lower the case of the tag and replace spaces with underscores
 		
 		final StringBuffer buffer = new StringBuffer();
@@ -147,7 +148,7 @@ abstract public class BeanProxy<T> implements DataListener {
 		
 	
 	/** get the java reference snippet */
-	public String getJavaReferenceSnippet( final BeanNode node ) {
+	public String getJavaReferenceSnippet( final BeanNode<?> node ) {
 		final StringBuffer buffer = new StringBuffer();
 		buffer.append( "final " );
 		buffer.append( node.getShortClassName() );
@@ -167,7 +168,7 @@ abstract public class BeanProxy<T> implements DataListener {
 	
 	
 	/** Generate the Java symbol for the specified node by lowering the case of the first character, stripping whitespace and capitalizing the first word character */
-	private static String generateJavaReferenceSymbol( final BeanNode node ) {
+	private static String generateJavaReferenceSymbol( final BeanNode<?> node ) {
 		final String tag = node.getTag();
 		final int tagLength = tag.length();
 		final StringBuffer buffer = new StringBuffer();
@@ -197,7 +198,7 @@ abstract public class BeanProxy<T> implements DataListener {
 	
 	
 	/** get the java reference snippet */
-	public String getXALReferenceSnippet( final BeanNode node ) {
+	public String getXALReferenceSnippet( final BeanNode<ViewType> node ) {
 		return getJavaReferenceSnippet( node );
 	}
 	
@@ -206,7 +207,7 @@ abstract public class BeanProxy<T> implements DataListener {
 	 * Get the java declaration snippet
 	 * @return the java declaration snippet
 	 */
-	public String getJavaDeclarationSnippet( final BeanNode node ) {
+	public String getJavaDeclarationSnippet( final BeanNode<ViewType> node ) {
 		final StringBuffer buffer = new StringBuffer();
 		buffer.append( node.getShortClassName() );
 		buffer.append( " " );
@@ -230,7 +231,7 @@ abstract public class BeanProxy<T> implements DataListener {
 	 * Get the reference snippet method arguments
 	 * @return the method arguments
 	 */
-	protected String getReferenceSnippetFetchMethodArgumentsString( final BeanNode node ) {
+	protected String getReferenceSnippetFetchMethodArgumentsString( final BeanNode<?> node ) {
 		return " \"" + node.getTag() + "\" ";
 	}
 	

@@ -11,7 +11,10 @@ import xal.smf.AcceleratorNode;
 
 import java.lang.reflect.Constructor;
 import java.text.NumberFormat;
+import java.util.List;
 import java.util.ArrayList;
+
+
 /**
  * The super class of all lattice elements.
  *
@@ -239,8 +242,9 @@ public abstract class Element implements VisitorListener, Cloneable {
     public void setLength(double length) {
         this.len=length;
     }
-    
-    protected ArrayList<Element> split(Element insert) throws LatticeError {
+
+	@SuppressWarnings( "rawtypes" )		// arrays don't support generics
+    protected List<Element> split(Element insert) throws LatticeError {
         //The slice (and replace) operation. The thick element (this)
         //is cut into an upstream and a downstream part and then element 'insert'
         //is inserted (with limiting markers) into the lattice.
@@ -273,7 +277,7 @@ public abstract class Element implements VisitorListener, Cloneable {
             params[0]=Class.forName("java.lang.Double");
             params[1]=Class.forName("java.lang.Double");
             params[2]=Class.forName("java.lang.String");
-            Constructor constructor=this.getClass().getConstructor(params);
+            Constructor<?> constructor = this.getClass().getConstructor(params);
             
             args[0]=new Double(positions[0]);
             args[1]=new Double(positions[1]);

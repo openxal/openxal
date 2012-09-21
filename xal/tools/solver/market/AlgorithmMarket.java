@@ -72,10 +72,9 @@ public class AlgorithmMarket implements AlgorithmScheduleListener, SolutionJudge
 	 */
 	public AlgorithmMarket( final AlgorithmPool pool ) {
 		this( pool, Collections.<AlgorithmStrategy>emptyList() );
-		
-		final Iterator algorithmIter = pool.getAlgorithms().iterator();
-		while ( algorithmIter.hasNext() ) {
-			final SearchAlgorithm algorithm = (SearchAlgorithm)algorithmIter.next();
+
+		// create a strategy for each algorithm
+		for ( final SearchAlgorithm algorithm : pool.getAlgorithms() ) {
 			addAlgorithmStrategy( new SingleAlgorithmStrategy( pool, algorithm ) );
 		}
 	}

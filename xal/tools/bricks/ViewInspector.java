@@ -51,7 +51,7 @@ public class ViewInspector extends Box {
 	protected boolean _hasBeenPositioned;
 	
 	/** view node to inspect */
-	protected BeanNode _node;
+	protected BeanNode<?> _node;
 	
 	
 	/** Constructor */
@@ -77,7 +77,7 @@ public class ViewInspector extends Box {
 	/**
 	 * Inspect the specified view node
 	 */
-	public void inspect( final BricksContext context, final BeanNode node ) {
+	public void inspect( final BricksContext context, final BeanNode<?> node ) {
 		setViewNode( context, node );
 	}
 	
@@ -85,7 +85,7 @@ public class ViewInspector extends Box {
 	/**
 	 * Set the view node
 	 */
-	public void setViewNode( final BricksContext context, final BeanNode node ) {
+	public void setViewNode( final BricksContext context, final BeanNode<?> node ) {
 		_node = node;
 		
 		final ViewInspectorTableModel tableModel = new ViewInspectorTableModel( node, PROPERTY_EDITOR_MANAGER );
@@ -112,7 +112,7 @@ public class ViewInspector extends Box {
 	
 	/** refresh the custom class field to reflect the custom class field if any */
 	private void refreshCustomClassView() {
-		final BeanNode node = _node;
+		final BeanNode<?> node = _node;
 		
 		final boolean hasCustomBeanClass = node.hasCustomBeanClass();
 		CUSTOM_CLASS_FIELD.setText( hasCustomBeanClass? node.getCustomBeanClassName() : node.getClassName() );
@@ -125,7 +125,7 @@ public class ViewInspector extends Box {
 	/**
 	 * Get the view node
 	 */
-	public BeanNode getViewNode() {
+	public BeanNode<?> getViewNode() {
 		return _node;
 	}
 	

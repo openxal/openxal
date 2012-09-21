@@ -348,7 +348,7 @@ class OpticsSelectionEditor {
 				final String path = PATH_FIELD.getText();
 				if ( new File(path).exists() ) {
 					// make this file the new default optics
-					ACCELERATOR_CHOOSER.setDefaultPath( path );
+					AcceleratorChooser.setDefaultPath( path );
 				}
 				else {
 					String title = "Error: File does not exist...";

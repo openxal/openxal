@@ -72,6 +72,12 @@ public class BatchConnectionRequest extends java.lang.Object {
 		
 		REQUEST_HANDLER = new RequestHandler();
     }
+
+
+	/** dispose of the queue */
+	protected void finalize() throws Throwable {
+		RESOURCE_SYNC_QUEUE.dispose();
+	}
 	
 	
 	/** add the specified listener as a receiver of batch connection request events from this instance */
