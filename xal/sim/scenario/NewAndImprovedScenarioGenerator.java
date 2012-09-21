@@ -61,6 +61,8 @@ public class NewAndImprovedScenarioGenerator
 		private Sector currentSeq;
 		private SynchronizationManager syncManager;
 		private AcceleratorSeq sequence;
+
+		@SuppressWarnings( "rawtypes" )		// TODO: this map is never used (only referenced in code that has been commented out)
 		private HashMap mapRfCavity = new HashMap();
 	
 		protected int dipoleInd = 0;
