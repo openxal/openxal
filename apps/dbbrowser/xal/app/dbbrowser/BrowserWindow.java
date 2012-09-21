@@ -148,6 +148,7 @@ class BrowserWindow extends XalWindow implements SwingConstants {
 
 
 	/** Make the contents of the main view  */
+	@SuppressWarnings( {"rawtypes", "unchecked"} )		// TODO: JList supports generics in Java 7 or later
 	protected void makeContents() {
 		Box mainView = new Box( BoxLayout.X_AXIS );
 		getContentPane().add( mainView );

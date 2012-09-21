@@ -37,12 +37,12 @@ class ViewInspectorTableModel extends AbstractTableModel implements PropertyTabl
 	final static public int VALUE_COLUMN = 1;
 	
 	final protected PropertyDescriptor[] PROPERTY_DESCRIPTORS;
-	final protected BeanNode BEAN_NODE;
+	final protected BeanNode<?> BEAN_NODE;
 	final protected PropertyValueEditorManager PROPERTY_VALUE_EDITOR_MANAGER;
 	
 	
 	/** Constructor */
-	public ViewInspectorTableModel( final BeanNode node, final PropertyValueEditorManager propertyEditorManager ) {
+	public ViewInspectorTableModel( final BeanNode<?> node, final PropertyValueEditorManager propertyEditorManager ) {
 		BEAN_NODE = node;
 		PROPERTY_VALUE_EDITOR_MANAGER = propertyEditorManager;
 		
@@ -71,7 +71,7 @@ class ViewInspectorTableModel extends AbstractTableModel implements PropertyTabl
 	
 	
 	/** get the property descriptor for the specified row */
-	public Class getPropertyClass( final int row ) {
+	public Class<?> getPropertyClass( final int row ) {
 		return getPropertyDescriptor( row ).getPropertyType();
 	}
 	
@@ -120,7 +120,7 @@ class ViewInspectorTableModel extends AbstractTableModel implements PropertyTabl
 	/**
 		* Get the data class for the specified column.
 	 */
-	public Class getColumnClass( final int column ) {
+	public Class<?> getColumnClass( final int column ) {
 		switch( column ) {
 			default:
 				return String.class;

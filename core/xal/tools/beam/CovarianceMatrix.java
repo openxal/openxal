@@ -9,17 +9,26 @@ import Jama.Matrix;
  * A <code>CovarianceMatrix</code> in homogeneous coordinates represents
  * all moments of a phase space distribution up to and include second order.  This is 
  * seen by taken the moment of the outer product of two phase vectors.  We find
- * <pre>
- * &lt;z*z'&gt;  = | &lt;x*x&gt;   &lt;x*xp   &lt;x*y&gt;   &lt;x*yp&gt;  &lt;x*z&gt;   &lt;x*zp&gt;  &lt;x&gt;  |
- *           | &lt;xp*x&gt;  &lt;xp*xp&gt; &lt;xp*y&gt;  &lt;xp*yp&gt; &lt;xp*z&gt;  &lt;xp*zp&gt; &lt;xp&gt; |
- *           | &lt;y*x&gt;   &lt;y*xp&gt;  &lt;y*y&gt;   &lt;y*yp&gt;  &lt;y*z&gt;   &lt;y*zp&gt;  &lt;y&gt;  |
- *           | &lt;yp*x&gt;  &lt;yp*xp&gt; &lt;yp*y&gt;  &lt;yp*yp&gt; &lt;yp*z&gt;  &lt;yp*zp&gt; &lt;yp&gt; |
- *           | &lt;z*x&gt;   &lt;z*xp&gt;  &lt;z*y&gt;   &lt;z*yp&gt;  &lt;z*z&gt;   &lt;z*zp&gt;  &lt;z&gt;  |
- *           | &lt;zp*x&gt;  &lt;zp*xp&gt; &lt;zp*y&gt;  &lt;zp*yp&gt; &lt;zp*z&gt;  &lt;zp*zp&gt; &lt;zp&gt; |
- *           | &lt;x&gt;     &lt;xp&gt;    &lt;y&gt;     &lt;yp&gt;    &lt;z&gt;     &lt;zp&gt;    &lt;1&gt;  |
+  * <pre>
+ * &lt;zz<sup>T</sup>&gt;  = | &lt;xx&gt;   &lt;xx'   &lt;xy&gt;   &lt;xy'&gt;  &lt;xz&gt;   &lt;xz'&gt;  &lt;x&gt;  |
+ *           | &lt;x'x&gt;  &lt;x'x'&gt; &lt;x'y&gt;  &lt;x'y'&gt; &lt;x'z&gt;  &lt;x'z'&gt; &lt;x'&gt; |
+ *           | &lt;yx&gt;   &lt;yx'&gt;  &lt;yy&gt;   &lt;yy'&gt;  &lt;yz&gt;   &lt;yz'&gt;  &lt;y&gt;  |
+ *           | &lt;y'x&gt;  &lt;y'x'&gt; &lt;y'y&gt;  &lt;y'y'&gt; &lt;y'z&gt;  &lt;y'z'&gt; &lt;y'&gt; |
+ *           | &lt;zx&gt;   &lt;zx'&gt;  &lt;zy&gt;   &lt;zy'&gt;  &lt;zz&gt;   &lt;zz'&gt;  &lt;z&gt;  |
+ *           | &lt;z'x&gt;  &lt;z'x'&gt; &lt;z'y&gt;  &lt;z'y&gt; &lt;z'z&gt;  &lt;z'z'&gt; &lt;z'&gt; |
+ *           | &lt;x&gt;     &lt;x&gt;    &lt;y&gt;     &lt;y&gt;    &lt;z&gt;     &lt;z&gt;    &lt;1&gt;  |
  * </pre>
- * where <i>xp, yp, zp</i> represent the momentum coordinate in the <i>x, y,</i> and <i>z</i>
+ * where <i>x', y', z'</i> represent the momentum coordinate in the <i>x, y,</i> and <i>z</i>
  * directions, respectively.
+ * </p>
+ * <p>
+ * Note that the covariance matrix is not necessarily centralized.  Specifically, if the
+ * beam is off axis, then at least one of the moments 
+ * &lt;<i>x</i>&gt;, &lt;<i>y</i>&gt;, &lt;<i>z</i>&gt; is non-zero and the corresponding 
+ * second-order moments will be skewed.  Likewise, if the beam has a coherent drift in
+ * some direction, then the moments &lt;<i>x'</i>&gt;, &lt;<i>y'</i>&gt;, &lt;<i>z'</i>&gt;
+ * will have at least one nonlinear value.  There are methods in this class for returning
+ * centralized moments when such quantities are needed.
  * </p>
  * <p>
  * Note that the covariance matrix is not necessarily centralized.  Specifically, if the

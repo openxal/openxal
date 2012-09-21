@@ -74,15 +74,13 @@ public class LatticeGenerator {
      *  @param  lat         current Lattice object under generation
      */
     
-    private void    buildElements(List lstNodes, Lattice lat){
-        Iterator iter = lstNodes.iterator();
-
+    private void    buildElements( final List<AcceleratorNode> lstNodes, final Lattice lat ){
 		System.out.println();
-		System.out.println("position: " + ((AcceleratorNode)lstNodes.get(0)).getPosition());
+		System.out.println("position: " + (lstNodes.get(0)).getPosition());
 		System.out.println("building node set:");
-        
-        while (iter.hasNext())  {
-            AcceleratorNode node = (AcceleratorNode)iter.next();
+
+		// TODO: this loop doesn't do anything so someone should take a look at this code
+		for ( final AcceleratorNode node : lstNodes ) {
 //            System.out.println(node.getId());
 //            Element elem = new Element(node, node.getLength(), node.getPosition());
 //            lat.add(elem);

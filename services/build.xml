@@ -16,7 +16,7 @@
     
     <!-- Build all the services which allow batch building. -->
     <target name="all-standalone">
-        <subant target="all-standalone">
+        <subant target="build-standalone">
             <property name="batch.service.build" value="true" />
             <fileset dir="." includes="${build.path.pattern}" />
         </subant>

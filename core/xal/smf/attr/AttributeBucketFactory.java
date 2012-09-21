@@ -18,7 +18,7 @@ public final class AttributeBucketFactory {
      */
     
     static private HashSet<AttributeBucket>                  m_setBuckTypes;     // set of all AttributeBucket derived classes
-    static private HashMap<String,Constructor>                  m_mapCtors;         // map of node type ids to constructors
+    static private HashMap<String,Constructor<?>>                  m_mapCtors;         // map of node type ids to constructors
     
     
     
@@ -54,16 +54,10 @@ public final class AttributeBucketFactory {
         
         // Build the string array
         int                 iType;      // index of current type
-        Set                 setTypes;   // set of AttributeBucket type ids
-        Iterator            iter;       // nodetype set iterator
-        
-        setTypes = m_mapCtors.keySet();
-        iter     = setTypes.iterator();
+        final Set<String> nodeTypes = m_mapCtors.keySet();
         iType    = 0;
-        while (iter.hasNext())  {
-            arrTypes[iType] = (String)iter.next();
-            
-            iType++;
+		for ( final String nodeType : nodeTypes ) {
+            arrTypes[iType++] = nodeType;
         }
             
         return arrTypes;
@@ -80,7 +74,7 @@ public final class AttributeBucketFactory {
         
         
         // Find the constructur object for the AttributeBucket and instantiate new node
-        Constructor         ctor;       // contructor object for node type
+        Constructor<?>         ctor;       // contructor object for node type
         Object[]            arrArgs;    // constructor arguments
         AttributeBucket     buck;       // the returned object
 
@@ -111,18 +105,13 @@ public final class AttributeBucketFactory {
         m_setBuckTypes.add(objInst);
     };
     
-    
-    private static void buildCtorMap()  {
-        Iterator              iter;     // nodetype set iterator
 
-        m_mapCtors = new HashMap<String,Constructor>();
-        
-        iter = m_setBuckTypes.iterator();
-        while (iter.hasNext())  {
-            
-            try {
-                
-                AttributeBucket bucType = (AttributeBucket)iter.next();
+	@SuppressWarnings( "rawtypes" )		// generics aren't supported in arrays
+    private static void buildCtorMap()  {
+        m_mapCtors = new HashMap<String,Constructor<?>>();
+
+		for ( final AttributeBucket bucType : m_setBuckTypes ) {            
+            try {                
                 Class<?>           clsType = bucType.getClass();
                 String          strType = bucType.getType();
                 Constructor<?>     ctrType = clsType.getConstructor(new Class[] { });

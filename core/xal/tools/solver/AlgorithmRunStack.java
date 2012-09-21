@@ -73,9 +73,7 @@ public class AlgorithmRunStack {
 	 * @param anAlgorithmRunStack  The algorithm to add to the stack.
 	 */
 	public void appendStack( final AlgorithmRunStack anAlgorithmRunStack ) {
-		Iterator algorithmRunStackIter = anAlgorithmRunStack.getAlgorithmRuns().iterator();
-		while ( algorithmRunStackIter.hasNext() ) {
-			AlgorithmRun algorithmRun = (AlgorithmRun)algorithmRunStackIter.next();
+		for ( final AlgorithmRun algorithmRun : anAlgorithmRunStack.getAlgorithmRuns() ) {
 			appendRun( algorithmRun );
 		}
 	}

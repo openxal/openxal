@@ -37,19 +37,14 @@ public class ApplicationStatusService implements ApplicationStatus {
 	
 	
 	/** reveal the application by bringing all windows to the front */
-	public boolean showAllWindows() {
+	public void showAllWindows() {
 		Application.getApp().showAllWindows();
-		return true;
 	}
 	
 	
-	/**
-	 * Request that the virtual machine run the garbage collector.
-	 * @return true.
-	 */
-	public boolean collectGarbage() {
+	/** Request that the virtual machine run the garbage collector. */
+	public void collectGarbage() {
 		System.gc();
-		return true;
 	}
 	
 	

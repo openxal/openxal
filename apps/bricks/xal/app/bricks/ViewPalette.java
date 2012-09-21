@@ -51,6 +51,7 @@ public class ViewPalette extends JTabbedPane {
 	
 	
 	/** add a tab of views to the tabbed pane */
+	@SuppressWarnings( {"rawtypes", "unchecked"} )		// JList only supports generics in Java 7 or later
 	private void addTab( final JTabbedPane tabbedPane, final String name, final Vector<? extends BeanProxy> views ) {
 		final JList list = new JList();
 		
@@ -64,6 +65,7 @@ public class ViewPalette extends JTabbedPane {
 	
 	
 	/** add a tab of borders to the tabbed pane */
+	@SuppressWarnings( {"rawtypes", "unchecked"} )		// JList only supports generics in Java 7 or later
 	private void addBorderTab( final JTabbedPane tabbedPane, final String name, final Vector<BorderProxy> borders ) {
 		final JList list = new JList();
 		
@@ -77,6 +79,7 @@ public class ViewPalette extends JTabbedPane {
 	
 	
 	/** make the controls views */
+	@SuppressWarnings( "rawtypes" )		// the types are irrelevant
 	private Vector<ViewProxy> makeControlsViews() {
 		final Vector<ViewProxy> views = new Vector<ViewProxy>();
 		
@@ -94,6 +97,7 @@ public class ViewPalette extends JTabbedPane {
 	
 	
 	/** make the controls views */
+	@SuppressWarnings( "rawtypes" )		// the types are irrelevant
 	private Vector<ViewProxy> makeTextViews() {
 		final Vector<ViewProxy> views = new Vector<ViewProxy>();
 		
@@ -110,6 +114,7 @@ public class ViewPalette extends JTabbedPane {
 	
 	
 	/** make the controls views */
+	@SuppressWarnings( "rawtypes" )		// the types are irrelevant
 	private Vector<ViewProxy> makeDataViews() {
 		final Vector<ViewProxy> views = new Vector<ViewProxy>();
 		
@@ -123,6 +128,7 @@ public class ViewPalette extends JTabbedPane {
 	
 	
 	/** make the containers */
+	@SuppressWarnings( "rawtypes" )		// the types are irrelevant
 	private Vector<ViewProxy> makeContainers() {
 		final Vector<ViewProxy> views = new Vector<ViewProxy>();
 		
@@ -141,6 +147,7 @@ public class ViewPalette extends JTabbedPane {
 	
 	
 	/** make the windows */
+	@SuppressWarnings( "rawtypes" )		// the types are irrelevant
 	private Vector<ViewProxy> makeWindows() {
 		final Vector<ViewProxy> views = new Vector<ViewProxy>();
 
@@ -152,6 +159,7 @@ public class ViewPalette extends JTabbedPane {
 	
 	
 	/** make the controls views */
+	@SuppressWarnings( "rawtypes" )		// the types are irrelevant
 	private Vector<BorderProxy> makeBorders() {
 		final Vector<BorderProxy> views = new Vector<BorderProxy>();
 		
@@ -166,6 +174,7 @@ public class ViewPalette extends JTabbedPane {
 	
 	
 	/** Knob list transfer handler */
+	@SuppressWarnings( "rawtypes" )		// JList only supports generics in Java 7 or later
 	class ViewTransferHandler extends TransferHandler {
         /** serialization identifier */
         private static final long serialVersionUID = 1L;
@@ -181,7 +190,7 @@ public class ViewPalette extends JTabbedPane {
 		
 		/** transfer views from the palette */
 		protected Transferable createTransferable( final JComponent component ) {
-			final BeanProxy proxy = (BeanProxy)VIEW_LIST.getSelectedValue();
+			final BeanProxy<?> proxy = (BeanProxy<?>)VIEW_LIST.getSelectedValue();
 			if ( proxy != null ) {
 				return new ViewTransferable( proxy );
 			}
@@ -200,6 +209,7 @@ public class ViewPalette extends JTabbedPane {
 
 
 /** render the view as an icon */
+@SuppressWarnings( "rawtypes" )		// JList and ListCellRenderer only support generics in Java 7 or later
 class ViewCellRenderer extends JLabel implements ListCellRenderer {
     /** serialization identifier */
     private static final long serialVersionUID = 1L;

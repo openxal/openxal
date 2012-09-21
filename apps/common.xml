@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<project name="common.apps.config" basedir="." default="all">
+<project name="common.apps.config" basedir="." default="build">
     <import file="../config.xml" />
 
     <!-- the value for these properties are overriden if specified in the beginning of the app's build file before any tasks are defined -->
@@ -150,7 +150,7 @@
     
     
     <!-- Install the application in the apps directory under the install directory -->
-    <target name="install" depends="all" if="allows.install">
+    <target name="install" depends="build" if="allows.install">
         <copy file="${app.build.jar}" todir="${apps.install.root}" />
         <echo message="${appname} installed!"/>
     </target>
@@ -167,16 +167,20 @@
     <target name="run" depends="init,jar" description="Run application.">
     	<java jar="${app.build.jar}" fork="true" />
     </target>
-    
+
+
+    <!-- Synonym for the "build" target -->
+    <target name="all" depends="build" description="Build everything." if="allows.build" />
+	
     
     <!-- Build the application and place it in the apps directory under the build directory -->
-    <target name="all" depends="init,jar" description="Build everything." if="allows.build">
+    <target name="build" depends="init,jar" description="Build everything." if="allows.build">
         <echo message="${appname} built!" />
     </target>
     
     
     <!-- Build the application standalone and place it in the apps directory under the build directory -->
-    <target name="all-standalone" depends="init,jar-standalone" description="Build everything." if="allows.build">
+    <target name="build-standalone" depends="init,jar-standalone" description="Build everything." if="allows.build">
         <echo message="${appname} built standalone!" />
     </target>
     
@@ -207,8 +211,8 @@
 		<echo message="" />
 		<echo message="  where target(s) can be:" />
 		<echo message="    help ....................... Print this message." />
-		<echo message="    all ........................ Compile the application and assemble the jar product with dependence on the common libraries." />
-		<echo message="    all-standalone ............. Compile the application and assemble the jar product as standalone application." />
+		<echo message="    build ...................... Compile the application and assemble the jar product with dependence on the common libraries." />
+		<echo message="    build-standalone ........... Compile the application and assemble the jar product as standalone application." />
 		<echo message="    clean ...................... Clean compiled classes and build product" />
 		<echo message="    compile .................... Compile the application reporting all recommended warnings." />
 		<echo message="    compile-warn-all ........... Compile the application reporting all recommended warnings." />

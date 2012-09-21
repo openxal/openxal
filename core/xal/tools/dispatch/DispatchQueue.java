@@ -9,6 +9,7 @@
 package xal.tools.dispatch;
 
 import java.util.Date;
+import java.util.NoSuchElementException;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.*;
@@ -18,6 +19,9 @@ import javax.swing.SwingUtilities;
 
 /** DispatchQueue which attempts to implement a subset of the open source libdispatch library */
 abstract public class DispatchQueue implements DispatchOperationListener {
+	/** possible states of the dispatch queue */
+	public enum DispatchQueueState { PROCESSING, SUSPENDED, DISPOSED }
+
 	/** priority for a high priority queue */
 	final static public int DISPATCH_QUEUE_PRIORITY_HIGH;
 
@@ -45,8 +49,8 @@ abstract public class DispatchQueue implements DispatchOperationListener {
 	/** number of operations currently running */
 	final protected AtomicInteger RUNNING_OPERATION_COUNTER;
 
-	/** indicates whether this queue is submitting pending operations for execution */
-	protected volatile boolean _isProcessingPendingOperationQueue;
+	/** state of this queue */
+	protected volatile DispatchQueueState _queueState;
 
 	/** queue of pending operations which have not yet been submitted for execution */
 	final protected LinkedBlockingQueue<DispatchOperation<?>> PENDING_OPERATION_QUEUE;
@@ -72,8 +76,7 @@ abstract public class DispatchQueue implements DispatchOperationListener {
 		QUEUE_PROCESSOR = Executors.newSingleThreadExecutor();
 
 		RUNNING_OPERATION_COUNTER = new AtomicInteger( 0 );
-
-		_isProcessingPendingOperationQueue = true;
+		_queueState = DispatchQueueState.PROCESSING;
 	}
 
 
@@ -83,29 +86,74 @@ abstract public class DispatchQueue implements DispatchOperationListener {
 	}
 
 
+	/** dispose of the executors */
+	protected void finalize() throws Throwable {
+		releaseResources();		// call this method as dispose() only works for custom queues
+	}
+
+
 	/** get this queue's label */
 	public String getLabel() {
 		return LABEL;
 	}
 
 
-	/** Determines whether this queue is suspended */
+	/** Determines whether this queue is suspended (disposed implies suspended) */
 	public boolean isSuspended() {
-		return !_isProcessingPendingOperationQueue;
+		return _queueState != DispatchQueueState.PROCESSING;	// disposed states are also suspended
 	}
 
 
-	/** suspend execution of pending operations */
+	/** suspend execution of pending operations if processing (nothing if disposed or already suspended) */
 	public void suspend() {
-		_isProcessingPendingOperationQueue = false;
+		switch( _queueState ) {
+			case PROCESSING:
+				_queueState = DispatchQueueState.SUSPENDED;
+				break;
+			default:
+				break;
+		}
 	}
 
 
-	/** resume execution of pending operations */
+	/** resume execution of pending operations if suspended or throw an exception if attempting to resume a disposed queue */
 	public void resume() {
-		if ( !_isProcessingPendingOperationQueue ) {
-			_isProcessingPendingOperationQueue = true;
-			processOperationQueue();
+		switch( _queueState ) {
+			case SUSPENDED:
+				_queueState = DispatchQueueState.PROCESSING;
+				processOperationQueue();
+				break;
+			case DISPOSED:
+				throw new RuntimeException( "Cannot resume the disposed dispatch queue: " + LABEL );
+			default:
+				break;
+		}
+	}
+
+
+	/** dispose of this queue - can only be called on a custom queue */
+	public void dispose() {
+		_queueState = DispatchQueueState.DISPOSED;
+		releaseResources();
+	}
+
+
+	/** determine whether this queue has been disposed */
+	public boolean isDisposed() {
+		return _queueState == DispatchQueueState.DISPOSED;
+	}
+
+
+	/** release allocated resources - called internally for any queue */
+	protected void releaseResources() {
+		_queueState = DispatchQueueState.DISPOSED;
+
+		if ( !DISPATCH_EXECUTOR.isShutdown()	) {
+			DISPATCH_EXECUTOR.shutdown();
+		}
+
+		if ( !QUEUE_PROCESSOR.isShutdown() ) {
+			QUEUE_PROCESSOR.shutdown();
 		}
 	}
 
@@ -400,18 +448,37 @@ class ConcurrentDispatchQueue extends DispatchQueue {
 
 	/** process the pending operations */
 	private void processPendingOperations() {
-		while ( _isProcessingPendingOperationQueue ) {		// process (in order) all pending operations which can be processed
-			final DispatchOperation nextOperation = PENDING_OPERATION_QUEUE.peek();
+		while ( _queueState == DispatchQueueState.PROCESSING && PENDING_OPERATION_QUEUE.size() > 0 ) {		// process (in order) all pending operations which can be processed
+			final DispatchOperation<?> nextOperation = PENDING_OPERATION_QUEUE.peek();
 
-			if ( nextOperation != null && canRunNextOperationNow( nextOperation ) ) {
-				processNextPendingOperation();
+			if ( nextOperation != null ) {
+				if ( canRunNextOperationNow( nextOperation ) ) {
+					processNextPendingOperation();
+				}
+				else {
+					return;		// Stop processing the pending queue because nothing can process, now. An event will force the next processing cycle.
+				}
+			}
+			else {
+				// there should never be a null operation so we note if we find one and remove it from the queue
+				try {
+					throw new RuntimeException( "Null operaiton in pending operations queue of size: " + PENDING_OPERATION_QUEUE.size() );
+				}
+				catch( Exception exception ) {
+					System.err.println( exception.getMessage() );
+					exception.printStackTrace();
+				}
+				try {
+					PENDING_OPERATION_QUEUE.remove();	// remove the null operation
+				}
+				catch( NoSuchElementException exception ) {}
 			}
 		}
 	}
 
 
 	/** Determine whether the next operation can run now */
-	private boolean canRunNextOperationNow( final DispatchOperation nextOperation ) {
+	private boolean canRunNextOperationNow( final DispatchOperation<?> nextOperation ) {
 		if ( _isRunningBarrierOperation ) {			// make sure there is no barrier operation currently running before executing any other operation
 			return false;
 		}
@@ -435,12 +502,15 @@ class ConcurrentDispatchQueue extends DispatchQueue {
 	/** process the next pending operation */
 	@SuppressWarnings( "unchecked" )	// executor expects a known type but the operations are arbitrary
 	private void processNextPendingOperation() {
-		final DispatchOperation operation = PENDING_OPERATION_QUEUE.remove();
-		if ( operation.isBarrier() ) {
-			_isRunningBarrierOperation = true;
+		try {
+			final DispatchOperation<?> operation = PENDING_OPERATION_QUEUE.remove();
+			if ( operation.isBarrier() ) {
+				_isRunningBarrierOperation = true;
+			}
+			incrementRunningOperationCount();
+			DISPATCH_EXECUTOR.submit( operation );
 		}
-		incrementRunningOperationCount();
-		DISPATCH_EXECUTOR.submit( operation );
+		catch( NoSuchElementException exception ) {}	// nothing left to process in the queue
 	}
 
 
@@ -495,6 +565,12 @@ class GlobalDispatchQueue extends ConcurrentDispatchQueue {
 	public void resume() {}
 
 
+	/** dispose of this queue */
+	public void dispose() {
+		throw new UnsupportedOperationException( "Global dispatch queues cannot be disposed." );
+	}
+
+
 	/**
 	 * Overriden to simply call dispatchAsync() since the global queues do not support barriers.
 	 * @param operation the operation to execute
@@ -547,12 +623,15 @@ class SerialDispatchQueue extends DispatchQueue {
 
 	/** if no process is currently running, process the next pending operation (if any) without blocking */
 	protected void processNextPendingOperation() {
-		if ( _isProcessingPendingOperationQueue && RUNNING_OPERATION_COUNTER.get() == 0 ) {
-			final Callable<?> nextOperation = PENDING_OPERATION_QUEUE.poll();
-			if ( nextOperation != null ) {
-				incrementRunningOperationCount();
-				DISPATCH_EXECUTOR.submit( nextOperation );
+		if ( _queueState == DispatchQueueState.PROCESSING && RUNNING_OPERATION_COUNTER.get() == 0 ) {
+			try {
+				final Callable<?> nextOperation = PENDING_OPERATION_QUEUE.remove();
+				if ( nextOperation != null ) {
+					incrementRunningOperationCount();
+					DISPATCH_EXECUTOR.submit( nextOperation );
+				}
 			}
+			catch ( NoSuchElementException exception ) {}		// nothing left to process in the queue
 		}
 	}
 }
@@ -599,6 +678,12 @@ class MainDispatchQueue extends SerialDispatchQueue {
 	public void resume() {}
 
 
+	/** dispose of this queue */
+	public void dispose() {
+		throw new UnsupportedOperationException( "The main dispatch queue cannot be disposed." );
+	}
+
+
 	/** submit the operation for execution on the queue and wait for it to complete */
 	public <ReturnType> ReturnType dispatchSync( final Callable<ReturnType> rawOperation ) {
 		final CallRunnable<ReturnType> runnableOperation = new CallRunnable<ReturnType>( rawOperation );
@@ -609,22 +694,25 @@ class MainDispatchQueue extends SerialDispatchQueue {
 
 	/** process the next pending operation if any */
 	protected void processNextPendingOperation() {
-		if ( _isProcessingPendingOperationQueue && RUNNING_OPERATION_COUNTER.get() == 0 ) {
-			final Callable<?> nextOperation = PENDING_OPERATION_QUEUE.poll();
-			if ( nextOperation != null ) {
-				incrementRunningOperationCount();
-				final Runnable runnableOperation = new Runnable() {
-					public void run() {
-						try {
-							nextOperation.call();
+		if ( _queueState == DispatchQueueState.PROCESSING && RUNNING_OPERATION_COUNTER.get() == 0 ) {
+			try {
+				final Callable<?> nextOperation = PENDING_OPERATION_QUEUE.remove();
+				if ( nextOperation != null ) {
+					incrementRunningOperationCount();
+					final Runnable runnableOperation = new Runnable() {
+						public void run() {
+							try {
+								nextOperation.call();
+							}
+							catch( Exception exception ) {
+								throw new RuntimeException( exception );
+							}
 						}
-						catch( Exception exception ) {
-							throw new RuntimeException( exception );
-						}
-					}
-				};
-				SwingUtilities.invokeLater( runnableOperation );
+					};
+					SwingUtilities.invokeLater( runnableOperation );
+				}
 			}
+			catch ( NoSuchElementException exception ) {}	// nothing left to process in the queue
 		}
 	}
 }
@@ -713,11 +801,11 @@ class DispatchThread extends Thread {
 	/** constructor */
 	public DispatchThread( final DispatchQueue queue, final Runnable handler ) {
 		super( handler );
-
+		
 		QUEUE_THREAD_LOCAL.set( queue );
 	}
-
-
+	
+	
 	/** get the thread's queue */
 	public DispatchQueue getQueue() {
 		return QUEUE_THREAD_LOCAL.get();

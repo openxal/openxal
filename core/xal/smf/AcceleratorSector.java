@@ -21,7 +21,7 @@ public final class AcceleratorSector extends AcceleratorSeq {
      */
     
     /** List of legal predecessors (AcceleratorSectors) to this AcceleratorSector */
-    private LinkedList m_lstPred;
+    private LinkedList<AcceleratorSector> m_lstPred;		// TODO: doesn't look like this ever gets initialized or populated
     
     
     
@@ -87,10 +87,8 @@ public final class AcceleratorSector extends AcceleratorSeq {
 
     public AcceleratorSeq   concatenate(AcceleratorSector sec)  {
         boolean     bolTest = false;
-        Iterator    iterPred = m_lstPred.iterator();
-        while (iterPred.hasNext())  {
-            AcceleratorSector   secValid = (AcceleratorSector)iterPred.next();
-            
+
+		for ( final AcceleratorSector secValid : m_lstPred ) {
             if (secValid.equals(sec))
                 bolTest = true;
         }

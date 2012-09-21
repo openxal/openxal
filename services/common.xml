@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<project name="common.services.config" basedir="." default="all">
+<project name="common.services.config" basedir="." default="build">
     <import file="../config.xml" />
 
     <!-- the value for these properties are overriden if specified in the beginning of the service's build file before any tasks are defined -->
@@ -150,7 +150,7 @@
     
     
     <!-- Install the service in the services directory under the install directory -->
-    <target name="install" depends="all" if="allows.install">
+    <target name="install" depends="build" if="allows.install">
         <copy file="${service.build.jar}" todir="${services.install.root}" />
         <echo message="${servicename} installed!"/>
     </target>
@@ -167,16 +167,20 @@
     <target name="run" depends="init,jar" description="Run service.">
     	<java jar="${service.build.jar}" fork="true" />
     </target>
-    
+
+
+    <!-- Synonym for the build target -->
+    <target name="all" depends="build" description="Build everything." if="allows.build" />
+
     
     <!-- Build the service and place it in the services directory under the build directory -->
-    <target name="all" depends="init,jar" description="Build everything." if="allows.build">
+    <target name="build" depends="init,jar" description="Build everything." if="allows.build">
         <echo message="${servicename} built!" />
     </target>
     
     
     <!-- Build the service standalone and place it in the services directory under the build directory -->
-    <target name="all-standalone" depends="init,jar-standalone" description="Build everything." if="allows.build">
+    <target name="build-standalone" depends="init,jar-standalone" description="Build everything." if="allows.build">
         <echo message="${servicename} built standalone!" />
     </target>
     
@@ -207,8 +211,8 @@
 		<echo message="" />
 		<echo message="  where target(s) can be:" />
 		<echo message="    help ....................... Print this message." />
-		<echo message="    all ........................ Compile the service and assemble the jar product with dependence on the common libraries." />
-		<echo message="    all-standalone ............. Compile the service and assemble the jar product as standalone service." />
+		<echo message="    build ...................... Compile the service and assemble the jar product with dependence on the common libraries." />
+		<echo message="    build-standalone ........... Compile the service and assemble the jar product as standalone service." />
 		<echo message="    clean ...................... Clean compiled classes and build product" />
 		<echo message="    compile .................... Compile the service reporting all recommended warnings." />
 		<echo message="    compile-warn-all ........... Compile the service reporting all recommended warnings." />

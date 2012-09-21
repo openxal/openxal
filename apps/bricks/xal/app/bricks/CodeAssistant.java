@@ -205,8 +205,9 @@ public class CodeAssistant {
 	
 	
 	/** update the actions */
+	@SuppressWarnings( "rawtypes" )		// generics are not compatible with arrays
 	protected void updateActions() {
-		final BeanNode selectedNode = _viewTree != null ? TreeUtility.getSelectedBeanNode( _viewTree ) : null;
+		final BeanNode<?> selectedNode = _viewTree != null ? TreeUtility.getSelectedBeanNode( _viewTree ) : null;
 		final BeanNode[] selectedNodes = _viewTree != null ? TreeUtility.getSelectedBeanNodes( _viewTree ) : new BeanNode[0];
 		
 		final boolean hasSelectedNode = selectedNode != null;

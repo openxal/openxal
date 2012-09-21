@@ -17,10 +17,10 @@ import xal.model.IElement;
  */
 public interface Synchronizer {
 	
-	void resync(IElement anElem, Map valueMap) 
+	void resync( final IElement anElem, final Map<String,Double> valueMap )
 			throws SynchronizationException;
 			
-	void checkSynchronization(IElement anElem, Map valueMap)
+	void checkSynchronization( final IElement anElem, final Map<String,Double> valueMap )
 			throws SynchronizationException;
 
 }

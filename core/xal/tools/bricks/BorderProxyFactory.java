@@ -16,12 +16,12 @@ import java.util.HashMap;
 /** Factory for generating border proxies */
 public class BorderProxyFactory {
 	/** table of proxies keyed by type */
-	static protected Map<String,BorderProxy> PROXY_TABLE;
+	static protected Map<String,BorderProxy<Border>> PROXY_TABLE;
 	
 	
 	// static initializer
 	static {
-		PROXY_TABLE = new HashMap<String,BorderProxy>();
+		PROXY_TABLE = new HashMap<String,BorderProxy<Border>>();
 		
 		register( getBorderProxy( EtchedBorder.class, "Etched Border" )  );
 		register( getLoweredBevelBorderProxy( "Lowered Bevel" ) );
@@ -31,13 +31,14 @@ public class BorderProxyFactory {
 	
 	
 	/** register the proxy in the proxy table */
-	static protected void register( final BorderProxy proxy ) {
-		PROXY_TABLE.put( proxy.getType(), proxy );
+	@SuppressWarnings( "unchecked" )	// must convert border proxy subtypes to the subtype of Border
+	static protected void register( final BorderProxy<? extends Border> proxy ) {
+		PROXY_TABLE.put( proxy.getType(), (BorderProxy<Border>)proxy );
 	}
 	
 	
 	/** get a border proxy with the specified type */
-	static public BorderProxy getBorderProxy( final String type ) {
+	static public BorderProxy<Border> getBorderProxy( final String type ) {
 		if ( PROXY_TABLE.containsKey( type ) ) {
 			return PROXY_TABLE.get( type );
 		}

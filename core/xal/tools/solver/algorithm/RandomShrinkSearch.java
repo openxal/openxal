@@ -260,10 +260,7 @@ public class RandomShrinkSearch extends SearchAlgorithm {
 			boolean elementChanged = false;
 			double changeProbability = expectedNumToChange * _changeProbabilityBase;
 
-			Iterator variableIter = _problem.getVariables().iterator();
-			while ( variableIter.hasNext() ) {
-				Variable variable = (Variable)variableIter.next();
-
+			for ( final Variable variable : _problem.getVariables() ) {
 				boolean shouldChange = ( _randomGenerator.nextDouble() <= changeProbability );
 				if ( shouldChange ) {
 					elementChanged = true;
@@ -339,13 +336,13 @@ public class RandomShrinkSearch extends SearchAlgorithm {
 		public void printVariableSearchWindows( final String message ) {
 			System.out.println( "********* Printing variable search windows *********" );
 			System.out.println( message );
-			final Iterator iter = _problem.getVariables().iterator();
-			while ( iter.hasNext() ) {
-				final Variable variable = (Variable)iter.next();
+
+			for ( final Variable variable : _problem.getVariables() ) {
 				VariableWindow window = getSearchWindow( variable );
 				System.out.println( variable.getName() + " lower limit: " + window.getLowerLimit() );
 				System.out.println( variable.getName() + " upper limit: " + window.getUpperLimit() );
 			}
+			
 			System.out.println( "****************************************************" );
 		}
 
@@ -357,9 +354,7 @@ public class RandomShrinkSearch extends SearchAlgorithm {
 		 * @param newPoint  The new best point.
 		 */
 		public void newTopSolution( final TrialPoint oldPoint, final TrialPoint newPoint ) {
-			final Iterator variableIter = _problem.getVariables().iterator();
-			while ( variableIter.hasNext() ) {
-				final Variable variable = (Variable)variableIter.next();
+			for ( final Variable variable : _problem.getVariables() ) {
 				final double newValue = newPoint.getValue( variable );
 				final double oldValue = oldPoint.getValue( variable );
 

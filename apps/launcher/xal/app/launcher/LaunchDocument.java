@@ -71,6 +71,7 @@ class LaunchDocument extends XalDocument implements DataListener, LaunchBoardLis
 		}
 		
 		new RunController( MODEL, WINDOW_REFERENCE );
+		new MonitorController( MODEL, WINDOW_REFERENCE );
 		new FileWatcherController( MODEL, WINDOW_REFERENCE );
 		new RulesController( MODEL, WINDOW_REFERENCE );
 		new HostConfigurationController( MODEL, WINDOW_REFERENCE );

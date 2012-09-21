@@ -32,7 +32,7 @@ public class KeyValueTableModel<RecordType> extends AbstractTableModel {
 	final private MessageCenter MESSAGE_CENTER;
 	
 	/** proxy for events to be forwarded to registered listeners */
-	final private KeyValueRecordListener<KeyValueTableModel,RecordType> EVENT_PROXY;
+	final private KeyValueRecordListener<KeyValueTableModel<RecordType>,RecordType> EVENT_PROXY;
 	
 	/** key value adaptor to get the value from a record (row) for the specified key path (column property) */
 	final protected KeyValueAdaptor KEY_VALUE_ADAPTOR;
@@ -41,7 +41,7 @@ public class KeyValueTableModel<RecordType> extends AbstractTableModel {
 	final private Map<String,String> COLUMN_NAME_MAP;
 	
 	/** column class keyed by key path */
-	final private Map<String,Class> COLUMN_CLASS_MAP;
+	final private Map<String,Class<?>> COLUMN_CLASS_MAP;
 	
 	/** column edit indicator map keyed by key path */
 	final private Map<String,ColumnEditRule<RecordType>> COLUMN_EDITABLE_MAP;
@@ -72,7 +72,7 @@ public class KeyValueTableModel<RecordType> extends AbstractTableModel {
 		KEY_VALUE_ADAPTOR = new KeyValueAdaptor();
 		
 		COLUMN_NAME_MAP = new HashMap<String,String>();
-		COLUMN_CLASS_MAP = new HashMap<String,Class>();
+		COLUMN_CLASS_MAP = new HashMap<String,Class<?>>();
 		COLUMN_EDITABLE_MAP = new HashMap<String,ColumnEditRule<RecordType>>();
 		
 		setDataSource( records, keyPaths );
@@ -89,7 +89,7 @@ public class KeyValueTableModel<RecordType> extends AbstractTableModel {
 	 * Add the specified listener as a receiver of record modification events from this instance.
 	 * @param listener object to receive events
 	 */
-	public void addKeyValueRecordListener( final KeyValueRecordListener<KeyValueTableModel,RecordType> listener ) {
+	public void addKeyValueRecordListener( final KeyValueRecordListener<KeyValueTableModel<RecordType>,RecordType> listener ) {
 		MESSAGE_CENTER.registerTarget( listener, this, KeyValueRecordListener.class );
 	}
 	
@@ -98,7 +98,7 @@ public class KeyValueTableModel<RecordType> extends AbstractTableModel {
 	 * Remove the specified listener from receiving record modification events from this instance.
 	 * @param listener object to be removed from receiving events
 	 */
-	public void removeKeyValueRecordListener( final KeyValueRecordListener<KeyValueTableModel,RecordType> listener ) {
+	public void removeKeyValueRecordListener( final KeyValueRecordListener<KeyValueTableModel<RecordType>,RecordType> listener ) {
 		MESSAGE_CENTER.removeTarget( listener, this, KeyValueRecordListener.class );
 	}
 	
@@ -205,7 +205,7 @@ public class KeyValueTableModel<RecordType> extends AbstractTableModel {
 	 * @param keyPath key path for which to assign the class
 	 * @param columnClass the new class to assign the column
 	 */
-	public void setColumnClass( final String keyPath, final Class columnClass ) {
+	public void setColumnClass( final String keyPath, final Class<?> columnClass ) {
         setColumnClassForKeyPaths( columnClass, keyPath );
 	}
 	
@@ -215,7 +215,7 @@ public class KeyValueTableModel<RecordType> extends AbstractTableModel {
 	 * @param columnClass the new class to assign the column
 	 * @param keyPaths key paths for which to assign the class
 	 */
-	public void setColumnClassForKeyPaths( final Class columnClass, final String ... keyPaths ) {
+	public void setColumnClassForKeyPaths( final Class<?> columnClass, final String ... keyPaths ) {
         for ( final String keyPath : keyPaths ) {
             COLUMN_CLASS_MAP.put( keyPath, columnClass );
         }
@@ -224,8 +224,8 @@ public class KeyValueTableModel<RecordType> extends AbstractTableModel {
 	
 	
 	/** Get the data class for the specified column */
-	public Class getColumnClass( final int column ) {
-		final Class customClass = COLUMN_CLASS_MAP.get( _keyPaths[column] );
+	public Class<?> getColumnClass( final int column ) {
+		final Class<?> customClass = COLUMN_CLASS_MAP.get( _keyPaths[column] );
 		return customClass != null ? customClass : super.getColumnClass( column );
 	}
 	

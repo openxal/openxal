@@ -429,20 +429,19 @@ public class FunctionGraphsJPanel extends JPanel implements MouseListener, Mouse
 	 *
 	 *@param  gdV  The vector with BasicGraphData instances
 	 */
-	public synchronized void addGraphData(Vector gdV) {
-		BasicGraphData lgd;
+	public synchronized void addGraphData( final Vector<? extends BasicGraphData> gdV ) {
 		synchronized (gdV) {
 			synchronized (graphDataV) {
 				synchronized (graphColorV) {
-					for (int i = 0; i < gdV.size(); i++) {
-						lgd = (BasicGraphData) gdV.get(i);
-						if (graphChoosingYes) {
-							graphColorV.add(lineDefaultColor);
-						} else {
-							graphColorV.add(null);
+					for ( final BasicGraphData lgd : gdV ) {
+						if ( graphChoosingYes ) {
+							graphColorV.add( lineDefaultColor );
 						}
-						graphDataV.add(lgd);
-						lgd.registerInContainer(this);
+						else {
+							graphColorV.add( null );
+						}
+						graphDataV.add( lgd );
+						lgd.registerInContainer( this );
 					}
 					updateData();
 				}
@@ -457,19 +456,19 @@ public class FunctionGraphsJPanel extends JPanel implements MouseListener, Mouse
 	 *
 	 *@param  gdV  The vector with BasicGraphData instances
 	 */
-	public synchronized void setGraphData(Vector gdV) {
-		BasicGraphData lgd;
+	public synchronized void setGraphData( final Vector<? extends BasicGraphData> gdV ) {
 		synchronized (gdV) {
 			synchronized (graphDataV) {
 				synchronized (graphColorV) {
 					for (int i = 0, n = graphDataV.size(); i < n; i++) {
-						lgd = graphDataV.get(i);
+						final BasicGraphData lgd = graphDataV.get(i);
 						lgd.removeContainer(this);
 					}
+
 					graphDataV.clear();
 					graphColorV.clear();
-					for (int i = 0; i < gdV.size(); i++) {
-						lgd = (BasicGraphData) gdV.get(i);
+					
+					for ( final BasicGraphData lgd : gdV ) {
 						if (graphChoosingYes) {
 							graphColorV.add(lineDefaultColor);
 						} else {
@@ -490,11 +489,11 @@ public class FunctionGraphsJPanel extends JPanel implements MouseListener, Mouse
 	 *
 	 *@param  gdV  The vector with BasicGraphData instances
 	 */
-	public synchronized void removeGraphData(Vector gdV) {
+	public synchronized void removeGraphData( final Vector<? extends BasicGraphData> gdV ) {
 		synchronized (graphDataV) {
 			synchronized (graphColorV) {
 				for (int i = 0, nGDV = gdV.size(); i < nGDV; i++) {
-					BasicGraphData lgd = (BasicGraphData) gdV.get(i);
+					BasicGraphData lgd = gdV.get(i);
 					int index = graphDataV.indexOf(lgd);
 					if (index < 0) {
 						continue;
@@ -634,8 +633,7 @@ public class FunctionGraphsJPanel extends JPanel implements MouseListener, Mouse
 
 
 	/**
-	 *  Adds a feature to the CurveData attribute of the FunctionGraphsJPanel
-	 *  object
+	 *  Adds a feature to the CurveData attribute of the FunctionGraphsJPanel object
 	 *
 	 *@param  curveData  The feature to be added to the CurveData attribute
 	 */
@@ -646,15 +644,12 @@ public class FunctionGraphsJPanel extends JPanel implements MouseListener, Mouse
 
 
 	/**
-	 *  Adds a feature to the CurveData attribute of the FunctionGraphsJPanel
-	 *  object
+	 *  Adds a feature to the CurveData attribute of the FunctionGraphsJPanel object
 	 *
 	 *@param  cdV  The feature to be added to the CurveData attribute
 	 */
-	public void addCurveData(Vector cdV) {
-		CurveData cd = null;
-		for (int i = 0; i < cdV.size(); i++) {
-			cd = (CurveData) cdV.get(i);
+	public void addCurveData( final Vector<? extends CurveData> cdV ) {
+		for ( final CurveData cd : cdV ) {
 			if (cd != null) {
 				curveDataV.add(cd);
 			}
@@ -668,11 +663,9 @@ public class FunctionGraphsJPanel extends JPanel implements MouseListener, Mouse
 	 *
 	 *@param  cdV  The new curveData value
 	 */
-	public void setCurveData(Vector cdV) {
-		CurveData cd = null;
+	public void setCurveData( final Vector<? extends CurveData> cdV ) {
 		curveDataV.clear();
-		for (int i = 0; i < cdV.size(); i++) {
-			cd = (CurveData) cdV.get(i);
+		for ( final CurveData cd : cdV ) {
 			if (cd != null) {
 				curveDataV.add(cd);
 			}

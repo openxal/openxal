@@ -340,9 +340,8 @@ public class BrowserModel {
 				attributes.add( attribute );
 			}
 
-			List primaryKeys = fetchPrimaryKeys( schema, table );
-			for ( Iterator iter = attributes.iterator(); iter.hasNext();  ) {
-				TableAttribute attribute = (TableAttribute)iter.next();
+			final List<String> primaryKeys = fetchPrimaryKeys( schema, table );
+			for ( final TableAttribute attribute : attributes ) {
 				attribute.isPrimaryKey = primaryKeys.contains( attribute.name );
 			}
 

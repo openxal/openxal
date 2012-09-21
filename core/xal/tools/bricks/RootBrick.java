@@ -54,7 +54,7 @@ public class RootBrick extends Brick implements ViewNodeContainer, DataListener 
 	 * Determine if the brick can add the specified view
 	 * @return true if it can add the specified view and false if not
 	 */
-	public boolean canAdd( final BeanProxy beanProxy ) {
+	public boolean canAdd( final BeanProxy<?> beanProxy ) {
 		if ( beanProxy instanceof ViewProxy ) {
 			return ((ViewProxy)beanProxy).isWindow();
 		}
@@ -77,11 +77,12 @@ public class RootBrick extends Brick implements ViewNodeContainer, DataListener 
 	 * Add the views to this node
 	 * @param beanProxies the views to add to this node
 	 */
-	public void add( final List<BeanProxy> beanProxies ) {
-		final List<BeanNode> nodes = new ArrayList<BeanNode>( beanProxies.size() );
-		for ( final BeanProxy beanProxy : beanProxies ) {
+	@SuppressWarnings( "unchecked" )	// must cast bean proxy to view proxy
+	public void add( final List<BeanProxy<?>> beanProxies ) {
+		final List<BeanNode<?>> nodes = new ArrayList<BeanNode<?>>( beanProxies.size() );
+		for ( final BeanProxy<?> beanProxy : beanProxies ) {
 			if ( beanProxy instanceof ViewProxy ) {
-				final ViewNode node = new ViewNode( (ViewProxy)beanProxy );
+				final ViewNode node = new ViewNode( (ViewProxy<Component>)beanProxy );
 				WINDOW_NODES.add( node );
 				node.addBrickListener( this );
 				nodes.add( node );
@@ -104,11 +105,11 @@ public class RootBrick extends Brick implements ViewNodeContainer, DataListener 
 	
 	
 	/** move the specified nodes down */
-	public void moveDownNodes( final List<BeanNode> nodes ) {}
+	public void moveDownNodes( final List<BeanNode<?>> nodes ) {}
 	
 	
 	/** move the specified nodes up */
-	public void moveUpNodes( final List<BeanNode> nodes ) {}
+	public void moveUpNodes( final List<BeanNode<?>> nodes ) {}
 	
 	
 	/**
@@ -129,16 +130,16 @@ public class RootBrick extends Brick implements ViewNodeContainer, DataListener 
 	 * Insert the views in this node beginning at the specified index
 	 * @param viewProxies the views to add to this node
 	 */
-	public void insertSiblings( final List<BeanProxy> viewProxies ) {}
+	public void insertSiblings( final List<BeanProxy<?>> viewProxies ) {}
 	
 	
 	/**
 	 * Add the views nodes to this node
 	 * @param originalNodes the nodes to add to this node
 	 */
-	public void addNodes( final List<BeanNode> originalNodes ) {
-		final List<BeanNode> nodes = new ArrayList<BeanNode>( originalNodes.size() );
-		for ( final BeanNode originalNode : originalNodes ) {
+	public void addNodes( final List<BeanNode<?>> originalNodes ) {
+		final List<BeanNode<?>> nodes = new ArrayList<BeanNode<?>>( originalNodes.size() );
+		for ( final BeanNode<?> originalNode : originalNodes ) {
 			if ( originalNode instanceof ViewNode ) {
 				final ViewNode node = new ViewNode( (ViewNode)originalNode );
 				WINDOW_NODES.add( node );
@@ -156,15 +157,17 @@ public class RootBrick extends Brick implements ViewNodeContainer, DataListener 
 	 * Insert the view nodes in this node beginning at the specified index
 	 * @param originalNodes the nodes to add to this node
 	 */
-	public void insertSiblingNodes( final List<BeanNode> originalNodes ) {}
+	public void insertSiblingNodes( final List<BeanNode<?>> originalNodes ) {}
 	
 	
 	/**
 	 * Remove the view node from this container
 	 * @param node the node to remove
 	 */
-	public void removeNode( final BeanNode node ) {
-		removeNodes( Collections.singletonList( node ) );
+	@SuppressWarnings( "unchecked" )		// need to cast from singleton list since it converts type to capture
+	public void removeNode( final BeanNode<?> node ) {
+		final List<BeanNode<?>> nodes = (List<BeanNode<?>>)Collections.singletonList( node );
+		removeNodes( nodes );
 	}
 	
 	
@@ -172,8 +175,8 @@ public class RootBrick extends Brick implements ViewNodeContainer, DataListener 
 	 * Remove the view nodes from this container
 	 * @param nodes the nodes to remove
 	 */
-	public void removeNodes( final List<BeanNode> nodes ) {
-		for ( final BeanNode node : nodes ) {
+	public void removeNodes( final List<BeanNode<?>> nodes ) {
+		for ( final BeanNode<?> node : nodes ) {
 			if ( node instanceof ViewNode ) {
 				final ViewNode viewNode = (ViewNode)node;
 				viewNode.removeBrickListener( this );
@@ -207,7 +210,7 @@ public class RootBrick extends Brick implements ViewNodeContainer, DataListener 
      */
     public void update( final DataAdaptor adaptor ) {
 		final List<DataAdaptor> nodeAdaptors = adaptor.childAdaptors( ViewNode.DATA_LABEL );
-		final List<BeanNode> nodes = new ArrayList<BeanNode>( nodeAdaptors.size() );
+		final List<BeanNode<?>> nodes = new ArrayList<BeanNode<?>>( nodeAdaptors.size() );
 		for ( final DataAdaptor nodeAdaptor : nodeAdaptors ) {
 			nodeAdaptor.setValue( "contextURL", adaptor.stringValue( "contextURL" ) );
 			nodes.add( ViewNode.getInstance( nodeAdaptor ) );
@@ -231,7 +234,7 @@ public class RootBrick extends Brick implements ViewNodeContainer, DataListener 
 	 * @param container the node to which nodes have been added
 	 * @param nodes the nodes which have been added
 	 */
-	public void nodesAdded( final Object source, final Brick container, final List<BeanNode> nodes ) {
+	public void nodesAdded( final Object source, final Brick container, final List<BeanNode<?>> nodes ) {
 		EVENT_PROXY.nodesAdded( this, container, nodes );
 	}
 	
@@ -242,7 +245,7 @@ public class RootBrick extends Brick implements ViewNodeContainer, DataListener 
 	 * @param container the node from which nodes have been removed
 	 * @param nodes the nodes which have been removed
 	 */
-	public void nodesRemoved( final Object source, final Brick container, final List<BeanNode> nodes ) {
+	public void nodesRemoved( final Object source, final Brick container, final List<BeanNode<?>> nodes ) {
 		EVENT_PROXY.nodesRemoved( this, container, nodes );
 	}
 	
@@ -253,7 +256,7 @@ public class RootBrick extends Brick implements ViewNodeContainer, DataListener 
 	 * @param propertyDescriptor the property which has changed
 	 * @param value the new value
 	 */
-	public void propertyChanged( final BeanNode node, final PropertyDescriptor propertyDescriptor, final Object value ) {
+	public void propertyChanged( final BeanNode<?> node, final PropertyDescriptor propertyDescriptor, final Object value ) {
 		EVENT_PROXY.propertyChanged( node, propertyDescriptor, value ); 
 	}
 	

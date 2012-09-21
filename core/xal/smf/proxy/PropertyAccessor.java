@@ -20,6 +20,6 @@ public interface PropertyAccessor {
 	double doubleValueFor(AcceleratorNode node, String property, String mode)
 		throws ProxyException;
 	
-	List propertyNames();
+	List<String> propertyNames();
 
 }

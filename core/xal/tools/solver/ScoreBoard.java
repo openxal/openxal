@@ -254,21 +254,21 @@ public class ScoreBoard implements AlgorithmScheduleListener, SolutionJudgeListe
 		buffer.append( "Overall Satisfaction:  " + _bestSolution.getSatisfaction() + "\n" );
 
 		buffer.append( "Optimal Solutions: \n" );
-		Iterator solutionIter = _solutionJudge.getOptimalSolutions().iterator();
+		
+		final Iterator<Trial> solutionIter = _solutionJudge.getOptimalSolutions().iterator();
 		int count = 0;
 		while ( solutionIter.hasNext() && count < 3 ) {
 			count++;
 			buffer.append( "-------------------------------------\n" );
-			Trial optimalSolution = (Trial)solutionIter.next();
-			Iterator variableIter = optimalSolution.getProblem().getVariables().iterator();
-			Iterator objectiveIter = optimalSolution.getProblem().getObjectives().iterator();
-			while ( variableIter.hasNext() ) {
-				Variable variable = (Variable)variableIter.next();
+			final Trial optimalSolution = solutionIter.next();
+			
+			final Problem problem = optimalSolution.getProblem();
+			for ( final Variable variable : problem.getVariables() ) {
 				double value = optimalSolution.getTrialPoint().getValue( variable );
 				buffer.append( "Variable: " + variable.getName() + " = " + value + "\n" );
 			}
-			while ( objectiveIter.hasNext() ) {
-				Objective objective = (Objective)objectiveIter.next();
+			
+			for ( final Objective objective : problem.getObjectives() ) {
 				Score score = optimalSolution.getScore( objective );
 				double value = score.getValue();
 				double satisfaction = score.getSatisfaction();
