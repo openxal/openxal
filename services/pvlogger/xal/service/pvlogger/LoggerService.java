@@ -209,8 +209,8 @@ public class LoggerService implements RemoteLogging {
 	
 	
 	/**
-	 * Get a vector of group types
-	 * @return a vector of group types
+	 * Get the list of group types
+	 * @return a list of the group types
 	 */
 	public List<String> getGroupTypes() {
 		return new ArrayList<String>( _model.getSessionTypes() );
