@@ -22,23 +22,23 @@ import java.util.*;
  */
 public class LoggerModel {
 	/** The time when this process was launched in seconds since the Java epoch */
-	static final protected double LAUNCH_TIME;
+	static final private Date LAUNCH_TIME;
 	
 	/** PV Logger */
-	final protected PVLogger PV_LOGGER;
+	final private PVLogger PV_LOGGER;
 	
 	/** session models keyed by group ID */
-	final protected Map<String,SessionModel> SESSION_MODELS;
+	final private Map<String,SessionModel> SESSION_MODELS;
 	
 	/** ID of the service to log */
-	final protected String SERVICE_ID;
+	final private String SERVICE_ID;
 
 	
 	/**
 	 * static initialization
 	 */
 	static {
-		LAUNCH_TIME = ((double)new Date().getTime()) / 1000;
+		LAUNCH_TIME = new Date();
 	}
 	
 	
@@ -121,7 +121,7 @@ public class LoggerModel {
 	 * @return the session model for the specified type or null if there is no match
 	 */
 	public SessionModel getSessionModel( final String groupType ) {
-		return (SessionModel)SESSION_MODELS.get( groupType );
+		return SESSION_MODELS.get( groupType );
 	}
 	
 	
@@ -187,7 +187,7 @@ public class LoggerModel {
 	 * Get the launch time of the service.
 	 * @return the launch time in seconds since the Java epoch of January 1, 1970.
 	 */
-	static public double getLaunchTime() {
+	static public Date getLaunchTime() {
 		return LAUNCH_TIME;
 	}
 }

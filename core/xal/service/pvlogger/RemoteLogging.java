@@ -99,7 +99,7 @@ public interface RemoteLogging {
 	 * Get the launch time of the service.
 	 * @return the launch time in seconds since the Java epoch of January 1, 1970.
 	 */
-	public double getLaunchTime();
+	public Date getLaunchTime();
 	
 	
 	/**
