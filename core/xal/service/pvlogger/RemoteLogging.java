@@ -9,6 +9,7 @@
 package xal.service.pvlogger;
 
 import java.util.*;
+import xal.tools.services.OneWay;
 
 
 /** Interface for communicating with a remote PV logger */
@@ -21,13 +22,12 @@ public interface RemoteLogging {
 	 * Set the period between events where we take and store machine snapshots for the specified group.
 	 * @param groupType identifies the group by type 
 	 * @param period The period in seconds between events where we take and store machine snapshots.
-	 * @return 0 Services must always return something
 	 */
-	public int setLoggingPeriod( String groupType, double period );
+	public void setLoggingPeriod( String groupType, double period );
 	
 	
 	/** publish snapshots in the snapshot buffer */
-	public boolean publishSnapshots();
+	public void publishSnapshots();
 	
 	
 	/**
@@ -68,35 +68,24 @@ public interface RemoteLogging {
 	public boolean reloadLoggerSession( final String groupType );
 	
 	
-	/**
-	 * Restart the logger.
-	 * Stop logging, reload groups from the database and resume logging.
-	 * @return 0 Services must always return something
-	 */
-	public int restartLogger();
+	/** Stop logging, reload groups from the database and resume logging. */
+	public void restartLogger();
+
+	
+	/** Resume the logger logging. */
+	public void resumeLogging();
 	
 	
-	
-	/**
-	 * Resume the logger logging.
-	 * @return 0 Services must always return something
-	 */
-	public int resumeLogging();
+	/** Stop the logger. */
+	public void stopLogging();
 	
 	
 	/**
-	 * Stop the logger.
-	 * @return 0 Services must always return something
-	 */
-	public int stopLogging();
-	
-	
-	/**
-	 * Shutdown the process.
+	 * Shutdown the process without waiting for a response.
 	 * @param code The shutdown code which is normally just 0.
-	 * @return 0 Services must always return something
 	 */
-	public int shutdown( int code );
+	@OneWay
+	public void shutdown( int code );
 	
 	
 	/**
@@ -130,11 +119,10 @@ public interface RemoteLogging {
 	
 	
 	/**
-	 * Get a vector of group types
-	 * @return a vector of group types
+	 * Get the list of group types
+	 * @return a list of the group types
 	 */
-	@SuppressWarnings( "rawtypes" )		// TODO: we'll suppress this one for now as this interface isn't yet settled
-	public Vector getGroupTypes();
+	public List<String> getGroupTypes();
 	
 	
 	/**
@@ -151,9 +139,8 @@ public interface RemoteLogging {
 	 * @param groupType identifies the group by type 
 	 * @return The list channel info tables corresponding to the channels we wish to log
 	 */
-	@SuppressWarnings( "rawtypes" )		// TODO: we'll suppress this one for now as this interface isn't yet settled
-	public Vector getChannels( String groupType );
-	
+	public List<Map<String,Object>> getChannels( final String groupType );
+
 	
 	/**
 	 * Get the timestamp of the last published snapshot
