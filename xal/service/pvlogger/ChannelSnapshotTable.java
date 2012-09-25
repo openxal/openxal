@@ -7,7 +7,7 @@
 //  Copyright 2006 Oak Ridge National Lab. All rights reserved.
 //
 
-package xal.tools.pvlogger;
+package xal.service.pvlogger;
 
 import java.sql.Array;
 import java.sql.Connection;

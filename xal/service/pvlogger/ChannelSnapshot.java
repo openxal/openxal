@@ -8,7 +8,7 @@
  * Oak Ridge, TN 37830
  */
 
-package xal.tools.pvlogger;
+package xal.service.pvlogger;
 
 import xal.tools.ArrayTool;
 

@@ -4,7 +4,8 @@
  *  Created	: Mar 19, 2010
  *  Author      : Christopher K. Allen 
  */
-package xal.tools.pvlogger;
+
+package xal.service.pvlogger;
 
 /**
  * Exception thrown for a general runtime error involving

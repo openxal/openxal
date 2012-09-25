@@ -6,7 +6,7 @@
 //  Copyright 2006 Oak Ridge National Lab. All rights reserved.
 //
 
-package xal.tools.pvlogger;
+package xal.service.pvlogger;
 
 import java.net.URL;
 import java.util.Date;

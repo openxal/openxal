@@ -5,7 +5,8 @@
 //  Created by Tom Pelaia on 8/31/2009.
 //  Copyright 2009 Oak Ridge National Lab. All rights reserved.
 //
-package xal.tools.pvlogger;
+
+package xal.service.pvlogger;
 
 import java.sql.Connection;
 import java.sql.SQLException;
