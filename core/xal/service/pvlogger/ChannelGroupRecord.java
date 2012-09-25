@@ -5,7 +5,7 @@
 // Created by t6p on 1/20/11
 //
 
-package xal.tools.pvlogger;
+package xal.service.pvlogger;
 
 import java.util.ArrayList;
 import java.util.List;

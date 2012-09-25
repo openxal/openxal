@@ -6,7 +6,7 @@
 //  Copyright 2006 Oak Ridge National Lab. All rights reserved.
 //
 
-package xal.tools.pvlogger;
+package xal.service.pvlogger;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -15,7 +15,6 @@ import java.sql.SQLException;
 
 import java.util.List;
 import java.util.ArrayList;
-
 
 
 /** represent the snapshot group (type) - PV relationship database table */

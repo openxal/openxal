@@ -6,7 +6,7 @@
 //  Copyright 2009 Oak Ridge National Lab. All rights reserved.
 //
 
-package xal.tools.pvlogger;
+package xal.service.pvlogger;
 
 import java.util.*;
 
