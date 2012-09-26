@@ -19,9 +19,9 @@ import xal.smf.proxy.ElectromagnetPropertyAccessor;
 import xal.tools.ArrayValue;
 import xal.tools.database.ConnectionDictionary;
 import xal.tools.database.ConnectionPreferenceController;
-import xal.tools.pvlogger.ChannelSnapshot;
-import xal.tools.pvlogger.MachineSnapshot;
-import xal.tools.pvlogger.PVLogger;
+import xal.service.pvlogger.ChannelSnapshot;
+import xal.service.pvlogger.MachineSnapshot;
+import xal.service.pvlogger.PVLogger;
 import xal.ca.Channel;
 import xal.tools.transforms.ValueTransform;
 
