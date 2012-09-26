@@ -6,7 +6,7 @@
 //  Copyright 2006 Oak Ridge National Lab. All rights reserved.
 //
 
-package xal.tools.pvlogger;
+package xal.service.pvlogger;
 
 import java.net.URL;
 import java.sql.Connection;
@@ -46,7 +46,7 @@ public class PVLogger {
 	public PVLogger( final ConnectionDictionary connectionDictionary ) {
 		LOGGER_SESSIONS = new HashMap<String,LoggerSession>();
 
-		final URL configurationURL = getClass().getResource( "resources/configuration.xml" );
+		final URL configurationURL = getClass().getResource( "configuration.xml" );
 		final DataAdaptor configurationAdaptor = XmlDataAdaptor.adaptorForUrl( configurationURL, false ).childAdaptor( "Configuration" );
 
 		final DataAdaptor persistentStoreAdaptor = configurationAdaptor.childAdaptor( "persistentStore" );

@@ -5,7 +5,8 @@
 //  Created by Tom Pelaia on 8/31/2009.
 //  Copyright 2009 Oak Ridge National Lab. All rights reserved.
 //
-package xal.tools.pvlogger;
+
+package xal.service.pvlogger;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -29,7 +30,7 @@ public class LoggerConfiguration {
 	
 	/** Constructor */
 	public LoggerConfiguration( final Connection connection ) {
-		final URL configurationURL = getClass().getResource( "resources/configuration.xml" );
+		final URL configurationURL = getClass().getResource( "configuration.xml" );
 		final DataAdaptor configurationAdaptor = XmlDataAdaptor.adaptorForUrl( configurationURL, false ).childAdaptor( "Configuration" );
 		
 		final DataAdaptor persistentStoreAdaptor = configurationAdaptor.childAdaptor( "persistentStore" );
