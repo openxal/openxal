@@ -30,7 +30,7 @@ public class LoggerConfiguration {
 	
 	/** Constructor */
 	public LoggerConfiguration( final Connection connection ) {
-		final URL configurationURL = getClass().getResource( "resources/configuration.xml" );
+		final URL configurationURL = getClass().getResource( "configuration.xml" );
 		final DataAdaptor configurationAdaptor = XmlDataAdaptor.adaptorForUrl( configurationURL, false ).childAdaptor( "Configuration" );
 		
 		final DataAdaptor persistentStoreAdaptor = configurationAdaptor.childAdaptor( "persistentStore" );
