@@ -1,0 +1,91 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<BricksDocument date="Thu Jan 20 10:06:18 EST 2011" version="1.0.0">
+    <RootBrick>
+        <ViewNode customBeanClass="xal.smf.application.DefaultAcceleratorWindow" height="739" tag="ConfigurationWindow" width="900">
+            <ViewProxy type="javax.swing.JFrame"/>
+            <ViewNode tag="Main View">
+                <ViewProxy type="javax.swing.Box_Vertical"/>
+                <ViewNode tag="Main Split Pane">
+                    <ViewProxy type="javax.swing.JSplitPane"/>
+                    <BeanProperty name="orientation" value="0"/>
+                    <BeanProperty name="dividerLocation" value="200"/>
+                    <ViewNode tag="Group Editor">
+                        <ViewProxy type="javax.swing.Box_Vertical"/>
+                        <ViewNode tag="Horizontal Box">
+                            <ViewProxy type="javax.swing.Box_Horizontal"/>
+                            <ViewNode tag="RevertGroupEditsButton">
+                                <ViewProxy type="javax.swing.JButton"/>
+                                <BeanProperty group="general" iconName="Undo24.gif" name="icon"/>
+                                <BeanProperty name="text" value=""/>
+                                <BeanProperty name="toolTipText" value="Revert group edits"/>
+                            </ViewNode>
+                            <ViewNode tag="PublishGroupEditsButton">
+                                <ViewProxy type="javax.swing.JButton"/>
+                                <BeanProperty group="general" iconName="Save24.gif" name="icon"/>
+                                <BeanProperty name="text" value=""/>
+                                <BeanProperty name="toolTipText" value="Publish group edits"/>
+                            </ViewNode>
+                            <ViewNode tag="Horizontal Glue">
+                                <ViewProxy type="javax.swing.Box_HorizontalGlue"/>
+                            </ViewNode>
+                        </ViewNode>
+                        <ViewNode tag="Group Scroll Pane">
+                            <ViewProxy type="javax.swing.JScrollPane"/>
+                            <ViewNode tag="Group Table">
+                                <ViewProxy type="javax.swing.JTable"/>
+                            </ViewNode>
+                        </ViewNode>
+                    </ViewNode>
+                    <ViewNode tag="SignalsContainer">
+                        <ViewProxy type="javax.swing.Box_Vertical"/>
+                        <ViewNode tag="ControlBox">
+                            <ViewProxy type="javax.swing.Box_Horizontal"/>
+                            <ViewNode tag="AddChannelsButton">
+                                <ViewProxy type="javax.swing.JButton"/>
+                                <BeanProperty group="general" iconName="Add24.gif" name="icon"/>
+                                <BeanProperty name="text" value=""/>
+                                <BeanProperty name="toolTipText" value="Add channels to the selected group"/>
+                            </ViewNode>
+                            <ViewNode tag="RevertAdditionsButton">
+                                <ViewProxy type="javax.swing.JButton"/>
+                                <BeanProperty group="general" iconName="Undo24.gif" name="icon"/>
+                                <BeanProperty name="text" value=""/>
+                                <BeanProperty name="toolTipText" value="Revert channel additions"/>
+                            </ViewNode>
+                            <ViewNode tag="PublishAdditionsButton">
+                                <ViewProxy type="javax.swing.JButton"/>
+                                <BeanProperty group="general" iconName="Save24.gif" name="icon"/>
+                                <BeanProperty name="text" value=""/>
+                                <BeanProperty name="toolTipText" value="Publish channel additions"/>
+                            </ViewNode>
+                            <ViewNode tag="Horizontal Glue">
+                                <ViewProxy type="javax.swing.Box_HorizontalGlue"/>
+                                <BeanProperty name="toolTipText" value=""/>
+                            </ViewNode>
+                            <ViewNode tag="ChannelFilterField">
+                                <ViewProxy type="javax.swing.JTextField"/>
+                                <BeanProperty name="selectionEnd" value="0"/>
+                                <BeanProperty name="text" value=""/>
+                                <BeanProperty height="28" name="preferredSize" width="200"/>
+                                <BeanProperty height="50" name="maximumSize" width="250"/>
+                                <BeanProperty name="toolTipText" value="Filter the Channels"/>
+                            </ViewNode>
+                            <ViewNode tag="ChannelFilterClearButton">
+                                <ViewProxy type="javax.swing.JButton"/>
+                                <BeanProperty group="custom" iconName="Clear24.gif" name="icon"/>
+                                <BeanProperty name="text" value=""/>
+                                <BeanProperty name="toolTipText" value="Clear the channel filter"/>
+                            </ViewNode>
+                        </ViewNode>
+                        <ViewNode tag="Signal Scroll Pane">
+                            <ViewProxy type="javax.swing.JScrollPane"/>
+                            <ViewNode tag="Signal Table">
+                                <ViewProxy type="javax.swing.JTable"/>
+                            </ViewNode>
+                        </ViewNode>
+                    </ViewNode>
+                </ViewNode>
+            </ViewNode>
+        </ViewNode>
+    </RootBrick>
+</BricksDocument>
