@@ -27,6 +27,9 @@ import java.lang.reflect.Proxy;
  * @author  tap
  */
 class ClientHandler<ProxyType> implements InvocationHandler {
+	/** terminator for remote messages */
+	final static char REMOTE_MESSAGE_TERMINATOR = RpcServer.REMOTE_MESSAGE_TERMINATOR;
+
     /** single thread queue for sending remote messages */
     final private DispatchQueue REMOTE_SEND_QUEUE;
     
@@ -217,20 +220,23 @@ class ClientHandler<ProxyType> implements InvocationHandler {
     private void processRemoteResponse() throws java.net.SocketException, java.io.IOException {
         final int BUFFER_SIZE = REMOTE_SOCKET.getReceiveBufferSize();
         final char[] streamBuffer = new char[BUFFER_SIZE];
-        final BufferedReader reader = new BufferedReader( new InputStreamReader( REMOTE_SOCKET.getInputStream() ) );
+		final InputStream readStream = REMOTE_SOCKET.getInputStream();
+        final BufferedReader reader = new BufferedReader( new InputStreamReader( readStream ) );
         final StringBuilder inputBuffer = new StringBuilder();
+		boolean moreToRead = true;
         do {
             final int readCount = reader.read( streamBuffer, 0, BUFFER_SIZE );
             
             if ( readCount == -1 ) {     // the session has been closed
 				cleanupClosedSocket( new RemoteServiceDroppedException( "The remote socket has closed while reading the remote response..." ) );
             }
-            else {
+            else if  ( readCount > 0 ) {
                 inputBuffer.append( streamBuffer, 0, readCount );
+				moreToRead = streamBuffer[readCount - 1] != REMOTE_MESSAGE_TERMINATOR;
             }
-        } while ( reader.ready()  );
+        } while ( reader.ready() || readStream.available() > 0 || moreToRead );
         
-        final String jsonResponse = inputBuffer.toString();
+        final String jsonResponse = inputBuffer.toString().trim();
         if ( jsonResponse != null ) {
             final Object responseObject = MESSAGE_CODER.decode( jsonResponse );
             if ( responseObject instanceof Map ) {
@@ -273,8 +279,9 @@ class ClientHandler<ProxyType> implements InvocationHandler {
         REMOTE_SEND_QUEUE.dispatchAsync( new Runnable() {
             public void run() {
                 try {
-                    final PrintWriter writer = new PrintWriter( REMOTE_SOCKET.getOutputStream() );
+                    final Writer writer = new OutputStreamWriter( REMOTE_SOCKET.getOutputStream() );
                     writer.write( jsonRequest );
+					writer.write( REMOTE_MESSAGE_TERMINATOR );
                     writer.flush();
                 }
                 catch( Exception exception ) {
