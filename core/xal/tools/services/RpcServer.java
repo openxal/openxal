@@ -25,6 +25,9 @@ import java.util.logging.*;
  */
 //public class RpcServer extends WebServer {
 public class RpcServer {
+	/** terminator for remote messages */
+	final static char REMOTE_MESSAGE_TERMINATOR = '\0';
+
     /** delimeter for encoding remote messages */
     final static private String REMOTE_MESSAGE_DELIMITER = "#";
     
@@ -155,22 +158,25 @@ public class RpcServer {
                     try {
                         final int BUFFER_SIZE = remoteSocket.getReceiveBufferSize();
                         final char[] streamBuffer = new char[BUFFER_SIZE];
-                        final BufferedReader reader = new BufferedReader( new InputStreamReader( remoteSocket.getInputStream() ) );
-                        final PrintWriter output = new PrintWriter( remoteSocket.getOutputStream() );
+						final InputStream readStream = remoteSocket.getInputStream();
+                        final BufferedReader reader = new BufferedReader( new InputStreamReader( readStream ) );
+                        final Writer output = new OutputStreamWriter( remoteSocket.getOutputStream() );
                         
                         final StringBuilder inputBuffer = new StringBuilder();
+						boolean moreToRead = true;
                         do {
                             final int readCount = reader.read( streamBuffer, 0, BUFFER_SIZE );
                             
                             if ( readCount == -1 ) {     // the session has been closed
                                 throw new RemoteClientDroppedException( "Session has been closed during read..." );
                             }
-                            else {
-                                inputBuffer.append( streamBuffer, 0, readCount );
-                            }
-                        } while( reader.ready() );
+							else if  ( readCount > 0 ) {
+								inputBuffer.append( streamBuffer, 0, readCount );
+								moreToRead = streamBuffer[readCount - 1] != REMOTE_MESSAGE_TERMINATOR;
+							}
+                        } while ( reader.ready() || readStream.available() > 0 || moreToRead );
                         
-                        final String jsonRequest = inputBuffer.toString();
+                        final String jsonRequest = inputBuffer.toString().trim();
                                                                     
                         final Object requestObject = MESSAGE_CODER.decode( jsonRequest );
                         if ( requestObject instanceof Map ) {
@@ -195,7 +201,8 @@ public class RpcServer {
                                 response.put( "error", result.getRuntimeExceptionWrapper() );
                                 
                                 final String jsonResponse = MESSAGE_CODER.encode( response );
-                                output.print( jsonResponse );
+                                output.write( jsonResponse );
+								output.write( REMOTE_MESSAGE_TERMINATOR );
                                 output.flush();
                             }
                         }
