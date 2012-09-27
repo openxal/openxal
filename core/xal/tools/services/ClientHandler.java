@@ -301,9 +301,6 @@ class SerialRemoteMessageProcessor {
     /** socket for sending and receiving remote messages */
     final private Socket REMOTE_SOCKET;
 
-    /** pending result */
-	private PendingResult _pendingResult;
-
     /** coder for encoding and decoding messages for remote transport */
     final private Coder MESSAGE_CODER;
 
@@ -318,8 +315,6 @@ class SerialRemoteMessageProcessor {
         MESSAGE_CODER = messageCoder;
 
         REMOTE_SOCKET = makeRemoteSocket( host, port );
-
-		_pendingResult = null;
     }
 
 	
@@ -367,7 +362,7 @@ class SerialRemoteMessageProcessor {
 
     /** process the remote response */
     @SuppressWarnings( "unchecked" )    // no way to know response Object type at compile time
-    private PendingResult processRemoteResponse() throws java.net.SocketException, java.io.IOException {		
+    private void processRemoteResponse( final PendingResult pendingResult ) throws java.net.SocketException, java.io.IOException {
         final int BUFFER_SIZE = REMOTE_SOCKET.getReceiveBufferSize();
         final char[] streamBuffer = new char[BUFFER_SIZE];
 		final InputStream readStream = REMOTE_SOCKET.getInputStream();
@@ -378,7 +373,7 @@ class SerialRemoteMessageProcessor {
             final int readCount = reader.read( streamBuffer, 0, BUFFER_SIZE );
 
             if ( readCount == -1 ) {     // the session has been closed
-				cleanupClosedSocket( new RemoteServiceDroppedException( "The remote socket has closed while reading the remote response..." ) );
+				cleanupClosedSocket( pendingResult, new RemoteServiceDroppedException( "The remote socket has closed while reading the remote response..." ) );
             }
             else if  ( readCount > 0 ) {
                 inputBuffer.append( streamBuffer, 0, readCount );
@@ -394,25 +389,21 @@ class SerialRemoteMessageProcessor {
                 final Object result = response.get( "result" );
                 final RuntimeException remoteException = (RuntimeException)response.get( "error" );
 
-				final PendingResult pendingResult = new PendingResult();
 				pendingResult.setValue( result );
 				pendingResult.setRemoteException( remoteException );
-				return pendingResult;
             }
         }
-
-		return null;
     }
 
 
 	/** cleanup after discovering the socket has closed */
-	private void cleanupClosedSocket( final Exception exception ) {
+	private void cleanupClosedSocket( final PendingResult pendingResult, final Exception exception ) {
 		// encapsulate the exception in a runtime exception if necessary since that is what gets passed back to the calling method
 		final RuntimeException resultException = exception instanceof RuntimeException ? (RuntimeException)exception : new RuntimeException( exception );
 
 		// assign the exception to the pending result
-		if ( _pendingResult != null ) {
-			_pendingResult.setRemoteException( resultException );
+		if ( pendingResult != null ) {
+			pendingResult.setRemoteException( resultException );
 		}
 	}
 
@@ -426,21 +417,24 @@ class SerialRemoteMessageProcessor {
 			writer.flush();
 
 			if ( hasResponse ) {
+				final PendingResult pendingResult = new PendingResult();
+				
 				try {
-					return processRemoteResponse();
+					processRemoteResponse( pendingResult );
+					return pendingResult;
 				}
 				catch( SocketException exception ) {
-					return null;
+					return pendingResult;	// no need to flood output when we expect socket exceptions when remote services drop
 				}
 				catch( Exception exception ) {
 					exception.printStackTrace();
-					return null;
+					return pendingResult;
 				}
 				finally {
 					// if the socket closes, cleanup the connection resources and forward the exception to the client
 					if ( REMOTE_SOCKET.isClosed() ) {
-						cleanupClosedSocket( new RemoteServiceDroppedException( "The remote socket has closed while processing the remote response..." ) );
-					}
+						cleanupClosedSocket( pendingResult, new RemoteServiceDroppedException( "The remote socket has closed while processing the remote response..." ) );
+					}					
 				}
 			}
 			else {
