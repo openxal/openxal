@@ -11,7 +11,6 @@
 package xal.tools.services;
 
 import xal.tools.coding.*;
-import xal.tools.dispatch.DispatchQueue;
 
 import java.io.*;
 import java.net.*;
@@ -26,19 +25,7 @@ import java.lang.reflect.Proxy;
  * ClientHandler handles messages sent to the proxy by forwarding them to the service associated with the proxy.
  * @author  tap
  */
-class ClientHandler<ProxyType> implements InvocationHandler {
-	/** terminator for remote messages */
-	final static char REMOTE_MESSAGE_TERMINATOR = RpcServer.REMOTE_MESSAGE_TERMINATOR;
-
-    /** single thread queue for sending remote messages */
-    final private DispatchQueue REMOTE_SEND_QUEUE;
-    
-    /** single thread queue for receiving remote messages */
-    final private DispatchQueue REMOTE_RECEIVE_QUEUE;
-    
-    /** socket for sending and receiving remote messages */
-    final private Socket REMOTE_SOCKET;
-    
+class ClientHandler<ProxyType> implements InvocationHandler {    
     /** protocol implemented by the remote service and dispatched through the proxy */
     final private Class<ProxyType> PROTOCOL;
     
@@ -53,13 +40,13 @@ class ClientHandler<ProxyType> implements InvocationHandler {
     
     /** remote port */
     final private int REMOTE_PORT;
+
+	/** message processors which are available */
+	final private ConcurrentLinkedQueue<SerialRemoteMessageProcessor> MESSAGE_PROCESSORS;
     
     /** request ID counter is incremented to provide a unique ID for each request */
     private volatile int _requestIDCounter;
-    
-    /** pending results keyed by request ID */
-    final private Map<Long,PendingResult> PENDING_RESULTS;
-    
+
     /** coder for encoding and decoding messages for remote transport */
     final private Coder MESSAGE_CODER;
     
@@ -80,32 +67,12 @@ class ClientHandler<ProxyType> implements InvocationHandler {
         MESSAGE_CODER = messageCoder;
         
         PROXY = createProxy();
-        
-        PENDING_RESULTS = Collections.synchronizedMap( new HashMap<Long,PendingResult>() );
-        
-        REMOTE_SEND_QUEUE = DispatchQueue.createSerialQueue( "Remote Send Queue" );
-        REMOTE_RECEIVE_QUEUE = DispatchQueue.createSerialQueue( "Remote Receive Queue" );
-        REMOTE_SOCKET = makeRemoteSocket( host, port );
+
+		MESSAGE_PROCESSORS = new ConcurrentLinkedQueue<SerialRemoteMessageProcessor>();
         
         _requestIDCounter = 0;
     }
-    
-    
-    /** make a new remote socket */
-    static private Socket makeRemoteSocket( final String host, final int port ) {
-        try {
-            final Socket remoteSocket = new Socket( host, port );
-            remoteSocket.setKeepAlive( true );
-            return remoteSocket;
-        }
-        catch( UnknownHostException exception ) {
-            throw new RuntimeException( "Attempt to open a socket to an unknown host.", exception );
-        }
-        catch( IOException exception ) {
-            throw new RuntimeException( "IO Exception attempting to open a new socket.", exception );
-        }
-    }
-    
+
     
     /** Get the next request ID and increment it */
     private int getNextRequestID() {
@@ -173,124 +140,50 @@ class ClientHandler<ProxyType> implements InvocationHandler {
     
     /** dispose of resources */
     public void dispose() {
-		REMOTE_SEND_QUEUE.dispose();
-		REMOTE_RECEIVE_QUEUE.dispose();
+		final List<SerialRemoteMessageProcessor> processors = new ArrayList<SerialRemoteMessageProcessor>();
+
+		synchronized( MESSAGE_PROCESSORS ) {
+			processors.addAll( MESSAGE_PROCESSORS );
+			MESSAGE_PROCESSORS.clear();
+		}
 		
-        if ( !REMOTE_SOCKET.isClosed() ) {
-            try {
-                REMOTE_SOCKET.close();
-            }
-            catch( Exception exception ) {
-                throw new RuntimeException( "Excepting closing remote client socket.", exception );
-            }
-        }
+		for ( final SerialRemoteMessageProcessor processor : processors ) {
+			processor.dispose();
+		}
     }
     
     
     /** dispose of resources upon collection */
     protected void finalize() throws Throwable {
         dispose();
-    }
-    
-    
-    /** listen for incoming messages */
-    private void listenForRemoteMessages() {
-        REMOTE_RECEIVE_QUEUE.dispatchAsync( new Runnable() {
-            public void run() {
-                try {
-                    processRemoteResponse();
-                }
-				catch( SocketException exception ) {}	// no need to flood output with socket exceptions as they will naturally occur when remote services close
-                catch( Exception exception ) {
-                    exception.printStackTrace();
-                }
-				finally {
-					// if the socket closes, cleanup the connection resources and forward the exception to the client
-					if ( REMOTE_SOCKET.isClosed() ) {
-						cleanupClosedSocket( new RemoteServiceDroppedException( "The remote socket has closed while processing the remote response..." ) );
-					}
-				}
-            }
-        });
-    }
-    
-    
-    /** process the remote response */
-    @SuppressWarnings( "unchecked" )    // no way to know response Object type at compile time
-    private void processRemoteResponse() throws java.net.SocketException, java.io.IOException {
-        final int BUFFER_SIZE = REMOTE_SOCKET.getReceiveBufferSize();
-        final char[] streamBuffer = new char[BUFFER_SIZE];
-		final InputStream readStream = REMOTE_SOCKET.getInputStream();
-        final BufferedReader reader = new BufferedReader( new InputStreamReader( readStream ) );
-        final StringBuilder inputBuffer = new StringBuilder();
-		boolean moreToRead = true;
-        do {
-            final int readCount = reader.read( streamBuffer, 0, BUFFER_SIZE );
-            
-            if ( readCount == -1 ) {     // the session has been closed
-				cleanupClosedSocket( new RemoteServiceDroppedException( "The remote socket has closed while reading the remote response..." ) );
-            }
-            else if  ( readCount > 0 ) {
-                inputBuffer.append( streamBuffer, 0, readCount );
-				moreToRead = streamBuffer[readCount - 1] != REMOTE_MESSAGE_TERMINATOR;
-            }
-        } while ( reader.ready() || readStream.available() > 0 || moreToRead );
-        
-        final String jsonResponse = inputBuffer.toString().trim();
-        if ( jsonResponse != null ) {
-            final Object responseObject = MESSAGE_CODER.decode( jsonResponse );
-            if ( responseObject instanceof Map ) {
-                final Map<String,Object> response = (Map<String,Object>)responseObject;
-                final Object result = response.get( "result" );
-                final RuntimeException remoteException = (RuntimeException)response.get( "error" );
-                final Long requestID = (Long)response.get( "id" );
-                
-                final PendingResult pendingResult = PENDING_RESULTS.get( requestID );
-                
-                if ( pendingResult != null ) {
-                    synchronized( pendingResult ) {
-                        pendingResult.setValue( result );
-                        pendingResult.setRemoteException( remoteException );
-                        pendingResult.notifyAll();
-                    }
-                }
-            }
-        }
+		super.finalize();
     }
 
 
-	/** cleanup after discovering the socket has closed */
-	private void cleanupClosedSocket( final Exception exception ) {
-		// encapsulate the exception in a runtime exception if necessary since that is what gets passed back to the calling method
-		final RuntimeException resultException = exception instanceof RuntimeException ? (RuntimeException)exception : new RuntimeException( exception );
-		// process every pending result and assign the exception
-		final Collection<PendingResult> pendingResults = new HashSet<PendingResult>( PENDING_RESULTS.values() );		// make a local copy so we can safely loop through the entries
-		for ( final PendingResult pendingResult : pendingResults ) {
-			synchronized( pendingResult ) {
-				pendingResult.setRemoteException( resultException );
-				pendingResult.notifyAll();		// make sure threads waiting on the pending result are notified
-			}
+	/** get the next remote message processor which is free for processing a fresh message */
+	private SerialRemoteMessageProcessor nextRemoteMessageProcessor() {
+		SerialRemoteMessageProcessor processor = null;
+		
+		synchronized( MESSAGE_PROCESSORS ) {
+			processor = MESSAGE_PROCESSORS.poll();
+		}
+		
+		if ( processor != null ) {
+			return processor;
+		}
+		else {
+			return new SerialRemoteMessageProcessor( REMOTE_HOST, REMOTE_PORT, MESSAGE_CODER );
 		}
 	}
-    
-    
-    /** Submit the remote request */
-    private void submitRemoteRequest( final String jsonRequest ) {
-        REMOTE_SEND_QUEUE.dispatchAsync( new Runnable() {
-            public void run() {
-                try {
-                    final Writer writer = new OutputStreamWriter( REMOTE_SOCKET.getOutputStream() );
-                    writer.write( jsonRequest );
-					writer.write( REMOTE_MESSAGE_TERMINATOR );
-                    writer.flush();
-                }
-                catch( Exception exception ) {
-                    exception.printStackTrace();
-                }
-            }
-        });
-    }
-	
+
+
+	/** recycle a message processor which is no longer in use */
+	private void recycleRemoteMessageProcessor( final SerialRemoteMessageProcessor processor ) {
+		synchronized( MESSAGE_PROCESSORS ) {
+			MESSAGE_PROCESSORS.add( processor );
+		}
+	}
+
     
     /** 
      * Invoke the specified method on the proxy to implement the InvocationHandler interface.
@@ -324,24 +217,12 @@ class ClientHandler<ProxyType> implements InvocationHandler {
             // methods marked with the OneWay annotation return immediately and do not wait for a response from the service
             final boolean waitForResponse = !method.isAnnotationPresent( OneWay.class );
 
+            // submit the request and wait for the response if expected
+			final SerialRemoteMessageProcessor processor = nextRemoteMessageProcessor();	// get the next available processor from the stack
+            final PendingResult pendingResult = processor.submitRemoteRequest( jsonRequest, waitForResponse );
+			if ( !processor.isClosed() )  recycleRemoteMessageProcessor( processor );		// push the processor back onto the stack if it is still viable
             
-            // configure a pending result whose value will be set upon receiving a response from the remote service
-            final PendingResult pendingResult = new PendingResult();
-            if ( waitForResponse ) {
-                PENDING_RESULTS.put( requestID, pendingResult );
-            }
-            
-            submitRemoteRequest( jsonRequest );
-            
-            if ( waitForResponse ) {
-                listenForRemoteMessages();
-                
-                synchronized( pendingResult ) {
-                    pendingResult.wait();			// TODO: allow for a configurable timeout with a reasonable default
-                }
-                
-                PENDING_RESULTS.remove( requestID );
-                
+            if ( pendingResult != null ) {
                 final RuntimeException remoteException = pendingResult.getRemoteException();
                 if ( remoteException == null ) {
                     return pendingResult.getValue();
@@ -407,5 +288,168 @@ class PendingResult {
     /** get the error message */
     public RuntimeException getRemoteException() {
         return _remoteException;
+    }
+}
+
+
+
+/** Remote message processor that can handle serial (noncurrent) requests over the same socket. */
+class SerialRemoteMessageProcessor {
+	/** terminator for remote messages */
+	final static char REMOTE_MESSAGE_TERMINATOR = RpcServer.REMOTE_MESSAGE_TERMINATOR;
+
+    /** socket for sending and receiving remote messages */
+    final private Socket REMOTE_SOCKET;
+
+    /** pending result */
+	private PendingResult _pendingResult;
+
+    /** coder for encoding and decoding messages for remote transport */
+    final private Coder MESSAGE_CODER;
+
+	
+    /**
+	 * Creates a new ClientHandler to handle service requests.
+	 * @param host  The host where the service is running.
+	 * @param port  The port through which the service is provided.
+     * @param messageCoder coder for encoding and decoding messages for remote transport
+	 */
+    public SerialRemoteMessageProcessor( final String host, final int port, final Coder messageCoder ) {
+        MESSAGE_CODER = messageCoder;
+
+        REMOTE_SOCKET = makeRemoteSocket( host, port );
+
+		_pendingResult = null;
+    }
+
+	
+    /** make a new remote socket */
+    static private Socket makeRemoteSocket( final String host, final int port ) {
+        try {
+            final Socket remoteSocket = new Socket( host, port );
+            remoteSocket.setKeepAlive( true );
+            return remoteSocket;
+        }
+        catch( UnknownHostException exception ) {
+            throw new RuntimeException( "Attempt to open a socket to an unknown host.", exception );
+        }
+        catch( IOException exception ) {
+            throw new RuntimeException( "IO Exception attempting to open a new socket.", exception );
+        }
+    }
+
+
+	/** determine whether the socket is closed */
+	public boolean isClosed() {
+		return REMOTE_SOCKET.isClosed();
+	}
+
+
+    /** dispose of resources */
+    public void dispose() {
+        if ( !REMOTE_SOCKET.isClosed() ) {
+            try {
+                REMOTE_SOCKET.close();
+            }
+            catch( Exception exception ) {
+                throw new RuntimeException( "Excepting closing remote client socket.", exception );
+            }
+        }
+    }
+
+
+    /** dispose of resources upon collection */
+    protected void finalize() throws Throwable {
+        dispose();
+		super.finalize();
+    }
+
+
+    /** process the remote response */
+    @SuppressWarnings( "unchecked" )    // no way to know response Object type at compile time
+    private PendingResult processRemoteResponse() throws java.net.SocketException, java.io.IOException {		
+        final int BUFFER_SIZE = REMOTE_SOCKET.getReceiveBufferSize();
+        final char[] streamBuffer = new char[BUFFER_SIZE];
+		final InputStream readStream = REMOTE_SOCKET.getInputStream();
+        final BufferedReader reader = new BufferedReader( new InputStreamReader( readStream ) );
+        final StringBuilder inputBuffer = new StringBuilder();
+		boolean moreToRead = true;
+        do {
+            final int readCount = reader.read( streamBuffer, 0, BUFFER_SIZE );
+
+            if ( readCount == -1 ) {     // the session has been closed
+				cleanupClosedSocket( new RemoteServiceDroppedException( "The remote socket has closed while reading the remote response..." ) );
+            }
+            else if  ( readCount > 0 ) {
+                inputBuffer.append( streamBuffer, 0, readCount );
+				moreToRead = streamBuffer[readCount - 1] != REMOTE_MESSAGE_TERMINATOR;
+            }
+        } while ( reader.ready() || readStream.available() > 0 || moreToRead );
+
+        final String jsonResponse = inputBuffer.toString().trim();
+        if ( jsonResponse != null ) {
+            final Object responseObject = MESSAGE_CODER.decode( jsonResponse );
+            if ( responseObject instanceof Map ) {
+                final Map<String,Object> response = (Map<String,Object>)responseObject;
+                final Object result = response.get( "result" );
+                final RuntimeException remoteException = (RuntimeException)response.get( "error" );
+
+				final PendingResult pendingResult = new PendingResult();
+				pendingResult.setValue( result );
+				pendingResult.setRemoteException( remoteException );
+				return pendingResult;
+            }
+        }
+
+		return null;
+    }
+
+
+	/** cleanup after discovering the socket has closed */
+	private void cleanupClosedSocket( final Exception exception ) {
+		// encapsulate the exception in a runtime exception if necessary since that is what gets passed back to the calling method
+		final RuntimeException resultException = exception instanceof RuntimeException ? (RuntimeException)exception : new RuntimeException( exception );
+
+		// assign the exception to the pending result
+		if ( _pendingResult != null ) {
+			_pendingResult.setRemoteException( resultException );
+		}
+	}
+
+
+    /** Submit the remote request */
+    public PendingResult submitRemoteRequest( final String jsonRequest, final boolean hasResponse ) {
+		try {
+			final Writer writer = new OutputStreamWriter( REMOTE_SOCKET.getOutputStream() );
+			writer.write( jsonRequest );
+			writer.write( REMOTE_MESSAGE_TERMINATOR );
+			writer.flush();
+
+			if ( hasResponse ) {
+				try {
+					return processRemoteResponse();
+				}
+				catch( SocketException exception ) {
+					return null;
+				}
+				catch( Exception exception ) {
+					exception.printStackTrace();
+					return null;
+				}
+				finally {
+					// if the socket closes, cleanup the connection resources and forward the exception to the client
+					if ( REMOTE_SOCKET.isClosed() ) {
+						cleanupClosedSocket( new RemoteServiceDroppedException( "The remote socket has closed while processing the remote response..." ) );
+					}
+				}
+			}
+			else {
+				return null;
+			}
+		}
+		catch( Exception exception ) {
+			exception.printStackTrace();
+			return null;
+		}
     }
 }
