@@ -326,16 +326,20 @@ class SerialRemoteMessageProcessor {
             return remoteSocket;
         }
         catch( UnknownHostException exception ) {
-            throw new RuntimeException( "Attempt to open a socket to an unknown host.", exception );
+            throw new RemoteServiceDroppedException( "Attempt to open a socket to an unknown host.", exception );
         }
         catch( IOException exception ) {
-            throw new RuntimeException( "IO Exception attempting to open a new socket.", exception );
+            throw new RemoteServiceDroppedException( "IO Exception attempting to open a new socket.", exception );
         }
+		catch( Exception exception ) {
+			throw new RemoteServiceDroppedException( "Exceptiong attempting to establish a new remote socket.", exception );
+		}
     }
 
 
 	/** determine whether the socket is closed */
 	public boolean isClosed() {
+		System.out.println( "Processor closed: " + REMOTE_SOCKET.isClosed() );
 		return REMOTE_SOCKET.isClosed();
 	}
 
@@ -398,6 +402,8 @@ class SerialRemoteMessageProcessor {
 
 	/** cleanup after discovering the socket has closed */
 	private void cleanupClosedSocket( final PendingResult pendingResult, final Exception exception ) {
+		System.out.println( "Cleaning up closed socket: " + exception );
+		
 		// encapsulate the exception in a runtime exception if necessary since that is what gets passed back to the calling method
 		final RuntimeException resultException = exception instanceof RuntimeException ? (RuntimeException)exception : new RuntimeException( exception );
 
@@ -436,6 +442,22 @@ class SerialRemoteMessageProcessor {
 						cleanupClosedSocket( pendingResult, new RemoteServiceDroppedException( "The remote socket has closed while processing the remote response..." ) );
 					}					
 				}
+			}
+			else {
+				return null;
+			}
+		}
+		catch( SocketException exception ) {
+			if ( !REMOTE_SOCKET.isClosed() ) {
+				try {
+					REMOTE_SOCKET.close();
+				}
+				catch( Exception closeException ) {}
+			}
+			if ( hasResponse ) {
+				final PendingResult pendingResult = new PendingResult();
+				cleanupClosedSocket( new PendingResult(), new RemoteServiceDroppedException( "The remote socket has closed while processing the remote response..." ) );
+				return pendingResult;
 			}
 			else {
 				return null;
