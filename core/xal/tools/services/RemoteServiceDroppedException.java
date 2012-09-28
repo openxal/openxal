@@ -19,8 +19,15 @@ public class RemoteServiceDroppedException extends RuntimeException {
     /** serialization ID */
     private static final long serialVersionUID = 1L;
 
+	/** Constructor */
 	public RemoteServiceDroppedException( final String message ) {
-		super( message );
+		this( message, null );
+	}
+
+
+	/** Primary Constructor */
+	public RemoteServiceDroppedException( final String message, final Exception cause ) {
+		super( message, cause );
 	}
 }
 
