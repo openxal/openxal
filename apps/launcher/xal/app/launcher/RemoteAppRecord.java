@@ -11,7 +11,7 @@ package xal.app.launcher;
 import java.util.concurrent.Callable;
 import java.util.Date;
 
-import xal.tools.services.RemoteServiceDroppedException;
+import xal.tools.services.*;
 import xal.application.ApplicationStatus;
 import xal.tools.dispatch.DispatchQueue;
 
@@ -44,9 +44,9 @@ public class RemoteAppRecord {
 
 	
 	/** Constructor */
-    public RemoteAppRecord( final ApplicationStatus proxy, final String remoteAddress ) {
+    public RemoteAppRecord( final ApplicationStatus proxy ) {
 		REMOTE_PROXY = proxy;
-		REMOTE_ADDRESS = remoteAddress;
+		REMOTE_ADDRESS = ((ServiceState)proxy).getServiceHost();
 		
 		_lastUpdate = null;
 		_isConnected = true;	// assume so until proven otherwise

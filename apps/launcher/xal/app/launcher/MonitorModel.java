@@ -77,7 +77,7 @@ public class MonitorModel extends java.lang.Object {
 			 */
 			public void serviceAdded( final ServiceDirectory directory, final ServiceRef serviceRef ) {
 				final ApplicationStatus proxy = directory.getProxy( ApplicationStatus.class, serviceRef );
-				final RemoteAppRecord remoteRecord = new RemoteAppRecord( proxy, serviceRef.getHostAddress() );
+				final RemoteAppRecord remoteRecord = new RemoteAppRecord( proxy );
 				final String serviceID = serviceRef.getRawName();
 				
 				System.out.println( "Found remote application with ID: " + serviceID );

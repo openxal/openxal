@@ -27,7 +27,7 @@ import java.lang.reflect.Proxy;
  */
 class ClientHandler<ProxyType> implements InvocationHandler {
     /** protocol implemented by the remote service and dispatched through the proxy */
-    final private Class<ProxyType> PROTOCOL;
+    final private Class<ProxyType> SERVICE_PROTOCOL;
 
     /** name of the remote service */
     final private String SERVICE_NAME;
@@ -63,7 +63,7 @@ class ClientHandler<ProxyType> implements InvocationHandler {
         REMOTE_HOST = host;
         REMOTE_PORT = port;
         SERVICE_NAME = name;
-        PROTOCOL = newProtocol;
+        SERVICE_PROTOCOL = newProtocol;
         MESSAGE_CODER = messageCoder;
 
         PROXY = createProxy();
@@ -85,7 +85,7 @@ class ClientHandler<ProxyType> implements InvocationHandler {
      * @return The interface managed by this handler.
      */
     public Class<?> getProtocol() {
-        return PROTOCOL;
+        return SERVICE_PROTOCOL;
     }
 
 
@@ -132,7 +132,7 @@ class ClientHandler<ProxyType> implements InvocationHandler {
     @SuppressWarnings( { "unchecked", "rawtypes" } )   // we have not choice but to cast since newProxyInstance does not support generics
     private ProxyType createProxy() {
 		ClassLoader loader = this.getClass().getClassLoader();
-        Class[] protocols = new Class[] { PROTOCOL };
+        Class[] protocols = new Class[] { SERVICE_PROTOCOL, ServiceState.class };
 
         return (ProxyType)Proxy.newProxyInstance( loader, protocols, this );
     }
@@ -196,6 +196,18 @@ class ClientHandler<ProxyType> implements InvocationHandler {
      */
     @SuppressWarnings( "unchecked" )    // must cast generic response object to Map
     synchronized public Object invoke( final Object proxy, final Method method, final Object[] args ) throws RemoteMessageException, RemoteServiceDroppedException {
+		try {
+			SERVICE_PROTOCOL.getMethod( method.getName(), method.getParameterTypes() );		// test whether the remote service implements the method
+			return performRemoteServiceCall( method, args );
+		}
+		catch( NoSuchMethodException exception ) {
+			return performServiceStateCall( method, args );
+		}
+    }
+
+
+	/** perform the remote service call */
+	private Object performRemoteServiceCall( final Method method, final Object[] args ) throws RemoteMessageException, RemoteServiceDroppedException {
         try {
             final List<Object> params = new ArrayList<Object>();
 			if ( args != null ) {
@@ -253,7 +265,57 @@ class ClientHandler<ProxyType> implements InvocationHandler {
             exception.printStackTrace();
             throw new RuntimeException( "Exception performing invocation for remote request.", exception );
         }
-    }
+	}
+
+
+	/** perform the service state call on the local client handler */
+	private Object performServiceStateCall( final Method method, final Object[] args ) {
+		try {
+			return method.invoke( newServiceState(), args );
+		}
+		catch( Exception exception ) {
+            exception.printStackTrace();
+            throw new RuntimeException( "Exception performing local service state call on proxy to remote.", exception );
+		}
+	}
+
+
+	/** Create new service state instance to implement the service state interface */
+	private ServiceState newServiceState() {
+		return new ServiceState() {
+			/**
+			 * Get the name of the remote service.
+			 * @return The name of the remote service.
+			 */
+			public String getServiceName() {
+				return ClientHandler.this.getServiceName();
+			}
+
+			
+			/**
+			 * Get the host name of the remote service.
+			 * @return The host name of the remote service.
+			 */
+			public String getServiceHost() {
+				return ClientHandler.this.getHost();
+			}
+
+
+			/**
+			 * Get the port of the remote service.
+			 * @return The port of the remote service.
+			 */
+			public int getServicePort() {
+				return ClientHandler.this.getPort();
+			}
+
+
+			/** dispose of this proxy's resources */
+			public void disposeServiceResources() {
+				ClientHandler.this.dispose();
+			}
+		};
+	}
 }
 
 
