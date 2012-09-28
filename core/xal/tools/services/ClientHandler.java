@@ -25,33 +25,33 @@ import java.lang.reflect.Proxy;
  * ClientHandler handles messages sent to the proxy by forwarding them to the service associated with the proxy.
  * @author  tap
  */
-class ClientHandler<ProxyType> implements InvocationHandler {    
+class ClientHandler<ProxyType> implements InvocationHandler {
     /** protocol implemented by the remote service and dispatched through the proxy */
     final private Class<ProxyType> PROTOCOL;
-    
+
     /** name of the remote service */
     final private String SERVICE_NAME;
-    
+
     /** proxy which forwards invocations to the remote service */
     final private ProxyType PROXY;
-    
+
     /** remote host */
     final private String REMOTE_HOST;
-    
+
     /** remote port */
     final private int REMOTE_PORT;
 
 	/** message processors which are available */
 	final private ConcurrentLinkedQueue<SerialRemoteMessageProcessor> MESSAGE_PROCESSORS;
-    
+
     /** request ID counter is incremented to provide a unique ID for each request */
     private volatile int _requestIDCounter;
 
     /** coder for encoding and decoding messages for remote transport */
     final private Coder MESSAGE_CODER;
-    
-    
-    /** 
+
+
+    /**
 	 * Creates a new ClientHandler to handle service requests.
 	 * @param host  The host where the service is running.
 	 * @param port  The port through which the service is provided.
@@ -65,39 +65,39 @@ class ClientHandler<ProxyType> implements InvocationHandler {
         SERVICE_NAME = name;
         PROTOCOL = newProtocol;
         MESSAGE_CODER = messageCoder;
-        
+
         PROXY = createProxy();
 
 		MESSAGE_PROCESSORS = new ConcurrentLinkedQueue<SerialRemoteMessageProcessor>();
-        
+
         _requestIDCounter = 0;
     }
 
-    
+
     /** Get the next request ID and increment it */
     private int getNextRequestID() {
         return _requestIDCounter++;
     }
-    
-    
-    /** 
+
+
+    /**
      * Get the interface managed by this handler.
      * @return The interface managed by this handler.
      */
     public Class<?> getProtocol() {
         return PROTOCOL;
     }
-    
-    
-    /** 
+
+
+    /**
      * Get the name of the remote service.
      * @return The name of the remote service.
      */
     public String getServiceName() {
         return SERVICE_NAME;
     }
-    
-    
+
+
     /**
      * Get the host name of the remote service.
      * @return The host name of the remote service.
@@ -105,8 +105,8 @@ class ClientHandler<ProxyType> implements InvocationHandler {
     public String getHost() {
         return REMOTE_HOST;
     }
-    
-    
+
+
     /**
      * Get the port of the remote service.
      * @return The port of the remote service.
@@ -114,30 +114,30 @@ class ClientHandler<ProxyType> implements InvocationHandler {
     public int getPort() {
         return REMOTE_PORT;
     }
-    
-    
-    /** 
+
+
+    /**
      * Get the proxy that will forward requests to the remote service.
      * @return The proxy that will forward requests to the remote service.
      */
     public ProxyType getProxy() {
         return PROXY;
     }
-    
-    
-    /** 
-	 * Create the proxy for this handler to message. 
+
+
+    /**
+	 * Create the proxy for this handler to message.
 	 * @return The proxy that will forward requests to the remote service.
 	 */
     @SuppressWarnings( { "unchecked", "rawtypes" } )   // we have not choice but to cast since newProxyInstance does not support generics
     private ProxyType createProxy() {
 		ClassLoader loader = this.getClass().getClassLoader();
         Class[] protocols = new Class[] { PROTOCOL };
-        
+
         return (ProxyType)Proxy.newProxyInstance( loader, protocols, this );
     }
-    
-    
+
+
     /** dispose of resources */
     public void dispose() {
 		final List<SerialRemoteMessageProcessor> processors = new ArrayList<SerialRemoteMessageProcessor>();
@@ -146,13 +146,13 @@ class ClientHandler<ProxyType> implements InvocationHandler {
 			processors.addAll( MESSAGE_PROCESSORS );
 			MESSAGE_PROCESSORS.clear();
 		}
-		
+
 		for ( final SerialRemoteMessageProcessor processor : processors ) {
 			processor.dispose();
 		}
     }
-    
-    
+
+
     /** dispose of resources upon collection */
     protected void finalize() throws Throwable {
         dispose();
@@ -163,11 +163,11 @@ class ClientHandler<ProxyType> implements InvocationHandler {
 	/** get the next remote message processor which is free for processing a fresh message */
 	private SerialRemoteMessageProcessor nextRemoteMessageProcessor() {
 		SerialRemoteMessageProcessor processor = null;
-		
+
 		synchronized( MESSAGE_PROCESSORS ) {
 			processor = MESSAGE_PROCESSORS.poll();
 		}
-		
+
 		if ( processor != null ) {
 			return processor;
 		}
@@ -184,8 +184,8 @@ class ClientHandler<ProxyType> implements InvocationHandler {
 		}
 	}
 
-    
-    /** 
+
+    /**
      * Invoke the specified method on the proxy to implement the InvocationHandler interface.
      * The method is evaluated by calling the remote method using XML-RPC.
      * @param proxy The instance on which the method is invoked.  This argument is unused.
@@ -203,9 +203,9 @@ class ClientHandler<ProxyType> implements InvocationHandler {
                     params.add( arg );
                 }
 			}
-            
+
             final long requestID = getNextRequestID();
-            
+
             final String methodName = method.getName();
             final Map<String,Object> request = new HashMap<String,Object>();
             final String message = RpcServer.encodeRemoteMessage( SERVICE_NAME, methodName );
@@ -213,7 +213,7 @@ class ClientHandler<ProxyType> implements InvocationHandler {
             request.put( "params", params );
             request.put( "id", requestID );
             final String jsonRequest = MESSAGE_CODER.encode( request );
-            
+
             // methods marked with the OneWay annotation return immediately and do not wait for a response from the service
             final boolean waitForResponse = !method.isAnnotationPresent( OneWay.class );
 
@@ -221,7 +221,7 @@ class ClientHandler<ProxyType> implements InvocationHandler {
 			final SerialRemoteMessageProcessor processor = nextRemoteMessageProcessor();	// get the next available processor from the stack
             final PendingResult pendingResult = processor.submitRemoteRequest( jsonRequest, waitForResponse );
 			if ( !processor.isClosed() )  recycleRemoteMessageProcessor( processor );		// push the processor back onto the stack if it is still viable
-            
+
             if ( pendingResult != null ) {
                 final RuntimeException remoteException = pendingResult.getRemoteException();
                 if ( remoteException == null ) {
@@ -262,29 +262,29 @@ class ClientHandler<ProxyType> implements InvocationHandler {
 class PendingResult {
     /** result value */
     private Object _value;
-    
+
     /** remote exception */
     private RuntimeException _remoteException;
-    
-    
+
+
     /** set the result's value */
     public void setValue( final Object value ) {
         _value = value;
     }
-    
-    
+
+
     /** get the result's value */
     public Object getValue() {
         return _value;
     }
-    
-    
+
+
     /** set the error message */
     public void setRemoteException( final RuntimeException exception ) {
         _remoteException = exception;
     }
-    
-    
+
+
     /** get the error message */
     public RuntimeException getRemoteException() {
         return _remoteException;
@@ -304,7 +304,7 @@ class SerialRemoteMessageProcessor {
     /** coder for encoding and decoding messages for remote transport */
     final private Coder MESSAGE_CODER;
 
-	
+
     /**
 	 * Creates a new ClientHandler to handle service requests.
 	 * @param host  The host where the service is running.
@@ -317,7 +317,7 @@ class SerialRemoteMessageProcessor {
         REMOTE_SOCKET = makeRemoteSocket( host, port );
     }
 
-	
+
     /** make a new remote socket */
     static private Socket makeRemoteSocket( final String host, final int port ) {
         try {
@@ -424,7 +424,7 @@ class SerialRemoteMessageProcessor {
 
 			if ( hasResponse ) {
 				final PendingResult pendingResult = new PendingResult();
-				
+
 				try {
 					processRemoteResponse( pendingResult );
 					return pendingResult;
@@ -440,8 +440,24 @@ class SerialRemoteMessageProcessor {
 					// if the socket closes, cleanup the connection resources and forward the exception to the client
 					if ( REMOTE_SOCKET.isClosed() ) {
 						cleanupClosedSocket( pendingResult, new RemoteServiceDroppedException( "The remote socket has closed while processing the remote response..." ) );
-					}					
+					}
 				}
+			}
+			else {
+				return null;
+			}
+		}
+		catch( SocketException exception ) {
+			if ( !REMOTE_SOCKET.isClosed() ) {
+				try {
+					REMOTE_SOCKET.close();
+				}
+				catch( Exception closeException ) {}
+			}
+			if ( hasResponse ) {
+				final PendingResult pendingResult = new PendingResult();
+				cleanupClosedSocket( new PendingResult(), new RemoteServiceDroppedException( "The remote socket has closed while processing the remote response..." ) );
+				return pendingResult;
 			}
 			else {
 				return null;
