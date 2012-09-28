@@ -463,22 +463,6 @@ class SerialRemoteMessageProcessor {
 				return null;
 			}
 		}
-		catch( SocketException exception ) {
-			if ( !REMOTE_SOCKET.isClosed() ) {
-				try {
-					REMOTE_SOCKET.close();
-				}
-				catch( Exception closeException ) {}
-			}
-			if ( hasResponse ) {
-				final PendingResult pendingResult = new PendingResult();
-				cleanupClosedSocket( new PendingResult(), new RemoteServiceDroppedException( "The remote socket has closed while processing the remote response..." ) );
-				return pendingResult;
-			}
-			else {
-				return null;
-			}
-		}
 		catch( Exception exception ) {
 			exception.printStackTrace();
 			return null;
