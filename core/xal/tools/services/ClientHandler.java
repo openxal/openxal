@@ -339,7 +339,6 @@ class SerialRemoteMessageProcessor {
 
 	/** determine whether the socket is closed */
 	public boolean isClosed() {
-		System.out.println( "Processor closed: " + REMOTE_SOCKET.isClosed() );
 		return REMOTE_SOCKET.isClosed();
 	}
 
@@ -402,8 +401,6 @@ class SerialRemoteMessageProcessor {
 
 	/** cleanup after discovering the socket has closed */
 	private void cleanupClosedSocket( final PendingResult pendingResult, final Exception exception ) {
-		System.out.println( "Cleaning up closed socket: " + exception );
-
 		// encapsulate the exception in a runtime exception if necessary since that is what gets passed back to the calling method
 		final RuntimeException resultException = exception instanceof RuntimeException ? (RuntimeException)exception : new RuntimeException( exception );
 
