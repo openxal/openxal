@@ -339,7 +339,6 @@ class SerialRemoteMessageProcessor {
 
 	/** determine whether the socket is closed */
 	public boolean isClosed() {
-		System.out.println( "Processor closed: " + REMOTE_SOCKET.isClosed() );
 		return REMOTE_SOCKET.isClosed();
 	}
 
