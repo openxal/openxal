@@ -74,10 +74,10 @@ public abstract class DatabaseAdaptor {
 	
 	/**
 	 * Get a new database adaptor using the default database adaptor. Site specific code should provide an implementation of this method using the site specific database drivers.
-	 * @return Currently returns null, but site specific version should return a new instance of the default database adaptor
+	 * @return Currently throws an exception, but site specific version should return a new instance of the default database adaptor
 	 */
 	static public DatabaseAdaptor getInstance() {
-		return null;
+		throw new DatabaseException( "No concrete database adaptor has been implemented.", null, null );
 	}
 	
 	
