@@ -11,6 +11,7 @@
 package xal.application;
 
 import xal.tools.services.OneWay;
+import java.util.Date;
 
 
 /**
@@ -50,9 +51,16 @@ public interface ApplicationStatus {
 	 * Get the launch time of the application in seconds since the epoch (midnight GMT, January 1, 1970)
 	 * @return the time at with the application was launched in seconds since the epoch
 	 */
-	public java.util.Date getLaunchTime();
+	public Date getLaunchTime();
 	
+
+	/**
+	 * Get a heartbeat from the service.
+	 * @return the time measured from the service at which the heartbeat was sent
+	 */
+	public Date getHeartbeat();
 	
+
 	/** reveal the application by bringing all windows to the front */
 	public void showAllWindows();
 	
