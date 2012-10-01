@@ -100,7 +100,14 @@ public interface RemoteLogging {
 	 * @return the launch time in seconds since the Java epoch of January 1, 1970.
 	 */
 	public Date getLaunchTime();
-	
+
+
+	/**
+	 * Get a heartbeat from the service.
+	 * @return the time measured from the service at which the heartbeat was sent
+	 */
+	public Date getHeartbeat();
+
 	
 	/**
 	 * Get the timestamp of the last channel event (e.g. channel connected/disconnected event)
