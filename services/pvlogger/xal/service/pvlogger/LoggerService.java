@@ -180,7 +180,16 @@ public class LoggerService implements RemoteLogging {
 	public Date getLaunchTime() {
 		return LoggerModel.getLaunchTime();
 	}
-	
+
+
+	/**
+	 * Get a heartbeat from the service.
+	 * @return the time measured from the service at which the heartbeat was sent
+	 */
+	public Date getHeartbeat() {
+		return new Date();
+	}
+
 	
 	/**
 	 * Get the timestamp of the last channel event (e.g. channel connected/disconnected event)

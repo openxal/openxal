@@ -14,6 +14,8 @@ import xal.application.*;
 import xal.smf.application.*;
 import xal.service.pvlogger.*;
 import xal.tools.data.*;
+import xal.tools.swing.KeyValueTableModel;
+import xal.tools.dispatch.*;
 
 import java.util.Iterator;
 import java.util.Date;
@@ -32,10 +34,9 @@ import javax.swing.event.*;
 
 /**
  * PVLoggerWindow
- *
  * @author  tap
  */
-class PVLoggerWindow extends AcceleratorWindow implements SwingConstants, DataKeys, ScrollPaneConstants {
+class PVLoggerWindow extends AcceleratorWindow implements SwingConstants, ScrollPaneConstants {
 	/** required UID for serialization */
 	static final long serialVersionUID = 1L;
 
@@ -44,7 +45,13 @@ class PVLoggerWindow extends AcceleratorWindow implements SwingConstants, DataKe
 	
 	/** Table of loggers running on the local network */
 	protected JTable loggerTable;
-	
+
+	/** table model for displaying the PV Loggers */
+	final private KeyValueTableModel<RemoteLoggerRecord> LOGGER_TABLE_MODEL;
+
+	/** timer for refreshing the data */
+	final private DispatchTimer REFRESH_TIMER;
+
 	/** List of session group types */
 	@SuppressWarnings( "rawtypes" )		// TODO: JList is only typed in Java 7 or later
 	protected JList _groupTypesListView;
@@ -63,10 +70,7 @@ class PVLoggerWindow extends AcceleratorWindow implements SwingConstants, DataKe
 	
 	/** Table selection action to start the selected loggers logging */
 	protected Action resumeLoggingSelectionAction;
-	
-	/** Field for entering and displaying the update period */
-	protected JTextField periodField;
-	
+
 	/** Label for displaying the latest log event */
 	protected JLabel latestLogDateField;
 	
@@ -112,9 +116,9 @@ class PVLoggerWindow extends AcceleratorWindow implements SwingConstants, DataKe
 	
 	
     /** Creates a new instance of MainWindow */
-    public PVLoggerWindow(PVLoggerDocument aDocument, LoggerTableModel loggerTableModel) {
+    public PVLoggerWindow( final PVLoggerDocument aDocument ) {
         super(aDocument);
-        setSize(900, 600);
+        setSize( 900, 600 );
 		_model = aDocument.getModel();
 		_mainModel = _model.getMainModel();
 		
@@ -124,10 +128,57 @@ class PVLoggerWindow extends AcceleratorWindow implements SwingConstants, DataKe
 		SNAPSHOT_COMMENT_FIELD.setMaximumSize( SNAPSHOT_COMMENT_FIELD.getPreferredSize() );
 		SNAPSHOT_RESULT_FIELD = new JLabel( "" );
 
-		makeContent(loggerTableModel);
+		makeContent();
+
+		LOGGER_TABLE_MODEL = new KeyValueTableModel<RemoteLoggerRecord>( new ArrayList<RemoteLoggerRecord>(), "hostName", "launchTime", "heartbeat" );
+		loggerTable.setModel( LOGGER_TABLE_MODEL );
+
 		handleLoggerEvents();
-		_mainModel.updateServiceList();
+		handleLoggerModelEvents();
+		updateLoggerTable();
+		
+		REFRESH_TIMER = new DispatchTimer( DispatchQueue.getMainQueue(), new Runnable() {
+			public void run() {
+				final int rowCount = LOGGER_TABLE_MODEL.getRowCount();
+				if ( rowCount > 0 ) {
+					LOGGER_TABLE_MODEL.fireTableRowsUpdated( 0, rowCount - 1 );
+					updateChannelsInspector();
+				}
+			}
+		});
+		REFRESH_TIMER.startNowWithInterval( 10000, 0 );	// refresh the table every 10 seconds
     }
+
+
+	/** handle events from the logger model */
+	private void handleLoggerModelEvents() {
+		_mainModel.addLoggerModelListener( new LoggerModelListener() {
+			/**
+			 * The status of a logger has been updated along with its client side record.
+			 * @param source The source of the event
+			 * @param record The record that has been updated.
+			 */
+			public void newLoggerStatus( LoggerModel source, RemoteLoggerRecord record ) {
+				updateLoggerTable();
+			}
+
+
+			/**
+			 * The list of loggers has changed.
+			 * @param model The source of the event
+			 * @param records The new logger records.
+			 */
+			public void loggersChanged( LoggerModel model, java.util.List<RemoteLoggerRecord> records ) {
+				updateLoggerTable();
+			}
+		});
+	}
+
+
+	/** update the logger table */
+	private void updateLoggerTable() {
+		LOGGER_TABLE_MODEL.setRecords( _mainModel.getRemoteLoggers() );
+	}
 	
 	
 	/** Listen for new logger status events and update the views accordingly */
@@ -138,7 +189,7 @@ class PVLoggerWindow extends AcceleratorWindow implements SwingConstants, DataKe
 			 * @param source the document model managing selections
 			 * @param handler the latest handler selection or null if none is selected
 			 */
-			public void handlerSelected(DocumentModel source, LoggerHandler handler) {
+			public void handlerSelected(DocumentModel source, RemoteLoggerRecord handler) {
 				updateLoggerInspector();
 				updateControls();
 		}
@@ -149,7 +200,7 @@ class PVLoggerWindow extends AcceleratorWindow implements SwingConstants, DataKe
 			 * @param source the document model managing selections
 			 * @param handler the latest session handler selection or null if none is selected
 			 */
-			public void sessionHandlerSelected(DocumentModel source, LoggerSessionHandler handler) {
+			public void sessionHandlerSelected( final DocumentModel source, final LoggerSessionHandler handler ) {
 				updateChannelsInspector();
 				updateLogText();
 				updateLoggerInfo();
@@ -209,20 +260,6 @@ class PVLoggerWindow extends AcceleratorWindow implements SwingConstants, DataKe
 	
 	/** Update the controls to reconcile it with the model. */
 	protected void updateControls() {
-		int oldPeriod;
-		try {
-			oldPeriod = Integer.parseInt( periodField.getText() );
-		}
-		catch(Exception exception) {
-			oldPeriod = 0;
-		}
-		
-		final int period = _mainModel.getUpdatePeriod();
-		if ( period != oldPeriod ) {
-			periodField.setText( String.valueOf(period) );
-			periodField.selectAll();
-		}
-		
 		boolean hasSelectedHandler = _model.getSelectedHandler() != null;
 		_publishSnapshotsOnSelectionAction.setEnabled( hasSelectedHandler );
 		shutdownSelectionAction.setEnabled( hasSelectedHandler );
@@ -258,9 +295,6 @@ class PVLoggerWindow extends AcceleratorWindow implements SwingConstants, DataKe
 		
 		String status = (session != null) ? String.valueOf( session.isLogging() ) : "false";
 		_loggingStatusField.setText(status);
-		
-		String periodText = (session != null) ? String.valueOf( session.getLoggingPeriod() ) : "0";
-		_loggingPeriodField.setText(periodText);
 	}
 	
 	
@@ -269,6 +303,7 @@ class PVLoggerWindow extends AcceleratorWindow implements SwingConstants, DataKe
 	protected void updateChannelsInspector() {
 		LoggerSessionHandler handler = _model.getSelectedSessionHandler();
 		if ( handler != null ) {
+			handler.update();
 			final Vector<ChannelRef> connectedPVs = new Vector<ChannelRef>();
 			final Vector<ChannelRef> unconnectedPVs = new Vector<ChannelRef>();
 			final Collection<ChannelRef> channelRefs = handler.getChannelRefs();
@@ -298,9 +333,12 @@ class PVLoggerWindow extends AcceleratorWindow implements SwingConstants, DataKe
 		if ( handler != null ) {
 			latestLogTextView.setText( handler.getLastPublishedSnapshotDump() );
 			latestLogTextView.setCaretPosition(0);
-			
-			String dateText = TIMESTAMP_FORMAT.format( handler.getTimestampOfLastPublishedSnapshot() );
-			latestLogDateField.setText(dateText);
+
+			final Date timestamp = handler.getTimestampOfLastPublishedSnapshot();
+			if ( timestamp != null ) {
+				final String dateText = TIMESTAMP_FORMAT.format( timestamp );
+				latestLogDateField.setText( dateText);
+			}
 		}
 		else {
 			latestLogTextView.setText("");
@@ -312,86 +350,44 @@ class PVLoggerWindow extends AcceleratorWindow implements SwingConstants, DataKe
 	/** Update the list of logger sessions identified by group */
 	@SuppressWarnings( "unchecked" )		// TODO: JList is only typed in Java 7 or later
 	protected void updateGroupListView() {
-		final LoggerHandler handler = _model.getSelectedHandler();
+		final RemoteLoggerRecord handler = _model.getSelectedHandler();
 		final Vector<String> groups = ( handler != null ) ? new Vector<String>( handler.getGroupTypes() ) : new Vector<String>();
 		Collections.sort( groups );
 		_groupTypesListView.setListData( groups );
 	}
 	
 	
-	/**
-	 * Build the component contents of the window.
-	 * @param loggerTableModel The table model for the logger view
-	 */
-	protected void makeContent(final LoggerTableModel loggerTableModel) {
-		Box mainView = new Box(VERTICAL);
-		getContentPane().add(mainView);
+	/** Build the component contents of the window. */
+	protected void makeContent() {
+		Box mainView = new Box( VERTICAL );
+		getContentPane().add( mainView );
 		
-		mainView.add( makePeriodView() );
 		Box loggerPanel = new Box(HORIZONTAL);
-		JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, true);
+		JSplitPane splitPane = new JSplitPane( JSplitPane.VERTICAL_SPLIT, true );
 		splitPane.setOneTouchExpandable(true);
-		splitPane.setTopComponent( makeLoggerTable(loggerTableModel) );
+		splitPane.setTopComponent( makeLoggerTable() );
 		splitPane.setBottomComponent( makeLoggerInspector() );
-		splitPane.setResizeWeight(0.5);
-		loggerPanel.add(splitPane);
-		mainView.add(loggerPanel);
+		splitPane.setResizeWeight( 0.5 );
+		loggerPanel.add( splitPane );
+		mainView.add( loggerPanel );
 		
 		updateControls();
 		updateLoggerInspector();
 	}
-	
-	
-	/**
-	 * Make a view that displays the period of updates and allows the user to change that period
-	 * @return the period view
-	 */
-	protected JComponent makePeriodView() {
-		JPanel periodPanel = new JPanel();
-		periodPanel.setLayout( new FlowLayout(FlowLayout.LEFT) );
-		periodPanel.add( new JLabel("update period (sec): ") );
-		periodField = new JTextField(2);
-		periodField.addActionListener( new ActionListener() {
-			public void actionPerformed( final ActionEvent event ) {
-				applyPeriodSetting();
-			}
-		});
-		periodField.addFocusListener( new FocusAdapter() {
-			public void focusGained(FocusEvent event) {
-				periodField.selectAll();
-			}
-			public void focusLost(FocusEvent event) {
-				updateControls();
-				periodField.setCaretPosition(0);
-				periodField.moveCaretPosition(0);
-			}
-		});
-		
-		periodField.setHorizontalAlignment(RIGHT);
-		periodPanel.add(periodField);
-		periodPanel.setBorder( new EtchedBorder() );
-		periodPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 10+periodField.getHeight()) );
-		
-		return periodPanel;
-	}
-	
+
 	
 	/**
 	 * Make a table that lists the currently running loggers
-	 * @param tableModel The table model
 	 * @return the table view
 	 */
-	protected JComponent makeLoggerTable(final LoggerTableModel tableModel) {
-		loggerTable = new JTable(tableModel);
-		loggerTable.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		
-		TableCellRenderer numericCellRenderer = makeNumericCellRenderer();
-		TableColumnModel columnModel = loggerTable.getColumnModel();
-    
-        JScrollPane loggerScrollPane = new JScrollPane(loggerTable);
+	protected JComponent makeLoggerTable() {
+		loggerTable = new JTable( LOGGER_TABLE_MODEL );
+		loggerTable.getSelectionModel().setSelectionMode( ListSelectionModel.SINGLE_SELECTION );
+
+        JScrollPane loggerScrollPane = new JScrollPane( loggerTable );
 		loggerScrollPane.setColumnHeaderView( loggerTable.getTableHeader() );
-		loggerScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-        loggerScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+		loggerScrollPane.setHorizontalScrollBarPolicy( JScrollPane.HORIZONTAL_SCROLLBAR_NEVER );
+        loggerScrollPane.setVerticalScrollBarPolicy( JScrollPane.VERTICAL_SCROLLBAR_ALWAYS );
 		
 		return loggerScrollPane;
 	}
@@ -407,15 +403,9 @@ class PVLoggerWindow extends AcceleratorWindow implements SwingConstants, DataKe
 		loggerTable.getSelectionModel().addListSelectionListener( new ListSelectionListener() {
 			public void valueChanged(ListSelectionEvent event) {
 				if ( event.getValueIsAdjusting() )  return;
-				int selectedRow = loggerTable.getSelectedRow();
-				if ( selectedRow >= 0 ) {
-					LoggerTableModel tableModel = (LoggerTableModel)loggerTable.getModel();
-					String id = tableModel.getRecord(selectedRow).stringValueForKey(ID_KEY);
-					_model.setSelectedHandler( _mainModel.getHandler(id) );
-				}
-				else {
-					_model.setSelectedHandler(null);
-				}
+				final RemoteLoggerRecord record = getSelectedRemoteLoggerRecord();
+				_model.setSelectedHandler( record );
+
 			}
 		});
 		
@@ -428,7 +418,21 @@ class PVLoggerWindow extends AcceleratorWindow implements SwingConstants, DataKe
 		
 		return inspector;
 	}
-	
+
+
+	/** Get the remote logger record selected by the user */
+	private RemoteLoggerRecord getSelectedRemoteLoggerRecord() {
+		final int selectedRow = loggerTable.getSelectedRow();
+
+		if ( selectedRow >= 0 ) {
+			final int modelRow = loggerTable.convertRowIndexToModel( selectedRow );
+			return LOGGER_TABLE_MODEL.getRecordAtRow( modelRow );
+		}
+		else {
+			return null;
+		}
+	}
+
 	
 	/**
 	 * Make the session list view which displays the list of logger sessions for the selected
@@ -453,8 +457,8 @@ class PVLoggerWindow extends AcceleratorWindow implements SwingConstants, DataKe
 			public void valueChanged(ListSelectionEvent event) {
 				if ( !event.getValueIsAdjusting() ) {
 					String selectedGroup = (String)_groupTypesListView.getSelectedValue();
-					LoggerHandler handler = _model.getSelectedHandler();
-					LoggerSessionHandler sessionHandler = ( handler != null ) ? handler.getLoggerSession(selectedGroup) : null;
+					final RemoteLoggerRecord handler = _model.getSelectedHandler();
+					final LoggerSessionHandler sessionHandler = ( handler != null ) ? handler.getLoggerSession( selectedGroup ) : null;
 					_model.setSelectedSessionHandler(sessionHandler);
 				}
 			}
@@ -623,23 +627,6 @@ class PVLoggerWindow extends AcceleratorWindow implements SwingConstants, DataKe
 	public DocumentModel getModel() {
 		return getDocument().getModel();
 	}
-	
-	
-	/**
-	 * Apply to the model the period setting from the period field.
-	 */
-	protected void applyPeriodSetting() {
-		try {
-			int period = Integer.parseInt( periodField.getText() );
-			period = Math.max(period, 1);
-			period = Math.min(period, 99);
-			_mainModel.setUpdatePeriod(period);
-		}
-		catch(NumberFormatException exception) {
-			Toolkit.getDefaultToolkit().beep();
-		}
-		updateControls();
-	}
     
     
     /**
@@ -733,31 +720,46 @@ class PVLoggerWindow extends AcceleratorWindow implements SwingConstants, DataKe
 	
 	/** Shutdown the loggers corresponding to the selected rows of the logger table. */
 	public void shutdownSelections() {
-		((LoggerTableModel)loggerTable.getModel()).shutdownSelections( loggerTable.getSelectedRows() );
+		final RemoteLoggerRecord record = getSelectedRemoteLoggerRecord();
+		if ( record != null ) {
+			record.shutdown( 0 );
+		}
 	}
 	
 	
 	/** publish snapshots on the selected PV Loggers */
 	public void publishSnapshots() {
-		((LoggerTableModel)loggerTable.getModel()).publishSnapshots( loggerTable.getSelectedRows() );
+		final RemoteLoggerRecord record = getSelectedRemoteLoggerRecord();
+		if ( record != null ) {
+			record.publishSnapshots();
+		}
 	}
 	
 	
 	/** Restart the selected loggers by stopping them, reloading their groups and restarting them. */
 	public void restartSelections() {
-		((LoggerTableModel)loggerTable.getModel()).restartSelections( loggerTable.getSelectedRows() );
+		final RemoteLoggerRecord record = getSelectedRemoteLoggerRecord();
+		if ( record != null ) {
+			record.restartLogger();
+		}
 	}
 	
 	
 	/** Start the selected loggers logging. */
 	public void resumeLoggingSelections() {
-		((LoggerTableModel)loggerTable.getModel()).resumeLoggingSelections( loggerTable.getSelectedRows() );
+		final RemoteLoggerRecord record = getSelectedRemoteLoggerRecord();
+		if ( record != null ) {
+			record.resumeLogging();
+		}
 	}
 	
 	
 	/** Stop the selected loggers logging. */
 	public void stopLoggingSelections() {
-		((LoggerTableModel)loggerTable.getModel()).stopLoggingSelections( loggerTable.getSelectedRows() );
+		final RemoteLoggerRecord record = getSelectedRemoteLoggerRecord();
+		if ( record != null ) {
+			record.stopLogging();
+		}
 	}
 }
 

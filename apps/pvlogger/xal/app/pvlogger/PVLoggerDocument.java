@@ -24,10 +24,7 @@ import java.net.URL;
  *
  * @author  tap
  */
-class PVLoggerDocument extends AcceleratorDocument {
-	/** table model for the table of remote loggers */
-	protected LoggerTableModel loggerTableModel;
-	
+class PVLoggerDocument extends AcceleratorDocument {	
 	/** model for this document */
 	protected DocumentModel _model;
 	
@@ -42,10 +39,9 @@ class PVLoggerDocument extends AcceleratorDocument {
      * Create a new document loaded from the URL file 
      * @param url The URL of the file to load into the new document.
      */
-    public PVLoggerDocument(java.net.URL url, LoggerModel mainModel) {
+    public PVLoggerDocument( final java.net.URL url, final LoggerModel mainModel ) {
         setSource(url);
-		_model = new DocumentModel(mainModel);
-		loggerTableModel = new LoggerTableModel(mainModel);
+		_model = new DocumentModel( mainModel );
     }
     
     
@@ -54,7 +50,7 @@ class PVLoggerDocument extends AcceleratorDocument {
      * pane to use the textDocument variable as its document.
      */
     public void makeMainWindow() {
-        mainWindow = new PVLoggerWindow(this, loggerTableModel);
+        mainWindow = new PVLoggerWindow( this );
     }
 	
     

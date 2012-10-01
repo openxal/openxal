@@ -12,8 +12,6 @@ package xal.app.pvlogger;
 
 import java.util.List;
 
-import xal.tools.data.*;
-
 
 /**
  * LoggerModelListener is the interface for listeners who want to receive logger model events.
@@ -26,7 +24,7 @@ interface LoggerModelListener {
 	 * @param source The source of the event
 	 * @param record The record that has been updated.
 	 */
-	public void newLoggerStatus( LoggerModel source, GenericRecord record );
+	public void newLoggerStatus( LoggerModel source, RemoteLoggerRecord record );
 	
 	
 	/**
@@ -34,6 +32,6 @@ interface LoggerModelListener {
 	 * @param model The source of the event
 	 * @param records The new logger records.
 	 */
-	public void loggersChanged( LoggerModel model, List<GenericRecord> records );
+	public void loggersChanged( LoggerModel model, List<RemoteLoggerRecord> records );
 }
 

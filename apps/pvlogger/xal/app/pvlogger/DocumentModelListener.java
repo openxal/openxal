@@ -26,7 +26,7 @@ public interface DocumentModelListener {
 	 * @param source the document model managing selections
 	 * @param handler the latest handler selection or null if none is selected
 	 */
-	public void handlerSelected(DocumentModel source, LoggerHandler handler);
+	public void handlerSelected(DocumentModel source, RemoteLoggerRecord handler);
 	
 	
 	/**

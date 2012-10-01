@@ -21,7 +21,7 @@ import java.util.*;
  *
  * @author  tap
  */
-public class DocumentModel implements LoggerHandlerListener, LoggerSessionListener {
+public class DocumentModel implements LoggerSessionListener {
 	/** message center */
 	final protected MessageCenter _messageCenter;
 	
@@ -32,7 +32,7 @@ public class DocumentModel implements LoggerHandlerListener, LoggerSessionListen
 	protected LoggerModel _mainModel;
 	
 	/** selected handler to monitor */
-	protected LoggerHandler _selectedHandler;
+	protected RemoteLoggerRecord _selectedHandler;
 	
 	/** selected session handler */
 	protected LoggerSessionHandler _selectedSessionHandler;
@@ -79,12 +79,10 @@ public class DocumentModel implements LoggerHandlerListener, LoggerSessionListen
 	 * Set the selected logger handler
 	 * @param handler the selected logger handler
 	 */
-	public void setSelectedHandler(LoggerHandler handler) {
-		if ( _selectedHandler != null )  _selectedHandler.removeLoggerHandlerListener(this);
+	public void setSelectedHandler( final RemoteLoggerRecord handler ) {
 		_selectedHandler = handler;
-		_proxy.handlerSelected(this, handler);
-		setSelectedSessionHandler(null);
-		if ( _selectedHandler != null )  _selectedHandler.addLoggerHandlerListener(this);
+		setSelectedSessionHandler( null );
+		_proxy.handlerSelected( this, handler );
 	}
 	
 	
@@ -92,7 +90,7 @@ public class DocumentModel implements LoggerHandlerListener, LoggerSessionListen
 	 * Get the logger handler for the selected logger tool
 	 * @return the logger handler for the selected logger tool
 	 */
-	public LoggerHandler getSelectedHandler() {
+	public RemoteLoggerRecord getSelectedHandler() {
 		return _selectedHandler;
 	}
 	
@@ -101,11 +99,11 @@ public class DocumentModel implements LoggerHandlerListener, LoggerSessionListen
 	 * Set the selected session handler
 	 * @param handler the selected session handler
 	 */
-	public void setSelectedSessionHandler(LoggerSessionHandler handler) {
-		if ( _selectedSessionHandler != null )  _selectedSessionHandler.removeLoggerSessionListener(this);
+	public void setSelectedSessionHandler( final LoggerSessionHandler handler ) {
+		if ( _selectedSessionHandler != null )  _selectedSessionHandler.removeLoggerSessionListener( this );
 		_selectedSessionHandler = handler;
-		_proxy.sessionHandlerSelected(this, handler);
-		if ( _selectedSessionHandler != null )  _selectedSessionHandler.addLoggerSessionListener(this);
+		_proxy.sessionHandlerSelected( this, handler );
+		if ( _selectedSessionHandler != null )  _selectedSessionHandler.addLoggerSessionListener( this );
 	}
 	
 	
@@ -128,22 +126,12 @@ public class DocumentModel implements LoggerHandlerListener, LoggerSessionListen
 	
 	
 	/**
-	 * Notification that the logger handler's record has been updated
-	 * @param source the logger handler whose record has been updated
-	 * @param record the updated record
-	 */
-	public void recordUpdated(LoggerHandler source, GenericRecord record) {
-		_proxy.recordUpdated(this, record);
-	}
-	
-	
-	/**
 	 * Notification that the specified logger session handler's channels have changed.
 	 * @param source the logger session handler whose channels changed
 	 * @param channelRefs the new channel references
 	 */
-	public void channelsChanged(LoggerSessionHandler source, List<ChannelRef> channelRefs) {
-		_proxy.channelsChanged(this, channelRefs);
+	public void channelsChanged( final LoggerSessionHandler source, final List<ChannelRef> channelRefs ) {
+		_proxy.channelsChanged( this, channelRefs );
 	}
 	
 	
@@ -153,8 +141,8 @@ public class DocumentModel implements LoggerHandlerListener, LoggerSessionListen
 	 * @param timestamp the timestamp of the machine snapshot
 	 * @param snapshotDump a textual dump of the machine snapshot
 	 */
-	public void snapshotPublished(LoggerSessionHandler source, Date timestamp, String snapshotDump) {
-		_proxy.snapshotPublished(this, timestamp, snapshotDump);
+	public void snapshotPublished( final LoggerSessionHandler source, final Date timestamp, final String snapshotDump ) {
+		_proxy.snapshotPublished( this, timestamp, snapshotDump );
 	}
 	
 	
@@ -162,8 +150,8 @@ public class DocumentModel implements LoggerHandlerListener, LoggerSessionListen
 	 * Notification that the logger session handler has been updated
 	 * @param source the logger session handler which has been updated
 	 */
-	public void loggerSessionUpdated(LoggerSessionHandler source) {
-		_proxy.loggerSessionUpdated(this, source);
+	public void loggerSessionUpdated( final LoggerSessionHandler source ) {
+		_proxy.loggerSessionUpdated( this, source );
 	}
 }
 
