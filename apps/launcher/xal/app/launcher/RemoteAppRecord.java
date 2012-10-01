@@ -33,23 +33,17 @@ public class RemoteAppRecord {
 	/** cache for the total memory */
 	private final RemoteDataCache<Double> TOTAL_MEMORY_CACHE;
 
+	/** cache for the remote service heartbeat */
+	private final RemoteDataCache<Date> HEARTBEAT_CACHE;
+
 	/** host address of the remote service */
 	private final String REMOTE_ADDRESS;
-
-	/** timestamp of last update */
-	private Date _lastUpdate;
-
-	/** indicates whether the service is reachable */
-	private volatile boolean _isConnected;
 
 	
 	/** Constructor */
     public RemoteAppRecord( final ApplicationStatus proxy ) {
 		REMOTE_PROXY = proxy;
 		REMOTE_ADDRESS = ((ServiceState)proxy).getServiceHost();
-		
-		_lastUpdate = null;
-		_isConnected = true;	// assume so until proven otherwise
 
 		// don't need to keep making remote requests for application name as it won't change
 		APPLICATION_NAME_CACHE = createRemoteOperationCache( new Callable<String>() {
@@ -78,6 +72,13 @@ public class RemoteAppRecord {
 				return REMOTE_PROXY.getTotalMemory();
 			}
 		});
+
+		// insulate this call from hangs of the remote application
+		HEARTBEAT_CACHE = createRemoteCyclingOperationCache( new Callable<Date>() {
+			public Date call() {
+				return REMOTE_PROXY.getHeartbeat();
+			}
+		});
     }
 
 
@@ -95,36 +96,22 @@ public class RemoteAppRecord {
 	}
 
 
-	/** Get the timestamp of the last update */
-	public Date getLastUpdate() {
-		return _lastUpdate;
-	}
-
-
-	/** Determine whether this record is believed to be connected but don't test */
-	public boolean isConnected() {
-		return _isConnected;
-	}
-
-
 	/**
 	 * Get the total memory consumed by the application instance.
 	 * @return The total memory consumed by the application instance.
 	 */
 	public double getTotalMemory() {
-		if ( _isConnected ) {
+		if ( isConnected() ) {
 			try {
 				final Double memory = TOTAL_MEMORY_CACHE.getValue();
 				if ( memory != null ) {
-					_lastUpdate = TOTAL_MEMORY_CACHE.getTimestamp();
 					return memory.doubleValue();
 				}
 				else {
 					return Double.NaN;
 				}
 			}
-			catch ( RemoteServiceDroppedException exception ) {
-				_isConnected = false;
+			catch ( Exception exception ) {
 				return Double.NaN;
 			}
 		}
@@ -154,11 +141,26 @@ public class RemoteAppRecord {
 
 
 	/**
-	 * Get the launch time of the application in seconds since the epoch (midnight GMT, January 1, 1970)
+	 * Get the launch time of the application
+	 * @return the time at with the application was launched
+	 */
+	public Date getLaunchTime() {
+		return LAUNCH_TIME_CACHE.getValue();
+	}
+
+
+	/**
+	 * Get the heartbeat from the service
 	 * @return the time at with the application was launched in seconds since the epoch
 	 */
-	public java.util.Date getLaunchTime() {
-		return LAUNCH_TIME_CACHE.getValue();
+	public Date getHeartbeat() {
+		return HEARTBEAT_CACHE.getValue();
+	}
+
+
+	/** Determine whether this record is believed to be connected but don't test */
+	public boolean isConnected() {
+		return HEARTBEAT_CACHE.isConnected();
 	}
 
 
@@ -221,6 +223,9 @@ class RemoteDataCache<DataType> {
 	/** indicates whether the fetch request has been sent */
 	protected volatile boolean _fetchRequestSent;
 
+	/** indicates whether the remote service is connected */
+	private volatile boolean _isConnected;
+
 
 	/** Constructor */
 	public RemoteDataCache( final Callable<DataType> remoteOperation ) {
@@ -228,6 +233,7 @@ class RemoteDataCache<DataType> {
 
 		_fetchRequestSent = false;
 		_cachedData = null;
+		_isConnected = true;	// assume connected until proven otherwise
 	}
 
 
@@ -249,6 +255,12 @@ class RemoteDataCache<DataType> {
 	}
 
 
+	/** determine whether the remote service is connected */
+	public boolean isConnected() {
+		return _isConnected;
+	}
+
+
 	/** Fetch the data from the remote service */
 	protected void fetchData() {
 		_fetchRequestSent = true;
@@ -261,6 +273,7 @@ class RemoteDataCache<DataType> {
 				}
 				catch ( RemoteServiceDroppedException exception ) {
 					_cachedData = null;
+					_isConnected = false;
 				}
 				catch ( Exception exception ) {
 					exception.printStackTrace();
@@ -348,5 +361,11 @@ class RemoteData<DataType> {
 	/** get the timestamp */
 	public Date getTimestamp() {
 		return FETCH_TIMESTAMP;
+	}
+
+
+	/** get string representation */
+	public String toString() {
+		return "Cached value: " + VALUE + ", timestamp: " + FETCH_TIMESTAMP;
 	}
 }

@@ -10,6 +10,8 @@
 
 package xal.application;
 
+import java.util.Date;
+
 
 /**
  * ApplicationStatusService handles application status queries on behalf of the running
@@ -93,8 +95,17 @@ public class ApplicationStatusService implements ApplicationStatus {
 	 * Get the launch time of the application in seconds since the epoch (midnight GMT, January 1, 1970)
 	 * @return the time at with the application was launched in seconds since the epoch
 	 */
-	public java.util.Date getLaunchTime() {
+	public Date getLaunchTime() {
 		return Application.getApp().getLaunchTime();
+	}
+
+
+	/**
+	 * Get a heartbeat from the service.
+	 * @return the time measured from the service at which the heartbeat was sent
+	 */
+	public Date getHeartbeat() {
+		return new Date();
 	}
 }
 
