@@ -119,7 +119,9 @@ public class RemoteAppRecord {
 	 * @return The application name.
 	 */
 	public String getApplicationName() {
-		return APPLICATION_NAME_CACHE.getValue();
+		final String applicationName = APPLICATION_NAME_CACHE.getValue();
+		// if the service cache is not yet populated, then just get the name from the service info
+		return applicationName != null ? applicationName : ((ServiceState)REMOTE_PROXY).getServiceName();
 	}
 
 
