@@ -11,6 +11,7 @@ package xal.tools.services;
 import java.util.concurrent.Callable;
 import java.util.Date;
 
+import xal.tools.UpdateListener;
 import xal.tools.dispatch.DispatchQueue;
 
 
@@ -28,14 +29,37 @@ public class RemoteDataCache<DataType> {
 	/** indicates whether a fetch is pending */
 	private volatile boolean _isFetchPending;
 
+	/** optional handler of the update event */
+	private UpdateListener _updateListener;
+
 
 	/** Constructor */
 	public RemoteDataCache( final Callable<DataType> remoteOperation ) {
+		this( remoteOperation, null );
+	}
+
+
+	/** Primary Constructor */
+	public RemoteDataCache( final Callable<DataType> remoteOperation, final UpdateListener updateHandler ) {
 		REMOTE_OPERATION = remoteOperation;
+		
+		_updateListener = updateHandler;
 
 		_isFetchPending = false;
 		_cachedData = null;
 		_isConnected = true;	// assume connected until proven otherwise
+	}
+
+
+	/** set the update handler which is called when the cache has been updated */
+	public void setUpdateListener( final UpdateListener handler ) {
+		_updateListener = handler;
+	}
+
+
+	/** get the update handler */
+	public UpdateListener getUpdateListener() {
+		return _updateListener;
 	}
 
 
@@ -93,6 +117,12 @@ public class RemoteDataCache<DataType> {
 				}
 				finally {
 					_isFetchPending = false;
+
+					// if there is an update listener, notify it of the updated value
+					final UpdateListener updateHandler = _updateListener;
+					if ( updateHandler != null ) {
+						updateHandler.observedUpdate( RemoteDataCache.this );
+					}
 				}
 			}
 		});
