@@ -118,6 +118,12 @@ public class KeyValueTableModel<RecordType> extends AbstractTableModel {
 	public RecordType getRecordAtRow( final int row ) {
 		return _records.get( row );
 	}
+
+
+	/** Get the records indexed by row */
+	public List<RecordType> getRecords() {
+		return _records;
+	}
 	
 	
 	/** 
