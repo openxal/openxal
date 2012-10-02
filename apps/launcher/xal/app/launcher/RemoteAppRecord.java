@@ -11,13 +11,14 @@ package xal.app.launcher;
 import java.util.concurrent.Callable;
 import java.util.Date;
 
+import xal.tools.UpdateListener;
 import xal.tools.services.*;
 import xal.application.ApplicationStatus;
 import xal.tools.dispatch.DispatchQueue;
 
 
 /** RemoteAppRecord wraps the remote proxy so it can be hashed and included in collections */
-public class RemoteAppRecord {
+public class RemoteAppRecord implements UpdateListener {
 	/** remote proxy */
 	private final ApplicationStatus REMOTE_PROXY;
 
@@ -39,9 +40,12 @@ public class RemoteAppRecord {
 	/** host address of the remote service */
 	private final String REMOTE_ADDRESS;
 
+	/** optional handler of the update event */
+	private UpdateListener _updateListener;
+
 	
-	/** Constructor */
-    public RemoteAppRecord( final ApplicationStatus proxy ) {
+	/** Primary Constructor */
+    public RemoteAppRecord( final ApplicationStatus proxy, final UpdateListener updateListener ) {
 		REMOTE_PROXY = proxy;
 		REMOTE_ADDRESS = ((ServiceState)proxy).getServiceHost();
 
@@ -79,12 +83,54 @@ public class RemoteAppRecord {
 				return REMOTE_PROXY.getHeartbeat();
 			}
 		});
+		
+		// observe updates from the caches
+		APPLICATION_NAME_CACHE.setUpdateListener( this );
+		HOST_NAME_CACHE.setUpdateListener( this );
+		LAUNCH_TIME_CACHE.setUpdateListener( this );
+		TOTAL_MEMORY_CACHE.setUpdateListener( this );
+		HEARTBEAT_CACHE.setUpdateListener( this );
+    }
+
+
+	/** Constructor */
+    public RemoteAppRecord( final ApplicationStatus proxy ) {
+		this( proxy, null );
     }
 
 
 	/** Create a remote operation cache for the given operation */
-	private <DataType> RemoteDataCache<DataType> createRemoteOperationCache( final Callable<DataType> operation ) {
+	static private <DataType> RemoteDataCache<DataType> createRemoteOperationCache( final Callable<DataType> operation ) {
 		return new RemoteDataCache<DataType>( operation );
+	}
+
+
+	/** set the update handler which is called when the cache has been updated */
+	public void setUpdateListener( final UpdateListener handler ) {
+		_updateListener = handler;
+	}
+
+
+	/** get the update handler */
+	public UpdateListener getUpdateListener() {
+		return _updateListener;
+	}
+
+
+	/** called when the source posts an update to this observer */
+	public void observedUpdate( final Object source ) {
+		// propagate update notification to the update listener if any
+		final UpdateListener updateHandler = _updateListener;
+		if ( updateHandler != null ) {
+			updateHandler.observedUpdate( this );
+		}
+	}
+
+
+	/** refresh the record */
+	public void refresh() {
+		TOTAL_MEMORY_CACHE.refresh();		// refresh the cache for future calls
+		HEARTBEAT_CACHE.refresh();		// refresh the cache for future calls
 	}
 
 
@@ -95,7 +141,6 @@ public class RemoteAppRecord {
 	public double getTotalMemory() {
 		if ( isConnected() ) {
 			try {
-				TOTAL_MEMORY_CACHE.refresh();		// refresh the cache for future calls
 				final Double memory = TOTAL_MEMORY_CACHE.getValue();
 				if ( memory != null ) {
 					return memory.doubleValue();
@@ -149,7 +194,6 @@ public class RemoteAppRecord {
 	 * @return the time at with the application was launched in seconds since the epoch
 	 */
 	public Date getHeartbeat() {
-		HEARTBEAT_CACHE.refresh();		// refresh the cache for future calls
 		return HEARTBEAT_CACHE.getValue();
 	}
 

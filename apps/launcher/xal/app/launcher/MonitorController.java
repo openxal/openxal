@@ -17,10 +17,11 @@ import xal.application.Application;
 import xal.tools.bricks.*;
 import xal.tools.swing.KeyValueFilteredTableModel;
 import xal.tools.dispatch.*;
+import xal.tools.UpdateListener;
 
 
 /** MonitorController */
-public class MonitorController implements MonitorModelListener {
+public class MonitorController implements MonitorModelListener, UpdateListener {
 	/** The main model of this document */
 	final private LaunchModel LAUNCH_MODEL;
 
@@ -112,13 +113,12 @@ public class MonitorController implements MonitorModelListener {
 
 		REFRESH_TIMER = new DispatchTimer( DispatchQueue.getMainQueue(), new Runnable() {
 			public void run() {
-				final int rowCount = APP_TABLE_MODEL.getRowCount();
-				if ( rowCount > 0 ) {
-					APP_TABLE_MODEL.fireTableRowsUpdated( 0, rowCount - 1 );
+				for ( final RemoteAppRecord record : APP_TABLE_MODEL.getRecords() ) {
+					record.refresh();
 				}
 			}
 		});
-		REFRESH_TIMER.startNowWithInterval( 5000, 0 );	// refresh the table every 5 seconds
+		REFRESH_TIMER.startNowWithInterval( 5000, 0 );	// refresh records every 5 seconds
 
 		final Box monitorView = (Box)windowReference.getView( "MonitorView" );
 		final JTabbedPane mainTabPane = (JTabbedPane)windowReference.getView( "MainTabPane" );
@@ -141,11 +141,31 @@ public class MonitorController implements MonitorModelListener {
 	}
 
 
+	/** called when the source posts an update to this observer */
+	public void observedUpdate( final Object source ) {
+		if ( source instanceof RemoteAppRecord ) {
+			final RemoteAppRecord record = (RemoteAppRecord)source;
+			DispatchQueue.getMainQueue().dispatchAsync( new Runnable() {
+				public void run() {
+					final List<RemoteAppRecord> records = APP_TABLE_MODEL.getRecords();
+					final int row = records.indexOf( record );
+					if ( row >= 0 ) {
+						APP_TABLE_MODEL.fireTableRowsUpdated( row, row );
+					}
+				}
+			});
+		}
+	}
+
+
 	/** event indicating that the list of remote apps has changed */
 	public void remoteAppsChanged( final MonitorModel model, final List<RemoteAppRecord> remoteApps ) {
 		DispatchQueue.getMainQueue().dispatchAsync( new Runnable() {
 			public void run() {
 				APP_TABLE_MODEL.setRecords( remoteApps );
+				for ( final RemoteAppRecord record : remoteApps ) {
+					record.setUpdateListener( MonitorController.this );
+				}
 			}
 		});
 	}
