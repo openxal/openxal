@@ -89,7 +89,7 @@ public class KeyValueTableModel<RecordType> extends AbstractTableModel {
 	 * Add the specified listener as a receiver of record modification events from this instance.
 	 * @param listener object to receive events
 	 */
-	public void addKeyValueRecordListener( final KeyValueRecordListener<KeyValueTableModel<RecordType>,RecordType> listener ) {
+	public void addKeyValueRecordListener( final KeyValueRecordListener<? extends KeyValueTableModel<RecordType>,RecordType> listener ) {
 		MESSAGE_CENTER.registerTarget( listener, this, KeyValueRecordListener.class );
 	}
 	
