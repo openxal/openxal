@@ -16,6 +16,7 @@ import xal.service.pvlogger.*;
 import xal.tools.data.*;
 import xal.tools.swing.KeyValueTableModel;
 import xal.tools.dispatch.*;
+import xal.tools.UpdateListener;
 
 import java.util.Iterator;
 import java.util.Date;
@@ -36,7 +37,7 @@ import javax.swing.event.*;
  * PVLoggerWindow
  * @author  tap
  */
-class PVLoggerWindow extends AcceleratorWindow implements SwingConstants, ScrollPaneConstants {
+class PVLoggerWindow extends AcceleratorWindow implements SwingConstants, ScrollPaneConstants, UpdateListener {
 	/** required UID for serialization */
 	static final long serialVersionUID = 1L;
 
@@ -139,15 +140,31 @@ class PVLoggerWindow extends AcceleratorWindow implements SwingConstants, Scroll
 		
 		REFRESH_TIMER = new DispatchTimer( DispatchQueue.getMainQueue(), new Runnable() {
 			public void run() {
-				final int rowCount = LOGGER_TABLE_MODEL.getRowCount();
-				if ( rowCount > 0 ) {
-					LOGGER_TABLE_MODEL.fireTableRowsUpdated( 0, rowCount - 1 );
-					updateChannelsInspector();
+				for ( final RemoteLoggerRecord record : LOGGER_TABLE_MODEL.getRecords() ) {
+					record.refresh();
 				}
+				updateChannelsInspector();
 			}
 		});
 		REFRESH_TIMER.startNowWithInterval( 10000, 0 );	// refresh the table every 10 seconds
     }
+
+
+	/** called when the source posts an update to this observer */
+	public void observedUpdate( final Object source ) {
+		if ( source instanceof RemoteLoggerRecord ) {
+			final RemoteLoggerRecord record = (RemoteLoggerRecord)source;
+			DispatchQueue.getMainQueue().dispatchAsync( new Runnable() {
+				public void run() {
+					final java.util.List<RemoteLoggerRecord> records = LOGGER_TABLE_MODEL.getRecords();
+					final int row = records.indexOf( record );
+					if ( row >= 0 ) {
+						LOGGER_TABLE_MODEL.fireTableRowsUpdated( row, row );
+					}
+				}
+			});
+		}
+	}
 
 
 	/** handle events from the logger model */
@@ -168,8 +185,15 @@ class PVLoggerWindow extends AcceleratorWindow implements SwingConstants, Scroll
 			 * @param model The source of the event
 			 * @param records The new logger records.
 			 */
-			public void loggersChanged( LoggerModel model, java.util.List<RemoteLoggerRecord> records ) {
-				updateLoggerTable();
+			public void loggersChanged( final LoggerModel model, final java.util.List<RemoteLoggerRecord> records ) {
+				DispatchQueue.getMainQueue().dispatchAsync( new Runnable() {
+					public void run() {
+						updateLoggerTable();
+						for ( final RemoteLoggerRecord record : records ) {
+							record.setUpdateListener( PVLoggerWindow.this );
+						}
+					}
+				});
 			}
 		});
 	}

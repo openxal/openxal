@@ -11,13 +11,14 @@ package xal.app.pvlogger;
 import java.util.concurrent.Callable;
 import java.util.*;
 
+import xal.tools.UpdateListener;
 import xal.tools.services.*;
 import xal.tools.dispatch.DispatchQueue;
 import xal.service.pvlogger.RemoteLogging;
 
 
 /** RemoteLoggerRecord */
-public class RemoteLoggerRecord {
+public class RemoteLoggerRecord implements UpdateListener {
 	/** remote proxy */
 	private final RemoteLogging REMOTE_PROXY;
 
@@ -38,6 +39,9 @@ public class RemoteLoggerRecord {
 
 	/** logger sessions keyed by group type */
 	private final Map<String,LoggerSessionHandler> LOGGER_SESSIONS;
+
+	/** optional handler of the update event */
+	private UpdateListener _updateListener;
 
 	
 	/** Constructor */
@@ -72,12 +76,45 @@ public class RemoteLoggerRecord {
 		for ( final String groupType : GROUP_TYPES ) {
 			LOGGER_SESSIONS.put( groupType, new LoggerSessionHandler( groupType, REMOTE_PROXY ) );
 		}
-    }
+
+		// observe updates from the caches
+		HOST_NAME_CACHE.setUpdateListener( this );
+		LAUNCH_TIME_CACHE.setUpdateListener( this );
+		HEARTBEAT_CACHE.setUpdateListener( this );
+   }
 
 
 	/** Create a remote operation cache for the given operation */
-	private <DataType> RemoteDataCache<DataType> createRemoteOperationCache( final Callable<DataType> operation ) {
+	static private <DataType> RemoteDataCache<DataType> createRemoteOperationCache( final Callable<DataType> operation ) {
 		return new RemoteDataCache<DataType>( operation );
+	}
+
+
+	/** set the update handler which is called when the cache has been updated */
+	public void setUpdateListener( final UpdateListener handler ) {
+		_updateListener = handler;
+	}
+
+
+	/** get the update handler */
+	public UpdateListener getUpdateListener() {
+		return _updateListener;
+	}
+
+
+	/** called when the source posts an update to this observer */
+	public void observedUpdate( final Object source ) {
+		// propagate update notification to the update listener if any
+		final UpdateListener updateHandler = _updateListener;
+		if ( updateHandler != null ) {
+			updateHandler.observedUpdate( this );
+		}
+	}
+
+
+	/** refresh the record */
+	public void refresh() {
+		HEARTBEAT_CACHE.refresh();
 	}
 
 
@@ -124,7 +161,6 @@ public class RemoteLoggerRecord {
 	 * @return the time at with the application was launched in seconds since the epoch
 	 */
 	public Date getHeartbeat() {
-		HEARTBEAT_CACHE.refresh();		// refresh for future calls
 		return HEARTBEAT_CACHE.getValue();
 	}
 
