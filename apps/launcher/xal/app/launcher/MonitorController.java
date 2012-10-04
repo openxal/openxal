@@ -113,7 +113,7 @@ public class MonitorController implements MonitorModelListener, UpdateListener {
 
 		REFRESH_TIMER = new DispatchTimer( DispatchQueue.getMainQueue(), new Runnable() {
 			public void run() {
-				for ( final RemoteAppRecord record : APP_TABLE_MODEL.getRecords() ) {
+				for ( final RemoteAppRecord record : APP_TABLE_MODEL.getRowRecords() ) {
 					record.refresh();
 				}
 			}
@@ -147,7 +147,7 @@ public class MonitorController implements MonitorModelListener, UpdateListener {
 			final RemoteAppRecord record = (RemoteAppRecord)source;
 			DispatchQueue.getMainQueue().dispatchAsync( new Runnable() {
 				public void run() {
-					final List<RemoteAppRecord> records = APP_TABLE_MODEL.getRecords();
+					final List<RemoteAppRecord> records = APP_TABLE_MODEL.getRowRecords();
 					final int row = records.indexOf( record );
 					if ( row >= 0 ) {
 						APP_TABLE_MODEL.fireTableRowsUpdated( row, row );
