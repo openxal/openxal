@@ -65,6 +65,9 @@ public class Main extends ApplicationAdaptor {
 		else if ( type.equals( "Configuration" ) ) {
 			return new ConfigurationDocument();
 		}
+		else if ( type.equals( "Browsing" ) ) {
+			return new BrowserDocument();
+		}
 		else {
 			return newEmptyDocument();
 		}

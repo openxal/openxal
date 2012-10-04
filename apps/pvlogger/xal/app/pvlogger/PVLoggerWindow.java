@@ -140,7 +140,7 @@ class PVLoggerWindow extends AcceleratorWindow implements SwingConstants, Scroll
 		
 		REFRESH_TIMER = new DispatchTimer( DispatchQueue.getMainQueue(), new Runnable() {
 			public void run() {
-				for ( final RemoteLoggerRecord record : LOGGER_TABLE_MODEL.getRecords() ) {
+				for ( final RemoteLoggerRecord record : LOGGER_TABLE_MODEL.getRowRecords() ) {
 					record.refresh();
 				}
 				updateChannelsInspector();
@@ -156,7 +156,7 @@ class PVLoggerWindow extends AcceleratorWindow implements SwingConstants, Scroll
 			final RemoteLoggerRecord record = (RemoteLoggerRecord)source;
 			DispatchQueue.getMainQueue().dispatchAsync( new Runnable() {
 				public void run() {
-					final java.util.List<RemoteLoggerRecord> records = LOGGER_TABLE_MODEL.getRecords();
+					final java.util.List<RemoteLoggerRecord> records = LOGGER_TABLE_MODEL.getRowRecords();
 					final int row = records.indexOf( record );
 					if ( row >= 0 ) {
 						LOGGER_TABLE_MODEL.fireTableRowsUpdated( row, row );
