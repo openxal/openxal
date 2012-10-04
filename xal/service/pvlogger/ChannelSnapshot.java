@@ -99,6 +99,18 @@ public class ChannelSnapshot {
 	public double[] getValue() {
 		return _value;
 	}
+
+
+	/** get the scalar value which corresponds to the first element of the value array if it exists or NaN otherwise */
+	public double getScalarValue() {
+		return _value != null && _value.length > 0 ? _value[0] : Double.NaN;
+	}
+
+
+	/** Get the number of elements in the value array */
+	public int getValueCount() {
+		return _value != null ? _value.length : 0;
+	}
 	
 	
 	/**
