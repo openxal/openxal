@@ -121,7 +121,7 @@ public class KeyValueTableModel<RecordType> extends AbstractTableModel {
 
 
 	/** Get the records indexed by row */
-	public List<RecordType> getRecords() {
+	public List<RecordType> getRowRecords() {
 		return _records;
 	}
 	
