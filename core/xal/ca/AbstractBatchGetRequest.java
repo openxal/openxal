@@ -124,11 +124,27 @@ abstract public class AbstractBatchGetRequest<RecordType extends ChannelRecord> 
 			oldBatchConnectionRequest.removeBatchConnectionRequestListener( this );
 		}
 
-		// create a fresh batch channel connection request
-		final BatchConnectionRequest batchConnectionRequest = new BatchConnectionRequest( channels );
-		_batchConnectionRequest = batchConnectionRequest;
-		batchConnectionRequest.addBatchConnectionRequestListener( this );
-		batchConnectionRequest.submit();
+		// determine which channels are connected and process them immediately
+		final Set<Channel> unconnectedChannels = new HashSet<Channel>();
+		for ( final Channel channel : channels ) {
+			if ( channel.isConnected() ) {
+				PENDING_CONNECTED_CHANNELS.add( channel );
+			}
+			else {
+				unconnectedChannels.add( channel );
+			}
+		}
+		if ( PENDING_CONNECTED_CHANNELS.size() > 0 ) {
+			processPendingConnectedChannels();
+		}
+
+		// create a fresh batch channel connection request for unconnected channels if any
+		if ( unconnectedChannels.size() > 0 ) {
+			final BatchConnectionRequest batchConnectionRequest = new BatchConnectionRequest( unconnectedChannels );
+			_batchConnectionRequest = batchConnectionRequest;
+			batchConnectionRequest.addBatchConnectionRequestListener( this );
+			batchConnectionRequest.submit();
+		}
 	}
 	
 	
@@ -335,16 +351,20 @@ abstract public class AbstractBatchGetRequest<RecordType extends ChannelRecord> 
 						channels.addAll( PENDING_CONNECTED_CHANNELS );
 						PENDING_CONNECTED_CHANNELS.clear();
 					}
-					
-					try {
-						for ( final Channel channel : channels ) {
-							processRequest( channel );
+
+//					System.out.println( "Processing " + channels.size() + " channels." );
+
+					if ( channels.size() > 0 ) {
+						try {
+							for ( final Channel channel : channels ) {
+								processRequest( channel );
+							}
+							Channel.flushIO();
+							Thread.yield();		// yield to other threads so we can accumulate a batch of channels to process 
 						}
-						Channel.flushIO();
-						Thread.yield();		// yield to other threads so we can accumulate a batch of channels to process 
-					}
-					catch( Exception exception ) {
-						exception.printStackTrace();
+						catch( Exception exception ) {
+							exception.printStackTrace();
+						}
 					}
 				}
 			});
