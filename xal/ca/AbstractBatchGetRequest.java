@@ -9,13 +9,14 @@
 package xal.ca;
 
 import xal.tools.messaging.MessageCenter;
+import xal.tools.dispatch.DispatchQueue;
 
 import java.util.*;
 import java.util.concurrent.*;
 
 
 /** AbstractBatchGetRequest */
-abstract public class AbstractBatchGetRequest<RecordType extends ChannelRecord> {
+abstract public class AbstractBatchGetRequest<RecordType extends ChannelRecord> implements BatchConnectionRequestListener {
 	/** message center for dispatching events */
 	final private MessageCenter MESSAGE_CENTER;
 	
@@ -33,12 +34,21 @@ abstract public class AbstractBatchGetRequest<RecordType extends ChannelRecord> 
 	
 	/** channels pending completion */
 	final private Set<Channel> PENDING_CHANNELS;
-	
-	/** executor pool for processing the get requests */
-	final private ExecutorService PROCESSING_POOL;
+
+	/** channels that are connected and pending the get request */
+	final private Set<Channel> PENDING_CONNECTED_CHANNELS;
+
+	/** serial queue on which channels are submitted for get requests */
+	final private DispatchQueue GET_REQUEST_PROCESSING_QUEUE;
+
+	/** indicates that pending connected channels are queued for processing */
+	private volatile boolean _pendingChannelProcessingQueued;
 	
 	/** object used for waiting and notification */
 	final private Object COMPLETION_LOCK;
+
+	/** batch request for connecting to the pending channels */
+	private BatchConnectionRequest _batchConnectionRequest;
 	
 	
 	/** Primary Constructor */
@@ -52,12 +62,23 @@ abstract public class AbstractBatchGetRequest<RecordType extends ChannelRecord> 
 		RECORDS = new HashMap<Channel,RecordType>();
 		EXCEPTIONS = new HashMap<Channel,Exception>();
 		PENDING_CHANNELS = new HashSet<Channel>();
-		PROCESSING_POOL = Executors.newCachedThreadPool();
-		
+		PENDING_CONNECTED_CHANNELS = new HashSet<Channel>();
+		GET_REQUEST_PROCESSING_QUEUE = DispatchQueue.createSerialQueue( "Batch Get Request Processing" );
+
+		_batchConnectionRequest = null;
+		_pendingChannelProcessingQueued = false;
+
 		CHANNELS = new HashSet<Channel>( channels.size() );
 		CHANNELS.addAll( channels );
 	}
-	
+
+
+	/** dispose of the executors */
+	protected void finalize() throws Throwable {
+		GET_REQUEST_PROCESSING_QUEUE.dispose();
+		super.finalize();
+	}
+
 	
 	/** add the specified listener as a receiver of batch get request events from this instance */
 	public void addBatchGetRequestListener( final BatchGetRequestListener<RecordType> listener ) {
@@ -95,16 +116,19 @@ abstract public class AbstractBatchGetRequest<RecordType extends ChannelRecord> 
 		synchronized ( RECORDS ) {
 			RECORDS.clear();
 		}
-		
-		try {
-			for ( final Channel channel : channels ) {
-				processRequest( channel );
-			}
-			Channel.flushIO();
+
+		// dispose of the old batch channel connection request
+		final BatchConnectionRequest oldBatchConnectionRequest = _batchConnectionRequest;
+		if ( oldBatchConnectionRequest != null ) {
+			oldBatchConnectionRequest.cancel();
+			oldBatchConnectionRequest.removeBatchConnectionRequestListener( this );
 		}
-		catch( Exception exception ) {
-			throw new RuntimeException( "Exception while submitting a batch Get request.", exception );
-		}
+
+		// create a fresh batch channel connection request
+		final BatchConnectionRequest batchConnectionRequest = new BatchConnectionRequest( channels );
+		_batchConnectionRequest = batchConnectionRequest;
+		batchConnectionRequest.addBatchConnectionRequestListener( this );
+		batchConnectionRequest.submit();
 	}
 	
 	
@@ -283,7 +307,79 @@ abstract public class AbstractBatchGetRequest<RecordType extends ChannelRecord> 
 					exception.printStackTrace();
 				}
 			}
+
+			// once this batch get request is complete we can cancel the batch connection request
+			final BatchConnectionRequest batchConnectionRequest = _batchConnectionRequest;
+			if ( batchConnectionRequest != null ) {
+				batchConnectionRequest.cancel();
+			}
+			
 			EVENT_PROXY.batchRequestCompleted( this, getRecordCount(), getExceptionCount() );
+		}
+	}
+
+
+	/** process any pending connected channels */
+	private void processPendingConnectedChannels() {
+		if ( !_pendingChannelProcessingQueued ) {
+			_pendingChannelProcessingQueued = true;
+
+			GET_REQUEST_PROCESSING_QUEUE.dispatchAsync( new Runnable() {
+				public void run() {
+					_pendingChannelProcessingQueued = false;
+
+					final Set<Channel> channels = new HashSet<Channel>();
+					synchronized( PENDING_CONNECTED_CHANNELS ) {
+						channels.addAll( PENDING_CONNECTED_CHANNELS );
+						PENDING_CONNECTED_CHANNELS.clear();
+					}
+					
+					try {
+						for ( final Channel channel : channels ) {
+							processRequest( channel );
+						}
+						Channel.flushIO();
+					}
+					catch( Exception exception ) {
+						exception.printStackTrace();
+					}
+				}
+			});
+		}
+	}
+
+
+	/** event indicating that the batch request is complete */
+	public void batchConnectionRequestCompleted( final BatchConnectionRequest connectionRequest, final int connectedCount, final int disconnectedCount, final int exceptionCount ) {}
+
+	
+	/** event indicating that an exception has been thrown for a channel */
+	public void connectionExceptionInBatch( final BatchConnectionRequest connectionRequest, final Channel channel, final Exception exception ) {
+		synchronized( EXCEPTIONS ) {
+			EXCEPTIONS.put( channel, exception );
+			synchronized ( PENDING_CHANNELS ) {
+				PENDING_CHANNELS.remove( channel );
+			}
+		}
+		final ConnectionException connectionException = new ConnectionException( channel, "Exception connecting to channel " + channel.channelName() + " during batch get request." );
+		EVENT_PROXY.exceptionInBatch( this, channel, connectionException );
+		processCurrentStatus();
+	}
+
+
+	/** event indicating that a connection change has occurred for a channel */
+	public void connectionChangeInBatch( BatchConnectionRequest connectionRequest, Channel channel, boolean connected ) {
+		synchronized( PENDING_CONNECTED_CHANNELS ) {
+			if ( connected ) {
+				PENDING_CONNECTED_CHANNELS.add( channel );
+			}
+			else {
+				PENDING_CONNECTED_CHANNELS.remove( channel );
+			}
+		}
+
+		if ( connected ) {
+			processPendingConnectedChannels();
 		}
 	}
 }
