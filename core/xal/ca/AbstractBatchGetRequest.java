@@ -17,25 +17,25 @@ import java.util.concurrent.*;
 /** AbstractBatchGetRequest */
 abstract public class AbstractBatchGetRequest<RecordType extends ChannelRecord> {
 	/** message center for dispatching events */
-	final protected MessageCenter MESSAGE_CENTER;
+	final private MessageCenter MESSAGE_CENTER;
 	
 	/** proxy which forwards events to registered listeners */
-	final protected BatchGetRequestListener<RecordType> EVENT_PROXY;
+	final private BatchGetRequestListener<RecordType> EVENT_PROXY;
 	
 	/** set of channels for which to request batch operations */
-	final protected Set<Channel> CHANNELS;
+	final private Set<Channel> CHANNELS;
 	
 	/** table of channel records keyed by channel */
-	final protected Map<Channel,RecordType> RECORDS;
+	final private Map<Channel,RecordType> RECORDS;
 	
 	/** table of get request exceptions keyed by channel */
-	final protected Map<Channel,Exception> EXCEPTIONS;
+	final private Map<Channel,Exception> EXCEPTIONS;
 	
 	/** channels pending completion */
-	final protected Set<Channel> PENDING_CHANNELS;
+	final private Set<Channel> PENDING_CHANNELS;
 	
 	/** executor pool for processing the get requests */
-	final protected ExecutorService PROCESSING_POOL;
+	final private ExecutorService PROCESSING_POOL;
 	
 	/** object used for waiting and notification */
 	final private Object COMPLETION_LOCK;
@@ -118,12 +118,24 @@ abstract public class AbstractBatchGetRequest<RecordType extends ChannelRecord> 
 		submit();
 		return waitForCompletion( timeout );
 	}
-	
+
+
+	/**
+	 * Synonym for waitForCompletion. Wait up to the specified timeout for completion. This method should be called outside of a Channel Access callback
+	 * otherwise events will not be processed.
+	 * @param timeout the maximum time in seconds to wait for completion
+	 * @return true if complete or false if not
+	 */
+	public boolean await( final double timeout ) {
+		return waitForCompletion( timeout );
+	}
+
 	
 	/** 
 	 * Wait up to the specified timeout for completion. This method should be called outside of a Channel Access callback
 	 * otherwise events will not be processed.
 	 * @param timeout the maximum time in seconds to wait for completion
+	 * @return true if complete or false if not
 	 */
 	public boolean waitForCompletion( final double timeout ) {
 		final long milliTimeout = (long) ( 1000 * timeout );		// timeout in milliseconds
@@ -243,8 +255,22 @@ abstract public class AbstractBatchGetRequest<RecordType extends ChannelRecord> 
 			return new HashSet<Channel>( CHANNELS );
 		}
 	}
-	
-	
+
+
+	/** process the receipt of a new record event */
+	protected void processRecordEvent( final Channel channel, final RecordType record ) {
+		synchronized ( RECORDS ) {
+			RECORDS.put( channel, record );
+			synchronized( PENDING_CHANNELS ) {
+				PENDING_CHANNELS.remove( channel );
+			}
+		}
+
+		EVENT_PROXY.recordReceivedInBatch( this, channel, record );
+		processCurrentStatus();
+	}
+
+
 	/** check for the current status and post notifications if necessary */
 	protected void processCurrentStatus() {
 		if ( isComplete() ) {
