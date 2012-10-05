@@ -89,6 +89,7 @@ abstract public class DispatchQueue implements DispatchOperationListener {
 	/** dispose of the executors */
 	protected void finalize() throws Throwable {
 		releaseResources();		// call this method as dispose() only works for custom queues
+		super.finalize();
 	}
 
 
