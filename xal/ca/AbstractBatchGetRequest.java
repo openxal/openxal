@@ -321,11 +321,13 @@ abstract public class AbstractBatchGetRequest<RecordType extends ChannelRecord> 
 
 	/** process any pending connected channels */
 	private void processPendingConnectedChannels() {
-		if ( !_pendingChannelProcessingQueued ) {
+		if ( !_pendingChannelProcessingQueued ) {		// flag allows pending connected channels to be accumulated so get requests can be submitted in batches
 			_pendingChannelProcessingQueued = true;
 
 			GET_REQUEST_PROCESSING_QUEUE.dispatchAsync( new Runnable() {
 				public void run() {
+					Thread.yield();		// yield to other threads so we can accumulate a batch of channels to process
+					
 					_pendingChannelProcessingQueued = false;
 
 					final Set<Channel> channels = new HashSet<Channel>();
@@ -339,6 +341,7 @@ abstract public class AbstractBatchGetRequest<RecordType extends ChannelRecord> 
 							processRequest( channel );
 						}
 						Channel.flushIO();
+						Thread.yield();		// yield to other threads so we can accumulate a batch of channels to process 
 					}
 					catch( Exception exception ) {
 						exception.printStackTrace();
