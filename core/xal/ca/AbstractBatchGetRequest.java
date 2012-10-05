@@ -12,7 +12,6 @@ import xal.tools.messaging.MessageCenter;
 import xal.tools.dispatch.DispatchQueue;
 
 import java.util.*;
-import java.util.concurrent.*;
 
 
 /** AbstractBatchGetRequest */
