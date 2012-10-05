@@ -40,14 +40,7 @@ public class BatchGetValueRequest extends AbstractBatchGetRequest<ChannelRecord>
 	/** handle get request events */
 	protected class RequestHandler implements IEventSinkValue {
 		public void eventValue( final ChannelRecord record, final Channel channel ) {
-			synchronized ( RECORDS ) {
-				RECORDS.put( channel, record );
-				synchronized( PENDING_CHANNELS ) {
-					PENDING_CHANNELS.remove( channel );
-				}
-			}
-			EVENT_PROXY.recordReceivedInBatch( BatchGetValueRequest.this, channel, record ); 
-			processCurrentStatus();
+			processRecordEvent( channel, record );
 		}
 	}
 }
