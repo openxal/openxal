@@ -26,7 +26,7 @@ import java.util.logging.*;
 //public class RpcServer extends WebServer {
 public class RpcServer {
 	/** terminator for remote messages */
-	final static char REMOTE_MESSAGE_TERMINATOR = '\0';
+	final static char REMOTE_MESSAGE_TERMINATOR = SocketMessageIO.REMOTE_MESSAGE_TERMINATOR;
 
     /** delimeter for encoding remote messages */
     final static private String REMOTE_MESSAGE_DELIMITER = "#";
@@ -156,30 +156,17 @@ public class RpcServer {
             public void run() {
                 while( !remoteSocket.isClosed() ) {
                     try {
-                        final int BUFFER_SIZE = remoteSocket.getReceiveBufferSize();
-                        final char[] streamBuffer = new char[BUFFER_SIZE];
-						final InputStream readStream = remoteSocket.getInputStream();
-                        final BufferedReader reader = new BufferedReader( new InputStreamReader( readStream ) );
-                        final Writer output = new OutputStreamWriter( remoteSocket.getOutputStream() );
-                        
-                        final StringBuilder inputBuffer = new StringBuilder();
-						boolean moreToRead = true;
-                        do {
-                            final int readCount = reader.read( streamBuffer, 0, BUFFER_SIZE );
-                            
-                            if ( readCount == -1 ) {     // the session has been closed
-                                throw new RemoteClientDroppedException( "Session has been closed during read..." );
-                            }
-							else if  ( readCount > 0 ) {
-								inputBuffer.append( streamBuffer, 0, readCount );
-								moreToRead = streamBuffer[readCount - 1] != REMOTE_MESSAGE_TERMINATOR;
-							}
-                        } while ( reader.ready() || readStream.available() > 0 || moreToRead );
-                        
-                        final String jsonRequest = inputBuffer.toString().trim();
-                                                                    
+						String jsonRequest = null;
+						try {
+							jsonRequest = SocketMessageIO.readMessage( remoteSocket );
+						}
+						catch( SocketMessageIO.SocketPrematurelyClosedException exception ) {
+							throw new RemoteClientDroppedException( "Session has been closed during read..." );
+						}
+						
                         final Object requestObject = MESSAGE_CODER.decode( jsonRequest );
                         if ( requestObject instanceof Map ) {
+							final Writer output = new OutputStreamWriter( remoteSocket.getOutputStream() );
                             final Map<String,Object> request = (Map<String,Object>)requestObject;
                             final String message = (String)request.get( "message" );
                             final String[] messageParts = decodeRemoteMessage( message );

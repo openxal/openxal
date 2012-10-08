@@ -358,7 +358,7 @@ class PendingResult {
 /** Remote message processor that can handle serial (noncurrent) requests over the same socket. */
 class SerialRemoteMessageProcessor {
 	/** terminator for remote messages */
-	final static char REMOTE_MESSAGE_TERMINATOR = RpcServer.REMOTE_MESSAGE_TERMINATOR;
+	final static char REMOTE_MESSAGE_TERMINATOR = SocketMessageIO.REMOTE_MESSAGE_TERMINATOR;
 
     /** socket for sending and receiving remote messages */
     final private Socket REMOTE_SOCKET;
@@ -428,36 +428,23 @@ class SerialRemoteMessageProcessor {
     /** process the remote response */
     @SuppressWarnings( "unchecked" )    // no way to know response Object type at compile time
     private void processRemoteResponse( final PendingResult pendingResult ) throws java.net.SocketException, java.io.IOException {
-        final int BUFFER_SIZE = REMOTE_SOCKET.getReceiveBufferSize();
-        final char[] streamBuffer = new char[BUFFER_SIZE];
-		final InputStream readStream = REMOTE_SOCKET.getInputStream();
-        final BufferedReader reader = new BufferedReader( new InputStreamReader( readStream ) );
-        final StringBuilder inputBuffer = new StringBuilder();
-		boolean moreToRead = true;
-        do {
-            final int readCount = reader.read( streamBuffer, 0, BUFFER_SIZE );
+		try {
+			final String jsonResponse = SocketMessageIO.readMessage( REMOTE_SOCKET );
+			if ( jsonResponse != null ) {
+				final Object responseObject = MESSAGE_CODER.decode( jsonResponse );
+				if ( responseObject instanceof Map ) {
+					final Map<String,Object> response = (Map<String,Object>)responseObject;
+					final Object result = response.get( "result" );
+					final RuntimeException remoteException = (RuntimeException)response.get( "error" );
 
-            if ( readCount == -1 ) {     // the session has been closed
-				cleanupClosedSocket( pendingResult, new RemoteServiceDroppedException( "The remote socket has closed while reading the remote response..." ) );
-            }
-            else if  ( readCount > 0 ) {
-                inputBuffer.append( streamBuffer, 0, readCount );
-				moreToRead = streamBuffer[readCount - 1] != REMOTE_MESSAGE_TERMINATOR;
-            }
-        } while ( reader.ready() || readStream.available() > 0 || moreToRead );
-
-        final String jsonResponse = inputBuffer.toString().trim();
-        if ( jsonResponse != null ) {
-            final Object responseObject = MESSAGE_CODER.decode( jsonResponse );
-            if ( responseObject instanceof Map ) {
-                final Map<String,Object> response = (Map<String,Object>)responseObject;
-                final Object result = response.get( "result" );
-                final RuntimeException remoteException = (RuntimeException)response.get( "error" );
-
-				pendingResult.setValue( result );
-				pendingResult.setRemoteException( remoteException );
-            }
-        }
+					pendingResult.setValue( result );
+					pendingResult.setRemoteException( remoteException );
+				}
+			}
+		}
+		catch( SocketMessageIO.SocketPrematurelyClosedException exception ) {
+			cleanupClosedSocket( pendingResult, new RemoteServiceDroppedException( "The remote socket has closed while reading the remote response..." ) );
+		}
     }
 
 
