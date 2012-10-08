@@ -89,10 +89,8 @@ public class ArrayTool {
     
     
     /**
-     * Increment the indices in place.  The lower bounds of each index is 0.
-     * The upper bound of each index is given by the size of the associated 
-     * dimension.  Indices are incremented in the same way that a 
-     * multi-dimensional C array would be incremented.  Namely, the outter most 
+     * Increment the indices in place.  The lower bounds of each index is 0. The upper bound of each index is given by the size of the associated 
+     * dimension.  Indices are incremented in the same way that a multi-dimensional C array would be incremented.  Namely, the outer most 
      * index is the fast index.
      * @param indices       the indices are the set of indices to increment
      * @param dimensions    each element is the size of each dimension
