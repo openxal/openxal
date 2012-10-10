@@ -3,17 +3,16 @@
  */
 package xal.smf.proxy;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
+import xal.sim.scenario.Scenario;
 import xal.sim.scenario.ModelInput;
 import xal.sim.sync.SynchronizationManager;
 import xal.smf.AcceleratorNode;
 import xal.smf.impl.Electromagnet;
 import xal.smf.impl.RfCavity;
 import xal.smf.impl.RfGap;
+import xal.ca.*;
 
 
 /**
@@ -23,85 +22,63 @@ public class PrimaryPropertyAccessor {
 	/** indicates the debugging status for diagnostic typeout */
 	private static final boolean DEBUG = false;
 	
-	/** map of property accessors keyed by node */
-	private static Map<Class<?>,PropertyAccessor> nodeAccessorMap = new HashMap<Class<?>,PropertyAccessor>();
-	
 	// key = accelerator node, value = list of inputs for that node
 	private Map<AcceleratorNode,Map<String,ModelInput>> nodeInputMap = new HashMap<AcceleratorNode,Map<String,ModelInput>>();
 	
 	/** cache of values (excluding model inputs) for node properties keyed by node and the subsequent map is keyed by property to get the value */
 	final private Map<AcceleratorNode, Map<String,Double>> PROPERTY_VALUE_CACHE;
-	
-	
-	// static initializer
-	static {
-		// Accessor Registration
-		registerAccessorInstance( Electromagnet.class, new ElectromagnetPropertyAccessor() );
-		registerAccessorInstance( RfGap.class, new RfGapPropertyAccessor() );
-		registerAccessorInstance( RfCavity.class, new RfCavityPropertyAccessor() );
-	}
+
+	/** batch accessor for node properties */
+	private BatchPropertyAccessor _batchAccessor;
 	
 	
 	/** Constructor */
 	public PrimaryPropertyAccessor() {
 		PROPERTY_VALUE_CACHE = new HashMap<AcceleratorNode, Map<String,Double>>();
+		_batchAccessor = BatchPropertyAccessor.getInstance( Scenario.SYNC_MODE_DESIGN );
 	}
-	
-	
-	/**
-	 * Returns the double value for the specified property of the supplied node, using the specified mode.
-	 * @param node AcceleratorNode to get property value for
-	 * @param property name of node property to get value for
-	 * @param mode either PropertyAccessor.SYNC_MODE_LIVE or
-	 * PropertyAccessor.SYNC_MODE_Design
-	 * @return a double value for the specified node property using mode
-	 * @throws ProxyException if the node's accessor encounters an error getting a property value
-	 */
-	protected static double doubleValueFor( final AcceleratorNode node, final String property, final String mode ) throws ProxyException {
-		if ((node == null) || (property == null) || (mode == null))
-			throw new IllegalArgumentException(
-				"null arguments not allowed by doubleValueFor");
-		if (! (SynchronizationManager.syncModes().contains(mode)))
-			throw new IllegalArgumentException(
-				"illegal sync mode value");
-		PropertyAccessor accessor = getAccessorFor(node);
-		if (accessor == null)
-			throw new IllegalArgumentException(
-				"No accessor registered for: " + node.getClass().getName());
-		return accessor.doubleValueFor(node, property, mode);
+
+
+	/** request values for the nodes and the specified sync mode */
+	public void requestValuesForNodes( final Collection<AcceleratorNode> nodes, final String syncMode ) {
+		final BatchPropertyAccessor batchAccessor = BatchPropertyAccessor.getInstance( syncMode );
+		batchAccessor.requestValuesForNodes( nodes );
+		_batchAccessor = batchAccessor;
 	}
+
 	
 	/**
 	 * Returns a Map of property values for the supplied node.  The map's keys are the property names as defined by the node class' propertyNames
 	 * method, values are the Double value for that property on aNode.
 	 * @param objNode the AcclereatorNode whose properties to return
-	 * @param mode synchronization mode
 	 * @return a Map of node property values
 	 * @throws ProxyException if the node's accessor encounters an error getting a property value
 	 */
-	public Map<String,Double> valueMapFor( final Object objNode, final String mode ) throws ProxyException {
-		if ( (objNode == null) || (mode == null) ) {
+	public Map<String,Double> valueMapFor( final Object objNode ) {
+		if ( (objNode == null) ) {
 			throw new IllegalArgumentException( "null arguments not allowed by doubleValueFor" );
 		}
 		if (! (objNode instanceof AcceleratorNode)) {
 			throw new IllegalArgumentException( "expected instance of AcceleratorNode" );
 		}
-		if (! (SynchronizationManager.syncModes().contains(mode))) {
-			throw new IllegalArgumentException( "illegal sync mode value" );
-		}
+
 		AcceleratorNode aNode = (AcceleratorNode) objNode;
-		PropertyAccessor nodeAccessor = getAccessorFor(aNode);
+		
+		PropertyAccessor nodeAccessor = getAccessorFor( aNode );
 		if (nodeAccessor == null) {
 			throw new IllegalArgumentException( "unknown node type: " + aNode.getClass().getName() );
 		}
-		final List<String> properties = nodeAccessor.propertyNames();
-		final Map<String,Double> valueMap = new HashMap<String,Double>( properties.size() );
-		for ( final String property : properties ) {
-			valueMap.put( property, nodeAccessor.doubleValueFor( aNode, property, mode ) );
-		}
+
+		final Map<String,Double> valueMap = _batchAccessor.valueMapFor( aNode );
+
+		// cache the values
 		PROPERTY_VALUE_CACHE.put( aNode, new HashMap<String,Double>( valueMap ) );		// need to copy it so we don't override the raw values
+
+		// apply whatif settings
 		addInputOverrides( aNode, valueMap );
+
 		if (DEBUG) printValueMap( aNode, valueMap );
+		
 		return valueMap;
 	}
 	
@@ -123,42 +100,27 @@ public class PrimaryPropertyAccessor {
 	
 	/**
 	 * Returns a List of property names for the supplied node.
-	 * 
 	 * @param aNode AcceleratorNode whose property names to return
 	 * @return a List of property names for aNode
 	 */
 	public List<String> propertyNamesFor( final AcceleratorNode aNode ) {
-		if ( aNode == null )  throw new IllegalArgumentException("can't get property names for null node");
-		final PropertyAccessor nodeAccessor = getAccessorFor( aNode );
-		if (nodeAccessor == null)  throw new IllegalArgumentException( "unregistered node type: " + aNode.getClass().getName() );
-		return nodeAccessor.propertyNames();
+		return _batchAccessor.propertyNamesFor( aNode );
 	}
-	
-	
-	// Node-Specific Factory Operations ========================================
 
-	private static PropertyAccessor getAccessorFor( final AcceleratorNode aNode ) {
-		for ( final Class<?> nodeClass : nodeAccessorMap.keySet() ) {
-			if ( nodeClass.isInstance( aNode ) ) {
-				return nodeAccessorMap.get( nodeClass );
-			}
-		}
-		return null;
+
+	/** get the accessor for the specified node */
+	public PropertyAccessor getAccessorFor( final AcceleratorNode node ) {
+		return BatchPropertyAccessor.getAccessorFor( node );
 	}
+
 	
 	/**
-	 * Returns true if there is an accessor for the specified node type, false
-	 * otherwise.
-	 * 
+	 * Returns true if there is an accessor for the specified node type, false otherwise.
 	 * @param aNode AcceleratorNode whose type to find an accessor for
 	 * @return true if there is an accessor for the supplied node, false otherwise
 	 */
 	public boolean hasAccessorFor(AcceleratorNode aNode) {
-		return getAccessorFor(aNode) != null;
-	}
-	
-	private static void registerAccessorInstance( final Class<?> nodeClass, final PropertyAccessor accessor ) {
-		nodeAccessorMap.put( nodeClass, accessor );
+		return _batchAccessor.hasAccessorFor( aNode );
 	}
 
 
@@ -328,5 +290,192 @@ public class PrimaryPropertyAccessor {
 		
 		System.out.println();
 	}
+}
+
+
+
+/** Accessor for property values in batch */
+abstract class BatchPropertyAccessor {
+	/** map of property accessors keyed by node */
+	final private static Map<Class<?>,PropertyAccessor> NODE_ACCESSORS = new HashMap<Class<?>,PropertyAccessor>();
+
+
+	// static initializer
+	static {
+		// Accessor Registration
+		registerAccessorInstance( Electromagnet.class, new ElectromagnetPropertyAccessor() );
+		registerAccessorInstance( RfGap.class, new RfGapPropertyAccessor() );
+		registerAccessorInstance( RfCavity.class, new RfCavityPropertyAccessor() );
+	}
+
+
+	/** register the property accessor for each supported node class */
+	private static void registerAccessorInstance( final Class<?> nodeClass, final PropertyAccessor accessor ) {
+		NODE_ACCESSORS.put( nodeClass, accessor );
+	}
+
+
+	/**
+	 * Returns a List of property names for the supplied node.
+	 * @param aNode AcceleratorNode whose property names to return
+	 * @return a List of property names for aNode
+	 */
+	public List<String> propertyNamesFor( final AcceleratorNode aNode ) {
+		if ( aNode == null )  throw new IllegalArgumentException("can't get property names for null node");
+		final PropertyAccessor nodeAccessor = getAccessorFor( aNode );
+		if (nodeAccessor == null)  throw new IllegalArgumentException( "unregistered node type: " + aNode.getClass().getName() );
+		return nodeAccessor.propertyNames();
+	}
+
+
+	/** get the accessor for the specified node */
+	protected static PropertyAccessor getAccessorFor( final AcceleratorNode node ) {
+		for ( final Class<?> nodeClass : NODE_ACCESSORS.keySet() ) {
+			if ( nodeClass.isInstance( node ) ) {
+				return NODE_ACCESSORS.get( nodeClass );
+			}
+		}
+		
+		return null;
+	}
+
+	/**
+	 * Returns true if there is an accessor for the specified node type, false otherwise.
+	 * @param aNode AcceleratorNode whose type to find an accessor for
+	 * @return true if there is an accessor for the supplied node, false otherwise
+	 */
+	public boolean hasAccessorFor(AcceleratorNode aNode) {
+		return getAccessorFor( aNode ) != null;
+	}
+
+
+	/** make the request for values for the specified nodes */
+	abstract public void requestValuesForNodes( final Collection<AcceleratorNode> nodes );
+
+
+	/**
+	 * Returns a Map of property values for the supplied node.  The map's keys are the property names as defined by the node class' propertyNames, values are the Double value for that property on node.
+	 * @param node the AcclereatorNode whose properties to return
+	 * @return a Map of node property values keyed by property name
+	 */
+	abstract public Map<String,Double> valueMapFor( final AcceleratorNode node );
 	
+
+	/** get the instance for the specified synchronization mode */
+	static BatchPropertyAccessor getInstance( final String syncMode ) {
+		if ( syncMode == null ) {
+			throw new IllegalArgumentException( "Null Synchronization mode" );
+		}
+		else if ( syncMode.equals( Scenario.SYNC_MODE_LIVE ) ) {
+			return new LiveBatchPropertyAccessor();
+		}
+		else if ( syncMode.equals( Scenario.SYNC_MODE_DESIGN ) ) {
+			return new DesignBatchPropertyAccessor();
+		}
+		else if ( syncMode.equals( Scenario.SYNC_MODE_RF_DESIGN ) ) {
+			return new LiveRFDesignBatchPropertyAccessor();
+		}
+		else {
+			throw new IllegalArgumentException( "Unknown Synchronization mode: " + syncMode );
+		}
+	}
+}
+
+
+
+/** Accessor for property values in batch */
+class DesignBatchPropertyAccessor extends BatchPropertyAccessor {
+	/** make the request for values for the specified nodes */
+	public void requestValuesForNodes( final Collection<AcceleratorNode> nodes ) {}
+
+
+	/**
+	 * Returns a Map of property values for the supplied node.  The map's keys are the property names as defined by the node class' propertyNames, values are the Double value for that property on node.
+	 * @param node the AcclereatorNode whose properties to return
+	 * @return a Map of node property values
+	 */
+	public Map<String,Double> valueMapFor( final AcceleratorNode node ) {
+		final PropertyAccessor accessor = getAccessorFor( node );
+		return accessor.getDesignValueMap( node );
+	}
+}
+
+
+
+/** Accessor for property values in batch */
+class LiveBatchPropertyAccessor extends BatchPropertyAccessor {
+	/** channel value keyed by channel */
+	protected Map<Channel,Double> _channelValues;
+	
+
+	/** make the request for values for the specified nodes */
+	public void requestValuesForNodes( final Collection<AcceleratorNode> nodes ) {
+		final Set<Channel> channels = new HashSet<Channel>();
+		for ( final AcceleratorNode node : nodes ) {
+			final PropertyAccessor accessor = getAccessorFor( node );
+			channels.addAll( accessor.getLiveChannels( node ) );
+		}
+
+		final BatchGetValueRequest request = new BatchGetValueRequest( channels );
+		request.submitAndWait( 5.0 );
+
+		final Map<Channel,Double> channelValues = new HashMap<Channel,Double>();
+		for ( final Channel channel : channels ) {
+			final ChannelRecord record = request.getRecord( channel );
+			channelValues.put( channel, record.doubleValue() );
+		}
+
+		_channelValues = channelValues;
+	}
+
+
+	/**
+	 * Returns a Map of property values for the supplied node.  The map's keys are the property names as defined by the node class' propertyNames, values are the Double value for that property on node.
+	 * @param node the AcclereatorNode whose properties to return
+	 * @return a Map of node property values
+	 */
+	public Map<String,Double> valueMapFor( final AcceleratorNode node ) {
+		final PropertyAccessor accessor = getAccessorFor( node );
+		return accessor.getLiveValueMap( node, _channelValues );
+	}
+}
+
+
+
+/** Accessor for property values in batch */
+class LiveRFDesignBatchPropertyAccessor extends BatchPropertyAccessor {
+	/** channel value keyed by channel */
+	protected Map<Channel,Double> _channelValues;
+
+
+	/** make the request for values for the specified nodes */
+	public void requestValuesForNodes( final Collection<AcceleratorNode> nodes ) {
+		final Set<Channel> channels = new HashSet<Channel>();
+		for ( final AcceleratorNode node : nodes ) {
+			final PropertyAccessor accessor = getAccessorFor( node );
+			channels.addAll( accessor.getLiveRFDesignChannels( node ) );
+		}
+
+		final BatchGetValueRequest request = new BatchGetValueRequest( channels );
+		request.submitAndWait( 5.0 );
+
+		final Map<Channel,Double> channelValues = new HashMap<Channel,Double>();
+		for ( final Channel channel : channels ) {
+			final ChannelRecord record = request.getRecord( channel );
+			channelValues.put( channel, record.doubleValue() );
+		}
+
+		_channelValues = channelValues;
+	}
+
+
+	/**
+	 * Returns a Map of property values for the supplied node.  The map's keys are the property names as defined by the node class' propertyNames, values are the Double value for that property on node.
+	 * @param node the AcclereatorNode whose properties to return
+	 * @return a Map of node property values
+	 */
+	public Map<String,Double> valueMapFor( final AcceleratorNode node ) {
+		final PropertyAccessor accessor = getAccessorFor( node );
+		return accessor.getLiveRFDesignValueMap( node, _channelValues );
+	}
 }

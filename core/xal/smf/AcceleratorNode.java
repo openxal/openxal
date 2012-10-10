@@ -248,7 +248,24 @@ public abstract class AcceleratorNode implements /* IElement, */ ElementType, Da
         return tmpChan;
     }
     
-    
+
+	/** Get the design value for the specified property */
+	public double getDesignPropertyValue( final String propertyName ) {
+		throw new UnsupportedOperationException( "getDesignPropertyValue is not implemented for this class: " + getClass() );
+	}
+
+
+	/** Get the live property value for the corresponding array of channel values in the order given by getLivePropertyChannels() */
+	public double getLivePropertyValue( final String propertyName, final double[] channelValues ) {
+		throw new UnsupportedOperationException( "getLivePropertyValue is not implemented for this class: " + getClass() );
+	}
+
+
+	/** Get the array of channels for the specified property */
+	public Channel[] getLivePropertyChannels( final String propertyName ) {
+		throw new UnsupportedOperationException( "getLivePropertyChannels is not implemented for this class: " + getClass() );
+	}
+
     
     
     /*
