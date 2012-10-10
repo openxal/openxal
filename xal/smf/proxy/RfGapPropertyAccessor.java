@@ -3,122 +3,101 @@
  */
 package xal.smf.proxy;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
-import xal.sim.scenario.Scenario;
-import xal.sim.sync.SynchronizationManager;
 import xal.smf.AcceleratorNode;
 import xal.smf.impl.RfGap;
+import xal.ca.Channel;
 
 /**
  * Returns property values for RfGap nodes.
- * 
  * @author Craig McChesney
+ * @author Tom Pelaia
  */
-public class RfGapPropertyAccessor implements PropertyAccessor {
+public class RfGapPropertyAccessor extends AbstractPropertyAccessor {
 	
 	// Constants ===============================================================
 	
 	// Property Names
+	public static final String PROPERTY_ETL = RfGap.Property.ETL.toString();
+	public static final String PROPERTY_PHASE = RfGap.Property.PHASE.toString();
+	public static final String PROPERTY_FREQUENCY = RfGap.Property.FREQUENCY.toString();
+	public static final String PROPERTY_E0 = RfGap.Property.FIELD.toString();
 	
-	public static final String PROPERTY_ETL = "ETL";
-	public static final String PROPERTY_PHASE = "Phase";
-	public static final String PROPERTY_FREQUENCY = "Frequency";
-	public static final String PROPERTY_E0 = "Field";
 	
-	
-	// Method Names
-	
-	public static final String METHOD_LIVE_ETL = "getGapE0TL";	
-	public static final String METHOD_LIVE_PHASE = "getGapPhaseAvg";	
-	public static final String METHOD_LIVE_FREQUENCY = "getGapDfltFrequency";	
-	public static final String METHOD_LIVE_E0 = "getGapAmpAvg";		
-	public static final String METHOD_DESIGN_ETL = "getGapDfltE0TL";	
-	public static final String METHOD_DESIGN_PHASE = "getGapDfltPhase";	
-	public static final String METHOD_DESIGN_FREQUENCY = "getGapDfltFrequency";	
-	public static final String METHOD_DESIGN_E0 = "getGapDfltAmp";		
-	// Scaling Factors for unit conversion
-	
+	// Scaling Factors for unit conversion	
 	public static final double SCALE_ETL = 1.e6;
 	public static final double SCALE_PHASE = Math.PI/180.;
 	public static final double SCALE_FREQUENCY = 1.e6;
-	public static final double SCALE_E0= 1.e6; 
+	public static final double SCALE_E0 = 1.e6;
+
+
+	/** scale factors keyed by property name */
+	private static final Map<String,Double> PROPERTY_SCALE_FACTORS;
 	
 	
 	// Static Variables ========================================================
-	
-	private static ArrayList<String> propertyNames;
-	
-	private static HashMap<String,PropertyProxy> liveProxies;
-	private static HashMap<String,PropertyProxy> designProxies;
-	
+	private static List<String> PROPERTY_NAMES;
+
 	
 	// Static Initialization ===================================================
 	
 	static {
-		propertyNames = new ArrayList<String>();
-		propertyNames.add(PROPERTY_ETL);
-		propertyNames.add(PROPERTY_PHASE);
-		propertyNames.add(PROPERTY_FREQUENCY);
-		propertyNames.add(PROPERTY_E0);
-		
-		initLiveProxies();
-		
-		initDesignProxies();
-	}
-	
-	private static void initLiveProxies() {
-		liveProxies = new HashMap<String,PropertyProxy>(propertyNames.size());
-		liveProxies.put(PROPERTY_ETL, 
-			new PropertyProxy(RfGap.class, METHOD_LIVE_ETL, SCALE_ETL));
-		liveProxies.put(PROPERTY_PHASE,
-			new PropertyProxy(RfGap.class, METHOD_LIVE_PHASE, SCALE_PHASE));
-		liveProxies.put(PROPERTY_FREQUENCY,
-			new PropertyProxy(RfGap.class, METHOD_LIVE_FREQUENCY, SCALE_FREQUENCY));
-		liveProxies.put(PROPERTY_E0,
-			new PropertyProxy(RfGap.class, METHOD_LIVE_E0, SCALE_E0));			
-	}
-	
-	private static void initDesignProxies() {
-		designProxies = new HashMap<String,PropertyProxy>(propertyNames.size());
-		designProxies.put(PROPERTY_ETL, 
-			new PropertyProxy(RfGap.class, METHOD_DESIGN_ETL, SCALE_ETL));
-		designProxies.put(PROPERTY_PHASE,
-			new PropertyProxy(RfGap.class, METHOD_DESIGN_PHASE, SCALE_PHASE));
-		designProxies.put(PROPERTY_FREQUENCY,
-			new PropertyProxy(RfGap.class, METHOD_DESIGN_FREQUENCY, SCALE_FREQUENCY));
-		designProxies.put(PROPERTY_E0,
-			new PropertyProxy(RfGap.class, METHOD_DESIGN_E0, SCALE_E0));			
-	}
-	
-	
-    // PropertyAccessor Interface ==============================================
+		PROPERTY_NAMES = new ArrayList<String>();
+		PROPERTY_NAMES.add( PROPERTY_ETL );
+		PROPERTY_NAMES.add( PROPERTY_PHASE );
+		PROPERTY_NAMES.add( PROPERTY_FREQUENCY );
+		PROPERTY_NAMES.add( PROPERTY_E0 );
 
-	@Override
-    public double doubleValueFor(AcceleratorNode node, String property, String mode) throws ProxyException {
-        PropertyProxy proxy = null;
-        if (mode.equals(Scenario.SYNC_MODE_LIVE)) {
-            proxy = liveProxies.get(property);
-        } else if (mode.equals(Scenario.SYNC_MODE_DESIGN)) {
-            proxy = designProxies.get(property);
-        } else if (mode.equals(Scenario.SYNC_MODE_RF_DESIGN)) {
-            proxy = designProxies.get(property);
-        } else {
-            throw new IllegalArgumentException("Unknown mode: " + mode);
-        }
-        if (proxy == null)
-            throw new IllegalArgumentException("Unknown property: " + property);
-        return proxy.doubleValueFor(node);
-    }
-    
+		PROPERTY_SCALE_FACTORS = new HashMap<String,Double>();
+		PROPERTY_SCALE_FACTORS.put( PROPERTY_ETL, SCALE_ETL );
+		PROPERTY_SCALE_FACTORS.put( PROPERTY_PHASE, SCALE_PHASE );
+		PROPERTY_SCALE_FACTORS.put( PROPERTY_FREQUENCY, SCALE_FREQUENCY );
+		PROPERTY_SCALE_FACTORS.put( PROPERTY_E0, SCALE_E0 );
+	}
+
 	
-	// Accessing ===============================================================
+	/** Get the scale factor for the specified property */
+	protected double getPropertyScale( final String propertyName ) {
+		final Double scaleFactor = PROPERTY_SCALE_FACTORS.get( propertyName );
+		return scaleFactor != null ? scaleFactor : 1.0;
+	}
 	
+	
+	/** get the map of design values keyed by property name */
+	public Map<String,Double> getDesignValueMap( final AcceleratorNode node ) {
+		return getDesignValueMap( node, PROPERTY_NAMES );
+	}
+
+
+	/** get the map of live values keyed by property name */
+	public Map<String,Double> getLiveValueMap( final AcceleratorNode node, final Map<Channel,Double> channelValues ) {
+		return getLiveValueMap( node, channelValues, PROPERTY_NAMES );
+	}
+
+
+	/** get the map of live RF design values keyed by property name */
+	public Map<String,Double> getLiveRFDesignValueMap( final AcceleratorNode node, final Map<Channel,Double> channelValues ) {
+		return getDesignValueMap( node );
+	}
+
+
+	/** get the channels for live property access */
+	public Collection<Channel> getLiveChannels( final AcceleratorNode node ) {
+		return getLiveChannels( node, PROPERTY_NAMES );
+	}
+
+
+	/** get the channels for live property access with design RF */
+	public Collection<Channel> getLiveRFDesignChannels( final AcceleratorNode node ) {
+		return Collections.<Channel>emptySet();
+	}
+
+	
+	/** get the list of property names */
     @SuppressWarnings( "unchecked" )    // clone doesn't support generics, so we must cast
 	public List<String> propertyNames() {
-		return (List<String>) propertyNames.clone();
+		return new ArrayList<String>( PROPERTY_NAMES );
 	}
 
 }

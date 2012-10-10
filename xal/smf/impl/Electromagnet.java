@@ -21,6 +21,9 @@ import java.util.*;
  * @author  tap
  */
 abstract public class Electromagnet extends Magnet {
+	/** accessible properties */
+	public enum Property { FIELD }
+
     /** the node type */
     public static final String      s_strType   = "emag";
 	
@@ -163,7 +166,44 @@ abstract public class Electromagnet extends Magnet {
     public MagnetMainSupply getMainSupply() {
         return getAccelerator().getMagnetMainSupply( mainSupplyId );
     }
-    
+
+
+	/** Get the design value for the specified property */
+	public double getDesignPropertyValue( final String propertyName ) {
+		final Property property = Property.valueOf( propertyName );
+		switch( property ) {
+			case FIELD:
+				return getDesignField();
+			default:
+				return Double.NaN;
+		}
+	}
+
+
+	/** Get the live property value for the corresponding array of channel values in the order given by getLivePropertyChannels() */
+	public double getLivePropertyValue( final String propertyName, final double[] channelValues ) {
+		final Property property = Property.valueOf( propertyName );
+		switch( property ) {
+			case FIELD:
+				return toFieldFromCA( channelValues[0] );
+			default:
+				return Double.NaN;
+		}
+	}
+
+
+	/** Get the array of channels for the specified property */
+	public Channel[] getLivePropertyChannels( final String propertyName ) {
+		final Property property = Property.valueOf( propertyName );
+		switch( property ) {
+			case FIELD:
+				final Channel fieldChannel = _useFieldReadback ? findChannel( FIELD_RB_HANDLE ) : findChannel( MagnetMainSupply.FIELD_SET_HANDLE );
+				return new Channel[] { fieldChannel };
+			default:
+				return null;
+		}
+	}
+
         
     /**
      * Set the cycle enable state of the magnet.  If enabled, the magnet will 

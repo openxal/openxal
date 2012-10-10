@@ -111,7 +111,41 @@ public class TrimmedQuadrupole extends Quadrupole implements TrimmedMagnet {
     public MagnetTrimSupply getTrimSupply() {
         return getAccelerator().getMagnetTrimSupply( _trimSupplyID );
     }
-    
+
+
+	/** Get the live property value for the corresponding array of channel values in the order given by getLivePropertyChannels() */
+	public double getLivePropertyValue( final Property property, final double[] channelValues ) {
+		switch( property ) {
+			case FIELD:
+				// no matter whether the readback or setpoint, the field is the total of all associated field values
+				double totalField = 0.0;
+				for ( final double channelValue : channelValues ) {
+					totalField += toFieldFromCA( channelValue );
+				}
+				return totalField;
+			default:
+				return Double.NaN;
+		}
+	}
+
+
+	/** Get the array of channels for the specified property */
+	public Channel[] getLivePropertyChannels( final Property property ) {
+		switch( property ) {
+			case FIELD:
+				if ( _useFieldReadback ) {
+					return new Channel[] { findChannel( FIELD_RB_HANDLE ) };
+				}
+				else {
+					final Channel mainFieldSetChannel = findChannel( MagnetMainSupply.FIELD_SET_HANDLE );
+					final Channel trimFieldSetChannel = findChannel( MagnetTrimSupply.FIELD_SET_HANDLE );
+					return new Channel[] { mainFieldSetChannel, trimFieldSetChannel };
+				}
+			default:
+				return null;
+		}
+	}
+
     
     /** 
 	 * Set the trim power supply field contribution in the magnet.  If cycle enable 

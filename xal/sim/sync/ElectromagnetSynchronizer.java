@@ -39,7 +39,7 @@ public class ElectromagnetSynchronizer implements Synchronizer {
 
 		final IElectromagnet mag = (IElectromagnet) anElem;
 		final Double field = valueMap.get( ElectromagnetPropertyAccessor.PROPERTY_FIELD );
-		if ( field == null )  throw new SynchronizationException( "missing value for Field property" );
+		if ( field == null )  throw new SynchronizationException( "missing value for Field property: " );
 		if ( mag.getMagField() != field.doubleValue() )  throw new SynchronizationException( "synchronized value doesn't agree with node property" );
 	}
 	

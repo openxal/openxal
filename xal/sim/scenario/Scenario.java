@@ -15,7 +15,6 @@ import xal.sim.sync.SynchronizationManager;
 import xal.smf.AcceleratorNode;
 import xal.smf.AcceleratorSeq;
 import xal.smf.Ring;
-import xal.smf.proxy.ProxyException;
 
 import java.util.List;
 import java.util.Map;
@@ -298,15 +297,8 @@ public class Scenario {
      * @throws IllegalArgumentException if aNode is null
      */
     public Map<String,Double> propertiesForNode( final AcceleratorNode aNode ) throws SynchronizationException {
-        if (aNode == null)
-            throw new IllegalArgumentException(
-                "node cannot be null getting property values");
-        try {
-            return syncManager.propertiesForNode(aNode);
-        } catch (ProxyException e) {
-            throw new SynchronizationException("ProxyException getting properties for: " + 
-                    aNode);
-        }
+        if (aNode == null)  throw new IllegalArgumentException( "node cannot be null getting property values" );
+		return syncManager.propertiesForNode(aNode);
     }
     
 	

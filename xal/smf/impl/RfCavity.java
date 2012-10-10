@@ -33,6 +33,10 @@ import xal.tools.math.poly.UnivariateRealPolynomial;
  */
 
 public class RfCavity extends AcceleratorSeq implements RfCavityDataSource {
+	/** accessible properties */
+	public enum Property { AMPLITUDE, PHASE }
+
+
     /*
      * Constant PV signal names
      */
@@ -153,7 +157,49 @@ public class RfCavity extends AcceleratorSeq implements RfCavityDataSource {
 
         super.addBucket(buc);
     }
-    
+
+
+	/** Get the design value for the specified property */
+	public double getDesignPropertyValue( final String propertyName ) {
+		final Property property = Property.valueOf( propertyName );
+		switch( property ) {
+			case AMPLITUDE:
+				return getDfltCavAmp();
+			case PHASE:
+				return getDfltCavPhase();
+			default:
+				return Double.NaN;
+		}
+	}
+
+
+	/** Get the live property value for the corresponding array of channel values in the order given by getLivePropertyChannels() */
+	public double getLivePropertyValue( final String propertyName, final double[] channelValues ) {
+		final Property property = Property.valueOf( propertyName );
+		switch( property ) {
+			case AMPLITUDE:
+				return toCavAmpAvgFromCA( channelValues[0] );
+			case PHASE:
+				return toCavPhaseAvgFromCA( channelValues[0] );
+			default:
+				return Double.NaN;
+		}
+	}
+
+
+	/** Get the array of channels for the specified property */
+	public Channel[] getLivePropertyChannels( final String propertyName ) {
+		final Property property = Property.valueOf( propertyName );
+		switch( property ) {
+			case AMPLITUDE:
+				return new Channel[] { findChannel( CAV_AMP_AVG_HANDLE ) };
+			case PHASE:
+				return new Channel[] { findChannel( CAV_PHASE_AVG_HANDLE ) };
+			default:
+				return null;
+		}
+	}
+
 
     private Channel cavAmpSetC = null;
     private Channel cavPhaseSetC = null;

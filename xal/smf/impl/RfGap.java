@@ -1,5 +1,6 @@
 package xal.smf.impl;
 
+import xal.ca.Channel;
 import xal.ca.ConnectionException;
 import xal.ca.GetException;
 import xal.model.source.RfGapDataSource;
@@ -24,8 +25,10 @@ import xal.tools.math.poly.UnivariateRealPolynomial;
  */
 
 public class RfGap extends AcceleratorNode implements RfGapDataSource {
-    
-    
+	/** accessible properties */
+	public enum Property { ETL, PHASE, FREQUENCY, FIELD }
+
+
     /*
      *  Constants
      */
@@ -107,6 +110,64 @@ public class RfGap extends AcceleratorNode implements RfGapDataSource {
 	
     // public process variable accessors ---------------------------
 
+
+	/** Get the design value for the specified property */
+	public double getDesignPropertyValue( final String propertyName ) {
+		final Property property = Property.valueOf( propertyName );
+		switch( property ) {
+			case ETL:
+				return getGapDfltE0TL();
+			case PHASE:
+				return getGapDfltPhase();
+			case FREQUENCY:
+				return getGapDfltFrequency();
+			case FIELD:
+				return getGapDfltAmp();
+			default:
+				return Double.NaN;
+		}
+	}
+
+
+	/** Get the live property value for the corresponding array of channel values in the order given by getLivePropertyChannels() */
+	public double getLivePropertyValue( final String propertyName, final double[] channelValues ) {
+        final RfCavity cavity = (RfCavity)this.getParent();
+		
+		final Property property = Property.valueOf( propertyName );
+		switch( property ) {
+			case ETL:
+				final double gapField = toGapAmpFromCavityAmp( cavity.getLivePropertyValue( RfCavity.Property.AMPLITUDE.toString(), channelValues ) );
+				return toE0TLFromGapField( gapField );
+			case FIELD:
+				return toGapAmpFromCavityAmp( cavity.getLivePropertyValue( RfCavity.Property.AMPLITUDE.toString(), channelValues ) );
+			case PHASE:
+				return toGapPhaseFromCavityPhase( cavity.getLivePropertyValue( RfCavity.Property.PHASE.toString(), channelValues ) );
+			case FREQUENCY:
+				return getGapDfltFrequency();
+			default:
+				return Double.NaN;
+		}
+	}
+
+
+	/** Get the array of channels for the specified property */
+	public Channel[] getLivePropertyChannels( final String propertyName ) {
+        final RfCavity cavity = (RfCavity)this.getParent();
+		
+		final Property property = Property.valueOf( propertyName );
+		switch( property ) {
+			case ETL: case FIELD:
+				return cavity.getLivePropertyChannels( RfCavity.Property.AMPLITUDE.toString() );
+			case PHASE:
+				return cavity.getLivePropertyChannels( RfCavity.Property.PHASE.toString() );
+			case FREQUENCY:
+				return new Channel[0];
+			default:
+				return null;
+		}
+	}
+
+	
     /** return the RF amplitude in the gap (kV/m). Note, this method should probably be modified */
     public double getGapAmpAvg() throws ConnectionException, GetException {
         final RfCavity rfCav = (RfCavity) this.getParent();

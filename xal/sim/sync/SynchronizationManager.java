@@ -3,11 +3,7 @@
  */
 package xal.sim.sync;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import xal.model.IComponent;
 import xal.model.IComposite;
@@ -19,7 +15,6 @@ import xal.sim.scenario.ModelInput;
 import xal.sim.scenario.Scenario;
 import xal.smf.AcceleratorNode;
 import xal.smf.proxy.PrimaryPropertyAccessor;
-import xal.smf.proxy.ProxyException;
 
 /**
  * Manages synchronization mappings between accelerator node proxies and
@@ -79,9 +74,8 @@ public class SynchronizationManager {
 
 	// Public State ============================================================
 	
-	public void setSynchronizationMode(String newMode) {
-		if (! SynchronizationManager.syncModes.contains(newMode))
-			throw new IllegalArgumentException("unknown synchronization mode: " + newMode);
+	public void setSynchronizationMode( final String newMode ) {
+		if ( !SynchronizationManager.syncModes.contains( newMode ) )  throw new IllegalArgumentException( "unknown synchronization mode: " + newMode );
 		syncMode = newMode;
 	}
 	
@@ -96,16 +90,12 @@ public class SynchronizationManager {
 	// Public Synchronization operations =======================================
 	
 	public void resync() throws SynchronizationException {
-		for ( final AcceleratorNode node : synchronizedNodeElems.keySet() ) {
-			Map<String,Double> valueMap;
-			try {
-				valueMap = propertyAccessor.valueMapFor( node, syncMode );
-			}
-			catch ( ProxyException exception ) {
-				exception.printStackTrace();
-				throw new SynchronizationException( "ProxyException getting properties for: " + node.getId() );
-			}
-			
+		final Collection<AcceleratorNode> nodes = synchronizedNodeElems.keySet();
+		propertyAccessor.requestValuesForNodes( nodes, syncMode );
+		
+		for ( final AcceleratorNode node : nodes ) {
+			final Map<String,Double> valueMap = propertyAccessor.valueMapFor( node );
+
 			for ( final IElement elem : synchronizedNodeElems.get( node ) ) {
 				resync(elem, valueMap);
 			}
@@ -190,10 +180,11 @@ public class SynchronizationManager {
 
 // Queries =================================================================
 	
-	public Map<String,Double> propertiesForNode( final AcceleratorNode aNode ) throws ProxyException {
-		return propertyAccessor.valueMapFor( aNode, syncMode );
+	public Map<String,Double> propertiesForNode( final AcceleratorNode aNode ) {
+		propertyAccessor.requestValuesForNodes( Collections.singleton( aNode ), syncMode );
+		return propertyAccessor.valueMapFor( aNode );
 	}
-	
+
 	// Node - Element Mapping ==================================================
 	
 	private void addElementMappedTo(IElement anElem, AcceleratorNode aNode) {
