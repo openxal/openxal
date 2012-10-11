@@ -354,7 +354,7 @@ abstract class BatchPropertyAccessor {
 
 
 	/**
-	 * Returns a Map of property values for the supplied node.  The map's keys are the property names as defined by the node class' propertyNames, values are the Double value for that property on node.
+	 * Get a Map of property values for the supplied node keyd by property name.
 	 * @param node the AcclereatorNode whose properties to return
 	 * @return a Map of node property values keyed by property name
 	 */
@@ -390,7 +390,7 @@ class DesignBatchPropertyAccessor extends BatchPropertyAccessor {
 
 
 	/**
-	 * Returns a Map of property values for the supplied node.  The map's keys are the property names as defined by the node class' propertyNames, values are the Double value for that property on node.
+	 * Get a Map of property values for the supplied node keyd by property name.
 	 * @param node the AcclereatorNode whose properties to return
 	 * @return a Map of node property values
 	 */
@@ -402,27 +402,51 @@ class DesignBatchPropertyAccessor extends BatchPropertyAccessor {
 
 
 
-/** Accessor for property values in batch */
-class LiveBatchPropertyAccessor extends BatchPropertyAccessor {
+/** batch property accessor which is based on channels */
+abstract class BatchChannelPropertyAccessor extends BatchPropertyAccessor {
 	/** channel value keyed by channel */
 	protected Map<Channel,Double> _channelValues;
-	
+
 
 	/** make the request for values for the specified nodes */
 	public void requestValuesForNodes( final Collection<AcceleratorNode> nodes ) {
+		// assign an empty map at the start should something go wrong later
+		_channelValues = Collections.<Channel,Double>emptyMap();
+
+		// collect all the channels from every node's properties
 		final Set<Channel> channels = new HashSet<Channel>();
 		for ( final AcceleratorNode node : nodes ) {
 			final PropertyAccessor accessor = getAccessorFor( node );
-			channels.addAll( accessor.getLiveChannels( node ) );
+			channels.addAll( getChannels( accessor, node ) );
 		}
 
+		// create and submit a batch channel Get request
 		final BatchGetValueRequest request = new BatchGetValueRequest( channels );
-		request.submitAndWait( 5.0 );
+		request.submitAndWait( 5.0 );	// wait up to 5 seconds for a response
 
+		// print an overview of the request status
+		if ( !request.isComplete() ) {
+			final int requestCount = channels.size();
+			final int recordCount = request.getRecordCount();
+			final int exceptionCount = request.getExceptionCount();
+			System.err.println( "Batch channel request for online model is incomplete. " + recordCount + " of " + requestCount + " channels succeeded. " + exceptionCount + " channels had exceptions." );
+		}
+
+		// gather values for the channels in a map keyed by channel
 		final Map<Channel,Double> channelValues = new HashMap<Channel,Double>();
 		for ( final Channel channel : channels ) {
 			final ChannelRecord record = request.getRecord( channel );
-			channelValues.put( channel, record.doubleValue() );
+			if ( record != null ) {
+				channelValues.put( channel, record.doubleValue() );
+			}
+			else {
+				System.err.println( "No record for channel: " + channel.getId() );
+				
+				final Exception channelException = request.getException( channel );
+				if ( channelException != null ) {
+					System.err.println( channelException );
+				}
+			}
 		}
 
 		_channelValues = channelValues;
@@ -430,12 +454,36 @@ class LiveBatchPropertyAccessor extends BatchPropertyAccessor {
 
 
 	/**
-	 * Returns a Map of property values for the supplied node.  The map's keys are the property names as defined by the node class' propertyNames, values are the Double value for that property on node.
+	 * Get a Map of property values for the supplied node keyd by property name.
 	 * @param node the AcclereatorNode whose properties to return
 	 * @return a Map of node property values
 	 */
 	public Map<String,Double> valueMapFor( final AcceleratorNode node ) {
 		final PropertyAccessor accessor = getAccessorFor( node );
+		return getValueMap( accessor, node );
+	}
+
+
+	/** get the channels for the specified node */
+	protected abstract Collection<Channel> getChannels( final PropertyAccessor accessor, final AcceleratorNode node );
+
+
+	/** get the value map for the specified node */
+	protected abstract Map<String,Double> getValueMap( final PropertyAccessor accessor, final AcceleratorNode node );
+}
+
+
+
+/** Accessor for property values in batch */
+class LiveBatchPropertyAccessor extends BatchChannelPropertyAccessor {
+	/** get the channels for the specified node */
+	protected Collection<Channel> getChannels( final PropertyAccessor accessor, final AcceleratorNode node ) {
+		return accessor.getLiveChannels( node );
+	}
+
+
+	/** get the value map for the specified node */
+	protected Map<String,Double> getValueMap( final PropertyAccessor accessor, final AcceleratorNode node ) {
 		return accessor.getLiveValueMap( node, _channelValues );
 	}
 }
@@ -443,39 +491,15 @@ class LiveBatchPropertyAccessor extends BatchPropertyAccessor {
 
 
 /** Accessor for property values in batch */
-class LiveRFDesignBatchPropertyAccessor extends BatchPropertyAccessor {
-	/** channel value keyed by channel */
-	protected Map<Channel,Double> _channelValues;
-
-
-	/** make the request for values for the specified nodes */
-	public void requestValuesForNodes( final Collection<AcceleratorNode> nodes ) {
-		final Set<Channel> channels = new HashSet<Channel>();
-		for ( final AcceleratorNode node : nodes ) {
-			final PropertyAccessor accessor = getAccessorFor( node );
-			channels.addAll( accessor.getLiveRFDesignChannels( node ) );
-		}
-
-		final BatchGetValueRequest request = new BatchGetValueRequest( channels );
-		request.submitAndWait( 5.0 );
-
-		final Map<Channel,Double> channelValues = new HashMap<Channel,Double>();
-		for ( final Channel channel : channels ) {
-			final ChannelRecord record = request.getRecord( channel );
-			channelValues.put( channel, record.doubleValue() );
-		}
-
-		_channelValues = channelValues;
+class LiveRFDesignBatchPropertyAccessor extends BatchChannelPropertyAccessor {
+	/** get the channels for the specified node */
+	protected Collection<Channel> getChannels( final PropertyAccessor accessor, final AcceleratorNode node ) {
+		return accessor.getLiveRFDesignChannels( node );
 	}
 
 
-	/**
-	 * Returns a Map of property values for the supplied node.  The map's keys are the property names as defined by the node class' propertyNames, values are the Double value for that property on node.
-	 * @param node the AcclereatorNode whose properties to return
-	 * @return a Map of node property values
-	 */
-	public Map<String,Double> valueMapFor( final AcceleratorNode node ) {
-		final PropertyAccessor accessor = getAccessorFor( node );
+	/** get the value map for the specified node */
+	protected Map<String,Double> getValueMap( final PropertyAccessor accessor, final AcceleratorNode node ) {
 		return accessor.getLiveRFDesignValueMap( node, _channelValues );
 	}
 }
