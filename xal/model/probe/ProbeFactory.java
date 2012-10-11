@@ -250,7 +250,7 @@ public class ProbeFactory {
 	 */
 	private static boolean initializeLocation( final Probe probe, final String locationID, final AcceleratorSeq sequence, final IAlgorithm algorithm ) {
 		final EditContext editContext = sequence.getAccelerator().editContext();
-		System.out.println("editContext = "+editContext);
+		//System.out.println("editContext = "+editContext);
 		final DataTable speciesTable = editContext.getTable( SPECIES_TABLE );
 		final DataTable locationTable = editContext.getTable( LOCATION_TABLE );
 		
