@@ -16,6 +16,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import xal.model.alg.*;
 import xal.model.IAlgorithm;
 import xal.smf.Accelerator;
 import xal.smf.AcceleratorSeq;
@@ -131,7 +132,20 @@ public class ProbeFactory {
 		
 		return success ? probe : null;
 	}
-	
+
+
+	/**
+	 * Generate a TransferMap probe initialized with the default entrance parameters for the
+	 * specified sequence.  The location used defaults to the sequence's entrance ID.
+	 *
+	 * @param sequence   the sequence for which to initialize the probe
+	 * @return           the initialized transfer map probe
+	 */
+	public static TransferMapProbe getTransferMapProbe( final AcceleratorSeq sequence ) {
+		final IAlgorithm algorithm = new TransferMapTracker();
+		return getTransferMapProbe( sequence, algorithm );
+	}
+
 	
 	/**
 	 * Generate a TransferMap probe initialized with the default entrance parameters for the
@@ -165,7 +179,19 @@ public class ProbeFactory {
 		
 		return success ? probe : null;
 	}
-	
+
+
+	/**
+	 * Generate an Envelope probe initialized with the default entrance parameters for the
+	 * specified sequence.  The location used defaults to the sequence's entrance ID.
+	 * @param sequence   the sequence for which to initialize the probe
+	 * @return           the initialized transfer map probe
+	 */
+	public static EnvelopeProbe getEnvelopeProbe( final AcceleratorSeq sequence ) {
+		final IAlgorithm algorithm = new EnvTrackerAdapt();
+		return getEnvelopeProbe( sequence, algorithm );
+	}
+
 	
 	/**
 	 * Generate an Envelope probe initialized with the default entrance parameters for the
