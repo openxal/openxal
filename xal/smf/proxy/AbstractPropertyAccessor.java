@@ -6,7 +6,6 @@ package xal.smf.proxy;
 import java.util.*;
 
 import xal.smf.AcceleratorNode;
-import xal.smf.impl.Electromagnet;
 import xal.ca.Channel;
 
 
@@ -23,12 +22,10 @@ abstract public class AbstractPropertyAccessor implements PropertyAccessor {
 
 	/** get the map of design values keyed by property name */
 	protected Map<String,Double> getDesignValueMap( final AcceleratorNode node, final List<String> propertyNames ) {
-		final Electromagnet magnet = (Electromagnet)node;
-
 		final Map<String,Double> valueMap = new HashMap<String,Double>();
 		for( final String propertyName : propertyNames	) {
 			final double scale = getPropertyScale( propertyName );
-			final double value = scale * magnet.getDesignPropertyValue( propertyName );
+			final double value = scale * node.getDesignPropertyValue( propertyName );
 			valueMap.put( propertyName, value );
 		}
 		
@@ -57,7 +54,6 @@ abstract public class AbstractPropertyAccessor implements PropertyAccessor {
 
 	/** get the channels for live property access */
 	protected Collection<Channel> getLiveChannels( final AcceleratorNode node, final List<String> propertyNames ) {
-		final Electromagnet magnet = (Electromagnet)node;
 		final Set<Channel> channels = new HashSet<Channel>();
 
 		for( final String propertyName : propertyNames	) {
