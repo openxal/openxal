@@ -113,36 +113,50 @@ public class TrimmedQuadrupole extends Quadrupole implements TrimmedMagnet {
     }
 
 
+
 	/** Get the live property value for the corresponding array of channel values in the order given by getLivePropertyChannels() */
-	public double getLivePropertyValue( final Property property, final double[] channelValues ) {
-		switch( property ) {
-			case FIELD:
-				// no matter whether the readback or setpoint, the field is the total of all associated field values
-				double totalField = 0.0;
-				for ( final double channelValue : channelValues ) {
-					totalField += toFieldFromCA( channelValue );
-				}
-				return totalField;
-			default:
-				return Double.NaN;
+	public double getLivePropertyValue( final String propertyName, final double[] channelValues ) {
+		try {
+			final Property property = Property.valueOf( propertyName );		// throws IllegalArgumentException if no matching property
+			switch( property ) {
+				case FIELD:
+					// TODO: special logic may be needed to properly handle shunts
+					// no matter whether the readback or setpoint, the field is the total of all associated field values
+					double totalField = 0.0;
+					for ( final double channelValue : channelValues ) {
+						totalField += toFieldFromCA( channelValue );
+					}
+					return totalField;
+				default:
+					throw new IllegalArgumentException( "Unsupported Electromagnet live value property: " + propertyName );
+			}
+		}
+		catch( IllegalArgumentException exception ) {
+			return super.getLivePropertyValue( propertyName, channelValues );
 		}
 	}
 
 
 	/** Get the array of channels for the specified property */
-	public Channel[] getLivePropertyChannels( final Property property ) {
-		switch( property ) {
-			case FIELD:
-				if ( _useFieldReadback ) {
-					return new Channel[] { findChannel( FIELD_RB_HANDLE ) };
-				}
-				else {
-					final Channel mainFieldSetChannel = findChannel( MagnetMainSupply.FIELD_SET_HANDLE );
-					final Channel trimFieldSetChannel = findChannel( MagnetTrimSupply.FIELD_SET_HANDLE );
-					return new Channel[] { mainFieldSetChannel, trimFieldSetChannel };
-				}
-			default:
-				return null;
+	public Channel[] getLivePropertyChannels( final String propertyName ) {
+		try {
+			final Property property = Property.valueOf( propertyName );		// throws IllegalArgumentException if no matching property
+			switch( property ) {
+				case FIELD:
+					if ( _useFieldReadback ) {
+						return super.getLivePropertyChannels( propertyName );
+					}
+					else {
+						final Channel mainFieldSetChannel = findChannel( MagnetMainSupply.FIELD_SET_HANDLE );
+						final Channel trimFieldSetChannel = findChannel( MagnetTrimSupply.FIELD_SET_HANDLE );
+						return new Channel[] { mainFieldSetChannel, trimFieldSetChannel };
+					}
+				default:
+					throw new IllegalArgumentException( "Unsupported Electromagnet live channels property: " + propertyName );
+			}
+		}
+		catch( IllegalArgumentException exception ) {
+			return super.getLivePropertyChannels( propertyName );
 		}
 	}
 

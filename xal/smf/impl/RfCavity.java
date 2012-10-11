@@ -161,42 +161,57 @@ public class RfCavity extends AcceleratorSeq implements RfCavityDataSource {
 
 	/** Get the design value for the specified property */
 	public double getDesignPropertyValue( final String propertyName ) {
-		final Property property = Property.valueOf( propertyName );
-		switch( property ) {
-			case AMPLITUDE:
-				return getDfltCavAmp();
-			case PHASE:
-				return getDfltCavPhase();
-			default:
-				return Double.NaN;
+		try {
+			final Property property = Property.valueOf( propertyName );		// throws IllegalArgumentException if no matching property
+			switch( property ) {
+				case AMPLITUDE:
+					return getDfltCavAmp();
+				case PHASE:
+					return getDfltCavPhase();
+				default:
+					throw new IllegalArgumentException( "Unsupported RfCavity design value property: " + propertyName );
+			}
+		}
+		catch( IllegalArgumentException exception ) {
+			return getDesignPropertyValue( propertyName );
 		}
 	}
 
 
 	/** Get the live property value for the corresponding array of channel values in the order given by getLivePropertyChannels() */
 	public double getLivePropertyValue( final String propertyName, final double[] channelValues ) {
-		final Property property = Property.valueOf( propertyName );
-		switch( property ) {
-			case AMPLITUDE:
-				return toCavAmpAvgFromCA( channelValues[0] );
-			case PHASE:
-				return toCavPhaseAvgFromCA( channelValues[0] );
-			default:
-				return Double.NaN;
+		try {
+			final Property property = Property.valueOf( propertyName );		// throws IllegalArgumentException if no matching property
+			switch( property ) {
+				case AMPLITUDE:
+					return toCavAmpAvgFromCA( channelValues[0] );
+				case PHASE:
+					return toCavPhaseAvgFromCA( channelValues[0] );
+				default:
+					throw new IllegalArgumentException( "Unsupported RfCavity live value property: " + propertyName );
+			}
+		}
+		catch( IllegalArgumentException exception ) {
+			return super.getLivePropertyValue( propertyName, channelValues );
 		}
 	}
 
 
 	/** Get the array of channels for the specified property */
 	public Channel[] getLivePropertyChannels( final String propertyName ) {
-		final Property property = Property.valueOf( propertyName );
-		switch( property ) {
-			case AMPLITUDE:
-				return new Channel[] { findChannel( CAV_AMP_AVG_HANDLE ) };
-			case PHASE:
-				return new Channel[] { findChannel( CAV_PHASE_AVG_HANDLE ) };
-			default:
-				return null;
+		try {
+			final Property property = Property.valueOf( propertyName );		// throws IllegalArgumentException if no matching property
+			switch( property ) {
+				case AMPLITUDE:
+					return new Channel[] { findChannel( CAV_AMP_AVG_HANDLE ) };
+				case PHASE:
+					return new Channel[] { findChannel( CAV_PHASE_AVG_HANDLE ) };
+				default:
+					throw new IllegalArgumentException( "Unsupported RfCavity live channels property: " + propertyName );
+			}
+		}
+		catch( IllegalArgumentException exception ) {
+			return super.getLivePropertyChannels( propertyName );
 		}
 	}
 
