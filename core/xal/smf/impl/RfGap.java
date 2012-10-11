@@ -113,18 +113,23 @@ public class RfGap extends AcceleratorNode implements RfGapDataSource {
 
 	/** Get the design value for the specified property */
 	public double getDesignPropertyValue( final String propertyName ) {
-		final Property property = Property.valueOf( propertyName );
-		switch( property ) {
-			case ETL:
-				return getGapDfltE0TL();
-			case PHASE:
-				return getGapDfltPhase();
-			case FREQUENCY:
-				return getGapDfltFrequency();
-			case FIELD:
-				return getGapDfltAmp();
-			default:
-				return Double.NaN;
+		try {
+			final Property property = Property.valueOf( propertyName );		// throws IllegalArgumentException if no matching property
+			switch( property ) {
+				case ETL:
+					return getGapDfltE0TL();
+				case PHASE:
+					return getGapDfltPhase();
+				case FREQUENCY:
+					return getGapDfltFrequency();
+				case FIELD:
+					return getGapDfltAmp();
+				default:
+					throw new IllegalArgumentException( "Unsupported RfGap design value property: " + propertyName );
+			}
+		}
+		catch( IllegalArgumentException exception ) {
+			return super.getDesignPropertyValue( propertyName );
 		}
 	}
 
@@ -132,20 +137,25 @@ public class RfGap extends AcceleratorNode implements RfGapDataSource {
 	/** Get the live property value for the corresponding array of channel values in the order given by getLivePropertyChannels() */
 	public double getLivePropertyValue( final String propertyName, final double[] channelValues ) {
         final RfCavity cavity = (RfCavity)this.getParent();
-		
-		final Property property = Property.valueOf( propertyName );
-		switch( property ) {
-			case ETL:
-				final double gapField = toGapAmpFromCavityAmp( cavity.getLivePropertyValue( RfCavity.Property.AMPLITUDE.toString(), channelValues ) );
-				return toE0TLFromGapField( gapField );
-			case FIELD:
-				return toGapAmpFromCavityAmp( cavity.getLivePropertyValue( RfCavity.Property.AMPLITUDE.toString(), channelValues ) );
-			case PHASE:
-				return toGapPhaseFromCavityPhase( cavity.getLivePropertyValue( RfCavity.Property.PHASE.toString(), channelValues ) );
-			case FREQUENCY:
-				return getGapDfltFrequency();
-			default:
-				return Double.NaN;
+
+		try {
+			final Property property = Property.valueOf( propertyName );		// throws IllegalArgumentException if no matching property
+			switch( property ) {
+				case ETL:
+					final double gapField = toGapAmpFromCavityAmp( cavity.getLivePropertyValue( RfCavity.Property.AMPLITUDE.toString(), channelValues ) );
+					return toE0TLFromGapField( gapField );
+				case FIELD:
+					return toGapAmpFromCavityAmp( cavity.getLivePropertyValue( RfCavity.Property.AMPLITUDE.toString(), channelValues ) );
+				case PHASE:
+					return toGapPhaseFromCavityPhase( cavity.getLivePropertyValue( RfCavity.Property.PHASE.toString(), channelValues ) );
+				case FREQUENCY:
+					return getGapDfltFrequency();
+				default:
+					throw new IllegalArgumentException( "Unsupported RfGap live value property: " + propertyName );
+			}
+		}
+		catch ( IllegalArgumentException exception ) {
+			return super.getLivePropertyValue( propertyName, channelValues );
 		}
 	}
 
@@ -153,17 +163,22 @@ public class RfGap extends AcceleratorNode implements RfGapDataSource {
 	/** Get the array of channels for the specified property */
 	public Channel[] getLivePropertyChannels( final String propertyName ) {
         final RfCavity cavity = (RfCavity)this.getParent();
-		
-		final Property property = Property.valueOf( propertyName );
-		switch( property ) {
-			case ETL: case FIELD:
-				return cavity.getLivePropertyChannels( RfCavity.Property.AMPLITUDE.toString() );
-			case PHASE:
-				return cavity.getLivePropertyChannels( RfCavity.Property.PHASE.toString() );
-			case FREQUENCY:
-				return new Channel[0];
-			default:
-				return null;
+
+		try {
+			final Property property = Property.valueOf( propertyName );		// throws IllegalArgumentException if no matching property
+			switch( property ) {
+				case ETL: case FIELD:
+					return cavity.getLivePropertyChannels( RfCavity.Property.AMPLITUDE.toString() );
+				case PHASE:
+					return cavity.getLivePropertyChannels( RfCavity.Property.PHASE.toString() );
+				case FREQUENCY:
+					return new Channel[0];
+				default:
+					throw new IllegalArgumentException( "Unsupported RfGap live channels property: " + propertyName );
+			}
+		}
+		catch( IllegalArgumentException exception ) {
+			return super.getLivePropertyChannels( propertyName );
 		}
 	}
 
