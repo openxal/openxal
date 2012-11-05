@@ -9,7 +9,7 @@ import javax.swing.border.*;
 import java.net.*;
 import java.io.*;
 
-import xal.tools.xml.*;
+import xal.tools.data.DataAdaptor;
 import xal.tools.apputils.*;
 import xal.tools.scan.*;
 import xal.tools.plot.*;
@@ -147,7 +147,7 @@ public final class AnalysisCntrlDTLPhase extends AnalysisController {
 	 */
 	@SuppressWarnings( {"rawtypes", "unchecked"} )		// TODO: JComboBox is typed in JDK 7
 	public AnalysisCntrlDTLPhase(MainAnalysisController mainController_In,
-			XmlDataAdaptor analysisConf,
+			DataAdaptor analysisConf,
 			JPanel parentAnalysisPanel_In,
 			JPanel customControlPanel_In,
 			JPanel customGraphPanel_In,
@@ -174,22 +174,22 @@ public final class AnalysisCntrlDTLPhase extends AnalysisController {
 				graphDataLocal_In);
 
 		String nameIn = "DTL PHASE SCAN";
-		XmlDataAdaptor nameDA = (XmlDataAdaptor) analysisConf.childAdaptor("ANALYSIS_NAME");
+		DataAdaptor nameDA =  analysisConf.childAdaptor("ANALYSIS_NAME");
 		if (nameDA != null) {
 			nameIn = nameDA.stringValue("name");
 		}
 		setName(nameIn);
 
-		XmlDataAdaptor designEnrgDA = (XmlDataAdaptor) analysisConf.childAdaptor("DESIGN_ENERGY_DELTA");
+		DataAdaptor designEnrgDA =  analysisConf.childAdaptor("DESIGN_ENERGY_DELTA");
 		double designEnrg_tmp = 0.0;
 		if (designEnrgDA != null) {
 			designEnrg_tmp = designEnrgDA.doubleValue("value");
 		}
 
-		XmlDataAdaptor theoryDataDA = (XmlDataAdaptor) analysisConf.childAdaptor("THEORY_SCAN_DATA");
+		DataAdaptor theoryDataDA =  analysisConf.childAdaptor("THEORY_SCAN_DATA");
 		if (theoryDataDA != null) {
-			XmlDataAdaptor theoryDataDA_dphi_vs_amp = (XmlDataAdaptor) theoryDataDA.childAdaptor("DPHI_VS_AMP");
-			XmlDataAdaptor theoryDataDA_kShift_vs_amp = (XmlDataAdaptor) theoryDataDA.childAdaptor("KSHIFT_VS_AMP");
+			DataAdaptor theoryDataDA_dphi_vs_amp =  theoryDataDA.childAdaptor("DPHI_VS_AMP");
+			DataAdaptor theoryDataDA_kShift_vs_amp =  theoryDataDA.childAdaptor("KSHIFT_VS_AMP");
 			if (theoryDataDA_dphi_vs_amp != null && theoryDataDA_kShift_vs_amp != null) {
 				readTheoryData(theoryDataDA_dphi_vs_amp.stringValue("file_name"),
 						theoryDataDA_kShift_vs_amp.stringValue("file_name"));
@@ -293,18 +293,18 @@ public final class AnalysisCntrlDTLPhase extends AnalysisController {
 	 *
 	 *@param  analysisConfig  Description of the Parameter
 	 */
-	public void dumpAnalysisConfig(XmlDataAdaptor analysisConfig) {
+	public void dumpAnalysisConfig(DataAdaptor analysisConfig) {
 		super.dumpAnalysisConfig(analysisConfig);
 
-		XmlDataAdaptor designEnrgDA = (XmlDataAdaptor) analysisConfig.createChild("DESIGN_ENERGY_DELTA");
+		DataAdaptor designEnrgDA =  analysisConfig.createChild("DESIGN_ENERGY_DELTA");
 		designEnrgDA.setValue("value", designEnrgDevText.getValue());
 
-		XmlDataAdaptor theoryDataDA = (XmlDataAdaptor) analysisConfig.createChild("THEORY_SCAN_DATA");
+		DataAdaptor theoryDataDA =  analysisConfig.createChild("THEORY_SCAN_DATA");
 
-		XmlDataAdaptor theoryDataDA_dphi_vs_amp = (XmlDataAdaptor) theoryDataDA.createChild("DPHI_VS_AMP");
+		DataAdaptor theoryDataDA_dphi_vs_amp =  theoryDataDA.createChild("DPHI_VS_AMP");
 		theoryDataDA_dphi_vs_amp.setValue("file_name", theoryWvsADataFileName);
 
-		XmlDataAdaptor theoryDataDA_kShift_vs_amp = (XmlDataAdaptor) theoryDataDA.createChild("KSHIFT_VS_AMP");
+		DataAdaptor theoryDataDA_kShift_vs_amp =  theoryDataDA.createChild("KSHIFT_VS_AMP");
 		theoryDataDA_kShift_vs_amp.setValue("file_name", theoryKSvsADataFileName);
 
 	}

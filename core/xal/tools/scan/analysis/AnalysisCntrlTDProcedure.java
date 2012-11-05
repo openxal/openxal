@@ -12,7 +12,7 @@ import java.net.*;
 
 import java.util.prefs.*;
 
-import xal.tools.xml.*;
+import xal.tools.data.DataAdaptor;
 import xal.tools.scan.*;
 import xal.tools.plot.*;
 import xal.tools.apputils.VerticalLayout;
@@ -136,7 +136,7 @@ public final class AnalysisCntrlTDProcedure extends AnalysisController {
 	 *  The constructor.
 	 *
 	 *@param  mainController_In         The MainAnalysisController reference
-	 *@param  analysisConf              The XmlDataAdaptor instance with
+	 *@param  analysisConf              The DataAdaptor instance with
 	 *      configuration data
 	 *@param  parentAnalysisPanel_In    The parent panel for analysis
 	 *@param  customControlPanel_In     The control panel for GUI elements specific
@@ -152,7 +152,7 @@ public final class AnalysisCntrlTDProcedure extends AnalysisController {
 	 *@param  graphDataLocal_In         The external graph data for temporary graph
 	 */
 	public AnalysisCntrlTDProcedure(MainAnalysisController mainController_In,
-			XmlDataAdaptor analysisConf,
+			DataAdaptor analysisConf,
 			JPanel parentAnalysisPanel_In,
 			JPanel customControlPanel_In,
 			JPanel customGraphPanel_In,
@@ -180,13 +180,13 @@ public final class AnalysisCntrlTDProcedure extends AnalysisController {
 
 		//reading data from data adaptor
 		String nameIn = "DELTA-T PROCEDURE ANALYSIS";
-		XmlDataAdaptor nameDA = (XmlDataAdaptor) analysisConf.childAdaptor("ANALYSIS_NAME");
+		DataAdaptor nameDA =  analysisConf.childAdaptor("ANALYSIS_NAME");
 		if (nameDA != null) {
 			nameIn = nameDA.stringValue("name");
 		}
 		setName(nameIn);
 
-		XmlDataAdaptor cavInfoDA = (XmlDataAdaptor) analysisConf.childAdaptor("CAVITY_INFO");
+		DataAdaptor cavInfoDA =  analysisConf.childAdaptor("CAVITY_INFO");
 		if (cavInfoDA != null) {
 			cavIndex = cavInfoDA.intValue("index");
 			moduleNameLabel.setText(cavInfoDA.stringValue("cavity_name"));
@@ -197,7 +197,7 @@ public final class AnalysisCntrlTDProcedure extends AnalysisController {
 			energyStep_Text.setValue(cavInfoDA.doubleValue("energy_step_kev"));
 		}
 
-		XmlDataAdaptor thFileDA = (XmlDataAdaptor) analysisConf.childAdaptor("THEORETICAL_FILE");
+		DataAdaptor thFileDA =  analysisConf.childAdaptor("THEORETICAL_FILE");
 		if (thFileDA != null) {
 			String fileName = thFileDA.stringValue("name");
 			readTheoryData(fileName);
@@ -340,19 +340,19 @@ public final class AnalysisCntrlTDProcedure extends AnalysisController {
 	/**
 	 *  Sets the configurations of the analysis.
 	 *
-	 *@param  analysisConfig  The XmlDataAdaptor instance with configuration data
+	 *@param  analysisConfig  The DataAdaptor instance with configuration data
 	 */
-	public void dumpAnalysisConfig(XmlDataAdaptor analysisConfig) {
+	public void dumpAnalysisConfig(DataAdaptor analysisConfig) {
 		super.dumpAnalysisConfig(analysisConfig);
 
-		XmlDataAdaptor cavInfoDA = (XmlDataAdaptor) analysisConfig.createChild("CAVITY_INFO");
+		DataAdaptor cavInfoDA =  analysisConfig.createChild("CAVITY_INFO");
 		cavInfoDA.setValue("index", cavIndex);
 		cavInfoDA.setValue("cavity_name", moduleNameLabel.getText());
 		cavInfoDA.setValue("bpm1_name", bpm1_NameString);
 		cavInfoDA.setValue("bpm2_name", bpm2_NameString);
 		cavInfoDA.setValue("energy_step_kev", energyStep_Text.getValue());
 
-		XmlDataAdaptor thFileDA = (XmlDataAdaptor) analysisConfig.createChild("THEORETICAL_FILE");
+		DataAdaptor thFileDA =  analysisConfig.createChild("THEORETICAL_FILE");
 		thFileDA.setValue("name", fileName_TheoryData);
 	}
 

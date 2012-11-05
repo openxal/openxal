@@ -5,7 +5,7 @@ import java.awt.*;
 import java.text.*;
 import javax.swing.*;
 
-import xal.tools.xml.*;
+import xal.tools.data.DataAdaptor;
 import xal.tools.scan.*;
 import xal.tools.plot.*;
 
@@ -50,7 +50,7 @@ public class AnalysisControllerFactory {
 	 *@return                        The aC value
 	 */
 	public static AnalysisController getAC(MainAnalysisController mainController,
-			XmlDataAdaptor analysisConf,
+			DataAdaptor analysisConf,
 			JPanel parentAnalysisPanel,
 			JPanel customControlPanel,
 			JPanel customGraphPanel,

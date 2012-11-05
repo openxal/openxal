@@ -6,6 +6,7 @@ import java.text.*;
 import javax.swing.*;
 import javax.swing.border.*;
 
+import xal.tools.data.DataAdaptor;
 import xal.tools.xml.*;
 import xal.tools.scan.*;
 import xal.tools.plot.*;
@@ -47,7 +48,7 @@ public class AnalysisController{
 
     /**  The constructor.*/   
     public AnalysisController( MainAnalysisController mainController_In,
-			       XmlDataAdaptor analysisConf,
+			       DataAdaptor analysisConf,
 			       JPanel parentAnalysisPanel_In,
 			       JPanel customControlPanel_In,
 			       JPanel customGraphPanel_In,
@@ -107,8 +108,8 @@ public class AnalysisController{
      * Sets the configuration of the analysis.
      * The subclasses should call the super-class method in this method.
      */
-    public void dumpAnalysisConfig(XmlDataAdaptor analysisConfig){
-       XmlDataAdaptor nameDA = (XmlDataAdaptor) analysisConfig.createChild("ANALYSIS_NAME");
+    public void dumpAnalysisConfig(DataAdaptor analysisConfig){
+       DataAdaptor nameDA = analysisConfig.createChild("ANALYSIS_NAME");
        nameDA.setValue("name",getName());
     }
 

@@ -6,7 +6,7 @@ import java.text.*;
 import javax.swing.*;
 import java.awt.event.*;
 
-import xal.tools.xml.*;
+import xal.tools.data.DataAdaptor;
 import xal.tools.scan.*;
 import xal.tools.plot.*;
 
@@ -28,7 +28,7 @@ final public class AnalysisCntrlPolynomFit extends AnalysisController{
 
     /**  The constructor.*/   
     public AnalysisCntrlPolynomFit(MainAnalysisController mainController_In,
-			       XmlDataAdaptor analysisConf,
+			       DataAdaptor analysisConf,
 			       JPanel parentAnalysisPanel_In,
 			       JPanel customControlPanel_In,
 			       JPanel customGraphPanel_In,
@@ -56,7 +56,7 @@ final public class AnalysisCntrlPolynomFit extends AnalysisController{
 
 
 	String nameIn = "POLYNOMIAL FITTING";
-	XmlDataAdaptor nameDA =  (XmlDataAdaptor) analysisConf.childAdaptor("ANALYSIS_NAME");
+	DataAdaptor nameDA =   analysisConf.childAdaptor("ANALYSIS_NAME");
 	if(nameDA != null){
 	    nameIn = nameDA.stringValue("name");
 	}
@@ -69,7 +69,7 @@ final public class AnalysisCntrlPolynomFit extends AnalysisController{
     /**
      * Sets the configurations of the analysis.
      */
-    public void dumpAnalysisConfig(XmlDataAdaptor analysisConfig){
+    public void dumpAnalysisConfig(DataAdaptor analysisConfig){
 	super.dumpAnalysisConfig(analysisConfig);
     }
 
