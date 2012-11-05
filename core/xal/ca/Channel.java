@@ -39,7 +39,10 @@ abstract public class Channel {
     
     /** hold connection status */
     protected volatile boolean connectionFlag;
-        
+	
+	/** indicates whether this channel is marked as being valid */
+	private boolean _valid;
+
 
     static {
         channelSystem = ChannelFactory.defaultSystem();
@@ -91,7 +94,7 @@ abstract public class Channel {
     
     /**  Creates empty Channel */
     protected Channel()    {
-        this(null);
+        this( null );
     }
     
     
@@ -100,7 +103,7 @@ abstract public class Channel {
      *  @param  name     EPICS channel name
      */
     protected Channel(String name) {        
-        this(name, ValueTransform.noOperationTransform);
+        this( name, ValueTransform.noOperationTransform );
     }
     
     
@@ -109,11 +112,12 @@ abstract public class Channel {
      * @param name The EPICS PV name
      * @param aTransform The transform to apply to PV values
      */
-    protected Channel(String name, ValueTransform aTransform) {
+    protected Channel( String name, ValueTransform aTransform ) {
         // Initialize attributes
+		_valid = true;		// by default a channel is valid unless marked otherwise
         connectionFlag = false;
         m_strId   = name;
-        setValueTransform(aTransform);
+        setValueTransform( aTransform );
     }
 	
 	
@@ -135,7 +139,19 @@ abstract public class Channel {
 	static public Channel getInstance( final String signalName, final ValueTransform transform ) {
 		return ChannelFactory.defaultFactory().getChannel( signalName, transform );
 	}
-    
+
+
+	/** set whether this channel is valid */
+	public void setValid( final boolean valid ) {
+		_valid = valid;
+	}
+
+
+	/** determine whether this channel is valid */
+	public boolean isValid() {
+		return _valid;
+	}
+
     
     /**
      * Set a value transform for this channel.
