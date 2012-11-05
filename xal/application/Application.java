@@ -260,7 +260,7 @@ abstract public class Application {
 			Runtime.getRuntime().addShutdownHook( new Thread() {
 				public void run() {
 					try {
-						System.out.println( "Shutting down the PV Logger service..." );
+						System.out.println( "Shutting down this Application's default service..." );
 						ServiceDirectory.defaultDirectory().dispose();  // shutdown services
 					}
 					catch ( Exception exception ) {
