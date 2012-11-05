@@ -7,7 +7,7 @@ import javax.swing.*;
 import java.awt.event.*;
 import javax.swing.border.*;
 
-import xal.tools.xml.*;
+import xal.tools.data.DataAdaptor;
 import xal.tools.scan.*;
 import xal.tools.plot.*;
 import xal.tools.swing.*;
@@ -61,7 +61,7 @@ public final class AnalysisCntrlFindMinMax extends AnalysisController {
 	 *@param  graphDataLocal_In         Description of the Parameter
 	 */
 	public AnalysisCntrlFindMinMax(MainAnalysisController mainController_In,
-			XmlDataAdaptor analysisConf,
+			DataAdaptor analysisConf,
 			JPanel parentAnalysisPanel_In,
 			JPanel customControlPanel_In,
 			JPanel customGraphPanel_In,
@@ -88,7 +88,7 @@ public final class AnalysisCntrlFindMinMax extends AnalysisController {
 				graphDataLocal_In);
 
 		String nameIn = "FIND MIN/MAX";
-		XmlDataAdaptor nameDA = (XmlDataAdaptor) analysisConf.childAdaptor("ANALYSIS_NAME");
+		DataAdaptor nameDA =  analysisConf.childAdaptor("ANALYSIS_NAME");
 		if (nameDA != null) {
 			nameIn = nameDA.stringValue("name");
 		}
@@ -106,7 +106,7 @@ public final class AnalysisCntrlFindMinMax extends AnalysisController {
 	 *
 	 *@param  analysisConfig  Description of the Parameter
 	 */
-	public void dumpAnalysisConfig(XmlDataAdaptor analysisConfig) {
+	public void dumpAnalysisConfig(DataAdaptor analysisConfig) {
 		super.dumpAnalysisConfig(analysisConfig);
 	}
 

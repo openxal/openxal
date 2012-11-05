@@ -318,7 +318,7 @@ public class MainAnalysisController {
 	 *@param  analysisConfig  Description of the Parameter
 	 */
 	@SuppressWarnings( {"rawtypes", "unchecked"} )		// TODO: JComboBox is typed in JDK 7
-	public void createChildAnalysis(XmlDataAdaptor analysisConfig) {
+	public void createChildAnalysis(DataAdaptor analysisConfig) {
 
 		Vector<AnalysisController> analysisContrV = new Vector<AnalysisController>();
 
@@ -328,7 +328,7 @@ public class MainAnalysisController {
 
 		for ( final DataAdaptor analysisConf : analysisConfig.childAdaptors() ) {
 			AnalysisController ac = AnalysisControllerFactory.getAC(this,
-					(XmlDataAdaptor)analysisConf,
+					analysisConf,
 					parentAnalysisPanel,
 					customControlPanel,
 					customGraphPanel,
@@ -383,9 +383,9 @@ public class MainAnalysisController {
 	 *
 	 *@param  analysisConfig  Description of the Parameter
 	 */
-	public void dumpChildAnalysisConfig(XmlDataAdaptor analysisConfig) {
+	public void dumpChildAnalysisConfig(DataAdaptor analysisConfig) {
 		for (int i = 0; i < analysisControllers.length; i++) {
-			XmlDataAdaptor aConf = (XmlDataAdaptor) analysisConfig.createChild(analysisControllers[i].getTypeName());
+			DataAdaptor aConf =  analysisConfig.createChild(analysisControllers[i].getTypeName());
 			analysisControllers[i].dumpAnalysisConfig(aConf);
 		}
 	}

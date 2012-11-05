@@ -5,7 +5,7 @@ import java.awt.*;
 import java.text.*;
 import javax.swing.*;
 
-import xal.tools.xml.*;
+import xal.tools.data.DataAdaptor;
 import xal.tools.scan.*;
 import xal.tools.plot.*;
 
@@ -22,7 +22,7 @@ public final class AnalysisCntrlEmpty extends AnalysisController {
      *  The constructor.
      *
      *@param  mainController_In         The MainAnalysisController reference
-     *@param  analysisConf              The XmlDataAdaptor instance with
+     *@param  analysisConf              The DataAdaptor instance with
      *      configuration data
      *@param  parentAnalysisPanel_In    The parent panel for analysis
      *@param  customControlPanel_In     The control panel for GUI elements
@@ -40,7 +40,7 @@ public final class AnalysisCntrlEmpty extends AnalysisController {
      *      graph
      */
     public AnalysisCntrlEmpty(MainAnalysisController mainController_In,
-        XmlDataAdaptor analysisConf,
+        DataAdaptor analysisConf,
         JPanel parentAnalysisPanel_In,
         JPanel customControlPanel_In,
         JPanel customGraphPanel_In,
@@ -67,7 +67,7 @@ public final class AnalysisCntrlEmpty extends AnalysisController {
             graphDataLocal_In);
 
         String nameIn = "DATA READER";
-        XmlDataAdaptor nameDA = (XmlDataAdaptor) analysisConf.childAdaptor("ANALYSIS_NAME");
+        DataAdaptor nameDA =  analysisConf.childAdaptor("ANALYSIS_NAME");
         if (nameDA != null) {
             nameIn = nameDA.stringValue("name");
         }
@@ -79,10 +79,10 @@ public final class AnalysisCntrlEmpty extends AnalysisController {
     /**
      *  Sets the configurations of the analysis.
      *
-     *@param  analysisConfig  The XmlDataAdaptor instance with configuration
+     *@param  analysisConfig  The DataAdaptor instance with configuration
      *      data
      */
-    public void dumpAnalysisConfig(XmlDataAdaptor analysisConfig) {
+    public void dumpAnalysisConfig(DataAdaptor analysisConfig) {
         super.dumpAnalysisConfig(analysisConfig);
     }
 

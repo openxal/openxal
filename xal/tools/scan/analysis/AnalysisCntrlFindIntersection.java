@@ -7,7 +7,7 @@ import javax.swing.*;
 import java.awt.event.*;
 import javax.swing.border.*;
 
-import xal.tools.xml.*;
+import xal.tools.data.DataAdaptor;
 import xal.tools.scan.*;
 import xal.tools.plot.*;
 import xal.tools.swing.*;
@@ -60,7 +60,7 @@ public final class AnalysisCntrlFindIntersection extends AnalysisController {
 	 *@param  graphDataLocal_In         Description of the Parameter
 	 */
 	public AnalysisCntrlFindIntersection(MainAnalysisController mainController_In,
-			XmlDataAdaptor analysisConf,
+			DataAdaptor analysisConf,
 			JPanel parentAnalysisPanel_In,
 			JPanel customControlPanel_In,
 			JPanel customGraphPanel_In,
@@ -87,7 +87,7 @@ public final class AnalysisCntrlFindIntersection extends AnalysisController {
 				graphDataLocal_In);
 
 		String nameIn = "FIND INTERSECTION";
-		XmlDataAdaptor nameDA = (XmlDataAdaptor) analysisConf.childAdaptor("ANALYSIS_NAME");
+		DataAdaptor nameDA =  analysisConf.childAdaptor("ANALYSIS_NAME");
 		if (nameDA != null) {
 			nameIn = nameDA.stringValue("name");
 		}
@@ -106,7 +106,7 @@ public final class AnalysisCntrlFindIntersection extends AnalysisController {
 	 *
 	 *@param  analysisConfig  Description of the Parameter
 	 */
-	public void dumpAnalysisConfig(XmlDataAdaptor analysisConfig) {
+	public void dumpAnalysisConfig(DataAdaptor analysisConfig) {
 		super.dumpAnalysisConfig(analysisConfig);
 	}
 
