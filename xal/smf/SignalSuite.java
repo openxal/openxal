@@ -51,7 +51,12 @@ public class SignalSuite {
 				final boolean settable = channelAdaptor.booleanValue( "settable" );
 				signalEntry.setSettable( settable );
 			}
-			
+
+			if ( channelAdaptor.hasAttribute( "valid" ) ) {
+				final boolean valid = channelAdaptor.booleanValue( "valid" );
+				signalEntry.setValid( valid );
+			}
+
 			if ( channelAdaptor.hasAttribute( "transform" ) ) {
 				final String transformKey = channelAdaptor.stringValue( "transform" );
 				signalEntry.setTransformKey( transformKey );
@@ -80,6 +85,7 @@ public class SignalSuite {
             channelAdaptor.setValue( "handle", entry.getKey() );
             channelAdaptor.setValue( "signal", signalEntry.signal() );
             channelAdaptor.setValue( "settable", signalEntry.settable() );
+            channelAdaptor.setValue( "valid", signalEntry.isValid() );
         }
     }
     
@@ -104,7 +110,7 @@ public class SignalSuite {
      * @return The signal associated with the specified handle.
      */
     public String getSignal( final String handle ) {
-        final SignalEntry signalEntry = _signalMap.get( handle );        
+        final SignalEntry signalEntry = getSignalEntry( handle );
 		return signalEntry != null ? signalEntry.signal() : null;
     }
     
@@ -135,7 +141,7 @@ public class SignalSuite {
      * @return true if the handle has an associated value transform and false otherwise.
      */
     public boolean hasTransform( final String handle ) {
-        final SignalEntry signalEntry = _signalMap.get( handle );
+        final SignalEntry signalEntry = getSignalEntry( handle );
 		return signalEntry != null ? ( signalEntry.getTransformKey() != null ) : false;
     }
     
@@ -146,9 +152,30 @@ public class SignalSuite {
      * @return The transform for the specified handle.
      */
     public ValueTransform getTransform(String handle) {
-        final SignalEntry signalEntry = _signalMap.get(handle);
+        final SignalEntry signalEntry = getSignalEntry( handle );
 		return signalEntry != null ? _transformTable.get( signalEntry.getTransformKey() ) : null;
     }
+
+
+    /**
+     * Determine whether the handle's corresponding PV is valid.
+     * @param handle The handle for which to get the validity.
+     * @return validity state of the PV or false if there is no entry for the handle
+     */
+    public boolean isValid( final String handle ) {
+        final SignalEntry signalEntry = getSignalEntry( handle );
+		return signalEntry != null ? signalEntry.isValid() : false;
+    }
+
+
+    /**
+     * Get the signal entry for the handle.
+     * @param handle The handle for which to get the entry.
+     * @return signal entry for the handle or null if there is none
+     */
+	private SignalEntry getSignalEntry( final String handle ) {
+		return _signalMap.get( handle );
+	}
 }
 
 
@@ -158,8 +185,9 @@ public class SignalSuite {
  * the key is a handle and the value is an instance of SignalEntry.
  */
 class SignalEntry {
-	private String _signal;   // the PV signal name
+	private String _signal;			// the PV signal name
     private boolean _settable;		// whether the PV is settable
+	private boolean _valid;			// whether the channel is marked valid
     private String _transformkey;   // Name of the transform if any
 	
 	
@@ -168,6 +196,7 @@ class SignalEntry {
         _signal = signal;
         _settable = settable;
         _transformkey = transformKey;
+		_valid = true;
     }
 	
 	
@@ -189,6 +218,18 @@ class SignalEntry {
 	/** set the settable property */
 	public void setSettable( final boolean isSettable ) {
 		_settable = isSettable;
+	}
+
+
+	/** get the valid status of the PV */
+	public boolean isValid() {
+		return _valid;
+	}
+
+
+	/** mark the valid status of the PV */
+	public void setValid( final boolean isValid ) {
+		_valid = isValid;
 	}
 
 

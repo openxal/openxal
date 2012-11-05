@@ -129,7 +129,17 @@ public class ChannelSuite implements DataListener {
     final public ValueTransform getTransform( final String handle ) {
         return SIGNAL_SUITE.getTransform( handle );
     }
-    
+
+
+    /**
+     * Determine whether the handle's corresponding PV is valid.
+     * @param handle The handle for which to get the validity.
+     * @return validity state of the PV or false if there is no entry for the handle
+     */
+    final public boolean isValid( final String handle ) {
+		return SIGNAL_SUITE.isValid( handle );
+    }
+
     
     /** 
      * Get the channel corresponding to the specified handle.
@@ -141,15 +151,17 @@ public class ChannelSuite implements DataListener {
         Channel channel = CHANNEL_HANDLE_MAP.get( handle );
         
         if ( channel == null ) {                    // if the channel was never cached ...
-            String signal = getSignal( handle );      // lookup the signal
+            final String signal = getSignal( handle );      // lookup the signal
             if ( signal != null ) {                 // get the channel from the channel factory
-                ValueTransform transform = getTransform( handle );
+                final ValueTransform transform = getTransform( handle );
                 if ( transform != null ) {
                     channel = CHANNEL_FACTORY.getChannel( signal, transform );
                 }
                 else {
                     channel = CHANNEL_FACTORY.getChannel( signal );
                 }
+
+				channel.setValid( isValid( handle ) );
             }
             
             // if we have a channel, cache it for future access
