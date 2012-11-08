@@ -120,7 +120,7 @@ public class CovarianceMatrix extends PhaseMatrix {
      * 
      * @see CovarianceMatrix#buildCorrelation(Twiss, Twiss, Twiss)
      */
-    public static CovarianceMatrix buildCorrelation(Twiss3D envTwiss)  {
+    public static CovarianceMatrix buildCovariance(Twiss3D envTwiss)  {
         return CovarianceMatrix.buildCorrelation(
                                     envTwiss.getTwiss(SpaceIndex3D.X), 
                                     envTwiss.getTwiss(SpaceIndex3D.Y),

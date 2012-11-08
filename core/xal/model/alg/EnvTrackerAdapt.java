@@ -78,7 +78,7 @@ public class EnvTrackerAdapt extends EnvelopeTrackerBase {
     // Archiving constants 
     
     /** EditContext label for table containing adaptive tracker parameters   */
-    private static final String TBL_LBL_ENVTRACKERADAPT = "adaptivetracker";
+    private static final String TBL_LBL_ENVTRACKERADAPT = "EnvTrackerAdapt";
     
     /** attribute label for maximum step size */
     private final static String      ATTRTAG_MAXSTEP = "maxstep";

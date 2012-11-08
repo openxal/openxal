@@ -163,8 +163,8 @@ public abstract class EnvelopeTrackerBase extends Tracker {
      * Global Constants
      */
     
-    /** EditContext table name containing envelope tracking parameters */
-    public static final String TBL_LBL_ENVELOPETRACKER = "EnvelopeTracker";
+    /** EditContext table name containing basic envelope tracking parameters */
+    public static final String TBL_LBL_ENVBASETRACKER = "EnvelopeBaseTracker";
     
     /** Table record primary key name */
 //    public static final String TBL_PRIM_KEY_NAME = "name";
@@ -449,16 +449,16 @@ public abstract class EnvelopeTrackerBase extends Tracker {
         super.load(strPrimKeyVal, ecTableData);
         
         // Get the algorithm class name from the EditContext
-        DataTable     tblAlgorithm = ecTableData.getTable( EnvelopeTrackerBase.TBL_LBL_ENVELOPETRACKER);
+        DataTable     tblAlgorithm = ecTableData.getTable( TBL_LBL_ENVBASETRACKER);
         GenericRecord recTracker = tblAlgorithm.record( Tracker.TBL_PRIM_KEY_NAME,  strPrimKeyVal );
     
         if ( recTracker == null ) {
             recTracker = tblAlgorithm.record( Tracker.TBL_PRIM_KEY_NAME, "default" );  // just use the default record
         }
     
-        final boolean   bolEmitGrw  = recTracker.booleanValueForKey( EnvelopeTrackerBase.ATTR_EMITGROWTH );
-        final boolean   bolUseSpChg = recTracker.booleanValueForKey( EnvelopeTrackerBase.ATTR_SCHEFF );
-        final double    dblStepSize = recTracker.doubleValueForKey( EnvelopeTrackerBase.ATTR_STEPSIZE );
+        final boolean   bolEmitGrw  = recTracker.booleanValueForKey( ATTR_EMITGROWTH );
+        final boolean   bolUseSpChg = recTracker.booleanValueForKey( ATTR_SCHEFF );
+        final double    dblStepSize = recTracker.doubleValueForKey( ATTR_STEPSIZE );
     
         this.setEmittanceGrowth( bolEmitGrw );
         this.setStepSize( dblStepSize );

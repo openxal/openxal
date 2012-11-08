@@ -34,12 +34,21 @@ import xal.model.probe.TwissProbe;
 
 
 /**
+ * <p>
  * Tracking algorithm for <code>TwissProbe</code> objects.  The <code>TwissProbe</code>'s
  * primary state object, a <code>BunchDescriptor</code> object containing three sets of Twiss
  * parameters (one for each phase plane), is advanced using the linear
  * dynamics portion of any beamline element (<code>IElement</code> exposing object) 
  * Moreover, currently the dynamics are not coupled between phase planes.  The
  * values of the Twiss parameter propagated according to  formula 2.54 from S.Y. Lee's book.
+ * </p>
+ * <p>
+ * <h4>NOTES:</h4>
+ * &middot; There is necessarily no coupling between the phase planes from hardware elements.  There
+ * can be, however, coupling from space charge effects
+ * <br/>
+ * &middot; Something else?
+ * </p> 
  * 
  * @author Christopher K. Allen
  */
@@ -290,11 +299,6 @@ public class TwissTracker extends Tracker {
         this.setUseSpacecharge( bolUseSpChg );
     }    
 
-    
-    /*
-     * IArchive Interface
-     */    
-
     /** 
      * Load the parameters of the algorithm from a data source exposing the
      * <code>IArchive</code> interface.
@@ -321,8 +325,10 @@ public class TwissTracker extends Tracker {
             
                 if (daTwiss.hasAttribute(ATTR_SCHEFF)) {
                     this.setUseSpacecharge( daTwiss.booleanValue(ATTR_SCHEFF) );
+                    
                 } else if (daTwiss.hasAttribute(ATTR_USESPACECHARGE)) { // Backward compatibility
-                   this.setUseSpacecharge( daTwiss.booleanValue(ATTR_USESPACECHARGE));
+                   
+                    this.setUseSpacecharge( daTwiss.booleanValue(ATTR_USESPACECHARGE));
                 }
                 
             }
@@ -404,7 +410,7 @@ public class TwissTracker extends Tracker {
         
         if(this.getSpaceChargeFlag()) {            // Get the space charge kick
             double              K = probe.beamPerveance();
-            CovarianceMatrix   matTau = CovarianceMatrix.buildCorrelation(probe.getTwiss());
+            CovarianceMatrix    matTau = CovarianceMatrix.buildCovariance(probe.getTwiss());
             BeamEllipsoid       ellipsoid = new BeamEllipsoid(gamma, matTau);
             PhaseMatrix         matPhiSC  = ellipsoid.computeScheffMatrix(dblLen/2.0, K);
             

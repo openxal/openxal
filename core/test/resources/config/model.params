@@ -48,6 +48,7 @@
     
     
     <table name="Algorithm">
+        <!-- This table is going to be deprecated.  We should not support a "default algorithm" for every probe -->
 	    <schema>
 			<attribute isPrimaryKey="true"  name="name"           type="java.lang.String" />
 			<attribute isPrimaryKey="false" name="type"           type="java.lang.String" defaultValue="xal.model.alg.EnvTrackerAdapt" />
@@ -58,8 +59,46 @@
 		<record name="default" />
     </table>
     
+    <table name="SynchronousTracker">
+        <schema>
+            <attribute isPrimaryKey="true"  name="name"         type="java.lang.String" />
+        </schema>
+        <record name="default" />
+    </table>
     
-    <table name="EnvelopeTracker">
+    <table name="ParticleTracker">
+        <schema>
+            <attribute isPrimaryKey="true"  name="name"         type="java.lang.String" />
+        </schema>
+        <record name="default" />
+    </table>
+    
+    <table name="TransferMapTracker">
+        <schema>
+            <attribute isPrimaryKey="true"  name="name"         type="java.lang.String" />
+        </schema>
+        <record name="default" />
+    </table>
+    
+    <table name="TwissTracker">
+        <schema>
+            <attribute isPrimaryKey="true"  name="name"         type="java.lang.String" />
+            <attribute isPrimaryKey="false" name="emitgrowth"   type="java.lang.Boolean" defaultValue="false" />
+            <attribute isPrimaryKey="false" name="scheff"       type="java.lang.Boolean" defaultValue="true" />
+            <attribute isPrimaryKey="false" name="stepsize"     type="java.lang.Double" defaultValue="0.004" />
+        </schema>
+        <record name="default" />
+    </table>
+    
+    <table name="Trace3dTracker">
+        <schema>
+            <attribute isPrimaryKey="true"  name="name"         type="java.lang.String" />
+            <attribute isPrimaryKey="false" name="stepsize"     type="java.lang.Double" defaultValue="0.004" />
+        </schema>
+        <record name="default" />
+    </table>
+    
+    <table name="EnvelopeBaseTracker">
 	    <schema>
 			<attribute isPrimaryKey="true"  name="name"         type="java.lang.String" />
 			<attribute isPrimaryKey="false" name="emitgrowth"   type="java.lang.Boolean" defaultValue="false" />
@@ -68,9 +107,8 @@
 		</schema>
 		<record name="default" />
     </table>
-	
     
-	<table name="adaptivetracker">
+	<table name="EnvTrackerAdapt">
 		<schema>
 			<attribute isPrimaryKey="true" name="name" type="java.lang.String" />
             <attribute isPrimaryKey="false" name="errortol" type="java.lang.Double" defaultValue="1.0E-5" />
@@ -83,10 +121,10 @@
             <attribute isPrimaryKey="false" name="maxstepdriftpmq" type="java.lang.Double" defaultValue="0.0" />
 		</schema>
 		<record name="default" />
-		<record name="HEBT1" errortol="0.1" initstep="0.1" maxiter="1000" />
-		<record name="HEBT2" errortol="0.1" initstep="0.1" maxiter="1000" />
-		<record name="RTBT1" errortol="0.1" initstep="0.1" maxiter="1000" />
-		<record name="RTBT2" errortol="0.1" initstep="0.1" maxiter="1000" />
+		<record name="HEBT1" errortol="1.0e-8" initstep="0.1" maxiter="1000" />
+		<record name="HEBT2" errortol="1.0e-8" initstep="0.1" maxiter="1000" />
+		<record name="RTBT1" errortol="1.0e-8" initstep="0.1" maxiter="1000" />
+		<record name="RTBT2" errortol="1.0e-8" initstep="0.1" maxiter="1000" />
 	</table>
     
     

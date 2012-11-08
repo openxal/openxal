@@ -22,17 +22,21 @@ import xal.model.probe.TwissProbe;
 
 
 /**
+ * <p>
  * This class is a super class of the <code>TwissTracker</code> class meant to 
  * handle the special case of <code>IdealPermMagQuad</code> elements.  There really
  * is not much extra to do here, just look for the exception element and adjust the
  * number of integration steps accordingly.
- *
+ * </p>
+ *<p>
  * See the <code>TwissTracker</code> class for a complete description of the
  * functionality
+ * </p>
  * 
  * @see xal.model.alg.TwissTracker 
  *
  * @author Christopher K. Allen
+ * @since  December, 2006
  */
 public class TwissTrackerPmq extends TwissTracker {
 

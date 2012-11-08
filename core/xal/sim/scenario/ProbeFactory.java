@@ -8,7 +8,7 @@
  *  Oak Ridge, TN 37830
  *
  */
-package xal.model.probe;
+package xal.sim.scenario;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -16,8 +16,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import xal.model.alg.*;
 import xal.model.IAlgorithm;
+import xal.model.probe.BunchProbe;
+import xal.model.probe.EnvelopeProbe;
+import xal.model.probe.ParticleProbe;
+import xal.model.probe.Probe;
+import xal.model.probe.TransferMapProbe;
 import xal.smf.Accelerator;
 import xal.smf.AcceleratorSeq;
 import xal.tools.beam.Twiss;
@@ -108,7 +112,7 @@ public class ProbeFactory {
 	 * @param algorithm  the online model algorithm to use
 	 * @return           the initialized particle probe
 	 */
-	public static ParticleProbe getParticleProbe( final AcceleratorSeq sequence, final IAlgorithm algorithm ) {
+	public static ParticleProbe createParticleProbe( final AcceleratorSeq sequence, final IAlgorithm algorithm ) {
 		return getParticleProbe( sequence.getEntranceID(), sequence, algorithm );
 	}
 	
@@ -128,24 +132,11 @@ public class ProbeFactory {
 			return null;
 		}
 		
-		boolean success = initializeLocation( probe, locationID, sequence, algorithm );
+		boolean success = initializeLocation( probe, locationID, sequence);
 		
 		return success ? probe : null;
 	}
-
-
-	/**
-	 * Generate a TransferMap probe initialized with the default entrance parameters for the
-	 * specified sequence.  The location used defaults to the sequence's entrance ID.
-	 *
-	 * @param sequence   the sequence for which to initialize the probe
-	 * @return           the initialized transfer map probe
-	 */
-	public static TransferMapProbe getTransferMapProbe( final AcceleratorSeq sequence ) {
-		final IAlgorithm algorithm = new TransferMapTracker();
-		return getTransferMapProbe( sequence, algorithm );
-	}
-
+	
 	
 	/**
 	 * Generate a TransferMap probe initialized with the default entrance parameters for the
@@ -175,23 +166,11 @@ public class ProbeFactory {
 			return null;
 		}
 		
-		boolean success = initializeLocation( probe, locationID, sequence, algorithm );
+		boolean success = initializeLocation( probe, locationID, sequence);
 		
 		return success ? probe : null;
 	}
-
-
-	/**
-	 * Generate an Envelope probe initialized with the default entrance parameters for the
-	 * specified sequence.  The location used defaults to the sequence's entrance ID.
-	 * @param sequence   the sequence for which to initialize the probe
-	 * @return           the initialized transfer map probe
-	 */
-	public static EnvelopeProbe getEnvelopeProbe( final AcceleratorSeq sequence ) {
-		final IAlgorithm algorithm = new EnvTrackerAdapt();
-		return getEnvelopeProbe( sequence, algorithm );
-	}
-
+	
 	
 	/**
 	 * Generate an Envelope probe initialized with the default entrance parameters for the
@@ -221,11 +200,9 @@ public class ProbeFactory {
 			return null;
 		}
 		
-		boolean success = initializeLocation( probe, sequence.getEntranceID(), sequence, algorithm );
-		success &= initializeBeam( probe, sequence, algorithm );
-		success &= initializeTwiss( probe, locationID, sequence, algorithm );
-
-		algorithm.load( locationID, sequence.getAccelerator().editContext() );
+		boolean success = initializeLocation( probe, sequence.getEntranceID(), sequence);
+		success &= initializeBeam( probe, sequence );
+		success &= initializeTwiss( probe, locationID, sequence );
 		
 		return success ? probe : null;
 	}
@@ -273,12 +250,12 @@ public class ProbeFactory {
 	 * @param probe      the probe to initialize
 	 * @param locationID location within the acceleration where the probe is initialized
 	 * @param sequence   the sequence for which to initialize the probe
-	 * @param algorithm  the online model algorithm to use
+	 * 
 	 * @return           true for successful initialization and false if it fails
 	 */
-	private static boolean initializeLocation( final Probe probe, final String locationID, final AcceleratorSeq sequence, final IAlgorithm algorithm ) {
+	private static boolean initializeLocation( final Probe probe, final String locationID, final AcceleratorSeq sequence) {
 		final EditContext editContext = sequence.getAccelerator().editContext();
-		//System.out.println("editContext = "+editContext);
+		System.out.println("editContext = "+editContext);
 		final DataTable speciesTable = editContext.getTable( SPECIES_TABLE );
 		final DataTable locationTable = editContext.getTable( LOCATION_TABLE );
 		
@@ -314,10 +291,9 @@ public class ProbeFactory {
 	 *
 	 * @param probe      the probe to initialize
 	 * @param sequence   the sequence for which to initialize the probe
-	 * @param algorithm  the online model algorithm to use
 	 * @return           true for successful initialization and false if it fails
 	 */
-	private static boolean initializeBeam( final BunchProbe probe, final AcceleratorSeq sequence, final IAlgorithm algorithm ) {
+	private static boolean initializeBeam( final BunchProbe probe, final AcceleratorSeq sequence) {
 		final EditContext editContext = sequence.getAccelerator().editContext();
 		final DataTable beamTable = editContext.getTable( BEAM_TABLE );
 		
@@ -340,10 +316,9 @@ public class ProbeFactory {
 	 * @param probe      the probe to initialize
      * @param locationID location within the acceleration where the probe is initialized
 	 * @param sequence   the sequence for which to initialize the probe
-	 * @param algorithm  the online model algorithm to use
 	 * @return           true for successful initialization and false if it fails
 	 */
-	private static boolean initializeTwiss( final EnvelopeProbe probe, final String locationID, final AcceleratorSeq sequence, final IAlgorithm algorithm ) {
+	private static boolean initializeTwiss( final EnvelopeProbe probe, final String locationID, final AcceleratorSeq sequence) {
 		final EditContext editContext = sequence.getAccelerator().editContext();
 		final DataTable twissTable = editContext.getTable( "twiss" );
 		

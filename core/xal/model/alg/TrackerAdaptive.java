@@ -17,7 +17,7 @@ import xal.smf.AcceleratorSeq;
 
 /** Common abstract superclass for the adaptive tracker algorithms 
  * 
- * @deprecated  functionality pushed up into base class gov.sns.xal.model.alg.Tracker
+ * @deprecated  functionality pushed down into child class class <code>{@link EnvTrackerAdapt}</code>
  */
 @Deprecated
 abstract public class TrackerAdaptive extends Tracker {

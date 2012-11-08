@@ -21,11 +21,11 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import xal.model.alg.EnvTrackerAdapt;
+import xal.sim.scenario.ProbeFactory;
 import xal.smf.Accelerator;
 import xal.smf.AcceleratorSeq;
-import xal.smf.data.XMLDataManager;
-import xal.tools.beam.CovarianceMatrix;
 import xal.test.ResourceManager;
+import xal.tools.beam.CovarianceMatrix;
 
 /**
  * Tests the <code>ProbeFactory</code> class factory of Open XAL.
@@ -79,7 +79,7 @@ public class TestProbeFactory {
     }
 
     /**
-     * Test method for {@link xal.model.probe.ProbeFactory#getParticleProbe(xal.smf.AcceleratorSeq, xal.model.IAlgorithm)}.
+     * Test method for {@link xal.sim.scenario.ProbeFactory#createParticleProbe(xal.smf.AcceleratorSeq, xal.model.IAlgorithm)}.
      */
     @Test
     public void testGetParticleProbeAcceleratorSeqIAlgorithm() {
@@ -87,7 +87,7 @@ public class TestProbeFactory {
     }
 
     /**
-     * Test method for {@link xal.model.probe.ProbeFactory#getTransferMapProbe(xal.smf.AcceleratorSeq, xal.model.IAlgorithm)}.
+     * Test method for {@link xal.sim.scenario.ProbeFactory#getTransferMapProbe(xal.smf.AcceleratorSeq, xal.model.IAlgorithm)}.
      */
     @Test
     public void testGetTransferMapProbeAcceleratorSeqIAlgorithm() {
@@ -95,7 +95,7 @@ public class TestProbeFactory {
     }
 
     /**
-     * Test method for {@link xal.model.probe.ProbeFactory#getEnvelopeProbe(xal.smf.AcceleratorSeq, xal.model.IAlgorithm)}.
+     * Test method for {@link xal.sim.scenario.ProbeFactory#getEnvelopeProbe(xal.smf.AcceleratorSeq, xal.model.IAlgorithm)}.
      */
     @Test
     public void testGetEnvelopeProbeAcceleratorSeqIAlgorithm() {

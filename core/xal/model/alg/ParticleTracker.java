@@ -9,6 +9,11 @@ package xal.model.alg;
 
 import xal.tools.beam.PhaseMap;
 import xal.tools.beam.PhaseVector;
+import xal.tools.data.DataAdaptor;
+import xal.tools.data.DataFormatException;
+import xal.tools.data.DataTable;
+import xal.tools.data.EditContext;
+import xal.tools.data.GenericRecord;
 import xal.model.IElement;
 import xal.model.IProbe;
 import xal.model.ModelException;
@@ -32,6 +37,10 @@ public class ParticleTracker extends Tracker {
      *  Global Attributes
      */
 
+    /** Label for edit context table containing algorithm parameters - i.e., in "model.params" file */ 
+    private static final String STR_LBL_TABLE = "ParticleTracker";
+    
+
     /** string type identifier for this algorithm */
     public static final String      s_strTypeId = ParticleTracker.class.getName();
     
@@ -40,17 +49,13 @@ public class ParticleTracker extends Tracker {
 
     /** probe type recognized by this algorithm */
     public static final Class<ParticleProbe>       s_clsProbeType = ParticleProbe.class;
+
+
     
-//    /** default value - maximum distance to advance probe before saving state */
-//    private static final double     s_dblDefMaxStep = .01;  // one cm
-
-
     /*
      *  Local Attributes
      */
      
-//    /** maximum distance to advance probe before saving state */
-//    private double      m_dblMaxStep = s_dblDefMaxStep;
     
     
     
@@ -81,7 +86,56 @@ public class ParticleTracker extends Tracker {
 //        return this.m_dblMaxStep;
 //    }
     
+
+    /*
+     * IArchive Interface
+     */
     
+    /**
+     * Place holder for loading additional parameters from an edit context.
+     *  
+     * @since Oct 26, 2012
+     * @see xal.model.alg.Tracker#load(java.lang.String, xal.tools.data.EditContext)
+     */
+    @Override
+    public void load(String strPrimKeyVal, EditContext ecTableData) throws DataFormatException {
+        super.load(strPrimKeyVal, ecTableData);
+        
+        // Get the algorithm class name from the EditContext
+        DataTable     tblAlgorithm = ecTableData.getTable( STR_LBL_TABLE );
+        GenericRecord recTracker = tblAlgorithm.record( Tracker.TBL_PRIM_KEY_NAME,  strPrimKeyVal );
+    
+        if ( recTracker == null ) {
+            recTracker = tblAlgorithm.record( Tracker.TBL_PRIM_KEY_NAME, "default" );  // just use the default record
+        }
+        
+    }
+
+
+    /**
+     * Place holder for loading additional parameters from a data adaptor.
+     * 
+     * @since Oct 26, 2012
+     * @see xal.model.alg.Tracker#load(xal.tools.data.DataAdaptor)
+     */
+    @Override
+    public void load(DataAdaptor daSource) throws DataFormatException {
+        super.load(daSource);
+    }
+
+
+    /**
+     * Place holder for loading additional parameters from a data adaptor.
+     * 
+     * @since Oct 26, 2012
+     * @see xal.model.alg.Tracker#save(xal.tools.data.DataAdaptor)
+     */
+    @Override
+    public void save(DataAdaptor daptArchive) {
+        super.save(daptArchive);
+    }
+
+
     
 
     /*
@@ -154,11 +208,11 @@ public class ParticleTracker extends Tracker {
      *
      *  @exception ModelException     bad element transfer matrix/corrupt probe state
      */
-    protected void advanceState(ParticleProbe probe, IElement ifcElem, double dblLen)
+    protected void advanceState(ParticleProbe probe, IElement elem, double dblLen)
     		throws ModelException {
         
         // Properties of the element
-        PhaseMap  mapPhi = ifcElem.transferMap(probe, dblLen);
+        PhaseMap  mapPhi = elem.transferMap(probe, dblLen);
         
         // Advance state vector
         PhaseVector  z0 = probe.phaseCoordinates();

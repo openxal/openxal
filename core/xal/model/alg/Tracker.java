@@ -19,6 +19,7 @@ import xal.model.IElement;
 import xal.model.IProbe;
 import xal.model.ModelException;
 
+import xal.sim.scenario.AlgorithmFactory;
 import xal.smf.AcceleratorSeq;
 
 import java.util.ArrayList;
@@ -233,12 +234,28 @@ public abstract class Tracker implements IAlgorithm, IArchive {
      * <code>AcceleratorSeq</code> name. 
      * </p>
      * 
+     * <p>
+     * <h4>NOTE</h4>
+     * &middot; The returned algorithm type is that specified by the <tt>"type"</tt> attribute
+     * of the <code>&lt;Algorithm&gt;</code> table contained in the 
+     * <code>model.params</code> file.  The developer must ensure that the <tt>Probe</tt>
+     * and the <tt>Algorithm</tt> objects are of the correct type.
+     * </p>
+     * 
      * @param sequence  sequence from which to retrieve the algorithms' parameters.
      * 
      * @return          new IAlgorithm object initialized to the given table data
      * 
      * @throws DataFormatException  bad data format, error reading data
+     * 
+     * @author Christopher K. Allen
+     * @since  > Oct 17, 2012
+     * 
+     * @deprecated  I want to discourage use of this method since it return the same "default"
+     *              algorithm regardless the type of probe being used.  Please refer to
+     *              <code>{@link AlgorithmFactory}</code>. 
      */
+    @Deprecated
     public static IAlgorithm newFromEditContext( final AcceleratorSeq sequence ) {
         return newFromEditContext( sequence.getEntranceID(), sequence );
     }
@@ -246,7 +263,7 @@ public abstract class Tracker implements IAlgorithm, IArchive {
     /**
      * <p>
      * Load the sequence's model parameters for the adaptive tracker from the 
-     * global XAL edit context, which is retreivable through the given
+     * global XAL edit context, which is retrievable through the given
      * <code>AcceleratorSeq</code> argument.
      * </p>
      * 
@@ -255,13 +272,29 @@ public abstract class Tracker implements IAlgorithm, IArchive {
      * have the given value of the argument <code>strLocationId</code>.
      * </p>
      * 
+     * <p>
+     * <h4>NOTE</h4>
+     * &middot; The returned algorithm type is that specified by the <tt>"type"</tt> attribute
+     * of the <code>&lt;Algorithm&gt;</code> table contained in the 
+     * <code>model.params</code> file.  The developer must ensure that the <tt>Probe</tt>
+     * and the <tt>Algorithm</tt> objects are of the correct type.
+     * </p>
+     * 
      * @param strLocationId The location ID of the entrance parameters to use
      * @param sequence The sequence for which to get the adaptive tracker parameters.
      *
      * @return  new IAlgorithm object initialized to the given table data
      * 
      * @throws DataFormatException  bad data format, error reading data
+     * 
+     * @author Christopher K. Allen
+     * @since  > Oct 17, 2012
+     * 
+     * @deprecated  I want to discourage use of this method since it return the same "default"
+     *              algorithm regardless the type of probe being used.  Please refer to
+     *              <code>{@link AlgorithmFactory}</code>. 
      */
+    @Deprecated
     public static IAlgorithm newFromEditContext( final String strLocationId, final AcceleratorSeq sequence ) {
 
         // If locationID is null then take the sequence entrance identifier
@@ -965,4 +998,5 @@ public abstract class Tracker implements IAlgorithm, IArchive {
 //    currentPosition += nextInterval;
 //  } while (currentPosition < elem.getLength());
 //};
+
 

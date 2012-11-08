@@ -8,23 +8,19 @@
  
 package xal.model.alg;
 
-import xal.tools.math.r3.R3;
-
-import xal.tools.beam.CovarianceMatrix;
-import xal.tools.beam.PhaseIndexHom;
-import xal.tools.beam.PhaseMap;
-import xal.tools.beam.PhaseMatrix;
-import xal.tools.beam.Twiss;
-
 import xal.model.IElement;
 import xal.model.IProbe;
 import xal.model.ModelException;
 import xal.model.elem.ChargeExchangeFoil;
 import xal.model.elem.IdealMagQuad;
 import xal.model.elem.IdealRfGap;
-import xal.model.elem.ThickElement;
 import xal.model.probe.EnvelopeProbe;
 import xal.model.probe.traj.ProbeState;
+import xal.tools.beam.CovarianceMatrix;
+import xal.tools.beam.PhaseMap;
+import xal.tools.beam.PhaseMatrix;
+import xal.tools.beam.Twiss;
+import xal.tools.math.r3.R3;
 
 
 /**
@@ -73,8 +69,10 @@ import xal.model.probe.traj.ProbeState;
 public class EnvelopeBacktracker extends EnvelopeTrackerBase {
 
     /*
-     *  Global Attributes
+     *  Global Constants
      */
+    
+
     
     /** string type identifier for algorithm */
     public static final String      s_strTypeId = EnvelopeTracker.class.getName();
@@ -92,8 +90,6 @@ public class EnvelopeBacktracker extends EnvelopeTrackerBase {
      */
     
     /**
-     * <h1>EnvelopeBacktracker Constructor</h1>
-     * 
      * <p>
      * Create a new, uninitialized <code>EnvelopeBacktracker()</code>
      * algorithm object.  This is the default constructor to be used
@@ -105,8 +101,6 @@ public class EnvelopeBacktracker extends EnvelopeTrackerBase {
     }
 
     /**
-     *  <h1>EnvelopeBacktracker Constructor</h1>
-     *
      *  <p>
      *  This method is a protected constructor meant only for building
      *  child classes.
@@ -175,7 +169,7 @@ public class EnvelopeBacktracker extends EnvelopeTrackerBase {
         
     }
     /** 
-     * <h1>Back-propagates the Defining State of the Probe Object</h1>
+     * <h2>Back-propagates the Defining State of the Probe Object</h2>
      *
      * <p>
      * This method uses the same basic algorithm as in 
