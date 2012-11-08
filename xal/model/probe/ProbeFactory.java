@@ -224,6 +224,8 @@ public class ProbeFactory {
 		boolean success = initializeLocation( probe, sequence.getEntranceID(), sequence, algorithm );
 		success &= initializeBeam( probe, sequence, algorithm );
 		success &= initializeTwiss( probe, locationID, sequence, algorithm );
+
+		algorithm.load( locationID, sequence.getAccelerator().editContext() );
 		
 		return success ? probe : null;
 	}
