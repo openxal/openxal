@@ -23,24 +23,24 @@ abstract public class SourceAgent<RecordType> implements StateNotice<RecordType>
 	
 	/** Shared Message center */
     final private MessageCenter MESSAGE_CENTER;
-	
+
+	/** tester for correlations */
+    final private CorrelationTester<RecordType> CORRELATION_TESTER;
+
 	/** unique name of this source agent */
     protected String _name;
 	
 	/** bins sorted by timestamp */
-    private LinkedList<BinAgent<RecordType>> binAgents;
+    private LinkedList<BinAgent<RecordType>> _binAgents;
 	
 	/** proxy to forward bin update events to registered listeners */
-    protected BinUpdate<RecordType> binUpdateProxy;
-	
-	/** tester for correlations */
-    private CorrelationTester<RecordType> correlationTester;
+    protected BinUpdate<RecordType> _binUpdateProxy;
 
     
     /** Creates new ChannelAgent */
     public SourceAgent( final MessageCenter messageCenter, final String name, final RecordFilter<RecordType> recordFilter, final CorrelationTester<RecordType> tester ) {
         _name = name;
-        correlationTester = tester;
+        CORRELATION_TESTER = tester;
         MESSAGE_CENTER = messageCenter;
         
         setupEventHandler( recordFilter );
@@ -52,7 +52,7 @@ abstract public class SourceAgent<RecordType> implements StateNotice<RecordType>
     
 	@SuppressWarnings( "unchecked" )	// need cast to get the proxy using Generics 
     private void registerEvents() {        
-        binUpdateProxy = (BinUpdate<RecordType>)MESSAGE_CENTER.registerSource( this, BinUpdate.class );
+        _binUpdateProxy = (BinUpdate<RecordType>)MESSAGE_CENTER.registerSource( this, BinUpdate.class );
         MESSAGE_CENTER.registerTarget( this, StateNotice.class );
     }
     
@@ -74,7 +74,7 @@ abstract public class SourceAgent<RecordType> implements StateNotice<RecordType>
     
     /** clear memory of all events */
     public void reset() {
-		for ( final BinAgent<RecordType> binAgent : binAgents ) {
+		for ( final BinAgent<RecordType> binAgent : _binAgents ) {
             binAgent.reset();
         }
     }
@@ -82,15 +82,20 @@ abstract public class SourceAgent<RecordType> implements StateNotice<RecordType>
 
     /** set the timespan to each bin */
     public void setBinTimespan( final double timespan ) {
+		final List<BinAgent<RecordType>> binAgents = new ArrayList<BinAgent<RecordType>>();
+		synchronized( _binAgents ) {		// need to synchronize since nextBin() modifies _binAgents
+			binAgents.addAll( _binAgents );
+		}
+
 		for ( final BinAgent<RecordType> binAgent : binAgents ) {
-            binAgent.setTimespan( timespan );
-        }
+			binAgent.setTimespan( timespan );
+		}
     }
     
     
     /** Create a pool of bins that form a circular buffer */
     private void createBins() {
-        binAgents = new LinkedList<BinAgent<RecordType>>();
+        _binAgents = new LinkedList<BinAgent<RecordType>>();
         
         for ( int index = 0 ; index < BIN_POOL_SIZE ; index++ ) {
             createNewBin();
@@ -100,23 +105,23 @@ abstract public class SourceAgent<RecordType> implements StateNotice<RecordType>
     
     /** Create a new bin.  Register each bin for events. */
     private void createNewBin() {
-        final BinAgent<RecordType> binAgent = new BinAgent<RecordType>( MESSAGE_CENTER, correlationTester );
+        final BinAgent<RecordType> binAgent = new BinAgent<RecordType>( MESSAGE_CENTER, CORRELATION_TESTER );
         
         MESSAGE_CENTER.registerTarget( binAgent, BinUpdate.class );
         MESSAGE_CENTER.registerTarget( binAgent, StateNotice.class );
 		
-        binAgents.add( binAgent );
+        _binAgents.add( binAgent );
     }
     
     
     /** deallocate the bins when they are no longer needed */
     private void removeBins() {
-        synchronized( binAgents ) {
-			for ( final BinAgent<RecordType> binAgent : binAgents ) {
+        synchronized( _binAgents ) {
+			for ( final BinAgent<RecordType> binAgent : _binAgents ) {
                 removeBin( binAgent );
             }
 
-            binAgents.clear();
+            _binAgents.clear();
         }
     }
     
@@ -134,9 +139,9 @@ abstract public class SourceAgent<RecordType> implements StateNotice<RecordType>
     private BinAgent<RecordType> nextBin() {
         BinAgent<RecordType> nextBin;
         
-        synchronized(binAgents) {
-            nextBin = binAgents.removeFirst();
-            binAgents.addLast( nextBin );
+        synchronized(_binAgents) {
+            nextBin = _binAgents.removeFirst();
+            _binAgents.addLast( nextBin );
         }
         
         return nextBin;
@@ -153,7 +158,7 @@ abstract public class SourceAgent<RecordType> implements StateNotice<RecordType>
         nextBin().resetWithRecord( name(), record, timestamp );
 
         // now notify bins everywhere of the new record
-        binUpdateProxy.newEvent( name(), record, timestamp );
+        _binUpdateProxy.newEvent( name(), record, timestamp );
     }
 
     
