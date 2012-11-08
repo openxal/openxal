@@ -54,6 +54,12 @@ public class GenericRecord implements KeyedRecord, DataListener {
 			return ATTRIBUTE_TABLE.values();			
 		}
     }
+
+
+	/** Determine whether this record has the specified attribute */
+	public boolean hasAttributeForKey( final String key ) {
+		return ATTRIBUTE_TABLE.containsKey( key );
+	}
     
     
 	/**
