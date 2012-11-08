@@ -20,6 +20,11 @@ import xal.tools.beam.PhaseIndexHom;
 import xal.tools.beam.PhaseMap;
 import xal.tools.beam.PhaseMatrix;
 import xal.tools.beam.em.BeamEllipsoid;
+import xal.tools.data.DataAdaptor;
+import xal.tools.data.DataFormatException;
+import xal.tools.data.DataTable;
+import xal.tools.data.EditContext;
+import xal.tools.data.GenericRecord;
 import xal.tools.math.r3.R3;
 
 
@@ -42,7 +47,17 @@ import xal.tools.math.r3.R3;
  * below.
  * </p>
  * <p>
- * Completed: Replace <code>EllipsoidalCharge</code> with <code>BeamEllipsoid</code>.
+ * This is a basic algorithm for envelope propagation, almost exact to that used in Trace3D.
+ * There is no emittance growth mechanism for RF gaps, however.  It was used for direct comparison 
+ * of results from <tt>Trace3D</tt> and the XAL online model.  All the functionality of this class
+ * is contained in <code>EnvelopeTracker</code> so it is no longer supported.  However, I am not
+ * deprecated this class since it can be used as a light-weight substitute.
+ * </p>
+ * <p>
+ * <h4>NOTES:</h4>
+ * &middot; Completed: Replace <code>EllipsoidalCharge</code> with <code>BeamEllipsoid</code>.
+ * <br/>
+ * &middot; The default value for step size is 0.01 meters (1 cm).
  * </p>
  * 
  * @see xal.tools.beam.em.BeamEllipsoid
@@ -54,6 +69,26 @@ import xal.tools.math.r3.R3;
  */
 public class Trace3dTracker extends Tracker {
 
+    
+    
+    
+    
+    /*
+     * Global Constants
+     */
+
+    /** Label of the Trace3dTracker table in the edit context */
+    private static final String TBL_LBL_ENVBASETRACKER = "Trace3dTracker";  
+    
+    
+    /** data node label for EnvelopeTracker settings */
+    public static final String LABEL_OPTIONS = "options";
+    
+    /** label for maximum step size **/
+    public static final String ATTR_STEPSIZE = "stepsize";
+
+    
+    
     /*
      *  Global Attributes
      */
@@ -68,15 +103,19 @@ public class Trace3dTracker extends Tracker {
     public static final Class<EnvelopeProbe>       s_clsProbeType = EnvelopeProbe.class;
     
     /** maximum distance to advance probe before applying space charge kick */
-    private static final double     s_dblMaxStep = .01;  
-    
+    private static final double     s_dblDefStep = .01;
+
+
     
     
     /*
      *  Local Attributes
      */
-     
-     
+    
+    /** The current integration step size */
+    private double          dblStepSize;
+    
+    
      
     
     /*
@@ -88,9 +127,23 @@ public class Trace3dTracker extends Tracker {
      */
     public Trace3dTracker() { 
         super(s_strTypeId, s_intVersion, s_clsProbeType);
+        
+        this.dblStepSize = Trace3dTracker.s_dblDefStep;
     };
     
 
+    /**
+     * Sets the value of the integration step size to the given value.
+     *
+     * @param dblStepSize       new step length for propagating probes
+     *
+     * @author Christopher K. Allen
+     * @since  Oct 25, 2012
+     */
+    public void setStepSize(double dblStepSize) {
+        this.dblStepSize = dblStepSize;
+    }
+    
     
     
     /**
@@ -103,8 +156,8 @@ public class Trace3dTracker extends Tracker {
      * 
      * @return  maximum step size for numerical integration 
      */
-    private double getMaxStepSize() {
-    	return s_dblMaxStep;
+    public double getStepSize() {
+    	return this.dblStepSize;
     }
     
 
@@ -125,7 +178,7 @@ public class Trace3dTracker extends Tracker {
     @Override
     public void doPropagation(IProbe probe, IElement elem) throws ModelException {
         
-        int     nSteps = (int) Math.max(Math.ceil(elem.getLength() / getMaxStepSize()), 1);
+        int     nSteps = (int) Math.max(Math.ceil(elem.getLength() / getStepSize()), 1);
         double  dblSize = elem.getLength() / nSteps;
         for (int i=0 ; i<nSteps ; i++) {
             this.advanceState(probe, elem, dblSize);
@@ -134,6 +187,83 @@ public class Trace3dTracker extends Tracker {
         }
     }
 
+
+    
+    /*
+     * IArchive Interface
+     */
+    
+    /**
+     * Load the parameters of this <code>IAlgorithm</code> object from the
+     * table data in the given <code>EditContext</code>.  
+     * 
+     * Here we load only the parameters specific to the base class.  It is expected
+     * that Subclasses should override this method to recover the data particular 
+     * to there own operation.
+     * 
+     * @param   strPrimKeyVal   primary key value specifying the name of the data record
+     * @param   ecTableData     EditContext containing table data
+     * 
+     * @see xal.tools.data.IContextAware#load(String, xal.tools.data.EditContext)
+     */
+    @Override
+    public void load(final String strPrimKeyVal, final EditContext ecTableData) throws DataFormatException {
+        super.load(strPrimKeyVal, ecTableData);
+        
+        // Get the algorithm class name from the EditContext
+        DataTable     tblAlgorithm = ecTableData.getTable( Trace3dTracker.TBL_LBL_ENVBASETRACKER);
+        GenericRecord recTracker = tblAlgorithm.record( Tracker.TBL_PRIM_KEY_NAME,  strPrimKeyVal );
+    
+        if ( recTracker == null ) {
+            recTracker = tblAlgorithm.record( Tracker.TBL_PRIM_KEY_NAME, "default" );  // just use the default record
+        }
+    
+        final double    dblStepSize = recTracker.doubleValueForKey( EnvelopeTrackerBase.ATTR_STEPSIZE );
+    
+        this.setStepSize( dblStepSize );
+    }
+
+    /** 
+     * Load the parameters of the algorithm from a data source exposing the
+     * <code>IArchive</code> interface.
+     * The superclass <code>load</code> method is called first, then the properties
+     * particular to <code>EnvTrackerAdapt<code> are loaded.
+     * 
+     * @see xal.tools.data.IArchive#load(xal.tools.data.DataAdaptor)
+     */
+    @Override
+    public void load(DataAdaptor daptArchive) {
+        super.load(daptArchive);
+        
+        DataAdaptor daEnv = daptArchive.childAdaptor(LABEL_OPTIONS);
+        if (daEnv != null)  {
+
+            if (daEnv.hasAttribute(ATTR_STEPSIZE)) 
+                this.setStepSize( daEnv.doubleValue(ATTR_STEPSIZE) );
+        }
+    }
+
+    /**
+     * Save the state and settings of this algorithm to a data source 
+     * exposing the <code>DataAdaptor</code> interface.  Subclasses should
+     * override this method to store the data particular to there own 
+     * operation.
+     * 
+     * @param   daptArchive     data source to receive algorithm configuration
+     * 
+     * @see xal.tools.data.IArchive#save(xal.tools.data.DataAdaptor)
+     */
+    @Override
+    public void save(DataAdaptor daptArchive) {
+
+        super.save(daptArchive);
+
+        DataAdaptor daptAlg = daptArchive.childAdaptor(NODETAG_ALG);
+
+        DataAdaptor daptOpt = daptAlg.createChild(LABEL_OPTIONS);
+        daptOpt.setValue(ATTR_STEPSIZE, this.getStepSize());
+
+    }
 
 
     

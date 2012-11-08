@@ -10,6 +10,7 @@ import xal.tools.beam.PhaseMap;
 import xal.tools.beam.PhaseVector;
 import xal.tools.data.DataAdaptor;
 
+import xal.model.probe.traj.EnvelopeProbeState;
 import xal.model.probe.traj.ProbeState;
 import xal.model.probe.traj.TransferMapState;
 import xal.model.probe.traj.TransferMapTrajectory;
@@ -17,7 +18,20 @@ import xal.model.xml.ParsingException;
 
 
 /**
+ * <p>
+ * Probe that tracks all the transfer maps between modeling elements.
+ * Note there is no beam dynamics <i>per se</i>, the probe simply collects all
+ * the transfer maps as provided by the beamline elements for the design 
+ * synchronous particle.
+ * </p>
+ * <p>
+ * If you wish to compute the transfer matrices for an envelope model that includes
+ * space charge effects, then you should employ and <code>{@link EnvelopeProbe}</code>
+ * and call the method <code>{@link EnvelopeProbeState#getResponseMatrix}</code>.
+ * </p>
+ * 
  * @author Christopher K. Allen
+ * @since  May 28, 2004
  */
 public class TransferMapProbe extends Probe {
     /** composite transfer map */

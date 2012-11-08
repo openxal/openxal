@@ -196,10 +196,10 @@ public class EnvelopeTracker extends EnvelopeTrackerBase {
         EnvelopeProbe   probe = (EnvelopeProbe)ifcProbe;
         
         // Get initial conditions of probe
-        R3                  vecPhs0  = probe.getBetatronPhase();
-        Twiss[]             twiss0   = probe.getCovariance().computeTwiss();
-        PhaseMatrix         matRnsp0 = probe.getResponseMatrixNoSpaceCharge();
-        PhaseMatrix         matResp0 = probe.getResponseMatrix();
+        R3                 vecPhs0  = probe.getBetatronPhase();
+        Twiss[]            twiss0   = probe.getCovariance().computeTwiss();
+        PhaseMatrix        matRnsp0 = probe.getResponseMatrixNoSpaceCharge();
+        PhaseMatrix        matResp0 = probe.getResponseMatrix();
         CovarianceMatrix   matTau0  = probe.getCovariance();
         
         // Compute the transfer matrix

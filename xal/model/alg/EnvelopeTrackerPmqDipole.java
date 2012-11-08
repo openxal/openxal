@@ -24,7 +24,8 @@ import xal.model.probe.EnvelopeProbe;
  * This class is a super class of the <code>EnvelopeTracker</code> class meant to 
  * handle the special case of <code>IdealPermMagQuad</code> elements.  There really
  * is not much extra to do here, just look for the exception element and adjust the
- * number of integration steps accordingly.
+ * number of integration steps accordingly.  This algorithm also treats
+ * <code>IdealMagSectorDipole2</code> object in a special fashion.
  * </p>
  * <p>
  * See the <code>EnvelopeTracker</code> class for a complete description of the
