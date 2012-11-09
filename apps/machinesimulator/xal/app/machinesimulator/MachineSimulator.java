@@ -186,12 +186,29 @@ public class MachineSimulator implements DataListener {
 	 * @return the default probe for the specified sequence
 	 */
 	static public Probe getDefaultProbe( final AcceleratorSeq sequence ) {
-        // todo: need to configure the envelope adaptive tracker based on the model params
-		final Probe probe = ( sequence instanceof Ring ) ? (Probe)ProbeFactory.getTransferMapProbe( sequence, new TransferMapTracker() ) : (Probe)ProbeFactory.getEnvelopeProbe( sequence, new EnvelopeTracker() );
-		
-		probe.getAlgorithm().setRfGapPhaseCalculation( true );	// make sure we enable the full RF gap phase slip calculation
-		
-		return probe;
+		try {
+			final Probe probe = ( sequence instanceof Ring ) ? createRingProbe( sequence ) : createEnvelopeProbe( sequence );
+			probe.getAlgorithm().setRfGapPhaseCalculation( true );	// make sure we enable the full RF gap phase slip calculation
+			return probe;
+		}
+		catch( InstantiationException exception ) {
+			exception.printStackTrace();
+			throw new RuntimeException( "Exception creating the default probe.", exception );
+		}
+	}
+
+
+	/** create a new ring probe */
+	static private Probe createRingProbe( final AcceleratorSeq sequence ) throws InstantiationException {
+		final TransferMapTracker tracker = AlgorithmFactory.createTransferMapTracker( sequence );
+		return ProbeFactory.getTransferMapProbe( sequence, tracker );
+	}
+
+
+	/** create a new envelope probe */
+	static private Probe createEnvelopeProbe( final AcceleratorSeq sequence ) throws InstantiationException {
+		final EnvelopeTracker tracker = AlgorithmFactory.createEnvelopeTracker( sequence );
+		return ProbeFactory.getEnvelopeProbe( sequence, tracker );
 	}
 	
 	
