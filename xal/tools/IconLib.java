@@ -55,7 +55,7 @@ public class IconLib {
      * @return The path to the specified icon in classpath notation
      */
     static protected String getPathToIcon( final IconGroup group, final String iconName ) {
-        return group + "/" + iconName;
+		return getPathToIcon( group.toString(), iconName );
     }
 	
 	
