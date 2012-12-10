@@ -63,7 +63,7 @@ public class Main {
 	}
     
     
-    /** Shutdown the applicaiton */
+    /** Shutdown the application */
     static public void shutdown( final int code ) {
         System.out.println( "Shutting down work service..." );
         ServiceDirectory.defaultDirectory().dispose();
