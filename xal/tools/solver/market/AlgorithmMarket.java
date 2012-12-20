@@ -86,7 +86,7 @@ public class AlgorithmMarket implements AlgorithmScheduleListener, SolutionJudge
 	 * @param strategy  the only strategy to use in the market
 	 */
 	public AlgorithmMarket( final AlgorithmPool pool, final AlgorithmStrategy strategy ) {
-		this( pool, Collections.singletonList( strategy ) );
+		this( pool, Collections.<AlgorithmStrategy>singletonList( strategy ) );
 	}
 
 
