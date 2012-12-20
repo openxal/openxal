@@ -6,6 +6,14 @@
     
     <property name="build.path.pattern" value="*/build.xml" />
 
+	<!-- Post build information -->
+	<target name="info">
+		<echo message="Ant Version: ${ant.version}" />
+		<echo message="Ant Home: ${ant.home}" />
+		<echo message="Ant Java version: ${ant.java.version}" />
+		<echo message="Java Home: ${java.home}" />
+	</target>
+
     
     <!-- Build the core and all the applications which allow batch building. -->
     <target name="all" depends="core, services, apps, scripts" />
@@ -58,7 +66,7 @@
     
     
     <!-- Build the core. -->
-    <target name="core">
+    <target name="core" depends="info">
         <subant target="all">
             <fileset dir=".">
                 <include name="core/build.xml" />
@@ -189,6 +197,7 @@
 		<echo message="    clean ...................... Clean compiled classes and build products" />
 		<echo message="    core ....................... Compile the core XAL classes and assemble the jar products." />
 		<echo message="    doc ........................ Build the javadoc." />
+		<echo message="    info ....................... Post build information." />
 		<echo message="    install .................... Install all build products which allow batch installation." />
 		<echo message="    install-apps ............... Install all apps which allow batch installation." />
 		<echo message="    install-core ............... Install the core." />
