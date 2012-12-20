@@ -62,7 +62,7 @@ public class AlgorithmPool implements SearchAlgorithmListener, SolutionJudgeList
 	 * @param algorithm  Description of the Parameter
 	 */
 	public AlgorithmPool( final SearchAlgorithm algorithm ) {
-		this( Collections.singletonList( algorithm ) );
+		this( Collections.<SearchAlgorithm>singletonList( algorithm ) );
 	}
 
 
