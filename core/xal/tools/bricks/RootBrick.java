@@ -164,9 +164,8 @@ public class RootBrick extends Brick implements ViewNodeContainer, DataListener 
 	 * Remove the view node from this container
 	 * @param node the node to remove
 	 */
-	@SuppressWarnings( "unchecked" )		// need to cast from singleton list since it converts type to capture
 	public void removeNode( final BeanNode<?> node ) {
-		final List<BeanNode<?>> nodes = (List<BeanNode<?>>)Collections.singletonList( node );
+		final List<BeanNode<?>> nodes = Collections.<BeanNode<?>>singletonList( node );
 		removeNodes( nodes );
 	}
 	

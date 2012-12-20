@@ -50,9 +50,8 @@ public class ViewTransferable implements Transferable {
 	 * Constructor
 	 * @param viewProxy The view to transfer
 	 */
-	@SuppressWarnings( "unchecked" )	// must cast as singletonList returns captured type
 	public ViewTransferable( final BeanProxy<?> viewProxy ) {
-		this( (List<BeanProxy<?>>)Collections.singletonList( viewProxy ) );
+		this( Collections.<BeanProxy<?>>singletonList( viewProxy ) );
 	}
 	
 	

@@ -50,9 +50,8 @@ public class ViewNodeTransferable implements Transferable {
 	 * Constructor
 	 * @param node The node to transfer
 	 */
-	@SuppressWarnings( "unchecked" )	// must cast from singletonList since it returns captured type
 	public ViewNodeTransferable( final BeanNode<?> node ) {
-		this( (List<BeanNode<?>>)Collections.singletonList( node ) );
+		this( Collections.<BeanNode<?>>singletonList( node ) );
 	}
 	
 	
