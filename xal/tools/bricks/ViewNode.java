@@ -424,9 +424,8 @@ public class ViewNode extends BeanNode<Component> implements ViewNodeContainer {
 	 * Remove the view node from this container
 	 * @param node the node to remove
 	 */
-	@SuppressWarnings( "unchecked" )	// must cast because singletonList returns captured type
 	public void removeNode( final BeanNode<?> node ) {
-		final List<BeanNode<?>> nodes = (List<BeanNode<?>>)Collections.singletonList( node );
+		final List<BeanNode<?>> nodes = Collections.<BeanNode<?>>singletonList( node );
 		removeNodes( nodes );
 	}
 	
