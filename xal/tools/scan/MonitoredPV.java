@@ -1,82 +1,68 @@
 package xal.tools.scan;
 
 import xal.ca.*;
+import xal.tools.messaging.MessageCenter;
 
 import java.util.*;
 import java.awt.event.*;
 
 /**
- *  Description of the Class
- *
- *@author     shishlo
- *created    October 31, 2005
+ * Manage the monitor events for a Process Variable
+ * @author     shishlo
+ * @author     tap
+ * created    October 31, 2005
  */
 public class MonitoredPV {
+	/** hash of monitored PVs keyed by alias */
+	final private static Map<String,MonitoredPV> ALIAS_PV_MAP;
 
-	private String alias = null;
+	/** local message center for state events */
+	final private MessageCenter STATE_MESSAGE_CENTER;
 
-	private Channel ch = null;
+	/** dispatches state events to registered listeners */
+	final private ActionListener STATE_EVENT_DISPATCH;
 
-	private String chName = null;
+	/** local message center for value events */
+	final private MessageCenter VALUE_MESSAGE_CENTER;
 
-	private Monitor monitor = null;
+	/** dispatches value events to registered listeners */
+	final private ActionListener VALUE_EVENT_DISPATCH;
 
-	private volatile boolean isRunning = false;
-	
-	private volatile int thread_counter = 0;
+	/** handler of the delegate callbacks */
+	final private MonitorDelegateHandler DELEGATE_HANDLER;
 
-	private volatile double currValue = 0.0;
+	private String _alias = null;
 
-	private IEventSinkValue callBack = null;
+	/** monitor of channel to monitor */
+	private ScanChannelMonitor _monitor;
 
-	private volatile boolean isGood = false;
 
-	//sleep time between attempt to connect in sec.
-	private double sleepTime = 30.0;
-
-	private Vector<ActionListener> stateListenersV = new Vector<ActionListener>();
-
-	private Vector<ActionListener> valueListenersV = new Vector<ActionListener>();
-
-	private ActionEvent stateChangedAction = null;
-
-	//synchronizing lock
-	private Object lockObj = new Object();
-
-	private Thread connectThread = null;
-
-	private static Map<String,MonitoredPV> hashPVs = new HashMap<String,MonitoredPV>();
-
-	/**
-	 *  Constructor for the MonitoredPV object
-	 */
-	private MonitoredPV() {
-
-		final MonitoredPV mpvThis = this;
-
-		callBack =
-			new IEventSinkValue() {
-				public void eventValue(ChannelRecord record, Channel chan) {
-					currValue = record.doubleValue();
-					int nL = valueListenersV.size();
-					if(nL > 0) {
-						stateChangedAction = new MonitoredPVEvent(mpvThis, record, chan);
-						for(int i = 0; i < nL; i++) {
-							valueListenersV.get(i).actionPerformed(stateChangedAction);
-						}
-					}
-				}
-			};
+	// static initializer
+	static {
+		ALIAS_PV_MAP = new HashMap<String,MonitoredPV>();
 	}
+
+
+	/** Constructor for the MonitoredPV */
+	private MonitoredPV() {
+		STATE_MESSAGE_CENTER = new MessageCenter( "MonitoredPV State" );
+		STATE_EVENT_DISPATCH = STATE_MESSAGE_CENTER.registerSource( this, ActionListener.class );
+
+		VALUE_MESSAGE_CENTER = new MessageCenter( "MonitoredPV Value" );
+		VALUE_EVENT_DISPATCH = VALUE_MESSAGE_CENTER.registerSource( this, ActionListener.class );
+
+		DELEGATE_HANDLER = new MonitorDelegateHandler();
+	}
+
 
 	/**
 	 *  Sets the alias attribute of the MonitoredPV object
-	 *
-	 *@param  alias  The new alias value
+	 *  @param  alias  The new alias value
 	 */
-	private void setAlias(String alias) {
-		this.alias = alias;
+	private void setAlias( final String alias ) {
+		_alias = alias;
 	}
+
 
 	/**
 	 *  Returns the monitoredPV attribute of the MonitoredPV class
@@ -84,58 +70,60 @@ public class MonitoredPV {
 	 *@param  alias  The Parameter
 	 *@return        The monitoredPV value
 	 */
-	public static MonitoredPV getMonitoredPV(String alias) {
+	public static MonitoredPV getMonitoredPV( final String alias ) {
 		if(alias == null) {
 			return null;
 		}
-		if(hashPVs.containsKey(alias)) {
-			return hashPVs.get(alias);
-		} else {
+		if( ALIAS_PV_MAP.containsKey( alias ) ) {
+			return ALIAS_PV_MAP.get( alias );
+		}
+		else {
 			MonitoredPV mpv = new MonitoredPV();
-			mpv.setAlias(alias);
-			hashPVs.put(alias, mpv);
+			mpv.setAlias( alias );
+			ALIAS_PV_MAP.put( alias, mpv );
 			return mpv;
 		}
 	}
 
-	/**
-	 *  Description of the Method
-	 *
-	 *@param  alias  The Parameter
-	 *@return        The Return Value
-	 */
-	static boolean hasAlias(String alias) {
-		return hashPVs.containsKey(alias);
-	}
 
 	/**
-	 *  Description of the Method
-	 *
-	 *@param  alias  The Parameter
+	 * Determine if a monitored PV is associated with the specified alias
+	 * @param  alias  The alias to lookup
+	 * @return true if a monitored PV has been assigned to the alias
 	 */
-	public static void removeMonitoredPV(String alias) {
-		if(alias == null) {
+	static boolean hasAlias( final String alias ) {
+		return ALIAS_PV_MAP.containsKey( alias );
+	}
+
+
+	/**
+	 * Remove the monitored PV associated with the alias
+	 * @param  alias  The Parameter
+	 */
+	public static void removeMonitoredPV( final String alias ) {
+		if( alias == null ) {
 			return;
 		}
-		if(hashPVs.containsKey(alias)) {
-			MonitoredPV mpv = hashPVs.get(alias);
+		if( ALIAS_PV_MAP.containsKey( alias ) ) {
+			MonitoredPV mpv = ALIAS_PV_MAP.get( alias );
 			mpv.stopMonitor();
-			hashPVs.remove(alias);
+			ALIAS_PV_MAP.remove( alias );
 		}
 	}
 
+
 	/**
-	 *  Description of the Method
-	 *
-	 *@param  mpv  The Parameter
+	 * Dispose of the monitored PV and remove its alias
+	 * @param  mpv  the monitored PV to remove
 	 */
-	public static void removeMonitoredPV(MonitoredPV mpv) {
-		if(mpv == null) {
+	public static void removeMonitoredPV( MonitoredPV mpv ) {
+		if( mpv == null ) {
 			return;
 		}
 		mpv.stopMonitor();
-		removeMonitoredPV(mpv.getAlias());
+		removeMonitoredPV( mpv.getAlias() );
 	}
+
 
 	/**
 	 *  Returns the aliases attribute of the MonitoredPV class
@@ -143,7 +131,7 @@ public class MonitoredPV {
 	 *@return    The aliases value
 	 */
 	public static Object[] getAliases() {
-		return hashPVs.keySet().toArray();
+		return ALIAS_PV_MAP.keySet().toArray();
 	}
 
 	/**
@@ -152,315 +140,174 @@ public class MonitoredPV {
 	 *@return    The alias value
 	 */
 	public String getAlias() {
-		return alias;
-	}
-
-	/**
-	 *  Sets the channelName attribute of the MonitoredPV object
-	 *
-	 *@param  chanName  The new channelName value
-	 */
-	public void setChannelName(String chanName) {
-		stopMonitor();
-		chName = chanName;
-		if(chanName != null) {
-			Channel chIn = ChannelFactory.defaultFactory().getChannel(chanName);
-			ch = chIn;
-			tryConnect(chIn);
-		} else {
-			ch = null;
-			tryConnect(null);
-		}
-	}
-
-	/**
-	 *  Sets the channelNameQuietly attribute of the MonitoredPV object
-	 *
-	 *@param  chanName  The new channelNameQuietly value
-	 */
-	public void setChannelNameQuietly(String chanName) {
-		stopMonitor();
-		chName = chanName;
-		if(chanName != null) {
-			Channel chIn = ChannelFactory.defaultFactory().getChannel(chanName);
-			ch = chIn;
-		}
+		return _alias;
 	}
 
 
 	/**
-	 *  Returns the channelName attribute of the MonitoredPV object
-	 *
-	 *@return    The channelName value
+	 * Get the name of the channel to be monitored
+	 * @return    The channelName value
 	 */
 	public String getChannelName() {
-		return chName;
-	}
-
-	/**
-	 *  Sets the channel attribute of the MonitoredPV object
-	 *
-	 *@param  chIn  The new channel value
-	 */
-	public void setChannel(Channel chIn) {
-		stopMonitor();
-		if(chIn != null) {
-			chName = chIn.channelName();
-		} else {
-			chName = null;
-		}
-		ch = chIn;
-		tryConnect(chIn);
-	}
-
-	/**
-	 *  Sets the channelQuietly attribute of the MonitoredPV object
-	 *
-	 *@param  chIn  The new channelQuietly value
-	 */
-	public void setChannelQuietly(Channel chIn) {
-		stopMonitor();
-		if(chIn != null) {
-			chName = chIn.channelName();
-			ch = chIn;
-		} else {
-			chName = null;
-			ch = null;
-		}
+		final Channel channel = getChannel();
+		return channel != null ? channel.channelName() : null;
 	}
 
 
 	/**
-	 *  Returns the channel attribute of the MonitoredPV object
-	 *
-	 *@return    The channel value
+	 * Get the channel to be monitored
+	 * @return    The channel value
 	 */
 	public Channel getChannel() {
-		return ch;
+		final ScanChannelMonitor monitor = _monitor;
+		return monitor != null ? monitor.getChannel() : null;
 	}
 
+
 	/**
-	 *  Returns the value attribute of the MonitoredPV object
-	 *
-	 *@return    The value value
+	 * Sets the channel to monitor
+	 * @param channel the new channel to monitor
+	 * @param delegate to handle monitor callbacks
+	 * @param requestEvents request channel events
+	 */
+	private void setChannel( final Channel channel, final boolean requestEvents ) {
+		final ScanChannelMonitor oldMonitor = _monitor;
+		if ( oldMonitor != null ) {
+			oldMonitor.dispose();
+		}
+
+		if ( channel != null ) {
+			_monitor = new ScanChannelMonitor( channel, DELEGATE_HANDLER, requestEvents );
+		}
+	}
+
+
+	/**
+	 * Sets the channel to monitor
+	 * @param  channel the new channel to monitor
+	 */
+	public void setChannel( final Channel channel ) {
+		setChannel( channel, true );
+	}
+
+
+	/**
+	 * Sets the channelQuietly attribute of the MonitoredPV object
+	 * @param  channel  The new channelQuietly value
+	 */
+	public void setChannelQuietly( final Channel channel ) {
+		setChannel( channel, false );
+	}
+
+
+	/**
+	 * Set the name of the channel to monitor
+	 * @param  chanName  The new channelName value
+	 */
+	public void setChannelName( final String chanName ) {
+		final Channel channel = ChannelFactory.defaultFactory().getChannel( chanName );
+		setChannel( channel );
+	}
+
+
+	/**
+	 * Sets the name of the channel to monitor without posting events
+	 * @param  chanName  The new channelNameQuietly value
+	 */
+	public void setChannelNameQuietly( final String chanName ) {
+		final Channel channel = ChannelFactory.defaultFactory().getChannel( chanName );
+		setChannelQuietly( channel );
+	}
+
+
+	/**
+	 * Get the latest value of the monitored channel
+	 * @return    The value value
 	 */
 	public double getValue() {
-		return currValue;
+		final ScanChannelMonitor monitor = _monitor;
+		final ChannelTimeRecord record = monitor != null ? monitor.getLatestRecord() : null;
+		return record != null ? record.doubleValue() : 0.0;		// default value is 0.0 instead of NaN due for backward compatibility
 	}
 
+
 	/**
-	 *  Returns the good attribute of the MonitoredPV object
-	 *
-	 *@return    The good value
+	 * Determine whether the channel is good meaning that it is connected and has posted a monitored value
+	 * @return  channel status
 	 */
 	public boolean isGood() {
-		return isGood;
+		final ScanChannelMonitor monitor = _monitor;
+		return monitor != null && monitor.isValid();
+	}
+
+
+	/**
+	 * Add a listener for state change events from this monitored PV
+	 * @param  actionListener  listener of state change events
+	 */
+	public void addStateListener( final ActionListener actionListener ) {
+		STATE_MESSAGE_CENTER.registerTarget( actionListener, this, ActionListener.class );
+	}
+
+
+	/**
+	 * Remove the listener from getting state change events from this monitored PV
+	 * @param  actionListener  the listener to remove
+	 */
+	public void removeStateListener( final ActionListener actionListener ) {
+		STATE_MESSAGE_CENTER.removeTarget( actionListener, this, ActionListener.class );
+	}
+
+
+	/**
+	 * Add a listener for value change events from this monitored PV
+	 * @param  actionListener  The listener to add for value change events
+	 */
+	public void addValueListener( final ActionListener actionListener ) {
+		VALUE_MESSAGE_CENTER.registerTarget( actionListener, this, ActionListener.class );
 	}
 
 	/**
-	 *  Adds a feature to the StateListener attribute of the MonitoredPV object
-	 *
-	 *@param  actionListener  The feature to be added to the StateListener
-	 *      attribute
+	 * Remove the listener from getting value change events from this monitored PV
+	 * @param  actionListener  the listener to remove
 	 */
-	public void addStateListener(ActionListener actionListener) {
-		if(actionListener != null) {
-			stateListenersV.add(actionListener);
-		}
+	public void removeValueListener( final ActionListener actionListener ) {
+		VALUE_MESSAGE_CENTER.removeTarget( actionListener, this, ActionListener.class );
 	}
 
-	/**
-	 *  Description of the Method
-	 *
-	 *@param  actionListener  The Parameter
-	 */
-	public void removeStateListener(ActionListener actionListener) {
-		stateListenersV.remove(actionListener);
-	}
 
-	/**
-	 *  Description of the Method
-	 */
-	public void removeStateListeners() {
-		stateListenersV.clear();
-	}
-
-	/**
-	 *  Adds a feature to the ValueListener attribute of the MonitoredPV object
-	 *
-	 *@param  actionListener  The feature to be added to the ValueListener
-	 *      attribute
-	 */
-	public void addValueListener(ActionListener actionListener) {
-		if(actionListener != null) {
-			valueListenersV.add(actionListener);
-		}
-	}
-
-	/**
-	 *  Description of the Method
-	 *
-	 *@param  actionListener  The Parameter
-	 */
-	public void removeValueListener(ActionListener actionListener) {
-		valueListenersV.remove(actionListener);
-	}
-
-	/**
-	 *  Description of the Method
-	 */
-	public void removeValueListeners() {
-		valueListenersV.clear();
-	}
-
-	/**
-	 *  Description of the Method
-	 */
+	/** Stop the monitor */
 	public void stopMonitor() {
-		isRunning = false;
-		isGood = false;
-		while(connectThread != null && connectThread.isAlive()) {
-			connectThread.interrupt();
-			Thread.yield();
+		final ScanChannelMonitor monitor = _monitor;
+		if ( monitor != null ) {
+			monitor.stop();
 		}
-		
-		final MonitoredPV mpvThis = this;
-
-		callBack =
-			new IEventSinkValue() {
-				public void eventValue(ChannelRecord record, Channel chan) {
-					currValue = record.doubleValue();
-					int nL = valueListenersV.size();
-					if(nL > 0) {
-						stateChangedAction = new MonitoredPVEvent(mpvThis, record, chan);
-						for(int i = 0; i < nL; i++) {
-							valueListenersV.get(i).actionPerformed(stateChangedAction);
-						}
-					}
-				}
-			};
 	}
 
-	/**
-	 *  Description of the Method
-	 */
+
+	/** Start the monitor */
 	public void startMonitor() {
-		if(isRunning == true) {
-			return;
-		}
-		if(ch != null) {
-			tryConnect(ch);
-		} else {
-			isRunning = false;
-			isGood = false;
-			if(monitor != null) {
-				monitor.clear();
-				monitor = null;
-			}
+		final ScanChannelMonitor monitor = _monitor;
+		if ( monitor != null ) {
+			monitor.start();
 		}
 	}
 
-	/**
-	 *  Sets the sleepTime attribute of the MonitoredPV object
-	 *
-	 *@param  sleepTime  The new sleepTime value
-	 */
-	public void setSleepTime(double sleepTime) {
-		this.sleepTime = sleepTime;
+
+	/** Handle the delegate callbacks */
+	private class MonitorDelegateHandler implements ScanChannelMonitorDelegate {
+		/** Callback for channel state events */
+		public void channelStateChanged( final ScanChannelMonitor monitor, final boolean valid ) {
+			final ActionEvent stateChangedAction = new MonitoredPVEvent( MonitoredPV.this, monitor.getLatestRecord(), monitor.getChannel() );
+			STATE_EVENT_DISPATCH.actionPerformed( stateChangedAction );
+		}
+
+
+		/** Callback for channel monitor events */
+		public void channelRecordUpdate( final ScanChannelMonitor monitor, final ChannelTimeRecord record ) {
+			final double value = record.doubleValue();
+			final ActionEvent valueChangedAction = new MonitoredPVEvent( MonitoredPV.this, record, monitor.getChannel() );
+			VALUE_EVENT_DISPATCH.actionPerformed( valueChangedAction );
+		}
 	}
-
-	/**
-	 *  Description of the Method
-	 *
-	 *@param  chIn  The Parameter
-	 */
-	private void tryConnect(final Channel chIn) {
-
-		final MonitoredPV mpvThis = this;
-		
-		thread_counter = thread_counter + 1;
-		
-		Runnable tryConnectRun =
-			new Runnable() {
-				public void run() {
-					synchronized(lockObj) {
-						connectThread = Thread.currentThread();
-						ch = chIn;
-						isRunning = true;
-						isGood = false;
-						int inner_thread_counter = thread_counter;
-						while(isRunning && ch != null) {
-							//System.out.println("debug thread="+inner_thread_counter);
-							boolean isGoodIni = isGood;
-							try {
-								if(!isGood) {
-									if(monitor != null) {
-										monitor.clear();
-									}
-									if(isRunning && ch != null) {
-										monitor = ch.addMonitorValue(callBack, Monitor.VALUE);
-									}
-								}
-								currValue = ch.getValDbl();
-								isGood = true;
-							} catch(ConnectionException e) {
-								isGood = false;
-								currValue = 0.0;
-							} catch(MonitorException e) {
-								isGood = false;
-								currValue = 0.0;
-							} catch(GetException e) {
-								isGood = false;
-								currValue = 0.0;
-							}
-
-							if(!isRunning) {
-								break;
-							}
-
-							if(isGoodIni != isGood) {
-								if(stateListenersV.size() > 0) {
-
-									ChannelRecord record = null;
-									try {
-										record = ch.getValueRecord();
-									} catch(ConnectionException e) {} catch(GetException e) {}
-
-									stateChangedAction = new MonitoredPVEvent(mpvThis, record, ch);
-									for(int i = 0, n = stateListenersV.size(); i < n; i++) {
-										stateListenersV.get(i).actionPerformed(stateChangedAction);
-									}
-								}
-							}
-
-							if(!isRunning) {
-								break;
-							}
-
-							try {
-								Thread.sleep((long) (sleepTime * 1000.0));
-							} catch(InterruptedException e) {
-								isRunning = false;
-								currValue = 0.0;
-							}
-
-							if(!isRunning) {
-								break;
-							}
-						}
-						if(monitor != null) {
-							monitor.clear();
-							monitor = null;
-						}
-						isRunning = false;
-						isGood = false;
-					}
-				}
-			};
-
-		Thread monitorThread = new Thread(tryConnectRun);
-		monitorThread.start();
-	}
-
 }
-
