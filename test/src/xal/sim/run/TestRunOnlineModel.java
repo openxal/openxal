@@ -18,6 +18,7 @@ import xal.sim.sync.PVLoggerDataSource;
 import xal.smf.Accelerator;
 import xal.smf.AcceleratorSeq;
 import xal.smf.data.XMLDataManager;
+import xal.test.ResourceManager;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -46,7 +47,7 @@ public class TestRunOnlineModel {
     
     
     /** URL of the accelerator hardware description file */
-    static public String            STRL_URL_ACCEL   = "core/test/resources/config/main.xal";
+    static public String            STRL_URL_ACCEL   = ResourceManager.getTestAcceleratorURL().toString();
     
     
     /** String identifier for accelerator sequence used in testing */
@@ -97,7 +98,7 @@ public class TestRunOnlineModel {
     public static void setUpBeforeClass() throws Exception {
         
         try {
-            ACCEL_TEST   = XMLDataManager.acceleratorWithPath(STRL_URL_ACCEL);
+            ACCEL_TEST   = XMLDataManager.acceleratorWithUrlSpec(STRL_URL_ACCEL);
             SEQ_TEST     = ACCEL_TEST.findSequence(STR_SEQ_ID);
             MODEL_TEST   = Scenario.newScenarioFor(SEQ_TEST);
             
