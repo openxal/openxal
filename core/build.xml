@@ -32,7 +32,7 @@
 				<compilerarg value="@{flag}" />
 			</javac>
                         
-            <copy todir="${build.compile.core.root}/resources/xal">
+            <copy todir="${build.compile.core.root}/resources">
                 <fileset dir="resources" />
             </copy>
 

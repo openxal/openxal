@@ -22,13 +22,13 @@ public class ResourceManager {
      * @return URL to the resource or null if there is none found
      */
     static public URL getResourceURL( final String resourcePath ) {
-        return ResourceManager.class.getResource( "/xal/" + resourcePath );
+        return ResourceManager.class.getResource( resourcePath );
     }
     
     
     /** Load and get the default test accelerator */
     static public Accelerator getTestAccelerator() {
-        return getAcceleratorForResource( "config/main.xal" );
+        return getAcceleratorForResource( "/config/main.xal" );
     }
     
     

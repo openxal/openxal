@@ -88,7 +88,7 @@ public class IconLib {
      * @return The path to the specified icon in classpath notation
      */
     static protected String getPathToIcon( final String group, final String iconName ) {
-        return "/xal/icons/" + group + "/" + iconName;
+        return "icons/" + group + "/" + iconName;
     }
 	
 	
