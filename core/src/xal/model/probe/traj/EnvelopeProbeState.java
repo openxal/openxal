@@ -965,7 +965,8 @@ public class EnvelopeProbeState extends BunchProbeState implements IPhaseState {
      */
     @Override
     public String toString() {
-        return super.toString() + " correlation: " + getCorrelationMatrix().toString();
+        return super.toString() + " correlation: " + getCorrelationMatrix().toString() 
+                                + ", response: " + this.getResponseMatrix().toString();
     }   
     
     
