@@ -24,7 +24,10 @@
         <isset property="env.XAL_JAVADOC_ROOT" />
     </condition>
     
-    <property name="build.compile.root" value="${build.root}/compile" />
+	<!-- General build configuration  -->
+	<property name="build.compile.java.source" value="1.7" />
+	<property name="build.compile.java.target" value="${build.compile.java.source}" />
+	<property name="build.compile.root" value="${build.root}/compile" />
 	<property name="build.compile.core.root" value="${build.compile.root}/core" />
 	<property name="build.compile.core.test.root" value="${build.compile.root}/test/core" />
 	<property name="build.jar.root" value="${build.root}/jar" />
