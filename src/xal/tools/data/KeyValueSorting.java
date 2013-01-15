@@ -64,6 +64,7 @@ public class KeyValueSorting {
 	 * @param comparators array of parameters to coalesce taken in order (sort first by the first comparator and last by the last comparator)
 	 * @return the compound comparator
 	 */
+	@SafeVarargs		// let the compiler know that heap pollution will not occur
 	static public <RecordType> Comparator<RecordType> compoundComparator( final Comparator<RecordType> ... comparators ) {
 		return new Comparator<RecordType>() {
 			/** compares the two items for order */
