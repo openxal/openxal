@@ -939,14 +939,18 @@ public class PhaseMatrix implements IArchive, java.io.Serializable {
     }
 
     /**
-     *  Return the l-1 norm of this matrix, which is the maximum 
-     *  column sum.
-     *
-     * NOTE:
-     * This operation does not include the effect of the 
+     * <p>
+     * Return the <i>l</i><sub>1</sub> norm of this matrix; specifically, the maximum
+     * column sum.
+     * </p>
+     * <p>
+     * <h4>NOTE:</h4>
+     * &middot; This operation does not include the effect of the 
      * homogeneous element at index (HOM,HOM)
+     * </p>
      * 
-     *  @return     ||M||_1 = max_i Sum_j |m_ij|
+     *  @return     ||<b>M</b>||<sub>1</sub> &equiv; 
+     *              sup<sub><i>j</i></sub> &Sigma;<sub><i>i</i></sub> |<i>m<sub>ij</sub></i>|
      */
     public double   norm1()     { 
         this.setElem(PhaseIndexHom.HOM, PhaseIndexHom.HOM, 0.0);
@@ -957,14 +961,17 @@ public class PhaseMatrix implements IArchive, java.io.Serializable {
     };
     
     /**
-     *  Return the l-2 norm of this matrix, which is the maximum
-     *  singular value.
-     *
+     * <p>
+     * Return the <i>l</i>-2 norm of this matrix, which is the maximum
+     * singular value.
+     * </p>
+     * <p>
      * NOTE:
-     * This operation does not include the effect of the 
+     * &middot; This operation does not include the effect of the 
      * homogeneous element at index (HOM,HOM)
+     * </p>
      * 
-     *  @return     max D_ij where M = U*D*V, U,V orthogonal
+     *  @return     max &sigma;<sub><i>ij</i></sub> where <b>M</b> = <b>U*&Sigma;*V</b>, <b>U,V</b> orthogonal
      */
     public double   norm2()     { 
         this.setElem(PhaseIndexHom.HOM, PhaseIndexHom.HOM, 0.0);
@@ -975,14 +982,17 @@ public class PhaseMatrix implements IArchive, java.io.Serializable {
     };
     
     /**
-     *  Return the l-infinity norm of this matrix, which is the 
-     *  maximum row sum.
-     *
-     * NOTE:
-     * This operation does not include the effect of the 
+     * <p>
+     * Return the Lebesgue-infinity norm of this matrix; specifically, the maximum row sum.
+     * </p>
+     * <p>
+     * <h4>NOTE:</h4>
+     * &middot; This operation does not include the effect of the 
      * homogeneous element at index (HOM,HOM)
+     * </p>
      * 
-     *  @return     ||M||_inf = max_j sum_i |m_ij|
+     *  @return     ||<b>M</b>||<sub>&infin;</sub> &equiv; sup<sub><i>i</i></sub> 
+     *              &Sigma;<sub><i>j</i></sub> |<i>m<sub>ij</sub></i>|
      */
     public double   normInf()   { 
         this.setElem(PhaseIndexHom.HOM, PhaseIndexHom.HOM, 0.0);
@@ -993,14 +1003,17 @@ public class PhaseMatrix implements IArchive, java.io.Serializable {
     };
     
     /**
-     * Return the Frobenius norm, which is the square-root of the 
-     * sum of the squares of all elements.
-     * 
-     * NOTE:
-     * This operation does not include the effect of the 
+     * <p>
+     * Return the Frobenius norm of this matrix; specifically, the square-root of the sum of all 
+     * elements squared.
+     * </p>
+     * <p>
+     * <h4>NOTE:</h4>
+     * &middot; This operation does not include the effect of the 
      * homogeneous element at index (HOM,HOM)
+     * </p>
      * 
-     * @return      ||M|| = sqrt( Sum_ij (M_ij)^2 )
+     *  @return     ||<b>M</b>||<sub>F</sub> &equiv; [ &Sigma; <i>m<sub>ij</sub></i><sup>2</sup> ]<sup>1/2</sup>
      */
     public double   normF()     { 
         this.setElem(PhaseIndexHom.HOM, PhaseIndexHom.HOM, 0.0);
