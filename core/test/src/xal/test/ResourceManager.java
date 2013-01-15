@@ -24,13 +24,20 @@ public class ResourceManager {
     static public URL getResourceURL( final String resourcePath ) {
         return ResourceManager.class.getResource( resourcePath );
     }
-    
+
+
+    /** Load and get the default test accelerator */
+    static public URL getTestAcceleratorURL() {
+        return getResourceURL( "/config/main.xal" );
+    }
+
     
     /** Load and get the default test accelerator */
     static public Accelerator getTestAccelerator() {
-        return getAcceleratorForResource( "/config/main.xal" );
+		final URL opticsURL = getTestAcceleratorURL();
+		return opticsURL != null ? getAcceleratorAtURL( opticsURL ) : null;
     }
-    
+
     
     /** 
      * Load and get the accelerator at the specified resource path
@@ -38,6 +45,15 @@ public class ResourceManager {
      */
     static public Accelerator getAcceleratorForResource( final String resourcePath ) {
         final URL opticsURL = getResourceURL( resourcePath );
+		return getAcceleratorAtURL( opticsURL );
+    }
+
+
+    /**
+     * Load and get the accelerator at the specified resource path
+     * @param opticsURL URL to the optics
+     */
+    static public Accelerator getAcceleratorAtURL( final URL opticsURL ) {
         return opticsURL != null ? XMLDataManager.getInstance( opticsURL ).getAccelerator() : null;
     }
 }
