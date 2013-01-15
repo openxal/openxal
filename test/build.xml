@@ -40,8 +40,6 @@
         <mkdir dir="${build.compile.core.test.root}" />
         <javac debug="true" source="1.6" target="1.6" includeAntRuntime="no" deprecation="true" destdir="${build.compile.core.test.root}" srcdir="${srcroot}" includes="src/**" sourcepath="">
             <classpath>
-                <pathelement location="${build.compile.core.test.root}/xal" />
-                <pathelement location="${build.compile.core.test.root}/resources/xal" />
                 <pathelement location="${build.jar.lib.root}/xal-core.jar" />
                 <pathelement location="${build.jar.lib.root}/xal-lib.jar" />
                 <pathelement location="${junit.jar.path}" />
@@ -49,7 +47,7 @@
             <compilerarg value="-Xlint" />
         </javac>
         
-        <copy todir="${build.compile.core.test.root}/resources/xal">
+        <copy todir="${build.compile.core.test.root}/resources">
             <fileset dir="resources" />
         </copy>
 	</target>
