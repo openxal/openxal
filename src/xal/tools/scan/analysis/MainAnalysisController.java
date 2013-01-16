@@ -92,8 +92,7 @@ public class MainAnalysisController {
 	private String[] operationList = new String[0];
 	private AnalysisController[] analysisControllers = new AnalysisController[0];
 
-	@SuppressWarnings( "rawtypes" )		// TODO: JComboBox is typed in JDK 7 and later
-	private JComboBox operationChooser = null;
+	private JComboBox<String> operationChooser = null;
 
 	private int indexOfPanelNew = -1;
 	private int indexOfPanelOld = -1;
@@ -137,7 +136,6 @@ public class MainAnalysisController {
 	 *@param  graphScan_In                 Description of the Parameter
 	 *@param  graphAnalysis_In             Description of the Parameter
 	 */
-	@SuppressWarnings( {"rawtypes", "unchecked"} )		// TODO: JComboBox is typed in JDK 7
 	public MainAnalysisController(Object mainScanDocument_In,
 			JPanel parentAnalysisPanel_In,
 			JPanel analysisControlPanel_In,
@@ -195,7 +193,7 @@ public class MainAnalysisController {
 		dataReaderPanel.add(yValPanel_Main_Text);
 
 		//define main chooser
-		operationChooser = new JComboBox(operationList);
+		operationChooser = new JComboBox<>(operationList);
 		operationChooser.setBackground(Color.cyan);
 		operationChooser.addActionListener(
 			new ActionListener() {
@@ -317,7 +315,6 @@ public class MainAnalysisController {
 	 *
 	 *@param  analysisConfig  Description of the Parameter
 	 */
-	@SuppressWarnings( {"rawtypes", "unchecked"} )		// TODO: JComboBox is typed in JDK 7
 	public void createChildAnalysis(DataAdaptor analysisConfig) {
 
 		Vector<AnalysisController> analysisContrV = new Vector<AnalysisController>();
@@ -351,7 +348,7 @@ public class MainAnalysisController {
 		}
 
 		//define main chooser
-		operationChooser = new JComboBox(operationList);
+		operationChooser = new JComboBox<>(operationList);
 		operationChooser.setBackground(Color.cyan);
 		operationChooser.addActionListener(
 			new ActionListener() {
