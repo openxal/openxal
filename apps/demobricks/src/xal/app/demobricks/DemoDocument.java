@@ -46,13 +46,13 @@ public class DemoDocument extends XalDocument {
      * Make a main window by instantiating the my custom window.  Set the text 
      * pane to use the textDocument variable as its document.
      */
-	@SuppressWarnings( {"rawtypes", "unchecked"} )		// TODO: JList supports generics in Java 7 or later
+	@SuppressWarnings( "unchecked" )		// Cast JList to String element type
     public void makeMainWindow() {
 		final WindowReference windowReference = getDefaultWindowReference( "MainWindow", this );
         mainWindow = (XalWindow)windowReference.getWindow();
 		
-		final JList magnetList = (JList)windowReference.getView( "MagnetList" );
-		final Object[] magnets = { "Bend", "Quadrupole", "Sextupole", "Octupole", "Skew Quadrupole", "Vertical Corrector", "Horizontal Corrector", "Skew Dipole", "Skew Sextupole", "Sector Bend", "Rectangular Bend", "Chicane" };
+		final JList<String> magnetList = (JList<String>)windowReference.getView( "MagnetList" );
+		final String[] magnets = { "Bend", "Quadrupole", "Sextupole", "Octupole", "Skew Quadrupole", "Vertical Corrector", "Horizontal Corrector", "Skew Dipole", "Skew Sextupole", "Sector Bend", "Rectangular Bend", "Chicane" };
 		magnetList.setListData( magnets );
 		
 		final JButton runButton = (JButton)windowReference.getView( "RunButton" );

@@ -53,8 +53,7 @@ public class BrowserWindow extends AcceleratorWindow implements SwingConstants, 
 	protected BrowserController _controller;
 
 	/** menu for displaying the list of available pvlogger groups */
-	@SuppressWarnings( "rawtypes" )		// TODO: JComboBox is typed in Java 7 and later
-	protected JComboBox _groupMenu;
+	protected JComboBox<String> _groupMenu;
 
 	private JButton _exportButton;
 
@@ -137,7 +136,6 @@ public class BrowserWindow extends AcceleratorWindow implements SwingConstants, 
 	 * Build the view for querying the database for the machine snapshots.
 	 * @return the query view
 	 */
-	@SuppressWarnings( "rawtypes" )		// TODO: JComboBox is typed in Java 7 and later
 	protected Container buildQueryView() {
 		Box queryView = new Box(HORIZONTAL);
 		queryView.setBorder(BorderFactory.createEtchedBorder());
@@ -152,7 +150,7 @@ public class BrowserWindow extends AcceleratorWindow implements SwingConstants, 
 		});
 
 		queryView.add(Box.createHorizontalStrut(BUTTON_GAP));
-		_groupMenu = new JComboBox();
+		_groupMenu = new JComboBox<>();
 		_groupMenu.setMaximumSize(new Dimension(200, 25));
 		queryView.add(_groupMenu);
 		_groupMenu.addItemListener(new ItemListener() {
@@ -477,10 +475,9 @@ public class BrowserWindow extends AcceleratorWindow implements SwingConstants, 
 	
 	
 	/** Update the menu that displays the list of channel groups. */
-	@SuppressWarnings( {"rawtypes", "unchecked"} )		// TODO: JComboBox is typed in Java 7 and later
 	protected void updateGroupMenu() {
 		try {
-			final JComboBox groupMenu = _groupMenu;
+			final JComboBox<String> groupMenu = _groupMenu;
 			groupMenu.removeAllItems();
 			final String[] types = BROWSER_MODEL.getLoggerTypes();
 			

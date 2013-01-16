@@ -38,8 +38,7 @@ public final class AnalysisCntrlDTLPhase extends AnalysisController {
 	private DecimalFormat ampFormat = new DecimalFormat("####.###");
 	private DecimalFormat phaseFormat = new DecimalFormat("###.#");
 
-	@SuppressWarnings( "rawtypes" )		// JComboBox is typed in JDK 7
-	private JComboBox operationChooser = null;
+	private JComboBox<String> operationChooser = null;
 
 	//child panels
 	private JPanel[] childControlPanels = new JPanel[2];
@@ -145,7 +144,6 @@ public final class AnalysisCntrlDTLPhase extends AnalysisController {
 	 *@param  messageTextLocal_In       Description of the Parameter
 	 *@param  graphDataLocal_In         Description of the Parameter
 	 */
-	@SuppressWarnings( {"rawtypes", "unchecked"} )		// TODO: JComboBox is typed in JDK 7
 	public AnalysisCntrlDTLPhase(MainAnalysisController mainController_In,
 			DataAdaptor analysisConf,
 			JPanel parentAnalysisPanel_In,
@@ -221,7 +219,7 @@ public final class AnalysisCntrlDTLPhase extends AnalysisController {
 		tmp_0.add(designEnrgDevLabel);
 		tmp_0.add(designEnrgDevText);
 
-		operationChooser = new JComboBox(panelNameList);
+		operationChooser = new JComboBox<>( panelNameList );
 		operationChooser.setBackground(Color.cyan);
 		operationChooser.addActionListener(
 			new ActionListener() {

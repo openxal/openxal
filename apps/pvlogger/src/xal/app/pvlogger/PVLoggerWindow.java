@@ -54,8 +54,7 @@ class PVLoggerWindow extends AcceleratorWindow implements SwingConstants, Scroll
 	final private DispatchTimer REFRESH_TIMER;
 
 	/** List of session group types */
-	@SuppressWarnings( "rawtypes" )		// TODO: JList is only typed in Java 7 or later
-	protected JList _groupTypesListView;
+	protected JList<String> _groupTypesListView;
 	
 	/** action to publish snapshots for the selected PV Logger */
 	protected Action _publishSnapshotsOnSelectionAction;
@@ -79,12 +78,10 @@ class PVLoggerWindow extends AcceleratorWindow implements SwingConstants, Scroll
 	protected JTextArea latestLogTextView;
 	
 	/** List view displaying connected PVs */
-	@SuppressWarnings( "rawtypes" )		// TODO: JList is only typed in Java 7 or later
-	protected JList _connectedPVList;
+	protected JList<ChannelRef> _connectedPVList;
 	
 	/** List view displaying unconnected PVs */
-	@SuppressWarnings( "rawtypes" )		// TODO: JList is only typed in Java 7 or later
-	protected JList _unconnectedPVList;
+	protected JList<ChannelRef> _unconnectedPVList;
 	
 	/** field displaying whether the logger is active */
 	protected JLabel _loggingStatusField;
@@ -323,7 +320,6 @@ class PVLoggerWindow extends AcceleratorWindow implements SwingConstants, Scroll
 	
 	
 	/** Update the list of connected and disconnected channels for the selected logger handler */
-	@SuppressWarnings( "unchecked" )		// TODO: JList is only typed in Java 7 or later
 	protected void updateChannelsInspector() {
 		LoggerSessionHandler handler = _model.getSelectedSessionHandler();
 		if ( handler != null ) {
@@ -372,7 +368,6 @@ class PVLoggerWindow extends AcceleratorWindow implements SwingConstants, Scroll
 	
 	
 	/** Update the list of logger sessions identified by group */
-	@SuppressWarnings( "unchecked" )		// TODO: JList is only typed in Java 7 or later
 	protected void updateGroupListView() {
 		final RemoteLoggerRecord handler = _model.getSelectedHandler();
 		final Vector<String> groups = ( handler != null ) ? new Vector<String>( handler.getGroupTypes() ) : new Vector<String>();
@@ -463,7 +458,6 @@ class PVLoggerWindow extends AcceleratorWindow implements SwingConstants, Scroll
 	 * logger handler.
 	 * @return the view which displays the logger sessions
 	 */
-	@SuppressWarnings( "rawtypes" )		// TODO: JList is only typed in Java 7 or later
 	protected JComponent makeSessionListView() {
 		Box view = new Box(BoxLayout.Y_AXIS);
 		
@@ -473,14 +467,14 @@ class PVLoggerWindow extends AcceleratorWindow implements SwingConstants, Scroll
 		labelRow.add( Box.createHorizontalGlue() );
 		view.add(labelRow);
 		
-		_groupTypesListView = new JList();
+		_groupTypesListView = new JList<>();
 		view.add( new JScrollPane(_groupTypesListView) );
 		_groupTypesListView.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		
 		_groupTypesListView.addListSelectionListener( new ListSelectionListener() {
 			public void valueChanged(ListSelectionEvent event) {
 				if ( !event.getValueIsAdjusting() ) {
-					String selectedGroup = (String)_groupTypesListView.getSelectedValue();
+					String selectedGroup = _groupTypesListView.getSelectedValue();
 					final RemoteLoggerRecord handler = _model.getSelectedHandler();
 					final LoggerSessionHandler sessionHandler = ( handler != null ) ? handler.getLoggerSession( selectedGroup ) : null;
 					_model.setSelectedSessionHandler(sessionHandler);
@@ -568,20 +562,19 @@ class PVLoggerWindow extends AcceleratorWindow implements SwingConstants, Scroll
 	 * from those that are not connected.
 	 * @return the tab view
 	 */
-	@SuppressWarnings( "rawtypes" )		// TODO: JList is only typed in Java 7 or later
 	protected JComponent makePVTab() {
 		Box view = new Box(HORIZONTAL);
 		
 		Box pvBox = new Box(VERTICAL);
 		
 		pvBox.add( new JLabel("Connected PVs:") );
-		_connectedPVList = new JList();
+		_connectedPVList = new JList<>();
 		pvBox.add( new JScrollPane(_connectedPVList, VERTICAL_SCROLLBAR_ALWAYS, HORIZONTAL_SCROLLBAR_NEVER) );
 		view.add(pvBox);
 		
 		pvBox = new Box(VERTICAL);
 		pvBox.add( new JLabel("Unconnected PVs:") );
-		_unconnectedPVList = new JList();
+		_unconnectedPVList = new JList<>();
 		pvBox.add( new JScrollPane(_unconnectedPVList, VERTICAL_SCROLLBAR_ALWAYS, HORIZONTAL_SCROLLBAR_NEVER) );
 		view.add(pvBox);
 		
