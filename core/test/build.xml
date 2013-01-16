@@ -42,7 +42,11 @@
             <classpath>
                 <pathelement location="${build.jar.lib.root}/xal-core.jar" />
                 <pathelement location="${build.jar.lib.root}/xal-lib.jar" />
-                <pathelement location="${junit.jar.path}" />
+
+				<!-- compile against external test libraries if any -->
+				<fileset dir="${srcroot}">
+					<include name="lib/*.jar" />
+				</fileset>
             </classpath>
             <compilerarg value="-Xlint" />
         </javac>
@@ -53,12 +57,19 @@
 	</target>
     
 	
-	<!-- Jar the core XAL classes -->
+	<!-- Jar the core test XAL classes -->
     <target  name="jar" depends="init, compile">
         <mkdir dir="${build.jar.lib.root}" />
         <jar compress="false" jarfile="${build.jar.lib.root}/xal-test.jar" index="true">
 			<fileset dir="${build.compile.core.test.root}" includes="xal/**/*" />
 			<fileset dir="${build.compile.core.test.root}/resources" />
+			
+			<!-- merge external test libraries if any -->
+			<zipgroupfileset dir="${srcroot}">
+				<patternset>
+					<include name="lib/*.jar" />
+				</patternset>
+			</zipgroupfileset>
         </jar>
     </target>
 
