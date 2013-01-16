@@ -18,8 +18,7 @@ import javax.swing.*;
  *
  * @author  tap
  */
-@SuppressWarnings( "rawtypes" )		// TODO: AbstractListModel supports generics in Java 7 or later
-public class SchemaListModel extends AbstractListModel {
+public class SchemaListModel extends AbstractListModel<String> {
     /** serialization identifier */
     private static final long serialVersionUID = 1L;
     
@@ -75,7 +74,7 @@ public class SchemaListModel extends AbstractListModel {
 	 * @param index The index of the schema to display
 	 * @return the name of the schema for the specified index
 	 */
-	public Object getElementAt(int index) {
+	public String getElementAt(int index) {
 		return _model.getSchemas().get(index);
 	}
 }

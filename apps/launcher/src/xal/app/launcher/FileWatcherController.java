@@ -25,14 +25,14 @@ public class FileWatcherController {
 	final private FileWatcher FILE_WATCHER;
 	
 	/** list of watched folders */
-	@SuppressWarnings( "rawtypes" )		// TODO: JList supports generics in Java 7 or later
-	final private JList WATCH_FOLDER_LIST;
+	final private JList<File> WATCH_FOLDER_LIST;
 	
 	/** file chooser for selecting folders to watch */
 	final private JFileChooser FOLDER_CHOOSER;
 	
 	
 	/** Constructor */
+	@SuppressWarnings( "unchecked" )		// need to cast JList to appropriate element type
 	public FileWatcherController( final LaunchModel model, final WindowReference windowReference ) {
 		MODEL = model;
 		FILE_WATCHER = model.getFileWatcher();
@@ -41,7 +41,7 @@ public class FileWatcherController {
 		FOLDER_CHOOSER.setFileSelectionMode( JFileChooser.DIRECTORIES_ONLY );
 		FOLDER_CHOOSER.setMultiSelectionEnabled( true );
 		
-		WATCH_FOLDER_LIST = (JList)windowReference.getView( "WatchPathList" );
+		WATCH_FOLDER_LIST = (JList<File>)windowReference.getView( "WatchPathList" );
 		
 		final JButton deleteWatchPathButton = (JButton)windowReference.getView( "DeleteWatchPathButton" );
 		deleteWatchPathButton.addActionListener( deleteSelectedWatchFoldersAction() );
@@ -83,17 +83,14 @@ public class FileWatcherController {
 	
 	
 	/** action to delete the selected watch folders */
-	@SuppressWarnings( "deprecation" )		// TODO: JList supports generics in Java 7 or later
 	private AbstractAction deleteSelectedWatchFoldersAction() {
 		return new AbstractAction() {
             private static final long serialVersionUID = 1L;
             
 			public void actionPerformed( final ActionEvent event ) {
-				final Object[] selections = WATCH_FOLDER_LIST.getSelectedValues();
-				for ( final Object selection : selections ) {
-					if ( selection instanceof File ) {
-						FILE_WATCHER.ignoreFolder( (File)selection );
-					}
+				final List<File> selections = WATCH_FOLDER_LIST.getSelectedValuesList();
+				for ( final File selection : selections ) {
+					FILE_WATCHER.ignoreFolder( selection );
 				}
 				refreshView();
 			}

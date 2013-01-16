@@ -148,7 +148,6 @@ class BrowserWindow extends XalWindow implements SwingConstants {
 
 
 	/** Make the contents of the main view  */
-	@SuppressWarnings( {"rawtypes", "unchecked"} )		// TODO: JList supports generics in Java 7 or later
 	protected void makeContents() {
 		Box mainView = new Box( BoxLayout.X_AXIS );
 		getContentPane().add( mainView );
@@ -162,18 +161,18 @@ class BrowserWindow extends XalWindow implements SwingConstants {
 		JLabel schemaLabel = new JLabel( "Schemas: " );
 		schemaLabel.setMinimumSize( schemaLabelSize );
 		schemaView.add( schemaLabel );
-		final JList schemaListView = new JList();
+		final JList<String> schemaListView = new JList<>();
 		schemaListView.setSelectionMode( ListSelectionModel.SINGLE_SELECTION );
 		schemaView.add( new JScrollPane( schemaListView ) );
 		schemaListView.addListSelectionListener(
 			new ListSelectionListener() {
-				public void valueChanged( ListSelectionEvent event ) {
+				public void valueChanged( final ListSelectionEvent event ) {
 					if ( event.getValueIsAdjusting() ) {
 						return;
 					}
 					try {
-						JList list = (JList)event.getSource();
-						Object selectedSchema = list.getSelectedValue();
+						final JList<String> list = schemaListView;
+						final String selectedSchema = list.getSelectedValue();
 						if ( selectedSchema != null ) {
 							_model.setSchema( selectedSchema.toString() );
 						}
@@ -194,7 +193,7 @@ class BrowserWindow extends XalWindow implements SwingConstants {
 		JLabel tableLabel = new JLabel( "Tables: " );
 		tableLabel.setMinimumSize( tableLabelSize );
 		tableView.add( tableLabel );
-		JList tableListView = new JList();
+		final JList<String> tableListView = new JList<>();
 		tableListView.setSelectionMode( ListSelectionModel.SINGLE_SELECTION );
 		tableListView.addListSelectionListener(
 			new ListSelectionListener() {

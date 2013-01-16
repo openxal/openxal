@@ -105,7 +105,7 @@ class ComboSequenceComposer {
 	 * @param accelerator pass the Accelerator object here from main routine
 	 * @param owner the window that owns the sequence selector
 	 */
-	@SuppressWarnings( {"rawtypes", "unchecked"} )		// TODO: JList supports generics in Java 7 or later
+	@SuppressWarnings( "unchecked" )		// need to cast from untyped JList
 	static public AcceleratorSeqCombo composeComboSequence( final Accelerator accelerator, final JFrame owner ) {
 		final ComboSequenceComposer composer = new ComboSequenceComposer( accelerator );
 		
@@ -137,7 +137,7 @@ class ComboSequenceComposer {
 			sequenceNames.add( sequence.getId() );
 		}
 		
-		final JList startSequenceList = (JList)windowReference.getView( "Start Sequence List" );
+		final JList<String> startSequenceList = (JList<String>)windowReference.getView( "Start Sequence List" );
 		startSequenceList.setListData( sequenceNames );
 		startSequenceList.addListSelectionListener( new ListSelectionListener() {
 		   public void valueChanged( final ListSelectionEvent event ) {
@@ -151,7 +151,7 @@ class ComboSequenceComposer {
 		   }
 		});
 		
-		final JList endSequenceList = (JList)windowReference.getView( "End Sequence List" );
+		final JList<String> endSequenceList = (JList<String>)windowReference.getView( "End Sequence List" );
 		endSequenceList.setListData( sequenceNames );
 	    endSequenceList.addListSelectionListener( new ListSelectionListener() {
 			  public void valueChanged( final ListSelectionEvent event ) {

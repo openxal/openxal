@@ -17,8 +17,7 @@ import javax.swing.*;
  * Model for generating the list of tables for the selected schema.
  * @author t6p
  */
-@SuppressWarnings( "rawtypes" )		// TODO: AbstractListModel supports generics in Java 7 or later
-class TableListModel extends AbstractListModel {
+class TableListModel extends AbstractListModel<String> {
     /** serialization identifier */
     private static final long serialVersionUID = 1L;
     
@@ -75,7 +74,7 @@ class TableListModel extends AbstractListModel {
 	 * @param index The index of the table to display
 	 * @return the name of the table for the specified index
 	 */
-	public Object getElementAt(int index) {
+	public String getElementAt(int index) {
 		return _model.getTables().get(index);
 	}
 }
