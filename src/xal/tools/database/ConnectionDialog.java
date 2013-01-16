@@ -52,8 +52,7 @@ public class ConnectionDialog extends JDialog {
 	private Box SERVER_CUSTOM_FORM;
 	
 	/** menu of available servers */
-	@SuppressWarnings( "rawtypes" )		// TODO: JComboBox supports generics in Java 7 or later
-	private JComboBox SERVER_MENU;
+	private JComboBox<String> SERVER_MENU;
 
 	/** field for entering the adaptor specification */
 	private JTextField _adaptorField;
@@ -172,7 +171,6 @@ public class ConnectionDialog extends JDialog {
 	
 	
 	/** load the default configuration */
-	@SuppressWarnings( "unchecked" )		// TODO: JComboBox supports generics in Java 7 or later
 	private void loadDefaultConfiguration() {
 		final DBConfiguration configuration = DBConfiguration.getInstance();
 		_configuration = configuration;
@@ -360,7 +358,6 @@ public class ConnectionDialog extends JDialog {
 
 
 	/** Make the Dialog content */
-	@SuppressWarnings( "rawtypes" )		// TODO: JComboBox support generics in Java 7 or later
 	protected void makeContent() {
 		setSize( 250, 130 );
 		getContentPane().setLayout( new BorderLayout() );
@@ -371,7 +368,7 @@ public class ConnectionDialog extends JDialog {
 		
 		SERVER_OPTION_BOX = new Box( BoxLayout.X_AXIS );
 		SERVER_OPTION_BOX.add( Box.createGlue() );
-		SERVER_MENU = new JComboBox();
+		SERVER_MENU = new JComboBox<String>();
 		SERVER_OPTION_BOX.add( new JLabel( "Server: " ) );
 		SERVER_OPTION_BOX.add( SERVER_MENU );
 		mainView.add( SERVER_OPTION_BOX );
