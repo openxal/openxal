@@ -184,7 +184,9 @@ public class Launcher implements DataListener {
 			MESSAGE_BOARD_PROXY.postErrorMessage( this, "Could not connect to any of the specified hosts." );
 			return null;
 		}
-		
+
+		application.setLastLaunchTime( new Date() );
+
 		final String appCommand = application.getCommand();
 		final String command = _hostConfiguration.getCommand( host, appCommand );
 		return process( command );

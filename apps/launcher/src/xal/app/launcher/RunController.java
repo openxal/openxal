@@ -60,15 +60,16 @@ public class RunController {
 		APP_TABLE.setAutoResizeMode( JTable.AUTO_RESIZE_LAST_COLUMN );
 		APP_TABLE.setAutoCreateRowSorter( true );
 		APP_TABLE.setSelectionMode( ListSelectionModel.SINGLE_SELECTION );
-		APP_TABLE_MODEL = new KeyValueFilteredTableModel<App>( new ArrayList<App>(), "label", "rule.kind", "notes" );
+		APP_TABLE_MODEL = new KeyValueFilteredTableModel<App>( new ArrayList<App>(), "label", "lastLaunchTime", "rule.kind", "notes" );
 		APP_TABLE_MODEL.setMatchingKeyPaths( "label", "rule.kind", "file.name", "notes" );
 		APP_TABLE_MODEL.setColumnName( "rule.kind", "Kind" );
+		APP_TABLE_MODEL.setColumnClass( "lastLaunchTime", Date.class );
 		APP_TABLE_MODEL.setInputFilterComponent( FILTER_FIELD );
 		APP_TABLE.setModel( APP_TABLE_MODEL );
 		APP_TABLE.addMouseListener( appTableClickHandler() );
 		APP_TABLE.addMouseMotionListener( appTableMouseMonitor() );
 		
-		APP_TABLE.getColumnModel().getColumn( 2 ).setPreferredWidth( 300 );		// allot space for the notes
+		APP_TABLE.getColumnModel().getColumn( 3 ).setPreferredWidth( 300 );		// allot space for the notes
 		
 		refreshView();
 	}

@@ -43,7 +43,10 @@ public class App implements Comparable<App> {
 	
 	/** label for this application */
 	private String _label;
-	
+
+	/** time of last run */
+	private Date _lastLaunchTime;
+
 	
 	static {
 		SCRIPT_NOTES_PATTERN = Pattern.compile( "^#\\s+(\\w+\\s+[\\w\\s\\p{Punct}]+)$" );
@@ -58,7 +61,10 @@ public class App implements Comparable<App> {
 	public App( final File file, final Rule rule ) {
 		FILE = file;
 		RULE = rule;
+
+		_lastLaunchTime = null;
 		_label = file.getName().split( "[.]" )[0];
+		
 		parseInfo( file );
 	}
 	
@@ -97,7 +103,19 @@ public class App implements Comparable<App> {
 	public String getLabel() {
 		return _label;
 	}
-	
+
+
+	/** get the time of the last run for this app */
+	public Date getLastLaunchTime() {
+		return _lastLaunchTime;
+	}
+
+
+	/** set the last run time */
+	public void setLastLaunchTime( final Date runTime ) {
+		_lastLaunchTime = runTime;
+	}
+
 	
 	/**
 	 * Test if the executable exists
