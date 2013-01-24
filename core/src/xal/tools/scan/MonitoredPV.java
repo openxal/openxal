@@ -6,6 +6,7 @@ import xal.tools.messaging.MessageCenter;
 import java.util.*;
 import java.awt.event.*;
 
+
 /**
  * Manage the monitor events for a Process Variable
  * @author     shishlo
@@ -13,6 +14,9 @@ import java.awt.event.*;
  * created    October 31, 2005
  */
 public class MonitoredPV {
+	/** default for the current value (0.0 rather than NaN for backward compatibility) */
+	final private static double DEFAULT_CURRENT_VALUE = 0.0;
+
 	/** hash of monitored PVs keyed by alias */
 	final private static Map<String,MonitoredPV> ALIAS_PV_MAP;
 
@@ -20,13 +24,13 @@ public class MonitoredPV {
 	final private MessageCenter STATE_MESSAGE_CENTER;
 
 	/** dispatches state events to registered listeners */
-	final private ActionListener STATE_EVENT_DISPATCH;
+	final ActionListener STATE_EVENT_DISPATCH;
 
 	/** local message center for value events */
 	final private MessageCenter VALUE_MESSAGE_CENTER;
 
 	/** dispatches value events to registered listeners */
-	final private ActionListener VALUE_EVENT_DISPATCH;
+	final ActionListener VALUE_EVENT_DISPATCH;
 
 	/** handler of the delegate callbacks */
 	final private MonitorDelegateHandler DELEGATE_HANDLER;
@@ -34,7 +38,16 @@ public class MonitoredPV {
 	private String _alias = null;
 
 	/** monitor of channel to monitor */
-	private ScanChannelMonitor _monitor;
+	protected ScanChannelMonitor _monitor;
+
+	/** market used to indicate whether the value has changed since the last reset */
+	volatile private boolean _valueChanged;
+
+	/** the current value (either monitored or set) */
+	volatile double _currentValue;
+
+	/** indicates whether the latest event was successful */
+	volatile boolean _latestEventSuccessful;
 
 
 	// static initializer
@@ -44,7 +57,7 @@ public class MonitoredPV {
 
 
 	/** Constructor for the MonitoredPV */
-	private MonitoredPV() {
+	MonitoredPV() {
 		STATE_MESSAGE_CENTER = new MessageCenter( "MonitoredPV State" );
 		STATE_EVENT_DISPATCH = STATE_MESSAGE_CENTER.registerSource( this, ActionListener.class );
 
@@ -52,15 +65,10 @@ public class MonitoredPV {
 		VALUE_EVENT_DISPATCH = VALUE_MESSAGE_CENTER.registerSource( this, ActionListener.class );
 
 		DELEGATE_HANDLER = new MonitorDelegateHandler();
-	}
 
-
-	/**
-	 *  Sets the alias attribute of the MonitoredPV object
-	 *  @param  alias  The new alias value
-	 */
-	private void setAlias( final String alias ) {
-		_alias = alias;
+		_latestEventSuccessful = false;
+		_valueChanged = false;
+		_currentValue = DEFAULT_CURRENT_VALUE;
 	}
 
 
@@ -87,12 +95,39 @@ public class MonitoredPV {
 
 
 	/**
+	 *  Sets the alias attribute of the MonitoredPV object
+	 *  @param  alias  The new alias value
+	 */
+	private void setAlias( final String alias ) {
+		_alias = alias;
+	}
+
+
+	/**
 	 * Determine if a monitored PV is associated with the specified alias
 	 * @param  alias  The alias to lookup
 	 * @return true if a monitored PV has been assigned to the alias
 	 */
 	static boolean hasAlias( final String alias ) {
 		return ALIAS_PV_MAP.containsKey( alias );
+	}
+
+
+	/**
+	 * Determine whether the value was changed since the last reset (i.e. setValueChanged(false)).
+	 * @return  true if the value was changed since the last time it was reset; false otherwise
+	 */
+	public boolean valueChanged() {
+		return _valueChanged;
+	}
+
+
+	/**
+	 * Sets the boolean marker to the specified change state
+	 * @param  valueChanged  The new value change marker state
+	 */
+	public void setValueChanged( final boolean valueChanged ) {
+		_valueChanged = valueChanged;
 	}
 
 
@@ -176,6 +211,7 @@ public class MonitoredPV {
 			oldMonitor.dispose();
 		}
 
+		_currentValue = DEFAULT_CURRENT_VALUE;
 		if ( channel != null ) {
 			_monitor = new ScanChannelMonitor( channel, DELEGATE_HANDLER, requestEvents );
 		}
@@ -202,11 +238,16 @@ public class MonitoredPV {
 
 	/**
 	 * Set the name of the channel to monitor
-	 * @param  chanName  The new channelName value
+	 * @param  channelName  The new channelName value
 	 */
-	public void setChannelName( final String chanName ) {
-		final Channel channel = ChannelFactory.defaultFactory().getChannel( chanName );
-		setChannel( channel );
+	public void setChannelName( final String channelName ) {
+		if ( channelName != null && channelName != "" && channelName.length() > 0 ) {
+			final Channel channel = ChannelFactory.defaultFactory().getChannel( channelName );
+			setChannel( channel );
+		}
+		else {
+			setChannel( null );
+		}
 	}
 
 
@@ -225,19 +266,17 @@ public class MonitoredPV {
 	 * @return    The value value
 	 */
 	public double getValue() {
-		final ScanChannelMonitor monitor = _monitor;
-		final ChannelTimeRecord record = monitor != null ? monitor.getLatestRecord() : null;
-		return record != null ? record.doubleValue() : 0.0;		// default value is 0.0 instead of NaN due for backward compatibility
+		return _currentValue;
 	}
 
 
 	/**
-	 * Determine whether the channel is good meaning that it is connected and has posted a monitored value
+	 * Determine whether the channel is good meaning that it is connected, has posted a monitored value and the latest event was successful
 	 * @return  channel status
 	 */
 	public boolean isGood() {
 		final ScanChannelMonitor monitor = _monitor;
-		return monitor != null && monitor.isValid();
+		return monitor != null && monitor.isValid() && _latestEventSuccessful;
 	}
 
 
@@ -276,6 +315,12 @@ public class MonitoredPV {
 	}
 
 
+	/** Make an event for the given record and channel */
+	ActionEvent makeEvent( final ChannelTimeRecord record, final Channel channel ) {
+		return new MonitoredPVEvent( this, record, channel );
+	}
+
+
 	/** Stop the monitor */
 	public void stopMonitor() {
 		final ScanChannelMonitor monitor = _monitor;
@@ -298,7 +343,7 @@ public class MonitoredPV {
 	private class MonitorDelegateHandler implements ScanChannelMonitorDelegate {
 		/** Callback for channel state events */
 		public void channelStateChanged( final ScanChannelMonitor monitor, final boolean valid ) {
-			final ActionEvent stateChangedAction = new MonitoredPVEvent( MonitoredPV.this, monitor.getLatestRecord(), monitor.getChannel() );
+			final ActionEvent stateChangedAction = makeEvent( monitor.getLatestRecord(), monitor.getChannel() );
 			STATE_EVENT_DISPATCH.actionPerformed( stateChangedAction );
 		}
 
@@ -306,7 +351,10 @@ public class MonitoredPV {
 		/** Callback for channel monitor events */
 		public void channelRecordUpdate( final ScanChannelMonitor monitor, final ChannelTimeRecord record ) {
 			final double value = record.doubleValue();
-			final ActionEvent valueChangedAction = new MonitoredPVEvent( MonitoredPV.this, record, monitor.getChannel() );
+			MonitoredPV.this._currentValue = value;
+			MonitoredPV.this._valueChanged = true;
+			MonitoredPV.this._latestEventSuccessful = true;
+			final ActionEvent valueChangedAction = makeEvent( record, monitor.getChannel() );
 			VALUE_EVENT_DISPATCH.actionPerformed( valueChangedAction );
 		}
 	}
