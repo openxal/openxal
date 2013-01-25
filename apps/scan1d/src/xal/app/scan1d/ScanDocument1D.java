@@ -957,13 +957,29 @@ public class ScanDocument1D extends XalDocument {
 
 		//dump data into the file
 		try {
-			da.writeTo(new File(url.getFile()));
+			da.writeToUrl( url );
 
 			//super class method - will show "Save" menu active
 			setHasChanges(true);
-		} catch (IOException e) {
-			System.out.println("IOException e=" + e);
 		}
+        catch( XmlDataAdaptor.WriteException exception ) {
+			if ( exception.getCause() instanceof java.io.FileNotFoundException ) {
+				System.err.println(exception);
+				displayError("Save Failed!", "Save failed due to a file access exception!", exception);
+			}
+			else if ( exception.getCause() instanceof java.io.IOException ) {
+				System.err.println(exception);
+				displayError("Save Failed!", "Save failed due to a file IO exception!", exception);
+			}
+			else {
+				exception.printStackTrace();
+				displayError("Save Failed!", "Save failed due to an internal write exception!", exception);
+			}
+        }
+        catch( Exception exception ) {
+			exception.printStackTrace();
+            displayError("Save Failed!", "Save failed due to an internal exception!", exception);
+        }
 
 	}
 
