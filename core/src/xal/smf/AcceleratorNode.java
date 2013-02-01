@@ -24,6 +24,12 @@ public abstract class AcceleratorNode implements /* IElement, */ ElementType, Da
     /** node identifier  */
     protected String            m_strId;
     
+    /** physics identifier  */
+    protected String            m_strPId;
+    
+    /** engineering identifier  */
+    protected String            m_strEId;
+    
     /** position of node   */
     protected double            m_dblPos;
     
@@ -54,7 +60,9 @@ public abstract class AcceleratorNode implements /* IElement, */ ElementType, Da
     /** Indicator as to whether accelerator node is valid */
     protected boolean            m_bolValid;
     
-    
+    /** "s" position for global display */
+    protected double 			m_dblS;
+        
     
     /** Indicator if this node is a "softNode" copy */
     protected boolean       m_bolIsSoft=false;
@@ -109,7 +117,16 @@ public abstract class AcceleratorNode implements /* IElement, */ ElementType, Da
             m_strId = adaptor.stringValue("id");
         }
         
+        // update physics id
+        if ( adaptor.hasAttribute("pid") ) {
+        	m_strPId = adaptor.stringValue("pid");
+        }
         
+        // update engineering id
+        if ( adaptor.hasAttribute("eid") ) {
+        	m_strEId = adaptor.stringValue("eid");
+        }
+                
         // get the status of the node which identifies whether the node is operational
         if ( adaptor.hasAttribute("status") ) {
             m_bolStatus = adaptor.booleanValue("status");
@@ -139,6 +156,12 @@ public abstract class AcceleratorNode implements /* IElement, */ ElementType, Da
             setPosition(newPosition);
         }
         
+        // update s display coordinate if there is one
+        if ( adaptor.hasAttribute("s") ) {
+            double newSDisplay = adaptor.doubleValue("s");
+            setSDisplay(newSDisplay);
+        }        
+        
         // read the channel suites
         DataAdaptor suiteAdaptor = adaptor.childAdaptor("channelsuite");
         if ( suiteAdaptor != null ) {
@@ -167,12 +190,15 @@ public abstract class AcceleratorNode implements /* IElement, */ ElementType, Da
     /** implement DataListener interface */
     public void write(DataAdaptor adaptor) {
         adaptor.setValue( "id", m_strId );
+        adaptor.setValue("pid", m_strPId);
+        adaptor.setValue("eid", m_strEId);
         adaptor.setValue( "type", getType() );
 		if ( getSoftType() != null ) {
 			adaptor.setValue( "softType", getSoftType() );
 		}
         adaptor.setValue( "status", m_bolStatus );
         adaptor.setValue( "pos", m_dblPos );
+        adaptor.setValue("s", m_dblS);
         adaptor.setValue( "len", m_dblLen );
         
         Collection<AttributeBucket> buckets = getBuckets();
@@ -275,12 +301,24 @@ public abstract class AcceleratorNode implements /* IElement, */ ElementType, Da
     /** return the ID of this node */
     public String           getId()             { return m_strId;  };
     
+    /** return the engineering ID of this node */   
+    public String           getEId()             { return m_strEId;  };
+    
+    /** return the physics ID of this node */   
+    public String           getPId()             { return m_strPId;  };
+    
     /** return the physical length of this node (m) */
     public double           getLength()         { return m_dblLen; };
     
     /** return the position of this node,  along the reference orbit
      * within its sequence (m) */
     public double           getPosition()       { return m_dblPos; };
+    
+    /**
+     * return global "s" display coordinate
+     * @return s coordinate
+     */
+    public double 			getSDisplay()		{ return m_dblS;};
     
     /** return the top level accelerator that this node belongs to */
     public Accelerator      getAccelerator()    { return m_objAccel; };
@@ -315,12 +353,21 @@ public abstract class AcceleratorNode implements /* IElement, */ ElementType, Da
     public boolean          getValid()          { return m_bolValid; };
     
     
-	/** set the position of this accelerator node within its parent sequence */
+    void     setPId(String value)         { m_strPId = value; }
+    void     setEId(String value)         { m_strEId = value; }
+
+    /** set the position of this accelerator node within its parent sequence */
 	public void setPosition( final double position )  { m_dblPos = position; };
 	
 	
 	/** set the length of this accelerator node  */
 	public void setLength( final double length )    { m_dblLen = length; };
+    
+    /**
+     * set "s" coordinate
+     * @param dblS s coordinate
+     */
+    public void 	setSDisplay(double dblS) { m_dblS = dblS; };
     
     
     /**
