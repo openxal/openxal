@@ -3,7 +3,10 @@
     <dirname property="xal.home" file="${ant.file.config}" />
     
     <property environment="env" />
-                
+    
+    <!-- source directory -->            
+    <property name="src" value="src" />
+    
     <!-- Determine the build directory using the environment variable if defined, otherwise place the build root under xal home -->
     <condition property="build.root" value="${env.XAL_BUILD_ROOT}" else="${xal.home}/build">
         <isset property="env.XAL_BUILD_ROOT" />
