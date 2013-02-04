@@ -12,6 +12,7 @@
 		<echo message="Ant Home: ${ant.home}" />
 		<echo message="Ant Java version: ${ant.java.version}" />
 		<echo message="Java Home: ${java.home}" />
+		<echo message="XAL Home: ${xal.home}" />
 	</target>
 
     
