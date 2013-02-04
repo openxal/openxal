@@ -115,7 +115,7 @@
         <mkdir dir="${build.javadoc.root}" />
         <javadoc destdir="${build.javadoc.root}" packagenames="xal.*" author="false" version="false" maxmemory="512m">
             <sourcepath>
-                <pathelement location="." />
+                <pathelement location="${src}" />
             </sourcepath>
             <classpath>
                 <pathelement location="${build.jar.lib.root}/xal-core.jar" />
