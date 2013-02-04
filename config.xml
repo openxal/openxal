@@ -5,7 +5,7 @@
     <property environment="env" />
     
     <!-- location of source code directory relative to a source root -->            
-    <property name="sourcecode.dir" value="src" />
+    <property name="source.code.dir" value="src" />
     
     <!-- Determine the build directory using the environment variable if defined, otherwise place the build root under xal home -->
     <condition property="build.root" value="${env.XAL_BUILD_ROOT}" else="${xal.home}/build">
