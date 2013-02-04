@@ -61,7 +61,7 @@
 		<attribute name="flag" default="-Xlint:none" />
 		<sequential>
             <mkdir dir="${app.build.compile.root}" />
-            <javac srcdir="${app.src.root}" includes="src/**" destdir="${app.build.compile.root}" debug="true" source="${build.compile.java.source}" target="${build.compile.java.target}" includeAntRuntime="no" deprecation="true">
+            <javac srcdir="${app.src.root}/${srcdir}" includes="**" destdir="${app.build.compile.root}" debug="true" source="${build.compile.java.source}" target="${build.compile.java.target}" includeAntRuntime="no" deprecation="true">
                 <compilerarg value="@{flag}" />
                 
                 <!-- compile against the common libraries (e.g. xal-core.jar, xal-lib.jar) -->
@@ -182,17 +182,6 @@
     <!-- Build the application standalone and place it in the apps directory under the build directory -->
     <target name="build-standalone" depends="init,jar-standalone" description="Build everything." if="allows.build">
         <echo message="${appname} built standalone!" />
-    </target>
-    
-    
-    <!-- Generate Java documentation -->
-    <target name="javadoc" depends="init" description="Javadoc for ${appname} app. API.">
-        <mkdir dir="${build.root}/javadoc"/>
-        <javadoc packagenames="${apps}.${appname}" destdir="${build.root}/javadoc">
-            <sourcepath>
-                <pathelement location="${xal.home}" />
-            </sourcepath>
-        </javadoc>
     </target>
 
     
