@@ -25,7 +25,7 @@
 		<attribute name="flag" default="-Xlint:none" />
 		<sequential>
 			<mkdir dir="${build.compile.core.root}" />
-			<javac debug="true" source="${build.compile.java.source}" target="${build.compile.java.target}" includeAntRuntime="no" deprecation="true" destdir="${build.compile.core.root}" srcdir="${srcroot}" includes="src/**" sourcepath="">
+			<javac debug="true" source="${build.compile.java.source}" target="${build.compile.java.target}" includeAntRuntime="no" deprecation="true" destdir="${build.compile.core.root}" srcdir="${srcroot}/${source.code.dir}" includes="**" sourcepath="">
 				<classpath>
 					<pathelement location="${build.jar.lib.root}/xal-lib.jar" />
 				</classpath>
@@ -115,7 +115,7 @@
         <mkdir dir="${build.javadoc.root}" />
         <javadoc destdir="${build.javadoc.root}" packagenames="xal.*" author="false" version="false" maxmemory="512m">
             <sourcepath>
-                <pathelement location="${src}" />
+                <pathelement location="${srcroot}/${source.code.dir}" />
             </sourcepath>
             <classpath>
                 <pathelement location="${build.jar.lib.root}/xal-core.jar" />
