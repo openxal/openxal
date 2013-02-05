@@ -12,6 +12,8 @@ package xal.app.dbbrowser;
 import xal.tools.database.*;
 import xal.tools.messaging.MessageCenter;
 
+import xal.tools.database.DatabaseException;
+
 import java.sql.*;
 import java.util.*;
 
@@ -278,7 +280,30 @@ public class BrowserModel {
 	 * @throws xal.tools.database.DatabaseException  if the schema fetch fails
 	 */
 	public List<String> fetchSchemas() throws DatabaseException {
-		return _databaseAdaptor.fetchNontrivialSchemas( _connection );
+		try {
+			List schemas = new ArrayList();
+			DatabaseMetaData metaData = _connection.getMetaData();
+			ResultSet result = null;
+			
+			if (metaData.getDatabaseProductName().equals("MySQL"))
+				result = metaData.getCatalogs();
+			else if (metaData.getDatabaseProductName().equals("Oracle"))
+				result = metaData.getSchemas();
+			
+			while ( result.next() ) {
+				if (metaData.getDatabaseProductName().equals("MySQL"))
+					schemas.add( result.getString( "TABLE_CAT" ) );
+				else if (metaData.getDatabaseProductName().equals("Oracle"))
+					schemas.add( result.getString( "TABLE_SCHEM" ) );
+			}
+
+			return schemas;
+		}
+		catch ( SQLException exception ) {
+			throw new DatabaseException( "Database exception while fetching schemas.", _databaseAdaptor, exception );
+		}
+
+		//		return _databaseAdaptor.fetchNontrivialSchemas( _connection );
 	}
 	
 
@@ -302,9 +327,16 @@ public class BrowserModel {
 	 */
 	public List<String> fetchTables( final String schema ) throws DatabaseException {
 		try {
-			final List<String> tables = new ArrayList<String>();
-			final DatabaseMetaData metaData = _connection.getMetaData();
-			final ResultSet result = metaData.getTables( null, schema, null, null );
+			List tables = new ArrayList();
+			DatabaseMetaData metaData = _connection.getMetaData();
+			
+			ResultSet result = null;
+			
+			if (metaData.getDatabaseProductName().equals("MySQL"))
+				result = metaData.getTables( schema, null, null, null );
+			else if (metaData.getDatabaseProductName().equals("MySQL"))
+				result = metaData.getTables( null, schema, null, null );
+			
 			while ( result.next() ) {
 				String name = result.getString( "TABLE_NAME" );
 				tables.add( name );
@@ -315,6 +347,20 @@ public class BrowserModel {
 		catch ( SQLException exception ) {
 			throw new DatabaseException( "Database exception while fetching schemas.", _databaseAdaptor, exception );
 		}
+//		try {
+//			final List<String> tables = new ArrayList<String>();
+//			final DatabaseMetaData metaData = _connection.getMetaData();
+//			final ResultSet result = metaData.getTables( null, schema, null, null );
+//			while ( result.next() ) {
+//				String name = result.getString( "TABLE_NAME" );
+//				tables.add( name );
+//			}
+//
+//			return tables;
+//		}
+//		catch ( SQLException exception ) {
+//			throw new DatabaseException( "Database exception while fetching schemas.", _databaseAdaptor, exception );
+//		}
 	}
 
 
@@ -327,11 +373,18 @@ public class BrowserModel {
 	 */
 	public List<TableAttribute> fetchAttributes( final String schema, final String table ) throws DatabaseException {
 		try {
-			final List<TableAttribute> attributes = new ArrayList<TableAttribute>();
-			final DatabaseMetaData metaData = _connection.getMetaData();
-			final ResultSet result = metaData.getColumns( null, schema, table, null );
+			List attributes = new ArrayList();
+			DatabaseMetaData metaData = _connection.getMetaData();
+			
+			ResultSet result = null;
+			
+			if (metaData.getDatabaseProductName().equals("MySQL"))
+				result = metaData.getColumns( schema, null, table, null );
+			else if (metaData.getDatabaseProductName().equals("Oracle"))
+				result = metaData.getColumns( null, schema, table, null );
+			
 			while ( result.next() ) {
-				final TableAttribute attribute = new TableAttribute();
+				TableAttribute attribute = new TableAttribute();
 				attribute.name = result.getString( "COLUMN_NAME" );
 				attribute.dataType = result.getInt( "DATA_TYPE" );
 				attribute.type = result.getString( "TYPE_NAME" );
@@ -340,8 +393,9 @@ public class BrowserModel {
 				attributes.add( attribute );
 			}
 
-			final List<String> primaryKeys = fetchPrimaryKeys( schema, table );
-			for ( final TableAttribute attribute : attributes ) {
+			List primaryKeys = fetchPrimaryKeys( schema, table );
+			for ( Iterator iter = attributes.iterator(); iter.hasNext();  ) {
+				TableAttribute attribute = (TableAttribute)iter.next();
 				attribute.isPrimaryKey = primaryKeys.contains( attribute.name );
 			}
 
@@ -350,6 +404,30 @@ public class BrowserModel {
 		catch ( SQLException exception ) {
 			throw new DatabaseException( "Database exception while fetching schemas.", _databaseAdaptor, exception );
 		}
+//		try {
+//			final List<TableAttribute> attributes = new ArrayList<TableAttribute>();
+//			final DatabaseMetaData metaData = _connection.getMetaData();
+//			final ResultSet result = metaData.getColumns( null, schema, table, null );
+//			while ( result.next() ) {
+//				final TableAttribute attribute = new TableAttribute();
+//				attribute.name = result.getString( "COLUMN_NAME" );
+//				attribute.dataType = result.getInt( "DATA_TYPE" );
+//				attribute.type = result.getString( "TYPE_NAME" );
+//				attribute.width = result.getInt( "COLUMN_SIZE" );
+//				attribute.nullable = result.getString( "IS_NULLABLE" );
+//				attributes.add( attribute );
+//			}
+//
+//			final List<String> primaryKeys = fetchPrimaryKeys( schema, table );
+//			for ( final TableAttribute attribute : attributes ) {
+//				attribute.isPrimaryKey = primaryKeys.contains( attribute.name );
+//			}
+//
+//			return attributes;
+//		}
+//		catch ( SQLException exception ) {
+//			throw new DatabaseException( "Database exception while fetching schemas.", _databaseAdaptor, exception );
+//		}
 	}
 
 
@@ -362,11 +440,17 @@ public class BrowserModel {
 	 */
 	protected List<String> fetchPrimaryKeys( final String schema, final String table ) throws DatabaseException {
 		try {
-			final List<String> primaryKeys = new ArrayList<String>();
+			List primaryKeys = new ArrayList();
 			DatabaseMetaData metaData = _connection.getMetaData();
-			ResultSet result = metaData.getPrimaryKeys( null, schema, table );
+			
+			ResultSet result = null;
+			if (metaData.getDatabaseProductName().equals("MySQL"))
+				result = metaData.getPrimaryKeys( schema, null, table );
+			else if (metaData.getDatabaseProductName().equals("Oracle"))
+				result = metaData.getPrimaryKeys( null, schema, table );
+			
 			while ( result.next() ) {
-				final String column = result.getString( "COLUMN_NAME" );
+				String column = result.getString( "COLUMN_NAME" );
 				primaryKeys.add( column );
 			}
 
@@ -375,6 +459,20 @@ public class BrowserModel {
 		catch ( SQLException exception ) {
 			throw new DatabaseException( "Database exception while fetching primary keys.", _databaseAdaptor, exception );
 		}
+//		try {
+//			final List<String> primaryKeys = new ArrayList<String>();
+//			DatabaseMetaData metaData = _connection.getMetaData();
+//			ResultSet result = metaData.getPrimaryKeys( null, schema, table );
+//			while ( result.next() ) {
+//				final String column = result.getString( "COLUMN_NAME" );
+//				primaryKeys.add( column );
+//			}
+//
+//			return primaryKeys;
+//		}
+//		catch ( SQLException exception ) {
+//			throw new DatabaseException( "Database exception while fetching primary keys.", _databaseAdaptor, exception );
+//		}
 	}
 
 
