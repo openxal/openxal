@@ -2,8 +2,12 @@ package xal.tools.database;
 
 import java.sql.Array;
 import java.sql.Connection;
+import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
@@ -11,15 +15,16 @@ import java.util.logging.Logger;
 
 
 public class MySQLDatabaseAdaptor extends DatabaseAdaptor {
-
-	protected Map arrayDescriptorMap;
+	/** Table of cached array descriptors keyed by type. The value class is actually oracle.sql.ArrayDescriptor, but Object is used since the Oracle driver is reflected. */
+	final private Map<String,Object> ARRAY_DESCRIPTOR_TABLE;
 
 	/**
 	 * Public Constructor
 	 */
 	public MySQLDatabaseAdaptor() {
-		arrayDescriptorMap = new HashMap();
+		ARRAY_DESCRIPTOR_TABLE = new HashMap<String,Object>();
 	}
+
 	
 	/**
 	 * Static initializer
@@ -62,6 +67,49 @@ public class MySQLDatabaseAdaptor extends DatabaseAdaptor {
 		}
 	}
 
+	
+	/**
+	 * Fetch all schemas from the connected database. MySQL adaptor returns catalogs instead of schemas.
+	 * @return  list of all schemas in the database
+	 * @exception DatabaseException
+	 * @throws gov.sns.tools.database.DatabaseException  if the schema fetch fails
+	 */
+	public List<String> fetchAllSchemas( final Connection connection ) throws DatabaseException {
+		try {
+			final List<String> schemas = new ArrayList<String>();
+			final DatabaseMetaData metaData = connection.getMetaData();
+			final ResultSet result = metaData.getCatalogs();
+
+			while ( result.next() ) {
+				schemas.add( result.getString( "TABLE_CAT" ) );
+			}
+
+			return schemas;
+		}
+		catch ( SQLException exception ) {
+			throw new DatabaseException( "Database exception while fetching schemas.", this, exception );
+		}
+	}
+
+
+	/** Get the result set for tables for the specified meta data and schema. MySQL adaptor uses the catalog in place of schema. */
+	public ResultSet getTablesResultSet( final DatabaseMetaData metaData, final String schema ) throws SQLException {
+		return metaData.getTables( schema, null, null, null );
+	}
+
+
+	/** Get the result set of columns for the specified meta data, schema and table. MySQL adaptor uses the catalog in place of schema. */
+	public ResultSet getColumnsResultSet( final DatabaseMetaData metaData, final String schema, final String table ) throws SQLException {
+		return metaData.getColumns( schema, null, table, null );
+	}
+
+
+	/** Get the result set of primary keys for the specified meta data, schema and table. MySQL adaptor uses the catalog in place of schema. */
+	public ResultSet getPrimaryKeysResultSet( final DatabaseMetaData metaData, final String schema, final String table ) throws SQLException {
+		return metaData.getPrimaryKeys( schema, null, table );
+	}
+
+	
 //	/**
 //	 * Get the array descriptor for the specified array type
 //	 * @param type An SQL array type
