@@ -112,5 +112,75 @@ public abstract class DatabaseAdaptor {
 	public List<String> fetchNontrivialSchemas( final Connection connection ) throws DatabaseException {
 		return fetchAllSchemas( connection );
 	}
+
+
+	/**
+	 * Fetch tables for the specified schema
+	 * @param connection         The database connection
+	 * @param schema             The schema for which to fetch the tables
+	 * @return                   a list of tables associated with the specified schema
+	 * @exception DatabaseException            
+	 * @throws xal.tools.database.DatabaseException  if the schema fetch fails
+	 */
+	public List<String> fetchTables( final Connection connection, final String schema ) throws DatabaseException {
+		try {
+			final List<String> tables = new ArrayList<String>();
+			final DatabaseMetaData metaData = connection.getMetaData();
+			final ResultSet result = getTablesResultSet( metaData, schema );
+			while ( result.next() ) {
+				String name = result.getString( "TABLE_NAME" );
+				tables.add( name );
+			}
+
+			return tables;
+		}
+		catch ( SQLException exception ) {
+			throw new DatabaseException( "Database exception while fetching schemas.", this, exception );
+		}
+	}
+
+
+	/** Get the result set of tables for the specified meta data and schema */
+	public ResultSet getTablesResultSet( final DatabaseMetaData metaData, final String schema ) throws SQLException {
+		return metaData.getTables( null, schema, null, null );
+	}
+
+
+	/** Get the result set of columns for the specified meta data, schema and table */
+	public ResultSet getColumnsResultSet( final DatabaseMetaData metaData, final String schema, final String table ) throws SQLException {
+		return metaData.getColumns( null, schema, table, null );
+	}
+
+
+	/**
+	 * Fetch the primary keys for a specified table in a specified schema
+	 * @param connection         The database connection
+	 * @param schema             The schema to use
+	 * @param table              The table for which to fetch the primary keys
+	 * @return                    a list of the primary keys as column names
+	 * @exception DatabaseException  Description of the Exception
+	 */
+	public List<String> fetchPrimaryKeys( final Connection connection, final String schema, final String table ) throws DatabaseException {
+		try {
+			final List<String> primaryKeys = new ArrayList<String>();
+			final DatabaseMetaData metaData = connection.getMetaData();
+			final ResultSet result = getPrimaryKeysResultSet( metaData, schema, table );
+			while ( result.next() ) {
+				final String column = result.getString( "COLUMN_NAME" );
+				primaryKeys.add( column );
+			}
+
+			return primaryKeys;
+		}
+		catch ( SQLException exception ) {
+			throw new DatabaseException( "Database exception while fetching primary keys.", this, exception );
+		}
+	}
+
+
+	/** Get the result set of primary keys for the specified meta data, schema and table */
+	public ResultSet getPrimaryKeysResultSet( final DatabaseMetaData metaData, final String schema, final String table ) throws SQLException {
+		return metaData.getPrimaryKeys( null, schema, table );
+	}
 }
 
