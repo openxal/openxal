@@ -270,7 +270,7 @@ public class DispatchTimer {
 					if ( !_isCanceled ) {
 						try {
 							final long maxTime = new Date().getTime() + _milliInterval;		// maximum millisecond time limit
-							while ( true ) {
+							while ( !_isCanceled ) {
 								final long milliTimeout = maxTime - new Date().getTime();	// milliseconds left to wait
 								final int nanoTimeout = _nanoInterval;
 								if ( milliTimeout >= 0 && ( milliTimeout > 0 || nanoTimeout > 0 ) ) {	// if remaining milliseconds is zero or greater then wait longer and at least one of nanoTimeout or milliTimeout is greater than zero
