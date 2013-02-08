@@ -457,18 +457,22 @@ public class IdealRfGap extends ThinElement implements IRfGap {
          */
     }
     
-    /**  
-     * Compute the tranfer map for an ideal RF gap.
-     *
-     * new transferMap with same definitions of kx and kz from Trace3d manual 
-     * but correctly considering xal and trace3d longitudinal phase 
+    /**
+     * <p>  
+     * Compute the transfer map for an ideal RF gap.
+     * </p
+     * <p>
+     * New transfer matrix with same definitions of <i>k<sub>r</sub></i> and <i>k<sub>z</sub></i>
+     * from Trace3D manual, but correctly considering XAL and trace3d longitudinal phase. 
      * transformation
+     * </p>
+     * <p>
+     * Modified on 21 Jul 06 Sako (consistency checked with Trace3D).
+     * </p>
      * 
-     * modfied on 21 Jul 06 Sako (consistency checked with Trace3D
-     * 
-     *  @param  probe       compute tranfer map using paramters from this probe
+     *  @param  probe       compute transfer map using parameters from this probe
      *
-     *  @return             tranfer map for the probe
+     *  @return             transfer map for the probe
      *
      *  @exception  ModelException  this should not occur
      */
