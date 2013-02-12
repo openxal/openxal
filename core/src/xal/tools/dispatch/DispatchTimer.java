@@ -13,8 +13,11 @@ import java.util.Date;
 
 /** DispatchTimer */
 public class DispatchTimer {
+	/** possible dispatch modes */
+	public enum DispatchTimerMode { FIXED_RATE, COALESCING }
+
 	/** possible run states of the dispatch timer */
-	public enum DispatchTimerRunState { PROCESSING, SUSPENDED, DISPOSED }
+	private enum DispatchTimerRunState { PROCESSING, SUSPENDED, DISPOSED }
 
 	/** queue to which to dispatch events */
 	final private DispatchQueue EVENT_QUEUE;
@@ -43,9 +46,14 @@ public class DispatchTimer {
 	/** next scheduled event */
 	private ScheduledEvent _nextScheduledEvent;
 
+	/** delegate for handling the specified dispatch mode */
+	final private DispatchTimerModeDelegate DISPATCH_MODE_DELEGATE;
 
-	/** Constructor */
-    public DispatchTimer( final DispatchQueue eventQueue, final Runnable eventHandler ) {
+
+	/** Primary Constructor */
+    public DispatchTimer( final DispatchTimerMode dispatchMode, final DispatchQueue eventQueue, final Runnable eventHandler ) {
+		DISPATCH_MODE_DELEGATE = getDispatchModeDelegate( dispatchMode );
+
 		EVENT_QUEUE = eventQueue;
 		_eventHandler = eventHandler;
 
@@ -56,6 +64,37 @@ public class DispatchTimer {
 
 		_nextScheduledEvent = null;
     }
+
+
+	/** Constructor */
+    public DispatchTimer( final DispatchQueue eventQueue, final Runnable eventHandler ) {
+		this ( DispatchTimerMode.FIXED_RATE, eventQueue, eventHandler );
+    }
+
+
+	/** Create a new fixed rate timer */
+	static public DispatchTimer getFixedRateInstance( final DispatchQueue eventQueue, final Runnable eventHandler ) {
+		return new DispatchTimer( DispatchTimerMode.FIXED_RATE, eventQueue, eventHandler );
+	}
+
+
+	/** Create a new coalescing timer */
+	static public DispatchTimer getCoalescingInstance( final DispatchQueue eventQueue, final Runnable eventHandler ) {
+		return new DispatchTimer( DispatchTimerMode.COALESCING, eventQueue, eventHandler );
+	}
+
+
+	/** Get the dispatch mode delegate for the corresponding mode enum */
+	private DispatchTimerModeDelegate getDispatchModeDelegate( final DispatchTimerMode dispatchMode ) {
+		switch( dispatchMode ) {
+			case FIXED_RATE:
+				return new DispatchTimerFixedRateDispatch();
+			case COALESCING:
+				return new DispatchTimerCoalescingDispatch();
+			default:
+				return new DispatchTimerFixedRateDispatch();
+		}
+	}
 
 
 	/** release resources held by this timer */
@@ -92,14 +131,16 @@ public class DispatchTimer {
 	 * @param nanoInterval nanoseconds of the interval between when the timer fires
 	 */
 	public void setStartTimeAndInterval( final Date startTime, final long milliInterval, final int nanoInterval ) {
-		cancelNextScheduledEvent();		// since the start time is changing, we need to cancel the next pending event
+		cancelNextScheduledEvent();		// Since the start time is changing, we need to immediately cancel the next pending event here plus later on the schedule queue (see code below).
 
 		SCHEDULE_QUEUE.dispatchAsync( new Runnable() {
 			public void run() {
+				cancelNextScheduledEvent();		// Cancel any currently scheduled event on the schedule queue in addition to immediately (see code above)
+
 				_milliInterval = milliInterval;
 				_nanoInterval = nanoInterval;
 
-				final ScheduledEvent nextScheduledEvent = new ScheduledEvent();		// schedule an event that will execute immediately upon dispatch
+				final ScheduledEvent nextScheduledEvent = new ScheduledEvent( startTime );		// schedule an event that will execute immediately upon dispatch
 				_nextScheduledEvent = nextScheduledEvent;
 				SCHEDULE_QUEUE.dispatchAfter( startTime, nextScheduledEvent );		// dispatch after the start time
 			}
@@ -108,10 +149,9 @@ public class DispatchTimer {
 
 
 	/** Schedule the next event */
-	private void scheduleNextEvent() {
+	private void scheduleNextEvent( final ScheduledEvent nextScheduledEvent ) {
 		SCHEDULE_QUEUE.dispatchAsync( new Runnable() {
 			public void run() {
-				final ScheduledEvent nextScheduledEvent = new ScheduledEvent( true );	// schedule an event that will execute at the specified interval
 				_nextScheduledEvent = nextScheduledEvent;
 				SCHEDULE_QUEUE.dispatchAsync( nextScheduledEvent );
 			}
@@ -138,6 +178,7 @@ public class DispatchTimer {
 		if ( nextScheduledEvent != null ) {
 			nextScheduledEvent.cancel();
 		}
+		_nextScheduledEvent = null;
 	}
 
 
@@ -206,21 +247,66 @@ public class DispatchTimer {
 		/** indicates whether this event is canceled */
 		private volatile boolean _isCanceled;
 
-		/** indicates whether this event fires immediately or waits for the interval */
-		private volatile boolean _waitsForInterval;
+		/** time at which the event should fire */
+		private final long TARGET_TIME;
+
+		/** additional nanosecond time */
+		private final int NANO_OFFSET;
 
 
 		/** Primary Constructor */
-		public ScheduledEvent( final boolean waitsForInterval ) {
+		public ScheduledEvent( final long targetTime, final int nanoOffset ) {
+			TARGET_TIME = targetTime;
+			NANO_OFFSET = nanoOffset;
+
 			_isCanceled = false;
 			_isPastDue = false;
-			_waitsForInterval = waitsForInterval;
 		}
 
 
 		/** Constructor */
+		public ScheduledEvent( final Date targetDate, final int nanoOffset ) {
+			this( targetDate.getTime(), nanoOffset );
+		}
+
+
+		/** Constructor */
+		public ScheduledEvent( final long targetTime ) {
+			this( targetTime, 0 );
+		}
+
+
+		/** Constructor */
+		public ScheduledEvent( final Date targetDate ) {
+			this( targetDate.getTime() );
+		}
+
+
+		/** Constructor with event scheduled immediately */
 		public ScheduledEvent() {
-			this( false );
+			this( new Date() );
+		}
+
+
+		/** Get the target time */
+		public long getTargetTime() {
+			return TARGET_TIME;
+		}
+
+
+		/** Get the next scheduled event relative to this one using the timer's millisecond and nanosecond intervals */
+		public ScheduledEvent nextScheduledEvent() {
+			return nextScheduledEvent( _milliInterval, _nanoInterval );
+		}
+
+
+		/** Get the next scheduled event relative to this one using the specified delays */
+		public ScheduledEvent nextScheduledEvent( final long milliDelay, final int nanoDelay ) {
+			// Calculate the new target time and nano offset. If nanos accumulate more than a millisecond, shift that amount to the milliseconds.
+			final int nanoShift = NANO_OFFSET + nanoDelay;
+			final long targetTime = TARGET_TIME + milliDelay + nanoShift / 1000000;
+			final int nanoOffset = nanoShift % 1000000;
+			return new ScheduledEvent( targetTime, nanoOffset );
 		}
 
 
@@ -249,11 +335,7 @@ public class DispatchTimer {
 			if ( !_isCanceled ) {
 				switch ( _runState ) {
 					case PROCESSING:
-						final Runnable eventHandler = _eventHandler;
-						if ( eventHandler != null ) {
-							EVENT_QUEUE.dispatchAsync( eventHandler );
-						}
-						if ( !_isCanceled )  scheduleNextEvent();
+						DISPATCH_MODE_DELEGATE.processTimerEvent( _eventHandler );
 						break;
 					default:
 						_isPastDue = true;
@@ -265,37 +347,82 @@ public class DispatchTimer {
 
 		/** Executes the event */
 		public void run() {
-			if ( _waitsForInterval ) {
-				synchronized( SCHEDULE_QUEUE ) {
-					if ( !_isCanceled ) {
-						try {
-							final long maxTime = new Date().getTime() + _milliInterval;		// maximum millisecond time limit
-							while ( !_isCanceled ) {
-								final long milliTimeout = maxTime - new Date().getTime();	// milliseconds left to wait
-								final int nanoTimeout = _nanoInterval;
-								if ( milliTimeout >= 0 && ( milliTimeout > 0 || nanoTimeout > 0 ) ) {	// if remaining milliseconds is zero or greater then wait longer and at least one of nanoTimeout or milliTimeout is greater than zero
-									//									System.out.println( "Will wait " + milliTimeout + " msec, " + _nanoInterval + " ns"  );
-									SCHEDULE_QUEUE.wait( milliTimeout, nanoTimeout );		// wait the remaining millisecond timeout and the nano interval
-								}
-								else {
-									break;
-								}
+			synchronized( SCHEDULE_QUEUE ) {
+				if ( !_isCanceled ) {
+					try {
+						while ( !_isCanceled ) {
+							final long milliTimeout = TARGET_TIME - new Date().getTime();	// milliseconds left to wait
+							final int nanoTimeout = NANO_OFFSET;
+
+							if ( milliTimeout > 0 ) {
+								SCHEDULE_QUEUE.wait( milliTimeout, 0 );		// wait the remaining millisecond timeout
+							}
+							else if ( milliTimeout == 0 && nanoTimeout > 0 ) {
+								SCHEDULE_QUEUE.wait( 0, nanoTimeout );		// wait the remaining nano interval
+								break;		// assume the nano timeout was successful as we have no way to verify otherwise
+							}
+							else {
+								break;
 							}
 						}
-						catch ( Exception exception ) {
-							exception.printStackTrace();
-						}
-						finally {
-							dispatchEventIfEnabled();
-						}
+					}
+					catch ( Exception exception ) {
+						exception.printStackTrace();
+					}
+					finally {
+						dispatchEventIfEnabled();
 					}
 				}
 			}
-			else {
-				dispatchEventIfEnabled();
+		}
+	}
+
+
+	/** Make the next scheduled event */
+	private ScheduledEvent makeNextScheduledEvent() {
+		return _nextScheduledEvent.nextScheduledEvent();
+	}
+
+
+
+	/** Delegate interface for handling the various dispatch modes */
+	interface DispatchTimerModeDelegate {
+		/** process the current timer event */
+		public void processTimerEvent( final Runnable eventHandler );
+	}
+
+
+
+	/** Dispatches events at a fixed rate */
+	private class DispatchTimerFixedRateDispatch implements DispatchTimerModeDelegate {
+		/** process the current timer event */
+		public void processTimerEvent( final Runnable eventHandler ) {
+			final ScheduledEvent nextEvent = makeNextScheduledEvent();
+
+			if ( eventHandler != null ) {
+				EVENT_QUEUE.dispatchAsync( eventHandler );
 			}
-			
+
+			if ( !_isCanceled )  scheduleNextEvent( nextEvent );
+		}
+	}
+
+
+
+	/** Dispatches events at a fixed rate but coalesces events that are concurrent thus preventing events from backing up in the queue */
+	private class DispatchTimerCoalescingDispatch implements DispatchTimerModeDelegate {
+		/** process the current timer event */
+		public void processTimerEvent( final Runnable eventHandler ) {
+			final ScheduledEvent nextEvent = makeNextScheduledEvent();
+
+			try {
+				if ( eventHandler != null ) {
+					EVENT_QUEUE.dispatchSync( eventHandler );
+				}
+			}
+			finally {
+				if ( !_isCanceled )  scheduleNextEvent( nextEvent );
+			}
 		}
 	}
 }
-
