@@ -380,7 +380,8 @@ public class DispatchTimer {
 
 	/** Make the next scheduled event */
 	private ScheduledEvent makeNextScheduledEvent() {
-		return _nextScheduledEvent.nextScheduledEvent();
+		final ScheduledEvent nextEvent = _nextScheduledEvent;
+		return nextEvent != null ? nextEvent.nextScheduledEvent() : null;
 	}
 
 
@@ -403,7 +404,7 @@ public class DispatchTimer {
 				EVENT_QUEUE.dispatchAsync( eventHandler );
 			}
 
-			if ( !_isCanceled )  scheduleNextEvent( nextEvent );
+			if ( !_isCanceled && nextEvent != null )  scheduleNextEvent( nextEvent );
 		}
 	}
 
@@ -421,7 +422,7 @@ public class DispatchTimer {
 				}
 			}
 			finally {
-				if ( !_isCanceled )  scheduleNextEvent( nextEvent );
+				if ( !_isCanceled && nextEvent != null )  scheduleNextEvent( nextEvent );
 			}
 		}
 	}
