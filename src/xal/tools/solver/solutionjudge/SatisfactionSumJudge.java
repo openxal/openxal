@@ -80,28 +80,33 @@
 	 * @param trial the trial to judge.
 	 */
 	 public void judge( final Trial trial ) {
-		 double weightedSum = 0.0;
-		 double totalWeight = 0.0;
-		 
-		 // Calculate the overall satisfaction which is simply the weighted sum of all the score satisfactions.
-		 for ( final Objective objective : trial.getProblem().getObjectives() ) {
-			 final double satisfaction = trial.getScore( objective ).getSatisfaction();
-			 final double weight = getWeight( objective );
-			 totalWeight += weight;
-			 weightedSum += satisfaction * weight;
+		 if ( trial.isVetoed() ) {
+			 trial.setSatisfaction( 0.0 );
 		 }
-		 weightedSum /= totalWeight;
-		 trial.setSatisfaction( weightedSum );
-		 
-		 if( weightedSum == _bestWeightedSum ) {
-			 _optimalSolutions.add( trial );
-			 _eventProxy.foundNewOptimalSolution( this, _optimalSolutions, trial );
-		 }
-		 else if( weightedSum > _bestWeightedSum ) {
-			 _bestWeightedSum = weightedSum;
-			 _optimalSolutions.clear();
-			 _optimalSolutions.add( trial );
-			 _eventProxy.foundNewOptimalSolution( this, _optimalSolutions, trial );
+		 else {
+			 double weightedSum = 0.0;
+			 double totalWeight = 0.0;
+			 
+			 // Calculate the overall satisfaction which is simply the weighted sum of all the score satisfactions.
+			 for ( final Objective objective : trial.getProblem().getObjectives() ) {
+				 final double satisfaction = trial.getScore( objective ).getSatisfaction();
+				 final double weight = getWeight( objective );
+				 totalWeight += weight;
+				 weightedSum += satisfaction * weight;
+			 }
+			 weightedSum /= totalWeight;
+			 trial.setSatisfaction( weightedSum );
+			 
+			 if( weightedSum == _bestWeightedSum ) {
+				 _optimalSolutions.add( trial );
+				 _eventProxy.foundNewOptimalSolution( this, _optimalSolutions, trial );
+			 }
+			 else if( weightedSum > _bestWeightedSum ) {
+				 _bestWeightedSum = weightedSum;
+				 _optimalSolutions.clear();
+				 _optimalSolutions.add( trial );
+				 _eventProxy.foundNewOptimalSolution( this, _optimalSolutions, trial );
+			 }
 		 }
 	 }
  }
