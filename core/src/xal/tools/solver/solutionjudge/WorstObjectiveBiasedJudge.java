@@ -73,45 +73,50 @@ public class WorstObjectiveBiasedJudge extends SolutionJudge {
 	 * @param trial The trial with which to update the solution judge.
 	 */
 	public void judge( final Trial trial ) {
-		final List<Objective> objectives = trial.getProblem().getObjectives();
-		final int numObjectives = objectives.size();
-		final List<Double> satisfactions = new ArrayList<Double>( numObjectives );
-		
-		// collect the list of each satisfaction
-        for ( final Objective objective : objectives ) {
-			final double satisfaction = trial.getScore( objective ).getSatisfaction();
-			satisfactions.add( satisfaction );
+		if ( trial.isVetoed() ) {
+			trial.setSatisfaction( 0.0 );
 		}
-		Collections.sort( satisfactions );		// sort satisfactions from worst to best
-		
-		// weight each satisfaction with most weight for the worst satisfaction and exponentially decreasing from there
-		double weightedSum = 0.0;
-		double weight = 1.0;
-		final Iterator<Double> satisfactionIter = satisfactions.iterator();
-		while ( satisfactionIter.hasNext() ) {
-			final double satisfaction = satisfactionIter.next().doubleValue();
-			weightedSum += weight * satisfaction;
-			weight *= BIAS_WEIGHT;	// weight the worst satisfactions most
-		}
-		
-		// make sure we do this at least once and then cache it
-		if (  _totalWeight == 0.0 ) {
-			_totalWeight = ( 1.0 - Math.pow( BIAS_WEIGHT, numObjectives ) ) / ( 1.0 - BIAS_WEIGHT );
-		}
-		
-		// generate the overall satisfaction which is scaled from 0 to 1
-		final double totalSatisfaction = weightedSum / _totalWeight;
-		trial.setSatisfaction( totalSatisfaction );
-		
-		if( totalSatisfaction == _bestSatisfaction ) {
-			_optimalSolutions.add( trial );
-			_eventProxy.foundNewOptimalSolution( this, _optimalSolutions, trial );
-		}
-		else if( totalSatisfaction > _bestSatisfaction ) {
-			_bestSatisfaction = totalSatisfaction;
-			_optimalSolutions.clear();
-			_optimalSolutions.add( trial );
-			_eventProxy.foundNewOptimalSolution( this, _optimalSolutions, trial );
+		else {
+			final List<Objective> objectives = trial.getProblem().getObjectives();
+			final int numObjectives = objectives.size();
+			final List<Double> satisfactions = new ArrayList<Double>( numObjectives );
+			
+			// collect the list of each satisfaction
+			for ( final Objective objective : objectives ) {
+				final double satisfaction = trial.getScore( objective ).getSatisfaction();
+				satisfactions.add( satisfaction );
+			}
+			Collections.sort( satisfactions );		// sort satisfactions from worst to best
+			
+			// weight each satisfaction with most weight for the worst satisfaction and exponentially decreasing from there
+			double weightedSum = 0.0;
+			double weight = 1.0;
+			final Iterator<Double> satisfactionIter = satisfactions.iterator();
+			while ( satisfactionIter.hasNext() ) {
+				final double satisfaction = satisfactionIter.next().doubleValue();
+				weightedSum += weight * satisfaction;
+				weight *= BIAS_WEIGHT;	// weight the worst satisfactions most
+			}
+			
+			// make sure we do this at least once and then cache it
+			if (  _totalWeight == 0.0 ) {
+				_totalWeight = ( 1.0 - Math.pow( BIAS_WEIGHT, numObjectives ) ) / ( 1.0 - BIAS_WEIGHT );
+			}
+			
+			// generate the overall satisfaction which is scaled from 0 to 1
+			final double totalSatisfaction = weightedSum / _totalWeight;
+			trial.setSatisfaction( totalSatisfaction );
+			
+			if( totalSatisfaction == _bestSatisfaction ) {
+				_optimalSolutions.add( trial );
+				_eventProxy.foundNewOptimalSolution( this, _optimalSolutions, trial );
+			}
+			else if( totalSatisfaction > _bestSatisfaction ) {
+				_bestSatisfaction = totalSatisfaction;
+				_optimalSolutions.clear();
+				_optimalSolutions.add( trial );
+				_eventProxy.foundNewOptimalSolution( this, _optimalSolutions, trial );
+			}
 		}
 	}
 }

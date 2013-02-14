@@ -68,29 +68,34 @@
 	 * update the pareto optimal judge with. 
 	 */
 	 public void judge( final Trial solution ) {
-		 final Iterator<Trial> optimalSolutionIter = _optimalSolutions.iterator();
-		 final List<Objective> objectives = solution.getProblem().getObjectives();
-		 boolean foundOptimal = false;
-		 
-		 /**Determine if the new solution is optimal*/
-		 while( optimalSolutionIter.hasNext() ) {
-			 final Trial optimalSolution = optimalSolutionIter.next();
-			 if( isBetter( solution, optimalSolution, objectives ) ) {
-				 foundOptimal = true;
-				 break;
-			 }
+		 if ( solution.isVetoed() ) {
+			 solution.setSatisfaction( 0.0 );
 		 }
-		 
-		 /**Determine if an existing optimal solutions should be removed*/
-		 if( foundOptimal ) {
+		 else {
+			 final Iterator<Trial> optimalSolutionIter = _optimalSolutions.iterator();
+			 final List<Objective> objectives = solution.getProblem().getObjectives();
+			 boolean foundOptimal = false;
+			 
+			 /**Determine if the new solution is optimal*/
 			 while( optimalSolutionIter.hasNext() ) {
 				 final Trial optimalSolution = optimalSolutionIter.next();
-				 if( !isBetter( optimalSolution, solution, objectives ) ) {
-					 _optimalSolutions.remove( optimalSolution );
+				 if( isBetter( solution, optimalSolution, objectives ) ) {
+					 foundOptimal = true;
+					 break;
 				 }
 			 }
-			 _optimalSolutions.add( solution );
-			 _eventProxy.foundNewOptimalSolution( this, _optimalSolutions, solution );
+			 
+			 /**Determine if an existing optimal solutions should be removed*/
+			 if( foundOptimal ) {
+				 while( optimalSolutionIter.hasNext() ) {
+					 final Trial optimalSolution = optimalSolutionIter.next();
+					 if( !isBetter( optimalSolution, solution, objectives ) ) {
+						 _optimalSolutions.remove( optimalSolution );
+					 }
+				 }
+				 _optimalSolutions.add( solution );
+				 _eventProxy.foundNewOptimalSolution( this, _optimalSolutions, solution );
+			 }
 		 }
 	 }
  }

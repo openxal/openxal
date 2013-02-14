@@ -291,7 +291,10 @@ public class Problem {
 	 */
 	public boolean evaluate( final Trial trial ) {
 		final TrialVeto veto = validate( trial );
-		if ( veto != null )  return false;
+		if ( veto != null ) {
+			trial.vetoTrial( veto );
+			return false;
+		};
 		_evaluator.evaluate( trial );
 		return true;
 	}
