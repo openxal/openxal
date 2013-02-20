@@ -245,7 +245,10 @@ public class DirectedStep extends SearchAlgorithm {
 		for ( int index = 0 ; index < gradient.length ; index++ ) {
 			final Variable variable = variables.get( index );
 			final double value = originPoint.getValue( variable ) + gradient[index] * scale;
-			valueMap.put( variable, value );
+			final double lowerLimit = variable.getLowerLimit();
+			final double upperLimit = variable.getUpperLimit();
+			final double trialValue = value < lowerLimit ? lowerLimit : value > upperLimit ? upperLimit : value;
+			valueMap.put( variable, trialValue );
 		}
 
 		return new TrialPoint( valueMap );
