@@ -149,6 +149,7 @@ public class EnvelopeProbeState extends BunchProbeState implements IPhaseState {
         this.setResponseMatrixNoSpaceCharge(probe.getResponseMatrixNoSpaceCharge());
         this.setPerturbationMatrix(probe.getCurrentResponseMatrix());
         //obsolete this.setTwiss(probe.getTwiss());
+        System.out.println("This is " + this.getElementId());
         this.setTwiss(probe.getCovariance().computeTwiss());
         this.setSaveTwissFlag(probe.getSaveTwissFlag());
 	//sako
