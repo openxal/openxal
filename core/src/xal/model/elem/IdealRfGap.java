@@ -296,59 +296,92 @@ public class IdealRfGap extends ThinElement implements IRfGap {
      */
     @Override
     public double elapsedTime(IProbe probe)  {
-        double deltaPhaseCorrection;
-        double entrancePhase;
-        double dPhi1;
-        double dPhi2;
+//        double deltaPhaseCorrection;
+//        double entrancePhase;
+//        double dPhi1;
+//        double dPhi2;
+//        
+//        // Initial energy parameters
+//        double Er = probe.getSpeciesRestEnergy();
+//        double Wi = probe.getKineticEnergy();
+//        double bi = probe.getBeta();
+//        double gi = probe.getGamma();
+//        double dW = this.energyGain(probe);
+//        
+//        // Final energy parameters
+//        double Wf = Wi + dW;
+//        double gf = Wf/Er + 1.0;
+//        double bf = Math.sqrt(1.0 - 1.0/(gf*gf));
+//        
+//        double b0 = (bi + bf)/2.;
+//        double g0 = (gi + gf)/2.;
+//        
+//        // Phase change from drift from start of cell to center of cell
+//        //  gapOffsets have to do with electrical centers != geometric centers, 
+//        //  e.g. DTLs (small effect).
+//        if(!isFirstGap()) {
+//            entrancePhase = upstreamExitPhase;
+//            dPhi1 = 2. * Math.PI * (getCellLength()/2. + gapOffset) * getFrequency() /(bi * IElement.LightSpeed);
+//        }
+//        else {
+//            // phase is prescibed at the center for this guy
+//            dPhi1 = 0.;
+//            entrancePhase = getPhase();
+//        }   
+//        
+//        // phase change from center correction factor:
+//        
+//        //old T.owens way (uses simple "constant T'" scaling with beta)
+//        //deltaPhaseCorrection = -2. * Math.PI * getFrequency() * getE0() * Math.pow(getCellLength(), 2.) / (Math.pow(b0, 3.) * Math.pow(g0, 3.) * Er * IElement.LightSpeed) * (1. + structureMode) * Math.sin(phi0) * TTFPrimeFit.evaluateAt(b0);
+//        
+//        double ETL = getETL();
+//        
+//        //old deltaPhaseCorrection = -2. * Math.PI * getE0() * getCellLength() / (Math.pow(b0, 2.) * Math.pow(g0, 3.) * Er) * Math.sin(phi0) * TTFPrimeFit.evaluateAt(b0);	
+//        //new 
+//        deltaPhaseCorrection = -2. * Math.PI * ETL / ((b0*b0) * (g0*g0*g0) * Er) * Math.sin(phi0) * TTFPrimeFit.evaluateAt(b0);	
+//        
+//        // phase change from drift from center to cell exit:
+//        dPhi2 = 2. * Math.PI * (getCellLength()/2. - gapOffset) * getFrequency() /(bf * IElement.LightSpeed);
+//        
+//        upstreamExitPhase = entrancePhase + dPhi1 + dPhi2 + deltaPhaseCorrection - (2 - structureMode) * Math.PI;
+//        
+//        upstreamExitTime = probe.getTime() + getCellLength()/(2. * bf * IElement.LightSpeed) + deltaPhaseCorrection/ (getFrequency() * 2 *Math.PI);
+//        // update the elapsed time to account for the phase correction term
+////      probe.setTime(deltaPhaseCorrection/(getFrequency() * 2. * Math.PI));
+//        double dT = ( deltaPhaseCorrection/(this.getFrequency() * 2.0 *Math.PI) );
         
-        // Initial energy parameters
-        double Er = probe.getSpeciesRestEnergy();
-        double Wi = probe.getKineticEnergy();
-        double bi = probe.getBeta();
-        double gi = probe.getGamma();
-        double dW = this.energyGain(probe);
-        
-        // Final energy parameters
-        double Wf = Wi + dW;
-        double gf = Wf/Er + 1.0;
-        double bf = Math.sqrt(1.0 - 1.0/(gf*gf));
-        
-        double b0 = (bi + bf)/2.;
-        double g0 = (gi + gf)/2.;
-        
-        // Phase change from drift from start of cell to center of cell
-        //  gapOffsets have to do with electrical centers != geometric centers, 
-        //  e.g. DTLs (small effect).
-        if(!isFirstGap()) {
-            entrancePhase = upstreamExitPhase;
-            dPhi1 = 2. * Math.PI * (getCellLength()/2. + gapOffset) * getFrequency() /(bi * IElement.LightSpeed);
-        }
-        else {
-            // phase is prescibed at the center for this guy
-            dPhi1 = 0.;
-            entrancePhase = getPhase();
-        }   
-        
-        // phase change from center correction factor:
-        
-        //old T.owens way (uses simple "constant T'" scaling with beta)
-        //deltaPhaseCorrection = -2. * Math.PI * getFrequency() * getE0() * Math.pow(getCellLength(), 2.) / (Math.pow(b0, 3.) * Math.pow(g0, 3.) * Er * IElement.LightSpeed) * (1. + structureMode) * Math.sin(phi0) * TTFPrimeFit.evaluateAt(b0);
-        
-        double ETL = getETL();
-        
-        //old deltaPhaseCorrection = -2. * Math.PI * getE0() * getCellLength() / (Math.pow(b0, 2.) * Math.pow(g0, 3.) * Er) * Math.sin(phi0) * TTFPrimeFit.evaluateAt(b0);	
-        //new 
-        deltaPhaseCorrection = -2. * Math.PI * ETL / ((b0*b0) * (g0*g0*g0) * Er) * Math.sin(phi0) * TTFPrimeFit.evaluateAt(b0);	
-        
-        // phase change from drift from center to cell exit:
-        dPhi2 = 2. * Math.PI * (getCellLength()/2. - gapOffset) * getFrequency() /(bf * IElement.LightSpeed);
-        
-        upstreamExitPhase = entrancePhase + dPhi1 + dPhi2 + deltaPhaseCorrection - (2 - structureMode) * Math.PI;
-        
-        upstreamExitTime = probe.getTime() + getCellLength()/(2. * bf * IElement.LightSpeed) + deltaPhaseCorrection/ (getFrequency() * 2 *Math.PI);
-        // update the elapsed time to account for the phase correction term
-//      probe.setTime(deltaPhaseCorrection/(getFrequency() * 2. * Math.PI));
-        double dT = ( deltaPhaseCorrection/(this.getFrequency() * 2.0 *Math.PI) );
+		double deltaPhaseCorrection;
+
+		// Initial energy parameters
+		double Er = probe.getSpeciesRestEnergy();
+		double Wi = probe.getKineticEnergy();
+		double bi = probe.getBeta();
+		double gi = probe.getGamma();
+		double dW = this.energyGain(probe);
+
+		// Final energy parameters
+		double Wf = Wi + dW;
+		double gf = Wf / Er + 1.0;
+		double bf = Math.sqrt(1.0 - 1.0 / (gf * gf));
+
+		deltaPhaseCorrection = 0;
+		// phase change from center correction factor:
+		double V0 = getE0() * getCellLength();
+		double bTb = bi * TTFFit.evaluateDerivativeAt(bi);
+		double sin_phase = getPhase();
+		double sinPhi = Math.sin(sin_phase);
+		deltaPhaseCorrection = -(V0 / (gi * gi * gi * bi * bi * Er)) * bTb * sinPhi;
+
+		// update the elapsed time to account for the phase correction term
+		double dT = ((deltaPhaseCorrection) / (this.getFrequency() * 2.0 * Math.PI));
+
+		//the gap offset correction
+		dT = dT + gapOffset * (1. / (bi * IElement.LightSpeed) - 1. / (bf * IElement.LightSpeed));
+
+		//the time when probe will exit this gap
+		upstreamExitTime = probe.getTime() + dT + (getCellLength()/2.) / (bf * IElement.LightSpeed);
+
+    	System.out.println("dT = " + dT);
         return dT;
     }
     
@@ -445,6 +478,7 @@ public class IdealRfGap extends ThinElement implements IRfGap {
         double Q   = Math.abs( probe.getSpeciesCharge() );
         
         theEnergyGain = Q*EL*Math.cos(phi0) * TTFFit.evaluateAt(bc);
+        System.out.println("theEnergyGain = " + theEnergyGain + ", EL = " + EL + ", TTF = " + TTFFit.evaluateAt(bc) + ", bc = " + bc);
         
         //this means phi0 = 0 has max. acceleartion
         
@@ -481,7 +515,8 @@ public class IdealRfGap extends ThinElement implements IRfGap {
         if ( probe.getAlgorithm().useRfGapPhaseCalculation() ) { 
             compEnergyGain(probe);
         } else {
-            simpleEnergyGain(probe);
+        	compEnergyGain(probe);
+//            simpleEnergyGain(probe);
         }
         
         // Get probe parameters at initial energy
@@ -514,16 +549,23 @@ public class IdealRfGap extends ThinElement implements IRfGap {
         double ps  = this.getPhase();
         double sin = Math.sin(ps);
 
-        kt = this.compTransFocusing(probe) * sin;
-        kz = -2.0*kt*ga*ga;
-
+//        kt = this.compTransFocusing(probe) * sin;
+//        kz = -2.0*kt*ga*ga;
+        kt = this.compTransFocusing(probe);
+        kz = this.compLongFocusing(probe);
 
         if (debugT3d) {
     		System.out.println("bgin, bgf = "+bi*gi+" "+bf*gf);
     	}
 
-        double arrTran[][] = new double[][] {{1.0, 0.0}, {kt, eta }};
-        double arrLong[][] = new double[][] {{1.0, 0.0}, {kz/(gf_2), eta*gi_2/gf_2}};
+//        double arrTran[][] = new double[][] {{1.0, 0.0}, {kt, eta }};
+//        double arrLong[][] = new double[][] {{1.0, 0.0}, {kz/(gf_2), eta*gi_2/gf_2}};
+		double arrTran[][] = new double[][]{{1.0, 0.0}, {kt / (bf * gf), bi * gi / (bf * gf)}};
+		double arrLong[][] = new double[][]{{1.0, 0.0}, {(kz / (bf * gf)) , gi * bi / (gf * bf)}};
+//        System.out.println(this.getId() + " transverse ** " + kt + " ** " + eta);
+//        System.out.println(this.getId() + " longitudinal ** "+ kz/(gf_2) + " ** " + eta*gi_2/gf_2);
+        System.out.println(this.getId() + " transverse ** " + kt / (bf * gf) + " ** " + bi * gi / (bf * gf));
+        System.out.println(this.getId() + " longitudinal ** "+ (kz / (bf * gf)) + " ** " + gi * bi / (gf * bf));
         
         PhaseMatrix matPhi = new PhaseMatrix();
         
@@ -532,6 +574,7 @@ public class IdealRfGap extends ThinElement implements IRfGap {
         matPhi.setSubMatrix(2,3, 2,3, arrTran);
         matPhi.setSubMatrix(4,5, 4,5, arrLong);
         
+        System.out.println("transfermap = " + matPhi);
         return new PhaseMap(matPhi);
     }
 
@@ -712,25 +755,73 @@ public class IdealRfGap extends ThinElement implements IRfGap {
      */
     public double compTransFocusing(IProbe probe)    {  //calculate kx'
 
-        double  c = IElement.LightSpeed;
+//        double  c = IElement.LightSpeed;
+//        
+//        double  Q = Math.abs( probe.getSpeciesCharge() );
+//        double Er = probe.getSpeciesRestEnergy();
+//        
+//        double ga = this.gammaMidGap(probe);
+//        double bga_2 = ga*ga - 1.0;
+//        
+//        double bf = this.betaFinal(probe);
+//        double gf = this.gammaFinal(probe);
+//
+//        double  ETL = this.getETL();
+////        double  phi = this.getPhase();
+//        double    f = this.getFrequency();
+//        
+//        double   kr = -Math.PI*Q*ETL*f/(c*Er*bga_2*bf*gf);
+////        double   kr = -Math.PI*Q*ETL*f*Math.sin(phi)/(c*Er*bga_2*bf*gf);
         
-        double  Q = Math.abs( probe.getSpeciesCharge() );
-        double Er = probe.getSpeciesRestEnergy();
-        
-        double ga = this.gammaMidGap(probe);
-        double bga_2 = ga*ga - 1.0;
-        
-        double bf = this.betaFinal(probe);
-        double gf = this.gammaFinal(probe);
+		double c = IElement.LightSpeed;
 
-        double  ETL = this.getETL();
-//        double  phi = this.getPhase();
-        double    f = this.getFrequency();
-        
-        double   kr = -Math.PI*Q*ETL*f/(c*Er*bga_2*bf*gf);
-//        double   kr = -Math.PI*Q*ETL*f*Math.sin(phi)/(c*Er*bga_2*bf*gf);
-        
-        return kr;
+		double Q = Math.abs(probe.getSpeciesCharge());
+		double Er = probe.getSpeciesRestEnergy();
+		double Wi = probe.getKineticEnergy();
+		double gi = Wi / Er + 1.0;
+		double bi = Math.sqrt(1.0 - 1.0 / (gi * gi));
+		
+		double Wbar = Wi + this.energyGain(probe) / 2.0;
+		double gbar = Wbar / Er + 1.0;
+		double bbar = Math.sqrt(1.0 - 1.0 / (gbar * gbar));
+		double bgbar = bbar * gbar;
+
+		double Wf = Wi + this.energyGain(probe);
+		double gf = 1 + Wf/Er;
+		double bf = Math.sqrt(1.0 - 1.0 / (gf * gf));
+		
+		double ETL = this.getETL();
+		double phi = this.getPhase();
+		double f = this.getFrequency();
+		double EL = this.getE0()*this.getCellLength();
+		
+		//double ttf_b_avg = theEnergyGain /( Q * EL * Math.cos(phi) );
+		double theEnergyGain_im = Q * EL * Math.cos(phi) * TTFFit.evaluateAt(bi);
+				
+		
+		//find out new beta final, and if there is a large difference, reevaluate TTF at average beta
+		double Wf_im = Wi + theEnergyGain_im;
+		double gf_im = Wf_im / Er + 1.0;
+		double bf_im = Math.sqrt(1.0 - 1.0 / (gf_im * gf_im));
+		
+		double b_avg = bi;
+//		double TTF_pdiff = 100*(TTFFit.evaluateAt(bf_im)-TTFFit.evaluateAt(bi))/TTFFit.evaluateAt(bi);
+//		if(TTF_pdiff>5)
+//		{
+//			double g_avg = (gi + gf)/2;
+//			b_avg = Math.sqrt(1.0 - 1.0 / (g_avg * g_avg));
+//			//theEnergyGain = Q * EL * Math.cos(phi0) * TTFFit.evaluateAt(b_avg);
+//		}
+//				
+		
+		//double kr = Math.PI * Q * getE0()*ttf_b_avg*getCellLength() * f * Math.sin(-phi) / (c * Er * bgbar * bgbar);
+//        double   kr = Math.PI*Q*ETL*f*Math.sin(-phi)/(q*c*Er*bgbar*bgbar);
+		//double kr = Math.PI * Q * ETL * f * Math.sin(-phi) / (c * Er * bgbar * bgbar);
+		double kr = Math.PI * Q * getE0()*TTFFit.evaluateAt(b_avg)*getCellLength() * f * Math.sin(-phi) / (c * Er * bgbar * bgbar);//should TTF be at bi, or bbar?
+
+		System.out.println("kr = " + kr);		
+
+		return kr;
     };
     
     /**
@@ -757,29 +848,38 @@ public class IdealRfGap extends ThinElement implements IRfGap {
 //    @Deprecated
     public double compLongFocusing(IProbe probe)    {
         
-//        double   c = IProbe.LightSpeed;
-//        double   Q = Math.abs( probe.getSpeciesCharge() );
-//        double  Er = probe.getSpeciesRestEnergy();
+////        double   c = IProbe.LightSpeed;
+////        double   Q = Math.abs( probe.getSpeciesCharge() );
+////        double  Er = probe.getSpeciesRestEnergy();
+////
+////        double ETL = this.getETL();
+////        double phi = this.getPhase();
+////        double   f = this.getFrequency();
+////        
+////        double  ba = this.betaMidGap(probe);
+////        double  bf = this.betaFinal(probe);
+////        double  gf = this.gammaFinal(probe);
+////        
+////        double kz = 2.0*Math.PI*Q*ETL*Math.sin(phi)*f/(c*Er*bf*gf*ba);
+////        
+////        return kz;
 //
-//        double ETL = this.getETL();
-//        double phi = this.getPhase();
-//        double   f = this.getFrequency();
+//        // Compute average energy parameters (average)
+//        double ga = this.gammaMidGap(probe);
 //        
-//        double  ba = this.betaMidGap(probe);
-//        double  bf = this.betaFinal(probe);
-//        double  gf = this.gammaFinal(probe);
 //        
-//        double kz = 2.0*Math.PI*Q*ETL*Math.sin(phi)*f/(c*Er*bf*gf*ba);
-//        
-//        return kz;
+//        double  kt = this.compTransFocusing(probe);
+//        double  kz = -2.0*kt*ga*ga;
+		double Er = probe.getSpeciesRestEnergy();
+		double Wi = probe.getKineticEnergy();
 
-        // Compute average energy parameters (average)
-        double ga = this.gammaMidGap(probe);
+		double Wbar = Wi + this.energyGain(probe) / 2.0;
+		double gbar = Wbar / Er + 1.0;
+
+		double kr = this.compTransFocusing(probe);
+		double kz = -2.0* kr * gbar * gbar;//-2.0 * kr * gbar * gbar;
         
-        
-        double  kt = this.compTransFocusing(probe);
-        double  kz = -2.0*kt*ga*ga;
-        
+		System.out.println("kz = " + kz);
         return kz;
     };
     

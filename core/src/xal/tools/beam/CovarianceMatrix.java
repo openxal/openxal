@@ -592,6 +592,9 @@ public class CovarianceMatrix extends PhaseMatrix {
     	//        PhaseMatrix matSig = this.phaseCorrelation();
         CovarianceMatrix matSig = this.computeCovariance();
 	
+//        System.out.println("(0,0) = " + matSig.getElem(0, 0) + ", (1,1) = " + matSig.getElem(1,1));
+//        System.out.println("(0,1) = " + matSig.getElem(0, 1) + ", (1,0) = " + matSig.getElem(1,0));
+//        System.out.println("(2,2) = " + matSig.getElem(2, 2) + ", (3,3) = " + matSig.getElem(3,3));
         double ex_2 =
                 matSig.getElem(0, 0) * matSig.getElem(1, 1)
                 - matSig.getElem(0, 1) * matSig.getElem(1,0);
@@ -632,7 +635,7 @@ public class CovarianceMatrix extends PhaseMatrix {
         CovarianceMatrix matSig = this.computeCovariance();
 	
         double[] arrEmit; // array of rms emittance values
-
+        
         arrEmit = computeRmsEmittances();
 
         // Compute the X plane twiss parameters

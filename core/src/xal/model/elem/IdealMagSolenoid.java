@@ -164,16 +164,23 @@ public class IdealMagSolenoid  extends ThickElement implements IElectromagnet {
         double gamma = probe.getGamma();
         
         // focusing constant (radians/meter)
-        final double k = ( charge * LightSpeed * getMagField() ) / ( Er * beta * gamma );
+        final double k = ( charge * LightSpeed * getMagField() ) / ( Er * beta * gamma )/2.;
+        System.out.println("k = " + k);
 //		final double kSqrt = Math.sqrt( Math.abs( k ) );
 
         // Compute the transfer matrix components
+//		double r11 = Math.cos(k*length)*Math.cos(k*length);
+//		double r12 = 2.*Math.sin(k*length)*Math.cos(k*length)/k;
+//		double r13 = Math.sin(k*length)*Math.cos(k*length);
+//		double r14 = 2.*Math.sin(k*length)*Math.sin(k*length)/k;
+//		double r21 = -1*k*Math.sin(k*length)*Math.cos(k*length)/2.;
+//		double r41 = k*Math.sin(k*length)*Math.sin(k*length)/2.;
 		double r11 = Math.cos(k*length)*Math.cos(k*length);
-		double r12 = 2.*Math.sin(k*length)*Math.cos(k*length)/k;
+		double r12 = Math.sin(k*length)*Math.cos(k*length)/k;
 		double r13 = Math.sin(k*length)*Math.cos(k*length);
-		double r14 = 2.*Math.sin(k*length)*Math.sin(k*length)/k;
-		double r21 = -1*k*Math.sin(k*length)*Math.cos(k*length)/2.;
-		double r41 = k*Math.sin(k*length)*Math.sin(k*length)/2.;
+		double r14 = Math.sin(k*length)*Math.sin(k*length)/k;
+		double r21 = -1*k*Math.sin(k*length)*Math.cos(k*length);
+		double r41 = k*Math.sin(k*length)*Math.sin(k*length);
 		
         final double[][] arr0 = DriftSpace.transferDriftPlane( length );
 

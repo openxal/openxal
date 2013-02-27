@@ -618,15 +618,16 @@ public class EnvelopeProbe extends BunchProbe {
         double ratio;       // transverse plane emittance growth
         double ratio2;      // longitudinal plane emittance growth
         
+        double gammaRelativisticOld = this.getGamma();
+        double gammaRelativisticNew = this.computeGammaFromW(getKineticEnergy() + dW);
+
         if (dW == 0.0)  {
             ratio  = 1.0;
             ratio2 = 1.0;
             
         } else  {
             
-            double gammaRelativisticOld = this.getGamma();
             double betaRelativisticOld = this.getBeta();
-            double gammaRelativisticNew = this.computeGammaFromW(getKineticEnergy() + dW);
             double betaRelativisticNew = this.computeBetaFromGamma(gammaRelativisticNew);
             ratio = gammaRelativisticOld * betaRelativisticOld/(betaRelativisticNew * gammaRelativisticNew);
             //sako, 21 Jul 06 to optimize speed double ratio2 = betaRelativisticOld * Math.pow(gammaRelativisticOld, 3.) / (betaRelativisticNew  * Math.pow(gammaRelativisticNew, 3.) );
@@ -639,6 +640,9 @@ public class EnvelopeProbe extends BunchProbe {
         double alpha, beta;
 		double alphaOld, betaOld, gammaOld, emit;
 		
+		double EtOld = this.getSpeciesRestEnergy()*(gammaRelativisticOld-1) + this.getSpeciesRestEnergy();
+		double EtNew = this.getSpeciesRestEnergy()*(gammaRelativisticNew-1) + this.getSpeciesRestEnergy();
+
 		int j = 0;
 		for (int i = 0; i < 3; i++) {
 			j = 2 * i;
@@ -675,8 +679,17 @@ public class EnvelopeProbe extends BunchProbe {
 			alpha = -Rjj*Rjpj*betaOld + (Rjj*Rjpjp + Rjjp*Rjpj)*alphaOld
 					- Rjjp*Rjpjp*gammaOld;
 
+			if (i!=2) {
+//				double val_old = gammaOld*betaOld-alphaOld*alphaOld;
+//				System.out.println("* betaOld = " + betaOld + " val_old = " + val_old + ", EtOld/EtNew = " + EtOld/EtNew);
+				beta = beta * EtNew/EtOld;
+				alpha = alpha * EtNew/EtOld;
+			}
+			
 			twissNew[i] = new Twiss(alpha, beta, emit);
 		}
+		
+		System.out.println("****" + this.getPosition() + " betaX = " + twissNew[0].getBeta() + ", emitX = " + twissNew[0].getEmittance() + ", Etold/Etnew = " + EtOld/EtNew);
 		
 		this.setTwiss(twissNew);
 
