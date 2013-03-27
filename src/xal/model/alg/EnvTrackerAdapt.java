@@ -1046,9 +1046,7 @@ public class EnvTrackerAdapt extends EnvelopeTrackerBase {
         CovarianceMatrix   matChi0 = probe.getCovariance();
         Twiss [] twissOld = probe.getCovariance().computeTwiss();
 	//obsolete Twiss [] twissOld = probe.getTwiss();
-        
-        System.out.println("Twiss[0] = " + twissOld[0].getBeta());
-            
+                    
         // Compute the reference state matChi1
         PhaseMatrix matPhi1 = this.compTransferMatrix(h, probe, elem);
         PhaseMatrix matChi1 = matChi0.conjugateTrans( matPhi1 ); 
