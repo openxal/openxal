@@ -562,10 +562,6 @@ public class IdealRfGap extends ThinElement implements IRfGap {
 //        double arrLong[][] = new double[][] {{1.0, 0.0}, {kz/(gf_2), eta*gi_2/gf_2}};
 		double arrTran[][] = new double[][]{{1.0, 0.0}, {kt / (bf * gf), bi * gi / (bf * gf)}};
 		double arrLong[][] = new double[][]{{1.0, 0.0}, {(kz / (bf * gf)) , gi * bi / (gf * bf)}};
-//        System.out.println(this.getId() + " transverse ** " + kt + " ** " + eta);
-//        System.out.println(this.getId() + " longitudinal ** "+ kz/(gf_2) + " ** " + eta*gi_2/gf_2);
-        System.out.println(this.getId() + " transverse ** " + kt / (bf * gf) + " ** " + bi * gi / (bf * gf));
-        System.out.println(this.getId() + " longitudinal ** "+ (kz / (bf * gf)) + " ** " + gi * bi / (gf * bf));
         
         PhaseMatrix matPhi = new PhaseMatrix();
         
@@ -574,7 +570,6 @@ public class IdealRfGap extends ThinElement implements IRfGap {
         matPhi.setSubMatrix(2,3, 2,3, arrTran);
         matPhi.setSubMatrix(4,5, 4,5, arrLong);
         
-        System.out.println("transfermap = " + matPhi);
         return new PhaseMap(matPhi);
     }
 
