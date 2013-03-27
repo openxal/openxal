@@ -165,7 +165,6 @@ public class IdealMagSolenoid  extends ThickElement implements IElectromagnet {
         
         // focusing constant (radians/meter)
         final double k = ( charge * LightSpeed * getMagField() ) / ( Er * beta * gamma )/2.;
-        System.out.println("k = " + k);
 //		final double kSqrt = Math.sqrt( Math.abs( k ) );
 
         // Compute the transfer matrix components
