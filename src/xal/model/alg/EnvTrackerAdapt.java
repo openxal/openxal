@@ -1046,7 +1046,7 @@ public class EnvTrackerAdapt extends EnvelopeTrackerBase {
         CovarianceMatrix   matChi0 = probe.getCovariance();
         Twiss [] twissOld = probe.getCovariance().computeTwiss();
 	//obsolete Twiss [] twissOld = probe.getTwiss();
-                    
+            
         // Compute the reference state matChi1
         PhaseMatrix matPhi1 = this.compTransferMatrix(h, probe, elem);
         PhaseMatrix matChi1 = matChi0.conjugateTrans( matPhi1 ); 
@@ -1356,7 +1356,6 @@ public class EnvTrackerAdapt extends EnvelopeTrackerBase {
 
         // Get the transfer matrices for the two individual effects
         PhaseMatrix matPhiE = this.compElemTransMatrix(h, probe, elem);
-
         // jdg - bail if no space charge is needed:
         if (probe.bunchCharge() == 0.) return matPhiE;
 
@@ -1374,7 +1373,7 @@ public class EnvTrackerAdapt extends EnvelopeTrackerBase {
 
         matPhi.plusEquals( matCom );
         matPhi.timesEquals( 0.5 );
-        
+
         return matPhi;
     }
     
