@@ -3,6 +3,9 @@
  */
 package xal.sim.scenario;
 
+import xal.sim.slg.EDipole;
+import xal.sim.slg.EQuad;
+
 import java.util.Date;
 import java.util.HashMap;
 
@@ -516,6 +519,58 @@ public class NewAndImprovedScenarioGenerator
 			xal.model.elem.Marker xalMarker =
 				new xal.model.elem.Marker(e.getName());
 			processNewElementMapping(e, xalMarker);
+		}
+
+		public void visit(EQuad e) {
+			xal.smf.impl.EQuad magnet = (xal.smf.impl.EQuad) e.getAcceleratorNode();
+			int orientation = IElectromagnet.ORIENT_NONE;
+			if (magnet.isHorizontal()) {
+				orientation = IElectromagnet.ORIENT_HOR;
+			}
+			if (magnet.isVertical()) {
+				orientation = IElectromagnet.ORIENT_VER;
+			}
+
+
+			xal.model.elem.IdealEQuad xalQuad =
+					new xal.model.elem.IdealEQuad();
+			xalQuad.setId(e.getName());
+			xalQuad.setLength(e.getLength());
+			// need to initialize this because PermanentMagnets aren't synchronized
+			xalQuad.setVoltage(magnet.getDesignField());
+			//		xalQuad.setEffLength(magnet.getEffLength() * e.getLength() / magnet.getLength());
+			xalQuad.setOrientation(orientation);
+			xalQuad.setAperture(magnet.getAper().getAperX());
+			
+			processNewElementMapping(e, xalQuad);
+			
+			
+		}
+
+		@Override
+		public void visit(EDipole e) {
+			// TODO Auto-generated method stub
+			xal.smf.impl.EDipole magnet = (xal.smf.impl.EDipole) e.getAcceleratorNode();
+			int orientation = IElectromagnet.ORIENT_NONE;
+			if (magnet.isHorizontal()) {
+				orientation = IElectromagnet.ORIENT_HOR;
+			}
+			if (magnet.isVertical()) {
+				orientation = IElectromagnet.ORIENT_VER;
+			}
+
+
+			xal.model.elem.IdealEDipole edipole =
+					new xal.model.elem.IdealEDipole();
+			edipole.setId(e.getName());
+			edipole.setLength(e.getLength());
+			// need to initialize this because PermanentMagnets aren't synchronized
+			edipole.setVoltage(magnet.getDesignField());
+			//		xalQuad.setEffLength(magnet.getEffLength() * e.getLength() / magnet.getLength());
+			edipole.setOrientation(orientation);
+			
+			processNewElementMapping(e, edipole);
+			
 		}
 
 }

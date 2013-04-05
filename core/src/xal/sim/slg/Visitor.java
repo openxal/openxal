@@ -44,6 +44,10 @@ public interface Visitor {
     /** visit a Quadrupole lattice element */
     public void visit(Quadrupole e);
     /** visit a RFGap lattice element */
+    /** visit a Electrostatic Quadrupole lattice element */
+    public void visit(EQuad e);
+    /** visit a Electrostatic Dipole lattice element */
+    public void visit(EDipole e);
     public void visit(RFGap e);
     /** visit a Sextupole lattice element */
     public void visit(Sextupole e);
