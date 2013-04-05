@@ -17,6 +17,8 @@ import xal.sim.mpx.ModelProxy;
 import xal.smf.impl.Electromagnet;
 import xal.smf.impl.Magnet;
 import xal.smf.impl.RfGap;
+import xal.smf.impl.Electrostatic;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -266,6 +268,38 @@ public class LatticeSynchronizer implements Visitor {
 		parAdptr.setValue("value", Integer.toString(orientation));
 	}
 	
+	@Override
+	public void visit(EDipole e) {
+		// TODO Auto-generated method stub
+		writeElementTag(e);
+		xal.smf.impl.EDipole edipole= (xal.smf.impl.EDipole) e.getAcceleratorNode();
+		//parameter 
+		parAdptr= elmAdptr.createChild("Parameter");
+		parAdptr.setValue("name", "magField");
+		parAdptr.setValue("type", "double");
+		parAdptr.setValue("value", Double.toString(getFieldWrapper(edipole)));
+		//parameter         
+		parAdptr= elmAdptr.createChild("Parameter");
+		parAdptr.setValue("name", "EffLength");
+		parAdptr.setValue("type", "double");
+		double effLen= edipole.getEffLength() * e.getLength() / edipole.getLength();
+		parAdptr.setValue("value", Double.toString(effLen));
+		//parameter         
+		parAdptr= elmAdptr.createChild("Parameter");
+		parAdptr.setValue("name", "Orientation");
+		parAdptr.setValue("type", "int");
+//		IdealEDipole elmg= new IdealEDipole();
+		int orientation= edipole.getOrientation();
+//		if (edipole.isHorizontal()) {
+//			orientation= IElectromagnet.ORIENT_HOR;
+//		}
+//		if (edipole.isVertical()) {
+//			orientation= IElectromagnet.ORIENT_VER;
+//		}
+		parAdptr.setValue("value", Integer.toString(orientation));
+		
+	}
+
 	/** Writes the element- and paramter-tags of a VSteerer lattice element  */
 	public void visit(VSteerer e) {
 		writeElementTag(e);
@@ -335,6 +369,36 @@ public class LatticeSynchronizer implements Visitor {
 	public void visit(Quadrupole e) {
 		writeElementTag(e);
 		Magnet magnet= (Magnet) e.getAcceleratorNode();
+		//parameter 
+		parAdptr= elmAdptr.createChild("Parameter");
+		parAdptr.setValue("name", "MagField");
+		parAdptr.setValue("type", "double");
+		parAdptr.setValue("value", Double.toString(getFieldWrapper(magnet)));
+		//parameter         
+		parAdptr= elmAdptr.createChild("Parameter");
+		parAdptr.setValue("name", "EffLength");
+		parAdptr.setValue("type", "double");
+		double effLen= magnet.getEffLength() * e.getLength() / magnet.getLength();
+		parAdptr.setValue("value", Double.toString(effLen));
+		//parameter         
+		parAdptr= elmAdptr.createChild("Parameter");
+		parAdptr.setValue("name", "Orientation");
+		parAdptr.setValue("type", "int");
+		IElectromagnet elmg= new IdealMagQuad();
+		int orientation= IElectromagnet.ORIENT_NONE;
+		if (magnet.isHorizontal()) {
+			orientation= IElectromagnet.ORIENT_HOR;
+		}
+		if (magnet.isVertical()) {
+			orientation= IElectromagnet.ORIENT_VER;
+		}
+		parAdptr.setValue("value", Integer.toString(orientation));
+	}
+
+	/** Writes the element- and paramter-tags of a Quadrupole lattice element  */
+	public void visit(EQuad e) {
+		writeElementTag(e);
+		xal.smf.impl.EQuad magnet= (xal.smf.impl.EQuad) e.getAcceleratorNode();
 		//parameter 
 		parAdptr= elmAdptr.createChild("Parameter");
 		parAdptr.setValue("name", "MagField");
@@ -502,6 +566,34 @@ public class LatticeSynchronizer implements Visitor {
 			try {
 				if (magnet instanceof Electromagnet) {
                                     return ((Electromagnet) magnet).getField();
+					//				return -99.d;
+				} else {
+                                    return magnet.getDesignField();
+				}
+			} catch (Throwable e) {
+				//				throw new Error(e.getMessage());
+				if (e.getMessage() != null) {
+					System.out.println(e.getMessage());
+				} else {
+					System.out.println("Electromagnet.getField(): channel access failed: " + magnet.getId());
+				}
+				return 0.d;
+			}
+		} 		else
+                	return magnet.getDesignField();
+	}
+
+	/**A wrapper to read the magnet field strength.*/
+	private double getFieldWrapper(Electrostatic magnet) {
+                // for design values
+		if (paramSrc == ModelProxy.PARAMSRC_DESIGN)
+                        return magnet.getDesignField();
+                // for live values
+		else if (paramSrc == ModelProxy.PARAMSRC_LIVE ||
+		         paramSrc == ModelProxy.PARAMSRC_RF_DESIGN) {
+			try {
+				if (magnet instanceof Electrostatic) {
+                                    return ((Electrostatic) magnet).getField();
 					//				return -99.d;
 				} else {
                                     return magnet.getDesignField();

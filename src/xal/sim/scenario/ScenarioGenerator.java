@@ -44,6 +44,9 @@ import xal.smf.impl.Electromagnet;
 import xal.smf.impl.Magnet;
 import xal.smf.impl.RfGap;
 
+import xal.sim.slg.EDipole;
+import xal.sim.slg.EQuad;
+
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -680,6 +683,87 @@ public class ScenarioGenerator implements Visitor {
         primVisit(e, xalMarker);
 		elementContainer.addChild(xalMarker);
 		syncManager.synchronize(xalMarker, e.getAcceleratorNode());
+	}
+
+	public void visit(EQuad e) {
+		xal.model.elem.IdealEQuad eQuad = new xal.model.elem.IdealEQuad();
+		primVisit(e, eQuad);
+		xal.smf.impl.EQuad magnet = (xal.smf.impl.EQuad) e.getAcceleratorNode();
+		
+		int orientation = IElectromagnet.ORIENT_NONE;
+		if (magnet.isHorizontal())    {
+			orientation = IElectromagnet.ORIENT_HOR;
+			
+		} else if (magnet.isVertical()) {
+			orientation = IElectromagnet.ORIENT_VER;
+			
+		} else    {
+		    //  This is an exceptional condition!
+		    //    Something went wrong if we made it here
+		    //    Let's say so
+		    String    strSrc = "gov.sns.xal.model.scenario.ScenarioGenerator#visit(EQuad)";
+		    String    strMsg = "Encountered an un-oriented focusing 'Quadrupole' object";
+		    Logger    logGbl = Logger.getLogger("global");
+		    
+		    logGbl.log(Level.WARNING, strMsg + " : " + strSrc);
+            System.out.println("WARNING!: " + strSrc + " : " + strMsg);
+		}
+		    
+
+		xal.model.elem.IdealEQuad xalQuad = new xal.model.elem.IdealEQuad();
+		xalQuad.setId(e.getName());
+		xalQuad.setLength(e.getLength());
+		
+		// need to initialize this because PermanentMagnets aren't synchronized
+		xalQuad.setVoltage(magnet.getDesignField());
+		//      xalQuad.setEffLength(magnet.getEffLength() * e.getLength() / magnet.getLength());
+		xalQuad.setOrientation(orientation);
+		xalQuad.setAperture(magnet.getAper().getAperX());
+		elementContainer.addChild(xalQuad);
+
+		syncManager.synchronize(xalQuad, magnet);
+
+		
+	}
+
+	@Override
+	public void visit(EDipole e) {
+		xal.model.elem.IdealEDipole eDipole = new xal.model.elem.IdealEDipole();
+		primVisit(e, eDipole);
+		xal.smf.impl.EDipole magnet = (xal.smf.impl.EDipole) e.getAcceleratorNode();
+		
+		int orientation = IElectromagnet.ORIENT_NONE;
+		if (magnet.isHorizontal())    {
+			orientation = IElectromagnet.ORIENT_HOR;
+			
+		} else if (magnet.isVertical()) {
+			orientation = IElectromagnet.ORIENT_VER;
+			
+		} else    {
+		    //  This is an exceptional condition!
+		    //    Something went wrong if we made it here
+		    //    Let's say so
+		    String    strSrc = "gov.sns.xal.model.scenario.ScenarioGenerator#visit(EQuad)";
+		    String    strMsg = "Encountered an un-oriented focusing 'Quadrupole' object";
+		    Logger    logGbl = Logger.getLogger("global");
+		    
+		    logGbl.log(Level.WARNING, strMsg + " : " + strSrc);
+            System.out.println("WARNING!: " + strSrc + " : " + strMsg);
+		}
+		    
+
+		xal.model.elem.IdealEDipole edipole = new xal.model.elem.IdealEDipole();
+		edipole.setId(e.getName());
+		edipole.setLength(e.getLength());
+		
+		// need to initialize this because PermanentMagnets aren't synchronized
+		edipole.setVoltage(magnet.getDesignField());
+		//      xalQuad.setEffLength(magnet.getEffLength() * e.getLength() / magnet.getLength());
+		edipole.setOrientation(orientation);
+		elementContainer.addChild(edipole);
+
+		syncManager.synchronize(edipole, magnet);
+		
 	}
 
 }
