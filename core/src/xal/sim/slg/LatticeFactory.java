@@ -317,7 +317,9 @@ public class LatticeFactory {
 			  effLength = ((Bend) node).getDfltPathLength();
 			else  
 			  effLength = ((Magnet) node).getEffLength();
-		}
+		} else if (node instanceof xal.smf.impl.Electrostatic)
+			effLength = length;
+		
 		if (debug) {
 			cout.println(
 				"nodeToElement: "
