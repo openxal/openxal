@@ -159,7 +159,10 @@ public abstract class Element implements VisitorListener, Cloneable {
      * Return the upstream start position of this element.
      */
     public double getStartPosition() {
-        return position-len*0.5;
+    	double pos = position-len*0.5;
+    	if (pos < 0.)
+    		pos = 0.;
+        return pos;
     }
     
     /**
@@ -354,6 +357,7 @@ public abstract class Element implements VisitorListener, Cloneable {
             retval.add(marker);
             retval.add(downstream);
         }
+        
         return retval;
     }
     
