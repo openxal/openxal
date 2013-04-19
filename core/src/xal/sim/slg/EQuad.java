@@ -40,7 +40,7 @@ public class EQuad extends Element {
 
 	@Override
 	public void accept(Visitor v) {
-        v.visit((EQuad)this);
+        v.visit(this);
 	}
 
 }

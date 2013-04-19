@@ -593,7 +593,7 @@ public class LatticeSynchronizer implements Visitor {
 		         paramSrc == ModelProxy.PARAMSRC_RF_DESIGN) {
 			try {
 				if (magnet instanceof Electrostatic) {
-                                    return ((Electrostatic) magnet).getField();
+                                    return magnet.getField();
 					//				return -99.d;
 				} else {
                                     return magnet.getDesignField();
