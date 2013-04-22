@@ -15,9 +15,7 @@ import xal.smf.impl.Magnet;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
 /**
@@ -56,6 +54,8 @@ public class LatticeFactory {
 		STANDARD_THICK_KINDS.add("BCM");   //slim 
 		STANDARD_THICK_KINDS.add("SOL");
 		STANDARD_THICK_KINDS.add("QUAD");
+		STANDARD_THICK_KINDS.add(xal.smf.impl.EQuad.s_strType);
+		STANDARD_THICK_KINDS.add(xal.smf.impl.EDipole.s_strType);
 
 //		STANDARD_THIN_KINDS.add("SH");
 //		STANDARD_THIN_KINDS.add("SV");
@@ -317,7 +317,9 @@ public class LatticeFactory {
 			  effLength = ((Bend) node).getDfltPathLength();
 			else  
 			  effLength = ((Magnet) node).getEffLength();
-		}
+		} else if (node instanceof xal.smf.impl.Electrostatic)
+			effLength = length;
+		
 		if (debug) {
 			cout.println(
 				"nodeToElement: "
@@ -336,6 +338,24 @@ public class LatticeFactory {
 			//			length= ((Magnet) node).getEffLength();
 			Element dipole = new Dipole(position, effLength, name);
 			dipole.setAcceleratorNode(node);
+			if (halfmag) {
+				//split the magnet and put a permanent marker in its center
+				PermMarker center =
+					new PermMarker(position, 0.d, "ELEMENT_CENTER:" + name);
+				center.setAcceleratorNode(node);
+				final List<Element> half = dipole.split(center);
+				result.add(half.get(0));
+				result.add(half.get(2));
+				result.add(half.get(4));
+			} else {
+				result.add(dipole);
+			}
+			
+		} else if (node.isKindOf(xal.smf.impl.EDipole.s_strType)) {  // EDipole
+			
+			Element dipole = new EDipole(position, effLength, name);
+			dipole.setAcceleratorNode(node);
+			
 			if (halfmag) {
 				//split the magnet and put a permanent marker in its center
 				PermMarker center =
@@ -378,6 +398,26 @@ public class LatticeFactory {
 			//we use only effective lengths for magnets
 			//			length= ((Magnet) node).getEffLength();
 			Element quadrupole = new Quadrupole(position, effLength, name);
+			quadrupole.setAcceleratorNode(node);
+			if (halfmag) {
+				//split the magnet and put a permanent marker in its center
+				PermMarker center =
+					new PermMarker(position, 0.d, "ELEMENT_CENTER:" + name);
+				center.setAcceleratorNode(node);
+				final List<Element> half = quadrupole.split(center);
+				result.add(half.get(0));
+				result.add(half.get(2));
+				result.add(half.get(4));
+			} else {
+				result.add(quadrupole);
+			}
+			
+		} else if (node.isKindOf(xal.smf.impl.EQuad.s_strType)) { 
+		    //electrostatic quadrupoles
+			//we use only effective lengths for magnets
+			//			length= ((Magnet) node).getEffLength();
+			
+			Element quadrupole = new EQuad(position, effLength, name);
 			quadrupole.setAcceleratorNode(node);
 			if (halfmag) {
 				//split the magnet and put a permanent marker in its center
