@@ -18,7 +18,6 @@
                 <pathelement location="${build.jar.lib.root}/xal-test.jar" />
                 <pathelement location="${build.jar.lib.root}/xal-core.jar" />
                 <pathelement location="${build.jar.lib.root}/xal-lib.jar" />
-                <pathelement location="${junit.jar.path}" />
             </classpath>
             
             <formatter type="plain" usefile="false" />
