@@ -128,6 +128,10 @@ public class Node2ElementMapper implements Visitor {
 	public void visit(Quadrupole e) {
 	}
 
+	/** visit a Quadrupole lattice element  */
+	public void visit(EQuad e) {
+	}
+
 	/** visit a Solenoid lattice element  */
 	public void visit(Solenoid e) {
 	}
@@ -170,4 +174,8 @@ public class Node2ElementMapper implements Visitor {
 	public void visit(Marker e) {
 	}
 
+	@Override
+	public void visit(EDipole e) {
+		
+	}
 }
