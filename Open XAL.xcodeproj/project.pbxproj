@@ -219,7 +219,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				XAL_CLASSPATH = "$(XAL_HOME)/build/jar/lib/xal-core.jar:$(XAL_HOME)/build/jar/lib/xal-lib.jar";
-				XAL_HOME = "$(SRCROOT)/dev";
+				XAL_HOME = "$(SRCROOT)";
 				XCPA_DEFAULT_COMMAND = /usr/bin/ant;
 			};
 			name = Release;
