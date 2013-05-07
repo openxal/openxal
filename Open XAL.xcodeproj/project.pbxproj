@@ -37,7 +37,7 @@
 			buildConfigurationList = 4C39E67715ED111100D99103 /* Build configuration list for PBXLegacyTarget "all" */;
 			buildPhases = (
 			);
-			buildToolPath = "/usr/local/bin/xcode-perform-action.sh";
+			buildToolPath = "./xcode-perform-action.sh";
 			buildWorkingDirectory = "$(XAL_HOME)";
 			dependencies = (
 			);
@@ -65,7 +65,7 @@
 			buildConfigurationList = 4C9888811427892800E14203 /* Build configuration list for PBXLegacyTarget "apps" */;
 			buildPhases = (
 			);
-			buildToolPath = "/usr/local/bin/xcode-perform-action.sh";
+			buildToolPath = "../xcode-perform-action.sh";
 			buildWorkingDirectory = "$(XAL_HOME)/apps";
 			dependencies = (
 			);
@@ -79,7 +79,7 @@
 			buildConfigurationList = 4C98888514279CC900E14203 /* Build configuration list for PBXLegacyTarget "app" */;
 			buildPhases = (
 			);
-			buildToolPath = "/usr/local/bin/xcode-perform-action.sh";
+			buildToolPath = "../../xcode-perform-action.sh";
 			buildWorkingDirectory = "$(XAL_HOME)/apps/$(APPNAME)";
 			dependencies = (
 			);
@@ -93,7 +93,7 @@
 			buildConfigurationList = 4CBB76401405528F0064E2F7 /* Build configuration list for PBXLegacyTarget "core-run-tests" */;
 			buildPhases = (
 			);
-			buildToolPath = "/usr/local/bin/xcode-perform-action.sh";
+			buildToolPath = "../xcode-perform-action.sh";
 			buildWorkingDirectory = "$(XAL_HOME)/core";
 			dependencies = (
 			);
@@ -107,7 +107,7 @@
 			buildConfigurationList = 4CC4A85C14B798FB0075B061 /* Build configuration list for PBXLegacyTarget "services" */;
 			buildPhases = (
 			);
-			buildToolPath = "/usr/local/bin/xcode-perform-action.sh";
+			buildToolPath = "../xcode-perform-action.sh";
 			buildWorkingDirectory = "$(XAL_HOME)/services";
 			dependencies = (
 			);
@@ -121,7 +121,7 @@
 			buildConfigurationList = 4CFB61B81301D4A600A0E8E2 /* Build configuration list for PBXLegacyTarget "core" */;
 			buildPhases = (
 			);
-			buildToolPath = "/usr/local/bin/xcode-perform-action.sh";
+			buildToolPath = "../xcode-perform-action.sh";
 			buildWorkingDirectory = "$(XAL_HOME)/core";
 			dependencies = (
 			);
