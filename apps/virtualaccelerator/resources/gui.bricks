@@ -1,0 +1,32 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<BricksDocument date="Thu Apr 30 15:26:23 EDT 2009" version="1.0.0">
+    <RootBrick>
+        <ViewNode customBeanClass="xal.smf.application.DefaultAcceleratorWindow" height="800" tag="MainWindow" width="1000">
+            <ViewProxy type="javax.swing.JFrame"/>
+            <BeanProperty name="title" value="Virtual Accelerator"/>
+            <ViewNode tag="MainLayout">
+                <ViewProxy type="javax.swing.Box_Vertical"/>
+                <ViewNode tag="HeaderBox">
+                    <ViewProxy type="javax.swing.Box_Horizontal"/>
+                    <ViewNode tag="Label">
+                        <ViewProxy type="javax.swing.JLabel"/>
+                        <BeanProperty name="text" value="Filter: "/>
+                    </ViewNode>
+                    <ViewNode tag="FilterField">
+                        <ViewProxy type="javax.swing.JTextField"/>
+                        <BeanProperty name="text" value=""/>
+                        <BeanProperty name="toolTipText" value="Filter the records"/>
+                        <BeanProperty height="50" name="maximumSize" width="2147483647"/>
+                    </ViewNode>
+                </ViewNode>
+                <ViewNode tag="TableScroller">
+                    <ViewProxy type="javax.swing.JScrollPane"/>
+                    <ViewNode tag="ReadbackTable">
+                        <ViewProxy type="javax.swing.JTable"/>
+                        <BeanProperty height="1" name="intercellSpacing" width="10"/>
+                    </ViewNode>
+                </ViewNode>
+            </ViewNode>
+        </ViewNode>
+    </RootBrick>
+</BricksDocument>
