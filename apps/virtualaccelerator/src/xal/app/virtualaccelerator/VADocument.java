@@ -115,13 +115,13 @@ public class VADocument extends AcceleratorDocument implements ActionListener, P
 
 	private volatile boolean vaRunning = false;
 
-	private java.util.List rfCavities;
+	private java.util.List<RfCavity> rfCavities;
 
 	private java.util.List<Electromagnet> mags;
 
-	private java.util.List bpms;
+	private java.util.List<BPM> bpms;
 
-	private java.util.List wss;
+	private java.util.List<ProfileMonitor> wss;
 
 	private Channel beamOnEvent;
 
@@ -199,7 +199,7 @@ public class VADocument extends AcceleratorDocument implements ActionListener, P
 		
 		final WindowReference windowReference = getDefaultWindowReference( "MainWindow", this );
 		_windowReference = windowReference;
-		READBACK_SET_TABLE_MODEL = new KeyValueFilteredTableModel<ReadbackSetRecord>( new ArrayList(), "node.id", "readbackChannel.channelName", "lastReadback", "setpointChannel.channelName", "lastSetpoint" );
+		READBACK_SET_TABLE_MODEL = new KeyValueFilteredTableModel<ReadbackSetRecord>( new ArrayList<ReadbackSetRecord>(), "node.id", "readbackChannel.channelName", "lastReadback", "setpointChannel.channelName", "lastSetpoint" );
 		READBACK_SET_TABLE_MODEL.setColumnClass( "lastReadback", Number.class );
 		READBACK_SET_TABLE_MODEL.setColumnClass( "lastSetpoint", Number.class );
 		READBACK_SET_TABLE_MODEL.setColumnName( "node.id", "Node" );
@@ -373,23 +373,22 @@ public class VADocument extends AcceleratorDocument implements ActionListener, P
 		}
 
 		// save selected sequences
-		List<String> seqs;
-		if (getSelectedSequence() != null) {
+		List<String> sequenceNames;
+		if ( getSelectedSequence() != null ) {
 			DataAdaptor daSeq = daLevel1.createChild("sequences");
 			daSeq.setValue("name", getSelectedSequence().getId());
-			if (getSelectedSequence() instanceof AcceleratorSeqCombo) {
+			if ( getSelectedSequence() instanceof AcceleratorSeqCombo ) {
 				AcceleratorSeqCombo asc = (AcceleratorSeqCombo) getSelectedSequence();
-				seqs = asc.getConstituentNames();
-			} else {
-				seqs = new ArrayList<String>();
-				seqs.add(getSelectedSequence().getId());
+				sequenceNames = asc.getConstituentNames();
+			}
+            else {
+				sequenceNames = new ArrayList<String>();
+				sequenceNames.add( getSelectedSequence().getId() );
 			}
 
-			Iterator itr = seqs.iterator();
-
-			while (itr.hasNext()) {
-				DataAdaptor daSeqComponents = daSeq.createChild("seq");
-				daSeqComponents.setValue("name", itr.next());
+            for ( final String sequenceName : sequenceNames ) {
+				DataAdaptor daSeqComponents = daSeq.createChild( "seq" );
+				daSeqComponents.setValue( "name", sequenceName );
 			}
 		}
 
@@ -703,18 +702,16 @@ public class VADocument extends AcceleratorDocument implements ActionListener, P
 			this.acceleratorChanged();
 
 			// set up the right sequence combo from selected primaries:
-			List temp = da1.childAdaptors("sequences");
+			List<DataAdaptor> temp = da1.childAdaptors( "sequences" );
 			if ( temp.isEmpty() )  return; // bail out, nothing left to do
 
 			ArrayList<AcceleratorSeq> seqs = new ArrayList<AcceleratorSeq>();
-			DataAdaptor da2a = da1.childAdaptor("sequences");
-			String seqName = da2a.stringValue("name");
+			DataAdaptor da2a = da1.childAdaptor( "sequences" );
+			String seqName = da2a.stringValue( "name" );
 
 			temp = da2a.childAdaptors("seq");
-			Iterator itr = temp.iterator();
-			while (itr.hasNext()) {
-				DataAdaptor da = (DataAdaptor) itr.next();
-				seqs.add(getAccelerator().getSequence(da.stringValue("name")));
+            for ( final DataAdaptor da : temp ) {
+				seqs.add( getAccelerator().getSequence( da.stringValue("name") ) );
 			}
 			if (seqName.equals("Ring"))
 				setSelectedSequence(new Ring(seqName, seqs));
@@ -878,7 +875,7 @@ public class VADocument extends AcceleratorDocument implements ActionListener, P
 				final String readbackPV = record.getReadbackChannel().channelName();
 
 				if ( qPVMap.containsKey( readbackPV ) ) {
-					final double basisValue = ((Double)qPVMap.get( readbackPV )).doubleValue();
+					final double basisValue = qPVMap.get( readbackPV ).doubleValue();
 					record.updateReadback( basisValue, ch_noiseMap, ch_offsetMap, this );
 				}
 			} 
@@ -920,10 +917,7 @@ public class VADocument extends AcceleratorDocument implements ActionListener, P
 	 */
 	private void putSetPVs() {
 		// for all magnets
-		Iterator iAllMag = mags.iterator();
-
-		while (iAllMag.hasNext()) {
-			Electromagnet em = (Electromagnet) iAllMag.next();
+        for ( final Electromagnet em : mags ) {
 			try {
 				Channel ch = em.getMainSupply().getAndConnectChannel( MagnetMainSupply.FIELD_SET_HANDLE );
 				final double setting = em.toCAFromField( em.getDfltField() );
@@ -935,19 +929,20 @@ public class VADocument extends AcceleratorDocument implements ActionListener, P
 					//System.out.println("Ready to put " + 0.0 + " to " + trimChannel.getId());
 					trimChannel.putValCallback( 0.0, this);
 				}
-			} catch (NoSuchChannelException e) {
+			}
+            catch (NoSuchChannelException e) {
 				System.err.println(e.getMessage());
-			} catch (ConnectionException e) {
+			}
+            catch (ConnectionException e) {
 				System.err.println(e.getMessage());
-			} catch (PutException e) {
+			}
+            catch (PutException e) {
 				System.err.println(e.getMessage());
 			}
 		}
 
 		// for all rf cavities
-		Iterator irf = rfCavities.iterator();
-		while (irf.hasNext()) {
-			RfCavity rfCavity = (RfCavity) irf.next();
+        for ( final RfCavity rfCavity : rfCavities ) {
 			try {
 				Channel ampSetCh = rfCavity
 						.getAndConnectChannel(RfCavity.CAV_AMP_SET_HANDLE);
@@ -973,26 +968,24 @@ public class VADocument extends AcceleratorDocument implements ActionListener, P
 	}
 
 	private void putSetPVsFromPVLogger() {
-		// for all magnets
-		Iterator iAllMag = mags.iterator();
 		final Map<String,Double> qPSPVMap = plds.getMagnetPSMap();
 
-		while (iAllMag.hasNext()) {
-			Electromagnet em = (Electromagnet) iAllMag.next();
+        for ( final Electromagnet em : mags ) {
 			try {
-				Channel ch = em.getMainSupply().getAndConnectChannel(
-						MagnetMainSupply.FIELD_SET_HANDLE);
+				Channel ch = em.getMainSupply().getAndConnectChannel( MagnetMainSupply.FIELD_SET_HANDLE );
 				//System.out.println("Ready to put " + Math.abs(em.getDfltField()) + " to " + ch.getId());
 
-				if (qPSPVMap.containsKey(ch.getId()))
-					ch.putValCallback(((Double) qPSPVMap.get(ch.getId()))
-							.doubleValue(), this);
-
-			} catch (NoSuchChannelException e) {
+                final String channelID = ch.getId();
+				if ( qPSPVMap.containsKey( channelID ) )
+					ch.putValCallback( qPSPVMap.get( channelID ).doubleValue(), this );
+			}
+            catch (NoSuchChannelException e) {
 				System.err.println(e.getMessage());
-			} catch (ConnectionException e) {
+			}
+            catch (ConnectionException e) {
 				System.err.println(e.getMessage());
-			} catch (PutException e) {
+			}
+            catch (PutException e) {
 				System.err.println(e.getMessage());
 			}
 		}
@@ -1001,9 +994,7 @@ public class VADocument extends AcceleratorDocument implements ActionListener, P
 	/** This method is for populating the diagnostic PVs (only BPMs + WSs for now) */
 	protected void putDiagPVs() {
 		// for BPMs
-		Iterator ibpm = bpms.iterator();
-		while (ibpm.hasNext()) {
-			final BPM bpm = (BPM) ibpm.next();
+        for ( final BPM bpm : bpms ) {
 			final Channel bpmXAvgChannel = bpm.getChannel( BPM.X_AVG_HANDLE );
 			final Channel bpmXTBTChannel = bpm.getChannel( BPM.X_TBT_HANDLE );
 			final Channel bpmYAvgChannel = bpm.getChannel( BPM.Y_AVG_HANDLE );
@@ -1047,10 +1038,7 @@ public class VADocument extends AcceleratorDocument implements ActionListener, P
 		}
 
 		// for WSs
-		Iterator iws = wss.iterator();
-		while (iws.hasNext()) {
-			ProfileMonitor ws = (ProfileMonitor) iws.next();
-
+        for ( final ProfileMonitor ws : wss ) {
 			Channel wsX = ws.getChannel(ProfileMonitor.H_SIGMA_M_HANDLE);
 			Channel wsY = ws.getChannel(ProfileMonitor.V_SIGMA_M_HANDLE);
 
@@ -1076,9 +1064,7 @@ public class VADocument extends AcceleratorDocument implements ActionListener, P
 		final Map<String,Double> bpmAmpMap = plds.getBPMAmpMap();
 		final Map<String,Double> bpmPhaseMap = plds.getBPMPhaseMap();
 
-		Iterator ibpm = bpms.iterator();
-		while ( ibpm.hasNext() ) {
-			BPM bpm = (BPM) ibpm.next();
+        for ( final BPM bpm : bpms ) {
 			Channel bpmX = bpm.getChannel(BPM.X_AVG_HANDLE);
 			Channel bpmY = bpm.getChannel(BPM.Y_AVG_HANDLE);
 			Channel bpmAmp = bpm.getChannel(BPM.AMP_AVG_HANDLE);
@@ -1087,21 +1073,21 @@ public class VADocument extends AcceleratorDocument implements ActionListener, P
 				System.err.println("Now updating " + bpm.getId());
 
 				if ( bpmXMap.containsKey( bpmX.getId() ) ) {
-					bpmX.putVal( NoiseGenerator.setValForPV( ( (Double)bpmXMap.get( bpmX.getId() ) ).doubleValue(), bpmNoise, bpmOffset ) );
+					bpmX.putVal( NoiseGenerator.setValForPV( bpmXMap.get( bpmX.getId() ).doubleValue(), bpmNoise, bpmOffset ) );
 				}
 				
 				if ( bpmYMap.containsKey( bpmY.getId() ) ) {
-					bpmY.putVal( NoiseGenerator.setValForPV( ( (Double)bpmYMap.get( bpmY.getId() ) ).doubleValue(), bpmNoise, bpmOffset ) );
+					bpmY.putVal( NoiseGenerator.setValForPV( bpmYMap.get( bpmY.getId() ).doubleValue(), bpmNoise, bpmOffset ) );
 				}
 
 				// BPM amplitude
 				if (bpmAmpMap.containsKey(bpmAmp.getId()))
-					bpmAmp.putVal( NoiseGenerator.setValForPV( ( (Double)bpmAmpMap.get( bpmAmp.getId() ) ).doubleValue(), 5., 0.1) );
+					bpmAmp.putVal( NoiseGenerator.setValForPV( bpmAmpMap.get( bpmAmp.getId() ).doubleValue(), 5., 0.1) );
 				// BPM phase (for linac only)
 				if ( !( myProbe instanceof TransferMapProbe ) ) {
 					Channel bpmPhase = bpm.getChannel( BPM.PHASE_AVG_HANDLE );
 					if ( bpmPhaseMap.containsKey( bpmPhase.getId() ) ) {
-						bpmPhase.putVal( ( (Double) bpmPhaseMap.get( bpmPhase.getId() ) ).doubleValue() );
+						bpmPhase.putVal( bpmPhaseMap.get( bpmPhase.getId() ).doubleValue() );
 					}
 				}
 
@@ -1128,9 +1114,7 @@ public class VADocument extends AcceleratorDocument implements ActionListener, P
 		
 		if ( selectedSequence != null ) {
 			// for magnet PVs
-			Iterator iAllMag = mags.iterator();
-			while (iAllMag.hasNext()) {
-				final Electromagnet em = (Electromagnet) iAllMag.next();
+            for ( final Electromagnet em : mags ) {
 				READBACK_SET_RECORDS.add( new ReadbackSetRecord( em, em.getChannel( Electromagnet.FIELD_RB_HANDLE ), em.getChannel( MagnetMainSupply.FIELD_SET_HANDLE ) ) );
 				
 				// handle the trimmed magnets
@@ -1156,9 +1140,7 @@ public class VADocument extends AcceleratorDocument implements ActionListener, P
 			}
 			
 			// for rf PVs
-			Iterator iRfCavity = rfCavities.iterator();
-			while ( iRfCavity.hasNext() ) {
-				final RfCavity rfCav = (RfCavity) iRfCavity.next();
+            for ( final RfCavity rfCav : rfCavities ) {
 				READBACK_SET_RECORDS.add( new ReadbackSetRecord( rfCav, rfCav.getChannel( RfCavity.CAV_AMP_AVG_HANDLE ), rfCav.getChannel( RfCavity.CAV_AMP_SET_HANDLE ) ) );
 				READBACK_SET_RECORDS.add( new ReadbackSetRecord( rfCav, rfCav.getChannel( RfCavity.CAV_PHASE_AVG_HANDLE ), rfCav.getChannel( RfCavity.CAV_PHASE_SET_HANDLE ) ) );
 				ch_noiseMap.put( rfCav.getChannel( RfCavity.CAV_AMP_AVG_HANDLE ), rfAmpNoise );
@@ -1168,7 +1150,7 @@ public class VADocument extends AcceleratorDocument implements ActionListener, P
 			}
 			
 			Collections.sort( READBACK_SET_RECORDS, new ReadbackSetRecordPositionComparator( selectedSequence ) );
-			READBACK_SET_TABLE_MODEL.setRecords( new ArrayList( READBACK_SET_RECORDS ) );
+			READBACK_SET_TABLE_MODEL.setRecords( new ArrayList<ReadbackSetRecord>( READBACK_SET_RECORDS ) );
 		}
 	}
 	
@@ -1225,15 +1207,14 @@ public class VADocument extends AcceleratorDocument implements ActionListener, P
 			
 			// get electro magnets
 			TypeQualifier typeQualifier = QualifierFactory.qualifierWithStatusAndTypes( true, Electromagnet.s_strType );
-            final List magnetNodes = getSelectedSequence().getAllNodesWithQualifier( typeQualifier );
-			mags = new ArrayList<Electromagnet>( magnetNodes );
+            mags = getSelectedSequence().<Electromagnet>getAllNodesWithQualifier( typeQualifier );
 			
 			// get all the rf cavities
 			typeQualifier = typeQualifier = QualifierFactory.qualifierWithStatusAndTypes( true, RfCavity.s_strType );
 			rfCavities = getSelectedSequence().getAllInclusiveNodesWithQualifier( typeQualifier );
 			
 			// get all the BPMs
-			bpms = getSelectedSequence().getAllNodesWithQualifier( QualifierFactory.qualifierWithStatusAndType( true, "BPM" ) );
+			bpms = getSelectedSequence().<BPM>getAllNodesWithQualifier( QualifierFactory.qualifierWithStatusAndType( true, "BPM" ) );
 			
 			// get all the wire scanners
 			wss = getSelectedSequence().getAllNodesWithQualifier( QualifierFactory.qualifierWithStatusAndType( true, ProfileMonitor.PROFILE_MONITOR_TYPE ) );
