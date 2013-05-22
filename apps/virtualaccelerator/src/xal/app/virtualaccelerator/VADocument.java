@@ -46,6 +46,7 @@ import xal.model.xml.ParsingException;
 
 import xal.tools.xml.*;
 import xal.tools.data.*;
+import xal.tools.beam.Twiss;
 import xal.tools.beam.PhaseVector;
 import xal.tools.swing.KeyValueFilteredTableModel;
 //import xal.tools.swing.DecimalField;
@@ -1046,8 +1047,9 @@ public class VADocument extends AcceleratorDocument implements ActionListener, P
 			try {
 				ProbeState probeState = model.getTrajectory().stateForElement( ws.getId() );
 				if (model.getProbe() instanceof EnvelopeProbe) {
-					wsX.putValCallback( ( (EnvelopeProbeState)probeState ).getTwiss()[0].getEnvelopeRadius() * 1000., this );
-					wsY.putValCallback( ( (EnvelopeProbeState)probeState ).getTwiss()[1].getEnvelopeRadius() * 1000., this );
+                    final Twiss[] twiss = ( (EnvelopeProbeState)probeState ).getCorrelationMatrix().computeTwiss();
+					wsX.putValCallback( twiss[0].getEnvelopeRadius() * 1000., this );
+					wsY.putValCallback( twiss[1].getEnvelopeRadius() * 1000., this );
 				}
 			} catch (ConnectionException e) {
 				System.err.println( e.getMessage() );
