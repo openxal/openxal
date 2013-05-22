@@ -123,10 +123,9 @@ public class VAServer {
         System.out.println( "type: " + type );
 		for ( AcceleratorNode node : nodes ) {
             System.out.println( "node: " + node.getId() + ", soft type: " + node.getSoftType() );
-			final Collection handles = processor.getHandlesToProcess( node );
+			final Collection<String> handles = processor.getHandlesToProcess( node );
             System.out.println( "handles: " + handles + "\n\n" );
-			for ( Iterator handleIter = handles.iterator() ; handleIter.hasNext() ; ) {
-				final String handle = (String)handleIter.next();
+            for ( final String handle : handles ) {
 				final Channel channel = node.getChannel( handle );
 				if ( channel != null ) {
 					final String signal = channel.channelName();
@@ -153,10 +152,9 @@ public class VAServer {
 		final TimingCenter timingCenter = SEQUENCE.getAccelerator().getTimingCenter();
 		
 		if ( timingCenter == null )  return;
-		final Collection handles = processor.getHandlesToProcess( timingCenter );
+		final Collection<String> handles = processor.getHandlesToProcess( timingCenter );
 		
-		for ( Iterator handleIter = handles.iterator() ; handleIter.hasNext() ; ) {
-			final String handle = (String)handleIter.next();
+        for ( final String handle : handles ) {
 			final Channel channel = timingCenter.getChannel( handle );
 			if ( channel != null ) {
 				final String signal = channel.channelName();
@@ -262,7 +260,7 @@ class NodeSignalProcessor extends SignalProcessor {
 	 * @param node The node whose handles we wish to get
 	 * @return the collection of the node's handles we wish to process
 	 */
-	public Collection getHandlesToProcess( final AcceleratorNode node ) {
+	public Collection<String> getHandlesToProcess( final AcceleratorNode node ) {
 		return node.getHandles();
 	}
 }
@@ -271,11 +269,11 @@ class NodeSignalProcessor extends SignalProcessor {
 
 /** Implement the processor for the ProfileMonitor.  This class returns only the X and Y sigma M handles. */
 class ProfileMonitorProcessor extends NodeSignalProcessor {
-	final static private Collection HANDLES;
+	final static private Collection<String> HANDLES;
 	
 	// static initializer
 	static {
-		HANDLES = new ArrayList();
+		HANDLES = new ArrayList<String>();
 		HANDLES.add( ProfileMonitor.H_SIGMA_M_HANDLE );
 		HANDLES.add( ProfileMonitor.V_SIGMA_M_HANDLE );
 		HANDLES.add( ProfileMonitor.H_SIGMA_F_HANDLE );
@@ -287,7 +285,7 @@ class ProfileMonitorProcessor extends NodeSignalProcessor {
 	 * Get the handles we wish to process for a node.  This processor overrides this method to return only the handles of interest for the node.
 	 * @return the collection of the node's handles we wish to process
 	 */
-	public Collection getHandlesToProcess( final AcceleratorNode node ) {
+	public Collection<String> getHandlesToProcess( final AcceleratorNode node ) {
 		return HANDLES;
 	}	
 }
@@ -296,11 +294,11 @@ class ProfileMonitorProcessor extends NodeSignalProcessor {
 
 /** Implement the processor for the WireScanner. */
 class WireScannerProcessor extends NodeSignalProcessor {
-	final static private Collection HANDLES;
+	final static private Collection<String> HANDLES;
 	
 	// static initializer
 	static {
-		HANDLES = new ArrayList();
+		HANDLES = new ArrayList<String>();
         // TODO: add wirescanner handles
 //		HANDLES.add( WireScanner.HORIZONTAL_SIGMA_GAUSS_HANDLE );
 //		HANDLES.add( WireScanner.VERTICAL_SIGMA_GAUSS_HANDLE );
@@ -311,7 +309,7 @@ class WireScannerProcessor extends NodeSignalProcessor {
 	 * Get the handles we wish to process for a node.  This processor overrides this method to return only the handles of interest for the node.
 	 * @return the collection of the node's handles we wish to process
 	 */
-	public Collection getHandlesToProcess( final AcceleratorNode node ) {
+	public Collection<String> getHandlesToProcess( final AcceleratorNode node ) {
 		return HANDLES;
 	}	
 }
@@ -319,11 +317,11 @@ class WireScannerProcessor extends NodeSignalProcessor {
 
 /** Implement the processor for the WireScanner2. */
 class WireScanner2Processor extends NodeSignalProcessor {
-    final static private Collection HANDLES;
+    final static private Collection<String> HANDLES;
     
     // static initializer
     static {
-        HANDLES = new ArrayList();
+        HANDLES = new ArrayList<String>();
         // TODO: add wirescanner 2 handles
 //        HANDLES.add( WireScanner2.HORIZONTAL_SIGMA_GAUSS_HANDLE );
 //        HANDLES.add( WireScanner2.VERTICAL_SIGMA_GAUSS_HANDLE );
@@ -334,7 +332,7 @@ class WireScanner2Processor extends NodeSignalProcessor {
      * Get the handles we wish to process for a node.  This processor overrides this method to return only the handles of interest for the node.
      * @return the collection of the node's handles we wish to process
      */
-    public Collection getHandlesToProcess( final AcceleratorNode node ) {
+    public Collection<String> getHandlesToProcess( final AcceleratorNode node ) {
         return HANDLES;
     }   
 }
@@ -342,12 +340,12 @@ class WireScanner2Processor extends NodeSignalProcessor {
 
 /** Signal processor appropriate for processing sextupole electro magnets */
 class SextupoleProcessor extends NodeSignalProcessor {
-	static final private Set LIMIT_HANDLES;
+	static final private Set<String> LIMIT_HANDLES;
 	
 	
 	//Static initializer for setting constant values
 	static {		
-		LIMIT_HANDLES = new HashSet();
+		LIMIT_HANDLES = new HashSet<String>();
 		LIMIT_HANDLES.add( Electromagnet.FIELD_RB_HANDLE );
 		LIMIT_HANDLES.add( MagnetMainSupply.FIELD_SET_HANDLE );
 		LIMIT_HANDLES.add( MagnetMainSupply.FIELD_RB_HANDLE );
@@ -365,12 +363,12 @@ class SextupoleProcessor extends NodeSignalProcessor {
 
 /** Signal processor appropriate for processing unipolar electro magnets */
 class UnipolarEMProcessor extends NodeSignalProcessor {
-	static final private Set LIMIT_HANDLES;
+	static final private Set<String> LIMIT_HANDLES;
 	
 	
 	//Static initializer for setting constant values
 	static {		
-		LIMIT_HANDLES = new HashSet();
+		LIMIT_HANDLES = new HashSet<String>();
 		LIMIT_HANDLES.add( Electromagnet.FIELD_RB_HANDLE );
 		LIMIT_HANDLES.add( MagnetMainSupply.FIELD_SET_HANDLE );
 		LIMIT_HANDLES.add( MagnetMainSupply.FIELD_RB_HANDLE );
@@ -389,19 +387,19 @@ class UnipolarEMProcessor extends NodeSignalProcessor {
 
 /** Signal processor appropriate for processing trimmed quadrupoles */
 class TrimmedQuadrupoleProcessor extends NodeSignalProcessor {
-	static final private Set MAIN_LIMIT_HANDLES;
-	static final private Set TRIM_LIMIT_HANDLES;
+	static final private Set<String> MAIN_LIMIT_HANDLES;
+	static final private Set<String> TRIM_LIMIT_HANDLES;
 	
 	
 	// Static initializer for setting constant values
 	static {		
-		MAIN_LIMIT_HANDLES = new HashSet();
+		MAIN_LIMIT_HANDLES = new HashSet<String>();
 		MAIN_LIMIT_HANDLES.add( Electromagnet.FIELD_RB_HANDLE );
 		MAIN_LIMIT_HANDLES.add( MagnetMainSupply.FIELD_SET_HANDLE );
 		MAIN_LIMIT_HANDLES.add( MagnetMainSupply.FIELD_RB_HANDLE );
 		MAIN_LIMIT_HANDLES.add( MagnetMainSupply.FIELD_BOOK_HANDLE );
 		
-		TRIM_LIMIT_HANDLES = new HashSet();
+		TRIM_LIMIT_HANDLES = new HashSet<String>();
 		TRIM_LIMIT_HANDLES.add( MagnetTrimSupply.FIELD_RB_HANDLE );
 		TRIM_LIMIT_HANDLES.add( MagnetTrimSupply.FIELD_SET_HANDLE );
 	}
@@ -436,14 +434,14 @@ class BPMProcessor extends NodeSignalProcessor {
 
 /** Signal processor appropriate for processing bends */
 class BendProcessor extends NodeSignalProcessor {
-	static final private Set LIMIT_HANDLES;
+	static final private Set<String> LIMIT_HANDLES;
 	
 	
 	/**
 	 * Static initializer for setting constant values
 	 */
 	static {		
-		LIMIT_HANDLES = new HashSet();
+		LIMIT_HANDLES = new HashSet<String>();
 		LIMIT_HANDLES.add( Electromagnet.FIELD_RB_HANDLE );
 		LIMIT_HANDLES.add( MagnetMainSupply.FIELD_SET_HANDLE );
 		LIMIT_HANDLES.add( MagnetMainSupply.FIELD_RB_HANDLE );
@@ -462,14 +460,14 @@ class BendProcessor extends NodeSignalProcessor {
 
 /** Signal processor appropriate for processing dipole correctors */
 class DipoleCorrectorProcessor extends NodeSignalProcessor {
-	static final private Set LIMIT_HANDLES;
+	static final private Set<String> LIMIT_HANDLES;
 	
 	
 	/**
 	 * Static initializer for setting constant values
 	 */
 	static {
-		LIMIT_HANDLES = new HashSet();
+		LIMIT_HANDLES = new HashSet<String>();
 		LIMIT_HANDLES.add( Electromagnet.FIELD_RB_HANDLE );
 		LIMIT_HANDLES.add( MagnetMainSupply.FIELD_SET_HANDLE );
 		LIMIT_HANDLES.add( MagnetMainSupply.FIELD_RB_HANDLE );
@@ -492,7 +490,7 @@ class TimingCenterProcessor extends SignalProcessor {
 	 * @param timingCenter The timing center whose handles we wish to get
 	 * @return the collection of the node's handles we wish to process
 	 */
-	public Collection getHandlesToProcess( final TimingCenter timingCenter ) {
+	public Collection<String> getHandlesToProcess( final TimingCenter timingCenter ) {
 		return timingCenter.getHandles();
 	}
 }
