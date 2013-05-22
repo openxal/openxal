@@ -423,11 +423,26 @@ abstract public class Application {
     // --------- accessors -----------------------------------------------------
     
     /**
-     * Get the list of all open documents.
+     * Get the unmodifiable list of all open documents.
      * @return An immutable list of the open documents.
      */
     public List<XalAbstractDocument> getDocuments() {
         return Collections.unmodifiableList( _openDocuments );
+    }
+    
+    /**
+     * Get a copy of the list of all open documents.
+     * @return An immutable list of the open documents.
+     */
+    @SuppressWarnings( "unchecked" )    // suppress unchecked casting to DocumentType since there is not way around it
+    public <DocumentType extends XalAbstractDocument> List<DocumentType> getDocumentsCopy() {
+        final List<XalAbstractDocument> documents = getDocuments();
+        final List<DocumentType> documentsCopy = new ArrayList<DocumentType>( documents.size() );
+        for ( final XalAbstractDocument document : documents ) {
+            documentsCopy.add( (DocumentType)document );
+        }
+        
+        return documentsCopy;
     }
     
     
