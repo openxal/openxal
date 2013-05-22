@@ -61,11 +61,9 @@ public class Main extends ApplicationAdaptor {
     
     public void applicationWillQuit() {
 		try {
-			final List documents = Application.getApp().getDocuments();
-			final Iterator documentIter = documents.iterator();
-			while ( documentIter.hasNext() ) {
+			final List<VADocument> documents = Application.getApp().<VADocument>getDocumentsCopy();
+            for ( final VADocument document : documents ) {
 				try {
-					final VADocument document = (VADocument)documentIter.next();
 					document.destroyServer();
 				}
 				catch( Exception exception ) {
