@@ -39,11 +39,11 @@ import xal.model.probe.traj.TransferMapState;
 import xal.model.probe.traj.ProbeState;
 import xal.model.probe.traj.EnvelopeProbeState;
 import xal.model.probe.traj.ICoordinateState;
+import xal.sim.scenario.*;
+import xal.smf.*;
 import xal.model.xml.*;
 import xal.model.xml.ParsingException;
-import xal.sim.scenario.Scenario;
 
-import xal.tools.apputils.SimpleProbeEditor;
 import xal.tools.xml.*;
 import xal.tools.data.*;
 import xal.tools.beam.PhaseVector;
@@ -422,20 +422,42 @@ public class VADocument extends AcceleratorDocument implements ActionListener, P
 		});
 	}
 
-	/**
-	 * Create the default probe from the edit context.
-	 */
+    
+	/** Create the default probe from the edit context. */
 	private void createDefaultProbe() {
 		if ( selectedSequence != null ) {
-			if ( selectedSequence instanceof xal.smf.Ring ) {
-				myProbe = ProbeFactory.getTransferMapProbe( selectedSequence, new TransferMapTracker() );
-			}
-            else {
-				myProbe = ProbeFactory.getEnvelopeProbe( selectedSequence, new EnvTrackerAdapt(selectedSequence) );
-			}
-			model.setProbe( myProbe );
+            try {
+                myProbe = ( selectedSequence instanceof xal.smf.Ring ) ? createRingProbe( selectedSequence ) : createEnvelopeProbe( selectedSequence );
+                
+                if ( selectedSequence instanceof xal.smf.Ring ) {
+                    final TransferMapState state = (TransferMapState) myProbe.createProbeState();
+                    // set initial x, y slightly off-axis to introduce betatron oscillation.
+                    state.setPhaseCoordinates( new PhaseVector( 0.01, 0., 0.01, 0., 0., 0. ) );
+                    myProbe.applyState( state );
+                }
+                
+                model.setProbe( myProbe );
+            }
+            catch ( Exception exception ) {
+                displayError( "Error Creating Probe", "Probe Error", exception );
+            }
 		}
 	}
+    
+    
+	/** create a new ring probe */
+	static private Probe createRingProbe( final AcceleratorSeq sequence ) throws InstantiationException {
+		final TransferMapTracker tracker = AlgorithmFactory.createTransferMapTracker( sequence );
+		return ProbeFactory.getTransferMapProbe( sequence, tracker );
+	}
+    
+    
+	/** create a new envelope probe */
+	static private Probe createEnvelopeProbe( final AcceleratorSeq sequence ) throws InstantiationException {
+		final EnvelopeTracker tracker = AlgorithmFactory.createEnvelopeTracker( sequence );
+		return ProbeFactory.getEnvelopeProbe( sequence, tracker );
+	}
+
 
 	protected void customizeCommands(Commander commander) {
 
@@ -466,38 +488,41 @@ public class VADocument extends AcceleratorDocument implements ActionListener, P
 		commander.registerAction(openprobeAction);
 
 		// open probe editor
+        // TODO: implement probe editor support
 		Action probeEditorAction = new AbstractAction("probe-editor") {
 			static final long serialVersionUID = 0;
 			public void actionPerformed(ActionEvent event) {
-				SimpleProbeEditor spe = new SimpleProbeEditor();
+                throw new RuntimeException( "Probe editor currently not implemented." );
 
-				// if model has a probe
-				if (model.getProbe() != null) {
-					//reset the probe to initial state
-					model.resetProbe();
-					spe.createSimpleProbeEditor(model.getProbe());
-					// if model has no probe
-				} else {
-					// if a probe file exists, start with existing probe file
-					if (theProbeFile != null) {
-						spe.createSimpleProbeEditor(new File(theProbeFile));
-						// if no probe file exitst, start with an empty one
-					} else {
-						spe.createSimpleProbeEditor();
-					}
-				}
-				// update the model probe with the one from probe editor
-				if (spe.probeHasChanged()) {
-					//			  mxProxy.setNewProbe(spe.getProbe());
-					if (myProbe instanceof EnvelopeProbe)
-						myProbe = (EnvelopeProbe) spe.getProbe();
-					else if (myProbe instanceof TransferMapProbe)
-						myProbe = (TransferMapProbe) spe.getProbe();
-					else 
-						myProbe = spe.getProbe();
-					
-					model.setProbe(myProbe);
-				}
+//				SimpleProbeEditor spe = new SimpleProbeEditor();
+//
+//				// if model has a probe
+//				if (model.getProbe() != null) {
+//					//reset the probe to initial state
+//					model.resetProbe();
+//					spe.createSimpleProbeEditor(model.getProbe());
+//					// if model has no probe
+//				} else {
+//					// if a probe file exists, start with existing probe file
+//					if (theProbeFile != null) {
+//						spe.createSimpleProbeEditor(new File(theProbeFile));
+//						// if no probe file exitst, start with an empty one
+//					} else {
+//						spe.createSimpleProbeEditor();
+//					}
+//				}
+//				// update the model probe with the one from probe editor
+//				if (spe.probeHasChanged()) {
+//					//			  mxProxy.setNewProbe(spe.getProbe());
+//					if (myProbe instanceof EnvelopeProbe)
+//						myProbe = (EnvelopeProbe) spe.getProbe();
+//					else if (myProbe instanceof TransferMapProbe)
+//						myProbe = (TransferMapProbe) spe.getProbe();
+//					else 
+//						myProbe = spe.getProbe();
+//					
+//					model.setProbe(myProbe);
+//				}
 			}
 		};
 		probeEditorAction.putValue(Action.NAME, "probe-editor");
@@ -1226,26 +1251,7 @@ public class VADocument extends AcceleratorDocument implements ActionListener, P
 			}
 
 			// setting up the default probe
-			try {
-				// if it is part of the ring
-				if ( selectedSequence instanceof Ring ) {
-					myProbe = ProbeFactory.getTransferMapProbe( selectedSequence, new TransferMapTracker() );
-					final TransferMapState state = (TransferMapState) myProbe.createProbeState();
-					// set initial x, y slightly off-axis to introduce betatron oscillation.
-					state.setPhaseCoordinates( new PhaseVector( 0.01, 0., 0.01, 0., 0., 0. ) );
-					myProbe.applyState( state );
-				} 
-				else {
-					// if it is part of the Linac
-					myProbe = ProbeFactory.getEnvelopeProbe( selectedSequence, new EnvTrackerAdapt( selectedSequence ) );
-				}
-			}
-			catch ( NullPointerException exception ) {
-				System.err.println( "There is no default probe for this sequence." );
-			}
-			if ( myProbe != null ) {
-				model.setProbe(myProbe);
-			}
+            createDefaultProbe();
 
 			setHasChanges(true);
 		}
