@@ -491,7 +491,8 @@ public class VADocument extends AcceleratorDocument implements ActionListener, P
 		Action probeEditorAction = new AbstractAction("probe-editor") {
 			static final long serialVersionUID = 0;
 			public void actionPerformed(ActionEvent event) {
-                throw new RuntimeException( "Probe editor currently not implemented." );
+                displayError( "Probe Editor Error", "Probe Editor is not implemented." );
+                throw new RuntimeException( "Probe editor is not implemented." );
 
 //				SimpleProbeEditor spe = new SimpleProbeEditor();
 //
