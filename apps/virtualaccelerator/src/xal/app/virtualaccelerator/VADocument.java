@@ -49,7 +49,7 @@ import xal.tools.data.*;
 import xal.tools.beam.Twiss;
 import xal.tools.beam.PhaseVector;
 import xal.tools.swing.KeyValueFilteredTableModel;
-//import xal.tools.swing.DecimalField;
+import xal.tools.swing.DecimalField;
 import xal.tools.apputils.files.*;
 import xal.tools.apputils.pvlogbrowser.PVLogSnapshotChooser;
 import xal.sim.sync.PVLoggerDataSource;
@@ -84,9 +84,9 @@ public class VADocument extends AcceleratorDocument implements ActionListener, P
 
 	private JDialog setNoise = new JDialog();
 
-//	private DecimalField df1, df2, df3, df4;
-//
-//	private DecimalField df11, df21, df31, df41;
+	private DecimalField df1, df2, df3, df4;
+
+	private DecimalField df11, df21, df31, df41;
 
 	private double quadNoise = 0.0;
 
@@ -272,73 +272,72 @@ public class VADocument extends AcceleratorDocument implements ActionListener, P
 		numberFormat = NumberFormat.getNumberInstance();
 		numberFormat.setMaximumFractionDigits(3);
         
-		// TODO: add support for noise input
-//		JPanel noiseLevel1 = new JPanel();
-//		noiseLevel1.setLayout(new GridLayout(1, 3));
-//		JLabel label1 = new JLabel("Quad: ");
-//		df1 = new DecimalField(0., 5, numberFormat);
-//		noiseLevel1.add(label1);
-//		noiseLevel1.add(df1);
-//		noiseLevel1.add(percent);
-//		noiseLevelPanel.add(noiseLevel1);
-//		
-//		JPanel noiseLevel2 = new JPanel();
-//		noiseLevel2.setLayout(new GridLayout(1, 3));
-//		JLabel label2 = new JLabel("Bending Dipole: ");
-//		percent = new JLabel("%");
-//		df2 = new DecimalField(0., 5, numberFormat);
-//		noiseLevel2.add(label2);
-//		noiseLevel2.add(df2);
-//		noiseLevel2.add(percent);
-//		noiseLevelPanel.add(noiseLevel2);
-//		
-//		JPanel noiseLevel3 = new JPanel();
-//		noiseLevel3.setLayout(new GridLayout(1, 3));
-//		df3 = new DecimalField(0., 5, numberFormat);
-//		noiseLevel3.add(new JLabel("Dipole Corr.: "));
-//		noiseLevel3.add(df3);
-//		noiseLevel3.add(new JLabel("%"));
-//		noiseLevelPanel.add(noiseLevel3);
-//		
-//		JPanel noiseLevel4 = new JPanel();
-//		noiseLevel4.setLayout(new GridLayout(1, 3));
-//		df4 = new DecimalField(0., 5, numberFormat);
-//		noiseLevel4.add(new JLabel("BPM: "));
-//		noiseLevel4.add(df4);
-//		noiseLevel4.add(new JLabel("%"));
-//		noiseLevelPanel.add(noiseLevel4);
-//		
-//		// for offsets
-//		offsetPanel.setLayout(new GridLayout(7, 1));
-//		offsetPanel.add(new JLabel("Offset for Device Type:"));
-//		
-//		JPanel offset1 = new JPanel();
-//		offset1.setLayout(new GridLayout(1, 2));
-//		df11 = new DecimalField(0., 5, numberFormat);
-//		offset1.add(new JLabel("Quad: "));
-//		offset1.add(df11);
-//		offsetPanel.add(offset1);
-//		
-//		JPanel offset2 = new JPanel();
-//		offset2.setLayout(new GridLayout(1, 2));
-//		df21 = new DecimalField(0., 5, numberFormat);
-//		offset2.add(new JLabel("Bending Dipole: "));
-//		offset2.add(df21);
-//		offsetPanel.add(offset2);
-//		
-//		JPanel offset3 = new JPanel();
-//		offset3.setLayout(new GridLayout(1, 2));
-//		df31 = new DecimalField(0., 5, numberFormat);
-//		offset3.add(new JLabel("Dipole Corr.: "));
-//		offset3.add(df31);
-//		offsetPanel.add(offset3);
-//		
-//		JPanel offset4 = new JPanel();
-//		offset4.setLayout(new GridLayout(1, 2));
-//		df41 = new DecimalField(0., 5, numberFormat);
-//		offset4.add(new JLabel("BPM: "));
-//		offset4.add(df41);
-//		offsetPanel.add(offset4);
+		JPanel noiseLevel1 = new JPanel();
+		noiseLevel1.setLayout(new GridLayout(1, 3));
+		JLabel label1 = new JLabel("Quad: ");
+		df1 = new DecimalField( 0., 5, numberFormat );
+		noiseLevel1.add(label1);
+		noiseLevel1.add(df1);
+		noiseLevel1.add(percent);
+		noiseLevelPanel.add(noiseLevel1);
+
+		JPanel noiseLevel2 = new JPanel();
+		noiseLevel2.setLayout(new GridLayout(1, 3));
+		JLabel label2 = new JLabel("Bending Dipole: ");
+		percent = new JLabel("%");
+		df2 = new DecimalField( 0., 5, numberFormat );
+		noiseLevel2.add(label2);
+		noiseLevel2.add(df2);
+		noiseLevel2.add(percent);
+		noiseLevelPanel.add(noiseLevel2);
+		
+		JPanel noiseLevel3 = new JPanel();
+		noiseLevel3.setLayout(new GridLayout(1, 3));
+		df3 = new DecimalField( 0., 5, numberFormat );
+		noiseLevel3.add(new JLabel("Dipole Corr.: "));
+		noiseLevel3.add(df3);
+		noiseLevel3.add(new JLabel("%"));
+		noiseLevelPanel.add(noiseLevel3);
+		
+		JPanel noiseLevel4 = new JPanel();
+		noiseLevel4.setLayout(new GridLayout(1, 3));
+		df4 = new DecimalField( 0., 5, numberFormat );
+		noiseLevel4.add(new JLabel("BPM: "));
+		noiseLevel4.add(df4);
+		noiseLevel4.add(new JLabel("%"));
+		noiseLevelPanel.add(noiseLevel4);
+		
+		// for offsets
+		offsetPanel.setLayout(new GridLayout(7, 1));
+		offsetPanel.add(new JLabel("Offset for Device Type:"));
+		
+		JPanel offset1 = new JPanel();
+		offset1.setLayout(new GridLayout(1, 2));
+		df11 = new DecimalField( 0., 5, numberFormat );
+		offset1.add(new JLabel("Quad: "));
+		offset1.add(df11);
+		offsetPanel.add(offset1);
+		
+		JPanel offset2 = new JPanel();
+		offset2.setLayout(new GridLayout(1, 2));
+		df21 = new DecimalField( 0., 5, numberFormat );
+		offset2.add(new JLabel("Bending Dipole: "));
+		offset2.add(df21);
+		offsetPanel.add(offset2);
+		
+		JPanel offset3 = new JPanel();
+		offset3.setLayout(new GridLayout(1, 2));
+		df31 = new DecimalField( 0., 5, numberFormat );
+		offset3.add(new JLabel("Dipole Corr.: "));
+		offset3.add(df31);
+		offsetPanel.add(offset3);
+		
+		JPanel offset4 = new JPanel();
+		offset4.setLayout(new GridLayout(1, 2));
+		df41 = new DecimalField( 0., 5, numberFormat );
+		offset4.add(new JLabel("BPM: "));
+		offset4.add(df41);
+		offsetPanel.add(offset4);
 		
 		// put everything together
 		setNoise.setBounds(300, 300, 300, 300);
@@ -1252,17 +1251,16 @@ public class VADocument extends AcceleratorDocument implements ActionListener, P
 
 	}
 
-    // TODO: add support for getting noise values
 	public void actionPerformed(ActionEvent ev) {
 		if (ev.getActionCommand().equals("noiseSet")) {
-//			quadNoise = df1.getValue();
-//			dipoleNoise = df2.getValue();
-//			correctorNoise = df3.getValue();
-//			bpmNoise = df4.getValue();
-//			quadOffset = df11.getValue();
-//			dipoleOffset = df21.getValue();
-//			correctorOffset = df31.getValue();
-//			bpmOffset = df41.getValue();
+			quadNoise = df1.getDoubleValue();
+			dipoleNoise = df2.getDoubleValue();
+			correctorNoise = df3.getDoubleValue();
+			bpmNoise = df4.getDoubleValue();
+			quadOffset = df11.getDoubleValue();
+			dipoleOffset = df21.getDoubleValue();
+			correctorOffset = df31.getDoubleValue();
+			bpmOffset = df41.getDoubleValue();
 
 			setNoise.setVisible(false);
 		}
