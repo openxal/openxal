@@ -93,7 +93,11 @@ public abstract class DatabaseAdaptor {
 			final DatabaseMetaData metaData = connection.getMetaData();
 			final ResultSet result = metaData.getSchemas();
 			while ( result.next() ) {
-				schemas.add( result.getString( "TABLE_SCHEM" ) );
+				if (metaData.getDatabaseProductName().equals("MySQL"))
+					schemas.add( result.getString( "TABLE_CAT" ) );
+				else if (metaData.getDatabaseProductName().equals("Oracle"))
+					schemas.add( result.getString( "TABLE_SCHEM" ) );
+//				schemas.add( result.getString( "TABLE_SCHEM" ) );
 			}
 			
 			return schemas;
@@ -142,12 +146,24 @@ public abstract class DatabaseAdaptor {
 
 	/** Get the result set of tables for the specified meta data and schema */
 	public ResultSet getTablesResultSet( final DatabaseMetaData metaData, final String schema ) throws SQLException {
+		if (metaData.getDatabaseProductName().equals("MySQL"))
+			return metaData.getTables( schema, null, null, null );
+		else if (metaData.getDatabaseProductName().equals("Oracle"))
+			return metaData.getTables( null, schema, null, null );
+		
+		// default to Oracle
 		return metaData.getTables( null, schema, null, null );
 	}
 
 
 	/** Get the result set of columns for the specified meta data, schema and table */
 	public ResultSet getColumnsResultSet( final DatabaseMetaData metaData, final String schema, final String table ) throws SQLException {
+		if (metaData.getDatabaseProductName().equals("MySQL"))
+			return metaData.getColumns( schema, null, table, null );
+		else if (metaData.getDatabaseProductName().equals("Oracle"))
+			return metaData.getColumns( null, schema, table, null );
+		
+		// default to Oracle
 		return metaData.getColumns( null, schema, table, null );
 	}
 
@@ -180,6 +196,12 @@ public abstract class DatabaseAdaptor {
 
 	/** Get the result set of primary keys for the specified meta data, schema and table */
 	public ResultSet getPrimaryKeysResultSet( final DatabaseMetaData metaData, final String schema, final String table ) throws SQLException {
+		if (metaData.getDatabaseProductName().equals("MySQL"))
+			return metaData.getPrimaryKeys( schema, null, table );
+		else if (metaData.getDatabaseProductName().equals("Oracle"))
+			return metaData.getPrimaryKeys( null, schema, table );
+
+		// default to Oracle
 		return metaData.getPrimaryKeys( null, schema, table );
 	}
 }

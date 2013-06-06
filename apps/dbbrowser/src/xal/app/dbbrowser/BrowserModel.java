@@ -278,6 +278,12 @@ public class BrowserModel {
 	 * @throws xal.tools.database.DatabaseException  if the schema fetch fails
 	 */
 	public List<String> fetchSchemas() throws DatabaseException {
+		try {
+			System.out.println("DB = " + _connection.getMetaData().getDatabaseProductName());
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return _databaseAdaptor.fetchNontrivialSchemas( _connection );
 	}
 	
