@@ -830,16 +830,14 @@ public class ArrayPVViewerDocument extends XalDocument {
 			}
 		}
 
-		Enumeration enumNodes =  pvNode.children();
-		int i = 0;
-		int count = 0;
-		while (enumNodes.hasMoreElements()) {
-			PVTreeNode pvn = (PVTreeNode) enumNodes.nextElement();
-			if (count != deleteIndex) {
-				pvn.setColor(IncrementalColors.getColor(i));
-				i++;
+		final Enumeration<PVTreeNode> enumNodes =  pvNode.children();
+		int keptNodeCounter = 0;  // counter of nodes that are not deleted
+        for ( int nodeIndex = 0 ; enumNodes.hasMoreElements() ; nodeIndex++ ) {
+			final PVTreeNode pvn = enumNodes.nextElement();
+			if ( nodeIndex != deleteIndex ) {
+				pvn.setColor( IncrementalColors.getColor( keptNodeCounter ) );
+				keptNodeCounter++;
 			}
-			count++;
 		}
 	}
 
