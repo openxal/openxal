@@ -18,8 +18,6 @@ import xal.tools.apputils.*;
 import xal.tools.swing.*;
 import xal.tools.xml.*;
 
-//local packages
-import xal.apps.bpmviewer.*;
 
 /**
  *  The panel includes graph data and GUI elements for phase, x and y-positions

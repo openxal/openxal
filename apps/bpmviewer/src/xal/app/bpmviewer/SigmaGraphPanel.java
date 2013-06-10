@@ -16,8 +16,6 @@ import xal.tools.plot.*;
 import xal.tools.apputils.*;
 import xal.tools.swing.*;
 
-//local packages
-import xal.apps.bpmviewer.*;
 
 /**
  *  The panel includes graph data and GUI elements for the dispersions of phase
