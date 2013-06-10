@@ -13,9 +13,6 @@ import xal.tools.plot.*;
 import xal.tools.xml.*;
 import xal.tools.data.DataAdaptor;
 
-//local packages
-import xal.apps.bpmviewer.*;
-
 /**
  *  Keeps the references to the ArrayDataPV and graph data instances.
  *

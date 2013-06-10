@@ -98,7 +98,7 @@ public class KnobElement implements DataListener {
 	
 	// static initializer
 	static {
-		final String defaultLimitsProperty = System.getProperty( "gov.sns.apps.knobs.KnobElement.DEFAULT_LIMIT" );
+		final String defaultLimitsProperty = System.getProperty( "xal.app.knobs.KnobElement.DEFAULT_LIMIT" );
 		HAS_DEFAULT_LIMITS = ( defaultLimitsProperty != null );
 		double limit = Double.NaN;
 		try {

@@ -28,8 +28,6 @@ import xal.tools.data.DataAdaptor;
 
 import xal.tools.scan.UpdatingEventController;
 
-//local packages
-import xal.app.scalarpvviewer.*;
 
 /**
  *  ScalarpvviewerDocument is a custom XalDocument for Scalarpvviewer

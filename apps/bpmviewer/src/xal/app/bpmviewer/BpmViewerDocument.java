@@ -26,8 +26,6 @@ import xal.tools.apputils.*;
 import xal.tools.apputils.pvselection.*;
 import xal.tools.swing.*;
 
-//local packages
-import xal.apps.bpmviewer.*;
 
 /**
  *  BpmViewerDocument is a custom XalDocument for bpmViewer application. The
