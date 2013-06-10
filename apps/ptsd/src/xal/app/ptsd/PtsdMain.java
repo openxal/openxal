@@ -43,7 +43,7 @@ public class PtsdMain extends ApplicationAdaptor {
      */
     
     /**  String */
-    public static final String STR_LOGGER_ID = "gov.sns.apps.ptsd";
+    public static final String STR_LOGGER_ID = "xal.app.ptsd";
 
     
     
