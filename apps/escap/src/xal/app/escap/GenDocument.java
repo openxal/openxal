@@ -40,7 +40,8 @@ import xal.model.probe.*;
 import xal.model.xml.*; 
 import xal.sim.scenario.*;
 
-import xal.tools.solver.*;
+//Unused
+//import xal.tools.solver.*;
 
 
 /**
