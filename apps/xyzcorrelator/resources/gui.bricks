@@ -1,0 +1,220 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<BricksDocument date="Fri Feb 06 16:21:19 EST 2009" version="1.0.0">
+    <RootBrick>
+        <ViewNode customBeanClass="xal.smf.application.DefaultAcceleratorWindow" height="714" tag="MainWindow" width="981">
+            <ViewProxy type="javax.swing.JFrame"/>
+            <BeanProperty name="title" value="XYZ Correlator"/>
+            <ViewNode tag="MainPane">
+                <ViewProxy type="javax.swing.JSplitPane"/>
+                <BeanProperty name="oneTouchExpandable" value="true"/>
+                <BeanProperty name="orientation" value="0"/>
+                <BeanProperty name="dividerLocation" value="200"/>
+                <ViewNode tag="Channels Box">
+                    <ViewProxy type="javax.swing.Box_Vertical"/>
+                    <BorderNode tag="Titled Border">
+                        <BorderProxy type="javax.swing.border.TitledBorder"/>
+                        <BeanProperty name="title" value="Channels"/>
+                    </BorderNode>
+                    <ViewNode tag="Scroll Pane">
+                        <ViewProxy type="javax.swing.JScrollPane"/>
+                        <ViewNode tag="ChannelTable">
+                            <ViewProxy type="javax.swing.JTable"/>
+                        </ViewNode>
+                    </ViewNode>
+                    <ViewNode tag="Buttons">
+                        <ViewProxy type="javax.swing.Box_Horizontal"/>
+                        <BorderNode tag="Etched Border">
+                            <BorderProxy type="javax.swing.border.EtchedBorder"/>
+                        </BorderNode>
+                        <ViewNode tag="InsertChannelButton">
+                            <ViewProxy type="javax.swing.JButton"/>
+                            <BeanProperty name="text" value=""/>
+                            <BeanProperty name="verticalAlignment" value="0"/>
+                            <BeanProperty group="table" iconName="RowInsertBefore24.gif" name="icon"/>
+                            <BeanProperty name="toolTipText" value="Insert a channel placeholder"/>
+                        </ViewNode>
+                        <ViewNode tag="DeleteChannelButton">
+                            <ViewProxy type="javax.swing.JButton"/>
+                            <BeanProperty name="text" value=""/>
+                            <BeanProperty name="verticalAlignment" value="0"/>
+                            <BeanProperty group="table" iconName="RowDelete24.gif" name="icon"/>
+                            <BeanProperty name="toolTipText" value="Delete the selected channel placeholder"/>
+                        </ViewNode>
+                        <ViewNode tag="AddChannelRefButton">
+                            <ViewProxy type="javax.swing.JButton"/>
+                            <BeanProperty name="text" value="Add..."/>
+                            <BeanProperty name="toolTipText" value="Add a channel reference from the accelerator nodes"/>
+                        </ViewNode>
+                        <ViewNode tag="Horizontal Glue">
+                            <ViewProxy type="javax.swing.Box_HorizontalGlue"/>
+                        </ViewNode>
+                        <BorderNode tag="Etched Border">
+                            <BorderProxy type="javax.swing.border.EtchedBorder"/>
+                        </BorderNode>
+                    </ViewNode>
+                    <BorderNode tag="Titled Border">
+                        <BorderProxy type="javax.swing.border.TitledBorder"/>
+                        <BeanProperty name="title" value="Channels"/>
+                    </BorderNode>
+                </ViewNode>
+                <ViewNode tag="Plot Box">
+                    <ViewProxy type="javax.swing.Box_Vertical"/>
+                    <ViewNode tag="Spectrum Box">
+                        <ViewProxy type="javax.swing.Box_Horizontal"/>
+                        <BorderNode tag="Titled Border">
+                            <BorderProxy type="javax.swing.border.TitledBorder"/>
+                            <BeanProperty name="title" value="Spectrum for third PV"/>
+                        </BorderNode>
+                        <ViewNode tag="Horizontal Glue">
+                            <ViewProxy type="javax.swing.Box_HorizontalGlue"/>
+                        </ViewNode>
+                        <ViewNode tag="ColorPVLabel">
+                            <ViewProxy type="javax.swing.JLabel"/>
+                            <BeanProperty name="text" value=""/>
+                            <BeanProperty name="toolTipText" value="Color PV"/>
+                            <BeanProperty name="requestFocusEnabled" value="true"/>
+                        </ViewNode>
+                        <ViewNode tag="Horizontal Glue">
+                            <ViewProxy type="javax.swing.Box_HorizontalGlue"/>
+                        </ViewNode>
+                        <ViewNode tag="StartZLabel">
+                            <ViewProxy type="javax.swing.JLabel"/>
+                            <BeanProperty name="text" value="-1"/>
+                            <BeanProperty name="toolTipText" value="Lower Z for the spectrum"/>
+                        </ViewNode>
+                        <ViewNode customBeanClass="xal.apps.xyzcorrelator.ColorSpectrumPanel" tag="ColorSpectrum">
+                            <ViewProxy type="javax.swing.JPanel"/>
+                            <BeanProperty height="25" name="preferredSize" width="300"/>
+                            <BeanProperty name="toolTipText" value="Spectrum for the Z axis"/>
+                            <BeanProperty height="10" name="minimumSize" width="100"/>
+                            <BeanProperty height="40" name="maximumSize" width="500"/>
+                        </ViewNode>
+                        <ViewNode tag="EndZLabel">
+                            <ViewProxy type="javax.swing.JLabel"/>
+                            <BeanProperty name="text" value="1"/>
+                            <BeanProperty name="toolTipText" value="Upper Z for the spectrum"/>
+                        </ViewNode>
+                        <ViewNode tag="Horizontal Glue">
+                            <ViewProxy type="javax.swing.Box_HorizontalGlue"/>
+                        </ViewNode>
+                        <ViewNode tag="Horizontal Glue">
+                            <ViewProxy type="javax.swing.Box_HorizontalGlue"/>
+                        </ViewNode>
+                        <BorderNode tag="Titled Border">
+                            <BorderProxy type="javax.swing.border.TitledBorder"/>
+                            <BeanProperty name="title" value="Spectrum for third PV"/>
+                        </BorderNode>
+                    </ViewNode>
+                    <ViewNode tag="CorrelationPlot">
+                        <ViewProxy type="xal.tools.plot.FunctionGraphsJPanel"/>
+                    </ViewNode>
+                    <ViewNode tag="ButtonBox">
+                        <ViewProxy type="javax.swing.Box_Horizontal"/>
+                        <ViewNode tag="Correlator Box">
+                            <ViewProxy type="javax.swing.Box_Horizontal"/>
+                            <BorderNode tag="Titled Border">
+                                <BorderProxy type="javax.swing.border.TitledBorder"/>
+                                <BeanProperty name="title" value="Correlator"/>
+                            </BorderNode>
+                            <ViewNode tag="PlayButton">
+                                <ViewProxy type="javax.swing.JToggleButton"/>
+                                <BeanProperty name="text" value=""/>
+                                <BeanProperty group="media" iconName="Play24.gif" name="icon"/>
+                                <BeanProperty name="toolTipText" value="Run"/>
+                            </ViewNode>
+                            <ViewNode tag="StopButton">
+                                <ViewProxy type="javax.swing.JToggleButton"/>
+                                <BeanProperty name="text" value=""/>
+                                <BeanProperty group="media" iconName="Stop24.gif" name="icon"/>
+                                <BeanProperty name="toolTipText" value="Stop"/>
+                            </ViewNode>
+                            <ViewNode tag="ClearButton">
+                                <ViewProxy type="javax.swing.JButton"/>
+                                <BeanProperty name="text" value=""/>
+                                <BeanProperty group="custom" iconName="Clear24.gif" name="icon"/>
+                                <BeanProperty name="toolTipText" value="Clear Plot and Correlation Buffer"/>
+                            </ViewNode>
+                            <ViewNode tag="Label">
+                                <ViewProxy type="javax.swing.JLabel"/>
+                                <BeanProperty name="text" value=" Resolution:"/>
+                            </ViewNode>
+                            <ViewNode tag="CorrelationResolutionField">
+                                <ViewProxy type="javax.swing.JTextField"/>
+                                <BeanProperty name="horizontalAlignment" value="4"/>
+                                <BeanProperty name="text" value="0.001"/>
+                                <BeanProperty height="28" name="preferredSize" width="100"/>
+                                <BeanProperty height="28" name="minimumSize" width="50"/>
+                                <BeanProperty name="toolTipText" value="Correlation time resolution (seconds)"/>
+                                <BeanProperty height="30" name="maximumSize" width="200"/>
+                            </ViewNode>
+                            <ViewNode tag="Label">
+                                <ViewProxy type="javax.swing.JLabel"/>
+                                <BeanProperty name="text" value=" Buffer:"/>
+                            </ViewNode>
+                            <ViewNode tag="BufferSpinner">
+                                <ViewProxy type="javax.swing.JSpinner"/>
+                                <BeanProperty height="28" name="preferredSize" width="75"/>
+                                <BeanProperty name="toolTipText" value="Buffer Size"/>
+                                <BeanProperty name="visible" value="true"/>
+                                <BeanProperty height="30" name="maximumSize" width="200"/>
+                            </ViewNode>
+                            <ViewNode tag="ExportButton">
+                                <ViewProxy type="javax.swing.JButton"/>
+                                <BeanProperty name="text" value=""/>
+                                <BeanProperty name="label" value=""/>
+                                <BeanProperty group="general" iconName="Export24.gif" name="icon"/>
+                                <BeanProperty name="toolTipText" value="Export correlated data from the buffer."/>
+                            </ViewNode>
+                            <BorderNode tag="Titled Border">
+                                <BorderProxy type="javax.swing.border.TitledBorder"/>
+                                <BeanProperty name="title" value="Correlator"/>
+                            </BorderNode>
+                        </ViewNode>
+                        <ViewNode tag="Horizontal Glue">
+                            <ViewProxy type="javax.swing.Box_HorizontalGlue"/>
+                        </ViewNode>
+                        <ViewNode tag="Fitting Box">
+                            <ViewProxy type="javax.swing.Box_Horizontal"/>
+                            <BorderNode tag="Fitting">
+                                <BorderProxy type="javax.swing.border.TitledBorder"/>
+                                <BeanProperty name="title" value="Fitting"/>
+                            </BorderNode>
+                            <ViewNode tag="Label">
+                                <ViewProxy type="javax.swing.JLabel"/>
+                                <BeanProperty name="text" value=" Polynomial Order:"/>
+                            </ViewNode>
+                            <ViewNode tag="FitOrderSpinner">
+                                <ViewProxy type="javax.swing.JSpinner"/>
+                                <BeanProperty height="28" name="preferredSize" width="50"/>
+                                <BeanProperty name="visible" value="true"/>
+                                <BeanProperty name="toolTipText" value="Polynomial order for the fit"/>
+                                <BeanProperty height="30" name="maximumSize" width="100"/>
+                            </ViewNode>
+                            <ViewNode tag="FitButton">
+                                <ViewProxy type="javax.swing.JButton"/>
+                                <BeanProperty name="text" value="Fit"/>
+                                <BeanProperty name="toolTipText" value="Perform a polynomial fit of the 2D data"/>
+                            </ViewNode>
+                            <ViewNode tag="CopyFitButton">
+                                <ViewProxy type="javax.swing.JButton"/>
+                                <BeanProperty name="text" value=""/>
+                                <BeanProperty group="general" iconName="Copy24.gif" name="icon"/>
+                                <BeanProperty name="toolTipText" value="Copy the polynomial fit to the clipboard"/>
+                            </ViewNode>
+                            <ViewNode tag="ClearFitButton">
+                                <ViewProxy type="javax.swing.JButton"/>
+                                <BeanProperty name="text" value=""/>
+                                <BeanProperty group="custom" iconName="Clear24.gif" name="icon"/>
+                                <BeanProperty name="toolTipText" value="Clear the polynomial fit"/>
+                            </ViewNode>
+                            <BorderNode tag="Fitting">
+                                <BorderProxy type="javax.swing.border.TitledBorder"/>
+                                <BeanProperty name="title" value="Fitting"/>
+                            </BorderNode>
+                        </ViewNode>
+                    </ViewNode>
+                </ViewNode>
+            </ViewNode>
+        </ViewNode>
+    </RootBrick>
+</BricksDocument>
