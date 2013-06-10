@@ -120,6 +120,8 @@ public class WaveformFace {
 	
 	
 	/** initialize views */
+    // Had to suppress warnings getView returns object that cannot be cast. 
+    @SuppressWarnings ("unchecked")
 	protected void initializeViews() {
 	    masterPane = (JSplitPane)windowReference.getView( "masterPane" );
 		
