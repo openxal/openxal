@@ -135,7 +135,7 @@
 		4CFEB21B12CA2CB900613FF9 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0450;
+				LastUpgradeCheck = 0460;
 				ORGANIZATIONNAME = "Oak Ridge National Lab";
 			};
 			buildConfigurationList = 4CFEB21E12CA2CB900613FF9 /* Build configuration list for PBXProject "Open XAL" */;
@@ -164,6 +164,7 @@
 		4C39E67915ED111100D99103 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				PRODUCT_NAME = All;
 				XCPA_BUILD_ARGS = "-emacs all";
 			};
@@ -173,6 +174,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				COMBINE_HIDPI_IMAGES = YES;
 				PRODUCT_NAME = "script-run";
 				SCRIPT_PATH = "$(XAL_HOME)/scripts/waveform_monitor/waveform-monitor.rb";
 			};
@@ -181,6 +183,7 @@
 		4C9888831427892800E14203 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				XCPA_BUILD_ARGS = "-emacs all";
 			};
 			name = Release;
@@ -188,7 +191,8 @@
 		4C98888714279CC900E14203 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				APPNAME = machinesimulator;
+				APPNAME = escap;
+				COMBINE_HIDPI_IMAGES = YES;
 				XCPA_BUILD_ARGS = "-emacs build";
 			};
 			name = Release;
@@ -196,6 +200,7 @@
 		4CBB76421405528F0064E2F7 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				XCPA_BUILD_ARGS = "-emacs run-tests";
 			};
 			name = Release;
@@ -203,6 +208,7 @@
 		4CC4A85E14B798FB0075B061 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				XCPA_BUILD_ARGS = "-emacs all";
 			};
 			name = Release;
@@ -210,6 +216,7 @@
 		4CFB61B71301D4A600A0E8E2 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				XCPA_BUILD_ARGS = "-emacs all";
 				XCPA_TEST_ARGS = "-emacs run-tests";
 			};
