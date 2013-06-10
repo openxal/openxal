@@ -34,7 +34,7 @@ public class EmaWindow extends AcceleratorWindow {
    static protected Color buttonColor = new Color(0,225,225);
     protected JTextField errorText;
     protected JList<Object> presetBPMList;
-    protected JFormattedTextField energyGuessField, minCurField;
+    protected DecimalField energyGuessField, minCurField;
     
     /** list of linac BPMs the user can pick from */
     protected JList<Object> BPM1List = new JList<Object>();
@@ -310,8 +310,8 @@ public class EmaWindow extends AcceleratorWindow {
 	spGridBag.setConstraints(energyGuessLabel, gbc);
 	setupPanel.add(energyGuessLabel);
 	
-	energyGuessField = new JFormattedTextField(950); //changed from (950., 9);
-	gbc.fill = GridBagConstraints.BOTH;
+	energyGuessField = new DecimalField(950., 9);
+    gbc.fill = GridBagConstraints.BOTH;
 	gbc.weightx = 1.; gbc.weighty = 0.;
 	gbc.gridx = 0; gbc.gridy = sumy++;
 	spGridBag.setConstraints(energyGuessField, gbc);
@@ -354,7 +354,7 @@ public class EmaWindow extends AcceleratorWindow {
 	spGridBag.setConstraints(BCMList, gbc);
 	setupPanel.add(BCMList);
 	
-	minCurField = new JFormattedTextField(5); //changed from (5., 4)
+	minCurField = new DecimalField(5., 4);
 	gbc.fill = GridBagConstraints.BOTH;
 	gbc.weightx = 1.; gbc.weighty = 0.;
 	gbc.gridx = 1; gbc.gridy = sumy++;
