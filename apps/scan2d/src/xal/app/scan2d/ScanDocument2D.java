@@ -911,7 +911,7 @@ public class ScanDocument2D extends XalDocument {
 		}
 
 		//dump validation variables and their state
-		Enumeration<PVTreeNode> validation_children = (Enumeration<PVTreeNode>)validationPVs_Node.children();
+		Enumeration<PVTreeNode> validation_children = validationPVs_Node.children();
 		while (validation_children.hasMoreElements()) {
 			PVTreeNode pvNode = validation_children.nextElement();
 			DataAdaptor validationPV_node =  validationPVs_scan2D.createChild("Validation_PV");
@@ -1595,7 +1595,7 @@ public class ScanDocument2D extends XalDocument {
 		graphScan.refreshGraphJPanel();
 		graphAnalysis.refreshGraphJPanel();
 
-		Enumeration<PVTreeNode> enumNode = (Enumeration<PVTreeNode>)measuredPVs_Node.children();
+		Enumeration<PVTreeNode> enumNode = measuredPVs_Node.children();
 		int i = 0;
 		int count = 0;
 		while (enumNode.hasMoreElements()) {
