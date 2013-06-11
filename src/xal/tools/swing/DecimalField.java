@@ -34,5 +34,9 @@ public class DecimalField extends JFormattedTextField {
     /** Get the value as a double */
     public double getDoubleValue() {
         return ((Number)getValue()).doubleValue();
-    }    
+    }
+    
+    public void clear() {
+        setText(null);
+    }
 }
