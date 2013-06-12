@@ -21,12 +21,18 @@ import java.util.prefs.*;
 public class DBConfiguration {
 	/** key for getting the URL from the preferences */
 	final static protected String PREFERENCES_URL_KEY = "configURL";
+
+	/** name of the default database adaptor */
+	final private String DEFAULT_DATABASE_ADAPTOR_NAME;
 	
 	/** name of the default server */
 	final private String DEFAULT_SERVER_NAME;
 	
 	/** name of the default account */
 	final private String DEFAULT_ACCOUNT_NAME;
+
+	/** table mapping database adaptor names to database adaptor class names */
+	final private Map<String,String> DATABASE_ADAPTOR_MAP;
 	
 	/** table of servers keyed by name */
 	final private Map<String,DBServerConfig> SERVERS;
@@ -36,9 +42,12 @@ public class DBConfiguration {
 	
 	
 	/** Primary Constructor */
-	private DBConfiguration( final String defaultServerName, final Map<String,DBServerConfig> servers, final String defaultAccountName, final Map<String,DBAccountConfig> accounts ) {
+	private DBConfiguration( final String defaultDBAdaptorName, final Map<String,String> dbAdaptorMap, final String defaultServerName, final Map<String,DBServerConfig> servers, final String defaultAccountName, final Map<String,DBAccountConfig> accounts ) {
+		DEFAULT_DATABASE_ADAPTOR_NAME = defaultDBAdaptorName;
 		DEFAULT_SERVER_NAME = defaultServerName;
 		DEFAULT_ACCOUNT_NAME = defaultAccountName;
+
+		DATABASE_ADAPTOR_MAP = dbAdaptorMap;
 		SERVERS = servers;
 		ACCOUNTS = accounts;
 	}
@@ -206,7 +215,7 @@ public class DBConfiguration {
 			accountTable.put( name, new DBAccountConfig( name, user, password ) );
 		}
 		
-		return new DBConfiguration( defaultServerName, serverTable, defaultAccountName, accountTable );
+		return new DBConfiguration( defaultDBAdaptorName, dbAdaptorTable, defaultServerName, serverTable, defaultAccountName, accountTable );
 	}
 	
 	
@@ -274,6 +283,27 @@ public class DBConfiguration {
 	 */
 	static public void setDefaultURL( final URL url ) throws BackingStoreException {
 		setDefaultURLSpec( url.toString() );
+	}
+
+
+
+	/**
+	 * Get the default database adaptor
+	 * @return the database adaptor
+	 */
+	public DatabaseAdaptor getDefaultDatabaseAdaptor() {
+		if ( DATABASE_ADAPTOR_MAP == null )  return null;
+		
+		final String className = DATABASE_ADAPTOR_MAP.get( DEFAULT_DATABASE_ADAPTOR_NAME );
+		if ( className == null || className.equals( "" ) )  return null;
+		try {
+			final Class<?> databaseAdaptorClass = Class.forName( className );
+			return (DatabaseAdaptor)databaseAdaptorClass.newInstance();
+		}
+		catch(Exception exception) {
+			final String message = "Failed to instantiate database adaptor for class:  " + className;
+			throw new RuntimeException( message, exception );
+		}
 	}
 }
 

@@ -77,9 +77,10 @@ public abstract class DatabaseAdaptor {
 	 * @return return a new instance of the default database adaptor (OracleDatabaseAdaptor)
 	 */
 	static public DatabaseAdaptor getInstance() {
-		return new OracleDatabaseAdaptor();
+		final DBConfiguration dbConfiguration = DBConfiguration.getInstance();
+		return dbConfiguration != null ? dbConfiguration.getDefaultDatabaseAdaptor() : null;
 	}
-	
+
 	
 	/**
 	 * Fetch all schemas from the connected database
