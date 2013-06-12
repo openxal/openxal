@@ -30,7 +30,7 @@ class ImageEntryTransferable implements Transferable {
 	static {
 		DataFlavor flavor = null;
 		try {
-			flavor = new DataFlavor( DataFlavor.javaJVMLocalObjectMimeType + ";class=gov.sns.apps.labbook.ImageEntry" );
+			flavor = new DataFlavor( DataFlavor.javaJVMLocalObjectMimeType + ";class=xal.app.labbook.ImageEntry" );
 		}
 		catch( ClassNotFoundException exception ) {
 			exception.printStackTrace();
