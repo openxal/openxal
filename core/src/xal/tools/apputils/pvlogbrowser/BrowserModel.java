@@ -98,7 +98,7 @@ public class BrowserModel {
 	 * @throws DatabaseException if the connection or schema fetch fails
 	 */
 	public void connect( final ConnectionDictionary dictionary ) throws DatabaseException {
-		final Connection connection = DatabaseAdaptor.getInstance().getConnection( dictionary );
+		final Connection connection = dictionary.getDatabaseAdaptor().getConnection( dictionary );
 		setDatabaseConnection( connection, dictionary );
 	}
 	
