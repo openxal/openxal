@@ -30,7 +30,7 @@ public class AttachmentEntryTransferable implements Transferable {
 	static {
 		DataFlavor flavor = null;
 		try {
-			flavor = new DataFlavor( DataFlavor.javaJVMLocalObjectMimeType + ";class=gov.sns.apps.labbook.AttachmentEntry" );
+			flavor = new DataFlavor( DataFlavor.javaJVMLocalObjectMimeType + ";class=xal.app.labbook.AttachmentEntry" );
 		}
 		catch( ClassNotFoundException exception ) {
 			exception.printStackTrace();
