@@ -19,50 +19,50 @@ import xal.tools.beam.IConstants;
 abstract public class AbstractDeviceDataSource {
 	/** singleton design data source which carries no state */
 	final static private DesignDeviceDataSource DESIGN_DATA_SOURCE;
-
-
+    
+    
 	/** Speed of light in billions of meters per second */
 	final static double LIGHT_SPEED = IConstants.LightSpeed / 1e9;
-
-
+    
+    
 	// static initializer
 	static {
 		DESIGN_DATA_SOURCE = new DesignDeviceDataSource();
 	}
-
+    
 	
 	/** Get the field for the specified magnet */
 	abstract public double getField( final Magnet magnet );
-
-
+    
+    
 	/** Get this source's label */
 	abstract public String getLabel();
-
-
+    
+    
 	/** Get the magnet's bend angle per unit element length */
 	abstract public double getBendAnglePerLength( final Bend bend, final double unitCharge, final double momentum );
-
-
+    
+    
 	/** Get the magnet's bend angle per unit element length */
 	abstract public double getBendEntranceAngle( final Bend bend, final double unitCharge, final double momentum );
-
-
+    
+    
 	/** Get the magnet's bend angle per unit element length */
 	abstract public double getBendExitAngle( final Bend bend, final double unitCharge, final double momentum );
-
-
+    
+    
 	/** Get an instance of the design data source */
 	static public DesignDeviceDataSource getDesignDataSourceInstance() {
 		return DESIGN_DATA_SOURCE;
 	}
-
-
+    
+    
 	/** Get an instance of the live data source */
 	static public LiveMachineDesignRFDeviceDataSource getLiveMachineDesignRFDataSourceInstance() {
 		return new LiveMachineDesignRFDeviceDataSource();
 	}
-
-
+    
+    
 	/** Get the PV Logger Snapshot Data Source */
 	static public PVLoggerSnapshotDeviceDataSource getPVLoggerDataSourceInstance( final long pvLoggerID ) {
 		return new PVLoggerSnapshotDeviceDataSource( pvLoggerID );
@@ -78,8 +78,8 @@ abstract class MeasurementDataSource extends AbstractDeviceDataSource {
 		final double field = getField( bend );
 		return unitCharge * field * LIGHT_SPEED / momentum;
 	}
-
-
+    
+    
 	/** Get the magnet's bend angle per unit element length */
 	public double getBendEntranceAngle( final Bend bend, final double unitCharge, final double momentum ) {
 		final double designAngle = bend.getEntrRotAngle() * Math.PI / 180.0;
@@ -87,8 +87,8 @@ abstract class MeasurementDataSource extends AbstractDeviceDataSource {
 		final double field = getField( bend );
 		return unitCharge * field * Math.abs( designAngle / designField );
 	}
-
-
+    
+    
 	/** Get the magnet's bend angle per unit element length */
 	public double getBendExitAngle( final Bend bend, final double unitCharge, final double momentum ) {
 		final double designAngle = bend.getExitRotAngle() * Math.PI / 180.0;
@@ -104,18 +104,18 @@ abstract class MeasurementDataSource extends AbstractDeviceDataSource {
 class PVLoggerSnapshotDeviceDataSource extends MeasurementDataSource {
 	/** PVLogger Data Source */
 	final private PVLoggerDataSource LOGGER_DATA_SOURCE;
-
+    
 	/** Constructor */
 	public PVLoggerSnapshotDeviceDataSource( final long pvLoggerID ) {
 		LOGGER_DATA_SOURCE = new PVLoggerDataSource( pvLoggerID );
 	}
-
-
+    
+    
 	/** Get this source's label */
 	public String getLabel() {
 		return "Logged Machine Design RF Lattice";
 	}
-
+    
 	
 	/** Get the field for the specified magnet */
 	public double getField( final Magnet magnet ) {
@@ -136,7 +136,7 @@ class LiveMachineDesignRFDeviceDataSource extends MeasurementDataSource {
 	public String getLabel() {
 		return "Live Machine Design RF Lattice";
 	}
-
+    
 	
 	/** Get the field for the specified magnet */
 	public double getField( final Magnet magnet ) {
@@ -165,26 +165,26 @@ class DesignDeviceDataSource extends AbstractDeviceDataSource {
 	public String getLabel() {
 		return "Design Lattice";
 	}
-
-
+    
+    
 	/** Get the magnet's bend angle per unit element length */
 	public double getBendAnglePerLength( final Bend bend, final double unitCharge, final double momentum ) {
 		// take the design angle as is without accounting for unit charge since it is a definition
 		return bend.getDfltBendAngle() / bend.getEffLength() * Math.PI / 180.0;
 	}
-
-
+    
+    
 	/** Get the magnet's bend angle per unit element length */
 	public double getBendEntranceAngle( final Bend bend, final double unitCharge, final double momentum ) {
 		return bend.getEntrRotAngle() * Math.PI / 180.0;
 	}
-
-
+    
+    
 	/** Get the magnet's bend angle per unit element length */
 	public double getBendExitAngle( final Bend bend, final double unitCharge, final double momentum ) {
 		return bend.getExitRotAngle() * Math.PI / 180.0;
 	}
-
+    
 	
 	/** Get the field for the specified magnet */
 	public double getField( final Magnet magnet ) {

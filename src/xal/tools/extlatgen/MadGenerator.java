@@ -36,7 +36,7 @@ import xal.tools.beam.CovarianceMatrix;
  * MadGenerator object with an XAL lattice as input, then call the method
  * createMadInput() which one can specify either DESIGN or LIVE data as
  * argument.
- * 
+ *
  * @author C.M.Chu
  * @version 0.1 31 Oct 2003
  */
@@ -47,20 +47,20 @@ public class MadGenerator {
 	
 	/** default number format */
 	final static NumberFormat NUMBER_FORMAT;
-
+    
 	/** Probe for initial condition */
 	protected Probe myProbe;
-
+    
 	protected java.util.List<AcceleratorSeq> _sequenceChain = null;
-
+    
 	/** for design values */
 	public static final int PARAMSRC_DESIGN = 2;
-
+    
 	/** for live data from the machine */
 	public static final int PARAMSRC_LIVE = 3;
-
+    
 	protected String myLatticeName = null;
-
+    
 	/** sign of particle charge */
 	protected double Q = -1.;
 	
@@ -69,7 +69,7 @@ public class MadGenerator {
 	
 	/** beam initial condition */
 	protected double beamci[] = { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
-
+    
 	/** indicates whether to use design bend angles regardless of the specified data source */
 	private boolean _useDesignBendAngles;
 	
@@ -106,14 +106,14 @@ public class MadGenerator {
 	public MadGenerator( String latticeName, java.util.List<AcceleratorSeq> sequenceChain, TransferMapProbe envProbe ) {
 		this( latticeName, sequenceChain, (Probe)envProbe );
 	}
-
+    
 	
 	/** Constructor */
 	public MadGenerator(String latticeName, java.util.List<AcceleratorSeq> sequenceChain, EnvelopeProbe envProbe) {
 		this( latticeName, sequenceChain, (Probe)envProbe );
 	}
-
-
+    
+    
 	/** Constructor */
 	public MadGenerator( final String latticeName, final java.util.List<AcceleratorSeq> sequenceChain, final Probe envProbe) {
 		myLatticeName = latticeName;
@@ -121,8 +121,8 @@ public class MadGenerator {
 		_sequenceChain = sequenceChain;
 		_useDesignBendAngles = true;
 	}
-
-
+    
+    
 	/** Set whether to use the design bend angles independent of the specified data source */
 	public void setUseDesignBendAngles( final boolean useDesignBendAngles ) {
 		_useDesignBendAngles = useDesignBendAngles;
@@ -169,29 +169,29 @@ public class MadGenerator {
 	public void createMadInput( final AbstractDeviceDataSource deviceDataSource, final File outputFile ) throws IOException {
 		// select the data source for bends depending on whether the flag has been set to use design bend angles
 		final AbstractDeviceDataSource bendDataSource = _useDesignBendAngles ? AbstractDeviceDataSource.getDesignDataSourceInstance() : deviceDataSource;
-
+        
 		if (myLatticeName == null) {
 			myLatticeName = _sequenceChain.get(0).getId() + "-" + _sequenceChain.get( _sequenceChain.size() - 1 ).getId();
 		}
-
+        
 		File mad_file = outputFile != null ? outputFile : new File( myLatticeName + ".mad" );
 		System.out.println( "Exporting MAD optics to file: " + mad_file.getAbsolutePath() );
 		final FileWriter MAD_WRITER = new FileWriter( mad_file );
 		final Date today = new Date();
-
+        
 		TraceXalUnitConverter uc = TraceXalUnitConverter.newConverter( 402500000., myProbe.getSpeciesRestEnergy(), myProbe.getKineticEnergy() );
-
+        
 		double momentum = RelativisticParameterConverter.computeMomentumFromEnergies( myProbe.getKineticEnergy(), myProbe.getSpeciesRestEnergy() ) / 1.e9;
 		System.out.println( "momentum = " + momentum );
-
+        
 		// Q = myProbe.getSpeciesCharge()/1.602e-19;
 		Q = myProbe.getSpeciesCharge();
-				
+        
 		final String sourceLabel = deviceDataSource.getLabel();
 		MAD_WRITER.write( "TITLE, \"" + sourceLabel + ": " + myLatticeName + "  Date created: " + today.toString() + "\";\n\n" );
-
+        
 		int driftCounter = 0;
-
+        
 		MAD_ELEMENTS = new ArrayList<MadElement>();
 		for (int i = 0; i < _sequenceChain.size(); i++) {
 			Lattice myLattice = createLattice( _sequenceChain.get(i) );
@@ -217,7 +217,7 @@ public class MadGenerator {
 						currentThickNodePath = 0.0;
 					}
 				}
-
+                
 				// for regular drift space, diagnostic devices
 				if (elementType.equals("drift")) {
 					addElement( formattedName + driftCounter, "DRIFT, L=" + NUMBER_FORMAT.format(elementLength) );
@@ -244,9 +244,9 @@ public class MadGenerator {
 				else if ( elementType.equals("dipole") ) {
 					final xal.smf.impl.Bend bendNode = (xal.smf.impl.Bend)node;
 					final double bendMagneticLength = bendNode.getEffLength();
-
+                    
 					final double bendAngle = elementLength * bendDataSource.getBendAnglePerLength( bendNode, Q, momentum );
-
+                    
 					// if the element is the first for the bend magnet then we apply the entrance angle for this element
 					// an element is determined to be the first element of a bend if the current path through the bend is at the beginning (i.e. zero).
 					final double entranceAngle = currentThickNodePath == 0.0 ? bendDataSource.getBendEntranceAngle( bendNode, Q, momentum ) : 0.0;
@@ -255,7 +255,7 @@ public class MadGenerator {
 					// an element is determined to be the last element of a bend if the path after having passed through the element equals the magnetic length of the whole bend
 					final double lengthThreshold = 0.99999;	// ideally this should be 1.0, but we must allow for numerical precision errors
 					final double exitAngle = currentThickNodePath > lengthThreshold * bendMagneticLength ? bendDataSource.getBendExitAngle( bendNode, Q, momentum ) : 0.0;
-
+                    
 					final double k1 = bendNode.getQuadComponent();
 					
 					addElement( formattedName, "SBEND, L=" + NUMBER_FORMAT.format( elementLength ) + ", ANGLE=" + NUMBER_FORMAT.format( bendAngle ) + ", K1=" + NUMBER_FORMAT.format( k1 ) + ", " + "E1=" + NUMBER_FORMAT.format( entranceAngle ) + ", " + "E2=" + NUMBER_FORMAT.format( exitAngle ) );
@@ -286,10 +286,10 @@ public class MadGenerator {
 					final double k2 = Q * field * LIGHT_SPEED / momentum;
 					addElement( formattedName, "SEXTUPOLE, L=" + NUMBER_FORMAT.format( elementLength ) + ", K2=" + NUMBER_FORMAT.format( k2 ) );
 				}
-//				// RF Cavities are not handled properly, so comment out the RF Cavity code
-//				// for rf gaps
-//				else if (elementType.equals("rfgap")) {
-//				}
+                //				// RF Cavities are not handled properly, so comment out the RF Cavity code
+                //				// for rf gaps
+                //				else if (elementType.equals("rfgap")) {
+                //				}
 				else {
 					if ( node != null ) {
 						System.out.println( "Ignored element type: " + elementType + ", node: " + node.getId() + ", length: " + node.getLength() );
@@ -341,7 +341,7 @@ public class MadGenerator {
 			MAD_WRITER.write( "SEGMENT" + (lineIndex + 1) + "," );
 		}
 		MAD_WRITER.write( "SEGMENT" + lineCount + ");\n" );
-				
+        
 		final StringBuffer footerBuffer = new StringBuffer();
 		footerBuffer.append( "BEAM, MASS=" + NUMBER_FORMAT.format(myProbe.getSpeciesRestEnergy() / 1.e9) );
 		footerBuffer.append( ", CHARGE=" + NUMBER_FORMAT.format( myProbe.getSpeciesCharge() ) );
@@ -351,7 +351,7 @@ public class MadGenerator {
             CovarianceMatrix covarianceMatrix = ((EnvelopeProbe)myProbe).createProbeState().getCorrelationMatrix();
             
             Twiss[] inputTwiss = covarianceMatrix.computeTwiss();
-
+            
 			footerBuffer.append( "   SELECT, flag=twiss, range = #s/#e, COLUMN = NAME,KEYWORD,S,L,K1,x,y,BETX,ALFX,DX,BETY,ALFY,DY;\n" );
 			footerBuffer.append( "   SELECT, FLAG=second, RANGE=#S/E;\n" );
 			footerBuffer.append( "   TWISS" );
@@ -371,13 +371,13 @@ public class MadGenerator {
 		footerBuffer.append( "   plot, haxis=s, vaxis1=betx,bety, range=#s/#e, style=100, colour=100, notitle=true;\n" );
 		footerBuffer.append( "   plot, haxis=s, vaxis1=x,y, range=#s/#e, style=100, colour=100, notitle=true;\n" );
 		footerBuffer.append( "STOP;\n" );
-
+        
 		MAD_WRITER.write( footerBuffer.toString() );
-
+        
 		MAD_WRITER.close();
-
+        
 	}
-
+    
 	/** strip the leading sequence and device category identifier (i.e. Ring_Mag:), replace any "-" or ":" with "_" in the device name or beamline name */
 	public String formatName( final String name ) {
 		if ( !( name.substring( 0, 3 ).equals( "END" ) ) && !( name.substring( 0, 3 ).equals( "BEG" ) ) ) {
@@ -386,7 +386,7 @@ public class MadGenerator {
 		}
 		return name;
 	}
-
+    
 	/**
 	 * create an XAL intermediate lattice
 	 * @param accSeq accelerator sequence for the lattice
@@ -406,9 +406,9 @@ public class MadGenerator {
 		} catch (LatticeError lerr) {
 			System.out.println(lerr.getMessage());
 		}
-
+        
 		return lattice;
-
+        
 	}
 }
 
