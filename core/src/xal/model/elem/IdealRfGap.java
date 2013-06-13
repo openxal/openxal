@@ -478,7 +478,7 @@ public class IdealRfGap extends ThinElement implements IRfGap {
         double Q   = Math.abs( probe.getSpeciesCharge() );
         
         theEnergyGain = Q*EL*Math.cos(phi0) * TTFFit.evaluateAt(bc);
-        System.out.println("theEnergyGain = " + theEnergyGain + ", EL = " + EL + ", TTF = " + TTFFit.evaluateAt(bc) + ", bc = " + bc);
+//        System.out.println("theEnergyGain = " + theEnergyGain + ", EL = " + EL + ", TTF = " + TTFFit.evaluateAt(bc) + ", bc = " + bc);
         
         //this means phi0 = 0 has max. acceleartion
         
@@ -818,7 +818,7 @@ public class IdealRfGap extends ThinElement implements IRfGap {
 		//double kr = Math.PI * Q * ETL * f * Math.sin(-phi) / (c * Er * bgbar * bgbar);
 		double kr = Math.PI * Q * getE0()*TTFFit.evaluateAt(b_avg)*getCellLength() * f * Math.sin(-phi) / (c * Er * bgbar * bgbar);//should TTF be at bi, or bbar?
 
-		System.out.println("kr = " + kr);		
+//		System.out.println("kr = " + kr);		
 
 		return kr;
     };
@@ -878,7 +878,7 @@ public class IdealRfGap extends ThinElement implements IRfGap {
 		double kr = this.compTransFocusing(probe);
 		double kz = -2.0* kr * gbar * gbar;//-2.0 * kr * gbar * gbar;
         
-		System.out.println("kz = " + kz);
+//		System.out.println("kz = " + kz);
         return kz;
     };
     
