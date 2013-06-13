@@ -381,7 +381,7 @@ public class IdealRfGap extends ThinElement implements IRfGap {
 		//the time when probe will exit this gap
 		upstreamExitTime = probe.getTime() + dT + (getCellLength()/2.) / (bf * IElement.LightSpeed);
 
-    	System.out.println("dT = " + dT);
+//    	System.out.println("dT = " + dT);
         return dT;
     }
     
