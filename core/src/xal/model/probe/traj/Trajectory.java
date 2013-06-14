@@ -511,7 +511,7 @@ public abstract class Trajectory implements IArchive {
         List<ProbeState>                  lstStates = setStates.toList();
         
         ProbeState[] arrStates = new ProbeState[lstStates.size()];
-        return (ProbeState[]) lstStates.toArray(arrStates);
+        return lstStates.toArray(arrStates);
     }
 
     /**
