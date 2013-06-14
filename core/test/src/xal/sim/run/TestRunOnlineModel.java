@@ -20,13 +20,9 @@ import xal.smf.AcceleratorSeq;
 import xal.smf.data.XMLDataManager;
 import xal.test.ResourceManager;
 
-import java.text.NumberFormat;
-import java.util.ArrayList;
-
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import Jama.Matrix;
 
 
 /**
