@@ -95,6 +95,7 @@ public class TestScenario {
 
     /**
      * Test method for {@link xal.sim.scenario.Scenario#run()}.
+     * Uses an adaptive envelope probe.
      */
     @Test
     public void testRunViaNewFromEditContext() {
@@ -103,7 +104,7 @@ public class TestScenario {
         
         try {
             Scenario        model = Scenario.newScenarioFor(seq);
-            IAlgorithm      algor = Tracker.newFromEditContext(seq);
+            IAlgorithm      algor = AlgorithmFactory.createEnvTrackerAdapt(seq);
             EnvelopeProbe   probe = ProbeFactory.getEnvelopeProbe(seq, algor);
             
             probe.initialize();
@@ -112,7 +113,7 @@ public class TestScenario {
             
             model.run();
             
-        } catch (ModelException e) {
+        } catch (ModelException | InstantiationException e) {
 
             fail("Unable to run Scenario");
             e.printStackTrace();

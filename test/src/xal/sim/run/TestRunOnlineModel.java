@@ -1,12 +1,11 @@
 package xal.sim.run;
 
-import static org.junit.Assert.*;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
-import xal.model.IAlgorithm;
 import xal.model.ModelException;
 import xal.model.alg.EnvTrackerAdapt;
 import xal.model.alg.ParticleTracker;
-import xal.model.alg.Tracker;
 import xal.model.alg.TransferMapTracker;
 import xal.model.probe.EnvelopeProbe;
 import xal.model.probe.ParticleProbe;
@@ -19,14 +18,6 @@ import xal.smf.Accelerator;
 import xal.smf.AcceleratorSeq;
 import xal.smf.data.XMLDataManager;
 import xal.test.ResourceManager;
-
-import java.text.NumberFormat;
-import java.util.ArrayList;
-
-import org.junit.BeforeClass;
-import org.junit.Test;
-
-import Jama.Matrix;
 
 
 /**
@@ -125,21 +116,21 @@ public class TestRunOnlineModel {
      * Tests
      */
     
-    /**
-     * Test the <i>create default algorithm</i> method of the <code>{@link Tracker}</code>
-     * base class (see <code>{@link Tracker#newFromEditContext(AcceleratorSeq)}</code>).
-     * This method has been deprecated, however, and should not be used. 
-     *
-     * @author Christopher K. Allen
-     * @since  Oct 29, 2012
-     */
-    @Test
-    public void testTrackerNewFromEditContext() {
-        IAlgorithm algDef = Tracker.newFromEditContext(SEQ_TEST);
-        
-        if (algDef == null) 
-            fail("Tracker#newFromEditContext() failure");
-    }
+//    /**
+//     * Test the <i>create default algorithm</i> method of the <code>{@link Tracker}</code>
+//     * base class (see <code>{@link Tracker#newFromEditContext(AcceleratorSeq)}</code>).
+//     * This method has been deprecated, however, and should not be used. 
+//     *
+//     * @author Christopher K. Allen
+//     * @since  Oct 29, 2012
+//     */
+//    @Test
+//    public void testTrackerNewFromEditContext() {
+//        IAlgorithm algDef = Tracker.newFromEditContext(SEQ_TEST);
+//        
+//        if (algDef == null) 
+//            fail("Tracker#newFromEditContext() failure");
+//    }
     
 	/**
 	 * Run the online model for an envelope probe.
