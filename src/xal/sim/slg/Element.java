@@ -284,21 +284,24 @@ public abstract class Element implements VisitorListener, Cloneable {
             
             args[0]=new Double(positions[0]);
             args[1]=new Double(positions[1]);
-            if (getPosition() > ((Double)args[0]).doubleValue()) 
-                args[2]=getName()+"x";
-            else
-                args[2]=getName();
+//            if (getPosition() > ((Double)args[0]).doubleValue()) 
+//                args[2]=getName()+"x";
+//            else
+//                args[2]=getName();
+            args[2]=getName();
+
             upstream=(Element)constructor.newInstance(args);
             upstream.setAcceleratorNode(this.xalNode);
             
             args[0]=new Double(positions[2]);
             args[1]=new Double(positions[3]);
-            if (getType() != "drift") {
-                args[2]=getName()+"y";
-            }
-            else {
-                args[2]=getName();
-            }
+//            if (getType() != "drift") {
+//                args[2]=getName()+"y";
+//            }
+//            else {
+//                args[2]=getName();
+//            }
+            args[2]=getName();
             
             downstream=(Element)constructor.newInstance(args);
             downstream.setAcceleratorNode(this.xalNode);
