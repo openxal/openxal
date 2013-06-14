@@ -96,29 +96,30 @@ public class TestScenario {
     /**
      * Test method for {@link xal.sim.scenario.Scenario#run()}.
      */
-    @Test
-    public void testRunViaNewFromEditContext() {
-        Accelerator     accel = ResourceManager.getTestAccelerator();
-        AcceleratorSeq  seq   = accel.getSequence(STR_ACCL_SEQ_ID);
-        
-        try {
-            Scenario        model = Scenario.newScenarioFor(seq);
-            IAlgorithm      algor = Tracker.newFromEditContext(seq);
-            EnvelopeProbe   probe = ProbeFactory.getEnvelopeProbe(seq, algor);
-            
-            probe.initialize();
-            model.setProbe( probe );
-            model.resync();
-            
-            model.run();
-            
-        } catch (ModelException e) {
-
-            fail("Unable to run Scenario");
-            e.printStackTrace();
-        }
-        
-    }
+// dont' call this method since it calls the deprecated newFromEditContext() method.
+//    @Test
+//    public void testRunViaNewFromEditContext() {
+//        Accelerator     accel = ResourceManager.getTestAccelerator();
+//        AcceleratorSeq  seq   = accel.getSequence(STR_ACCL_SEQ_ID);
+//        
+//        try {
+//            Scenario        model = Scenario.newScenarioFor(seq);
+//            IAlgorithm      algor = Tracker.newFromEditContext(seq);
+//            EnvelopeProbe   probe = ProbeFactory.getEnvelopeProbe(seq, algor);
+//            
+//            probe.initialize();
+//            model.setProbe( probe );
+//            model.resync();
+//            
+//            model.run();
+//            
+//        } catch (ModelException e) {
+//
+//            fail("Unable to run Scenario");
+//            e.printStackTrace();
+//        }
+//        
+//    }
 
     /**
      * Test method for {@link xal.sim.scenario.Scenario#run()}.
