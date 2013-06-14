@@ -7,10 +7,14 @@ import xal.tools.data.IArchive;
 import xal.model.probe.Probe;
 import xal.model.xml.ParsingException;
 
+import java.util.AbstractMap;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * Manages the history for a probe.  Saves <code>ProbeState</code> objects,
@@ -44,6 +48,150 @@ public abstract class Trajectory implements IArchive {
     private static final String DESCRIPTION_LABEL = "description";
 
 
+    /*
+     * Local Types
+     */
+    
+    /**
+     * <p>
+     * Maintains a list of probe states for every each element class.  Each element
+     * class is refined as the collection is built.  States are placed into the map
+     * using the modeling element ID as the key.  If it is found that that element ID
+     * is similar to an existing element ID, than the state is entered into the element
+     * ID class.  By similar, we mean that one ID string can be contained within another
+     * ID (or is equal to).
+     * </p>
+     * <p>
+     * The idea is that each element ID class is then representative of probe states associated
+     * with a single hardware node.  See {@link IdentifierEquivClass} for another explanation.  
+     * </p>
+     * 
+     * @param <S>   probe state type for particular probe trajectory
+     * 
+     * @author Christopher K. Allen
+     * @since  Jun 5, 2013
+     */
+    private static class ElementStateMap<S extends ProbeState>  {
+        
+        /*
+         * Local Attributes
+         */
+        
+        /** map from element prefix to element states */
+        private final Map<String, RealNumericIndexer<S>>    mapStateList;
+        
+        /** the last map entry to be accessed (added to) */
+        private Map.Entry<String, RealNumericIndexer<S>>    entryLast;
+        
+        
+        /*
+         * Initialization
+         */
+        
+        /**
+         * Creates a new uninitialized instance of <code>ElementStateMap</code>.
+         *
+         * @author Christopher K. Allen
+         * @since  Jun 5, 2013
+         */
+        public ElementStateMap() {
+
+            // Create the comparator for ordering the tree map nodes
+            //  Then create the map itself
+            Comparator<String>  cmpIdClsOrder = new Comparator<String>() {
+
+                @Override
+                public int compare(String id1, String id2) {
+                    return id1.compareTo(id2);
+                }
+            };
+            
+            this.mapStateList = new TreeMap<String, RealNumericIndexer<S>>(cmpIdClsOrder);
+            
+            // Create a blank last map entry
+            String                  ideEmpty   = new String("");
+            RealNumericIndexer<S>   setIdEmpty = new RealNumericIndexer<S>();
+            
+            this.mapStateList.put(ideEmpty, setIdEmpty);
+            this.entryLast = new AbstractMap.SimpleEntry<String, RealNumericIndexer<S>>(ideEmpty, setIdEmpty);
+        }
+
+        
+        /*
+         * Operations
+         */
+        
+        /**
+         * <p>
+         * Enters the given probe state into the map using the element ID as the 
+         * initial key.  Note that this key can be changed internally if the
+         * element ID belongs to an element ID class already identified.
+         * </p>
+         * <p>
+         * To improve efficiency the method checks if the given element ID is the same
+         * (same equivalence class, that is) as the last one provided in the previous call
+         * to this method.  A reference to the list of elements for that ID is kept
+         * on hand so a full map search is not used.
+         * </p>
+         * 
+         * @param strElemId     string identifier of the modeling element associated with the probe state
+         * @param state         probe state to be entered into the map
+         *
+         * @author Christopher K. Allen
+         * @since  Jun 5, 2013
+         */
+        public void putState(String strElemId, S state) {
+            
+            // Create the ID class for the element ID (needed for indexing elements)
+            //  and get the position of the state within the sequence (needed for indexing states within elements)
+            String                    idElem = strElemId;
+            double                    dblPos = state.getPosition();
+            
+            // The state is a member of the last equivalence class accessed
+            if ( this.entryLast.getKey().equals(idElem) ) {
+                RealNumericIndexer<S> setStates = this.entryLast.getValue();
+                
+                setStates.add(dblPos, state);
+                return;
+            }
+            
+            // This is a new equivalence class - that is, different then the last accessed
+            //  Get the list of states corresponding to the ID class
+            RealNumericIndexer<S>    setStates = this.mapStateList.get(idElem);
+            
+            // If there is no list for this ID class, create one and add it to the map
+            if (setStates == null) {
+                setStates = new RealNumericIndexer<S>();
+                
+                this.mapStateList.put(idElem, setStates);
+            }
+            
+            // Add the given state to the list
+            setStates.add(dblPos, state);
+            
+            // Save the last list to be accessed
+            this.entryLast = new AbstractMap.SimpleEntry<String, RealNumericIndexer<S>>(idElem, setStates);
+        }
+        
+        /**
+         * Returns a list of probe states corresponding to the identifier
+         * class containing the given modeling element ID.
+         * 
+         * @param strElemId     model element identifier
+         * 
+         * @return              all the probe states which are associated with the given element ID and its class,
+         *                      or <code>null</code> if there are none
+         *
+         * @author Christopher K. Allen
+         * @since  Jun 5, 2013
+         */
+        public RealNumericIndexer<S>  getStates(String strElemId) {
+            RealNumericIndexer<S> lstStates = this.mapStateList.get(strElemId);
+            
+            return lstStates;
+        }
+    }
+
 
     /*
      *  Local Attributes
@@ -53,10 +201,13 @@ public abstract class Trajectory implements IArchive {
     private String description = "";
     
     /** the history of probe states along the trajectory */
-    private RealNumericIndexer<ProbeState> _history;
+    private RealNumericIndexer<ProbeState>      _history;
+    
+    /** Probe states by element name */
+    private final ElementStateMap<ProbeState>   mapStates;
     
     /** time stamp of trajectory */
-    private Date timestamp = new Date();
+    private Date                                timestamp = new Date();
 
 
 
@@ -135,7 +286,8 @@ public abstract class Trajectory implements IArchive {
      * Create a new, empty <code>Trajectory</code> object.
      */
     public Trajectory() {
-		_history = new RealNumericIndexer<ProbeState>();
+		this._history  = new RealNumericIndexer<ProbeState>();
+        this.mapStates = new ElementStateMap<ProbeState>();
     }
 	
 
@@ -177,7 +329,11 @@ public abstract class Trajectory implements IArchive {
      * @param state     new addition to trajectory
      */
     public void saveState( final ProbeState state ) {
-        _history.add( state.getPosition(), state );
+        double  dblPos = state.getPosition();
+        _history.add( dblPos, state );
+        
+        String  strElemId = state.getElementId();
+        this.mapStates.putState(strElemId, state);
     }
     
     /**
@@ -201,14 +357,12 @@ public abstract class Trajectory implements IArchive {
      */
     public String getDescription() {return description; }
 
-
     /**
      * Return the time stamp of the trajectory object
      * 
      * @return  trajectory time stamp
      */
     public Date getTimestamp() { return timestamp; }
-
     
     
     /**
@@ -246,7 +400,6 @@ public abstract class Trajectory implements IArchive {
         return stateWithIndex(numStates()-1);
     }
     
-    
 	/**
 	 * Get the list of states.
 	 *
@@ -255,8 +408,6 @@ public abstract class Trajectory implements IArchive {
 	protected List<ProbeState> getStates() {
 		return _history.toList();
 	}
-	
-
 	
     /**
      * Returns the probe state at the specified position.  Returns null if there
@@ -280,7 +431,6 @@ public abstract class Trajectory implements IArchive {
 		final int index = _history.getClosestIndex( position );
 		return _history.size() > 0 ? _history.get( index ) : null;
 	}
-	
 
     /**
      * Returns the states that fall within the specified position range, inclusive.
@@ -304,7 +454,6 @@ public abstract class Trajectory implements IArchive {
 		}
     }
 	
-	
 	/**
 	 * Get the probe state for the specified element ID.
 	 * @param elemID the name of the element for which to get the probe state
@@ -313,14 +462,13 @@ public abstract class Trajectory implements IArchive {
 	public ProbeState stateForElement( final String elemID ) {
 		return statesForElement( elemID )[0];
 	}
-
 	
     /**
      * Returns the states associated with the specified element.
      * @param strElemId    the name of the element to search for
      * @return             an array of <code>ProbeState</code> objects for that element
      */
-    public ProbeState[] statesForElement(String strElemId) {
+    public ProbeState[] statesForElement_old(String strElemId) {
         List<ProbeState> result = new ArrayList<ProbeState>();
         Iterator<ProbeState> it = stateIterator();
         while (it.hasNext()) {
@@ -332,6 +480,38 @@ public abstract class Trajectory implements IArchive {
         }
         ProbeState[] resultArray = new ProbeState[result.size()];
         return result.toArray(resultArray);
+    }
+
+    /**
+     * <p>
+     * Revised version of state lookup method for an element ID
+     * class, which theoretically corresponds to a hardware node
+     * ID.  The element ID class consists of all the modeling element
+     * string identifiers which have the same prefix.  Since the lattice
+     * generator creates element IDs by suffixing accelerator node IDs,
+     * this technique hopefully works.
+     * </p>
+     * <p>
+     * The revised part comes from the fact that the states are now stored and retrieved by
+     * hashing, rather that by a linear search.  Specifically, a list of probe
+     * states for every element ID class is hashed using the prefix of the 
+     * element ID class.
+     * </p>
+     * 
+     * @param strElemId element ID which identifies the accelerator node 
+     * 
+     * @return          all the probe states associated with the element ID class containing 
+     *                  the given element ID
+     *
+     * @author Christopher K. Allen
+     * @since  Jun 5, 2013
+     */
+    public ProbeState[] statesForElement(String strElemId) {
+        RealNumericIndexer<ProbeState>    setStates = this.mapStates.getStates(strElemId);
+        List<ProbeState>                  lstStates = setStates.toList();
+        
+        ProbeState[] arrStates = new ProbeState[lstStates.size()];
+        return (ProbeState[]) lstStates.toArray(arrStates);
     }
 
     /**
