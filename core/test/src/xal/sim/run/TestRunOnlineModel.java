@@ -129,14 +129,15 @@ public class TestRunOnlineModel {
      * @author Christopher K. Allen
      * @since  Oct 29, 2012
      */
-    @Test
-    public void testTrackerNewFromEditContext() {
-        IAlgorithm algDef = Tracker.newFromEditContext(SEQ_TEST);
-        
-        if (algDef == null) 
-            fail("Tracker#newFromEditContext() failure");
-    }
-    
+// dont' call this method since it calls the deprecated newFromEditContext() method.
+//    @Test
+//    public void testTrackerNewFromEditContext() {
+//        IAlgorithm algDef = Tracker.newFromEditContext(SEQ_TEST);
+//        
+//        if (algDef == null) 
+//            fail("Tracker#newFromEditContext() failure");
+//    }
+
 	/**
 	 * Run the online model for an envelope probe.
 	 *
