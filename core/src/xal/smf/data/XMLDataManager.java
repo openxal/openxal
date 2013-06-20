@@ -67,6 +67,14 @@ public class XMLDataManager {
         acceleratorManager = new AcceleratorManager();
         tableManager = new TableManager();
         mainManager = new MainManager( urlPath );
+        try {
+            mainManager.refresh();
+        }
+        catch( XmlDataAdaptor.ResourceNotFoundException exception ) {
+            // if the file doesn't exist, don't load it
+            System.err.println( exception );
+            exception.printStackTrace();
+        }
     }
 	
 	
@@ -214,6 +222,24 @@ public class XMLDataManager {
         setMainUrlSpec(urlSpec);
     }
     
+    /** 
+	 * Get absolute URL specifications given a URL spec relative to the main URL
+	 * @return absolute URL specification
+	 */
+    public String absoluteUrlSpec( final String urlSpec ) {
+        URL mainUrl = mainUrl();
+        URL absoluteUrl = null;
+        
+        try {
+            absoluteUrl = new URL( mainUrl, urlSpec );
+        }
+        catch( MalformedURLException excpt ) {
+            System.err.println( excpt );
+            excpt.printStackTrace();
+        }
+        
+        return absoluteUrl.toString();
+    }
     
 	/**
 	 * Get the URL spec to the accelerator optics.
@@ -439,19 +465,11 @@ public class XMLDataManager {
         
         
         protected URL mainUrl;   /** URL of main XML source */
-		
+		protected String mainSchema = "main.xsd";
 		
 		/** Constructor */
         public MainManager( final String urlSpec ) {
             setMainUrlSpec( urlSpec );
-            try {
-                refresh();
-            }
-            catch( XmlDataAdaptor.ResourceNotFoundException exception ) {
-                // if the file doesn't exist, don't load it
-                System.err.println( exception );
-                exception.printStackTrace();
-            }
         }
 
         
@@ -476,8 +494,8 @@ public class XMLDataManager {
                 System.err.println( excpt );
                 excpt.printStackTrace();
             }
-        }
-        
+        }       
+                
         
         /**  Sample XML input file to parse
          * <sources>
@@ -487,7 +505,7 @@ public class XMLDataManager {
          */
         public void refresh() {
             final String mainUrlSpec = mainUrlSpec();
-            final DataAdaptor mainAdaptor = XmlDataAdaptor.adaptorForUrl( mainUrlSpec, false );
+            final DataAdaptor mainAdaptor = XmlDataAdaptor.adaptorForUrl( mainUrlSpec, false,  absoluteUrlSpec( mainSchema ) );
             final DataAdaptor sourcesAdaptor = mainAdaptor.childAdaptor( SOURCE_TAG );
 
 			if ( sourcesAdaptor.hasAttribute( "version" ) ) {
@@ -523,52 +541,27 @@ public class XMLDataManager {
             final DataAdaptor timingReferenceAdaptor = sourcesAdaptor.childAdaptor( TIMING_TAG );
 			if ( timingReferenceAdaptor != null ) {
 				final String timingRelativeURL = timingReferenceAdaptor.stringValue( TIMING_URL_KEY );
-				
-				try {
-					final URL timingURL = new URL( mainUrl, timingRelativeURL );
-					_timingManager.setURLSpec( timingURL.toString() );
-				}
-				catch( MalformedURLException excpt ) {
-					System.err.println( excpt );
-					excpt.printStackTrace();
-				}
+				final String timingURL = absoluteUrlSpec( timingRelativeURL );
+				_timingManager.setURLSpec( timingURL );				
 			}
 			
 			// fetch the device mapping
             final DataAdaptor deviceMappingReferenceAdaptor = sourcesAdaptor.childAdaptor( DEVICEMAPPING_TAG );
 			if ( deviceMappingReferenceAdaptor != null ) {
 				final String deviceMappingURL = deviceMappingReferenceAdaptor.stringValue( DEVICEMAPPING_URL_KEY );
-				
-				try {
-					final URL deviceURL = new URL( mainUrl, deviceMappingURL );
-					DEVICE_MANAGER.setURL( deviceURL );
-				}
-				catch ( MalformedURLException excpt ){
-					System.err.println( excpt );
-					excpt.printStackTrace();
-				}
+				DEVICE_MANAGER.setURL(absoluteUrlSpec( deviceMappingURL ));				
 			}
 			
 			// fetch the model configuration
 			final DataAdaptor daModelConfig = sourcesAdaptor.childAdaptor( MODELCONFIG_TAG );
 			if ( daModelConfig != null ) {
 			    final String strUrlModelCfg = daModelConfig.stringValue( MODELCONFIG_URL_KEY );
-
-			    try {
-			        final URL urlModelConfig = new URL( mainUrl, strUrlModelCfg );
-			        elementMapping = FileBasedElementMapping.loadFrom(urlModelConfig);
-			    }
-			    catch ( MalformedURLException excpt ){
-			        System.err.println( excpt );
-			        excpt.printStackTrace();
-			    } catch (ClassNotFoundException excpt) {
-			    	System.err.println( excpt );
-			        excpt.printStackTrace();
-				}
+				final String urlModelConfig = absoluteUrlSpec( strUrlModelCfg );
+				elementMapping = FileBasedElementMapping.loadFrom(urlModelConfig);
 			} else {
 				elementMapping = DefaultElementMapping.getInstance();
 			}
-			            
+			
             // fetch the table group references
             final List<DataAdaptor> tableAdaptors = sourcesAdaptor.childAdaptors( TABLE_GROUP_TAG );
             tableManager.clear();
@@ -644,27 +637,6 @@ public class XMLDataManager {
         public String opticsUrlSpec() {
             return opticsUrlSpec;
         }
-        
-        
-        /** 
-		 * Get absolute URL specifications given a URL spec relative to the main URL
-		 * @return absolute URL specification
-		 */
-        public String absoluteUrlSpec( final String urlSpec ) {
-            URL mainUrl = mainUrl();
-            URL absoluteUrl = null;
-            
-            try {
-                absoluteUrl = new URL( mainUrl, urlSpec );
-            }
-            catch( MalformedURLException excpt ) {
-                System.err.println( excpt );
-                excpt.printStackTrace();
-            }
-            
-            return absoluteUrl.toString();
-        }
-
 
 		/** set the optics URL spec */
         public void setOpticsUrlSpec( final String urlSpec ) {
@@ -785,6 +757,8 @@ public class XMLDataManager {
 		
 		public static final String DEVICE_MAPPING = "deviceMapping";
     	
+		private final String deviceMappingSchema = "impl.xsd";
+		
     	final private HashMap<String, String> _deviceMap;
 		
 		/** factory for generating accelerator nodes */
@@ -807,8 +781,8 @@ public class XMLDataManager {
 //    		return _deviceMap;
 //    	}
 		
-    	public void setURL( final URL url ) {
-    		final XmlDataAdaptor deviceMappingDocumentAdaptor = XmlDataAdaptor.adaptorForUrl( url, false );
+    	public void setURL( final String url ) {
+    		final XmlDataAdaptor deviceMappingDocumentAdaptor = XmlDataAdaptor.adaptorForUrl( url, false, absoluteUrlSpec( deviceMappingSchema ) );
 			final DataAdaptor deviceMappingAdaptor = deviceMappingDocumentAdaptor.childAdaptor( DeviceManager.DEVICE_MAPPING );
 			
 			final List<DataAdaptor> deviceAdaptors = deviceMappingAdaptor.childAdaptors( DEVICE_TAG );
