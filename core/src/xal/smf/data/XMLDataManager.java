@@ -24,6 +24,12 @@ import java.util.*;
 import java.util.prefs.Preferences;
 import java.net.*;
 
+import javax.xml.XMLConstants;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.validation.Schema;
+import javax.xml.validation.SchemaFactory;
+import javax.xml.validation.Validator;
+
 
 /*****************************************************************************
  * The XMLDataManager is the central class providing XML specific access to 
@@ -623,13 +629,14 @@ public class XMLDataManager {
         private String opticsUrlSpec;
         private List<String> extraUrlSpecs;
 		private String _hardwareStatusURLSpec;
-        
+		private String opticsSchema;
         
 		/** Constructor */
         public AcceleratorManager() {
             dtdUrlSpec = "xdxf.dtd";     // default DTD file
             extraUrlSpecs = new ArrayList<String>();
-			_hardwareStatusURLSpec = null;
+			_hardwareStatusURLSpec = null;			
+			opticsSchema = "xdxf.xsd";
         }
         
         
@@ -696,15 +703,15 @@ public class XMLDataManager {
         
         
         /** Parse the accelerator from the optics URL with the specified DTD validation flag */
-        public Accelerator getAccelerator( final boolean isValidating ) throws XmlDataAdaptor.ParseException {
+        public Accelerator getAccelerator( final boolean isValidating ) throws XmlDataAdaptor.ParseException {        	
             String absoluteUrlSpec = absoluteUrlSpec( opticsUrlSpec );
-            XmlDataAdaptor adaptor = XmlDataAdaptor.adaptorForUrl( absoluteUrlSpec, isValidating );
+            XmlDataAdaptor adaptor = XmlDataAdaptor.adaptorForUrl( absoluteUrlSpec, isValidating, absoluteUrlSpec(opticsSchema) );
 			
             Document document = adaptor.document();
             DocumentType docType = document.getDoctype();
             String acceleratorTag = docType.getName();
 			
-            dtdUrlSpec = docType.getSystemId();
+            dtdUrlSpec = docType.getSystemId();                        
             
             DataAdaptor accelAdaptor = adaptor.childAdaptor( acceleratorTag );
             Accelerator accelerator = new Accelerator();
