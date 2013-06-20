@@ -24,7 +24,7 @@ import xal.smf.*;
 class TimingDataManager {
 	protected String _urlSpec;
 	protected TimingCenter _timingCenter;
-	
+	protected String timingSchema = "xdxf.xsd";
 	
 	/**
 	 * TimingDataManager constructor
@@ -80,7 +80,8 @@ class TimingDataManager {
 	 */
 	protected void updateTimingCenter(TimingCenter timingCenter) {
 		if ( _urlSpec != null ) {
-			XmlDataAdaptor documentAdaptor = XmlDataAdaptor.adaptorForUrl(_urlSpec, false);
+			XmlDataAdaptor documentAdaptor = XmlDataAdaptor.adaptorForUrl(_urlSpec, false,
+					XMLDataManager.getDefaultInstance().absoluteUrlSpec(timingSchema));
 			DataAdaptor timingAdaptor = documentAdaptor.childAdaptor(TimingCenter.DATA_LABEL);
 			timingCenter.update(timingAdaptor);
 		}

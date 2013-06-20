@@ -622,14 +622,14 @@ public class XMLDataManager {
         private String opticsUrlSpec;
         private List<String> extraUrlSpecs;
 		private String _hardwareStatusURLSpec;
-		private String opticsSchema;
+		private String xdxfSchema;
         
 		/** Constructor */
         public AcceleratorManager() {
             dtdUrlSpec = "xdxf.dtd";     // default DTD file
             extraUrlSpecs = new ArrayList<String>();
 			_hardwareStatusURLSpec = null;			
-			opticsSchema = "xdxf.xsd";
+			xdxfSchema = "xdxf.xsd";
         }
         
         
@@ -677,7 +677,7 @@ public class XMLDataManager {
         /** Parse the accelerator from the optics URL with the specified DTD validation flag */
         public Accelerator getAccelerator( final boolean isValidating ) throws XmlDataAdaptor.ParseException {        	
             String absoluteUrlSpec = absoluteUrlSpec( opticsUrlSpec );
-            XmlDataAdaptor adaptor = XmlDataAdaptor.adaptorForUrl( absoluteUrlSpec, isValidating, absoluteUrlSpec(opticsSchema) );
+            XmlDataAdaptor adaptor = XmlDataAdaptor.adaptorForUrl( absoluteUrlSpec, isValidating, absoluteUrlSpec(xdxfSchema) );
 			
             Document document = adaptor.document();
             DocumentType docType = document.getDoctype();
@@ -733,7 +733,7 @@ public class XMLDataManager {
         /** update the accelerator with data from the optics URL with a DTD validation flag */
         public void updateAccelerator( final String urlSpec, final Accelerator accelerator, final boolean isValidating ) throws XmlDataAdaptor.ParseException {
             String absoluteUrlSpec = absoluteUrlSpec( urlSpec );
-            XmlDataAdaptor adaptor = XmlDataAdaptor.adaptorForUrl( absoluteUrlSpec, isValidating );
+            XmlDataAdaptor adaptor = XmlDataAdaptor.adaptorForUrl( absoluteUrlSpec, isValidating,  absoluteUrlSpec(xdxfSchema) );
             
             String acceleratorTag = accelerator.dataLabel();
             
