@@ -888,6 +888,13 @@
 			</xs:annotation>
 		</xs:attribute>
 		<xs:attribute name="exclude" type="xs:boolean" />
+		<xs:attribute name="mod-comment" type="xs:string">
+			<xs:annotation>
+				<xs:documentation>
+					Apparently used in hardware_status.xdxf, but not in the code.
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
 	</xs:complexType>
 
 	<xs:complexType name="acceleratorSeq">
@@ -1020,6 +1027,14 @@
 				</xs:documentation>
 			</xs:annotation>
 		</xs:attribute>
+		<xs:attribute name="version" type="xs:string">
+			<xs:annotation>
+				<xs:documentation>
+					Apparently used in hardware_status.xdxf, but not in the code.
+					Don't change to "ver" / if you do, the ver from main file will be lost when loading.
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
 		<xs:attribute name="date" type="xs:string">
 			<xs:annotation>
 				<xs:documentation>
@@ -1046,6 +1061,21 @@
 			<xs:selector xpath="comboseq/sequence" />
 			<xs:field xpath="@id" />
 		</xs:keyref>
+	</xs:element>
+
+	<xs:element name="timing">
+		<xs:annotation>
+			<xs:documentation>
+				Used as a root element in a file, which lists all the general timing signals used by XAL. 
+				Such signals are used by applications that trigger on certain events,
+				like an RF pulse, or monitor certain aspects of the machine, such as the orbit.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="channelsuite"/>
+			</xs:sequence>
+		</xs:complexType>
 	</xs:element>
 
 	<xs:simpleType name="doubleArrayType">
