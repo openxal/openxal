@@ -29,6 +29,9 @@ public class FileBasedElementMapping extends ElementMapping {
 	protected Class<? extends IComponent> defaultElement;
 	protected Class<? extends IComponent> driftElement;
 	
+	/** Model Configuration schema */
+    final public static String elementMappingSchema = "ModelConfig.xsd";
+	
 	protected FileBasedElementMapping() {		
 	}
 	
@@ -48,9 +51,9 @@ public class FileBasedElementMapping extends ElementMapping {
 		}		
 	}
 
-	public static ElementMapping loadFrom(String urlModelConfig) {
+	public static ElementMapping loadFrom(String urlModelConfig, String schemaUrl) {
 		
-			DataAdaptor daDoc = XmlDataAdaptor.adaptorForUrl(urlModelConfig, false);
+			DataAdaptor daDoc = XmlDataAdaptor.adaptorForUrl(urlModelConfig, false, schemaUrl);
 			FileBasedElementMapping elementMapping = new FileBasedElementMapping();
 				
 			DataAdaptor daCfg = daDoc.childAdaptor( "configuration" );	    
