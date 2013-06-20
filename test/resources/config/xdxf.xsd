@@ -1,89 +1,951 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- edited with XMLSpy v2013 rel. 2 (http://www.altova.com) by Ivo List (a) -->
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
-	<xs:simpleType name="nodeType"> <!-- TODO -->
-		<xs:restriction base="xs:string">			
+	<xs:simpleType name="nodeType">
+		<xs:annotation>
+			<xs:documentation>
+				Node type describes the type of accelerator device.
+				There's a class implementing the type in package xal.smf.impl or may be provided externally.
+				One class may implement multiple types and register some of them via ElementTypeManager.				
+				The types, ones that the implementation doesn't register or external ones, may be registered through *.impl file.				
+			</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="BLM">
+				<xs:annotation>
+					<xs:documentation>
+						Implementation: xal.smf.impl.BLM<br/>
+						pertinant to modeling Beam Loss monitors.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="BPM">
+				<xs:annotation>
+					<xs:documentation> 
+						Implementation: xal.smf.impl.BPM, xal.smf.impl.RBPM (warning registered 2 times)<br/>
+						pertinant to modeling Beam Position monitors.						
+					</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="RBPM">
+				<xs:annotation>
+					<xs:documentation>
+						Implementation: xal.smf.impl.RBPM extends BPM<br/>
+						SNS Ring BPMs. The Ring BPMs can set up to 4 different gains within	its 1060 waveform points.
+						They also have 2 modes: base-band and 402.5 MHz.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="bend">
+				<xs:annotation>
+					<xs:documentation>
+						Implementation: xal.smf.impl.Bend extends Dipole extends Electromagnet extends Magnet<br/>
+						Bend is used to represent a normal horizontal dipole magnet rather
+						than a corrector.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="DH">
+				<xs:annotation>
+					<xs:documentation>
+						Implementation: xal.smf.impl.Bend extends Dipole extends Electromagnet extends Magnet<br/>
+						Bend is used to represent a normal horizontal dipole magnet rather
+						than a corrector.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="BSM">
+				<xs:annotation>
+					<xs:documentation>
+						Implementation: xal.smf.impl.BunchShapeMonitor<br/>
+						Bunch Shape Monitor  
+					</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="BCM">
+				<xs:annotation>
+					<xs:documentation> 
+						Implementation: xal.smf.impl.CurrentMonitor<br/>
+						pertinant to modeling Current Monitors
+					</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="CVG">
+				<xs:annotation>
+					<xs:documentation>
+						Implementation: xal.smf.impl.CvgGauge<br/>
+						Convectron Gauge implementation. This type of vacuum gauge is for higher
+						pressures (during rough pumpdown).
+					</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="dipole">
+				<xs:annotation>
+					<xs:documentation> 
+						Implementation: xal.smf.impl.Dipole extends Electromagnet extends Magnet<br/>
+						main dipoles 
+					</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="D">
+				<xs:annotation>
+					<xs:documentation>
+						Implementation: xal.smf.impl.Dipole extends Electromagnet extends Magnet<br/>
+						main dipoles 
+					</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="EDipole">
+				<xs:annotation>
+					<xs:documentation>
+						Implementation: xal.smf.impl.EDipole extends Electromagnet extends Magnet<br/>
+						electrostactic 
+					</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			
+			<xs:enumeration value="DHE">
+				<xs:annotation>	
+					<xs:documentation>
+						Implementation: xal.smf.impl.EDipole extends Electromagnet extends Magnet<br/>
+						Not registered<br/>
+						electrostactic 
+					</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="DVE">
+				<xs:annotation>
+					<xs:documentation>
+						Implementation: xal.smf.impl.EDipole extends Electromagnet extends Magnet<br/>
+						Not registered<br/>
+						electrostactic 
+					</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="emag">
+				<xs:annotation>
+					<xs:documentation> 
+						Implementation: xal.smf.impl.Electromagnet extends Magnet<br/>
+						electromagnet 
+					</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="electromagnet">
+				<xs:annotation>
+					<xs:documentation>
+						Implementation: xal.smf.impl.Electromagnet extends Magnet<br/> 
+						electromagnet 
+					</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="EQuad">
+				<xs:annotation>
+					<xs:documentation>
+						Implementation: xal.smf.impl.EQuad extends Electrostatic<br/>
+						Not registered
+					</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="QHE">
+				<xs:annotation>
+					<xs:documentation>
+						Implementation: xal.smf.impl.EQuad extends Electrostatic<br/>
+						Not registered
+					</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="QVE">
+				<xs:annotation>
+					<xs:documentation>
+						Implementation: xal.smf.impl.EQuad extends Electrostatic<br/>
+						Not registered
+					</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="QSE">
+				<xs:annotation>
+					<xs:documentation>
+						Implementation: xal.smf.impl.EQuad extends Electrostatic<br/>
+						Not registered
+					</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>		
+
+			<xs:enumeration value="EKick">
+				<xs:annotation>
+					<xs:documentation>
+						Implementation: xal.smf.impl.ExtractionKicker extends Dipole extends Electromagnet extends Magnet<br/>					
+						the extraction kicker represents a pulsed magnet for extracting the	beam vertically from the ring
+					</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="kicker">
+				<xs:annotation>
+					<xs:documentation>
+						Implementation: xal.smf.impl.ExtractionKicker extends Dipole extends Electromagnet extends Magnet<br/>					
+						the extraction kicker represents a pulsed magnet for extracting the	beam vertically from the ring
+					</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="vertkicker">
+				<xs:annotation>
+					<xs:documentation>
+						Implementation: xal.smf.impl.ExtractionKicker extends Dipole extends Electromagnet extends Magnet<br/>					
+						the extraction kicker represents a pulsed magnet for extracting the	beam vertically from the ring
+					</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="extractionkicker">
+				<xs:annotation>
+					<xs:documentation>
+						Implementation: xal.smf.impl.ExtractionKicker extends Dipole extends Electromagnet extends Magnet<br/>					
+						the extraction kicker represents a pulsed magnet for extracting the	beam vertically from the ring
+					</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+
+			<xs:enumeration value="DCH">
+				<xs:annotation>
+					<xs:documentation>
+						Implementation: xal.smf.impl.HDipoleCorr extends Dipole extends Electromagnet extends Magnet<br/>					
+					 	Horizontal Dipole corrector element
+					</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="hcorr">
+				<xs:annotation>
+					<xs:documentation>
+						Implementation: xal.smf.impl.HDipoleCorr extends Dipole extends Electromagnet extends Magnet<br/>					
+					 	Horizontal Dipole corrector element
+					</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="horzcorr">
+				<xs:annotation>
+					<xs:documentation>
+						Implementation: xal.smf.impl.HDipoleCorr extends Dipole extends Electromagnet extends Magnet<br/>					
+					 	Horizontal Dipole corrector element
+					</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="DCV">
+				<xs:annotation>
+					<xs:documentation>
+						Implementation: xal.smf.impl.VDipoleCorr extends Dipole extends Electromagnet extends Magnet<br/>										 	
+					 	Vertical Dipole corrector element
+					</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="vertcorr">
+				<xs:annotation>
+					<xs:documentation>
+						Implementation: xal.smf.impl.VDipoleCorr extends Dipole extends Electromagnet extends Magnet<br/>										 	
+					 	Vertical Dipole corrector element
+					</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="vcorr">
+				<xs:annotation>
+					<xs:documentation>
+						Implementation: xal.smf.impl.VDipoleCorr extends Dipole extends Electromagnet extends Magnet<br/>										 	
+					 	Vertical Dipole corrector element
+					</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+
+			<xs:enumeration value="IG">
+				<xs:annotation>
+					<xs:documentation>
+						Implementation: xal.smf.impl.IonGauge extends Vacuum<br/>					
+					 	Ion Gauge
+					 </xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+
+			<xs:enumeration value="magnet">
+				<xs:annotation>
+					<xs:documentation>
+						Implementation: xal.smf.impl.Magnet<br/>
+						Children: Electromagnet, PermanentMagnet<br/>
+					 	common to all magnets 
+					 </xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+
+			<xs:enumeration value="marker">
+				<xs:annotation>
+					<xs:documentation>
+						Implementation: xal.smf.impl.Marker<br/>
+					 	for generic marker 
+					 </xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="VIW">
+				<xs:annotation>
+					<xs:documentation>
+						Implementation: xal.smf.impl.Marker<br/>
+						Not registered					
+					 </xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="Foil">
+				<xs:annotation>
+					<xs:documentation>
+						Implementation: xal.smf.impl.Marker<br/>
+						Not registered					
+					 </xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>			
+			<xs:enumeration value="Tgt">
+				<xs:annotation>
+					<xs:documentation>
+						Implementation: xal.smf.impl.Marker<br/>
+						Not registered					
+					 </xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>			
+			<xs:enumeration value="Harp">
+				<xs:annotation>
+					<xs:documentation>
+						Implementation: xal.smf.impl.Marker<br/>
+						Not registered					
+					 </xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>			
+			<xs:enumeration value="ChMPS">
+				<xs:annotation>
+					<xs:documentation>
+						Implementation: xal.smf.impl.Marker<br/>
+						Not registered					
+					 </xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>			
+			<xs:enumeration value="LStrp">
+				<xs:annotation>
+					<xs:documentation>
+						Implementation: xal.smf.impl.Marker<br/>
+						Not registered					
+					 </xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="LW">
+				<xs:annotation>
+					<xs:documentation>
+						Implementation: xal.smf.impl.Marker<br/>
+						Not registered					
+					 </xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+						
+			<xs:enumeration value="ND">
+				<xs:annotation>
+					<xs:documentation>
+						Implementation: xal.smf.impl.NeutronDetector extends BLM<br/>
+						Neutron Detector class.<br/>
+						ND's are a subclass of loss monitors that detect neutron losses.
+						A seperate class is provided for these since they may need to be grabbed separatly.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="pmag">
+				<xs:annotation>
+					<xs:documentation>
+						Implementation: xal.smf.impl.PermanentMagnet extends Magnet<br/>
+						superclass of all permanent magnet
+					</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="permanentmagnet">
+				<xs:annotation>
+					<xs:documentation>
+						Implementation: xal.smf.impl.PermanentMagnet extends Magnet<br/>
+						superclass of all permanent magnet
+					</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="PQ">
+				<xs:annotation>
+					<xs:documentation>
+						Implementation: xal.smf.impl.PermQuadrupole extends PermanentMagnet extends Magnet<br/>
+					 	Permanent magnet Quadrupole.<br/>
+					 	Unlike many other beam line elements, PermQuadrupole represents more than one official
+						type (PMQH and PMQV) as specified by the naming convention.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="permquad">
+				<xs:annotation>
+					<xs:documentation>
+						Implementation: xal.smf.impl.PermQuadrupole extends PermanentMagnet extends Magnet<br/>
+					 	Permanent magnet Quadrupole.<br/>
+					 	Unlike many other beam line elements, PermQuadrupole represents more than one official
+						type (PMQH and PMQV) as specified by the naming convention.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="PMQH">
+				<xs:annotation>
+					<xs:documentation>
+						Implementation: xal.smf.impl.PermQuadrupole extends PermanentMagnet extends Magnet<br/>
+						Not registered<br/>
+					 	Permanent magnet Quadrupole.<br/>
+					 	Unlike many other beam line elements, PermQuadrupole represents more than one official
+						type (PMQH and PMQV) as specified by the naming convention.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="PMQV">
+				<xs:annotation>
+					<xs:documentation>
+						Implementation: xal.smf.impl.PermQuadrupole extends PermanentMagnet extends Magnet<br/>
+						Not registered<br/>
+					 	Permanent magnet Quadrupole.<br/>
+					 	Unlike many other beam line elements, PermQuadrupole represents more than one official
+						type (PMQH and PMQV) as specified by the naming convention.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			
+			<xs:enumeration value="WS">
+				<xs:annotation>
+					<xs:documentation>
+						Implementation: xal.smf.impl.ProfileMonitor<br/>
+						Represents the wire scanner device using the original API 						
+					</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="wirescanner">
+				<xs:annotation>
+					<xs:documentation>
+						Implementation: xal.smf.impl.ProfileMonitor<br/>
+						Represents the wire scanner device using the original API
+					</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="profilemonitor">
+				<xs:annotation>
+					<xs:documentation>
+						Implementation: xal.smf.impl.ProfileMonitor<br/>
+						Represents the wire scanner device using the original API					
+					</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+					
+			<xs:enumeration value="Q">
+				<xs:annotation>
+					<xs:documentation>
+						Implementation: xal.smf.impl.Quadrupole extends Electromagnet extends Magnet<br/>
+					 	Quadrupole implements an Electromagnet<br/>
+						Quadrupole supplied by a single power supply. 
+						Unlike many other beam line elements, Quadrupole represents more 
+						than one official type (QH and QV) as specified by the naming convention.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="emquad">
+				<xs:annotation>
+					<xs:documentation>
+						Implementation: xal.smf.impl.Quadrupole extends Electromagnet extends Magnet<br/>
+					 	Quadrupole implements an Electromagnet<br/>
+						Quadrupole supplied by a single power supply. 
+						Unlike many other beam line elements, Quadrupole represents more 
+						than one official type (QH and QV) as specified by the naming convention.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="quad">
+				<xs:annotation>
+					<xs:documentation>
+						Implementation: xal.smf.impl.Quadrupole extends Electromagnet extends Magnet<br/>
+					 	Quadrupole implements an Electromagnet<br/>
+						Quadrupole supplied by a single power supply. 
+						Unlike many other beam line elements, Quadrupole represents more 
+						than one official type (QH and QV) as specified by the naming convention.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="quadrupole">
+				<xs:annotation>
+					<xs:documentation>
+						Implementation: xal.smf.impl.Quadrupole extends Electromagnet extends Magnet<br/>
+					 	Quadrupole implements an Electromagnet<br/>
+						Quadrupole supplied by a single power supply. 
+						Unlike many other beam line elements, Quadrupole represents more 
+						than one official type (QH and QV) as specified by the naming convention.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			
+			<xs:enumeration value="QV">
+				<xs:annotation>
+					<xs:documentation>
+						Implementation: xal.smf.impl.Quadrupole extends Electromagnet extends Magnet<br/>
+						Not registered.<br/>
+					 	Quadrupole implements an Electromagnet<br/>
+						Quadrupole supplied by a single power supply. 
+						Unlike many other beam line elements, Quadrupole represents more 
+						than one official type (QH and QV) as specified by the naming convention.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>			
+			<xs:enumeration value="QH">
+			<xs:annotation>
+					<xs:documentation>
+						Implementation: xal.smf.impl.Quadrupole extends Electromagnet extends Magnet<br/>
+						Not registered.<br/>
+					 	Quadrupole implements an Electromagnet<br/>
+						Quadrupole supplied by a single power supply. 
+						Unlike many other beam line elements, Quadrupole represents more 
+						than one official type (QH and QV) as specified by the naming convention.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>			
+			<xs:enumeration value="QSC">
+			<xs:annotation>
+					<xs:documentation>
+						Implementation: xal.smf.impl.Quadrupole extends Electromagnet extends Magnet<br/>
+						Not registered.<br/>
+					 	Quadrupole implements an Electromagnet<br/>
+						Quadrupole supplied by a single power supply. 
+						Unlike many other beam line elements, Quadrupole represents more 
+						than one official type (QH and QV) as specified by the naming convention.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>			
+
+			<xs:enumeration value="vacuum">
+				<xs:annotation>
+					<xs:documentation>
+						Implementation: xal.smf.impl.Vacuum<br/>
+						Different types of vacuum guages are derived from this class. 
+					</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+
+			<xs:enumeration value="QT">
+				<xs:annotation>
+					<xs:documentation> 
+						Implementation: xal.smf.impl.TrimmedQuadrupole extends Quadrupole extends Electromagnet extends Magnet<br/>
+						TrimmedQuadrupole is a subclass of Quadrupole that has a trim power supply in addition to a main power supply.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="trimmedquad">
+				<xs:annotation>
+					<xs:documentation> 
+						Implementation: xal.smf.impl.TrimmedQuadrupole extends Quadrupole extends Electromagnet extends Magnet<br/>
+						TrimmedQuadrupole is a subclass of Quadrupole that has a trim power supply in addition to a main power supply.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="QTH">
+				<xs:annotation>
+					<xs:documentation> 
+						Implementation: xal.smf.impl.TrimmedQuadrupole extends Quadrupole extends Electromagnet extends Magnet<br/>
+						Not registered.<br/>
+						TrimmedQuadrupole is a subclass of Quadrupole that has a trim power supply in addition to a main power supply.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="QTV">
+				<xs:annotation>
+					<xs:documentation> 
+						Implementation: xal.smf.impl.TrimmedQuadrupole extends Quadrupole extends Electromagnet extends Magnet<br/>
+						Not registered.<br/>
+						TrimmedQuadrupole is a subclass of Quadrupole that has a trim power supply in addition to a main power supply.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			
+
+			<xs:enumeration value="S">
+				<xs:annotation>
+					<xs:documentation>
+						Implementation: xal.smf.impl.Sextupole extends Electromagnet extends Magnet<br/>
+						Sextupole magnet
+					</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="emsext">
+				<xs:annotation>
+					<xs:documentation>
+						Implementation: xal.smf.impl.Sextupole extends Electromagnet extends Magnet<br/>
+						Sextupole magnet
+					</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="sext">
+				<xs:annotation>
+					<xs:documentation>
+						Implementation: xal.smf.impl.Sextupole extends Electromagnet extends Magnet<br/>
+						Sextupole magnet
+					</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="sextupole">
+				<xs:annotation>
+					<xs:documentation>
+						Implementation: xal.smf.impl.Sextupole extends Electromagnet extends Magnet<br/>
+						Sextupole magnet
+					</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="SH">
+				<xs:annotation>
+					<xs:documentation>
+						Implementation: xal.smf.impl.Sextupole extends Electromagnet extends Magnet<br/>
+						Not registered.<br/>
+						Sextupole magnet
+					</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="SV">
+				<xs:annotation>
+					<xs:documentation>
+						Implementation: xal.smf.impl.Sextupole extends Electromagnet extends Magnet<br/>
+						Not registered.<br/>
+						Sextupole magnet
+					</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="SSH">
+				<xs:annotation>
+					<xs:documentation>
+						Implementation: xal.smf.impl.Sextupole extends Electromagnet extends Magnet<br/>
+						Not registered.<br/>
+						Sextupole magnet
+					</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="SSV">
+				<xs:annotation>
+					<xs:documentation>
+						Implementation: xal.smf.impl.Sextupole extends Electromagnet extends Magnet<br/>
+						Not registered.<br/>
+						Sextupole magnet
+					</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="SOL">
+				<xs:annotation>
+					<xs:documentation>
+						Implementation: xal.smf.impl.Solenoid extends Electromagnet extends Magnet<br/>
+						Solenoid
+					</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+
+			<!-- also sequences -->
+			
+			<xs:enumeration value="CCL">
+				<xs:annotation>
+					<xs:documentation>
+					Implementation: xal.smf.impl.CCL extends RfCavity<br/>
+					CCL</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="DTLTank">
+				<xs:annotation>
+					<xs:documentation>
+						Implementation: xal.smf.impl.DTLTank extends RfCavity<br/>
+					 	Drift Tube Linacs<br/>
+					 	These devices have RfGaps in them, which are controlled by a single RfCavity. 
+					 	That is, the RfCavity contains the hooks to the	klystron signals, which controll all of the RfGaps together.
+						As the DTLTank is also a sequence, it is possible for it to	contain	other types of nodes, such as quads and BPMs.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="Bnch">
+				<xs:annotation>
+					<xs:documentation>
+						Implementation: xal.smf.impl.ReBuncher extends RfCavity<br/>
+						ReBuncher
+					</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="rebuncher">
+				<xs:annotation>
+					<xs:documentation>
+						Implementation: xal.smf.impl.ReBuncher extends RfCavity<br/>
+						ReBuncher
+					</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="RF">
+				<xs:annotation>
+					<xs:documentation> 
+						Implementation: xal.smf.impl.RfCavity<br/>
+						The Rf Cavity is the device that is directly connected to a klystron.
+						There are internal RF gap(s) within this cavity, which are controlled by the cavity.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="rfcavity">
+				<xs:annotation>
+					<xs:documentation>
+						Implementation: xal.smf.impl.RfCavity<br/>
+					 	The Rf Cavity is the device that is directly connected to a klystron.
+						There are internal RF gap(s) within this cavity, which are controlled by the cavity.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>			
+			<xs:enumeration value="RG">
+				<xs:annotation>
+					<xs:documentation>
+						Implementation: xal.smf.impl.RfGap<br/>
+						The RfGap class is meant to be used in connection with a set of related RF gaps, 
+						such as the gaps in a DTL Tank, which are all part of a single resonant cavity controlled by a single klystron.
+						Each gap may have a fixed scale factor for both the field and phase, relative to a nominal field and phase. 
+ 					 </xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="rfgap">
+				<xs:annotation>
+					<xs:documentation>
+						Implementation: xal.smf.impl.RfGap<br/>
+						The RfGap class is meant to be used in connection with a set of related RF gaps, 
+						such as the gaps in a DTL Tank, which are all part of a single resonant cavity controlled by a single klystron.
+						Each gap may have a fixed scale factor for both the field and phase, relative to a nominal field and phase.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>			
+			<xs:enumeration value="SCLCavity">
+				<xs:annotation>
+					<xs:documentation> 
+						Implementation: xal.smf.impl.SCLCavity extends RfCavity<br/>
+						SCLCavity class is used to represent an SCL RF cavity.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>		
 		</xs:restriction>
 	</xs:simpleType>
 
 	<xs:simpleType name="seqType">
+		<xs:annotation>
+			<xs:documentation>
+				Sequence type describes the type of accelerator device.
+				There's a class implementing the type in package xal.smf.impl or may be provided externally.
+				One class may implement multiple types and register some of them via ElementTypeManager.				
+				The types, ones that the implementation doesn't register or external ones, may be registered through *.impl file.				
+			</xs:documentation>
+		</xs:annotation>
 		<xs:restriction base="xs:string">
-			<xs:enumeration value="Bnch"/>
-			<xs:enumeration value="CCL"/>
-			<xs:enumeration value="DTLTank"/>
-			<xs:enumeration value="SCLCavity"/>
+			<xs:enumeration value="CCL">
+				<xs:annotation>
+					<xs:documentation>
+					Implementation: xal.smf.impl.CCL extends RfCavity<br/>
+					CCL</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="DTLTank">
+				<xs:annotation>
+					<xs:documentation>
+						Implementation: xal.smf.impl.DTLTank extends RfCavity<br/>
+					 	Drift Tube Linacs<br/>
+					 	These devices have RfGaps in them, which are controlled by a single RfCavity. 
+					 	That is, the RfCavity contains the hooks to the	klystron signals, which controll all of the RfGaps together.
+						As the DTLTank is also a sequence, it is possible for it to	contain	other types of nodes, such as quads and BPMs.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="Bnch">
+				<xs:annotation>
+					<xs:documentation>
+						Implementation: xal.smf.impl.ReBuncher extends RfCavity<br/>
+						ReBuncher
+					</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="rebuncher">
+				<xs:annotation>
+					<xs:documentation>
+						Implementation: xal.smf.impl.ReBuncher extends RfCavity<br/>
+						ReBuncher
+					</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="RF">
+				<xs:annotation>
+					<xs:documentation> 
+						Implementation: xal.smf.impl.RfCavity<br/>
+						The Rf Cavity is the device that is directly connected to a klystron.
+						There are internal RF gap(s) within this cavity, which are controlled by the cavity.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="rfcavity">
+				<xs:annotation>
+					<xs:documentation>
+						Implementation: xal.smf.impl.RfCavity<br/>
+					 	The Rf Cavity is the device that is directly connected to a klystron.
+						There are internal RF gap(s) within this cavity, which are controlled by the cavity.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>			
+			<xs:enumeration value="RG">
+				<xs:annotation>
+					<xs:documentation>
+						Implementation: xal.smf.impl.RfGap<br/>
+						The RfGap class is meant to be used in connection with a set of related RF gaps, 
+						such as the gaps in a DTL Tank, which are all part of a single resonant cavity controlled by a single klystron.
+						Each gap may have a fixed scale factor for both the field and phase, relative to a nominal field and phase. 
+ 					 </xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="rfgap">
+				<xs:annotation>
+					<xs:documentation>
+						Implementation: xal.smf.impl.RfGap<br/>
+						The RfGap class is meant to be used in connection with a set of related RF gaps, 
+						such as the gaps in a DTL Tank, which are all part of a single resonant cavity controlled by a single klystron.
+						Each gap may have a fixed scale factor for both the field and phase, relative to a nominal field and phase.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>			
+			<xs:enumeration value="SCLCavity">
+				<xs:annotation>
+					<xs:documentation> 
+						Implementation: xal.smf.impl.SCLCavity extends RfCavity<br/>
+						SCLCavity class is used to represent an SCL RF cavity.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>		
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="comboSeqType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="Ring">
+				<xs:annotation>
+					<xs:documentation>
+						Implementation: xal.smf.Ring<br/>
+			 			Ring is a subclass of combo sequence that is intended to support the special needs of a Ring.
+			 			A ring is made up of ring segments.
+			 		</xs:documentation>
+			 	</xs:annotation>
+			 </xs:enumeration>
+			<xs:enumeration value="AcceleratorSeqCombo">
+				<xs:annotation>
+					<xs:documentation>
+						Implementation: xal.smf.AcceleratorSeqCombo<br/>
+						The implementation of the accelerator combo sequence.
+						This class is meant to deal with pasting together existing sequences into new sequences.
+ 					</xs:documentation>
+			 	</xs:annotation>
+			 </xs:enumeration>
+			<xs:enumeration value="">
+				<xs:annotation>
+					<xs:documentation>
+						Implementation: xal.smf.AcceleratorSeq<br/>
+						The implementation of the accelerator composite node, ordered collection of accelerator elements and sequences.
+ 					</xs:documentation>
+			 	</xs:annotation>
+			 </xs:enumeration>
 		</xs:restriction>
 	</xs:simpleType>
 
 	<xs:complexType name="acceleratorNode">
-		<xs:choice maxOccurs="unbounded">			
-			<xs:element minOccurs="0" maxOccurs="1" ref="channelsuite"/>
-			<xs:element minOccurs="0" maxOccurs="1" ref="attributes"/>			
-			<!-- implemented in specific sub nodes  -->
+		<xs:choice maxOccurs="unbounded">
+			<xs:element minOccurs="0" maxOccurs="1" ref="channelsuite" />
+			<xs:element minOccurs="0" maxOccurs="unbounded" ref="attributes" />
+			<!-- implemented in specific sub nodes -->
 			<xs:element minOccurs="0" maxOccurs="1" name="ps">
 				<xs:complexType>
-					<xs:attribute name="main" type="xs:string"/>
-					<xs:attribute name="trim" type="xs:string"/>
+					<xs:attribute name="main" type="xs:string" />
+					<xs:attribute name="trim" type="xs:string" />
 				</xs:complexType>
-			</xs:element>		
+			</xs:element>
 		</xs:choice>
-		<xs:attribute name="id" type="xs:string" use="required"/>
-		<xs:attribute name="type" type="xs:string"/>
-		<xs:attribute name="softType" type="xs:string"/>
-		<xs:attribute name="pid" type="xs:string"/> <!-- Physics id -->
-		<xs:attribute name="eid" type="xs:string"/> <!-- Engineering id -->
-		<xs:attribute name="status" type="xs:boolean"/> <!--  status of the node which identifies whether the node is operational -->		
-		<xs:attribute name="len" type="xs:decimal"/>
-		<xs:attribute name="pos" type="xs:decimal"/>
-		<xs:attribute name="s" type="xs:decimal"/> <!-- s display coordinate -->
-		<xs:attribute name="exclude" type="xs:boolean"/>
+		<xs:attribute name="id" type="xs:string" use="required" />
+		<xs:attribute name="type" type="nodeType" />
+		<xs:attribute name="softType" type="xs:string" />
+		<xs:attribute name="pid" type="xs:string" /> <!-- Physics id -->
+		<xs:attribute name="eid" type="xs:string" /> <!-- Engineering id -->
+		<xs:attribute name="status" type="xs:boolean" /> <!-- status of the node which identifies whether the node is operational -->
+		<xs:attribute name="len" type="xs:decimal" />
+		<xs:attribute name="pos" type="xs:decimal" />
+		<xs:attribute name="s" type="xs:decimal" /> <!-- s display coordinate -->
+		<xs:attribute name="exclude" type="xs:boolean" />
 	</xs:complexType>
-	
-	<xs:complexType name="acceleratorSeq">				
+
+	<xs:complexType name="acceleratorSeq">
 		<xs:choice maxOccurs="unbounded">
-			<xs:element minOccurs="0"  maxOccurs="unbounded" name="node" type="acceleratorNode"/>
-			<xs:element minOccurs="0" maxOccurs="unbounded" name="sequence" type="acceleratorSeq"/>			
+			<xs:element minOccurs="0" maxOccurs="unbounded" name="node"
+				type="acceleratorNode" />
+			<xs:element minOccurs="0" maxOccurs="unbounded" name="sequence"
+				type="acceleratorSeq" />
 			<!-- derived from acceleratorNode -->
-			<xs:element minOccurs="0" maxOccurs="1" ref="channelsuite"/>
-			<xs:element minOccurs="0" maxOccurs="1" ref="attributes"/>		
+			<xs:element minOccurs="0" maxOccurs="1" ref="channelsuite" />
+			<xs:element minOccurs="0" maxOccurs="unbounded" ref="attributes" />
 		</xs:choice>
 		<!-- derived from acceleratorNode -->
-		<xs:attribute name="id" type="xs:string" use="required"/>
-		<xs:attribute name="type" type="nodeType"/>
-		<xs:attribute name="softType" type="xs:string"/>
-		<xs:attribute name="pid" type="xs:string"/> <!-- Physics id -->
-		<xs:attribute name="eid" type="xs:string"/> <!-- Engineering id -->
-		<xs:attribute name="status" type="xs:boolean"/> <!--  status of the node which identifies whether the node is operational -->		
-		<xs:attribute name="len" type="xs:decimal"/>
-		<xs:attribute name="pos" type="xs:decimal"/>
-		<xs:attribute name="s" type="xs:decimal"/> <!-- s display coordinate -->
-		<xs:attribute name="exclude" type="xs:boolean"/>				
+		<xs:attribute name="id" type="xs:string" use="required" />
+		<xs:attribute name="type" type="seqType" />
+		<xs:attribute name="softType" type="xs:string" />
+		<xs:attribute name="pid" type="xs:string" /> <!-- Physics id -->
+		<xs:attribute name="eid" type="xs:string" /> <!-- Engineering id -->
+		<xs:attribute name="status" type="xs:boolean" /> <!-- status of the node which identifies whether the node is operational -->
+		<xs:attribute name="len" type="xs:decimal" />
+		<xs:attribute name="pos" type="xs:decimal" />
+		<xs:attribute name="s" type="xs:decimal" /> <!-- s display coordinate -->
+		<xs:attribute name="exclude" type="xs:boolean" />
 	</xs:complexType>
-	
-	<xs:complexType name="accelerator">		
+
+
+	<xs:complexType name="acceleratorComboSeq">
+		<!-- This class is meant to deal with pasting together existing sequences into new sequences. -->
 		<xs:choice maxOccurs="unbounded">
-			<xs:element minOccurs="0" maxOccurs="unbounded"  ref="comboseq" />
-			<xs:element minOccurs="0" maxOccurs="1" ref="powersupplies"/>
 			<!-- derived from acceleratorSeq -->
-			<xs:element minOccurs="0" maxOccurs="unbounded" name="sequence" type="acceleratorSeq"/>
-			<!--  not used  -->
-			<!--<xs:element minOccurs="0"  maxOccurs="unbounded" name="node" type="accleratorNode"/>			
-			 <xs:element minOccurs="0" maxOccurs="1" ref="channelsuite"/>
-			<xs:element minOccurs="0" maxOccurs="1" ref="attributes"/> -->
-		</xs:choice>				
+			<xs:element minOccurs="0" maxOccurs="unbounded" name="node"
+				type="acceleratorNode" /> <!-- not used -->
+			<xs:element minOccurs="0" maxOccurs="unbounded" name="sequence"
+				type="acceleratorSeq" />
+			<!-- derived from acceleratorNode -->
+			<xs:element minOccurs="0" maxOccurs="1" ref="channelsuite" /> <!-- not used -->
+			<xs:element minOccurs="0" maxOccurs="unbounded" ref="attributes" /> <!-- not used -->
+		</xs:choice>
+		<!-- derived from acceleratorNode -->
+		<xs:attribute name="id" type="xs:string" use="required" />
+		<xs:attribute name="type" type="comboSeqType" />
+		<!-- usually not used -->
+		<xs:attribute name="softType" type="xs:string" />
+		<xs:attribute name="pid" type="xs:string" /> <!-- Physics id -->
+		<xs:attribute name="eid" type="xs:string" /> <!-- Engineering id -->
+		<xs:attribute name="status" type="xs:boolean" /> <!-- status of the node which identifies whether the node is operational -->
+		<xs:attribute name="len" type="xs:decimal" />
+		<xs:attribute name="pos" type="xs:decimal" />
+		<xs:attribute name="s" type="xs:decimal" /> <!-- s display coordinate -->
+		<xs:attribute name="exclude" type="xs:boolean" />
+	</xs:complexType>
+
+	<xs:complexType name="accelerator">
+		<xs:choice maxOccurs="unbounded">
+			<xs:element minOccurs="0" maxOccurs="unbounded" name="comboseq"
+				type="acceleratorComboSeq" />
+			<xs:element minOccurs="0" maxOccurs="1" ref="powersupplies" />
+			<!-- derived from acceleratorSeq -->
+			<xs:element minOccurs="0" maxOccurs="unbounded" name="sequence"
+				type="acceleratorSeq" />
+			<!-- not used -->
+			<!--<xs:element minOccurs="0" maxOccurs="unbounded" name="node" type="accleratorNode"/> 
+				<xs:element minOccurs="0" maxOccurs="1" ref="channelsuite"/> <xs:element 
+				minOccurs="0" maxOccurs="unbounded" ref="attributes"/> -->
+		</xs:choice>
 		<xs:attribute name="system" type="xs:string">
 			<xs:annotation>
 				<xs:documentation>
-					The name of the accelerator system that is described.
+					The name of the accelerator system that is
+					described.
 				</xs:documentation>
 			</xs:annotation>
 		</xs:attribute>
 		<xs:attribute name="ver" type="xs:string">
 			<xs:annotation>
 				<xs:documentation>
-					The ver attribute contains any versioning information associated with the file.
-					This feature allows users to monitor changes in the XAL configuration with a version stamp, 
+					The ver attribute contains any versioning
+					information associated with the file.
+					This feature allows users to
+					monitor changes in the XAL configuration with a version stamp,
 					facilitating more accurate comparisons of archived data.
 				</xs:documentation>
 			</xs:annotation>
@@ -91,125 +953,167 @@
 		<xs:attribute name="date" type="xs:string">
 			<xs:annotation>
 				<xs:documentation>
-					Date, contains the date in which the optics file was last built. 
-					The date value can be expressed in the ISO 8601 standard [12], 
-					however, any date format recognized by the Java class DateFormat [9] is valid.
+					Date, contains the date in which the optics file
+					was last built.
+					The date value can be expressed in the ISO 8601
+					standard [12],
+					however, any date format recognized by the Java class
+					DateFormat
+					[9] is valid.
 					XAL only writes this value.
 				</xs:documentation>
 			</xs:annotation>
-		</xs:attribute>		
+		</xs:attribute>
 		<!-- other attributes also derived but not used -->
 	</xs:complexType>
-		
-	<xs:element name="xdxf" type="accelerator">		
-		<xs:key name="sequence-id">			
-			<xs:selector xpath="sequence"/>
-			<xs:field xpath="@id"/>
+
+	<xs:element name="xdxf" type="accelerator">
+		<xs:key name="sequence-id">
+			<xs:selector xpath="sequence" />
+			<xs:field xpath="@id" />
 		</xs:key>
-		<xs:key name="comboseq-id">			
-			<xs:selector xpath="comboseq"/>
-			<xs:field xpath="@id"/>
+		<xs:key name="comboseq-id">
+			<xs:selector xpath="comboseq" />
+			<xs:field xpath="@id" />
 		</xs:key>
 		<xs:keyref name="comboseq-sequenceid" refer="sequence-id">
-			<xs:selector xpath="comboseq/sequence"/>
-			<xs:field xpath="@id"/>
+			<xs:selector xpath="comboseq/sequence" />
+			<xs:field xpath="@id" />
 		</xs:keyref>
 	</xs:element>
-	
-	<xs:element name="comboseq">
-		<xs:complexType>
-			<xs:sequence>
-				<xs:element name="sequence" maxOccurs="unbounded">
-					<xs:complexType>
-						<xs:attribute name="id" type="xs:string" use="required"/>						
-					</xs:complexType>
-				</xs:element>
-			</xs:sequence>
-			<xs:attribute name="id" type="xs:string" use="required"/>
-			<xs:attribute name="type">
-				<xs:simpleType>
-					<xs:restriction base="xs:string">
-						<xs:enumeration value="Ring"/>
-						<xs:enumeration value="AcceleratorSeqCombo"/>
-						<xs:enumeration value=""/>
-					</xs:restriction>
-				</xs:simpleType>
-			</xs:attribute>
-		</xs:complexType>
-	</xs:element>
-	
+
 	<xs:element name="attributes">
 		<xs:complexType>
 			<xs:all>
 				<xs:element name="align" minOccurs="0">
+					<!-- * An attribute set for alignment attributes (x, y, z, pitch, yaw, 
+						roll). * These alignments are offsets in the local lattice coordinate system. -->
 					<xs:complexType>
-						<xs:attribute name="x" type="xs:decimal" use="required"/>
-						<xs:attribute name="y" type="xs:decimal" use="required"/>
-						<xs:attribute name="z" type="xs:decimal" use="required"/>
-						<xs:attribute name="pitch" type="xs:decimal" use="required"/>
-						<xs:attribute name="yaw" type="xs:decimal" use="required"/>
-						<xs:attribute name="roll" type="xs:decimal" use="required"/>
+						<xs:attribute name="x" type="xs:decimal" use="required" /> <!-- x is in the horizontal direction [mm] -->
+						<xs:attribute name="y" type="xs:decimal" use="required" /> <!-- y is in the vertical direction [mm] -->
+						<xs:attribute name="z" type="xs:decimal" use="required" /> <!-- z is in the longitudinal direction along the beam [mm] -->
+						<xs:attribute name="pitch" type="xs:decimal" use="required" /> <!-- pitch is the rotation about x [mrad] -->
+						<xs:attribute name="yaw" type="xs:decimal" use="required" /> <!-- yaw is the rotation about y [mrad] -->
+						<xs:attribute name="roll" type="xs:decimal" use="required" /> <!-- roll is the rotation about z [mrad] -->
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="rotation" minOccurs="0">
+					<!-- * * An attribute set for rotation alignment attributes (pitch, 
+						yaw, roll). * These alignments are offsets in the local lattice coordinate 
+						system. -->
+					<xs:complexType>
+						<xs:attribute name="pitch" type="xs:decimal" use="required" /> <!-- pitch is the rotation about x [mrad] -->
+						<xs:attribute name="yaw" type="xs:decimal" use="required" /> <!-- yaw is the rotation about y [mrad] -->
+						<xs:attribute name="roll" type="xs:decimal" use="required" /> <!-- roll is the rotation about z [mrad] -->
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="displacement" minOccurs="0">
+					<!-- An attribute set for displacement alignment attributes (x, y, z). 
+						* These alignments are offsets in the local lattice coordinate system. -->
+					<xs:complexType>
+						<xs:attribute name="x" type="xs:decimal" use="required" /> <!-- x is in the horizontal direction -->
+						<xs:attribute name="y" type="xs:decimal" use="required" /> <!-- y is in the vertical direction -->
+						<xs:attribute name="z" type="xs:decimal" use="required" /> <!-- z is in the longitudinal direction along the beam -->
 					</xs:complexType>
 				</xs:element>
 				<xs:element name="magnet" minOccurs="0">
+					<!-- Attribute set for magnet information -->
 					<xs:complexType>
-						<xs:attribute name="len" type="xs:decimal" use="required"/>
-						<xs:attribute name="dfltMagFld" type="xs:decimal" use="required"/>
-						<xs:attribute name="polarity" type="xs:byte" use="required"/>
-						<xs:attribute name="bendAngle" type="xs:decimal"/>
-						<xs:attribute name="dipoleEntrRotAngle" type="xs:decimal"/>
-						<xs:attribute name="dipoleExitRotAngle" type="xs:decimal"/>
-						<xs:attribute name="dipoleQuadComponent" type="xs:decimal"/>
-						<xs:attribute name="pathLength" type="xs:decimal"/>
-						<!-- TODO missing attributes -->
+						<xs:attribute name="len" type="xs:decimal" use="required" /> <!-- the effective magnetic length [m] -->
+						<xs:attribute name="dfltMagFld" type="xs:decimal"
+							use="required" /> <!-- dfltMagField is the default field value (T for dipole, T/m for quad, 
+							etc.) -->
+						<xs:attribute name="polarity" type="xs:byte" use="required" /> <!-- polarity - is the polarity flag/default polarity value. 1 means positive 
+							current = positive field. * -1 means positive current = negative field<br> -->
+						<xs:attribute name="bendAngle" type="xs:decimal" /> <!-- dipole bend angle (in degrees) -->
+						<xs:attribute name="multFieldNorm" type="xs:string" /> <!-- normal field components - multFieldNorm - is an array of the normal 
+							direction multipole components * element n is the n'th pole field level over 
+							the primary field * where n= 0 for dipole, n=1 for quad, ... -->
+						<xs:attribute name="multFieldSkew" type="xs:decimal" /> <!-- skew field components - is the same as multFieldNorm, but is for the 
+							skew direction -->
+
+						<xs:attribute name="pathLength" type="xs:decimal" /> <!-- path length (in m) -->
+
+						<xs:attribute name="dipoleEntrRotAngle" type="xs:decimal" /> <!-- dipole rotation angle for entrance pole face (in degrees) -->
+						<xs:attribute name="dipoleExitRotAngle" type="xs:decimal" /> <!-- dipole rotation angle for exit pole face (in degrees) -->
+						<xs:attribute name="dipoleQuadComponent" type="xs:decimal" /> <!-- quadrupole component for bend dipole -->
 					</xs:complexType>
 				</xs:element>
 				<xs:element name="aperture" minOccurs="0">
 					<xs:complexType>
-						<xs:attribute name="x" type="xs:decimal"/>
-						<xs:attribute name="y" type="xs:decimal"/>
-						<xs:attribute name="shape" type="xs:byte" use="required"/>
+						<xs:attribute name="x" type="xs:decimal" />
+						<xs:attribute name="y" type="xs:decimal" />
+						<xs:attribute name="shape" type="xs:byte" use="required" /> <!-- public static final int iUnkown = 0; public static final int iEllipse 
+							= 1; public static final int iRectangle = 2; public static final int iDiamond 
+							= 3; public static final int iIrregular = 11; -->
 					</xs:complexType>
 				</xs:element>
 				<xs:element name="rfgap" minOccurs="0">
+					<!-- * A set of RF gap attributes. * * This bucket contains information 
+						about a specific gap withing a resonating cavity such as a DTL * or CCL, 
+						which is driven by a common RF source. -->
 					<xs:complexType>
-						<xs:attribute name="length" type="xs:decimal" use="required"/>
-						<xs:attribute name="phaseFactor" type="xs:decimal" use="required"/>
-						<xs:attribute name="ampFactor" type="xs:decimal" use="required"/>
-						<xs:attribute name="TTF" type="xs:decimal" use="required"/>
-						<xs:attribute name="endCell" type="xs:byte" use="required"/>
-						<xs:attribute name="gapOffset" type="xs:decimal" use="required"/>
+						<xs:attribute name="length" type="xs:decimal" use="required" /> <!-- The length is the length of the gap (m) -->
+						<xs:attribute name="phaseFactor" type="xs:decimal"
+							use="required" /> <!-- the ratio of the RF phase in the gap over the phase in the first gap -->
+						<xs:attribute name="ampFactor" type="xs:decimal" use="required" /> <!-- the ratio of the RF amplitude in the gap over the amplitude in the first 
+							gap -->
+						<xs:attribute name="TTF" type="xs:decimal" use="required" /> <!-- The transit time factor of this gap -->
+						<xs:attribute name="endCell" type="xs:byte" use="required" /> <!-- flag for whether this is and end cell (i.e. uses the end cell TTFs)" -->
+						<xs:attribute name="gapOffset" type="xs:decimal" use="required" /> <!-- the distance between the Electric and geometric center (E_ctr - G_ctr) 
+							(m) -->
 					</xs:complexType>
 				</xs:element>
 				<xs:element name="rfcavity" minOccurs="0">
+					<!-- A set of RF cavity attributes. -->
 					<xs:complexType>
-						<xs:attribute name="amp" type="xs:decimal" use="required"/>
-						<xs:attribute name="phase" type="xs:decimal" use="required"/>
-						<xs:attribute name="freq" type="xs:decimal" use="required"/>
-						<xs:attribute name="TTFCoefs" type="xs:string" use="required"/>
-						<xs:attribute name="TTFPrimeCoefs" type="xs:string" use="required"/>
-						<xs:attribute name="STFCoefs" type="xs:string" use="required"/>
-						<xs:attribute name="STFPrimeCoefs" type="xs:string" use="required"/>
-						<xs:attribute name="TTF_endCoefs" type="xs:string" use="required"/>
-						<xs:attribute name="TTFPrime_EndCoefs" type="xs:string" use="required"/>
-						<xs:attribute name="STF_endCoefs" type="xs:string" use="required"/>
-						<xs:attribute name="STFPrime_endCoefs" type="xs:string" use="required"/>
-						<xs:attribute name="structureMode" type="xs:byte" use="required"/>
-						<xs:attribute name="qLoaded" type="xs:decimal"/>
-						<xs:attribute name="structureTTF" type="xs:decimal"/>
-						<!-- TODO missing -->
+						<xs:attribute name="amp" type="xs:decimal" use="required" /> <!-- the default amplitude (kV) -->
+						<xs:attribute name="phase" type="xs:decimal" use="required" /> <!-- the default phase (deg) -->
+						<xs:attribute name="freq" type="xs:decimal" use="required" /> <!-- the frequency (MHz) -->
+						<xs:attribute name="ampFactor" type="xs:decimal" /> <!-- calibration factor for klystron amplitude -->
+						<xs:attribute name="phaseOffset" type="xs:decimal" /> <!-- calibration offset for beam - klystron phase -->
+						<xs:attribute name="TTFCoefs" type="xs:string" use="required" /> <!-- quadratic fit coefficients for the transit time factor as a function 
+							of beta (constant, linear, quad) -->
+						<xs:attribute name="TTFPrimeCoefs" type="xs:string"
+							use="required" /><!-- quadratic fit coefficients for the transit time 
+							factor prime as a function of beta (constant, linear, quad) -->
+						<xs:attribute name="STFCoefs" type="xs:string" use="required" /> <!-- quadratic fit coefficients for the "S transit time factor" as a function 
+							of beta (constant, linear, quad) -->
+						<xs:attribute name="STFPrimeCoefs" type="xs:string"
+							use="required" /> <!-- quadratic fit coefficients for the "S transit time factor" prime as 
+							a function of beta (constant, linear, quad) -->
+						<xs:attribute name="TTF_endCoefs" type="xs:string"
+							use="required" /> <!-- quadratic fit coefficients for the transit time factor as a function 
+							of beta for the end cells (constant, linear, quad) -->
+						<xs:attribute name="TTFPrime_EndCoefs" type="xs:string"
+							use="required" /> <!-- quadratic fit coefficients for the transit time factor prime as a function 
+							of beta for the end cells (constant, linear, quad) -->
+						<xs:attribute name="STF_endCoefs" type="xs:string"
+							use="required" /> <!-- quadratic fit coefficients for the "S transit time factor" as a function 
+							of beta for the end cells (constant, linear, quad) -->
+						<xs:attribute name="STFPrime_endCoefs" type="xs:string"
+							use="required" /> <!-- quadratic fit coefficients for the "S transit time factor" prime as 
+							a function of beta for the end cells (constant, linear, quad) -->
+						<xs:attribute name="structureMode" type="xs:byte"
+							use="required" /> <!-- flag for the structure type (0 or pi mode) -->
+						<xs:attribute name="qLoaded" type="xs:decimal" /> <!-- quality factor with all external contribution -->
+						<xs:attribute name="structureTTF" type="xs:decimal" /> <!-- TTF used in the real accelerator LLRF -->
 					</xs:complexType>
 				</xs:element>
 				<xs:element name="bpm" minOccurs="0">
 					<xs:complexType>
-						<xs:attribute name="orientation" type="xs:byte" use="required"/>
-						<xs:attribute name="length" type="xs:decimal" use="required"/>
-						<xs:attribute name="frequency" type="xs:decimal" use="required"/>
+						<xs:attribute name="frequency" type="xs:decimal" /> <!-- // the phase frequency (MHz) -->
+						<xs:attribute name="length" type="xs:decimal" /><!-- stripline 
+							length (m) -->
+						<xs:attribute name="orientation" type="xs:byte" /><!-- 
+							leads come in up (1)or downstream (-1) -->
 					</xs:complexType>
 				</xs:element>
 				<xs:element name="sequence" minOccurs="0">
+					<!-- * A bucket to hold Information about sequences. In particular, 
+						* how long the sequence is, and allowed predecessor sequences. -->
 					<xs:complexType>
-						<xs:attribute name="predecessors" type="xs:string"/>
+						<xs:attribute name="predecessors" type="xs:string" /> <!-- can have at most 2 predecessors -->
 					</xs:complexType>
 				</xs:element>
 			</xs:all>
@@ -220,46 +1124,46 @@
 			<xs:sequence>
 				<xs:element name="channel" minOccurs="0" maxOccurs="unbounded">
 					<xs:complexType>
-						<xs:attribute name="handle" type="xs:string" use="required"/>
-						<xs:attribute name="signal" type="xs:string"/>
-						<xs:attribute name="settable" type="xs:boolean"/>
-						<xs:attribute name="valid" type="xs:boolean"/>
-						<xs:attribute name="transform" type="xs:string"/>
+						<xs:attribute name="handle" type="xs:string" use="required" />
+						<xs:attribute name="signal" type="xs:string" />
+						<xs:attribute name="settable" type="xs:boolean" />
+						<xs:attribute name="valid" type="xs:boolean" />
+						<xs:attribute name="transform" type="xs:string" />
 					</xs:complexType>
 				</xs:element>
 				<xs:element name="transform" minOccurs="0" maxOccurs="unbounded">
 					<xs:complexType>
-						<xs:attribute name="name" type="xs:string" use="required"/>
+						<xs:attribute name="name" type="xs:string" use="required" />
 						<xs:attribute name="type" use="required">
 							<xs:simpleType>
-								<xs:restriction base="xs:string">									
-									<xs:enumeration value="doubleScale"/>
-									<xs:enumeration value="doubleTranslation"/>
-									<xs:enumeration value="doubleLinear"/>
-									<xs:enumeration value="doubleArrayScale"/>
-									<xs:enumeration value="doubleArrayTranslation"/>
-									<xs:enumeration value="doubleArrayLinear"/>									
+								<xs:restriction base="xs:string">
+									<xs:enumeration value="doubleScale" />
+									<xs:enumeration value="doubleTranslation" />
+									<xs:enumeration value="doubleLinear" />
+									<xs:enumeration value="doubleArrayScale" />
+									<xs:enumeration value="doubleArrayTranslation" />
+									<xs:enumeration value="doubleArrayLinear" />
 								</xs:restriction>
 							</xs:simpleType>
 						</xs:attribute>
-						<xs:attribute name="scale" type="xs:decimal"/>
-						<xs:attribute name="offset" type="xs:decimal"/>
+						<xs:attribute name="scale" type="xs:decimal" />
+						<xs:attribute name="offset" type="xs:decimal" />
 					</xs:complexType>
 				</xs:element>
 			</xs:sequence>
-			<xs:attribute name="name" type="xs:string"/> <!-- not used -->
+			<xs:attribute name="name" type="xs:string" /> <!-- not used -->
 		</xs:complexType>
-		<xs:key name="channel-handle">			
-			<xs:selector xpath="channel"/>
-			<xs:field xpath="@handle"/>
+		<xs:key name="channel-handle">
+			<xs:selector xpath="channel" />
+			<xs:field xpath="@handle" />
 		</xs:key>
-		<xs:key name="transform-name">			
-			<xs:selector xpath="transform"/>
-			<xs:field xpath="@name"/>
+		<xs:key name="transform-name">
+			<xs:selector xpath="transform" />
+			<xs:field xpath="@name" />
 		</xs:key>
 		<xs:keyref name="channel-transform" refer="transform-name">
-			<xs:selector xpath="channel"/>
-			<xs:field xpath="@transform"/>
+			<xs:selector xpath="channel" />
+			<xs:field xpath="@transform" />
 		</xs:keyref>
 	</xs:element>
 	<xs:element name="powersupplies">
@@ -268,14 +1172,14 @@
 				<xs:element name="ps" maxOccurs="unbounded">
 					<xs:complexType>
 						<xs:sequence minOccurs="1" maxOccurs="1">
-							<xs:element ref="channelsuite"/>
+							<xs:element ref="channelsuite" />
 						</xs:sequence>
-						<xs:attribute name="id" type="xs:string" use="required"/>
+						<xs:attribute name="id" type="xs:string" use="required" />
 						<xs:attribute name="type" use="required">
 							<xs:simpleType>
 								<xs:restriction base="xs:string">
-									<xs:enumeration value="main"/>
-									<xs:enumeration value="trim"/>
+									<xs:enumeration value="main" />
+									<xs:enumeration value="trim" />
 								</xs:restriction>
 							</xs:simpleType>
 						</xs:attribute>
@@ -283,9 +1187,9 @@
 				</xs:element>
 			</xs:sequence>
 		</xs:complexType>
-		<xs:key name="powersupply-id">			
-			<xs:selector xpath="ps"/>
-			<xs:field xpath="@id"/>
+		<xs:key name="powersupply-id">
+			<xs:selector xpath="ps" />
+			<xs:field xpath="@id" />
 		</xs:key>
 	</xs:element>
 </xs:schema> 
