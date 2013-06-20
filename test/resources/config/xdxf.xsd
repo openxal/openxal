@@ -1048,6 +1048,12 @@
 		</xs:keyref>
 	</xs:element>
 
+	<xs:simpleType name="doubleArrayType">
+		<xs:restriction base="xs:string">
+			<xs:pattern value="((\+|-)?([0-9]+(\.[0-9]*)?|\.[0-9]+),.*)*(\+|-)?([0-9]+(\.[0-9]*)?|\.[0-9]+)"/>
+		</xs:restriction>
+	</xs:simpleType>
+
 	<xs:element name="attributes">
 		<xs:complexType>
 			<xs:all>
@@ -1179,7 +1185,7 @@
 								<xs:documentation>dipole bend angle (in degrees)</xs:documentation>
 							</xs:annotation>
 						</xs:attribute>
-						<xs:attribute name="multFieldNorm" type="xs:string">
+						<xs:attribute name="multFieldNorm" type="doubleArrayType">
 							<xs:annotation>
 								<xs:documentation>
 									normal field components<br/> 
@@ -1188,7 +1194,7 @@
 								</xs:documentation>
 							</xs:annotation>
 						</xs:attribute>
-						<xs:attribute name="multFieldSkew" type="xs:decimal">
+						<xs:attribute name="multFieldSkew" type="doubleArrayType">
 							<xs:annotation>
 								<xs:documentation>skew field components - is the same as multFieldNorm, but is for the skew direction
 								</xs:documentation>
@@ -1265,6 +1271,21 @@
 								<xs:documentation>The transit time factor of this gap</xs:documentation>
 							</xs:annotation>
 						</xs:attribute>
+						<xs:attribute name="amp" type="doubleArrayType">
+							<xs:annotation>
+								<xs:documentation>the default amplitude (kV)</xs:documentation>
+							</xs:annotation>
+						</xs:attribute>
+						<xs:attribute name="phase" type="doubleArrayType">
+							<xs:annotation>
+								<xs:documentation>the default phase (deg)</xs:documentation>
+							</xs:annotation>
+						</xs:attribute>
+						<xs:attribute name="freq" type="doubleArrayType">
+							<xs:annotation>
+								<xs:documentation>the frequency (MHz)</xs:documentation>
+							</xs:annotation>
+						</xs:attribute>
 						<xs:attribute name="endCell" type="xs:byte" use="required">
 							<xs:annotation>
 								<xs:documentation>flag for whether this is and end cell (i.e. uses the end cell TTFs)" </xs:documentation>
@@ -1273,6 +1294,16 @@
 						<xs:attribute name="gapOffset" type="xs:decimal" use="required">
 							<xs:annotation>
 								<xs:documentation>the distance between the Electric and geometric center (E_ctr - G_ctr) (m)</xs:documentation>
+							</xs:annotation>
+						</xs:attribute>
+						<xs:attribute name="testPhaseFactor" type="xs:decimal">
+							<xs:annotation>
+								<xs:documentation>the ratio of the RF phase in the gap over the	phase in the first gap </xs:documentation>
+							</xs:annotation>
+						</xs:attribute>
+						<xs:attribute name="testAmpFactor" type="xs:decimal">
+							<xs:annotation>
+								<xs:documentation>the ratio of the RF amplitude in the gap over the amplitude in the first gap</xs:documentation>
 							</xs:annotation>
 						</xs:attribute>
 					</xs:complexType>
@@ -1309,7 +1340,7 @@
 								<xs:documentation>calibration offset for beam - klystron phase</xs:documentation>
 							</xs:annotation>
 						</xs:attribute>
-						<xs:attribute name="TTFCoefs" type="xs:string" use="required">
+						<xs:attribute name="TTFCoefs" type="doubleArrayType" use="required">
 							<xs:annotation>
 								<xs:documentation>
 									quadratic fit coefficients for the transit time factor 
@@ -1317,7 +1348,7 @@
 								</xs:documentation>
 							</xs:annotation>
 						</xs:attribute>
-						<xs:attribute name="TTFPrimeCoefs" type="xs:string"
+						<xs:attribute name="TTFPrimeCoefs" type="doubleArrayType"
 							use="required">
 							<xs:annotation>
 								<xs:documentation> quadratic fit coefficients for the transit time
@@ -1325,14 +1356,14 @@
 								</xs:documentation>
 							</xs:annotation>
 						</xs:attribute>
-						<xs:attribute name="STFCoefs" type="xs:string" use="required">
+						<xs:attribute name="STFCoefs" type="doubleArrayType" use="required">
 							<xs:annotation>
 								<xs:documentation>quadratic fit coefficients for the "S transit time factor" as a function
 									of beta (constant, linear, quad)
 								</xs:documentation>
 							</xs:annotation>
 						</xs:attribute>
-						<xs:attribute name="STFPrimeCoefs" type="xs:string"
+						<xs:attribute name="STFPrimeCoefs" type="doubleArrayType"
 							use="required">
 							<xs:annotation>
 								<xs:documentation>quadratic fit coefficients for the "S transit time factor" prime as
@@ -1340,7 +1371,7 @@
 								</xs:documentation>
 							</xs:annotation>
 						</xs:attribute>
-						<xs:attribute name="TTF_endCoefs" type="xs:string"
+						<xs:attribute name="TTF_endCoefs" type="doubleArrayType"
 							use="required">
 							<xs:annotation>
 								<xs:documentation>quadratic fit coefficients for the transit time factor as a function
@@ -1348,7 +1379,7 @@
 								</xs:documentation>
 							</xs:annotation>
 						</xs:attribute>
-						<xs:attribute name="TTFPrime_EndCoefs" type="xs:string"
+						<xs:attribute name="TTFPrime_EndCoefs" type="doubleArrayType"
 							use="required">
 							<xs:annotation>
 								<xs:documentation>quadratic fit coefficients for the transit time factor prime as a function
@@ -1356,7 +1387,7 @@
 								</xs:documentation>
 							</xs:annotation>
 						</xs:attribute>
-						<xs:attribute name="STF_endCoefs" type="xs:string"
+						<xs:attribute name="STF_endCoefs" type="doubleArrayType"
 							use="required">
 							<xs:annotation>
 								<xs:documentation>quadratic fit coefficients for the "S transit time factor" as a function
@@ -1364,7 +1395,7 @@
 								</xs:documentation>
 							</xs:annotation>
 						</xs:attribute>
-						<xs:attribute name="STFPrime_endCoefs" type="xs:string"
+						<xs:attribute name="STFPrime_endCoefs" type="doubleArrayType"
 							use="required">
 							<xs:annotation>
 								<xs:documentation>quadratic fit coefficients for the "S transit time factor" prime as
