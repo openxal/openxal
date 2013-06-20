@@ -850,6 +850,11 @@
 			<xs:element minOccurs="0" maxOccurs="unbounded" ref="attributes" />
 			<!-- implemented in specific sub nodes -->
 			<xs:element minOccurs="0" maxOccurs="1" name="ps">
+				<xs:annotation>
+					<xs:documentation>
+						Implementation: xal.smf.impl.Electromagnet<br/>
+					</xs:documentation>
+				</xs:annotation>
 				<xs:complexType>
 					<xs:attribute name="main" type="xs:string" />
 					<xs:attribute name="trim" type="xs:string" />
@@ -859,12 +864,29 @@
 		<xs:attribute name="id" type="xs:string" use="required" />
 		<xs:attribute name="type" type="nodeType" />
 		<xs:attribute name="softType" type="xs:string" />
-		<xs:attribute name="pid" type="xs:string" /> <!-- Physics id -->
-		<xs:attribute name="eid" type="xs:string" /> <!-- Engineering id -->
-		<xs:attribute name="status" type="xs:boolean" /> <!-- status of the node which identifies whether the node is operational -->
+		<xs:attribute name="pid" type="xs:string">
+			<xs:annotation>
+				<xs:documentation>Physics id </xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="eid" type="xs:string">
+			<xs:annotation>
+				<xs:documentation>Engineering id </xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="status" type="xs:boolean">
+			<xs:annotation>
+				<xs:documentation>status of the node which identifies whether the
+					node is operational </xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
 		<xs:attribute name="len" type="xs:decimal" />
 		<xs:attribute name="pos" type="xs:decimal" />
-		<xs:attribute name="s" type="xs:decimal" /> <!-- s display coordinate -->
+		<xs:attribute name="s" type="xs:decimal">
+			<xs:annotation>
+				<xs:documentation>s display coordinate </xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
 		<xs:attribute name="exclude" type="xs:boolean" />
 	</xs:complexType>
 
@@ -882,39 +904,90 @@
 		<xs:attribute name="id" type="xs:string" use="required" />
 		<xs:attribute name="type" type="seqType" />
 		<xs:attribute name="softType" type="xs:string" />
-		<xs:attribute name="pid" type="xs:string" /> <!-- Physics id -->
-		<xs:attribute name="eid" type="xs:string" /> <!-- Engineering id -->
-		<xs:attribute name="status" type="xs:boolean" /> <!-- status of the node which identifies whether the node is operational -->
+		<xs:attribute name="pid" type="xs:string">
+			<xs:annotation>
+				<xs:documentation>Physics id </xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="eid" type="xs:string">
+			<xs:annotation>
+				<xs:documentation>Engineering id </xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="status" type="xs:boolean">
+			<xs:annotation>
+				<xs:documentation>status of the node which identifies whether the
+					node is operational </xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
 		<xs:attribute name="len" type="xs:decimal" />
 		<xs:attribute name="pos" type="xs:decimal" />
-		<xs:attribute name="s" type="xs:decimal" /> <!-- s display coordinate -->
+		<xs:attribute name="s" type="xs:decimal">
+			<xs:annotation>
+				<xs:documentation>s display coordinate </xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
 		<xs:attribute name="exclude" type="xs:boolean" />
 	</xs:complexType>
 
 
 	<xs:complexType name="acceleratorComboSeq">
-		<!-- This class is meant to deal with pasting together existing sequences into new sequences. -->
+		<xs:annotation>
+			<xs:documentation>
+				This class is meant to deal with pasting together
+				existing sequences into new sequences.
+			</xs:documentation>
+		</xs:annotation>
 		<xs:choice maxOccurs="unbounded">
 			<!-- derived from acceleratorSeq -->
 			<xs:element minOccurs="0" maxOccurs="unbounded" name="node"
-				type="acceleratorNode" /> <!-- not used -->
+				type="acceleratorNode">
+				<xs:annotation>
+					<xs:documentation>not used </xs:documentation>
+				</xs:annotation>
+			</xs:element>
 			<xs:element minOccurs="0" maxOccurs="unbounded" name="sequence"
 				type="acceleratorSeq" />
 			<!-- derived from acceleratorNode -->
-			<xs:element minOccurs="0" maxOccurs="1" ref="channelsuite" /> <!-- not used -->
-			<xs:element minOccurs="0" maxOccurs="unbounded" ref="attributes" /> <!-- not used -->
+			<xs:element minOccurs="0" maxOccurs="1" ref="channelsuite">
+				<xs:annotation>
+					<xs:documentation>not used </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element minOccurs="0" maxOccurs="unbounded" ref="attributes">
+				<xs:annotation>
+					<xs:documentation>not used </xs:documentation>
+				</xs:annotation>
+			</xs:element>
 		</xs:choice>
 		<!-- derived from acceleratorNode -->
 		<xs:attribute name="id" type="xs:string" use="required" />
 		<xs:attribute name="type" type="comboSeqType" />
 		<!-- usually not used -->
 		<xs:attribute name="softType" type="xs:string" />
-		<xs:attribute name="pid" type="xs:string" /> <!-- Physics id -->
-		<xs:attribute name="eid" type="xs:string" /> <!-- Engineering id -->
-		<xs:attribute name="status" type="xs:boolean" /> <!-- status of the node which identifies whether the node is operational -->
+		<xs:attribute name="pid" type="xs:string">
+			<xs:annotation>
+				<xs:documentation>Physics id </xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="eid" type="xs:string">
+			<xs:annotation>
+				<xs:documentation>Engineering id </xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="status" type="xs:boolean">
+			<xs:annotation>
+				<xs:documentation>status of the node which identifies whether the
+					node is operational </xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
 		<xs:attribute name="len" type="xs:decimal" />
 		<xs:attribute name="pos" type="xs:decimal" />
-		<xs:attribute name="s" type="xs:decimal" /> <!-- s display coordinate -->
+		<xs:attribute name="s" type="xs:decimal">
+			<xs:annotation>
+				<xs:documentation>s display coordinate </xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
 		<xs:attribute name="exclude" type="xs:boolean" />
 	</xs:complexType>
 
@@ -934,18 +1007,15 @@
 		<xs:attribute name="system" type="xs:string">
 			<xs:annotation>
 				<xs:documentation>
-					The name of the accelerator system that is
-					described.
+					The name of the accelerator system that is described.
 				</xs:documentation>
 			</xs:annotation>
 		</xs:attribute>
 		<xs:attribute name="ver" type="xs:string">
 			<xs:annotation>
 				<xs:documentation>
-					The ver attribute contains any versioning
-					information associated with the file.
-					This feature allows users to
-					monitor changes in the XAL configuration with a version stamp,
+					The ver attribute contains any versioning information associated with the file.
+					This feature allows users to monitor changes in the XAL configuration with a version stamp,
 					facilitating more accurate comparisons of archived data.
 				</xs:documentation>
 			</xs:annotation>
@@ -953,13 +1023,9 @@
 		<xs:attribute name="date" type="xs:string">
 			<xs:annotation>
 				<xs:documentation>
-					Date, contains the date in which the optics file
-					was last built.
-					The date value can be expressed in the ISO 8601
-					standard [12],
-					however, any date format recognized by the Java class
-					DateFormat
-					[9] is valid.
+					Date, contains the date in which the optics file was last built.
+					The date value can be expressed in the ISO 8601	standard [12],
+					however, any date format recognized by the Java class DateFormat [9] is valid.
 					XAL only writes this value.
 				</xs:documentation>
 			</xs:annotation>
@@ -986,134 +1052,477 @@
 		<xs:complexType>
 			<xs:all>
 				<xs:element name="align" minOccurs="0">
-					<!-- * An attribute set for alignment attributes (x, y, z, pitch, yaw, 
-						roll). * These alignments are offsets in the local lattice coordinate system. -->
+					<xs:annotation>
+						<xs:documentation>
+							Implementation: xal.smf.attr.AlignmentBucket<br/>
+							An attribute set for alignment attributes (x, y, z, pitch, yaw, roll).
+							These alignments are offsets in the local lattice coordinate system.
+						</xs:documentation>
+					</xs:annotation>
 					<xs:complexType>
-						<xs:attribute name="x" type="xs:decimal" use="required" /> <!-- x is in the horizontal direction [mm] -->
-						<xs:attribute name="y" type="xs:decimal" use="required" /> <!-- y is in the vertical direction [mm] -->
-						<xs:attribute name="z" type="xs:decimal" use="required" /> <!-- z is in the longitudinal direction along the beam [mm] -->
-						<xs:attribute name="pitch" type="xs:decimal" use="required" /> <!-- pitch is the rotation about x [mrad] -->
-						<xs:attribute name="yaw" type="xs:decimal" use="required" /> <!-- yaw is the rotation about y [mrad] -->
-						<xs:attribute name="roll" type="xs:decimal" use="required" /> <!-- roll is the rotation about z [mrad] -->
+						<xs:attribute name="x" type="xs:decimal" use="required">
+							<xs:annotation>
+								<xs:documentation>x is in the horizontal direction [mm]</xs:documentation>
+							</xs:annotation>
+						</xs:attribute>
+						<xs:attribute name="y" type="xs:decimal" use="required">
+							<xs:annotation>
+								<xs:documentation>y is in the vertical direction [mm]</xs:documentation>
+							</xs:annotation>
+						</xs:attribute>
+						<xs:attribute name="z" type="xs:decimal" use="required">
+							<xs:annotation>
+								<xs:documentation>z is in the longitudinal direction along the beam [mm]</xs:documentation>
+							</xs:annotation>
+						</xs:attribute>
+						<xs:attribute name="pitch" type="xs:decimal" use="required">
+							<xs:annotation>
+								<xs:documentation>pitch is the rotation about x [mrad]</xs:documentation>
+							</xs:annotation>
+						</xs:attribute>
+						<xs:attribute name="yaw" type="xs:decimal" use="required">
+							<xs:annotation>
+								<xs:documentation>yaw is the rotation about y [mrad]</xs:documentation>
+							</xs:annotation>
+						</xs:attribute>
+						<xs:attribute name="roll" type="xs:decimal" use="required">
+							<xs:annotation>
+								<xs:documentation>roll is the rotation about z [mrad]</xs:documentation>
+							</xs:annotation>
+						</xs:attribute>
 					</xs:complexType>
 				</xs:element>
 				<xs:element name="rotation" minOccurs="0">
-					<!-- * * An attribute set for rotation alignment attributes (pitch, 
-						yaw, roll). * These alignments are offsets in the local lattice coordinate 
-						system. -->
+					<xs:annotation>
+						<xs:documentation>
+							Implementation: xal.smf.attr.RotationBucket<br/>
+							An attribute set for rotation alignment attributes (pitch, yaw, roll).
+							These alignments are offsets in the local lattice coordinate system.
+						</xs:documentation>
+					</xs:annotation>
 					<xs:complexType>
-						<xs:attribute name="pitch" type="xs:decimal" use="required" /> <!-- pitch is the rotation about x [mrad] -->
-						<xs:attribute name="yaw" type="xs:decimal" use="required" /> <!-- yaw is the rotation about y [mrad] -->
-						<xs:attribute name="roll" type="xs:decimal" use="required" /> <!-- roll is the rotation about z [mrad] -->
+						<xs:attribute name="pitch" type="xs:decimal" use="required">
+							<xs:annotation>
+								<xs:documentation>pitch is the rotation about x [mrad]</xs:documentation>
+							</xs:annotation>
+						</xs:attribute>
+						<xs:attribute name="yaw" type="xs:decimal" use="required">
+							<xs:annotation>
+								<xs:documentation>yaw is the rotation about y [mrad]</xs:documentation>
+							</xs:annotation>
+						</xs:attribute>
+						<xs:attribute name="roll" type="xs:decimal" use="required">
+							<xs:annotation>
+								<xs:documentation>roll is the rotation about z [mrad]</xs:documentation>
+							</xs:annotation>
+						</xs:attribute>
 					</xs:complexType>
 				</xs:element>
 				<xs:element name="displacement" minOccurs="0">
-					<!-- An attribute set for displacement alignment attributes (x, y, z). 
-						* These alignments are offsets in the local lattice coordinate system. -->
+					<xs:annotation>
+						<xs:documentation>
+							Implementation: xal.smf.attr.DisplaceBucket<br/>
+							An attribute set for displacement alignment attributes (x, y, z).
+							These alignments are offsets in the local lattice coordinate system.
+						</xs:documentation>
+					</xs:annotation>
 					<xs:complexType>
-						<xs:attribute name="x" type="xs:decimal" use="required" /> <!-- x is in the horizontal direction -->
-						<xs:attribute name="y" type="xs:decimal" use="required" /> <!-- y is in the vertical direction -->
-						<xs:attribute name="z" type="xs:decimal" use="required" /> <!-- z is in the longitudinal direction along the beam -->
+						<xs:attribute name="x" type="xs:decimal" use="required">
+							<xs:annotation>
+								<xs:documentation>x is in the horizontal direction
+								</xs:documentation>
+							</xs:annotation>
+						</xs:attribute>
+						<xs:attribute name="y" type="xs:decimal" use="required">
+							<xs:annotation>
+								<xs:documentation>y is in the vertical direction
+								</xs:documentation>
+							</xs:annotation>
+						</xs:attribute>
+						<xs:attribute name="z" type="xs:decimal" use="required">
+							<xs:annotation>
+								<xs:documentation>z is in the longitudinal direction along the beam </xs:documentation>
+							</xs:annotation>
+						</xs:attribute>
 					</xs:complexType>
 				</xs:element>
 				<xs:element name="magnet" minOccurs="0">
-					<!-- Attribute set for magnet information -->
+					<xs:annotation>
+						<xs:documentation>
+							Implementation: xal.smf.attr.MagnetBucket<br/>
+							Attribute set for magnet information
+						</xs:documentation>
+					</xs:annotation>
 					<xs:complexType>
-						<xs:attribute name="len" type="xs:decimal" use="required" /> <!-- the effective magnetic length [m] -->
+						<xs:attribute name="len" type="xs:decimal" use="required">
+							<xs:annotation>
+								<xs:documentation>the effective magnetic length [m]</xs:documentation>
+							</xs:annotation>
+						</xs:attribute>
 						<xs:attribute name="dfltMagFld" type="xs:decimal"
-							use="required" /> <!-- dfltMagField is the default field value (T for dipole, T/m for quad, 
-							etc.) -->
-						<xs:attribute name="polarity" type="xs:byte" use="required" /> <!-- polarity - is the polarity flag/default polarity value. 1 means positive 
-							current = positive field. * -1 means positive current = negative field<br> -->
-						<xs:attribute name="bendAngle" type="xs:decimal" /> <!-- dipole bend angle (in degrees) -->
-						<xs:attribute name="multFieldNorm" type="xs:string" /> <!-- normal field components - multFieldNorm - is an array of the normal 
-							direction multipole components * element n is the n'th pole field level over 
-							the primary field * where n= 0 for dipole, n=1 for quad, ... -->
-						<xs:attribute name="multFieldSkew" type="xs:decimal" /> <!-- skew field components - is the same as multFieldNorm, but is for the 
-							skew direction -->
+							use="required">
+							<xs:annotation>
+								<xs:documentation>dfltMagField is the default field value (T for dipole, T/m for quad, etc.)</xs:documentation>
+							</xs:annotation>
+						</xs:attribute>
+						<xs:attribute name="polarity" type="xs:byte" use="required">
+							<xs:annotation>
+								<xs:documentation>
+									polarity - is the polarity flag/default polarity value.
+									1 means	positive current = positive field. -1 means positive current = negative field
+									<br />
+								</xs:documentation>
+							</xs:annotation>
+						</xs:attribute>
+						<xs:attribute name="bendAngle" type="xs:decimal">
+							<xs:annotation>
+								<xs:documentation>dipole bend angle (in degrees)</xs:documentation>
+							</xs:annotation>
+						</xs:attribute>
+						<xs:attribute name="multFieldNorm" type="xs:string">
+							<xs:annotation>
+								<xs:documentation>
+									normal field components<br/> 
+									- multFieldNorm - is an array of the normal	direction multipole components
+									 element n is the n'th pole field level	over the primary field where n=0 for dipole, n=1 for quad, ...
+								</xs:documentation>
+							</xs:annotation>
+						</xs:attribute>
+						<xs:attribute name="multFieldSkew" type="xs:decimal">
+							<xs:annotation>
+								<xs:documentation>skew field components - is the same as multFieldNorm, but is for the skew direction
+								</xs:documentation>
+							</xs:annotation>
+						</xs:attribute>
 
-						<xs:attribute name="pathLength" type="xs:decimal" /> <!-- path length (in m) -->
+						<xs:attribute name="pathLength" type="xs:decimal">
+							<xs:annotation>
+								<xs:documentation>path length (in m)</xs:documentation>
+							</xs:annotation>
+						</xs:attribute>
 
-						<xs:attribute name="dipoleEntrRotAngle" type="xs:decimal" /> <!-- dipole rotation angle for entrance pole face (in degrees) -->
-						<xs:attribute name="dipoleExitRotAngle" type="xs:decimal" /> <!-- dipole rotation angle for exit pole face (in degrees) -->
-						<xs:attribute name="dipoleQuadComponent" type="xs:decimal" /> <!-- quadrupole component for bend dipole -->
+						<xs:attribute name="dipoleEntrRotAngle" type="xs:decimal">
+							<xs:annotation>
+								<xs:documentation>dipole rotation angle for entrance pole face (in degrees)</xs:documentation>
+							</xs:annotation>
+						</xs:attribute>
+						<xs:attribute name="dipoleExitRotAngle" type="xs:decimal">
+							<xs:annotation>
+								<xs:documentation>dipole rotation angle for exit pole face (in degrees)</xs:documentation>
+							</xs:annotation>
+						</xs:attribute>
+						<xs:attribute name="dipoleQuadComponent" type="xs:decimal">
+							<xs:annotation>
+								<xs:documentation>quadrupole component for bend dipole</xs:documentation>
+							</xs:annotation>
+						</xs:attribute>
 					</xs:complexType>
 				</xs:element>
 				<xs:element name="aperture" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>
+							Implementation: xal.smf.attr.ApertureBucket<br/>
+						</xs:documentation>
+					</xs:annotation>					
 					<xs:complexType>
 						<xs:attribute name="x" type="xs:decimal" />
 						<xs:attribute name="y" type="xs:decimal" />
-						<xs:attribute name="shape" type="xs:byte" use="required" /> <!-- public static final int iUnkown = 0; public static final int iEllipse 
-							= 1; public static final int iRectangle = 2; public static final int iDiamond 
-							= 3; public static final int iIrregular = 11; -->
+						<xs:attribute name="shape" type="xs:byte" use="required">
+							<xs:annotation>
+								<xs:documentation>iUnkown = 0; iEllipse	= 1; iRectangle = 2; iDiamond = 3; int iIrregular = 11;</xs:documentation>
+							</xs:annotation>
+						</xs:attribute>
 					</xs:complexType>
 				</xs:element>
 				<xs:element name="rfgap" minOccurs="0">
-					<!-- * A set of RF gap attributes. * * This bucket contains information 
-						about a specific gap withing a resonating cavity such as a DTL * or CCL, 
-						which is driven by a common RF source. -->
+					<xs:annotation>
+						<xs:documentation>
+							Implementation: xal.smf.attr.RfGapBucket<br/>
+							A set of RF gap attributes.<br/>
+							This bucket contains information about a specific gap withing a resonating cavity such as a DTL or CCL,
+							which is driven by a common RF source.
+						</xs:documentation>
+					</xs:annotation>
 					<xs:complexType>
-						<xs:attribute name="length" type="xs:decimal" use="required" /> <!-- The length is the length of the gap (m) -->
+						<xs:attribute name="length" type="xs:decimal" use="required">
+							<xs:annotation>
+								<xs:documentation>The length is the length of the gap (m)</xs:documentation>
+							</xs:annotation>
+						</xs:attribute>
 						<xs:attribute name="phaseFactor" type="xs:decimal"
-							use="required" /> <!-- the ratio of the RF phase in the gap over the phase in the first gap -->
-						<xs:attribute name="ampFactor" type="xs:decimal" use="required" /> <!-- the ratio of the RF amplitude in the gap over the amplitude in the first 
-							gap -->
-						<xs:attribute name="TTF" type="xs:decimal" use="required" /> <!-- The transit time factor of this gap -->
-						<xs:attribute name="endCell" type="xs:byte" use="required" /> <!-- flag for whether this is and end cell (i.e. uses the end cell TTFs)" -->
-						<xs:attribute name="gapOffset" type="xs:decimal" use="required" /> <!-- the distance between the Electric and geometric center (E_ctr - G_ctr) 
-							(m) -->
+							use="required">
+							<xs:annotation>
+								<xs:documentation>the ratio of the RF phase in the gap over the	phase in the first gap </xs:documentation>
+							</xs:annotation>
+						</xs:attribute>
+						<xs:attribute name="ampFactor" type="xs:decimal" use="required">
+							<xs:annotation>
+								<xs:documentation>the ratio of the RF amplitude in the gap over the amplitude in the first gap</xs:documentation>
+							</xs:annotation>
+						</xs:attribute>
+						<xs:attribute name="TTF" type="xs:decimal" use="required">
+							<xs:annotation>
+								<xs:documentation>The transit time factor of this gap</xs:documentation>
+							</xs:annotation>
+						</xs:attribute>
+						<xs:attribute name="endCell" type="xs:byte" use="required">
+							<xs:annotation>
+								<xs:documentation>flag for whether this is and end cell (i.e. uses the end cell TTFs)" </xs:documentation>
+							</xs:annotation>
+						</xs:attribute>
+						<xs:attribute name="gapOffset" type="xs:decimal" use="required">
+							<xs:annotation>
+								<xs:documentation>the distance between the Electric and geometric center (E_ctr - G_ctr) (m)</xs:documentation>
+							</xs:annotation>
+						</xs:attribute>
 					</xs:complexType>
 				</xs:element>
 				<xs:element name="rfcavity" minOccurs="0">
-					<!-- A set of RF cavity attributes. -->
+					<xs:annotation>
+						<xs:documentation>
+							Implementation: xal.smf.attr.RfCavityBucket<br/>
+							A set of RF cavity attributes.</xs:documentation>
+					</xs:annotation>
 					<xs:complexType>
-						<xs:attribute name="amp" type="xs:decimal" use="required" /> <!-- the default amplitude (kV) -->
-						<xs:attribute name="phase" type="xs:decimal" use="required" /> <!-- the default phase (deg) -->
-						<xs:attribute name="freq" type="xs:decimal" use="required" /> <!-- the frequency (MHz) -->
-						<xs:attribute name="ampFactor" type="xs:decimal" /> <!-- calibration factor for klystron amplitude -->
-						<xs:attribute name="phaseOffset" type="xs:decimal" /> <!-- calibration offset for beam - klystron phase -->
-						<xs:attribute name="TTFCoefs" type="xs:string" use="required" /> <!-- quadratic fit coefficients for the transit time factor as a function 
-							of beta (constant, linear, quad) -->
+						<xs:attribute name="amp" type="xs:decimal" use="required">
+							<xs:annotation>
+								<xs:documentation>the default amplitude (kV)</xs:documentation>
+							</xs:annotation>
+						</xs:attribute>
+						<xs:attribute name="phase" type="xs:decimal" use="required">
+							<xs:annotation>
+								<xs:documentation>the default phase (deg)</xs:documentation>
+							</xs:annotation>
+						</xs:attribute>
+						<xs:attribute name="freq" type="xs:decimal" use="required">
+							<xs:annotation>
+								<xs:documentation>the frequency (MHz)</xs:documentation>
+							</xs:annotation>
+						</xs:attribute>
+						<xs:attribute name="ampFactor" type="xs:decimal">
+							<xs:annotation>
+								<xs:documentation>calibration factor for klystron amplitude</xs:documentation>
+							</xs:annotation>
+						</xs:attribute>
+						<xs:attribute name="phaseOffset" type="xs:decimal">
+							<xs:annotation>
+								<xs:documentation>calibration offset for beam - klystron phase</xs:documentation>
+							</xs:annotation>
+						</xs:attribute>
+						<xs:attribute name="TTFCoefs" type="xs:string" use="required">
+							<xs:annotation>
+								<xs:documentation>
+									quadratic fit coefficients for the transit time factor 
+									as a function of beta (constant, linear, quad)
+								</xs:documentation>
+							</xs:annotation>
+						</xs:attribute>
 						<xs:attribute name="TTFPrimeCoefs" type="xs:string"
-							use="required" /><!-- quadratic fit coefficients for the transit time 
-							factor prime as a function of beta (constant, linear, quad) -->
-						<xs:attribute name="STFCoefs" type="xs:string" use="required" /> <!-- quadratic fit coefficients for the "S transit time factor" as a function 
-							of beta (constant, linear, quad) -->
+							use="required">
+							<xs:annotation>
+								<xs:documentation> quadratic fit coefficients for the transit time
+									factor prime as a function of beta (constant, linear, quad)
+								</xs:documentation>
+							</xs:annotation>
+						</xs:attribute>
+						<xs:attribute name="STFCoefs" type="xs:string" use="required">
+							<xs:annotation>
+								<xs:documentation>quadratic fit coefficients for the "S transit time factor" as a function
+									of beta (constant, linear, quad)
+								</xs:documentation>
+							</xs:annotation>
+						</xs:attribute>
 						<xs:attribute name="STFPrimeCoefs" type="xs:string"
-							use="required" /> <!-- quadratic fit coefficients for the "S transit time factor" prime as 
-							a function of beta (constant, linear, quad) -->
+							use="required">
+							<xs:annotation>
+								<xs:documentation>quadratic fit coefficients for the "S transit time factor" prime as
+									a function of beta (constant, linear, quad)
+								</xs:documentation>
+							</xs:annotation>
+						</xs:attribute>
 						<xs:attribute name="TTF_endCoefs" type="xs:string"
-							use="required" /> <!-- quadratic fit coefficients for the transit time factor as a function 
-							of beta for the end cells (constant, linear, quad) -->
+							use="required">
+							<xs:annotation>
+								<xs:documentation>quadratic fit coefficients for the transit time factor as a function
+									of beta for the end cells (constant, linear, quad)
+								</xs:documentation>
+							</xs:annotation>
+						</xs:attribute>
 						<xs:attribute name="TTFPrime_EndCoefs" type="xs:string"
-							use="required" /> <!-- quadratic fit coefficients for the transit time factor prime as a function 
-							of beta for the end cells (constant, linear, quad) -->
+							use="required">
+							<xs:annotation>
+								<xs:documentation>quadratic fit coefficients for the transit time factor prime as a function
+									of beta for the end cells (constant, linear, quad)
+								</xs:documentation>
+							</xs:annotation>
+						</xs:attribute>
 						<xs:attribute name="STF_endCoefs" type="xs:string"
-							use="required" /> <!-- quadratic fit coefficients for the "S transit time factor" as a function 
-							of beta for the end cells (constant, linear, quad) -->
+							use="required">
+							<xs:annotation>
+								<xs:documentation>quadratic fit coefficients for the "S transit time factor" as a function
+									of beta for the end cells (constant, linear, quad)
+								</xs:documentation>
+							</xs:annotation>
+						</xs:attribute>
 						<xs:attribute name="STFPrime_endCoefs" type="xs:string"
-							use="required" /> <!-- quadratic fit coefficients for the "S transit time factor" prime as 
-							a function of beta for the end cells (constant, linear, quad) -->
+							use="required">
+							<xs:annotation>
+								<xs:documentation>quadratic fit coefficients for the "S transit time factor" prime as
+									a function of beta for the end cells (constant, linear, quad)
+								</xs:documentation>
+							</xs:annotation>
+						</xs:attribute>
 						<xs:attribute name="structureMode" type="xs:byte"
-							use="required" /> <!-- flag for the structure type (0 or pi mode) -->
-						<xs:attribute name="qLoaded" type="xs:decimal" /> <!-- quality factor with all external contribution -->
-						<xs:attribute name="structureTTF" type="xs:decimal" /> <!-- TTF used in the real accelerator LLRF -->
+							use="required">
+							<xs:annotation>
+								<xs:documentation>flag for the structure type (0 or pi mode)</xs:documentation>
+							</xs:annotation>
+						</xs:attribute>
+						<xs:attribute name="qLoaded" type="xs:decimal">
+							<xs:annotation>
+								<xs:documentation>quality factor with all external contribution</xs:documentation>
+							</xs:annotation>
+						</xs:attribute>
+						<xs:attribute name="structureTTF" type="xs:decimal">
+							<xs:annotation>
+								<xs:documentation>TTF used in the real accelerator LLRF</xs:documentation>
+							</xs:annotation>
+						</xs:attribute>
 					</xs:complexType>
 				</xs:element>
 				<xs:element name="bpm" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>
+							Implementation: xal.smf.attr.BPMBucket<br/>
+						</xs:documentation>
+					</xs:annotation>
 					<xs:complexType>
-						<xs:attribute name="frequency" type="xs:decimal" /> <!-- // the phase frequency (MHz) -->
-						<xs:attribute name="length" type="xs:decimal" /><!-- stripline 
-							length (m) -->
-						<xs:attribute name="orientation" type="xs:byte" /><!-- 
-							leads come in up (1)or downstream (-1) -->
+						<xs:attribute name="frequency" type="xs:decimal">
+							<xs:annotation>							
+								<xs:documentation>the phase frequency (MHz)</xs:documentation>
+							</xs:annotation>
+						</xs:attribute>
+						<xs:attribute name="length" type="xs:decimal">
+							<xs:annotation>
+								<xs:documentation>stripline	length (m)</xs:documentation>
+							</xs:annotation>
+						</xs:attribute>
+						<xs:attribute name="orientation" type="xs:byte">
+							<xs:annotation>
+								<xs:documentation>leads come in up (1) or downstream (-1)</xs:documentation>
+							</xs:annotation>
+						</xs:attribute>
 					</xs:complexType>
 				</xs:element>
 				<xs:element name="sequence" minOccurs="0">
-					<!-- * A bucket to hold Information about sequences. In particular, 
-						* how long the sequence is, and allowed predecessor sequences. -->
+					<xs:annotation>
+						<xs:documentation>
+							Implementation: xal.smf.attr.SequenceBucket<br/>
+							A bucket to hold Information about sequences. 
+							In particular, how long the sequence is, and allowed predecessor sequences.
+						</xs:documentation>
+					</xs:annotation>
 					<xs:complexType>
-						<xs:attribute name="predecessors" type="xs:string" /> <!-- can have at most 2 predecessors -->
+						<xs:attribute name="predecessors" type="xs:string">
+							<xs:annotation>
+								<xs:documentation>can have at most 2 predecessors</xs:documentation>
+							</xs:annotation>
+						</xs:attribute>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="twiss" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>
+							Implementation: xal.smf.attr.TwissBucket<br/>
+						</xs:documentation>
+					</xs:annotation>
+					<xs:complexType>
+						<xs:attribute name="x" type="xs:decimal">
+							<xs:annotation>							
+								<xs:documentation>x</xs:documentation>
+							</xs:annotation>
+						</xs:attribute>
+						<xs:attribute name="y" type="xs:decimal">
+							<xs:annotation>							
+								<xs:documentation>y</xs:documentation>
+							</xs:annotation>
+						</xs:attribute>
+						<xs:attribute name="ax" type="xs:decimal">
+							<xs:annotation>							
+								<xs:documentation>alpha x</xs:documentation>
+							</xs:annotation>
+						</xs:attribute>
+						<xs:attribute name="bx" type="xs:decimal">
+							<xs:annotation>							
+								<xs:documentation>beta x</xs:documentation>
+							</xs:annotation>
+						</xs:attribute>
+						<xs:attribute name="ex" type="xs:decimal">
+							<xs:annotation>							
+								<xs:documentation>emit x</xs:documentation>
+							</xs:annotation>
+						</xs:attribute>
+						<xs:attribute name="ay" type="xs:decimal">
+							<xs:annotation>							
+								<xs:documentation>alpha y</xs:documentation>
+							</xs:annotation>
+						</xs:attribute>
+						<xs:attribute name="by" type="xs:decimal">
+							<xs:annotation>							
+								<xs:documentation>beta y</xs:documentation>
+							</xs:annotation>
+						</xs:attribute>
+						<xs:attribute name="ey" type="xs:decimal">
+							<xs:annotation>							
+								<xs:documentation>emit y</xs:documentation>
+							</xs:annotation>
+						</xs:attribute>
+						<xs:attribute name="az" type="xs:decimal">
+							<xs:annotation>							
+								<xs:documentation>alpha z</xs:documentation>
+							</xs:annotation>
+						</xs:attribute>
+						<xs:attribute name="bz" type="xs:decimal">
+							<xs:annotation>							
+								<xs:documentation>beta z</xs:documentation>
+							</xs:annotation>
+						</xs:attribute>
+						<xs:attribute name="ez" type="xs:decimal">
+							<xs:annotation>							
+								<xs:documentation>emit z</xs:documentation>
+							</xs:annotation>
+						</xs:attribute>							
+						<xs:attribute name="etx" type="xs:decimal">
+							<xs:annotation>							
+								<xs:documentation>eta x</xs:documentation>
+							</xs:annotation>
+						</xs:attribute>
+						<xs:attribute name="etpx" type="xs:decimal">
+							<xs:annotation>							
+								<xs:documentation>eta px</xs:documentation>
+							</xs:annotation>
+						</xs:attribute>
+						<xs:attribute name="ety" type="xs:decimal">
+							<xs:annotation>							
+								<xs:documentation>eta y</xs:documentation>
+							</xs:annotation>
+						</xs:attribute>
+						<xs:attribute name="etpy" type="xs:decimal">
+							<xs:annotation>							
+								<xs:documentation>eta py</xs:documentation>
+							</xs:annotation>
+						</xs:attribute>
+						<xs:attribute name="mux" type="xs:decimal">
+							<xs:annotation>							
+								<xs:documentation>mu x</xs:documentation>
+							</xs:annotation>
+						</xs:attribute>
+						<xs:attribute name="muy" type="xs:decimal">
+							<xs:annotation>							
+								<xs:documentation>mu y</xs:documentation>
+							</xs:annotation>
+						</xs:attribute>
+	
 					</xs:complexType>
 				</xs:element>
 			</xs:all>
@@ -1151,7 +1560,11 @@
 					</xs:complexType>
 				</xs:element>
 			</xs:sequence>
-			<xs:attribute name="name" type="xs:string" /> <!-- not used -->
+			<xs:attribute name="name" type="xs:string">
+				<xs:annotation>
+					<xs:documentation>not used </xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
 		</xs:complexType>
 		<xs:key name="channel-handle">
 			<xs:selector xpath="channel" />
