@@ -542,7 +542,7 @@ public class XMLDataManager {
 			if ( timingReferenceAdaptor != null ) {
 				final String timingRelativeURL = timingReferenceAdaptor.stringValue( TIMING_URL_KEY );
 				final String timingURL = absoluteUrlSpec( timingRelativeURL );
-				_timingManager.setURLSpec( timingURL );				
+				_timingManager.setURLSpec( timingURL, absoluteUrlSpec(acceleratorManager.xdxfSchema) );				
 			}
 			
 			// fetch the device mapping
@@ -557,7 +557,7 @@ public class XMLDataManager {
 			if ( daModelConfig != null ) {
 			    final String strUrlModelCfg = daModelConfig.stringValue( MODELCONFIG_URL_KEY );
 				final String urlModelConfig = absoluteUrlSpec( strUrlModelCfg );
-				elementMapping = FileBasedElementMapping.loadFrom(urlModelConfig);
+				elementMapping = FileBasedElementMapping.loadFrom(urlModelConfig, absoluteUrlSpec( FileBasedElementMapping.elementMappingSchema ));
 			} else {
 				elementMapping = DefaultElementMapping.getInstance();
 			}

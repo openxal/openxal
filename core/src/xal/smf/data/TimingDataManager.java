@@ -48,9 +48,10 @@ class TimingDataManager {
 	 * Set the timing source's URL
 	 * @param urlSpec The new URL spec of the timing data source
 	 */
-	public void setURLSpec(String urlSpec) {
+	public void setURLSpec(String urlSpec, String schemaUrl) {
 		_urlSpec = urlSpec;
 		_timingCenter = null;
+		timingSchema = schemaUrl;
 	}
 	
 	
@@ -80,8 +81,7 @@ class TimingDataManager {
 	 */
 	protected void updateTimingCenter(TimingCenter timingCenter) {
 		if ( _urlSpec != null ) {
-			XmlDataAdaptor documentAdaptor = XmlDataAdaptor.adaptorForUrl(_urlSpec, false,
-					XMLDataManager.getDefaultInstance().absoluteUrlSpec(timingSchema));
+			XmlDataAdaptor documentAdaptor = XmlDataAdaptor.adaptorForUrl(_urlSpec, false, timingSchema);
 			DataAdaptor timingAdaptor = documentAdaptor.childAdaptor(TimingCenter.DATA_LABEL);
 			timingCenter.update(timingAdaptor);
 		}
