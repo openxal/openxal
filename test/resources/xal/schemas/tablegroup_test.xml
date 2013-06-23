@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tablegroup xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="tablegroup.xsd">
+	<table name="tableA">
+		<schema>
+			<attribute name="id" type="java.lang.Integer" isPrimaryKey="true"/>
+			<attribute name="name" type="java.lang.String" isPrimaryKey="false"/>
+			<attribute name="active" type="java.lang.Boolean" isPrimaryKey="false" defaultValue="false"/>
+			<attribute name="value" type="java.lang.Double" isPrimaryKey="false" defaultValue="0.0"/>
+		</schema>
+		<record id="1" name="Arthur"/>
+		<record id="2" name="Bogomila" active="true"/>
+		<record id="3" name="Cecile" defaultValue="1.0"/>
+		<record id="4" name="Dent" active="true" defaultValue="3.14159"/>
+	</table>
+	<table name="tableB">
+		<schema>
+			<attribute name="id" type="java.lang.Integer" isPrimaryKey="true"/>
+		</schema>
+		<record id="1"/>
+	</table>
+</tablegroup>
