@@ -465,7 +465,7 @@ public class XMLDataManager {
         
         
         protected URL mainUrl;   /** URL of main XML source */
-		protected String mainSchema = "main.xsd";
+		protected String mainSchema = "/xal/schemas/main.xsd";
 		
 		/** Constructor */
         public MainManager( final String urlSpec ) {
@@ -505,7 +505,7 @@ public class XMLDataManager {
          */
         public void refresh() {
             final String mainUrlSpec = mainUrlSpec();
-            final DataAdaptor mainAdaptor = XmlDataAdaptor.adaptorForUrl( mainUrlSpec, false,  absoluteUrlSpec( mainSchema ) );
+            final DataAdaptor mainAdaptor = XmlDataAdaptor.adaptorForUrl( mainUrlSpec, false,  mainSchema );
             final DataAdaptor sourcesAdaptor = mainAdaptor.childAdaptor( SOURCE_TAG );
 
 			if ( sourcesAdaptor.hasAttribute( "version" ) ) {
@@ -542,7 +542,7 @@ public class XMLDataManager {
 			if ( timingReferenceAdaptor != null ) {
 				final String timingRelativeURL = timingReferenceAdaptor.stringValue( TIMING_URL_KEY );
 				final String timingURL = absoluteUrlSpec( timingRelativeURL );
-				_timingManager.setURLSpec( timingURL, absoluteUrlSpec(acceleratorManager.xdxfSchema) );				
+				_timingManager.setURLSpec( timingURL, acceleratorManager.xdxfSchema );				
 			}
 			
 			// fetch the device mapping
@@ -557,7 +557,7 @@ public class XMLDataManager {
 			if ( daModelConfig != null ) {
 			    final String strUrlModelCfg = daModelConfig.stringValue( MODELCONFIG_URL_KEY );
 				final String urlModelConfig = absoluteUrlSpec( strUrlModelCfg );
-				elementMapping = FileBasedElementMapping.loadFrom(urlModelConfig, absoluteUrlSpec( FileBasedElementMapping.elementMappingSchema ));
+				elementMapping = FileBasedElementMapping.loadFrom(urlModelConfig, FileBasedElementMapping.elementMappingSchema );
 			} else {
 				elementMapping = DefaultElementMapping.getInstance();
 			}
@@ -629,7 +629,7 @@ public class XMLDataManager {
             dtdUrlSpec = "xdxf.dtd";     // default DTD file
             extraUrlSpecs = new ArrayList<String>();
 			_hardwareStatusURLSpec = null;			
-			xdxfSchema = "xdxf.xsd";
+			xdxfSchema = "/xal/schemas/xdxf.xsd";
         }
         
         
@@ -677,7 +677,7 @@ public class XMLDataManager {
         /** Parse the accelerator from the optics URL with the specified DTD validation flag */
         public Accelerator getAccelerator( final boolean isValidating ) throws XmlDataAdaptor.ParseException {        	
             String absoluteUrlSpec = absoluteUrlSpec( opticsUrlSpec );
-            XmlDataAdaptor adaptor = XmlDataAdaptor.adaptorForUrl( absoluteUrlSpec, isValidating, absoluteUrlSpec(xdxfSchema) );
+            XmlDataAdaptor adaptor = XmlDataAdaptor.adaptorForUrl( absoluteUrlSpec, isValidating, xdxfSchema );
 			
             Document document = adaptor.document();
             DocumentType docType = document.getDoctype();
@@ -733,7 +733,7 @@ public class XMLDataManager {
         /** update the accelerator with data from the optics URL with a DTD validation flag */
         public void updateAccelerator( final String urlSpec, final Accelerator accelerator, final boolean isValidating ) throws XmlDataAdaptor.ParseException {
             String absoluteUrlSpec = absoluteUrlSpec( urlSpec );
-            XmlDataAdaptor adaptor = XmlDataAdaptor.adaptorForUrl( absoluteUrlSpec, isValidating,  absoluteUrlSpec(xdxfSchema) );
+            XmlDataAdaptor adaptor = XmlDataAdaptor.adaptorForUrl( absoluteUrlSpec, isValidating,  xdxfSchema );
             
             String acceleratorTag = accelerator.dataLabel();
             
@@ -757,7 +757,7 @@ public class XMLDataManager {
 		
 		public static final String DEVICE_MAPPING = "deviceMapping";
     	
-		private final String deviceMappingSchema = "impl.xsd";
+		private final String deviceMappingSchema = "/xal/schemas/impl.xsd";
 		
     	final private HashMap<String, String> _deviceMap;
 		
@@ -782,7 +782,7 @@ public class XMLDataManager {
 //    	}
 		
     	public void setURL( final String url ) {
-    		final XmlDataAdaptor deviceMappingDocumentAdaptor = XmlDataAdaptor.adaptorForUrl( url, false, absoluteUrlSpec( deviceMappingSchema ) );
+    		final XmlDataAdaptor deviceMappingDocumentAdaptor = XmlDataAdaptor.adaptorForUrl( url, false, deviceMappingSchema );
 			final DataAdaptor deviceMappingAdaptor = deviceMappingDocumentAdaptor.childAdaptor( DeviceManager.DEVICE_MAPPING );
 			
 			final List<DataAdaptor> deviceAdaptors = deviceMappingAdaptor.childAdaptors( DEVICE_TAG );

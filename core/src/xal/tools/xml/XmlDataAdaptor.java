@@ -553,7 +553,7 @@ public class XmlDataAdaptor implements DataAdaptor {
      */
     static public XmlDataAdaptor adaptorForUrl( final String urlPath, final boolean isValidating, String schemaUrl) throws ParseException, ResourceNotFoundException {
         try {
-            DocumentBuilder builder = newDocumentBuilder( isValidating, new URL(schemaUrl) );
+            DocumentBuilder builder = newDocumentBuilder( isValidating, XmlDataAdaptor.class.getResource(schemaUrl) );
             Document document = builder.parse( urlPath );
 
             return new XmlDataAdaptor( document );

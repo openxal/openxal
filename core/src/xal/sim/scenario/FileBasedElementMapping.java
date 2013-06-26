@@ -30,7 +30,7 @@ public class FileBasedElementMapping extends ElementMapping {
 	protected Class<? extends IComponent> driftElement;
 	
 	/** Model Configuration schema */
-    final public static String elementMappingSchema = "ModelConfig.xsd";
+    final public static String elementMappingSchema = "/xal/schemas/ModelConfig.xsd";
 	
 	protected FileBasedElementMapping() {		
 	}
