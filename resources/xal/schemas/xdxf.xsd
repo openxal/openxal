@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" version="1.0">
 
 	<xs:simpleType name="nodeType">
 		<xs:annotation>
@@ -98,8 +98,8 @@
 			<xs:enumeration value="EDipole">
 				<xs:annotation>
 					<xs:documentation>
-						Implementation: xal.smf.impl.EDipole extends Electrostatic<br/>
-						electrostatic 
+						Implementation: xal.smf.impl.EDipole extends Electromagnet extends Magnet<br/>
+						electrostactic 
 					</xs:documentation>
 				</xs:annotation>
 			</xs:enumeration>
@@ -107,18 +107,18 @@
 			<xs:enumeration value="DHE">
 				<xs:annotation>	
 					<xs:documentation>
-						Implementation: xal.smf.impl.EDipole extends Electrostatic<br/>
+						Implementation: xal.smf.impl.EDipole extends Electromagnet extends Magnet<br/>
 						Not registered<br/>
-						electrostatic 
+						electrostactic 
 					</xs:documentation>
 				</xs:annotation>
 			</xs:enumeration>
 			<xs:enumeration value="DVE">
 				<xs:annotation>
 					<xs:documentation>
-						Implementation: xal.smf.impl.EDipole extends Electrostatic<br/>
+						Implementation: xal.smf.impl.EDipole extends Electromagnet extends Magnet<br/>
 						Not registered<br/>
-						electrostatic 
+						electrostactic 
 					</xs:documentation>
 				</xs:annotation>
 			</xs:enumeration>
@@ -634,6 +634,26 @@
 					</xs:documentation>
 				</xs:annotation>
 			</xs:enumeration>
+			<xs:enumeration value="RG">
+				<xs:annotation>
+					<xs:documentation>
+						Implementation: xal.smf.impl.RfGap<br/>
+						The RfGap class is meant to be used in connection with a set of related RF gaps, 
+						such as the gaps in a DTL Tank, which are all part of a single resonant cavity controlled by a single klystron.
+						Each gap may have a fixed scale factor for both the field and phase, relative to a nominal field and phase. 
+ 					 </xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="rfgap">
+				<xs:annotation>
+					<xs:documentation>
+						Implementation: xal.smf.impl.RfGap<br/>
+						The RfGap class is meant to be used in connection with a set of related RF gaps, 
+						such as the gaps in a DTL Tank, which are all part of a single resonant cavity controlled by a single klystron.
+						Each gap may have a fixed scale factor for both the field and phase, relative to a nominal field and phase.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>	
 
 			<!-- also sequences -->
 			
@@ -688,27 +708,7 @@
 						There are internal RF gap(s) within this cavity, which are controlled by the cavity.
 					</xs:documentation>
 				</xs:annotation>
-			</xs:enumeration>			
-			<xs:enumeration value="RG">
-				<xs:annotation>
-					<xs:documentation>
-						Implementation: xal.smf.impl.RfGap<br/>
-						The RfGap class is meant to be used in connection with a set of related RF gaps, 
-						such as the gaps in a DTL Tank, which are all part of a single resonant cavity controlled by a single klystron.
-						Each gap may have a fixed scale factor for both the field and phase, relative to a nominal field and phase. 
- 					 </xs:documentation>
-				</xs:annotation>
-			</xs:enumeration>
-			<xs:enumeration value="rfgap">
-				<xs:annotation>
-					<xs:documentation>
-						Implementation: xal.smf.impl.RfGap<br/>
-						The RfGap class is meant to be used in connection with a set of related RF gaps, 
-						such as the gaps in a DTL Tank, which are all part of a single resonant cavity controlled by a single klystron.
-						Each gap may have a fixed scale factor for both the field and phase, relative to a nominal field and phase.
-					</xs:documentation>
-				</xs:annotation>
-			</xs:enumeration>			
+			</xs:enumeration>					
 			<xs:enumeration value="SCLCavity">
 				<xs:annotation>
 					<xs:documentation> 
@@ -781,27 +781,7 @@
 						There are internal RF gap(s) within this cavity, which are controlled by the cavity.
 					</xs:documentation>
 				</xs:annotation>
-			</xs:enumeration>			
-			<xs:enumeration value="RG">
-				<xs:annotation>
-					<xs:documentation>
-						Implementation: xal.smf.impl.RfGap<br/>
-						The RfGap class is meant to be used in connection with a set of related RF gaps, 
-						such as the gaps in a DTL Tank, which are all part of a single resonant cavity controlled by a single klystron.
-						Each gap may have a fixed scale factor for both the field and phase, relative to a nominal field and phase. 
- 					 </xs:documentation>
-				</xs:annotation>
-			</xs:enumeration>
-			<xs:enumeration value="rfgap">
-				<xs:annotation>
-					<xs:documentation>
-						Implementation: xal.smf.impl.RfGap<br/>
-						The RfGap class is meant to be used in connection with a set of related RF gaps, 
-						such as the gaps in a DTL Tank, which are all part of a single resonant cavity controlled by a single klystron.
-						Each gap may have a fixed scale factor for both the field and phase, relative to a nominal field and phase.
-					</xs:documentation>
-				</xs:annotation>
-			</xs:enumeration>			
+			</xs:enumeration>					
 			<xs:enumeration value="SCLCavity">
 				<xs:annotation>
 					<xs:documentation> 
@@ -833,18 +813,15 @@
  					</xs:documentation>
 			 	</xs:annotation>
 			 </xs:enumeration>
-			<xs:enumeration value="">
-				<xs:annotation>
-					<xs:documentation>
-						Implementation: xal.smf.AcceleratorSeq<br/>
-						The implementation of the accelerator composite node, ordered collection of accelerator elements and sequences.
- 					</xs:documentation>
-			 	</xs:annotation>
-			 </xs:enumeration>
 		</xs:restriction>
 	</xs:simpleType>
 
 	<xs:complexType name="acceleratorNode">
+		<xs:annotation>
+			<xs:documentation>
+				A node element describes a basic hardware element, such as a magnet.
+			</xs:documentation>
+		</xs:annotation>
 		<xs:choice maxOccurs="unbounded">
 			<xs:element minOccurs="0" maxOccurs="1" ref="channelsuite" />
 			<xs:element minOccurs="0" maxOccurs="unbounded" ref="attributes" />
@@ -861,8 +838,12 @@
 				</xs:complexType>
 			</xs:element>
 		</xs:choice>
-		<xs:attribute name="id" type="xs:string" use="required" />
-		<xs:attribute name="type" type="nodeType" />
+		<xs:attribute name="id" type="xs:string" use="required">		
+			<xs:annotation>
+				<xs:documentation>The value of id is the unique identifier string for the described node.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="type" type="nodeType"/> <!-- normally required, not required in hardware_status.xdxf -->
 		<xs:attribute name="softType" type="xs:string" />
 		<xs:attribute name="pid" type="xs:string">
 			<xs:annotation>
@@ -876,12 +857,19 @@
 		</xs:attribute>
 		<xs:attribute name="status" type="xs:boolean">
 			<xs:annotation>
-				<xs:documentation>status of the node which identifies whether the
-					node is operational </xs:documentation>
+				<xs:documentation>Indicates whether or not a hardware component was on line. If present it should always be set to “yes”</xs:documentation>
 			</xs:annotation>
 		</xs:attribute>
-		<xs:attribute name="len" type="xs:decimal" />
-		<xs:attribute name="pos" type="xs:decimal" />
+		<xs:attribute name="len" type="xs:decimal">
+			<xs:annotation>
+				<xs:documentation>Length of hardware node (m). Taken to be zero if attribute is absent.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="pos" type="xs:decimal">
+		<xs:annotation>
+				<xs:documentation>Position within parent (m). The pos attribute always refers to the position of the node’s center location.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
 		<xs:attribute name="s" type="xs:decimal">
 			<xs:annotation>
 				<xs:documentation>s display coordinate </xs:documentation>
@@ -898,6 +886,22 @@
 	</xs:complexType>
 
 	<xs:complexType name="acceleratorSeq">
+		<xs:annotation>
+			<xs:documentation>
+				Implementation: xal.smf.AcceleratorSeq.<br/>
+				Sequences are extended from node and contain same XML attributes. 
+				Also device types which are sequences may also be used as a node.
+				Sequences may contain other sequences or nodes.
+			
+				<p>Typical use cases of a sequence are:<br/>
+				<ul>
+				<li>When a sequence is describing a particular hardware object in the beamline it contains a linear listing of nodes.</li>
+				<li>When it is describing a composite accelerator component it contains other sequences. There are no restrictions on the depth of this nesting.</li>
+				<li>When it is describing a macro device, such as RT cavity, it also contains channelsuite element.</li>
+				</ul>				
+				</p>
+			</xs:documentation>
+		</xs:annotation>
 		<xs:choice maxOccurs="unbounded">
 			<xs:element minOccurs="0" maxOccurs="unbounded" name="node"
 				type="acceleratorNode" />
@@ -908,8 +912,12 @@
 			<xs:element minOccurs="0" maxOccurs="unbounded" ref="attributes" />
 		</xs:choice>
 		<!-- derived from acceleratorNode -->
-		<xs:attribute name="id" type="xs:string" use="required" />
-		<xs:attribute name="type" type="seqType" />
+		<xs:attribute name="id" type="xs:string" use="required">
+			<xs:annotation>
+				<xs:documentation>The value of id is the unique identifier string for the described sequence.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="type" type="seqType"/>
 		<xs:attribute name="softType" type="xs:string" />
 		<xs:attribute name="pid" type="xs:string">
 			<xs:annotation>
@@ -927,8 +935,16 @@
 					node is operational </xs:documentation>
 			</xs:annotation>
 		</xs:attribute>
-		<xs:attribute name="len" type="xs:decimal" />
-		<xs:attribute name="pos" type="xs:decimal" />
+		<xs:attribute name="len" type="xs:decimal"> <!-- normally required, except in hardware_status.xdxf -->
+			<xs:annotation>
+				<xs:documentation>Length of hardware node (m). Taken to be zero if attribute is absent.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="pos" type="xs:decimal">
+		<xs:annotation>
+				<xs:documentation>Position within parent (m). The pos attribute always refers to the position of the node’s center location.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
 		<xs:attribute name="s" type="xs:decimal">
 			<xs:annotation>
 				<xs:documentation>s display coordinate </xs:documentation>
@@ -943,74 +959,41 @@
 			<xs:documentation>
 				This class is meant to deal with pasting together
 				existing sequences into new sequences.
+				Each comboseq contains a list of &lt;sequence&gt; elements. 
+				This feature is primarily a convenience to XAL users where &lt;sequence&gt; objects may be grouped together 
+				to form larger composite lattice objects making sense in the context of the current accelerator complex.
 			</xs:documentation>
 		</xs:annotation>
 		<xs:choice maxOccurs="unbounded">
-			<!-- derived from acceleratorSeq -->
-			<xs:element minOccurs="0" maxOccurs="unbounded" name="node"
-				type="acceleratorNode">
-				<xs:annotation>
-					<xs:documentation>not used </xs:documentation>
-				</xs:annotation>
-			</xs:element>
-			<xs:element minOccurs="0" maxOccurs="unbounded" name="sequence"
-				type="acceleratorSeq" />
-			<!-- derived from acceleratorNode -->
-			<xs:element minOccurs="0" maxOccurs="1" ref="channelsuite">
-				<xs:annotation>
-					<xs:documentation>not used </xs:documentation>
-				</xs:annotation>
-			</xs:element>
-			<xs:element minOccurs="0" maxOccurs="unbounded" ref="attributes">
-				<xs:annotation>
-					<xs:documentation>not used </xs:documentation>
-				</xs:annotation>
-			</xs:element>
+			<!-- although whole machinery is derived from acceleratorSeq only the following is used-->
+			<xs:element minOccurs="0" maxOccurs="unbounded" name="sequence">
+				<xs:complexType>
+					<xs:attribute name="id" type="xs:string"/>
+				</xs:complexType>
+			</xs:element>					
 		</xs:choice>
 		<!-- derived from acceleratorNode -->
-		<xs:attribute name="id" type="xs:string" use="required" />
+		<xs:attribute name="id" type="xs:string" use="required">
+			<xs:annotation>
+				<xs:documentation>The value of id is the unique identifier string for the described combination sequence.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
 		<xs:attribute name="type" type="comboSeqType" />
-		<!-- usually not used -->
-		<xs:attribute name="softType" type="xs:string" />
-		<xs:attribute name="pid" type="xs:string">
-			<xs:annotation>
-				<xs:documentation>Physics id </xs:documentation>
-			</xs:annotation>
-		</xs:attribute>
-		<xs:attribute name="eid" type="xs:string">
-			<xs:annotation>
-				<xs:documentation>Engineering id </xs:documentation>
-			</xs:annotation>
-		</xs:attribute>
-		<xs:attribute name="status" type="xs:boolean">
-			<xs:annotation>
-				<xs:documentation>status of the node which identifies whether the
-					node is operational </xs:documentation>
-			</xs:annotation>
-		</xs:attribute>
-		<xs:attribute name="len" type="xs:decimal" />
-		<xs:attribute name="pos" type="xs:decimal" />
-		<xs:attribute name="s" type="xs:decimal">
-			<xs:annotation>
-				<xs:documentation>s display coordinate </xs:documentation>
-			</xs:annotation>
-		</xs:attribute>
-		<xs:attribute name="exclude" type="xs:boolean" />
 	</xs:complexType>
 
 	<xs:complexType name="accelerator">
-		<xs:choice maxOccurs="unbounded">
+		<xs:sequence>
 			<xs:element minOccurs="0" maxOccurs="unbounded" name="comboseq"
 				type="acceleratorComboSeq" />
+						
+			<xs:element minOccurs="0" maxOccurs="unbounded" name="sequence" type="acceleratorSeq" /> <!-- derived from acceleratorSeq -->
+				
 			<xs:element minOccurs="0" maxOccurs="1" ref="powersupplies" />
-			<!-- derived from acceleratorSeq -->
-			<xs:element minOccurs="0" maxOccurs="unbounded" name="sequence"
-				type="acceleratorSeq" />
 			<!-- not used -->
 			<!--<xs:element minOccurs="0" maxOccurs="unbounded" name="node" type="accleratorNode"/> 
 				<xs:element minOccurs="0" maxOccurs="1" ref="channelsuite"/> <xs:element 
 				minOccurs="0" maxOccurs="unbounded" ref="attributes"/> -->
-		</xs:choice>
+		</xs:sequence>
 		<xs:attribute name="system" type="xs:string">
 			<xs:annotation>
 				<xs:documentation>
@@ -1049,6 +1032,15 @@
 	</xs:complexType>
 
 	<xs:element name="xdxf" type="accelerator">
+	<xs:annotation>
+		<xs:documentation>
+			There is only  one &lt;xdxf&gt; element in the optics file and 
+			it contains a description of the all the accelerator hardware considered by XAL. 
+			That is, the &lt;xdxf&gt; element is the root of the accelerator hierarchy, 
+			containing all the accelerator hardware information in the optics file. 		
+		</xs:documentation>
+	</xs:annotation>
+	  <!-- TODO check if subsequence-id's and node id's need to be unique too and add key -->
 		<xs:key name="sequence-id">
 			<xs:selector xpath="sequence" />
 			<xs:field xpath="@id" />
@@ -1085,7 +1077,13 @@
 	</xs:simpleType>
 
 	<xs:element name="attributes">
+		<xs:annotation>
+			<xs:documentation>
+				Contain design parameters of a node or a sequence, called attribute buckets in XAL terminology.
+			</xs:documentation>
+		</xs:annotation>
 		<xs:complexType>
+	
 			<xs:all>
 				<xs:element name="align" minOccurs="0">
 					<xs:annotation>
@@ -1096,32 +1094,32 @@
 						</xs:documentation>
 					</xs:annotation>
 					<xs:complexType>
-						<xs:attribute name="x" type="xs:decimal" use="required">
+						<xs:attribute name="x" type="xs:decimal">
 							<xs:annotation>
 								<xs:documentation>x is in the horizontal direction [mm]</xs:documentation>
 							</xs:annotation>
 						</xs:attribute>
-						<xs:attribute name="y" type="xs:decimal" use="required">
+						<xs:attribute name="y" type="xs:decimal">
 							<xs:annotation>
 								<xs:documentation>y is in the vertical direction [mm]</xs:documentation>
 							</xs:annotation>
 						</xs:attribute>
-						<xs:attribute name="z" type="xs:decimal" use="required">
+						<xs:attribute name="z" type="xs:decimal">
 							<xs:annotation>
 								<xs:documentation>z is in the longitudinal direction along the beam [mm]</xs:documentation>
 							</xs:annotation>
 						</xs:attribute>
-						<xs:attribute name="pitch" type="xs:decimal" use="required">
+						<xs:attribute name="pitch" type="xs:decimal">
 							<xs:annotation>
 								<xs:documentation>pitch is the rotation about x [mrad]</xs:documentation>
 							</xs:annotation>
 						</xs:attribute>
-						<xs:attribute name="yaw" type="xs:decimal" use="required">
+						<xs:attribute name="yaw" type="xs:decimal">
 							<xs:annotation>
 								<xs:documentation>yaw is the rotation about y [mrad]</xs:documentation>
 							</xs:annotation>
 						</xs:attribute>
-						<xs:attribute name="roll" type="xs:decimal" use="required">
+						<xs:attribute name="roll" type="xs:decimal">
 							<xs:annotation>
 								<xs:documentation>roll is the rotation about z [mrad]</xs:documentation>
 							</xs:annotation>
@@ -1137,17 +1135,17 @@
 						</xs:documentation>
 					</xs:annotation>
 					<xs:complexType>
-						<xs:attribute name="pitch" type="xs:decimal" use="required">
+						<xs:attribute name="pitch" type="xs:decimal">
 							<xs:annotation>
 								<xs:documentation>pitch is the rotation about x [mrad]</xs:documentation>
 							</xs:annotation>
 						</xs:attribute>
-						<xs:attribute name="yaw" type="xs:decimal" use="required">
+						<xs:attribute name="yaw" type="xs:decimal">
 							<xs:annotation>
 								<xs:documentation>yaw is the rotation about y [mrad]</xs:documentation>
 							</xs:annotation>
 						</xs:attribute>
-						<xs:attribute name="roll" type="xs:decimal" use="required">
+						<xs:attribute name="roll" type="xs:decimal">
 							<xs:annotation>
 								<xs:documentation>roll is the rotation about z [mrad]</xs:documentation>
 							</xs:annotation>
@@ -1163,19 +1161,19 @@
 						</xs:documentation>
 					</xs:annotation>
 					<xs:complexType>
-						<xs:attribute name="x" type="xs:decimal" use="required">
+						<xs:attribute name="x" type="xs:decimal">
 							<xs:annotation>
 								<xs:documentation>x is in the horizontal direction
 								</xs:documentation>
 							</xs:annotation>
 						</xs:attribute>
-						<xs:attribute name="y" type="xs:decimal" use="required">
+						<xs:attribute name="y" type="xs:decimal">
 							<xs:annotation>
 								<xs:documentation>y is in the vertical direction
 								</xs:documentation>
 							</xs:annotation>
 						</xs:attribute>
-						<xs:attribute name="z" type="xs:decimal" use="required">
+						<xs:attribute name="z" type="xs:decimal">
 							<xs:annotation>
 								<xs:documentation>z is in the longitudinal direction along the beam </xs:documentation>
 							</xs:annotation>
@@ -1195,20 +1193,25 @@
 								<xs:documentation>the effective magnetic length [m]</xs:documentation>
 							</xs:annotation>
 						</xs:attribute>
-						<xs:attribute name="dfltMagFld" type="xs:decimal"
-							use="required">
+						<xs:attribute name="dfltMagFld" type="xs:decimal" use="required">
 							<xs:annotation>
 								<xs:documentation>dfltMagField is the default field value (T for dipole, T/m for quad, etc.)</xs:documentation>
 							</xs:annotation>
 						</xs:attribute>
-						<xs:attribute name="polarity" type="xs:byte" use="required">
+						<xs:attribute name="polarity" use="required">
 							<xs:annotation>
 								<xs:documentation>
 									polarity - is the polarity flag/default polarity value.
 									1 means	positive current = positive field. -1 means positive current = negative field
 									<br />
-								</xs:documentation>
+								</xs:documentation>								
 							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:byte">
+									<xs:enumeration value="-1"/>
+									<xs:enumeration value="1"/>
+								</xs:restriction>
+							</xs:simpleType>
 						</xs:attribute>
 						<xs:attribute name="bendAngle" type="xs:decimal">
 							<xs:annotation>
@@ -1261,12 +1264,21 @@
 						</xs:documentation>
 					</xs:annotation>					
 					<xs:complexType>
-						<xs:attribute name="x" type="xs:decimal" />
-						<xs:attribute name="y" type="xs:decimal" />
-						<xs:attribute name="shape" type="xs:byte" use="required">
+						<xs:attribute name="x" type="xs:decimal" use="required"/>
+						<xs:attribute name="y" type="xs:decimal"/>
+						<xs:attribute name="shape">
 							<xs:annotation>
 								<xs:documentation>iUnkown = 0; iEllipse	= 1; iRectangle = 2; iDiamond = 3; int iIrregular = 11;</xs:documentation>
 							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:byte">
+									<xs:enumeration value="0"/>
+									<xs:enumeration value="1"/>
+									<xs:enumeration value="2"/>
+									<xs:enumeration value="3"/>
+									<xs:enumeration value="11"/>
+								</xs:restriction>
+							</xs:simpleType>
 						</xs:attribute>
 					</xs:complexType>
 				</xs:element>
@@ -1285,8 +1297,7 @@
 								<xs:documentation>The length is the length of the gap (m)</xs:documentation>
 							</xs:annotation>
 						</xs:attribute>
-						<xs:attribute name="phaseFactor" type="xs:decimal"
-							use="required">
+						<xs:attribute name="phaseFactor" type="xs:decimal" use="required">
 							<xs:annotation>
 								<xs:documentation>the ratio of the RF phase in the gap over the	phase in the first gap </xs:documentation>
 							</xs:annotation>
@@ -1316,10 +1327,16 @@
 								<xs:documentation>the frequency (MHz)</xs:documentation>
 							</xs:annotation>
 						</xs:attribute>
-						<xs:attribute name="endCell" type="xs:byte" use="required">
+						<xs:attribute name="endCell" use="required">
 							<xs:annotation>
-								<xs:documentation>flag for whether this is and end cell (i.e. uses the end cell TTFs)" </xs:documentation>
+								<xs:documentation>flag for whether this is and end cell (i.e. uses the end cell TTFs)" </xs:documentation>								
 							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:byte">
+									<xs:enumeration value="0"/>
+									<xs:enumeration value="1"/>
+								</xs:restriction>
+							</xs:simpleType>
 						</xs:attribute>
 						<xs:attribute name="gapOffset" type="xs:decimal" use="required">
 							<xs:annotation>
@@ -1378,8 +1395,7 @@
 								</xs:documentation>
 							</xs:annotation>
 						</xs:attribute>
-						<xs:attribute name="TTFPrimeCoefs" type="doubleArrayType"
-							use="required">
+						<xs:attribute name="TTFPrimeCoefs" type="doubleArrayType" use="required">
 							<xs:annotation>
 								<xs:documentation> quadratic fit coefficients for the transit time
 									factor prime as a function of beta (constant, linear, quad)
@@ -1393,51 +1409,51 @@
 								</xs:documentation>
 							</xs:annotation>
 						</xs:attribute>
-						<xs:attribute name="STFPrimeCoefs" type="doubleArrayType"
-							use="required">
+						<xs:attribute name="STFPrimeCoefs" type="doubleArrayType" use="required">
 							<xs:annotation>
 								<xs:documentation>quadratic fit coefficients for the "S transit time factor" prime as
 									a function of beta (constant, linear, quad)
 								</xs:documentation>
 							</xs:annotation>
 						</xs:attribute>
-						<xs:attribute name="TTF_endCoefs" type="doubleArrayType"
-							use="required">
+						<xs:attribute name="TTF_endCoefs" type="doubleArrayType" use="required">
 							<xs:annotation>
 								<xs:documentation>quadratic fit coefficients for the transit time factor as a function
 									of beta for the end cells (constant, linear, quad)
 								</xs:documentation>
 							</xs:annotation>
 						</xs:attribute>
-						<xs:attribute name="TTFPrime_EndCoefs" type="doubleArrayType"
-							use="required">
+						<xs:attribute name="TTFPrime_EndCoefs" type="doubleArrayType" use="required">
 							<xs:annotation>
 								<xs:documentation>quadratic fit coefficients for the transit time factor prime as a function
 									of beta for the end cells (constant, linear, quad)
 								</xs:documentation>
 							</xs:annotation>
 						</xs:attribute>
-						<xs:attribute name="STF_endCoefs" type="doubleArrayType"
-							use="required">
+						<xs:attribute name="STF_endCoefs" type="doubleArrayType" use="required">
 							<xs:annotation>
 								<xs:documentation>quadratic fit coefficients for the "S transit time factor" as a function
 									of beta for the end cells (constant, linear, quad)
 								</xs:documentation>
 							</xs:annotation>
 						</xs:attribute>
-						<xs:attribute name="STFPrime_endCoefs" type="doubleArrayType"
-							use="required">
+						<xs:attribute name="STFPrime_endCoefs" type="doubleArrayType" use="required">
 							<xs:annotation>
 								<xs:documentation>quadratic fit coefficients for the "S transit time factor" prime as
 									a function of beta for the end cells (constant, linear, quad)
 								</xs:documentation>
 							</xs:annotation>
 						</xs:attribute>
-						<xs:attribute name="structureMode" type="xs:byte"
-							use="required">
+						<xs:attribute name="structureMode" use="required">
 							<xs:annotation>
 								<xs:documentation>flag for the structure type (0 or pi mode)</xs:documentation>
 							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:byte">
+									<xs:enumeration value="0"/>
+									<xs:enumeration value="1"/>
+								</xs:restriction>
+							</xs:simpleType>
 						</xs:attribute>
 						<xs:attribute name="qLoaded" type="xs:decimal">
 							<xs:annotation>
@@ -1458,20 +1474,26 @@
 						</xs:documentation>
 					</xs:annotation>
 					<xs:complexType>
-						<xs:attribute name="frequency" type="xs:decimal">
+						<xs:attribute name="frequency" type="xs:decimal" use="required">
 							<xs:annotation>							
 								<xs:documentation>the phase frequency (MHz)</xs:documentation>
 							</xs:annotation>
 						</xs:attribute>
-						<xs:attribute name="length" type="xs:decimal">
+						<xs:attribute name="length" type="xs:decimal" use="required">
 							<xs:annotation>
 								<xs:documentation>stripline	length (m)</xs:documentation>
 							</xs:annotation>
 						</xs:attribute>
-						<xs:attribute name="orientation" type="xs:byte">
+						<xs:attribute name="orientation" use="required">
 							<xs:annotation>
 								<xs:documentation>leads come in up (1) or downstream (-1)</xs:documentation>
 							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:byte">
+									<xs:enumeration value="-1"/>
+									<xs:enumeration value="1"/>
+								</xs:restriction>
+							</xs:simpleType>
 						</xs:attribute>
 					</xs:complexType>
 				</xs:element>
@@ -1484,7 +1506,7 @@
 						</xs:documentation>
 					</xs:annotation>
 					<xs:complexType>
-						<xs:attribute name="predecessors" type="xs:string">
+						<xs:attribute name="predecessors" type="xs:string" use="required">
 							<xs:annotation>
 								<xs:documentation>can have at most 2 predecessors</xs:documentation>
 							</xs:annotation>
@@ -1498,87 +1520,87 @@
 						</xs:documentation>
 					</xs:annotation>
 					<xs:complexType>
-						<xs:attribute name="x" type="xs:decimal">
+						<xs:attribute name="x" type="xs:decimal" use="required">
 							<xs:annotation>							
 								<xs:documentation>x</xs:documentation>
 							</xs:annotation>
 						</xs:attribute>
-						<xs:attribute name="y" type="xs:decimal">
+						<xs:attribute name="y" type="xs:decimal" use="required">
 							<xs:annotation>							
 								<xs:documentation>y</xs:documentation>
 							</xs:annotation>
 						</xs:attribute>
-						<xs:attribute name="ax" type="xs:decimal">
+						<xs:attribute name="ax" type="xs:decimal" use="required">
 							<xs:annotation>							
 								<xs:documentation>alpha x</xs:documentation>
 							</xs:annotation>
 						</xs:attribute>
-						<xs:attribute name="bx" type="xs:decimal">
+						<xs:attribute name="bx" type="xs:decimal" use="required">
 							<xs:annotation>							
 								<xs:documentation>beta x</xs:documentation>
 							</xs:annotation>
 						</xs:attribute>
-						<xs:attribute name="ex" type="xs:decimal">
+						<xs:attribute name="ex" type="xs:decimal" use="required">
 							<xs:annotation>							
 								<xs:documentation>emit x</xs:documentation>
 							</xs:annotation>
 						</xs:attribute>
-						<xs:attribute name="ay" type="xs:decimal">
+						<xs:attribute name="ay" type="xs:decimal" use="required">
 							<xs:annotation>							
 								<xs:documentation>alpha y</xs:documentation>
 							</xs:annotation>
 						</xs:attribute>
-						<xs:attribute name="by" type="xs:decimal">
+						<xs:attribute name="by" type="xs:decimal" use="required">
 							<xs:annotation>							
 								<xs:documentation>beta y</xs:documentation>
 							</xs:annotation>
 						</xs:attribute>
-						<xs:attribute name="ey" type="xs:decimal">
+						<xs:attribute name="ey" type="xs:decimal" use="required">
 							<xs:annotation>							
 								<xs:documentation>emit y</xs:documentation>
 							</xs:annotation>
 						</xs:attribute>
-						<xs:attribute name="az" type="xs:decimal">
+						<xs:attribute name="az" type="xs:decimal" use="required">
 							<xs:annotation>							
 								<xs:documentation>alpha z</xs:documentation>
 							</xs:annotation>
 						</xs:attribute>
-						<xs:attribute name="bz" type="xs:decimal">
+						<xs:attribute name="bz" type="xs:decimal" use="required">
 							<xs:annotation>							
 								<xs:documentation>beta z</xs:documentation>
 							</xs:annotation>
 						</xs:attribute>
-						<xs:attribute name="ez" type="xs:decimal">
+						<xs:attribute name="ez" type="xs:decimal" use="required">
 							<xs:annotation>							
 								<xs:documentation>emit z</xs:documentation>
 							</xs:annotation>
 						</xs:attribute>							
-						<xs:attribute name="etx" type="xs:decimal">
+						<xs:attribute name="etx" type="xs:decimal" use="required">
 							<xs:annotation>							
 								<xs:documentation>eta x</xs:documentation>
 							</xs:annotation>
 						</xs:attribute>
-						<xs:attribute name="etpx" type="xs:decimal">
+						<xs:attribute name="etpx" type="xs:decimal" use="required">
 							<xs:annotation>							
 								<xs:documentation>eta px</xs:documentation>
 							</xs:annotation>
 						</xs:attribute>
-						<xs:attribute name="ety" type="xs:decimal">
+						<xs:attribute name="ety" type="xs:decimal" use="required">
 							<xs:annotation>							
 								<xs:documentation>eta y</xs:documentation>
 							</xs:annotation>
 						</xs:attribute>
-						<xs:attribute name="etpy" type="xs:decimal">
+						<xs:attribute name="etpy" type="xs:decimal" use="required">
 							<xs:annotation>							
 								<xs:documentation>eta py</xs:documentation>
 							</xs:annotation>
 						</xs:attribute>
-						<xs:attribute name="mux" type="xs:decimal">
+						<xs:attribute name="mux" type="xs:decimal" use="required">
 							<xs:annotation>							
 								<xs:documentation>mu x</xs:documentation>
 							</xs:annotation>
 						</xs:attribute>
-						<xs:attribute name="muy" type="xs:decimal">
+						<xs:attribute name="muy" type="xs:decimal" use="required">
 							<xs:annotation>							
 								<xs:documentation>mu y</xs:documentation>
 							</xs:annotation>
@@ -1594,7 +1616,7 @@
 			<xs:sequence>
 				<xs:element name="channel" minOccurs="0" maxOccurs="unbounded">
 					<xs:complexType>
-						<xs:attribute name="handle" type="xs:string" use="required" />
+						<xs:attribute name="handle" type="xs:string" use="required" /> <!--  TODO: this enumeration may be restricted -->
 						<xs:attribute name="signal" type="xs:string" />
 						<xs:attribute name="settable" type="xs:boolean" />
 						<xs:attribute name="valid" type="xs:boolean" />
@@ -1641,6 +1663,20 @@
 		</xs:keyref>
 	</xs:element>
 	<xs:element name="powersupplies">
+	<xs:annotation>
+		<xs:documentation>
+			Implementation: xal.smf.impl.MagnetMainSupply, xal.smf.impl.MagnetTrimSupply<br/>
+				
+			Power supplies element contains list of power supplies. 
+			Each is described in ps element by unique identifier, type which can be either main or trim, and corresponding channel suite and.
+			
+			The optics file contains a single instance of the powersupplies element, although this single element is typically a large listing. 
+			This element usually occurs at the end of the optics file, after all the sequence elements are defined. 
+			Located under the powersupplies element is a listing of all the power supplies used in the accelerator description. 
+			The direct children are ps elements, which describe the actual power supplies. 
+			Each ps element contains a channelsuite entry listing all the channels connected to that supply.
+		</xs:documentation>
+	</xs:annotation>
 		<xs:complexType>
 			<xs:sequence>
 				<xs:element name="ps" maxOccurs="unbounded">
