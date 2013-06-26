@@ -166,7 +166,7 @@ public abstract class AbstractXMLValidationTest {
 	 * @see #getDocumentBuilder()
 	 */
 	protected static Document readDocument(String xmlFileName) throws ParserConfigurationException, SAXException, IOException {
-		Document document = getDocumentBuilder().parse(new File(xmlFileName));
+		Document document = getDocumentBuilder().parse(AbstractXMLValidationTest.class.getResourceAsStream(xmlFileName));
 		return document;
 	}
 	
@@ -182,7 +182,7 @@ public abstract class AbstractXMLValidationTest {
 	 */
 	protected static Schema readSchema(String schemaFileName, String schemaLanguage) throws SAXException, NullPointerException {
 		SchemaFactory factory = SchemaFactory.newInstance(schemaLanguage);
-		Schema schema = factory.newSchema(new File(schemaFileName));
+		Schema schema = factory.newSchema(AbstractXMLValidationTest.class.getResource(schemaFileName));
 		return schema;
 	}
 	

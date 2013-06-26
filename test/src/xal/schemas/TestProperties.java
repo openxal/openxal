@@ -2,7 +2,10 @@ package xal.schemas;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.InputStream;
 import java.util.Properties;
+
+import org.junit.Assert;
 
 /**
  * Wrapper for properties for XML and XML schema JUnit test classes.<br/>
@@ -20,7 +23,7 @@ public final class TestProperties {
 	public static final String KEY_DIR_TEST_XMLS = "dir.xml.test";
 	
 	/**	Relative path to the test properties file.	*/
-	private static final String FILE_TEST_PROPERTIES = "../resources/xal/schemas/schema_tests.properties";
+	private static final String FILE_TEST_PROPERTIES = "schema_tests.properties";
 	
 	/**	Test properties cache.	*/
 	private static Properties testProperties;
@@ -42,12 +45,12 @@ public final class TestProperties {
 	 */
 	private static Properties getProperties() {
 		if(testProperties == null) {
-			File propertiesFile = new File(FILE_TEST_PROPERTIES);
+			InputStream propertiesFile = TestProperties.class.getResourceAsStream(FILE_TEST_PROPERTIES);
 			Properties tempProperties = new Properties();
 			try {
-				tempProperties.load(new FileInputStream(propertiesFile));
+				tempProperties.load(propertiesFile);
 			} catch(Exception e) {
-				//TODO handle logging!
+				Assert.fail("Exception "+e);
 			}
 			testProperties = tempProperties;
 		}
