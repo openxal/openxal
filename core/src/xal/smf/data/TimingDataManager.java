@@ -24,7 +24,7 @@ import xal.smf.*;
 class TimingDataManager {
 	protected String _urlSpec;
 	protected TimingCenter _timingCenter;
-	protected String timingSchema = "xdxf.xsd";
+	protected String timingSchema = "/xal/schemas/xdxf.xsd";
 	
 	/**
 	 * TimingDataManager constructor
