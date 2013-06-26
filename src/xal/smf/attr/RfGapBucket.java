@@ -33,14 +33,14 @@ public class RfGapBucket extends AttributeBucket {
                                                 "phaseFactor",
                                                 "ampFactor",
                                                 "TTF",
-						"amp",
-						"phase",
-						"freq",
-						"testAmpFactor",
-						"testPhaseFactor",
-						"endCell",
-						"gapOffset"						
-                                };
+                                                "amp",
+                                                "phase",
+                                                "freq",
+                                                "testAmpFactor",
+                                                "testPhaseFactor",
+                                                "endCell",
+                                                "gapOffset"						
+    };
     
     /*
      *  Local Attributes

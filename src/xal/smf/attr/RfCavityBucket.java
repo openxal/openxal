@@ -5,11 +5,12 @@ package xal.smf.attr;
 /**
  * A set of RF cavity attributes. Here's what's in it:
  *
- *  amp - the default amplitude (kV)
+ *  amp - the default field amplitude (in kV/m)
  *  phase - the default phase (deg)
  *  freq - the frequency (MHz)
- *  ampactor - calibration factor for klystron amplitude
+ *  ampFactor - calibration factor for klystron amplitude to cavity field value (ratio)
  *  phaseOffset - calibration offset for beam - klystron phase
+ *  TTFCoefs - coefficients of a 2nd order polynomial representing the transit time factor function T(betat) 
  *
  * @author  Nikolay Malitsky, Christopher K. Allen
  */
@@ -28,51 +29,71 @@ public class RfCavityBucket extends AttributeBucket {
     final static String[]       c_arrNames = {  "amp", 
                                                 "phase",
                                                 "freq",
-						"ampFactor",
-						"phaseOffset",
-						"TTFCoefs",
-						"TTFPrimeCoefs",
-						"STFCoefs",
-						"STFPrimeCoefs",
-						"TTF_endCoefs",
-						"TTFPrime_EndCoefs",
-						"STF_endCoefs",
-						"STFPrime_endCoefs",
-						"structureMode",
-						"qLoaded",
-						"structureTTF"
-                                };
+                                                "ampFactor",
+                                                "phaseOffset",
+                                                "TTFCoefs",
+                                                "TTFPrimeCoefs",
+                                                "STFCoefs",
+                                                "STFPrimeCoefs",
+                                                "TTF_endCoefs",
+                                                "TTFPrime_EndCoefs",
+                                                "STF_endCoefs",
+                                                "STFPrime_endCoefs",
+                                                "structureMode",
+                                                "qLoaded",
+                                                "structureTTF"
+    };
     
     
     /*
      *  Local Attributes
      */
     
+    /** Default field amplitude (in kV/m) */
     private Attribute   m_attAmp;
+    
+    /** Default (design) cavity RF phase */
     private Attribute   m_attPhase;
+    
+    /** Design cavity resonant frequency */
     private Attribute   m_attFreq;
+    
+    /** Calibration factor for klystron amplitude to cavity field value (ratio) */
     private Attribute   m_attAmpFactor;
+    
+    /** Calibration offset for beam-to-klystron phase */
     private Attribute   m_attPhaseOffset;
+    
     /** quadratic fit coefficients for the transit time factor as a function of beta (constant, linear, quad) */
     private Attribute   m_attTTFCoefs;
+    
     /** quadratic fit coefficients for the transit time factor prime as a function of beta (constant, linear, quad) */
-    private Attribute   m_attTTFPrimeCoefs;   
+    private Attribute   m_attTTFPrimeCoefs;
+    
     /** quadratic fit coefficients for the "S transit time factor" as a function of beta (constant, linear, quad) */
     private Attribute   m_attSTFCoefs;
+    
     /** quadratic fit coefficients for the "S transit time factor" prime as a function of beta (constant, linear, quad) */
-    private Attribute   m_attSTFPrimeCoefs; 
+    private Attribute   m_attSTFPrimeCoefs;
+    
    /** quadratic fit coefficients for the transit time factor as a function of beta  for the end cells (constant, linear, quad) */     
     private Attribute   m_attTTF_endCoefs;
+    
     /** quadratic fit coefficients for the transit time factor prime as a function of beta for the end cells  (constant, linear, quad) */
-    private Attribute   m_attTTFPrime_endCoefs;   
+    private Attribute   m_attTTFPrime_endCoefs;
+    
     /** quadratic fit coefficients for the "S transit time factor" as a function of beta for the end cells  (constant, linear, quad) */
     private Attribute   m_attSTF_endCoefs;
+    
     /** quadratic fit coefficients for the "S transit time factor" prime as a function of beta for the end cells (constant, linear, quad) */
-    private Attribute   m_attSTFPrime_endCoefs; 
+    private Attribute   m_attSTFPrime_endCoefs;
+    
     /** flag for the structure type (0 or pi mode) */
     private Attribute m_attStructureMode;
+    
     /** quality factor with all external contribution */
     private Attribute m_attQLoaded;
+    
     /** TTF used in the real accelerator LLRF */
     private Attribute m_attStructureTTF;
     
