@@ -4,22 +4,17 @@
 package xal.sim.latgen;
 
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Stack;
 
 import xal.model.Sector;
 import xal.model.elem.IdealDrift;
-
-import xal.sim.latgen.atree.HardwareTree;
 import xal.sim.latgen.atree.DriftSpaceNode;
+import xal.sim.latgen.atree.HardwareTree;
 import xal.sim.latgen.atree.IHwareTreeVisitor;
 import xal.sim.latgen.atree.ThickHardware;
 import xal.sim.latgen.atree.ThinHardware;
 import xal.sim.latgen.atree.TreeNode;
-
 import xal.sim.sync.SynchronizationManager;
-
 import xal.smf.AcceleratorNode;
 import xal.smf.AcceleratorSeq;
 import xal.tools.math.MathException;
