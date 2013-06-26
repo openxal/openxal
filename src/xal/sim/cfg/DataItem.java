@@ -50,7 +50,7 @@ import xal.tools.data.IArchive;
  * <br/>
  * </code>
  * Note that the template (generic) parameter <code>E</code> is required to be an
- * enumeration type.  To defined the data node it is necessary to 
+ * enumeration type.  To define the data node it is necessary to 
  * pass the class object of the enumeration type <code>E</code> 
  * to the constructor (see {@link #DataItem(Class)}). 
  * </p>

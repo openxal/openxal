@@ -22,7 +22,7 @@ public interface IRfGap /*extends gov.sns.xal.model.IElement*/ {
      *      L is the length of the gap.
      *
      *  The maximum energy gain from the gap is given by qETL where q is the charge
-     *  (in coulombs) of the species particle.
+     *  (in Coulombs) of the species particle.
      *
      *  @param  dblETL  ETL product of gap (in <bold>volts</bold>).
      */
@@ -33,7 +33,7 @@ public interface IRfGap /*extends gov.sns.xal.model.IElement*/ {
      *  The actual energy gain from the gap is given by qETLcos(dblPhi) where dbkPhi is 
      *  the phase delay.
      *
-     *  @param  dblPhase    phase delay of the RF w.r.t. synchonouse particle (in <bold>radians</bold>).
+     *  @param  dblPhase    phase delay of the RF w.r.t. synchronous particle (in <bold>radians</bold>).
      */
     public void setPhase(double dblPhase);
     
@@ -55,9 +55,9 @@ public interface IRfGap /*extends gov.sns.xal.model.IElement*/ {
     public double getETL();
     
     /**
-     *  Return the RF phase delay of the gap with respect to the synchonous particle.
+     *  Return the RF phase delay of the gap with respect to the synchronous particle.
      *
-     *  @return     phase delay w.r.t. synchonous particle (in <bold>radians</bold>).
+     *  @return     phase delay w.r.t. synchronous particle (in <bold>radians</bold>).
      */
     public double getPhase();
     
@@ -68,12 +68,16 @@ public interface IRfGap /*extends gov.sns.xal.model.IElement*/ {
      */
     public double getFrequency();
 
-    /** Set the on accelerating field
-    * @ param E - the on axis field (V/m)
-    */
+    /**
+     *  Set the on accelerating field
+     *  
+     * @param E - the on axis field (V/m)
+     */
     public void setE0(double E);
-     /** Get the on accelerating field (V/m)
-    */   
+
+    /** 
+     * Get the on accelerating field (V/m)
+     */   
     public double getE0();
-    
+
 };
