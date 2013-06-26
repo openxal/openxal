@@ -286,12 +286,18 @@ public class RfGap extends AcceleratorNode implements RfGapDataSource {
     }
 
 	
-    /** Set the RF amplitude in the  (kV/m) 
-    *  should be done by the parent cavity (e.g. DTL tank)              
-    * @param cavAmp The amplitude  of the first gap (kV/m)
-    */
+    /** 
+     *  Set the RF amplitude in the  (kV/m) 
+     *  should be done by the parent cavity (e.g. DTL tank)
+     *  <br/>
+     *  <br/>
+     *  <em>Currently this method does nothing!</em>  
+     *  
+     *     
+     * @param cavAmp The amplitude  of the first gap (kV/m)
+     */
     public void setGapAmp(double cavAmp){ 
-//       	ampAvg = cavAmp *  m_bucRfGap.getAmpFactor();
+    	//       	ampAvg = cavAmp *  m_bucRfGap.getAmpFactor();
     }
 
     /** Set the  RF phase in the gap  (deg) 
