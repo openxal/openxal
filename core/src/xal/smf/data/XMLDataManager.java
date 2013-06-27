@@ -623,6 +623,7 @@ public class XMLDataManager {
         private List<String> extraUrlSpecs;
 		private String _hardwareStatusURLSpec;
 		private String xdxfSchema;
+        public static final String acceleratorTag = "xdxf";
         
 		/** Constructor */
         public AcceleratorManager() {
@@ -680,10 +681,8 @@ public class XMLDataManager {
             XmlDataAdaptor adaptor = XmlDataAdaptor.adaptorForUrl( absoluteUrlSpec, isValidating, xdxfSchema );
 			
             Document document = adaptor.document();
-            DocumentType docType = document.getDoctype();
-            String acceleratorTag = docType.getName();
-			
-            dtdUrlSpec = docType.getSystemId();                        
+            DocumentType docType = document.getDoctype();            
+			if (docType != null) dtdUrlSpec = docType.getSystemId();                        
             
             DataAdaptor accelAdaptor = adaptor.childAdaptor( acceleratorTag );
             Accelerator accelerator = new Accelerator();

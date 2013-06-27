@@ -1,7 +1,6 @@
 <?xml version = '1.0' encoding = 'UTF-8'?>
-<!DOCTYPE ModelConfig SYSTEM "xdxf.dtd">
-
-<configuration>
+<configuration  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xsi:noNamespaceSchemaLocation="https://hudson.esss.dk/job/OpenXAL/lastSuccessfulBuild/artifact/build/schemas/ModelConfig_1_0.xsd">
     <elements>
         <default type="xal.model.elem.Marker"/>
         <drift type="xal.model.elem.IdealDrift"/>
