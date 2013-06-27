@@ -18,7 +18,7 @@
 					</xs:element>
 					<xs:element name="optics_extra" type="configSpec" minOccurs="0" maxOccurs="unbounded"/>
 					<xs:element name="hardware_status" type="configSpec" minOccurs="0"/>
-					<xs:element name="timing_source" type="configSpec">
+					<xs:element name="timing_source" type="configSpec" minOccurs="0">
 						<xs:annotation>
 							<xs:documentation>								
 								Points to a file which lists all the general timing signals used by XAL.
