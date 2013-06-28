@@ -90,6 +90,7 @@ public class VAServer {
 		registerNodeChannels( CurrentMonitor.s_strType );
 		registerNodeChannels( BPM.s_strType );
 		registerNodeChannels( BLM.s_strType );
+		registerNodeChannels( Solenoid.s_strType);
         
         // need to distinguish profile monitors from wire scanners which share the same type but have different soft types
 		registerNodeChannels( ProfileMonitor.s_strType, ProfileMonitor.SOFTWARE_TYPE, AndTypeQualifier.qualifierWithQualifiers( new KindQualifier( ProfileMonitor.s_strType ), QualifierFactory.getSoftTypeQualifier( ProfileMonitor.SOFTWARE_TYPE ) ) );
@@ -242,7 +243,7 @@ class NodeSignalProcessor extends SignalProcessor {
 	 * @return An instance of SignalProcessor or a subclass appropriate for the node type
 	 */
 	static public NodeSignalProcessor getInstance( final String type, final String softType ) {
-		if ( type == Quadrupole.s_strType || type == Bend.s_strType )  return new UnipolarEMProcessor();
+		if ( type == Quadrupole.s_strType || type == Bend.s_strType || type == Solenoid.s_strType )  return new UnipolarEMProcessor();
 		else if ( type == TrimmedQuadrupole.s_strType )  return new TrimmedQuadrupoleProcessor();
 		else if ( type == BPM.s_strType )  return new BPMProcessor();
 		else if ( type == VDipoleCorr.s_strType || type == HDipoleCorr.s_strType )  return new DipoleCorrectorProcessor();

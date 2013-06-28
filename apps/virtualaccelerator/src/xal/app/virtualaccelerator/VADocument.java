@@ -84,15 +84,17 @@ public class VADocument extends AcceleratorDocument implements ActionListener, P
 
 	private JDialog setNoise = new JDialog();
 
-	private DecimalField df1, df2, df3, df4;
+	private DecimalField df1, df2, df3, df4, df5;
 
-	private DecimalField df11, df21, df31, df41;
+	private DecimalField df11, df21, df31, df41, df51;
 
 	private double quadNoise = 0.0;
 
 	private double dipoleNoise = 0.0;
 
 	private double correctorNoise = 0.0;
+	
+	private double solNoise = 0.0;
 
 	private double bpmNoise = 0.0;
 
@@ -105,6 +107,8 @@ public class VADocument extends AcceleratorDocument implements ActionListener, P
 	private double dipoleOffset = 0.0;
 
 	private double correctorOffset = 0.0;
+
+	private double solOffset = 0.0;
 
 	private double bpmOffset = 0.0;
 
@@ -236,7 +240,7 @@ public class VADocument extends AcceleratorDocument implements ActionListener, P
 		if (getSource() != null) {
 			java.net.URL url = getSource();
 			DataAdaptor documentAdaptor = XmlDataAdaptor.adaptorForUrl( url, false );
-			update( documentAdaptor.childAdaptor("MpxDocument") );
+			update( documentAdaptor.childAdaptor("VADocument") );
 		}
 
 		setHasChanges(false);
@@ -299,6 +303,14 @@ public class VADocument extends AcceleratorDocument implements ActionListener, P
 		noiseLevel3.add(new JLabel("%"));
 		noiseLevelPanel.add(noiseLevel3);
 		
+		JPanel noiseLevel5 = new JPanel();
+		noiseLevel5.setLayout(new GridLayout(1, 3));
+		df5 = new DecimalField( 0., 5, numberFormat );
+		noiseLevel5.add(new JLabel("Solenoid: "));
+		noiseLevel5.add(df5);
+		noiseLevel5.add(new JLabel("%"));
+		noiseLevelPanel.add(noiseLevel5);
+		
 		JPanel noiseLevel4 = new JPanel();
 		noiseLevel4.setLayout(new GridLayout(1, 3));
 		df4 = new DecimalField( 0., 5, numberFormat );
@@ -331,6 +343,13 @@ public class VADocument extends AcceleratorDocument implements ActionListener, P
 		offset3.add(new JLabel("Dipole Corr.: "));
 		offset3.add(df31);
 		offsetPanel.add(offset3);
+		
+		JPanel offset5 = new JPanel();
+		offset5.setLayout(new GridLayout(1, 2));
+		df51 = new DecimalField( 0., 5, numberFormat );
+		offset5.add(new JLabel("Solenoid: "));
+		offset5.add(df51);
+		offsetPanel.add(offset5);
 		
 		JPanel offset4 = new JPanel();
 		offset4.setLayout(new GridLayout(1, 2));
@@ -909,6 +928,9 @@ public class VADocument extends AcceleratorDocument implements ActionListener, P
             catch ( PutException exception ) {
 				System.err.println( exception.getMessage() );
 			}
+            catch ( NullPointerException exception ) {
+            	System.err.println( exception.getMessage() );
+            }
         }
     }
     
@@ -938,6 +960,9 @@ public class VADocument extends AcceleratorDocument implements ActionListener, P
 				System.err.println(e.getMessage());
 			}
             catch (PutException e) {
+				System.err.println(e.getMessage());
+			}
+			catch (NullPointerException e) {
 				System.err.println(e.getMessage());
 			}
 		}
@@ -1139,6 +1164,10 @@ public class VADocument extends AcceleratorDocument implements ActionListener, P
 					ch_noiseMap.put( em.getChannel( Electromagnet.FIELD_RB_HANDLE ), correctorNoise );
 					ch_offsetMap.put( em.getChannel( Electromagnet.FIELD_RB_HANDLE ), correctorOffset );
 				}
+				else if ( em.isKindOf( Solenoid.s_strType ) ) {
+					ch_noiseMap.put( em.getChannel( Electromagnet.FIELD_RB_HANDLE ), solNoise );
+					ch_offsetMap.put( em.getChannel( Electromagnet.FIELD_RB_HANDLE ), solOffset );
+				}
 			}
 			
 			// for rf PVs
@@ -1256,11 +1285,13 @@ public class VADocument extends AcceleratorDocument implements ActionListener, P
 			quadNoise = df1.getDoubleValue();
 			dipoleNoise = df2.getDoubleValue();
 			correctorNoise = df3.getDoubleValue();
+			solNoise = df5.getDoubleValue();
 			bpmNoise = df4.getDoubleValue();
 			quadOffset = df11.getDoubleValue();
 			dipoleOffset = df21.getDoubleValue();
 			correctorOffset = df31.getDoubleValue();
 			bpmOffset = df41.getDoubleValue();
+			solOffset = df51.getDoubleValue();
 
 			setNoise.setVisible(false);
 		}
