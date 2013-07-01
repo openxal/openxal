@@ -51,6 +51,7 @@ import xal.tools.beam.PhaseVector;
 import xal.tools.swing.KeyValueFilteredTableModel;
 import xal.tools.swing.DecimalField;
 import xal.tools.apputils.files.*;
+import xal.tools.apputils.SimpleProbeEditor;
 import xal.tools.apputils.pvlogbrowser.PVLogSnapshotChooser;
 import xal.sim.sync.PVLoggerDataSource;
 import xal.tools.dispatch.*;
@@ -70,62 +71,62 @@ public class VADocument extends AcceleratorDocument implements ActionListener, P
     
 	/** The document for the text pane in the main window. */
 	protected PlainDocument textDocument;
-
+    
 	/** For on-line model */
-	protected Scenario model;
-
+	protected Scenario modelScenario;
+    
 	private Probe myProbe;
-
+    
 	String dataSource = Scenario.SYNC_MODE_LIVE;
-
+    
 	protected String theProbeFile;
-
+    
 	int runT3d_OK = 0;
-
+    
 	private JDialog setNoise = new JDialog();
-
+    
 	private DecimalField df1, df2, df3, df4;
-
+    
 	private DecimalField df11, df21, df31, df41;
-
+    
 	private double quadNoise = 0.0;
-
+    
 	private double dipoleNoise = 0.0;
-
+    
 	private double correctorNoise = 0.0;
-
+    
 	private double bpmNoise = 0.0;
-
+    
 	private double rfAmpNoise = 0.0;
-
+    
 	private double rfPhaseNoise = 0.0;
-
+    
 	private double quadOffset = 0.0;
-
+    
 	private double dipoleOffset = 0.0;
-
+    
 	private double correctorOffset = 0.0;
-
+    
 	private double bpmOffset = 0.0;
-
+    
 	private double rfAmpOffset = 0.0;
-
+    
 	private double rfPhaseOffset = 0.0;
-
+    
 	private JButton done = new JButton("OK");
-
+    
 	private volatile boolean vaRunning = false;
-
+    
 	private java.util.List<RfCavity> rfCavities;
-
+    
 	private java.util.List<Electromagnet> mags;
-
+    
 	private java.util.List<BPM> bpms;
-
+    
 	private java.util.List<ProfileMonitor> wss;
-
+    
 	private Channel beamOnEvent;
-
+    
 	private Channel beamOnEventCount;
 	
 	private Channel slowDiagEvent;
@@ -136,66 +137,66 @@ public class VADocument extends AcceleratorDocument implements ActionListener, P
 	private Date _lastUpdate;
 	
 	private long beamOnEventCounter = 0;
-
+    
 	private List<ReadbackSetRecord> READBACK_SET_RECORDS;
-
+    
 	private LinkedHashMap<Channel, Double> ch_noiseMap;
-
+    
 	private LinkedHashMap<Channel, Double> ch_offsetMap;
 	
 	private VAServer _vaServer;
-
-	private RecentFileTracker _probeFileTracker;
-
+    
+//	private RecentFileTracker _probeFileTracker;
+    
 	// for on/off-line mode selection
 	ToggleButtonModel olmModel = new ToggleButtonModel();
-
+    
 	ToggleButtonModel pvlogModel = new ToggleButtonModel();
-
+    
 	ToggleButtonModel pvlogMovieModel = new ToggleButtonModel();
-
+    
 	private boolean isFromPVLogger = false;
 	private boolean isForOLM = false;
-
+    
 	private PVLogSnapshotChooser plsc;
-
+    
 	private JDialog pvLogSelector;
-
+    
 	private PVLoggerDataSource plds;
-		
+    
 	/** bricks window reference */
 	private WindowReference _windowReference;
 	
 	/** readback setpoint table model */
 	private KeyValueFilteredTableModel<ReadbackSetRecord> READBACK_SET_TABLE_MODEL;
-
+    
 	/** timer to synch the readbacks with the setpoints and also sync the model */
 	final private DispatchTimer MODEL_SYNC_TIMER;
-
+    
 	/** model sync period in milliseconds */
 	private long _modelSyncPeriod;
-
-
+    
+    
 	/** Create a new empty document */
 	public VADocument() {
 		this( null );
-
+        
 	}
-
+    
 	/**
 	 * Create a new document loaded from the URL file
 	 * @param url  The URL of the file to load into the new document.
 	 */
 	public VADocument( final java.net.URL url ) {
 		setSource( url );
-
+        
 		// queue to synchronize readbacks with setpoints as well as the online model
 		final DispatchQueue modelSyncQueue = DispatchQueue.createSerialQueue( "Model Sync Queue" );
 		MODEL_SYNC_TIMER = DispatchTimer.getCoalescingInstance( DispatchQueue.createSerialQueue( "" ), getOnlineModelSynchronizer() );
-
+        
 		// set the default model sync period to 1 second
 		_modelSyncPeriod = 1000;
-
+        
 		READBACK_SET_RECORDS = new ArrayList<ReadbackSetRecord>();
 		
 		final WindowReference windowReference = getDefaultWindowReference( "MainWindow", this );
@@ -215,10 +216,10 @@ public class VADocument extends AcceleratorDocument implements ActionListener, P
 		makeTextDocument();
 		
 		// probe file management
-		_probeFileTracker = new RecentFileTracker( 1, this.getClass(), "recent_probes" );
+		//_probeFileTracker = new RecentFileTracker( 1, this.getClass(), "recent_probes" );
 		
 		_lastUpdate = new Date();
-
+        
 		if ( url == null )  return;
 	}
 	
@@ -238,17 +239,17 @@ public class VADocument extends AcceleratorDocument implements ActionListener, P
 			DataAdaptor documentAdaptor = XmlDataAdaptor.adaptorForUrl( url, false );
 			update( documentAdaptor.childAdaptor("MpxDocument") );
 		}
-
+        
 		setHasChanges(false);
 	}
-
-
+    
+    
 	/** get the model sync period in milliseconds */
 	public long getModelSyncPeriod() {
 		return _modelSyncPeriod;
 	}
-
-
+    
+    
 	/** update the model sync period in milliseconds */
 	public void setModelSyncPeriod( final long period ) {
 		_modelSyncPeriod = period;
@@ -280,7 +281,7 @@ public class VADocument extends AcceleratorDocument implements ActionListener, P
 		noiseLevel1.add(df1);
 		noiseLevel1.add(percent);
 		noiseLevelPanel.add(noiseLevel1);
-
+        
 		JPanel noiseLevel2 = new JPanel();
 		noiseLevel2.setLayout(new GridLayout(1, 3));
 		JLabel label2 = new JLabel("Bending Dipole: ");
@@ -354,24 +355,24 @@ public class VADocument extends AcceleratorDocument implements ActionListener, P
 	}
 	
 	
-
+    
 	/**
 	 * Save the document to the specified URL.
 	 * @param url The URL to which the document should be saved.
 	 */
 	public void saveDocumentAs(URL url) {
-
+        
 		XmlDataAdaptor xda = XmlDataAdaptor.newEmptyDocumentAdaptor();
 		DataAdaptor daLevel1 = xda.createChild("VA");
 		//save accelerator file
 		DataAdaptor daXMLFile = daLevel1.createChild("accelerator");
 		daXMLFile.setValue("xmlFile", this.getAcceleratorFilePath());
 		//save probe file
-		if (theProbeFile != null) {
-			DataAdaptor envProbeXMLFile = daLevel1.createChild("env_probe");
-			envProbeXMLFile.setValue("probeXmlFile", theProbeFile);
-		}
-
+//		if (theProbeFile != null) {
+//			DataAdaptor envProbeXMLFile = daLevel1.createChild("env_probe");
+//			envProbeXMLFile.setValue("probeXmlFile", theProbeFile);
+//		}
+        
 		// save selected sequences
 		List<String> sequenceNames;
 		if ( getSelectedSequence() != null ) {
@@ -385,15 +386,15 @@ public class VADocument extends AcceleratorDocument implements ActionListener, P
 				sequenceNames = new ArrayList<String>();
 				sequenceNames.add( getSelectedSequence().getId() );
 			}
-
+            
             for ( final String sequenceName : sequenceNames ) {
 				DataAdaptor daSeqComponents = daSeq.createChild( "seq" );
 				daSeqComponents.setValue( "name", sequenceName );
 			}
 		}
-
+        
 		daLevel1.setValue( "modelSyncPeriod", _modelSyncPeriod );
-
+        
 		xda.writeToUrl(url);
 		setHasChanges(false);
 	}
@@ -410,17 +411,17 @@ public class VADocument extends AcceleratorDocument implements ActionListener, P
 			public void changedUpdate(javax.swing.event.DocumentEvent evt) {
 				setHasChanges(true);
 			}
-
+            
 			public void removeUpdate(DocumentEvent evt) {
 				setHasChanges(true);
 			}
-
+            
 			public void insertUpdate(DocumentEvent evt) {
 				setHasChanges(true);
 			}
 		});
 	}
-
+    
     
 	/** Create the default probe from the edit context. */
 	private void createDefaultProbe() {
@@ -435,7 +436,7 @@ public class VADocument extends AcceleratorDocument implements ActionListener, P
                     myProbe.applyState( state );
                 }
                 
-                model.setProbe( myProbe );
+                modelScenario.setProbe( myProbe );
             }
             catch ( Exception exception ) {
                 displayError( "Error Creating Probe", "Probe Error", exception );
@@ -456,78 +457,97 @@ public class VADocument extends AcceleratorDocument implements ActionListener, P
 		final EnvelopeTracker tracker = AlgorithmFactory.createEnvelopeTracker( sequence );
 		return ProbeFactory.getEnvelopeProbe( sequence, tracker );
 	}
-
-
+    
+    
 	protected void customizeCommands(Commander commander) {
-
+        
 		// action for probe XML file open
-		Action openprobeAction = new AbstractAction() {
-			static final long serialVersionUID = 0;
-			public void actionPerformed(ActionEvent event) {
-				final String currentDirectory = _probeFileTracker.getRecentFolderPath();
-
-				JFileChooser fileChooser = new JFileChooser( currentDirectory );
-				fileChooser.addChoosableFileFilter( new ProbeFileFilter() );
-
-				int status = fileChooser.showOpenDialog( getMainWindow() );
-				if (status == JFileChooser.APPROVE_OPTION) {
-					_probeFileTracker.cacheURL( fileChooser.getSelectedFile() );
-					File file = fileChooser.getSelectedFile();
-					theProbeFile = file.getPath();
-					try {
-						myProbe = ProbeXmlParser.parse( theProbeFile );
-						model.setProbe( myProbe );
-					} catch (ParsingException e) {
-						System.err.println(e);
-					}
-				}
-			}
-		};
-		openprobeAction.putValue(Action.NAME, "openprobe");
-		commander.registerAction(openprobeAction);
-
+        //Remove probe file functionality
+//		Action openprobeAction = new AbstractAction() {
+//			static final long serialVersionUID = 0;
+//			public void actionPerformed(ActionEvent event) {
+//				final String currentDirectory = _probeFileTracker.getRecentFolderPath();
+//                
+//				JFileChooser fileChooser = new JFileChooser( currentDirectory );
+//				fileChooser.addChoosableFileFilter( new ProbeFileFilter() );
+//                
+//				int status = fileChooser.showOpenDialog( getMainWindow() );
+//				if (status == JFileChooser.APPROVE_OPTION) {
+//					_probeFileTracker.cacheURL( fileChooser.getSelectedFile() );
+//					File file = fileChooser.getSelectedFile();
+//					theProbeFile = file.getPath();
+//					try {
+//						myProbe = ProbeXmlParser.parse( theProbeFile );
+//						model.setProbe( myProbe );
+//					} catch (ParsingException e) {
+//						System.err.println(e);
+//					}
+//				}
+//			}
+//		};
+		//openprobeAction.putValue(Action.NAME, "openprobe");
+		//commander.registerAction(openprobeAction);
+        
 		// open probe editor
         // TODO: implement probe editor support
 		Action probeEditorAction = new AbstractAction("probe-editor") {
 			static final long serialVersionUID = 0;
 			public void actionPerformed(ActionEvent event) {
-                displayError( "Probe Editor Error", "Probe Editor is not implemented." );
-                throw new RuntimeException( "Probe editor is not implemented." );
-
-//				SimpleProbeEditor spe = new SimpleProbeEditor();
-//
-//				// if model has a probe
-//				if (model.getProbe() != null) {
-//					//reset the probe to initial state
-//					model.resetProbe();
-//					spe.createSimpleProbeEditor(model.getProbe());
-//					// if model has no probe
-//				} else {
-//					// if a probe file exists, start with existing probe file
-//					if (theProbeFile != null) {
-//						spe.createSimpleProbeEditor(new File(theProbeFile));
-//						// if no probe file exitst, start with an empty one
-//					} else {
-//						spe.createSimpleProbeEditor();
-//					}
-//				}
-//				// update the model probe with the one from probe editor
-//				if (spe.probeHasChanged()) {
-//					//			  mxProxy.setNewProbe(spe.getProbe());
-//					if (myProbe instanceof EnvelopeProbe)
-//						myProbe = (EnvelopeProbe) spe.getProbe();
-//					else if (myProbe instanceof TransferMapProbe)
-//						myProbe = (TransferMapProbe) spe.getProbe();
-//					else 
-//						myProbe = spe.getProbe();
-//					
-//					model.setProbe(myProbe);
-//				}
+                //                displayError( "Probe Editor Error", "Probe Editor is not implemented." );
+                //                throw new RuntimeException( "Probe editor is not implemented." );
+                
+				SimpleProbeEditor spe;//
+                
+                
+                if( modelScenario != null ) {
+                    // if model has a probe
+                    if (modelScenario.getProbe() != null) {
+                        //reset the probe to initial state
+                        modelScenario.resetProbe();
+                        spe = new SimpleProbeEditor(getMainWindow(), modelScenario.getProbe());
+                        
+                        myProbe = spe.getProbe();
+                        modelScenario.setProbe(myProbe);
+                        //spe.createSimpleProbeEditor(model.getProbe());
+                        // if model has no probe
+                    }
+                }
+                else {
+                    //Sequence has not been selected
+                    displayError("Probe Editor Error", "You must select a sequence before attempting to edit the probe.");
+                }
+                //                else {
+                //
+                //					// if a probe file exists, start with existing probe file
+                //					if (theProbeFile != null) {
+                //						spe.createSimpleProbeEditor(new File(theProbeFile));
+                //						// if no probe file exitst, start with an empty one
+                //					} else {
+                //						spe.createSimpleProbeEditor();
+                //					}
+                //				}
+                //                if(spe != null) {
+                //                    myProbe = spe.getProbe();
+                //                    model.setProbe(myProbe);
+                //                }
+                //
+                //				// update the model probe with the one from probe editor
+                //				if (spe.probeHasChanged()) {
+                //					//			  mxProxy.setNewProbe(spe.getProbe());
+                //					if (myProbe instanceof EnvelopeProbe)
+                //						myProbe = (EnvelopeProbe) spe.getProbe();
+                //					else if (myProbe instanceof TransferMapProbe)
+                //						myProbe = (TransferMapProbe) spe.getProbe();
+                //					else
+                //						myProbe = spe.getProbe();
+                //
+                //					model.setProbe(myProbe);
+                //				}
 			}
 		};
 		probeEditorAction.putValue(Action.NAME, "probe-editor");
 		commander.registerAction(probeEditorAction);
-
+        
 		// action for using online model as engine
 		olmModel.setSelected(true);
 		olmModel.addActionListener(new ActionListener() {
@@ -537,14 +557,14 @@ public class VADocument extends AcceleratorDocument implements ActionListener, P
 			}
 		});
 		commander.registerModel("olm", olmModel);
-
+        
 		// action for using PV logger snapshot through online model
 		pvlogModel.setSelected(false);
 		pvlogModel.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
 				isForOLM = true;
 				isFromPVLogger = true;
-
+                
 				if (pvLogSelector == null) {
 					// for PV Logger snapshot chooser
 					plsc = new PVLogSnapshotChooser();
@@ -561,7 +581,7 @@ public class VADocument extends AcceleratorDocument implements ActionListener, P
 			public void actionPerformed(ActionEvent event) {
 				isForOLM = false;
 				isFromPVLogger = true;
-
+                
 				if (pvLogSelector == null) {
 					// for PV Logger snapshot chooser
 					plsc = new PVLogSnapshotChooser();
@@ -570,8 +590,8 @@ public class VADocument extends AcceleratorDocument implements ActionListener, P
 					pvLogSelector.setVisible(true);
 			}
 		});
-		commander.registerModel("pvlogMovie", pvlogMovieModel);		
-
+		commander.registerModel("pvlogMovie", pvlogMovieModel);
+        
 		// action for running model and Diagnostics acquisition
 		Action runAction = new AbstractAction() {
 			static final long serialVersionUID = 0;
@@ -580,17 +600,17 @@ public class VADocument extends AcceleratorDocument implements ActionListener, P
 					JOptionPane.showMessageDialog( getMainWindow(), "Virtual Accelerator has already started.", "Warning!", JOptionPane.PLAIN_MESSAGE );
 					return;
 				}
-
+                
 				if ( getSelectedSequence() == null ) {
 					JOptionPane.showMessageDialog( getMainWindow(), "You need to select sequence(s) first.", "Warning!", JOptionPane.PLAIN_MESSAGE );
-				} 
+				}
 				else {
 					// use PV logger
 					if ( isFromPVLogger ) {
 						long pvLoggerId = plsc.getPVLogId();
 						
 						runServer();
-
+                        
 						plds = new PVLoggerDataSource(pvLoggerId);
 						
 						// use PVLogger to construct the model
@@ -613,10 +633,10 @@ public class VADocument extends AcceleratorDocument implements ActionListener, P
 								return;
 							}
 							actionPerformed( event );
-						} 
+						}
 						else {
 							runServer();
-						} 
+						}
                         
                         // put the initial B_Book PVs to the server
                         configFieldBookPVs();
@@ -635,7 +655,7 @@ public class VADocument extends AcceleratorDocument implements ActionListener, P
 		};
 		runAction.putValue(Action.NAME, "run-va");
 		commander.registerAction(runAction);
-
+        
 		// stop the channel access server
 		Action stopAction = new AbstractAction() {
 			static final long serialVersionUID = 0;
@@ -646,7 +666,7 @@ public class VADocument extends AcceleratorDocument implements ActionListener, P
 		
 		stopAction.putValue(Action.NAME, "stop-va");
 		commander.registerAction(stopAction);
-
+        
 		// set noise level
 		Action setNoiseAction = new AbstractAction() {
 			static final long serialVersionUID = 0;
@@ -656,7 +676,7 @@ public class VADocument extends AcceleratorDocument implements ActionListener, P
 		};
 		setNoiseAction.putValue(Action.NAME, "set-noise");
 		commander.registerAction(setNoiseAction);
-
+        
 		// configure synchronization
 		final Action synchConfigAction = new AbstractAction() {
 			static final long serialVersionUID = 0;
@@ -684,15 +704,15 @@ public class VADocument extends AcceleratorDocument implements ActionListener, P
 		destroyServer();
 	}
 	
-
+    
 	public void update( final DataAdaptor adaptor ) {
 		if ( getSource() != null ) {
 			XmlDataAdaptor xda = XmlDataAdaptor.adaptorForUrl( getSource(), false );
 			DataAdaptor da1 = xda.childAdaptor( "VA" );
-
+            
 			//restore accelerator file
 			this.setAcceleratorFilePath( da1.childAdaptor( "accelerator" ).stringValue( "xmlFile" ) );
-
+            
 			String accelUrl = "file://" + this.getAcceleratorFilePath();
 			try {
 				XMLDataManager dMgr = new XMLDataManager(accelUrl);
@@ -701,55 +721,58 @@ public class VADocument extends AcceleratorDocument implements ActionListener, P
 				JOptionPane.showMessageDialog( null, "Hey - I had trouble parsing the accelerator input xml file you fed me", "VA error", JOptionPane.ERROR_MESSAGE );
 			}
 			this.acceleratorChanged();
-
+            
 			// set up the right sequence combo from selected primaries:
 			List<DataAdaptor> temp = da1.childAdaptors( "sequences" );
 			if ( temp.isEmpty() )  return; // bail out, nothing left to do
-
+            
 			ArrayList<AcceleratorSeq> seqs = new ArrayList<AcceleratorSeq>();
 			DataAdaptor da2a = da1.childAdaptor( "sequences" );
 			String seqName = da2a.stringValue( "name" );
-
+            
 			temp = da2a.childAdaptors("seq");
             for ( final DataAdaptor da : temp ) {
 				seqs.add( getAccelerator().getSequence( da.stringValue("name") ) );
 			}
 			if (seqName.equals("Ring"))
 				setSelectedSequence(new Ring(seqName, seqs));
-			else 
+			else
 				setSelectedSequence(new AcceleratorSeqCombo(seqName, seqs));
 			
 			setSelectedSequenceList(seqs.subList(0, seqs.size()));
-
+            
 			//restore probe file
-			if (da1.hasAttribute("env_probe")) { 
-				DataAdaptor probeFile = da1.childAdaptor("env_probe");
-				theProbeFile = probeFile.stringValue("probeXmlFile");
-				if (theProbeFile.length() > 1) {
-					try {
-						myProbe = (EnvelopeProbe) ProbeXmlParser.parse(theProbeFile);
-					} catch (ParsingException e) {
-						// if we have trouble restore the probe, just create from default
-						createDefaultProbe();
-					}
-				} 
-			}
-			else {
-				createDefaultProbe();
-			}
-
-			model.setProbe(myProbe);
-
+            //Remove probe file functionality
+//			if (da1.hasAttribute("env_probe")) {
+//				DataAdaptor probeFile = da1.childAdaptor("env_probe");
+//				theProbeFile = probeFile.stringValue("probeXmlFile");
+//				if (theProbeFile.length() > 1) {
+//					try {
+//						myProbe = (EnvelopeProbe) ProbeXmlParser.parse(theProbeFile);
+//					} catch (ParsingException e) {
+//						// if we have trouble restore the probe, just create from default
+//						createDefaultProbe();
+//					}
+//				}
+//			}
+//			else {
+//				createDefaultProbe();
+//			}
+            
+            createDefaultProbe();
+            
+			modelScenario.setProbe(myProbe);
+            
 			if ( da1.hasAttribute( "modelSyncPeriod" ) ) {
 				_modelSyncPeriod = da1.longValue( "modelSyncPeriod" );
 			}
 		}
-
+        
 	}
     
     
 	protected Scenario getScenario() {
-		return model;
+		return modelScenario;
 	}
     
     
@@ -773,7 +796,7 @@ public class VADocument extends AcceleratorDocument implements ActionListener, P
                         final String[] warningPVs = fieldChannel.getWarningLimitPVs();
                         
                         final Channel lowerWarningChannel = ChannelFactory.defaultFactory().getChannel( warningPVs[0], fieldChannel.getValueTransform() );
-//                        System.out.println( "Lower Limit PV: " + lowerWarningChannel.channelName() );
+                        //                        System.out.println( "Lower Limit PV: " + lowerWarningChannel.channelName() );
                         if ( lowerWarningChannel.connectAndWait() ) {
                             lowerWarningChannel.putValCallback( bookField - warningOffset, this );
                         }
@@ -796,16 +819,16 @@ public class VADocument extends AcceleratorDocument implements ActionListener, P
                         }
                     }
                 }
-			} 
+			}
             catch ( NoSuchChannelException exception ) {
 				System.err.println( exception.getMessage() );
-			} 
+			}
             catch ( ConnectionException exception ) {
 				System.err.println( exception.getMessage() );
-			} 
+			}
             catch ( GetException exception ) {
 				System.err.println( exception.getMessage() );
-			} 
+			}
             catch ( PutException exception ) {
 				System.err.println( exception.getMessage() );
 			}
@@ -839,10 +862,10 @@ public class VADocument extends AcceleratorDocument implements ActionListener, P
 		for ( final ReadbackSetRecord record : READBACK_SET_RECORDS ) {
 			try {
 				record.updateReadback( ch_noiseMap, ch_offsetMap, this );
-			} 
+			}
 			catch (Exception e) {
 				System.err.println( e.getMessage() );
-			} 
+			}
 		}
 		Channel.flushIO();
 		final int rowCount = READBACK_SET_TABLE_MODEL.getRowCount();
@@ -857,7 +880,7 @@ public class VADocument extends AcceleratorDocument implements ActionListener, P
     /** populate the readback PVs from the PV Logger */
 	private void putReadbackPVsFromPVLogger() {
 		final Map<String,Double> qPVMap = plds.getMagnetMap();
-
+        
 		// set beam trigger PV to "on"
 		try {
 			if ( beamOnEvent != null )  beamOnEvent.putVal(0);
@@ -869,20 +892,20 @@ public class VADocument extends AcceleratorDocument implements ActionListener, P
 		} catch (PutException e) {
 			System.err.println(e);
 		}
-
+        
 		// get the "set" PV value, add noise, and then put to the corresponding readback PV.
 		for ( final ReadbackSetRecord record : READBACK_SET_RECORDS ) {
 			try {
 				final String readbackPV = record.getReadbackChannel().channelName();
-
+                
 				if ( qPVMap.containsKey( readbackPV ) ) {
 					final double basisValue = qPVMap.get( readbackPV ).doubleValue();
 					record.updateReadback( basisValue, ch_noiseMap, ch_offsetMap, this );
 				}
-			} 
+			}
 			catch ( Exception e ) {
 				System.err.println( e.getMessage() );
-			} 
+			}
 		}
 		READBACK_SET_TABLE_MODEL.fireTableDataChanged();
 	}
@@ -899,20 +922,20 @@ public class VADocument extends AcceleratorDocument implements ActionListener, P
                         bookChannel.putValCallback( bookField, this );
                     }
                 }
-			} 
+			}
             catch ( NoSuchChannelException exception ) {
 				System.err.println( exception.getMessage() );
-			} 
+			}
             catch ( ConnectionException exception ) {
 				System.err.println( exception.getMessage() );
-			} 
+			}
             catch ( PutException exception ) {
 				System.err.println( exception.getMessage() );
 			}
         }
     }
     
-
+    
 	/**
 	 * populate all the "set" PV values from design values
 	 */
@@ -941,12 +964,12 @@ public class VADocument extends AcceleratorDocument implements ActionListener, P
 				System.err.println(e.getMessage());
 			}
 		}
-
+        
 		// for all rf cavities
         for ( final RfCavity rfCavity : rfCavities ) {
 			try {
 				Channel ampSetCh = rfCavity
-						.getAndConnectChannel(RfCavity.CAV_AMP_SET_HANDLE);
+                .getAndConnectChannel(RfCavity.CAV_AMP_SET_HANDLE);
 				//System.out.println("Ready to put " + rfCavity.getDfltCavAmp() + " to " + ampSetCh.getId());
 				if (rfCavity instanceof xal.smf.impl.SCLCavity) {
 					ampSetCh.putValCallback( rfCavity.getDfltCavAmp()*((SCLCavity)rfCavity).getStructureTTF(), this );
@@ -967,15 +990,15 @@ public class VADocument extends AcceleratorDocument implements ActionListener, P
 		}
 		Channel.flushIO();
 	}
-
+    
 	private void putSetPVsFromPVLogger() {
 		final Map<String,Double> qPSPVMap = plds.getMagnetPSMap();
-
+        
         for ( final Electromagnet em : mags ) {
 			try {
 				Channel ch = em.getMainSupply().getAndConnectChannel( MagnetMainSupply.FIELD_SET_HANDLE );
 				//System.out.println("Ready to put " + Math.abs(em.getDfltField()) + " to " + ch.getId());
-
+                
                 final String channelID = ch.getId();
 				if ( qPSPVMap.containsKey( channelID ) )
 					ch.putValCallback( qPSPVMap.get( channelID ).doubleValue(), this );
@@ -991,7 +1014,7 @@ public class VADocument extends AcceleratorDocument implements ActionListener, P
 			}
 		}
 	}
-
+    
 	/** This method is for populating the diagnostic PVs (only BPMs + WSs for now) */
 	protected void putDiagPVs() {
 		// for BPMs
@@ -1004,9 +1027,9 @@ public class VADocument extends AcceleratorDocument implements ActionListener, P
             
             
 			try {
-				ProbeState probeState = model.getTrajectory().stateForElement( bpm.getId() );
+				ProbeState probeState = modelScenario.getTrajectory().stateForElement( bpm.getId() );
 				//System.out.println("Now updating " + bpm.getId());
-
+                
 				if ( probeState instanceof ICoordinateState ) {
 					final PhaseVector coordinates = ((ICoordinateState)probeState).getFixedOrbit();
 					// For SNS Ring BPM system, we only measure the signal with respect to the center of the beam pipe.
@@ -1019,11 +1042,11 @@ public class VADocument extends AcceleratorDocument implements ActionListener, P
                     final double yAvg = NoiseGenerator.getAverage( yTBT, DEFAULT_BPM_WAVEFORM_DATA_SIZE );
                     
 					bpmXAvgChannel.putValCallback( xAvg, this );
-//                    bpmXTBTChannel.putValCallback( xTBT, this );  // don't post to channel access until the turn by turn data is generated correctly
+                    //                    bpmXTBTChannel.putValCallback( xTBT, this );  // don't post to channel access until the turn by turn data is generated correctly
 					bpmYAvgChannel.putValCallback( yAvg, this );
-//                    bpmYTBTChannel.putValCallback( yTBT, this );  // don't post to channel access until the turn by turn data is generated correctly
+                    //                    bpmYTBTChannel.putValCallback( yTBT, this );  // don't post to channel access until the turn by turn data is generated correctly
 				}
-
+                
 				// hardwired BPM amplitude noise and offset to 5% and 0.1mm (randomly) respectively
 				bpmAmpAvgChannel.putVal( NoiseGenerator.setValForPV( 20., 5., 0.1 ) );
 				// calculate the BPM phase (for linac only)
@@ -1037,15 +1060,15 @@ public class VADocument extends AcceleratorDocument implements ActionListener, P
 				System.err.println( e.getMessage() );
 			}
 		}
-
+        
 		// for WSs
         for ( final ProfileMonitor ws : wss ) {
 			Channel wsX = ws.getChannel(ProfileMonitor.H_SIGMA_M_HANDLE);
 			Channel wsY = ws.getChannel(ProfileMonitor.V_SIGMA_M_HANDLE);
-
+            
 			try {
-				ProbeState probeState = model.getTrajectory().stateForElement( ws.getId() );
-				if (model.getProbe() instanceof EnvelopeProbe) {
+				ProbeState probeState = modelScenario.getTrajectory().stateForElement( ws.getId() );
+				if (modelScenario.getProbe() instanceof EnvelopeProbe) {
                     final Twiss[] twiss = ( (EnvelopeProbeState)probeState ).getCorrelationMatrix().computeTwiss();
 					wsX.putValCallback( twiss[0].getEnvelopeRadius() * 1000., this );
 					wsY.putValCallback( twiss[1].getEnvelopeRadius() * 1000., this );
@@ -1058,22 +1081,22 @@ public class VADocument extends AcceleratorDocument implements ActionListener, P
 		}
 		Channel.flushIO();
 	}
-
+    
 	private void putDiagPVsFromPVLogger() {
 		// for BPMs
 		final Map<String,Double> bpmXMap = plds.getBPMXMap();
 		final Map<String,Double> bpmYMap = plds.getBPMYMap();
 		final Map<String,Double> bpmAmpMap = plds.getBPMAmpMap();
 		final Map<String,Double> bpmPhaseMap = plds.getBPMPhaseMap();
-
+        
         for ( final BPM bpm : bpms ) {
 			Channel bpmX = bpm.getChannel(BPM.X_AVG_HANDLE);
 			Channel bpmY = bpm.getChannel(BPM.Y_AVG_HANDLE);
 			Channel bpmAmp = bpm.getChannel(BPM.AMP_AVG_HANDLE);
-
+            
 			try {
 				System.err.println("Now updating " + bpm.getId());
-
+                
 				if ( bpmXMap.containsKey( bpmX.getId() ) ) {
 					bpmX.putVal( NoiseGenerator.setValForPV( bpmXMap.get( bpmX.getId() ).doubleValue(), bpmNoise, bpmOffset ) );
 				}
@@ -1081,7 +1104,7 @@ public class VADocument extends AcceleratorDocument implements ActionListener, P
 				if ( bpmYMap.containsKey( bpmY.getId() ) ) {
 					bpmY.putVal( NoiseGenerator.setValForPV( bpmYMap.get( bpmY.getId() ).doubleValue(), bpmNoise, bpmOffset ) );
 				}
-
+                
 				// BPM amplitude
 				if (bpmAmpMap.containsKey(bpmAmp.getId()))
 					bpmAmp.putVal( NoiseGenerator.setValForPV( bpmAmpMap.get( bpmAmp.getId() ).doubleValue(), 5., 0.1) );
@@ -1092,21 +1115,21 @@ public class VADocument extends AcceleratorDocument implements ActionListener, P
 						bpmPhase.putVal( bpmPhaseMap.get( bpmPhase.getId() ).doubleValue() );
 					}
 				}
-
+                
 			} catch ( ConnectionException e ) {
 				System.err.println( e.getMessage() );
 			} catch ( PutException e ) {
 				System.err.println( e.getMessage() );
 			}
 		}
-
+        
 	}
 	
 	
 	/** handle the CA put callback */
 	public void putCompleted( final Channel chan ) {}
 	
-
+    
 	/** create the map between the "readback" and "set" PVs */
 	private void configureReadbacks() {
 		READBACK_SET_RECORDS.clear();
@@ -1130,11 +1153,11 @@ public class VADocument extends AcceleratorDocument implements ActionListener, P
 				if ( em.isKindOf( Quadrupole.s_strType ) ) {
 					ch_noiseMap.put( em.getChannel( Electromagnet.FIELD_RB_HANDLE), quadNoise );
 					ch_offsetMap.put( em.getChannel( Electromagnet.FIELD_RB_HANDLE), quadOffset );
-				} 
+				}
 				else if ( em.isKindOf( Bend.s_strType ) ) {
 					ch_noiseMap.put( em.getChannel(Electromagnet.FIELD_RB_HANDLE), dipoleNoise );
 					ch_offsetMap.put( em.getChannel(Electromagnet.FIELD_RB_HANDLE), dipoleOffset );
-				} 
+				}
 				else if ( em.isKindOf( HDipoleCorr.s_strType ) || em.isKindOf( VDipoleCorr.s_strType ) ) {
 					ch_noiseMap.put( em.getChannel( Electromagnet.FIELD_RB_HANDLE ), correctorNoise );
 					ch_offsetMap.put( em.getChannel( Electromagnet.FIELD_RB_HANDLE ), correctorOffset );
@@ -1181,7 +1204,7 @@ public class VADocument extends AcceleratorDocument implements ActionListener, P
 		}
 		catch( Exception exception ) {
 			exception.printStackTrace();
-		}	
+		}
 	}
 	
 	
@@ -1195,7 +1218,7 @@ public class VADocument extends AcceleratorDocument implements ActionListener, P
 			setHasChanges( true );
 		}
 	}
-
+    
 	public void selectedSequenceChanged() {
 		destroyServer();
 		
@@ -1224,33 +1247,37 @@ public class VADocument extends AcceleratorDocument implements ActionListener, P
 			
 			// should create a new map for "set" <-> "readback" PV mapping
 			configureReadbacks();
-
+            
 			// for on-line model
 			try {
-				model = Scenario.newScenarioFor( getSelectedSequence() );
+				modelScenario = Scenario.newScenarioFor( getSelectedSequence() );
 			}
 			catch ( ModelException exception ) {
 				System.err.println( exception.getMessage() );
 			}
-
+            
 			// setting up the default probe
             createDefaultProbe();
-
+            
 			setHasChanges(true);
 		}
+        else {
+            modelScenario = null;
+            myProbe = null;
+        }
 	}
-
+    
 	public void buildOnlineModel() {
 		try {
 			//	 model.resetProbe();
-			model.setSynchronizationMode(Scenario.SYNC_MODE_LIVE);
-			model.resync();
+			modelScenario.setSynchronizationMode(Scenario.SYNC_MODE_LIVE);
+			modelScenario.resync();
 		} catch (Exception e) {
 			System.err.println(e.getMessage());
 		}
-
+        
 	}
-
+    
 	public void actionPerformed(ActionEvent ev) {
 		if (ev.getActionCommand().equals("noiseSet")) {
 			quadNoise = df1.getDoubleValue();
@@ -1261,35 +1288,35 @@ public class VADocument extends AcceleratorDocument implements ActionListener, P
 			dipoleOffset = df21.getDoubleValue();
 			correctorOffset = df31.getDoubleValue();
 			bpmOffset = df41.getDoubleValue();
-
+            
 			setNoise.setVisible(false);
 		}
 	}
-
+    
 	
 	/** synchronize the readbacks with setpoints and synchronize with the online model */
 	private void syncOnlineModel() {
 		if ( vaRunning ) {
 			// add noise, populate "read-back" PVs
 			putReadbackPVs();
-
+            
 			// re-sync lattice and run model
 			buildOnlineModel();
-
+            
 			try {
 				myProbe.reset();
-				model.run();
-
+				modelScenario.run();
+                
 				// put diagnostic node PVs
 				putDiagPVs();
-			} 
+			}
 			catch ( ModelException exception ) {
 				System.err.println( exception.getMessage() );
 			}
 		}
 	}
-
-
+    
+    
 	/** Get a runnable that syncs the online model */
 	private Runnable getOnlineModelSynchronizer() {
 		return new Runnable() {
@@ -1298,8 +1325,8 @@ public class VADocument extends AcceleratorDocument implements ActionListener, P
 			}
 		};
 	}
-
-
+    
+    
 	/** synchronize the readbacks with setpoints and synchronize with the online model */
 	private void syncPVLogger() {
 		if ( vaRunning ) {
@@ -1308,8 +1335,8 @@ public class VADocument extends AcceleratorDocument implements ActionListener, P
 			putDiagPVsFromPVLogger();
 		}
 	}
-
-
+    
+    
 	/** Get a runnable that syncs with the PV Logger */
 	private Runnable getPVLoggerSynchronizer() {
 		return new Runnable() {
@@ -1359,49 +1386,49 @@ class ReadbackSetRecordPositionComparator implements Comparator<ReadbackSetRecor
 	}
 }
 
-
-class ProbeFileFilter extends javax.swing.filechooser.FileFilter {
-	//Accept xml files.
-	public boolean accept(File f) {
-		if (f.isDirectory()) {
-			return true;
-		}
-
-		String extension = Utils.getExtension(f);
-		if (extension != null) {
-			if (extension.equals(Utils.probe)) {
-				return true;
-			} else {
-				return false;
-			}
-		}
-
-		return false;
-	}
-
-	//The description of this filter
-	public String getDescription() {
-		return "Probe File";
-	}
-
-}
-
-
-class Utils {
-	public final static String probe = "probe";
-
-	/**
-	 * Get the extension of a file.
-	 */
-	public static String getExtension(File f) {
-		String ext = null;
-		String s = f.getName();
-		int i = s.lastIndexOf('.');
-
-		if (i > 0 && i < s.length() - 1) {
-			ext = s.substring(i + 1).toLowerCase();
-		}
-		return ext;
-	}
-}
+//Remove probe file functionality
+//class ProbeFileFilter extends javax.swing.filechooser.FileFilter {
+//	//Accept xml files.
+//	public boolean accept(File f) {
+//		if (f.isDirectory()) {
+//			return true;
+//		}
+//        
+//		String extension = Utils.getExtension(f);
+//		if (extension != null) {
+//			if (extension.equals(Utils.probe)) {
+//				return true;
+//			} else {
+//				return false;
+//			}
+//		}
+//        
+//		return false;
+//	}
+//    
+//	//The description of this filter
+//	public String getDescription() {
+//		return "Probe File";
+//	}
+//    
+//}
+//
+//
+//class Utils {
+//	public final static String probe = "probe";
+//    
+//	/**
+//	 * Get the extension of a file.
+//	 */
+//	public static String getExtension(File f) {
+//		String ext = null;
+//		String s = f.getName();
+//		int i = s.lastIndexOf('.');
+//        
+//		if (i > 0 && i < s.length() - 1) {
+//			ext = s.substring(i + 1).toLowerCase();
+//		}
+//		return ext;
+//	}
+//}
 

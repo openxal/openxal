@@ -107,18 +107,27 @@ public class SimpleProbeEditor extends JDialog {
             System.out.println(e.getMessage());
         }
         
-        //Center the editor in relation to the frame that constructed the editor
-        setLocationRelativeTo(owner);
         //Set the window size
         setSize(600, 600);
         //Set up each component in the editor
         initializeComponents();
         //Fit the components in the window
         pack();
+        //Center the editor in relation to the frame that constructed the editor
+        setLocationRelativeTo(owner);
         //Populate the properties table
         setTableProperties();
         //Make the window visible
         setVisible(true);
+    }
+    
+    /* getProbe()
+     *
+     * Returns the probe associated with the editor
+     *
+     */
+    public Probe getProbe() {
+        return probe;
     }
     
     /* setTableProperties()
@@ -156,8 +165,7 @@ public class SimpleProbeEditor extends JDialog {
                     //Filter out classes we don't want to edit
                     if(isEditableClass(result.getClass())) {
                         //Add the property as a ProbeProperty to the list of editable properties
-                        propertyList.add(new ProbeProperty(key, descriptors[propIndex].getName
-                                                           (), result, result.getClass()));
+                        propertyList.add(new ProbeProperty(key, descriptors[propIndex].getName(), result, result.getClass()));
                     }//if(isEditableClass())
                 }//if(write && read)
             }//for(descriptors)
@@ -193,9 +201,7 @@ public class SimpleProbeEditor extends JDialog {
         //Return the result
         return result == null ? "null" : result;
     }
-    
-    //TODO: Continue documenting
-    
+        
     /* getPropertyDescriptor(BeanInfo)
      *
      * Gets the PropertyDescriptors from a BeanInfo
@@ -221,6 +227,7 @@ public class SimpleProbeEditor extends JDialog {
         applyButtonPanel = new JPanel(new GridLayout(1, 2));
         //Apply button
         applyButton = new JButton( "Apply" );
+        applyButton.setEnabled(false);
         //Close button
         closeButton = new JButton( "Close" );
         
@@ -354,7 +361,7 @@ public class SimpleProbeEditor extends JDialog {
     
     /* saveProbeProperties()
      *
-     * Initialize the components of the probe editor
+     * Set the properties of the probe that have been changed
      *
      */
     private void saveProbeProperties()
@@ -383,21 +390,22 @@ public class SimpleProbeEditor extends JDialog {
                     //Find the right property in the list based on name
                     for(ProbeProperty pp : propertyList)
                     {
-                        if(pp.hasChanged() && pp.getGroup().equals(key) && pp.getProperty().equals(descriptors[propIndex].getName())) {
+                        if(pp.hasChanged() && pp.getProperty().equals(descriptors[propIndex].getName())) {
                             //Try to invoke the write method with the changed property
                             try {
                                 //Call the invoke method with the instance and value
+                                System.out.println("Set property " + pp.getProperty());
                                 write.invoke( instance, pp.getValue());
                             } catch (Exception e) {
                                 //Display an error saying the property could not be set
                                 System.out.println("Could not set property '" + pp.getProperty() + "' with value " + pp.getValue() + " of type " + pp.getValueType());
                                 System.err.println(e.getMessage());
-                            }//try/catch
-                        }//if(correct property)
-                    }//for(each ProbeProperty)
-                }//if(write && read != null)
-            }//for(descriptors)
-        }//for(each HashMap key)
+                            }// try/catch
+                        }// if(correct property)
+                    }// for(each ProbeProperty)
+                }// if(write && read != null)
+            }// for(descriptors)
+        }// for(each HashMap key)
         //Update the table contents
         refreshView();
     }
@@ -418,6 +426,17 @@ public class SimpleProbeEditor extends JDialog {
         return false;
     }
     
+    /* setPropertiesAsUnchanged()
+     *
+     * Sets property to be marked as unchanged after applying the changes
+     *
+     */
+    private void setPropertiesAsUnchanged() {
+        for(ProbeProperty pp : propertyList) {
+            if(pp.hasChanged()) pp.setHasChanged(false);
+        }
+    }
+    
     /* Class: ProbeProperty
      *
      * Description: ProbeProperty record that gets dislpayed in the property table
@@ -426,32 +445,32 @@ public class SimpleProbeEditor extends JDialog {
     private class ProbeProperty {
         
         //Class type of the property
-        private Class<?> type;
+        private Class<?> _type;
         //Group name, and property name of the property
-        private String group, property;
+        private String _group, _property;
         //Actual value of the property
         private Object _value;
         //If the property has been changed or not
-        private boolean hasChanged = false;
+        private boolean _hasChanged = false;
         
         
         //ProbeProperty Constructor that takes a group name, property name, value, and class type
         public ProbeProperty(String group, String property, Object value, Class<?> type)
         {
             //Initialize the attributes
-            this.type = type;
-            this.property = property;
+            _type = type;
+            _property = property;
             _value = value;
-            this.group = group;
+            _group = group;
         }
         
         /* getGroup()
          *
-         * return the group name formatted with htlm to be bold
+         * return the group name formatted with html to be bold
          *
          */
         public String getGroup() {
-            return "<html><b>" + group + "</b></html>";
+            return "<html><b>" + _group + "</b></html>";
         }
         
         /* getType()
@@ -460,7 +479,7 @@ public class SimpleProbeEditor extends JDialog {
          *
          */
         public Class<?> getType() {
-            return type;
+            return _type;
         }
         
         /* getValueType()
@@ -469,7 +488,7 @@ public class SimpleProbeEditor extends JDialog {
          *
          */
         public String getValueType() {
-            return type.getSimpleName();
+            return _type.getSimpleName();
         }
         
         /* getProperty()
@@ -478,7 +497,7 @@ public class SimpleProbeEditor extends JDialog {
          *
          */
         public String getProperty() {
-            return property;
+            return _property;
         }
         
         /* getValue()
@@ -496,7 +515,16 @@ public class SimpleProbeEditor extends JDialog {
          *
          */
         public boolean hasChanged() {
-            return hasChanged;
+            return _hasChanged;
+        }
+        
+        /* setChanged()
+         *
+         * return if the value has changed
+         *
+         */
+        public void setHasChanged(boolean changed) {
+            _hasChanged = changed;
         }
         
         /* setValue(Boolean)
@@ -508,7 +536,8 @@ public class SimpleProbeEditor extends JDialog {
          *
          */
         public void setValue(Boolean value) {
-            hasChanged = true;
+            if(!applyButton.isEnabled()) applyButton.setEnabled(true);
+            _hasChanged = true;
             _value = value;
         }
         
@@ -520,31 +549,32 @@ public class SimpleProbeEditor extends JDialog {
          */
         public void setValue(String value) {
             try {
-                if( type == Double.class ){
+                if( _type == Double.class ){
                     _value = Double.parseDouble(value);
                 }
-                else if(type == Float.class) {
+                else if(_type == Float.class) {
                     _value = Float.parseFloat(value);
                 }
-                else if(type == Integer.class) {
+                else if(_type == Integer.class) {
                     _value = Integer.parseInt(value);
                 }
-                else if(type == Boolean.class) {
+                else if(_type == Boolean.class) {
                     _value = Boolean.parseBoolean(value);
                 }
-                else if(type == Long.class) {
+                else if(_type == Long.class) {
                     _value = Long.parseLong(value);
                 }
-                else if(type == Short.class) {
+                else if(_type == Short.class) {
                     _value = Short.parseShort(value);
                 }
-                else if(type == Byte.class) {
+                else if(_type == Byte.class) {
                     _value = Byte.parseByte(value);
                 }
                 else {
                     _value = value;
                 }
-                hasChanged = true;
+                if(!applyButton.isEnabled()) applyButton.setEnabled(true);
+                _hasChanged = true;
             } catch (Exception e) {
                 System.err.println("Invalid property value " + value + " for " + getProperty());
             }
@@ -562,6 +592,10 @@ public class SimpleProbeEditor extends JDialog {
         public void actionPerformed(ActionEvent e) {
             //Save the properties
             saveProbeProperties();
+            //Mark the properties as unchanged/saved
+            setPropertiesAsUnchanged();
+            //Re-enable the button
+            applyButton.setEnabled(false);
         }
     }
 }
