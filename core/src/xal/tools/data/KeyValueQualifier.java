@@ -30,7 +30,7 @@ public class KeyValueQualifier implements Qualifier {
 	private final String _key;
 	
 	/** the value with which to compare against */
-	private final Comparable _value;
+	private final Comparable<Object> _value;
 	
 	/** comparison operation */
 	private final int _operation;
@@ -42,7 +42,7 @@ public class KeyValueQualifier implements Qualifier {
 	 * @param value the value with which to the compare the record's value for the specified key
 	 * @param operation the code corresponding to the comparison operation
 	 */
-	public KeyValueQualifier( final String key, final Comparable value, final int operation ) {
+	public KeyValueQualifier( final String key, final Comparable<Object> value, final int operation ) {
 		_key = key;
 		_value = value;
 		_operation = operation;
@@ -54,7 +54,7 @@ public class KeyValueQualifier implements Qualifier {
 	 * @param key the key for which the record's value is fetched
 	 * @param value the value with which to the compare the record's value for the specified key
 	 */
-	public KeyValueQualifier( final String key, final Comparable value ) {
+	public KeyValueQualifier( final String key, final Comparable<Object> value ) {
 		this( key, value, COMPARE_EQUALS );
 	}
 	
@@ -66,8 +66,9 @@ public class KeyValueQualifier implements Qualifier {
 	 * @return true if the object matches the criteria and false if not.
 	 * @throws java.lang.ClassCastException if the object does not implement the Comparable interface
 	 */
+    @SuppressWarnings( "unchecked" ) //valueForKey cannot be resolved to a specific type since it returns Object
 	public boolean matches( final Object object ) {
-		final Comparable value = (Comparable)((KeyedRecord)object).valueForKey( _key );
+		final Comparable<Object> value = (Comparable<Object>)((KeyedRecord)object).valueForKey( _key );
 		final int comparisonResult = value.compareTo( _value );
 		
 		switch( _operation ) {
