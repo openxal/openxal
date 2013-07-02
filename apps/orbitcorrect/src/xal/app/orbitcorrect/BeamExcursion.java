@@ -103,6 +103,7 @@ public class BeamExcursion {
 	 * @param referenceExcursion  The reference excursion
 	 * @return                The difference between the primary excursion and reference excursion
 	 */
+    @SuppressWarnings("unchecked") //calcDifference could not be called when using <?> on BeamMarkerRecord
 	static public BeamExcursion calcDifference( final BeamExcursion primaryExcursion, final BeamExcursion referenceExcursion ) {
 		if ( primaryExcursion == null || referenceExcursion == null ) {
 			return null;
