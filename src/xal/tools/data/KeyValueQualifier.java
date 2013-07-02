@@ -54,7 +54,8 @@ public class KeyValueQualifier implements Qualifier {
 	 * @param key the key for which the record's value is fetched
 	 * @param value the value with which to the compare the record's value for the specified key
 	 */
-	public KeyValueQualifier( final String key, final Comparable<Object> value ) {
+    @SuppressWarnings({"rawtypes", "unchecked"})
+	public KeyValueQualifier( final String key, final Comparable value ) {
 		this( key, value, COMPARE_EQUALS );
 	}
 	
