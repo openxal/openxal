@@ -144,7 +144,7 @@ public final class AlgorithmFactory {
      */
     public static ParticleTracker       createParticleTracker(AcceleratorSeq smfSeq) throws InstantiationException {
         
-        ParticleTracker     algPrtl = AlgorithmFactory.createTrackerFor(null, ParticleTracker.class);
+        ParticleTracker     algPrtl = AlgorithmFactory.createTrackerFor(smfSeq, ParticleTracker.class);
         
         return algPrtl;
     }
