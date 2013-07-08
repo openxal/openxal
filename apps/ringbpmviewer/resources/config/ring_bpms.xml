@@ -1,0 +1,646 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<LINES>
+<RING_BPM_TBT_PVs>
+    <RING_BPM name="A13">
+        <PV_NAMES>
+            <xTBT name="Ring_Diag:BPM_A13:xTBT"/>
+            <yTBT name="Ring_Diag:BPM_A13:yTBT"/>
+            <ampTBT name="Ring_Diag:BPM_A13:ampTBT"/>
+        </PV_NAMES>
+    </RING_BPM>
+    <RING_BPM name="B01">
+        <PV_NAMES>
+            <xTBT name="Ring_Diag:BPM_B01:xTBT"/>
+            <yTBT name="Ring_Diag:BPM_B01:yTBT"/>
+            <ampTBT name="Ring_Diag:BPM_B01:ampTBT"/>
+        </PV_NAMES>
+    </RING_BPM>
+    <RING_BPM name="B02">
+        <PV_NAMES>
+            <xTBT name="Ring_Diag:BPM_B02:xTBT"/>
+            <yTBT name="Ring_Diag:BPM_B02:yTBT"/>
+            <ampTBT name="Ring_Diag:BPM_B02:ampTBT"/>
+        </PV_NAMES>
+    </RING_BPM>
+    <RING_BPM name="B03">
+        <PV_NAMES>
+            <xTBT name="Ring_Diag:BPM_B03:xTBT"/>
+            <yTBT name="Ring_Diag:BPM_B03:yTBT"/>
+            <ampTBT name="Ring_Diag:BPM_B03:ampTBT"/>
+        </PV_NAMES>
+    </RING_BPM>
+    <RING_BPM name="B04">
+        <PV_NAMES>
+            <xTBT name="Ring_Diag:BPM_B04:xTBT"/>
+            <yTBT name="Ring_Diag:BPM_B04:yTBT"/>
+            <ampTBT name="Ring_Diag:BPM_B04:ampTBT"/>
+        </PV_NAMES>
+    </RING_BPM>
+    <RING_BPM name="B05">
+        <PV_NAMES>
+            <xTBT name="Ring_Diag:BPM_B05:xTBT"/>
+            <yTBT name="Ring_Diag:BPM_B05:yTBT"/>
+            <ampTBT name="Ring_Diag:BPM_B05:ampTBT"/>
+        </PV_NAMES>
+    </RING_BPM>
+    <RING_BPM name="B06">
+        <PV_NAMES>
+            <xTBT name="Ring_Diag:BPM_B06:xTBT"/>
+            <yTBT name="Ring_Diag:BPM_B06:yTBT"/>
+            <ampTBT name="Ring_Diag:BPM_B06:ampTBT"/>
+        </PV_NAMES>
+    </RING_BPM>
+    <RING_BPM name="B07">
+        <PV_NAMES>
+            <xTBT name="Ring_Diag:BPM_B07:xTBT"/>
+            <yTBT name="Ring_Diag:BPM_B07:yTBT"/>
+            <ampTBT name="Ring_Diag:BPM_B07:ampTBT"/>
+        </PV_NAMES>
+    </RING_BPM>
+    <RING_BPM name="B08">
+        <PV_NAMES>
+            <xTBT name="Ring_Diag:BPM_B08:xTBT"/>
+            <yTBT name="Ring_Diag:BPM_B08:yTBT"/>
+            <ampTBT name="Ring_Diag:BPM_B08:ampTBT"/>
+        </PV_NAMES>
+    </RING_BPM>
+    <RING_BPM name="B09">
+        <PV_NAMES>
+            <xTBT name="Ring_Diag:BPM_B09:xTBT"/>
+            <yTBT name="Ring_Diag:BPM_B09:yTBT"/>
+            <ampTBT name="Ring_Diag:BPM_B09:ampTBT"/>
+        </PV_NAMES>
+    </RING_BPM>
+    <RING_BPM name="B10">
+        <PV_NAMES>
+            <xTBT name="Ring_Diag:BPM_B10:xTBT"/>
+            <yTBT name="Ring_Diag:BPM_B10:yTBT"/>
+            <ampTBT name="Ring_Diag:BPM_B10:ampTBT"/>
+        </PV_NAMES>
+    </RING_BPM>
+    <RING_BPM name="B13">
+        <PV_NAMES>
+            <xTBT name="Ring_Diag:BPM_B13:xTBT"/>
+            <yTBT name="Ring_Diag:BPM_B13:yTBT"/>
+            <ampTBT name="Ring_Diag:BPM_B13:ampTBT"/>
+        </PV_NAMES>
+    </RING_BPM>
+    <RING_BPM name="C01">
+        <PV_NAMES>
+            <xTBT name="Ring_Diag:BPM_C01:xTBT"/>
+            <yTBT name="Ring_Diag:BPM_C01:yTBT"/>
+            <ampTBT name="Ring_Diag:BPM_C01:ampTBT"/>
+        </PV_NAMES>
+    </RING_BPM>
+    <RING_BPM name="C02">
+        <PV_NAMES>
+            <xTBT name="Ring_Diag:BPM_C02:xTBT"/>
+            <yTBT name="Ring_Diag:BPM_C02:yTBT"/>
+            <ampTBT name="Ring_Diag:BPM_C02:ampTBT"/>
+        </PV_NAMES>
+    </RING_BPM>
+    <RING_BPM name="C03">
+        <PV_NAMES>
+            <xTBT name="Ring_Diag:BPM_C03:xTBT"/>
+            <yTBT name="Ring_Diag:BPM_C03:yTBT"/>
+            <ampTBT name="Ring_Diag:BPM_C03:ampTBT"/>
+        </PV_NAMES>
+    </RING_BPM>
+    <RING_BPM name="C04">
+        <PV_NAMES>
+            <xTBT name="Ring_Diag:BPM_C04:xTBT"/>
+            <yTBT name="Ring_Diag:BPM_C04:yTBT"/>
+            <ampTBT name="Ring_Diag:BPM_C04:ampTBT"/>
+        </PV_NAMES>
+    </RING_BPM>
+    <RING_BPM name="C05">
+        <PV_NAMES>
+            <xTBT name="Ring_Diag:BPM_C05:xTBT"/>
+            <yTBT name="Ring_Diag:BPM_C05:yTBT"/>
+            <ampTBT name="Ring_Diag:BPM_C05:ampTBT"/>
+        </PV_NAMES>
+    </RING_BPM>
+    <RING_BPM name="C06">
+        <PV_NAMES>
+            <xTBT name="Ring_Diag:BPM_C06:xTBT"/>
+            <yTBT name="Ring_Diag:BPM_C06:yTBT"/>
+            <ampTBT name="Ring_Diag:BPM_C06:ampTBT"/>
+        </PV_NAMES>
+    </RING_BPM>
+    <RING_BPM name="C07">
+        <PV_NAMES>
+            <xTBT name="Ring_Diag:BPM_C07:xTBT"/>
+            <yTBT name="Ring_Diag:BPM_C07:yTBT"/>
+            <ampTBT name="Ring_Diag:BPM_C07:ampTBT"/>
+        </PV_NAMES>
+    </RING_BPM>
+    <RING_BPM name="C08">
+        <PV_NAMES>
+            <xTBT name="Ring_Diag:BPM_C08:xTBT"/>
+            <yTBT name="Ring_Diag:BPM_C08:yTBT"/>
+            <ampTBT name="Ring_Diag:BPM_C08:ampTBT"/>
+        </PV_NAMES>
+    </RING_BPM>
+    <RING_BPM name="C09">
+        <PV_NAMES>
+            <xTBT name="Ring_Diag:BPM_C09:xTBT"/>
+            <yTBT name="Ring_Diag:BPM_C09:yTBT"/>
+            <ampTBT name="Ring_Diag:BPM_C09:ampTBT"/>
+        </PV_NAMES>
+    </RING_BPM>
+    <RING_BPM name="C10">
+        <PV_NAMES>
+            <xTBT name="Ring_Diag:BPM_C10:xTBT"/>
+            <yTBT name="Ring_Diag:BPM_C10:yTBT"/>
+            <ampTBT name="Ring_Diag:BPM_C10:ampTBT"/>
+        </PV_NAMES>
+    </RING_BPM>
+    <RING_BPM name="C13">
+        <PV_NAMES>
+            <xTBT name="Ring_Diag:BPM_C13:xTBT"/>
+            <yTBT name="Ring_Diag:BPM_C13:yTBT"/>
+            <ampTBT name="Ring_Diag:BPM_C13:ampTBT"/>
+        </PV_NAMES>
+    </RING_BPM>
+    <RING_BPM name="D01">
+        <PV_NAMES>
+            <xTBT name="Ring_Diag:BPM_D01:xTBT"/>
+            <yTBT name="Ring_Diag:BPM_D01:yTBT"/>
+            <ampTBT name="Ring_Diag:BPM_D01:ampTBT"/>
+        </PV_NAMES>
+    </RING_BPM>
+    <RING_BPM name="D02">
+        <PV_NAMES>
+            <xTBT name="Ring_Diag:BPM_D02:xTBT"/>
+            <yTBT name="Ring_Diag:BPM_D02:yTBT"/>
+            <ampTBT name="Ring_Diag:BPM_D02:ampTBT"/>
+        </PV_NAMES>
+    </RING_BPM>
+    <RING_BPM name="D03">
+        <PV_NAMES>
+            <xTBT name="Ring_Diag:BPM_D03:xTBT"/>
+            <yTBT name="Ring_Diag:BPM_D03:yTBT"/>
+            <ampTBT name="Ring_Diag:BPM_D03:ampTBT"/>
+        </PV_NAMES>
+    </RING_BPM>
+    <RING_BPM name="D04">
+        <PV_NAMES>
+            <xTBT name="Ring_Diag:BPM_D04:xTBT"/>
+            <yTBT name="Ring_Diag:BPM_D04:yTBT"/>
+            <ampTBT name="Ring_Diag:BPM_D04:ampTBT"/>
+        </PV_NAMES>
+    </RING_BPM>
+    <RING_BPM name="D05">
+        <PV_NAMES>
+            <xTBT name="Ring_Diag:BPM_D05:xTBT"/>
+            <yTBT name="Ring_Diag:BPM_D05:yTBT"/>
+            <ampTBT name="Ring_Diag:BPM_D05:ampTBT"/>
+        </PV_NAMES>
+    </RING_BPM>
+    <RING_BPM name="D06">
+        <PV_NAMES>
+            <xTBT name="Ring_Diag:BPM_D06:xTBT"/>
+            <yTBT name="Ring_Diag:BPM_D06:yTBT"/>
+            <ampTBT name="Ring_Diag:BPM_D06:ampTBT"/>
+        </PV_NAMES>
+    </RING_BPM>
+    <RING_BPM name="D07">
+        <PV_NAMES>
+            <xTBT name="Ring_Diag:BPM_D07:xTBT"/>
+            <yTBT name="Ring_Diag:BPM_D07:yTBT"/>
+            <ampTBT name="Ring_Diag:BPM_D07:ampTBT"/>
+        </PV_NAMES>
+    </RING_BPM>
+    <RING_BPM name="D08">
+        <PV_NAMES>
+            <xTBT name="Ring_Diag:BPM_D08:xTBT"/>
+            <yTBT name="Ring_Diag:BPM_D08:yTBT"/>
+            <ampTBT name="Ring_Diag:BPM_D08:ampTBT"/>
+        </PV_NAMES>
+    </RING_BPM>
+    <RING_BPM name="D09">
+        <PV_NAMES>
+            <xTBT name="Ring_Diag:BPM_D09:xTBT"/>
+            <yTBT name="Ring_Diag:BPM_D09:yTBT"/>
+            <ampTBT name="Ring_Diag:BPM_D09:ampTBT"/>
+        </PV_NAMES>
+    </RING_BPM>
+    <RING_BPM name="D10">
+        <PV_NAMES>
+            <xTBT name="Ring_Diag:BPM_D10:xTBT"/>
+            <yTBT name="Ring_Diag:BPM_D10:yTBT"/>
+            <ampTBT name="Ring_Diag:BPM_D10:ampTBT"/>
+        </PV_NAMES>
+    </RING_BPM>
+    <RING_BPM name="D13">
+        <PV_NAMES>
+            <xTBT name="Ring_Diag:BPM_D13:xTBT"/>
+            <yTBT name="Ring_Diag:BPM_D13:yTBT"/>
+            <ampTBT name="Ring_Diag:BPM_D13:ampTBT"/>
+        </PV_NAMES>
+    </RING_BPM>
+    <RING_BPM name="A01">
+        <PV_NAMES>
+            <xTBT name="Ring_Diag:BPM_A01:xTBT"/>
+            <yTBT name="Ring_Diag:BPM_A01:yTBT"/>
+            <ampTBT name="Ring_Diag:BPM_A01:ampTBT"/>
+        </PV_NAMES>
+    </RING_BPM>
+    <RING_BPM name="A02">
+        <PV_NAMES>
+            <xTBT name="Ring_Diag:BPM_A02:xTBT"/>
+            <yTBT name="Ring_Diag:BPM_A02:yTBT"/>
+            <ampTBT name="Ring_Diag:BPM_A02:ampTBT"/>
+        </PV_NAMES>
+    </RING_BPM>
+    <RING_BPM name="A03">
+        <PV_NAMES>
+            <xTBT name="Ring_Diag:BPM_A03:xTBT"/>
+            <yTBT name="Ring_Diag:BPM_A03:yTBT"/>
+            <ampTBT name="Ring_Diag:BPM_A03:ampTBT"/>
+        </PV_NAMES>
+    </RING_BPM>
+    <RING_BPM name="A04">
+        <PV_NAMES>
+            <xTBT name="Ring_Diag:BPM_A04:xTBT"/>
+            <yTBT name="Ring_Diag:BPM_A04:yTBT"/>
+            <ampTBT name="Ring_Diag:BPM_A04:ampTBT"/>
+        </PV_NAMES>
+    </RING_BPM>
+    <RING_BPM name="A05">
+        <PV_NAMES>
+            <xTBT name="Ring_Diag:BPM_A05:xTBT"/>
+            <yTBT name="Ring_Diag:BPM_A05:yTBT"/>
+            <ampTBT name="Ring_Diag:BPM_A05:ampTBT"/>
+        </PV_NAMES>
+    </RING_BPM>
+    <RING_BPM name="A06">
+        <PV_NAMES>
+            <xTBT name="Ring_Diag:BPM_A06:xTBT"/>
+            <yTBT name="Ring_Diag:BPM_A06:yTBT"/>
+            <ampTBT name="Ring_Diag:BPM_A06:ampTBT"/>
+        </PV_NAMES>
+    </RING_BPM>
+    <RING_BPM name="A07">
+        <PV_NAMES>
+            <xTBT name="Ring_Diag:BPM_A07:xTBT"/>
+            <yTBT name="Ring_Diag:BPM_A07:yTBT"/>
+            <ampTBT name="Ring_Diag:BPM_A07:ampTBT"/>
+        </PV_NAMES>
+    </RING_BPM>
+    <RING_BPM name="A08">
+        <PV_NAMES>
+            <xTBT name="Ring_Diag:BPM_A08:xTBT"/>
+            <yTBT name="Ring_Diag:BPM_A08:yTBT"/>
+            <ampTBT name="Ring_Diag:BPM_A08:ampTBT"/>
+        </PV_NAMES>
+    </RING_BPM>
+    <RING_BPM name="A09">
+        <PV_NAMES>
+            <xTBT name="Ring_Diag:BPM_A09:xTBT"/>
+            <yTBT name="Ring_Diag:BPM_A09:yTBT"/>
+            <ampTBT name="Ring_Diag:BPM_A09:ampTBT"/>
+        </PV_NAMES>
+    </RING_BPM>
+    <RING_BPM name="A10">
+        <PV_NAMES>
+            <xTBT name="Ring_Diag:BPM_A10:xTBT"/>
+            <yTBT name="Ring_Diag:BPM_A10:yTBT"/>
+            <ampTBT name="Ring_Diag:BPM_A10:ampTBT"/>
+        </PV_NAMES>
+    </RING_BPM>
+</RING_BPM_TBT_PVs>
+<HEBT_BPM_PVs>
+    <TRANSF_LINE_BPM name="01" disabled="false">
+        <PV_NAMES>
+            <xAvg name="HEBT_Diag:BPM01:xAvg"/>
+            <yAvg name="HEBT_Diag:BPM01:yAvg"/>
+            <amplitudeAvg name="HEBT_Diag:BPM01:amplitudeAvg"/>
+        </PV_NAMES>
+    </TRANSF_LINE_BPM>
+    <TRANSF_LINE_BPM name="02" disabled="false">
+        <PV_NAMES>
+            <xAvg name="HEBT_Diag:BPM02:xAvg"/>
+            <yAvg name="HEBT_Diag:BPM02:yAvg"/>
+            <amplitudeAvg name="HEBT_Diag:BPM02:amplitudeAvg"/>
+        </PV_NAMES>
+    </TRANSF_LINE_BPM>
+    <TRANSF_LINE_BPM name="03" disabled="true">
+        <PV_NAMES>
+            <xAvg name="HEBT_Diag:BPM03:xAvg"/>
+            <yAvg name="HEBT_Diag:BPM03:yAvg"/>
+            <amplitudeAvg name="HEBT_Diag:BPM03:amplitudeAvg"/>
+        </PV_NAMES>
+    </TRANSF_LINE_BPM>
+    <TRANSF_LINE_BPM name="04" disabled="true">
+        <PV_NAMES>
+            <xAvg name="HEBT_Diag:BPM04:xAvg"/>
+            <yAvg name="HEBT_Diag:BPM04:yAvg"/>
+            <amplitudeAvg name="HEBT_Diag:BPM04:amplitudeAvg"/>
+        </PV_NAMES>
+    </TRANSF_LINE_BPM>
+    <TRANSF_LINE_BPM name="05" disabled="true">
+        <PV_NAMES>
+            <xAvg name="HEBT_Diag:BPM05:xAvg"/>
+            <yAvg name="HEBT_Diag:BPM05:yAvg"/>
+            <amplitudeAvg name="HEBT_Diag:BPM05:amplitudeAvg"/>
+        </PV_NAMES>
+    </TRANSF_LINE_BPM>
+    <TRANSF_LINE_BPM name="06" disabled="true">
+        <PV_NAMES>
+            <xAvg name="HEBT_Diag:BPM06:xAvg"/>
+            <yAvg name="HEBT_Diag:BPM06:yAvg"/>
+            <amplitudeAvg name="HEBT_Diag:BPM06:amplitudeAvg"/>
+        </PV_NAMES>
+    </TRANSF_LINE_BPM>
+    <TRANSF_LINE_BPM name="07">
+        <PV_NAMES>
+            <xAvg name="HEBT_Diag:BPM07:xAvg"/>
+            <yAvg name="HEBT_Diag:BPM07:yAvg"/>
+            <amplitudeAvg name="HEBT_Diag:BPM07:amplitudeAvg"/>
+        </PV_NAMES>
+    </TRANSF_LINE_BPM>
+    <TRANSF_LINE_BPM name="08">
+        <PV_NAMES>
+            <xAvg name="HEBT_Diag:BPM08:xAvg"/>
+            <yAvg name="HEBT_Diag:BPM08:yAvg"/>
+            <amplitudeAvg name="HEBT_Diag:BPM08:amplitudeAvg"/>
+        </PV_NAMES>
+    </TRANSF_LINE_BPM>
+    <TRANSF_LINE_BPM name="09">
+        <PV_NAMES>
+            <xAvg name="HEBT_Diag:BPM09:xAvg"/>
+            <yAvg name="HEBT_Diag:BPM09:yAvg"/>
+            <amplitudeAvg name="HEBT_Diag:BPM09:amplitudeAvg"/>
+        </PV_NAMES>
+    </TRANSF_LINE_BPM>
+    <TRANSF_LINE_BPM name="10">
+        <PV_NAMES>
+            <xAvg name="HEBT_Diag:BPM10:xAvg"/>
+            <yAvg name="HEBT_Diag:BPM10:yAvg"/>
+            <amplitudeAvg name="HEBT_Diag:BPM10:amplitudeAvg"/>
+        </PV_NAMES>
+    </TRANSF_LINE_BPM>
+    <TRANSF_LINE_BPM name="11">
+        <PV_NAMES>
+            <xAvg name="HEBT_Diag:BPM11:xAvg"/>
+            <yAvg name="HEBT_Diag:BPM11:yAvg"/>
+            <amplitudeAvg name="HEBT_Diag:BPM11:amplitudeAvg"/>
+        </PV_NAMES>
+    </TRANSF_LINE_BPM>
+    <TRANSF_LINE_BPM name="16">
+        <PV_NAMES>
+            <xAvg name="HEBT_Diag:BPM16:xAvg"/>
+            <yAvg name="HEBT_Diag:BPM16:yAvg"/>
+            <amplitudeAvg name="HEBT_Diag:BPM16:amplitudeAvg"/>
+        </PV_NAMES>
+    </TRANSF_LINE_BPM>
+    <TRANSF_LINE_BPM name="17">
+        <PV_NAMES>
+            <xAvg name="HEBT_Diag:BPM17:xAvg"/>
+            <yAvg name="HEBT_Diag:BPM17:yAvg"/>
+            <amplitudeAvg name="HEBT_Diag:BPM17:amplitudeAvg"/>
+        </PV_NAMES>
+    </TRANSF_LINE_BPM>
+    <TRANSF_LINE_BPM name="18">
+        <PV_NAMES>
+            <xAvg name="HEBT_Diag:BPM18:xAvg"/>
+            <yAvg name="HEBT_Diag:BPM18:yAvg"/>
+            <amplitudeAvg name="HEBT_Diag:BPM18:amplitudeAvg"/>
+        </PV_NAMES>
+    </TRANSF_LINE_BPM>
+    <TRANSF_LINE_BPM name="19">
+        <PV_NAMES>
+            <xAvg name="HEBT_Diag:BPM19:xAvg"/>
+            <yAvg name="HEBT_Diag:BPM19:yAvg"/>
+            <amplitudeAvg name="HEBT_Diag:BPM19:amplitudeAvg"/>
+        </PV_NAMES>
+    </TRANSF_LINE_BPM>
+    <TRANSF_LINE_BPM name="20" disabled="true">
+        <PV_NAMES>
+            <xAvg name="HEBT_Diag:BPM20:xAvg"/>
+            <yAvg name="HEBT_Diag:BPM20:yAvg"/>
+            <amplitudeAvg name="HEBT_Diag:BPM20:amplitudeAvg"/>
+        </PV_NAMES>
+    </TRANSF_LINE_BPM>
+    <TRANSF_LINE_BPM name="21" disabled="true">
+        <PV_NAMES>
+            <xAvg name="HEBT_Diag:BPM21:xAvg"/>
+            <yAvg name="HEBT_Diag:BPM21:yAvg"/>
+            <amplitudeAvg name="HEBT_Diag:BPM21:amplitudeAvg"/>
+        </PV_NAMES>
+    </TRANSF_LINE_BPM>
+    <TRANSF_LINE_BPM name="22" disabled="true">
+        <PV_NAMES>
+            <xAvg name="HEBT_Diag:BPM22:xAvg"/>
+            <yAvg name="HEBT_Diag:BPM22:yAvg"/>
+            <amplitudeAvg name="HEBT_Diag:BPM22:amplitudeAvg"/>
+        </PV_NAMES>
+    </TRANSF_LINE_BPM>
+    <TRANSF_LINE_BPM name="23">
+        <PV_NAMES>
+            <xAvg name="HEBT_Diag:BPM23:xAvg"/>
+            <yAvg name="HEBT_Diag:BPM23:yAvg"/>
+            <amplitudeAvg name="HEBT_Diag:BPM23:amplitudeAvg"/>
+        </PV_NAMES>
+    </TRANSF_LINE_BPM>
+    <TRANSF_LINE_BPM name="24">
+        <PV_NAMES>
+            <xAvg name="HEBT_Diag:BPM24:xAvg"/>
+            <yAvg name="HEBT_Diag:BPM24:yAvg"/>
+            <amplitudeAvg name="HEBT_Diag:BPM24:amplitudeAvg"/>
+        </PV_NAMES>
+    </TRANSF_LINE_BPM>
+    <TRANSF_LINE_BPM name="25">
+        <PV_NAMES>
+            <xAvg name="HEBT_Diag:BPM25:xAvg"/>
+            <yAvg name="HEBT_Diag:BPM25:yAvg"/>
+            <amplitudeAvg name="HEBT_Diag:BPM25:amplitudeAvg"/>
+        </PV_NAMES>
+    </TRANSF_LINE_BPM>
+    <TRANSF_LINE_BPM name="26">
+        <PV_NAMES>
+            <xAvg name="HEBT_Diag:BPM26:xAvg"/>
+            <yAvg name="HEBT_Diag:BPM26:yAvg"/>
+            <amplitudeAvg name="HEBT_Diag:BPM26:amplitudeAvg"/>
+        </PV_NAMES>
+    </TRANSF_LINE_BPM>
+    <TRANSF_LINE_BPM name="27" disabled="true">
+        <PV_NAMES>
+            <xAvg name="HEBT_Diag:BPM27:xAvg"/>
+            <yAvg name="HEBT_Diag:BPM27:yAvg"/>
+            <amplitudeAvg name="HEBT_Diag:BPM27:amplitudeAvg"/>
+        </PV_NAMES>
+    </TRANSF_LINE_BPM>
+    <TRANSF_LINE_BPM name="28" disabled="true">
+        <PV_NAMES>
+            <xAvg name="HEBT_Diag:BPM28:xAvg"/>
+            <yAvg name="HEBT_Diag:BPM28:yAvg"/>
+            <amplitudeAvg name="HEBT_Diag:BPM28:amplitudeAvg"/>
+        </PV_NAMES>
+    </TRANSF_LINE_BPM>
+    <TRANSF_LINE_BPM name="29" disabled="true">
+        <PV_NAMES>
+            <xAvg name="HEBT_Diag:BPM29:xAvg"/>
+            <yAvg name="HEBT_Diag:BPM29:yAvg"/>
+            <amplitudeAvg name="HEBT_Diag:BPM29:amplitudeAvg"/>
+        </PV_NAMES>
+    </TRANSF_LINE_BPM>
+    <TRANSF_LINE_BPM name="30">
+        <PV_NAMES>
+            <xAvg name="HEBT_Diag:BPM30:xAvg"/>
+            <yAvg name="HEBT_Diag:BPM30:yAvg"/>
+            <amplitudeAvg name="HEBT_Diag:BPM30:amplitudeAvg"/>
+        </PV_NAMES>
+    </TRANSF_LINE_BPM>
+    <TRANSF_LINE_BPM name="31">
+        <PV_NAMES>
+            <xAvg name="HEBT_Diag:BPM31:xAvg"/>
+            <yAvg name="HEBT_Diag:BPM31:yAvg"/>
+            <amplitudeAvg name="HEBT_Diag:BPM31:amplitudeAvg"/>
+        </PV_NAMES>
+    </TRANSF_LINE_BPM>
+    <TRANSF_LINE_BPM name="32">
+        <PV_NAMES>
+            <xAvg name="HEBT_Diag:BPM32:xAvg"/>
+            <yAvg name="HEBT_Diag:BPM32:yAvg"/>
+            <amplitudeAvg name="HEBT_Diag:BPM32:amplitudeAvg"/>
+        </PV_NAMES>
+    </TRANSF_LINE_BPM>
+    <TRANSF_LINE_BPM name="33">
+        <PV_NAMES>
+            <xAvg name="HEBT_Diag:BPM33:xAvg"/>
+            <yAvg name="HEBT_Diag:BPM33:yAvg"/>
+            <amplitudeAvg name="HEBT_Diag:BPM33:amplitudeAvg"/>
+        </PV_NAMES>
+    </TRANSF_LINE_BPM>
+</HEBT_BPM_PVs>
+<RTBT_BPM_PVs>
+    <TRANSF_LINE_BPM name="07">
+        <PV_NAMES>
+            <xAvg name="RTBT_Diag:BPM07:xAvg"/>
+            <yAvg name="RTBT_Diag:BPM07:yAvg"/>
+            <amplitudeAvg name="RTBT_Diag:BPM07:ampAvg"/>
+        </PV_NAMES>
+    </TRANSF_LINE_BPM>
+    <TRANSF_LINE_BPM name="08">
+        <PV_NAMES>
+            <xAvg name="RTBT_Diag:BPM08:xAvg"/>
+            <yAvg name="RTBT_Diag:BPM08:yAvg"/>
+            <amplitudeAvg name="RTBT_Diag:BPM08:ampAvg"/>
+        </PV_NAMES>
+    </TRANSF_LINE_BPM>
+    <TRANSF_LINE_BPM name="09">
+        <PV_NAMES>
+            <xAvg name="RTBT_Diag:BPM09:xAvg"/>
+            <yAvg name="RTBT_Diag:BPM09:yAvg"/>
+            <amplitudeAvg name="RTBT_Diag:BPM09:ampAvg"/>
+        </PV_NAMES>
+    </TRANSF_LINE_BPM>
+    <TRANSF_LINE_BPM name="10">
+        <PV_NAMES>
+            <xAvg name="RTBT_Diag:BPM10:xAvg"/>
+            <yAvg name="RTBT_Diag:BPM10:yAvg"/>
+            <amplitudeAvg name="RTBT_Diag:BPM10:ampAvg"/>
+        </PV_NAMES>
+    </TRANSF_LINE_BPM>
+    <TRANSF_LINE_BPM name="13">
+        <PV_NAMES>
+            <xAvg name="RTBT_Diag:BPM13:xAvg"/>
+            <yAvg name="RTBT_Diag:BPM13:yAvg"/>
+            <amplitudeAvg name="RTBT_Diag:BPM13:ampAvg"/>
+        </PV_NAMES>
+    </TRANSF_LINE_BPM>
+    <TRANSF_LINE_BPM name="15">
+        <PV_NAMES>
+            <xAvg name="RTBT_Diag:BPM15:xAvg"/>
+            <yAvg name="RTBT_Diag:BPM15:yAvg"/>
+            <amplitudeAvg name="RTBT_Diag:BPM15:ampAvg"/>
+        </PV_NAMES>
+    </TRANSF_LINE_BPM>
+    <TRANSF_LINE_BPM name="16">
+        <PV_NAMES>
+            <xAvg name="RTBT_Diag:BPM16:xAvg"/>
+            <yAvg name="RTBT_Diag:BPM16:yAvg"/>
+            <amplitudeAvg name="RTBT_Diag:BPM16:ampAvg"/>
+        </PV_NAMES>
+    </TRANSF_LINE_BPM>
+    <TRANSF_LINE_BPM name="17">
+        <PV_NAMES>
+            <xAvg name="RTBT_Diag:BPM17:xAvg"/>
+            <yAvg name="RTBT_Diag:BPM17:yAvg"/>
+            <amplitudeAvg name="RTBT_Diag:BPM17:ampAvg"/>
+        </PV_NAMES>
+    </TRANSF_LINE_BPM>
+    <TRANSF_LINE_BPM name="18">
+        <PV_NAMES>
+            <xAvg name="RTBT_Diag:BPM18:xAvg"/>
+            <yAvg name="RTBT_Diag:BPM18:yAvg"/>
+            <amplitudeAvg name="RTBT_Diag:BPM18:ampAvg"/>
+        </PV_NAMES>
+    </TRANSF_LINE_BPM>
+    <TRANSF_LINE_BPM name="19">
+        <PV_NAMES>
+            <xAvg name="RTBT_Diag:BPM19:xAvg"/>
+            <yAvg name="RTBT_Diag:BPM19:yAvg"/>
+            <amplitudeAvg name="RTBT_Diag:BPM19:ampAvg"/>
+        </PV_NAMES>
+    </TRANSF_LINE_BPM>
+    <TRANSF_LINE_BPM name="21">
+        <PV_NAMES>
+            <xAvg name="RTBT_Diag:BPM21:xAvg"/>
+            <yAvg name="RTBT_Diag:BPM21:yAvg"/>
+            <amplitudeAvg name="RTBT_Diag:BPM21:ampAvg"/>
+        </PV_NAMES>
+    </TRANSF_LINE_BPM>
+    <TRANSF_LINE_BPM name="22">
+        <PV_NAMES>
+            <xAvg name="RTBT_Diag:BPM22:xAvg"/>
+            <yAvg name="RTBT_Diag:BPM22:yAvg"/>
+            <amplitudeAvg name="RTBT_Diag:BPM22:ampAvg"/>
+        </PV_NAMES>
+    </TRANSF_LINE_BPM>
+    <TRANSF_LINE_BPM name="23">
+        <PV_NAMES>
+            <xAvg name="RTBT_Diag:BPM23:xAvg"/>
+            <yAvg name="RTBT_Diag:BPM23:yAvg"/>
+            <amplitudeAvg name="RTBT_Diag:BPM23:ampAvg"/>
+        </PV_NAMES>
+    </TRANSF_LINE_BPM>
+    <TRANSF_LINE_BPM name="24">
+        <PV_NAMES>
+            <xAvg name="RTBT_Diag:BPM24:xAvg"/>
+            <yAvg name="RTBT_Diag:BPM24:yAvg"/>
+            <amplitudeAvg name="RTBT_Diag:BPM24:ampAvg"/>
+        </PV_NAMES>
+    </TRANSF_LINE_BPM>
+    <TRANSF_LINE_BPM name="25">
+        <PV_NAMES>
+            <xAvg name="RTBT_Diag:BPM25:xAvg"/>
+            <yAvg name="RTBT_Diag:BPM25:yAvg"/>
+            <amplitudeAvg name="RTBT_Diag:BPM25:ampAvg"/>
+        </PV_NAMES>
+    </TRANSF_LINE_BPM>
+    <TRANSF_LINE_BPM name="27">
+        <PV_NAMES>
+            <xAvg name="RTBT_Diag:BPM27:xAvg"/>
+            <yAvg name="RTBT_Diag:BPM27:yAvg"/>
+            <amplitudeAvg name="RTBT_Diag:BPM27:ampAvg"/>
+        </PV_NAMES>
+    </TRANSF_LINE_BPM>
+    <TRANSF_LINE_BPM name="29">
+        <PV_NAMES>
+            <xAvg name="RTBT_Diag:BPM29:xAvg"/>
+            <yAvg name="RTBT_Diag:BPM29:yAvg"/>
+            <amplitudeAvg name="RTBT_Diag:BPM29:ampAvg"/>
+        </PV_NAMES>
+    </TRANSF_LINE_BPM>
+    <TRANSF_LINE_BPM name="30">
+        <PV_NAMES>
+            <xAvg name="RTBT_Diag:BPM30:xAvg"/>
+            <yAvg name="RTBT_Diag:BPM30:yAvg"/>
+            <amplitudeAvg name="RTBT_Diag:BPM30:ampAvg"/>
+        </PV_NAMES>
+    </TRANSF_LINE_BPM>
+</RTBT_BPM_PVs>
+</LINES>
