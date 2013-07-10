@@ -26,19 +26,6 @@ public class MySQLDatabaseAdaptor extends DatabaseAdaptor {
 	}
 
 	
-	/**
-	 * Static initializer
-	 */
-	static {
-		try {
-			Class.forName("com.mysql.jdbc.Driver");
-		}
-		catch(ClassNotFoundException exception) {
-			Logger.getLogger("global").log( Level.SEVERE, "Error loading Oracle driver.", exception );
-			exception.printStackTrace();
-		}
-	}
-	
 	@Override
 	public Array getArray(String type, Connection connection, Object array)
 			throws DatabaseException {
