@@ -18,10 +18,10 @@ import xal.smf.*;
 import xal.smf.data.*;
 import xal.application.*;
 import xal.model.*;
-import xal.model.alg.EnvTrackerAdapt;
+import xal.model.alg.*;
 import xal.model.probe.EnvelopeProbe;
 import xal.sim.scenario.ProbeFactory;
-import xal.sim.scenario.Scenario;
+import xal.sim.scenario.*;
 import xal.tools.xml.*;
 import xal.tools.data.*;
 
@@ -68,9 +68,23 @@ public class GenDocument extends AcceleratorDocument{
         this.seqlist.add(accl.getSequence("HEBT1"));
         this.seq = new AcceleratorSeqCombo("HEBTCombo", seqlist);
         
-        EnvTrackerAdapt etracker = new EnvTrackerAdapt();
+        //EnvTrackerAdapt etracker = new EnvTrackerAdapt();
+        
+        EnvelopeTracker etracker = null;
+        
+        try {
+            
+            etracker = AlgorithmFactory.createEnvelopeTracker( seq );
+            
+        } catch ( InstantiationException exception ) {
+            System.err.println( "Instantiation exception creating probe." );
+            exception.printStackTrace();
+        }
         
         EnvelopeProbe probe = ProbeFactory.getEnvelopeProbe(STR_ID, seq, etracker);
+        
+        
+        
         
         try {
             model = Scenario.newScenarioFor(seq);
