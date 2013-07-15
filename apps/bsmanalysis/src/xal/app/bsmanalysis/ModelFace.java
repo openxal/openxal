@@ -2,7 +2,7 @@
  * ModelFace.java
  *
  */
- package xal.app.bsmanalysis;
+package xal.app.bsmanalysis;
 
 import xal.tools.swing.*;
 import xal.tools.apputils.EdgeLayout;
@@ -24,7 +24,7 @@ import xal.smf.*;
 import xal.smf.impl.*;
 import xal.model.*;
 import xal.model.alg.*;
-import xal.sim.scenario.Scenario;
+import xal.sim.scenario.*;
 import xal.model.probe.*;
 import xal.model.probe.traj.*;
 import xal.model.xml.*;
@@ -35,7 +35,7 @@ import java.text.NumberFormat;
 import xal.tools.swing.DecimalField;
 import xal.tools.apputils.EdgeLayout;
 import xal.tools.data.*;
-import xal.tools.xml.XmlDataAdaptor; 
+import xal.tools.xml.XmlDataAdaptor;
 import xal.tools.beam.*;
 import java.text.DecimalFormat;
 import xal.tools.solver.*;
@@ -51,11 +51,11 @@ import xal.sim.scenario.ProbeFactory;
 //import gov.sns.xal.smf.proxy.RFCavityPropertyAccessor;
 
 /**
- * Performs matching to find steerer strengths for desired injection 
+ * Performs matching to find steerer strengths for desired injection
  * spot position and angle on the foil.
  * @author  cp3
  */
- 
+
 public class ModelFace extends JPanel{
     /** ID for serializable version */
     private static final long serialVersionUID = 1L;
@@ -64,8 +64,8 @@ public class ModelFace extends JPanel{
     private Scenario scenario;
     private EnvelopeProbe probe;
 	private EnvelopeProbe initprobe;
-    private JButton probeeditbutton;	
-	private PVLoggerDataSource plds;   
+    private JButton probeeditbutton;
+	private PVLoggerDataSource plds;
     private Accelerator accl = new Accelerator();
     private DecimalField[] zdat = new DecimalField[4];
 	private DecimalField[] amp = new DecimalField[4];
@@ -81,7 +81,7 @@ public class ModelFace extends JPanel{
     //private JButton sendtoharpbutton;
     private JPanel mainPanel;
     JTable resultstable;
-	JTable twisstable;  
+	JTable twisstable;
 	JButton solvebutton;
     JButton loadbutton;
 	JButton restoreampbutton;
@@ -99,7 +99,7 @@ public class ModelFace extends JPanel{
     JLabel BSM410label = new JLabel("BSM410: ");
     JLabel devicelabel = new JLabel("Device");
     JLabel zlabel = new JLabel("Z (deg) ");
-    JLabel uselabel = new JLabel("Use"); 
+    JLabel uselabel = new JLabel("Use");
 	
 	JLabel CCL1label = new JLabel("CCL1: ");
     JLabel CCL2label = new JLabel("CCL2: ");
@@ -124,10 +124,10 @@ public class ModelFace extends JPanel{
     GridLimits limits = new GridLimits();
     
     //ArrayList xsigmas = new ArrayList();
-   // ArrayList ysigmas = new ArrayList();
+    // ArrayList ysigmas = new ArrayList();
     ArrayList<Double> zdatalist = new ArrayList<Double>();
     ArrayList<String> namelist = new ArrayList<String>();
-   // ArrayList fullnamelist = new ArrayList();
+    // ArrayList fullnamelist = new ArrayList();
     //ArrayList xfulldatalist = new ArrayList();
     //ArrayList yfulldatalist = new ArrayList();
 	
@@ -173,7 +173,7 @@ public class ModelFace extends JPanel{
 	double rffrequency = 805e6;
     DataTable fitsdatabase;
     
-    public ModelFace(GenDocument aDocument, JPanel mainpanel) {   
+    public ModelFace(GenDocument aDocument, JPanel mainpanel) {
 		doc=aDocument;
 		setPreferredSize(new Dimension(950,850));
 		setLayout(layout);
@@ -183,7 +183,7 @@ public class ModelFace extends JPanel{
     }
     
 	public void addcomponents(){
-	
+        
 		layout.setConstraints(mainPanel, 0, 0, 0, 0, EdgeLayout.ALL_SIDES, EdgeLayout.GROW_BOTH);
 		this.add(mainPanel);
 		
@@ -193,12 +193,12 @@ public class ModelFace extends JPanel{
 		GridLayout ampgrid = new GridLayout(6, 3);
 		newlayout.setConstraints(syncstate, 17, 20, 100, 10, EdgeLayout.LEFT, EdgeLayout.NO_GROWTH);
 		/*
-		mainPanel.add(syncstate);
-		newlayout.setConstraints(usepvlabel, 20, 220, 100, 10, EdgeLayout.LEFT, EdgeLayout.NO_GROWTH);
-		mainPanel.add(usepvlabel);
-		newlayout.setConstraints(pvloggerfield, 20, 310, 100, 10, EdgeLayout.LEFT, EdgeLayout.NO_GROWTH);
-		mainPanel.add(pvloggerfield);
-		*/
+         mainPanel.add(syncstate);
+         newlayout.setConstraints(usepvlabel, 20, 220, 100, 10, EdgeLayout.LEFT, EdgeLayout.NO_GROWTH);
+         mainPanel.add(usepvlabel);
+         newlayout.setConstraints(pvloggerfield, 20, 310, 100, 10, EdgeLayout.LEFT, EdgeLayout.NO_GROWTH);
+         mainPanel.add(pvloggerfield);
+         */
 		
 		initPanel.setLayout(initgrid);
 		initPanel.add(devicelabel); initPanel.add(zlabel); initPanel.add(uselabel);
@@ -214,14 +214,14 @@ public class ModelFace extends JPanel{
 		ampPanel.setLayout(ampgrid);
 		ampPanel.add(ccldevicelabel); ampPanel.add(amplabel);
 		ampPanel.add(CCL1label); ampPanel.add(amp[0]);
-		ampPanel.add(CCL2label); ampPanel.add(amp[1]); 
-		ampPanel.add(CCL3label); ampPanel.add(amp[2]); 
-		ampPanel.add(CCL4label); ampPanel.add(amp[3]); 
+		ampPanel.add(CCL2label); ampPanel.add(amp[1]);
+		ampPanel.add(CCL3label); ampPanel.add(amp[2]);
+		ampPanel.add(CCL4label); ampPanel.add(amp[3]);
 		newlayout.setConstraints(ampPanel, 0, 500, 100, 10, EdgeLayout.LEFT, EdgeLayout.NO_GROWTH);
 		mainPanel.add(ampPanel);
 		newlayout.setConstraints(restoreampbutton, 145, 485, 150, 10, EdgeLayout.LEFT, EdgeLayout.NO_GROWTH);
 		mainPanel.add(restoreampbutton);
-
+        
 		//newlayout.setConstraints(probeeditbutton, 205, 0, 100, 10, EdgeLayout.LEFT, EdgeLayout.NO_GROWTH);
 		//mainPanel.add(probeeditbutton);
 		newlayout.setConstraints(beamcurrentlabel, 140, 10, 150, 10, EdgeLayout.LEFT, EdgeLayout.NO_GROWTH);
@@ -257,7 +257,7 @@ public class ModelFace extends JPanel{
     }
     
     public void init(){
-	
+        
 		mainPanel = new JPanel();
 		mainPanel.setPreferredSize(new Dimension(950,850));
 		
@@ -288,13 +288,13 @@ public class ModelFace extends JPanel{
 		numFor.setMinimumFractionDigits(4);
 		numfor = NumberFormat.getNumberInstance();
 		numfor.setMinimumFractionDigits(10);
-				
+        
 		accl = XMLDataManager.loadDefaultAccelerator();
 		seq=accl.getComboSequence("CCL");
-		amp[0] = new DecimalField(((RfCavity)(seq.getNodeWithId("CCL1"))).getDfltCavAmp(), 4, numFor); 
-		amp[1] = new DecimalField(((RfCavity)(seq.getNodeWithId("CCL2"))).getDfltCavAmp(), 4, numFor); 
-		amp[2] = new DecimalField(((RfCavity)(seq.getNodeWithId("CCL3"))).getDfltCavAmp(), 4, numFor); 
-		amp[3] = new DecimalField(((RfCavity)(seq.getNodeWithId("CCL4"))).getDfltCavAmp(), 4, numFor); 
+		amp[0] = new DecimalField(((RfCavity)(seq.getNodeWithId("CCL1"))).getDfltCavAmp(), 4, numFor);
+		amp[1] = new DecimalField(((RfCavity)(seq.getNodeWithId("CCL2"))).getDfltCavAmp(), 4, numFor);
+		amp[2] = new DecimalField(((RfCavity)(seq.getNodeWithId("CCL3"))).getDfltCavAmp(), 4, numFor);
+		amp[3] = new DecimalField(((RfCavity)(seq.getNodeWithId("CCL4"))).getDfltCavAmp(), 4, numFor);
 		initamp[0] = new DecimalField((amp[0].getDoubleValue()), 4, numFor);
 		initamp[1] = new DecimalField((amp[1].getDoubleValue()), 4, numFor);
 		initamp[2] = new DecimalField((amp[2].getDoubleValue()), 4, numFor);
@@ -304,7 +304,7 @@ public class ModelFace extends JPanel{
 		BSM109box.setSelected(true);
 		BSM111box.setSelected(true);
 		BSM410box.setSelected(true);
-				
+        
 		for(int i = 0; i<4; i++){
 			zdat[i] = new DecimalField(0.0, 4, numFor);
 		}
@@ -325,123 +325,123 @@ public class ModelFace extends JPanel{
 		twisstablemodel.setValueAt(new String("Alpha"),0,0);
 		twisstablemodel.setValueAt(new String("Beta"),1,0);
 		twisstablemodel.setValueAt(new String("Emit"),2,0);
-	
+        
     }
     
-
+    
     
     public void setAction(){
-	
+        
 		solvebutton.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent ae){
-			solve();
+                solve();
 			}
 		});
 		
 		loadbutton.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent ae){
-			loadFits();
+                loadFits();
 			}
 		});
 		
 		restoreampbutton.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent ae){
-			restoreDesignAmps();
-		 }
-		 });
-		 
+                restoreDesignAmps();
+            }
+        });
+        
 		resetinitbutton.addActionListener(new ActionListener(){
-		 public void actionPerformed(ActionEvent ae){
-			firstpass = true;
-			limitsWereSet = false; 
-		 }
-		 });
+            public void actionPerformed(ActionEvent ae){
+                firstpass = true;
+                limitsWereSet = false;
+            }
+        });
 		
-		syncstate.addActionListener(new ActionListener(){ 
+		syncstate.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e) {
-			if(syncstate.getSelectedIndex() == 0){
-			  latticestate="Live";
-			  System.out.println("Using live.");
+                if(syncstate.getSelectedIndex() == 0){
+                    latticestate="Live";
+                    System.out.println("Using live.");
+                }
+                if(syncstate.getSelectedIndex() == 1){
+                    latticestate="PVLogger";
+                    System.out.println("Using PVlogger.");
+                }
 			}
-			if(syncstate.getSelectedIndex() == 1){
-			  latticestate="PVLogger";
-			  System.out.println("Using PVlogger.");
-			}   
-			}
-		});  
+		});
 		
 		probeeditbutton.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e) {
-			SimpleProbeEditor spe = new SimpleProbeEditor(null, scenario.getProbe());
-			//spe.createSimpleProbeEditor(scenario.getProbe());
-			
+                SimpleProbeEditor spe = new SimpleProbeEditor(null, scenario.getProbe());
+                //spe.createSimpleProbeEditor(scenario.getProbe());
+                
 			}
 		});
 		
 		singlepassbutton.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent ae){
-			singlePass();
-		  }
-		  });
+                singlePass();
+            }
+        });
 		
 		setlimits.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
-			final JDialog limitdialog = new JDialog();
-			limitdialog.setLayout(new GridLayout(5,4));
-			limitdialog.add(new JLabel("Twiss"));
-			limitdialog.add(new JLabel("Inital"));
-			limitdialog.add(new JLabel("Lower"));
-			limitdialog.add(new JLabel("Upper"));
-			
-			final JTextField alphaZinitial = new JTextField(10);
-			final JTextField alphaZlower = new JTextField(10);
-			final JTextField alphaZupper = new JTextField(10);
-			final JTextField betaZinitial = new JTextField(10);
-			final JTextField betaZlower = new JTextField(10);
-			final JTextField betaZupper = new JTextField(10);
-			final JTextField emitZinitial = new JTextField(10);
-			final JTextField emitZlower = new JTextField(10);
-			final JTextField emitZupper = new JTextField(10);
-			alphaZinitial.setText(numfor.format(alphaz0)); alphaZlower.setText(numfor.format(alphaZmin)); alphaZupper.setText(numfor.format(alphaZmax));
-			betaZinitial.setText(numfor.format(betaz0)); betaZlower.setText(numfor.format(betaZmin)); betaZupper.setText(numfor.format(betaZmax));
-			emitZinitial.setText(numfor.format(emitz0)); emitZlower.setText(numfor.format(emitZmin)); emitZupper.setText(numfor.format(emitZmax));
-			limitdialog.add(new JLabel("Alphaz"));
-			limitdialog.add(alphaZinitial);
-			limitdialog.add(alphaZlower);
-			limitdialog.add(alphaZupper);
-			limitdialog.add(new JLabel("Betaz [m]         "));
-			limitdialog.add(betaZinitial);
-			limitdialog.add(betaZlower);
-			limitdialog.add(betaZupper);
-			limitdialog.add(new JLabel("Emitz [m radians]"));
-			limitdialog.add(emitZinitial);
-			limitdialog.add(emitZlower);
-			limitdialog.add(emitZupper);
-			JButton set = new JButton("Set");
-			limitdialog.add(set);
-			limitdialog.pack(); 
-			limitdialog.setVisible(true);										
-			set.addActionListener(new ActionListener(){
-				  public void actionPerformed(ActionEvent e){
-				  alphaz0=Double.parseDouble(alphaZinitial.getText());
-				  alphaZmin = Double.parseDouble(alphaZlower.getText());
-				  alphaZmax = Double.parseDouble(alphaZupper.getText());
-				  betaz0=Double.parseDouble(betaZinitial.getText());
-				  betaZmin = Double.parseDouble(betaZlower.getText());
-				  betaZmax = Double.parseDouble(betaZupper.getText());
-				  emitz0 = Double.parseDouble(emitZinitial.getText());
-				  emitZmin = Double.parseDouble(emitZlower.getText());
-				  emitZmax = Double.parseDouble(emitZupper.getText());
-				  limitsWereSet = true;
-				  limitdialog.setVisible(false);
-				  }
-			});
-		}
-	});
+                final JDialog limitdialog = new JDialog();
+                limitdialog.setLayout(new GridLayout(5,4));
+                limitdialog.add(new JLabel("Twiss"));
+                limitdialog.add(new JLabel("Inital"));
+                limitdialog.add(new JLabel("Lower"));
+                limitdialog.add(new JLabel("Upper"));
+                
+                final JTextField alphaZinitial = new JTextField(10);
+                final JTextField alphaZlower = new JTextField(10);
+                final JTextField alphaZupper = new JTextField(10);
+                final JTextField betaZinitial = new JTextField(10);
+                final JTextField betaZlower = new JTextField(10);
+                final JTextField betaZupper = new JTextField(10);
+                final JTextField emitZinitial = new JTextField(10);
+                final JTextField emitZlower = new JTextField(10);
+                final JTextField emitZupper = new JTextField(10);
+                alphaZinitial.setText(numfor.format(alphaz0)); alphaZlower.setText(numfor.format(alphaZmin)); alphaZupper.setText(numfor.format(alphaZmax));
+                betaZinitial.setText(numfor.format(betaz0)); betaZlower.setText(numfor.format(betaZmin)); betaZupper.setText(numfor.format(betaZmax));
+                emitZinitial.setText(numfor.format(emitz0)); emitZlower.setText(numfor.format(emitZmin)); emitZupper.setText(numfor.format(emitZmax));
+                limitdialog.add(new JLabel("Alphaz"));
+                limitdialog.add(alphaZinitial);
+                limitdialog.add(alphaZlower);
+                limitdialog.add(alphaZupper);
+                limitdialog.add(new JLabel("Betaz [m]         "));
+                limitdialog.add(betaZinitial);
+                limitdialog.add(betaZlower);
+                limitdialog.add(betaZupper);
+                limitdialog.add(new JLabel("Emitz [m radians]"));
+                limitdialog.add(emitZinitial);
+                limitdialog.add(emitZlower);
+                limitdialog.add(emitZupper);
+                JButton set = new JButton("Set");
+                limitdialog.add(set);
+                limitdialog.pack();
+                limitdialog.setVisible(true);
+                set.addActionListener(new ActionListener(){
+                    public void actionPerformed(ActionEvent e){
+                        alphaz0=Double.parseDouble(alphaZinitial.getText());
+                        alphaZmin = Double.parseDouble(alphaZlower.getText());
+                        alphaZmax = Double.parseDouble(alphaZupper.getText());
+                        betaz0=Double.parseDouble(betaZinitial.getText());
+                        betaZmin = Double.parseDouble(betaZlower.getText());
+                        betaZmax = Double.parseDouble(betaZupper.getText());
+                        emitz0 = Double.parseDouble(emitZinitial.getText());
+                        emitZmin = Double.parseDouble(emitZlower.getText());
+                        emitZmax = Double.parseDouble(emitZupper.getText());
+                        limitsWereSet = true;
+                        limitdialog.setVisible(false);
+                    }
+                });
+            }
+        });
 		
 	}
-	  
-	  
+    
+    
     
 	public void singlePass() {
 		initModel();
@@ -453,14 +453,14 @@ public class ModelFace extends JPanel{
 			//scenario.setStartNode((String)namelist.get(0));
 			scenario.resync();
 			scenario.run();
-		}	
+		}
 		catch(Exception exception){
 			exception.printStackTrace();
 		}
-	
+        
 		resetPlot();
-						
-
+        
+        
     }
 	
 	
@@ -468,28 +468,28 @@ public class ModelFace extends JPanel{
 		initModel();
 		ArrayList<Variable> variables =  new ArrayList<Variable>();
 		if(limitsWereSet){
-			variables.add(new Variable("alphaZ", alphaz0, alphaZmin, alphaZmax)); 
+			variables.add(new Variable("alphaZ", alphaz0, alphaZmin, alphaZmax));
 			variables.add(new Variable("betaZ", betaz0, betaZmin, betaZmax));
 			variables.add(new Variable("emitZ", emitz0, emitZmin, emitZmax));
 		}
 		else{
-			variables.add(new Variable("alphaZ", alphaz0, -4.0, 4.0)); 
+			variables.add(new Variable("alphaZ", alphaz0, -4.0, 4.0));
 			variables.add(new Variable("betaZ", betaz0, 0, 20));
 			variables.add(new Variable("emitZ", emitz0, 0, emitz0*10.0));
 		}
 		
 		ArrayList<Objective> objectives = new ArrayList<Objective>();
 		objectives.add(new TargetObjective( "diff", 0.0 ) );
-
+        
 		Evaluator1 evaluator = new Evaluator1( objectives, variables );
-
+        
 		Problem problem = new Problem( objectives, variables, evaluator );
 		problem.addHint(new InitialDelta( 0.1 ) );
 		
-		double solvetime= new Double(Double.parseDouble(solvertimefield.getText()));	
+		double solvetime= new Double(Double.parseDouble(solvertimefield.getText()));
 		Stopper maxSolutionStopper = SolveStopperFactory.minMaxTimeSatisfactionStopper( 1, solvetime, 0.99999 );
 		Solver solver = new Solver(new RandomShrinkSearch(), maxSolutionStopper );
-		 
+        
 		solver.solve( problem );
 		System.out.println("score is " + solver.getScoreBoard());
 		Trial best = solver.getScoreBoard().getBestSolution();
@@ -508,12 +508,12 @@ public class ModelFace extends JPanel{
 		catch(Exception exception){
 			exception.printStackTrace();
 		}
-		//Print the final results at the desired locations       
-
+		//Print the final results at the desired locations
+        
 		//resetTwissTable(variables, best);
 		satfield.setValue(best.getSatisfaction());
 		//resetResultsTable();
-		resetPlot(); 
+		resetPlot();
 		firstpass = false;
 		limitsWereSet = false;
 		resetTwissTable(variables, best);
@@ -521,12 +521,12 @@ public class ModelFace extends JPanel{
 		betaz0 = currenttwiss[1];
 		emitz0 = currenttwiss[2];
 		
-
-	 
+        
+        
     }
     
     public void initModel(){
-	
+        
 		zdatalist.clear();
 		namelist.clear();
 		
@@ -549,8 +549,21 @@ public class ModelFace extends JPanel{
 			zdatalist.add(zdat[3].getDoubleValue());
 		}
 		
-		EnvTrackerAdapt etracker = new EnvTrackerAdapt();
-		probe = ProbeFactory.getEnvelopeProbe(seq, etracker);
+		//EnvTrackerAdapt etracker = new EnvTrackerAdapt();
+		
+        EnvelopeTracker etracker = null;
+        
+        try {
+            
+            etracker = AlgorithmFactory.createEnvelopeTracker(seq);
+            
+        } catch ( InstantiationException exception ) {
+            System.err.println( "Instantiation exception creating probe." );
+            exception.printStackTrace();
+        }
+        
+        
+        probe = ProbeFactory.getEnvelopeProbe(seq, etracker);
 		initprobe = ProbeFactory.getEnvelopeProbe(seq, etracker);
 		//Run the model once to get the Twiss state at the first BSM.
 		try {
@@ -560,7 +573,7 @@ public class ModelFace extends JPanel{
 			scenario.setSynchronizationMode(Scenario.SYNC_MODE_DESIGN);
 			scenario.resync();
 			scenario.run();
-		}	
+		}
 		catch(Exception exception){
 			exception.printStackTrace();
 		}
@@ -575,8 +588,8 @@ public class ModelFace extends JPanel{
 			EnvelopeProbeState state = (EnvelopeProbeState)traj.statesForElement(namelist.get(i))[0];
 			double T = state.getKineticEnergy();
 			double m = state.getSpeciesRestEnergy();
-			double gamma = T/m + 1; 
-			double beta = Math.abs(Math.sqrt(1-1/(gamma*gamma)));      
+			double gamma = T/m + 1;
+			double beta = Math.abs(Math.sqrt(1-1/(gamma*gamma)));
 			double v = beta*c;
 			double sigma_rms = zdat[i].getDoubleValue();
 			double tm = sigma_rms*Math.PI/180/(rffrequency*2*Math.PI);
@@ -585,7 +598,7 @@ public class ModelFace extends JPanel{
 			//System.out.println("zdata is at " + i + " is " + zdatalist.get(i) + " at element " + namelist.get(i) + " with energy " + T + " and v " + v);
 		}
 		EnvelopeProbeState state = (EnvelopeProbeState)traj.statesForElement("Begin_Of_CCL")[0];
-					
+        
 		//Twiss[] twiss = state.getTwiss();
         
         CovarianceMatrix covarianceMatrix = state.getCorrelationMatrix();
@@ -628,14 +641,14 @@ public class ModelFace extends JPanel{
 		System.out.println("Current is " + initprobe.getBeamCurrent());
 		initprobe.initFromTwiss(tw);
 		probe = EnvelopeProbe.newInstance(initprobe);
-	
+        
 	}
-	  	   
-		 
-   public double calcError(ArrayList<Variable> vars, Trial trial){
-	   updateProbe(vars, trial);
-       probe.reset(); 
-	   try{
+    
+    
+    public double calcError(ArrayList<Variable> vars, Trial trial){
+        updateProbe(vars, trial);
+        probe.reset();
+        try{
 			scenario.setProbe(probe);
 			scenario.resync();
             scenario.run();
@@ -643,7 +656,7 @@ public class ModelFace extends JPanel{
 		catch(Exception exception){
 			exception.printStackTrace();
 		}
-					  
+        
 		EnvelopeTrajectory traj= (EnvelopeTrajectory)probe.getTrajectory();
 		double error = 0.0;
 		int size = namelist.size();
@@ -661,13 +674,13 @@ public class ModelFace extends JPanel{
 			//System.out.println("rz is " + rz + " compared to " + zdatalist.get(i));
 			error += Math.pow( 1000*(rz - (zdatalist.get(i)).doubleValue()), 2.);
 		}
-		error = Math.sqrt(error);  
+		error = Math.sqrt(error);
 		//System.out.println("Error is " + error);
 		return error;
     }
-
+    
     void updateProbe(ArrayList<Variable> vars, Trial trial){
-	
+        
 		double alphaz=0.0;
 		double betaz=0.0;
 		double emitz=0.0;
@@ -685,12 +698,12 @@ public class ModelFace extends JPanel{
 		Twiss xTwiss = new Twiss(alphax0, betax0, emitx0);
 		Twiss yTwiss = new Twiss(alphay0, betay0, emity0);
 		Twiss zTwiss = new Twiss(alphaz, betaz, emitz);
-
+        
         Twiss[] tw= new Twiss[3];
         tw[0]=xTwiss;
         tw[1]=yTwiss;
         tw[2]=zTwiss;
-		 
+        
         probe.initFromTwiss(tw);
 		
     }
@@ -698,7 +711,7 @@ public class ModelFace extends JPanel{
     
     public void makeTwissTable(){
 		String[] colnames = {"Parameter", "Results (MKS)", "Results (Parmilla)"};
-
+        
 		twisstablemodel = new ResultsTableModel(colnames,3);
 		
 		twisstable = new JTable(twisstablemodel);
@@ -720,8 +733,8 @@ public class ModelFace extends JPanel{
 		Iterator<Variable> itr = vars.iterator();
 		double T = initprobe.getKineticEnergy();
 		double m = initprobe.getSpeciesRestEnergy();
-		double gamma = T/m + 1; 
-		double beta = Math.abs(Math.sqrt(1-1/(gamma*gamma)));      
+		double gamma = T/m + 1;
+		double beta = Math.abs(Math.sqrt(1-1/(gamma*gamma)));
 		double v = beta*c;
 		
         while(itr.hasNext()){
@@ -730,7 +743,7 @@ public class ModelFace extends JPanel{
 			//System.out.println("value is " + value);
             String name = variable.getName();
 			DecimalFormat decfor =  new DecimalFormat("###.000");
-			if(name.equalsIgnoreCase("alphaz")){ 
+			if(name.equalsIgnoreCase("alphaz")){
 				//twisstablemodel.setValueAt(new Double(decfor.format(value)),0,1);
 				//twisstablemodel.setValueAt(new Double(decfor.format(value)),0,2);
 				currenttwiss[0]=value;
@@ -757,30 +770,30 @@ public class ModelFace extends JPanel{
 		DecimalFormat decfor =  new DecimalFormat("###.000");
 		double T = initprobe.getKineticEnergy();
 		double m = initprobe.getSpeciesRestEnergy();
-		double gamma = T/m + 1; 
-		double beta = Math.abs(Math.sqrt(1-1/(gamma*gamma)));      
+		double gamma = T/m + 1;
+		double beta = Math.abs(Math.sqrt(1-1/(gamma*gamma)));
 		double v = beta*c;
-
+        
 		twisstablemodel.setValueAt(new Double(decfor.format(twiss[2].getAlpha())),0,1);
 		twisstablemodel.setValueAt(new Double(decfor.format(twiss[2].getAlpha())),0,2);
 		currenttwiss[0]=twiss[2].getAlpha();
-	
+        
 		twisstablemodel.setValueAt(new Double(decfor.format(twiss[2].getBeta())),1,1);
 		currenttwiss[1]=twiss[2].getBeta();
 		double parmvalue = twiss[2].getBeta() * (rffrequency*2*Math.PI) / v * 180.0/Math.PI;
 		twisstablemodel.setValueAt(new Double(decfor.format(parmvalue)),1,2);
-
+        
 		twisstablemodel.setValueAt(new Double(decfor.format(twiss[2].getEmittance()*1e6)),2,1);
 		currenttwiss[2]=twiss[2].getEmittance();
 		parmvalue = twiss[2].getEmittance() * (rffrequency*2*Math.PI) * 180.0/Math.PI / 1e6;
 		twisstablemodel.setValueAt(new Double(decfor.format(parmvalue)),2,2);
-	
+        
 		twisstablemodel.fireTableDataChanged();
     }
 	
 	
 	
-       
+    
     private void loadFits(){
 		ArrayList<String> tabledata = new ArrayList<String>();
 		if(doc.resultMap.size() == 0){
@@ -789,30 +802,30 @@ public class ModelFace extends JPanel{
 		else{
 			Set<String> keys = doc.resultMap.keySet();
 			Iterator<String> itr = keys.iterator();
-		   
+            
 			while(itr.hasNext()){
-			//tabledata.clear();
-			double sigma_rms;
-			String tempfilename = itr.next();
-			String bsmname = (String)((HashMap)doc.resultMap.get(tempfilename)).get("name");
-			Boolean statrms = (Boolean)((HashMap)doc.resultMap.get(tempfilename)).get("statrms");
-			if(statrms)
-				sigma_rms = ((Double)((HashMap)doc.resultMap.get(tempfilename)).get("rms")).doubleValue();
-			else
-				sigma_rms = ((Double)((HashMap)doc.resultMap.get(tempfilename)).get("sigma")).doubleValue();
-			
-			if(bsmname.equals("107"))
-				 zdat[0].setValue(sigma_rms);
-			if(bsmname.equals("109"))
-				 zdat[1].setValue(sigma_rms);
-			if(bsmname.equals("111"))
-				 zdat[2].setValue(sigma_rms);
-			if(bsmname.equals("410"))
-				 zdat[3].setValue(sigma_rms);	
-		   }	
+                //tabledata.clear();
+                double sigma_rms;
+                String tempfilename = itr.next();
+                String bsmname = (String)((HashMap)doc.resultMap.get(tempfilename)).get("name");
+                Boolean statrms = (Boolean)((HashMap)doc.resultMap.get(tempfilename)).get("statrms");
+                if(statrms)
+                    sigma_rms = ((Double)((HashMap)doc.resultMap.get(tempfilename)).get("rms")).doubleValue();
+                else
+                    sigma_rms = ((Double)((HashMap)doc.resultMap.get(tempfilename)).get("sigma")).doubleValue();
+                
+                if(bsmname.equals("107"))
+                    zdat[0].setValue(sigma_rms);
+                if(bsmname.equals("109"))
+                    zdat[1].setValue(sigma_rms);
+                if(bsmname.equals("111"))
+                    zdat[2].setValue(sigma_rms);
+                if(bsmname.equals("410"))
+                    zdat[3].setValue(sigma_rms);
+            }
 		}
     }
-
+    
     private void setCavityAmps(){
 		((RfCavity)(seq.getNodeWithId("CCL1"))).setDfltCavAmp(amp[0].getDoubleValue());
 		((RfCavity)(seq.getNodeWithId("CCL2"))).setDfltCavAmp(amp[1].getDoubleValue());
@@ -828,17 +841,17 @@ public class ModelFace extends JPanel{
 	}
     
     public void resetPlot(){
-	
+        
 		plotpanel.removeAllGraphData();
 		BasicGraphData modelgraphdata = new BasicGraphData();
-		BasicGraphData zgraphdata = new BasicGraphData();	
-			
+		BasicGraphData zgraphdata = new BasicGraphData();
+        
 		ArrayList<Double> sdata = new ArrayList<Double>();
 		ArrayList<Double> zdata = new ArrayList<Double>();
-
+        
 		EnvelopeTrajectory traj= (EnvelopeTrajectory)probe.getTrajectory();
 		Iterator<ProbeState> iterState= traj.stateIterator();
-			
+        
 		while(iterState.hasNext()){
 			EnvelopeProbeState state= (EnvelopeProbeState)iterState.next();
 			sdata.add(state.getPosition());
@@ -848,19 +861,19 @@ public class ModelFace extends JPanel{
             Twiss[] twiss = covarianceMatrix.computeTwiss();
 			double rz =  1000.0*twiss[2].getEnvelopeRadius();
 			if((state.getElementId()).equals(new String("ELEMENT_CENTER:" + namelist.get(0)))) resetResultsTable(twiss);
-				
+            
 			if(plotunitbox.getSelectedIndex() == 1){
 				double T = state.getKineticEnergy();
 				double m = probe.getSpeciesRestEnergy();
-				double gamma = T/m + 1; 
-				double beta = Math.abs(Math.sqrt(1-1/(gamma*gamma)));      
+				double gamma = T/m + 1;
+				double beta = Math.abs(Math.sqrt(1-1/(gamma*gamma)));
 				double v = beta*c;
 				rz *=  (rffrequency*2*Math.PI) / v / 1000.0 * 180/Math.PI;
 				System.out.println(state.getElementId() + " " + state.getPosition() + " " + rz);
 			}
 			zdata.add(rz);
 		}
-
+        
 		int size = sdata.size() - 1;
 		
 		double[] s = new double[size];
@@ -895,65 +908,65 @@ public class ModelFace extends JPanel{
 			if(plotunitbox.getSelectedIndex() == 1){
 				double T = newstate.getKineticEnergy();
 				double m = probe.getSpeciesRestEnergy();
-				double gamma = T/m + 1; 
+				double gamma = T/m + 1;
 				double beta = Math.abs(Math.sqrt(1-1/(gamma*gamma)));      
 				double v = beta*c;
 				zrdata[i] *=  (rffrequency*2*Math.PI) / v / 1000.0 * 180.0/Math.PI;
 			}
 			//System.out.println("For " + (String)namelist.get(i) + "pos is " + newstate.getPosition());
-		 } 
+        } 
 		zgraphdata.addPoint(srdata, zrdata);
 		zgraphdata.setDrawPointsOn(true);
 		zgraphdata.setDrawLinesOn(false);
 		zgraphdata.setGraphColor(Color.RED);
-			
+        
 		plotpanel.addGraphData(zgraphdata);
 		plotpanel.addGraphData(zgraphdata);
 		limits.setSmartLimits();
 		plotpanel.setExternalGL(limits);
     }	
     
-
-
-//Evaluates beam properties for a trial point
-class Evaluator1 implements Evaluator{
     
-    protected ArrayList<Objective> _objectives;
-    protected ArrayList<Variable> _variables;
-    public Evaluator1( final ArrayList<Objective> objectives, final ArrayList<Variable> variables ) {
-	_objectives = objectives;
-	_variables = variables;
+    
+    //Evaluates beam properties for a trial point
+    class Evaluator1 implements Evaluator{
+        
+        protected ArrayList<Objective> _objectives;
+        protected ArrayList<Variable> _variables;
+        public Evaluator1( final ArrayList<Objective> objectives, final ArrayList<Variable> variables ) {
+            _objectives = objectives;
+            _variables = variables;
+        }
+        
+        public void evaluate(final Trial trial){
+            double error =0.0; 
+            Iterator<Objective> itr = _objectives.iterator();
+            while(itr.hasNext()){
+                TargetObjective objective = (TargetObjective)itr.next();
+                error = calcError(_variables, trial);
+                trial.setScore(objective, error);
+            }
+            
+        }
     }
     
-    public void evaluate(final Trial trial){
-	double error =0.0; 
-	Iterator<Objective> itr = _objectives.iterator();
-	while(itr.hasNext()){
-	    TargetObjective objective = (TargetObjective)itr.next();
-	    error = calcError(_variables, trial);
-	    trial.setScore(objective, error);
-	}
-
-    }
-}
-			
-
-// objective class for solver.
-class TargetObjective extends Objective{
     
-    protected final double _target;
-   
-    public TargetObjective(final String name, final double target){
-	    super(name);
-	    _target=target;
-    }
-    
-
-    public double satisfaction(double value){
-	double error = _target - value;
-	return 1.0/(1+error*error);
-    }
-} 
+    // objective class for solver.
+    class TargetObjective extends Objective{
+        
+        protected final double _target;
+        
+        public TargetObjective(final String name, final double target){
+            super(name);
+            _target=target;
+        }
+        
+        
+        public double satisfaction(double value){
+            double error = _target - value;
+            return 1.0/(1+error*error);
+        }
+    } 
 	
 }
 
