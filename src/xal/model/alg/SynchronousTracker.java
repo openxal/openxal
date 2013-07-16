@@ -66,7 +66,23 @@ public class SynchronousTracker extends Tracker {
     public SynchronousTracker() {
         super(s_strTypeId, s_intVersion, s_clsProbeType);
     }
+    
+    /**
+     * Copy constructor for SynchronousTracker
+     *
+     * @param       sourceTracker   Tracker that is being copied
+     */
+    public SynchronousTracker( SynchronousTracker sourceTracker ) {
+        super( sourceTracker );
+    }
 
+    /**
+     * Creates a deep copy of SynchronousTracker
+     */
+    @Override
+    public SynchronousTracker copy() {
+        return new SynchronousTracker( this );
+    }
 
     /*
      * IArchive Interface

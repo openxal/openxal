@@ -139,6 +139,10 @@ public class EnsembleProbe extends BunchProbe {
         this.setEnsemble( probe.getEnsemble() );
     };
     
+    @Override
+    public EnsembleProbe copy() {
+        return new EnsembleProbe( this );
+    }
     /**
      *  Set the field calculation method
      *
