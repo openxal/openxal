@@ -117,6 +117,11 @@ public class PhaseMap implements IArchive {
          m_vecOffset = PhaseVector.zero();
          m_matLinear = matTrans;
      };
+    
+    public PhaseMap( PhaseMap phaseMapCopy ) {
+        this.m_vecOffset = new PhaseVector( phaseMapCopy.m_vecOffset );
+        this.m_matLinear = new PhaseMatrix( phaseMapCopy.m_matLinear );
+    }
 	 
 	 
 	 /**
@@ -125,12 +130,7 @@ public class PhaseMap implements IArchive {
 	  * @return  a deep copy of this phase map
 	  */
 	 public PhaseMap copy() {
-		 final PhaseMap map = new PhaseMap();
-		 
-		 map.setZeroOrder( new PhaseVector( m_vecOffset ) );
-		 map.setFirstOrder( new PhaseMatrix( m_matLinear ) );
-		 
-		 return map;
+		 return new PhaseMap( this );
 	 }
 	 
 	 

@@ -79,9 +79,24 @@ public class TwissTrackerPmq extends TwissTracker {
         super(s_strTypeId, s_intVersion, s_clsProbeType);
     };
     
-    
+    /**
+     * Copy constructor for TwissTrackerPmq
+     *
+     * @param       sourceTracker   Tracker that is being copied
+     */
+    public TwissTrackerPmq(TwissTrackerPmq sourceTracker) {
+        super( sourceTracker );
+    }
     
 
+    /**
+     * Creates a deep copy of TwissTrackerPmq
+     */
+    @Override
+    public TwissTrackerPmq copy() {
+        return new TwissTrackerPmq( this );
+    }
+    
     /*
      *  Tracker Abstract Methods
      */

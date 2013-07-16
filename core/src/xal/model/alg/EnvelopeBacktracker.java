@@ -114,6 +114,23 @@ public class EnvelopeBacktracker extends EnvelopeTrackerBase {
             Class<? extends IProbe> clsProbeType) {
         super(strType, intVersion, clsProbeType);
     }
+    
+    /**
+     * Copy constructor for EnvelopeBackTracker
+     *
+     * @param       sourceTracker   Tracker that is being copied
+     */
+    public EnvelopeBacktracker(EnvelopeBacktracker sourceTracker) {
+        super( sourceTracker );
+    }
+    
+    /**
+     * Create a deep copy of EnvelopeBackTracker
+     */
+    @Override
+    public EnvelopeBacktracker copy() {
+        return new EnvelopeBacktracker( this );
+    }
 
 
     

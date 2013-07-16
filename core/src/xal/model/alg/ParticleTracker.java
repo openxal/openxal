@@ -71,7 +71,22 @@ public class ParticleTracker extends Tracker {
         super(s_strTypeId, s_intVersion, s_clsProbeType);
     }; 
     
+    /**
+     * Copy constructor for ParticleTracker
+     *
+     * @param       sourceTracker   Tracker that is being copied
+     */
+    public ParticleTracker( ParticleTracker sourceTracker ) {
+        super( sourceTracker );
+    }
     
+    /**
+     * Create a deep copy of ParticleTracker
+     */
+    @Override
+    public ParticleTracker copy() {
+        return new ParticleTracker( this );
+    }
 
 
     /*
