@@ -222,6 +222,34 @@ public class EnvTrackerAdapt extends EnvelopeTrackerBase {
 		m_nDbgSteps = 0;
     }
     
+    /**
+     * Copy constructor for EnvTrackerAdapt
+     *
+     * @param       sourceTracker   Tracker that is being copied
+     */
+    public EnvTrackerAdapt(EnvTrackerAdapt sourceTracker) {
+        super(sourceTracker);
+        
+        this.m_intMaxIter = sourceTracker.m_intMaxIter;
+        this.m_intOrder = sourceTracker.m_intOrder;
+        this.m_nDbgSteps = sourceTracker.m_nDbgSteps;
+        this.dlbStepSizeInit = sourceTracker.dlbStepSizeInit;
+        this.m_dblStepSize = sourceTracker.m_dblStepSize;
+        this.m_dblMaxStep = sourceTracker.m_dblMaxStep;
+        this.m_dblMaxStepDriftPmq = sourceTracker.m_dblMaxStepDriftPmq;
+        this.m_dblErrTol = sourceTracker.m_dblErrTol;
+        this.m_dblSlack = sourceTracker.m_dblSlack;
+        this.m_enmNorm = sourceTracker.m_enmNorm;
+    }
+    
+    /**
+     * Creates a deep copy of EnvTrackerAdapt
+     */
+    @Override
+    public EnvTrackerAdapt copy() {
+        return new EnvTrackerAdapt( this );
+    }
+    
 //    /**
 //     * Creates a new instance of <code>EnvTrackerAdapt</code> and initializes
 //     * it to the data in the global XAL EditContext object accessible through

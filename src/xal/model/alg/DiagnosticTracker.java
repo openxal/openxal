@@ -37,6 +37,22 @@ public class DiagnosticTracker extends Tracker {
         super(s_strTypeId, s_intVersion, s_clsProbeType);
     }
     
+    /**
+     * Copy constructor for DiagnosticTracker
+     *
+     * @param       sourceTracker   Tracker that is being copied
+     */
+    public DiagnosticTracker( DiagnosticTracker sourceTracker ) {
+        super( sourceTracker );
+    }
+    
+    /**
+     * Create a deep copy of DiagnosticTracker
+     */
+    @Override
+    public DiagnosticTracker copy() {
+        return new DiagnosticTracker( this );
+    }
     
     // ************* Tracker abstract protocol
     
