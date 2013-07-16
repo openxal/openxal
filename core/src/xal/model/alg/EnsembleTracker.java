@@ -60,7 +60,22 @@ public class EnsembleTracker extends Tracker {
         super(s_strTypeId, s_intVersion, s_clsProbeType);
     }
     
+    /**
+     * Copy constructor for EnsembleTracker
+     *
+     * @param       sourceTracker   Tracker that is being copied
+     */
+    public EnsembleTracker( EnsembleTracker sourceTracker ) {
+        super( sourceTracker );
+    }
     
+    /**
+     * Create a deep copy of EnsembleTracker
+     */
+    @Override
+    public EnsembleTracker copy() {
+        return new EnsembleTracker( this );
+    }
     /*
      * Accessing 
      */

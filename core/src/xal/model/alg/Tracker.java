@@ -76,16 +76,15 @@ import java.util.List;
  * @author Craig McChesney
  * 
  * @see #doPropagation(IProbe, IElement)
- * 
+ *
  * @see xal.model.IAlgorithm
  */
 public abstract class Tracker implements IAlgorithm, IArchive {
-    
+
 
     /*
      *  Abstract Methods
      */
-    
     
     /**
      * <p>
@@ -393,15 +392,17 @@ public abstract class Tracker implements IAlgorithm, IArchive {
      */
     private double      m_dblPosElem = 0;
     
-    
-    
+    /**
+     * Class type of the probe
+     */
+    private Class<? extends IProbe> probeType;
     
     /*
      * Initialization
      */
     
     
-    /** 
+    /**
      *  <p>Creates a new, empty, instance of Tracker.</p>
      *
      *  <p>
@@ -418,12 +419,36 @@ public abstract class Tracker implements IAlgorithm, IArchive {
         m_strType = strType;
         m_intVersion = intVersion;
         m_lstProbes = new ArrayList<Class<? extends IProbe>>();
+        probeType = clsProbeType;
         
         this.registerProbeType(clsProbeType);
     };
     
-
+    /**
+     * Copy constructor for Tracker
+     *
+     * @param       sourceTracker   Tracker that is being copied
+     */
+    protected Tracker(Tracker sourceTracker) {
+        this(sourceTracker.m_strType, sourceTracker.m_intVersion, sourceTracker.probeType);
+        
+        this.m_bolCalcRfGapPhase = sourceTracker.m_bolCalcRfGapPhase;
+        this.m_enmUpdatePolicy = sourceTracker.m_enmUpdatePolicy;
+        this.m_bolDebug = sourceTracker.m_bolDebug;
+        this.m_strElemStart = sourceTracker.m_strElemStart;
+        this.m_strElemStop = sourceTracker.m_strElemStop;
+        this.m_bolIsStopped = sourceTracker.m_bolIsStopped;
+        this.m_bolIsStarted = sourceTracker.m_bolIsStarted;
+        this.m_dblPosElem = sourceTracker.m_dblPosElem;
+    }
     
+    /**
+     * Creates a deep copy of Tracker
+     */
+//    @Override
+//    public Tracker copy() {
+//        return new Tracker( this );
+//    }
     
     
     /**
@@ -520,12 +545,14 @@ public abstract class Tracker implements IAlgorithm, IArchive {
     
     /** 
      *  Returns the version number of this algorithm
-     *  
+     *
      *  @return     version number of the integration algorithm 
      */
     public int getVersion() { return m_intVersion; };
     
-
+    public Class<? extends IProbe> getProbeType() {
+        return probeType;
+    }
     
     /**  
      *  Check if probe can be handled by this algorithm.
