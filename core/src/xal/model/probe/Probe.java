@@ -228,6 +228,10 @@ public abstract class Probe implements IProbe, IArchive {
      */
     public abstract ProbeState createProbeState();
     
+    /**
+     * Creates a deep copy of the probe
+     */
+    public abstract Probe copy();
     
     /**
      * Apply the contents of ProbeState to update my current state.  Subclass
@@ -824,22 +828,10 @@ public abstract class Probe implements IProbe, IArchive {
         
         // Copy the algorithm object if we have one
         this.m_ifcAlg = null;
-        if ( probe.getAlgorithm() != null )   {
-            try {
-                IArchive                arc  = probe.getAlgorithm();
-                TransientDataAdaptor    dapt = new TransientDataAdaptor("Probe#deepCopyProbeBase temporary");
-                arc.save(dapt);
-
-                this.m_ifcAlg = Tracker.newInstance(dapt);
-                
-            } catch (DataFormatException e) {
-                this.m_ifcAlg = null;
-                
-            } catch (ClassCastException e)    {
-                this.m_ifcAlg = null;
-                
-            }
-        }        
+        final IAlgorithm algorithm = probe.getAlgorithm();
+        if ( algorithm != null )   {
+            this.setAlgorithm( algorithm.copy() );
+        }
     };
 
 

@@ -62,6 +62,11 @@ public class ParticleProbe extends Probe {
         this.setPhaseCoordinates( probe.phaseCoordinates() );
     }
     
+    @Override
+    public ParticleProbe copy() {
+        return new ParticleProbe( this );
+    }
+    
 	
     /** 
      *  Returns homogeneous phase space coordinates of the particle.  The units

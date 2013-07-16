@@ -85,10 +85,14 @@ public class TwissProbe extends BunchProbe {
 	public TwissProbe(TwissProbe probe) {
 		super(probe);
 
-        this.setCentroid(probe.getCentroid());
-        this.setResponseMatrix(probe.getResponseMatrix());
-        this.setTwiss(probe.getTwiss());
+        this.setCentroid(new PhaseVector( probe.getCentroid() ));
+        this.setResponseMatrix(new PhaseMatrix( probe.getResponseMatrix() ));
+        this.setTwiss(new Twiss3D( probe.getTwiss() ));
 	};
+    
+    public TwissProbe copy() {
+        return new TwissProbe( this );
+    }
     
     /**
      * Initializing constructor - initialize from data adaptor

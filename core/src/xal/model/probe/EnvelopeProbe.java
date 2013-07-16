@@ -11,6 +11,7 @@ import xal.tools.beam.PhaseMatrix;
 import xal.tools.beam.PhaseVector;
 import xal.tools.beam.Twiss;
 import xal.tools.data.DataAdaptor;
+import xal.tools.math.r3.R3;
 
 import xal.model.ModelException;
 import xal.model.alg.EnvTrackerAdapt;
@@ -167,12 +168,18 @@ public class EnvelopeProbe extends BunchProbe {
 	public EnvelopeProbe(EnvelopeProbe probe) {
 		super(probe);
 
-		this.setResponseMatrix(probe.getResponseMatrix());
-		this.setResponseMatrixNoSpaceCharge(probe.getResponseMatrixNoSpaceCharge());
-		this.setCurrentResponseMatrix(probe.getCurrentResponseMatrix());
-		this.setBetatronPhase(probe.getBetatronPhase());
-		this.setCorrelation(probe.getCovariance());
+        //PhaseMatrix copy constructor does a deep copy
+		this.setResponseMatrix(new PhaseMatrix(probe.getResponseMatrix()));
+		this.setResponseMatrixNoSpaceCharge(new PhaseMatrix(probe.getResponseMatrixNoSpaceCharge()));
+		this.setCurrentResponseMatrix(new PhaseMatrix(probe.getCurrentResponseMatrix()));
+		this.setBetatronPhase(new R3(probe.getBetatronPhase()));
+		this.setCorrelation(new CovarianceMatrix(probe.getCovariance()));
 	};
+    
+    @Override
+    public EnvelopeProbe copy() {
+        return new EnvelopeProbe( this );
+    }
     
     /**
      * Set the twiss parameters for each phase plane.

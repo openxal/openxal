@@ -75,8 +75,13 @@ public class TransferMapProbe extends Probe {
     public TransferMapProbe( final TransferMapProbe probe ) {
         super(probe);
         
-        setTransferMap( probe.getTransferMap() );
-        setPhaseCoordinates( probe.phaseCoordinates() );
+        this.setTransferMap( new PhaseMap( probe.m_mapTrans) );
+        this.setPhaseCoordinates( new PhaseVector(probe._phaseCoordinates) );
+    }
+    
+    @Override
+    public TransferMapProbe copy() {
+        return new TransferMapProbe( this );
     }
     
     
