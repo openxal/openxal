@@ -90,6 +90,7 @@ public class ModelConfigTest extends AbstractXMLValidationTest {
 		
 		//Correct root element.
 		Element root = document.createElement("configuration");
+		root.setAttributeNS("http://www.w3.org/2001/XMLSchema-instance", "xsi:noNamespaceSchemaLocation", "https://hudson.esss.dk/job/OpenXAL/lastSuccessfulBuild/artifact/build/schemas/ModelConfig_1_0.xsd");
 		document.appendChild(root);
 		try {
 			validator.validate(new DOMSource(document));
