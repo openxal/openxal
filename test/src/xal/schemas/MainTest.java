@@ -126,6 +126,7 @@ public class MainTest extends AbstractXMLValidationTest {
 		
 		//Correct root element.
 		Element root = document.createElement("sources");
+		root.setAttributeNS("http://www.w3.org/2001/XMLSchema-instance", "xsi:noNamespaceSchemaLocation", "https://hudson.esss.dk/job/OpenXAL/lastSuccessfulBuild/artifact/build/schemas/main_1_0.xsd");
 		document.appendChild(root);
 		try {
 			validator.validate(new DOMSource(document));

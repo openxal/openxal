@@ -98,6 +98,7 @@ public class HardwareStatusTest extends AbstractXMLValidationTest {
 		
 		//Correct root element.
 		Element root = document.createElement("xdxf");
+		root.setAttributeNS("http://www.w3.org/2001/XMLSchema-instance", "xsi:noNamespaceSchemaLocation", "https://hudson.esss.dk/job/OpenXAL/lastSuccessfulBuild/artifact/build/schemas/xdxf_1_0.xsd");
 		document.appendChild(root);
 		try {
 			validator.validate(new DOMSource(document));
