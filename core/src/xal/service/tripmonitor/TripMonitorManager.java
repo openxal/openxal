@@ -32,7 +32,8 @@ public class TripMonitorManager {
 	public TripMonitorManager() {
 		TRIP_MONITORS = new ArrayList<TripMonitor>();
 		
-		final URL url = getClass().getResource( "resources/config.xml" );
+		final URL url = getClass().getResource( "config.xml" );
+        if(url == null) System.out.println("URL IS NULL");
 		final DataAdaptor mainAdaptor = XmlDataAdaptor.adaptorForUrl( url, false );
 		load( mainAdaptor.childAdaptor( "Configuration" ) );		
 	}
