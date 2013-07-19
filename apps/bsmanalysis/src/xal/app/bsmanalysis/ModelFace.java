@@ -558,7 +558,7 @@ public class ModelFace extends JPanel{
             etracker = AlgorithmFactory.createEnvelopeTracker(seq);
             
         } catch ( InstantiationException exception ) {
-            System.err.println( "Instantiation exception creating probe." );
+            System.err.println( "Instantiation exception creating tracker." );
             exception.printStackTrace();
         }
         
