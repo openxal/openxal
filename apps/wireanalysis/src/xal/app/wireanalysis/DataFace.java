@@ -217,7 +217,7 @@ public class DataFace extends JPanel{
         return newdata;
     }
     
-    @SuppressWarnings ("unchecked") //had to suppress warnings because data help multiple types.
+    @SuppressWarnings ("unchecked") //had to suppress warnings because data held multiple types.
     public void toTable(String filename, ArrayList<Object> data){
         
         Iterator<Object> itr = data.iterator();
