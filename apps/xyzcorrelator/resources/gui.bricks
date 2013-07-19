@@ -82,7 +82,7 @@
                             <BeanProperty name="text" value="-1"/>
                             <BeanProperty name="toolTipText" value="Lower Z for the spectrum"/>
                         </ViewNode>
-                        <ViewNode customBeanClass="xal.apps.xyzcorrelator.ColorSpectrumPanel" tag="ColorSpectrum">
+                        <ViewNode customBeanClass="xal.app.xyzcorrelator.ColorSpectrumPanel" tag="ColorSpectrum">
                             <ViewProxy type="javax.swing.JPanel"/>
                             <BeanProperty height="25" name="preferredSize" width="300"/>
                             <BeanProperty name="toolTipText" value="Spectrum for the Z axis"/>
