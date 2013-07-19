@@ -433,8 +433,8 @@ public class AnalysisPanel extends JPanel{
     //Extracts data from the time interval specified by t1 and t2,  
     public void getYValues(){ 
 	    if(!table2){
-		    t1 = (int)time1.getValue();
-		    t2 = (int)time2.getValue();
+		    t1 = (int)time1.getDoubleValue();
+		    t2 = (int)time2.getDoubleValue();
 	    }
 	    Double sum = 0.0; 	
 	    int sizeX = data.size();
