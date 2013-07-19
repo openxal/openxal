@@ -34,7 +34,7 @@ public class BPMCorrelator implements CorrelationNotice<ChannelTimeRecord> {
 	/** the constructor */
 	public BPMCorrelator() {
 		theCorrelator = new ChannelCorrelator(correlationWidth);
-		PeriodicPoster<ChannelTimeRecord> poster = new PeriodicPoster<ChannelTimeRecord>(theCorrelator, postPeriod);
+        poster = new PeriodicPoster<ChannelTimeRecord>(theCorrelator, postPeriod);
 		poster.addCorrelationNoticeListener(this);
 		//setTimespan(1.);
 		setFilter(CorrelationFilterFactory.<ChannelTimeRecord>maxMissingFilter(1));
