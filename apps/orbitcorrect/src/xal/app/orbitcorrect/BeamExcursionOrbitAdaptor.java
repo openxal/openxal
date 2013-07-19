@@ -102,7 +102,7 @@ public class BeamExcursionOrbitAdaptor {
                 
                 final Probe probe;
                 
-                probe = (sequence instanceof Ring) ? ProbeFactory.getTransferMapProbe( sequence, new TransferMapTracker() ) : ProbeFactory.getEnvelopeProbe( sequence, AlgorithmFactory.createEnvelopeTracker(sequence));
+                probe = (sequence instanceof Ring) ? ProbeFactory.getTransferMapProbe( sequence, AlgorithmFactory.createTransferMapTracker(sequence)) : ProbeFactory.getEnvelopeProbe( sequence, AlgorithmFactory.createEnvelopeTracker(sequence));
 
 				//final Probe probe = ( sequence instanceof Ring ) ? ProbeFactory.getTransferMapProbe( sequence, new TransferMapTracker() ) : ProbeFactory.getEnvelopeProbe( sequence, new EnvTrackerAdapt( sequence ) );
                 
