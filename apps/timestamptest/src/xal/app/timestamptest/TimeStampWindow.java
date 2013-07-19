@@ -150,7 +150,7 @@ public class TimeStampWindow extends AcceleratorWindow {
 		done.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				// set buffer size
-				buffSize = Math.round((int) df1.getValue());
+				buffSize = Math.round((int) df1.getDoubleValue());
 				// set display (time) range
 				timeInSeconds = Math.round((int) (dsec.getDoubleValue()
 						+ dmin.getDoubleValue() * 60 + dhr.getDoubleValue() * 3600));
@@ -213,7 +213,7 @@ public class TimeStampWindow extends AcceleratorWindow {
 		pvControlPane.add(label);
 		edgeLayout.setConstraints(pvText, 2, 25, 0, 0, EdgeLayout.LEFT);
 		pvControlPane.add(pvText);
-		edgeLayout.setConstraints(addPV, 0, 290, 0, 0, EdgeLayout.LEFT);
+		edgeLayout.setConstraints(addPV, 0, 320, 0, 0, EdgeLayout.LEFT);
 		pvControlPane.add(addPV);
 		edgeLayout.setConstraints(removeAll, 0, 0, 0, 0, EdgeLayout.RIGHT);
 		pvControlPane.add(removeAll);
