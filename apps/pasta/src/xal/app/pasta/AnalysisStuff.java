@@ -953,7 +953,17 @@ public class AnalysisStuff {
                 //
                 //                //final Probe probe = ( _sequence instanceof Ring ) ? (Probe)ProbeFactory.getTransferMapProbe( _sequence, new TransferMapTracker() ) : (Probe)ProbeFactory.getParticleProbe( _sequence, new ParticleTracker() );
                 
-			    ParticleTracker pt= new ParticleTracker();
+                ParticleTracker pt = null;
+                
+                try {
+                    
+                    pt= AlgorithmFactory.createParticleTracker(theDoc.theSequence);
+                    
+                } catch (InstantiationException e) {
+                    System.err.println( "Instantiation exception creating tracker." );
+                    e.printStackTrace();
+                }
+                
 			    pt.setRfGapPhaseCalculation(true);
 			    System.out.println("cav = " + theDoc.theCavity.getId());
                 try {
@@ -1135,11 +1145,11 @@ public class AnalysisStuff {
 				updateAmpFactors();
 			}
 			
-			if(variableList.get("Fudge") != null)  { 
+			if(variableList.get("Fudge") != null)  {
 				theDoc.fudgePhaseOffset =(variableList.get("Fudge")).getInitialValue();
 			}
 			// calculate error term for these settings:
-			System.out.print("scan at " + WIn + "  " + cavPhaseOffset + "  " + cavityVoltage + "  " + theDoc.fudgePhaseOffset + "  ");			
+			System.out.print("scan at " + WIn + "  " + cavPhaseOffset + "  " + cavityVoltage + "  " + theDoc.fudgePhaseOffset + "  ");
 			return doCalc();
 		}
 		
@@ -1153,13 +1163,13 @@ public class AnalysisStuff {
         // same with amplitude:
         cavityVoltage = theDoc.theDesignAmp;
         //assume the cavity phase setpoint is in the center of the scan range:
-        if(theDoc.myWindow().useBPM1Box.isSelected()) 
-            someMeasuredData = theDoc.scanStuff.BPM1AmpMV.getDataContainer(0); 
-        if(theDoc.myWindow().useBPM2Box.isSelected()) 
-            someMeasuredData = theDoc.scanStuff.BPM2AmpMV.getDataContainer(0); 
+        if(theDoc.myWindow().useBPM1Box.isSelected())
+            someMeasuredData = theDoc.scanStuff.BPM1AmpMV.getDataContainer(0);
+        if(theDoc.myWindow().useBPM2Box.isSelected())
+            someMeasuredData = theDoc.scanStuff.BPM2AmpMV.getDataContainer(0);
         if(someMeasuredData == null) {
             String errText = "Hey - give me some measured data first!!!: ";
-			Toolkit.getDefaultToolkit().beep();			
+			Toolkit.getDefaultToolkit().beep();
 			theDoc.myWindow().errorText.setText(errText);
 			System.err.println(errText);
             return;
@@ -1181,7 +1191,7 @@ public class AnalysisStuff {
         theDoc.myWindow().maxScanPhaseField.setValue(phaseModelMax);
         theDoc.analysisStuff.phaseModelMin = minPhase + 0.1 * dPhase;
         theDoc.myWindow().minScanPhaseField.setValue(phaseModelMin);
-		theDoc.analysisStuff.makeCalcPoints();	
+		theDoc.analysisStuff.makeCalcPoints();
         analysisTableModel.fireTableDataChanged();
         
     }
