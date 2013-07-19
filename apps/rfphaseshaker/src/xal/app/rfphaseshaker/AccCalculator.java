@@ -176,7 +176,7 @@ public class AccCalculator {
                 scenario.setProbe(probe);
                 probe.initialize();
             } catch ( InstantiationException exception ){
-                System.err.println( "Instantiation exception creating probe." );
+                System.err.println( "Instantiation exception creating tracker." );
                 exception.printStackTrace();
             }
             
