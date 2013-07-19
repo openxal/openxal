@@ -23,6 +23,7 @@ import xal.tools.solver.algorithm.RandomShrinkSearch;
 import xal.tools.solver.hint.*;
 import xal.tools.swing.DecimalField;
 import java.text.NumberFormat;
+import xal.sim.scenario.AlgorithmFactory;
 
 
 
@@ -536,7 +537,15 @@ public class MatchingFace extends JPanel{
             seqList.add(accl.getSequence("SCLHigh"));
             seqList.add(accl.getSequence("HEBT1"));
             seq = AcceleratorSeqCombo.getInstance("HEBTCombo", seqList);
-            probe = ProbeFactory.getEnvelopeProbe(seq, new EnvelopeTracker());
+            
+            try {
+            
+            probe = ProbeFactory.getEnvelopeProbe(seq, AlgorithmFactory.createEnvelopeTracker( seq ));
+                
+            } catch ( InstantiationException exception ) {
+                System.err.println( "Instantiation exception creating probe." );
+                exception.printStackTrace();
+            }
             
             //                      .getTransferMapProbe(seq,
             //                                      new TransferMapTracker());
