@@ -65,7 +65,7 @@ public class OnlineModelSimulator extends MappedSimulator {
 		
 		try {
             
-            final Probe probe = (_sequence instanceof Ring) ? ProbeFactory.getTransferMapProbe( _sequence, new TransferMapTracker() ) : ProbeFactory.createParticleProbe(_sequence, AlgorithmFactory.createParticleTracker(_sequence));
+            final Probe probe = (_sequence instanceof Ring) ? ProbeFactory.getTransferMapProbe( _sequence, AlgorithmFactory.createTransferMapTracker(_sequence) ) : ProbeFactory.createParticleProbe(_sequence, AlgorithmFactory.createParticleTracker(_sequence));
 
 			//final Probe probe = ( _sequence instanceof Ring ) ? (Probe)ProbeFactory.getTransferMapProbe( _sequence, new TransferMapTracker() ) : (Probe)ProbeFactory.getParticleProbe( _sequence, new ParticleTracker() );
 			final Scenario scenario = Scenario.newScenarioFor( _sequence );
