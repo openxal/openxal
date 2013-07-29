@@ -33,21 +33,34 @@ public class BeamTrigger{
 	tDelayText.setValue(0.2);
         
 	//get channel from timing center
-	TimingCenter tmCenter = TimingCenter.getDefaultTimingCenter();
-        ch = tmCenter.getChannel(TimingCenter.TRIGGER_HANDLE);
+	final TimingCenter tmCenter = TimingCenter.getDefaultTimingCenter();
+		// some sites may not have a default accelerator defined or the trigger channel
+		if ( tmCenter != null ) {
+			ch = tmCenter.findChannel( TimingCenter.TRIGGER_HANDLE );
+			if ( ch != null ) {
+				useTriggerButton.setSelected(true);
 
-        useTriggerButton.setSelected(true);
-  
- 	useTriggerButton.addItemListener(new ItemListener(){
-		public void itemStateChanged(ItemEvent e) {
-		    if (e.getStateChange() == ItemEvent.SELECTED) {
-			setOnOff(true);
-		    }
-		    else{
-			setOnOff(false);
-		    }
+				useTriggerButton.addItemListener(new ItemListener(){
+					public void itemStateChanged(ItemEvent e) {
+						if (e.getStateChange() == ItemEvent.SELECTED) {
+							setOnOff(true);
+						}
+						else{
+							setOnOff(false);
+						}
+					}
+				});
+			}
+			else {
+				useTriggerButton.setSelected( false );
+				useTriggerButton.setEnabled( false );
+			}
 		}
-	    });
+		else {
+			useTriggerButton.setSelected( false );
+			useTriggerButton.setEnabled( false );
+		}
+  
     }
 
     public void setOnOff(boolean onOff){
