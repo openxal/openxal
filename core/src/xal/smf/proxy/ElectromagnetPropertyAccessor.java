@@ -19,7 +19,7 @@ public class ElectromagnetPropertyAccessor extends AbstractPropertyAccessor {
 	// Constants ===============================================================
 	
 	// Property Names
-	public static final String PROPERTY_FIELD = Electromagnet.Property.FIELD.toString();
+	public static final String PROPERTY_FIELD = Electromagnet.Property.FIELD.name();
 	
 	
 	// Static Variables ========================================================
