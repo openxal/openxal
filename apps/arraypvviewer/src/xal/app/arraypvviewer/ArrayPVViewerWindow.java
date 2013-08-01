@@ -6,7 +6,7 @@
 package xal.app.arraypvviewer;
 
 import xal.application.XalDocument;
-import xal.application.XalWindow;
+import xal.smf.application.*;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -24,7 +24,7 @@ import javax.swing.JTextField;
  *@version    July 12, 2004
  */
 
-public class ArrayPVViewerWindow extends XalWindow {
+public class ArrayPVViewerWindow extends AcceleratorWindow {
 
     /**  serialization version */
     private static final long serialVersionUID = 1L;

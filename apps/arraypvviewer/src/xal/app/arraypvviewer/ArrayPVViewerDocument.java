@@ -18,6 +18,7 @@ import xal.tools.plot.FunctionGraphsJPanel;
 import xal.tools.plot.IncrementalColors;
 import xal.tools.xml.XmlDataAdaptor;
 import xal.tools.data.DataAdaptor;
+import xal.smf.application.*;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -60,7 +61,7 @@ import javax.swing.tree.DefaultTreeModel;
  *@version    1.0
  */
 
-public class ArrayPVViewerDocument extends XalDocument {
+public class ArrayPVViewerDocument extends AcceleratorDocument {
 
 	static {
 		ChannelFactory.defaultFactory().init();
@@ -80,7 +81,6 @@ public class ArrayPVViewerDocument extends XalDocument {
 	//------------------------------------------------------
 	private Action setViewlAction = null;
 	private Action setPVsAction = null;
-	private Action setAcceleratorAction = null;
 	private Action setPredefConfigAction = null;
 
 	//---------------------------------------------
@@ -472,27 +472,6 @@ public class ArrayPVViewerDocument extends XalDocument {
 			};
 		commander.registerAction(setPVsAction);
 
-		// define the "show-set-accelerator-panel" set PVs panel appearance action
-		setAcceleratorAction =
-			new AbstractAction("show-set-accelerator-panel") {
-                /** serialization ID */
-                private static final long serialVersionUID = 1L;
-				public void actionPerformed(ActionEvent event) {
-					JFileChooser ch = new JFileChooser();
-					ch.setDialogTitle("READ ACCELERATOR DATA XML FILE");
-					if (acceleratorDataFile != null) {
-						ch.setSelectedFile(acceleratorDataFile);
-					}
-					int returnVal = ch.showOpenDialog(setPVsPanel);
-					if (returnVal == JFileChooser.APPROVE_OPTION) {
-						acceleratorDataFile = ch.getSelectedFile();
-						String path = acceleratorDataFile.getAbsolutePath();
-						pvsSelector.setAcceleratorFileName(path);
-					}
-				}
-			};
-		commander.registerAction(setAcceleratorAction);
-		setAcceleratorAction.setEnabled(false);
 
 		setPredefConfigAction =
 			new AbstractAction("set-predef-config") {
@@ -573,6 +552,9 @@ public class ArrayPVViewerDocument extends XalDocument {
 
 		//make PVs selectror and place it on the selectionPVsPanel
 		pvsSelector = new PVsSelector(root_Node);
+        if ( accelerator != null ) {
+            pvsSelector.setAccelerator( accelerator );
+        }
 		pvsSelector.removeMessageTextField();
 
 		setPVsPanel.setLayout(new BorderLayout());
@@ -874,7 +856,6 @@ public class ArrayPVViewerDocument extends XalDocument {
 			//action before view panel will disappear
 		} else if (oldActPanelInd == SET_PVS_PANEL) {
 			//action before set PVs panel will disappear
-			setAcceleratorAction.setEnabled(false);
 		} else if (oldActPanelInd == PREFERENCES_PANEL) {
 			//action before preferences panel will disappear
 		} else if (oldActPanelInd == PREDEF_CONF_PANEL) {
@@ -883,16 +864,12 @@ public class ArrayPVViewerDocument extends XalDocument {
 
 		//make something before the new panel will show up
 		if (newActPanelInd == VIEW_PANEL) {
-			setAcceleratorAction.setEnabled(false);
 			getArrayPVViewerWindow().setJComponent(viewPanel);
 		} else if (newActPanelInd == SET_PVS_PANEL) {
-			setAcceleratorAction.setEnabled(true);
 			getArrayPVViewerWindow().setJComponent(setPVsPanel);
 		} else if (newActPanelInd == PREFERENCES_PANEL) {
-			setAcceleratorAction.setEnabled(false);
 			getArrayPVViewerWindow().setJComponent(preferencesPanel);
 		} else if (newActPanelInd == PREDEF_CONF_PANEL) {
-			setAcceleratorAction.setEnabled(false);
 			getArrayPVViewerWindow().setJComponent(configPanel);
 		}
 
@@ -900,6 +877,21 @@ public class ArrayPVViewerDocument extends XalDocument {
 
 		cleanMessageTextField();
 	}
+    
+    
+    //attempt to make an accelerator based application
+    public void acceleratorChanged() {
+        if (accelerator != null) {
+            if ( pvsSelector != null ) {
+                pvsSelector.setAccelerator( accelerator );
+            }
+            
+            setHasChanges(true);
+        }
+        
+    }
+    
+    
 }
 
 //----------------------------------------------

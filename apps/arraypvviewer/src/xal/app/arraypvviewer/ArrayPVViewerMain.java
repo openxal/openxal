@@ -8,6 +8,7 @@ package xal.app.arraypvviewer;
 import xal.application.Application;
 import xal.application.ApplicationAdaptor;
 import xal.application.XalDocument;
+import xal.smf.application.AcceleratorApplication;
 
 import java.net.URL;
 
@@ -123,7 +124,7 @@ public class ArrayPVViewerMain extends ApplicationAdaptor {
 
         if (args.length == 0) {
             try {
-                Application.launch(new ArrayPVViewerMain());
+                AcceleratorApplication.launch(new ArrayPVViewerMain());
             } catch (Exception exception) {
                 System.err.println(exception.getMessage());
                 exception.printStackTrace();
@@ -142,7 +143,7 @@ public class ArrayPVViewerMain extends ApplicationAdaptor {
         }
 
         try {
-            Application.launch(doc, predefConfURLArr);
+           AcceleratorApplication.launch(doc, predefConfURLArr);
         } catch (Exception exception) {
             System.err.println(exception.getMessage());
             exception.printStackTrace();
