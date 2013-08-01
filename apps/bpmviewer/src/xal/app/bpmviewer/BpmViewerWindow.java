@@ -10,6 +10,7 @@ import java.util.*;
 import java.awt.*;
 
 import xal.application.*;
+import xal.smf.application.*;
 
 /**
  *  BpmViewerWindow is a subclass of XalWindow used in the bpmViewer
@@ -19,7 +20,7 @@ import xal.application.*;
  *@version    July 12, 2004
  */
 
-public class BpmViewerWindow extends XalWindow {
+public class BpmViewerWindow extends AcceleratorWindow {
     /** serialization ID */
     private static final long serialVersionUID = 1L;
 
@@ -36,7 +37,7 @@ public class BpmViewerWindow extends XalWindow {
     public BpmViewerWindow(XalDocument aDocument) {
         super(aDocument);
         makeContent();
-        pack();
+        //pack();
     }
 
 

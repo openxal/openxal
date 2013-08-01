@@ -11,6 +11,7 @@ import java.awt.event.*;
 import java.net.*;
 
 import xal.application.*;
+import xal.smf.application.AcceleratorApplication;
 
 /**
  *  BpmViewerMain is a concrete subclass of ApplicationAdaptor for the bpmViewer
@@ -115,7 +116,7 @@ public class BpmViewerMain extends ApplicationAdaptor {
 
         if (args.length == 0) {
             try {
-                Application.launch(new BpmViewerMain());
+                AcceleratorApplication.launch(new BpmViewerMain());
             } catch (Exception exception) {
                 System.err.println(exception.getMessage());
                 exception.printStackTrace();
@@ -134,7 +135,7 @@ public class BpmViewerMain extends ApplicationAdaptor {
         }
 
         try {
-            Application.launch(doc, predefConfURLArr);
+            AcceleratorApplication.launch(doc, predefConfURLArr);
         } catch (Exception exception) {
             System.err.println(exception.getMessage());
             exception.printStackTrace();

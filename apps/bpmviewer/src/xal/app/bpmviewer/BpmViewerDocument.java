@@ -25,6 +25,7 @@ import xal.tools.xml.*;
 import xal.tools.apputils.*;
 import xal.tools.apputils.pvselection.*;
 import xal.tools.swing.*;
+import xal.smf.application.*;
 
 
 /**
@@ -35,7 +36,7 @@ import xal.tools.swing.*;
  *@version    1.0
  */
 
-public class BpmViewerDocument extends XalDocument {
+public class BpmViewerDocument extends AcceleratorDocument {
 
     static {
         ChannelFactory.defaultFactory().init();
@@ -55,7 +56,6 @@ public class BpmViewerDocument extends XalDocument {
     //------------------------------------------------------
     private Action setViewlAction = null;
     private Action setPVsAction = null;
-    private Action setAcceleratorAction = null;
     private Action setPredefConfigAction = null;
 
     //---------------------------------------------
@@ -512,27 +512,6 @@ public class BpmViewerDocument extends XalDocument {
             };
         commander.registerAction( setPVsAction );
 
-        // define the "show-set-accelerator-panel" set PVs panel appearance action
-        setAcceleratorAction =
-            new AbstractAction( "show-set-accelerator-panel" ) {
-                /** serialization ID */
-                private static final long serialVersionUID = 1L;
-                public void actionPerformed( ActionEvent event ) {
-                    JFileChooser ch = new JFileChooser();
-                    ch.setDialogTitle( "READ ACCELERATOR DATA XML FILE" );
-                    if ( acceleratorDataFile != null ) {
-                        ch.setSelectedFile( acceleratorDataFile );
-                    }
-                    int returnVal = ch.showOpenDialog( setPVsPanel );
-                    if ( returnVal == JFileChooser.APPROVE_OPTION ) {
-                        acceleratorDataFile = ch.getSelectedFile();
-                        String path = acceleratorDataFile.getAbsolutePath();
-                        pvsSelector.setAcceleratorFileName( path );
-                    }
-                }
-            };
-        commander.registerAction( setAcceleratorAction );
-        setAcceleratorAction.setEnabled( false );
 
         setPredefConfigAction =
             new AbstractAction( "set-predef-config" ) {
@@ -613,6 +592,9 @@ public class BpmViewerDocument extends XalDocument {
 
         //make PVs selectror and place it on the selectionPVsPanel
         pvsSelector = new PVsSelector( root_Node );
+        if ( accelerator != null ) {
+            pvsSelector.setAccelerator( accelerator );
+        }
         pvsSelector.removeMessageTextField();
 
         setPVsPanel.setLayout( new BorderLayout() );
@@ -984,8 +966,20 @@ public class BpmViewerDocument extends XalDocument {
         sigmaGraphPanel.update();
     }
 
-
-    /**
+    
+    //attempt to make an accelerator based application
+    public void acceleratorChanged() {
+		if (accelerator != null) {
+            if ( pvsSelector != null ) {
+                pvsSelector.setAccelerator( accelerator );
+            }
+            
+			setHasChanges(true);
+		}
+        
+	}
+    
+      /**
      *  Sets the activePanel attribute of the BpmViewerDocument object
      *
      *@param  newActPanelInd  The new activePanel value
@@ -1003,7 +997,7 @@ public class BpmViewerDocument extends XalDocument {
         }
         else if ( oldActPanelInd == SET_PVS_PANEL ) {
             //action before set PVs panel will disappear
-            setAcceleratorAction.setEnabled( false );
+            
         }
         else if ( oldActPanelInd == PREFERENCES_PANEL ) {
             //action before preferences panel will disappear
@@ -1014,19 +1008,15 @@ public class BpmViewerDocument extends XalDocument {
 
         //make something before the new panel will show up
         if ( newActPanelInd == VIEW_PANEL ) {
-            setAcceleratorAction.setEnabled( false );
             getBpmViewerWindow().setJComponent( viewPanel );
         }
         else if ( newActPanelInd == SET_PVS_PANEL ) {
-            setAcceleratorAction.setEnabled( true );
             getBpmViewerWindow().setJComponent( setPVsPanel );
         }
         else if ( newActPanelInd == PREFERENCES_PANEL ) {
-            setAcceleratorAction.setEnabled( false );
             getBpmViewerWindow().setJComponent( preferencesPanel );
         }
         else if ( newActPanelInd == PREDEF_CONF_PANEL ) {
-            setAcceleratorAction.setEnabled( false );
             getBpmViewerWindow().setJComponent( configPanel );
         }
 
@@ -1107,4 +1097,8 @@ class DateAndTimeText {
         return newText;
     }
 }
+
+
+
+
 
