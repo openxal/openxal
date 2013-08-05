@@ -639,7 +639,6 @@ public class ModelFace extends JPanel{
                 sortWirenamelist();
                 //if(!errorcheck());
                 
-                //EnvTrackerAdapt etracker = new EnvTrackerAdapt(seq);
                 
                 EnvelopeTracker etracker = null;
                 
@@ -668,7 +667,6 @@ public class ModelFace extends JPanel{
                 EnvelopeTrajectory traj = (EnvelopeTrajectory) tempprobe.getTrajectory();
                 Iterator iterState= traj.stateIterator();
                 EnvelopeProbeState state = (EnvelopeProbeState)iterState.next();
-                //Twiss[] twiss =  state.getTwiss();
                 CovarianceMatrix covarianceMatrix = state.getCorrelationMatrix();
                 Twiss[] twiss = covarianceMatrix.computeTwiss();
                 
@@ -930,7 +928,6 @@ public class ModelFace extends JPanel{
     void initModel(){
         
 	    String init = (String)elementList.getSelectedItem();
-		//EnvTrackerAdapt etracker = new EnvTrackerAdapt(seq);
 		
         EnvelopeTracker etracker = null;
         
@@ -980,7 +977,6 @@ public class ModelFace extends JPanel{
 		initprobe.setKineticEnergy(newstate.getKineticEnergy());
 		initprobe.setPosition(seq.getPosition(seq.getNodeWithId(init)));
 		
-		//Twiss[] twiss = newstate.getTwiss();
         CovarianceMatrix covarianceMatrix = newstate.getCorrelationMatrix();
         Twiss[] twiss = covarianceMatrix.computeTwiss();
         
@@ -1050,11 +1046,7 @@ public class ModelFace extends JPanel{
 		System.out.println("Starting with ay, by, ey = " + alphay0 +  " " + betay0 + " " + emity0);
 		System.out.println("Starting with az, bz, ez = " + alphaz0 +  " " + betaz0 + " " + emitz0);
         
-		//Twiss[] temptwiss = solverprobe.getTwiss();
         
-        
-        
-		
 		try{
 			solvermodel = Scenario.newScenarioFor(seq);
 			solvermodel.setProbe(solverprobe);
@@ -1187,7 +1179,6 @@ public class ModelFace extends JPanel{
 		EnvelopeTrajectory traj = (EnvelopeTrajectory) tempprobe.getTrajectory();
         Iterator<ProbeState> iterState= traj.stateIterator();
         EnvelopeProbeState state= (EnvelopeProbeState)iterState.next();
-        //Twiss[] twiss =  state.getTwiss();
         
         CovarianceMatrix covarianceMatrix = state.getCorrelationMatrix();
         Twiss[] twiss = covarianceMatrix.computeTwiss();
@@ -1202,7 +1193,6 @@ public class ModelFace extends JPanel{
 			boolean RTBTlimit = false;
 			while(iterState.hasNext()){
 				state= (EnvelopeProbeState)iterState.next();
-				//twiss =  state.getTwiss();
                 
                 covarianceMatrix = state.getCorrelationMatrix();
                 twiss = covarianceMatrix.computeTwiss();
@@ -1254,7 +1244,6 @@ public class ModelFace extends JPanel{
 		
 		for(int i =0; i<size; i++){
 			EnvelopeProbeState state = (EnvelopeProbeState)traj.statesForElement(Wirenamelist.get(i))[0];
-			//Twiss[] twiss =  state.getTwiss();
             
             CovarianceMatrix covarianceMatrix = state.getCorrelationMatrix();
             Twiss[] twiss = covarianceMatrix.computeTwiss();
@@ -1293,7 +1282,6 @@ public class ModelFace extends JPanel{
 		
 		for(int i =0; i<size; i++){
 			EnvelopeProbeState state = (EnvelopeProbeState)traj.statesForElement(Wirenamelist.get(i))[0];
-			//Twiss[] twiss =  state.getTwiss();
             
             CovarianceMatrix covarianceMatrix = state.getCorrelationMatrix();
             Twiss[] twiss = covarianceMatrix.computeTwiss();
@@ -1338,7 +1326,6 @@ public class ModelFace extends JPanel{
 		while(iterState.hasNext()){
 			EnvelopeProbeState state= (EnvelopeProbeState)iterState.next();
 			sdata.add(state.getPosition());
-			//Twiss[] twiss =  state.getTwiss();
             
             CovarianceMatrix covarianceMatrix = state.getCorrelationMatrix();
             Twiss[] twiss = covarianceMatrix.computeTwiss();
@@ -1471,7 +1458,6 @@ public class ModelFace extends JPanel{
         
         while(iterState.hasNext()){
             EnvelopeProbeState state= (EnvelopeProbeState)iterState.next();
-            //Twiss[] twiss =  state.getTwiss();
             CovarianceMatrix covarianceMatrix = state.getCorrelationMatrix();
             Twiss[] twiss = covarianceMatrix.computeTwiss();
             
