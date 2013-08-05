@@ -1,0 +1,54 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<BricksDocument date="Fri May 18 12:58:10 EDT 2007" version="1.0.0">
+    <RootBrick>
+        <ViewNode height="390" tag="TargetBeamParameterDialog" width="753">
+            <ViewProxy type="javax.swing.JDialog"/>
+            <BeanProperty name="resizable" value="false"/>
+            <BeanProperty name="title" value="New Target Beam Parameters"/>
+            <BeanProperty name="visible" value="false"/>
+            <BeanProperty name="modal" value="true"/>
+            <ViewNode tag="MainView">
+                <ViewProxy type="javax.swing.Box_Vertical"/>
+                <ViewNode tag="BeamParamScroller">
+                    <ViewProxy type="javax.swing.JScrollPane"/>
+                    <BorderNode tag="Etched Border">
+                        <BorderProxy type="javax.swing.border.EtchedBorder"/>
+                    </BorderNode>
+                    <ViewNode tag="BeamParameterTable">
+                        <ViewProxy type="javax.swing.JTable"/>
+                    </ViewNode>
+                    <BorderNode tag="Etched Border">
+                        <BorderProxy type="javax.swing.border.EtchedBorder"/>
+                    </BorderNode>
+                </ViewNode>
+                <ViewNode tag="ButtonRow">
+                    <ViewProxy type="javax.swing.Box_Horizontal"/>
+                    <BorderNode tag="Etched Border">
+                        <BorderProxy type="javax.swing.border.EtchedBorder"/>
+                    </BorderNode>
+                    <ViewNode tag="Horizontal Glue">
+                        <ViewProxy type="javax.swing.Box_HorizontalGlue"/>
+                    </ViewNode>
+                    <ViewNode tag="CancelButton">
+                        <ViewProxy type="javax.swing.JButton"/>
+                        <BeanProperty name="text" value="Cancel"/>
+                        <BeanProperty name="toolTipText" value="Cancel the publishing operation."/>
+                    </ViewNode>
+                    <ViewNode tag="ResetButton">
+                        <ViewProxy type="javax.swing.JButton"/>
+                        <BeanProperty name="text" value="Reset"/>
+                        <BeanProperty name="toolTipText" value="Reset to the default values."/>
+                    </ViewNode>
+                    <ViewNode tag="PublishButton">
+                        <ViewProxy type="javax.swing.JButton"/>
+                        <BeanProperty name="text" value="Publish"/>
+                        <BeanProperty name="toolTipText" value="Publish the beam parameters."/>
+                    </ViewNode>
+                    <BorderNode tag="Etched Border">
+                        <BorderProxy type="javax.swing.border.EtchedBorder"/>
+                    </BorderNode>
+                </ViewNode>
+            </ViewNode>
+        </ViewNode>
+    </RootBrick>
+</BricksDocument>
