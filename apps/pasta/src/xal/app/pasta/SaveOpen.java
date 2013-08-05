@@ -493,11 +493,8 @@ public class SaveOpen {
 	    //set measured PVs and graph's data
         
         
-	    //java.util.Iterator measuredPVs_children = measurePVs_scan2D.childAdaptorIterator();
 	    MeasuredValue mv_tmp;
-        //while(measuredPVs_children.hasNext()){
         for(DataAdaptor measuredPV_DA : measurePVs_scan2D.childAdaptors()) {
-            //XmlDataAdaptor measuredPV_DA = (XmlDataAdaptor) measuredPVs_children.next();
             String name = measuredPV_DA.stringValue("name");
             boolean onOff = measuredPV_DA.booleanValue("on");
             boolean unWrappedData = false;
@@ -537,13 +534,10 @@ public class SaveOpen {
             //measuredValuesV.add(mv_tmp);
             //scanController.addMeasuredValue(mv_tmp);
             
-            //java.util.Iterator dataIt = measuredPV_DA.childAdaptorIterator("Graph_For_scanPV");
-            //while(dataIt.hasNext()){
             for(DataAdaptor data : measuredPV_DA.childAdaptors("Graph_For_scanPV")) {
                 BasicGraphData gd = new BasicGraphData();
                 mv_tmp.addNewDataConatainer(gd);
                 
-                //XmlDataAdaptor data = (XmlDataAdaptor) dataIt.next();
                 String legend = data.stringValue("legend");
                 
                 XmlDataAdaptor paramDataValue = (XmlDataAdaptor) data.childAdaptor("parameter_value");
@@ -559,10 +553,7 @@ public class SaveOpen {
                 }
                 
                 gd.setGraphProperty(graphScan.getLegendKeyString(),legend);
-                //java.util.Iterator xyerrIt = data.childAdaptorIterator("XYErr");
-                //while(xyerrIt.hasNext()){
                 for(DataAdaptor xyerr : data.childAdaptors("XYErr")) {
-                    //XmlDataAdaptor xyerr = (XmlDataAdaptor) xyerrIt.next();
                     gd.addPoint(xyerr.doubleValue("x"),
                                 xyerr.doubleValue("y"),
                                 xyerr.doubleValue("err"));
@@ -570,20 +561,13 @@ public class SaveOpen {
                 
             }
             
-            //dataIt = measuredPV_DA.childAdaptorIterator("Graph_For_scanPV_RB");
-            //while(dataIt.hasNext()){
             for(DataAdaptor data : measuredPV_DA.childAdaptors("Graph_For_scanPV_RB")) {
-                //XmlDataAdaptor data = (XmlDataAdaptor) dataIt.next();
                 String legend = data.stringValue("legend");
                 BasicGraphData gd = new BasicGraphData();
                 mv_tmp.addNewDataConatainerRB(gd);
                 if(gd != null){
                     //gd.setGraphProperty(graphScan.getLegendKeyString(),legend);
-                    //java.util.Iterator xyerrIt = data.childAdaptorIterator("XYErr");
-                    //while(xyerrIt.hasNext()){
                     for(DataAdaptor xyerr : data.childAdaptors("XYErr")) {
-
-                        //XmlDataAdaptor xyerr = (XmlDataAdaptor) xyerrIt.next();
                         gd.addPoint(xyerr.doubleValue("x"),
                                     xyerr.doubleValue("y"),
                                     xyerr.doubleValue("err"));
@@ -652,11 +636,8 @@ public class SaveOpen {
         
         
 	    //set measured PVs and graph's data
-	    //java.util.Iterator measuredPVs_children = measurePVs_scan1D.childAdaptorIterator();
-	    MeasuredValue mv_tmp;
-        //while(measuredPVs_children.hasNext()){
+        MeasuredValue mv_tmp;
         for(final DataAdaptor measuredPV_DA : measurePVs_scan1D.childAdaptors()) {
-            //XmlDataAdaptor measuredPV_DA = (XmlDataAdaptor) measuredPVs_children.next();
             String name = measuredPV_DA.stringValue("name");
             boolean onOff = measuredPV_DA.booleanValue("on");
             boolean unWrappedData = false;
@@ -665,7 +646,7 @@ public class SaveOpen {
             }
             
             if(name.equals(BPM1PhaseName)) {
-                mv_tmp = theDoc.scanStuff.BPM1PhaseOffMV;			
+                mv_tmp = theDoc.scanStuff.BPM1PhaseOffMV;
             }
             else if(name.equals(BPM2PhaseName)) {
                 mv_tmp = theDoc.scanStuff.BPM2PhaseOffMV;
@@ -682,13 +663,10 @@ public class SaveOpen {
             
             mv_tmp.generateUnwrappedData(unWrappedData);
             
-            //java.util.Iterator dataIt = measuredPV_DA.childAdaptorIterator("Graph_For_scanPV");
-            //while(dataIt.hasNext()){
             for(final DataAdaptor data : measuredPV_DA.childAdaptors("Graph_For_scanPV")) {
                 BasicGraphData gd = new BasicGraphData();
                 mv_tmp.addNewDataConatainer(gd);
                 
-                //XmlDataAdaptor data = (XmlDataAdaptor) dataIt.next();
                 String legend = data.stringValue("legend");
                 
                 XmlDataAdaptor paramDataValue = (XmlDataAdaptor) data.childAdaptor("parameter_value");
@@ -704,11 +682,7 @@ public class SaveOpen {
                 }
                 
                 gd.setGraphProperty(graphScan.getLegendKeyString(),legend);
-                //java.util.Iterator xyerrIt = data.childAdaptorIterator("XYErr");
-                //while(xyerrIt.hasNext()){
                 for(DataAdaptor xyerr : data.childAdaptors("XYErr")) {
-
-                    //XmlDataAdaptor xyerr = (XmlDataAdaptor) xyerrIt.next();
                     gd.addPoint(xyerr.doubleValue("x"),
                                 xyerr.doubleValue("y"),
                                 xyerr.doubleValue("err"));
@@ -716,21 +690,13 @@ public class SaveOpen {
                 
             }
             
-            //dataIt = measuredPV_DA.childAdaptorIterator("Graph_For_scanPV_RB");
-            //while(dataIt.hasNext()){
             for(final DataAdaptor data : measuredPV_DA.childAdaptors("Graph_For_scanPV_RB")) {
-
-                //XmlDataAdaptor data = (XmlDataAdaptor) dataIt.next();
                 String legend = data.stringValue("legend");
                 BasicGraphData gd = new BasicGraphData();
                 mv_tmp.addNewDataConatainerRB(gd);
                 if(gd != null){
                     gd.setGraphProperty(graphScan.getLegendKeyString(),legend);
-                    //java.util.Iterator xyerrIt = data.childAdaptorIterator("XYErr");
-                    //while(xyerrIt.hasNext()){
                     for(DataAdaptor xyerr : data.childAdaptors("XYErr")) {
-
-                        //XmlDataAdaptor xyerr = (XmlDataAdaptor) xyerrIt.next();
                         gd.addPoint(xyerr.doubleValue("x"),
                                     xyerr.doubleValue("y"),
                                     xyerr.doubleValue("err"));

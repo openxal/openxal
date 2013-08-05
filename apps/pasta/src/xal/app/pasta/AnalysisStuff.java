@@ -948,11 +948,6 @@ public class AnalysisStuff {
                  System.err.println(errText);
                  return false;
                  */
-                
-                //                final Probe probe = (_sequence instanceof Ring) ? ProbeFactory.getTransferMapProbe( _sequence, new TransferMapTracker() ) : ProbeFactory.createParticleProbe(_sequence, AlgorithmFactory.createParticleTracker(_sequence));
-                //
-                //                //final Probe probe = ( _sequence instanceof Ring ) ? (Probe)ProbeFactory.getTransferMapProbe( _sequence, new TransferMapTracker() ) : (Probe)ProbeFactory.getParticleProbe( _sequence, new ParticleTracker() );
-                
                 ParticleTracker pt = null;
                 
                 try {
