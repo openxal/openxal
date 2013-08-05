@@ -273,9 +273,6 @@ public class AnalysisPanel extends JPanel{
                 e.printStackTrace();
             }
 
-            //-
-            
-			//probe = ProbeFactory.getParticleProbe(seq, particleTracker);
 			scenario = Scenario.newScenarioFor(seq);
 			scenario.setSynchronizationMode(Scenario.SYNC_MODE_RF_DESIGN);
 			scenario.setStartElementId("Ring_Mag:EKick01");
