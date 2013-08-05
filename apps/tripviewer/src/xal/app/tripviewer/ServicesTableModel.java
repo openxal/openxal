@@ -12,7 +12,7 @@ import javax.swing.table.AbstractTableModel;
 import java.util.*;
 import java.text.SimpleDateFormat;
 
-//import gov.sns.services.tripmonitor.*;
+import xal.service.tripmonitor.*;
 
 
 /** table model for managing the table of trip services */
