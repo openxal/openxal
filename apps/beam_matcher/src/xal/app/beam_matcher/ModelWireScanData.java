@@ -115,9 +115,7 @@ public class ModelWireScanData {
         
         EnvelopeProbeState	state = (EnvelopeProbeState)targ;
         CovarianceMatrix covarianceMatrix = state.getCorrelationMatrix();
-        //ProbeState -> covariance Matrix -> getTwiss();
         Twiss[] arrTwiss = covarianceMatrix.computeTwiss();
-        //Twiss[]	arrTwiss = state.getTwiss();
         
         targetHSize1 = arrTwiss[0].getEnvelopeRadius();
         targetVSize1 = arrTwiss[1].getEnvelopeRadius();

@@ -539,16 +539,14 @@ public class MatchingFace extends JPanel{
             seq = AcceleratorSeqCombo.getInstance("HEBTCombo", seqList);
             
             try {
-            
-            probe = ProbeFactory.getEnvelopeProbe(seq, AlgorithmFactory.createEnvelopeTracker( seq ));
+                
+                probe = ProbeFactory.getEnvelopeProbe(seq, AlgorithmFactory.createEnvelopeTracker( seq ));
                 
             } catch ( InstantiationException exception ) {
                 System.err.println( "Instantiation exception creating probe." );
                 exception.printStackTrace();
             }
             
-            //                      .getTransferMapProbe(seq,
-            //                                      new TransferMapTracker());
             model = Scenario.newScenarioFor(seq);
             model.setStartElementId("SCL_Diag:BPM29");
             model.setSynchronizationMode(Scenario.SYNC_MODE_RF_DESIGN);
@@ -1215,9 +1213,7 @@ public class MatchingFace extends JPanel{
             sdata.add(state.getPosition());
             
             CovarianceMatrix covarianceMatrix = state.getCorrelationMatrix();
-            //ProbeState -> covariance Matrix -> getTwiss();
             Twiss[] twiss = covarianceMatrix.computeTwiss();
-            //Deprecated - Twiss[] twiss =  state.getTwiss();
             double rx =  1000.0*twiss[0].getEnvelopeRadius();
             double ry =  1000.0*twiss[1].getEnvelopeRadius();
             hdata.add(rx);
