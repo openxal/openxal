@@ -104,9 +104,7 @@ public class BeamExcursionOrbitAdaptor {
                 
                 probe = (sequence instanceof Ring) ? ProbeFactory.getTransferMapProbe( sequence, AlgorithmFactory.createTransferMapTracker(sequence)) : ProbeFactory.getEnvelopeProbe( sequence, AlgorithmFactory.createEnvelopeTracker(sequence));
 
-				//final Probe probe = ( sequence instanceof Ring ) ? ProbeFactory.getTransferMapProbe( sequence, new TransferMapTracker() ) : ProbeFactory.getEnvelopeProbe( sequence, new EnvTrackerAdapt( sequence ) );
-                
-				// the transfer matrices that matter are the ones for the coherent bunch motion
+            // the transfer matrices that matter are the ones for the coherent bunch motion
 				if ( probe instanceof BunchProbe ) {
                     //Do not need anymore ((BunchProbe)probe).setBeamCharge( 0.0 );
 					((BunchProbe)probe).setBeamCurrent( 0.0 );
