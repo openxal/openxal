@@ -549,8 +549,6 @@ public class ModelFace extends JPanel{
 			zdatalist.add(zdat[3].getDoubleValue());
 		}
 		
-		//EnvTrackerAdapt etracker = new EnvTrackerAdapt();
-		
         EnvelopeTracker etracker = null;
         
         try {
@@ -598,8 +596,6 @@ public class ModelFace extends JPanel{
 			//System.out.println("zdata is at " + i + " is " + zdatalist.get(i) + " at element " + namelist.get(i) + " with energy " + T + " and v " + v);
 		}
 		EnvelopeProbeState state = (EnvelopeProbeState)traj.statesForElement("Begin_Of_CCL")[0];
-        
-		//Twiss[] twiss = state.getTwiss();
         
         CovarianceMatrix covarianceMatrix = state.getCorrelationMatrix();
         Twiss[] twiss = covarianceMatrix.computeTwiss();
@@ -664,7 +660,6 @@ public class ModelFace extends JPanel{
         for(int i =0; i<size; i++){
 			String name = namelist.get(i);
 			EnvelopeProbeState state = (EnvelopeProbeState)traj.statesForElement(name)[0];
-			//Twiss[] twiss =  state.getTwiss();
             
             CovarianceMatrix covarianceMatrix = state.getCorrelationMatrix();
             Twiss[] twiss = covarianceMatrix.computeTwiss();
@@ -855,7 +850,6 @@ public class ModelFace extends JPanel{
 		while(iterState.hasNext()){
 			EnvelopeProbeState state= (EnvelopeProbeState)iterState.next();
 			sdata.add(state.getPosition());
-			//Twiss[] twiss =  state.getTwiss();
             
             CovarianceMatrix covarianceMatrix = state.getCorrelationMatrix();
             Twiss[] twiss = covarianceMatrix.computeTwiss();
@@ -909,12 +903,12 @@ public class ModelFace extends JPanel{
 				double T = newstate.getKineticEnergy();
 				double m = probe.getSpeciesRestEnergy();
 				double gamma = T/m + 1;
-				double beta = Math.abs(Math.sqrt(1-1/(gamma*gamma)));      
+				double beta = Math.abs(Math.sqrt(1-1/(gamma*gamma)));
 				double v = beta*c;
 				zrdata[i] *=  (rffrequency*2*Math.PI) / v / 1000.0 * 180.0/Math.PI;
 			}
 			//System.out.println("For " + (String)namelist.get(i) + "pos is " + newstate.getPosition());
-        } 
+        }
 		zgraphdata.addPoint(srdata, zrdata);
 		zgraphdata.setDrawPointsOn(true);
 		zgraphdata.setDrawLinesOn(false);
@@ -924,7 +918,7 @@ public class ModelFace extends JPanel{
 		plotpanel.addGraphData(zgraphdata);
 		limits.setSmartLimits();
 		plotpanel.setExternalGL(limits);
-    }	
+    }
     
     
     
@@ -939,7 +933,7 @@ public class ModelFace extends JPanel{
         }
         
         public void evaluate(final Trial trial){
-            double error =0.0; 
+            double error =0.0;
             Iterator<Objective> itr = _objectives.iterator();
             while(itr.hasNext()){
                 TargetObjective objective = (TargetObjective)itr.next();
@@ -966,7 +960,7 @@ public class ModelFace extends JPanel{
             double error = _target - value;
             return 1.0/(1+error*error);
         }
-    } 
+    }
 	
 }
 
