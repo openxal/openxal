@@ -36,8 +36,6 @@ import xal.smf.AcceleratorSeq;
 import xal.smf.AcceleratorNode;
 import xal.smf.impl.BPM;
 
-//local packages
-//import gov.sns.apps.viewers.ringbpmviewer.utils.*;
 
 /**
  *  RingbpmviewerDocument is a custom XalDocument for Ringbpmviewer application.
@@ -47,47 +45,47 @@ import xal.smf.impl.BPM;
  */
 
 public class RingbpmviewerDocument extends XalDocument {
-
+    
 	static {
 		ChannelFactory.defaultFactory().init();
 	}
-
+    
 	//message text field. It is actually message text field from
 	private JTextField messageTextLocal = new JTextField();
-
+    
 	//Updating controller
 	UpdatingEventController updatingController = new UpdatingEventController();
-
+    
 	//update controller for the changing the set of bar columns in charts
 	private UpdatingEventController ucContent = new UpdatingEventController();
-
+    
 	//the tabbed panel that will keep all subpanels
 	private JTabbedPane mainTabbedPanel = new JTabbedPane();
-
+    
 	//--------------------------------------------------------------
 	//The view ring BPM panel with control elements
 	//--------------------------------------------------------------
 	private JPanel viewRingBPMPanel = null;
 	private RingBPMsController ringBPMsController = null;
-
+    
 	//--------------------------------------------------------------
 	//The view ring BPM TBT waveforms panel with control elements
 	//--------------------------------------------------------------
 	private JPanel viewWaveFormPanel = null;
 	RingBPMsWaveFormController ringBPMsWaveFormController = null;
-
+    
 	//--------------------------------------------------------------
 	//The HEBT BPM panel with control elements
 	//--------------------------------------------------------------
 	private JPanel viewHebtBPMPanel = null;
 	private TrLineBPMsController hebtBPMsController = null;
-
+    
 	//--------------------------------------------------------------
 	//The RTBT BPM panel with control elements
 	//--------------------------------------------------------------
 	private JPanel viewRtbtBPMPanel = null;
 	private TrLineBPMsController rtbtBPMsController = null;
-
+    
 	//-------------------------------------------------------------
 	//PREFERENCES_PANEL and GUI elements, actions etc.
 	//-------------------------------------------------------------
@@ -96,9 +94,9 @@ public class RingbpmviewerDocument extends XalDocument {
 	private JSpinner fontSize_PrefPanel_Spinner = new JSpinner(new SpinnerNumberModel(7, 7, 26, 1));
 	private JLabel timeDealyUC_Label = new JLabel("time delay for graphics update [sec]", JLabel.LEFT);
 	private JSpinner timeDealyUC_Spinner = new JSpinner(new SpinnerNumberModel(1.0, 0.1, 10.0, 0.1));
-
+    
 	private Font globalFont = new Font("Monospaced", Font.BOLD, 10);
-
+    
 	//------------------------------------------------
 	//PANEL STATE
 	//------------------------------------------------
@@ -112,61 +110,61 @@ public class RingbpmviewerDocument extends XalDocument {
 	//time and date related member
 	//-------------------------------------
 	private static DateAndTimeText dateAndTime = new DateAndTimeText();
-
+    
 	//------------------------------------------
 	//SAVE RESTORE PART
 	//------------------------------------------
 	//root node name
 	private String dataRootName = "RING_BPM_VIEWER";
-
-
+    
+    
 	/**
 	 *  Create a new empty RingbpmviewerDocument
 	 */
 	public RingbpmviewerDocument() {
 		updatingController.setUpdateTime(1.0);
 		ucContent.setUpdateTime(0.3);
-
+        
 		ringBPMsController = new RingBPMsController(updatingController, ucContent);
 		viewRingBPMPanel = ringBPMsController.getPanel();
-
+        
 		ringBPMsWaveFormController = new RingBPMsWaveFormController(updatingController, ucContent);
 		viewWaveFormPanel = ringBPMsWaveFormController.getPanel();
-
+        
 		hebtBPMsController = new TrLineBPMsController(updatingController, ucContent);
 		viewHebtBPMPanel = hebtBPMsController.getPanel();
-
+        
 		rtbtBPMsController = new TrLineBPMsController(updatingController, ucContent);
 		viewRtbtBPMPanel = rtbtBPMsController.getPanel();
-
+        
 		mainTabbedPanel.addChangeListener(
-			new ChangeListener() {
-				public void stateChanged(ChangeEvent e) {
-					JTabbedPane tbp = (JTabbedPane) e.getSource();
-					setActivePanel(tbp.getSelectedIndex());
-				}
-			});
-
+                                          new ChangeListener() {
+            public void stateChanged(ChangeEvent e) {
+                JTabbedPane tbp = (JTabbedPane) e.getSource();
+                setActivePanel(tbp.getSelectedIndex());
+            }
+        });
+        
 		//make all panels
 		makePreferencesPanel();
-
+        
 		mainTabbedPanel.add("Ring BPMs X,Y,Amp", viewRingBPMPanel);
 		mainTabbedPanel.add("Ring TBT X,Y,Amp", viewWaveFormPanel);
 		mainTabbedPanel.add("HEBT BPMs X,Y,Amp", viewHebtBPMPanel);
 		mainTabbedPanel.add("RTBT BPMs X,Y,Amp", viewRtbtBPMPanel);
 		mainTabbedPanel.add("Preferences", preferencesPanel);
-
+        
 		mainTabbedPanel.setSelectedIndex(0);
-
+        
 		//initialize the BPMs' names
 		URL init_url = this.getClass().getResource("resources/config/ring_bpms.xml");
 		XmlDataAdaptor root_da = XmlDataAdaptor.adaptorForUrl(init_url, false);
 		XmlDataAdaptor init_da = (XmlDataAdaptor) root_da.childAdaptor("LINES");
-
+        
 		XmlDataAdaptor ring_bpms_da = (XmlDataAdaptor) init_da.childAdaptor("RING_BPM_TBT_PVs");
 		XmlDataAdaptor hebt_bpms_da = (XmlDataAdaptor) init_da.childAdaptor("HEBT_BPM_PVs");
 		XmlDataAdaptor rtbt_bpms_da = (XmlDataAdaptor) init_da.childAdaptor("RTBT_BPM_PVs");
-
+        
 		//------------------------------------------
 		//This is new part: we get rid of xml files data
 		//and use accelerator and a status of BPM
@@ -175,13 +173,13 @@ public class RingbpmviewerDocument extends XalDocument {
 		
 		//make new data adaptors from accelerator
 		Accelerator accl = XMLDataManager.loadDefaultAccelerator();
-
+        
 		ring_bpms_da = XmlDataAdaptor.newEmptyDocumentAdaptor();
 		XmlDataAdaptor bpms_tmp_da = (XmlDataAdaptor) ring_bpms_da.createChild("RING_BPM_TBT_PVs");
 		ring_bpms_da = bpms_tmp_da;
 		AcceleratorSeq accSeq = accl.findSequence("Ring");
 		java.util.List<AcceleratorNode> bpms_list = accSeq.getAllNodesOfType(BPM.s_strType);
-		Iterator<AcceleratorNode> iter = bpms_list.iterator();	
+		Iterator<AcceleratorNode> iter = bpms_list.iterator();
 		Pattern p = Pattern.compile(":BPM_((.*))");
 		while(iter.hasNext()){
 			AcceleratorNode node = iter.next();
@@ -189,7 +187,7 @@ public class RingbpmviewerDocument extends XalDocument {
 				String bpm_name = node.getId();
 				XmlDataAdaptor bpm_da = (XmlDataAdaptor) bpms_tmp_da.createChild("RING_BPM");
 				Matcher m = p.matcher(bpm_name);
-				m.find();				
+				m.find();
 				bpm_da.setValue("name", m.group(1));
 				XmlDataAdaptor pvs_da = (XmlDataAdaptor) bpm_da.createChild("PV_NAMES");
 				XmlDataAdaptor pvx_da = (XmlDataAdaptor) pvs_da.createChild("xTBT");
@@ -206,7 +204,7 @@ public class RingbpmviewerDocument extends XalDocument {
 		hebt_bpms_da = bpms_tmp_da;
 		accSeq = accl.findSequence("HEBT");
 		bpms_list = accSeq.getAllNodesOfType(BPM.s_strType);
-		iter = bpms_list.iterator();	
+		iter = bpms_list.iterator();
 		p = Pattern.compile(":BPM((.*))");
 		while(iter.hasNext()){
 			AcceleratorNode node = iter.next();
@@ -223,16 +221,16 @@ public class RingbpmviewerDocument extends XalDocument {
 				XmlDataAdaptor pvAmp_da = (XmlDataAdaptor) pvs_da.createChild("amplitudeAvg");
 				pvx_da.setValue("name", bpm_name+":xAvg");
 				pvy_da.setValue("name", bpm_name+":yAvg");
-				pvAmp_da.setValue("name", bpm_name+":amplitudeAvg");	
+				pvAmp_da.setValue("name", bpm_name+":amplitudeAvg");
 			}
-		}		
+		}
 		
 		rtbt_bpms_da = XmlDataAdaptor.newEmptyDocumentAdaptor();
 		bpms_tmp_da = (XmlDataAdaptor) rtbt_bpms_da.createChild("RTBT_BPM_PVs");
 		rtbt_bpms_da = bpms_tmp_da;
 		accSeq = accl.findSequence("RTBT");
 		bpms_list = accSeq.getAllNodesOfType(BPM.s_strType);
-		iter = bpms_list.iterator();	
+		iter = bpms_list.iterator();
 		p = Pattern.compile(":BPM((.*))");
 		while(iter.hasNext()){
 			AcceleratorNode node = iter.next();
@@ -249,9 +247,9 @@ public class RingbpmviewerDocument extends XalDocument {
 				XmlDataAdaptor pvAmp_da = (XmlDataAdaptor) pvs_da.createChild("amplitudeAvg");
 				pvx_da.setValue("name", bpm_name+":xAvg");
 				pvy_da.setValue("name", bpm_name+":yAvg");
-				pvAmp_da.setValue("name", bpm_name+":ampAvg");	
+				pvAmp_da.setValue("name", bpm_name+":ampAvg");
 			}
-		}			
+		}
 		
 		//------------------------------------------
 		//This is new part: we get rid of xml files data
@@ -262,29 +260,29 @@ public class RingbpmviewerDocument extends XalDocument {
 		ringBPMsController.init(ring_bpms_da);
 		hebtBPMsController.init(hebt_bpms_da);
 		rtbtBPMsController.init(rtbt_bpms_da);
-
+        
 		ringBPMsWaveFormController.getListenToEPICS_Button().setModel(
-				ringBPMsController.getListenToEPICS_Button().getModel()
-				);
-
+                                                                      ringBPMsController.getListenToEPICS_Button().getModel()
+                                                                      );
+        
 		//The HEBT and RTBT controllers will be independent
 		//    in the sense of EPICS listening if the following is commented
 		/**
-		hebtBPMsController.getListenToEPICS_Button().setModel(
-				ringBPMsController.getListenToEPICS_Button().getModel()
-				);
-
-		rtbtBPMsController.getListenToEPICS_Button().setModel(
-				ringBPMsController.getListenToEPICS_Button().getModel()
-				);
-		*/
-
+         hebtBPMsController.getListenToEPICS_Button().setModel(
+         ringBPMsController.getListenToEPICS_Button().getModel()
+         );
+         
+         rtbtBPMsController.getListenToEPICS_Button().setModel(
+         ringBPMsController.getListenToEPICS_Button().getModel()
+         );
+         */
+        
 		ringBPMsController.setListenToEPICS(false);
-
+        
 		ringBPMsWaveFormController.init(ringBPMsController.getRingBPMset());
 	}
-
-
+    
+    
 	/**
 	 *  Create a new document loaded from the URL file
 	 *
@@ -297,15 +295,15 @@ public class RingbpmviewerDocument extends XalDocument {
 		}
 		setSource(url);
 		readRingbpmviewerDocument(url);
-
+        
 		//super class method - will show "Save" menu active
 		if(url.getProtocol().equals("jar")) {
 			return;
 		}
 		setHasChanges(true);
 	}
-
-
+    
+    
 	/**
 	 *  Make a main window by instantiating the RingbpmviewerWindow window.
 	 */
@@ -314,35 +312,35 @@ public class RingbpmviewerDocument extends XalDocument {
 		//---------------------------------------------------------------
 		//this is the place for initializing initial state of main window
 		//---------------------------------------------------------------
-
+        
 		//define initial state of the window
 		getRingbpmviewerWindow().setJComponent(mainTabbedPanel);
-
+        
 		//set connections between message texts
 		messageTextLocal = getRingbpmviewerWindow().getMessageTextField();
-
+        
 		//set all text messages for sub frames
 		//???
 		ringBPMsWaveFormController.setMessageTextLocal(messageTextLocal);
 		ringBPMsWaveFormController.setOnwnerFrame(getRingbpmviewerWindow());
-
+        
 		fontSize_PrefPanel_Spinner.setValue(new Integer(globalFont.getSize()));
 		setFontForAll(globalFont);
-
+        
 		timeDealyUC_Spinner.setValue(new Double(updatingController.getUpdateTime()));
 		updatingController.setUpdateTime(((Double) timeDealyUC_Spinner.getValue()).doubleValue());
-
+        
 		//set connections to a message text in others panels
-
+        
 		//set timer
 		JTextField timeTxt_temp = dateAndTime.getNewTimeTextField();
 		timeTxt_temp.setHorizontalAlignment(JTextField.CENTER);
 		getRingbpmviewerWindow().addTimeStamp(timeTxt_temp);
-
+        
 		mainWindow.setSize(new Dimension(700, 600));
 	}
-
-
+    
+    
 	/**
 	 *  Dispose of RingbpmviewerDocument resources. This method overrides an empty
 	 *  superclass method.
@@ -350,26 +348,26 @@ public class RingbpmviewerDocument extends XalDocument {
 	protected void freeCustomResources() {
 		cleanUp();
 	}
-
-
+    
+    
 	/**
 	 *  Reads the content of the document from the specified URL.
 	 *
 	 *@param  url  Description of the Parameter
 	 */
 	public void readRingbpmviewerDocument(URL url) {
-
+        
 		//read the document content from the persistent storage
-
+        
 		XmlDataAdaptor readAdp = null;
 		readAdp = XmlDataAdaptor.adaptorForUrl(url, false);
-
+        
 		if(readAdp != null) {
 			XmlDataAdaptor ringbpmviewerData_Adaptor = (XmlDataAdaptor) readAdp.childAdaptor(dataRootName);
 			if(ringbpmviewerData_Adaptor != null) {
 				cleanUp();
 				setTitle(ringbpmviewerData_Adaptor.stringValue("title"));
-
+                
 				//set font
 				XmlDataAdaptor params_font = (XmlDataAdaptor) ringbpmviewerData_Adaptor.childAdaptor("font");
 				int font_size = params_font.intValue("size");
@@ -378,29 +376,29 @@ public class RingbpmviewerDocument extends XalDocument {
 				globalFont = new Font(font_Family, style, font_size);
 				fontSize_PrefPanel_Spinner.setValue(new Integer(font_size));
 				setFontForAll(globalFont);
-
+                
 				XmlDataAdaptor params_da = (XmlDataAdaptor) ringbpmviewerData_Adaptor.childAdaptor("shared_parameters");
 				updatingController.setUpdateTime(params_da.doubleValue("update_time"));
-
+                
 				//read data to form bpms set
 				XmlDataAdaptor ring_bpms_da = (XmlDataAdaptor) ringbpmviewerData_Adaptor.childAdaptor("RING_BPMs");
 				ringBPMsController.readData(ring_bpms_da);
-
+                
 				//read data to form bpms set
 				XmlDataAdaptor hebt_bpms_da = (XmlDataAdaptor) ringbpmviewerData_Adaptor.childAdaptor("HEBT_BPMs");
 				hebtBPMsController.readData(hebt_bpms_da);
-
+                
 				//read data to form bpms set
 				XmlDataAdaptor rtbt_bpms_da = (XmlDataAdaptor) ringbpmviewerData_Adaptor.childAdaptor("RTBT_BPMs");
 				rtbtBPMsController.readData(rtbt_bpms_da);
 			}
-
+            
 			//init the WaveForm controller
 			ringBPMsWaveFormController.init(ringBPMsController.getRingBPMset());
 		}
 	}
-
-
+    
+    
 	/**
 	 *  Save the RingbpmviewerDocument document to the specified URL.
 	 *
@@ -408,36 +406,36 @@ public class RingbpmviewerDocument extends XalDocument {
 	 */
 	public void saveDocumentAs(URL url) {
 		//this is the place to write document to the persistent storage
-
+        
 		XmlDataAdaptor da = XmlDataAdaptor.newEmptyDocumentAdaptor();
 		XmlDataAdaptor ringbpmviewerData_Adaptor = (XmlDataAdaptor) da.createChild(dataRootName);
 		ringbpmviewerData_Adaptor.setValue("title", url.getFile());
-
+        
 		//dump parameters
 		XmlDataAdaptor params_font = (XmlDataAdaptor) ringbpmviewerData_Adaptor.createChild("font");
 		params_font.setValue("name", globalFont.getFamily());
 		params_font.setValue("style", globalFont.getStyle());
 		params_font.setValue("size", globalFont.getSize());
-
+        
 		XmlDataAdaptor params_da = (XmlDataAdaptor) ringbpmviewerData_Adaptor.createChild("shared_parameters");
 		params_da.setValue("update_time", updatingController.getUpdateTime());
-
+        
 		//write the data about BPMs and stack
-
+        
 		XmlDataAdaptor ring_bpms_da = (XmlDataAdaptor) ringbpmviewerData_Adaptor.createChild("RING_BPMs");
 		ringBPMsController.dumpData(ring_bpms_da);
-
+        
 		XmlDataAdaptor hebt_bpms_da = (XmlDataAdaptor) ringbpmviewerData_Adaptor.createChild("HEBT_BPMs");
 		hebtBPMsController.dumpData(hebt_bpms_da);
-
+        
 		XmlDataAdaptor rtbt_bpms_da = (XmlDataAdaptor) ringbpmviewerData_Adaptor.createChild("RTBT_BPMs");
 		rtbtBPMsController.dumpData(rtbt_bpms_da);
-
-
+        
+        
 		//dump data into the file
 		try {
 			da.writeToUrl( url );
-
+            
 			//super class method - will show "Save" menu active
 			setHasChanges( true );
 		}
@@ -459,10 +457,10 @@ public class RingbpmviewerDocument extends XalDocument {
 			exception.printStackTrace();
             displayError("Save Failed!", "Save failed due to an internal exception!", exception);
         }
-
+        
 	}
-
-
+    
+    
 	/**
 	 *  Edit preferences for the document.
 	 */
@@ -471,8 +469,8 @@ public class RingbpmviewerDocument extends XalDocument {
 		mainTabbedPanel.setSelectedIndex(PREFERENCES_PANEL);
 		setActivePanel(PREFERENCES_PANEL);
 	}
-
-
+    
+    
 	/**
 	 *  Convenience method for getting the RingbpmviewerWindow window. It is the
 	 *  cast to the proper subclass of XalWindow. This allows me to avoid casting
@@ -483,71 +481,71 @@ public class RingbpmviewerDocument extends XalDocument {
 	private RingbpmviewerWindow getRingbpmviewerWindow() {
 		return (RingbpmviewerWindow) mainWindow;
 	}
-
-
+    
+    
 	/**
 	 *  Register actions for the menu items and toolbar.
 	 *
 	 *@param  commander  Description of the Parameter
 	 */
-
+    
 	protected void customizeCommands(Commander commander) {
 	}
-
-
+    
+    
 	/**
 	 *  Description of the Method
 	 */
 	private void makePreferencesPanel() {
-
+        
 		fontSize_PrefPanel_Spinner.setAlignmentX(JSpinner.CENTER_ALIGNMENT);
 		timeDealyUC_Spinner.setAlignmentX(JSpinner.CENTER_ALIGNMENT);
-
+        
 		JPanel tmp_0 = new JPanel(new FlowLayout(FlowLayout.LEFT, 1, 1));
 		tmp_0.add(fontSize_PrefPanel_Spinner);
 		tmp_0.add(setFont_PrefPanel_Button);
-
+        
 		JPanel tmp_1 = new JPanel(new FlowLayout(FlowLayout.LEFT, 1, 1));
 		tmp_1.add(timeDealyUC_Spinner);
 		tmp_1.add(timeDealyUC_Label);
-
+        
 		JPanel tmp_2 = new JPanel(new GridLayout(0, 1));
 		tmp_2.add(tmp_0);
 		tmp_2.add(tmp_1);
-
+        
 		preferencesPanel.setLayout(new BorderLayout());
 		preferencesPanel.add(tmp_2, BorderLayout.NORTH);
-
+        
 		setFont_PrefPanel_Button.addActionListener(
-			new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					int fnt_size = ((Integer) fontSize_PrefPanel_Spinner.getValue()).intValue();
-					globalFont = new Font(globalFont.getFamily(), globalFont.getStyle(), fnt_size);
-					setFontForAll(globalFont);
-					int h = getRingbpmviewerWindow().getHeight();
-					int w = getRingbpmviewerWindow().getWidth();
-					getRingbpmviewerWindow().validate();
-				}
-			});
-
+                                                   new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                int fnt_size = ((Integer) fontSize_PrefPanel_Spinner.getValue()).intValue();
+                globalFont = new Font(globalFont.getFamily(), globalFont.getStyle(), fnt_size);
+                setFontForAll(globalFont);
+                int h = getRingbpmviewerWindow().getHeight();
+                int w = getRingbpmviewerWindow().getWidth();
+                getRingbpmviewerWindow().validate();
+            }
+        });
+        
 		timeDealyUC_Spinner.addChangeListener(
-			new ChangeListener() {
-				public void stateChanged(ChangeEvent evnt) {
-					updatingController.setUpdateTime(((Double) timeDealyUC_Spinner.getValue()).doubleValue());
-				}
-			});
-
+                                              new ChangeListener() {
+            public void stateChanged(ChangeEvent evnt) {
+                updatingController.setUpdateTime(((Double) timeDealyUC_Spinner.getValue()).doubleValue());
+            }
+        });
+        
 	}
-
-
+    
+    
 	/**
 	 *  Clean up the document content
 	 */
 	private void cleanUp() {
 		cleanMessageTextField();
 	}
-
-
+    
+    
 	/**
 	 *  Description of the Method
 	 */
@@ -555,8 +553,8 @@ public class RingbpmviewerDocument extends XalDocument {
 		messageTextLocal.setText(null);
 		messageTextLocal.setForeground(Color.red);
 	}
-
-
+    
+    
 	/**
 	 *  Sets the fontForAll attribute of the RingbpmviewerDocument object
 	 *
@@ -568,20 +566,20 @@ public class RingbpmviewerDocument extends XalDocument {
 		setFont_PrefPanel_Button.setFont(fnt);
 		fontSize_PrefPanel_Spinner.setFont(fnt);
 		((JSpinner.DefaultEditor) fontSize_PrefPanel_Spinner.getEditor()).getTextField().setFont(fnt);
-
+        
 		globalFont = fnt;
 		//mainTabbedPanel.setFont(fnt);
 		ringBPMsController.setFont(fnt);
 		ringBPMsWaveFormController.setFont(fnt);
 		hebtBPMsController.setFont(fnt);
 		rtbtBPMsController.setFont(fnt);
-
+        
 		timeDealyUC_Label.setFont(fnt);
 		timeDealyUC_Spinner.setFont(fnt);
 		((JSpinner.DefaultEditor) timeDealyUC_Spinner.getEditor()).getTextField().setFont(fnt);
 	}
-
-
+    
+    
 	/**
 	 *  Sets the activePanel attribute of the RingbpmviewerDocument object
 	 *
@@ -589,11 +587,11 @@ public class RingbpmviewerDocument extends XalDocument {
 	 */
 	private void setActivePanel(int newActPanelInd) {
 		int oldActPanelInd = ACTIVE_PANEL;
-
+        
 		if(oldActPanelInd == newActPanelInd) {
 			return;
 		}
-
+        
 		//shut up active panel
 		if(oldActPanelInd == VIEW_RING_BPM_PANEL) {
 			//action before view values panel will disappear
@@ -607,7 +605,7 @@ public class RingbpmviewerDocument extends XalDocument {
 		} else if(oldActPanelInd == PREFERENCES_PANEL) {
 			//action before preferences panel will disappear
 		}
-
+        
 		//make something before the new panel will show up
 		if(newActPanelInd == VIEW_RING_BPM_PANEL) {
 			//action before view values panel will show up
@@ -622,9 +620,9 @@ public class RingbpmviewerDocument extends XalDocument {
 		} else if(newActPanelInd == PREFERENCES_PANEL) {
 			//action before preferences pane will show u
 		}
-
+        
 		ACTIVE_PANEL = newActPanelInd;
-
+        
 		cleanMessageTextField();
 	}
 }
@@ -639,12 +637,12 @@ public class RingbpmviewerDocument extends XalDocument {
  *@version
  */
 class DateAndTimeText {
-
-
+    
+    
 	private SimpleDateFormat dFormat = null;
 	private JFormattedTextField dateTimeField = null;
-
-
+    
+    
 	/**
 	 *  Constructor for the DateAndTimeText object
 	 */
@@ -653,22 +651,22 @@ class DateAndTimeText {
 		dateTimeField = new JFormattedTextField(dFormat);
 		dateTimeField.setEditable(false);
 		Runnable timer =
-			new Runnable() {
-				public void run() {
-					while(true) {
-						dateTimeField.setValue(new Date());
-						try {
-							Thread.sleep(30000);
-						} catch(InterruptedException e) {}
-					}
-				}
-			};
-
+        new Runnable() {
+            public void run() {
+                while(true) {
+                    dateTimeField.setValue(new Date());
+                    try {
+                        Thread.sleep(30000);
+                    } catch(InterruptedException e) {}
+                }
+            }
+        };
+        
 		Thread thr = new Thread(timer);
 		thr.start();
 	}
-
-
+    
+    
 	/**
 	 *  Returns the time attribute of the DateAndTimeText object
 	 *
@@ -677,8 +675,8 @@ class DateAndTimeText {
 	protected String getTime() {
 		return dateTimeField.getText();
 	}
-
-
+    
+    
 	/**
 	 *  Returns the timeTextField attribute of the DateAndTimeText object
 	 *
@@ -687,8 +685,8 @@ class DateAndTimeText {
 	protected JFormattedTextField getTimeTextField() {
 		return dateTimeField;
 	}
-
-
+    
+    
 	/**
 	 *  Returns the newTimeTextField attribute of the DateAndTimeText object
 	 *
