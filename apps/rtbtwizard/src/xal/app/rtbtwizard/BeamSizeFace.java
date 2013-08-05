@@ -245,7 +245,6 @@ public class BeamSizeFace extends JPanel{
         probeeditbutton = new JButton("Edit Model Probe");
         
         //Set up a few model items
-        //EnvTrackerAdapt etracker = new EnvTrackerAdapt();
         
         EnvelopeTracker etracker = null;
         
@@ -444,7 +443,7 @@ public class BeamSizeFace extends JPanel{
         EnvelopeTrajectory traj= (EnvelopeTrajectory)probe.getTrajectory();
         EnvelopeProbeState state = (EnvelopeProbeState)traj.statesForElement(namelist.get(0))[0];
         //EnvelopeProbeState state =(EnvelopeProbeState)traj.statesForElement("RTBT_Diag:WS20")[0];
-        //Twiss[] twiss = state.getTwiss();
+       
         
         CovarianceMatrix covarianceMatrix = state.getCorrelationMatrix();
         Twiss[] twiss = covarianceMatrix.computeTwiss();
@@ -554,7 +553,6 @@ public class BeamSizeFace extends JPanel{
             String name = namelist.get(i);
             //EnvelopeProbeState state = (EnvelopeProbeState)traj.statesForElement("RTBT_Diag:WS21")[0];
             EnvelopeProbeState state = (EnvelopeProbeState)traj.statesForElement(namelist.get(i))[0];
-            //Twiss[] twiss =  state.getTwiss();
             
             CovarianceMatrix covarianceMatrix = state.getCorrelationMatrix();
             Twiss[] twiss = covarianceMatrix.computeTwiss();
@@ -771,7 +769,6 @@ public class BeamSizeFace extends JPanel{
 		}
 		for(int i = istart; i<size; i++){
 			newstate = (EnvelopeProbeState)traj.statesForElement(fullnamelist.get(i))[0];
-			//newtwiss =  newstate.getTwiss();
             
             CovarianceMatrix covarianceMatrix = newstate.getCorrelationMatrix();
             newtwiss = covarianceMatrix.computeTwiss();
@@ -786,7 +783,6 @@ public class BeamSizeFace extends JPanel{
         
 		harparea=((Double)tabledata[4][1]).doubleValue()*((Double)tabledata[4][2]).doubleValue();;
 		newstate = (EnvelopeProbeState)traj.statesForElement("RTBT_Vac:VIW")[0];
-		//newtwiss =  newstate.getTwiss();
         
         CovarianceMatrix covarianceMatrix = newstate.getCorrelationMatrix();
         newtwiss = covarianceMatrix.computeTwiss();
@@ -795,7 +791,6 @@ public class BeamSizeFace extends JPanel{
 		tabledata[5][1] = new Double(decfor.format(rx));
 		tabledata[5][2] = new Double(decfor.format(ry));
 		newstate = (EnvelopeProbeState)traj.statesForElement("RTBT:Tgt")[0];
-		//newtwiss =  newstate.getTwiss();
         
         covarianceMatrix = newstate.getCorrelationMatrix();
         newtwiss = covarianceMatrix.computeTwiss();
@@ -987,7 +982,6 @@ public class BeamSizeFace extends JPanel{
 		while(iterState.hasNext()){
 			EnvelopeProbeState state= (EnvelopeProbeState)iterState.next();
 			sdata.add(state.getPosition());
-			//Twiss[] twiss =  state.getTwiss();
             
             CovarianceMatrix covarianceMatrix = state.getCorrelationMatrix();
             Twiss[] twiss = covarianceMatrix.computeTwiss();
