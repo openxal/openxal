@@ -11,6 +11,7 @@ import java.awt.event.*;
 import java.net.*;
 
 import xal.application.*;
+import xal.smf.application.AcceleratorApplication;
 
 /**
  *  MainScan1D is a concrete subclass of ApplicationAdaptor for one dimensional
@@ -114,7 +115,7 @@ public class MainScan1D extends ApplicationAdaptor {
 
 		if (args.length == 0) {
 			try {
-				Application.launch(new MainScan1D());
+				AcceleratorApplication.launch(new MainScan1D());
 			} catch (Exception exception) {
 				System.err.println(exception.getMessage());
 				exception.printStackTrace();
@@ -133,7 +134,7 @@ public class MainScan1D extends ApplicationAdaptor {
 		}
 
 		try {
-			Application.launch(doc, predefConfURLArr);
+			AcceleratorApplication.launch(doc, predefConfURLArr);
 		} catch (Exception exception) {
 			System.err.println(exception.getMessage());
 			exception.printStackTrace();

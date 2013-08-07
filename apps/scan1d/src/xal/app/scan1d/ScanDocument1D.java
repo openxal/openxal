@@ -27,6 +27,7 @@ import xal.tools.apputils.pvselection.*;
 import xal.tools.swing.*;
 import xal.tools.scan.*;
 import xal.tools.scan.analysis.*;
+import xal.smf.application.*;
 
 import xal.service.pvlogger.*;
 import xal.tools.database.*;
@@ -38,7 +39,7 @@ import xal.tools.database.*;
  *@author    shishlo
  */
 
-public class ScanDocument1D extends XalDocument {
+public class ScanDocument1D extends AcceleratorDocument {
 
 	static {
 		ChannelFactory.defaultFactory().init();
@@ -50,7 +51,6 @@ public class ScanDocument1D extends XalDocument {
 	private Action setScanPanelAction = null;
 	private Action setPVsChooserPanelAction = null;
 	private Action setAnalysisPanelAction = null;
-	private Action setAcceleratorAction = null;
 	private Action setPredefConfigAction = null;
 
 	//------------------------------------------------------
@@ -244,6 +244,9 @@ public class ScanDocument1D extends XalDocument {
 		root_Node.add(validationPVs_Node);
 
 		pvsSelector = new PVsSelector(root_Node);
+        if ( accelerator != null ) {
+            pvsSelector.setAccelerator( accelerator );
+        }
 		pvsSelector.removeMessageTextField();
 
 		makeTreeListeners();
@@ -990,7 +993,6 @@ public class ScanDocument1D extends XalDocument {
 	void editPreferences() {
 		//place for edit preferences
 		if (!scanController.isScanON()) {
-			setAcceleratorAction.setEnabled(false);
 			if (ACTIVE_PANEL == ANALYSIS_PANEL) {
 				analysisController.isGoingShutUp();
 				updateDataSetOnGraphPanels();
@@ -1031,7 +1033,6 @@ public class ScanDocument1D extends XalDocument {
 				private static final long serialVersionUID = 0L;
 				public void actionPerformed(ActionEvent event) {
 					if (!scanController.isScanON()) {
-						setAcceleratorAction.setEnabled(false);
 						if (ACTIVE_PANEL == ANALYSIS_PANEL) {
 							analysisController.isGoingShutUp();
 							updateDataSetOnGraphPanels();
@@ -1052,7 +1053,6 @@ public class ScanDocument1D extends XalDocument {
 				private static final long serialVersionUID = 0L;
 				public void actionPerformed(ActionEvent event) {
 					if (!scanController.isScanON()) {
-						setAcceleratorAction.setEnabled(true);
 						if (ACTIVE_PANEL == ANALYSIS_PANEL) {
 							analysisController.isGoingShutUp();
 							updateDataSetOnGraphPanels();
@@ -1073,7 +1073,6 @@ public class ScanDocument1D extends XalDocument {
 				private static final long serialVersionUID = 0L;
 				public void actionPerformed(ActionEvent event) {
 					if (!scanController.isScanON()) {
-						setAcceleratorAction.setEnabled(false);
 						analysisController.isGoingShowUp();
 						getScanWindow().setJComponent(analysisPanel);
 						cleanMessageTextField();
@@ -1085,33 +1084,11 @@ public class ScanDocument1D extends XalDocument {
 			};
 		commander.registerAction(setAnalysisPanelAction);
 
-		setAcceleratorAction =
-			new AbstractAction("set-accelerator") {
-				private static final long serialVersionUID = 0L;
-				public void actionPerformed(ActionEvent event) {
-					JFileChooser ch = new JFileChooser();
-					ch.setDialogTitle("READ ACCELERATOR DATA XML FILE");
-					if (acceleratorDataFile != null) {
-						ch.setSelectedFile(acceleratorDataFile);
-					}
-					int returnVal = ch.showOpenDialog(selectionPVsPanel);
-					if (returnVal == JFileChooser.APPROVE_OPTION) {
-						acceleratorDataFile = ch.getSelectedFile();
-						String path = acceleratorDataFile.getAbsolutePath();
-						pvsSelector.setAcceleratorFileName(path);
-					}
-				}
-			};
-
-		commander.registerAction(setAcceleratorAction);
-		setAcceleratorAction.setEnabled(false);
-
 		setPredefConfigAction =
 			new AbstractAction("set-predef-config") {
 				private static final long serialVersionUID = 0L;
 				public void actionPerformed(ActionEvent event) {
 					if (!scanController.isScanON()) {
-						setAcceleratorAction.setEnabled(false);
 						getScanWindow().setJComponent(configPanel);
 						cleanMessageTextField();
 						ACTIVE_PANEL = PREDEF_CONF_PANEL;
@@ -1318,7 +1295,6 @@ public class ScanDocument1D extends XalDocument {
 					setHasChanges(false);
 
 					setFontForAll(globalFont);
-					setAcceleratorAction.setEnabled(false);
 					if (ACTIVE_PANEL == ANALYSIS_PANEL) {
 						analysisController.isGoingShutUp();
 						updateDataSetOnGraphPanels();
@@ -1694,6 +1670,19 @@ public class ScanDocument1D extends XalDocument {
 		clearSnapshotButton.setFont(fnt);
 		snapshotIdLabel.setFont(fnt);
 	}
+    
+    
+    //attempt to make an accelerator based application
+    public void acceleratorChanged() {
+        if (accelerator != null) {
+            if ( pvsSelector != null ) {
+                pvsSelector.setAccelerator( accelerator );
+            }
+            
+            setHasChanges(true);
+        }
+        
+    }
 
 
 
