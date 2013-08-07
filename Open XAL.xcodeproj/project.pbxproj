@@ -191,7 +191,7 @@
 		4C98888714279CC900E14203 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				APPNAME = scan1d;
+				APPNAME = scan2d;
 				XCPA_BUILD_ARGS = "-emacs build";
 			};
 			name = Release;
