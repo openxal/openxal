@@ -11,6 +11,7 @@ import java.util.*;
 import java.awt.*;
 
 import xal.application.*;
+import xal.smf.application.*;
 
 /**
  * ScanWindow2D is a subclass of XalWindow used in the 2D scan. It has mainPanel
@@ -19,7 +20,7 @@ import xal.application.*;
  * @author  shishlo
  */
 
-public class ScanWindow2D extends XalWindow {
+public class ScanWindow2D extends AcceleratorWindow {
 	private static final long serialVersionUID = 0L;
 	
     private JPanel mainPanel = new JPanel(new BorderLayout());

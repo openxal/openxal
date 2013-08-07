@@ -12,6 +12,7 @@ import java.awt.event.*;
 import java.net.*;
 
 import xal.application.*;
+import xal.smf.application.AcceleratorApplication;
 
 /**
  * MainScan2D is a concrete subclass of ApplicationAdaptor 
@@ -98,7 +99,7 @@ public class MainScan2D extends ApplicationAdaptor {
 
 	if(args.length == 0){
 	    try {
-		Application.launch( new MainScan2D() );
+		AcceleratorApplication.launch( new MainScan2D() );
 	    }
 	    catch(Exception exception) {
 		System.err.println( exception.getMessage() );
@@ -118,7 +119,7 @@ public class MainScan2D extends ApplicationAdaptor {
 	}
 
 	try{
-	    Application.launch( doc , predefConfURLArr);
+	    AcceleratorApplication.launch( doc , predefConfURLArr);
 	}
 	catch(Exception exception) {
 	    System.err.println( exception.getMessage() );
