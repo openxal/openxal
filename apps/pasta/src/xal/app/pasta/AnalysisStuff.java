@@ -182,7 +182,7 @@ public class AnalysisStuff {
     public AnalysisStuff(PastaDocument doc) {
         
         theDoc = doc;
-        
+                
         for (int i = 0; i<3; i++) variableActiveFlags.add(new Boolean(true));
         variableActiveFlags.add(new Boolean(false));
         
@@ -828,7 +828,7 @@ public class AnalysisStuff {
 	    }
         
         Problem problem = ProblemFactory.getInverseSquareMinimizerProblem( new ArrayList<Variable>( variableList.values()), theScorer, 0.001 );
-	    solver = new Solver(SolveStopperFactory.minMaxTimeSatisfactionStopper(0, timeoutPeriod, 0.00089919072));
+	    solver = new Solver(SolveStopperFactory.minMaxTimeSatisfactionStopper(0, timeoutPeriod, SatisfactionCurve.inverseSquareSatisfaction( 0.001, 0.1 )));
         
         //solver.setStopper(SolveStopperFactory.targetStopperWithMaxTime(.1, timeoutPeriod));
         
