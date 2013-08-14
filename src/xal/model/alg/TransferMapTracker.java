@@ -64,7 +64,23 @@ public class TransferMapTracker extends Tracker {
     public TransferMapTracker() {
         super(s_strTypeId, s_intVersion, s_clsProbeType);
     }
+    
+    /**
+     * Copy constructor for TransferMapTracker
+     *
+     * @param       sourceTracker   Tracker that is being copied
+     */
+    public TransferMapTracker(TransferMapTracker sourceTracker) {
+        super(sourceTracker);
+    }
 
+    /**
+     * Creates a deep copy of TransferMapTracker
+     */
+    @Override
+    public TransferMapTracker copy() {
+        return new TransferMapTracker( this );
+    }
 
     /*
      * IArchive Interface

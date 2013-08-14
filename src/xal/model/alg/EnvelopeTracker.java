@@ -121,7 +121,24 @@ public class EnvelopeTracker extends EnvelopeTrackerBase {
     protected EnvelopeTracker(String strType, int intVersion, Class<? extends IProbe> clsProbeType) {
         super(strType, intVersion, clsProbeType);
     }
+   
+    /**
+     * Copy constructor for EnvelopeTracker
+     * 
+     * @param       sourceTracker   Tracker that is being copied
+     */
+    protected EnvelopeTracker(EnvelopeTracker sourceTracker) {
+        super(sourceTracker);
+    }
     
+
+    /**
+     * Creates a deep copy of EnvelopeTracker
+     */
+    @Override
+    public EnvelopeTracker copy() {
+        return new EnvelopeTracker(this);
+    }
     
     
     /**

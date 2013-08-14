@@ -30,8 +30,17 @@ public class DiagnosticProbe extends Probe {
     public DiagnosticProbe() {
         super( new DiagnosticTracker() );        
     }
+    
+    public DiagnosticProbe(DiagnosticProbe copy) {
+        super( copy );
+        this.elementsVisited = copy.elementsVisited;
+    }
 
 
+    @Override
+    public DiagnosticProbe copy() {
+        return new DiagnosticProbe( this );
+    }
     // ************ diagnostic tracking methods
     
     

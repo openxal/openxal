@@ -77,8 +77,22 @@ public class EnvelopeTrackerPmqDipole extends EnvelopeTracker {
         super(s_strTypeId, s_intVersion, s_clsProbeType);
     };
     
+    /**
+     * Copy constructor for EnvelopeTrackerPmqDipole
+     *
+     * @param       sourceTracker   Tracker that is being copied
+     */
+    public EnvelopeTrackerPmqDipole( EnvelopeTrackerPmqDipole sourceTracker ) {
+        super( sourceTracker );
+    }
     
-    
+    /**
+     * Creates a deep copy of EnvelopeTrackerPmqDipole
+     */
+    @Override
+    public EnvelopeTrackerPmqDipole copy() {
+        return new EnvelopeTrackerPmqDipole( this );
+    }
 
     /*
      *  Tracker Abstract Methods
