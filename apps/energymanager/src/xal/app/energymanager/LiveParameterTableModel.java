@@ -132,7 +132,7 @@ public class LiveParameterTableModel extends AbstractTableModel implements LiveP
 			else {
 				final int NUM_PARAMETERS = _allParameters.size();
 				for ( int param = 0 ; param < NUM_PARAMETERS ; param++ ) {
-					final LiveParameter parameter = (LiveParameter)_allParameters.get( param );
+					final LiveParameter parameter = _allParameters.get( param );
 					if ( _qualifier.matches( parameter ) )  parameters.add( parameter );
 				}
 			}
@@ -244,7 +244,7 @@ public class LiveParameterTableModel extends AbstractTableModel implements LiveP
 	public Object getValueAt( final int row, final int column ) {
 		synchronized( PARAMETERS_LOCK ) {
 			if ( row >= _parameters.size() )  return null;
-			final LiveParameter parameter = (LiveParameter)_parameters.get( row );
+			final LiveParameter parameter = _parameters.get( row );
 			
 			switch ( column ) {
 				case VARIABLE_COLUMN:
@@ -278,7 +278,7 @@ public class LiveParameterTableModel extends AbstractTableModel implements LiveP
 	 * Set the value of the specified cell to the value specified.
 	 */
 	public void setValueAt( final Object value, final int row, final int column ) {
-		final LiveParameter parameter = (LiveParameter)_parameters.get( row );
+		final LiveParameter parameter = _parameters.get( row );
 		
 		switch ( column ) {
 			case VARIABLE_COLUMN:
@@ -295,7 +295,7 @@ public class LiveParameterTableModel extends AbstractTableModel implements LiveP
 	 * @return the live parameter displayed at the specified row.
 	 */
 	final public LiveParameter getParameter( final int row ) {
-		return ( row >= 0 && row < getRowCount() ) ? (LiveParameter)_parameters.get( row ) : null;
+		return ( row >= 0 && row < getRowCount() ) ? _parameters.get( row ) : null;
 	}
 	
 	

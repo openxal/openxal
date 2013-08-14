@@ -122,7 +122,7 @@ public class FixedCustomParameterTableModel extends AbstractTableModel implement
 		synchronized( SOLUTION_LOCK ) {
 			if ( row >= _parameters.size() )  return null;
 			
-			final CoreParameter parameter = (CoreParameter)_parameters.get( row );
+			final CoreParameter parameter = _parameters.get( row );
 			
 			switch ( column ) {
 				case NAME_COLUMN:

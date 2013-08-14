@@ -52,7 +52,7 @@ public class OpticsOptimizer implements ScoreBoardListener, SolverSessionListene
 	 */
 	public OpticsOptimizer( final SolverSession solverSession ) {
 		_messageCenter = new MessageCenter( "Optics Optimizer" );
-		_eventProxy = (OpticsOptimizerListener)_messageCenter.registerSource( this, OpticsOptimizerListener.class );
+		_eventProxy = _messageCenter.registerSource( this, OpticsOptimizerListener.class );
 		
 		_activeSolverSession = solverSession;
 		solverSession.addSolverSessionListener( this );

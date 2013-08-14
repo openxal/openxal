@@ -131,7 +131,7 @@ public class LiveParameter implements KeyedRecord, CoreParameterListener {
 	 */
 	public LiveParameter( final NodeAgent nodeAgent, final CoreParameter coreParameter ) {
 		_messageCenter = new MessageCenter( "Live Parameter" );
-		_eventProxy = (LiveParameterListener)_messageCenter.registerSource( this, LiveParameterListener.class );
+		_eventProxy = _messageCenter.registerSource( this, LiveParameterListener.class );
 		
 		final ParameterTypeAdaptor typeAdaptor = coreParameter.getTypeAdaptor();
 		
@@ -319,7 +319,7 @@ public class LiveParameter implements KeyedRecord, CoreParameterListener {
     public Object valueForKey( final String key ) {
 		final ValueGetter valueGetter;
 		synchronized( VALUE_GETTERS ) {
-			valueGetter = (ValueGetter)VALUE_GETTERS.get(key);			
+			valueGetter = VALUE_GETTERS.get(key);			
 		}
 		
 		return ( valueGetter != null ) ? valueGetter.getValue( this ) : _nodeAgent.valueForKey( key );

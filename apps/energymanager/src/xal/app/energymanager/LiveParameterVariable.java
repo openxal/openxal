@@ -43,7 +43,7 @@ public class LiveParameterVariable extends Variable implements KeyedRecord {
 	protected void gatherNodes() {
 		final Iterator<LiveParameter> liveParameterIter = _parameter.getLiveParameters().iterator();
 		while( liveParameterIter.hasNext() ) {
-			final LiveParameter liveParameter = (LiveParameter)liveParameterIter.next();
+			final LiveParameter liveParameter = liveParameterIter.next();
 			_nodes.add( liveParameter.getNode() );
 		}
 	}

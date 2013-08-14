@@ -59,7 +59,7 @@ public class NodeView extends Box {
 		
 		final List<LiveParameter> parameters = node.getLiveParameters();
 		for ( int index = 0 ; index < parameters.size() ; index++ ) {
-			add( new LiveParameterView( (LiveParameter)parameters.get(index) ) );
+			add( new LiveParameterView( parameters.get(index) ) );
 		}
 		
 		validate();

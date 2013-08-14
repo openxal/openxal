@@ -46,7 +46,7 @@ abstract public class OpticsObjective extends Objective implements DataListener 
 		super( name );
 		
 		_messageCenter = new MessageCenter( "Optics Objective" );
-		_eventProxy = (OpticsObjectiveListener)_messageCenter.registerSource( this, OpticsObjectiveListener.class );
+		_eventProxy = _messageCenter.registerSource( this, OpticsObjectiveListener.class );
 		
 		_isEnabled = true;
 	}

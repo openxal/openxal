@@ -256,7 +256,7 @@ public class SolverConfigDialog extends JDialog implements SolverSessionListener
 		
 		final Iterator<OpticsObjectiveEditor> objectiveEditorIter = _objectiveEditors.iterator();
 		while( objectiveEditorIter.hasNext() ) {
-			final OpticsObjectiveEditor editor = (OpticsObjectiveEditor)objectiveEditorIter.next();
+			final OpticsObjectiveEditor editor = objectiveEditorIter.next();
 			editor.applySettings();
 		}
 	}
@@ -268,7 +268,7 @@ public class SolverConfigDialog extends JDialog implements SolverSessionListener
 		
 		final Iterator<OpticsObjectiveEditor> objectiveEditorIter = _objectiveEditors.iterator();
 		while( objectiveEditorIter.hasNext() ) {
-			final OpticsObjectiveEditor editor = (OpticsObjectiveEditor)objectiveEditorIter.next();
+			final OpticsObjectiveEditor editor = objectiveEditorIter.next();
 			editor.refreshSettings();
 		}
 	}

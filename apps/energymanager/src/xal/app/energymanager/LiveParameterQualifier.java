@@ -44,7 +44,7 @@ public class LiveParameterQualifier implements Qualifier {
 	/** Constructor */
 	public LiveParameterQualifier() {
 		_messageCenter = new MessageCenter( "Live Parameter" );
-		_eventProxy = (LiveParameterQualifierListener)_messageCenter.registerSource( this, LiveParameterQualifierListener.class );
+		_eventProxy = _messageCenter.registerSource( this, LiveParameterQualifierListener.class );
 		
 		_qualifier = PASS_ALL_QUALIFIER;
 		

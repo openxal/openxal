@@ -107,7 +107,7 @@ public class SolverSession implements OpticsObjectiveListener, DataListener {
 		_variables = determineVariables();
 		_simulator.setFixedCustomParameterValues( _fixedCustomParameters );
 		_problem.setVariables( _variables );
-		_problem.setObjectives( (List)getEnabledObjectives() );
+		_problem.setObjectives( getEnabledObjectives() );
 	}
 	
 	
