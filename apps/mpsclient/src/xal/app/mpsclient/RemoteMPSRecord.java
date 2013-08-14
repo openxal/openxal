@@ -65,7 +65,9 @@ public class RemoteMPSRecord implements UpdateListener {
     // messaging
 	protected MessageCenter _messageCenter;
 	protected RequestHandlerListener _proxy;
-    
+
+	
+	@SuppressWarnings( {"rawtypes", "unchecked"} )		// Generics are incompatible with arrays
     public RemoteMPSRecord( final MPSPortal proxy ) {
         _messageCenter = new MessageCenter("MPS Record");
 
@@ -207,6 +209,7 @@ public class RemoteMPSRecord implements UpdateListener {
 	public void addRequestHandlerListener(RequestHandlerListener listener) {
 		_messageCenter.registerTarget(listener, this, RequestHandlerListener.class);
     }
+
 	
 	/**
 	 * Remove the specified listener from being a receiver of events from this request handler
@@ -215,16 +218,19 @@ public class RemoteMPSRecord implements UpdateListener {
 	public void removeRequestHandlerListener(RequestHandlerListener listener) {
         _messageCenter.removeTarget(listener, this, RequestHandlerListener.class);
 	}
-	
+
+
     public String getMPSTripSummary(int mpsType) {
         return TRIP_SUMMARY_CACHE[mpsType].getValue();
     }
-    
+
+
     /**
 	 * Get the most recent MPS event
 	 * @param mpsType The index of the MPS latch type for which to get the event list
 	 * @return the latest MPS event or null if there is none
 	 */
+	@SuppressWarnings( "unchecked" )	// have to cast
 	public MPSEvent getLatestMPSEvent(int mpsType) {
         selectedMPSType = mpsType;
         int mpsEvents = getLatestMPSEvents(mpsType).size();
@@ -243,7 +249,9 @@ public class RemoteMPSRecord implements UpdateListener {
             return null;
         }
 	}
+
     
+	@SuppressWarnings( "unchecked" )	// have to cast
     public List<MPSEvent> processMPSEvents(int mpsType) {
         selectedMPSType = mpsType;
         List<MPSEvent> mpsEvents = new ArrayList<MPSEvent>();
