@@ -17,6 +17,12 @@ import xal.smf.impl.qualify.*;
 public class ExtractionKicker extends Dipole {
 	/** node type */
     public static final String s_strType   = "EKick";
+    
+    /** voltage readback handle */
+    public static final String VOLTAGE_RB_HANDLE = "voltageRB";
+    
+    /** voltage setting handle */
+    public static final String VOLTAGE_SET_HANDLE = "voltageSet";
 	
     
 	// static initializer
@@ -60,5 +66,34 @@ public class ExtractionKicker extends Dipole {
 	 */
     public boolean isCorrector() {
         return false;
-    }	
+    }
+	
+    /**
+     * Get the voltage readback for this kicker's power supply.
+     * @return the power supply voltage readback
+     */
+    public double getVoltage() throws ConnectionException, GetException {
+        final Channel channel = getAndConnectChannel( VOLTAGE_RB_HANDLE );
+        return channel.getValDbl();
+    }
+    
+    
+    /**
+     * Get the voltage setting for this kicker's power supply.
+     * @return the power supply voltage setting
+     */
+    public double getVoltageSetting() throws ConnectionException, GetException {
+        final Channel channel = getAndConnectChannel( VOLTAGE_SET_HANDLE );
+        return channel.getValDbl();
+    }
+    
+    
+    /**
+     * Set this kicker's power supply voltage
+     * @param voltage is the new voltage to apply to the power supply.
+     */
+    public void setVoltage( final double voltage ) throws ConnectionException, PutException {
+        final Channel channel = getAndConnectChannel( VOLTAGE_SET_HANDLE );
+        channel.putVal( voltage );
+    }
 }

@@ -242,6 +242,23 @@ public abstract class EnvelopeTrackerBase extends Tracker {
         super(strType, intVersion, clsProbeType);
     }
 
+    /**
+     * Copy constructor for EnvelopeTracker
+     *
+     * @param       sourceTracker   Tracker that is being copied
+     */
+    public EnvelopeTrackerBase(EnvelopeTrackerBase sourceTracker) {
+        super(sourceTracker);
+
+        this.dblMaxStep = sourceTracker.dblMaxStep;
+        this.bolScheff = sourceTracker.bolScheff;
+        this.bolEmitGrowth = sourceTracker.bolEmitGrowth;
+        this.enmEmitGrowthModel = sourceTracker.enmEmitGrowthModel;
+    }
+
+    
+    //public EnvelopeTrackerBase copy();
+
     /** 
      * Set maximum step size allowed between space charge kicks 
      * 

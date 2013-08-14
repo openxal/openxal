@@ -1,0 +1,55 @@
+<html>
+<head>
+<title>Optics Editor Help</title>
+</head>
+
+<body>
+<center><u>Optics Editor Help</u></center>
+<p>
+The Optics Editor allows you to view and edit the <b>enable</b> and <b>disable</b> status of nodes. You can also control the inclusion of nodes, but this is probably best left to <i>experts</i>. For example, if you exclude a node, it is completely removed from the accelerator hierarchy rather than simply being disabled.
+<p>
+When you open the application, it will automatically attempt to open the default accelerator optics file. To open another XAL optics file, select the "Open" menu item under the "File" menu and navigate to and select the desired optics file. All nodes are displayed alphabetically along with their status, inclusion and modification flags. You can filter the nodes quickly by any of these flags.
+<p>
+
+<h3>Node Flags</h3>
+<dl>
+<dt>Status</dt>
+<dd>Indicates whether the node is enabled or disabled for use. Typically, an application will use the status to filter only for enabled nodes.</dd>
+<dt>Inclusion</dt>
+<dd>Indicates whether a node is marked for inclusion or exclusion. A node may be excluded to completely remove it from the accelerator hierarchy preventing applications from attempting to access it.</dd>
+<dt>Modification</dt>
+<dd>Indicates whether the current status or inclusion flags differ from the original design optics. The hardware status file stores modifications to the original design optics file which remains unchanged.</dd>
+</dl>
+
+<p>
+<h3>Filtering</h3>
+You may filter which nodes are displayed by typing text into the "Node Name" text field. The filter is case insensitive, and the text may appear anywhere within the node name to form a match. You can select the radio buttons for <i>Status</i>, <i>Inclusion</i> or <i>Modification</i> to match against these flags in any combination you desire.
+
+<p>
+<h3>Editing</h3>
+You may enable and disable nodes as well as change the inclusion flag. 
+<br>
+To modify any flag:
+<ol>
+<li> Filter the nodes if desired </li>
+<li> Select the nodes you wish to modify </li>
+<li> Perform one of the following operations:
+	<ul>
+	<li> Press the "Enable" button to enable the selected nodes </li>
+	<li> Press the "Disable" button to disable the selected nodes </li>
+	<li> Select the Nodes:Include menu item to Include the selected nodes within the accelerator hierarchy </li>
+	<li> Select the Nodes:Exclude menu item to exclude the selected nodes from the accelerator hierarchy </li>
+	</ul>
+</li>
+<li> Save the document to commit the changes you have made to the hardware status file. </li>
+</ol>
+
+<p>
+<h3> Warning </h3>
+<div style="color: orange;">
+Please note that the hardware status file is computer generated and only contains support for the flags mentioned here (status and inclusion). Any other attributes or entries will be lost when saving a document including but not limited to comments. These other modifications should be placed manually in other optics extra files. Please do not edit the hardware status file manually!
+</div>
+
+</body>
+
+</html>

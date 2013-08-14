@@ -1,0 +1,303 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXFileReference section */
+		4CD4E2421739755700D6CCFD /* apps */ = {isa = PBXFileReference; lastKnownFileType = folder; path = apps; sourceTree = "<group>"; };
+		4CD4E2431739755700D6CCFD /* build.xml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = build.xml; sourceTree = "<group>"; };
+		4CD4E2441739755700D6CCFD /* config.xml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = config.xml; sourceTree = "<group>"; };
+		4CD4E2451739755700D6CCFD /* core */ = {isa = PBXFileReference; lastKnownFileType = folder; path = core; sourceTree = "<group>"; };
+		4CD4E2461739755700D6CCFD /* scripts */ = {isa = PBXFileReference; lastKnownFileType = folder; path = scripts; sourceTree = "<group>"; };
+		4CD4E2471739755700D6CCFD /* services */ = {isa = PBXFileReference; lastKnownFileType = folder; path = services; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		4CFEB21912CA2CB900613FF9 = {
+			isa = PBXGroup;
+			children = (
+				4CD4E2421739755700D6CCFD /* apps */,
+				4CD4E2431739755700D6CCFD /* build.xml */,
+				4CD4E2441739755700D6CCFD /* config.xml */,
+				4CD4E2451739755700D6CCFD /* core */,
+				4CD4E2461739755700D6CCFD /* scripts */,
+				4CD4E2471739755700D6CCFD /* services */,
+			);
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXLegacyTarget section */
+		4C39E67615ED111100D99103 /* all */ = {
+			isa = PBXLegacyTarget;
+			buildArgumentsString = "";
+			buildConfigurationList = 4C39E67715ED111100D99103 /* Build configuration list for PBXLegacyTarget "all" */;
+			buildPhases = (
+			);
+			buildToolPath = "./xcode-perform-action.sh";
+			buildWorkingDirectory = "$(XAL_HOME)";
+			dependencies = (
+			);
+			name = all;
+			passBuildSettingsInEnvironment = 1;
+			productName = all;
+		};
+		4C835B721430D0D000B43D11 /* jruby-run */ = {
+			isa = PBXLegacyTarget;
+			buildArgumentsString = "-emacs all";
+			buildConfigurationList = 4C835B731430D0D000B43D11 /* Build configuration list for PBXLegacyTarget "jruby-run" */;
+			buildPhases = (
+			);
+			buildToolPath = /usr/bin/ant;
+			buildWorkingDirectory = "$(XAL_HOME)/core";
+			dependencies = (
+			);
+			name = "jruby-run";
+			passBuildSettingsInEnvironment = 1;
+			productName = "core-compile-war";
+		};
+		4C9888801427892800E14203 /* apps */ = {
+			isa = PBXLegacyTarget;
+			buildArgumentsString = "";
+			buildConfigurationList = 4C9888811427892800E14203 /* Build configuration list for PBXLegacyTarget "apps" */;
+			buildPhases = (
+			);
+			buildToolPath = "../xcode-perform-action.sh";
+			buildWorkingDirectory = "$(XAL_HOME)/apps";
+			dependencies = (
+			);
+			name = apps;
+			passBuildSettingsInEnvironment = 1;
+			productName = "core-compile-war";
+		};
+		4C98888414279CC900E14203 /* app */ = {
+			isa = PBXLegacyTarget;
+			buildArgumentsString = "";
+			buildConfigurationList = 4C98888514279CC900E14203 /* Build configuration list for PBXLegacyTarget "app" */;
+			buildPhases = (
+			);
+			buildToolPath = "../../xcode-perform-action.sh";
+			buildWorkingDirectory = "$(XAL_HOME)/apps/$(APPNAME)";
+			dependencies = (
+			);
+			name = app;
+			passBuildSettingsInEnvironment = 1;
+			productName = "core-compile-war";
+		};
+		4CBB763F1405528F0064E2F7 /* core-run-tests */ = {
+			isa = PBXLegacyTarget;
+			buildArgumentsString = "";
+			buildConfigurationList = 4CBB76401405528F0064E2F7 /* Build configuration list for PBXLegacyTarget "core-run-tests" */;
+			buildPhases = (
+			);
+			buildToolPath = "../xcode-perform-action.sh";
+			buildWorkingDirectory = "$(XAL_HOME)/core";
+			dependencies = (
+			);
+			name = "core-run-tests";
+			passBuildSettingsInEnvironment = 1;
+			productName = all;
+		};
+		4CC4A85B14B798FB0075B061 /* services */ = {
+			isa = PBXLegacyTarget;
+			buildArgumentsString = "";
+			buildConfigurationList = 4CC4A85C14B798FB0075B061 /* Build configuration list for PBXLegacyTarget "services" */;
+			buildPhases = (
+			);
+			buildToolPath = "../xcode-perform-action.sh";
+			buildWorkingDirectory = "$(XAL_HOME)/services";
+			dependencies = (
+			);
+			name = services;
+			passBuildSettingsInEnvironment = 1;
+			productName = "core-compile-war";
+		};
+		4CFB61B51301D4A600A0E8E2 /* core */ = {
+			isa = PBXLegacyTarget;
+			buildArgumentsString = "";
+			buildConfigurationList = 4CFB61B81301D4A600A0E8E2 /* Build configuration list for PBXLegacyTarget "core" */;
+			buildPhases = (
+			);
+			buildToolPath = "../xcode-perform-action.sh";
+			buildWorkingDirectory = "$(XAL_HOME)/core";
+			dependencies = (
+			);
+			name = core;
+			passBuildSettingsInEnvironment = 1;
+			productName = all;
+		};
+/* End PBXLegacyTarget section */
+
+/* Begin PBXProject section */
+		4CFEB21B12CA2CB900613FF9 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0460;
+				ORGANIZATIONNAME = "Oak Ridge National Lab";
+			};
+			buildConfigurationList = 4CFEB21E12CA2CB900613FF9 /* Build configuration list for PBXProject "Open XAL" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 4CFEB21912CA2CB900613FF9;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				4C39E67615ED111100D99103 /* all */,
+				4CFB61B51301D4A600A0E8E2 /* core */,
+				4CBB763F1405528F0064E2F7 /* core-run-tests */,
+				4C9888801427892800E14203 /* apps */,
+				4C98888414279CC900E14203 /* app */,
+				4CC4A85B14B798FB0075B061 /* services */,
+				4C835B721430D0D000B43D11 /* jruby-run */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin XCBuildConfiguration section */
+		4C39E67915ED111100D99103 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				PRODUCT_NAME = All;
+				XCPA_BUILD_ARGS = "-emacs all";
+			};
+			name = Release;
+		};
+		4C835B751430D0D000B43D11 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				COMBINE_HIDPI_IMAGES = YES;
+				PRODUCT_NAME = "script-run";
+				SCRIPT_PATH = "$(XAL_HOME)/scripts/waveform_monitor/waveform-monitor.rb";
+			};
+			name = Release;
+		};
+		4C9888831427892800E14203 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				XCPA_BUILD_ARGS = "-emacs all";
+			};
+			name = Release;
+		};
+		4C98888714279CC900E14203 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				APPNAME = scan2d;
+				XCPA_BUILD_ARGS = "-emacs build";
+			};
+			name = Release;
+		};
+		4CBB76421405528F0064E2F7 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				XCPA_BUILD_ARGS = "-emacs run-tests";
+			};
+			name = Release;
+		};
+		4CC4A85E14B798FB0075B061 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				XCPA_BUILD_ARGS = "-emacs all";
+			};
+			name = Release;
+		};
+		4CFB61B71301D4A600A0E8E2 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				XCPA_BUILD_ARGS = "-emacs all";
+				XCPA_TEST_ARGS = "-emacs run-tests";
+			};
+			name = Release;
+		};
+		4CFEB22112CA2CB900613FF9 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				XAL_CLASSPATH = "$(XAL_HOME)/build/jar/lib/xal-core.jar:$(XAL_HOME)/build/jar/lib/xal-lib.jar";
+				XAL_HOME = "$(SRCROOT)";
+				XCPA_DEFAULT_COMMAND = /usr/bin/ant;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		4C39E67715ED111100D99103 /* Build configuration list for PBXLegacyTarget "all" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4C39E67915ED111100D99103 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		4C835B731430D0D000B43D11 /* Build configuration list for PBXLegacyTarget "jruby-run" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4C835B751430D0D000B43D11 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		4C9888811427892800E14203 /* Build configuration list for PBXLegacyTarget "apps" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4C9888831427892800E14203 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		4C98888514279CC900E14203 /* Build configuration list for PBXLegacyTarget "app" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4C98888714279CC900E14203 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		4CBB76401405528F0064E2F7 /* Build configuration list for PBXLegacyTarget "core-run-tests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4CBB76421405528F0064E2F7 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		4CC4A85C14B798FB0075B061 /* Build configuration list for PBXLegacyTarget "services" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4CC4A85E14B798FB0075B061 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		4CFB61B81301D4A600A0E8E2 /* Build configuration list for PBXLegacyTarget "core" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4CFB61B71301D4A600A0E8E2 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		4CFEB21E12CA2CB900613FF9 /* Build configuration list for PBXProject "Open XAL" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4CFEB22112CA2CB900613FF9 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 4CFEB21B12CA2CB900613FF9 /* Project object */;
+}

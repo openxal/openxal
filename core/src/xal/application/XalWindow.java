@@ -30,7 +30,10 @@ public abstract class XalWindow extends JFrame implements XalDocumentView, XalDo
 	// public static constants for confirmation dialogs
 	final static public int YES_OPTION = JOptionPane.YES_OPTION;
 	final static public int NO_OPTION = JOptionPane.NO_OPTION;
-	
+	    
+    /** indicates whether to display a toolbar */
+    private final boolean DISPLAYS_TOOLBAR;
+
 	/** The toolbar associated with this window */
 	private JToolBar _toolBar;
     
@@ -40,9 +43,17 @@ public abstract class XalWindow extends JFrame implements XalDocumentView, XalDo
     
     /** Creates a new instance of WindowAdaptor */
     public XalWindow( final XalDocument aDocument ) {
+        this( aDocument, true );
+    }
+    
+    
+    public XalWindow( final XalDocument aDocument, final boolean displaysToolbar ) {
 		positionWindow();
         registerEvents();
+        
         document = aDocument;
+        DISPLAYS_TOOLBAR = displaysToolbar;
+        
         makeFrame();
     }
 	
@@ -290,7 +301,7 @@ public abstract class XalWindow extends JFrame implements XalDocumentView, XalDo
      * Subclasses may override this method to not create the toolbar.
      */
     public boolean usesToolbar() {
-        return true;
+        return DISPLAYS_TOOLBAR;
     }
         
     
