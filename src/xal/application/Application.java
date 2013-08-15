@@ -253,22 +253,7 @@ abstract public class Application {
 				exception.printStackTrace();
 				System.err.println("Service registration failed due to " + exception);
 				Logger.getLogger( "xal.application" ).log( Level.SEVERE, "Service registration failed...", exception );
-			}
-
-			
-			// shutdown the service before quitting the process
-			Runtime.getRuntime().addShutdownHook( new Thread() {
-				public void run() {
-					try {
-						System.out.println( "Shutting down this Application's default service..." );
-						ServiceDirectory.defaultDirectory().dispose();  // shutdown services
-					}
-					catch ( Exception exception ) {
-						System.out.println( "Exception caught during service shutdown when quitting." );
-						exception.printStackTrace();
-					}
-				}
-			});
+			}			
 		}
 		else {
 			Logger.getLogger("global").log( Level.CONFIG, "Application services disabled." );
