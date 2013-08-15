@@ -40,7 +40,7 @@ public class OptimizerObjectivesTableModel extends AbstractTableModel implements
 	protected OpticsOptimizer _optimizer;
 	
 	/** objectives to view */
-	protected List _objectives;
+	protected List<OpticsObjective> _objectives;
 	
 	/** trial from which to get the values for the objectives */
 	protected Trial _solution;
@@ -135,7 +135,7 @@ public class OptimizerObjectivesTableModel extends AbstractTableModel implements
 	public Object getValueAt( final int row, final int column ) {
 		synchronized( SOLUTION_LOCK ) {
 			if ( row >= _objectives.size() )  return "";
-			final OpticsObjective objective = (OpticsObjective)_objectives.get( row );
+			final OpticsObjective objective = _objectives.get( row );
 			
 			switch ( column ) {
 				case OBJECTIVE_COLUMN:

@@ -42,7 +42,7 @@ public class SolverSession implements OpticsObjectiveListener, DataListener {
 	final protected AcceleratorSeq _sequence;
 	
 	/** the list of all available objectives */
-	final protected List _objectives;
+	final protected List<OpticsObjective> _objectives;
 	
 	/** table of all available objectives keyed by name */
 	final protected Map<String, OpticsObjective> _objectivesTable;
@@ -77,7 +77,7 @@ public class SolverSession implements OpticsObjectiveListener, DataListener {
 	 */
 	public SolverSession( final String name, final AcceleratorSeq sequence, final List<AcceleratorNode> evaluationNodes, final Probe entranceProbe, final List<CoreParameter> coreParameters ) {
 		_messageCenter = new MessageCenter( "Solver Session" );
-		_eventProxy = (SolverSessionListener)_messageCenter.registerSource( this, SolverSessionListener.class );
+		_eventProxy = _messageCenter.registerSource( this, SolverSessionListener.class );
 		
 		setName( name );
 		_sequence = sequence;
@@ -89,7 +89,7 @@ public class SolverSession implements OpticsObjectiveListener, DataListener {
 		_problem.addHint( InitialDomain.getFractionalDomainHint( 0.01 ) );	// change variables by 1% initially
 		_problem.setEvaluator( new OpticsEvaluator( _simulator ) );
 		
-		_objectives = new ArrayList();
+		_objectives = new ArrayList<OpticsObjective>();
 		_objectivesTable = new HashMap<String, OpticsObjective>();
 		makeObjectives();
 		
@@ -208,7 +208,7 @@ public class SolverSession implements OpticsObjectiveListener, DataListener {
 	 * @return the objective corresponding to the specified name or null if no match exists
 	 */
 	protected OpticsObjective getObjective( final String name ) {
-		return (OpticsObjective)_objectivesTable.get( name );
+		return _objectivesTable.get( name );
 	}
 	
 	
@@ -216,13 +216,10 @@ public class SolverSession implements OpticsObjectiveListener, DataListener {
 	 * Get the list of enabled objectives.
 	 * @return enabled objectives
 	 */
-	protected List getEnabledObjectives() {
-		final List enabledObjectives = new ArrayList<>( _objectives.size() );
-		final Iterator objectiveIter = _objectives.iterator();
+	protected List<OpticsObjective> getEnabledObjectives() {
+		final List<OpticsObjective> enabledObjectives = new ArrayList<>( _objectives.size() );
 
-        
-		while ( objectiveIter.hasNext() ) {
-			final OpticsObjective objective = (OpticsObjective)objectiveIter.next();
+		for ( final OpticsObjective objective : _objectives ) {
 			if ( objective.isEnabled() ) {
 				enabledObjectives.add( objective );
 			}
@@ -328,7 +325,7 @@ public class SolverSession implements OpticsObjectiveListener, DataListener {
 	 * Get all available objectives.
 	 * @return all available objectives.
 	 */
-	public List getObjectives() {
+	public List<OpticsObjective> getObjectives() {
 		return _objectives;
 	}
 	
@@ -353,9 +350,7 @@ public class SolverSession implements OpticsObjectiveListener, DataListener {
 	
 	/** Disable all objectives */
 	protected void disableAllObjectives() {
-		final Iterator iter = _objectives.iterator();
-		while ( iter.hasNext() ) {
-			final OpticsObjective objective = (OpticsObjective)iter.next();
+		for ( final OpticsObjective objective : _objectives ) {
 			objective.setEnable( false );
 		}
 	}
@@ -369,9 +364,7 @@ public class SolverSession implements OpticsObjectiveListener, DataListener {
 		_fixedCustomParameters = new ArrayList<CoreParameter>();
 		
 		final List<Variable> variables = new ArrayList<Variable>();
-		final Iterator<CoreParameter> parameterIter = _coreParameters.iterator();
-		while ( parameterIter.hasNext() ) {
-			final CoreParameter parameter = (CoreParameter)parameterIter.next();
+		for ( final CoreParameter parameter : _coreParameters ) {
 			if ( parameter.isVariable() ) {
 				variables.add( new LiveParameterVariable( parameter ) );
 			}
@@ -425,10 +418,8 @@ public class SolverSession implements OpticsObjectiveListener, DataListener {
 		adaptor.setValue( "minSolveTime", _minSolveTime );
 		adaptor.setValue( "maxSolveTime", _maxSolveTime );
 		adaptor.setValue( "targetSatisfaction", _targetSatisfaction );
-		
-		final Iterator objectiveIter = _objectives.iterator();
-		while ( objectiveIter.hasNext() ) {
-			final OpticsObjective objective = (OpticsObjective)objectiveIter.next();
+
+		for ( final OpticsObjective objective : _objectives ) {
 			final DataAdaptor objectiveAdaptor = adaptor.createChild( objective.dataLabel() );
 			objective.write( objectiveAdaptor );
 		}

@@ -45,10 +45,9 @@ public class OpticsEvaluator implements Evaluator {
 		final Map<Variable, Number> trialValues = trial.getTrialPoint().getValueMap();
 		final Simulation designSimulation = _simulator.getDesignSimulation();
 		final Simulation simulation = _simulator.runWithVariables( trialValues );
-				
-		final Iterator objectiveIter = trial.getProblem().getObjectives().iterator();
-		while ( objectiveIter.hasNext() ) {
-			final OpticsObjective objective = (OpticsObjective)objectiveIter.next();
+
+		for ( final Objective rawObjective : trial.getProblem().getObjectives() ) {
+			final OpticsObjective objective = (OpticsObjective)rawObjective;
 			final double score = objective.getValue( trialValues, simulation, designSimulation );
 			trial.setScore( objective, score );
 		}

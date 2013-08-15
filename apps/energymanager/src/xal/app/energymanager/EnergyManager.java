@@ -68,7 +68,7 @@ public class EnergyManager implements DataListener, ParameterStoreListener, Opti
 	/** Constructor */
 	public EnergyManager() {
 		_messageCenter = new MessageCenter( "Energy Manager" );
-		_eventProxy = (EnergyManagerListener)_messageCenter.registerSource( this, EnergyManagerListener.class );
+		_eventProxy = _messageCenter.registerSource( this, EnergyManagerListener.class );
 		
 		_parameterStore = new ParameterStore();
 		_parameterStore.addParameterStoreListener( this );
@@ -385,8 +385,7 @@ public class EnergyManager implements DataListener, ParameterStoreListener, Opti
 		// get dipole corrector magnets with good status
 		final TypeQualifier dipoleCorrectorQualifier = new AndTypeQualifier().and( QualifierFactory.getStatusQualifier( true ) ).and( OrTypeQualifier.qualifierForKinds( VDipoleCorr.s_strType, HDipoleCorr.s_strType ) );
 		final List<Dipole> correctors = sequence.getAllInclusiveNodesWithQualifier( dipoleCorrectorQualifier );
-        for ( final Dipole correctorNode : correctors ) {
-            final Dipole corrector = (Dipole)correctorNode;
+        for ( final Dipole corrector : correctors ) {
 			final DipoleCorrectorAgent agent = new DipoleCorrectorAgent( sequence, corrector, parameterStore );
 			agents.add( agent );
 			agentTable.put( corrector.getId(), agent );
@@ -479,7 +478,7 @@ public class EnergyManager implements DataListener, ParameterStoreListener, Opti
 		
         
         for( Map.Entry<String, Map<String, Object>> settingsEntry : settingsMap.entrySet() ) {
-            final String name = (String)settingsEntry.getKey();
+            final String name = settingsEntry.getKey();
 			final LiveParameter parameter = parameterTable.get( name );
 			if ( parameter != null ) {
 				final Map<String, Object> settings = settingsEntry.getValue();

@@ -349,9 +349,7 @@ public class OpticsOptimizer implements ScoreBoardListener, SolverSessionListene
 		writer.write( "# Objective Results \n" );
 		writer.write( "# Objective  \tValue  \t% Satisfaction \n" );
 		
-		final Iterator objectiveIter = _activeSolverSession.getEnabledObjectives().iterator();
-		while ( objectiveIter.hasNext() ) {
-			final OpticsObjective objective = (OpticsObjective)objectiveIter.next();
+		for ( final OpticsObjective objective : _activeSolverSession.getEnabledObjectives() ) {
 			writer.write( objective.getLabel() );
 			writer.write( "  \t" + objective.getDisplayValue( solution.getScore( objective ).getValue() ) );
 			writer.write( "  \t" + 100 * solution.getSatisfaction( objective ) );

@@ -114,7 +114,7 @@ public class CoreParameter implements KeyedRecord, DataListener {
 	 */
 	public CoreParameter( final String name, final ParameterTypeAdaptor typeAdaptor ) {
 		_messageCenter = new MessageCenter( "Core Parameter" );
-		_eventProxy = (CoreParameterListener)_messageCenter.registerSource( this, CoreParameterListener.class );
+		_eventProxy = _messageCenter.registerSource( this, CoreParameterListener.class );
 		
 		_name = name;
 		_typeAdaptor = typeAdaptor;
@@ -234,7 +234,7 @@ public class CoreParameter implements KeyedRecord, DataListener {
     public Object valueForKey( final String key ) {
 		final ValueGetter valueGetter;
 		synchronized( VALUE_GETTERS ) {
-			valueGetter = (ValueGetter)VALUE_GETTERS.get(key);			
+			valueGetter = VALUE_GETTERS.get(key);			
 		}
 		return ( valueGetter != null ) ? valueGetter.getValue( this ) : null;
 	}

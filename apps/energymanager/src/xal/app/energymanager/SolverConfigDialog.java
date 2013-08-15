@@ -129,9 +129,7 @@ public class SolverConfigDialog extends JDialog implements SolverSessionListener
 		
 		if ( _solverSession == null )  return;
 		
-		final Iterator objectiveIter = _solverSession.getObjectives().iterator();
-		while( objectiveIter.hasNext() ) {
-			final OpticsObjective objective = (OpticsObjective)objectiveIter.next();
+		for ( final OpticsObjective objective : _solverSession.getObjectives() ) {
 			final OpticsObjectiveEditor editor = OpticsObjectiveEditor.getInstance( objective );
 			_objectiveEditors.add( editor );
 			_objectivesContainer.add( editor );
