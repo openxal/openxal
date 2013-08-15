@@ -150,16 +150,6 @@ public class PVLoggerDataSource {
 	}
 	
 	
-	/** 
-	 * Get the value map for magnets 
-	 * @deprecated use getMagnetMap() instead as this method is misleading since it applies to more than just quads
-	 */
-	@Deprecated
-	public Map<String, Double> getQuadMap() {
-		return getMagnetMap();
-	}
-	
-	
 	/** Get the value map for magnets */
 	public Map<String, Double> getMagnetMap() {
 		final Map<String, Double> pvMap = new HashMap<String, Double>();
@@ -173,16 +163,6 @@ public class PVLoggerDataSource {
 		}
 
 		return pvMap;
-	}
-	
-	
-	/** 
-	 * Get the value map for magnets 
-	 * @deprecated use getMagnetPSMap() instead as this method is misleading since it applies to more than just quads
-	 */
-	@Deprecated
-	public Map<String, Double> getQuadPSMap() {
-		return getMagnetMap();
 	}
 	
 	
