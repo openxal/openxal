@@ -18,7 +18,7 @@ import java.util.*;
  *
  * @author  tap
  */
-public interface DocumentModelListener extends RequestHandlerListener {
+public interface DocumentModelListener extends RemoteMPSRecordListener {
 	/**
 	 * This event indicates that a new handler has been selected
 	 * @param model The model sending the event

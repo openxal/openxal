@@ -633,36 +633,14 @@ class MPSWindow extends XalWindow implements SwingConstants, DataKeys, ScrollPan
 				});
 			}
 			
-            /*
-             public void updatePVs( final DocumentModelListener source ) {
-             channelRefs.clear();
-             final int mpsType = _model.getSelectedMPSTypeIndex();
-             final RemoteMPSRecord handler = _model.getSelectedHandler();
-             System.out.println("UPDATED PVS");
-             if ( mpsType >= 0 && handler != null ) {
-             // TODO: HANDLE - NO EVENTS, check for 0 size
-             try {
-             java.util.List<ChannelRef> refs = new ArrayList<ChannelRef>( handler.getInputPVs(mpsType) );
-             if(refs.size() > 0)
-             channelRefs.addAll( refs );
-             }
-             catch (Exception e) {
-             System.err.println("");
-             }
-             }
-             
-             fireContentsChanged( source, 0, getSize() );
-             }
-             */
-            
+
 			public void updatePVs( final DocumentModelListener source ) {
 				channelRefs.clear();
 				final int mpsType = _model.getSelectedMPSTypeIndex();
 				final RemoteMPSRecord handler = _model.getSelectedHandler();
-				//handler.refresh();
 				if ( mpsType >= 0 && handler != null ) {
                     try {
-					java.util.List<ChannelRef> refs = new ArrayList<>( handler.getMPSPVs(mpsType) );
+					java.util.List<ChannelRef> refs = new ArrayList<>( handler.getMPSPVs( mpsType ) );
                         if(refs.size() > 0) {
                             channelRefs.addAll( refs );
                             System.out.println("[TYPE " + mpsType + "] ADDED PV=" + channelRefs.get(0) );
@@ -678,12 +656,15 @@ class MPSWindow extends XalWindow implements SwingConstants, DataKeys, ScrollPan
 				
 				fireContentsChanged( source, 0, getSize() );
 			}
-			
+
+
 			public int getSize() {
 				int mpsType = _model.getSelectedMPSTypeIndex();
 				RemoteMPSRecord handler = _model.getSelectedHandler();
-				return ( mpsType >= 0 && handler != null ) ? handler.getMPSPVs(mpsType).size() : 0;
+				final java.util.List<ChannelRef> mpsPVs = ( mpsType >= 0 && handler != null ) ? handler.getMPSPVs( mpsType ) : null;
+				return mpsPVs != null ? mpsPVs.size() : 0;
 			}
+
 			
 			public String getElementAt(int index) {
 				try {
@@ -741,6 +722,7 @@ class MPSWindow extends XalWindow implements SwingConstants, DataKeys, ScrollPan
 				});
 			}
 			
+			
 			public void updatePVs( final DocumentModelListener source ) {
 				channelRefs.clear();
 				final int mpsType = _model.getSelectedMPSTypeIndex();
@@ -749,9 +731,8 @@ class MPSWindow extends XalWindow implements SwingConstants, DataKeys, ScrollPan
 				if ( mpsType >= 0 && handler != null ) {
                     // TODO: HANDLE - NO EVENTS, check for 0 size
                     try {
-                    java.util.List<ChannelRef> refs = new ArrayList<ChannelRef>( handler.getInputPVs(mpsType) );
-                    if(refs.size() > 0)
-                        channelRefs.addAll( refs );
+						final java.util.List<ChannelRef> refs = new ArrayList<ChannelRef>( handler.getInputPVs(mpsType) );
+						if(refs.size() > 0)  channelRefs.addAll( refs );
                     }
                     catch (Exception e) {
                         System.err.println("");
@@ -760,10 +741,12 @@ class MPSWindow extends XalWindow implements SwingConstants, DataKeys, ScrollPan
 					
 				fireContentsChanged( source, 0, getSize() );				
 			}
+
 			
 			public int getSize() {
 				return channelRefs.size();
 			}
+			
 			
 			public String getElementAt( int index ) {
 				try {

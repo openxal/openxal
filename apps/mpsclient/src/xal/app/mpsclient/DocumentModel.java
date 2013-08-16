@@ -20,15 +20,12 @@ import java.util.*;
  *
  * @author  tap
  */
-public class DocumentModel implements RequestHandlerListener {
+public class DocumentModel implements RemoteMPSRecordListener {
 	/** main model */
 	protected MPSModel _mainModel;
 	
-    
+	/** selected remote MPS record */
     protected RemoteMPSRecord _selectedHandler;
-    
-	/** selected handler to monitor */
-	protected RequestHandler _selectedRequestHandler;
 	
 	/** The list index of the selected MPS Type */
 	protected int _selectedMPSTypeIndex;
@@ -51,7 +48,6 @@ public class DocumentModel implements RequestHandlerListener {
 		_mainModel = mainModel;
 		_selectedHandler = null;
 		_selectedMPSTypeIndex = -1;
-        _selectedRequestHandler = null;
 	}
 	
 	
@@ -84,10 +80,10 @@ public class DocumentModel implements RequestHandlerListener {
 	 * Set the selected request handler
 	 * @param handler the selected request handler
 	 */
-	public void setSelectedHandler(final RemoteMPSRecord handler) {
-        if ( _selectedHandler != null )  _selectedHandler.removeRequestHandlerListener( this );
+	public void setSelectedHandler( final RemoteMPSRecord handler ) {
+        if ( _selectedHandler != null )  _selectedHandler.removeRemoteMPSRecordListener( this );
 		_selectedHandler = handler;
-        if ( handler != null )  handler.addRequestHandlerListener( this );
+        if ( handler != null )  handler.addRemoteMPSRecordListener( this );
 		setSelectedMPSTypeIndex(-1);
 		_proxy.handlerSelected( this, handler );
 	}

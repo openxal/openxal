@@ -42,34 +42,37 @@ public class RemoteMPSRecord implements UpdateListener {
     
     private String[] _firstHitText;
     
-    /* Remote address */
+    /** Remote address */
     private final String REMOTE_ADDRESS;
     
-    /* If the service is connected */
+    /** If the service is connected */
     private Boolean serviceOkay = false;
     
-    /* List of mps types */
+    /** List of mps types */
     private final List<String> MPS_TYPES;
     
     private UpdateListener _updateListener;
     
-    /* Used for instantiating caches in the constructor */
+    /** Used for instantiating caches in the constructor */
     private int mpsTypeIndex = 0;
     
-    /* Number of mps types */
+    /** Number of mps types */
     final private int numTypes;
     
-    /* Selected mps type index */
+    /** Selected mps type index */
     private int selectedMPSType = 0;
     
-    // messaging
-	protected MessageCenter _messageCenter;
-	protected RequestHandlerListener _proxy;
+    /** message center for dispatching events */
+	private final MessageCenter MESSAGE_CENTER;
+
+	/** proxy to forward events to registered listeners */
+	private final RemoteMPSRecordListener EVENT_PROXY;
 
 	
 	@SuppressWarnings( {"rawtypes", "unchecked"} )		// Generics are incompatible with arrays
     public RemoteMPSRecord( final MPSPortal proxy ) {
-        _messageCenter = new MessageCenter("MPS Record");
+        MESSAGE_CENTER = new MessageCenter("MPS Record");
+		EVENT_PROXY = MESSAGE_CENTER.registerSource( this, RemoteMPSRecordListener.class );
 
         REMOTE_PROXY = proxy;
         REMOTE_ADDRESS = ((ServiceState)proxy).getServiceHost();
@@ -89,14 +92,12 @@ public class RemoteMPSRecord implements UpdateListener {
         
 
         LAUNCH_TIME_CACHE = createRemoteOperationCache( new Callable<Date>() {
-            
             public Date call() {
                 return REMOTE_PROXY.getLaunchTime();
             }        
         });
         
         HOST_CACHE = createRemoteOperationCache( new Callable<String>() {
-            
             public String call() {
                 return REMOTE_PROXY.getHostName();
             }
@@ -203,20 +204,20 @@ public class RemoteMPSRecord implements UpdateListener {
     }
     
     /**
-	 * Add the specified listener as a receiver of events from this request handler
+	 * Add the specified listener as a receiver of events from this record
 	 * @param listener the listener to add as a receiver of events
 	 */
-	public void addRequestHandlerListener(RequestHandlerListener listener) {
-		_messageCenter.registerTarget(listener, this, RequestHandlerListener.class);
+	public void addRemoteMPSRecordListener( final RemoteMPSRecordListener listener ) {
+		MESSAGE_CENTER.registerTarget(listener, this, RemoteMPSRecordListener.class);
     }
 
 	
 	/**
-	 * Remove the specified listener from being a receiver of events from this request handler
-	 * @param listener the listener to remove from receiving events from this request handler
+	 * Remove the specified listener from being a receiver of events from this record
+	 * @param listener the listener to remove from receiving events from this record
 	 */
-	public void removeRequestHandlerListener(RequestHandlerListener listener) {
-        _messageCenter.removeTarget(listener, this, RequestHandlerListener.class);
+	public void removeRemoteMPSRecordListener( final RemoteMPSRecordListener listener ) {
+        MESSAGE_CENTER.removeTarget(listener, this, RemoteMPSRecordListener.class);
 	}
 
 
@@ -389,15 +390,16 @@ public class RemoteMPSRecord implements UpdateListener {
 	 * @param type The MPS latch type for the list of PV tables we wish to process
      * @return List of MPS PVs as ChannelRefs
 	 */
-    protected List<ChannelRef> getMPSPVs(int mpsType) {
+    protected List<ChannelRef> getMPSPVs( final int mpsType ) {
         selectedMPSType = mpsType;
         final List<ChannelRef> channels = new ArrayList<ChannelRef>();
-        //refresh();
-        List<HashMap<String, Object>> pvs = MPS_PVS_CACHE[selectedMPSType].getValue();
-        if(pvs == null) return null;
-        if(pvs.size() > 0) {
-        
-            for(Iterator<HashMap<String, Object>> iter = pvs.iterator() ; iter.hasNext() ; ) {
+        final List<HashMap<String, Object>> pvs = MPS_PVS_CACHE[selectedMPSType].getValue();
+
+		System.out.println( "Fetched pvs: " + pvs );
+
+        if( pvs == null ) return null;
+        if( pvs.size() > 0 ) {
+            for( Iterator<HashMap<String, Object>> iter = pvs.iterator() ; iter.hasNext() ; ) {
                 Map<String, Object> channelMap = (Map<String, Object>)iter.next();
                 String pv = (String)channelMap.get( MPSPortal.CHANNEL_PV_KEY );
                 Boolean connected = (Boolean)channelMap.get( MPSPortal.CHANNEL_CONNECTED_KEY );

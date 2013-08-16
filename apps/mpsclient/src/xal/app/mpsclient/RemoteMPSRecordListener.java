@@ -18,7 +18,7 @@ import java.util.*;
  *
  * @author  tap
  */
-public interface RequestHandlerListener {
+public interface RemoteMPSRecordListener {
 	/**
 	 * Indicates that MPS channels have been updated.
 	 * @param handler The handler sending the event
