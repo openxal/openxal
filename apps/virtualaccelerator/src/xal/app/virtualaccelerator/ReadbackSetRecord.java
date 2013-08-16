@@ -74,6 +74,7 @@ public class ReadbackSetRecord {
 		if ( READ_CHANNEL != null && SET_CHANNEL != null ) {
 			final Double noise = noiseMap.get( READ_CHANNEL );
 			final Double offset = offsetMap.get( READ_CHANNEL );
+			
 			final double readBack = noise != null && offset != null ? NoiseGenerator.setValForPV( basisValue, noise, offset ) : basisValue;
 			_lastSetpoint = basisValue;
 			_lastReadback = readBack;
@@ -89,4 +90,19 @@ public class ReadbackSetRecord {
 			updateReadback( setPoint, noiseMap, offsetMap, listener );
 		}			
 	}	
+	
+	public void setLastSetpoint(Double val) {
+		try {
+			// set a new value
+			SET_CHANNEL.putVal(val);
+			// update cached value
+			
+		} catch (ConnectionException e) {
+			System.out.println("Cannot connect to " + SET_CHANNEL.channelName());
+			e.printStackTrace();
+		} catch (PutException e) {
+			System.out.println("Cannot set value for " + SET_CHANNEL.channelName());
+			e.printStackTrace();
+		}
+	}
 }

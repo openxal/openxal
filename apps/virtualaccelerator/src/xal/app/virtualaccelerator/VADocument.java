@@ -206,12 +206,13 @@ public class VADocument extends AcceleratorDocument implements ActionListener, P
 		_windowReference = windowReference;
 		READBACK_SET_TABLE_MODEL = new KeyValueFilteredTableModel<ReadbackSetRecord>( new ArrayList<ReadbackSetRecord>(), "node.id", "readbackChannel.channelName", "lastReadback", "setpointChannel.channelName", "lastSetpoint" );
 		READBACK_SET_TABLE_MODEL.setColumnClass( "lastReadback", Number.class );
-		READBACK_SET_TABLE_MODEL.setColumnClass( "lastSetpoint", Number.class );
+		READBACK_SET_TABLE_MODEL.setColumnClass( "lastSetpoint", Double.class );
 		READBACK_SET_TABLE_MODEL.setColumnName( "node.id", "Node" );
 		READBACK_SET_TABLE_MODEL.setColumnName( "readbackChannel.channelName", "Readback PV" );
 		READBACK_SET_TABLE_MODEL.setColumnName( "lastReadback", "Readback" );
 		READBACK_SET_TABLE_MODEL.setColumnName( "setpointChannel.channelName", "Setpoint PV" );
 		READBACK_SET_TABLE_MODEL.setColumnName( "lastSetpoint", "Setpoint" );
+		READBACK_SET_TABLE_MODEL.setColumnEditable("lastSetpoint", true);
 		
 		final JTextField filterField = (JTextField)windowReference.getView( "FilterField" );
 		READBACK_SET_TABLE_MODEL.setInputFilterComponent( filterField );
@@ -1293,6 +1294,9 @@ public class VADocument extends AcceleratorDocument implements ActionListener, P
 			bpmOffset = df41.getDoubleValue();
 			solOffset = df51.getDoubleValue();
 
+			// update noise map
+			configureReadbacks();
+			
 			setNoise.setVisible(false);
 		}
 	}
