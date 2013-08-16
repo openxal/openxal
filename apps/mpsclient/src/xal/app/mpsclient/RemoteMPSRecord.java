@@ -17,26 +17,22 @@ public class RemoteMPSRecord implements UpdateListener {
     
     /* Data caches */
     private final RemoteDataCache<Date> LAUNCH_TIME_CACHE;
-    
-    private final RemoteDataCache<Date> LAST_CHECK_TIME_CACHE;
-    
+        
     private final RemoteDataCache<String> HOST_CACHE;
     
     private final RemoteDataCache<Integer> PROCESS_ID_CACHE;
     
     private final RemoteDataCache<Boolean> LOGS_STATS_CACHE;
-    
-    private final RemoteDataCache<Boolean> SERVICE_OKAY_CACHE;
-    
-    private final RemoteDataCache<String[]> FIRST_HIT_TEXT_CACHE;
-    
+
     private final RemoteDataCache<List<String>> MPS_TYPES_CACHE;
+
+    private final RemoteDataCache<String>[] FIRST_HIT_TEXT_CACHE;
+
+    private final RemoteDataCache<List<Map<String, Object>>>[] LATEST_MPS_EVENTS_CACHE;
     
-    private final RemoteDataCache<List<HashMap<String, Object>>>[] LATEST_MPS_EVENTS_CACHE;
+    private final RemoteDataCache<List<Map<String, Object>>>[] MPS_PVS_CACHE;
     
-    private final RemoteDataCache<List<HashMap<String, Object>>>[] MPS_PVS_CACHE;
-    
-    private final RemoteDataCache<List<HashMap<String, Object>>>[] INPUT_PVS_CACHE;
+    private final RemoteDataCache<List<Map<String, Object>>>[] INPUT_PVS_CACHE;
     
     private final RemoteDataCache<String>[] TRIP_SUMMARY_CACHE;
     
@@ -53,12 +49,9 @@ public class RemoteMPSRecord implements UpdateListener {
     
     private UpdateListener _updateListener;
     
-    /** Used for instantiating caches in the constructor */
-    private int mpsTypeIndex = 0;
-    
     /** Number of mps types */
     final private int numTypes;
-    
+
     /** Selected mps type index */
     private int selectedMPSType = 0;
     
@@ -85,11 +78,12 @@ public class RemoteMPSRecord implements UpdateListener {
         
         _firstHitText = new String[numTypes];
 
+		FIRST_HIT_TEXT_CACHE = new RemoteDataCache[numTypes];
         LATEST_MPS_EVENTS_CACHE = new RemoteDataCache[numTypes];
         TRIP_SUMMARY_CACHE = new RemoteDataCache[numTypes];
         MPS_PVS_CACHE = new RemoteDataCache[numTypes];
         INPUT_PVS_CACHE = new RemoteDataCache[numTypes];
-        
+
 
         LAUNCH_TIME_CACHE = createRemoteOperationCache( new Callable<Date>() {
             public Date call() {
@@ -123,26 +117,6 @@ public class RemoteMPSRecord implements UpdateListener {
             }
         });
         
-        SERVICE_OKAY_CACHE = createRemoteOperationCache( new Callable<Boolean> () {
-            public Boolean call() {
-                return getServiceOkay();
-            }
-        });
-        
-        LAST_CHECK_TIME_CACHE = createRemoteOperationCache( new Callable<Date> () {
-            public Date call() {
-                return getLastCheckTime();
-            }
-        });
-        
-        FIRST_HIT_TEXT_CACHE = createRemoteOperationCache ( new Callable<String[]> () {
-            public String[] call() {
-                for(int type =0; type < numTypes; type++) {
-                    _firstHitText[type] = REMOTE_PROXY.getFirstHitText(type);
-                }
-                return _firstHitText;
-            }
-        });
         
         MPS_TYPES_CACHE = createRemoteOperationCache ( new Callable<List<String>> () {
             public List<String> call() {
@@ -151,55 +125,54 @@ public class RemoteMPSRecord implements UpdateListener {
         });
 
         
-        for(mpsTypeIndex = 0; mpsTypeIndex < numTypes; mpsTypeIndex++) {
+        for( int mpsTypeIndex = 0; mpsTypeIndex < numTypes; mpsTypeIndex++ ) {
+			final int typeIndex = mpsTypeIndex;		// declare local final variable so it can be used in capture blocks
+
             System.out.println("Creating remote latest event cache (" + mpsTypeIndex + ").");
             
-            LATEST_MPS_EVENTS_CACHE[mpsTypeIndex] = createRemoteOperationCache( new Callable<List<HashMap<String, Object>>>() {
-                
-                public List<HashMap<String, Object>> call() {
-                    return REMOTE_PROXY.getLatestMPSEvents(selectedMPSType);
+			FIRST_HIT_TEXT_CACHE[mpsTypeIndex] = createRemoteOperationCache ( new Callable<String> () {
+				public String call() {
+					return REMOTE_PROXY.getFirstHitText( typeIndex );
+				}
+			});
+            FIRST_HIT_TEXT_CACHE[mpsTypeIndex].setUpdateListener( this );
+
+            LATEST_MPS_EVENTS_CACHE[mpsTypeIndex] = createRemoteOperationCache( new Callable<List<Map<String, Object>>>() {
+                public List<Map<String, Object>> call() {
+                    return REMOTE_PROXY.getLatestMPSEvents( typeIndex );
                 }
                 
             });
-            
             LATEST_MPS_EVENTS_CACHE[mpsTypeIndex].setUpdateListener( this );
-            
+
             TRIP_SUMMARY_CACHE[mpsTypeIndex] = createRemoteOperationCache(new Callable<String> () {
                 public String call() {
-                    return REMOTE_PROXY.getMPSTripSummary(selectedMPSType);
+                    return REMOTE_PROXY.getMPSTripSummary( typeIndex );
                 }
             });
-            
             TRIP_SUMMARY_CACHE[mpsTypeIndex].setUpdateListener( this );
             
-            MPS_PVS_CACHE[mpsTypeIndex] = createRemoteOperationCache( new Callable<List<HashMap<String, Object>>>() {
-               
-                public List<HashMap<String, Object>> call() {
-                    return REMOTE_PROXY.getMPSChannelInfo(selectedMPSType);
+            MPS_PVS_CACHE[mpsTypeIndex] = createRemoteOperationCache( new Callable<List<Map<String, Object>>>() {
+                public List<Map<String, Object>> call() {
+                    return REMOTE_PROXY.getMPSChannelInfo( typeIndex );
                 }
                 
             });
-            
             MPS_PVS_CACHE[mpsTypeIndex].setUpdateListener( this );
-            
-            INPUT_PVS_CACHE[mpsTypeIndex] = createRemoteOperationCache( new Callable<List<HashMap<String, Object>>>() {
-               
-                public List<HashMap<String, Object>> call() {
-                    return REMOTE_PROXY.getInputChannelInfo( selectedMPSType );
+			
+            INPUT_PVS_CACHE[mpsTypeIndex] = createRemoteOperationCache( new Callable<List<Map<String, Object>>>() {
+                public List<Map<String, Object>> call() {
+                    return REMOTE_PROXY.getInputChannelInfo( typeIndex );
                 }
                 
             });
-            
             INPUT_PVS_CACHE[mpsTypeIndex].setUpdateListener( this );
         }
         
         LAUNCH_TIME_CACHE.setUpdateListener( this );
-        LAST_CHECK_TIME_CACHE.setUpdateListener( this );
-        SERVICE_OKAY_CACHE.setUpdateListener( this );
         HOST_CACHE.setUpdateListener( this );
         PROCESS_ID_CACHE.setUpdateListener( this );
         LOGS_STATS_CACHE.setUpdateListener( this );
-        FIRST_HIT_TEXT_CACHE.setUpdateListener( this );
         MPS_TYPES_CACHE.setUpdateListener( this );
     }
     
@@ -273,9 +246,9 @@ public class RemoteMPSRecord implements UpdateListener {
         
     }
     
-    public List<HashMap<String, Object>> getLatestMPSEvents(int mpsType) {
+    public List<Map<String, Object>> getLatestMPSEvents(int mpsType) {
         selectedMPSType = mpsType;
-        return REMOTE_PROXY.getLatestMPSEvents(mpsType);
+        return REMOTE_PROXY.getLatestMPSEvents( mpsType );
     }
     
     
@@ -301,17 +274,20 @@ public class RemoteMPSRecord implements UpdateListener {
 	static private <DataType> RemoteDataCache<DataType> createRemoteOperationCache( final Callable<DataType> operation ) {
 		return new RemoteDataCache<DataType>( operation );
 	}
-    
+
+	
     /** set the update handler which is called when the cache has been updated */
 	public void setUpdateListener( final UpdateListener handler ) {
 		_updateListener = handler;
 	}
-    
+
+	
 	/** get the update handler */
 	public UpdateListener getUpdateListener() {
 		return _updateListener;
 	}
-    
+
+	
     /** called when the source posts an update to this observer */
 	public void observedUpdate( final Object source ) {
 		// propagate update notification to the update listener if any
@@ -320,56 +296,57 @@ public class RemoteMPSRecord implements UpdateListener {
 			updateHandler.observedUpdate( this );
 		}
 	}
-    
+
+	
     /** refresh the record */
 	public void refresh() {
         try {
-            /**
-             *  TODO: refresh chaches
-             */  
-//            for(int mpsTypeIndex = 0; mpsTypeIndex < numTypes; mpsTypeIndex++) {
-//                TRIP_SUMMARY_CACHE[mpsTypeIndex].refresh();
+            for( int mpsTypeIndex = 0; mpsTypeIndex < numTypes; mpsTypeIndex++ ) {
 //                LATEST_MPS_EVENTS_CACHE[mpsTypeIndex].refresh();
+//                TRIP_SUMMARY_CACHE[mpsTypeIndex].refresh();
 //                MPS_PVS_CACHE[mpsTypeIndex].refresh();
 //                INPUT_PVS_CACHE[mpsTypeIndex].refresh();
-//            }
-            FIRST_HIT_TEXT_CACHE.refresh();
-            SERVICE_OKAY_CACHE.refresh();
-            LAST_CHECK_TIME_CACHE.refresh();
+//				  FIRST_HIT_TEXT_CACHE[mpsTypeIndex].refresh();
+            }
             MPS_TYPES_CACHE.refresh();
          }
         catch(Exception e) {
             serviceOkay = false;
         }
 	}
-    
+
+	
     public List<String> getMPSTypes() {
         return MPS_TYPES_CACHE.getValue();
     }
 
+
     public String getHostName() {
-        
         final String hostName = HOST_CACHE.getValue();
-        
         return hostName != null ? hostName : REMOTE_ADDRESS;
     }
-    
+
+
     public Date getLaunchTime() {
         return LAUNCH_TIME_CACHE.getValue();
     }
-    
+
+
     public Integer getProcessID() {
         return PROCESS_ID_CACHE.getValue();
     }
-    
+
+
     public Boolean getLogsStatistics() {
         return LOGS_STATS_CACHE.getValue();
     }
-    
+
+
     public void shutdown(int code) {
         REMOTE_PROXY.shutdown(code);
     }
-    
+
+	
     public void reloadSignals() {
 		if ( REMOTE_PROXY != null ) {
 			try {
@@ -384,6 +361,7 @@ public class RemoteMPSRecord implements UpdateListener {
 			}
 		}
 	}
+
 	
     /**
 	 * Process the channels by converting each PV table into a convenient ChannelRef.
@@ -393,14 +371,14 @@ public class RemoteMPSRecord implements UpdateListener {
     protected List<ChannelRef> getMPSPVs( final int mpsType ) {
         selectedMPSType = mpsType;
         final List<ChannelRef> channels = new ArrayList<ChannelRef>();
-        final List<HashMap<String, Object>> pvs = MPS_PVS_CACHE[selectedMPSType].getValue();
+        final List<Map<String, Object>> pvs = MPS_PVS_CACHE[selectedMPSType].getValue();
 
 		System.out.println( "Fetched pvs: " + pvs );
 
         if( pvs == null ) return null;
         if( pvs.size() > 0 ) {
-            for( Iterator<HashMap<String, Object>> iter = pvs.iterator() ; iter.hasNext() ; ) {
-                Map<String, Object> channelMap = (Map<String, Object>)iter.next();
+            for( Iterator<Map<String, Object>> iter = pvs.iterator() ; iter.hasNext() ; ) {
+                final Map<String, Object> channelMap = iter.next();
                 String pv = (String)channelMap.get( MPSPortal.CHANNEL_PV_KEY );
                 Boolean connected = (Boolean)channelMap.get( MPSPortal.CHANNEL_CONNECTED_KEY );
                 channels.add( new ChannelRef(pv, connected) );	// make the channel reference
@@ -412,14 +390,15 @@ public class RemoteMPSRecord implements UpdateListener {
         }
     }
     
-    
+
+	/** Get the input PVs */
     protected List<ChannelRef> getInputPVs(int mpsType) {
         selectedMPSType = mpsType;
         final List<ChannelRef> channels = new ArrayList<ChannelRef>();
-        List<HashMap<String, Object>> pvs = INPUT_PVS_CACHE[mpsType].getValue();
+        List<Map<String, Object>> pvs = INPUT_PVS_CACHE[mpsType].getValue();
         if(pvs.size() > 0) {
-            for(Iterator<HashMap<String, Object>> iter = pvs.iterator() ; iter.hasNext() ; ) {
-                Map<String, Object> channelMap = (Map<String, Object>)iter.next();
+            for(Iterator<Map<String, Object>> iter = pvs.iterator() ; iter.hasNext() ; ) {
+                final Map<String, Object> channelMap = iter.next();
                 String pv = (String)channelMap.get( MPSPortal.CHANNEL_PV_KEY );
                 Boolean connected = (Boolean)channelMap.get( MPSPortal.CHANNEL_CONNECTED_KEY );
                 //System.out.println("Input PV is connected=" + connected);

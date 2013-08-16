@@ -40,7 +40,6 @@ public class MPSService implements MPSPortal {
 
 	/**
 	 * LoggerService constructor
-	 *
 	 * @param model  The MPS model
 	 */
 	public MPSService( final MPSModel model ) {
@@ -67,7 +66,6 @@ public class MPSService implements MPSPortal {
 
 	/**
 	 * Shutdown the process.
-	 *
 	 * @param code  The shutdown code which is normally just 0.
 	 */
 	public void shutdown( int code ) {
@@ -77,7 +75,6 @@ public class MPSService implements MPSPortal {
 
 	/**
 	 * Get the name of the host where the application is running.
-	 *
 	 * @return   The name of the host where the application is running.
 	 */
 	public String getHostName() {
@@ -92,7 +89,6 @@ public class MPSService implements MPSPortal {
 
 	/**
 	 * Get the launch time of the service.
-	 *
 	 * @return   the launch time of the application.
 	 */
 	public Date getLaunchTime() {
@@ -108,9 +104,7 @@ public class MPSService implements MPSPortal {
 
 	/**
 	 * Get the list of MPS latch types. Monitors are listed as an array and their
-	 * index in this array can be used in several methods to reference a specific
-	 * monitor.
-	 *
+	 * index in this array can be used in several methods to reference a specific monitor.
 	 * @return   the list of MPS latch types as strings (e.g. "FPL", "FPAR")
 	 */
 	public Vector<String> getMPSTypes() {
@@ -125,9 +119,7 @@ public class MPSService implements MPSPortal {
 
 	/**
 	 * Determing if the correlator is running.
-	 *
-	 * @param monitorIndex  index of the monitor to test if its correlator is
-	 *      running
+	 * @param monitorIndex  index of the monitor to test if its correlator is running
 	 * @return              true if the correlator is running and false otherwise.
 	 */
 	public boolean isRunning( final int monitorIndex ) {
@@ -137,7 +129,6 @@ public class MPSService implements MPSPortal {
 
 	/**
 	 * Stop looking for MPS trips
-	 *
 	 * @param monitorIndex  index of the monitor that should stop its correlator
 	 */
 	public void stopCorrelator( final int monitorIndex ) {
@@ -147,7 +138,6 @@ public class MPSService implements MPSPortal {
 
 	/**
 	 * Restart the poster after a pause
-	 *
 	 * @param monitorIndex  index of the monitor that should restart its correlator
 	 */
 	public void restartCorrelator( final int monitorIndex ) {
@@ -161,18 +151,15 @@ public class MPSService implements MPSPortal {
 	 * The values are Date objects that indicate
 	 * the time the last event of the specified type had happened. This method may
 	 * be used by clients to determine if their information is current.
-	 * Since XML-RPC does not preserve sub-second accuracy of dates, we must pass
-	 * dates as a string.
-	 *
 	 * @param monitorIndex  index of the monitor whose timestamps are requested
 	 * @return              a table of latest event timestamps keyed by event type
 	 */
-	public HashMap<String, String> getLastEventTimes( int monitorIndex ) {
-		MPSMonitor monitor = _model.getMonitor( monitorIndex );
-		HashMap<String, String> eventTimes = new HashMap<>();
-		eventTimes.put( MPS_CHANNEL_EVENT, asString( monitor.getLastMPSChannelEventTime() ) );
-		eventTimes.put( INPUT_CHANNEL_EVENT, asString( monitor.getLastInputChannelEventTime() ) );
-		eventTimes.put( MPS_EVENT, asString( monitor.getLastMPSEventTime() ) );
+	public Map<String, Date> getLastEventTimes( int monitorIndex ) {
+		final MPSMonitor monitor = _model.getMonitor( monitorIndex );
+		final Map<String, Date> eventTimes = new HashMap<>();
+		eventTimes.put( MPS_CHANNEL_EVENT, monitor.getLastMPSChannelEventTime() );
+		eventTimes.put( INPUT_CHANNEL_EVENT, monitor.getLastInputChannelEventTime() );
+		eventTimes.put( MPS_EVENT, monitor.getLastMPSEventTime() );
 
 		return eventTimes;
 	}
@@ -183,18 +170,17 @@ public class MPSService implements MPSPortal {
 	 * information is returned as a list of channel info tables (one entry for each
 	 * PV). The channel info table has the CHANNEL_PV_KEY and CHANNEL_CONNECTED_KEY
 	 * keys and provides the signal name and the connection status of a channel.
-	 *
 	 * @param monitorIndex  index of the monitor whose channel info is requested
 	 * @return              The list of all PV info tables for the MPS PVs we are
 	 *      attempting to monitor and log
 	 */
-	public List<HashMap<String, Object>> getMPSChannelInfo( int monitorIndex ) {
+	public List<Map<String, Object>> getMPSChannelInfo( int monitorIndex ) {
 		final ChannelWrapper[] wrappers = _model.getMonitor( monitorIndex ).getMPSChannelWrappers();
-		final List<HashMap<String, Object>> channelInfo = new ArrayList<>( wrappers.length );
+		final List<Map<String, Object>> channelInfo = new ArrayList<>( wrappers.length );
 
 		for ( int index = 0; index < wrappers.length; index++ ) {
 			final ChannelWrapper wrapper = wrappers[index];
-			final HashMap<String, Object> info = new HashMap<>();
+			final Map<String, Object> info = new HashMap<>();
 			info.put( CHANNEL_PV_KEY, wrapper.getPV() );
 			info.put( CHANNEL_CONNECTED_KEY, new Boolean( wrapper.isConnected() ) );
 			channelInfo.add( info );
@@ -209,19 +195,18 @@ public class MPSService implements MPSPortal {
 	 * information is returned as a list of channel info tables (one entry for each
 	 * PV). The channel info table has the CHANNEL_PV_KEY and CHANNEL_CONNECTED_KEY
 	 * keys and provides the signal name and the connection status of a channel.
-	 *
 	 * @param monitorIndex  index of the monitor whose channel info is requested
 	 * @return              The list of all PV info tables for the Input PVs we are
 	 *      attempting to monitor and log
 	 */
-	public List<HashMap<String, Object>> getInputChannelInfo( int monitorIndex ) {
+	public List<Map<String, Object>> getInputChannelInfo( int monitorIndex ) {
 		final Collection<InputMonitor> inputs = new HashSet<>( _model.getMonitor( monitorIndex ).getInputMonitors() );
-		final List<HashMap<String, Object>> channelInfo = new ArrayList<>( inputs.size() );
+		final List<Map<String, Object>> channelInfo = new ArrayList<>( inputs.size() );
 
 		final Iterator<InputMonitor> inputIter = inputs.iterator();
 		while( inputIter.hasNext() ) {
 			final InputMonitor input = inputIter.next();
-			final HashMap<String, Object> info = new HashMap<>();
+			final Map<String, Object> info = new HashMap<>();
 			info.put( CHANNEL_PV_KEY, input.getSignal() );
 			info.put( CHANNEL_CONNECTED_KEY, new Boolean( input.isConnected() ) );
 			channelInfo.add( info );
@@ -232,9 +217,7 @@ public class MPSService implements MPSPortal {
 
 
 	/**
-	 * Reload the MPS signals from the signal data source for the specified
-	 * monitor.
-	 *
+	 * Reload the MPS signals from the signal data source for the specified monitor.
 	 * @param monitorIndex  index of the monitor that should reload its signals
 	 */
 	public void reloadSignals( int monitorIndex ) {
@@ -244,7 +227,6 @@ public class MPSService implements MPSPortal {
 
 	/**
 	 * Get the summary of first hit statistics
-	 *
 	 * @param monitorIndex  index of the monitor whose statistics are to be fetched
 	 * @return              the first hit statistics summary
 	 */
@@ -255,7 +237,6 @@ public class MPSService implements MPSPortal {
 
 	/**
 	 * Does nothing at this time.
-	 *
 	 * @param monitorIndex  Description of the Parameter
 	 * @return              null
 	 */
@@ -266,7 +247,6 @@ public class MPSService implements MPSPortal {
 
 	/**
 	 * Get the summary of MPS trips.
-	 *
 	 * @param monitorIndex  index of the monitor whose statistics are to be fetched
 	 * @return              summary of MPS trips
 	 */
@@ -278,13 +258,12 @@ public class MPSService implements MPSPortal {
 	/**
 	 * Get the list of MPS events since the specified time.  Unfortunately, XML-RPC does
 	 * not preserve the millisecond accuracy of time, so we must pass a string representation.
-	 *
 	 * @param monitorIndex  index of the monitor whose statistics are to be fetched
 	 * @param timeStr       String representation of the reference time 
 	 * @return              the latest processed MPS events since the specified
 	 *      time
 	 */
-	public List<HashMap<String, Object>> getMPSEventsSince( final int monitorIndex, final String timeStr ) {
+	public List<Map<String, Object>> getMPSEventsSince( final int monitorIndex, final String timeStr ) {
 		final Date time = asDate(timeStr);
 		final List<MPSEvent> events = _model.getMonitor( monitorIndex ).getMPSEventsSince( time );
 
@@ -294,11 +273,10 @@ public class MPSService implements MPSPortal {
 
 	/**
 	 * Get the list of latest MPS events.
-	 *
 	 * @param monitorIndex  index of the monitor whose statistics are to be fetched
 	 * @return              the latest list of processed MPS events
 	 */
-	public List<HashMap<String, Object>> getLatestMPSEvents( final int monitorIndex ) {
+	public List<Map<String, Object>> getLatestMPSEvents( final int monitorIndex ) {
 		final List<MPSEvent> events = _model.getMonitor( monitorIndex ).getMPSEventBuffer();
 
 		return processMPSEvents( events );
@@ -307,7 +285,6 @@ public class MPSService implements MPSPortal {
 
 	/**
 	 * Generate a date represented by the specified string.
-	 *
 	 * @param dateStr  String representation of a date.
 	 * @return         The date represented by the specified string.
 	 */
@@ -325,7 +302,6 @@ public class MPSService implements MPSPortal {
 
 	/**
 	 * Generate a string representation of a string.
-	 *
 	 * @param date  The date to represent with a string.
 	 * @return      The string representation of the date.
 	 */
@@ -338,17 +314,16 @@ public class MPSService implements MPSPortal {
 
 	/**
 	 * Get the list of processed MPS events packaged for delivery
-	 *
 	 * @param mpsEvents  The input list of MPS events
 	 * @return           the processed MPS events
 	 */
-	private List<HashMap<String, Object>> processMPSEvents( final List<MPSEvent> mpsEvents ) {
-		List<HashMap<String, Object>> eventList = new ArrayList<>( mpsEvents.size() );
+	private List<Map<String, Object>> processMPSEvents( final List<MPSEvent> mpsEvents ) {
+		final List<Map<String, Object>> eventList = new ArrayList<>( mpsEvents.size() );
 
 		for ( Iterator<MPSEvent> iter = mpsEvents.iterator(); iter.hasNext();  ) {
-			MPSEvent event = iter.next();
-			List<HashMap<String, Object>> signalEvents = packageMPSEvent( event );
-			HashMap<String, Object> info = new HashMap<String, Object>();
+			final MPSEvent event = iter.next();
+			final List<Map<String, Object>> signalEvents = packageMPSEvent( event );
+			final Map<String, Object> info = new HashMap<String, Object>();
 			info.put( TIMESTAMP_KEY, asString(event.getTimestamp()) );
 			info.put( SIGNAL_EVENTS_KEY, signalEvents );
 			eventList.add( info );
@@ -360,17 +335,16 @@ public class MPSService implements MPSPortal {
 
 	/**
 	 * Package an MPSEvent into a vector of signal event maps
-	 *
 	 * @param mpsEvent  The MPSEvent to package
 	 * @return          a vector of signal event maps
 	 */
-	private List<HashMap<String, Object>> packageMPSEvent( MPSEvent mpsEvent ) {
-		List<SignalEvent> events = mpsEvent.getSignalEvents();
-		List<HashMap<String, Object>> eventList = new ArrayList<>( events.size() );
+	private List<Map<String, Object>> packageMPSEvent( final MPSEvent mpsEvent ) {
+		final List<SignalEvent> events = mpsEvent.getSignalEvents();
+		final List<Map<String, Object>> eventList = new ArrayList<>( events.size() );
 
 		for ( Iterator<SignalEvent> iter = events.iterator(); iter.hasNext();  ) {
-			SignalEvent event = iter.next();
-			HashMap<String, Object> info = new HashMap<>();
+			final SignalEvent event = iter.next();
+			final Map<String, Object> info = new HashMap<>();
 			info.put( CHANNEL_PV_KEY, event._signal );
 			info.put( TIMESTAMP_KEY, event._timestamp.getFullSeconds().toString() );
 			eventList.add( info );

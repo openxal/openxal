@@ -123,7 +123,7 @@ public interface MPSPortal {
 	 * @param monitorIndex  index of the monitor whose timestamps are requested
 	 * @return  a table of latest event timestamps keyed by event type
 	 */
-	public HashMap<String, String> getLastEventTimes( int monitorIndex );
+	public Map<String, Date> getLastEventTimes( int monitorIndex );
 
 
 	/**
@@ -134,7 +134,7 @@ public interface MPSPortal {
 	 * @param monitorIndex  index of the monitor whose channel info is requested
 	 * @return  The list of all MPS PV info tables for the PVs we are attempting to monitor and log
 	 */
-	public List<HashMap<String, Object>> getMPSChannelInfo( int monitorIndex );
+	public List<Map<String, Object>> getMPSChannelInfo( int monitorIndex );
 
 
 	/**
@@ -145,7 +145,7 @@ public interface MPSPortal {
 	 * @param monitorIndex  index of the monitor whose channel info is requested
 	 * @return  The list of all PV info tables for the Input PVs we are attempting to monitor and log
 	 */
-	public List<HashMap<String, Object>> getInputChannelInfo( int monitorIndex );
+	public List<Map<String, Object>> getInputChannelInfo( int monitorIndex );
 
 
 	/**
@@ -170,7 +170,7 @@ public interface MPSPortal {
 	 * @param timeStr  a string representation of the reference time
 	 * @return  the latest processed MPS events since the specified time
 	 */
-	public List<HashMap<String, Object>> getMPSEventsSince( final int monitorIndex, final String timeStr );
+	public List<Map<String, Object>> getMPSEventsSince( final int monitorIndex, final String timeStr );
 
 
 	/**
@@ -178,6 +178,6 @@ public interface MPSPortal {
 	 * @param monitorIndex  index of the monitor whose statistics are to be fetched
 	 * @return  the latest ordered list of MPS events
 	 */
-	public List<HashMap<String, Object>> getLatestMPSEvents( int monitorIndex );
+	public List<Map<String, Object>> getLatestMPSEvents( int monitorIndex );
 }
 
