@@ -38,12 +38,14 @@ public class ReadbackSetRecord {
 		SET_CHANNEL = setChannel;
 	}
 	
-	
+
+
 	/** get the accelerator node */
 	public AcceleratorNode getNode() {
 		return NODE;
 	}
 	
+
 	
 	/** get the readback channel */
 	public Channel getReadbackChannel() {
@@ -68,13 +70,27 @@ public class ReadbackSetRecord {
 		return _lastReadback;
 	}
 	
+
+	public void setLastSetpoint(Double value) {
+		try {
+			SET_CHANNEL.putVal(value);
+		} catch (ConnectionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (PutException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+
+	
 	
 	/** update the readback from the setpoint, noise and offset */
 	public void updateReadback( final double basisValue, final Map<Channel, Double> noiseMap, final Map<Channel, Double> offsetMap, final PutListener listener ) throws Exception {
 		if ( READ_CHANNEL != null && SET_CHANNEL != null ) {
 			final Double noise = noiseMap.get( READ_CHANNEL );
 			final Double offset = offsetMap.get( READ_CHANNEL );
-			
 			final double readBack = noise != null && offset != null ? NoiseGenerator.setValForPV( basisValue, noise, offset ) : basisValue;
 			_lastSetpoint = basisValue;
 			_lastReadback = readBack;
@@ -90,19 +106,4 @@ public class ReadbackSetRecord {
 			updateReadback( setPoint, noiseMap, offsetMap, listener );
 		}			
 	}	
-	
-	public void setLastSetpoint(Double val) {
-		try {
-			// set a new value
-			SET_CHANNEL.putVal(val);
-			// update cached value
-			
-		} catch (ConnectionException e) {
-			System.out.println("Cannot connect to " + SET_CHANNEL.channelName());
-			e.printStackTrace();
-		} catch (PutException e) {
-			System.out.println("Cannot set value for " + SET_CHANNEL.channelName());
-			e.printStackTrace();
-		}
-	}
 }

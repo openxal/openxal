@@ -121,11 +121,11 @@ public class VAServer {
 		final TypeQualifier qualifier = QualifierFactory.qualifierForQualifiers( true, nodeFilter );
 		final List<AcceleratorNode> nodes = SEQUENCE.getAllInclusiveNodesWithQualifier( qualifier );
 		
-        System.out.println( "type: " + type );
+//        System.out.println( "type: " + type );
 		for ( AcceleratorNode node : nodes ) {
-            System.out.println( "node: " + node.getId() + ", soft type: " + node.getSoftType() );
+//            System.out.println( "node: " + node.getId() + ", soft type: " + node.getSoftType() );
 			final Collection<String> handles = processor.getHandlesToProcess( node );
-            System.out.println( "handles: " + handles + "\n\n" );
+//            System.out.println( "handles: " + handles + "\n\n" );
             for ( final String handle : handles ) {
 				final Channel channel = node.getChannel( handle );
 				if ( channel != null ) {
