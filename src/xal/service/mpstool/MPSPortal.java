@@ -35,17 +35,20 @@ public interface MPSPortal {
 	/** key used in the latest MPS event table */
 	public final static String TIMESTAMP_KEY = "TIMESTAMP";
 
-	/** key used in the event time table to indicate an MPS channel event */
-	public final static String MPS_CHANNEL_EVENT = "MPS-CHANNEL-EVENT";
-
-	/** key used in the event time table to indicate an MPS channel event */
-	public final static String INPUT_CHANNEL_EVENT = "INPUT-CHANNEL-EVENT";
-
 	/** key used in the event time table to indicate signal events */
 	public final static String SIGNAL_EVENTS_KEY = "SIGNAL_EVENTS";
 
+	/** key used in the event time table to indicate an MPS channel event */
+	public final static int MPS_CHANNEL_EVENT_ID = 0;
+
+	/** key used in the event time table to indicate an MPS channel event */
+	public final static int INPUT_CHANNEL_EVENT_ID = MPS_CHANNEL_EVENT_ID + 1;
+
 	/** key used in the event time table to indicate an MPS event */
-	public final static String MPS_EVENT = "MPS-EVENT";
+	public final static int MPS_EVENT_ID = INPUT_CHANNEL_EVENT_ID + 1;
+
+	/** count of the event IDs */
+	public final static int EVENT_ID_COUNT = MPS_EVENT_ID + 1;
 	
 	
 	/** Get the process ID of the process in which the service runs or 0 if it is unknown */
@@ -116,14 +119,13 @@ public interface MPSPortal {
 
 
 	/**
-	 * Get the table of event timestamps. The table keys indicate the type of event
-	 * (e.g. CHANNEL-EVENT or MPS-EVENT). The values are Date objects that indicate
-	 * the time the last event of the specified type had happened. This method may
+	 * Get an arry of timestamps corresponding to the different event ids.
+	 * The values are Date objects that indicate the time the last event of the specified type had happened. This method may
 	 * be used by clients to determine if their information is current.
 	 * @param monitorIndex  index of the monitor whose timestamps are requested
-	 * @return  a table of latest event timestamps keyed by event type
+	 * @return an array of timestamps
 	 */
-	public Map<String, Date> getLastEventTimes( int monitorIndex );
+	public Date[] getLastEventTimes( int monitorIndex );
 
 
 	/**
