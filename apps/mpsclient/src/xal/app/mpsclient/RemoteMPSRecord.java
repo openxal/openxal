@@ -28,6 +28,9 @@ public class RemoteMPSRecord implements UpdateListener {
 
     private final RemoteDataCache<String>[] FIRST_HIT_TEXT_CACHE;
 
+	/** cache of the timestamps for the latest events */
+	private final RemoteDataCache<Date[]>[] LAST_EVENT_TIMESTAMP_CACHE;
+
     private final RemoteDataCache<List<Map<String, Object>>>[] LATEST_MPS_EVENTS_CACHE;
     
     private final RemoteDataCache<List<Map<String, Object>>>[] MPS_PVS_CACHE;
@@ -45,21 +48,24 @@ public class RemoteMPSRecord implements UpdateListener {
     private Boolean serviceOkay = false;
     
     /** List of mps types */
-    private final List<String> MPS_TYPES;
-    
-    private UpdateListener _updateListener;
-    
+    final private List<String> MPS_TYPES;
+
     /** Number of mps types */
-    final private int numTypes;
+    final private int MPS_TYPE_COUNT;
 
     /** Selected mps type index */
-    private int selectedMPSType = 0;
-    
+    private int _selectedMPSType = 0;
+
+    private UpdateListener _updateListener;
+
     /** message center for dispatching events */
 	private final MessageCenter MESSAGE_CENTER;
 
 	/** proxy to forward events to registered listeners */
 	private final RemoteMPSRecordListener EVENT_PROXY;
+
+	/** timestamps of the last events indexed by event ID */
+	private final Date[] LAST_EVENT_TIMESTAMPS;
 
 	
 	@SuppressWarnings( {"rawtypes", "unchecked"} )		// Generics are incompatible with arrays
@@ -67,22 +73,25 @@ public class RemoteMPSRecord implements UpdateListener {
         MESSAGE_CENTER = new MessageCenter("MPS Record");
 		EVENT_PROXY = MESSAGE_CENTER.registerSource( this, RemoteMPSRecordListener.class );
 
+		LAST_EVENT_TIMESTAMPS = new Date[MPSPortal.EVENT_ID_COUNT];
+
         REMOTE_PROXY = proxy;
         REMOTE_ADDRESS = ((ServiceState)proxy).getServiceHost();
-        
+
         MPS_TYPES = REMOTE_PROXY.getMPSTypes();
         
-        numTypes = MPS_TYPES.size();
+        MPS_TYPE_COUNT = MPS_TYPES.size();
         
-        System.out.println("MPS TYPES=" + numTypes);
+        System.out.println("MPS TYPES=" + MPS_TYPE_COUNT);
         
-        _firstHitText = new String[numTypes];
+        _firstHitText = new String[MPS_TYPE_COUNT];
 
-		FIRST_HIT_TEXT_CACHE = new RemoteDataCache[numTypes];
-        LATEST_MPS_EVENTS_CACHE = new RemoteDataCache[numTypes];
-        TRIP_SUMMARY_CACHE = new RemoteDataCache[numTypes];
-        MPS_PVS_CACHE = new RemoteDataCache[numTypes];
-        INPUT_PVS_CACHE = new RemoteDataCache[numTypes];
+		LAST_EVENT_TIMESTAMP_CACHE = new RemoteDataCache[MPS_TYPE_COUNT];
+		FIRST_HIT_TEXT_CACHE = new RemoteDataCache[MPS_TYPE_COUNT];
+        LATEST_MPS_EVENTS_CACHE = new RemoteDataCache[MPS_TYPE_COUNT];
+        TRIP_SUMMARY_CACHE = new RemoteDataCache[MPS_TYPE_COUNT];
+        MPS_PVS_CACHE = new RemoteDataCache[MPS_TYPE_COUNT];
+        INPUT_PVS_CACHE = new RemoteDataCache[MPS_TYPE_COUNT];
 
 
         LAUNCH_TIME_CACHE = createRemoteOperationCache( new Callable<Date>() {
@@ -125,10 +134,48 @@ public class RemoteMPSRecord implements UpdateListener {
         });
 
         
-        for( int mpsTypeIndex = 0; mpsTypeIndex < numTypes; mpsTypeIndex++ ) {
+        for( int mpsTypeIndex = 0; mpsTypeIndex < MPS_TYPE_COUNT; mpsTypeIndex++ ) {
 			final int typeIndex = mpsTypeIndex;		// declare local final variable so it can be used in capture blocks
 
-            System.out.println("Creating remote latest event cache (" + mpsTypeIndex + ").");
+			LAST_EVENT_TIMESTAMP_CACHE[mpsTypeIndex] = createRemoteOperationCache ( new Callable<Date[]> () {
+				public Date[] call() {
+					return REMOTE_PROXY.getLastEventTimes( typeIndex );
+				}
+			});
+            LAST_EVENT_TIMESTAMP_CACHE[mpsTypeIndex].setUpdateListener( new UpdateListener() {
+				public void observedUpdate( final Object source ) {
+					final Date[] lastRemoteEventTimestamps = LAST_EVENT_TIMESTAMP_CACHE[typeIndex].getValue();
+
+					final Date lastLocalMPSChannelEventTimestamp = LAST_EVENT_TIMESTAMPS[MPSPortal.MPS_CHANNEL_EVENT_ID];
+					final Date lastRemoteMPSChannelEventTimestamp = lastRemoteEventTimestamps[MPSPortal.MPS_CHANNEL_EVENT_ID];
+					if ( lastRemoteMPSChannelEventTimestamp != null	) {
+						if ( lastLocalMPSChannelEventTimestamp == null || lastRemoteMPSChannelEventTimestamp.after( lastLocalMPSChannelEventTimestamp ) ) {
+							MPS_PVS_CACHE[typeIndex].refresh();
+							LAST_EVENT_TIMESTAMPS[MPSPortal.MPS_CHANNEL_EVENT_ID] = lastRemoteMPSChannelEventTimestamp;
+						}
+					}
+
+					final Date lastLocalInputChannelEventTimestamp = LAST_EVENT_TIMESTAMPS[MPSPortal.INPUT_CHANNEL_EVENT_ID];
+					final Date lastRemoteInputChannelEventTimestamp = lastRemoteEventTimestamps[MPSPortal.INPUT_CHANNEL_EVENT_ID];
+					if ( lastRemoteInputChannelEventTimestamp != null ) {
+						if ( lastLocalInputChannelEventTimestamp == null || lastRemoteMPSChannelEventTimestamp.after( lastLocalInputChannelEventTimestamp ) ) {
+							INPUT_PVS_CACHE[typeIndex].refresh();
+							LAST_EVENT_TIMESTAMPS[MPSPortal.INPUT_CHANNEL_EVENT_ID] = lastRemoteInputChannelEventTimestamp;
+						}
+					}
+
+					final Date lastLocalMPSEventTimestamp = LAST_EVENT_TIMESTAMPS[MPSPortal.MPS_EVENT_ID];
+					final Date lastRemoteMPSEventTimestamp = lastRemoteEventTimestamps[MPSPortal.MPS_EVENT_ID];
+					if ( lastRemoteMPSEventTimestamp != null ) {
+						if ( lastLocalMPSEventTimestamp == null || lastRemoteMPSEventTimestamp.after( lastLocalMPSEventTimestamp ) ) {
+							LATEST_MPS_EVENTS_CACHE[typeIndex].refresh();
+							FIRST_HIT_TEXT_CACHE[typeIndex].refresh();
+							TRIP_SUMMARY_CACHE[typeIndex].refresh();
+							LAST_EVENT_TIMESTAMPS[MPSPortal.MPS_EVENT_ID] = lastRemoteMPSEventTimestamp;
+						}
+					}
+				}
+			});
             
 			FIRST_HIT_TEXT_CACHE[mpsTypeIndex] = createRemoteOperationCache ( new Callable<String> () {
 				public String call() {
@@ -206,7 +253,7 @@ public class RemoteMPSRecord implements UpdateListener {
 	 */
 	@SuppressWarnings( "unchecked" )	// have to cast
 	public MPSEvent getLatestMPSEvent(int mpsType) {
-        selectedMPSType = mpsType;
+        _selectedMPSType = mpsType;
         int mpsEvents = getLatestMPSEvents(mpsType).size();
         if(mpsEvents > 0) {
             Map<String, Object> eventsTable = getLatestMPSEvents(mpsType).get(0);
@@ -227,7 +274,7 @@ public class RemoteMPSRecord implements UpdateListener {
     
 	@SuppressWarnings( "unchecked" )	// have to cast
     public List<MPSEvent> processMPSEvents(int mpsType) {
-        selectedMPSType = mpsType;
+        _selectedMPSType = mpsType;
         List<MPSEvent> mpsEvents = new ArrayList<MPSEvent>();
         
         int mpsEventCount = getLatestMPSEvents(mpsType).size();
@@ -247,7 +294,7 @@ public class RemoteMPSRecord implements UpdateListener {
     }
     
     public List<Map<String, Object>> getLatestMPSEvents(int mpsType) {
-        selectedMPSType = mpsType;
+        _selectedMPSType = mpsType;
         return REMOTE_PROXY.getLatestMPSEvents( mpsType );
     }
     
@@ -301,12 +348,8 @@ public class RemoteMPSRecord implements UpdateListener {
     /** refresh the record */
 	public void refresh() {
         try {
-            for( int mpsTypeIndex = 0; mpsTypeIndex < numTypes; mpsTypeIndex++ ) {
-//                LATEST_MPS_EVENTS_CACHE[mpsTypeIndex].refresh();
-//                TRIP_SUMMARY_CACHE[mpsTypeIndex].refresh();
-//                MPS_PVS_CACHE[mpsTypeIndex].refresh();
-//                INPUT_PVS_CACHE[mpsTypeIndex].refresh();
-//				  FIRST_HIT_TEXT_CACHE[mpsTypeIndex].refresh();
+            for( int mpsTypeIndex = 0; mpsTypeIndex < MPS_TYPE_COUNT; mpsTypeIndex++ ) {
+				LAST_EVENT_TIMESTAMP_CACHE[mpsTypeIndex].refresh();
             }
             MPS_TYPES_CACHE.refresh();
          }
@@ -350,9 +393,8 @@ public class RemoteMPSRecord implements UpdateListener {
     public void reloadSignals() {
 		if ( REMOTE_PROXY != null ) {
 			try {
-				final int numTypes = MPS_TYPES.size();
-				for ( int type = 0 ; type < numTypes ; type++ ) {
-					REMOTE_PROXY.reloadSignals(type);
+				for ( int type = 0 ; type < MPS_TYPE_COUNT ; type++ ) {
+					REMOTE_PROXY.reloadSignals( type );
 				}
 			}
 			catch(RemoteMessageException exception) {
@@ -369,11 +411,9 @@ public class RemoteMPSRecord implements UpdateListener {
      * @return List of MPS PVs as ChannelRefs
 	 */
     protected List<ChannelRef> getMPSPVs( final int mpsType ) {
-        selectedMPSType = mpsType;
+        _selectedMPSType = mpsType;
         final List<ChannelRef> channels = new ArrayList<ChannelRef>();
-        final List<Map<String, Object>> pvs = MPS_PVS_CACHE[selectedMPSType].getValue();
-
-		System.out.println( "Fetched pvs: " + pvs );
+        final List<Map<String, Object>> pvs = MPS_PVS_CACHE[_selectedMPSType].getValue();
 
         if( pvs == null ) return null;
         if( pvs.size() > 0 ) {
@@ -393,7 +433,7 @@ public class RemoteMPSRecord implements UpdateListener {
 
 	/** Get the input PVs */
     protected List<ChannelRef> getInputPVs(int mpsType) {
-        selectedMPSType = mpsType;
+        _selectedMPSType = mpsType;
         final List<ChannelRef> channels = new ArrayList<ChannelRef>();
         List<Map<String, Object>> pvs = INPUT_PVS_CACHE[mpsType].getValue();
         if(pvs.size() > 0) {
@@ -401,7 +441,6 @@ public class RemoteMPSRecord implements UpdateListener {
                 final Map<String, Object> channelMap = iter.next();
                 String pv = (String)channelMap.get( MPSPortal.CHANNEL_PV_KEY );
                 Boolean connected = (Boolean)channelMap.get( MPSPortal.CHANNEL_CONNECTED_KEY );
-                //System.out.println("Input PV is connected=" + connected);
                 channels.add( new ChannelRef(pv, connected) );	// make the channel reference
             }
             return channels;

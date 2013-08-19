@@ -146,20 +146,19 @@ public class MPSService implements MPSPortal {
 
 
 	/**
-	 * Get the table of event timestamps. The table keys indicate the type of event
-	 * (e.g. MPS-CHANNEL-EVENT, INPUT-CHANNEL-EVENT or MPS-EVENT). 
-	 * The values are Date objects that indicate
-	 * the time the last event of the specified type had happened. This method may
+	 * Get an arry of timestamps corresponding to the different event ids.
+	 * The values are Date objects that indicate the time the last event of the specified type had happened. This method may
 	 * be used by clients to determine if their information is current.
 	 * @param monitorIndex  index of the monitor whose timestamps are requested
-	 * @return              a table of latest event timestamps keyed by event type
+	 * @return an array of timestamps
 	 */
-	public Map<String, Date> getLastEventTimes( int monitorIndex ) {
+	public Date[] getLastEventTimes( int monitorIndex ) {
 		final MPSMonitor monitor = _model.getMonitor( monitorIndex );
-		final Map<String, Date> eventTimes = new HashMap<>();
-		eventTimes.put( MPS_CHANNEL_EVENT, monitor.getLastMPSChannelEventTime() );
-		eventTimes.put( INPUT_CHANNEL_EVENT, monitor.getLastInputChannelEventTime() );
-		eventTimes.put( MPS_EVENT, monitor.getLastMPSEventTime() );
+		
+		final Date[] eventTimes = new Date[EVENT_ID_COUNT];
+		eventTimes[MPS_CHANNEL_EVENT_ID] = monitor.getLastMPSChannelEventTime();
+		eventTimes[INPUT_CHANNEL_EVENT_ID] = monitor.getLastInputChannelEventTime();
+		eventTimes[MPS_EVENT_ID] = monitor.getLastMPSEventTime();
 
 		return eventTimes;
 	}
