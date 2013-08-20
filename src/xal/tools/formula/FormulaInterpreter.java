@@ -22,6 +22,9 @@ final public class FormulaInterpreter {
 	/** script engine to perform the formula evaluation */
 	final private ScriptEngine SCRIPT_ENGINE;
 
+	/** formula to evaluate */
+	private String _formula;
+
 
 	// static initializer
 	static {
@@ -36,8 +39,10 @@ final public class FormulaInterpreter {
 			System.err.println( "Error: JavaScript engine is missing!" );
 			throw new RuntimeException( "JavaScript engine is missing and needed for the Formula Interpreter!" );
 		}
+
 		try {
 			SCRIPT_ENGINE.eval( STANDARD_SCRIPT_HEADER );
+			_formula = "";
 		}
 		catch ( ScriptException exception ) {
 			throw new RuntimeException( exception );
@@ -94,13 +99,32 @@ final public class FormulaInterpreter {
     final public boolean hasVariable( final String name ) {
         return SCRIPT_ENGINE.get( name ) != null;
     }
+
+
+	/** compile the specified formula */
+	public void compile( final String formula ) {
+		_formula = formula;
+	}
     
     
     /** 
-     * Evaluate the specified formula.
+     * Compile and evaluate the specified formula.
      * @return The result of evaluating the formula with the present variable values.
      */
-    final public double evaluate( final String formula ) {
+    public double evaluate( final String formula ) {
+		compile( formula );
+		return performEvaluation( formula );
+    }
+
+
+	/** evaluate the compiled formula */
+	public double evaluate() {
+		return performEvaluation( _formula );
+	}
+
+
+	/** perform the evaluation internally */
+	private double performEvaluation( final String formula ) {
 		try {
 			final Object result = SCRIPT_ENGINE.eval( formula );
 			if ( result instanceof Number ) {
@@ -113,5 +137,5 @@ final public class FormulaInterpreter {
 		catch ( ScriptException exception ) {
 			throw new RuntimeException( exception );
 		}
-    }
+	}
 }
