@@ -1,5 +1,5 @@
 /*
- * ControlApp.java
+ * Scope.java
  *
  * Created on December 17, 2002, 9:46 AM
  */
@@ -21,7 +21,7 @@ import java.net.URL;
  *
  * @author  tap
  */
-public class ControlApp extends ApplicationAdaptor {	
+public class Scope extends ApplicationAdaptor {
     // --------- Document management -------------------------------------------
     
     /**
@@ -118,7 +118,7 @@ public class ControlApp extends ApplicationAdaptor {
 			for ( int index = 0 ; index < args.length ; index++ ) {
 				urls[index] = new File(args[index]).toURI().toURL();
 			}
-            Application.launch( new ControlApp(), urls );
+            Application.launch( new Scope(), urls );
         }
         catch(Exception exception) {
             System.err.println( exception.getMessage() );

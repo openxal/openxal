@@ -13,11 +13,12 @@ package xal.app.scope;
 import xal.tools.formula.*;
 import xal.tools.LinearInterpolator;
 import xal.tools.correlator.*;
-import xal.ca.*;
-import xal.tools.Lock;
+import xal.tools.dispatch.DispatchQueue;
 import xal.tools.messaging.MessageCenter;
 import xal.tools.data.*;
+import xal.ca.*;
 
+import java.util.concurrent.Callable;
 import java.util.*;
 
 
@@ -33,20 +34,19 @@ public class MathModel implements TraceSource, DataListener, ChannelModelListene
     
     // properties
     protected String id;
-    
+
     // messaging variables
-    protected MessageCenter messageCenter;
-    protected SettingListener settingProxy;
+    final private MessageCenter MESSAGE_CENTER;
+    final private SettingListener SETTING_PROXY;
     
     // formula infrastructure
-    protected String formula;
-    protected FormulaInterpreter interpreter;
+    protected String _formula;
+    protected FormulaInterpreter _interpreter;
     
     // state variables
     protected boolean hasCompileErrors;
     protected boolean canEnable;
     protected boolean enabled;
-    protected Lock busyLock;        // locks this model when busy
     
     // model variables
     protected TimeModel timeModel;
@@ -54,22 +54,25 @@ public class MathModel implements TraceSource, DataListener, ChannelModelListene
     protected ChannelModel[] sources;
     protected double startTurn;
     protected double turnStep;
-    
+
     // data variables
     protected double[] elementTimes;
+
+	/** queue to synchronize busy state for modifications and access */
+	private final DispatchQueue BUSY_QUEUE;
     
     
     /** Creates a new instance of MathModel */
-    public MathModel(final String newId, final ChannelModel[]  newSources, final TimeModel aTimeModel) {
+    public MathModel( final String newId, final ChannelModel[]  newSources, final TimeModel aTimeModel ) {
+		BUSY_QUEUE = DispatchQueue.createConcurrentQueue( "math model busy" );
+
         id = newId;
         timeModel = aTimeModel;
         
-        messageCenter = new MessageCenter("Channel Model");
-        settingProxy = (SettingListener)messageCenter.registerSource(this, SettingListener.class);
-        
-        busyLock = new Lock();
-        
-        interpreter = new FormulaInterpreter();
+        MESSAGE_CENTER = new MessageCenter( "Channel Model" );
+        SETTING_PROXY = MESSAGE_CENTER.registerSource(this, SettingListener.class);
+
+        _interpreter = new FormulaInterpreter();
         canEnable = false;
         enabled = false;
         hasCompileErrors = false;
@@ -93,7 +96,7 @@ public class MathModel implements TraceSource, DataListener, ChannelModelListene
 	 * @return The model's formula.
 	 */
 	public String getLabel() {
-		return formula;
+		return _formula;
 	}
 
     
@@ -131,8 +134,8 @@ public class MathModel implements TraceSource, DataListener, ChannelModelListene
      * @param adaptor The data adaptor corresponding to this object's data node.
      */
     public void write(DataAdaptor adaptor) {
-        if ( formula != null ) {
-            adaptor.setValue("formula", formula);
+        if ( _formula != null ) {
+            adaptor.setValue("formula", _formula);
         }
         adaptor.setValue("enabled", enabled);
     }
@@ -142,8 +145,8 @@ public class MathModel implements TraceSource, DataListener, ChannelModelListene
      * Add the listener to be notified when a setting has changed.
      * @param listener Object to receive setting change events.
      */
-    void addSettingListener(SettingListener listener) {
-        messageCenter.registerTarget(listener, this, SettingListener.class);
+    void addSettingListener( final SettingListener listener ) {
+        MESSAGE_CENTER.registerTarget( listener, this, SettingListener.class );
     }
     
     
@@ -151,57 +154,51 @@ public class MathModel implements TraceSource, DataListener, ChannelModelListene
      * Remove the listener as a receiver of setting change events.
      * @param listener Object to remove from receiving setting change events.
      */
-    void removeSettingListener(SettingListener listener) {
-        messageCenter.removeTarget(listener, this, SettingListener.class);
+    void removeSettingListener( final SettingListener listener ) {
+        MESSAGE_CENTER.removeTarget( listener, this, SettingListener.class );
     }
-    
-    
-    /**
-     * Try to get a lock on the model.  If the sender gets the lock it 
-     * is responsible for releasing the lock when done.
-     * @return true if the sender gets the lock and false otherwise.
-     */
-    public boolean tryLock() {
-        return busyLock.tryLock();
-    }
-    
-    
-    /**
-     * Release a lock on the model.  Every lock must be balanced by
-     * an unlock in order to free the model for a new lock from a separate thread.
-     */
-    public void unlock() {
-        busyLock.unlock();
-    }
-    
+
+
+	/** post the channel change event */
+	private void postSettingChangeEvent() {
+		DispatchQueue.getGlobalDefaultPriorityQueue().dispatchAsync( new Runnable() {
+			public void run() {
+				SETTING_PROXY.settingChanged( MathModel.this );
+			}
+		});
+	}
+
     
     /**
      * Set the formula for this model to manage and compile it.
      * @param newFormula The formula to manage.
      */
     public void setFormula( final String newFormula ) throws RuntimeException {
-        try {
-            busyLock.lock();
-            formula = newFormula;
-            interpreter = new FormulaInterpreter();     // need to start fresh with no variables defined
-            interpreter.compile( formula );
-            hasCompileErrors = false;
-            
-            setupSources();
-            
-            setCanEnable(true);
-            setEnabled(true);
-            
-            settingProxy.settingChanged( this );
-        }
-        catch( RuntimeException exception ) {
-            setCanEnable(false);
-            hasCompileErrors = true;
-            throw exception;
-        }
-        finally {
-            busyLock.unlock();
-        }
+		try {
+			// create fresh interpreter with no variables assigned
+			final FormulaInterpreter interpreter = new FormulaInterpreter();
+			interpreter.compile( newFormula );
+
+			dispatchUpdateOperation( new Runnable() {
+				public void run() {
+					_formula = newFormula;
+					_interpreter = interpreter;
+					hasCompileErrors = false;
+
+					setupSources();
+
+					setCanEnable( true );
+					setEnabled( true );
+
+					postSettingChangeEvent();
+				}
+			});
+		}
+		catch( RuntimeException exception ) {
+			setCanEnable( false );
+			hasCompileErrors = true;
+			throw exception;
+		}
     }
     
     
@@ -210,34 +207,38 @@ public class MathModel implements TraceSource, DataListener, ChannelModelListene
      * to listen to those sources.
      */
     protected void setupSources() {
-        for ( int index = 0 ; index < sources.length ; index++ ) {
-            sources[index].removeChannelModelListener(this);
-        }
+		dispatchUpdateOperation( new Runnable() {
+			public void run() {
+				for ( int index = 0 ; index < sources.length ; index++ ) {
+					sources[index].removeChannelModelListener( MathModel.this );
+				}
 
-        final ChannelModel[] tempSources = new ChannelModel[allSources.length];
-        int numSources = 0;
-        for ( int index = 0 ; index < allSources.length ; index++ ) {
-            if ( interpreter.hasVariable( allSources[index].getID() ) ) {
-                tempSources[numSources++] = allSources[index];
-            }
-        }
-        sources = new ChannelModel[numSources];
-        System.arraycopy(tempSources, 0, sources, 0, numSources);
+				final ChannelModel[] tempSources = new ChannelModel[allSources.length];
+				int numSources = 0;
+				for ( int index = 0 ; index < allSources.length ; index++ ) {
+					if ( _interpreter.hasVariable( allSources[index].getID() ) ) {
+						tempSources[numSources++] = allSources[index];
+					}
+				}
+				sources = new ChannelModel[numSources];
+				System.arraycopy(tempSources, 0, sources, 0, numSources);
 
-        for ( int index = 0 ; index < sources.length ; index++ ) {
-            sources[index].addChannelModelListener(this);
-        }
-        
-        updateElementTimes();
+				for ( int index = 0 ; index < sources.length ; index++ ) {
+					sources[index].addChannelModelListener( MathModel.this );
+				}
+
+				updateElementTimes();
+			}
+		});
     }
-    
-    
+
+
     /**
      * Get the formula managed by this model.
      * @return This model's formula.
      */
     public String getFormula() {
-        return formula;
+        return _formula;
     }
     
     
@@ -276,17 +277,21 @@ public class MathModel implements TraceSource, DataListener, ChannelModelListene
      * Attempt to enable the math model so it produces a waveform.
      * @param state The requested enable state.  True to enable and false to disable.
      */
-    public void setEnabled(boolean state) {
-        if ( enabled != state && (canEnable || !state) ) {
-            enabled = state;
-            settingProxy.settingChanged(this);
-        }
+    public void setEnabled( final boolean state ) {
+		dispatchUpdateOperation( new Runnable() {
+			public void run() {
+				if ( enabled != state && (canEnable || !state) ) {
+					enabled = state;
+					postSettingChangeEvent();
+				}
+			}
+		});
     }
     
     
     /** Toggle the enable */
     public void toggleEnable() {
-        setEnabled(!enabled);
+        setEnabled( !enabled );
     }
     
     
@@ -301,14 +306,25 @@ public class MathModel implements TraceSource, DataListener, ChannelModelListene
     
     /**
      * Get the array of time elements for the waveform.  Each time element represents
-     * the time associated with the corresponding waveform element.  The time unit is 
-     * a turn.
+     * the time associated with the corresponding waveform element.  The time unit is a turn.
      * @return The element times in units of turns relative to cycle start.
      */
     final public double[] getElementTimes() {
         return elementTimes;
     }
-    
+
+
+	/** dispatch an operation that updates this model */
+	private void dispatchUpdateOperation( final Runnable operation ) {
+		// run the operation immediately if on the busy queue, otherwise dispatch asynchronously
+		if ( DispatchQueue.getCurrentQueue() == BUSY_QUEUE ) {
+			operation.run();
+		}
+		else {
+			BUSY_QUEUE.dispatchBarrierAsync( operation );
+		}
+	}
+
     
     /**
      * Get the trace for the formula given the correlation as a data source.
@@ -320,39 +336,28 @@ public class MathModel implements TraceSource, DataListener, ChannelModelListene
         final LinearInterpolator[] interpolators = new LinearInterpolator[sources.length];
         final String[] channelKeys = new String[sources.length];
         for ( int sourceIndex = 0 ; sourceIndex < sources.length ; sourceIndex++ ) {
-            final ChannelModel source = sources[sourceIndex];
+            final ChannelModel sourceCopy = sources[sourceIndex].cheapCopy();
+			if ( !sourceCopy.canMonitor() )  return null;
 			
-			if ( source.tryLock() ) {
-				try {
-					if ( !source.canMonitor() )  return null;
-					
-					final String channelKey = source.getID();
-					channelKeys[sourceIndex] = channelKey;
-					
-					if ( !correlation.isCorrelated( channelKey ) )  return null;      // one or more variables undefined
-					
-					double delay = source.getWaveformDelay();
-					double samplePeriod = source.getSamplePeriod();
-					double[] rawArray = correlation.getRecord( channelKey ).doubleArray();
-					if ( rawArray.length != source.getNumElements() )  return null;	// check for consistency
-					interpolators[sourceIndex] = new LinearInterpolator( rawArray, delay, samplePeriod );
-				}
-				finally {
-					source.unlock();
-				}
-			}
-			else {
-				return null;
-			}
+			final String channelKey = sourceCopy.getID();
+			channelKeys[sourceIndex] = channelKey;
+			
+			if ( !correlation.isCorrelated( channelKey ) )  return null;      // one or more variables undefined
+			
+			double delay = sourceCopy.getWaveformDelay();
+			double samplePeriod = sourceCopy.getSamplePeriod();
+			double[] rawArray = correlation.getRecord( channelKey ).doubleArray();
+			if ( rawArray.length != sourceCopy.getNumElements() )  return null;	// check for consistency
+			interpolators[sourceIndex] = new LinearInterpolator( rawArray, delay, samplePeriod );
         }
         
-        double[] values = new double[elementTimes.length];
+        final double[] values = new double[elementTimes.length];
         for ( int sampleIndex = 0 ; sampleIndex < elementTimes.length ; sampleIndex++ ) {
             double time = startTurn + sampleIndex * turnStep;
             for ( int sourceIndex = 0 ; sourceIndex < sources.length ; sourceIndex++ ) {
-                interpreter.setVariable(channelKeys[sourceIndex], interpolators[sourceIndex].calcValueAt(time));
+                _interpreter.setVariable(channelKeys[sourceIndex], interpolators[sourceIndex].calcValueAt(time));
             }
-            values[sampleIndex] = interpreter.evaluate();
+            values[sampleIndex] = _interpreter.evaluate();
         }
         
         return values;
@@ -365,7 +370,11 @@ public class MathModel implements TraceSource, DataListener, ChannelModelListene
 	 * @return the trace event corresponding to this trace source and the correlation
      */
 	final public TraceEvent getTraceEvent( final Correlation<ChannelTimeRecord> correlation ) {
-		return new MathTraceEvent( this, getTrace( correlation ), elementTimes );
+		return BUSY_QUEUE.dispatchSync( new Callable<TraceEvent>() {
+			public TraceEvent call() {
+				return new MathTraceEvent( MathModel.this, getTrace( correlation ), elementTimes );
+			}
+		});
 	}
 
     
@@ -379,56 +388,46 @@ public class MathModel implements TraceSource, DataListener, ChannelModelListene
      * source time steps.
      */
     final private void updateElementTimes() {
-        busyLock.lock();
-        
-        try {
-            startTurn = Double.MIN_VALUE;
-            turnStep = Double.MAX_VALUE;
-            double lastTurn = Double.MAX_VALUE;
-            
-            for ( int index = 0 ; index < sources.length ; index++ ) {
-                ChannelModel source = sources[index];
-				if ( source.tryLock() ) {
-					try {
-						if ( source.canMonitor() ) {
-							int numElements = source.getNumElements();
-							
-							if ( numElements == 0 )  continue;
-							
-							double samplePeriod = source.getSamplePeriod();
-							double waveformDelay = source.getWaveformDelay();
-							
-							turnStep = Math.min( turnStep, samplePeriod);
-							startTurn = Math.max( startTurn, waveformDelay);
-							
-							double lastSourceTurn = waveformDelay + numElements * samplePeriod;
-							lastTurn = Math.min(lastTurn, lastSourceTurn);
-						}
+		dispatchUpdateOperation( new Runnable() {
+			public void run() {
+				startTurn = Double.MIN_VALUE;
+				turnStep = Double.MAX_VALUE;
+				double lastTurn = Double.MAX_VALUE;
+
+				for ( int index = 0 ; index < sources.length ; index++ ) {
+					final ChannelModel sourceCopy = sources[index].cheapCopy();
+					if ( sourceCopy.canMonitor() ) {
+						int numElements = sourceCopy.getNumElements();
+
+						if ( numElements == 0 )  continue;
+
+						double samplePeriod = sourceCopy.getSamplePeriod();
+						double waveformDelay = sourceCopy.getWaveformDelay();
+
+						turnStep = Math.min( turnStep, samplePeriod);
+						startTurn = Math.max( startTurn, waveformDelay);
+
+						double lastSourceTurn = waveformDelay + numElements * samplePeriod;
+						lastTurn = Math.min(lastTurn, lastSourceTurn);
 					}
-					finally {
-						source.unlock();
+				}
+
+				try {
+					int count = (int) ( (lastTurn - startTurn) / turnStep );
+					elementTimes = new double[count];
+					double nextTime = startTurn;
+					for ( int index = 0 ; index < count ; index++ ) {
+						elementTimes[index] = nextTime;
+						nextTime += turnStep;
 					}
-                }
-            }
-            
-            try {
-                int count = (int) ( (lastTurn - startTurn) / turnStep );
-                elementTimes = new double[count];
-                double nextTime = startTurn;
-                for ( int index = 0 ; index < count ; index++ ) {
-                    elementTimes[index] = nextTime;
-                    nextTime += turnStep;
-                }
-                timeModel.convertTurns(elementTimes);
-            }
-            catch(Exception exception) {
-                elementTimes = new double[0];
-            }
-        }
-        finally {
-            busyLock.unlock();
-        }
-    }
+					timeModel.convertTurns(elementTimes);
+				}
+				catch(Exception exception) {
+					elementTimes = new double[0];
+				}
+			}
+		});
+	}
     
     
     /**

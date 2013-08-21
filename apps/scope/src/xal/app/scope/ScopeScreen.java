@@ -31,8 +31,8 @@ public class ScopeScreen extends Box implements TraceListener, DataListener, Swi
     final static Color[] defaultTraceColors = {Color.red, Color.white, Color.blue, Color.green.darker(), Color.magenta.darker(), Color.yellow, Color.cyan, Color.orange.darker(), Color.darkGray};
     
     // messaging
-    protected MessageCenter messageCenter;
-    protected SettingListener settingProxy;
+    final private MessageCenter MESSAGE_CENTER;
+    final private SettingListener SETTING_EVENT_PROXY;
     
     // models
     protected ScopeModel model;
@@ -47,8 +47,8 @@ public class ScopeScreen extends Box implements TraceListener, DataListener, Swi
     public ScopeScreen(ScopeModel aModel) {
 		super(HORIZONTAL);
 		
-        messageCenter = new MessageCenter("ScopeScreen Center");
-        settingProxy = (SettingListener)messageCenter.registerSource(this, SettingListener.class);
+        MESSAGE_CENTER = new MessageCenter("ScopeScreen Center");
+        SETTING_EVENT_PROXY = MESSAGE_CENTER.registerSource(this, SettingListener.class);
         
         model = aModel;
 		_defaultHandler = new DefaultScreenHandler(aModel);
@@ -137,7 +137,7 @@ public class ScopeScreen extends Box implements TraceListener, DataListener, Swi
      * @param listener Object to receive setting change events.
      */
     void addSettingListener(SettingListener listener) {
-        messageCenter.registerTarget(listener, this, SettingListener.class);
+        MESSAGE_CENTER.registerTarget(listener, this, SettingListener.class);
 		_defaultHandler.addSettingListener(listener);
 		_fftHandler.addSettingListener(listener);
     }
@@ -148,7 +148,7 @@ public class ScopeScreen extends Box implements TraceListener, DataListener, Swi
      * @param listener Object to remove from receiving setting change events.
      */
     void removeSettingListener(SettingListener listener) {
-        messageCenter.removeTarget(listener, this, SettingListener.class);
+        MESSAGE_CENTER.removeTarget(listener, this, SettingListener.class);
 		_defaultHandler.removeSettingListener(listener);
 		_fftHandler.removeSettingListener(listener);
     }

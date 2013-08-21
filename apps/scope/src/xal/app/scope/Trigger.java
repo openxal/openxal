@@ -31,16 +31,16 @@ public class Trigger implements DataListener, ConnectionListener {
     protected volatile boolean isSettingChannel;     // true if the channel is being set
     
     // messaging variables
-    protected MessageCenter messageCenter;
-    protected TriggerListener triggerChangeProxy;
-    protected SettingListener settingProxy;
+    final private MessageCenter MESSAGE_CENTER;
+    final private TriggerListener TRIGGER_CHANGE_PROXY;
+    final private SettingListener SETTING_EVENT_PROXY;
     
     
     /** Creates a new instance of Trigger */
     public Trigger() {
-        messageCenter = new MessageCenter("Trigger Model");
-        triggerChangeProxy = (TriggerListener)messageCenter.registerSource(this, TriggerListener.class);
-        settingProxy = (SettingListener)messageCenter.registerSource(this, SettingListener.class);
+        MESSAGE_CENTER = new MessageCenter( "Trigger Model" );
+        TRIGGER_CHANGE_PROXY = MESSAGE_CENTER.registerSource(this, TriggerListener.class);
+        SETTING_EVENT_PROXY = MESSAGE_CENTER.registerSource(this, SettingListener.class);
         
         triggerFilter = null;
         
@@ -65,7 +65,7 @@ public class Trigger implements DataListener, ConnectionListener {
             setChannel( adaptor.stringValue("channel") );
         }
         
-        DataAdaptor filterAdaptor = (DataAdaptor)adaptor.childAdaptor(TriggerFilter.dataLabel);
+        final DataAdaptor filterAdaptor = adaptor.childAdaptor( TriggerFilter.dataLabel );
         if ( filterAdaptor != null ) {
             triggerFilter = TriggerFilterFactory.decodeFilter(filterAdaptor);
         }
@@ -94,7 +94,7 @@ public class Trigger implements DataListener, ConnectionListener {
      * @param listener Listener to register for TriggerListener events.
      */
     public void addTriggerListener(TriggerListener listener) {
-        messageCenter.registerTarget(listener, this, TriggerListener.class);
+        MESSAGE_CENTER.registerTarget(listener, this, TriggerListener.class);
     }
     
     
@@ -103,7 +103,7 @@ public class Trigger implements DataListener, ConnectionListener {
      * @param listener Listener to remove for TriggerListener events.
      */
     public void removeTriggerListener(TriggerListener listener) {
-        messageCenter.removeTarget(listener, this, TriggerListener.class);
+        MESSAGE_CENTER.removeTarget(listener, this, TriggerListener.class);
     }
     
     
@@ -114,7 +114,7 @@ public class Trigger implements DataListener, ConnectionListener {
      * @param listener Object to receive setting change events.
      */
     void addSettingListener(SettingListener listener) {
-        messageCenter.registerTarget(listener, this, SettingListener.class);
+        MESSAGE_CENTER.registerTarget(listener, this, SettingListener.class);
     }
     
     
@@ -123,7 +123,7 @@ public class Trigger implements DataListener, ConnectionListener {
      * @param listener Object to remove from receiving setting change events.
      */
     void removeSettingListener(SettingListener listener) {
-        messageCenter.removeTarget(listener, this, SettingListener.class);
+        MESSAGE_CENTER.removeTarget(listener, this, SettingListener.class);
     }
     
     
@@ -159,15 +159,15 @@ public class Trigger implements DataListener, ConnectionListener {
             
             channel = ChannelFactory.defaultFactory().getChannel(channelName);
             setEnabled(false);
-            triggerChangeProxy.channelStateChanged(this);
+            TRIGGER_CHANGE_PROXY.channelStateChanged(this);
             
             channel.addConnectionListener(this);
 			setEnabled(true);
-            settingProxy.settingChanged(this);
+            SETTING_EVENT_PROXY.settingChanged(this);
         }
         finally {
             isSettingChannel = false;
-            triggerChangeProxy.channelStateChanged(this);
+            TRIGGER_CHANGE_PROXY.channelStateChanged(this);
         }
     }
     
@@ -235,13 +235,13 @@ public class Trigger implements DataListener, ConnectionListener {
         if ( canEnable() || !state && isEnabled != state ) {
             isEnabled = state;
             if ( isEnabled ) {
-                triggerChangeProxy.triggerEnabled(this);
+                TRIGGER_CHANGE_PROXY.triggerEnabled(this);
             }
             else {
-                triggerChangeProxy.triggerDisabled(this);
+                TRIGGER_CHANGE_PROXY.triggerDisabled(this);
             }
         }
-        settingProxy.settingChanged(this);
+        SETTING_EVENT_PROXY.settingChanged(this);
     }
     
     
@@ -318,7 +318,7 @@ public class Trigger implements DataListener, ConnectionListener {
      * @param channel The channel which has been connected.
      */
     public void connectionMade(Channel channel) {
-		triggerChangeProxy.channelStateChanged(this);
+		TRIGGER_CHANGE_PROXY.channelStateChanged(this);
     }
     
     
@@ -327,6 +327,6 @@ public class Trigger implements DataListener, ConnectionListener {
      * @param channel The channel which has been disconnected.
      */
     public void connectionDropped(Channel channel) {
-		triggerChangeProxy.channelStateChanged(this);
+		TRIGGER_CHANGE_PROXY.channelStateChanged(this);
     }
 }

@@ -33,8 +33,8 @@ public class ScopeScaleControl extends Box implements SwingConstants {
 	static final protected DecimalFormat scaleFieldFormat = new DecimalFormat("0.0######");
     
     /** event broadcast */
-    protected MessageCenter messageCenter;
-    protected ChangeListener changeProxy;
+    final private MessageCenter MESSAGE_CENTER;
+    final private ChangeListener CHANGE_PROXY;
     
     /** properties */
     protected String title;     // title of the control
@@ -70,8 +70,8 @@ public class ScopeScaleControl extends Box implements SwingConstants {
         upperPower = anUpperPower;
         
         // setup for events
-        messageCenter = new MessageCenter("Scale Control");
-        changeProxy = (ChangeListener)messageCenter.registerSource(this, ChangeListener.class);
+        MESSAGE_CENTER = new MessageCenter("Scale Control");
+        CHANGE_PROXY = MESSAGE_CENTER.registerSource(this, ChangeListener.class);
         
         // initialize the view
         initView();
@@ -80,13 +80,13 @@ public class ScopeScaleControl extends Box implements SwingConstants {
     
     /** Add a listener of value changes */
     public void addChangeListener(ChangeListener listener) {
-        messageCenter.registerTarget(listener, this, ChangeListener.class);
+        MESSAGE_CENTER.registerTarget(listener, this, ChangeListener.class);
     }
     
     
     /** Remove a listener of value changes */
     public void removeChangeListener(ChangeListener listener) {
-        messageCenter.removeTarget(listener, this, ChangeListener.class);
+        MESSAGE_CENTER.removeTarget(listener, this, ChangeListener.class);
     }
     
     
@@ -219,7 +219,7 @@ public class ScopeScaleControl extends Box implements SwingConstants {
     protected class ValueChangeMonitor implements ChangeListener {
         public void stateChanged(ChangeEvent event) {
             updateValueField();
-            changeProxy.stateChanged( new ChangeEvent(ScopeScaleControl.this) );        
+            CHANGE_PROXY.stateChanged( new ChangeEvent(ScopeScaleControl.this) );        
         }
     }
 }

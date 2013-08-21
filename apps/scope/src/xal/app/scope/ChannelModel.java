@@ -9,9 +9,9 @@ package xal.app.scope;
 import xal.tools.ArrayMath;
 import xal.tools.data.*;
 import xal.tools.messaging.MessageCenter;
+import xal.tools.dispatch.DispatchQueue;
 import xal.ca.*;
 import xal.tools.correlator.*;
-import xal.tools.Lock;
 import xal.application.Util;
 
 /**
@@ -26,7 +26,7 @@ public class ChannelModel implements TraceSource, DataListener, TimeModelListene
 	final private static String DELAY_PV_SUFFIX;
     
     // attributes
-    final protected String ID;
+    final private String ID;
     
     // messaging variables
     final protected MessageCenter MESSAGE_CENTER;
@@ -34,10 +34,9 @@ public class ChannelModel implements TraceSource, DataListener, TimeModelListene
     final protected SettingListener SETTING_PROXY;
     
     // model hierarchy
-    protected TimeModel _timeModel;
+    final private TimeModel _timeModel;
     
     // model state variables
-    final protected Lock BUSY_LOCK;        // locks this model when busy
     protected boolean _enabled;      // is the channel enabled for monitoring
     protected double _signalScale;   // units per division
     protected double _signalOffset;  // units offset
@@ -56,15 +55,19 @@ public class ChannelModel implements TraceSource, DataListener, TimeModelListene
     protected double _waveformDelay;
     protected double _samplePeriod;
     protected double[] _elementTimes;
-	
 
+	/** queue to synchronize busy state for modifications and access */
+	private final DispatchQueue BUSY_QUEUE;
+
+
+	// static initializer
     static {
 		final String SAMPLE_PERIOD_PV_SUFFIX_KEY = "waveformSamplePeriodPvSuffix";
 		final String DELAY_PV_SUFFIX_KEY = "waveformDelayPvSuffix";
 		java.util.Map<String,String> properties = Util.getPropertiesFromResource( "scope" );
 		// use the scope.properties file to get the defaul value, but allow it to be overriden as a command line property
-		SAMPLE_PERIOD_PV_SUFFIX = System.getProperties().getProperty(SAMPLE_PERIOD_PV_SUFFIX_KEY, (String)properties.get(SAMPLE_PERIOD_PV_SUFFIX_KEY));
-		DELAY_PV_SUFFIX = System.getProperties().getProperty(DELAY_PV_SUFFIX_KEY, (String)properties.get(DELAY_PV_SUFFIX_KEY));
+		SAMPLE_PERIOD_PV_SUFFIX = System.getProperties().getProperty(SAMPLE_PERIOD_PV_SUFFIX_KEY, properties.get(SAMPLE_PERIOD_PV_SUFFIX_KEY));
+		DELAY_PV_SUFFIX = System.getProperties().getProperty(DELAY_PV_SUFFIX_KEY, properties.get(DELAY_PV_SUFFIX_KEY));
 	}
     
     
@@ -76,16 +79,17 @@ public class ChannelModel implements TraceSource, DataListener, TimeModelListene
     
     /** Create a new channel model with the specified channel name */
     public ChannelModel( final String anID, final String channelName, final TimeModel aTimeModel ) {
+		BUSY_QUEUE = DispatchQueue.createConcurrentQueue( "channel model busy" );
+		
 		_isReady = false;
         ID = anID;
         
         MESSAGE_CENTER = new MessageCenter( "Channel Model" );
-        CHANNEL_MODEL_PROXY = (ChannelModelListener)MESSAGE_CENTER.registerSource( this, ChannelModelListener.class );
-        SETTING_PROXY = (SettingListener)MESSAGE_CENTER.registerSource( this, SettingListener.class );
+        CHANNEL_MODEL_PROXY = MESSAGE_CENTER.registerSource( this, ChannelModelListener.class );
+        SETTING_PROXY = MESSAGE_CENTER.registerSource( this, SettingListener.class );
         
         _isSettingChannel = false;
-        BUSY_LOCK = new Lock();
-        
+
         _timeModel = aTimeModel;
         _timeModel.addTimeModelListener( this );
         
@@ -98,6 +102,34 @@ public class ChannelModel implements TraceSource, DataListener, TimeModelListene
         _samplePeriod = 0;
 		_elementTimes = new double[0];
     }
+
+
+	/** make a cheap (excludes monitors and listeners), safe (synchronized snapshot) copy of basic properties */
+	public ChannelModel cheapCopy() {
+		final ChannelModel duplicate = new ChannelModel( ID, _timeModel );
+		propertyCopyTo( duplicate );
+		return duplicate;
+	}
+
+
+	/** copy basic properties to the target (excludes monitors and listeners) */
+	private void propertyCopyTo( final ChannelModel target ) {
+		BUSY_QUEUE.dispatchSync( new Runnable() {
+			public void run() {
+				target._channel = _channel;
+				target._delayChannel = _delayChannel;
+				target._enabled = _enabled;
+				target._isReady = _isReady;
+				target._signalOffset = _signalOffset;
+				target._signalScale = _signalScale;
+				target._isSettingChannel = _isSettingChannel;
+				target._waveformDelayInitialized = _waveformDelayInitialized;
+				target._waveformDelay = _waveformDelay;
+				target._samplePeriod = _samplePeriod;
+				target._elementTimes = _elementTimes;
+			}
+		});
+	}
     
     
     /**
@@ -184,7 +216,19 @@ public class ChannelModel implements TraceSource, DataListener, TimeModelListene
         finally {
         }
     }
-    
+
+
+	/** dispatch an operation that updates this model */
+	private void dispatchUpdateOperation( final Runnable operation ) {
+		// run the operation immediately if on the busy queue, otherwise dispatch asynchronously
+		if ( DispatchQueue.getCurrentQueue() == BUSY_QUEUE ) {
+			operation.run();
+		}
+		else {
+			BUSY_QUEUE.dispatchBarrierAsync( operation );
+		}
+	}
+
     
     /**
      * Stop listentening for waveform connection events and stop monitoring 
@@ -235,7 +279,57 @@ public class ChannelModel implements TraceSource, DataListener, TimeModelListene
     void removeSettingListener( final SettingListener listener ) {
         MESSAGE_CENTER.removeTarget( listener, this, SettingListener.class );
     }
-    
+
+
+	/** post the channel change event */
+	private void postChannelChangeEvent( final Channel channel ) {
+		DispatchQueue.getGlobalDefaultPriorityQueue().dispatchAsync( new Runnable() {
+			public void run() {
+				CHANNEL_MODEL_PROXY.channelChanged( ChannelModel.this, channel );    // notify the listeners
+			}
+		});
+	}
+
+
+	/** post the channel change event */
+	private void postChannelEnableChangeEvent( final Channel channel ) {
+		DispatchQueue.getGlobalDefaultPriorityQueue().dispatchAsync( new Runnable() {
+			public void run() {
+				CHANNEL_MODEL_PROXY.enableChannel( ChannelModel.this, channel );    // notify the listeners
+			}
+		});
+	}
+
+
+	/** post the channel change event */
+	private void postChannelDisableChangeEvent( final Channel channel ) {
+		DispatchQueue.getGlobalDefaultPriorityQueue().dispatchAsync( new Runnable() {
+			public void run() {
+				CHANNEL_MODEL_PROXY.disableChannel( ChannelModel.this, channel );    // notify the listeners
+			}
+		});
+	}
+
+
+	/** post the channel change event */
+	private void postElementTimesChangedEvent( final double[] elementTimes ) {
+		DispatchQueue.getGlobalDefaultPriorityQueue().dispatchAsync( new Runnable() {
+			public void run() {
+				CHANNEL_MODEL_PROXY.elementTimesChanged( ChannelModel.this, elementTimes );    // notify the listeners
+			}
+		});
+	}
+
+
+	/** post the channel change event */
+	private void postSettingChangeEvent() {
+		DispatchQueue.getGlobalDefaultPriorityQueue().dispatchAsync( new Runnable() {
+			public void run() {
+				SETTING_PROXY.settingChanged( ChannelModel.this );
+			}
+		});
+	}
+
     
     /**
      * Determine if the channel is being set.
@@ -244,67 +338,48 @@ public class ChannelModel implements TraceSource, DataListener, TimeModelListene
     public boolean isSettingChannel() {
         return _isSettingChannel;
     }
-    
-    
-    /**
-     * Try to get a lock on the model.  If the sender gets the lock it 
-     * is responsible for releasing the lock when done.
-     * @return true if the sender gets the lock and false otherwise.
-     */
-    public boolean tryLock() {
-        return BUSY_LOCK.tryLock();
-    }
-    
-    
-    /**
-     * Release a lock on the channel model.  Every lock must be balanced by
-     * an unlock in order to free the model for a new lock from a separate thread.
-     */
-    public void unlock() {
-        BUSY_LOCK.unlock();
-    }
-    
+
     
     /** 
      * Change the waveform channel to that specified by the channel name.  Also monitor the waveform's offset from cycle start and the width of each element.
      * @param channelName The name of the channel to set.
      * @throws xal.app.scope.ChannelSetException if one or more of the required associated channels cannot connect.
      */
-    public void setChannel( final String channelName ) throws ChannelSetException {
-        try {
-			_isReady = false;
-            _isSettingChannel = true;
-            BUSY_LOCK.lock();
-			
-			setEnabled( false );            
-            stopChannelEvents();
-            
-			_waveformDelayInitialized = false;
-			_samplePeriod = 0;
-			_waveformDelay = 0;
-			
-            if ( channelName == null || channelName == "" || channelName.length() == 0 ) {
-                _channel = null;
-                return;
-            }
+    public void setChannel( final String channelName ) {
+		dispatchUpdateOperation( new Runnable() {
+			public void run() {
+				_isReady = false;
+				_isSettingChannel = true;
 
-            _channel = ChannelFactory.defaultFactory().getChannel( channelName );
-            CHANNEL_MODEL_PROXY.disableChannel( this, _channel );
-			
-            _channel.addConnectionListener( this );
-			_channel.requestConnection();
-			setupTimeChannels();
-			Channel.flushIO();
-			setEnabled( true );
-        }
-        finally {
-            BUSY_LOCK.unlock();
-			_isSettingChannel = false;
-			CHANNEL_MODEL_PROXY.channelChanged( this, _channel );    // notify the listeners
-			SETTING_PROXY.settingChanged( this );
-        }
+				setEnabled( false );
+				stopChannelEvents();
+
+				_waveformDelayInitialized = false;
+				_samplePeriod = 0;
+				_waveformDelay = 0;
+
+				if ( channelName == null || channelName == "" || channelName.length() == 0 ) {
+					_channel = null;
+				}
+				else {
+					_channel = ChannelFactory.defaultFactory().getChannel( channelName );
+					postChannelDisableChangeEvent( _channel );
+
+					_channel.addConnectionListener( ChannelModel.this );
+					_channel.requestConnection();
+					setupTimeChannels();
+					Channel.flushIO();
+					setEnabled( true );
+				}
+
+				_isSettingChannel = false;
+
+				postChannelChangeEvent( _channel );
+				postSettingChangeEvent();
+			}
+		});
     }
-    
+
     
     /** 
      * Get the waveform channel.
@@ -338,31 +413,30 @@ public class ChannelModel implements TraceSource, DataListener, TimeModelListene
 		
 		// first check whether there is anything to do
 		if ( oldDelayChannel != null && pv.equals( oldDelayChannel.channelName() ) )  return;
-		
-		try {
-			_isReady = false;
-            BUSY_LOCK.lock();
-			
-			stopMonitoringDelay();
-			
-			if ( oldDelayChannel != null ) {
-				oldDelayChannel.removeConnectionListener( this );
+
+		_isReady = false;
+
+		dispatchUpdateOperation( new Runnable() {
+			public void run() {
+				stopMonitoringDelay();
+
+				if ( oldDelayChannel != null ) {
+					oldDelayChannel.removeConnectionListener( ChannelModel.this );
+				}
+
+				if ( pv != null && pv.length() > 0 && !pv.equals( "" ) ) {
+					_delayChannel = ChannelFactory.defaultFactory().getChannel( pv );
+					_delayChannel.addConnectionListener( ChannelModel.this );
+					_delayChannel.requestConnection();
+					Channel.flushIO();
+				}
+				else {
+					_delayChannel = null;
+				}
+
+				postSettingChangeEvent();
 			}
-			
-			if ( pv != null && pv.length() > 0 && !pv.equals( "" ) ) {
-				_delayChannel = ChannelFactory.defaultFactory().getChannel( pv );
-				_delayChannel.addConnectionListener( this );
-				_delayChannel.requestConnection();
-				Channel.flushIO();
-			}
-			else {
-				_delayChannel = null;
-			}
-		}
-        finally {
-            BUSY_LOCK.unlock();
-            SETTING_PROXY.settingChanged( this );
-        }
+		});
 	}
 	
 	
@@ -380,32 +454,35 @@ public class ChannelModel implements TraceSource, DataListener, TimeModelListene
 	 * @param pv the PV for which to set the sample period channel
 	 */
 	public void setSamplePeriodChannel( final String pv ) {
-		final Channel oldSamplePeriodChannel = _samplePeriodChannel;
-		
-		// first check whether there is anything to do
-		if ( oldSamplePeriodChannel != null && pv.equals( oldSamplePeriodChannel.channelName() ) )  return;
-			 
-		try {
-			stopMonitoringSamplePeriod();
-			
-			if ( oldSamplePeriodChannel != null ) {
-				oldSamplePeriodChannel.removeConnectionListener( this );
+		dispatchUpdateOperation( new Runnable() {
+			public void run() {
+				final Channel oldSamplePeriodChannel = _samplePeriodChannel;
+
+				// first check whether there is anything to do
+				if ( oldSamplePeriodChannel != null && pv.equals( oldSamplePeriodChannel.channelName() ) )  return;
+
+				try {
+					stopMonitoringSamplePeriod();
+
+					if ( oldSamplePeriodChannel != null ) {
+						oldSamplePeriodChannel.removeConnectionListener( ChannelModel.this );
+					}
+
+					if ( pv != null && pv.length() > 0 && !pv.equals( "" ) ) {
+						_samplePeriodChannel = ChannelFactory.defaultFactory().getChannel( pv );
+						_samplePeriodChannel.addConnectionListener( ChannelModel.this );
+						_samplePeriodChannel.requestConnection();
+						Channel.flushIO();
+					}
+					else {
+						_samplePeriodChannel = null;
+					}
+				}
+				finally {
+					postSettingChangeEvent();
+				}
 			}
-			
-			if ( pv != null && pv.length() > 0 && !pv.equals( "" ) ) {
-				_samplePeriodChannel = ChannelFactory.defaultFactory().getChannel( pv );
-				_samplePeriodChannel.addConnectionListener( this );
-				_samplePeriodChannel.requestConnection();
-				Channel.flushIO();
-			}
-			else {
-				_samplePeriodChannel = null;
-			}
-		}
-		finally {
-            BUSY_LOCK.unlock();
-            SETTING_PROXY.settingChanged( this );
-		}
+		});
 	}
 	
 	
@@ -463,71 +540,71 @@ public class ChannelModel implements TraceSource, DataListener, TimeModelListene
 	 * @param waveformChannel the waveform channel
 	 */
 	protected void handleWaveformConnection( final Channel waveformChannel ) {
-        try {
-			BUSY_LOCK.lock();
-			_isReady = false;
-            int numElements = _channel.elementCount();
-            _elementTimes = new double[numElements];
-            
-            updateElementTimes();
-			_isReady = true;
-        }
-        catch( ConnectionException exception ) {
-            System.err.println( exception );
-        }
-		finally {
-			BUSY_LOCK.unlock();
-		}
+		dispatchUpdateOperation( new Runnable() {
+			public void run() {
+				try {
+					_isReady = false;
+					int numElements = _channel.elementCount();
+					_elementTimes = new double[numElements];
+
+					updateElementTimes();
+					_isReady = true;
+				}
+				catch( ConnectionException exception ) {
+					System.err.println( exception );
+				}
+			}
+		});
 	}
 	
 	
 	/** Monitor the delay channel. */
 	protected void monitorDelayChannel() {
-        try {
-			BUSY_LOCK.lock();
-			_isReady = false;
-			
-			if ( _waveformDelayMonitor == null ) {
-				_waveformDelayMonitor = _delayChannel.addMonitorValue( new WaveformDelayListener(), Monitor.VALUE );
+		dispatchUpdateOperation( new Runnable() {
+			public void run() {
+				try {
+					_isReady = false;
+
+					if ( _waveformDelayMonitor == null ) {
+						_waveformDelayMonitor = _delayChannel.addMonitorValue( new WaveformDelayListener(), Monitor.VALUE );
+					}
+
+					updateElementTimes();
+					_isReady = true;
+				}
+				catch( ConnectionException exception ) {
+					System.err.println( exception );
+				}
+				catch( MonitorException exception ) {
+					System.err.println( exception );
+				}
 			}
-			
-            updateElementTimes();
-			_isReady = true;
-        }
-        catch( ConnectionException exception ) {
-            System.err.println( exception );
-        }
-        catch( MonitorException exception ) {
-            System.err.println( exception );
-        }
-		finally {
-			BUSY_LOCK.unlock();
-		}
+		});
 	}
 	
 	
 	/** Monitor the sample period channel. */
 	protected void monitorSamplePeriod() {
-        try {
-			BUSY_LOCK.lock();
-			_isReady = false;
-			
-			if ( _samplePeriodMonitor == null ) {
-				_samplePeriodMonitor = _samplePeriodChannel.addMonitorValue( new SamplePeriodListener(), Monitor.VALUE );
+		dispatchUpdateOperation( new Runnable() {
+			public void run() {
+				try {
+					_isReady = false;
+
+					if ( _samplePeriodMonitor == null ) {
+						_samplePeriodMonitor = _samplePeriodChannel.addMonitorValue( new SamplePeriodListener(), Monitor.VALUE );
+					}
+
+					updateElementTimes();
+					_isReady = true;
+				}
+				catch( ConnectionException exception ) {
+					System.err.println( exception );
+				}
+				catch( MonitorException exception ) {
+					System.err.println( exception );
+				}
 			}
-			
-            updateElementTimes();
-			_isReady = true;
-        }
-        catch( ConnectionException exception ) {
-            System.err.println( exception );
-        }
-        catch( MonitorException exception ) {
-            System.err.println( exception );
-        }
-		finally {
-			BUSY_LOCK.unlock();
-		}
+		});
 	}
     
     
@@ -537,74 +614,67 @@ public class ChannelModel implements TraceSource, DataListener, TimeModelListene
      * and the sample period.
      */
     protected void updateElementTimes() {
-        if ( _elementTimes == null || !channelsConnected() )  return;    // nothing to update
-        
-        int numElements = _elementTimes.length;
-        double timeMark = _waveformDelay;
-        
-		try {
-			BUSY_LOCK.lock();
-            for ( int index = 0 ; index < numElements ; index++ ) {
-                _elementTimes[index] = timeMark;
-                timeMark += _samplePeriod;
-            }
-            _timeModel.convertTurns(_elementTimes);
-            CHANNEL_MODEL_PROXY.elementTimesChanged( this, _elementTimes );
-        }
-		finally {
-			BUSY_LOCK.unlock();
-		}
+		dispatchUpdateOperation( new Runnable() {
+			public void run() {
+				if ( _elementTimes == null || !channelsConnected() )  return;    // nothing to update
+
+				final int numElements = _elementTimes.length;
+				double timeMark = _waveformDelay;
+
+				for ( int index = 0 ; index < numElements ; index++ ) {
+					_elementTimes[index] = timeMark;
+					timeMark += _samplePeriod;
+				}
+				_timeModel.convertTurns(_elementTimes);
+
+				postElementTimesChangedEvent( _elementTimes );
+			}
+		});
     }
     
     
     /** Stop monitoring the delay channel. */
     private void stopMonitoringDelay() {
-		try {
-			BUSY_LOCK.lock();
-			_isReady = false;
-			
-			// disable the present waveform monitor
-			if ( _waveformDelayMonitor != null ) {
-				_waveformDelayMonitor.clear();
-				_waveformDelayMonitor = null;
+		dispatchUpdateOperation( new Runnable() {
+			public void run() {
+				_isReady = false;
+
+				// disable the present waveform monitor
+				if ( _waveformDelayMonitor != null ) {
+					_waveformDelayMonitor.clear();
+					_waveformDelayMonitor = null;
+				}
 			}
-		}
-		finally {
-			BUSY_LOCK.unlock();
-		}
+		});
     }
     
     
     /** Stop monitoring the sample period channel. */
     private void stopMonitoringSamplePeriod() {
-		try {
-			BUSY_LOCK.lock();
-			_isReady = false;
-			
-			// disable the present sample period monitor
-			if ( _samplePeriodMonitor != null ) {
-				_samplePeriodMonitor.clear();
-				_samplePeriodMonitor = null;
+		dispatchUpdateOperation( new Runnable() {
+			public void run() {
+				_isReady = false;
+
+				// disable the present sample period monitor
+				if ( _samplePeriodMonitor != null ) {
+					_samplePeriodMonitor.clear();
+					_samplePeriodMonitor = null;
+				}
 			}
-		}
-		finally {
-			BUSY_LOCK.unlock();
-		}
+		});
     }
     
     
     /** Stop monitoring the time PVs which determine the offset from cycle start and the period between waveform elements. */
     private void stopMonitoringTime() {
-		try {
-			BUSY_LOCK.lock();
-			_isReady = false;
-			
-			stopMonitoringDelay();
-			stopMonitoringSamplePeriod();
-		}
-		finally {
-			BUSY_LOCK.unlock();
-		}
+		dispatchUpdateOperation( new Runnable() {
+			public void run() {
+				_isReady = false;
+
+				stopMonitoringDelay();
+				stopMonitoringSamplePeriod();
+			}
+		});
     }
     
     
@@ -672,7 +742,7 @@ public class ChannelModel implements TraceSource, DataListener, TimeModelListene
     final public void setSignalScale( final double newScale ) {
         if ( _signalScale != newScale ) {
             _signalScale = newScale;
-            SETTING_PROXY.settingChanged( this );
+			postSettingChangeEvent();
         }
     }
     
@@ -693,7 +763,7 @@ public class ChannelModel implements TraceSource, DataListener, TimeModelListene
     final public void setSignalOffset( final double newOffset ) {
         if ( _signalOffset != newOffset ) {
             _signalOffset = newOffset;
-            SETTING_PROXY.settingChanged( this );
+			postSettingChangeEvent();
         }
     }
     
@@ -738,27 +808,31 @@ public class ChannelModel implements TraceSource, DataListener, TimeModelListene
      * @see #isEnabled
      */
     public void setEnabled( final boolean state ) throws ChannelSetException {
-        if ( _enabled != state ) {
-            _enabled = (_channel != null) ? state : false;
-            if ( _enabled ) {
-				if ( channelsConnected() ) {
-					monitorDelayChannel();
-					monitorSamplePeriod();
+		dispatchUpdateOperation( new Runnable() {
+			public void run() {
+				if ( _enabled != state ) {
+					_enabled = (_channel != null) ? state : false;
+					if ( _enabled ) {
+						if ( channelsConnected() ) {
+							monitorDelayChannel();
+							monitorSamplePeriod();
+						}
+						postChannelEnableChangeEvent( _channel );
+					}
+					else {
+						if ( _channel != null ) {
+							stopMonitoringTime();
+							postChannelDisableChangeEvent( _channel );
+						}
+					}
+
+					postSettingChangeEvent();
 				}
-				CHANNEL_MODEL_PROXY.enableChannel( this, _channel );
-            }
-            else {
-				if ( _channel != null ) {
-					stopMonitoringTime();
-					CHANNEL_MODEL_PROXY.disableChannel( this, _channel );
-				}
-            }
-			
-            SETTING_PROXY.settingChanged( this );
-        }
+			}
+		});
     }
-    
-    
+
+
     /** Toggle the channel enable */
     public void toggleEnable() {
         setEnabled( !_enabled );
@@ -798,7 +872,8 @@ public class ChannelModel implements TraceSource, DataListener, TimeModelListene
 		else if ( channel == _samplePeriodChannel ) {
 			monitorSamplePeriod();
 		}
-		CHANNEL_MODEL_PROXY.channelChanged( this, _channel );
+		
+		postChannelChangeEvent( _channel );
     }
     
     
@@ -807,7 +882,7 @@ public class ChannelModel implements TraceSource, DataListener, TimeModelListene
      * @param channel The channel which has been disconnected.
      */
     public void connectionDropped( final Channel channel ) {
-		CHANNEL_MODEL_PROXY.channelChanged( this, _channel );
+		postChannelChangeEvent( channel );
     }
     
     
@@ -821,28 +896,28 @@ public class ChannelModel implements TraceSource, DataListener, TimeModelListene
          * the element time array.
          */
         public void eventValue( final ChannelRecord record, final Channel chan ) {
-            double newDelay = record.doubleValue();
-			boolean postChange = false;
-            
-			try {
-				BUSY_LOCK.lock();
-				if ( newDelay != _waveformDelay ) {
-					_waveformDelay = newDelay;
-					updateElementTimes();
+            final double newDelay = record.doubleValue();
+
+			dispatchUpdateOperation( new Runnable() {
+				public void run() {
+					boolean postChange = false;
+					
+					if ( newDelay != _waveformDelay ) {
+						_waveformDelay = newDelay;
+						updateElementTimes();
+					}
+
+					// since the new waveform delay could be zero we need to make sure the receivers start monitoring
+					if ( !_waveformDelayInitialized ) {
+						postChange = true;
+						_waveformDelayInitialized = true;
+					}
+					
+					if ( postChange ) {
+						postChannelChangeEvent( _channel );
+					}
 				}
-				
-				// since the new waveform delay could be zero we need to make sure the receivers start monitoring
-				if ( !_waveformDelayInitialized ) {
-					postChange = true;
-					_waveformDelayInitialized = true;
-				}
-			}
-			finally {
-				BUSY_LOCK.unlock();
-				if ( postChange ) {
-					CHANNEL_MODEL_PROXY.channelChanged( ChannelModel.this, _channel );
-				}
-			}
+			});            
         }
     }
     
@@ -857,19 +932,18 @@ public class ChannelModel implements TraceSource, DataListener, TimeModelListene
          * the element time array.
          */
         public void eventValue( final ChannelRecord record, final Channel chan ) {
-            double newPeriod = record.doubleValue();
-            
-            if ( newPeriod != _samplePeriod ) {
-				try {
-					BUSY_LOCK.lock();
-					_samplePeriod = newPeriod;
-					updateElementTimes();
-				}
-				finally {
-					BUSY_LOCK.unlock();
-					CHANNEL_MODEL_PROXY.channelChanged( ChannelModel.this, _channel );
-				}
-            }
+            final double newPeriod = record.doubleValue();
+
+			if ( newPeriod != _samplePeriod ) {
+				dispatchUpdateOperation( new Runnable() {
+					public void run() {
+						_samplePeriod = newPeriod;
+						updateElementTimes();
+
+						postChannelChangeEvent( _channel );
+					}
+				});
+			}
         }
     }
 }

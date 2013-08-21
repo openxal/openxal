@@ -27,10 +27,10 @@ import java.util.*;
  */
 public class ScopeModel implements CorrelationNotice<ChannelTimeRecord>, ChannelModelListener, TriggerListener, XalDocumentListener, DataListener  {
     // messaging variables
-    protected MessageCenter messageCenter;
-    protected TraceListener traceProxy;
-    protected SettingListener settingProxy;
-    
+    final private MessageCenter MESSAGE_CENTER;
+    final private TraceListener TRACE_EVENT_PROXY;
+    final private SettingListener SETTING_EVENT_PROXY;
+
     // models
     protected ChannelModel[] channelModels;
     protected MathModel[] mathModels;
@@ -66,9 +66,9 @@ public class ScopeModel implements CorrelationNotice<ChannelTimeRecord>, Channel
 		rawHistoryKeeper = new RawHistoryKeeper( channelModels );
 		poster.addCorrelationNoticeListener( rawHistoryKeeper );
         
-        messageCenter = new MessageCenter("Scope Model");
-        traceProxy = (TraceListener)messageCenter.registerSource(this, TraceListener.class);
-        settingProxy = (SettingListener)messageCenter.registerSource(this, SettingListener.class);
+        MESSAGE_CENTER = new MessageCenter("Scope Model");
+        TRACE_EVENT_PROXY = MESSAGE_CENTER.registerSource(this, TraceListener.class);
+        SETTING_EVENT_PROXY = MESSAGE_CENTER.registerSource(this, SettingListener.class);
     }
 	
 	
@@ -92,10 +92,6 @@ public class ScopeModel implements CorrelationNotice<ChannelTimeRecord>, Channel
 		
 		correlator.dispose();
 		correlator = null;
-		
-		messageCenter = null;
-		traceProxy = null;
-		settingProxy = null;
 	}
     
     
@@ -122,7 +118,7 @@ public class ScopeModel implements CorrelationNotice<ChannelTimeRecord>, Channel
 			setCorrelatorTimespan( adaptor.doubleValue("correlationWindow") );
 		}
         
-        DataAdaptor timeAdaptor = (DataAdaptor)adaptor.childAdaptor(TimeModel.dataLabel);
+        DataAdaptor timeAdaptor = adaptor.childAdaptor(TimeModel.dataLabel);
         if ( timeAdaptor != null ) {
             timeModel.update(timeAdaptor);
         }
@@ -131,7 +127,7 @@ public class ScopeModel implements CorrelationNotice<ChannelTimeRecord>, Channel
         int channelCount = channelAdaptors.size();
         
         for ( int index = 0 ; index < channelCount ; index++ ) {
-            DataAdaptor channelAdaptor = (DataAdaptor)channelAdaptors.get(index);
+            final DataAdaptor channelAdaptor = channelAdaptors.get( index );
             try {
                 channelModels[index].update(channelAdaptor);
             }
@@ -143,11 +139,11 @@ public class ScopeModel implements CorrelationNotice<ChannelTimeRecord>, Channel
         final List<DataAdaptor> mathAdaptors = adaptor.childAdaptors( MathModel.dataLabel );
         int mathCount = mathAdaptors.size();
         for ( int index = 0 ; index < mathCount ; index++ ) {
-            final DataAdaptor mathAdaptor = (DataAdaptor)mathAdaptors.get(index);
+            final DataAdaptor mathAdaptor = mathAdaptors.get( index );
             mathModels[index].update( mathAdaptor );
         }
         
-        final DataAdaptor triggerAdaptor = (DataAdaptor)adaptor.childAdaptor( Trigger.dataLabel );
+        final DataAdaptor triggerAdaptor = adaptor.childAdaptor( Trigger.dataLabel );
         if ( triggerAdaptor != null ) {
             trigger.update( triggerAdaptor );
         }
@@ -183,7 +179,7 @@ public class ScopeModel implements CorrelationNotice<ChannelTimeRecord>, Channel
      * @param listener Object to receive setting change events.
      */
     void addSettingListener(SettingListener listener) {
-        messageCenter.registerTarget(listener, this, SettingListener.class);
+        MESSAGE_CENTER.registerTarget(listener, this, SettingListener.class);
         timeModel.addSettingListener(listener);
         for ( int index = 0 ; index < channelModels.length ; index++ ) {
             channelModels[index].addSettingListener(listener);
@@ -200,7 +196,7 @@ public class ScopeModel implements CorrelationNotice<ChannelTimeRecord>, Channel
      * @param listener Object to remove from receiving setting change events.
      */
     void removeSettingListener(SettingListener listener) {
-        messageCenter.removeTarget(listener, this, SettingListener.class);
+        MESSAGE_CENTER.removeTarget(listener, this, SettingListener.class);
         timeModel.removeSettingListener(listener);
         for ( int index = 0 ; index < channelModels.length ; index++ ) {
             channelModels[index].removeSettingListener(listener);
@@ -217,7 +213,7 @@ public class ScopeModel implements CorrelationNotice<ChannelTimeRecord>, Channel
 	 * @param listener The new listener of Trace events.
 	 */
     public void addTraceListener(TraceListener listener) {
-        messageCenter.registerTarget(listener, this, TraceListener.class);
+        MESSAGE_CENTER.registerTarget(listener, this, TraceListener.class);
     }
     
     
@@ -226,7 +222,7 @@ public class ScopeModel implements CorrelationNotice<ChannelTimeRecord>, Channel
 	 * @param listener The listener of trace events to remove.
 	 */
     public void removeTraceListener(TraceListener listener) {
-        messageCenter.removeTarget(listener, this, TraceListener.class);
+        MESSAGE_CENTER.removeTarget(listener, this, TraceListener.class);
     }
     
     
@@ -358,7 +354,7 @@ public class ScopeModel implements CorrelationNotice<ChannelTimeRecord>, Channel
 	public void setCorrelatorTimespan(double newTimespan) {
 		if ( newTimespan != correlator.binTimespan() ) {
 			correlator.setBinTimespan(newTimespan);
-            settingProxy.settingChanged(this);
+            SETTING_EVENT_PROXY.settingChanged(this);
 		}
 	}
     
@@ -384,7 +380,7 @@ public class ScopeModel implements CorrelationNotice<ChannelTimeRecord>, Channel
     public void setSweepPeriod(double sweepPeriod) {
         if ( sweepPeriod != getSweepPeriod() ) {
             poster.setPeriod(sweepPeriod);
-            settingProxy.settingChanged(this);
+            SETTING_EVENT_PROXY.settingChanged(this);
         }
     }
     
@@ -416,17 +412,10 @@ public class ScopeModel implements CorrelationNotice<ChannelTimeRecord>, Channel
         TraceEvent[] traceEvents = new TraceEvent[traceSources.length];
         
         for ( int index = 0 ; index < traceSources.length ; index++ ) {
-            TraceSource traceSource = traceSources[index];
-            if( traceSource.tryLock() ) {
-                try {
-                    traceEvents[index] = traceSource.getTraceEvent( correlation );
-                }
-                finally {
-                    traceSource.unlock();
-                }
-            }
+            final TraceSource traceSource = traceSources[index];
+			traceEvents[index] = traceSource.getTraceEvent( correlation );
         }
-        
+
         postTraces(traceEvents, correlation.meanDate());
     }
     
@@ -447,7 +436,7 @@ public class ScopeModel implements CorrelationNotice<ChannelTimeRecord>, Channel
      * @param timestamp The average time stamp for the event that generated the traces.
      */
     public void postTraces(final TraceEvent[] traceEvents, final Date timestamp) {
-        traceProxy.updateTraces(this, traceEvents, timestamp);
+        TRACE_EVENT_PROXY.updateTraces(this, traceEvents, timestamp);
     }
     
     

@@ -38,8 +38,8 @@ abstract class AbstractScreenHandler implements DataListener {
     protected FunctionGraphsJPanel chart;
     
     // messaging
-    protected MessageCenter messageCenter;
-    protected SettingListener settingProxy;
+    final private MessageCenter MESSAGE_CENTER;
+    final private SettingListener SETTING_EVENT_PROXY;
     
     // models
     protected ScopeDataModel dataModel;
@@ -51,8 +51,8 @@ abstract class AbstractScreenHandler implements DataListener {
 	 * @param aModel The scope model.
 	 */
 	public AbstractScreenHandler(ScopeModel aModel) {
-        messageCenter = new MessageCenter("ScopeScreen Center");
-        settingProxy = (SettingListener)messageCenter.registerSource(this, SettingListener.class);
+        MESSAGE_CENTER = new MessageCenter("ScopeScreen Center");
+        SETTING_EVENT_PROXY = MESSAGE_CENTER.registerSource( this, SettingListener.class );
 		
 		model = aModel;
         dataModel = new ScopeDataModel();
@@ -161,7 +161,7 @@ abstract class AbstractScreenHandler implements DataListener {
      * @param listener Object to receive setting change events.
      */
     void addSettingListener(SettingListener listener) {
-        messageCenter.registerTarget(listener, this, SettingListener.class);
+        MESSAGE_CENTER.registerTarget(listener, this, SettingListener.class);
     }
     
     
@@ -170,7 +170,7 @@ abstract class AbstractScreenHandler implements DataListener {
      * @param listener Object to remove from receiving setting change events.
      */
     void removeSettingListener(SettingListener listener) {
-        messageCenter.removeTarget(listener, this, SettingListener.class);
+        MESSAGE_CENTER.removeTarget(listener, this, SettingListener.class);
     }
 	
 	
@@ -232,7 +232,7 @@ abstract class AbstractScreenHandler implements DataListener {
         float[] hsbVals = Color.RGBtoHSB(backColor.getRed(), backColor.getGreen(), backColor.getBlue(), null);
         Color newBackColor = Color.getHSBColor(hsbVals[0], hsbVals[1], brightness);
         chart.setGraphBackGroundColor(newBackColor);
-        settingProxy.settingChanged(this);
+        SETTING_EVENT_PROXY.settingChanged(this);
     }
     
     
@@ -254,7 +254,7 @@ abstract class AbstractScreenHandler implements DataListener {
 		
         chart.setGridLinesVisibleX(isVisible);
         chart.setGridLinesVisibleY(isVisible);
-        settingProxy.settingChanged(this);
+        SETTING_EVENT_PROXY.settingChanged(this);
     }
     
     

@@ -32,9 +32,9 @@ public class TimeModel implements DataListener {
     final static public int MICROSECOND = 1;
     
     // messaging variables
-    protected MessageCenter messageCenter;
-    protected TimeModelListener modelProxy;
-    protected SettingListener settingProxy;
+    private final MessageCenter MESSAGE_CENTER;
+    private final TimeModelListener TIME_MODEL_EVENT_PROXY;
+    private final SettingListener SETTING_EVENT_PROXY;
     
     // state variables
     protected int unitsType = NONE;
@@ -45,9 +45,9 @@ public class TimeModel implements DataListener {
     /** Creates a new instance of TimeModel */
     public TimeModel() {
         // setup messaging notifications
-        messageCenter = new MessageCenter("Time Model");
-        modelProxy = (TimeModelListener)messageCenter.registerSource(this, TimeModelListener.class);
-        settingProxy = (SettingListener)messageCenter.registerSource(this, SettingListener.class);
+        MESSAGE_CENTER = new MessageCenter("Time Model");
+        TIME_MODEL_EVENT_PROXY = MESSAGE_CENTER.registerSource(this, TimeModelListener.class);
+        SETTING_EVENT_PROXY = MESSAGE_CENTER.registerSource(this, SettingListener.class);
         
         // set the default units
         setUnitsType(TURN);
@@ -89,7 +89,7 @@ public class TimeModel implements DataListener {
      * @param listener The object to add as a listener of time model events.
      */
     public void addTimeModelListener(TimeModelListener listener) {
-        messageCenter.registerTarget(listener, this, TimeModelListener.class);
+        MESSAGE_CENTER.registerTarget(listener, this, TimeModelListener.class);
     }
     
     
@@ -98,7 +98,7 @@ public class TimeModel implements DataListener {
      * @param listener The object to remove as a listener of time model events.
      */
     public void removeTimeModelListener(TimeModelListener listener) {
-        messageCenter.removeTarget(listener, this, TimeModelListener.class);
+        MESSAGE_CENTER.removeTarget(listener, this, TimeModelListener.class);
     }
     
     
@@ -107,7 +107,7 @@ public class TimeModel implements DataListener {
      * @param listener Object to receive setting change events.
      */
     void addSettingListener(SettingListener listener) {
-        messageCenter.registerTarget(listener, this, SettingListener.class);
+        MESSAGE_CENTER.registerTarget(listener, this, SettingListener.class);
     }
     
     
@@ -116,7 +116,7 @@ public class TimeModel implements DataListener {
      * @param listener Object to remove from receiving setting change events.
      */
     void removeSettingListener(SettingListener listener) {
-        messageCenter.removeTarget(listener, this, SettingListener.class);
+        MESSAGE_CENTER.removeTarget(listener, this, SettingListener.class);
     }
     
     
@@ -147,7 +147,7 @@ public class TimeModel implements DataListener {
                     unitsHandler = new TurnUnitsHandler();
                     break;
                 case MICROSECOND:
-                    unitsHandler = new MicrosecondUnitsHandler(this, modelProxy);
+                    unitsHandler = new MicrosecondUnitsHandler( this, TIME_MODEL_EVENT_PROXY );
                     break;
                 default:
                     throw new IllegalArgumentException("Time units must be one of the enumerated types!  Units specified: " + newUnitsType);
@@ -155,9 +155,9 @@ public class TimeModel implements DataListener {
             
             unitsType = newUnitsType;
             
-            settingProxy.settingChanged(this);
-            modelProxy.timeUnitsChanged(this);
-            modelProxy.timeConversionChanged(this);
+            SETTING_EVENT_PROXY.settingChanged( this );
+            TIME_MODEL_EVENT_PROXY.timeUnitsChanged( this );
+            TIME_MODEL_EVENT_PROXY.timeConversionChanged( this );
         }
     }
     
@@ -293,8 +293,9 @@ class MicrosecondUnitsHandler implements TimeUnitsHandler, IEventSinkValue {
     
     private volatile Monitor monitor;
     private volatile double period;     // microseconds per turn
-    private TimeModel model;
-    private TimeModelListener modelProxy;
+
+    private final TimeModel model;
+    private final TimeModelListener TIME_MODEL_EVENT_PROXY;
     
     static {
 		final String TURN_MHZ_PV_KEY = "turnMHzPV";
@@ -309,7 +310,7 @@ class MicrosecondUnitsHandler implements TimeUnitsHandler, IEventSinkValue {
      */
     public MicrosecondUnitsHandler( final TimeModel aModel, final TimeModelListener aModelProxy ) {
         model = aModel;
-        modelProxy = aModelProxy;
+        TIME_MODEL_EVENT_PROXY = aModelProxy;
         
         try {
             final Channel ringFrequencyChannel = ChannelFactory.defaultFactory().getChannel( turnMHzPVName );
@@ -380,7 +381,7 @@ class MicrosecondUnitsHandler implements TimeUnitsHandler, IEventSinkValue {
             if ( Math.abs(period - newPeriod) >= 1.0e-3 ) {
                 System.out.println("old period: " + period + ", new period: " + newPeriod);
                 period = newPeriod;
-                modelProxy.timeConversionChanged(model);
+                TIME_MODEL_EVENT_PROXY.timeConversionChanged( model );
             }
         }
     }

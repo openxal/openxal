@@ -35,8 +35,8 @@ public class TractorKnob extends Box implements SwingConstants {
 	final static private long serialVersionUID = 1L;
 
     protected ThumbWheelModel model;
-    protected MessageCenter messageCenter;
-    final protected TractorListener proxy;
+    final private MessageCenter MESSAGE_CENTER;
+    final private TractorListener TRACTOR_EVENT_PROXY;
     
     protected JButton incButton, decButton;
     protected ThumbWheel thumbWheel;
@@ -52,14 +52,14 @@ public class TractorKnob extends Box implements SwingConstants {
     public TractorKnob(int axis, long value, long minValue, long maxValue) {
         super(axis);
         
-        messageCenter = new MessageCenter();
-        proxy = (TractorListener)messageCenter.registerSource(this, TractorListener.class);
+        MESSAGE_CENTER = new MessageCenter();
+        TRACTOR_EVENT_PROXY = MESSAGE_CENTER.registerSource(this, TractorListener.class);
         
         model = new ThumbWheelModel(value, minValue, maxValue);
         model.addThumbWheelListener( new ThumbWheelListener() {
             public void phaseChanged(ThumbWheelModel aModel, long phase) {
                 // rebroadcast the event to the tractor knob listeners
-                proxy.valueChanged(TractorKnob.this, phase);
+                TRACTOR_EVENT_PROXY.valueChanged(TractorKnob.this, phase);
             }
         });
         initComponents(axis);
@@ -71,7 +71,7 @@ public class TractorKnob extends Box implements SwingConstants {
      * @param listener The object to receive tractor events.
      */
     public void addTractorListener(TractorListener listener) {
-        messageCenter.registerTarget(listener, this, TractorListener.class);
+        MESSAGE_CENTER.registerTarget(listener, this, TractorListener.class);
     }
     
     
@@ -80,7 +80,7 @@ public class TractorKnob extends Box implements SwingConstants {
      * @param listener The object to be removed as a receiver of tractor events.
      */
     public void removeTractorListener(TractorListener listener) {
-        messageCenter.removeTarget(listener, this, TractorListener.class);
+        MESSAGE_CENTER.removeTarget(listener, this, TractorListener.class);
     }
     
     
@@ -164,8 +164,8 @@ class ThumbWheelModel {
     protected volatile long phase;
     protected long maxPhase, minPhase;
     
-    protected MessageCenter messageCenter;
-    protected ThumbWheelListener proxy;
+    final private MessageCenter MESSAGE_CENTER;
+    final private ThumbWheelListener THUMB_WHEEL_EVENT_PROXY;
     
     
     /**
@@ -176,8 +176,8 @@ class ThumbWheelModel {
         minPhase = aMinPhase;
         maxPhase = aMaxPhase;
         
-        messageCenter = new MessageCenter();
-        proxy = (ThumbWheelListener)messageCenter.registerSource(this, ThumbWheelListener.class);
+        MESSAGE_CENTER = new MessageCenter();
+        THUMB_WHEEL_EVENT_PROXY = MESSAGE_CENTER.registerSource(this, ThumbWheelListener.class);
     }
     
     
@@ -186,7 +186,7 @@ class ThumbWheelModel {
      * @param listener The listener of thumb wheel events.
      */
     void addThumbWheelListener(ThumbWheelListener listener) {
-        messageCenter.registerTarget(listener, this, ThumbWheelListener.class);
+        MESSAGE_CENTER.registerTarget(listener, this, ThumbWheelListener.class);
     }
     
     
@@ -195,7 +195,7 @@ class ThumbWheelModel {
      * @param listener The listener to remove from receiving thumb wheel events.
      */
     void removeThumbWheelListener(ThumbWheelListener listener) {
-        messageCenter.removeTarget(listener, this, ThumbWheelListener.class);
+        MESSAGE_CENTER.removeTarget(listener, this, ThumbWheelListener.class);
     }
     
     
@@ -238,7 +238,7 @@ class ThumbWheelModel {
         // only notify listeners if the phase really changed
         if ( phase != newPhase ) {
             phase = newPhase;
-            proxy.phaseChanged(this, phase);
+            THUMB_WHEEL_EVENT_PROXY.phaseChanged(this, phase);
         }
     }
 }

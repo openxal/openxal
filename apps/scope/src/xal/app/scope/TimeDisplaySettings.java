@@ -31,16 +31,16 @@ public class TimeDisplaySettings implements DataListener {
 	protected double _lowerLimit;
 	
 	// messaging
-    protected SettingListener settingProxy;
-    protected MessageCenter messageCenter;
+    final private SettingListener SETTING_EVENT_PROXY;
+    final private MessageCenter MESSAGE_CENTER;
 	
 	
 	/**
 	 * TimeDisplaySettings constructor
 	 */
 	public TimeDisplaySettings(double lowerLimit, double timeDivision) {
-        messageCenter = new MessageCenter("ScopeScreen Center");
-        settingProxy = (SettingListener)messageCenter.registerSource(this, SettingListener.class);
+        MESSAGE_CENTER = new MessageCenter( "ScopeScreen Center" );
+        SETTING_EVENT_PROXY = MESSAGE_CENTER.registerSource( this, SettingListener.class );
 		
 		setLowerLimitAndTimeDivision(lowerLimit, timeDivision);
 	}
@@ -89,7 +89,7 @@ public class TimeDisplaySettings implements DataListener {
      * @param listener Object to receive setting change events.
      */
     void addSettingListener(SettingListener listener) {
-        messageCenter.registerTarget(listener, this, SettingListener.class);
+        MESSAGE_CENTER.registerTarget(listener, this, SettingListener.class);
     }
     
     
@@ -98,7 +98,7 @@ public class TimeDisplaySettings implements DataListener {
      * @param listener Object to remove from receiving setting change events.
      */
     void removeSettingListener(SettingListener listener) {
-        messageCenter.removeTarget(listener, this, SettingListener.class);
+        MESSAGE_CENTER.removeTarget(listener, this, SettingListener.class);
     }
 	
 	
@@ -122,7 +122,7 @@ public class TimeDisplaySettings implements DataListener {
     public void setLowerLimitAndTimeDivision(double lowerLimit, double timeDivision) {
 		_lowerLimit = lowerLimit;
 		_timeDivision = timeDivision;
-        settingProxy.settingChanged(this);
+        SETTING_EVENT_PROXY.settingChanged(this);
     }
 	
 	
@@ -144,7 +144,7 @@ public class TimeDisplaySettings implements DataListener {
     public void setTimeDivision(double newTimeDivision) {
         if ( newTimeDivision != getTimeDivision() ) {
             _timeDivision = newTimeDivision;
-            settingProxy.settingChanged(this);
+            SETTING_EVENT_PROXY.settingChanged(this);
         }
     }
     
@@ -165,7 +165,7 @@ public class TimeDisplaySettings implements DataListener {
     public void setLowerLimit(double lowerLimit) {
         if ( lowerLimit != getLowerLimit() ) {
 			setLowerLimitAndTimeDivision(lowerLimit, _timeDivision);
-            settingProxy.settingChanged(this);
+            SETTING_EVENT_PROXY.settingChanged(this);
         }
     }
     

@@ -50,20 +50,5 @@ interface TraceSource {
      * @return The element times in units of turns relative to cycle start.
      */
     public double[] getElementTimes();
-    
-    
-    /**
-     * Try to get a lock on the model.  If the sender gets the lock it 
-     * is responsible for releasing the lock when done.
-     * @return true if the sender gets the lock and false otherwise.
-     */
-    public boolean tryLock();
-    
-    
-    /**
-     * Release a lock on the model.  Every lock must be balanced by
-     * an unlock in order to free the model for a new lock from a separate thread.
-     */
-    public void unlock();
 }
 

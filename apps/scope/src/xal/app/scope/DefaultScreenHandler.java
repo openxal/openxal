@@ -79,7 +79,7 @@ class DefaultScreenHandler extends AbstractScreenHandler implements TimeModelLis
 				_timeSettings.setLowerLimit( adaptor.doubleValue("lowerTurnsLimit") );
 				break;
 			case 1:
-				DataAdaptor timeAdaptor = (DataAdaptor)adaptor.childAdaptor(TimeDisplaySettings.dataLabel);
+				final DataAdaptor timeAdaptor = adaptor.childAdaptor( TimeDisplaySettings.dataLabel );
 				if ( timeAdaptor != null ) {
 					_timeSettings.update(timeAdaptor);
 				}

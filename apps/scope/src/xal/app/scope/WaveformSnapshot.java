@@ -47,7 +47,7 @@ public class WaveformSnapshot {
 		for ( final String key : keys ) {
 			final ChannelRecord record = correlation.getRecord( key );
 			final WaveformTime timeInfo = timeMap.get( key );
-			String pvName = (String)pvMap.get(key);
+			final String pvName = pvMap.get( key );
 			waveforms[index] = new Waveform( pvName, record.doubleArray(), timeInfo );
 			++index;
 		}
