@@ -10,6 +10,8 @@
 
 package xal.app.scope;
 
+import xal.tools.dispatch.DispatchQueue;
+
 import javax.swing.*;
 import javax.swing.text.*;
 import javax.swing.border.*;
@@ -25,7 +27,7 @@ import java.util.*;
  *
  * @author  tap
  */
-public class MathPanel extends javax.swing.Box implements SwingConstants {
+public class MathPanel extends javax.swing.Box implements SwingConstants, SettingListener {
 	/** satisfy serializable */
 	final static private long serialVersionUID = 1;
 	
@@ -54,14 +56,15 @@ public class MathPanel extends javax.swing.Box implements SwingConstants {
     
     /** Creates a new instance of MathPanel */
     public MathPanel() {
-        this(null);
+        this( null );
     }
     
     
     /** Creates a new instance of MathPanel */
-    public MathPanel(MathModel aModel) {
-        super(VERTICAL);
-        model = aModel;
+    public MathPanel( final MathModel aModel ) {
+        super( VERTICAL );
+
+		setModel( null, aModel );
         initComponents();
     }
     
@@ -69,19 +72,28 @@ public class MathPanel extends javax.swing.Box implements SwingConstants {
     /** 
      * Set a new math model for display.  Buttons are used to select which 
      * math model to display.  When the user presses a math button we 
-     * update the math panel with the information for the corresponding
-     * model.
+     * update the math panel with the information for the corresponding model.
      * @param sender The button that fired the event
      * @param newModel The new math model to represent
      */
-    public void setModel(AbstractButton sender, MathModel newModel) {        
+    public void setModel( final AbstractButton sender, final MathModel newModel ) {
+		if ( model != null ) {
+			model.removeSettingListener( this );
+		}
+
         model = newModel;
-        
+
+		if ( newModel != null ) {
+			newModel.addSettingListener( this );
+		}
+
         try {
-            String title = model.getId();
-            TitledBorder border = (TitledBorder)getBorder();
-            border.setTitle(title);
-            border.setBorder( new LineBorder(sender.getForeground()) );
+			if ( model != null ) {
+				final String title = model.getId();
+				final TitledBorder border = (TitledBorder)getBorder();
+				border.setTitle( title );
+				border.setBorder( new LineBorder( sender.getForeground() ) );
+			}
         }
         catch(Exception excpt) {
             System.err.println(excpt);
@@ -108,7 +120,26 @@ public class MathPanel extends javax.swing.Box implements SwingConstants {
         
         repaint();
     }
-    
+
+	
+	/**
+     * A setting from the sender has changed.
+     * @param source The object whose setting changed.
+     */
+    public void settingChanged( final Object source ) {
+		if ( DispatchQueue.getCurrentQueue() == DispatchQueue.getMainQueue() ) {
+			updateView();
+		}
+		else {
+			DispatchQueue.getMainQueue().dispatchAsync( new Runnable() {
+				public void run() {
+					updateView();
+				}
+			});
+		}
+	}
+
+
     
     /**
      * Update the style of the formula text to reflect the status of the formula.
@@ -151,9 +182,6 @@ public class MathPanel extends javax.swing.Box implements SwingConstants {
                     String message = "The formula entered does not compile.";
                     String title = "Compile Error";
                     JOptionPane.showMessageDialog(MathPanel.this, message, title, JOptionPane.ERROR_MESSAGE);
-                }
-                finally {
-                    updateView();
                 }
             }
         });

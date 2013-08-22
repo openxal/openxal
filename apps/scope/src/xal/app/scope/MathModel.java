@@ -216,12 +216,13 @@ public class MathModel implements TraceSource, DataListener, ChannelModelListene
 				final ChannelModel[] tempSources = new ChannelModel[allSources.length];
 				int numSources = 0;
 				for ( int index = 0 ; index < allSources.length ; index++ ) {
-					if ( _interpreter.hasVariable( allSources[index].getID() ) ) {
+					final String sourceID = allSources[index].getID();
+					if ( _formula.contains( sourceID ) ) {
 						tempSources[numSources++] = allSources[index];
 					}
 				}
 				sources = new ChannelModel[numSources];
-				System.arraycopy(tempSources, 0, sources, 0, numSources);
+				System.arraycopy( tempSources, 0, sources, 0, numSources );
 
 				for ( int index = 0 ; index < sources.length ; index++ ) {
 					sources[index].addChannelModelListener( MathModel.this );
@@ -331,7 +332,7 @@ public class MathModel implements TraceSource, DataListener, ChannelModelListene
      * @return the waveform trace
      */
     final public double[] getTrace( final Correlation<ChannelTimeRecord> correlation ) {
-        if ( !enabled )  return null;
+        if ( !enabled || correlation == null )  return null;
         
         final LinearInterpolator[] interpolators = new LinearInterpolator[sources.length];
         final String[] channelKeys = new String[sources.length];
@@ -341,7 +342,7 @@ public class MathModel implements TraceSource, DataListener, ChannelModelListene
 			
 			final String channelKey = sourceCopy.getID();
 			channelKeys[sourceIndex] = channelKey;
-			
+
 			if ( !correlation.isCorrelated( channelKey ) )  return null;      // one or more variables undefined
 			
 			double delay = sourceCopy.getWaveformDelay();

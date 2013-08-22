@@ -56,6 +56,9 @@ public class ChannelModel implements TraceSource, DataListener, TimeModelListene
     protected double _samplePeriod;
     protected double[] _elementTimes;
 
+	/** indicates that the current instance supports events and is not just a cheap copy */
+	final private boolean SUPPORTS_EVENTS;
+
 	/** queue to synchronize busy state for modifications and access */
 	private final DispatchQueue BUSY_QUEUE;
 
@@ -73,30 +76,51 @@ public class ChannelModel implements TraceSource, DataListener, TimeModelListene
     
     /** Creates a new instance of ChannelModel */
     public ChannelModel( final String anId, final TimeModel aTimeModel) {
-        this(anId, null, aTimeModel);
+        this( anId, null, aTimeModel );
     }
-    
+
     
     /** Create a new channel model with the specified channel name */
     public ChannelModel( final String anID, final String channelName, final TimeModel aTimeModel ) {
+		this( anID, channelName, aTimeModel, true );
+    }
+
+
+    /** Create a new channel model with the specified channel name */
+    private ChannelModel( final String anID, final String channelName, final TimeModel aTimeModel, final boolean supportsEvents ) {
 		BUSY_QUEUE = DispatchQueue.createConcurrentQueue( "channel model busy" );
-		
+		SUPPORTS_EVENTS = supportsEvents;
+
 		_isReady = false;
         ID = anID;
-        
-        MESSAGE_CENTER = new MessageCenter( "Channel Model" );
-        CHANNEL_MODEL_PROXY = MESSAGE_CENTER.registerSource( this, ChannelModelListener.class );
-        SETTING_PROXY = MESSAGE_CENTER.registerSource( this, SettingListener.class );
-        
+
         _isSettingChannel = false;
 
         _timeModel = aTimeModel;
-        _timeModel.addTimeModelListener( this );
-        
-        setChannel( channelName );
-        setEnabled( false );
-        setSignalScale( 1.0 );
-        setSignalOffset( 0 );
+		if ( SUPPORTS_EVENTS ) {
+			MESSAGE_CENTER = new MessageCenter( "Channel Model" );
+			CHANNEL_MODEL_PROXY = MESSAGE_CENTER.registerSource( this, ChannelModelListener.class );
+			SETTING_PROXY = MESSAGE_CENTER.registerSource( this, SettingListener.class );
+			
+			_timeModel.addTimeModelListener( this );
+			setChannel( channelName );
+			setEnabled( false );
+			setSignalScale( 1.0 );
+			setSignalOffset( 0 );
+		}
+		else {
+			MESSAGE_CENTER = null;
+			CHANNEL_MODEL_PROXY = null;
+			SETTING_PROXY = null;
+			
+			if ( channelName != null ) {
+				_channel = ChannelFactory.defaultFactory().getChannel( channelName );
+			}
+			_enabled = false;
+			_signalScale = 1.0;
+			_signalOffset = 0;
+		}
+
 		_waveformDelayInitialized = false;
         _waveformDelay = 0;
         _samplePeriod = 0;
@@ -106,7 +130,7 @@ public class ChannelModel implements TraceSource, DataListener, TimeModelListene
 
 	/** make a cheap (excludes monitors and listeners), safe (synchronized snapshot) copy of basic properties */
 	public ChannelModel cheapCopy() {
-		final ChannelModel duplicate = new ChannelModel( ID, _timeModel );
+		final ChannelModel duplicate = new ChannelModel( ID, null, _timeModel, false );
 		propertyCopyTo( duplicate );
 		return duplicate;
 	}
@@ -118,10 +142,13 @@ public class ChannelModel implements TraceSource, DataListener, TimeModelListene
 			public void run() {
 				target._channel = _channel;
 				target._delayChannel = _delayChannel;
+				target._samplePeriodChannel = _samplePeriodChannel;
+
 				target._enabled = _enabled;
 				target._isReady = _isReady;
 				target._signalOffset = _signalOffset;
 				target._signalScale = _signalScale;
+
 				target._isSettingChannel = _isSettingChannel;
 				target._waveformDelayInitialized = _waveformDelayInitialized;
 				target._waveformDelay = _waveformDelay;
@@ -373,6 +400,7 @@ public class ChannelModel implements TraceSource, DataListener, TimeModelListene
 				}
 
 				_isSettingChannel = false;
+				_isReady = true;
 
 				postChannelChangeEvent( _channel );
 				postSettingChangeEvent();
