@@ -19,10 +19,10 @@ public class RfGapPropertyAccessor extends AbstractPropertyAccessor {
 	// Constants ===============================================================
 	
 	// Property Names
-	public static final String PROPERTY_ETL = RfGap.Property.ETL.toString();
-	public static final String PROPERTY_PHASE = RfGap.Property.PHASE.toString();
-	public static final String PROPERTY_FREQUENCY = RfGap.Property.FREQUENCY.toString();
-	public static final String PROPERTY_E0 = RfGap.Property.FIELD.toString();
+	public static final String PROPERTY_ETL = RfGap.Property.ETL.name();
+	public static final String PROPERTY_PHASE = RfGap.Property.PHASE.name();
+	public static final String PROPERTY_FREQUENCY = RfGap.Property.FREQUENCY.name();
+	public static final String PROPERTY_E0 = RfGap.Property.FIELD.name();
 	
 	
 	// Scaling Factors for unit conversion	

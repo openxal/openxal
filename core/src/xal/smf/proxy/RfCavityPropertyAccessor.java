@@ -18,8 +18,8 @@ public class RfCavityPropertyAccessor extends AbstractPropertyAccessor {
 	// Constants ===============================================================	
 	
 	// Property Names	
-	public static final String PROPERTY_PHASE = RfCavity.Property.PHASE.toString();
-	public static final String PROPERTY_AMPLITUDE = RfCavity.Property.AMPLITUDE.toString();
+	public static final String PROPERTY_PHASE = RfCavity.Property.PHASE.name();
+	public static final String PROPERTY_AMPLITUDE = RfCavity.Property.AMPLITUDE.name();
 	
 	// Class Variables =========================================================
 	final private static List<String> PROPERTY_NAMES;
