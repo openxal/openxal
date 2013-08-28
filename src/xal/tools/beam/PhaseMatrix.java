@@ -609,101 +609,101 @@ public class PhaseMatrix implements IArchive, java.io.Serializable {
     * Beam Operations
     */
      
-    /**
-     * Compute and return the betatron phase advance for a particle produced
-     * by this matrix when used as a transfer matrix.
-     * 
-     * @param   twissOld    Twiss parameter before application of matrix
-     * @param   twissNew    Twiss parameter after application of matrix
-     * 
-     * @return  vector (sigx,sigy,sigz) of phase advances in <b>radians</b>
-     */
-    public R3   compPhaseAdvance(Twiss[] twissOld, Twiss[] twissNew)  {
-        
-        int     i;          // loop control
-        int     iElem;      // matrix element index
-        double  dblR12;     // sub-matrix element R12
-        double  dblPhsAd;   // phase advance
-        double  betaOld, betaNew;
-        R3      vecPhsAd = new R3();    // returned set of phase advances
-        
-        for (i=0; i<3; i++) {           // Loop through each plane
-
-            iElem = 2*i;
-            /*
-             dblTrace = getElem(iElem,iElem) + getElem(iElem+1,iElem+1);
-             
-             if (dblTrace >= 2.0)    {
-             dblPhsAd = 0.0;
-             
-             } else if (dblTrace <= -2.0)    {
-             dblPhsAd = Math.PI;
-             
-             } else  {
-             dblPhsAd = Math.acos(0.5*dblTrace);
-             
-             }
-             */
-            dblR12 = getElem(iElem, iElem+1);
-            betaOld = twissOld[i].getBeta();
-            betaNew = twissNew[i].getBeta();
-            dblPhsAd = Math.asin(dblR12/Math.sqrt(betaOld * betaNew) );
-            
-            vecPhsAd.set(i, dblPhsAd);
-            
-        }
-        
-        return vecPhsAd;
-    }
+//    /**
+//     * Compute and return the betatron phase advance for a particle produced
+//     * by this matrix when used as a transfer matrix.
+//     * 
+//     * @param   twissOld    Twiss parameter before application of matrix
+//     * @param   twissNew    Twiss parameter after application of matrix
+//     * 
+//     * @return  vector (sigx,sigy,sigz) of phase advances in <b>radians</b>
+//     */
+//    public R3   compPhaseAdvance(Twiss[] twissOld, Twiss[] twissNew)  {
+//        
+//        int     i;          // loop control
+//        int     iElem;      // matrix element index
+//        double  dblR12;     // sub-matrix element R12
+//        double  dblPhsAd;   // phase advance
+//        double  betaOld, betaNew;
+//        R3      vecPhsAd = new R3();    // returned set of phase advances
+//        
+//        for (i=0; i<3; i++) {           // Loop through each plane
+//
+//            iElem = 2*i;
+//            /*
+//             dblTrace = getElem(iElem,iElem) + getElem(iElem+1,iElem+1);
+//             
+//             if (dblTrace >= 2.0)    {
+//             dblPhsAd = 0.0;
+//             
+//             } else if (dblTrace <= -2.0)    {
+//             dblPhsAd = Math.PI;
+//             
+//             } else  {
+//             dblPhsAd = Math.acos(0.5*dblTrace);
+//             
+//             }
+//             */
+//            dblR12 = getElem(iElem, iElem+1);
+//            betaOld = twissOld[i].getBeta();
+//            betaNew = twissNew[i].getBeta();
+//            dblPhsAd = Math.asin(dblR12/Math.sqrt(betaOld * betaNew) );
+//            
+//            vecPhsAd.set(i, dblPhsAd);
+//            
+//        }
+//        
+//        return vecPhsAd;
+//    }
+//    
+//    /** 
+//     * Calculate the fixed point solution vector representing the closed orbit at the location of this element.
+//     * We find the fixed point for the six phase space coordinates.
+//     * The equation to solve is <code>Ax + b = 0</code> where <code>A</code> is the 6x6 submatrix less the identity
+//     * matrix and <code>b</code> is the 7th column excluding the 7th row element.  The reason for this is that the
+//     * fixed point is defined by the point for which the transfer map maps to the same point.  This is
+//     * <code>M * v = v</code>.  
+//     * 
+//     * @return the fixed point solution
+//     */
+//    public PhaseVector calculateFixedPoint() {
+//        Matrix A = m_matPhase.getMatrix( 0, IND_ZP, 0, IND_ZP ).minus( Matrix.identity(IND_ZP+1, IND_ZP+1) );
+//        Matrix b = m_matPhase.getMatrix( 0, IND_ZP, IND_HOM, IND_HOM ).times( -1 );
+//
+//        //sako
+//        //Matrix MZ = m_matPhase.getMatrix(IND_Z,IND_ZP,IND_Z,IND_ZP);
+//        //      System.out.println("det(MZ), det(A) = "+MZ.det()+" "+A.det());
+//        //      System.out.println("###### MZ = ("+MZ.get(0,0)+","+MZ.get(0,1)+")("+MZ.get(1,0)+","+MZ.get(1,1)+")");
+//
+//        PhaseVector sol;
+//
+//        if (A.det()==0) {
+//            Matrix Axy = m_matPhase.getMatrix( 0, IND_YP, 0, IND_YP ).minus( Matrix.identity(IND_YP+1, IND_YP+1) );
+//            Matrix bxy = m_matPhase.getMatrix( 0, IND_YP, IND_HOM, IND_HOM ).times( -1 );
+//            Matrix solutionxy = Axy.solve(bxy);
+//            //System.out.println("A.det()=0, sxy solved");
+//            sol = new PhaseVector( solutionxy.get(IND_X, 0), solutionxy.get(IND_XP, 0), solutionxy.get(IND_Y, 0), solutionxy.get(IND_YP, 0), 0, 0 );//sako, check z, zp components!
+//        } else {
+//
+//            Matrix solution = A.solve(b);
+//            sol = new PhaseVector( solution.get(IND_X, 0), solution.get(IND_XP, 0), solution.get(IND_Y, 0), solution.get(IND_YP, 0), solution.get(IND_Z, 0), solution.get(IND_ZP, 0) );
+//        }
+//        return sol;
+//    }
+    
     
     /** 
-     * Calculate the fixed point solution vector representing the closed orbit at the location of this element.
-     * We find the fixed point for the six phase space coordinates.
-     * The equation to solve is <code>Ax + b = 0</code> where <code>A</code> is the 6x6 submatrix less the identity
-     * matrix and <code>b</code> is the 7th column excluding the 7th row element.  The reason for this is that the
+     * Calculate the fixed point solution vector representing the dispersion at the location of this element.
+     * We find the fixed point for the four transverse phase space coordinates.
+     * The equation to solve is <code>Ax + b = 0</code> where <code>A</code> is the 4x4 submatrix less the identity
+     * matrix and <code>b</code> is the 6th column excluding the longitudinal row element.  The reason for this is that the
      * fixed point is defined by the point for which the transfer map maps to the same point.  This is
      * <code>M * v = v</code>.  
      * 
-     * @return the fixed point solution
+     * @param    gamma   I think it's the relativistic factor (CKA)
+     * 
+     * @return the dispersion vector
      */
-    public PhaseVector calculateFixedPoint() {
-        Matrix A = m_matPhase.getMatrix( 0, IND_ZP, 0, IND_ZP ).minus( Matrix.identity(IND_ZP+1, IND_ZP+1) );
-        Matrix b = m_matPhase.getMatrix( 0, IND_ZP, IND_HOM, IND_HOM ).times( -1 );
-
-        //sako
-        //Matrix MZ = m_matPhase.getMatrix(IND_Z,IND_ZP,IND_Z,IND_ZP);
-        //      System.out.println("det(MZ), det(A) = "+MZ.det()+" "+A.det());
-        //      System.out.println("###### MZ = ("+MZ.get(0,0)+","+MZ.get(0,1)+")("+MZ.get(1,0)+","+MZ.get(1,1)+")");
-
-        PhaseVector sol;
-
-        if (A.det()==0) {
-            Matrix Axy = m_matPhase.getMatrix( 0, IND_YP, 0, IND_YP ).minus( Matrix.identity(IND_YP+1, IND_YP+1) );
-            Matrix bxy = m_matPhase.getMatrix( 0, IND_YP, IND_HOM, IND_HOM ).times( -1 );
-            Matrix solutionxy = Axy.solve(bxy);
-            //System.out.println("A.det()=0, sxy solved");
-            sol = new PhaseVector( solutionxy.get(IND_X, 0), solutionxy.get(IND_XP, 0), solutionxy.get(IND_Y, 0), solutionxy.get(IND_YP, 0), 0, 0 );//sako, check z, zp components!
-        } else {
-
-            Matrix solution = A.solve(b);
-            sol = new PhaseVector( solution.get(IND_X, 0), solution.get(IND_XP, 0), solution.get(IND_Y, 0), solution.get(IND_YP, 0), solution.get(IND_Z, 0), solution.get(IND_ZP, 0) );
-        }
-        return sol;
-    }
-    
-    
-    /** 
-    * Calculate the fixed point solution vector representing the dispersion at the location of this element.
-    * We find the fixed point for the four transverse phase space coordinates.
-    * The equation to solve is <code>Ax + b = 0</code> where <code>A</code> is the 4x4 submatrix less the identity
-    * matrix and <code>b</code> is the 6th column excluding the longitudinal row element.  The reason for this is that the
-    * fixed point is defined by the point for which the transfer map maps to the same point.  This is
-    * <code>M * v = v</code>.  
-    * 
-    * @param    gamma   I think it's the relativistic factor (CKA)
-    * 
-    * @return the dispersion vector
-    */
     public double[] calculateDispersion(final double gamma) {
         Matrix A = m_matPhase.getMatrix( 0, IND_YP, 0, IND_YP ).minus( Matrix.identity(IND_YP+1, IND_YP+1) );
         Matrix b = m_matPhase.getMatrix( 0, IND_YP, IND_ZP, IND_ZP ).times( -1./(gamma*gamma) );

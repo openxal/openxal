@@ -19,7 +19,7 @@ import Jama.Matrix;
  * @author Patrick Scruggs
  * @since  Aug 14, 2013
  */
-public class MachineParameterCalcEngine {
+public class MachineParameterCalcEngine implements IPhaseState {
 
 
 
@@ -34,6 +34,16 @@ public class MachineParameterCalcEngine {
 	}
 
 
+	/** 
+	 * Calculate the fixed point solution vector representing the closed orbit at the location of this element.
+	 * We find the fixed point for the six phase space coordinates.
+	 * The equation to solve is <code>Ax + b = 0</code> where <code>A</code> is the 6x6 submatrix less the identity
+	 * matrix and <code>b</code> is the 7th column excluding the 7th row element.  The reason for this is that the
+	 * fixed point is defined by the point for which the transfer map maps to the same point.  This is
+	 * <code>M * v = v</code>.  
+	 * 
+	 * @return the fixed point solution
+	 */
 	public PhaseVector calculateFixedPoint() {
 		Matrix A = _phaseMatrix.getMatrix().getMatrix( 0, PhaseMatrix.IND_ZP, 0, PhaseMatrix.IND_ZP ).minus( Matrix.identity(PhaseMatrix.IND_ZP+1, PhaseMatrix.IND_ZP+1) );
 		Matrix b = _phaseMatrix.getMatrix().getMatrix( 0, PhaseMatrix.IND_ZP, PhaseMatrix.IND_HOM, PhaseMatrix.IND_HOM ).times( -1 );
@@ -59,6 +69,19 @@ public class MachineParameterCalcEngine {
 		return sol;
 	}
 
+	/*
+	 * Beam Operations
+	 */
+
+	/**
+	 * Compute and return the betatron phase advance for a particle produced
+	 * by this matrix when used as a transfer matrix.
+	 * 
+	 * @param   twissOld    Twiss parameter before application of matrix
+	 * @param   twissNew    Twiss parameter after application of matrix
+	 * 
+	 * @return  vector (sigx,sigy,sigz) of phase advances in <b>radians</b>
+	 */
 	public R3   compPhaseAdvance(Twiss[] twissOld, Twiss[] twissNew)  {
 
 		int     i;          // loop control
@@ -148,5 +171,33 @@ public class MachineParameterCalcEngine {
 	public void load(DataAdaptor da) { }
 
 	public void save(DataAdaptor da) { }
+
+
+	/**
+	 *
+	 * @see xal.model.probe.traj.IPhaseState#getTwiss()
+	 *
+	 * @author Christopher K. Allen
+	 * @since  Aug 14, 2013
+	 */
+	@Override
+	public Twiss[] getTwiss() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	/**
+	 *
+	 * @see xal.model.probe.traj.IPhaseState#getBetatronPhase()
+	 *
+	 * @author Christopher K. Allen
+	 * @since  Aug 14, 2013
+	 */
+	@Override
+	public R3 getBetatronPhase() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }
 
