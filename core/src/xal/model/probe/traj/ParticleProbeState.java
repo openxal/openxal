@@ -65,7 +65,7 @@ public class ParticleProbeState extends ProbeState implements ICoordinateState {
      */
     public ParticleProbeState(ParticleProbe probe) {
         super(probe);
-        this.setPhaseCoordinates( probe.phaseCoordinates() );
+        this.setPhaseCoordinates( probe.getPhaseCoordinates() );
     }
     
     /** 
@@ -89,7 +89,7 @@ public class ParticleProbeState extends ProbeState implements ICoordinateState {
      *
      *  @return     vector (x,x',y,y',z,z',1) of phase space coordinates
      */
-    public PhaseVector phaseCoordinates() {
+    public PhaseVector getPhaseCoordinates() {
         return this.m_vecCoords;
     }
 	
@@ -116,7 +116,7 @@ public class ParticleProbeState extends ProbeState implements ICoordinateState {
      */
     @Override
     public String toString() {
-        return super.toString() + " coords: " + phaseCoordinates().toString();
+        return super.toString() + " coords: " + getPhaseCoordinates().toString();
     }       
     
     
@@ -140,7 +140,7 @@ public class ParticleProbeState extends ProbeState implements ICoordinateState {
         super.addPropertiesTo(container);
         
         DataAdaptor partNode = container.createChild(PARTICLE_LABEL);
-        partNode.setValue(VALUE_LABEL, phaseCoordinates().toString());
+        partNode.setValue(VALUE_LABEL, getPhaseCoordinates().toString());
     }
     
     /**

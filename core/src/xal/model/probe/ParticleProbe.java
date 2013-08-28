@@ -59,7 +59,7 @@ public class ParticleProbe extends Probe {
         super(probe);
         
         // Copy phase coordinate vector
-        this.setPhaseCoordinates( probe.phaseCoordinates() );
+        this.setPhaseCoordinates( probe.getPhaseCoordinates() );
     }
     
     @Override
@@ -74,7 +74,7 @@ public class ParticleProbe extends Probe {
      *
      *  @return     vector (x,x',y,y',z,z',1) of phase space coordinates
      */
-    public PhaseVector phaseCoordinates()  { 
+    public PhaseVector getPhaseCoordinates()  { 
     	return this.m_vecCoords;
     }
 	
@@ -138,7 +138,7 @@ public class ParticleProbe extends Probe {
         if (!(state instanceof ParticleProbeState))
             throw new IllegalArgumentException("invalid probe state");
         super.applyState(state);
-        setPhaseCoordinates(((ParticleProbeState)state).phaseCoordinates());
+        setPhaseCoordinates(((ParticleProbeState)state).getPhaseCoordinates());
     }
     
     @Override

@@ -429,7 +429,7 @@ public class EnvelopeProbeState extends BunchProbeState implements IPhaseState {
      *  
      *  @see    EnvelopeProbeState#phaseMean()
      */
-    public PhaseVector phaseCoordinates() {
+    public PhaseVector getPhaseCoordinates() {
         return phaseMean();
     }
     
