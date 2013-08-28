@@ -230,7 +230,7 @@ public class ParticleTracker extends Tracker {
         PhaseMap  mapPhi = elem.transferMap(probe, dblLen);
         
         // Advance state vector
-        PhaseVector  z0 = probe.phaseCoordinates();
+        PhaseVector  z0 = probe.getPhaseCoordinates();
         PhaseVector  z1 = mapPhi.apply(z0);
         
         probe.setPhaseCoordinates(z1);

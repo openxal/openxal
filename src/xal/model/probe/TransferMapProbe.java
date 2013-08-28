@@ -166,7 +166,7 @@ public class TransferMapProbe extends Probe {
         super.applyState(state);
         stateTrans.setTrajectory( (TransferMapTrajectory)m_trajHist );
         setTransferMap( stateTrans.getTransferMap() );
-        setPhaseCoordinates( stateTrans.phaseCoordinates() );
+        setPhaseCoordinates( stateTrans.getPhaseCoordinates() );
     }
     
     

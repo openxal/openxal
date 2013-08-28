@@ -186,7 +186,7 @@ public class TransferMapState extends ProbeState implements IPhaseState {
      *  Returns homogeneous phase space coordinates of the closed orbit.  The units are meters and radians.
      *  @return vector (x,x',y,y',z,z',1) of phase space coordinates
      */
-    public PhaseVector phaseCoordinates() {
+    public PhaseVector getPhaseCoordinates() {
         return _phaseCoordinates[0];
     }
 
