@@ -168,9 +168,9 @@ public class RfGap extends AcceleratorNode implements RfGapDataSource {
 			final Property property = Property.valueOf( propertyName );		// throws IllegalArgumentException if no matching property
 			switch( property ) {
 				case ETL: case FIELD:
-					return cavity.getLivePropertyChannels( RfCavity.Property.AMPLITUDE.toString() );
+					return cavity.getLivePropertyChannels( RfCavity.Property.AMPLITUDE.name() );
 				case PHASE:
-					return cavity.getLivePropertyChannels( RfCavity.Property.PHASE.toString() );
+					return cavity.getLivePropertyChannels( RfCavity.Property.PHASE.name() );
 				case FREQUENCY:
 					return new Channel[0];
 				default:
