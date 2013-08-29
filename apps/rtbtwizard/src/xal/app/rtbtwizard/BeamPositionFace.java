@@ -568,10 +568,10 @@ public class BeamPositionFace extends JPanel{
         TransferMapState targetstate = (TransferMapState)traj.stateForElement("RTBT:Tgt");
         //TransferMapState targetstate = (TransferMapState)traj.stateForElement("RTBT_Diag:BPM25");
         
-        //PhaseVector bpm1coords = bpm1state.phaseCoordinates();
-        //PhaseVector bpm2coords = bpm2state.phaseCoordinates();
-        PhaseVector windowcoords = windowstate.phaseCoordinates();
-        PhaseVector targetcoords = targetstate.phaseCoordinates();
+        //PhaseVector bpm1coords = bpm1state.getPhaseCoordinates();
+        //PhaseVector bpm2coords = bpm2state.getPhaseCoordinates();
+        PhaseVector windowcoords = windowstate.getPhaseCoordinates();
+        PhaseVector targetcoords = targetstate.getPhaseCoordinates();
         
         //System.out.println("bpm 1 " + bpm1coords.getx() +  " " +bpm1coords.gety());
         //System.out.println("bpm 2 " + bpm2coords.getx() +  " " +bpm2coords.gety());
@@ -641,7 +641,7 @@ public class BeamPositionFace extends JPanel{
         while(iterState.hasNext()){
             TransferMapState state= (TransferMapState)iterState.next();
             sdata.add(state.getPosition());
-            PhaseVector coords=state.phaseCoordinates();
+            PhaseVector coords=state.getPhaseCoordinates();
             hdata.add(coords.getx());
             vdata.add(coords.gety());
         }

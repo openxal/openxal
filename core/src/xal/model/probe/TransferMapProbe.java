@@ -61,7 +61,7 @@ public class TransferMapProbe extends Probe {
      */
     public void setupNextTurn() {
         this.setPosition(0);
-        PhaseVector pv = this.phaseCoordinates();
+        PhaseVector pv = this.getPhaseCoordinates();
         this.m_trajHist = this.createTrajectory();
         pv.setz(0);
         this.setPhaseCoordinates(pv);
@@ -113,7 +113,7 @@ public class TransferMapProbe extends Probe {
      *  are meters and radians.
      *  @return vector (x,x',y,y',z,z',1) of phase space coordinates
      */
-    public PhaseVector phaseCoordinates()  { 
+    public PhaseVector getPhaseCoordinates()  { 
         return _phaseCoordinates;
     }
     

@@ -478,7 +478,7 @@ public class AnalysisPanel extends JPanel{
 		
 		ParticleTrajectory traj = (ParticleTrajectory)probe.getTrajectory();
 		state = (ParticleProbeState)traj.stateForElement("RTBT_Mag:ExSptm");
-		coordinates = state.phaseCoordinates();
+		coordinates = state.getPhaseCoordinates();
 		
 		/* Display the resulting y and py */
 		ySingleField.setValue(coordinates.gety());
@@ -621,7 +621,7 @@ public class AnalysisPanel extends JPanel{
 
 		traj = (ParticleTrajectory)probe.getTrajectory();
 		state = (ParticleProbeState)traj.stateForElement("RTBT_Mag:ExSptm");
-		coordinates = state.phaseCoordinates();
+		coordinates = state.getPhaseCoordinates();
 		error = ((coordinates.gety()-yGoalField.getDoubleValue())*(coordinates.gety()-yGoalField.getDoubleValue()))
 				+10.0*((coordinates.getyp()-pyGoalField.getDoubleValue())*(coordinates.getyp()-pyGoalField.getDoubleValue()));
 		return Math.sqrt(10000.0*error);
@@ -669,7 +669,7 @@ public class AnalysisPanel extends JPanel{
 		
 		while(iterState.hasNext()){
 			state = (ParticleProbeState)iterState.next();
-			coordinates = state.phaseCoordinates();
+			coordinates = state.getPhaseCoordinates();
 			double s = state.getPosition();
 			double y =  1000.0*coordinates.gety();
 			double py =  1000.0*coordinates.getyp();
@@ -682,7 +682,7 @@ public class AnalysisPanel extends JPanel{
 		int size = ydata.size() - 1;
 		ParticleProbeState bpmc10state = (ParticleProbeState)traj.stateForElement("Ring_Mag:QTH_C10");
 		double bpmc10pos = bpmc10state.getPosition();
-		double bpmc10y = 1000.0*(bpmc10state.phaseCoordinates()).gety();
+		double bpmc10y = 1000.0*(bpmc10state.getPhaseCoordinates()).gety();
 		
 		
 		double[] s = new double[size];
