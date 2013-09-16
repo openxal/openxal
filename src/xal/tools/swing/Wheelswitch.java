@@ -17,7 +17,6 @@ package xal.tools.swing;
 import com.cosylab.events.SetEvent;
 import com.cosylab.events.SetListener;
 
-import com.cosylab.gui.components.demo.WheelswitchDemo;
 import com.cosylab.gui.components.util.ColorHelper;
 import com.cosylab.gui.components.wheelswitch.Digit;
 import com.cosylab.gui.components.wheelswitch.StaticDigit;
@@ -798,34 +797,6 @@ public class Wheelswitch extends JPanel
 		listenerList.add(SetListener.class, l);
 	}
 
-	/**
-	 * Run test applet.
-	 *
-	 * @param args command line parameters
-	 */
-	public static void main(String[] args)
-	{
-		JApplet applet = new JApplet() {
-				public void init()
-				{
-					Container cp = this.getContentPane();
-					cp.add((new WheelswitchDemo()).initializeContentPanel());
-				}
-			};
-
-		JFrame frame = new JFrame("Wheelswitch Testing Applet");
-		frame.getContentPane().add(applet);
-		frame.setSize(500, 300);
-		frame.addWindowListener(new WindowAdapter() {
-				public void windowClosing(WindowEvent e)
-				{
-					System.exit(0);
-				}
-			});
-		applet.init();
-		applet.start();
-		frame.setVisible(true);
-	}
 
 	/**
 	 * Overriden to implement digit and upDownButton enabling/disabling.
