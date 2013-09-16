@@ -12,7 +12,7 @@
  * OR REDISTRIBUTION OF THIS SOFTWARE.
  */
 
-package com.cosylab.events;
+package xal.tools.swing.wheelswitch;
 
 import java.util.EventObject;
 

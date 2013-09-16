@@ -1,7 +1,7 @@
 /*
  * @@COPYRIGHT@@
  */
-package com.cosylab.events;
+package xal.tools.swing.wheelswitch;
 
 import java.util.EventListener;
 
