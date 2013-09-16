@@ -11,7 +11,7 @@ import javax.swing.JComponent;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.EventListenerList;
 
-import com.cosylab.gui.components.ArrowButton;
+import xal.tools.swing.wheelswitch.comp.ArrowButton;
 import xal.tools.swing.wheelswitch.util.ColorHelper;
 
 /**

@@ -12,9 +12,9 @@
  * OR REDISTRIBUTION OF THIS SOFTWARE.
  */
 
-package com.cosylab.gui.components;
+package xal.tools.swing.wheelswitch.comp;
 
-import com.cosylab.gui.components.util.PaintHelper;
+import xal.tools.swing.wheelswitch.util.PaintHelper;
 
 import java.awt.Container;
 import java.awt.Dimension;
