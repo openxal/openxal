@@ -12,10 +12,10 @@
  * OR REDISTRIBUTION OF THIS SOFTWARE.
  */
 
-package com.cosylab.gui.components;
+package xal.tools.swing.wheelswitch.comp;
 
-import com.cosylab.gui.components.util.FontHelper;
-import com.cosylab.gui.components.util.PaintHelper;
+import xal.tools.swing.wheelswitch.util.FontHelper;
+import xal.tools.swing.wheelswitch.util.PaintHelper;
 
 import java.awt.Dimension;
 import java.awt.Font;
