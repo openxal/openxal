@@ -26,7 +26,7 @@ import xal.tools.swing.wheelswitch.ValueDigit;
 import xal.tools.swing.wheelswitch.WheelswitchFormatter;
 import com.cosylab.gui.components.wheelswitch.WheelswitchLayout;
 
-import com.cosylab.util.Debug;
+import xal.tools.swing.wheelswitch.util.Debug;
 
 //import java.applet.AudioClip;
 

@@ -12,7 +12,7 @@
  * OR REDISTRIBUTION OF THIS SOFTWARE.
  */
 
-package com.cosylab.util;
+package xal.tools.swing.wheelswitch.util;
 
 /**
  * This class generalizes the debug output by providing additional
