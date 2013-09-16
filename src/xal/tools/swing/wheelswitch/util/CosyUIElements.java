@@ -21,7 +21,7 @@ import javax.swing.border.Border;
 import javax.swing.plaf.metal.MetalBorders;
 import javax.swing.plaf.metal.MetalTabbedPaneUI;
 
-import com.cosylab.gui.components.SimpleButton;
+import xal.tools.swing.wheelswitch.comp.SimpleButton;
 
 
 /**
