@@ -12,7 +12,7 @@
  * OR REDISTRIBUTION OF THIS SOFTWARE.
  */
 
-package com.cosylab.gui.components;
+package xal.tools.swing.wheelswitch.comp;
 
 import com.cosylab.gui.components.util.ColorHelper;
 
