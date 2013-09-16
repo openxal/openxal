@@ -17,7 +17,7 @@ package xal.tools.swing;
 import com.cosylab.events.SetEvent;
 import com.cosylab.events.SetListener;
 
-import com.cosylab.gui.components.util.ColorHelper;
+import xal.tools.swing.wheelswitch.ColorHelper;
 import com.cosylab.gui.components.wheelswitch.Digit;
 import com.cosylab.gui.components.wheelswitch.StaticDigit;
 import com.cosylab.gui.components.wheelswitch.UpDownButton;
