@@ -14,7 +14,7 @@
 
 package xal.tools.swing.wheelswitch.comp;
 
-import com.cosylab.gui.components.util.ColorHelper;
+import xal.tools.swing.wheelswitch.util.ColorHelper;
 
 import java.awt.Color;
 import java.awt.GradientPaint;
