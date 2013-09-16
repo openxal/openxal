@@ -14,10 +14,10 @@
 
 package xal.tools.swing;
 
-import xal.tools.swing.wheelswitch.SetEvent;
-import xal.tools.swing.wheelswitch.SetListener;
+import xal.tools.swing.wheelswitch.util.SetEvent;
+import xal.tools.swing.wheelswitch.util.SetListener;
 
-import xal.tools.swing.wheelswitch.ColorHelper;
+import xal.tools.swing.wheelswitch.util.ColorHelper;
 import xal.tools.swing.wheelswitch.Digit;
 import com.cosylab.gui.components.wheelswitch.StaticDigit;
 import com.cosylab.gui.components.wheelswitch.UpDownButton;

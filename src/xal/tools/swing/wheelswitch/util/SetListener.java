@@ -1,7 +1,7 @@
 /*
  * @@COPYRIGHT@@
  */
-package xal.tools.swing.wheelswitch;
+package xal.tools.swing.wheelswitch.util;
 
 import java.util.EventListener;
 

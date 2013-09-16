@@ -12,7 +12,7 @@
  * OR REDISTRIBUTION OF THIS SOFTWARE.
  */
 
-package xal.tools.swing.wheelswitch;
+package xal.tools.swing.wheelswitch.util;
 
 import java.util.EventObject;
 
