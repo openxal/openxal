@@ -12,10 +12,10 @@
  * OR REDISTRIBUTION OF THIS SOFTWARE.
  */
 
-package com.cosylab.gui.components.wheelswitch;
+package xal.tools.swing.wheelswitch;
 
 import com.cosylab.gui.components.SimpleButton;
-import com.cosylab.gui.components.util.ColorHelper;
+import xal.tools.swing.wheelswitch.ColorHelper;
 import com.cosylab.gui.components.util.PaintHelper;
 
 import java.awt.AlphaComposite;
