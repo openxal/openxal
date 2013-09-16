@@ -12,7 +12,7 @@
  * OR REDISTRIBUTION OF THIS SOFTWARE.
  */
 
-package com.cosylab.gui.components;
+package xal.tools.swing;
 
 import com.cosylab.events.SetEvent;
 import com.cosylab.events.SetListener;
