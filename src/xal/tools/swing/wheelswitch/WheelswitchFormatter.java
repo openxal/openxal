@@ -12,7 +12,7 @@
  * OR REDISTRIBUTION OF THIS SOFTWARE.
  */
 
-package com.cosylab.gui.components.wheelswitch;
+package xal.tools.swing.wheelswitch;
 
 import com.cosylab.util.Debug;
 import com.cosylab.util.PrintfFormat;
