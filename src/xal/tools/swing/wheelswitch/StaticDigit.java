@@ -1,9 +1,9 @@
 /*
  * @@COPYRIGHT@@
  */
-package com.cosylab.gui.components.wheelswitch;
+package xal.tools.swing.wheelswitch;
 
-import com.cosylab.gui.components.SimpleButton;
+import xal.tools.swing.wheelswitch.comp.SimpleButton;
 
 /**
  * Descedant of <code>Digit</code> displaying static text.
