@@ -14,7 +14,7 @@
 
 package xal.tools.swing.wheelswitch;
 
-import com.cosylab.gui.components.SimpleButton;
+import xal.tools.swing.wheelswitch.comp.SimpleButton;
 import xal.tools.swing.wheelswitch.util.ColorHelper;
 import xal.tools.swing.wheelswitch.util.PaintHelper;
 
