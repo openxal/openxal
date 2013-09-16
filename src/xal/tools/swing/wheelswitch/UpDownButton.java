@@ -1,7 +1,7 @@
 /*
  * @@COPYRIGHT@@
  */
-package com.cosylab.gui.components.wheelswitch;
+package xal.tools.swing.wheelswitch;
 
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
@@ -12,7 +12,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.EventListenerList;
 
 import com.cosylab.gui.components.ArrowButton;
-import com.cosylab.gui.components.util.ColorHelper;
+import xal.tools.swing.wheelswitch.util.ColorHelper;
 
 /**
  * Descedant of <code>javax.swing.JComponent</code> that contains two 

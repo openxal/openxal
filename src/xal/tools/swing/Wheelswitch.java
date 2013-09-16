@@ -20,7 +20,7 @@ import xal.tools.swing.wheelswitch.util.SetListener;
 import xal.tools.swing.wheelswitch.util.ColorHelper;
 import xal.tools.swing.wheelswitch.Digit;
 import xal.tools.swing.wheelswitch.StaticDigit;
-import com.cosylab.gui.components.wheelswitch.UpDownButton;
+import xal.tools.swing.wheelswitch.UpDownButton;
 import com.cosylab.gui.components.wheelswitch.UpDownListener;
 import xal.tools.swing.wheelswitch.ValueDigit;
 import com.cosylab.gui.components.wheelswitch.WheelswitchFormatter;
