@@ -1,7 +1,7 @@
 /*
  * @@COPYRIGHT@@
  */
-package com.cosylab.gui.components.demo;
+package xal.tools.swing;
 
 import java.awt.Color;
 import java.awt.Dimension;
