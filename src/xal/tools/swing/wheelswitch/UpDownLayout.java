@@ -1,7 +1,7 @@
 /*
  * @@COPYRIGHT@@
  */
-package com.cosylab.gui.components.wheelswitch;
+package xal.tools.swing.wheelswitch;
 
 import java.awt.Component;
 import java.awt.Container;
