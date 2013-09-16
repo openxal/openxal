@@ -22,7 +22,7 @@ import xal.tools.swing.wheelswitch.Digit;
 import xal.tools.swing.wheelswitch.StaticDigit;
 import com.cosylab.gui.components.wheelswitch.UpDownButton;
 import com.cosylab.gui.components.wheelswitch.UpDownListener;
-import com.cosylab.gui.components.wheelswitch.ValueDigit;
+import xal.tools.swing.wheelswitch.ValueDigit;
 import com.cosylab.gui.components.wheelswitch.WheelswitchFormatter;
 import com.cosylab.gui.components.wheelswitch.WheelswitchLayout;
 
