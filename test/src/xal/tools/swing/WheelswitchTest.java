@@ -23,9 +23,9 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.border.LineBorder;
 
-import com.cosylab.events.SetEvent;
-import com.cosylab.events.SetListener;
-import com.cosylab.gui.components.Wheelswitch;
+import xal.tools.swing.wheelswitch.util.SetEvent;
+import xal.tools.swing.wheelswitch.util.SetListener;
+import xal.tools.swing.Wheelswitch;
 import com.cosylab.gui.components.demonstrator.AbstractDemoPanel;
 import com.cosylab.gui.components.util.IconHelper;
 /**
@@ -37,14 +37,14 @@ import com.cosylab.gui.components.util.IconHelper;
  * @author <a href="mailto:gasper.pajor@cosylab.com">Gasper Pajor</a>
  * @version $id$
  */
-public class WheelswitchDemo extends AbstractDemoPanel {
+public class WheelswitchTest extends AbstractDemoPanel {
 	String defaultText = "Wheelswitch displays a formatted numerical value with a set of numerical digits which can optionally be individually modified for precision setting of values.\n"+
 	"Click on any of the numerical digits inside the wheelswitch to modify them through the two-button switch on the right side of the component.";
 
 	/**
 	 * Constructor for WheelSwitchDemoContent.
 	 */
-	public WheelswitchDemo() {
+	public WheelswitchTest() {
 		super("Wheelswitch");
 		setIcon(IconHelper.createIcon("Resources/icons/components/Wheelswitch16.gif"));
 		getHelpTextArea().setText(defaultText);
