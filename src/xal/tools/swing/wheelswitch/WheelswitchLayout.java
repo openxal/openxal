@@ -1,14 +1,14 @@
 /*
  * @@COPYRIGHT@@
  */
-package com.cosylab.gui.components.wheelswitch;
+package xal.tools.swing.wheelswitch;
 
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.LayoutManager;
 
-import com.cosylab.gui.components.Wheelswitch;
+import xal.tools.swing.Wheelswitch;
 
 /**
  * Implementation of <code>java.awt.LayoutManager</code> to be used for
