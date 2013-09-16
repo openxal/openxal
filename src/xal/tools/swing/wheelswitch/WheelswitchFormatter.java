@@ -15,7 +15,7 @@
 package xal.tools.swing.wheelswitch;
 
 import xal.tools.swing.wheelswitch.util.Debug;
-import com.cosylab.util.PrintfFormat;
+import xal.tools.swing.wheelswitch.util.PrintfFormat;
 
 import java.beans.Beans;
 

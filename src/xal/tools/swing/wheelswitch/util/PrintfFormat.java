@@ -1,4 +1,4 @@
-package com.cosylab.util;
+package xal.tools.swing.wheelswitch.util;
 //
 // (c) 2000 Sun Microsystems, Inc.
 // ALL RIGHTS RESERVED
