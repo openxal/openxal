@@ -1,7 +1,7 @@
 /*
  * @@COPYRIGHT@@
  */
-package com.cosylab.gui.components.util;
+package xal.tools.swing.wheelswitch.util;
 
 import java.awt.BasicStroke;
 import java.awt.Color;

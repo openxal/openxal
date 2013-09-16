@@ -15,7 +15,7 @@
 package xal.tools.swing.wheelswitch.comp;
 
 import xal.tools.swing.wheelswitch.util.ColorHelper;
-import com.cosylab.gui.components.util.CosyUIElements;
+import xal.tools.swing.wheelswitch.util.CosyUIElements;
 
 import java.awt.Color;
 import java.awt.Container;
