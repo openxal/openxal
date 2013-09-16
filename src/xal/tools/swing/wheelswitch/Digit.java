@@ -16,7 +16,7 @@ package xal.tools.swing.wheelswitch;
 
 import com.cosylab.gui.components.SimpleButton;
 import xal.tools.swing.wheelswitch.util.ColorHelper;
-import com.cosylab.gui.components.util.PaintHelper;
+import xal.tools.swing.wheelswitch.util.PaintHelper;
 
 import java.awt.AlphaComposite;
 import java.awt.Dimension;
