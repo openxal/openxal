@@ -176,41 +176,6 @@ public class ArrowButton extends SimpleButton
 			repaint();
 		}
 	}
-
-	/**
-	 * Run test applet.
-	 *
-	 * @param args command line parameters
-	 */
-	public static void main(String[] args)
-	{
-		JApplet applet = new JApplet() {
-				public void init()
-				{
-					Container cp = this.getContentPane();
-					JPanel panel = new JPanel();
-					panel.setLayout(new GridLayout(1, 0));
-					panel.add(new ArrowButton(ArrowButton.UP));
-					panel.add(new ArrowButton(ArrowButton.DOWN));
-					panel.add(new ArrowButton(ArrowButton.LEFT));
-					panel.add(new ArrowButton(ArrowButton.RIGHT));
-					cp.add(panel);
-				}
-			};
-
-		JFrame frame = new JFrame("Arrow Button Demo");
-		frame.getContentPane().add(applet);
-		frame.setSize(300, 400);
-		frame.addWindowListener(new WindowAdapter() {
-				public void windowClosing(WindowEvent e)
-				{
-					System.exit(0);
-				}
-			});
-		applet.init();
-		applet.start();
-		frame.setVisible(true);
-	}
 }
 
 /* __oOo__ */
