@@ -86,9 +86,9 @@ public class WheelswitchFormatter
 	public void setFormat(String newFormatString)
 		throws IllegalArgumentException
 	{
-		if (newFormatString == formatString || Beans.isDesignTime()) {
+		if (formatString.equals(newFormatString) || Beans.isDesignTime()) {
 			return;
-		} else if (newFormatString == null || newFormatString == "") {
+		} else if (newFormatString == null || newFormatString.isEmpty()) {
 			formatString = null;
 			generatedFormatString = null;
 			formatter = new PrintfFormat(transformFormat(generateFormat()));
