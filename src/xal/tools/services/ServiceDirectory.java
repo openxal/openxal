@@ -81,6 +81,14 @@ final public class ServiceDirectory {
 				_isLoopback = true;
 				_bonjour = JmDNS.create( java.net.InetAddress.getByName( "127.0.0.1" ) );
 			}
+			
+			// shutdown the service directory when quitting the process
+			Runtime.getRuntime().addShutdownHook( new Thread() {
+				public void run() {
+					System.out.println( "Shutting down services for this process..." );
+					ServiceDirectory.this.dispose();
+				}
+			});
 		}
 		catch( Exception exception ) {
 			final String message = "JmDNS initialization failed.  Services are disabled.";
@@ -100,7 +108,7 @@ final public class ServiceDirectory {
 	}
 	
 	
-	/** Shutdown bonjour and the web server and dispose of all resources. */
+	/** Shutdown bonjour and the RPC server and dispose of all resources. */
 	public void dispose() {
 		_listenerMap.clear();
 		if ( _bonjour != null ) {
@@ -369,6 +377,7 @@ final public class ServiceDirectory {
 				 * @param name the fully qualified name of the service
 				 */
 				public void serviceAdded( final ServiceEvent event ) {
+					System.out.println( "Service added: " + event.getName() );
 					THREAD_POOL.execute( new Runnable() {
 						public void run() {
 							event.getDNS().requestServiceInfo( event.getType(), event.getName() );		
@@ -383,6 +392,7 @@ final public class ServiceDirectory {
 				 * @param name the fully qualified name of the service
 				 */
 				public void serviceRemoved( final ServiceEvent event ) {
+					System.out.println( "Service removed: " + event.getName() );
 					final String type = event.getType();
 					listener.serviceRemoved( ServiceDirectory.this, ServiceRef.getBaseType( type ), event.getName() );
 				}

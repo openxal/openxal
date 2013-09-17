@@ -101,8 +101,11 @@ public abstract class BunchProbe extends Probe {
      */
     public BunchProbe(BunchProbe probe)   {
         super(probe);
-        this.setBunchFrequency(this.getBunchFrequency());
+        //Not sure what the purpose of this is
+        //this.setBunchFrequency(this.getBunchFrequency());
+        this.setBunchFrequency(probe.getBunchFrequency());
         this.setBeamCurrent(probe.getBeamCurrent());
+        this.setBetatronPhase(new R3(probe.getBetatronPhase()));
     };        
 
     

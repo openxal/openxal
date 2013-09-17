@@ -8,6 +8,8 @@ package xal.tools.beam;
 
 import java.io.PrintWriter;
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.util.Locale;
 import  java.util.StringTokenizer;
 
 import Jama.Matrix;
@@ -90,10 +92,12 @@ public class PhaseMatrix implements IArchive, java.io.Serializable {
     
     
     /** matrix element parsing format - fixed */
-    final static private DecimalFormat FIXED_FORMAT = new DecimalFormat("####.########"); //$NON-NLS-1$
+    final static private DecimalFormat FIXED_FORMAT = new DecimalFormat("####.########", //$NON-NLS-1$ 
+    		new DecimalFormatSymbols(Locale.ROOT)); 
     
     /** matrix element parsing format - scientific */
-    final static private DecimalFormat SCI_FORMAT = new DecimalFormat("0.00000000E00"); //$NON-NLS-1$
+    final static private DecimalFormat SCI_FORMAT = new DecimalFormat("0.00000000E00", //$NON-NLS-1$ 
+    		new DecimalFormatSymbols(Locale.ROOT));
     
     
     /** attribute marker for data */

@@ -60,7 +60,12 @@ public class SynchronousProbe extends Probe {
     public SynchronousProbe(SynchronousProbe probe) {
         super(probe);
         this.setRfPhase( probe.getRfPhase() );
-        this.setBetatronPhase( probe.getBetatronPhase() );
+        this.setBetatronPhase( new R3(probe.getBetatronPhase()) );
+    }
+    
+    @Override
+    public SynchronousProbe copy() {
+        return new SynchronousProbe( this );
     }
 
 

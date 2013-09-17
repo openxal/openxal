@@ -71,7 +71,22 @@ public class ParticleTracker extends Tracker {
         super(s_strTypeId, s_intVersion, s_clsProbeType);
     }; 
     
+    /**
+     * Copy constructor for ParticleTracker
+     *
+     * @param       sourceTracker   Tracker that is being copied
+     */
+    public ParticleTracker( ParticleTracker sourceTracker ) {
+        super( sourceTracker );
+    }
     
+    /**
+     * Create a deep copy of ParticleTracker
+     */
+    @Override
+    public ParticleTracker copy() {
+        return new ParticleTracker( this );
+    }
 
 
     /*
@@ -215,7 +230,7 @@ public class ParticleTracker extends Tracker {
         PhaseMap  mapPhi = elem.transferMap(probe, dblLen);
         
         // Advance state vector
-        PhaseVector  z0 = probe.phaseCoordinates();
+        PhaseVector  z0 = probe.getPhaseCoordinates();
         PhaseVector  z1 = mapPhi.apply(z0);
         
         probe.setPhaseCoordinates(z1);

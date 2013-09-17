@@ -147,6 +147,26 @@ public class TwissTracker extends Tracker {
         super(strType, intVersion, clsProbeType);
     }
     
+    /**
+     * Copy constructor for TwissTracker
+     *
+     * @param       sourceTracker   Tracker that is being copied
+     */
+    public TwissTracker( TwissTracker sourceTracker ) {
+        super( sourceTracker );
+        
+        this.dblStepSize = sourceTracker.dblStepSize;
+        this.bolEmitGrowth = sourceTracker.bolEmitGrowth;
+        this.bolScheff = sourceTracker.bolScheff;
+    }
+    
+    /**
+     * Creates a deep copy of TwissTracker
+     */
+    @Override
+    public TwissTracker copy() {
+        return new TwissTracker( this );
+    }
     
     
     /** 
