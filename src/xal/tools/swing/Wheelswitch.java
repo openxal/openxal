@@ -26,8 +26,6 @@ import xal.tools.swing.wheelswitch.ValueDigit;
 import xal.tools.swing.wheelswitch.WheelswitchFormatter;
 import xal.tools.swing.wheelswitch.WheelswitchLayout;
 
-import xal.tools.swing.wheelswitch.util.Debug;
-
 //import java.applet.AudioClip;
 
 import java.awt.Container;
@@ -46,6 +44,8 @@ import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.swing.Box;
 import javax.swing.JApplet;
@@ -188,7 +188,7 @@ public class Wheelswitch extends JPanel
 		 */
 		public void mouseWheelMoved(MouseWheelEvent e)
 		{
-			Debug.out("mousewheel");
+			logger.log(Level.FINE, "mousewheel");
 
 			if (editable && isEnabled()) {
 				int i = getSelectedDigit();
@@ -317,6 +317,7 @@ public class Wheelswitch extends JPanel
 
 	/** DOCUMENT ME! */
 	public static final String EDITABLE = "editable";
+    private static final Logger logger = Logger.getLogger("global");
 	protected EventListenerList listenerList = null;
 	protected FocusHandler focusHandler;
 	protected KeyHandler keyHandler;
@@ -332,7 +333,7 @@ public class Wheelswitch extends JPanel
 	private boolean enhanced = true;
 	private boolean tiltingEnabled;
 	private int selectedDigit = -1;
-
+    
 	/**
 	 * Constructor for <code>Wheelswitch</code> creates a new Wheelswitch with
 	 * the specified value, format and unit. No minimum or maximum values are
@@ -498,7 +499,7 @@ public class Wheelswitch extends JPanel
 		try {
 			formatter.setFormat(newFormat);
 		} catch (IllegalArgumentException e) {
-			Debug.out(e);
+			logger.log(Level.WARNING, "Exception setting new format: " + newFormat, e);
 
 			return;
 		}
@@ -1092,7 +1093,7 @@ public class Wheelswitch extends JPanel
 					((ValueDigit)digits.get(i)).setValue(Integer.parseInt(
 					        stringValue.substring(i, i + 1)));
 				} else {
-					Debug.out(
+					logger.log(Level.WARNING,
 					    "Wheelswitch#initDigits(): digits improperly synchronized");
 					setupValueDigits();
 					setupLayout();

@@ -14,10 +14,11 @@
 
 package xal.tools.swing.wheelswitch;
 
-import xal.tools.swing.wheelswitch.util.Debug;
 import xal.tools.swing.wheelswitch.util.PrintfFormat;
 
 import java.beans.Beans;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 /**
@@ -32,6 +33,7 @@ import java.beans.Beans;
  */
 public class WheelswitchFormatter
 {
+    private static final Logger logger = Logger.getLogger("global");
 	protected PrintfFormat defFormatter;
 	protected PrintfFormat formatter;
 	protected String formatString = null;
@@ -42,7 +44,7 @@ public class WheelswitchFormatter
 	protected double minimum;
 	protected double value = 0.;
 	private int maximumDigits = 10;
-
+            
 	/**
 	 * Constructs the PlainWheelswitchFormatter and sets the format  string.
 	 *
@@ -176,8 +178,8 @@ public class WheelswitchFormatter
 	 */
 	public void setString(String newValueString)
 	{
-		Debug.out("WheelswitchFormatter#setString(): newValueString=" + newValueString);
-		Debug.out("WheelswitchFormatter#setString(): formatString=" + formatString);
+		logger.log(Level.FINE, "WheelswitchFormatter#setString(): newValueString={0}", newValueString);
+		logger.log(Level.FINE, "WheelswitchFormatter#setString(): formatString={0}", formatString);
 
 		double newValue = Double.parseDouble(newValueString);
 
@@ -427,8 +429,8 @@ public class WheelswitchFormatter
 		value = newValue;
 		valueString = newValueString;
 
-		Debug.out("WheelswitchFormatter#setString(): value=" + value);
-		Debug.out("WheelswitchFormatter#setString(): finalValueString=" + valueString);
+		logger.log(Level.FINE, "WheelswitchFormatter#setString(): value={0}", value);
+		logger.log(Level.FINE, "WheelswitchFormatter#setString(): finalValueString={0}", valueString);
 	}
 
 	/**
