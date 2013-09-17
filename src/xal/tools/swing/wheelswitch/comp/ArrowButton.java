@@ -16,19 +16,10 @@ package xal.tools.swing.wheelswitch.comp;
 
 import xal.tools.swing.wheelswitch.util.PaintHelper;
 
-import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.GridLayout;
 import java.awt.Insets;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-
-import javax.swing.JApplet;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-
 
 /**
  * A simple resizable button identified by an arrow icon.
@@ -106,6 +97,7 @@ public class ArrowButton extends SimpleButton
 	 *
 	 * @param g Graphics
 	 */
+    @Override
 	public void paintComponent(Graphics g)
 	{
 		((Graphics2D)g).addRenderingHints(PaintHelper.getAntialiasingHints());
