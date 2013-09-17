@@ -63,10 +63,10 @@ import javax.swing.plaf.metal.MetalBorders;
 public class SimpleButton extends GradientLabel
 {
 	private static Timer actionTimer = null;
-	protected static final String MOUSE_PRESSED = new String("mousePressed");
-	protected static final String MOUSE_CLICKED = new String("mouseClicked");
-	protected static final String MOUSE_RELEASED = new String("mouseReleased");
-	protected static final String MOUSE_CHAIN = new String("mouseChain");
+	protected static final String MOUSE_PRESSED = "mousePressed";
+	protected static final String MOUSE_CLICKED = "mouseClicked";
+	protected static final String MOUSE_RELEASED = "mouseReleased";
+	protected static final String MOUSE_CHAIN = "mouseChain";
 
 	/** DOCUMENT ME! */
 	public static final int NULL_ACTION_MODE = 0;
@@ -254,6 +254,7 @@ public class SimpleButton extends GradientLabel
 	 *
 	 * @see com.cosylab.gui.components.GradientLabel#setBackground(Color)
 	 */
+    @Override
 	public void setBackground(Color newColor)
 	{
 		if (newColor == background) {
@@ -271,6 +272,7 @@ public class SimpleButton extends GradientLabel
 	 *
 	 * @see java.awt.Component#getBackground()
 	 */
+    @Override
 	public Color getBackground()
 	{
 		if (painting && pressed) {
@@ -289,6 +291,7 @@ public class SimpleButton extends GradientLabel
 	 *
 	 * @see javax.swing.JComponent#setForeground(Color)
 	 */
+    @Override
 	public void setForeground(Color newColor)
 	{
 		if (foreground == newColor) {
@@ -306,6 +309,7 @@ public class SimpleButton extends GradientLabel
 	 *
 	 * @see java.awt.Component#getForeground()
 	 */
+    @Override
 	public Color getForeground()
 	{
 		if (painting && pressed) {
@@ -324,6 +328,7 @@ public class SimpleButton extends GradientLabel
 	 *
 	 * @see com.cosylab.gui.components.GradientLabel#getBackgroundStart()
 	 */
+    @Override
 	public Color getBackgroundStart()
 	{
 		if (painting && pressed) {
@@ -342,6 +347,7 @@ public class SimpleButton extends GradientLabel
 	 *
 	 * @see com.cosylab.gui.components.GradientLabel#setBackgroundStart(Color)
 	 */
+    @Override
 	public void setBackgroundStart(Color newColor)
 	{
 		if (backgroundStart == newColor) {
@@ -359,6 +365,7 @@ public class SimpleButton extends GradientLabel
 	 *
 	 * @see javax.swing.JComponent#setBorder(Border)
 	 */
+    @Override
 	public void setBorder(Border newBorder)
 	{
 		if (border == newBorder) {
@@ -376,6 +383,7 @@ public class SimpleButton extends GradientLabel
 	 *
 	 * @see javax.swing.JComponent#getBorder()
 	 */
+    @Override
 	public Border getBorder()
 	{
 		if (painting && pressed) {
@@ -797,6 +805,7 @@ public class SimpleButton extends GradientLabel
 	 *
 	 * @see com.cosylab.gui.components.GradientLabel#paintComponent(Graphics)
 	 */
+    @Override
 	public void paintComponent(Graphics g)
 	{
 		painting = true;
@@ -812,6 +821,7 @@ public class SimpleButton extends GradientLabel
 	 *
 	 * @see javax.swing.JComponent#paintBorder(Graphics)
 	 */
+    @Override
 	protected void paintBorder(Graphics g)
 	{
 		painting = true;
@@ -822,6 +832,7 @@ public class SimpleButton extends GradientLabel
 	/**
 	 * DOCUMENT ME!
 	 */
+    @Override
 	public void addNotify()
 	{
 		setRollover(false);
@@ -832,6 +843,7 @@ public class SimpleButton extends GradientLabel
 	/**
 	 * DOCUMENT ME!
 	 */
+    @Override
 	public void removeNotify()
 	{
 		setRollover(false);
@@ -844,6 +856,7 @@ public class SimpleButton extends GradientLabel
 	 *
 	 * @param visible DOCUMENT ME!
 	 */
+    @Override
 	public void setVisible(boolean visible)
 	{
 		if (isVisible() != visible) {
@@ -861,6 +874,7 @@ public class SimpleButton extends GradientLabel
 	public static void main(String[] args)
 	{
 		JApplet applet = new JApplet() {
+                @Override
 				public void init()
 				{
 					Container cp = this.getContentPane();
@@ -882,6 +896,7 @@ public class SimpleButton extends GradientLabel
 		frame.getContentPane().add(applet);
 		frame.setSize(300, 400);
 		frame.addWindowListener(new WindowAdapter() {
+                @Override
 				public void windowClosing(WindowEvent e)
 				{
 					System.exit(0);
@@ -909,6 +924,7 @@ public class SimpleButton extends GradientLabel
 		 *
 		 * @see java.awt.event.KeyListener#keyPressed(KeyEvent)
 		 */
+        @Override
 		public void keyPressed(KeyEvent e)
 		{
 			//Debug.out("keypressed");
@@ -939,6 +955,7 @@ public class SimpleButton extends GradientLabel
 		 *
 		 * @see java.awt.event.MouseListener#mousePressed(MouseEvent)
 		 */
+        @Override
 		public void mousePressed(MouseEvent e)
 		{
 			if (SwingUtilities.isLeftMouseButton(e) && isEnabled()) {
@@ -954,6 +971,7 @@ public class SimpleButton extends GradientLabel
 		 *
 		 * @see java.awt.event.MouseListener#mouseReleased(MouseEvent)
 		 */
+        @Override
 		public void mouseReleased(MouseEvent e)
 		{
 			if (isPressed()) {
@@ -968,6 +986,7 @@ public class SimpleButton extends GradientLabel
 		 *
 		 * @see java.awt.event.MouseListener#mouseEntered(MouseEvent)
 		 */
+        @Override
 		public void mouseEntered(MouseEvent e)
 		{
 			if (isEnabled()) {
@@ -982,6 +1001,7 @@ public class SimpleButton extends GradientLabel
 		 *
 		 * @see java.awt.event.MouseListener#mouseExited(MouseEvent)
 		 */
+        @Override
 		public void mouseExited(MouseEvent e)
 		{
 			if (isPressed()) {
@@ -1009,6 +1029,7 @@ public class SimpleButton extends GradientLabel
 		 *
 		 * @see java.awt.event.MouseListener#mouseClicked(MouseEvent)
 		 */
+        @Override
 		public void mouseClicked(MouseEvent e)
 		{
 			if (!isEnabled()) {
@@ -1037,6 +1058,7 @@ public class SimpleButton extends GradientLabel
 		 *
 		 * @see java.awt.event.MouseListener#mousePressed(MouseEvent)
 		 */
+        @Override
 		public void mousePressed(MouseEvent e)
 		{
 			if (!isEnabled()) {
@@ -1048,6 +1070,7 @@ public class SimpleButton extends GradientLabel
 				        ActionEvent.ACTION_PERFORMED, MOUSE_PRESSED));
 				actionTimer = new Timer();
 				actionTimer.schedule(new TimerTask() {
+                        @Override
 						public void run()
 						{
 							fireActionPerformed(new ActionEvent(
@@ -1065,6 +1088,7 @@ public class SimpleButton extends GradientLabel
 		 *
 		 * @see java.awt.event.MouseListener#mouseReleased(MouseEvent)
 		 */
+        @Override
 		public void mouseReleased(MouseEvent e)
 		{
 			if (actionTimer != null) {
@@ -1080,6 +1104,7 @@ public class SimpleButton extends GradientLabel
 		 *
 		 * @see java.awt.event.MouseListener#mouseExited(MouseEvent)
 		 */
+        @Override
 		public void mouseExited(MouseEvent e)
 		{
 			if (actionTimer != null) {
@@ -1104,6 +1129,7 @@ public class SimpleButton extends GradientLabel
 		 *
 		 * @see java.awt.event.MouseListener#mouseClicked(MouseEvent)
 		 */
+        @Override
 		public void mousePressed(MouseEvent e)
 		{
 			if (!isEnabled()) {
