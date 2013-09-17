@@ -68,6 +68,7 @@ public class ValueDigit extends Digit {
 	 * This method was overriden to implement animated number digit
 	 * scrolling.
 	 */
+    @Override
 	protected void paintDigitTransition(BufferedImage oldImage,BufferedImage newImage, Graphics g, float parameter) {
 		Graphics2D g2D = (Graphics2D)g;
 		if ((value>oldValue && (value!=9 || oldValue!=0)) || (value==0 && oldValue==9)) {
