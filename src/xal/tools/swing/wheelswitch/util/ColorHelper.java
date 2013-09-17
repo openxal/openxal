@@ -128,7 +128,7 @@ public final class ColorHelper {
      *
      * @return Color
      */
-    public static final Color getControlText() {
+    public static Color getControlText() {
         Color ret = UIManager.getColor("controlText");
 
         if (ret != null) {
