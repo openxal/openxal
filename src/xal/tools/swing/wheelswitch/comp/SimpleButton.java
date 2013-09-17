@@ -14,13 +14,14 @@
 
 package xal.tools.swing.wheelswitch.comp;
 
+import java.awt.BasicStroke;
 import xal.tools.swing.wheelswitch.util.ColorHelper;
-//import xal.tools.swing.wheelswitch.util.CosyUIElements;
 
 import java.awt.Color;
-import java.awt.Container;
+import java.awt.Component;
 import java.awt.Graphics;
-import java.awt.GridLayout;
+import java.awt.Graphics2D;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
@@ -28,22 +29,15 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 
 import java.util.Timer;
 import java.util.TimerTask;
-
 import javax.swing.Icon;
-import javax.swing.JApplet;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.border.Border;
 import javax.swing.event.EventListenerList;
 import javax.swing.plaf.metal.MetalBorders;
-import xal.tools.swing.wheelswitch.util.CosyUIElements;
 
 
 /**
@@ -147,7 +141,7 @@ public class SimpleButton extends GradientLabel
 		pressedBackground = ColorHelper.getControlShadow();
 		pressedForeground = ColorHelper.getControlText();
 		pressedBackgroundStart = ColorHelper.getControlDarkShadow();
-		pressedBorder = CosyUIElements.getPlainBorder(false);
+		pressedBorder = new PanelFlushBorder(false, true);
 		fireRate = 20;
 
 		setHorizontalAlignment(JLabel.CENTER);
@@ -1101,6 +1095,88 @@ public class SimpleButton extends GradientLabel
 			}
 		}
 	}
+    
+     /**
+     * A clean border that visually raises the component above its surroundings.
+     * Should be used in combination with ContainerFlushBorder.
+     *
+     * @author  Miha Kadunc
+     * @version @@VERSION@@
+     */
+    public static class PanelFlushBorder implements Border {
+        private final Insets insets = new Insets(1, 1, 1, 1);
+        private final Insets cloneInsets = new Insets(1, 1, 1, 1);
+        private boolean lockInsets = false;
+        private boolean raised = true;
+
+        public PanelFlushBorder() {
+            this(true);
+        }
+
+        public PanelFlushBorder(boolean isRaised) {
+            this(isRaised, false);
+        }
+
+        private PanelFlushBorder(boolean isRaised, boolean lockInsets) {
+            this.lockInsets = lockInsets;
+            raised = isRaised;
+        }
+
+        /**
+         * @see javax.swing.border.Border#paintBorder(Component, Graphics, int, int, int, int)
+         */
+        @Override
+        public void paintBorder(Component c, Graphics g, int x, int y,
+            int width, int height) {
+            if (raised) {
+                paintBorder(g, x, y, width, height);
+            } else {
+                paintBorder(g, (x + width) - 1, (y + height) - 1, 2 - width,
+                    2 - height);
+            }
+        }
+
+        public static void paintBorder(Graphics g, int x, int y, int width,
+            int height) {
+        	((Graphics2D)g).setStroke(new BasicStroke());
+            g.setColor(ColorHelper.getControlShadow());
+            g.drawLine((x + width) - 1, y, (x + width) - 1, (y + height) - 1);
+            g.drawLine(x, (y + height) - 1, (x + width) - 1, (y + height) - 1);
+
+            g.setColor(ColorHelper.getControlLightHighlight());
+            g.drawLine(x, y, x, (y + height) - 1);
+            g.drawLine(x, y, (x + width) - 1, y);
+
+            g.setColor(ColorHelper.getControl());
+            g.drawLine((x + width) - 1, y, (x + width) - 1, y);
+            g.drawLine(x, (y + height) - 1, x, (y + height) - 1);
+        }
+
+        /**
+         * @see javax.swing.border.Border#getBorderInsets(Component)
+         */
+        @Override
+        public Insets getBorderInsets(Component c) {
+            if (!lockInsets) {
+                return insets;
+            } else {
+                cloneInsets.top = insets.top;
+                cloneInsets.bottom = insets.bottom;
+                cloneInsets.left = insets.left;
+                cloneInsets.right = insets.right;
+
+                return cloneInsets;
+            }
+        }
+
+        /**
+         * @see javax.swing.border.Border#isBorderOpaque()
+         */
+        @Override
+        public boolean isBorderOpaque() {
+            return true;
+        }
+    }
 }
 
 /* __oOo__ */
