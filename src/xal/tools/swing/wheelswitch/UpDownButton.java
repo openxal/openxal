@@ -22,7 +22,6 @@ import xal.tools.swing.wheelswitch.util.ColorHelper;
  * @version $id$
  */
 public class UpDownButton extends JComponent {
-	protected EventListenerList listenerList = null; 
 	protected ChangeEvent changeEvent = null;
 	
 	private int value = 0;
@@ -42,6 +41,7 @@ public class UpDownButton extends JComponent {
 		bn.setEnabled(isEnabled());
 	    bn.setBackground(ColorHelper.getCosyControl());
 		bn.addActionListener(new ActionListener() {
+            @Override
 			public void actionPerformed(ActionEvent e) {
 				value = UP_PRESSED;
 				fireUpDownChanged();				
@@ -52,6 +52,7 @@ public class UpDownButton extends JComponent {
 		bs.setEnabled(isEnabled());
 	    bs.setBackground(ColorHelper.getCosyControl());
 		bs.addActionListener(new ActionListener() {
+            @Override
 			public void actionPerformed(ActionEvent e) {
 				value = DOWN_PRESSED;
 				fireUpDownChanged();				
@@ -114,6 +115,7 @@ public class UpDownButton extends JComponent {
    * 
    * @see JComponent#getPreferredSize()
    */
+    @Override
 	public Dimension getPreferredSize() {
 		return new Dimension(24,48);
 	}
@@ -125,12 +127,14 @@ public class UpDownButton extends JComponent {
    * 
    * @see JComponent#getMinimumSize()
    */
+    @Override
 	public Dimension getMinimumSize() {
 		return new Dimension(12,24);
 	}	
 	/* (non-Javadoc)
 	 * @see java.awt.Component#setEnabled(boolean)
 	 */
+    @Override
 	public void setEnabled(boolean arg0) {
 		super.setEnabled(arg0);
 		getComponent(0).setEnabled(arg0);
