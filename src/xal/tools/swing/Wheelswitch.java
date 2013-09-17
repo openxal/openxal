@@ -1176,11 +1176,10 @@ public class Wheelswitch extends JPanel
 		selectedDigit = -1;
 
 		String stringValue = formatter.getString();
-		char digitValue = 0;
-		Digit digit = null;
+		Digit digit;
 
 		for (int i = 0; i < stringValue.length(); i++) {
-			digitValue = stringValue.charAt(i);
+			char digitValue = stringValue.charAt(i);
 
 			if ((digitValue >= '0') && (digitValue <= '9')) {
 				digit = new ValueDigit(Integer.parseInt(stringValue.substring(
