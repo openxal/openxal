@@ -20,17 +20,20 @@ public class UpDownLayout implements LayoutManager {
 	/**
 	 * @see LayoutManager#addLayoutComponent(String, Component)
 	 */
+    @Override
 	public void addLayoutComponent(String name, Component comp) {
 	}
 
 	/**
 	 * @see LayoutManager#removeLayoutComponent(Component)
 	 */
+    @Override
 	public void removeLayoutComponent(Component comp) {}
 
 	/**
 	 * @see LayoutManager#preferredLayoutSize(Container)
 	 */
+    @Override
 	public Dimension preferredLayoutSize(Container parent) {
 		return parent.getPreferredSize();
 	}
@@ -38,6 +41,7 @@ public class UpDownLayout implements LayoutManager {
 	/**
 	 * @see LayoutManager#minimumLayoutSize(Container)
 	 */
+    @Override
 	public Dimension minimumLayoutSize(Container parent) {
 		return parent.getMinimumSize();
 	}
@@ -45,8 +49,9 @@ public class UpDownLayout implements LayoutManager {
 	/**
 	 * @see LayoutManager#layoutContainer(Container)
 	 */
+    @Override
 	public void layoutContainer(Container parent) {
-		UpDownButton upDownButton = (UpDownButton)parent;;
+		UpDownButton upDownButton = (UpDownButton)parent;
 		if (upDownButton==null || upDownButton.getComponentCount()!=2) return;		
 		int height = upDownButton.getHeight();
 		int width = upDownButton.getWidth();
