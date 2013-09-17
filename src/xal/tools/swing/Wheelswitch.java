@@ -942,7 +942,7 @@ public class Wheelswitch extends JPanel
 				    && (oldStringValue.charAt(j) != '-') && (newValue != 0));
 				    j--) {
 					if (oldStringValue.charAt(j) == '.') {
-						;
+						// do nothing in this case //
 					} else if (oldStringValue.charAt(j) != '0') {
 						newStringValue = newStringValue.substring(0, j)
 							+ String.valueOf(Integer.parseInt(
@@ -1016,28 +1016,28 @@ public class Wheelswitch extends JPanel
 
 				while ((++i < digits.size())
 				    && digits.get(i) instanceof StaticDigit) {
-					;
+					// do nothing in while loop //
 				}
 
 				if (i == digits.size()) {
 					i = -1;
 
 					while (digits.get(++i) instanceof StaticDigit) {
-						;
+						// do nothing in while loop //
 					}
 				}
 			} else if (i == DECREASE_SELECTION) {
 				i = selectedDigit;
 
 				while ((--i >= 0) && digits.get(i) instanceof StaticDigit) {
-					;
+					// do nothing in while loop //
 				}
 
 				if (i < 0) {
 					i = digits.size();
 
 					while (digits.get(--i) instanceof StaticDigit) {
-						;
+						// do nothing in while loop //
 					}
 				}
 			}
@@ -1089,7 +1089,7 @@ public class Wheelswitch extends JPanel
 			if ((digitValue == '+') || (digitValue == '-')
 			    || (digitValue == 'E') || (digitValue == 'e')
 			    || (digitValue == '.')) {
-				;
+				// do nothing in this case //
 			} else {
 				if (digits.get(i) instanceof ValueDigit) {
 					((ValueDigit)digits.get(i)).setValue(Integer.parseInt(
