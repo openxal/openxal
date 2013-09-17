@@ -3,20 +3,21 @@
  *
  * Created on June 17, 2013, 8:51 AM
  *
+ * @author Tom Pelaia
  * @author Patrick Scruggs
  */
 
 package xal.tools.apputils;
 
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.List;
-import java.util.HashMap;
-import java.util.ArrayList;
+import java.awt.BorderLayout;
+import java.awt.GridLayout;
 import java.awt.Frame;
 import javax.swing.*;
 import javax.swing.table.*;
+import java.util.*;
+
 import xal.model.probe.Probe;
 import xal.model.IAlgorithm;
 import xal.tools.bricks.*;
@@ -25,111 +26,55 @@ import xal.tools.data.KeyValueAdaptor;
 import java.beans.*;
 import java.lang.reflect.*;
 
-/**
- * SimpleProbeEditor
- */
-public class SimpleProbeEditor extends JDialog {
-    
-    //Private serializable version ID
-    private static final long serialVersionUID = 1L;
-    
 
-    //Buttons for applying changes and closing the editor
-    private JButton applyButton, closeButton;
-    //Table that contains property records
-    private JTable propertyTable;
-    //TextField that filters the properties
-    private JTextField filterTextField;
-    //Table model of ProbeProperty records
-    private KeyValueFilteredTableModel<ProbeProperty> PROPERTY_TABLE_MODEL;
-    //Panel that contains every component
-    private JPanel searchPanel;
-    //Panel that contains the apply and close button
-    private JPanel applyButtonPanel;
-    //ScrollPane attached to the properties table
-    private JScrollPane scrollPane;
+/** SimpleProbeEditor */
+public class SimpleProbeEditor extends JDialog {
+    /** Private serializable version ID */
+    private static final long serialVersionUID = 1L;
+
+    /** Table model of ProbeProperty records */
+    final private KeyValueFilteredTableModel<ProbeProperty> PROPERTY_TABLE_MODEL;
+
+    /** List of properties that appear in the properties table */
+    private List<ProbeProperty> propertyList = new ArrayList<ProbeProperty>();
     
-    //List of properties that appear in the properties table
-    List<ProbeProperty> propertyList = new ArrayList<ProbeProperty>();
+    /** Map that contains an object keyed by group name. The Object instance is where the properties and methods. */
+    private Map<String, Object> propertyClasses = new HashMap<>();
+
+    /** Used to look for methods given a method name key */
+    final private KeyValueAdaptor KEY_VALUE_ADAPTOR;
     
-    //HashMap that contains an object instance with a group name as the key
-    //The Object instance is where the properties and methods are pulled from
-    //The key is the group name displayed next to the property
-    HashMap<String, Object> propertyClasses = new HashMap<String, Object>();
-    
-    //List of property types that can be modified
-    //Other types are filtered out
-    Class<?>[] editableClasses = { Double.class, Integer.class, String.class, Boolean.class };
-    
-    //Used to look for methods given a method name key
-    private KeyValueAdaptor keyValueAdaptor = new KeyValueAdaptor();
-    
-    
-    //Probe that is being editted
-    public Probe probe;
-    
-    //The probe's algorithm
-    private IAlgorithm algorithm;
-    
+    /** Probe that is being edited */
+    final private Probe PROBE;
+
+	
     /* Constructor that takes a window parent
      * and a probe to fetch properties from
      */
-    public SimpleProbeEditor(Frame owner, Probe probe)
-    {
-        //Set JDialog's owner, title, and modality
-        super(owner, "Probe Editor", true);
+    public SimpleProbeEditor( final Frame owner, final Probe probe ) {
+        super( owner, "Probe Editor", true );	//Set JDialog's owner, title, and modality
         
-        //Set the probe and algorithm
-        this.probe = probe;
-        algorithm = probe.getAlgorithm();
-        
-        //Add the probe to the map so its properties will be fetched
-        propertyClasses.put("Probe", probe);
-        //Add the probe's algorithm to the map so its properties will be fetched
-        propertyClasses.put("Algorithm", algorithm);
-        
-        
-        /**
-         *  Methods that do not have get/set convention can be added here
-         *  as well as methods from probes that subclass Probe and have
-         *  methods that Probe does not
-         **/
-        try {
-            
-            /* Try to get the phaseCoordinates() or getPhaseCoordinates() method from the probe given
-             * phaseCoordinates() is found in ParticleProbe - this method will be added if SimpleProbeEditor is constructed
-             * with a ParticleProbe object.
-             */
-            Object phaseCoords = keyValueAdaptor.valueForKey(probe, "phaseCoordinates");
-            propertyClasses.put("Phase_Coordinates", phaseCoords);
-            
-        } catch(Exception e) {
-            System.out.println(e.getMessage());
-        }
-        
-        //Set the window size
-        setSize(600, 600);
-        //Set up each component in the editor
-        initializeComponents();
-        //Fit the components in the window
-        pack();
-        //Center the editor in relation to the frame that constructed the editor
-        setLocationRelativeTo(owner);
-        //Populate the properties table
-        setTableProperties();
-        //Make the window visible
-        setVisible(true);
+        PROBE = probe;					// Set the probe to edit
+		KEY_VALUE_ADAPTOR = new KeyValueAdaptor();
+		PROPERTY_TABLE_MODEL = new KeyValueFilteredTableModel<ProbeProperty>( new ArrayList<ProbeProperty>(), "group", "property", "value");
+
+        setSize( 600, 600 );			// Set the window size
+        initializeComponents();			// Set up each component in the editor
+        pack();							// Fit the components in the window
+        setLocationRelativeTo( owner );	// Center the editor in relation to the frame that constructed the editor
+        setVisible(true);				// Make the window visible
     }
+	
     
-    /* getProbe()
-     *
-     * Returns the probe associated with the editor
-     *
+    /** 
+	 * Get the probe to edit
+     * @return probe associated with this editor
      */
     public Probe getProbe() {
-        return probe;
+        return PROBE;
     }
-    
+
+	
     /* setTableProperties()
      *
      * Sets the table data with the properties found through introspection
@@ -201,7 +146,8 @@ public class SimpleProbeEditor extends JDialog {
         //Return the result
         return result == null ? "null" : result;
     }
-        
+
+	
     /* getPropertyDescriptor(BeanInfo)
      *
      * Gets the PropertyDescriptors from a BeanInfo
@@ -211,22 +157,22 @@ public class SimpleProbeEditor extends JDialog {
         //If the bean is not null, return the descriptors
 		return bean != null ? bean.getPropertyDescriptors() : new PropertyDescriptor[0];
 	}
+	
     
     /* initializeComponents()
      *
      * Initialize the components of the probe editor
      *
      */
-    public void initializeComponents()
-    {
+    public void initializeComponents() {
         //Panel containing all elements
-        searchPanel = new JPanel();
+        final JPanel mainContainer = new JPanel();
         //Set the layout of the panel to a BorderLayout
-        searchPanel.setLayout(new BorderLayout());
+        mainContainer.setLayout( new BorderLayout() );
         //Panel containing apply and close button with a 1 row, 2 column grid layout
-        applyButtonPanel = new JPanel(new GridLayout(1, 2));
+        final JPanel controlPanel = new JPanel( new GridLayout(1, 2) );
         //Apply button
-        applyButton = new JButton( "Apply" );
+        final JButton applyButton = new JButton( "Apply" );
         applyButton.setEnabled(false);
         //Close button
         closeButton = new JButton( "Close" );
@@ -240,22 +186,31 @@ public class SimpleProbeEditor extends JDialog {
         });
         
         //Add the action listener as the ApplyButtonListener
-        applyButton.addActionListener( new ApplyButtonListener() );
+        applyButton.addActionListener( new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				//Save the properties
+				saveProbeProperties();
+				//Mark the properties as unchanged/saved
+				setPropertiesAsUnchanged();
+				//Re-enable the button
+				applyButton.setEnabled( false );
+			}
+		});
+		
         //Add the close button to the button panel
-        applyButtonPanel.add( closeButton );
+        controlPanel.add( closeButton );
         //Add the apply button to the button panel
-        applyButtonPanel.add( applyButton );
+        controlPanel.add( applyButton );
         
         //Text field that filters the properties
-        filterTextField = new JTextField();
+        final JTextField filterTextField = new JTextField();
         
         //Set the text field properts to search field
-        filterTextField.putClientProperty("JTextField.variant", "search");
-        filterTextField.putClientProperty("JTextField.Search.Prompt", "Property Filter");
+        filterTextField.putClientProperty( "JTextField.variant", "search" );
+        filterTextField.putClientProperty( "JTextField.Search.Prompt", "Property Filter" );
         
         //Table containing the properties that can be modified
-        propertyTable = new JTable(null, new Object[] {"Group", "Property", "Value" }) {
-            
+        final JTable propertyTable = new JTable() {
             //Serializable version ID
             private static final long serialVersionUID = 1L;
             
@@ -266,15 +221,15 @@ public class SimpleProbeEditor extends JDialog {
                 Object value = getValueAt(row, col);
                 
                 //Set the appropriate editor for each value type
-                if(value instanceof Boolean)
-                    return getDefaultEditor(Boolean.class);
-                else if(value instanceof Double)
-                    return getDefaultEditor(Double.class);
-                else if(value instanceof Integer)
+                if( value instanceof Boolean )
+                    return getDefaultEditor( Boolean.class );
+                else if( value instanceof Double )
+                    return getDefaultEditor( Double.class );
+                else if( value instanceof Integer )
                     return getDefaultEditor( Integer.class );
                 
                 //Default editor (String type)
-                return super.getCellEditor(row, col);
+                return super.getCellEditor( row, col );
             }
             
             //Get the cell renderer for the table to change how values are displayed
@@ -286,15 +241,15 @@ public class SimpleProbeEditor extends JDialog {
                 //Set the renderer of each type
                 //Boolean = checkbox display
                 //Double/Int = right aligned display
-                if(value instanceof Boolean)
+                if( value instanceof Boolean )
                     return getDefaultRenderer( Boolean.class );
-                else if(value instanceof Double)
+                else if( value instanceof Double )
                     return getDefaultRenderer( Double.class );
-                else if(value instanceof Integer)
+                else if( value instanceof Integer )
                     return getDefaultRenderer( Integer.class );
                 
                 //Default = left aligned string display
-                return super.getCellRenderer(row, col);
+                return super.getCellRenderer( row, col );
             }
         };
         
@@ -305,8 +260,6 @@ public class SimpleProbeEditor extends JDialog {
         propertyTable.setAutoResizeMode( JTable.AUTO_RESIZE_LAST_COLUMN);
         //Allow single selection only
 		propertyTable.setSelectionMode( ListSelectionModel.SINGLE_SELECTION );
-        //Set the table's model to a KeyValueFiltered model with the property's group, name, and the value of the property
-		PROPERTY_TABLE_MODEL = new KeyValueFilteredTableModel<ProbeProperty>( new ArrayList<ProbeProperty>(), "group", "property", "value");
         //Match the property's keys with their method
 		PROPERTY_TABLE_MODEL.setMatchingKeyPaths( "group", "property", "value");
         //Set the table filter component to the text field
@@ -321,51 +274,28 @@ public class SimpleProbeEditor extends JDialog {
         refreshView();
         
         //Add the scrollpane to the table with a vertical scrollbar
-        scrollPane = new JScrollPane(propertyTable, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        final JScrollPane scrollPane = new JScrollPane( propertyTable, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED );
         
         //Add the text field to the top of the dialog
-        searchPanel.add(filterTextField, BorderLayout.NORTH);
+        mainContainer.add( filterTextField, BorderLayout.NORTH );
         //Add the table to the center of the dialog
-        searchPanel.add(scrollPane, BorderLayout.CENTER);
+        mainContainer.add( scrollPane, BorderLayout.CENTER );
         //Add the buttons to the bottom of the dialog
-        searchPanel.add(applyButtonPanel, BorderLayout.SOUTH);
+        mainContainer.add( controlPanel, BorderLayout.SOUTH );
         //Add everything to the dialog
-        add(searchPanel);
+        add( mainContainer );
     }
-    
-    /* refreshView()
-     *
-     * Set the values of the table to the property list
-     *
-     */
+
+	
+    /** Set the values of the table to the property list */
     private void refreshView() {
         //Set the records as the properties from the property list
         PROPERTY_TABLE_MODEL.setRecords( propertyList );
     }
-    
-    /* getBeanObjectBeanInfo(Class<?>)
-     *
-     * Get the BeanInfo from a class
-     *
-     */
-	public BeanInfo getBeanObjectBeanInfo(Class<?> beanClass) {
-		//Try to get the BeanInfo from the class given
-        try {
-			return Introspector.getBeanInfo( beanClass );
-		}
-        //Throw an exception if the BeanInfo could not be obtained
-		catch( IntrospectionException exception ) {
-			return null;
-		}
-	}
-    
-    /* saveProbeProperties()
-     *
-     * Set the properties of the probe that have been changed
-     *
-     */
-    private void saveProbeProperties()
-    {
+
+	
+    /** Set the properties of the probe that have been changed */
+    private void saveProbeProperties() {
         //Go through each value in the properties HashMap
         for(String key : propertyClasses.keySet()) {
             
@@ -409,22 +339,20 @@ public class SimpleProbeEditor extends JDialog {
         //Update the table contents
         refreshView();
     }
-    
-    /* isEditableClass(Class<?>)
-     *
-     * Determine if the property's class is editable or not based on the editableClasses attribute
-     *
-     */
+
+	
+    /** Determine if the property's class is editable or not based on the EDITABLE_CLASSES attribute */
     private boolean isEditableClass(Class<?> propertyClass) {
         
-        //Look through each class in the editableClasses array
-        for(Class<?> c : editableClasses) {
+        //Look through each class in the EDITABLE_CLASSES array
+        for(Class<?> c : EDITABLE_CLASSES) {
             if(propertyClass == c)
                 return true;
         }
         
         return false;
     }
+	
     
     /* setPropertiesAsUnchanged()
      *
@@ -436,14 +364,11 @@ public class SimpleProbeEditor extends JDialog {
             if(pp.hasChanged()) pp.setHasChanged(false);
         }
     }
-    
-    /* Class: ProbeProperty
-     *
-     * Description: ProbeProperty record that gets dislpayed in the property table
-     *
-     */
+
+
+	
+    /** ProbeProperty record that gets dislpayed in the property table */
     private class ProbeProperty {
-        
         //Class type of the property
         private Class<?> _type;
         //Group name, and property name of the property
@@ -536,7 +461,7 @@ public class SimpleProbeEditor extends JDialog {
          *
          */
         public void setValue(Boolean value) {
-            if(!applyButton.isEnabled()) applyButton.setEnabled(true);
+            if( !applyButton.isEnabled() ) applyButton.setEnabled(true);
             _hasChanged = true;
             _value = value;
         }
@@ -580,22 +505,49 @@ public class SimpleProbeEditor extends JDialog {
             }
         }
     }
-    
-    /* Class: ApplyButtonListener
-     * Implements: AcitonListener
-     * Description: Sets the Apply button's action
-     *
-     */
-    private class ApplyButtonListener implements ActionListener {
-        
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            //Save the properties
-            saveProbeProperties();
-            //Mark the properties as unchanged/saved
-            setPropertiesAsUnchanged();
-            //Re-enable the button
-            applyButton.setEnabled(false);
-        }
-    }
+}
+
+
+/** model for traversing a probe's object graph and collecting editable properties */
+class ProbeEditableProperties {
+    /** array of classes for which the property can be edited directly */
+    final static private Set<Class<?>> EDITABLE_PROPERTY_TYPES = new HashSet<>();
+	
+	/** probe to model */
+	final private Probe PROBE;
+
+
+	// static initializer
+	static {
+		// cache the editable properties in a set for quick comparison later
+		final Class<?>[] editablePropertyTypes = { Double.class, Double.TYPE, Integer.class, Integer.TYPE, Boolean.class, Boolean.TYPE, String.class };
+		for ( final Class<?> type : editablePropertyTypes ) {
+			EDITABLE_PROPERTY_TYPES.add( type );
+		}
+	}
+
+
+	/** constructor */
+	public ProbeProperties( final Probe probe ) {
+		PROBE = probe;
+	}
+
+
+	/** Get the probe */
+	public Probe getProbe() {
+		return PROBE;
+	}
+
+
+    /** Convenience method to get the BeanInfo for an object's class */
+	static private BeanInfo getBeanInfo( final Object object ) {
+		//Try to get the BeanInfo from the class given
+        try {
+			return Introspector.getBeanInfo( object.getClass() );
+		}
+        //Throw an exception if the BeanInfo could not be obtained
+		catch( IntrospectionException exception ) {
+			return null;
+		}
+	}
 }
