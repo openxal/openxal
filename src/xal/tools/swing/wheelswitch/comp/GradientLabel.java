@@ -144,6 +144,7 @@ public class GradientLabel extends ResizableTextLabel
 	/**
 	 * @see javax.swing.JComponent#paintComponent(java.awt.Graphics)
 	 */
+    @Override
 	protected void paintComponent(Graphics g)
 	{
 		boolean oldOpaque = isOpaque();
@@ -186,6 +187,7 @@ public class GradientLabel extends ResizableTextLabel
 	 * @see java.awt.Component#setBackground(Color)
 	 * @see #setBackgroundStart(Color)
 	 */
+    @Override
 	public void setBackground(Color c)
 	{
 		if (!c.equals(getBackground())) {
