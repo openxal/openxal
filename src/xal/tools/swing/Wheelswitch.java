@@ -26,9 +26,6 @@ import xal.tools.swing.wheelswitch.ValueDigit;
 import xal.tools.swing.wheelswitch.WheelswitchFormatter;
 import xal.tools.swing.wheelswitch.WheelswitchLayout;
 
-//import java.applet.AudioClip;
-
-import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
@@ -38,8 +35,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 
 import java.util.ArrayList;
 import java.util.Timer;
@@ -48,8 +43,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.swing.Box;
-import javax.swing.JApplet;
-import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.EventListenerList;
@@ -86,6 +79,7 @@ public class Wheelswitch extends JPanel
 		 *
 		 * @param e
 		 */
+        @Override
 		public void focusGained(FocusEvent e)
 		{
 			if (getSelectedDigit() == -1) {
@@ -98,6 +92,7 @@ public class Wheelswitch extends JPanel
 		 *
 		 * @param e
 		 */
+        @Override
 		public void focusLost(FocusEvent e)
 		{
 			if ((e.getOppositeComponent() != upDownButton)
@@ -121,6 +116,7 @@ public class Wheelswitch extends JPanel
 		 *
 		 * @param e
 		 */
+        @Override
 		public void keyPressed(KeyEvent e)
 		{
 			if (editable && isEnabled()) {
@@ -163,6 +159,7 @@ public class Wheelswitch extends JPanel
 		 *
 		 * @param e
 		 */
+        @Override
 		public void mousePressed(MouseEvent e)
 		{
 			if (e.getButton() == MouseEvent.BUTTON1) {
@@ -186,6 +183,7 @@ public class Wheelswitch extends JPanel
 		 *
 		 * @param e DOCUMENT ME!
 		 */
+        @Override
 		public void mouseWheelMoved(MouseWheelEvent e)
 		{
 			logger.log(Level.FINE, "mousewheel");
@@ -218,6 +216,7 @@ public class Wheelswitch extends JPanel
 			/**
 			 * DOCUMENT ME!
 			 */
+            @Override
 			public void run()
 			{
 				if (numberOfTilts >= MAX_NUMBER_OF_TILTS) {
@@ -290,6 +289,7 @@ public class Wheelswitch extends JPanel
 		 *
 		 * @param e
 		 */
+        @Override
 		public void upDownChanged(ChangeEvent e)
 		{
 			if (editable && isEnabled()) {
@@ -318,7 +318,6 @@ public class Wheelswitch extends JPanel
 	/** DOCUMENT ME! */
 	public static final String EDITABLE = "editable";
     private static final Logger logger = Logger.getLogger("global");
-	protected EventListenerList listenerList = null;
 	protected FocusHandler focusHandler;
 	protected KeyHandler keyHandler;
 	protected MouseHandler mouseHandler;
@@ -618,6 +617,7 @@ public class Wheelswitch extends JPanel
 	 *
 	 * @see java.awt.Component#getMinimumSize()
 	 */
+    @Override
 	public Dimension getMinimumSize()
 	{
 		if (minimumSize == null) {
@@ -642,6 +642,7 @@ public class Wheelswitch extends JPanel
 	 *
 	 * @see java.awt.Component#getPreferredSize()
 	 */
+    @Override
 	public Dimension getPreferredSize()
 	{
 		if (preferredSize == null) {
@@ -804,6 +805,7 @@ public class Wheelswitch extends JPanel
 	 *
 	 * @see java.awt.Component#setEnabled(boolean)
 	 */
+    @Override
 	public void setEnabled(boolean arg0)
 	{
 		super.setEnabled(arg0);
@@ -1079,7 +1081,7 @@ public class Wheelswitch extends JPanel
 	protected void initDigits()
 	{
 		String stringValue = formatter.getString();
-		char digitValue = 0;
+		char digitValue;
 
 		for (int i = 0; i < stringValue.length(); i++) {
 			digitValue = stringValue.charAt(i);
@@ -1123,7 +1125,7 @@ public class Wheelswitch extends JPanel
 			add((Digit)digits.get(i));
 		}
 
-		if (unitDigits.size() != 0) {
+		if (unitDigits.isEmpty()) {
 			add(Box.createHorizontalStrut(5));
 
 			for (int i = 0; i < unitDigits.size(); i++) {
@@ -1155,7 +1157,7 @@ public class Wheelswitch extends JPanel
 			return;
 		}
 
-		Digit digit = null;
+		Digit digit;
 
 		for (int i = 0; i < unit.length(); i++) {
 			digit = new StaticDigit(unit.substring(i, i + 1));
