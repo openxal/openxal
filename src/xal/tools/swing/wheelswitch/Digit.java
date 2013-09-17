@@ -52,6 +52,7 @@ public abstract class Digit extends SimpleButton
 		/**
 		 * @see java.util.TimerTask#run()
 		 */
+        @Override
 		public void run()
 		{
 			repaint();
@@ -112,6 +113,7 @@ public abstract class Digit extends SimpleButton
 	 *
 	 * @param newEnhanced
 	 */
+    @Override
 	public void setEnhanced(boolean newEnhanced)
 	{
 		if (newEnhanced == enhanced) {
@@ -128,6 +130,7 @@ public abstract class Digit extends SimpleButton
 	 *
 	 * @return boolean
 	 */
+    @Override
 	public boolean isEnhanced()
 	{
 		return enhanced;
@@ -168,6 +171,7 @@ public abstract class Digit extends SimpleButton
 	 *
 	 * @see JLabel#setText(java.lang.String)
 	 */
+    @Override
 	public synchronized void setText(String newText)
 	{
 		if (newText != null
@@ -224,6 +228,7 @@ public abstract class Digit extends SimpleButton
 	 *
 	 * @param g DOCUMENT ME!
 	 */
+    @Override
 	public void paintComponent(Graphics g)
 	{
 		int width = getWidth();
