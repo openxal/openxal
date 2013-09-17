@@ -31,6 +31,7 @@ public class WheelswitchLayout implements LayoutManager {
 	 * 
 	 * @see LayoutManager#addLayoutComponent(String, Component)
 	 */
+    @Override
 	public void addLayoutComponent(String name, Component comp) {
 	}
 
@@ -39,12 +40,14 @@ public class WheelswitchLayout implements LayoutManager {
 	 * 
 	 * @see LayoutManager#removeLayoutComponent(Component)
 	 */
+    @Override
 	public void removeLayoutComponent(Component comp) {
 	}
 
 	/**
 	 * @see LayoutManager#preferredLayoutSize(Container)
 	 */
+    @Override
 	public Dimension preferredLayoutSize(Container parent) {
 		return parent.getPreferredSize();
 	}
@@ -52,6 +55,7 @@ public class WheelswitchLayout implements LayoutManager {
 	/**
 	 * @see LayoutManager#minimumLayoutSize(Container)
 	 */
+    @Override
 	public Dimension minimumLayoutSize(Container parent) {
 		return parent.getMinimumSize();
 	}
@@ -59,9 +63,10 @@ public class WheelswitchLayout implements LayoutManager {
 	/**
 	 * @see LayoutManager#layoutContainer(Container)
 	 */
+    @Override
 	public void layoutContainer(Container parent) {
 		Wheelswitch wswitch = (Wheelswitch)parent;
-		Component comp = null;
+		Component comp;
 		int numberOfComponents = wswitch.getComponentCount();
 		if (numberOfComponents<2) return;
 		
@@ -71,8 +76,8 @@ public class WheelswitchLayout implements LayoutManager {
 //  mkadunc	
 //	int digitInset = Math.max(height/10,1);
   	int digitInset = 0;
-		int compWidth = 0;
-		int compHeight = 0;
+		int compWidth;
+		int compHeight;
 
         if (width==0 || height==0) return;
 
@@ -104,7 +109,7 @@ public class WheelswitchLayout implements LayoutManager {
 		}
 
 		int x = 0;
-		int y = 0;
+		int y;
 		for (int i=0; i<numberOfComponents; i++) {
 			comp = wswitch.getComponent(i);
 			if (comp instanceof Digit) {
