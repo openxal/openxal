@@ -347,7 +347,7 @@ public abstract class Digit extends SimpleButton
 	 * foreground colors and opacity of the digit depending on the current
 	 * selection state of the digit.
 	 */
-	protected void init()
+	private void init()
 	{
 		setHorizontalAlignment(0);
 
