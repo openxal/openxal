@@ -64,6 +64,7 @@ public class ResizableTextLabel extends JLabel
 		 *
 		 * @see java.awt.event.ComponentListener#componentResized(ComponentEvent)
 		 */
+        @Override
 		public void componentResized(ComponentEvent e)
 		{
 			if (resizable) {
@@ -248,6 +249,7 @@ public class ResizableTextLabel extends JLabel
 	 *
 	 * @see javax.swing.JLabel#setText(String)
 	 */
+    @Override
 	public void setText(String text)
 	{
 		if (text != null && text.length() < 1) {
@@ -291,6 +293,7 @@ public class ResizableTextLabel extends JLabel
 	 *
 	 * @see javax.swing.JComponent#addNotify()
 	 */
+    @Override
 	public void addNotify()
 	{
 		super.addNotify();
@@ -307,6 +310,7 @@ public class ResizableTextLabel extends JLabel
 	 *
 	 * @see javax.swing.JLabel#getPreferredSize()
 	 */
+    @Override
 	public Dimension getPreferredSize()
 	{
 		if (preferredSize != null) {
@@ -343,6 +347,7 @@ public class ResizableTextLabel extends JLabel
 	 *
 	 * @see javax.swing.JComponent#setPreferredSize(Dimension)
 	 */
+    @Override
 	public void setPreferredSize(Dimension newPreferredSize)
 	{
 		preferredSize = newPreferredSize;
@@ -354,6 +359,7 @@ public class ResizableTextLabel extends JLabel
 	 *
 	 * @see java.awt.Component#getMinimumSize()
 	 */
+    @Override
 	public Dimension getMinimumSize()
 	{
 		if (minimumSize != null) {
@@ -370,6 +376,7 @@ public class ResizableTextLabel extends JLabel
 	 *
 	 * @see javax.swing.JComponent#setMinimumSize(Dimension)
 	 */
+    @Override
 	public void setMinimumSize(Dimension newMinimumSize)
 	{
 		minimumSize = newMinimumSize;
@@ -382,6 +389,7 @@ public class ResizableTextLabel extends JLabel
 	 *
 	 * @see javax.swing.JComponent#paintComponent(Graphics)
 	 */
+    @Override
 	protected void paintComponent(Graphics g)
 	{
 		if (enhanced) {
