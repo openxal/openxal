@@ -271,7 +271,7 @@ public abstract class BunchProbeState extends ProbeState /* implements IPhaseSta
 //	 *
 //	 *  @return     vector (x,x',y,y',z,z',1) of phase space coordinates
 //	 */
-//    public PhaseVector phaseCoordinates() {
+//    public PhaseVector getPhaseCoordinates() {
 //		return phaseMean();
 //	}
 //	

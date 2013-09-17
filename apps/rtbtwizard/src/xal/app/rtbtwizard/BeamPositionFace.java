@@ -572,6 +572,8 @@ public class BeamPositionFace extends JPanel{
         //PhaseVector bpm2coords = bpm2state.phaseCoordinates();
         PhaseVector windowcoords = windowstate.getPhaseCoordinates();
         PhaseVector targetcoords = targetstate.getPhaseCoordinates();
+        //PhaseVector bpm1coords = bpm1state.getPhaseCoordinates();
+        //PhaseVector bpm2coords = bpm2state.getPhaseCoordinates();
         
         //System.out.println("bpm 1 " + bpm1coords.getx() +  " " +bpm1coords.gety());
         //System.out.println("bpm 2 " + bpm2coords.getx() +  " " +bpm2coords.gety());
