@@ -15,7 +15,7 @@
 package xal.tools.swing.wheelswitch.comp;
 
 import xal.tools.swing.wheelswitch.util.ColorHelper;
-import xal.tools.swing.wheelswitch.util.CosyUIElements;
+//import xal.tools.swing.wheelswitch.util.CosyUIElements;
 
 import java.awt.Color;
 import java.awt.Container;
@@ -43,6 +43,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.border.Border;
 import javax.swing.event.EventListenerList;
 import javax.swing.plaf.metal.MetalBorders;
+import xal.tools.swing.wheelswitch.util.CosyUIElements;
 
 
 /**
@@ -863,47 +864,6 @@ public class SimpleButton extends GradientLabel
 			setPressed(false);
 			super.setVisible(visible);
 		}
-	}
-
-	/**
-	 * Run test applet.
-	 *
-	 * @param args command line parameters
-	 */
-	public static void main(String[] args)
-	{
-		JApplet applet = new JApplet() {
-                @Override
-				public void init()
-				{
-					Container cp = this.getContentPane();
-					JPanel panel = new JPanel();
-					SimpleButton button = new SimpleButton("SimpleButton");
-					button.setGradientEnabled(true);
-					button.setBorder(null);
-					button.setEnabled(true);
-					button.setRolloverEnabled(true);
-					button.setRolloverBorder(CosyUIElements.getPlainBorder(true));
-					button.setPressedBorder(CosyUIElements.getPlainBorder(false));
-					panel.setLayout(new GridLayout(1, 0));
-					panel.add(button);
-					cp.add(panel);
-				}
-			};
-
-		JFrame frame = new JFrame("Arrow Button Demo");
-		frame.getContentPane().add(applet);
-		frame.setSize(300, 400);
-		frame.addWindowListener(new WindowAdapter() {
-                @Override
-				public void windowClosing(WindowEvent e)
-				{
-					System.exit(0);
-				}
-			});
-		applet.init();
-		applet.start();
-		frame.setVisible(true);
 	}
 
 	/*
