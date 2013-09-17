@@ -68,6 +68,18 @@ public class ReadbackSetRecord {
 		return _lastReadback;
 	}
 	
+	public void setLastSetpoint(Double value){
+		try {
+			SET_CHANNEL.putVal(value);
+		} catch (ConnectionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (PutException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
 	
 	/** update the readback from the setpoint, noise and offset */
 	public void updateReadback( final double basisValue, final Map<Channel, Double> noiseMap, final Map<Channel, Double> offsetMap, final PutListener listener ) throws Exception {
