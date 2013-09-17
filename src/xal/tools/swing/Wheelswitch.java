@@ -1111,7 +1111,7 @@ public class Wheelswitch extends JPanel
 	/*
 	 * Repositions the components inside the wheelswitch.
 	 */
-	protected void setupLayout()
+	private void setupLayout()
 	{
 		removeAll();
 
@@ -1147,7 +1147,7 @@ public class Wheelswitch extends JPanel
 	/*
 	 * Constructs unit digits from scratch.
 	 */
-	protected void setupUnitDigits()
+	private void setupUnitDigits()
 	{
 		unitDigits.clear();
 
@@ -1170,7 +1170,7 @@ public class Wheelswitch extends JPanel
 	/*
 	 * Contructs value digits from scratch.
 	 */
-	protected void setupValueDigits()
+	private void setupValueDigits()
 	{
 		digits.clear();
 		selectedDigit = -1;
