@@ -37,7 +37,7 @@ public class UpDownButton extends JComponent {
 		super();
 		listenerList = new EventListenerList();	
 		setLayout(new UpDownLayout());
-		ArrowButton bn = new ArrowButton(ArrowButton.UP);
+		ArrowButton bn = new ArrowButton(ArrowButton.Orientation.UP);
 		bn.setFocusable(false);
 		bn.setEnabled(isEnabled());
 	    bn.setBackground(ColorHelper.getCosyControl());
@@ -47,7 +47,7 @@ public class UpDownButton extends JComponent {
 				fireUpDownChanged();				
 			}
 		});
-		ArrowButton bs = new ArrowButton(ArrowButton.DOWN);
+		ArrowButton bs = new ArrowButton(ArrowButton.Orientation.DOWN);
 		bs.setFocusable(false);
 		bs.setEnabled(isEnabled());
 	    bs.setBackground(ColorHelper.getCosyControl());

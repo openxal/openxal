@@ -31,35 +31,23 @@ import java.awt.Insets;
  */
 public class ArrowButton extends SimpleButton
 {
-	/** Arrow icon pointing upwards. */
-	public static int UP = 0;
-
-	/** Arrow icon pointing downwards. */
-	public static int DOWN = 1;
-
-	/** Arrow icon pointing to the left. */
-	public static int LEFT = 2;
-
-	/** Arrow icon pointing to the right. */
-	public static int RIGHT = 3;
+    public static enum Orientation {
+        UP, DOWN, LEFT, RIGHT;
+    }
+	
 	private Insets insets;
-	private int orientation;
+	private Orientation orientation;
 
 	/**
 	 * Constructor for ArrowButton. Sets the orientation of the arrow icon.
 	 *
 	 * @param newOrientation int
 	 */
-	public ArrowButton(int newOrientation)
+	public ArrowButton(Orientation newOrientation)
 	{
 		super();
 
-		if (newOrientation != UP && newOrientation != DOWN
-		    && newOrientation != LEFT && newOrientation != RIGHT) {
-			throw (new IllegalArgumentException());
-		}
-
-		orientation = newOrientation;
+        orientation = newOrientation;
 		setMinimumSize(new Dimension(10, 10));
 		setPreferredSize(new Dimension(20, 20));
 		insets = null;
@@ -124,19 +112,19 @@ public class ArrowButton extends SimpleButton
 
 		g.setColor(getForeground());
 
-		if (orientation == DOWN) {
+		if (orientation == Orientation.DOWN) {
 			int[] xs = { left, (int)(maxWidth / 2), maxWidth - right };
 			int[] ys = { top, maxHeight - bottom, top };
 			g.fillPolygon(xs, ys, 3);
-		} else if (orientation == UP) {
+		} else if (orientation == Orientation.UP) {
 			int[] xs = { left, (int)(maxWidth / 2), maxWidth - right };
 			int[] ys = { maxHeight - bottom, top, maxHeight - bottom };
 			g.fillPolygon(xs, ys, 3);
-		} else if (orientation == RIGHT) {
+		} else if (orientation == Orientation.RIGHT) {
 			int[] ys = { top, (int)(maxHeight / 2), maxHeight - bottom };
 			int[] xs = { left, maxWidth - right, left };
 			g.fillPolygon(xs, ys, 3);
-		} else if (orientation == LEFT) {
+		} else if (orientation == Orientation.LEFT) {
 			int[] ys = { top, (int)(maxHeight / 2), maxHeight - bottom };
 			int[] xs = { maxWidth - right, left, maxWidth - right };
 			g.fillPolygon(xs, ys, 3);
@@ -150,7 +138,7 @@ public class ArrowButton extends SimpleButton
 	 */
 	public int getOrientation()
 	{
-		return orientation;
+		return orientation.ordinal();
 	}
 
 	/**
@@ -160,8 +148,8 @@ public class ArrowButton extends SimpleButton
 	 */
 	public void setOrientation(int newOrientation)
 	{
-		int oldOrientation = orientation;
-		orientation = newOrientation;
+		int oldOrientation = orientation.ordinal();
+		orientation = Orientation.values()[newOrientation];
 		firePropertyChange("orientation", oldOrientation, newOrientation);
 
 		if (oldOrientation != newOrientation) {
