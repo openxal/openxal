@@ -14,8 +14,11 @@ import java.util.prefs.*;
 import java.net.*;
 import java.io.*;
 import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Shape;
 import java.awt.event.*;
 import java.awt.GridLayout;
+import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import javax.swing.*;
 import javax.swing.text.*;
@@ -35,6 +38,7 @@ import xal.smf.impl.qualify.*;
 import xal.model.*;
 import xal.model.probe.*;  // Probe for t3d header
 import xal.model.alg.*;
+import xal.model.probe.traj.IPhaseState;
 import xal.model.probe.traj.TransferMapState;
 import xal.model.probe.traj.ProbeState;
 import xal.model.probe.traj.EnvelopeProbeState;
@@ -42,12 +46,13 @@ import xal.model.probe.traj.ICoordinateState;
 import xal.sim.scenario.*;
 import xal.smf.*;
 import xal.model.xml.*;
-import xal.model.xml.ParsingException;
 
 import xal.tools.xml.*;
 import xal.tools.data.*;
 import xal.tools.beam.Twiss;
 import xal.tools.beam.PhaseVector;
+import xal.tools.plot.BasicGraphData;
+import xal.tools.plot.FunctionGraphsJPanel;
 import xal.tools.swing.KeyValueFilteredTableModel;
 import xal.tools.swing.DecimalField;
 import xal.tools.apputils.files.*;
@@ -85,15 +90,17 @@ public class VADocument extends AcceleratorDocument implements ActionListener, P
     
 	private JDialog setNoise = new JDialog();
     
-	private DecimalField df1, df2, df3, df4;
+	private DecimalField df1, df2, df3, df4, df5;
     
-	private DecimalField df11, df21, df31, df41;
+	private DecimalField df11, df21, df31, df41, df51;
     
 	private double quadNoise = 0.0;
     
 	private double dipoleNoise = 0.0;
     
 	private double correctorNoise = 0.0;
+	
+	private double solNoise = 0.0;
     
 	private double bpmNoise = 0.0;
     
@@ -106,7 +113,9 @@ public class VADocument extends AcceleratorDocument implements ActionListener, P
 	private double dipoleOffset = 0.0;
     
 	private double correctorOffset = 0.0;
-    
+
+	private double solOffset = 0.0;
+	
 	private double bpmOffset = 0.0;
     
 	private double rfAmpOffset = 0.0;
@@ -116,7 +125,8 @@ public class VADocument extends AcceleratorDocument implements ActionListener, P
 	private JButton done = new JButton("OK");
     
 	private volatile boolean vaRunning = false;
-    
+	// add by liyong
+	private java.util.List<AcceleratorNode> nodes;
 	private java.util.List<RfCavity> rfCavities;
     
 	private java.util.List<Electromagnet> mags;
@@ -175,6 +185,8 @@ public class VADocument extends AcceleratorDocument implements ActionListener, P
     
 	/** model sync period in milliseconds */
 	private long _modelSyncPeriod;
+	
+	public DiagPlot _diagplot;
     
     
 	/** Create a new empty document */
@@ -203,12 +215,15 @@ public class VADocument extends AcceleratorDocument implements ActionListener, P
 		_windowReference = windowReference;
 		READBACK_SET_TABLE_MODEL = new KeyValueFilteredTableModel<ReadbackSetRecord>( new ArrayList<ReadbackSetRecord>(), "node.id", "readbackChannel.channelName", "lastReadback", "setpointChannel.channelName", "lastSetpoint" );
 		READBACK_SET_TABLE_MODEL.setColumnClass( "lastReadback", Number.class );
-		READBACK_SET_TABLE_MODEL.setColumnClass( "lastSetpoint", Number.class );
+		//READBACK_SET_TABLE_MODEL.setColumnClass( "lastSetpoint", Number.class );
+		READBACK_SET_TABLE_MODEL.setColumnClass( "lastSetpoint", Double.class );
 		READBACK_SET_TABLE_MODEL.setColumnName( "node.id", "Node" );
 		READBACK_SET_TABLE_MODEL.setColumnName( "readbackChannel.channelName", "Readback PV" );
 		READBACK_SET_TABLE_MODEL.setColumnName( "lastReadback", "Readback" );
 		READBACK_SET_TABLE_MODEL.setColumnName( "setpointChannel.channelName", "Setpoint PV" );
 		READBACK_SET_TABLE_MODEL.setColumnName( "lastSetpoint", "Setpoint" );
+	
+		READBACK_SET_TABLE_MODEL.setColumnEditable("lastSetpoint", true);
 		
 		final JTextField filterField = (JTextField)windowReference.getView( "FilterField" );
 		READBACK_SET_TABLE_MODEL.setInputFilterComponent( filterField );
@@ -231,6 +246,11 @@ public class VADocument extends AcceleratorDocument implements ActionListener, P
 		final JTable readbackTable = (JTable)_windowReference.getView( "ReadbackTable" );
 		readbackTable.setCellSelectionEnabled( true );
 		readbackTable.setModel( READBACK_SET_TABLE_MODEL );
+		
+		/** add digaplot */
+		final FunctionGraphsJPanel beamdispplot = (FunctionGraphsJPanel) _windowReference.getView("BeamDispPlot");
+		final FunctionGraphsJPanel sigamplot = (FunctionGraphsJPanel) _windowReference.getView("SigmaPlot");			
+		_diagplot = new DiagPlot(beamdispplot, sigamplot);
 		
 		makeNoiseDialog();
 		
@@ -300,6 +320,14 @@ public class VADocument extends AcceleratorDocument implements ActionListener, P
 		noiseLevel3.add(new JLabel("%"));
 		noiseLevelPanel.add(noiseLevel3);
 		
+		JPanel noiseLevel5 = new JPanel();
+		noiseLevel5.setLayout(new GridLayout(1, 3));
+		df5 = new DecimalField( 0., 5, numberFormat );
+		noiseLevel5.add(new JLabel("Solenoid: "));
+		noiseLevel5.add(df5);
+		noiseLevel5.add(new JLabel("%"));
+		noiseLevelPanel.add(noiseLevel5);
+		
 		JPanel noiseLevel4 = new JPanel();
 		noiseLevel4.setLayout(new GridLayout(1, 3));
 		df4 = new DecimalField( 0., 5, numberFormat );
@@ -332,6 +360,13 @@ public class VADocument extends AcceleratorDocument implements ActionListener, P
 		offset3.add(new JLabel("Dipole Corr.: "));
 		offset3.add(df31);
 		offsetPanel.add(offset3);
+		
+		JPanel offset5 = new JPanel();
+		offset5.setLayout(new GridLayout(1, 2));
+		df51 = new DecimalField( 0., 5, numberFormat );
+		offset5.add(new JLabel("Solenoid: "));
+		offset5.add(df51);
+		offsetPanel.add(offset5);
 		
 		JPanel offset4 = new JPanel();
 		offset4.setLayout(new GridLayout(1, 2));
@@ -1017,6 +1052,60 @@ public class VADocument extends AcceleratorDocument implements ActionListener, P
     
 	/** This method is for populating the diagnostic PVs (only BPMs + WSs for now) */
 	protected void putDiagPVs() {
+		/**temporary list data for getting the array bpm and ws datas*/
+		int i = 0;
+		List<Double> tempBPMx = new ArrayList<Double>();
+		List<Double> tempBPMy = new ArrayList<Double>();
+		List<Double> tempBPMp = new ArrayList<Double>();
+
+		List<Double> tempWSx = new ArrayList<Double>();
+		List<Double> tempWSy = new ArrayList<Double>();
+		List<Double> tempWSp = new ArrayList<Double>();
+		
+		List<Double> tempbeampos = new ArrayList<Double>();
+		List<Double> tempbeamx = new ArrayList<Double>();
+		List<Double> tempbeamy = new ArrayList<Double>();	
+		List<Double> tempsigmaz = new ArrayList<Double>();
+			      
+		final Iterator<ProbeState> stateIter =modelScenario.getTrajectory().stateIterator();
+	        while ( stateIter.hasNext() ) {	
+	        	EnvelopeProbeState state = (EnvelopeProbeState) stateIter.next();
+	            double position = state.getPosition();
+	            double x= state.phaseMean().getx()* 1000;
+	            double y= state.phaseMean().gety()* 1000;
+	            
+	            final Twiss[] twiss = state.getCorrelationMatrix().computeTwiss();	
+				double sigmaz=twiss[2].getEnvelopeRadius() * 1000;	
+				
+				tempbeampos.add(position);
+				tempbeamx.add(x);
+				tempbeamy.add(y);
+				tempsigmaz.add(sigmaz);
+	        }	        		
+	
+		double beamp[] = new double[tempbeampos.size()];
+		double beamx[] = new double[tempbeampos.size()];
+		double beamy[] = new double[tempbeampos.size()];
+		double beamsigmaz[]=new double[tempbeampos.size()];
+		
+		for (i = 0; i < tempbeampos.size(); i++) {
+			beamp[i] = tempbeampos.get(i);
+			beamx[i] = tempbeamx.get(i);
+			beamy[i] = tempbeamy.get(i);
+			beamsigmaz[i]=tempsigmaz.get(i);			
+		}
+		try {
+			_diagplot.showbeampositionplot(beamp, beamx, beamy);
+			_diagplot.showsigmazplot(beamp, beamsigmaz);
+		} catch (ConnectionException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (GetException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
+		
 		// for BPMs
         for ( final BPM bpm : bpms ) {
 			final Channel bpmXAvgChannel = bpm.getChannel( BPM.X_AVG_HANDLE );
@@ -1045,6 +1134,11 @@ public class VADocument extends AcceleratorDocument implements ActionListener, P
                     //                    bpmXTBTChannel.putValCallback( xTBT, this );  // don't post to channel access until the turn by turn data is generated correctly
 					bpmYAvgChannel.putValCallback( yAvg, this );
                     //                    bpmYTBTChannel.putValCallback( yTBT, this );  // don't post to channel access until the turn by turn data is generated correctly
+				
+					final double position = bpm.getPosition();
+					tempBPMp.add(position);
+					tempBPMx.add(xAvg);
+					tempBPMy.add(yAvg);				
 				}
                 
 				// hardwired BPM amplitude noise and offset to 5% and 0.1mm (randomly) respectively
@@ -1060,6 +1154,28 @@ public class VADocument extends AcceleratorDocument implements ActionListener, P
 				System.err.println( e.getMessage() );
 			}
 		}
+        	
+		/**the array of bpm data*/
+		double bpmp[] = new double[tempBPMp.size()];
+		double bpmx[] = new double[tempBPMp.size()];
+		double bpmy[] = new double[tempBPMp.size()];
+		 /**get the bpmdata[] from the list*/
+		for (i = 0; i < tempBPMp.size(); i++) {
+			bpmp[i] = tempBPMp.get(i);
+			bpmx[i] = tempBPMx.get(i);
+			bpmy[i] = tempBPMy.get(i);
+		}
+        /**showBPMplot*/
+		try {
+			_diagplot.showbpmplot(bpmp, bpmx,bpmy);
+		} catch (ConnectionException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (GetException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+
         
 		// for WSs
         for ( final ProfileMonitor ws : wss ) {
@@ -1072,6 +1188,10 @@ public class VADocument extends AcceleratorDocument implements ActionListener, P
                     final Twiss[] twiss = ( (EnvelopeProbeState)probeState ).getCorrelationMatrix().computeTwiss();
 					wsX.putValCallback( twiss[0].getEnvelopeRadius() * 1000., this );
 					wsY.putValCallback( twiss[1].getEnvelopeRadius() * 1000., this );
+	
+					tempWSp.add(ws.getPosition());
+					tempWSx.add(twiss[0].getEnvelopeRadius() * 1000);
+					tempWSy.add(twiss[1].getEnvelopeRadius() * 1000);
 				}
 			} catch (ConnectionException e) {
 				System.err.println( e.getMessage() );
@@ -1079,6 +1199,28 @@ public class VADocument extends AcceleratorDocument implements ActionListener, P
 				System.err.println( e.getMessage() );
 			}
 		}
+				
+		/**the array of ws data*/
+		double wsp[] = new double[tempWSp.size()];
+		double wsx[] = new double[tempWSp.size()];
+		double wsy[] = new double[tempWSp.size()];
+		 /**get the wsdata[] from the list*/
+		for (i = 0; i < tempWSp.size(); i++) {
+			wsp[i] = tempWSp.get(i);
+			wsx[i] = tempWSx.get(i);
+			wsy[i] = tempWSy.get(i);
+		}
+		/**showWSplot*/
+		try {			
+			_diagplot.showsigmaplot(wsp, wsx, wsy);
+		} catch (ConnectionException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (GetException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
 		Channel.flushIO();
 	}
     
@@ -1162,6 +1304,10 @@ public class VADocument extends AcceleratorDocument implements ActionListener, P
 					ch_noiseMap.put( em.getChannel( Electromagnet.FIELD_RB_HANDLE ), correctorNoise );
 					ch_offsetMap.put( em.getChannel( Electromagnet.FIELD_RB_HANDLE ), correctorOffset );
 				}
+				else if ( em.isKindOf( Solenoid.s_strType ) ) {
+					ch_noiseMap.put( em.getChannel( Electromagnet.FIELD_RB_HANDLE ), solNoise );
+					ch_offsetMap.put( em.getChannel( Electromagnet.FIELD_RB_HANDLE ), solOffset );
+				}
 			}
 			
 			// for rf PVs
@@ -1229,6 +1375,10 @@ public class VADocument extends AcceleratorDocument implements ActionListener, P
 			catch( Exception exception ) {
 				exception.printStackTrace();
 			}
+			/**get all nodes(add by liyong) */
+			nodes = getSelectedSequence().getAllNodes();
+			
+
 			
 			// get electro magnets
 			TypeQualifier typeQualifier = QualifierFactory.qualifierWithStatusAndTypes( true, Electromagnet.s_strType );
@@ -1284,11 +1434,14 @@ public class VADocument extends AcceleratorDocument implements ActionListener, P
 			dipoleNoise = df2.getDoubleValue();
 			correctorNoise = df3.getDoubleValue();
 			bpmNoise = df4.getDoubleValue();
+			solNoise = df5.getDoubleValue();
 			quadOffset = df11.getDoubleValue();
 			dipoleOffset = df21.getDoubleValue();
 			correctorOffset = df31.getDoubleValue();
 			bpmOffset = df41.getDoubleValue();
-            
+			solOffset = df51.getDoubleValue();
+			/**add below*/
+			configureReadbacks();
 			setNoise.setVisible(false);
 		}
 	}
@@ -1301,12 +1454,10 @@ public class VADocument extends AcceleratorDocument implements ActionListener, P
 			putReadbackPVs();
             
 			// re-sync lattice and run model
-			buildOnlineModel();
-            
+			buildOnlineModel();     
 			try {
 				myProbe.reset();
-				modelScenario.run();
-                
+				modelScenario.run();				
 				// put diagnostic node PVs
 				putDiagPVs();
 			}
@@ -1431,4 +1582,103 @@ class ReadbackSetRecordPositionComparator implements Comparator<ReadbackSetRecor
 //		return ext;
 //	}
 //}
+
+/**show bpm and ws plots*/
+class DiagPlot {
+	
+	protected FunctionGraphsJPanel _beampositionplot;
+	protected FunctionGraphsJPanel _sigamplot;
+
+	public DiagPlot(FunctionGraphsJPanel beampositionplot, FunctionGraphsJPanel sigamplot) {
+		_beampositionplot=beampositionplot;
+		_sigamplot=sigamplot;
+		setupPlot(beampositionplot,sigamplot);
+	}
+
+	public void showbeampositionplot(double[] p,double[] x, double[] y) throws ConnectionException, GetException {
+		_beampositionplot.removeAllGraphData();
+		BasicGraphData DataBeamx=new BasicGraphData();
+		BasicGraphData DataBeamy=new BasicGraphData();	
+		DataBeamx.addPoint(p, x);
+		DataBeamy.addPoint(p, y);
+	    DataBeamx.setGraphColor(Color.blue);
+	    DataBeamy.setGraphColor(Color.orange);
+	    DataBeamx.setGraphProperty(_beampositionplot.getLegendKeyString(), "BeamxAvg");
+	    DataBeamy.setGraphProperty(_beampositionplot.getLegendKeyString(), "BeamyAvg");	   
+		_beampositionplot.addGraphData(DataBeamx);
+		_beampositionplot.addGraphData(DataBeamy);			    		
+	}
+	
+	public void showbpmplot(double[] p,double[] x, double[] y) throws ConnectionException, GetException {
+		BasicGraphData DataBPMx=new BasicGraphData();
+		BasicGraphData DataBPMy=new BasicGraphData();	
+		DataBPMx.addPoint(p, x);
+	    DataBPMy.addPoint(p, y);
+	    DataBPMx.setGraphColor(Color.RED);
+		DataBPMy.setGraphColor(Color.BLACK);
+	    DataBPMx.setGraphProperty(_beampositionplot.getLegendKeyString(), "BPMxAvg");
+		DataBPMy.setGraphProperty(_beampositionplot.getLegendKeyString(), "BPMyAvg");	   
+		_beampositionplot.addGraphData(DataBPMx);
+		_beampositionplot.addGraphData(DataBPMy);			    		
+	}
+	
+	
+	public void showsigmazplot(double[] p,double[] sigmaz) throws ConnectionException, GetException {
+		_sigamplot.removeAllGraphData();
+		BasicGraphData Datasigmaz=new BasicGraphData();	
+	    Datasigmaz.addPoint(p, sigmaz);
+	    Datasigmaz.setGraphColor(Color.blue);
+	    Datasigmaz.setGraphProperty(_sigamplot.getLegendKeyString(), "sigmaz");	   
+		_sigamplot.addGraphData(Datasigmaz);			    	
+	}
+	
+	public void showsigmaplot(double[] wsp,double[] wsx, double[] wsy) throws ConnectionException, GetException {
+		//_sigamplot.removeAllGraphData();
+		BasicGraphData DataWSx=new BasicGraphData();
+		BasicGraphData DataWSy=new BasicGraphData();	
+		DataWSx.addPoint(wsp, wsx);
+	    DataWSy.addPoint(wsp, wsy);
+	    DataWSx.setGraphColor(Color.RED);
+		DataWSy.setGraphColor(Color.BLACK);
+	    DataWSx.setGraphProperty(_sigamplot.getLegendKeyString(), "sigmax");
+		DataWSy.setGraphProperty(_sigamplot.getLegendKeyString(), "sigmay");	
+		_sigamplot.addGraphData(DataWSx);
+		_sigamplot.addGraphData(DataWSy);			    	
+	}
+	
+	
+	public void setupPlot(FunctionGraphsJPanel beampositionplot,FunctionGraphsJPanel sigamplot) {
+		/** setup beamdispplot*/
+		// labels
+		beampositionplot.setName( "BeamDisp_PLOT" );
+		beampositionplot.setAxisNameX("Position(m)");
+		beampositionplot.setAxisNameY("Beam displacement (mm)");
+
+		beampositionplot.setNumberFormatX( new DecimalFormat( "0.00E0" ) );
+		beampositionplot.setNumberFormatY( new DecimalFormat( "0.00E0" ) );
+
+		// add legend support
+		beampositionplot.setLegendPosition( FunctionGraphsJPanel.LEGEND_POSITION_ARBITRARY );
+		beampositionplot.setLegendKeyString( "Legend" );
+		beampositionplot.setLegendBackground( Color.lightGray );
+		beampositionplot.setLegendColor( Color.black );
+		beampositionplot.setLegendVisible( true );		
+		
+		/** setup sigamplot*/
+		// labels
+		sigamplot.setName( "Sigma_PLOT" );
+		sigamplot.setAxisNameX("Position(m)");
+		sigamplot.setAxisNameY("Beam Envelope(mm)");
+
+		sigamplot.setNumberFormatX( new DecimalFormat( "0.00E0" ) );
+		sigamplot.setNumberFormatY( new DecimalFormat( "0.00E0" ) );
+
+		// add legend support
+		sigamplot.setLegendPosition( FunctionGraphsJPanel.LEGEND_POSITION_ARBITRARY );
+		sigamplot.setLegendKeyString( "Legend" );
+		sigamplot.setLegendBackground( Color.lightGray );
+		sigamplot.setLegendColor( Color.black );
+		sigamplot.setLegendVisible( true );
+	}
+}
 
