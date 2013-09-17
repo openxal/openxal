@@ -698,7 +698,7 @@ public class Wheelswitch extends JPanel
 	{
 		String oldUnit = formatter.getUnit();
 
-		if (oldUnit == newUnit) {
+		if (oldUnit.equals(newUnit)) {
 			return;
 		}
 
