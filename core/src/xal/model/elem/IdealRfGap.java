@@ -513,6 +513,12 @@ public class IdealRfGap extends ThinElement implements IRfGap {
     @Override
     protected PhaseMap transferMap(IProbe probe) throws ModelException {
 
+    	System.out.println("This is " + this.getId());
+    	System.out.println("E0 is   " + this.getE0());
+    	System.out.println("ETL is  " + this.getETL());
+    	System.out.println("");
+    	
+    	
         // Determine the current energy gain and focusing constants for the gap
         // the following section is to calculate the phase of the beam at each gap, rather than use hardwired phases.
         // update the energy gain first:

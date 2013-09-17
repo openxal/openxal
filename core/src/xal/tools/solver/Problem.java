@@ -83,7 +83,7 @@ public class Problem {
 	 * Set the objectives.
 	 * @param objectives  The new objectives value
 	 */
-	public void setObjectives( final List<Objective> objectives ) {
+	public void setObjectives( final List<? extends Objective> objectives ) {
 		_objectives = new ArrayList<Objective>( objectives.size() );
 		for ( Objective objective : objectives ) {
 			addObjective( objective );

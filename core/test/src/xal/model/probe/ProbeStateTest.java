@@ -112,7 +112,7 @@ public class ProbeStateTest extends TestCase {
 		assertTrue(state instanceof ParticleProbeState);
 		assertTrue(probe.getPosition() == 
 			((ParticleProbeState)state).getPosition());
-		assertTrue(probe.phaseCoordinates().equals(((ParticleProbeState)state).phaseCoordinates()));
+		assertTrue(probe.getPhaseCoordinates().equals(((ParticleProbeState)state).getPhaseCoordinates()));
 		
 		// save the state to a trajectory	
 		Trajectory trajectory = probe.createTrajectory();

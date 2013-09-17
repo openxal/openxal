@@ -131,6 +131,25 @@ public class Trace3dTracker extends Tracker {
         this.dblStepSize = Trace3dTracker.s_dblDefStep;
     };
     
+    /**
+     * Copy constructor for Trace3dTracker
+     *
+     * @param       sourceTracker   Tracker that is being copied
+     */
+    public Trace3dTracker( Trace3dTracker copy ) {
+        super( copy );
+        
+        this.dblStepSize = copy.dblStepSize;
+    }
+    
+    /**
+     * Creates a deep copy of Trace3dTracker
+     */
+    @Override
+    public Trace3dTracker copy() {
+        return new Trace3dTracker( this );
+    }
+    
 
     /**
      * Sets the value of the integration step size to the given value.

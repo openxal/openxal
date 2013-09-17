@@ -71,8 +71,22 @@ public class EnvelopeTrackerPmq extends EnvelopeTracker {
         super(s_strTypeId, s_intVersion, s_clsProbeType);
     };
     
+    /**
+     * Copy constructor for EnvelopeTrackerPmq
+     *
+     * @param       sourceTracker   Tracker that is being copied
+     */
+    public EnvelopeTrackerPmq( EnvelopeTrackerPmq sourceTracker ) {
+        super( sourceTracker );
+    }
     
-    
+    /**
+     * Creates a deep copy of EnvelopeTrackerPmq
+     */
+    @Override
+    public EnvelopeTrackerPmq copy() {
+        return new EnvelopeTrackerPmq( this );
+    }
 
     /*
      *  Tracker Abstract Methods

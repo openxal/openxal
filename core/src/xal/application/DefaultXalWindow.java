@@ -14,9 +14,6 @@ public class DefaultXalWindow extends XalWindow {
     /** serialization ID */
     private static final long serialVersionUID = 1L;
     
-    /** indicates whether to display a toolbar */
-    private final boolean DISPLAYS_TOOLBAR;
-    
     
     /** Constructor */
     public DefaultXalWindow( final XalDocument aDocument ) {
@@ -26,16 +23,6 @@ public class DefaultXalWindow extends XalWindow {
     
     /** Constructor */
     public DefaultXalWindow( final XalDocument aDocument, final boolean displaysToolbar ) {
-		super( aDocument );
-        DISPLAYS_TOOLBAR = displaysToolbar;
+		super( aDocument, displaysToolbar );
     }	
-    
-	
-    /**
-	 * Indicates whether or not to display the toolbar.
-	 * @return true to display the toolbar and false to hide it
-     */
-    public boolean usesToolbar() {
-        return DISPLAYS_TOOLBAR;
-    }
 }

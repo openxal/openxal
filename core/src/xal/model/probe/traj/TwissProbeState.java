@@ -277,7 +277,7 @@ public class TwissProbeState extends BunchProbeState implements IPhaseState {
      *  
      *  @see    TwissProbeState#getCentroid()
      */
-    public PhaseVector phaseCoordinates() {
+    public PhaseVector getPhaseCoordinates() {
         return this.getCentroid();
     }
     

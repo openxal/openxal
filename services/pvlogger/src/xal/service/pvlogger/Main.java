@@ -25,14 +25,6 @@ public class Main {
 	/** Main Constructor */
 	public Main() {
 		model = new LoggerModel();
-
-		// shutdown the service before quitting the process
-		Runtime.getRuntime().addShutdownHook( new Thread() {
-			public void run() {
-				System.out.println( "Shutting down the PV Logger service..." );
-				ServiceDirectory.defaultDirectory().dispose();
-			}
-		});
 	}
 	
 	

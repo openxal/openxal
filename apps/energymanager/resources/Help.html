@@ -1,0 +1,80 @@
+<html>
+<head>
+<title>Energy Manager Help</title>
+</head>
+
+<body>
+<center><u>Energy Manager Help</u></center>
+<br>
+<div>
+The energy manager provides tools for optimizing an optics.  One may also use it to scale magnetic field strengths to energy and also to provide a best guess for RF phases to preserve focusing given a set of imported RF cavity amplitudes.
+</div>
+<hr>
+<h2>Common Tasks</h2>
+
+<h3>Create a document</h3>
+<ol>
+<li>Launch the energy manager application
+<li>Specify an accelerator if one has not been set automatically (Accelerator - Load Default Accelerator) or (Accelerator - Load Accelerator)
+<li>Specify a sequence (Accelerator - Sequences - <i>The Sequence</i>)
+</ol>
+
+<h3>Load custom RF settings</h3>
+<ol>
+<li>Create a document
+<li>Parameters - Import Cavity Amplitudes...
+<li>Navigate to and select the desired cavity field document (document format is cavity ID followed by the amplituded)
+</ol>
+
+<h3>Select a parameter to edit</h3>
+<ol>
+<li>Create a document
+<li>Double click on a row in the parameter table for the parameter whose value you wish to edit revealing a parameter inspector
+<li>Click the arrows at the bottom to navigate to the previous or next parameter listed in the table
+<li>With the inspector visible you may select a new parameter simply by single clicking a row in the parameter table
+</ol>
+
+<h3>Edit the custom value of a parameter</h3>
+<ol>
+<li>Select a parameter to edit
+<li>Select "Custom" as the active source if it isn't already selected
+<li>Enter a new value where it says "Initial"
+</ol>
+
+<h3>Make a parameter variable (or fixed)</h3>
+<ol>
+<li>Select a parameter to edit
+<li>Check the "Variable" checkbox to make it variable or deselect it to make it fixed
+<li>Select multiple parameters
+<li>Select (Parameters - Make Selected Variable) or (Parameters - Make Selected Fixed) as appropriate
+<li>Select (Parameters - Make Disabled Cavities Fixed) to fix the phase parameters for cavities with zero amplitude
+</ol>
+
+<h3>Apply best guesses to preserve longitudinal and transverse focusing</h3>
+<ol>
+<li>Create a document
+<li>Load custom RF settings or edit the initial values manually
+<li>(Parameters - Apply Best Longitudinal Guess)
+<li>(Parameters - Apply Best Transverse Guess)
+</ol>
+
+<h3>Apply a simple energy scaling to the magnetic fields</h3>
+If the sequence does not accelerate the beam then you can scale magnetic fields based on the initial energy and the target energy.
+<ol>
+<li>Create a document
+<li>Parameters - Scale Magnets For Energies
+<li>Enter the initial kinetic energy and the target kinetic energy, select a source value to scale and press "Okay"
+</ol>
+
+<h3>Optimize an optics</h3>
+<ol>
+<li>Edit the custom parameter values
+<li>Make at least one parameter variable
+<li>(Run - Solve)
+<li>Edit the objective parameters (Use Design is recommended as a starting point) and press "Run"
+<li>(Parameters - Import Optimal Values) if you want to set the custom values based from the best solution found
+<li>(Parameters - Upload Magnetic Fields) to upload the "Initial Values" of the magnetic fields to the control system
+</ol>
+
+</body>
+</html>

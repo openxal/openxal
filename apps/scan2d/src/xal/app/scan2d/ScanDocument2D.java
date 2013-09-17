@@ -27,6 +27,7 @@ import xal.tools.apputils.pvselection.*;
 import xal.tools.swing.*;
 import xal.tools.scan.*;
 import xal.tools.scan.analysis.*;
+import xal.smf.application.*;
 
 import xal.service.pvlogger.*;
 import xal.tools.database.*;
@@ -38,7 +39,7 @@ import xal.tools.database.*;
  *@author    shishlo
  */
 
-public class ScanDocument2D extends XalDocument {
+public class ScanDocument2D extends AcceleratorDocument {
 
 	static {
 		ChannelFactory.defaultFactory().init();
@@ -50,7 +51,6 @@ public class ScanDocument2D extends XalDocument {
 	private Action setScanPanelAction = null;
 	private Action setPVsChooserPanelAction = null;
 	private Action setAnalysisPanelAction = null;
-	private Action setAcceleratorAction = null;
 	private Action setPredefConfigAction = null;
 
 	//------------------------------------------------------
@@ -240,6 +240,9 @@ public class ScanDocument2D extends XalDocument {
 		root_Node.add(validationPVs_Node);
 
 		pvsSelector = new PVsSelector(root_Node);
+        if ( accelerator != null ) {
+            pvsSelector.setAccelerator( accelerator );
+        }
 		pvsSelector.removeMessageTextField();
 
 		makeTreeListeners();
@@ -911,7 +914,7 @@ public class ScanDocument2D extends XalDocument {
 		}
 
 		//dump validation variables and their state
-		Enumeration<PVTreeNode> validation_children = (Enumeration<PVTreeNode>)validationPVs_Node.children();
+		Enumeration<PVTreeNode> validation_children = validationPVs_Node.children();
 		while (validation_children.hasMoreElements()) {
 			PVTreeNode pvNode = validation_children.nextElement();
 			DataAdaptor validationPV_node =  validationPVs_scan2D.createChild("Validation_PV");
@@ -1005,7 +1008,6 @@ public class ScanDocument2D extends XalDocument {
 	void editPreferences() {
 		//place for edit preferences
 		if (!scanController.isScanON()) {
-			setAcceleratorAction.setEnabled(false);
 			if (ACTIVE_PANEL == ANALYSIS_PANEL) {
 				analysisController.isGoingShutUp();
 				updateDataSetOnGraphPanels();
@@ -1046,7 +1048,6 @@ public class ScanDocument2D extends XalDocument {
 				private static final long serialVersionUID = 0L;
 				public void actionPerformed(ActionEvent event) {
 					if (!scanController.isScanON()) {
-						setAcceleratorAction.setEnabled(false);
 						if (ACTIVE_PANEL == ANALYSIS_PANEL) {
 							analysisController.isGoingShutUp();
 							updateDataSetOnGraphPanels();
@@ -1067,7 +1068,6 @@ public class ScanDocument2D extends XalDocument {
 				private static final long serialVersionUID = 0L;
 				public void actionPerformed(ActionEvent event) {
 					if (!scanController.isScanON()) {
-						setAcceleratorAction.setEnabled(true);
 						if (ACTIVE_PANEL == ANALYSIS_PANEL) {
 							analysisController.isGoingShutUp();
 							updateDataSetOnGraphPanels();
@@ -1088,7 +1088,6 @@ public class ScanDocument2D extends XalDocument {
 				private static final long serialVersionUID = 0L;
 				public void actionPerformed(ActionEvent event) {
 					if (!scanController.isScanON()) {
-						setAcceleratorAction.setEnabled(false);
 						analysisController.isGoingShowUp();
 						getScanWindow().setJComponent(analysisPanel);
 						cleanMessageTextField();
@@ -1100,33 +1099,11 @@ public class ScanDocument2D extends XalDocument {
 			};
 		commander.registerAction(setAnalysisPanelAction);
 
-		setAcceleratorAction =
-			new AbstractAction("set-accelerator") {
-				private static final long serialVersionUID = 0L;
-				public void actionPerformed(ActionEvent event) {
-					JFileChooser ch = new JFileChooser();
-					ch.setDialogTitle("READ ACCELERATOR DATA XML FILE");
-					if (acceleratorDataFile != null) {
-						ch.setSelectedFile(acceleratorDataFile);
-					}
-					int returnVal = ch.showOpenDialog(selectionPVsPanel);
-					if (returnVal == JFileChooser.APPROVE_OPTION) {
-						acceleratorDataFile = ch.getSelectedFile();
-						String path = acceleratorDataFile.getAbsolutePath();
-						pvsSelector.setAcceleratorFileName(path);
-					}
-				}
-			};
-
-		commander.registerAction(setAcceleratorAction);
-		setAcceleratorAction.setEnabled(false);
-
 		setPredefConfigAction =
 			new AbstractAction("set-predef-config") {
 				private static final long serialVersionUID = 0L;
 				public void actionPerformed(ActionEvent event) {
 					if (!scanController.isScanON()) {
-						setAcceleratorAction.setEnabled(false);
 						getScanWindow().setJComponent(configPanel);
 						cleanMessageTextField();
 						ACTIVE_PANEL = PREDEF_CONF_PANEL;
@@ -1320,7 +1297,6 @@ public class ScanDocument2D extends XalDocument {
 					setHasChanges(false);
 
 					setFontForAll(globalFont);
-					setAcceleratorAction.setEnabled(false);
 					if (ACTIVE_PANEL == ANALYSIS_PANEL) {
 						analysisController.isGoingShutUp();
 						updateDataSetOnGraphPanels();
@@ -1595,7 +1571,7 @@ public class ScanDocument2D extends XalDocument {
 		graphScan.refreshGraphJPanel();
 		graphAnalysis.refreshGraphJPanel();
 
-		Enumeration<PVTreeNode> enumNode = (Enumeration<PVTreeNode>)measuredPVs_Node.children();
+		Enumeration<PVTreeNode> enumNode = measuredPVs_Node.children();
 		int i = 0;
 		int count = 0;
 		while (enumNode.hasMoreElements()) {
@@ -1689,7 +1665,17 @@ public class ScanDocument2D extends XalDocument {
 		clearSnapshotButton.setFont(fnt);
 	}
 
-
+    //attempt to make an accelerator based application
+    public void acceleratorChanged() {
+        if (accelerator != null) {
+            if ( pvsSelector != null ) {
+                pvsSelector.setAccelerator( accelerator );
+            }
+            
+            setHasChanges(true);
+        }
+        
+    }
 
 	//--------------------------------------------------------
 	//This class deals with additional Parameter PV panel
