@@ -26,7 +26,7 @@ import xal.model.xml.ParsingException;
  * <h4>NOTES: CKA</h4>
  * &middot; I noticed a very brittle situation with this implementation.  
  * <code>ICoordinateState</code> requires the methods 
- * <code>@link ICoordinateState#phaseCoordinates()}</code> etc.
+ * <code>@link ICoordinateState#getPhaseCoordinates()}</code> etc.
  * Interface <code>ICoordinateState</code> extends <code>IProbeState</code>.
  * Well, <code>TransferMapState</code> inherits from <code>ProbeState</code>
  * which implements <code>IProbeState</code>.  It's getting dicey.
@@ -103,7 +103,7 @@ public class TransferMapState extends ProbeState implements IPhaseState {
 
         setTrajectory( (TransferMapTrajectory)probe.getTrajectory() );
         setTransferMap( probe.getTransferMap() );
-        setPhaseCoordinates( probe.phaseCoordinates() );
+        setPhaseCoordinates( probe.getPhaseCoordinates() );
     }
 
 

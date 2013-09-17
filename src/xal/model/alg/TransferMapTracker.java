@@ -177,7 +177,7 @@ public class TransferMapTracker extends Tracker {
         final PhaseMap mapComp = mapPhi.compose( mapProbe );
         probe.setTransferMap( mapComp );
 		
-		final PhaseVector z0 = probe.phaseCoordinates();
+		final PhaseVector z0 = probe.getPhaseCoordinates();
 		final PhaseVector z1 = mapPhi.apply( z0 );
         probe.setPhaseCoordinates( z1 );
 	}
