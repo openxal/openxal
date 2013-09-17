@@ -82,7 +82,6 @@ public class SimpleButton extends GradientLabel
 	private boolean pressed;
 	private boolean rollover;
 	private boolean rolloverEnabled;
-	private EventListenerList listenerList = null;
 	private int fireRate;
 	private int actionMode;
 	private MouseListener mouseListener = null;
