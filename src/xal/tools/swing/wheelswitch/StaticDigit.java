@@ -29,10 +29,12 @@ public class StaticDigit extends Digit {
 	/**
 	 * This method has been overriden to disable selection of static digits.
 	 */
+    @Override
 	public void setSelected(boolean newSel){}
 
 	/**
 	 * This method has been overriden to disable selection of static digits.
 	 */
+    @Override
 	public boolean isSelected() {return false;}
 }
