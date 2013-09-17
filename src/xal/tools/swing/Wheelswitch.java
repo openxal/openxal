@@ -1243,10 +1243,10 @@ public class Wheelswitch extends JPanel
 			return Integer.MAX_VALUE;
 		}
 
-		String digits = formatter.getString();
+		String dgts = formatter.getString();
 		int decimalPosition = 0;
-		int expIndex = digits.indexOf('E');
-		int dotIndex = digits.indexOf('.');
+		int expIndex = dgts.indexOf('E');
+		int dotIndex = dgts.indexOf('.');
 
 		if ((expIndex == -1) || (digitPosition < expIndex)) {
 			if (dotIndex != -1) {
@@ -1254,7 +1254,7 @@ public class Wheelswitch extends JPanel
 			} else if (expIndex != -1) {
 				decimalPosition += (expIndex - digitPosition);
 			} else {
-				decimalPosition += (digits.length() - digitPosition);
+				decimalPosition += (dgts.length() - digitPosition);
 			}
 
 			if (decimalPosition > 0) {
@@ -1262,13 +1262,13 @@ public class Wheelswitch extends JPanel
 			}
 
 			if (expIndex != -1) {
-				int exponent = (int)Double.parseDouble(digits.substring(expIndex
+				int exponent = (int)Double.parseDouble(dgts.substring(expIndex
 					        + 1));
 				decimalPosition += exponent;
 			}
 		} else {
 			//multiples of hundreds are returned for exponent digits
-			decimalPosition = 100 * (digits.length() - digitPosition);
+			decimalPosition = 100 * (dgts.length() - digitPosition);
 		}
 
 		return decimalPosition;
@@ -1284,23 +1284,23 @@ public class Wheelswitch extends JPanel
 			return -1;
 		}
 
-		String digits = formatter.getString();
+		String dgts = formatter.getString();
 		int digitPosition = 0;
-		int expIndex = digits.indexOf('E');
-		int dotIndex = digits.indexOf('.');
+		int expIndex = dgts.indexOf('E');
+		int dotIndex = dgts.indexOf('.');
 
 		if (((decimalPosition % 100) == 0) && (decimalPosition != 0)) {
 			decimalPosition /= 100;
 
 			if ((expIndex == -1)
-			    || ((digits.length() - expIndex) < decimalPosition)) {
+			    || ((dgts.length() - expIndex) < decimalPosition)) {
 				return Integer.MAX_VALUE;
 			}
 
-			digitPosition = digits.length() - decimalPosition;
+			digitPosition = dgts.length() - decimalPosition;
 
-			if ((digits.charAt(digitPosition) == '+')
-			    || (digits.charAt(digitPosition) == '-')) {
+			if ((dgts.charAt(digitPosition) == '+')
+			    || (dgts.charAt(digitPosition) == '-')) {
 				return Integer.MAX_VALUE;
 			}
 
@@ -1311,18 +1311,18 @@ public class Wheelswitch extends JPanel
 			} else if (expIndex != -1) {
 				digitPosition += (expIndex - decimalPosition - 1);
 			} else {
-				digitPosition += (digits.length() - decimalPosition - 1);
+				digitPosition += (dgts.length() - decimalPosition - 1);
 			}
 
 			if (expIndex != -1) {
-				int exponent = (int)Double.parseDouble(digits.substring(expIndex
+				int exponent = (int)Double.parseDouble(dgts.substring(expIndex
 					        + 1));
 				digitPosition += exponent;
 			}
 
 			if ((expIndex != -1) && (digitPosition >= expIndex)) {
 				return Integer.MAX_VALUE;
-			} else if (digitPosition >= digits.length()) {
+			} else if (digitPosition >= dgts.length()) {
 				return Integer.MAX_VALUE;
 			}
 		}
@@ -1333,7 +1333,7 @@ public class Wheelswitch extends JPanel
 
 		if ((digitPosition < 0)
 		    || ((digitPosition == 0)
-		    && ((digits.charAt(0) == '+') || (digits.charAt(0) == '-')))) {
+		    && ((dgts.charAt(0) == '+') || (dgts.charAt(0) == '-')))) {
 			return Integer.MAX_VALUE;
 		}
 
