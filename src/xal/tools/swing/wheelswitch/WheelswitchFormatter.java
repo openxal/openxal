@@ -195,21 +195,11 @@ public class WheelswitchFormatter
 			tempFormatString = generateFormat();
 		}
 
-		String oldValueString = valueString;
-
-		//		double oldValue = Double.parseDouble(oldValueString);
 		int newExpIndex = Math.max(newValueString.indexOf("E"),
 			    newValueString.indexOf("e"));
 
 		if (newExpIndex < 0) {
 			newExpIndex = newValueString.length();
-		}
-
-		int oldExpIndex = Math.max(oldValueString.indexOf("E"),
-			    oldValueString.indexOf("e"));
-
-		if (oldExpIndex < 0) {
-			oldExpIndex = oldValueString.length();
 		}
 
 		int formatExpIndex = tempFormatString.indexOf("E");
@@ -225,25 +215,10 @@ public class WheelswitchFormatter
 			newDotIndex = newExpIndex;
 		}
 
-		int oldDotIndex = Math.max(oldValueString.indexOf("."),
-			    oldValueString.indexOf(","));
-
-		if (oldDotIndex < 0) {
-			oldDotIndex = oldExpIndex;
-		}
-
 		int formatDotIndex = tempFormatString.indexOf(".");
 
 		if (formatDotIndex < 0) {
 			formatDotIndex = formatExpIndex;
-		}
-
-		int oldSignTag = 0;
-
-		if (oldValueString.charAt(0) == '+') {
-			oldSignTag++;
-		} else if (oldValueString.charAt(0) == '-') {
-			oldSignTag--;
 		}
 
 		int newSignTag = 0;
@@ -260,21 +235,6 @@ public class WheelswitchFormatter
 			formatSignTag++;
 		}
 
-		//        int newExpSignTag =0;
-		//        if (newExpIndex<newValueString.length()-1) {
-		//           if (newValueString.charAt(newExpIndex+1)=='+') newExpSignTag++;
-		//           else if (newValueString.charAt(newExpIndex+1)=='-') newExpSignTag--;
-		//        }
-		int oldExpSignTag = 0;
-
-		if (oldExpIndex < oldValueString.length() - 1) {
-			if (oldValueString.charAt(oldExpIndex + 1) == '+') {
-				oldExpSignTag++;
-			} else if (oldValueString.charAt(oldExpIndex + 1) == '-') {
-				oldExpSignTag--;
-			}
-		}
-
 		int formatExpSignTag = 0;
 
 		if (formatExpIndex + 1 < tempFormatString.length()
@@ -289,24 +249,6 @@ public class WheelswitchFormatter
 			        + 1));
 		}
 
-		String exponent = String.valueOf(newExpValue);
-
-		if (newExpValue < 0) {
-			//			newExpSignTag=-1;
-			exponent = exponent.substring(1);
-		}
-
-		int oldExpValue = 0;
-
-		if (oldExpIndex < oldValueString.length() - 1) {
-			oldExpValue += (int)Double.parseDouble(oldValueString.substring(oldExpIndex
-			        + 1));
-		}
-
-		//double oldMantissaValue = Double.parseDouble(oldValueString.substring(
-		//	        0, oldExpIndex));
-		//double newMantissaValue = Double.parseDouble(newValueString.substring(
-		//	        0, newExpIndex));
 		newExpValue += newDotIndex - formatDotIndex;
 
 		if (newSignTag != 0) {
@@ -340,7 +282,7 @@ public class WheelswitchFormatter
 		}
 
 		if (formatExpIndex + formatExpSignTag + 1 < tempFormatString.length()) {
-			exponent = String.valueOf(newExpValue);
+			String exponent = String.valueOf(newExpValue);
 
 			int newExpSignTag = 1;
 
