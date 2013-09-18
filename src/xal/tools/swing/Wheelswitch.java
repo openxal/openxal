@@ -1126,7 +1126,7 @@ public class Wheelswitch extends JPanel
 			add((Digit)digits.get(i));
 		}
 
-		if (unitDigits.isEmpty()) {
+		if (!unitDigits.isEmpty()) {
 			add(Box.createHorizontalStrut(5));
 
 			for (int i = 0; i < unitDigits.size(); i++) {
