@@ -16,7 +16,6 @@ package xal.tools.swing.wheelswitch;
 
 import xal.tools.swing.wheelswitch.util.PrintfFormat;
 
-import java.beans.Beans;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -86,7 +85,7 @@ public class WheelswitchFormatter
 	public final void setFormat(String newFormatString)
 		throws IllegalArgumentException
 	{
-		if (formatString.equals(newFormatString) || Beans.isDesignTime()) {
+		if (formatString.equals(newFormatString)) {
 			return;
 		} else if (newFormatString == null || newFormatString.isEmpty()) {
 			formatString = null;
