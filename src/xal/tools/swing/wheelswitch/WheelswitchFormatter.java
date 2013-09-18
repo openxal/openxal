@@ -83,7 +83,7 @@ public class WheelswitchFormatter
 	 * @see Double#parseDouble(String)
 	 * @see NumberFormatException
 	 */
-	public void setFormat(String newFormatString)
+	public final void setFormat(String newFormatString)
 		throws IllegalArgumentException
 	{
 		if (formatString.equals(newFormatString) || Beans.isDesignTime()) {
@@ -118,7 +118,7 @@ public class WheelswitchFormatter
 	 *
 	 * @param newMaximum DOCUMENT ME!
 	 */
-	public void setMaximum(double newMaximum)
+	public final void setMaximum(double newMaximum)
 	{
 		if (newMaximum < minimum) {
 			newMaximum = minimum;
@@ -147,7 +147,7 @@ public class WheelswitchFormatter
 	 *
 	 * @param newMinimum DOCUMENT ME!
 	 */
-	public void setMinimum(double newMinimum)
+	public final void setMinimum(double newMinimum)
 	{
 		if (newMinimum > maximum) {
 			newMinimum = maximum;
