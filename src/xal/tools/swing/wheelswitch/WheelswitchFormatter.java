@@ -85,7 +85,8 @@ public class WheelswitchFormatter
 	public final void setFormat(String newFormatString)
 		throws IllegalArgumentException
 	{
-		if (formatString.equals(newFormatString)) {
+		if ((newFormatString != null && newFormatString.equals(formatString)) ||
+                (formatString != null && formatString.equals(newFormatString))) {
 			return;
 		} else if (newFormatString == null || newFormatString.isEmpty()) {
 			formatString = null;
