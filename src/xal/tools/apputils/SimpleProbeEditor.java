@@ -82,14 +82,14 @@ public class SimpleProbeEditor extends JDialog {
      * Takes each property from the propertyClasses HashMap and adds
      * them to the list of properties.
      */
-    public void setTableProperties() {
+    private void setTableProperties() {
         
         //Cycle through each element in the HashMap
         for(String key : propertyClasses.keySet()) {
             //The instance of the object that will have its properties taken
             Object instance = propertyClasses.get(key);
             //Get the BeanInfo from the instance's class
-            BeanInfo beanInfo = getBeanObjectBeanInfo(instance.getClass());
+			final BeanInfo beanInfo = null;
             //Get each property descriptor from the BeanInfo
             PropertyDescriptor[] descriptors = getPropertyDescriptors(beanInfo);
             
@@ -171,11 +171,13 @@ public class SimpleProbeEditor extends JDialog {
         mainContainer.setLayout( new BorderLayout() );
         //Panel containing apply and close button with a 1 row, 2 column grid layout
         final JPanel controlPanel = new JPanel( new GridLayout(1, 2) );
+
         //Apply button
         final JButton applyButton = new JButton( "Apply" );
-        applyButton.setEnabled(false);
+        applyButton.setEnabled( false );
+
         //Close button
-        closeButton = new JButton( "Close" );
+        final JButton closeButton = new JButton( "Close" );
         
         //Set the close button's action to close the dialog
         closeButton.addActionListener( new ActionListener() {
@@ -302,7 +304,8 @@ public class SimpleProbeEditor extends JDialog {
             //The instance of the object from the class
             Object instance = propertyClasses.get(key);
             //Get the BeanInfo from the class in the HashMap
-            BeanInfo beanInfo = getBeanObjectBeanInfo(instance.getClass());
+			final BeanInfo beanInfo = null;
+//            BeanInfo beanInfo = getBeanObjectBeanInfo(instance.getClass());
             //Get the PropertyDescriptors from the class
             PropertyDescriptor[] descriptors = getPropertyDescriptors(beanInfo);
             
@@ -343,13 +346,13 @@ public class SimpleProbeEditor extends JDialog {
 	
     /** Determine if the property's class is editable or not based on the EDITABLE_CLASSES attribute */
     private boolean isEditableClass(Class<?> propertyClass) {
-        
-        //Look through each class in the EDITABLE_CLASSES array
-        for(Class<?> c : EDITABLE_CLASSES) {
-            if(propertyClass == c)
-                return true;
-        }
-        
+//        
+//        //Look through each class in the EDITABLE_CLASSES array
+//        for(Class<?> c : EDITABLE_CLASSES) {
+//            if(propertyClass == c)
+//                return true;
+//        }
+//        
         return false;
     }
 	
@@ -461,7 +464,7 @@ public class SimpleProbeEditor extends JDialog {
          *
          */
         public void setValue(Boolean value) {
-            if( !applyButton.isEnabled() ) applyButton.setEnabled(true);
+//            if( !applyButton.isEnabled() ) applyButton.setEnabled(true);
             _hasChanged = true;
             _value = value;
         }
@@ -498,7 +501,7 @@ public class SimpleProbeEditor extends JDialog {
                 else {
                     _value = value;
                 }
-                if(!applyButton.isEnabled()) applyButton.setEnabled(true);
+//                if(!applyButton.isEnabled()) applyButton.setEnabled(true);
                 _hasChanged = true;
             } catch (Exception e) {
                 System.err.println("Invalid property value " + value + " for " + getProperty());
@@ -528,7 +531,7 @@ class ProbeEditableProperties {
 
 
 	/** constructor */
-	public ProbeProperties( final Probe probe ) {
+	public ProbeEditableProperties( final Probe probe ) {
 		PROBE = probe;
 	}
 
@@ -541,12 +544,15 @@ class ProbeEditableProperties {
 
     /** Convenience method to get the BeanInfo for an object's class */
 	static private BeanInfo getBeanInfo( final Object object ) {
-		//Try to get the BeanInfo from the class given
-        try {
-			return Introspector.getBeanInfo( object.getClass() );
+		if ( object != null ) {
+			try {
+				return Introspector.getBeanInfo( object.getClass() );
+			}
+			catch( IntrospectionException exception ) {
+				return null;
+			}
 		}
-        //Throw an exception if the BeanInfo could not be obtained
-		catch( IntrospectionException exception ) {
+		else {
 			return null;
 		}
 	}
