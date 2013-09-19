@@ -17,8 +17,10 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import javax.swing.JApplet;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 
+import javax.swing.JApplet;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
@@ -29,8 +31,6 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.border.LineBorder;
 
-import xal.tools.swing.wheelswitch.util.SetEvent;
-import xal.tools.swing.wheelswitch.util.SetListener;
 
 /**
  * To change this generated comment edit the template variable "typecomment":
@@ -196,14 +196,12 @@ public class WheelswitchTest extends JPanel {
             });
             jb2.addMouseListener(new HelpAdapter("Press the 'Get Value' button to read the value in the wheelswitch and display it in the 'Value' textfield."));
 
-            wSwitch.addSetListener(new SetListener() {
-                @Override
-                public void setPerformed(SetEvent e) {
-                    txt2.setText(String.valueOf(e.getDoubleValue()));               
-                }
-            });
-
-           // pan0 = new JPanel();
+            wSwitch.addPropertyChangeListener(Wheelswitch.VALUE, new PropertyChangeListener()  {
+				@Override
+				public void propertyChange(PropertyChangeEvent evt) {
+					txt2.setText(evt.getNewValue().toString());
+				}
+			});
 
             tgb1.addActionListener(new ActionListener() {
                 @Override
