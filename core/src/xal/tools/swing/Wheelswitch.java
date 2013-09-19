@@ -14,8 +14,6 @@
 
 package xal.tools.swing;
 
-import xal.tools.swing.wheelswitch.util.SetEvent;
-import xal.tools.swing.wheelswitch.util.SetListener;
 
 import xal.tools.swing.wheelswitch.util.ColorHelper;
 import xal.tools.swing.wheelswitch.Digit;
@@ -415,9 +413,7 @@ public class Wheelswitch extends JPanel
 			return;
 		}
 
-		boolean oldEditable = editable;
 		editable = newEditable;
-		firePropertyChange(EDITABLE, oldEditable, newEditable);
 
 		if (!isEnabled()) {
 			return;
@@ -450,7 +446,6 @@ public class Wheelswitch extends JPanel
 			return;
 		}
 
-		firePropertyChange("enhanced", this.enhanced, enhanced);
 		this.enhanced = enhanced;
 
 		for (int i = 0; i < digits.size(); i++) {
@@ -493,8 +488,6 @@ public class Wheelswitch extends JPanel
 			return;
 		}
 
-		String oldFormat = formatter.getFormat();
-
 		try {
 			formatter.setFormat(newFormat);
 		} catch (IllegalArgumentException e) {
@@ -502,8 +495,6 @@ public class Wheelswitch extends JPanel
 
 			return;
 		}
-
-		firePropertyChange("format", oldFormat, newFormat);
 
 		if (!isEnabled()) {
 			return;
@@ -547,8 +538,6 @@ public class Wheelswitch extends JPanel
 		if (getValue() > formatter.getMaximum()) {
 			setValue(formatter.getMaximum());
 		}
-
-		firePropertyChange("graphMax", oldValue, newValue);
 	}
 
 	/**
@@ -583,8 +572,6 @@ public class Wheelswitch extends JPanel
 		if (getValue() < formatter.getMinimum()) {
 			setValue(formatter.getMinimum());
 		}
-
-		firePropertyChange("graphMin", oldValue, newValue);
 	}
 
 	/**
@@ -673,7 +660,6 @@ public class Wheelswitch extends JPanel
 		}
 
 		tiltingEnabled = b;
-		firePropertyChange("tiltingEnabled", !b, b);
 	}
 
 	/**
@@ -704,7 +690,6 @@ public class Wheelswitch extends JPanel
 		}
 
 		formatter.setUnit(newUnit);
-		firePropertyChange("unit", oldUnit, newUnit);
 
 		if (!isEnabled()) {
 			return;
@@ -745,8 +730,6 @@ public class Wheelswitch extends JPanel
 			return;
 		}
 
-		firePropertyChange(VALUE, oldValue, newValue);
-
 		int oldDigitSelection = getSelectedDigit();
 		int decimalSelection = parseDecimalPosition(oldDigitSelection);
 
@@ -785,21 +768,6 @@ public class Wheelswitch extends JPanel
 		return formatter.getValue();
 	}
 
-	/**
-	 * Adds an <code>SetListener</code> to the array of listeners currently
-	 * registered for listening to the value sets of the
-	 * <code>Wheelswitch</code>. These listeners are notified whenever the
-	 * user sets a new value.
-	 *
-	 * @param l
-	 *
-	 * @see com.cosylab.events.SetListener
-	 */
-	public void addSetListener(SetListener l)
-	{
-		listenerList.add(SetListener.class, l);
-	}
-
 
 	/**
 	 * Overriden to implement digit and upDownButton enabling/disabling.
@@ -835,21 +803,7 @@ public class Wheelswitch extends JPanel
 	 */
 	public void setMaximumDigits(int bound)
 	{
-		int oldBound = formatter.getMaximumDigits();
 		formatter.setMaximumDigits(bound);
-		firePropertyChange("maximumDigits", oldBound, bound);
-	}
-
-	/**
-	 * Removes an <code>SetListener</code> from the array of listeners
-	 * currently registered for listening to the value sets of the
-	 * <code>Wheelswitch</code>.
-	 *
-	 * @param l DOCUMENT ME!
-	 */
-	public void removeSetListener(SetListener l)
-	{
-		listenerList.remove(SetListener.class, l);
 	}
 
 	/*
@@ -1060,21 +1014,6 @@ public class Wheelswitch extends JPanel
 		return selectedDigit;
 	}
 
-	/*
-	 * Fires a <code>SetEvent</code> to all currently
-	 * registered <code>SetListener</code>s of the <code>Wheelswitch</code>.
-	 */
-	protected void fireSetPerformed(double newValue)
-	{
-		Object[] listeners = listenerList.getListenerList();
-
-		for (int i = listeners.length - 2; i >= 0; i -= 2) {
-			if (listeners[i] == SetListener.class) {
-				((SetListener)listeners[i + 1]).setPerformed(new SetEvent(
-				        this, newValue));
-			}
-		}
-	}
 
 	/*
 	 * (Re)initializes existing value digits inside the wheelswitch.
@@ -1211,7 +1150,6 @@ public class Wheelswitch extends JPanel
 
 		if (oldValue != newValue) {
 			firePropertyChange(VALUE, oldValue, newValue);
-			fireSetPerformed(newValue);
 		}
 
 		if (!isEnabled()) {
