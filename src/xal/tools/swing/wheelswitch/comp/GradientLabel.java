@@ -36,6 +36,8 @@ import javax.swing.Icon;
  */
 public class GradientLabel extends ResizableTextLabel
 {
+	private static final long serialVersionUID = 1L;
+	
 	private Color backgroundOther = ColorHelper.getControlShadow();
 	private BufferedImage daBuffer = null;
 	private double endX = 1;

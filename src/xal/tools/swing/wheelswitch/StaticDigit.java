@@ -12,7 +12,9 @@ import xal.tools.swing.wheelswitch.comp.SimpleButton;
  * @author <a href="mailto:jernej.kamenik@cosylab.com">Jernej Kamenik</a>
  * @version $id$
  */
-public class StaticDigit extends Digit {
+public class StaticDigit extends Digit
+{	
+	private static final long serialVersionUID = 1L;
 
 	/**
 	 * Constructor for StaticDigit.

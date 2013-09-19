@@ -31,7 +31,9 @@ import java.awt.Insets;
  */
 public class ArrowButton extends SimpleButton
 {
-    public static enum Orientation {
+	private static final long serialVersionUID = 1L;
+
+	public static enum Orientation {
         UP, DOWN, LEFT, RIGHT;
     }
 	

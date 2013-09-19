@@ -43,6 +43,8 @@ import javax.swing.border.LineBorder;
  */
 public abstract class Digit extends SimpleButton
 {
+	private static final long serialVersionUID = 1L;
+
 	/*
 	 * Used for the animation of the switching of the displayed symbols
 	 * on the digit.
@@ -66,8 +68,8 @@ public abstract class Digit extends SimpleButton
 	}
 
 	private static Timer animationTimer = null;
-	private static HashMap images = null;
-	private static HashMap backgroundImages = null;
+	private static HashMap<Dimension,Map<String,BufferedImage>> images = null;
+	private static HashMap<Dimension,BufferedImage[]> backgroundImages = null;
 	private static Border enhancedPressedBorder = new LineBorder(ColorHelper
 		    .getCosyControlShadow());
 	private static Border pressedBorder = new LineBorder(ColorHelper
@@ -94,11 +96,11 @@ public abstract class Digit extends SimpleButton
 		super();
 
 		if (images == null) {
-			images = new HashMap();
+			images = new HashMap<Dimension,Map<String,BufferedImage>>();
 		}
 
 		if (backgroundImages == null) {
-			backgroundImages = new HashMap();
+			backgroundImages = new HashMap<Dimension,BufferedImage[]>();
 		}
 
 		setResizable(true);
@@ -245,8 +247,8 @@ public abstract class Digit extends SimpleButton
 				backgroundImages.put(size, new BufferedImage[2]);
 			}
 
-			if ((((Object[])backgroundImages.get(size))[0] == null && !presel)
-			    || (((Object[])backgroundImages.get(size))[1] == null && presel)) {
+			if ((backgroundImages.get(size)[0] == null && !presel)
+			    || (backgroundImages.get(size)[1] == null && presel)) {
 				image = new BufferedImage(width, height,
 					    BufferedImage.TYPE_4BYTE_ABGR);
 				g2D = image.createGraphics();
@@ -271,7 +273,7 @@ public abstract class Digit extends SimpleButton
 						    ColorHelper.getCosyControlShadow());
 					g2D.setPaint(paint);
 					g2D.fillRect(0, height / 2, width, height);
-					((Object[])backgroundImages.get(getSize()))[1] = image;
+					backgroundImages.get(getSize())[1] = image;
 				} else {
 					paint = new GradientPaint(0f, 0f,
 						    ColorHelper.getCosyControlHighlight(),
@@ -294,13 +296,13 @@ public abstract class Digit extends SimpleButton
 						    ColorHelper.getCosyControl());
 					g2D.setPaint(paint);
 					g2D.fillRect(0, height / 2, width, height);
-					((Object[])backgroundImages.get(size))[0] = image;
+					backgroundImages.get(size)[0] = image;
 				}
 			} else {
 				if (presel) {
-					image = (BufferedImage)((Object[])backgroundImages.get(size))[1];
+					image = backgroundImages.get(size)[1];
 				} else {
-					image = (BufferedImage)((Object[])backgroundImages.get(size))[0];
+					image = backgroundImages.get(size)[0];
 				}
 			}
 
@@ -310,10 +312,10 @@ public abstract class Digit extends SimpleButton
 
 			if (animationCompleted < 1.f) {
 				if (images.get(size) == null) {
-					images.put(size, new HashMap());
+					images.put(size, new HashMap<String,BufferedImage>());
 				}
 
-				if (((Map)images.get(size)).get(newText) == null) {
+				if(images.get(size).get(newText) == null) {
 					image = new BufferedImage(width, height,
 						    BufferedImage.TYPE_4BYTE_ABGR);
 
@@ -321,13 +323,12 @@ public abstract class Digit extends SimpleButton
 					gr.addRenderingHints(PaintHelper.getAntialiasingHints());
 					gr.setFont(getFont());
 					super.paintComponent(gr);
-					((HashMap)images.get(size)).put(newText, image);
+					images.get(size).put(newText, image);
 				}
 
-				paintDigitTransition((BufferedImage)((HashMap)images.get(
-				        getSize())).get(oldText),
-				    (BufferedImage)((HashMap)images.get(getSize())).get(newText),
-				    g2D, animationCompleted);
+				paintDigitTransition(images.get(getSize()).get(oldText),
+						images.get(getSize()).get(newText),
+						g2D, animationCompleted);
 				super.paintBorder(g2D);
 			} else {
 				super.paintComponent(g2D);

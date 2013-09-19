@@ -13,8 +13,10 @@ import java.awt.image.BufferedImage;
  * @author <a href="mailto:jernej.kamenik@cosylab.com">Jernej Kamenik</a>
  * @version $id$
  */
-public class ValueDigit extends Digit {
-
+public class ValueDigit extends Digit
+{
+	private static final long serialVersionUID = 1L;
+	
 	public static int INCREASE_VALUE = -1;
 	public static int DECREASE_VALUE = -2;
 

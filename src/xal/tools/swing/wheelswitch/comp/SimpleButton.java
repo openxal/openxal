@@ -57,6 +57,8 @@ import javax.swing.plaf.metal.MetalBorders;
  */
 public class SimpleButton extends GradientLabel
 {
+	private static final long serialVersionUID = 1L;
+	
 	private static Timer actionTimer = null;
 	protected static final String MOUSE_PRESSED = "mousePressed";
 	protected static final String MOUSE_CLICKED = "mouseClicked";

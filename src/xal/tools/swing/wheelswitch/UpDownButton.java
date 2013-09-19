@@ -21,7 +21,10 @@ import xal.tools.swing.wheelswitch.util.ColorHelper;
  * @author <a href="mailto:jernej.kamenik@cosylab.com">Jernej Kamenik</a>
  * @version $id$
  */
-public class UpDownButton extends JComponent {
+public class UpDownButton extends JComponent
+{
+	private static final long serialVersionUID = 1L;
+
 	protected ChangeEvent changeEvent = null;
 	
 	private int value = 0;

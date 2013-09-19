@@ -33,8 +33,8 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
-
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.logging.Level;
@@ -62,6 +62,8 @@ import javax.swing.event.EventListenerList;
  */
 public class Wheelswitch extends JPanel
 {
+	private static final long serialVersionUID = 1L;
+
 	/*
 	 * An implementation of FocusListener removes digit selection
 	 * when focus is lost.
@@ -322,8 +324,8 @@ public class Wheelswitch extends JPanel
 	protected TiltHandler tiltHandler;
 	private Dimension minimumSize = null;
 	private Dimension preferredSize = null;
-	private java.util.List digits;
-	private java.util.List unitDigits;
+	private List<Digit> digits;
+	private List<Digit> unitDigits;
 	private UpDownButton upDownButton;
 	private WheelswitchFormatter formatter;
 	private boolean editable = true;
@@ -349,8 +351,8 @@ public class Wheelswitch extends JPanel
 		focusHandler = new FocusHandler();
 		tiltHandler = new TiltHandler();
 
-		digits = new ArrayList();
-		unitDigits = new ArrayList();
+		digits = new ArrayList<Digit>();
+		unitDigits = new ArrayList<Digit>();
 
 		upDownButton = new UpDownButton();
 		upDownButton.setName("upDownButton");

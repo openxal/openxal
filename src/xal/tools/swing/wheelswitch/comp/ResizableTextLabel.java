@@ -39,6 +39,8 @@ import javax.swing.JLabel;
  */
 public class ResizableTextLabel extends JLabel
 {
+	private static final long serialVersionUID = 1L;
+	
 	private boolean resizable;
 	private boolean enhanced;
 	private int columns;

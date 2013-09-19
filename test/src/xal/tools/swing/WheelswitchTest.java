@@ -41,10 +41,11 @@ import javax.swing.border.LineBorder;
  * @author <a href="mailto:gasper.pajor@cosylab.com">Gasper Pajor</a>
  * @version $id$
  */
-public class WheelswitchTest extends JPanel {
-    
-    
-    /**
+public class WheelswitchTest extends JPanel
+{    
+	private static final long serialVersionUID = 1L;
+
+	/**
     * Run test applet.
     *
     * @param args command line parameters
@@ -52,7 +53,10 @@ public class WheelswitchTest extends JPanel {
     public static void main(String[] args)
     {
         JApplet applet = new JApplet() {
-            @Override
+            
+			private static final long serialVersionUID = 1L;
+
+			@Override
             public void init()
             {
                 setLayout(new GridBagLayout());
@@ -112,7 +116,10 @@ public class WheelswitchTest extends JPanel {
      * @author Jernej Kamenik(jernej.kamenik@cosylab.com)
      */	
     public class WheelSwitchTestPanel extends JPanel {
-        Wheelswitch wSwitch;
+
+		private static final long serialVersionUID = 1L;
+		
+		Wheelswitch wSwitch;
         JTextField txt1;
         JTextField txt2;
         JTextField txt3;
