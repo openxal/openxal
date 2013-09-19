@@ -4,6 +4,8 @@
 package xal.tools.swing.wheelswitch.util;
 
 import java.awt.Font;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.plaf.metal.MetalLookAndFeel;
 
@@ -18,7 +20,7 @@ import javax.swing.plaf.metal.MetalLookAndFeel;
  * @see java.awt.Font
  */
 public final class FontHelper {
-    private static java.util.List fonts = new java.util.ArrayList();
+    private static List<Font> fonts = new ArrayList<Font>();
 
     /**
      * Returns the default Font name
@@ -60,16 +62,16 @@ public final class FontHelper {
      */
     public static Font getFontWithStyle(int style, Font inFont) {
         for (int i = 0; i < fonts.size(); i++) {
-            if (((Font) fonts.get(i)).getName().equals(inFont.getName()) &&
-                    (((Font) fonts.get(i)).getSize() == inFont.getSize()) &&
-                    (((Font) fonts.get(i)).getStyle() == style)) {
-                return (Font) fonts.get(i);
+            if (fonts.get(i).getName().equals(inFont.getName()) &&
+                    (fonts.get(i).getSize() == inFont.getSize()) &&
+                    (fonts.get(i).getStyle() == style)) {
+                return fonts.get(i);
             }
         }
 
         fonts.add(inFont.deriveFont(style));
 
-        return (Font) fonts.get(fonts.size() - 1);
+        return fonts.get(fonts.size() - 1);
     }
 
     /**
@@ -82,16 +84,16 @@ public final class FontHelper {
      */
     public static Font getFontWithName(String name, Font inFont) {
         for (int i = 0; i < fonts.size(); i++) {
-            if (((Font) fonts.get(i)).getName().equals(name) &&
-                    (((Font) fonts.get(i)).getSize() == inFont.getSize()) &&
-                    (((Font) fonts.get(i)).getStyle() == inFont.getStyle())) {
-                return (Font) fonts.get(i);
+            if (fonts.get(i).getName().equals(name) &&
+                    (fonts.get(i).getSize() == inFont.getSize()) &&
+                    (fonts.get(i).getStyle() == inFont.getStyle())) {
+                return fonts.get(i);
             }
         }
 
         fonts.add(new Font(name, inFont.getStyle(), inFont.getSize()));
 
-        return (Font) fonts.get(fonts.size() - 1);
+        return fonts.get(fonts.size() - 1);
     }
 
     /**
@@ -104,16 +106,16 @@ public final class FontHelper {
      */
     public static Font getFontWithSize(int size, Font inFont) {
         for (int i = 0; i < fonts.size(); i++) {
-            if (((Font) fonts.get(i)).getName().equals(inFont.getName()) &&
-                    (((Font) fonts.get(i)).getSize() == size) &&
-                    (((Font) fonts.get(i)).getStyle() == inFont.getStyle())) {
-                return (Font) fonts.get(i);
+            if (fonts.get(i).getName().equals(inFont.getName()) &&
+                    (fonts.get(i).getSize() == size) &&
+                    (fonts.get(i).getStyle() == inFont.getStyle())) {
+                return fonts.get(i);
             }
         }
 
         fonts.add(inFont.deriveFont((float) size));
 
-        return (Font) fonts.get(fonts.size() - 1);
+        return fonts.get(fonts.size() - 1);
     }
 
     /**
@@ -126,15 +128,15 @@ public final class FontHelper {
      */
     public static Font getFont(String name, int style, int size) {
         for (int i = 0; i < fonts.size(); i++) {
-            if (((Font) fonts.get(i)).getName().equals(name) &&
-                    (((Font) fonts.get(i)).getSize() == size) &&
-                    (((Font) fonts.get(i)).getStyle() == style)) {
-                return (Font) fonts.get(i);
+            if (fonts.get(i).getName().equals(name) &&
+                    (fonts.get(i).getSize() == size) &&
+                    (fonts.get(i).getStyle() == style)) {
+                return fonts.get(i);
             }
         }
 
         fonts.add(new Font(name, style, size));
 
-        return (Font) fonts.get(fonts.size() - 1);
+        return fonts.get(fonts.size() - 1);
     }
 }

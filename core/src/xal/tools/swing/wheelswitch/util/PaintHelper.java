@@ -9,9 +9,6 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
-import java.awt.image.BufferedImage;
-
-import java.util.HashMap;
 
 
 /**
@@ -22,15 +19,8 @@ import java.util.HashMap;
  * @version $id$
  */
 public class PaintHelper {
-    public static HashMap networkErrorImages;
+	
     protected static RenderingHints qualityHints = null;
-    protected static BufferedImage rasterPattern = null;
-    public static HashMap warningImages = null;
-    public static HashMap alarmImages = null;
-    public static HashMap emergencyImages = null;
-    public static HashMap clockCaseImages = null;
-    public static HashMap minutePointers = null;
-    public static HashMap hourPointers = null;
 
     /**
      *
