@@ -743,7 +743,7 @@ public class AnalysisPanel extends JPanel{
 		width = (rightedge - centguess)/2.0;
 		
 		double amp1 = xmax; double amp2 = amp1/4.0;
-		double sigma1 = width; double sigma2 = sigma1/4.0;
+		double sigma1 = width; double sigma2 = sigma1/2.0;
 		double center = centguess;
 		double offset = 0.0;
 		int exp1 = 5; int exp2 = 2;
@@ -758,7 +758,7 @@ public class AnalysisPanel extends JPanel{
 		variables.add(new Variable("N1", exp1, 2, 6));
 		if (calcmodechooser.getSelectedIndex()==0){
 			variables.add(new Variable("amp2", amp2, 0.0, 50.0));
-			variables.add(new Variable("sigma2", sigma2, 1.0, 50.0));
+			variables.add(new Variable("sigma2", sigma2, sigma2*0.75, sigma2*1.25));
 			variables.add(new Variable("N2", 2.0, 2.0, 2.0));
 		}
 		else if (calcmodechooser.getSelectedIndex()==2){

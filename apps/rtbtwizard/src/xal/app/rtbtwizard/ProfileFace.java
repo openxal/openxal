@@ -272,7 +272,7 @@ public class ProfileFace extends JPanel{
         datatablemodel = new DataTableModel(colnames, 0);
         
         datatable = new JTable(datatablemodel);
-        datatable.getColumnModel().getColumn(0).setMinWidth(175);
+		datatable.getColumnModel().getColumn(0).setMinWidth(285);
         datatable.getColumnModel().getColumn(1).setMinWidth(120);
         datatable.getColumnModel().getColumn(2).setMinWidth(125);
         datatable.getColumnModel().getColumn(3).setMinWidth(125);
@@ -285,8 +285,8 @@ public class ProfileFace extends JPanel{
         datascrollpane = new JScrollPane(datatable,JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         datascrollpane.getVerticalScrollBar().setValue(0);
         datascrollpane.getHorizontalScrollBar().setValue(0);
-        datascrollpane.setPreferredSize(new Dimension(570, 100));
-        
+		datascrollpane.setPreferredSize(new Dimension(680, 100));
+
         ButtonRenderer xbuttonRenderer = new ButtonRenderer();
         datatable.getColumnModel().getColumn(2).setCellRenderer(xbuttonRenderer);
         datatable.getColumnModel().getColumn(2).setCellEditor(xbuttonRenderer);
