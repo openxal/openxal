@@ -115,19 +115,19 @@ public class ArrowButton extends SimpleButton
 		g.setColor(getForeground());
 
 		if (orientation == Orientation.DOWN) {
-			int[] xs = { left, (int)(maxWidth / 2), maxWidth - right };
+			int[] xs = { left, maxWidth / 2, maxWidth - right };
 			int[] ys = { top, maxHeight - bottom, top };
 			g.fillPolygon(xs, ys, 3);
 		} else if (orientation == Orientation.UP) {
-			int[] xs = { left, (int)(maxWidth / 2), maxWidth - right };
+			int[] xs = { left, maxWidth / 2, maxWidth - right };
 			int[] ys = { maxHeight - bottom, top, maxHeight - bottom };
 			g.fillPolygon(xs, ys, 3);
 		} else if (orientation == Orientation.RIGHT) {
-			int[] ys = { top, (int)(maxHeight / 2), maxHeight - bottom };
+			int[] ys = { top, maxHeight / 2, maxHeight - bottom };
 			int[] xs = { left, maxWidth - right, left };
 			g.fillPolygon(xs, ys, 3);
 		} else if (orientation == Orientation.LEFT) {
-			int[] ys = { top, (int)(maxHeight / 2), maxHeight - bottom };
+			int[] ys = { top, maxHeight / 2, maxHeight - bottom };
 			int[] xs = { maxWidth - right, left, maxWidth - right };
 			g.fillPolygon(xs, ys, 3);
 		}
