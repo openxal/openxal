@@ -1,7 +1,7 @@
 /*
  * @@COPYRIGHT@@
  */
-package xal.tools.swing;
+package xal.tools.swing.wheelswitch.demo;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -31,6 +31,8 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.border.LineBorder;
 
+import xal.tools.swing.Wheelswitch;
+
 
 /**
  * To change this generated comment edit the template variable "typecomment":
@@ -41,7 +43,7 @@ import javax.swing.border.LineBorder;
  * @author <a href="mailto:gasper.pajor@cosylab.com">Gasper Pajor</a>
  * @version $id$
  */
-public class WheelswitchTest extends JPanel
+public class WheelswitchDemo extends JPanel
 {    
 	private static final long serialVersionUID = 1L;
 
@@ -61,7 +63,7 @@ public class WheelswitchTest extends JPanel
             {
                 setLayout(new GridBagLayout());
                 
-                WheelswitchTest wst = new WheelswitchTest();
+                WheelswitchDemo wst = new WheelswitchDemo();
  
                 GridBagConstraints consContent = new GridBagConstraints();
                 consContent.gridx = 0;
@@ -115,7 +117,7 @@ public class WheelswitchTest extends JPanel
      * @version @@VERSION@@
      * @author Jernej Kamenik(jernej.kamenik@cosylab.com)
      */	
-    public class WheelSwitchTestPanel extends JPanel {
+    public class WheelSwitchDemoPanel extends JPanel {
 
 		private static final long serialVersionUID = 1L;
 		
@@ -161,7 +163,7 @@ public class WheelswitchTest extends JPanel
 
         /**
          */
-        public WheelSwitchTestPanel() {
+        public WheelSwitchDemoPanel() {
             wSwitch = new Wheelswitch("+####.##E+###",12.3456789,"unit");
             wSwitch.setGraphMax(200);
             wSwitch.setGraphMin(-200);
@@ -390,7 +392,7 @@ public class WheelswitchTest extends JPanel
 	 * @see AbstractDemoPanel#getContentPanel()
 	 */
 	public JComponent initializeContentPanel() {
-		return new WheelSwitchTestPanel();
+		return new WheelSwitchDemoPanel();
 	}
 
     /**
