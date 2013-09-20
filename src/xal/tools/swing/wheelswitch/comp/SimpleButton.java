@@ -53,7 +53,7 @@ import javax.swing.plaf.metal.MetalBorders;
  * @author <a href="mailto:jernej.kamenik@cosylab.com">Jernej Kamenik</a>
  * @version $id$
  *
- * @see com.cosylab.gui.components.GradientLabel
+ * @see xal.tools.swing.wheelswitch.comp.GradientLabel
  */
 public class SimpleButton extends GradientLabel
 {
@@ -248,7 +248,7 @@ public class SimpleButton extends GradientLabel
 	 *
 	 * @param newColor Color
 	 *
-	 * @see com.cosylab.gui.components.GradientLabel#setBackground(Color)
+	 * @see xal.tools.swing.wheelswitch.comp.GradientLabel#setBackground(Color)
 	 */
     @Override
 	public void setBackground(Color newColor)
@@ -322,7 +322,7 @@ public class SimpleButton extends GradientLabel
 	 *
 	 * @return Color
 	 *
-	 * @see com.cosylab.gui.components.GradientLabel#getBackgroundStart()
+	 * @see xal.tools.swing.wheelswitch.comp.GradientLabel#getBackgroundStart()
 	 */
     @Override
 	public Color getBackgroundStart()
@@ -341,7 +341,7 @@ public class SimpleButton extends GradientLabel
 	 *
 	 * @param newColor Color
 	 *
-	 * @see com.cosylab.gui.components.GradientLabel#setBackgroundStart(Color)
+	 * @see xal.tools.swing.wheelswitch.comp.GradientLabel#setBackgroundStart(Color)
 	 */
     @Override
 	public void setBackgroundStart(Color newColor)
@@ -799,7 +799,7 @@ public class SimpleButton extends GradientLabel
 	 *
 	 * @param g Graphics
 	 *
-	 * @see com.cosylab.gui.components.GradientLabel#paintComponent(Graphics)
+	 * @see xal.tools.swing.wheelswitch.comp.GradientLabel#paintComponent(Graphics)
 	 */
     @Override
 	public void paintComponent(Graphics g)

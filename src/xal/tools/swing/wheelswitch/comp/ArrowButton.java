@@ -27,7 +27,7 @@ import java.awt.Insets;
  * @author <a href="mailto:jernej.kamenik@cosylab.com">Jernej Kamenik</a>
  * @version $id$
  *
- * @see com.cosylab.gui.components.SimpleButton
+ * @see xal.tools.swing.wheelswitch.comp.SimpleButton
  */
 public class ArrowButton extends SimpleButton
 {
