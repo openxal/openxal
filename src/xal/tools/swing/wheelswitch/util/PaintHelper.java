@@ -45,8 +45,7 @@ public class PaintHelper {
         g2D.addRenderingHints(getAntialiasingHints());
         g2D.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,
                 (float) 0.40));
-        g2D.setStroke(new BasicStroke((float) strokeWidth,
-                BasicStroke.CAP_ROUND, BasicStroke.JOIN_MITER));
+        g2D.setStroke( new BasicStroke( strokeWidth, BasicStroke.CAP_ROUND, BasicStroke.JOIN_MITER ) );
         g2D.setColor(color);
         g2D.drawRect(x + (int) (strokeWidth), y + (int) (strokeWidth),
             width - ((int) strokeWidth * 2), height - ((int) strokeWidth * 2));

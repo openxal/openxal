@@ -223,14 +223,13 @@ public class Wheelswitch extends JPanel
 					cancel();
 
 					for (int i = 0; i < digits.size(); i++) {
-						((Digit)digits.get(i)).setTilting(false);
+						digits.get(i).setTilting(false);
 					}
 				} else {
 					numberOfTilts++;
 
 					for (int i = 0; i < digits.size(); i++) {
-						((Digit)digits.get(i)).setTilting(!((Digit)digits.get(i))
-						    .isTilting());
+						digits.get(i).setTilting( !digits.get(i).isTilting() );
 					}
 				}
 
@@ -451,11 +450,11 @@ public class Wheelswitch extends JPanel
 		this.enhanced = enhanced;
 
 		for (int i = 0; i < digits.size(); i++) {
-			((Digit)digits.get(i)).setEnhanced(enhanced);
+			digits.get(i).setEnhanced(enhanced);
 		}
 
 		for (int i = 0; i < unitDigits.size(); i++) {
-			((Digit)unitDigits.get(i)).setEnhanced(enhanced);
+			unitDigits.get(i).setEnhanced(enhanced);
 		}
 	}
 
@@ -787,11 +786,11 @@ public class Wheelswitch extends JPanel
 		repaint();
 
 		for (int i = 0; i < digits.size(); i++) {
-			((Digit)digits.get(i)).setEnabled(arg0);
+			digits.get(i).setEnabled(arg0);
 		}
 
 		for (int i = 0; i < unitDigits.size(); i++) {
-			((Digit)unitDigits.get(i)).setEnabled(arg0);
+			unitDigits.get(i).setEnabled(arg0);
 		}
 
 		upDownButton.setEnabled(arg0);
@@ -961,7 +960,7 @@ public class Wheelswitch extends JPanel
 			}
 
 			if ((selectedDigit >= 0) && (selectedDigit < digits.size())) {
-				((Digit)digits.get(selectedDigit)).setSelected(false);
+				digits.get(selectedDigit).setSelected(false);
 			}
 
 			if ((i == INCREASE_SELECTION)
@@ -999,8 +998,8 @@ public class Wheelswitch extends JPanel
 				}
 			}
 
-			if ((i >= 0) && (i < digits.size())) {
-				((Digit)digits.get(i)).setSelected(true);
+			if ( (i >= 0) && ( i < digits.size() ) ) {
+				digits.get(i).setSelected(true);
 			}
 
 			selectedDigit = i;
@@ -1060,18 +1059,18 @@ public class Wheelswitch extends JPanel
 		//  by mkadunc
 		//		add(Box.createHorizontalStrut(5));
 		for (int i = 0; i < digits.size(); i++) {
-			if (((Digit)digits.get(i)).getText().indexOf('E') != -1) {
+			if ( digits.get(i).getText().indexOf('E') != -1 ) {
 				add(Box.createHorizontalStrut(3));
 			}
 
-			add((Digit)digits.get(i));
+			add( digits.get(i) );
 		}
 
 		if (!unitDigits.isEmpty()) {
 			add(Box.createHorizontalStrut(5));
 
 			for (int i = 0; i < unitDigits.size(); i++) {
-				add((Digit)unitDigits.get(i));
+				add( unitDigits.get(i) );
 			}
 		}
 
