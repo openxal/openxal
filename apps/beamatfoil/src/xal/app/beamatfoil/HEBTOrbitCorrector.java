@@ -13,7 +13,7 @@ import java.io.*;
 import java.util.List;
 import java.beans.*;
 
-import com.cosylab.gui.components.Wheelswitch;
+import xal.tools.swing.Wheelswitch;
 
 import xal.ca.*;
 

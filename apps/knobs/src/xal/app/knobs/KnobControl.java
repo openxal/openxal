@@ -18,7 +18,7 @@ import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.event.*;
 
-import com.cosylab.gui.components.Wheelswitch;
+import xal.tools.swing.Wheelswitch;
 
 
 /** view for allowing users to use a knob */
