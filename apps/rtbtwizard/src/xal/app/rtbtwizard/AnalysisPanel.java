@@ -82,8 +82,8 @@ public class AnalysisPanel extends JPanel{
     private String label;
     private String[] plottypes = {"Plot Linear Values", "Plot Log Values"};
     private String[] flooroptions = {"Freeze Offset at 0.0", "Fit Offset"};
-    private String[] calcmodes = {"Two Gauss", "SuperGauss", "Two Super Gauss"};
-    
+    private String[] calcmodes = {"Target Profile", "Two Gauss", "SuperGauss", "Two Super Gauss"};
+
     private JComboBox<String> scalechooser = new JComboBox<String>(plottypes);
     private JComboBox<String> floorchooser = new JComboBox<String>(flooroptions);
     private JComboBox<String> calcmodechooser = new JComboBox<String>(calcmodes);
@@ -241,8 +241,8 @@ public class AnalysisPanel extends JPanel{
 		centerpanel.add(centerbutton);
 		centerpanel.add(center);
 		
-		calcmodechooser.setSelectedIndex(1);
-        
+		calcmodechooser.setSelectedIndex(0);
+
 		//fitthreshpanel = new JPanel();
 		//fitthreshpanel.add(fitthreshbutton);
 		//fitthreshpanel.add(fitthreshold);
@@ -277,7 +277,7 @@ public class AnalysisPanel extends JPanel{
         
 		calcmodechooser.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e) {
-				if(calcmodechooser.getSelectedIndex()==0){
+				if(calcmodechooser.getSelectedIndex()==1){
 					gaussfit = true;
 					doc.lastfitSuperGauss = false;
 					System.out.println("Changing to " + doc.lastfitSuperGauss);
@@ -742,12 +742,12 @@ public class AnalysisPanel extends JPanel{
 		centguess = (rightedge - leftedge)/2.0 + leftedge;
 		width = (rightedge - centguess)/2.0;
 		
-		double amp1 = 2*xmax; double amp2 = amp1/2.0;
+		double amp1 = xmax; double amp2 = amp1/4.0;
 		double sigma1 = width; double sigma2 = sigma1/2.0;
 		double center = centguess;
 		double offset = 0.0;
-		int exp1 = 5; int exp2 = 5;
-		
+		int exp1 = 5; int exp2 = 2;
+
 		//Do the fit.
 		ArrayList<Variable> variables =  new ArrayList<Variable>();
 		
@@ -755,8 +755,13 @@ public class AnalysisPanel extends JPanel{
 		variables.add(new Variable("sigma1", sigma1, 1.0, 50.0));
 		variables.add(new Variable("center", center, -200.0, 200.0));
 		variables.add(new Variable("offset", offset, -0.1, 0.1));
-		variables.add(new Variable("N1", exp1, 1, 10));
-		if (calcmodechooser.getSelectedIndex()==1){
+		variables.add(new Variable("N1", exp1, 2, 6));
+		if (calcmodechooser.getSelectedIndex()==0){
+			variables.add(new Variable("amp2", amp2, 0.0, 50.0));
+			variables.add(new Variable("sigma2", sigma2, sigma2*0.75, sigma2*1.25));
+			variables.add(new Variable("N2", 2.0, 2.0, 2.0));
+		}
+		else if (calcmodechooser.getSelectedIndex()==2){
 			amp2 =0.0; sigma2 = 0.0; exp2 = 0;
 			variables.add(new Variable("amp2", amp2, 0.0, 0.0));
 			variables.add(new Variable("sigma2", sigma2, 0.0, 0.0));
@@ -768,19 +773,18 @@ public class AnalysisPanel extends JPanel{
 			variables.add(new Variable("N2", exp2, 1, 10));
 		}
 		
-		
 		ArrayList<Objective> objectives = new ArrayList<Objective>();
 		objectives.add(new TargetObjective("diff", 0.0));
 		
 		Evaluator1 evaluator = new Evaluator1(objectives, variables);
 		
 		Problem problem = new Problem(objectives, variables, evaluator);
-		problem.addHint(new InitialDelta(0.05));
-		
-		double solvetime=5.0;
+
+		double solvetime=1.0;
 		Stopper maxSolutionStopper = SolveStopperFactory.minMaxTimeSatisfactionStopper(1, solvetime, 0.999);
-		Solver solver = new Solver(new RandomShrinkSearch(), maxSolutionStopper);
-		
+		//Solver solver = new Solver(new RandomShrinkSearch(), maxSolutionStopper);
+		Solver solver = new Solver( maxSolutionStopper);
+
 		solver.solve(problem);
 		System.out.println("SuperGauss Fit Routine Results");
 		System.out.println("score is " + solver.getScoreBoard());
@@ -816,7 +820,6 @@ public class AnalysisPanel extends JPanel{
 		
 		while(x <= xmax && i<npoints){
 			sfit[i]=x;
-			//yfit[i] = amp1*Math.exp(-(Math.pow(Math.abs(x-center), exp1)))/(2.0*(Math.pow(sigma1, exp1))) - amp2*Math.exp(-(Math.pow(Math.abs(x-center), exp2)))/(2.0*(Math.pow(sigma2, exp2)));
 			yfit[i] = amp1*Math.exp(-(Math.pow(Math.abs((x-center)), exp1))/(2.0*(Math.pow(sigma1, exp1)))) - amp2*Math.exp(-(Math.pow(Math.abs((x-center)), exp2))/(2.0*(Math.pow(sigma2, exp2))));
 			x+=inc;
 			i++;

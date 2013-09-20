@@ -93,14 +93,14 @@ public class AnalysisFace extends JPanel{
         layout.add(datascrollpane, mainPanel, 180, 10, EdgeLayout.LEFT);
         layout.add(analyzebutton, mainPanel, 10, 50, EdgeLayout.LEFT);
         layout.add(loadbutton, mainPanel, 10, 20, EdgeLayout.LEFT);
-        layout.add(analysispanel, mainPanel, 10, 110, EdgeLayout.LEFT);
-        layout.add(storedresultspanel, mainPanel, 460, 110, EdgeLayout.LEFT);
+		layout.add(analysispanel, mainPanel, 0, 110, EdgeLayout.LEFT);
+		layout.add(storedresultspanel, mainPanel, 490, 110, EdgeLayout.LEFT);
         this.add(mainPanel);
         
     }
     
     public void makeComponents(){
-        mainPanel = new JPanel();
+		mainPanel.setPreferredSize(new Dimension(980, 750));
         mainPanel.setPreferredSize(new Dimension(950, 750));
         
         loadbutton = new JButton("Load Table");
