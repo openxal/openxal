@@ -46,12 +46,17 @@ public class OpticsEvaluator implements Evaluator {
 		final Simulation designSimulation = _simulator.getDesignSimulation();
 		final Simulation simulation = _simulator.runWithVariables( trialValues );
 
-		for ( final Objective rawObjective : trial.getProblem().getObjectives() ) {
-			final OpticsObjective objective = (OpticsObjective)rawObjective;
-			final double score = objective.getValue( trialValues, simulation, designSimulation );
-			trial.setScore( objective, score );
+		if ( simulation != null ) {
+			for ( final Objective rawObjective : trial.getProblem().getObjectives() ) {
+				final OpticsObjective objective = (OpticsObjective)rawObjective;
+				final double score = objective.getValue( trialValues, simulation, designSimulation );
+				trial.setScore( objective, score );
+			}
+
+			trial.setCustomInfo( simulation );
 		}
-		
-		trial.setCustomInfo( simulation );
+		else {
+			trial.vetoTrial( new TrialVeto( trial, null, "Model Exception" ) );
+		}
 	}
 }
