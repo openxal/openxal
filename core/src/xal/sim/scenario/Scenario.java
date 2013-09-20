@@ -108,6 +108,9 @@ public class Scenario {
         syncManager.setSynchronizationMode(newMode);
     }
     
+    public String getSynchronizationMode() {
+    	return syncManager.getSynchronizationMode();
+    }
 	
     /**
      * Synchronizes each lattice element to the appropriate data source.

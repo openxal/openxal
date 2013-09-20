@@ -79,6 +79,10 @@ public class SynchronizationManager {
 		syncMode = newMode;
 	}
 	
+	public String getSynchronizationMode() {
+		return syncMode;
+	}
+	
 	
 	// Constructors ============================================================
 	
