@@ -58,6 +58,9 @@ public class SimpleProbeEditor extends JDialog {
 		KEY_VALUE_ADAPTOR = new KeyValueAdaptor();
 		PROPERTY_TABLE_MODEL = new KeyValueFilteredTableModel<ProbeProperty>( new ArrayList<ProbeProperty>(), "group", "property", "value");
 
+		final EditablePropertyContainer probeContainer = EditableProperty.getInstanceWithRoot( "Probe", probe );
+		System.out.println( probeContainer );
+
         setSize( 600, 600 );			// Set the window size
         initializeComponents();			// Set up each component in the editor
         pack();							// Fit the components in the window
@@ -511,13 +514,20 @@ public class SimpleProbeEditor extends JDialog {
 }
 
 
-/** model for traversing a probe's object graph and collecting editable properties */
-class ProbeEditableProperties {
+
+/** base class for a editable property */
+abstract class EditableProperty {
     /** array of classes for which the property can be edited directly */
-    final static private Set<Class<?>> EDITABLE_PROPERTY_TYPES = new HashSet<>();
-	
-	/** probe to model */
-	final private Probe PROBE;
+    final static protected Set<Class<?>> EDITABLE_PROPERTY_TYPES = new HashSet<>();
+
+	/** property name */
+	final private String NAME;
+
+	/** target object which is assigned the property */
+	final protected Object TARGET;
+
+	/** property descriptor */
+	final protected PropertyDescriptor PROPERTY_DESCRIPTOR;
 
 
 	// static initializer
@@ -530,23 +540,109 @@ class ProbeEditableProperties {
 	}
 
 
-	/** constructor */
-	public ProbeEditableProperties( final Probe probe ) {
-		PROBE = probe;
+	/** Constructor */
+	protected EditableProperty( final String name, final Object target, final PropertyDescriptor descriptor ) {
+		NAME = name;
+		TARGET = target;
+		PROPERTY_DESCRIPTOR = descriptor;
 	}
 
 
-	/** Get the probe */
-	public Probe getProbe() {
-		return PROBE;
+	/** Constructor */
+	protected EditableProperty( final Object target, final PropertyDescriptor descriptor ) {
+		this( descriptor.getName(), target, descriptor );
+	}
+
+
+	/** Get an instance starting at the root object */
+	static public EditablePropertyContainer getInstanceWithRoot( final String name, final Object root ) {
+		return EditablePropertyContainer.getInstanceWithRoot( name, root );
+	}
+
+
+	/** name of the property */
+	public String getName() {
+		return NAME;
+	}
+
+
+	/** Get the property type */
+	public Class<?> getPropertyType() {
+		return PROPERTY_DESCRIPTOR != null ? PROPERTY_DESCRIPTOR.getPropertyType() : null;
+	}
+
+
+	/** Get the value for this property */
+	public Object getValue() {
+		if ( TARGET != null && PROPERTY_DESCRIPTOR != null ) {
+			final Method getter = PROPERTY_DESCRIPTOR.getReadMethod();
+			if ( getter.isAccessible() ) {
+				try {
+					return getter.invoke( TARGET );
+				}
+				catch( Exception exception ) {
+					return null;
+				}
+			}
+			else {
+				return null;
+			}
+		}
+		else {
+			return null;
+		}
+	}
+
+
+	/** determine whether the property is a container */
+	abstract public boolean isContainer();
+
+	/** determine whether the property is a primitive */
+	abstract public boolean isPrimitive();
+
+
+    /*
+     * Get the property descriptors for the given bean info
+     * @param target object for which to get the descriptors
+	 * @return the property descriptors for non-null beanInfo otherwise null
+     */
+    static protected PropertyDescriptor[] getPropertyDescriptors( final Object target ) {
+		if ( target != null ) {
+			final BeanInfo beanInfo = getBeanInfo( target );
+			return getPropertyDescriptorsForBeanInfo( beanInfo );
+		}
+		else {
+			return null;
+		}
+	}
+
+
+    /*
+     * Get the property descriptors for the given bean info
+     * @param beanInfo bean info
+	 * @return the property descriptors for non-null beanInfo otherwise null
+     */
+    static private PropertyDescriptor[] getPropertyDescriptorsForBeanInfo( final BeanInfo beanInfo ) {
+		return beanInfo != null ? beanInfo.getPropertyDescriptors() : null;
 	}
 
 
     /** Convenience method to get the BeanInfo for an object's class */
 	static private BeanInfo getBeanInfo( final Object object ) {
 		if ( object != null ) {
+			return getBeanInfoForType( object.getClass() );
+		}
+		else {
+			return null;
+		}
+	}
+
+
+    /** Convenience method to get the BeanInfo for the given type */
+	static private BeanInfo getBeanInfoForType( final Class<?> propertyType ) {
+		if ( propertyType != null ) {
 			try {
-				return Introspector.getBeanInfo( object.getClass() );
+				return Introspector.getBeanInfo( propertyType );
 			}
 			catch( IntrospectionException exception ) {
 				return null;
@@ -555,5 +651,238 @@ class ProbeEditableProperties {
 		else {
 			return null;
 		}
+	}
+
+
+	/** Get a string represenation of this property */
+	public String toString() {
+		return getName();
+	}
+}
+
+
+
+/** editable property representing a primitive that is directly editable */
+class EditablePrimitiveProperty extends EditableProperty {
+	/** Constructor */
+	protected EditablePrimitiveProperty( final Object target, final PropertyDescriptor descriptor ) {
+		super( target, descriptor );
+	}
+
+
+	/** determine whether the property is a container */
+	public boolean isContainer() {
+		return false;
+	}
+
+
+	/** determine whether the property is a primitive */
+	public boolean isPrimitive() {
+		return true;
+	}
+
+
+	/** Set the value for this property */
+	public void setValue( final Object value ) {
+		if ( TARGET != null && PROPERTY_DESCRIPTOR != null ) {
+			final Method setter = PROPERTY_DESCRIPTOR.getWriteMethod();
+			if ( setter.isAccessible() ) {
+				try {
+					setter.invoke( TARGET, value );
+				}
+				catch( Exception exception ) {
+					throw new RuntimeException( "Cannot set value " + value + " on target: " + TARGET + " with descriptor: " + PROPERTY_DESCRIPTOR.getName(), exception );
+				}
+			}
+			else {
+				throw new RuntimeException( "Cannot set value " + value + " on target: " + TARGET + " with descriptor: " + PROPERTY_DESCRIPTOR.getName() + " because the set method is not accessible." );
+			}
+		}
+		else {
+			if ( TARGET == null && PROPERTY_DESCRIPTOR == null ) {
+				throw new RuntimeException( "Cannot set value " + value + " on target because both the target and descriptor are null." );
+			}
+			else if ( TARGET == null ) {
+				throw new RuntimeException( "Cannot set value " + value + " on target with descriptor: " + PROPERTY_DESCRIPTOR.getName() + " because the target is null." );
+			}
+			else if ( PROPERTY_DESCRIPTOR == null ) {
+				throw new RuntimeException( "Cannot set value " + value + " on target: " + TARGET + " because the property descriptor is null." );
+			}
+		}
+	}
+}
+
+
+
+/** base class for a container of editable properties */
+class EditablePropertyContainer extends EditableProperty {
+	/** list of child properties */
+	final List<EditableProperty> CHILD_PROPERTIES;
+
+	/** target for child properties */
+	final protected Object CHILD_TARGET;
+
+
+	/** Primary Constructor */
+	protected EditablePropertyContainer( final String name, final Object target, final PropertyDescriptor descriptor, final Object childTarget ) {
+		super( name, target, descriptor );
+
+		CHILD_PROPERTIES = new ArrayList<EditableProperty>();
+
+		CHILD_TARGET = childTarget;
+	}
+
+
+	/** Constructor */
+	protected EditablePropertyContainer( final Object target, final PropertyDescriptor descriptor, final Object childTarget ) {
+		this( descriptor.getName(), target, descriptor, childTarget );
+	}
+
+
+	/** Constructor */
+	protected EditablePropertyContainer( final Object target, final PropertyDescriptor descriptor ) {
+		this( target, descriptor, generateChildTarget( target, descriptor ) );
+	}
+
+
+	/** Create an instance witht the specified root Object */
+	static public EditablePropertyContainer getInstanceWithRoot( final String name, final Object rootObject ) {
+		final EditablePropertyContainer container = new EditablePropertyContainer( name, null, null, rootObject );
+		container.generateChildPropertiesWithAncestor( rootObject );
+		return container;
+	}
+
+
+	/** Generat the child target from the target and descriptor */
+	static private Object generateChildTarget( final Object target, final PropertyDescriptor descriptor ) {
+		try {
+			final Method readMethod = descriptor.getReadMethod();
+			return readMethod.invoke( target );
+		}
+		catch( Exception exception ) {
+//			System.err.println( "Exception generating child target for target: " + target + " and descriptor: " + descriptor.getName() );
+//			System.err.println( "Exception: " + exception );
+//			exception.printStackTrace();
+			return null;
+		}
+	}
+
+
+	/** determine whether this container has any child properties */
+	public boolean isEmpty() {
+		return CHILD_PROPERTIES.size() == 0;
+	}
+
+
+	/** get the number of child properties */
+	public int getChildCount() {
+		return CHILD_PROPERTIES.size();
+	}
+
+	
+	/** determine whether the property is a container */
+	public boolean isContainer() {
+		return true;
+	}
+
+
+	/** determine whether the property is a primitive */
+	public boolean isPrimitive() {
+		return false;
+	}
+
+
+	/** Get the child properties */
+	public List<EditableProperty> getChildProperties() {
+		return CHILD_PROPERTIES;
+	}
+
+
+	/** Generate the child properties this container's child target */
+	public void generateChildPropertiesWithAncestor( final Object ancestor ) {
+		final Set<Object> rootAncestor = new HashSet<Object>();
+		generateChildPropertiesWithAncestors( rootAncestor );
+	}
+
+
+	/** Generate the child properties this container's child target */
+	protected void generateChildPropertiesWithAncestors( final Set<Object> ancestors ) {
+		final PropertyDescriptor[] descriptors = getPropertyDescriptors( CHILD_TARGET );
+		if ( descriptors != null ) {
+			for ( final PropertyDescriptor descriptor : descriptors ) {
+				if ( descriptor.getPropertyType() != Class.class ) {
+					generateChildPropertyForDescriptorAndAncestors( descriptor, ancestors );
+				}
+			}
+		}
+	}
+
+
+	/** Generate the child properties starting at the specified descriptor for this container's child target */
+	protected void generateChildPropertyForDescriptorAndAncestors( final PropertyDescriptor descriptor, final Set<Object> ancestorsReference ) {
+		final Set<Object> ancestors = new HashSet<Object>( ancestorsReference );	// make a copy so it is unique for each branch
+		final Class<?> propertyType = descriptor.getPropertyType();
+
+		if ( EDITABLE_PROPERTY_TYPES.contains( propertyType ) ) {
+			// if the property is an editable primitive with both a getter and setter then return the primitive property instance otherwise null
+			final Method getter = descriptor.getReadMethod();
+			final Method setter = descriptor.getWriteMethod();
+			if ( getter != null && setter != null ) {
+				CHILD_PROPERTIES.add( new EditablePrimitiveProperty( CHILD_TARGET, descriptor ) );
+			}
+			return;		// reached end of branch so we are done
+		}
+		else if ( propertyType == null ) {
+			return;
+		}
+		else if ( propertyType.isArray() ) {
+			// property is an array
+			return;
+		}
+		else {
+			// property is a plain container
+			if ( !ancestors.contains( CHILD_TARGET ) ) {	// only propagate down the branch if the targets are unique (avoid cycles)
+				ancestors.add( CHILD_TARGET );
+				final EditablePropertyContainer container = new EditablePropertyContainer( CHILD_TARGET, descriptor );
+				container.generateChildPropertiesWithAncestors( ancestors );
+				if ( container.getChildCount() > 0 ) {	// only care about nontrivial containers
+					CHILD_PROPERTIES.add( container );
+				}
+			}
+			return;
+		}
+	}
+
+
+	/** Get the editable properties of the specified target */
+	static public List<EditableProperty> getChildProperties( final Object target ) {
+		return null;
+	}
+
+
+	/** Get the child property for the given descriptor */
+	protected EditableProperty getChildProperty( final PropertyDescriptor descriptor ) {
+		return null;
+	}
+
+
+	/** Get a string represenation of this property */
+	public String toString() {
+		final StringBuilder buffer = new StringBuilder();
+		buffer.append( "\n" + getName() + ":\n" );
+		for ( final EditableProperty property : CHILD_PROPERTIES ) {
+			buffer.append( "\t" + property.toString() + "\n" );
+		}
+		buffer.append( "\n" );
+		return buffer.toString();
+	}
+}
+
+
+/** container for an editable property that is an array */
+class EditableArrayProperty extends EditablePropertyContainer {
+	/** Constructor */
+	protected EditableArrayProperty( final Object target, final PropertyDescriptor descriptor ) {
+		super( target, descriptor );
 	}
 }
