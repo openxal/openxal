@@ -716,40 +716,41 @@ class EditablePrimitiveProperty extends EditableProperty {
 
 /** base class for a container of editable properties */
 class EditablePropertyContainer extends EditableProperty {
-	/** list of child properties */
-	final List<EditableProperty> CHILD_PROPERTIES;
-
 	/** target for child properties */
 	final protected Object CHILD_TARGET;
 
+	/** set of ancestors to reference to prevent cycles */
+	final private Set<Object> ANCESTORS;
+	
+	/** list of child properties */
+	protected List<EditableProperty> _childProperties;
+
 
 	/** Primary Constructor */
-	protected EditablePropertyContainer( final String name, final Object target, final PropertyDescriptor descriptor, final Object childTarget ) {
+	protected EditablePropertyContainer( final String name, final Object target, final PropertyDescriptor descriptor, final Object childTarget, final Set<Object> ancestors ) {
 		super( name, target, descriptor );
 
-		CHILD_PROPERTIES = new ArrayList<EditableProperty>();
-
 		CHILD_TARGET = childTarget;
+		ANCESTORS = ancestors;
 	}
 
 
 	/** Constructor */
-	protected EditablePropertyContainer( final Object target, final PropertyDescriptor descriptor, final Object childTarget ) {
-		this( descriptor.getName(), target, descriptor, childTarget );
+	protected EditablePropertyContainer( final Object target, final PropertyDescriptor descriptor, final Object childTarget, final Set<Object> ancestors ) {
+		this( descriptor.getName(), target, descriptor, childTarget, ancestors );
 	}
 
 
 	/** Constructor */
-	protected EditablePropertyContainer( final Object target, final PropertyDescriptor descriptor ) {
-		this( target, descriptor, generateChildTarget( target, descriptor ) );
+	protected EditablePropertyContainer( final Object target, final PropertyDescriptor descriptor, final Set<Object> ancestors ) {
+		this( target, descriptor, generateChildTarget( target, descriptor ), ancestors );
 	}
 
 
 	/** Create an instance witht the specified root Object */
 	static public EditablePropertyContainer getInstanceWithRoot( final String name, final Object rootObject ) {
-		final EditablePropertyContainer container = new EditablePropertyContainer( name, null, null, rootObject );
-		container.generateChildPropertiesWithAncestor( rootObject );
-		return container;
+		final Set<Object> ancestors = new HashSet<Object>();
+		return new EditablePropertyContainer( name, null, null, rootObject, ancestors );
 	}
 
 
@@ -760,23 +761,8 @@ class EditablePropertyContainer extends EditableProperty {
 			return readMethod.invoke( target );
 		}
 		catch( Exception exception ) {
-//			System.err.println( "Exception generating child target for target: " + target + " and descriptor: " + descriptor.getName() );
-//			System.err.println( "Exception: " + exception );
-//			exception.printStackTrace();
 			return null;
 		}
-	}
-
-
-	/** determine whether this container has any child properties */
-	public boolean isEmpty() {
-		return CHILD_PROPERTIES.size() == 0;
-	}
-
-
-	/** get the number of child properties */
-	public int getChildCount() {
-		return CHILD_PROPERTIES.size();
 	}
 
 	
@@ -792,26 +778,43 @@ class EditablePropertyContainer extends EditableProperty {
 	}
 
 
+	/** determine whether this container has any child properties */
+	public boolean isEmpty() {
+		return getChildCount() == 0;
+	}
+
+
+	/** get the number of child properties */
+	public int getChildCount() {
+		generateChildPropertiesIfNeeded();
+		return _childProperties.size();
+	}
+
+
 	/** Get the child properties */
 	public List<EditableProperty> getChildProperties() {
-		return CHILD_PROPERTIES;
+		generateChildPropertiesIfNeeded();
+		return _childProperties;
+	}
+
+
+	/** generate the child properties if needed */
+	protected void generateChildPropertiesIfNeeded() {
+		if ( _childProperties == null ) {
+			generateChildProperties();
+		}
 	}
 
 
 	/** Generate the child properties this container's child target */
-	public void generateChildPropertiesWithAncestor( final Object ancestor ) {
-		final Set<Object> rootAncestor = new HashSet<Object>();
-		generateChildPropertiesWithAncestors( rootAncestor );
-	}
+	protected void generateChildProperties() {
+		_childProperties = new ArrayList<EditableProperty>();
 
-
-	/** Generate the child properties this container's child target */
-	protected void generateChildPropertiesWithAncestors( final Set<Object> ancestors ) {
 		final PropertyDescriptor[] descriptors = getPropertyDescriptors( CHILD_TARGET );
 		if ( descriptors != null ) {
 			for ( final PropertyDescriptor descriptor : descriptors ) {
 				if ( descriptor.getPropertyType() != Class.class ) {
-					generateChildPropertyForDescriptorAndAncestors( descriptor, ancestors );
+					generateChildPropertyForDescriptor( descriptor );
 				}
 			}
 		}
@@ -819,8 +822,7 @@ class EditablePropertyContainer extends EditableProperty {
 
 
 	/** Generate the child properties starting at the specified descriptor for this container's child target */
-	protected void generateChildPropertyForDescriptorAndAncestors( final PropertyDescriptor descriptor, final Set<Object> ancestorsReference ) {
-		final Set<Object> ancestors = new HashSet<Object>( ancestorsReference );	// make a copy so it is unique for each branch
+	protected void generateChildPropertyForDescriptor( final PropertyDescriptor descriptor ) {
 		final Class<?> propertyType = descriptor.getPropertyType();
 
 		if ( EDITABLE_PROPERTY_TYPES.contains( propertyType ) ) {
@@ -828,7 +830,7 @@ class EditablePropertyContainer extends EditableProperty {
 			final Method getter = descriptor.getReadMethod();
 			final Method setter = descriptor.getWriteMethod();
 			if ( getter != null && setter != null ) {
-				CHILD_PROPERTIES.add( new EditablePrimitiveProperty( CHILD_TARGET, descriptor ) );
+				_childProperties.add( new EditablePrimitiveProperty( CHILD_TARGET, descriptor ) );
 			}
 			return;		// reached end of branch so we are done
 		}
@@ -841,28 +843,14 @@ class EditablePropertyContainer extends EditableProperty {
 		}
 		else {
 			// property is a plain container
-			if ( !ancestors.contains( CHILD_TARGET ) ) {	// only propagate down the branch if the targets are unique (avoid cycles)
+			if ( !ANCESTORS.contains( CHILD_TARGET ) ) {	// only propagate down the branch if the targets are unique (avoid cycles)
+				final Set<Object> ancestors = new HashSet<Object>( ANCESTORS );
 				ancestors.add( CHILD_TARGET );
-				final EditablePropertyContainer container = new EditablePropertyContainer( CHILD_TARGET, descriptor );
-				container.generateChildPropertiesWithAncestors( ancestors );
-				if ( container.getChildCount() > 0 ) {	// only care about nontrivial containers
-					CHILD_PROPERTIES.add( container );
-				}
+				final EditablePropertyContainer container = new EditablePropertyContainer( CHILD_TARGET, descriptor, ancestors );
+				_childProperties.add( container );
 			}
 			return;
 		}
-	}
-
-
-	/** Get the editable properties of the specified target */
-	static public List<EditableProperty> getChildProperties( final Object target ) {
-		return null;
-	}
-
-
-	/** Get the child property for the given descriptor */
-	protected EditableProperty getChildProperty( final PropertyDescriptor descriptor ) {
-		return null;
 	}
 
 
@@ -870,7 +858,7 @@ class EditablePropertyContainer extends EditableProperty {
 	public String toString() {
 		final StringBuilder buffer = new StringBuilder();
 		buffer.append( "\n" + getName() + ":\n" );
-		for ( final EditableProperty property : CHILD_PROPERTIES ) {
+		for ( final EditableProperty property : getChildProperties() ) {
 			buffer.append( "\t" + property.toString() + "\n" );
 		}
 		buffer.append( "\n" );
@@ -882,7 +870,7 @@ class EditablePropertyContainer extends EditableProperty {
 /** container for an editable property that is an array */
 class EditableArrayProperty extends EditablePropertyContainer {
 	/** Constructor */
-	protected EditableArrayProperty( final Object target, final PropertyDescriptor descriptor ) {
-		super( target, descriptor );
+	protected EditableArrayProperty( final Object target, final PropertyDescriptor descriptor, final Set<Object> ancestors ) {
+		super( target, descriptor, ancestors );
 	}
 }
