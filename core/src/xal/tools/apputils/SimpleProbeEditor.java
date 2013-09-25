@@ -814,6 +814,20 @@ class EditablePropertyContainer extends EditableProperty {
 	}
 
 
+	/** Get the list of child primitive properties */
+	public List<EditablePrimitiveProperty> getChildPrimitiveProperties() {
+		generateChildPropertiesIfNeeded();
+		return _childPrimitiveProperties;
+	}
+
+
+	/** Get the list of child property containers */
+	public List<EditablePropertyContainer> getChildPropertyContainers() {
+		generateChildPropertiesIfNeeded();
+		return _childPropertyContainers;
+	}
+
+
 	/** generate the child properties if needed */
 	protected void generateChildPropertiesIfNeeded() {
 		if ( _childPrimitiveProperties == null ) {
