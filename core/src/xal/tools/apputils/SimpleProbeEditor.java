@@ -150,7 +150,8 @@ public class SimpleProbeEditor extends JDialog {
 					dispose();
 				}
 				catch( Exception exception ) {
-					System.out.println( "Exception publishing values to probe: " + exception );
+					JOptionPane.showMessageDialog( SimpleProbeEditor.this, exception.getMessage(), "Error Publishing", JOptionPane.ERROR_MESSAGE );
+					System.err.println( "Exception publishing values to probe: " + exception );
 				}
 			}
 		});
@@ -414,6 +415,8 @@ class PropertyRecord {
 
 	/** append the properties in the given tree to the records nesting deeply */
 	static private void appendPropertiesToRecords( final EditablePropertyContainer propertyTree, final List<PropertyRecord> records ) {
+		records.add( new PropertyRecord( propertyTree ) );		// add the container itself
+
 		// add all the primitive properties
 		final List<EditablePrimitiveProperty> properties = propertyTree.getChildPrimitiveProperties();
 		for ( final EditablePrimitiveProperty property : properties ) {
@@ -423,7 +426,6 @@ class PropertyRecord {
 		// navigate down through each container and append their sub trees
 		final List<EditablePropertyContainer> containers = propertyTree.getChildPropertyContainers();
 		for ( final EditablePropertyContainer container : containers ) {
-			records.add( new PropertyRecord( container ) );		// add the container itself
 			appendPropertiesToRecords( container, records );	// add the containers descendents
 		}
 	}
