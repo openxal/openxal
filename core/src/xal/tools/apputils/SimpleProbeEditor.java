@@ -521,7 +521,10 @@ abstract class EditableProperty {
     final static protected Set<Class<?>> EDITABLE_PROPERTY_TYPES = new HashSet<>();
 
 	/** property name */
-	final private String NAME;
+	final protected String NAME;
+
+	/** path to this property */
+	final protected String PATH;
 
 	/** target object which is assigned the property */
 	final protected Object TARGET;
@@ -541,16 +544,17 @@ abstract class EditableProperty {
 
 
 	/** Constructor */
-	protected EditableProperty( final String name, final Object target, final PropertyDescriptor descriptor ) {
+	protected EditableProperty( final String pathPrefix, final String name, final Object target, final PropertyDescriptor descriptor ) {
 		NAME = name;
+		PATH = pathPrefix != null && pathPrefix.length() > 0 ? pathPrefix + "." + name : name;
 		TARGET = target;
 		PROPERTY_DESCRIPTOR = descriptor;
 	}
 
 
 	/** Constructor */
-	protected EditableProperty( final Object target, final PropertyDescriptor descriptor ) {
-		this( descriptor.getName(), target, descriptor );
+	protected EditableProperty( final String pathPrefix, final Object target, final PropertyDescriptor descriptor ) {
+		this( pathPrefix, descriptor.getName(), target, descriptor );
 	}
 
 
@@ -563,6 +567,12 @@ abstract class EditableProperty {
 	/** name of the property */
 	public String getName() {
 		return NAME;
+	}
+
+
+	/** Get the path to this property */
+	public String getPath() {
+		return PATH;
 	}
 
 
@@ -656,7 +666,7 @@ abstract class EditableProperty {
 
 	/** Get a string represenation of this property */
 	public String toString() {
-		return getName();
+		return getPath();
 	}
 }
 
@@ -665,8 +675,8 @@ abstract class EditableProperty {
 /** editable property representing a primitive that is directly editable */
 class EditablePrimitiveProperty extends EditableProperty {
 	/** Constructor */
-	protected EditablePrimitiveProperty( final Object target, final PropertyDescriptor descriptor ) {
-		super( target, descriptor );
+	protected EditablePrimitiveProperty( final String pathPrefix, final Object target, final PropertyDescriptor descriptor ) {
+		super( pathPrefix, target, descriptor );
 	}
 
 
@@ -727,8 +737,8 @@ class EditablePropertyContainer extends EditableProperty {
 
 
 	/** Primary Constructor */
-	protected EditablePropertyContainer( final String name, final Object target, final PropertyDescriptor descriptor, final Object childTarget, final Set<Object> ancestors ) {
-		super( name, target, descriptor );
+	protected EditablePropertyContainer( final String pathPrefix, final String name, final Object target, final PropertyDescriptor descriptor, final Object childTarget, final Set<Object> ancestors ) {
+		super( pathPrefix, name, target, descriptor );
 
 		CHILD_TARGET = childTarget;
 		ANCESTORS = ancestors;
@@ -736,21 +746,21 @@ class EditablePropertyContainer extends EditableProperty {
 
 
 	/** Constructor */
-	protected EditablePropertyContainer( final Object target, final PropertyDescriptor descriptor, final Object childTarget, final Set<Object> ancestors ) {
-		this( descriptor.getName(), target, descriptor, childTarget, ancestors );
+	protected EditablePropertyContainer( final String pathPrefix, final Object target, final PropertyDescriptor descriptor, final Object childTarget, final Set<Object> ancestors ) {
+		this( pathPrefix, descriptor.getName(), target, descriptor, childTarget, ancestors );
 	}
 
 
 	/** Constructor */
-	protected EditablePropertyContainer( final Object target, final PropertyDescriptor descriptor, final Set<Object> ancestors ) {
-		this( target, descriptor, generateChildTarget( target, descriptor ), ancestors );
+	protected EditablePropertyContainer( final String pathPrefix, final Object target, final PropertyDescriptor descriptor, final Set<Object> ancestors ) {
+		this( pathPrefix, target, descriptor, generateChildTarget( target, descriptor ), ancestors );
 	}
 
 
-	/** Create an instance witht the specified root Object */
+	/** Create an instance with the specified root Object */
 	static public EditablePropertyContainer getInstanceWithRoot( final String name, final Object rootObject ) {
 		final Set<Object> ancestors = new HashSet<Object>();
-		return new EditablePropertyContainer( name, null, null, rootObject, ancestors );
+		return new EditablePropertyContainer( "", name, null, null, rootObject, ancestors );
 	}
 
 
@@ -830,7 +840,7 @@ class EditablePropertyContainer extends EditableProperty {
 			final Method getter = descriptor.getReadMethod();
 			final Method setter = descriptor.getWriteMethod();
 			if ( getter != null && setter != null ) {
-				_childProperties.add( new EditablePrimitiveProperty( CHILD_TARGET, descriptor ) );
+				_childProperties.add( new EditablePrimitiveProperty( PATH, CHILD_TARGET, descriptor ) );
 			}
 			return;		// reached end of branch so we are done
 		}
@@ -839,6 +849,7 @@ class EditablePropertyContainer extends EditableProperty {
 		}
 		else if ( propertyType.isArray() ) {
 			// property is an array
+			System.out.println( "Property type is array for target: " + CHILD_TARGET + " with descriptor: " + descriptor.getName() );
 			return;
 		}
 		else {
@@ -846,8 +857,10 @@ class EditablePropertyContainer extends EditableProperty {
 			if ( !ANCESTORS.contains( CHILD_TARGET ) ) {	// only propagate down the branch if the targets are unique (avoid cycles)
 				final Set<Object> ancestors = new HashSet<Object>( ANCESTORS );
 				ancestors.add( CHILD_TARGET );
-				final EditablePropertyContainer container = new EditablePropertyContainer( CHILD_TARGET, descriptor, ancestors );
-				_childProperties.add( container );
+				final EditablePropertyContainer container = new EditablePropertyContainer( PATH, CHILD_TARGET, descriptor, ancestors );
+				if ( container.getChildCount() > 0 ) {	// only care about containers that lead to editable properties
+					_childProperties.add( container );
+				}
 			}
 			return;
 		}
@@ -857,7 +870,7 @@ class EditablePropertyContainer extends EditableProperty {
 	/** Get a string represenation of this property */
 	public String toString() {
 		final StringBuilder buffer = new StringBuilder();
-		buffer.append( "\n" + getName() + ":\n" );
+		buffer.append( "\n" + getPath() + ":\n" );
 		for ( final EditableProperty property : getChildProperties() ) {
 			buffer.append( "\t" + property.toString() + "\n" );
 		}
@@ -867,10 +880,13 @@ class EditablePropertyContainer extends EditableProperty {
 }
 
 
+
 /** container for an editable property that is an array */
 class EditableArrayProperty extends EditablePropertyContainer {
 	/** Constructor */
-	protected EditableArrayProperty( final Object target, final PropertyDescriptor descriptor, final Set<Object> ancestors ) {
-		super( target, descriptor, ancestors );
+	protected EditableArrayProperty( final String pathPrefix, final Object target, final PropertyDescriptor descriptor, final Set<Object> ancestors ) {
+		super( pathPrefix, target, descriptor, ancestors );
 	}
+
+	// TODO: complete implementation of array property
 }
