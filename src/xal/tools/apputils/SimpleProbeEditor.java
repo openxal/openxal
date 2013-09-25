@@ -10,6 +10,7 @@
 package xal.tools.apputils;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.BorderLayout;
@@ -229,6 +230,7 @@ public class SimpleProbeEditor extends JDialog {
 
         //Configure the text field to filter the table
         final JTextField filterTextField = new JTextField();
+		filterTextField.setMaximumSize( new Dimension( 32000, filterTextField.getPreferredSize().height ) );
         filterTextField.putClientProperty( "JTextField.variant", "search" );
         filterTextField.putClientProperty( "JTextField.Search.Prompt", "Property Filter" );
 		PROPERTY_TABLE_MODEL.setInputFilterComponent( filterTextField );
