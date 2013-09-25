@@ -586,17 +586,11 @@ abstract class EditableProperty {
 	public Object getValue() {
 		if ( TARGET != null && PROPERTY_DESCRIPTOR != null ) {
 			final Method getter = PROPERTY_DESCRIPTOR.getReadMethod();
-			getter.setAccessible( true );
-			if ( getter.isAccessible() ) {
-				try {
-					return getter.invoke( TARGET );
-				}
-				catch( Exception exception ) {
-					System.err.println( exception );
-					return null;
-				}
+			try {
+				return getter.invoke( TARGET );
 			}
-			else {
+			catch( Exception exception ) {
+				System.err.println( exception );
 				return null;
 			}
 		}
@@ -706,7 +700,6 @@ class EditablePrimitiveProperty extends EditableProperty {
 		try {
 			final Method unitsAccessor = TARGET.getClass().getMethod( unitsAccessorName );
 			if ( unitsAccessor.getReturnType() == String.class ) {
-				unitsAccessor.setAccessible( true );
 				return (String)unitsAccessor.invoke( TARGET );
 			}
 		}
@@ -715,7 +708,6 @@ class EditablePrimitiveProperty extends EditableProperty {
 			try {
 				final Method unitsAccessor = TARGET.getClass().getMethod( "getUnitsForProperty", String.class );
 				if ( unitsAccessor.getReturnType() == String.class ) {
-					unitsAccessor.setAccessible( true );
 					return (String)unitsAccessor.invoke( TARGET, getName() );
 				}
 				return "";
@@ -749,16 +741,11 @@ class EditablePrimitiveProperty extends EditableProperty {
 	public void setValue( final Object value ) {
 		if ( TARGET != null && PROPERTY_DESCRIPTOR != null ) {
 			final Method setter = PROPERTY_DESCRIPTOR.getWriteMethod();
-			if ( setter.isAccessible() ) {
-				try {
-					setter.invoke( TARGET, value );
-				}
-				catch( Exception exception ) {
-					throw new RuntimeException( "Cannot set value " + value + " on target: " + TARGET + " with descriptor: " + PROPERTY_DESCRIPTOR.getName(), exception );
-				}
+			try {
+				setter.invoke( TARGET, value );
 			}
-			else {
-				throw new RuntimeException( "Cannot set value " + value + " on target: " + TARGET + " with descriptor: " + PROPERTY_DESCRIPTOR.getName() + " because the set method is not accessible." );
+			catch( Exception exception ) {
+				throw new RuntimeException( "Cannot set value " + value + " on target: " + TARGET + " with descriptor: " + PROPERTY_DESCRIPTOR.getName(), exception );
 			}
 		}
 		else {
