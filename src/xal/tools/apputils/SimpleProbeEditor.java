@@ -251,45 +251,33 @@ class PropertyRecord {
 
 	/** Set the pending string value. Most values (except for boolean) are set as string since the table cell editor does so. */
 	public void setValue( final String value ) {
-		final Class<?> type = getPropertyType();
-		if ( type == String.class ) {
+		final Class<?> rawType = getPropertyType();
+		if ( rawType == String.class ) {
 			setValueAsObject( value );
 		}
 		else {
 			try {
+				final Class<?> type = rawType.isPrimitive() ? _value.getClass() : rawType;	// convert to wrapper type (e.g. double.class to Double.class) if necessary
 				final Object objectValue = toObjectOfType( value, type );
 				setValueAsObject( objectValue );
 			}
 			catch( Exception exception ) {
 				System.err.println( "Exception: " + exception );
-				System.err.println( "Error parsing the value: " + value + " as " + type );
+				System.err.println( "Error parsing the value: " + value + " as " + rawType );
 			}
 		}
 	}
 
 
 	/** Convert the string to an Object of the specified type */
-	static private Object toObjectOfType( final String value, final Class<?> type ) {
-		if ( type == Byte.class || type == Byte.TYPE ) {
-			return Byte.valueOf( value );
+	static private Object toObjectOfType( final String stringValue, final Class<?> type ) {
+		try {
+			// every wrapper class has a static method named "valueOf" that takes a String and returns a corresponding instance of the wrapper
+			final Method converter = type.getMethod( "valueOf", String.class );
+			return converter.invoke( null, stringValue );
 		}
-		else if ( type == Short.class || type == Short.TYPE ) {
-			return Short.valueOf( value );
-		}
-		else if ( type == Integer.class || type == Integer.TYPE ) {
-			return Integer.valueOf( value );
-		}
-		else if ( type == Long.class || type == Long.TYPE ) {
-			return Long.valueOf( value );
-		}
-		else if ( type == Float.class || type == Float.TYPE ) {
-			return Float.valueOf( value );
-		}
-		else if ( type == Double.class || type == Double.TYPE ) {
-			return Double.valueOf( value );
-		}
-		else {
-			throw new RuntimeException( "No match to parse string: " + value + " as " + type );
+		catch ( Exception exception ) {
+			throw new RuntimeException( "No match to parse string: " + stringValue + " as " + type );
 		}
 	}
 
