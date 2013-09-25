@@ -586,11 +586,13 @@ abstract class EditableProperty {
 	public Object getValue() {
 		if ( TARGET != null && PROPERTY_DESCRIPTOR != null ) {
 			final Method getter = PROPERTY_DESCRIPTOR.getReadMethod();
+			getter.setAccessible( true );
 			if ( getter.isAccessible() ) {
 				try {
 					return getter.invoke( TARGET );
 				}
 				catch( Exception exception ) {
+					System.err.println( exception );
 					return null;
 				}
 			}
@@ -601,6 +603,12 @@ abstract class EditableProperty {
 		else {
 			return null;
 		}
+	}
+
+
+	/** Get the units */
+	public String getUnits() {
+		return null;
 	}
 
 
@@ -674,9 +682,54 @@ abstract class EditableProperty {
 
 /** editable property representing a primitive that is directly editable */
 class EditablePrimitiveProperty extends EditableProperty {
+	/** property's units */
+	final private String UNITS;
+
+
 	/** Constructor */
 	protected EditablePrimitiveProperty( final String pathPrefix, final Object target, final PropertyDescriptor descriptor ) {
 		super( pathPrefix, target, descriptor );
+
+		UNITS = fetchUnits();
+	}
+
+
+	/** fetch the units */
+	private String fetchUnits() {
+		// form the accessor as get<PropertyName>Units() replacing <PropertyName> with the property's name whose first character is upper case
+		final char[] nameChars = getName().toCharArray();
+		nameChars[0] = Character.toUpperCase( nameChars[0] );		// capitalize the first character of the name
+		final String propertyName = String.valueOf( nameChars );	// property name whose first character is upper case
+
+		// first look for a method of the form get<PropertyName>Units() taking no arguments and returning a String
+		final String unitsAccessorName = "get" + propertyName + "Units";
+		try {
+			final Method unitsAccessor = TARGET.getClass().getMethod( unitsAccessorName );
+			if ( unitsAccessor.getReturnType() == String.class ) {
+				unitsAccessor.setAccessible( true );
+				return (String)unitsAccessor.invoke( TARGET );
+			}
+		}
+		catch ( NoSuchMethodException exception ) {
+			// fallback look for a method of the form getUnitsForProperty( String name ) returning a String
+			try {
+				final Method unitsAccessor = TARGET.getClass().getMethod( "getUnitsForProperty", String.class );
+				if ( unitsAccessor.getReturnType() == String.class ) {
+					unitsAccessor.setAccessible( true );
+					return (String)unitsAccessor.invoke( TARGET, getName() );
+				}
+				return "";
+			}
+			catch( Exception fallbackException ) {
+				return "";
+			}
+		}
+		catch( Exception exception ) {
+			System.out.println( exception );
+			return "";
+		}
+
+		return "";
 	}
 
 
@@ -719,6 +772,18 @@ class EditablePrimitiveProperty extends EditableProperty {
 				throw new RuntimeException( "Cannot set value " + value + " on target: " + TARGET + " because the property descriptor is null." );
 			}
 		}
+	}
+
+
+	/** Get the units */
+	public String getUnits() {
+		return UNITS;
+	}
+
+
+	/** Get a string represenation of this property */
+	public String toString() {
+		return getPath() + ": " + getValue() + " " + getUnits();
 	}
 }
 
