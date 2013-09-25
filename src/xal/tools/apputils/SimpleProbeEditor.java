@@ -118,7 +118,7 @@ public class SimpleProbeEditor extends JDialog {
         // button to publish changes and dismiss the panel
         final JButton okayButton = new JButton( "Okay" );
 		okayButton.setToolTipText( "Publish values to the probe and dismiss the dialog." );
-        okayButton.setEnabled( false );
+        okayButton.setEnabled( true );
 
         //Add the action listener as the ApplyButtonListener
         revertButton.addActionListener( new ActionListener() {
@@ -126,7 +126,6 @@ public class SimpleProbeEditor extends JDialog {
 				revertFromProbe();
 				revertButton.setEnabled( false );
 				publishButton.setEnabled( false );
-				okayButton.setEnabled( false );
 			}
 		});
         controlPanel.add( revertButton );
@@ -137,7 +136,6 @@ public class SimpleProbeEditor extends JDialog {
 				publishToProbe();
 				revertButton.setEnabled( false );
 				publishButton.setEnabled( false );
-				okayButton.setEnabled( false );
 			}
 		});
         controlPanel.add( publishButton );
@@ -162,7 +160,6 @@ public class SimpleProbeEditor extends JDialog {
 			public void recordModified( final KeyValueTableModel<PropertyRecord> source, final PropertyRecord record, final String keyPath, final Object value ) {
 				revertButton.setEnabled( true );
 				publishButton.setEnabled( true );
-				okayButton.setEnabled( true );
 			}
 		});
 
