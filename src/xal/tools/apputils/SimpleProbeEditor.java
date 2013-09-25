@@ -9,6 +9,7 @@
 
 package xal.tools.apputils;
 
+import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.BorderLayout;
@@ -56,9 +57,10 @@ public class SimpleProbeEditor extends JDialog {
 
 		PROBE_PROPERTY_RECORDS = PropertyRecord.toRecords( probePropertyTree );
 
-		PROPERTY_TABLE_MODEL = new KeyValueFilteredTableModel<>( PROBE_PROPERTY_RECORDS, "path", "value", "units" );
-		PROPERTY_TABLE_MODEL.setColumnName( "path", "Property" );
-		PROPERTY_TABLE_MODEL.setColumnEditKeyPath( "value", "editable" );
+		PROPERTY_TABLE_MODEL = new KeyValueFilteredTableModel<>( PROBE_PROPERTY_RECORDS, "displayLabel", "value", "units" );
+		PROPERTY_TABLE_MODEL.setMatchingKeyPaths( "path" );					// match on the path
+		PROPERTY_TABLE_MODEL.setColumnName( "displayLabel", "Property" );
+		PROPERTY_TABLE_MODEL.setColumnEditKeyPath( "value", "editable" );	// the value is editable if the record is editable
 
         setSize( 600, 600 );			// Set the window size
         initializeComponents();			// Set up each component in the editor
@@ -114,8 +116,12 @@ public class SimpleProbeEditor extends JDialog {
 
         //Table containing the properties that can be modified
         final JTable propertyTable = new JTable() {
-            //Serializable version ID
+            /** Serializable version ID */
             private static final long serialVersionUID = 1L;
+
+			/** renderer for a table section */
+			private final TableCellRenderer SECTION_RENDERER = makeSectionRenderer();
+
             
             //Get the cell editor for the table
             @Override
@@ -141,7 +147,7 @@ public class SimpleProbeEditor extends JDialog {
 
                 //Set the renderer according to the property type (e.g. Boolean => checkbox display, numeric => right justified)
 				if ( !record.isEditable() ) {
-                    return super.getCellRenderer( row, col );
+                    return SECTION_RENDERER;
 				}
 				else if ( value == null ) {
                     return super.getCellRenderer( row, col );
@@ -150,6 +156,14 @@ public class SimpleProbeEditor extends JDialog {
 					return getDefaultRenderer( value.getClass() );
 				}
             }
+
+
+			private TableCellRenderer makeSectionRenderer() {
+				final DefaultTableCellRenderer renderer = new DefaultTableCellRenderer();
+				renderer.setBackground( Color.GRAY );
+				renderer.setForeground( Color.WHITE );
+				return renderer;
+			}
         };
         
         //Set the table to allow one-click edit
@@ -215,6 +229,12 @@ class PropertyRecord {
 	/** Get the path to this property */
 	public String getPath() {
 		return PROPERTY.getPath();
+	}
+
+
+	/**  Get the label for display. */
+	public String getDisplayLabel() {
+		return isEditable() ? getName() : getPath();
 	}
 
 
