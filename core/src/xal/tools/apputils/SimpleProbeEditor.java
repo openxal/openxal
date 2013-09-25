@@ -22,8 +22,8 @@ import java.util.*;
 import xal.model.probe.Probe;
 import xal.model.IAlgorithm;
 import xal.tools.bricks.*;
-import xal.tools.swing.KeyValueFilteredTableModel;
-import xal.tools.data.KeyValueAdaptor;
+import xal.tools.swing.*;
+import xal.tools.data.*;
 import java.beans.*;
 import java.lang.reflect.*;
 
@@ -78,41 +78,91 @@ public class SimpleProbeEditor extends JDialog {
         return PROBE;
     }
 
+
+	/** publish record values to the probe */
+	private void publishToProbe() {
+		for ( final PropertyRecord record : PROBE_PROPERTY_RECORDS ) {
+			record.publishIfNeeded();
+		}
+	}
+
+
+	/** revert the record values from the probe */
+	private void revertFromProbe() {
+		for ( final PropertyRecord record : PROBE_PROPERTY_RECORDS ) {
+			record.revertIfNeeded();
+		}
+		PROPERTY_TABLE_MODEL.fireTableDataChanged();
+	}
+
     
     /** Initialize the components of the probe editor */
     public void initializeComponents() {
-        //Panel containing all elements
-        final JPanel mainContainer = new JPanel();
-        //Set the layout of the panel to a BorderLayout
-        mainContainer.setLayout( new BorderLayout() );
-        //Panel containing apply and close button with a 1 row, 2 column grid layout
-        final JPanel controlPanel = new JPanel( new GridLayout(1, 2) );
+        //main view containing all components
+        final Box mainContainer = new Box( BoxLayout.Y_AXIS );
 
-        //Apply button
-        final JButton applyButton = new JButton( "Apply" );
-        applyButton.setEnabled( false );
+        //Panel containing buttons
+        final Box controlPanel = new Box( BoxLayout.X_AXIS );
 
-        //Close button
-        final JButton closeButton = new JButton( "Close" );
-        
-        //Set the close button's action to close the dialog
-        closeButton.addActionListener( new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                dispose();
-            }
-        });
-        
+        // button to revert changes back to last saved state
+        final JButton revertButton = new JButton( "Revert" );
+		revertButton.setToolTipText( "Revert values back to those in probe." );
+        revertButton.setEnabled( false );
+
+        // button to publish changes
+        final JButton publishButton = new JButton( "Publish" );
+		publishButton.setToolTipText( "Publish values to the probe." );
+        publishButton.setEnabled( false );
+
+        // button to publish changes and dismiss the panel
+        final JButton okayButton = new JButton( "Okay" );
+		okayButton.setToolTipText( "Publish values to the probe and dismiss the dialog." );
+        okayButton.setEnabled( false );
+
         //Add the action listener as the ApplyButtonListener
-        applyButton.addActionListener( new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
+        revertButton.addActionListener( new ActionListener() {
+			public void actionPerformed( final ActionEvent event ) {
+				revertFromProbe();
+				revertButton.setEnabled( false );
+				publishButton.setEnabled( false );
+				okayButton.setEnabled( false );
 			}
 		});
-		
-        //Add the close button to the button panel
-        controlPanel.add( closeButton );
-        //Add the apply button to the button panel
-        controlPanel.add( applyButton );
+        controlPanel.add( revertButton );
+
+        //Add the action listener as the ApplyButtonListener
+        publishButton.addActionListener( new ActionListener() {
+			public void actionPerformed( final ActionEvent event ) {
+				publishToProbe();
+				revertButton.setEnabled( false );
+				publishButton.setEnabled( false );
+				okayButton.setEnabled( false );
+			}
+		});
+        controlPanel.add( publishButton );
+
+        //Add the action listener as the ApplyButtonListener
+        okayButton.addActionListener( new ActionListener() {
+			public void actionPerformed( final ActionEvent event ) {
+				try {
+					publishToProbe();
+					dispose();
+				}
+				catch( Exception exception ) {
+					System.out.println( "Exception publishing values to probe: " + exception );
+				}
+			}
+		});
+        controlPanel.add( okayButton );
+
+
+		PROPERTY_TABLE_MODEL.addKeyValueRecordListener( new KeyValueRecordListener<KeyValueTableModel<PropertyRecord>,PropertyRecord>() {
+			public void recordModified( final KeyValueTableModel<PropertyRecord> source, final PropertyRecord record, final String keyPath, final Object value ) {
+				revertButton.setEnabled( true );
+				publishButton.setEnabled( true );
+				okayButton.setEnabled( true );
+			}
+		});
 
         //Table containing the properties that can be modified
         final JTable propertyTable = new JTable() {
@@ -186,10 +236,10 @@ public class SimpleProbeEditor extends JDialog {
 
         //Add the scrollpane to the table with a vertical scrollbar
         final JScrollPane scrollPane = new JScrollPane( propertyTable, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED );
-        mainContainer.add( scrollPane, BorderLayout.CENTER );
+        mainContainer.add( scrollPane );
 
         //Add the buttons to the bottom of the dialog
-        mainContainer.add( controlPanel, BorderLayout.SOUTH );
+        mainContainer.add( controlPanel );
 
         //Add everything to the dialog
         add( mainContainer );
@@ -214,9 +264,8 @@ class PropertyRecord {
 	public PropertyRecord( final EditableProperty property ) {
 		PROPERTY = property;
 
-		// the value is only meaningful for primitive properties (only thing we want to display)
-		_value = property.isPrimitive() ? PROPERTY.getValue() : null;
-		_hasChanges = false;
+		// initialize the value and status from the underlying property
+		revert();
 	}
 
 
@@ -313,6 +362,22 @@ class PropertyRecord {
 	/** indicates whether this record has unpublished changes */
 	public boolean hasChanges() {
 		return _hasChanges;
+	}
+
+
+	/** revert to the property value if this record is editable and has unpublished changes */
+	public void revertIfNeeded() {
+		if ( isEditable() && hasChanges() ) {
+			revert();
+		}
+	}
+
+
+	/** revert back to the current value of the underlying property */
+	public void revert() {
+		// the value is only meaningful for primitive properties (only thing we want to display)
+		_value = PROPERTY.isPrimitive() ? PROPERTY.getValue() : null;
+		_hasChanges = false;
 	}
 
 
