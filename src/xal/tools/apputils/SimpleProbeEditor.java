@@ -119,40 +119,36 @@ public class SimpleProbeEditor extends JDialog {
             
             //Get the cell editor for the table
             @Override
-            public TableCellEditor getCellEditor(int row, int col) {
+            public TableCellEditor getCellEditor( final int row, final int col ) {
                 //Value at [row, col] of the table
-                Object value = getValueAt(row, col);
-                
-                //Set the appropriate editor for each value type
-                if( value instanceof Boolean )
-                    return getDefaultEditor( Boolean.class );
-                else if( value instanceof Double )
-                    return getDefaultEditor( Double.class );
-                else if( value instanceof Integer )
-                    return getDefaultEditor( Integer.class );
-                
-                //Default editor (String type)
-                return super.getCellEditor( row, col );
+                final Object value = getValueAt( row, col );
+
+				if ( value == null ) {
+					return super.getCellEditor( row, col );
+				}
+				else {
+                    return getDefaultEditor( value.getClass() );
+				}
             }
             
             //Get the cell renderer for the table to change how values are displayed
             @Override
-            public TableCellRenderer getCellRenderer(int row, int col) {
-                //Value at [row, col]
-                Object value = getValueAt(row, col);
- 
-                //Set the renderer of each type
-                //Boolean = checkbox display
-                //Double/Int = right aligned display
-                if( value instanceof Boolean )
-                    return getDefaultRenderer( Boolean.class );
-                else if( value instanceof Double )
-                    return getDefaultRenderer( Double.class );
-                else if( value instanceof Integer )
-                    return getDefaultRenderer( Integer.class );
-                
-                //Default = left aligned string display
-                return super.getCellRenderer( row, col );
+            public TableCellRenderer getCellRenderer( final int row, final int col ) {
+				// index of the record in the model
+				final int recordIndex = this.convertRowIndexToModel( row );
+				final PropertyRecord record = PROPERTY_TABLE_MODEL.getRecordAtRow( recordIndex );
+				final Object value = getValueAt( row, col );
+
+                //Set the renderer according to the property type (e.g. Boolean => checkbox display, numeric => right justified)
+				if ( !record.isEditable() ) {
+                    return super.getCellRenderer( row, col );
+				}
+				else if ( value == null ) {
+                    return super.getCellRenderer( row, col );
+				}
+				else {
+					return getDefaultRenderer( value.getClass() );
+				}
             }
         };
         
