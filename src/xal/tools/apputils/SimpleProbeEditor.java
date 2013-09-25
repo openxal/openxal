@@ -732,8 +732,11 @@ class EditablePropertyContainer extends EditableProperty {
 	/** set of ancestors to reference to prevent cycles */
 	final private Set<Object> ANCESTORS;
 	
-	/** list of child properties */
-	protected List<EditableProperty> _childProperties;
+	/** list of child primitive properties */
+	protected List<EditablePrimitiveProperty> _childPrimitiveProperties;
+
+	/** list of child property containers */
+	protected List<EditablePropertyContainer> _childPropertyContainers;
 
 
 	/** Primary Constructor */
@@ -797,20 +800,23 @@ class EditablePropertyContainer extends EditableProperty {
 	/** get the number of child properties */
 	public int getChildCount() {
 		generateChildPropertiesIfNeeded();
-		return _childProperties.size();
+		return _childPrimitiveProperties.size() + _childPropertyContainers.size();
 	}
 
 
 	/** Get the child properties */
 	public List<EditableProperty> getChildProperties() {
 		generateChildPropertiesIfNeeded();
-		return _childProperties;
+		final List<EditableProperty> properties = new ArrayList<>();
+		properties.addAll( _childPrimitiveProperties );
+		properties.addAll( _childPropertyContainers );
+		return properties;
 	}
 
 
 	/** generate the child properties if needed */
 	protected void generateChildPropertiesIfNeeded() {
-		if ( _childProperties == null ) {
+		if ( _childPrimitiveProperties == null ) {
 			generateChildProperties();
 		}
 	}
@@ -818,7 +824,8 @@ class EditablePropertyContainer extends EditableProperty {
 
 	/** Generate the child properties this container's child target */
 	protected void generateChildProperties() {
-		_childProperties = new ArrayList<EditableProperty>();
+		_childPrimitiveProperties = new ArrayList<>();
+		_childPropertyContainers = new ArrayList<>();
 
 		final PropertyDescriptor[] descriptors = getPropertyDescriptors( CHILD_TARGET );
 		if ( descriptors != null ) {
@@ -840,7 +847,7 @@ class EditablePropertyContainer extends EditableProperty {
 			final Method getter = descriptor.getReadMethod();
 			final Method setter = descriptor.getWriteMethod();
 			if ( getter != null && setter != null ) {
-				_childProperties.add( new EditablePrimitiveProperty( PATH, CHILD_TARGET, descriptor ) );
+				_childPrimitiveProperties.add( new EditablePrimitiveProperty( PATH, CHILD_TARGET, descriptor ) );
 			}
 			return;		// reached end of branch so we are done
 		}
@@ -859,7 +866,7 @@ class EditablePropertyContainer extends EditableProperty {
 				ancestors.add( CHILD_TARGET );
 				final EditablePropertyContainer container = new EditablePropertyContainer( PATH, CHILD_TARGET, descriptor, ancestors );
 				if ( container.getChildCount() > 0 ) {	// only care about containers that lead to editable properties
-					_childProperties.add( container );
+					_childPropertyContainers.add( container );
 				}
 			}
 			return;
@@ -870,11 +877,10 @@ class EditablePropertyContainer extends EditableProperty {
 	/** Get a string represenation of this property */
 	public String toString() {
 		final StringBuilder buffer = new StringBuilder();
-		buffer.append( "\n" + getPath() + ":\n" );
+		buffer.append( getPath() + ":\n" );
 		for ( final EditableProperty property : getChildProperties() ) {
 			buffer.append( "\t" + property.toString() + "\n" );
 		}
-		buffer.append( "\n" );
 		return buffer.toString();
 	}
 }
