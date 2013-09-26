@@ -134,6 +134,33 @@ public class KeyValueTableModel<RecordType> extends AbstractTableModel {
 		_records = records;
 		fireTableDataChanged();
 	}
+
+
+	/**
+	 * Get the key path for the specified model column
+	 * @param column model column for which to get the key path
+	 * @return key path for the specified model column or null if the column is out of bounds
+	 */
+	public String getKeyPathForColumn( final int column ) {
+		return column >= 0 && column < _keyPaths.length ? _keyPaths[column] : null;
+	}
+
+
+	/** 
+	 * Get the model column for the specified key path
+	 * @param keyPath key path to the specified column
+	 * @return model column index for the specified key path or -1 if no match
+	 */
+	public int getColumnForKeyPath( final String keyPath ) {
+		if ( keyPath == null )  return -1;	// nothing to match
+
+		for ( int column = 0 ; column < _keyPaths.length ; column++  ) {
+			if ( keyPath.equals( _keyPaths[column] ) )  return column;
+		}
+
+		// no match was found
+		return -1;
+	}
 	
 	
 	/**
