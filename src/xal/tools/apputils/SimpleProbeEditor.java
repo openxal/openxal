@@ -449,7 +449,7 @@ abstract class EditableProperty {
 	// static initializer
 	static {
 		// cache the editable properties in a set for quick comparison later
-		final Class<?>[] editablePropertyTypes = { Double.class, Double.TYPE, Integer.class, Integer.TYPE, Boolean.class, Boolean.TYPE, String.class };
+		final Class<?>[] editablePropertyTypes = { Double.class, Double.TYPE, Float.class, Float.TYPE, Integer.class, Integer.TYPE, Short.class, Short.TYPE, Long.class, Long.TYPE, Boolean.class, Boolean.TYPE, String.class };
 		for ( final Class<?> type : editablePropertyTypes ) {
 			EDITABLE_PROPERTY_TYPES.add( type );
 		}
