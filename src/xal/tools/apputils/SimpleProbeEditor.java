@@ -43,6 +43,9 @@ public class SimpleProbeEditor extends JDialog {
     /** Probe that is being edited */
     final private Probe PROBE;
 
+	/** model column for the value in the property table */
+	final private int PROPERTY_TABLE_VALUE_COLUMN;
+
 	
     /* Constructor that takes a window parent
      * and a probe to fetch properties from
@@ -62,6 +65,7 @@ public class SimpleProbeEditor extends JDialog {
 		PROPERTY_TABLE_MODEL.setMatchingKeyPaths( "path" );					// match on the path
 		PROPERTY_TABLE_MODEL.setColumnName( "displayLabel", "Property" );
 		PROPERTY_TABLE_MODEL.setColumnEditKeyPath( "value", "editable" );	// the value is editable if the record is editable
+		PROPERTY_TABLE_VALUE_COLUMN = PROPERTY_TABLE_MODEL.getColumnForKeyPath( "value" );	// store the column for the "value" key path
 
         setSize( 600, 600 );			// Set the window size
         initializeComponents();			// Set up each component in the editor
@@ -85,6 +89,7 @@ public class SimpleProbeEditor extends JDialog {
 		for ( final PropertyRecord record : PROBE_PROPERTY_RECORDS ) {
 			record.publishIfNeeded();
 		}
+		PROPERTY_TABLE_MODEL.fireTableDataChanged();
 	}
 
 
@@ -181,21 +186,28 @@ public class SimpleProbeEditor extends JDialog {
             
             //Get the cell renderer for the table to change how values are displayed
             @Override
-            public TableCellRenderer getCellRenderer( final int row, final int col ) {
+            public TableCellRenderer getCellRenderer( final int row, final int column ) {
 				// index of the record in the model
 				final int recordIndex = this.convertRowIndexToModel( row );
 				final PropertyRecord record = PROPERTY_TABLE_MODEL.getRecordAtRow( recordIndex );
-				final Object value = getValueAt( row, col );
+				final Object value = getValueAt( row, column );
 
                 //Set the renderer according to the property type (e.g. Boolean => checkbox display, numeric => right justified)
 				if ( !record.isEditable() ) {
                     return SECTION_RENDERER;
 				}
 				else if ( value == null ) {
-                    return super.getCellRenderer( row, col );
+                    return super.getCellRenderer( row, column );
 				}
 				else {
-					return getDefaultRenderer( value.getClass() );
+					final TableCellRenderer renderer = getDefaultRenderer( value.getClass() );
+					if ( renderer instanceof DefaultTableCellRenderer ) {
+						final DefaultTableCellRenderer defaultRenderer = (DefaultTableCellRenderer)renderer;
+						final int modelColumn = convertColumnIndexToModel( column );
+						// highlight the cell if the column corresponds to the value and it has unpublished changes
+						defaultRenderer.setForeground( modelColumn == PROPERTY_TABLE_VALUE_COLUMN && record.hasChanges() ? Color.BLUE : Color.BLACK );
+					}
+					return renderer;
 				}
             }
 
