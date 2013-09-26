@@ -829,36 +829,41 @@ class EditablePropertyContainer extends EditableProperty {
 
 	/** Generate the child properties starting at the specified descriptor for this container's child target */
 	protected void generateChildPropertyForDescriptor( final PropertyDescriptor descriptor ) {
-		final Class<?> propertyType = descriptor.getPropertyType();
+		final Method getter = descriptor.getReadMethod();
 
-		if ( EDITABLE_PROPERTY_TYPES.contains( propertyType ) ) {
-			// if the property is an editable primitive with both a getter and setter then return the primitive property instance otherwise null
-			final Method getter = descriptor.getReadMethod();
-			final Method setter = descriptor.getWriteMethod();
-			if ( getter != null && setter != null ) {
-				_childPrimitiveProperties.add( new EditablePrimitiveProperty( PATH, CHILD_TARGET, descriptor ) );
-			}
-			return;		// reached end of branch so we are done
-		}
-		else if ( propertyType == null ) {
-			return;
-		}
-		else if ( propertyType.isArray() ) {
-			// property is an array
-//			System.out.println( "Property type is array for target: " + CHILD_TARGET + " with descriptor: " + descriptor.getName() );
-			return;
-		}
-		else {
-			// property is a plain container
-			if ( !ANCESTORS.contains( CHILD_TARGET ) ) {	// only propagate down the branch if the targets are unique (avoid cycles)
-				final Set<Object> ancestors = new HashSet<Object>( ANCESTORS );
-				ancestors.add( CHILD_TARGET );
-				final EditablePropertyContainer container = new EditablePropertyContainer( PATH, CHILD_TARGET, descriptor, ancestors );
-				if ( container.getChildCount() > 0 ) {	// only care about containers that lead to editable properties
-					_childPropertyContainers.add( container );
+		// include only properties whether the getter exists and is not deprecated
+		if ( getter != null && getter.getAnnotation( Deprecated.class ) == null ) {
+			final Class<?> propertyType = descriptor.getPropertyType();
+
+			if ( EDITABLE_PROPERTY_TYPES.contains( propertyType ) ) {
+				// if the property is an editable primitive with both a getter and setter then return the primitive property instance otherwise null
+				final Method setter = descriptor.getWriteMethod();
+				// include only properties whether the setter exists and is not deprecated (getter was already filtered in an enclosing block)
+				if ( setter != null && setter.getAnnotation( Deprecated.class ) == null ) {
+					_childPrimitiveProperties.add( new EditablePrimitiveProperty( PATH, CHILD_TARGET, descriptor ) );
 				}
+				return;		// reached end of branch so we are done
 			}
-			return;
+			else if ( propertyType == null ) {
+				return;
+			}
+			else if ( propertyType.isArray() ) {
+				// property is an array
+				//			System.out.println( "Property type is array for target: " + CHILD_TARGET + " with descriptor: " + descriptor.getName() );
+				return;
+			}
+			else {
+				// property is a plain container
+				if ( !ANCESTORS.contains( CHILD_TARGET ) ) {	// only propagate down the branch if the targets are unique (avoid cycles)
+					final Set<Object> ancestors = new HashSet<Object>( ANCESTORS );
+					ancestors.add( CHILD_TARGET );
+					final EditablePropertyContainer container = new EditablePropertyContainer( PATH, CHILD_TARGET, descriptor, ancestors );
+					if ( container.getChildCount() > 0 ) {	// only care about containers that lead to editable properties
+						_childPropertyContainers.add( container );
+					}
+				}
+				return;
+			}
 		}
 	}
 
