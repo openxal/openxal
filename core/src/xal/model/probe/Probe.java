@@ -500,7 +500,7 @@ public abstract class Probe implements IProbe, IArchive {
 				case bunchFrequency:
 					return "Hz";
 				case kineticEnergy:
-					return "Hz";
+					return "eV";
 				case position:
 					return "meters";
 				case speciesRestEnergy:
