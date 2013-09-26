@@ -102,9 +102,6 @@ public class SimpleProbeEditor extends JDialog {
         //main view containing all components
         final Box mainContainer = new Box( BoxLayout.Y_AXIS );
 
-        //Panel containing buttons
-        final Box controlPanel = new Box( BoxLayout.X_AXIS );
-
         // button to revert changes back to last saved state
         final JButton revertButton = new JButton( "Revert" );
 		revertButton.setToolTipText( "Revert values back to those in probe." );
@@ -128,7 +125,6 @@ public class SimpleProbeEditor extends JDialog {
 				publishButton.setEnabled( false );
 			}
 		});
-        controlPanel.add( revertButton );
 
         //Add the action listener as the ApplyButtonListener
         publishButton.addActionListener( new ActionListener() {
@@ -138,7 +134,6 @@ public class SimpleProbeEditor extends JDialog {
 				publishButton.setEnabled( false );
 			}
 		});
-        controlPanel.add( publishButton );
 
         //Add the action listener as the ApplyButtonListener
         okayButton.addActionListener( new ActionListener() {
@@ -153,8 +148,6 @@ public class SimpleProbeEditor extends JDialog {
 				}
 			}
 		});
-        controlPanel.add( okayButton );
-
 
 		PROPERTY_TABLE_MODEL.addKeyValueRecordListener( new KeyValueRecordListener<KeyValueTableModel<PropertyRecord>,PropertyRecord>() {
 			public void recordModified( final KeyValueTableModel<PropertyRecord> source, final PropertyRecord record, final String keyPath, final Object value ) {
@@ -239,6 +232,11 @@ public class SimpleProbeEditor extends JDialog {
         mainContainer.add( scrollPane );
 
         //Add the buttons to the bottom of the dialog
+        final Box controlPanel = new Box( BoxLayout.X_AXIS );
+		controlPanel.add( revertButton );
+		controlPanel.add( Box.createHorizontalGlue() );
+        controlPanel.add( publishButton );
+        controlPanel.add( okayButton );
         mainContainer.add( controlPanel );
 
         //Add everything to the dialog
