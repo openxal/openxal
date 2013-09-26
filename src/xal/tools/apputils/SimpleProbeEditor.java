@@ -312,8 +312,19 @@ class PropertyRecord {
 	/** set the pending value */
 	public void setValueAsObject( final Object value ) {
 		if ( isEditable() ) {
-			_hasChanges = true;
 			_value = value;
+
+			// get the property's current value
+			final Object propertyValue = PROPERTY.getValue();
+
+			// if the value is really different from the property's current value then mark it as having changes
+			// if the value is null then look for strict equality otherwise compare using equals
+			if ( ( value == null && value != propertyValue ) || ( value != null && !value.equals( propertyValue ) )  ) {
+				_hasChanges = true;
+			}
+			else {
+				_hasChanges = false;
+			}
 		}
 	}
 
