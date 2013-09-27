@@ -20,6 +20,7 @@ import javax.swing.*;
 import javax.swing.table.*;
 import java.util.*;
 
+import xal.tools.annotation.Units;
 import xal.model.probe.Probe;
 import xal.model.IAlgorithm;
 import xal.tools.bricks.*;
@@ -630,38 +631,46 @@ class EditablePrimitiveProperty extends EditableProperty {
 
 	/** fetch the units */
 	private String fetchUnits() {
-		// form the accessor as get<PropertyName>Units() replacing <PropertyName> with the property's name whose first character is upper case
-		final char[] nameChars = getName().toCharArray();
-		nameChars[0] = Character.toUpperCase( nameChars[0] );		// capitalize the first character of the name
-		final String propertyName = String.valueOf( nameChars );	// property name whose first character is upper case
+		// first check to see if there is a Units annotation (ideal when known at compile time) on the accessor method and use it otherwise fallback to fetching by unit property methods
+		final Method readMethod = PROPERTY_DESCRIPTOR.getReadMethod();
+		final Units units = readMethod != null ? readMethod.getAnnotation( Units.class ) : null;
+		if ( units != null ) {
+			return units.value();
+		}
+		else {		// unit property methods allow for dynamic units (i.e. units not known at runtime)
+			// form the accessor as get<PropertyName>Units() replacing <PropertyName> with the property's name whose first character is upper case
+			final char[] nameChars = getName().toCharArray();
+			nameChars[0] = Character.toUpperCase( nameChars[0] );		// capitalize the first character of the name
+			final String propertyName = String.valueOf( nameChars );	// property name whose first character is upper case
 
-		// first look for a method of the form get<PropertyName>Units() taking no arguments and returning a String
-		final String unitsAccessorName = "get" + propertyName + "Units";
-		try {
-			final Method unitsAccessor = TARGET.getClass().getMethod( unitsAccessorName );
-			if ( unitsAccessor.getReturnType() == String.class ) {
-				return (String)unitsAccessor.invoke( TARGET );
-			}
-		}
-		catch ( NoSuchMethodException exception ) {
-			// fallback look for a method of the form getUnitsForProperty( String name ) returning a String
+			// first look for a method of the form get<PropertyName>Units() taking no arguments and returning a String
+			final String unitsAccessorName = "get" + propertyName + "Units";
 			try {
-				final Method unitsAccessor = TARGET.getClass().getMethod( "getUnitsForProperty", String.class );
+				final Method unitsAccessor = TARGET.getClass().getMethod( unitsAccessorName );
 				if ( unitsAccessor.getReturnType() == String.class ) {
-					return (String)unitsAccessor.invoke( TARGET, getName() );
+					return (String)unitsAccessor.invoke( TARGET );
 				}
+			}
+			catch ( NoSuchMethodException exception ) {
+				// fallback look for a method of the form getUnitsForProperty( String name ) returning a String
+				try {
+					final Method unitsAccessor = TARGET.getClass().getMethod( "getUnitsForProperty", String.class );
+					if ( unitsAccessor.getReturnType() == String.class ) {
+						return (String)unitsAccessor.invoke( TARGET, getName() );
+					}
+					return "";
+				}
+				catch( Exception fallbackException ) {
+					return "";
+				}
+			}
+			catch( Exception exception ) {
+				System.out.println( exception );
 				return "";
 			}
-			catch( Exception fallbackException ) {
-				return "";
-			}
-		}
-		catch( Exception exception ) {
-			System.out.println( exception );
+			
 			return "";
 		}
-
-		return "";
 	}
 
 

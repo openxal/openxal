@@ -10,6 +10,7 @@
 package xal.model.probe;
 
 
+import xal.tools.annotation.Units;
 import xal.tools.math.r3.R3;
 
 import xal.model.probe.traj.BeamTrajectory;
@@ -165,6 +166,7 @@ public abstract class BunchProbe extends Probe {
      *      
      * @return  bunch frequency in Hertz
      */
+	@Units( "Hz" )
     public double getBunchFrequency()  {
         return this.dlbFreq;
     };
@@ -174,6 +176,7 @@ public abstract class BunchProbe extends Probe {
      * 
      * @return  beam current in <b>amps</b>
      */
+	@Units( "amps" )
     public double getBeamCurrent() { 
         return dblCurrent;  
      }
@@ -183,6 +186,7 @@ public abstract class BunchProbe extends Probe {
      * 
      * @return vector (psix,psiy,psiz) of phases in <b>radians </b>
      */
+	@Units( "radians" )
     public R3 getBetatronPhase() {
         return this.vecPhsBeta;
     }
