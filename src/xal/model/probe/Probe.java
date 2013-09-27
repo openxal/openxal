@@ -7,7 +7,8 @@
 package xal.model.probe;
 
 
-import xal.tools.annotation.Units;
+import xal.tools.annotation.AProperty.NoEdit;
+import xal.tools.annotation.AProperty.Units;
 import xal.tools.data.DataAdaptor;
 import xal.tools.data.DataFormatException;
 import xal.tools.data.IArchive;
@@ -403,6 +404,7 @@ public abstract class Probe implements IProbe, IArchive {
      *
      *  @return     time stamp
      */
+	@NoEdit	// editors should not access this property
     public Date     getTimestamp()              { return m_dateStamp; };
 
 
@@ -413,7 +415,8 @@ public abstract class Probe implements IProbe, IArchive {
      * 
      *  @return     Trajectory object of the proper sub-type for the probe type 
      */
-    public Trajectory getTrajectory() { 
+	@NoEdit	// editors should not access this property
+    public Trajectory getTrajectory() {
         if (m_trajHist == null) {
             this.m_trajHist = createTrajectory();
         }
@@ -529,6 +532,7 @@ public abstract class Probe implements IProbe, IArchive {
      * 
      * @author jdg
      */
+	@NoEdit	// editors should not edit this property
     public void setTime(double dblTime) {
         this.m_dblTime = dblTime;
     }
@@ -621,6 +625,7 @@ public abstract class Probe implements IProbe, IArchive {
      * 
      * @see xal.tools.data.IArchive
      */
+	@NoEdit	// hide this property so it doesn't appear in editors
     public IArchive getArchive()        { return this; };
 
     
