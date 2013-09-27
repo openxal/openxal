@@ -9,6 +9,7 @@ package xal.model.probe;
 
 import xal.tools.beam.PhaseVector;
 import xal.tools.data.DataAdaptor;
+import xal.tools.annotation.AProperty.NoEdit;
 
 import xal.model.probe.traj.ParticleProbeState;
 import xal.model.probe.traj.ParticleTrajectory;
@@ -92,7 +93,8 @@ public class ParticleProbe extends Probe {
 	/**
 	 * Get the fixed orbit about which betatron oscillations occur.
 	 * @return the fixed orbit vector (x,x',y,y',z,z',1)
-	 */
+	*/
+	@NoEdit		// editors should not edit this parameter as it is a computed value
 	public PhaseVector getFixedOrbit() {
     	return this.m_vecCoords;		
 	}
