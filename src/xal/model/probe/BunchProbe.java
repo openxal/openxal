@@ -10,7 +10,8 @@
 package xal.model.probe;
 
 
-import xal.tools.annotation.Units;
+import xal.tools.annotation.AProperty.NoEdit;
+import xal.tools.annotation.AProperty.Units;
 import xal.tools.math.r3.R3;
 
 import xal.model.probe.traj.BeamTrajectory;
@@ -186,7 +187,7 @@ public abstract class BunchProbe extends Probe {
      * 
      * @return vector (psix,psiy,psiz) of phases in <b>radians </b>
      */
-	@Units( "radians" )
+	@NoEdit		// editors should ignore this property as it is a computed value
     public R3 getBetatronPhase() {
         return this.vecPhsBeta;
     }
