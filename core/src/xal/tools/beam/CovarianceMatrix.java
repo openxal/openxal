@@ -1,6 +1,7 @@
 package xal.tools.beam;
 
 import xal.tools.math.r3.R3x3;
+import xal.tools.annotation.AProperty.NoEdit;
 import Jama.Matrix;
 
 
@@ -386,6 +387,7 @@ public class CovarianceMatrix extends PhaseMatrix {
      * 
      *  @return     PhaseVector representing the mean values of the correlation
      */
+	@NoEdit		// editors should ignore this property as it is really a computed value
     public PhaseVector getMean() {
         PhaseVector vec = new PhaseVector();
         

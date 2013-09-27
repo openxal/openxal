@@ -20,7 +20,8 @@ import javax.swing.*;
 import javax.swing.table.*;
 import java.util.*;
 
-import xal.tools.annotation.Units;
+import xal.tools.annotation.AProperty.NoEdit;
+import xal.tools.annotation.AProperty.Units;
 import xal.model.probe.Probe;
 import xal.model.IAlgorithm;
 import xal.tools.bricks.*;
@@ -863,15 +864,15 @@ class EditablePropertyContainer extends EditableProperty {
 	protected void generateChildPropertyForDescriptor( final PropertyDescriptor descriptor ) {
 		final Method getter = descriptor.getReadMethod();
 
-		// include only properties whether the getter exists and is not deprecated
-		if ( getter != null && getter.getAnnotation( Deprecated.class ) == null ) {
+		// include only properties if the getter exists and is not deprecated and not marked hidden
+		if ( getter != null && getter.getAnnotation( Deprecated.class ) == null && getter.getAnnotation( NoEdit.class ) == null ) {
 			final Class<?> propertyType = descriptor.getPropertyType();
 
 			if ( EDITABLE_PROPERTY_TYPES.contains( propertyType ) ) {
 				// if the property is an editable primitive with both a getter and setter then return the primitive property instance otherwise null
 				final Method setter = descriptor.getWriteMethod();
-				// include only properties whether the setter exists and is not deprecated (getter was already filtered in an enclosing block)
-				if ( setter != null && setter.getAnnotation( Deprecated.class ) == null ) {
+				// include only properties if the setter exists and is not deprecated (getter was already filtered in an enclosing block) and not marked hidden
+				if ( setter != null && setter.getAnnotation( Deprecated.class ) == null && setter.getAnnotation( NoEdit.class ) == null ) {
 					_childPrimitiveProperties.add( new EditablePrimitiveProperty( PATH, CHILD_TARGET, descriptor ) );
 				}
 				return;		// reached end of branch so we are done
