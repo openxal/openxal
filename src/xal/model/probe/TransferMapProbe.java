@@ -6,6 +6,7 @@
  */
 package xal.model.probe;
 
+import xal.tools.annotation.AProperty.NoEdit;
 import xal.tools.beam.PhaseMap;
 import xal.tools.beam.PhaseVector;
 import xal.tools.data.DataAdaptor;
@@ -103,6 +104,7 @@ public class TransferMapProbe extends Probe {
       * 
       * @return transfer map in homogeneous phase space coordinates
       */
+	 @NoEdit	// editors should not edit this parameter as it is for internal setting
      public PhaseMap getTransferMap()  {
          return this.m_mapTrans;
      }
