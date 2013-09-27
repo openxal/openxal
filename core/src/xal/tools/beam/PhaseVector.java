@@ -11,6 +11,8 @@ package xal.tools.beam;
 import  java.io.PrintWriter;
 import  java.util.StringTokenizer;
 
+import xal.tools.annotation.AProperty.NoEdit;
+import xal.tools.annotation.AProperty.Units;
 import xal.tools.data.DataAdaptor;
 import xal.tools.data.DataFormatException;
 import xal.tools.data.IArchive;
@@ -385,31 +387,37 @@ public class PhaseVector implements java.io.Serializable, IArchive {
     /**
      *  Return the x position coordinate
      */
+	@Units( "meters" )
     public double   getx()  { return this.getElem(0); };
     
     /**
      *  Return the x momentum coordinate
      */
+	@Units( "radians" )
     public double   getxp() { return this.getElem(1); };
     
     /**
      *  Return the y position coordinate
      */
+	@Units( "meters" )
     public double   gety()  { return this.getElem(2); };
     
     /**
      *  Return the y momentum coordinate
      */
+	@Units( "radians" )
     public double   getyp() { return this.getElem(3); };
     
     /**
      *  Return the z momentum coordinate
      */
+	@Units( "meters" )
     public double   getz()  { return this.getElem(4); };
     
     /**
      *  Return the z momentum coordinate
      */
+	@Units( "radians" )
     public double   getzp() { return this.getElem(5); };
     
     /**
@@ -417,6 +425,7 @@ public class PhaseVector implements java.io.Serializable, IArchive {
      *
      *  @return     (x,y,z)
      */
+	@NoEdit		// returns a new instance so should not edit
     public R3   getPosition()   { return new R3(getx(), gety(), getz()); };
     
     /**
@@ -424,6 +433,7 @@ public class PhaseVector implements java.io.Serializable, IArchive {
      *
      *  @return     (xp,yp,zp)
      */
+	@NoEdit		// returns a new instance so should not edit
     public  R3  getMomentum()   { return new R3(getxp(), getyp(), getzp()); };
         
     
