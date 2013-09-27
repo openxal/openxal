@@ -7,6 +7,7 @@
 package xal.model.probe;
 
 
+import xal.tools.annotation.Units;
 import xal.tools.data.DataAdaptor;
 import xal.tools.data.DataFormatException;
 import xal.tools.data.IArchive;
@@ -37,10 +38,6 @@ import java.util.Date;
  * @author  Christopher K. Allen
  */
 public abstract class Probe implements IProbe, IArchive {
-	/** accessible properties for which the units will be fetched */
-	private enum Property { beamCurrent, bunchFrequency, kineticEnergy, position, speciesRestEnergy }
-
-	
     /*
      * global attributes
      */
@@ -442,6 +439,7 @@ public abstract class Probe implements IProbe, IArchive {
      *
      *  @return     particle species rest energy (<b>electron-volts</b>)
      */
+	@Units( "eV" )
     public double getSpeciesRestEnergy() { return m_dblParEr; }
     
     /** Returns the momentum
@@ -464,6 +462,7 @@ public abstract class Probe implements IProbe, IArchive {
      *  
      *  @return     probe position (<b>meters</b>)
      */
+	@Units( "meters" )
     public double getPosition() { return m_dblPos; };
     
     /**
@@ -471,6 +470,7 @@ public abstract class Probe implements IProbe, IArchive {
      * 
      * @return      elapsed time in <b>seconds</b>
      */
+	@Units( "seconds" )
     public double   getTime()   {
         return this.m_dblTime;
     }
@@ -482,38 +482,8 @@ public abstract class Probe implements IProbe, IArchive {
      *
      *  @return     probe kinetic energy    (<b>electron-volts</b>)
      */
+	@Units( "eV" )
     public double getKineticEnergy()   { return m_dblW; };
-
-
-  	/** 
-	 * Get the units for the specified property.
-	 * This is a fallback method if get<PropertyName>Units() is not implemented where <PropertyName> is replaced by the property name.
-	 * @param propertyName JavaBeans property name
-	 * @return units for the specified property or an empty string if no match
-	 */
-	public String getUnitsForProperty( final String propertyName ) {
-		try {
-			final Property property = Property.valueOf( propertyName );		// throws IllegalArgumentException if no matching property
-			switch( property ) {
-				case beamCurrent:
-					return "amps";
-				case bunchFrequency:
-					return "Hz";
-				case kineticEnergy:
-					return "eV";
-				case position:
-					return "meters";
-				case speciesRestEnergy:
-					return "eV";
-				default:
-					return "";
-			}
-		}
-		catch ( IllegalArgumentException exception ) {
-			return "";
-		}
-	}
-
 
     
     /** 
