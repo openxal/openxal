@@ -71,7 +71,6 @@ public class SimpleProbeEditor extends JDialog {
 
         setSize( 600, 600 );			// Set the window size
         initializeComponents();			// Set up each component in the editor
-        pack();							// Fit the components in the window
         setLocationRelativeTo( owner );	// Center the editor in relation to the frame that constructed the editor
         setVisible(true);				// Make the window visible
     }
