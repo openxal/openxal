@@ -205,6 +205,7 @@ public class LiveOrbitSource extends OrbitSource implements RepRateListener {
 			monitorBeamEvents();
 		}
 		else {
+			_beamEventChannel = null;	// must set this to null since it is tested when configuring the monitor
 			_bpmCorrelator.removeBeamEvent();
 		}
 	}
