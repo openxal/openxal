@@ -1,10 +1,14 @@
 package ess.jels;
 import java.io.IOException;
 
+import xal.model.IComponent;
+import xal.model.IElement;
 import xal.model.Lattice;
 import xal.model.ModelException;
+import xal.model.Sector;
 import xal.model.alg.EnvelopeTracker;
 import xal.model.alg.Tracker;
+import xal.model.elem.ElementSeq;
 import xal.model.probe.EnvelopeProbe;
 import xal.model.xml.LatticeXmlWriter;
 import xal.sim.scenario.ElsScenarioGenerator;
@@ -12,6 +16,7 @@ import xal.sim.scenario.OldScenarioMapping;
 import xal.sim.scenario.Scenario;
 import xal.smf.AcceleratorSeq;
 import xal.smf.impl.Bend;
+import xal.tools.beam.IConstants;
 import xal.tools.beam.Twiss;
 
 
@@ -22,18 +27,50 @@ public class BendTest {
 		System.out.println("Running\n");
 		AcceleratorSeq sequence = new AcceleratorSeq("DriftTest");
 		
-		Bend bend = new Bend("b");
-		double alpha_deg = -11;
-		double alpha = alpha_deg * Math.PI/180.0;
-		double rho = 9375.67;
+		// input from TraceWin
+		double entry_angle_deg = -5.5;
+		double exit_angle_deg = -5.5;
+		double alpha_deg = -11; // angle in degrees
+		double rho = 9375.67*1e-3; // curvature radius (in m)
+		double N = 0.; // field Index
+		final int HV = 1;  // 0 - horizontal, 1 - vertical 
+		/* G,K1,K2 - gap, fringe field factors are supported in the model but not SMF (use G*1.e-3)*/
+		
+		// calculations
+		double alpha = alpha_deg * Math.PI/180.0;		
 		double len = Math.abs(rho*alpha);
+		double quadComp = N / (rho*rho);
+		
+		// following are used to calculate field
+		EnvelopeProbe probe = setupProbeViaJavaCalls();
+		probe.initialize();
+	    double c  = IConstants.LightSpeed;	      
+	    double e = probe.getSpeciesCharge();
+	    double Er = probe.getSpeciesRestEnergy();
+	    double gamma = probe.getGamma();
+	    double b  = probe.getBeta();
+	    double B0 = b*gamma*Er/(e*c*rho)*Math.signum(alpha);
+		
+	    
+		Bend bend = new Bend("b") {
+			@Override
+			public int getOrientation() {
+				if (HV == 0) return HORIZONTAL;  
+				else return VERTICAL; // currently impossible to put it into a file
+				
+			}			
+		};
 		bend.setPosition(len*0.5); //always position on center!
-		bend.setLength(len); // pathLength below is actually the only one read 		
+		bend.setLength(len); // both paths are used in calculation
 		bend.getMagBucket().setPathLength(len);
-		bend.getMagBucket().setDipoleEntrRotAngle(alpha_deg*0.5);
-		bend.getMagBucket().setDipoleExitRotAngle(alpha_deg*0.5);
-		bend.setDfltField(0);
-		bend.getMagBucket().setDipoleQuadComponent(0);
+		
+		bend.getMagBucket().setDipoleEntrRotAngle(-entry_angle_deg);
+		bend.getMagBucket().setBendAngle(alpha_deg);
+		bend.getMagBucket().setDipoleExitRotAngle(-exit_angle_deg);		
+		bend.setDfltField(B0);		
+		bend.getMagBucket().setDipoleQuadComponent(quadComp);
+		 
+		
 		sequence.addNode(bend);
 		sequence.setLength(len);
 				
@@ -46,11 +83,15 @@ public class BendTest {
 		saveLattice(scenario.getLattice(), "lattice.xml");
 		saveLattice(oscenario.getLattice(), "elattice.xml");
 		
-		// Creating a probe
-		EnvelopeProbe probe = setupProbeViaJavaCalls();					
+		// Creating a probe						
 		scenario.setProbe(probe);			
 		
-				
+		// Prints transfer matrices
+		/*for (IComponent comp : ((ElementSeq)((Sector)scenario.getLattice().getElementList().get(0)).getChild(1)).getElementList()) {
+			IElement el = (IElement)comp;
+			el.transferMap(probe, el.getLength()).getFirstOrder().print();
+		}*/
+		
 		// Setting up synchronization mode
 		scenario.setSynchronizationMode(Scenario.SYNC_MODE_DESIGN);					
 		scenario.resync();
