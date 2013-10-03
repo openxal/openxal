@@ -23,7 +23,7 @@ public class GapTest {
 
 	public static void main(String[] args) throws InstantiationException, ModelException {
 		System.out.println("Running\n");
-		AcceleratorSeq sequence = new AcceleratorSeq("DriftTest");
+		AcceleratorSeq sequence = new AcceleratorSeq("GapTest");
 		
 		// input from TraceWin
 		double frequency = 4.025e8; // this is global in TraceWin
@@ -47,7 +47,7 @@ public class GapTest {
 		gap.setLength(0.0); // used only for positioning
 		
 		// following are used to calculate E0TL
-		double length = 1.0;	// length is no given in OpenXal, but is used only as a factor in E0TL
+		double length = 1.0; // length is not given in TraceWin, but is used only as a factor in E0TL in OpenXal
 		gap.getRfGap().setLength(length); 		
 		gap.getRfGap().setAmpFactor(1.0);
 		/*gap.getRfGap().setGapOffset(dblVal)*/		

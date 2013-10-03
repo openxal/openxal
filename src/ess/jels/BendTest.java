@@ -25,7 +25,7 @@ public class BendTest {
 
 	public static void main(String[] args) throws InstantiationException, ModelException {
 		System.out.println("Running\n");
-		AcceleratorSeq sequence = new AcceleratorSeq("DriftTest");
+		AcceleratorSeq sequence = new AcceleratorSeq("BendTest");
 		
 		// input from TraceWin
 		double entry_angle_deg = -5.5;
@@ -33,7 +33,7 @@ public class BendTest {
 		double alpha_deg = -11; // angle in degrees
 		double rho = 9375.67*1e-3; // curvature radius (in m)
 		double N = 0.; // field Index
-		final int HV = 1;  // 0 - horizontal, 1 - vertical 
+		final int HV = 0;  // 0 - horizontal, 1 - vertical 
 		/* G,K1,K2 - gap, fringe field factors are supported in the model but not SMF (use G*1.e-3)*/
 		
 		// calculations
@@ -87,10 +87,10 @@ public class BendTest {
 		scenario.setProbe(probe);			
 		
 		// Prints transfer matrices
-		/*for (IComponent comp : ((ElementSeq)((Sector)scenario.getLattice().getElementList().get(0)).getChild(1)).getElementList()) {
+		for (IComponent comp : ((ElementSeq)((Sector)scenario.getLattice().getElementList().get(0)).getChild(1)).getElementList()) {
 			IElement el = (IElement)comp;
 			el.transferMap(probe, el.getLength()).getFirstOrder().print();
-		}*/
+		}
 		
 		// Setting up synchronization mode
 		scenario.setSynchronizationMode(Scenario.SYNC_MODE_DESIGN);					

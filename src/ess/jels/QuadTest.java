@@ -20,9 +20,9 @@ public class QuadTest {
 
 	public static void main(String[] args) throws InstantiationException, ModelException {
 		System.out.println("Running\n");
-		AcceleratorSeq sequence = new AcceleratorSeq("DriftTest");
+		AcceleratorSeq sequence = new AcceleratorSeq("QuadTest");
 		
-		Quadrupole quad = new Quadrupole("quad") { // there's setter for type (you need to extend class)
+		Quadrupole quad = new Quadrupole("quad") { // there's no setter for type (you need to extend class)
 			{_type="Q"; }
 		};
 		quad.setPosition(70e-3*0.5); //always position on center!
