@@ -6,14 +6,10 @@ import xal.model.ModelException;
 import xal.model.alg.EnvelopeTracker;
 import xal.model.alg.Tracker;
 import xal.model.probe.EnvelopeProbe;
-import xal.model.probe.traj.EnvelopeProbeState;
-import xal.model.probe.traj.Trajectory;
 import xal.model.xml.LatticeXmlWriter;
 import xal.sim.scenario.ElsScenarioGenerator;
 import xal.sim.scenario.Scenario;
-
 import xal.smf.AcceleratorSeq;
-import xal.smf.impl.Quadrupole;
 import xal.tools.beam.Twiss;
 
 
