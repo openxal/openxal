@@ -12,7 +12,7 @@ package xal.tools.beam;
  * phase space objects.  Extends the <code>PhaseIndex</code> class
  * by adding the homogeneous element position <code>HOM</code>.
  * 
- * @author  Christopher K. Alen
+ * @author  Christopher K. Allen
  */
 public enum PhaseIndexHom {
     

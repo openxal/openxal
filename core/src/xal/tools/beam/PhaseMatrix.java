@@ -320,6 +320,11 @@ public class PhaseMatrix implements IArchive, java.io.Serializable {
     /** internal matrix storage */
     private Jama.Matrix     m_matPhase;
     
+    
+    /*
+     * Initialization
+     */
+    
     /** 
      *  Creates a new instance of PhaseMatrix initialized to zero.
      */
