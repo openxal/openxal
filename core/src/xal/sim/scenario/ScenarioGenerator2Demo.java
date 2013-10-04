@@ -12,7 +12,7 @@ import xal.smf.AcceleratorSeq;
 import xal.smf.data.XMLDataManager;
 
 
-public class ScenarioGenerator2Test {
+public class ScenarioGenerator2Demo {
 
 
 	public static void main(String[] args) throws InstantiationException, ModelException {
