@@ -599,7 +599,7 @@ public abstract class SquareMatrix<M extends SquareMatrix<M>>  {
      *  <b>&sigma;</b><sub>1</sub> is given by
      *  <br/>
      *  <br/>
-     *  &nbsp; &nbsp; <b>&sigma</b><sub>1</sub> = <b>&Phi;</b><b>&sigma;</b><sub>0</sub><b>&Phi;</b><sup><i>T</i></sup>
+     *  &nbsp; &nbsp; <b>&sigma;</b><sub>1</sub> = <b>&Phi;</b><b>&sigma;</b><sub>0</sub><b>&Phi;</b><sup><i>T</i></sup>
      *  <br/>
      *  <br/> 
      *  </p>

@@ -9,13 +9,9 @@
 package xal.tools.math.r3;
 
 
-import java.io.PrintWriter;
-import java.text.DecimalFormat;
 import java.util.EnumSet;
-import java.util.StringTokenizer;
 
 import xal.tools.math.SquareMatrix;
-import Jama.Matrix;
 
 
 
