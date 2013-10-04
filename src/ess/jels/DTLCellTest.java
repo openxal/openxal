@@ -15,8 +15,8 @@ import xal.model.probe.EnvelopeProbe;
 import xal.model.probe.traj.EnvelopeProbeState;
 import xal.model.probe.traj.ProbeState;
 import xal.model.xml.LatticeXmlWriter;
-import xal.sim.scenario.ElsScenarioGenerator;
-import xal.sim.scenario.OldScenarioMapping;
+import xal.sim.scenario.ScenarioGenerator2;
+import xal.sim.scenario.DefaultElementMapping;
 import xal.sim.scenario.Scenario;
 import xal.smf.AcceleratorSeq;
 import xal.smf.attr.ApertureBucket;
@@ -131,7 +131,7 @@ public class DTLCellTest {
 				
 		// Generates lattice from SMF accelerator
 		Scenario oscenario = Scenario.newScenarioFor(sequence);
-		Scenario scenario = new ElsScenarioGenerator(sequence, new OldScenarioMapping()).getScenario();
+		Scenario scenario = new ScenarioGenerator2(sequence).generateScenario();
 		scenario.resync();
 		oscenario.resync();
 		//Scenario oscenario = Scenario.newAndImprovedScenarioFor(sequence);

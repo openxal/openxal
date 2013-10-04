@@ -9,8 +9,8 @@ import xal.model.alg.EnvelopeTracker;
 import xal.model.alg.Tracker;
 import xal.model.probe.EnvelopeProbe;
 import xal.model.xml.LatticeXmlWriter;
-import xal.sim.scenario.ElsScenarioGenerator;
-import xal.sim.scenario.OldScenarioMapping;
+import xal.sim.scenario.ScenarioGenerator2;
+import xal.sim.scenario.DefaultElementMapping;
 import xal.sim.scenario.Scenario;
 import xal.smf.AcceleratorSeq;
 import xal.smf.impl.RfCavity;
@@ -92,7 +92,7 @@ public class GapTest {
 				
 		// Generates lattice from SMF accelerator
 		Scenario oscenario = Scenario.newScenarioFor(sequence);
-		Scenario scenario = new ElsScenarioGenerator(sequence, new OldScenarioMapping()).getScenario();
+		Scenario scenario = new ScenarioGenerator2(sequence).generateScenario();
 		scenario.resync();
 		//Scenario oscenario = Scenario.newAndImprovedScenarioFor(sequence);
 				

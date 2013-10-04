@@ -4,7 +4,8 @@ import java.io.IOException;
 import xal.model.Lattice;
 import xal.model.ModelException;
 import xal.model.xml.LatticeXmlWriter;
-import xal.sim.scenario.ElsScenarioGenerator;
+import xal.sim.scenario.NewAndImprovedScenarioElementMapping;
+import xal.sim.scenario.ScenarioGenerator2;
 import xal.sim.scenario.Scenario;
 import xal.smf.Accelerator;
 import xal.smf.AcceleratorSeq;
@@ -17,16 +18,23 @@ public class ScenarioGeneratorTest {
 	public static void main(String[] args) throws InstantiationException, ModelException {
 		System.out.println("Running\n");
 		
-		AcceleratorSeq sequence = loadAcceleratorSequence();
+		Accelerator accelerator = loadAccelerator();
 		
-		// Generates lattice from SMF accelerator
-		Scenario scenario = Scenario.newScenarioFor(sequence);
-		Scenario escenario = new ElsScenarioGenerator(sequence).getScenario();
-		//Scenario scenario = Scenario.newAndImprovedScenarioFor(sequence);
-				
-		// Outputting lattice elements
-		saveLattice(scenario.getLattice(), "lattice.xml");
-		saveLattice(escenario.getLattice(), "elattice.xml");
+		for (AcceleratorSeq sequence : accelerator.getSequences()) {			
+			// Generates lattice from SMF accelerator
+			Scenario scenario = Scenario.newScenarioFor(sequence);
+			ScenarioGenerator2 sg = new ScenarioGenerator2(sequence);
+			//Scenario scenario = Scenario.newAndImprovedScenarioFor(sequence);
+			//ScenarioGenerator2 sg = new ScenarioGenerator2(sequence, NewAndImprovedScenarioElementMapping.getInstance());
+			sg.setDebug(true);
+			sg.setVerbose(true);
+			Scenario escenario = sg.generateScenario();
+			//Scenario scenario = Scenario.newAndImprovedScenarioFor(sequence);
+					
+			// Outputting lattice elements
+			saveLattice(scenario.getLattice(), "old/lattice-"+sequence.getId()+".xml");
+			saveLattice(escenario.getLattice(), "new/lattice-"+sequence.getId()+".xml");			
+		}
 	}
 
 	private static void saveLattice(Lattice lattice, String file) {		
@@ -38,19 +46,17 @@ public class ScenarioGeneratorTest {
 		}
 	}
 
-	private static AcceleratorSeq loadAcceleratorSequence() {
+	private static Accelerator loadAccelerator() {
 		/* Loading SMF model */		
 		Accelerator accelerator = XMLDataManager.loadDefaultAccelerator();
 		//Accelerator accelerator = XMLDataManager.acceleratorWithPath("../main.xal");
 		if (accelerator == null)
 		{			
 			throw new Error("Accelerator is empty. Could not load the default accelerator.");
-		} 			
+		} 					
 		
-		/* Selects a section */
-		AcceleratorSeq sequence = accelerator.findSequence( "MEBT" );
 		//AcceleratorSeq sequence = accelerator.findSequence( "HEBT2" );				
-		return sequence;
+		return accelerator;
 		
 		/* We can instead build lattice for the whole accelerator */
 		//return accelerator;

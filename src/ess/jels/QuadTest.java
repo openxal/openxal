@@ -7,7 +7,7 @@ import xal.model.alg.EnvelopeTracker;
 import xal.model.alg.Tracker;
 import xal.model.probe.EnvelopeProbe;
 import xal.model.xml.LatticeXmlWriter;
-import xal.sim.scenario.ElsScenarioGenerator;
+import xal.sim.scenario.ScenarioGenerator2;
 import xal.sim.scenario.Scenario;
 import xal.smf.AcceleratorSeq;
 import xal.smf.attr.ApertureBucket;
@@ -38,7 +38,7 @@ public class QuadTest {
 				
 		// Generates lattice from SMF accelerator
 		//Scenario oscenario = Scenario.newScenarioFor(sequence);
-		Scenario scenario = new ElsScenarioGenerator(sequence).getScenario();
+		Scenario scenario = new ScenarioGenerator2(sequence).generateScenario();
 		Scenario oscenario = Scenario.newAndImprovedScenarioFor(sequence);
 				
 		// Outputting lattice elements
