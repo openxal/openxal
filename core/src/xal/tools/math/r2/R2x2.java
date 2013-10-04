@@ -44,7 +44,7 @@ public class R2x2 extends SquareMatrix<R2x2> implements java.io.Serializable {
     	X(0),
     	
     	/** represents the phase angle index */
-    	Xp(1);
+    	P(1);
 
 		/**
 		 * Returns the numerical value of this index enumeration constant.
@@ -275,7 +275,7 @@ public class R2x2 extends SquareMatrix<R2x2> implements java.io.Serializable {
      *
      *  @return         a matrix with all zero elements
      */
-    public static R2x2  zero()   {
+    public static R2x2  newZero()   {
         R2x2    matZero = new R2x2();
         matZero.assignZero();
         
@@ -287,11 +287,20 @@ public class R2x2 extends SquareMatrix<R2x2> implements java.io.Serializable {
      *
      *  @return         identity matrix object
      */
-    public static R2x2  identity()   {
+    public static R2x2  newIdentity()   {
         R2x2    matIden = new R2x2();
         matIden.assignIdentity();
         
         return  matIden; 
+    }
+    
+    public static R2x2 newSymplectic() {
+        R2x2    matJ = new R2x2();
+        matJ.assignZero();
+        matJ.setElem(IND.X, IND.P, +1.0);
+        matJ.setElem(IND.P, IND.X, -1.0);
+        
+        return matJ;
     }
     
     /**
@@ -305,12 +314,12 @@ public class R2x2 extends SquareMatrix<R2x2> implements java.io.Serializable {
     public static R2x2  rotation(double dblAng)    {
         double  sin   = Math.sin(dblAng);
         double  cos   = Math.cos(dblAng);
-        R2x2    matRx = R2x2.identity();
+        R2x2    matRx = R2x2.newIdentity();
 
         matRx.setElem(IND.X,  IND.X,  +cos);
-        matRx.setElem(IND.X,  IND.Xp, -sin);
-        matRx.setElem(IND.Xp, IND.X,  +sin);
-        matRx.setElem(IND.Xp, IND.Xp, +cos);
+        matRx.setElem(IND.X,  IND.P, -sin);
+        matRx.setElem(IND.P, IND.X,  +sin);
+        matRx.setElem(IND.P, IND.P, +cos);
         
         return matRx;
     }
@@ -358,11 +367,6 @@ public class R2x2 extends SquareMatrix<R2x2> implements java.io.Serializable {
     
     
     
-    
-    
-    /*
-     *  Local Attributes
-     */
     
     
     

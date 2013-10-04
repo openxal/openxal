@@ -8,8 +8,10 @@ package xal.tools.math.r2;
 
 import static org.junit.Assert.*;
 
+import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
@@ -23,12 +25,39 @@ import org.junit.runners.JUnit4;
 @RunWith(JUnit4.class)
 public class TestR2x2 {
 
+    
+    
+    
+    /*
+     * Global Attributes
+     */
+    
+    
+    /** Static identity matrix */
+    static private R2x2     MAT_IDEN;
+    
+    /** static symplectic matrix */
+    static private R2x2     MAT_SP2;
+    
+    /** Static testing matrix */
+    static private R2x2     MAT_TST2;
+    
+
+    @BeforeClass
+    public static void buildTestingResources() {
+        
+        MAT_IDEN = R2x2.newIdentity();
+        MAT_SP2  = R2x2.newSymplectic();
+        MAT_TST2 = MAT_IDEN.plus( MAT_IDEN );
+    }
+    
+    
 	/**
-	 * Test method for {@link xal.tools.math.r2.R2x2#zero()}.
+	 * Test method for {@link xal.tools.math.r2.R2x2#newZero()}.
 	 */
 	@Test
 	public void testZero() {
-		R2x2	matTest = R2x2.zero();
+		R2x2	matTest = R2x2.newZero();
 		
 //		fail("Not able to create a zero matrix");
 	}
@@ -42,20 +71,87 @@ public class TestR2x2 {
 		
 		int	szMatrix = matTest.getSize();
 		
+		Assert.assertTrue( szMatrix == 2 );
+		
 		System.out.println("Test matrix dynamic size = " + szMatrix);
 	}
 
-	/**
-	 * Test method for {@link xal.tools.math.r2.R2x2#getMatrixSize()}.
-	 */
 	@Test
-	@Ignore
-	public void testGetMatrixSize() {
-		R2x2 matTest = new R2x2();
-		
-//		int	szMatrix = matTest.getMatrixSize();
-//		
-//		System.out.println("Test matrix static size = " + szMatrix);
+	public void testMatrixAddition() {
+	    R2x2   mat1 = R2x2.newIdentity();
+	    R2x2   mat2 = R2x2.newIdentity();
+	    
+	    R2x2   matSum = mat1.plus( mat2 );
+	    
+	    Assert.assertTrue( matSum.isEquivalentTo(MAT_TST2) );
+	    
+	    System.out.println("\nThe matrix addition test");
+	    System.out.println( matSum.toString() );
 	}
+
+    @Test
+    public void testMatrixInPlaceAddition() {
+        R2x2   mat1 = R2x2.newIdentity();
+        R2x2   mat2 = R2x2.newIdentity();
+        
+        mat1.plusEquals( mat2 );
+        
+        Assert.assertTrue( mat1.isEquivalentTo(MAT_TST2) );
+        
+        System.out.println("\nThe matrix in place addition test");
+        System.out.println( mat1.toString() );
+    }
+
+    @Test
+    public void testMatrixMultiplication() {
+        R2x2   mat1 = R2x2.newIdentity();
+        R2x2   mat2 = R2x2.newIdentity();
+        
+        R2x2   matProd = mat1.times( mat2 );
+        
+        Assert.assertTrue( matProd.isEquivalentTo(MAT_IDEN) );
+        
+        System.out.println("\nThe matrix multiplication test");
+        System.out.println( matProd.toString() );
+    }
+
+    @Test
+    public void testMatrixInPlaceMultiplication() {
+        R2x2   mat1 = R2x2.newIdentity();
+        R2x2   mat2 = R2x2.newIdentity();
+        
+        mat1.timesEquals( mat2 );
+        
+        Assert.assertTrue( mat1.isEquivalentTo(MAT_IDEN) );
+        
+        System.out.println("\nThe matrix in place multiplication test");
+        System.out.println( mat1.toString() );
+    }
+    
+    @Test
+    public void testMatrixDeterminant() {
+        double  dblDetSp2 = MAT_SP2.det();
+        double  dblDetId  = MAT_IDEN.det();
+        double  dblDetTst2 = MAT_TST2.det();
+        
+        System.out.println("\nDeterminant Function");
+        System.out.println("|Id|  = " + dblDetId);
+        System.out.println("|2Id| = " + dblDetTst2);
+        System.out.println("|J|   = " + dblDetSp2);
+    }
+    
+    @Test
+    public void testMatrixNorm() {
+        double  dblL1   = MAT_SP2.norm1();
+        double  dblL2   = MAT_SP2.norm2();
+        double  dblLinf = MAT_SP2.normInf();
+        double  dblFrob = MAT_SP2.normF();
+        
+        System.out.println("\nNorms of the Symplectic Matrix");
+        System.out.println("||J||_1   = " + dblL1);
+        System.out.println("||J||_2   = " + dblL2);
+        System.out.println("||J||_inf = " + dblLinf);
+        System.out.println("||J||_F   = " + dblFrob);
+    }
 
 }
