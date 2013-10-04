@@ -71,6 +71,32 @@ public class Scenario {
         return generator.generateScenario();
     }
     
+	 /**
+     * Creates a new Scenario for the supplied accelerator sequence.
+     * 
+     * @param smfSeq    the accelerator sequence to build a scenario for
+     * @return          a new Scenario for the supplied accelerator sequence
+     * @throws          ModelException error building Scenario
+     */
+    public static Scenario newScenario2For( final AcceleratorSeq smfSeq ) throws ModelException {
+       // We have a linear accelerator/transport line - process as such
+        ScenarioGenerator2 generator = new ScenarioGenerator2(smfSeq);
+        return generator.generateScenario();
+    }
+	
+	 /**
+     * Creates a new Scenario for the supplied accelerator sequence and element mapping.
+     * 	 
+     * @param smfSeq    the accelerator sequence to build a scenario for
+	 * @param elementMapping    the element mapping to build a scenario with
+     * @return          a new Scenario for the supplied accelerator sequence
+     * @throws          ModelException error building Scenario
+     */
+    public static Scenario newScenario2For( final AcceleratorSeq smfSeq, ElementMapping elementMapping ) throws ModelException {
+       // We have a linear accelerator/transport line - process as such
+        ScenarioGenerator2 generator = new ScenarioGenerator2(smfSeq, elementMapping);
+        return generator.generateScenario();
+    }
 	
     /**
      * Creates a new <code>Scenario</code> object for the explicit case where
