@@ -15,7 +15,7 @@ import  java.util.StringTokenizer;
 import Jama.Matrix;
 
 import xal.tools.math.r3.R3;
-import xal.tools.math.r3.R3x3.Position;
+import xal.tools.math.r3.R3x3.POS;
 import xal.tools.math.r3.R3x3;
 import xal.tools.data.DataAdaptor;
 import xal.tools.data.DataFormatException;
@@ -278,7 +278,7 @@ public class PhaseMatrix implements IArchive, java.io.Serializable {
         int         m, n;       // indices into the SO(7) matrix
         double      val;        // matSO3 matrix element
         
-        for (Position pos : Position.values())  {
+        for (POS pos : POS.values())  {
             m = 2*pos.row();
             n = 2*pos.col();
             

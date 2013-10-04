@@ -311,7 +311,7 @@ public class R2x2 extends SquareMatrix<R2x2> implements java.io.Serializable {
      * 
      * @return  x-plane counter-clockwise rotation matrix 
      */
-    public static R2x2  rotation(double dblAng)    {
+    public static R2x2  newRotation(double dblAng)    {
         double  sin   = Math.sin(dblAng);
         double  cos   = Math.cos(dblAng);
         R2x2    matRx = R2x2.newIdentity();

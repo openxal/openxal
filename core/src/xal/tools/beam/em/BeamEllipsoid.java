@@ -17,7 +17,6 @@ import xal.tools.beam.CovarianceMatrix;
 import xal.tools.beam.PhaseIndexHom;
 import xal.tools.beam.PhaseMatrix;
 import xal.tools.beam.PhaseVector;
-
 import xal.tools.math.EllipticIntegral;
 import xal.tools.math.r3.R3;
 import xal.tools.math.r3.R3x3;
@@ -334,14 +333,17 @@ public class BeamEllipsoid {
      * <br/>
      * <br/>
      * to construct the ellipsoidal charge object according to the class documentation
+     * </p>
      * 
      *  @param  dblGamma        relativistic factor
      *  @param  matSigLab       envelope correlation matrix in homogeneous phase space coordinates
      * 
-     *  @author Christopher K. Allen
-     * 
+     * @throws InstantiationException   could not copy the given covariance matrix
+     *  
+     * @author Christopher K. Allen
+     * @version Oct, 2013
      */
-    public BeamEllipsoid(double dblGamma, CovarianceMatrix matSigLab)    {
+    public BeamEllipsoid(double dblGamma, CovarianceMatrix matSigLab) throws InstantiationException    {
 
         // Save the arguments
         this.dblGamma  = dblGamma;

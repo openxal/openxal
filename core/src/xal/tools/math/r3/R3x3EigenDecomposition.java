@@ -11,29 +11,33 @@ import  Jama.EigenvalueDecomposition;
 
 
 /**
- *  Encapsulates the results of an eigenvalue decomposition operation on
+ * <p>
+ *  Encapsulates the results of a Jacobi eigenvalue decomposition operation on
  *  a R3x3 matrix object.
- * 
+ *  </p>
+ *  <p>
  *  Essentially this class is just a wrapper over the <i>Jama</i> matrix
  *  package class <code>EigenvalueDecomposition</code>.  Thus, XAL can present
  *  a consistent interface in the event that Jama gets removed/replaced in 
  *  the future.
- * 
- *  If the matrix A is symmetric it can be decomposed as
- * 
- *      A = V*D*V'
- * 
- *  where R is an orthogonal matrix in SO(3), D is the real diagonal 
- *  matrix of eigenvales of A, and the prime indicates transposition.  
- *  
- *  If A is not symmetric then the decomposition is (loosely)
- *  
- *      A = V*D*V^-1
- *  
- *  where D is now block diagonal with the real eigenvalues in 1x1 blocks
- *  and complex eigenvalues x + iy in 2x2 blocks {{x, y},{-y, x}}.  The columns
- *  of V are the eigenvalues of A in the sense that A*V = V*D.  Note that the
- *  matrix V may be badly conditioned, or even singular, so that the above 
+ *  </p>
+ *  <p>
+ *  If the matrix <b>A</b> is invertible it can be decomposed as
+ *  <br/>
+ *  <br/>
+ *  &nbsp; &nbsp; <b>A</b> = <b>VDV</b><sup>-1</sup>
+ *  <br/>
+ *  <br/>
+ *  where <b>V</b> is an invertible matrix in the special linear group 
+ *  <i>SL</i>(3) &sub; <b>R</b><sup>3&times;3</sup> and <b>D</b> is the
+ *  the real matrix with 2&times;2 blocks consisting of the real and imaginary parts
+ *  of the eigenvalues on the diagonal.  (Each eigenvalue
+ *  of matrix <b>A</b> is the diagonal of the Jacobi block.)
+ *  </p>
+ *  <p>  
+ *  The columns
+ *  of <b>V</b> are the eigenvectors of <b>A</b> in the sense that <b>AV</b> = <b>VD</b>.  
+ *  Note that the matrix <b>V</b> may be badly conditioned, or even singular, so that the above 
  *  equation may not be valid.
  *  
  * @author Christopher K. Allen
@@ -97,31 +101,38 @@ public class R3x3EigenDecomposition {
 
 
     /**
-     *  Get the matrix V of eigenvector (columns) for the decomposition. Note
-     *  that this matrix is the diagonalizing matrix for the target matrix A. 
-     *  If the target matrix A is symmetric then the returned matrix V will 
-     *  be in the special orthogonal group SO(3).
+     *  Get the matrix <b>V</b> of eigenvectors (columns) for the decomposition. Note
+     *  that this matrix is the diagonalizing (in the Jacaobi sense) matrix 
+     *  for the target matrix <b>A</b>. 
+     *  If the target matrix <b>A</b> is symmetric then the returned matrix V will 
+     *  be in the special orthogonal group <i>SO</i>(3).
      *  
-     *  Note that, in general, this matrix may be badly conditioned.
+     *  Note that, in general, this matrix may be ill conditioned.
      *
-     *  @return     diagonalizing matrix of A 
+     *  @return     diagonalizing matrix of <b>A</b> 
      */    
     public R3x3 getEigenvectorMatrix()  {
-        return new R3x3( jamaDecomp.getV() );
+        Jama.Matrix matV = this.jamaDecomp.getV();
+        double[][]  arrV = matV.getArrayCopy();
+        
+        return new R3x3( arrV );
     }
     
     
     /**
-     * Return the matrix D of eigenvalues in the decomposition.  Note that if 
-     * target matrix A is symmetric then this matrix will be diagonal.  Otherwise
+     * Return the matrix <b>D</b> of eigenvalues in the decomposition.  Note that if 
+     * target matrix <b>A</b> is symmetric then this matrix will be diagonal.  Otherwise
      * it will be block diagonal in general where the 2x2 blocks are composed of the
      * real and imaginary parts of the eigenvalues as described in the class 
      * documentation.
      *
-     * @return      block diagonal matrix D of eigenvalues of A
+     * @return      block diagonal matrix <b>D</b> of eigenvalues of <b>A</b>
      */
     public R3x3 getEigenvalueMatrix()   {
-        return new R3x3( jamaDecomp.getD() );    
+        Jama.Matrix     matD = jamaDecomp.getD();
+        double[][]      arrD = matD.getArrayCopy();
+        
+        return new R3x3( arrD );    
     }
     
 
@@ -137,7 +148,10 @@ public class R3x3EigenDecomposition {
      * @param   matTarget   matrix to decompose
      */
     private void    decompose(R3x3 matTarget)   {
-        this.jamaDecomp = matTarget.getMatrix().eig();
+        double[][]  arrA = matTarget.getArrayCopy();
+        Jama.Matrix matA = new Jama.Matrix(arrA);
+        
+        this.jamaDecomp = matA.eig();
     }
 
     

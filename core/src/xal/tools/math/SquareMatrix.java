@@ -12,12 +12,23 @@ import java.lang.reflect.InvocationTargetException;
 import java.text.DecimalFormat;
 import java.util.StringTokenizer;
 
-import xal.tools.math.r2.R2x2;
 import Jama.Matrix;
 
 /**
+ * <p>
  * Class <code>SquareMatrix</code> is the abstract base class for matrix
  * objects supported in the XAL tools packages.
+ * </p>
+ * <p>
+ * Currently the internal matrix operations are supported by the <tt>Jama</tt>
+ * matrix package.  However, the Jama matrix package has been deemed a 
+ * "proof of principle" for the Java language and scientific computing and 
+ * is, thus, no longer supported.  The objective of this base class is to hide
+ * the internal implementation of matrix operations from the child classes and
+ * all developers using the matrix packages.  If it is determined that the Jama
+ * matrix package is to be removed from XAL, the modification will be substantially
+ * simplified in the current architecture.
+ * </p> 
  *
  * @author Christopher K. Allen
  * @since  Sep 25, 2013
@@ -29,13 +40,6 @@ public abstract class SquareMatrix<M extends SquareMatrix<M>>  {
      * Internal Classes
      */
 
-    //    @Documented
-    //    @Target(ElementType.TYPE)
-    //    public @interface ABaseMatrix {
-    //
-    //        public int size() default 0;
-    //    }
-    //
     /**
      * Interface <code>BaseMatrix.Ind</code> is exposed by objects
      * representing matrix indices.  In particular, the <code>enum</code>
@@ -57,101 +61,7 @@ public abstract class SquareMatrix<M extends SquareMatrix<M>>  {
         public int val();
     }
 
-    public enum TIND implements IIndex {
-
-        ;
-        /**
-         *
-         * @see xal.tools.math.BaseMatrix.IIndex#val()
-         *
-         * @author Christopher K. Allen
-         * @since  Sep 26, 2013
-         */
-        @Override
-        public int val() {
-            return 0;
-        }
-
-    }
-    //
-    //  
-    //  /*
-    //   * Global Attributes
-    //   */
-    //  
-    //    /** matrix size */
-    //    public static int    INT_SIZE = 0;
-    //    
-    //  
-    //  
-    //   
-    //       
-    //          /*
-    //           *  Global Methods
-    //           */
-    //    
-    //          
-    //    /**
-    //     *  Create a new instance of a zero matrix.
-    //     *
-    //     *  @return         zero vector
-    //     */
-    //    public static M  zero()   {
-    //        M matZero = new M();
-    //    }
-    //    
-    //    /**
-    //     *  Create an identity matrix
-    //     *
-    //     *  @return         identity matrix object
-    //     */
-    //    public static R2x2  identity()   {
-    //        return new R2x2( Jama.Matrix.identity(INT_SIZE,INT_SIZE) );
-    //    }
-    //    
-    //  /** 
-    //   * Initialization block. Get the size of the matrix from
-    //   *  the class annotation.
-    //   */
-    //    static  {
-    //      Annotation[] arrAnnts= BaseMatrix.class.getDeclaredAnnotations();
-    //
-    //      for (Annotation annTest : arrAnnts) 
-    //          if (annTest instanceof BaseMatrix) {
-    //              ABaseMatrix annProps = (ABaseMatrix)annTest;
-    //
-    //              INT_SIZE = annProps.size();
-    //          }
-    //
-    //
-    //      if (INT_SIZE == 0)
-    //          throw new MissingResourceException(
-    //                  "Missing annotation for subclass", 
-    //                  ABaseMatrix.class.getName(), 
-    //                  BaseMatrix.class.getName()
-    //                  );
-    //    }
-    //      
-    //
-    //  /**
-    //   * Static implementation of matrix size getter.
-    //   * Uses the annotated size property.
-    //   * 
-    //   * @return matrix size
-    //   *
-    //   * @author Christopher K. Allen
-    //   * @since  Sep 27, 2013
-    //   */
-    //  public static int    getMatrixSize() {
-    //
-    //      return INT_SIZE;
-    //  }
-    //
-    //    
-
-
-
-
+    
     /*
      *  Local Attributes
      */
@@ -168,73 +78,6 @@ public abstract class SquareMatrix<M extends SquareMatrix<M>>  {
     /** internal matrix implementation */
     private final Jama.Matrix       matImpl;
 
-
-
-
-    /*
-     * Initialization
-     */
-
-    /** 
-     * Creates a new, uninitialized instance of a square matrix with the given
-     * size. 
-     *  
-     * @param  cntSize     the matrix size of this object
-     *  
-     * @throws UnsupportedOperationException  base class has not defined a public, zero-argument constructor
-     */
-    @SuppressWarnings("unchecked")
-    public SquareMatrix(int cntSize) throws UnsupportedOperationException {
-        
-        try {
-            this.clsType = (Class<M>) this.getClass();
-            
-            this.ctrType = this.clsType.getConstructor();
-            this.intSize = cntSize;
-            this.matImpl = new Jama.Matrix(cntSize, cntSize, 0.0);
-            
-        } catch (NoSuchMethodException | SecurityException e) {
-            
-            throw new UnsupportedOperationException("Could not find public, zero-argument constructor for " 
-                    + this.clsType.getName()
-                    );
-        }
-    }
-
-    /**
-     * Copy constructor for <code>BaseMatrix</code>.  Creates a deep
-     * copy of the given object.  The dimensions are set and the 
-     * internal array is cloned. 
-     *
-     * @param matParent     the matrix to be cloned
-     *
-     * @throws UnsupportedOperationException  base class has not defined a public, zero-argument constructor
-     *  
-     * @author Christopher K. Allen
-     * @since  Sep 25, 2013
-     */
-    public SquareMatrix(M matParent) throws UnsupportedOperationException {
-        this(matParent.getSize());
-        
-        SquareMatrix<M> matBase = (SquareMatrix<M>)matParent;
-        this.setMatrix(matBase.getMatrix()); 
-    }
-
-    /**
-     * Create a deep copy of the this matrix object.  The returned 
-     * object is completely decoupled from the original.
-     * 
-     * @return  a deep copy object of this matrix
-     * 
-     * @throws InstantiationException error in new object construction
-     */
-    public M copy() throws InstantiationException   {
-
-        M  matClone = this.newInstance();
-        ((SquareMatrix<M>)matClone).setMatrix( this.matImpl );
-            
-        return matClone;
-    }
 
 
 
@@ -283,20 +126,47 @@ public abstract class SquareMatrix<M extends SquareMatrix<M>>  {
      *
      *  @exception  ArrayIndexOutOfBoundsException  sub-matrix does not fit into base matrix
      */
-    public void setSubMatrix(int i0, int i1, int j0,  int j1, double[][] arrSub)
-            throws ArrayIndexOutOfBoundsException
-            {
+    public void setSubMatrix(int i0, int i1, int j0,  int j1, double[][] arrSub) throws ArrayIndexOutOfBoundsException  {
         Jama.Matrix matSub = new Matrix(arrSub);
 
         this.getMatrix().setMatrix(i0,i1,j0,j1, matSub);
+    }
+    
+    /**
+     * Sets the entire matrix to the values given in the Java primitive type 
+     * double array.
+     * 
+     * @param arrMatrix Java primitive array containing new matrix values
+     * 
+     * @exception  ArrayIndexOutOfBoundsException  the argument must have the same dimensions as this matrix
+     *
+     * @author Christopher K. Allen
+     * @since  Oct 4, 2013
+     */
+    public void setMatrix(double[][] arrMatrix) throws ArrayIndexOutOfBoundsException {
+        
+        // Check the dimensions of the argument double array
+        if (this.getSize() != arrMatrix.length  ||  arrMatrix[0].length != this.getSize() )
+            throw new ArrayIndexOutOfBoundsException(
+                    "Dimensions of argument do not correspond to size of this matrix = " 
+                   + this.getSize()
+                   );
+        
+        // Set the elements of this array to that given by the corresponding 
+        //  argument entries
+        for (int i=0; i<this.getSize(); i++) 
+            for (int j=0; j<this.getSize(); j++) {
+                double dblVal = arrMatrix[i][j];
+                
+                this.setElem(i, j, dblVal);
             }
+    }
 
 
 
     /*
-     *  Matrix Properties
+     *  Matrix Attributes
      */
-
 
     /**
      * Returns the size of this square matrix, that is, the equal
@@ -327,6 +197,22 @@ public abstract class SquareMatrix<M extends SquareMatrix<M>>  {
     }
 
     /**
+     * Create a deep copy of the this matrix object.  The returned 
+     * object is completely decoupled from the original.
+     * 
+     * @return  a deep copy object of this matrix
+     * 
+     * @throws InstantiationException error in new object construction
+     */
+    public M copy() throws InstantiationException   {
+
+        M  matClone = this.newInstance();
+        ((SquareMatrix<M>)matClone).setMatrix( this.matImpl );
+            
+        return matClone;
+    }
+
+    /**
      *  Return matrix element value.  Get matrix element value at specified 
      *  <code>Diagonal</code> position.
      *
@@ -339,6 +225,11 @@ public abstract class SquareMatrix<M extends SquareMatrix<M>>  {
 
         return this.getMatrix().get(i,j);
     }
+    
+    
+    /*
+     * Matrix Properties
+     */
     
     /**
      *  Matrix determinant function.
@@ -961,6 +852,51 @@ public abstract class SquareMatrix<M extends SquareMatrix<M>>  {
         return dblVal;
     }
     
+    /** 
+     * Creates a new, uninitialized instance of a square matrix with the given
+     * size. The matrix contains all zeros.
+     *  
+     * @param  intSize     the matrix size of this object
+     *  
+     * @throws UnsupportedOperationException  base class has not defined a public, zero-argument constructor
+     */
+    @SuppressWarnings("unchecked")
+    protected SquareMatrix(int intSize) throws UnsupportedOperationException {
+        
+        try {
+            this.clsType = (Class<M>) this.getClass();
+            
+            this.ctrType = this.clsType.getConstructor();
+            this.intSize = intSize;
+            this.matImpl = new Jama.Matrix(intSize, intSize, 0.0);
+            
+        } catch (NoSuchMethodException | SecurityException e) {
+            
+            throw new UnsupportedOperationException("Could not find public, zero-argument constructor for " 
+                    + this.clsType.getName()
+                    );
+        }
+    }
+
+    /**
+     * Copy constructor for <code>BaseMatrix</code>.  Creates a deep
+     * copy of the given object.  The dimensions are set and the 
+     * internal array is cloned. 
+     *
+     * @param matParent     the matrix to be cloned
+     *
+     * @throws UnsupportedOperationException  base class has not defined a public, zero-argument constructor
+     *  
+     * @author Christopher K. Allen
+     * @since  Sep 25, 2013
+     */
+    protected SquareMatrix(M matParent) throws UnsupportedOperationException {
+        this(matParent.getSize());
+        
+        SquareMatrix<M> matBase = (SquareMatrix<M>)matParent;
+        this.setMatrix(matBase.getMatrix()); 
+    }
+    
     /**
      *  Parsing Constructor - creates an instance of the child class and initialize it
      *  according to a token string of element values.  
@@ -968,6 +904,7 @@ public abstract class SquareMatrix<M extends SquareMatrix<M>>  {
      *  The token string argument is assumed to be one-dimensional and packed by
      *  column (ala FORTRAN).
      *
+     *  @param  intSize     the matrix size of this object
      *  @param  strTokens   token vector of getSize()^2 numeric values
      *
      *  @exception  IllegalArgumentException    wrong number of token strings
@@ -996,6 +933,32 @@ public abstract class SquareMatrix<M extends SquareMatrix<M>>  {
             }
     }
     
+    /**
+     * <p>
+     * Initializing constructor for bases class <code>SquareMatrix</code>.  
+     * Sets the entire matrix to the values given in the Java primitive type 
+     * double array. The argument itself remains unchanged. 
+     * </p>
+     * <p>
+     * The dimensions of the given Java double array must be 
+     * consistent with the size of the matrix.  Thus, if the arguments are
+     * inconsistent, an exception is thrown.
+     * </p>
+     * 
+     * @param intSize     the matrix size of this object
+     * @param arrMatrix Java primitive array containing new matrix values
+     * 
+     * @exception  ArrayIndexOutOfBoundsException  the argument must have the same dimensions as this matrix
+     *
+     * @author Christopher K. Allen
+     * @since  Oct 4, 2013
+     */
+    protected SquareMatrix(int intSize, double[][] arrVals) throws ArrayIndexOutOfBoundsException {
+        this(intSize);
+        
+        this.setMatrix(arrVals);;
+    }
+
 
     /*
      * Internal Support
