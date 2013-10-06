@@ -1,5 +1,10 @@
 package eu.ess.jels;
+import java.io.File;
 import java.io.IOException;
+
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 import xal.model.Lattice;
 import xal.model.ModelException;
@@ -10,26 +15,43 @@ import xal.model.xml.LatticeXmlWriter;
 import xal.sim.scenario.Scenario;
 import xal.sim.scenario.ScenarioGenerator2;
 import xal.smf.AcceleratorSeq;
+import xal.smf.attr.ApertureBucket;
+import xal.smf.impl.Quadrupole;
 import xal.tools.beam.Twiss;
 
+@RunWith(JUnit4.class)
+public class QuadTest {
 
-public class DriftTest {
-
-
-	public static void main(String[] args) throws InstantiationException, ModelException {
+	@Test
+	public void doQuadTest() throws InstantiationException, ModelException {
 		System.out.println("Running\n");
+		AcceleratorSeq sequence = new AcceleratorSeq("QuadTest");
 		
-		AcceleratorSeq sequence = new AcceleratorSeq("DriftTest");
-		sequence.setLength(95e-3);
+		Quadrupole quad = new Quadrupole("quad") { // there's no setter for type (you need to extend class)
+			{_type="Q"; }
+		};
+		quad.setPosition(70e-3*0.5); //always position on center!
+		quad.setLength(70e-3); // effLength below is actually the only one read 
+		quad.getMagBucket().setEffLength(70e-3);
+		quad.setDfltField(16);
+		quad.getMagBucket().setPolarity(-1);
+		quad.getAper().setAperX(15e-3);
+		quad.getAper().setAperY(15e-3);
+		quad.getAper().setShape(ApertureBucket.iRectangle);
+		sequence.addNode(quad);
+		sequence.setLength(70e-3);		
 				
 		// Generates lattice from SMF accelerator
 		//Scenario oscenario = Scenario.newScenarioFor(sequence);
 		Scenario scenario = new ScenarioGenerator2(sequence).generateScenario();
-		//Scenario scenario = Scenario.newAndImprovedScenarioFor(sequence);
-				
+		Scenario oscenario = Scenario.newAndImprovedScenarioFor(sequence);
+		
+		// Ensure directory
+		new File("temp/quadtest").mkdirs();
+		
 		// Outputting lattice elements
-		//saveLattice(scenario.getLattice(), "lattice.xml");
-		//saveLattice(escenario.getLattice(), "elattice.xml");
+		saveLattice(scenario.getLattice(), "temp/quadtest/lattice.xml");
+		saveLattice(oscenario.getLattice(), "temp/quadtest/elattice.xml");
 		
 		// Creating a probe
 		EnvelopeProbe probe = setupProbeViaJavaCalls();					
@@ -43,7 +65,7 @@ public class DriftTest {
 		// Running simulation
 		scenario.run();
 				
-		// Getting results		
+		// Getting results
 		Twiss[] t = probe.getCovariance().computeTwiss();
 		
 		double[] beta = new double[3];
@@ -56,7 +78,7 @@ public class DriftTest {
 		System.out.printf("%E %E %E %E ",probe.getPosition(), sigma[0], sigma[1], sigma[2]);
 		System.out.printf("%E %E %E\n", beta[0], beta[1], beta[2]);
 		
-		/* ELS output: 9.500000E-02 9.523765E-04 1.177297E-03 1.952594E-03 3.158031E-01 4.841974E-01 9.768578E-01 */
+		/* ELS output: 7.000000E-02 1.060867E-03 9.629023E-04 1.920023E-03 3.918513E-01 3.239030E-01 9.445394E-01 */
 	}
 
 	private static EnvelopeProbe setupProbeViaJavaCalls() {
@@ -102,9 +124,7 @@ public class DriftTest {
 	}
 
 
-	private static void saveLattice(Lattice lattice, String file) {		
-		lattice.setAuthor("ESS");
-		lattice.setComments("IL|18/7/2013|Testing output of a lattice");
+	private static void saveLattice(Lattice lattice, String file) {				
 		try {
 			LatticeXmlWriter.writeXml(lattice, file);
 		} catch (IOException e1) {

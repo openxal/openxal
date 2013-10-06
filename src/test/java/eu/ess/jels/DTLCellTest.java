@@ -1,7 +1,12 @@
 package eu.ess.jels;
+import java.io.File;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
+
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 import xal.model.IComponent;
 import xal.model.IElement;
@@ -26,11 +31,11 @@ import xal.smf.impl.RfCavity;
 import xal.smf.impl.RfGap;
 import xal.tools.beam.Twiss;
 
-
+@RunWith(JUnit4.class)
 public class DTLCellTest {
 
-
-	public static void main(String[] args) throws InstantiationException, ModelException {
+	@Test
+	public void doDTLCellTest() throws InstantiationException, ModelException {
 		System.out.println("Running\n");
 		AcceleratorSeq sequence = new AcceleratorSeq("DTLCellTest");
 		
@@ -135,10 +140,13 @@ public class DTLCellTest {
 		scenario.resync();
 		oscenario.resync();
 		//Scenario oscenario = Scenario.newAndImprovedScenarioFor(sequence);
-				
+		
+		// Ensure directory
+		new File("temp/dtlcelltest").mkdirs();
+		
 		// Outputting lattice elements
-		saveLattice(scenario.getLattice(), "lattice.xml");
-		saveLattice(oscenario.getLattice(), "elattice.xml");
+		saveLattice(scenario.getLattice(), "temp/dtlcelltest/lattice.xml");
+		saveLattice(oscenario.getLattice(), "temp/dtlcelltest/elattice.xml");
 		
 		// Creating a probe		
 		EnvelopeProbe probe = setupProbeViaJavaCalls();					

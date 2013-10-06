@@ -1,5 +1,10 @@
 package eu.ess.jels;
+import java.io.File;
 import java.io.IOException;
+
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 import xal.model.Lattice;
 import xal.model.ModelException;
@@ -11,11 +16,11 @@ import xal.smf.Accelerator;
 import xal.smf.AcceleratorSeq;
 import xal.smf.data.XMLDataManager;
 
-
+@RunWith(JUnit4.class)
 public class ScenarioGeneratorTest {
 
-
-	public static void main(String[] args) throws InstantiationException, ModelException {
+	@Test
+	public void doScenarioGeneratorTest() throws InstantiationException, ModelException {
 		System.out.println("Running\n");
 		
 		Accelerator accelerator = loadAccelerator();
@@ -30,10 +35,14 @@ public class ScenarioGeneratorTest {
 			sg.setVerbose(true);
 			Scenario escenario = sg.generateScenario();
 			//Scenario scenario = Scenario.newAndImprovedScenarioFor(sequence);
-					
+			
+			// Ensure files
+			new File("temp/old").mkdirs();
+			new File("temp/new").mkdirs();
+			
 			// Outputting lattice elements
-			saveLattice(scenario.getLattice(), "old/lattice-"+sequence.getId()+".xml");
-			saveLattice(escenario.getLattice(), "new/lattice-"+sequence.getId()+".xml");			
+			saveLattice(scenario.getLattice(), "temp/old/lattice-"+sequence.getId()+".xml");
+			saveLattice(escenario.getLattice(), "temp/new/lattice-"+sequence.getId()+".xml");			
 		}
 	}
 
@@ -48,8 +57,8 @@ public class ScenarioGeneratorTest {
 
 	private static Accelerator loadAccelerator() {
 		/* Loading SMF model */		
-		Accelerator accelerator = XMLDataManager.loadDefaultAccelerator();
-		//Accelerator accelerator = XMLDataManager.acceleratorWithPath("../main.xal");
+		Accelerator accelerator = XMLDataManager.acceleratorWithPath("src/test/resources/config/main.xal");
+		
 		if (accelerator == null)
 		{			
 			throw new Error("Accelerator is empty. Could not load the default accelerator.");

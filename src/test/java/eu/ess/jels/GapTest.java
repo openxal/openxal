@@ -1,5 +1,10 @@
 package eu.ess.jels;
+import java.io.File;
 import java.io.IOException;
+
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 import xal.model.IElement;
 import xal.model.Lattice;
@@ -17,11 +22,11 @@ import xal.smf.impl.RfCavity;
 import xal.smf.impl.RfGap;
 import xal.tools.beam.Twiss;
 
-
+@RunWith(JUnit4.class)
 public class GapTest {
 
-
-	public static void main(String[] args) throws InstantiationException, ModelException {
+	@Test
+	public void doGapTest() throws InstantiationException, ModelException {
 		System.out.println("Running\n");
 		AcceleratorSeq sequence = new AcceleratorSeq("GapTest");
 		
@@ -96,9 +101,12 @@ public class GapTest {
 		scenario.resync();
 		//Scenario oscenario = Scenario.newAndImprovedScenarioFor(sequence);
 				
+		// Ensure directory
+		new File("temp/gaptest").mkdirs();
+		
 		// Outputting lattice elements
-		saveLattice(scenario.getLattice(), "lattice.xml");
-		saveLattice(oscenario.getLattice(), "elattice.xml");
+		saveLattice(scenario.getLattice(), "temp/gaptest/lattice.xml");
+		saveLattice(oscenario.getLattice(), "temp/gaptest/elattice.xml");
 		
 		// Creating a probe		
 		EnvelopeProbe probe = setupProbeViaJavaCalls();					

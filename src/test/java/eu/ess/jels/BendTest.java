@@ -1,55 +1,104 @@
 package eu.ess.jels;
+
+import java.io.File;
 import java.io.IOException;
 
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
+
+import xal.model.IComponent;
+import xal.model.IElement;
 import xal.model.Lattice;
 import xal.model.ModelException;
+import xal.model.Sector;
 import xal.model.alg.EnvelopeTracker;
 import xal.model.alg.Tracker;
+import xal.model.elem.ElementSeq;
 import xal.model.probe.EnvelopeProbe;
 import xal.model.xml.LatticeXmlWriter;
 import xal.sim.scenario.Scenario;
 import xal.sim.scenario.ScenarioGenerator2;
 import xal.smf.AcceleratorSeq;
-import xal.smf.attr.ApertureBucket;
-import xal.smf.impl.Quadrupole;
+import xal.smf.impl.Bend;
+import xal.tools.beam.IConstants;
 import xal.tools.beam.Twiss;
 
-
-public class QuadTest {
-
-
-	public static void main(String[] args) throws InstantiationException, ModelException {
+@RunWith(JUnit4.class)
+public class BendTest {
+	@Test
+	public void doBendTest() throws InstantiationException, ModelException {
 		System.out.println("Running\n");
-		AcceleratorSeq sequence = new AcceleratorSeq("QuadTest");
+		AcceleratorSeq sequence = new AcceleratorSeq("BendTest");
 		
-		Quadrupole quad = new Quadrupole("quad") { // there's no setter for type (you need to extend class)
-			{_type="Q"; }
+		// input from TraceWin
+		double entry_angle_deg = -5.5;
+		double exit_angle_deg = -5.5;
+		double alpha_deg = -11; // angle in degrees
+		double rho = 9375.67*1e-3; // curvature radius (in m)
+		double N = 0.; // field Index
+		final int HV = 0;  // 0 - horizontal, 1 - vertical 
+		/* G,K1,K2 - gap, fringe field factors are supported in the model but not SMF (use G*1.e-3)*/
+		
+		// calculations
+		double alpha = alpha_deg * Math.PI/180.0;		
+		double len = Math.abs(rho*alpha);
+		double quadComp = N / (rho*rho);
+		
+		// following are used to calculate field
+		EnvelopeProbe probe = setupProbeViaJavaCalls();
+		probe.initialize();
+	    double c  = IConstants.LightSpeed;	      
+	    double e = probe.getSpeciesCharge();
+	    double Er = probe.getSpeciesRestEnergy();
+	    double gamma = probe.getGamma();
+	    double b  = probe.getBeta();
+	    double B0 = b*gamma*Er/(e*c*rho)*Math.signum(alpha);
+		
+	    
+		Bend bend = new Bend("b") {
+			@Override
+			public int getOrientation() {
+				if (HV == 0) return HORIZONTAL;  
+				else return VERTICAL; // currently impossible to put it into a file
+				
+			}			
 		};
-		quad.setPosition(70e-3*0.5); //always position on center!
-		quad.setLength(70e-3); // effLength below is actually the only one read 
-		quad.getMagBucket().setEffLength(70e-3);
-		quad.setDfltField(16);
-		quad.getMagBucket().setPolarity(-1);
-		quad.getAper().setAperX(15e-3);
-		quad.getAper().setAperY(15e-3);
-		quad.getAper().setShape(ApertureBucket.iRectangle);
-		sequence.addNode(quad);
-		sequence.setLength(70e-3);		
+		bend.setPosition(len*0.5); //always position on center!
+		bend.setLength(len); // both paths are used in calculation
+		bend.getMagBucket().setPathLength(len);
+		
+		bend.getMagBucket().setDipoleEntrRotAngle(-entry_angle_deg);
+		bend.getMagBucket().setBendAngle(alpha_deg);
+		bend.getMagBucket().setDipoleExitRotAngle(-exit_angle_deg);		
+		bend.setDfltField(B0);		
+		bend.getMagBucket().setDipoleQuadComponent(quadComp);
+		 
+		
+		sequence.addNode(bend);
+		sequence.setLength(len);
 				
 		// Generates lattice from SMF accelerator
-		//Scenario oscenario = Scenario.newScenarioFor(sequence);
+		Scenario oscenario = Scenario.newScenarioFor(sequence);
 		Scenario scenario = new ScenarioGenerator2(sequence).generateScenario();
-		Scenario oscenario = Scenario.newAndImprovedScenarioFor(sequence);
-				
-		// Outputting lattice elements
-		saveLattice(scenario.getLattice(), "lattice.xml");
-		saveLattice(oscenario.getLattice(), "elattice.xml");
+		//Scenario oscenario = Scenario.newAndImprovedScenarioFor(sequence);
+
+		// Ensure directory
+		new File("temp/bendtest").mkdirs();
 		
-		// Creating a probe
-		EnvelopeProbe probe = setupProbeViaJavaCalls();					
+		// Outputting lattice elements
+		saveLattice(scenario.getLattice(), "temp/bendtest/lattice.xml");
+		saveLattice(oscenario.getLattice(), "temp/bendtest/elattice.xml");
+		
+		// Creating a probe						
 		scenario.setProbe(probe);			
 		
-				
+		// Prints transfer matrices
+		for (IComponent comp : ((ElementSeq)((Sector)scenario.getLattice().getElementList().get(0)).getChild(1)).getElementList()) {
+			IElement el = (IElement)comp;
+			el.transferMap(probe, el.getLength()).getFirstOrder().print();
+		}
+		
 		// Setting up synchronization mode
 		scenario.setSynchronizationMode(Scenario.SYNC_MODE_DESIGN);					
 		scenario.resync();
