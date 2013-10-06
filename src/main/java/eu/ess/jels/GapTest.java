@@ -1,8 +1,6 @@
 package eu.ess.jels;
 import java.io.IOException;
 
-import eu.ess.jels.scenario.DefaultElementMapping;
-import eu.ess.jels.scenario.ScenarioGenerator2;
 import xal.model.IElement;
 import xal.model.Lattice;
 import xal.model.ModelException;
@@ -11,7 +9,9 @@ import xal.model.alg.EnvelopeTracker;
 import xal.model.alg.Tracker;
 import xal.model.probe.EnvelopeProbe;
 import xal.model.xml.LatticeXmlWriter;
+import xal.sim.scenario.DefaultElementMapping;
 import xal.sim.scenario.Scenario;
+import xal.sim.scenario.ScenarioGenerator2;
 import xal.smf.AcceleratorSeq;
 import xal.smf.impl.RfCavity;
 import xal.smf.impl.RfGap;

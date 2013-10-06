@@ -3,8 +3,6 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
 
-import eu.ess.jels.scenario.DefaultElementMapping;
-import eu.ess.jels.scenario.ScenarioGenerator2;
 import xal.model.IComponent;
 import xal.model.IElement;
 import xal.model.Lattice;
@@ -17,7 +15,9 @@ import xal.model.probe.EnvelopeProbe;
 import xal.model.probe.traj.EnvelopeProbeState;
 import xal.model.probe.traj.ProbeState;
 import xal.model.xml.LatticeXmlWriter;
+import xal.sim.scenario.DefaultElementMapping;
 import xal.sim.scenario.Scenario;
+import xal.sim.scenario.ScenarioGenerator2;
 import xal.smf.AcceleratorSeq;
 import xal.smf.attr.ApertureBucket;
 import xal.smf.impl.DTLTank;

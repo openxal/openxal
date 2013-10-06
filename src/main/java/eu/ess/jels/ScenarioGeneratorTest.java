@@ -1,12 +1,12 @@
 package eu.ess.jels;
 import java.io.IOException;
 
-import eu.ess.jels.scenario.NewAndImprovedScenarioElementMapping;
-import eu.ess.jels.scenario.ScenarioGenerator2;
 import xal.model.Lattice;
 import xal.model.ModelException;
 import xal.model.xml.LatticeXmlWriter;
+import xal.sim.scenario.NewAndImprovedScenarioElementMapping;
 import xal.sim.scenario.Scenario;
+import xal.sim.scenario.ScenarioGenerator2;
 import xal.smf.Accelerator;
 import xal.smf.AcceleratorSeq;
 import xal.smf.data.XMLDataManager;
