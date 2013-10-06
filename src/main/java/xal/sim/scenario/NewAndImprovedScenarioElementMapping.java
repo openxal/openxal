@@ -4,7 +4,7 @@
  * Created on Oct 3, 2013
  */
 
-package eu.ess.jels.scenario;
+package xal.sim.scenario;
 
 import xal.model.IElement;
 import xal.model.ModelException;
