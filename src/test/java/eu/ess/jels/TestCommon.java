@@ -1,5 +1,6 @@
 package eu.ess.jels;
 
+import java.io.File;
 import java.io.IOException;
 
 import xal.model.Lattice;
@@ -7,10 +8,12 @@ import xal.model.alg.EnvelopeTracker;
 import xal.model.alg.Tracker;
 import xal.model.probe.EnvelopeProbe;
 import xal.model.xml.LatticeXmlWriter;
+import xal.smf.AcceleratorSeq;
 import xal.tools.beam.Twiss;
+import xal.tools.xml.XmlDataAdaptor;
 
 public class TestCommon {
-	static EnvelopeProbe setupProbeViaJavaCalls() {
+	public static EnvelopeProbe setupProbeViaJavaCalls() {
 		// Envelope probe and tracker
 		EnvelopeTracker envelopeTracker = new EnvelopeTracker();			
 		envelopeTracker.setRfGapPhaseCalculation(false);
@@ -53,12 +56,21 @@ public class TestCommon {
 	}
 
 
-	static void saveLattice(Lattice lattice, String file) {				
+	public static void saveLattice(Lattice lattice, String file) {				
 		try {
 			LatticeXmlWriter.writeXml(lattice, file);
 		} catch (IOException e1) {
-			e1.printStackTrace();
-			return;
+			e1.printStackTrace();			
+		}
+	}
+	
+	public static void saveSequence(AcceleratorSeq sequence, String file)
+	{
+		XmlDataAdaptor da = XmlDataAdaptor.newDocumentAdaptor(sequence, null);
+		try {
+			da.writeTo(new File(file));
+		} catch (IOException e1) {
+			e1.printStackTrace();			
 		}
 	}
 }

@@ -56,6 +56,7 @@ public class QuadTest {
 		// Outputting lattice elements
 		TestCommon.saveLattice(scenario.getLattice(), "temp/quadtest/lattice.xml");
 		TestCommon.saveLattice(oscenario.getLattice(), "temp/quadtest/elattice.xml");
+		TestCommon.saveSequence(sequence, "temp/quadtest/seq.xml");
 		
 		// Creating a probe
 		EnvelopeProbe probe = TestCommon.setupProbeViaJavaCalls();					

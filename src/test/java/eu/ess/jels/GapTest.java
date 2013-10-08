@@ -12,9 +12,9 @@ import xal.model.probe.EnvelopeProbe;
 import xal.sim.scenario.Scenario;
 import xal.sim.scenario.ScenarioGenerator2;
 import xal.smf.AcceleratorSeq;
-import xal.smf.impl.RfCavity;
 import xal.smf.impl.RfGap;
 import xal.tools.beam.Twiss;
+import eu.ess.jels.smf.impl.ESSRfCavity;
 
 @RunWith(JUnit4.class)
 public class GapTest {
@@ -32,12 +32,17 @@ public class GapTest {
 		double R = 14.5; // aperture
 		double p = 0; // 0: relative phase, 1: absolute phase
 		
-		double betas = 0; // particle reduced velocity
+		/*double betas = 0; // particle reduced velocity
 		double Ts = 0;  // transit time factor
 		double kTs = 0;
-		double k2Ts = 0;
+		double k2Ts = 0;*/
 		double kS = 0;
 		double k2S = 0;
+		
+		double betas = 0.0805777; // particle reduced velocity
+		double Ts = 0.772147;  // transit time factor
+		double kTs = -0.386355;
+		double k2Ts = -0.142834;
 		
 		// setup		
 		RfGap gap = new RfGap("g");
@@ -49,9 +54,9 @@ public class GapTest {
 		double length = 1.0; // length is not given in TraceWin, but is used only as a factor in E0TL in OpenXal
 		gap.getRfGap().setLength(length); 		
 		gap.getRfGap().setAmpFactor(1.0);
-		/*gap.getRfGap().setGapOffset(dblVal)*/		
+		/*gap.getRfGap().setGapOffset(dblVal)*/	
 		
-		RfCavity cavity = new RfCavity("c");
+		ESSRfCavity cavity = new ESSRfCavity("c");
 		cavity.addNode(gap);
 		cavity.getRfField().setPhase(Phis);		
 		cavity.getRfField().setAmplitude(E0TL / length);
@@ -62,28 +67,12 @@ public class GapTest {
 		if (betas == 0.0) {
 			gap.getRfGap().setTTF(1.0);		
 			cavity.getRfField().setTTFCoefs(new double[] {1.0});
+			cavity.getRfField().setTTF_endCoefs(new double[] {1.0});
 		} else {
-			// TTF calculation
-			// we're equating T_openxal(bs/b)=a + b bs/b + c beta^2
-			// and            T_ELS(beta)=Ts + kTs (K-1) + k2Ts (K-1)^2/2, where K=betas/beta
-	        /*TTFCoefs="-.0815, 12.154, -41.431"
-	        TTFPrimeCoefs=".2018, -1.8634, 5.6742"
-	        STFCoefs=".7769, -3.3388, 6.0867"
-	        STFPrimeCoefs="-.0643, 1.7099, -6.349"
-	        TTF_endCoefs="-.0815, 12.154, -41.431"
-	        TTFPrime_EndCoefs=".2018, -1.8634, 5.6742"
-	        STF_endCoefs=".7769, -3.3388, 6.0867"
-	        STFPrime_endCoefs="-.0643, 1.7099, -6.349"*/
-			
-			/*cavity.getRfField().setTTFPrimeCoefs(arrVal);
-			cavity.getRfField().setTTFPrime_endCoefs(arrVal);
-			
-			cavity.getRfField().setTTF_endCoefs(arrVal);
-			cavity.getRfField().setSTFPrimeCoefs(arrVal);
-			cavity.getRfField().setSTFPrime_endCoefs(arrVal);
-			cavity.getRfField().setSTFCoefs(arrVal);
-			cavity.getRfField().setSTF_endCoefs(arrVal);		    
-			*/
+			cavity.getRfField().setTTFCoefs(new double[] {betas, Ts, kTs, k2Ts});
+			cavity.getRfField().setTTF_endCoefs(new double[] {betas, Ts, kTs, k2Ts});
+			cavity.getRfField().setSTFCoefs(new double[] {betas, 0., kS, k2S});
+			cavity.getRfField().setSTF_endCoefs(new double[] {betas, 0., kS, k2S});
 		}		
 		
 		sequence.addNode(cavity);
@@ -101,6 +90,7 @@ public class GapTest {
 		// Outputting lattice elements
 		TestCommon.saveLattice(scenario.getLattice(), "temp/gaptest/lattice.xml");
 		TestCommon.saveLattice(oscenario.getLattice(), "temp/gaptest/elattice.xml");
+		TestCommon.saveSequence(sequence, "temp/gaptest/seq.xml");
 		
 		// Creating a probe		
 		EnvelopeProbe probe = TestCommon.setupProbeViaJavaCalls();					

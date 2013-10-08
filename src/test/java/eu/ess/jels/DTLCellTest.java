@@ -17,10 +17,10 @@ import xal.model.probe.traj.ProbeState;
 import xal.sim.scenario.Scenario;
 import xal.sim.scenario.ScenarioGenerator2;
 import xal.smf.AcceleratorSeq;
-import xal.smf.impl.DTLTank;
 import xal.smf.impl.Quadrupole;
 import xal.smf.impl.RfGap;
 import xal.tools.beam.Twiss;
+import eu.ess.jels.smf.impl.ESSRfCavity;
 
 @RunWith(JUnit4.class)
 public class DTLCellTest {
@@ -45,7 +45,7 @@ public class DTLCellTest {
 		double R = 10; // aperture
 		double p = 0; // 0: relative phase, 1: absolute phase
 		
-		double betas = 0; //0.0805777; // particle reduced velocity
+		double betas = 0.0805777; // particle reduced velocity
 		double Ts = 0.772147;  // transit time factor
 		double kTs = -0.386355;
 		double k2Ts = -0.142834;
@@ -85,7 +85,7 @@ public class DTLCellTest {
 		gap.getRfGap().setAmpFactor(1.0);
 		/*gap.getRfGap().setGapOffset(dblVal)*/		
 		
-		DTLTank dtlTank = new DTLTank("d"); // this could also be rfcavity, makes no difference
+		ESSRfCavity dtlTank = new ESSRfCavity("d"); // this could also be rfcavity, makes no difference
 		dtlTank.addNode(quad1);
 		dtlTank.addNode(gap);
 		dtlTank.addNode(quad2);
@@ -99,27 +99,10 @@ public class DTLCellTest {
 			gap.getRfGap().setTTF(1.0);		
 			dtlTank.getRfField().setTTFCoefs(new double[] {1.0});
 		} else {
-			// TTF calculation
-			// we're equating T_openxal(bs/b)=a + b bs/b + c beta^2
-			// and            T_ELS(beta)=Ts + kTs (K-1) + k2Ts (K-1)^2/2, where K=betas/beta
-	        /*TTFCoefs="-.0815, 12.154, -41.431"
-	        TTFPrimeCoefs=".2018, -1.8634, 5.6742"
-	        STFCoefs=".7769, -3.3388, 6.0867"
-	        STFPrimeCoefs="-.0643, 1.7099, -6.349"
-	        TTF_endCoefs="-.0815, 12.154, -41.431"
-	        TTFPrime_EndCoefs=".2018, -1.8634, 5.6742"
-	        STF_endCoefs=".7769, -3.3388, 6.0867"
-	        STFPrime_endCoefs="-.0643, 1.7099, -6.349"*/
-			
-			/*cavity.getRfField().setTTFPrimeCoefs(arrVal);
-			cavity.getRfField().setTTFPrime_endCoefs(arrVal);
-			
-			cavity.getRfField().setTTF_endCoefs(arrVal);
-			cavity.getRfField().setSTFPrimeCoefs(arrVal);
-			cavity.getRfField().setSTFPrime_endCoefs(arrVal);
-			cavity.getRfField().setSTFCoefs(arrVal);
-			cavity.getRfField().setSTF_endCoefs(arrVal);		    
-			*/
+			dtlTank.getRfField().setTTFCoefs(new double[] {betas, Ts, kTs, k2Ts});
+			dtlTank.getRfField().setTTF_endCoefs(new double[] {betas, Ts, kTs, k2Ts});
+			dtlTank.getRfField().setSTFCoefs(new double[] {betas, 0., kS, k2S});
+			dtlTank.getRfField().setSTF_endCoefs(new double[] {betas, 0., kS, k2S});
 		}		
 		
 		sequence.addNode(dtlTank);
@@ -138,6 +121,7 @@ public class DTLCellTest {
 		// Outputting lattice elements
 		TestCommon.saveLattice(scenario.getLattice(), "temp/dtlcelltest/lattice.xml");
 		TestCommon.saveLattice(oscenario.getLattice(), "temp/dtlcelltest/elattice.xml");
+		TestCommon.saveSequence(sequence, "temp/dtlcelltest/seq.xml");
 		
 		// Creating a probe		
 		EnvelopeProbe probe = TestCommon.setupProbeViaJavaCalls();					

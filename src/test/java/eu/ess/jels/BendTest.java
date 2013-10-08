@@ -1,14 +1,11 @@
 package eu.ess.jels;
 
 import java.io.File;
-import java.io.IOException;
-import java.net.MalformedURLException;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
-import eu.ess.jels.smf.impl.Bend;
 import xal.model.IComponent;
 import xal.model.IElement;
 import xal.model.ModelException;
@@ -20,9 +17,7 @@ import xal.sim.scenario.ScenarioGenerator2;
 import xal.smf.AcceleratorSeq;
 import xal.tools.beam.IConstants;
 import xal.tools.beam.Twiss;
-import xal.tools.xml.XmlDataAdaptor;
-import xal.tools.xml.XmlDataAdaptor.ParseException;
-import xal.tools.xml.XmlDataAdaptor.ResourceNotFoundException;
+import eu.ess.jels.smf.impl.Bend;
 
 @RunWith(JUnit4.class)
 public class BendTest {
@@ -79,16 +74,7 @@ public class BendTest {
 		
 		sequence.addNode(bend);
 		sequence.setLength(len);
-				
-		
-		XmlDataAdaptor a = XmlDataAdaptor.newDocumentAdaptor(sequence, null);
-			try {
-				a.writeTo(new File("blah.xml"));
-			} catch (IOException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-			
+							
 		// Generates lattice from SMF accelerator
 		Scenario oscenario = Scenario.newScenarioFor(sequence);
 		Scenario scenario = new ScenarioGenerator2(sequence).generateScenario();
@@ -100,6 +86,7 @@ public class BendTest {
 		// Outputting lattice elements
 		TestCommon.saveLattice(scenario.getLattice(), "temp/bendtest/lattice.xml");
 		TestCommon.saveLattice(oscenario.getLattice(), "temp/bendtest/elattice.xml");
+		TestCommon.saveSequence(sequence, "temp/bendtest/seq.xml");
 		
 		// Creating a probe						
 		scenario.setProbe(probe);			
