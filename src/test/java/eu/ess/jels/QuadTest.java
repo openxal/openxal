@@ -1,17 +1,12 @@
 package eu.ess.jels;
 import java.io.File;
-import java.io.IOException;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
-import xal.model.Lattice;
 import xal.model.ModelException;
-import xal.model.alg.EnvelopeTracker;
-import xal.model.alg.Tracker;
 import xal.model.probe.EnvelopeProbe;
-import xal.model.xml.LatticeXmlWriter;
 import xal.sim.scenario.Scenario;
 import xal.sim.scenario.ScenarioGenerator2;
 import xal.smf.AcceleratorSeq;
@@ -27,14 +22,23 @@ public class QuadTest {
 		System.out.println("Running\n");
 		AcceleratorSeq sequence = new AcceleratorSeq("QuadTest");
 		
+		double L = 70e-3; // length
+		double G = -16; // field
+		double R = 15; // aperture
+		double Phi = 0; // skew angle
+		double G3 = 0; // sextupole gradient (T/m^2)
+		double G4 = 0; // octupole gradient (T/m^2)
+		double G5 = 0; // decapole gradient (T/m^2)
+		double G6 = 0; // dodecapole gradient (T/m^2)
+		
 		Quadrupole quad = new Quadrupole("quad") { // there's no setter for type (you need to extend class)
 			{_type="Q"; }
 		};
-		quad.setPosition(70e-3*0.5); //always position on center!
-		quad.setLength(70e-3); // effLength below is actually the only one read 
-		quad.getMagBucket().setEffLength(70e-3);
-		quad.setDfltField(16);
-		quad.getMagBucket().setPolarity(-1);
+		quad.setPosition(L*0.5); //always position on center!
+		quad.setLength(L); // effLength below is actually the only one read 
+		quad.getMagBucket().setEffLength(L);
+		quad.setDfltField(Math.abs(G));
+		quad.getMagBucket().setPolarity(Math.signum(G));
 		quad.getAper().setAperX(15e-3);
 		quad.getAper().setAperY(15e-3);
 		quad.getAper().setShape(ApertureBucket.iRectangle);
@@ -50,11 +54,11 @@ public class QuadTest {
 		new File("temp/quadtest").mkdirs();
 		
 		// Outputting lattice elements
-		saveLattice(scenario.getLattice(), "temp/quadtest/lattice.xml");
-		saveLattice(oscenario.getLattice(), "temp/quadtest/elattice.xml");
+		TestCommon.saveLattice(scenario.getLattice(), "temp/quadtest/lattice.xml");
+		TestCommon.saveLattice(oscenario.getLattice(), "temp/quadtest/elattice.xml");
 		
 		// Creating a probe
-		EnvelopeProbe probe = setupProbeViaJavaCalls();					
+		EnvelopeProbe probe = TestCommon.setupProbeViaJavaCalls();					
 		scenario.setProbe(probe);			
 		
 				
@@ -81,55 +85,5 @@ public class QuadTest {
 		/* ELS output: 7.000000E-02 1.060867E-03 9.629023E-04 1.920023E-03 3.918513E-01 3.239030E-01 9.445394E-01 */
 	}
 
-	private static EnvelopeProbe setupProbeViaJavaCalls() {
-		// Envelope probe and tracker
-		EnvelopeTracker envelopeTracker = new EnvelopeTracker();			
-		envelopeTracker.setRfGapPhaseCalculation(false);
-		envelopeTracker.setUseSpacecharge(false);
-		envelopeTracker.setEmittanceGrowth(false);
-		envelopeTracker.setStepSize(0.004);
-		envelopeTracker.setProbeUpdatePolicy(Tracker.UPDATE_EXIT);
-		
-		EnvelopeProbe envelopeProbe = new EnvelopeProbe();
-		envelopeProbe.setAlgorithm(envelopeTracker);
-		envelopeProbe.setSpeciesCharge(-1);
-		envelopeProbe.setSpeciesRestEnergy(9.3829431e8);
-		envelopeProbe.setKineticEnergy(2.5e6);//energy
-		envelopeProbe.setPosition(0.0);
-		envelopeProbe.setTime(0.0);		
-				
-		/*
-		number of particles = 1000
-		beam current in A = 0
-		Duty Cycle in %= 4
-		normalized horizontal emittance in m*rad= 0.2098e-6
-		normalized vertical emittance in m*rad = 0.2091e-6
-		normalized longitudinal emittance in m*rad = 0.2851e-6
-		kinetic energy in MeV = 3
-		alfa x = -0.1763
-		beta x in m/rad = 0.2442
-		alfa y = -0.3247
-		beta y in m/rad = 0.3974
-		alfa z = -0.5283
-		beta z in m/rad = 0.8684
-		 */
-		
-		envelopeProbe.initFromTwiss(new Twiss[]{new Twiss(-0.1763,0.2442,0.2098e-6),
-										  new Twiss(-0.3247,0.3974,0.2091e-6),
-										  new Twiss(-0.5283,0.8684,0.2851e-6)});
-		envelopeProbe.setBeamCurrent(0.0);
-		envelopeProbe.setBunchFrequency(4.025e8);//frequency
-		
-		return envelopeProbe;
-	}
 
-
-	private static void saveLattice(Lattice lattice, String file) {				
-		try {
-			LatticeXmlWriter.writeXml(lattice, file);
-		} catch (IOException e1) {
-			e1.printStackTrace();
-			return;
-		}
-	}
 }

@@ -2,27 +2,27 @@ package eu.ess.jels;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
+import eu.ess.jels.smf.impl.Bend;
 import xal.model.IComponent;
 import xal.model.IElement;
-import xal.model.Lattice;
 import xal.model.ModelException;
 import xal.model.Sector;
-import xal.model.alg.EnvelopeTracker;
-import xal.model.alg.Tracker;
 import xal.model.elem.ElementSeq;
 import xal.model.probe.EnvelopeProbe;
-import xal.model.xml.LatticeXmlWriter;
 import xal.sim.scenario.Scenario;
 import xal.sim.scenario.ScenarioGenerator2;
 import xal.smf.AcceleratorSeq;
-import xal.smf.impl.Bend;
 import xal.tools.beam.IConstants;
 import xal.tools.beam.Twiss;
+import xal.tools.xml.XmlDataAdaptor;
+import xal.tools.xml.XmlDataAdaptor.ParseException;
+import xal.tools.xml.XmlDataAdaptor.ResourceNotFoundException;
 
 @RunWith(JUnit4.class)
 public class BendTest {
@@ -35,10 +35,14 @@ public class BendTest {
 		double entry_angle_deg = -5.5;
 		double exit_angle_deg = -5.5;
 		double alpha_deg = -11; // angle in degrees
-		double rho = 9375.67*1e-3; // curvature radius (in m)
+		double rho = 9375.67*1e-3; // absolute curvature radius (in m)
 		double N = 0.; // field Index
-		final int HV = 0;  // 0 - horizontal, 1 - vertical 
-		/* G,K1,K2 - gap, fringe field factors are supported in the model but not SMF (use G*1.e-3)*/
+		int HV = 0;  // 0 - horizontal, 1 - vertical 
+		double G = 50;
+		double entrK1 = 0.45;
+		double entrK2 = 2.80;
+		double exitK1 = 0.45;
+		double exitK2 = 2.80;
 		
 		// calculations
 		double alpha = alpha_deg * Math.PI/180.0;		
@@ -46,7 +50,7 @@ public class BendTest {
 		double quadComp = N / (rho*rho);
 		
 		// following are used to calculate field
-		EnvelopeProbe probe = setupProbeViaJavaCalls();
+		EnvelopeProbe probe = TestCommon.setupProbeViaJavaCalls();
 		probe.initialize();
 	    double c  = IConstants.LightSpeed;	      
 	    double e = probe.getSpeciesCharge();
@@ -56,14 +60,7 @@ public class BendTest {
 	    double B0 = b*gamma*Er/(e*c*rho)*Math.signum(alpha);
 		
 	    
-		Bend bend = new Bend("b") {
-			@Override
-			public int getOrientation() {
-				if (HV == 0) return HORIZONTAL;  
-				else return VERTICAL; // currently impossible to put it into a file
-				
-			}			
-		};
+		Bend bend = new Bend("b", HV);
 		bend.setPosition(len*0.5); //always position on center!
 		bend.setLength(len); // both paths are used in calculation
 		bend.getMagBucket().setPathLength(len);
@@ -73,11 +70,25 @@ public class BendTest {
 		bend.getMagBucket().setDipoleExitRotAngle(-exit_angle_deg);		
 		bend.setDfltField(B0);		
 		bend.getMagBucket().setDipoleQuadComponent(quadComp);
-		 
+		
+		bend.setGap(G);
+		bend.setEntrK1(entrK1);
+		bend.setEntrK2(entrK2);
+		bend.setExitK1(exitK1);
+		bend.setExitK2(exitK2);
 		
 		sequence.addNode(bend);
 		sequence.setLength(len);
 				
+		
+		XmlDataAdaptor a = XmlDataAdaptor.newDocumentAdaptor(sequence, null);
+			try {
+				a.writeTo(new File("blah.xml"));
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			
 		// Generates lattice from SMF accelerator
 		Scenario oscenario = Scenario.newScenarioFor(sequence);
 		Scenario scenario = new ScenarioGenerator2(sequence).generateScenario();
@@ -87,8 +98,8 @@ public class BendTest {
 		new File("temp/bendtest").mkdirs();
 		
 		// Outputting lattice elements
-		saveLattice(scenario.getLattice(), "temp/bendtest/lattice.xml");
-		saveLattice(oscenario.getLattice(), "temp/bendtest/elattice.xml");
+		TestCommon.saveLattice(scenario.getLattice(), "temp/bendtest/lattice.xml");
+		TestCommon.saveLattice(oscenario.getLattice(), "temp/bendtest/elattice.xml");
 		
 		// Creating a probe						
 		scenario.setProbe(probe);			
@@ -120,57 +131,5 @@ public class BendTest {
 		System.out.printf("%E %E %E\n", beta[0], beta[1], beta[2]);
 		
 		/* ELS output: 7.000000E-02 1.060867E-03 9.629023E-04 1.920023E-03 3.918513E-01 3.239030E-01 9.445394E-01 */
-	}
-
-	private static EnvelopeProbe setupProbeViaJavaCalls() {
-		// Envelope probe and tracker
-		EnvelopeTracker envelopeTracker = new EnvelopeTracker();			
-		envelopeTracker.setRfGapPhaseCalculation(false);
-		envelopeTracker.setUseSpacecharge(false);
-		envelopeTracker.setEmittanceGrowth(false);
-		envelopeTracker.setStepSize(0.004);
-		envelopeTracker.setProbeUpdatePolicy(Tracker.UPDATE_EXIT);
-		
-		EnvelopeProbe envelopeProbe = new EnvelopeProbe();
-		envelopeProbe.setAlgorithm(envelopeTracker);
-		envelopeProbe.setSpeciesCharge(-1);
-		envelopeProbe.setSpeciesRestEnergy(9.3829431e8);
-		envelopeProbe.setKineticEnergy(2.5e6);//energy
-		envelopeProbe.setPosition(0.0);
-		envelopeProbe.setTime(0.0);		
-				
-		/*
-		number of particles = 1000
-		beam current in A = 0
-		Duty Cycle in %= 4
-		normalized horizontal emittance in m*rad= 0.2098e-6
-		normalized vertical emittance in m*rad = 0.2091e-6
-		normalized longitudinal emittance in m*rad = 0.2851e-6
-		kinetic energy in MeV = 3
-		alfa x = -0.1763
-		beta x in m/rad = 0.2442
-		alfa y = -0.3247
-		beta y in m/rad = 0.3974
-		alfa z = -0.5283
-		beta z in m/rad = 0.8684
-		 */
-		
-		envelopeProbe.initFromTwiss(new Twiss[]{new Twiss(-0.1763,0.2442,0.2098e-6),
-										  new Twiss(-0.3247,0.3974,0.2091e-6),
-										  new Twiss(-0.5283,0.8684,0.2851e-6)});
-		envelopeProbe.setBeamCurrent(0.0);
-		envelopeProbe.setBunchFrequency(4.025e8);//frequency
-		
-		return envelopeProbe;
-	}
-
-
-	private static void saveLattice(Lattice lattice, String file) {				
-		try {
-			LatticeXmlWriter.writeXml(lattice, file);
-		} catch (IOException e1) {
-			e1.printStackTrace();
-			return;
-		}
 	}
 }

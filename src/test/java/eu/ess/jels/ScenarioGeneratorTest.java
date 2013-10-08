@@ -9,7 +9,6 @@ import org.junit.runners.JUnit4;
 import xal.model.Lattice;
 import xal.model.ModelException;
 import xal.model.xml.LatticeXmlWriter;
-import xal.sim.scenario.NewAndImprovedScenarioElementMapping;
 import xal.sim.scenario.Scenario;
 import xal.sim.scenario.ScenarioGenerator2;
 import xal.smf.Accelerator;
