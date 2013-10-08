@@ -4,6 +4,11 @@ import xal.smf.impl.qualify.ElementTypeManager;
 import xal.tools.data.DataAdaptor;
 import eu.ess.jels.smf.attr.Magnet2Bucket;
 
+/**
+ * Extends OpenXal Bend class with orientation and FringeField parameters.
+ * 
+ * @author Ivo List
+ */
 public class Bend extends xal.smf.impl.Bend {
 	
 	/** horizontal dipole type */
@@ -27,14 +32,22 @@ public class Bend extends xal.smf.impl.Bend {
         ElementTypeManager typeManager = ElementTypeManager.defaultManager();
         typeManager.registerType(Bend.class, "D");
     }
-    
-	
+    	
 	private Magnet2Bucket magnet2Bucket = new Magnet2Bucket();
 	
+	/**
+	 * Creates Bend with horizontal orientation.
+	 * @param strId node id
+	 */
 	public Bend(String strId) {
 		this(strId, HORIZONTAL);
 	}
 	
+	/**
+	 * Creates Bend with arbitrary orientation.
+	 * @param strId node id
+	 * @param orientation orientation of the magnet, either HORIZONTAL or VERTICAL as defined by MagnetType. 
+	 */
 	public Bend(String strId, int orientation) {
 		super(strId);		
 		this._type = orientation == HORIZONTAL ? HORIZONTAL_TYPE : VERTICAL_TYPE;
@@ -52,6 +65,11 @@ public class Bend extends xal.smf.impl.Bend {
         return _type; 
     }
 	
+    /**
+	 * Sets orientation of the magnet as defined by MagnetType. 
+	 *  
+	 * @param orientation orientation of the magnet, either HORIZONTAL or VERTICAL
+	 */
     public void setOrientation(int orientation)
     {
     	this._type = orientation == HORIZONTAL ? HORIZONTAL_TYPE : VERTICAL_TYPE;
@@ -69,42 +87,52 @@ public class Bend extends xal.smf.impl.Bend {
         super.update( adaptor );
     }
 
+    /** @return total gap of magnet (m) */
 	public double getGap() {
 		return magnet2Bucket.getGap();
 	}
 
+	/** @param value total gap of magnet (m) */
 	public void setGap(double value) {
 		magnet2Bucket.setGap(value);
 	}
 
+	/** @return Upstream edge face Fringe-field factor (default = 0.45) */
 	public double getEntrK1() {
 		return magnet2Bucket.getEntrK1();
 	}
 
+	/** @param value Upstream edge face Fringe-field factor (default = 0.45) */
 	public void setEntrK1(double value) {
 		magnet2Bucket.setEntrK1(value);
 	}
 
+	/** @return Upstream edge face Fringe-field factor (default = 2.80) */
 	public double getEntrK2() {
 		return magnet2Bucket.getEntrK2();
 	}
 
+	/** @param value Upstream edge face Fringe-field factor (default = 2.80) */
 	public void setEntrK2(double value) {
 		magnet2Bucket.setEntrK2(value);
 	}
 
+	/** @return Downstream edge face Fringe-field factor (default = 0.45) */
 	public double getExitK1() {
 		return magnet2Bucket.getExitK1();
 	}
 
+	/** @param value Downstream edge face Fringe-field factor (default = 0.45) */
 	public void setExitK1(double value) {
 		magnet2Bucket.setExitK1(value);
 	}
 
+	/** @return Downstream edge face Fringe-field factor (default = 2.80) */
 	public double getExitK2() {
 		return magnet2Bucket.getExitK2();
 	}
 
+	/** @param value Downstream edge face Fringe-field factor (default = 2.80) */
 	public void setExitK2(double value) {
 		magnet2Bucket.setExitK2(value);
 	}	

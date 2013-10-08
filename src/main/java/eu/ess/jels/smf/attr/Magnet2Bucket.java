@@ -1,12 +1,7 @@
 package eu.ess.jels.smf.attr;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-
 import xal.smf.attr.Attribute;
-import xal.smf.attr.AttributeBucket;
 import xal.smf.attr.MagnetBucket;
-import xal.tools.ArrayTool;
 
 
 /**
@@ -72,43 +67,52 @@ public class Magnet2Bucket extends MagnetBucket {
     /** Downstream edge face Fringe-field factor (default = 2.80) */
     private Attribute       m_attExitK2;
 
-
+    /** @return total gap of magnet (m) */
 	public double getGap() {
 		return m_attGap.getDouble();
 	}
 
+	/** @param value total gap of magnet (m) */
 	public void setGap(double value) {
 		m_attGap.set(value);
 	}
 
+	/** @return Upstream edge face Fringe-field factor (default = 0.45) */
 	public double getEntrK1() {
 		return m_attEntrK1.getDouble();
 	}
 
+	/** @param value Upstream edge face Fringe-field factor (default = 0.45) */
 	public void setEntrK1(double value) {
 		m_attEntrK1.set(value);
 	}
 
+	/** @return Upstream edge face Fringe-field factor (default = 2.80) */
 	public double getEntrK2() {
 		return m_attEntrK2.getDouble();
 	}
 
+	/** @param value Upstream edge face Fringe-field factor (default = 2.80) */
 	public void setEntrK2(double value) {
 		m_attEntrK2.set(value);
 	}
 
+	/** @return Downstream edge face Fringe-field factor (default = 0.45) */
 	public double getExitK1() {
 		return m_attExitK1.getDouble();
 	}
 
+	/** @param value Downstream edge face Fringe-field factor (default = 0.45) */
 	public void setExitK1(double value) {
 		m_attExitK1.set(value);
 	}
 
+	/** @return Downstream edge face Fringe-field factor (default = 2.80) */
 	public double getExitK2() {
 		return m_attExitK2.getDouble();
 	}
 
+	/** @param value Downstream edge face Fringe-field factor (default = 2.80) */
 	public void setExitK2(double value) {
 		this.m_attExitK2.set(value);
 	}        
