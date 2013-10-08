@@ -45,7 +45,8 @@ public class InMemoryDataAdaptor implements DataAdaptor {
     
     /** string value associated with the specified attribute */
     public String stringValue( final String attribute ) {
-        return PROPERTIES.get( attribute ).toString();
+    	Object value = PROPERTIES.get( attribute );
+        return value != null ? value.toString() : null;
     }
     
     
