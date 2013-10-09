@@ -1,0 +1,51 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<Configuration date="Mon Jul 31 11:19:02 EDT 2006" version="1.0.0">
+	<TripLogger loggingPeriod="900.0" />
+	<TripFilterFactory>
+		<TripFilter name="TripCounter" type="TripCounter" />
+		<TripFilter name="OkayValueEquals0" type="OkayValue" target="0" />
+		<TripFilter name="OkayValueEquals1" type="OkayValue" target="1" />
+	</TripFilterFactory>
+    <TripMonitorFilter name="SCL Trips" enable="true" sequence="SCL" nodeType="SCLCavity" nodeIDPattern="SCL_RF:Cav(\w+)" >
+		<PersistentStore table="epics.rf_cav_trip" pvColumn="sgnl_id" timestampColumn="cur_dte" />
+		<PVNodeFormatGroup>
+			<PVNodeFormat pattern="SCL_LLRF:HPM(\d\d[abcdef]):\w+" />
+			<PVNodeFormat pattern="SCL_LLRF:FCM(\d\d[abcdef]):\w+" />
+			<PVNodeFormat pattern="SCL_Vac:CCG(\d\d[123456])01:\w+" conversion="NumericToAlpha" />
+		</PVNodeFormatGroup>
+		<TripChannelFilter PVFormat="SCL_Vac:CCG%s01:VacOK" tripFilter="OkayValueEquals1" conversion="NumericToAlpha" />
+		<TripChannelFilter PVFormat="SCL_LLRF:HPM%s:FOARCCtr0" tripFilter="TripCounter" />
+		<TripChannelFilter PVFormat="SCL_LLRF:HPM%s:FOARCCtr1" tripFilter="TripCounter" />
+		<TripChannelFilter PVFormat="SCL_LLRF:HPM%s:FOARCCtr2" tripFilter="TripCounter" />
+		<TripChannelFilter PVFormat="SCL_LLRF:HPM%s:FOARCCtr3" tripFilter="TripCounter" />
+		<TripChannelFilter PVFormat="SCL_LLRF:HPM%s:FOARCCtr4" tripFilter="TripCounter" />
+		<TripChannelFilter PVFormat="SCL_LLRF:HPM%s:ADCFltCtr0" tripFilter="TripCounter" />
+		<TripChannelFilter PVFormat="SCL_LLRF:HPM%s:ADCFltCtr1" tripFilter="TripCounter" />
+		<TripChannelFilter PVFormat="SCL_LLRF:HPM%s:ADCFltCtr2" tripFilter="TripCounter" />
+		<TripChannelFilter PVFormat="SCL_LLRF:HPM%s:ADCFltCtr3" tripFilter="TripCounter" />
+		<TripChannelFilter PVFormat="SCL_LLRF:HPM%s:ADCFltCtr4" tripFilter="TripCounter" />
+		<TripChannelFilter PVFormat="SCL_LLRF:HPM%s:ADCFltCtr5" tripFilter="TripCounter" />
+		<TripChannelFilter PVFormat="SCL_LLRF:HPM%s:ADCFltCtr6" tripFilter="TripCounter" />
+		<TripChannelFilter PVFormat="SCL_LLRF:HPM%s:ADCFltCtr7" tripFilter="TripCounter" />
+		<TripChannelFilter PVFormat="SCL_LLRF:HPM%s:VacCtr" tripFilter="TripCounter" />
+		<TripChannelFilter PVFormat="SCL_LLRF:HPM%s:ChtFlt" tripFilter="OkayValueEquals0" />
+		<TripChannelFilter PVFormat="SCL_LLRF:HPM%s:CryoHBt_Sts" tripFilter="OkayValueEquals1" />
+		<TripChannelFilter PVFormat="SCL_LLRF:HPM%s:Coupler_Sts" tripFilter="OkayValueEquals1" />
+		<TripChannelFilter PVFormat="SCL_LLRF:HPM%s:Cryo_Sts" tripFilter="OkayValueEquals1" />
+		<TripChannelFilter PVFormat="SCL_LLRF:HPM%s:HPRFHBt_Sts" tripFilter="OkayValueEquals1" />
+		<TripChannelFilter PVFormat="SCL_LLRF:FCM%s:ErrLvlTrip" tripFilter="OkayValueEquals1" />
+	</TripMonitorFilter>
+    <TripMonitorFilter name="Test Trips" enable="false" sequence="MEBT" nodeType="BPM" nodeIDPattern="MEBT_Diag:BPM(\w+)" >
+		<PersistentStore table="epics.rf_cav_trip" pvColumn="sgnl_id" timestampColumn="cur_dte" />
+		<PVNodeFormatGroup>
+			<PVNodeFormat pattern="MEBT_Diag:BPM(\d\d[abcdef]):\w+" />
+			<PVNodeFormat pattern="SCL_Diag:BPM(\d\d[abcdef]):\w+" />
+		</PVNodeFormatGroup>
+		<TripChannelFilter PVFormat="MEBT_Diag:BPM%s:amplitudeAvg" tripFilter="TripCounter" />
+		<TripChannelFilter PVFormat="MEBT_Diag:BPM%s:xAvg" tripFilter="OkayValueEquals1" />
+		<TripChannelFilter PVFormat="MEBT_Diag:BPM%s:yAvg" tripFilter="TripCounter" />
+		<TripChannelFilter PVFormat="SCL_Diag:BPM%s:amplitudeAvg" tripFilter="TripCounter" />
+		<TripChannelFilter PVFormat="SCL_Diag:BPM%s:xAvg" tripFilter="OkayValueEquals1" />
+		<TripChannelFilter PVFormat="SCL_Diag:BPM%s:yAvg" tripFilter="TripCounter" />
+	</TripMonitorFilter>
+</Configuration>

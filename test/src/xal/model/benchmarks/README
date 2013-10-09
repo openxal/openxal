@@ -1,0 +1,13 @@
+These scripts test the online model against other established optics engines.
+
+Description of Tests:
+
+Test Ring online model against MAD with no kicks:
+type "jython ring-model-test.py" and visually check consistency.
+
+Test Ring online model against MAD with horizontal and vertical orbit distortions:
+type "jython ring-model-test.py kicks" and visually check consistency.
+
+Test Ring online model turn by turn motion for a particle with an initial offset from the closed orbit.
+type "jython ring-turns-test.py" and visually verify that the turn-by-turn motion is stable and oscillates about the closed orbit.
+

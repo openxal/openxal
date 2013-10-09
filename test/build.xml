@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project basedir="." default="run-tests" name="xal.core.test">
+	<import file="../../config.xml"/>
+    
+	<description>Test Open XAL Core</description>
+	
+    <target name="init">
+        <property name="srcroot" value="." />
+        <mkdir dir="${build.root}" />
+    </target>
+    
+    
+    <!-- run junit tests -->
+    <target name="run-tests" depends="all">
+        <mkdir dir="${build.tests.root}" />
+        <junit printsummary="yes">
+            <classpath>
+                <pathelement location="${build.jar.lib.root}/xal-test.jar" />
+                <pathelement location="${build.jar.lib.root}/xal-core.jar" />
+                <pathelement location="${build.jar.lib.root}/xal-lib.jar" />
+            </classpath>
+            
+            <formatter type="plain" usefile="false" />
+            
+            <batchtest todir="${build.tests.root}">
+                <fileset dir="${build.compile.core.test.root}"> 
+                    <include name="**/*Test*.class"/> 
+                    <exclude name="xal/resources/**/*"/> 
+                </fileset> 
+                
+                <formatter type="plain" usefile="true"/>
+            </batchtest>
+        </junit>
+    </target>
+	
+	
+	<!-- Macro to compile the core test XAL classes using the specified compiler flag -->
+	<target name="compile" depends="init">
+        <mkdir dir="${build.compile.core.test.root}" />
+        <javac debug="true" source="${build.compile.java.source}" target="${build.compile.java.target}" includeAntRuntime="no" deprecation="true" destdir="${build.compile.core.test.root}" srcdir="${srcroot}/${source.code.dir}" includes="**" sourcepath="">
+            <classpath>
+                <pathelement location="${build.jar.lib.root}/xal-core.jar" />
+                <pathelement location="${build.jar.lib.root}/xal-lib.jar" />
+
+				<!-- compile against external test libraries if any -->
+				<fileset dir="${srcroot}">
+					<include name="lib/*.jar" />
+				</fileset>
+            </classpath>
+            <compilerarg value="-Xlint" />
+        </javac>
+        
+        <copy todir="${build.compile.core.test.root}/resources">
+            <fileset dir="resources" />
+        </copy>
+	</target>
+    
+	
+	<!-- Jar the core test XAL classes -->
+    <target  name="jar" depends="init, compile">
+        <mkdir dir="${build.jar.lib.root}" />
+        <jar compress="false" jarfile="${build.jar.lib.root}/xal-test.jar" index="true">
+			<fileset dir="${build.compile.core.test.root}" includes="xal/**/*" />
+			<fileset dir="${build.compile.core.test.root}/resources" />
+			
+			<!-- merge external test libraries if any -->
+			<zipgroupfileset dir="${srcroot}">
+				<patternset>
+					<include name="lib/*.jar" />
+				</patternset>
+			</zipgroupfileset>
+        </jar>
+    </target>
+
+    
+	<!-- merge the external jars and build XAL test core -->
+    <target name="all" depends="init,compile,jar" description="Build everything." >
+        <echo message="Everything built. " />
+    </target>
+	
+	
+	<!-- clean compiled products -->
+    <target name="clean" depends="init" description="Clean all build products." >
+        <delete dir="${build.compile.core.test.root}" />
+        <delete dir="${build.tests.root}" />
+        <delete file="${build.jar.lib.root}/xal-test.jar" quiet="true" />
+        
+        <echo message="Core test cleaned!" />
+    </target>
+	
+	
+	<!-- provide guidance on the various targets -->
+    <target name="help">
+		<echo message="Build the unit testing for XAL core" />
+		<echo message="Usage: ant [ant options] target1 [target2 | target3 | ... ]" />
+		<echo message="" />
+		<echo message="  where target(s) can be:" />
+		<echo message="    help ....................... Print this message." />
+		<echo message="    all ........................ Build and run the test cases." />
+		<echo message="    clean ...................... Clean compiled classes and build products" />
+		<echo message="    compile .................... Compile the core XAL classes reporting only mandated warnings." />
+		<echo message="    jar: ....................... Assemble the core XAL classes and resources into xal-core.jar" />
+		<echo message="    run-tests .................. Build and run the test cases." />
+    </target>
+</project>
+

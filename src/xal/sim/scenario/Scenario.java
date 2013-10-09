@@ -1,0 +1,467 @@
+/*
+ * Created on Oct 15, 2003
+ */
+package xal.sim.scenario;
+
+import xal.model.IAlgorithm;
+import xal.model.IElement;
+import xal.model.Lattice;
+import xal.model.ModelException;
+import xal.model.probe.Probe;
+import xal.model.probe.traj.ProbeState;
+import xal.model.probe.traj.Trajectory;
+import xal.sim.sync.SynchronizationException;
+import xal.sim.sync.SynchronizationManager;
+import xal.smf.AcceleratorNode;
+import xal.smf.AcceleratorSeq;
+import xal.smf.Ring;
+
+import java.util.List;
+import java.util.Map;
+
+
+/**
+ * Packages an on-line model scenario, including accelerator node proxy manager,
+ * lattice, probe, and synchronization manager.
+ * 
+ * @author Craig McChesney
+ * @author Christopher K. Allen
+ */
+public class Scenario {
+    public static final String SYNC_MODE_LIVE = "LIVE";
+    public static final String SYNC_MODE_DESIGN = "DESIGN";
+	public static final String SYNC_MODE_RF_DESIGN = "RF_DESIGN";
+	
+    private Lattice lattice;
+    private Probe probe;
+    private final SynchronizationManager syncManager;
+    private final AcceleratorSeq _sequence;
+    
+    /** element from which to start propagation */
+    private String idElemStart = null;
+    
+    /** element at which to stop propagation */
+    private String idElemStop = null;
+    
+    
+    /** Constructor */
+    protected Scenario( final AcceleratorSeq aSeq, final Lattice aLattice, final SynchronizationManager aSyncMgr ) {
+        _sequence = aSeq;
+        lattice = aLattice;
+        syncManager = aSyncMgr;
+    }
+    
+
+    /**
+     * Creates a new Scenario for the supplied accelerator sequence.
+     * 
+     * @param smfSeq    the accelerator sequence to build a scenario for
+     * @return          a new Scenario for the supplied accelerator sequence
+     * @throws          ModelException error building Scenario
+     */
+    public static Scenario newScenarioFor( final AcceleratorSeq smfSeq ) throws ModelException {
+        // Check if hardware sequence is actually a ring
+        if (smfSeq instanceof Ring) {
+            Ring    smfRing = (Ring)smfSeq;
+            return Scenario.newScenarioFor(smfRing);
+        }
+        
+        // We have a linear accelerator/transport line - process as such
+        ScenarioGenerator generator = new ScenarioGenerator(smfSeq);
+        return generator.generateScenario();
+    }
+    
+	
+    /**
+     * Creates a new <code>Scenario</code> object for the explicit case where
+     * the <code>AcceleratorSeq</code> object is of type 
+     * <code>gov.sns.xal.smf.Ring</code>.
+     * 
+     * @param   smfRing     target hardware (SMF) ring object 
+     * @return              <code>Scenario</code> object encapsulating ring
+     * 
+     * @throws ModelException   unable to build modeling scenario
+     */
+    public static Scenario  newScenarioFor( final Ring smfRing ) throws ModelException {
+        ScenarioGenerator genScen = new ScenarioGenerator(smfRing);
+        return genScen.generateScenario(); 
+    }
+
+	
+    public static Scenario newAndImprovedScenarioFor(AcceleratorSeq aSeq) 
+            throws ModelException 
+    {
+        NewAndImprovedScenarioGenerator generator = new NewAndImprovedScenarioGenerator(aSeq);
+        return generator.generateScenario();
+    }       
+    
+    // Model Operations ========================================================
+    
+    /**
+     * Sets the synchronization mode for the sync manager to a known sync mode,
+     * such as SynchronizationManager.SYNC_MODE_LIVE or SYNC_MODE_DESIGN.
+     * 
+     * @param newMode String specifying mode to set to
+     * @throws IllegalArgumentException if the specified mode is unknown
+     */
+    public void setSynchronizationMode( final String newMode ) {
+        syncManager.setSynchronizationMode(newMode);
+    }
+    
+	
+    /**
+     * Synchronizes each lattice element to the appropriate data source.
+     * @throws SynchronizationException if an error is encountered reading a data source
+     */
+    public void resync() throws SynchronizationException {
+        syncManager.resync();
+    }
+    
+	
+    /**
+	 * Synchronizes each lattice element from the cache and applies the whatif model inputs.
+     * @throws SynchronizationException if an error is encountered reading a data source
+     */
+    public void resyncFromCache() throws SynchronizationException {
+        syncManager.resyncFromCache();
+    }
+	
+        
+    /**
+     * Sets the model to start propagation from the AcceleratorNode with the
+     * specified id.  First get the AcceleratorNode for the id, find the first
+     * element mapped to it, and then set it as the starting element in the
+     * lattice.
+     * 
+     * @param nodeId ID of AcceleratorNode to start from
+     * 
+     * @throws ModelException if the node is not found, or no elements are mapped to it
+     */
+    public void setStartNode( final String nodeId ) throws ModelException {
+        // find start node
+        AcceleratorNode theNode = nodeWithId(nodeId);
+        if (theNode == null)
+            throw new ModelException("Node not found: " + nodeId);
+            
+        // get first element mapped to node
+        List<IElement> mappedElems = elementsMappedTo(theNode);
+        if (mappedElems.isEmpty())
+            throw new ModelException("No model elements mapped to: " + nodeId);
+            
+        // set propagation to start from that element
+        IElement elemStart = mappedElems.get(0);
+        //System.out.println("Scenario.setStartNode start at element: " + elemStart.getId());
+        setStartElement(elemStart);
+        
+    }
+        
+	
+    /**
+     * Sets the model to stop propagation the AcceleratorNode 
+     * with the specified id. By default the model will stop propagation <b>AFTER</b> this node. 
+		 * This behavior can be changed in the Tracker ( see setStopNodeInclusive(boolean) method. 
+     * 
+     * @param nodeId ID of the AcceleratorNode to stop after
+     * 
+     * @throws ModelException if the node is not found, or no elements are mapped to it
+     */
+    public void setStopNode( final String nodeId ) throws ModelException {
+        
+        // find stop node
+        AcceleratorNode theNode = nodeWithId(nodeId);
+        if (theNode == null)
+            throw new ModelException("Node not found: " + nodeId);
+            
+        // get first element mapped to node
+        List<IElement> mappedElems = elementsMappedTo(theNode);
+        if (mappedElems.isEmpty())
+            throw new ModelException("No model elements mapped to: " + nodeId);
+            
+        // set propagation to stop after that element
+        IElement elemStop = mappedElems.get(0);
+        //System.out.println("Scenario.setStopNode stop at element: " + elemStop.getId());
+        setStopElement(elemStop);
+        
+    }
+	
+	
+    /**
+     * Sets the model to start propagation from the specified IElement.  If you
+     * don't have a reference to an element but do have an AcceleratorNode, use
+     * setStartNode(String).
+     * 
+     * @param start Element to start propagation from
+     */
+    public void setStartElement( final IElement start ) {
+        idElemStart = start.getId();
+    }
+    
+	
+    /**
+     * Sets the model to stop propagation (by default) <b>after</b> the specified IElement.  If you
+     * don't have a reference to an element but do have an AcceleratorNode, use
+     * setStopNode(String). 
+		 * This "stop after" behavior can be changed in the Tracker ( see setStopNodeInclusive(boolean) method. 
+     * 
+     * @param stop Element to stop propagation after
+     */
+    public void setStopElement( final IElement stop ) {
+        idElemStop = stop.getId();
+    }
+	
+	
+	/**
+	 * Convert the position of a location in the sequence to a position in a trajectory due to 
+	 * a start element offset specified in the scenario.
+	 * @param positionInSequence The position of a location in this scenario's sequence
+	 * @return the corresponding position relative to this scenario's starting element
+	 */
+	public double getPositionRelativeToStart( final double positionInSequence ) {
+		return ( idElemStart == null ) ? positionInSequence : _sequence.getRelativePosition( positionInSequence, idElemStart );
+	}
+    
+	
+    /**
+     * Runs the model (propagate probe through lattice).
+     * 
+     * @throws ModelException if there is an error propagating the probe
+     * @throws IllegalStateException if the lattice or probe is not properly initialized
+     */
+    public void run() throws ModelException {
+        if (lattice == null)
+            throw new IllegalStateException(
+                "must initialize lattice before running model");
+        if (probe == null)
+            throw new IllegalStateException(
+                "must initialize probe before running model");
+        
+        // Set the starting and stoping elements
+        IAlgorithm  alg = probe.getAlgorithm();
+        
+        if (this.getStartElementId() != null)
+            alg.setStartElementId( this.getStartElementId() );
+        else
+            alg.unsetStartElementId();
+            
+        if (this.getStopElementId() != null)
+            alg.setStopElementId( this.getStopElementId() );
+        else
+            alg.unsetStopElementId();
+        
+        // Propagate probe
+	lattice.propagate(probe);
+    }
+    
+	
+    /**
+     * Returns the lattice.  NOTE: I (Craig M) don't like this here.  I only
+     * added it so that I could keep ModelProxy working as it presently does.
+     * Let's figure out a way to change it.  It seems that the only thing that
+     * gets the Lattice from ModelProxy is OrbitDisplay2.  If it were changed
+     * to use Scenario, then this method could be removed!
+     * 
+     * @return the Lattice
+     */
+    public Lattice getLattice() {
+        return lattice;
+    }
+    
+    public void setLattice(Lattice aLattice) {
+    	lattice = aLattice;
+    }
+	
+    /**
+     * Returns the trajectory obtained by running the model.
+     * 
+     * @return the Trajectory obtained by running the model
+     * @throws IllegalStateException if the probe or trajectory is null
+     */
+    public Trajectory getTrajectory() {
+        if (probe == null)
+            throw new IllegalStateException("scenario doesn't contain a probe");
+        if (probe.getTrajectory() == null)
+            throw new IllegalStateException("model not yet run");
+        return probe.getTrajectory();
+    }
+        
+    
+    // Queries =================================================================
+    
+    /**
+     * Returns a map of property values (key = String property name, value =
+     * double property value) for the supplied node.
+     * 
+     * @param aNode AcceleratorNode whose properties to get
+     * @return a Map of property values for the supplied node
+     * @throws SynchronizationException if error getting properties
+     * @throws IllegalArgumentException if aNode is null
+     */
+    public Map<String,Double> propertiesForNode( final AcceleratorNode aNode ) throws SynchronizationException {
+        if (aNode == null)  throw new IllegalArgumentException( "node cannot be null getting property values" );
+		return syncManager.propertiesForNode(aNode);
+    }
+    
+	
+    /**
+     * Returns the accelerator node with the specified id, or null if there is
+     * none.
+     * 
+     * @param id String id of the node to return
+     * @return AcceleratorNode with specified id
+     */
+    public AcceleratorNode nodeWithId( final String id ) {
+        return _sequence.getNodeWithId(id);
+    }
+    
+	
+    /**
+     * Returns a List of elements mapped to the specified node.
+     * 
+     * @param aNode node to get elements mapped to
+     * @return a List of Elements mapped to the specified node
+     */
+    public List<IElement> elementsMappedTo( final AcceleratorNode aNode ) {
+        return syncManager.allElementsMappedTo(aNode);
+    }
+    
+	
+    /**
+     * Returns an array of the trajectory states for the specified element id.
+     * 
+     * @param id element id to find states for
+     * @return array of trajectory states for specified element id
+     * @throws ModelException if the probe is not yet propagated
+     */
+    public ProbeState[] trajectoryStatesForElement( final String id ) throws ModelException {
+        if (probe == null)
+            throw new ModelException("Probe is null");
+        return probe.getTrajectory().statesForElement(id);
+    }
+    
+	
+    /**
+     * Return the string identifier of the modeling element where propagation
+     * starts.
+     * 
+     * @return      modeling element string identifier
+     */
+    public String getStartElementId() {
+        return idElemStart;
+    }
+    
+	
+    /**
+     * Set the "start" element by String id
+     * @param elemId Start element Id
+     */
+    public void setStartElementId( final String elemId ) {
+        idElemStart = elemId;
+    }
+
+	
+    /**
+     * Return the string identifier of the modeling element where propagation
+     * stops.
+     * 
+     * @return      modeling element string identifier
+     */
+    public String getStopElementId() {
+        return idElemStop;
+    }
+    
+	
+    /**
+     * Set the "stop" element by String id
+     * @param elemId Stop element Id
+     */
+    public void setStopElementId( final String elemId ){
+        idElemStop = elemId;
+    }
+    
+	
+    /**
+     * Sets the specified node's property to the specified value.  Replaces the
+     * existing value if there is one.
+     * 
+     * @param aNode node whose property to set
+     * @param propName name of property to set
+     * @param val double value for property
+     */
+    public ModelInput setModelInput( final AcceleratorNode aNode, final String propName, final double val ) {
+        return syncManager.setModelInput(aNode, propName, val);
+    }
+    
+	
+    /**
+     * Returns the ModelInput for the specified node's property.
+     * 
+     * @param aNode node whose property to get a ModelInput for
+     * @param propName name of property to get a ModelInput for
+     */
+    public ModelInput getModelInput( final AcceleratorNode aNode, final String propName ) {
+        return syncManager.getModelInput(aNode, propName);
+    }
+    
+	
+    /**
+     * Removes the model input for the specified property on the specified node,
+     * if there is one.
+     * 
+     * @param aNode node whose input to remove
+     * @param property name of property whose input to remove
+     */
+    public void removeModelInput( final AcceleratorNode aNode, final String property ) {
+        syncManager.removeModelInput(aNode, property);
+    }
+    
+    
+    /**
+     * Sets the supplied probe for this scenario.
+     * 
+     * @param aProbe the probe to be used by the scenario
+     */
+    public void setProbe( final Probe aProbe ) {
+        probe = aProbe;
+    }
+    
+	
+    /**
+     * Returns the scenario's current probe, or null if there is none.
+     * 
+     * @return the scenario's current probe or null
+     */
+    public Probe getProbe() {
+        return probe;
+    }
+    
+	
+    /**
+     * Resets the probe to its initial state - before propagation (e.g., the
+     * state specified in the probe xml file).
+     */
+    public void resetProbe() {
+        if (probe != null) probe.reset();
+    }
+    
+    
+    /** Testing Support */
+    public boolean checkSynchronization( final AcceleratorNode aNode, final Map<String,Double> values ) throws SynchronizationException {
+        return syncManager.checkSynchronization(aNode, values);
+    }
+    
+	
+    /**
+     * remove previously set Start point
+     */
+    public void unsetStartNode() {
+        idElemStart = null;
+    }
+    
+	
+    /**
+     * remove previously set Stop point
+     */
+    public void unsetStopNode() {
+        idElemStop = null;
+    }
+}

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="US-ASCII" ?>
+
+
+<!-- XAL MODEL LATTICE DEFINITION
+  -       Document Type Definition
+  -
+  -  Version   : 1.0.0
+  -  Author    : Christopher K. Allen
+  -  Modified  : February, 2003
+  -
+  -->
+
+
+<!-- ################################################################### -->
+<!-- XAL MODEL LATTICE -->
+
+<!ELEMENT Lattice ( comment?, (Sequence | Element)* )>
+
+
+<!ATTLIST Lattice id 	 ID      #IMPLIED>
+<!ATTLIST Lattice ver    NMTOKEN #IMPLIED>
+<!ATTLIST Lattice date   CDATA   #IMPLIED>
+<!ATTLIST Lattice author CDATA   #IMPLIED>
+
+
+<!ELEMENT comment (#PCDATA)>
+<!ATTLIST comment author CDATA  #IMPLIED>
+<!ATTLIST comment date   CDATA  #IMPLIED>
+<!ATTLIST comment text   CDATA  #IMPLIED>
+
+
+<!ELEMENT Sequence ( comment?, (Sequence | Element)* )>
+<!ATTLIST Sequence id NMTOKEN #REQUIRED>
+
+
+<!ELEMENT Element ( Parameter*) >
+<!ATTLIST Element type  NMTOKEN        #REQUIRED>
+<!ATTLIST Element id    NMTOKEN        #REQUIRED>
+
+
+<!ELEMENT Parameter EMPTY>
+<!ATTLIST Parameter name  NMTOKEN #REQUIRED>
+<!ATTLIST Parameter type  NMTOKEN #REQUIRED>
+<!ATTLIST Parameter value CDATA   #REQUIRED>
+
+
+

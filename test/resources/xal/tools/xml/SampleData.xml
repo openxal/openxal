@@ -1,0 +1,7 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<book>
+    <people comment="&quot;This &amp; that&quot;" vec="1.2, -12.477, 7.9">
+        <person firstName="Albert" lastName="Einstein" birthYear="1879"></person>
+        <person firstName="Enrico" lastName="Fermi" birthYear="1901"></person>
+    </people>
+</book>
