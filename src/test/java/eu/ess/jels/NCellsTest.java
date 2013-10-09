@@ -14,9 +14,9 @@ import xal.model.probe.EnvelopeProbe;
 import xal.sim.scenario.Scenario;
 import xal.sim.scenario.ScenarioGenerator2;
 import xal.smf.AcceleratorSeq;
-import xal.smf.impl.RfGap;
 import xal.tools.beam.Twiss;
 import eu.ess.jels.smf.impl.ESSRfCavity;
+import eu.ess.jels.smf.impl.ESSRfGap;
 
 @RunWith(JUnit4.class)
 public class NCellsTest {
@@ -65,23 +65,22 @@ public class NCellsTest {
 
 		// TTF		
 		if (betas == 0.0) {
-			//cavity.getRfField().setTTF_startCoefs(new double[] {1.0});
+			cavity.getRfField().setTTF_startCoefs(new double[] {1.0});
 			cavity.getRfField().setTTFCoefs(new double[] {1.0});
 			cavity.getRfField().setTTF_endCoefs(new double[] {1.0});
 		} else {
-			//cavity.getRfField().setTTF_startCoefs(new double[] {betas, Ti, kTi, k2Ti});
+			cavity.getRfField().setTTF_startCoefs(new double[] {betas, Ti, kTi, k2Ti});
 			cavity.getRfField().setTTFCoefs(new double[] {betas, Ts, kTs, k2Ts});
 			cavity.getRfField().setTTF_endCoefs(new double[] {betas, To, kTo, k2To});			
 		}		
 
 		
 		// setup		
-		RfGap firstgap = new RfGap("g0");
+		ESSRfGap firstgap = new ESSRfGap("g0");
 		
 		double lambda = IElement.LightSpeed/frequency;
 		double Lc0,Lc,Lcn;
 		double amp0,amp,ampn;
-		double beta0, beta, betan;		
 		
 		amp0 = (1+kE0Ti)*(Ti/Ts);
 		amp = (1+kE0Ti)*(Ti/Ts); // verify this
@@ -111,16 +110,16 @@ public class NCellsTest {
 		cavity.addNode(firstgap);
 				
 		for (int i = 1; i<n-1; i++) {
-			RfGap gap = new RfGap("g"+i);
+			ESSRfGap gap = new ESSRfGap("g"+i);
 			gap.getRfGap().setTTF(1);
 			gap.setPosition(Lc0 + (i-0.5)*Lc);
-			gap.setLength(Lc);
+			gap.setLength(0);
 			gap.getRfGap().setLength(Lc);
 			gap.getRfGap().setAmpFactor(amp);
 			cavity.addNode(gap);
 		}
 		
-		RfGap lastgap = new RfGap("g"+(n-1));
+		ESSRfGap lastgap = new ESSRfGap("g"+(n-1));
 		lastgap.getRfGap().setEndCell(1);
 		lastgap.setLength(0); // used only for positioning
 		lastgap.setPosition(Lc0 + (n-2)*Lc + 0.5*Lcn + dzo);
