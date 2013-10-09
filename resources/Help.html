@@ -1,0 +1,173 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<HTML>
+<HEAD>
+<style type="text/css">
+P.warning {font-size: large; font-weight: bold;}        
+</style>
+<TITLE>Scope Application Help</TITLE>
+</HEAD>
+<BODY>
+
+<center><u>Scope Application Help</u></center>
+
+<p align=center>
+<a href="#intro_ref" TARGET="_self">Introduction</a> - 
+<a href="#release_notes" TARGET="_self">Release Notes</a> - 
+<a href="#features" TARGET="_self">Features</a> - 
+<a href="#startup_ref" TARGET="_self">Startup</a> - 
+<a href="#acknowledgements_ref" TARGET="_self">Acknowledgements</a>
+</p>
+
+<hr><br>
+<a name="intro_ref" <b>Introduction:</b></a>
+<p>
+The Scope application is intended to be a virtual scope capable of displaying 
+waveform PVs on a common timebase relative to cycle start.
+</p>
+
+<hr><br>
+<a name="release_notes" <b>Release Notes:</b></a>
+<p>
+Note that this application has only been tested by
+the developer and hence has not been subjected to extensive quality control.
+</p>
+<p>
+The Scope Application was developed and tested on Linux using 
+version 1.4.2 of the Java runtime environment from Sun Microsystems.  Thus, it is
+recommended to use this version of the Java runtime environment
+on the system where this application will be running.
+</p>
+
+<hr><br>
+<a name="features" <b>Features and Tips:</b></a>
+<p>
+Before using the application it may prove helpful to familiarize yourself
+with some of the features of the Scope application.
+</p>
+<p>
+This application can be used to view PV waveforms that provide information about 
+the time offset from cycle start of each element in the waveform.  The packaging 
+of This information must conform to the SNS standard.  Namely for given waveform
+PVs such as <code>Physics_Test:Scope:ch1</code>, <code>Physics_Test:Scope:ch2</code>, 
+<code>Physics_Test:Scope:ch3</code>
+that share a common prefix, there must also be PVs which broadcast concurrently
+(same time stamp) that provide information about the offset from cycle start of 
+the first element in the waveform (<code>Physics_Test:Scope:tDelayTBT</code>) and the spacing 
+between elements of the waveform (<code>Physics_Test:Scope:tSamplePeriod</code>).  These suffixes
+(<code>tDelayTBT</code> and <code>tSamplePeriod</code>) are the accepted SNS standard suffixes.  All times 
+are specified in units of turns.  By adhering to the standard, PV waveforms provided by
+different groups at SNS can be displayed and aligned using a common time base.
+</p>
+<p>
+The scope application was developed using the standard XAL application framework 
+so it shares many of the common menu items and behaviors of other XAL applications.
+This application is intended to be an virtual scope so hopefully the controls 
+are intuitive.
+</p>
+<p>
+Each document represents a single scope.  Under one application you may open as many
+scopes as you want and performance constraints allow.  If you save a document to a 
+file it should end with the suffix <code>.scope</code> as in <code>rf.scope</code>.
+You many enter up to four channels (waveform PVs) to monitor.  A scope document
+records the channels selected along with the settings for the channels, trigger, time base 
+and the scope screen.  Essentially a document stores a scope setup.
+</p>
+<p>
+By default when you enter channel PVs, the scope triggers on those channels.  The screen
+refreshes at a fixed rate and posts the subset of waveforms that post within a 10 msec 
+time window of each other.  One may also add an explicit trigger that.  This can be any PV 
+and the waveforms are only displayed if the trigger posts in synchronization with a subset
+of the waveforms.  Additionally one can apply a filter to the trigger PV so it will only 
+trigger if the PV not only posts but also passes the filter's test (e.g. max value, min value, ...).
+</p>
+<p>
+One may also perform simple math on the channels.  There are math channels that allow
+you to enter simple math formulas that can be applied to the input channels and the math
+channels output the resulting waveform that gets displayed on the scope screen.  The input
+channels can be referenced as variables and their names are of the form "ch1, ch2, ..."
+corresponding to the names on the buttons and in lower case.  All of the basic arithmetic
+operators, "+,-,*/", are supported as well as several basic math functions, "abs, sqrt, log, 
+sin, cos, tan, asin, acos, atan, exp, pow, min, max".  Most of these functions operate
+on a single argument.  The "pow" function operates one two arguments, base and power, as
+in <code>pow(ch1, 2)</code> for example to take the square of the first channel waveform.  
+The "min" and "max" functions can have two or more arguments as in 
+<code>min(ch1, 2.3*ch2, ch3)</code>.  A formula is evaluated over each channel input
+waveform for each time point from the set of time points within the range of overlapping 
+time domains of the input channels.  Interpolation is used to get values from the input
+waveforms at time points where no data is available.  Here are some sample formulae:
+<ul>
+<li> <code>ch1 - ch2</code>
+<li> <code>ch1+ ch2 + ch3</code>
+<li> <code>ch1 * (ch2 - ch3) + 2.5*sin(ch4/2)</code>
+<li> <code>3 + max(abs(ch1), ch2/5, ch3, 2*ch4)</code>
+</ul>
+</p>
+<p>
+For each individual input channel you may:
+<ul>
+<li> enable/disable the channel
+<li> change the vertical units per division
+<li> vertically offset the waveform
+</ul>
+For each individual math channel you may:
+<ul>
+<li> enable/disable the math channel
+<li> set a formula to apply to the input channels
+</ul>
+For the trigger you may:
+<ul>
+<li> set a trigger channel
+<li> enable/disable the trigger
+<li> select a filter and set its parameters
+</ul>
+For the time base you may:
+<ul>
+<li> horizontally offset the time base origin from cycle start
+<li> change the turns per division scale
+</ul>
+For the scope screen you may:
+<ul>
+<li> change the background brightness (shade of gray)
+<li> enable/disable the grid
+<li> save an image of the scope screen
+<li> save the latest raw waveform data to a file
+</ul>
+</p>
+
+<hr><br>
+<a name="startup_ref" <b>Start the Application:</b></a>
+<p>
+The basic steps for starting the application:
+<ol>
+<li> Make sure the latest version of xal.jar is in your Java classpath
+<li> Launch the application: <code> java -server xal.app.scope.ControlApp </code>
+<li> The following Java properties may optionally be set:
+<table border=1>
+<tr> <th> Property </th> <th> Default </th> <th>Definition</th> </tr>
+<tr> <td> usesConsole </td> <td align=right> true </td> <td> True implies standard out and err should be captured by the Console instead of the command line. </td> </tr>
+</table>
+<li> You may either open an existing scope document or start setting up the empty scope document.
+<li> To add a new channel simply select a channel button and enter the full PV name of the waveform and hit the <em>Set</em> button.
+<li> To add a trigger simply select the trigger button and enter the full name of the trigger PV and hit the <em>Set</em> button.
+</ol>
+</p>
+
+<hr><br>
+<a name="acknowledgements_ref" <b>Acknowledgements:</b></a>
+<p>
+SNS is managed by UT-Battelle, LLC, under contract DE-AC05-00OR22725 for the U.S. Department of Energy. <br>
+SNS is a collaboration of six US National Laboratories: Argonne National Laboratory (ANL), Brookhaven National Laboratory (BNL), 
+Thomas Jefferson National Accelerator Facility (TJNAF), Los Alamos National Laboratory (LANL), Lawrence Berkeley National Laboratory (LBNL), 
+and Oak Ridge National Laboratory (ORNL). SNS is managed by UT-Battelle, LLC, under contract DE-AC05-00OR22725 for the U.S. Department of Energy.
+</p>
+<p>
+Apache XML DOM parsers are used for parsing XML files.
+</p>
+<p>
+Other third party libraries may have been used either directly or indirectly in 
+development of this application or the XAL framework upon which it relies.
+</p>
+
+</BODY>
+</HTML>
