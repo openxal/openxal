@@ -52,7 +52,10 @@ public class BendTest {
 	    double Er = probe.getSpeciesRestEnergy();
 	    double gamma = probe.getGamma();
 	    double b  = probe.getBeta();
-	    double B0 = b*gamma*Er/(e*c*rho)*Math.signum(alpha);
+	    
+	    double k = b*gamma*Er/(e*c); // = -0.22862458629665997
+	    double B0 = k/rho*Math.signum(alpha);
+	    //double B0 = b*gamma*Er/(e*c*rho)*Math.signum(alpha);
 		
 	    
 		Bend bend = new Bend("b", HV);
