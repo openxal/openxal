@@ -12,8 +12,11 @@
     <target name="init">
         <dirname property="apps.src.root" file="${ant.file.common.apps.config}" />
         
-        <property environment="env" />        
-        <property name="appname" value="${ant.project.name}" />
+        <property environment="env" />
+
+		<!-- The application name is synonymous with the directory within which the application's build file resides (i.e. ${basedir}).-->
+		<basename property="appname" file="${basedir}"/>
+
 		<property name="app.package.prefix" value="xal.app" />
 		<property name="mainclass" value="${app.package.prefix}.${appname}.${mainclass.base}" />
         <property name="app.ref" value="${appname}" />

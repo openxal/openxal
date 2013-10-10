@@ -13,7 +13,10 @@
         <dirname property="services.src.root" file="${ant.file.common.services.config}" />
         
         <property environment="env" />        
-        <property name="servicename" value="${ant.project.name}" />
+
+		<!-- The service name is synonymous with the directory within which the service's build file resides (i.e. ${basedir}).-->
+		<basename property="servicename" file="${basedir}"/>
+
 		<property name="service.package.prefix" value="xal.service" />
 		<property name="mainclass" value="${service.package.prefix}.${servicename}.${mainclass.base}" />
         <property name="service.ref" value="${servicename}" />
