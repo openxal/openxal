@@ -105,7 +105,7 @@ public class ProbeStateTest extends TestCase {
 		// create a probe and set some state, capture state in snapshot
 		ParticleProbe probe = new ParticleProbe();
 		probe.setPosition(INITIAL_POSITION);
-		probe.setPhaseCoordinates(PhaseVector.zero());
+		probe.setPhaseCoordinates(PhaseVector.newZero());
 		ProbeState state = probe.createProbeState();
 		
 		//compare the snapshot to the probe

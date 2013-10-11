@@ -55,7 +55,7 @@ public class PhaseMap implements IArchive {
     public static PhaseMap  identity()   {
         PhaseMap    mapId = new PhaseMap();
         
-        mapId.setZeroOrder( PhaseVector.zero() );
+        mapId.setZeroOrder( PhaseVector.newZero() );
         mapId.setFirstOrder( PhaseMatrix.identity() );
         
         return mapId;
@@ -90,7 +90,7 @@ public class PhaseMap implements IArchive {
      *  Creates a new instance of PhaseMap - produces the identity map
      */
     public PhaseMap() {
-        m_vecOffset = PhaseVector.zero();
+        m_vecOffset = PhaseVector.newZero();
         m_matLinear = PhaseMatrix.identity();
     }
     
@@ -114,7 +114,7 @@ public class PhaseMap implements IArchive {
      *  @param  matTrans   linear portion of the phase map
      */
      public PhaseMap(PhaseMatrix matTrans) {
-         m_vecOffset = PhaseVector.zero();
+         m_vecOffset = PhaseVector.newZero();
          m_matLinear = matTrans;
      };
     

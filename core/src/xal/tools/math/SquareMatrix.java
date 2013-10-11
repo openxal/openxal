@@ -12,11 +12,15 @@ import java.lang.reflect.InvocationTargetException;
 import java.text.DecimalFormat;
 import java.util.StringTokenizer;
 
+import xal.tools.beam.PhaseMatrix;
+import xal.tools.data.DataAdaptor;
+import xal.tools.data.DataFormatException;
+import xal.tools.data.IArchive;
 import Jama.Matrix;
 
 /**
  * <p>
- * Class <code>SquareMatrix</code> is the abstract base class for matrix
+ * Class <code>SquareMatrix</code> is the abstract base class for square matrix
  * objects supported in the XAL tools packages.
  * </p>
  * <p>
@@ -33,9 +37,18 @@ import Jama.Matrix;
  * @author Christopher K. Allen
  * @since  Sep 25, 2013
  */
-public abstract class SquareMatrix<M extends SquareMatrix<M>>  {
+public abstract class SquareMatrix<M extends SquareMatrix<M>> extends BaseMatrix<M> implements IArchive {
 
 
+    
+    /*
+     * Global Constants
+     */
+    
+    /** Attribute marker for data managed by IArchive interface */
+    public static final String     ATTR_DATA   = "values";
+
+    
     /*
      * Internal Classes
      */
@@ -48,7 +61,7 @@ public abstract class SquareMatrix<M extends SquareMatrix<M>>  {
      * @author Christopher K. Allen
      * @since  Sep 25, 2013
      */
-    protected interface IIndex {
+    public interface IIndex {
 
         /**
          * Returns the value of this matrix index object.
@@ -60,6 +73,8 @@ public abstract class SquareMatrix<M extends SquareMatrix<M>>  {
          */
         public int val();
     }
+
+    
 
     
     /*
@@ -162,6 +177,38 @@ public abstract class SquareMatrix<M extends SquareMatrix<M>>  {
             }
     }
 
+    /**
+     *  Parsing assignment - set the <code>PhaseMatrix</code> value
+     *  according to a token string of element values.  
+     *
+     *  The token string argument is assumed to be one-dimensional and packed by
+     *  column (aka FORTRAN).
+     *
+     *  @param  strValues   token vector of SIZE<sup>2</sup> numeric values
+     *
+     *  @exception  IllegalArgumentException    wrong number of token strings
+     *  @exception  NumberFormatException       bad number format, unparseable
+     */
+    public void setMatrix(String strValues)
+        throws NumberFormatException, IllegalArgumentException
+    {
+        
+        // Error check the number of token strings
+        StringTokenizer     tokArgs = new StringTokenizer(strValues, " ,()[]{}"); //$NON-NLS-1$
+        
+        if (tokArgs.countTokens() != this.getSize()*this.getSize())
+            throw new IllegalArgumentException("PhaseMatrix#setMatrix - wrong number of token strings: " + strValues); //$NON-NLS-1$
+        
+        
+        // Extract initial phase coordinate values
+        for (int i=0; i<this.getSize(); i++)
+            for (int j=0; j<this.getSize(); j++) {
+                String  strVal = tokArgs.nextToken();
+                double  dblVal = Double.valueOf(strVal).doubleValue();
+            
+                this.setElem(i,j, dblVal);
+            }
+    }
 
 
     /*
@@ -207,7 +254,7 @@ public abstract class SquareMatrix<M extends SquareMatrix<M>>  {
     public M copy() throws InstantiationException   {
 
         M  matClone = this.newInstance();
-        ((SquareMatrix<M>)matClone).setMatrix( this.matImpl );
+        ((SquareMatrix<M>)matClone).assignMatrix( this.getMatrix() );
             
         return matClone;
     }
@@ -374,12 +421,14 @@ public abstract class SquareMatrix<M extends SquareMatrix<M>>  {
             
             Jama.Matrix impTrans = this.getMatrix().transpose();
             M           matTrans = this.newInstance();
-            ((SquareMatrix<M>)matTrans).setMatrix(impTrans);
+            ((SquareMatrix<M>)matTrans).assignMatrix(impTrans);
             
             return matTrans;
             
         } catch (InstantiationException e) {
             
+            System.err.println("Unable to instantiate resultant vector");
+
             return null;
         }
     }
@@ -394,13 +443,161 @@ public abstract class SquareMatrix<M extends SquareMatrix<M>>  {
             
             Jama.Matrix impInv = this.getMatrix().inverse();
             M           matInv = this.newInstance();
-            ((SquareMatrix<M>)matInv).setMatrix(impInv);
+            ((SquareMatrix<M>)matInv).assignMatrix(impInv);
             
             return matInv;
             
         } catch (InstantiationException e) {
             
+            System.err.println("Unable to instantiate resultant vector");
+
             return null;
+        }
+    }
+    
+    /**
+     * <p>
+     * Solves the linear matrix-vector system without destroying the given
+     * data vector.  Say the linear system can be represented algebraically
+     * as
+     * <br/>
+     * <br/>
+     * &nbsp; &nbsp; <b>Ax</b> = <b>y</b> ,
+     * <br/>
+     * <br/>
+     * where <b>A</b> is this matrix, <b>x</b> is the solution matrix to be
+     * determined, and <b>y</b> is the data vector provided as the argument.
+     * The returned value is equivalent to 
+     * <br/>
+     * <br/>
+     * &nbsp; &nbsp; <b>y</b> = <b>A</b><sup>-1</sup><b>x</b> ,
+     * <br/>
+     * <br/>
+     * that is, the value of vector <b>y</b>.  
+     * <p>
+     * </p>
+     * The vector <b>x</b> is left
+     * unchanged.  However, this is somewhat expensive in that the solution
+     * vector must be created through reflection and exceptions may occur.
+     * For a safer implementation, but where the solution is returned within the
+     * existing data vector <b>y</b> see <code>{@link #solveInPlace(Vector)}</code>.
+     * </p>
+     * <p>
+     * Note that the inverse matrix
+     * <b>A</b><sup>-1</sup> is never computed, the system is solved in 
+     * less than <i>N</i><sup>2</sup> time.  However, if this system is to be
+     * solved repeated for the same matrix <b>A</b> it may be preferrable to 
+     * invert this matrix and solve the multiple system with matrix multiplication.
+     * </p>
+     * 
+     * @param vecObs        the data vector
+     * 
+     * @return              vector which, when multiplied by this matrix, will equal the data vector
+     * 
+     * @throws IllegalArgumentException     the argument has the wrong size
+     *
+     * @author Christopher K. Allen
+     * @since  Oct 11, 2013
+     */
+    public <V extends Vector<V>> V solve(V vecObs) throws IllegalArgumentException {
+        
+        // Check sizes
+        if ( vecObs.getSize() != this.getSize() ) 
+            throw new IllegalArgumentException(vecObs.getClass().getName() + " vector must have compatible size");
+        
+        // Get the implementation matrix.
+        Jama.Matrix impL = this.getMatrix();
+        
+        // Create a Jama matrix for the observation vector 
+        Jama.Matrix impObs = new Jama.Matrix(this.getSize(), 1 ,0.0);
+        for (int i=0; i<this.getSize(); i++) 
+            impObs.set(i,0, vecObs.getElem(i));
+        
+        // Solve the matrix-vector system in the Jama package
+        Jama.Matrix impState = impL.solve(impObs);
+        
+        
+        try {
+            Class<V>        clsVec = (Class<V>) vecObs.getClass();
+            Constructor<V> ctrVec = (Constructor<V>) vecObs.getClass().getConstructor();
+            
+            V   vecSoln = ctrVec.newInstance();
+            
+            for (int i=0; i<this.getSize(); i++) {
+                double dblVal = impState.get(i,  0);
+                
+                vecSoln.setElem(i,  dblVal);
+            }
+            
+            return vecSoln;
+            
+        } catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
+            
+            System.err.println("Unable to instantiate resultant vector");
+
+            return null;
+        }
+    }
+
+    /**
+     * <p>
+     * Solves the linear matrix-vector system and returns the solution in
+     * the given data vector.  Say the linear system can be represented 
+     * algebraically as
+     * <br/>
+     * <br/>
+     * &nbsp; &nbsp; <b>Ax</b> = <b>y</b> ,
+     * <br/>
+     * <br/>
+     * where <b>A</b> is this matrix, <b>x</b> is the solution matrix to be
+     * determined, and <b>y</b> is the data vector provided as the argument.
+     * The returned value is equivalent to 
+     * <br/>
+     * <br/>
+     * &nbsp; &nbsp; <b>y</b> = <b>A</b><sup>-1</sup><b>x</b> ,
+     * <br/>
+     * <br/>
+     * that is, the value of vector <b>y</b>.  
+     * </p>
+     * <p> 
+     * The value of <b>y</b> is returned within the argument vector.  Thus,
+     * the argument cannot be immutable.
+     * <p>
+     * Note that the inverse matrix
+     * <b>A</b><sup>-1</sup> is never computed, the system is solved in 
+     * less than <i>N</i><sup>2</sup> time.  However, if this system is to be
+     * solved repeated for the same matrix <b>A</b> it may be preferable to 
+     * invert this matrix and solve the multiple system with matrix multiplication.
+     * </p>
+     * 
+     * @param vecObs        the data vector on call, the solution vector upon return
+     * 
+     * @throws IllegalArgumentException     the argument has the wrong size
+     *
+     * @author Christopher K. Allen
+     * @since  Oct 11, 2013
+     */
+    public <V extends Vector<V>> void solveInPlace(V vecObs) throws IllegalArgumentException {
+        
+        // Check sizes
+        if ( vecObs.getSize() != this.getSize() ) 
+            throw new IllegalArgumentException(vecObs.getClass().getName() + " vector must have compatible size");
+        
+        // Get the implementation matrix.
+        Jama.Matrix impL = this.getMatrix();
+        
+        // Create a Jama matrix for the observation vector 
+        Jama.Matrix impObs = new Jama.Matrix(this.getSize(), 1 ,0.0);
+        for (int i=0; i<this.getSize(); i++) 
+            impObs.set(i,0, vecObs.getElem(i));
+        
+        // Solve the matrix-vector system in the Jama package
+        Jama.Matrix impState = impL.solve(impObs);
+        
+        for (int i=0; i<this.getSize(); i++) {
+            double dblVal = impState.get(i,  0);
+            
+            vecObs.setElem(i,  dblVal);
         }
     }
 
@@ -470,6 +667,8 @@ public abstract class SquareMatrix<M extends SquareMatrix<M>>  {
 
         } catch (InstantiationException e) {
 
+            System.err.println("Unable to instantiate resultant vector");
+
             return null;
         }
     }     
@@ -504,6 +703,8 @@ public abstract class SquareMatrix<M extends SquareMatrix<M>>  {
 
         } catch (InstantiationException e) {
 
+            System.err.println("Unable to instantiate resultant vector");
+            
             return null;
         }
     }
@@ -537,6 +738,8 @@ public abstract class SquareMatrix<M extends SquareMatrix<M>>  {
             
         } catch (InstantiationException e) {
             
+            System.err.println("Unable to instantiate resultant vector");
+            
             return null;
         }
     }
@@ -549,6 +752,67 @@ public abstract class SquareMatrix<M extends SquareMatrix<M>>  {
      */
     public void timesEquals(double s) {
         this.getMatrix().timesEquals(s);
+    }
+    
+    /**
+     * <p>
+     * Non-destructive matrix-vector multiplication.  The returned value is the
+     * usual product of the given vector pre-multiplied by this matrix.  Specifically,
+     * denote by <b>A</b> this matrix and by <b>x</b> the argument vector, then
+     * the components {<i>y<sub>i</sub></i>} of the returned vector <b>y</b> are given by
+     * <br/>
+     * <br/>
+     * &nbsp; &nbsp; <i>y</i><sub><i>i</i></sub> = &Sigma;<sub><i>j</i></sub> <i>A<sub>ij</sub>x<sub>j</sbu></i>
+     * <br/>
+     * <br/>
+     * </p>
+     * <p>
+     * The returned vector must be created using Java reflection, so this operation
+     * is somewhat more risky and expensive than and in place multiplication.
+     * </p>
+     *  
+     * @param vecFac    the vector factor
+     * 
+     * @return          the matrix-vector product of this matrix with the argument
+     * 
+     * @throws IllegalArgumentException the argument vector must be the same size
+     *
+     * @author Christopher K. Allen
+     * @since  Oct 11, 2013
+     */
+    public <V extends Vector<V>> V times(V vecFac) throws IllegalArgumentException {
+        
+        // Check sizes
+        if ( vecFac.getSize() != this.getSize() ) 
+            throw new IllegalArgumentException(vecFac.getClass().getName() + " vector must have compatible size");
+        
+        try {
+            Class<V>        clsVec = (Class<V>) vecFac.getClass();
+            Constructor<V> ctrVec = (Constructor<V>) vecFac.getClass().getConstructor();
+            
+            V   vecSoln = ctrVec.newInstance();
+            
+            for (int i=0; i<this.getSize(); i++) {
+                double dblSum = 0.0;
+
+                for (int j=0; j<this.getSize(); j++) {
+                    double dblFac = this.getElem(i, j)*vecFac.getElem(j);
+                 
+                    dblSum += dblFac;
+                }
+                
+                vecSoln.setElem(i,  dblSum);
+            }
+            
+            return vecSoln;
+            
+        } catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
+            
+            System.err.println("Unable to instantiate resultant vector");
+
+            return null;
+        }
+        
     }
     
     /**
@@ -571,6 +835,8 @@ public abstract class SquareMatrix<M extends SquareMatrix<M>>  {
 
         } catch (InstantiationException e) {
 
+            System.err.println("Unable to instantiate resultant vector");
+            
             return null;
         }
     }
@@ -620,6 +886,8 @@ public abstract class SquareMatrix<M extends SquareMatrix<M>>  {
             
         } catch (InstantiationException e) {
             
+            System.err.println("Unable to instantiate resultant vector");
+            
             return null;
         }
     };
@@ -655,6 +923,8 @@ public abstract class SquareMatrix<M extends SquareMatrix<M>>  {
             return matAns;
             
         } catch (InstantiationException e) {
+            
+            System.err.println("Unable to instantiate resultant vector");
             
             return null;
         }
@@ -801,6 +1071,40 @@ public abstract class SquareMatrix<M extends SquareMatrix<M>>  {
     
     
     
+    /*
+     * IArchive Interface
+     */    
+     
+    /**
+     * Save the value of this <code>PhaseMatrix</code> to a data sink 
+     * represented by the <code>DataAdaptor</code> interface.
+     * 
+     * @param daptArchive   interface to data sink 
+     * 
+     * @see xal.tools.data.IArchive#save(xal.tools.data.DataAdaptor)
+     */
+    public void save(DataAdaptor daptArchive) {
+        daptArchive.setValue(ATTR_DATA, this.toString());
+    }
+
+    /**
+     * Restore the value of the this <code>PhaseMatrix</code> from the
+     * contents of a data archive.
+     * 
+     * @param daptArchive   interface to data source
+     * 
+     * @throws DataFormatException      malformed data
+     * @throws IllegalArgumentException wrong number of string tokens
+     * 
+     * @see xal.tools.data.IArchive#load(xal.tools.data.DataAdaptor)
+     */
+    public void load(DataAdaptor daptArchive) throws DataFormatException {
+        if ( daptArchive.hasAttribute(PhaseMatrix.ATTR_DATA) )  {
+            String  strValues = daptArchive.stringValue(PhaseMatrix.ATTR_DATA);
+            this.setMatrix(strValues);         
+        }
+    }
+    
 
 
     /*
@@ -879,7 +1183,7 @@ public abstract class SquareMatrix<M extends SquareMatrix<M>>  {
     }
 
     /**
-     * Copy constructor for <code>BaseMatrix</code>.  Creates a deep
+     * Copy constructor for <code>SquareMatrix</code>.  Creates a deep
      * copy of the given object.  The dimensions are set and the 
      * internal array is cloned. 
      *
@@ -894,7 +1198,7 @@ public abstract class SquareMatrix<M extends SquareMatrix<M>>  {
         this(matParent.getSize());
         
         SquareMatrix<M> matBase = (SquareMatrix<M>)matParent;
-        this.setMatrix(matBase.getMatrix()); 
+        this.assignMatrix(matBase.getMatrix()); 
     }
     
     /**
@@ -982,7 +1286,7 @@ public abstract class SquareMatrix<M extends SquareMatrix<M>>  {
      * @author Christopher K. Allen
      * @since  Oct 1, 2013
      */
-    private void setMatrix(Jama.Matrix matValue) {
+    private void assignMatrix(Jama.Matrix matValue) {
         for (int i=0; i<this.getSize(); i++)
             for (int j=0; j<this.getSize(); j++) {
                 double dblVal = matValue.get(i, j);
@@ -1055,7 +1359,7 @@ public abstract class SquareMatrix<M extends SquareMatrix<M>>  {
         
         M   matNewInst = this.newInstance();
         
-        ((SquareMatrix<M>)matNewInst).setMatrix(impInit);
+        ((SquareMatrix<M>)matNewInst).assignMatrix(impInit);
         
         return matNewInst;
     }

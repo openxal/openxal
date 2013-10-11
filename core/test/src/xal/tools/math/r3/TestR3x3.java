@@ -6,6 +6,8 @@
  */
 package xal.tools.math.r3;
 
+import static org.junit.Assert.fail;
+
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -42,14 +44,19 @@ public class TestR3x3 {
     /** static testing matrix - a rotation about z axis */
     static private R3x3     MAT_Z;
     
+    /** static symmetric test matrix */
+    static private R3x3     MAT_S;
 
     @BeforeClass
     public static void buildTestingResources() {
         
         MAT_I = R3x3.newIdentity();
         MAT_2 = MAT_I.plus( MAT_I );
-        MAT_X = R3x3.newRotationX(Math.PI/2.0);
-        MAT_Z = R3x3.newRotationZ(Math.PI/2.0);
+        MAT_X = R3x3.newRotationX(Math.PI/4.0);
+        MAT_Z = R3x3.newRotationZ(Math.PI/4.0);
+        
+        MAT_S = new R3x3( new double[][] {{1.0,0.0,0.0}, {0.0,2.0,0.0},{0.0,0.0,3.0}} );
+        MAT_S = MAT_S.conjugateTrans( MAT_Z );
     }
     
     
@@ -169,7 +176,53 @@ public class TestR3x3 {
     }
     
     @Test
-    public void testRandom() {
+    public void testJacobiDecomposition() throws IllegalArgumentException, InstantiationException {
+        R3x3                        matR = MAT_S;
+        
+        try {
+            R3x3JacobiDecomposition     jacR = new R3x3JacobiDecomposition(matR);
+
+            R3x3                        matO = jacR.getRotationMatrix();
+            R3x3                        matD = jacR.getDiagonalMatrix();
+
+            System.out.println("\nThe Jacobi Decomposition Test");
+            System.out.println("R = " + matR);
+            System.out.println("O = " + matO);
+            System.out.println("D = " + matD);
+            
+        } catch (IllegalArgumentException e) {
+
+            fail("matrix not symmetric " + matR);
+
+        } catch (InstantiationException e) {
+
+            fail("Unable to copy target matrix " + matR);
+        }
+
     }
+    
+    @Test
+    public void testEigenValueDecomposition() throws IllegalArgumentException, InstantiationException {
+        R3x3                            matT = MAT_S;
+        
+        try {
+            R3x3EigenDecomposition     decL = new R3x3EigenDecomposition(matT);
+
+            R3x3                        matE = decL.getEigenvalueMatrix();
+            R3x3                        matV = decL.getEigenvectorMatrix();
+
+            System.out.println("\nThe Eigen Decomposition Test");
+            System.out.println("R = " + matT);
+            System.out.println("O = " + matE);
+            System.out.println("D = " + matV);
+            
+        } catch (IllegalArgumentException e) {
+
+            fail("matrix not symmetric " + matT);
+
+        }
+
+    }
+    
 
 }

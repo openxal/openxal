@@ -11,10 +11,6 @@ import  Jama.EigenvalueDecomposition;
 
 
 /**
- * <p>
- *  Encapsulates the results of a Jacobi eigenvalue decomposition operation on
- *  a R3x3 matrix object.
- *  </p>
  *  <p>
  *  Essentially this class is just a wrapper over the <i>Jama</i> matrix
  *  package class <code>EigenvalueDecomposition</code>.  Thus, XAL can present

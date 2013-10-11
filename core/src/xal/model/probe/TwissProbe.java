@@ -71,7 +71,7 @@ public class TwissProbe extends BunchProbe {
 	 */
 	public TwissProbe() {
         super();
-        this.vecCent = PhaseVector.zero();
+        this.vecCent = PhaseVector.newZero();
         this.matResp = PhaseMatrix.identity();
         this.envTwiss = new Twiss3D();
 	};

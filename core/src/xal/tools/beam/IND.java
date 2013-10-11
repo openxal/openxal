@@ -13,8 +13,10 @@ package xal.tools.beam;
  * by adding the homogeneous element position <code>HOM</code>.
  * 
  * @author  Christopher K. Allen
+ * @deprecated  replaced by PhaseMatrix.IND
  */
-public enum PhaseIndexHom {
+@Deprecated
+public enum IND  {
     
     /*
      * Enumeration Constants
@@ -45,7 +47,7 @@ public enum PhaseIndexHom {
     /** 
      * Default enumeration constructor 
      */
-    PhaseIndexHom(int i)  {
+    IND(int i)  {
         this.i = i;
     }
 

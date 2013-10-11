@@ -103,7 +103,8 @@ public class TestProbeFactory {
         EnvelopeProbe prbTest = ProbeFactory.getEnvelopeProbe( SEQ_TEST, new EnvTrackerAdapt() );
         
         CovarianceMatrix matCov = prbTest.getCovariance();
-        matCov.print();
+        
+        System.out.println(matCov);
         
     }
 

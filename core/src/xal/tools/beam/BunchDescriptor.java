@@ -77,7 +77,7 @@ public class BunchDescriptor implements IArchive {
      */
     public BunchDescriptor() {
         this.enmProfile = ProfileIndex.NONE;
-        this.vecCentroid = PhaseVector.zero();
+        this.vecCentroid = PhaseVector.newZero();
         this.twissEnv = new Twiss3D();
     }
 

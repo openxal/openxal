@@ -10,13 +10,15 @@ package xal.tools.beam;
 
 import java.util.EnumSet;
 
+import xal.tools.math.SquareMatrix.IIndex;
+
 /** 
  * Enumeration for the element position indices of six-dimensional
  * phase space object. 
  * 
  * @author  Christopher K. Alen
  */
-public enum PhaseIndex {
+public enum PhaseIndex implements IIndex {
 
     
     /*
