@@ -2,7 +2,7 @@
 
 <!-- Build the core and all applications. -->
 <project basedir="." default="all" name="xal.common">    
-    <import file="config.xml"/>
+    <import file="config/config.xml"/>
     
     <property name="build.path.pattern" value="*/build.xml" />
 

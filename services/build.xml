@@ -2,7 +2,7 @@
 
 <!-- Process all the services. -->
 <project name="services" basedir="." default="all">
-    <import file="../config.xml"/>
+    <import file="../config/config.xml"/>
     
     <property name="build.path.pattern" value="*/build.xml" />
 

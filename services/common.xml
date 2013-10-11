@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <project name="common.services.config" basedir="." default="build">
-    <import file="../config.xml" />
+    <import file="../config/config.xml" />
 
     <!-- the value for these properties are overriden if specified in the beginning of the service's build file before any tasks are defined -->
 	<property name="classpath.ref" value="default.classpath" />

@@ -1,7 +1,8 @@
 <project name="config">
     <!-- XAL Home is where this file resides -->
-    <dirname property="xal.home" file="${ant.file.config}" />
-    
+    <dirname property="config.home" file="${ant.file.config}" />
+    <dirname property="xal.home" file="${config.home}/.." />
+
     <property environment="env" />
     
     <!-- location of source code directory relative to a source root -->            
