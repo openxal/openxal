@@ -5,7 +5,7 @@
 
     <!-- the value for these properties are overriden if specified in the beginning of the service's build file before any tasks are defined -->
 	<property name="classpath.ref" value="default.classpath" />
-	<property name="manifest.classpath" value="../lib/xal-core.jar ../lib/xal-lib.jar" />    
+	<property name="manifest.classpath" value="../lib/xal-shared.jar" />
     <property name="mainclass.base" value="Main" />
     
     <!-- Initialization for the service build -->
@@ -54,8 +54,7 @@
     
     <!-- classpath to be referenced -->
 	<path id="default.classpath">
-		<pathelement location="${build.jar.lib.root}/xal-core.jar" />
-		<pathelement location="${build.jar.lib.root}/xal-lib.jar" />
+		<pathelement location="${build.jar.lib.root}/xal-shared.jar" />
 	</path>
 
 	
@@ -67,7 +66,7 @@
             <javac srcdir="${service.src.root}/${source.code.dir}" includes="**" destdir="${service.build.compile.root}" debug="true" source="${build.compile.java.source}" target="${build.compile.java.target}" includeAntRuntime="no" deprecation="true">
                 <compilerarg value="@{flag}" />
                 
-                <!-- compile against the common libraries (e.g. xal-core.jar, xal-lib.jar) -->
+                <!-- compile against the common libraries (e.g. xal-shared.jar) -->
                 <classpath refid="${classpath.ref}" />
                 
                 <!-- compile against any service specific jars in the service's lib directory -->
@@ -144,8 +143,7 @@
             <embed-other>
                 <!-- embed the core and external libraries into the service's archive -->
                 <zipgroupfileset dir="${build.jar.lib.root}">
-                    <include name="xal-core.jar" />
-                    <include name="xal-lib.jar" />
+                    <include name="xal-shared.jar" />
                 </zipgroupfileset>
             </embed-other>
         </archive>

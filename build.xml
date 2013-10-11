@@ -17,11 +17,11 @@
 
     
     <!-- Build the core and all the applications which allow batch building. -->
-    <target name="all" depends="core, services, apps, scripts" />
+    <target name="all" depends="shared, services, apps, scripts" />
     
     
     <!-- Install the core and all the applications, services and scripts which allow batch installation. -->
-    <target name="install" depends="install-core, install-services, install-apps, install-scripts" />
+    <target name="install" depends="install-shared, install-services, install-apps, install-scripts" />
     
     
     <!-- Build and run all unit tests. -->
@@ -46,10 +46,9 @@
     
     
     <!-- Clean the core and all the applications. -->
-    <target name="purge-install">
+    <target name="purge-install" depends="purge-install-shared">
         <subant target="purge-install">
             <fileset dir=".">
-                <include name="core/build.xml" />
                 <include name="apps/build.xml" />
                 <include name="services/build.xml" />
                 <include name="scripts/build.xml" />
@@ -74,10 +73,23 @@
             </fileset>
         </subant>
     </target>
-    
+
+
+	<!-- Build the shared library which all applications reference -->
+    <target name="shared" depends="core">
+        <mkdir dir="${build.jar.lib.root}" />
+        <jar compress="true" jarfile="${build.jar.lib.root}/xal-shared.jar" index="true">
+			<zipgroupfileset dir="${build.intermediates.shared}">
+				<patternset>
+					<include name="*.jar" />
+				</patternset>
+			</zipgroupfileset>
+		</jar>
+    </target>
+
     
     <!-- Build all the applications which allow batch building. -->
-    <target name="apps" depends="core">
+    <target name="apps" depends="shared">
         <subant target="all">
             <fileset dir=".">
                 <include name="apps/build.xml" />
@@ -87,7 +99,7 @@
     
     
     <!-- Build all the services which allow batch building. -->
-    <target name="services" depends="core">
+    <target name="services" depends="shared">
         <subant target="all">
             <fileset dir=".">
                 <include name="services/build.xml" />
@@ -97,7 +109,7 @@
     
     
     <!-- Copy scripts to the build directory. -->
-    <target name="scripts" depends="core">
+    <target name="scripts" depends="shared">
         <subant target="all">
             <fileset dir=".">
                 <include name="scripts/build.xml" />
@@ -107,7 +119,7 @@
     
     
     <!-- Build all the applications standalone which allow batch building. -->
-    <target name="standalone-apps" depends="core">
+    <target name="standalone-apps" depends="shared">
         <subant target="all-standalone">
             <fileset dir=".">
                 <include name="apps/build.xml" />
@@ -117,7 +129,7 @@
     
     
     <!-- Build all the services standalone which allow batch building. -->
-    <target name="standalone-services" depends="core">
+    <target name="standalone-services" depends="shared">
         <subant target="all-standalone">
             <fileset dir=".">
                 <include name="services/build.xml" />
@@ -126,18 +138,27 @@
     </target>
     
     
-    <!-- Install the core. -->
-    <target name="install-core">
-        <subant target="install">
-            <fileset dir=".">
-                <include name="core/build.xml" />
+    <!-- Install the shared libraries. -->
+    <target name="install-shared">
+        <mkdir dir="${install.lib.root}" />
+		<copy todir="${install.lib.root}">
+			<fileset dir="${build.jar.lib.root}">
+                <include name="xal-shared.jar" />
             </fileset>
-        </subant>
+		</copy>
+        <echo message="XAL shared libraries installed. " />
     </target>
-    
+
+
+	<!-- purge the installed shared libraries -->
+    <target name="purge-install-shared" description="Purge the installed shared libraries." >
+        <delete dir="${install.lib.root}" />
+        <echo message="Purged the installed shared libraries!" />
+    </target>
+
     
     <!-- Install all the applications which allow batch installation. -->
-    <target name="install-apps" depends="install-core">
+    <target name="install-apps" depends="install-shared">
         <subant target="install">
             <fileset dir=".">
                 <include name="apps/build.xml" />
@@ -147,7 +168,7 @@
     
     
     <!-- Install all the services which allow batch installation. -->
-    <target name="install-services" depends="install-core">
+    <target name="install-services" depends="install-shared">
         <subant target="install">
             <fileset dir=".">
                 <include name="services/build.xml" />
@@ -157,7 +178,7 @@
     
     
     <!-- Install all the scripts. -->
-    <target name="install-scripts" depends="install-core">
+    <target name="install-scripts" depends="install-shared">
         <subant target="install">
             <fileset dir=".">
                 <include name="scripts/build.xml" />
@@ -201,15 +222,16 @@
 		<echo message="    info ....................... Post build information." />
 		<echo message="    install .................... Install all build products which allow batch installation." />
 		<echo message="    install-apps ............... Install all apps which allow batch installation." />
-		<echo message="    install-core ............... Install the core." />
 		<echo message="    install-doc ................ Install the javadoc." />
 		<echo message="    install-scripts ............ Install all scripts." />
 		<echo message="    install-services ........... Install all services which allow batch installation." />
+		<echo message="    install-shared ............. Install the core." />
 		<echo message="    purge-build ................ Purge all build products." />
 		<echo message="    purge-install .............. Purge all installed products." />
 		<echo message="    run-tests .................. Build and run unit tests." />
 		<echo message="    scripts .................... Copy scripts to the build directory." />
 		<echo message="    services ................... Compile the services and assemble the jar products." />
+		<echo message="    shared ..................... Build the shared library including the core and any extensions and plugins." />
 		<echo message="    standalone-apps ............ Build the applications which allow batch building and assemble the jar products as standalone applications." />
 		<echo message="    standalone-services ........ Build the services which allow batch building and assemble the jar products as standalone services." />
     </target>

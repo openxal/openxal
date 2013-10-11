@@ -32,6 +32,12 @@
 
 	<!-- Configure build intermediates -->
 	<property name="build.intermediates.root" value="${build.root}/intermediates" />
+	<property name="build.intermediates.apps" value="${build.intermediates.root}/apps" />
+	<property name="build.intermediates.core" value="${build.intermediates.root}/core" />
+	<property name="build.intermediates.extensions" value="${build.intermediates.root}/extensions" />
+	<property name="build.intermediates.services" value="${build.intermediates.root}/services" />
+	<property name="build.intermediates.shared" value="${build.intermediates.root}/shared" />
+	<property name="build.intermediates.toolbox" value="${build.intermediates.root}/toolbox" />
 
 	<!-- Configure build products  -->
 	<property name="build.jar.root" value="${build.root}/products" />
