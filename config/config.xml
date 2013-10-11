@@ -23,15 +23,24 @@
         <isset property="env.XAL_JAVADOC_ROOT" />
     </condition>
     
-	<!-- General build configuration  -->
+	<!-- Configure build compilation -->
 	<property name="build.compile.java.source" value="1.7" />
 	<property name="build.compile.java.target" value="${build.compile.java.source}" />
 	<property name="build.compile.root" value="${build.root}/compile" />
 	<property name="build.compile.core.root" value="${build.compile.root}/core" />
 	<property name="build.compile.core.test.root" value="${build.compile.root}/test/core" />
-	<property name="build.jar.root" value="${build.root}/jar" />
+
+	<!-- Configure build intermediates -->
+	<property name="build.intermediates.root" value="${build.root}/intermediates" />
+
+	<!-- Configure build products  -->
+	<property name="build.jar.root" value="${build.root}/products" />
 	<property name="build.jar.lib.root" value="${build.jar.root}/lib" />
+
+	<!-- Configure build tests  -->
 	<property name="build.tests.root" value="${build.root}/tests" />
+
+	<!-- Configure build javadoc  -->
 	<property name="build.javadoc.root" value="${build.root}/doc" />
     
     <!-- Configure path for the common libraries  -->
