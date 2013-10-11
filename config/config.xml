@@ -1,7 +1,7 @@
 <project name="config">
     <!-- XAL Home is where this file resides -->
     <dirname property="config.home" file="${ant.file.config}" />
-    <dirname property="xal.home" file="${config.home}/.." />
+    <property name="xal.home" value="${config.home}/.." />
 
     <property environment="env" />
     
