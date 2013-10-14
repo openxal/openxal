@@ -60,6 +60,15 @@
 		<!-- sets the property if there are any libraries to process -->
 		<pathconvert refid="fileset.app.lib" property="app.has.libs" setonempty="false"/>
 
+		<!-- fileset for the app's resources -->
+		<fileset id="fileset.app.resources" dir="${app.src.root}">
+			<patternset>
+				<include name="resources/*" />
+			</patternset>
+		</fileset>
+
+		<!-- sets the property if there are any resources to process -->
+		<pathconvert refid="fileset.app.resources" property="app.has.resources" setonempty="false"/>
 
         <mkdir dir="${build.root}" />
         <mkdir dir="${apps.build.compile.root}" />
@@ -113,7 +122,7 @@
 
 
 	<!-- Jar the application's resources -->
-	<target  name="jar-resources" depends="init">
+	<target  name="jar-resources" depends="init" if="app.has.resources">
 		<mkdir dir="${app.intermediates.root}/resources/xal/app/${appname}/resources" />
 		<copy todir="${app.intermediates.root}/resources/xal/app/${appname}/resources">
 			<fileset dir="${app.src.root}/resources" />
@@ -173,12 +182,14 @@
     
     <!-- Archive the application and any of its app specific libraries into a jar file with relative dependency on the common libraries -->
     <target name="jar" depends="init, compile, jar-resources" if="allows.build">
-        <archive />
+		<mkdir dir="${service.intermediates.root}" />
+		<archive />
     </target>
     
     
     <!-- Archive the application, any of its app specific libraries and the common libraries into a standalone jar file -->
     <target name="jar-standalone" depends="init, compile, jar-resources" if="allows.build">
+		<mkdir dir="${service.intermediates.root}" />
         <archive>
             <embed-other>
                 <!-- embed the core and external libraries into the application's archive -->
