@@ -31,14 +31,16 @@ public class QuadTest {
 		double G5 = 0; // decapole gradient (T/m^2)
 		double G6 = 0; // dodecapole gradient (T/m^2)
 		
+		EnvelopeProbe probe = TestCommon.setupProbeViaJavaCalls();
+		
 		Quadrupole quad = new Quadrupole("quad") { // there's no setter for type (you need to extend class)
 			{_type="Q"; }
 		};
 		quad.setPosition(L*0.5); //always position on center!
 		quad.setLength(L); // effLength below is actually the only one read 
 		quad.getMagBucket().setEffLength(L);
-		quad.setDfltField(Math.abs(G));
-		quad.getMagBucket().setPolarity(Math.signum(G));
+		quad.setDfltField(G*Math.signum(probe.getSpeciesCharge()));
+		quad.getMagBucket().setPolarity(1);
 		quad.getAper().setAperX(15e-3);
 		quad.getAper().setAperY(15e-3);
 		quad.getAper().setShape(ApertureBucket.iRectangle);
@@ -59,7 +61,7 @@ public class QuadTest {
 		TestCommon.saveSequence(sequence, "temp/quadtest/seq.xml");
 		
 		// Creating a probe
-		EnvelopeProbe probe = TestCommon.setupProbeViaJavaCalls();					
+							
 		scenario.setProbe(probe);			
 		
 				
