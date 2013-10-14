@@ -9,6 +9,7 @@ package xal.sim.scenario;
 import xal.model.IComponent;
 import xal.model.IElement;
 import xal.model.ModelException;
+import xal.model.elem.IdealDrift;
 import xal.model.elem.IdealEDipole;
 import xal.model.elem.IdealEQuad;
 import xal.model.elem.IdealMagQuad;
@@ -58,6 +59,12 @@ public class DefaultElementMapping extends ElementMapping {
 		return defaultConverter;
 	}
 
+
+	@Override
+	public IComponent createDrift(String name, double len) {
+		return new IdealDrift(name, len);
+	}
+	
 	protected void initialize() {
 		putMap("dh", new ElementConverter() {
 

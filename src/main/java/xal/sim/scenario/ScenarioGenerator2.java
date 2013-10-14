@@ -17,9 +17,7 @@ import xal.model.IElement;
 import xal.model.Lattice;
 import xal.model.ModelException;
 import xal.model.Sector;
-import xal.model.elem.IdealDrift;
 import xal.model.xml.LatticeXmlParser;
-import xal.sim.scenario.Scenario;
 import xal.sim.sync.SynchronizationManager;
 import xal.smf.AcceleratorNode;
 import xal.smf.AcceleratorSeq;
@@ -256,8 +254,8 @@ public class ScenarioGenerator2 {
 		for (LatticeElement element : splitElements) {
 			double driftLength = (element.isThin() ? element.getCenter() : element.getStartPosition()) - position;
 			if (driftLength > EPS) {
-				// sector.addChild(new IdealDrift("DR" + (++driftCount), driftLength));
-				sector.addChild(new IdealDrift("DRFT", driftLength));
+				//sector.addChild(elementMapping.createDrift("DR" + (++driftCount), driftLength));
+				sector.addChild(elementMapping.createDrift("DRFT", driftLength));
 			}
 			IComponent modelElement = element.convert();
 			sector.addChild(modelElement);
