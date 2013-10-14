@@ -25,7 +25,9 @@
         <property name="app.build.jar" value="${apps.build.jar.root}/${appname}.jar" />
         <property name="app.relative.path" value="xal/app/${appname}" />
         <property name="app.install.jar" value="${apps.install.root}/${appname}.jar" />
-        
+
+        <property name="app.intermediates.root" value="${build.intermediates.apps}/${appname}" />
+
         <!-- determine whether building should be allowed -->
         <!-- don't build if the build is a batch build and this project explicitly excludes batch building -->
         <condition property="allows.build">
@@ -44,7 +46,21 @@
                 <isset property="exclude.install" />
             </not>
         </condition>
-        
+
+		<!-- define a patternset and enable reference by ID -->
+		<patternset id="pattern.app.lib">
+			<include name="lib/*.jar" />
+		</patternset>
+
+		<!-- fileset for the application's libraries -->
+		<fileset id="fileset.app.lib" dir="${app.src.root}">
+			<patternset refid="pattern.app.lib" />
+		</fileset>
+
+		<!-- sets the property if there are any libraries to process -->
+		<pathconvert refid="fileset.app.lib" property="app.has.libs" setonempty="false"/>
+
+
         <mkdir dir="${build.root}" />
         <mkdir dir="${apps.build.compile.root}" />
         
@@ -70,39 +86,62 @@
                 <classpath refid="${classpath.ref}" />
                 
                 <!-- compile against any app specific jars in the app's lib directory -->
-                <classpath>
-                    <fileset dir="${app.src.root}">
-                        <include name="lib/*.jar" />
-                    </fileset>
-                </classpath>
+				<classpath>
+					<pathelement location="${app.intermediates.root}/lib.jar" />
+				</classpath>
             </javac>
-            
-            <!-- copy the app's resources into the compile directory -->
-            <copy todir="${app.build.compile.root}/${app.relative.path}/resources">
-                <fileset dir="${app.src.root}/resources" />
-            </copy>
-            
 		</sequential>
 	</macrodef>
-	
+
 	
 	<!-- Compile the core XAL classes using the lint flag to show some recommended warnings -->
-    <target name="compile-warn-mandatory" depends="init" if="allows.build">
+    <target name="compile-warn-mandatory" depends="init, jar-lib" if="allows.build">
 		<compile-flagged />
     </target>
 	
 	
 	<!-- Compile the core XAL classes using the lint flag to show all recommended warnings -->
-    <target name="compile-warn-all" depends="init" if="allows.build">
+    <target name="compile-warn-all" depends="init, jar-lib" if="allows.build">
 		<compile-flagged flag="-Xlint" />
     </target>
 	
 	
 	<!-- Compile the core XAL classes reporting only mandated warnings -->
-    <target name="compile" depends="init" if="allows.build">
+    <target name="compile" depends="init, jar-lib" if="allows.build">
 		<compile-flagged flag="-Xlint" />
     </target>
-    
+
+
+	<!-- Jar the application's resources -->
+	<target  name="jar-resources" depends="init">
+		<mkdir dir="${app.intermediates.root}/resources/xal/app/${appname}/resources" />
+		<copy todir="${app.intermediates.root}/resources/xal/app/${appname}/resources">
+			<fileset dir="${app.src.root}/resources" />
+		</copy>
+		<jar compress="true" jarfile="${app.intermediates.root}/resources.jar">
+			<fileset dir="${app.intermediates.root}/resources" />
+		</jar>
+	</target>
+
+
+	<!-- Jar the core by jaring the core's compiled classes -->
+	<target  name="jar-classes" depends="init, compile">
+		<jar compress="true" jarfile="${app.intermediates.root}/${appname}-classes.jar">
+			<fileset dir="${app.build.compile.root}" includes="xal/**/*" />
+		</jar>
+	</target>
+
+
+	<!-- Join the third party jars into a common external jar file -->
+    <target name="jar-lib" depends="init" if="app.has.libs">
+        <mkdir dir="${app.intermediates.root}" />
+        <jar compress="true" jarfile="${app.intermediates.root}/lib.jar" duplicate="preserve">
+			<zipgroupfileset id="app.lib.group" dir="${app.src.root}">
+				<patternset refid="pattern.app.lib" />
+			</zipgroupfileset>
+        </jar>
+    </target>
+
     
     <!-- Archive the application either referencing the common libraries or as standalone with the common libraries embedded -->
     <macrodef name="archive">
@@ -118,9 +157,10 @@
                 </manifest>
                 
                 <!-- merge any app specific libraries in the app's lib directory into the app's jar -->
-                <zipgroupfileset dir="${app.src.root}">
+                <zipgroupfileset dir="${app.intermediates.root}">
                     <patternset>
-                        <include name="lib/*.jar" />
+                        <include name="lib.jar" />
+                        <include name="resources.jar" />
                     </patternset>
                 </zipgroupfileset>
                 
@@ -132,13 +172,13 @@
 
     
     <!-- Archive the application and any of its app specific libraries into a jar file with relative dependency on the common libraries -->
-    <target name="jar" depends="init,compile" if="allows.build">
+    <target name="jar" depends="init, compile, jar-resources" if="allows.build">
         <archive />
     </target>
     
     
     <!-- Archive the application, any of its app specific libraries and the common libraries into a standalone jar file -->
-    <target name="jar-standalone" depends="init,compile" if="allows.build">
+    <target name="jar-standalone" depends="init, compile, jar-resources" if="allows.build">
         <archive>
             <embed-other>
                 <!-- embed the core and external libraries into the application's archive -->
@@ -189,6 +229,7 @@
     <!-- Clean the application build files -->
     <target name="clean" depends="init" description="Clean all build products.">
         <delete dir="${apps.build.compile.root}/${app.relative.path}"/>
+        <delete dir="${app.intermediates.root}" quiet="true" />
         <delete file="${app.build.jar}"/>
         <delete dir="${build.root}/javadoc/apps/${appname}" />
     </target>
