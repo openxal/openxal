@@ -164,8 +164,7 @@ public class PhaseMatrix extends SquareMatrix<PhaseMatrix> implements IArchive, 
 //    		new DecimalFormatSymbols(Locale.ROOT));
     
     
-    /** attribute marker for data */
-    public static final String     ATTR_DATA   = "values"; //$NON-NLS-1$
+    
     
     
     
