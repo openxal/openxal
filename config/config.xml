@@ -22,13 +22,6 @@
     <condition property="install.javadoc.root" value="${env.XAL_JAVADOC_ROOT}" else="${install.root}/doc">
         <isset property="env.XAL_JAVADOC_ROOT" />
     </condition>
-    
-	<!-- Configure build compilation -->
-	<property name="build.compile.java.source" value="1.7" />
-	<property name="build.compile.java.target" value="${build.compile.java.source}" />
-	<property name="build.compile.root" value="${build.root}/compile" />
-	<property name="build.compile.core.root" value="${build.compile.root}/core" />
-	<property name="build.compile.core.test.root" value="${build.compile.root}/test/core" />
 
 	<!-- Configure build intermediates -->
 	<property name="build.intermediates.root" value="${build.root}/intermediates" />
@@ -39,8 +32,16 @@
 	<property name="build.intermediates.shared" value="${build.intermediates.root}/shared" />
 	<property name="build.intermediates.toolbox" value="${build.intermediates.root}/toolbox" />
 
+	<!-- Configure build compilation -->
+	<property name="build.compile.java.source" value="1.7" />
+	<property name="build.compile.java.target" value="${build.compile.java.source}" />
+	<property name="build.compile.root" value="${build.intermediates.root}/compile" />
+	<property name="build.compile.core.root" value="${build.compile.root}/core" />
+	<property name="build.compile.core.test.root" value="${build.compile.root}/test/core" />
+
 	<!-- Configure build products  -->
-	<property name="build.jar.root" value="${build.root}/products" />
+	<property name="build.products.root" value="${build.root}/products" />
+	<property name="build.jar.root" value="${build.products.root}" />
 	<property name="build.jar.lib.root" value="${build.jar.root}/lib" />
 
 	<!-- Configure build tests  -->
@@ -53,16 +54,16 @@
     <property name="install.lib.root" value="${install.root}/lib" />
     
     <!-- Configure paths for services  -->
-    <property name="services.build.compile.root" value="${build.root}/compile/services" />
+    <property name="services.build.compile.root" value="${build.compile.root}/services" />
     <property name="services.build.jar.root" value="${build.jar.root}/services" />
     <property name="services.install.root" value="${install.root}/services" />
         
     <!-- Configure paths for apps  -->
-    <property name="apps.build.compile.root" value="${build.root}/compile/apps" />
+    <property name="apps.build.compile.root" value="${build.compile.root}/apps" />
     <property name="apps.build.jar.root" value="${build.jar.root}/apps" />
     <property name="apps.install.root" value="${install.root}/apps" />
     
     <!-- Configure paths for scripts  -->
-    <property name="scripts.build.root" value="${build.root}/scripts" />
+    <property name="scripts.build.root" value="${build.products.root}/scripts" />
     <property name="scripts.install.root" value="${install.root}/scripts" />
 </project>
