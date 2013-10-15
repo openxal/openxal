@@ -40,8 +40,11 @@
             <fileset dir=".">
                 <include name="core/build.xml" />
                 <include name="apps/build.xml" />
+                <include name="services/build.xml" />
             </fileset>
         </subant>
+		<delete dir="${build.products.root}" quiet="true" />
+		<delete dir="${build.intermediates.root}" quiet="true" />
     </target>
     
     
