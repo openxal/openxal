@@ -127,7 +127,17 @@
 			</zipgroupfileset>
         </jar>
     </target>
-	
+
+
+	<!-- Jar the service's resources as a convenience if one wants to use it. It isn't referenced elsewhere. -->
+	<target  name="jar-resources" depends="compile">
+		<jar compress="true" jarfile="${service.intermediates.root}/resources.jar">
+			<fileset dir="${service.compile.root}">
+				<exclude name="**/*.class" />
+			</fileset>
+		</jar>
+	</target>
+
     
     <!-- Archive the service either referencing the common libraries or as standalone with the common libraries embedded -->
     <macrodef name="archive">

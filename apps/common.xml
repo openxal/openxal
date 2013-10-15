@@ -128,6 +128,16 @@
         </jar>
     </target>
 
+
+	<!-- Jar the application's resources as a convenience if one wants to use it. It isn't referenced elsewhere. -->
+	<target  name="jar-resources" depends="compile">
+		<jar compress="true" jarfile="${app.intermediates.root}/resources.jar">
+			<fileset dir="${app.compile.root}">
+				<exclude name="**/*.class" />
+			</fileset>
+		</jar>
+	</target>
+
     
     <!-- Archive the application either referencing the common libraries or as standalone with the common libraries embedded -->
     <macrodef name="archive">
