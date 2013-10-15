@@ -21,12 +21,14 @@
 		<property name="mainclass" value="${app.package.prefix}.${appname}.${mainclass.base}" />
         <property name="app.ref" value="${appname}" />
         <property name="app.src.root" value="${apps.src.root}/${app.ref}" />
-        <property name="app.build.compile.root" value="${apps.build.compile.root}" />
         <property name="app.build.jar" value="${apps.build.jar.root}/${appname}.jar" />
         <property name="app.relative.path" value="xal/app/${appname}" />
         <property name="app.install.jar" value="${apps.install.root}/${appname}.jar" />
 
         <property name="app.intermediates.root" value="${build.intermediates.apps}/${appname}" />
+        <property name="app.compile.root" value="${app.intermediates.root}/compile" />
+        <property name="app.archive.root" value="${app.intermediates.root}/archives" />
+        <property name="app.intermediates.resources" value="${app.compile.root}/${app.relative.path}/resources" />
 
         <!-- determine whether building should be allowed -->
         <!-- don't build if the build is a batch build and this project explicitly excludes batch building -->
@@ -60,16 +62,6 @@
 		<!-- sets the property if there are any libraries to process -->
 		<pathconvert refid="fileset.app.lib" property="app.has.libs" setonempty="false"/>
 
-		<!-- fileset for the app's resources -->
-		<fileset id="fileset.app.resources" dir="${app.src.root}">
-			<patternset>
-				<include name="resources/*" />
-			</patternset>
-		</fileset>
-
-		<!-- sets the property if there are any resources to process -->
-		<pathconvert refid="fileset.app.resources" property="app.has.resources" setonempty="false"/>
-
         <mkdir dir="${build.root}" />
         <mkdir dir="${apps.build.compile.root}" />
         
@@ -87,8 +79,8 @@
 	<macrodef name="compile-flagged">
 		<attribute name="flag" default="-Xlint:none" />
 		<sequential>
-            <mkdir dir="${app.build.compile.root}" />
-            <javac srcdir="${app.src.root}/${source.code.dir}" includes="**" destdir="${app.build.compile.root}" debug="true" source="${build.compile.java.source}" target="${build.compile.java.target}" includeAntRuntime="no" deprecation="true">
+            <mkdir dir="${app.compile.root}" />
+            <javac srcdir="${app.src.root}/${source.code.dir}" includes="**" destdir="${app.compile.root}" debug="true" source="${build.compile.java.source}" target="${build.compile.java.target}" includeAntRuntime="no" deprecation="true">
                 <compilerarg value="@{flag}" />
                 
                 <!-- compile against the common libraries (e.g. xal-shared.jar) -->
@@ -96,9 +88,15 @@
                 
                 <!-- compile against any app specific jars in the app's lib directory -->
 				<classpath>
-					<pathelement location="${app.intermediates.root}/lib.jar" />
+					<pathelement location="${app.archive.root}/lib.jar" />
 				</classpath>
             </javac>
+
+			<!-- Copy the application's resources into the compile directory -->
+			<mkdir dir="${app.intermediates.resources}" />
+			<copy todir="${app.intermediates.resources}" quiet="true" failonerror="false">
+				<fileset dir="${app.src.root}/resources" />
+			</copy>
 		</sequential>
 	</macrodef>
 
@@ -121,30 +119,10 @@
     </target>
 
 
-	<!-- Jar the application's resources -->
-	<target  name="jar-resources" depends="init" if="app.has.resources">
-		<mkdir dir="${app.intermediates.root}/resources/xal/app/${appname}/resources" />
-		<copy todir="${app.intermediates.root}/resources/xal/app/${appname}/resources">
-			<fileset dir="${app.src.root}/resources" />
-		</copy>
-		<jar compress="true" jarfile="${app.intermediates.root}/resources.jar">
-			<fileset dir="${app.intermediates.root}/resources" />
-		</jar>
-	</target>
-
-
-	<!-- Jar the core by jaring the core's compiled classes -->
-	<target  name="jar-classes" depends="init, compile">
-		<jar compress="true" jarfile="${app.intermediates.root}/${appname}-classes.jar">
-			<fileset dir="${app.build.compile.root}" includes="xal/**/*" />
-		</jar>
-	</target>
-
-
 	<!-- Join the third party jars into a common external jar file -->
     <target name="jar-lib" depends="init" if="app.has.libs">
-        <mkdir dir="${app.intermediates.root}" />
-        <jar compress="true" jarfile="${app.intermediates.root}/lib.jar" duplicate="preserve">
+        <mkdir dir="${app.archive.root}" />
+        <jar compress="true" jarfile="${app.archive.root}/lib.jar" duplicate="preserve">
 			<zipgroupfileset id="app.lib.group" dir="${app.src.root}">
 				<patternset refid="pattern.app.lib" />
 			</zipgroupfileset>
@@ -158,7 +136,8 @@
         <sequential>
             <mkdir dir="${build.jar.root}" />
             <mkdir dir="${apps.build.jar.root}" />
-            <jar jarfile="${app.build.jar}" compress="true" basedir="${app.build.compile.root}" includes="${app.relative.path}/**/*">
+			<mkdir dir="${app.archive.root}" />
+            <jar jarfile="${app.build.jar}" compress="true" basedir="${app.compile.root}" includes="${app.relative.path}/**/*">
                 <manifest>
                     <attribute name="Manifest-Version" value="1.0" />
                     <attribute name="Main-Class" value="${mainclass}" />
@@ -166,10 +145,9 @@
                 </manifest>
                 
                 <!-- merge any app specific libraries in the app's lib directory into the app's jar -->
-                <zipgroupfileset dir="${app.intermediates.root}">
+                <zipgroupfileset dir="${app.archive.root}">
                     <patternset>
                         <include name="lib.jar" />
-                        <include name="resources.jar" />
                     </patternset>
                 </zipgroupfileset>
                 
@@ -181,15 +159,15 @@
 
     
     <!-- Archive the application and any of its app specific libraries into a jar file with relative dependency on the common libraries -->
-    <target name="jar" depends="init, compile, jar-resources" if="allows.build">
-		<mkdir dir="${service.intermediates.root}" />
+    <target name="jar" depends="init, compile" if="allows.build">
+		<mkdir dir="${app.archive.root}" />
 		<archive />
     </target>
     
     
     <!-- Archive the application, any of its app specific libraries and the common libraries into a standalone jar file -->
-    <target name="jar-standalone" depends="init, compile, jar-resources" if="allows.build">
-		<mkdir dir="${service.intermediates.root}" />
+    <target name="jar-standalone" depends="init, compile" if="allows.build">
+		<mkdir dir="${app.archive.root}" />
         <archive>
             <embed-other>
                 <!-- embed the core and external libraries into the application's archive -->
@@ -239,7 +217,6 @@
     
     <!-- Clean the application build files -->
     <target name="clean" depends="init" description="Clean all build products.">
-        <delete dir="${apps.build.compile.root}/${app.relative.path}"/>
         <delete dir="${app.intermediates.root}" quiet="true" />
         <delete file="${app.build.jar}"/>
         <delete dir="${build.root}/javadoc/apps/${appname}" />

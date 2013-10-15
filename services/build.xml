@@ -61,7 +61,6 @@
             <fileset dir="." includes="${build.path.pattern}" />
         </subant>
         
-        <delete dir="${services.build.compile.root}" />
         <delete dir="${services.build.jar.root}" />
     </target>
     
