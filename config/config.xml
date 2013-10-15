@@ -36,7 +36,6 @@
 	<property name="build.compile.java.source" value="1.7" />
 	<property name="build.compile.java.target" value="${build.compile.java.source}" />
 	<property name="build.compile.root" value="${build.intermediates.root}/compile" />
-	<property name="build.compile.core.root" value="${build.compile.root}/core" />
 	<property name="build.compile.core.test.root" value="${build.compile.root}/test/core" />
 
 	<!-- Configure build products  -->
