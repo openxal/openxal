@@ -6,6 +6,9 @@
 	
     <target name="init">
         <property name="srcroot" value="." />
+		<property name="core.compile.root" value="${build.intermediates.core}/compile" />
+		<property name="core.intermediates.resources" value="${core.compile.root}" />
+
         <mkdir dir="${build.root}" />
     </target>
     
@@ -24,13 +27,19 @@
 	<macrodef name="compile-flagged">
 		<attribute name="flag" default="-Xlint:none" />
 		<sequential>
-			<mkdir dir="${build.compile.core.root}" />
-			<javac debug="true" source="${build.compile.java.source}" target="${build.compile.java.target}" includeAntRuntime="no" deprecation="true" destdir="${build.compile.core.root}" srcdir="${srcroot}/${source.code.dir}" includes="**" sourcepath="">
+			<mkdir dir="${core.compile.root}" />
+			<javac debug="true" source="${build.compile.java.source}" target="${build.compile.java.target}" includeAntRuntime="no" deprecation="true" destdir="${core.compile.root}" srcdir="${srcroot}/${source.code.dir}" includes="**" sourcepath="">
 				<classpath>
 					<pathelement location="${build.intermediates.core}/lib.jar" />
 				</classpath>
 				<compilerarg value="@{flag}" />
 			</javac>
+
+			<!-- Copy the service's resources into the compile directory -->
+			<mkdir dir="${core.intermediates.resources}" />
+			<copy todir="${core.intermediates.resources}" quiet="true" failonerror="false">
+				<fileset dir="${srcroot}/resources" />
+			</copy>
 		</sequential>
 	</macrodef>
 	
@@ -62,14 +71,6 @@
     </target>
 
 
-	<!-- Jar the core by jaring the core's compiled classes -->
-    <target  name="jar-core-classes" depends="init, compile">
-        <jar compress="true" jarfile="${build.intermediates.core}/core-classes.jar" index="true">
-			<fileset dir="${build.compile.core.root}" includes="xal/**/*" />
-		</jar>
-    </target>
-
-
 	<!-- Join the third party jars into a common external jar file -->
     <target name="jar-lib" depends="init">
         <mkdir dir="${build.intermediates.core}" />
@@ -84,9 +85,10 @@
 
 
 	<!-- Merge the core compiled classes, core resources.jar and core lib.jar -->
-    <target  name="jar-core" depends="init, jar-core-classes, jar-resources">
+    <target  name="jar-core" depends="init, compile">
+        <mkdir dir="${core.compile.root}" />
         <mkdir dir="${build.intermediates.shared}" />
-        <jar compress="true" jarfile="${build.intermediates.shared}/xal-core.jar" index="true">
+        <jar compress="true" jarfile="${build.intermediates.shared}/xal-core.jar" index="true" basedir="${core.compile.root}" includes="xal/**/*">
 			<zipgroupfileset dir="${build.intermediates.core}">
 				<patternset>
 					<include name="*.jar" />
@@ -118,7 +120,7 @@
 	
 	<!-- clean compiled products -->
     <target name="clean" depends="init" description="Clean all build products." >
-        <delete dir="${build.compile.core.root}" quiet="true" />
+        <delete dir="${core.compile.root}" quiet="true" />
         <delete dir="${build.intermediates.core}" quiet="true" />
         <delete file="${build.intermediates.shared}/xal-core.jar" quiet="true" />
 
