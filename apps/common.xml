@@ -63,7 +63,6 @@
 		<pathconvert refid="fileset.app.lib" property="app.has.libs" setonempty="false"/>
 
         <mkdir dir="${build.root}" />
-        <mkdir dir="${apps.build.compile.root}" />
         
         <echo message="Conditionally processing ${appname}" />
     </target>

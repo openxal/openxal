@@ -63,7 +63,6 @@
 		<pathconvert refid="fileset.service.lib" property="service.has.libs" setonempty="false"/>
 
         <mkdir dir="${build.root}" />
-        <mkdir dir="${services.build.compile.root}" />
         
         <echo message="Conditionally processing ${servicename}" />
     </target>
