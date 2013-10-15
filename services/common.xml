@@ -27,7 +27,7 @@
 
         <property name="service.intermediates.root" value="${build.intermediates.services}/${servicename}" />
         <property name="service.compile.root" value="${service.intermediates.root}/compile" />
-        <property name="service.archive.root" value="${service.intermediates.root}/archives" />
+        <property name="service.intermediates.lib.root" value="${service.intermediates.root}/lib" />
         <property name="service.intermediates.resources" value="${service.compile.root}/${service.relative.path}/resources" />
 
         <!-- determine whether building should be allowed -->
@@ -121,8 +121,8 @@
 
 	<!-- Join the third party jars into a common external jar file -->
     <target name="jar-lib" depends="init" if="service.has.libs">
-        <mkdir dir="${service.archive.root}" />
-        <jar compress="true" jarfile="${service.archive.root}/lib.jar" duplicate="preserve">
+        <mkdir dir="${service.intermediates.lib.root}" />
+        <jar compress="true" jarfile="${service.intermediates.lib.root}/lib.jar" duplicate="preserve">
 			<zipgroupfileset id="service.lib.group" dir="${service.src.root}">
 				<patternset refid="pattern.service.lib" />
 			</zipgroupfileset>
@@ -136,7 +136,7 @@
         <sequential>
             <mkdir dir="${build.jar.root}" />
             <mkdir dir="${services.build.jar.root}" />
-			<mkdir dir="${service.archive.root}" />
+			<mkdir dir="${service.intermediates.lib.root}" />
             <jar jarfile="${service.build.jar}" compress="true" basedir="${service.compile.root}" includes="${service.relative.path}/**/*">
                 <manifest>
                     <attribute name="Manifest-Version" value="1.0" />
@@ -145,7 +145,7 @@
                 </manifest>
                 
                 <!-- merge any service specific libraries in the service's lib directory into the service's jar -->
-                <zipgroupfileset dir="${service.archive.root}">
+                <zipgroupfileset dir="${service.intermediates.lib.root}">
                     <patternset>
                         <include name="lib.jar" />
                     </patternset>

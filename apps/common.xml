@@ -27,7 +27,7 @@
 
         <property name="app.intermediates.root" value="${build.intermediates.apps}/${appname}" />
         <property name="app.compile.root" value="${app.intermediates.root}/compile" />
-        <property name="app.archive.root" value="${app.intermediates.root}/archives" />
+        <property name="app.intermediates.lib.root" value="${app.intermediates.root}/lib" />
         <property name="app.intermediates.resources" value="${app.compile.root}/${app.relative.path}/resources" />
 
         <!-- determine whether building should be allowed -->
@@ -88,7 +88,7 @@
                 
                 <!-- compile against any app specific jars in the app's lib directory -->
 				<classpath>
-					<pathelement location="${app.archive.root}/lib.jar" />
+					<pathelement location="${app.intermediates.lib.root}/lib.jar" />
 				</classpath>
             </javac>
 
@@ -121,8 +121,8 @@
 
 	<!-- Join the third party jars into a common external jar file -->
     <target name="jar-lib" depends="init" if="app.has.libs">
-        <mkdir dir="${app.archive.root}" />
-        <jar compress="true" jarfile="${app.archive.root}/lib.jar" duplicate="preserve">
+        <mkdir dir="${app.intermediates.lib.root}" />
+        <jar compress="true" jarfile="${app.intermediates.lib.root}/lib.jar" duplicate="preserve">
 			<zipgroupfileset id="app.lib.group" dir="${app.src.root}">
 				<patternset refid="pattern.app.lib" />
 			</zipgroupfileset>
@@ -136,7 +136,7 @@
         <sequential>
             <mkdir dir="${build.jar.root}" />
             <mkdir dir="${apps.build.jar.root}" />
-			<mkdir dir="${app.archive.root}" />
+			<mkdir dir="${app.intermediates.lib.root}" />
             <jar jarfile="${app.build.jar}" compress="true" basedir="${app.compile.root}" includes="${app.relative.path}/**/*">
                 <manifest>
                     <attribute name="Manifest-Version" value="1.0" />
@@ -145,7 +145,7 @@
                 </manifest>
                 
                 <!-- merge any app specific libraries in the app's lib directory into the app's jar -->
-                <zipgroupfileset dir="${app.archive.root}">
+                <zipgroupfileset dir="${app.intermediates.lib.root}">
                     <patternset>
                         <include name="lib.jar" />
                     </patternset>
@@ -160,14 +160,14 @@
     
     <!-- Archive the application and any of its app specific libraries into a jar file with relative dependency on the common libraries -->
     <target name="jar" depends="init, compile" if="allows.build">
-		<mkdir dir="${app.archive.root}" />
+		<mkdir dir="${app.intermediates.lib.root}" />
 		<archive />
     </target>
     
     
     <!-- Archive the application, any of its app specific libraries and the common libraries into a standalone jar file -->
     <target name="jar-standalone" depends="init, compile" if="allows.build">
-		<mkdir dir="${app.archive.root}" />
+		<mkdir dir="${app.intermediates.lib.root}" />
         <archive>
             <embed-other>
                 <!-- embed the core and external libraries into the application's archive -->
