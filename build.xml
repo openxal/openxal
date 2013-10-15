@@ -188,7 +188,19 @@
             </fileset>
         </subant>
     </target>
-    
+
+
+    <!-- Jar resources for the core plus all batch enabled applications and services. -->
+    <target name="jar-resources">
+        <subant target="jar-resources">
+            <fileset dir=".">
+                <include name="core/build.xml" />
+                <include name="apps/build.xml" />
+                <include name="services/build.xml" />
+            </fileset>
+        </subant>
+    </target>
+
     
     <!-- Build the javadoc. -->
     <target name="doc">
@@ -229,6 +241,7 @@
 		<echo message="    install-scripts ............ Install all scripts." />
 		<echo message="    install-services ........... Install all services which allow batch installation." />
 		<echo message="    install-shared ............. Install the core." />
+		<echo message="    jar-resources .............. Archive resources for the core plus all batch enabled applications and services." />
 		<echo message="    purge-build ................ Purge all build products." />
 		<echo message="    purge-install .............. Purge all installed products." />
 		<echo message="    run-tests .................. Build and run unit tests." />

@@ -45,7 +45,16 @@
             <fileset dir="." includes="${build.path.pattern}" />
         </subant>
     </target>
-    
+
+
+    <!-- jar-resources for all services which allow batch building. -->
+    <target name="jar-resources">
+        <subant target="jar-resources">
+            <property name="batch.service.build" value="true" />
+            <fileset dir="." includes="${build.path.pattern}" />
+        </subant>
+    </target>
+
     
     <!-- Install all the services which allow installation. -->
     <target name="install">
@@ -86,9 +95,10 @@
 		<echo message="    help ....................... Print this message." />
 		<echo message="    all ........................ Compile the services which allow batch building and assemble the jar products with dependence on the common libraries." />
 		<echo message="    all-standalone ............. Compile the services which allow batch building and assemble the jar products as standalone services." />
-		<echo message="    force-all .................. Compile all services (regardless of whether they allow batch building) and assemble the jar products." />
 		<echo message="    clean ...................... Clean compiled classes and build products" />
+		<echo message="    force-all .................. Compile all services (regardless of whether they allow batch building) and assemble the jar products." />
 		<echo message="    install .................... Install all build products intended for distribution." />
+		<echo message="    jar-resources .............. Archive resources for all services supporting batch build." />
 		<echo message="    purge-install .............. Purge installed services." />
     </target>
     

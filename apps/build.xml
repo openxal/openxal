@@ -45,7 +45,16 @@
             <fileset dir="." includes="${build.path.pattern}" />
         </subant>
     </target>
-    
+
+
+    <!-- jar-resources for all applications which allow batch building. -->
+    <target name="jar-resources">
+        <subant target="jar-resources">
+            <property name="batch.app.build" value="true" />
+            <fileset dir="." includes="${build.path.pattern}" />
+        </subant>
+    </target>
+
     
     <!-- Install all the applications which allow installation. -->
     <target name="install">
@@ -86,9 +95,10 @@
 		<echo message="    help ....................... Print this message." />
 		<echo message="    all ........................ Compile the applications which allow batch building and assemble the jar products with dependence on the common libraries." />
 		<echo message="    all-standalone ............. Compile the applications which allow batch building and assemble the jar products as standalone applications." />
-		<echo message="    force-all .................. Compile all applications (regardless of whether they allow batch building) and assemble the jar products." />
 		<echo message="    clean ...................... Clean compiled classes and build products" />
+		<echo message="    force-all .................. Compile all applications (regardless of whether they allow batch building) and assemble the jar products." />
 		<echo message="    install .................... Install all build products intended for distribution." />
+		<echo message="    jar-resources .............. Archive resources for all applications supporting batch build." />
 		<echo message="    purge-install .............. Purge installed applications." />
     </target>
     
