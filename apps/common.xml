@@ -27,7 +27,7 @@
 
         <property name="app.intermediates.root" value="${build.intermediates.apps}/${appname}" />
         <property name="app.compile.root" value="${app.intermediates.root}/compile" />
-        <property name="app.intermediates.lib.root" value="${app.intermediates.root}/lib" />
+        <property name="app.intermediates.lib.root" value="${app.intermediates.root}" />
         <property name="app.intermediates.resources" value="${app.compile.root}/${app.relative.path}/resources" />
 
         <!-- determine whether building should be allowed -->

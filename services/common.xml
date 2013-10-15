@@ -27,7 +27,7 @@
 
         <property name="service.intermediates.root" value="${build.intermediates.services}/${servicename}" />
         <property name="service.compile.root" value="${service.intermediates.root}/compile" />
-        <property name="service.intermediates.lib.root" value="${service.intermediates.root}/lib" />
+        <property name="service.intermediates.lib.root" value="${service.intermediates.root}" />
         <property name="service.intermediates.resources" value="${service.compile.root}/${service.relative.path}/resources" />
 
         <!-- determine whether building should be allowed -->
