@@ -44,8 +44,13 @@
             <classpath>
                 <pathelement location="${build.intermediates.shared}/xal-core.jar" />
 
-				<!-- compile against external test libraries if any -->
+				<!-- compile against external test libraries in the local test library if any -->
 				<fileset dir="${srcroot}">
+					<include name="lib/*.jar" />
+				</fileset>
+
+				<!-- compile against external test libraries in the common test library if any -->
+				<fileset dir="${common.test.root}">
 					<include name="lib/*.jar" />
 				</fileset>
             </classpath>
@@ -66,6 +71,13 @@
 			
 			<!-- merge external test libraries if any -->
 			<zipgroupfileset dir="${srcroot}">
+				<patternset>
+					<include name="lib/*.jar" />
+				</patternset>
+			</zipgroupfileset>
+
+			<!-- merge external test libraries if any -->
+			<zipgroupfileset dir="${common.test.root}">
 				<patternset>
 					<include name="lib/*.jar" />
 				</patternset>
