@@ -42,6 +42,7 @@
 	<property name="build.jar.lib.root" value="${build.jar.root}/lib" />
 
 	<!-- Configure build tests  -->
+	<property name="common.test.root" value="${xal.home}/test" />
 	<property name="build.tests.root" value="${build.root}/tests" />
 
 	<!-- Configure build javadoc  -->
