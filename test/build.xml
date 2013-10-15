@@ -6,7 +6,11 @@
 	
     <target name="init">
         <property name="srcroot" value="." />
+		<property name="build.intermediates.core.test" value="${build.intermediates.core}/test" />
+		<property name="build.compile.core.test.root" value="${build.intermediates.core.test}/compile" />
+
         <mkdir dir="${build.root}" />
+        <mkdir dir="${build.intermediates.core.test}" />
     </target>
     
     
@@ -15,9 +19,8 @@
         <mkdir dir="${build.tests.root}" />
         <junit printsummary="yes">
             <classpath>
-                <pathelement location="${build.jar.lib.root}/xal-test.jar" />
-                <pathelement location="${build.jar.lib.root}/xal-core.jar" />
-                <pathelement location="${build.jar.lib.root}/xal-lib.jar" />
+                <pathelement location="${build.intermediates.core.test}/xal-test.jar" />
+                <pathelement location="${build.intermediates.shared}/xal-core.jar" />
             </classpath>
             
             <formatter type="plain" usefile="false" />
@@ -39,8 +42,7 @@
         <mkdir dir="${build.compile.core.test.root}" />
         <javac debug="true" source="${build.compile.java.source}" target="${build.compile.java.target}" includeAntRuntime="no" deprecation="true" destdir="${build.compile.core.test.root}" srcdir="${srcroot}/${source.code.dir}" includes="**" sourcepath="">
             <classpath>
-                <pathelement location="${build.jar.lib.root}/xal-core.jar" />
-                <pathelement location="${build.jar.lib.root}/xal-lib.jar" />
+                <pathelement location="${build.intermediates.shared}/xal-core.jar" />
 
 				<!-- compile against external test libraries if any -->
 				<fileset dir="${srcroot}">
@@ -58,8 +60,7 @@
 	
 	<!-- Jar the core test XAL classes -->
     <target  name="jar" depends="init, compile">
-        <mkdir dir="${build.jar.lib.root}" />
-        <jar compress="false" jarfile="${build.jar.lib.root}/xal-test.jar" index="true">
+        <jar compress="false" jarfile="${build.intermediates.core.test}/xal-test.jar" index="true">
 			<fileset dir="${build.compile.core.test.root}" includes="xal/**/*" />
 			<fileset dir="${build.compile.core.test.root}/resources" />
 			
@@ -83,7 +84,7 @@
     <target name="clean" depends="init" description="Clean all build products." >
         <delete dir="${build.compile.core.test.root}" />
         <delete dir="${build.tests.root}" />
-        <delete file="${build.jar.lib.root}/xal-test.jar" quiet="true" />
+        <delete file="${build.intermediates.core.test}/xal-test.jar" quiet="true" />
         
         <echo message="Core test cleaned!" />
     </target>
