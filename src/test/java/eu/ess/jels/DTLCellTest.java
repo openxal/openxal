@@ -1,35 +1,28 @@
 package eu.ess.jels;
-import java.io.File;
-import java.util.Iterator;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
+import org.junit.runners.Parameterized;
 
-import xal.model.IComponent;
-import xal.model.IElement;
 import xal.model.ModelException;
-import xal.model.Sector;
-import xal.model.elem.ElementSeq;
-import xal.model.probe.EnvelopeProbe;
-import xal.model.probe.traj.EnvelopeProbeState;
-import xal.model.probe.traj.ProbeState;
-import xal.sim.scenario.Scenario;
-import xal.sim.scenario.ScenarioGenerator2;
+import xal.model.probe.Probe;
+import xal.sim.scenario.ElementMapping;
 import xal.smf.AcceleratorSeq;
 import xal.smf.impl.Quadrupole;
 import xal.smf.impl.RfGap;
-import xal.tools.beam.Twiss;
 import eu.ess.jels.smf.impl.ESSRfCavity;
 
-@RunWith(JUnit4.class)
-public class DTLCellTest {
+@RunWith(Parameterized.class)
+public class DTLCellTest extends TestCommon {
+
+	public DTLCellTest(Probe probe, ElementMapping elementMapping) {
+		super(probe, elementMapping);
+	}
 
 	@Test
-	public void doDTLCellTest() throws InstantiationException, ModelException {
-		System.out.println("Running\n");
+	public void doDTLCellTest() throws InstantiationException, ModelException {		
 		AcceleratorSeq sequence = new AcceleratorSeq("DTLCellTest");
-		
+
+		// DTL_CEL 68.534 22.5 22.5 0.00864202 0 46.964 148174 -90 10 0 0 0.0805777 0.772147 -0.386355 -0.142834
 		// input from TraceWin
 		double frequency = 4.025e8; // this is global in TraceWin
 		
@@ -60,7 +53,7 @@ public class DTLCellTest {
 		quad1.setPosition(Lq1*0.5); //always position on center!
 		quad1.setLength(Lq1); // effLength below is actually the only one read 
 		quad1.getMagBucket().setEffLength(Lq1);
-		quad1.setDfltField(B1);
+		quad1.setDfltField(B1 * Math.signum(probe.getSpeciesCharge()));
 		quad1.getMagBucket().setPolarity(1);
 		
 		Quadrupole quad2 = new Quadrupole("quad2") { // there's no setter for type (you need to extend class)
@@ -69,7 +62,7 @@ public class DTLCellTest {
 		quad2.setPosition(L-Lq2*0.5); //always position on center!
 		quad2.setLength(Lq2); // effLength below is actually the only one read 
 		quad2.getMagBucket().setEffLength(Lq2);
-		quad2.setDfltField(B2);
+		quad2.setDfltField(B2 * Math.signum(probe.getSpeciesCharge()));
 		quad2.getMagBucket().setPolarity(1);
 		
 		
@@ -80,7 +73,7 @@ public class DTLCellTest {
 		gap.setLength(2*g); // used only for positioning
 		gap.setPosition((L+Lq1-Lq2)/2+g);
 		// following are used to calculate E0TL
-		double length = 1.0; // length is not given in TraceWin, but is used only as a factor in E0TL in OpenXal
+		double length = 2*g; // length is not given in TraceWin, but is used only as a factor in E0TL in OpenXal
 		gap.getRfGap().setLength(length); 		
 		gap.getRfGap().setAmpFactor(1.0);
 		/*gap.getRfGap().setGapOffset(dblVal)*/		
@@ -97,81 +90,19 @@ public class DTLCellTest {
 		// TTF		
 		if (betas == 0.0) {
 			gap.getRfGap().setTTF(1.0);		
-			dtlTank.getRfField().setTTFCoefs(new double[] {1.0});
+			dtlTank.getRfField().setTTFCoefs(new double[] {0.0});
 		} else {
-			dtlTank.getRfField().setTTFCoefs(new double[] {betas, Ts, kTs, k2Ts});
-			dtlTank.getRfField().setTTF_endCoefs(new double[] {betas, Ts, kTs, k2Ts});
-			dtlTank.getRfField().setSTFCoefs(new double[] {betas, 0., kS, k2S});
-			dtlTank.getRfField().setSTF_endCoefs(new double[] {betas, 0., kS, k2S});
+			gap.getRfGap().setTTF(1.0);		
+			dtlTank.getRfField().setTTFCoefs(new double[] {betas, Ts, kTs, k2Ts});			
+			dtlTank.getRfField().setSTFCoefs(new double[] {betas, 0., kS, k2S});			
 		}		
 		
 		sequence.addNode(dtlTank);
 		sequence.setLength(L);
 				
-		// Generates lattice from SMF accelerator
-		Scenario oscenario = Scenario.newScenarioFor(sequence);
-		Scenario scenario = new ScenarioGenerator2(sequence).generateScenario();
-		scenario.resync();
-		oscenario.resync();
-		//Scenario oscenario = Scenario.newAndImprovedScenarioFor(sequence);
+		run(sequence);
 		
-		// Ensure directory
-		new File("temp/dtlcelltest").mkdirs();
-		
-		// Outputting lattice elements
-		TestCommon.saveLattice(scenario.getLattice(), "temp/dtlcelltest/lattice.xml");
-		TestCommon.saveLattice(oscenario.getLattice(), "temp/dtlcelltest/elattice.xml");
-		TestCommon.saveSequence(sequence, "temp/dtlcelltest/seq.xml");
-		
-		// Creating a probe		
-		EnvelopeProbe probe = TestCommon.setupProbeViaJavaCalls();					
-		scenario.setProbe(probe);			
-		
-		// Prints transfer matrices
-		for (IComponent el : ((ElementSeq)((Sector)scenario.getLattice().getElementList().get(0))).getElementList() )
-		{		
-			((IElement)el).transferMap(probe, el.getLength()).getFirstOrder().print();
-		}
-		
-		
-		// Setting up synchronization mode
-		scenario.setSynchronizationMode(Scenario.SYNC_MODE_DESIGN);					
-		scenario.resync();
-				
-		// Running simulation
-		scenario.run();
-				
-		// Getting results
-		Iterator<ProbeState> it = scenario.getTrajectory().stateIterator();
-		while (it.hasNext()) {
-			EnvelopeProbeState ps = (EnvelopeProbeState)it.next();
-			Twiss[] t = ps.getCorrelationMatrix().computeTwiss();
-			
-			double[] beta = new double[3];
-			for (int i=0; i<3; i++) beta[i] = t[i].getBeta();
-			beta[2]/=ps.getGamma()*ps.getGamma();
-			
-			double[] sigma = new double[3];
-			double gamma = ps.getGamma();
-			for (int i=0; i<3; i++)
-				sigma[i] = Math.sqrt(beta[i]*t[i].getEmittance()/Math.sqrt(1.0 - 1.0/(gamma*gamma))/gamma);		
-			System.out.printf("%E %E %E %E ",ps.getPosition(), sigma[0], sigma[1], sigma[2]);
-			System.out.printf("%E %E %E\n", beta[0], beta[1], beta[2]);
-			
-		}
-		
-		Twiss[] t = probe.getCovariance().computeTwiss();
-		
-		double[] beta = new double[3];
-		for (int i=0; i<3; i++) beta[i] = t[i].getBeta();
-		beta[2]/=probe.getGamma()*probe.getGamma();
-		
-		double[] sigma = new double[3];
-		for (int i=0; i<3; i++)
-			sigma[i] = Math.sqrt(beta[i]*t[i].getEmittance()/probe.getBeta()/probe.getGamma());		
-		System.out.printf("%E %E %E %E ",probe.getPosition(), sigma[0], sigma[1], sigma[2]);
-		System.out.printf("%E %E %E\n", beta[0], beta[1], beta[2]);
-		
-		/* ELS output: 7.000000E-02 1.060867E-03 9.629023E-04 1.920023E-03 3.918513E-01 3.239030E-01 9.445394E-01 */
+		printResults(6.853400E-02, new double[] { 9.128969E-04, 1.266179E-03, 1.698689E-03},
+				new double [] {2.901633E-01, 5.600682E-01, 7.393248E-01});
 	}
 }

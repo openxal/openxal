@@ -1,29 +1,25 @@
 package eu.ess.jels;
-import java.io.File;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
+import org.junit.runners.Parameterized;
 
-import xal.model.IComponent;
 import xal.model.IElement;
 import xal.model.ModelException;
-import xal.model.Sector;
-import xal.model.elem.ElementSeq;
-import xal.model.probe.EnvelopeProbe;
-import xal.sim.scenario.Scenario;
-import xal.sim.scenario.ScenarioGenerator2;
+import xal.model.probe.Probe;
+import xal.sim.scenario.ElementMapping;
 import xal.smf.AcceleratorSeq;
-import xal.tools.beam.Twiss;
 import eu.ess.jels.smf.impl.ESSRfCavity;
 import eu.ess.jels.smf.impl.ESSRfGap;
 
-@RunWith(JUnit4.class)
-public class NCellsTest {
+@RunWith(Parameterized.class)
+public class NCellsTest extends TestCommon {
+
+	public NCellsTest(Probe probe, ElementMapping elementMapping) {
+		super(probe, elementMapping);
+	}
 
 	@Test
-	public void doGapTest() throws InstantiationException, ModelException {
-		System.out.println("Running\n");
+	public void doGapTest() throws InstantiationException, ModelException {		
 		AcceleratorSeq sequence = new AcceleratorSeq("GapTest");
 		
 		// input from TraceWin
@@ -133,69 +129,10 @@ public class NCellsTest {
 		sequence.addNode(cavity);
 		sequence.setLength(Lc0+(n-2)*Lc+Lcn);
 				
-		// Generates lattice from SMF accelerator
-		Scenario oscenario = Scenario.newScenarioFor(sequence);
-		Scenario scenario = new ScenarioGenerator2(sequence).generateScenario();
-		oscenario.resync();
-		scenario.resync();
-		//Scenario oscenario = Scenario.newAndImprovedScenarioFor(sequence);
-				
-		// Ensure directory
-		new File("temp/ncellstest").mkdirs();
 		
-		// Outputting lattice elements
-		TestCommon.saveLattice(scenario.getLattice(), "temp/ncellstest/lattice.xml");
-		TestCommon.saveLattice(oscenario.getLattice(), "temp/ncellstest/elattice.xml");
-		TestCommon.saveSequence(sequence, "temp/ncellstest/seq.xml");
-		
-		// Creating a probe		
-		EnvelopeProbe probe = TestCommon.setupProbeViaJavaCalls();					
-		scenario.setProbe(probe);			
-		
-		// Setting up synchronization mode
-		scenario.setSynchronizationMode(Scenario.SYNC_MODE_DESIGN);					
-		scenario.resync();
-			
-		// Prints transfer matrices
-		for (IComponent el : ((ElementSeq)((Sector)scenario.getLattice().getElementList().get(0))).getElementList() )
-		{		
-			//((IElement)el).transferMap(probe, el.getLength()).getFirstOrder().print();			
-			if (el instanceof xal.model.elem.IdealRfGap) {
-				xal.model.elem.IdealRfGap gap = (xal.model.elem.IdealRfGap)el;
-				System.out.printf("gap phase=%f E0TL=%E\n", gap.getPhase()*180./Math.PI, gap.getETL());
-			}
-		}
-		
-		
-		// Running simulation
-		scenario.run();
-				
-		// Prints transfer matrices
-		for (IComponent el : ((ElementSeq)((Sector)scenario.getLattice().getElementList().get(0))).getElementList() )
-		{		
-			//((IElement)el).transferMap(probe, el.getLength()).getFirstOrder().print();			
-			if (el instanceof xal.model.elem.IdealRfGap) {
-				xal.model.elem.IdealRfGap gap = (xal.model.elem.IdealRfGap)el;
-				double phase = gap.getPhase()*180./Math.PI;
-				while (phase>180.) phase -=180;
-				while (phase<-180.) phase += 180;
-				System.out.printf("gap phase=%f E0TL=%E\n", phase, gap.getETL());
-			}
-		}
-		
-		// Getting results
-		Twiss[] t = probe.getCovariance().computeTwiss();
-		
-		double[] betaa = new double[3];
-		for (int i=0; i<3; i++) betaa[i] = t[i].getBeta();
-		betaa[2]/=probe.getGamma()*probe.getGamma();
-		
-		double[] sigma = new double[3];
-		for (int i=0; i<3; i++)
-			sigma[i] = Math.sqrt(betaa[i]*t[i].getEmittance()/probe.getBeta()/probe.getGamma());		
-		System.out.printf("%E %E %E %E ",probe.getPosition(), sigma[0], sigma[1], sigma[2]);
-		System.out.printf("%E %E %E\n", betaa[0], betaa[1], betaa[2]);
-		
-		/* ELS output: 7.000000E-02 1.060867E-03 9.629023E-04 1.920023E-03 3.918513E-01 3.239030E-01 9.445394E-01 */
+		run(sequence);
+		  
+		printResults(1.117239E+00, new double[] {2.365512E-01, 2.661233E-01, 8.937822E-02},
+				new double [] {5.192974E+04, 6.594518E+04, 5.455538E+03});
 	}
 }
