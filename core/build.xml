@@ -62,12 +62,19 @@
     </target>
     
 	
-	<!-- Jar the core resources -->
+	<!-- Jar the core resources plus those of any subdirectory -->
     <target  name="jar-resources" depends="init">
         <mkdir dir="${build.intermediates.core}" />
         <jar compress="true" jarfile="${build.intermediates.core}/resources.jar" index="true">
 			<fileset dir="resources" />
-       </jar>
+        </jar>
+
+		<!-- jar resources for any sub directories that support it -->
+        <subant target="jar-resources">
+            <fileset dir=".">
+                <include name="test/build.xml" />
+            </fileset>
+        </subant>
     </target>
 
 

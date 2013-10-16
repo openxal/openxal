@@ -85,6 +85,18 @@
         </jar>
     </target>
 
+
+	<!-- Jar the test resources -->
+    <target  name="jar-resources" depends="init, compile">
+        <mkdir dir="${build.intermediates.core}" />
+        <jar compress="true" jarfile="${build.intermediates.core.test}/resources.jar" index="true">
+			<!-- test resources are rooted in the "resources" directory and this prefix must be preserved in the jar file -->
+			<fileset dir="${build.compile.core.test.root}">
+				<include name="resources/**/*" />
+			</fileset>
+        </jar>
+    </target>
+
     
 	<!-- merge the external jars and build XAL test core -->
     <target name="all" depends="init,compile,jar" description="Build everything." >
@@ -111,8 +123,9 @@
 		<echo message="    help ....................... Print this message." />
 		<echo message="    all ........................ Build and run the test cases." />
 		<echo message="    clean ...................... Clean compiled classes and build products" />
-		<echo message="    compile .................... Compile the core XAL classes reporting only mandated warnings." />
-		<echo message="    jar: ....................... Assemble the core XAL classes and resources into xal-core.jar" />
+		<echo message="    compile .................... Compile the XAL test classes reporting only mandated warnings." />
+		<echo message="    jar: ....................... Assemble the XAL test classes and resources." />
+		<echo message="    jar-resources: ............. Archive the test resources." />
 		<echo message="    run-tests .................. Build and run the test cases." />
     </target>
 </project>
