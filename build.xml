@@ -41,6 +41,7 @@
                 <include name="core/build.xml" />
                 <include name="apps/build.xml" />
                 <include name="services/build.xml" />
+                <include name="extensions/build.xml" />
             </fileset>
         </subant>
 		<delete dir="${build.products.root}" quiet="true" />
@@ -78,8 +79,16 @@
     </target>
 
 
+	<!-- Build the extensions -->
+	<target name="extensions" depends="core">
+		<subant target="all">
+			<fileset dir="extensions" includes="build.xml"/>
+		</subant>
+	</target>
+
+
 	<!-- Build the shared library which all applications reference -->
-    <target name="shared" depends="core">
+    <target name="shared" depends="core, extensions">
         <mkdir dir="${build.jar.lib.root}" />
         <jar compress="true" jarfile="${build.jar.lib.root}/xal-shared.jar" index="true">
 			<zipgroupfileset dir="${build.intermediates.shared}">

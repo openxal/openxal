@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- Build file for extensions. -->
+<project basedir="." default="all" name="extensions">
+    <import file="../config/config.xml"/>
+
+
+    <!-- Initialization for the extensions builder -->
+    <target name="init">
+		<property name="build.intermediates.extensions" value="${build.intermediates.extensions}" />
+		<property name="extension.compiler" value="${build.intermediates.extensions}/compiler.xml" />
+		<property name="extension.compile.root" value="${build.intermediates.extensions}/compile" />
+    </target>
+
+
+    <!-- Generate the build file. -->
+    <target name="all" depends="init, compile, jar" />
+
+
+	<!-- Compile the extensions -->
+	<target name="compile" depends="generate-compiler">
+		<subant target="compile" antfile="compiler.xml">
+			<fileset dir="${build.intermediates.extensions}" includes="compiler.xml"/>
+		</subant>
+	</target>
+
+
+	<!-- Archive the extensions -->
+    <target  name="jar" depends="init, compile">
+        <mkdir dir="${extension.compile.root}" />
+        <mkdir dir="${build.intermediates.shared}" />
+        <jar compress="true" jarfile="${build.intermediates.shared}/xal-extensions.jar" index="true" basedir="${extension.compile.root}" includes="xal/**/*">
+			<zipgroupfileset dir="${build.intermediates.extensions}">
+				<patternset>
+					<include name="lib.jar" />
+				</patternset>
+			</zipgroupfileset>
+		</jar>
+    </target>
+
+
+	<!-- Clean the extensions -->
+	<target name="clean" depends="generate-compiler">
+        <delete dir="${build.intermediates.extensions}" quiet="true" />
+	</target>
+
+
+	<!-- Generate the build file for compiling extensions. -->
+	<target name="generate-compiler" depends="init">
+		<touch file="${extension.compiler}" mkdirs="true" />
+
+		<echo file="${extension.compiler}">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;project basedir="." default="compile" name="xal.extension-compiler"&gt;
+	&lt;target name="compile"&gt;
+		&lt;mkdir dir="${extension.compile.root}" /&gt;
+		&lt;javac debug="true" source="${build.compile.java.source}" target="${build.compile.java.target}" includeAntRuntime="no" deprecation="true" destdir="${extension.compile.root}" includes="**" sourcepath=""&gt;
+
+			&lt;classpath&gt;
+				&lt;pathelement location="${build.intermediates.shared}/xal-core.jar" /&gt;
+			&lt;/classpath&gt;
+		</echo>
+
+		<!-- loop over every extension directory and add the source code -->
+		<subant genericantfile="${ant.file.extensions}" target="append-extension">
+			<dirset dir="${services.root}" includes="*/extension" />
+		</subant>
+
+		<echo file="${extension.compiler}" append="true">
+		&lt;/javac&gt;
+	&lt;/target&gt;
+&lt;/project&gt;&#10;</echo>
+	</target>
+
+
+    <!-- Append the extension to the common extensions build file. -->
+    <target name="append-extension" depends="init">
+		<echo file="${extension.compiler}" append="true">&lt;src path="${basedir}/src" /&gt;
+		</echo>
+		<echo message="Appending extension: ${basedir}" />
+    </target>
+
+	
+	<!-- provide guidance on the various targets -->
+    <target name="help">
+		<echo message="Build the XAL Extensions" />
+		<echo message="Usage: ant [ant options] target1 [target2 | target3 | ... ]" />
+		<echo message="" />
+		<echo message="  where target(s) can be:" />
+		<echo message="    help ....................... Print this message." />
+    </target>
+
+</project>
