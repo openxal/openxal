@@ -56,9 +56,6 @@
     <property name="services.build.jar.root" value="${build.jar.root}/services" />
     <property name="services.install.root" value="${install.root}/services" />
 
-    <!-- Configure paths for toolbox  -->
-    <property name="toolbox.root" value="${xal.home}/toolbox" />
-
     <!-- Configure paths for apps  -->
     <property name="apps.build.jar.root" value="${build.jar.root}/apps" />
     <property name="apps.install.root" value="${install.root}/apps" />

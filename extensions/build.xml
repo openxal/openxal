@@ -7,6 +7,7 @@
 
     <!-- Initialization for the extensions builder -->
     <target name="init">
+		<property name="extensions.root" value="${xal.home}/extensions" />
 		<property name="build.intermediates.extensions" value="${build.intermediates.extensions}" />
 		<property name="extension.compiler" value="${build.intermediates.extensions}/compiler.xml" />
 		<property name="extension.compile.root" value="${build.intermediates.extensions}/compile" />
@@ -62,6 +63,7 @@
 
 		<!-- loop over every extension directory and add the source code -->
 		<subant genericantfile="${ant.file.extensions}" target="append-extension">
+			<dirset dir="${extensions.root}" includes="*" />
 			<dirset dir="${services.root}" includes="*/extension" />
 		</subant>
 
