@@ -259,13 +259,14 @@ public class IdealRfGap extends ThinElement implements IRfGap {
       
     @Override
     public double energyGain(IProbe probe)
-    {
-    	return (gamma_end - 1.0) * probe.getSpeciesRestEnergy() - probe.getKineticEnergy();        
+    {    	
+    	//return (gamma_end - 1.0) * probe.getSpeciesRestEnergy() - probe.getKineticEnergy();
+    	return (gamma_end - probe.getGamma()) * probe.getSpeciesRestEnergy();    	
+    	//return getETL()*Math.cos(getPhase());
     }
     
-    protected double computeBetaFromGamma(double gamma) {
-        double beta = Math.sqrt(1.0 - 1.0/(gamma*gamma));
-
+    protected double computeBetaFromGamma(double gamma) {    	    
+        double beta = Math.sqrt(1.0 - 1.0/Math.pow(gamma,2));
         return beta;
     };
        
@@ -313,7 +314,7 @@ public class IdealRfGap extends ThinElement implements IRfGap {
     	else
     	{
     		double gamma_start=probe.getGamma();
-    		double beta_start=probe.getBeta();
+    		double beta_start=computeBetaFromGamma(gamma_start);//probe.getBeta();
     		double lambda=LightSpeed/getFrequency();
     		double beta_end;
     		
@@ -375,6 +376,7 @@ public class IdealRfGap extends ThinElement implements IRfGap {
     		matPhi.setElem(5,5,(beta_start*gamma_start)/(beta_end*gamma_end));  		
     	}
                 
+    	matPhi.setElem(6,6,1);
         return new PhaseMap(matPhi);
     }
     

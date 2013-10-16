@@ -248,6 +248,10 @@ public class IdealMagWedgeDipole2 extends ElementSeq implements IElectromagnet {
     public void setEntrFringeIntegral(double dblFldInt) {
         this.getFaceEntr().setFringeIntegral(dblFldInt);
     }
+    
+    public void setEntrFringeIntegral2(double dblFldInt) {
+        this.getFaceEntr().setFringeIntegral2(dblFldInt);
+    }
 
     /**
      * Set the exit fringe integral (a la D.C. Carey) which accounts  
@@ -262,6 +266,9 @@ public class IdealMagWedgeDipole2 extends ElementSeq implements IElectromagnet {
         this.getFaceExit().setFringeIntegral(dblFldInt);
     }
 
+    public void setExitFringeIntegral2(double dblFldInt) {
+        this.getFaceExit().setFringeIntegral2(dblFldInt);
+    }
     
     
     /**
@@ -384,6 +391,10 @@ public class IdealMagWedgeDipole2 extends ElementSeq implements IElectromagnet {
         return this.getFaceEntr().getFringeIntegral();
     }
 
+    public double   getEntrFringeIntegral2() {
+        return this.getFaceEntr().getFringeIntegral2();
+    } 
+    
     /**
      * Get the exit fringe integral (a la D.C. Carey) which accounts  
      * for the first-order effects of the fringing field outside the dipole
@@ -395,6 +406,10 @@ public class IdealMagWedgeDipole2 extends ElementSeq implements IElectromagnet {
      */
     public double   getExitFringeIntegral() {
         return this.getFaceExit().getFringeIntegral();
+    }
+
+    public double   getExitFringeIntegral2() {
+        return this.getFaceExit().getFringeIntegral2();
     }
 
 

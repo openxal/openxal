@@ -70,7 +70,7 @@ public class ElsElementMapping extends ElementMapping {
 			@Override
 			public IComponent convert(LatticeElement element) {
 				IdealMagWedgeDipole2 dipole = new IdealMagWedgeDipole2();
-				Bend magnet = (Bend) element.getNode();
+				eu.ess.jels.smf.impl.Bend magnet = (eu.ess.jels.smf.impl.Bend) element.getNode();
 				dipole.setPosition(element.getCenter(), element.getLength());
 
 				// gov.sns.xal.model.elem.ThickDipole xalDipole =
@@ -103,11 +103,18 @@ public class ElsElementMapping extends ElementMapping {
 				dipole.setMagField(fld_mag0);
 				dipole.setFieldIndex(fld_ind0);
 				dipole.setDesignBendAngle(ang_bend);
-								
-				if (element.getPartNr() == 0) // first piece
-					dipole.setEntrPoleAngle(magnet.getEntrRotAngle() * Math.PI / 180.);
-				if (element.getParts()-1 == element.getPartNr()) // last piece					
+				dipole.setGapSize(magnet.getGap());		
+				
+				if (element.getPartNr() == 0) { // first piece
+					dipole.setEntrPoleAngle(magnet.getEntrRotAngle() * Math.PI / 180.);					
+					dipole.setEntrFringeIntegral(magnet.getEntrK1());
+					dipole.setEntrFringeIntegral2(magnet.getEntrK2());
+				}
+				if (element.getParts()-1 == element.getPartNr()) {// last piece					
 					dipole.setExitPoleAngle(magnet.getExitRotAngle() * Math.PI / 180.);
+					dipole.setExitFringeIntegral(magnet.getExitK1());
+					dipole.setExitFringeIntegral2(magnet.getExitK2());
+				}
 				
 				return dipole;
 			}

@@ -75,6 +75,9 @@ public class IdealMagDipoleFace2 extends ThinElement implements IElectromagnet {
     /** second moment of fringe field defined a al Carey */
     private double              dblFringeInt = 0.0;
     
+    /** additional fringe field coefficient */
+    private double              dblFringeInt2 = 0.0;
+    
     /** Field strength of the dipole magnet */
     private double              dblField = 0.0;
     /** flag to use design field from bending angle and path instead of bfield */
@@ -154,6 +157,11 @@ public class IdealMagDipoleFace2 extends ThinElement implements IElectromagnet {
     public void setFringeIntegral(double dblFringeInt) {
         this.dblFringeInt = dblFringeInt;
     }
+    
+    public void setFringeIntegral2(double dblFringeInt2) {
+        this.dblFringeInt2 = dblFringeInt2;
+    }
+    
     /**
      * sako to set field path flag
      * @param ba
@@ -248,7 +256,9 @@ public class IdealMagDipoleFace2 extends ThinElement implements IElectromagnet {
         return this.dblFringeInt;
     }
 
-
+    public double  getFringeIntegral2() {
+        return this.dblFringeInt2;
+    }
 
     /*
      *  IElectromagnet Interface
@@ -383,11 +393,12 @@ public class IdealMagDipoleFace2 extends ThinElement implements IElectromagnet {
      */
     @Override
     protected PhaseMap transferMap(IProbe probe) throws ModelException {
-    	int i,j;
-
+    	double B = getPoleFaceAngle();
+    	if (B==0) return PhaseMap.identity();
+    	
     	double K1 = getFringeIntegral();
-    	double K2 = 0.0; //TODO
-    	double B = getMagField();
+    	double K2 = getFringeIntegral2();
+    	
     	double G = getGapHeight();
     	double rho = 1/compDesignCurvature();
     	    	

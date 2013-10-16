@@ -8,6 +8,7 @@ import xal.model.ModelException;
 import xal.model.probe.Probe;
 import xal.sim.scenario.ElementMapping;
 import xal.smf.AcceleratorSeq;
+import xal.smf.impl.qualify.MagnetType;
 import xal.tools.beam.IConstants;
 import eu.ess.jels.smf.impl.Bend;
 
@@ -33,8 +34,8 @@ public class BendTest extends TestCommon {
 		double alpha_deg = -11; // angle in degrees
 		double rho = 9375.67*1e-3; // absolute curvature radius (in m)
 		double N = 0.; // field Index
-		int HV = 0;  // 0 - horizontal, 1 - vertical 
-		double G = 50;
+		int HV = 1;  // 0 - horizontal, 1 - vertical 
+		double G = 50 * 1e-3;
 		double entrK1 = 0.45;
 		double entrK2 = 2.80;
 		double exitK1 = 0.45;
@@ -56,14 +57,14 @@ public class BendTest extends TestCommon {
 	    double B0 = k/rho*Math.signum(alpha);
 	    //double B0 = b*gamma*Er/(e*c*rho)*Math.signum(alpha);
 			    
-		Bend bend = new Bend("b", HV);
+		Bend bend = new Bend("b", HV == 0 ? MagnetType.HORIZONTAL : MagnetType.VERTICAL);
 		bend.setPosition(len*0.5); //always position on center!
 		bend.setLength(len); // both paths are used in calculation
 		bend.getMagBucket().setPathLength(len);
 		
-		bend.getMagBucket().setDipoleEntrRotAngle(-entry_angle_deg);
+		bend.getMagBucket().setDipoleEntrRotAngle(entry_angle_deg);
 		bend.getMagBucket().setBendAngle(alpha_deg);
-		bend.getMagBucket().setDipoleExitRotAngle(-exit_angle_deg);		
+		bend.getMagBucket().setDipoleExitRotAngle(exit_angle_deg);		
 		bend.setDfltField(B0);		
 		bend.getMagBucket().setDipoleQuadComponent(quadComp);
 		
@@ -77,8 +78,12 @@ public class BendTest extends TestCommon {
 		sequence.setLength(len);
 							
 		run(sequence);
-		 
-		printResults(1.799999E+00, new double[] {6.471216E-03, 5.453634E-03, 5.385990E-03},
-				new double [] {1.458045E+01, 1.039017E+01, 7.432561E+00});
+
+		printResults(1.799999E+00, new double[] {6.471216E-03, 5.453634E-03, 5.404960E-03},
+				new double [] { 1.458045E+01, 1.039017E+01, 7.485008E+00}); // when halfMag=true
+		//printResults(1.799999E+00, new double[] {6.471216E-03, 5.453634E-03, 5.385990E-03},				
+		//		new double [] {1.458045E+01, 1.039017E+01, 7.432561E+00});// when halfMag = false
+		// converges to
+		// 1.799999E+00 6.471216E-03 5.453634E-03 5.411296E-03 1.458045E+01 1.039017E+01 7.502568E+00
 	}
 }

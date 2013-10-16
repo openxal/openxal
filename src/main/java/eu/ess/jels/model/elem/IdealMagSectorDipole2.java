@@ -542,15 +542,14 @@ public class IdealMagSectorDipole2 extends ThickElement implements IElectromagne
     	PhaseMatrix  matPhi  = new PhaseMatrix();
 
     	double rho = compDesignBendingRadius();
-    	double alfa = getDesignBendingAngle();
+    	double alfa = dblLen/rho;
     	double N = getQuadComponent() * Math.pow(rho,2);
     	
-    	double h=1/Math.abs(rho)*alfa/Math.abs(alfa);
-    	double kx=Math.sqrt((1-N)*Math.pow(h,2));
-    	double ky=Math.sqrt(N*Math.pow(h,2));
+    	double h=Math.signum(alfa)/Math.abs(rho);
+    	double kx=Math.sqrt(1-N)*Math.abs(h);
+    	double ky=Math.sqrt(N)*Math.abs(h);
 
-    	double Deltas=Math.abs(rho*alfa);
-
+    	double Deltas=dblLen;
  
     	if (N==0 && getOrientation() == IElectromagnet.ORIENT_HOR)
     	{
