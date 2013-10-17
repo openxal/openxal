@@ -24,7 +24,6 @@ import xal.tools.annotation.AProperty.NoEdit;
 import xal.tools.annotation.AProperty.Units;
 import xal.model.probe.Probe;
 import xal.model.IAlgorithm;
-import xal.tools.bricks.*;
 import xal.tools.swing.*;
 import xal.tools.data.*;
 import java.beans.*;
