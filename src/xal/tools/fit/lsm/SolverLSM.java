@@ -1,6 +1,6 @@
 package xal.tools.fit.lsm;
 
-import xal.tools.plot.*;
+import xal.tools.ArrayMath;
 
 /**
  *  The least square method solver
@@ -118,7 +118,7 @@ public class SolverLSM implements FitSolver {
 			}
 		}
 
-		boolean res = GraphDataOperations.reverseMatrix(ATWA);
+		boolean res = ArrayMath.invertMatrix(ATWA);
 		if (res != true) {
 			return false;
 		}
