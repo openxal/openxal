@@ -34,14 +34,14 @@ import Jama.Matrix;
  * @version Oct, 2013
  */
 
-public abstract class Vector<V extends Vector<V>> implements IArchive, java.io.Serializable {
+public abstract class BaseVector<V extends BaseVector<V>> implements IArchive, java.io.Serializable {
     
     
     /*
      * Global Constants
      */
     
-    /** ID for serializable version */
+    /** ID for serialization version */
     private static final long serialVersionUID = 1L;
     
     
@@ -53,26 +53,26 @@ public abstract class Vector<V extends Vector<V>> implements IArchive, java.io.S
      * Internal Classes
      */
 
-    /**
-     * Interface <code>BaseMatrix.Ind</code> is exposed by objects
-     * representing matrix indices.  In particular, the <code>enum</code>
-     * types that are matrix indices expose this interface.
-     *
-     * @author Christopher K. Allen
-     * @since  Sep 25, 2013
-     */
-    public interface IIndex {
-
-        /**
-         * Returns the value of this matrix index object.
-         * 
-         * @return  the numerical index represented by this object 
-         *
-         * @author Christopher K. Allen
-         * @since  Sep 25, 2013
-         */
-        public int val();
-    }
+//    /**
+//     * Interface <code>BaseMatrix.Ind</code> is exposed by objects
+//     * representing matrix indices.  In particular, the <code>enum</code>
+//     * types that are matrix indices expose this interface.
+//     *
+//     * @author Christopher K. Allen
+//     * @since  Sep 25, 2013
+//     */
+//    public interface IIndex extends BaseMatrix.IIndex {
+//
+////        /**
+////         * Returns the value of this matrix index object.
+////         * 
+////         * @return  the numerical index represented by this object 
+////         *
+////         * @author Christopher K. Allen
+////         * @since  Sep 25, 2013
+////         */
+////        public int val();
+//    }
 
     
     /**
@@ -172,20 +172,40 @@ public abstract class Vector<V extends Vector<V>> implements IArchive, java.io.S
             return this.matVectImpl.get(i, 0);
         }
         
+//        /**
+//         * Return the vector element at the given index enumeration.
+//         * 
+//         * @param i     index into the vector (starting at 0)
+//         * 
+//         * @return      vector element at given index
+//         * 
+//         * @throws ArrayIndexOutOfBoundsException   the index is larger than the vector
+//         *
+//         * @author Christopher K. Allen
+//         * @since  Oct 9, 2013
+//         */
+//        public double   getElem(IIndex i) throws ArrayIndexOutOfBoundsException {
+//            return this.matVectImpl.get(i.val(), 0);
+//        }
+        
         /**
-         * Return the vector element at the given index enumeration.
+         * Creates and returns a Java array containing the element values
+         * of this vector.  The returned value is a duplicate of the
+         * internal structure, thus any manipulation will leave this vector
+         * unchanged.
          * 
-         * @param i     index into the vector (starting at 0)
-         * 
-         * @return      vector element at given index
-         * 
-         * @throws ArrayIndexOutOfBoundsException   the index is larger than the vector
+         * @return  a Java array representation of this vector
          *
          * @author Christopher K. Allen
-         * @since  Oct 9, 2013
+         * @since  Oct 16, 2013
          */
-        public double   getElem(IIndex i) throws ArrayIndexOutOfBoundsException {
-            return this.matVectImpl.get(i.val(), 0);
+        public double[] getArrayCopy() {
+            double[]    arrVec = new double[ this.getSize() ];
+            
+            for (int i=0; i<this.getSize(); i++)
+                arrVec[i] = getElem(i);
+            
+            return arrVec;
         }
      
         
@@ -444,7 +464,7 @@ public abstract class Vector<V extends Vector<V>> implements IArchive, java.io.S
      * @since  Oct 4, 2013
      */
     public void setVector(V vecParent) {
-        JVector     impParent = ((Vector<V>)vecParent).getVector();
+        JVector     impParent = ((BaseVector<V>)vecParent).getVector();
                 
         this.assignVector(impParent);
     }
@@ -486,20 +506,35 @@ public abstract class Vector<V extends Vector<V>> implements IArchive, java.io.S
     /** 
      * Set individual element of a vector to given value
      * 
-     *  @param  iIndex  index of element
+     *  @param  intIndex  index of element
      *  @param  dblVal  new value of element
      *
      *  @exception  ArrayIndexOutOfBoundsException  iIndex is larger than the vector
      */
-    public void setElem(int iIndex, double dblVal) throws ArrayIndexOutOfBoundsException {
-        this.getVector().setElem(iIndex, dblVal);
+    public void setElem(int intIndex, double dblVal) throws ArrayIndexOutOfBoundsException {
+        this.getVector().setElem(intIndex, dblVal);
     };
+    
+//    /** 
+//     * Set individual element of a vector to given value.  The index is assumed
+//     * to be an enumeration exposing the <code>IIndex</code> interface.
+//     * 
+//     *  @param  iIndex  index of element
+//     *  @param  dblVal  new value of element
+//     *
+//     *  @exception  ArrayIndexOutOfBoundsException  iIndex is larger than the vector
+//     */
+//    public void setElem(BaseVector.IIndex iIndex, double dblVal) throws ArrayIndexOutOfBoundsException {
+//        this.getVector().setElem(iIndex.val(), dblVal);
+//    };
     
     /** 
      * Set individual element of a vector to given value.  The index is assumed
-     * to be an enumeration exposing the <code>IIndex</code> interface.
+     * to be an enumeration exposing the <code>IIndex</code> interface.  That interface
+     * interface belongs to the <code>BaseMatrix<M></code> namespace.  In this manner
+     * matrix indices can be used to set vector component values.
      * 
-     *  @param  iIndex  index of element
+     *  @param  iIndex  index of element taken from the interface <code>IIndex</code> of class <code>BaseMatrix</code>
      *  @param  dblVal  new value of element
      *
      *  @exception  ArrayIndexOutOfBoundsException  iIndex is larger than the vector
@@ -528,7 +563,7 @@ public abstract class Vector<V extends Vector<V>> implements IArchive, java.io.S
      * 
      *  @param  iIndex  data source providing index of element 
      *  
-     *  @return         value of element
+     *  @return         value of element at given index
      *  
      *  @exception  ArrayIndexOutOfBoundsException  iIndex is larger than vector size
      */
@@ -536,20 +571,96 @@ public abstract class Vector<V extends Vector<V>> implements IArchive, java.io.S
         return this.getVector().getElem(iIndex);
     };
     
+//    /**
+//     * <p>
+//     * Returns the vector component at the position indicated by the
+//     * given index sources.  
+//     * </p>
+//     * <p>
+//     * <h4>NOTES</h4>
+//     * &middot; It is expected that the
+//     * object exposing the <code>IIndex</code> interface is an enumeration
+//     * class restricting the number of possible index values.
+//     * <br/>
+//     * &middot; Consequently we do not declare a thrown exception assuming
+//     * that that enumeration class eliminates the possibility of an out of
+//     * bounds error.
+//     * </p>
+//     *  
+//     * @param i        source of the row index
+//     * @param indCol        source of the column index
+//     * 
+//     * @return          value of the matrix element at the given index
+//     *
+//     * @author Christopher K. Allen
+//     * @since  Sep 30, 2013
+//     */
+//    public double getElem(IIndex i) {
+//        double  dblVal = this.vecImpl.getElem(i.val());
+//
+//        return dblVal;
+//    }
+
     /** 
-     * Get individual element of a vector at given index. The index is assumed
-     * to be an enumeration exposing the <code>IIndex</code> interface.
+     * <p>
+     * Returns the vector component at the position indicated by the
+     * given index in the <code>IIndex</code> interface.  That 
+     * interface belongs to the <code>BaseMatrix<M></code> namespace.  
+     * In this way matrix indices can be used to get vector component values.
+     * </p>
+     * <p>
+     * <h4>NOTES</h4>
+     * &middot; It is expected that the
+     * object exposing the <code>IIndex</code> interface is an enumeration
+     * class restricting the number of possible index values.
+     * <br/>
+     * &middot; Consequently we do not declare a thrown exception assuming
+     * that that enumeration class eliminates the possibility of an out of
+     * bounds error.
+     * </p>
+     *  
+     * @param iIndex    source containing the vector index
      * 
-     *  @param  iIndex  index of element(likely an enumeration)
-     *  
-     *  @return         value of element
-     *  
-     *  @exception  ArrayIndexOutOfBoundsException  iIndex is larger than vector size
+     * @return          value of the matrix element at the given row and column
+     *
+     *
+     * @exception  ArrayIndexOutOfBoundsException  iIndex is larger than the vector
      */
-    public double get(IIndex iIndex) {
-        return this.getVector().getElem(iIndex);
+    public double getElem(IIndex iIndex) throws ArrayIndexOutOfBoundsException {
+        return this.getElem( iIndex.val() );
     };
     
+//     * Get individual element of a vector at given index. The index is assumed
+//     * to be an enumeration exposing the <code>IIndex</code> interface.
+//     * 
+//     *  @param  iIndex  index of element(likely an enumeration)
+//     *  
+//     *  @return         value of element
+//     *  
+//     *  @exception  ArrayIndexOutOfBoundsException  iIndex is larger than vector size
+//     */
+//    public double get(IIndex iIndex) {
+//        return this.getVector().getElem(iIndex);
+//    };
+    
+
+    /**
+     * Returns a copy of the internal Java array containing
+     * the vector elements.  The array dimensions are given by
+     * the size of this matrix, available from 
+     * <code>{@link #getSize()}</code>.  The returned array is
+     * a copy of this vector thus manipulation with not affect
+     * the parent object.  
+     * 
+     * @return  copied array of vector values
+     *
+     * @author Christopher K. Allen
+     * @since  Sep 25, 2013
+     */
+    public double[] getArrayCopy() {
+        return this.vecImpl.getArrayCopy();
+    }
+
     
     /*
      *  Object method overrides
@@ -631,7 +742,7 @@ public abstract class Vector<V extends Vector<V>> implements IArchive, java.io.S
      */
     public V copyVector() throws InstantiationException    {
         V  vecClone = this.newInstance();
-        ((Vector<V>)vecClone).assignVector( this.getVector() );
+        ((BaseVector<V>)vecClone).assignVector( this.getVector() );
             
         return vecClone;
     };
@@ -736,7 +847,7 @@ public abstract class Vector<V extends Vector<V>> implements IArchive, java.io.S
      *
      */
     public void plusEquals(V vecAdd) {
-        JVector impAdd = ((Vector<V>)vecAdd).getVector();
+        JVector impAdd = ((BaseVector<V>)vecAdd).getVector();
         JVector impSum = this.getVector().plus( impAdd );
         
         this.assignVector(impSum);
@@ -755,7 +866,7 @@ public abstract class Vector<V extends Vector<V>> implements IArchive, java.io.S
     public V plus(V vecAdd){
 
         try {
-            JVector     impAdd = ((Vector<V>)vecAdd).getVector();
+            JVector     impAdd = ((BaseVector<V>)vecAdd).getVector();
             JVector     impSum = this.getVector().plus( impAdd );
 
             V vecSum = this.newInstance( impSum );
@@ -778,7 +889,7 @@ public abstract class Vector<V extends Vector<V>> implements IArchive, java.io.S
      *
      */
     public void minusEquals(V vecSub) {
-        JVector impSub = ((Vector<V>)vecSub).getVector();
+        JVector impSub = ((BaseVector<V>)vecSub).getVector();
         JVector impDif = this.getVector().minus( impSub );
         
         this.assignVector(impDif);
@@ -797,7 +908,7 @@ public abstract class Vector<V extends Vector<V>> implements IArchive, java.io.S
     public V minus(V vecAdd){
 
         try {
-            JVector     impSub = ((Vector<V>)vecAdd).getVector();
+            JVector     impSub = ((BaseVector<V>)vecAdd).getVector();
             JVector     impDif = this.getVector().plus( impSub );
 
             V vecSum = this.newInstance( impDif );
@@ -841,7 +952,7 @@ public abstract class Vector<V extends Vector<V>> implements IArchive, java.io.S
      *  
      *  @param  s   scalar
      */
-    public void timesEqual(double s)   {
+    public void timesEquals(double s)   {
         JVector     impProd = this.getVector().times(s);
         
         this.assignVector(impProd);
@@ -1125,35 +1236,35 @@ public abstract class Vector<V extends Vector<V>> implements IArchive, java.io.S
      * Child Class Support
      */
     
-    /**
-     * <p>
-     * Returns the vector component at the position indicated by the
-     * given index sources.  
-     * </p>
-     * <p>
-     * <h4>NOTES</h4>
-     * &middot; It is expected that the
-     * object exposing the <code>IIndex</code> interface is an enumeration
-     * class restricting the number of possible index values.
-     * <br/>
-     * &middot; Consequently we do not declare a thrown exception assuming
-     * that that enumeration class eliminates the possibility of an out of
-     * bounds error.
-     * </p>
-     *  
-     * @param i        source of the row index
-     * @param indCol        source of the column index
-     * 
-     * @return          value of the matrix element at the given row and column
-     *
-     * @author Christopher K. Allen
-     * @since  Sep 30, 2013
-     */
-    protected double getElem(IIndex i) {
-        double  dblVal = this.vecImpl.getElem(i.val());
-
-        return dblVal;
-    }
+//    /**
+//     * <p>
+//     * Returns the vector component at the position indicated by the
+//     * given index sources.  
+//     * </p>
+//     * <p>
+//     * <h4>NOTES</h4>
+//     * &middot; It is expected that the
+//     * object exposing the <code>IIndex</code> interface is an enumeration
+//     * class restricting the number of possible index values.
+//     * <br/>
+//     * &middot; Consequently we do not declare a thrown exception assuming
+//     * that that enumeration class eliminates the possibility of an out of
+//     * bounds error.
+//     * </p>
+//     *  
+//     * @param i        source of the row index
+//     * @param indCol        source of the column index
+//     * 
+//     * @return          value of the matrix element at the given row and column
+//     *
+//     * @author Christopher K. Allen
+//     * @since  Sep 30, 2013
+//     */
+//    protected double getElem(IIndex i) {
+//        double  dblVal = this.vecImpl.getElem(i.val());
+//
+//        return dblVal;
+//    }
     
     /** 
      * Creates a new, uninitialized instance of a vector with the given
@@ -1164,7 +1275,7 @@ public abstract class Vector<V extends Vector<V>> implements IArchive, java.io.S
      * @throws UnsupportedOperationException  base class has not defined a public, zero-argument constructor
      */
     @SuppressWarnings("unchecked")
-    protected Vector(int intSize) throws UnsupportedOperationException {
+    protected BaseVector(int intSize) throws UnsupportedOperationException {
         
         try {
             this.clsType = (Class<V>) this.getClass();
@@ -1192,19 +1303,36 @@ public abstract class Vector<V extends Vector<V>> implements IArchive, java.io.S
      * @author Christopher K. Allen
      * @since  Sep 25, 2013
      */
-    protected Vector(V vecParent) throws UnsupportedOperationException {
+    protected BaseVector(V vecParent) throws UnsupportedOperationException {
         this(vecParent.getSize());
         
-        Vector<V> matBase = (Vector<V>)vecParent;
-        this.assignVector(matBase.getVector()); 
+        BaseVector<V> vecBase = (BaseVector<V>)vecParent;
+        this.assignVector(vecBase.getVector()); 
     }
     
     /**
+     *  <p>
      *  Parsing Constructor - creates an instance of the child class and initialize it
-     *  according to a token string of element values.  
-     *
-     *  The token string argument is assumed to be one-dimensional and packed by
-     *  column (ala FORTRAN).
+     *  according to a token string of element values.
+     *  </p>  
+     *  <p>
+     *  The token string argument is assumed to be one-dimensional and delimited
+     *  by any of the characters <tt>" ,()[]{}"</tt>  Repeated, contiguous delimiters 
+     *  are parsed together.  This conditions allows a variety of parseable string
+     *  representations. For example,
+     *  <br/>
+     *  <br/>
+     *  &nbsp; &nbsp; { 1, 2, 3, 4 }
+     *  <br/>
+     *  <br/>
+     *  and
+     *  <br/>
+     *  <br/>
+     *  &nbsp; &nbsp; [1 2 3 4]
+     *  <br/>
+     *  <br/>
+     *  would parse to the same homogeneous vector (1, 2, 3, 4 | 1).
+     *  </p>
      *
      *  @param  intSize     the matrix size of this object
      *  @param  strTokens   token vector of getSize() numeric values
@@ -1212,7 +1340,7 @@ public abstract class Vector<V extends Vector<V>> implements IArchive, java.io.S
      *  @exception  IllegalArgumentException    wrong number of token strings
      *  @exception  NumberFormatException       bad number format, unparseable
      */
-    protected Vector(int intSize, String strTokens)    
+    protected BaseVector(int intSize, String strTokens)    
         throws IllegalArgumentException, NumberFormatException
     {
         this(intSize);
@@ -1253,12 +1381,12 @@ public abstract class Vector<V extends Vector<V>> implements IArchive, java.io.S
      * @author Christopher K. Allen
      * @since  Oct 4, 2013
      */
-    protected Vector(int intSize, double[] arrVals) throws ArrayIndexOutOfBoundsException {
+    protected BaseVector(int intSize, double[] arrVals) throws ArrayIndexOutOfBoundsException {
         this(intSize);
         
         this.setVector(arrVals);;
     }
-
+    
 
     /*
      * Internal Support
@@ -1333,7 +1461,7 @@ public abstract class Vector<V extends Vector<V>> implements IArchive, java.io.S
         
         V   vecNewInst = this.newInstance();
         
-        ((Vector<V>)vecNewInst).assignVector(vecInit);
+        ((BaseVector<V>)vecNewInst).assignVector(vecInit);
         
         return vecNewInst;
     }

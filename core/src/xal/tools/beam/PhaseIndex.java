@@ -10,7 +10,7 @@ package xal.tools.beam;
 
 import java.util.EnumSet;
 
-import xal.tools.math.SquareMatrix.IIndex;
+import xal.tools.math.IIndex;
 
 /** 
  * Enumeration for the element position indices of six-dimensional

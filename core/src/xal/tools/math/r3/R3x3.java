@@ -11,6 +11,7 @@ package xal.tools.math.r3;
 
 import java.util.EnumSet;
 
+import xal.tools.math.IIndex;
 import xal.tools.math.SquareMatrix;
 
 
@@ -106,7 +107,7 @@ public class R3x3 extends SquareMatrix<R3x3> implements java.io.Serializable {
      * convenience functions for accessing these <code>R3x3</code> 
      * elements.
      * 
-     * @author  Christopher K. Alen
+     * @author  Christopher K. Allen
      */
     public enum POS  {
         

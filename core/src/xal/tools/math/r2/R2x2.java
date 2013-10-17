@@ -9,6 +9,7 @@
 package xal.tools.math.r2;
 
 
+import xal.tools.math.IIndex;
 import xal.tools.math.SquareMatrix;
 
 

@@ -11,12 +11,11 @@
 package xal.tools.beam.em;
 
 
-import java.io.PrintWriter;
-
 import xal.tools.beam.CovarianceMatrix;
-import xal.tools.beam.PhaseIndexHom;
 import xal.tools.beam.PhaseMatrix;
+import xal.tools.beam.PhaseMatrix.IND;
 import xal.tools.beam.PhaseVector;
+
 import xal.tools.math.EllipticIntegral;
 import xal.tools.math.r3.R3;
 import xal.tools.math.r3.R3x3;
@@ -909,9 +908,9 @@ public class BeamEllipsoid {
 
         // Build the transfer matrix and transform it to laboratory frame 
         PhaseMatrix     F0  = PhaseMatrix.identity();
-        F0.setElem(PhaseIndexHom.Xp, PhaseIndexHom.X, kx);
-        F0.setElem(PhaseIndexHom.Yp, PhaseIndexHom.Y, ky);
-        F0.setElem(PhaseIndexHom.Zp, PhaseIndexHom.Z, kz);
+        F0.setElem(IND.Xp, IND.X, kx);
+        F0.setElem(IND.Yp, IND.Y, ky);
+        F0.setElem(IND.Zp, IND.Z, kz);
 
         PhaseMatrix     F = Mi.times(F0.times(M));
 
@@ -940,9 +939,9 @@ public class BeamEllipsoid {
         PhaseMatrix matLorentz;
 
         matLorentz = PhaseMatrix.identity();
-        matLorentz.setElem(PhaseIndexHom.Z,  PhaseIndexHom.Z,  dblGamma);
+        matLorentz.setElem(IND.Z,  IND.Z,  dblGamma);
         //        matLorentz.setElem(PhaseIndexHom.Zp, PhaseIndexHom.Zp, 1.0/dblGamma);
-        matLorentz.setElem(PhaseIndexHom.Zp, PhaseIndexHom.Zp, dblGamma);
+        matLorentz.setElem(IND.Zp, IND.Zp, dblGamma);
 
         return matLorentz;
     }
@@ -1029,9 +1028,9 @@ public class BeamEllipsoid {
         // Build the generator matrix in the ellipsoid coordinates
         PhaseMatrix     G0 = PhaseMatrix.zero();
 
-        G0.setElem(PhaseIndexHom.Xp, PhaseIndexHom.X, kx);
-        G0.setElem(PhaseIndexHom.Yp, PhaseIndexHom.Y, ky);
-        G0.setElem(PhaseIndexHom.Zp, PhaseIndexHom.Z, kz);
+        G0.setElem(IND.Xp, IND.X, kx);
+        G0.setElem(IND.Yp, IND.Y, ky);
+        G0.setElem(IND.Zp, IND.Z, kz);
 
         return G0;
     }

@@ -8,18 +8,16 @@
 
 package xal.tools.beam;
 
-import  java.io.PrintWriter;
-import  java.util.StringTokenizer;
+import java.io.PrintWriter;
+import java.util.EnumSet;
 
 import xal.tools.data.DataAdaptor;
 import xal.tools.data.DataFormatException;
 import xal.tools.data.IArchive;
-
-import xal.tools.math.SquareMatrix;
-import xal.tools.math.SquareMatrix.IIndex;
-import xal.tools.math.Vector;
-
+import xal.tools.math.BaseVector;
+import xal.tools.math.IIndex;
 import xal.tools.math.r3.R3;
+import xal.tools.math.r6.R6;
 
 
 
@@ -66,7 +64,7 @@ import xal.tools.math.r3.R3;
  * @author Christopher K. Allen
  * @since  Oct 11, 2013
  */
-public class PhaseVector extends Vector<PhaseVector> implements java.io.Serializable, IArchive {
+public class PhaseVector extends BaseVector<PhaseVector> implements java.io.Serializable, IArchive {
     
     
     /*
@@ -91,13 +89,19 @@ public class PhaseVector extends Vector<PhaseVector> implements java.io.Serializ
      */
     
     /**
-     * Enumeration for the element position indices of a homogeneous
-     * phase space objects.  
+     * Enumeration for the element position indices for homogeneous
+     * phase space objects.  This set include the phase space coordinates
+     * and the homogeneous coordinate.
      *
      * @author Christopher K. Allen
      * @since  Oct 8, 2013
      */
     public enum IND implements IIndex {
+
+        /*
+         * Enumeration Constants
+         */
+        
         /** Index of the x coordinate */
         X(0),
         
@@ -119,6 +123,35 @@ public class PhaseVector extends Vector<PhaseVector> implements java.io.Serializ
         /** Index of the homogeneous coordinate */
         HOM(6);
         
+        
+        /*
+         * Global Constants
+         */
+        
+        /** the set of IND constants that only include phase space variables (not the homogeneous coordinate) */
+        private final static EnumSet<IND> SET_PHASE = EnumSet.of(X, Xp, Y, Yp, Z, Zp);
+
+        
+        /*
+         * Global Operations
+         */
+        
+        /**
+         * Returns the set of index constants that correspond to phase
+         * coordinates only.  The homogeneous coordinate index is not
+         * included (i.e., the <code>IND.HOM</code> constant).
+         * 
+         * @return  the set of phase indices <code>IND</code> less the <code>HOM</code> constant
+         *
+         * @see xal.tools.math.BaseMatrix.IIndex#val()
+         *
+         * @author Christopher K. Allen
+         * @since  Oct 15, 2013
+         */
+        public static EnumSet<IND>  valuesPhase() {
+            return SET_PHASE;
+        }
+
         
         /*
          * IIndex Interface
@@ -206,6 +239,35 @@ public class PhaseVector extends Vector<PhaseVector> implements java.io.Serializ
         throws NumberFormatException, IllegalArgumentException
     {
         return new PhaseVector(strTokens);
+    }
+    
+    /**
+     * Embeds the given vector <b>z</b> &in; <b>R</b><sup>6</sup> into 
+     * homogeneous phase space.  The given vector is treated like a vector
+     * of phase space coordinates corresponding to the first 6 elements
+     * of a <code>PhaseVector</code> object.  The last element of 
+     * the returned phase vector has value 1, as do all phase vectors.
+     * 
+     * @param vecCoords     vector <b>z</b> containing the first 6 element 
+     *                      values of the returned phase vector
+     * 
+     * @return              the augmented vector (<b>z</b>,1)
+     *
+     * @author Christopher K. Allen
+     * @since  Oct 16, 2013
+     */
+    public static PhaseVector embed(final R6 vecCoords) {
+        PhaseVector vecPhase = new PhaseVector();
+        
+        for (IND i : IND.valuesPhase()) {
+            double  dblVal = vecCoords.getElem(i);
+            
+            vecPhase.setElem(i, dblVal);
+        }
+        
+        vecPhase.setElem(IND.HOM, 1.0);
+        
+        return vecPhase;
     }
 
     
@@ -762,7 +824,7 @@ public class PhaseVector extends Vector<PhaseVector> implements java.io.Serializ
      *
      * @return     ||z||<sub>1</sub> = &Sigma;<sub><i>i&ne;6</i></sub> |<i>z<sub>i</sub></i>|
      *
-     * @see xal.tools.math.Vector#norm1()
+     * @see xal.tools.math.BaseVector#norm1()
      *
      * @author Christopher K. Allen
      * @since  Oct 11, 2013
@@ -785,7 +847,7 @@ public class PhaseVector extends Vector<PhaseVector> implements java.io.Serializ
      *
      * @return     ||z||<sub>2</sub> = [ &Sigma;<sub><i>i</i>&ne;6</sub> <i>z<sub>i</sub></i><sup>2</sup> ]<sup>1/2</sup>
      *
-     * @see xal.tools.math.Vector#norm2()
+     * @see xal.tools.math.BaseVector#norm2()
      *
      * @author Christopher K. Allen
      * @since  Oct 11, 2013
@@ -808,7 +870,7 @@ public class PhaseVector extends Vector<PhaseVector> implements java.io.Serializ
      *
      * @return     ||<i>z</i>||<sub>&infin;</sub> = sup<sub><i>i</i>&ne;6</sub> |<i>z<sub>i</sub></i>|
      *
-     * @see xal.tools.math.Vector#normInf()
+     * @see xal.tools.math.BaseVector#normInf()
      *
      * @author Christopher K. Allen
      * @since  Oct 11, 2013

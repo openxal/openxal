@@ -6,15 +6,18 @@
 
 package xal.tools.beam;
 
+import java.util.EnumSet;
+
 import xal.tools.data.DataAdaptor;
 import xal.tools.data.DataFormatException;
-import xal.tools.data.IArchive;
-
+import xal.tools.math.IIndex;
 import xal.tools.math.SquareMatrix;
-
 import xal.tools.math.r3.R3;
 import xal.tools.math.r3.R3x3;
 import xal.tools.math.r3.R3x3.POS;
+import xal.tools.math.r6.R6;
+import xal.tools.math.r6.R6x6;
+import xal.tools.beam.PhaseVector;
 
 
 
@@ -27,20 +30,21 @@ import xal.tools.math.r3.R3x3.POS;
  *  <p>
  *  The coordinates in homogeneous phase space are as follows:
  *  <pre>
- *      (x, xp, y, yp, z, zp, 1)'
+ *      (<i>x, x<sub>p</sub>, y, y<sub>p</sub>, z, z<sub>p</sub>,</i> 1)'
  *  </pre>
  *  where the prime indicates transposition and
  *  <pre>
- *      x  = x-plane position
- *      xp = x-plane momentum
- *      y  = y-plane position
- *      yp = y-plane momentum
- *      z  = z-plane position
- *      zp = z-plane momentum
+ *      <i>x</i>  = x-plane position
+ *      <i>x<sub>p</sub></i> = x-plane momentum
+ *      <i>y</i>  = y-plane position
+ *      <i>y<sub>p</sub></i> = y-plane momentum
+ *      <i>z</i>  = z-plane position
+ *      <i>z<sub>p</sub></i> = z-plane momentum
  *  </pre>
  *  </p>
  *  <p>
- *  Homogeneous coordinates are parameterizations of the projective spaces Pn.  They are
+ *  Homogeneous coordinates are parameterizations of the projective spaces <b>P</b><sup><i>n</i></sup>.
+ *  They are
  *  useful here to allow vector transpositions, normally produced by vector addition, to 
  *  be represented as matrix multiplications.  These operations can be embodied by 
  *  <code>PhaseMatrix</code>.  Thus, <code>PhaseMatrix</code> objects can represent any 
@@ -56,7 +60,14 @@ import xal.tools.math.r3.R3x3.POS;
  *  @see    PhaseVector
  *  @see    CovarianceMatrix
  */
-public class PhaseMatrix extends SquareMatrix<PhaseMatrix> implements IArchive, java.io.Serializable {
+/**
+ * Class <code></code>.
+ *
+ *
+ * @author Christopher K. Allen
+ * @since  Oct 16, 2013
+ */
+public class PhaseMatrix extends SquareMatrix<PhaseMatrix> implements java.io.Serializable {
 
     
     /*
@@ -76,14 +87,56 @@ public class PhaseMatrix extends SquareMatrix<PhaseMatrix> implements IArchive, 
         /*
          * Enumeration Constants
          */
-        X   (0),        // x plane spatial
-        Xp  (1),        // x plane momentum
-        Y   (2),        // y plane spatial
-        Yp  (3),        // y plane momentum
-        Z   (4),        // z plane spatial
-        Zp  (5),        // z plane momentum
-        HOM (6);        // homogeneous coordinate position
-                    
+        /** Index of the x coordinate */
+        X(0),
+        
+        /** Index of the X' coordinate */
+        Xp(1),
+        
+        /** Index of the Y coordinate */
+        Y(2),
+        
+        /** Index of the Y' coordinate */
+        Yp(3),
+        
+        /** Index of the Z (longitudinal) coordinate */
+        Z   (4),        
+        
+        /** Index of the Z' (change in momenutum) coordinate */
+        Zp  (5),        
+        
+        /** Index of the homogeneous coordinate */
+        HOM(6);
+               
+        
+        /*
+         * Global Constants
+         */
+
+        /** the set of IND constants that only include phase space variables (not the homogeneous coordinate) */
+        private final static EnumSet<IND> SET_PHASE = EnumSet.of(X, Xp, Y, Yp, Z, Zp);
+        
+        
+        /*
+         * Global Operations
+         */
+        
+        /**
+         * Returns the set of index constants that correspond to phase
+         * coordinates only.  The homogeneous coordinate index is not
+         * included (i.e., the <code>IND.HOM</code> constant).
+         * 
+         * @return  the set of phase indices <code>IND</code> less the <code>HOM</code> constant
+         *
+         * @see xal.tools.math.BaseMatrix.IIndex#val()
+         *
+         * @author Christopher K. Allen
+         * @since  Oct 15, 2013
+         */
+        public static EnumSet<IND>  valuesPhase() {
+            return SET_PHASE;
+        }
+
         
         /*
          * IIndex Interface
@@ -360,7 +413,6 @@ public class PhaseMatrix extends SquareMatrix<PhaseMatrix> implements IArchive, 
         return matSO7;
     }
     
-
     
     /**
      *  Create a PhaseMatrix instance and initialize it
@@ -383,13 +435,6 @@ public class PhaseMatrix extends SquareMatrix<PhaseMatrix> implements IArchive, 
     }
     
     
-//    /*
-//     *  Local Attributes
-//     */
-//    
-//    /** internal matrix storage */
-//    private Jama.Matrix     m_matPhase;
-//    
     
     /*
      * Initialization
@@ -572,6 +617,151 @@ public class PhaseMatrix extends SquareMatrix<PhaseMatrix> implements IArchive, 
         this.setElem(IND.HOM, IND.HOM, 1.0);
     }
     
+    /*
+     * Matrix Operations
+     */
+    
+    /**
+     * <p>
+     * Projects the <code>PhaseMatrix</code> onto the space of
+     * 6&times;6 matrices.  The projective dimension of this phase matrix
+     * is lost in the projection, that is, the homogeneous coordinate and
+     * all the actions associated with it (primarily translations).
+     * </p>
+     * <p>
+     * This method is useful when the phase matrix represents the 
+     * statistics of a centered beam, or when it represents a transfer
+     * map without any translation.
+     * </p>
+     * 
+     * @return      the top 6&times;6 diagonal block of this matrix 
+     *
+     * @author Christopher K. Allen
+     * @since  Oct 16, 2013
+     */
+    public R6x6  projectR6x6() {
+        
+        R6x6    matProj = new R6x6();
+        
+        for (IND i : IND.valuesPhase()) 
+            for (IND j : IND.valuesPhase()) {
+                double  dblVal = this.getElem(i, j);
+                
+                matProj.setElem(i, j, dblVal);
+            }
+        
+        return matProj;
+    }
+    
+    /**
+     * Projects the <i>i<sup>th</sup></i> row onto <b>R</b><sup>6</sup>.
+     * Specifically, the projective element (the 7<i><sup>th</sup></i> element
+     * in this case) is dropped and that part of the <i>i<sup>th</sup></i> row 
+     * in the 6 dimensional phase space is returned.
+     *  
+     * @param i index of the matrix row to be returned, <i>i</i> &in; {0,...,5}
+     *  
+     * @return  matrix row at the above index, less the final projective element 
+     *
+     * @author Christopher K. Allen
+     * @since  Oct 16, 2013
+     * 
+     * @see #projectRow(int)
+     */
+    public R6 projectRow(IND i) {
+        return this.projectRow( i.val() );
+//        R6  vecProj  = new R6();
+//        
+//        for (IND j : IND.valuesPhase()) {
+//            double dblVal = this.getElem(i,  j);
+//            
+//            vecProj.setElem(j, dblVal);
+//        }
+//        
+//        return vecProj;
+    }
+    
+    /**
+     * Projects the <i>i<sup>th</sup></i> row onto <b>R</b><sup>6</sup>.
+     * Specifically, the projective element (the 7<i><sup>th</sup></i> element
+     * in this case) is dropped and that part of the <i>i<sup>th</sup></i> row 
+     * in the 6 dimensional phase space is returned.
+     *  
+     * @param i index of the matrix row to be returned, <i>i</i> &in; {0,...,5}
+     *  
+     * @return  matrix row at the above index, less the final projective element 
+     *
+     *
+     * @author Christopher K. Allen
+     * @since  Oct 16, 2013
+     */
+    public R6 projectRow(int i) {
+        R6  vecProj  = new R6();
+        
+        for (int j=0; j<this.getSize() -1; j++) {
+            double dblVal = this.getElem(i,  j);
+            
+            vecProj.setElem(j, dblVal);
+        }
+        
+        return vecProj;
+    }
+
+    /**
+     * Projects the <i>j<sup>th</sup></i> column onto <b>R</b><sup>6</sup>.
+     * Specifically, the projective element (the 7<i><sup>th</sup></i> element
+     * in this case) is dropped and that part of the <i>j<sup>th</sup></i> column 
+     * in the 6 dimensional phase space is returned.
+     *  
+     * @param j index of the matrix column to be returned, <i>j</i> &in; {0,...,5}
+     *  
+     * @return  matrix row at the above index, less the final projective element 
+     *
+     * @author Christopher K. Allen
+     * @since  Oct 16, 2013
+     * 
+     * @see #projectColumn(int)
+     */
+    public R6 projectColumn(IND j) {
+        
+        return this.projectColumn( j.val() );
+//        R6  vecProj  = new R6();
+//        
+//        for (IND i : IND.valuesPhase()) {
+//            double dblVal = this.getElem(i,  j);
+//            
+//            vecProj.setElem(i, dblVal);
+//        }
+//        
+//        return vecProj;
+    }
+
+    /**
+     * Projects the <i>j<sup>th</sup></i> column onto <b>R</b><sup>6</sup>.
+     * Specifically, the projective element (the 7<i><sup>th</sup></i> element
+     * in this case) is dropped and that part of the <i>j<sup>th</sup></i> column 
+     * in the 6 dimensional phase space is returned.
+     *  
+     * @param j index of the matrix column to be returned, <i>j</i> &in; {0,...,5}
+     *  
+     * @return  matrix row at the above index, less the final projective element 
+     *
+     * @author Christopher K. Allen
+     * @since  Oct 16, 2013
+     */
+    public R6 projectColumn(int j) {
+        R6  vecProj  = new R6();
+        
+        for (int i=0; i<this.getSize()-1; i++) {
+            double dblVal = this.getElem(i,  j);
+            
+            vecProj.setElem(i, dblVal);
+        }
+        
+        return vecProj;
+    }
+    
+    
 //    /**
 //     *  Set a submatrix within the phase matrix.
 //     *
@@ -612,18 +802,18 @@ public class PhaseMatrix extends SquareMatrix<PhaseMatrix> implements IArchive, 
 //        return this.getMatrix().get(i,j);
 //    }
 
-    /**
-     *  Return matrix element value.  Get matrix element value at specified index
-     *
-     *  @param  iRow    row index
-     *  @param  iCol    column index
-     *
-     *  @return         the matrix element value at the given index
-     */
-    public double getElem(IND iRow, IND iCol)  {
-        return super.getElem(iRow, iCol);
-    }
-    
+//    /**
+//     *  Return matrix element value.  Get matrix element value at specified index
+//     *
+//     *  @param  iRow    row index
+//     *  @param  iCol    column index
+//     *
+//     *  @return         the matrix element value at the given index
+//     */
+//    public double getElem(IND iRow, IND iCol)  {
+//        return super.getElem(iRow, iCol);
+//    }
+//    
 
 //    /**
 //     *  Check if matrix is symmetric.  

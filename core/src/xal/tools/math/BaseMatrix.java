@@ -16,7 +16,6 @@ import xal.tools.beam.PhaseMatrix;
 import xal.tools.data.DataAdaptor;
 import xal.tools.data.DataFormatException;
 import xal.tools.data.IArchive;
-import xal.tools.math.SquareMatrix.IIndex;
 import Jama.Matrix;
 
 /**
@@ -58,6 +57,24 @@ public abstract class BaseMatrix<M extends BaseMatrix<M>> implements IArchive {
     
     
     
+//    /*
+//     * Internal Classes
+//     */
+//
+//    /**
+//     * Interface <code>BaseMatrix.Ind</code> is exposed by objects
+//     * representing matrix indices.  In particular, the <code>enum</code>
+//     * types that are matrix indices expose this interface.
+//     *
+//     * @author Christopher K. Allen
+//     * @since  Sep 25, 2013
+//     */
+//    public interface IIndex extends IIndex {
+//    }
+//
+    
+
+    
     
     /*
      *  Local Attributes
@@ -95,11 +112,10 @@ public abstract class BaseMatrix<M extends BaseMatrix<M>> implements IArchive {
      *
      *  @exception  ArrayIndexOutOfBoundsException  an index was equal to or larger than the matrix size
      */
-    public void setElem(int i, int j, double s)
-            throws ArrayIndexOutOfBoundsException {
-            
-                this.getMatrix().set(i,j, s);
-            }
+    public void setElem(int i, int j, double s) throws ArrayIndexOutOfBoundsException {
+
+        this.getMatrix().set(i,j, s);
+    }
 
     /**
      *  Set a block sub-matrix within the current matrix.  If the given two-dimensional
@@ -184,38 +200,6 @@ public abstract class BaseMatrix<M extends BaseMatrix<M>> implements IArchive {
                     }
             }
 
-    /**
-     * Returns a copy of the internal Java array containing
-     * the matrix elements.  The array dimensions are given by
-     * the size of this matrix, available from 
-     * <code>{@link #getSize()}</code>.  
-     * 
-     * @return  copied array of matrix values
-     *
-     * @author Christopher K. Allen
-     * @since  Sep 25, 2013
-     */
-    public double[][] getArrayCopy() {
-        return this.matImpl.getArrayCopy();
-    }
-
-    /**
-     * Create a deep copy of the this matrix object.  The returned 
-     * object is completely decoupled from the original.
-     * 
-     * @return  a deep copy object of this matrix
-     * 
-     * @throws InstantiationException error in new object construction
-     */
-    public M copy() throws InstantiationException {
-    
-        M  matClone = this.newInstance();
-        ((BaseMatrix<M>)matClone).assignMatrix( this.getMatrix() );
-            
-        return matClone;
-    }
-
-    
 
 
     /*
@@ -259,17 +243,76 @@ public abstract class BaseMatrix<M extends BaseMatrix<M>> implements IArchive {
      *
      *  @exception  ArrayIndexOutOfBoundsException  an index was equal to or larger than the matrix size
      */
-    public double getElem(int i, int j)
-            throws ArrayIndexOutOfBoundsException {
-            
-                return this.getMatrix().get(i,j);
-            }
+    public double getElem(int i, int j) throws ArrayIndexOutOfBoundsException  {
+        return this.getMatrix().get(i,j);
+    }
+
+    /**
+     * <p>
+     * Returns the matrix element at the position indicated by the
+     * given row and column index sources.  
+     * </p>
+     * <p>
+     * <h4>NOTES</h4>
+     * &middot; It is expected that the
+     * object exposing the <code>IIndex</code> interface is an enumeration
+     * class restricting the number of possible index values.
+     * <br/>
+     * &middot; Consequently we do not declare a thrown exception assuming
+     * that that enumeration class eliminates the possibility of an out of
+     * bounds error.
+     * </p>
+     *  
+     * @param indRow        source of the row index
+     * @param indCol        source of the column index
+     * 
+     * @return          value of the matrix element at the given row and column
+     *
+     * @author Christopher K. Allen
+     * @since  Sep 30, 2013
+     */
+    public double getElem(IIndex indRow, IIndex indCol) {
+        double  dblVal = this.matImpl.get(indRow.val(), indCol.val());
+    
+        return dblVal;
+    }
+
+    /**
+     * Returns a copy of the internal Java array containing
+     * the matrix elements.  The array dimensions are given by
+     * the size of this matrix, available from 
+     * <code>{@link #getSize()}</code>.  
+     * 
+     * @return  copied array of matrix values
+     *
+     * @author Christopher K. Allen
+     * @since  Sep 25, 2013
+     */
+    public double[][] getArrayCopy() {
+        return this.matImpl.getArrayCopy();
+    }
 
     
     /*
      * Matrix Operations
      */
     
+    /**
+     * Create a deep copy of the this matrix object.  The returned 
+     * object is completely decoupled from the original.
+     * 
+     * @return  a deep copy object of this matrix
+     * 
+     * @throws InstantiationException error in new object construction
+     */
+    public M copy() throws InstantiationException {
+    
+        M  matClone = this.newInstance();
+        ((BaseMatrix<M>)matClone).assignMatrix( this.getMatrix() );
+            
+        return matClone;
+    }
+
     /**
      *  Assign this matrix to be the zero matrix, specifically
      *  the matrix containing all 0's. 
@@ -283,6 +326,22 @@ public abstract class BaseMatrix<M extends BaseMatrix<M>> implements IArchive {
                 this.setElem(i, j, 0.0);
     }
 
+    /**
+     * Ratio of the largest singular value over the smallest singular value.
+     * Note that this method does a singular value decomposition just to
+     * get the number (done in the (wasteful) <code>Jama.Matrix</code>
+     * internal implementation).  Thus, this computation is not cheap
+     * if the matrix is large.
+     * 
+     * @return      the ratio of extreme singular values
+     *
+     * @author Christopher K. Allen
+     * @since  Oct 16, 2013
+     */
+    public double conditionNumber() {
+        return this.matImpl.cond();
+    }
+    
     
     /*
      *  Algebraic Operations
@@ -626,36 +685,6 @@ public abstract class BaseMatrix<M extends BaseMatrix<M>> implements IArchive {
      */
     
     /**
-     * <p>
-     * Returns the matrix element at the position indicated by the
-     * given row and column index sources.  
-     * </p>
-     * <p>
-     * <h4>NOTES</h4>
-     * &middot; It is expected that the
-     * object exposing the <code>IIndex</code> interface is an enumeration
-     * class restricting the number of possible index values.
-     * <br/>
-     * &middot; Consequently we do not declare a thrown exception assuming
-     * that that enumeration class eliminates the possibility of an out of
-     * bounds error.
-     * </p>
-     *  
-     * @param indRow        source of the row index
-     * @param indCol        source of the column index
-     * 
-     * @return          value of the matrix element at the given row and column
-     *
-     * @author Christopher K. Allen
-     * @since  Sep 30, 2013
-     */
-    protected double getElem(IIndex indRow, IIndex indCol) {
-        double  dblVal = this.matImpl.get(indRow.val(), indCol.val());
-    
-        return dblVal;
-    }
-
-    /**
      *  Return the internal matrix representation.
      *
      *  @return     the Jama matrix object
@@ -745,7 +774,7 @@ public abstract class BaseMatrix<M extends BaseMatrix<M>> implements IArchive {
      * @param  cntRows    the matrix row count of this object
      * @param  cntCols    the matrix column count
      *  
-     * @throws UnsupportedOperationException  base class has not defined a public, zero-argument constructor
+     * @throws UnsupportedOperationException  child class has not defined a public, zero-argument constructor
      */
     @SuppressWarnings("unchecked")
     protected BaseMatrix(int cntRows, int cntCols) throws UnsupportedOperationException {

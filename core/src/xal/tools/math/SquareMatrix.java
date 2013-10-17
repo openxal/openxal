@@ -36,34 +36,6 @@ public abstract class SquareMatrix<M extends SquareMatrix<M>> extends BaseMatrix
 
     
     /*
-     * Internal Classes
-     */
-
-    /**
-     * Interface <code>BaseMatrix.Ind</code> is exposed by objects
-     * representing matrix indices.  In particular, the <code>enum</code>
-     * types that are matrix indices expose this interface.
-     *
-     * @author Christopher K. Allen
-     * @since  Sep 25, 2013
-     */
-    public interface IIndex {
-
-        /**
-         * Returns the value of this matrix index object.
-         * 
-         * @return  the numerical index represented by this object 
-         *
-         * @author Christopher K. Allen
-         * @since  Sep 25, 2013
-         */
-        public int val();
-    }
-
-    
-
-    
-    /*
      *  Local Attributes
      */
 
@@ -183,12 +155,12 @@ public abstract class SquareMatrix<M extends SquareMatrix<M>> extends BaseMatrix
      * 
      *  @return     transposed copy of this matrix or <code>null</code> if error
      */
-    public BaseMatrix<M> transpose()  {
+    public M transpose()  {
         try {
             
             Jama.Matrix impTrans = this.getMatrix().transpose();
-            BaseMatrix<M>           matTrans = this.newInstance();
-            ((BaseMatrix<M>)matTrans).assignMatrix(impTrans);
+            M           matTrans = this.newInstance();
+            matTrans.assignMatrix(impTrans);
             
             return matTrans;
             
@@ -214,12 +186,12 @@ public abstract class SquareMatrix<M extends SquareMatrix<M>> extends BaseMatrix
      *
      *  @return     the algebraic inverse of this matrix or <code>null</code> if error
      */
-    public BaseMatrix<M> inverse()    {
+    public M inverse()    {
         try {
             
             Jama.Matrix impInv = this.getMatrix().inverse();
-            BaseMatrix<M>           matInv = this.newInstance();
-            ((BaseMatrix<M>)matInv).assignMatrix(impInv);
+            M           matInv = this.newInstance();
+            matInv.assignMatrix(impInv);
             
             return matInv;
             
@@ -256,7 +228,7 @@ public abstract class SquareMatrix<M extends SquareMatrix<M>> extends BaseMatrix
      * unchanged.  However, this is somewhat expensive in that the solution
      * vector must be created through reflection and exceptions may occur.
      * For a safer implementation, but where the solution is returned within the
-     * existing data vector <b>y</b> see <code>{@link #solveInPlace(Vector)}</code>.
+     * existing data vector <b>y</b> see <code>{@link #solveInPlace(BaseVector)}</code>.
      * </p>
      * <p>
      * Note that the inverse matrix
@@ -275,7 +247,7 @@ public abstract class SquareMatrix<M extends SquareMatrix<M>> extends BaseMatrix
      * @author Christopher K. Allen
      * @since  Oct 11, 2013
      */
-    public <V extends Vector<V>> V solve(V vecObs) throws IllegalArgumentException {
+    public <V extends BaseVector<V>> V solve(V vecObs) throws IllegalArgumentException {
         
         // Check sizes
         if ( vecObs.getSize() != this.getSize() ) 
@@ -353,7 +325,7 @@ public abstract class SquareMatrix<M extends SquareMatrix<M>> extends BaseMatrix
      * @author Christopher K. Allen
      * @since  Oct 11, 2013
      */
-    public <V extends Vector<V>> void solveInPlace(V vecObs) throws IllegalArgumentException {
+    public <V extends BaseVector<V>> void solveInPlace(V vecObs) throws IllegalArgumentException {
         
         // Check sizes
         if ( vecObs.getSize() != this.getSize() ) 
@@ -407,10 +379,10 @@ public abstract class SquareMatrix<M extends SquareMatrix<M>> extends BaseMatrix
      *  @return     new matrix equal to the element-wise product of <i>s</i> and this matrix,
      *                      or <code>null</code> if an error occurred
      */
-    public BaseMatrix<M>    times(double s) {
+    public M    times(double s) {
         try {
             Jama.Matrix impPrd = this.getMatrix().times(s);
-            BaseMatrix<M>           matAns = this.newInstance(impPrd);
+            M           matAns = this.newInstance(impPrd);
             
             return matAns;
             
@@ -458,7 +430,7 @@ public abstract class SquareMatrix<M extends SquareMatrix<M>> extends BaseMatrix
      * @author Christopher K. Allen
      * @since  Oct 11, 2013
      */
-    public <V extends Vector<V>> V times(V vecFac) throws IllegalArgumentException {
+    public <V extends BaseVector<V>> V times(V vecFac) throws IllegalArgumentException {
         
         // Check sizes
         if ( vecFac.getSize() != this.getSize() ) 
@@ -502,12 +474,12 @@ public abstract class SquareMatrix<M extends SquareMatrix<M>> extends BaseMatrix
      *  @return             new matrix which is the matrix product of this matrix and the argument,
      *                      or <code>null</code> if an error occurred
      */
-    public BaseMatrix<M>    times(BaseMatrix<M> matRight) {
+    public M    times(M matRight) {
         try {
             BaseMatrix<M> matBase = (BaseMatrix<M>)matRight;
             Jama.Matrix     impMult = matBase.getMatrix();
             Jama.Matrix     impProd = this.getMatrix().times( impMult);
-            BaseMatrix<M>               matAns  = this.newInstance(impProd);
+            M               matAns  = this.newInstance(impProd);
 
             return matAns;
 
@@ -552,13 +524,13 @@ public abstract class SquareMatrix<M extends SquareMatrix<M>> extends BaseMatrix
      *
      *  @return             matPhi*this*matPhi^T, or <code>null</code> if an error occurred
      */
-    public BaseMatrix<M>    conjugateTrans(BaseMatrix<M> matPhi) {
+    public M    conjugateTrans(M matPhi) {
         try {
             Jama.Matrix impPhi  = ((BaseMatrix<M>)matPhi).getMatrix();
             Jama.Matrix impPhiT = impPhi.transpose();
             Jama.Matrix impAns  = impPhi.times( this.getMatrix().times( impPhiT) );
             
-            BaseMatrix<M>   matAns = this.newInstance(impAns);
+            M   matAns = this.newInstance(impAns);
             
             return matAns;
             
@@ -590,13 +562,13 @@ public abstract class SquareMatrix<M extends SquareMatrix<M>> extends BaseMatrix
      *
      *  @return             matPhi*this*matPhi^-1
      */
-    public BaseMatrix<M> conjugateInv(BaseMatrix<M> matPhi) {
+    public M conjugateInv(M matPhi) {
         try {
             Jama.Matrix impPhi = ((BaseMatrix<M>)matPhi).getMatrix();
             Jama.Matrix impInv = impPhi.inverse();
             Jama.Matrix impAns = impPhi.times( this.getMatrix().times( impInv) );
             
-            BaseMatrix<M>   matAns = this.newInstance(impAns);
+            M   matAns = this.newInstance(impAns);
             
             return matAns;
             
@@ -626,7 +598,7 @@ public abstract class SquareMatrix<M extends SquareMatrix<M>> extends BaseMatrix
      *
      * @param intSize   size of this square matrix
      * 
-     * @throws UnsupportedOperationException  base class has not defined a public, zero-argument constructor
+     * @throws UnsupportedOperationException  child class has not defined a public, zero-argument constructor
      *
      * @author Christopher K. Allen
      * @since  Oct 14, 2013
@@ -638,7 +610,7 @@ public abstract class SquareMatrix<M extends SquareMatrix<M>> extends BaseMatrix
     }
 
     /**
-     * Copy constructor for <code>BaseMatrix</code>.  Creates a deep
+     * Copy constructor for <code>SquareMatrix</code>.  Creates a deep
      * copy of the given object.  The dimensions are set and the 
      * internal array is cloned. 
      *
@@ -662,8 +634,7 @@ public abstract class SquareMatrix<M extends SquareMatrix<M>> extends BaseMatrix
      *  The token string argument is assumed to be one-dimensional and packed by
      *  column (ala FORTRAN).
      *
-     *  @param  cntRows     the matrix row size of this object
-     *  @param  cntCols     the matrix column size of this object
+     *  @param  intSize     the matrix size of this object
      *  @param  strTokens   token vector of getSize()^2 numeric values
      *
      *  @exception  IllegalArgumentException    wrong number of token strings
