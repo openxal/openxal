@@ -112,8 +112,12 @@ class LatticeElement implements Comparable<LatticeElement> {
 		double p1 = isThin() ? position : start;
 		double p2 = e2.isThin() ? e2.position : e2.start;
 		int d = Double.compare(p1, p2);
-		if (d == 0)
-			d = originalPosition - e2.originalPosition;
+		if (d == 0) {
+			if (isThin() && e2.isThin())
+				d = originalPosition - e2.originalPosition;
+			else
+				d = isThin() ? -1 : 1;
+		}
 		return d;
 	}
 
