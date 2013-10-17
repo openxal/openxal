@@ -4,7 +4,7 @@
  * Created on May 23, 2003, 2:41 PM
  */
 
-package xal.application;
+package xal.tools.apputils;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
