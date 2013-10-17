@@ -11,6 +11,22 @@
 		<property name="build.intermediates.extensions" value="${build.intermediates.extensions}" />
 		<property name="extension.compiler" value="${build.intermediates.extensions}/compiler.xml" />
 		<property name="extension.compile.root" value="${build.intermediates.extensions}/compile" />
+
+		<!-- fileset for pure extensions' libraries -->
+		<fileset id="fileset.extensions.lib" dir="${extensions.root}">
+			<include name="*/lib/*.jar" />
+		</fileset>
+
+		<!-- sets the property if there are any pure extensions libraries to process -->
+		<pathconvert refid="fileset.extensions.lib" property="extensions.have.libs" setonempty="false" />
+
+		<!-- fileset for services extensions' libraries -->
+		<fileset id="fileset.services.extensions.lib" dir="${services.root}">
+			<include name="*/extension/lib/*.jar" />
+		</fileset>
+
+		<!-- sets the property if there are any services extensions libraries to process -->
+		<pathconvert refid="fileset.services.extensions.lib" property="extensions.have.libs" setonempty="false" />
     </target>
 
 
@@ -19,7 +35,7 @@
 
 
 	<!-- Compile the extensions -->
-	<target name="compile" depends="generate-compiler">
+	<target name="compile" depends="generate-compiler, jar-lib">
 		<mkdir dir="${extension.compile.root}" />
 
 		<!-- Compile every extension -->
@@ -55,6 +71,23 @@
     </target>
 
 
+	<!-- Join the third party jars into a common external jar file -->
+    <target name="jar-lib" depends="init" if="extensions.have.libs">
+        <mkdir dir="${build.intermediates.extensions}" />
+        <jar compress="true" jarfile="${build.intermediates.extensions}/lib.jar" duplicate="preserve">
+			<!-- include jars from each extension -->
+			<zipgroupfileset dir="${extensions.root}">
+				<include name="*/lib/*.jar" />
+			</zipgroupfileset>
+
+			<!-- include jars from each service extension -->
+			<zipgroupfileset dir="${services.root}">
+				<include name="*/extension/lib/*.jar" />
+			</zipgroupfileset>
+        </jar>
+    </target>
+
+
 	<!-- Clean the extensions -->
 	<target name="clean" depends="generate-compiler">
         <delete dir="${build.intermediates.extensions}" quiet="true" />
@@ -73,6 +106,7 @@
 
 			&lt;classpath&gt;
 				&lt;pathelement location="${build.intermediates.shared}/xal-core.jar" /&gt;
+				&lt;pathelement location="${build.intermediates.extensions}/lib.jar" /&gt;
 			&lt;/classpath&gt;
 		</echo>
 
@@ -81,7 +115,6 @@
 			<dirset dir="${extensions.root}" includes="*" />
 			<dirset dir="${services.root}" includes="*/extension" />
 		</subant>
-
 		<echo file="${extension.compiler}" append="true">
 		&lt;/javac&gt;
 	&lt;/target&gt;
