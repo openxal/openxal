@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
 
+import xal.model.IComponent;
 import xal.smf.AcceleratorNode;
 
 /**
@@ -30,6 +31,13 @@ public abstract class ElementMapping {
 	 */
 	public abstract ElementConverter getDefaultConverter();
 
+	/**
+	 * Different model may have different implementation of the drift element.
+	 *   
+	 * @return drift model element
+	 */
+	public abstract IComponent createDrift(String name, double len);	
+	
 	/**
 	 * Returns converter for the given node.
 	 * Default implementation traverses a list and returns first good converter. 

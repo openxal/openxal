@@ -6,6 +6,7 @@
 
 package xal.sim.scenario;
 
+import xal.model.IComponent;
 import xal.model.IElement;
 import xal.model.ModelException;
 import xal.model.elem.IElectromagnet;
@@ -50,6 +51,11 @@ public class NewAndImprovedScenarioElementMapping extends ElementMapping {
 	@Override
 	public ElementConverter getDefaultConverter() {
 		return defaultConverter;
+	}
+	
+	@Override
+	public IComponent createDrift(String name, double len) {	
+		return new IdealDrift(name,  len);
 	}
 
 	protected void initialize() {
