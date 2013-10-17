@@ -20,9 +20,18 @@
 
 	<!-- Compile the extensions -->
 	<target name="compile" depends="generate-compiler">
+		<mkdir dir="${extension.compile.root}" />
+
+		<!-- Compile every extension -->
 		<subant target="compile" antfile="compiler.xml">
 			<fileset dir="${build.intermediates.extensions}" includes="compiler.xml"/>
 		</subant>
+
+		<!-- Merge the extensions' resources into the compile directory -->
+		<copy todir="${extension.compile.root}" quiet="true" failonerror="false">
+			<fileset dir="${extensions.root}" includes="*/resources" />
+			<fileset dir="${services.root}" includes="*/extension/resources" />
+		</copy>
 	</target>
 
 
