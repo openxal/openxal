@@ -26,6 +26,8 @@ import xal.tools.apputils.files.*;
 import xal.tools.messaging.MessageCenter;
 import xal.tools.services.*;
 import xal.tools.URLReference;
+import xal.tools.apputils.ApplicationSupport;
+
 
 /**
  * The Application class handles defines the core of an application.  It is often 
@@ -1119,7 +1121,7 @@ abstract public class Application {
      * @return The active window
      */
     static public Window getActiveWindow() {
-        return java.awt.KeyboardFocusManager.getCurrentKeyboardFocusManager().getActiveWindow();
+		return ApplicationSupport.getActiveWindow();
     }
     
     
@@ -1168,8 +1170,7 @@ abstract public class Application {
 	 * @return YES_OPTION or NO_OPTION 
 	 */
 	static public int displayConfirmDialog( final String title, final String message ) {
-        Toolkit.getDefaultToolkit().beep();
-        return JOptionPane.showConfirmDialog( getActiveWindow(), message, title, JOptionPane.YES_NO_OPTION );		
+		return ApplicationSupport.displayConfirmDialog( title, message );
 	}
 	
     
@@ -1178,9 +1179,7 @@ abstract public class Application {
      * @param exception The exception about which the warning dialog is displayed.
      */
     static public void displayWarning( final Exception exception ) {
-        Toolkit.getDefaultToolkit().beep();
-        String message = "Exception: " + exception.getClass().getName() + "\n" + exception.getMessage();
-        displayWarning( exception.getClass().getName(), message );
+		ApplicationSupport.displayWarning( exception );
     }
 
     
@@ -1190,8 +1189,7 @@ abstract public class Application {
      * @param message The warning message to appear in the warning dialog box.
      */
     static public void displayWarning( final String title, final String message ) {
-        Toolkit.getDefaultToolkit().beep();
-        JOptionPane.showMessageDialog( getActiveWindow(), message, title, JOptionPane.WARNING_MESSAGE );
+		displayWarning( title, message );
     }
     
     
@@ -1203,9 +1201,7 @@ abstract public class Application {
      * @param exception The exception about which the warning dialog is displayed.
      */
     static public void displayWarning( final String title, final String prefix, final Exception exception ) {
-        Toolkit.getDefaultToolkit().beep();
-        String message = prefix + "\n" + "Exception: " + exception.getClass().getName() + "\n" + exception.getMessage();
-        JOptionPane.showMessageDialog( getActiveWindow(), message, title, JOptionPane.WARNING_MESSAGE );
+		ApplicationSupport.displayWarning( title, prefix, exception );
     }
 
     
@@ -1215,8 +1211,7 @@ abstract public class Application {
      * @param message The warning message to appear in the warning dialog box.
      */
     static public void displayError( final String title, final String message ) {
-        Toolkit.getDefaultToolkit().beep();
-        JOptionPane.showMessageDialog( getActiveWindow(), message, title, JOptionPane.ERROR_MESSAGE );
+		ApplicationSupport.displayError( title, message );
     }
     
     
@@ -1225,10 +1220,8 @@ abstract public class Application {
      * @param exception The exception about which the warning dialog is displayed.
      */
     static public void displayError( final Exception exception ) {
-        Toolkit.getDefaultToolkit().beep();
-        String message = "Exception: " + exception.getClass().getName() + "\n" + exception.getMessage();
-        displayError( exception.getClass().getName(), message );
-    }    
+		ApplicationSupport.displayError( exception );
+    }
     
     
     /**
@@ -1239,9 +1232,7 @@ abstract public class Application {
      * @param exception The exception about which the warning dialog is displayed.
      */
     static public void displayError( final String title, final String prefix, final Exception exception ) {
-        Toolkit.getDefaultToolkit().beep();
-        String message = prefix + "\n" + "Exception: " + exception.getClass().getName() + "\n" + exception.getMessage();
-        JOptionPane.showMessageDialog( getActiveWindow(), message, title, JOptionPane.ERROR_MESSAGE );
+		ApplicationSupport.displayError( title, prefix, exception );
     }
     
     
@@ -1253,9 +1244,7 @@ abstract public class Application {
      * @param exception The exception about which the warning dialog is displayed.
      */
     static public void displayApplicationError( final String title, final String prefix, final Exception exception ) {
-        Toolkit.getDefaultToolkit().beep();
-        String message = prefix + "\n" + "Exception: " + exception.getClass().getName() + "\n" + exception.getMessage();
-        JOptionPane.showMessageDialog( getActiveWindow(), message, title, JOptionPane.ERROR_MESSAGE );
+		displayError( title, prefix, exception );
     }
     
     

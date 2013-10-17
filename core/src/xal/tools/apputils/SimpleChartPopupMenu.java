@@ -7,7 +7,7 @@
 package xal.tools.apputils;
 
 import xal.tools.apputils.*;
-import xal.application.ImageCaptureManager;
+import xal.tools.apputils.ImageCaptureManager;
 
 import java.awt.Frame;
 import java.awt.Dialog;

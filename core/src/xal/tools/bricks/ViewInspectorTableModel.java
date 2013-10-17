@@ -25,7 +25,7 @@ import javax.swing.event.*;
 import java.util.List;
 import java.util.ArrayList;
 
-import xal.application.Application;
+import xal.tools.apputils.ApplicationSupport;
 
 
 /** Inspector table model */
@@ -196,8 +196,7 @@ class ViewInspectorTableModel extends AbstractTableModel implements PropertyTabl
 				}
 				catch ( Exception exception ) {
 					exception.printStackTrace();
-					final Window window = Application.getActiveWindow();
-					Application.displayWarning( "Error Setting Value", "Property Setting Exception:", exception );
+					ApplicationSupport.displayWarning( "Error Setting Value", "Property Setting Exception:", exception );
 					return;
 				}
 			default:
