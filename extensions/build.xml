@@ -27,10 +27,16 @@
 			<fileset dir="${build.intermediates.extensions}" includes="compiler.xml"/>
 		</subant>
 
-		<!-- Merge the extensions' resources into the compile directory -->
-		<copy todir="${extension.compile.root}" quiet="true" failonerror="false">
-			<fileset dir="${extensions.root}" includes="*/resources" />
-			<fileset dir="${services.root}" includes="*/extension/resources" />
+		<!-- Merge the pure extensions' resources into the compile directory -->
+		<copy todir="${extension.compile.root}" quiet="true" failonerror="false" includeEmptyDirs="false">
+			<mapper type="regexp" from="^[^/]+/resources/(.*)$$" to="\1"/>
+			<fileset dir="${extensions.root}" includes="*/resources/**/*" />
+		</copy>
+
+		<!-- Merge the services extensions' resources into the compile directory -->
+		<copy todir="${extension.compile.root}" quiet="true" failonerror="false" includeEmptyDirs="false">
+			<mapper type="regexp" from="^[^/]+/extension/resources/(.*)$$" to="\1"/>
+			<fileset dir="${services.root}" includes="*/extension/resources/**/*" />
 		</copy>
 	</target>
 
