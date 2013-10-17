@@ -29,13 +29,13 @@
 
 		<!-- Merge the pure extensions' resources into the compile directory -->
 		<copy todir="${extension.compile.root}" quiet="true" failonerror="false" includeEmptyDirs="false">
-			<mapper type="regexp" from="^[^/]+/resources/(.*)$$" to="\1"/>
+			<regexpmapper handledirsep="true" from="^[^/]+/resources/(.*)$$" to="\1" />
 			<fileset dir="${extensions.root}" includes="*/resources/**/*" />
 		</copy>
 
 		<!-- Merge the services extensions' resources into the compile directory -->
 		<copy todir="${extension.compile.root}" quiet="true" failonerror="false" includeEmptyDirs="false">
-			<mapper type="regexp" from="^[^/]+/extension/resources/(.*)$$" to="\1"/>
+			<regexpmapper handledirsep="true" from="^[^/]+/extension/resources/(.*)$$" to="\1" />
 			<fileset dir="${services.root}" includes="*/extension/resources/**/*" />
 		</copy>
 	</target>
