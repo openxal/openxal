@@ -10,7 +10,7 @@
 
 package xal.app.orbitcorrect;
 
-import xal.tools.plot.*;
+import xal.extension.widgets.plot.*;
 
 import javax.swing.table.*;
 import java.util.Collections;

@@ -15,9 +15,9 @@ import xal.smf.impl.*;
 import xal.smf.*;
 import xal.tools.data.*;
 //import xal.tools.apputils.iconlib.IconLib;
-//import xal.tools.swing.patternfilter.*;
-import xal.tools.swing.KeyValueTableModel;
-import xal.tools.swing.KeyValueFilteredTableModel;
+//import xal.extension.widgets.swing.patternfilter.*;
+import xal.extension.widgets.swing.KeyValueTableModel;
+import xal.extension.widgets.swing.KeyValueFilteredTableModel;
 import xal.tools.text.FormattedNumber;
 
 import javax.swing.*;

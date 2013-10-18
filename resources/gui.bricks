@@ -65,7 +65,7 @@
                             </ViewNode>
                         </ViewNode>
                         <ViewNode tag="OrbitPlot">
-                            <ViewProxy type="xal.tools.plot.FunctionGraphsJPanel" />
+                            <ViewProxy type="xal.extension.widgets.plot.FunctionGraphsJPanel" />
                         </ViewNode>
                         <ViewNode tag="SynopticContainer">
                             <ViewProxy type="javax.swing.Box_Horizontal" />
