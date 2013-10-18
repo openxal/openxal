@@ -9,7 +9,7 @@
 package xal.service.pvlogger;
 
 import java.util.*;
-import xal.tools.services.OneWay;
+import xal.extension.service.OneWay;
 
 
 /** Interface for communicating with a remote PV logger */

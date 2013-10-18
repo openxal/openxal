@@ -12,9 +12,9 @@ import java.util.Collection;
 import java.util.Hashtable;
 import java.util.Map;
 
-import xal.tools.services.ServiceDirectory;
-import xal.tools.services.ServiceListener;
-import xal.tools.services.ServiceRef;
+import xal.extension.service.ServiceDirectory;
+import xal.extension.service.ServiceListener;
+import xal.extension.service.ServiceRef;
 
 
 /** Center for communicating with a remote PV logger */
