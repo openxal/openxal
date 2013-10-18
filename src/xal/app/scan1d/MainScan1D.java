@@ -10,8 +10,8 @@ import javax.swing.event.*;
 import java.awt.event.*;
 import java.net.*;
 
-import xal.application.*;
-import xal.smf.application.AcceleratorApplication;
+import xal.extension.application.*;
+import xal.extension.smf.application.AcceleratorApplication;
 
 /**
  *  MainScan1D is a concrete subclass of ApplicationAdaptor for one dimensional
