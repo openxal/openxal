@@ -19,8 +19,8 @@ import java.awt.event.*;
 import java.util.*;
 import java.text.*;
 
-import xal.application.*;
-import xal.smf.application.*;
+import xal.extension.application.*;
+import xal.extension.smf.application.*;
 import xal.tools.bricks.WindowReference;
 import xal.tools.data.*;
 import xal.tools.plot.*;
