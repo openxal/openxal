@@ -35,7 +35,7 @@ include_class 'xal.ca.Channel'
 include_class 'xal.ca.ChannelFactory'
 include_class 'xal.ca.IEventSinkValTime'
 include_class 'xal.ca.Monitor'
-include_class 'xal.extension.application.ImageCaptureManager'
+include_class 'xal.tools.apputils.ImageCaptureManager'
 
 module Java
 	include_class 'java.awt.event.MouseAdapter'
