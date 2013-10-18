@@ -8,7 +8,7 @@
  * Oak Ridge, TN 37830
  */
 
-package xal.tools.services;
+package xal.extension.service;
 
 import xal.tools.coding.*;
 
@@ -192,7 +192,7 @@ class ClientHandler<ProxyType> implements InvocationHandler {
      * @param method The method to implement.
      * @param args The array of arguments to pass to the method.
      * @return The result of the method invokation.
-	 * @throws xal.tools.services.RemoteMessageException if an exception occurs while invoking this remote message.
+	 * @throws xal.extension.service.RemoteMessageException if an exception occurs while invoking this remote message.
      */
     @SuppressWarnings( "unchecked" )    // must cast generic response object to Map
     synchronized public Object invoke( final Object proxy, final Method method, final Object[] args ) throws RemoteMessageException, RemoteServiceDroppedException {

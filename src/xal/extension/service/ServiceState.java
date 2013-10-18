@@ -6,7 +6,7 @@
 // Copyright 2012 Oak Ridge National Lab. All rights reserved.
 //
 
-package xal.tools.services;
+package xal.extension.service;
 
 
 /** Provides methods for getting information and controlling the client side of the service through the proxy */

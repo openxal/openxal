@@ -8,7 +8,7 @@
  * Oak Ridge, TN 37830
  */
 
-package xal.tools.services;
+package xal.extension.service;
 
 
 /**
