@@ -9,7 +9,7 @@
  */
 package xal.app.dbbrowser;
 
-import xal.application.*;
+import xal.extension.application.*;
 import xal.tools.database.*;
 
 import java.util.*;
