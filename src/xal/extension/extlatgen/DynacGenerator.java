@@ -7,7 +7,7 @@
  *
  */
 
-package xal.tools.extlatgen;
+package xal.extension.extlatgen;
 
 import java.io.*;
 import java.util.Date;
