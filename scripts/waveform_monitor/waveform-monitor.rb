@@ -58,6 +58,18 @@ end
 
 
 
+# model of functions to resolve Java ambiguities
+module JavaResolver
+	# Construct a SpinnerNumberModel using integer parameters (addresses ambiguous Java constructor)
+	def newSpinnerNumberModel( value, minimum, maximum, step )
+		constructor = SpinnerNumberModel.java_class.constructor( Java::int, Java::int, Java::int, Java::int )
+		return constructor.new_instance( value, minimum, maximum, step )
+	end
+end
+
+include JavaResolver
+
+
 class WaveformReader	
 	attr_reader :waveformPV
 	
@@ -232,9 +244,9 @@ class ControlApp
 		
 		@range_checkbox.addActionListener self
 		
-		@lower_range_spinner.setModel( SpinnerNumberModel.new( 0, 0, 1500, 1 ) )
+		@lower_range_spinner.setModel( newSpinnerNumberModel( 0, 0, 1500, 1 ) )
 		@lower_range_spinner.addChangeListener self
-		@upper_range_spinner.setModel( SpinnerNumberModel.new( 256, 0, 1500, 1 ) )
+		@upper_range_spinner.setModel( newSpinnerNumberModel( 256, 0, 1500, 1 ) )
 		@upper_range_spinner.addChangeListener self
 		
 		@sample_period_field = @window_reference.getView( "Sample Period Field" )
