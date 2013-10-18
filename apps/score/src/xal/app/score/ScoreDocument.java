@@ -26,7 +26,7 @@ import xal.extension.bricks.WindowReference;
 import xal.tools.data.*;
 import xal.tools.swing.*;
 import xal.ca.*;
-import xal.tools.logbook.ElogUtility;
+import xal.extension.logbook.ElogUtility;
 
 
 /**

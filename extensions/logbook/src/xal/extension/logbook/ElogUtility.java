@@ -8,7 +8,7 @@
  * Oak Ridge, TN 37830
  */
 
-package xal.tools.logbook;
+package xal.extension.logbook;
 
 
 import xal.tools.database.*;

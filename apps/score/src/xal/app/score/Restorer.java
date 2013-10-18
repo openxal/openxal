@@ -9,7 +9,7 @@ package xal.app.score;
 import xal.ca.*;
 import xal.tools.swing.KeyValueTableModel;
 import xal.tools.data.*;
-import xal.tools.logbook.ElogUtility;
+import xal.extension.logbook.ElogUtility;
 
 import java.text.*;
 import java.util.*;

@@ -6,7 +6,7 @@
 //  Copyright 2004 Oak Ridge National Lab. All rights reserved.
 //
 
-package xal.tools.logbook;
+package xal.extension.logbook;
 
 import java.net.*;
 
