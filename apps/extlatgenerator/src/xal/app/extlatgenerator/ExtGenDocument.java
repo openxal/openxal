@@ -24,7 +24,7 @@ import xal.extension.application.*;
 import xal.smf.*;
 import xal.smf.data.*;
 import xal.sim.slg.*;   // for lattice generation
-import xal.tools.extlatgen.*; // t3d and dynac adaptor
+import xal.extension.extlatgen.*; // t3d and dynac adaptor
 import xal.model.probe.*;  // Probe for t3d header
 import xal.model.xml.*;
 import xal.model.xml.ParsingException;

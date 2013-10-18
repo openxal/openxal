@@ -6,7 +6,7 @@
 // Copyright 2012 ORNL. All rights reserved.
 //
 
-package xal.tools.extlatgen;
+package xal.extension.extlatgen;
 
 import xal.service.pvlogger.sim.PVLoggerDataSource;
 import xal.smf.impl.Bend;
