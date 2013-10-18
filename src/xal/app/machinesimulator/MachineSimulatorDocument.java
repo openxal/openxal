@@ -21,7 +21,7 @@ import xal.tools.apputils.*;
 import xal.tools.xml.XmlDataAdaptor;
 import xal.smf.data.XMLDataManager;
 import xal.tools.data.*;
-import xal.tools.bricks.WindowReference;
+import xal.extension.bricks.WindowReference;
 import xal.tools.swing.*;
 import xal.model.probe.traj.IPhaseState;
 
