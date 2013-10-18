@@ -8,7 +8,7 @@
  * All rights reserved.
  */
 
-package xal.tools.apputils.pvlogbrowser;
+package xal.service.pvlogger.apputils.browser;
 
 import xal.service.pvlogger.*;
 import xal.tools.database.*;
