@@ -37,7 +37,7 @@ import xal.model.alg.*;
 import xal.model.probe.*;
 import xal.model.probe.traj.*;
 import xal.sim.scenario.*;
-import xal.tools.OrbitMatcher;
+import xal.extension.orbit.OrbitMatcher;
 import xal.service.pvlogger.sim.PVLoggerDataSource;
 
 
