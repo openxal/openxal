@@ -13,7 +13,7 @@ import java.awt.event.*;
 import java.io.*;
 import javax.swing.border.*;
 
-import xal.application.*;
+import xal.extension.application.*;
 import xal.tools.scan.*;
 import xal.tools.plot.*;
 import xal.tools.swing.*;
