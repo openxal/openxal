@@ -1,7 +1,7 @@
 package xal.extension.scan;
 
 import xal.ca.*;
-import xal.tools.swing.*;
+import xal.extension.widgets.swing.*;
 
 import java.text.*;
 import javax.swing.*;

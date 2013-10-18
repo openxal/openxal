@@ -7,7 +7,7 @@ import javax.swing.*;
 
 import xal.tools.data.DataAdaptor;
 import xal.extension.scan.*;
-import xal.tools.plot.*;
+import xal.extension.widgets.plot.*;
 
 /**
  *  This class is an empty analysis class. It analyzes the scan data.

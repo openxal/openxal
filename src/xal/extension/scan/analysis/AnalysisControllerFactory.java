@@ -7,7 +7,7 @@ import javax.swing.*;
 
 import xal.tools.data.DataAdaptor;
 import xal.extension.scan.*;
-import xal.tools.plot.*;
+import xal.extension.widgets.plot.*;
 
 /**
  *  This is a factory to produce different type of analysis.
