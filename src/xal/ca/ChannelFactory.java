@@ -9,6 +9,7 @@ package xal.ca;
 import xal.tools.transforms.ValueTransform;
 
 import java.util.*;
+import java.lang.reflect.Method;
 
 
 /**
@@ -135,7 +136,16 @@ abstract public class ChannelFactory {
 	 * @return a new channel factory
 	 */
     static protected ChannelFactory newFactory() {
-        return new xal.jca.JcaChannelFactory();
+		try {
+			// effectively returns ChannelFactoryPlugin.getChannelFactoryInstance()
+			final Class<?> pluginClass = Class.forName( "xal.ca.ChannelFactoryPlugin" );
+			final Method creatorMethod = pluginClass.getMethod( "getChannelFactoryInstance" );
+			return (ChannelFactory)creatorMethod.invoke( null );
+		}
+		catch( Exception exception ) {
+			exception.printStackTrace();
+			throw new RuntimeException( "Failed to load the ChannelFactoryPlugin: " + exception.getMessage() );
+		}
     }
     
     
