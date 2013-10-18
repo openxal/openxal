@@ -21,7 +21,7 @@ import java.text.*;
 
 import xal.extension.application.*;
 import xal.extension.smf.application.*;
-import xal.tools.bricks.WindowReference;
+import xal.extension.bricks.WindowReference;
 import xal.tools.data.*;
 import xal.tools.plot.*;
 import xal.tools.swing.KeyValueRecordSelector;
