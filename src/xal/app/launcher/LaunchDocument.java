@@ -14,7 +14,7 @@ import xal.extension.application.*;
 import xal.tools.data.*;
 import xal.tools.xml.XmlDataAdaptor;
 import xal.tools.IconLib;
-import xal.tools.bricks.WindowReference;
+import xal.extension.bricks.WindowReference;
 import xal.tools.messaging.MessageCenter;
 
 import java.net.URL;
