@@ -1,5 +1,3 @@
-package xal.jca;
-
 /*
  * MonitorSrc.java
  *
@@ -7,6 +5,8 @@ package xal.jca;
  */
 
  
+package xal.plugin.jca;
+
 import xal.ca.*;
 
 import gov.aps.jca.CAException;

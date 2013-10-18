@@ -4,7 +4,7 @@
  * Created on August 26, 2002, 1:25 PM
  */
 
-package xal.jca;
+package xal.plugin.jca;
 
 import xal.ca.*;
 

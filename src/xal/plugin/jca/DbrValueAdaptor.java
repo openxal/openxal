@@ -4,7 +4,7 @@
  * Created on August 26, 2002, 5:25 PM
  */
 
-package xal.jca;
+package xal.plugin.jca;
 
 import xal.ca.ChannelRecord;
 import xal.ca.ValueAdaptor;

@@ -4,7 +4,7 @@
  * Created on September 18, 2002, 12:32 PM
  */
 
-package xal.jca;
+package xal.plugin.jca;
 
 import xal.ca.PutListener;
 import xal.ca.Channel;

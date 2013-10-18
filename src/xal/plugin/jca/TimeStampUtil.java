@@ -4,7 +4,7 @@
  * Created on July 1, 2002, 1:43 PM
  */
 
-package xal.jca;
+package xal.plugin.jca;
 
 import gov.aps.jca.dbr.TimeStamp;
 import java.util.Date;

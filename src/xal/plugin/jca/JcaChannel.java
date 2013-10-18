@@ -3,7 +3,7 @@
  *
  * Created on August 26, 2002, 10:02 AM
  */
-package xal.jca;
+package xal.plugin.jca;
 
 import xal.tools.messaging.MessageCenter;
 import xal.tools.ArrayValue;

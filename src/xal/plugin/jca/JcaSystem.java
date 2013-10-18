@@ -4,7 +4,7 @@
  * Created on August 27, 2002, 2:38 PM
  */
 
-package xal.jca;
+package xal.plugin.jca;
 
 import xal.ca.ChannelSystem;
 
