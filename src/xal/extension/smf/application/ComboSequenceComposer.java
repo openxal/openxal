@@ -8,7 +8,7 @@
 
 package xal.extension.smf.application;
 
-import xal.tools.bricks.WindowReference;
+import xal.extension.bricks.WindowReference;
 import xal.smf.*;
 
 import java.net.URL;

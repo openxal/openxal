@@ -6,7 +6,7 @@
 
 package xal.extension.application;
 
-import xal.tools.bricks.WindowReference;
+import xal.extension.bricks.WindowReference;
 
 import java.net.*;
 import java.awt.print.*;
