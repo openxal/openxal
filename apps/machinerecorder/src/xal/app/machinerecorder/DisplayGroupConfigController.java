@@ -12,7 +12,7 @@ import javax.swing.*;
 import java.awt.event.*;
 import java.util.*;
 
-import xal.tools.bricks.WindowReference;
+import xal.extension.bricks.WindowReference;
 import xal.tools.swing.KeyValueTableModel;
 import xal.smf.*;
 import xal.smf.widgets.NodeChannelSelector;

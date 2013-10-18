@@ -10,7 +10,7 @@ package xal.app.injectionpainting;
 
 import xal.ca.*;
 import xal.extension.application.*;
-import xal.tools.bricks.WindowReference;
+import xal.extension.bricks.WindowReference;
 import xal.tools.messaging.MessageCenter;
 
 import java.net.URL;

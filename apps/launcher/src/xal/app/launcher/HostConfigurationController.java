@@ -9,7 +9,7 @@
 package xal.app.launcher;
 
 import xal.extension.application.*;
-import xal.tools.bricks.WindowReference;
+import xal.extension.bricks.WindowReference;
 
 import javax.swing.*;
 import javax.swing.event.*;

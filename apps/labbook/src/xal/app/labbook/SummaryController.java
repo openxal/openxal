@@ -8,7 +8,7 @@
 
 package xal.app.labbook;
 
-import xal.tools.bricks.WindowReference;
+import xal.extension.bricks.WindowReference;
 import xal.tools.logbook.ElogUtility;
 import xal.tools.messaging.MessageCenter;
 import xal.service.pvlogger.RemoteLoggingCenter;

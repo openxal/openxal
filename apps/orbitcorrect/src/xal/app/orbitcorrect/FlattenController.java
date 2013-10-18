@@ -9,7 +9,7 @@
 package xal.app.orbitcorrect;
 
 import xal.extension.application.Application;
-import xal.tools.bricks.WindowReference;
+import xal.extension.bricks.WindowReference;
 import xal.ca.Channel;
 import xal.smf.impl.*;
 import xal.smf.*;

@@ -23,7 +23,7 @@ import xal.tools.apputils.*;
 import xal.tools.xml.XmlDataAdaptor;
 import xal.smf.data.XMLDataManager;
 import xal.tools.data.*;
-import xal.tools.bricks.WindowReference;
+import xal.extension.bricks.WindowReference;
 import xal.smf.widgets.NodeChannelSelector;
 import xal.tools.plot.*;
 import xal.tools.statistics.UnivariateStatistics;

@@ -22,7 +22,7 @@ import java.awt.Toolkit;
 import java.sql.Timestamp;
 
 import xal.extension.application.*;
-import xal.tools.bricks.WindowReference;
+import xal.extension.bricks.WindowReference;
 import xal.tools.data.*;
 import xal.tools.swing.*;
 import xal.ca.*;

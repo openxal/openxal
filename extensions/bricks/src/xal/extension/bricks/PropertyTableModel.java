@@ -6,7 +6,7 @@
 //  Copyright 2006 Oak Ridge National Lab. All rights reserved.
 //
 
-package xal.tools.bricks;
+package xal.extension.bricks;
 
 
 /** interface for table models implementing property display support */

@@ -13,7 +13,7 @@ import javax.swing.text.*;
 import java.awt.event.*;
 
 import xal.extension.application.XalDocument;
-import xal.tools.bricks.WindowReference;
+import xal.extension.bricks.WindowReference;
 
 
 /** SnapshotCommitController */

@@ -18,7 +18,7 @@ import xal.extension.application.*;
 import xal.extension.smf.application.AcceleratorDocument;
 import xal.smf.*;
 import xal.ca.Channel;
-import xal.tools.bricks.WindowReference;
+import xal.extension.bricks.WindowReference;
 import xal.service.pvlogger.*;
 import xal.tools.data.KeyValueSorting;
 import xal.tools.data.KeyValueRecordListener;

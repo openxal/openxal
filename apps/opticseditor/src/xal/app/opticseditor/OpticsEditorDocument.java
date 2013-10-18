@@ -11,7 +11,7 @@
 package xal.app.opticseditor;
 
 import xal.extension.application.*;
-import xal.tools.bricks.WindowReference;
+import xal.extension.bricks.WindowReference;
 import xal.tools.messaging.MessageCenter;
 import xal.tools.data.*;
 import xal.tools.FreshProcessor;

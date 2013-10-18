@@ -10,7 +10,7 @@
 package xal.extension.application;
 
 import xal.tools.apputils.files.*;
-import xal.tools.bricks.WindowReference;
+import xal.extension.bricks.WindowReference;
 
 import java.util.logging.*;
 import java.net.*;

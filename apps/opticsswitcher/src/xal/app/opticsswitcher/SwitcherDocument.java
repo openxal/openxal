@@ -18,7 +18,7 @@ import java.util.logging.*;
 import java.util.Vector;
 
 import xal.extension.application.*;
-import xal.tools.bricks.WindowReference;
+import xal.extension.bricks.WindowReference;
 import xal.tools.plot.*;
 import xal.smf.data.OpticsSwitcher;
 

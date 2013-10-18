@@ -11,7 +11,7 @@
 package xal.app.bricks;
 
 import xal.extension.application.*;
-import xal.tools.bricks.*;
+import xal.extension.bricks.*;
 import xal.tools.data.*;
 import xal.tools.xml.XmlDataAdaptor;
 

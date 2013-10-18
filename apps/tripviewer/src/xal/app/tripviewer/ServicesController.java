@@ -10,7 +10,7 @@ package xal.app.tripviewer;
 
 import xal.service.tripmonitor.*;
 import xal.extension.application.*;
-import xal.tools.bricks.WindowReference;
+import xal.extension.bricks.WindowReference;
 import xal.service.*;
 import xal.tools.services.*;
 import xal.tools.messaging.MessageCenter;

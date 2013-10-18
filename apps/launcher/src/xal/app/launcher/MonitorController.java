@@ -14,7 +14,7 @@ import javax.swing.event.*;
 import java.util.*;
 
 import xal.extension.application.Application;
-import xal.tools.bricks.*;
+import xal.extension.bricks.*;
 import xal.tools.swing.KeyValueFilteredTableModel;
 import xal.tools.dispatch.*;
 import xal.tools.UpdateListener;

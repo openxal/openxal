@@ -9,7 +9,7 @@
 package xal.tools.swing;
 
 import xal.tools.data.*;
-import xal.tools.bricks.WindowReference;
+import xal.extension.bricks.WindowReference;
 
 import java.net.URL;
 import java.awt.event.*;
