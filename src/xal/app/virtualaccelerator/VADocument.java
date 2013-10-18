@@ -57,8 +57,8 @@ import xal.tools.swing.KeyValueFilteredTableModel;
 import xal.tools.swing.DecimalField;
 import xal.tools.apputils.files.*;
 import xal.tools.apputils.SimpleProbeEditor;
-import xal.tools.apputils.pvlogbrowser.PVLogSnapshotChooser;
-import xal.sim.sync.PVLoggerDataSource;
+import xal.service.pvlogger.apputils.browser.PVLogSnapshotChooser;
+import xal.service.pvlogger.sim.PVLoggerDataSource;
 import xal.tools.dispatch.*;
 
 
