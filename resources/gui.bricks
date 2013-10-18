@@ -35,11 +35,11 @@
                     <BeanProperty name="name" value="DiagPlot"/>
                     <BeanProperty name="toolTipText" value=""/>
                     <ViewNode tag="BeamDispPlot">
-                        <ViewProxy type="xal.tools.plot.FunctionGraphsJPanel"/>
+                        <ViewProxy type="xal.extension.widgets.plot.FunctionGraphsJPanel"/>
                         <BeanProperty name="name" value="BeamDispPlot"/>
                     </ViewNode>
                     <ViewNode tag="SigmaPlot">
-                        <ViewProxy type="xal.tools.plot.FunctionGraphsJPanel"/>
+                        <ViewProxy type="xal.extension.widgets.plot.FunctionGraphsJPanel"/>
                         <BeanProperty name="name" value="SigmaPlot"/>
                     </ViewNode>
                 </ViewNode>
