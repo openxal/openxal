@@ -20,7 +20,6 @@ import xal.model.xml.ProbeXmlWriter;
 
 import xal.sim.scenario.Scenario;
 import xal.sim.slg.LatticeError;
-import xal.sim.sync.PVLoggerDataSource;
 import xal.sim.sync.SynchronizationException;
 
 import xal.smf.AcceleratorNode;
@@ -306,12 +305,6 @@ public class ModelProxy {
 		}
 		return false;
 	}
-        
-        public void setPVlogger(long pvlogId) {
-            scenario.setSynchronizationMode(Scenario.SYNC_MODE_DESIGN);
-            PVLoggerDataSource plds = new PVLoggerDataSource(pvlogId);
-            scenario = plds.setModelSource(acceleratorSequence, scenario);
-        }
 
 	// -------------------------- getter members ------------------------------------------
 	/**
