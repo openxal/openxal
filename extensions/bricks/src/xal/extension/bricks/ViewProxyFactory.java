@@ -28,7 +28,7 @@ import java.util.Map;
 import java.util.HashMap;
 import java.lang.reflect.*;
 
-import xal.tools.plot.*;
+import xal.extension.widgets.plot.*;
 
 
 /** factory for making view proxies */

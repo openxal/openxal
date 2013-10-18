@@ -5,12 +5,12 @@ import java.util.*;
 import java.awt.event.*;
 
 import xal.ca.*;
-import xal.tools.plot.*;
+import xal.extension.widgets.plot.*;
 import xal.extension.scan.MonitoredPV;
 import xal.extension.scan.MonitoredPVEvent;
 import xal.extension.scan.UpdatingEventController;
 
-import xal.tools.plot.barchart.*;
+import xal.extension.widgets.plot.barchart.*;
 
 /**
  *  The average transfer line BPM (x,y, or amplitude) values stack. It

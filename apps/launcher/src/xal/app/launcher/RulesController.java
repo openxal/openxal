@@ -9,7 +9,7 @@
 package xal.app.launcher;
 
 import xal.extension.bricks.WindowReference;
-import xal.tools.swing.KeyValueTableModel;
+import xal.extension.widgets.swing.KeyValueTableModel;
 
 import java.awt.event.*;
 import java.util.*;

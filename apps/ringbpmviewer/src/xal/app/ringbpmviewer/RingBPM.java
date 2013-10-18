@@ -6,7 +6,7 @@ import java.awt.*;
 
 import xal.extension.scan.UpdatingEventController;
 
-import xal.tools.plot.barchart.*;
+import xal.extension.widgets.plot.barchart.*;
 
 /**
  *  The container of the three RingBPMtbtAvg instances fro x,y, and amplitude

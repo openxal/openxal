@@ -13,7 +13,7 @@ import java.io.*;
 import java.awt.event.*;
 
 import xal.ca.*;
-import xal.tools.plot.*;
+import xal.extension.widgets.plot.*;
 import xal.tools.swing.FortranNumberFormat;
 import xal.tools.xml.*;
 

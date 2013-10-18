@@ -121,7 +121,7 @@ public class ViewPalette extends JTabbedPane {
 		views.add( ViewProxyFactory.getViewProxy( "JList" ) );
 		views.add( ViewProxyFactory.getViewProxy( "JTable" ) );
 		views.add( ViewProxyFactory.getViewProxy( "JTree" ) );
-		views.add( ViewProxyFactory.getViewProxy( "xal.tools.plot.FunctionGraphsJPanel" ) );
+		views.add( ViewProxyFactory.getViewProxy( "xal.extension.widgets.plot.FunctionGraphsJPanel" ) );
 				
 		return views;
 	}

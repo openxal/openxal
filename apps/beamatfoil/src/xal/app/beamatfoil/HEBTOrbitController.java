@@ -14,7 +14,7 @@ import javax.swing.tree.DefaultTreeModel;
 
 import xal.extension.scan.UpdatingEventController;
 import xal.tools.xml.*;
-import xal.tools.swing.*;
+import xal.extension.widgets.swing.*;
 import xal.smf.*;
 import xal.smf.impl.*;
 

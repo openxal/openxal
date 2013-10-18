@@ -106,7 +106,7 @@
                         </BorderNode>
                     </ViewNode>
                     <ViewNode tag="CorrelationPlot">
-                        <ViewProxy type="xal.tools.plot.FunctionGraphsJPanel"/>
+                        <ViewProxy type="xal.extension.widgets.plot.FunctionGraphsJPanel"/>
                     </ViewNode>
                     <ViewNode tag="ButtonBox">
                         <ViewProxy type="javax.swing.Box_Horizontal"/>

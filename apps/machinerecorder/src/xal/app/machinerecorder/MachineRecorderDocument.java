@@ -18,7 +18,7 @@ import xal.extension.smf.application.*;
 import xal.smf.*;
 import xal.tools.xml.XmlDataAdaptor;
 import xal.tools.data.*;
-import xal.tools.swing.KeyValueTableModel;
+import xal.extension.widgets.swing.KeyValueTableModel;
 
 
 /**

@@ -5,7 +5,7 @@
  */
 package xal.app.arraypvviewer;
 
-import xal.tools.plot.CurveData;
+import xal.extension.widgets.plot.CurveData;
 
 /**
  *  This class calculates average value and dispersion of the array

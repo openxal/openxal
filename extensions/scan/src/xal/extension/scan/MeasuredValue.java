@@ -4,7 +4,7 @@ import java.util.*;
 import java.awt.*;
 
 import xal.ca.*;
-import xal.tools.plot.*;
+import xal.extension.widgets.plot.*;
 
 public class MeasuredValue{
     

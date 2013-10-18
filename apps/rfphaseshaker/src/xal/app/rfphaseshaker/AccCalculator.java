@@ -23,7 +23,7 @@ import xal.sim.scenario.ProbeFactory;
 import xal.model.ModelException;
 import xal.model.probe.traj.Trajectory;
 
-import xal.tools.plot.BasicGraphData;
+import xal.extension.widgets.plot.BasicGraphData;
 
 
 //import gov.sns.ca.ConnectionException;

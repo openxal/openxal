@@ -9,7 +9,7 @@ import java.awt.Color;
 import java.awt.BorderLayout;
 
 import xal.ca.*;
-import xal.tools.swing.*;
+import xal.extension.widgets.swing.*;
 import xal.smf.TimingCenter;
 
 

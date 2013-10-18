@@ -7,7 +7,7 @@ import xal.extension.scan.UpdatingEventController;
 import xal.tools.data.DataAdaptor;
 import xal.smf.impl.BPM;
 
-import xal.tools.plot.barchart.*;
+import xal.extension.widgets.plot.barchart.*;
 
 /**
  *  The container of the TrLineBPM instances to provide group operation over the

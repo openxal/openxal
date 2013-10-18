@@ -23,9 +23,9 @@ import java.text.*;
 
 import xal.extension.application.XalDocument;
 import xal.extension.smf.application.AcceleratorWindow;
-import xal.tools.plot.*;
+import xal.extension.widgets.plot.*;
 import xal.tools.apputils.*;
-import xal.tools.swing.*;
+import xal.extension.widgets.swing.*;
 import xal.extension.scan.*;
 import xal.sim.scenario.Scenario;
 

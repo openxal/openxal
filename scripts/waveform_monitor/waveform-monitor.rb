@@ -19,15 +19,15 @@ import javax.swing.JFrame
 import javax.swing.JOptionPane
 import javax.swing.SpinnerNumberModel
 
-include_class 'xal.tools.apputils.SimpleChartPopupMenu'
+include_class 'xal.extension.widgets.apputils.SimpleChartPopupMenu'
 include_class 'xal.tools.StringJoiner'
-include_class 'xal.tools.plot.RainbowColorGenerator'
-include_class 'xal.tools.plot.FunctionGraphsJPanel'
-include_class 'xal.tools.plot.BasicGraphData'
+include_class 'xal.extension.widgets.plot.RainbowColorGenerator'
+include_class 'xal.extension.widgets.plot.FunctionGraphsJPanel'
+include_class 'xal.extension.widgets.plot.BasicGraphData'
 include_class 'xal.extension.bricks.WindowReference'
 include_class 'xal.tools.statistics.MutableUnivariateStatistics'
 include_class 'xal.tools.math.DiscreteFourierTransform'
-include_class 'xal.smf.widgets.NodeChannelSelector'
+include_class 'xal.extension.widgets.smf.NodeChannelSelector'
 include_class 'xal.smf.impl.BPM'
 include_class 'xal.smf.data.XMLDataManager'
 include_class 'xal.ca.ConnectionListener'

@@ -66,7 +66,7 @@
                     </ViewNode>
                 </ViewNode>
                 <ViewNode tag="HistogramPlot">
-                    <ViewProxy type="xal.tools.plot.FunctionGraphsJPanel"/>
+                    <ViewProxy type="xal.extension.widgets.plot.FunctionGraphsJPanel"/>
                     <BeanProperty name="name" value="PV Histogram"/>
                 </ViewNode>
                 <ViewNode tag="FooterBar">

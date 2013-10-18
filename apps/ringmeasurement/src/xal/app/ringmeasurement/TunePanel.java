@@ -25,7 +25,7 @@ import java.text.ParseException;
 import xal.tools.apputils.EdgeLayout;
 import xal.smf.impl.*;
 import xal.smf.Ring;
-import xal.tools.swing.DecimalField;
+import xal.extension.widgets.swing.DecimalField;
 import xal.ca.*;
 import xal.tools.apputils.files.*;
 import xal.service.pvlogger.*;

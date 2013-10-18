@@ -13,9 +13,9 @@ import java.awt.event.*;
 import java.util.*;
 
 import xal.extension.bricks.WindowReference;
-import xal.tools.swing.KeyValueTableModel;
+import xal.extension.widgets.swing.KeyValueTableModel;
 import xal.smf.*;
-import xal.smf.widgets.NodeChannelSelector;
+import xal.extension.widgets.smf.NodeChannelSelector;
 
 
 /** DisplayGroupConfigController */

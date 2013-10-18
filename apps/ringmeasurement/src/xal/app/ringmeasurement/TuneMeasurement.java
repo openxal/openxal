@@ -9,7 +9,7 @@ package xal.app.ringmeasurement;
 import xal.ca.ConnectionException;
 import xal.ca.GetException;
 //import xal.tools.fit.lsm.Cosine;
-import xal.tools.plot.BasicGraphData;
+import xal.extension.widgets.plot.BasicGraphData;
 import xal.smf.impl.BPM;
 import JSci.maths.Complex;
 import JSci.maths.FourierMath;

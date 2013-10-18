@@ -30,7 +30,7 @@ import javax.swing.JToggleButton.ToggleButtonModel;
 import xal.extension.smf.application.*;
 import xal.extension.application.*;
 import xal.smf.*;
-import xal.tools.plot.BasicGraphData;
+import xal.extension.widgets.plot.BasicGraphData;
 import xal.tools.xml.*;
 import xal.tools.apputils.files.RecentFileTracker;
 import xal.tools.data.*;

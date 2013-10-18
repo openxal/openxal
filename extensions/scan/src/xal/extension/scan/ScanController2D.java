@@ -8,7 +8,7 @@ import javax.swing.event.*;
 import java.util.*;
 import javax.swing.border.*;
 
-import xal.tools.swing.*;
+import xal.extension.widgets.swing.*;
 import xal.ca.*;
 import xal.tools.apputils.*;
 

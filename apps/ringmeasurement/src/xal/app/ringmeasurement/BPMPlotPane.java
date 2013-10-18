@@ -9,9 +9,9 @@
 
 package xal.app.ringmeasurement;
 
-import xal.tools.apputils.SimpleChartPopupMenu;
-import xal.tools.plot.BasicGraphData;
-import xal.tools.plot.FunctionGraphsJPanel;
+import xal.extension.widgets.apputils.SimpleChartPopupMenu;
+import xal.extension.widgets.plot.BasicGraphData;
+import xal.extension.widgets.plot.FunctionGraphsJPanel;
 
 import java.awt.BorderLayout;
 import java.awt.Color;

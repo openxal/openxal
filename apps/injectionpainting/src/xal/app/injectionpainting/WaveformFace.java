@@ -26,7 +26,7 @@ import java.sql.Connection;
 import java.awt.Color;
 import java.net.*;
 import java.io.*;
-import xal.tools.plot.*;
+import xal.extension.widgets.plot.*;
 import xal.tools.apputils.files.RecentFileTracker;
 
 

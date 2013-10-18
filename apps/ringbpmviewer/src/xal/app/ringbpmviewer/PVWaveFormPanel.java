@@ -8,8 +8,8 @@ import javax.swing.border.*;
 import java.awt.event.*;
 import java.text.*;
 
-import xal.tools.plot.*;
-import xal.tools.swing.*;
+import xal.extension.widgets.plot.*;
+import xal.extension.widgets.swing.*;
 import xal.extension.scan.UpdatingEventController;
 
 /**

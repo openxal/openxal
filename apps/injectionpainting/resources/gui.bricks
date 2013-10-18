@@ -149,7 +149,7 @@
                 <ViewNode tag="Plot Box">
                     <ViewProxy type="javax.swing.Box_Horizontal" />
                     <ViewNode tag="HWaveformPlot">
-                        <ViewProxy type="xal.tools.plot.FunctionGraphsJPanel" />
+                        <ViewProxy type="xal.extension.widgets.plot.FunctionGraphsJPanel" />
                         <BeanProperty name="enabled" value="false" />
                         <BeanProperty alpha="255" blue="255" green="255" name="graphBackGroundColor" red="255" />
                         <BeanProperty name="visible" value="true" />
@@ -166,7 +166,7 @@
                         <BeanProperty alpha="255" blue="255" green="255" name="foreground" red="51" />
                     </ViewNode>
                     <ViewNode tag="VWaveformPlot">
-                        <ViewProxy type="xal.tools.plot.FunctionGraphsJPanel" />
+                        <ViewProxy type="xal.extension.widgets.plot.FunctionGraphsJPanel" />
                         <BeanProperty name="enabled" value="false" />
                         <BeanProperty alpha="255" blue="255" green="255" name="graphBackGroundColor" red="255" />
                         <BeanProperty name="legendVisible" value="false" />

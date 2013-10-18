@@ -10,7 +10,7 @@ package xal.app.knobs;
 
 import xal.tools.text.FormattedNumber;
 import xal.tools.IconLib;
-import xal.smf.widgets.*;
+import xal.extension.widgets.smf.*;
 import xal.smf.*;
 
 import java.util.*;

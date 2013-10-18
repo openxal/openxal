@@ -11,8 +11,8 @@
 package xal.app.scope;
 
 import xal.tools.data.*;
-import xal.tools.plot.*;
-import xal.tools.apputils.SimpleChartPopupMenu;
+import xal.extension.widgets.plot.*;
+import xal.extension.widgets.apputils.SimpleChartPopupMenu;
 
 import javax.swing.*;
 import java.awt.*;

@@ -8,7 +8,7 @@ import java.awt.event.*;
 
 import xal.tools.data.DataAdaptor;
 import xal.extension.scan.*;
-import xal.tools.plot.*;
+import xal.extension.widgets.plot.*;
 
 /**
  * This class is a analysis class for polynomial fitting.

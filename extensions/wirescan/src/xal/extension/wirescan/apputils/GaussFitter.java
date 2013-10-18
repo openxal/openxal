@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.ArrayList;
 
 
-import xal.tools.plot.BasicGraphData;
+import xal.extension.widgets.plot.BasicGraphData;
 import xal.tools.solver.Scorer;
 import xal.tools.solver.Trial;
 import xal.tools.solver.Variable;

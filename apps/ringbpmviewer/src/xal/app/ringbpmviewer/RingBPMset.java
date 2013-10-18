@@ -3,7 +3,7 @@ package xal.app.ringbpmviewer;
 import xal.extension.scan.UpdatingEventController;
 import xal.tools.xml.XmlDataAdaptor;
 import xal.tools.data.DataAdaptor;
-import xal.tools.plot.barchart.*;
+import xal.extension.widgets.plot.barchart.*;
 
 import java.awt.Font;
 import java.util.Vector;

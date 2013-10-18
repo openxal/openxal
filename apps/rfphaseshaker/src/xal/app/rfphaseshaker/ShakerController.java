@@ -26,12 +26,12 @@ import xal.smf.impl.BPM;
 import xal.smf.impl.RfCavity;
 
 import xal.tools.swing.FortranNumberFormat;
-import xal.tools.swing.DoubleInputTextField;
+import xal.extension.widgets.swing.DoubleInputTextField;
 
-import xal.tools.plot.BasicGraphData;
-import xal.tools.plot.FunctionGraphsJPanel;
-import xal.tools.plot.GraphDataOperations;
-import xal.tools.apputils.SimpleChartPopupMenu;
+import xal.extension.widgets.plot.BasicGraphData;
+import xal.extension.widgets.plot.FunctionGraphsJPanel;
+import xal.extension.widgets.plot.GraphDataOperations;
+import xal.extension.widgets.apputils.SimpleChartPopupMenu;
 
 /**
  *  ShakerController is a controller to perform the shake measurements and simulations.

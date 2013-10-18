@@ -12,8 +12,9 @@ import java.io.*;
 import xal.tools.data.DataAdaptor;
 import xal.tools.apputils.*;
 import xal.extension.scan.*;
-import xal.tools.plot.*;
-import xal.tools.swing.*;
+import xal.extension.widgets.apputils.SimpleChartPopupMenu;
+import xal.extension.widgets.plot.*;
+import xal.extension.widgets.swing.*;
 
 /**
  *  This class is a DTL Phase Scan analysis.

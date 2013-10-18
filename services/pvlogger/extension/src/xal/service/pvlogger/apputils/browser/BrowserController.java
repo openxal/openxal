@@ -13,8 +13,8 @@ package xal.service.pvlogger.apputils.browser;
 import xal.service.pvlogger.*;
 import xal.tools.messaging.*;
 import xal.tools.data.KeyValueRecordListener;
-import xal.tools.swing.KeyValueTableModel;
-import xal.tools.swing.KeyValueFilteredTableModel;
+import xal.extension.widgets.swing.KeyValueTableModel;
+import xal.extension.widgets.swing.KeyValueFilteredTableModel;
 
 import java.util.*;
 

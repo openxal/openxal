@@ -12,9 +12,10 @@ import java.util.*;
 import xal.extension.scan.UpdatingEventController;
 import xal.extension.scan.WrappedChannel;
 
-import xal.tools.plot.*;
+import xal.extension.widgets.plot.*;
+import xal.extension.widgets.apputils.SimpleChartPopupMenu;
 import xal.tools.apputils.*;
-import xal.tools.swing.*;
+import xal.extension.widgets.swing.*;
 import xal.tools.xml.*;
 
 //import xal.tools.pvlogger.*;

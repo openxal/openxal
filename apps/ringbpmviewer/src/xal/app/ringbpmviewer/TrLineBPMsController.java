@@ -9,10 +9,11 @@ import java.util.*;
 
 import xal.extension.scan.UpdatingEventController;
 import xal.tools.xml.*;
-import xal.tools.swing.*;
+import xal.extension.widgets.swing.*;
+import xal.tools.swing.FortranNumberFormat;
 import xal.tools.data.DataAdaptor;
 
-import xal.tools.plot.barchart.*;
+import xal.extension.widgets.plot.barchart.*;
 
 /**
  *  The GUI panel for ring BPM data representation.

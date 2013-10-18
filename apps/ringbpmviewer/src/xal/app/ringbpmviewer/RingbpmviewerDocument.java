@@ -19,12 +19,12 @@ import javax.swing.tree.DefaultTreeModel;
 import java.util.regex.*;
 
 import xal.ca.*;
-import xal.tools.plot.*;
+import xal.extension.widgets.plot.*;
 import xal.extension.application.*;
 import xal.tools.xml.*;
 import xal.tools.apputils.*;
 import xal.tools.apputils.pvselection.*;
-import xal.tools.swing.*;
+import xal.extension.widgets.swing.*;
 
 import xal.extension.scan.UpdatingEventController;
 

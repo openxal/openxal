@@ -5,9 +5,9 @@
  */
 package xal.app.scalarpvviewer;
 
-import xal.tools.plot.CurveData;
-import xal.tools.plot.DateGraphFormat;
-import xal.tools.plot.GraphDataOperations;
+import xal.extension.widgets.plot.CurveData;
+import xal.extension.widgets.plot.DateGraphFormat;
+import xal.extension.widgets.plot.GraphDataOperations;
 import xal.extension.scan.MonitoredPV;
 import xal.extension.scan.UpdatingEventController;
 

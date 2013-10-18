@@ -24,7 +24,7 @@ import java.sql.Timestamp;
 import xal.extension.application.*;
 import xal.extension.bricks.WindowReference;
 import xal.tools.data.*;
-import xal.tools.swing.*;
+import xal.extension.widgets.swing.*;
 import xal.ca.*;
 import xal.extension.logbook.ElogUtility;
 

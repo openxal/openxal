@@ -6,7 +6,7 @@ import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.border.*;
 
-import xal.tools.swing.*;
+import xal.extension.widgets.swing.*;
 import xal.tools.xml.*;
 import xal.tools.data.DataAdaptor;
 

@@ -19,7 +19,7 @@ import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 
 import xal.extension.bricks.WindowReference;
-import xal.tools.plot.*;
+import xal.extension.widgets.plot.*;
 import xal.ca.*;
 import xal.tools.fit.lsm.Polynomial;
 

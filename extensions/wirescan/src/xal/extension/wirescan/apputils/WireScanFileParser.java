@@ -6,7 +6,7 @@
 package xal.extension.wirescan.apputils;
 
 import java.util.Vector;
-import xal.tools.plot.BasicGraphData;
+import xal.extension.widgets.plot.BasicGraphData;
 import java.io.*;
 
 

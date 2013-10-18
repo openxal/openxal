@@ -14,7 +14,7 @@ import xal.extension.application.*;
 import xal.extension.smf.application.*;
 import xal.service.pvlogger.*;
 import xal.tools.data.*;
-import xal.tools.swing.KeyValueTableModel;
+import xal.extension.widgets.swing.KeyValueTableModel;
 import xal.tools.dispatch.*;
 import xal.tools.UpdateListener;
 

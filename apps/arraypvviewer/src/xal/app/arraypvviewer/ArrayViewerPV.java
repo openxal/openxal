@@ -9,7 +9,7 @@ import java.awt.Color;
 import java.text.*;
 
 import xal.ca.*;
-import xal.tools.plot.*;
+import xal.extension.widgets.plot.*;
 import xal.tools.xml.*;
 import xal.tools.data.DataAdaptor;
 

@@ -18,7 +18,7 @@ import xal.extension.application.*;
 import xal.extension.smf.application.*;
 import xal.smf.impl.*;
 import xal.tools.apputils.*;
-import xal.tools.swing.*;
+import xal.extension.widgets.swing.*;
 
 /**
  * Controls the swing componenet setup for the Window Application

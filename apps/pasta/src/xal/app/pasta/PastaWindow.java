@@ -17,8 +17,9 @@ import xal.extension.application.*;
 import xal.extension.smf.application.*;
 import xal.smf.impl.*;
 import xal.tools.apputils.*;
-import xal.tools.swing.*;
-import xal.tools.plot.*;
+import xal.extension.widgets.swing.*;
+import xal.extension.widgets.plot.*;
+import xal.extension.widgets.apputils.SimpleChartPopupMenu;
 import xal.extension.scan.*;
 import xal.sim.scenario.Scenario;
 

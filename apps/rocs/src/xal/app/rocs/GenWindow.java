@@ -15,7 +15,7 @@ import java.util.*;
 import java.io.*;
 import java.lang.*;
 import java.text.NumberFormat;
-import xal.tools.swing.*;
+import xal.extension.widgets.swing.*;
 import xal.extension.application.*;
 import xal.extension.smf.application.*;
 

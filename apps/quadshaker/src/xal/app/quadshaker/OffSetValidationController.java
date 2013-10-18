@@ -5,7 +5,7 @@ import javax.swing.*;
 import javax.swing.border.*;
 import java.util.*;
 
-import xal.tools.swing.*;
+import xal.extension.widgets.swing.*;
 
 /**
  *  Description of the Class

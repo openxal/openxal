@@ -16,9 +16,9 @@ import java.awt.event.*;
 import xal.extension.application.*;
 import xal.extension.smf.application.*;
 import xal.tools.apputils.EdgeLayout;
-import xal.tools.apputils.SimpleChartPopupMenu;
-import xal.tools.plot.*;
-import xal.tools.swing.DecimalField;
+import xal.extension.widgets.apputils.SimpleChartPopupMenu;
+import xal.extension.widgets.plot.*;
+import xal.extension.widgets.swing.DecimalField;
 
 /**
  * TimeStampWindow is the window control for the Time Stamp Test application.

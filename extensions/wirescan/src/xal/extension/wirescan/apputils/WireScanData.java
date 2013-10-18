@@ -1,7 +1,7 @@
 package xal.extension.wirescan.apputils;
 
 
-import xal.tools.plot.BasicGraphData;
+import xal.extension.widgets.plot.BasicGraphData;
 import java.awt.Color;
 
 

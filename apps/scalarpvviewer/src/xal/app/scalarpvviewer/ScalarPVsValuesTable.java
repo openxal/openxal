@@ -14,7 +14,7 @@ import javax.swing.*;
 import javax.swing.table.*;
 import javax.swing.event.*;
 
-import xal.tools.plot.*;
+import xal.extension.widgets.plot.*;
 import xal.tools.swing.FortranNumberFormat;
 import xal.extension.scan.UpdatingEventController;
 

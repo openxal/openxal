@@ -19,7 +19,7 @@ import java.util.Vector;
 
 import xal.extension.application.*;
 import xal.extension.bricks.WindowReference;
-import xal.tools.plot.*;
+import xal.extension.widgets.plot.*;
 import xal.smf.data.OpticsSwitcher;
 
 

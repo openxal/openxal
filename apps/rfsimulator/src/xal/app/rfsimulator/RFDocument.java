@@ -30,7 +30,7 @@ import xal.extension.application.Commander;
 
 import xal.tools.xml.*;
 import xal.tools.apputils.*;
-import xal.tools.swing.*;
+import xal.extension.widgets.swing.*;
 import xal.tools.data.DataAdaptor;
 import xal.tools.xml.XmlDataAdaptor;
 

@@ -19,10 +19,11 @@ import java.text.*;
 import java.util.*;
 
 import xal.tools.solver.*;
-import xal.tools.plot.*;
+import xal.extension.widgets.plot.*;
 import xal.tools.apputils.*;
 import xal.smf.AcceleratorSeq;
-import xal.smf.widgets.XALSynopticPanel;
+import xal.extension.widgets.smf.XALSynopticPanel;
+import xal.extension.widgets.apputils.SimpleChartPopupMenu;
 
 
 /**

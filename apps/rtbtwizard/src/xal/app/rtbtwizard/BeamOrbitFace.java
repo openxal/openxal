@@ -29,7 +29,7 @@ import Jama.*;
 import xal.ca.*;
 import xal.smf.*;
 import xal.smf.impl.*;
-import xal.tools.plot.*;
+import xal.extension.widgets.plot.*;
 import xal.tools.messaging.MessageCenter;
 import xal.tools.statistics.RunningWeightedStatistics;
 import xal.tools.text.FormattedNumber;

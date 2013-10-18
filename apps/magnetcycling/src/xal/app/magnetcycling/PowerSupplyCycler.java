@@ -4,7 +4,7 @@ import java.util.*;
 import java.awt.*;
 import java.awt.event.*;
 
-import xal.tools.plot.*;
+import xal.extension.widgets.plot.*;
 import xal.extension.scan.WrappedChannel;
 
 /**
