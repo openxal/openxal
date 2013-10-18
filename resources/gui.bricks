@@ -133,7 +133,7 @@
                         <ViewProxy type="javax.swing.Box_Vertical"/>
                         <BeanProperty name="name" value="States Plot"/>
                         <ViewNode tag="States Plot">
-                            <ViewProxy type="xal.tools.plot.FunctionGraphsJPanel"/>
+                            <ViewProxy type="xal.extension.widgets.plot.FunctionGraphsJPanel"/>
                         </ViewNode>
                     </ViewNode>
                 </ViewNode>
