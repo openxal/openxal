@@ -20,7 +20,7 @@
         <junit printsummary="yes">
             <classpath>
                 <pathelement location="${build.intermediates.core.test}/xal-test.jar" />
-                <pathelement location="${build.intermediates.shared}/xal-core.jar" />
+                <pathelement location="${build.products.lib}/xal-shared.jar" />
             </classpath>
             
             <formatter type="plain" usefile="false" />
@@ -42,7 +42,7 @@
         <mkdir dir="${build.compile.core.test.root}" />
         <javac debug="true" source="${build.compile.java.source}" target="${build.compile.java.target}" includeAntRuntime="no" deprecation="true" destdir="${build.compile.core.test.root}" srcdir="${srcroot}/${source.code.dir}" includes="**" sourcepath="">
             <classpath>
-                <pathelement location="${build.intermediates.shared}/xal-core.jar" />
+                <pathelement location="${build.products.lib}/xal-shared.jar" />
 
 				<!-- compile against external test libraries in the local test library if any -->
 				<fileset dir="${srcroot}">
