@@ -6,7 +6,7 @@
 //  Copyright 2009 Oak Ridge National Lab. All rights reserved.
 //
 
-package xal.tools.bricks;
+package xal.extension.bricks;
 
 import java.net.URL;
 

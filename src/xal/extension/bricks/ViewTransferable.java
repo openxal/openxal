@@ -1,12 +1,12 @@
 //
-//  ViewNodeTransferable.java
+//  ViewTransferable.java
 //  xal
 //
-//  Created by Thomas Pelaia on 6/30/06.
+//  Created by Thomas Pelaia on 4/17/06.
 //  Copyright 2006 Oak Ridge National Lab. All rights reserved.
 //
 
-package xal.tools.bricks;
+package xal.extension.bricks;
 
 import javax.swing.*;
 import javax.swing.border.*;
@@ -18,50 +18,50 @@ import java.util.Collections;
 import java.util.List;
 
 
-/** transferable for transfering view nodes */
-public class ViewNodeTransferable implements Transferable {
-	/** define the view node flavor */
-	static public final DataFlavor VIEW_NODE_FLAVOR;
+/** transferable for transfering views */
+public class ViewTransferable implements Transferable {
+	/** define the view flavor */
+	static public final DataFlavor VIEW_FLAVOR;
 	
-	/** the list of flavors associated with view node transfer */
+	/** the list of flavors associated with view transfer */
 	static public final DataFlavor[] FLAVORS;
 	
-	/** The view nodes being transferred */
-	protected final List<BeanNode<?>> _viewNodes;
+	/** The views being transferred */
+	protected final List<BeanProxy<?>> VIEW_PROXIES;
 	
 	
 	// static initializer
 	static {
-		VIEW_NODE_FLAVOR = new DataFlavor( ViewNode.class, "View Node" );
-		FLAVORS = new DataFlavor[] { VIEW_NODE_FLAVOR };
+		VIEW_FLAVOR = new DataFlavor( BeanProxy.class, "View" );
+		FLAVORS = new DataFlavor[] { VIEW_FLAVOR };
 	}
 	
 	
 	/**
 	 * Primary Constructor
-	 * @param nodes The nodes being transferred
+	 * @param beanProxies The views being transferred
 	 */
-	public ViewNodeTransferable( final List<BeanNode<?>> nodes ) {
-		_viewNodes = new ArrayList<BeanNode<?>>( nodes );
+	public ViewTransferable( final List<BeanProxy<?>> beanProxies ) {
+		VIEW_PROXIES = new ArrayList<BeanProxy<?>>( beanProxies );
 	}
 	
 	
 	/**
 	 * Constructor
-	 * @param node The node to transfer
+	 * @param viewProxy The view to transfer
 	 */
-	public ViewNodeTransferable( final BeanNode<?> node ) {
-		this( Collections.<BeanNode<?>>singletonList( node ) );
+	public ViewTransferable( final BeanProxy<?> viewProxy ) {
+		this( Collections.<BeanProxy<?>>singletonList( viewProxy ) );
 	}
 	
 	
 	/**
-	 * Get the data being transfered which in this case is simply the list of view nodes
+	 * Get the data being transfered which in this case is simply the list of views
 	 * @param flavor The flavor of the transfer
-	 * @return The nodes to transfer
+	 * @return The views being transfered
 	 */
 	public Object getTransferData( final DataFlavor flavor ) {
-		return _viewNodes;
+		return VIEW_PROXIES;
 	}
 	
 	
