@@ -39,6 +39,7 @@
 	<property name="build.products.root" value="${build.root}/products" />
 	<property name="build.jar.root" value="${build.products.root}" />
 	<property name="build.jar.lib.root" value="${build.jar.root}/lib" />
+	<property name="build.products.lib" value="${build.jar.lib.root}" />
 
 	<!-- Configure build tests  -->
 	<property name="common.test.root" value="${xal.home}/test" />
