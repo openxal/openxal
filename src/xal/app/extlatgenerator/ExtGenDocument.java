@@ -33,7 +33,7 @@ import xal.sim.scenario.Scenario;
 import xal.sim.scenario.*;
 
 import xal.tools.apputils.SimpleProbeEditor;
-import xal.tools.apputils.pvlogbrowser.PVLogSnapshotChooser;
+import xal.service.pvlogger.apputils.browser.PVLogSnapshotChooser;
 import xal.tools.xml.*;
 import xal.tools.data.*;
 
