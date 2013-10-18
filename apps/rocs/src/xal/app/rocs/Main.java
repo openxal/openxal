@@ -15,8 +15,8 @@ import javax.swing.event.*;
 import java.awt.event.*;
 import java.net.*;
 import xal.tools.swing.*;
-import xal.application.*;
-import xal.smf.application.*;
+import xal.extension.application.*;
+import xal.extension.smf.application.*;
 
 /**
  * This is the main class for the ring optics application panel.

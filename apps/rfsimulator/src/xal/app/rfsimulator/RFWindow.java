@@ -21,8 +21,8 @@ import java.awt.event.*;
 import javax.swing.border.*;
 import java.text.*;
 
-import xal.application.XalDocument;
-import xal.smf.application.AcceleratorWindow;
+import xal.extension.application.XalDocument;
+import xal.extension.smf.application.AcceleratorWindow;
 import xal.tools.plot.*;
 import xal.tools.apputils.*;
 import xal.tools.swing.*;

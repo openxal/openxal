@@ -9,9 +9,9 @@ import javax.swing.*;
 import java.util.*;
 import java.awt.*;
 
-import xal.application.*;
-import xal.smf.application.AcceleratorWindow;
-import xal.smf.application.AcceleratorDocument;
+import xal.extension.application.*;
+import xal.extension.smf.application.AcceleratorWindow;
+import xal.extension.smf.application.AcceleratorDocument;
 
 /**
  *  RFPhaseShakerWindow is a subclass of XalWindow used in the RFPhaseShaker

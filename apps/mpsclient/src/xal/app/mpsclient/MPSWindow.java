@@ -10,7 +10,7 @@
 
 package xal.app.mpsclient;
 
-import xal.application.*;
+import xal.extension.application.*;
 import xal.service.mpstool.MPSPortal;
 import xal.tools.data.GenericRecord;
 import xal.tools.swing.KeyValueTableModel;

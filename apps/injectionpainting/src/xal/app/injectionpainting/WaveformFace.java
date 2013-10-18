@@ -9,7 +9,7 @@
 package xal.app.injectionpainting;
 
 import xal.ca.*;
-import xal.application.*;
+import xal.extension.application.*;
 import xal.tools.bricks.WindowReference;
 import xal.tools.messaging.MessageCenter;
 

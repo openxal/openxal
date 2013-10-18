@@ -27,7 +27,7 @@
                 </ViewNode>
             </ViewNode>
         </ViewNode>
-        <ViewNode customBeanClass="xal.application.DefaultXalWindow" height="547" tag="MainWindow" width="772">
+        <ViewNode customBeanClass="xal.extension.application.DefaultXalWindow" height="547" tag="MainWindow" width="772">
             <ViewProxy type="javax.swing.JFrame"/>
             <BeanProperty name="title" value="Demo"/>
             <ViewNode tag="Main Tabs">

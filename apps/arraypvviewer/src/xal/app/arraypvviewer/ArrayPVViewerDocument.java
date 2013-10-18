@@ -5,8 +5,8 @@
  */
 package xal.app.arraypvviewer;
 
-import xal.application.Commander;
-import xal.application.XalDocument;
+import xal.extension.application.Commander;
+import xal.extension.application.XalDocument;
 import xal.app.arraypvviewer.*;
 import xal.ca.ChannelFactory;
 import xal.tools.apputils.PredefinedConfController;
@@ -18,7 +18,7 @@ import xal.tools.plot.FunctionGraphsJPanel;
 import xal.tools.plot.IncrementalColors;
 import xal.tools.xml.XmlDataAdaptor;
 import xal.tools.data.DataAdaptor;
-import xal.smf.application.*;
+import xal.extension.smf.application.*;
 
 import java.awt.BorderLayout;
 import java.awt.Color;

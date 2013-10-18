@@ -19,12 +19,12 @@ import javax.swing.tree.DefaultTreeModel;
 
 import xal.ca.*;
 import xal.tools.plot.*;
-import xal.application.*;
+import xal.extension.application.*;
 import xal.tools.xml.*;
 import xal.tools.apputils.*;
 import xal.tools.swing.*;
 
-import xal.smf.application.*;
+import xal.extension.smf.application.*;
 import xal.smf.*;
 import xal.smf.impl.*;
 import xal.smf.impl.qualify.*;

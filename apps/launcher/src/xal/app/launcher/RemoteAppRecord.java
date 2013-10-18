@@ -13,7 +13,7 @@ import java.util.Date;
 
 import xal.tools.UpdateListener;
 import xal.tools.services.*;
-import xal.application.ApplicationStatus;
+import xal.extension.application.ApplicationStatus;
 import xal.tools.dispatch.DispatchQueue;
 
 

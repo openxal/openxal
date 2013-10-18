@@ -19,12 +19,12 @@ import javax.swing.tree.DefaultTreeModel;
 
 import xal.ca.*;
 import xal.tools.plot.*;
-import xal.application.*;
+import xal.extension.application.*;
 import xal.tools.xml.*;
 import xal.tools.apputils.*;
 import xal.tools.swing.*;
 
-import xal.smf.application.AcceleratorDocument;
+import xal.extension.smf.application.AcceleratorDocument;
 
 import xal.smf.data.XMLDataManager;
 import xal.tools.data.DataAdaptor;

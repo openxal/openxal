@@ -10,7 +10,7 @@
 
 package xal.app.mpsclient;
 
-import xal.application.*;
+import xal.extension.application.*;
 
 import java.net.URL;
 

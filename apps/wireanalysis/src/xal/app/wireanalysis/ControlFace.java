@@ -24,11 +24,11 @@ import java.util.List;
 import java.io.*;
 import java.lang.*;
 
-import xal.smf.application.*;
+import xal.extension.smf.application.*;
 import xal.smf.*;
 import xal.smf.impl.*;
 import xal.smf.data.*;
-import xal.application.*;
+import xal.extension.application.*;
 import xal.model.*;
 import xal.ca.*;
 import xal.tools.*;
@@ -99,8 +99,8 @@ import xal.tools.solver.algorithm.*;
 import xal.tools.solver.market.*;
 import xal.tools.solver.solutionjudge.*;
 import xal.tools.beam.*;
-import xal.smf.application.*;
-import xal.application.*;
+import xal.extension.smf.application.*;
+import xal.extension.application.*;
 import xal.smf.proxy.*;
 import xal.smf.impl.*;
 

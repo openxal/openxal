@@ -1,7 +1,7 @@
 <?xml version = '1.0' encoding = 'UTF-8'?>
 <BricksDocument date="Thu Feb 16 13:54:45 EST 2012" version="1.0.0">
     <RootBrick>
-        <ViewNode customBeanClass="xal.application.DefaultXalWindow" height="733" tag="MainWindow" width="1111">
+        <ViewNode customBeanClass="xal.extension.application.DefaultXalWindow" height="733" tag="MainWindow" width="1111">
             <ViewProxy type="javax.swing.JFrame" />
             <BeanProperty name="enabled" value="true" />
             <BeanProperty name="focusTraversalPolicyProvider" value="false" />

@@ -17,11 +17,11 @@ import javax.swing.*;
 import javax.swing.event.*;
 import java.awt.*;
 import java.awt.event.*;
-import xal.application.*;
+import xal.extension.application.*;
 import java.util.Timer.*;
 
 import xal.tools.data.*;
-import xal.smf.application.*;
+import xal.extension.smf.application.*;
 import xal.smf.data.*;
 import xal.smf.*;
 import xal.smf.impl.*;

@@ -15,8 +15,8 @@ import javax.swing.event.*;
 import java.awt.Toolkit;
 
 import xal.ca.*;
-import xal.application.*;
-import xal.smf.application.*;
+import xal.extension.application.*;
+import xal.extension.smf.application.*;
 import xal.smf.*;
 import xal.smf.impl.*;
 import xal.smf.impl.qualify.*;

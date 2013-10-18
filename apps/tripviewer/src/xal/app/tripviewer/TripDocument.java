@@ -11,7 +11,7 @@
 package xal.app.tripviewer;
 
 import xal.service.tripmonitor.*;
-import xal.application.*;
+import xal.extension.application.*;
 import xal.tools.bricks.WindowReference;
 import xal.tools.database.*;
 

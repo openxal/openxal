@@ -10,8 +10,8 @@
 
 package xal.app.acceleratorapplicationtemplate;
 
-import xal.application.*;
-import xal.smf.application.AcceleratorApplication;
+import xal.extension.application.*;
+import xal.extension.smf.application.AcceleratorApplication;
 
 
 /**

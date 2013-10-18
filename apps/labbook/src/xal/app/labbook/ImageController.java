@@ -8,7 +8,7 @@
 
 package xal.app.labbook;
 
-import xal.application.Application;
+import xal.extension.application.Application;
 import xal.tools.bricks.*;
 import xal.tools.messaging.MessageCenter;
 

@@ -25,8 +25,8 @@ import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.border.*;
 
-import xal.application.*;
-import xal.application.Commander;
+import xal.extension.application.*;
+import xal.extension.application.Commander;
 
 import xal.tools.xml.*;
 import xal.tools.apputils.*;
@@ -35,7 +35,7 @@ import xal.tools.data.DataAdaptor;
 import xal.tools.xml.XmlDataAdaptor;
 
 import xal.smf.*;
-import xal.smf.application.*;
+import xal.extension.smf.application.*;
 
 public class RFDocument extends AcceleratorDocument {
    /*

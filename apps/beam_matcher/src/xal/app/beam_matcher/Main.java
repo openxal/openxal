@@ -10,8 +10,8 @@ package xal.app.beam_matcher;
 
 import javax.swing.*;
 import java.net.*;
-import xal.application.*;
-import xal.smf.application.*;
+import xal.extension.application.*;
+import xal.extension.smf.application.*;
 
 /**
  * This is the main class for the loss viewer application.

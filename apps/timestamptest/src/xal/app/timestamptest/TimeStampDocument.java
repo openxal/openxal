@@ -27,8 +27,8 @@ import java.awt.Color;
 import javax.swing.event.*;
 import javax.swing.JToggleButton.ToggleButtonModel;
 
-import xal.smf.application.*;
-import xal.application.*;
+import xal.extension.smf.application.*;
+import xal.extension.application.*;
 import xal.smf.*;
 import xal.tools.plot.BasicGraphData;
 import xal.tools.xml.*;

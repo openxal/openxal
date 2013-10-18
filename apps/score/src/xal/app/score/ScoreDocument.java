@@ -21,7 +21,7 @@ import java.text.DecimalFormat;
 import java.awt.Toolkit;
 import java.sql.Timestamp;
 
-import xal.application.*;
+import xal.extension.application.*;
 import xal.tools.bricks.WindowReference;
 import xal.tools.data.*;
 import xal.tools.swing.*;

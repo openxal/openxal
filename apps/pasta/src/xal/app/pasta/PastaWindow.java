@@ -13,8 +13,8 @@ import java.awt.event.*;
 import javax.swing.border.*;
 import java.text.*;
 
-import xal.application.*;
-import xal.smf.application.*;
+import xal.extension.application.*;
+import xal.extension.smf.application.*;
 import xal.smf.impl.*;
 import xal.tools.apputils.*;
 import xal.tools.swing.*;

@@ -8,7 +8,7 @@
 
 package xal.app.labbook;
 
-import xal.application.*;
+import xal.extension.application.*;
 import xal.tools.bricks.*;
 
 import java.awt.*;

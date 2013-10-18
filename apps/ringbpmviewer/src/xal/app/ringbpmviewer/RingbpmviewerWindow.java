@@ -9,7 +9,7 @@ import javax.swing.*;
 import java.util.*;
 import java.awt.*;
 
-import xal.application.*;
+import xal.extension.application.*;
 
 /**
  *  RingbpmviewerWindow is a subclass of XalWindow used in the Ringbpmviewer

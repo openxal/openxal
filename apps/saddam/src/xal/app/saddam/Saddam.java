@@ -11,8 +11,8 @@ import javax.swing.event.*;
 import java.awt.event.*;
 import java.net.*;
 
-import xal.application.*;
-import xal.smf.application.*;
+import xal.extension.application.*;
+import xal.extension.smf.application.*;
 
 /**
  * An application to set all PVs with a certain handle for many devices 

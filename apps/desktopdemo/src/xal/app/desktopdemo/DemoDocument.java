@@ -19,7 +19,7 @@ import javax.swing.event.*;
 import java.awt.event.*;
 import java.util.logging.*;
 
-import xal.application.*;
+import xal.extension.application.*;
 
 
 /** demonstration document */

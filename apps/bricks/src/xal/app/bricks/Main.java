@@ -10,7 +10,7 @@
 
 package xal.app.bricks;
 
-import xal.application.*;
+import xal.extension.application.*;
 
 import java.io.File;
 import java.net.URL;

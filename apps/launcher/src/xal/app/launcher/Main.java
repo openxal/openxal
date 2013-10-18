@@ -10,7 +10,7 @@
 
 package xal.app.launcher;
 
-import xal.application.*;
+import xal.extension.application.*;
 
 import java.io.*;
 import java.net.*;

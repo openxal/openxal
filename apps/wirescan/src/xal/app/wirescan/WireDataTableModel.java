@@ -6,9 +6,9 @@ package xal.app.wirescan;
 
 import javax.swing.table.AbstractTableModel;
 
-import xal.application.*;
+import xal.extension.application.*;
 import xal.smf.*;
-import xal.smf.application.*;
+import xal.extension.smf.application.*;
 import xal.smf.impl.*;
 
 /**

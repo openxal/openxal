@@ -14,8 +14,8 @@ import javax.swing.event.*;
 import java.util.*;
 import java.sql.*;
 
-import xal.application.*;
-import xal.smf.application.AcceleratorDocument;
+import xal.extension.application.*;
+import xal.extension.smf.application.AcceleratorDocument;
 import xal.smf.*;
 import xal.ca.Channel;
 import xal.tools.bricks.WindowReference;

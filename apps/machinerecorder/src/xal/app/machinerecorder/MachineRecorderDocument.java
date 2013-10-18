@@ -12,9 +12,9 @@ import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.event.*;
 
-import xal.application.*;
+import xal.extension.application.*;
 import xal.tools.bricks.WindowReference;
-import xal.smf.application.*;
+import xal.extension.smf.application.*;
 import xal.smf.*;
 import xal.tools.xml.XmlDataAdaptor;
 import xal.tools.data.*;
