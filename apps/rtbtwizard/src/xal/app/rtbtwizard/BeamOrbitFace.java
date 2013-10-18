@@ -38,7 +38,7 @@ import xal.model.probe.*;
 import xal.model.probe.traj.*;
 import xal.sim.scenario.*;
 import xal.tools.OrbitMatcher;
-import xal.sim.sync.PVLoggerDataSource;
+import xal.service.pvlogger.sim.PVLoggerDataSource;
 
 
 /** view providing an alternative beam position measurement based on matching measurements from multiple BPMs */

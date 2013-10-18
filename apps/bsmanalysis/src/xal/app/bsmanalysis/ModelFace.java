@@ -44,7 +44,7 @@ import xal.tools.solver.hint.*;
 import xal.tools.solver.algorithm.*;
 import xal.tools.solver.market.*;
 import xal.tools.solver.solutionjudge.*;
-import xal.sim.sync.PVLoggerDataSource;
+import xal.service.pvlogger.sim.PVLoggerDataSource;
 import xal.tools.apputils.SimpleProbeEditor;
 import xal.tools.beam.IConstants;
 import xal.sim.scenario.ProbeFactory;

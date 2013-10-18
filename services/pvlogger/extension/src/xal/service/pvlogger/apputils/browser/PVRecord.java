@@ -6,7 +6,7 @@
 // Copyright 2012 Oak Ridge National Lab. All rights reserved.
 //
 
-package xal.tools.apputils.pvlogbrowser;
+package xal.service.pvlogger.apputils.browser;
 
 
 /** PVRecord */

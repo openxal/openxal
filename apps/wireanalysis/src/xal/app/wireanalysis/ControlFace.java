@@ -76,7 +76,7 @@ import java.text.DecimalFormat;
 import xal.tools.apputils.NonConsecutiveSeqSelector;
 import xal.tools.apputils.SimpleProbeEditor;
 import xal.tools.apputils.SimpleChartPopupMenu;
-import xal.sim.sync.PVLoggerDataSource;
+import xal.service.pvlogger.sim.PVLoggerDataSource;
 import xal.tools.xml.XmlDataAdaptor;
 import xal.sim.scenario.Scenario;
 import xal.sim.sync.SynchronizationException;

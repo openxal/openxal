@@ -43,7 +43,7 @@ import xal.tools.xml.XmlDataAdaptor;
 import xal.tools.beam.*;
 import xal.tools.statistics.*;
 import java.text.DecimalFormat;
-import xal.sim.sync.PVLoggerDataSource;
+import xal.service.pvlogger.sim.PVLoggerDataSource;
 import xal.tools.apputils.SimpleProbeEditor;
 
 /**

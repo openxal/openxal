@@ -6,7 +6,7 @@
  * All rights reserved.
  *
  */
-package xal.sim.sync;
+package xal.service.pvlogger.sim;
 
 import java.util.*;
 

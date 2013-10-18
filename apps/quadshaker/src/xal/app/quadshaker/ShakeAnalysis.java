@@ -27,7 +27,7 @@ import xal.smf.impl.qualify.*;
 
 import xal.model.*;
 import xal.sim.scenario.*;
-import xal.sim.sync.PVLoggerDataSource;
+import xal.service.pvlogger.sim.PVLoggerDataSource;
 import xal.model.probe.*;
 //import xal.model.alg.resp.*;
 //import xal.model.probe.resp.*;

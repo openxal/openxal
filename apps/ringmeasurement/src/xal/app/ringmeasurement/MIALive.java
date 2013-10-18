@@ -51,7 +51,7 @@ import xal.sim.scenario.*;
 import xal.model.probe.Probe;
 import xal.model.probe.traj.*;
 //import xal.model.probe.traj.BeamProbeState;
-import xal.sim.sync.PVLoggerDataSource;
+import xal.service.pvlogger.sim.PVLoggerDataSource;
 import xal.smf.*;
 import xal.tools.xml.*;
 import xal.tools.data.*;

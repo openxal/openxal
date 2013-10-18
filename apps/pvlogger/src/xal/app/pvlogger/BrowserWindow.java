@@ -15,7 +15,7 @@ import xal.application.*;
 import xal.smf.application.*;
 import xal.tools.database.*;
 import xal.tools.apputils.files.RecentFileTracker;
-import xal.tools.apputils.pvlogbrowser.*;
+import xal.service.pvlogger.apputils.browser.*;
 import xal.tools.plot.*;
 import xal.tools.swing.KeyValueTableModel;
 import xal.tools.swing.KeyValueFilteredTableModel;
