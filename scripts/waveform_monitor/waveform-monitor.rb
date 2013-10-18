@@ -345,7 +345,7 @@ class ControlApp
             if ( fresh_reader != nil )     # check that at least one reader is fresh otherwise there is nothing to do
                 readers.each do |reader|
                     waveform = reader.waveform
-                    if waveform != nil:
+                    if waveform != nil
                         refreshDisplay
                         return
                     end
