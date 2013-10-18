@@ -24,7 +24,7 @@ import xal.tools.xml.*;
 import xal.tools.apputils.*;
 import xal.tools.swing.*;
 
-import xal.tools.scan.UpdatingEventController;
+import xal.extension.scan.UpdatingEventController;
 
 
 /**

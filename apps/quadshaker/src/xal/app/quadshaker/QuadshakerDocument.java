@@ -30,7 +30,7 @@ import xal.smf.impl.*;
 import xal.smf.impl.qualify.*;
 import xal.tools.data.DataAdaptor;
 
-import xal.tools.scan.UpdatingEventController;
+import xal.extension.scan.UpdatingEventController;
 
 /**
  *  QuadshakerDocument is a custom XalDocument for Quadshaker application. The

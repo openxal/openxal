@@ -8,8 +8,8 @@ package xal.app.scalarpvviewer;
 import xal.tools.plot.CurveData;
 import xal.tools.plot.DateGraphFormat;
 import xal.tools.plot.GraphDataOperations;
-import xal.tools.scan.MonitoredPV;
-import xal.tools.scan.UpdatingEventController;
+import xal.extension.scan.MonitoredPV;
+import xal.extension.scan.UpdatingEventController;
 
 import java.awt.Color;
 import java.awt.event.ActionEvent;

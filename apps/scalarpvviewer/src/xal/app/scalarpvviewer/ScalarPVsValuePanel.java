@@ -8,7 +8,7 @@ package xal.app.scalarpvviewer;
 import xal.tools.apputils.SimpleChartPopupMenu;
 import xal.tools.apputils.VerticalLayout;
 import xal.tools.plot.FunctionGraphsJPanel;
-import xal.tools.scan.UpdatingEventController;
+import xal.extension.scan.UpdatingEventController;
 import xal.tools.swing.FortranNumberFormat;
 import xal.tools.plot.CurveData;
 

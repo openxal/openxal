@@ -7,7 +7,7 @@ import java.awt.event.*;
 import javax.swing.border.*;
 import java.util.*;
 
-import xal.tools.scan.UpdatingEventController;
+import xal.extension.scan.UpdatingEventController;
 import xal.tools.xml.*;
 import xal.tools.swing.*;
 import xal.tools.data.DataAdaptor;

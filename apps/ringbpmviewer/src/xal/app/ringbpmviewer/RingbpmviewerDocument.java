@@ -26,7 +26,7 @@ import xal.tools.apputils.*;
 import xal.tools.apputils.pvselection.*;
 import xal.tools.swing.*;
 
-import xal.tools.scan.UpdatingEventController;
+import xal.extension.scan.UpdatingEventController;
 
 import xal.app.ringbpmviewer.*;
 

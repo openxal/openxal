@@ -3,7 +3,7 @@ import java.util.*;
 import java.awt.*;
 
 import xal.tools.xml.*;
-import xal.tools.scan.UpdatingEventController;
+import xal.extension.scan.UpdatingEventController;
 import xal.tools.data.DataAdaptor;
 import xal.smf.impl.BPM;
 

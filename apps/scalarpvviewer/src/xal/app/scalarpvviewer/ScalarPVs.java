@@ -17,8 +17,8 @@ import xal.tools.plot.*;
 import xal.tools.swing.FortranNumberFormat;
 import xal.tools.xml.*;
 
-import xal.tools.scan.MonitoredPV;
-import xal.tools.scan.UpdatingEventController;
+import xal.extension.scan.MonitoredPV;
+import xal.extension.scan.UpdatingEventController;
 
 /**
  *  Keeps the references to the ScalarPV objects.

@@ -21,7 +21,7 @@ import xal.tools.dispatch.DispatchQueue;
 import xal.tools.plot.*;
 import xal.tools.beam.*;
 import xal.tools.math.TrigStuff;
-import xal.tools.scan.*;
+import xal.extension.scan.*;
 import xal.model.xml.*;
 import xal.model.probe.*;
 import xal.model.probe.traj.*;

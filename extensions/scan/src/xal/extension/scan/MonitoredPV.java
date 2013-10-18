@@ -1,4 +1,4 @@
-package xal.tools.scan;
+package xal.extension.scan;
 
 import xal.ca.*;
 import xal.tools.messaging.MessageCenter;

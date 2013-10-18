@@ -29,7 +29,7 @@ import xal.smf.*;
 import xal.smf.impl.*;
 import xal.smf.impl.qualify.*;
 
-import xal.tools.scan.UpdatingEventController;
+import xal.extension.scan.UpdatingEventController;
 
 
 /**

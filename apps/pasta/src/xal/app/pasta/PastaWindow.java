@@ -19,7 +19,7 @@ import xal.smf.impl.*;
 import xal.tools.apputils.*;
 import xal.tools.swing.*;
 import xal.tools.plot.*;
-import xal.tools.scan.*;
+import xal.extension.scan.*;
 import xal.sim.scenario.Scenario;
 
 /**

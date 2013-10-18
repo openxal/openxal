@@ -25,8 +25,8 @@ import xal.tools.data.DataAdaptor;
 import xal.tools.apputils.*;
 import xal.tools.apputils.pvselection.*;
 import xal.tools.swing.*;
-import xal.tools.scan.*;
-import xal.tools.scan.analysis.*;
+import xal.extension.scan.*;
+import xal.extension.scan.analysis.*;
 import xal.extension.smf.application.*;
 
 import xal.service.pvlogger.*;

@@ -20,7 +20,7 @@ import xal.extension.smf.application.*;
 import xal.smf.*;
 import xal.smf.impl.*;
 import xal.smf.impl.qualify.*;
-import xal.tools.scan.*;
+import xal.extension.scan.*;
 import xal.sim.scenario.Scenario;
 
 /**

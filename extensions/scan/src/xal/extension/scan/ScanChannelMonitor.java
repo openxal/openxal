@@ -6,7 +6,7 @@
 // Copyright 2013 ORNL. All rights reserved.
 //
 
-package xal.tools.scan;
+package xal.extension.scan;
 
 import xal.ca.*;
 

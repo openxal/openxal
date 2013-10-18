@@ -6,9 +6,9 @@ import java.awt.event.*;
 
 import xal.ca.*;
 import xal.tools.plot.*;
-import xal.tools.scan.MonitoredPV;
-import xal.tools.scan.MonitoredPVEvent;
-import xal.tools.scan.UpdatingEventController;
+import xal.extension.scan.MonitoredPV;
+import xal.extension.scan.MonitoredPVEvent;
+import xal.extension.scan.UpdatingEventController;
 
 import xal.tools.plot.barchart.*;
 

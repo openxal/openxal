@@ -17,7 +17,7 @@ import javax.swing.event.*;
 
 import xal.tools.plot.*;
 import xal.tools.swing.FortranNumberFormat;
-import xal.tools.scan.UpdatingEventController;
+import xal.extension.scan.UpdatingEventController;
 
 /**
  *  Shows the table with PVs names and atributes realted to the value, reference

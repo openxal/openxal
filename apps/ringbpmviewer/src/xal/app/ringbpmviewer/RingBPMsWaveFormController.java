@@ -9,7 +9,7 @@ import java.util.*;
 import java.io.*;
 import java.util.prefs.*;
 
-import xal.tools.scan.UpdatingEventController;
+import xal.extension.scan.UpdatingEventController;
 import xal.tools.xml.*;
 import xal.tools.swing.*;
 

@@ -9,7 +9,7 @@ package xal.app.arraypvviewer;
 import xal.ca.Channel;
 import xal.ca.ConnectionException;
 import xal.ca.GetException;
-import xal.tools.scan.MonitoredPV;
+import xal.extension.scan.MonitoredPV;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

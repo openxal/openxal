@@ -9,7 +9,7 @@ import java.util.*;
 import java.awt.event.*;
 
 import xal.ca.*;
-import xal.tools.scan.MonitoredPV;
+import xal.extension.scan.MonitoredPV;
 
 /**
  *  This class keeps a reference to the PV with array data and listens to the

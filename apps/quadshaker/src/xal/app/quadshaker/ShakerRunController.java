@@ -9,8 +9,8 @@ import javax.swing.event.*;
 import javax.swing.border.*;
 import java.util.*;
 
-import xal.tools.scan.UpdatingEventController;
-import xal.tools.scan.WrappedChannel;
+import xal.extension.scan.UpdatingEventController;
+import xal.extension.scan.WrappedChannel;
 
 import xal.tools.plot.*;
 import xal.tools.apputils.*;

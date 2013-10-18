@@ -15,7 +15,7 @@ import java.text.*;
 
 import xal.ca.view.*;
 
-import xal.tools.scan.UpdatingEventController;
+import xal.extension.scan.UpdatingEventController;
 
 /**
  *  The ContentController class is a container for power cycling groups and

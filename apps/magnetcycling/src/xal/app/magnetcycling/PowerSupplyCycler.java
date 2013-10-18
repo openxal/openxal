@@ -5,7 +5,7 @@ import java.awt.*;
 import java.awt.event.*;
 
 import xal.tools.plot.*;
-import xal.tools.scan.WrappedChannel;
+import xal.extension.scan.WrappedChannel;
 
 /**
  *  This class keeps references to the power supply I_Set PV and read back PV, a

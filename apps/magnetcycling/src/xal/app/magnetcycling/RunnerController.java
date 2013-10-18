@@ -14,7 +14,7 @@ import xal.tools.plot.*;
 import xal.tools.xml.*;
 import xal.tools.data.DataAdaptor;
 
-import xal.tools.scan.UpdatingEventController;
+import xal.extension.scan.UpdatingEventController;
 
 /**
  *  The RunnerController class is a container for Runner class instance and

@@ -3,7 +3,7 @@
  *
  *  Created on September 26, 2003, 10:25 AM
  */
-package xal.tools.scan.analysis;
+package xal.extension.scan.analysis;
 
 import javax.swing.*;
 import java.util.*;
@@ -14,7 +14,7 @@ import java.io.*;
 import javax.swing.border.*;
 
 import xal.extension.application.*;
-import xal.tools.scan.*;
+import xal.extension.scan.*;
 import xal.tools.plot.*;
 import xal.tools.swing.*;
 import xal.tools.data.DataAdaptor;

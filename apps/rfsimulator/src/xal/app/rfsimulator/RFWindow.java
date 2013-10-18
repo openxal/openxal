@@ -26,7 +26,7 @@ import xal.extension.smf.application.AcceleratorWindow;
 import xal.tools.plot.*;
 import xal.tools.apputils.*;
 import xal.tools.swing.*;
-import xal.tools.scan.*;
+import xal.extension.scan.*;
 import xal.sim.scenario.Scenario;
 
 public class RFWindow extends AcceleratorWindow {

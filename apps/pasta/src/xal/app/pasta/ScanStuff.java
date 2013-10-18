@@ -14,7 +14,7 @@ import java.text.*;
 import xal.smf.*;
 import xal.smf.impl.*;
 import xal.smf.impl.qualify.*;
-import xal.tools.scan.*;
+import xal.extension.scan.*;
 import xal.tools.apputils.*;
 import xal.tools.plot.*;
 import xal.tools.xml.*;

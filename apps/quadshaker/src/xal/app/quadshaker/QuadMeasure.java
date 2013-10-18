@@ -4,7 +4,7 @@ import java.util.*;
 import javax.swing.*;
 
 import xal.ca.*;
-import xal.tools.scan.WrappedChannel;
+import xal.extension.scan.WrappedChannel;
 import xal.tools.xml.*;
 import xal.tools.data.DataAdaptor;
 
