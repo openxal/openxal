@@ -23,8 +23,8 @@ import xal.service.pvlogger.*;
 import xal.tools.data.KeyValueSorting;
 import xal.tools.data.KeyValueRecordListener;
 import xal.tools.database.*;
-import xal.tools.swing.*;
-import xal.smf.widgets.NodeChannelSelector;
+import xal.extension.widgets.swing.*;
+import xal.extension.widgets.smf.NodeChannelSelector;
 
 
 /** document for managing the PV Logger configuration */
