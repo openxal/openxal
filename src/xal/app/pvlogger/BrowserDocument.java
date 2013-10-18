@@ -15,7 +15,7 @@ import xal.smf.application.*;
 import xal.application.*;
 import xal.tools.database.*;
 import xal.tools.apputils.PathPreferenceSelector;
-import xal.tools.apputils.pvlogbrowser.*;
+import xal.service.pvlogger.apputils.browser.*;
 
 import java.net.URL;
 
