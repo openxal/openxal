@@ -4,7 +4,7 @@
  * Created on August 26, 2002, 5:41 PM
  */
 
-package xal.jca;
+package xal.plugin.jca;
 
 import xal.ca.StatusAdaptor;
 

@@ -6,7 +6,7 @@
 
 package xal.ca;
 
-import xal.jca.JcaChannelFactory;
+import xal.plugin.jca.JcaChannelFactory;
 
 
 /**

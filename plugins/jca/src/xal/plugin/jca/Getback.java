@@ -3,7 +3,7 @@
  *
  * Created on December 19, 2001, 3:34 PM
  */
-package xal.jca;
+package xal.plugin.jca;
 
 
 import xal.ca.*;

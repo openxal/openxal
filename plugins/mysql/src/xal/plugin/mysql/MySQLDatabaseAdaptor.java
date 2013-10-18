@@ -1,4 +1,6 @@
-package xal.tools.database;
+package xal.plugin.mysql;
+
+import xal.tools.database.*;
 
 import java.sql.Array;
 import java.sql.Connection;

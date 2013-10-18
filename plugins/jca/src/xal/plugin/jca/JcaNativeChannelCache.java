@@ -6,7 +6,7 @@
 //  Copyright 2005 Oak Ridge National Lab. All rights reserved.
 //
 
-package xal.jca;
+package xal.plugin.jca;
 
 import java.util.*;
 
