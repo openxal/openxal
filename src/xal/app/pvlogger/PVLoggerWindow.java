@@ -10,8 +10,8 @@
 
 package xal.app.pvlogger;
 
-import xal.application.*;
-import xal.smf.application.*;
+import xal.extension.application.*;
+import xal.extension.smf.application.*;
 import xal.service.pvlogger.*;
 import xal.tools.data.*;
 import xal.tools.swing.KeyValueTableModel;
