@@ -17,7 +17,7 @@ import java.awt.event.*;
 import java.util.logging.*;
 import java.util.Vector;
 
-import xal.application.*;
+import xal.extension.application.*;
 import xal.tools.bricks.WindowReference;
 import xal.tools.plot.*;
 
