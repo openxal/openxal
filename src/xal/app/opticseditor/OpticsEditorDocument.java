@@ -10,7 +10,7 @@
 
 package xal.app.opticseditor;
 
-import xal.application.*;
+import xal.extension.application.*;
 import xal.tools.bricks.WindowReference;
 import xal.tools.messaging.MessageCenter;
 import xal.tools.data.*;
