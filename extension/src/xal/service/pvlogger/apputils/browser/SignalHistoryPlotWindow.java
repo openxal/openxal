@@ -10,8 +10,8 @@
 
 package xal.service.pvlogger.apputils.browser;
 
-import xal.tools.apputils.SimpleChartPopupMenu;
-import xal.tools.plot.*;
+import xal.extension.widgets.apputils.SimpleChartPopupMenu;
+import xal.extension.widgets.plot.*;
 import xal.service.pvlogger.*;
 
 import javax.swing.*;

@@ -12,7 +12,7 @@ package xal.service.pvlogger.apputils.browser;
 
 import xal.service.pvlogger.*;
 import xal.tools.database.*;
-import xal.tools.swing.KeyValueTableModel;
+import xal.extension.widgets.swing.KeyValueTableModel;
 
 import java.sql.*;
 import java.util.Date;
