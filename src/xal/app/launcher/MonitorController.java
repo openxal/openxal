@@ -13,7 +13,7 @@ import javax.swing.*;
 import javax.swing.event.*;
 import java.util.*;
 
-import xal.application.Application;
+import xal.extension.application.Application;
 import xal.tools.bricks.*;
 import xal.tools.swing.KeyValueFilteredTableModel;
 import xal.tools.dispatch.*;
