@@ -6,7 +6,7 @@
 
 package xal.app.scope;
 
-import xal.application.*;
+import xal.extension.application.*;
 import xal.tools.data.*;
 import xal.tools.xml.XmlDataAdaptor;
 

@@ -10,7 +10,7 @@
 
 package xal.app.scope;
 
-import xal.application.Util;
+import xal.extension.application.Util;
 import xal.tools.data.*;
 import xal.tools.messaging.MessageCenter;
 import xal.ca.*;
