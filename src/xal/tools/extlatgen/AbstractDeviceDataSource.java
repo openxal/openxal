@@ -8,7 +8,7 @@
 
 package xal.tools.extlatgen;
 
-import xal.sim.sync.PVLoggerDataSource;
+import xal.service.pvlogger.sim.PVLoggerDataSource;
 import xal.smf.impl.Bend;
 import xal.smf.impl.Electromagnet;
 import xal.smf.impl.Magnet;
