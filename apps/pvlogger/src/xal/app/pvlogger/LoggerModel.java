@@ -18,7 +18,7 @@ import java.util.*;
 import java.util.concurrent.Callable;
 
 import xal.service.pvlogger.*;
-import xal.tools.services.*;
+import xal.extension.service.*;
 import xal.tools.dispatch.DispatchQueue;
 import xal.tools.messaging.MessageCenter;
 

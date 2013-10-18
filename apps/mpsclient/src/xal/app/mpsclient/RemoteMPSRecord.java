@@ -6,7 +6,7 @@ import java.util.*;
 import xal.tools.messaging.MessageCenter;
 import xal.service.mpstool.MPSPortal;
 import xal.tools.UpdateListener;
-import xal.tools.services.*;
+import xal.extension.service.*;
 import xal.tools.dispatch.DispatchQueue;
 import xal.service.pvlogger.RemoteLogging;
 

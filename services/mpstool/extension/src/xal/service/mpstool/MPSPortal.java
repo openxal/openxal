@@ -9,7 +9,7 @@
  */
 package xal.service.mpstool;
 
-import xal.tools.services.OneWay;
+import xal.extension.service.OneWay;
 
 import java.util.*;
 

@@ -11,7 +11,7 @@
 package xal.service.pvlogger;
 
 import xal.tools.database.*;
-import xal.tools.services.ServiceDirectory;
+import xal.extension.service.ServiceDirectory;
 
 import java.util.*;
 
