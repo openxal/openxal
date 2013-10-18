@@ -7,7 +7,6 @@
 
     <!-- Initialization for the extensions builder -->
     <target name="init">
-		<property name="extensions.root" value="${xal.home}/extensions" />
 		<property name="build.intermediates.extensions" value="${build.intermediates.extensions}" />
 		<property name="extension.compiler" value="${build.intermediates.extensions}/compiler.xml" />
 		<property name="extension.compile.root" value="${build.intermediates.extensions}/compile" />
@@ -19,6 +18,14 @@
 
 		<!-- sets the property if there are any pure extensions libraries to process -->
 		<pathconvert refid="fileset.extensions.lib" property="extensions.have.libs" setonempty="false" />
+
+		<!-- fileset for pure extensions' libraries -->
+		<fileset id="fileset.plugins.lib" dir="${plugins.root}">
+			<include name="*/lib/*.jar" />
+		</fileset>
+
+		<!-- sets the property if there are any pure extensions libraries to process -->
+		<pathconvert refid="fileset.plugins.lib" property="plugins.have.libs" setonempty="false" />
 
 		<!-- fileset for services extensions' libraries -->
 		<fileset id="fileset.services.extensions.lib" dir="${services.root}">
@@ -49,6 +56,12 @@
 			<fileset dir="${extensions.root}" includes="*/resources/**/*" />
 		</copy>
 
+		<!-- Merge the plugins' resources into the compile directory -->
+		<copy todir="${extension.compile.root}" quiet="true" failonerror="false" includeEmptyDirs="false">
+			<regexpmapper handledirsep="true" from="^[^/]+/resources/(.*)$$" to="\1" />
+			<fileset dir="${plugins.root}" includes="*/resources/**/*" />
+		</copy>
+
 		<!-- Merge the services extensions' resources into the compile directory -->
 		<copy todir="${extension.compile.root}" quiet="true" failonerror="false" includeEmptyDirs="false">
 			<regexpmapper handledirsep="true" from="^[^/]+/extension/resources/(.*)$$" to="\1" />
@@ -77,6 +90,11 @@
         <jar compress="true" jarfile="${build.intermediates.extensions}/lib.jar" duplicate="preserve">
 			<!-- include jars from each extension -->
 			<zipgroupfileset dir="${extensions.root}">
+				<include name="*/lib/*.jar" />
+			</zipgroupfileset>
+
+			<!-- include jars from each plugin -->
+			<zipgroupfileset dir="${plugins.root}">
 				<include name="*/lib/*.jar" />
 			</zipgroupfileset>
 
@@ -113,6 +131,7 @@
 		<!-- loop over every extension directory and add the source code -->
 		<subant genericantfile="${ant.file.extensions}" target="append-extension">
 			<dirset dir="${extensions.root}" includes="*" />
+			<dirset dir="${plugins.root}" includes="*" />
 			<dirset dir="${services.root}" includes="*/extension" />
 		</subant>
 		<echo file="${extension.compiler}" append="true">
@@ -136,6 +155,9 @@
 		<echo message="Usage: ant [ant options] target1 [target2 | target3 | ... ]" />
 		<echo message="" />
 		<echo message="  where target(s) can be:" />
+		<echo message="    all ........................ Build the shared extensions library." />
+		<echo message="    compile .................... Compile the extensions." />
+		<echo message="    jar ........................ Archive the shared extensions library." />
 		<echo message="    help ....................... Print this message." />
     </target>
 

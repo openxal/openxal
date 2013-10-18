@@ -30,7 +30,6 @@
 	<property name="build.intermediates.extensions" value="${build.intermediates.root}/extensions" />
 	<property name="build.intermediates.services" value="${build.intermediates.root}/services" />
 	<property name="build.intermediates.shared" value="${build.intermediates.root}/shared" />
-	<property name="build.intermediates.toolbox" value="${build.intermediates.root}/toolbox" />
 
 	<!-- Configure build compilation -->
 	<property name="build.compile.java.source" value="1.7" />
@@ -50,7 +49,13 @@
     
     <!-- Configure path for the common libraries  -->
     <property name="install.lib.root" value="${install.root}/lib" />
-    
+
+    <!-- Configure paths for extensions  -->
+    <property name="extensions.root" value="${xal.home}/extensions" />
+
+    <!-- Configure paths for plugins  -->
+    <property name="plugins.root" value="${xal.home}/plugins" />
+
     <!-- Configure paths for services  -->
     <property name="services.root" value="${xal.home}/services" />
     <property name="services.build.jar.root" value="${build.jar.root}/services" />
