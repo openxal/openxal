@@ -15,7 +15,7 @@ import xal.smf.*;
 import xal.model.probe.*;
 import xal.model.alg.*;
 import xal.tools.data.*;
-import xal.tools.apputils.SimpleProbeEditor;
+import xal.extension.widgets.apputils.SimpleProbeEditor;
 //import xal.tools.apputils.NumericCellRenderer;
 import xal.tools.apputils.files.RecentFileTracker;
 
