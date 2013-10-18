@@ -15,7 +15,7 @@ import java.util.*;
 import java.text.DecimalFormat;
 import java.beans.*;
 
-import xal.tools.swing.Wheelswitch;
+import xal.extension.widgets.swing.Wheelswitch;
 
 
 /**

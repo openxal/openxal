@@ -17,7 +17,7 @@ import java.text.DecimalFormat;
 
 import xal.ca.view.ChannelNameDocument;
 import xal.ca.*;
-import xal.tools.swing.*;
+import xal.extension.widgets.swing.*;
 
 
 /**

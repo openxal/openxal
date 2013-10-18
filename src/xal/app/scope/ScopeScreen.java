@@ -7,7 +7,7 @@
 package xal.app.scope;
 
 import xal.tools.data.*;
-import xal.tools.plot.*;
+import xal.extension.widgets.plot.*;
 import xal.tools.messaging.MessageCenter;
 
 import javax.swing.*;
