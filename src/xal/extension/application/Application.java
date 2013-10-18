@@ -24,7 +24,7 @@ import xal.extension.application.platform.*;
 import xal.tools.StringJoiner;
 import xal.tools.apputils.files.*;
 import xal.tools.messaging.MessageCenter;
-import xal.tools.services.*;
+import xal.extension.service.*;
 import xal.tools.URLReference;
 import xal.tools.apputils.ApplicationSupport;
 

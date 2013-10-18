@@ -24,7 +24,7 @@ import java.util.prefs.Preferences;
 import xal.tools.StringJoiner;
 import xal.tools.apputils.files.*;
 import xal.tools.messaging.MessageCenter;
-import xal.tools.services.*;
+import xal.extension.service.*;
 
 
 /** Application subclass for JFrame based applications. */

@@ -10,7 +10,7 @@
 
 package xal.extension.application;
 
-import xal.tools.services.OneWay;
+import xal.extension.service.OneWay;
 import java.util.Date;
 
 
