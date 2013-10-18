@@ -10,7 +10,7 @@ import java.io.*;
 import java.util.*;
 import java.text.*;
 
-import xal.tools.apputils.wirescan.*;
+import xal.extension.wirescan.apputils.*;
 
 /**
  *
@@ -21,7 +21,7 @@ public class ExportToMatlab {
     boolean readingRawArrays = false;
     boolean readingFitArrays = false;
     boolean zeroData = false;
-    ArrayList<xal.tools.apputils.wirescan.WireData> wires = new ArrayList<xal.tools.apputils.wirescan.WireData>();
+    ArrayList<xal.extension.wirescan.apputils.WireData> wires = new ArrayList<xal.extension.wirescan.apputils.WireData>();
     
     WireDataFileParser wdfp;
     
@@ -62,7 +62,7 @@ public class ExportToMatlab {
 
             char[] buffer;
             for (int i=0; i<wires.size(); i++) {
-                xal.tools.apputils.wirescan.WireData ws = (wires.get(i));
+                xal.extension.wirescan.apputils.WireData ws = (wires.get(i));
                 str = comment + ws.getName() + "\n";
 
                 buffer = new char[str.length()];
@@ -148,7 +148,7 @@ public class ExportToMatlab {
             char[] buffer;
             
             for (int i=0; i<wires.size(); i++) {
-               xal.tools.apputils.wirescan.WireData ws = (wires.get(i));
+               xal.extension.wirescan.apputils.WireData ws = (wires.get(i));
                 str = ws.getName() + float1.format(ws.getXFitSigma()) + "\t" + float1.format(ws.getYFitSigma()) 
                     + "\t" + float1.format(ws.getZFitSigma()) + "\n";
                 buffer = new char[str.length()];

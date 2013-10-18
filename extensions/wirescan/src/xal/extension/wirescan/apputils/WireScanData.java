@@ -1,4 +1,4 @@
-package xal.tools.apputils.wirescan;
+package xal.extension.wirescan.apputils;
 
 
 import xal.tools.plot.BasicGraphData;

@@ -3,7 +3,7 @@
  * of WireScanData instances with raw data and results of analysis. 
  */
  
-package xal.tools.apputils.wirescan;
+package xal.extension.wirescan.apputils;
 
 import java.util.Vector;
 import xal.tools.plot.BasicGraphData;

@@ -4,7 +4,7 @@
  * Created      : August, 2007
  * Author       : Christopher K. Allen
  */
-package xal.tools.data.profile;
+package xal.extension.wirescan.profile;
 
 import java.util.ArrayList;
 

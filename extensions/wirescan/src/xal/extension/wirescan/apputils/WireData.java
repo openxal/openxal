@@ -4,7 +4,7 @@
  * Created on January 5, 2005, 10:38 AM
  */
 
-package xal.tools.apputils.wirescan;
+package xal.extension.wirescan.apputils;
 
 import java.io.*;
 import java.util.*;

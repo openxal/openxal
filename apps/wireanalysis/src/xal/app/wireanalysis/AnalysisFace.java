@@ -32,7 +32,7 @@ import xal.tools.data.*;
 import java.text.NumberFormat;
 import xal.tools.messaging.*;
 import xal.ca.*;
-import xal.tools.data.profile.*;
+import xal.extension.wirescan.profile.*;
 
 public class AnalysisFace extends JPanel{
     

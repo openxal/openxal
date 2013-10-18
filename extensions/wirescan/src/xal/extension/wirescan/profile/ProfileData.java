@@ -4,7 +4,7 @@
  * Author   : Christopher K. Allen
  * Created  : August, 2007
  */
-package xal.tools.data.profile;
+package xal.extension.wirescan.profile;
 
 
 import java.io.StringWriter;
