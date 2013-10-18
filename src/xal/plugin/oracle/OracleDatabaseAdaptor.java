@@ -8,7 +8,9 @@
  * Oak Ridge, TN 37830
  */
 
-package xal.tools.database;
+package xal.plugin.oracle;
+
+import xal.tools.database.*;
 
 import java.util.*;
 import java.util.logging.*;
