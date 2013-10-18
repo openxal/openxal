@@ -27,7 +27,7 @@ import javax.swing.JToggleButton.ToggleButtonModel;
 
 import xal.extension.smf.application.*;
 import xal.extension.application.*;
-import xal.tools.bricks.WindowReference;
+import xal.extension.bricks.WindowReference;
 
 import xal.ca.*;
 import xal.smf.*;
