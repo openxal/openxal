@@ -13,7 +13,6 @@ import xal.model.probe.TransferMapProbe;
 import xal.sim.scenario.AlgorithmFactory;
 import xal.sim.scenario.ProbeFactory;
 import xal.sim.scenario.Scenario;
-import xal.sim.sync.PVLoggerDataSource;
 import xal.smf.Accelerator;
 import xal.smf.AcceleratorSeq;
 import xal.smf.data.XMLDataManager;
@@ -182,27 +181,4 @@ public class TestRunOnlineModel {
         MODEL_TEST.resync();
         MODEL_TEST.run();
     }
-    
-	/**
-	 * Test the ability of the online model to synchronize to an historical machine configuration.
-	 * 
-	 * @throws ModelException      general synchronization or simulation error ?
-	 *
-	 * @author Christopher K. Allen
-	 * @since  Oct 12, 2012
-	 */
-//	@Test
-	public void testPvLoggerDataSource() throws ModelException {
-	    
-        PVLoggerDataSource  srcPvLog = new PVLoggerDataSource(LNG_PVLOGID);
-        Scenario    modHistory = srcPvLog.setModelSource(SEQ_TEST, MODEL_TEST);
-	    
-        PROBE_ENV_TEST.reset();
-        modHistory.setProbe(PROBE_ENV_TEST);
-        modHistory.resync();
-        modHistory.run();
-	}
-	
-	
-
 }
