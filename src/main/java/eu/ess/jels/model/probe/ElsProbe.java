@@ -87,8 +87,8 @@ public class ElsProbe extends EnvelopeProbe {
 		for (int i = 0; i<3; i++) {
 			envelope.set(3*i+0,0,twiss[i].getBeta());
 			envelope.set(3*i+1,0,twiss[i].getAlpha());
-			envelope.set(3*i+2,0,(1+Math.pow(twiss[i].getAlpha(),2))/twiss[i].getBeta());
-			normalized_emmitance.set(i,0,twiss[i].getEmittance());
+			envelope.set(3*i+2,0,twiss[i].getGamma());
+			normalized_emmitance.set(i,0,twiss[i].getEmittance()*getBeta()*getGamma());
 		}		
 	}
 	
@@ -103,9 +103,10 @@ public class ElsProbe extends EnvelopeProbe {
 	@Override
 	public Twiss[] getTwiss()
 	{
-		Twiss[] t = new Twiss[3];
+		Twiss[] twiss = new Twiss[3];
 		for (int i=0; i<3; i++)
-			t[i] = new Twiss(envelope.get(3*i+1,0), envelope.get(3*i,0), normalized_emmitance.get(i,0));
-		return t;
+			twiss[i] = new Twiss(envelope.get(3*i+1,0), envelope.get(3*i,0), normalized_emmitance.get(i,0)/(getBeta()*getGamma()));
+		twiss[2].setTwiss(twiss[2].getAlpha(), twiss[2].getBeta()*Math.pow(getGamma(), 2), twiss[2].getEmittance());
+		return twiss;
 	}
 }

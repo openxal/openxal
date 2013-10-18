@@ -7,10 +7,14 @@ import java.util.Collection;
 
 import org.junit.runners.Parameterized.Parameters;
 
+import xal.model.IComponent;
+import xal.model.IElement;
 import xal.model.Lattice;
 import xal.model.ModelException;
+import xal.model.Sector;
 import xal.model.alg.EnvelopeTracker;
 import xal.model.alg.Tracker;
+import xal.model.elem.ElementSeq;
 import xal.model.probe.EnvelopeProbe;
 import xal.model.probe.Probe;
 import xal.model.xml.LatticeXmlWriter;
@@ -20,6 +24,7 @@ import xal.sim.scenario.ElsElementMapping;
 import xal.sim.scenario.Scenario;
 import xal.sim.scenario.ScenarioGenerator2;
 import xal.smf.AcceleratorSeq;
+import xal.tools.beam.CovarianceMatrix;
 import xal.tools.beam.Twiss;
 import xal.tools.xml.XmlDataAdaptor;
 import eu.ess.jels.model.alg.ElsTracker;
@@ -28,11 +33,14 @@ import eu.ess.jels.model.probe.ElsProbe;
 public abstract class TestCommon {
 	protected Probe probe;
 	protected ElementMapping elementMapping;
+	protected double beta0,gamma0;
 	
 	public TestCommon(Probe probe, ElementMapping elementMapping)
 	{
 		this.probe = probe;
 		this.elementMapping = elementMapping;
+		beta0 = probe.getBeta();
+		gamma0 = probe.getGamma();
 	}
 	
 
@@ -48,7 +56,7 @@ public abstract class TestCommon {
 	public static EnvelopeProbe setupProbeViaJavaCalls() {
 		// Envelope probe and tracker
 		EnvelopeTracker envelopeTracker = new EnvelopeTracker();			
-		envelopeTracker.setRfGapPhaseCalculation(false);
+		envelopeTracker.setRfGapPhaseCalculation(true);
 		envelopeTracker.setUseSpacecharge(false);
 		envelopeTracker.setEmittanceGrowth(false);
 		envelopeTracker.setStepSize(0.004);
@@ -58,7 +66,7 @@ public abstract class TestCommon {
 		envelopeProbe.setAlgorithm(envelopeTracker);
 		envelopeProbe.setSpeciesCharge(-1);
 		envelopeProbe.setSpeciesRestEnergy(9.3829431e8);
-		envelopeProbe.setKineticEnergy(2.5e6);//energy
+		envelopeProbe.setKineticEnergy(3e6);//energy
 		envelopeProbe.setPosition(0.0);
 		envelopeProbe.setTime(0.0);		
 				
@@ -77,32 +85,42 @@ public abstract class TestCommon {
 		alfa z = -0.5283
 		beta z in m/rad = 0.8684
 		 */
+		double beta_gamma = envelopeProbe.getBeta() * envelopeProbe.getGamma();
 		
-		envelopeProbe.initFromTwiss(new Twiss[]{new Twiss(-0.1763,0.2442,0.2098e-6),
-										  new Twiss(-0.3247,0.3974,0.2091e-6),
-										  new Twiss(-0.5283,0.8684,0.2851e-6)});
+		envelopeProbe.initFromTwiss(new Twiss[]{new Twiss(-0.1763,0.2442,0.2098e-6 / beta_gamma),
+				  new Twiss(-0.3247,0.3974,0.2091e-6 / beta_gamma),
+				  new Twiss(-0.5283,0.8684,0.2851e-6 / beta_gamma)});
 		envelopeProbe.setBeamCurrent(0.0);
 		envelopeProbe.setBunchFrequency(4.025e8);//frequency
+		
+		/*CovarianceMatrix cov = ((EnvelopeProbe)envelopeProbe).getCovariance().computeCovariance();
+		cov.setElem(4, 4, cov.getElem(4,4)/Math.pow(envelopeProbe.getGamma(),2));
+		cov.setElem(5, 5, cov.getElem(5,5)*Math.pow(envelopeProbe.getGamma(),2));
+		for (int i=0; i<6; i++) {
+			System.out.println();
+			for (int j=0; j<6; j++)
+				System.out.printf("%E ",cov.getElem(i,j));
+		}*/
 		
 		return envelopeProbe;
 	}
 
 	public static ElsProbe setupElsProbeViaJavaCalls() {
 		// Envelope probe and tracker
-		ElsTracker envelopeTracker = new ElsTracker();			
-		envelopeTracker.setRfGapPhaseCalculation(false);
+		ElsTracker elsTracker = new ElsTracker();			
+		elsTracker.setRfGapPhaseCalculation(false);
 		/*envelopeTracker.setUseSpacecharge(false);
 		envelopeTracker.setEmittanceGrowth(false);
 		envelopeTracker.setStepSize(0.004);*/
-		envelopeTracker.setProbeUpdatePolicy(Tracker.UPDATE_EXIT);
+		elsTracker.setProbeUpdatePolicy(Tracker.UPDATE_EXIT);
 		
-		ElsProbe envelopeProbe = new ElsProbe();
-		envelopeProbe.setAlgorithm(envelopeTracker);
-		envelopeProbe.setSpeciesCharge(-1);
-		envelopeProbe.setSpeciesRestEnergy(9.3829431e8);
-		envelopeProbe.setKineticEnergy(2.5e6);//energy
-		envelopeProbe.setPosition(0.0);
-		envelopeProbe.setTime(0.0);		
+		ElsProbe elsProbe = new ElsProbe();
+		elsProbe.setAlgorithm(elsTracker);
+		elsProbe.setSpeciesCharge(-1);
+		elsProbe.setSpeciesRestEnergy(9.3829431e8);
+		elsProbe.setKineticEnergy(3e6);//energy
+		elsProbe.setPosition(0.0);
+		elsProbe.setTime(0.0);		
 				
 		/*
 		number of particles = 1000
@@ -119,14 +137,16 @@ public abstract class TestCommon {
 		alfa z = -0.5283
 		beta z in m/rad = 0.8684
 		 */
+		double beta_gamma = elsProbe.getBeta() * elsProbe.getGamma();
+	
 		
-		envelopeProbe.initFromTwiss(new Twiss[]{new Twiss(-0.1763,0.2442,0.2098e-6),
-										  new Twiss(-0.3247,0.3974,0.2091e-6),
-										  new Twiss(-0.5283,0.8684,0.2851e-6)});
-		envelopeProbe.setBeamCurrent(0.0);
-		envelopeProbe.setBunchFrequency(4.025e8);//frequency
+		elsProbe.initFromTwiss(new Twiss[]{new Twiss(-0.1763,0.2442,0.2098e-6 / beta_gamma),
+										  new Twiss(-0.3247,0.3974,0.2091e-6 / beta_gamma),
+										  new Twiss(-0.5283,0.8684,0.2851e-6 / beta_gamma)});
+		elsProbe.setBeamCurrent(0.0);
+		elsProbe.setBunchFrequency(4.025e8);//frequency
 		
-		return envelopeProbe;
+		return elsProbe;
 	}
 
 
@@ -153,8 +173,10 @@ public abstract class TestCommon {
 	{
 		// Generates lattice from SMF accelerator
 		//Scenario scenario = Scenario.newScenarioFor(sequence);		
-		//Scenario scenario = Scenario.newAndImprovedScenarioFor(sequence);			
-		Scenario scenario = new ScenarioGenerator2(sequence, elementMapping).generateScenario();
+		//Scenario scenario = Scenario.newAndImprovedScenarioFor(sequence);
+		ScenarioGenerator2 sg2 = new ScenarioGenerator2(sequence, elementMapping);
+		sg2.setHalfMag(false);
+		Scenario scenario = sg2.generateScenario();
 
 		// Outputting lattice elements
 		//new File("temp/bendtest").mkdirs();
@@ -168,11 +190,11 @@ public abstract class TestCommon {
 		scenario.run();
 		
 		// Prints transfer matrices
-		/*for (IComponent comp : ((ElementSeq)((Sector)scenario.getLattice().getElementList().get(0)).getChild(1)).getElementList()) {
+		/*for (IComponent comp : ((ElementSeq)((Sector)scenario.getLattice().getElementList().get(0)).getChild(3)).getElementList()) {
 			IElement el = (IElement)comp;
 			el.transferMap(probe, el.getLength()).getFirstOrder().print();
-		}
-			*/
+		}*/
+			
 		// Prints transfer matrices
 	/*	for (IComponent el : ((ElementSeq)((Sector)scenario.getLattice().getElementList().get(0))).getElementList() )
 		{		
@@ -200,14 +222,26 @@ public abstract class TestCommon {
 		
 		double[] beta = new double[3];
 		for (int i=0; i<3; i++) beta[i] = t[i].getBeta();
-		if (!(probe instanceof ElsProbe))
-			beta[2]/=probe.getGamma()*probe.getGamma();
+				
+		beta[2]/=Math.pow(probe.getGamma(),2);
 		
 		double[] sigma = new double[3];
 		for (int i=0; i<3; i++)
-			sigma[i] = Math.sqrt(beta[i]*t[i].getEmittance()/probe.getBeta()/probe.getGamma());		
-		System.out.printf("%E %E %E %E ",probe.getPosition(), sigma[0], sigma[1], sigma[2]);
-		System.out.printf("%E %E %E\n", beta[0], beta[1], beta[2]);
+			sigma[i] = t[i].getEnvelopeRadius();		
+		/*System.out.printf("alpha %E %E %E\n", t[0].getAlpha(), t[1].getAlpha(), t[2].getAlpha());		
+		System.out.printf("emittance %E %E %E\n", t[0].getEmittance(), t[1].getEmittance(), t[2].getEmittance());*/
+		
+		System.out.printf("%E %E %E %E\n",probe.getPosition(), sigma[0], sigma[1], sigma[2]);
+		System.out.printf("beta %E %E %E\n", beta[0], beta[1], beta[2]);
+		
+		/*CovarianceMatrix cov = ((EnvelopeProbe)probe).getCovariance().computeCovariance();
+		cov.setElem(4, 4, cov.getElem(4,4)/Math.pow(probe.getGamma(),2));
+		cov.setElem(5, 5, cov.getElem(5,5)*Math.pow(probe.getGamma(),2));
+		for (int i=0; i<6; i++) {
+			System.out.println();
+			for (int j=0; j<6; j++)
+				System.out.printf("%E ",cov.getElem(i,j));
+		}*/
 		
 	}
 
