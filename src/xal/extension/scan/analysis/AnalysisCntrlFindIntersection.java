@@ -1,4 +1,4 @@
-package xal.tools.scan.analysis;
+package xal.extension.scan.analysis;
 
 import java.util.*;
 import java.awt.*;
@@ -8,28 +8,28 @@ import java.awt.event.*;
 import javax.swing.border.*;
 
 import xal.tools.data.DataAdaptor;
-import xal.tools.scan.*;
+import xal.extension.scan.*;
 import xal.tools.plot.*;
 import xal.tools.swing.*;
 
 /**
- *  This class is a analysis class to find min and max.
+ *  This class is a analysis class to find an intersection point.
  *
  *@author     A. Shishlo
  *@version    1.0
  */
 
-public final class AnalysisCntrlFindMinMax extends AnalysisController {
+public final class AnalysisCntrlFindIntersection extends AnalysisController {
 
-	//DEFINITION  "FIND MIN/MAX" PANEL
-	private JPanel findMinMaxPanel = new JPanel();
+	//DEFINITION  "FIND INTERSECTION" PANEL
+	private JPanel findIntersectionPanel = new JPanel();
 	private JLabel markerPos_Label = new JLabel(" Marker Position :");
 	private JLabel pvSet_Label = new JLabel(" Scan PV Set:");
 	private JLabel pvRB_Label = new JLabel(" Scan PV RB:");
 
-	private ActionListener findMaxMin_Listener = null;
+	private ActionListener findIntersection_Listener = null;
 
-	private JButton find_Button = new JButton("FIND MAX/MIN");
+	private JButton find_Button = new JButton("FIND INTERSECTION");
 	private JButton setVal_Button = new JButton("SET FOUND VALUE TO EPICS");
 	private JButton readVal_Button = new JButton("READ CURRENT VALUES");
 
@@ -41,7 +41,6 @@ public final class AnalysisCntrlFindMinMax extends AnalysisController {
 
 	private ActionListener dragVerLine_Listener = null;
 	private double markerPos = 0.;
-	private double phase_shift = 0.;
 
 
 	/**
@@ -60,7 +59,7 @@ public final class AnalysisCntrlFindMinMax extends AnalysisController {
 	 *@param  messageTextLocal_In       Description of the Parameter
 	 *@param  graphDataLocal_In         Description of the Parameter
 	 */
-	public AnalysisCntrlFindMinMax(MainAnalysisController mainController_In,
+	public AnalysisCntrlFindIntersection(MainAnalysisController mainController_In,
 			DataAdaptor analysisConf,
 			JPanel parentAnalysisPanel_In,
 			JPanel customControlPanel_In,
@@ -87,7 +86,7 @@ public final class AnalysisCntrlFindMinMax extends AnalysisController {
 				messageTextLocal_In,
 				graphDataLocal_In);
 
-		String nameIn = "FIND MIN/MAX";
+		String nameIn = "FIND INTERSECTION";
 		DataAdaptor nameDA =  analysisConf.childAdaptor("ANALYSIS_NAME");
 		if (nameDA != null) {
 			nameIn = nameDA.stringValue("name");
@@ -97,7 +96,8 @@ public final class AnalysisCntrlFindMinMax extends AnalysisController {
 		graphAnalysis.addDraggedVerLinesListener(null);
 		graphAnalysis.removeVerticalValue(0);
 
-		makeFindMinMaxPanel();
+		makeIntersectionFindingPanel();
+
 	}
 
 
@@ -154,7 +154,7 @@ public final class AnalysisCntrlFindMinMax extends AnalysisController {
 		graphAnalysis.setDraggedVerLinesMotionListen(true);
 
 		customControlPanel.add(dataReaderPanel, BorderLayout.NORTH);
-		customControlPanel.add(findMinMaxPanel, BorderLayout.CENTER);
+		customControlPanel.add(findIntersectionPanel, BorderLayout.CENTER);
 		customGraphPanel.add(graphAnalysis, BorderLayout.CENTER);
 		customGraphPanel.add(globalButtonsPanel, BorderLayout.SOUTH);
 	}
@@ -174,7 +174,7 @@ public final class AnalysisCntrlFindMinMax extends AnalysisController {
 	/**
 	 *  Description of the Method
 	 */
-	private void makeFindMinMaxPanel() {
+	private void makeIntersectionFindingPanel() {
 		markerPos_Text.setEditable(true);
 		pvSetVal_Text.setEditable(false);
 		pvRBVal_Text.setEditable(false);
@@ -191,9 +191,9 @@ public final class AnalysisCntrlFindMinMax extends AnalysisController {
 		pvSetVal_Text.removeInnerFocusListener();
 		pvRBVal_Text.removeInnerFocusListener();
 
-		findMinMaxPanel.setLayout(new BorderLayout());
+		findIntersectionPanel.setLayout(new BorderLayout());
 		Border etchedBorder = BorderFactory.createEtchedBorder();
-		findMinMaxPanel.setBorder(etchedBorder);
+		findIntersectionPanel.setBorder(etchedBorder);
 
 		JPanel temp_0 = new JPanel();
 		temp_0.setLayout(new GridLayout(1, 2, 1, 1));
@@ -219,22 +219,23 @@ public final class AnalysisCntrlFindMinMax extends AnalysisController {
 		temp_3.add(temp_2, BorderLayout.CENTER);
 		temp_3.add(readVal_Button, BorderLayout.SOUTH);
 
-		findMinMaxPanel.add(temp_3, BorderLayout.NORTH);
+		findIntersectionPanel.add(temp_3, BorderLayout.NORTH);
 
 		dragVerLine_Listener =
 			new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					int ind = graphAnalysis.getDraggedLineIndex();
-					markerPos = graphAnalysis.getVerticalValue(ind);
-					markerPos -= phase_shift;
-					if (phase_shift != 0.) {
+					double phase = graphAnalysis.getVerticalValue(ind);
+					double shift = MainAnalysisController.getPhaseShift(graphAnalysis.getAllGraphData());
+					markerPos = phase - shift;
+					if (shift != 0.) {
 						markerPos += 180.;
 						while (markerPos < 0.) {
 							markerPos += 360.;
 						}
 						markerPos = markerPos % 360.;
 						markerPos -= 180.;
-					}					
+					}
 					markerPos_Text.setValueQuietly(markerPos);
 				}
 			};
@@ -244,69 +245,67 @@ public final class AnalysisCntrlFindMinMax extends AnalysisController {
 				public void actionPerformed(ActionEvent e) {
 					graphAnalysis.addDraggedVerLinesListener(null);
 					markerPos = markerPos_Text.getValue();
-					double phase = markerPos + phase_shift;
-					if (phase_shift != 0.) {
+					double shift = MainAnalysisController.getPhaseShift(graphAnalysis.getAllGraphData());
+					double phase = markerPos + shift;
+					if (shift != 0.) {
 						phase += 180.;
 						while (phase < 0.) {
 							phase += 360.;
 						}
 						phase = phase % 360.;
 						phase -= 180.;
-					}										
+					}
 					graphAnalysis.setVerticalLineValue(phase, 0);
 					graphAnalysis.addDraggedVerLinesListener(dragVerLine_Listener);
 				}
 			});
 
-		findMaxMin_Listener =
+		findIntersection_Listener =
 			new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					BasicGraphData gd = mainController.getChoosenDraphData();
-					if (gd != null) {
-						graphAnalysis.removeGraphData(graphDataLocal);
-						graphDataLocal.removeAllPoints();
-						if (gd.getNumbOfPoints() > 0) {
-							GraphDataOperations.polynomialFit(gd, graphDataLocal,
-									graphAnalysis.getCurrentMinX(),
-									graphAnalysis.getCurrentMaxX(), 2, 10);
-							double d_max_pos = GraphDataOperations.getExtremumPosition(graphDataLocal,
-									graphAnalysis.getCurrentMinX(),
-									graphAnalysis.getCurrentMaxX());
-							if (d_max_pos > graphAnalysis.getCurrentMinX() && d_max_pos < graphAnalysis.getCurrentMaxX()) {
-								phase_shift = MainAnalysisController.getPhaseShift(gd);
-								graphAnalysis.addDraggedVerLinesListener(null);
-								d_max_pos -= phase_shift;
-								if (phase_shift != 0.) {
-									d_max_pos += 180.;
-									while (d_max_pos < 0.) {
-										d_max_pos += 360.;
-									}
-									d_max_pos = d_max_pos % 360.;
-									d_max_pos -= 180.;
+					double xMin = graphAnalysis.getCurrentMinX();
+					double xMax = graphAnalysis.getCurrentMaxX();
+					double yMin = graphAnalysis.getCurrentMinY();
+					double yMax = graphAnalysis.getCurrentMaxY();
+					Vector<BasicGraphData> interpGD_V = graphAnalysis.getAllGraphData();
+					interpGD_V.remove(graphDataLocal);
+					if (interpGD_V.size() > 1) {
+						Double[] intersectV = GraphDataOperations.findIntersection(interpGD_V,
+								xMin, xMax, yMin, yMax, 0.001);
+						if (intersectV[0] != null) {
+							graphAnalysis.addDraggedVerLinesListener(null);
+							double phase = intersectV[0].doubleValue();
+							double shift = MainAnalysisController.getPhaseShift(interpGD_V);
+							markerPos = phase - shift;
+							if (shift != 0.) {
+								markerPos += 180.;
+								while (markerPos < 0.) {
+									markerPos += 360.;
 								}
-								markerPos_Text.setValue(d_max_pos);
-								graphAnalysis.addDraggedVerLinesListener(dragVerLine_Listener);
-								messageTextLocal.setText(null);
-								messageTextLocal.setText("Extremum has been found. The phase_shift value =" + val_Format.format(phase_shift));
-							} else {
-								Toolkit.getDefaultToolkit().beep();
-								messageTextLocal.setText(null);
-								messageTextLocal.setText("Cannot find extremum in the specified region.");
-								graphDataLocal.removeAllPoints();
-								graphAnalysis.refreshGraphJPanel();
+								markerPos = markerPos % 360.;
+								markerPos -= 180.;
 							}
-
+							markerPos_Text.setValue(markerPos);
+							graphAnalysis.addDraggedVerLinesListener(dragVerLine_Listener);
+							messageTextLocal.setText(null);
+							messageTextLocal.setText("The intersection point x=" +
+									val_Format.format(intersectV[0].doubleValue()) +
+									" +- " +
+									val_Format.format(intersectV[2].doubleValue()) +
+									"   shift = " +
+									val_Format.format(shift)
+									);
 						} else {
 							Toolkit.getDefaultToolkit().beep();
 							messageTextLocal.setText(null);
-							messageTextLocal.setText("The graph does not have data points.");
+							messageTextLocal.setText("Cannot find intersection.");
 						}
-						graphAnalysis.addGraphData(graphDataLocal);
 					} else {
-						messageTextLocal.setText(null);
-						messageTextLocal.setText("Please choose graph and point first. Use S-button on the graph panel.");
 						Toolkit.getDefaultToolkit().beep();
+						messageTextLocal.setText(null);
+						messageTextLocal.setText("Cannot find intersection. Do not have enough data.");
 					}
+
 				}
 			};
 
@@ -342,7 +341,7 @@ public final class AnalysisCntrlFindMinMax extends AnalysisController {
 				}
 			});
 
-		find_Button.addActionListener(findMaxMin_Listener);
+		find_Button.addActionListener(findIntersection_Listener);
 
 		find_Button.setForeground(Color.blue);
 		setVal_Button.setForeground(Color.blue);

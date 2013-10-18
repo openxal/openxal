@@ -1,4 +1,4 @@
-package xal.tools.scan.analysis;
+package xal.extension.scan.analysis;
 
 import java.awt.event.*;
 import java.util.*;
@@ -11,7 +11,7 @@ import java.io.*;
 
 import xal.tools.data.DataAdaptor;
 import xal.tools.apputils.*;
-import xal.tools.scan.*;
+import xal.extension.scan.*;
 import xal.tools.plot.*;
 import xal.tools.swing.*;
 

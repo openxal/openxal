@@ -3,7 +3,7 @@
  *
  *  Created on July 7, 2005, 10:25 AM
  */
-package xal.tools.scan;
+package xal.extension.scan;
 
 import java.util.*;
 import java.awt.event.*;
