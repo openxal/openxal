@@ -15,8 +15,8 @@ import javax.swing.border.*;
 
 import xal.extension.application.*;
 import xal.extension.scan.*;
-import xal.tools.plot.*;
-import xal.tools.swing.*;
+import xal.extension.widgets.plot.*;
+import xal.extension.widgets.swing.*;
 import xal.tools.data.DataAdaptor;
 import xal.tools.xml.*;
 

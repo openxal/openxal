@@ -14,9 +14,10 @@ import java.util.prefs.*;
 
 import xal.tools.data.DataAdaptor;
 import xal.extension.scan.*;
-import xal.tools.plot.*;
+import xal.extension.widgets.plot.*;
 import xal.tools.apputils.VerticalLayout;
-import xal.tools.swing.*;
+import xal.extension.widgets.swing.*;
+import xal.tools.swing.FortranNumberFormat;
 
 /**
  *  This creates an ASCII file for dT procedure

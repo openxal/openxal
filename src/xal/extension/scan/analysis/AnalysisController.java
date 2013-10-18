@@ -9,7 +9,7 @@ import javax.swing.border.*;
 import xal.tools.data.DataAdaptor;
 import xal.tools.xml.*;
 import xal.extension.scan.*;
-import xal.tools.plot.*;
+import xal.extension.widgets.plot.*;
 
 /**
  * This class is a base class for different analysis of the scan data.

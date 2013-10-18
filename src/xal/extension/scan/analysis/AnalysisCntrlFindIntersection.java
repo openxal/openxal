@@ -9,8 +9,8 @@ import javax.swing.border.*;
 
 import xal.tools.data.DataAdaptor;
 import xal.extension.scan.*;
-import xal.tools.plot.*;
-import xal.tools.swing.*;
+import xal.extension.widgets.plot.*;
+import xal.extension.widgets.swing.*;
 
 /**
  *  This class is a analysis class to find an intersection point.

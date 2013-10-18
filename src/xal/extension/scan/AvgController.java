@@ -7,7 +7,7 @@ import java.awt.event.*;
 import javax.swing.event.*;
 import java.util.*;
 
-import xal.tools.swing.*;
+import xal.extension.widgets.swing.*;
 
 public class AvgController{
 
