@@ -393,7 +393,7 @@ public class IdealMagDipoleFace2 extends ThinElement implements IElectromagnet {
      */
     @Override
     protected PhaseMap transferMap(IProbe probe) throws ModelException {
-    	double B = getPoleFaceAngle();
+    	double B = -getPoleFaceAngle();
     	if (B==0) return PhaseMap.identity();
     	
     	double K1 = getFringeIntegral();
