@@ -20,13 +20,13 @@ public class GapTest extends TestCommon {
 	public void doGapTest() throws InstantiationException, ModelException {		
 		AcceleratorSeq sequence = new AcceleratorSeq("GapTest");
 		
-		// GAP 78019.7 -90 14.5 0 0 0 0 0 0 0
+		// GAP 78019.7 -80 14.5 0 0 0 0 0 0 0
 		
 		// input from TraceWin
 		double frequency = 4.025e8; // this is global in TraceWin
 		
 		double E0TL = 78019.7 * 1e-6; // Effective gap voltage
-		double Phis = -90;  // RF phase (deg) absolute or relative
+		double Phis = -80;  // RF phase (deg) absolute or relative
 		double R = 14.5; // aperture
 		double p = 0; // 0: relative phase, 1: absolute phase
 		
@@ -76,9 +76,17 @@ public class GapTest extends TestCommon {
 		sequence.addNode(cavity);
 		sequence.setLength(0.0);
 
+		System.out.println("W0: "+probe.getKineticEnergy());
 		run(sequence);
 		
-		printResults(0.000000E+00, new double[] {8.374778E-04, 1.066568E-03, 1.836118E-03},
-				new double [] {2.442000E-01, 3.974000E-01, 8.637909E-01});
+		printResults(0.000000E+00, new double[] {8.001089E-04, 1.018977E-03, 1.753257E-03},
+				new double [] {2.442000E-01, 3.974000E-01, 8.628735E-01});
+		System.out.println("W: "+probe.getKineticEnergy());
+		// -90 0.000000E+00 8.001089E-04 1.018977E-03 1.753257E-03 2.442000E-01 3.974000E-01 8.628735E-01
+		// -80 0.000000E+00 7.992067E-04 1.017828E-03 1.753257E-03 2.442000E-01 3.974000E-01 8.648228E-01
+		// -45 0.000000E+00 7.964664E-04 1.014338E-03 1.753257E-03 2.442000E-01 3.974000E-01 8.707840E-01
+		// -10 0.000000E+00 7.950583E-04 1.012545E-03 1.753258E-03 2.442000E-01 3.974000E-01 8.738712E-01
+		// 0 0.000000E+00 7.949815E-04 1.012447E-03 1.753257E-03 2.442000E-01 3.974000E-01 8.740398E-01
+
 	}
 }

@@ -62,9 +62,9 @@ public class BendTest extends TestCommon {
 		bend.setLength(len); // both paths are used in calculation
 		bend.getMagBucket().setPathLength(len);
 		
-		bend.getMagBucket().setDipoleEntrRotAngle(entry_angle_deg);
+		bend.getMagBucket().setDipoleEntrRotAngle(-entry_angle_deg);
 		bend.getMagBucket().setBendAngle(alpha_deg);
-		bend.getMagBucket().setDipoleExitRotAngle(exit_angle_deg);		
+		bend.getMagBucket().setDipoleExitRotAngle(-exit_angle_deg);		
 		bend.setDfltField(B0);		
 		bend.getMagBucket().setDipoleQuadComponent(quadComp);
 		
@@ -85,5 +85,15 @@ public class BendTest extends TestCommon {
 		//		new double [] {1.458045E+01, 1.039017E+01, 7.432561E+00});// when halfMag = false
 		// converges to
 		// 1.799999E+00 6.471216E-03 5.453634E-03 5.411296E-03 1.458045E+01 1.039017E+01 7.502568E+00
+		
+		checkResults(new double[][] {
+				{+3.822288e-11, +2.081295e-11, +0.000000e+00, +0.000000e+00, +0.000000e+00, +0.000000e+00}, 
+				{+2.081295e-11, +1.151277e-11, +0.000000e+00, +0.000000e+00, +0.000000e+00, +0.000000e+00}, 
+				{+0.000000e+00, +0.000000e+00, +2.730380e-11, +1.338170e-11, +9.152883e-13, -9.096619e-13}, 
+				{+0.000000e+00, +0.000000e+00, +1.338170e-11, +6.868014e-12, -7.836318e-13, -9.982870e-13}, 
+				{+0.000000e+00, +0.000000e+00, +9.152883e-13, -7.836318e-13, +2.675748e-11, +1.126873e-11}, 
+				{+0.000000e+00, +0.000000e+00, -9.096619e-13, -9.982870e-13, +1.126873e-11, +5.280827e-12} 
+		});
+		
 	}
 }

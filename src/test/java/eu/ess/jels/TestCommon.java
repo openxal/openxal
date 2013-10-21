@@ -4,10 +4,13 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
 
 import org.junit.runners.Parameterized.Parameters;
 
 import xal.model.IComponent;
+import xal.model.IComposite;
 import xal.model.IElement;
 import xal.model.Lattice;
 import xal.model.ModelException;
@@ -187,26 +190,25 @@ public abstract class TestCommon {
 		scenario.setProbe(probe);									
 		scenario.setSynchronizationMode(Scenario.SYNC_MODE_DESIGN);					
 		scenario.resync();
-		scenario.run();
 		
-		// Prints transfer matrices
-		/*for (IComponent comp : ((ElementSeq)((Sector)scenario.getLattice().getElementList().get(0)).getChild(3)).getElementList()) {
-			IElement el = (IElement)comp;
-			el.transferMap(probe, el.getLength()).getFirstOrder().print();
+		// Prints transfer matrices		
+		/*Iterator<IComponent> it = scenario.getLattice().globalIterator();
+		while (it.hasNext()) {
+			IComponent comp = it.next();
+			if (comp instanceof IElement) {
+				IElement el = (IElement)comp;
+				el.transferMap(probe, el.getLength()).getFirstOrder().print();
+				if (el instanceof xal.model.elem.IdealRfGap) {
+					xal.model.elem.IdealRfGap gap = (xal.model.elem.IdealRfGap)el;
+					System.out.printf("gap phase=%f E0TL=%E\n", gap.getPhase()*180./Math.PI, gap.getETL());
+				}
+			}
 		}*/
 			
-		// Prints transfer matrices
-	/*	for (IComponent el : ((ElementSeq)((Sector)scenario.getLattice().getElementList().get(0))).getElementList() )
-		{		
-			((IElement)el).transferMap(probe, el.getLength()).getFirstOrder().print();			
-			if (el instanceof xal.model.elem.IdealRfGap) {
-				xal.model.elem.IdealRfGap gap = (xal.model.elem.IdealRfGap)el;
-				System.out.printf("gap phase=%f E0TL=%E\n", gap.getPhase()*180./Math.PI, gap.getETL());
-			}			
-		}*/
-	
+		
+		scenario.run();	
 	}
-	
+
 	public void printResults(double elsPosition, double[] elsSigma, double[] elsBeta) {
 		// Getting results		
 		//Matrix envelope = probe.getEnvelope();
@@ -228,11 +230,12 @@ public abstract class TestCommon {
 		double[] sigma = new double[3];
 		for (int i=0; i<3; i++)
 			sigma[i] = t[i].getEnvelopeRadius();		
-		/*System.out.printf("alpha %E %E %E\n", t[0].getAlpha(), t[1].getAlpha(), t[2].getAlpha());		
-		System.out.printf("emittance %E %E %E\n", t[0].getEmittance(), t[1].getEmittance(), t[2].getEmittance());*/
+		System.out.printf("alpha %E %E %E\n", t[0].getAlpha(), t[1].getAlpha(), t[2].getAlpha());		
+		System.out.printf("beta %E %E %E\n", beta[0], beta[1], beta[2]);
+		System.out.printf("emittance %E %E %E\n", t[0].getEmittance(), t[1].getEmittance(), t[2].getEmittance());
 		
 		System.out.printf("%E %E %E %E\n",probe.getPosition(), sigma[0], sigma[1], sigma[2]);
-		System.out.printf("beta %E %E %E\n", beta[0], beta[1], beta[2]);
+		
 		
 		/*CovarianceMatrix cov = ((EnvelopeProbe)probe).getCovariance().computeCovariance();
 		cov.setElem(4, 4, cov.getElem(4,4)/Math.pow(probe.getGamma(),2));
@@ -243,6 +246,38 @@ public abstract class TestCommon {
 				System.out.printf("%E ",cov.getElem(i,j));
 		}*/
 		
+	}
+	
+	private double tr(double x)
+	{
+		return Math.signum(x)*Math.pow(10, (int)Math.log10(Math.abs(x)));
+	}
+	
+	protected void checkResults(double[][] cov) {
+		double[] alpha = new double[3],beta=new double[3],emit=new double[3], det=new double[3];
+		for (int i=0; i<3; i++) 
+			det[i]=Math.sqrt(cov[2*i+0][2*i+0]*cov[2*i+1][2*i+1]-cov[2*i+1][2*i+0]*cov[2*i+0][2*i+1]);
+		for (int i=0; i<3; i++) {
+			alpha[i]=-cov[2*i+1][2*i+0]/det[i];
+			beta[i]=cov[2*i+0][2*i+0]/det[i];
+			emit[i]=Math.sqrt(det[i]);
+		}
+		beta[2]*=Math.pow(probe.getGamma(),2);
+		System.out.printf("Tracewin alpha: %E %E %E\n",alpha[0],alpha[1],alpha[2]);
+		System.out.printf("Tracewin beta: %E %E %E\n",beta[0],beta[1],beta[2]);
+		System.out.printf("Tracewin emit: %E %E %E\n",emit[0],emit[1],emit[2]);
+		
+		Twiss[] t;
+		if (probe instanceof ElsProbe)
+			t = ((ElsProbe)probe).getTwiss();
+		else 
+			t = ((EnvelopeProbe)probe).getCovariance().computeTwiss();
+		
+		System.out.printf("differences ");
+		for (int i = 0; i<3; i++) {
+			System.out.printf("%c:%.0g %.0g %.0g ",'x'+i, tr(t[i].getAlpha()-alpha[i]), tr(t[i].getBeta()-beta[i]), tr(t[i].getEmittance()-emit[i]));	
+		}
+		System.out.printf("\n\n");
 	}
 
 }
