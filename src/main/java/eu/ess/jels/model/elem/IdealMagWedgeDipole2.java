@@ -9,7 +9,6 @@ package eu.ess.jels.model.elem;
 import xal.model.IProbe;
 import xal.model.elem.ElementSeq;
 import xal.model.elem.IElectromagnet;
-import xal.model.elem.IdealMagDipoleFace;
 import xal.tools.math.r3.R3;
 
 /**

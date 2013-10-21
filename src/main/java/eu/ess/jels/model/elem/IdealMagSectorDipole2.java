@@ -543,7 +543,7 @@ public class IdealMagSectorDipole2 extends ThickElement implements IElectromagne
 
     	double rho = compDesignBendingRadius();
     	double alfa = dblLen/rho;
-    	double N = getQuadComponent() * Math.pow(rho,2);
+    	double N = getFieldIndex();
     	
     	double h=Math.signum(alfa)/Math.abs(rho);
     	double kx=Math.sqrt(1-N)*Math.abs(h);
