@@ -50,7 +50,13 @@ class JcaSystem extends ChannelSystem {
 			exception.printStackTrace();
 		}
     }
-	
+
+
+	/** Create a new channel server */
+	public JcaChannelServer newChannelServer() throws Exception {
+		return new JcaChannelServer();
+	}
+
 	
 	/**
 	 * Determine the user's preferred JCA Context otherwise defaulting to JCALibrary.CHANNEL_ACCESS_JAVA 
