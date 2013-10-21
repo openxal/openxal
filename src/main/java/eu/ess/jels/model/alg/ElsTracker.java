@@ -107,7 +107,7 @@ public class ElsTracker extends EnvelopeTracker {
             cntSteps = (int) Math.max(Math.ceil(propLen / getStepSize()), 1);
         else*/ 
             cntSteps = 1;
-        
+            //cntSteps = (int) Math.max(Math.ceil(propLen / getStepSize()), 1);
         dblStep = propLen / cntSteps;
         
         /*
@@ -161,9 +161,11 @@ public class ElsTracker extends EnvelopeTracker {
         optics.set(0,0,matrix.getElem(0,0)*matrix.getElem(0,0));
     	optics.set(0,1,-2.0*matrix.getElem(0,0)*matrix.getElem(0,1));
     	optics.set(0,2,matrix.getElem(0,1)*matrix.getElem(0,1));
+    	
     	optics.set(1,0,-matrix.getElem(0,0)*matrix.getElem(1,0));
     	optics.set(1,1,matrix.getElem(0,0)*matrix.getElem(1,1)+matrix.getElem(0,1)*matrix.getElem(1,0));
     	optics.set(1,2,-matrix.getElem(0,1)*matrix.getElem(1,1));
+    	
     	optics.set(2,0,matrix.getElem(1,0)*matrix.getElem(1,0));
     	optics.set(2,1,-2.0*matrix.getElem(1,0)*matrix.getElem(1,1));
     	optics.set(2,2,matrix.getElem(1,1)*matrix.getElem(1,1));
@@ -188,11 +190,22 @@ public class ElsTracker extends EnvelopeTracker {
     	optics.set(8,7,-2.0*matrix.getElem(5,4)*matrix.getElem(5,5));
     	optics.set(8,8,matrix.getElem(5,5)*matrix.getElem(5,5));
 
-    	double det0 = matrix.getElem(0,0)*matrix.getElem(1,1)-matrix.getElem(0,1)*matrix.getElem(1,0);
-    	optics = optics.times(1./det0);
+    	double[] det = new double[3];
+		for (int i=0; i<3; i++) 
+			det[i]=Math.sqrt(matrix.getElem(2*i+0,2*i+0)*matrix.getElem(2*i+1,2*i+1)-matrix.getElem(2*i+1,2*i+0)*matrix.getElem(2*i+0,2*i+1));
+
+       	
+    	//optics = optics.times(1./det0);
+    	for (int i = 0; i<9; i++)
+    		for (int j=0; j<9; j++)
+    			optics.set(i, j, optics.get(i,j)/det[i/3]);
     	
-        Matrix	envelope1 = optics.times(envelope);
+    	
+        Matrix	envelope1 = new Matrix(9,1);// = optics.times(envelope);        
         
+        for (int i=0;i<9;i++)
+    		for (int j=0;j<9;j++)
+    			envelope1.set(i, 0, envelope1.get(i,0)+optics.get(i,j)*envelope.get(j,0));
         // Advance the probe states 
         probe.setEnvelope(envelope1);
     };
