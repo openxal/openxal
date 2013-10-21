@@ -260,13 +260,14 @@ public class IdealRfGap extends ThinElement implements IRfGap {
     @Override
     public double energyGain(IProbe probe)
     {    	
-    	//return (gamma_end - 1.0) * probe.getSpeciesRestEnergy() - probe.getKineticEnergy();
-    	return (gamma_end - probe.getGamma()) * probe.getSpeciesRestEnergy();    	
+    	return (gamma_end - 1.0) * probe.getSpeciesRestEnergy() - probe.getKineticEnergy();
+    	//return (gamma_end - probe.getGamma()) * probe.getSpeciesRestEnergy();    	
     	//return getETL()*Math.cos(getPhase());
     }
     
     protected double computeBetaFromGamma(double gamma) {    	    
-        double beta = Math.sqrt(1.0 - 1.0/Math.pow(gamma,2));
+        //double beta = Math.sqrt(1.0 - 1.0/Math.pow(gamma,2));
+        double beta = Math.sqrt(Math.pow(gamma,2) - 1.0)/gamma;
         return beta;
     };
        
@@ -355,10 +356,10 @@ public class IdealRfGap extends ThinElement implements IRfGap {
     			double gamma_avg=(gamma_end+gamma_start)/2;
     			double beta_avg=(beta_end+beta_start)/2;
 
-    			kxy=-Math.PI*E0TL/mass*Math.sin(Phis)/(Math.pow(gamma_avg*beta_avg,2)*lambda);
+    			kxy=-Math.PI*E0TL*Math.sin(Phis)/(Math.pow(gamma_avg*beta_avg,2)*lambda*mass);
     			kx=1-E0TL/(2*mass)*Math.cos(Phis)/(Math.pow(beta_avg,2)*gamma_avg);
     			ky=kx;
-    			kz=2*Math.PI*E0TL/mass*Math.sin(Phis)/(Math.pow(beta_avg,2)*lambda);
+    			kz=2*Math.PI*E0TL*Math.sin(Phis)/(Math.pow(beta_avg,2)*lambda*mass);
     		}
     		
     		double C=Math.sqrt(((beta_start*gamma_start)/(beta_end*gamma_end))/(kx*ky));
