@@ -113,6 +113,8 @@ public class InverseRealPolynomial extends UnivariateRealPolynomial {
             return 0.0;
 
         double x0 = m_arrCoef[0];
+        if (x0 == 0.0) return 1.0;
+        
         int     N = this.m_arrCoef.length;      // number of coefficients
         double  dblAccum = 0.0;                 // accumulator
 
