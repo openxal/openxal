@@ -3,11 +3,12 @@
  *
  *  Created on October 22, 2002, 1:58 PM
  */
-package eu.ess.jels.model.elem;
+package eu.ess.jels.model.twelem;
 
 import java.io.PrintWriter;
 
 import eu.ess.jels.model.probe.IGapPhaseProbe;
+import eu.ess.jels.model.probe.GapEnvelopeProbe;
 import xal.model.IModelDataSource;
 import xal.model.IProbe;
 import xal.model.ModelException;
@@ -297,13 +298,9 @@ public class IdealRfGap extends ThinElement implements IRfGap {
     @Override
     protected PhaseMap transferMap(IProbe probe) throws ModelException {
     	PhaseMatrix matPhi = new PhaseMatrix(); 	
-    	double DeltaPhi;
-
-    	double E0TL = getETL();
-    	double mass = probe.getSpeciesRestEnergy();
-    	double lambda=LightSpeed/getFrequency();
-    	double Phis;
+     	double lambda=LightSpeed/getFrequency();
     	
+    	double Phis;
     	if (isFirstGap()) Phis = getPhase();
     	else {
     		IGapPhaseProbe gprobe = (IGapPhaseProbe)probe;  
@@ -319,13 +316,15 @@ public class IdealRfGap extends ThinElement implements IRfGap {
     		}
     	}
     	
+    	double E0TL = getETL();
+    	double DeltaPhi = 0;
     	if (E0TL==0)
     	{
-    		matPhi = PhaseMatrix.identity();  
-    		DeltaPhi = 0;
+    		matPhi = PhaseMatrix.identity();    		
     	}
     	else
-    	{
+    	{        	
+    		double mass = probe.getSpeciesRestEnergy();
     		double gamma_start=probe.getGamma();
     		double beta_start=computeBetaFromGamma(gamma_start);//probe.getBeta();
     		
@@ -360,8 +359,7 @@ public class IdealRfGap extends ThinElement implements IRfGap {
     			kz=2*Math.PI*(E0TL_scaled/mass)*Math.sin(Phis)/(Math.pow(beta_avg,2)*lambda);
     		}
     		else
-    		{
-    			DeltaPhi=0;
+    		{    			
     			gamma_end=gamma_start+E0TL/mass*Math.cos(Phis);    			
     			beta_end = computeBetaFromGamma(gamma_end);
     			
@@ -385,13 +383,12 @@ public class IdealRfGap extends ThinElement implements IRfGap {
     		matPhi.setElem(3,3,ky*C);
 
     		matPhi.setElem(4,4,1);
-    		matPhi.setElem(5,4,kz/(beta_end*gamma_end));
-    		matPhi.setElem(5,5,(beta_start*gamma_start)/(beta_end*gamma_end));  		
+    		matPhi.setElem(5,4,kz/(beta_end*Math.pow(gamma_end,3)));
+    		matPhi.setElem(5,5,(beta_start*Math.pow(gamma_start,3))/(beta_end*Math.pow(gamma_end,3)));  		
     	}
-         
+            
     	((IGapPhaseProbe)probe).setLastGapPhase(Phis + DeltaPhi);
     	((IGapPhaseProbe)probe).setLastGapPosition(probe.getPosition());
-    	
     	matPhi.setElem(6,6,1);
         return new PhaseMap(matPhi);
     }

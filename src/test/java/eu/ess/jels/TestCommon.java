@@ -5,19 +5,15 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.List;
 
 import org.junit.runners.Parameterized.Parameters;
 
 import xal.model.IComponent;
-import xal.model.IComposite;
 import xal.model.IElement;
 import xal.model.Lattice;
 import xal.model.ModelException;
-import xal.model.Sector;
 import xal.model.alg.EnvelopeTracker;
 import xal.model.alg.Tracker;
-import xal.model.elem.ElementSeq;
 import xal.model.probe.EnvelopeProbe;
 import xal.model.probe.Probe;
 import xal.model.xml.LatticeXmlWriter;
@@ -26,24 +22,24 @@ import xal.sim.scenario.ElementMapping;
 import xal.sim.scenario.ElsElementMapping;
 import xal.sim.scenario.Scenario;
 import xal.sim.scenario.ScenarioGenerator2;
+import xal.sim.scenario.TWElementMapping;
 import xal.smf.AcceleratorSeq;
-import xal.tools.beam.CovarianceMatrix;
+import xal.tools.beam.PhaseMap;
 import xal.tools.beam.Twiss;
 import xal.tools.xml.XmlDataAdaptor;
 import eu.ess.jels.model.alg.ElsTracker;
+import eu.ess.jels.model.elem.IdealRfGap;
 import eu.ess.jels.model.probe.ElsProbe;
+import eu.ess.jels.model.probe.GapEnvelopeProbe;
 
 public abstract class TestCommon {
 	protected Probe probe;
-	protected ElementMapping elementMapping;
-	protected double beta0,gamma0;
+	protected ElementMapping elementMapping;	
 	
 	public TestCommon(Probe probe, ElementMapping elementMapping)
 	{
 		this.probe = probe;
 		this.elementMapping = elementMapping;
-		beta0 = probe.getBeta();
-		gamma0 = probe.getGamma();
 	}
 	
 
@@ -51,7 +47,9 @@ public abstract class TestCommon {
 	public static Collection<Object[]> probes() {
 		return Arrays.asList(new Object[][]{
 				{setupProbeViaJavaCalls(), DefaultElementMapping.getInstance()},
-				{setupElsProbeViaJavaCalls(), ElsElementMapping.getInstance()}});
+				{setupElsProbeViaJavaCalls(), ElsElementMapping.getInstance()},
+				{setupProbeViaJavaCalls(), TWElementMapping.getInstance()}
+				});
 	}
 
 	
@@ -61,11 +59,11 @@ public abstract class TestCommon {
 		EnvelopeTracker envelopeTracker = new EnvelopeTracker();			
 		envelopeTracker.setRfGapPhaseCalculation(true);
 		envelopeTracker.setUseSpacecharge(false);
-		envelopeTracker.setEmittanceGrowth(false);
+		envelopeTracker.setEmittanceGrowth(true);
 		envelopeTracker.setStepSize(0.004);
 		envelopeTracker.setProbeUpdatePolicy(Tracker.UPDATE_EXIT);
 		
-		EnvelopeProbe envelopeProbe = new EnvelopeProbe();
+		EnvelopeProbe envelopeProbe = new GapEnvelopeProbe();
 		envelopeProbe.setAlgorithm(envelopeTracker);
 		envelopeProbe.setSpeciesCharge(-1);
 		envelopeProbe.setSpeciesRestEnergy(9.3829431e8);
@@ -90,9 +88,9 @@ public abstract class TestCommon {
 		 */
 		double beta_gamma = envelopeProbe.getBeta() * envelopeProbe.getGamma();
 		
-		envelopeProbe.initFromTwiss(new Twiss[]{new Twiss(-0.1763,0.2442,0.2098e-6 / beta_gamma),
-				  new Twiss(-0.3247,0.3974,0.2091e-6 / beta_gamma),
-				  new Twiss(-0.5283,0.8684,0.2851e-6 / beta_gamma)});
+		envelopeProbe.initFromTwiss(new Twiss[]{new Twiss(-0.1763,0.2442,0.2098e-6*1e-6 / beta_gamma),
+				  new Twiss(-0.3247,0.3974,0.2091e-6*1e-6 / beta_gamma),
+				  new Twiss(-0.5283,0.8684,0.2851e-6*1e-6 / beta_gamma)});
 		envelopeProbe.setBeamCurrent(0.0);
 		envelopeProbe.setBunchFrequency(4.025e8);//frequency
 		
@@ -143,9 +141,9 @@ public abstract class TestCommon {
 		double beta_gamma = elsProbe.getBeta() * elsProbe.getGamma();
 	
 		
-		elsProbe.initFromTwiss(new Twiss[]{new Twiss(-0.1763,0.2442,0.2098e-6 / beta_gamma),
-										  new Twiss(-0.3247,0.3974,0.2091e-6 / beta_gamma),
-										  new Twiss(-0.5283,0.8684,0.2851e-6 / beta_gamma)});
+		elsProbe.initFromTwiss(new Twiss[]{new Twiss(-0.1763,0.2442,0.2098e-6*1e-6 / beta_gamma),
+										  new Twiss(-0.3247,0.3974,0.2091e-6*1e-6 / beta_gamma),
+										  new Twiss(-0.5283,0.8684,0.2851e-6*1e-6 / beta_gamma)});
 		elsProbe.setBeamCurrent(0.0);
 		elsProbe.setBunchFrequency(4.025e8);//frequency
 		
@@ -191,22 +189,34 @@ public abstract class TestCommon {
 		scenario.setSynchronizationMode(Scenario.SYNC_MODE_DESIGN);					
 		scenario.resync();
 		
+		scenario.run();
+		
 		// Prints transfer matrices		
 		/*Iterator<IComponent> it = scenario.getLattice().globalIterator();
+		PhaseMap pm = PhaseMap.identity();
 		while (it.hasNext()) {
 			IComponent comp = it.next();
 			if (comp instanceof IElement) {
 				IElement el = (IElement)comp;
-				el.transferMap(probe, el.getLength()).getFirstOrder().print();
+				//el.transferMap(probe, el.getLength()).getFirstOrder().print();
+				pm = pm.compose(el.transferMap(probe, el.getLength()));
 				if (el instanceof xal.model.elem.IdealRfGap) {
 					xal.model.elem.IdealRfGap gap = (xal.model.elem.IdealRfGap)el;
 					System.out.printf("gap phase=%f E0TL=%E\n", gap.getPhase()*180./Math.PI, gap.getETL());
 				}
+				if (el instanceof IdealRfGap) {
+					IdealRfGap gap = (IdealRfGap)el;
+					System.out.printf("gap phase=%f E0TL=%E\n", gap.getPhase()*180./Math.PI, gap.getETL());
+				}
+				if (el instanceof eu.ess.jels.model.twelem.IdealRfGap) {
+					eu.ess.jels.model.twelem.IdealRfGap gap = (eu.ess.jels.model.twelem.IdealRfGap)el;
+					System.out.printf("gap phase=%f E0TL=%E\n", 360+Math.IEEEremainder(gap.getPhase()*180./Math.PI, 360), gap.getETL());
+				}
 			}
-		}*/
-			
+		}
+		pm.getFirstOrder().print();*/
 		
-		scenario.run();	
+			
 	}
 
 	public void printResults(double elsPosition, double[] elsSigma, double[] elsBeta) {
@@ -226,13 +236,15 @@ public abstract class TestCommon {
 		for (int i=0; i<3; i++) beta[i] = t[i].getBeta();
 				
 		beta[2]/=Math.pow(probe.getGamma(),2);
+
+		System.out.printf("alpha %E %E %E\n", t[0].getAlpha(), t[1].getAlpha(), t[2].getAlpha());		
+		System.out.printf("beta %E %E %E\n", beta[0], beta[1], beta[2]);
+		System.out.printf("emittance %E %E %E\n", t[0].getEmittance(), t[1].getEmittance(), t[2].getEmittance());
 		
 		double[] sigma = new double[3];
 		for (int i=0; i<3; i++)
 			sigma[i] = t[i].getEnvelopeRadius();		
-		System.out.printf("alpha %E %E %E\n", t[0].getAlpha(), t[1].getAlpha(), t[2].getAlpha());		
-		System.out.printf("beta %E %E %E\n", beta[0], beta[1], beta[2]);
-		System.out.printf("emittance %E %E %E\n", t[0].getEmittance(), t[1].getEmittance(), t[2].getEmittance());
+
 		
 		System.out.printf("%E %E %E %E\n",probe.getPosition(), sigma[0], sigma[1], sigma[2]);
 		
@@ -248,21 +260,34 @@ public abstract class TestCommon {
 		
 	}
 	
-	private double tr(double x)
+	private double tr(double x, double y)
 	{
-		return Math.signum(x)*Math.pow(10, (int)Math.log10(Math.abs(x)));
+		return Math.signum(x-y)*Math.pow(10, (int)Math.log10(Math.abs((x-y)/x)));
 	}
 	
-	protected void checkResults(double[][] cov) {
-		double[] alpha = new double[3],beta=new double[3],emit=new double[3], det=new double[3];
+	protected void checkResults(double gamma, double[][] cov) {
+		double[] alpha = new double[3],beta=new double[3],emit=new double[3], det=new double[3], sigma=new double[3], gama=new double[3];
 		for (int i=0; i<3; i++) 
-			det[i]=Math.sqrt(cov[2*i+0][2*i+0]*cov[2*i+1][2*i+1]-cov[2*i+1][2*i+0]*cov[2*i+0][2*i+1]);
+			det[i]=Math.sqrt(cov[2*i+0][2*i+0]*cov[2*i+1][2*i+1]-cov[2*i+1][2*i+0]*cov[2*i+0][2*i+1]);		
 		for (int i=0; i<3; i++) {
 			alpha[i]=-cov[2*i+1][2*i+0]/det[i];
 			beta[i]=cov[2*i+0][2*i+0]/det[i];
-			emit[i]=Math.sqrt(det[i]);
+			emit[i]=det[i];
 		}
-		beta[2]*=Math.pow(probe.getGamma(),2);
+		
+		/*double betta = Math.sqrt(Math.pow(gamma,2) - 1.0)/gamma;
+		for (int i=0; i<3; i++) {
+			double cos = 0.5*(cov[2*i][2*i]+cov[2*i+1][2*i+1]);
+			double sin = Math.sqrt(1.0 - cos*cos);
+			sigma[i]=Math.acos(cos);
+			alpha[i]=0.5*(cov[2*i][2*i]-cov[2*i+1][2*i+1])/sin;
+			beta[i]=betta*gamma*cov[2*i][2*i+1]/sin;
+		    gama[i]=-cov[2*i+1][2*i]/sin/(betta*gamma);
+		    emit[i]=-cov[2*i+1][2*i]/alpha[i];
+		}*/
+		
+		beta[2]*=Math.pow(gamma,2);		
+		
 		System.out.printf("Tracewin alpha: %E %E %E\n",alpha[0],alpha[1],alpha[2]);
 		System.out.printf("Tracewin beta: %E %E %E\n",beta[0],beta[1],beta[2]);
 		System.out.printf("Tracewin emit: %E %E %E\n",emit[0],emit[1],emit[2]);
@@ -272,12 +297,12 @@ public abstract class TestCommon {
 			t = ((ElsProbe)probe).getTwiss();
 		else 
 			t = ((EnvelopeProbe)probe).getCovariance().computeTwiss();
-		
+			
 		System.out.printf("differences ");
 		for (int i = 0; i<3; i++) {
-			System.out.printf("%c:%.0g %.0g %.0g ",'x'+i, tr(t[i].getAlpha()-alpha[i]), tr(t[i].getBeta()-beta[i]), tr(t[i].getEmittance()-emit[i]));	
+			System.out.printf("%c:%.0g %.0g %.0g ",'x'+i, tr(t[i].getAlpha(),alpha[i]), tr(t[i].getBeta(),beta[i]), tr(t[i].getEmittance(),emit[i]));	
 		}
-		System.out.printf("\n\n");
+		System.out.printf("\ngamma: %.0g\n", tr(probe.getGamma(),gamma));		
 	}
 
 }
