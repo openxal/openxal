@@ -7,7 +7,6 @@
 
     <!-- Initialization for the extensions builder -->
     <target name="init">
-		<property name="build.intermediates.extensions" value="${build.intermediates.extensions}" />
 		<property name="extension.compiler" value="${build.intermediates.extensions}/compiler.xml" />
 		<property name="extension.compile.root" value="${build.intermediates.extensions}/compile" />
 
@@ -68,6 +67,31 @@
 			<fileset dir="${services.root}" includes="*/extension/resources/**/*" />
 		</copy>
 	</target>
+
+
+	<!-- Jar all extensions resources -->
+    <target  name="jar-resources" depends="init">
+        <mkdir dir="${build.intermediates.extensions}" />
+		<property name="extension.intermediates.resources" value="${build.intermediates.extensions}/resources" />
+		<mkdir dir="${extension.intermediates.resources}" />
+
+		<!-- Merge the pure extensions' resources into the extensions build intermedites resources directory -->
+		<copy todir="${extension.intermediates.resources}" quiet="true" failonerror="false" includeEmptyDirs="false">
+			<regexpmapper handledirsep="true" from="^[^/]+/resources/(.*)$$" to="\1" />
+			<fileset dir="${extensions.root}" includes="*/resources/**/*" />
+		</copy>
+
+		<!-- Merge the services extensions' resources into the extensions build intermedites resources directory -->
+		<copy todir="${extension.intermediates.resources}" quiet="true" failonerror="false" includeEmptyDirs="false">
+			<regexpmapper handledirsep="true" from="^[^/]+/extension/resources/(.*)$$" to="\1" />
+			<fileset dir="${services.root}" includes="*/extension/resources/**/*" />
+		</copy>
+
+        <jar compress="true" jarfile="${build.intermediates.extensions}/resources.jar" index="true">
+			<fileset dir="${extension.intermediates.resources}" />
+        </jar>
+    </target>
+
 
 
 	<!-- Archive the extensions -->
@@ -166,6 +190,7 @@
 		<echo message="    all ........................ Build the shared extensions library." />
 		<echo message="    compile .................... Compile the extensions." />
 		<echo message="    jar ........................ Archive the shared extensions library." />
+		<echo message="    jar-resources .............. Assemble the extensions resources into an intermediate extensions jar file, resources.jar" />
 		<echo message="    purge-intermediates ........ Purge the build intermediates directory for all extensions." />
     </target>
 

@@ -218,6 +218,7 @@
         <subant target="jar-resources">
             <fileset dir=".">
                 <include name="core/build.xml" />
+                <include name="extensions/build.xml" />
                 <include name="apps/build.xml" />
                 <include name="services/build.xml" />
             </fileset>
