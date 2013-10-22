@@ -72,7 +72,14 @@
         
         <delete dir="${services.build.jar.root}" />
     </target>
-    
+
+
+	<!-- purge the services build intermediates -->
+    <target name="purge-intermediates" description="Purge services build intermediates." >
+        <delete dir="${build.intermediates.services}" />
+        <echo message="Purged the services build intermediates directory!" />
+    </target>
+
     
     <!-- Purge the services install root. -->
     <target name="purge-install">
@@ -100,6 +107,7 @@
 		<echo message="    install .................... Install all build products intended for distribution." />
 		<echo message="    jar-resources .............. Archive resources for all services supporting batch build." />
 		<echo message="    purge-install .............. Purge installed services." />
+		<echo message="    purge-intermediates ........ Purge the build intermediates directory for all services." />
     </target>
     
 </project>

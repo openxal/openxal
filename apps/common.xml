@@ -230,7 +230,14 @@
         <delete file="${app.build.jar}"/>
         <delete dir="${build.root}/javadoc/apps/${appname}" />
     </target>
-	
+
+
+	<!-- purge the application's build intermediates -->
+    <target name="purge-intermediates" depends="init" description="Purge the application's build intermediates." >
+        <delete dir="${app.intermediates.root}" />
+        <echo message="Purged the build intermediates directory for ${appname}!" />
+    </target>
+
 	
 	<!-- provide guidance on the various targets -->
     <target name="help" depends="init">
@@ -247,6 +254,7 @@
 		<echo message="    compile-warn-mandatory ..... Compile the application reporting only mandated warnings." />
 		<echo message="    install .................... Install the application for distribution." />
 		<echo message="    purge-install .............. Purge the installed application." />
+		<echo message="    purge-intermediates ........ Purge the application's build intermediates directory." />
     </target>
 
 </project>

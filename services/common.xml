@@ -230,7 +230,14 @@
         <delete file="${service.build.jar}"/>
         <delete dir="${build.root}/javadoc/services/${servicename}" />
     </target>
-	
+
+
+	<!-- purge the service's build intermediates -->
+    <target name="purge-intermediates" depends="init" description="Purge the service's build intermediates." >
+        <delete dir="${service.intermediates.root}" />
+        <echo message="Purged the build intermediates directory for ${servicename}!" />
+    </target>
+
 	
 	<!-- provide guidance on the various targets -->
     <target name="help" depends="init">
@@ -247,6 +254,7 @@
 		<echo message="    compile-warn-mandatory ..... Compile the service reporting only mandated warnings." />
 		<echo message="    install .................... Install the service for distribution." />
 		<echo message="    purge-install .............. Purge the installed service." />
+		<echo message="    purge-intermediates ........ Purge the service's build intermediates directory." />
     </target>
 
 </project>
