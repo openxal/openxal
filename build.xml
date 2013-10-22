@@ -139,7 +139,14 @@
         
         <echo message="Core cleaned!" />
     </target>
-    
+	
+
+	<!-- purge core build intermediates -->
+    <target name="purge-intermediates" description="Purge core build intermediates." >
+        <delete dir="${build.intermediates.core}" />
+        <echo message="Purged the core build intermediates directory!" />
+    </target>
+
 	
 	<!-- provide guidance on the various targets -->
     <target name="help">
@@ -157,6 +164,7 @@
 		<echo message="    jar-core ................... Assemble the core XAL classes and resources and libraries into the intermediate shared xal-core.jar" />
 		<echo message="    jar-lib .................... Assemble the external jar files into a single library, xal-lib.jar" />
 		<echo message="    jar-resources .............. Assemble the core resources into an intermediate core jar file, resources.jar" />
+		<echo message="    purge-intermediates ........ Purge the core build intermediates." />
 		<echo message="    run-tests .................. Build and run the test cases." />
     </target>
 </project>
