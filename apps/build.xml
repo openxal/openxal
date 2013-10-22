@@ -72,7 +72,14 @@
         
         <delete dir="${apps.build.jar.root}" />
     </target>
-    
+
+
+	<!-- purge the apps build intermediates -->
+    <target name="purge-intermediates" description="Purge apps build intermediates." >
+        <delete dir="${build.intermediates.apps}" />
+        <echo message="Purged the apps build intermediates directory!" />
+    </target>
+
     
     <!-- Purge the applications install root. -->
     <target name="purge-install">
@@ -100,6 +107,7 @@
 		<echo message="    install .................... Install all build products intended for distribution." />
 		<echo message="    jar-resources .............. Archive resources for all applications supporting batch build." />
 		<echo message="    purge-install .............. Purge installed applications." />
+		<echo message="    purge-intermediates ........ Purge the build intermediates directory for all applications." />
     </target>
     
 </project>

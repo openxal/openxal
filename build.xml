@@ -60,7 +60,21 @@
         </subant>
         <delete dir="${install.root}" />
     </target>
-	
+
+
+	<!-- purge build intermediates -->
+    <target name="purge-intermediates" description="Purge all build intermediates." >
+        <delete dir="${build.intermediates.root}" />
+        <echo message="Purged the build intermediates directory!" />
+    </target>
+
+
+	<!-- purge shared build intermediates -->
+    <target name="purge-shared-intermediates" description="Purge shared build intermediates." >
+        <delete dir="${build.intermediates.shared}" />
+        <echo message="Purged the shared build intermediates directory!" />
+    </target>
+
 	
 	<!-- purge build products -->
     <target name="purge-build" description="Purge all build products." >
@@ -253,6 +267,8 @@
 		<echo message="    jar-resources .............. Archive resources for the core plus all batch enabled applications and services." />
 		<echo message="    purge-build ................ Purge all build products." />
 		<echo message="    purge-install .............. Purge all installed products." />
+		<echo message="    purge-intermediates ........ Purge the build intermediates." />
+		<echo message="    purge-shared-intermediates . Purge the shared build intermediates." />
 		<echo message="    run-tests .................. Build and run unit tests." />
 		<echo message="    scripts .................... Copy scripts to the build directory." />
 		<echo message="    services ................... Compile the services and assemble the jar products." />
