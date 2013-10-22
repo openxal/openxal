@@ -12,7 +12,23 @@ import xal.tools.math.BaseVector;
 import xal.tools.math.IIndex;
 
 /**
- * Class <code></code>.
+ * <p>  
+ * Class <code>TransPhaseVector</code> represents transverse 
+ * phase coordinates.  This set of phase coordinates is isomorphic to 
+ * <b>R</b><sup>4</sup>, however, in order to represent translations
+ * of phase coordinates by matrix multiplication, this class is embedded
+ * in the space <b>R</b><sup>4</sup>&times;{1} &sub; <b>R</b><sup>5</sup>
+ * of "homogeneous coordinates".  Matrix multiplication is performed by
+ * elements of the class <code>{@link TrnsPhaseMatrix}</code>.
+ * <p>  
+ * </p>
+ * The last coordinate of all homogeneous (transverse) phase vectors 
+ * <b>v</b> &in; <b>R</b><sup>5</sup>
+ * is 1.  Thus <b>v</b> = (<i>x,x',y,y'</i>,1).  Likewise, the (5,5) element of
+ * any matrix <b>&Phi;</b> &in; <b>R</b><sup>4&times;4</sup>&times;{1} &sub;
+ * <b>R</b><sup>5&times;5</sup> representing an operator in homogeneous coordinates
+ * must be 1.
+ * </p>
  *
  *
  * @author Christopher K. Allen

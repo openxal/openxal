@@ -15,6 +15,7 @@ import xal.tools.math.SquareMatrix;
 import xal.tools.math.r3.R3;
 import xal.tools.math.r3.R3x3;
 import xal.tools.math.r3.R3x3.POS;
+import xal.tools.math.r4.R4x4;
 import xal.tools.math.r6.R6;
 import xal.tools.math.r6.R6x6;
 import xal.tools.beam.PhaseVector;
@@ -644,6 +645,39 @@ public class PhaseMatrix extends SquareMatrix<PhaseMatrix> implements java.io.Se
         R6x6    matProj = new R6x6();
         
         for (IND i : IND.valuesPhase()) 
+            for (IND j : IND.valuesPhase()) {
+                double  dblVal = this.getElem(i, j);
+                
+                matProj.setElem(i, j, dblVal);
+            }
+        
+        return matProj;
+    }
+    
+    /**
+     * <p>
+     * Projects the <code>PhaseMatrix</code> onto the space of
+     * 4&times;4 matrices.  The projective dimension of this phase matrix
+     * is lost in the projection, as is the longitudinal components of the
+     * matrix. that is, the last three columns and the last three rows are
+     * truncated.
+     * </p>
+     * <p>
+     * This method is useful when the phase matrix represents the 
+     * transverse properties of a beam, or when it represents a transverse
+     * action on a beam.
+     * </p>
+     * 
+     * @return      the top 6&times;6 diagonal block of this matrix 
+     *
+     * @author Christopher K. Allen
+     * @since  Oct 16, 2013
+     */
+    public R4x4  projectR4x4() {
+        
+        R4x4    matProj = new R4x4();
+        
+        for (R4x4.IND i : R4x4.IND.values()) 
             for (IND j : IND.valuesPhase()) {
                 double  dblVal = this.getElem(i, j);
                 

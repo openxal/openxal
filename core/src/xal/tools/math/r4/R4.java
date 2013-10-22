@@ -4,19 +4,20 @@
  * Author  : Christopher K. Allen
  * Since   : Oct 15, 2013
  */
-package xal.tools.math.r6;
+package xal.tools.math.r4;
 
+import xal.tools.dyn.TrnsPhaseMatrix;
+import xal.tools.dyn.TrnsPhaseVector.IND;
 import xal.tools.math.IIndex;
 import xal.tools.math.BaseVector;
 
 /**
- * Class <code></code>.
- *
+ * Set of real 4-vectors in <b>R</b><sup>4</sup> 
  *
  * @author Christopher K. Allen
  * @since  Oct 15, 2013
  */
-public class R6 extends BaseVector<R6> {
+public class R4 extends BaseVector<R4> {
 
     
     /*
@@ -24,8 +25,8 @@ public class R6 extends BaseVector<R6> {
      */
     
     /**
-     * Class <code>R3x3.IND</code> is an enumeration of the matrix indices
-     * for the <code>R3x3</code> class.
+     * Class <code>R4x4.IND</code> is an enumeration of the matrix indices
+     * for the <code>R4x4</code> class.
      *
      * @author Christopher K. Allen
      * @since  Oct 4, 2013
@@ -42,15 +43,9 @@ public class R6 extends BaseVector<R6> {
         X3(2),
         
         /** the <i>rd</i> axis index of <b>R</b><sup>6</sup> */
-        X4(3),
-        
-        /** the <i>th</i> axis index of <b>R</b><sup>6</sup> */
-        X5(4),
-        
-        /** the <i>th</i> axis index of <b>R</b><sup>6</sup> */
-        X6(5);
-        
+        X4(3);
 
+        
         /*
          * Operations
          */
@@ -108,30 +103,27 @@ public class R6 extends BaseVector<R6> {
      
      
      /** number of dimensions (DIM=3) */
-     public static final int    INT_SIZE = 6;
+     public static final int    INT_SIZE = 4;
      
     
-    
      /*
-      * Global Methods
+      *  Global Methods
       */
-
+     
      /**
       *  Create a new instance of a zero vector.
       *
       *  @return         zero vector
-      *  
-      * @author Christopher K. Allen
-      * @since  Oct 18, 2013
       */
-     public static R6 newZero() {
-         R6  vecZero = new R6();
+     public static R4   newZero()   {
+         R4 vecZero = new R4();
+         
          vecZero.assignZero();
-
-         return vecZero;
+         
+         return vecZero; 
      }
      
-     
+    
     /*
      * Initialization
      */
@@ -145,7 +137,7 @@ public class R6 extends BaseVector<R6> {
      * @author Christopher K. Allen
      * @since  Oct 15, 2013
      */
-    public R6() throws UnsupportedOperationException {
+    public R4() throws UnsupportedOperationException {
         super(INT_SIZE);
     }
 
@@ -169,8 +161,7 @@ public class R6 extends BaseVector<R6> {
      * @author Christopher K. Allen
      * @since  Oct 16, 2013
      */
-    public R6(double[] arrVals) {
+    public R4(double[] arrVals) {
         super(INT_SIZE, arrVals);
     }
-
 }

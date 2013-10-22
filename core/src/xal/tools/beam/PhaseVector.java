@@ -17,6 +17,7 @@ import xal.tools.data.IArchive;
 import xal.tools.math.BaseVector;
 import xal.tools.math.IIndex;
 import xal.tools.math.r3.R3;
+import xal.tools.math.r4.R4;
 import xal.tools.math.r6.R6;
 
 
@@ -260,6 +261,37 @@ public class PhaseVector extends BaseVector<PhaseVector> implements java.io.Seri
         PhaseVector vecPhase = new PhaseVector();
         
         for (IND i : IND.valuesPhase()) {
+            double  dblVal = vecCoords.getElem(i);
+            
+            vecPhase.setElem(i, dblVal);
+        }
+        
+        vecPhase.setElem(IND.HOM, 1.0);
+        
+        return vecPhase;
+    }
+
+    /**
+     * Embeds the given vector <b>z</b> &in; <b>R</b><sup>4</sup> into 
+     * homogeneous phase space.  The given vector is treated like a vector
+     * of transverse phase space coordinates corresponding to the first 4 elements
+     * of a <code>PhaseVector</code> object.  The vector elements corresonding
+     * to the longitudinal phase space coordinates <i>z</i> and <i>z'</i> are
+     * both set to zero.  The last element of 
+     * the returned phase vector has value 1, as do all phase vectors.
+     * 
+     * @param vecCoords     vector <b>z</b> containing the first 6 element 
+     *                      values of the returned phase vector
+     * 
+     * @return              the augmented vector (<b>z</b>,1)
+     *
+     * @author Christopher K. Allen
+     * @since  Oct 16, 2013
+     */
+    public static PhaseVector embed(final R4 vecCoords) {
+        PhaseVector vecPhase = new PhaseVector();
+        
+        for (R4.IND i : R4.IND.values()) {
             double  dblVal = vecCoords.getElem(i);
             
             vecPhase.setElem(i, dblVal);

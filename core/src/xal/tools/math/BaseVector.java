@@ -14,7 +14,6 @@ import java.util.StringTokenizer;
 import xal.tools.data.DataAdaptor;
 import xal.tools.data.DataFormatException;
 import xal.tools.data.IArchive;
-
 import Jama.Matrix;
 
 
@@ -771,7 +770,82 @@ public abstract class BaseVector<V extends BaseVector<V>> implements IArchive, j
             this.setElem(i, 1.0);
     }
     
-
+    /**
+     * <p>
+     * Projects this vector onto the smaller subspace represented by
+     * the given vector.  For example, say this vector <b>v</b> is an element
+     * of <b>R</b><sup><i>n</i></sup> and the given vector <b>u</b> is
+     * an element of <b>R</b><sup><i>m</i></sup> where 
+     * <i>m</i> &le; <i>n</i>. Then <b>v</b> decomposes as 
+     * <b>v</b> = (<b>v</b><sub>1</sub> <b>v</b><sub>2</sub>) &in; 
+     * <b>R</b><sup><i>m</i></sup> &times; <b>R</b><sup><i>n-m</i></sup>.
+     * That component <b>v</b><sub>1</sub> that lives in the subspace
+     * <b>R</b><sup><i>m</i></sup> is projected onto the given vector.
+     * </p>
+     * <p>
+     * To make it simple, the first <i>m</i> components of this vector are
+     * used to set all the values of the given vector, in respective order.
+     * If the give vector is larger than this vector an exception is thrown.
+     * </p>
+     * 
+     * @param vecSub    The vector to receive the projection of this vector (determines size)
+     * 
+     * @throws IllegalArgumentException Thrown if the given vector is larger than this one.
+     *
+     * @author Christopher K. Allen
+     * @since  Oct 18, 2013
+     */
+    public <U extends BaseVector<U>> void projectOnto(U vecSub) throws IllegalArgumentException {
+        
+        // Check size of sub-space vector
+        if (vecSub.getSize() > this.getSize())
+            throw new IllegalArgumentException("Cannot project this vector onto the larger vector " + vecSub);
+        
+        for (int i=0; i<vecSub.getSize(); i++) {
+            double  dblVal = this.getElem(i);
+            
+            vecSub.setElem(i, dblVal);
+        }
+    }
+    
+    /**
+     * <p>
+     * Embeds this vector into the larger super-space represented by
+     * the given vector.  For example, say this vector <b>v</b> is an element
+     * of <b>R</b><sup><i>m</i></sup> and the given vector <b>u</b> is
+     * an element of <b>R</b><sup><i>n</i></sup> where 
+     * <i>m</i> &le; <i>n</i>. Then <b>u</b> decomposes as 
+     * <b>u</b> = (<b>u</b><sub>1</sub> <b>u</b><sub>2</sub>) &in; 
+     * <b>R</b><sup><i>m</i></sup> &times; <b>R</b><sup><i>n-m</i></sup>.
+     * This vector <b>v</b> is embedded as that component <b>u</b><sub>1</sub> 
+     * that lives in the sub-space
+     * <b>R</b><sup><i>m</i></sup> &sub;<b>R</b><sup><i>m</i></sup> &times; <b>R</b><sup><i>n-m</i></sup>.
+     * </p>
+     * <p>
+     * To make it simple, the first <i>m</i> components of the given vector are
+     * set to the components of this vector, in respective order.
+     * If the give vector is smaller than this vector an exception is thrown.
+     * </p>
+     * 
+     * @param vecSup    The vector to receive the embedding of this vector 
+     * 
+     * @throws IllegalArgumentException Thrown if the given vector is smaller than this one.
+     *
+     * @author Christopher K. Allen
+     * @since  Oct 18, 2013
+     */
+    public <U extends BaseVector<U>> void embedIn(U vecSup) throws IllegalArgumentException {
+        
+        // Check the size of the super-space vector
+        if ( vecSup.getSize() < this.getSize() ) 
+            throw new IllegalArgumentException("Cannot embed this vector into a smaller vector " + vecSup);
+        
+        for (int i=0; i<this.getSize(); i++) {
+            double dblVal = this.getElem(i);
+            
+            vecSup.setElem(i, dblVal);
+        }
+    }
 
     /**
      * Checks if the given vector is algebraically equivalent to this
