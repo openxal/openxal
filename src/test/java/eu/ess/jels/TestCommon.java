@@ -45,21 +45,20 @@ public abstract class TestCommon {
 
 	@Parameters
 	public static Collection<Object[]> probes() {
+		double energy = 3e6, frequency = 4.025e8, current = 0;
 		return Arrays.asList(new Object[][]{
-				{setupProbeViaJavaCalls(), DefaultElementMapping.getInstance()},
-				{setupElsProbeViaJavaCalls(), ElsElementMapping.getInstance()},
-				{setupProbeViaJavaCalls(), TWElementMapping.getInstance()}
+					{setupOpenXALProbe(energy, frequency, current), DefaultElementMapping.getInstance()},
+					{setupElsProbe(energy, frequency, current), ElsElementMapping.getInstance()},
+					{setupOpenXALProbe(energy, frequency, current), TWElementMapping.getInstance()}
 				});
 	}
-
 	
-	
-	public static EnvelopeProbe setupProbeViaJavaCalls() {
+	public static EnvelopeProbe setupOpenXALProbe(double energy, double frequency, double current) {
 		// Envelope probe and tracker
 		EnvelopeTracker envelopeTracker = new EnvelopeTracker();			
 		envelopeTracker.setRfGapPhaseCalculation(true);
 		envelopeTracker.setUseSpacecharge(false);
-		envelopeTracker.setEmittanceGrowth(true);
+		envelopeTracker.setEmittanceGrowth(false);
 		envelopeTracker.setStepSize(0.004);
 		envelopeTracker.setProbeUpdatePolicy(Tracker.UPDATE_EXIT);
 		
@@ -67,7 +66,7 @@ public abstract class TestCommon {
 		envelopeProbe.setAlgorithm(envelopeTracker);
 		envelopeProbe.setSpeciesCharge(-1);
 		envelopeProbe.setSpeciesRestEnergy(9.3829431e8);
-		envelopeProbe.setKineticEnergy(3e6);//energy
+		envelopeProbe.setKineticEnergy(energy);//energy
 		envelopeProbe.setPosition(0.0);
 		envelopeProbe.setTime(0.0);		
 				
@@ -91,8 +90,8 @@ public abstract class TestCommon {
 		envelopeProbe.initFromTwiss(new Twiss[]{new Twiss(-0.1763,0.2442,0.2098e-6*1e-6 / beta_gamma),
 				  new Twiss(-0.3247,0.3974,0.2091e-6*1e-6 / beta_gamma),
 				  new Twiss(-0.5283,0.8684,0.2851e-6*1e-6 / beta_gamma)});
-		envelopeProbe.setBeamCurrent(0.0);
-		envelopeProbe.setBunchFrequency(4.025e8);//frequency
+		envelopeProbe.setBeamCurrent(current);
+		envelopeProbe.setBunchFrequency(frequency);//frequency
 		
 		/*CovarianceMatrix cov = ((EnvelopeProbe)envelopeProbe).getCovariance().computeCovariance();
 		cov.setElem(4, 4, cov.getElem(4,4)/Math.pow(envelopeProbe.getGamma(),2));
@@ -106,7 +105,7 @@ public abstract class TestCommon {
 		return envelopeProbe;
 	}
 
-	public static ElsProbe setupElsProbeViaJavaCalls() {
+	public static ElsProbe setupElsProbe(double energy, double frequency, double current) {
 		// Envelope probe and tracker
 		ElsTracker elsTracker = new ElsTracker();			
 		elsTracker.setRfGapPhaseCalculation(false);
@@ -119,7 +118,7 @@ public abstract class TestCommon {
 		elsProbe.setAlgorithm(elsTracker);
 		elsProbe.setSpeciesCharge(-1);
 		elsProbe.setSpeciesRestEnergy(9.3829431e8);
-		elsProbe.setKineticEnergy(3e6);//energy
+		elsProbe.setKineticEnergy(energy);//energy
 		elsProbe.setPosition(0.0);
 		elsProbe.setTime(0.0);		
 				
@@ -144,8 +143,8 @@ public abstract class TestCommon {
 		elsProbe.initFromTwiss(new Twiss[]{new Twiss(-0.1763,0.2442,0.2098e-6*1e-6 / beta_gamma),
 										  new Twiss(-0.3247,0.3974,0.2091e-6*1e-6 / beta_gamma),
 										  new Twiss(-0.5283,0.8684,0.2851e-6*1e-6 / beta_gamma)});
-		elsProbe.setBeamCurrent(0.0);
-		elsProbe.setBunchFrequency(4.025e8);//frequency
+		elsProbe.setBeamCurrent(current);
+		elsProbe.setBunchFrequency(frequency);//frequency
 		
 		return elsProbe;
 	}
@@ -192,7 +191,12 @@ public abstract class TestCommon {
 		scenario.run();
 		
 		// Prints transfer matrices		
-		/*Iterator<IComponent> it = scenario.getLattice().globalIterator();
+		//printTransferMatrices(scenario);
+	}
+	
+	public void printTransferMatrices(Scenario scenario) throws ModelException
+	{
+		Iterator<IComponent> it = scenario.getLattice().globalIterator();
 		PhaseMap pm = PhaseMap.identity();
 		while (it.hasNext()) {
 			IComponent comp = it.next();
@@ -214,10 +218,9 @@ public abstract class TestCommon {
 				}
 			}
 		}
-		pm.getFirstOrder().print();*/
-		
-			
+		pm.getFirstOrder().print();
 	}
+	
 
 	public void printResults(double elsPosition, double[] elsSigma, double[] elsBeta) {
 		// Getting results		
