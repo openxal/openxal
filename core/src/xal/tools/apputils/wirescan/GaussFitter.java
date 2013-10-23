@@ -384,8 +384,8 @@ public class GaussFitter{
 	/** Returns the width coefficient for fitting. The fit will use  
 	    - wCoeff*sigma : + wCoeff*sigma region around pick for fitting 
 	*/
-	public void getWidthCoeff(double wCoeff){
-		this.wCoeff = wCoeff;
+	public double getWidthCoeff(){
+		return wCoeff;
 	}	
 	
 	
