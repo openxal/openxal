@@ -6,6 +6,8 @@
     
     <property name="build.path.pattern" value="*/build.xml" />
 
+	<property name="doc.builder" value="${build.intermediates.shared}/doc-builder.xml" />
+
 	<!-- Post build information -->
 	<target name="info">
 		<echo message="Ant Version: ${ant.version}" />
@@ -226,15 +228,51 @@
     </target>
 
     
-    <!-- Build the javadoc. -->
-    <target name="doc">
-        <subant target="doc">
-            <fileset dir=".">
-                <include name="core/build.xml" />
-            </fileset>
-        </subant>
+    <!-- Build the javadoc for the shared library including the core, extensions and plugins. -->
+    <target name="doc" depends="shared, generate-doc-builder">
+        <mkdir dir="${build.javadoc.root}" />
+
+		<!-- Compile every extension -->
+		<subant target="doc" antfile="doc-builder.xml">
+			<fileset dir="${build.intermediates.shared}" includes="doc-builder.xml"/>
+		</subant>
     </target>
-    
+
+
+	<!-- Generate the build file for compiling extensions. -->
+	<target name="generate-doc-builder">
+		<touch file="${doc.builder}" mkdirs="true" />
+
+		<echo file="${doc.builder}">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;project basedir="." default="doc" name="xal.shared.doc"&gt;
+	&lt;target name="doc"&gt;
+		&lt;mkdir dir="${build.javadoc.root}" /&gt;
+		&lt;javadoc destdir="${build.javadoc.root}" packagenames="xal.*" author="false" version="false" maxmemory="512m"&gt;
+			&lt;sourcepath&gt;
+			&lt;pathelement location="${core.root}/src" /&gt;
+		</echo>
+
+		<!-- loop over every extension directory and add the source path -->
+		<subant genericantfile="${ant.file.xal.common}" target="append-extension-source">
+			<dirset dir="${extensions.root}" includes="*" />
+			<dirset dir="${plugins.root}" includes="*" />
+			<dirset dir="${services.root}" includes="*/extension" />
+		</subant>
+		<echo file="${doc.builder}" append="true">
+			&lt;/sourcepath&gt;
+		&lt;/javadoc&gt;
+	&lt;/target&gt;
+&lt;/project&gt;&#10;</echo>
+	</target>
+
+
+    <!-- Append the extension source for constructing the javadoc. -->
+    <target name="append-extension-source">
+		<echo file="${doc.builder}" append="true">&lt;pathelement location="${basedir}/src" /&gt;
+		</echo>
+		<echo message="Appending extension: ${basedir}" />
+    </target>
+
     
 	<!-- Install the javadoc -->
     <target name="install-doc" depends="doc" description="Build and install the javadoc documentation." >
@@ -257,7 +295,7 @@
 		<echo message="    apps ....................... Compile the applications and assemble the jar products." />
 		<echo message="    clean ...................... Clean compiled classes and build products" />
 		<echo message="    core ....................... Compile the core XAL classes and assemble the jar products." />
-		<echo message="    doc ........................ Build the javadoc." />
+		<echo message="    doc ........................ Build the javadoc for the core, extensions and plugins." />
 		<echo message="    info ....................... Post build information." />
 		<echo message="    install .................... Install all build products which allow batch installation." />
 		<echo message="    install-apps ............... Install all apps which allow batch installation." />

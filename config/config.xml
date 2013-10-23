@@ -51,6 +51,9 @@
     <!-- Configure path for the common libraries  -->
     <property name="install.lib.root" value="${install.root}/lib" />
 
+    <!-- Configure path to the core  -->
+    <property name="core.root" value="${xal.home}/core" />
+
     <!-- Configure paths for extensions  -->
     <property name="extensions.root" value="${xal.home}/extensions" />
 
