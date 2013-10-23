@@ -111,10 +111,10 @@
     </target>
 
 	
-	<!-- Javadoc the XAL core -->
+	<!-- Javadoc the XAL core and place the documentation under core intermediates -->
     <target name="doc" depends="init, jar-core" description="Javadoc XAL core." >
-        <mkdir dir="${build.javadoc.root}" />
-        <javadoc destdir="${build.javadoc.root}" packagenames="xal.*" author="false" version="false" maxmemory="512m">
+        <mkdir dir="${build.intermediates.core}/doc" />
+        <javadoc destdir="${build.intermediates.core}/doc" packagenames="xal.*" author="false" version="false" maxmemory="512m">
             <sourcepath>
                 <pathelement location="${srcroot}/${source.code.dir}" />
             </sourcepath>
@@ -160,7 +160,7 @@
 		<echo message="    compile .................... Compile the core XAL classes reporting all recommended warnings." />
 		<echo message="    compile-warn-all ........... Compile the core XAL classes reporting all recommended warnings." />
 		<echo message="    compile-warn-mandatory ..... Compile the core XAL classes reporting only mandated warnings." />
-		<echo message="    doc ........................ Generate documentation for the core." />
+		<echo message="    doc ........................ Generate documentation for the core and place in intermediates." />
 		<echo message="    jar-core ................... Assemble the core XAL classes and resources and libraries into the intermediate shared xal-core.jar" />
 		<echo message="    jar-lib .................... Assemble the external jar files into a single library, xal-lib.jar" />
 		<echo message="    jar-resources .............. Assemble the core resources into an intermediate core jar file, resources.jar" />
