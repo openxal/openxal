@@ -257,6 +257,11 @@ public abstract class TestCommon {
 		
 	}
 	
+	public void checkTWTransferMatrix(double T[][])
+	{
+		
+	}
+	
 	
 	private double tr(double x, double y)
 	{
@@ -286,9 +291,9 @@ public abstract class TestCommon {
 		
 		beta[2]*=Math.pow(gamma,2);		
 		
-		System.out.printf("Tracewin alpha: %E %E %E\n",alpha[0],alpha[1],alpha[2]);
+		/*System.out.printf("Tracewin alpha: %E %E %E\n",alpha[0],alpha[1],alpha[2]);
 		System.out.printf("Tracewin beta: %E %E %E\n",beta[0],beta[1],beta[2]);
-		System.out.printf("Tracewin emit: %E %E %E\n",emit[0],emit[1],emit[2]);
+		System.out.printf("Tracewin emit: %E %E %E\n",emit[0],emit[1],emit[2]);*/
 		
 		Twiss[] t;
 		if (probe instanceof ElsProbe)
@@ -296,7 +301,7 @@ public abstract class TestCommon {
 		else 
 			t = ((EnvelopeProbe)probe).getCovariance().computeTwiss();
 			
-		System.out.printf("differences ");
+		System.out.printf("TW results differences vs %s:\n", elementMapping.getClass());
 		for (int i = 0; i<3; i++) {
 			System.out.printf("%c:%.0g %.0g %.0g ",'x'+i, tr(t[i].getAlpha(),alpha[i]), tr(t[i].getBeta(),beta[i]), tr(t[i].getEmittance(),emit[i]));	
 		}

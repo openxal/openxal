@@ -20,30 +20,59 @@ public class DTLCellTest extends TestCommon {
 
 	@Test
 	public void doDTLCellTest() throws InstantiationException, ModelException {		
-		AcceleratorSeq sequence = new AcceleratorSeq("DTLCellTest");
-
 		// DTL_CEL 68.534 22.5 22.5 0.00864202 0 46.964 148174 -90 10 0 0 0.0805777 0.772147 -0.386355 -0.142834
-		// input from TraceWin
-		double frequency = 4.025e8; // this is global in TraceWin
+		AcceleratorSeq sequence = dtlcell(4.025e8, 68.534, 22.5, 22.5, 0.00864202, 0, 46.964,
+				148174, -90, 10, 0,
+				0.0805777, 0.772147, -0.386355, -0.142834, 0, 0);
+				
+		run(sequence);
 		
-		double L = 68.534 * 1e-3;
-		double Lq1 = 22.5 * 1e-3;
-		double Lq2 = 22.5 * 1e-3;
-		double g = 0.00864202 * 1e-3;
-		double B1 = 0;
-		double B2 = 46.964;
+		printResults();
+		checkELSResults(6.853400E-02, new double[] { 9.128969E-04, 1.266179E-03, 1.698689E-03},
+				new double [] {2.901633E-01, 5.600682E-01, 7.393248E-01});
 		
-		double E0TL = 148174 * 1e-6; // Effective gap voltage
-		double Phis = -90;  // RF phase (deg) absolute or relative
-		double R = 10; // aperture
-		double p = 0; // 0: relative phase, 1: absolute phase
 		
-		double betas = 0.0805777; // particle reduced velocity
-		double Ts = 0.772147;  // transit time factor
-		double kTs = -0.386355;
-		double k2Ts = -0.142834;
-		double kS = 0;
-		double k2S = 0;
+		checkTWResults(1.003197291, new double[][] 
+				{{+7.479994e-13, -1.023415e-12, -2.946095e-20, -1.080781e-18, +0.000000e+00, +0.000000e+00}, 
+					{-1.023415e-12, +1.058787e-11, -1.660521e-18, -8.816041e-18, +0.000000e+00, +0.000000e+00}, 
+					{-2.946095e-20, -1.660521e-18, +1.414917e-12, +8.722957e-12, +0.000000e+00, +0.000000e+00}, 
+					{-1.080781e-18, -8.816041e-18, +8.722957e-12, +5.860168e-11, +0.000000e+00, +0.000000e+00}, 
+					{+0.000000e+00, +0.000000e+00, +0.000000e+00, +0.000000e+00, +2.796100e-12, -5.769466e-12}, 
+					{+0.000000e+00, +0.000000e+00, +0.000000e+00, +0.000000e+00, -5.769466e-12, +1.644345e-11} 
+				});
+	}
+
+	/**
+	 * 
+	 * @param L
+	 * @param Lq1
+	 * @param Lq2
+	 * @param g
+	 * @param B1
+	 * @param B2
+	 * @param E0TL Effective gap voltage
+	 * @param Phis RF phase (deg) absolute or relative
+	 * @param R aperture
+	 * @param p 0: relative phase, 1: absolute phase
+	 * @param betas particle reduced velocity
+	 * @param Ts transit time factor
+	 * @param kTs
+	 * @param k2Ts
+	 * @param kS
+	 * @param k2S
+	 * @return
+	 */
+	public AcceleratorSeq dtlcell(double frequency, double L, double Lq1, double Lq2, double g, double B1, double B2, 
+			double E0TL, double Phis, double R,	double p, 
+			double betas, double Ts, double kTs, double k2Ts, double kS, double k2S)
+	{
+		AcceleratorSeq sequence = new AcceleratorSeq("DTLCellTest");
+		
+		// mm -> m
+		L *= 1e-3;
+		Lq1 *= 1e-3;
+		Lq2 *= 1e-3;
+		g *= 1e-3;		
 		
 		// setup		
 		// QUAD1,2
@@ -83,7 +112,7 @@ public class DTLCellTest extends TestCommon {
 		dtlTank.addNode(gap);
 		dtlTank.addNode(quad2);
 		dtlTank.getRfField().setPhase(Phis);		
-		dtlTank.getRfField().setAmplitude(E0TL / length);
+		dtlTank.getRfField().setAmplitude(E0TL * 1e-6 / length);
 		dtlTank.getRfField().setFrequency(frequency * 1e-6);		
 		/*cavity.getRfField().setStructureMode(dblVal);*/
 		
@@ -99,21 +128,8 @@ public class DTLCellTest extends TestCommon {
 		
 		sequence.addNode(dtlTank);
 		sequence.setLength(L);
-				
-		run(sequence);
 		
-		printResults();
-		checkELSResults(6.853400E-02, new double[] { 9.128969E-04, 1.266179E-03, 1.698689E-03},
-				new double [] {2.901633E-01, 5.600682E-01, 7.393248E-01});
-		
-		
-		checkTWResults(1.003197291, new double[][] 
-				{{+7.479994e-13, -1.023415e-12, -2.946095e-20, -1.080781e-18, +0.000000e+00, +0.000000e+00}, 
-					{-1.023415e-12, +1.058787e-11, -1.660521e-18, -8.816041e-18, +0.000000e+00, +0.000000e+00}, 
-					{-2.946095e-20, -1.660521e-18, +1.414917e-12, +8.722957e-12, +0.000000e+00, +0.000000e+00}, 
-					{-1.080781e-18, -8.816041e-18, +8.722957e-12, +5.860168e-11, +0.000000e+00, +0.000000e+00}, 
-					{+0.000000e+00, +0.000000e+00, +0.000000e+00, +0.000000e+00, +2.796100e-12, -5.769466e-12}, 
-					{+0.000000e+00, +0.000000e+00, +0.000000e+00, +0.000000e+00, -5.769466e-12, +1.644345e-11} 
-				});
+		return sequence;		
 	}
+	
 }
