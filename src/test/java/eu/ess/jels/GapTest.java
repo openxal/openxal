@@ -79,7 +79,8 @@ public class GapTest extends TestCommon {
 		System.out.println("W0: "+probe.getKineticEnergy());
 		run(sequence);
 		
-		printResults(0.000000E+00, new double[] {8.001089E-04, 1.018977E-03, 1.753257E-03},
+		printResults();
+		checkELSResults(0.000000E+00, new double[] {8.001089E-04, 1.018977E-03, 1.753257E-03},
 				new double [] {2.442000E-01, 3.974000E-01, 8.628735E-01});
 		System.out.println("W: "+probe.getKineticEnergy());
 		// -90 0.000000E+00 8.001089E-04 1.018977E-03 1.753257E-03 2.442000E-01 3.974000E-01 8.628735E-01
@@ -89,7 +90,7 @@ public class GapTest extends TestCommon {
 		// 0 0.000000E+00 7.949815E-04 1.012447E-03 1.753257E-03 2.442000E-01 3.974000E-01 8.740398E-01
 
 		
-		checkResults(1.003211730, new double[][] 
+		checkTWResults(1.003211730, new double[][] 
 				{{+6.387305e-13, +8.900741e-13, +0.000000e+00, +0.000000e+00, +0.000000e+00, +0.000000e+00}, 
 					{+8.900741e-13, +1.195123e-11, +0.000000e+00, +0.000000e+00, +0.000000e+00, +0.000000e+00}, 
 					{+0.000000e+00, +0.000000e+00, +1.035973e-12, +1.542166e-12, +0.000000e+00, +0.000000e+00}, 

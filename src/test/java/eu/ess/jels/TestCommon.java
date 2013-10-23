@@ -222,7 +222,7 @@ public abstract class TestCommon {
 	}
 	
 
-	public void printResults(double elsPosition, double[] elsSigma, double[] elsBeta) {
+	public void printResults() {
 		// Getting results		
 		//Matrix envelope = probe.getEnvelope();
 		//System.out.printf("%E %E %E\n", envelope.get(0,0), envelope.get(3,0), envelope.get(6,0));
@@ -240,35 +240,30 @@ public abstract class TestCommon {
 				
 		beta[2]/=Math.pow(probe.getGamma(),2);
 
-		System.out.printf("alpha %E %E %E\n", t[0].getAlpha(), t[1].getAlpha(), t[2].getAlpha());		
-		System.out.printf("beta %E %E %E\n", beta[0], beta[1], beta[2]);
-		System.out.printf("emittance %E %E %E\n", t[0].getEmittance(), t[1].getEmittance(), t[2].getEmittance());
+		System.out.printf("alpha: %E %E %E\n", t[0].getAlpha(), t[1].getAlpha(), t[2].getAlpha());		
+		System.out.printf("beta: %E %E %E\n", beta[0], beta[1], beta[2]);
+		System.out.printf("emittance: %E %E %E\n", t[0].getEmittance(), t[1].getEmittance(), t[2].getEmittance());
 		
 		double[] sigma = new double[3];
 		for (int i=0; i<3; i++)
 			sigma[i] = t[i].getEnvelopeRadius();		
 
 		
-		System.out.printf("%E %E %E %E\n",probe.getPosition(), sigma[0], sigma[1], sigma[2]);
-		
-		
-		/*CovarianceMatrix cov = ((EnvelopeProbe)probe).getCovariance().computeCovariance();
-		cov.setElem(4, 4, cov.getElem(4,4)/Math.pow(probe.getGamma(),2));
-		cov.setElem(5, 5, cov.getElem(5,5)*Math.pow(probe.getGamma(),2));
-		for (int i=0; i<6; i++) {
-			System.out.println();
-			for (int j=0; j<6; j++)
-				System.out.printf("%E ",cov.getElem(i,j));
-		}*/
+		System.out.printf("sigma: %E %E %E %E\n",probe.getPosition(), sigma[0], sigma[1], sigma[2]);		
+	}
+	
+	public void checkELSResults(double elsPosition, double[] elsSigma, double[] elsBeta)
+	{
 		
 	}
+	
 	
 	private double tr(double x, double y)
 	{
 		return Math.signum(x-y)*Math.pow(10, (int)Math.log10(Math.abs((x-y)/x)));
 	}
 	
-	protected void checkResults(double gamma, double[][] cov) {
+	protected void checkTWResults(double gamma, double[][] cov) {
 		double[] alpha = new double[3],beta=new double[3],emit=new double[3], det=new double[3], sigma=new double[3], gama=new double[3];
 		for (int i=0; i<3; i++) 
 			det[i]=Math.sqrt(cov[2*i+0][2*i+0]*cov[2*i+1][2*i+1]-cov[2*i+1][2*i+0]*cov[2*i+0][2*i+1]);		

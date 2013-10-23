@@ -29,11 +29,13 @@ public class DriftTest extends TestCommon {
 		sequence.setLength(L);
 		
 		run(sequence);
-						
-		printResults(9.500000E-02, new double[]{9.523765E-04, 1.177297E-03, 1.952594E-03},
+		
+		printResults();
+		
+		checkELSResults(9.500000E-02, new double[]{9.523765E-04, 1.177297E-03, 1.952594E-03},
 				new double[] {3.158031E-01, 4.841974E-01, 9.768578E-01});
 		
-		checkResults(1.003197291, new double[][] 
+		checkTWResults(1.003197291, new double[][] 
 				{{+8.278830e-13, +1.513708e-12, +0.000000e+00, +0.000000e+00, +0.000000e+00, +0.000000e+00},
 				{+1.513708e-12, +1.106878e-11, +0.000000e+00, +0.000000e+00, +0.000000e+00, +0.000000e+00}, 
 				{+0.000000e+00, +0.000000e+00, +1.265096e-12, +1.538810e-12, +0.000000e+00, +0.000000e+00}, 
