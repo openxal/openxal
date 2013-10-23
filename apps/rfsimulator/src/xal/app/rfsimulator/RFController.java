@@ -23,9 +23,9 @@ import java.text.NumberFormat;
 import java.io.*;
 import java.util.*;
 
-import xal.tools.swing.DecimalField;
-import xal.tools.apputils.SimpleChartPopupMenu;
-import xal.tools.plot.*;
+import xal.extension.widgets.swing.DecimalField;
+import xal.extension.widgets.apputils.SimpleChartPopupMenu;
+import xal.extension.widgets.plot.*;
 
 public class RFController implements ItemListener {
     

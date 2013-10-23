@@ -1,7 +1,7 @@
 <?xml version = '1.0' encoding = 'UTF-8'?>
 <BricksDocument date="Thu Mar 22 10:05:29 EDT 2012" version="1.0.0">
     <RootBrick>
-        <ViewNode customBeanClass="xal.smf.application.DefaultAcceleratorWindow" height="911" tag="MainWindow" width="1372">
+        <ViewNode customBeanClass="xal.extension.smf.application.DefaultAcceleratorWindow" height="911" tag="MainWindow" width="1372">
             <ViewProxy type="javax.swing.JFrame" />
             <BeanProperty name="title" value="Machine Recorder" />
             <ViewNode tag="Main Split Pane">
@@ -221,7 +221,7 @@
                                     </BorderNode>
                                 </ViewNode>
                                 <ViewNode tag="Display Group Plot">
-                                    <ViewProxy type="xal.tools.plot.FunctionGraphsJPanel" />
+                                    <ViewProxy type="xal.extension.widgets.plot.FunctionGraphsJPanel" />
                                     <BeanProperty name="name" value="Plot" />
                                 </ViewNode>
                             </ViewNode>

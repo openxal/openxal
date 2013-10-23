@@ -1,7 +1,7 @@
 <?xml version = '1.0' encoding = 'UTF-8'?>
 <BricksDocument date="Fri Aug 11 14:07:07 EDT 2006" version="1.0.0">
     <RootBrick>
-        <ViewNode customBeanClass="xal.application.DefaultXalWindow" height="698" tag="MainWindow" width="998">
+        <ViewNode customBeanClass="xal.extension.application.DefaultXalWindow" height="698" tag="MainWindow" width="998">
             <ViewProxy type="javax.swing.JFrame"/>
             <BeanProperty name="title" value="Trip Viewer"/>
             <ViewNode tag="Tabbed Pane">

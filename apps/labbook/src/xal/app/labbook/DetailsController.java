@@ -8,8 +8,8 @@
 
 package xal.app.labbook;
 
-import xal.tools.bricks.WindowReference;
-import xal.application.Commander;
+import xal.extension.bricks.WindowReference;
+import xal.extension.application.Commander;
 import xal.tools.IconLib;
 import xal.tools.messaging.MessageCenter;
 

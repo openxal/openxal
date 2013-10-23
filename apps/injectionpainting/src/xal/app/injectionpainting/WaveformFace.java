@@ -9,8 +9,8 @@
 package xal.app.injectionpainting;
 
 import xal.ca.*;
-import xal.application.*;
-import xal.tools.bricks.WindowReference;
+import xal.extension.application.*;
+import xal.extension.bricks.WindowReference;
 import xal.tools.messaging.MessageCenter;
 
 import java.net.URL;
@@ -26,7 +26,7 @@ import java.sql.Connection;
 import java.awt.Color;
 import java.net.*;
 import java.io.*;
-import xal.tools.plot.*;
+import xal.extension.widgets.plot.*;
 import xal.tools.apputils.files.RecentFileTracker;
 
 

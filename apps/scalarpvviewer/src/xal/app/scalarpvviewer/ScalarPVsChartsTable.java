@@ -15,9 +15,9 @@ import javax.swing.border.*;
 import javax.swing.table.*;
 import javax.swing.event.*;
 
-import xal.tools.plot.*;
+import xal.extension.widgets.plot.*;
 import xal.tools.swing.FortranNumberFormat;
-import xal.tools.scan.UpdatingEventController;
+import xal.extension.scan.UpdatingEventController;
 
 /**
  *  Shows the table with PVs names and atributes realted to the value, reference

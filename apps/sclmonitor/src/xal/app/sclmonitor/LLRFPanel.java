@@ -12,9 +12,9 @@ import xal.ca.MonitorException;
 import xal.ca.PutException;
 import xal.ca.PutListener;
 import xal.tools.apputils.EdgeLayout;
-import xal.tools.apputils.SimpleChartPopupMenu;
-import xal.tools.plot.CurveData;
-import xal.tools.plot.FunctionGraphsJPanel;
+import xal.extension.widgets.apputils.SimpleChartPopupMenu;
+import xal.extension.widgets.plot.CurveData;
+import xal.extension.widgets.plot.FunctionGraphsJPanel;
 import xal.smf.impl.SCLCavity;
 
 import java.awt.Color;

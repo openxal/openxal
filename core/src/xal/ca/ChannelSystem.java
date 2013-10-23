@@ -25,6 +25,10 @@ abstract public class ChannelSystem {
 	 * @param debugFlag True to enable debug mode and false to disable debug mode.
 	 */
     abstract public void setDebugMode( final boolean debugFlag );
+
+
+	/** Create a new channel server */
+	abstract public ChannelServer newChannelServer() throws Exception;
 	
 	
 	/** flush requests to the server */

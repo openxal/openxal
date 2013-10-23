@@ -18,13 +18,13 @@ import java.util.*;
 import javax.swing.tree.DefaultTreeModel;
 
 import xal.ca.*;
-import xal.tools.plot.*;
-import xal.application.*;
+import xal.extension.widgets.plot.*;
+import xal.extension.application.*;
 import xal.tools.xml.*;
 import xal.tools.apputils.*;
-import xal.tools.swing.*;
+import xal.extension.widgets.swing.*;
 
-import xal.tools.scan.UpdatingEventController;
+import xal.extension.scan.UpdatingEventController;
 
 
 /**

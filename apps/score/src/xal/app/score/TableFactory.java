@@ -10,7 +10,7 @@ package xal.app.score;
 
 import xal.ca.*;
 import xal.tools.data.*;
-import xal.tools.swing.*;
+import xal.extension.widgets.swing.*;
 import xal.tools.text.FormattedNumber;
 import xal.tools.data.GenericRecord;
 

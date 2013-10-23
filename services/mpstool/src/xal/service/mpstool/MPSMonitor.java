@@ -12,7 +12,7 @@ package xal.service.mpstool;
 import xal.tools.correlator.*;
 import xal.ca.correlator.*;
 import xal.ca.*;
-import xal.tools.logbook.ElogUtility;
+import xal.extension.logbook.ElogUtility;
 
 import java.util.*;
 import java.text.*;

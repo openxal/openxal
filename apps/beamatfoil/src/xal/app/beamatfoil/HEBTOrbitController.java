@@ -12,9 +12,9 @@ import javax.swing.border.*;
 import java.util.*;
 import javax.swing.tree.DefaultTreeModel;
 
-import xal.tools.scan.UpdatingEventController;
+import xal.extension.scan.UpdatingEventController;
 import xal.tools.xml.*;
-import xal.tools.swing.*;
+import xal.extension.widgets.swing.*;
 import xal.smf.*;
 import xal.smf.impl.*;
 

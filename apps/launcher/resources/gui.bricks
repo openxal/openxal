@@ -1,7 +1,7 @@
 <?xml version = '1.0' encoding = 'UTF-8'?>
 <BricksDocument date="Wed Sep 12 11:59:49 EDT 2012" version="1.0.0">
     <RootBrick>
-        <ViewNode customBeanClass="xal.application.DefaultXalWindow" height="685" tag="MainWindow" width="1098">
+        <ViewNode customBeanClass="xal.extension.application.DefaultXalWindow" height="685" tag="MainWindow" width="1098">
             <ViewProxy type="javax.swing.JFrame" />
             <BeanProperty name="title" value="Launcher" />
             <ViewNode tag="MainLayout">

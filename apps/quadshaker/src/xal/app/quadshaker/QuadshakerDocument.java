@@ -18,19 +18,19 @@ import java.util.*;
 import javax.swing.tree.DefaultTreeModel;
 
 import xal.ca.*;
-import xal.tools.plot.*;
-import xal.application.*;
+import xal.extension.widgets.plot.*;
+import xal.extension.application.*;
 import xal.tools.xml.*;
 import xal.tools.apputils.*;
-import xal.tools.swing.*;
+import xal.extension.widgets.swing.*;
 
-import xal.smf.application.*;
+import xal.extension.smf.application.*;
 import xal.smf.*;
 import xal.smf.impl.*;
 import xal.smf.impl.qualify.*;
 import xal.tools.data.DataAdaptor;
 
-import xal.tools.scan.UpdatingEventController;
+import xal.extension.scan.UpdatingEventController;
 
 /**
  *  QuadshakerDocument is a custom XalDocument for Quadshaker application. The

@@ -9,7 +9,7 @@
  */
 package xal.service.mpstool;
 
-import xal.tools.services.*;
+import xal.extension.service.*;
 
 import java.util.*;
 import java.text.*;

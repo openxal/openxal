@@ -10,8 +10,8 @@
 
 package xal.app.ptsd;
 
-import xal.application.XalDocument;
-import xal.smf.application.AcceleratorWindow;
+import xal.extension.application.XalDocument;
+import xal.extension.smf.application.AcceleratorWindow;
 
 import javax.swing.JFrame;
 import javax.swing.SwingConstants;

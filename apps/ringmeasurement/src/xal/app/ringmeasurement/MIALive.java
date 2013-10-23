@@ -34,9 +34,9 @@ import Jama.SingularValueDecomposition;
 import xal.tools.apputils.EdgeLayout;
 import xal.smf.impl.*;
 import xal.smf.Ring;
-import xal.tools.swing.DecimalField;
+import xal.extension.widgets.swing.DecimalField;
 import xal.ca.*;
-import xal.tools.plot.*;
+import xal.extension.widgets.plot.*;
 import xal.tools.apputils.files.*;
 import xal.service.pvlogger.*;
 //import xal.tools.pvlogger.query.*;
@@ -51,14 +51,14 @@ import xal.sim.scenario.*;
 import xal.model.probe.Probe;
 import xal.model.probe.traj.*;
 //import xal.model.probe.traj.BeamProbeState;
-import xal.sim.sync.PVLoggerDataSource;
+import xal.service.pvlogger.sim.PVLoggerDataSource;
 import xal.smf.*;
 import xal.tools.xml.*;
 import xal.tools.data.*;
-import xal.smf.application.*;
+import xal.extension.smf.application.*;
 import xal.smf.*;
 import xal.smf.data.XMLDataManager;
-import xal.application.*;
+import xal.extension.application.*;
 
 
 /**

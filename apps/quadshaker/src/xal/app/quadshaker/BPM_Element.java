@@ -2,7 +2,7 @@ package xal.app.quadshaker;
 
 import xal.ca.*;
 import xal.tools.xml.*;
-import xal.tools.scan.WrappedChannel;
+import xal.extension.scan.WrappedChannel;
 import xal.tools.data.DataAdaptor;
 
 /**

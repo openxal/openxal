@@ -14,7 +14,7 @@ import java.util.*;
 
 import javax.swing.*;
 
-import xal.smf.application.*;
+import xal.extension.smf.application.*;
 import xal.smf.*;
 import xal.smf.impl.Quadrupole;
 import xal.smf.impl.MagnetMainSupply;

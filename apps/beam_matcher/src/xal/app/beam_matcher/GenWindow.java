@@ -9,7 +9,7 @@ package xal.app.beam_matcher;
 
 import java.awt.*;
 import javax.swing.*;
-import xal.application.*;
+import xal.extension.application.*;
 
 /**
  * GenWindow is a subclass of XalWindow used in the ring optics application.

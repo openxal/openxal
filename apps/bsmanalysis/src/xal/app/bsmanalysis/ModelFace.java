@@ -4,7 +4,7 @@
  */
 package xal.app.bsmanalysis;
 
-import xal.tools.swing.*;
+import xal.extension.widgets.swing.*;
 import xal.tools.apputils.EdgeLayout;
 import xal.tools.messaging.*;
 import xal.ca.*;
@@ -18,7 +18,7 @@ import javax.swing.event.*;
 import java.awt.*;
 import java.awt.event.*;
 
-import xal.smf.application.*;
+import xal.extension.smf.application.*;
 import xal.smf.data.*;
 import xal.smf.*;
 import xal.smf.impl.*;
@@ -30,9 +30,9 @@ import xal.model.probe.traj.*;
 import xal.model.xml.*;
 //import gov.sns.tools.optimizer.*;
 import xal.tools.beam.Twiss;
-import xal.tools.plot.*;
+import xal.extension.widgets.plot.*;
 import java.text.NumberFormat;
-import xal.tools.swing.DecimalField;
+import xal.extension.widgets.swing.DecimalField;
 import xal.tools.apputils.EdgeLayout;
 import xal.tools.data.*;
 import xal.tools.xml.XmlDataAdaptor;
@@ -44,8 +44,8 @@ import xal.tools.solver.hint.*;
 import xal.tools.solver.algorithm.*;
 import xal.tools.solver.market.*;
 import xal.tools.solver.solutionjudge.*;
-import xal.sim.sync.PVLoggerDataSource;
-import xal.tools.apputils.SimpleProbeEditor;
+import xal.service.pvlogger.sim.PVLoggerDataSource;
+import xal.extension.widgets.apputils.SimpleProbeEditor;
 import xal.tools.beam.IConstants;
 import xal.sim.scenario.ProbeFactory;
 //import gov.sns.xal.smf.proxy.RFCavityPropertyAccessor;

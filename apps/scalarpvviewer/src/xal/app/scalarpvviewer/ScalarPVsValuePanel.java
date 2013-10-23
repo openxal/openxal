@@ -5,12 +5,12 @@
  */
 package xal.app.scalarpvviewer;
 
-import xal.tools.apputils.SimpleChartPopupMenu;
+import xal.extension.widgets.apputils.SimpleChartPopupMenu;
 import xal.tools.apputils.VerticalLayout;
-import xal.tools.plot.FunctionGraphsJPanel;
-import xal.tools.scan.UpdatingEventController;
+import xal.extension.widgets.plot.FunctionGraphsJPanel;
+import xal.extension.scan.UpdatingEventController;
 import xal.tools.swing.FortranNumberFormat;
-import xal.tools.plot.CurveData;
+import xal.extension.widgets.plot.CurveData;
 
 import java.awt.BorderLayout;
 import java.awt.Color;

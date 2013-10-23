@@ -8,13 +8,14 @@ import javax.swing.border.*;
 import javax.swing.table.*;
 import javax.swing.event.*;
 
-import xal.tools.swing.*;
+import xal.extension.widgets.swing.*;
+import xal.extension.widgets.apputils.SimpleChartPopupMenu;
 import xal.tools.apputils.*;
-import xal.tools.plot.*;
+import xal.extension.widgets.plot.*;
 import xal.tools.xml.*;
 import xal.tools.data.DataAdaptor;
 
-import xal.tools.scan.UpdatingEventController;
+import xal.extension.scan.UpdatingEventController;
 
 /**
  *  The RunnerController class is a container for Runner class instance and

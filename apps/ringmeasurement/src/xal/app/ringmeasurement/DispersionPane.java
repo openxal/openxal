@@ -12,9 +12,9 @@ import xal.ca.ConnectionException;
 import xal.ca.GetException;
 import xal.ca.PutException;
 import xal.tools.apputils.EdgeLayout;
-import xal.tools.apputils.SimpleChartPopupMenu;
-import xal.tools.plot.BasicGraphData;
-import xal.tools.plot.FunctionGraphsJPanel;
+import xal.extension.widgets.apputils.SimpleChartPopupMenu;
+import xal.extension.widgets.plot.BasicGraphData;
+import xal.extension.widgets.plot.FunctionGraphsJPanel;
 import xal.smf.impl.BPM;
 import xal.smf.impl.SCLCavity;
 

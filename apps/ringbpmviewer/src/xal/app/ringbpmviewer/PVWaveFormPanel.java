@@ -8,9 +8,9 @@ import javax.swing.border.*;
 import java.awt.event.*;
 import java.text.*;
 
-import xal.tools.plot.*;
-import xal.tools.swing.*;
-import xal.tools.scan.UpdatingEventController;
+import xal.extension.widgets.plot.*;
+import xal.extension.widgets.swing.*;
+import xal.extension.scan.UpdatingEventController;
 
 /**
  *  The wrapper for the FunctionGraphsJPanel to show the wave form of the array

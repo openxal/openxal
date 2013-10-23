@@ -9,8 +9,8 @@
 
 package xal.app.energymanager;
 
-import xal.application.*;
-import xal.smf.application.*;
+import xal.extension.application.*;
+import xal.extension.smf.application.*;
 import xal.smf.*;
 import xal.model.probe.Probe;
 import xal.smf.data.XMLDataManager;

@@ -12,7 +12,7 @@ import java.awt.event.*;
 import java.util.*;
 import java.util.logging.*;
 
-import xal.application.*;
+import xal.extension.application.*;
 
 /**
  * MyWindow is a demo subclass of XalWindow used in the demo application.  This 

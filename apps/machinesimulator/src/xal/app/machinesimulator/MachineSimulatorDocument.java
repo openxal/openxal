@@ -14,15 +14,15 @@ import javax.swing.*;
 import javax.swing.text.*;
 import javax.swing.event.*;
 
-import xal.application.*;
-import xal.smf.application.*;
+import xal.extension.application.*;
+import xal.extension.smf.application.*;
 import xal.smf.*;
 import xal.tools.apputils.*;
 import xal.tools.xml.XmlDataAdaptor;
 import xal.smf.data.XMLDataManager;
 import xal.tools.data.*;
-import xal.tools.bricks.WindowReference;
-import xal.tools.swing.*;
+import xal.extension.bricks.WindowReference;
+import xal.extension.widgets.swing.*;
 import xal.model.probe.traj.IPhaseState;
 
 

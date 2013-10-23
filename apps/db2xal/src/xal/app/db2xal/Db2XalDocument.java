@@ -26,11 +26,11 @@ import javax.swing.event.*;
 import javax.swing.text.*;
 import javax.swing.JToggleButton.ToggleButtonModel;
 
-import xal.smf.application.*;
+import xal.extension.smf.application.*;
 import xal.tools.xml.*;
 import xal.tools.data.*;
 
-import xal.application.*;
+import xal.extension.application.*;
 import xal.tools.apputils.NonConsecutiveSeqSelector; 
 
 import xal.tools.database.ConnectionDictionary;

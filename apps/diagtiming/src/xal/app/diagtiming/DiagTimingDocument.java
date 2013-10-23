@@ -5,7 +5,7 @@ import java.util.*;
 import xal.ca.Channel;
 import xal.tools.data.DataAdaptor;
 import xal.tools.xml.XmlDataAdaptor;
-import xal.smf.application.*;
+import xal.extension.smf.application.*;
 import xal.smf.data.XMLDataManager;
 import xal.smf.impl.qualify.*;
 import xal.smf.*;

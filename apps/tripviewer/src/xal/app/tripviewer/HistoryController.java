@@ -9,8 +9,8 @@
 package xal.app.tripviewer;
 
 import xal.service.tripmonitor.*;
-import xal.application.*;
-import xal.tools.bricks.WindowReference;
+import xal.extension.application.*;
+import xal.extension.bricks.WindowReference;
 import xal.tools.database.*;
 
 import java.net.URL;

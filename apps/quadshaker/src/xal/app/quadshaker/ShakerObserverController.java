@@ -9,11 +9,13 @@ import javax.swing.event.*;
 import javax.swing.border.*;
 import java.util.*;
 
-import xal.tools.scan.UpdatingEventController;
+import xal.extension.scan.UpdatingEventController;
 
-import xal.tools.plot.*;
+import xal.extension.widgets.plot.*;
+import xal.extension.widgets.apputils.SimpleChartPopupMenu;
 import xal.tools.apputils.*;
-import xal.tools.swing.*;
+import xal.extension.widgets.swing.*;
+import xal.tools.swing.FortranNumberFormat;
 
 import xal.tools.fit.lsm.Polynomial;
 

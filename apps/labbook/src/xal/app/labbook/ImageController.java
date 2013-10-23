@@ -8,8 +8,8 @@
 
 package xal.app.labbook;
 
-import xal.application.Application;
-import xal.tools.bricks.*;
+import xal.extension.application.Application;
+import xal.extension.bricks.*;
 import xal.tools.messaging.MessageCenter;
 
 import java.io.*;

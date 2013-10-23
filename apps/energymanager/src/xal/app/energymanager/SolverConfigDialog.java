@@ -9,7 +9,7 @@
 
 package xal.app.energymanager;
 
-import xal.application.*;
+import xal.extension.application.*;
 import xal.tools.solver.*;
 
 import javax.swing.*;

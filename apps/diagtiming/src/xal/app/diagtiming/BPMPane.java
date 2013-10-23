@@ -18,9 +18,9 @@ import xal.smf.impl.BPM;
 import xal.smf.impl.RingBPM;
 import xal.ca.*;
 import xal.tools.apputils.EdgeLayout;
-import xal.tools.apputils.SimpleChartPopupMenu;
-import xal.tools.plot.*;
-import xal.tools.swing.DecimalField;
+import xal.extension.widgets.apputils.SimpleChartPopupMenu;
+import xal.extension.widgets.plot.*;
+import xal.extension.widgets.swing.DecimalField;
 import xal.smf.AcceleratorNode;
 
 public class BPMPane extends JPanel implements ConnectionListener, ActionListener {

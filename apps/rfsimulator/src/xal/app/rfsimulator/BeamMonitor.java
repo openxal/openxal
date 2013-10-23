@@ -21,9 +21,9 @@ import java.awt.event.*;
 import javax.swing.*;
 import java.text.NumberFormat;
 
-import xal.tools.swing.DecimalField;
-import xal.tools.apputils.SimpleChartPopupMenu;
-import xal.tools.plot.*;
+import xal.extension.widgets.swing.DecimalField;
+import xal.extension.widgets.apputils.SimpleChartPopupMenu;
+import xal.extension.widgets.plot.*;
 
 public class BeamMonitor implements ItemListener, ActionListener {
                     

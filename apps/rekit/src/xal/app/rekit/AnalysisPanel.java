@@ -27,7 +27,7 @@ import xal.tools.apputils.EdgeLayout;
 import xal.tools.beam.*;
 import xal.tools.solver.*;
 import xal.tools.solver.algorithm.*;
-import xal.tools.swing.DecimalField;
+import xal.extension.widgets.swing.DecimalField;
 import xal.model.*;
 import xal.model.probe.*;
 import xal.model.alg.ParticleTracker;
@@ -37,7 +37,7 @@ import xal.smf.*;
 import xal.smf.data.*;
 import xal.smf.impl.*;
 import xal.smf.proxy.*;
-import xal.tools.plot.*;
+import xal.extension.widgets.plot.*;
 
 /**
  * This is the display panel for the extraction kicker restoration application.

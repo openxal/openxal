@@ -13,10 +13,10 @@ import java.util.*;
 import javax.swing.text.*;
 import java.util.HashMap;
 
-import xal.smf.application.*;
+import xal.extension.smf.application.*;
 import xal.smf.*;
 import xal.smf.data.*;
-import xal.application.*;
+import xal.extension.application.*;
 import xal.model.*;
 import xal.model.alg.*;
 import xal.model.probe.EnvelopeProbe;

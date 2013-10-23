@@ -13,8 +13,8 @@ import java.awt.event.*;
 import java.net.*;
 import java.util.logging.*;
 
-import xal.application.*;
-import xal.smf.application.*;
+import xal.extension.application.*;
+import xal.extension.smf.application.*;
 
 
 /**

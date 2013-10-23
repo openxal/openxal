@@ -13,13 +13,14 @@ import java.io.*;
 import java.util.List;
 import java.beans.*;
 
-import xal.tools.swing.Wheelswitch;
+import xal.extension.widgets.swing.Wheelswitch;
+import xal.tools.swing.FortranNumberFormat;
 
 import xal.ca.*;
 
-import xal.tools.plot.*;
+import xal.extension.widgets.plot.*;
 import xal.tools.apputils.*;
-import xal.tools.swing.*;
+import xal.extension.widgets.swing.*;
 import xal.tools.xml.*;
 
 import xal.service.pvlogger.*;
@@ -33,7 +34,7 @@ import xal.smf.impl.qualify.*;
 
 import xal.model.*;
 import xal.sim.scenario.*;
-import xal.sim.sync.PVLoggerDataSource;
+import xal.service.pvlogger.sim.PVLoggerDataSource;
 import xal.model.probe.*;
 //import xal.model.alg.resp.*;
 //import xal.model.probe.resp.*;

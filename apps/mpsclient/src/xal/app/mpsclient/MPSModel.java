@@ -11,7 +11,7 @@
 package xal.app.mpsclient;
 
 import xal.service.mpstool.MPSPortal;
-import xal.tools.services.*;
+import xal.extension.service.*;
 import xal.tools.messaging.MessageCenter;
 import xal.tools.dispatch.DispatchQueue;
 import xal.tools.dispatch.DispatchTimer;

@@ -32,12 +32,12 @@ import javax.swing.JFrame;
 import javax.swing.event.TableModelListener;
 import javax.swing.event.TableModelEvent;
 
-import xal.application.*;
+import xal.extension.application.*;
 import xal.ca.*;
 import xal.tools.apputils.*;
 import xal.service.pvlogger.RemoteLoggingCenter;
 import xal.smf.*;
-import xal.smf.application.*;
+import xal.extension.smf.application.*;
 import xal.smf.impl.*;
 import xal.tools.correlator.*;   // for correlattion
 

@@ -9,7 +9,7 @@ import javax.swing.*;
 import java.util.*;
 import java.awt.*;
 
-import xal.application.*;
+import xal.extension.application.*;
 
 /**
  *  BeamAtFoilWindow is a subclass of XalWindow used in the BeamAtFoil

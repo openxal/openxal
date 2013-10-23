@@ -10,8 +10,8 @@
 
 package xal.app.labbook;
 
-import xal.application.*;
-import xal.tools.bricks.WindowReference;
+import xal.extension.application.*;
+import xal.extension.bricks.WindowReference;
 import xal.tools.database.*;
 import xal.tools.messaging.MessageCenter;
 

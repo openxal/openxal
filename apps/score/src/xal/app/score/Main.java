@@ -11,7 +11,7 @@ import javax.swing.event.*;
 import java.awt.event.*;
 import java.net.*;
 
-import xal.application.*;
+import xal.extension.application.*;
 
 /**
  * Main is the main program for the score app.

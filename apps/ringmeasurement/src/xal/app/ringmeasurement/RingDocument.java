@@ -16,18 +16,18 @@ import javax.swing.JToggleButton.ToggleButtonModel;
 import javax.swing.*;
 import java.io.*;
 
-import xal.application.*;
+import xal.extension.application.*;
 import xal.tools.data.DataAdaptor;
 import xal.tools.xml.XmlDataAdaptor;
-import xal.smf.application.*;
+import xal.extension.smf.application.*;
 import xal.smf.data.XMLDataManager;
 import xal.smf.*;
 import xal.tools.apputils.files.*;
 
-import xal.smf.application.*;
+import xal.extension.smf.application.*;
 import xal.smf.impl.*;
 import xal.smf.data.*;
-import xal.application.*;
+import xal.extension.application.*;
 import xal.model.*;
 import xal.tools.*;
 import xal.tools.beam.*;

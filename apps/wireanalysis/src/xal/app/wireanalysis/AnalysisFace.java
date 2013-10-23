@@ -23,16 +23,16 @@ import java.util.List;
 import java.io.*;
 import java.lang.*;
 
-import xal.tools.swing.*;
+import xal.extension.widgets.swing.*;
 import xal.tools.statistics.*;
 import xal.tools.apputils.EdgeLayout;
 import xal.tools.apputils.files.RecentFileTracker;
-import xal.tools.plot.*;
+import xal.extension.widgets.plot.*;
 import xal.tools.data.*;
 import java.text.NumberFormat;
 import xal.tools.messaging.*;
 import xal.ca.*;
-import xal.tools.data.profile.*;
+import xal.extension.wirescan.profile.*;
 
 public class AnalysisFace extends JPanel{
     

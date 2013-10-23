@@ -10,7 +10,7 @@
 
 package xal.app.dbbrowser;
 
-import xal.tools.swing.KeyValueFilteredTableModel;
+import xal.extension.widgets.swing.KeyValueFilteredTableModel;
 
 import javax.swing.*;
 import javax.swing.table.*;

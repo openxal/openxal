@@ -12,8 +12,8 @@ import javax.swing.event.*;
 import javax.swing.text.*;
 import java.awt.event.*;
 
-import xal.application.XalDocument;
-import xal.tools.bricks.WindowReference;
+import xal.extension.application.XalDocument;
+import xal.extension.bricks.WindowReference;
 
 
 /** SnapshotCommitController */

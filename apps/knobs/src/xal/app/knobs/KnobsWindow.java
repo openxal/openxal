@@ -8,8 +8,8 @@
 
 package xal.app.knobs;
 
-import xal.application.*;
-import xal.smf.application.*;
+import xal.extension.application.*;
+import xal.extension.smf.application.*;
 import xal.tools.messaging.MessageCenter;
 import xal.tools.IconLib;
 import xal.tools.IconLib.IconGroup;

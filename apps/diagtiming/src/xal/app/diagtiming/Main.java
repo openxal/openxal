@@ -3,8 +3,8 @@ package xal.app.diagtiming;
 import javax.swing.*;
 import java.net.*;
 
-import xal.application.*;
-import xal.smf.application.*;
+import xal.extension.application.*;
+import xal.extension.smf.application.*;
 
 public class Main extends ApplicationAdaptor {
     private URL url;

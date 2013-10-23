@@ -13,13 +13,13 @@ import java.awt.event.*;
 import javax.swing.border.*;
 import java.text.*;
 
-import xal.application.*;
-import xal.smf.application.*;
+import xal.extension.application.*;
+import xal.extension.smf.application.*;
 import xal.smf.impl.*;
 import xal.tools.apputils.*;
-import xal.tools.swing.*;
-import xal.tools.plot.*;
-import xal.tools.scan.*;
+import xal.extension.widgets.swing.*;
+import xal.extension.widgets.plot.*;
+import xal.extension.scan.*;
 /**
  * Controls the swing componenet setup for the Saddam Application
  *

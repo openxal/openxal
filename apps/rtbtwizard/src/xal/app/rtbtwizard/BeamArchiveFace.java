@@ -28,7 +28,7 @@ import xal.ca.*;
 import xal.smf.*;
 import xal.smf.impl.*;
 
-import xal.tools.bricks.WindowReference;
+import xal.extension.bricks.WindowReference;
 import xal.tools.database.*;
 import xal.tools.data.*;
 import xal.tools.StringJoiner;

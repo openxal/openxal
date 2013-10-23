@@ -9,7 +9,7 @@
  */
 package xal.app.orbitcorrect;
 
-import xal.application.*;
+import xal.extension.application.*;
 import xal.smf.AcceleratorSeq;
 
 import javax.swing.*;

@@ -29,7 +29,7 @@ import Jama.*;
 import xal.ca.*;
 import xal.smf.*;
 import xal.smf.impl.*;
-import xal.tools.plot.*;
+import xal.extension.widgets.plot.*;
 import xal.tools.messaging.MessageCenter;
 import xal.tools.statistics.RunningWeightedStatistics;
 import xal.tools.text.FormattedNumber;
@@ -37,8 +37,8 @@ import xal.model.alg.*;
 import xal.model.probe.*;
 import xal.model.probe.traj.*;
 import xal.sim.scenario.*;
-import xal.tools.OrbitMatcher;
-import xal.sim.sync.PVLoggerDataSource;
+import xal.extension.orbit.OrbitMatcher;
+import xal.service.pvlogger.sim.PVLoggerDataSource;
 
 
 /** view providing an alternative beam position measurement based on matching measurements from multiple BPMs */

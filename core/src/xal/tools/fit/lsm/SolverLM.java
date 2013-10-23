@@ -1,6 +1,6 @@
 package xal.tools.fit.lsm;
 
-import xal.tools.plot.*;
+import xal.tools.ArrayMath;
 
 /**
  *  The Levenberg-Marquardt fitting solver.
@@ -529,7 +529,7 @@ public class SolverLM implements FitSolver {
 				}
 			}
 
-			boolean res = GraphDataOperations.reverseMatrix(ATWA);
+			boolean res = ArrayMath.invertMatrix(ATWA);
 			if (res != true) {
 				return false;
 			}
@@ -637,7 +637,7 @@ public class SolverLM implements FitSolver {
 				}
 			}
 
-			boolean res = GraphDataOperations.reverseMatrix(ATWA);
+			boolean res = ArrayMath.invertMatrix(ATWA);
 
 			if (!res) {
 				return;

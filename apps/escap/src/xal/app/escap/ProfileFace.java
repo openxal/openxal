@@ -9,8 +9,8 @@
 package xal.app.escap;
 
 import xal.ca.*;
-import xal.application.*;
-import xal.tools.bricks.WindowReference;
+import xal.extension.application.*;
+import xal.extension.bricks.WindowReference;
 import xal.tools.messaging.MessageCenter;
 //import xal.apps.escap.*;
 import java.net.URL;
@@ -25,11 +25,11 @@ import java.awt.Color;
 import java.lang.Object;
 import java.net.*;
 import java.io.*;
-import xal.tools.plot.*;
+import xal.extension.widgets.plot.*;
 import xal.tools.apputils.files.RecentFileTracker;
 import xal.tools.apputils.EdgeLayout;
 import javax.swing.border.*;
-import xal.tools.swing.*;
+import xal.extension.widgets.swing.*;
 import java.awt.Dimension;
 import java.text.NumberFormat;
 

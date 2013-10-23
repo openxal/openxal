@@ -1,11 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project basedir="." default="all" name="xal.core">
-	<import file="../config.xml"/>
+	<import file="../config/config.xml"/>
     
 	<description>Builds Open XAL Core</description>
 	
     <target name="init">
         <property name="srcroot" value="." />
+		<property name="core.compile.root" value="${build.intermediates.core}/compile" />
+		<property name="core.intermediates.resources" value="${core.compile.root}" />
+
         <mkdir dir="${build.root}" />
     </target>
     
@@ -24,18 +27,19 @@
 	<macrodef name="compile-flagged">
 		<attribute name="flag" default="-Xlint:none" />
 		<sequential>
-			<mkdir dir="${build.compile.core.root}" />
-			<javac debug="true" source="${build.compile.java.source}" target="${build.compile.java.target}" includeAntRuntime="no" deprecation="true" destdir="${build.compile.core.root}" srcdir="${srcroot}/${source.code.dir}" includes="**" sourcepath="">
+			<mkdir dir="${core.compile.root}" />
+			<javac debug="true" source="${build.compile.java.source}" target="${build.compile.java.target}" includeAntRuntime="no" deprecation="true" destdir="${core.compile.root}" srcdir="${srcroot}/${source.code.dir}" includes="**" sourcepath="">
 				<classpath>
-					<pathelement location="${build.jar.lib.root}/xal-lib.jar" />
+					<pathelement location="${build.intermediates.core}/lib.jar" />
 				</classpath>
 				<compilerarg value="@{flag}" />
 			</javac>
-                        
-            <copy todir="${build.compile.core.root}/resources">
-                <fileset dir="resources" />
-            </copy>
 
+			<!-- Copy the service's resources into the compile directory -->
+			<mkdir dir="${core.intermediates.resources}" />
+			<copy todir="${core.intermediates.resources}" quiet="true" failonerror="false">
+				<fileset dir="${srcroot}/resources" />
+			</copy>
 		</sequential>
 	</macrodef>
 	
@@ -58,22 +62,26 @@
     </target>
     
 	
-	<!-- Jar the core XAL classes -->
-    <target  name="jar-core" depends="init, compile">
-        <mkdir dir="${build.jar.lib.root}" />
-        <jar compress="true" jarfile="${build.jar.lib.root}/xal-core.jar" index="true">
-			<fileset dir="${build.compile.core.root}" includes="xal/**/*">
-			</fileset>
-            
-			<fileset dir="${build.compile.core.root}/resources" />
-       </jar>
+	<!-- Jar the core resources plus those of any subdirectory -->
+    <target  name="jar-resources" depends="init">
+        <mkdir dir="${build.intermediates.core}" />
+        <jar compress="true" jarfile="${build.intermediates.core}/resources.jar" index="true">
+			<fileset dir="resources" />
+        </jar>
+
+		<!-- jar resources for any sub directories that support it -->
+        <subant target="jar-resources">
+            <fileset dir=".">
+                <include name="test/build.xml" />
+            </fileset>
+        </subant>
     </target>
-	
-	
+
+
 	<!-- Join the third party jars into a common external jar file -->
     <target name="jar-lib" depends="init">
-        <mkdir dir="${build.jar.lib.root}" />
-        <jar compress="true" jarfile="${build.jar.lib.root}/xal-lib.jar" index="true" duplicate="preserve">
+        <mkdir dir="${build.intermediates.core}" />
+        <jar compress="true" jarfile="${build.intermediates.core}/lib.jar" index="true" duplicate="preserve">
 			<zipgroupfileset dir="lib">
 				<patternset>
 					<include name="*.jar" />
@@ -81,45 +89,37 @@
 			</zipgroupfileset>
         </jar>
     </target>
-	
+
+
+	<!-- Merge the core compiled classes, core resources.jar and core lib.jar -->
+    <target  name="jar-core" depends="init, compile">
+        <mkdir dir="${core.compile.root}" />
+        <mkdir dir="${build.intermediates.shared}" />
+        <jar compress="true" jarfile="${build.intermediates.shared}/xal-core.jar" index="true" basedir="${core.compile.root}" includes="xal/**/*">
+			<zipgroupfileset dir="${build.intermediates.core}">
+				<patternset>
+					<include name="*.jar" />
+				</patternset>
+			</zipgroupfileset>
+		</jar>
+    </target>
+
 	
 	<!-- merge the external jars and build XAL core -->
     <target name="all" depends="jar-lib,jar-core" description="Build everything." >
         <echo message="Everything built. " />
     </target>
-	
-	
-	<!-- Build everything and install in the the installation location -->
-    <target name="install" depends="all" description="Build everything and install in the installation location." >
-        <mkdir dir="${install.lib.root}" />
-		<copy todir="${install.lib.root}">
-			<fileset dir="${build.jar.lib.root}">
-                <include name="xal-core.jar" />
-                <include name="xal-lib.jar" />
-            </fileset>
-		</copy>
-        <echo message="XAL built and installed. " />
-    </target>
-	
-	
-	<!-- Build everything and install in the the installation location -->
-    <target name="purge-install" depends="init" description="Build everything and install in the installation location." >
-        <delete file="${install.lib.root}/xal-core.jar" quiet="true" />
-        <delete file="${install.lib.root}/xal-lib.jar" quiet="true" />
-        <echo message="Purged core installation!"/>
-    </target>
-	
+
 	
 	<!-- Javadoc the XAL core -->
-    <target name="doc" depends="init" description="Javadoc XAL core." >
+    <target name="doc" depends="init, jar-core" description="Javadoc XAL core." >
         <mkdir dir="${build.javadoc.root}" />
         <javadoc destdir="${build.javadoc.root}" packagenames="xal.*" author="false" version="false" maxmemory="512m">
             <sourcepath>
                 <pathelement location="${srcroot}/${source.code.dir}" />
             </sourcepath>
             <classpath>
-                <pathelement location="${build.jar.lib.root}/xal-core.jar" />
-                <pathelement location="${build.jar.lib.root}/xal-lib.jar" />
+                <pathelement location="${build.intermediates.shared}/xal-core.jar" />
             </classpath>
         </javadoc>
     </target>
@@ -127,10 +127,10 @@
 	
 	<!-- clean compiled products -->
     <target name="clean" depends="init" description="Clean all build products." >
-        <delete dir="${build.compile.core.root}" />
-        <delete file="${build.jar.lib.root}/xal-core.jar" quiet="true" />
-        <delete file="${build.jar.lib.root}/xal-lib.jar" quiet="true" />
-        
+        <delete dir="${core.compile.root}" quiet="true" />
+        <delete dir="${build.intermediates.core}" quiet="true" />
+        <delete file="${build.intermediates.shared}/xal-core.jar" quiet="true" />
+
         <subant target="clean">
             <fileset dir=".">
                 <include name="test/build.xml" />
@@ -139,7 +139,14 @@
         
         <echo message="Core cleaned!" />
     </target>
-    
+	
+
+	<!-- purge core build intermediates -->
+    <target name="purge-intermediates" description="Purge core build intermediates." >
+        <delete dir="${build.intermediates.core}" />
+        <echo message="Purged the core build intermediates directory!" />
+    </target>
+
 	
 	<!-- provide guidance on the various targets -->
     <target name="help">
@@ -149,15 +156,15 @@
 		<echo message="  where target(s) can be:" />
 		<echo message="    help ....................... Print this message." />
 		<echo message="    all ........................ Compile the core XAL classes and assemble the jar products." />
-		<echo message="    clean ...................... Clean compiled classes and build products" />
+		<echo message="    clean ...................... Clean compiled classes and intermediate build products" />
 		<echo message="    compile .................... Compile the core XAL classes reporting all recommended warnings." />
 		<echo message="    compile-warn-all ........... Compile the core XAL classes reporting all recommended warnings." />
 		<echo message="    compile-warn-mandatory ..... Compile the core XAL classes reporting only mandated warnings." />
 		<echo message="    doc ........................ Generate documentation for the core." />
-		<echo message="    install .................... Install the core products intended for distribution." />
+		<echo message="    jar-core ................... Assemble the core XAL classes and resources and libraries into the intermediate shared xal-core.jar" />
 		<echo message="    jar-lib .................... Assemble the external jar files into a single library, xal-lib.jar" />
-		<echo message="    jar-core ................... Assemble the core XAL classes and resources into xal-core.jar" />
-		<echo message="    purge-install .............. Purge the core installation." />
+		<echo message="    jar-resources .............. Assemble the core resources into an intermediate core jar file, resources.jar" />
+		<echo message="    purge-intermediates ........ Purge the core build intermediates." />
 		<echo message="    run-tests .................. Build and run the test cases." />
     </target>
 </project>

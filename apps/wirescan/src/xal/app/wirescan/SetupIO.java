@@ -10,11 +10,11 @@ import java.util.*;
 
 import javax.swing.*;
 
-import xal.application.*;
+import xal.extension.application.*;
 import xal.tools.data.*;
 import xal.tools.xml.*;
 import xal.smf.*;
-import xal.smf.application.*;
+import xal.extension.smf.application.*;
 import xal.smf.data.*;
 
 /**

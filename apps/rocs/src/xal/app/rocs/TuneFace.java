@@ -17,7 +17,7 @@ import java.util.*;
 import java.util.List;
 import java.io.*;
 import java.lang.*;
-import xal.tools.swing.*;
+import xal.extension.widgets.swing.*;
 import xal.tools.apputils.EdgeLayout;
 import java.text.NumberFormat;
 import xal.tools.messaging.*;

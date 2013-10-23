@@ -8,8 +8,8 @@
 
 package xal.app.labbook;
 
-import xal.application.*;
-import xal.tools.bricks.*;
+import xal.extension.application.*;
+import xal.extension.bricks.*;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;

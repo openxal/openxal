@@ -12,7 +12,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
 
-import xal.tools.swing.Wheelswitch;
+import xal.extension.widgets.swing.Wheelswitch;
 
 import xal.ca.*;
 import xal.tools.swing.FortranNumberFormat;

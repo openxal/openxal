@@ -10,7 +10,7 @@ import javax.swing.event.*;
 import java.awt.event.*;
 import java.net.*;
 
-import xal.application.*;
+import xal.extension.application.*;
 
 /**
  *  BeamAtFoilMain is a concrete subclass of ApplicationAdaptor for the

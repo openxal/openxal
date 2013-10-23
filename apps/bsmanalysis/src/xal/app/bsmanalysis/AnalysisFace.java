@@ -4,7 +4,7 @@
  */
 package xal.app.bsmanalysis;
 
-import xal.tools.swing.*;
+import xal.extension.widgets.swing.*;
 import xal.tools.apputils.EdgeLayout;
 import xal.tools.messaging.*;
 import xal.ca.*;
@@ -21,9 +21,9 @@ import java.awt.event.*;
 import javax.swing.table.*;
 
 import xal.model.xml.*;
-import xal.tools.plot.*;
+import xal.extension.widgets.plot.*;
 import java.text.NumberFormat;
-import xal.tools.swing.DecimalField;
+import xal.extension.widgets.swing.DecimalField;
 import xal.tools.apputils.EdgeLayout;
 import xal.tools.beam.*;
 import java.text.DecimalFormat;
@@ -33,8 +33,8 @@ import xal.tools.solver.hint.*;
 import xal.tools.solver.algorithm.*;
 import xal.tools.solver.market.*;
 import xal.tools.solver.solutionjudge.*;
-import xal.sim.sync.PVLoggerDataSource;
-import xal.tools.apputils.SimpleProbeEditor;
+import xal.service.pvlogger.sim.PVLoggerDataSource;
+import xal.extension.widgets.apputils.SimpleProbeEditor;
 
 import xal.tools.apputils.files.RecentFileTracker;
 

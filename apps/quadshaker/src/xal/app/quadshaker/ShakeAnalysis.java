@@ -11,9 +11,10 @@ import java.util.*;
 
 import xal.ca.*;
 
-import xal.tools.plot.*;
+import xal.extension.widgets.plot.*;
 import xal.tools.apputils.*;
-import xal.tools.swing.*;
+import xal.extension.widgets.swing.*;
+import xal.extension.widgets.apputils.SimpleChartPopupMenu;
 import xal.tools.xml.*;
 
 import xal.service.pvlogger.*;
@@ -27,7 +28,7 @@ import xal.smf.impl.qualify.*;
 
 import xal.model.*;
 import xal.sim.scenario.*;
-import xal.sim.sync.PVLoggerDataSource;
+import xal.service.pvlogger.sim.PVLoggerDataSource;
 import xal.model.probe.*;
 //import xal.model.alg.resp.*;
 //import xal.model.probe.resp.*;

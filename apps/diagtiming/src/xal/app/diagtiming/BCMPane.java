@@ -10,10 +10,10 @@ import xal.ca.MonitorException;
 import xal.ca.IEventSinkValTime;
 import xal.ca.ChannelTimeRecord;
 import xal.smf.AcceleratorNode;
-import xal.tools.apputils.SimpleChartPopupMenu;
+import xal.extension.widgets.apputils.SimpleChartPopupMenu;
 import xal.tools.apputils.EdgeLayout;
-import xal.tools.plot.CurveData;
-import xal.tools.plot.FunctionGraphsJPanel;
+import xal.extension.widgets.plot.CurveData;
+import xal.extension.widgets.plot.FunctionGraphsJPanel;
 import xal.smf.impl.CurrentMonitor;
 
 import java.awt.event.ActionEvent;

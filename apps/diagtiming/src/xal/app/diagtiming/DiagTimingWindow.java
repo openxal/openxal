@@ -3,7 +3,7 @@ package xal.app.diagtiming;
 import javax.swing.*;
 
 import xal.ca.Channel;
-import xal.smf.application.*;
+import xal.extension.smf.application.*;
 import xal.smf.AcceleratorNode;
 import xal.smf.impl.BPM;
 import xal.smf.impl.RingBPM;

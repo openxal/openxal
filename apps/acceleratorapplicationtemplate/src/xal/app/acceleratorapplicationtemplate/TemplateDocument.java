@@ -17,7 +17,7 @@ import xal.model.xml.ParsingException;
 import xal.model.xml.ProbeXmlParser;
 import xal.smf.AcceleratorSeq;
 import xal.smf.AcceleratorSeqCombo;
-import xal.smf.application.*;
+import xal.extension.smf.application.*;
 import xal.smf.data.XMLDataManager;
 
 import java.io.File;

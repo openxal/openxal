@@ -10,7 +10,7 @@
 
 package xal.app.sclmonitor;
 
-import xal.smf.application.*;
+import xal.extension.smf.application.*;
 
 import javax.swing.*;
 

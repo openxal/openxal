@@ -20,11 +20,11 @@ import javax.swing.text.*;
 import java.awt.event.*;
 import javax.swing.event.*;
 
-import xal.smf.application.*;
+import xal.extension.smf.application.*;
 import xal.smf.*;
 import xal.smf.impl.*;
 import xal.smf.data.*;
-import xal.application.*;
+import xal.extension.application.*;
 import xal.model.*;
 import xal.ca.*;
 import xal.tools.*;

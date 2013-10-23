@@ -6,11 +6,11 @@
 package xal.app.arraypvviewer;
 
 import xal.app.arraypvviewer.*;
-import xal.tools.apputils.SimpleChartPopupMenu;
-import xal.tools.plot.FunctionGraphsJPanel;
-import xal.tools.swing.DoubleInputTextField;
+import xal.extension.widgets.apputils.SimpleChartPopupMenu;
+import xal.extension.widgets.plot.FunctionGraphsJPanel;
+import xal.extension.widgets.swing.DoubleInputTextField;
 import xal.tools.xml.XmlDataAdaptor;
-import xal.tools.plot.*;
+import xal.extension.widgets.plot.*;
 
 import java.awt.BorderLayout;
 import java.awt.Color;

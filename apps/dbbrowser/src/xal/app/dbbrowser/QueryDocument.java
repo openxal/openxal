@@ -10,7 +10,7 @@
 
 package xal.app.dbbrowser;
 
-import xal.application.*;
+import xal.extension.application.*;
 
 import java.net.URL;
 import java.io.*;

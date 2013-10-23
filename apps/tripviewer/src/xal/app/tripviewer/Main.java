@@ -10,7 +10,7 @@
 
 package xal.app.tripviewer;
 
-import xal.application.*;
+import xal.extension.application.*;
 
 
 /**

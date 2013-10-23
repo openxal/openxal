@@ -13,9 +13,10 @@ import javax.swing.border.*;
 import java.text.*;
 import java.awt.event.*;
 
-import xal.tools.plot.*;
+import xal.extension.widgets.plot.*;
+import xal.extension.widgets.apputils.SimpleChartPopupMenu;
 import xal.tools.apputils.*;
-import xal.tools.swing.*;
+import xal.extension.widgets.swing.*;
 import xal.tools.xml.*;
 
 

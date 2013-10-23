@@ -15,10 +15,10 @@ import java.awt.event.*;
 import java.awt.Color;
 import java.util.*;
 
-import xal.application.*;
-import xal.tools.bricks.WindowReference;
-import xal.tools.plot.*;
-import xal.smf.application.*;
+import xal.extension.application.*;
+import xal.extension.bricks.WindowReference;
+import xal.extension.widgets.plot.*;
+import xal.extension.smf.application.*;
 import xal.smf.*;
 import xal.smf.data.*;
 import xal.tools.xml.XmlDataAdaptor;

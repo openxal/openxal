@@ -25,9 +25,9 @@ import javax.swing.text.*;
 import javax.swing.event.*;
 import javax.swing.JToggleButton.ToggleButtonModel;
 
-import xal.smf.application.*;
-import xal.application.*;
-import xal.tools.bricks.WindowReference;
+import xal.extension.smf.application.*;
+import xal.extension.application.*;
+import xal.extension.bricks.WindowReference;
 
 import xal.ca.*;
 import xal.smf.*;
@@ -51,14 +51,14 @@ import xal.tools.xml.*;
 import xal.tools.data.*;
 import xal.tools.beam.Twiss;
 import xal.tools.beam.PhaseVector;
-import xal.tools.plot.BasicGraphData;
-import xal.tools.plot.FunctionGraphsJPanel;
-import xal.tools.swing.KeyValueFilteredTableModel;
-import xal.tools.swing.DecimalField;
+import xal.extension.widgets.plot.BasicGraphData;
+import xal.extension.widgets.plot.FunctionGraphsJPanel;
+import xal.extension.widgets.swing.KeyValueFilteredTableModel;
+import xal.extension.widgets.swing.DecimalField;
 import xal.tools.apputils.files.*;
-import xal.tools.apputils.SimpleProbeEditor;
-import xal.tools.apputils.pvlogbrowser.PVLogSnapshotChooser;
-import xal.sim.sync.PVLoggerDataSource;
+import xal.extension.widgets.apputils.SimpleProbeEditor;
+import xal.service.pvlogger.apputils.browser.PVLogSnapshotChooser;
+import xal.service.pvlogger.sim.PVLoggerDataSource;
 import xal.tools.dispatch.*;
 
 

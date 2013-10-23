@@ -18,10 +18,10 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.text.PlainDocument;
 import javax.swing.JFileChooser;
 
-import xal.application.*;
+import xal.extension.application.*;
 import xal.smf.*;
 import xal.smf.impl.ProfileMonitor;
-import xal.smf.application.*;
+import xal.extension.smf.application.*;
 import xal.tools.apputils.files.*;
 import xal.ca.*;
 import xal.ca.correlator.*;      // for correlator

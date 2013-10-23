@@ -18,9 +18,9 @@ import javax.swing.table.*;
 import java.sql.Timestamp;
 
 import xal.tools.apputils.*;
-import xal.application.*;
+import xal.extension.application.*;
 import xal.tools.IconLib;
-import xal.tools.swing.*;
+import xal.extension.widgets.swing.*;
 import xal.tools.data.DataTable;
 import xal.tools.database.*;
 

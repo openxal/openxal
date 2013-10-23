@@ -14,7 +14,7 @@ import javax.swing.tree.DefaultTreeModel;
 import xal.tools.data.DataAdaptor;
 
 
-import xal.tools.scan.UpdatingEventController;
+import xal.extension.scan.UpdatingEventController;
 import xal.tools.xml.*;
 
 /**

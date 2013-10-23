@@ -18,9 +18,9 @@ import java.net.URL;
 
 import javax.swing.JOptionPane;
 
-import xal.application.ApplicationAdaptor;
-import xal.application.XalDocument;
-import xal.smf.application.AcceleratorApplication;
+import xal.extension.application.ApplicationAdaptor;
+import xal.extension.application.XalDocument;
+import xal.extension.smf.application.AcceleratorApplication;
 
 public class Main extends ApplicationAdaptor {
     private URL url;

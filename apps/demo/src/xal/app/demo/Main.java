@@ -13,7 +13,7 @@ import java.awt.event.*;
 import java.net.*;
 import java.util.logging.*;
 
-import xal.application.*;
+import xal.extension.application.*;
 
 
 /**

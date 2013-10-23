@@ -6,8 +6,8 @@
  */
 package xal.app.ptsd;
 
-import xal.application.XalDocumentView;
-import xal.application.XalWindow;
+import xal.extension.application.XalDocumentView;
+import xal.extension.application.XalWindow;
 
 /**
  *  Controller component for the <code>PULPTAFE</code> application.

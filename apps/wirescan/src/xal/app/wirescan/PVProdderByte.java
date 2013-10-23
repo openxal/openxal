@@ -16,11 +16,11 @@ import javax.swing.JButton;
 import javax.swing.JTextArea;
 import javax.swing.JTable;
 
-import xal.application.*;
+import xal.extension.application.*;
 import xal.ca.*;
 import xal.tools.apputils.*;
 import xal.smf.*;
-import xal.smf.application.*;
+import xal.extension.smf.application.*;
 import xal.smf.impl.*;
 
 /**

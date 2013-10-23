@@ -4,7 +4,7 @@
  */
 package xal.app.rtbtwizard;
 
-import xal.tools.swing.*;
+import xal.extension.widgets.swing.*;
 import xal.tools.apputils.EdgeLayout;
 import xal.tools.messaging.*;
 import xal.ca.*;
@@ -17,11 +17,11 @@ import javax.swing.*;
 import javax.swing.event.*;
 import java.awt.*;
 import java.awt.event.*;
-import xal.application.*;
+import xal.extension.application.*;
 import java.util.Timer.*;
 
 import xal.tools.data.*;
-import xal.smf.application.*;
+import xal.extension.smf.application.*;
 import xal.smf.data.*;
 import xal.smf.*;
 import xal.smf.impl.*;
@@ -34,17 +34,17 @@ import xal.model.probe.traj.*;
 import xal.model.xml.*;
 //import xal.tools.optimizer.*;
 import xal.tools.beam.Twiss;
-import xal.tools.plot.*;
+import xal.extension.widgets.plot.*;
 import java.text.NumberFormat;
-import xal.tools.swing.DecimalField;
+import xal.extension.widgets.swing.DecimalField;
 import xal.tools.apputils.EdgeLayout;
 import xal.tools.data.*;
 import xal.tools.xml.XmlDataAdaptor;
 import xal.tools.beam.*;
 import xal.tools.statistics.*;
 import java.text.DecimalFormat;
-import xal.sim.sync.PVLoggerDataSource;
-import xal.tools.apputils.SimpleProbeEditor;
+import xal.service.pvlogger.sim.PVLoggerDataSource;
+import xal.extension.widgets.apputils.SimpleProbeEditor;
 
 /**
  * Performs matching to find steerer strengths for desired injection

@@ -10,7 +10,7 @@ import java.util.*;
 
 import xal.tools.solver.*;
 import xal.tools.solver.algorithm.*;
-import xal.tools.plot.BasicGraphData;
+import xal.extension.widgets.plot.BasicGraphData;
 
 /**
  *

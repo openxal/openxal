@@ -10,7 +10,7 @@
 
 package xal.app.labbook;
 
-import xal.application.*;
+import xal.extension.application.*;
 
 
 /**

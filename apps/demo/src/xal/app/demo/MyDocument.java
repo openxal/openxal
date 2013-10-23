@@ -16,7 +16,7 @@ import javax.swing.event.*;
 import java.awt.event.*;
 import java.util.logging.*;
 
-import xal.application.*;
+import xal.extension.application.*;
 
 /**
  * MyDocument is a custom XalDocument for my application.  Each document instance 

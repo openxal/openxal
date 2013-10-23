@@ -15,12 +15,12 @@ import xal.tools.xml.XmlDataAdaptor;
 import xal.smf.AcceleratorSeq;
 import xal.smf.AcceleratorSeqCombo;
 import xal.smf.AcceleratorNode;
-import xal.smf.application.*;
+import xal.extension.smf.application.*;
 import xal.smf.data.XMLDataManager;
-import xal.application.*;
+import xal.extension.application.*;
 import xal.service.pvlogger.*;
 import xal.tools.database.*;
-import xal.tools.apputils.pvlogbrowser.PVLogSnapshotChooser;
+import xal.service.pvlogger.apputils.browser.PVLogSnapshotChooser;
 import xal.ca.*;
 import xal.smf.impl.SCLCavity;
 

@@ -15,8 +15,8 @@ import javax.swing.table.*;
 import java.text.*;
 import java.util.*;
 
-import xal.application.*;
-import xal.tools.bricks.WindowReference;
+import xal.extension.application.*;
+import xal.extension.bricks.WindowReference;
 import xal.tools.text.FormattedNumber;
 
 
