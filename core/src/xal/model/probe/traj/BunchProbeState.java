@@ -156,13 +156,20 @@ public abstract class BunchProbeState extends ProbeState /* implements IPhaseSta
      */
     
     /**
-     * Returns the bunch frequency, that is the frequency of 
-     * the bunches need to create the beam current.
-     * 
-     * The bunch frequency f is computed from the beam current 
-     * I and bunch charge Q as 
-     *  
-     *      f = I/Q
+     * <p>
+     * Returns the bunch frequency, that is, the rate at which
+     * beam bunches pass a stationary point (in laboratory coordinates).
+     * The frequency <i>f</i> of the bunches determines the beam current <i>I</i>.
+     * </p>
+     * <p>
+     * The bunch frequency <i>f</i> is related to the beam current 
+     * <i>I</i> and bunch charge <i>Q</i> as 
+     * <br/>
+     * <br/>
+     * &nbsp; &nbsp; <i>f</i> = <i>I/Q</i>
+     * <br/>
+     * <br/>
+     * </p>
      *      
      * @return  bunch frequency in Hertz
      */
@@ -171,7 +178,8 @@ public abstract class BunchProbeState extends ProbeState /* implements IPhaseSta
     };
     
     /** 
-     * Returns the total beam current 
+     * Returns the total beam current, which is the bunch charge <i>Q</i> times
+     * the bunch frequency <i>f</i>.
      * 
      * @return  beam current in <b>amps</b>
      */
@@ -180,12 +188,14 @@ public abstract class BunchProbeState extends ProbeState /* implements IPhaseSta
     }
     
     /**
-     * Returns the betatron phase with space charge for all three phase
-     * planes.
+     * Returns the betatron phase of this bunch for all 3 phase places.
      * 
-     * @return  vector (psix,psiy,psiz) of phases in <b>radians</b>
+     * @return  vector (&psi;<sub><i>x</i></sub>, &psi;<sub><i>y</i></sub>, &psi;<sub><i>z</i></sub>) 
+     *
+     * @author Christopher K. Allen
+     * @since  Oct 23, 2013
      */
-    public R3 getBetatronPhase() {
+    public R3   getBunchBetatronPhase() {
         return this.vecPhsBeta;
     }
     
@@ -300,7 +310,7 @@ public abstract class BunchProbeState extends ProbeState /* implements IPhaseSta
         return super.toString() + 
                 " curr: " + getBeamCurrent() + 
                 " freq: " + getBunchFrequency() +
-                " phase: " + getBetatronPhase();
+                " phase: " + getBunchBetatronPhase();
     }
 	
 
@@ -321,7 +331,7 @@ public abstract class BunchProbeState extends ProbeState /* implements IPhaseSta
         DataAdaptor datBunch = daSink.createChild(ELEM_BEAM);
         datBunch.setValue(ATTR_BUNCHFREQ,   getBunchFrequency());
         datBunch.setValue(ATTR_BEAMCURRENT, getBeamCurrent());
-        datBunch.setValue(ATTR_BETAPHASE,   getBetatronPhase().toString());
+        datBunch.setValue(ATTR_BETAPHASE,   getBunchBetatronPhase().toString());
         
     }
     

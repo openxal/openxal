@@ -117,9 +117,8 @@ public class R3x3JacobiDecomposition {
      * @param matTarget     target matrix to factorize
      * 
      * @throws  IllegalArgumentException    matrix is not symmetric
-     * @throws InstantiationException       could not copy the given matrix 
      */
-    public R3x3JacobiDecomposition(R3x3 matTarget) throws IllegalArgumentException, InstantiationException {
+    public R3x3JacobiDecomposition(final R3x3 matTarget) throws IllegalArgumentException {
         if (!matTarget.isSymmetric())
             throw new IllegalArgumentException("R3x3JacobiDecomposition: Target matrix is not symmetric");
         
@@ -206,26 +205,38 @@ public class R3x3JacobiDecomposition {
      */
     
     /** 
+     * <p>
+     * Decomposes the given matrix <b>&sigma;</b> into the product
+     * <br/>
+     * <br/>
+     * &nbsp; &nbsp; <b>&sigma;</b> = <b>RDR</b><sup><i>T</i></sup> ,
+     * <br/>
+     * <br/>
+     * where <b>R</b> &in; <i>O</i>(3) is the conjugating rotation matrix and
+     * <b>D</b> &in; <b>R</b><sub>+</sub><sup>3&times;3</sup> is the diagonal
+     * matrix of eigenvalues of <b>&sigma;</b>.
+     * </p>
+     * <p>
+     * The actual computations are done by the objects of the class 
+     * <code>{@link JacobiIterate}</code>.
+     * </p>
      * 
      * @param matTarget  the covariance matrix of the ellipsoid
      * 
      * @throws IllegalArgumentException     the covariance matrix is not symmetric 
      *                                      and/or positive definite
-     * @throws InstantiationException       unable to copy the given matrix
      * 
      * @see #setRotation
      * @see #setSemiAxes
      */
-    private void decompose(R3x3  matTarget) 
-        throws IllegalArgumentException, InstantiationException
-    {    
+    private void decompose(final R3x3  matTarget) throws IllegalArgumentException {    
         JacobiIterate   iter  = new JacobiIterate(matTarget);
         
         // Initialize the loop
         double  angle = iter.getAngle();    // rotation angle
         R3x3    R     = iter.getRotation(); // rotation matrix
         R3x3    Rt    = R.transpose();      // transpose of rotation matrix          
-        R3x3    D     = matTarget.copy();   // diagonalization matrix
+        R3x3    D     = matTarget;          // diagonalization matrix
 
         this.cntIter = 0;
         this.matRot = R3x3.newIdentity();
@@ -310,7 +321,7 @@ class JacobiIterate {
      * 
      * @param   matTarget   matrix for which new iterate parameters are to be computed
      */
-    public JacobiIterate(R3x3   matTarget)  {
+    public JacobiIterate(final R3x3   matTarget)  {
         this.matTarget = matTarget;
         this.posPivot = compPivot();
         this.dblAng = compAngle2();

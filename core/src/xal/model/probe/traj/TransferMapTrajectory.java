@@ -15,19 +15,24 @@ import java.util.Iterator;
  * Specializes the <code>Trajectory</code> class to the 
  * <code>TransferMapProbe<code> behavior.
  * 
- * @author Christopher K. Allen
+ * @author  Christopher K. Allen
+ * @since   Jun 9, 2004
+ * @version Oct 22, 2013
  *
  */
 public class TransferMapTrajectory extends Trajectory {
 	static final private int NUM_MODES = 3;
 	
 	/** full turn map at the lattice origin */
+	@Deprecated
 	final private PhaseMap _originFullTurnMap;
 	
 	/** tunes for x, y and z */
+	@Deprecated
 	final private double[] _tunes;
 	
 	/** tunes for x, y and z */
+	@Deprecated
 	final private double[] _fullTunes;
 	
 	
@@ -66,7 +71,10 @@ public class TransferMapTrajectory extends Trajectory {
 	 * Set the full turn map to the one specified.
 	 *
 	 * @param fullTurnMap the full turn map to use for the trajectory
+	 * 
+	 * @deprecated This is not a parameter you can change post simulation
 	 */
+    @Deprecated
 	public void setFullTurnMap( final PhaseMap fullTurnMap ) {
 		_originFullTurnMap.setFrom( fullTurnMap );
 	}
@@ -83,7 +91,10 @@ public class TransferMapTrajectory extends Trajectory {
 	/**
 	 * Get the x, y and z tunes.
 	 * @return the array of tunes of the three modes (x, y and z).
+	 * 
+	 * @deprecated TransferMapProbes do not have tunes
 	 */
+	@Deprecated
 	public double[] getTunes() {
 		calculateTunesIfNeeded();
 		
@@ -98,13 +109,25 @@ public class TransferMapTrajectory extends Trajectory {
 	 *
 	 * @author Unknown
 	 * @since  Unknown
+	 * 
+     * @deprecated TransferMapProbes do not have tunes
 	 */
+	@Deprecated
 	public double[] getFullTunes() {
 		calculateFullTunesIfNeeded();
 		
 		return _fullTunes;
 	}
 	
+	/**
+	 * 
+	 *
+	 * @author Christopher K. Allen
+	 * @since  Oct 22, 2013
+	 * 
+     * @deprecated Moved to xal.tools.beam.calc
+	 */
+	@Deprecated
 	private void calculateFullTunesIfNeeded() {
 
 
@@ -179,11 +202,14 @@ public class TransferMapTrajectory extends Trajectory {
 	
 	/**
 	 * Calculate the x, y and z tunes
+	 * 
+	 * @deprecated Moved to xal.tools.beam.calc
 	 */
     //sako version look at the sign of M12, and determine the phase
     // since M12=beta*sin(mu) and beta>0, if M12>0, sin(mu)>0, 0<mu<pi
     //                                    if M12<0, sin(mu)<0, -pi<mu<0
 	// sako
+	@Deprecated
 	private void calculateTunesIfNeeded() {
 		if ( _needsTuneCalculation ) {
 			final double PI2 = 2 * Math.PI;

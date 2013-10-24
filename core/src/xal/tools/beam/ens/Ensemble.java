@@ -213,7 +213,7 @@ public class Ensemble implements Serializable {
      *
      *  @return         the 7x7 correlation matrix of the ensemble distribution
      */
-    public CovarianceMatrix phaseCorrelation()    {
+    public CovarianceMatrix phaseCovariance()    {
         int             N        = this.getCount();
         CovarianceMatrix     matSigma = new CovarianceMatrix();
         Iterator<Particle> iter = this.iterator();
@@ -239,7 +239,7 @@ public class Ensemble implements Serializable {
      */
     public double[] rmsEmittances()  {
         double[] arrEmit = new double[3];
-        PhaseMatrix matSig = this.phaseCorrelation();
+        PhaseMatrix matSig = this.phaseCovariance();
 
         arrEmit[0] = Math.sqrt( matSig.getElem(0,0)*matSig.getElem(1,1) - matSig.getElem(0,1)*matSig.getElem(1,0) );
         arrEmit[1] = Math.sqrt( matSig.getElem(2,2)*matSig.getElem(3,3) - matSig.getElem(2,3)*matSig.getElem(3,2) );

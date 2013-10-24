@@ -6,7 +6,7 @@ import xal.tools.beam.PhaseVector;
 import xal.tools.beam.PhaseMatrix;
 import xal.tools.beam.Twiss;
 import xal.tools.data.DataAdaptor;
-
+import xal.tools.math.r3.R3;
 import xal.model.probe.EnvelopeProbe;
 import xal.model.probe.Probe;
 import xal.model.xml.ParsingException;
@@ -64,17 +64,17 @@ public class EnvelopeProbeState extends BunchProbeState implements IPhaseState {
      */
      
     /** current response matrix (Sako) */
-    private PhaseMatrix         m_matPert;
+    private PhaseMatrix         matPert;
 
     /** accumulated response matrix */
-    private PhaseMatrix         m_matResp;
+    private PhaseMatrix         matResp;
     
     
     /** accumulated response matrix (no space charge) */
-    private PhaseMatrix         m_matRespNoSpaceCharge;
+    private PhaseMatrix         matRespNoSpaceCharge;
 
     /** envelope state */
-    private CovarianceMatrix   m_matCorrel;
+    private CovarianceMatrix   matCov;
 
     
     
@@ -129,10 +129,10 @@ public class EnvelopeProbeState extends BunchProbeState implements IPhaseState {
      * Default constructor.  Create a new, empty <code>EnvelopeProbeState<code> object.
      */    
     public EnvelopeProbeState() {
-        this.m_matPert = PhaseMatrix.identity();
-        this.m_matResp = PhaseMatrix.identity();
-        this.m_matRespNoSpaceCharge = PhaseMatrix.identity();
-    	this.m_matCorrel = new CovarianceMatrix();
+        this.matPert = PhaseMatrix.identity();
+        this.matResp = PhaseMatrix.identity();
+        this.matRespNoSpaceCharge = PhaseMatrix.identity();
+    	this.matCov = new CovarianceMatrix();
     }
 	
     /**
@@ -144,39 +144,41 @@ public class EnvelopeProbeState extends BunchProbeState implements IPhaseState {
     @SuppressWarnings("deprecation")
     public EnvelopeProbeState(EnvelopeProbe probe) {
         super(probe);
-        this.setCorrelation(probe.getCovariance());
+        this.setCovariance(probe.getCovariance());
         this.setResponseMatrix(probe.getResponseMatrix());
         this.setResponseMatrixNoSpaceCharge(probe.getResponseMatrixNoSpaceCharge());
         this.setPerturbationMatrix(probe.getCurrentResponseMatrix());
         //obsolete this.setTwiss(probe.getTwiss());
-        this.setTwiss(probe.getCovariance().computeTwiss());
-        this.setSaveTwissFlag(probe.getSaveTwissFlag());
+        this.twissParams = probe.getCovariance().computeTwiss();
+        this.bolSaveTwiss = probe.getSaveTwissFlag();
+//        this.setTwiss(probe.getCovariance().computeTwiss());
+//        this.setSaveTwissFlag(probe.getSaveTwissFlag());
 	//sako
 
     }
     
     
-    /**
-     * Changes the behavior of the save state methods.
-     * By setting this flag to <code>true</code> the Twiss
-     * parameter attributes will be saved <b>instead</b> of
-     * the correlation matrix.  The default behavior for this class
-     * is to save the correlation matrix.
-     * 
-     * CKA Notes:
-     * - This is clearly a kluge; use this method with caution.
-     * It is provided to maintain backward compatibility.
-     * 
-     * @param   bolSaveTwiss    behavior of save state methods 
-     * 
-     * @see EnvelopeProbeState#addPropertiesTo(DataAdaptor)
-     * 
-     * @deprecated
-     */
-    @Deprecated
-    public void setSaveTwissFlag(boolean bolSaveTwiss)    {
-        this.bolSaveTwiss = bolSaveTwiss;
-    }
+//    /**
+//     * Changes the behavior of the save state methods.
+//     * By setting this flag to <code>true</code> the Twiss
+//     * parameter attributes will be saved <b>instead</b> of
+//     * the correlation matrix.  The default behavior for this class
+//     * is to save the correlation matrix.
+//     * 
+//     * CKA Notes:
+//     * - This is clearly a kluge; use this method with caution.
+//     * It is provided to maintain backward compatibility.
+//     * 
+//     * @param   bolSaveTwiss    behavior of save state methods 
+//     * 
+//     * @see EnvelopeProbeState#addPropertiesTo(DataAdaptor)
+//     * 
+//     * @deprecated
+//     */
+//    @Deprecated
+//    public void setSaveTwissFlag(boolean bolSaveTwiss)    {
+//        this.bolSaveTwiss = bolSaveTwiss;
+//    }
     
     /**
      * Set the first-order response matrix of the current element slice
@@ -184,7 +186,7 @@ public class EnvelopeProbeState extends BunchProbeState implements IPhaseState {
      * @param matPerturb   first-order response matrix in homogeneous coordinates
      */
     public void setPerturbationMatrix(PhaseMatrix matPerturb)  {
-        this.m_matPert = matPerturb;
+        this.matPert = matPerturb;
     }
 
     /**
@@ -194,7 +196,7 @@ public class EnvelopeProbeState extends BunchProbeState implements IPhaseState {
      * @param matResp   first-order response matrix in homogeneous coordinates
      */
     public void setResponseMatrix(PhaseMatrix matResp)  {
-        this.m_matResp = matResp;
+        this.matResp = matResp;
     }
 
     /**
@@ -204,7 +206,7 @@ public class EnvelopeProbeState extends BunchProbeState implements IPhaseState {
      * @param matResp   first-order response matrix in homogeneous coordinates
      */
     public void setResponseMatrixNoSpaceCharge(PhaseMatrix matResp)  {
-        this.m_matRespNoSpaceCharge = matResp;
+        this.matRespNoSpaceCharge = matResp;
     }
 
     /**
@@ -214,24 +216,24 @@ public class EnvelopeProbeState extends BunchProbeState implements IPhaseState {
      *
      *  @see xal.tools.beam.CovarianceMatrix
      */
-    public void setCorrelation(CovarianceMatrix matTau) {
-        m_matCorrel = matTau;
+    public void setCovariance(CovarianceMatrix matTau) {
+        matCov = matTau;
     }
 
-    /** 
-     * Set the twiss parameters for the probe 
-     * 
-     * @param twiss new 3 dimensional array of Twiss objects (horizontal, vertical and longitudinal)
-     * 
-     * @see xal.tools.beam.Twiss
-     * @see EnvelopeProbeState#getTwiss()
-     * 
-     * @deprecated
-     */
-    @Deprecated
-    public void setTwiss(Twiss [] twiss) {
-        twissParams = twiss;
-    }
+//    /** 
+//     * Set the twiss parameters for the probe 
+//     * 
+//     * @param twiss new 3 dimensional array of Twiss objects (horizontal, vertical and longitudinal)
+//     * 
+//     * @see xal.tools.beam.Twiss
+//     * @see EnvelopeProbeState#getTwiss()
+//     * 
+//     * @deprecated
+//     */
+//    @Deprecated
+//    public void setTwiss(Twiss [] twiss) {
+//        twissParams = twiss;
+//    }
     
     
     
@@ -249,7 +251,7 @@ public class EnvelopeProbeState extends BunchProbeState implements IPhaseState {
      * @return  first-order response matrix in homogeneous coordinates
      */
     public PhaseMatrix getResponseMatrix()  {
-        return this.m_matResp;
+        return this.matResp;
     }
     
     /**
@@ -259,7 +261,7 @@ public class EnvelopeProbeState extends BunchProbeState implements IPhaseState {
      * @return  first-order response matrix in homogeneous coordinates
      */
     public PhaseMatrix getResponseMatrixNoSpaceCharge()  {
-        return this.m_matRespNoSpaceCharge;
+        return this.matRespNoSpaceCharge;
     }
     
     /**
@@ -268,7 +270,7 @@ public class EnvelopeProbeState extends BunchProbeState implements IPhaseState {
      * @return  first-order response matrix in homogeneous coordinates
      */
     public PhaseMatrix getPerturbationMatrix()  {
-        return this.m_matPert;
+        return this.matPert;
     }
     
     /** 
@@ -278,37 +280,8 @@ public class EnvelopeProbeState extends BunchProbeState implements IPhaseState {
      * 
      * @return  7x7 matrix <zz^T> in homogeneous coordinates
      */
-    public CovarianceMatrix getCorrelationMatrix()   {
-        return m_matCorrel;
-    }
-    
-    
-    /** 
-     * Returns the (independent attribute) array of Twiss parameters for this 
-     * state for all three planes.
-     * 
-     * CKA NOTES:
-     * - This attribute is redundant in the sense that all "Twiss parameter"
-     * information is contained within the correlation matrix.  The correlation
-     * matrix was intended as the primary attribute of an <code>EnvelopeProbe</code>.
-     * 
-     * - The dynamics of this attribute are computed from tranfer matrices,
-     * however, with space charge the transfer matrices are computed using the
-     * correlation matrix.  Thus these parameters are inconsistent in the 
-     * presence of space charge.
-     * 
-     * - I have made a separate Probe class, <code>TwissProbe</code> which has
-     * Twiss parameters as its primary state.
-     * 
-     * - For all these reason I am deprecating this method
-     * 
-     * @return array(twiss-H, twiss-V, twiss-L)
-     * 
-     * @deprecated redundant state variable
-     */
-    @Deprecated
-    public Twiss[] getTwiss() { 
-        return this.twissParams;
+    public CovarianceMatrix getCovarianceMatrix()   {
+        return matCov;
     }
     
     /**
@@ -350,10 +323,10 @@ public class EnvelopeProbeState extends BunchProbeState implements IPhaseState {
      * 
      * @return  &lt;<b>zz</b><sup><i>T</i></sup>&gt; - &lt;<b>z</b>&gt;&lt;<b>z</b>&gt;<sup><i>T</i></sup>
      * 
-     * @see xal.tools.beam.CovarianceMatrix#computeCovariance()
+     * @see xal.tools.beam.CovarianceMatrix#computeCentralCovariance()
      */
-    public  CovarianceMatrix phaseCovariance()   {
-        return getCorrelationMatrix().computeCovariance();
+    public  CovarianceMatrix centralCovariance()   {
+        return getCovarianceMatrix().computeCentralCovariance();
     }
     
     /**
@@ -365,24 +338,27 @@ public class EnvelopeProbeState extends BunchProbeState implements IPhaseState {
      * @return array (&epsilon;<sub>x</sub>,&epsilon;<sub>y</sub>,&epsilon;<sub>z</sub>) of rms emittances
      */
     public double[] rmsEmittances() {
-        return getCorrelationMatrix().computeRmsEmittances();
+        return getCovarianceMatrix().computeRmsEmittances();
     }
     
     /**
+     * <p>
      * Return the twiss parameters for this state calculated from the 
-     * correlation matrix.
-     * 
-     * CKA Notes:
+     * covariance matrix.
+     * </p>
+     * <p>
+     * <h4>CKA Notes:</h4>
      * - Use this method with caution.  The returned information is incomplete,
-     * it is taken only from the three 2x2 diagonal blocks of the correlation
+     * it is taken only from the three 2&times;2 diagonal blocks of the correlation
      * matrix and, therefore, does not contain the full state of the beam.  In
      * general, you cannot restart the beam with the returned parameters, for
      * example, in the case of bends, offsets, dipoles, etc.
+     * </p>
      *
      * @return  twiss parameters computed from diagonal blocks of the correlation matrix
      */
     public Twiss[] twissParameters() {
-        return getCorrelationMatrix().computeTwiss();
+        return getCovarianceMatrix().computeTwiss();
     }
     
     
@@ -412,45 +388,12 @@ public class EnvelopeProbeState extends BunchProbeState implements IPhaseState {
      *  @see    xal.tools.beam.CovarianceMatrix#getMean()
      */
     public PhaseVector phaseMean()  {
-        return getCorrelationMatrix().getMean();
+        return getCovarianceMatrix().getMean();
     }
     
-    /** 
-     *  <p>
-     *  Returns homogeneous phase space coordinates of the particle.  The units
-     *  are meters and radians.
-     *  </p>
-     *  <p>
-     *  <h4>CKA NOTE:</h4>
-     *  This method simply returns the value of EnvelopeProbeState#phaseMean()
-     *  </p>
-     *
-     *  @return     vector (x,x',y,y',z,z',1) of phase space coordinates
-     *  
-     *  @see    EnvelopeProbeState#phaseMean()
-     */
-    public PhaseVector getPhaseCoordinates() {
-        return phaseMean();
-    }
     
-    /**
-     * <p>
-     * Get the fixed orbit about which betatron oscillations occur.
-     * </p>
-     * <p>
-     * <h4>CKA NOTE:</h4>
-     *  This method simply returns the value of EnvelopeProbeState#phaseMean()
-     * </p>
-     *
-     * @return the fixed orbit vector (x,x',y,y',z,z',1)
-     *  
-     * @see    EnvelopeProbeState#phaseMean()
-     */
-    public PhaseVector getFixedOrbit() {
-        return phaseMean();
-    }
     
-
+    
     /**
      * <p>
      * Save the state values particular to <code>EnvelopeProbeState</code> objects
@@ -468,7 +411,7 @@ public class EnvelopeProbeState extends BunchProbeState implements IPhaseState {
      *  @param  daSink   data sink represented by <code>DataAdaptor</code> interface
      */
     public void saveStateAsTwiss(DataAdaptor daSink) {
-    	DataAdaptor stateNode = daSink.createChild(STATE_LABEL);
+        DataAdaptor stateNode = daSink.createChild(STATE_LABEL);
         stateNode.setValue(TYPE_LABEL, getClass().getName());
         stateNode.setValue("id", this.getElementId());
         
@@ -493,12 +436,9 @@ public class EnvelopeProbeState extends BunchProbeState implements IPhaseState {
     }
     
     
-
-    
     /*
-     * Support Methods
+     * ProbeState Overrides
      */ 
-    
     
     /**
      * Save the state values particular to <code>EnvelopeProbeState</code> objects
@@ -515,12 +455,12 @@ public class EnvelopeProbeState extends BunchProbeState implements IPhaseState {
 //      sako this is unnecessary  (2008/07/07) envNode.setValue(EnvelopeProbeState.PERTURB_LABEL, this.getPerturbationMatrix().toString());
         
         if (!bolSaveTwiss)
-            envNode.setValue(EnvelopeProbeState.CORR_LABEL, this.getCorrelationMatrix().toString());
+            envNode.setValue(EnvelopeProbeState.CORR_LABEL, this.getCovarianceMatrix().toString());
         else {
             //sako
 //            this.setTwiss(this.twissParameters());
             
-        	Twiss[] twiss = this.twissParameters();
+            Twiss[] twiss = this.twissParameters();
             envNode.setValue(EnvelopeProbeState.ALPHA_X_LABEL, twiss[0].getAlpha());
             envNode.setValue(EnvelopeProbeState.BETA_X_LABEL, twiss[0].getBeta());
             envNode.setValue(EnvelopeProbeState.EMIT_X_LABEL, twiss[0].getEmittance());
@@ -532,7 +472,7 @@ public class EnvelopeProbeState extends BunchProbeState implements IPhaseState {
             envNode.setValue(EnvelopeProbeState.EMIT_Z_LABEL, twiss[2].getEmittance());           
             
             //sako
-            envNode.setValue(EnvelopeProbeState.CORR_LABEL, this.getCorrelationMatrix().toString());
+            envNode.setValue(EnvelopeProbeState.CORR_LABEL, this.getCovarianceMatrix().toString());
             
         }
     }
@@ -566,10 +506,12 @@ public class EnvelopeProbeState extends BunchProbeState implements IPhaseState {
             twiss[2] = new Twiss(envNode.doubleValue(EnvelopeProbeState.ALPHA_Z_LABEL), 
                     envNode.doubleValue(EnvelopeProbeState.BETA_Z_LABEL),
                     envNode.doubleValue(EnvelopeProbeState.EMIT_Z_LABEL));
-            this.setTwiss(twiss);
+//            this.setTwiss(twiss);
+            this.twissParams = twiss;
+            
             DataAdaptor parNode = container.childAdaptor(EnvelopeProbeState.CENTROID_LABEL);
             if (parNode == null) {
-                this.setCorrelation(CovarianceMatrix.buildCorrelation(twiss[0], twiss[1], twiss[2]));
+                this.setCovariance(CovarianceMatrix.buildCorrelation(twiss[0], twiss[1], twiss[2]));
 //              throw new ParsingException("EnvelopeProbeState#readPropertiesFrom(): no child element = " + EnvelopeProbeState.PARTICLE_LABEL);
             } else {
 //                if (parNode.hasAttribute(EnvelopeProbeState.X_LABEL)) {
@@ -587,16 +529,17 @@ public class EnvelopeProbeState extends BunchProbeState implements IPhaseState {
                     String      strCent = parNode.stringValue(EnvelopeProbeState.VALUE_LABEL);
                     PhaseVector vecCent = new PhaseVector(strCent);
                     
-                    this.setCorrelation(CovarianceMatrix.buildCorrelation(twiss[0], twiss[1], twiss[2], vecCent));
+                    this.setCovariance(CovarianceMatrix.buildCorrelation(twiss[0], twiss[1], twiss[2], vecCent));
                 }
                 
             }
             
         } else if (envNode.hasAttribute(EnvelopeProbeState.CORR_LABEL))   {
             CovarianceMatrix matChi = new CovarianceMatrix(envNode.stringValue(EnvelopeProbeState.CORR_LABEL));
-            this.setCorrelation(matChi);
+            this.setCovariance(matChi);
             // initialize the state twiss parameters from the correlation matrix
-            this.setTwiss(matChi.computeTwiss());
+            this.twissParams = matChi.computeTwiss();
+//            this.setTwiss(matChi.computeTwiss());
         }
         
         /* sako 2008/07/07
@@ -614,6 +557,118 @@ public class EnvelopeProbeState extends BunchProbeState implements IPhaseState {
         }
         */
     }
+    
+    
+    /*
+     * IPhaseCoordinate Interface
+     */
+    
+    /** 
+     *  <p>
+     *  Returns homogeneous phase space coordinates of the particle.  The units
+     *  are meters and radians.
+     *  </p>
+     *  <p>
+     *  <h4>CKA NOTE:</h4>
+     *  This method simply returns the value of EnvelopeProbeState#phaseMean()
+     *  </p>
+     *
+     *  @return     vector (x,x',y,y',z,z',1) of phase space coordinates
+     *  
+     *  @see    EnvelopeProbeState#phaseMean()
+     */
+    @Override
+    public PhaseVector getPhaseCoordinates() {
+        return phaseMean();
+    }
+    
+    /**
+     * <p>
+     * Get the fixed orbit about which betatron oscillations occur.
+     * </p>
+     * <p>
+     * <h4>CKA NOTE:</h4>
+     *  &middot; This method simply returns the value of EnvelopeProbeState#phaseMean()
+     *  <br/>
+     *  &middot; This method really has no context unless we are in a ring and then
+     *  it would represent the fixed-orbit position at this state (position), otherwise
+     *  ???
+     * </p>
+     *
+     * @return the fixed orbit vector (x,x',y,y',z,z',1)
+     *  
+     * @see    EnvelopeProbeState#phaseMean()
+     */
+    @Override
+    public PhaseVector getFixedOrbit() {
+        return phaseMean();
+    }
+    
+
+    /*
+     * IPhaseState Interface
+     */
+    
+    /**
+     * <p> 
+     * Returns the (independent attribute) array of Twiss parameters for this 
+     * state for all three planes.
+     * </p>
+     * <p>
+     * <h4>CKA NOTES:</h4>
+     * - This attribute is redundant in the sense that all "Twiss parameter"
+     * information is contained within the covariance matrix.  The covariance
+     * matrix was intended as the primary attribute of an <code>EnvelopeProbe</code>.
+     * <br/> 
+     * - The dynamics of this attribute are computed from transfer matrices,
+     * however, with space charge the transfer matrices are computed using the
+     * covariance matrix.  Thus these parameters are inconsistent in the 
+     * presence of space charge.
+     * <br/>
+     * - I have made a separate Probe class, <code>TwissProbe</code> which has
+     * Twiss parameters as its primary state.
+     * <br/>
+     * - Now this method returns the same quantities as <code>{@link #twissParameters()}</code>
+     * - For all these reason I am deprecating this method
+     * </p>
+     * 
+     * @return array [twiss-H, twiss-V, twiss-L] of Twiss parameters in each phase plane
+     * 
+     * @deprecated redundant state variable
+     */
+    @Deprecated
+    public Twiss[] getTwiss() { 
+        return this.twissParams;
+    }
+
+    /**
+     * Returns the betatron phase with space charge for all three phase
+     * planes.
+     * 
+     * @return  vector (psix,psiy,psiz) of phases in <b>radians</b>
+     */
+    @Override
+    public R3 getBetatronPhase() {
+        return super.getBunchBetatronPhase();
+    }
+    
+    
+    /*
+     * Object Overrides
+     */
+     
+    /**
+     * Write out state information to a string.
+     * 
+     * @return     text version of internal state data
+     */
+    @Override
+    public String toString() {
+        return super.toString() + " covariance: " + getCovarianceMatrix().toString() 
+                                + ", response: " + this.getResponseMatrix().toString();
+    }   
+    
+
     
     
 //=====================================================================================
@@ -892,8 +947,8 @@ public class EnvelopeProbeState extends BunchProbeState implements IPhaseState {
         double  W  = this.getKineticEnergy();
         double  Er = this.getSpeciesRestEnergy(); 
         double  gamma = RelativisticParameterConverter.computeGammaFromEnergies(W, Er);
-        double  d     = this.getCorrelationMatrix().getElem(PhaseMatrix.IND_X, PhaseMatrix.IND_ZP)
-        / this.getCorrelationMatrix().getElem(PhaseMatrix.IND_ZP,PhaseMatrix.IND_ZP);
+        double  d     = this.getCovarianceMatrix().getElem(PhaseMatrix.IND_X, PhaseMatrix.IND_ZP)
+        / this.getCovarianceMatrix().getElem(PhaseMatrix.IND_ZP,PhaseMatrix.IND_ZP);
         
         return d/(gamma*gamma);//Is gamma necessary?
     } 
@@ -910,7 +965,7 @@ public class EnvelopeProbeState extends BunchProbeState implements IPhaseState {
         double  Er = this.getSpeciesRestEnergy(); 
         double  gamma = RelativisticParameterConverter.computeGammaFromEnergies(W, Er);
         double  d     = this.getResponseMatrixNoSpaceCharge().getElem(PhaseMatrix.IND_Y, PhaseMatrix.IND_ZP)
-                / this.getCorrelationMatrix().getElem(PhaseMatrix.IND_ZP,PhaseMatrix.IND_ZP);
+                / this.getCovarianceMatrix().getElem(PhaseMatrix.IND_ZP,PhaseMatrix.IND_ZP);
         
         return d/(gamma*gamma);
     }
@@ -927,7 +982,7 @@ public class EnvelopeProbeState extends BunchProbeState implements IPhaseState {
         double  Er = this.getSpeciesRestEnergy(); 
         double  gamma = RelativisticParameterConverter.computeGammaFromEnergies(W, Er);
         double  d     = this.getResponseMatrixNoSpaceCharge().getElem(PhaseMatrix.IND_XP, PhaseMatrix.IND_ZP)
-                / this.getCorrelationMatrix().getElem(PhaseMatrix.IND_ZP,PhaseMatrix.IND_ZP);
+                / this.getCovarianceMatrix().getElem(PhaseMatrix.IND_ZP,PhaseMatrix.IND_ZP);
         
         return d/(gamma*gamma);
     } 
@@ -944,32 +999,8 @@ public class EnvelopeProbeState extends BunchProbeState implements IPhaseState {
         double  Er = this.getSpeciesRestEnergy(); 
         double  gamma = RelativisticParameterConverter.computeGammaFromEnergies(W, Er);
         double  d     = this.getResponseMatrixNoSpaceCharge().getElem(PhaseMatrix.IND_YP, PhaseMatrix.IND_ZP)
-                / this.getCorrelationMatrix().getElem(PhaseMatrix.IND_ZP,PhaseMatrix.IND_ZP);
+                / this.getCovarianceMatrix().getElem(PhaseMatrix.IND_ZP,PhaseMatrix.IND_ZP);
         return d/(gamma*gamma);
     }
-    
-  
-    
-  
-    
-    /*
-     * Debugging
-     */
-     
-     
-     
-    /**
-     * Write out state information to a string.
-     * 
-     * @return     text version of internal state data
-     */
-    @Override
-    public String toString() {
-        return super.toString() + " correlation: " + getCorrelationMatrix().toString() 
-                                + ", response: " + this.getResponseMatrix().toString();
-    }   
-    
-    
-    
     
 }

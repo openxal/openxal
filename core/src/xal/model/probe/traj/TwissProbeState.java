@@ -15,10 +15,9 @@ import xal.tools.beam.PhaseVector;
 import xal.tools.beam.PhaseMatrix;
 import xal.tools.beam.Twiss;
 import xal.tools.beam.Twiss3D;
-
 import xal.tools.data.DataAdaptor;
 import xal.tools.data.DataFormatException;
-
+import xal.tools.math.r3.R3;
 import xal.model.probe.TwissProbe;
 import xal.model.xml.ParsingException;
 
@@ -317,60 +316,70 @@ public class TwissProbeState extends BunchProbeState implements IPhaseState {
         return arrTwiss;
     }
     
-
-    
     /**
-     * <p>
-     * Convenience function for returning the chromatic dispersion as defined by
-     * D.C. Carey in "The Optics of Charged Particle Beams".  This value is taken
-     * from the response matrix in the off-energy column (z').
-     * </p>
-     * <p>
-     * <h4>NOTE:</h4>
-     * For X and Y coordinates We convert to the conventional definition of 
-     * dispersion dx/(dp/p) by dividing the (x|z') element of the first-order response 
-     * matrix by relativistic gamma squared.
-     * <br/>
-     * <br/>
-     * See D.C. Carey, "The Optics of Charged Particle Beams".
-     * </p> 
+     * Returns the betatron phase with space charge for all three phase
+     * planes.
      * 
-     * @param   index   phase coordinate index of desired "dispersion"
-     * 
-     * @return  chromatic dispersion in <b>meters/radian</b> or <b>radians/radian</b>
-     * 
+     * @return  vector (psix,psiy,psiz) of phases in <b>radians</b>
      */
-    public double getChromDispersion(PhaseIndex index)  {
-        
-        if (index==PhaseIndex.X || index==PhaseIndex.Y) {
-            double  W  = this.getKineticEnergy();
-            double  Er = this.getSpeciesRestEnergy(); 
-            double  gamma = RelativisticParameterConverter.computeGammaFromEnergies(W, Er);
-            double  d     = this.getResponseMatrix().getElem(index.val(), PhaseMatrix.IND_ZP);
-            
-            return d/(gamma*gamma);
-            
-        } else {
-            double d = this.getResponseMatrix().getElem(index.val(), PhaseMatrix.IND_ZP);
-            
-            return d;
-        }
-    } 
-    
-    
-    /**
-     * Set the "Chromatic dispersion" element of the response matrix.  That is
-     * we set the (index,z') element of the response matrix to the given value.
-     * <br/>
-     * <br/>
-     *  See D.C. Carey, "The Optics of Charged Particle Beams".
-     *  
-     * @param   index   phase coordinate index of desired "dispersion"
-     * @param   d       dispersion in <b>meters/radian</b> or <b>radians/radian</b>
-     */
-    public void setChromDispersion(PhaseIndex index, double d)  {
-        this.getResponseMatrix().setElem(index.val(), PhaseMatrix.IND_ZP, d);
+    @Override
+    public R3 getBetatronPhase() {
+        return super.getBunchBetatronPhase();
     }
+
+//    
+//    /**
+//     * <p>
+//     * Convenience function for returning the chromatic dispersion as defined by
+//     * D.C. Carey in "The Optics of Charged Particle Beams".  This value is taken
+//     * from the response matrix in the off-energy column (z').
+//     * </p>
+//     * <p>
+//     * <h4>NOTE:</h4>
+//     * For X and Y coordinates We convert to the conventional definition of 
+//     * dispersion dx/(dp/p) by dividing the (x|z') element of the first-order response 
+//     * matrix by relativistic gamma squared.
+//     * <br/>
+//     * <br/>
+//     * See D.C. Carey, "The Optics of Charged Particle Beams".
+//     * </p> 
+//     * 
+//     * @param   index   phase coordinate index of desired "dispersion"
+//     * 
+//     * @return  chromatic dispersion in <b>meters/radian</b> or <b>radians/radian</b>
+//     * 
+//     */
+//    public double getChromDispersion(PhaseIndex index)  {
+//        
+//        if (index==PhaseIndex.X || index==PhaseIndex.Y) {
+//            double  W  = this.getKineticEnergy();
+//            double  Er = this.getSpeciesRestEnergy(); 
+//            double  gamma = RelativisticParameterConverter.computeGammaFromEnergies(W, Er);
+//            double  d     = this.getResponseMatrix().getElem(index.val(), PhaseMatrix.IND_ZP);
+//            
+//            return d/(gamma*gamma);
+//            
+//        } else {
+//            double d = this.getResponseMatrix().getElem(index.val(), PhaseMatrix.IND_ZP);
+//            
+//            return d;
+//        }
+//    } 
+//    
+//    
+//    /**
+//     * Set the "Chromatic dispersion" element of the response matrix.  That is
+//     * we set the (index,z') element of the response matrix to the given value.
+//     * <br/>
+//     * <br/>
+//     *  See D.C. Carey, "The Optics of Charged Particle Beams".
+//     *  
+//     * @param   index   phase coordinate index of desired "dispersion"
+//     * @param   d       dispersion in <b>meters/radian</b> or <b>radians/radian</b>
+//     */
+//    public void setChromDispersion(PhaseIndex index, double d)  {
+//        this.getResponseMatrix().setElem(index.val(), PhaseMatrix.IND_ZP, d);
+//    }
 
 
     

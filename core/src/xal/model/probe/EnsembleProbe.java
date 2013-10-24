@@ -106,7 +106,7 @@ public class EnsembleProbe extends BunchProbe {
      *  @see    xal.tools.beam.PhaseMatrix
      */
     public CovarianceMatrix  getCorrelation()    {
-        return getEnsemble().phaseCorrelation();
+        return getEnsemble().phaseCovariance();
     }
     
     

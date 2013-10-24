@@ -342,7 +342,7 @@ public class BeamEllipsoid {
      * @author Christopher K. Allen
      * @version Oct, 2013
      */
-    public BeamEllipsoid(double dblGamma, CovarianceMatrix matSigLab) throws InstantiationException    {
+    public BeamEllipsoid(double dblGamma, CovarianceMatrix matSigLab) /* throws InstantiationException  */  {
 
         // Save the arguments
         this.dblGamma  = dblGamma;

@@ -1069,7 +1069,7 @@ public class VADocument extends AcceleratorDocument implements ActionListener, P
 			try {
 				ProbeState probeState = modelScenario.getTrajectory().stateForElement( ws.getId() );
 				if (modelScenario.getProbe() instanceof EnvelopeProbe) {
-                    final Twiss[] twiss = ( (EnvelopeProbeState)probeState ).getCorrelationMatrix().computeTwiss();
+                    final Twiss[] twiss = ( (EnvelopeProbeState)probeState ).getCovarianceMatrix().computeTwiss();
 					wsX.putValCallback( twiss[0].getEnvelopeRadius() * 1000., this );
 					wsY.putValCallback( twiss[1].getEnvelopeRadius() * 1000., this );
 				}

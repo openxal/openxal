@@ -97,7 +97,7 @@ public class DynacGenerator {
                                                                       myProbe.getSpeciesRestEnergy(),
                                                                       myProbe.getKineticEnergy());
         // for Dynac header
-        CovarianceMatrix covarianceMatrix = myProbe.createProbeState().getCorrelationMatrix();
+        CovarianceMatrix covarianceMatrix = myProbe.createProbeState().getCovarianceMatrix();
         
         Twiss[] twiss = covarianceMatrix.computeTwiss();
         String dynac_header =

@@ -269,7 +269,7 @@ public abstract class BunchProbe extends Probe {
         super.applyState(stateBunch);
         this.setBunchFrequency( stateBunch.getBunchFrequency() );
         this.setBeamCurrent( stateBunch.getBeamCurrent() );
-        this.setBetatronPhase(stateBunch.getBetatronPhase());
+        this.setBetatronPhase(stateBunch.getBunchBetatronPhase());
         
 //	setElapsedTime(((BunchProbeState)state).getElapsedTime());
     }

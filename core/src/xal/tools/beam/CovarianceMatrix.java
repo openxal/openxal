@@ -560,7 +560,7 @@ public class CovarianceMatrix extends PhaseMatrix {
      * 
      *  @return     &lt;(z-&lt;z&gt;)*(z-&lt;z&gt;)^T&gt; = &lt;z*z^T&gt; - &lt;z&gt;*&lt;z&gt;^T
      */
-    public CovarianceMatrix computeCovariance() {
+    public CovarianceMatrix computeCentralCovariance() {
         PhaseVector vecMean = this.getMean();
         PhaseMatrix matCorrel = this;
         PhaseMatrix matAve2 = vecMean.outerProd(vecMean);
@@ -590,7 +590,7 @@ public class CovarianceMatrix extends PhaseMatrix {
      */
     public double[] computeRmsEmittances() {
     	//        PhaseMatrix matSig = this.phaseCorrelation();
-        CovarianceMatrix matSig = this.computeCovariance();
+        CovarianceMatrix matSig = this.computeCentralCovariance();
 	
         double ex_2 =
                 matSig.getElem(0, 0) * matSig.getElem(1, 1)
@@ -629,7 +629,7 @@ public class CovarianceMatrix extends PhaseMatrix {
      */
     public Twiss[] computeTwiss() {
     //        return twissParameters(this.phaseCorrelation());
-        CovarianceMatrix matSig = this.computeCovariance();
+        CovarianceMatrix matSig = this.computeCentralCovariance();
 	
         double[] arrEmit; // array of rms emittance values
 

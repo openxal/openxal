@@ -9,9 +9,9 @@
 package xal.model.alg;
 
 import xal.tools.beam.CovarianceMatrix;
-import xal.tools.beam.PhaseIndexHom;
 import xal.tools.beam.PhaseMap;
 import xal.tools.beam.PhaseMatrix;
+import xal.tools.beam.PhaseMatrix.IND;
 import xal.tools.beam.PhaseVector;
 import xal.tools.beam.RelativisticParameterConverter;
 import xal.tools.beam.SpaceIndex3D;
@@ -503,13 +503,13 @@ public class TwissTracker extends Tracker {
             PhaseMatrix T  = PhaseMatrix.identity();
             PhaseMatrix Ti = PhaseMatrix.identity();
             
-            T.setElem(PhaseIndexHom.X,PhaseIndexHom.HOM, -delx);
-            T.setElem(PhaseIndexHom.Y,PhaseIndexHom.HOM, -dely);
-            T.setElem(PhaseIndexHom.Z,PhaseIndexHom.HOM, -delz);
+            T.setElem(IND.X,IND.HOM, -delx);
+            T.setElem(IND.Y,IND.HOM, -dely);
+            T.setElem(IND.Z,IND.HOM, -delz);
             
-            Ti.setElem(PhaseIndexHom.X,PhaseIndexHom.HOM, delx);
-            Ti.setElem(PhaseIndexHom.Y,PhaseIndexHom.HOM, dely);
-            Ti.setElem(PhaseIndexHom.Z,PhaseIndexHom.HOM, delz);
+            Ti.setElem(IND.X,IND.HOM, delx);
+            Ti.setElem(IND.Y,IND.HOM, dely);
+            Ti.setElem(IND.Z,IND.HOM, delz);
             
             matPhi = Ti.times(matPhi).times(T);    
         }
