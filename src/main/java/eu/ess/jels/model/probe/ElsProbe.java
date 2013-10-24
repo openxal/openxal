@@ -10,6 +10,9 @@ public class ElsProbe extends GapEnvelopeProbe {
 	private double dlbFreq;
 	private double dblCurrent;
 	
+	private Matrix envelope0;
+	private Matrix normalized_emmitance0;
+	
 	/*@Override
 	public Trajectory createTrajectory() {
 		// TODO Auto-generated method stub
@@ -89,6 +92,8 @@ public class ElsProbe extends GapEnvelopeProbe {
 			envelope.set(3*i+2,0,twiss[i].getGamma());
 			normalized_emmitance.set(i,0,twiss[i].getEmittance()*getBeta()*getGamma());
 		}		
+		envelope0 = envelope.copy();
+		normalized_emmitance0 = normalized_emmitance.copy();
 	}
 	
 	public Matrix getEnvelope() {
@@ -107,5 +112,13 @@ public class ElsProbe extends GapEnvelopeProbe {
 			twiss[i] = new Twiss(envelope.get(3*i+1,0), envelope.get(3*i,0), normalized_emmitance.get(i,0)/(getBeta()*getGamma()));
 		twiss[2].setTwiss(twiss[2].getAlpha(), twiss[2].getBeta()*Math.pow(getGamma(), 2), twiss[2].getEmittance());
 		return twiss;
+	}
+	
+	@Override
+	public void reset()
+	{
+		super.reset();
+		envelope = envelope0.copy();
+		normalized_emmitance = normalized_emmitance0.copy();
 	}
 }

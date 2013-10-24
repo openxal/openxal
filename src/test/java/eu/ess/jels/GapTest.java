@@ -1,17 +1,35 @@
 package eu.ess.jels;
+import java.util.Arrays;
+import java.util.Collection;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameters;
 
 import xal.model.ModelException;
 import xal.model.probe.Probe;
+import xal.sim.scenario.DefaultElementMapping;
 import xal.sim.scenario.ElementMapping;
+import xal.sim.scenario.ElsElementMapping;
+import xal.sim.scenario.TWElementMapping;
 import xal.smf.AcceleratorSeq;
 import xal.smf.impl.RfGap;
 import eu.ess.jels.smf.impl.ESSRfCavity;
 
 @RunWith(Parameterized.class)
 public class GapTest extends TestCommon {
+	
+	@Parameters
+	public static Collection<Object[]> probes() {
+		double energy = 2.5e6, frequency = 4.025e8, current = 0;
+		return Arrays.asList(new Object[][]{
+					{setupOpenXALProbe(energy, frequency, current), DefaultElementMapping.getInstance()},
+					{setupElsProbe(energy, frequency, current), ElsElementMapping.getInstance()},
+					{setupOpenXALProbe(energy, frequency, current), TWElementMapping.getInstance()}
+				});
+	}
+	
 	public GapTest(Probe probe, ElementMapping elementMapping) {
 		super(probe, elementMapping);
 	}
@@ -24,6 +42,7 @@ public class GapTest extends TestCommon {
 		//AcceleratorSeq sequence = gap(4.025e8, 78019.7, -80, 14.5, 0, 0.0805777, 0.772147, -0.386355, -0.142834, 0, 0);
 		
 		System.out.println("W0: "+probe.getKineticEnergy());
+		
 		run(sequence);
 		
 		printResults();
@@ -37,15 +56,28 @@ public class GapTest extends TestCommon {
 		// -10 0.000000E+00 7.950583E-04 1.012545E-03 1.753258E-03 2.442000E-01 3.974000E-01 8.738712E-01
 		// 0 0.000000E+00 7.949815E-04 1.012447E-03 1.753257E-03 2.442000E-01 3.974000E-01 8.740398E-01
 
+
 		
-		checkTWResults(1.003211730, new double[][] 
-				{{+6.387305e-13, +8.900741e-13, +0.000000e+00, +0.000000e+00, +0.000000e+00, +0.000000e+00}, 
-					{+8.900741e-13, +1.195123e-11, +0.000000e+00, +0.000000e+00, +0.000000e+00, +0.000000e+00}, 
-					{+0.000000e+00, +0.000000e+00, +1.035973e-12, +1.542166e-12, +0.000000e+00, +0.000000e+00}, 
-					{+0.000000e+00, +0.000000e+00, +1.542166e-12, +8.855526e-12, +0.000000e+00, +0.000000e+00}, 
-					{+0.000000e+00, +0.000000e+00, +0.000000e+00, +0.000000e+00, +3.073912e-12, -2.272640e-12}, 
-					{+0.000000e+00, +0.000000e+00, +0.000000e+00, +0.000000e+00, -2.272640e-12, +5.790190e-12} 
+		checkTWResults(1.002678848, new double[][] 
+				{{+6.994725e-13, +1.122296e-12, +0.000000e+00, +0.000000e+00, +0.000000e+00, +0.000000e+00}, 
+					{+1.122296e-12, +1.353021e-11, +0.000000e+00, +0.000000e+00, +0.000000e+00, +0.000000e+00}, 
+					{+0.000000e+00, +0.000000e+00, +1.134492e-12, +1.928183e-12, +0.000000e+00, +0.000000e+00}, 
+					{+0.000000e+00, +0.000000e+00, +1.928183e-12, +1.046080e-11, +0.000000e+00, +0.000000e+00}, 
+					{+0.000000e+00, +0.000000e+00, +0.000000e+00, +0.000000e+00, +3.371330e-12, -3.918053e-12}, 
+					{+0.000000e+00, +0.000000e+00, +0.000000e+00, +0.000000e+00, -3.918053e-12, +9.047444e-12}, 
 				});
+		
+		
+		// we need to check the transfer matrix with the old probe!
+		probe.reset();
+		checkTWTransferMatrix(new double[][]{
+				{+9.986471e-01, +0.000000e+00, +0.000000e+00, +0.000000e+00, +0.000000e+00, +0.000000e+00}, 
+				{+8.813454e-01, +9.986471e-01, +0.000000e+00, +0.000000e+00, +0.000000e+00, +0.000000e+00}, 
+				{+0.000000e+00, +0.000000e+00, +9.986471e-01, +0.000000e+00, +0.000000e+00, +0.000000e+00}, 
+				{+0.000000e+00, +0.000000e+00, +8.813454e-01, +9.986471e-01, +0.000000e+00, +0.000000e+00}, 
+				{+0.000000e+00, +0.000000e+00, +0.000000e+00, +0.000000e+00, +1.000000e+00, +0.000000e+00}, 
+				{+0.000000e+00, +0.000000e+00, +0.000000e+00, +0.000000e+00, -1.772122e+00, +9.972978e-01}, 
+		});
 	}
 	
 	/**

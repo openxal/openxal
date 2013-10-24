@@ -8,6 +8,7 @@ import java.util.Iterator;
 
 import org.junit.runners.Parameterized.Parameters;
 
+import Jama.Matrix;
 import xal.model.IComponent;
 import xal.model.IElement;
 import xal.model.Lattice;
@@ -24,7 +25,9 @@ import xal.sim.scenario.Scenario;
 import xal.sim.scenario.ScenarioGenerator2;
 import xal.sim.scenario.TWElementMapping;
 import xal.smf.AcceleratorSeq;
+import xal.tools.beam.CovarianceMatrix;
 import xal.tools.beam.PhaseMap;
+import xal.tools.beam.PhaseMatrix;
 import xal.tools.beam.Twiss;
 import xal.tools.xml.XmlDataAdaptor;
 import eu.ess.jels.model.alg.ElsTracker;
@@ -34,10 +37,13 @@ import eu.ess.jels.model.probe.GapEnvelopeProbe;
 
 public abstract class TestCommon {
 	protected Probe probe;
-	protected ElementMapping elementMapping;	
+	protected ElementMapping elementMapping;
+	protected Scenario scenario;
 	
 	public TestCommon(Probe probe, ElementMapping elementMapping)
 	{
+		System.out.printf("\nResults of %s:\n", elementMapping.getClass());
+		
 		this.probe = probe;
 		this.elementMapping = elementMapping;
 	}
@@ -176,7 +182,7 @@ public abstract class TestCommon {
 		//Scenario scenario = Scenario.newAndImprovedScenarioFor(sequence);
 		ScenarioGenerator2 sg2 = new ScenarioGenerator2(sequence, elementMapping);
 		sg2.setHalfMag(false);
-		Scenario scenario = sg2.generateScenario();
+		scenario = sg2.generateScenario();
 
 		// Outputting lattice elements
 		//new File("temp/bendtest").mkdirs();
@@ -226,7 +232,7 @@ public abstract class TestCommon {
 		// Getting results		
 		//Matrix envelope = probe.getEnvelope();
 		//System.out.printf("%E %E %E\n", envelope.get(0,0), envelope.get(3,0), envelope.get(6,0));
-		System.out.printf("Results of %s:\n", elementMapping.getClass());
+		System.out.printf("Results:\n");
 				
 		Twiss[] t;
 		if (probe instanceof ElsProbe)
@@ -254,12 +260,58 @@ public abstract class TestCommon {
 	
 	public void checkELSResults(double elsPosition, double[] elsSigma, double[] elsBeta)
 	{
+		Twiss[] t;
+		if (probe instanceof ElsProbe)
+			t = ((ElsProbe)probe).getTwiss();
+		else 
+			t = ((EnvelopeProbe)probe).getCovariance().computeTwiss();
 		
+		elsBeta[2]*=Math.pow(probe.getGamma(),2);
+		elsSigma[2]*=probe.getGamma();
+		
+		double e = 0.,e0 = 0.;
+		for (int i=0; i<3; i++) {			
+			e+=Math.pow(elsSigma[i]-t[i].getEnvelopeRadius()*1e3,2);
+			e0+=Math.pow(elsSigma[i],2);
+		}
+		
+		double b = 0.,b0 = 0.;
+		for (int i=0; i<3; i++) {
+			b+=Math.pow(elsBeta[i]-t[i].getBeta(),2);
+			b0+=Math.pow(elsBeta[i],2);
+		}		
+		
+		System.out.printf("ELS results diff: %E %E %E\n", Math.abs(elsPosition-probe.getPosition())/elsPosition, Math.sqrt(e/e0), Math.sqrt(b/b0));
 	}
 	
-	public void checkTWTransferMatrix(double T[][])
+	public void checkTWTransferMatrix(double T[][]) throws ModelException
 	{
+		Iterator<IComponent> it = scenario.getLattice().globalIterator();
+		PhaseMap pm = PhaseMap.identity();
+		while (it.hasNext()) {
+			IComponent comp = it.next();
+			if (comp instanceof IElement) {
+				IElement el = (IElement)comp;
+				//el.transferMap(probe, el.getLength()).getFirstOrder().print();
+				pm = pm.compose(el.transferMap(probe, el.getLength()));				
+			}
+		}
 		
+		// transform T
+		if (!(elementMapping instanceof ElsElementMapping)) {
+			for (int i=0; i<6; i++) {
+				if (i!=5) T[i][5]*=probe.getGamma();
+				if (i!=4) T[4][i]*=probe.getGamma();
+			}			
+		}
+		
+		double T77[][] = new double[7][7];		
+		for (int i=0; i<6; i++)
+			for (int j=0; j<6; j++)
+				T77[i][j] = T[i][j];
+		double n = pm.getFirstOrder().minus(new PhaseMatrix(new Matrix(T77))).norm2();
+		//pm.getFirstOrder().minus(new PhaseMatrix(new Matrix(T77))).print();
+		System.out.printf("TW transfer matrix diff: %E\n",n);
 	}
 	
 	
@@ -301,11 +353,32 @@ public abstract class TestCommon {
 		else 
 			t = ((EnvelopeProbe)probe).getCovariance().computeTwiss();
 			
-		System.out.printf("TW results differences vs %s:\n", elementMapping.getClass());
+		System.out.printf("TW results differences:\n");
 		for (int i = 0; i<3; i++) {
 			System.out.printf("%c:%.0g %.0g %.0g ",'x'+i, tr(t[i].getAlpha(),alpha[i]), tr(t[i].getBeta(),beta[i]), tr(t[i].getEmittance(),emit[i]));	
 		}
-		System.out.printf("\ngamma: %.0g\n", tr(probe.getGamma(),gamma));		
+		System.out.printf("\ngamma: %.0g\n", tr(probe.getGamma(),gamma));
+		
+		
+		// transform cov
+		if (!(elementMapping instanceof ElsElementMapping)) {
+			for (int i=0; i<6; i++) {
+				cov[i][4]*=probe.getGamma();
+				cov[4][i]*=probe.getGamma();
+				cov[i][5]/=probe.getGamma();
+				cov[5][i]/=probe.getGamma();
+			}
+
+			double cov77[][] = new double[7][7];		
+			for (int i=0; i<6; i++)
+				for (int j=0; j<6; j++)
+					cov77[i][j] = cov[i][j];
+			CovarianceMatrix pcov = ((EnvelopeProbe)probe).getCovariance();
+			double n = pcov.minus(new PhaseMatrix(new Matrix(cov77))).norm2()/pcov.norm2();
+			//pm.getFirstOrder().minus(new PhaseMatrix(new Matrix(T77))).print();
+			System.out.printf("TW cov matrix diff: %E\n",n);
+		}
+		
 	}
 
 }
