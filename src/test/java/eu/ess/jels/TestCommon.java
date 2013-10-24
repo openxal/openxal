@@ -300,8 +300,10 @@ public abstract class TestCommon {
 		// transform T
 		if (!(elementMapping instanceof ElsElementMapping)) {
 			for (int i=0; i<6; i++) {
-				if (i!=5) T[i][5]*=probe.getGamma();
-				if (i!=4) T[4][i]*=probe.getGamma();
+				T[i][4]/=probe.getGamma();
+				T[i][5]*=probe.getGamma();
+				T[4][i]*=probe.getGamma();
+				T[5][i]/=probe.getGamma();
 			}			
 		}
 		
