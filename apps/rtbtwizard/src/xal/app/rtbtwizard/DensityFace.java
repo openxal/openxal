@@ -27,12 +27,12 @@ import xal.extension.widgets.swing.DecimalField;
 import xal.tools.apputils.EdgeLayout;
 import xal.tools.beam.*;
 import java.text.DecimalFormat;
-import xal.tools.solver.*;
+import xal.extension.solver.*;
 //import xal.tools.formula.*;
-import xal.tools.solver.hint.*;
-import xal.tools.solver.algorithm.*;
-import xal.tools.solver.market.*;
-import xal.tools.solver.solutionjudge.*;
+import xal.extension.solver.hint.*;
+import xal.extension.solver.algorithm.*;
+import xal.extension.solver.market.*;
+import xal.extension.solver.solutionjudge.*;
 import xal.service.pvlogger.sim.PVLoggerDataSource;
 import xal.extension.widgets.apputils.SimpleProbeEditor;
 

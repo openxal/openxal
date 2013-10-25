@@ -8,8 +8,8 @@ package xal.app.ringmeasurement;
 
 import java.util.*;
 
-import xal.tools.solver.*;
-import xal.tools.solver.algorithm.*;
+import xal.extension.solver.*;
+import xal.extension.solver.algorithm.*;
 import xal.extension.widgets.plot.BasicGraphData;
 
 /**

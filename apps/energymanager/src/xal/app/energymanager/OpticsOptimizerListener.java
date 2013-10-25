@@ -10,7 +10,7 @@
 package xal.app.energymanager;
 
 
-import xal.tools.solver.*;
+import xal.extension.solver.*;
 
 
 /** Interface for optimization events */

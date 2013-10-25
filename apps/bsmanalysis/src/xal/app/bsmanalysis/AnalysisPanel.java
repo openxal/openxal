@@ -29,12 +29,12 @@ import xal.extension.fit.lsm.*;
 import java.text.NumberFormat;
 import xal.tools.messaging.*;
 import xal.ca.*;
-import xal.tools.solver.*;
+import xal.extension.solver.*;
 //import xal.tools.formula.*;
-import xal.tools.solver.hint.*;
-import xal.tools.solver.algorithm.*;
-import xal.tools.solver.market.*;
-import xal.tools.solver.solutionjudge.*;
+import xal.extension.solver.hint.*;
+import xal.extension.solver.algorithm.*;
+import xal.extension.solver.market.*;
+import xal.extension.solver.solutionjudge.*;
 
 public class AnalysisPanel extends JPanel{
     

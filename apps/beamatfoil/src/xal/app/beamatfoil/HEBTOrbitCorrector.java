@@ -44,10 +44,10 @@ import xal.sim.sync.*;
 
 import xal.tools.beam.*;
 //import xal.tools.optimizer.*;
-import xal.tools.solver.*;
-import xal.tools.solver.algorithm.*;
+import xal.extension.solver.*;
+import xal.extension.solver.algorithm.*;
 import xal.model.alg.EnvelopeTracker;
-import xal.tools.solver.hint.InitialDelta;
+import xal.extension.solver.hint.InitialDelta;
 
 /**
  *  Description of the Class

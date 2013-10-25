@@ -14,7 +14,7 @@ import xal.tools.beam.*;
 import xal.model.probe.*;
 import xal.smf.*;
 import xal.tools.xml.XmlTableIO;
-import xal.tools.solver.*;
+import xal.extension.solver.*;
 import xal.smf.impl.*;
 import xal.smf.impl.qualify.*;
 import xal.tools.messaging.MessageCenter;
@@ -1004,7 +1004,7 @@ public class EnergyManager implements DataListener, ParameterStoreListener, Opti
 	 * @param optimizer the optimizer producing the event
 	 * @param trial the trial which was scored
 	 */
-	public void trialScored( final OpticsOptimizer optimizer, final xal.tools.solver.Trial trial ) {}
+	public void trialScored( final OpticsOptimizer optimizer, final xal.extension.solver.Trial trial ) {}
 	
 	
 	/**
@@ -1012,7 +1012,7 @@ public class EnergyManager implements DataListener, ParameterStoreListener, Opti
 	 * @param optimizer the optimizer producing the event
 	 * @param solution the new optimal solution
 	 */
-	public void newOptimalSolution( final OpticsOptimizer optimizer, final xal.tools.solver.Trial solution ) {
+	public void newOptimalSolution( final OpticsOptimizer optimizer, final xal.extension.solver.Trial solution ) {
 		_eventProxy.newOptimalSolutionFound( this, optimizer );
 	}
 	

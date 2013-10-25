@@ -25,8 +25,8 @@ import java.text.DecimalFormat;
 
 import xal.tools.apputils.EdgeLayout;
 import xal.tools.beam.*;
-import xal.tools.solver.*;
-import xal.tools.solver.algorithm.*;
+import xal.extension.solver.*;
+import xal.extension.solver.algorithm.*;
 import xal.extension.widgets.swing.DecimalField;
 import xal.model.*;
 import xal.model.probe.*;

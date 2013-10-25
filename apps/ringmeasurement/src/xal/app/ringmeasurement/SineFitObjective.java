@@ -8,7 +8,7 @@ package xal.app.ringmeasurement;
 
 import java.util.*;
 
-import xal.tools.solver.*;
+import xal.extension.solver.*;
 
 /**
  *

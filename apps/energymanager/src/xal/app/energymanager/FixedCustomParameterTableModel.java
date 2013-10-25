@@ -11,7 +11,7 @@
 
 package xal.app.energymanager;
 
-import xal.tools.solver.*;
+import xal.extension.solver.*;
 
 import javax.swing.table.*;
 import java.util.*;

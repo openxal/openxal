@@ -41,7 +41,7 @@ import xal.model.xml.*;
 import xal.sim.scenario.*;
 
 //Unused
-//import xal.tools.solver.*;
+//import xal.extension.solver.*;
 
 
 /**

@@ -29,8 +29,8 @@ import xal.model.alg.ParticleTracker;
 import xal.sim.scenario.Scenario;
 import xal.tools.xml.XmlDataAdaptor;
 import xal.extension.fit.spline.*;
-import xal.tools.solver.*;
-import xal.tools.solver.algorithm.*;
+import xal.extension.solver.*;
+import xal.extension.solver.algorithm.*;
 import xal.sim.scenario.ProbeFactory;
 import xal.sim.scenario.AlgorithmFactory;
 /**

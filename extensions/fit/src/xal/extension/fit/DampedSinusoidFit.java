@@ -8,8 +8,8 @@
 package xal.extension.fit;
 
 import xal.tools.math.DifferentialVariable;
-import xal.tools.solver.*;
-import xal.tools.solver.hint.InitialDelta;
+import xal.extension.solver.*;
+import xal.extension.solver.hint.InitialDelta;
 import xal.tools.statistics.MutableUnivariateStatistics;
 
 import java.util.*;

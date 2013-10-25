@@ -10,10 +10,10 @@
 package xal.app.orbitcorrect;
 
 import xal.tools.messaging.*;
-import xal.tools.solver.*;
-import xal.tools.solver.solutionjudge.*;
-import xal.tools.solver.algorithm.*;
-import xal.tools.solver.hint.*;
+import xal.extension.solver.*;
+import xal.extension.solver.solutionjudge.*;
+import xal.extension.solver.algorithm.*;
+import xal.extension.solver.hint.*;
 import xal.smf.*;
 import xal.smf.impl.*;
 import xal.ca.*;

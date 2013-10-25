@@ -18,9 +18,9 @@ import xal.sim.sync.SynchronizationException;
 import xal.model.probe.traj.TransferMapTrajectory;
 import xal.model.probe.traj.TransferMapState;
 //import xal.tools.optimizer.*;
-import xal.tools.solver.*;
-import xal.tools.solver.algorithm.*;
-import xal.tools.solver.hint.*;
+import xal.extension.solver.*;
+import xal.extension.solver.algorithm.*;
+import xal.extension.solver.hint.*;
 import xal.sim.scenario.AlgorithmFactory;
 
 

@@ -9,7 +9,7 @@
 
 package xal.app.energymanager;
 
-import xal.tools.solver.*;
+import xal.extension.solver.*;
 import xal.tools.apputils.NumericCellRenderer;
 
 import javax.swing.*;

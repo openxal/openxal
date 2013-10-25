@@ -5,17 +5,17 @@ import java.util.ArrayList;
 
 
 import xal.extension.widgets.plot.BasicGraphData;
-import xal.tools.solver.Scorer;
-import xal.tools.solver.Trial;
-import xal.tools.solver.Variable;
-import xal.tools.solver.Stopper;
-import xal.tools.solver.SolveStopperFactory;
-import xal.tools.solver.ProblemFactory;
-import xal.tools.solver.Solver;
-import xal.tools.solver.Problem;
-import xal.tools.solver.algorithm.SimplexSearchAlgorithm;
-import xal.tools.solver.hint.Hint;
-import xal.tools.solver.hint.InitialDelta;
+import xal.extension.solver.Scorer;
+import xal.extension.solver.Trial;
+import xal.extension.solver.Variable;
+import xal.extension.solver.Stopper;
+import xal.extension.solver.SolveStopperFactory;
+import xal.extension.solver.ProblemFactory;
+import xal.extension.solver.Solver;
+import xal.extension.solver.Problem;
+import xal.extension.solver.algorithm.SimplexSearchAlgorithm;
+import xal.extension.solver.hint.Hint;
+import xal.extension.solver.hint.InitialDelta;
 
 /*
  * The  GaussFitter class fits the waveforms from WireScanData class. 

@@ -9,7 +9,7 @@
  */
 package xal.app.orbitcorrect;
 
-import xal.tools.solver.*;
+import xal.extension.solver.*;
 import xal.smf.*;
 import xal.smf.impl.*;
 

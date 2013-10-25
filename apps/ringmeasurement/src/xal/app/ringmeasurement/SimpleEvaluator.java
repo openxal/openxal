@@ -1,7 +1,7 @@
 package xal.app.ringmeasurement;
 
 //import xal.tools.optimizer.*;
-import xal.tools.solver.*;
+import xal.extension.solver.*;
 import java.util.List;
 
 public class SimpleEvaluator implements Scorer {

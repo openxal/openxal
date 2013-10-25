@@ -11,8 +11,8 @@ package xal.app.energymanager;
 
 import xal.tools.data.*;
 import xal.tools.messaging.MessageCenter;
-import xal.tools.solver.*;
-import xal.tools.solver.algorithm.*;
+import xal.extension.solver.*;
+import xal.extension.solver.algorithm.*;
 import xal.model.probe.*;
 import xal.model.probe.traj.*;
 import xal.tools.beam.*;
