@@ -10,7 +10,7 @@
 package xal.app.orbitcorrect;
 
 import xal.tools.messaging.MessageCenter;
-import xal.tools.solver.*;
+import xal.extension.solver.*;
 
 
 /**

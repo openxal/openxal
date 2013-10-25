@@ -7,7 +7,7 @@ import javax.swing.border.*;
 import java.awt.event.*;
 import java.text.*;
 
-import xal.tools.swing.FortranNumberFormat;
+import xal.tools.text.FortranNumberFormat;
 import xal.extension.widgets.plot.*;
 import xal.extension.widgets.swing.*;
 
