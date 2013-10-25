@@ -25,7 +25,7 @@ import xal.smf.AcceleratorNode;
 import xal.smf.impl.BPM;
 import xal.smf.impl.RfCavity;
 
-import xal.tools.swing.FortranNumberFormat;
+import xal.tools.text.FortranNumberFormat;
 import xal.extension.widgets.swing.DoubleInputTextField;
 
 import xal.extension.widgets.plot.BasicGraphData;

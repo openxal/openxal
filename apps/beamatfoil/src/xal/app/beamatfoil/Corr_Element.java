@@ -3,7 +3,7 @@ package xal.app.beamatfoil;
 import xal.ca.ConnectionException;
 import xal.ca.GetException;
 import xal.ca.PutException;
-import xal.tools.swing.FortranNumberFormat;
+import xal.tools.text.FortranNumberFormat;
 import xal.smf.impl.Electromagnet;
 
 /**

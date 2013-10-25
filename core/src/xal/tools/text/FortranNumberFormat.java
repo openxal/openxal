@@ -3,7 +3,7 @@
  *
  *  Created at August 25, 2004
  */
-package xal.tools.swing;
+package xal.tools.text;
 
 import java.util.regex.*;
 import java.text.*;

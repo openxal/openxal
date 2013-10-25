@@ -6,7 +6,7 @@ import xal.ca.*;
 import xal.tools.xml.*;
 import xal.extension.scan.WrappedChannel;
 
-import xal.tools.swing.FortranNumberFormat;
+import xal.tools.text.FortranNumberFormat;
 import xal.tools.data.DataAdaptor;
 
 /**

@@ -1,6 +1,6 @@
 package xal.tools.fit.lsm;
 
-import xal.tools.swing.FortranNumberFormat;
+import xal.tools.text.FortranNumberFormat;
 
 /**
  *  This class is for data fitting with polynomial equation.

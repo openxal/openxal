@@ -14,7 +14,7 @@ import java.util.List;
 import java.beans.*;
 
 import xal.extension.widgets.swing.Wheelswitch;
-import xal.tools.swing.FortranNumberFormat;
+import xal.tools.text.FortranNumberFormat;
 
 import xal.ca.*;
 

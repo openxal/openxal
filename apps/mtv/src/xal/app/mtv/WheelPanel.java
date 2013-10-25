@@ -15,7 +15,7 @@ import java.util.*;
 import xal.extension.widgets.swing.Wheelswitch;
 
 import xal.ca.*;
-import xal.tools.swing.FortranNumberFormat;
+import xal.tools.text.FortranNumberFormat;
 
 /**
  * The window representation / view of an xiodiag document

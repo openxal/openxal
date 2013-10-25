@@ -12,7 +12,7 @@ import java.util.prefs.*;
 import xal.extension.scan.UpdatingEventController;
 import xal.tools.xml.*;
 import xal.extension.widgets.swing.*;
-import xal.tools.swing.FortranNumberFormat;
+import xal.tools.text.FortranNumberFormat;
 
 import xal.tools.fit.DampedSinusoidFit;
 

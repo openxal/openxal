@@ -8,7 +8,7 @@ import xal.extension.scan.WrappedChannel;
 
 import xal.smf.impl.*;
 
-import xal.tools.swing.FortranNumberFormat;
+import xal.tools.text.FortranNumberFormat;
 
 /**
  *  Description of the Class

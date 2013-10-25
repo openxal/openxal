@@ -10,7 +10,7 @@ import java.util.*;
 import xal.extension.scan.UpdatingEventController;
 import xal.tools.xml.*;
 import xal.extension.widgets.swing.*;
-import xal.tools.swing.FortranNumberFormat;
+import xal.tools.text.FortranNumberFormat;
 import xal.tools.data.DataAdaptor;
 
 import xal.extension.widgets.plot.barchart.*;

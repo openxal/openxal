@@ -5,7 +5,7 @@
  */
 package xal.app.arraypvviewer;
 
-import xal.tools.swing.FortranNumberFormat;
+import xal.tools.text.FortranNumberFormat;
 
 import java.awt.BorderLayout;
 import java.awt.Color;

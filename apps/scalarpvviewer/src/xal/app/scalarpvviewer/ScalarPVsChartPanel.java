@@ -9,7 +9,7 @@ import xal.extension.widgets.apputils.SimpleChartPopupMenu;
 import xal.extension.widgets.plot.DateGraphFormat;
 import xal.extension.widgets.plot.FunctionGraphsJPanel;
 import xal.extension.scan.UpdatingEventController;
-import xal.tools.swing.FortranNumberFormat;
+import xal.tools.text.FortranNumberFormat;
 import xal.extension.widgets.plot.CurveData;
 
 import java.awt.BorderLayout;

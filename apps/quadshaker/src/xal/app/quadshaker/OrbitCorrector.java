@@ -18,7 +18,7 @@ import xal.extension.widgets.plot.*;
 import xal.extension.widgets.swing.*;
 import xal.extension.widgets.apputils.SimpleChartPopupMenu;
 import xal.tools.apputils.*;
-import xal.tools.swing.FortranNumberFormat;
+import xal.tools.text.FortranNumberFormat;
 import xal.tools.xml.*;
 
 import xal.service.pvlogger.*;

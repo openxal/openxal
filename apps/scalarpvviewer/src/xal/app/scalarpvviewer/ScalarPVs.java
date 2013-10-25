@@ -14,7 +14,7 @@ import java.awt.event.*;
 
 import xal.ca.*;
 import xal.extension.widgets.plot.*;
-import xal.tools.swing.FortranNumberFormat;
+import xal.tools.text.FortranNumberFormat;
 import xal.tools.xml.*;
 
 import xal.extension.scan.MonitoredPV;

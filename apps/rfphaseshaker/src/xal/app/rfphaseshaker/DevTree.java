@@ -17,7 +17,7 @@ import javax.swing.tree.TreePath;
 
 import java.util.*;
 
-import xal.tools.swing.FortranNumberFormat;
+import xal.tools.text.FortranNumberFormat;
 
 
 /**
