@@ -4,7 +4,7 @@
  * Created on June 5, 2003, 2:57 PM
  */
 
-package xal.tools;
+package xal.tools.text;
 
 import java.util.HashMap;
 import java.util.Map;
