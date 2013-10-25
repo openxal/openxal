@@ -1,19 +1,35 @@
 package eu.ess.jels;
+import java.util.Arrays;
+import java.util.Collection;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameters;
 
 import xal.model.IElement;
 import xal.model.ModelException;
 import xal.model.probe.Probe;
+import xal.sim.scenario.DefaultElementMapping;
 import xal.sim.scenario.ElementMapping;
+import xal.sim.scenario.ElsElementMapping;
+import xal.sim.scenario.TWElementMapping;
 import xal.smf.AcceleratorSeq;
 import eu.ess.jels.smf.impl.ESSRfCavity;
 import eu.ess.jels.smf.impl.ESSRfGap;
 
 @RunWith(Parameterized.class)
 public class NCellsTest extends TestCommon {
-
+	@Parameters
+	public static Collection<Object[]> probes() {
+		double energy = 2.5e6, frequency = 4.025e8, current = 0;
+		return Arrays.asList(new Object[][]{
+					{setupOpenXALProbe(energy, frequency, current), DefaultElementMapping.getInstance()},
+					{setupElsProbe(energy, frequency, current), ElsElementMapping.getInstance()},
+					{setupOpenXALProbe(energy, frequency, current), TWElementMapping.getInstance()}
+				});
+	}
+	
 	public NCellsTest(Probe probe, ElementMapping elementMapping) {
 		super(probe, elementMapping);
 	}

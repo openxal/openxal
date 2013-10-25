@@ -329,6 +329,7 @@ public class IdealRfGap extends ThinElement implements IRfGap {
     		double beta_start=computeBetaFromGamma(gamma_start);//probe.getBeta();
     		
     		double beta_end;
+    		double gamma_avg;
     		
         	double kx;
         	double ky;
@@ -347,7 +348,7 @@ public class IdealRfGap extends ThinElement implements IRfGap {
 
     			gamma_end=gamma_start+E0TL_scaled/mass*Math.cos(Phis);    			
     			beta_end = computeBetaFromGamma(gamma_end);
-    			double gamma_avg=(gamma_end+gamma_start)/2;
+    			gamma_avg=(gamma_end+gamma_start)/2;
     			double beta_avg=(beta_end+beta_start)/2;
     /*
     			DeltaPhi=E0TL_scaled/(mass*1e6)*sin(Phis)/(pow(gamma_avg,2)*beta_avg)*(kT/T);
@@ -363,7 +364,7 @@ public class IdealRfGap extends ThinElement implements IRfGap {
     			gamma_end=gamma_start+E0TL/mass*Math.cos(Phis);    			
     			beta_end = computeBetaFromGamma(gamma_end);
     			
-    			double gamma_avg=(gamma_end+gamma_start)/2;
+    			gamma_avg=(gamma_end+gamma_start)/2;
     			double beta_avg=(beta_end+beta_start)/2;
 
     			kxy=-Math.PI*E0TL*Math.sin(Phis)/(Math.pow(gamma_avg*beta_avg,2)*lambda*mass);
@@ -372,7 +373,7 @@ public class IdealRfGap extends ThinElement implements IRfGap {
     			kz=2*Math.PI*E0TL*Math.sin(Phis)/(Math.pow(beta_avg,2)*lambda*mass);
     		}
     		
-    		double C=Math.sqrt(((beta_start*gamma_start)/(beta_end*gamma_end))/(kx*ky));
+    		double C=Math.sqrt((beta_start*gamma_start)/(beta_end*gamma_end*kx*ky));
 
     		matPhi.setElem(0, 0, kx*C);
     		matPhi.setElem(1,0,kxy/(beta_end*gamma_end));
@@ -382,9 +383,12 @@ public class IdealRfGap extends ThinElement implements IRfGap {
     		matPhi.setElem(3,2,kxy/(beta_end*gamma_end));
     		matPhi.setElem(3,3,ky*C);
 
-    		matPhi.setElem(4,4,1);
+    		/*matPhi.setElem(4,4,1);
     		matPhi.setElem(5,4,kz/(beta_end*Math.pow(gamma_end,3)));
-    		matPhi.setElem(5,5,(beta_start*Math.pow(gamma_start,3))/(beta_end*Math.pow(gamma_end,3)));  		
+    		matPhi.setElem(5,5,(beta_start*Math.pow(gamma_start,3))/(beta_end*Math.pow(gamma_end,3)));*/
+    		matPhi.setElem(4,4,gamma_end/gamma_start);
+    		matPhi.setElem(5,4,kz/(beta_end*Math.pow(gamma_end,2)*gamma_avg));
+    		matPhi.setElem(5,5,(beta_start*Math.pow(gamma_start,2))/(beta_end*Math.pow(gamma_end,2)));
     	}
             
     	((IGapPhaseProbe)probe).setLastGapPhase(Phis + DeltaPhi);

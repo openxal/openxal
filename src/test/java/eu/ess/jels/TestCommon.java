@@ -17,6 +17,8 @@ import xal.model.alg.EnvelopeTracker;
 import xal.model.alg.Tracker;
 import xal.model.probe.EnvelopeProbe;
 import xal.model.probe.Probe;
+import xal.model.probe.traj.ProbeState;
+import xal.model.probe.traj.Trajectory;
 import xal.model.xml.LatticeXmlWriter;
 import xal.sim.scenario.DefaultElementMapping;
 import xal.sim.scenario.ElementMapping;
@@ -285,28 +287,38 @@ public abstract class TestCommon {
 	}
 	
 	public void checkTWTransferMatrix(double T[][]) throws ModelException
-	{
+	{		
 		Iterator<IComponent> it = scenario.getLattice().globalIterator();
+		Trajectory trajectory = probe.getTrajectory();
+		Probe probe = this.probe.copy();
 		PhaseMap pm = PhaseMap.identity();
+		ProbeState ps = trajectory.finalState();
+		
 		while (it.hasNext()) {
 			IComponent comp = it.next();
-			if (comp instanceof IElement) {
-				IElement el = (IElement)comp;
-				//el.transferMap(probe, el.getLength()).getFirstOrder().print();
+			if (comp instanceof IElement) {				
+				IElement el = (IElement)comp;				
+				//el.transferMap(probe, el.getLength()).getFirstOrder().print();				
+				probe.applyState(ps);
+				
 				pm = pm.compose(el.transferMap(probe, el.getLength()));				
+				ps = trajectory.stateForElement(el.getId()); // this is the state after the element
 			}
 		}
 		
 		// transform T
 		if (!(elementMapping instanceof ElsElementMapping)) {
+			double gamma_start = trajectory.finalState().getGamma();
+			double gamma_end = trajectory.initialState().getGamma();
+			
 			for (int i=0; i<6; i++) {
-				T[i][4]/=probe.getGamma();
-				T[i][5]*=probe.getGamma();
-				T[4][i]*=probe.getGamma();
-				T[5][i]/=probe.getGamma();
+				T[i][4]/=gamma_start;
+				T[i][5]*=gamma_start;
+				T[4][i]*=gamma_end;
+				T[5][i]/=gamma_end;
 			}			
 		}
-		
+		//pm.getFirstOrder().print();
 		double T77[][] = new double[7][7];		
 		for (int i=0; i<6; i++)
 			for (int j=0; j<6; j++)
@@ -319,20 +331,27 @@ public abstract class TestCommon {
 	
 	private double tr(double x, double y)
 	{
-		return Math.signum(x-y)*Math.pow(10, (int)Math.log10(Math.abs((x-y)/x)));
+		//return Math.signum(x-y)*Math.pow(10, (int)Math.log10(Math.abs((x-y)/x)));
+		return (x-y)/x;
 	}
 	
 	protected void checkTWResults(double gamma, double[][] cov) {
 		double[] alpha = new double[3],beta=new double[3],emit=new double[3], det=new double[3], sigma=new double[3], gama=new double[3];
-		for (int i=0; i<3; i++) 
-			det[i]=Math.sqrt(cov[2*i+0][2*i+0]*cov[2*i+1][2*i+1]-cov[2*i+1][2*i+0]*cov[2*i+0][2*i+1]);		
-		for (int i=0; i<3; i++) {
-			alpha[i]=-cov[2*i+1][2*i+0]/det[i];
-			beta[i]=cov[2*i+0][2*i+0]/det[i];
-			emit[i]=det[i];
-		}
 		
-		/*double betta = Math.sqrt(Math.pow(gamma,2) - 1.0)/gamma;
+		/*double gamma_start = probe.getTrajectory().finalState().getGamma();
+		double beta_start = Math.sqrt(1.0 - 1.0/Math.pow(gamma_start,2));
+		double gamma_end = gamma;//probe.getTrajectory().initialState().getGamma();
+		double beta_end = Math.sqrt(1.0 - 1.0/Math.pow(gamma_end,2));
+		double k = (beta_end*gamma_end)/(beta_start*gamma_start);		
+		for (int i=0; i<6; i++) {
+			cov[i][1]*=k;
+			cov[1][i]*=k;
+			cov[i][3]*=k;
+			cov[3][i]*=k;
+			cov[i][5]*=k;
+			cov[5][i]*=k;
+		}
+		double betta = Math.sqrt(Math.pow(gamma,2) - 1.0)/gamma;
 		for (int i=0; i<3; i++) {
 			double cos = 0.5*(cov[2*i][2*i]+cov[2*i+1][2*i+1]);
 			double sin = Math.sqrt(1.0 - cos*cos);
@@ -342,6 +361,14 @@ public abstract class TestCommon {
 		    gama[i]=-cov[2*i+1][2*i]/sin/(betta*gamma);
 		    emit[i]=-cov[2*i+1][2*i]/alpha[i];
 		}*/
+		
+		for (int i=0; i<3; i++) 
+			det[i]=Math.sqrt(cov[2*i+0][2*i+0]*cov[2*i+1][2*i+1]-cov[2*i+1][2*i+0]*cov[2*i+0][2*i+1]);		
+		for (int i=0; i<3; i++) {
+			alpha[i]=-cov[2*i+1][2*i+0]/det[i];
+			beta[i]=cov[2*i+0][2*i+0]/det[i];
+			emit[i]=det[i];
+		}
 		
 		beta[2]*=Math.pow(gamma,2);		
 		
@@ -359,16 +386,16 @@ public abstract class TestCommon {
 		for (int i = 0; i<3; i++) {
 			System.out.printf("%c:%.0g %.0g %.0g ",'x'+i, tr(t[i].getAlpha(),alpha[i]), tr(t[i].getBeta(),beta[i]), tr(t[i].getEmittance(),emit[i]));	
 		}
-		System.out.printf("\ngamma: %.0g\n", tr(probe.getGamma(),gamma));
+		System.out.printf("\ngamma: %.2g\n", tr(probe.getGamma(),gamma));
 		
 		
 		// transform cov
 		if (!(elementMapping instanceof ElsElementMapping)) {
 			for (int i=0; i<6; i++) {
-				cov[i][4]*=probe.getGamma();
-				cov[4][i]*=probe.getGamma();
-				cov[i][5]/=probe.getGamma();
-				cov[5][i]/=probe.getGamma();
+				cov[i][4]*=gamma;
+				cov[i][5]/=gamma;
+				cov[4][i]*=gamma;				
+				cov[5][i]/=gamma;
 			}
 
 			double cov77[][] = new double[7][7];		

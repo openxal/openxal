@@ -267,8 +267,8 @@ public class IdealRfGap extends ThinElement implements IRfGap {
     }
     
     protected double computeBetaFromGamma(double gamma) {    	    
-        //double beta = Math.sqrt(1.0 - 1.0/Math.pow(gamma,2));
-        double beta = Math.sqrt(Math.pow(gamma,2) - 1.0)/gamma;
+        double beta = Math.sqrt(1.0 - 1.0/Math.pow(gamma,2));
+        //double beta = Math.sqrt(Math.pow(gamma,2) - 1.0)/gamma;
         return beta;
     };
        
@@ -369,7 +369,7 @@ public class IdealRfGap extends ThinElement implements IRfGap {
     			double beta_avg=(beta_end+beta_start)/2;
 
     			kxy=-Math.PI*E0TL*Math.sin(Phis)/(Math.pow(gamma_avg*beta_avg,2)*lambda*mass);
-    			kx=1-E0TL/(2*mass)*Math.cos(Phis)/(Math.pow(beta_avg,2)*gamma_avg);
+    			kx=1-E0TL*Math.cos(Phis)/(2*mass*Math.pow(beta_avg,2)*gamma_avg);
     			ky=kx;
     			kz=2*Math.PI*E0TL*Math.sin(Phis)/(Math.pow(beta_avg,2)*lambda*mass);
     		}

@@ -11,8 +11,16 @@ public class GapEnvelopeProbe extends EnvelopeProbe implements IGapPhaseProbe {
 		super();
 	}
 
-	public GapEnvelopeProbe(EnvelopeProbe probe) {
+	public GapEnvelopeProbe(GapEnvelopeProbe probe) {
 		super(probe);
+		setLastGapPhase(probe.getLastGapPhase());
+		setLastGapPosition(probe.getLastGapPosition());
+		 // Copy the algorithm object if we have one
+        m_ifcAlg = null;
+        final IAlgorithm algorithm = probe.getAlgorithm();
+        if ( algorithm != null )   {
+            setAlgorithm( algorithm.copy() );
+        }
 	}
 
 	private double lastGapPhase;
@@ -55,6 +63,12 @@ public class GapEnvelopeProbe extends EnvelopeProbe implements IGapPhaseProbe {
         
         m_ifcAlg = ifcAlg;
         return true;
-    };
+    }
+
+	@Override
+	public EnvelopeProbe copy() {
+		super.copy();
+		return new GapEnvelopeProbe( this );		
+	};
 	
 }
