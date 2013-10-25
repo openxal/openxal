@@ -1,4 +1,4 @@
-package xal.tools.fit.lsm;
+package xal.extension.fit.lsm;
 
 /**
  *  This is an abstract adapter class for a model function with one independent

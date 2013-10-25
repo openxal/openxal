@@ -17,7 +17,7 @@ import xal.tools.apputils.*;
 import xal.extension.widgets.swing.*;
 import xal.tools.text.FortranNumberFormat;
 
-import xal.tools.fit.lsm.Polynomial;
+import xal.extension.fit.lsm.Polynomial;
 
 /**
  *  Description of the Class

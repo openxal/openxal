@@ -21,7 +21,7 @@ import java.text.SimpleDateFormat;
 import xal.extension.bricks.WindowReference;
 import xal.extension.widgets.plot.*;
 import xal.ca.*;
-import xal.tools.fit.lsm.Polynomial;
+import xal.extension.fit.lsm.Polynomial;
 
 
 

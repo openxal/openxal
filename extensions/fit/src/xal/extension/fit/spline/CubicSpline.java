@@ -17,7 +17,7 @@
 //
 ///////////////////////////////////////////////////////////////////////////
 
-package xal.tools.fit.spline;
+package xal.extension.fit.spline;
 
 import java.io.*;
 import java.util.*;

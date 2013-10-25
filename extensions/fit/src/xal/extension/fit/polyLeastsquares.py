@@ -3,7 +3,7 @@
 #
 
 
-from xal.tools.fit import *
+from xal.extension.fit import *
 from java.util import *
 from jarray import zeros, array
 

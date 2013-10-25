@@ -5,7 +5,7 @@
 // Created by t6p on 3/11/2010
 //
 
-package xal.tools.fit;
+package xal.extension.fit;
 
 import xal.tools.math.DifferentialVariable;
 import xal.tools.solver.*;

@@ -2,7 +2,7 @@
  * PolyLeatsSquaresException
  */
 
-package xal.tools.fit;
+package xal.extension.fit;
 
 public class PolyLeastsquaresException  extends Exception {
     /** serialization ID */

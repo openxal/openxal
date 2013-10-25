@@ -25,7 +25,7 @@ import xal.tools.database.*;
 import xal.ca.*;
 import xal.ca.view.*;
 
-import xal.tools.fit.lsm.Polynomial;
+import xal.extension.fit.lsm.Polynomial;
 import xal.tools.data.DataAdaptor;
 
 /**

@@ -13,7 +13,7 @@ package xal.app.orbitcorrect;
 import xal.smf.*;
 import xal.smf.impl.*;
 import xal.tools.*;
-import xal.tools.fit.*;
+import xal.extension.fit.*;
 import xal.tools.statistics.*;
 
 import java.util.*;

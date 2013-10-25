@@ -8,12 +8,12 @@ package xal.app.ringmeasurement;
 
 import xal.ca.ConnectionException;
 import xal.ca.GetException;
-//import xal.tools.fit.lsm.Cosine;
+//import xal.extension.fit.lsm.Cosine;
 import xal.extension.widgets.plot.BasicGraphData;
 import xal.smf.impl.BPM;
 import JSci.maths.Complex;
 import JSci.maths.FourierMath;
-import xal.tools.fit.DampedSinusoidFit;
+import xal.extension.fit.DampedSinusoidFit;
 
 /**
  *

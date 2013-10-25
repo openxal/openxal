@@ -20,7 +20,7 @@ import xal.tools.apputils.EdgeLayout;
 import xal.tools.apputils.files.RecentFileTracker;
 import xal.extension.widgets.plot.*;
 import xal.tools.data.*;
-import xal.tools.fit.lsm.*;
+import xal.extension.fit.lsm.*;
 import java.text.NumberFormat;
 import xal.tools.messaging.*;
 import xal.ca.*;

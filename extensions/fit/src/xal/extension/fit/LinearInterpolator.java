@@ -8,7 +8,7 @@
  * Oak Ridge, TN 37830
  */
 
-package xal.tools.fit;
+package xal.extension.fit;
 
 /**
  * LinearInterpolator calculates the linear interpolated value at at any point

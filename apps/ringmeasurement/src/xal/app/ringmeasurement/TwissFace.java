@@ -39,7 +39,7 @@ import xal.service.pvlogger.*;
 //import xal.tools.pvlogger.query.*;
 import xal.tools.database.*;
 import xal.model.*;
-import xal.tools.fit.LinearFit;
+import xal.extension.fit.LinearFit;
 import xal.model.probe.TransferMapProbe;
 import xal.sim.scenario.ProbeFactory;
 import xal.model.alg.TransferMapTracker;

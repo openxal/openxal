@@ -14,7 +14,7 @@ import xal.tools.xml.*;
 import xal.extension.widgets.swing.*;
 import xal.tools.text.FortranNumberFormat;
 
-import xal.tools.fit.DampedSinusoidFit;
+import xal.extension.fit.DampedSinusoidFit;
 
 import xal.service.pvlogger.*;
 import xal.tools.database.*;

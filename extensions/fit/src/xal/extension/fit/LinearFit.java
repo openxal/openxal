@@ -6,7 +6,7 @@
 //  Copyright 2004 Oak Ridge National Lab. All rights reserved.
 //
 
-package xal.tools.fit;
+package xal.extension.fit;
 
 import xal.tools.statistics.*;
 

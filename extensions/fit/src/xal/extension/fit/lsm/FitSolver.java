@@ -1,4 +1,4 @@
-package xal.tools.fit.lsm;
+package xal.extension.fit.lsm;
 
 /**
  *  The interface for fitting solvers.

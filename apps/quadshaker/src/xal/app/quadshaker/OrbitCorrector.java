@@ -41,7 +41,7 @@ import xal.sim.sync.*;
 //import xal.model.probe.resp.traj.*;
 import xal.tools.beam.*;
 
-import xal.tools.fit.lsm.*;
+import xal.extension.fit.lsm.*;
 
 /**
  *  Description of the Class

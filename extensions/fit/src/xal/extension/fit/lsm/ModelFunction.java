@@ -1,4 +1,4 @@
-package xal.tools.fit.lsm;
+package xal.extension.fit.lsm;
 
 /**
  *  This interface define a model function and its partial derivatives that will

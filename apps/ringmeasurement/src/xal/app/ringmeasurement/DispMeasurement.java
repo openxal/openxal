@@ -11,7 +11,7 @@ package xal.app.ringmeasurement;
 import java.util.*;
 
 import xal.smf.impl.BPM;
-import xal.tools.fit.lsm.*;
+import xal.extension.fit.lsm.*;
 
 /**
  * For dispersion measurement at a BPM location.  This class takes an array of 

@@ -1,4 +1,4 @@
-package xal.tools.fit.lsm;
+package xal.extension.fit.lsm;
 
 import xal.tools.text.FortranNumberFormat;
 

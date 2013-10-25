@@ -1,4 +1,4 @@
-package xal.tools.fit;
+package xal.extension.fit;
 
 
 import java.io.*;
