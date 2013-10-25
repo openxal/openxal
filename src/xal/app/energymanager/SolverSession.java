@@ -11,11 +11,11 @@ package xal.app.energymanager;
 
 import xal.tools.data.*;
 import xal.tools.messaging.MessageCenter;
-import xal.tools.solver.*;
-import xal.tools.solver.hint.*;
-import xal.tools.solver.algorithm.*;
-import xal.tools.solver.market.*;
-import xal.tools.solver.solutionjudge.*;
+import xal.extension.solver.*;
+import xal.extension.solver.hint.*;
+import xal.extension.solver.algorithm.*;
+import xal.extension.solver.market.*;
+import xal.extension.solver.solutionjudge.*;
 import xal.model.probe.Probe;
 import xal.model.probe.traj.IPhaseState;
 import xal.smf.*;

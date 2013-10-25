@@ -10,7 +10,7 @@
 package xal.app.energymanager;
 
 import xal.extension.application.*;
-import xal.tools.solver.*;
+import xal.extension.solver.*;
 
 import javax.swing.*;
 import javax.swing.event.*;

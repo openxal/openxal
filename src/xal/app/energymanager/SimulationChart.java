@@ -18,7 +18,7 @@ import java.awt.Insets;
 import java.text.*;
 import java.util.*;
 
-import xal.tools.solver.*;
+import xal.extension.solver.*;
 import xal.extension.widgets.plot.*;
 import xal.tools.apputils.*;
 import xal.smf.AcceleratorSeq;

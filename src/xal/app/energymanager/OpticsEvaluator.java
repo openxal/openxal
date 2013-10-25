@@ -9,8 +9,8 @@
 
 package xal.app.energymanager;
 
-import xal.tools.solver.*;
-import xal.tools.solver.algorithm.*;
+import xal.extension.solver.*;
+import xal.extension.solver.algorithm.*;
 
 import java.util.*;
 
