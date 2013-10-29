@@ -161,7 +161,7 @@ public class DTLCellTest extends TestCommon {
 	 * @return
 	 */
 	public AcceleratorSeq dtlcell(double frequency, double L, double Lq1, double Lq2, double g, double B1, double B2, 
-			double E0T, double Phis, double R,	double p, 
+			double E0TL, double Phis, double R,	double p, 
 			double betas, double Ts, double kTs, double k2Ts, double kS, double k2S)
 	{
 		AcceleratorSeq sequence = new AcceleratorSeq("DTLCellTest");
@@ -211,7 +211,7 @@ public class DTLCellTest extends TestCommon {
 		dtlTank.addNode(gap);
 		dtlTank.addNode(quad2);
 		dtlTank.getRfField().setPhase(Phis);		
-		dtlTank.getRfField().setAmplitude(E0T * 1e-6 / length);
+		dtlTank.getRfField().setAmplitude(E0TL * 1e-6 / length);
 		dtlTank.getRfField().setFrequency(frequency * 1e-6);		
 		/*cavity.getRfField().setStructureMode(dblVal);*/
 				

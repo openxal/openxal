@@ -188,7 +188,7 @@ public abstract class TestCommon {
 
 		// Outputting lattice elements
 		//new File("temp/bendtest").mkdirs();
-		//saveLattice(scenario.getLattice(), "lattice.xml");
+		saveLattice(scenario.getLattice(), "lattice.xml");
 		//saveLattice(escenario.getLattice(), "elattice.xml");
 		//saveSequence(sequence, "temp/bendtest/seq.xml");
 		
@@ -288,28 +288,36 @@ public abstract class TestCommon {
 	
 	public void checkTWTransferMatrix(double T[][]) throws ModelException
 	{		
-		Iterator<IComponent> it = scenario.getLattice().globalIterator();
+		Iterator<IComponent> it = scenario.getLattice().globalIterator();		
 		Trajectory trajectory = probe.getTrajectory();
+		// TODO REMOVE WORKAROUND there's a bug in OpenXal trajectory iterator gives incorrect order of elements
+		//Iterator<ProbeState> it2 = trajectory.stateIterator();
+		
 		Probe probe = this.probe.copy();
-		PhaseMap pm = PhaseMap.identity();
-		ProbeState ps = trajectory.finalState();
+		PhaseMap pm = PhaseMap.identity();		
+		
+		ProbeState initialState = null;
+		ProbeState ps = null;
 		
 		while (it.hasNext()) {
 			IComponent comp = it.next();
 			if (comp instanceof IElement) {				
 				IElement el = (IElement)comp;				
-				//el.transferMap(probe, el.getLength()).getFirstOrder().print();				
-				probe.applyState(ps);
+				//el.transferMap(probe, el.getLength()).getFirstOrder().print();
+				if (ps != null) {
+					probe.applyState(ps);				
+					pm = el.transferMap(probe, el.getLength()).compose(pm);
+				}
 				
-				pm = pm.compose(el.transferMap(probe, el.getLength()));				
-				ps = trajectory.stateForElement(el.getId()); // this is the state after the element
+				ps = trajectory.stateForElement(el.getId());
+				if (initialState == null) initialState = ps;
 			}
 		}
 		
 		// transform T
 		if (!(elementMapping instanceof ElsElementMapping)) {
-			double gamma_start = trajectory.finalState().getGamma();
-			double gamma_end = trajectory.initialState().getGamma();
+			double gamma_start = initialState.getGamma();
+			double gamma_end = ps.getGamma();
 			
 			for (int i=0; i<6; i++) {
 				T[i][4]/=gamma_start;
