@@ -20,7 +20,7 @@ import xal.model.xml.ParsingException;
  * @version $id:
  * 
  */
-public class EnvelopeProbeState extends BunchProbeState implements IPhaseState {
+public class EnvelopeProbeState extends BunchProbeState /* implements IPhaseState */ {
 
 
 
@@ -559,99 +559,99 @@ public class EnvelopeProbeState extends BunchProbeState implements IPhaseState {
     }
     
     
-    /*
-     * IPhaseCoordinate Interface
-     */
-    
-    /** 
-     *  <p>
-     *  Returns homogeneous phase space coordinates of the particle.  The units
-     *  are meters and radians.
-     *  </p>
-     *  <p>
-     *  <h4>CKA NOTE:</h4>
-     *  This method simply returns the value of EnvelopeProbeState#phaseMean()
-     *  </p>
-     *
-     *  @return     vector (x,x',y,y',z,z',1) of phase space coordinates
-     *  
-     *  @see    EnvelopeProbeState#phaseMean()
-     */
-    @Override
-    public PhaseVector getPhaseCoordinates() {
-        return phaseMean();
-    }
-    
-    /**
-     * <p>
-     * Get the fixed orbit about which betatron oscillations occur.
-     * </p>
-     * <p>
-     * <h4>CKA NOTE:</h4>
-     *  &middot; This method simply returns the value of EnvelopeProbeState#phaseMean()
-     *  <br/>
-     *  &middot; This method really has no context unless we are in a ring and then
-     *  it would represent the fixed-orbit position at this state (position), otherwise
-     *  ???
-     * </p>
-     *
-     * @return the fixed orbit vector (x,x',y,y',z,z',1)
-     *  
-     * @see    EnvelopeProbeState#phaseMean()
-     */
-    @Override
-    public PhaseVector getFixedOrbit() {
-        return phaseMean();
-    }
-    
-
-    /*
-     * IPhaseState Interface
-     */
-    
-    /**
-     * <p> 
-     * Returns the (independent attribute) array of Twiss parameters for this 
-     * state for all three planes.
-     * </p>
-     * <p>
-     * <h4>CKA NOTES:</h4>
-     * - This attribute is redundant in the sense that all "Twiss parameter"
-     * information is contained within the covariance matrix.  The covariance
-     * matrix was intended as the primary attribute of an <code>EnvelopeProbe</code>.
-     * <br/> 
-     * - The dynamics of this attribute are computed from transfer matrices,
-     * however, with space charge the transfer matrices are computed using the
-     * covariance matrix.  Thus these parameters are inconsistent in the 
-     * presence of space charge.
-     * <br/>
-     * - I have made a separate Probe class, <code>TwissProbe</code> which has
-     * Twiss parameters as its primary state.
-     * <br/>
-     * - Now this method returns the same quantities as <code>{@link #twissParameters()}</code>
-     * - For all these reason I am deprecating this method
-     * </p>
-     * 
-     * @return array [twiss-H, twiss-V, twiss-L] of Twiss parameters in each phase plane
-     * 
-     * @deprecated redundant state variable
-     */
-    @Deprecated
-    public Twiss[] getTwiss() { 
-        return this.twissParams;
-    }
-
-    /**
-     * Returns the betatron phase with space charge for all three phase
-     * planes.
-     * 
-     * @return  vector (psix,psiy,psiz) of phases in <b>radians</b>
-     */
-    @Override
-    public R3 getBetatronPhase() {
-        return super.getBunchBetatronPhase();
-    }
-    
+//    /*
+//     * IPhaseCoordinate Interface
+//     */
+//    
+//    /** 
+//     *  <p>
+//     *  Returns homogeneous phase space coordinates of the particle.  The units
+//     *  are meters and radians.
+//     *  </p>
+//     *  <p>
+//     *  <h4>CKA NOTE:</h4>
+//     *  This method simply returns the value of EnvelopeProbeState#phaseMean()
+//     *  </p>
+//     *
+//     *  @return     vector (x,x',y,y',z,z',1) of phase space coordinates
+//     *  
+//     *  @see    EnvelopeProbeState#phaseMean()
+//     */
+//    @Override
+//    public PhaseVector getPhaseCoordinates() {
+//        return phaseMean();
+//    }
+//    
+//    /**
+//     * <p>
+//     * Get the fixed orbit about which betatron oscillations occur.
+//     * </p>
+//     * <p>
+//     * <h4>CKA NOTE:</h4>
+//     *  &middot; This method simply returns the value of EnvelopeProbeState#phaseMean()
+//     *  <br/>
+//     *  &middot; This method really has no context unless we are in a ring and then
+//     *  it would represent the fixed-orbit position at this state (position), otherwise
+//     *  ???
+//     * </p>
+//     *
+//     * @return the fixed orbit vector (x,x',y,y',z,z',1)
+//     *  
+//     * @see    EnvelopeProbeState#phaseMean()
+//     */
+//    @Override
+//    public PhaseVector getFixedOrbit() {
+//        return phaseMean();
+//    }
+//    
+//
+//    /*
+//     * IPhaseState Interface
+//     */
+//    
+//    /**
+//     * <p> 
+//     * Returns the (independent attribute) array of Twiss parameters for this 
+//     * state for all three planes.
+//     * </p>
+//     * <p>
+//     * <h4>CKA NOTES:</h4>
+//     * - This attribute is redundant in the sense that all "Twiss parameter"
+//     * information is contained within the covariance matrix.  The covariance
+//     * matrix was intended as the primary attribute of an <code>EnvelopeProbe</code>.
+//     * <br/> 
+//     * - The dynamics of this attribute are computed from transfer matrices,
+//     * however, with space charge the transfer matrices are computed using the
+//     * covariance matrix.  Thus these parameters are inconsistent in the 
+//     * presence of space charge.
+//     * <br/>
+//     * - I have made a separate Probe class, <code>TwissProbe</code> which has
+//     * Twiss parameters as its primary state.
+//     * <br/>
+//     * - Now this method returns the same quantities as <code>{@link #twissParameters()}</code>
+//     * - For all these reason I am deprecating this method
+//     * </p>
+//     * 
+//     * @return array [twiss-H, twiss-V, twiss-L] of Twiss parameters in each phase plane
+//     * 
+//     * @deprecated redundant state variable
+//     */
+//    @Deprecated
+//    public Twiss[] getTwiss() { 
+//        return this.twissParams;
+//    }
+//
+//    /**
+//     * Returns the betatron phase with space charge for all three phase
+//     * planes.
+//     * 
+//     * @return  vector (psix,psiy,psiz) of phases in <b>radians</b>
+//     */
+//    @Override
+//    public R3 getBetatronPhase() {
+//        return super.getBunchBetatronPhase();
+//    }
+//    
     
     /*
      * Object Overrides

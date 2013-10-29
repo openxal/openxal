@@ -6,29 +6,27 @@
  */
 package xal.tools.beam.calc;
 
-import xal.model.probe.traj.IPhaseState;
+import xal.tools.beam.PhaseMatrix;
+import xal.tools.beam.PhaseMatrix.IND;
+import xal.tools.beam.PhaseVector;
+import xal.tools.beam.Twiss;
 import xal.tools.math.r3.R3;
 import xal.tools.math.r4.R4;
 import xal.tools.math.r4.R4x4;
 import xal.tools.math.r6.R6;
 import xal.tools.math.r6.R6x6;
-import xal.tools.beam.PhaseMap;
-import xal.tools.beam.PhaseMatrix;
-import xal.tools.beam.PhaseVector;
-import xal.tools.beam.Twiss;
-import xal.tools.beam.PhaseMatrix.IND;
-import xal.tools.data.DataAdaptor;
-import Jama.Matrix;
 
 /**
- * Class <code></code>.
- *
+ * Class <code>CalcEngine</code> performs all the common numerical calculation when
+ * computing machine parameters from simulation data.  There are common data produced
+ * by ring simulations and linac simulation, however, the interpretation is different.
+ * It is up to the child classes to interpret the results of these calculations.
  *
  * @author Christopher K. Allen
  * @author Patrick Scruggs
  * @since  Aug 14, 2013
  */
-public abstract class CalcEngine implements IPhaseState {
+public abstract class CalcEngine {
 
 
 
@@ -56,7 +54,7 @@ public abstract class CalcEngine implements IPhaseState {
     }
 
     
-    public PhaseVector phaseCoordinates() { return null; }
+//    public PhaseVector phaseCoordinates() { return null; }
 
 
     
@@ -149,7 +147,7 @@ public abstract class CalcEngine implements IPhaseState {
      * By inspection we can see that <b>p</b> is defined so long as the eigenvalues
      * of <b>T</b> are located away from 1.
      * In this case the returned value is the augmented vector 
-     * (<b>p</b> 1)<sup><i>T</i></sup>.
+     * (<b>p</b> 1)<sup><i>T</i></sup> &in; <b>R</b><sup>6</sup> &times; {1}.
      * </p>
      * <p>
      * When the eigenvectors do contain 1, we attempt to find the solution for the
@@ -158,7 +156,7 @@ public abstract class CalcEngine implements IPhaseState {
      * <b>T</b> = proj<sub>4&times;4</sub> <b>&Phi;</b>.  The returned value is then
      * <b>z</b> = (<b>p</b> 0 0 1)<sup><i>T</i></sup>.
      * 
-     * @param   matPhi      the one-turn transfer matrix
+     * @param   matPhi      the one-turn transfer matrix (full-turn matrix)
      * 
      * @return              fixed point solution for the given phase matrix
      *  
@@ -207,47 +205,32 @@ public abstract class CalcEngine implements IPhaseState {
      * Beam Operations
      */
 
-    /**
-     * <p>
-     * Taken from <code>TransferMapState</code>.
-     * </p>
-     * <p>
-     * Compute and return the betatron phase advance for a particle produced
-     * by the given matrix when used as a transfer matrix.
-     * </p>
-     * 
-     * @param	matPhase	the transfer matrix that propagated the Twiss parameters
-     * @param   twsOld    Twiss parameter before application of matrix
-     * @param   twsNew    Twiss parameter after application of matrix
-     * 
-     * @return  vector (sigx,sigy,sigz) of phase advances in <b>radians</b>
-     * 
-     * @deprecated This is superceded by calculatePhaseAdvance which does more extensive checking
-     */
-    @Deprecated
-    public R3   compPhaseAdvance(PhaseMatrix matPhase, Twiss[] twsOld, Twiss[] twsNew)  {
+//    /**
+//     * <p>
+//     * Taken from <code>TransferMapState</code>.
+//     * </p>
+//     * <p>
+//     * Get the betatron phase for all three phase planes from the probe's origin 
+//     * and for the specified number of turns.
+//     * Currently this is just the fractional betatron phase.
+//     * </p>
+//     * 
+//     * @param turns     the number of ring turns for which to calculate the phase advance
+//     * 
+//     * @return  vector (&psi;<sub><i>x</i></sub>,&psi;<sub><i>y</i></sub>,&psi;<sub><i>z</i></sub>) of phases in radians
+//     */
+//    public R3 getBetatronPhase( final int turns, final double[] tunes) {
+//        final int num_modes = 3;
+//        final double[] phases = getBetatronPhase().toArray();
+//        final double PI2 = 2 * Math.PI;
+//
+//        for ( int mode = 0 ; mode < num_modes ; mode++ ) {
+//            phases[mode] += PI2 * turns * tunes[mode];
+//        }
+//
+//        return new R3( phases );
+//    }
 
-        double  dblPhsAd;   // phase advance
-        double  betaOld;    // the beta Twiss parameter (beam size) before propagation
-        double  betaNew;    // the beta Twiss parameter (beam size) after propagation
-
-        // Compute the phase advances for each phase plane
-        R3      vecPhsAd = new R3();    // returned set of phase advances
-
-        for (int i=0; i<3; i++) {           // Loop through each plane
-            int iElem = 2*i;                // phase matrix index
-
-            double dblXXp = matPhase.getElem(iElem, iElem+1);	// <xx'>, <yy'>, <zz'>
-
-            betaOld = twsOld[i].getBeta();
-            betaNew = twsNew[i].getBeta();
-            dblPhsAd = Math.asin(dblXXp/Math.sqrt(betaOld * betaNew) );
-
-            vecPhsAd.set(i, dblPhsAd);
-        }
-
-        return vecPhsAd;
-    }
 
     /**
      * <p>
@@ -280,7 +263,8 @@ public abstract class CalcEngine implements IPhaseState {
      * &nbsp; &nbsp;  &sigma; = cos<sup>-1</sup>[&frac12; Tr <b>&Phi;</b>] ,
      * <br/>
      * <br/>
-     * where <b>&Phi;</b> is the the provided transfer matrix.
+     * where <b>&Phi;</b> is the the provided transfer matrix, and Tr <b>&Phi;</b> indicates the
+     * trace of matrix <b>&Phi;</b>.
      * </p>
      * 
      * @param   matPhiCell  transfer matrix for a cell in a periodic structure
@@ -291,7 +275,7 @@ public abstract class CalcEngine implements IPhaseState {
      * @author Christopher K. Allen
      * @since  Aug 14, 2013
      */
-    private double[] calculatePhaseAdvPerCell(PhaseMatrix matPhiCell) {
+    public double[] calculatePhaseAdvPerCell(PhaseMatrix matPhiCell) {
         double[]    arrTunes = new double[NUM_MODES];
     
         // H. Sako - Look at the sign of M12, and determine the phase
@@ -359,7 +343,7 @@ public abstract class CalcEngine implements IPhaseState {
      * @author Christopher K. Allen
      * @since  Aug 14, 2013
      */
-    private double[] calculateTunePerCell(PhaseMatrix matPhiCell) {
+    public double[] calculateTunePerCell(PhaseMatrix matPhiCell) {
         double[]    arrTunes = this.calculatePhaseAdvPerCell(matPhiCell);
         
         for (int i=0; i<arrTunes.length; i++) {
@@ -421,50 +405,98 @@ public abstract class CalcEngine implements IPhaseState {
      * @since   Jun, 2004
      * @version Oct, 2013
      */
-    private R3 calculatePhaseAdvance(PhaseMatrix matPhi, Twiss[] twsInit, Twiss[] twsFinal) {
+    public R3 calculatePhaseAdvance(PhaseMatrix matPhi, Twiss[] twsInit, Twiss[] twsFinal) {
 
         final Twiss[] twsFnl = twsFinal;
         final Twiss[] twsInt = twsInit;
 
-        final double[] phases = new double[3];
+        final double[] arrPhsAdv = new double[3];
+        
         for ( int mode = 0 ; mode < 3; mode++ ) {
-            final double beta = twsFnl[mode].getBeta();
-            final double initialBeta = twsInt[mode].getBeta();
-            final double initialAlpha = twsInt[mode].getAlpha();
-            final double m11 = matPhi.getElem( 2*mode, 2*mode );
-            final double m12 = matPhi.getElem( 2*mode, 2*mode + 1 );
+            final double dblBetaFnl = twsFnl[mode].getBeta();
+            final double dblBetaInt = twsInt[mode].getBeta();
+            
+            final double dblAlphInt = twsInt[mode].getAlpha();
+            
+            final double dblM11 = matPhi.getElem( 2*mode, 2*mode );
+            final double dblM12 = matPhi.getElem( 2*mode, 2*mode + 1 );
 
-            double sinPhase = m12 / Math.sqrt( beta * initialBeta );
-            sinPhase = Math.max( Math.min( sinPhase, 1.0 ), -1.0 );     // make sure it is in the range [-1, 1]
+            // Compute the phase advance for this plane
+            double dblSinPhs = dblM12 / Math.sqrt( dblBetaFnl * dblBetaInt );
+            dblSinPhs = Math.max( Math.min( dblSinPhs, 1.0 ), -1.0 );     // make sure it is in the range [-1, 1]
 
-            // Sako (I think the following is wrong)          
-            //    final double cosPhase = m11 * Math.sqrt( beta / initialBeta ) - initialAlpha * sinPhase;
-            //  Replaced by
-            final double cosPhase = m11 * Math.sqrt( initialBeta / beta) - initialAlpha * sinPhase;
-            //org
+            final double   dblPhsAdv  = Math.asin( dblSinPhs );
+            
+            // Compute the cosine of phase advance for identifying the phase quadrant
+            //    Sako - (I think the following is wrong)          
             //      final double cosPhase = m11 * Math.sqrt( beta / initialBeta ) - initialAlpha * sinPhase;
+            //    Replaced by
+            final double cosPhase = dblM11 * Math.sqrt( dblBetaInt / dblBetaFnl) - dblAlphInt * dblSinPhs;
 
-            final double   phase  = Math.asin( sinPhase );
-
+            // Put the phase advance in the positive real line
             if ( cosPhase >= 0 ) {
-                if ( sinPhase >= 0 ) {
-                    phases[mode] = phase;
+                if ( dblSinPhs >= 0 ) {
 
+                    arrPhsAdv[mode] = dblPhsAdv;
                 } else {
 
-                    phases[mode] = 2 * Math.PI + phase;                 
+                    arrPhsAdv[mode] = 2 * Math.PI + dblPhsAdv;                 
                 }
 
             } else {
 
-                phases[mode] = Math.PI - phase;
+                arrPhsAdv[mode] = Math.PI - dblPhsAdv;
             }           
         }
 
-        R3 vecPhases = new R3( phases );
+        // Pack into vector format and return
+        R3 vecPhases = new R3( arrPhsAdv );
 
         return vecPhases;
     }
+
+//    /**
+//     * <p>
+//     * Taken from <code>TransferMapState</code>.
+//     * </p>
+//     * <p>
+//     * Compute and return the betatron phase advance for a particle produced
+//     * by the given matrix when used as a transfer matrix.
+//     * </p>
+//     * 
+//     * @param	matPhase	the transfer matrix that propagated the Twiss parameters
+//     * @param   twsOld    Twiss parameter before application of matrix
+//     * @param   twsNew    Twiss parameter after application of matrix
+//     * 
+//     * @return  vector (sigx,sigy,sigz) of phase advances in <b>radians</b>
+//     * 
+//     * @deprecated This is superceded by {@link #calculatePhaseAdvance(PhaseMatrix, Twiss[], Twiss[])} which does more extensive checking
+//     */
+//    @Deprecated
+//    public R3   compPhaseAdvance(PhaseMatrix matPhase, Twiss[] twsOld, Twiss[] twsNew)  {
+//    
+//        double  dblPhsAd;   // phase advance
+//        double  betaOld;    // the beta Twiss parameter (beam size) before propagation
+//        double  betaNew;    // the beta Twiss parameter (beam size) after propagation
+//    
+//        // Compute the phase advances for each phase plane
+//        R3      vecPhsAd = new R3();    // returned set of phase advances
+//    
+//        for (int i=0; i<3; i++) {           // Loop through each plane
+//            int iElem = 2*i;                // phase matrix index
+//    
+//            double dblXXp = matPhase.getElem(iElem, iElem+1);	// <xx'>, <yy'>, <zz'>
+//    
+//            betaOld = twsOld[i].getBeta();
+//            betaNew = twsNew[i].getBeta();
+//            dblPhsAd = Math.asin(dblXXp/Math.sqrt(betaOld * betaNew) );
+//    
+//            vecPhsAd.set(i, dblPhsAd);
+//        }
+//    
+//        return vecPhsAd;
+//    }
+
 
     /** 
      * <p>
@@ -472,14 +504,17 @@ public abstract class CalcEngine implements IPhaseState {
      * </p>
      * <p>
      * Calculates the matched Courant-Snyder parameters for the given
-     * period cell transfer matrix and phase advances.  
+     * period cell transfer matrix and phase advances.  When the given transfer matrix
+     * is the full-turn matrix for a ring the computed Twiss parameters are the matched
+     * envelopes for the ring at that point.
      * </p>
      * <p>
      * The given matrix <b>&Phi;</b> is assumed to be the transfer matrix through
-     * at least one cell in a periodic lattice.  The array of phase advances 
+     * at least one cell in a periodic lattice.  Internally, the array of phase advances 
      * {&sigma;<sub><i>x</i></sub>, &sigma;<sub><i>y</i></sub>, &sigma;<sub><i>x</i></sub>}
      * are assumed to be the particle phase advances through the cell for the matched 
-     * solution.   
+     * solution.   These are computed with the method 
+     * <code>{@link #calculatePhaseAdvPerCell(PhaseMatrix)}</code>.
      * </p> 
      * <p>
      * The returned Courant-Snyder parameters (&alpha;, &beta;, &epsilon;) are invariant
@@ -503,8 +538,7 @@ public abstract class CalcEngine implements IPhaseState {
      * particular phase plance.
      * </p>
      * 
-     * @param   matPhiCell  transfer matrix for a periodic cell
-     * @param   arrPhsCell  the phase advances through the periodic cell
+     * @param   matPhiCell  transfer matrix <b>&Phi;</b> for a periodic cell
      * 
      * @return  array of matched Courant-Snyder parameters 
      *          (&alpha;<sub><i>cell</i></sub>, &beta;<sub><i>cell</i></sub>, <code>NaN</code>) 
@@ -516,18 +550,24 @@ public abstract class CalcEngine implements IPhaseState {
      * @since  Jun 2004
      * @version Oct, 2013
      */
-    private Twiss[] calculateMatchedTwiss(PhaseMatrix matPhiCell, double[] arrPhsCell) {
+    public Twiss[] calculateMatchedTwiss(PhaseMatrix matPhiCell /*, double[] arrPhsCell*/) {
 
+        final double[]  arrPhsCell = this.calculatePhaseAdvPerCell(matPhiCell);
+        
         final Twiss[] arrTwsCell = new Twiss[NUM_MODES];
+        
         for ( int mode = 0 ; mode < NUM_MODES ; mode++ ) {
             final int index = 2 * mode;
+            
             final double sinMu = Math.sin( DBL_2PI * arrPhsCell[mode] );// _tunes could be NaN
             final double m11 = matPhiCell.getElem( index, index );
             final double m12 = matPhiCell.getElem( index, index + 1 );
             final double m22 = matPhiCell.getElem( index + 1, index + 1 );
+            
             final double beta = m12 / sinMu;
             final double alpha = ( m11 - m22 ) / ( 2 * sinMu );
             final double emittance = Double.NaN;
+            
             arrTwsCell[mode] = new Twiss( alpha, beta, emittance );
         }
 
@@ -539,8 +579,9 @@ public abstract class CalcEngine implements IPhaseState {
      * Taken from <code>TransferMapState</code>.
      * </p>
      * <p>
-     * Calculates the fixed point (closed orbit) for the given transfer matrix (assumed to be
-     * a one-turn map) in the presence of dispersion.  The fixed point is with regard
+     * Calculates the fixed point (closed orbit) for the given transfer matrix <b>&Phi;</b>
+     * (assumed to be a one-turn map) in the presence of dispersion.  
+     * The fixed point is with regard
      * to the transverse phase plane coordinates.
      * </p>
      * <p>
@@ -551,7 +592,7 @@ public abstract class CalcEngine implements IPhaseState {
      * <br/>
      * <br/>  
      * It can be identified as the first 4 entries of the 6<sup><i>th</i></sup> 
-     * column in the given transfer matrix. The above vector
+     * column in the transfer matrix <b>&Phi;</b>. The above vector
      * quantifies the change in the transverse particle phase 
      * coordinate position versus the change in particle momentum.  
      * The factor -(1/&gamma;<sup>2</sup>) is needed to convert from longitudinal divergence
@@ -731,113 +772,79 @@ public abstract class CalcEngine implements IPhaseState {
 
 
 
-    /*
-     * 
-     * Unused, courtesy of ICoordinateState & IProbeState
-     * 
-     * 
-     */
-
-    /*
-     * IPhaseState Interface 
-     */
-
-    /**
-     *
-     * @see xal.model.probe.traj.IPhaseState#getTwiss()
-     *
-     * @author Christopher K. Allen
-     * @since  Aug 14, 2013
-     */
-    @Override
-    public Twiss[] getTwiss() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-
-    /**
-     *
-     * @see xal.model.probe.traj.IPhaseState#getBetatronPhase()
-     *
-     * @author Christopher K. Allen
-     * @since  Aug 14, 2013
-     */
-    @Override
-    public R3 getBetatronPhase() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-
-    /*
-     * ICoordinateState Interface
-     */
-
-    /**
-     *
-     * @see xal.model.probe.traj.ICoordinateState#getPhaseCoordinates()
-     *
-     * @author Christopher K. Allen
-     * @since  Oct 22, 2013
-     */
-    @Override
-    public PhaseVector getPhaseCoordinates() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public PhaseVector getFixedOrbit() { return null; }
-
-
-
-
-    /*
-     * IProbeState Interface
-     */
-
-    @Override
-    public void setKineticEnergy(double W) { }
-
-    @Override
-    public double getKineticEnergy() { return Double.NaN; }
-
-    @Override
-    public void setTime(double t) { }
-
-    @Override
-    public double getTime() { return Double.NaN; }
-
-    @Override
-    public void setPosition(double s) { }
-
-    @Override
-    public double getPosition() { return Double.NaN; }
-
-    @Override
-    public void setSpeciesCharge(double q) { }
-
-    @Override
-    public double getSpeciesCharge() {return Double.NaN; }
-
-    @Override
-    public void setSpeciesRestEnergy(double Er) { }
-
-    @Override
-    public double getSpeciesRestEnergy() { return Double.NaN; }
-
-    @Override
-    public void setElementId(String id) { }
-
-    @Override
-    public String getElementId() { return null; }
-
-    @Override
-    public void load(DataAdaptor da) { }
-
-    @Override
-    public void save(DataAdaptor da) { }
+//    /*
+//     * 
+//     * Unused, courtesy of ICoordinateState & IProbeState
+//     * 
+//     * 
+//     */
+//
+//    /*
+//     * IPhaseState Interface 
+//     */
+//
+//    /**
+//     *
+//     * @see xal.model.probe.traj.IPhaseState#getTwiss()
+//     *
+//     * @author Christopher K. Allen
+//     * @since  Aug 14, 2013
+//     * 
+//     * @deprecated  This needs to be refactored, renamed, commented, and put into context 
+//     */
+//    @Override
+//    public Twiss[] getTwiss() {
+//        // TODO Auto-generated method stub
+//        return null;
+//    }
+//
+//
+//    /**
+//     *
+//     * @see xal.model.probe.traj.IPhaseState#getBetatronPhase()
+//     *
+//     * @author Christopher K. Allen
+//     * @since  Aug 14, 2013
+//     * 
+//     * @deprecated  This needs to be refactored, renamed, commented, and put into context 
+//     */
+//    @Override
+//    public R3 getBetatronPhase() {
+//        // TODO Auto-generated method stub
+//        return null;
+//    }
+//
+//
+//    /*
+//     * ICoordinateState Interface
+//     */
+//
+//    /**
+//     *
+//     * @see xal.model.probe.traj.ICoordinateState#getPhaseCoordinates()
+//     *
+//     * @author Christopher K. Allen
+//     * @since  Oct 22, 2013
+//     * 
+//     * @deprecated  This needs to be refactored, renamed, commented, and put into context 
+//     */
+//    @Override
+//    public PhaseVector getPhaseCoordinates() {
+//        // TODO Auto-generated method stub
+//        return null;
+//    }
+//
+//    /**
+//     *
+//     * @see xal.model.probe.traj.ICoordinateState#getFixedOrbit()
+//     *
+//     * @author Christopher K. Allen
+//     * @since  Oct 25, 2013
+//     * 
+//     * @deprecated  This needs to be refactored, renamed, commented, and put into context 
+//     */
+//    @Override
+//    public PhaseVector getFixedOrbit() { return null; }
 
 
 

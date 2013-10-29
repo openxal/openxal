@@ -101,109 +101,109 @@ public class TransferMapTrajectory extends Trajectory {
 		return _tunes;
 	}
 	
-	/**
-	 * CKA- I'm adding Javadoc to be complete.  This computation
-	 * really belongs in a separate probe mechanism.
-	 *
-	 * @return I guess it's supposed to be the ring tune
-	 *
-	 * @author Unknown
-	 * @since  Unknown
-	 * 
-     * @deprecated TransferMapProbes do not have tunes
-	 */
-	@Deprecated
-	public double[] getFullTunes() {
-		calculateFullTunesIfNeeded();
-		
-		return _fullTunes;
-	}
+//	/**
+//	 * CKA- I'm adding Javadoc to be complete.  This computation
+//	 * really belongs in a separate probe mechanism.
+//	 *
+//	 * @return I guess it's supposed to be the ring tune
+//	 *
+//	 * @author Unknown
+//	 * @since  Unknown
+//	 * 
+//     * @deprecated TransferMapProbes do not have tunes
+//	 */
+//	@Deprecated
+//	public double[] getFullTunes() {
+//		calculateFullTunesIfNeeded();
+//		
+//		return _fullTunes;
+//	}
 	
-	/**
-	 * 
-	 *
-	 * @author Christopher K. Allen
-	 * @since  Oct 22, 2013
-	 * 
-     * @deprecated Moved to xal.tools.beam.calc
-	 */
-	@Deprecated
-	private void calculateFullTunesIfNeeded() {
-
-
-		if (!_needsFullTuneCalculation) {
-			return;
-		} else {
-			_needsFullTuneCalculation = false;
-		}
-	
-		// is it necessary?
-		_needsTuneCalculation = true;
-		
-		calculateTunesIfNeeded();
-
-		Iterator<ProbeState> iter = this.stateIterator();
-		
-		
-		int nx=0;
-		int ny=0;
-		int nz=0;
-		
-		double betaxMax = 0;
-		double betayMax = 0;
-		double betazMax = 0;
-		
-		double epsilon = Math.PI/4;
-		
-		int counter = 0;
-		while (iter.hasNext()) {
-			TransferMapState state = (TransferMapState)iter.next();
-			R3 beta = state.getBetatronPhase();
-					
-			if ((betaxMax > 2*Math.PI-epsilon)&&(beta.getx()<epsilon)) {
-				betaxMax = 0;
-				nx++;
-			} else if (beta.getx() > betaxMax) {
-				betaxMax = beta.getx();
-			}
-			if ((betayMax > 2*Math.PI-epsilon)&&(beta.gety()<epsilon)) {
-				betayMax = 0;
-				ny++;
-			} else if (beta.gety()> betayMax) {
-				betayMax = beta.gety();
-			}
-			if ((betazMax > 2*Math.PI-epsilon)&&(beta.getz()<epsilon)) {
-				betayMax = 0;
-				ny++;
-			} else if (beta.getz()> betazMax) {
-				betazMax = beta.gety();
-			}
-			counter++;
-		}
-		
-		if (_tunes[0] < 0) {
-			_fullTunes[0] = _tunes[0] + (nx+1);
-		} else {
-			_fullTunes[0] = _tunes[0] + nx;
-		}
-		if (_tunes[1] < 0) {
-			_fullTunes[1] = _tunes[1] + (ny+1);
-		} else {
-			_fullTunes[1] = _tunes[1] + ny;
-		}
-		if (_tunes[2] < 0) {
-			_fullTunes[2] = _tunes[2] + (nz+1);
-		} else {
-			_fullTunes[2] = _tunes[2] + nz;
-		}
-		
-	}
+//	/**
+//	 * 
+//	 *
+//	 * @author Christopher K. Allen
+//	 * @since  Oct 22, 2013
+//	 * 
+//     * @deprecated Moved to xal.tools.beam.calc
+//	 */
+//	@Deprecated
+//	private void calculateFullTunesIfNeeded() {
+//
+//
+//		if (!_needsFullTuneCalculation) {
+//			return;
+//		} else {
+//			_needsFullTuneCalculation = false;
+//		}
+//	
+//		// is it necessary?
+//		_needsTuneCalculation = true;
+//		
+//		calculateTunesIfNeeded();
+//
+//		Iterator<ProbeState> iter = this.stateIterator();
+//		
+//		
+//		int nx=0;
+//		int ny=0;
+//		int nz=0;
+//		
+//		double betaxMax = 0;
+//		double betayMax = 0;
+//		double betazMax = 0;
+//		
+//		double epsilon = Math.PI/4;
+//		
+//		int counter = 0;
+//		while (iter.hasNext()) {
+//			TransferMapState state = (TransferMapState)iter.next();
+//			R3 beta = state.getBetatronPhase();
+//					
+//			if ((betaxMax > 2*Math.PI-epsilon)&&(beta.getx()<epsilon)) {
+//				betaxMax = 0;
+//				nx++;
+//			} else if (beta.getx() > betaxMax) {
+//				betaxMax = beta.getx();
+//			}
+//			if ((betayMax > 2*Math.PI-epsilon)&&(beta.gety()<epsilon)) {
+//				betayMax = 0;
+//				ny++;
+//			} else if (beta.gety()> betayMax) {
+//				betayMax = beta.gety();
+//			}
+//			if ((betazMax > 2*Math.PI-epsilon)&&(beta.getz()<epsilon)) {
+//				betayMax = 0;
+//				ny++;
+//			} else if (beta.getz()> betazMax) {
+//				betazMax = beta.gety();
+//			}
+//			counter++;
+//		}
+//		
+//		if (_tunes[0] < 0) {
+//			_fullTunes[0] = _tunes[0] + (nx+1);
+//		} else {
+//			_fullTunes[0] = _tunes[0] + nx;
+//		}
+//		if (_tunes[1] < 0) {
+//			_fullTunes[1] = _tunes[1] + (ny+1);
+//		} else {
+//			_fullTunes[1] = _tunes[1] + ny;
+//		}
+//		if (_tunes[2] < 0) {
+//			_fullTunes[2] = _tunes[2] + (nz+1);
+//		} else {
+//			_fullTunes[2] = _tunes[2] + nz;
+//		}
+//		
+//	}
 	
 	
 	/**
 	 * Calculate the x, y and z tunes
 	 * 
-	 * @deprecated Moved to xal.tools.beam.calc
+	 * @deprecated Moved to xal.tools.beam.calc - transfer map trajectories don't have tunes
 	 */
     //sako version look at the sign of M12, and determine the phase
     // since M12=beta*sin(mu) and beta>0, if M12>0, sin(mu)>0, 0<mu<pi

@@ -178,6 +178,7 @@ public class TransferMapTracker extends Tracker {
         probe.setTransferMap( mapComp );
         probe.setPartialTransferMap( mapPhi );
 		
+        // Why?  A transfer map does not have center?
 		final PhaseVector z0 = probe.getPhaseCoordinates();
 		final PhaseVector z1 = mapPhi.apply( z0 );
         probe.setPhaseCoordinates( z1 );

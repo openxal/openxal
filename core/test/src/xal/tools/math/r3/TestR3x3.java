@@ -38,7 +38,7 @@ public class TestR3x3 {
     /** Static testing matrix */
     static private R3x3     MAT_2;
     
-    /** static rotation matrix about x axix */
+    /** static rotation matrix about x axis */
     static private R3x3     MAT_X;
     
     /** static testing matrix - a rotation about z axis */
@@ -194,9 +194,6 @@ public class TestR3x3 {
 
             fail("matrix not symmetric " + matR);
 
-        } catch (InstantiationException e) {
-
-            fail("Unable to copy target matrix " + matR);
         }
 
     }

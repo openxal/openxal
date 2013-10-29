@@ -13,12 +13,23 @@ import xal.tools.beam.Twiss;
 
 
 /**
+ * Interface for exposing machine parameters involving the state data produced by
+ * numerical simulation.  The context of these
+ * quantities should depend upon the type <code>S</code> of the probe
+ * states produced by the simulation. 
  *
  * @author Thomas Pelaia
+ * @author Christopher K. Allen
  * @since   2/9/05
+ * @version Oct 29, 2013
  */
 public interface IPhaseState extends ICoordinateState {
-	/** index of the X coordinate result */
+	
+    /*
+     * Constants
+     */
+    
+    /** index of the X coordinate result */
 	final public int X = 0;
 	
 	/** index of the Y coordinate result */
@@ -27,6 +38,10 @@ public interface IPhaseState extends ICoordinateState {
 	/** index of the Z coordinate result */
 	final public int Z = 2;
 		
+	
+	/*
+	 * Interface Methods
+	 */
 	
     /** 
 	* Returns the array of twiss objects for this state for all three planes.
