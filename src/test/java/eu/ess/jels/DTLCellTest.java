@@ -24,9 +24,9 @@ public class DTLCellTest extends TestCommon {
 	public static Collection<Object[]> probes() {
 		double energy = 2.5e6, frequency = 4.025e8, current = 0;
 		return Arrays.asList(new Object[][]{
-					{setupOpenXALProbe(energy, frequency, current), DefaultElementMapping.getInstance()},
-					{setupElsProbe(energy, frequency, current), ElsElementMapping.getInstance()},
-					{setupOpenXALProbe(energy, frequency, current), TWElementMapping.getInstance()}
+				{setupOpenXALProbe(energy, frequency, current), TWElementMapping.getInstance()},
+				{setupElsProbe(energy, frequency, current), ElsElementMapping.getInstance()},
+				{setupOpenXALProbe(energy, frequency, current), DefaultElementMapping.getInstance()},										
 				});
 	}
 	

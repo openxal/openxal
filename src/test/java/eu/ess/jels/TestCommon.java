@@ -55,9 +55,9 @@ public abstract class TestCommon {
 	public static Collection<Object[]> probes() {
 		double energy = 3e6, frequency = 4.025e8, current = 0;
 		return Arrays.asList(new Object[][]{
+					{setupOpenXALProbe(energy, frequency, current), TWElementMapping.getInstance()},
+					{setupElsProbe(energy, frequency, current), ElsElementMapping.getInstance()},					
 					{setupOpenXALProbe(energy, frequency, current), DefaultElementMapping.getInstance()},
-					{setupElsProbe(energy, frequency, current), ElsElementMapping.getInstance()},
-					{setupOpenXALProbe(energy, frequency, current), TWElementMapping.getInstance()}
 				});
 	}
 	
@@ -331,7 +331,8 @@ public abstract class TestCommon {
 		for (int i=0; i<6; i++)
 			for (int j=0; j<6; j++)
 				T77[i][j] = T[i][j];
-		double n = pm.getFirstOrder().minus(new PhaseMatrix(new Matrix(T77))).norm2();
+		PhaseMatrix pm77 = new PhaseMatrix(new Matrix(T77));
+		double n = pm.getFirstOrder().minus(pm77).norm2()/pm77.norm2();
 		//pm.getFirstOrder().minus(new PhaseMatrix(new Matrix(T77))).print();
 		System.out.printf("TW transfer matrix diff: %E\n",n);
 	}
@@ -340,7 +341,7 @@ public abstract class TestCommon {
 	private double tr(double x, double y)
 	{
 		//return Math.signum(x-y)*Math.pow(10, (int)Math.log10(Math.abs((x-y)/x)));
-		return (x-y)/x;
+		return (x-y)/y;
 	}
 	
 	protected void checkTWResults(double gamma, double[][] cov) {
@@ -411,7 +412,8 @@ public abstract class TestCommon {
 				for (int j=0; j<6; j++)
 					cov77[i][j] = cov[i][j];
 			CovarianceMatrix pcov = ((EnvelopeProbe)probe).getCovariance();
-			double n = pcov.minus(new PhaseMatrix(new Matrix(cov77))).norm2()/pcov.norm2();
+			PhaseMatrix pcov77 = new PhaseMatrix(new Matrix(cov77));
+			double n = pcov.minus(new PhaseMatrix(new Matrix(cov77))).norm2()/pcov77.norm2();
 			//pm.getFirstOrder().minus(new PhaseMatrix(new Matrix(T77))).print();
 			System.out.printf("TW cov matrix diff: %E\n",n);
 		}
