@@ -19,18 +19,18 @@ import java.awt.Dimension;
 import java.awt.event.*;
 import java.awt.Component;
 import java.text.NumberFormat;
+
 import javax.swing.*;
 import javax.swing.Timer;
-import javax.swing.JFileChooser;
-import javax.swing.SwingUtilities;
 import javax.swing.event.*;
 import javax.swing.table.*;
+
 import java.text.ParseException;
 import java.lang.Math.*;
 import java.lang.String;
+
 import Jama.Matrix;
 import Jama.SingularValueDecomposition;
-
 import xal.tools.apputils.EdgeLayout;
 import xal.smf.impl.*;
 import xal.smf.Ring;
@@ -42,6 +42,7 @@ import xal.service.pvlogger.*;
 //import xal.tools.pvlogger.query.*;
 import xal.tools.database.*;
 import xal.tools.beam.Twiss;
+import xal.tools.beam.calc.RingParameters;
 import xal.model.*;
 import xal.tools.fit.LinearFit;
 import xal.model.probe.TransferMapProbe;
@@ -66,6 +67,13 @@ import xal.application.*;
  * Class for calculating beta functions via MIA analysis from live BPM data.   
  */
  
+/**
+ * Class <code></code>.
+ *
+ *
+ * @author Christopher K. Allen
+ * @since  Oct 30, 2013
+ */
 public class MIALive extends JPanel{
     
     /** ID for serializable version */
@@ -529,51 +537,106 @@ public class MIALive extends JPanel{
 	}
 
 
+	/**
+	 * <p>
+	 * No comments were provided.
+	 * </p>
+	 * <p>
+	 * <h4>CKA NOTES:</h4>
+	 * &middot; I have refactored some of the machine parameter calculations
+	 * to work with the new machine parameter calculation component of the
+	 * the online model.  This are marked in the code.
+	 * <br/>
+	 * <br/>
+	 * &middot; I assume the processing done in this method is for ring data.  That is the way
+	 * I treated it.
+	 * <br/>
+	 * <br/>
+	 * &middot; I was forced to make downcasts since several of the variables
+	 * were open typed, but I did not indicate any such exception as they should not break.
+	 * </p>
+	 *
+	 * @author cp3  
+	 * @author Christopher K. Allen
+	 * @since  Jun 30, 2010
+	 * @version  Oct 30, 2013
+	 */
 	public void makeDesignData() {
-		int numSelected = numberSelected();
-		posDesignPlot = new double[numSelected];
-		xBetaDesignPlot = new double[numSelected];
-		yBetaDesignPlot = new double[numSelected];
-		
-		try {
-            
-            try {
-                
-            
-			probe = ProbeFactory.getTransferMapProbe(seq, AlgorithmFactory.createTransferMapTracker( seq ));
-            
-            
-        } catch ( InstantiationException exception ) {
-            System.err.println( "Instantiation exception creating probe." );
-            exception.printStackTrace();
-        }
-        
-			scenario = Scenario.newScenarioFor(seq);
-			scenario.setSynchronizationMode(Scenario.SYNC_MODE_DESIGN);
-			scenario.setStartElementId("Ring_Inj:Foil");
-			scenario.setProbe(probe);
-			scenario.resync();
-			scenario.run();
-			traj = probe.getTrajectory();
+	    int numSelected = numberSelected();
+	    posDesignPlot = new double[numSelected];
+	    xBetaDesignPlot = new double[numSelected];
+	    yBetaDesignPlot = new double[numSelected];
 
-			int j = 0;
-			for (int i = 0; i < BPMTable.getRowCount(); i++) {
-				if (((Boolean)BPMTable.getValueAt(i, 2)).booleanValue()) {
-					state = traj.stateForElement(BPMAgents[i].name());
-					twiss = ((TransferMapState)state).getTwiss();
-					posDesignPlot[j] = state.getPosition();
-					xBetaDesignPlot[j] = twiss[0].getBeta();
-					yBetaDesignPlot[j] = twiss[1].getBeta();
-					j++;
-				}
-			}
-		}
-		catch (ModelException e) {
-			System.out.println(e);
-		}
+	    try {
+
+	        try {
+
+
+	            probe = ProbeFactory.getTransferMapProbe(seq, AlgorithmFactory.createTransferMapTracker( seq ));
+
+
+	        } catch ( InstantiationException exception ) {
+	            System.err.println( "Instantiation exception creating probe." );
+	            exception.printStackTrace();
+	        }
+
+	        scenario = Scenario.newScenarioFor(seq);
+	        scenario.setSynchronizationMode(Scenario.SYNC_MODE_DESIGN);
+	        scenario.setStartElementId("Ring_Inj:Foil");
+	        scenario.setProbe(probe);
+	        scenario.resync();
+	        scenario.run();
+	        traj = probe.getTrajectory();
+
+	        // CKA - Down cast the simulation trajectory results to the proper type then
+	        //   create a ring parameter calculation engine for processing
+	        TransferMapTrajectory  trjSimulation = (TransferMapTrajectory)traj;
+	        RingParameters         cmpRingParams = new RingParameters(trjSimulation);
+
+	        int j = 0;
+	        for (int i = 0; i < BPMTable.getRowCount(); i++) {
+	            if (((Boolean)BPMTable.getValueAt(i, 2)).booleanValue()) {
+	                state = traj.stateForElement(BPMAgents[i].name());
+	                
+	                // CKA - Down cast the trajectory state to the proper type
+	                //     then calculation the matched Twiss parameters at
+	                //     the state location.
+	                TransferMapState staXfer = (TransferMapState)state;
+	                Twiss[]          arrTws  = cmpRingParams.getTwiss(staXfer);
+	                
+//	                twiss = ((TransferMapState)state).getTwiss();
+	                twiss = arrTws;
+	                
+	                posDesignPlot[j] = state.getPosition();
+	                xBetaDesignPlot[j] = twiss[0].getBeta();
+	                yBetaDesignPlot[j] = twiss[1].getBeta();
+	                j++;
+	            }
+	        }
+	    }
+	    catch (ModelException e) {
+	        System.out.println(e);
+	    }
 	}
 
 
+    /**
+     * <p>
+     * No comments were provided.
+     * </p>
+     * <p>
+     * <h4>CKA NOTES:</h4>
+     * &middot; The method reproduces most of the code in <code>{@link #makeDesignData()}</code>
+     * so I will not repeat the above comments, other to say that I need to repeat the
+     * same code as well.
+     * <br/>
+     * </p>
+     *
+     * @author cp3  
+     * @author Christopher K. Allen
+     * @since  Jun 30, 2010
+     * @version  Oct 30, 2013
+     */
 	public void	makeLiveDesignData() {
 		int numSelected = numberSelected();
 		posLiveDesignPlot = new double[numSelected];
@@ -600,11 +663,24 @@ public class MIALive extends JPanel{
 			scenario.run();
 			traj = probe.getTrajectory();
 			
+            // CKA - Down cast the simulation trajectory results to the proper type then
+            //   create a ring parameter calculation engine for processing
+            TransferMapTrajectory  trjSimulation = (TransferMapTrajectory)traj;
+            RingParameters         cmpRingParams = new RingParameters(trjSimulation);
+
 			int j = 0;
 			for (int i = 0; i < BPMTable.getRowCount(); i++) {
 				if (((Boolean)BPMTable.getValueAt(i, 2)).booleanValue()) {
 					state = traj.stateForElement(BPMAgents[i].name());
-					twiss = ((TransferMapState)state).getTwiss();
+                    // CKA - Down cast the trajectory state to the proper type
+                    //     then calculation the matched Twiss parameters at
+                    //     the state location.
+                    TransferMapState staXfer = (TransferMapState)state;
+                    Twiss[]          arrTws  = cmpRingParams.getTwiss(staXfer);
+                    
+//                  twiss = ((TransferMapState)state).getTwiss();
+                    twiss = arrTws;
+                    
 					posDesignPlot[j] = state.getPosition();
 					xBetaLiveDesignPlot[j] = twiss[0].getBeta();
 					yBetaLiveDesignPlot[j] = twiss[1].getBeta();

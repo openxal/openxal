@@ -164,7 +164,7 @@ public abstract class CalcEngine {
      * @author Christopher K. Allen
      * @since  Aug 14, 2013
      */
-    public PhaseVector calculateFixedPoint(PhaseMatrix matPhi) {
+    protected PhaseVector calculateFixedPoint(PhaseMatrix matPhi) {
 
         R6x6    matT = matPhi.projectR6x6();
         R6x6    matI = R6x6.newIdentity();
@@ -260,22 +260,24 @@ public abstract class CalcEngine {
      * The basic computation is 
      * <br/>
      * <br/>
-     * &nbsp; &nbsp;  &sigma; = cos<sup>-1</sup>[&frac12; Tr <b>&Phi;</b>] ,
+     * &nbsp; &nbsp;  &sigma; = cos<sup>-1</sup>[&frac12; Tr <b>&Phi;</b><sub>&alpha;&alpha;</sub>] ,
      * <br/>
      * <br/>
-     * where <b>&Phi;</b> is the the provided transfer matrix, and Tr <b>&Phi;</b> indicates the
-     * trace of matrix <b>&Phi;</b>.
+     * where <b>&Phi;</b></b><sub>&alpha;&alpha;</sub> is the 2&times;2 block diagonal 
+     * of the the provided transfer matrix for the &alpha; phase plane, 
+     * and Tr <b>&Phi;</b></b><sub>&alpha;&alpha;</sub> indicates the trace of matrix 
+     * <b>&Phi;</b></b><sub>&alpha;&alpha;</sub>.
      * </p>
      * 
      * @param   matPhiCell  transfer matrix for a cell in a periodic structure
      * 
-     * @return  the array of phase advances (&sigma;<sub><i>x</i></sub>, &sigma;<sub><i>y</i></sub>, &sigma;<sub><i>z</i></sub>)
+     * @return  vector of phase advances (&sigma;<sub><i>x</i></sub>, &sigma;<sub><i>y</i></sub>, &sigma;<sub><i>z</i></sub>)
      * 
      * @author Thomas Pelaia                
      * @author Christopher K. Allen
      * @since  Aug 14, 2013
      */
-    public double[] calculatePhaseAdvPerCell(PhaseMatrix matPhiCell) {
+    protected R3 calculatePhaseAdvPerCell(PhaseMatrix matPhiCell) {
         double[]    arrTunes = new double[NUM_MODES];
     
         // H. Sako - Look at the sign of M12, and determine the phase
@@ -295,7 +297,7 @@ public abstract class CalcEngine {
             arrTunes[imode] = sigma;            
         }
     
-        return arrTunes;
+        return new R3(arrTunes);
     }
 
     /**
@@ -343,16 +345,21 @@ public abstract class CalcEngine {
      * @author Christopher K. Allen
      * @since  Aug 14, 2013
      */
-    public double[] calculateTunePerCell(PhaseMatrix matPhiCell) {
-        double[]    arrTunes = this.calculatePhaseAdvPerCell(matPhiCell);
+    protected R3 calculateTunePerCell(PhaseMatrix matPhiCell) {
+//        double[]    arrTunes = this.calculatePhaseAdvPerCell(matPhiCell);
         
-        for (int i=0; i<arrTunes.length; i++) {
-            double  dblTune = arrTunes[i]/DBL_2PI % 1.0;
+        // Compute the phase advance for the full turn matrix
+        R3          vecTunes = this.calculatePhaseAdvPerCell(matPhiCell);
+        
+        for (R3.IND i : R3.IND.values()) {
             
-            arrTunes[i] = dblTune;
+            // Normalized the phase advances by 2 pi
+            double  dblTune = vecTunes.getElem(i)/DBL_2PI % 1.0;
+            
+            vecTunes.setElem(i, dblTune);
         }
         
-        return arrTunes;
+        return vecTunes;
     }
 
     /** 
@@ -405,7 +412,7 @@ public abstract class CalcEngine {
      * @since   Jun, 2004
      * @version Oct, 2013
      */
-    public R3 calculatePhaseAdvance(PhaseMatrix matPhi, Twiss[] twsInit, Twiss[] twsFinal) {
+    protected R3 calculatePhaseAdvance(PhaseMatrix matPhi, Twiss[] twsInit, Twiss[] twsFinal) {
 
         final Twiss[] twsFnl = twsFinal;
         final Twiss[] twsInt = twsInit;
@@ -519,7 +526,7 @@ public abstract class CalcEngine {
      * <p>
      * The returned Courant-Snyder parameters (&alpha;, &beta;, &epsilon;) are invariant
      * under the action of the given phase matrix, that is, they are matched.  All that 
-     * is require are &alpha; and &beta; since &epsilon; specifies the size of the beam
+     * is required are &alpha; and &beta; since &epsilon; specifies the size of the beam
      * envelope.  Consequently the returned &epsilon; is <code>NaN</code>.
      * </p>
      * The following are the calculations used for the Courant-Snyder parameters of a 
@@ -538,7 +545,7 @@ public abstract class CalcEngine {
      * particular phase plance.
      * </p>
      * 
-     * @param   matPhiCell  transfer matrix <b>&Phi;</b> for a periodic cell
+     * @param   matPhiCell  transfer matrix <b>&Phi;</b> for a periodic cell (or full turn)
      * 
      * @return  array of matched Courant-Snyder parameters 
      *          (&alpha;<sub><i>cell</i></sub>, &beta;<sub><i>cell</i></sub>, <code>NaN</code>) 
@@ -550,16 +557,17 @@ public abstract class CalcEngine {
      * @since  Jun 2004
      * @version Oct, 2013
      */
-    public Twiss[] calculateMatchedTwiss(PhaseMatrix matPhiCell /*, double[] arrPhsCell*/) {
+    protected Twiss[] calculateMatchedTwiss(PhaseMatrix matPhiCell /*, double[] arrPhsCell*/) {
 
-        final double[]  arrPhsCell = this.calculatePhaseAdvPerCell(matPhiCell);
+//        final double[]  arrPhsCell = this.calculatePhaseAdvPerCell(matPhiCell);
+        final R3        vecPhsCell = this.calculatePhaseAdvPerCell(matPhiCell);
         
         final Twiss[] arrTwsCell = new Twiss[NUM_MODES];
         
         for ( int mode = 0 ; mode < NUM_MODES ; mode++ ) {
             final int index = 2 * mode;
             
-            final double sinMu = Math.sin( DBL_2PI * arrPhsCell[mode] );// _tunes could be NaN
+            final double sinMu = Math.sin( DBL_2PI * vecPhsCell.getElem(mode) );// _tunes could be NaN
             final double m11 = matPhiCell.getElem( index, index );
             final double m12 = matPhiCell.getElem( index, index + 1 );
             final double m22 = matPhiCell.getElem( index + 1, index + 1 );
@@ -659,7 +667,7 @@ public abstract class CalcEngine {
      * @author Christopher K. Allen
      * @since  Aug 14, 2013
      */
-    public double[] calculateDispersion(final PhaseMatrix matPhi, final double gamma) {
+    protected double[] calculateDispersion(final PhaseMatrix matPhi, final double gamma) {
 
         // Decompose the transfer matrix into transverse and longitudinal 
         //    components.  The decomposition contains the linear algebraic

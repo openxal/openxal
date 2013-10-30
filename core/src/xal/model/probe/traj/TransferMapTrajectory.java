@@ -6,10 +6,7 @@
 package xal.model.probe.traj;
 
 import xal.tools.beam.PhaseMap;
-import xal.tools.beam.PhaseMatrix;
-import xal.tools.math.r3.R3;
-
-import java.util.Iterator;
+import xal.model.probe.traj.TransferMapState;
 
 /**
  * Specializes the <code>Trajectory</code> class to the 
@@ -21,35 +18,35 @@ import java.util.Iterator;
  *
  */
 public class TransferMapTrajectory extends Trajectory {
-	static final private int NUM_MODES = 3;
+//	static final private int NUM_MODES = 3;
 	
 	/** full turn map at the lattice origin */
 	@Deprecated
 	final private PhaseMap _originFullTurnMap;
 	
-	/** tunes for x, y and z */
-	@Deprecated
-	final private double[] _tunes;
+//	/** tunes for x, y and z */
+//	@Deprecated
+//	final private double[] _tunes;
+//	
+//	/** tunes for x, y and z */
+//	@Deprecated
+//	final private double[] _fullTunes;
 	
-	/** tunes for x, y and z */
-	@Deprecated
-	final private double[] _fullTunes;
 	
-	
-	/** indicates if the tune needs to be calculated */
-	private boolean _needsTuneCalculation;
-	/** indicates if the tune needs to be calculated */
-	private boolean _needsFullTuneCalculation;
+//	/** indicates if the tune needs to be calculated */
+//	private boolean _needsTuneCalculation;
+//	/** indicates if the tune needs to be calculated */
+//	private boolean _needsFullTuneCalculation;
 
 	/**
 	 * Constructor
 	 */
 	public TransferMapTrajectory() {
 		_originFullTurnMap = new PhaseMap();
-		_tunes = new double[3];
-		_fullTunes = new double[3];
-		_needsTuneCalculation = true;
-		 _needsFullTuneCalculation = true;
+//		_tunes = new double[3];
+//		_fullTunes = new double[3];
+//		_needsTuneCalculation = true;
+//		 _needsFullTuneCalculation = true;
 	}
 
 
@@ -64,7 +61,10 @@ public class TransferMapTrajectory extends Trajectory {
      */
     @Override
     protected ProbeState newProbeState() {
-        return new TransferMapState( this, null, null );
+        return new TransferMapState();
+        
+        // CKA - removed since we never reference the backpointer to the trajectory
+//        return new TransferMapState( this, null, null );
     }
 	
 	/**
@@ -88,18 +88,18 @@ public class TransferMapTrajectory extends Trajectory {
 	}
 	
 	
-	/**
-	 * Get the x, y and z tunes.
-	 * @return the array of tunes of the three modes (x, y and z).
-	 * 
-	 * @deprecated TransferMapProbes do not have tunes
-	 */
-	@Deprecated
-	public double[] getTunes() {
-		calculateTunesIfNeeded();
-		
-		return _tunes;
-	}
+//	/**
+//	 * Get the x, y and z tunes.
+//	 * @return the array of tunes of the three modes (x, y and z).
+//	 * 
+//	 * @deprecated TransferMapProbes do not have tunes
+//	 */
+//	@Deprecated
+//	public double[] getTunes() {
+//		calculateTunesIfNeeded();
+//		
+//		return _tunes;
+//	}
 	
 //	/**
 //	 * CKA- I'm adding Javadoc to be complete.  This computation
@@ -200,51 +200,51 @@ public class TransferMapTrajectory extends Trajectory {
 //	}
 	
 	
-	/**
-	 * Calculate the x, y and z tunes
-	 * 
-	 * @deprecated Moved to xal.tools.beam.calc - transfer map trajectories don't have tunes
-	 */
-    //sako version look at the sign of M12, and determine the phase
-    // since M12=beta*sin(mu) and beta>0, if M12>0, sin(mu)>0, 0<mu<pi
-    //                                    if M12<0, sin(mu)<0, -pi<mu<0
-	// sako
-	@Deprecated
-	private void calculateTunesIfNeeded() {
-		if ( _needsTuneCalculation ) {
-			final double PI2 = 2 * Math.PI;
-			final PhaseMatrix matrix = _originFullTurnMap.getFirstOrder();
-			
-			for ( int mode = 0 ; mode < NUM_MODES ; mode++ ) {
-				final int index = 2 * mode;
-				double trace = matrix.getElem( index, index ) + matrix.getElem( index + 1, index + 1 );
-
-				double m12   = matrix.getElem( index, index+1 );                               
-				double mu    = Math.acos( trace / 2 );
-				// problem is when abs(trace)>1, then _tunes are Double.NaN
-			    if (m12<0) {
-				    mu *= (-1);
-				}
-				_tunes[mode] = mu / PI2;			
-			}
-			_needsTuneCalculation = false;
-		}
-	}
-
-    /* original
-    
-	private void calculateTunesIfNeeded() {
-		if ( _needsTuneCalculation ) {
-			final double PI2 = 2 * Math.PI;
-			final PhaseMatrix matrix = _originFullTurnMap.getFirstOrder();
-			
-			for ( int mode = 0 ; mode < NUM_MODES ; mode++ ) {
-				final int index = 2 * mode;
-				double trace = matrix.getElem( index, index ) + matrix.getElem( index + 1, index + 1 );
-				_tunes[mode] = Math.acos( trace / 2 ) / PI2;					
-			}
-			
-			_needsTuneCalculation = false;
-		}
-	}*/
+//	/**
+//	 * Calculate the x, y and z tunes
+//	 * 
+//	 * @deprecated Moved to xal.tools.beam.calc - transfer map trajectories don't have tunes
+//	 */
+//    //sako version look at the sign of M12, and determine the phase
+//    // since M12=beta*sin(mu) and beta>0, if M12>0, sin(mu)>0, 0<mu<pi
+//    //                                    if M12<0, sin(mu)<0, -pi<mu<0
+//	// sako
+//	@Deprecated
+//	private void calculateTunesIfNeeded() {
+//		if ( _needsTuneCalculation ) {
+//			final double PI2 = 2 * Math.PI;
+//			final PhaseMatrix matrix = _originFullTurnMap.getFirstOrder();
+//			
+//			for ( int mode = 0 ; mode < NUM_MODES ; mode++ ) {
+//				final int index = 2 * mode;
+//				double trace = matrix.getElem( index, index ) + matrix.getElem( index + 1, index + 1 );
+//
+//				double m12   = matrix.getElem( index, index+1 );                               
+//				double mu    = Math.acos( trace / 2 );
+//				// problem is when abs(trace)>1, then _tunes are Double.NaN
+//			    if (m12<0) {
+//				    mu *= (-1);
+//				}
+//				_tunes[mode] = mu / PI2;			
+//			}
+//			_needsTuneCalculation = false;
+//		}
+//	}
+//
+//    /* original
+//    
+//	private void calculateTunesIfNeeded() {
+//		if ( _needsTuneCalculation ) {
+//			final double PI2 = 2 * Math.PI;
+//			final PhaseMatrix matrix = _originFullTurnMap.getFirstOrder();
+//			
+//			for ( int mode = 0 ; mode < NUM_MODES ; mode++ ) {
+//				final int index = 2 * mode;
+//				double trace = matrix.getElem( index, index ) + matrix.getElem( index + 1, index + 1 );
+//				_tunes[mode] = Math.acos( trace / 2 ) / PI2;					
+//			}
+//			
+//			_needsTuneCalculation = false;
+//		}
+//	}*/
 }

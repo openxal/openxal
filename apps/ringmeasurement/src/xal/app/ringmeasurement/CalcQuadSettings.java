@@ -17,6 +17,8 @@ import xal.sim.scenario.Scenario;
 import xal.sim.sync.SynchronizationException;
 import xal.model.probe.traj.TransferMapTrajectory;
 import xal.model.probe.traj.TransferMapState;
+import xal.tools.beam.calc.RingParameters;
+import xal.tools.math.r3.R3;
 //import xal.tools.optimizer.*;
 import xal.tools.solver.*;
 import xal.tools.solver.algorithm.*;
@@ -244,6 +246,22 @@ public class CalcQuadSettings implements Runnable {
         
 	}
     
+	/**
+     * <p>
+     * No comments were provided.
+     * </p>
+     * <p>
+     * <h4>CKA NOTES:</h4>
+     * &middot; I have refactored some of the machine parameter calculations
+     * to work with the new machine parameter calculation component of the
+     * the online model.  This are marked in the code.
+     * </p>
+     *
+     * @author cp3  
+     * @author Christopher K. Allen
+     * @since  Jun 30, 2010 (estimated)
+     * @version  Oct 30, 2013
+	 */
 	protected double calcError() {
 		double error = 10000.;
         
@@ -255,19 +273,42 @@ public class CalcQuadSettings implements Runnable {
 		myProbe = (TransferMapProbe) scenario.getProbe();
 		traj = (TransferMapTrajectory) myProbe.getTrajectory();
         
-		// get the 1st BPM betatron phase as the reference
-		TransferMapState state0 = (TransferMapState) traj.stateForElement(bpms
-                                                                          .get(0));
-		double xPhase0 = state0.getBetatronPhase().getx();
-		double yPhase0 = state0.getBetatronPhase().gety();
+		// CKA - this resource is no longer needed
+//		// get the 1st BPM betatron phase as the reference
+//		TransferMapState state0 = (TransferMapState) traj.stateForElement(bpms
+//                                                                          .get(0));
+		
+		// CKA - Create a machine parameter processor for the ring to replace
+		//    the machine parameters that were previously processed in the
+		//    simulation data itself.
+		RingParameters     cmpRingParams = new RingParameters(traj);
+		
+		// CKA - This
+		R3    vecPhase0 = cmpRingParams.entranceBetatronPhaseAdvance();
+		
+		double xPhase0 = vecPhase0.getx();
+		double yPhase0 = vecPhase0.gety();
+		
+		// Replaces this
+//		double xPhase0 = state0.getBetatronPhase().getx();
+//		double yPhase0 = state0.getBetatronPhase().gety();
         
 		double sum = 0.;
 		for (int i = 1; i < bpms.size(); i++) {
 			TransferMapState state = (TransferMapState) traj
             .stateForElement(bpms.get(i));
 			if (!tp.badBPMs.contains(new Integer(i))) {
-				double xPhase = state.getBetatronPhase().getx() - xPhase0;
-				double yPhase = state.getBetatronPhase().gety() - yPhase0;
+			    
+			    // CKA - This
+			    R3   vecPhase = cmpRingParams.getBetatronPhase(state);
+			    
+			    double xPhase = vecPhase.getx() - xPhase0;
+			    double yPhase = vecPhase.gety() - yPhase0;
+			    
+			    // Replaces this
+//				double xPhase = state.getBetatronPhase().getx() - xPhase0;
+//				double yPhase = state.getBetatronPhase().gety() - yPhase0;
+				
 				if (xPhase < 0.)
 					xPhase = xPhase + 2. * Math.PI;
 				if (yPhase < 0.)
