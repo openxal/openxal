@@ -19,6 +19,7 @@ import xal.smf.impl.*;
 import xal.smf.impl.qualify.*;
 import xal.tools.messaging.MessageCenter;
 import xal.model.probe.traj.IPhaseState;
+import xal.model.probe.traj.IProbeState;
 import xal.model.probe.traj.Trajectory;
 
 import java.util.*;
@@ -840,8 +841,8 @@ public class EnergyManager implements DataListener, ParameterStoreListener, Opti
 		for ( LiveParameter parameter : magnetParameters ) {
 			final ElectromagnetAgent agent = (ElectromagnetAgent)parameter.getNodeAgent();
 			final String nodeID = agent.getNode().getId();
-			final IPhaseState state = (IPhaseState)trajectory.stateForElement( nodeID );
-			final IPhaseState designState = (IPhaseState)designTrajectory.stateForElement( nodeID );
+			final IProbeState state = (IProbeState)trajectory.stateForElement( nodeID );
+			final IProbeState designState = (IProbeState)designTrajectory.stateForElement( nodeID );
 			agent.preserveDesignInfluence( state.getKineticEnergy(), designState.getKineticEnergy(), state.getSpeciesRestEnergy() );
 		}
 	}

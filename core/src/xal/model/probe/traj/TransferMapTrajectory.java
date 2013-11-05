@@ -8,6 +8,7 @@ package xal.model.probe.traj;
 import xal.tools.beam.PhaseMap;
 import xal.model.probe.traj.TransferMapState;
 
+
 /**
  * Specializes the <code>Trajectory</code> class to the 
  * <code>TransferMapProbe<code> behavior.

@@ -78,40 +78,37 @@ public class EnvelopeProbeState extends BunchProbeState /* implements IPhaseStat
 
     
     
-    /** 
-     * the twiss parameters calculated from the transfer matrix 
-     * (not calculated from the correlation matrix, except for
-     * the initialization)
-     * 
-     * CKA NOTES:
-     * - This attribute is redundant in the sense that all "Twiss parameter"
-     * information is contained within the correlation matrix.  The correlation
-     * matrix was intended as the primary attribute for an <code>EnvelopeProbe</code>.
-     * 
-     * - The dynamics of this attribute are computed from tranfer matrices,
-     * however, with space charge the transfer matrices are computed using the
-     * correlation matrix.  Thus, these parameters are inconsistent in the 
-     * presence of space charge.
-     * 
-     * - I have made a separate Probe class, <code>TwissProbe</code> which has
-     * Twiss parameters as its primary state.
-     * 
-     * - For all these reason I am deprecating this attribute
-     * 
-     * @deprecated
-     */
-    @Deprecated
-    private Twiss [] twissParams;
+//    /** 
+//     * the twiss parameters calculated from the transfer matrix 
+//     * (not calculated from the correlation matrix, except for
+//     * the initialization)
+//     * 
+//     * CKA NOTES:
+//     * - This attribute is redundant in the sense that all "Twiss parameter"
+//     * information is contained within the correlation matrix.  The correlation
+//     * matrix was intended as the primary attribute for an <code>EnvelopeProbe</code>.
+//     * 
+//     * - The dynamics of this attribute are computed from transfer matrices,
+//     * however, with space charge the transfer matrices are computed using the
+//     * correlation matrix.  Thus, these parameters are inconsistent in the 
+//     * presence of space charge.
+//     * 
+//     * - I have made a separate Probe class, <code>TwissProbe</code> which has
+//     * Twiss parameters as its primary state.
+//     * 
+//     * - For all these reason I am deprecating this attribute
+//     * 
+//     * @deprecated
+//     */
+//    @Deprecated
+//    private Twiss [] twissParams;
     
     
     /** 
-     * save Twiss parameters flag
+     * Instead of saving the covariance matrix to a <code>DataAdaptor</code>
+     * the Twiss parameters projected from the covariance matrix are saved.
      * 
-     * CKA NOTES:
-     * - As this attribute relates to the above attribes, I am 
-     * deprecating it as well.
-     * 
-     * @deprecated
+     * @deprecated  saving only the Twiss parameters leaves and incomplete state and should be avoided
      */
     @Deprecated
     private boolean bolSaveTwiss = false;
@@ -149,8 +146,8 @@ public class EnvelopeProbeState extends BunchProbeState /* implements IPhaseStat
         this.setResponseMatrixNoSpaceCharge(probe.getResponseMatrixNoSpaceCharge());
         this.setPerturbationMatrix(probe.getCurrentResponseMatrix());
         //obsolete this.setTwiss(probe.getTwiss());
-        this.twissParams = probe.getCovariance().computeTwiss();
-        this.bolSaveTwiss = probe.getSaveTwissFlag();
+//        this.twissParams = probe.getCovariance().computeTwiss();
+//        this.bolSaveTwiss = probe.getSaveTwissFlag();
 //        this.setTwiss(probe.getCovariance().computeTwiss());
 //        this.setSaveTwissFlag(probe.getSaveTwissFlag());
 	//sako
@@ -158,27 +155,38 @@ public class EnvelopeProbeState extends BunchProbeState /* implements IPhaseStat
     }
     
     
-//    /**
-//     * Changes the behavior of the save state methods.
-//     * By setting this flag to <code>true</code> the Twiss
-//     * parameter attributes will be saved <b>instead</b> of
-//     * the correlation matrix.  The default behavior for this class
-//     * is to save the correlation matrix.
-//     * 
-//     * CKA Notes:
-//     * - This is clearly a kluge; use this method with caution.
-//     * It is provided to maintain backward compatibility.
-//     * 
-//     * @param   bolSaveTwiss    behavior of save state methods 
-//     * 
-//     * @see EnvelopeProbeState#addPropertiesTo(DataAdaptor)
-//     * 
-//     * @deprecated
-//     */
-//    @Deprecated
-//    public void setSaveTwissFlag(boolean bolSaveTwiss)    {
-//        this.bolSaveTwiss = bolSaveTwiss;
-//    }
+    /**
+     * <p>
+     * Changes the behavior of the persistence methods (from the 
+     * <code>DataAdaptor</code> methods).
+     * By setting this flag to <code>true</code> the Twiss
+     * parameter attributes will be saved <b>instead</b> to a <code>DataAdapter</code> 
+     * interface rather that the full correlation matrix.  The default behavior for this class
+     * is to save the correlation matrix.
+     * </p>
+     * <p>
+     * <h4>CKA Notes:</h4>
+     * - This can be dangerous as we have the 
+     * potential to loose a lot of information.  In particular,
+     * if the probe has pasted through a bend or a steering
+     * magnet, the Twiss parameters do not contain enough information
+     * to restart the probe.
+     * <br/> 
+     * - This is clearly a kluge; use this method with caution.
+     * It is provided to maintain backward compatibility.
+     * </p>
+     * 
+     * @param   bolSaveTwiss    behavior of save state methods 
+     * 
+     * @see EnvelopeProbeState#addPropertiesTo(DataAdaptor)
+     * 
+     * @deprecated  Storing only the Twiss parameters leaves an incomplete state 
+     *              and may lead to erroneous results
+     */
+    @Deprecated
+    public void setSaveTwissFlag(boolean bolSaveTwiss)    {
+        this.bolSaveTwiss = bolSaveTwiss;
+    }
     
     /**
      * Set the first-order response matrix of the current element slice
@@ -402,10 +410,10 @@ public class EnvelopeProbeState extends BunchProbeState /* implements IPhaseStat
      * </p>
      * <p>
      * <h4>CKA NOTE:</h4>
-     * - <strong>Be careful</strong> when using this method!  It is here as a convenient.  It
-     * saves the <code>EnvelopeProbeState</code> information in the save format as
+     * - <strong>Be careful</strong> when using this method!  It is here as a convenience only!  
+     * It saves the <code>EnvelopeProbeState</code> information in the save format as
      * the load()/save() methods do, but you cannot restore an <code>EnvelopeProbe</code>
-     * object from these data in general.
+     * object from these data.
      * </p>
      * 
      *  @param  daSink   data sink represented by <code>DataAdaptor</code> interface
@@ -495,6 +503,7 @@ public class EnvelopeProbeState extends BunchProbeState /* implements IPhaseStat
         if (envNode == null)
             throw new ParsingException("EnvelopeProbeState#readPropertiesFrom(): no child element = " + ENVELOPE_LABEL);
         
+//        Twiss[] twissParams;
         if (envNode.hasAttribute(EnvelopeProbeState.ALPHA_X_LABEL)) {
             Twiss[] twiss = new Twiss[3];
             twiss[0] = new Twiss(envNode.doubleValue(EnvelopeProbeState.ALPHA_X_LABEL), 
@@ -507,7 +516,7 @@ public class EnvelopeProbeState extends BunchProbeState /* implements IPhaseStat
                     envNode.doubleValue(EnvelopeProbeState.BETA_Z_LABEL),
                     envNode.doubleValue(EnvelopeProbeState.EMIT_Z_LABEL));
 //            this.setTwiss(twiss);
-            this.twissParams = twiss;
+//            twissParams = twiss;
             
             DataAdaptor parNode = container.childAdaptor(EnvelopeProbeState.CENTROID_LABEL);
             if (parNode == null) {
@@ -538,7 +547,7 @@ public class EnvelopeProbeState extends BunchProbeState /* implements IPhaseStat
             CovarianceMatrix matChi = new CovarianceMatrix(envNode.stringValue(EnvelopeProbeState.CORR_LABEL));
             this.setCovariance(matChi);
             // initialize the state twiss parameters from the correlation matrix
-            this.twissParams = matChi.computeTwiss();
+//            twissParams = matChi.computeTwiss();
 //            this.setTwiss(matChi.computeTwiss());
         }
         

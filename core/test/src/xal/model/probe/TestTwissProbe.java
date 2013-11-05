@@ -10,11 +10,10 @@ package xal.model.probe;
 import java.io.IOException;
 
 import xal.tools.beam.PhaseVector;
-import xal.tools.beam.SpaceIndex3D;
 import xal.tools.beam.Twiss;
 import xal.tools.beam.Twiss3D;
+import xal.tools.math.SpaceIndex3D;
 import xal.tools.math.r3.R3;
-
 import xal.model.IAlgorithm;
 import xal.model.alg.TwissTracker;
 import xal.model.probe.Probe;
@@ -22,6 +21,7 @@ import xal.model.probe.TwissProbe;
 import xal.model.xml.ParsingException;
 import xal.model.xml.ProbeXmlParser;
 import xal.model.xml.ProbeXmlWriter;
+
 
 
 import org.junit.Assert;

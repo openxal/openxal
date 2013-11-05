@@ -1461,6 +1461,21 @@ public abstract class BaseVector<V extends BaseVector<V>> implements IArchive, j
         this.setVector(arrVals);;
     }
     
+    /**
+     * Initializing constructor for <code>BaseVector</code>.  The vector values
+     * are taken from the data source provided.
+     *
+     * @param intSize       size of this vector
+     * @param daSource      data source containing the initial values of this vector
+     *
+     * @author Christopher K. Allen
+     * @since  Nov 5, 2013
+     */
+    protected BaseVector(int intSize, DataAdaptor daSource) {
+        this(intSize);
+        
+        this.load(daSource);
+    }
 
     /*
      * Internal Support

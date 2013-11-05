@@ -22,9 +22,11 @@ import xal.model.probe.EnvelopeProbe;
 import xal.model.probe.ParticleProbe;
 import xal.model.probe.Probe;
 import xal.model.probe.TransferMapProbe;
+import xal.model.probe.TwissProbe;
 import xal.smf.Accelerator;
 import xal.smf.AcceleratorSeq;
 import xal.tools.beam.Twiss;
+import xal.tools.beam.Twiss3D;
 import xal.tools.data.DataTable;
 import xal.tools.data.EditContext;
 import xal.tools.data.GenericRecord;
@@ -171,6 +173,37 @@ public class ProbeFactory {
 		return success ? probe : null;
 	}
 	
+	public static TwissProbe getTwissProbe( final AcceleratorSeq seqParent, final IAlgorithm algDynamics ) {
+	    return ProbeFactory.getTwissProbe( seqParent.getEntranceID(), seqParent, algDynamics);
+	}
+	
+	/**
+	 * Create and initialize a new <code>TwissProbe</code> object with the default parameters
+	 * in the <tt>model.params</tt> file.  The parameters are taken for the location 
+	 * of the provided location ID along the given accelerator hardware sequence.  The
+	 * given algorithm object is also verified and attached to the probe.  
+	 * 
+	 * @param strLocId     location of the accelerator where the model parameters are taken
+	 * @param seqParent    accelerator sequence containing the location
+	 * @param algDynamics  algorithm used for the simulation 
+	 * 
+	 * @return             new, initialized <code>TwissProbe</code> object 
+	 *
+	 * @author Christopher K. Allen
+	 * @since  Nov 5, 2013
+	 */
+	public static TwissProbe getTwissProbe( final String strLocId, final AcceleratorSeq seqParent, final IAlgorithm algDynamics) {
+	    TwissProbe     prbTwiss = new TwissProbe();
+	    
+	    if ( !prbTwiss.setAlgorithm(algDynamics) )
+	        return null;
+	    
+	    boolean bolResult = ProbeFactory.initializeLocation(prbTwiss, strLocId, seqParent);
+	    bolResult &= ProbeFactory.initializeBeam(prbTwiss, seqParent);
+	    bolResult &= ProbeFactory.initializeTwiss(prbTwiss, strLocId, seqParent);
+	 
+	    return bolResult ? prbTwiss : null;
+	}
 	
 	/**
 	 * Generate an Envelope probe initialized with the default entrance parameters for the
@@ -300,43 +333,103 @@ public class ProbeFactory {
 		final GenericRecord beamRecord = beamTable.record( "name", "default" );
         final double bunchFreq = beamRecord.doubleValueForKey( "bunchFreq" );
 		final double beamCurrent = beamRecord.doubleValueForKey( "current" );
-        final String phase = beamRecord.stringValueForKey( "phase" );
 				
         probe.setBunchFrequency( bunchFreq );
 		probe.setBeamCurrent( beamCurrent );
-        probe.setBetatronPhase( new R3( phase ) );
+//        probe.setBetatronPhase( new R3( phase ) );
 		
 		return true;
 	}
 	
-	
 	/**
-	 * Initialize the twiss parameters of the probe with the specified sequence and algorithm.
+     * Initialize the twiss parameters of the probe with Twiss parameters taken from the
+     * <tt>model.params</tt> file.
+     * 
+	 * @param prbTwiss     probe to initialize
+	 * @param strLocId     location of the accelerator where Twiss parameters are taken
+	 * @param seqLoc       hardware accelerator sequence
+	 * 
+	 * @return             <code>true</code> always
+	 *
+	 * @author Christopher K. Allen
+	 * @since  Nov 5, 2013
+	 */
+	private static boolean initializeTwiss(final TwissProbe prbTwiss, final String strLocId, final AcceleratorSeq seqLoc) {
+        final EditContext   edcData = seqLoc.getAccelerator().editContext();
+
+        // Extract the betratron phase and set it
+        final DataTable     tblBeam = edcData.getTable(BEAM_TABLE);
+	    final GenericRecord recBeam = tblBeam.record("name", "default");   
+        final String        strPhs  = recBeam.stringValueForKey( "phase" );
+        final R3            vecPhs  = new R3(strPhs);
+        prbTwiss.setBetatronPhase(vecPhs);
+        
+        // Extract the Twiss parameters and set them
+        Twiss[] arrTwiss = getTwissArray( strLocId, edcData );
+        prbTwiss.setTwiss( new Twiss3D(arrTwiss) );
+        
+        return true;
+	}
+	/**
+	 * Initialize the covariance matrix of the given probe using the Twiss parameters in the
+	 * <tt>model.params</tt> file.  
 	 *
 	 * @param probe      the probe to initialize
      * @param locationID location within the acceleration where the probe is initialized
 	 * @param sequence   the sequence for which to initialize the probe
+	 * 
 	 * @return           true for successful initialization and false if it fails
 	 */
 	private static boolean initializeTwiss( final EnvelopeProbe probe, final String locationID, final AcceleratorSeq sequence) {
 		final EditContext editContext = sequence.getAccelerator().editContext();
-		final DataTable twissTable = editContext.getTable( "twiss" );
-		
-		final Map<String, String> bindings = new HashMap<String, String>();
-		bindings.put( "name", locationID );
-		
-		bindings.put( "coordinate", "x" );
-		final GenericRecord twissX = twissTable.record( bindings );
-		bindings.put( "coordinate", "y" );
-		final GenericRecord twissY = twissTable.record( bindings );
-		bindings.put( "coordinate", "z" );
-		final GenericRecord twissZ = twissTable.record( bindings );
-		
-		final Twiss[] twissVector = new Twiss[] { getTwiss( twissX ), getTwiss( twissY ), getTwiss( twissZ ) };
-		
+//		final DataTable twissTable = editContext.getTable( "twiss" );
+//		
+//		final Map<String, String> bindings = new HashMap<String, String>();
+//		bindings.put( "name", locationID );
+//		
+//		bindings.put( "coordinate", "x" );
+//		final GenericRecord twissX = twissTable.record( bindings );
+//		bindings.put( "coordinate", "y" );
+//		final GenericRecord twissY = twissTable.record( bindings );
+//		bindings.put( "coordinate", "z" );
+//		final GenericRecord twissZ = twissTable.record( bindings );
+//		
+//		final Twiss[] twissVector = new Twiss[] { getTwiss( twissX ), getTwiss( twissY ), getTwiss( twissZ ) };
+
+		final Twiss[] twissVector = getTwissArray( locationID, editContext );
 		probe.initFromTwiss( twissVector );
 		
 		return true;
+	}
+	
+	/**
+	 * Parses the Twiss parameters for the given accelerator location ID from the
+	 * data within the given <code>EditContext</code> object.
+	 * 
+	 * @param strLocId     location where the Twiss parameters are taken
+	 * @param edcData      the data store containing all the Twiss data
+	 * 
+	 * @return             Twiss parameters in all three planes for the given location 
+	 *
+	 * @author Christopher K. Allen
+	 * @since  Nov 5, 2013
+	 */
+	private static Twiss[] getTwissArray( final String strLocId, final EditContext edcData) {
+        final DataTable twissTable = edcData.getTable( "twiss" );
+        
+        final Map<String, String> bindings = new HashMap<String, String>();
+        bindings.put( "name", strLocId );
+        
+        bindings.put( "coordinate", "x" );
+        final GenericRecord twissX = twissTable.record( bindings );
+        bindings.put( "coordinate", "y" );
+        final GenericRecord twissY = twissTable.record( bindings );
+        bindings.put( "coordinate", "z" );
+        final GenericRecord twissZ = twissTable.record( bindings );
+        
+        final Twiss[] arrTwiss = new Twiss[] { getTwiss( twissX ), getTwiss( twissY ), getTwiss( twissZ ) };
+        
+        return arrTwiss;
 	}
 	
 	

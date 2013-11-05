@@ -10,6 +10,8 @@ import xal.tools.data.DataAdaptor;
 import xal.tools.data.DataFormatException;
 import xal.tools.data.IArchive;
 
+import xal.tools.math.IIndex;
+
 /**
  * Encapsulates the Twiss parameters for describing a beam bunch.  Specifically,
  * we have three sets of Twiss parameters, one for each phase plane.  This class
@@ -19,9 +21,63 @@ import xal.tools.data.IArchive;
  * @author Christopher K. Allen
  *
  */
+/**
+ * Class <code></code>.
+ *
+ *
+ * @author Christopher K. Allen
+ * @since  Nov 5, 2013
+ */
 public class Twiss3D implements IArchive {
 
+    /*
+     * Internal Types
+     */
     
+    /** 
+     * Enumeration for the element position indices of three-dimensional objects. 
+     * 
+     * @author  Christopher K. Alen
+     */
+    public enum SpaceIndex3D implements IIndex {
+
+        
+        /*
+         * Enumeration Constants
+         */
+        /** The horizontal axis  */
+        X   (0),        // x plane spatial
+        
+        /** The vertical axis  */
+        Y   (1),        // y plane spatial
+        
+        /** The longitudinal axis */
+        Z   (2);        // z plane spatial
+                    
+        
+        /*
+         * Local Attributes
+         */
+        
+        /** index value */
+        private final int i;
+        
+        
+        /** 
+         * Default enumeration constructor
+         * 
+         * @param i     enumeration constant
+         */
+        SpaceIndex3D(int i)        { this.i = i; };
+        
+        /** 
+         * Return the integer value of the index position
+         *  
+         * @return  Integer value of enumeration constant
+         */
+        public int val()    { return i; };
+        
+    }    
     
     
     /*
@@ -74,6 +130,18 @@ public class Twiss3D implements IArchive {
         for (SpaceIndex3D index : SpaceIndex3D.values())    {
             this.arrTwiss[index.val()] = new Twiss(t3d.getTwiss(index));
         }
+    }
+    
+    /**
+     * Initializing constructor for <code>Twiss3D</code>.
+     *
+     * @param arrTwiss  array of Twiss parameter for each phase plane
+     *
+     * @author Christopher K. Allen
+     * @since  Nov 5, 2013
+     */
+    public Twiss3D(Twiss[] arrTwiss) {
+        this(arrTwiss[SpaceIndex3D.X.val()], arrTwiss[SpaceIndex3D.Y.val()], arrTwiss[SpaceIndex3D.Z.val()]);
     }
     
     /**

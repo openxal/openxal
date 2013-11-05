@@ -16,7 +16,6 @@ import xal.model.IProbe;
 import xal.model.ModelException;
 import xal.model.probe.EnvelopeProbe;
 import xal.tools.beam.CovarianceMatrix;
-import xal.tools.beam.PhaseIndexHom;
 import xal.tools.beam.PhaseMap;
 import xal.tools.beam.PhaseMatrix;
 import xal.tools.beam.em.BeamEllipsoid;
@@ -376,9 +375,9 @@ public class Trace3dTracker extends Tracker {
 //        R3          vecDis = rho.getDisplacement();
         PhaseMatrix matDis = rho.getTranslation();
         R3          vecDis = new R3(
-                matDis.getElem(PhaseIndexHom.X, PhaseIndexHom.HOM),
-                matDis.getElem(PhaseIndexHom.Y, PhaseIndexHom.HOM),
-                matDis.getElem(PhaseIndexHom.Z, PhaseIndexHom.HOM)
+                matDis.getElem(PhaseMatrix.IND.X, PhaseMatrix.IND.HOM),
+                matDis.getElem(PhaseMatrix.IND.Y, PhaseMatrix.IND.HOM),
+                matDis.getElem(PhaseMatrix.IND.Z, PhaseMatrix.IND.HOM)
                 );
 
 //        PhaseMatrix matRot = rho.compPhaseRotation();

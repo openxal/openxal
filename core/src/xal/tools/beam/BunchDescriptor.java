@@ -6,6 +6,7 @@ package xal.tools.beam;
 import xal.tools.data.DataAdaptor;
 import xal.tools.data.DataFormatException;
 import xal.tools.data.IArchive;
+import xal.tools.beam.Twiss3D.SpaceIndex3D;
 
 /**
  * Encapsulation of an analytic description of a beam bunch using
@@ -174,7 +175,7 @@ public class BunchDescriptor implements IArchive {
     /**
      * Get the distribution profile descriptor.
      * 
-     * @return  profile desriptor object for this distribution
+     * @return  profile descriptor object for this distribution
      */
     public ProfileIndex    getProfile()    {
         return this.enmProfile;

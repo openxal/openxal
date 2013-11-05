@@ -215,12 +215,12 @@ public class PhaseVector extends BaseVector<PhaseVector> implements java.io.Seri
      * Creates a deep copy of the given <code>PhaseVector</code>
      * object.  Thus, the argument is unmodified and unreferenced.
      * 
-     * @param   vec2Copy    vector object to clone
+     * @param   vecParent    vector object to clone
      * 
      * @return              deep copy of the argument
      */
-    public static PhaseVector copy(final PhaseVector vec2Copy)    {
-        return new PhaseVector(vec2Copy);
+    public static PhaseVector copy(final PhaseVector vecParent)    {
+        return new PhaseVector(vecParent);
     }
     
     /**

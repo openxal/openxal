@@ -170,14 +170,18 @@ public class TransferMapTracker extends Tracker {
      *  @exception ModelException     bad element transfer matrix/corrupt probe state
      */
     protected void advanceState( final TransferMapProbe probe, final IElement ifcElem, final double dblLng ) throws ModelException {
+        
         // Properties of the element
         final PhaseMap mapPhi = ifcElem.transferMap( probe, dblLng );
-      // Compose the transfer maps
+
+        // Set the partial (state) transfer map
+        probe.setPartialTransferMap( mapPhi );
+        
+        // Compose the transfer maps
         final PhaseMap mapProbe = probe.getTransferMap();
         final PhaseMap mapComp = mapPhi.compose( mapProbe );
         probe.setTransferMap( mapComp );
-        probe.setPartialTransferMap( mapPhi );
-		
+
         // Why?  A transfer map does not have center?
 		final PhaseVector z0 = probe.getPhaseCoordinates();
 		final PhaseVector z1 = mapPhi.apply( z0 );

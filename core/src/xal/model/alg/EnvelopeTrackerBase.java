@@ -9,8 +9,8 @@
 package xal.model.alg;
 
 import xal.tools.beam.CovarianceMatrix;
-import xal.tools.beam.PhaseIndexHom;
 import xal.tools.beam.PhaseMatrix;
+import xal.tools.beam.PhaseMatrix.IND;
 import xal.tools.beam.PhaseVector;
 import xal.tools.beam.em.BeamEllipsoid;
 import xal.tools.data.DataAdaptor;
@@ -583,13 +583,13 @@ public abstract class EnvelopeTrackerBase extends Tracker {
             PhaseMatrix T  = PhaseMatrix.identity();
             PhaseMatrix Ti = PhaseMatrix.identity();
             
-            T.setElem(PhaseIndexHom.X,PhaseIndexHom.HOM, -dx);
-            T.setElem(PhaseIndexHom.Y,PhaseIndexHom.HOM, -dy);
-            T.setElem(PhaseIndexHom.Z,PhaseIndexHom.HOM, -dz);
+            T.setElem(IND.X,IND.HOM, -dx);
+            T.setElem(IND.Y,IND.HOM, -dy);
+            T.setElem(IND.Z,IND.HOM, -dz);
             
-            Ti.setElem(PhaseIndexHom.X,PhaseIndexHom.HOM, dx);
-            Ti.setElem(PhaseIndexHom.Y,PhaseIndexHom.HOM, dy);
-            Ti.setElem(PhaseIndexHom.Z,PhaseIndexHom.HOM, dz);
+            Ti.setElem(IND.X,IND.HOM, dx);
+            Ti.setElem(IND.Y,IND.HOM, dy);
+            Ti.setElem(IND.Z,IND.HOM, dz);
             
             PhaseMatrix matPhiDspl = Ti.times(matPhi).times(T);
             
@@ -717,14 +717,14 @@ public abstract class EnvelopeTrackerBase extends Tracker {
         // Modify the transfer matrix
         double  fl;     // thin-lens focal-length element of tranfer matrix
 
-        fl = matPhi.getElem(PhaseIndexHom.Xp, PhaseIndexHom.X);
-        matPhi.setElem(PhaseIndexHom.Xp, PhaseIndexHom.X, fl*Ft);
+        fl = matPhi.getElem(IND.Xp, IND.X);
+        matPhi.setElem(IND.Xp, IND.X, fl*Ft);
 
-        fl = matPhi.getElem(PhaseIndexHom.Yp, PhaseIndexHom.Y);
-        matPhi.setElem(PhaseIndexHom.Yp, PhaseIndexHom.Y, fl*Ft);
+        fl = matPhi.getElem(IND.Yp, IND.Y);
+        matPhi.setElem(IND.Yp, IND.Y, fl*Ft);
 
-        fl = matPhi.getElem(PhaseIndexHom.Zp, PhaseIndexHom.Z);
-        matPhi.setElem(PhaseIndexHom.Zp, PhaseIndexHom.Z, fl*Fz);
+        fl = matPhi.getElem(IND.Zp, IND.Z);
+        matPhi.setElem(IND.Zp, IND.Z, fl*Fz);
         //            matPhi.setElem(PhaseIndexHom.Zp, PhaseIndexHom.Z, fl*(1.0 - dphi_2/12.0));
         //            matPhi.setElem(PhaseIndexHom.Zp, PhaseIndexHom.Z, k*(1.0 + dp_2/12.0));
 
@@ -805,9 +805,9 @@ public abstract class EnvelopeTrackerBase extends Tracker {
             // Build the space charge transfer matrix in beam coordinates
             matPhiSc = PhaseMatrix.identity();
             
-            matPhiSc.setElem(PhaseIndexHom.Xp, PhaseIndexHom.X, kx);
-            matPhiSc.setElem(PhaseIndexHom.Yp, PhaseIndexHom.Y, ky);
-            matPhiSc.setElem(PhaseIndexHom.Zp, PhaseIndexHom.Z, kz);
+            matPhiSc.setElem(IND.Xp, IND.X, kx);
+            matPhiSc.setElem(IND.Yp, IND.Y, ky);
+            matPhiSc.setElem(IND.Zp, IND.Z, kz);
             
             // Transform to laboratory coordinates
             PhaseVector z  = tau0.getMean();
@@ -2184,7 +2184,7 @@ public abstract class EnvelopeTrackerBase extends Tracker {
             double k    = (2.0*Math.PI)/(beta*lambda);
             
             // Compute the longitudinal phase spread 
-            double z_2  = 5.0*probe.getCovariance().getElem(PhaseIndexHom.Z, PhaseIndexHom.Z);
+            double z_2  = 5.0*probe.getCovariance().getElem(IND.Z, IND.Z);
             double dphi = k * Math.sqrt(z_2);
             
             return dphi;

@@ -8,18 +8,16 @@
  */
 package xal.model.probe.traj;
 
-import xal.tools.beam.SpaceIndex3D;
-import xal.tools.beam.PhaseIndex;
-import xal.tools.beam.RelativisticParameterConverter;
-import xal.tools.beam.PhaseVector;
+import xal.model.probe.TwissProbe;
+import xal.model.xml.ParsingException;
 import xal.tools.beam.PhaseMatrix;
+import xal.tools.beam.PhaseVector;
 import xal.tools.beam.Twiss;
 import xal.tools.beam.Twiss3D;
+import xal.tools.beam.Twiss3D.SpaceIndex3D;
 import xal.tools.data.DataAdaptor;
 import xal.tools.data.DataFormatException;
 import xal.tools.math.r3.R3;
-import xal.model.probe.TwissProbe;
-import xal.model.xml.ParsingException;
 
 
 
@@ -48,6 +46,9 @@ public class TwissProbeState extends BunchProbeState implements IPhaseState {
     /** element label for response matrix */
     protected static final String   LABEL_RESP = "resp";
     
+    /** element label for betatron phase */
+    protected static final String   LABEL_PHASE = "phase";
+    
     /** element label for twiss parameters */
     protected static final String   LABEL_TWISS = "twiss";
     
@@ -66,6 +67,9 @@ public class TwissProbeState extends BunchProbeState implements IPhaseState {
     /** accumulated response matrix */
     private PhaseMatrix         matResp;
 
+    /** particle betatron phase (with space charge if present) */
+    private R3                 vecPhsBeta;
+  
     /** current twiss parameters */
     private Twiss3D             envTwiss;
     
@@ -87,10 +91,11 @@ public class TwissProbeState extends BunchProbeState implements IPhaseState {
      */    
     public TwissProbeState() {
         super();
-//        this.desBunch = new BunchDescriptor();
-        this.vecCent = PhaseVector.newZero();
-        this.matResp = PhaseMatrix.identity();
-        this.envTwiss = new Twiss3D();
+        
+        this.vecCent    = PhaseVector.newZero();
+        this.matResp    = PhaseMatrix.identity();
+        this.vecPhsBeta = R3.zero();
+        this.envTwiss   = new Twiss3D();
     }
 	
     /**
@@ -99,12 +104,13 @@ public class TwissProbeState extends BunchProbeState implements IPhaseState {
      * 
      * @param probe     <code>TwissProbe</code> containing initializing state information
      */
-    public TwissProbeState(TwissProbe probe) {
+    public TwissProbeState(final TwissProbe probe) {
         super(probe);
-        this.setCentroid(probe.getCentroid());
-        this.setResponseMatrix(probe.getResponseMatrix());
-        this.setTwiss(probe.getTwiss());
-//        this.setBunchParameters(probe.getBunchParameters());
+        
+        this.setCentroid( new PhaseVector( probe.getCentroid() ) );
+        this.setResponseMatrix( new PhaseMatrix( probe.getResponseMatrix() ) );
+        this.setBetatronPhase( new R3( probe.getBetatronPhase() ) );
+        this.setTwiss( new Twiss3D(probe.getTwiss()) );
     }
     
     
@@ -140,7 +146,17 @@ public class TwissProbeState extends BunchProbeState implements IPhaseState {
     public void setResponseMatrix(PhaseMatrix matResp)  {
         this.matResp = matResp;
     }
-    
+
+    /**
+     * Set the betatron phase with space charge for each phase plane.
+     * 
+     * @param vecPhase  vector (&psi;<sub><i>x</i></sub>,&psi;<sub><i>y</i></sub>,&psi;<sub><i>z</i></sub>) 
+     *                  of betatron phases in <b>radians </b>
+     */
+    public void setBetatronPhase(R3 vecPhase) {
+        this.vecPhsBeta = vecPhase;
+    }
+     
     /**
      * Set the Twiss parameters for the given phase plane.
      * 
@@ -320,11 +336,11 @@ public class TwissProbeState extends BunchProbeState implements IPhaseState {
      * Returns the betatron phase with space charge for all three phase
      * planes.
      * 
-     * @return  vector (psix,psiy,psiz) of phases in <b>radians</b>
+     * @return  vector (&psi;<sub><i>x</i></sub>,&psi;<sub><i>y</i></sub>,&psi;<sub><i>z</i></sub>) 
+     *                  of betatron phases in <b>radians </b>
      */
-    @Override
     public R3 getBetatronPhase() {
-        return super.getBunchBetatronPhase();
+        return this.vecPhsBeta;
     }
 
 //    
@@ -398,13 +414,16 @@ public class TwissProbeState extends BunchProbeState implements IPhaseState {
     protected void addPropertiesTo(DataAdaptor daSink) {
         super.addPropertiesTo(daSink);
         
-        DataAdaptor daProbe = daSink.createChild(TwissProbeState.LABEL_TWISSPROBE);
+        DataAdaptor daProbe = daSink.createChild(LABEL_TWISSPROBE);
         
-        DataAdaptor daCent = daProbe.createChild(TwissProbeState.LABEL_CENT);
+        DataAdaptor daCent = daProbe.createChild(LABEL_CENT);
         this.getCentroid().save(daCent);
         
-        DataAdaptor daResp = daProbe.createChild(TwissProbeState.LABEL_RESP);
+        DataAdaptor daResp = daProbe.createChild(LABEL_RESP);
         this.getResponseMatrix().save(daResp);
+        
+        DataAdaptor daPhase = daProbe.createChild(LABEL_PHASE);
+        this.getBetatronPhase().save(daPhase);
 
         this.getTwiss3D().save(daProbe);
 //        DataAdaptor daTwiss = daProbe.createChild(TwissProbeState.LABEL_TWISS);
@@ -425,21 +444,27 @@ public class TwissProbeState extends BunchProbeState implements IPhaseState {
     {
         super.readPropertiesFrom(daSource);
         
-        DataAdaptor daProbe = daSource.childAdaptor(TwissProbeState.LABEL_TWISSPROBE);
+        DataAdaptor daProbe = daSource.childAdaptor(LABEL_TWISSPROBE);
         if (daProbe == null)
             throw new ParsingException("TwissProbeState#readPropertiesFrom(): no child element = " + LABEL_TWISSPROBE);
         
         try {
-            DataAdaptor daCent = daProbe.childAdaptor(TwissProbeState.LABEL_CENT);
+            DataAdaptor daCent = daProbe.childAdaptor(LABEL_CENT);
             if (daCent != null) {
                 PhaseVector vecCent = new PhaseVector(daCent);
                 this.setCentroid(vecCent);
             }
             
-            DataAdaptor daResp = daProbe.childAdaptor(TwissProbeState.LABEL_RESP);
+            DataAdaptor daResp = daProbe.childAdaptor(LABEL_RESP);
             if (daResp != null) {
                 PhaseMatrix matResp = new PhaseMatrix(daResp);
                 this.setResponseMatrix(matResp);
+            }
+            
+            DataAdaptor daPhase = daProbe.childAdaptor(LABEL_PHASE);
+            if (daPhase != null) {
+                R3  vecPhase = new R3(daPhase);
+                this.setBetatronPhase(vecPhase);
             }
             
 //            DataAdaptor daTwiss = daProbe.childAdaptor(TwissProbeState.LABEL_TWISS);

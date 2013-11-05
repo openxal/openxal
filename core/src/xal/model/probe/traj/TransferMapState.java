@@ -56,8 +56,8 @@ public class TransferMapState extends ProbeState /* implements IPhaseState */ {
     /** transfer map through this state */
     private PhaseMap        mapPhiPart;
 
-    /** the trajectory */
-    private TransferMapTrajectory _trajectory;
+//    /** the trajectory */
+//    private TransferMapTrajectory _trajectory;
 
 //    /** full turn map at this element */
 //    @Deprecated
@@ -121,13 +121,14 @@ public class TransferMapState extends ProbeState /* implements IPhaseState */ {
     }
 
 
-    /**
-     * Set the trajectory to the one specified.
-     * @param trajectory the trajectory to use.
-     */
-    public void setTrajectory( final TransferMapTrajectory trajectory ) {
-        _trajectory = trajectory;
-    }
+//    /**
+//     * Set the trajectory to the one specified.
+//     * REOMOVING THE BACKPOINTER TO TRAJECTORY
+//     * @param trajectory the trajectory to use.
+//     */
+//    public void setTrajectory( final TransferMapTrajectory trajectory ) {
+//        _trajectory = trajectory;
+//    }
 
 
     /**

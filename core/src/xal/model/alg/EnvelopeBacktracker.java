@@ -214,8 +214,8 @@ public class EnvelopeBacktracker extends EnvelopeTrackerBase {
         EnvelopeProbe   probe = (EnvelopeProbe)ifcProbe;
         
         // Get initial conditions of probe
-        R3                  vecPhs0  = probe.getBetatronPhase();
-        Twiss[]             twiss0   = probe.getCovariance().computeTwiss();
+//        R3                  vecPhs0  = probe.getBetatronPhase();
+//        Twiss[]             twiss0   = probe.getCovariance().computeTwiss();
         PhaseMatrix         matResp0 = probe.getResponseMatrix();
         PhaseMatrix         matTau0  = probe.getCovariance();
 
@@ -238,9 +238,9 @@ public class EnvelopeBacktracker extends EnvelopeTrackerBase {
 //        probe.advanceTwiss(matPhi, ifcElem.energyGain(probe, dblLen) );
         
         // phase update:
-        Twiss []    twiss1  = probe.getCovariance().computeTwiss();
-        R3          vecPhs1 = vecPhs0.plus( matPhi.compPhaseAdvance(twiss0, twiss1) );
-        probe.setBetatronPhase(vecPhs1);
+//        Twiss []    twiss1  = probe.getCovariance().computeTwiss();
+//        R3          vecPhs1 = vecPhs0.plus( matPhi.compPhaseAdvance(twiss0, twiss1) );
+//        probe.setBetatronPhase(vecPhs1);
         
         /** sako 
          * treatment of ChargeExchangeFoil

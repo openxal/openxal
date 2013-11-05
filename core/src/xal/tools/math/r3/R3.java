@@ -6,6 +6,7 @@
 
 package xal.tools.math.r3;
 
+import xal.tools.data.DataAdaptor;
 import xal.tools.math.BaseVector;
 import xal.tools.math.IIndex;
 
@@ -247,8 +248,20 @@ public class R3 extends BaseVector<R3> implements java.io.Serializable {
 //        }
     }
     
-
-
+    /**
+     * Initializing constructor for <code>R3</code>.  Initial values are taken
+     * from the data source provided.  The values are parsed from a numeric string
+     * and identified by the tag <code>BaseVector#ATTR_Data</code>.
+     *
+     * @param daSource  interface to data source containing initialization data
+     *
+     * @author Christopher K. Allen
+     * @since  Nov 5, 2013
+     */
+    public R3(DataAdaptor daSource) {
+        super(INT_SIZE, daSource);
+    }
+    
     
     /**
      *  Performs a deep copy operation.

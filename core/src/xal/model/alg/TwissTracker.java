@@ -14,10 +14,10 @@ import xal.tools.beam.PhaseMatrix;
 import xal.tools.beam.PhaseMatrix.IND;
 import xal.tools.beam.PhaseVector;
 import xal.tools.beam.RelativisticParameterConverter;
-import xal.tools.beam.SpaceIndex3D;
 import xal.tools.beam.TraceXalUnitConverter;
 import xal.tools.beam.Twiss;
 import xal.tools.beam.Twiss3D;
+import xal.tools.beam.Twiss3D.SpaceIndex3D;
 import xal.tools.beam.em.BeamEllipsoid;
 import xal.tools.data.DataAdaptor;
 import xal.tools.data.DataFormatException;
@@ -589,41 +589,110 @@ public class TwissTracker extends Tracker {
     }
 
     
+//    /**
+//     * Compute and return the betatron phase advance for the centroid produced
+//     * by this matrix when used as a transfer matrix.
+//     * 
+//     * @param   twissEnv0   twiss parameters before action by <code>matPhi</code>
+//     * @param   twissEnv1   twiss parameters after action by <code>matPhi</code>
+//     * @param   matPhi      transfer matrix
+//     * 
+//     * @return  vector (sigx,sigy,sigz) of phase advances in <b>radians</b>
+//     */
+//    private R3   compPhaseAdvance(Twiss3D twissEnv0, Twiss3D twissEnv1, PhaseMatrix matPhi)  {
+//        
+//        int     iElem;      // matrix element index
+//        double  dblR12;     // sub-matrix element R12
+//        double  dblPhsAd;   // phase advance
+//        double  dblBeta0;   // Twiss beta before action of matPhi
+//        double  dblBeta1;   // Twiss beta after action of matPhi
+//        R3      vecPhsAd = new R3();    // returned set of phase advances
+//        
+//        // Loop through each plane
+//        for (SpaceIndex3D index : SpaceIndex3D.values()) {
+//            iElem = 2*index.val();
+//            dblR12 = matPhi.getElem(iElem, iElem+1);
+//            
+//            dblBeta0 = twissEnv0.getTwiss(index).getBeta();
+//            dblBeta1 = twissEnv1.getTwiss(index).getBeta();
+//            
+//            final double dblAlphInt = twsInt[mode].getAlpha();
+//            
+//            final double dblM11 = matPhi.getElem( 2*mode, 2*mode );
+//            final double dblM12 = matPhi.getElem( 2*mode, 2*mode + 1 );
+//
+//            dblPhsAd = Math.asin(dblR12/Math.sqrt(dblBeta0 * dblBeta1) );
+//            
+//            vecPhsAd.set(index.val(), dblPhsAd);
+//            
+//        }
+//        
+//        return vecPhsAd;
+//    }
+    
     /**
-     * Compute and return the betatron phase advance for the centroid produced
-     * by this matrix when used as a transfer matrix.
+     * Compute and return the betatron phase advance for the given Twiss
+     * parameters and transfer matrix.  There are no assumptions on the 
+     * Twiss parameters, they do not need to describe the matched envelope.
+     * Likewise with the given transfer matrix, it does not need to be a full
+     * turn matrix, or the matrix of a periodic cell.
+     * The returned values are restricted to the interval [0,2&pi;).
      * 
      * @param   twissEnv0   twiss parameters before action by <code>matPhi</code>
      * @param   twissEnv1   twiss parameters after action by <code>matPhi</code>
      * @param   matPhi      transfer matrix
      * 
-     * @return  vector (sigx,sigy,sigz) of phase advances in <b>radians</b>
+     * @return  vector (&psi;<sub><i>x</i></sub>,&psi;<sub><i>y</i></sub>,&psi;<sub><i>z</i></sub>) of phase advances in <b>radians</b>
      */
-    private R3   compPhaseAdvance(Twiss3D twissEnv0, Twiss3D twissEnv1, PhaseMatrix matPhi)  {
+    private R3 compPhaseAdvance(Twiss3D twsInit, Twiss3D twsFinal, PhaseMatrix matPhi) {
+
+        final Twiss3D twsFnl = twsFinal;
+        final Twiss3D twsInt = twsInit;
+
+        final double[] arrPhsAdv = new double[3];
         
-        int     iElem;      // matrix element index
-        double  dblR12;     // sub-matrix element R12
-        double  dblPhsAd;   // phase advance
-        double  dblBeta0;   // Twiss beta before action of matPhi
-        double  dblBeta1;   // Twiss beta after action of matPhi
-        R3      vecPhsAd = new R3();    // returned set of phase advances
-        
-        // Loop through each plane
-        for (SpaceIndex3D index : SpaceIndex3D.values()) {
-            iElem = 2*index.val();
-            dblR12 = matPhi.getElem(iElem, iElem+1);
+        for ( SpaceIndex3D mode : SpaceIndex3D.values() ) {
+            int     iElem = 2 * mode.val();
             
-            dblBeta0 = twissEnv0.getTwiss(index).getBeta();
-            dblBeta1 = twissEnv1.getTwiss(index).getBeta();
+            final double dblBetaFnl = twsFnl.getTwiss(mode).getBeta();
+            final double dblBetaInt = twsInt.getTwiss(mode).getBeta();
             
-            dblPhsAd = Math.asin(dblR12/Math.sqrt(dblBeta0 * dblBeta1) );
+            final double dblAlphInt = twsInt.getTwiss(mode).getAlpha();
             
-            vecPhsAd.set(index.val(), dblPhsAd);
+            final double dblM11 = matPhi.getElem( 2*iElem, 2*iElem );
+            final double dblM12 = matPhi.getElem( 2*iElem, 2*iElem + 1 );
+
+            // Compute the phase advance for this plane
+            double dblSinPhs = dblM12 / Math.sqrt( dblBetaFnl * dblBetaInt );
+            dblSinPhs = Math.max( Math.min( dblSinPhs, 1.0 ), -1.0 );     // make sure it is in the range [-1, 1]
+
+            final double   dblPhsAdv  = Math.asin( dblSinPhs );
             
+            // Compute the cosine of phase advance for identifying the phase quadrant
+            final double cosPhase = dblM11 * Math.sqrt( dblBetaInt / dblBetaFnl) - dblAlphInt * dblSinPhs;
+
+            // Put the phase advance in the positive real line
+            if ( cosPhase >= 0 ) {
+                if ( dblSinPhs >= 0 ) {
+
+                    arrPhsAdv[mode.val()] = dblPhsAdv;
+                } else {
+
+                    arrPhsAdv[mode.val()] = 2 * Math.PI + dblPhsAdv;                 
+                }
+
+            } else {
+
+                arrPhsAdv[mode.val()] = Math.PI - dblPhsAdv;
+            }           
         }
-        
-        return vecPhsAd;
+
+        // Pack into vector format and return
+        R3 vecPhases = new R3( arrPhsAdv );
+
+        return vecPhases;
     }
+
 
     
     /**
@@ -770,7 +839,7 @@ public class TwissTracker extends Tracker {
      * 
      * @return          incremental increase in longitudinal RMS emittance for probe
      */
-    public double correctLongSigmaPhaseSpread(TwissProbe probe, IdealRfGap elem) {
+    private double correctLongSigmaPhaseSpread(TwissProbe probe, IdealRfGap elem) {
         
         double phi = elem.getPhase();
         double dphi = this.phaseSpread(probe, elem);
@@ -821,7 +890,7 @@ public class TwissTracker extends Tracker {
      * 
      * @return          incremental increase in transverse RMS emittance for probe
      */
-    public double correctTransFocusingPhaseSpread(TwissProbe probe, IdealRfGap elem) {
+    private double correctTransFocusingPhaseSpread(TwissProbe probe, IdealRfGap elem) {
         double cor;
 
         double dphi = this.phaseSpread(probe, elem);
@@ -862,7 +931,7 @@ public class TwissTracker extends Tracker {
      * 
      * @author Hiroyuki Sako
      */
-    public double phaseSpread(TwissProbe probe, IdealRfGap elem) {
+    private double phaseSpread(TwissProbe probe, IdealRfGap elem) {
         
         
         double Er = probe.getSpeciesRestEnergy();

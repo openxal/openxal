@@ -12,13 +12,6 @@
  
 package xal.model.alg;
 
-import  xal.tools.math.r3.R3;
-
-import xal.tools.beam.CovarianceMatrix;
-import xal.tools.beam.PhaseMap;
-import xal.tools.beam.PhaseMatrix;
-import xal.tools.beam.Twiss;
-
 import xal.model.IElement;
 import xal.model.IProbe;
 import xal.model.ModelException;
@@ -27,6 +20,9 @@ import xal.model.elem.IdealMagQuad;
 import xal.model.elem.IdealRfGap;
 import xal.model.probe.EnvelopeProbe;
 import xal.model.probe.traj.ProbeState;
+import xal.tools.beam.CovarianceMatrix;
+import xal.tools.beam.PhaseMap;
+import xal.tools.beam.PhaseMatrix;
 
 
 /**
@@ -198,14 +194,13 @@ public class EnvelopeTracker extends EnvelopeTrackerBase {
      *  specified length.  Applies a space charge kick at the end of the element
      *  subsection for any probe having nonzero beam current.
      *
-     *  @param  ifcElem     interface to the beam element
+     *  @param  iElem     interface to the beam element
      *  @param  ifcProbe    interface to the probe
      *  @param  dblLen      length of element subsection to advance
      *
      *  @exception ModelException     bad element transfer matrix/corrupt probe state
      */
-    @SuppressWarnings("deprecation")
-    protected void advanceState(IProbe ifcProbe, IElement ifcElem, double dblLen) 
+    protected void advanceState(IProbe ifcProbe, IElement iElem, double dblLen) 
         throws ModelException 
     {
         
@@ -213,15 +208,15 @@ public class EnvelopeTracker extends EnvelopeTrackerBase {
         EnvelopeProbe   probe = (EnvelopeProbe)ifcProbe;
         
         // Get initial conditions of probe
-        R3                 vecPhs0  = probe.getBetatronPhase();
-        Twiss[]            twiss0   = probe.getCovariance().computeTwiss();
+//        R3                 vecPhs0  = probe.getBetatronPhase();
+//        Twiss[]            twiss0   = probe.getCovariance().computeTwiss();
         PhaseMatrix        matRnsp0 = probe.getResponseMatrixNoSpaceCharge();
         PhaseMatrix        matResp0 = probe.getResponseMatrix();
         CovarianceMatrix   matTau0  = probe.getCovariance();
         
         // Compute the transfer matrix
-        PhaseMatrix matPhi_op  = ifcElem.transferMap(probe, dblLen).getFirstOrder(); 
-        PhaseMatrix matPhi_sc = compTransferMatrix(dblLen, probe, ifcElem);
+        PhaseMatrix matPhi_op = iElem.transferMap(probe, dblLen).getFirstOrder(); 
+        PhaseMatrix matPhi_sc = compTransferMatrix(dblLen, probe, iElem);
         
         
         // Advance the probe states 
@@ -231,7 +226,7 @@ public class EnvelopeTracker extends EnvelopeTrackerBase {
         
         
         if (this.getEmittanceGrowthFlag())   
-            matTau1 = this.addEmittanceGrowth(probe, ifcElem, matTau1);
+            matTau1 = this.addEmittanceGrowth(probe, iElem, matTau1);
         
         
         
@@ -240,18 +235,18 @@ public class EnvelopeTracker extends EnvelopeTrackerBase {
         probe.setResponseMatrix(matResp1);
         probe.setCurrentResponseMatrix(matPhi_sc);
         probe.setCorrelation(new CovarianceMatrix(matTau1));
-        probe.advanceTwiss(matPhi_sc, ifcElem.energyGain(probe, dblLen) );
+//        probe.advanceTwiss(matPhi_sc, iElem.energyGain(probe, dblLen) );
         
         // phase update:
         //obsolete Twiss []    twiss1  = probe.getTwiss();
-        Twiss []    twiss1  = probe.getCovariance().computeTwiss();
-        R3          vecPhs1 = vecPhs0.plus( matPhi_sc.compPhaseAdvance(twiss0, twiss1) );
-        probe.setBetatronPhase(vecPhs1);
+//        Twiss []    twiss1  = probe.getCovariance().computeTwiss();
+//        R3          vecPhs1 = vecPhs0.plus( matPhi_sc.compPhaseAdvance(twiss0, twiss1) );
+//        probe.setBetatronPhase(vecPhs1);
         
         /** sako 
          * treatment of ChargeExchangeFoil
          **/
-        treatChargeExchange(probe, ifcElem);
+        treatChargeExchange(probe, iElem);
     };
 
 

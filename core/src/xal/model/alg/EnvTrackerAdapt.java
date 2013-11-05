@@ -1167,36 +1167,40 @@ public class EnvTrackerAdapt extends EnvelopeTrackerBase {
             	if (getDebugMode()) {
             		System.out.println("now NORM_LINF");
                 	System.out.println("trying to print matrix");
-	            	PrintWriter os = new PrintWriter(System.out);
-                  	mat.print(os);
-                  	os.flush();
+                	System.out.println(mat);
+//	            	PrintWriter os = new PrintWriter(System.out);
+//                  	mat.print(os);
+//                  	os.flush();
                 }
                 return mat.normInf();
                 
             case EnvTrackerAdapt.NORM_L1:
             	if (getDebugMode()) {
             		System.out.println("now NORM_L1");
-	            	PrintWriter os = new PrintWriter(System.out);
-                  	mat.print(os);
-                  	os.flush();
+                    System.out.println(mat);
+//	            	PrintWriter os = new PrintWriter(System.out);
+//                  	mat.print(os);
+//                  	os.flush();
             	}
                    return mat.norm1();
                 
             case EnvTrackerAdapt.NORM_L2:
             	if (getDebugMode()) {
             		System.out.println("now NORM_L2");
-	            	PrintWriter os = new PrintWriter(System.out);
-                  	mat.print(os);
-                  	os.flush();
+                    System.out.println(mat);
+//            	PrintWriter os = new PrintWriter(System.out);
+//                  	mat.print(os);
+//                  	os.flush();
             	}
                 return mat.norm2();
                 
             default:
             	if (getDebugMode()) {
             		System.out.println("now normInf is obtained");
-	            	PrintWriter os = new PrintWriter(System.out);
-                  	mat.print(os);
-                  	os.flush();
+                    System.out.println(mat);
+//	            	PrintWriter os = new PrintWriter(System.out);
+//                  	mat.print(os);
+//                  	os.flush();
             	}
                 return mat.normInf();
         }

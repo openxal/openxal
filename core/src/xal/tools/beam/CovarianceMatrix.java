@@ -1,5 +1,6 @@
 package xal.tools.beam;
 
+import xal.tools.math.SpaceIndex3D;
 import xal.tools.math.r3.R3x3;
 import Jama.Matrix;
 
