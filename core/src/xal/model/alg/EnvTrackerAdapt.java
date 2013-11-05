@@ -817,69 +817,68 @@ public class EnvTrackerAdapt extends EnvelopeTrackerBase {
      *
      *  @exception ModelException     bad element transfer matrix/corrupt probe state
      */
-    protected void stepThinElement(IProbe ifcProbe, IElement ifcElem) 
-            throws ModelException {
-    	
-    	double dblLen = 0;
-        
+    protected void stepThinElement(IProbe ifcProbe, IElement ifcElem)  throws ModelException {
+
+        double dblLen = 0;
+
         // Identify probe
         EnvelopeProbe   probe = (EnvelopeProbe)ifcProbe;
-        
+
         // Get initial conditions of probe
- //       double              gamma = probe.getGamma();
- //       double              K    = probe.beamPerveance();
+        //       double              gamma = probe.getGamma();
+        //       double              K    = probe.beamPerveance();
         PhaseMatrix         res0 = probe.getResponseMatrix();
         R3                  phs0 = probe.getBetatronPhase();
-	//obsolete Twiss [] twissOld = probe.getTwiss();
+        //obsolete Twiss [] twissOld = probe.getTwiss();
         Twiss [] twissOld = probe.getCovariance().computeTwiss();
-	CovarianceMatrix   chi0 = probe.getCovariance(); // chi0 = sigma matrix(raw)
-        
+        CovarianceMatrix   chi0 = probe.getCovariance(); // chi0 = sigma matrix(raw)
+
         // Get properties of the element
         double      L    = dblLen;
         PhaseMap    mapE = ifcElem.transferMap(ifcProbe, L); //first calculate transfer matrix (mapE, PhiE=Phi)
         PhaseMatrix PhiE = mapE.getFirstOrder();  
-        
-	PhaseMatrix Phi = PhiE;//transfermap
-        
- 
-    PhaseMatrix res1 = Phi.times( res0); // 
-    PhaseMatrix chi1 = chi0.conjugateTrans( Phi );  //chi1 = sigma matrix (new)
 
-//    PhaseMatrix chi1raw = chi0.conjugateTrans( Phi );  //chi1 = sigma matrix (new)
-       
-    //sako emittance growth effect for RFGap
+        PhaseMatrix Phi = PhiE;//transfermap
 
-//    CovarianceMatrix cor2 = null;
 
-    if (ifcElem instanceof IdealRfGap) {
-	/*
+        PhaseMatrix res1 = Phi.times( res0); // 
+        PhaseMatrix chi1 = chi0.conjugateTrans( Phi );  //chi1 = sigma matrix (new)
+
+        //    PhaseMatrix chi1raw = chi0.conjugateTrans( Phi );  //chi1 = sigma matrix (new)
+
+        //sako emittance growth effect for RFGap
+
+        //    CovarianceMatrix cor2 = null;
+
+        if (ifcElem instanceof IdealRfGap) {
+            /*
     	double sigmaCorTrans = ((IdealRfGap)ifcElem).correctTransSigmaPhaseSpread(probe);
     	double sigmaCorLong  = ((IdealRfGap)ifcElem).correctLongSigmaPhaseSpread(probe);
-	*/
+             */
 
-	//new 7 Aug 06, Sako
+            //new 7 Aug 06, Sako
 
-	double sigmaCor[] = ((IdealRfGap)ifcElem).correctSigmaPhaseSpread(probe); //correction for sigma matrix
+            double sigmaCor[] = ((IdealRfGap)ifcElem).correctSigmaPhaseSpread(probe); //correction for sigma matrix
 
-	double sigmaCorTrans = sigmaCor[0];
-	double sigmaCorLong = sigmaCor[1];
+            double sigmaCorTrans = sigmaCor[0];
+            double sigmaCorLong = sigmaCor[1];
 
-    	double s11new = chi1.getElem(1,1)+sigmaCorTrans*chi1.getElem(0,0);
-	chi1.setElem(1,1,s11new);
-    	double s33new = chi1.getElem(3,3)+sigmaCorTrans*chi1.getElem(2,2);
-	chi1.setElem(3,3,s33new);
-    	double s55new = chi1.getElem(5,5)+sigmaCorLong*chi1.getElem(4,4);
-	chi1.setElem(5,5,s55new);
+            double s11new = chi1.getElem(1,1)+sigmaCorTrans*chi1.getElem(0,0);
+            chi1.setElem(1,1,s11new);
+            double s33new = chi1.getElem(3,3)+sigmaCorTrans*chi1.getElem(2,2);
+            chi1.setElem(3,3,s33new);
+            double s55new = chi1.getElem(5,5)+sigmaCorLong*chi1.getElem(4,4);
+            chi1.setElem(5,5,s55new);
 
-	// some conversion factor necessary between sigma44 and sigma55, I think
-	//                                          <z*z>        <z',z'>
-	//t3d    dPhi = (1.0/( (vnorm*lambda)/360.0 ))*z
-	//t3d        dW   = (W/( 1.0/(gamma*(gamma+1)) ))*zp
-	//  vnorm = beta
-	// lambda = LightSpeed / f;
+            // some conversion factor necessary between sigma44 and sigma55, I think
+            //                                          <z*z>        <z',z'>
+            //t3d    dPhi = (1.0/( (vnorm*lambda)/360.0 ))*z
+            //t3d        dW   = (W/( 1.0/(gamma*(gamma+1)) ))*zp
+            //  vnorm = beta
+            // lambda = LightSpeed / f;
 
-	//z/zp = dPhi/dW * (1/((vnorm*lambda/360)*W *(gamma*(gamma+1))
-/*
+            //z/zp = dPhi/dW * (1/((vnorm*lambda/360)*W *(gamma*(gamma+1))
+            /*
 	double freq = ((IdealRfGap)ifcElem).getFrequency();
 	double Er = probe.getSpeciesRestEnergy();
 	double Wi = probe.getKineticEnergy();
@@ -906,50 +905,50 @@ public class EnvTrackerAdapt extends EnvelopeTrackerBase {
 	PhaseVector phaseT3dNew = chiT3d.getMean();
 
 	cor2 = converter.correlationMatrixFromT3d(twissT3dNew[0],twissT3dNew[1],twissT3dNew[2],phaseT3dNew);
-*/
-	/*
+             */
+            /*
 	System.out.println("sigmaCorTrans, sigmaCorLong = "+sigmaCorTrans+" "+sigmaCorLong);
 	System.out.println("chi1,chi1raw,cor2(11) = "+chi1.getElem(1,1)+" "+cor2.getElem(1,1));
 	System.out.println("chi1,chi1raw,cor2(33) = "+chi1.getElem(3,3)+" "+cor2.getElem(3,3));
 	System.out.println("chi1,chi1raw,cor2(55) = "+chi1.getElem(5,5)+" "+cor2.getElem(5,5));
-	*/
-	/*
+             */
+            /*
 	double vnorm = converter.getVNorm();
 	double gamma = converter.getGamma();
 	double lambda = converter.getLambda();
 	double convFactor = vnorm*lambda/360 *Wi *(gamma*(gamma+1))*vnorm*lambda/360 *Wi *(gamma*(gamma+1))/1000/1000;
 
 	System.out.println("convFactor = "+convFactor);
-	*/
+             */
 
 
 
-    } else {
-    	// System.out.println("not instanceof IdealRfGap");
-    }
+        } else {
+            // System.out.println("not instanceof IdealRfGap");
+        }
 
         // Save the new state variables in the probe
-	probe.setResponseMatrix(res1);
+        probe.setResponseMatrix(res1);
 
-	/*
+        /*
         if (cor2 != null) {
 	    probe.setCorrelation(cor2);
 	} else {
 	    probe.setCorrelation(new CovarianceMatrix(chi1));
 	    }
-	*/
-	//default
-	probe.setCorrelation(new CovarianceMatrix(chi1));
-	probe.advanceTwiss(Phi, ifcElem.energyGain(probe, dblLen) );//Phi=transferemap
-   
-	// phase update:
-	//obsolete Twiss [] twissNew = probe.getTwiss();
-	Twiss [] twissNew = probe.getCovariance().computeTwiss();
+         */
+        //default
+        probe.setCorrelation(new CovarianceMatrix(chi1));
+        probe.advanceTwiss(Phi, ifcElem.energyGain(probe, dblLen) );//Phi=transferemap
+
+        // phase update:
+        //obsolete Twiss [] twissNew = probe.getTwiss();
+        Twiss [] twissNew = probe.getCovariance().computeTwiss();
         R3  phs1 = phs0.plus( Phi.compPhaseAdvance(twissOld, twissNew) );//Phi=Transferemap
         probe.setBetatronPhase(phs1);
 
-        
-	this.advanceProbe(probe, ifcElem, 0.0);
+
+        this.advanceProbe(probe, ifcElem, 0.0);
     };
 
     /** Original code
