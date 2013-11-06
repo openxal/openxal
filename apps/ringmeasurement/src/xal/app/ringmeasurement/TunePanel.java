@@ -786,7 +786,7 @@ public class TunePanel extends JPanel implements ConnectionListener,
 				.stateForElement(goodBPMs.get(i));
 				
 				// CKA - This
-				R3  vecPhaseBpm = cmpRingParams.getBetatronPhase(state);
+				R3  vecPhaseBpm = cmpRingParams.computeBetatronPhase(state);
 				
 				xModelPhase[i] = vecPhaseBpm.getx() - xModelPhase0;
 				yModelPhase[i] = vecPhaseBpm.gety() - yModelPhase0;

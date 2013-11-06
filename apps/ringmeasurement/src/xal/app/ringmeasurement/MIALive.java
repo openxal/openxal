@@ -602,7 +602,7 @@ public class MIALive extends JPanel{
 	                //     then calculation the matched Twiss parameters at
 	                //     the state location.
 	                TransferMapState staXfer = (TransferMapState)state;
-	                Twiss[]          arrTws  = cmpRingParams.getTwiss(staXfer);
+	                Twiss[]          arrTws  = cmpRingParams.computeTwissParameters(staXfer);
 	                
 //	                twiss = ((TransferMapState)state).getTwiss();
 	                twiss = arrTws;
@@ -676,7 +676,7 @@ public class MIALive extends JPanel{
                     //     then calculation the matched Twiss parameters at
                     //     the state location.
                     TransferMapState staXfer = (TransferMapState)state;
-                    Twiss[]          arrTws  = cmpRingParams.getTwiss(staXfer);
+                    Twiss[]          arrTws  = cmpRingParams.computeTwissParameters(staXfer);
                     
 //                  twiss = ((TransferMapState)state).getTwiss();
                     twiss = arrTws;

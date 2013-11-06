@@ -880,7 +880,7 @@ public abstract class CalcEngine {
 //     */
 //
 //    /*
-//     * IPhaseState Interface 
+//     * IMachineParameters Interface 
 //     */
 //
 //    /**

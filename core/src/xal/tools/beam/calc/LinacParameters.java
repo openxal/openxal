@@ -8,11 +8,17 @@ package xal.tools.beam.calc;
 
 import xal.model.probe.TwissProbe;
 import xal.model.probe.traj.EnvelopeTrajectory;
+import xal.model.probe.traj.IPhaseState;
+import xal.model.probe.traj.EnvelopeProbeState;
+import xal.model.probe.traj.ProbeState;
+import xal.model.probe.traj.TransferMapState;
+import xal.model.probe.traj.TransferMapTrajectory;
 import xal.tools.beam.PhaseMatrix;
+import xal.tools.beam.PhaseVector;
 import xal.tools.beam.RelativisticParameterConverter;
 import xal.tools.beam.Twiss;
 import xal.tools.beam.Twiss3D;
-import xal.tools.math.SpaceIndex3D;
+import xal.tools.beam.Twiss3D.SpaceIndex3D;
 import xal.tools.math.r3.R3;
 
 /**
@@ -22,8 +28,37 @@ import xal.tools.math.r3.R3;
  * @author Christopher K. Allen
  * @since  Oct 22, 2013
  */
-public class LinacParameters extends CalcEngine {
+public class LinacParameters extends CalcEngine implements IMachineParameters<EnvelopeProbeState>{
 
+
+    /*
+     * Local Attributes
+     */
+    
+    /** The trajectory around one turn of the ring */
+    private final EnvelopeTrajectory        trjLinac;
+    
+    /** The final transfer map probe state (at the end of the ring) */
+    private final EnvelopeProbeState        staFinal;
+
+    /** The response matrix for the linac (between initial state and final state) */
+    private final PhaseMatrix               matResp;
+
+    
+    /** The betatron phase advances at the at the exit of the linac */
+    private final R3                        vecPhsAdv;
+    
+    /** The fixed orbit position at the ring entrance */
+    private final PhaseVector               vecFxdPt;
+    
+    /** The matched beam Twiss parameters at the start of the ring */
+    private final Twiss[]                   arrTwsMch;
+
+    
+    /*
+     * Initialization
+     */
+    
     /**
      * Constructor for LinacParameters.
      *
@@ -31,8 +66,23 @@ public class LinacParameters extends CalcEngine {
      * @author Christopher K. Allen
      * @since  Oct 22, 2013
      */
-    public LinacParameters(EnvelopeTrajectory trjEnvSim) {
-        // TODO Auto-generated constructor stub
+    public LinacParameters(EnvelopeTrajectory trjLinac) {
+        ProbeState  pstFinal = trjLinac.finalState();
+        
+        // Check for correct probe types
+        if ( !( pstFinal instanceof EnvelopeProbeState) )
+            throw new IllegalArgumentException(
+                    "Trajectory states are not EnvelopeProbeStates? - " 
+                    + pstFinal.getClass().getName()
+                    );
+        
+        this.trjLinac  = trjLinac;
+        this.staFinal  = (EnvelopeProbeState)pstFinal;
+        this.matResp   = this.staFinal.getResponseMatrix();
+        
+        this.vecPhsAdv = super.calculatePhaseAdvPerCell(this.matResp);
+        this.vecFxdPt  = super.calculateFixedPoint(this.matPhiRng);
+        this.arrTwsMch = super.calculateMatchedTwiss(this.matPhiRng); 
     }
     
     public R3 computePhaseAdvance(PhaseMatrix matPhi, Twiss twsInt,  Twiss twsFnl) {

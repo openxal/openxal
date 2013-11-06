@@ -300,7 +300,7 @@ public class CalcQuadSettings implements Runnable {
 			if (!tp.badBPMs.contains(new Integer(i))) {
 			    
 			    // CKA - This
-			    R3   vecPhase = cmpRingParams.getBetatronPhase(state);
+			    R3   vecPhase = cmpRingParams.computeBetatronPhase(state);
 			    
 			    double xPhase = vecPhase.getx() - xPhase0;
 			    double yPhase = vecPhase.gety() - yPhase0;

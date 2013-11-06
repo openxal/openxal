@@ -9,26 +9,28 @@
 
 package xal.app.energymanager;
 
-import xal.tools.*;
-import xal.smf.*;
-import xal.smf.impl.*;
-import xal.smf.impl.qualify.*;
-import xal.tools.beam.*;
-import xal.model.*;
-import xal.sim.scenario.Scenario;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+//import xal.model.probe.resp.*;
+import xal.model.alg.Tracker;
+import xal.model.probe.Probe;
 import xal.sim.scenario.AlgorithmFactory;
 import xal.sim.scenario.ProbeFactory;
-import xal.model.probe.*;
-import xal.tools.solver.*;
-//import xal.model.probe.resp.*;
-import xal.model.alg.*;
+import xal.sim.scenario.Scenario;
+import xal.smf.AcceleratorNode;
+import xal.smf.AcceleratorSeq;
+import xal.smf.Ring;
+import xal.smf.impl.Quadrupole;
+import xal.smf.impl.RfCavity;
+import xal.smf.impl.qualify.OrTypeQualifier;
+import xal.tools.solver.Variable;
 //import xal.model.alg.resp.*;
-import xal.model.probe.traj.*;
 //import xal.model.probe.resp.traj.*;
-import xal.smf.proxy.*;
-
-import java.util.*;
-import java.util.logging.*;
 
 
 /** Simulate the optics using the online model. */

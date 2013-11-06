@@ -6,6 +6,7 @@
  */
 package xal.tools.beam.calc;
 
+import xal.model.probe.traj.IPhaseState;
 import xal.model.probe.traj.ProbeState;
 import xal.model.probe.traj.TransferMapState;
 import xal.model.probe.traj.TransferMapTrajectory;
@@ -36,14 +37,7 @@ import xal.tools.math.r4.R4;
  * @author Christopher K. Allen
  * @since  Oct 22, 2013
  */
-/**
- * Class <code></code>.
- *
- *
- * @author Christopher K. Allen
- * @since  Oct 30, 2013
- */
-public class RingParameters extends CalcEngine  {
+public class RingParameters extends CalcEngine implements IMachineParameters<TransferMapState>  {
     
     /*
      * Local Attributes
@@ -355,46 +349,9 @@ public class RingParameters extends CalcEngine  {
         return new R4(arrDisp);
     }
     
-    
-//    /**
-//     * Calculate the x, y and z tunes
-//     * <br/>
-//     * This calculates the tune of the one-turn map, that is, the
-//     * tune of the entire ring.
-//     * 
-//     * @deprecated  replaced by calculateTunePerCell(PhaseMatrix)
-//     */
-//    //sako version look at the sign of M12, and determine the phase
-//    // since M12=beta*sin(mu) and beta>0, if M12>0, sin(mu)>0, 0<mu<pi
-//    //                                    if M12<0, sin(mu)<0, -pi<mu<0
-//    // sako
-//    private void calculateTunesIfNeeded() {
-//        if ( _needsTuneCalculation ) {
-//            final double PI2 = 2 * Math.PI;
-//            final PhaseMatrix matrix = _originFullTurnMap.getFirstOrder();
-//            
-//            for ( int mode = 0 ; mode < NUM_MODES ; mode++ ) {
-//                final int index = 2 * mode;
-//                double trace = matrix.getElem( index, index ) + matrix.getElem( index + 1, index + 1 );
-//
-//                double m12   = matrix.getElem( index, index+1 );                               
-//                double mu    = Math.acos( trace / 2 );
-//                // problem is when abs(trace)>1, then _tunes are Double.NaN
-//                if (m12<0) {
-//                    mu *= (-1);
-//                }
-//                _tunes[mode] = mu / PI2;            
-//            }
-//            _needsTuneCalculation = false;
-//        }
-//    }
-
-    
-    
-
-    
+ 
     /*
-     * IPhaseState Interface 
+     * IMachineParameters Interface 
      */
 
     /**
@@ -451,13 +408,13 @@ public class RingParameters extends CalcEngine  {
      * @author Christopher K. Allen
      * @since  Aug 14, 2013
      */
-    public Twiss[] getTwiss(TransferMapState state) {
+    @Override
+    public Twiss[] computeTwissParameters(TransferMapState state) {
         PhaseMatrix matFullTrn = this.calculateFullTurnMatrixAt(state);
         Twiss[]     arrTwsMtch = super.calculateMatchedTwiss(matFullTrn);
         
         return arrTwsMtch;
     }
-
 
     /**
      * <p>
@@ -510,7 +467,8 @@ public class RingParameters extends CalcEngine  {
      * @author Christopher K. Allen
      * @since  Aug 14, 2013
      */
-    public R3 getBetatronPhase(TransferMapState state) {
+    @Override
+    public R3 computeBetatronPhase(TransferMapState state) {
         PhaseMatrix matFullTrn = this.calculateFullTurnMatrixAt(state);
         Twiss[]     arrTwsLoc  = super.calculateMatchedTwiss(matFullTrn);
 
@@ -521,24 +479,19 @@ public class RingParameters extends CalcEngine  {
     }
 
 
-    /*
-     * ICoordinateState Interface
+    /**
+     * We return the zero phase vector since there are no well-defined phase 
+     * coordinates for a transfer map. 
+     *
+     * @see xal.model.probe.traj.ICoordinateState#getPhaseCoordinates()
+     *
+     * @author Christopher K. Allen
+     * @since  Oct 22, 2013
      */
-
-//    /**
-//     *
-//     * @see xal.model.probe.traj.ICoordinateState#getPhaseCoordinates()
-//     *
-//     * @author Christopher K. Allen
-//     * @since  Oct 22, 2013
-//     * 
-//     * @deprecated  This needs to be refactored, renamed, commented, and put into context 
-//     */
-//    @Override
-//    public PhaseVector getPhaseCoordinates() {
-//        // TODO Auto-generated method stub
-//        return null;
-//    }
+    @Override
+    public PhaseVector computePhaseCoordinates(TransferMapState state) {
+        return PhaseVector.newZero();
+    }
 
     /**
      * <p>
@@ -612,45 +565,14 @@ public class RingParameters extends CalcEngine  {
      * @author Christopher K. Allen
      * @since  Oct 25, 2013
      */
-    public PhaseVector getFixedOrbit(TransferMapState state) {
+    @Override
+    public PhaseVector computeFixedOrbit(TransferMapState state) {
         PhaseMatrix matFullTrn = this.calculateFullTurnMatrixAt(state);
         PhaseVector vecFixedPt = super.calculateFixedPoint(matFullTrn);
         
         return vecFixedPt; 
     }
 
-    //    /**
-    //     * Calculate the x, y and z tunes
-    //     * <br/>
-    //     * This calculates the tune of the one-turn map, that is, the
-    //     * tune of the entire ring.
-    //     * 
-    //     * @deprecated  replaced by calculateTunePerCell(PhaseMatrix)
-    //     */
-    //    //sako version look at the sign of M12, and determine the phase
-    //    // since M12=beta*sin(mu) and beta>0, if M12>0, sin(mu)>0, 0<mu<pi
-    //    //                                    if M12<0, sin(mu)<0, -pi<mu<0
-    //    // sako
-    //    private void calculateTunesIfNeeded() {
-    //        if ( _needsTuneCalculation ) {
-    //            final double PI2 = 2 * Math.PI;
-    //            final PhaseMatrix matrix = _originFullTurnMap.getFirstOrder();
-    //            
-    //            for ( int mode = 0 ; mode < NUM_MODES ; mode++ ) {
-    //                final int index = 2 * mode;
-    //                double trace = matrix.getElem( index, index ) + matrix.getElem( index + 1, index + 1 );
-    //
-    //                double m12   = matrix.getElem( index, index+1 );                               
-    //                double mu    = Math.acos( trace / 2 );
-    //                // problem is when abs(trace)>1, then _tunes are Double.NaN
-    //                if (m12<0) {
-    //                    mu *= (-1);
-    //                }
-    //                _tunes[mode] = mu / PI2;            
-    //            }
-    //            _needsTuneCalculation = false;
-    //        }
-    //    }
     
         
     /*
