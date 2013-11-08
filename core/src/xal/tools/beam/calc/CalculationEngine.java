@@ -1,5 +1,5 @@
 /**
- * CalcEngine.java
+ * CalculationEngine.java
  *
  * Author  : Christopher K. Allen
  * Since   : Aug 14, 2013
@@ -21,7 +21,7 @@ import xal.tools.math.r6.R6;
 import xal.tools.math.r6.R6x6;
 
 /**
- * Class <code>CalcEngine</code> performs all the common numerical calculation when
+ * Class <code>CalculationEngine</code> performs all the common numerical calculation when
  * computing machine parameters from simulation data.  There are common data produced
  * by ring simulations and linac simulation, however, the interpretation is different.
  * It is up to the child classes to interpret the results of these calculations.
@@ -30,7 +30,7 @@ import xal.tools.math.r6.R6x6;
  * @author Patrick Scruggs
  * @since  Aug 14, 2013
  */
-public abstract class CalcEngine {
+public abstract class CalculationEngine {
 
 
 
@@ -54,7 +54,7 @@ public abstract class CalcEngine {
      * Initialization
      */
 
-    public CalcEngine() {
+    public CalculationEngine() {
     }
 
     
@@ -406,8 +406,8 @@ public abstract class CalcEngine {
      * </p>
      * 
      * @param   matPhi    the transfer matrix that propagated the Twiss parameters
-     * @param   twsOld    Twiss parameter before application of matrix
-     * @param   twsNew    Twiss parameter after application of matrix
+     * @param   twsInit   initial Twiss parameter before application of matrix
+     * @param   twsFinal  final Twiss parameter after application of matrix
      * 
      * @return      the array of betatron tunes (&sigma;<sub><i>x</i></sub>, &sigma;<sub><i>z</i></sub>, &sigma;<sub><i>z</i></sub>)
      * 
@@ -880,7 +880,7 @@ public abstract class CalcEngine {
 //     */
 //
 //    /*
-//     * IMachineParameters Interface 
+//     * ISimulationResults Interface 
 //     */
 //
 //    /**

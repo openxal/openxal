@@ -30,13 +30,7 @@ import xal.tools.data.DataAdaptor;
  * 
  * @author Christopher K. Allen
  * @since  May 28, 2004
- */
-/**
- * Class <code></code>.
- *
- *
- * @author Christopher K. Allen
- * @since  Oct 25, 2013
+ * @version  Oct 25, 2013
  */
 public class TransferMapProbe extends Probe {
     

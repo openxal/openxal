@@ -9,25 +9,28 @@
 
 package xal.app.energymanager;
 
-import xal.tools.*;
-import xal.smf.*;
-import xal.smf.impl.*;
-import xal.tools.beam.*;
-import xal.tools.beam.calc.LinacParameters;
-import xal.tools.beam.calc.RingParameters;
-import xal.model.*;
-import xal.sim.scenario.Scenario;
-import xal.model.probe.*;
-//import xal.model.probe.resp.*;
-import xal.model.alg.*;
-//import xal.model.alg.resp.*;
-import xal.model.probe.traj.*;
-//import xal.model.probe.resp.traj.*;
-import xal.smf.proxy.*;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.Iterator;
+import java.util.List;
 
-import java.util.*;
-import java.util.logging.*;
-import java.text.Collator;
+import xal.model.probe.EnvelopeProbe;
+import xal.model.probe.Probe;
+import xal.model.probe.TransferMapProbe;
+import xal.model.probe.traj.EnvelopeProbeState;
+import xal.model.probe.traj.EnvelopeTrajectory;
+import xal.model.probe.traj.IPhaseState;
+import xal.model.probe.traj.ProbeState;
+import xal.model.probe.traj.Trajectory;
+import xal.model.probe.traj.TransferMapState;
+import xal.model.probe.traj.TransferMapTrajectory;
+import xal.smf.AcceleratorNode;
+import xal.tools.beam.PhaseVector;
+import xal.tools.beam.Twiss;
+import xal.tools.beam.calc.ISimulationResults;
+import xal.tools.beam.calc.LinacCalculations;
+import xal.tools.beam.calc.RingCalculations;
+import xal.tools.math.r3.R3;
 
 
 /** 
@@ -53,19 +56,42 @@ import java.text.Collator;
  * - I have refactored this class to make the simulation data processing depending upon
  * the type of simulation data offered (transfer maps or envelope data).
  * </p>
+ * 
+ * @author Thomas Pelaia
+ * @author Christopher K. Allen
+ * @since  6/14/05.
+ * @version Nov 7, 2013
  */
 public class Simulation {
+    
+    /*
+     * Global Constants
+     */
+    
     /** conversion factor to convert eV to MeV */
     final static private double CONVERT_EV_TO_MEV = 1.0e-6;
     
-	/** index of the X coordinate result */
-	static final public int X_INDEX = IPhaseState.X;
+//	/** index of the X coordinate result */
+//	static final public int X_INDEX = IPhaseState.X;
+//	
+//	/** index of the Y coordinate result */
+//	static final public int Y_INDEX = IPhaseState.Y;
+//	
+//	/** index of the Z coordinate result */
+//	static final public int Z_INDEX = IPhaseState.Z;
+    /** index of the X coordinate result */
+    static final public int X_INDEX = 0;
+    
+    /** index of the Y coordinate result */
+    static final public int Y_INDEX = 1;
+    
+    /** index of the Z coordinate result */
+    static final public int Z_INDEX = 2;
 	
-	/** index of the Y coordinate result */
-	static final public int Y_INDEX = IPhaseState.Y;
 	
-	/** index of the Z coordinate result */
-	static final public int Z_INDEX = IPhaseState.Z;
+	/*
+	 * Local Attributes
+	 */
 	
 	/** Evaluation nodes */
 	final protected List<AcceleratorNode> _evaluationNodes;
@@ -144,8 +170,13 @@ public class Simulation {
 	
 	
 	/** The machine parameter calculation engine */
-	private IPhaseState     cmpMchParams;
+    private ISimulationResults<ProbeState>     cmpMchParams;
 	
+    
+    /*
+     * Initialization 
+     */
+    
 	/** 
 	 * Constructor 
 	 * 
@@ -163,24 +194,30 @@ public class Simulation {
 		
 		// Create the machine parameter calculation engine according to the
 		//    type of probe we are given
-        if (probe instanceof TransferMapProbe) {
-            TransferMapTrajectory   traj = (TransferMapTrajectory)probe.getTrajectory();
-
-            this.cmpMchParams = new RingParameters(traj);
-            
-        } else if (probe instanceof EnvelopeProbe) {
-            EnvelopeTrajectory traj = (EnvelopeTrajectory)probe.getTrajectory();
-            
-            this.cmpMchParams = new LinacParameters(traj);
-            
-        } else {
-            
-            throw new IllegalArgumentException("Unknown probe type " + probe.getClass().getName());
-        }
+		this.cmpMchParams = new MachineCalculations(_trajectory);
+		
+//        if (probe instanceof TransferMapProbe) {
+//            TransferMapTrajectory   traj = (TransferMapTrajectory)probe.getTrajectory();
+//
+//            this.cmpMchParams = new RingCalculations(traj);
+//            
+//        } else if (probe instanceof EnvelopeProbe) {
+//            EnvelopeTrajectory traj = (EnvelopeTrajectory)probe.getTrajectory();
+//            
+//            this.cmpMchParams = new LinacCalculations(traj);
+//            
+//        } else {
+//            
+//            throw new IllegalArgumentException("Unknown probe type " + probe.getClass().getName());
+//        }
 		
 	}
 
 
+	/*
+	 * Object Overrides
+	 */
+	
 	/** Provide a string representation of the global parameters of this Simulation */
 	@Override
     public String toString() {
@@ -409,7 +446,7 @@ public class Simulation {
 	 * @return the array of phase states
 	 */
 	public ProbeState[] getStates() {
-		if ( _states == null ) {
+    	if ( _states == null ) {
 			populateStates();
 		}
 		
@@ -486,7 +523,7 @@ public class Simulation {
 		    
 		    
 //			final Twiss[] twiss = states[ index ].getTwiss();
-            final Twiss[] twiss = this.cmpMchParams.
+            final Twiss[] twiss = this.cmpMchParams.computeTwissParameters(state);
 		    
 			for ( int axis = 0 ; axis <= Z_INDEX ; axis++ ) {
 				alpha[ axis ][ index ] = twiss[ axis ].getAlpha();
@@ -499,13 +536,16 @@ public class Simulation {
 	
 	/** populate Beta */
 	protected void populateBeta() {
-		final IPhaseState[] states = getStates();
+		final ProbeState[] states = getStates();
 		final double[][] beta = new double[ Z_INDEX + 1 ][ states.length ];
 		
 		for ( int index = 0 ; index < states.length ; index++ ) {
-			final Twiss[] twiss = states[ index ].getTwiss();
+//			final Twiss[] arrTwiss = states[ index ].getTwiss();
+			ProbeState    state    = states[ index ];
+			final Twiss[] arrTwiss = this.cmpMchParams.computeTwissParameters(state);
+			
 			for ( int axis = 0 ; axis <= Z_INDEX ; axis++ ) {
-				beta[ axis ][ index ] = twiss[ axis ].getBeta();
+				beta[ axis ][ index ] = arrTwiss[ axis ].getBeta();
 			}			
 		}
 		
@@ -515,11 +555,14 @@ public class Simulation {
 	
 	/** populate emittance */
 	protected void populateEmittance() {
-		final IPhaseState[] states = getStates();
+		final ProbeState[] states = getStates();
 		final double[][] emittance = new double[ Z_INDEX + 1 ][ states.length ];
 		
 		for ( int index = 0 ; index < states.length ; index++ ) {
-			final Twiss[] twiss = states[ index ].getTwiss();
+//			final Twiss[] twiss = states[ index ].getTwiss();
+		    ProbeState    state = states[ index ];
+		    final Twiss[] twiss = this.cmpMchParams.computeTwissParameters(state);
+		    
 			for ( int axis = 0 ; axis <= Z_INDEX ; axis++ ) {
 				emittance[ axis ][ index ] = twiss[ axis ].getEmittance();
 			}			
@@ -695,6 +738,210 @@ public class Simulation {
 				return states;
 			}
 		};
+	}
+	
+	/**
+	 * <p>
+	 * Class <code>MachineCalculations</code>.  This class generalized the
+	 * interface <code>ISimulationResults&lt;S&gt;</code> for use with simulation
+	 * results of either of the two types <code>TransferMapTrajectory</code>
+	 * or <code>EnvelopeTrajectory</code>.  The types to the methods of the
+	 * interface are specified as the general <code>ProbeState</code> base
+	 * class. Thus, probes states of either type <code>TransferMapState</code>
+	 * or <code>EnvelopeProbeState</code> may be passed to the interface
+	 * <code>ISimulationResults</code>. 
+	 * </p>
+	 * <p>
+	 * This class maintains an internal machine parameter calculation engine.
+	 * The type of engine depends on the type of simulation data.
+	 * Correct types and interpretations are determined at run time.
+	 * </p>
+	 *
+	 *
+	 * @author Christopher K. Allen
+	 * @since  Nov 7, 2013
+	 */
+	static class MachineCalculations implements ISimulationResults<ProbeState> {
+
+	    
+	    /*
+	     * Local Attributes
+	     */
+	    
+	    /** The machine parameter calculation engine for rings */
+	    private ISimulationResults<TransferMapState>   cmpRingParams;
+	    
+	    /** The machine parameter calculation engine for linacs */
+	    private ISimulationResults<EnvelopeProbeState> cmpLinacParams;
+	    
+	    
+	    /*
+	     * Initialization
+	     */
+	    
+	    /**
+	     * Constructor for <code>MachineCalculations</code>.  We create an internal
+	     * machine calculation engine based upon the type of the given simulation
+	     * trajectory. 
+	     *
+	     * @param trjSimul
+	     * @throws IllegalArgumentException
+	     *
+	     * @author Christopher K. Allen
+	     * @since  Nov 7, 2013
+	     */
+	    public MachineCalculations(Trajectory trjSimul) throws IllegalArgumentException {
+	        
+	        // Create the machine parameter calculation engine according to the
+	        //    type of probe we are given
+	        if (trjSimul instanceof TransferMapTrajectory) {
+	            TransferMapTrajectory   trj = (TransferMapTrajectory)trjSimul;
+
+	            this.cmpRingParams  = new RingCalculations(trj);
+	            this.cmpLinacParams = null;
+	            
+	        } else if (trjSimul instanceof EnvelopeTrajectory) {
+	            EnvelopeTrajectory trj = (EnvelopeTrajectory)trjSimul;
+	            
+	            this.cmpLinacParams = new LinacCalculations(trj);
+	            this.cmpRingParams  = null;
+	            
+	        } else {
+	            
+	            throw new IllegalArgumentException("Unknown simulation data type " + trjSimul.getClass().getName());
+	        }
+	    }
+	    
+	    
+	    /*
+	     * ISimulationResults Interface
+	     */
+	    
+        /**
+         * <p>
+         * This returns the matched envelope Courant-Snyder parameters at the given state 
+         * location for a ring.  For a linace the actual Courant-Snyder parameters for the beam
+         * envelope (including space charge) are returned, computed from the beam's second
+         * moments. 
+         * </p>
+         *
+         * @see xal.tools.beam.calc.ISimulationResults#computeTwissParameters(xal.model.probe.traj.ProbeState)
+         *
+         * @author Christopher K. Allen
+         * @since  Nov 7, 2013
+         */
+        @Override
+        public Twiss[] computeTwissParameters(ProbeState state) throws IllegalArgumentException {
+            
+            Object  objResult = this.compute("computeTwissParameters", state);
+            Twiss[] arrTwiss = (Twiss[])objResult;
+            
+            return arrTwiss;
+        }
+
+        /**
+         *
+         * @see xal.tools.beam.calc.ISimulationResults#computeBetatronPhase(xal.model.probe.traj.ProbeState)
+         *
+         * @author Christopher K. Allen
+         * @since  Nov 7, 2013
+         */
+        @Override
+        public R3 computeBetatronPhase(ProbeState state) {
+            return (R3)this.compute("computeBetatronPhase",  state);
+        }
+
+        /**
+         *
+         * @see xal.tools.beam.calc.ISimulationResults#computePhaseCoordinates(xal.model.probe.traj.ProbeState)
+         *
+         * @author Christopher K. Allen
+         * @since  Nov 7, 2013
+         */
+        @Deprecated
+        @Override
+        public PhaseVector computePhaseCoordinates(ProbeState state) {
+            return (PhaseVector)this.compute("computePhaseCoordinates", state);
+        }
+
+        /**
+         * <p>
+         * For rings, this is the location of the fixed orbit (invariant under applications
+         * of the full-turn map at the give state) about which betatron oscillations occur.
+         * For linacs, this is the fixed point of the end-to-end transfer map.
+         * </p>
+         *
+         * @see xal.tools.beam.calc.ISimulationResults#computeFixedOrbit(xal.model.probe.traj.ProbeState)
+         *
+         * @author Christopher K. Allen
+         * @since  Nov 7, 2013
+         */
+        @Override
+        public PhaseVector computeFixedOrbit(ProbeState state) {
+            return (PhaseVector)this.compute("computeFixedOrbit", state);
+        }
+        
+        
+        /*
+         * Support Methods
+         */
+
+        /**
+         * Determines the sub-type of the <code>ProbeState</code> object
+         * and uses that information to determine which <code>ISimulationResults</code>
+         * computation engine is used to compute the machine parameters.  (That is,
+         * are we looking at a ring or at a Linac.)  The result is passed back up to the
+         * <code>ISimulationResults</code> interface exposed by this class (i.e.,
+         * the interface method that invoked this method) where its type is identified
+         * and returned to the user of this class.
+         * 
+         * @param strMthName    name of the method in the <code>ISimulationResults</code> interface
+         * @param staArg        <code>ProbeState</code> derived object that is an argument to one of the
+         *                      methods in the <code>ISimulationResults</code> interface
+         *                      
+         * @return              result of invoking the given <code>ISimulationResults</code> method on 
+         *                      the given <code>ProbeState</code> argument
+         *  
+         * @author Christopher K. Allen
+         * @since  Nov 8, 2013
+         */
+        private Object  compute(String strMthName, ProbeState staArg) {
+
+            try {
+
+                if (staArg instanceof TransferMapState) {
+                    TransferMapState    staXfer = (TransferMapState)staArg;
+
+                    Method mthCmp;
+                    mthCmp = this.cmpRingParams.getClass().getDeclaredMethod(strMthName, TransferMapState.class);
+                    Object  objRes = mthCmp.invoke(cmpRingParams, staXfer);
+
+                    return objRes;
+
+                } else if (staArg instanceof EnvelopeProbeState) {
+                    EnvelopeProbeState    staEnv = (EnvelopeProbeState)staArg;
+
+                    Method  mthCmp = this.cmpLinacParams.getClass().getDeclaredMethod(strMthName, EnvelopeProbeState.class);
+                    Object  objRes = mthCmp.invoke(cmpRingParams, staEnv);
+
+                    return objRes;
+
+                } else {
+
+                    throw new IllegalArgumentException("Unknown probe state type " + staArg.getClass().getName());
+                }
+
+            } catch (ClassCastException | 
+                    NoSuchMethodException | 
+                    SecurityException | 
+                    IllegalAccessException | 
+                    IllegalArgumentException | 
+                    InvocationTargetException e
+                    ) {
+                
+                throw new IllegalArgumentException("Included exception thrown invoking method " + strMthName, e);
+            }
+        }
 	}
 }
 

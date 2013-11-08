@@ -10,69 +10,57 @@
 
 package xal.app.ringmeasurement;
 
-import java.io.*;                                                              
-import java.util.*;
-import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.GridLayout;
 import java.awt.Dimension;
-import java.awt.event.*;
-import java.awt.Component;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.text.NumberFormat;
+import java.util.ArrayList;
 
-import javax.swing.*;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.SwingUtilities;
 import javax.swing.Timer;
-import javax.swing.event.*;
-import javax.swing.table.*;
 
-import java.text.ParseException;
-import java.lang.Math.*;
-import java.lang.String;
-
+import xal.model.ModelException;
+import xal.model.probe.Probe;
+import xal.model.probe.traj.ProbeState;
+import xal.model.probe.traj.Trajectory;
+import xal.model.probe.traj.TransferMapState;
+import xal.model.probe.traj.TransferMapTrajectory;
+import xal.sim.scenario.AlgorithmFactory;
+import xal.sim.scenario.ProbeFactory;
+import xal.sim.scenario.Scenario;
+import xal.smf.Accelerator;
+import xal.smf.AcceleratorNode;
+import xal.smf.AcceleratorSeqCombo;
+import xal.smf.data.XMLDataManager;
+import xal.smf.impl.BPM;
+import xal.tools.apputils.EdgeLayout;
+import xal.tools.beam.Twiss;
+import xal.tools.beam.calc.RingCalculations;
+import xal.tools.plot.BasicGraphData;
+import xal.tools.plot.FunctionGraphsJPanel;
+import xal.tools.swing.DecimalField;
 import Jama.Matrix;
 import Jama.SingularValueDecomposition;
-import xal.tools.apputils.EdgeLayout;
-import xal.smf.impl.*;
-import xal.smf.Ring;
-import xal.tools.swing.DecimalField;
-import xal.ca.*;
-import xal.tools.plot.*;
-import xal.tools.apputils.files.*;
-import xal.service.pvlogger.*;
 //import xal.tools.pvlogger.query.*;
-import xal.tools.database.*;
-import xal.tools.beam.Twiss;
-import xal.tools.beam.calc.RingParameters;
-import xal.model.*;
-import xal.tools.fit.LinearFit;
-import xal.model.probe.TransferMapProbe;
-import xal.sim.scenario.ProbeFactory;
-import xal.model.alg.TransferMapTracker;
-import xal.sim.scenario.*;
-import xal.model.probe.Probe;
-import xal.model.probe.traj.*;
 //import xal.model.probe.traj.BeamProbeState;
-import xal.sim.sync.PVLoggerDataSource;
-import xal.smf.*;
-import xal.tools.xml.*;
-import xal.tools.data.*;
-import xal.smf.application.*;
-import xal.smf.*;
-import xal.smf.data.XMLDataManager;
-import xal.application.*;
 
 
 /**
+ * Class for calculating beta functions via MIA analysis from live BPM data.
+ *    
  * @author cp3, tep
- * Class for calculating beta functions via MIA analysis from live BPM data.   
- */
- 
-/**
- * Class <code></code>.
- *
- *
- * @author Christopher K. Allen
- * @since  Oct 30, 2013
  */
 public class MIALive extends JPanel{
     
@@ -591,7 +579,7 @@ public class MIALive extends JPanel{
 	        // CKA - Down cast the simulation trajectory results to the proper type then
 	        //   create a ring parameter calculation engine for processing
 	        TransferMapTrajectory  trjSimulation = (TransferMapTrajectory)traj;
-	        RingParameters         cmpRingParams = new RingParameters(trjSimulation);
+	        RingCalculations         cmpRingParams = new RingCalculations(trjSimulation);
 
 	        int j = 0;
 	        for (int i = 0; i < BPMTable.getRowCount(); i++) {
@@ -666,7 +654,7 @@ public class MIALive extends JPanel{
             // CKA - Down cast the simulation trajectory results to the proper type then
             //   create a ring parameter calculation engine for processing
             TransferMapTrajectory  trjSimulation = (TransferMapTrajectory)traj;
-            RingParameters         cmpRingParams = new RingParameters(trjSimulation);
+            RingCalculations         cmpRingParams = new RingCalculations(trjSimulation);
 
 			int j = 0;
 			for (int i = 0; i < BPMTable.getRowCount(); i++) {

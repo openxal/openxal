@@ -19,7 +19,6 @@ import xal.tools.beam.PhaseMatrix;
 import xal.tools.beam.PhaseVector;
 import xal.tools.beam.Twiss;
 import xal.tools.data.DataAdaptor;
-import xal.tools.math.r3.R3;
 
 /**
  * <p>

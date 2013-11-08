@@ -553,14 +553,14 @@ public abstract class SquareMatrix<M extends SquareMatrix<M>> extends BaseMatrix
      *  <b>&sigma;</b><sub>1</sub> is given by
      *  <br/>
      *  <br/>
-     *  &nbsp; &nbsp; <b>&sigma</b><sub>1</sub> = <b>&Phi;</b><b>&sigma;</b><sub>0</sub><b>&Phi;</b><sup><i>-1</i></sup>
+     *  &nbsp; &nbsp; <b>&sigma;</b><sub>1</sub> = <b>&Phi;</b><b>&sigma;</b><sub>0</sub><b>&Phi;</b><sup><i>-1</i></sup>
      *  <br/>
      *  <br/> 
      *  </p>
      *
      *  @param  matPhi      conjugating matrix <b>&Phi;</b> (typically a transfer matrix)
      *
-     *  @return             matPhi*this*matPhi^-1
+     *  @return             matPhi*this*matPhi<sup>-1</sup>
      */
     public M conjugateInv(M matPhi) {
         try {

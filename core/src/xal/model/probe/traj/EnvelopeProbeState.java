@@ -6,7 +6,6 @@ import xal.tools.beam.PhaseVector;
 import xal.tools.beam.PhaseMatrix;
 import xal.tools.beam.Twiss;
 import xal.tools.data.DataAdaptor;
-import xal.tools.math.r3.R3;
 import xal.model.probe.EnvelopeProbe;
 import xal.model.probe.Probe;
 import xal.model.xml.ParsingException;
