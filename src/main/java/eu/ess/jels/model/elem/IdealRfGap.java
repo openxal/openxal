@@ -335,6 +335,8 @@ public class IdealRfGap extends ThinElement implements IRfGap {
         	double ky;
         	double kxy;
         	double kz;
+        	        	
+        	double C;
         	
     		if (TTFFit.getCoef(0)!=0)
     		{
@@ -349,7 +351,8 @@ public class IdealRfGap extends ThinElement implements IRfGap {
     			gamma_end=gamma_start+E0TL_scaled/mass*Math.cos(Phis);    			
     			beta_end = computeBetaFromGamma(gamma_end);
     			double gamma_avg=(gamma_end+gamma_start)/2;
-    			double beta_avg=(beta_end+beta_start)/2;
+    			//double beta_avg=(beta_end+beta_start)/2;
+    			double beta_avg = computeBetaFromGamma(gamma_avg);
     /*
     			DeltaPhi=E0TL_scaled/(mass*1e6)*sin(Phis)/(pow(gamma_avg,2)*beta_avg)*(kT/T);
     */
@@ -358,6 +361,8 @@ public class IdealRfGap extends ThinElement implements IRfGap {
     			kx=1-E0TL_scaled/(2*mass)*Math.cos(Phis)/(Math.pow(beta_avg,2)*Math.pow(gamma_avg,3))*(Math.pow(gamma_avg,2)+kT/T);
     			ky=1-E0TL_scaled/(2*mass)*Math.cos(Phis)/(Math.pow(beta_avg,2)*Math.pow(gamma_avg,3))*(Math.pow(gamma_avg,2)-kT/T);
     			kz=2*Math.PI*(E0TL_scaled/mass)*Math.sin(Phis)/(Math.pow(beta_avg,2)*lambda);
+    			
+    			C=Math.sqrt(((beta_start*gamma_start)/(beta_end*gamma_end))/(kx*ky));
     		}
     		else
     		{
@@ -366,16 +371,18 @@ public class IdealRfGap extends ThinElement implements IRfGap {
     			beta_end = computeBetaFromGamma(gamma_end);
     			
     			double gamma_avg=(gamma_end+gamma_start)/2;
-    			double beta_avg=(beta_end+beta_start)/2;
+    			//double beta_avg=(beta_end+beta_start)/2;
+    			double beta_avg=computeBetaFromGamma(gamma_avg);
 
-    			kxy=-Math.PI*E0TL*Math.sin(Phis)/(Math.pow(gamma_avg*beta_avg,2)*lambda*mass);
+    			kxy=-Math.PI*E0TL*Math.sin(Phis)/(Math.pow(gamma_avg*beta_avg,2)*lambda*mass);    			
+    			
     			kx=1-E0TL*Math.cos(Phis)/(2*mass*Math.pow(beta_avg,2)*gamma_avg);
     			ky=kx;
     			kz=2*Math.PI*E0TL*Math.sin(Phis)/(Math.pow(beta_avg,2)*lambda*mass);
+    			
+    			C = 1.0;
     		}
     		
-    		double C=Math.sqrt(((beta_start*gamma_start)/(beta_end*gamma_end))/(kx*ky));
-
     		matPhi.setElem(0, 0, kx*C);
     		matPhi.setElem(1,0,kxy/(beta_end*gamma_end));
     		matPhi.setElem(1,1,ky*C);
