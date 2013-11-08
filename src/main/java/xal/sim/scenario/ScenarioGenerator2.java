@@ -247,15 +247,15 @@ public class ScenarioGenerator2 {
 	 * */
 	private Lattice convertLatticeAndAddDrift(List<LatticeElement> splitElements) {
 		double position = sequence.getPosition(); // always 0.0		
-		// int driftCount = 0;
+		int driftCount = 0;
 		
 		Sector sector = new Sector();
 		
 		for (LatticeElement element : splitElements) {
 			double driftLength = (element.isThin() ? element.getCenter() : element.getStartPosition()) - position;
 			if (driftLength > EPS) {
-				//sector.addChild(elementMapping.createDrift("DR" + (++driftCount), driftLength));
-				sector.addChild(elementMapping.createDrift("DRFT", driftLength));
+				sector.addChild(elementMapping.createDrift("DR" + (++driftCount), driftLength));
+				//sector.addChild(elementMapping.createDrift("DRFT", driftLength));
 			}
 			IComponent modelElement = element.convert();
 			sector.addChild(modelElement);

@@ -307,18 +307,24 @@ public abstract class TestCommon {
 			if (comp instanceof IElement) {				
 				IElement el = (IElement)comp;				
 				//el.transferMap(probe, el.getLength()).getFirstOrder().print();
+				ProbeState psnext = trajectory.stateForElement(el.getId());
 				if (ps != null) {
-					probe.applyState(ps);				
-					pm = el.transferMap(probe, el.getLength()).compose(pm);
+					probe.applyState(ps);
+					PhaseMap element_pm = el.transferMap(probe, el.getLength());
+					
+					if (!(elementMapping instanceof ElsElementMapping))
+						ROpenXal2TW(ps.getGamma(), psnext.getGamma(), element_pm);					
+					
+					pm = element_pm.compose(pm);
 				}
+				ps = psnext;
 				
-				ps = trajectory.stateForElement(el.getId());
 				if (initialState == null) initialState = ps;
 			}
 		}
 		
 		// transform T
-		if (!(elementMapping instanceof ElsElementMapping)) {
+	/*	if (!(elementMapping instanceof ElsElementMapping)) {
 			double gamma_start = initialState.getGamma();
 			double gamma_end = ps.getGamma();
 			
@@ -328,7 +334,7 @@ public abstract class TestCommon {
 				T[4][i]*=gamma_end;
 				T[5][i]/=gamma_end;
 			}			
-		}
+		}*/
 		//pm.getFirstOrder().print();
 		double T77[][] = new double[7][7];		
 		for (int i=0; i<6; i++)
@@ -341,6 +347,19 @@ public abstract class TestCommon {
 	}
 	
 	
+	private void ROpenXal2TW(double gamma_start, double gamma_end, PhaseMap pm) {		
+		PhaseMatrix r = pm.getFirstOrder();
+		
+		for (int i=0; i<6; i++) {
+			r.setElem(i, 4, r.getElem(i,4)*gamma_start);
+			r.setElem(i, 5, r.getElem(i,5)/gamma_start);
+			r.setElem(4, i, r.getElem(4,i)/gamma_end);
+			r.setElem(5, i, r.getElem(5,i)*gamma_end);			
+		}			
+		pm.setFirstOrder(r);
+	}
+
+
 	private double tr(double x, double y)
 	{
 		//return Math.signum(x-y)*Math.pow(10, (int)Math.log10(Math.abs((x-y)/x)));
