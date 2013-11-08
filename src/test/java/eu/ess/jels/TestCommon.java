@@ -41,11 +41,13 @@ public abstract class TestCommon {
 	protected Probe probe;
 	protected ElementMapping elementMapping;
 	protected Scenario scenario;
+	protected double initialEnergy;
 	
 	public TestCommon(Probe probe, ElementMapping elementMapping)
 	{
 		System.out.printf("\nResults of %s:\n", elementMapping.getClass());
-		
+		probe.reset();
+		this.initialEnergy = probe.getKineticEnergy();
 		this.probe = probe;
 		this.elementMapping = elementMapping;
 	}
@@ -53,7 +55,8 @@ public abstract class TestCommon {
 
 	@Parameters
 	public static Collection<Object[]> probes() {
-		double energy = 3e6, frequency = 4.025e8, current = 0;
+		//double energy = 3e6, frequency = 4.025e8, current = 0;
+		double energy = 2.5e9, frequency = 4.025e8, current = 0;
 		return Arrays.asList(new Object[][]{
 					{setupOpenXALProbe(energy, frequency, current), TWElementMapping.getInstance()},
 					{setupElsProbe(energy, frequency, current), ElsElementMapping.getInstance()},					
