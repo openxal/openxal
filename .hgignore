@@ -1,7 +1,0 @@
-syntax: glob
-bin
-.settings/*
-.project
-.classpath
-target
-temp/*
