@@ -109,8 +109,8 @@ public class InverseRealPolynomial extends UnivariateRealPolynomial {
      * @param   dblVal      indeterminate value to evaluate the model function at
      */
     public double evaluateAt(double dblVal) {
-        if (this.m_arrCoef == null || this.m_arrCoef.length < 1)
-            return 0.0;
+        if (this.m_arrCoef == null || this.m_arrCoef.length == 0)
+            return dblVal;
 
         double x0 = m_arrCoef[0];
         if (x0 == 0.0) return 1.0;
@@ -137,7 +137,7 @@ public class InverseRealPolynomial extends UnivariateRealPolynomial {
      * @param   dblVal      indeterminate value to evaluate the model function derivative
      */
     public double evaluateDerivativeAt(double dblVal) {
-        if (this.m_arrCoef == null)
+        if (this.m_arrCoef == null || this.m_arrCoef.length == 0)
             return 0.0;
 
         double x0 = m_arrCoef[0];

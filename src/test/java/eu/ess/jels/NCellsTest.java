@@ -24,9 +24,9 @@ public class NCellsTest extends TestCommon {
 	public static Collection<Object[]> probes() {
 		double energy = 2.5e6, frequency = 4.025e8, current = 0;
 		return Arrays.asList(new Object[][]{
-					{setupOpenXALProbe(energy, frequency, current), DefaultElementMapping.getInstance()},
-					{setupElsProbe(energy, frequency, current), ElsElementMapping.getInstance()},
-					{setupOpenXALProbe(energy, frequency, current), TWElementMapping.getInstance()}
+				{setupOpenXALProbe(energy, frequency, current), TWElementMapping.getInstance()},
+				{setupElsProbe(energy, frequency, current), ElsElementMapping.getInstance()},
+				{setupOpenXALProbe(energy, frequency, current), DefaultElementMapping.getInstance()},					
 				});
 	}
 	
@@ -34,8 +34,8 @@ public class NCellsTest extends TestCommon {
 		super(probe, elementMapping);
 	}
 
-	@Test
-	public void doGapTest() throws InstantiationException, ModelException {						 
+	//@Test
+	public void doNCellTest() throws InstantiationException, ModelException {						 
 		// NCELLS 0 3 0.5 5.27924e+06 -72.9826 31 0 0.493611 0.488812 12.9359 -14.4824 0.386525 0.664594 0.423349 0.350508 0.634734 0.628339 0.249724 0.639103 0.622128 0.25257
 		AcceleratorSeq sequence = ncells(4.025e8, 0, 3, 0.5, 5.27924e+06, -72.9826, 31, 0, 
 				0.493611, 0.488812, 12.9359, -14.4824, 
@@ -44,10 +44,16 @@ public class NCellsTest extends TestCommon {
 		run(sequence);
 		  
 		printResults();
+					
+		checkTWTransferMatrix(new double[][] {
+				{-1.251628e+02, -2.816564e+01, +0.000000e+00, +0.000000e+00, +0.000000e+00, +0.000000e+00}, 
+				{-4.892498e+02, -1.101003e+02, +0.000000e+00, +0.000000e+00, +0.000000e+00, +0.000000e+00}, 
+				{+0.000000e+00, +0.000000e+00, -1.251628e+02, -2.816564e+01, +0.000000e+00, +0.000000e+00}, 
+				{+0.000000e+00, +0.000000e+00, -4.892498e+02, -1.101003e+02, +0.000000e+00, +0.000000e+00}, 
+				{+0.000000e+00, +0.000000e+00, +0.000000e+00, +0.000000e+00, +8.271148e+02, +1.599042e+02}, 
+				{+0.000000e+00, +0.000000e+00, +0.000000e+00, +0.000000e+00, +6.136827e+03, +1.186419e+03}, 
+		});
 		
-		checkELSResults(1.117239E+00, new double[] {2.365512E-01, 2.661233E-01, 8.937822E-02},
-				new double [] {5.192974E+04, 6.594518E+04, 5.455538E+03});
-			
 		checkTWResults( 1.014228386, new double[][] 
 				{{+2.417781e-08, +9.451023e-08, +0.000000e+00, +0.000000e+00, +0.000000e+00, +0.000000e+00}, 
 					{+9.451023e-08, +3.694372e-07, +0.000000e+00, +0.000000e+00, +0.000000e+00, +0.000000e+00}, 
@@ -56,6 +62,102 @@ public class NCellsTest extends TestCommon {
 					{+0.000000e+00, +0.000000e+00, +0.000000e+00, +0.000000e+00, +2.999586e-06, +2.225560e-05}, 
 					{+0.000000e+00, +0.000000e+00, +0.000000e+00, +0.000000e+00, +2.225560e-05, +1.651268e-04}});
 	}
+	
+	@Test
+	public void doNCellTestNoTTF0() throws InstantiationException, ModelException {						 
+		// NCELLS 0 3 0.5 5.27924e+06 -72.9826 31 0 0.493611 0.488812 12.9359 -14.4824 0 1 0 0 1 0 0 1 0 0
+		System.out.println("NCELLS no TTF m=0");
+		AcceleratorSeq sequence = ncells(4.025e8, 0, 3, 0.5, 5.27924e+06, -72.9826, 31, 0, 
+				0.493611, 0.488812, 12.9359, -14.4824, 
+				0,1,0,0,1,0,0,1,0,0);
+		
+		run(sequence);
+		  
+		printResults();
+		
+		checkTWTransferMatrix(new double[][] {
+				{-1.735870e+03, -4.086639e+02, +0.000000e+00, +0.000000e+00, +0.000000e+00, +0.000000e+00}, 
+				{-8.865846e+03, -2.087226e+03, +0.000000e+00, +0.000000e+00, +0.000000e+00, +0.000000e+00}, 
+				{+0.000000e+00, +0.000000e+00, -1.735870e+03, -4.086639e+02, +0.000000e+00, +0.000000e+00}, 
+				{+0.000000e+00, +0.000000e+00, -8.865846e+03, -2.087226e+03, +0.000000e+00, +0.000000e+00}, 
+				{+0.000000e+00, +0.000000e+00, +0.000000e+00, +0.000000e+00, -6.122390e+02, -1.129077e+02}, 
+				{+0.000000e+00, +0.000000e+00, +0.000000e+00, +0.000000e+00, -3.024516e+03, -5.577793e+02}, 
+		});
+		
+		checkTWResults(  1.000303097, new double[][] {
+				{+4.857058e-06, +2.480712e-05, +0.000000e+00, +0.000000e+00, +0.000000e+00, +0.000000e+00}, 
+				{+2.480712e-05, +1.267008e-04, +0.000000e+00, +0.000000e+00, +0.000000e+00, +0.000000e+00}, 
+				{+0.000000e+00, +0.000000e+00, +6.076266e-06, +3.103415e-05, +0.000000e+00, +0.000000e+00}, 
+				{+0.000000e+00, +0.000000e+00, +3.103415e-05, +1.585049e-04, +0.000000e+00, +0.000000e+00}, 
+				{+0.000000e+00, +0.000000e+00, +0.000000e+00, +0.000000e+00, +1.622443e-06, +8.015025e-06}, 
+				{+0.000000e+00, +0.000000e+00, +0.000000e+00, +0.000000e+00, +8.015025e-06, +3.959499e-05}, 
+		});
+	}
+		
+	@Test
+	public void doNCellTestNoTTF1() throws InstantiationException, ModelException {						 
+		// NCELLS 1 3 0.5 5.27924e+06 -72.9826 31 0 0.493611 0.488812 12.9359 -14.4824 0 1 0 0 1 0 0 1 0 0
+		System.out.println("NCELLS no TTF m=1");
+		AcceleratorSeq sequence = ncells(4.025e8, 1, 3, 0.5, 5.27924e+06, -72.9826, 31, 0, 
+				0.493611, 0.488812, 12.9359, -14.4824, 
+				0,1,0,0,1,0,0,1,0,0);
+		
+		run(sequence);
+		  
+		printResults();
+			
+		checkTWTransferMatrix(new double[][] {
+				{-2.469811e-01, +1.206558e-01, +0.000000e+00, +0.000000e+00, +0.000000e+00, +0.000000e+00}, 
+				{-8.205329e+00, -2.699117e-01, +0.000000e+00, +0.000000e+00, +0.000000e+00, +0.000000e+00}, 
+				{+0.000000e+00, +0.000000e+00, -2.469811e-01, +1.206558e-01, +0.000000e+00, +0.000000e+00}, 
+				{+0.000000e+00, +0.000000e+00, -8.205329e+00, -2.699117e-01, +0.000000e+00, +0.000000e+00}, 
+				{+0.000000e+00, +0.000000e+00, +0.000000e+00, +0.000000e+00, +3.321139e+01, +2.165450e+00}, 
+				{+0.000000e+00, +0.000000e+00, +0.000000e+00, +0.000000e+00, +4.969652e+02, +3.243518e+01}, 
+		});
+		
+		checkTWResults(   1.002351947, new double[][] {
+				{+1.891455e-13, +5.588942e-13, +0.000000e+00, +0.000000e+00, +0.000000e+00, +0.000000e+00}, 
+				{+5.588942e-13, +5.034769e-11, +0.000000e+00, +0.000000e+00, +0.000000e+00, +0.000000e+00}, 
+				{+0.000000e+00, +0.000000e+00, +1.299134e-13, +1.187813e-12, +0.000000e+00, +0.000000e+00}, 
+				{+0.000000e+00, +0.000000e+00, +1.187813e-12, +8.128660e-11, +0.000000e+00, +0.000000e+00}, 
+				{+0.000000e+00, +0.000000e+00, +0.000000e+00, +0.000000e+00, +4.042244e-09, +6.048951e-08}, 
+				{+0.000000e+00, +0.000000e+00, +0.000000e+00, +0.000000e+00, +6.048951e-08, +9.051856e-07}, 
+	
+		});
+	}
+	
+	@Test
+	public void doNCellTestNoTTF2() throws InstantiationException, ModelException {						 
+		// NCELLS 2 3 0.5 5.27924e+06 -72.9826 31 0 0.493611 0.488812 12.9359 -14.4824 0 1 0 0 1 0 0 1 0 0
+		System.out.println("NCELLS no TTF m=2");
+		AcceleratorSeq sequence = ncells(4.025e8, 2, 3, 0.5, 5.27924e+06, -72.9826, 31, 0, 
+				0.493611, 0.488812, 12.9359, -14.4824, 
+				0,1,0,0,1,0,0,1,0,0);
+		
+		run(sequence);
+		  
+		printResults();
+					
+		checkTWTransferMatrix(new double[][] {
+				{-1.323586e+01, -1.982918e+00, +0.000000e+00, +0.000000e+00, +0.000000e+00, +0.000000e+00}, 
+				{-6.859146e+02, -1.028191e+02, +0.000000e+00, +0.000000e+00, +0.000000e+00, +0.000000e+00}, 
+				{+0.000000e+00, +0.000000e+00, -1.323586e+01, -1.982918e+00, +0.000000e+00, +0.000000e+00}, 
+				{+0.000000e+00, +0.000000e+00, -6.859146e+02, -1.028191e+02, +0.000000e+00, +0.000000e+00}, 
+				{+0.000000e+00, +0.000000e+00, +0.000000e+00, +0.000000e+00, +5.565648e+02, +4.473234e+01}, 
+				{+0.000000e+00, +0.000000e+00, +0.000000e+00, +0.000000e+00, +3.890135e+03, +3.126602e+02}, 
+		});
+		
+		checkTWResults(1.004183576, new double[][] {
+				{+1.971330e-10, +1.021774e-08, +0.000000e+00, +0.000000e+00, +0.000000e+00, +0.000000e+00}, 
+				{+1.021774e-08, +5.296029e-07, +0.000000e+00, +0.000000e+00, +0.000000e+00, +0.000000e+00}, 
+				{+0.000000e+00, +0.000000e+00, +2.793855e-10, +1.448011e-08, +0.000000e+00, +0.000000e+00}, 
+				{+0.000000e+00, +0.000000e+00, +1.448011e-08, +7.504809e-07, +0.000000e+00, +0.000000e+00}, 
+				{+0.000000e+00, +0.000000e+00, +0.000000e+00, +0.000000e+00, +1.158552e-06, +8.097754e-06}, 
+				{+0.000000e+00, +0.000000e+00, +0.000000e+00, +0.000000e+00, +8.097754e-06, +5.659964e-05}, 
+		});
+	}
+	
+
 	
 	
 	public AcceleratorSeq ncells(double frequency, int m, int n, double betag, double E0T, double Phis, double R, double p,
@@ -70,13 +172,15 @@ public class NCellsTest extends TestCommon {
 
 		// TTF		
 		if (betas == 0.0) {
-			cavity.getRfField().setTTF_startCoefs(new double[] {1.0});
-			cavity.getRfField().setTTFCoefs(new double[] {1.0});
-			cavity.getRfField().setTTF_endCoefs(new double[] {1.0});
+			cavity.getRfField().setTTF_startCoefs(new double[] {});
+			cavity.getRfField().setTTFCoefs(new double[] {});
+			cavity.getRfField().setTTF_endCoefs(new double[] {});
 		} else {
-			cavity.getRfField().setTTF_startCoefs(new double[] {betas, Ti, kTi, k2Ti});
+			//cavity.getRfField().setTTF_startCoefs(new double[] {betas, Ti, kTi, k2Ti});
+			cavity.getRfField().setTTF_startCoefs(new double[] {betas, Ts, kTs, k2Ts});
 			cavity.getRfField().setTTFCoefs(new double[] {betas, Ts, kTs, k2Ts});
-			cavity.getRfField().setTTF_endCoefs(new double[] {betas, To, kTo, k2To});			
+			cavity.getRfField().setTTF_endCoefs(new double[] {betas, Ts, kTs, k2Ts});
+			//cavity.getRfField().setTTF_endCoefs(new double[] {betas, To, kTo, k2To});			
 		}		
 
 		
@@ -85,27 +189,31 @@ public class NCellsTest extends TestCommon {
 		
 		double lambda = IElement.LightSpeed/frequency;
 		double Lc0,Lc,Lcn;
-		double amp0,amp,ampn;
+		double amp0,ampn;
+		double pos0, posn;
 		
-		amp0 = (1+kE0Ti)*(Ti/Ts);
-		amp = (1+kE0Ti)*(Ti/Ts); // verify this
-		amp = 1;
+		amp0 = (1+kE0Ti)*(Ti/Ts);		
 		ampn = (1+kE0To)*(To/Ts);
 		if (m==0) {
-			Lc = Lc0 = Lcn = betag * lambda;			
-			amp = 1;			
+			Lc = Lc0 = Lcn = betag * lambda;
+			pos0 = 0.5*Lc0 + dzi*1e-3;
+			posn = Lc0 + (n-2)*Lc + 0.5*Lcn + dzo*1e-3;			
 		} else if (m==1) {
-			Lc = Lc0 = Lcn = 0.5 * betag * lambda;		
+			Lc = Lc0 = Lcn = 0.5 * betag * lambda;
+			pos0 = 0.5*Lc0 + dzi*1e-3;
+			posn = Lc0 + (n-2)*Lc + 0.5*Lcn + dzo*1e-3;
 			cavity.getRfField().setStructureMode(1);
 		} else { //m==2
 			Lc0 = Lcn = 0.75 * betag * lambda;
-			Lc = betag * lambda;				
+			Lc = betag * lambda;			
+			pos0 = 0.25 * betag * lambda + dzi*1e-3;
+			posn = Lc0 + (n-2)*Lc + 0.5 * betag * lambda + dzo*1e-3;
 		}
 						
 		firstgap.setFirstGap(true); // this uses only phase for calculations
 		firstgap.getRfGap().setEndCell(0);
 		firstgap.setLength(0); // used only for positioning
-		firstgap.setPosition(0.5*Lc0 + dzi*1e-3);
+		firstgap.setPosition(pos0);
 		
 		// following are used to calculate E0TL		
 		firstgap.getRfGap().setLength(Lc0); 		
@@ -120,14 +228,14 @@ public class NCellsTest extends TestCommon {
 			gap.setPosition(Lc0 + (i-0.5)*Lc);
 			gap.setLength(0);
 			gap.getRfGap().setLength(Lc);
-			gap.getRfGap().setAmpFactor(amp);
+			gap.getRfGap().setAmpFactor(1.0);
 			cavity.addNode(gap);
 		}
 		
 		ESSRfGap lastgap = new ESSRfGap("g"+(n-1));
 		lastgap.getRfGap().setEndCell(1);
 		lastgap.setLength(0); // used only for positioning
-		lastgap.setPosition(Lc0 + (n-2)*Lc + 0.5*Lcn + dzo*1e-3);
+		lastgap.setPosition(posn);
 		
 		// following are used to calculate E0TL		
 		lastgap.getRfGap().setLength(Lcn); 		

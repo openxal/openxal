@@ -251,8 +251,8 @@ public class GapTest extends TestCommon {
 			
 			// TTF		
 			if (betas == 0.0) {
-				cavity.getRfField().setTTFCoefs(new double[] {0.0});
-				cavity.getRfField().setTTF_endCoefs(new double[] {0.0});
+				cavity.getRfField().setTTFCoefs(new double[] {});
+				cavity.getRfField().setTTF_endCoefs(new double[] {});
 			} else {				
 				cavity.getRfField().setTTFCoefs(new double[] {betas, Ts, kTs, k2Ts});
 				cavity.getRfField().setTTF_endCoefs(new double[] {betas, Ts, kTs, k2Ts});

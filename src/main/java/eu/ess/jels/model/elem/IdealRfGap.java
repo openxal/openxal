@@ -314,7 +314,7 @@ public class IdealRfGap extends ThinElement implements IRfGap {
     		} else {
 	    		Phis = gprobe.getLastGapPhase();
 	    		Phis += 2*Math.PI*(position - lastGapPosition)/(lambda*probe.getBeta());
-	    		if (structureMode == 1) Phis += Math.PI;
+	    		if (structureMode == 1) Phis += Math.PI;	    		
 	    		setPhase(Phis);
     		}
     	}
@@ -338,7 +338,7 @@ public class IdealRfGap extends ThinElement implements IRfGap {
         	        	
         	double C;
         	
-    		if (TTFFit.getCoef(0)!=0)
+    		if (TTFFit.getCoefs().length != 0)
     		{
     			double gamma_middle=gamma_start+E0TL/mass*Math.cos(Phis)/2;    			
     			double beta_middle= computeBetaFromGamma(gamma_middle);
@@ -356,7 +356,9 @@ public class IdealRfGap extends ThinElement implements IRfGap {
     /*
     			DeltaPhi=E0TL_scaled/(mass*1e6)*sin(Phis)/(pow(gamma_avg,2)*beta_avg)*(kT/T);
     */
-    			DeltaPhi=E0TL_scaled/mass*Math.sin(Phis)/(Math.pow(gamma_avg,3)*Math.pow(beta_avg,2))*(kT/T);
+    			DeltaPhi=E0TL_scaled/mass*Math.sin(Phis)/(Math.pow(gamma_avg,3/*3*/)*Math.pow(beta_avg,2))*(kT/T);
+    			//F->phaseG+=(E0TL/mass*sin(Phis)*kT/T)/harmonique[n]/(beta_avg*pow(gamma_avg,2));
+    			
     			kxy=-Math.PI*E0TL_scaled/mass*Math.sin(Phis)/(Math.pow(gamma_avg*beta_avg,2)*lambda);
     			kx=1-E0TL_scaled/(2*mass)*Math.cos(Phis)/(Math.pow(beta_avg,2)*Math.pow(gamma_avg,3))*(Math.pow(gamma_avg,2)+kT/T);
     			ky=1-E0TL_scaled/(2*mass)*Math.cos(Phis)/(Math.pow(beta_avg,2)*Math.pow(gamma_avg,3))*(Math.pow(gamma_avg,2)-kT/T);
