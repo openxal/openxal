@@ -353,11 +353,8 @@ public class IdealRfGap extends ThinElement implements IRfGap {
     			double gamma_avg=(gamma_end+gamma_start)/2;
     			//double beta_avg=(beta_end+beta_start)/2;
     			double beta_avg = computeBetaFromGamma(gamma_avg);
-    /*
-    			DeltaPhi=E0TL_scaled/(mass*1e6)*sin(Phis)/(pow(gamma_avg,2)*beta_avg)*(kT/T);
-    */
-    			DeltaPhi=E0TL_scaled/mass*Math.sin(Phis)/(Math.pow(gamma_avg,3/*3*/)*Math.pow(beta_avg,2))*(kT/T);
-    			//F->phaseG+=(E0TL/mass*sin(Phis)*kT/T)/harmonique[n]/(beta_avg*pow(gamma_avg,2));
+    
+    			DeltaPhi=E0TL_scaled/mass*Math.sin(Phis)/(Math.pow(gamma_avg,2)*beta_avg)*(kT/T);    
     			
     			kxy=-Math.PI*E0TL_scaled/mass*Math.sin(Phis)/(Math.pow(gamma_avg*beta_avg,2)*lambda);
     			kx=1-E0TL_scaled/(2*mass)*Math.cos(Phis)/(Math.pow(beta_avg,2)*Math.pow(gamma_avg,3))*(Math.pow(gamma_avg,2)+kT/T);
