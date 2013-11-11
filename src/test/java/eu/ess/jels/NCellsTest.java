@@ -26,7 +26,7 @@ public class NCellsTest extends TestCommon {
 		return Arrays.asList(new Object[][]{
 				{setupOpenXALProbe(energy, frequency, current), TWElementMapping.getInstance()},
 				{setupElsProbe(energy, frequency, current), ElsElementMapping.getInstance()},
-				{setupOpenXALProbe(energy, frequency, current), DefaultElementMapping.getInstance()},					
+				//{setupOpenXALProbe(energy, frequency, current), DefaultElementMapping.getInstance()},					
 				});
 	}
 	
@@ -34,8 +34,9 @@ public class NCellsTest extends TestCommon {
 		super(probe, elementMapping);
 	}
 
-	//@Test
-	public void doNCellTest() throws InstantiationException, ModelException {						 
+	@Test
+	public void doNCellTest0() throws InstantiationException, ModelException {
+		System.out.println("NCELLS m=0");
 		// NCELLS 0 3 0.5 5.27924e+06 -72.9826 31 0 0.493611 0.488812 12.9359 -14.4824 0.386525 0.664594 0.423349 0.350508 0.634734 0.628339 0.249724 0.639103 0.622128 0.25257
 		AcceleratorSeq sequence = ncells(4.025e8, 0, 3, 0.5, 5.27924e+06, -72.9826, 31, 0, 
 				0.493611, 0.488812, 12.9359, -14.4824, 
@@ -61,6 +62,69 @@ public class NCellsTest extends TestCommon {
 					{+0.000000e+00, +0.000000e+00, +1.199687e-07, +4.689511e-07, +0.000000e+00, +0.000000e+00}, 
 					{+0.000000e+00, +0.000000e+00, +0.000000e+00, +0.000000e+00, +2.999586e-06, +2.225560e-05}, 
 					{+0.000000e+00, +0.000000e+00, +0.000000e+00, +0.000000e+00, +2.225560e-05, +1.651268e-04}});
+	}
+	
+	@Test
+	public void doNCellTest1() throws InstantiationException, ModelException {
+		System.out.println("NCELLS m=1");
+		//  NCELLS 1 3 0.5 5.34709e+06 -55.7206 31 0 0.493611 0.488812 12.9604 -14.5077 0.393562 0.672107 0.409583 0.342918 0.645929 0.612576 0.257499 0.650186 0.606429 0.259876
+		AcceleratorSeq sequence = ncells(4.025e8, 1, 3, 0.5, 5.34709e+06, -55.7206, 31, 0,
+				0.493611, 0.488812, 12.9604, -14.5077,
+				0.393562, 0.672107, 0.409583, 0.342918, 0.645929, 0.612576, 0.257499, 0.650186, 0.606429, 0.259876);				
+		
+		run(sequence);
+		  
+		printResults();
+					
+		checkTWTransferMatrix(new double[][] {
+				{+9.781907e+00, +1.608910e+00, +0.000000e+00, +0.000000e+00, +0.000000e+00, +0.000000e+00}, 
+				{+2.764530e+01, +4.587636e+00, +0.000000e+00, +0.000000e+00, +0.000000e+00, +0.000000e+00}, 
+				{+0.000000e+00, +0.000000e+00, +9.781907e+00, +1.608910e+00, +0.000000e+00, +0.000000e+00}, 
+				{+0.000000e+00, +0.000000e+00, +2.764530e+01, +4.587636e+00, +0.000000e+00, +0.000000e+00}, 
+				{+0.000000e+00, +0.000000e+00, +0.000000e+00, +0.000000e+00, -1.945048e+01, -1.838470e+00}, 
+				{+0.000000e+00, +0.000000e+00, +0.000000e+00, +0.000000e+00, -3.222670e+01, -3.066498e+00}, 
+		});
+		
+		checkTWResults(  1.016786270, new double[][]	{
+				{+1.144407e-10, +3.244214e-10, +0.000000e+00, +0.000000e+00, +0.000000e+00, +0.000000e+00}, 
+				{+3.244214e-10, +9.196951e-10, +0.000000e+00, +0.000000e+00, +0.000000e+00, +0.000000e+00}, 
+				{+0.000000e+00, +0.000000e+00, +1.587170e-10, +4.494497e-10, +0.000000e+00, +0.000000e+00}, 
+				{+0.000000e+00, +0.000000e+00, +4.494497e-10, +1.272745e-09, +0.000000e+00, +0.000000e+00}, 
+				{+0.000000e+00, +0.000000e+00, +0.000000e+00, +0.000000e+00, +1.442445e-09, +2.390964e-09}, 
+				{+0.000000e+00, +0.000000e+00, +0.000000e+00, +0.000000e+00, +2.390964e-09, +3.963208e-09}, 
+
+		});
+	}
+	
+	@Test
+	public void doNCellTest2() throws InstantiationException, ModelException {
+		System.out.println("NCELLS m=2");
+		// NCELLS 2 3 0.5 5.34709e+06 -55.7206 31 0 0.493611 0.488812 12.9604 -14.5077 0.393562 0.672107 0.409583 0.342918 0.645929 0.612576 0.257499 0.650186 0.606429 0.259876
+		AcceleratorSeq sequence = ncells(4.025e8, 2, 3, 0.5, 5.34709e+06, -55.7206, 31, 0,
+				0.493611, 0.488812, 12.9604, -14.5077,
+				0.393562, 0.672107, 0.409583, 0.342918, 0.645929, 0.612576, 0.257499, 0.650186, 0.606429, 0.259876);				
+		
+		run(sequence);
+		  
+		printResults();
+					
+		checkTWTransferMatrix(new double[][] {
+				{+4.158248e+01, +7.331508e+00, +0.000000e+00, +0.000000e+00, +0.000000e+00, +0.000000e+00}, 
+				{+1.039245e+02, +1.833476e+01, +0.000000e+00, +0.000000e+00, +0.000000e+00, +0.000000e+00}, 
+				{+0.000000e+00, +0.000000e+00, +4.158248e+01, +7.331508e+00, +0.000000e+00, +0.000000e+00}, 
+				{+0.000000e+00, +0.000000e+00, +1.039245e+02, +1.833476e+01, +0.000000e+00, +0.000000e+00}, 
+				{+0.000000e+00, +0.000000e+00, +0.000000e+00, +0.000000e+00, +2.384991e+00, +2.217700e-01}, 
+				{+0.000000e+00, +0.000000e+00, +0.000000e+00, +0.000000e+00, +6.462182e+01, +6.210999e+00}, 
+		});
+		
+		checkTWResults(  1.011418698, new double[][]	{
+				{+2.173306e-09, +5.432880e-09, +0.000000e+00, +0.000000e+00, +0.000000e+00, +0.000000e+00}, 
+				{+5.432880e-09, +1.358124e-08, +0.000000e+00, +0.000000e+00, +0.000000e+00, +0.000000e+00}, 
+				{+0.000000e+00, +0.000000e+00, +2.961684e-09, +7.403073e-09, +0.000000e+00, +0.000000e+00}, 
+				{+0.000000e+00, +0.000000e+00, +7.403073e-09, +1.850484e-08, +0.000000e+00, +0.000000e+00}, 
+				{+0.000000e+00, +0.000000e+00, +0.000000e+00, +0.000000e+00, +2.164218e-11, +5.876521e-10}, 
+				{+0.000000e+00, +0.000000e+00, +0.000000e+00, +0.000000e+00, +5.876521e-10, +1.595673e-08}, 
+		});
 	}
 	
 	@Test
@@ -176,11 +240,9 @@ public class NCellsTest extends TestCommon {
 			cavity.getRfField().setTTFCoefs(new double[] {});
 			cavity.getRfField().setTTF_endCoefs(new double[] {});
 		} else {
-			//cavity.getRfField().setTTF_startCoefs(new double[] {betas, Ti, kTi, k2Ti});
-			cavity.getRfField().setTTF_startCoefs(new double[] {betas, Ts, kTs, k2Ts});
+			cavity.getRfField().setTTF_startCoefs(new double[] {betas, Ti, kTi, k2Ti});
 			cavity.getRfField().setTTFCoefs(new double[] {betas, Ts, kTs, k2Ts});
-			cavity.getRfField().setTTF_endCoefs(new double[] {betas, Ts, kTs, k2Ts});
-			//cavity.getRfField().setTTF_endCoefs(new double[] {betas, To, kTo, k2To});			
+			cavity.getRfField().setTTF_endCoefs(new double[] {betas, To, kTo, k2To});			
 		}		
 
 		
