@@ -331,9 +331,9 @@ public class RingCalculations extends MachineCalculations {
         PhaseMatrix     matFullTrn = this.calculateFullLatticeMatrixAt(state);
         double          dblGamma   = state.getGamma();
         
-        double[]        arrDisp = super.calculateDispersion(matFullTrn, dblGamma);
+        R4              vecDisp    = super.calculateDispersion(matFullTrn, dblGamma);
         
-        return new R4(arrDisp);
+        return vecDisp;
     }
     
  

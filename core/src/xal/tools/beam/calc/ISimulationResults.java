@@ -70,36 +70,41 @@ public interface ISimulationResults <S extends ProbeState> {
     public R3 computeBetatronPhase(S state);
 
     /**
-     * <p>
-     * <h4>Deprecated</h4>
-     *  This quantity is obtuse and not well defined - PhaseCoordinates of what?  
-     *              Is this a centroid location?
-     *              From which starting orbit?  
-     *              Not all simulation results have quantities naturally associated with phase coordinates
-     *              We need to stop use this or call it something else.
-     * </p>
      * <p> 
-     *  Returns homogeneous phase space coordinates of the simulation centroid.  
-     *  I believe this quantity is open for interpretation; we can be referring to
-     *  the position of the design trajectory or the location of the beam centroid,
+     *  Returns homogeneous phase space coordinates of something involving the simulation
+     *  data.  The interpretation is highly dependent upon the context of the data.  
+     *  That is, this quantity is open for interpretation; we can be referring to
+     *  the position of the design trajectory, an offset, or the location of the beam centroid,
      *  whatever "beam" means in the context.  The units
      *  are meters and radians.
+     *  </p>
+     * <p>
+     * <h4>NOTE:</h4>
+     *  This quantity is obtuse and not well defined - PhaseCoordinates of what?
+     *  <br/>  
+     *              &nbsp; &nbsp; &middot; Is this a centroid location?
+     *  <br/>  
+     *              &nbsp; &nbsp; &middot; From which starting orbit?  
+     *  <br/>  
+     *              &nbsp; &nbsp; &middot; Not all simulation results have quantities 
+     *                                      naturally associated with phase coordinates
+     *  <br/>  
+     *              &nbsp; &nbsp; &middot; We need to stop use this or call it something else.
+     * </p>
      *
      *  @param   state   simulation state where parameters are computed
      *  
      *  @return     vector (<i>x,x',y,y',z,z'</i>,1) of phase space coordinates
      *             
      */
-    @Deprecated
-//    public PhaseVector computePhaseLocation(S state);
-    public PhaseVector computePhaseCoordinates(S state);
+    public PhaseVector computeCoordinateOffset(S state);
 
 
     /**
      * Computes the fixed orbit about which betatron oscillations occur. This
      * value is well-defined for rings but could be ambiguous for beam envelope
      * simulation, especially with regard to method 
-     * <code>{@link #computePhaseCoordinates(ProbeState)}</code>.
+     * <code>{@link #computeCoordinateOffset(ProbeState)}</code>.
      * 
      * @param   state   simulation state where parameters are computed
      *  

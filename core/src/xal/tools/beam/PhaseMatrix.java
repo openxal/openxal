@@ -103,7 +103,7 @@ public class PhaseMatrix extends SquareMatrix<PhaseMatrix> implements java.io.Se
         /** Index of the Z (longitudinal) coordinate */
         Z   (4),        
         
-        /** Index of the Z' (change in momenutum) coordinate */
+        /** Index of the Z' (change in momentum) coordinate */
         Zp  (5),        
         
         /** Index of the homogeneous coordinate */

@@ -1,10 +1,12 @@
 /**
- * LinacCalculations.java
+ * BeamCalculations.java
  *
  * Author  : Christopher K. Allen
  * Since   : Oct 22, 2013
  */
 package xal.tools.beam.calc;
+
+import java.util.EnumSet;
 
 import xal.model.probe.traj.EnvelopeProbeState;
 import xal.model.probe.traj.EnvelopeTrajectory;
@@ -27,7 +29,7 @@ import xal.tools.math.r6.R6;
  * @author Christopher K. Allen
  * @since  Oct 22, 2013
  */
-public class LinacCalculations extends CalculationEngine implements ISimulationResults<EnvelopeProbeState>{
+public class BeamCalculations extends CalculationEngine implements ISimulationResults<EnvelopeProbeState>{
 
 
     /*
@@ -62,7 +64,7 @@ public class LinacCalculations extends CalculationEngine implements ISimulationR
      */
     
     /**
-     * Constructor for <cod>LinacCalculations</code>. Creates object
+     * Constructor for <cod>BeamCalculations</code>. Creates object
      * and computes all the static simulation results.
      * 
      * @param   trjSimul    results for an <code>EnvelopeProbe</code> simulation
@@ -70,7 +72,7 @@ public class LinacCalculations extends CalculationEngine implements ISimulationR
      * @author Christopher K. Allen
      * @since  Oct 22, 2013
      */
-    public LinacCalculations(EnvelopeTrajectory trjLinac) {
+    public BeamCalculations(EnvelopeTrajectory trjLinac) {
         ProbeState  pstFinal = trjLinac.finalState();
         
         // Check for correct probe types
@@ -281,13 +283,13 @@ public class LinacCalculations extends CalculationEngine implements ISimulationR
      * are expressed in homogeneous coordinates the final row and column of the 
      * covariance matrix are interpreted as the centroid vector of the beam bunch.
      *
-     * @see xal.tools.beam.calc.ISimulationResults#computePhaseCoordinates(xal.model.probe.traj.ProbeState)
+     * @see xal.tools.beam.calc.ISimulationResults#computeCoordinateOffset(xal.model.probe.traj.ProbeState)
      *
      * @author Christopher K. Allen
      * @since  Nov 7, 2013
      */
     @Override
-    public PhaseVector computePhaseCoordinates(EnvelopeProbeState state) {
+    public PhaseVector computeCoordinateOffset(EnvelopeProbeState state) {
         CovarianceMatrix    matSigLoc = state.getCovarianceMatrix();
         PhaseVector         vecCenter = matSigLoc.getMean();
         
@@ -303,7 +305,7 @@ public class LinacCalculations extends CalculationEngine implements ISimulationR
      * </p> 
      * <p>
      * To compute this linac fixed point, recall that the <i>homogeneous</i> response 
-     * matrix <b>&Phi;</b> for the linace
+     * matrix <b>&Phi;</b> for the linac
      * has final row that represents the translation <b>&Delta;</b> of the particle
      * under the action of <b>&Phi;</b>.  The 6&times;6 sub-matrix of <b>&Phi;</b> represents
      * the (linear) action of the bending magnetics and quadrupoles and corresponds to the
@@ -373,7 +375,79 @@ public class LinacCalculations extends CalculationEngine implements ISimulationR
 
 
     /**
-     *
+     * <p>
+     * Convenience function for returning the chromatic dispersion coefficients
+     * as defined by
+     * D.C. Carey in "The Optics of Charged Particle Beams".  
+     * </p>
+     * <p>
+     * For example, in the
+     * horizontal phase plane (<i>x,x'</i>) these coefficients specify the 
+     * change in position &Delta;<i>x</i>
+     * and the change in divergence angle &Delta;<i>x'</i>
+     * due to chromatic dispersion &delta; within the beam, or
+     * <br/>
+     * <br/>
+     * &nbsp; &nbsp; &Delta;<i>x</i> = (<i>dx</i>/<i>d</i>&delta;) &sdot; &delta; ,
+     * <br/>
+     * <br/> 
+     * &nbsp; &nbsp; &Delta;<i>x'</i> = (<i>dx'</i>/<i>d</i>&delta;) &sdot; &delta; .
+     * <br/>
+     * <br/>
+     * That is, (<i>dx</i>/<i>d</i>&delta;) and (<i>dx'</i>/<i>d</i>&delta;) are the dispersion
+     * coefficients for the horizontal plane position and horizontal plane divergence
+     * angle, respectively.  The vector returned by this method contains all the analogous
+     * coefficients for all the phase planes.
+     * </p>
+     * <p>The chromatic dispersion coefficient vector <b>&Delta;</b> can be built from 
+     * the 6<sup><i>th</i></sup>
+     * column of the state response matrix <b>&Phi;</b>.  However we must pay close 
+     * attention to the transverse plane quantities.  Specifically, consider again
+     * the horizontal phase plane (<i>x,x'</i>).  Denoting the elements of <b>&Phi;</b>
+     * in the 6<sup><i>th</i></sup> column (i.e., the <i>z'</i> column) corresponding 
+     * to this positions as &phi;<sub>1,6</sub> and &phi;<sub>2,6</sub>, we can write
+     * them as
+     * <br/>
+     * <br/>
+     * &nbsp; &nbsp; &phi;<sub>1,6</sub> = &part;<i>x</i>/&part;<i>z'</i> ,
+     * <br/>
+     * <br/>
+     * &nbsp; &nbsp; &phi;<sub>2,6</sub> = &part;<i>x'</i>/&part;<i>z'</i> .
+     * <br/>
+     * <br/>
+     * Now consider the relationship
+     * <br/>
+     * <br/>
+     * &nbsp; &nbsp; &delta; &equiv; (<i>p</i> - <i>p</i><sub>0</sub>)/<i>p</i><sub>0</sub>
+     *               = &gamma;<sup>2</sup><i>z</i>'= &gamma;<sup>2</sup><i>dz</i>/<i>ds</i>
+     * <br/>
+     * <br/>
+     * or
+     * <br/>
+     * <br/>
+     * &nbsp; &nbsp; &part;<i>z'</i>/&part;&delta; = 1/&gamma;<sup>2</sup> .
+     * <br/>
+     * <br/>
+     * Thus, it is necessary to multiply the transfer plane elements of 
+     * <i>Row</i><sub>6</sub>&Phi; by 1/&gamma;<sup>2</sup> to covert to 
+     * the conventional dispersion coefficients.  Specifically, for the horizontal plane
+     * <br/>
+     * <br/>
+     * &nbsp; &nbsp; &Delta;<sub><i>x</i></sub> = (<i>dx</i>/<i>d</i>&delta;) = &phi;<sub>6,1</sub>/&gamma;<sup>2</sup> ,
+     * <br/>
+     * <br/> 
+     * &nbsp; &nbsp; &Delta;<sub><i>x'</i></sub> = (<i>dx'</i>/<i>d</i>&delta;) = &phi;<sub>6,2</sub>/&gamma;<sup>2</sup> ,
+     * <br/>
+     * <br/>
+     * For the longitudinal plane no such normalization is necessary. 
+     * </p>
+     * <p>
+     * <h4>NOTE:</h4>
+     * - Reference text D.C. Carey, "The Optics of Charged Particle Beams"
+     * </p>
+     * 
+     * @return  vector of chromatic dispersion coefficients in <b>meters/radian</b>
+     * 
      * @see xal.tools.beam.calc.ISimulationResults#computeChromDispersion(xal.model.probe.traj.ProbeState)
      *
      * @author Christopher K. Allen
@@ -381,13 +455,23 @@ public class LinacCalculations extends CalculationEngine implements ISimulationR
      */
     @Override
     public PhaseVector computeChromDispersion(EnvelopeProbeState state) {
-        PhaseMatrix matResp  = state.getResponseMatrix();
-        R6          vecRspZp = matResp.projectColumn(IND.Zp);
+        PhaseMatrix matResp = state.getResponseMatrix();
+        R6          vecDel  = matResp.projectColumn(IND.Zp);
         
-        double      dblGamma = state.getGamma();
-        vecRspZp.timesEquals( 1.0/(dblGamma*dblGamma) );
+        double      dblGamma  = state.getGamma();
+        double      dblGamma2 = dblGamma*dblGamma;
+
+        // Need to normalize the transverse coordinates to momentum rather than angle
+        EnumSet<IND>    SET_TRNV = EnumSet.of(IND.X, IND.Xp, IND.Y, IND.Yp);
         
-        PhaseVector vecDisp = PhaseVector.embed(vecRspZp);
+        for (IND i : SET_TRNV) {
+            double      dblDspAng = vecDel.getElem(i);
+            double      dblDspMom  = dblDspAng/dblGamma2;
+            
+            vecDel.setElem(i, dblDspMom);
+        }
+
+        PhaseVector vecDisp = PhaseVector.embed(vecDel);
         
         return vecDisp;
     }

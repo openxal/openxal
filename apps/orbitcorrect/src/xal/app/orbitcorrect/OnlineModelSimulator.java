@@ -9,22 +9,19 @@
  */
 package xal.app.orbitcorrect;
 
-import xal.tools.*;
-import xal.smf.*;
-import xal.smf.impl.*;
-import xal.tools.beam.*;
-import xal.model.*;
-import xal.sim.scenario.*;
-import xal.model.probe.*;
-//import xal.model.probe.resp.*;
-import xal.model.alg.*;
-//import xal.model.alg.resp.*;
-import xal.model.probe.traj.*;
-//import xal.model.probe.resp.traj.*;
-import xal.smf.proxy.*;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-import java.util.*;
-import java.util.logging.*;
+import xal.model.probe.Probe;
+import xal.model.probe.traj.ICoordinateState;
+import xal.model.probe.traj.Trajectory;
+import xal.sim.scenario.AlgorithmFactory;
+import xal.sim.scenario.ProbeFactory;
+import xal.sim.scenario.Scenario;
+import xal.smf.Ring;
+import xal.smf.proxy.ElectromagnetPropertyAccessor;
+import xal.tools.beam.PhaseVector;
 
 
 /**

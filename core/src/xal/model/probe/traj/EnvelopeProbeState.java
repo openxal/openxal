@@ -137,7 +137,6 @@ public class EnvelopeProbeState extends BunchProbeState /* implements IPhaseStat
      * 
      * @param probe     <code>EnvelopeProbe</code> containing initializing state information
      */
-    @SuppressWarnings("deprecation")
     public EnvelopeProbeState(EnvelopeProbe probe) {
         super(probe);
         this.setCovariance(probe.getCovariance());

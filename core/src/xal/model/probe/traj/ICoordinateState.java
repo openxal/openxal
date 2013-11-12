@@ -21,7 +21,10 @@ import xal.tools.beam.PhaseVector;
  * @author Christopher K. Allen
  * @since   2/9/05
  * @version Oct 29, 2013
+ * 
+ * @deprecated  This interface is ambiguous and ill-defined, better to use the object itself
  */
+@Deprecated
 public interface ICoordinateState /* extends IProbeState */ {
     
     /** 

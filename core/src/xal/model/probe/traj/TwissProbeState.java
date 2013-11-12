@@ -323,11 +323,7 @@ public class TwissProbeState extends BunchProbeState implements IPhaseState {
      * @return array(twiss-H, twiss-V, twiss-L)
      */
     public Twiss[] getTwiss() { 
-        Twiss[] arrTwiss = new Twiss[3];
-        
-        for (SpaceIndex3D index : SpaceIndex3D.values())    {
-            arrTwiss[index.val()] = this.getTwiss(index);
-        }
+        Twiss[] arrTwiss = this.envTwiss.getTwiss();
         
         return arrTwiss;
     }

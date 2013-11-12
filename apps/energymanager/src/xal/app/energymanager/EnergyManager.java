@@ -9,22 +9,49 @@
 
 package xal.app.energymanager;
 
-import xal.tools.data.*;
-import xal.tools.beam.*;
-import xal.model.probe.*;
-import xal.smf.*;
-import xal.tools.xml.XmlTableIO;
-import xal.tools.solver.*;
-import xal.smf.impl.*;
-import xal.smf.impl.qualify.*;
-import xal.tools.messaging.MessageCenter;
-import xal.model.probe.traj.IPhaseState;
-import xal.model.probe.traj.IProbeState;
-import xal.model.probe.traj.Trajectory;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-import java.util.*;
-import java.util.logging.*;
-import java.text.*;
+import xal.model.probe.Probe;
+import xal.model.probe.traj.IProbeState;
+import xal.model.probe.traj.ProbeState;
+import xal.model.probe.traj.Trajectory;
+import xal.smf.Accelerator;
+import xal.smf.AcceleratorNode;
+import xal.smf.AcceleratorSeq;
+import xal.smf.impl.Bend;
+import xal.smf.impl.Dipole;
+import xal.smf.impl.HDipoleCorr;
+import xal.smf.impl.Marker;
+import xal.smf.impl.PermQuadrupole;
+import xal.smf.impl.Quadrupole;
+import xal.smf.impl.RfCavity;
+import xal.smf.impl.VDipoleCorr;
+import xal.smf.impl.qualify.AndTypeQualifier;
+import xal.smf.impl.qualify.KindQualifier;
+import xal.smf.impl.qualify.NotTypeQualifier;
+import xal.smf.impl.qualify.OrTypeQualifier;
+import xal.smf.impl.qualify.QualifierFactory;
+import xal.smf.impl.qualify.TypeQualifier;
+import xal.tools.data.DataAdaptor;
+import xal.tools.data.DataListener;
+import xal.tools.data.DataTable;
+import xal.tools.data.EditContext;
+import xal.tools.data.GenericRecord;
+import xal.tools.data.KeyValueQualifier;
+import xal.tools.data.Qualifier;
+import xal.tools.data.SortOrdering;
+import xal.tools.messaging.MessageCenter;
+import xal.tools.solver.Variable;
+import xal.tools.xml.XmlTableIO;
 
 
 /** Main model for managing the optics energy. */
@@ -743,7 +770,7 @@ public class EnergyManager implements DataListener, ParameterStoreListener, Opti
 		
 		final Simulation simulation = getOptimizer().getBestSimulation();
 		if ( simulation != null ) {
-			final IPhaseState[] states = simulation.getStates();
+			final ProbeState[] states = simulation.getStates();
 			final double[] positions = simulation.getPositions();
 			final double[] kineticEnergy = simulation.getKineticEnergy();
 			final double[][] beta = simulation.getBeta();

@@ -679,9 +679,11 @@ public abstract class CalculationEngine {
      * Taken from <code>TransferMapState</code>.
      * </p>
      * <p>
-     * Calculates the fixed point (closed orbit) for the given transfer matrix <b>&Phi;</b>
-     * (assumed to be a one-turn map) in the presence of dispersion.  
-     * The fixed point is with regard
+     * Calculates the differential coefficients describing change in the fixed point of the
+     * closed orbit versus chromatic dispersion.
+     * The given transfer matrix <b>&Phi;</b>
+     * is assumed to be the one-turn map of the ring with which the fixed point is
+     * caculated.  The fixed point is with regard
      * to the transverse phase plane coordinates.
      * </p>
      * <p>
@@ -759,7 +761,7 @@ public abstract class CalculationEngine {
      * @author Christopher K. Allen
      * @since  Aug 14, 2013
      */
-    protected double[] calculateDispersion(final PhaseMatrix matPhi, final double gamma) {
+    protected R4 calculateDispersion(final PhaseMatrix matPhi, final double gamma) {
 
         // Decompose the transfer matrix into transverse and longitudinal 
         //    components.  The decomposition contains the linear algebraic
@@ -784,9 +786,9 @@ public abstract class CalculationEngine {
         // Solve for the dispersion vector and return it
         R4    vecd = matR.solve(vecdp);
 
-        double[]  arrd = vecd.getArrayCopy();
-
-        return arrd;
+//        double[]  arrd = vecd.getArrayCopy();
+//        return arrd;
+        return vecd;
     }
 
     //	    public Twiss[] getTwiss() {

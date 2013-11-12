@@ -9,28 +9,18 @@
 
 package xal.app.energymanager;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.Iterator;
 import java.util.List;
 
-import xal.model.probe.EnvelopeProbe;
 import xal.model.probe.Probe;
-import xal.model.probe.TransferMapProbe;
-import xal.model.probe.traj.EnvelopeProbeState;
-import xal.model.probe.traj.EnvelopeTrajectory;
-import xal.model.probe.traj.IPhaseState;
 import xal.model.probe.traj.ProbeState;
 import xal.model.probe.traj.Trajectory;
-import xal.model.probe.traj.TransferMapState;
-import xal.model.probe.traj.TransferMapTrajectory;
 import xal.smf.AcceleratorNode;
+import xal.tools.beam.PhaseMatrix.IND;
 import xal.tools.beam.PhaseVector;
 import xal.tools.beam.Twiss;
 import xal.tools.beam.calc.ISimulationResults;
-import xal.tools.beam.calc.LinacCalculations;
-import xal.tools.beam.calc.RingCalculations;
-import xal.tools.math.r3.R3;
+import xal.tools.beam.calc.SimResultsAdaptor;
 
 
 /** 
@@ -170,7 +160,7 @@ public class Simulation {
 	
 	
 	/** The machine parameter calculation engine */
-    private ISimulationResults<ProbeState>     cmpMchParams;
+    private ISimulationResults<ProbeState>     adptSimResults;
 	
     
     /*
@@ -194,7 +184,7 @@ public class Simulation {
 		
 		// Create the machine parameter calculation engine according to the
 		//    type of probe we are given
-		this.cmpMchParams = new MachineCalculations(_trajectory);
+		this.adptSimResults = new SimResultsAdaptor(_trajectory);
 		
 //        if (probe instanceof TransferMapProbe) {
 //            TransferMapTrajectory   traj = (TransferMapTrajectory)probe.getTrajectory();
@@ -204,7 +194,7 @@ public class Simulation {
 //        } else if (probe instanceof EnvelopeProbe) {
 //            EnvelopeTrajectory traj = (EnvelopeTrajectory)probe.getTrajectory();
 //            
-//            this.cmpMchParams = new LinacCalculations(traj);
+//            this.cmpMchParams = new BeamCalculations(traj);
 //            
 //        } else {
 //            
@@ -523,7 +513,7 @@ public class Simulation {
 		    
 		    
 //			final Twiss[] twiss = states[ index ].getTwiss();
-            final Twiss[] twiss = this.cmpMchParams.computeTwissParameters(state);
+            final Twiss[] twiss = this.adptSimResults.computeTwissParameters(state);
 		    
 			for ( int axis = 0 ; axis <= Z_INDEX ; axis++ ) {
 				alpha[ axis ][ index ] = twiss[ axis ].getAlpha();
@@ -542,7 +532,7 @@ public class Simulation {
 		for ( int index = 0 ; index < states.length ; index++ ) {
 //			final Twiss[] arrTwiss = states[ index ].getTwiss();
 			ProbeState    state    = states[ index ];
-			final Twiss[] arrTwiss = this.cmpMchParams.computeTwissParameters(state);
+			final Twiss[] arrTwiss = this.adptSimResults.computeTwissParameters(state);
 			
 			for ( int axis = 0 ; axis <= Z_INDEX ; axis++ ) {
 				beta[ axis ][ index ] = arrTwiss[ axis ].getBeta();
@@ -561,7 +551,7 @@ public class Simulation {
 		for ( int index = 0 ; index < states.length ; index++ ) {
 //			final Twiss[] twiss = states[ index ].getTwiss();
 		    ProbeState    state = states[ index ];
-		    final Twiss[] twiss = this.cmpMchParams.computeTwissParameters(state);
+		    final Twiss[] twiss = this.adptSimResults.computeTwissParameters(state);
 		    
 			for ( int axis = 0 ; axis <= Z_INDEX ; axis++ ) {
 				emittance[ axis ][ index ] = twiss[ axis ].getEmittance();
@@ -578,9 +568,16 @@ public class Simulation {
 		final double[][] eta = new double[ Z_INDEX + 1 ][ states.length ];
 		
 		for ( int index = 0 ; index < states.length ; index++ ) {
-			eta[X_INDEX][index] = states[ index ].getChromDispersionX();
-			eta[Y_INDEX][index] = states[ index ].getChromDispersionY();
-			eta[Z_INDEX][index] = 0.0;
+		    ProbeState    state   = states[ index ];
+		    PhaseVector   vecDisp = this.adptSimResults.computeChromDispersion(state);
+		    
+		    eta[X_INDEX][index] = vecDisp.getElem(IND.X);
+		    eta[Y_INDEX][index] = vecDisp.getElem(IND.Y);
+            eta[Z_INDEX][index] = 0.0;
+		    
+//			eta[X_INDEX][index] = states[ index ].getChromDispersionX();
+//			eta[Y_INDEX][index] = states[ index ].getChromDispersionY();
+//			eta[Z_INDEX][index] = 0.0;
 		}
 		
 		_eta = eta;
@@ -589,13 +586,17 @@ public class Simulation {
 	
 	/** populate the kinetic energy array */
 	private void populateChargeAndEnergy() {
-		final IPhaseState[] states = getStates();
+//		final IPhaseState[] states = getStates();
+
+	    final ProbeState[] states = getStates();
 		final double[] kineticEnergy = new double[ states.length ];
         final double[] restEnergy = new double[ states.length ];
         final double[] speciesCharge = new double[ states.length ];
 		
 		for ( int index = 0 ; index < states.length ; index++ ) {
-            final IPhaseState state = states[ index ];
+//            final IPhaseState state = states[ index ];
+            final ProbeState state = states[ index ];
+            
 			kineticEnergy[ index  ] = CONVERT_EV_TO_MEV * state.getKineticEnergy();	// kinetic energy in MeV
             restEnergy[ index ] = CONVERT_EV_TO_MEV * state.getSpeciesRestEnergy();   // rest energy in MeV
             speciesCharge[ index ] = state.getSpeciesCharge();  // species charge in positive electron charge units
@@ -612,10 +613,12 @@ public class Simulation {
 		final double[] minBeta = new double[] { Double.MAX_VALUE, Double.MAX_VALUE, Double.MAX_VALUE };
 		final double[] maxBeta = new double[] { 0, 0, 0 };
 		
-		final IPhaseState[] states = getStates();
+		final ProbeState[] states = getStates();
 		
 		for ( int index = 0 ; index < states.length ; index++ ) {
-			final Twiss[] twiss = states[ index ].getTwiss();
+//			final Twiss[] twiss = states[ index ].getTwiss();
+			final Twiss[] twiss = this.adptSimResults.computeTwissParameters( states[index] );
+			
 			for ( int axis = 0 ; axis <= Z_INDEX ; axis++ ) {
 				final double beta = twiss[ axis ].getBeta();
 				if ( Double.isNaN( beta ) ) {
@@ -643,7 +646,7 @@ public class Simulation {
 		final double[] maxEta = new double[] { Double.MIN_VALUE, Double.MIN_VALUE, 0.0 };
 		
 		final double[][] dispersion = getEta();
-		final IPhaseState[] states = getStates();
+		final ProbeState[] states = getStates();
 		
 		for ( int index = 0 ; index < states.length ; index++ ) {
 			for ( int axis = 0 ; axis < Z_INDEX ; axis++ ) {
@@ -717,11 +720,11 @@ public class Simulation {
 		return new StateFinder() {
 			@Override
             public ProbeState[] findStates( final List nodes, final Trajectory trajectory ) {
-				final Iterator stateIter = trajectory.stateIterator();
+				final Iterator<ProbeState> stateIter = trajectory.stateIterator();
 				final ProbeState[] states = new ProbeState[ nodes.size() ];
 				
 				int index = 0;
-				final Iterator nodeIter = nodes.iterator();
+				final Iterator<AcceleratorNode> nodeIter = nodes.iterator();
 				while ( nodeIter.hasNext() ) {
 					final String nodeID = ( (AcceleratorNode)nodeIter.next() ).getId();
                     //System.out.println( "Searching for node: " + nodeID );
@@ -738,210 +741,6 @@ public class Simulation {
 				return states;
 			}
 		};
-	}
-	
-	/**
-	 * <p>
-	 * Class <code>MachineCalculations</code>.  This class generalized the
-	 * interface <code>ISimulationResults&lt;S&gt;</code> for use with simulation
-	 * results of either of the two types <code>TransferMapTrajectory</code>
-	 * or <code>EnvelopeTrajectory</code>.  The types to the methods of the
-	 * interface are specified as the general <code>ProbeState</code> base
-	 * class. Thus, probes states of either type <code>TransferMapState</code>
-	 * or <code>EnvelopeProbeState</code> may be passed to the interface
-	 * <code>ISimulationResults</code>. 
-	 * </p>
-	 * <p>
-	 * This class maintains an internal machine parameter calculation engine.
-	 * The type of engine depends on the type of simulation data.
-	 * Correct types and interpretations are determined at run time.
-	 * </p>
-	 *
-	 *
-	 * @author Christopher K. Allen
-	 * @since  Nov 7, 2013
-	 */
-	static class MachineCalculations implements ISimulationResults<ProbeState> {
-
-	    
-	    /*
-	     * Local Attributes
-	     */
-	    
-	    /** The machine parameter calculation engine for rings */
-	    private ISimulationResults<TransferMapState>   cmpRingParams;
-	    
-	    /** The machine parameter calculation engine for linacs */
-	    private ISimulationResults<EnvelopeProbeState> cmpLinacParams;
-	    
-	    
-	    /*
-	     * Initialization
-	     */
-	    
-	    /**
-	     * Constructor for <code>MachineCalculations</code>.  We create an internal
-	     * machine calculation engine based upon the type of the given simulation
-	     * trajectory. 
-	     *
-	     * @param trjSimul
-	     * @throws IllegalArgumentException
-	     *
-	     * @author Christopher K. Allen
-	     * @since  Nov 7, 2013
-	     */
-	    public MachineCalculations(Trajectory trjSimul) throws IllegalArgumentException {
-	        
-	        // Create the machine parameter calculation engine according to the
-	        //    type of probe we are given
-	        if (trjSimul instanceof TransferMapTrajectory) {
-	            TransferMapTrajectory   trj = (TransferMapTrajectory)trjSimul;
-
-	            this.cmpRingParams  = new RingCalculations(trj);
-	            this.cmpLinacParams = null;
-	            
-	        } else if (trjSimul instanceof EnvelopeTrajectory) {
-	            EnvelopeTrajectory trj = (EnvelopeTrajectory)trjSimul;
-	            
-	            this.cmpLinacParams = new LinacCalculations(trj);
-	            this.cmpRingParams  = null;
-	            
-	        } else {
-	            
-	            throw new IllegalArgumentException("Unknown simulation data type " + trjSimul.getClass().getName());
-	        }
-	    }
-	    
-	    
-	    /*
-	     * ISimulationResults Interface
-	     */
-	    
-        /**
-         * <p>
-         * This returns the matched envelope Courant-Snyder parameters at the given state 
-         * location for a ring.  For a linace the actual Courant-Snyder parameters for the beam
-         * envelope (including space charge) are returned, computed from the beam's second
-         * moments. 
-         * </p>
-         *
-         * @see xal.tools.beam.calc.ISimulationResults#computeTwissParameters(xal.model.probe.traj.ProbeState)
-         *
-         * @author Christopher K. Allen
-         * @since  Nov 7, 2013
-         */
-        @Override
-        public Twiss[] computeTwissParameters(ProbeState state) throws IllegalArgumentException {
-            
-            Object  objResult = this.compute("computeTwissParameters", state);
-            Twiss[] arrTwiss = (Twiss[])objResult;
-            
-            return arrTwiss;
-        }
-
-        /**
-         *
-         * @see xal.tools.beam.calc.ISimulationResults#computeBetatronPhase(xal.model.probe.traj.ProbeState)
-         *
-         * @author Christopher K. Allen
-         * @since  Nov 7, 2013
-         */
-        @Override
-        public R3 computeBetatronPhase(ProbeState state) {
-            return (R3)this.compute("computeBetatronPhase",  state);
-        }
-
-        /**
-         *
-         * @see xal.tools.beam.calc.ISimulationResults#computePhaseCoordinates(xal.model.probe.traj.ProbeState)
-         *
-         * @author Christopher K. Allen
-         * @since  Nov 7, 2013
-         */
-        @Deprecated
-        @Override
-        public PhaseVector computePhaseCoordinates(ProbeState state) {
-            return (PhaseVector)this.compute("computePhaseCoordinates", state);
-        }
-
-        /**
-         * <p>
-         * For rings, this is the location of the fixed orbit (invariant under applications
-         * of the full-turn map at the give state) about which betatron oscillations occur.
-         * For linacs, this is the fixed point of the end-to-end transfer map.
-         * </p>
-         *
-         * @see xal.tools.beam.calc.ISimulationResults#computeFixedOrbit(xal.model.probe.traj.ProbeState)
-         *
-         * @author Christopher K. Allen
-         * @since  Nov 7, 2013
-         */
-        @Override
-        public PhaseVector computeFixedOrbit(ProbeState state) {
-            return (PhaseVector)this.compute("computeFixedOrbit", state);
-        }
-        
-        
-        /*
-         * Support Methods
-         */
-
-        /**
-         * Determines the sub-type of the <code>ProbeState</code> object
-         * and uses that information to determine which <code>ISimulationResults</code>
-         * computation engine is used to compute the machine parameters.  (That is,
-         * are we looking at a ring or at a Linac.)  The result is passed back up to the
-         * <code>ISimulationResults</code> interface exposed by this class (i.e.,
-         * the interface method that invoked this method) where its type is identified
-         * and returned to the user of this class.
-         * 
-         * @param strMthName    name of the method in the <code>ISimulationResults</code> interface
-         * @param staArg        <code>ProbeState</code> derived object that is an argument to one of the
-         *                      methods in the <code>ISimulationResults</code> interface
-         *                      
-         * @return              result of invoking the given <code>ISimulationResults</code> method on 
-         *                      the given <code>ProbeState</code> argument
-         *  
-         * @author Christopher K. Allen
-         * @since  Nov 8, 2013
-         */
-        private Object  compute(String strMthName, ProbeState staArg) {
-
-            try {
-
-                if (staArg instanceof TransferMapState) {
-                    TransferMapState    staXfer = (TransferMapState)staArg;
-
-                    Method mthCmp;
-                    mthCmp = this.cmpRingParams.getClass().getDeclaredMethod(strMthName, TransferMapState.class);
-                    Object  objRes = mthCmp.invoke(cmpRingParams, staXfer);
-
-                    return objRes;
-
-                } else if (staArg instanceof EnvelopeProbeState) {
-                    EnvelopeProbeState    staEnv = (EnvelopeProbeState)staArg;
-
-                    Method  mthCmp = this.cmpLinacParams.getClass().getDeclaredMethod(strMthName, EnvelopeProbeState.class);
-                    Object  objRes = mthCmp.invoke(cmpRingParams, staEnv);
-
-                    return objRes;
-
-                } else {
-
-                    throw new IllegalArgumentException("Unknown probe state type " + staArg.getClass().getName());
-                }
-
-            } catch (ClassCastException | 
-                    NoSuchMethodException | 
-                    SecurityException | 
-                    IllegalAccessException | 
-                    IllegalArgumentException | 
-                    InvocationTargetException e
-                    ) {
-                
-                throw new IllegalArgumentException("Included exception thrown invoking method " + strMthName, e);
-            }
-        }
 	}
 }
 
