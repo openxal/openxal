@@ -28,7 +28,7 @@ import xal.tools.math.r3.R3;
  * @version $id:
  * 
  */
-public class TwissProbeState extends BunchProbeState implements IPhaseState {
+public class TwissProbeState extends BunchProbeState {
 
 
 
@@ -304,8 +304,6 @@ public class TwissProbeState extends BunchProbeState implements IPhaseState {
      *  for backward compatibility just to satisfy the IPhaseState interface.
      *
      * @return the fixed orbit vector (x,x',y,y',z,z',1)
-     *  
-     * @see    xal.model.probe.traj.IPhaseState
      */
     public PhaseVector getFixedOrbit() {
         return this.getCentroid();

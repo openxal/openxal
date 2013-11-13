@@ -678,7 +678,7 @@ public class PhaseMatrix extends SquareMatrix<PhaseMatrix> implements java.io.Se
         R4x4    matProj = new R4x4();
         
         for (R4x4.IND i : R4x4.IND.values()) 
-            for (IND j : IND.valuesPhase()) {
+            for (R4x4.IND j :R4x4.IND.values()) {
                 double  dblVal = this.getElem(i, j);
                 
                 matProj.setElem(i, j, dblVal);

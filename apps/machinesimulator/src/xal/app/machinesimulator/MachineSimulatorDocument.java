@@ -6,24 +6,28 @@
 
 package xal.app.machinesimulator;
 
-import java.awt.event.*;
-import java.util.*;
-import java.net.*;
-import java.io.*;
-import javax.swing.*;
-import javax.swing.text.*;
-import javax.swing.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
-import xal.application.*;
-import xal.smf.application.*;
-import xal.smf.*;
-import xal.tools.apputils.*;
-import xal.tools.xml.XmlDataAdaptor;
-import xal.smf.data.XMLDataManager;
-import xal.tools.data.*;
-import xal.tools.bricks.WindowReference;
-import xal.tools.swing.*;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+
+import xal.application.XalWindow;
 import xal.model.probe.traj.IPhaseState;
+import xal.model.probe.traj.ProbeState;
+import xal.smf.Accelerator;
+import xal.smf.AcceleratorSeq;
+import xal.smf.application.AcceleratorDocument;
+import xal.tools.bricks.WindowReference;
+import xal.tools.data.DataAdaptor;
+import xal.tools.data.DataListener;
+import xal.tools.swing.KeyValueFilteredTableModel;
+import xal.tools.xml.XmlDataAdaptor;
 
 
 /**
@@ -41,7 +45,8 @@ public class MachineSimulatorDocument extends AcceleratorDocument implements Dat
     final MachineModel MODEL;
     
     /** simulated states table model */
-    final KeyValueFilteredTableModel<IPhaseState> STATES_TABLE_MODEL;
+//    final KeyValueFilteredTableModel<IPhaseState> STATES_TABLE_MODEL;
+    final KeyValueFilteredTableModel<ProbeState> STATES_TABLE_MODEL;
 	
 	
     /** Empty Constructor */
@@ -59,7 +64,8 @@ public class MachineSimulatorDocument extends AcceleratorDocument implements Dat
 		
 		WINDOW_REFERENCE = getDefaultWindowReference( "MainWindow", this );
         
-        STATES_TABLE_MODEL = new KeyValueFilteredTableModel<IPhaseState>();
+//        STATES_TABLE_MODEL = new KeyValueFilteredTableModel<IPhaseState>();
+        STATES_TABLE_MODEL = new KeyValueFilteredTableModel<ProbeState>();
         
         // initialize the model here
         MODEL = new MachineModel();
@@ -166,7 +172,8 @@ public class MachineSimulatorDocument extends AcceleratorDocument implements Dat
                 int vectorParameterIndex = 0;
                 for ( final String plane : planes ) {
                     for ( final String twissParameter : twissParameterNames ) {
-                        vectorParameterKeys[ vectorParameterIndex++ ] = "twiss." + plane + "." + twissParameter;
+//                        vectorParameterKeys[ vectorParameterIndex++ ] = "twiss." + plane + "." + twissParameter;
+                        vectorParameterKeys[ vectorParameterIndex++ ] = "twissParameters." + plane + "." + twissParameter;
                     }
                     
                     if ( betatronPhaseCheckbox.isSelected() ) {

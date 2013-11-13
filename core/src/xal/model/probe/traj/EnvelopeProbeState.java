@@ -1,7 +1,6 @@
 package xal.model.probe.traj;
 
 import xal.tools.beam.CovarianceMatrix;
-import xal.tools.beam.RelativisticParameterConverter;
 import xal.tools.beam.PhaseVector;
 import xal.tools.beam.PhaseMatrix;
 import xal.tools.beam.Twiss;
@@ -376,13 +375,11 @@ public class EnvelopeProbeState extends BunchProbeState /* implements IPhaseStat
 //    public Twiss[] getTwiss() {
 //        return twissParameters();
 //    }
-    
-    
-    /*
-     * CKA - Why do we have three methods that return exactly the same thing?
-     * 
-     * This is a dangerous situation.
-     */ 
+//    
+//    
+//    /*
+//     * CKA - Why do we have three methods that return exactly the same thing?
+//     */ 
 
     /** 
      *  Convenience Method: Return the phase space coordinates of the centroid 
@@ -564,8 +561,25 @@ public class EnvelopeProbeState extends BunchProbeState /* implements IPhaseStat
         }
         */
     }
+
     
+    /*
+     * Object Overrides
+     */
+     
+    /**
+     * Write out state information to a string.
+     * 
+     * @return     text version of internal state data
+     */
+    @Override
+    public String toString() {
+        return super.toString() + " covariance: " + getCovarianceMatrix().toString() 
+                                + ", response: " + this.getResponseMatrix().toString();
+    }   
     
+
+
 //    /*
 //     * IPhaseCoordinate Interface
 //     */
@@ -660,22 +674,6 @@ public class EnvelopeProbeState extends BunchProbeState /* implements IPhaseStat
 //    }
 //    
     
-    /*
-     * Object Overrides
-     */
-     
-    /**
-     * Write out state information to a string.
-     * 
-     * @return     text version of internal state data
-     */
-    @Override
-    public String toString() {
-        return super.toString() + " covariance: " + getCovarianceMatrix().toString() 
-                                + ", response: " + this.getResponseMatrix().toString();
-    }   
-    
-
     
     
 //=====================================================================================
@@ -684,330 +682,330 @@ public class EnvelopeProbeState extends BunchProbeState /* implements IPhaseStat
 //  phase coordinate rather than six separate functions.
 //
     
-    /**
-     * Convenience function for returning the x plane chromatic dispersion as defined by
-     * D.C. Carey in "The Optics of Charged Particle Beams".
-     * 
-     * NOTE:
-     * We convert to the conventional definition of dispersion dx/(dp/p) by dividing
-     * the (x|z') element of the first-order response matrix by relativistic gamma 
-     * squared. 
-     * 
-     * @return  x plane chromatic dispersion in <b>meters/radian</b>
-     * 
-     * @see  Reference text D.C. Carey, "The Optics of Charged Particle Beams"
-     */
-    public double getChromDispersionX()  {
-        double  W  = this.getKineticEnergy();
-        double  Er = this.getSpeciesRestEnergy(); 
-        double  gamma = RelativisticParameterConverter.computeGammaFromEnergies(W, Er);
-        double  d     = this.getResponseMatrix().getElem(PhaseMatrix.IND_X, PhaseMatrix.IND_ZP);
-        
-        return d/(gamma*gamma);
-	//return d;//be carefull. Previous J-PARC vesion def is this.
-    } 
-	
-    /**
-     * Convenience function for returning the y plane chromatic dispersion as defined by
-     * D.C. Carey in "The Optics of Charged Particle Beams".
-     * 
-     * NOTE:
-     * We convert to the conventional definition of dispersion dy/(dp/p) by dividing
-     * the (y|z') element of the first-order response matrix by relativistic gamma 
-     * squared. 
-     * 
-     * @return  y plane chromatic dispersion in <b>meters/radian</b>
-     * 
-     * @see D.C. Carey, "The Optics of Charged Particle Beams"
-     */
-    public double getChromDispersionY()  {
-        double  W  = this.getKineticEnergy();
-        double  Er = this.getSpeciesRestEnergy(); 
-        double  gamma = RelativisticParameterConverter.computeGammaFromEnergies(W, Er);
-        double  d     = this.getResponseMatrix().getElem(PhaseMatrix.IND_Y, PhaseMatrix.IND_ZP);
-        
-        return d/(gamma*gamma);
-        //return d;
-    }
-    
-       
-//sako, 20 dec 2004, add other dispersion functions
-    /**
-     * Convenience function for returning the x' plane chromatic dispersion as defined by
-     * D.C. Carey in "The Optics of Charged Particle Beams".
-     * 
-     * NOTE:
-     * We convert to the conventional definition of dispersion dx'/(dp/p) by dividing
-     * the (x'|z') element of the first-order response matrix by relativistic gamma 
-     * squared. 
-     * 
-     * @return  x' plane chromatic dispersion in <b>meters/radian</b>
-     * 
-     * @see D.C. Carey, "The Optics of Charged Particle Beams"
-     */
-    public double getChromDispersionXP()  {
-        double  W  = this.getKineticEnergy();
-        double  Er = this.getSpeciesRestEnergy(); 
-        double  gamma = RelativisticParameterConverter.computeGammaFromEnergies(W, Er);
-        double  d     = this.getResponseMatrix().getElem(PhaseMatrix.IND_XP, PhaseMatrix.IND_ZP);
-        
-        return d/(gamma*gamma);
-        //return d;
-    } 
-	
-    /**
-     * Convenience function for returning the y' plane chromatic dispersion as defined by
-     * D.C. Carey in "The Optics of Charged Particle Beams".
-     * 
-     * NOTE:
-     * We convert to the conventional definition of dispersion dy'/(dp/p) by dividing
-     * the (y'|z') element of the first-order response matrix by relativistic gamma 
-     * squared. 
-     * 
-     * @return  y' plane chromatic dispersion in <b>meters/radian</b>
-     * 
-     * @see D.C. Carey, "The Optics of Charged Particle Beams"
-     */
-    public double getChromDispersionYP()  {
-        double  W  = this.getKineticEnergy();
-        double  Er = this.getSpeciesRestEnergy(); 
-        double  gamma = RelativisticParameterConverter.computeGammaFromEnergies(W, Er);
-        double  d     = this.getResponseMatrix().getElem(PhaseMatrix.IND_YP, PhaseMatrix.IND_ZP);
-        
-        return d/(gamma*gamma);
-        //return d;
-    }
-    
-    
-    /**
-     * Convenience function for returning the z plane chromatic dispersion as defined by
-     * D.C. Carey in "The Optics of Charged Particle Beams".
-     * 
-     * NOTE:
-     * We convert to the conventional definition of dispersion dz/(dp/p) by dividing
-     * the (z|z') element of the first-order response matrix by relativistic gamma 
-     * squared. 
-     * 
-     * @return  z plane chromatic dispersion in <b>meters/radian</b>
-     * 
-     * @see D.C. Carey, "The Optics of Charged Particle Beams"
-     */
-    public double getChromDispersionZ()  {
-        //double  W  = this.getKineticEnergy();
-        //double  Er = this.getSpeciesRestEnergy(); 
-        //double  gamma = ParameterConverter.computeGammaFromEnergies(W, Er);
-        double  d     = this.getResponseMatrix().getElem(PhaseMatrix.IND_Z, PhaseMatrix.IND_ZP);
-        
-        //return d/(gamma*gamma);
-        return d;
-    } 
-	
-    /**
-     * Convenience function for returning the z' plane chromatic dispersion as defined by
-     * D.C. Carey in "The Optics of Charged Particle Beams".
-     * 
-     * NOTE:
-     * We convert to the conventional definition of dispersion dzp/(dp/p) by dividing
-     * the (z'|z') element of the first-order response matrix by relativistic gamma 
-     * squared. 
-     * 
-     * @return  z' plane chromatic dispersion in <b>meters/radian</b>
-     * 
-     * @see D.C. Carey, "The Optics of Charged Particle Beams"
-     */
-    public double getChromDispersionZP()  {
-        //double  W  = this.getKineticEnergy();
-        //uble  Er = this.getSpeciesRestEnergy(); 
-        //uble  gamma = ParameterConverter.computeGammaFromEnergies(W, Er);
-        double  d     = this.getResponseMatrix().getElem(PhaseMatrix.IND_ZP, PhaseMatrix.IND_ZP);
-        
-        //return d/(gamma*gamma);
-        return d;
-    }
-    
-    
-    /** setter for dispersion, Sako, 16 Mar 06 */
-    public void setChromDispersionX(double d)  {
-        //double  W  = this.getKineticEnergy();
-        //double  Er = this.getSpeciesRestEnergy(); 
-        //double  gamma = RelativisticParameterConverter.computeGammaFromEnergies(W, Er);
-        this.getResponseMatrix().setElem(PhaseMatrix.IND_X, PhaseMatrix.IND_ZP, d);
-    } 
-	
-    /** setter for dispersion, Sako, 16 Mar 06 */
-    public void setChromDispersionXP(double d)  {
-        //double  W  = this.getKineticEnergy();
-        //double  Er = this.getSpeciesRestEnergy(); 
-        //double  gamma = ParameterConverter.computeGammaFromEnergies(W, Er);
-        this.getResponseMatrix().setElem(PhaseMatrix.IND_XP, PhaseMatrix.IND_ZP, d);
-    } 
-
-    /** setter for dispersion, Sako, 16 Mar 06 */
-    public void setChromDispersionY(double d)  {
-        //double  W  = this.getKineticEnergy();
-        //uble  Er = this.getSpeciesRestEnergy(); 
-        //uble  gamma = RelativisticParameterConverter.computeGammaFromEnergies(W, Er);
-        this.getResponseMatrix().setElem(PhaseMatrix.IND_Y, PhaseMatrix.IND_ZP, d);
-    }
-    /** setter for dispersion, Sako, 16 Mar 06 */
-    public void setChromDispersionYP(double d)  {
-        //double  W  = this.getKineticEnergy();
-        //uble  Er = this.getSpeciesRestEnergy(); 
-        //uble  gamma = ParameterConverter.computeGammaFromEnergies(W, Er);
-        this.getResponseMatrix().setElem(PhaseMatrix.IND_YP, PhaseMatrix.IND_ZP, d);
-    }
-    /** setter for dispersion, Sako, 16 Mar 06 */
-    public void setChromDispersionZ(double d)  {
-        //double  W  = this.getKineticEnergy();
-        //double  Er = this.getSpeciesRestEnergy(); 
-        //double  gamma = ParameterConverter.computeGammaFromEnergies(W, Er);
-        this.getResponseMatrix().setElem(PhaseMatrix.IND_Z, PhaseMatrix.IND_ZP, d);
-    } 
-    /** setter for dispersion, Sako, 16 Mar 06 */
-    public void setChromDispersionZP(double d)  {
-        //double  W  = this.getKineticEnergy();
-        //uble  Er = this.getSpeciesRestEnergy(); 
-        //uble  gamma = ParameterConverter.computeGammaFromEnergies(W, Er);
-        this.getResponseMatrix().setElem(PhaseMatrix.IND_ZP, PhaseMatrix.IND_ZP, d);
-    }
-    
-    
-    
-    
-    /**
-     * dispersion x without space charge
-     * 
-     * @return  x plane chromatic dispersion in <b>meters/radian</b>
-     * 
-     * @see D.C. Carey, "The Optics of Charged Particle Beams"
-     */
-    public double getChromDispersionXNoSpaceCharge()  {
-        double  W  = this.getKineticEnergy();
-        double  Er = this.getSpeciesRestEnergy(); 
-        double  gamma = RelativisticParameterConverter.computeGammaFromEnergies(W, Er);
-        double  d     = this.getResponseMatrixNoSpaceCharge().getElem(PhaseMatrix.IND_X, PhaseMatrix.IND_ZP);
-        
-        return d/(gamma*gamma);
-    } 
-	
-    /**
-     *     * dispersion y without space charge
-     * 
-     * @return  y plane chromatic dispersion in <b>meters/radian</b>
-     * 
-     * @see D.C. Carey, "The Optics of Charged Particle Beams"
-     */
-    public double getChromDispersionYNoSpaceCharge()  {
-        double  W  = this.getKineticEnergy();
-        double  Er = this.getSpeciesRestEnergy(); 
-        double  gamma = RelativisticParameterConverter.computeGammaFromEnergies(W, Er);
-        double  d     = this.getResponseMatrixNoSpaceCharge().getElem(PhaseMatrix.IND_Y, PhaseMatrix.IND_ZP);
-        
-        return d/(gamma*gamma);
-    }
-    
-    /**
-     * dispersion x' without space charge
-      * 
-     * @return  x' plane chromatic dispersion in <b>meters/radian</b>
-     * 
-     * @see D.C. Carey, "The Optics of Charged Particle Beams"
-     */
-    public double getChromDispersionXPNoSpaceCharge()  {
-        double  W  = this.getKineticEnergy();
-        double  Er = this.getSpeciesRestEnergy(); 
-        double  gamma = RelativisticParameterConverter.computeGammaFromEnergies(W, Er);
-        double  d     = this.getResponseMatrixNoSpaceCharge().getElem(PhaseMatrix.IND_XP, PhaseMatrix.IND_ZP);
-        
-        return d/(gamma*gamma);
-    } 
-	
-    /**
-     * dispersion y' without space charge
-     * 
-     * @return  y' plane chromatic dispersion in <b>meters/radian</b>
-     * 
-     * @see D.C. Carey, "The Optics of Charged Particle Beams"
-     */
-    public double getChromDispersionYPNoSpaceCharge()  {
-        double  W  = this.getKineticEnergy();
-        double  Er = this.getSpeciesRestEnergy(); 
-        double  gamma = RelativisticParameterConverter.computeGammaFromEnergies(W, Er);
-        double  d     = this.getResponseMatrixNoSpaceCharge().getElem(PhaseMatrix.IND_YP, PhaseMatrix.IND_ZP);
-        
-        return d/(gamma*gamma);
-    }
+//    /**
+//     * Convenience function for returning the x plane chromatic dispersion as defined by
+//     * D.C. Carey in "The Optics of Charged Particle Beams".
+//     * 
+//     * NOTE:
+//     * We convert to the conventional definition of dispersion dx/(dp/p) by dividing
+//     * the (x|z') element of the first-order response matrix by relativistic gamma 
+//     * squared. 
+//     * 
+//     * @return  x plane chromatic dispersion in <b>meters/radian</b>
+//     * 
+//     * @see  Reference text D.C. Carey, "The Optics of Charged Particle Beams"
+//     */
+//    public double getChromDispersionX()  {
+//        double  W  = this.getKineticEnergy();
+//        double  Er = this.getSpeciesRestEnergy(); 
+//        double  gamma = RelativisticParameterConverter.computeGammaFromEnergies(W, Er);
+//        double  d     = this.getResponseMatrix().getElem(PhaseMatrix.IND_X, PhaseMatrix.IND_ZP);
+//        
+//        return d/(gamma*gamma);
+//	//return d;//be carefull. Previous J-PARC vesion def is this.
+//    } 
+//	
+//    /**
+//     * Convenience function for returning the y plane chromatic dispersion as defined by
+//     * D.C. Carey in "The Optics of Charged Particle Beams".
+//     * 
+//     * NOTE:
+//     * We convert to the conventional definition of dispersion dy/(dp/p) by dividing
+//     * the (y|z') element of the first-order response matrix by relativistic gamma 
+//     * squared. 
+//     * 
+//     * @return  y plane chromatic dispersion in <b>meters/radian</b>
+//     * 
+//     * @see D.C. Carey, "The Optics of Charged Particle Beams"
+//     */
+//    public double getChromDispersionY()  {
+//        double  W  = this.getKineticEnergy();
+//        double  Er = this.getSpeciesRestEnergy(); 
+//        double  gamma = RelativisticParameterConverter.computeGammaFromEnergies(W, Er);
+//        double  d     = this.getResponseMatrix().getElem(PhaseMatrix.IND_Y, PhaseMatrix.IND_ZP);
+//        
+//        return d/(gamma*gamma);
+//        //return d;
+//    }
+//    
+//       
+////sako, 20 dec 2004, add other dispersion functions
+//    /**
+//     * Convenience function for returning the x' plane chromatic dispersion as defined by
+//     * D.C. Carey in "The Optics of Charged Particle Beams".
+//     * 
+//     * NOTE:
+//     * We convert to the conventional definition of dispersion dx'/(dp/p) by dividing
+//     * the (x'|z') element of the first-order response matrix by relativistic gamma 
+//     * squared. 
+//     * 
+//     * @return  x' plane chromatic dispersion in <b>meters/radian</b>
+//     * 
+//     * @see D.C. Carey, "The Optics of Charged Particle Beams"
+//     */
+//    public double getChromDispersionXP()  {
+//        double  W  = this.getKineticEnergy();
+//        double  Er = this.getSpeciesRestEnergy(); 
+//        double  gamma = RelativisticParameterConverter.computeGammaFromEnergies(W, Er);
+//        double  d     = this.getResponseMatrix().getElem(PhaseMatrix.IND_XP, PhaseMatrix.IND_ZP);
+//        
+//        return d/(gamma*gamma);
+//        //return d;
+//    } 
+//	
+//    /**
+//     * Convenience function for returning the y' plane chromatic dispersion as defined by
+//     * D.C. Carey in "The Optics of Charged Particle Beams".
+//     * 
+//     * NOTE:
+//     * We convert to the conventional definition of dispersion dy'/(dp/p) by dividing
+//     * the (y'|z') element of the first-order response matrix by relativistic gamma 
+//     * squared. 
+//     * 
+//     * @return  y' plane chromatic dispersion in <b>meters/radian</b>
+//     * 
+//     * @see D.C. Carey, "The Optics of Charged Particle Beams"
+//     */
+//    public double getChromDispersionYP()  {
+//        double  W  = this.getKineticEnergy();
+//        double  Er = this.getSpeciesRestEnergy(); 
+//        double  gamma = RelativisticParameterConverter.computeGammaFromEnergies(W, Er);
+//        double  d     = this.getResponseMatrix().getElem(PhaseMatrix.IND_YP, PhaseMatrix.IND_ZP);
+//        
+//        return d/(gamma*gamma);
+//        //return d;
+//    }
+//    
+//    
+//    /**
+//     * Convenience function for returning the z plane chromatic dispersion as defined by
+//     * D.C. Carey in "The Optics of Charged Particle Beams".
+//     * 
+//     * NOTE:
+//     * We convert to the conventional definition of dispersion dz/(dp/p) by dividing
+//     * the (z|z') element of the first-order response matrix by relativistic gamma 
+//     * squared. 
+//     * 
+//     * @return  z plane chromatic dispersion in <b>meters/radian</b>
+//     * 
+//     * @see D.C. Carey, "The Optics of Charged Particle Beams"
+//     */
+//    public double getChromDispersionZ()  {
+//        //double  W  = this.getKineticEnergy();
+//        //double  Er = this.getSpeciesRestEnergy(); 
+//        //double  gamma = ParameterConverter.computeGammaFromEnergies(W, Er);
+//        double  d     = this.getResponseMatrix().getElem(PhaseMatrix.IND_Z, PhaseMatrix.IND_ZP);
+//        
+//        //return d/(gamma*gamma);
+//        return d;
+//    } 
+//	
+//    /**
+//     * Convenience function for returning the z' plane chromatic dispersion as defined by
+//     * D.C. Carey in "The Optics of Charged Particle Beams".
+//     * 
+//     * NOTE:
+//     * We convert to the conventional definition of dispersion dzp/(dp/p) by dividing
+//     * the (z'|z') element of the first-order response matrix by relativistic gamma 
+//     * squared. 
+//     * 
+//     * @return  z' plane chromatic dispersion in <b>meters/radian</b>
+//     * 
+//     * @see D.C. Carey, "The Optics of Charged Particle Beams"
+//     */
+//    public double getChromDispersionZP()  {
+//        //double  W  = this.getKineticEnergy();
+//        //uble  Er = this.getSpeciesRestEnergy(); 
+//        //uble  gamma = ParameterConverter.computeGammaFromEnergies(W, Er);
+//        double  d     = this.getResponseMatrix().getElem(PhaseMatrix.IND_ZP, PhaseMatrix.IND_ZP);
+//        
+//        //return d/(gamma*gamma);
+//        return d;
+//    }
+//    
+//    
+//    /** setter for dispersion, Sako, 16 Mar 06 */
+//    public void setChromDispersionX(double d)  {
+//        //double  W  = this.getKineticEnergy();
+//        //double  Er = this.getSpeciesRestEnergy(); 
+//        //double  gamma = RelativisticParameterConverter.computeGammaFromEnergies(W, Er);
+//        this.getResponseMatrix().setElem(PhaseMatrix.IND_X, PhaseMatrix.IND_ZP, d);
+//    } 
+//	
+//    /** setter for dispersion, Sako, 16 Mar 06 */
+//    public void setChromDispersionXP(double d)  {
+//        //double  W  = this.getKineticEnergy();
+//        //double  Er = this.getSpeciesRestEnergy(); 
+//        //double  gamma = ParameterConverter.computeGammaFromEnergies(W, Er);
+//        this.getResponseMatrix().setElem(PhaseMatrix.IND_XP, PhaseMatrix.IND_ZP, d);
+//    } 
+//
+//    /** setter for dispersion, Sako, 16 Mar 06 */
+//    public void setChromDispersionY(double d)  {
+//        //double  W  = this.getKineticEnergy();
+//        //uble  Er = this.getSpeciesRestEnergy(); 
+//        //uble  gamma = RelativisticParameterConverter.computeGammaFromEnergies(W, Er);
+//        this.getResponseMatrix().setElem(PhaseMatrix.IND_Y, PhaseMatrix.IND_ZP, d);
+//    }
+//    /** setter for dispersion, Sako, 16 Mar 06 */
+//    public void setChromDispersionYP(double d)  {
+//        //double  W  = this.getKineticEnergy();
+//        //uble  Er = this.getSpeciesRestEnergy(); 
+//        //uble  gamma = ParameterConverter.computeGammaFromEnergies(W, Er);
+//        this.getResponseMatrix().setElem(PhaseMatrix.IND_YP, PhaseMatrix.IND_ZP, d);
+//    }
+//    /** setter for dispersion, Sako, 16 Mar 06 */
+//    public void setChromDispersionZ(double d)  {
+//        //double  W  = this.getKineticEnergy();
+//        //double  Er = this.getSpeciesRestEnergy(); 
+//        //double  gamma = ParameterConverter.computeGammaFromEnergies(W, Er);
+//        this.getResponseMatrix().setElem(PhaseMatrix.IND_Z, PhaseMatrix.IND_ZP, d);
+//    } 
+//    /** setter for dispersion, Sako, 16 Mar 06 */
+//    public void setChromDispersionZP(double d)  {
+//        //double  W  = this.getKineticEnergy();
+//        //uble  Er = this.getSpeciesRestEnergy(); 
+//        //uble  gamma = ParameterConverter.computeGammaFromEnergies(W, Er);
+//        this.getResponseMatrix().setElem(PhaseMatrix.IND_ZP, PhaseMatrix.IND_ZP, d);
+//    }
     
     
     
     
+//    /**
+//     * dispersion x without space charge
+//     * 
+//     * @return  x plane chromatic dispersion in <b>meters/radian</b>
+//     * 
+//     * @see D.C. Carey, "The Optics of Charged Particle Beams"
+//     */
+//    public double getChromDispersionXNoSpaceCharge()  {
+//        double  W  = this.getKineticEnergy();
+//        double  Er = this.getSpeciesRestEnergy(); 
+//        double  gamma = RelativisticParameterConverter.computeGammaFromEnergies(W, Er);
+//        double  d     = this.getResponseMatrixNoSpaceCharge().getElem(PhaseMatrix.IND_X, PhaseMatrix.IND_ZP);
+//        
+//        return d/(gamma*gamma);
+//    } 
+//	
+//    /**
+//     *     * dispersion y without space charge
+//     * 
+//     * @return  y plane chromatic dispersion in <b>meters/radian</b>
+//     * 
+//     * @see D.C. Carey, "The Optics of Charged Particle Beams"
+//     */
+//    public double getChromDispersionYNoSpaceCharge()  {
+//        double  W  = this.getKineticEnergy();
+//        double  Er = this.getSpeciesRestEnergy(); 
+//        double  gamma = RelativisticParameterConverter.computeGammaFromEnergies(W, Er);
+//        double  d     = this.getResponseMatrixNoSpaceCharge().getElem(PhaseMatrix.IND_Y, PhaseMatrix.IND_ZP);
+//        
+//        return d/(gamma*gamma);
+//    }
+//    
+//    /**
+//     * dispersion x' without space charge
+//      * 
+//     * @return  x' plane chromatic dispersion in <b>meters/radian</b>
+//     * 
+//     * @see D.C. Carey, "The Optics of Charged Particle Beams"
+//     */
+//    public double getChromDispersionXPNoSpaceCharge()  {
+//        double  W  = this.getKineticEnergy();
+//        double  Er = this.getSpeciesRestEnergy(); 
+//        double  gamma = RelativisticParameterConverter.computeGammaFromEnergies(W, Er);
+//        double  d     = this.getResponseMatrixNoSpaceCharge().getElem(PhaseMatrix.IND_XP, PhaseMatrix.IND_ZP);
+//        
+//        return d/(gamma*gamma);
+//    } 
+//	
+//    /**
+//     * dispersion y' without space charge
+//     * 
+//     * @return  y' plane chromatic dispersion in <b>meters/radian</b>
+//     * 
+//     * @see D.C. Carey, "The Optics of Charged Particle Beams"
+//     */
+//    public double getChromDispersionYPNoSpaceCharge()  {
+//        double  W  = this.getKineticEnergy();
+//        double  Er = this.getSpeciesRestEnergy(); 
+//        double  gamma = RelativisticParameterConverter.computeGammaFromEnergies(W, Er);
+//        double  d     = this.getResponseMatrixNoSpaceCharge().getElem(PhaseMatrix.IND_YP, PhaseMatrix.IND_ZP);
+//        
+//        return d/(gamma*gamma);
+//    }
     
-    /**
-     * dispersion x with space charge
- 
-     * 
-     * @return  x plane chromatic dispersion in <b>meters/radian</b>
-     * 
-     * @see Ohkawa, Ikegami, NUM A 576 (2007) 274
-      */
-    public double getChromDispersionXSpaceCharge()  {
-        double  W  = this.getKineticEnergy();
-        double  Er = this.getSpeciesRestEnergy(); 
-        double  gamma = RelativisticParameterConverter.computeGammaFromEnergies(W, Er);
-        double  d     = this.getCovarianceMatrix().getElem(PhaseMatrix.IND_X, PhaseMatrix.IND_ZP)
-        / this.getCovarianceMatrix().getElem(PhaseMatrix.IND_ZP,PhaseMatrix.IND_ZP);
-        
-        return d/(gamma*gamma);//Is gamma necessary?
-    } 
-	
-    /**
-     *     * dispersion y with space charge
-     * 
-     * @return  y plane chromatic dispersion in <b>meters/radian</b>
-     * 
-     * @see D.C. Carey, "The Optics of Charged Particle Beams"
-     */
-    public double getChromDispersionYSpaceCharge()  {
-        double  W  = this.getKineticEnergy();
-        double  Er = this.getSpeciesRestEnergy(); 
-        double  gamma = RelativisticParameterConverter.computeGammaFromEnergies(W, Er);
-        double  d     = this.getResponseMatrixNoSpaceCharge().getElem(PhaseMatrix.IND_Y, PhaseMatrix.IND_ZP)
-                / this.getCovarianceMatrix().getElem(PhaseMatrix.IND_ZP,PhaseMatrix.IND_ZP);
-        
-        return d/(gamma*gamma);
-    }
     
-    /**
-     * dispersion x' with space charge
-      * 
-     * @return  x' plane chromatic dispersion in <b>meters/radian</b>
-     * 
-     * @see D.C. Carey, "The Optics of Charged Particle Beams"
-     */
-    public double getChromDispersionXPSpaceCharge()  {
-        double  W  = this.getKineticEnergy();
-        double  Er = this.getSpeciesRestEnergy(); 
-        double  gamma = RelativisticParameterConverter.computeGammaFromEnergies(W, Er);
-        double  d     = this.getResponseMatrixNoSpaceCharge().getElem(PhaseMatrix.IND_XP, PhaseMatrix.IND_ZP)
-                / this.getCovarianceMatrix().getElem(PhaseMatrix.IND_ZP,PhaseMatrix.IND_ZP);
-        
-        return d/(gamma*gamma);
-    } 
-	
-    /**
-     * dispersion y' with space charge
-     * 
-     * @return  y' plane chromatic dispersion in <b>meters/radian</b>
-     * 
-     * @see D.C. Carey, "The Optics of Charged Particle Beams"
-     */
-    public double getChromDispersionYPSpaceCharge()  {
-        double  W  = this.getKineticEnergy();
-        double  Er = this.getSpeciesRestEnergy(); 
-        double  gamma = RelativisticParameterConverter.computeGammaFromEnergies(W, Er);
-        double  d     = this.getResponseMatrixNoSpaceCharge().getElem(PhaseMatrix.IND_YP, PhaseMatrix.IND_ZP)
-                / this.getCovarianceMatrix().getElem(PhaseMatrix.IND_ZP,PhaseMatrix.IND_ZP);
-        return d/(gamma*gamma);
-    }
+    
+    
+    
+//    /**
+//     * dispersion x with space charge
+// 
+//     * 
+//     * @return  x plane chromatic dispersion in <b>meters/radian</b>
+//     * 
+//     * @see Ohkawa, Ikegami, NUM A 576 (2007) 274
+//      */
+//    public double getChromDispersionXSpaceCharge()  {
+//        double  W  = this.getKineticEnergy();
+//        double  Er = this.getSpeciesRestEnergy(); 
+//        double  gamma = RelativisticParameterConverter.computeGammaFromEnergies(W, Er);
+//        double  d     = this.getCovarianceMatrix().getElem(PhaseMatrix.IND_X, PhaseMatrix.IND_ZP)
+//        / this.getCovarianceMatrix().getElem(PhaseMatrix.IND_ZP,PhaseMatrix.IND_ZP);
+//        
+//        return d/(gamma*gamma);//Is gamma necessary?
+//    } 
+//	
+//    /**
+//     *     * dispersion y with space charge
+//     * 
+//     * @return  y plane chromatic dispersion in <b>meters/radian</b>
+//     * 
+//     * @see D.C. Carey, "The Optics of Charged Particle Beams"
+//     */
+//    public double getChromDispersionYSpaceCharge()  {
+//        double  W  = this.getKineticEnergy();
+//        double  Er = this.getSpeciesRestEnergy(); 
+//        double  gamma = RelativisticParameterConverter.computeGammaFromEnergies(W, Er);
+//        double  d     = this.getResponseMatrixNoSpaceCharge().getElem(PhaseMatrix.IND_Y, PhaseMatrix.IND_ZP)
+//                / this.getCovarianceMatrix().getElem(PhaseMatrix.IND_ZP,PhaseMatrix.IND_ZP);
+//        
+//        return d/(gamma*gamma);
+//    }
+//    
+//    /**
+//     * dispersion x' with space charge
+//      * 
+//     * @return  x' plane chromatic dispersion in <b>meters/radian</b>
+//     * 
+//     * @see D.C. Carey, "The Optics of Charged Particle Beams"
+//     */
+//    public double getChromDispersionXPSpaceCharge()  {
+//        double  W  = this.getKineticEnergy();
+//        double  Er = this.getSpeciesRestEnergy(); 
+//        double  gamma = RelativisticParameterConverter.computeGammaFromEnergies(W, Er);
+//        double  d     = this.getResponseMatrixNoSpaceCharge().getElem(PhaseMatrix.IND_XP, PhaseMatrix.IND_ZP)
+//                / this.getCovarianceMatrix().getElem(PhaseMatrix.IND_ZP,PhaseMatrix.IND_ZP);
+//        
+//        return d/(gamma*gamma);
+//    } 
+//	
+//    /**
+//     * dispersion y' with space charge
+//     * 
+//     * @return  y' plane chromatic dispersion in <b>meters/radian</b>
+//     * 
+//     * @see D.C. Carey, "The Optics of Charged Particle Beams"
+//     */
+//    public double getChromDispersionYPSpaceCharge()  {
+//        double  W  = this.getKineticEnergy();
+//        double  Er = this.getSpeciesRestEnergy(); 
+//        double  gamma = RelativisticParameterConverter.computeGammaFromEnergies(W, Er);
+//        double  d     = this.getResponseMatrixNoSpaceCharge().getElem(PhaseMatrix.IND_YP, PhaseMatrix.IND_ZP)
+//                / this.getCovarianceMatrix().getElem(PhaseMatrix.IND_ZP,PhaseMatrix.IND_ZP);
+//        return d/(gamma*gamma);
+//    }
     
 }

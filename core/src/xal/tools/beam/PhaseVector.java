@@ -505,9 +505,8 @@ public class PhaseVector extends BaseVector<PhaseVector> implements java.io.Seri
      *
      *  @param  i       index of new element value
      */
-    public void setElem(PhaseIndex i, double dblVal)
-    {
-        this.setElem(i, dblVal);
+    public void setElem(PhaseIndex i, double dblVal)  {
+        super.setElem(i, dblVal);
     }
     
     /**

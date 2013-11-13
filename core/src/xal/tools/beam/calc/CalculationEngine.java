@@ -199,7 +199,7 @@ public abstract class CalculationEngine {
         R4       vecpt = matRt.solve(vecdt);
 
         PhaseVector     vecP = PhaseVector.newZero();
-        vecP.embedIn(vecpt);
+        vecpt.embedIn(vecP);
 
         return  vecP;
     }

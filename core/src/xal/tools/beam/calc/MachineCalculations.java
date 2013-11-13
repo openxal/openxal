@@ -200,8 +200,6 @@ public class MachineCalculations extends CalculationEngine  implements ISimulati
      * 
      * @return array (twiss-H, twiss-V, twiss-L)
      *
-     * @see xal.model.probe.traj.IPhaseState#getTwiss()
-     *
      * @author Christopher K. Allen
      * @since  Aug 14, 2013
      */
@@ -262,8 +260,6 @@ public class MachineCalculations extends CalculationEngine  implements ISimulati
      * @param   state   state containing transfer map and location used in these calculations
      * 
      * @see calculatePhaseAdvance(PhaseMatrix, Twiss[], Twiss[])
-     *
-     * @see xal.model.probe.traj.IPhaseState#getBetatronPhase()
      *
      * @author Christopher K. Allen
      * @since  Aug 14, 2013
