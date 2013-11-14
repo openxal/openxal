@@ -45,13 +45,9 @@ public class GapTest extends TestCommon {
 		
 		//AcceleratorSeq sequence = gap(4.025e8, 78019.7, -80, 14.5, 0, 0.0805777, 0.772147, -0.386355, -0.142834, 0, 0);
 		
-		System.out.println("W0: "+probe.getKineticEnergy());
-		
 		run(sequence);
 		
-		printResults();
-		
-		System.out.println("W: "+probe.getKineticEnergy());
+		//printResults();
 		
 		if (initialEnergy == 2.5e6) {
 			checkELSResults(0.000000E+00, new double[] {8.001089E-04, 1.018977E-03, 1.753257E-03},
@@ -133,16 +129,11 @@ public class GapTest extends TestCommon {
 		// GAP 78019.7 -35 14.5 0 0.0805777 0.772147 -0.386355 -0.142834 0 0 
 		AcceleratorSeq sequence = gap(4.025e8, 78019.7, -35, 14.5, 0, 0.0805777, 0.772147, -0.386355, -0.142834, 0, 0);
 		
-		//AcceleratorSeq sequence = gap(4.025e8, 78019.7, -80, 14.5, 0, 0.0805777, 0.772147, -0.386355, -0.142834, 0, 0);
-		
-		System.out.println("W0: "+probe.getKineticEnergy());
+		//AcceleratorSeq sequence = gap(4.025e8, 78019.7, -80, 14.5, 0, 0.0805777, 0.772147, -0.386355, -0.142834, 0, 0);		
 		
 		run(sequence);
 		
-		printResults();
-		
-		
-		System.out.println("W: "+probe.getKineticEnergy());
+		//printResults();		
 
 		if (initialEnergy == 2.5e6) {
 		

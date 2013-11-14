@@ -190,10 +190,8 @@ public abstract class TestCommon {
 		scenario = sg2.generateScenario();
 
 		// Outputting lattice elements
-		//new File("temp/bendtest").mkdirs();
-		saveLattice(scenario.getLattice(), "lattice.xml");
-		//saveLattice(escenario.getLattice(), "elattice.xml");
-		//saveSequence(sequence, "temp/bendtest/seq.xml");
+		//new File("temp/").mkdirs();
+		//saveLattice(scenario.getLattice(), "temp/lattice.xml");
 		
 		scenario.setProbe(probe);									
 		scenario.setSynchronizationMode(Scenario.SYNC_MODE_DESIGN);					
@@ -286,7 +284,7 @@ public abstract class TestCommon {
 			b0+=Math.pow(elsBeta[i],2);
 		}		
 		
-		System.out.printf("ELS results diff: %E %E %E\n", Math.abs(elsPosition-probe.getPosition())/elsPosition, Math.sqrt(e/e0), Math.sqrt(b/b0));
+		//System.out.printf("ELS results diff: %E %E %E\n", Math.abs(elsPosition-probe.getPosition())/elsPosition, Math.sqrt(e/e0), Math.sqrt(b/b0));
 	}
 	
 	public void checkTWTransferMatrix(double T[][]) throws ModelException
@@ -368,31 +366,7 @@ public abstract class TestCommon {
 	
 	protected void checkTWResults(double gamma, double[][] cov) {
 		double[] alpha = new double[3],beta=new double[3],emit=new double[3], det=new double[3], sigma=new double[3], gama=new double[3];
-		
-		/*double gamma_start = probe.getTrajectory().finalState().getGamma();
-		double beta_start = Math.sqrt(1.0 - 1.0/Math.pow(gamma_start,2));
-		double gamma_end = gamma;//probe.getTrajectory().initialState().getGamma();
-		double beta_end = Math.sqrt(1.0 - 1.0/Math.pow(gamma_end,2));
-		double k = (beta_end*gamma_end)/(beta_start*gamma_start);		
-		for (int i=0; i<6; i++) {
-			cov[i][1]*=k;
-			cov[1][i]*=k;
-			cov[i][3]*=k;
-			cov[3][i]*=k;
-			cov[i][5]*=k;
-			cov[5][i]*=k;
-		}
-		double betta = Math.sqrt(Math.pow(gamma,2) - 1.0)/gamma;
-		for (int i=0; i<3; i++) {
-			double cos = 0.5*(cov[2*i][2*i]+cov[2*i+1][2*i+1]);
-			double sin = Math.sqrt(1.0 - cos*cos);
-			sigma[i]=Math.acos(cos);
-			alpha[i]=0.5*(cov[2*i][2*i]-cov[2*i+1][2*i+1])/sin;
-			beta[i]=betta*gamma*cov[2*i][2*i+1]/sin;
-		    gama[i]=-cov[2*i+1][2*i]/sin/(betta*gamma);
-		    emit[i]=-cov[2*i+1][2*i]/alpha[i];
-		}*/
-		
+			
 		for (int i=0; i<3; i++) 
 			det[i]=Math.sqrt(cov[2*i+0][2*i+0]*cov[2*i+1][2*i+1]-cov[2*i+1][2*i+0]*cov[2*i+0][2*i+1]);		
 		for (int i=0; i<3; i++) {
@@ -413,11 +387,12 @@ public abstract class TestCommon {
 		else 
 			t = ((EnvelopeProbe)probe).getCovariance().computeTwiss();
 			
+		/*
 		System.out.printf("TW results differences:\n");
 		for (int i = 0; i<3; i++) {
 			System.out.printf("%c:%.0g %.0g %.0g ",'x'+i, tr(t[i].getAlpha(),alpha[i]), tr(t[i].getBeta(),beta[i]), tr(t[i].getEmittance(),emit[i]));	
-		}
-		System.out.printf("\ngamma: %.2g\n", tr(probe.getGamma(),gamma));
+		}*/
+		System.out.printf("TW gamma diff: %.2g\n", tr(probe.getGamma(),gamma));
 		
 		
 		// transform cov

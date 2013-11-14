@@ -26,7 +26,7 @@ public class ScenarioGeneratorTest {
 		
 		for (AcceleratorSeq sequence : accelerator.getSequences()) {			
 			// Generates lattice from SMF accelerator
-			Scenario scenario = Scenario.newScenarioFor(sequence);
+			//Scenario scenario = Scenario.newScenarioFor(sequence);
 			ScenarioGenerator2 sg = new ScenarioGenerator2(sequence);
 			//Scenario scenario = Scenario.newAndImprovedScenarioFor(sequence);
 			//ScenarioGenerator2 sg = new ScenarioGenerator2(sequence, NewAndImprovedScenarioElementMapping.getInstance());
@@ -40,7 +40,7 @@ public class ScenarioGeneratorTest {
 			new File("temp/new").mkdirs();
 			
 			// Outputting lattice elements
-			saveLattice(scenario.getLattice(), "temp/old/lattice-"+sequence.getId()+".xml");
+			//saveLattice(scenario.getLattice(), "temp/old/lattice-"+sequence.getId()+".xml");
 			saveLattice(escenario.getLattice(), "temp/new/lattice-"+sequence.getId()+".xml");			
 		}
 	}

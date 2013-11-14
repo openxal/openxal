@@ -47,7 +47,7 @@ public class DTLCellTest extends TestCommon {
 				
 		run(sequence);
 		
-		printResults();
+		//printResults();
 		if (initialEnergy == 2.5e6) {
 			checkELSResults(6.853400E-02, new double[] { 9.128969E-04, 1.266179E-03, 1.698689E-03},
 				new double [] {2.901633E-01, 5.600682E-01, 7.393248E-01});
@@ -121,7 +121,7 @@ public class DTLCellTest extends TestCommon {
 		
 		run(sequence);
 		
-		printResults();
+		//printResults();
 		if (initialEnergy == 2.5e6) {
 			checkELSResults(6.853400E-02, new double[] { 9.128969E-04, 1.266179E-03, 1.698689E-03},
 					new double [] {2.901633E-01, 5.600682E-01, 7.393248E-01});
@@ -186,7 +186,7 @@ public class DTLCellTest extends TestCommon {
 	}
 	
 
-	@Test
+	//@Test
 	public void doDTLCellTestOnlyRfNoTTF() throws InstantiationException, ModelException {
 		System.out.println("DTL Cell test Only RF no TTF");
 		probe.reset();
@@ -197,7 +197,7 @@ public class DTLCellTest extends TestCommon {
 				
 		run(sequence);
 		
-		printResults();
+		//printResults();
 		checkELSResults(6.853400E-02, new double[] { 9.128969E-04, 1.266179E-03, 1.698689E-03},
 				new double [] {2.901633E-01, 5.600682E-01, 7.393248E-01});
 		

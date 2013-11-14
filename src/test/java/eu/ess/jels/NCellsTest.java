@@ -44,7 +44,7 @@ public class NCellsTest extends TestCommon {
 		
 		run(sequence);
 		  
-		printResults();
+		//printResults();
 					
 		checkTWTransferMatrix(new double[][] {
 				{-1.251628e+02, -2.816564e+01, +0.000000e+00, +0.000000e+00, +0.000000e+00, +0.000000e+00}, 
@@ -74,7 +74,7 @@ public class NCellsTest extends TestCommon {
 		
 		run(sequence);
 		  
-		printResults();
+		//printResults();
 					
 		checkTWTransferMatrix(new double[][] {
 				{+9.781907e+00, +1.608910e+00, +0.000000e+00, +0.000000e+00, +0.000000e+00, +0.000000e+00}, 
@@ -106,7 +106,7 @@ public class NCellsTest extends TestCommon {
 		
 		run(sequence);
 		  
-		printResults();
+		//printResults();
 					
 		checkTWTransferMatrix(new double[][] {
 				{+4.158248e+01, +7.331508e+00, +0.000000e+00, +0.000000e+00, +0.000000e+00, +0.000000e+00}, 
@@ -137,7 +137,7 @@ public class NCellsTest extends TestCommon {
 		
 		run(sequence);
 		  
-		printResults();
+		//printResults();
 		
 		checkTWTransferMatrix(new double[][] {
 				{-1.735870e+03, -4.086639e+02, +0.000000e+00, +0.000000e+00, +0.000000e+00, +0.000000e+00}, 
@@ -168,7 +168,7 @@ public class NCellsTest extends TestCommon {
 		
 		run(sequence);
 		  
-		printResults();
+		//printResults();
 			
 		checkTWTransferMatrix(new double[][] {
 				{-2.469811e-01, +1.206558e-01, +0.000000e+00, +0.000000e+00, +0.000000e+00, +0.000000e+00}, 
@@ -200,7 +200,7 @@ public class NCellsTest extends TestCommon {
 		
 		run(sequence);
 		  
-		printResults();
+		//printResults();
 					
 		checkTWTransferMatrix(new double[][] {
 				{-1.323586e+01, -1.982918e+00, +0.000000e+00, +0.000000e+00, +0.000000e+00, +0.000000e+00}, 
