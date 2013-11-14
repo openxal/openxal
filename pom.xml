@@ -3,11 +3,11 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>eu.ess.jels</groupId>
-	<artifactId>scenario-gen</artifactId>
+	<artifactId>jels</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
-	<name>ESS OpenXAL custom scenario generator</name>
+	<name>ESS JEls</name>
 	<url>http://europeanspallationsource.se/</url>
 
 	<repositories>
