@@ -14,7 +14,7 @@ import xal.model.xml.ParsingException;
  * @version $id:
  * 
  */
-public class ParticleProbeState extends ProbeState implements ICoordinateState {
+public class ParticleProbeState extends ProbeState /*implements ICoordinateState */ {
 
 
 
@@ -43,6 +43,8 @@ public class ParticleProbeState extends ProbeState implements ICoordinateState {
     /** phase coordinates of the particle location */ 
     private PhaseVector     m_vecCoords;
     
+//    /** response matrix for initial coordinate sensitivity */
+//    private PhaseMatrix     matResp;
     
 	
 	
