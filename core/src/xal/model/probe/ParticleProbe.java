@@ -7,9 +7,9 @@
 package xal.model.probe;
 
 
+import xal.tools.beam.PhaseMatrix;
 import xal.tools.beam.PhaseVector;
 import xal.tools.data.DataAdaptor;
-
 import xal.model.probe.traj.ParticleProbeState;
 import xal.model.probe.traj.ParticleTrajectory;
 import xal.model.probe.traj.ProbeState;
@@ -22,6 +22,9 @@ import xal.model.xml.ParsingException;
  *
  * @author Christopher K. Allen
  * @author Craig McChesney
+ * @since Aug 13, 2002
+ * @version Nov 14, 2013
+ * 
  */
 
 public class ParticleProbe extends Probe {
@@ -32,7 +35,10 @@ public class ParticleProbe extends Probe {
      */
     
     /** phase coordinates of the particle location */ 
-    private PhaseVector     m_vecCoords;
+    private PhaseVector     vecCoords;
+    
+    /** response matrix for initial coordinate sensitivity */
+    private PhaseMatrix     matResp;
     
     
 
@@ -46,7 +52,7 @@ public class ParticleProbe extends Probe {
      */
     public ParticleProbe() {
         super( );
-        m_vecCoords = new PhaseVector();
+        vecCoords = new PhaseVector();
     }
     
     /**
@@ -59,9 +65,19 @@ public class ParticleProbe extends Probe {
         super(probe);
         
         // Copy phase coordinate vector
-        this.setPhaseCoordinates( probe.getPhaseCoordinates() );
+        this.setPhaseCoordinates( new PhaseVector(probe.getPhaseCoordinates()) );
+        this.setResponseMatrix( new PhaseMatrix(probe.getResponseMatrix()) );
     }
     
+    /**
+     * Creates a clone of this <code>ParticleProbe</code> object and returns it.
+     * This method is essentially a proxy to the constructor {@link #ParticleProbe(ParticleProbe)}.
+     *
+     * @see xal.model.probe.Probe#copy()
+     *
+     * @author Christopher K. Allen
+     * @since  Nov 14, 2013
+     */
     @Override
     public ParticleProbe copy() {
         return new ParticleProbe( this );
@@ -69,32 +85,87 @@ public class ParticleProbe extends Probe {
     
 	
     /** 
+     *  Set the phase space coordinates of the probe.  This is the location <b>z</b>
+     *  in homogeneous phase space coordinates <b>R</b><sup>6</sup> &times; {1}.
+     *
+     *  @param  vecPhase    new homogeneous phase space coordinate vector 
+     *                      <b>z</b> = (<i>x, x', y, y', z, z', </i>1)<sup><i>T</i></sup>
+	 */
+    public void setPhaseCoordinates(PhaseVector vecPhase) {
+        this.vecCoords = new PhaseVector(vecPhase);
+    }
+	
+    
+    /**
+     * <p>
+     * Set the response matrix <b>&Phi;</b> for the particle at the given
+     * state location <b>z</b>.  The response matrix represents the sensitivity of
+     * the current phase coordinate position <b>z</b> to the initial phase coordinate
+     * location <b>z</b><sub>0</sub> at the start of the simulation.  That is,
+     * <br/>
+     * <br/>
+     * &nbsp; &nbsp; <b>&Phi;</b> &equiv; &part;<b>z</b>/&part;<b>z</b><sub>0</sub>
+     * <br/>
+     * <br/>
+     * so that small changes &Delta;<b>z</b><sub>0</sub> in the initial phase position
+     * yield a corresponding change &Delta;<b>z</b> = <b>&Phi;</b>&Delta;<b>z</b><sub>0</sub>
+     * in the current particle location.
+     * </p>
+     * 
+     * @param matResp   the response matrix <b>&Phi;</b> &equiv; 
+     *                  &part;<b>z</b>/&part;<b>z</b><sub>0</sub>the matResp to set
+     */
+    public void setResponseMatrix(PhaseMatrix matResp) {
+        this.matResp = matResp;
+    }
+
+    /*
+     * Attribute Query
+     */
+	
+	/** 
      *  Returns homogeneous phase space coordinates of the particle.  The units
      *  are meters and radians.
      *
      *  @return     vector (x,x',y,y',z,z',1) of phase space coordinates
      */
     public PhaseVector getPhaseCoordinates()  { 
-    	return this.m_vecCoords;
+    	return this.vecCoords;
     }
-	
-    
-    /** 
-	 *  Set the phase coordinates of the probe.  
-	 *
-	 *  @param  vecPhase    new homogeneous phase space coordinate vector
-	 */
-    public void setPhaseCoordinates(PhaseVector vecPhase) {
-        this.m_vecCoords = new PhaseVector(vecPhase);
+
+    /**
+     * <p>
+     * Returns the response matrix <b>&Phi;</b> for the particle at the given
+     * state location <b>z</b>.  The response matrix represents the sensitivity of
+     * the current phase coordinate position <b>z</b> to the initial phase coordinate
+     * location <b>z</b><sub>0</sub> at the start of the simulation.  That is,
+     * <br/>
+     * <br/>
+     * &nbsp; &nbsp; <b>&Phi;</b> &equiv; &part;<b>z</b>/&part;<b>z</b><sub>0</sub>
+     * <br/>
+     * <br/>
+     * so that small changes &Delta;<b>z</b><sub>0</sub> in the initial phase position
+     * yield a corresponding change &Delta;<b>z</b> = <b>&Phi;</b>&Delta;<b>z</b><sub>0</sub>
+     * in the current particle location.
+     * </p>
+     * 
+     * @return the response matrix <b>&Phi;</b> &equiv; 
+     *          &part;<b>z</b>/&part;<b>z</b><sub>0</sub>
+     */
+    public PhaseMatrix getResponseMatrix() {
+        return matResp;
     }
-	
-	
-	/**
-	 * Get the fixed orbit about which betatron oscillations occur.
-	 * @return the fixed orbit vector (x,x',y,y',z,z',1)
-	 */
+
+    /**
+     * Get the fixed orbit about which betatron oscillations occur.
+     * @return the reference orbit vector (x,x',y,y',z,z',1)
+     * 
+     * @deprecated This is a duplicate of {@link #getPhaseCoordinates()} but with a 
+     *             misleading name.  I plan to get rid of it.
+     */
+    @Deprecated
 	public PhaseVector getFixedOrbit() {
-    	return this.m_vecCoords;		
+    	return this.vecCoords;		
 	}
 
     
@@ -107,6 +178,12 @@ public class ParticleProbe extends Probe {
      * Creates a new <code>Trajectory</code> object for <code>ParticleProbe</code> types.
      * 
      * @return  new, empty <code>ParticleTrajectory</code> object
+     * 
+     * @author Christopher K. Allen
+     * @since  Aug 13, 2002
+     * @version Nov 14, 2013
+     * 
+     * @see xal.model.probe.Probe#createTrajectory()
      */
     @Override
     public ParticleTrajectory createTrajectory() {
@@ -118,6 +195,12 @@ public class ParticleProbe extends Probe {
      * object.
      * 
      * @return  new <code>ParticleProbeState</code> object initialized to current state
+     * 
+     * @author Christopher K. Allen
+     * @since  Aug 13, 2002
+     * @version Nov 14, 2013
+     * 
+     * @see xal.model.probe.Probe#createProbeState()
      */
     @Override
     public ParticleProbeState createProbeState() {
@@ -129,16 +212,23 @@ public class ParticleProbe extends Probe {
      * Capture the current probe state to the <code>ProbeState</code> argument.  Note
      * that the argument must be of the concrete type <code>ParticleProbeState</code>.
      * 
-     * @param   state   <code>ProbeState</code> to recieve this probe's state information
+     * @param   state   <code>ProbeState</code> to receive this probe's state information
      * 
      * @exception IllegalArgumentException  argument is not of type <code>ParticleProbeState</code>
      */   
     @Override
     public void applyState(ProbeState state) {
+        
+        // Check if state is the right type
         if (!(state instanceof ParticleProbeState))
             throw new IllegalArgumentException("invalid probe state");
-        super.applyState(state);
-        setPhaseCoordinates(((ParticleProbeState)state).getPhaseCoordinates());
+        
+        ParticleProbeState  pps = (ParticleProbeState)state;
+        
+        // Set the properties of this probe according to the probe state
+        super.applyState(pps);
+        this.setPhaseCoordinates( pps.getPhaseCoordinates() );
+        this.setResponseMatrix( pps.getResponseMatrix() );
     }
     
     @Override

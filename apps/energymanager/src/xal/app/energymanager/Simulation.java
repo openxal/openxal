@@ -19,7 +19,7 @@ import xal.smf.AcceleratorNode;
 import xal.tools.beam.PhaseMatrix.IND;
 import xal.tools.beam.PhaseVector;
 import xal.tools.beam.Twiss;
-import xal.tools.beam.calc.ISimulationResults;
+import xal.tools.beam.calc.ISimEnvelopeResults;
 import xal.tools.beam.calc.SimResultsAdaptor;
 
 
@@ -160,7 +160,7 @@ public class Simulation {
 	
 	
 	/** The machine parameter calculation engine */
-    private ISimulationResults<ProbeState>     adptSimResults;
+    private ISimEnvelopeResults<ProbeState>     adptSimResults;
 	
     
     /*

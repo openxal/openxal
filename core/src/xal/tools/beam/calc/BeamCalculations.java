@@ -6,8 +6,6 @@
  */
 package xal.tools.beam.calc;
 
-import java.util.EnumSet;
-
 import xal.model.probe.traj.EnvelopeProbeState;
 import xal.model.probe.traj.EnvelopeTrajectory;
 import xal.model.probe.traj.ProbeState;
@@ -15,21 +13,21 @@ import xal.tools.beam.CovarianceMatrix;
 import xal.tools.beam.PhaseMatrix;
 import xal.tools.beam.PhaseVector;
 import xal.tools.beam.Twiss;
-import xal.tools.beam.PhaseMatrix.IND;
 import xal.tools.math.r3.R3;
+import xal.tools.math.r4.R4;
 import xal.tools.math.r6.R6;
 
 /**
  * Class for performing calculations on data obtained from simulating linacs and
  * beam transport systems.  The class performs the calculation exposed in the
- * <code>ISimulationResults</code> interface.  They are performed in the context
+ * <code>ISimEnvelopeResults</code> interface.  They are performed in the context
  * of a linear accelerator or transport system.
  *
  *
  * @author Christopher K. Allen
  * @since  Oct 22, 2013
  */
-public class BeamCalculations extends CalculationEngine implements ISimulationResults<EnvelopeProbeState>{
+public class BeamCalculations extends CalculationEngine implements ISimLocationResults<EnvelopeProbeState>, ISimEnvelopeResults<EnvelopeProbeState>{
 
 
     /*
@@ -49,13 +47,13 @@ public class BeamCalculations extends CalculationEngine implements ISimulationRe
     private final PhaseMatrix               matResp;
 
     
-    /** The betatron phase advances at the at the exit of the linac */
+    /** The betatron phase advances at the at the end of the simulation */
     private final R3                        vecPhsAdv;
     
-    /** The fixed orbit position at the entrance of the Linac */
+    /** The fixed orbit position at the beginning of the simulation */
     private final PhaseVector               vecFxdPt;
     
-    /** The matched beam Twiss parameters at the start of the ring */
+    /** The matched beam Twiss parameters at the start of the simulation */
     private final Twiss[]                   arrTwsMch;
 
     
@@ -72,8 +70,8 @@ public class BeamCalculations extends CalculationEngine implements ISimulationRe
      * @author Christopher K. Allen
      * @since  Oct 22, 2013
      */
-    public BeamCalculations(EnvelopeTrajectory trjLinac) {
-        ProbeState  pstFinal = trjLinac.finalState();
+    public BeamCalculations(EnvelopeTrajectory trjBeam) {
+        ProbeState  pstFinal = trjBeam.finalState();
         
         // Check for correct probe types
         if ( !( pstFinal instanceof EnvelopeProbeState) )
@@ -82,8 +80,8 @@ public class BeamCalculations extends CalculationEngine implements ISimulationRe
                     + pstFinal.getClass().getName()
                     );
         
-        this.trjSimul  = trjLinac;
-        this.staInit   = (EnvelopeProbeState)trjLinac.initialState();
+        this.trjSimul  = trjBeam;
+        this.staInit   = (EnvelopeProbeState)trjBeam.initialState();
         this.staFinal  = (EnvelopeProbeState)pstFinal;
         this.matResp   = this.staFinal.getResponseMatrix();
         
@@ -125,10 +123,11 @@ public class BeamCalculations extends CalculationEngine implements ISimulationRe
     
     /**
      * <p>
-     * Returns the betatron phase advances from the linac entrance to the linac exit 
+     * Returns the betatron phase advances from the simulation beginning to end
      * (which are computed at instantiation).  The returned value is the calculation
      * <code>{@link #calculatePhaseAdvPerCell(PhaseMatrix)}</code> of the super class,
-     * and thus assumes the linac is periodic.
+     * and thus assumes simulation trajectory is that for at least one period of 
+     * a periodic structure.
      * </p>
      * <p>  
      * <h4>NOTES:</h4>
@@ -141,16 +140,19 @@ public class BeamCalculations extends CalculationEngine implements ISimulationRe
      * @author Christopher K. Allen
      * @since  Oct 30, 2013
      */
-    public R3   linacBetatronPhaseAdvance() {
+    public R3   periodBetatronPhaseAdvance() {
         return this.vecPhsAdv;
     }
     
     /**
      * <p>
-     * Returns the phase space location of the fixed orbit at the ring entrance 
-     * (which is computed at instantiation). The returned value <b>z</b> is the result of the
+     * Returns the phase space location of the fixed orbit at the simulation start 
+     * (which is computed at instantiation) assuming the simulation is that for
+     * at least one period of a periodic accelerating or transport section. 
+     * The returned value <b>z</b> is the result of the
      * calculation <code>{@link #calculateFixedPoint(PhaseMatrix)}</code> given the
-     * full turn matrix <b>&Phi;</b> at the ring entrance. It is invariant under 
+     * full turn matrix <b>&Phi;</b> at the simulation exit (see {@link #getFullResponseMatrix()}). 
+     * It is invariant under 
      * the action of <b>&Phi;</b>, that is, <b>&Phi;z</b> = <b>z</b>. 
      * </p>
      * <p>  
@@ -164,14 +166,15 @@ public class BeamCalculations extends CalculationEngine implements ISimulationRe
      * @author Christopher K. Allen
      * @since  Oct 30, 2013
      */
-    public PhaseVector  ringFixedOrbitPt() {
+    public PhaseVector  periodFixedOrbitPt() {
         return this.vecFxdPt;
     }
     
     /**
      * <p>
-     * Returns the matched Courant-Snyder parameters at the entrance of the Linac. These
-     * are the "envelopes" taken from the "closed envelope" solution at the assume
+     * Returns the matched Courant-Snyder parameters at the entrance of the simulation
+     * assuming the simulation is for at least one period of a periodic structure. These
+     * are the "envelopes" taken from the "closed envelope" solution under the assume
      * the linac is a periodic transport.
      * </p>
      * <p>
@@ -181,7 +184,7 @@ public class BeamCalculations extends CalculationEngine implements ISimulationRe
      * </p>
      * <p>  
      * <h4>NOTES:</h4>
-     * &middot; The entrance of the ring is assumed to be the location of the
+     * &middot; The entrance of the simulation is assumed to be the location of the
      * first and last states of the solution trajectory.
      * </p>
      * 
@@ -190,106 +193,28 @@ public class BeamCalculations extends CalculationEngine implements ISimulationRe
      * @author Christopher K. Allen
      * @since  Oct 30, 2013
      */
-    public Twiss[]  ringMatchedTwiss() {
+    public Twiss[]  periodMatchedTwiss() {
         return this.arrTwsMch;
     }
 
 
-    
     /*
-     * ISimulationResults Interface
+     * ISimLocationResults Interface
      */
-
-    /**
-     * Returns the Courant-Snyder parameters of the beam envelope at the location of the
-     * given probe state.  These values are computed from the primary state object of
-     * an <code>EnvelopeProbe</code> the <i>covariance matrix</i> <b>&sigma;</b>.  
-     * Only the 2&times;2 diagonal blocks of <b>&sigma;</b> are used for 
-     * Courant-Snyder parameter calculations (for each phase plane), thus, any phase
-     * plane coupling is lost.
-     *
-     * @see xal.tools.beam.calc.ISimulationResults#computeTwissParameters(xal.model.probe.traj.ProbeState)
-     *
-     * @author Christopher K. Allen
-     * @since  Nov 7, 2013
-     */
-    @Override
-    public Twiss[] computeTwissParameters(EnvelopeProbeState state) {
-        
-        CovarianceMatrix    matSigma = state.getCovarianceMatrix();
-        Twiss[]             arrTwiss = matSigma.computeTwiss();
-        
-        return arrTwiss;
-    }
-
-    /**
-     * <p>
-     * Computes and returns the "betatron phase" of a beam particle within the simulated
-     * envelope at the given state location.  The calculation proceeds by computing the
-     * Courant-Snyder parameters &alpha; and &beta; of the envelope at the entrance to 
-     * the linac and at the
-     * given state location using the covariance matrix <b>&sigma;</b>(<i>s</i>) of the 
-     * simulation.  The given state also contains the response matrix <b>&Phi;</b>(<i>s</i>)
-     * between the entrance to the linac and the current state location <i>s</i>.  This
-     * matrix is used as the transfer matrix mapping particle phase coordinates between
-     * the linac entrance and the current state location.
-     * </p> 
-     * <p>
-     * The definition of phase advance &psi; is given by
-     * <br/>
-     * <br/>
-     * &nbsp; &nbsp; &psi;(<i>s</i>) &equiv; &int;<sup><i>s</i></sup> [1/&beta;(<i>t</i>)]<i>dt</i> ,
-     * <br/>
-     * <br/>
-     * where &beta;(<i>s</i>) is the Courant-Snyder, envelope function, and the integral 
-     * is taken along the interval between the initial and final Courant-Snyder 
-     * parameters.
-     * </p>
-     * <p>
-     * The basic relation used to compute &psi; is the following:
-     * <br/>
-     * <br/>
-     * &nbsp; &nbsp;  &psi; = sin<sup>-1</sup> &phi;<sub>12</sub>/(&beta;<sub>1</sub>&beta;<sub>2</sub>)<sup>&frac12;</sup> ,
-     * <br/>
-     * <br/>
-     * where &phi;<sub>12</sub> is the element of <b>&Phi;</b> in the upper right corner of each 
-     * 2&times;2 diagonal block, &beta;<sub>1</sub> is the initial beta function value (provided)
-     * and &beta;<sub>2</sub> is the final beta function value (provided).
-     * </p>
-     *
-     * @see xal.tools.beam.calc.ISimulationResults#computeBetatronPhase(xal.model.probe.traj.ProbeState)
-     *
-     * @author Christopher K. Allen
-     * @since  Nov 7, 2013
-     */
-    @Override
-    public R3 computeBetatronPhase(EnvelopeProbeState state) {
-        CovarianceMatrix    matSigInit = this.staInit.getCovarianceMatrix();
-        Twiss[]             arrTwsInit = matSigInit.computeTwiss();
-        
-        CovarianceMatrix    matSigLoc = state.getCovarianceMatrix();
-        Twiss[]             arrTwsLoc = matSigLoc.computeTwiss();
     
-        PhaseMatrix         matPhiLoc = state.getResponseMatrix();
-        
-        R3          vecPhsAdv  = super.calculatePhaseAdvance(matPhiLoc, arrTwsInit, arrTwsLoc);
-        
-        return vecPhsAdv;
-    }
-
     /**
      * Returns the centroid location of the beam envelope.  This quantity is taken from 
      * the <code>CovarianceMatrix</code> state object.  Since the state quantities
      * are expressed in homogeneous coordinates the final row and column of the 
      * covariance matrix are interpreted as the centroid vector of the beam bunch.
      *
-     * @see xal.tools.beam.calc.ISimulationResults#computeCoordinateOffset(xal.model.probe.traj.ProbeState)
+     * @see xal.tools.beam.calc.ISimEnvelopeResults#computeCoordinatePosition(xal.model.probe.traj.ProbeState)
      *
      * @author Christopher K. Allen
      * @since  Nov 7, 2013
      */
     @Override
-    public PhaseVector computeCoordinateOffset(EnvelopeProbeState state) {
+    public PhaseVector computeCoordinatePosition(EnvelopeProbeState state) {
         CovarianceMatrix    matSigLoc = state.getCovarianceMatrix();
         PhaseVector         vecCenter = matSigLoc.getMean();
         
@@ -299,13 +224,13 @@ public class BeamCalculations extends CalculationEngine implements ISimulationRe
     /**
      * <p>
      * Consider first the point in phase space that is invariant under repeated application
-     * of the response matrix <b>&Phi;</b> for the entire linac.  This is under 
+     * of the response matrix <b>&Phi;</b> for the entire beamline or ring.  This is under 
      * the condition that we decompose <b>&Phi;</b> into its homogeneous and non-homogeneous
      * components.  A particle entering the linac at that location exits at the same location.
      * </p> 
      * <p>
      * To compute this linac fixed point, recall that the <i>homogeneous</i> response 
-     * matrix <b>&Phi;</b> for the linac
+     * matrix <b>&Phi;</b> for the beamline (or full-turn matrix for a ring)
      * has final row that represents the translation <b>&Delta;</b> of the particle
      * under the action of <b>&Phi;</b>.  The 6&times;6 sub-matrix of <b>&Phi;</b> represents
      * the (linear) action of the bending magnetics and quadrupoles and corresponds to the
@@ -360,7 +285,7 @@ public class BeamCalculations extends CalculationEngine implements ISimulationRe
      * @return  The quantity <b>&Phi;</b><sub><i>n</i></sub>&sdot;<b>z</b><sub>0</sub>, the linac 
      *          fixed point <b>z</b><sub>0</sub> propagated to the state location <i>s<sub>n</sub></i>
      *
-     * @see xal.tools.beam.calc.ISimulationResults#computeFixedOrbit(xal.model.probe.traj.ProbeState)
+     * @see xal.tools.beam.calc.ISimEnvelopeResults#computeFixedOrbit(xal.model.probe.traj.ProbeState)
      *
      * @author Christopher K. Allen
      * @since  Nov 7, 2013
@@ -373,6 +298,113 @@ public class BeamCalculations extends CalculationEngine implements ISimulationRe
         return vecFxdLoc; 
     }
 
+    /**
+     * Computes the chromatic aberration for one pass around the ring starting at the given
+     * state location, or from the entrance to state position for a linear
+     * machine.  The returned vector is the displacement from the closed orbit caused 
+     * by a unit momentum offset (&delta;<i>p</i> = 1).  See the documentation in 
+     * {@link ISimLocationResults#computeChromAberration(ProbeState)} for a more detailed
+     * exposition.
+     *
+     * @see xal.tools.beam.calc.ISimLocationResults#computeChromAberration(xal.model.probe.traj.ProbeState)
+     *
+     * @author Christopher K. Allen
+     * @since  Nov 15, 2013
+     */
+    @Override
+    public PhaseVector computeChromAberration(EnvelopeProbeState state) {
+        double      dblGamma = state.getGamma();
+        PhaseMatrix matResp  = state.getResponseMatrix();
+        R6          vecDel   = super.calculateAberration(matResp, dblGamma);
+        
+        return PhaseVector.embed(vecDel);
+    }
+
+
+    
+    /*
+     * ISimEnvelopeResults Interface
+     */
+
+    /**
+     * Returns the Courant-Snyder parameters of the beam envelope at the location of the
+     * given probe state.  These values are computed from the primary state object of
+     * an <code>EnvelopeProbe</code> the <i>covariance matrix</i> <b>&sigma;</b>.  
+     * Only the 2&times;2 diagonal blocks of <b>&sigma;</b> are used for 
+     * Courant-Snyder parameter calculations (for each phase plane), thus, any phase
+     * plane coupling is lost.
+     *
+     * @see xal.tools.beam.calc.ISimEnvelopeResults#computeTwissParameters(xal.model.probe.traj.ProbeState)
+     *
+     * @author Christopher K. Allen
+     * @since  Nov 7, 2013
+     */
+    @Override
+    public Twiss[] computeTwissParameters(EnvelopeProbeState state) {
+        
+        CovarianceMatrix    matSigma = state.getCovarianceMatrix();
+        Twiss[]             arrTwiss = matSigma.computeTwiss();
+        
+        return arrTwiss;
+    }
+
+    /**
+     * <p>
+     * Computes and returns the "betatron phase" of a beam particle within the simulated
+     * envelope at the given state location.  This quantity is the phase advance between
+     * the beginning of the simulation and the given state location.  
+     * The calculation proceeds by computing the
+     * Courant-Snyder parameters &alpha; and &beta; of the envelope at the entrance to 
+     * the linac and at the
+     * given state location using the covariance matrix <b>&sigma;</b>(<i>s</i>) of the 
+     * simulation.  The given state also contains the response matrix <b>&Phi;</b>(<i>s</i>)
+     * between the entrance to the linac and the current state location <i>s</i>.  This
+     * matrix is used as the transfer matrix mapping particle phase coordinates between
+     * the linac entrance and the current state location.
+     * </p> 
+     * <p>
+     * The definition of phase advance &psi; is given by
+     * <br/>
+     * <br/>
+     * &nbsp; &nbsp; &psi;(<i>s</i>) &equiv; &int;<sup><i>s</i></sup> [1/&beta;(<i>t</i>)]<i>dt</i> ,
+     * <br/>
+     * <br/>
+     * where &beta;(<i>s</i>) is the Courant-Snyder, envelope function, and the integral 
+     * is taken along the interval between the initial and final Courant-Snyder 
+     * parameters.
+     * </p>
+     * <p>
+     * The basic relation used to compute &psi; is the following:
+     * <br/>
+     * <br/>
+     * &nbsp; &nbsp;  &psi; = sin<sup>-1</sup> &phi;<sub>12</sub>/(&beta;<sub>1</sub>&beta;<sub>2</sub>)<sup>&frac12;</sup> ,
+     * <br/>
+     * <br/>
+     * where &phi;<sub>12</sub> is the element of <b>&Phi;</b> in the upper right corner of each 
+     * 2&times;2 diagonal block, &beta;<sub>1</sub> is the initial beta function value (provided)
+     * and &beta;<sub>2</sub> is the final beta function value (provided).
+     * </p>
+     *
+     * @see xal.tools.beam.calc.ISimEnvelopeResults#computeBetatronPhase(xal.model.probe.traj.ProbeState)
+     *
+     * @author Christopher K. Allen
+     * @since  Nov 7, 2013
+     */
+    @Override
+    public R3 computeBetatronPhase(EnvelopeProbeState state) {
+        CovarianceMatrix    matSigInit = this.staInit.getCovarianceMatrix();
+        Twiss[]             arrTwsInit = matSigInit.computeTwiss();
+        
+        CovarianceMatrix    matSigLoc = state.getCovarianceMatrix();
+        Twiss[]             arrTwsLoc = matSigLoc.computeTwiss();
+    
+        PhaseMatrix         matPhiLoc = state.getResponseMatrix();
+        
+        R3          vecPhsAdv  = super.calculatePhaseAdvance(matPhiLoc, arrTwsInit, arrTwsLoc);
+        
+        return vecPhsAdv;
+    }
+
 
     /**
      * <p>
@@ -380,67 +412,12 @@ public class BeamCalculations extends CalculationEngine implements ISimulationRe
      * as defined by
      * D.C. Carey in "The Optics of Charged Particle Beams".  
      * </p>
-     * <p>
-     * For example, in the
-     * horizontal phase plane (<i>x,x'</i>) these coefficients specify the 
-     * change in position &Delta;<i>x</i>
-     * and the change in divergence angle &Delta;<i>x'</i>
-     * due to chromatic dispersion &delta; within the beam, or
-     * <br/>
-     * <br/>
-     * &nbsp; &nbsp; &Delta;<i>x</i> = (<i>dx</i>/<i>d</i>&delta;) &sdot; &delta; ,
-     * <br/>
-     * <br/> 
-     * &nbsp; &nbsp; &Delta;<i>x'</i> = (<i>dx'</i>/<i>d</i>&delta;) &sdot; &delta; .
-     * <br/>
-     * <br/>
-     * That is, (<i>dx</i>/<i>d</i>&delta;) and (<i>dx'</i>/<i>d</i>&delta;) are the dispersion
-     * coefficients for the horizontal plane position and horizontal plane divergence
-     * angle, respectively.  The vector returned by this method contains all the analogous
-     * coefficients for all the phase planes.
-     * </p>
-     * <p>The chromatic dispersion coefficient vector <b>&Delta;</b> can be built from 
-     * the 6<sup><i>th</i></sup>
-     * column of the state response matrix <b>&Phi;</b>.  However we must pay close 
-     * attention to the transverse plane quantities.  Specifically, consider again
-     * the horizontal phase plane (<i>x,x'</i>).  Denoting the elements of <b>&Phi;</b>
-     * in the 6<sup><i>th</i></sup> column (i.e., the <i>z'</i> column) corresponding 
-     * to this positions as &phi;<sub>1,6</sub> and &phi;<sub>2,6</sub>, we can write
-     * them as
-     * <br/>
-     * <br/>
-     * &nbsp; &nbsp; &phi;<sub>1,6</sub> = &part;<i>x</i>/&part;<i>z'</i> ,
-     * <br/>
-     * <br/>
-     * &nbsp; &nbsp; &phi;<sub>2,6</sub> = &part;<i>x'</i>/&part;<i>z'</i> .
-     * <br/>
-     * <br/>
-     * Now consider the relationship
-     * <br/>
-     * <br/>
-     * &nbsp; &nbsp; &delta; &equiv; (<i>p</i> - <i>p</i><sub>0</sub>)/<i>p</i><sub>0</sub>
-     *               = &gamma;<sup>2</sup><i>z</i>'= &gamma;<sup>2</sup><i>dz</i>/<i>ds</i>
-     * <br/>
-     * <br/>
-     * or
-     * <br/>
-     * <br/>
-     * &nbsp; &nbsp; &part;<i>z'</i>/&part;&delta; = 1/&gamma;<sup>2</sup> .
-     * <br/>
-     * <br/>
-     * Thus, it is necessary to multiply the transfer plane elements of 
-     * <i>Row</i><sub>6</sub>&Phi; by 1/&gamma;<sup>2</sup> to covert to 
-     * the conventional dispersion coefficients.  Specifically, for the horizontal plane
-     * <br/>
-     * <br/>
-     * &nbsp; &nbsp; &Delta;<sub><i>x</i></sub> = (<i>dx</i>/<i>d</i>&delta;) = &phi;<sub>6,1</sub>/&gamma;<sup>2</sup> ,
-     * <br/>
-     * <br/> 
-     * &nbsp; &nbsp; &Delta;<sub><i>x'</i></sub> = (<i>dx'</i>/<i>d</i>&delta;) = &phi;<sub>6,2</sub>/&gamma;<sup>2</sup> ,
-     * <br/>
-     * <br/>
-     * For the longitudinal plane no such normalization is necessary. 
-     * </p>
+     * Computes the chromatic aberration for one pass around the ring starting at the given
+     * state location, or from the entrance to state position for a linear
+     * machine.  The returned vector is the displacement from the closed orbit caused 
+     * by a unit momentum offset (&delta;<i>p</i> = 1).  See the documentation in 
+     * {@link ISimLocationResults#computeChromAberration(ProbeState)} for a more detailed
+     * exposition.
      * <p>
      * <h4>NOTE:</h4>
      * - Reference text D.C. Carey, "The Optics of Charged Particle Beams"
@@ -448,32 +425,19 @@ public class BeamCalculations extends CalculationEngine implements ISimulationRe
      * 
      * @return  vector of chromatic dispersion coefficients in <b>meters/radian</b>
      * 
-     * @see xal.tools.beam.calc.ISimulationResults#computeChromDispersion(xal.model.probe.traj.ProbeState)
+     * @see xal.tools.beam.calc.ISimEnvelopeResults#computeChromDispersion(xal.model.probe.traj.ProbeState)
      *
      * @author Christopher K. Allen
      * @since  Nov 8, 2013
      */
     @Override
     public PhaseVector computeChromDispersion(EnvelopeProbeState state) {
-        PhaseMatrix matResp = state.getResponseMatrix();
-        R6          vecDel  = matResp.projectColumn(IND.Zp);
+        double      dblGamma = state.getGamma();
+        PhaseMatrix matResp  = state.getResponseMatrix();
         
-        double      dblGamma  = state.getGamma();
-        double      dblGamma2 = dblGamma*dblGamma;
+        R4          vecDisp   = super.calculateDispersion(matResp, dblGamma);
 
-        // Need to normalize the transverse coordinates to momentum rather than angle
-        EnumSet<IND>    SET_TRNV = EnumSet.of(IND.X, IND.Xp, IND.Y, IND.Yp);
-        
-        for (IND i : SET_TRNV) {
-            double      dblDspAng = vecDel.getElem(i);
-            double      dblDspMom  = dblDspAng/dblGamma2;
-            
-            vecDel.setElem(i, dblDspMom);
-        }
-
-        PhaseVector vecDisp = PhaseVector.embed(vecDel);
-        
-        return vecDisp;
+        return PhaseVector.embed(vecDisp);
     }
     
     

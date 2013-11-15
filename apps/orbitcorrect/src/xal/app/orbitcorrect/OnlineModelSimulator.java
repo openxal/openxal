@@ -15,13 +15,20 @@ import java.util.logging.Logger;
 
 import xal.model.probe.Probe;
 import xal.model.probe.traj.ICoordinateState;
+import xal.model.probe.traj.ParticleTrajectory;
+import xal.model.probe.traj.ProbeState;
 import xal.model.probe.traj.Trajectory;
+import xal.model.probe.traj.TransferMapState;
+import xal.model.probe.traj.TransferMapTrajectory;
 import xal.sim.scenario.AlgorithmFactory;
 import xal.sim.scenario.ProbeFactory;
 import xal.sim.scenario.Scenario;
 import xal.smf.Ring;
 import xal.smf.proxy.ElectromagnetPropertyAccessor;
 import xal.tools.beam.PhaseVector;
+import xal.tools.beam.calc.ISimLocationResults;
+import xal.tools.beam.calc.MachineCalculations;
+import xal.tools.beam.calc.ParticleCalculations;
 
 
 /**
@@ -30,6 +37,99 @@ import xal.tools.beam.PhaseVector;
  * @since    Sep 07, 2004
  */
 public class OnlineModelSimulator extends MappedSimulator {
+    
+//    /*
+//     * Internal Classes
+//     */
+//    
+//    private static class SimDataProcessor implements ISimLocationResults<ProbeState> {
+//
+//        /*
+//         * Local Attributes
+//         */
+//        
+//        /** The simulation data */
+//        private final Trajectory                        traj;
+//        
+//        /** The particle trajectory data processor */
+//        private final ISimLocationResults<? extends ProbeState>  engResults;
+//        
+//        
+//        
+//        /**
+//         * @param supplies
+//         * @param bpmAgents
+//         * @return
+//         *
+//         * @author Christopher K. Allen
+//         * @since  Nov 15, 2013
+//         */
+//        public SimDataProcessor(Trajectory traj) {
+//            this.traj = traj;
+//            
+//            if (traj instanceof TransferMapTrajectory) {
+//                TransferMapTrajectory trjXferMap = (TransferMapTrajectory)traj;
+//                
+//                this.engResults = new MachineCalculations(trjXferMap);
+//                
+//            } else if (traj instanceof ParticleTrajectory) {
+//                ParticleTrajectory  trjPart = (ParticleTrajectory)traj;
+//                
+//                this.engResults = new ParticleCalculations(trjPart);
+//                
+//            } else {
+//                
+//                throw new IllegalArgumentException("Unknown trajectory type " + traj.getClass());
+//            }
+//            
+//        }
+//        
+//        /*
+//         * ISimLocationResults Interface
+//         */
+//        
+//        /**
+//         *
+//         * @see xal.tools.beam.calc.ISimLocationResults#computeCoordinatePosition(xal.model.probe.traj.ProbeState)
+//         *
+//         * @author Christopher K. Allen
+//         * @since  Nov 15, 2013
+//         */
+//        @Override
+//        public PhaseVector computeCoordinatePosition(ProbeState state) {
+//            if (state instanceof TransferMapState)
+//            return this.engResults.computeCoordinatePosition((TransferMapState)state);
+//        }
+//
+//        /**
+//         *
+//         * @see xal.tools.beam.calc.ISimLocationResults#computeFixedOrbit(xal.model.probe.traj.ProbeState)
+//         *
+//         * @author Christopher K. Allen
+//         * @since  Nov 15, 2013
+//         */
+//        @Override
+//        public PhaseVector computeFixedOrbit(ProbeState state) {
+//            // TODO Auto-generated method stub
+//            return null;
+//        }
+//
+//        /**
+//         *
+//         * @see xal.tools.beam.calc.ISimLocationResults#computeChromAberration(xal.model.probe.traj.ProbeState)
+//         *
+//         * @author Christopher K. Allen
+//         * @since  Nov 15, 2013
+//         */
+//        @Override
+//        public PhaseVector computeChromAberration(ProbeState state) {
+//            // TODO Auto-generated method stub
+//            return null;
+//        }
+//        
+//    }
+    
+    
 	/**
 	 * Constructor
 	 * @param orbitModel    The orbit model.

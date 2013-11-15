@@ -6,6 +6,8 @@
  */
 package xal.tools.beam.calc;
 
+import java.util.EnumSet;
+
 import xal.model.probe.TwissProbe;
 import xal.tools.beam.PhaseMatrix;
 import xal.tools.beam.PhaseMatrix.IND;
@@ -586,6 +588,224 @@ public abstract class CalculationEngine {
         return arrTwsCell;
     }
 
+    
+    /**
+     * <p>
+     * Convenience function for returning the chromatic aberration coefficients.
+     * </p>
+     * <p>
+     * For example, in the
+     * horizontal phase plane (<i>x,x'</i>) these coefficients specify the 
+     * change in position &Delta;<i>x</i>
+     * and the change in divergence angle &Delta;<i>x'</i>
+     * due to chromatic dispersion &delta; within the beam, or
+     * <br/>
+     * <br/>
+     * &nbsp; &nbsp; &Delta;<i>x</i> = (<i>dx</i>/<i>d</i>&delta;) &sdot; &delta; ,
+     * <br/>
+     * <br/> 
+     * &nbsp; &nbsp; &Delta;<i>x'</i> = (<i>dx'</i>/<i>d</i>&delta;) &sdot; &delta; .
+     * <br/>
+     * <br/>
+     * That is, (<i>dx</i>/<i>d</i>&delta;) and (<i>dx'</i>/<i>d</i>&delta;) are the dispersion
+     * coefficients for the horizontal plane position and horizontal plane divergence
+     * angle, respectively.  The vector returned by this method contains all the analogous
+     * coefficients for all the phase planes.
+     * </p>
+     * <p>The chromatic dispersion coefficient vector <b>&Delta;</b> can be built from 
+     * the 6<sup><i>th</i></sup>
+     * column of the state response matrix <b>&Phi;</b>.  However we must pay close 
+     * attention to the transverse plane quantities.  Specifically, consider again
+     * the horizontal phase plane (<i>x,x'</i>).  Denoting the elements of <b>&Phi;</b>
+     * in the 6<sup><i>th</i></sup> column (i.e., the <i>z'</i> column) corresponding 
+     * to this positions as &phi;<sub>1,6</sub> and &phi;<sub>2,6</sub>, we can write
+     * them as
+     * <br/>
+     * <br/>
+     * &nbsp; &nbsp; &phi;<sub>1,6</sub> = &part;<i>x</i>/&part;<i>z'</i> ,
+     * <br/>
+     * <br/>
+     * &nbsp; &nbsp; &phi;<sub>2,6</sub> = &part;<i>x'</i>/&part;<i>z'</i> .
+     * <br/>
+     * <br/>
+     * Now consider the relationship
+     * <br/>
+     * <br/>
+     * &nbsp; &nbsp; &delta; &equiv; (<i>p</i> - <i>p</i><sub>0</sub>)/<i>p</i><sub>0</sub>
+     *               = &gamma;<sup>2</sup><i>z</i>'= &gamma;<sup>2</sup><i>dz</i>/<i>ds</i>
+     * <br/>
+     * <br/>
+     * or
+     * <br/>
+     * <br/>
+     * &nbsp; &nbsp; &part;<i>z'</i>/&part;&delta; = 1/&gamma;<sup>2</sup> .
+     * <br/>
+     * <br/>
+     * Thus, it is necessary to multiply the transfer plane elements of 
+     * <i>Row</i><sub>6</sub>&Phi; by 1/&gamma;<sup>2</sup> to covert to 
+     * the conventional dispersion coefficients.  Specifically, for the horizontal plane
+     * <br/>
+     * <br/>
+     * &nbsp; &nbsp; &Delta;<sub><i>x</i></sub> = (<i>dx</i>/<i>d</i>&delta;) = &phi;<sub>6,1</sub>/&gamma;<sup>2</sup> ,
+     * <br/>
+     * <br/> 
+     * &nbsp; &nbsp; &Delta;<sub><i>x'</i></sub> = (<i>dx'</i>/<i>d</i>&delta;) = &phi;<sub>6,2</sub>/&gamma;<sup>2</sup> ,
+     * <br/>
+     * <br/>
+     * For the longitudinal plane no such normalization is necessary. 
+     * </p>
+     * <p>
+     * <h4>NOTE:</h4>
+     * - Reference text D.C. Carey, "The Optics of Charged Particle Beams"
+     * </p>
+     * 
+     * @param matPhi    transfer matrix for which we are computing aberrations
+     * @param dblGamma  relativistic factor for the beam particles at the location of aberration
+     * 
+     * @return  vector of chromatic dispersion coefficients in <b>meters/radian</b>
+     *
+     * @author Christopher K. Allen
+     * @since  Nov 15, 2013
+     */
+    protected R6 calculateAberration(final PhaseMatrix matPhi, final double dblGamma) {
+        PhaseMatrix matResp = matPhi;
+        R6          vecDelta  = matResp.projectColumn(IND.Zp);
+        
+        double      dblGamma2 = dblGamma*dblGamma;
+
+        // Need to normalize the transverse coordinates to momentum rather than angle
+        EnumSet<IND>    SET_TRNV = EnumSet.of(IND.X, IND.Xp, IND.Y, IND.Yp);
+        
+        for (IND i : SET_TRNV) {
+            double      dblDspAng = vecDelta.getElem(i);
+            double      dblDspMom  = dblDspAng/dblGamma2;
+            
+            vecDelta.setElem(i, dblDspMom);
+        }
+
+        return vecDelta;
+    }
+    
+    
+    
+    /** 
+         * <p>
+         * Taken from <code>TransferMapState</code>.
+         * </p>
+         * <p>
+         * Calculates the differential coefficients describing change in the fixed point of the
+         * closed orbit versus chromatic dispersion.
+         * The given transfer matrix <b>&Phi;</b>
+         * is assumed to be the one-turn map of the ring with which the fixed point is
+         * caculated.  The fixed point is with regard
+         * to the transverse phase plane coordinates.
+         * </p>
+         * <p>
+         * The transverse plane dispersion vector <b>&Delta;</b> is defined  
+         * <br/>
+         * <br/> 
+         * &nbsp; &nbsp; <b>&Delta;</b><sub><i>t</i></sub> &equiv; -(1/&gamma;<sup>2</sup>)[d<i>x</i>/d<i>z'</i>, d<i>x'</i>/d<i>z'</i>, d<i>y</i>/d<i>z'</i>, d<i>y'</i>/d<i>z'</i>]<sup><i>T</i></sup> .
+         * <br/>
+         * <br/>  
+         * It can be identified as the first 4 entries of the 6<sup><i>th</i></sup> 
+         * column in the transfer matrix <b>&Phi;</b>. The above vector
+         * quantifies the change in the transverse particle phase 
+         * coordinate position versus the change in particle momentum.  
+         * The factor -(1/&gamma;<sup>2</sup>) is needed to convert from longitudinal divergence
+         * angle <i>z'</i> used by XAL to momentum &delta;<i>p</i> &equiv; &Delta;<i>p</i>/<i>p</i> used in 
+         * the dispersion definition.  Specifically,
+         * <br/>
+         * <br/>
+         * &nbsp; &nbsp; &delta;<i>p</i> &equiv; &Delta;<i>p</i>/<i>p</i> = &gamma;<sup>2</sup><i>z</i>'
+         * <br/>
+         * <br/>
+         * As such, the above vector can be better described
+         * <br/>
+         * <br/> 
+         * &nbsp; &nbsp; <b>&Delta;</b><sub><i>t</i></sub> &equiv; [&Delta;<i>x</i>/&delta;<i>p</i>, &Delta;<i>x'</i>/&delta;<i>p</i>, &Delta;<i>y</i>/&delta;<i>p</i>, &Delta;<i>y'</i>/&delta;<i>p</i>]<sup><i>T</i></sup>
+         * <br/>
+         * <br/>
+         * explicitly describing the change in transverse phase coordinate for fractional
+         * change in momentum &delta;<i>p</i>.  
+         * </p>
+         * <p>
+         * Since we are only concerned with transverse phase space coordinates, we restrict ourselves to the 
+         * 4&times;4 upper diagonal block of <b>&Phi;</b>, which we denote take <b>T</b>.  
+         * That is, <b>T</b> = &pi; &sdot; <b>&Phi;</b>
+         * where &pi; : <b>R</b><sup>6&times;6</sup> &rarr; <b>R</b><sup>4&times;4</sup> is the
+         * projection operator. 
+         * </p>
+         * <p>
+         * This method finds that point <b>z</b><sub><i>t</i></sub> &equiv; 
+         * (<i>x<sub>t</sub></i>, <i>x'<sub>t</sub></i>, <i>y<sub>t</sub></i>, <i>y'<sub>t</sub></i>)
+         * in transvse phase space that is invariant under the action of the ring for a given momentum spread
+         * &delta;<i>p</i>.  That is, the particle ends up
+         * in the same location each revolution. With a finite momentum spread of &delta;<i>p</i> &gt; 0
+         * we require this require that
+         * <br/>
+         * <br/>
+         * &nbsp; &nbsp; <b>Tz</b><sub><i>t</i></sub> + &delta;<i>p</i><b>&Delta;</b><sub><i>t</i></sub> = <b>z</b><sub><i>t</i></sub> ,
+         * <br/>
+         * <br/>
+         * which can be written
+         * <br/>
+         * <br/>
+         * &nbsp; <b>z</b><sub><i>t</i></sub> = &delta;<i>p</i>(<b>T</b> - <b>I</b>)<sup>-1</sup><b>&Delta;</b><sub><i>t</i></sub> ,
+         * <br/>
+         * <br/>
+         * where <b>I</b> is the identity matrix.  Dividing both sides by &delta;<i>p</i> yields the final
+         * result
+         * <br/>
+         * <br/>
+         * &nbsp; <b>z</b><sub>0</sub> &equiv; <b>z</b><sub><i>t</i></sub>/&delta;<i>p</i> = (<b>T</b> - <b>I</b>)<sup>-1</sup><b>&Delta;</b><sub><i>t</i></sub> ,
+         * <br/>
+         * <br/>
+         * which is the returned value of this method.  It is normalized by
+         * &delta;<i>p</i> so that we can compute the closed orbit for any given momentum spread.
+         * </p>
+         *   
+         * @param matPhi	we are calculating the dispersion of a ring with this one-turn map
+         * @param dblGamma		relativistic factor
+         * 
+         * @return         The closed orbit fixed point <b>z</b><sub>0</sub> for finite 
+         *                 dispersion, normalized by momentum spread.
+         *                 Returned as an array [<i>x</i><sub>0</sub>,<i>x'</i><sub>0</sub>,<i>y</i><sub>0</sub>,<i>y'</i><sub>0</sub>]/&delta;<i>p</i>
+         *
+         * @author Thomas Pelaia                
+         * @author Christopher K. Allen
+         * @since  Aug 14, 2013
+         */
+        protected R4 calculateDispersion(final PhaseMatrix matPhi, final double dblGamma) {
+    
+            // Decompose the transfer matrix into transverse and longitudinal 
+            //    components.  The decomposition contains the linear algebraic
+            //    system we need to solve the dispersion relations.
+    
+            // Extract the transverse divergence-angle vector
+            R6    vecdP = matPhi.projectColumn(IND.Zp);
+            R4    vecdp = new R4();
+            vecdP.projectOnto(vecdp);
+    
+            // Convert it to momentum
+            vecdp.timesEquals(- 1.0/(dblGamma*dblGamma) );
+    
+    
+            // Extract the transverse phase space transfer matrix
+            //    then set up the fixed point system.
+            R4x4  matT = matPhi.projectR4x4();
+            R4x4  matI = R4x4.newIdentity();
+            R4x4  matR = matT.minus(matI);
+    
+    
+            // Solve for the dispersion vector and return it
+            R4    vecd = matR.solve(vecdp);
+    
+    //        double[]  arrd = vecd.getArrayCopy();
+    //        return arrd;
+            return vecd;
+        }
+
+
     /**
      * <p>
      * Advance the twiss parameters using the given transfer matrix based upon
@@ -602,7 +822,12 @@ public abstract class CalculationEngine {
      * @param dW        the energy gain of this element (eV)
      *
      * @return  set of new twiss parameter values
+     * 
+     * @deprecated This is the algorithm component for a <code>TwissProbe</code> and should
+     *             not be used as the dynamics elsewhere. It has been moved to the 
+     *             <code>TwissTracker</code> class.
      */
+    @Deprecated
     protected Twiss3D computeTwiss(TwissProbe probe, PhaseMatrix matPhi, double dW) {
         
         
@@ -674,123 +899,8 @@ public abstract class CalculationEngine {
         return twissEnv1;
     }
     
-    /** 
-     * <p>
-     * Taken from <code>TransferMapState</code>.
-     * </p>
-     * <p>
-     * Calculates the differential coefficients describing change in the fixed point of the
-     * closed orbit versus chromatic dispersion.
-     * The given transfer matrix <b>&Phi;</b>
-     * is assumed to be the one-turn map of the ring with which the fixed point is
-     * caculated.  The fixed point is with regard
-     * to the transverse phase plane coordinates.
-     * </p>
-     * <p>
-     * The transverse plane dispersion vector <b>&Delta;</b> is defined  
-     * <br/>
-     * <br/> 
-     * &nbsp; &nbsp; <b>&Delta;</b><sub><i>t</i></sub> &equiv; -(1/&gamma;<sup>2</sup>)[d<i>x</i>/d<i>z'</i>, d<i>x'</i>/d<i>z'</i>, d<i>y</i>/d<i>z'</i>, d<i>y'</i>/d<i>z'</i>]<sup><i>T</i></sup> .
-     * <br/>
-     * <br/>  
-     * It can be identified as the first 4 entries of the 6<sup><i>th</i></sup> 
-     * column in the transfer matrix <b>&Phi;</b>. The above vector
-     * quantifies the change in the transverse particle phase 
-     * coordinate position versus the change in particle momentum.  
-     * The factor -(1/&gamma;<sup>2</sup>) is needed to convert from longitudinal divergence
-     * angle <i>z'</i> used by XAL to momentum &delta;<i>p</i> &equiv; &Delta;<i>p</i>/<i>p</i> used in 
-     * the dispersion definition.  Specifically,
-     * <br/>
-     * <br/>
-     * &nbsp; &nbsp; &delta;<i>p</i> &equiv; &Delta;<i>p</i>/<i>p</i> = &gamma;<sup>2</sup><i>z</i>'
-     * <br/>
-     * <br/>
-     * As such, the above vector can be better described
-     * <br/>
-     * <br/> 
-     * &nbsp; &nbsp; <b>&Delta;</b><sub><i>t</i></sub> &equiv; [&Delta;<i>x</i>/&delta;<i>p</i>, &Delta;<i>x'</i>/&delta;<i>p</i>, &Delta;<i>y</i>/&delta;<i>p</i>, &Delta;<i>y'</i>/&delta;<i>p</i>]<sup><i>T</i></sup>
-     * <br/>
-     * <br/>
-     * explicitly describing the change in transverse phase coordinate for fractional
-     * change in momentum &delta;<i>p</i>.  
-     * </p>
-     * <p>
-     * Since we are only concerned with transverse phase space coordinates, we restrict ourselves to the 
-     * 4&times;4 upper diagonal block of <b>&Phi;</b>, which we denote take <b>T</b>.  
-     * That is, <b>T</b> = &pi; &sdot; <b>&Phi;</b>
-     * where &pi; : <b>R</b><sup>6&times;6</sup> &rarr; <b>R</b><sup>4&times;4</sup> is the
-     * projection operator. 
-     * </p>
-     * <p>
-     * This method finds that point <b>z</b><sub><i>t</i></sub> &equiv; 
-     * (<i>x<sub>t</sub></i>, <i>x'<sub>t</sub></i>, <i>y<sub>t</sub></i>, <i>y'<sub>t</sub></i>)
-     * in transvse phase space that is invariant under the action of the ring for a given momentum spread
-     * &delta;<i>p</i>.  That is, the particle ends up
-     * in the same location each revolution. With a finite momentum spread of &delta;<i>p</i> &gt; 0
-     * we require this require that
-     * <br/>
-     * <br/>
-     * &nbsp; &nbsp; <b>Tz</b><sub><i>t</i></sub> + &delta;<i>p</i><b>&Delta;</b><sub><i>t</i></sub> = <b>z</b><sub><i>t</i></sub> ,
-     * <br/>
-     * <br/>
-     * which can be written
-     * <br/>
-     * <br/>
-     * &nbsp; <b>z</b><sub><i>t</i></sub> = &delta;<i>p</i>(<b>T</b> - <b>I</b>)<sup>-1</sup><b>&Delta;</b><sub><i>t</i></sub> ,
-     * <br/>
-     * <br/>
-     * where <b>I</b> is the identity matrix.  Dividing both sides by &delta;<i>p</i> yields the final
-     * result
-     * <br/>
-     * <br/>
-     * &nbsp; <b>z</b><sub>0</sub> &equiv; <b>z</b><sub><i>t</i></sub>/&delta;<i>p</i> = (<b>T</b> - <b>I</b>)<sup>-1</sup><b>&Delta;</b><sub><i>t</i></sub> ,
-     * <br/>
-     * <br/>
-     * which is the returned value of this method.  It is normalized by
-     * &delta;<i>p</i> so that we can compute the closed orbit for any given momentum spread.
-     * </p>
-     *   
-     * @param matPhi	we are calculating the dispersion of a ring with this one-turn map
-     * @param gamma		relativistic factor
-     * 
-     * @return         The closed orbit fixed point <b>z</b><sub>0</sub> for finite 
-     *                 dispersion, normalized by momentum spread.
-     *                 Returned as an array [<i>x</i><sub>0</sub>,<i>x'</i><sub>0</sub>,<i>y</i><sub>0</sub>,<i>y'</i><sub>0</sub>]/&delta;<i>p</i>
-     *
-     * @author Thomas Pelaia                
-     * @author Christopher K. Allen
-     * @since  Aug 14, 2013
-     */
-    protected R4 calculateDispersion(final PhaseMatrix matPhi, final double gamma) {
 
-        // Decompose the transfer matrix into transverse and longitudinal 
-        //    components.  The decomposition contains the linear algebraic
-        //    system we need to solve the dispersion relations.
-
-        // Extract the transverse divergence-angle vector
-        R6    vecdP = matPhi.projectColumn(IND.Zp);
-        R4    vecdp = new R4();
-        vecdP.projectOnto(vecdp);
-
-        // Convert it to momentum
-        vecdp.timesEquals(- 1.0/(gamma*gamma) );
-
-
-        // Extract the transverse phase space transfer matrix
-        //    then set up the fixed point system.
-        R4x4  matT = matPhi.projectR4x4();
-        R4x4  matI = R4x4.newIdentity();
-        R4x4  matR = matT.minus(matI);
-
-
-        // Solve for the dispersion vector and return it
-        R4    vecd = matR.solve(vecdp);
-
-//        double[]  arrd = vecd.getArrayCopy();
-//        return arrd;
-        return vecd;
-    }
-
+    
     //	    public Twiss[] getTwiss() {
     //	            final double PI2 = 2 * Math.PI;
     //	            final double[] tunes = _trajectory.getTunes();
@@ -882,7 +992,7 @@ public abstract class CalculationEngine {
 //     */
 //
 //    /*
-//     * ISimulationResults Interface 
+//     * ISimEnvelopeResults Interface 
 //     */
 //
 //    /**

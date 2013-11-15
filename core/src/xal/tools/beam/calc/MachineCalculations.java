@@ -20,7 +20,7 @@ import xal.tools.math.r6.R6;
 
 /**
  * Class for performing the calculations expressed in the
- * <code>ISimulationResults</code> interface in the context of
+ * <code>ISimEnvelopeResults</code> interface in the context of
  * a particle beam system without regard to the particle.
  * That is, only properties of the machine are computed, no
  * attributes or properties of the beam are required for the 
@@ -30,7 +30,7 @@ import xal.tools.math.r6.R6;
  * @author Christopher K. Allen
  * @since  Nov 7, 2013
  */
-public class MachineCalculations extends CalculationEngine  implements ISimulationResults<TransferMapState> {
+public class MachineCalculations extends CalculationEngine  implements ISimLocationResults<TransferMapState>, ISimEnvelopeResults<TransferMapState> {
 
     
     /*
@@ -93,7 +93,7 @@ public class MachineCalculations extends CalculationEngine  implements ISimulati
 
     
     /*
-     * Attributes and Properties
+     * Attribute Queries
      */
     
     /**
@@ -146,9 +146,167 @@ public class MachineCalculations extends CalculationEngine  implements ISimulati
     
     
     /*
-     * ISimulationResults Interface
+     * ISimLocationResults Interface
      */
     
+    /**
+     * <p>
+     * We return the projective portion of the full-turn transfer
+     * map &phi;<sub><i>n</i></sub> : <b>P</b><sup>6</sup> &rarr; <b>P</b><sup>6</sup>
+     * where <i>n</i> is the index of the given state <i>S<sub>n</sub></i>.  This is the
+     * image &Delta;<b>z</b> of the value 
+     * <b>0</b> &in; <b>P</b><sup>6</sup> &cong; <b>R</b><sup>6</sup> &times; {1}.  
+     * That is the value &Delta;<b>z</b> = &phi;(<b>0</b>).
+     * </p>
+     * <p>
+     * Recall that the transfer
+     * map &phi; is a <code>PhaseMap</code> object containing a first-order component which is
+     * a linear operator on projective space <b>P</b><sup>6</sup>.  As such, this
+     * <code>PhaseMatrix</code> object <b>&Phi;</b> is embedded in <b>R</b><sup>7&times;7</sup>.  
+     * The 7<sup><i>th</i></sup> column &Delta;<b>z</b> of <b>&Phi;</b> is the column of 
+     * translation operations on a phase vector 
+     * <b>z</b> &in; <b>P</b><sup>6</sup> &sub; <b>R</b><sup>6</sup> &times; {1} since
+     * <b>z</b> &in; <b>P</b><sup>6</sup> is represented 
+     * <br/>
+     * <br/>
+     * &nbsp; &nbsp; <b>z</b> = (<i>x, x', y, y', z, z', </i>1)<sup><i>T</i></sup> .
+     * <br/>
+     * <br/>  
+     * Thus, the action of <b>&Phi;</b> can be (loosely) decomposed as 
+     * <br/>
+     * <br/>
+     * &nbsp; &nbsp; <b>&Phi; &sdot; z</b> = <b>Mz</b> + &Delta;<b>z</b> ,
+     * <br/>
+     * <br/>
+     * where <b>M</b> &in; <i>Sp</i>(6), the symplectic group.  This method returns the
+     * component &Delta;<b>z</b> of the transfer map.
+     * </p>
+     * 
+     * @param   state   state containing location of returned translation vector
+     * 
+     * @return      the translation vector &Delta;<b>z</b> of the given transfer map
+     *
+     * @author Christopher K. Allen
+     * @since  Oct 22, 2013
+     */
+    @Override
+    public PhaseVector computeCoordinatePosition(TransferMapState state) {
+        
+        PhaseMatrix matPhi = this.calculateFullLatticeMatrixAt(state);
+        R6          vecDel = matPhi.projectColumn(IND.HOM);
+        
+        PhaseVector vecTranslate = PhaseVector.embed(vecDel);
+        
+        return vecTranslate;
+    }
+
+    /**
+     * <p>
+     * Get the fixed point at this state location about which betatron oscillations occur.
+     * </p>
+     * <p> 
+     * Calculate the fixed point solution vector representing the closed orbit at the 
+     * location of this element.
+     * We first attempt to find the fixed point for the full six phase space coordinates.
+     * Let <b>&Phi;</b> denote the one-turn map for a ring.  The fixed point 
+     * <b>z</b> &in; <b>R</b><sup>6</sup>&times;{1} in homogeneous phase space coordinates
+     * is that which is invariant under <b>&Phi;</b>, that is,
+     * <br/>
+     * <br/>
+     * &nbsp; &nbsp; <b>&Phi;z</b> = <b>z</b> .
+     * <br/>
+     * <br/> 
+     * This method returns that vector <b>z</b>.  
+     * </p>
+     * <p>
+     * Recall that the <i>homogeneous</i> transfer matrix <b>&Phi;</b> for the ring 
+     * has final row that represents the translation <b>&Delta;</b> of the particle
+     * for the circuit around the ring.  The 6&times;6 sub-matrix of <b>&Phi;</b> represents
+     * the (linear) action of the bending magnetics and quadrupoles and corresponds to the
+     * matrix <b>T</b> &in; <b>R</b><sup>6&times;</sup> (here <b>T</b> is linear). 
+     * Thus, we can write the linear operator <b>&Phi;</b>
+     * as the augmented system 
+     * <br/>
+     * <br/>
+     * <pre>
+     * &nbsp; &nbsp; <b>&Phi;</b> = |<b>T</b> <b>&Delta;</b> |,   <b>z</b> &equiv; |<b>p</b>| ,
+     *         |<b>0</b> 1 |        |1|
+     * </pre> 
+     * where <b>p</b> is the projection of <b>z</b> onto the ambient phase space
+     * <b>R</b><sup>6</sup> (without homogeneous the homogeneous coordinate).
+     * coordinates). 
+     * </p>
+     * <p>
+     * Putting this together we get
+     * <br/>
+     * <br/>
+     * &nbsp; &nbsp; <b>&Phi;z</b> = <b>Tp</b> + <b>&Delta;</b> = <b>p</b> , 
+     * <br/>
+     * <br/>
+     * to which the solution is
+     * <br/>
+     * <br/>
+     * &nbsp; &nbsp; <b>p</b> = -(<b>T</b> - <b>I</b>)<sup>-1</sup><b>&Delta;</b>
+     * <br/>
+     * <br/>
+     * assuming it exists.  The question of solution existence falls upon the
+     * resolvent <b>R</b> &equiv; (<b>T</b> - <b>I</b>)<sup>-1</sup> of <b>T</b>.
+     * By inspection we can see that <b>p</b> is defined so long as the eigenvalues
+     * of <b>T</b> are located away from 1.
+     * In this case the returned value is the augmented vector 
+     * (<b>p</b> 1)<sup><i>T</i></sup> &in; <b>R</b><sup>6</sup> &times; {1}.
+     * </p>
+     * <p>
+     * When the set of eigenvectors does contain 1, we attempt to find the solution for the
+     * transverse phase space.  That is, we take vector <b>p</b> &in; <b>R</b><sup>4</sup>
+     * and <b>T</b> &in; <b>R</b><sup>4&times;4</sup> where 
+     * <b>T</b> = proj<sub>4&times;4</sub> <b>&Phi;</b>.  The returned value is then
+     * <b>z</b> = (<b>p</b> 0 0 1)<sup><i>T</i></sup>.
+     * 
+     * @param   state   state containing transfer map and location used in these calculations
+     * 
+     * @return              fixed point solution  (<i>x,x',y,y',z,z'</i>,1) for the given phase matrix
+     *
+     * @author Christopher K. Allen
+     * @since  Oct 25, 2013
+     */
+    @Override
+    public PhaseVector computeFixedOrbit(TransferMapState state) {
+        PhaseMatrix matFullTrn = this.calculateFullLatticeMatrixAt(state);
+        PhaseVector vecFixedPt = super.calculateFixedPoint(matFullTrn);
+        
+        return vecFixedPt; 
+    }
+
+    /**
+     * Computes the chromatic aberration for one pass around the ring starting at the given
+     * state location, or from the entrance to state position for a linear
+     * machine.  The returned vector is the displacement from the closed orbit caused 
+     * by a unit momentum offset (&delta;<i>p</i> = 1).  See the documentation in 
+     * {@link ISimLocationResults#computeChromAberration(ProbeState)} for a more detailed
+     * exposition.
+     *
+     * @see xal.tools.beam.calc.ISimLocationResults#computeChromAberration(xal.model.probe.traj.ProbeState)
+     *
+     * @author Christopher K. Allen
+     * @since  Nov 15, 2013
+     */
+    @Override
+    public PhaseVector computeChromAberration(TransferMapState state) {
+        double          dblGamma = state.getGamma();
+        PhaseMap        mapPhi   = state.getStateTransferMap();
+        PhaseMatrix     matPhi   = mapPhi.getFirstOrder();
+        R6              vecDel   = super.calculateAberration(matPhi, dblGamma);
+
+        return PhaseVector.embed(vecDel);
+    }
+
+    
+    /*
+     * ISimEnvelopeResults Interface
+     */
+    
+
     /**
      * <p>
      * Computes the closed orbit Twiss parameters at this state location representing
@@ -275,135 +433,7 @@ public class MachineCalculations extends CalculationEngine  implements ISimulati
         return vecPhsAdv;
     }
 
-    /**
-     * <p>
-     * We return the projective portion of the full-turn transfer
-     * map &phi;<sub><i>n</i></sub> : <b>P</b><sup>6</sup> &rarr; <b>P</b><sup>6</sup>
-     * where <i>n</i> is the index of the given state <i>S<sub>n</sub></i>.  This is the
-     * image &Delta;<b>z</b> of the value 
-     * <b>0</b> &in; <b>P</b><sup>6</sup> &cong; <b>R</b><sup>6</sup> &times; {1}.  
-     * That is the value &Delta;<b>z</b> = &phi;(<b>0</b>).
-     * </p>
-     * <p>
-     * Recall that the transfer
-     * map &phi; is a <code>PhaseMap</code> object containing a first-order component which is
-     * a linear operator on projective space <b>P</b><sup>6</sup>.  As such, this
-     * <code>PhaseMatrix</code> object <b>&Phi;</b> is embedded in <b>R</b><sup>7&times;7</sup>.  
-     * The 7<sup><i>th</i></sup> column &Delta;<b>z</b> of <b>&Phi;</b> is the column of 
-     * translation operations on a phase vector 
-     * <b>z</b> &in; <b>P</b><sup>6</sup> &sub; <b>R</b><sup>6</sup> &times; {1} since
-     * <b>z</b> &in; <b>P</b><sup>6</sup> is represented 
-     * <br/>
-     * <br/>
-     * &nbsp; &nbsp; <b>z</b> = (<i>x, x', y, y', z, z', </i>1)<sup><i>T</i></sup> .
-     * <br/>
-     * <br/>  
-     * Thus, the action of <b>&Phi;</b> can be (loosely) decomposed as 
-     * <br/>
-     * <br/>
-     * &nbsp; &nbsp; <b>&Phi; &sdot; z</b> = <b>Mz</b> + &Delta;<b>z</b> ,
-     * <br/>
-     * <br/>
-     * where <b>M</b> &in; <i>Sp</i>(6), the symplectic group.  This method returns the
-     * component &Delta;<b>z</b> of the transfer map.
-     * </p>
-     * 
-     * @param   state   state containing location of returned translation vector
-     * 
-     * @return      the translation vector &Delta;<b>z</b> of the given transfer map
-     *
-     * @author Christopher K. Allen
-     * @since  Oct 22, 2013
-     */
-    @Override
-    public PhaseVector computeCoordinateOffset(TransferMapState state) {
-        
-        PhaseMatrix matPhi = this.calculateFullLatticeMatrixAt(state);
-        R6          vecDel = matPhi.projectColumn(IND.HOM);
-        
-        PhaseVector vecTranslate = PhaseVector.embed(vecDel);
-        
-        return vecTranslate;
-    }
-
-    /**
-     * <p>
-     * Get the fixed point at this state location about which betatron oscillations occur.
-     * </p>
-     * <p> 
-     * Calculate the fixed point solution vector representing the closed orbit at the 
-     * location of this element.
-     * We first attempt to find the fixed point for the full six phase space coordinates.
-     * Let <b>&Phi;</b> denote the one-turn map for a ring.  The fixed point 
-     * <b>z</b> &in; <b>R</b><sup>6</sup>&times;{1} in homogeneous phase space coordinates
-     * is that which is invariant under <b>&Phi;</b>, that is,
-     * <br/>
-     * <br/>
-     * &nbsp; &nbsp; <b>&Phi;z</b> = <b>z</b> .
-     * <br/>
-     * <br/> 
-     * This method returns that vector <b>z</b>.  
-     * </p>
-     * <p>
-     * Recall that the <i>homogeneous</i> transfer matrix <b>&Phi;</b> for the ring 
-     * has final row that represents the translation <b>&Delta;</b> of the particle
-     * for the circuit around the ring.  The 6&times;6 sub-matrix of <b>&Phi;</b> represents
-     * the (linear) action of the bending magnetics and quadrupoles and corresponds to the
-     * matrix <b>T</b> &in; <b>R</b><sup>6&times;</sup> (here <b>T</b> is linear). 
-     * Thus, we can write the linear operator <b>&Phi;</b>
-     * as the augmented system 
-     * <br/>
-     * <br/>
-     * <pre>
-     * &nbsp; &nbsp; <b>&Phi;</b> = |<b>T</b> <b>&Delta;</b> |,   <b>z</b> &equiv; |<b>p</b>| ,
-     *         |<b>0</b> 1 |        |1|
-     * </pre> 
-     * where <b>p</b> is the projection of <b>z</b> onto the ambient phase space
-     * <b>R</b><sup>6</sup> (without homogeneous the homogeneous coordinate).
-     * coordinates). 
-     * </p>
-     * <p>
-     * Putting this together we get
-     * <br/>
-     * <br/>
-     * &nbsp; &nbsp; <b>&Phi;z</b> = <b>Tp</b> + <b>&Delta;</b> = <b>p</b> , 
-     * <br/>
-     * <br/>
-     * to which the solution is
-     * <br/>
-     * <br/>
-     * &nbsp; &nbsp; <b>p</b> = -(<b>T</b> - <b>I</b>)<sup>-1</sup><b>&Delta;</b>
-     * <br/>
-     * <br/>
-     * assuming it exists.  The question of solution existence falls upon the
-     * resolvent <b>R</b> &equiv; (<b>T</b> - <b>I</b>)<sup>-1</sup> of <b>T</b>.
-     * By inspection we can see that <b>p</b> is defined so long as the eigenvalues
-     * of <b>T</b> are located away from 1.
-     * In this case the returned value is the augmented vector 
-     * (<b>p</b> 1)<sup><i>T</i></sup> &in; <b>R</b><sup>6</sup> &times; {1}.
-     * </p>
-     * <p>
-     * When the set of eigenvectors does contain 1, we attempt to find the solution for the
-     * transverse phase space.  That is, we take vector <b>p</b> &in; <b>R</b><sup>4</sup>
-     * and <b>T</b> &in; <b>R</b><sup>4&times;4</sup> where 
-     * <b>T</b> = proj<sub>4&times;4</sub> <b>&Phi;</b>.  The returned value is then
-     * <b>z</b> = (<b>p</b> 0 0 1)<sup><i>T</i></sup>.
-     * 
-     * @param   state   state containing transfer map and location used in these calculations
-     * 
-     * @return              fixed point solution  (<i>x,x',y,y',z,z'</i>,1) for the given phase matrix
-     *
-     * @author Christopher K. Allen
-     * @since  Oct 25, 2013
-     */
-    @Override
-    public PhaseVector computeFixedOrbit(TransferMapState state) {
-        PhaseMatrix matFullTrn = this.calculateFullLatticeMatrixAt(state);
-        PhaseVector vecFixedPt = super.calculateFixedPoint(matFullTrn);
-        
-        return vecFixedPt; 
-    }
-
+    
     /**
      * <p>
      * Calculates the fixed point (closed orbit) in transverse phase space
@@ -480,7 +510,7 @@ public class MachineCalculations extends CalculationEngine  implements ISimulati
      *                 dispersion, normalized by momentum spread.
      *                 Returned as an array [<i>x</i><sub>0</sub>,<i>x'</i><sub>0</sub>,<i>y</i><sub>0</sub>,<i>y'</i><sub>0</sub>]/&delta;<i>p</i>
      *
-     * @see xal.tools.beam.calc.ISimulationResults#computeChromDispersion(xal.model.probe.traj.ProbeState)
+     * @see xal.tools.beam.calc.ISimEnvelopeResults#computeChromDispersion(xal.model.probe.traj.ProbeState)
      *
      * @author Christopher K. Allen
      * @since  Nov 8, 2013

@@ -1,8 +1,8 @@
 package xal.model.probe.traj;
 
+import xal.tools.beam.PhaseMatrix;
 import xal.tools.beam.PhaseVector;
 import xal.tools.data.DataAdaptor;
-
 import xal.model.probe.ParticleProbe;
 import xal.model.xml.ParsingException;
 
@@ -28,6 +28,9 @@ public class ParticleProbeState extends ProbeState /*implements ICoordinateState
     /** attribute tag for coordinate vector */
     private static final String VALUE_LABEL = "coordinates";
     
+    /** attribute tag for response matrix */
+    private static final String  RESP_LABEL = "response";
+    
     protected static final String X_LABEL = "x";
     protected static final String Y_LABEL = "y";
     protected static final String Z_LABEL = "z";
@@ -43,8 +46,8 @@ public class ParticleProbeState extends ProbeState /*implements ICoordinateState
     /** phase coordinates of the particle location */ 
     private PhaseVector     m_vecCoords;
     
-//    /** response matrix for initial coordinate sensitivity */
-//    private PhaseMatrix     matResp;
+    /** response matrix for initial coordinate sensitivity */
+    private PhaseMatrix     matResp;
     
 	
 	
@@ -56,29 +59,56 @@ public class ParticleProbeState extends ProbeState /*implements ICoordinateState
      * Default constructor.  Creates a new, empty <code>ParticleProbeState</code> object.
      */	
     public ParticleProbeState() {
-        this.m_vecCoords = new PhaseVector();
+        this.m_vecCoords = PhaseVector.newZero();
+        this.matResp = PhaseMatrix.identity();
     }
     
     /**
-     * Initializing constructor.  Creates a new <code>ParticleProbeState</code> object and
-     * initialize it to the state of the probe argument.
+     * Initializing constructor.  Creates a new <code>ParticleProbeState</code> object
+     * which contains a deep copy of the state of the given probe object.
      * 
-     * @param probe     <code>ParticleProbe</code> containing initial state data
+     * @param probe     <code>ParticleProbe</code> containing cloned initial state data
      */
     public ParticleProbeState(ParticleProbe probe) {
         super(probe);
-        this.setPhaseCoordinates( probe.getPhaseCoordinates() );
+        this.setPhaseCoordinates( new PhaseVector(probe.getPhaseCoordinates()) );
+        this.setResponseMatrix( new PhaseMatrix(probe.getResponseMatrix()) );
+        
     }
     
     /** 
-     *  Set the phase coordinates of the probe.  
+     *  Set the phase space coordinates of the probe.  This is the location <b>z</b>
+     *  in homogeneous phase space coordinates <b>R</b><sup>6</sup> &times; {1}.
      *
-     *  @param  vecPhase    new homogeneous phase space coordinate vector
+     *  @param  vecPhase    new homogeneous phase space coordinate vector 
+     *                      <b>z</b> = (<i>x, x', y, y', z, z', </i>1)<sup><i>T</i></sup>
      */
     public void setPhaseCoordinates(PhaseVector vecPhase) {
         this.m_vecCoords = new PhaseVector(vecPhase);
     }
 
+    /**
+     * <p>
+     * Set the response matrix <b>&Phi;</b> for the particle at the given
+     * state location <b>z</b>.  The response matrix represents the sensitivity of
+     * the current phase coordinate position <b>z</b> to the initial phase coordinate
+     * location <b>z</b><sub>0</sub> at the start of the simulation.  That is,
+     * <br/>
+     * <br/>
+     * &nbsp; &nbsp; <b>&Phi;</b> &equiv; &part;<b>z</b>/&part;<b>z</b><sub>0</sub>
+     * <br/>
+     * <br/>
+     * so that small changes &Delta;<b>z</b><sub>0</sub> in the initial phase position
+     * yield a corresponding change &Delta;<b>z</b> = <b>&Phi;</b>&Delta;<b>z</b><sub>0</sub>
+     * in the current particle location.
+     * </p>
+     * 
+     * @param matResp   the response matrix <b>&Phi;</b> &equiv; 
+     *                  &part;<b>z</b>/&part;<b>z</b><sub>0</sub>the matResp to set
+     */
+    public void setResponseMatrix(PhaseMatrix matResp) {
+        this.matResp = matResp;
+    }
 
     
     /*
@@ -86,20 +116,51 @@ public class ParticleProbeState extends ProbeState /*implements ICoordinateState
      */    
     
     /** 
+     *  <p>
      *  Returns homogeneous phase space coordinates of the particle.  The units
      *  are meters and radians.
+     *  </p>
+     *  This is the location <b>z</b>
+     *  in homogeneous phase space coordinates <b>R</b><sup>6</sup> &times; {1}.
+     *  </p>
      *
-     *  @return     vector (x,x',y,y',z,z',1) of phase space coordinates
+     *  @return     vector <b>z</b> = (<i>x,x',y,y',z,z',</i>1)<sup><i>T</i></sup> of phase space coordinates
      */
     public PhaseVector getPhaseCoordinates() {
         return this.m_vecCoords;
     }
 	
-	
 	/**
+	 * <p>
+	 * Returns the response matrix <b>&Phi;</b> for the particle at the given
+	 * state location <b>z</b>.  The response matrix represents the sensitivity of
+	 * the current phase coordinate position <b>z</b> to the initial phase coordinate
+	 * location <b>z</b><sub>0</sub> at the start of the simulation.  That is,
+	 * <br/>
+	 * <br/>
+	 * &nbsp; &nbsp; <b>&Phi;</b> &equiv; &part;<b>z</b>/&part;<b>z</b><sub>0</sub>
+	 * <br/>
+	 * <br/>
+	 * so that small changes &Delta;<b>z</b><sub>0</sub> in the initial phase position
+	 * yield a corresponding change &Delta;<b>z</b> = <b>&Phi;</b>&Delta;<b>z</b><sub>0</sub>
+	 * in the current particle location.
+	 * </p>
+	 * 
+     * @return the response matrix <b>&Phi;</b> &equiv; 
+     *          &part;<b>z</b>/&part;<b>z</b><sub>0</sub>
+     */
+    public PhaseMatrix getResponseMatrix() {
+        return matResp;
+    }
+
+    /**
 	 * Get the fixed orbit about which betatron oscillations occur.
 	 * @return the reference orbit vector (x,x',y,y',z,z',1)
+	 * 
+	 * @deprecated This is a duplicate of {@link #getPhaseCoordinates()} but with a 
+	 *             misleading name.  I plan to get rid of it.
 	 */
+    @Deprecated
 	public PhaseVector getFixedOrbit() {
         return this.m_vecCoords;
 	}
@@ -107,7 +168,7 @@ public class ParticleProbeState extends ProbeState /*implements ICoordinateState
 
 
     /*
-     * Debugging
+     * Object Overrides
      */
      
      
@@ -121,15 +182,10 @@ public class ParticleProbeState extends ProbeState /*implements ICoordinateState
         return super.toString() + " coords: " + getPhaseCoordinates().toString();
     }       
     
-    
-
-
-
 
     /*
-     * Internal Support
+     * ProbeState Overrides
      */    
-     
      
     /**
      * Save the state values particular to <code>BunchProbeState</code> objects
@@ -143,6 +199,7 @@ public class ParticleProbeState extends ProbeState /*implements ICoordinateState
         
         DataAdaptor partNode = container.createChild(PARTICLE_LABEL);
         partNode.setValue(VALUE_LABEL, getPhaseCoordinates().toString());
+        partNode.setValue(RESP_LABEL, this.getResponseMatrix().toString());
     }
     
     /**
@@ -162,7 +219,11 @@ public class ParticleProbeState extends ProbeState /*implements ICoordinateState
         if (partNode == null)
             throw new ParsingException("ParticleProbeState#readPropertiesFrom(): no child element = " + PARTICLE_LABEL);
         
-        setPhaseCoordinates(new PhaseVector(partNode.stringValue(VALUE_LABEL)));
+        String  strVecFmt = partNode.stringValue(VALUE_LABEL);
+        String  strMatFmt = partNode.stringValue(RESP_LABEL);
+        
+        setPhaseCoordinates(new PhaseVector(strVecFmt));
+        setResponseMatrix( new PhaseMatrix(strMatFmt));
     }
     
 }
