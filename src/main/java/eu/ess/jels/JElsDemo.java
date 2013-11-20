@@ -58,7 +58,7 @@ public class JElsDemo {
 		AcceleratorSeq sequence = loadAcceleratorSequence();
 				
 		// Generates lattice from SMF accelerator
-		Scenario scenario = new ScenarioGenerator2(sequence, ElsElementMapping.getInstance()).generateScenario();	
+		Scenario scenario = new ScenarioGenerator2(sequence, TWElementMapping.getInstance()).generateScenario();	
 				
 		// Outputting lattice elements
 		//saveLattice(scenario.getLattice(), "lattice.xml");
@@ -90,6 +90,7 @@ public class JElsDemo {
 		
 		double [] s = new double[ns];
 		double [] bx = new double[ns];
+		double [] sx = new double[ns];
 		double [] by = new double[ns];
 		double [] bz = new double[ns];
 		double [] w = new double[ns];
@@ -101,20 +102,23 @@ public class JElsDemo {
 		        
 		    s[i]= ps.getPosition() ;
 		    String elem=ps.getElementId() ;
-		    Twiss[] twiss = ps.twissParameters() ;
+		    Twiss[] twiss = ps.twissParameters() ;		    
 		    bx[i] = twiss[0].getBeta();
+		    sx[i] = twiss[0].getEnvelopeRadius();
 		    by[i] = twiss[1].getBeta();
 		    bz[i] = twiss[2].getBeta();
 		    w[i] = ps.getKineticEnergy()/1.e6;
-		    System.out.println(elem+"  "+s[i]+" "+bx[i]+"  "+by[i]+"  "+bz[i]);
+		    System.out.printf("%E %E %E %E %E %E %E\n", ps.getPosition(),
+		    		twiss[0].getEnvelopeRadius(), twiss[1].getEnvelopeRadius(), twiss[2].getEnvelopeRadius(),
+		    		twiss[0].getBeta(), twiss[1].getBeta(), twiss[2].getBeta()/Math.pow(ps.getGamma(), 2));
 		    i=i+1;
 		}
     	final JFrame frame = new JFrame();
     	FunctionGraphsJPanel plot = new FunctionGraphsJPanel();
      	plot.setVisible(true);
-  	    myDataX.addPoint(s, bx);
+  	    myDataX.addPoint(s, sx);
      	plot.addGraphData(myDataX);
-     	plot.setAxisNames("position", "beta_x");
+     	plot.setAxisNames("position", "sigma_x");
      	plot.refreshGraphJPanel();
      	frame.setSize(500,500);
         frame.addMouseListener(new MouseAdapter(){
@@ -133,9 +137,8 @@ public class JElsDemo {
 	}
 
 	private static Probe setupProbeViaJavaCalls() {
-		// Envelope probe and tracker
 		EnvelopeTracker envelopeTracker = new EnvelopeTracker();			
-		envelopeTracker.setRfGapPhaseCalculation(false);
+		envelopeTracker.setRfGapPhaseCalculation(true);
 		envelopeTracker.setUseSpacecharge(false);
 		envelopeTracker.setEmittanceGrowth(false);
 		envelopeTracker.setStepSize(0.004);
@@ -144,31 +147,41 @@ public class JElsDemo {
 		EnvelopeProbe envelopeProbe = new GapEnvelopeProbe();
 		envelopeProbe.setAlgorithm(envelopeTracker);
 		envelopeProbe.setSpeciesCharge(-1);
-		envelopeProbe.setSpeciesRestEnergy(9.39294e8);
-		envelopeProbe.setKineticEnergy(2500000);
+		envelopeProbe.setSpeciesRestEnergy(9.38272013e8);		
+		//envelopeProbe.setSpeciesRestEnergy(9.3829431e8);
+		//envelopeProbe.setSpeciesRestEnergy(9.39294e8);
+		envelopeProbe.setKineticEnergy(2500000);//energy
 		envelopeProbe.setPosition(0.0);
-		envelopeProbe.setTime(0.0);				
-		envelopeProbe.initFromTwiss(new Twiss[]{new Twiss(-1.62,0.155,3.02e-6),
-										  new Twiss(3.23,0.381,3.46e-6),
-										  new Twiss(0.0196,0.5844,3.8638e-6)});
-		envelopeProbe.setBeamCurrent(0.02);
-		envelopeProbe.setBunchFrequency(4.025e8);
-		
-		// Synchronous probe and tracker
-		Tracker synchronousTracker = new SynchronousTracker();
-		Probe synchronousProbe = new SynchronousProbe();
-		synchronousProbe.setAlgorithm(synchronousTracker);
+		envelopeProbe.setTime(0.0);		
 				
-		// Twiss probe and tracker
-		Tracker twissTracker = new TwissTracker();
-		TwissProbe twissProbe = new TwissProbe();
-		twissProbe.setTwiss(new Twiss3D(new Twiss(0,0,0),new Twiss(0,0,0),new Twiss(0,0,0)));
-		twissProbe.setAlgorithm(twissTracker);
-
-		// Diagnostic probe and tracker
-		Tracker diagnosticTracker = new DiagnosticTracker();
-		Probe diagnosticProbe = new DiagnosticProbe();
-		diagnosticProbe.setAlgorithm(diagnosticTracker);
+		/*
+		number of particles = 1000
+		beam current in A = 0
+		Duty Cycle in %= 4
+		normalized horizontal emittance in m*rad= 0.2098e-6
+		normalized vertical emittance in m*rad = 0.2091e-6
+		normalized longitudinal emittance in m*rad = 0.2851e-6
+		kinetic energy in MeV = 3
+		alfa x = -0.1763
+		beta x in m/rad = 0.2442
+		alfa y = -0.3247
+		beta y in m/rad = 0.3974
+		alfa z = -0.5283
+		beta z in m/rad = 0.8684
+		 */
+		double beta_gamma = envelopeProbe.getBeta() * envelopeProbe.getGamma();
+		
+		
+		/*envelopeProbe.initFromTwiss(new Twiss[]{new Twiss(-1.62,0.155,3.02e-6/ beta_gamma),
+				  new Twiss(3.23,0.381,3.46e-6/ beta_gamma),
+				  new Twiss(0.0196,0.5844,3.8638e-6/ beta_gamma)});*/
+		
+		
+		envelopeProbe.initFromTwiss(new Twiss[]{new Twiss(-0.1763,0.2442,0.2098e-6*1e-6 / beta_gamma),
+				  new Twiss(-0.3247,0.3974,0.2091e-6*1e-6 / beta_gamma),
+				  new Twiss(-0.5283,0.8684,0.2851e-6*1e-6 / beta_gamma)});
+		envelopeProbe.setBeamCurrent(0.0);
+		envelopeProbe.setBunchFrequency(4.025e8);//frequency
 		
 		return envelopeProbe;
 	}
@@ -256,7 +269,8 @@ public class JElsDemo {
 		/*List<AcceleratorSeq> seqs  = accelerator.getAllSeqs();
 		for (AcceleratorSeq seq : seqs)
 			if ("mebt".equals(seq.getId())) return seq;
-		
+		return null;*/
+		/*
 		AcceleratorSeq sequence = accelerator.findSequence( "mebt" );
 		//AcceleratorSeq sequence = accelerator.findSequence( "HEBT2" );				
 		return sequence;

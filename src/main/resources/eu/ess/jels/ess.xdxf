@@ -6,7 +6,7 @@
             <sequence id="ess" len="603.9766199715232" pos="0.0">
                 <sequence id="linac" len="444.16867604426903" pos="0.0">
                     <sequence id="warm" len="43.8994552" pos="0.0">
-                        <sequence id="lebt" len="2.1" pos="0.0">
+                    <!--     <sequence id="lebt" len="2.1" pos="0.0">
                             <sequence id="LEBT-SLOT" len="2.1" pos="0.0">
                                 <sequence id="LEBT-SLOTa" len="1.87" pos="0.0">
                                     <node id="LEBT-PBO_Coll-1" len="0.0" pos="0.9650000000000001" type="marker"/>
@@ -124,8 +124,8 @@
                             </sequence>
                             <node id="mrfqb" len="0.0" pos="3.9965270000000004" type="marker"/>
                             <node id="mrfqe" len="0.0" pos="3.9965270000000004" type="marker"/>
-                        </sequence>
-                        <sequence id="mebt" len="3.6218000000000004" pos="6.096527">
+                        </sequence>-->
+                        <sequence id="mebt" len="3.6218000000000004" pos="0">
                             <sequence id="MEBT-SLOT" len="3.6218000000000004" pos="0.0">
                                 <sequence id="mebt1" len="0.8698000000000001" pos="0.0">
                                     <sequence id="mebt1a" len="0.4000000000000001" pos="0.0">
