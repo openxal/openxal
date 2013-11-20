@@ -1,5 +1,6 @@
 package eu.ess.jels.model.probe;
 
+import xal.model.probe.traj.EnvelopeProbeState;
 import xal.tools.annotation.AProperty.Units;
 import xal.tools.beam.Twiss;
 import Jama.Matrix;
@@ -17,14 +18,15 @@ public class ElsProbe extends GapEnvelopeProbe {
 	public Trajectory createTrajectory() {
 		// TODO Auto-generated method stub
 		return null;
-	}
+	}*/
 
-	@Override
-	public ProbeState createProbeState() {
-		// TODO Auto-generated method stub
-		return null;
+    @Override
+	public EnvelopeProbeState createProbeState() {
+		EnvelopeProbeState ps = new EnvelopeProbeState(this);
+		ps.setTwiss(getTwiss());
+		return ps;
 	}
-
+/*
 	@Override
 	public Probe copy() {
 		// TODO Auto-generated method stub

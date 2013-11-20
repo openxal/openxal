@@ -4,6 +4,7 @@ import javax.swing.*;
 import javax.swing.JToggleButton.ToggleButtonModel;
 import javax.swing.event.*;
 
+import eu.ess.jels.model.alg.ElsTracker;
 import eu.ess.jels.model.probe.ElsProbe;
 import eu.ess.jels.model.probe.GapEnvelopeProbe;
 
@@ -58,8 +59,11 @@ public class JElsDemo {
 		AcceleratorSeq sequence = loadAcceleratorSequence();
 				
 		// Generates lattice from SMF accelerator
-		Scenario scenario = new ScenarioGenerator2(sequence, TWElementMapping.getInstance()).generateScenario();	
-				
+		Scenario scenario = new ScenarioGenerator2(sequence, TWElementMapping.getInstance()).generateScenario();
+		Probe probe = setupOpenXALProbe();
+		
+		/*Scenario scenario = new ScenarioGenerator2(sequence, ElsElementMapping.getInstance()).generateScenario();
+		Probe probe = setupElsProbe();*/
 		// Outputting lattice elements
 		//saveLattice(scenario.getLattice(), "lattice.xml");
 
@@ -67,7 +71,7 @@ public class JElsDemo {
 		// Creating a probe
 		//Probe probe = loadProbeFromModelParams(sequence);		
 		//Probe probe = loadProbeFromXML();
-		Probe probe = setupProbeViaJavaCalls();
+		
 		//saveProbe(probe, "envelopeProbe.xml");				
 		scenario.setProbe(probe);			
 		
@@ -102,7 +106,14 @@ public class JElsDemo {
 		        
 		    s[i]= ps.getPosition() ;
 		    String elem=ps.getElementId() ;
-		    Twiss[] twiss = ps.twissParameters() ;		    
+		    Twiss[] twiss;	
+		    
+			if (probe instanceof ElsProbe)
+				twiss = ps.getTwiss();
+			else 
+				twiss = ps.twissParameters();
+			
+			
 		    bx[i] = twiss[0].getBeta();
 		    sx[i] = twiss[0].getEnvelopeRadius();
 		    by[i] = twiss[1].getBeta();
@@ -136,7 +147,7 @@ public class JElsDemo {
 		
 	}
 
-	private static Probe setupProbeViaJavaCalls() {
+	private static Probe setupOpenXALProbe() {
 		EnvelopeTracker envelopeTracker = new EnvelopeTracker();			
 		envelopeTracker.setRfGapPhaseCalculation(true);
 		envelopeTracker.setUseSpacecharge(false);
@@ -153,29 +164,13 @@ public class JElsDemo {
 		envelopeProbe.setKineticEnergy(2500000);//energy
 		envelopeProbe.setPosition(0.0);
 		envelopeProbe.setTime(0.0);		
-				
-		/*
-		number of particles = 1000
-		beam current in A = 0
-		Duty Cycle in %= 4
-		normalized horizontal emittance in m*rad= 0.2098e-6
-		normalized vertical emittance in m*rad = 0.2091e-6
-		normalized longitudinal emittance in m*rad = 0.2851e-6
-		kinetic energy in MeV = 3
-		alfa x = -0.1763
-		beta x in m/rad = 0.2442
-		alfa y = -0.3247
-		beta y in m/rad = 0.3974
-		alfa z = -0.5283
-		beta z in m/rad = 0.8684
-		 */
+	
 		double beta_gamma = envelopeProbe.getBeta() * envelopeProbe.getGamma();
 		
 		
 		/*envelopeProbe.initFromTwiss(new Twiss[]{new Twiss(-1.62,0.155,3.02e-6/ beta_gamma),
 				  new Twiss(3.23,0.381,3.46e-6/ beta_gamma),
 				  new Twiss(0.0196,0.5844,3.8638e-6/ beta_gamma)});*/
-		
 		
 		envelopeProbe.initFromTwiss(new Twiss[]{new Twiss(-0.1763,0.2442,0.2098e-6*1e-6 / beta_gamma),
 				  new Twiss(-0.3247,0.3974,0.2091e-6*1e-6 / beta_gamma),
@@ -184,6 +179,36 @@ public class JElsDemo {
 		envelopeProbe.setBunchFrequency(4.025e8);//frequency
 		
 		return envelopeProbe;
+	}
+	
+	public static ElsProbe setupElsProbe() {
+		// Envelope probe and tracker
+		ElsTracker elsTracker = new ElsTracker();			
+		elsTracker.setRfGapPhaseCalculation(false);
+		/*envelopeTracker.setUseSpacecharge(false);
+		envelopeTracker.setEmittanceGrowth(false);
+		envelopeTracker.setStepSize(0.004);*/
+		elsTracker.setProbeUpdatePolicy(Tracker.UPDATE_EXIT);
+		
+		ElsProbe elsProbe = new ElsProbe();
+		elsProbe.setAlgorithm(elsTracker);
+		elsProbe.setSpeciesCharge(-1);
+		//elsProbe.setSpeciesRestEnergy(9.3829431e8);
+		elsProbe.setSpeciesRestEnergy(9.38272013e8);	
+		elsProbe.setKineticEnergy(2500000);//energy
+		elsProbe.setPosition(0.0);
+		elsProbe.setTime(0.0);		
+				
+		double beta_gamma = elsProbe.getBeta() * elsProbe.getGamma();
+	
+		
+		elsProbe.initFromTwiss(new Twiss[]{new Twiss(-0.1763,0.2442,0.2098e-6*1e-6 / beta_gamma),
+										  new Twiss(-0.3247,0.3974,0.2091e-6*1e-6 / beta_gamma),
+										  new Twiss(-0.5283,0.8684,0.2851e-6*1e-6 / beta_gamma)});
+		elsProbe.setBeamCurrent(0.0);
+		elsProbe.setBunchFrequency(4.025e8);//frequency
+		
+		return elsProbe;
 	}
 
 	private static Probe loadProbeFromXML() {
