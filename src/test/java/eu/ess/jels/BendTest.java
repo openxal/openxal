@@ -18,6 +18,26 @@ public class BendTest extends TestCommon {
 		super(probe, elementMapping);
 	}
 	
+	/*
+	 * Test used for madx comparison.
+	 * 
+	 * */
+	
+// 	@Test
+	public void doHorizontalBendTestMadX() throws InstantiationException, ModelException {
+		probe.reset();
+		System.out.println("Horizontal madx");
+		
+		AcceleratorSeq sequence = bend(-5.5, -11, -5.5, 9375.67, 0., 0, 0., 0, 0., 0, 0, 0);
+		
+		run(sequence);
+		
+		printResults();
+		
+//		checkTWTransferMatrix(new double[][]{});
+	}
+	
+	
 	@Test
 	public void doVerticalBendTest() throws InstantiationException, ModelException {
 		probe.reset();
