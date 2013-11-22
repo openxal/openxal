@@ -327,7 +327,7 @@ public class Trace3dTracker extends Tracker {
         
         
         // Save the new state variables in the probe
-        probe.setCorrelation(new CovarianceMatrix(chi1));
+        probe.setCovariance(new CovarianceMatrix(chi1));
     };
 
     /** 

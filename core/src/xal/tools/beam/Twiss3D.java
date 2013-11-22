@@ -39,7 +39,7 @@ public class Twiss3D implements IArchive {
      * 
      * @author  Christopher K. Alen
      */
-    public enum SpaceIndex3D implements IIndex {
+    public enum IND_3D implements IIndex {
 
         
         /*
@@ -68,7 +68,7 @@ public class Twiss3D implements IArchive {
          * 
          * @param i     enumeration constant
          */
-        SpaceIndex3D(int i)        { this.i = i; };
+        IND_3D(int i)        { this.i = i; };
         
         /** 
          * Return the integer value of the index position
@@ -127,7 +127,7 @@ public class Twiss3D implements IArchive {
      * @param t3d  <code>Twiss3D</code> containing initializing state information
      */
     public Twiss3D(Twiss3D t3d) {
-        for (SpaceIndex3D index : SpaceIndex3D.values())    {
+        for (IND_3D index : IND_3D.values())    {
             this.arrTwiss[index.val()] = new Twiss(t3d.getTwiss(index));
         }
     }
@@ -141,7 +141,7 @@ public class Twiss3D implements IArchive {
      * @since  Nov 5, 2013
      */
     public Twiss3D(Twiss[] arrTwiss) {
-        this(arrTwiss[SpaceIndex3D.X.val()], arrTwiss[SpaceIndex3D.Y.val()], arrTwiss[SpaceIndex3D.Z.val()]);
+        this(arrTwiss[IND_3D.X.val()], arrTwiss[IND_3D.Y.val()], arrTwiss[IND_3D.Z.val()]);
     }
     
     /**
@@ -153,9 +153,9 @@ public class Twiss3D implements IArchive {
      * @param   twissZ      z-plane Twiss parameters
      */
     public Twiss3D(Twiss twissX, Twiss twissY, Twiss twissZ) {
-        this.setTwiss(SpaceIndex3D.X, twissX);
-        this.setTwiss(SpaceIndex3D.Y, twissY);
-        this.setTwiss(SpaceIndex3D.Z, twissZ);
+        this.setTwiss(IND_3D.X, twissX);
+        this.setTwiss(IND_3D.Y, twissY);
+        this.setTwiss(IND_3D.Z, twissZ);
     }
     
     /**
@@ -177,7 +177,7 @@ public class Twiss3D implements IArchive {
      * @param   iPlane  phase plane index
      * @param   twiss   twiss parameters
      */
-    public void setTwiss(SpaceIndex3D iPlane, Twiss twiss)   {
+    public void setTwiss(IND_3D iPlane, Twiss twiss)   {
         this.arrTwiss[iPlane.val()] = twiss;
     }
     
@@ -194,7 +194,7 @@ public class Twiss3D implements IArchive {
      * 
      * @return  twiss parameters for given phase plane
      */
-    public Twiss    getTwiss(SpaceIndex3D iPlane)    {
+    public Twiss    getTwiss(IND_3D iPlane)    {
         return this.arrTwiss[iPlane.val()];
     }
     
@@ -249,15 +249,15 @@ public class Twiss3D implements IArchive {
     public void save(DataAdaptor daSink) {
         
         DataAdaptor daTwiss = daSink.createChild(Twiss3D.LABEL_TWISS);
-        daTwiss.setValue(Twiss3D.ATTR_ALPHA_X, this.getTwiss(SpaceIndex3D.X).getAlpha());
-        daTwiss.setValue(Twiss3D.ATTR_BETA_X, this.getTwiss(SpaceIndex3D.X).getBeta());
-        daTwiss.setValue(Twiss3D.ATTR_EMIT_X, this.getTwiss(SpaceIndex3D.X).getEmittance());
-        daTwiss.setValue(Twiss3D.ATTR_ALPHA_Y, this.getTwiss(SpaceIndex3D.Y).getAlpha());
-        daTwiss.setValue(Twiss3D.ATTR_BETA_Y, this.getTwiss(SpaceIndex3D.Y).getBeta());
-        daTwiss.setValue(Twiss3D.ATTR_EMIT_Y, this.getTwiss(SpaceIndex3D.Y).getEmittance());
-        daTwiss.setValue(Twiss3D.ATTR_ALPHA_Z, this.getTwiss(SpaceIndex3D.Z).getAlpha());
-        daTwiss.setValue(Twiss3D.ATTR_BETA_Z, this.getTwiss(SpaceIndex3D.Z).getBeta());
-        daTwiss.setValue(Twiss3D.ATTR_EMIT_Z, this.getTwiss(SpaceIndex3D.Z).getEmittance());           
+        daTwiss.setValue(Twiss3D.ATTR_ALPHA_X, this.getTwiss(IND_3D.X).getAlpha());
+        daTwiss.setValue(Twiss3D.ATTR_BETA_X, this.getTwiss(IND_3D.X).getBeta());
+        daTwiss.setValue(Twiss3D.ATTR_EMIT_X, this.getTwiss(IND_3D.X).getEmittance());
+        daTwiss.setValue(Twiss3D.ATTR_ALPHA_Y, this.getTwiss(IND_3D.Y).getAlpha());
+        daTwiss.setValue(Twiss3D.ATTR_BETA_Y, this.getTwiss(IND_3D.Y).getBeta());
+        daTwiss.setValue(Twiss3D.ATTR_EMIT_Y, this.getTwiss(IND_3D.Y).getEmittance());
+        daTwiss.setValue(Twiss3D.ATTR_ALPHA_Z, this.getTwiss(IND_3D.Z).getAlpha());
+        daTwiss.setValue(Twiss3D.ATTR_BETA_Z, this.getTwiss(IND_3D.Z).getBeta());
+        daTwiss.setValue(Twiss3D.ATTR_EMIT_Z, this.getTwiss(IND_3D.Z).getEmittance());           
     }
         
     /**
@@ -292,6 +292,30 @@ public class Twiss3D implements IArchive {
     }
 
     
+    /*
+     * Object Overrides
+     */
+    
+    /**
+     * Returns a textual representation of the internal state of this object.
+     * 
+     * @return  string representation of this object's value
+     *
+     * @see java.lang.Object#toString()
+     *
+     * @author Christopher K. Allen
+     * @since  Nov 22, 2013
+     */
+    @Override
+    public String   toString() {
+        String strTwsX = this.getTwiss(IND_3D.X).toString();
+        String strTwsY = this.getTwiss(IND_3D.Y).toString();
+        String strTwsZ = this.getTwiss(IND_3D.Z).toString();
+        
+        String strTws = "HOR(" + strTwsX + ") VER(" + strTwsY + ") LNG(" + strTwsZ + ")";
+        
+        return strTws;
+    }
 
     /*
      * Support Functions

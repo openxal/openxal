@@ -15,20 +15,13 @@ import java.util.logging.Logger;
 
 import xal.model.probe.Probe;
 import xal.model.probe.traj.ICoordinateState;
-import xal.model.probe.traj.ParticleTrajectory;
-import xal.model.probe.traj.ProbeState;
 import xal.model.probe.traj.Trajectory;
-import xal.model.probe.traj.TransferMapState;
-import xal.model.probe.traj.TransferMapTrajectory;
 import xal.sim.scenario.AlgorithmFactory;
 import xal.sim.scenario.ProbeFactory;
 import xal.sim.scenario.Scenario;
 import xal.smf.Ring;
 import xal.smf.proxy.ElectromagnetPropertyAccessor;
 import xal.tools.beam.PhaseVector;
-import xal.tools.beam.calc.ISimLocationResults;
-import xal.tools.beam.calc.MachineCalculations;
-import xal.tools.beam.calc.ParticleCalculations;
 
 
 /**
@@ -42,7 +35,7 @@ public class OnlineModelSimulator extends MappedSimulator {
 //     * Internal Classes
 //     */
 //    
-//    private static class SimDataProcessor implements ISimLocationResults<ProbeState> {
+//    private static class SimDataProcessor implements ISimLocResults<ProbeState> {
 //
 //        /*
 //         * Local Attributes
@@ -52,7 +45,7 @@ public class OnlineModelSimulator extends MappedSimulator {
 //        private final Trajectory                        traj;
 //        
 //        /** The particle trajectory data processor */
-//        private final ISimLocationResults<? extends ProbeState>  engResults;
+//        private final ISimLocResults<? extends ProbeState>  engResults;
 //        
 //        
 //        
@@ -70,12 +63,12 @@ public class OnlineModelSimulator extends MappedSimulator {
 //            if (traj instanceof TransferMapTrajectory) {
 //                TransferMapTrajectory trjXferMap = (TransferMapTrajectory)traj;
 //                
-//                this.engResults = new MachineCalculations(trjXferMap);
+//                this.engResults = new CalculationsOnMachine(trjXferMap);
 //                
 //            } else if (traj instanceof ParticleTrajectory) {
 //                ParticleTrajectory  trjPart = (ParticleTrajectory)traj;
 //                
-//                this.engResults = new ParticleCalculations(trjPart);
+//                this.engResults = new CalculationsOnParticle(trjPart);
 //                
 //            } else {
 //                
@@ -85,12 +78,12 @@ public class OnlineModelSimulator extends MappedSimulator {
 //        }
 //        
 //        /*
-//         * ISimLocationResults Interface
+//         * ISimLocResults Interface
 //         */
 //        
 //        /**
 //         *
-//         * @see xal.tools.beam.calc.ISimLocationResults#computeCoordinatePosition(xal.model.probe.traj.ProbeState)
+//         * @see xal.tools.beam.calc.ISimLocResults#computeCoordinatePosition(xal.model.probe.traj.ProbeState)
 //         *
 //         * @author Christopher K. Allen
 //         * @since  Nov 15, 2013
@@ -103,7 +96,7 @@ public class OnlineModelSimulator extends MappedSimulator {
 //
 //        /**
 //         *
-//         * @see xal.tools.beam.calc.ISimLocationResults#computeFixedOrbit(xal.model.probe.traj.ProbeState)
+//         * @see xal.tools.beam.calc.ISimLocResults#computeFixedOrbit(xal.model.probe.traj.ProbeState)
 //         *
 //         * @author Christopher K. Allen
 //         * @since  Nov 15, 2013
@@ -116,7 +109,7 @@ public class OnlineModelSimulator extends MappedSimulator {
 //
 //        /**
 //         *
-//         * @see xal.tools.beam.calc.ISimLocationResults#computeChromAberration(xal.model.probe.traj.ProbeState)
+//         * @see xal.tools.beam.calc.ISimLocResults#computeChromAberration(xal.model.probe.traj.ProbeState)
 //         *
 //         * @author Christopher K. Allen
 //         * @since  Nov 15, 2013

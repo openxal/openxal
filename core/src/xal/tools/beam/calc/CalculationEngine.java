@@ -11,7 +11,7 @@ import java.util.EnumSet;
 import xal.model.probe.TwissProbe;
 import xal.tools.beam.PhaseMatrix;
 import xal.tools.beam.PhaseMatrix.IND;
-import xal.tools.beam.Twiss3D.SpaceIndex3D;
+import xal.tools.beam.Twiss3D.IND_3D;
 import xal.tools.beam.PhaseVector;
 import xal.tools.beam.RelativisticParameterConverter;
 import xal.tools.beam.Twiss;
@@ -286,17 +286,19 @@ public abstract class CalculationEngine {
     protected R3 calculatePhaseAdvPerCell(PhaseMatrix matPhiCell) {
         double[]    arrTunes = new double[NUM_MODES];
     
-        // H. Sako - Look at the sign of M12, and determine the phase
-        // since M12=beta*sin(mu) and beta>0, if M12>0, sin(mu)>0, 0<mu<pi
-        //                                    if M12<0, sin(mu)<0, -pi<mu<0
         for ( int imode = 0 ; imode < NUM_MODES ; imode++ ) {
             final int index = 2 * imode;
             double trace = matPhiCell.getElem( index, index ) + matPhiCell.getElem( index + 1, index + 1 );
-    
             double m12   = matPhiCell.getElem( index, index+1 );                               
-            double sigma = Math.acos( trace / 2 );
             
             // problem is when abs(trace)>1, then _tunes are Double.NaN
+//          double sigma = Math.acos( trace / 2 );
+            double trmod = (trace > 2.0) ? 2.0 : Math.max(trace, -2);
+            double sigma = Math.acos( trmod/2.0 );
+
+            // H. Sako - Look at the sign of M12, and determine the phase
+            // since M12=beta*sin(mu) and beta>0, if M12>0, sin(mu)>0, 0<mu<pi
+            //                                    if M12<0, sin(mu)<0, -pi<mu<0
             if (m12<0) 
                 sigma = -sigma;
             
@@ -871,7 +873,7 @@ public abstract class CalculationEngine {
         double Rjpjp;   //                .
 
         int j = 0;
-        for (SpaceIndex3D index : SpaceIndex3D.values()) { // for each phase plane
+        for (IND_3D index : IND_3D.values()) { // for each phase plane
             j = 2 * index.val();
             
             // assume constant normalized emittance
@@ -888,7 +890,7 @@ public abstract class CalculationEngine {
             beta1  = Rjj*Rjj*beta0 - 2.*Rjj*Rjjp*alpha0 + Rjjp*Rjjp*gamma0;
             alpha1 = -Rjj*Rjpj*beta0 + (Rjj*Rjpjp + Rjjp*Rjpj)*alpha0 - Rjjp*Rjpjp*gamma0;
 
-            if (index==SpaceIndex3D.Z) // longitudinal plane
+            if (index==IND_3D.Z) // longitudinal plane
                 emit1 = emit0 * ratLong; 
             else     // transver plane
                 emit1 = emit0 * ratTran;
@@ -992,7 +994,7 @@ public abstract class CalculationEngine {
 //     */
 //
 //    /*
-//     * ISimEnvelopeResults Interface 
+//     * ISimEnvResults Interface 
 //     */
 //
 //    /**

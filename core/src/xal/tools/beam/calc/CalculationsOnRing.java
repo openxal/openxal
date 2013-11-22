@@ -1,5 +1,5 @@
 /**
- * RingCalculations.java
+ * CalculationsOnRing.java
  *
  * Author  : Christopher K. Allen
  * Since   : Oct 22, 2013
@@ -34,7 +34,7 @@ import xal.tools.math.r3.R3;
  * @author Christopher K. Allen
  * @since  Oct 22, 2013
  */
-public class RingCalculations extends MachineCalculations {
+public class CalculationsOnRing extends CalculationsOnMachine {
     
     /*
      * Local Attributes
@@ -54,7 +54,7 @@ public class RingCalculations extends MachineCalculations {
     
     /**
      * <p>
-     * Constructor for RingCalculations.  Accepts the <code>TransferMapTrajectory</code>
+     * Constructor for CalculationsOnRing.  Accepts the <code>TransferMapTrajectory</code>
      * object and extracts the final state and one-turn map.  Parameters that are 
      * required for subsequent ring parameter calculations are also computed, such as
      * entrance position phase advance, entrance position fixed orbit, and entrance position
@@ -73,7 +73,7 @@ public class RingCalculations extends MachineCalculations {
      * @author Christopher K. Allen
      * @since  Oct 22, 2013
      */
-    public RingCalculations(TransferMapTrajectory trjRing) throws IllegalArgumentException {
+    public CalculationsOnRing(TransferMapTrajectory trjRing) throws IllegalArgumentException {
         super(trjRing);
 //        ProbeState  pstFinal = trjRing.finalState();
 //        

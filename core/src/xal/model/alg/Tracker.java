@@ -416,10 +416,11 @@ public abstract class Tracker implements IAlgorithm, IArchive {
      *  @param      clsProbeType    class object for probe handled by this algorithm.
      */
     protected Tracker(String strType, int intVersion, Class<? extends IProbe> clsProbeType) {
-        m_strType = strType;
-        m_intVersion = intVersion;
-        m_lstProbes = new ArrayList<Class<? extends IProbe>>();
-        probeType = clsProbeType;
+        this.m_strType = strType;
+        this.m_intVersion = intVersion;
+        this.m_lstProbes = new ArrayList<Class<? extends IProbe>>();
+        this.probeType = clsProbeType;
+        this.m_bolDebug = false;
         
         this.registerProbeType(clsProbeType);
     };

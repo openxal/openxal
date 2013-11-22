@@ -117,6 +117,7 @@ public class TransferMapState extends ProbeState /* implements IPhaseState */ {
         // CKA - removing the backpointer to the trajectory since it is never referenced
 //        setTrajectory( (TransferMapTrajectory)probe.getTrajectory() );
         setTransferMap( probe.getTransferMap() );
+        setPartialTransferMap( probe.getPartialTransferMap() );
         setPhaseCoordinates( probe.getPhaseCoordinates() );
     }
 
@@ -139,6 +140,19 @@ public class TransferMapState extends ProbeState /* implements IPhaseState */ {
      */
     public void setTransferMap( final PhaseMap mapTrans ) {
         this.mapPhiCmp = ( mapTrans != null ) ? mapTrans : PhaseMap.identity();
+    }
+    
+    /**
+     * Sets the current partial transfer map, or "through map".  This map transfers
+     * particle phase coordinates through a distance occupied by this state.
+     * 
+     * @param mapPart   transfer map through this state
+     *
+     * @author Christopher K. Allen
+     * @since  Nov 22, 2013
+     */
+    public void setPartialTransferMap( final PhaseMap mapPart ) { 
+        this.mapPhiPart = ( mapPart != null ) ? mapPart : PhaseMap.identity();
     }
 
     /**
@@ -164,6 +178,19 @@ public class TransferMapState extends ProbeState /* implements IPhaseState */ {
      */
     public PhaseMap getTransferMap()  {
         return this.mapPhiCmp;
+    }
+    
+    /**
+     * Returns the partial transfer map that transports particle
+     * phase coordinates through the space occupied by this state.
+     * 
+     * @return      partial transfer map through this state
+     *
+     * @author Christopher K. Allen
+     * @since  Nov 22, 2013
+     */
+    public PhaseMap getPartialTransferMap() {
+        return this.mapPhiPart;
     }
     
     /**

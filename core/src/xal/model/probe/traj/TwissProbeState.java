@@ -14,7 +14,7 @@ import xal.tools.beam.PhaseMatrix;
 import xal.tools.beam.PhaseVector;
 import xal.tools.beam.Twiss;
 import xal.tools.beam.Twiss3D;
-import xal.tools.beam.Twiss3D.SpaceIndex3D;
+import xal.tools.beam.Twiss3D.IND_3D;
 import xal.tools.data.DataAdaptor;
 import xal.tools.data.DataFormatException;
 import xal.tools.math.r3.R3;
@@ -163,7 +163,7 @@ public class TwissProbeState extends BunchProbeState {
      * @param   iPlane  phase plane index
      * @param   twiss   twiss parameters
      */
-    public void setTwiss(SpaceIndex3D iPlane, Twiss twiss)   {
+    public void setTwiss(IND_3D iPlane, Twiss twiss)   {
         this.envTwiss.setTwiss(iPlane, twiss);
     }
     
@@ -234,7 +234,7 @@ public class TwissProbeState extends BunchProbeState {
      * 
      * @return  twiss parameters for given phase plane
      */
-    public Twiss    getTwiss(SpaceIndex3D iPlane)    {
+    public Twiss    getTwiss(IND_3D iPlane)    {
         return this.envTwiss.getTwiss(iPlane);
     }
     
@@ -263,7 +263,7 @@ public class TwissProbeState extends BunchProbeState {
     public double[] rmsEmittances() {
         double  arrEmit[] = new double[3];
         
-        for (SpaceIndex3D i : SpaceIndex3D.values()) 
+        for (IND_3D i : IND_3D.values()) 
             arrEmit[i.val()] = this.getTwiss(i).getEmittance();
         
         return arrEmit;

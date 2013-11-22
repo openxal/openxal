@@ -6,6 +6,9 @@
  */
 package xal.tools.beam.calc;
 
+import xal.tools.beam.calc.ISimulationResults.ISimEnvResults;
+import xal.tools.beam.calc.ISimulationResults.ISimLocResults;
+
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
@@ -22,13 +25,13 @@ import xal.tools.math.r3.R3;
 /**
  * <p>
  * Class <code>SimResultsAdaptor</code>.  This class generalized the
- * interface <code>ISimEnvelopeResults&lt;S&gt;</code> for use with simulation
+ * interface <code>ISimEnvResults&lt;S&gt;</code> for use with simulation
  * results of either of the two types <code>TransferMapTrajectory</code>
  * or <code>EnvelopeTrajectory</code>.  The types to the methods of the
  * interface are specified as the general <code>ProbeState</code> base
  * class. Thus, probes states of either type <code>TransferMapState</code>
  * or <code>EnvelopeProbeState</code> may be passed to the interface
- * <code>ISimEnvelopeResults</code>. 
+ * <code>ISimEnvResults</code>. 
  * </p>
  * <p>
  * This class maintains an internal machine parameter calculation engine.
@@ -40,7 +43,7 @@ import xal.tools.math.r3.R3;
  * @author Christopher K. Allen
  * @since  Nov 7, 2013
  */
-public class SimResultsAdaptor implements ISimEnvelopeResults<ProbeState>, ISimLocationResults<ProbeState> {
+public class SimResultsAdaptor implements ISimEnvResults<ProbeState>, ISimLocResults<ProbeState> {
 
     
     /*
@@ -48,10 +51,10 @@ public class SimResultsAdaptor implements ISimEnvelopeResults<ProbeState>, ISimL
      */
     
     /** The machine parameter calculation engine for rings */
-    private ISimEnvelopeResults<TransferMapState>   cmpRingParams;
+    private ISimEnvResults<TransferMapState>   cmpRingParams;
     
     /** The machine parameter calculation engine for linacs */
-    private ISimEnvelopeResults<EnvelopeProbeState> cmpLinacParams;
+    private ISimEnvResults<EnvelopeProbeState> cmpLinacParams;
     
     
     /*
@@ -77,13 +80,13 @@ public class SimResultsAdaptor implements ISimEnvelopeResults<ProbeState>, ISimL
         if (datSim instanceof TransferMapTrajectory) {
             TransferMapTrajectory   trj = (TransferMapTrajectory)datSim;
 
-            this.cmpRingParams  = new RingCalculations(trj);
+            this.cmpRingParams  = new CalculationsOnRing(trj);
             this.cmpLinacParams = null;
 
         } else if (datSim instanceof EnvelopeTrajectory) {
             EnvelopeTrajectory trj = (EnvelopeTrajectory)datSim;
 
-            this.cmpLinacParams = new BeamCalculations(trj);
+            this.cmpLinacParams = new CalculationsOnBeam(trj);
             this.cmpRingParams  = null;
 
         } else {
@@ -94,12 +97,12 @@ public class SimResultsAdaptor implements ISimEnvelopeResults<ProbeState>, ISimL
 
 
     /* 
-     * ISimLocationResults Interface
+     * ISimLocResults Interface
      */
 
     /**
      *
-     * @see xal.tools.beam.calc.ISimEnvelopeResults#computeCoordinatePosition(xal.model.probe.traj.ProbeState)
+     * @see xal.tools.beam.calc.ISimEnvResults#computeCoordinatePosition(xal.model.probe.traj.ProbeState)
      *
      * @author Christopher K. Allen
      * @since  Nov 7, 2013
@@ -116,7 +119,7 @@ public class SimResultsAdaptor implements ISimEnvelopeResults<ProbeState>, ISimL
      * For linacs, this is the fixed point of the end-to-end transfer map.
      * </p>
      *
-     * @see xal.tools.beam.calc.ISimEnvelopeResults#computeFixedOrbit(xal.model.probe.traj.ProbeState)
+     * @see xal.tools.beam.calc.ISimEnvResults#computeFixedOrbit(xal.model.probe.traj.ProbeState)
      *
      * @author Christopher K. Allen
      * @since  Nov 7, 2013
@@ -128,7 +131,7 @@ public class SimResultsAdaptor implements ISimEnvelopeResults<ProbeState>, ISimL
 
     /**
      *
-     * @see xal.tools.beam.calc.ISimLocationResults#computeChromAberration(xal.model.probe.traj.ProbeState)
+     * @see xal.tools.beam.calc.ISimLocResults#computeChromAberration(xal.model.probe.traj.ProbeState)
      *
      * @author Christopher K. Allen
      * @since  Nov 15, 2013
@@ -143,7 +146,7 @@ public class SimResultsAdaptor implements ISimEnvelopeResults<ProbeState>, ISimL
 
 
     /*
-     * ISimEnvelopeResults Interface
+     * ISimEnvResults Interface
      */
 
     /**
@@ -154,7 +157,7 @@ public class SimResultsAdaptor implements ISimEnvelopeResults<ProbeState>, ISimL
      * moments. 
      * </p>
      *
-     * @see xal.tools.beam.calc.ISimEnvelopeResults#computeTwissParameters(xal.model.probe.traj.ProbeState)
+     * @see xal.tools.beam.calc.ISimEnvResults#computeTwissParameters(xal.model.probe.traj.ProbeState)
      *
      * @author Christopher K. Allen
      * @since  Nov 7, 2013
@@ -175,7 +178,7 @@ public class SimResultsAdaptor implements ISimEnvelopeResults<ProbeState>, ISimL
      * phase advance from entrance location of a linac to current position.  In either case
      * the result should be in the range 0 to 2&pi;.
      *
-     * @see xal.tools.beam.calc.ISimEnvelopeResults#computeBetatronPhase(xal.model.probe.traj.ProbeState)
+     * @see xal.tools.beam.calc.ISimEnvResults#computeBetatronPhase(xal.model.probe.traj.ProbeState)
      *
      * @author Christopher K. Allen
      * @since  Nov 7, 2013
@@ -198,7 +201,7 @@ public class SimResultsAdaptor implements ISimEnvelopeResults<ProbeState>, ISimL
      * which expresses the sensitivity of the final states to changes in the initial state.
      * </p>
      *
-     * @see xal.tools.beam.calc.ISimEnvelopeResults#computeChromDispersion(xal.model.probe.traj.ProbeState)
+     * @see xal.tools.beam.calc.ISimEnvResults#computeChromDispersion(xal.model.probe.traj.ProbeState)
      *
      * @author Christopher K. Allen
      * @since  Nov 11, 2013
@@ -215,18 +218,18 @@ public class SimResultsAdaptor implements ISimEnvelopeResults<ProbeState>, ISimL
 
     /**
      * Determines the sub-type of the <code>ProbeState</code> object
-     * and uses that information to determine which <code>ISimEnvelopeResults</code>
+     * and uses that information to determine which <code>ISimEnvResults</code>
      * computation engine is used to compute the machine parameters.  (That is,
      * are we looking at a ring or at a Linac.)  The result is passed back up to the
-     * <code>ISimEnvelopeResults</code> interface exposed by this class (i.e.,
+     * <code>ISimEnvResults</code> interface exposed by this class (i.e.,
      * the interface method that invoked this method) where its type is identified
      * and returned to the user of this class.
      * 
-     * @param strMthName    name of the method in the <code>ISimEnvelopeResults</code> interface
+     * @param strMthName    name of the method in the <code>ISimEnvResults</code> interface
      * @param staArg        <code>ProbeState</code> derived object that is an argument to one of the
-     *                      methods in the <code>ISimEnvelopeResults</code> interface
+     *                      methods in the <code>ISimEnvResults</code> interface
      *                      
-     * @return              result of invoking the given <code>ISimEnvelopeResults</code> method on 
+     * @return              result of invoking the given <code>ISimEnvResults</code> method on 
      *                      the given <code>ProbeState</code> argument
      *  
      * @author Christopher K. Allen

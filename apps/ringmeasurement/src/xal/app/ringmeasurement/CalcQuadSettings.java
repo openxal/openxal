@@ -17,7 +17,7 @@ import xal.sim.scenario.Scenario;
 import xal.sim.sync.SynchronizationException;
 import xal.model.probe.traj.TransferMapTrajectory;
 import xal.model.probe.traj.TransferMapState;
-import xal.tools.beam.calc.RingCalculations;
+import xal.tools.beam.calc.CalculationsOnRing;
 import xal.tools.math.r3.R3;
 //import xal.tools.optimizer.*;
 import xal.tools.solver.*;
@@ -281,7 +281,7 @@ public class CalcQuadSettings implements Runnable {
 		// CKA - Create a machine parameter processor for the ring to replace
 		//    the machine parameters that were previously processed in the
 		//    simulation data itself.
-		RingCalculations     cmpRingParams = new RingCalculations(traj);
+		CalculationsOnRing     cmpRingParams = new CalculationsOnRing(traj);
 		
 		// CKA - This
 		R3    vecPhase0 = cmpRingParams.ringBetatronPhaseAdvance();

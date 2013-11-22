@@ -36,6 +36,11 @@ public class TransferMapTracker extends Tracker {
      * Global Constants
      */
     
+    /** probe type recognized by this algorithm */
+    public static final Class<TransferMapProbe>       s_clsProbeType = TransferMapProbe.class;
+
+
+
     /** Label for edit context table containing algorithm parameters - i.e., in "model.params" file */ 
     private static final String STR_LBL_TABLE = "TransferMapTracker";
     
@@ -47,8 +52,7 @@ public class TransferMapTracker extends Tracker {
     /** current version of this algorithm */
     public static final int         s_intVersion = 1;
 
-    /** probe type recognized by this algorithm */
-    public static final Class<TransferMapProbe>       s_clsProbeType = TransferMapProbe.class;
+    
 
 	
     

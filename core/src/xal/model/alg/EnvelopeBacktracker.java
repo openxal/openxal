@@ -234,7 +234,7 @@ public class EnvelopeBacktracker extends EnvelopeTrackerBase {
         // Save the new state variables in the probe
         probe.setResponseMatrix(matResp1);
         probe.setCurrentResponseMatrix(matPhi);
-        probe.setCorrelation(new CovarianceMatrix(matTau1));
+        probe.setCovariance(new CovarianceMatrix(matTau1));
 //        probe.advanceTwiss(matPhi, ifcElem.energyGain(probe, dblLen) );
         
         // phase update:
@@ -347,7 +347,7 @@ public class EnvelopeBacktracker extends EnvelopeTrackerBase {
             CovarianceMatrix covTau1 = new CovarianceMatrix(matTau1);
 
             probe.setPosition(pos);
-            probe.setCorrelation(covTau1);
+            probe.setCovariance(covTau1);
 
 
             // space charge transfer matrix

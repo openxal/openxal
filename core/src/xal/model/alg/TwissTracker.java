@@ -17,7 +17,7 @@ import xal.tools.beam.RelativisticParameterConverter;
 import xal.tools.beam.TraceXalUnitConverter;
 import xal.tools.beam.Twiss;
 import xal.tools.beam.Twiss3D;
-import xal.tools.beam.Twiss3D.SpaceIndex3D;
+import xal.tools.beam.Twiss3D.IND_3D;
 import xal.tools.beam.em.BeamEllipsoid;
 import xal.tools.data.DataAdaptor;
 import xal.tools.data.DataFormatException;
@@ -563,13 +563,13 @@ public class TwissTracker extends Tracker {
         Twiss3D twissEnv0 = probe.getTwiss();   // old Twiss parameters
         Twiss3D twissEnv1 = new Twiss3D();      // returned new Twiss parameters
         
-        for (SpaceIndex3D index : SpaceIndex3D.values()) {
+        for (IND_3D index : IND_3D.values()) {
             
             a0 = twissEnv0.getTwiss(index).getAlpha();
             b0 = twissEnv0.getTwiss(index).getBeta();
             e0 = twissEnv0.getTwiss(index).getEmittance();
             
-            if (index != SpaceIndex3D.Z)    // transverse plane
+            if (index != IND_3D.Z)    // transverse plane
                 k = this.correctTransSigmaPhaseSpread(probe, elem);
                 
             else                            // longitudinal plane
@@ -609,7 +609,7 @@ public class TwissTracker extends Tracker {
 //        R3      vecPhsAd = new R3();    // returned set of phase advances
 //        
 //        // Loop through each plane
-//        for (SpaceIndex3D index : SpaceIndex3D.values()) {
+//        for (IND_3D index : IND_3D.values()) {
 //            iElem = 2*index.val();
 //            dblR12 = matPhi.getElem(iElem, iElem+1);
 //            
@@ -651,7 +651,7 @@ public class TwissTracker extends Tracker {
 
         final double[] arrPhsAdv = new double[3];
         
-        for ( SpaceIndex3D mode : SpaceIndex3D.values() ) {
+        for ( IND_3D mode : IND_3D.values() ) {
             int     iElem = 2 * mode.val();
             
             final double dblBetaFnl = twsFnl.getTwiss(mode).getBeta();
@@ -752,7 +752,7 @@ public class TwissTracker extends Tracker {
         double Rjpjp;   //                .
 
         int j = 0;
-        for (SpaceIndex3D index : SpaceIndex3D.values()) { // for each phase plane
+        for (IND_3D index : IND_3D.values()) { // for each phase plane
             j = 2 * index.val();
             
             // assume constant normalized emittance
@@ -769,7 +769,7 @@ public class TwissTracker extends Tracker {
             beta1  = Rjj*Rjj*beta0 - 2.*Rjj*Rjjp*alpha0 + Rjjp*Rjjp*gamma0;
             alpha1 = -Rjj*Rjpj*beta0 + (Rjj*Rjpjp + Rjjp*Rjpj)*alpha0 - Rjjp*Rjpjp*gamma0;
 
-            if (index==SpaceIndex3D.Z) // longitudinal plane
+            if (index==IND_3D.Z) // longitudinal plane
                 emit1 = emit0 * ratLong; 
             else     // transver plane
                 emit1 = emit0 * ratTran;

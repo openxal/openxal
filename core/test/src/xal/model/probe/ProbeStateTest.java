@@ -137,7 +137,7 @@ public class ProbeStateTest extends TestCase {
 //		probe.setBeamCharge(CHARGE);
         probe.setBunchFrequency(FREQUENCY);
 		probe.setBeamCurrent(CURRENT);
-		probe.setCorrelation((CovarianceMatrix)PhaseMatrix.zero());     // causes class cast exception
+		probe.setCovariance((CovarianceMatrix)PhaseMatrix.zero());     // causes class cast exception
 		ProbeState state = probe.createProbeState();
 		
 		//compare the snapshot to the probe

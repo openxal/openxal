@@ -73,7 +73,6 @@ public class ParticleProbeState extends ProbeState /*implements ICoordinateState
         super(probe);
         this.setPhaseCoordinates( new PhaseVector(probe.getPhaseCoordinates()) );
         this.setResponseMatrix( new PhaseMatrix(probe.getResponseMatrix()) );
-        
     }
     
     /** 

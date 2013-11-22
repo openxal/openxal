@@ -234,7 +234,7 @@ public class EnvelopeTracker extends EnvelopeTrackerBase {
         probe.setResponseMatrixNoSpaceCharge(matRnsp1);
         probe.setResponseMatrix(matResp1);
         probe.setCurrentResponseMatrix(matPhi_sc);
-        probe.setCorrelation(new CovarianceMatrix(matTau1));
+        probe.setCovariance(new CovarianceMatrix(matTau1));
 //        probe.advanceTwiss(matPhi_sc, iElem.energyGain(probe, dblLen) );
         
         // phase update:
@@ -313,7 +313,7 @@ public class EnvelopeTracker extends EnvelopeTrackerBase {
             CovarianceMatrix covTau1 = new CovarianceMatrix(matTau1);
 
             probe.setPosition(pos);
-            probe.setCorrelation(covTau1);
+            probe.setCovariance(covTau1);
             
             
             // space charge transfer matrix

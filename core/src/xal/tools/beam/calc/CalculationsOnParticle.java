@@ -1,18 +1,18 @@
 /**
- * ParticleCalculations.java
+ * CalculationsOnParticle.java
  *
  * Author  : Christopher K. Allen
  * Since   : Nov 14, 2013
  */
 package xal.tools.beam.calc;
 
-import xal.model.probe.traj.EnvelopeProbeState;
 import xal.model.probe.traj.ParticleProbeState;
 import xal.model.probe.traj.ParticleTrajectory;
 import xal.model.probe.traj.ProbeState;
 import xal.tools.beam.PhaseMatrix;
 import xal.tools.beam.PhaseVector;
 import xal.tools.beam.Twiss;
+import xal.tools.beam.calc.ISimulationResults.ISimLocResults;
 import xal.tools.math.r3.R3;
 import xal.tools.math.r6.R6;
 
@@ -23,7 +23,7 @@ import xal.tools.math.r6.R6;
  * @author Christopher K. Allen
  * @since  Nov 14, 2013
  */
-public class ParticleCalculations extends CalculationEngine implements ISimLocationResults<ParticleProbeState> {
+public class CalculationsOnParticle extends CalculationEngine implements ISimLocResults<ParticleProbeState> {
 
     /*
      * Local Attributes
@@ -50,8 +50,8 @@ public class ParticleCalculations extends CalculationEngine implements ISimLocat
 
     
     /**
-     * Constructor for <code>ParticleCalculations</code>. Creates a new 
-     * <code>ParticleCalculations</code> object for process the simulation
+     * Constructor for <code>CalculationsOnParticle</code>. Creates a new 
+     * <code>CalculationsOnParticle</code> object for process the simulation
      * data contained in the given particle trajectory object.
      *
      * @param   trjPart     simulation data for a particle
@@ -59,11 +59,11 @@ public class ParticleCalculations extends CalculationEngine implements ISimLocat
      * @author Christopher K. Allen
      * @since  Nov 14, 2013
      */
-    public ParticleCalculations(ParticleTrajectory trjPart) {
+    public CalculationsOnParticle(ParticleTrajectory trjPart) {
         ProbeState  pstFinal = trjPart.finalState();
         
         // Check for correct probe types
-        if ( !( pstFinal instanceof EnvelopeProbeState) )
+        if ( !( pstFinal instanceof ParticleProbeState) )
             throw new IllegalArgumentException(
                     "Trajectory states are not EnvelopeProbeStates? - " 
                     + pstFinal.getClass().getName()
@@ -203,7 +203,7 @@ public class ParticleCalculations extends CalculationEngine implements ISimLocat
      * Simply returns the location of the simulated particle at the location of
      * the give state.  No real computation necessary.
      *
-     * @see xal.tools.beam.calc.ISimEnvelopeResults#computeCoordinatePosition(xal.model.probe.traj.ProbeState)
+     * @see xal.tools.beam.calc.ISimEnvResults#computeCoordinatePosition(xal.model.probe.traj.ProbeState)
      *
      * @author Christopher K. Allen
      * @since  Nov 14, 2013
@@ -280,7 +280,7 @@ public class ParticleCalculations extends CalculationEngine implements ISimLocat
      * @return  The quantity <b>&Phi;</b><sub><i>n</i></sub>&sdot;<b>z</b><sub>0</sub>, the linac 
      *          fixed point <b>z</b><sub>0</sub> propagated to the state location <i>s<sub>n</sub></i>
      *
-     * @see xal.tools.beam.calc.ISimEnvelopeResults#computeFixedOrbit(xal.model.probe.traj.ProbeState)
+     * @see xal.tools.beam.calc.ISimEnvResults#computeFixedOrbit(xal.model.probe.traj.ProbeState)
      *
      * @author Christopher K. Allen
      * @since  Nov 14, 2013
@@ -299,10 +299,10 @@ public class ParticleCalculations extends CalculationEngine implements ISimLocat
      * or for a beamline the entrance of the line to this state position. The returned 
      * vector is the displacement from the closed orbit caused 
      * by a unit momentum offset (&delta;<i>p</i> = 1).  See the documentation in 
-     * {@link ISimLocationResults#computeChromAberration(ProbeState)} for a more detailed
+     * {@link ISimLocResults#computeChromAberration(ProbeState)} for a more detailed
      * exposition.
      *
-     * @see xal.tools.beam.calc.ISimLocationResults#computeChromAberration(xal.model.probe.traj.ProbeState)
+     * @see xal.tools.beam.calc.ISimLocResults#computeChromAberration(xal.model.probe.traj.ProbeState)
      *
      * @author Christopher K. Allen
      * @since  Nov 14, 2013

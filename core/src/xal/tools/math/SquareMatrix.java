@@ -266,6 +266,7 @@ public abstract class SquareMatrix<M extends SquareMatrix<M>> extends BaseMatrix
         
         
         try {
+            @SuppressWarnings("unchecked")
             Class<V>        clsVec = (Class<V>) vecObs.getClass();
             Constructor<V> ctrVec = (Constructor<V>) clsVec.getConstructor();
             
@@ -437,6 +438,7 @@ public abstract class SquareMatrix<M extends SquareMatrix<M>> extends BaseMatrix
             throw new IllegalArgumentException(vecFac.getClass().getName() + " vector must have compatible size");
         
         try {
+            @SuppressWarnings("unchecked")
             Class<V>        clsVec = (Class<V>) vecFac.getClass();
             Constructor<V>  ctrVec = (Constructor<V>) clsVec.getConstructor();
             

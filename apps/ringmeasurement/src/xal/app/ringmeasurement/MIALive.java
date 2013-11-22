@@ -47,7 +47,7 @@ import xal.smf.data.XMLDataManager;
 import xal.smf.impl.BPM;
 import xal.tools.apputils.EdgeLayout;
 import xal.tools.beam.Twiss;
-import xal.tools.beam.calc.RingCalculations;
+import xal.tools.beam.calc.CalculationsOnRing;
 import xal.tools.plot.BasicGraphData;
 import xal.tools.plot.FunctionGraphsJPanel;
 import xal.tools.swing.DecimalField;
@@ -579,7 +579,7 @@ public class MIALive extends JPanel{
 	        // CKA - Down cast the simulation trajectory results to the proper type then
 	        //   create a ring parameter calculation engine for processing
 	        TransferMapTrajectory  trjSimulation = (TransferMapTrajectory)traj;
-	        RingCalculations         cmpRingParams = new RingCalculations(trjSimulation);
+	        CalculationsOnRing         cmpRingParams = new CalculationsOnRing(trjSimulation);
 
 	        int j = 0;
 	        for (int i = 0; i < BPMTable.getRowCount(); i++) {
@@ -654,7 +654,7 @@ public class MIALive extends JPanel{
             // CKA - Down cast the simulation trajectory results to the proper type then
             //   create a ring parameter calculation engine for processing
             TransferMapTrajectory  trjSimulation = (TransferMapTrajectory)traj;
-            RingCalculations         cmpRingParams = new RingCalculations(trjSimulation);
+            CalculationsOnRing         cmpRingParams = new CalculationsOnRing(trjSimulation);
 
 			int j = 0;
 			for (int i = 0; i < BPMTable.getRowCount(); i++) {

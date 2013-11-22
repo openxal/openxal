@@ -21,10 +21,10 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import xal.model.alg.EnvTrackerAdapt;
+import xal.resources.ResourceManager;
 import xal.sim.scenario.ProbeFactory;
 import xal.smf.Accelerator;
 import xal.smf.AcceleratorSeq;
-import xal.test.ResourceManager;
 import xal.tools.beam.CovarianceMatrix;
 
 /**

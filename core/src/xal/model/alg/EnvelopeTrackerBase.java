@@ -776,17 +776,17 @@ public abstract class EnvelopeTrackerBase extends Tracker {
         
         // Compute the space charge matrix 
         //      Compute the correlations in configuration space
-        double sigXX = tau0.computeCentralCovXX();
-        double sigYY = tau0.computeCentralCovYY();
-        double sigZZ = tau0.computeCentralCovZZ();
+        double covXX = tau0.computeCentralCovXX();
+        double covYY = tau0.computeCentralCovYY();
+        double covZZ = tau0.computeCentralCovZZ();
         
-        double sigXY = tau0.computeCentralCovXY();
-        double sigXZ = tau0.computeCentralCovXZ();
-        double sigYZ = tau0.computeCentralCovYZ();
+        double covXY = tau0.computeCentralCovXY();
+        double covXZ = tau0.computeCentralCovXZ();
+        double covYZ = tau0.computeCentralCovYZ();
         
-        double corr = (sigXY*sigXY)/(sigXX*sigYY) 
-                    + (sigXZ*sigXZ)/(sigXX*sigZZ) 
-                    + (sigYZ*sigYZ)/(sigYY*sigZZ);
+        double corr = (covXY*covXY)/(covXX*covYY) 
+                    + (covXZ*covXZ)/(covXX*covZZ) 
+                    + (covYZ*covYZ)/(covYY*covZZ);
 
         
         // Compute space charge matrix
@@ -796,9 +796,9 @@ public abstract class EnvelopeTrackerBase extends Tracker {
             double g_2 = gamma*gamma;
 
             // Compute elliptic integrals
-            double RDx = EllipticIntegral.RD(sigYY, g_2*sigZZ, sigXX)/EnvelopeTrackerBase.CONST_UNIFORM_BEAM;
-            double RDy = EllipticIntegral.RD(g_2*sigZZ, sigXX, sigYY)/EnvelopeTrackerBase.CONST_UNIFORM_BEAM;
-            double RDz = EllipticIntegral.RD(sigXX, sigYY, g_2*sigZZ)/EnvelopeTrackerBase.CONST_UNIFORM_BEAM;
+            double RDx = EllipticIntegral.RD(covYY, g_2*covZZ, covXX)/EnvelopeTrackerBase.CONST_UNIFORM_BEAM;
+            double RDy = EllipticIntegral.RD(g_2*covZZ, covXX, covYY)/EnvelopeTrackerBase.CONST_UNIFORM_BEAM;
+            double RDz = EllipticIntegral.RD(covXX, covYY, g_2*covZZ)/EnvelopeTrackerBase.CONST_UNIFORM_BEAM;
           
             // Compute defocusing constants in the laboratory frame
             double kx = gamma*dblLen*K*RDx;

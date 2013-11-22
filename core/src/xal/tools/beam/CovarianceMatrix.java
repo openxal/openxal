@@ -1,6 +1,6 @@
 package xal.tools.beam;
 
-import xal.tools.beam.Twiss3D.SpaceIndex3D;
+import xal.tools.beam.Twiss3D.IND_3D;
 import xal.tools.math.r3.R3x3;
 
 
@@ -122,9 +122,9 @@ public class CovarianceMatrix extends PhaseMatrix {
      */
     public static CovarianceMatrix buildCovariance(Twiss3D envTwiss)  {
         return CovarianceMatrix.buildCorrelation(
-                                    envTwiss.getTwiss(SpaceIndex3D.X), 
-                                    envTwiss.getTwiss(SpaceIndex3D.Y),
-                                    envTwiss.getTwiss(SpaceIndex3D.Z)
+                                    envTwiss.getTwiss(IND_3D.X), 
+                                    envTwiss.getTwiss(IND_3D.Y),
+                                    envTwiss.getTwiss(IND_3D.Z)
                                     );
     }
     

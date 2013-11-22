@@ -97,7 +97,7 @@ public class EnvelopeProbe extends BunchProbe {
     private PhaseMatrix        matPert;
 
 	/** envelope state */
-	private CovarianceMatrix  matTau;
+	private CovarianceMatrix  matSigam;
 
 //    /** 
 //     * <p>
@@ -152,8 +152,8 @@ public class EnvelopeProbe extends BunchProbe {
 	public EnvelopeProbe() {
 		this.matResp = PhaseMatrix.identity();
 		this.matRespNoSpaceCharge = PhaseMatrix.identity();
-		this.matPert = PhaseMatrix.identity();
-		this.matTau = CovarianceMatrix.newIdentity();
+		this.matPert  = PhaseMatrix.identity();
+		this.matSigam = CovarianceMatrix.newIdentity();
 	};
 
 	/**
@@ -170,7 +170,7 @@ public class EnvelopeProbe extends BunchProbe {
 		this.setResponseMatrixNoSpaceCharge(new PhaseMatrix(probe.getResponseMatrixNoSpaceCharge()));
 		this.setCurrentResponseMatrix(new PhaseMatrix(probe.getCurrentResponseMatrix()));
 //		this.setBetatronPhase(new R3(probe.getBetatronPhase()));
-		this.setCorrelation(new CovarianceMatrix(probe.getCovariance()));
+		this.setCovariance(new CovarianceMatrix(probe.getCovariance()));
 	};
     
     /**
@@ -204,7 +204,7 @@ public class EnvelopeProbe extends BunchProbe {
         PhaseVector pv = getCovariance().getMean();
         CovarianceMatrix cMat = CovarianceMatrix.buildCorrelation(twiss[0],
                 twiss[1], twiss[2], pv);
-        this.setCorrelation(cMat);
+        this.setCovariance(cMat);
     }
 
     /**
@@ -266,12 +266,12 @@ public class EnvelopeProbe extends BunchProbe {
 	 * Set the correlation matrix for this probe (7x7 matrix in homogeneous
 	 * coordinates).
 	 * 
-	 * @param matTau  new phase space covariance matrix of this probe
+	 * @param matSigam  new phase space covariance matrix of this probe
 	 * 
 	 * @see xal.tools.beam.CovarianceMatrix
 	 */
-	public void setCorrelation(CovarianceMatrix matTau) {
-		this.matTau = matTau;
+	public void setCovariance(CovarianceMatrix matTau) {
+		this.matSigam = matTau;
 	};
 
 //	/**
@@ -344,7 +344,7 @@ public class EnvelopeProbe extends BunchProbe {
      * @return  the 7x7 matrix <z*z^T> in homogeneous coordinates
      */
     public CovarianceMatrix getCovariance() {
-        return matTau;
+        return matSigam;
     }
 	/**
 	 * Get the first-order response matrix accumulated by the Envelope since its
@@ -521,7 +521,7 @@ public class EnvelopeProbe extends BunchProbe {
 		EnvelopeProbeState stateEnv = (EnvelopeProbeState) state;
 
 		super.applyState(stateEnv);
-		this.setCorrelation(stateEnv.getCovarianceMatrix());
+		this.setCovariance(stateEnv.getCovarianceMatrix());
 		this.setResponseMatrix(stateEnv.getResponseMatrix());
 		this.setResponseMatrixNoSpaceCharge(stateEnv.getResponseMatrixNoSpaceCharge());
         this.setCurrentResponseMatrix(stateEnv.getPerturbationMatrix());

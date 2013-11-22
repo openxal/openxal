@@ -618,6 +618,7 @@ public class PhaseMatrix extends SquareMatrix<PhaseMatrix> implements java.io.Se
         this.setElem(IND.HOM, IND.HOM, 1.0);
     }
     
+    
     /*
      * Matrix Operations
      */
@@ -795,6 +796,188 @@ public class PhaseMatrix extends SquareMatrix<PhaseMatrix> implements java.io.Se
         return vecProj;
     }
     
+    
+    /*
+     *  Algebraic Operations
+     */
+    
+    /**
+     * <p>
+     *  Non-destructive matrix addition.  The homogeneous pivot
+     *  element on the diagonal is unchanged at value 1.
+     *  </p>
+     *  <p>
+     *  <h4>NOTE:</h4>
+     *  BE VERY CAREFUL when using this function.  The homogeneous coordinates
+     *  are not meant for addition operations.
+     *  </p>
+     *
+     *  @param  matAddend     matrix to be added to this
+     *
+     *  @return         element wise sum of two matrices
+     */
+    public PhaseMatrix  plus(PhaseMatrix matAddend)   {
+        PhaseMatrix matSum = super.plus(matAddend);
+        matSum.setElem(IND.HOM,IND.HOM, 1.00);
+        return matSum;
+    }
+    
+    /** 
+     *  <p>
+     *  In-place matrix addition. The homogeneous pivot
+     *  element on the diagonal is unchanged at value 1.
+     *  </p>
+     *  <p>
+     *  <h4>NOTE:<h4>
+     *  BE VERY CAREFUL when using this function.  The homogeneous coordinates
+     *  are not meant for addition operations.
+     *  </p>
+     *
+     *  @param  matAddend     matrix to be added to this (result replaces this)
+     */
+    public void plusEquals(PhaseMatrix  matAddend)    {
+        super.plusEquals(matAddend);
+        this.setElem(IND.HOM,IND.HOM, 1.00);
+    }
+    
+    /**
+     * <p>
+     *  Non-destructive matrix subtraction.  The homogeneous pivot
+     *  element on the diagonal is unchanged at value 1.
+     *  </p>
+     *  <p>
+     *  <h4>NOTE:</h4>
+     *  BE VERY CAREFUL when using this function.  The homogeneous coordinates
+     *  are not meant for subtraction operations.
+     *  </p>
+     *
+     *  @param  matSub     matrix to be subtracted from this one (subtrahend)
+     *
+     *  @return         difference of this matrix and the given one
+     */
+    public PhaseMatrix  minus(PhaseMatrix matSub)   {
+        PhaseMatrix matDif = super.minus(matSub);
+        matDif.setElem(IND.HOM,IND.HOM, 1.00);
+        return matDif;
+    }
+    
+    /**
+     *  <p>
+     *  In-place matrix subtraction. The homogeneous pivot
+     *  element on the diagonal is unchanged at value 1.
+     *  </p>
+     *  <p>
+     *  <h4>NOTE:<h4>
+     *  BE VERY CAREFUL when using this function.  The homogeneous coordinates
+     *  are not meant for addition operations.
+     *  </p>
+     *
+     *  @param  matSub     matrix to be subtracted from this matrix (result replaces this)
+     */
+    public void minusEquals(PhaseMatrix  matSub)    {
+        super.minusEquals( matSub );
+        this.setElem(IND.HOM,IND.HOM, 1.00);
+    }
+    
+    
+    /*
+     * Topological Operations
+     */
+    
+    /**
+     * We must redefine the norm of any matrix on projective space to 
+     * eliminate the homogeneous coordinate.  See the base class
+     * <code>{@link xal.tools.math.BaseMatrix}</code> for information on the specific
+     * norm.
+     * 
+     * @see xal.tools.math.BaseMatrix#max()
+     *
+     * @author Christopher K. Allen
+     * @since  Nov 21, 2013
+     */
+    @Override
+    public double   max() {
+        R6x6    matLin = this.projectR6x6();
+        double  dblNorm = matLin.max();
+        
+        return dblNorm;
+    }
+    
+    /**
+     * We must redefine the norm of any matrix on projective space to 
+     * eliminate the homogeneous coordinate.  See the base class
+     * <code>{@link xal.tools.math.BaseMatrix}</code> for information on the specific
+     * norm.
+     * 
+     * @see xal.tools.math.BaseMatrix#normInf()
+     *
+     * @author Christopher K. Allen
+     * @since  Nov 21, 2013
+     */
+    @Override
+    public double   normInf() {
+        R6x6    matLin = this.projectR6x6();
+        double  dblNorm = matLin.normInf();
+        
+        return dblNorm;
+    }
+    
+    /**
+     * We must redefine the norm of any matrix on projective space to 
+     * eliminate the homogeneous coordinate.  See the base class
+     * <code>{@link xal.tools.math.BaseMatrix}</code> for information on the specific
+     * norm.
+     * 
+     * @see xal.tools.math.BaseMatrix#norm1()
+     *
+     * @author Christopher K. Allen
+     * @since  Nov 21, 2013
+     */
+    @Override
+    public double   norm1() {
+        R6x6    matLin = this.projectR6x6();
+        double  dblNorm = matLin.norm1();
+        
+        return dblNorm;
+    }
+    
+    /**
+     * We must redefine the norm of any matrix on projective space to 
+     * eliminate the homogeneous coordinate.  See the base class
+     * <code>{@link xal.tools.math.BaseMatrix}</code> for information on the specific
+     * norm.
+     * 
+     * @see xal.tools.math.BaseMatrix#norm2()
+     *
+     * @author Christopher K. Allen
+     * @since  Nov 21, 2013
+     */
+    @Override
+    public double   norm2() {
+        R6x6    matLin = this.projectR6x6();
+        double  dblNorm = matLin.norm2();
+        
+        return dblNorm;
+    }
+    
+    /**
+     * We must redefine the norm of any matrix on projective space to 
+     * eliminate the homogeneous coordinate.  See the base class
+     * <code>{@link xal.tools.math.BaseMatrix}</code> for information on the specific
+     * norm.
+     * 
+     * @see xal.tools.math.BaseMatrix#normF()
+     *
+     * @author Christopher K. Allen
+     * @since  Nov 21, 2013
+     */
+    @Override
+    public double   normF() {
+        R6x6    matLin = this.projectR6x6();
+        double  dblNorm = matLin.normF();
+        
+        return dblNorm;
+    }
     
 //    /**
 //     *  Set a submatrix within the phase matrix.
@@ -1085,88 +1268,6 @@ public class PhaseMatrix extends SquareMatrix<PhaseMatrix> implements java.io.Se
 //    }
 //
 //    
-    
-    /*
-     *  Algebraic Operations
-     */
-    
-    /**
-     * <p>
-     *  Non-destructive matrix addition.  The homogeneous pivot
-     *  element on the diagonal is unchanged at value 1.
-     *  </p>
-     *  <p>
-     *  <h4>NOTE:</h4>
-     *  BE VERY CAREFUL when using this function.  The homogeneous coordinates
-     *  are not meant for addition operations.
-     *  </p>
-     *
-     *  @param  matAddend     matrix to be added to this
-     *
-     *  @return         element wise sum of two matrices
-     */
-    public PhaseMatrix  plus(PhaseMatrix matAddend)   {
-        PhaseMatrix matSum = super.plus(matAddend);
-        matSum.setElem(IND.HOM,IND.HOM, 1.00);
-        return matSum;
-    }
-    
-    /** 
-     *  <p>
-     *  In-place matrix addition. The homogeneous pivot
-     *  element on the diagonal is unchanged at value 1.
-     *  </p>
-     *  <p>
-     *  <h4>NOTE:<h4>
-     *  BE VERY CAREFUL when using this function.  The homogeneous coordinates
-     *  are not meant for addition operations.
-     *  </p>
-     *
-     *  @param  matAddend     matrix to be added to this (result replaces this)
-     */
-    public void plusEquals(PhaseMatrix  matAddend)    {
-        super.plusEquals(matAddend);
-        this.setElem(IND.HOM,IND.HOM, 1.00);
-    }
-    
-    /**
-     * <p>
-     *  Non-destructive matrix subtraction.  The homogeneous pivot
-     *  element on the diagonal is unchanged at value 1.
-     *  </p>
-     *  <p>
-     *  <h4>NOTE:</h4>
-     *  BE VERY CAREFUL when using this function.  The homogeneous coordinates
-     *  are not meant for subtraction operations.
-     *  </p>
-     *
-     *  @param  matSub     matrix to be subtracted from this one (subtrahend)
-     *
-     *  @return         difference of this matrix and the given one
-     */
-    public PhaseMatrix  minus(PhaseMatrix matSub)   {
-        PhaseMatrix matDif = super.minus(matSub);
-        matDif.setElem(IND.HOM,IND.HOM, 1.00);
-        return matDif;
-    }
-    
-    /**
-     *  <p>
-     *  In-place matrix subtraction. The homogeneous pivot
-     *  element on the diagonal is unchanged at value 1.
-     *  </p>
-     *  <p>
-     *  <h4>NOTE:<h4>
-     *  BE VERY CAREFUL when using this function.  The homogeneous coordinates
-     *  are not meant for addition operations.
-     *  </p>
-     *
-     *  @param  matSub     matrix to be subtracted from this matrix (result replaces this)
-     */
-    public void minusEquals(PhaseMatrix  matSub)    {
-        super.minusEquals( matSub );
-        this.setElem(IND.HOM,IND.HOM, 1.00);
-    }
     
 //    /** 
 //     *  Non-destructive scalar multiplication.  The homogeneous pivot

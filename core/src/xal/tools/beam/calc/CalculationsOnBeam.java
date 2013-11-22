@@ -1,10 +1,13 @@
 /**
- * BeamCalculations.java
+ * CalculationsOnBeam.java
  *
  * Author  : Christopher K. Allen
  * Since   : Oct 22, 2013
  */
 package xal.tools.beam.calc;
+
+import xal.tools.beam.calc.ISimulationResults.ISimLocResults;
+import xal.tools.beam.calc.ISimulationResults.ISimEnvResults;
 
 import xal.model.probe.traj.EnvelopeProbeState;
 import xal.model.probe.traj.EnvelopeTrajectory;
@@ -20,14 +23,14 @@ import xal.tools.math.r6.R6;
 /**
  * Class for performing calculations on data obtained from simulating linacs and
  * beam transport systems.  The class performs the calculation exposed in the
- * <code>ISimEnvelopeResults</code> interface.  They are performed in the context
+ * <code>ISimEnvResults</code> interface.  They are performed in the context
  * of a linear accelerator or transport system.
  *
  *
  * @author Christopher K. Allen
  * @since  Oct 22, 2013
  */
-public class BeamCalculations extends CalculationEngine implements ISimLocationResults<EnvelopeProbeState>, ISimEnvelopeResults<EnvelopeProbeState>{
+public class CalculationsOnBeam extends CalculationEngine implements ISimLocResults<EnvelopeProbeState>, ISimEnvResults<EnvelopeProbeState> {
 
 
     /*
@@ -62,7 +65,7 @@ public class BeamCalculations extends CalculationEngine implements ISimLocationR
      */
     
     /**
-     * Constructor for <cod>BeamCalculations</code>. Creates object
+     * Constructor for <cod>CalculationsOnBeam</code>. Creates object
      * and computes all the static simulation results.
      * 
      * @param   trjSimul    results for an <code>EnvelopeProbe</code> simulation
@@ -70,7 +73,7 @@ public class BeamCalculations extends CalculationEngine implements ISimLocationR
      * @author Christopher K. Allen
      * @since  Oct 22, 2013
      */
-    public BeamCalculations(EnvelopeTrajectory trjBeam) {
+    public CalculationsOnBeam(EnvelopeTrajectory trjBeam) {
         ProbeState  pstFinal = trjBeam.finalState();
         
         // Check for correct probe types
@@ -199,7 +202,7 @@ public class BeamCalculations extends CalculationEngine implements ISimLocationR
 
 
     /*
-     * ISimLocationResults Interface
+     * ISimLocResults Interface
      */
     
     /**
@@ -208,7 +211,7 @@ public class BeamCalculations extends CalculationEngine implements ISimLocationR
      * are expressed in homogeneous coordinates the final row and column of the 
      * covariance matrix are interpreted as the centroid vector of the beam bunch.
      *
-     * @see xal.tools.beam.calc.ISimEnvelopeResults#computeCoordinatePosition(xal.model.probe.traj.ProbeState)
+     * @see xal.tools.beam.calc.ISimEnvResults#computeCoordinatePosition(xal.model.probe.traj.ProbeState)
      *
      * @author Christopher K. Allen
      * @since  Nov 7, 2013
@@ -285,7 +288,7 @@ public class BeamCalculations extends CalculationEngine implements ISimLocationR
      * @return  The quantity <b>&Phi;</b><sub><i>n</i></sub>&sdot;<b>z</b><sub>0</sub>, the linac 
      *          fixed point <b>z</b><sub>0</sub> propagated to the state location <i>s<sub>n</sub></i>
      *
-     * @see xal.tools.beam.calc.ISimEnvelopeResults#computeFixedOrbit(xal.model.probe.traj.ProbeState)
+     * @see xal.tools.beam.calc.ISimEnvResults#computeFixedOrbit(xal.model.probe.traj.ProbeState)
      *
      * @author Christopher K. Allen
      * @since  Nov 7, 2013
@@ -303,10 +306,10 @@ public class BeamCalculations extends CalculationEngine implements ISimLocationR
      * state location, or from the entrance to state position for a linear
      * machine.  The returned vector is the displacement from the closed orbit caused 
      * by a unit momentum offset (&delta;<i>p</i> = 1).  See the documentation in 
-     * {@link ISimLocationResults#computeChromAberration(ProbeState)} for a more detailed
+     * {@link ISimLocResults#computeChromAberration(ProbeState)} for a more detailed
      * exposition.
      *
-     * @see xal.tools.beam.calc.ISimLocationResults#computeChromAberration(xal.model.probe.traj.ProbeState)
+     * @see xal.tools.beam.calc.ISimLocResults#computeChromAberration(xal.model.probe.traj.ProbeState)
      *
      * @author Christopher K. Allen
      * @since  Nov 15, 2013
@@ -323,7 +326,7 @@ public class BeamCalculations extends CalculationEngine implements ISimLocationR
 
     
     /*
-     * ISimEnvelopeResults Interface
+     * ISimEnvResults Interface
      */
 
     /**
@@ -334,7 +337,7 @@ public class BeamCalculations extends CalculationEngine implements ISimLocationR
      * Courant-Snyder parameter calculations (for each phase plane), thus, any phase
      * plane coupling is lost.
      *
-     * @see xal.tools.beam.calc.ISimEnvelopeResults#computeTwissParameters(xal.model.probe.traj.ProbeState)
+     * @see xal.tools.beam.calc.ISimEnvResults#computeTwissParameters(xal.model.probe.traj.ProbeState)
      *
      * @author Christopher K. Allen
      * @since  Nov 7, 2013
@@ -385,7 +388,7 @@ public class BeamCalculations extends CalculationEngine implements ISimLocationR
      * and &beta;<sub>2</sub> is the final beta function value (provided).
      * </p>
      *
-     * @see xal.tools.beam.calc.ISimEnvelopeResults#computeBetatronPhase(xal.model.probe.traj.ProbeState)
+     * @see xal.tools.beam.calc.ISimEnvResults#computeBetatronPhase(xal.model.probe.traj.ProbeState)
      *
      * @author Christopher K. Allen
      * @since  Nov 7, 2013
@@ -416,7 +419,7 @@ public class BeamCalculations extends CalculationEngine implements ISimLocationR
      * state location, or from the entrance to state position for a linear
      * machine.  The returned vector is the displacement from the closed orbit caused 
      * by a unit momentum offset (&delta;<i>p</i> = 1).  See the documentation in 
-     * {@link ISimLocationResults#computeChromAberration(ProbeState)} for a more detailed
+     * {@link ISimLocResults#computeChromAberration(ProbeState)} for a more detailed
      * exposition.
      * <p>
      * <h4>NOTE:</h4>
@@ -425,7 +428,7 @@ public class BeamCalculations extends CalculationEngine implements ISimLocationR
      * 
      * @return  vector of chromatic dispersion coefficients in <b>meters/radian</b>
      * 
-     * @see xal.tools.beam.calc.ISimEnvelopeResults#computeChromDispersion(xal.model.probe.traj.ProbeState)
+     * @see xal.tools.beam.calc.ISimEnvResults#computeChromDispersion(xal.model.probe.traj.ProbeState)
      *
      * @author Christopher K. Allen
      * @since  Nov 8, 2013

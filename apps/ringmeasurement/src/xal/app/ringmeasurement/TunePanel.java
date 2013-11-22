@@ -31,7 +31,7 @@ import xal.tools.math.r3.R3;
 import xal.tools.swing.DecimalField;
 import xal.ca.*;
 import xal.tools.apputils.files.*;
-import xal.tools.beam.calc.RingCalculations;
+import xal.tools.beam.calc.CalculationsOnRing;
 import xal.service.pvlogger.*;
 import xal.service.pvlogger.query.*;
 import xal.tools.database.*;
@@ -753,7 +753,7 @@ public class TunePanel extends JPanel implements ConnectionListener,
 	        // CKA - Create a machine parameter processor for the ring to replace
 	        //    the machine parameters that were previously processed in the
 	        //    simulation data itself.
-	        RingCalculations     cmpRingParams = new RingCalculations(traj);
+	        CalculationsOnRing     cmpRingParams = new CalculationsOnRing(traj);
 	        
 	        // CKA - This
 	        R3   vecPhaseModel0 = cmpRingParams.ringBetatronPhaseAdvance();

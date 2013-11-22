@@ -52,7 +52,8 @@ public class ParticleProbe extends Probe {
      */
     public ParticleProbe() {
         super( );
-        vecCoords = new PhaseVector();
+        this.vecCoords = new PhaseVector();
+        this.matResp = PhaseMatrix.identity();
     }
     
     /**
