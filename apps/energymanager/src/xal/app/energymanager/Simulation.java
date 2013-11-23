@@ -19,7 +19,7 @@ import xal.smf.AcceleratorNode;
 import xal.tools.beam.PhaseMatrix.IND;
 import xal.tools.beam.PhaseVector;
 import xal.tools.beam.Twiss;
-import xal.tools.beam.calc.ISimEnvResults;
+import xal.tools.beam.calc.ISimulationResults.ISimEnvResults;
 import xal.tools.beam.calc.SimpleSimResultsAdaptor;
 
 

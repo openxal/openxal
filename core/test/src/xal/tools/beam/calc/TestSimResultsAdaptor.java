@@ -211,6 +211,8 @@ public class TestSimResultsAdaptor {
         this.cmpSimResults.registerCalcEngine(ParticleProbeState.class, this.calPartPart);
         this.cmpSimResults.registerCalcEngine(TransferMapState.class, this.calXferMach);
         this.cmpSimResults.registerCalcEngine(EnvelopeProbeState.class, this.calEnvBeam);
+        
+        this.cmpSimResults.registerCalcEngine(TransferMapState.class, this.calXferRing);
     }
 
     /**
