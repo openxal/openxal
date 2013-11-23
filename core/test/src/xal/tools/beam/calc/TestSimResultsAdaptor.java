@@ -6,7 +6,9 @@
  */
 package xal.tools.beam.calc;
 
-import static org.junit.Assert.fail;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -36,6 +38,7 @@ import xal.smf.data.XMLDataManager;
 import xal.tools.beam.PhaseVector;
 import xal.tools.beam.Twiss;
 import xal.tools.beam.Twiss3D;
+import xal.tools.math.r3.R3;
 
 /**
  * Test cases for the <code>SimResultsAdaptBase</code> class. 
@@ -47,21 +50,23 @@ public class TestSimResultsAdaptor {
 
     
     /*
+     * Global Constants
+     */
+    
+    /** Output file location */
+    static private String             STR_OUTPUT = TestSimResultsAdaptor.class.getName().replace('.', '/') + ".txt";
+    
+    /** String identifier for accelerator sequence used in testing */
+    static private String            STR_SEQ_ID       = "Ring";
+    
+
+    /*
      * Global Attributes 
      */
     
+    /** The file where we send the testing output */
+    private static FileWriter                       OWTR_OUTPUT;
     
-    /** String identifier for accelerator sequence used in testing */
-    static public String            STR_SEQ_ID       = "HEBT1";
-    
-    /** String identifier where Courant-Snyder parameters are to be reconstructed */
-    static public String            STR_TARG_ELEM_ID = "Begin_Of_HEBT1";
-    
-
-    
-//    /** URL of the accelerator hardware description file */
-//    static public String            STRL_URL_ACCEL;
-//    
     
     /** Accelerator object used for testing */
     private static Accelerator                      ACCEL_TEST;
@@ -97,12 +102,34 @@ public class TestSimResultsAdaptor {
     @BeforeClass
     public static void setUpBeforeClass() throws Exception {
         
+//        ResourceManager.clearAllFileLocations();
+        
         try {
+            
+            File fileOutput = ResourceManager.getOutputFile(STR_OUTPUT);
+            OWTR_OUTPUT = new FileWriter(fileOutput);
+            
             ACCEL_TEST   = XMLDataManager.loadDefaultAccelerator();
             SEQ_TEST     = ACCEL_TEST.findSequence(STR_SEQ_ID);
             MODEL_TEST   = Scenario.newScenarioFor(SEQ_TEST);
             MODEL_TEST.setSynchronizationMode(Scenario.SYNC_MODE_DESIGN);
             
+            // Create and initialize the particle probe
+            ParticleTracker algPart = AlgorithmFactory.createParticleTracker(SEQ_TEST);
+            PROBE_PARTL_TEST = ProbeFactory.createParticleProbe(SEQ_TEST, algPart);
+            PROBE_PARTL_TEST.reset();
+            MODEL_TEST.setProbe(PROBE_PARTL_TEST);
+            MODEL_TEST.resync();
+            MODEL_TEST.run();
+            
+            // Create and initialize transfer map probe
+            TransferMapTracker algXferMap = AlgorithmFactory.createTransferMapTracker(SEQ_TEST);
+            PROBE_XFER_TEST = ProbeFactory.getTransferMapProbe(SEQ_TEST, algXferMap );
+            PROBE_XFER_TEST.reset();
+            MODEL_TEST.setProbe(PROBE_XFER_TEST);
+            MODEL_TEST.resync();
+            MODEL_TEST.run();
+
             // Create and initialize the envelope probe
             EnvTrackerAdapt algEnv = AlgorithmFactory.createEnvTrackerAdapt(SEQ_TEST);
             PROBE_ENV_TEST = ProbeFactory.getEnvelopeProbe(SEQ_TEST, algEnv);
@@ -111,20 +138,6 @@ public class TestSimResultsAdaptor {
             MODEL_TEST.resync();
             MODEL_TEST.run();
             
-            // Create and initialize the particle probe
-            PROBE_PARTL_TEST = ProbeFactory.createParticleProbe(SEQ_TEST, new ParticleTracker());
-            PROBE_PARTL_TEST.reset();
-            MODEL_TEST.setProbe(PROBE_PARTL_TEST);
-            MODEL_TEST.resync();
-            MODEL_TEST.run();
-            
-            // Create and initialize transfer map probe
-            PROBE_XFER_TEST = ProbeFactory.getTransferMapProbe(SEQ_TEST, new TransferMapTracker() );
-            PROBE_XFER_TEST.reset();
-            MODEL_TEST.setProbe(PROBE_XFER_TEST);
-            MODEL_TEST.resync();
-            MODEL_TEST.run();
-
         } catch (Exception e) {
             System.err.println("Unable to initial the static test resources");
             
@@ -138,7 +151,9 @@ public class TestSimResultsAdaptor {
      * @since  Nov 9, 2011
      */
     @AfterClass
-    public static void commonCleanup() {
+    public static void commonCleanup() throws IOException {
+        OWTR_OUTPUT.flush();
+        OWTR_OUTPUT.close();
     }
 
     
@@ -174,7 +189,7 @@ public class TestSimResultsAdaptor {
        this.calPartPart = new CalculationsOnParticle( (ParticleTrajectory)PROBE_PARTL_TEST.getTrajectory() );
        this.calXferMach = new CalculationsOnMachine( (TransferMapTrajectory)PROBE_XFER_TEST.getTrajectory() );
        this.calXferRing = new CalculationsOnRing( (TransferMapTrajectory) PROBE_XFER_TEST.getTrajectory() );
-       this.calEnvBeam = new CalculationsOnBeam( (EnvelopeTrajectory)PROBE_ENV_TEST.getTrajectory() );
+       this.calEnvBeam  = new CalculationsOnBeam( (EnvelopeTrajectory)PROBE_ENV_TEST.getTrajectory() );
        
        this.cmpSimResults = new SimResultsAdaptBase();
 
@@ -200,49 +215,225 @@ public class TestSimResultsAdaptor {
 
     /**
      * Test method for {@link xal.tools.beam.calc.SimResultsAdaptBase#computeCoordinatePosition(xal.model.probe.traj.ProbeState)}.
+     * @throws IOException 
      */
     @Test
-    public void testComputeCoordinatePosition() {
+    public void testComputeCoordinatePosition() throws IOException {
 
-        System.out.println("\nParticle: computeCordinatePosition");
+        // Do computations on the particle trajectory
+        OWTR_OUTPUT.write("\nParticleTrajectory: computeCordinatePosition");
+        OWTR_OUTPUT.write("\n");
         ParticleTrajectory  trjPart = (ParticleTrajectory)PROBE_PARTL_TEST.getTrajectory();
         for (ProbeState state : trjPart) {
             PhaseVector vecPos = this.cmpSimResults.computeCoordinatePosition(state);
             
-            System.out.println(vecPos);
+            OWTR_OUTPUT.write(state.getElementId() + ": " + vecPos.toString());
+            OWTR_OUTPUT.write("\n");
         }
+        OWTR_OUTPUT.write("\n");
         
-        System.out.println("\nTransferMap: computeCoordinatePosition");
+        // Do computations on the transfer map trajectory
+        OWTR_OUTPUT.write("\nTransferMapTrajectory: computeCoordinatePosition");
+        OWTR_OUTPUT.write("\n");
         TransferMapTrajectory   trjXfer = (TransferMapTrajectory)PROBE_XFER_TEST.getTrajectory();
         for (ProbeState state : trjXfer) {
             PhaseVector vecPos = this.cmpSimResults.computeCoordinatePosition(state);
             
-            System.out.println(vecPos);
+            OWTR_OUTPUT.write(state.getElementId() + ": " + vecPos.toString());
+            OWTR_OUTPUT.write("\n");
         }
+        OWTR_OUTPUT.write("\n");
+
+        // Do computations on the envelope trajectory
+        OWTR_OUTPUT.write("\nEnvelopeTrajectory: computeCoordinatePosition");
+        OWTR_OUTPUT.write("\n");
+        EnvelopeTrajectory   trjEnv = (EnvelopeTrajectory)PROBE_ENV_TEST.getTrajectory();
+        for (ProbeState state : trjEnv) {
+            PhaseVector vecPos = this.cmpSimResults.computeCoordinatePosition(state);
+            
+            OWTR_OUTPUT.write(state.getElementId() + ": " + vecPos.toString());
+            OWTR_OUTPUT.write("\n");
+        }
+        OWTR_OUTPUT.write("\n");
+}
+
+    /**
+     * Test method for {@link xal.tools.beam.calc.SimResultsAdaptBase#computeFixedOrbit(xal.model.probe.traj.ProbeState)}.
+     * @throws IOException 
+     */
+    @Test
+    public void testComputeFixedOrbit() throws IOException {
+
+        // Do computations on the particle trajectory
+        OWTR_OUTPUT.write("\nParticleTrajectory: computeFixedOrbit");
+        OWTR_OUTPUT.write("\n");
+        ParticleTrajectory  trjPart = (ParticleTrajectory)PROBE_PARTL_TEST.getTrajectory();
+        for (ProbeState state : trjPart) {
+            PhaseVector vecPos = this.cmpSimResults.computeFixedOrbit(state);
+
+            OWTR_OUTPUT.write(state.getElementId() + ": " + vecPos.toString());
+            OWTR_OUTPUT.write("\n");
+        }
+        OWTR_OUTPUT.write("\n");
+
+        // Do computations on the transfer map trajectory
+        OWTR_OUTPUT.write("\nTransferMapTrajectory: computeFixedOrbit");
+        OWTR_OUTPUT.write("\n");
+        TransferMapTrajectory   trjXfer = (TransferMapTrajectory)PROBE_XFER_TEST.getTrajectory();
+        for (ProbeState state : trjXfer) {
+            PhaseVector vecPos = this.cmpSimResults.computeFixedOrbit(state);
+
+            OWTR_OUTPUT.write(state.getElementId() + ": " + vecPos.toString());
+            OWTR_OUTPUT.write("\n");
+        }
+        OWTR_OUTPUT.write("\n");
+
+        // Do computations on the envelope trajectory
+        OWTR_OUTPUT.write("\nEnvelopeTrajectory: computeFixedOrbit");
+        OWTR_OUTPUT.write("\n");
+        EnvelopeTrajectory   trjEnv = (EnvelopeTrajectory)PROBE_ENV_TEST.getTrajectory();
+        for (ProbeState state : trjEnv) {
+            PhaseVector vecPos = this.cmpSimResults.computeFixedOrbit(state);
+
+            OWTR_OUTPUT.write(state.getElementId() + ": " + vecPos.toString());
+            OWTR_OUTPUT.write("\n");
+        }
+        OWTR_OUTPUT.write("\n");
+    }
+
+    /**
+     * Test method for {@link xal.tools.beam.calc.SimResultsAdaptBase#computeChromAberration(xal.model.probe.traj.ProbeState)}.
+     */
+    @Test
+    public void testComputeChromaticAberration() throws IOException {
+
+        // Do computations on the particle trajectory
+        OWTR_OUTPUT.write("\nParticleTrajectory: computeChromAberration");
+        OWTR_OUTPUT.write("\n");
+        ParticleTrajectory  trjPart = (ParticleTrajectory)PROBE_PARTL_TEST.getTrajectory();
+        for (ProbeState state : trjPart) {
+            PhaseVector vecPos = this.cmpSimResults.computeChromAberration(state);
+            
+            OWTR_OUTPUT.write(state.getElementId() + ": " + vecPos.toString());
+            OWTR_OUTPUT.write("\n");
+        }
+        OWTR_OUTPUT.write("\n");
+        
+        // Do computations on the transfer map trajectory
+        OWTR_OUTPUT.write("\nTransferMapTrajectory: computeChromAberration");
+        OWTR_OUTPUT.write("\n");
+        TransferMapTrajectory   trjXfer = (TransferMapTrajectory)PROBE_XFER_TEST.getTrajectory();
+        for (ProbeState state : trjXfer) {
+            PhaseVector vecPos = this.cmpSimResults.computeChromAberration(state);
+            
+            OWTR_OUTPUT.write(state.getElementId() + ": " + vecPos.toString());
+            OWTR_OUTPUT.write("\n");
+        }
+        OWTR_OUTPUT.write("\n");
+
+        // Do computations on the envelope trajectory
+        OWTR_OUTPUT.write("\nEnvelopeTrajectory: computeChromAberration");
+        OWTR_OUTPUT.write("\n");
+        EnvelopeTrajectory   trjEnv = (EnvelopeTrajectory)PROBE_ENV_TEST.getTrajectory();
+        for (ProbeState state : trjEnv) {
+            PhaseVector vecPos = this.cmpSimResults.computeChromAberration(state);
+
+            OWTR_OUTPUT.write(state.getElementId() + ": " + vecPos.toString());
+            OWTR_OUTPUT.write("\n");
+        }
+        OWTR_OUTPUT.write("\n");
     }
 
     /**
      * Test method for {@link xal.tools.beam.calc.SimResultsAdaptBase#computeTwissParameters(xal.model.probe.traj.ProbeState)}.
      */
     @Test
-    public void testComputeTwissParameters() {
-        System.out.println("\nMachine: computeTwissParameters");
+    public void testComputeTwissParameters() throws IOException {
+
+        // Do computations on the transfer map trajectory
+        OWTR_OUTPUT.write("\nTransferMapTrajectory: computeTwissParameters");
+        OWTR_OUTPUT.write("\n");
         TransferMapTrajectory   trjXfer = (TransferMapTrajectory)PROBE_XFER_TEST.getTrajectory();
         for (ProbeState state : trjXfer) {
             Twiss[] arrTwiss = this.cmpSimResults.computeTwissParameters(state);
             Twiss3D t3dMach  = new Twiss3D(arrTwiss);
-            
-            System.out.println(t3dMach);
+
+            OWTR_OUTPUT.write(state.getElementId() + ": " + t3dMach.toString());
+            OWTR_OUTPUT.write("\n");
         }
-        
-        System.out.println("\nBeam: computeTwissParameters");
+        OWTR_OUTPUT.write("\n");
+
+        // Do computations on the EnvelopeTrajectory
+        OWTR_OUTPUT.write("\nEnvelopeTrajectory: computeTwissParameters");
         EnvelopeTrajectory  trjEnv = (EnvelopeTrajectory)PROBE_ENV_TEST.getTrajectory();
         for (ProbeState state : trjEnv) {
             Twiss[] arrTwiss = this.cmpSimResults.computeTwissParameters(state);
             Twiss3D t3dBeam = new Twiss3D(arrTwiss);
-            
-            System.out.println(t3dBeam);
+
+            OWTR_OUTPUT.write(state.getElementId() + ": " + t3dBeam.toString());
+            OWTR_OUTPUT.write("\n");
         }
+        OWTR_OUTPUT.write("\n");
     }
 
+    /**
+     * Test method for {@link xal.tools.beam.calc.SimResultsAdaptBase#computeBetatronPhase(xal.model.probe.traj.ProbeState)}.
+     */
+    @Test
+    public void testComputeBetatronPhase() throws IOException {
+
+        // Do computations on the transfer map trajectory
+        OWTR_OUTPUT.write("\nTransferMapTrajectory: computeBetatronPhase");
+        OWTR_OUTPUT.write("\n");
+        TransferMapTrajectory   trjXfer = (TransferMapTrajectory)PROBE_XFER_TEST.getTrajectory();
+        for (ProbeState state : trjXfer) {
+            R3  vecPhase = this.cmpSimResults.computeBetatronPhase(state);
+
+            OWTR_OUTPUT.write(state.getElementId() + ": " + vecPhase.toString());
+            OWTR_OUTPUT.write("\n");
+        }
+        OWTR_OUTPUT.write("\n");
+
+        // Do computations on the EnvelopeTrajectory
+        OWTR_OUTPUT.write("\nEnvelopeTrajectory: computeBetatronPhase");
+        EnvelopeTrajectory  trjEnv = (EnvelopeTrajectory)PROBE_ENV_TEST.getTrajectory();
+        for (ProbeState state : trjEnv) {
+            R3 vecPhase = this.cmpSimResults.computeBetatronPhase(state);
+
+            OWTR_OUTPUT.write(state.getElementId() + ": " + vecPhase.toString());
+            OWTR_OUTPUT.write("\n");
+        }
+        OWTR_OUTPUT.write("\n");
+    }
+    
+    /**
+     * Test method for {@link xal.tools.beam.calc.SimResultsAdaptBase#computeChromDispersion(xal.model.probe.traj.ProbeState)}.
+     */
+    @Test
+    public void testComputeChromDispersion() throws IOException {
+
+        // Do computations on the transfer map trajectory
+        OWTR_OUTPUT.write("\nTransferMapTrajectory: computeChromDispersion");
+        OWTR_OUTPUT.write("\n");
+        TransferMapTrajectory   trjXfer = (TransferMapTrajectory)PROBE_XFER_TEST.getTrajectory();
+        for (ProbeState state : trjXfer) {
+            PhaseVector vecPhase = this.cmpSimResults.computeChromDispersion(state);
+
+            OWTR_OUTPUT.write(state.getElementId() + ": " + vecPhase.toString());
+            OWTR_OUTPUT.write("\n");
+        }
+        OWTR_OUTPUT.write("\n");
+
+        // Do computations on the EnvelopeTrajectory
+        OWTR_OUTPUT.write("\nEnvelopeTrajectory: computeChromDispersion");
+        EnvelopeTrajectory  trjEnv = (EnvelopeTrajectory)PROBE_ENV_TEST.getTrajectory();
+        for (ProbeState state : trjEnv) {
+            PhaseVector vecPhase = this.cmpSimResults.computeChromDispersion(state);
+
+            OWTR_OUTPUT.write(state.getElementId() + ": " + vecPhase.toString());
+            OWTR_OUTPUT.write("\n");
+        }
+        OWTR_OUTPUT.write("\n");
+    }
+    
 }

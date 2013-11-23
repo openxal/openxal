@@ -199,8 +199,24 @@
 		<record name="EDmp" coordinate="x" alpha="-1.6" beta="7.6" emittance="1.60e-4"/>
 		<record name="EDmp" coordinate="y" alpha=" 2.2" beta="20.5" emittance="1.60e-4"/>
 		<record name="EDmp" coordinate="z" alpha="-0.01" beta="9589" emittance="11.4e-3"/>
-  	</table>
-	
+        <!-- Currently the ring emittances for the ring are taken from the RTBT -->
+        <!-- It may be interesting to use those of the HEBT and assume a single bunch through the ring -->		
+        <record name="Ring1" coordinate="x" alpha="0.9626321767470538"    beta="193.09331608059273" emittance="1.60e-4"/>
+        <record name="Ring1" coordinate="y" alpha="0.03999652174520488"   beta="10.632672619625001" emittance="1.60e-4"/>
+        <record name="Ring1" coordinate="z" alpha="3.035746329588807E-5"  beta="44082.34674372761"  emittance="11.4e-3"/>
+        <record name="Ring2" coordinate="x" alpha="13.237247704743508"    beta="63.053120728795776" emittance="1.60e-4"/>
+        <record name="Ring2" coordinate="y" alpha="-0.803688979527331"    beta="10.44269829302723"  emittance="1.60e-4"/>
+        <record name="Ring2" coordinate="z" alpha="2.2152039450237765E-5" beta="44080.64521318441"  emittance="11.4e-3"/>
+        <record name="Ring3" coordinate="x" alpha="-25.07049049940091"    beta="115.33431609699728" emittance="1.60e-4"/>
+        <record name="Ring3" coordinate="y" alpha="0.6149429597388433"    beta="8.662977417928978"  emittance="1.60e-4"/>
+        <record name="Ring3" coordinate="z" alpha="-2.290295306150538E-5" beta="44080.6434103401"   emittance="11.4e-3"/>
+        <record name="Ring4" coordinate="x" alpha="-6.375907191548824"    beta="209.64096771267614" emittance="1.60e-4"/>
+        <record name="Ring4" coordinate="y" alpha="-0.2815434919106546"   beta="11.527070493762421" emittance="1.60e-4"/>
+        <record name="Ring4" coordinate="z" alpha="-3.196789588840795E-5" beta="44080.644275927734" emittance="11.4e-3"/>
+        <record name="Ring5" coordinate="x" alpha="-13.236977362169418"   beta="63.066603251368974" emittance="1.60e-4"/>
+        <record name="Ring5" coordinate="y" alpha="0.8032172974602052"    beta="10.443530989905954" emittance="1.60e-4"/>
+        <record name="Ring5" coordinate="z" alpha="3.804429451077835E-5"  beta="44080.62851693638"  emittance="11.4e-3"/>
+    </table>
     <table name="location">
         <schema>
             <attribute isPrimaryKey="true" name="name" type="java.lang.String" />

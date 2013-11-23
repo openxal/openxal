@@ -15,6 +15,7 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.util.Properties;
+import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
 import javax.swing.JFileChooser;
@@ -54,8 +55,11 @@ public class ResourceManager {
 
     
     
-    /** The key for the resource location preference value */
-    static final String         STR_KEY_RESDIR = "location";
+    /** The preferences key for the common resource location  */
+    static final String         STR_KEY_RESDIR = "ResourceLocation";
+    
+    /** The preferences key for the common test output location */
+    static final String         STR_KEY_OUTDIR = "TestOutputLocation";
     
     /** the resource manager preferences */
     static final Preferences    PREFS_RESOURCES = Preferences.userNodeForPackage(ResourceManager.class);
@@ -127,6 +131,59 @@ public class ResourceManager {
         } catch (MalformedURLException e) {
 
             return null;
+        }
+    }
+
+    /** 
+     * Open and return the file at the specified location in the common test area.  If the
+     * common path has not already been set (via Java Preferences), then the user will 
+     * be asked to specify that path.
+     * 
+     * @param strFilePath   modified path relative to the common test location
+     * 
+     * @return                          URL to the resource or null if there is none found
+     */
+    static public File getOutputFile( final String strFilePath ) {
+        String  strOutDir = PREFS_RESOURCES.get(STR_KEY_OUTDIR, null);
+
+        // Ask the user for the resource location if it is not already set
+        if (strOutDir == null) {
+            JFileChooser fcResDir = new JFileChooser();
+            fcResDir.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+            fcResDir.setName("Set the location of the common tests output directory");
+            
+            int intResult = fcResDir.showDialog(null, "Test Ouptut Directory");
+            if (intResult == JFileChooser.APPROVE_OPTION) {
+                File    fileResDir = fcResDir.getSelectedFile();
+                
+                strOutDir = fileResDir.getAbsolutePath();
+                PREFS_RESOURCES.put(STR_KEY_OUTDIR, strOutDir);
+                
+            } else {
+                
+                return null;
+            }
+        }
+
+        File        fileAbsPath = new File(strOutDir, strFilePath);
+
+        return fileAbsPath;
+    }
+    
+    /**
+     * Clears all the previously set file locations
+     *
+     * @author Christopher K. Allen
+     * @since  Nov 23, 2013
+     */
+    static public void clearAllFileLocations() {
+        try {
+            PREFS_RESOURCES.clear();
+            
+        } catch (BackingStoreException e) {
+
+            System.err.println("Unable to clear ResourceManger file locations");
+            e.printStackTrace();
         }
     }
 

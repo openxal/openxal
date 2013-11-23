@@ -752,18 +752,23 @@ public abstract class CalculationEngine {
          * which can be written
          * <br/>
          * <br/>
-         * &nbsp; <b>z</b><sub><i>t</i></sub> = &delta;<i>p</i>(<b>T</b> - <b>I</b>)<sup>-1</sup><b>&Delta;</b><sub><i>t</i></sub> ,
+         * &nbsp; <b>z</b><sub><i>t</i></sub> = &delta;<i>p</i>(<b>I</b> - <b>T</b>)<sup>-1</sup><b>&Delta;</b><sub><i>t</i></sub> ,
          * <br/>
          * <br/>
          * where <b>I</b> is the identity matrix.  Dividing both sides by &delta;<i>p</i> yields the final
          * result
          * <br/>
          * <br/>
-         * &nbsp; <b>z</b><sub>0</sub> &equiv; <b>z</b><sub><i>t</i></sub>/&delta;<i>p</i> = (<b>T</b> - <b>I</b>)<sup>-1</sup><b>&Delta;</b><sub><i>t</i></sub> ,
+         * &nbsp; <b>z</b><sub>0</sub> &equiv; <b>z</b><sub><i>t</i></sub>/&delta;<i>p</i> = (<b>I</b> - <b>T</b>)<sup>-1</sup><b>&Delta;</b><sub><i>t</i></sub> ,
          * <br/>
          * <br/>
          * which is the returned value of this method.  It is normalized by
          * &delta;<i>p</i> so that we can compute the closed orbit for any given momentum spread.
+         * </p>
+         * <p>
+         * The eigenvalues of <b>T</b> determine conditioning of the the resolvent (<b>I</b> - <b>T</b>)<sup>-1</sup>. 
+         * Whenever 1 &in; &lambda;(<b>T</b>) we have problems.  Currently a value of <b>0</b> is returned
+         * whenever the resolvent does not exist.
          * </p>
          *   
          * @param matPhi	we are calculating the dispersion of a ring with this one-turn map
@@ -789,22 +794,29 @@ public abstract class CalculationEngine {
             vecdP.projectOnto(vecdp);
     
             // Convert it to momentum
-            vecdp.timesEquals(- 1.0/(dblGamma*dblGamma) );
+            vecdp.timesEquals( 1.0/(dblGamma*dblGamma) );
     
     
             // Extract the transverse phase space transfer matrix
             //    then set up the fixed point system.
             R4x4  matT = matPhi.projectR4x4();
             R4x4  matI = R4x4.newIdentity();
-            R4x4  matR = matT.minus(matI);
+            R4x4  matR = matI.minus(matT);
     
     
             // Solve for the dispersion vector and return it
-            R4    vecd = matR.solve(vecdp);
-    
-    //        double[]  arrd = vecd.getArrayCopy();
-    //        return arrd;
-            return vecd;
+            try {
+                
+                R4    vecd = matR.solve(vecdp);
+                
+                return vecd;
+                
+            } catch (Exception e) {
+                
+                System.err.println("Error in solving matrix-vector equation");
+                
+                return R4.newZero();
+            }
         }
 
 

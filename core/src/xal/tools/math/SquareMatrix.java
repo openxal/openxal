@@ -234,7 +234,7 @@ public abstract class SquareMatrix<M extends SquareMatrix<M>> extends BaseMatrix
      * Note that the inverse matrix
      * <b>A</b><sup>-1</sup> is never computed, the system is solved in 
      * less than <i>N</i><sup>2</sup> time.  However, if this system is to be
-     * solved repeated for the same matrix <b>A</b> it may be preferrable to 
+     * solved repeated for the same matrix <b>A</b> it may be preferable to 
      * invert this matrix and solve the multiple system with matrix multiplication.
      * </p>
      * 
