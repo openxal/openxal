@@ -1,5 +1,5 @@
 /**
- * CalculationsOnParticle.java
+ * CalculationsOnParticles.java
  *
  * Author  : Christopher K. Allen
  * Since   : Nov 14, 2013
@@ -23,7 +23,7 @@ import xal.tools.math.r6.R6;
  * @author Christopher K. Allen
  * @since  Nov 14, 2013
  */
-public class CalculationsOnParticle extends CalculationEngine implements ISimLocResults<ParticleProbeState> {
+public class CalculationsOnParticles extends CalculationEngine implements ISimLocResults<ParticleProbeState> {
 
     /*
      * Local Attributes
@@ -50,8 +50,8 @@ public class CalculationsOnParticle extends CalculationEngine implements ISimLoc
 
     
     /**
-     * Constructor for <code>CalculationsOnParticle</code>. Creates a new 
-     * <code>CalculationsOnParticle</code> object for process the simulation
+     * Constructor for <code>CalculationsOnParticles</code>. Creates a new 
+     * <code>CalculationsOnParticles</code> object for process the simulation
      * data contained in the given particle trajectory object.
      *
      * @param   trjPart     simulation data for a particle
@@ -59,7 +59,7 @@ public class CalculationsOnParticle extends CalculationEngine implements ISimLoc
      * @author Christopher K. Allen
      * @since  Nov 14, 2013
      */
-    public CalculationsOnParticle(ParticleTrajectory trjPart) {
+    public CalculationsOnParticles(ParticleTrajectory trjPart) {
         ProbeState  pstFinal = trjPart.finalState();
         
         // Check for correct probe types

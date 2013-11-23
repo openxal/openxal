@@ -1,5 +1,5 @@
 /**
- * CalculationsOnMachine.java
+ * CalculationsOnMachines.java
  *
  * Author  : Christopher K. Allen
  * Since   : Nov 7, 2013
@@ -32,7 +32,7 @@ import xal.tools.math.r6.R6;
  * @author Christopher K. Allen
  * @since  Nov 7, 2013
  */
-public class CalculationsOnMachine extends CalculationEngine  implements ISimLocResults<TransferMapState>, ISimEnvResults<TransferMapState> {
+public class CalculationsOnMachines extends CalculationEngine  implements ISimLocResults<TransferMapState>, ISimEnvResults<TransferMapState> {
 
     
     /*
@@ -58,7 +58,7 @@ public class CalculationsOnMachine extends CalculationEngine  implements ISimLoc
     
     /**
      * <p>
-     * Constructor for <code>CalculationsOnMachine</code>.  Accepts the 
+     * Constructor for <code>CalculationsOnMachines</code>.  Accepts the 
      * <code>TransferMapTrajectory</code>
      * object and extracts the final state and full trajectory transfer map.  
      * Quantities that are 
@@ -77,7 +77,7 @@ public class CalculationsOnMachine extends CalculationEngine  implements ISimLoc
      * @author Christopher K. Allen
      * @since  Nov 7, 2013
      */
-    public CalculationsOnMachine(TransferMapTrajectory trjSim) throws IllegalArgumentException {
+    public CalculationsOnMachines(TransferMapTrajectory trjSim) throws IllegalArgumentException {
         ProbeState  pstFinal = trjSim.finalState();
         
         // Check for correct probe types

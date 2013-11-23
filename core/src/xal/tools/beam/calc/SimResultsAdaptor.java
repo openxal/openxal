@@ -2,59 +2,62 @@
  * SimResultsAdaptor.java
  *
  * Author  : Christopher K. Allen
- * Since   : Nov 12, 2013
+ * Since   : Nov 15, 2013
  */
 package xal.tools.beam.calc;
 
-import xal.tools.beam.calc.ISimulationResults.ISimEnvResults;
-import xal.tools.beam.calc.ISimulationResults.ISimLocResults;
+import java.util.HashMap;
+import java.util.Map;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-
-import xal.model.probe.traj.EnvelopeProbeState;
-import xal.model.probe.traj.EnvelopeTrajectory;
 import xal.model.probe.traj.ProbeState;
-import xal.model.probe.traj.Trajectory;
-import xal.model.probe.traj.TransferMapState;
-import xal.model.probe.traj.TransferMapTrajectory;
 import xal.tools.beam.PhaseVector;
 import xal.tools.beam.Twiss;
+import xal.tools.beam.calc.ISimulationResults.ISimEnvResults;
+import xal.tools.beam.calc.ISimulationResults.ISimLocResults;
 import xal.tools.math.r3.R3;
 
 /**
  * <p>
- * Class <code>SimResultsAdaptor</code>.  This class generalized the
- * interface <code>ISimEnvResults&lt;S&gt;</code> for use with simulation
- * results of either of the two types <code>TransferMapTrajectory</code>
- * or <code>EnvelopeTrajectory</code>.  The types to the methods of the
- * interface are specified as the general <code>ProbeState</code> base
- * class. Thus, probes states of either type <code>TransferMapState</code>
- * or <code>EnvelopeProbeState</code> may be passed to the interface
- * <code>ISimEnvResults</code>. 
+ * This class allows the developer to dynamically choose which calculation engine
+ * applies to which simulation results type.  This is done by first registering
+ * the calculation engine (i.e., <code>CalculationsOnBeams</code>, 
+ * <code>CalculationsOnRings</code>, etc.) using the method 
+ * <code>{@link #registerCalcEngine(Class, ISimulationResults)}</code> while providing
+ * the type of <code>ProbeState</code> derived simulation data and the previously
+ * instantiated calculation engine.
  * </p>
  * <p>
- * This class maintains an internal machine parameter calculation engine.
- * The type of engine depends on the type of simulation data.
- * Correct types and interpretations are determined at run time.
+ * Currently, either or both of the interfaces<code>ISimulationResults.ISimLocResults</code> and 
+ * <code>ISimulationResults.ISimEnvResults</code> are recognized by the adaptor and the
+ * adaptor exposes both interfaces itself.  When registering the adaptor checks if 
+ * the calculation engine exposes each of the above interfaces then registers it as
+ * a provider of that calculation output.  Any calls to 
+ * <code>{@link #registerCalcEngine(Class, ISimulationResults)}</code> supersedes any previous 
+ * registrations.
+ * </p>
+ * <p>
+ * When an exposed method of either of the supported interfaces is called upon this
+ * adaptor, it first looks at the type of <code>ProbeState</code> it was given
+ * then retrieves the calculation engine registered to that type.  It then 
+ * delegates the method call to that simulation engine and returns the result.
  * </p>
  *
- *
  * @author Christopher K. Allen
- * @since  Nov 7, 2013
+ * @since  Nov 15, 2013
  */
-public class SimResultsAdaptor implements ISimEnvResults<ProbeState>, ISimLocResults<ProbeState> {
+public class SimResultsAdaptor implements ISimLocResults<ProbeState>, ISimEnvResults<ProbeState> {
 
     
     /*
      * Local Attributes
      */
     
-    /** The machine parameter calculation engine for rings */
-    private ISimEnvResults<TransferMapState>   cmpRingParams;
+    /** map of probe state types to ISimLocResults calculation engine types */
+    private final Map<Class<? extends ProbeState>, ISimLocResults<ProbeState>>   mapArgToLocCalc;
     
-    /** The machine parameter calculation engine for linacs */
-    private ISimEnvResults<EnvelopeProbeState> cmpLinacParams;
+    /** map of probe state types to ISimEnvResults calculation engine types */
+    private final Map<Class<? extends ProbeState>, ISimEnvResults<ProbeState>>   mapArgToEnvCalc;
+    
     
     
     /*
@@ -62,215 +65,260 @@ public class SimResultsAdaptor implements ISimEnvResults<ProbeState>, ISimLocRes
      */
     
     /**
-     * Constructor for <code>SimResultsAdaptor</code>.  We create an internal
-     * machine calculation engine based upon the type of the given simulation
-     * trajectory. 
+     * Constructor for SimResultsAdaptor.
      *
-     * @param datSim  simulation data that is going to be processed
-     * 
-     * @throws IllegalArgumentException the simulation data is of an unknown type
-     *
-     * @author Christopher K. Allen
-     * @since  Nov 7, 2013
-     */
-    public SimResultsAdaptor(Trajectory datSim) throws IllegalArgumentException {
-
-        // Create the machine parameter calculation engine according to the
-        //    type of probe we are given
-        if (datSim instanceof TransferMapTrajectory) {
-            TransferMapTrajectory   trj = (TransferMapTrajectory)datSim;
-
-            this.cmpRingParams  = new CalculationsOnRing(trj);
-            this.cmpLinacParams = null;
-
-        } else if (datSim instanceof EnvelopeTrajectory) {
-            EnvelopeTrajectory trj = (EnvelopeTrajectory)datSim;
-
-            this.cmpLinacParams = new CalculationsOnBeam(trj);
-            this.cmpRingParams  = null;
-
-        } else {
-
-            throw new IllegalArgumentException("Unknown simulation data type " + datSim.getClass().getName());
-        }
-    }
-
-
-    /* 
-     * ISimLocResults Interface
-     */
-
-    /**
-     *
-     * @see xal.tools.beam.calc.ISimEnvResults#computeCoordinatePosition(xal.model.probe.traj.ProbeState)
-     *
-     * @author Christopher K. Allen
-     * @since  Nov 7, 2013
-     */
-    @Override
-    public PhaseVector computeCoordinatePosition(ProbeState state) {
-        return (PhaseVector)this.compute("computePhaseCoordinates", state);
-    }
-
-    /**
-     * <p>
-     * For rings, this is the location of the fixed orbit (invariant under applications
-     * of the full-turn map at the give state) about which betatron oscillations occur.
-     * For linacs, this is the fixed point of the end-to-end transfer map.
-     * </p>
-     *
-     * @see xal.tools.beam.calc.ISimEnvResults#computeFixedOrbit(xal.model.probe.traj.ProbeState)
-     *
-     * @author Christopher K. Allen
-     * @since  Nov 7, 2013
-     */
-    @Override
-    public PhaseVector computeFixedOrbit(ProbeState state) {
-        return (PhaseVector)this.compute("computeFixedOrbit", state);
-    }
-
-    /**
-     *
-     * @see xal.tools.beam.calc.ISimLocResults#computeChromAberration(xal.model.probe.traj.ProbeState)
      *
      * @author Christopher K. Allen
      * @since  Nov 15, 2013
      */
+    public SimResultsAdaptor() {
+        this.mapArgToLocCalc = new HashMap<Class<? extends ProbeState>, ISimLocResults<ProbeState>>();
+        this.mapArgToEnvCalc = new HashMap<Class<? extends ProbeState>, ISimEnvResults<ProbeState>>();
+    }
+
+    /**
+     * Register the location calculation engine for the given probe data type.
+     * 
+     * @param clsType       class type of the simulation trajectory states
+     * 
+     * @param iCalcEngine   interface of computation engine for processing the data
+     * 
+     * @throws  IllegalArgumentException    unknown calculation engine type
+     *
+     * @author Christopher K. Allen
+     * @since  Nov 15, 2013
+     */
+    public <I extends ISimulationResults> void   registerCalcEngine(Class<? extends ProbeState> clsType, I iCalcEngine)
+            throws IllegalArgumentException
+    {
+        boolean     bolRegistered = false;
+        
+        if (iCalcEngine instanceof ISimLocResults<?>) {
+            @SuppressWarnings("unchecked")
+            ISimLocResults<ProbeState> calcLocEngine = (ISimLocResults<ProbeState>)iCalcEngine;
+
+            this.mapArgToLocCalc.put(clsType, calcLocEngine);
+            bolRegistered = true;
+        }  
+        
+        if (iCalcEngine instanceof ISimEnvResults<?>) {
+            @SuppressWarnings("unchecked")
+            ISimEnvResults<ProbeState> calcEnvEngine = (ISimEnvResults<ProbeState>)iCalcEngine;
+
+            this.mapArgToEnvCalc.put(clsType, calcEnvEngine);
+            bolRegistered = true;
+        }
+
+        if (!bolRegistered)
+            throw new IllegalArgumentException("Unknown calculation engine: " + iCalcEngine.getClass().getName());
+    }
+
+    
+
+    
+    /*
+     * ISimLocResults Interface
+     */
+    
+    /**
+     *
+     * @see xal.tools.beam.calc.ISimulationResults.ISimLocResults#computeCoordinatePosition(xal.model.probe.traj.ProbeState)
+     *
+     * @author Christopher K. Allen
+     * @since  Nov 19, 2013
+     */
+    @Override
+    public PhaseVector computeCoordinatePosition(ProbeState state) throws IllegalArgumentException {
+        
+        ISimLocResults<ProbeState>    iCalcEngine = this.retrieveLocCalcEngine(state);
+
+        return iCalcEngine.computeCoordinatePosition(state);
+    }
+
+    /**
+     *
+     * @see xal.tools.beam.calc.ISimulationResults.ISimLocResults#computeFixedOrbit(xal.model.probe.traj.ProbeState)
+     *
+     * @author Christopher K. Allen
+     * @since  Nov 19, 2013
+     */
+    @Override
+    public PhaseVector computeFixedOrbit(ProbeState state) {
+        
+        ISimLocResults<ProbeState>    iCalcEngine = this.retrieveLocCalcEngine(state);
+
+        return iCalcEngine.computeFixedOrbit(state);
+    }
+
+    /**
+     *
+     * @see xal.tools.beam.calc.ISimulationResults.ISimLocResults#computeChromAberration(xal.model.probe.traj.ProbeState)
+     *
+     * @author Christopher K. Allen
+     * @since  Nov 19, 2013
+     */
     @Override
     public PhaseVector computeChromAberration(ProbeState state) {
-        Object  objResult     = this.compute("computeChromaticAberration", state);
-        PhaseVector vecResult = (PhaseVector)objResult;
+        
+        ISimLocResults<ProbeState>    iCalcEngine = this.retrieveLocCalcEngine(state);
 
-        return vecResult;
+        return iCalcEngine.computeChromAberration(state);
     }
 
 
     /*
      * ISimEnvResults Interface
      */
-
+    
     /**
-     * <p>
-     * This returns the matched envelope Courant-Snyder parameters at the given state 
-     * location for a ring.  For a linace the actual Courant-Snyder parameters for the beam
-     * envelope (including space charge) are returned, computed from the beam's second
-     * moments. 
-     * </p>
      *
-     * @see xal.tools.beam.calc.ISimEnvResults#computeTwissParameters(xal.model.probe.traj.ProbeState)
+     * @see xal.tools.beam.calc.ISimulationResults.ISimEnvResults#computeTwissParameters(xal.model.probe.traj.ProbeState)
      *
      * @author Christopher K. Allen
-     * @since  Nov 7, 2013
+     * @since  Nov 19, 2013
      */
     @Override
-    public Twiss[] computeTwissParameters(ProbeState state) throws IllegalArgumentException {
-
-        Object  objResult = this.compute("computeTwissParameters", state);
-        Twiss[] arrTwiss = (Twiss[])objResult;
-
-        return arrTwiss;
+    public Twiss[] computeTwissParameters(ProbeState state) {
+        
+        ISimEnvResults<ProbeState>  iCalcEngine = this.retrieveEnvCalcEngine(state);
+        
+        return iCalcEngine.computeTwissParameters(state);
     }
 
     /**
-     * Compute and return the betatron phase &psi; at this state location.  Depending upon the
-     * context, this value could be the phase advance of a particle when traversing a ring at 
-     * this location, or the
-     * phase advance from entrance location of a linac to current position.  In either case
-     * the result should be in the range 0 to 2&pi;.
      *
-     * @see xal.tools.beam.calc.ISimEnvResults#computeBetatronPhase(xal.model.probe.traj.ProbeState)
+     * @see xal.tools.beam.calc.ISimulationResults.ISimEnvResults#computeBetatronPhase(xal.model.probe.traj.ProbeState)
      *
      * @author Christopher K. Allen
-     * @since  Nov 7, 2013
+     * @since  Nov 19, 2013
      */
     @Override
     public R3 computeBetatronPhase(ProbeState state) {
-        return (R3)this.compute("computeBetatronPhase",  state);
+        
+        ISimEnvResults<ProbeState>  iCalcEngine = this.retrieveEnvCalcEngine(state);
+        
+        return iCalcEngine.computeBetatronPhase(state);
     }
 
     /**
-     * <p>
-     * Computes and returns the dispersion coefficients for the machine and/or beam.
-     * </p>
-     * <p>
-     * For rings this is sensitivity of the transverse fixed orbit to the off energy
-     * component of the beam.  For linacs the sensitivity of any position in phase space
-     * to the chromatic dispersion 
-     * &delta; &equiv; (<i>p</i> - <i>p</i><sub>0</sub>)/<i>p</i><sub>0</sub>.  This is 
-     * because in linac calculation we use the state response matrix (including space charge)
-     * which expresses the sensitivity of the final states to changes in the initial state.
-     * </p>
      *
-     * @see xal.tools.beam.calc.ISimEnvResults#computeChromDispersion(xal.model.probe.traj.ProbeState)
+     * @see xal.tools.beam.calc.ISimulationResults.ISimEnvResults#computeChromDispersion(xal.model.probe.traj.ProbeState)
      *
      * @author Christopher K. Allen
-     * @since  Nov 11, 2013
+     * @since  Nov 19, 2013
      */
     @Override
     public PhaseVector computeChromDispersion(ProbeState state) {
-        return (PhaseVector)this.compute("computeChromDispersion", state);
+        
+        ISimEnvResults<ProbeState>  iCalcEngine = this.retrieveEnvCalcEngine(state);
+        
+        return iCalcEngine.computeChromDispersion(state);
     }
-
-
+    
+    
     /*
      * Support Methods
      */
+    
+    /**
+     * Searches the dictionary of (probe state type, calculation engine) pairs for the
+     * data processing engine that was registered for the given probe state.
+     * Uses the sub-type of the <code>ProbeState</code> object
+     * and to determine which <code>ISimLocResults</code>
+     * computation engine is used to compute the machine parameters.  (For example,
+     * are we looking at a ring or at a linac?)  The result is passed back up to the
+     * <code>ISimLocResults</code> interface exposed by this class (i.e.,
+     * the interface method that invoked this method) where its type is identified
+     * and returned to the user of this class.
+     * 
+     * @param state     probe state that is to be processed
+     * 
+     * @return          the calculation engine that will process the given probe state
+     * 
+     * @throws IllegalArgumentException     there was no calculation engine registered for the given probe
+     *
+     * @author Christopher K. Allen
+     * @since  Nov 19, 2013
+     */
+    private ISimLocResults<ProbeState> retrieveLocCalcEngine(ProbeState state) throws IllegalArgumentException {
+        
+        ISimLocResults<ProbeState>    iCalcEngine = this.mapArgToLocCalc.get(state.getClass());
+        if (iCalcEngine == null)
+            throw new IllegalArgumentException("No simulation data calculation engine for probe state type " + state.getClass());
+        
+        return iCalcEngine;
+    }
 
     /**
-     * Determines the sub-type of the <code>ProbeState</code> object
-     * and uses that information to determine which <code>ISimEnvResults</code>
-     * computation engine is used to compute the machine parameters.  (That is,
-     * are we looking at a ring or at a Linac.)  The result is passed back up to the
+     * Searches the dictionary of (probe state type, calculation engine) pairs for the
+     * data processing engine that was registered for the given probe state.
+     * Uses the sub-type of the <code>ProbeState</code> object
+     * and to determine which <code>ISimEnvResults</code>
+     * computation engine is used to compute the machine parameters.  (For example,
+     * are we looking at a ring or at a linac?)  The result is passed back up to the
      * <code>ISimEnvResults</code> interface exposed by this class (i.e.,
      * the interface method that invoked this method) where its type is identified
      * and returned to the user of this class.
      * 
-     * @param strMthName    name of the method in the <code>ISimEnvResults</code> interface
-     * @param staArg        <code>ProbeState</code> derived object that is an argument to one of the
-     *                      methods in the <code>ISimEnvResults</code> interface
-     *                      
-     * @return              result of invoking the given <code>ISimEnvResults</code> method on 
-     *                      the given <code>ProbeState</code> argument
-     *  
+     * @param state     probe state that is to be processed
+     * 
+     * @return          the calculation engine that will process the given probe state
+     * 
+     * @throws IllegalArgumentException     there was no calculation engine registered for the given probe
+     *
      * @author Christopher K. Allen
-     * @since  Nov 8, 2013
+     * @since  Nov 19, 2013
      */
-    private Object  compute(String strMthName, ProbeState staArg) {
-
-        try {
-
-            if (staArg instanceof TransferMapState) {
-                TransferMapState    staXfer = (TransferMapState)staArg;
-
-                Method mthCmp;
-                mthCmp = this.cmpRingParams.getClass().getDeclaredMethod(strMthName, TransferMapState.class);
-                Object  objRes = mthCmp.invoke(this.cmpRingParams, staXfer);
-
-                return objRes;
-
-            } else if (staArg instanceof EnvelopeProbeState) {
-                EnvelopeProbeState    staEnv = (EnvelopeProbeState)staArg;
-
-                Method  mthCmp = this.cmpLinacParams.getClass().getDeclaredMethod(strMthName, EnvelopeProbeState.class);
-                Object  objRes = mthCmp.invoke(this.cmpLinacParams, staEnv);
-
-                return objRes;
-
-            } else {
-
-                throw new IllegalArgumentException("Unknown probe state type " + staArg.getClass().getName());
-            }
-
-        } catch (ClassCastException | 
-                NoSuchMethodException | 
-                SecurityException | 
-                IllegalAccessException | 
-                IllegalArgumentException | 
-                InvocationTargetException e
-                ) {
-
-            throw new IllegalArgumentException("Included exception thrown invoking method " + strMthName, e);
-        }
-
+    private ISimEnvResults<ProbeState> retrieveEnvCalcEngine(ProbeState state) throws IllegalArgumentException {
+        
+        ISimEnvResults<ProbeState>    iCalcEngine = this.mapArgToEnvCalc.get(state.getClass());
+        if (iCalcEngine == null)
+            throw new IllegalArgumentException("No simulation data calculation engine for probe state type " + state.getClass());
+        
+        return iCalcEngine;
     }
+
+//    /**
+//     * Determines the sub-type of the <code>ProbeState</code> object
+//     * and uses that information to determine which <code>ISimEnvResults</code>
+//     * computation engine is used to compute the machine parameters.  (That is,
+//     * are we looking at a ring or at a Linac.)  The result is passed back up to the
+//     * <code>ISimEnvResults</code> interface exposed by this class (i.e.,
+//     * the interface method that invoked this method) where its type is identified
+//     * and returned to the user of this class.
+//     * 
+//     * @param strMthName    name of the method in the <code>ISimEnvResults</code> interface
+//     * @param staArg        <code>ProbeState</code> derived object that is an argument to one of the
+//     *                      methods in the <code>ISimEnvResults</code> interface
+//     *                      
+//     * @return              result of invoking the given <code>ISimEnvResults</code> method on 
+//     *                      the given <code>ProbeState</code> argument
+//     *  
+//     * @author Christopher K. Allen
+//     * @since  Nov 8, 2013
+//     */
+//    private <I extends ISimulationResults> Object  compute(I iCalcEngine, String strMthName, ProbeState staArg) {
+//    
+//        try {
+//    
+//            Class<? extends ProbeState> clsType = staArg.getClass();
+//    
+//            Method mthResult = iCalcEngine.getClass().getDeclaredMethod(strMthName, clsType);
+//            Object objResult = mthResult.invoke(iCalcEngine, staArg);
+//    
+//            return objResult;
+//    
+//    
+//        } catch (ClassCastException | 
+//                NoSuchMethodException | 
+//                SecurityException | 
+//                IllegalAccessException | 
+//                IllegalArgumentException | 
+//                InvocationTargetException e
+//                ) {
+//    
+//            throw new IllegalArgumentException("Included exception thrown invoking method " + strMthName, e);
+//        }
+//    }
+//
 }

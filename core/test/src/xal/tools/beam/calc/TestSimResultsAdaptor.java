@@ -41,7 +41,7 @@ import xal.tools.beam.Twiss3D;
 import xal.tools.math.r3.R3;
 
 /**
- * Test cases for the <code>SimResultsAdaptBase</code> class. 
+ * Test cases for the <code>SimResultsAdaptor</code> class. 
  *
  * @author Christopher K. Allen
  * @since  Nov 19, 2013
@@ -162,20 +162,20 @@ public class TestSimResultsAdaptor {
     */
    
     /** Calculation engine for particle parameters using particle probe states */
-    private CalculationsOnParticle       calPartPart;
+    private CalculationsOnParticles       calPartPart;
     
     /** Calculation engine for machine parameters using transfer map states */
-    private CalculationsOnMachine       calXferMach;
+    private CalculationsOnMachines       calXferMach;
     
     /** Calculation engine for ring parameters using transfer map states */
-    private CalculationsOnRing          calXferRing;
+    private CalculationsOnRings          calXferRing;
     
     /** Calculation engine for beam parameters using envelope probe states */
-    private CalculationsOnBeam           calEnvBeam;
+    private CalculationsOnBeams           calEnvBeam;
     
     
    /** the simulation adaptor */
-   private SimResultsAdaptBase           cmpSimResults;
+   private SimResultsAdaptor           cmpSimResults;
    
    /**
     *
@@ -186,12 +186,12 @@ public class TestSimResultsAdaptor {
     */
    @Before
    public void setUp() throws Exception {
-       this.calPartPart = new CalculationsOnParticle( (ParticleTrajectory)PROBE_PARTL_TEST.getTrajectory() );
-       this.calXferMach = new CalculationsOnMachine( (TransferMapTrajectory)PROBE_XFER_TEST.getTrajectory() );
-       this.calXferRing = new CalculationsOnRing( (TransferMapTrajectory) PROBE_XFER_TEST.getTrajectory() );
-       this.calEnvBeam  = new CalculationsOnBeam( (EnvelopeTrajectory)PROBE_ENV_TEST.getTrajectory() );
+       this.calPartPart = new CalculationsOnParticles( (ParticleTrajectory)PROBE_PARTL_TEST.getTrajectory() );
+       this.calXferMach = new CalculationsOnMachines( (TransferMapTrajectory)PROBE_XFER_TEST.getTrajectory() );
+       this.calXferRing = new CalculationsOnRings( (TransferMapTrajectory) PROBE_XFER_TEST.getTrajectory() );
+       this.calEnvBeam  = new CalculationsOnBeams( (EnvelopeTrajectory)PROBE_ENV_TEST.getTrajectory() );
        
-       this.cmpSimResults = new SimResultsAdaptBase();
+       this.cmpSimResults = new SimResultsAdaptor();
 
        this.cmpSimResults.registerCalcEngine(ParticleProbeState.class, this.calPartPart);
        this.cmpSimResults.registerCalcEngine(TransferMapState.class, this.calXferMach);
@@ -204,7 +204,7 @@ public class TestSimResultsAdaptor {
     */
    
     /**
-     * Test method for {@link xal.tools.beam.calc.SimResultsAdaptBase#registerCalcEngine(java.lang.Class, xal.tools.beam.calc.ISimulationResults)}.
+     * Test method for {@link xal.tools.beam.calc.SimResultsAdaptor#registerCalcEngine(java.lang.Class, xal.tools.beam.calc.ISimulationResults)}.
      */
     @Test
     public void testRegisterCalcEngine() {
@@ -214,7 +214,7 @@ public class TestSimResultsAdaptor {
     }
 
     /**
-     * Test method for {@link xal.tools.beam.calc.SimResultsAdaptBase#computeCoordinatePosition(xal.model.probe.traj.ProbeState)}.
+     * Test method for {@link xal.tools.beam.calc.SimResultsAdaptor#computeCoordinatePosition(xal.model.probe.traj.ProbeState)}.
      * @throws IOException 
      */
     @Test
@@ -258,7 +258,7 @@ public class TestSimResultsAdaptor {
 }
 
     /**
-     * Test method for {@link xal.tools.beam.calc.SimResultsAdaptBase#computeFixedOrbit(xal.model.probe.traj.ProbeState)}.
+     * Test method for {@link xal.tools.beam.calc.SimResultsAdaptor#computeFixedOrbit(xal.model.probe.traj.ProbeState)}.
      * @throws IOException 
      */
     @Test
@@ -302,7 +302,7 @@ public class TestSimResultsAdaptor {
     }
 
     /**
-     * Test method for {@link xal.tools.beam.calc.SimResultsAdaptBase#computeChromAberration(xal.model.probe.traj.ProbeState)}.
+     * Test method for {@link xal.tools.beam.calc.SimResultsAdaptor#computeChromAberration(xal.model.probe.traj.ProbeState)}.
      */
     @Test
     public void testComputeChromaticAberration() throws IOException {
@@ -345,7 +345,7 @@ public class TestSimResultsAdaptor {
     }
 
     /**
-     * Test method for {@link xal.tools.beam.calc.SimResultsAdaptBase#computeTwissParameters(xal.model.probe.traj.ProbeState)}.
+     * Test method for {@link xal.tools.beam.calc.SimResultsAdaptor#computeTwissParameters(xal.model.probe.traj.ProbeState)}.
      */
     @Test
     public void testComputeTwissParameters() throws IOException {
@@ -377,7 +377,7 @@ public class TestSimResultsAdaptor {
     }
 
     /**
-     * Test method for {@link xal.tools.beam.calc.SimResultsAdaptBase#computeBetatronPhase(xal.model.probe.traj.ProbeState)}.
+     * Test method for {@link xal.tools.beam.calc.SimResultsAdaptor#computeBetatronPhase(xal.model.probe.traj.ProbeState)}.
      */
     @Test
     public void testComputeBetatronPhase() throws IOException {
@@ -407,7 +407,7 @@ public class TestSimResultsAdaptor {
     }
     
     /**
-     * Test method for {@link xal.tools.beam.calc.SimResultsAdaptBase#computeChromDispersion(xal.model.probe.traj.ProbeState)}.
+     * Test method for {@link xal.tools.beam.calc.SimResultsAdaptor#computeChromDispersion(xal.model.probe.traj.ProbeState)}.
      */
     @Test
     public void testComputeChromDispersion() throws IOException {

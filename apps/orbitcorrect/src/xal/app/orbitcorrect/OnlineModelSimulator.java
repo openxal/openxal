@@ -63,12 +63,12 @@ public class OnlineModelSimulator extends MappedSimulator {
 //            if (traj instanceof TransferMapTrajectory) {
 //                TransferMapTrajectory trjXferMap = (TransferMapTrajectory)traj;
 //                
-//                this.engResults = new CalculationsOnMachine(trjXferMap);
+//                this.engResults = new CalculationsOnMachines(trjXferMap);
 //                
 //            } else if (traj instanceof ParticleTrajectory) {
 //                ParticleTrajectory  trjPart = (ParticleTrajectory)traj;
 //                
-//                this.engResults = new CalculationsOnParticle(trjPart);
+//                this.engResults = new CalculationsOnParticles(trjPart);
 //                
 //            } else {
 //                

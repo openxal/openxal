@@ -1,5 +1,5 @@
 /**
- * CalculationsOnBeam.java
+ * CalculationsOnBeams.java
  *
  * Author  : Christopher K. Allen
  * Since   : Oct 22, 2013
@@ -30,7 +30,7 @@ import xal.tools.math.r6.R6;
  * @author Christopher K. Allen
  * @since  Oct 22, 2013
  */
-public class CalculationsOnBeam extends CalculationEngine implements ISimLocResults<EnvelopeProbeState>, ISimEnvResults<EnvelopeProbeState> {
+public class CalculationsOnBeams extends CalculationEngine implements ISimLocResults<EnvelopeProbeState>, ISimEnvResults<EnvelopeProbeState> {
 
 
     /*
@@ -65,7 +65,7 @@ public class CalculationsOnBeam extends CalculationEngine implements ISimLocResu
      */
     
     /**
-     * Constructor for <cod>CalculationsOnBeam</code>. Creates object
+     * Constructor for <cod>CalculationsOnBeams</code>. Creates object
      * and computes all the static simulation results.
      * 
      * @param   trjSimul    results for an <code>EnvelopeProbe</code> simulation
@@ -73,7 +73,7 @@ public class CalculationsOnBeam extends CalculationEngine implements ISimLocResu
      * @author Christopher K. Allen
      * @since  Oct 22, 2013
      */
-    public CalculationsOnBeam(EnvelopeTrajectory trjBeam) {
+    public CalculationsOnBeams(EnvelopeTrajectory trjBeam) {
         ProbeState  pstFinal = trjBeam.finalState();
         
         // Check for correct probe types

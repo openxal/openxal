@@ -10,7 +10,7 @@ package xal.app.knobs;
 
 import xal.model.probe.traj.ProbeState;
 import xal.model.probe.traj.Trajectory;
-import xal.tools.beam.calc.SimResultsAdaptor;
+import xal.tools.beam.calc.SimpleSimResultsAdaptor;
 
 
 
@@ -78,7 +78,7 @@ abstract public class BumpShapeAdaptor {
      */
     
     /** the simulation data processor */
-    protected SimResultsAdaptor prcSimData;
+    protected SimpleSimResultsAdaptor prcSimData;
     
     
 	/*
@@ -101,7 +101,7 @@ abstract public class BumpShapeAdaptor {
      * @since  Nov 12, 2013
      */
     public void resetTrajectory(Trajectory traj) {
-        this.prcSimData = new SimResultsAdaptor(traj);
+        this.prcSimData = new SimpleSimResultsAdaptor(traj);
     }
     
 }

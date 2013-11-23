@@ -20,7 +20,7 @@ import xal.tools.beam.PhaseMatrix.IND;
 import xal.tools.beam.PhaseVector;
 import xal.tools.beam.Twiss;
 import xal.tools.beam.calc.ISimEnvResults;
-import xal.tools.beam.calc.SimResultsAdaptor;
+import xal.tools.beam.calc.SimpleSimResultsAdaptor;
 
 
 /** 
@@ -184,17 +184,17 @@ public class Simulation {
 		
 		// Create the machine parameter calculation engine according to the
 		//    type of probe we are given
-		this.adptSimResults = new SimResultsAdaptor(_trajectory);
+		this.adptSimResults = new SimpleSimResultsAdaptor(_trajectory);
 		
 //        if (probe instanceof TransferMapProbe) {
 //            TransferMapTrajectory   traj = (TransferMapTrajectory)probe.getTrajectory();
 //
-//            this.cmpMchParams = new CalculationsOnRing(traj);
+//            this.cmpMchParams = new CalculationsOnRings(traj);
 //            
 //        } else if (probe instanceof EnvelopeProbe) {
 //            EnvelopeTrajectory traj = (EnvelopeTrajectory)probe.getTrajectory();
 //            
-//            this.cmpMchParams = new CalculationsOnBeam(traj);
+//            this.cmpMchParams = new CalculationsOnBeams(traj);
 //            
 //        } else {
 //            
