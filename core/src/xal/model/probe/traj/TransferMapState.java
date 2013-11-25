@@ -40,9 +40,9 @@ import xal.model.xml.ParsingException;
  * @author Christopher K. Allen
  * @author t6p
  */
-public class TransferMapState extends ProbeState implements IPhaseState {
-    /** number of modes */
-    static final private int NUM_MODES = 3;
+public class TransferMapState extends ProbeState /* implements IPhaseState */ {
+//    /** number of modes */
+//    static final private int NUM_MODES = 3;
 
     /** element tag for RF phase */
     protected static final String LABEL_STATE = "transfer";
@@ -51,47 +51,60 @@ public class TransferMapState extends ProbeState implements IPhaseState {
     protected static final String ATTR_MAP = "map";
 
     /** composite transfer map */
-    private PhaseMap         m_mapTrans;
+    private PhaseMap         mapPhiCmp;
+    
+    /** transfer map through this state */
+    private PhaseMap        mapPhiPart;
 
-    /** the trajectory */
-    private TransferMapTrajectory _trajectory;
+//    /** the trajectory */
+//    private TransferMapTrajectory _trajectory;
 
-    /** full turn map at this element */
-    private PhaseMap _fullTurnMap;
+//    /** full turn map at this element */
+//    @Deprecated
+//    private PhaseMap _fullTurnMap;
 
-    /** closed orbit */
-    private PhaseVector _closedOrbit;
+//    /** closed orbit */
+//    @Deprecated
+//    private PhaseVector _closedOrbit;
 
-    /** phase coordinates of the particle location */ 
+    /** phase coordinates of the particle location */
+    @Deprecated
     private PhaseVector[] _phaseCoordinates;
 
-    /** twiss parameters */
-    private Twiss[] _twiss;
+//    /** twiss parameters */
+//    @Deprecated
+//    private Twiss[] _twiss;
 
-    /** betatron phase */
-    private R3 _betatronPhase;
+//    /** betatron phase */
+//    @Deprecated
+//    private R3 _betatronPhase;
 
-    /** dispersion */
-    private double[] _dispersion;
+//    /** dispersion */
+//    @Deprecated
+//    private double[] _dispersion;
 
 
     /** Constructor - create new <code>TransferMapState</code> and initialize to zero state values. */
     public TransferMapState() {
-        this( null, null, null );
+        
+        setTransferMap( null );
+        
+        // CKA - removing the backpointer to the trajectory since it is never referenced
+//        this( null, null, null );
     }
 
 
-    /**
-     * Primary constructor - create new <code>TransferMapState</code> and initialize to zero state values.
-     * @param trajectory the trajectory to which this state belongs
-     * @param transferMap the transfer map which is associated with this state
-     * @param coordinates the phase coordinates
-     */
-    public TransferMapState( final TransferMapTrajectory trajectory, final PhaseMap transferMap, final PhaseVector coordinates ) {
-        setTrajectory( trajectory );
-        setTransferMap( transferMap );
-        setPhaseCoordinates( coordinates );
-    }
+//    /**
+//     * Primary constructor - create new <code>TransferMapState</code> and initialize to zero state values.
+//     * @param trajectory the trajectory to which this state belongs
+//     * @param transferMap the transfer map which is associated with this state
+//     * @param coordinates the phase coordinates
+//     */
+//    public TransferMapState( final TransferMapTrajectory trajectory, final PhaseMap transferMap, final PhaseVector coordinates ) {
+////        setTrajectory( trajectory );
+//        setTransferMap( transferMap );
+//        setPhaseCoordinates( coordinates );
+//    }
 
 
     /**
@@ -101,316 +114,421 @@ public class TransferMapState extends ProbeState implements IPhaseState {
     public TransferMapState( final TransferMapProbe probe ) {
         super( probe );
 
-        setTrajectory( (TransferMapTrajectory)probe.getTrajectory() );
+        // CKA - removing the backpointer to the trajectory since it is never referenced
+//        setTrajectory( (TransferMapTrajectory)probe.getTrajectory() );
         setTransferMap( probe.getTransferMap() );
+        setPartialTransferMap( probe.getPartialTransferMap() );
         setPhaseCoordinates( probe.getPhaseCoordinates() );
     }
 
 
-    /**
-     * Set the trajectory to the one specified.
-     * @param trajectory the trajectory to use.
-     */
-    public void setTrajectory( final TransferMapTrajectory trajectory ) {
-        _trajectory = trajectory;
-    }
+//    /**
+//     * Set the trajectory to the one specified.
+//     * REOMOVING THE BACKPOINTER TO TRAJECTORY
+//     * @param trajectory the trajectory to use.
+//     */
+//    public void setTrajectory( final TransferMapTrajectory trajectory ) {
+//        _trajectory = trajectory;
+//    }
 
 
     /**
      * Set the current composite transfer map up to the current probe location.
      * @param   mapTrans    transfer map in homogeneous phase coordinates
      * @see Probe#createTrajectory()
+     * 
      */
     public void setTransferMap( final PhaseMap mapTrans ) {
-        this.m_mapTrans = ( mapTrans != null ) ? mapTrans : PhaseMap.identity();
+        this.mapPhiCmp = ( mapTrans != null ) ? mapTrans : PhaseMap.identity();
     }
-
-
-    /** 
-     * Returns the array of twiss objects for this state for all three planes.
+    
+    /**
+     * Sets the current partial transfer map, or "through map".  This map transfers
+     * particle phase coordinates through a distance occupied by this state.
      * 
-     * @return array (twiss-H, twiss-V, twiss-L)
+     * @param mapPart   transfer map through this state
+     *
+     * @author Christopher K. Allen
+     * @since  Nov 22, 2013
      */
-    public Twiss[] getTwiss() {
-        calculateTwissIfNeeded();
+    public void setPartialTransferMap( final PhaseMap mapPart ) { 
+        this.mapPhiPart = ( mapPart != null ) ? mapPart : PhaseMap.identity();
+    }
 
-        return _twiss;
+    /**
+     * Set the transfer map across this state, from entrance to exit.
+     * 
+     * @param   mapTrans    transfer map in homogeneous phase coordinates
+     * 
+     * @see Probe#createTrajectory()
+     */
+    public void setStateTransferMap( final PhaseMap mapTrans ) {
+        this.mapPhiPart = ( mapTrans != null ) ? mapTrans : PhaseMap.identity();
     }
 
 
     /**
-     * Get the dispersion.
-     * @return  x axis chromatic dispersion in <b>meters</b>
+     * Get the composite transfer map at this state location.  The
+     * composite map <b>&phi;</b> maps the phase coordinates of 
+     * particles at the beginning of the <code>TransferMapTrajectory</code>
+     * parent (i.e., at the first state of the trajectory object)
+     * to this state.
+     * 
+     * @return transfer map in homogeneous phase space coordinates
      */
-    public double getChromDispersionX()  {
-        calculateDispersionIfNeeded();
-
-        return _dispersion[0];
-    } 
-
-
+    public PhaseMap getTransferMap()  {
+        return this.mapPhiCmp;
+    }
+    
     /**
-     * Get the dispersion slope.
-     * @return  x axis chromatic dispersion slope.
+     * Returns the partial transfer map that transports particle
+     * phase coordinates through the space occupied by this state.
+     * 
+     * @return      partial transfer map through this state
+     *
+     * @author Christopher K. Allen
+     * @since  Nov 22, 2013
      */
-    public double getChromDispersionSlopeX()  {
-        calculateDispersionIfNeeded();
-
-        return _dispersion[1];
-    } 
-
-
+    public PhaseMap getPartialTransferMap() {
+        return this.mapPhiPart;
+    }
+    
     /**
-     * Get the dispersion.
-     * @return  y axis chromatic dispersion in <b>meters</b>
+     * Get the partial transfer map that maps particle phase coordinates from
+     * the previous state exit to this state's exit.  The product of all these
+     * partial transfer maps from the first state to this state would yield
+     * the returned value of <code>{@link #getTransferMap()}</code>. 
+     * 
+     * @return partial transfer map in homogeneous phase space coordinates
      */
-    public double getChromDispersionY()  {
-        calculateDispersionIfNeeded();
+    public PhaseMap getStateTransferMap()  {
+        return this.mapPhiPart;
+    }
+    
 
-        return _dispersion[2];
-    } 
+//    /** 
+//     * Returns the array of twiss objects for this state for all three planes.
+//     * 
+//     * These are the closed orbit Twiss parameters at this state location.
+//     * The phase tunes are the closed orbit tunes.
+//     * 
+//     * @return array (twiss-H, twiss-V, twiss-L)
+//     * 
+//     * @deprecated  Transfer maps do not have Twiss parameters
+//     */
+//    public Twiss[] getTwiss() {
+//        calculateTwissIfNeeded();
+//
+//        return _twiss;
+//    }
 
 
-    /**
-     * Get the dispersion slope.
-     * @return  y axis chromatic dispersion slope.
-     */
-    public double getChromDispersionSlopeY()  {
-        calculateDispersionIfNeeded();
-
-        return _dispersion[3];
-    } 
+//    /**
+//     * Get the dispersion.
+//     * @return  x axis chromatic dispersion in <b>meters</b>
+//     * @deprecated Moved to xal.tools.beam.calc 
+//     */
+//    public double getChromDispersionX()  {
+//        calculateDispersionIfNeeded();
+//
+//        return _dispersion[0];
+//    } 
+//
+//
+//    /**
+//     * Get the dispersion slope.
+//     * @return  x axis chromatic dispersion slope.
+//     * @deprecated Moved to xal.tools.beam.calc 
+//     */
+//    public double getChromDispersionSlopeX()  {
+//        calculateDispersionIfNeeded();
+//
+//        return _dispersion[1];
+//    } 
+//
+//
+//    /**
+//     * Get the dispersion.
+//     * @return  y axis chromatic dispersion in <b>meters</b>
+//     * @deprecated Moved to xal.tools.beam.calc 
+//     */
+//    public double getChromDispersionY()  {
+//        calculateDispersionIfNeeded();
+//
+//        return _dispersion[2];
+//    } 
+//
+//
+//    /**
+//     * Get the dispersion slope.
+//     * @return  y axis chromatic dispersion slope.
+//     * @deprecated Moved to xal.tools.beam.calc 
+//     */
+//    public double getChromDispersionSlopeY()  {
+//        calculateDispersionIfNeeded();
+//
+//        return _dispersion[3];
+//    } 
 
 
     /** 
      *  Returns homogeneous phase space coordinates of the closed orbit.  The units are meters and radians.
      *  @return vector (x,x',y,y',z,z',1) of phase space coordinates
+     * @deprecated Moved to xal.tools.beam.calc 
      */
     public PhaseVector getPhaseCoordinates() {
         return _phaseCoordinates[0];
     }
 
 
-    /**
-     * Get the turn by turn array of phase coordinates for the specified number of turns.
-     * @param turns the number of turns for which to get the turn by turn array of phase coordinates
-     * @return the turn by turn array of phase coordinates
-     */
-    public PhaseVector[] phaseCoordinatesTurnByTurn( final int turns ) {
-        if ( turns < 0 ) {
-            throw new IllegalArgumentException( "The number of turns must be non-negative, but you provided: " + turns );
-        }
-
-        if ( turns >= _phaseCoordinates.length ) {
-            PhaseVector[] vector = new PhaseVector[turns + 1];
-            System.arraycopy( _phaseCoordinates, 0, vector, 0, _phaseCoordinates.length );
-
-            final PhaseMatrix fullTurnMatrix = getFullTurnMap().getFirstOrder();
-            for ( int turn = _phaseCoordinates.length ; turn <= turns ; turn++ ) {
-                vector[turn] = fullTurnMatrix.times( vector[turn - 1] );
-            }
-
-            _phaseCoordinates = vector;
-        }
-
-        final PhaseVector[] result = new PhaseVector[turns + 1];
-        System.arraycopy( _phaseCoordinates, 0, result, 0, turns+1 );
-        return result;
-    }
-
-
-
-    /**
-     * Get one turn of phase coordinates at the specified number of turns.
-     * @param turns the number of turns for which to get the turn by turn array of phase coordinates
-     * @return the turn by turn array of phase coordinates
-     */
-    public PhaseVector phaseCoordinatesTurn( final int turns ) {
-        if ( turns < 0 ) {
-            throw new IllegalArgumentException( "The number of turns must be non-negative, but you provided: " + turns );
-        }
-
-        if ( turns >= _phaseCoordinates.length ) {
-            PhaseVector[] vector = new PhaseVector[turns + 1];
-            System.arraycopy( _phaseCoordinates, 0, vector, 0, _phaseCoordinates.length );
-
-            final PhaseMatrix fullTurnMatrix = getFullTurnMap().getFirstOrder();
-            //sako
+//    /**
+//     * Get the turn by turn array of phase coordinates for the specified number of turns.
+//     * @param turns the number of turns for which to get the turn by turn array of phase coordinates
+//     * @return the turn by turn array of phase coordinates
+//     */
+//    public PhaseVector[] phaseCoordinatesTurnByTurn( final int turns ) {
+//        if ( turns < 0 ) {
+//            throw new IllegalArgumentException( "The number of turns must be non-negative, but you provided: " + turns );
+//        }
+//
+//        if ( turns >= _phaseCoordinates.length ) {
+//            PhaseVector[] vector = new PhaseVector[turns + 1];
+//            System.arraycopy( _phaseCoordinates, 0, vector, 0, _phaseCoordinates.length );
+//
+//            final PhaseMatrix fullTurnMatrix = getFullTurnMap().getFirstOrder();
+//            for ( int turn = _phaseCoordinates.length ; turn <= turns ; turn++ ) {
+//                vector[turn] = fullTurnMatrix.times( vector[turn - 1] );
+//            }
+//
+//            _phaseCoordinates = vector;
+//        }
+//
+//        final PhaseVector[] result = new PhaseVector[turns + 1];
+//        System.arraycopy( _phaseCoordinates, 0, result, 0, turns+1 );
+//        return result;
+//    }
 
 
-            for ( int turn = _phaseCoordinates.length ; turn <= turns ; turn++ ) {
-                vector[turn] = fullTurnMatrix.times( vector[turn - 1] );
-            }
 
-            _phaseCoordinates = vector;
-        }
-
-        final PhaseVector[] result = new PhaseVector[turns + 1];
-        System.arraycopy( _phaseCoordinates, 0, result, 0, turns+1 );
-        return result[turns];
-    }
+//    /**
+//     * Get one turn of phase coordinates at the specified number of turns.
+//     * @param turns the number of turns for which to get the turn by turn array of phase coordinates
+//     * @return the turn by turn array of phase coordinates
+//     */
+//    public PhaseVector phaseCoordinatesTurn( final int turns ) {
+//        if ( turns < 0 ) {
+//            throw new IllegalArgumentException( "The number of turns must be non-negative, but you provided: " + turns );
+//        }
+//
+//        if ( turns >= _phaseCoordinates.length ) {
+//            PhaseVector[] vector = new PhaseVector[turns + 1];
+//            System.arraycopy( _phaseCoordinates, 0, vector, 0, _phaseCoordinates.length );
+//
+//            final PhaseMatrix fullTurnMatrix = getFullTurnMap().getFirstOrder();
+//            //sako
+//
+//
+//            for ( int turn = _phaseCoordinates.length ; turn <= turns ; turn++ ) {
+//                vector[turn] = fullTurnMatrix.times( vector[turn - 1] );
+//            }
+//
+//            _phaseCoordinates = vector;
+//        }
+//
+//        final PhaseVector[] result = new PhaseVector[turns + 1];
+//        System.arraycopy( _phaseCoordinates, 0, result, 0, turns+1 );
+//        return result[turns];
+//    }
 
 
     /** 
      *  Set the phase coordinates of the probe.  
      *  @param  vecPhase new homogeneous phase space coordinate vector
+     *  
+     *  @deprecated TransferMapProbes do not have phase vectors
      */
+    @Deprecated
     public void setPhaseCoordinates( final PhaseVector vecPhase ) {
         _phaseCoordinates = new PhaseVector[] { vecPhase != null ? new PhaseVector( vecPhase ) : new PhaseVector() };
     }
 
 
-    /**
-     * Get the closed orbit about which betatron oscillations occur.
-     * @return the fixed orbit vector (x,x',y,y',z,z',1)
-     */
-    public PhaseVector getFixedOrbit() {
-        calculateClosedOrbitIfNeeded();
-
-        return _closedOrbit;
-    }
-
-
-    /** Calculate the closed orbit if needed. */
-    public void calculateClosedOrbitIfNeeded() {
-        if ( _closedOrbit == null ) {
-            _closedOrbit = getFullTurnMap().calculateFixedPoint();
-        }
-    }
+//    /**
+//     * Get the closed orbit about which betatron oscillations occur.
+//     * @return the fixed orbit vector (x,x',y,y',z,z',1)
+//     * 
+//     * @deprecated  TransferMapProbes do not have fixed orbits
+//     */
+//    @Deprecated
+//    public PhaseVector getFixedOrbit() {
+//        calculateClosedOrbitIfNeeded();
+//
+//        return _closedOrbit;
+//    }
 
 
-    /** Calculate the twiss parameters if needed. */
-    private void calculateTwissIfNeeded() {
-        if ( _twiss == null ) {
-            final double PI2 = 2 * Math.PI;
-            final double[] tunes = _trajectory.getTunes();
-            final PhaseMatrix matrix = getFullTurnMap().getFirstOrder();
-
-            final Twiss[] twiss = new Twiss[NUM_MODES];
-            for ( int mode = 0 ; mode < NUM_MODES ; mode++ ) {
-                final int index = 2 * mode;
-                final double sinMu = Math.sin( PI2 * tunes[mode] );// _tunes could be NaN
-                final double m11 = matrix.getElem( index, index );
-                final double m12 = matrix.getElem( index, index + 1 );
-                final double m22 = matrix.getElem( index + 1, index + 1 );
-                final double beta = m12 / sinMu;
-                final double alpha = ( m11 - m22 ) / ( 2 * sinMu );
-                final double emittance = Double.NaN;
-                twiss[mode] = new Twiss( alpha, beta, emittance );
-            }
-
-            _twiss = twiss;
-        }
-    }
+//    /** 
+//     * Calculate the closed orbit if needed. 
+//     * 
+//     * @deprecated  This is being moved to xal.tools.beam.calc
+//     * */
+//    @Deprecated
+//    public void calculateClosedOrbitIfNeeded() {
+//        if ( _closedOrbit == null ) {
+//            _closedOrbit = getFullTurnMap().calculateFixedPoint();
+//        }
+//    }
 
 
-    /** Calculate the betatron phase advance if necessary. */
-    private void calculateBetatronPhaseIfNeeded() {
-        if ( _betatronPhase != null )  return;
-
-        final Twiss[] twiss = getTwiss();
-        final Twiss[] initialTwiss = ((IPhaseState)_trajectory.initialState()).getTwiss();
-
-        final double[] phases = new double[NUM_MODES];
-        for ( int mode = 0 ; mode < NUM_MODES ; mode++ ) {
-            final double beta = twiss[mode].getBeta();
-            final double initialBeta = initialTwiss[mode].getBeta();
-            final double initialAlpha = initialTwiss[mode].getAlpha();
-            final double m11 = getTransferMap().getFirstOrder().getElem( 2*mode, 2*mode );
-            final double m12 = getTransferMap().getFirstOrder().getElem( 2*mode, 2*mode + 1 );
-
-            double sinPhase = m12 / Math.sqrt( beta * initialBeta );
-            sinPhase = Math.max( Math.min( sinPhase, 1.0 ), -1.0 );		// make sure it is in the range [-1, 1]
-            //sako (I think this is wrong)			final double cosPhase = m11 * Math.sqrt( beta / initialBeta ) - initialAlpha * sinPhase;
-            //sako		
-            final double cosPhase = m11 * Math.sqrt( initialBeta / beta) - initialAlpha * sinPhase;
-            //org
-            //		final double cosPhase = m11 * Math.sqrt( beta / initialBeta ) - initialAlpha * sinPhase;
-
-            final double phase = Math.asin( sinPhase );
-
-            if ( cosPhase >= 0 ) {
-                if ( sinPhase >= 0 ) {
-                    phases[mode] = phase;					
-                }
-                else {
-                    phases[mode] = 2 * Math.PI + phase;					
-                }
-            }
-            else {
-                phases[mode] = Math.PI - phase;
-            }			
-        }
-
-        _betatronPhase = new R3( phases );
-    }
+//    /** 
+//     * Calculate the twiss parameters if needed. 
+//     * 
+//     * These are the closed orbit Twiss parameters at this state location.
+//     * The phase tunes are the closed orbit tunes.
+//     * 
+//     * @deprecated  This is being moved to xal.tools.beam.calc
+//     */
+//    @Deprecated
+//    private void calculateTwissIfNeeded() {
+//        if ( _twiss == null ) {
+//            final double PI2 = 2 * Math.PI;
+//            final double[] tunes = _trajectory.getTunes();
+//            final PhaseMatrix matrix = getFullTurnMap().getFirstOrder();
+//
+//            final Twiss[] twiss = new Twiss[NUM_MODES];
+//            for ( int mode = 0 ; mode < NUM_MODES ; mode++ ) {
+//                final int index = 2 * mode;
+//                final double sinMu = Math.sin( PI2 * tunes[mode] );// _tunes could be NaN
+//                final double m11 = matrix.getElem( index, index );
+//                final double m12 = matrix.getElem( index, index + 1 );
+//                final double m22 = matrix.getElem( index + 1, index + 1 );
+//                final double beta = m12 / sinMu;
+//                final double alpha = ( m11 - m22 ) / ( 2 * sinMu );
+//                final double emittance = Double.NaN;
+//                twiss[mode] = new Twiss( alpha, beta, emittance );
+//            }
+//
+//            _twiss = twiss;
+//        }
+//    }
 
 
-    /** Calculate the chromatic dispersion if necessary */
-    private void calculateDispersionIfNeeded() {
-        if ( _dispersion == null ) {
-            _dispersion = getFullTurnMap().calculateDispersion(getGamma());
-        }
-    }
+//    /** 
+//     * Calculate the betatron phase advance if necessary. This is a 
+//     * general quantity valid around the ring.
+//     * 
+//     * 
+//     * @deprecated  This is being moved to xal.tools.beam.calc
+//     * */
+//    @Deprecated
+//    private void calculateBetatronPhaseIfNeeded() {
+//        if ( _betatronPhase != null )  return;
+//
+//        final Twiss[] twiss = getTwiss();
+//        final Twiss[] initialTwiss = ((IPhaseState)_trajectory.initialState()).getTwiss();
+//
+//        final double[] phases = new double[NUM_MODES];
+//        for ( int mode = 0 ; mode < NUM_MODES ; mode++ ) {
+//            final double beta = twiss[mode].getBeta();
+//            final double initialBeta = initialTwiss[mode].getBeta();
+//            final double initialAlpha = initialTwiss[mode].getAlpha();
+//            final double m11 = getTransferMap().getFirstOrder().getElem( 2*mode, 2*mode );
+//            final double m12 = getTransferMap().getFirstOrder().getElem( 2*mode, 2*mode + 1 );
+//
+//            double sinPhase = m12 / Math.sqrt( beta * initialBeta );
+//            sinPhase = Math.max( Math.min( sinPhase, 1.0 ), -1.0 );		// make sure it is in the range [-1, 1]
+//            //sako (I think this is wrong)			final double cosPhase = m11 * Math.sqrt( beta / initialBeta ) - initialAlpha * sinPhase;
+//            //sako		
+//            final double cosPhase = m11 * Math.sqrt( initialBeta / beta) - initialAlpha * sinPhase;
+//            //org
+//            //		final double cosPhase = m11 * Math.sqrt( beta / initialBeta ) - initialAlpha * sinPhase;
+//
+//            final double phase = Math.asin( sinPhase );
+//
+//            if ( cosPhase >= 0 ) {
+//                if ( sinPhase >= 0 ) {
+//                    phases[mode] = phase;					
+//                }
+//                else {
+//                    phases[mode] = 2 * Math.PI + phase;					
+//                }
+//            }
+//            else {
+//                phases[mode] = Math.PI - phase;
+//            }			
+//        }
+//
+//        _betatronPhase = new R3( phases );
+//    }
 
 
-    /**
-     * Get the composite transfer map for the current probe location.
-     * @return transfer map in homogeneous phase space coordinates
-     */
-    public PhaseMap getTransferMap()  {
-        return this.m_mapTrans;
-    }
+//    /** Calculate the chromatic dispersion if necessary */
+//    private void calculateDispersionIfNeeded() {
+//        if ( _dispersion == null ) {
+//            _dispersion = getFullTurnMap().calculateDispersion(getGamma());
+//        }
+//    }
 
 
-    /**
-     * Get the full turn map at this element.
-     * @return the full turn map at this element
-     */
-    public PhaseMap getFullTurnMap() {
-        calculateFullTurnMapIfNeeded();
-
-        return _fullTurnMap;
-    }
-
-
-    /**
-     * Get the betatron phase for all three phase planes from the probe's origin.  Currently this is just the fractional betatron phase.
-     * @return  vector (psix,psiy,psiz) of phases in radians
-     */
-    public R3 getBetatronPhase() {
-        calculateBetatronPhaseIfNeeded();
-
-        return _betatronPhase;
-    }
+//    /**
+//     * Get the full turn map at this element.
+//     * 
+//     * @return the full turn map at this element
+//     * 
+//     * @deprecated  <code>TransferMapState</code>s do not know about rings, they
+//     *              are just states
+//     */
+//    public PhaseMap getFullTurnMap() {
+//        calculateFullTurnMapIfNeeded();
+//
+//        return _fullTurnMap;
+//    }
 
 
-    /**
-     * Get the betatron phase for all three phase planes from the probe's origin and for the specified number of turns.
-     * Currently this is just the fractional betatron phase.
-     * @param turns the number of turns for which to calculate the phase advance
-     * @return  vector (psix,psiy,psiz) of phases in radians
-     */
-    public R3 getBetatronPhase( final int turns ) {
-        final int num_modes = 3;
-        final double[] phases = getBetatronPhase().toArray();
-        final double[] tunes = _trajectory.getTunes();
-        final double PI2 = 2 * Math.PI;
-
-        for ( int mode = 0 ; mode < num_modes ; mode++ ) {
-            phases[mode] += PI2 * turns * tunes[mode];
-        }
-
-        return new R3( phases );
-    }
+//    /**
+//     * Get the betatron phase for all three phase planes from the probe's origin.  
+//     * Currently this is just the fractional betatron phase.
+//     * @return  vector (psix,psiy,psiz) of phases in radians
+//     */
+//    public R3 getBetatronPhase() {
+//        calculateBetatronPhaseIfNeeded();
+//
+//        return _betatronPhase;
+//    }
 
 
-    /** Calculate the full turn map. */
-    private void calculateFullTurnMapIfNeeded() {
-        if ( _fullTurnMap == null ) {
-            _fullTurnMap = m_mapTrans.compose( _trajectory.getFullTurnMapAtOrigin() ).compose( m_mapTrans.inverse() );
-        }
-    }
+//    /**
+//     * Get the betatron phase for all three phase planes from the probe's origin and for the specified number of turns.
+//     * Currently this is just the fractional betatron phase.
+//     * @param turns the number of turns for which to calculate the phase advance
+//     * @return  vector (psix,psiy,psiz) of phases in radians
+//     */
+//    @Deprecated
+//    public R3 getBetatronPhase( final int turns ) {
+//        final int num_modes = 3;
+//        final double[] phases = getBetatronPhase().toArray();
+//        final double[] tunes = _trajectory.getTunes();
+//        final double PI2 = 2 * Math.PI;
+//
+//        for ( int mode = 0 ; mode < num_modes ; mode++ ) {
+//            phases[mode] += PI2 * turns * tunes[mode];
+//        }
+//
+//        return new R3( phases );
+//    }
+
+
+//    /** 
+//     * Calculate the full turn map. 
+//     * 
+//     * @deprecated  This is being moved to xal.tools.beam.calc
+//     * */
+//    @Deprecated
+//    private void calculateFullTurnMapIfNeeded() {
+//        if ( _fullTurnMap == null ) {
+//            _fullTurnMap = mapPhiCmp.compose( _trajectory.getFullTurnMapAtOrigin() ).compose( mapPhiCmp.inverse() );
+//        }
+//    }
 
 
 

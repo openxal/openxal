@@ -9,37 +9,79 @@
 
 package xal.app.energymanager;
 
-import xal.tools.*;
-import xal.smf.*;
-import xal.smf.impl.*;
-import xal.tools.beam.*;
-import xal.model.*;
-import xal.sim.scenario.Scenario;
-import xal.model.probe.*;
-//import xal.model.probe.resp.*;
-import xal.model.alg.*;
-//import xal.model.alg.resp.*;
-import xal.model.probe.traj.*;
-//import xal.model.probe.resp.traj.*;
-import xal.smf.proxy.*;
+import java.util.Iterator;
+import java.util.List;
 
-import java.util.*;
-import java.util.logging.*;
+import xal.model.probe.Probe;
+import xal.model.probe.traj.ProbeState;
+import xal.model.probe.traj.Trajectory;
+import xal.smf.AcceleratorNode;
+import xal.tools.beam.PhaseMatrix.IND;
+import xal.tools.beam.PhaseVector;
+import xal.tools.beam.Twiss;
+import xal.tools.beam.calc.ISimulationResults.ISimEnvResults;
+import xal.tools.beam.calc.SimpleSimResultsAdaptor;
 
 
-/** A simulation result. */
+/** 
+ * <p>
+ * A simulation result.
+ * </p>
+ * <p>
+ * <h4>CKA NOTES:</h4>
+ * - The probe states had been cast to <code>EnvelopeProbeState</code> when I took over
+ * the refactoring of this class.  Originally they were treated as <code>PhaseState</code>
+ * (or <code>IPhaseState</code>) interfaces.
+ * <br/>
+ * <br/>
+ * - Some methods calling <code>{@link #getStates()}</code> still expected the 
+ * <code>IPhaseState</code> interface.
+ * <br/>
+ * <br/>
+ * - In practice the probe states are either <code>TransferMapState</code> objects or
+ * <code>EnvelopeProbeState</code> objects, depending upon the simulation type 
+ * (i.e., the <code>Probe</code> type).
+ * <br/>
+ * <br/>
+ * - I have refactored this class to make the simulation data processing depending upon
+ * the type of simulation data offered (transfer maps or envelope data).
+ * </p>
+ * 
+ * @author Thomas Pelaia
+ * @author Christopher K. Allen
+ * @since  6/14/05.
+ * @version Nov 7, 2013
+ */
 public class Simulation {
+    
+    /*
+     * Global Constants
+     */
+    
     /** conversion factor to convert eV to MeV */
     final static private double CONVERT_EV_TO_MEV = 1.0e-6;
     
-	/** index of the X coordinate result */
-	static final public int X_INDEX = IPhaseState.X;
+//	/** index of the X coordinate result */
+//	static final public int X_INDEX = IPhaseState.X;
+//	
+//	/** index of the Y coordinate result */
+//	static final public int Y_INDEX = IPhaseState.Y;
+//	
+//	/** index of the Z coordinate result */
+//	static final public int Z_INDEX = IPhaseState.Z;
+    /** index of the X coordinate result */
+    static final public int X_INDEX = 0;
+    
+    /** index of the Y coordinate result */
+    static final public int Y_INDEX = 1;
+    
+    /** index of the Z coordinate result */
+    static final public int Z_INDEX = 2;
 	
-	/** index of the Y coordinate result */
-	static final public int Y_INDEX = IPhaseState.Y;
 	
-	/** index of the Z coordinate result */
-	static final public int Z_INDEX = IPhaseState.Z;
+	/*
+	 * Local Attributes
+	 */
 	
 	/** Evaluation nodes */
 	final protected List<AcceleratorNode> _evaluationNodes;
@@ -84,7 +126,7 @@ public class Simulation {
 	protected double[] _positions;
 	
 	/** the phase states */
-	protected EnvelopeProbeState[] _states;
+	protected ProbeState[] _states;
 	
 	/** element IDs */
 	protected String[] _evaluationElementIDs;
@@ -117,21 +159,58 @@ public class Simulation {
 	protected StateFinder _stateFinder;
 	
 	
+	/** The machine parameter calculation engine */
+    private ISimEnvResults<ProbeState>     adptSimResults;
+	
+    
+    /*
+     * Initialization 
+     */
+    
 	/** 
 	 * Constructor 
+	 * 
+	 * @throws IllegalArgumentException    the probe is not a recognized type
 	 */
-	public Simulation( final Probe probe, final List<AcceleratorNode> evaluationNodes ) {
+	public Simulation( final Probe probe, final List<AcceleratorNode> evaluationNodes ) 
+	        throws IllegalArgumentException
+	{
 		_evaluationNodes = evaluationNodes;
 		_trajectory = probe.getTrajectory();
 		
 		_outputKineticEnergy = CONVERT_EV_TO_MEV * probe.getKineticEnergy();
 		
 		_stateFinder = newFirstStateFinder();
+		
+		// Create the machine parameter calculation engine according to the
+		//    type of probe we are given
+		this.adptSimResults = new SimpleSimResultsAdaptor(_trajectory);
+		
+//        if (probe instanceof TransferMapProbe) {
+//            TransferMapTrajectory   traj = (TransferMapTrajectory)probe.getTrajectory();
+//
+//            this.cmpMchParams = new CalculationsOnRings(traj);
+//            
+//        } else if (probe instanceof EnvelopeProbe) {
+//            EnvelopeTrajectory traj = (EnvelopeTrajectory)probe.getTrajectory();
+//            
+//            this.cmpMchParams = new CalculationsOnBeams(traj);
+//            
+//        } else {
+//            
+//            throw new IllegalArgumentException("Unknown probe type " + probe.getClass().getName());
+//        }
+		
 	}
 
 
+	/*
+	 * Object Overrides
+	 */
+	
 	/** Provide a string representation of the global parameters of this Simulation */
-	public String toString() {
+	@Override
+    public String toString() {
 		final StringBuffer buffer = new StringBuffer();
 		buffer.append( "Output Kinetic Energy: " + getOutputKineticEnergy() );
 		buffer.append( ", Beta Min: [ " + getBetaMin()[X_INDEX] + ", " + getBetaMin()[Y_INDEX] + " ]" );
@@ -356,8 +435,8 @@ public class Simulation {
 	 * Get the phase states array corresponding to the evaluation nodes.
 	 * @return the array of phase states
 	 */
-	public EnvelopeProbeState[] getStates() {
-		if ( _states == null ) {
+	public ProbeState[] getStates() {
+    	if ( _states == null ) {
 			populateStates();
 		}
 		
@@ -393,7 +472,7 @@ public class Simulation {
 	
 	/** populate positions */
 	protected void populatePositions() {
-		final IPhaseState[] states = getStates();
+		final ProbeState[] states = getStates();
 		final double[] positions = new double[ states.length ];
 		
 		for ( int index = 0 ; index < states.length ; index++ ) {
@@ -406,7 +485,7 @@ public class Simulation {
 	
 	/** populate evaluation element and node IDs */
 	protected void populateEvaluationElementAndNodeIDs() {
-		final IPhaseState[] states = getStates();
+		final ProbeState[] states = getStates();
         //System.out.println( "State count: " + states.length );
 		final int numNodes = _evaluationNodes.size();
 		
@@ -414,7 +493,7 @@ public class Simulation {
 		_evaluationElementIDs = new String[ numNodes ];
 		
 		for ( int index = 0 ; index < numNodes ; index++ ) {
-            final IPhaseState state = states[index];
+            final ProbeState state = states[index];
 			_evaluationNodeIDs[ index ] = _evaluationNodes.get( index ).getId();
             //System.out.println( "index: " + index + ", node: " + _evaluationNodeIDs[ index ] + ", state: " + state );
             if ( state != null ) {
@@ -426,11 +505,16 @@ public class Simulation {
 	
 	/** populate alpha */
 	protected void populateAlpha() {
-		final IPhaseState[] states = getStates();
+		final ProbeState[] states = getStates();
 		final double[][] alpha = new double[ Z_INDEX + 1 ][ states.length ];
 		
 		for ( int index = 0 ; index < states.length ; index++ ) {
-			final Twiss[] twiss = states[ index ].getTwiss();
+		    ProbeState    state = states[index];
+		    
+		    
+//			final Twiss[] twiss = states[ index ].getTwiss();
+            final Twiss[] twiss = this.adptSimResults.computeTwissParameters(state);
+		    
 			for ( int axis = 0 ; axis <= Z_INDEX ; axis++ ) {
 				alpha[ axis ][ index ] = twiss[ axis ].getAlpha();
 			}			
@@ -442,13 +526,16 @@ public class Simulation {
 	
 	/** populate Beta */
 	protected void populateBeta() {
-		final IPhaseState[] states = getStates();
+		final ProbeState[] states = getStates();
 		final double[][] beta = new double[ Z_INDEX + 1 ][ states.length ];
 		
 		for ( int index = 0 ; index < states.length ; index++ ) {
-			final Twiss[] twiss = states[ index ].getTwiss();
+//			final Twiss[] arrTwiss = states[ index ].getTwiss();
+			ProbeState    state    = states[ index ];
+			final Twiss[] arrTwiss = this.adptSimResults.computeTwissParameters(state);
+			
 			for ( int axis = 0 ; axis <= Z_INDEX ; axis++ ) {
-				beta[ axis ][ index ] = twiss[ axis ].getBeta();
+				beta[ axis ][ index ] = arrTwiss[ axis ].getBeta();
 			}			
 		}
 		
@@ -458,11 +545,14 @@ public class Simulation {
 	
 	/** populate emittance */
 	protected void populateEmittance() {
-		final IPhaseState[] states = getStates();
+		final ProbeState[] states = getStates();
 		final double[][] emittance = new double[ Z_INDEX + 1 ][ states.length ];
 		
 		for ( int index = 0 ; index < states.length ; index++ ) {
-			final Twiss[] twiss = states[ index ].getTwiss();
+//			final Twiss[] twiss = states[ index ].getTwiss();
+		    ProbeState    state = states[ index ];
+		    final Twiss[] twiss = this.adptSimResults.computeTwissParameters(state);
+		    
 			for ( int axis = 0 ; axis <= Z_INDEX ; axis++ ) {
 				emittance[ axis ][ index ] = twiss[ axis ].getEmittance();
 			}			
@@ -474,13 +564,20 @@ public class Simulation {
 	
 	/** populate chromatic dispersion */
 	protected void populateChromaticDispersion() {
-		final EnvelopeProbeState[] states = getStates();
+		final ProbeState[] states = getStates();
 		final double[][] eta = new double[ Z_INDEX + 1 ][ states.length ];
 		
 		for ( int index = 0 ; index < states.length ; index++ ) {
-			eta[X_INDEX][index] = states[ index ].getChromDispersionX();
-			eta[Y_INDEX][index] = states[ index ].getChromDispersionY();
-			eta[Z_INDEX][index] = 0.0;
+		    ProbeState    state   = states[ index ];
+		    PhaseVector   vecDisp = this.adptSimResults.computeChromDispersion(state);
+		    
+		    eta[X_INDEX][index] = vecDisp.getElem(IND.X);
+		    eta[Y_INDEX][index] = vecDisp.getElem(IND.Y);
+            eta[Z_INDEX][index] = 0.0;
+		    
+//			eta[X_INDEX][index] = states[ index ].getChromDispersionX();
+//			eta[Y_INDEX][index] = states[ index ].getChromDispersionY();
+//			eta[Z_INDEX][index] = 0.0;
 		}
 		
 		_eta = eta;
@@ -489,13 +586,17 @@ public class Simulation {
 	
 	/** populate the kinetic energy array */
 	private void populateChargeAndEnergy() {
-		final IPhaseState[] states = getStates();
+//		final IPhaseState[] states = getStates();
+
+	    final ProbeState[] states = getStates();
 		final double[] kineticEnergy = new double[ states.length ];
         final double[] restEnergy = new double[ states.length ];
         final double[] speciesCharge = new double[ states.length ];
 		
 		for ( int index = 0 ; index < states.length ; index++ ) {
-            final IPhaseState state = states[ index ];
+//            final IPhaseState state = states[ index ];
+            final ProbeState state = states[ index ];
+            
 			kineticEnergy[ index  ] = CONVERT_EV_TO_MEV * state.getKineticEnergy();	// kinetic energy in MeV
             restEnergy[ index ] = CONVERT_EV_TO_MEV * state.getSpeciesRestEnergy();   // rest energy in MeV
             speciesCharge[ index ] = state.getSpeciesCharge();  // species charge in positive electron charge units
@@ -512,10 +613,12 @@ public class Simulation {
 		final double[] minBeta = new double[] { Double.MAX_VALUE, Double.MAX_VALUE, Double.MAX_VALUE };
 		final double[] maxBeta = new double[] { 0, 0, 0 };
 		
-		final IPhaseState[] states = getStates();
+		final ProbeState[] states = getStates();
 		
 		for ( int index = 0 ; index < states.length ; index++ ) {
-			final Twiss[] twiss = states[ index ].getTwiss();
+//			final Twiss[] twiss = states[ index ].getTwiss();
+			final Twiss[] twiss = this.adptSimResults.computeTwissParameters( states[index] );
+			
 			for ( int axis = 0 ; axis <= Z_INDEX ; axis++ ) {
 				final double beta = twiss[ axis ].getBeta();
 				if ( Double.isNaN( beta ) ) {
@@ -543,7 +646,7 @@ public class Simulation {
 		final double[] maxEta = new double[] { Double.MIN_VALUE, Double.MIN_VALUE, 0.0 };
 		
 		final double[][] dispersion = getEta();
-		final IPhaseState[] states = getStates();
+		final ProbeState[] states = getStates();
 		
 		for ( int index = 0 ; index < states.length ; index++ ) {
 			for ( int axis = 0 ; axis < Z_INDEX ; axis++ ) {
@@ -605,7 +708,7 @@ public class Simulation {
 	/** Find the node's corresponding state from the state iterator */
 	static protected interface StateFinder {
 		/** find the trajectory's states corresponding to the specified nodes */
-		public EnvelopeProbeState[] findStates( final List<AcceleratorNode> nodes, final Trajectory trajectory );
+		public ProbeState[] findStates( final List<AcceleratorNode> nodes, final Trajectory trajectory );
 	}
 	
 	
@@ -615,17 +718,18 @@ public class Simulation {
 	 */
 	static protected StateFinder newFirstStateFinder() {
 		return new StateFinder() {
-			public EnvelopeProbeState[] findStates( final List nodes, final Trajectory trajectory ) {
-				final Iterator stateIter = trajectory.stateIterator();
-				final EnvelopeProbeState[] states = new EnvelopeProbeState[ nodes.size() ];
+			@Override
+            public ProbeState[] findStates( final List nodes, final Trajectory trajectory ) {
+				final Iterator<ProbeState> stateIter = trajectory.stateIterator();
+				final ProbeState[] states = new ProbeState[ nodes.size() ];
 				
 				int index = 0;
-				final Iterator nodeIter = nodes.iterator();
+				final Iterator<AcceleratorNode> nodeIter = nodes.iterator();
 				while ( nodeIter.hasNext() ) {
 					final String nodeID = ( (AcceleratorNode)nodeIter.next() ).getId();
                     //System.out.println( "Searching for node: " + nodeID );
 					while ( stateIter.hasNext() ) {
-						final EnvelopeProbeState state = (EnvelopeProbeState)stateIter.next();
+						final ProbeState state = (ProbeState)stateIter.next();
                         //System.out.println( "Testing state: " + state.getElementId() );
 						if ( state.getElementId().startsWith( nodeID ) ) {
 							states[ index++ ] = state;

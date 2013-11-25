@@ -667,7 +667,7 @@ public class ModelFace extends JPanel{
                 EnvelopeTrajectory traj = (EnvelopeTrajectory) tempprobe.getTrajectory();
                 Iterator iterState= traj.stateIterator();
                 EnvelopeProbeState state = (EnvelopeProbeState)iterState.next();
-                CovarianceMatrix covarianceMatrix = state.getCorrelationMatrix();
+                CovarianceMatrix covarianceMatrix = state.getCovarianceMatrix();
                 Twiss[] twiss = covarianceMatrix.computeTwiss();
                 
                 limitdialog.add(set);
@@ -977,7 +977,7 @@ public class ModelFace extends JPanel{
 		initprobe.setKineticEnergy(newstate.getKineticEnergy());
 		initprobe.setPosition(seq.getPosition(seq.getNodeWithId(init)));
 		
-        CovarianceMatrix covarianceMatrix = newstate.getCorrelationMatrix();
+        CovarianceMatrix covarianceMatrix = newstate.getCovarianceMatrix();
         Twiss[] twiss = covarianceMatrix.computeTwiss();
         
 		
@@ -1180,7 +1180,7 @@ public class ModelFace extends JPanel{
         Iterator<ProbeState> iterState= traj.stateIterator();
         EnvelopeProbeState state= (EnvelopeProbeState)iterState.next();
         
-        CovarianceMatrix covarianceMatrix = state.getCorrelationMatrix();
+        CovarianceMatrix covarianceMatrix = state.getCovarianceMatrix();
         Twiss[] twiss = covarianceMatrix.computeTwiss();
         
         if(!limitsWereSet || elementchanged){
@@ -1194,7 +1194,7 @@ public class ModelFace extends JPanel{
 			while(iterState.hasNext()){
 				state= (EnvelopeProbeState)iterState.next();
                 
-                covarianceMatrix = state.getCorrelationMatrix();
+                covarianceMatrix = state.getCovarianceMatrix();
                 twiss = covarianceMatrix.computeTwiss();
                 
                 
@@ -1245,7 +1245,7 @@ public class ModelFace extends JPanel{
 		for(int i =0; i<size; i++){
 			EnvelopeProbeState state = (EnvelopeProbeState)traj.statesForElement(Wirenamelist.get(i))[0];
             
-            CovarianceMatrix covarianceMatrix = state.getCorrelationMatrix();
+            CovarianceMatrix covarianceMatrix = state.getCovarianceMatrix();
             Twiss[] twiss = covarianceMatrix.computeTwiss();
 			
 			rx =  twiss[0].getEnvelopeRadius();
@@ -1283,7 +1283,7 @@ public class ModelFace extends JPanel{
 		for(int i =0; i<size; i++){
 			EnvelopeProbeState state = (EnvelopeProbeState)traj.statesForElement(Wirenamelist.get(i))[0];
             
-            CovarianceMatrix covarianceMatrix = state.getCorrelationMatrix();
+            CovarianceMatrix covarianceMatrix = state.getCovarianceMatrix();
             Twiss[] twiss = covarianceMatrix.computeTwiss();
 			
 			rx =  twiss[0].getEnvelopeRadius();
@@ -1327,7 +1327,7 @@ public class ModelFace extends JPanel{
 			EnvelopeProbeState state= (EnvelopeProbeState)iterState.next();
 			sdata.add(state.getPosition());
             
-            CovarianceMatrix covarianceMatrix = state.getCorrelationMatrix();
+            CovarianceMatrix covarianceMatrix = state.getCovarianceMatrix();
             Twiss[] twiss = covarianceMatrix.computeTwiss();
             
 			double rx =  1000.0*twiss[0].getEnvelopeRadius();
@@ -1458,7 +1458,7 @@ public class ModelFace extends JPanel{
         
         while(iterState.hasNext()){
             EnvelopeProbeState state= (EnvelopeProbeState)iterState.next();
-            CovarianceMatrix covarianceMatrix = state.getCorrelationMatrix();
+            CovarianceMatrix covarianceMatrix = state.getCovarianceMatrix();
             Twiss[] twiss = covarianceMatrix.computeTwiss();
             
             double rx =  1000.0*twiss[0].getEnvelopeRadius();

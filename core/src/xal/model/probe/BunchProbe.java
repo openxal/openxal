@@ -5,6 +5,7 @@
  * Modifcations:
  *      11/2006 - CKA changed the primary state variables to bunch frequency Q
  *                and beam current I
+ *      11/2013 - CKA removed the "betatron phase" attribute.
  */
 
 package xal.model.probe;
@@ -53,8 +54,8 @@ public abstract class BunchProbe extends Probe {
     /** Beam current */
     private double  dblCurrent = 0.0;
 
-    /** particle betatron phase with space charge */
-    protected R3 vecPhsBeta;
+//    /** particle betatron phase with space charge */
+//    protected R3 vecPhsBeta;
     
 //    /** Beam charge */
 //    private double m_dblBmQ = 0.0;
@@ -92,7 +93,7 @@ public abstract class BunchProbe extends Probe {
      */
     protected BunchProbe()   {
         super();
-        this.vecPhsBeta = R3.zero();
+//        this.vecPhsBeta = R3.zero();
     }
   
     /**
@@ -107,9 +108,8 @@ public abstract class BunchProbe extends Probe {
         //this.setBunchFrequency(this.getBunchFrequency());
         this.setBunchFrequency(probe.getBunchFrequency());
         this.setBeamCurrent(probe.getBeamCurrent());
-        this.setBetatronPhase(new R3(probe.getBetatronPhase()));
+//        this.setBetatronPhase(new R3(probe.getBetatronPhase()));
     };        
-
     
     /**
      * Set the bunch arrival time frequency.
@@ -130,17 +130,17 @@ public abstract class BunchProbe extends Probe {
     };
     
 
-    /**
-     * Set the betatron phase with space charge for each phase plane.
-     * 
-     * @param vecPhase
-     *            vector (psix,psiy,psiz) of betatron phases in <b>radians </b>
-     */
-    public void setBetatronPhase(R3 vecPhase) {
-        this.vecPhsBeta = vecPhase;
-        //this.m_vecPhsBeta = new R3(vecPhase);
-        // TODO - optimize the redundant copy
-    }
+//    /**
+//     * Set the betatron phase with space charge for each phase plane.
+//     * 
+//     * @param vecPhase
+//     *            vector (psix,psiy,psiz) of betatron phases in <b>radians </b>
+//     */
+//    public void setBetatronPhase(R3 vecPhase) {
+//        this.vecPhsBeta = vecPhase;
+//        //this.m_vecPhsBeta = new R3(vecPhase);
+//        // TODO - optimize the redundant copy
+//    }
 
 //    /**
 //     *  Set the total beam charge 
@@ -253,8 +253,30 @@ public abstract class BunchProbe extends Probe {
 
     
     /*
-     *  Trajectory Support
+     * Probe Overrides
      */
+    
+    /**
+     * Just restating <code>Probe.{@link #createTrajectory()}</code>.
+     *
+     * @see xal.model.probe.Probe#createTrajectory()
+     *
+     * @author Christopher K. Allen
+     * @version  Nov 5, 2013
+     */
+    @Override
+    public abstract BeamTrajectory createTrajectory();
+    
+    /**
+     * Just restating <code>Probe.{@link #createProbeState()}</code>
+     *
+     * @see xal.model.probe.Probe#createProbeState()
+     *
+     * @author Christopher K. Allen
+     * @since  Nov 5, 2013
+     */
+    @Override
+    public abstract BunchProbeState createProbeState();
     
     /**
      * Apply the contents of ProbeState to update my current state.  Subclass
@@ -274,17 +296,13 @@ public abstract class BunchProbe extends Probe {
         super.applyState(stateBunch);
         this.setBunchFrequency( stateBunch.getBunchFrequency() );
         this.setBeamCurrent( stateBunch.getBeamCurrent() );
-        this.setBetatronPhase(stateBunch.getBetatronPhase());
+//        this.setBetatronPhase(stateBunch.getBunchBetatronPhase());
         
-//	setElapsedTime(((BunchProbeState)state).getElapsedTime());
+//  setElapsedTime(((BunchProbeState)state).getElapsedTime());
     }
 
     
-    @Override
-    public abstract BeamTrajectory createTrajectory();
     
-    @Override
-    public abstract BunchProbeState createProbeState();
 }
 
 

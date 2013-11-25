@@ -20,20 +20,20 @@ public class ProbeXmlWriter {
 	
 	private static final String DOC_TYPE = Probe.PROBE_LABEL;
 
-	/** Sako
-	 * Writes supplied <code>Probe</code> to the specified XML file with Twiss.
-	 * 
-	 * @param aProbe <code>Probe</code> to output
-	 * @param fileURI String URI of output file
-	 * 
-	 * @throws IOException error writing to fileURI
-	 */
-	public static void writeXmlAsTwiss(EnvelopeProbe aProbe, String fileURI) 
-			throws IOException {
-		ProbeXmlWriter writer = new ProbeXmlWriter();
-		XmlDataAdaptor doc = writer.writeProbeToDocAsTwiss(aProbe);
-		doc.writeTo(new File(fileURI));
-	}
+//	/** Sako
+//	 * Writes supplied <code>Probe</code> to the specified XML file with Twiss.
+//	 * 
+//	 * @param aProbe <code>Probe</code> to output
+//	 * @param fileURI String URI of output file
+//	 * 
+//	 * @throws IOException error writing to fileURI
+//	 */
+//	public static void writeXmlAsTwiss(EnvelopeProbe aProbe, String fileURI) 
+//			throws IOException {
+//		ProbeXmlWriter writer = new ProbeXmlWriter();
+//		XmlDataAdaptor doc = writer.writeProbeToDocAsTwiss(aProbe);
+//		doc.writeTo(new File(fileURI));
+//	}
 	
 	
 	/**
@@ -89,21 +89,22 @@ public class ProbeXmlWriter {
 	    return document;        
 	}
 	
-	/**
-	 * Writes supplied <code>Probe</code> to the specified XML file with Twiss.
-	 * 
-	 * @param aProbe <code>Probe</code> to write to XML file
-	 * 
-	 * @throws IOException error writing to fileURI
-	 */
-	public XmlDataAdaptor writeProbeToDocAsTwiss(EnvelopeProbe aProbe) 
-	throws IOException {
-//	    return writeProbeToDoc(aProbe, false);
-	    XmlDataAdaptor document = 
-	        XmlDataAdaptor.newEmptyDocumentAdaptor(DOC_TYPE, null);
-	    aProbe.saveAsTwiss(document);
-	    return document;        
-	}
+//	/**
+//	 * Writes supplied <code>Probe</code> to the specified XML file with Twiss.
+//	 * 
+//	 * @param aProbe <code>Probe</code> to write to XML file
+//	 * 
+//	 * @throws IOException error writing to fileURI
+//	 */
+//	public XmlDataAdaptor writeProbeToDocAsTwiss(EnvelopeProbe aProbe) 
+//	throws IOException {
+////	    return writeProbeToDoc(aProbe, false);
+//	    XmlDataAdaptor document = 
+//	        XmlDataAdaptor.newEmptyDocumentAdaptor(DOC_TYPE, null);
+//	    aProbe.save(document);
+//	    aProbe.saveAsTwiss(document);
+//	    return document;        
+//	}
 
     
 //  CKA - How do you know probe has Twiss parameters?

@@ -1212,7 +1212,7 @@ public class MatchingFace extends JPanel{
             EnvelopeProbeState state= (EnvelopeProbeState)iterState.next();
             sdata.add(state.getPosition());
             
-            CovarianceMatrix covarianceMatrix = state.getCorrelationMatrix();
+            CovarianceMatrix covarianceMatrix = state.getCovarianceMatrix();
             Twiss[] twiss = covarianceMatrix.computeTwiss();
             double rx =  1000.0*twiss[0].getEnvelopeRadius();
             double ry =  1000.0*twiss[1].getEnvelopeRadius();

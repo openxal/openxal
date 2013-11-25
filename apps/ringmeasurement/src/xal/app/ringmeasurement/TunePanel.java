@@ -18,8 +18,10 @@ import java.awt.GridLayout;
 import java.awt.Dimension;
 import java.awt.event.*;
 import java.text.NumberFormat;
+
 import javax.swing.*;
 import javax.swing.event.*;
+
 import java.text.ParseException;
 
 import xal.tools.apputils.EdgeLayout;
@@ -28,6 +30,7 @@ import xal.smf.Ring;
 import xal.extension.widgets.swing.DecimalField;
 import xal.ca.*;
 import xal.tools.apputils.files.*;
+import xal.tools.beam.calc.CalculationsOnRings;
 import xal.service.pvlogger.*;
 import xal.service.pvlogger.query.*;
 import xal.tools.database.*;
@@ -746,12 +749,26 @@ public class TunePanel extends JPanel implements ConnectionListener,
 			double xPhaseDiff0 = goodBPMdata.get(goodBPMs.get(0))[0].doubleValue();
 			double yPhaseDiff0 = goodBPMdata.get(goodBPMs.get(0))[1].doubleValue();
 			
-			// get the 1st good BPM betatron phase as the reference
-			TransferMapState state0 = (TransferMapState) traj
-					.stateForElement(goodBPMs.get(0));
-			double xModelPhase0 = state0.getBetatronPhase().getx();
-			double yModelPhase0 = state0.getBetatronPhase().gety();
+	        // CKA - Create a machine parameter processor for the ring to replace
+	        //    the machine parameters that were previously processed in the
+	        //    simulation data itself.
+	        CalculationsOnRings     cmpRingParams = new CalculationsOnRings(traj);
+	        
+	        // CKA - This
+	        R3   vecPhaseModel0 = cmpRingParams.ringBetatronPhaseAdvance();
+	        
+	        double xModelPhase0 = vecPhaseModel0.getx();
+	        double yModelPhase0 = vecPhaseModel0.gety();
+	        
+	        // Replaces this
+	        
+//			// get the 1st good BPM betatron phase as the reference
+//			TransferMapState state0 = (TransferMapState) traj
+//					.stateForElement(goodBPMs.get(0));
+//			double xModelPhase0 = state0.getBetatronPhase().getx();
+//			double yModelPhase0 = state0.getBetatronPhase().gety();
 
+	        
 			for (int i=0; i<goodBPMs.size(); i++) {
 				// xPhaseDiff[i] = (xPhase[i] - xPhase[0]);
 				// yPhaseDiff[i] = (yPhase[i] - yPhase[0]);
@@ -766,10 +783,19 @@ public class TunePanel extends JPanel implements ConnectionListener,
 				// get model BPM phase difference
 				TransferMapState state = (TransferMapState) traj
 				.stateForElement(goodBPMs.get(i));
-				xModelPhase[i] = state.getBetatronPhase().getx()
-				- xModelPhase0;
-				yModelPhase[i] = state.getBetatronPhase().gety()
-				- yModelPhase0;
+				
+				// CKA - This
+				R3  vecPhaseBpm = cmpRingParams.computeBetatronPhase(state);
+				
+				xModelPhase[i] = vecPhaseBpm.getx() - xModelPhase0;
+				yModelPhase[i] = vecPhaseBpm.gety() - yModelPhase0;
+
+				// Replaces this
+//				xModelPhase[i] = state.getBetatronPhase().getx()
+//				- xModelPhase0;
+//				yModelPhase[i] = state.getBetatronPhase().gety()
+//				- yModelPhase0;
+				
 				if (xModelPhase[i] < 0.)
 					xModelPhase[i] = xModelPhase[i] + 2. * Math.PI;
 				if (yModelPhase[i] < 0.)

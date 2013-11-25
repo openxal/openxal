@@ -597,7 +597,7 @@ public class ModelFace extends JPanel{
 		}
 		EnvelopeProbeState state = (EnvelopeProbeState)traj.statesForElement("Begin_Of_CCL")[0];
         
-        CovarianceMatrix covarianceMatrix = state.getCorrelationMatrix();
+        CovarianceMatrix covarianceMatrix = state.getCovarianceMatrix();
         Twiss[] twiss = covarianceMatrix.computeTwiss();
 		
 		alphax0=twiss[0].getAlpha();
@@ -661,7 +661,7 @@ public class ModelFace extends JPanel{
 			String name = namelist.get(i);
 			EnvelopeProbeState state = (EnvelopeProbeState)traj.statesForElement(name)[0];
             
-            CovarianceMatrix covarianceMatrix = state.getCorrelationMatrix();
+            CovarianceMatrix covarianceMatrix = state.getCovarianceMatrix();
             Twiss[] twiss = covarianceMatrix.computeTwiss();
             
             
@@ -851,7 +851,7 @@ public class ModelFace extends JPanel{
 			EnvelopeProbeState state= (EnvelopeProbeState)iterState.next();
 			sdata.add(state.getPosition());
             
-            CovarianceMatrix covarianceMatrix = state.getCorrelationMatrix();
+            CovarianceMatrix covarianceMatrix = state.getCovarianceMatrix();
             Twiss[] twiss = covarianceMatrix.computeTwiss();
 			double rz =  1000.0*twiss[2].getEnvelopeRadius();
 			if((state.getElementId()).equals(new String("ELEMENT_CENTER:" + namelist.get(0)))) resetResultsTable(twiss);

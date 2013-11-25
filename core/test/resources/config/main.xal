@@ -1,7 +1,7 @@
 <?xml version = '1.0' encoding = 'UTF-8'?>
 <!DOCTYPE sources SYSTEM "xdxf.dtd">
 <sources>
-        <modelConfig_source name="modelConfig" url="ModelConfig.xml" />
+    <modelConfig_source name="modelConfig" url="ModelConfig.xml" />
 	<deviceMapping_source name="deviceMapping" url="sns.impl"/>
 	<optics_source name="optics" url="sns.xdxf"/>
 	<hardware_status name="Hardware Status" url="hardware_status.xdxf"/>

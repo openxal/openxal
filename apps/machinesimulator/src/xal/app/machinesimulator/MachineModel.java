@@ -8,16 +8,10 @@
 
 package xal.app.machinesimulator;
 
-import xal.tools.data.*;
-import xal.model.*;
-import xal.model.alg.*;
-import xal.model.probe.*;
-import xal.sim.scenario.*;
-import xal.smf.*;
-import xal.smf.impl.Electromagnet;
-
-import java.util.*;
-import java.util.logging.*;
+import xal.model.ModelException;
+import xal.smf.AcceleratorSeq;
+import xal.tools.data.DataAdaptor;
+import xal.tools.data.DataListener;
 
 
 /** MachineModel is the main model for the machine */

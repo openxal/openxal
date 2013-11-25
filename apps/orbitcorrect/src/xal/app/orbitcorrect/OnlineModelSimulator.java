@@ -9,22 +9,23 @@
  */
 package xal.app.orbitcorrect;
 
-import xal.tools.*;
-import xal.smf.*;
-import xal.smf.impl.*;
-import xal.tools.beam.*;
-import xal.model.*;
-import xal.sim.scenario.*;
-import xal.model.probe.*;
-//import xal.model.probe.resp.*;
-import xal.model.alg.*;
-//import xal.model.alg.resp.*;
-import xal.model.probe.traj.*;
-//import xal.model.probe.resp.traj.*;
-import xal.smf.proxy.*;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-import java.util.*;
-import java.util.logging.*;
+import xal.model.alg.ParticleTracker;
+import xal.model.alg.TransferMapTracker;
+import xal.model.probe.Probe;
+import xal.model.probe.traj.ICoordinateState;
+import xal.model.probe.traj.ProbeState;
+import xal.model.probe.traj.Trajectory;
+import xal.sim.scenario.AlgorithmFactory;
+import xal.sim.scenario.ProbeFactory;
+import xal.sim.scenario.Scenario;
+import xal.smf.Ring;
+import xal.smf.proxy.ElectromagnetPropertyAccessor;
+import xal.tools.beam.PhaseVector;
+import xal.tools.beam.calc.SimpleSimResultsAdaptor;
 
 
 /**
@@ -33,6 +34,99 @@ import java.util.logging.*;
  * @since    Sep 07, 2004
  */
 public class OnlineModelSimulator extends MappedSimulator {
+    
+//    /*
+//     * Internal Classes
+//     */
+//    
+//    private static class SimDataProcessor implements ISimLocResults<ProbeState> {
+//
+//        /*
+//         * Local Attributes
+//         */
+//        
+//        /** The simulation data */
+//        private final Trajectory                        traj;
+//        
+//        /** The particle trajectory data processor */
+//        private final ISimLocResults<? extends ProbeState>  engResults;
+//        
+//        
+//        
+//        /**
+//         * @param supplies
+//         * @param bpmAgents
+//         * @return
+//         *
+//         * @author Christopher K. Allen
+//         * @since  Nov 15, 2013
+//         */
+//        public SimDataProcessor(Trajectory traj) {
+//            this.traj = traj;
+//            
+//            if (traj instanceof TransferMapTrajectory) {
+//                TransferMapTrajectory trjXferMap = (TransferMapTrajectory)traj;
+//                
+//                this.engResults = new CalculationsOnMachines(trjXferMap);
+//                
+//            } else if (traj instanceof ParticleTrajectory) {
+//                ParticleTrajectory  trjPart = (ParticleTrajectory)traj;
+//                
+//                this.engResults = new CalculationsOnParticles(trjPart);
+//                
+//            } else {
+//                
+//                throw new IllegalArgumentException("Unknown trajectory type " + traj.getClass());
+//            }
+//            
+//        }
+//        
+//        /*
+//         * ISimLocResults Interface
+//         */
+//        
+//        /**
+//         *
+//         * @see xal.tools.beam.calc.ISimLocResults#computeCoordinatePosition(xal.model.probe.traj.ProbeState)
+//         *
+//         * @author Christopher K. Allen
+//         * @since  Nov 15, 2013
+//         */
+//        @Override
+//        public PhaseVector computeCoordinatePosition(ProbeState state) {
+//            if (state instanceof TransferMapState)
+//            return this.engResults.computeCoordinatePosition((TransferMapState)state);
+//        }
+//
+//        /**
+//         *
+//         * @see xal.tools.beam.calc.ISimLocResults#computeFixedOrbit(xal.model.probe.traj.ProbeState)
+//         *
+//         * @author Christopher K. Allen
+//         * @since  Nov 15, 2013
+//         */
+//        @Override
+//        public PhaseVector computeFixedOrbit(ProbeState state) {
+//            // TODO Auto-generated method stub
+//            return null;
+//        }
+//
+//        /**
+//         *
+//         * @see xal.tools.beam.calc.ISimLocResults#computeChromAberration(xal.model.probe.traj.ProbeState)
+//         *
+//         * @author Christopher K. Allen
+//         * @since  Nov 15, 2013
+//         */
+//        @Override
+//        public PhaseVector computeChromAberration(ProbeState state) {
+//            // TODO Auto-generated method stub
+//            return null;
+//        }
+//        
+//    }
+    
+    
 	/**
 	 * Constructor
 	 * @param orbitModel    The orbit model.
@@ -64,8 +158,21 @@ public class OnlineModelSimulator extends MappedSimulator {
 		final String FIELD_PROPERTY = ElectromagnetPropertyAccessor.PROPERTY_FIELD;
 		
 		try {
-            
-            final Probe probe = (_sequence instanceof Ring) ? ProbeFactory.getTransferMapProbe( _sequence, AlgorithmFactory.createTransferMapTracker(_sequence) ) : ProbeFactory.createParticleProbe(_sequence, AlgorithmFactory.createParticleTracker(_sequence));
+
+		    // CKA - Nov 25, 2013
+		    // Create the probe according to the sequence type then run an online model
+//            final Probe probe = (_sequence instanceof Ring) ? ProbeFactory.getTransferMapProbe( _sequence, AlgorithmFactory.createTransferMapTracker(_sequence) ) : ProbeFactory.createParticleProbe(_sequence, AlgorithmFactory.createParticleTracker(_sequence));
+		
+		    final Probe probe;
+		    if (_sequence instanceof Ring) {
+		        TransferMapTracker    algXferMap = AlgorithmFactory.createTransferMapTracker(_sequence);
+		        probe = ProbeFactory.getTransferMapProbe(_sequence, algXferMap);
+		                
+		    } else {
+		        ParticleTracker       algPart = AlgorithmFactory.createParticleTracker(_sequence);
+		        probe = ProbeFactory.createParticleProbe(_sequence, algPart);
+		        
+		    }
 
 			final Scenario scenario = Scenario.newScenarioFor( _sequence );
 			scenario.setProbe( probe );
@@ -73,6 +180,9 @@ public class OnlineModelSimulator extends MappedSimulator {
 			scenario.resync();
 			scenario.run();
 			final Trajectory initialTrajectory = probe.getTrajectory();
+			
+            // CKA - Nov 25, 2013
+			SimpleSimResultsAdaptor  cmpCalcEngine = new SimpleSimResultsAdaptor(initialTrajectory);
 
 			double[] xInitial = new double[bpmCount];
 			double[] yInitial = new double[bpmCount];
@@ -80,8 +190,11 @@ public class OnlineModelSimulator extends MappedSimulator {
 			for ( int bpmIndex = 0 ; bpmIndex < bpmCount ; bpmIndex++ ) {
 				final BpmAgent bpmAgent = bpmAgents.get( bpmIndex );
 				
-				ICoordinateState state = (ICoordinateState)initialTrajectory.stateForElement( bpmAgent.getID() );
-				PhaseVector coordinates = state.getFixedOrbit();
+	            // CKA - Nov 25, 2013
+//				ICoordinateState state = (ICoordinateState)initialTrajectory.stateForElement( bpmAgent.getID() );
+//				PhaseVector coordinates = state.getFixedOrbit();
+                ProbeState  state = initialTrajectory.stateForElement( bpmAgent.getID() );
+                PhaseVector coordinates = cmpCalcEngine.computeFixedOrbit(state);
 				
 				xInitial[bpmIndex] = coordinates.getx();
 				yInitial[bpmIndex] = coordinates.gety();
@@ -115,6 +228,9 @@ public class OnlineModelSimulator extends MappedSimulator {
 				scenario.run();
 				
 				final Trajectory trajectory = probe.getTrajectory();
+				
+				// CKA - Nov 25, 2013
+				final SimpleSimResultsAdaptor cmpCalcEngineResp = new SimpleSimResultsAdaptor(trajectory);
 	
 				for ( int bpmIndex = 0 ; bpmIndex < bpmCount ; bpmIndex++ ) {
 					final BpmAgent bpmAgent = bpmAgents.get( bpmIndex );
@@ -125,8 +241,12 @@ public class OnlineModelSimulator extends MappedSimulator {
 					
 					// verify that the BPM is downstream of the supply (which is always true for a Ring)
 					if ( isRing || ( bpmAgent.getPositionIn( _sequence ) > firstCorrectorPosition ) ) {
-						final ICoordinateState state = (ICoordinateState)trajectory.stateForElement( bpmAgent.getID() );
-						final PhaseVector coordinates = state.getFixedOrbit();
+
+					    // CKA - Nov 25, 2013
+//						final ICoordinateState state = (ICoordinateState)trajectory.stateForElement( bpmAgent.getID() );
+//						final PhaseVector coordinates = state.getFixedOrbit();
+					    final ProbeState  state       = trajectory.stateForElement( bpmAgent.getID() );
+					    final PhaseVector coordinates = cmpCalcEngineResp.computeFixedOrbit(state);
 						
 						// need factor of 1000 to convert from meters to mm
 						final double xResponse = 1000 * ( coordinates.getx() - xInitial[bpmIndex] ) / TRIAL_FIELD_EXCURSION;

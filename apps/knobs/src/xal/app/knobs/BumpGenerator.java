@@ -8,19 +8,28 @@
 
 package xal.app.knobs;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import xal.model.ModelException;
+import xal.model.probe.Probe;
+import xal.model.probe.traj.ProbeState;
+import xal.model.probe.traj.Trajectory;
+import xal.sim.scenario.AlgorithmFactory;
+import xal.sim.scenario.ProbeFactory;
+import xal.sim.scenario.Scenario;
+import xal.smf.Accelerator;
+import xal.smf.AcceleratorNode;
+import xal.smf.AcceleratorSeq;
+import xal.smf.NodeChannelRef;
+import xal.smf.Ring;
+import xal.smf.impl.BPM;
+import xal.smf.impl.Dipole;
+import xal.smf.impl.Electromagnet;
+import xal.smf.impl.MagnetMainSupply;
+import xal.smf.proxy.ElectromagnetPropertyAccessor;
 import xal.tools.messaging.MessageCenter;
-import xal.smf.*;
-import xal.smf.impl.*;
-import xal.smf.proxy.*;
-import xal.model.*;
-import xal.sim.scenario.*;
-import xal.model.alg.*;
-import xal.model.probe.*;
-import xal.model.probe.traj.*;
-
 import Jama.Matrix;
-
-import java.util.*;
 
 
 /** Generates closed bump knobs using the specified number of correctors */
@@ -57,6 +66,7 @@ public class BumpGenerator {
 	
 	/** base trajectory */
 	protected Trajectory _baseTrajectory;
+	
 	
 	/** lock for synchronizing runs */
 	final protected Object RUN_LOCK;
@@ -199,13 +209,15 @@ public class BumpGenerator {
 	
 	/** calculate the base trajectory */
 	protected void calculateBaseTrajectory() {
-		final PlaneAdaptor planeAdaptor = _planeAdaptor;
+//		final PlaneAdaptor planeAdaptor = _planeAdaptor;
 		
 		try {
 			_probe.reset();
 			_scenario.resync();
 			_scenario.run();
-			_baseTrajectory = _probe.getTrajectory();			
+			_baseTrajectory = _probe.getTrajectory();	
+			
+			this._bumpShapeAdaptor.resetTrajectory(_baseTrajectory);
 		}
 		catch ( ModelException exception ) {
 			exception.printStackTrace();
@@ -219,8 +231,10 @@ public class BumpGenerator {
 		final PlaneAdaptor planeAdaptor = _planeAdaptor;
 		
 		final Trajectory trajectory = _baseTrajectory;
-		final IPhaseState bumpState = (IPhaseState)trajectory.statesForElement( bumpNode.getId() )[0];
-		final IPhaseState endState = (IPhaseState)trajectory.statesForElement( endNode.getId() )[0];
+//		final IPhaseState bumpState = (IPhaseState)trajectory.statesForElement( bumpNode.getId() )[0];
+//		final IPhaseState endState = (IPhaseState)trajectory.statesForElement( endNode.getId() )[0];
+        final ProbeState bumpState = (ProbeState)trajectory.statesForElement( bumpNode.getId() )[0];
+        final ProbeState endState = (ProbeState)trajectory.statesForElement( endNode.getId() )[0];
 		
 		return _bumpShapeAdaptor.getOrbit( planeAdaptor, bumpState, endState, _elementCount );
 	}
@@ -260,8 +274,14 @@ public class BumpGenerator {
 			_scenario.run();
 			_scenario.removeModelInput( magnet, ElectromagnetPropertyAccessor.PROPERTY_FIELD );
 			final Trajectory trajectory = _probe.getTrajectory();
-			final IPhaseState bumpState = (IPhaseState)trajectory.statesForElement( bumpNode.getId() )[0];
-			final IPhaseState endState = (IPhaseState)trajectory.statesForElement( endNode.getId() )[0];
+			
+			// Reset the simulation data processor
+			this._bumpShapeAdaptor.resetTrajectory(trajectory);
+			
+//			final IPhaseState bumpState = (IPhaseState)trajectory.statesForElement( bumpNode.getId() )[0];
+//			final IPhaseState endState = (IPhaseState)trajectory.statesForElement( endNode.getId() )[0];
+            final ProbeState bumpState = trajectory.statesForElement( bumpNode.getId() )[0];
+            final ProbeState endState  = trajectory.statesForElement( endNode.getId() )[0];
 			
 			final double[] response = _bumpShapeAdaptor.getOrbit( planeAdaptor, bumpState, endState, _elementCount );
 			// adjust the response to account for the base orbit offset and scale by amplitude to get the response per unit of magnetic field
@@ -336,9 +356,9 @@ public class BumpGenerator {
 	/** create the bumps */
 	public void makeBumpKnobs() {
 		synchronized( RUN_LOCK ) {
-			final int elementCount = _elementCount;
+//			final int elementCount = _elementCount;
 			final AcceleratorSeq sequence = _sequence;
-			final Accelerator accelerator = sequence.getAccelerator();
+//			final Accelerator accelerator = sequence.getAccelerator();
 			
 			final List<AcceleratorNode> electromagnets = sequence.getNodesOfType( Electromagnet.s_strType, true );
 			for ( AcceleratorNode electromagnet : electromagnets ) {
@@ -359,7 +379,7 @@ public class BumpGenerator {
 				_scenario.setSynchronizationMode( _usesLiveModel ? Scenario.SYNC_MODE_RF_DESIGN : Scenario.SYNC_MODE_DESIGN );
 				_scenario.setProbe( _probe );
 				
-				final List<Dipole> magnets = _planeAdaptor.getCorrectors( sequence );
+//				final List<Dipole> magnets = _planeAdaptor.getCorrectors( sequence );
 				final List<AcceleratorNode> nodes = sequence.getNodesOfType( BPM.s_strType, true );
 				
 				calculateBaseTrajectory();
