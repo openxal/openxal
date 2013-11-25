@@ -87,6 +87,7 @@ import xal.tools.apputils.SimpleProbeEditor;
 import xal.tools.apputils.pvlogbrowser.PVLogSnapshotChooser;
 import xal.tools.beam.PhaseVector;
 import xal.tools.beam.Twiss;
+import xal.tools.beam.calc.SimpleSimResultsAdaptor;
 import xal.tools.bricks.WindowReference;
 import xal.tools.data.DataAdaptor;
 import xal.tools.dispatch.DispatchQueue;
@@ -97,6 +98,17 @@ import xal.tools.xml.XmlDataAdaptor;
 
 
 /**
+ * <p>
+ * <h4>CKA NOTES:</h4>
+ * - In method <code>{@link #createDefaultProbe()}</code> a <code>TransferMapProbe</code>
+ * is created in the case of a ring.  The method <code>TransferMapState#setPhaseCoordinates</code>
+ * is called to create an initial offset.  This does nothing because transfer map probes
+ * do not have phase coordinates any longer, the method is deprecated.
+ * <br/>
+ * <br/>
+ * - The offset for the above call is hard coded.  As are many features in this class.
+ * </p>
+ * 
  * VADocument is a custom AcceleratorDocument for virtual accelerator application.
  * @version 1.5 15 Jul 2004
  * @author Paul Chu
@@ -1056,6 +1068,9 @@ public class VADocument extends AcceleratorDocument implements ActionListener, P
     
 	/** This method is for populating the diagnostic PVs (only BPMs + WSs for now) */
 	protected void putDiagPVs() {
+	    // CKA Nov 25, 2013
+	    SimpleSimResultsAdaptor    cmpCalcEngine = new SimpleSimResultsAdaptor( modelScenario.getTrajectory() );
+	    
 		// for BPMs
         for ( final BPM bpm : bpms ) {
 			final Channel bpmXAvgChannel = bpm.getChannel( BPM.X_AVG_HANDLE );
@@ -1064,13 +1079,18 @@ public class VADocument extends AcceleratorDocument implements ActionListener, P
             final Channel bpmYTBTChannel = bpm.getChannel( BPM.Y_TBT_HANDLE );
 			final Channel bpmAmpAvgChannel = bpm.getChannel( BPM.AMP_AVG_HANDLE );
             
-            
 			try {
 				ProbeState probeState = modelScenario.getTrajectory().stateForElement( bpm.getId() );
 				//System.out.println("Now updating " + bpm.getId());
                 
-				if ( probeState instanceof ICoordinateState ) {
-					final PhaseVector coordinates = ((ICoordinateState)probeState).getFixedOrbit();
+	            // CKA - Transfer map probes and Envelope probes both exposed ICoordinateState
+	            //       so we should be able to compute a "fixed orbit" in any context
+	            //
+	            // CKA Nov 25, 2013
+//				if ( probeState instanceof ICoordinateState ) {
+//					final PhaseVector coordinates = ((ICoordinateState)probeState).getFixedOrbit();
+				final PhaseVector coordinates = cmpCalcEngine.computeFixedOrbit(probeState);
+				
 					// For SNS Ring BPM system, we only measure the signal with respect to the center of the beam pipe.
                     
                     // TO-DO: the turn by turn arrays should really be generated from betatron motion rather than random data about the nominal
@@ -1084,7 +1104,8 @@ public class VADocument extends AcceleratorDocument implements ActionListener, P
                     //                    bpmXTBTChannel.putValCallback( xTBT, this );  // don't post to channel access until the turn by turn data is generated correctly
 					bpmYAvgChannel.putValCallback( yAvg, this );
                     //                    bpmYTBTChannel.putValCallback( yTBT, this );  // don't post to channel access until the turn by turn data is generated correctly
-				}
+	            // CKA Nov 25, 2013
+//				}
                 
 				// hardwired BPM amplitude noise and offset to 5% and 0.1mm (randomly) respectively
 				bpmAmpAvgChannel.putVal( NoiseGenerator.setValForPV( 20., 5., 0.1 ) );

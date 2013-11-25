@@ -13,8 +13,11 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import xal.model.alg.ParticleTracker;
+import xal.model.alg.TransferMapTracker;
 import xal.model.probe.Probe;
 import xal.model.probe.traj.ICoordinateState;
+import xal.model.probe.traj.ProbeState;
 import xal.model.probe.traj.Trajectory;
 import xal.sim.scenario.AlgorithmFactory;
 import xal.sim.scenario.ProbeFactory;
@@ -22,6 +25,7 @@ import xal.sim.scenario.Scenario;
 import xal.smf.Ring;
 import xal.smf.proxy.ElectromagnetPropertyAccessor;
 import xal.tools.beam.PhaseVector;
+import xal.tools.beam.calc.SimpleSimResultsAdaptor;
 
 
 /**
@@ -154,8 +158,21 @@ public class OnlineModelSimulator extends MappedSimulator {
 		final String FIELD_PROPERTY = ElectromagnetPropertyAccessor.PROPERTY_FIELD;
 		
 		try {
-            
-            final Probe probe = (_sequence instanceof Ring) ? ProbeFactory.getTransferMapProbe( _sequence, AlgorithmFactory.createTransferMapTracker(_sequence) ) : ProbeFactory.createParticleProbe(_sequence, AlgorithmFactory.createParticleTracker(_sequence));
+
+		    // CKA - Nov 25, 2013
+		    // Create the probe according to the sequence type then run an online model
+//            final Probe probe = (_sequence instanceof Ring) ? ProbeFactory.getTransferMapProbe( _sequence, AlgorithmFactory.createTransferMapTracker(_sequence) ) : ProbeFactory.createParticleProbe(_sequence, AlgorithmFactory.createParticleTracker(_sequence));
+		
+		    final Probe probe;
+		    if (_sequence instanceof Ring) {
+		        TransferMapTracker    algXferMap = AlgorithmFactory.createTransferMapTracker(_sequence);
+		        probe = ProbeFactory.getTransferMapProbe(_sequence, algXferMap);
+		                
+		    } else {
+		        ParticleTracker       algPart = AlgorithmFactory.createParticleTracker(_sequence);
+		        probe = ProbeFactory.createParticleProbe(_sequence, algPart);
+		        
+		    }
 
 			final Scenario scenario = Scenario.newScenarioFor( _sequence );
 			scenario.setProbe( probe );
@@ -163,6 +180,9 @@ public class OnlineModelSimulator extends MappedSimulator {
 			scenario.resync();
 			scenario.run();
 			final Trajectory initialTrajectory = probe.getTrajectory();
+			
+            // CKA - Nov 25, 2013
+			SimpleSimResultsAdaptor  cmpCalcEngine = new SimpleSimResultsAdaptor(initialTrajectory);
 
 			double[] xInitial = new double[bpmCount];
 			double[] yInitial = new double[bpmCount];
@@ -170,8 +190,11 @@ public class OnlineModelSimulator extends MappedSimulator {
 			for ( int bpmIndex = 0 ; bpmIndex < bpmCount ; bpmIndex++ ) {
 				final BpmAgent bpmAgent = bpmAgents.get( bpmIndex );
 				
-				ICoordinateState state = (ICoordinateState)initialTrajectory.stateForElement( bpmAgent.getID() );
-				PhaseVector coordinates = state.getFixedOrbit();
+	            // CKA - Nov 25, 2013
+//				ICoordinateState state = (ICoordinateState)initialTrajectory.stateForElement( bpmAgent.getID() );
+//				PhaseVector coordinates = state.getFixedOrbit();
+                ProbeState  state = initialTrajectory.stateForElement( bpmAgent.getID() );
+                PhaseVector coordinates = cmpCalcEngine.computeFixedOrbit(state);
 				
 				xInitial[bpmIndex] = coordinates.getx();
 				yInitial[bpmIndex] = coordinates.gety();
@@ -205,6 +228,9 @@ public class OnlineModelSimulator extends MappedSimulator {
 				scenario.run();
 				
 				final Trajectory trajectory = probe.getTrajectory();
+				
+				// CKA - Nov 25, 2013
+				final SimpleSimResultsAdaptor cmpCalcEngineResp = new SimpleSimResultsAdaptor(trajectory);
 	
 				for ( int bpmIndex = 0 ; bpmIndex < bpmCount ; bpmIndex++ ) {
 					final BpmAgent bpmAgent = bpmAgents.get( bpmIndex );
@@ -215,8 +241,12 @@ public class OnlineModelSimulator extends MappedSimulator {
 					
 					// verify that the BPM is downstream of the supply (which is always true for a Ring)
 					if ( isRing || ( bpmAgent.getPositionIn( _sequence ) > firstCorrectorPosition ) ) {
-						final ICoordinateState state = (ICoordinateState)trajectory.stateForElement( bpmAgent.getID() );
-						final PhaseVector coordinates = state.getFixedOrbit();
+
+					    // CKA - Nov 25, 2013
+//						final ICoordinateState state = (ICoordinateState)trajectory.stateForElement( bpmAgent.getID() );
+//						final PhaseVector coordinates = state.getFixedOrbit();
+					    final ProbeState  state       = trajectory.stateForElement( bpmAgent.getID() );
+					    final PhaseVector coordinates = cmpCalcEngineResp.computeFixedOrbit(state);
 						
 						// need factor of 1000 to convert from meters to mm
 						final double xResponse = 1000 * ( coordinates.getx() - xInitial[bpmIndex] ) / TRIAL_FIELD_EXCURSION;
