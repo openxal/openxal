@@ -178,7 +178,9 @@ public class BasicGraphData {
 	public void addPoint(double x, double y, double err) {
 		synchronized (lockUpObj) {
 			xyPointV.add(new XYpoint(x, y, err));
-			Collections.sort( xyPointV, new CompareX() );
+			if ( x < xMax ) {
+				Collections.sort( xyPointV, new CompareX() );
+			}
 			this.calculateRepresentation();
 			this.updateData();
 		}
