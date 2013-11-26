@@ -6,11 +6,13 @@
 
 package xal.app.machinesimulator;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
+import java.awt.event.*;
+import java.util.*;
+import java.net.*;
+import java.io.*;
+import javax.swing.*;
+import javax.swing.text.*;
+import javax.swing.event.*;
 
 import xal.extension.application.*;
 import xal.extension.smf.application.*;
@@ -21,16 +23,7 @@ import xal.smf.data.XMLDataManager;
 import xal.tools.data.*;
 import xal.extension.bricks.WindowReference;
 import xal.extension.widgets.swing.*;
-import xal.model.probe.traj.IPhaseState;
 import xal.model.probe.traj.ProbeState;
-import xal.smf.Accelerator;
-import xal.smf.AcceleratorSeq;
-import xal.smf.application.AcceleratorDocument;
-import xal.tools.bricks.WindowReference;
-import xal.tools.data.DataAdaptor;
-import xal.tools.data.DataListener;
-import xal.tools.swing.KeyValueFilteredTableModel;
-import xal.tools.xml.XmlDataAdaptor;
 
 
 /**
