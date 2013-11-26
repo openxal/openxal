@@ -182,15 +182,14 @@ public abstract class BunchProbe extends Probe {
         return dblCurrent;  
      }
 
-    /**
-     * Returns the betatron phase with space charge for all three phase planes.
-     * 
-     * @return vector (psix,psiy,psiz) of phases in <b>radians </b>
-     */
-	@NoEdit		// editors should ignore this property as it is a computed value
-    public R3 getBetatronPhase() {
-        return this.vecPhsBeta;
-    }
+//    /**
+//     * Returns the betatron phase with space charge for all three phase planes.
+//     * 
+//     * @return vector (psix,psiy,psiz) of phases in <b>radians </b>
+//     */
+//    public R3 getBetatronPhase() {
+//        return this.vecPhsBeta;
+//    }
 
     
     /*

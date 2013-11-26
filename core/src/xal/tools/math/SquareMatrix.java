@@ -268,7 +268,7 @@ public abstract class SquareMatrix<M extends SquareMatrix<M>> extends BaseMatrix
         try {
             @SuppressWarnings("unchecked")
             Class<V>        clsVec = (Class<V>) vecObs.getClass();
-            Constructor<V> ctrVec = (Constructor<V>) clsVec.getConstructor();
+            Constructor<V> ctrVec = clsVec.getConstructor();
             
             V   vecSoln = ctrVec.newInstance();
             
@@ -440,7 +440,7 @@ public abstract class SquareMatrix<M extends SquareMatrix<M>> extends BaseMatrix
         try {
             @SuppressWarnings("unchecked")
             Class<V>        clsVec = (Class<V>) vecFac.getClass();
-            Constructor<V>  ctrVec = (Constructor<V>) clsVec.getConstructor();
+            Constructor<V>  ctrVec = clsVec.getConstructor();
             
             V   vecSoln = ctrVec.newInstance();
             
@@ -500,7 +500,7 @@ public abstract class SquareMatrix<M extends SquareMatrix<M>> extends BaseMatrix
      *  @param  matMult    multiplicand - right operand of matrix multiplication operator
      */
     public void timesEquals(BaseMatrix<M>   matMult) {
-        BaseMatrix<M> matBase = (BaseMatrix<M>)matMult;
+        BaseMatrix<M> matBase = matMult;
         
         this.getMatrix().arrayTimesEquals( matBase.getMatrix() );
     }

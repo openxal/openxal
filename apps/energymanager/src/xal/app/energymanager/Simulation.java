@@ -160,7 +160,7 @@ public class Simulation {
 	
 	
 	/** The machine parameter calculation engine */
-    private ISimEnvResults<ProbeState>     adptSimResults;
+    private ISimEnvResults<ProbeState>     _modelStatesAdaptor;
 	
     
     /*
@@ -184,7 +184,7 @@ public class Simulation {
 		
 		// Create the machine parameter calculation engine according to the
 		//    type of probe we are given
-		this.adptSimResults = new SimpleSimResultsAdaptor(_trajectory);
+		_modelStatesAdaptor = new SimpleSimResultsAdaptor(_trajectory);
 		
 //        if (probe instanceof TransferMapProbe) {
 //            TransferMapTrajectory   traj = (TransferMapTrajectory)probe.getTrajectory();
@@ -513,7 +513,7 @@ public class Simulation {
 		    
 		    
 //			final Twiss[] twiss = states[ index ].getTwiss();
-            final Twiss[] twiss = this.adptSimResults.computeTwissParameters(state);
+            final Twiss[] twiss = _modelStatesAdaptor.computeTwissParameters(state);
 		    
 			for ( int axis = 0 ; axis <= Z_INDEX ; axis++ ) {
 				alpha[ axis ][ index ] = twiss[ axis ].getAlpha();
@@ -532,7 +532,7 @@ public class Simulation {
 		for ( int index = 0 ; index < states.length ; index++ ) {
 //			final Twiss[] arrTwiss = states[ index ].getTwiss();
 			ProbeState    state    = states[ index ];
-			final Twiss[] arrTwiss = this.adptSimResults.computeTwissParameters(state);
+			final Twiss[] arrTwiss = _modelStatesAdaptor.computeTwissParameters(state);
 			
 			for ( int axis = 0 ; axis <= Z_INDEX ; axis++ ) {
 				beta[ axis ][ index ] = arrTwiss[ axis ].getBeta();
@@ -551,7 +551,7 @@ public class Simulation {
 		for ( int index = 0 ; index < states.length ; index++ ) {
 //			final Twiss[] twiss = states[ index ].getTwiss();
 		    ProbeState    state = states[ index ];
-		    final Twiss[] twiss = this.adptSimResults.computeTwissParameters(state);
+		    final Twiss[] twiss = _modelStatesAdaptor.computeTwissParameters(state);
 		    
 			for ( int axis = 0 ; axis <= Z_INDEX ; axis++ ) {
 				emittance[ axis ][ index ] = twiss[ axis ].getEmittance();
@@ -569,7 +569,7 @@ public class Simulation {
 		
 		for ( int index = 0 ; index < states.length ; index++ ) {
 		    ProbeState    state   = states[ index ];
-		    PhaseVector   vecDisp = this.adptSimResults.computeChromDispersion(state);
+		    PhaseVector   vecDisp = _modelStatesAdaptor.computeChromDispersion(state);
 		    
 		    eta[X_INDEX][index] = vecDisp.getElem(IND.X);
 		    eta[Y_INDEX][index] = vecDisp.getElem(IND.Y);
@@ -617,7 +617,7 @@ public class Simulation {
 		
 		for ( int index = 0 ; index < states.length ; index++ ) {
 //			final Twiss[] twiss = states[ index ].getTwiss();
-			final Twiss[] twiss = this.adptSimResults.computeTwissParameters( states[index] );
+			final Twiss[] twiss = _modelStatesAdaptor.computeTwissParameters( states[index] );
 			
 			for ( int axis = 0 ; axis <= Z_INDEX ; axis++ ) {
 				final double beta = twiss[ axis ].getBeta();
@@ -719,17 +719,16 @@ public class Simulation {
 	static protected StateFinder newFirstStateFinder() {
 		return new StateFinder() {
 			@Override
-            public ProbeState[] findStates( final List nodes, final Trajectory trajectory ) {
+            public ProbeState[] findStates( final List<AcceleratorNode> nodes, final Trajectory trajectory ) {
 				final Iterator<ProbeState> stateIter = trajectory.stateIterator();
 				final ProbeState[] states = new ProbeState[ nodes.size() ];
 				
 				int index = 0;
-				final Iterator<AcceleratorNode> nodeIter = nodes.iterator();
-				while ( nodeIter.hasNext() ) {
-					final String nodeID = ( (AcceleratorNode)nodeIter.next() ).getId();
+				for ( final AcceleratorNode node : nodes ) {
+					final String nodeID = node.getId();
                     //System.out.println( "Searching for node: " + nodeID );
 					while ( stateIter.hasNext() ) {
-						final ProbeState state = (ProbeState)stateIter.next();
+						final ProbeState state = stateIter.next();
                         //System.out.println( "Testing state: " + state.getElementId() );
 						if ( state.getElementId().startsWith( nodeID ) ) {
 							states[ index++ ] = state;

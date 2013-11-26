@@ -16,7 +16,6 @@ import java.util.logging.Logger;
 import xal.model.alg.ParticleTracker;
 import xal.model.alg.TransferMapTracker;
 import xal.model.probe.Probe;
-import xal.model.probe.traj.ICoordinateState;
 import xal.model.probe.traj.ProbeState;
 import xal.model.probe.traj.Trajectory;
 import xal.sim.scenario.AlgorithmFactory;

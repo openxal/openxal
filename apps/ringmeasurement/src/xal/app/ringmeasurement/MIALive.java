@@ -55,7 +55,9 @@ import xal.tools.apputils.files.*;
 import xal.service.pvlogger.*;
 //import xal.tools.pvlogger.query.*;
 import xal.tools.database.*;
+import xal.tools.math.r3.*;
 import xal.tools.beam.Twiss;
+import xal.tools.beam.calc.*;
 import xal.model.*;
 import xal.extension.fit.LinearFit;
 import xal.model.probe.TransferMapProbe;
@@ -73,6 +75,9 @@ import xal.extension.smf.application.*;
 import xal.smf.*;
 import xal.smf.data.XMLDataManager;
 import xal.extension.application.*;
+
+import Jama.Matrix;
+import Jama.SingularValueDecomposition;
 
 
 /**

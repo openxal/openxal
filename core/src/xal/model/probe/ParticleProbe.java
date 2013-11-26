@@ -158,13 +158,16 @@ public class ParticleProbe extends Probe {
     public PhaseMatrix getResponseMatrix() {
         return matResp;
     }
-	
-	
-	/**
-	 * Get the fixed orbit about which betatron oscillations occur.
-	 * @return the fixed orbit vector (x,x',y,y',z,z',1)
-	*/
-	@NoEdit		// editors should not edit this parameter as it is a computed value
+
+    /**
+     * Get the fixed orbit about which betatron oscillations occur.
+     * @return the reference orbit vector (x,x',y,y',z,z',1)
+     * 
+     * @deprecated This is a duplicate of {@link #getPhaseCoordinates()} but with a 
+     *             misleading name.  I plan to get rid of it.
+     */
+	@NoEdit
+    @Deprecated
 	public PhaseVector getFixedOrbit() {
     	return this.vecCoords;		
 	}

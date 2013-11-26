@@ -60,6 +60,7 @@ public class BeamPositionFace extends JPanel{
     private AcceleratorSeq accSeq;
     private Scenario scenario;
     private TransferMapProbe probe;
+	private ParticleProbe particleProbe;
     private JButton probeeditbutton;
     // private ParameterProxy xp0;
     
@@ -252,9 +253,14 @@ public class BeamPositionFace extends JPanel{
         
         accSeq = new AcceleratorSeqCombo("RTBT", lst);
         try{
-            scenario = Scenario.newScenarioFor(accSeq);
+            scenario = Scenario.newScenarioFor( accSeq );
+
             TransferMapTracker tracker = AlgorithmFactory.createTransferMapTracker(accSeq);
             probe=ProbeFactory.getTransferMapProbe(accSeq, tracker);
+
+			final ParticleTracker particleTracker = AlgorithmFactory.createParticleTracker( accSeq );
+			particleProbe = ProbeFactory.createParticleProbe( accSeq, particleTracker );
+
             currentenergy=probe.getKineticEnergy();
             scenario.setProbe(probe);
         }
@@ -345,17 +351,10 @@ public class BeamPositionFace extends JPanel{
         
         probeeditbutton.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e) {
-                SimpleProbeEditor spe = new SimpleProbeEditor( doc.myWindow(), scenario.getProbe());
-                //scenario.resetProbe();
-                //spe.createSimpleProbeEditor(scenario.getProbe());
-                
-                // update the model probe with the one from probe editor
-                //if (spe.probeHasChanged())
-                //{
+                SimpleProbeEditor spe = new SimpleProbeEditor( doc.myWindow(), scenario.getProbe() );
                 scenario.setProbe(spe.getProbe());
                 currentenergy=probe.getKineticEnergy();
-                //}
-                
+				particleProbe.setKineticEnergy( currentenergy );
             }
         });
         
@@ -476,6 +475,9 @@ public class BeamPositionFace extends JPanel{
         double x=0.0; double y=0.0;
         double[] data = new double[2];
         resetprobe();
+
+		// first set the probe and run it to get the transfer map and first order matrix
+		scenario.setProbe( probe );
         
         System.out.println("energy is = " + probe.getKineticEnergy());
         try {
@@ -547,11 +549,14 @@ public class BeamPositionFace extends JPanel{
         
         xop = (x - xo*mat.getElem(0,0) - mat.getElem(0,6))/mat.getElem(0,1);
         yop = (y - yo*mat.getElem(2,2) - mat.getElem(2,6))/mat.getElem(2,3);
-        
+
+
+        // now run the scenario using the particle probe
+		scenario.setProbe( particleProbe );
         scenario.unsetStopNode();
         resetprobe();
         scenario.setStartElementId(bpm1name);
-        probe.setPhaseCoordinates(new PhaseVector(xo, xop, yo, yop, 0.0, 0.0) );
+        particleProbe.setPhaseCoordinates( new PhaseVector( xo, xop, yo, yop, 0.0, 0.0 ) );
         
         try{
             scenario.resync();
@@ -561,20 +566,12 @@ public class BeamPositionFace extends JPanel{
             exception.printStackTrace();
         }
         
-        Trajectory traj = scenario.getTrajectory();
-        //TransferMapState bpm1state = (TransferMapState)traj.stateForElement(bpm1name);
-        //TransferMapState bpm2state = (TransferMapState)traj.stateForElement(bpm2name);
-        TransferMapState windowstate = (TransferMapState)traj.stateForElement("RTBT_Vac:VIW");
-        TransferMapState targetstate = (TransferMapState)traj.stateForElement("RTBT:Tgt");
-        //TransferMapState targetstate = (TransferMapState)traj.stateForElement("RTBT_Diag:BPM25");
-        
-        //PhaseVector bpm1coords = bpm1state.phaseCoordinates();
-        //PhaseVector bpm2coords = bpm2state.phaseCoordinates();
+        final Trajectory particleTrajectory = scenario.getTrajectory();
+        final ParticleProbeState windowstate = (ParticleProbeState)particleTrajectory.stateForElement("RTBT_Vac:VIW");
+        final ParticleProbeState targetstate = (ParticleProbeState)particleTrajectory.stateForElement("RTBT:Tgt");
         PhaseVector windowcoords = windowstate.getPhaseCoordinates();
         PhaseVector targetcoords = targetstate.getPhaseCoordinates();
-        //PhaseVector bpm1coords = bpm1state.getPhaseCoordinates();
-        //PhaseVector bpm2coords = bpm2state.getPhaseCoordinates();
-        
+
         //System.out.println("bpm 1 " + bpm1coords.getx() +  " " +bpm1coords.gety());
         //System.out.println("bpm 2 " + bpm2coords.getx() +  " " +bpm2coords.gety());
         //System.out.println("Window " + windowcoords.getx() +  " " +windowcoords.gety());
@@ -626,9 +623,9 @@ public class BeamPositionFace extends JPanel{
         ArrayList<Double> vdata = new ArrayList<Double>();
         
         resetprobe();
+		scenario.setProbe( particleProbe );
         scenario.setStartElementId(bpm27name);
-        probe.setPhaseCoordinates(new PhaseVector(xo, xop, yo, yop, 0.0, 0.0) );
-        probe = (TransferMapProbe)scenario.getProbe();
+        particleProbe.setPhaseCoordinates(new PhaseVector(xo, xop, yo, yop, 0.0, 0.0) );
         try{
             scenario.resync();
             scenario.run();
@@ -641,7 +638,7 @@ public class BeamPositionFace extends JPanel{
         Iterator<ProbeState> iterState= traj.stateIterator();
         
         while(iterState.hasNext()){
-            TransferMapState state= (TransferMapState)iterState.next();
+            ParticleProbeState state= (ParticleProbeState)iterState.next();
             sdata.add(state.getPosition());
             PhaseVector coords=state.getPhaseCoordinates();
             hdata.add(coords.getx());
@@ -680,7 +677,9 @@ public class BeamPositionFace extends JPanel{
     
     void resetprobe(){
         probe.reset();
-        probe.setKineticEnergy(currentenergy);
+        probe.setKineticEnergy( currentenergy );
+		particleProbe.reset();
+		particleProbe.setKineticEnergy( currentenergy );
     }
     
     void writeFile(File file) throws IOException{

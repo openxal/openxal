@@ -26,6 +26,7 @@ import xal.tools.beam.Twiss;
  * @deprecated  The ICoordinateState/IPhaseState interface is replaced by 
  *              <code>ISimEnvResults&lt;S&gt;</code>
  */
+@Deprecated
 public interface IPhaseState extends ICoordinateState {
 	
     /*

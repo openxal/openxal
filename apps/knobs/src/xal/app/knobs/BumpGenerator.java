@@ -233,8 +233,8 @@ public class BumpGenerator {
 		final Trajectory trajectory = _baseTrajectory;
 //		final IPhaseState bumpState = (IPhaseState)trajectory.statesForElement( bumpNode.getId() )[0];
 //		final IPhaseState endState = (IPhaseState)trajectory.statesForElement( endNode.getId() )[0];
-        final ProbeState bumpState = (ProbeState)trajectory.statesForElement( bumpNode.getId() )[0];
-        final ProbeState endState = (ProbeState)trajectory.statesForElement( endNode.getId() )[0];
+        final ProbeState bumpState = trajectory.statesForElement( bumpNode.getId() )[0];
+        final ProbeState endState = trajectory.statesForElement( endNode.getId() )[0];
 		
 		return _bumpShapeAdaptor.getOrbit( planeAdaptor, bumpState, endState, _elementCount );
 	}

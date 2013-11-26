@@ -30,6 +30,7 @@ import xal.smf.Ring;
 import xal.extension.widgets.swing.DecimalField;
 import xal.ca.*;
 import xal.tools.apputils.files.*;
+import xal.tools.math.r3.*;
 import xal.tools.beam.calc.CalculationsOnRings;
 import xal.service.pvlogger.*;
 import xal.service.pvlogger.query.*;

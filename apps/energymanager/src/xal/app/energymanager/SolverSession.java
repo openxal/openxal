@@ -9,17 +9,10 @@
 
 package xal.app.energymanager;
 
-import xal.tools.data.*;
-import xal.tools.messaging.MessageCenter;
-import xal.extension.solver.*;
-import xal.extension.solver.hint.*;
-import xal.extension.solver.algorithm.*;
-import xal.extension.solver.market.*;
-import xal.extension.solver.solutionjudge.*;
-import xal.model.probe.Probe;
-import xal.model.probe.traj.IPhaseState;
-import xal.smf.*;
-import xal.smf.impl.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import xal.model.probe.Probe;
 import xal.smf.AcceleratorNode;
@@ -27,11 +20,14 @@ import xal.smf.AcceleratorSeq;
 import xal.tools.data.DataAdaptor;
 import xal.tools.data.DataListener;
 import xal.tools.messaging.MessageCenter;
-import xal.tools.solver.Problem;
-import xal.tools.solver.SolveStopperFactory;
-import xal.tools.solver.Stopper;
-import xal.tools.solver.Variable;
-import xal.tools.solver.hint.InitialDomain;
+import xal.extension.solver.*;
+import xal.extension.solver.hint.*;
+import xal.extension.solver.algorithm.*;
+import xal.extension.solver.market.*;
+import xal.extension.solver.solutionjudge.*;
+import xal.model.probe.Probe;
+import xal.smf.*;
+import xal.smf.impl.*;
 
 
 /** Stores a solver configuration and the corresponding result. */

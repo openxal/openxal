@@ -150,6 +150,7 @@ public class TransferMapProbe extends Probe {
      *  
      *  @deprecated Transfer maps do not have phase coordinates
      */
+	@Deprecated
     public PhaseVector getPhaseCoordinates()  { 
         return _phaseCoordinates;
     }
@@ -210,32 +211,8 @@ public class TransferMapProbe extends Probe {
 //        stateTrans.setTrajectory( (TransferMapTrajectory)m_trajHist );
         this.setTransferMap( stateTrans.getTransferMap() );
         this.setPartialTransferMap( stateTrans.getStateTransferMap() );
-        this.setPhaseCoordinates( stateTrans.getPhaseCoordinates() );
     }
-    
-    
-    /**
-     * <p>
-     * Subclasses should override this method to perform any required post processing 
-     * upon completion of algorithm processing.  
-     * </p>
-     * <p>
-     * Currently this method implementation does copies the transfer map up to the
-     * the trajectory object, calling it the "<i>fullTurnMap</i>".  This is not
-     * good.
-     * </p>
-     *
-     * @see xal.model.probe.Probe#performPostProcessing()
-     * 
-     * @author Christopher K. Allen
-     * @version Oct 25, 2013
-     */
-    @Override
-    public void performPostProcessing() {
-        final PhaseMap fullTurnMap = m_mapTrans.copy();
-        ((TransferMapTrajectory)getTrajectory()).setFullTurnMap( fullTurnMap );
-    }
-    
+        
     
     /**
      * Initialize this probe from the one specified.

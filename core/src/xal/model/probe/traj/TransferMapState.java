@@ -118,7 +118,6 @@ public class TransferMapState extends ProbeState /* implements IPhaseState */ {
 //        setTrajectory( (TransferMapTrajectory)probe.getTrajectory() );
         setTransferMap( probe.getTransferMap() );
         setPartialTransferMap( probe.getPartialTransferMap() );
-        setPhaseCoordinates( probe.getPhaseCoordinates() );
     }
 
 
@@ -276,6 +275,7 @@ public class TransferMapState extends ProbeState /* implements IPhaseState */ {
      *  @return vector (x,x',y,y',z,z',1) of phase space coordinates
      * @deprecated Moved to xal.tools.beam.calc 
      */
+	@Deprecated
     public PhaseVector getPhaseCoordinates() {
         return _phaseCoordinates[0];
     }
