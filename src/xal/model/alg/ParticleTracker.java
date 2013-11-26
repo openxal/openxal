@@ -8,6 +8,7 @@ package xal.model.alg;
 
 
 import xal.tools.beam.PhaseMap;
+import xal.tools.beam.PhaseMatrix;
 import xal.tools.beam.PhaseVector;
 import xal.tools.data.DataAdaptor;
 import xal.tools.data.DataFormatException;
@@ -234,6 +235,13 @@ public class ParticleTracker extends Tracker {
         PhaseVector  z1 = mapPhi.apply(z0);
         
         probe.setPhaseCoordinates(z1);
+        
+        // Advance response matrix
+        PhaseMatrix matPhi = mapPhi.getFirstOrder();
+        PhaseMatrix R0 = probe.getResponseMatrix();
+        PhaseMatrix R1 = matPhi.times( R0 );
+        
+        probe.setResponseMatrix(R1);
     }
 
 

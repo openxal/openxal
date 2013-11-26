@@ -258,9 +258,9 @@ public class Grid implements java.io.Serializable {
         if (n1<=0 || n2<=0 || n3<=0)
             throw new GridException("Grid::setGridSize() - Bad size vector.");
 
-        m_vecDim.set(0.0);
-        m_vecRes.set(0.0);
-        m_ptOrg.set(0.0);
+        m_vecDim.setAll(0.0);
+        m_vecRes.setAll(0.0);
+        m_ptOrg.setAll(0.0);
         m_vecSize = new Z3(n1, n2, n3);
         
         this.allocateGrid(n1, n2, n3);

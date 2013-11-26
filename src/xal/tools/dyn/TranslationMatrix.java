@@ -4,7 +4,9 @@
  * TODO To change the template for this generated file go to
  * Window - Preferences - Java - Code Style - Code Templates
  */
-package xal.tools.beam;
+package xal.tools.dyn;
+
+import xal.tools.beam.PhaseMatrix;
 
 /**
  * @author sako
@@ -25,7 +27,7 @@ public class TranslationMatrix extends PhaseMatrix {
 	public TranslationMatrix(double dx, double dy, double dz) {
 		super();
 		//make the identity matrix
-		for (int i=0;i<DIM;i++) {
+		for (int i=0;i<this.getSize();i++) {
 			setElem(i,i,1);
 		}
 		setElem(0,0,1+dx);

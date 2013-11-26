@@ -27,7 +27,7 @@ import java.util.TreeMap;
  * @version $id:
  * 
  */
-public abstract class Trajectory implements IArchive {
+public abstract class Trajectory implements IArchive, Iterable<ProbeState> {
 	
     /*
      * Global Constants
@@ -371,7 +371,7 @@ public abstract class Trajectory implements IArchive {
     public Iterator<ProbeState> stateIterator() {
         return _history.iterator();
     }
-
+    
     /**
      * Return the number of states in the trajectory.
      * 
@@ -553,10 +553,29 @@ public abstract class Trajectory implements IArchive {
     }
 		
 
-
+    /*
+     * Iterable Interface
+     */
+    
+    /**
+     * Returns an iterator over all the probe states in the trajectory.  This is 
+     * the single method in the <code>Iterable<T></code> interface which facilitates
+     * the "for each" statement.
+     * 
+     * @return  iterator for use in a <code>(T X : Container&lt;T&gt;)</code> statement
+     *
+     * @author Christopher K. Allen
+     * @since  Oct 28, 2013
+     */
+    public Iterator<ProbeState> iterator() {
+        return this._history.iterator();
+    }
 
     // *********** debugging
 
+    /*
+     * Object Overrides
+     */
 
     /**
      * Store a textual representation of the trajectory to a string
@@ -583,6 +602,9 @@ public abstract class Trajectory implements IArchive {
 
     // Persistence Methods ====================================================
 
+    /*
+     * IArchive Interface
+     */
 
     /**
      * Adds a representation of this Trajectory and its state history to the supplied <code>DataAdaptor</code>.

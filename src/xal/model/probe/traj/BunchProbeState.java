@@ -13,7 +13,6 @@
 package xal.model.probe.traj;
 
 import xal.tools.data.DataAdaptor;
-import xal.tools.math.r3.R3;
 
 import xal.model.probe.BunchProbe;
 import xal.model.xml.ParsingException;
@@ -45,8 +44,8 @@ public abstract class BunchProbeState extends ProbeState /* implements IPhaseSta
     /** attribute tag for total beam charge */
     private static final String ATTR_BUNCHFREQ = "f";
     
-    /** attribute tag for betatron phase advance */    
-    private static final String ATTR_BETAPHASE = "phase";
+//    /** attribute tag for betatron phase advance */    
+//    private static final String ATTR_BETAPHASE = "phase";
     
 
 
@@ -60,8 +59,8 @@ public abstract class BunchProbeState extends ProbeState /* implements IPhaseSta
     /** Beam current */
     private double  dblBmCurr = 0.0;
     
-    /** betatron phase of bunch in three phase planes */
-    protected R3    vecPhsBeta;
+//    /** betatron phase of bunch in three phase planes */
+//    protected R3    vecPhsBeta;
 
 
 //  /** Beam charge */
@@ -95,7 +94,7 @@ public abstract class BunchProbeState extends ProbeState /* implements IPhaseSta
      *
      */
     public BunchProbeState() {
-        this.vecPhsBeta = new R3();
+//        this.vecPhsBeta = new R3();
     }
     
     /**
@@ -108,7 +107,7 @@ public abstract class BunchProbeState extends ProbeState /* implements IPhaseSta
         super(probe);
         this.setBunchFrequency(probe.getBunchFrequency());
         this.setBeamCurrent(probe.getBeamCurrent());
-        this.setBetatronPhase(probe.getBetatronPhase());
+//        this.setBetatronPhase(probe.getBetatronPhase());
     }
 
     
@@ -131,14 +130,14 @@ public abstract class BunchProbeState extends ProbeState /* implements IPhaseSta
         dblBmCurr = I;
     }
     
-    /**
-     * Set the betatron phase of the bunch centroid for each phase plane.
-     * 
-     * @param   vecPhase vector (psix,psiy,psiz) of betratron phases in <b>radians</b>
-     */
-    public void setBetatronPhase(R3 vecPhase) {
-        this.vecPhsBeta = vecPhase;
-    }
+//    /**
+//     * Set the betatron phase of the bunch centroid for each phase plane.
+//     * 
+//     * @param   vecPhase vector (psix,psiy,psiz) of betratron phases in <b>radians</b>
+//     */
+//    public void setBetatronPhase(R3 vecPhase) {
+//        this.vecPhsBeta = vecPhase;
+//    }
 
 //    /**
 //     *  Set the total beam charge 
@@ -156,13 +155,20 @@ public abstract class BunchProbeState extends ProbeState /* implements IPhaseSta
      */
     
     /**
-     * Returns the bunch frequency, that is the frequency of 
-     * the bunches need to create the beam current.
-     * 
-     * The bunch frequency f is computed from the beam current 
-     * I and bunch charge Q as 
-     *  
-     *      f = I/Q
+     * <p>
+     * Returns the bunch frequency, that is, the rate at which
+     * beam bunches pass a stationary point (in laboratory coordinates).
+     * The frequency <i>f</i> of the bunches determines the beam current <i>I</i>.
+     * </p>
+     * <p>
+     * The bunch frequency <i>f</i> is related to the beam current 
+     * <i>I</i> and bunch charge <i>Q</i> as 
+     * <br/>
+     * <br/>
+     * &nbsp; &nbsp; <i>f</i> = <i>I/Q</i>
+     * <br/>
+     * <br/>
+     * </p>
      *      
      * @return  bunch frequency in Hertz
      */
@@ -171,7 +177,8 @@ public abstract class BunchProbeState extends ProbeState /* implements IPhaseSta
     };
     
     /** 
-     * Returns the total beam current 
+     * Returns the total beam current, which is the bunch charge <i>Q</i> times
+     * the bunch frequency <i>f</i>.
      * 
      * @return  beam current in <b>amps</b>
      */
@@ -179,15 +186,17 @@ public abstract class BunchProbeState extends ProbeState /* implements IPhaseSta
         return dblBmCurr;
     }
     
-    /**
-     * Returns the betatron phase with space charge for all three phase
-     * planes.
-     * 
-     * @return  vector (psix,psiy,psiz) of phases in <b>radians</b>
-     */
-    public R3 getBetatronPhase() {
-        return this.vecPhsBeta;
-    }
+//    /**
+//     * Returns the betatron phase of this bunch for all 3 phase places.
+//     * 
+//     * @return  vector (&psi;<sub><i>x</i></sub>, &psi;<sub><i>y</i></sub>, &psi;<sub><i>z</i></sub>) 
+//     *
+//     * @author Christopher K. Allen
+//     * @since  Oct 23, 2013
+//     */
+//    public R3   getBunchBetatronPhase() {
+//        return this.vecPhsBeta;
+//    }
     
  
     /*
@@ -299,8 +308,9 @@ public abstract class BunchProbeState extends ProbeState /* implements IPhaseSta
     public String toString() {
         return super.toString() + 
                 " curr: " + getBeamCurrent() + 
-                " freq: " + getBunchFrequency() +
-                " phase: " + getBetatronPhase();
+                " freq: " + getBunchFrequency();
+//                " freq: " + getBunchFrequency() +
+//                " phase: " + getBunchBetatronPhase();
     }
 	
 
@@ -321,7 +331,7 @@ public abstract class BunchProbeState extends ProbeState /* implements IPhaseSta
         DataAdaptor datBunch = daSink.createChild(ELEM_BEAM);
         datBunch.setValue(ATTR_BUNCHFREQ,   getBunchFrequency());
         datBunch.setValue(ATTR_BEAMCURRENT, getBeamCurrent());
-        datBunch.setValue(ATTR_BETAPHASE,   getBetatronPhase().toString());
+//        datBunch.setValue(ATTR_BETAPHASE,   getBunchBetatronPhase().toString());
         
     }
     
@@ -346,10 +356,10 @@ public abstract class BunchProbeState extends ProbeState /* implements IPhaseSta
             setBunchFrequency(daBunch.doubleValue(ATTR_BUNCHFREQ));
         if (daBunch.hasAttribute(ATTR_BEAMCURRENT))            
             setBeamCurrent(daBunch.doubleValue(ATTR_BEAMCURRENT));
-        if (daBunch.hasAttribute(ATTR_BETAPHASE)) {
-            R3  vecPhase = new R3( daBunch.stringValue(ATTR_BETAPHASE) );
-            this.setBetatronPhase( vecPhase );
-        }
+//        if (daBunch.hasAttribute(ATTR_BETAPHASE)) {
+//            R3  vecPhase = new R3( daBunch.stringValue(ATTR_BETAPHASE) );
+//            this.setBetatronPhase( vecPhase );
+//        }
     }
 
 }

@@ -27,10 +27,10 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import xal.resources.ResourceManager;
 import xal.sim.latgen.GenerationException;
 import xal.smf.Accelerator;
 import xal.smf.AcceleratorSeq;
-import xal.test.ResourceManager;
 
 /**
  * JUnit test cases for the class <code>{@link HardwareTree}</code>.

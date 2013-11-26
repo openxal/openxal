@@ -12,12 +12,21 @@ import xal.tools.beam.PhaseVector;
 
 
 /**
- * 
+ * Interface for exposing machine parameters which are points in phase space.
+ * The calculations require state data produced by numerical simulation.  The context of these
+ * quantities should depend upon the type <code>S</code> of the probe
+ * states produced by the simulation. 
  *
  * @author Thomas Pelaia
+ * @author Christopher K. Allen
  * @since   2/9/05
+ * @version Oct 29, 2013
+ * 
+ * @deprecated  This interface is ambiguous and ill-defined, better to use the object itself
  */
-public interface ICoordinateState extends IProbeState {
+@Deprecated
+public interface ICoordinateState /* extends IProbeState */ {
+    
     /** 
 	*  Returns homogeneous phase space coordinates of the particle.  The units
 	*  are meters and radians.
