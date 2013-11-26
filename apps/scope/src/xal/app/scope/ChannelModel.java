@@ -12,7 +12,7 @@ import xal.tools.messaging.MessageCenter;
 import xal.tools.dispatch.DispatchQueue;
 import xal.ca.*;
 import xal.tools.correlator.*;
-import xal.application.Util;
+import xal.extension.application.Util;
 
 /**
  * Model for a single waveform channel.

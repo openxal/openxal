@@ -1,0 +1,75 @@
+<project name="config">
+    <!-- XAL Home is where this file resides -->
+    <dirname property="config.home" file="${ant.file.config}" />
+    <property name="xal.home" value="${config.home}/.." />
+
+    <property environment="env" />
+    
+    <!-- location of source code directory relative to a source root -->            
+    <property name="source.code.dir" value="src" />
+    
+    <!-- Determine the build directory using the environment variable if defined, otherwise place the build root under xal home -->
+    <condition property="build.root" value="${env.XAL_BUILD_ROOT}" else="${xal.home}/build">
+        <isset property="env.XAL_BUILD_ROOT" />
+    </condition>
+    
+    <!-- Determine the installation directory using the environment variable if defined, otherwise place the dist directory under the build root -->
+    <condition property="install.root" value="${env.XAL_INSTALL_ROOT}" else="${build.root}/dist">
+        <isset property="env.XAL_INSTALL_ROOT" />
+    </condition>
+    
+    <!-- Determine the installation directory for javadoc documentation -->
+    <condition property="install.javadoc.root" value="${env.XAL_JAVADOC_ROOT}" else="${install.root}/doc">
+        <isset property="env.XAL_JAVADOC_ROOT" />
+    </condition>
+
+	<!-- Configure build intermediates -->
+	<property name="build.intermediates.root" value="${build.root}/intermediates" />
+	<property name="build.intermediates.apps" value="${build.intermediates.root}/apps" />
+	<property name="build.intermediates.core" value="${build.intermediates.root}/core" />
+	<property name="build.intermediates.extensions" value="${build.intermediates.root}/extensions" />
+	<property name="build.intermediates.services" value="${build.intermediates.root}/services" />
+	<property name="build.intermediates.shared" value="${build.intermediates.root}/shared" />
+
+	<!-- Configure build compilation -->
+	<property name="build.compile.java.source" value="1.7" />
+	<property name="build.compile.java.target" value="${build.compile.java.source}" />
+
+	<!-- Configure build products  -->
+	<property name="build.products.root" value="${build.root}/products" />
+	<property name="build.jar.root" value="${build.products.root}" />
+	<property name="build.jar.lib.root" value="${build.jar.root}/lib" />
+	<property name="build.products.lib" value="${build.jar.lib.root}" />
+
+	<!-- Configure build tests  -->
+	<property name="common.test.root" value="${xal.home}/test" />
+	<property name="build.tests.root" value="${build.root}/tests" />
+
+	<!-- Configure build javadoc  -->
+	<property name="build.javadoc.root" value="${build.root}/doc" />
+    
+    <!-- Configure path for the common libraries  -->
+    <property name="install.lib.root" value="${install.root}/lib" />
+
+    <!-- Configure path to the core  -->
+    <property name="core.root" value="${xal.home}/core" />
+	
+    <!-- Configure paths for extensions  -->
+    <property name="extensions.root" value="${xal.home}/extensions" />
+
+    <!-- Configure paths for plugins  -->
+    <property name="plugins.root" value="${xal.home}/plugins" />
+
+    <!-- Configure paths for services  -->
+    <property name="services.root" value="${xal.home}/services" />
+    <property name="services.build.jar.root" value="${build.jar.root}/services" />
+    <property name="services.install.root" value="${install.root}/services" />
+
+    <!-- Configure paths for apps  -->
+    <property name="apps.build.jar.root" value="${build.jar.root}/apps" />
+    <property name="apps.install.root" value="${install.root}/apps" />
+    
+    <!-- Configure paths for scripts  -->
+    <property name="scripts.build.root" value="${build.products.root}/scripts" />
+    <property name="scripts.install.root" value="${install.root}/scripts" />
+</project>

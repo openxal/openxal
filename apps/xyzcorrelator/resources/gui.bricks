@@ -1,7 +1,7 @@
 <?xml version = '1.0' encoding = 'UTF-8'?>
 <BricksDocument date="Fri Feb 06 16:21:19 EST 2009" version="1.0.0">
     <RootBrick>
-        <ViewNode customBeanClass="xal.smf.application.DefaultAcceleratorWindow" height="714" tag="MainWindow" width="981">
+        <ViewNode customBeanClass="xal.extension.smf.application.DefaultAcceleratorWindow" height="714" tag="MainWindow" width="981">
             <ViewProxy type="javax.swing.JFrame"/>
             <BeanProperty name="title" value="XYZ Correlator"/>
             <ViewNode tag="MainPane">
@@ -106,7 +106,7 @@
                         </BorderNode>
                     </ViewNode>
                     <ViewNode tag="CorrelationPlot">
-                        <ViewProxy type="xal.tools.plot.FunctionGraphsJPanel"/>
+                        <ViewProxy type="xal.extension.widgets.plot.FunctionGraphsJPanel"/>
                     </ViewNode>
                     <ViewNode tag="ButtonBox">
                         <ViewProxy type="javax.swing.Box_Horizontal"/>

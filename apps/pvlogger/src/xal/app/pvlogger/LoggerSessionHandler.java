@@ -13,7 +13,7 @@ package xal.app.pvlogger;
 import xal.service.pvlogger.*;
 import xal.tools.data.*;
 import xal.tools.dispatch.DispatchQueue;
-import xal.tools.services.*;
+import xal.extension.service.*;
 import xal.tools.messaging.MessageCenter;
 
 import java.util.*;

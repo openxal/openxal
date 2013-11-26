@@ -8,7 +8,7 @@
 
 package xal.app.knobs;
 
-import xal.application.Application;
+import xal.extension.application.Application;
 import xal.tools.IconLib;
 
 import java.awt.Component;

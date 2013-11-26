@@ -11,11 +11,11 @@
 package xal.app.pvlogger;
 
 import xal.service.pvlogger.*;
-import xal.smf.application.*;
-import xal.application.*;
+import xal.extension.smf.application.*;
+import xal.extension.application.*;
 import xal.tools.database.*;
 import xal.tools.apputils.PathPreferenceSelector;
-import xal.tools.apputils.pvlogbrowser.*;
+import xal.service.pvlogger.apputils.browser.*;
 
 import java.net.URL;
 

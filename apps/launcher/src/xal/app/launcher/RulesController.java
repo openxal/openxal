@@ -8,8 +8,8 @@
 
 package xal.app.launcher;
 
-import xal.tools.bricks.WindowReference;
-import xal.tools.swing.KeyValueTableModel;
+import xal.extension.bricks.WindowReference;
+import xal.extension.widgets.swing.KeyValueTableModel;
 
 import java.awt.event.*;
 import java.util.*;

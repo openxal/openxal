@@ -25,9 +25,9 @@ import javax.swing.text.*;
 import javax.swing.event.*;
 import javax.swing.JToggleButton.ToggleButtonModel;
 
-import xal.smf.application.*;
-import xal.application.*;
-import xal.tools.bricks.WindowReference;
+import xal.extension.smf.application.*;
+import xal.extension.application.*;
+import xal.extension.bricks.WindowReference;
 
 import xal.ca.*;
 import xal.smf.*;
@@ -51,14 +51,14 @@ import xal.tools.xml.*;
 import xal.tools.data.*;
 import xal.tools.beam.Twiss;
 import xal.tools.beam.PhaseVector;
-import xal.tools.plot.BasicGraphData;
-import xal.tools.plot.FunctionGraphsJPanel;
-import xal.tools.swing.KeyValueFilteredTableModel;
-import xal.tools.swing.DecimalField;
+import xal.extension.widgets.plot.BasicGraphData;
+import xal.extension.widgets.plot.FunctionGraphsJPanel;
+import xal.extension.widgets.swing.KeyValueFilteredTableModel;
+import xal.extension.widgets.swing.DecimalField;
 import xal.tools.apputils.files.*;
-import xal.tools.apputils.SimpleProbeEditor;
-import xal.tools.apputils.pvlogbrowser.PVLogSnapshotChooser;
-import xal.sim.sync.PVLoggerDataSource;
+import xal.extension.widgets.apputils.SimpleProbeEditor;
+import xal.service.pvlogger.apputils.browser.PVLogSnapshotChooser;
+import xal.service.pvlogger.sim.PVLoggerDataSource;
 import xal.tools.dispatch.*;
 
 
@@ -1588,62 +1588,38 @@ class DiagPlot {
 	
 	protected FunctionGraphsJPanel _beampositionplot;
 	protected FunctionGraphsJPanel _sigamplot;
-
+	protected BasicGraphData DataBeamx;
+	protected BasicGraphData DataBeamy;
+	protected BasicGraphData DataBPMx;
+	protected BasicGraphData DataBPMy;
+	protected BasicGraphData Datasigmaz;
+	protected BasicGraphData DataWSx;
+	protected BasicGraphData DataWSy;
+	
 	public DiagPlot(FunctionGraphsJPanel beampositionplot, FunctionGraphsJPanel sigamplot) {
 		_beampositionplot=beampositionplot;
 		_sigamplot=sigamplot;
-		setupPlot(beampositionplot,sigamplot);
+		setupPlot(beampositionplot,sigamplot);	 
 	}
 
-	public void showbeampositionplot(double[] p,double[] x, double[] y) throws ConnectionException, GetException {
-		_beampositionplot.removeAllGraphData();
-		BasicGraphData DataBeamx=new BasicGraphData();
-		BasicGraphData DataBeamy=new BasicGraphData();	
-		DataBeamx.addPoint(p, x);
-		DataBeamy.addPoint(p, y);
-	    DataBeamx.setGraphColor(Color.blue);
-	    DataBeamy.setGraphColor(Color.orange);
-	    DataBeamx.setGraphProperty(_beampositionplot.getLegendKeyString(), "BeamxAvg");
-	    DataBeamy.setGraphProperty(_beampositionplot.getLegendKeyString(), "BeamyAvg");	   
-		_beampositionplot.addGraphData(DataBeamx);
-		_beampositionplot.addGraphData(DataBeamy);			    		
+	public void showbeampositionplot(double[] p,double[] x, double[] y) throws ConnectionException, GetException {	
+		DataBeamx.updateValues(p, x);
+		DataBeamy.updateValues(p, y);			
 	}
 	
-	public void showbpmplot(double[] p,double[] x, double[] y) throws ConnectionException, GetException {
-		BasicGraphData DataBPMx=new BasicGraphData();
-		BasicGraphData DataBPMy=new BasicGraphData();	
-		DataBPMx.addPoint(p, x);
-	    DataBPMy.addPoint(p, y);
-	    DataBPMx.setGraphColor(Color.RED);
-		DataBPMy.setGraphColor(Color.BLACK);
-	    DataBPMx.setGraphProperty(_beampositionplot.getLegendKeyString(), "BPMxAvg");
-		DataBPMy.setGraphProperty(_beampositionplot.getLegendKeyString(), "BPMyAvg");	   
-		_beampositionplot.addGraphData(DataBPMx);
-		_beampositionplot.addGraphData(DataBPMy);			    		
+	public void showbpmplot(double[] p,double[] x, double[] y) throws ConnectionException, GetException {		
+	    DataBPMx.updateValues(p, x);
+	    DataBPMy.updateValues(p, y);	    
 	}
 	
 	
 	public void showsigmazplot(double[] p,double[] sigmaz) throws ConnectionException, GetException {
-		_sigamplot.removeAllGraphData();
-		BasicGraphData Datasigmaz=new BasicGraphData();	
-	    Datasigmaz.addPoint(p, sigmaz);
-	    Datasigmaz.setGraphColor(Color.blue);
-	    Datasigmaz.setGraphProperty(_sigamplot.getLegendKeyString(), "sigmaz");	   
-		_sigamplot.addGraphData(Datasigmaz);			    	
+		Datasigmaz.updateValues(p, sigmaz);	
 	}
 	
-	public void showsigmaplot(double[] wsp,double[] wsx, double[] wsy) throws ConnectionException, GetException {
-		//_sigamplot.removeAllGraphData();
-		BasicGraphData DataWSx=new BasicGraphData();
-		BasicGraphData DataWSy=new BasicGraphData();	
-		DataWSx.addPoint(wsp, wsx);
-	    DataWSy.addPoint(wsp, wsy);
-	    DataWSx.setGraphColor(Color.RED);
-		DataWSy.setGraphColor(Color.BLACK);
-	    DataWSx.setGraphProperty(_sigamplot.getLegendKeyString(), "sigmax");
-		DataWSy.setGraphProperty(_sigamplot.getLegendKeyString(), "sigmay");	
-		_sigamplot.addGraphData(DataWSx);
-		_sigamplot.addGraphData(DataWSy);			    	
+	public void showsigmaplot(double[] wsp,double[] wsx, double[] wsy) throws ConnectionException, GetException {		
+		DataWSx.updateValues(wsp, wsx);
+		DataWSy.updateValues(wsp, wsy);
 	}
 	
 	
@@ -1679,6 +1655,40 @@ class DiagPlot {
 		sigamplot.setLegendBackground( Color.lightGray );
 		sigamplot.setLegendColor( Color.black );
 		sigamplot.setLegendVisible( true );
+		
+		
+		DataBeamx=new BasicGraphData();
+		DataBeamy=new BasicGraphData();	
+		DataBPMx=new BasicGraphData();	 
+		DataBPMy=new BasicGraphData();	
+		DataWSx=new BasicGraphData();
+		DataWSy=new BasicGraphData();
+		Datasigmaz=new BasicGraphData();
+		
+		DataBeamx.setGraphProperty(_beampositionplot.getLegendKeyString(), "BeamxAvg");
+	    DataBeamy.setGraphProperty(_beampositionplot.getLegendKeyString(), "BeamyAvg");		    
+		DataBPMx.setGraphProperty(_beampositionplot.getLegendKeyString(), "BPMxAvg");
+	    DataBPMy.setGraphProperty(_beampositionplot.getLegendKeyString(), "BPMyAvg");	    
+	    DataWSx.setGraphProperty(_sigamplot.getLegendKeyString(), "sigmax");		
+	    DataWSy.setGraphProperty(_sigamplot.getLegendKeyString(), "sigmay");
+		Datasigmaz.setGraphProperty(_sigamplot.getLegendKeyString(), "sigmaz");
+		
+	    DataBeamx.setGraphColor(Color.blue);
+	    DataBeamy.setGraphColor(Color.orange);    
+	    DataBPMx.setGraphColor(Color.RED);
+		DataBPMy.setGraphColor(Color.BLACK);		    
+		DataWSx.setGraphColor(Color.RED);
+	    DataWSy.setGraphColor(Color.BLACK);
+	    Datasigmaz.setGraphColor(Color.blue);
+	    
+	   _beampositionplot.addGraphData(DataBeamx);
+	   _beampositionplot.addGraphData(DataBeamy);		
+	   _beampositionplot.addGraphData(DataBPMx);
+	   _beampositionplot.addGraphData(DataBPMy);				
+	   _sigamplot.addGraphData(DataWSx);
+	   _sigamplot.addGraphData(DataWSy);			
+	   _sigamplot.addGraphData(Datasigmaz);
 	}
+	
 }
 

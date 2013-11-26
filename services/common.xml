@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <project name="common.services.config" basedir="." default="build">
-    <import file="../config.xml" />
+    <import file="../config/config.xml" />
 
     <!-- the value for these properties are overriden if specified in the beginning of the service's build file before any tasks are defined -->
 	<property name="classpath.ref" value="default.classpath" />
-	<property name="manifest.classpath" value="../lib/xal-core.jar ../lib/xal-lib.jar" />    
+	<property name="manifest.classpath" value="../lib/xal-shared.jar" />
     <property name="mainclass.base" value="Main" />
     
     <!-- Initialization for the service build -->
@@ -13,16 +13,23 @@
         <dirname property="services.src.root" file="${ant.file.common.services.config}" />
         
         <property environment="env" />        
-        <property name="servicename" value="${ant.project.name}" />
+
+		<!-- The service name is synonymous with the directory within which the service's build file resides (i.e. ${basedir}).-->
+		<basename property="servicename" file="${basedir}"/>
+
 		<property name="service.package.prefix" value="xal.service" />
 		<property name="mainclass" value="${service.package.prefix}.${servicename}.${mainclass.base}" />
         <property name="service.ref" value="${servicename}" />
         <property name="service.src.root" value="${services.src.root}/${service.ref}" />
-        <property name="service.build.compile.root" value="${services.build.compile.root}" />
         <property name="service.build.jar" value="${services.build.jar.root}/${servicename}.jar" />
         <property name="service.relative.path" value="xal/service/${servicename}" />
         <property name="service.install.jar" value="${services.install.root}/${servicename}.jar" />
-        
+
+        <property name="service.intermediates.root" value="${build.intermediates.services}/${servicename}" />
+        <property name="service.compile.root" value="${service.intermediates.root}/compile" />
+        <property name="service.intermediates.lib.root" value="${service.intermediates.root}" />
+        <property name="service.intermediates.resources" value="${service.compile.root}/${service.relative.path}/resources" />
+
         <!-- determine whether building should be allowed -->
         <!-- don't build if the build is a batch build and this project explicitly excludes batch building -->
         <condition property="allows.build">
@@ -41,9 +48,21 @@
                 <isset property="exclude.install" />
             </not>
         </condition>
-        
+
+		<!-- define a patternset and enable reference by ID -->
+		<patternset id="pattern.service.lib">
+			<include name="lib/*.jar" />
+		</patternset>
+
+		<!-- fileset for the service's libraries -->
+		<fileset id="fileset.service.lib" dir="${service.src.root}">
+			<patternset refid="pattern.service.lib" />
+		</fileset>
+
+		<!-- sets the property if there are any libraries to process -->
+		<pathconvert refid="fileset.service.lib" property="service.has.libs" setonempty="false"/>
+
         <mkdir dir="${build.root}" />
-        <mkdir dir="${services.build.compile.root}" />
         
         <echo message="Conditionally processing ${servicename}" />
     </target>
@@ -51,8 +70,7 @@
     
     <!-- classpath to be referenced -->
 	<path id="default.classpath">
-		<pathelement location="${build.jar.lib.root}/xal-core.jar" />
-		<pathelement location="${build.jar.lib.root}/xal-lib.jar" />
+		<pathelement location="${build.jar.lib.root}/xal-shared.jar" />
 	</path>
 
 	
@@ -60,55 +78,75 @@
 	<macrodef name="compile-flagged">
 		<attribute name="flag" default="-Xlint:none" />
 		<sequential>
-            <mkdir dir="${service.build.compile.root}" />
-            <javac srcdir="${service.src.root}/${source.code.dir}" includes="**" destdir="${service.build.compile.root}" debug="true" source="${build.compile.java.source}" target="${build.compile.java.target}" includeAntRuntime="no" deprecation="true">
+            <mkdir dir="${service.compile.root}" />
+            <javac srcdir="${service.src.root}/${source.code.dir}" includes="**" destdir="${service.compile.root}" debug="true" source="${build.compile.java.source}" target="${build.compile.java.target}" includeAntRuntime="no" deprecation="true">
                 <compilerarg value="@{flag}" />
                 
-                <!-- compile against the common libraries (e.g. xal-core.jar, xal-lib.jar) -->
+                <!-- compile against the common libraries (e.g. xal-shared.jar) -->
                 <classpath refid="${classpath.ref}" />
                 
                 <!-- compile against any service specific jars in the service's lib directory -->
-                <classpath>
-                    <fileset dir="${service.src.root}">
-                        <include name="lib/*.jar" />
-                    </fileset>
-                </classpath>
+				<classpath>
+					<pathelement location="${service.intermediates.root}/lib.jar" />
+				</classpath>
             </javac>
-            
-            <!-- copy the service's resources if they exist into the compile directory -->
-            <copy todir="${service.build.compile.root}/${service.relative.path}/resources" failonerror="false">
-                <fileset dir="${service.src.root}/resources" erroronmissingdir="false" />
-            </copy>
-            
+
+			<!-- Copy the service's resources into the compile directory -->
+			<mkdir dir="${service.intermediates.resources}" />
+			<copy todir="${service.intermediates.resources}" quiet="true" failonerror="false">
+				<fileset dir="${service.src.root}/resources" />
+			</copy>
 		</sequential>
 	</macrodef>
 	
 	
 	<!-- Compile the core XAL classes using the lint flag to show some recommended warnings -->
-    <target name="compile-warn-mandatory" depends="init" if="allows.build">
+    <target name="compile-warn-mandatory" depends="init, jar-lib" if="allows.build">
 		<compile-flagged />
     </target>
 	
 	
 	<!-- Compile the core XAL classes using the lint flag to show all recommended warnings -->
-    <target name="compile-warn-all" depends="init" if="allows.build">
+    <target name="compile-warn-all" depends="init, jar-lib" if="allows.build">
 		<compile-flagged flag="-Xlint" />
     </target>
 	
 	
 	<!-- Compile the core XAL classes reporting only mandated warnings -->
-    <target name="compile" depends="init" if="allows.build">
+    <target name="compile" depends="init, jar-lib" if="allows.build">
 		<compile-flagged flag="-Xlint" />
     </target>
-    
+
+
+	<!-- Join the third party jars into a common external jar file -->
+    <target name="jar-lib" depends="init" if="service.has.libs">
+        <mkdir dir="${service.intermediates.lib.root}" />
+        <jar compress="true" jarfile="${service.intermediates.lib.root}/lib.jar" duplicate="preserve">
+			<zipgroupfileset id="service.lib.group" dir="${service.src.root}">
+				<patternset refid="pattern.service.lib" />
+			</zipgroupfileset>
+        </jar>
+    </target>
+
+
+	<!-- Jar the service's resources as a convenience if one wants to use it. It isn't referenced elsewhere. -->
+	<target  name="jar-resources" depends="compile">
+		<jar compress="true" jarfile="${service.intermediates.root}/resources.jar">
+			<fileset dir="${service.compile.root}">
+				<exclude name="**/*.class" />
+			</fileset>
+		</jar>
+	</target>
+
     
     <!-- Archive the service either referencing the common libraries or as standalone with the common libraries embedded -->
     <macrodef name="archive">
-        <element name="embed-other" optional="yes" />
+       <element name="embed-other" optional="yes" />
         <sequential>
             <mkdir dir="${build.jar.root}" />
             <mkdir dir="${services.build.jar.root}" />
-            <jar jarfile="${service.build.jar}" compress="true" basedir="${service.build.compile.root}" includes="${service.relative.path}/**/*">
+			<mkdir dir="${service.intermediates.lib.root}" />
+            <jar jarfile="${service.build.jar}" compress="true" basedir="${service.compile.root}" includes="${service.relative.path}/**/*">
                 <manifest>
                     <attribute name="Manifest-Version" value="1.0" />
                     <attribute name="Main-Class" value="${mainclass}" />
@@ -116,12 +154,12 @@
                 </manifest>
                 
                 <!-- merge any service specific libraries in the service's lib directory into the service's jar -->
-                <zipgroupfileset dir="${service.src.root}">
+                <zipgroupfileset dir="${service.intermediates.lib.root}">
                     <patternset>
-                        <include name="lib/*.jar" />
+                        <include name="lib.jar" />
                     </patternset>
                 </zipgroupfileset>
-                
+
                 <!-- optionally embed other items into the archive -->
                 <embed-other />
             </jar>
@@ -130,19 +168,20 @@
 
     
     <!-- Archive the service and any of its service specific libraries into a jar file with relative dependency on the common libraries -->
-    <target name="jar" depends="init,compile" if="allows.build">
-        <archive />
+    <target name="jar" depends="init, compile" if="allows.build">
+ 		<mkdir dir="${service.intermediates.root}" />
+       <archive />
     </target>
     
     
     <!-- Archive the service, any of its service specific libraries and the common libraries into a standalone jar file -->
-    <target name="jar-standalone" depends="init,compile" if="allows.build">
+    <target name="jar-standalone" depends="init, compile" if="allows.build">
+		<mkdir dir="${service.intermediates.root}" />
         <archive>
             <embed-other>
                 <!-- embed the core and external libraries into the service's archive -->
                 <zipgroupfileset dir="${build.jar.lib.root}">
-                    <include name="xal-core.jar" />
-                    <include name="xal-lib.jar" />
+                    <include name="xal-shared.jar" />
                 </zipgroupfileset>
             </embed-other>
         </archive>
@@ -187,11 +226,18 @@
     
     <!-- Clean the service build files -->
     <target name="clean" depends="init" description="Clean all build products.">
-        <delete dir="${services.build.compile.root}/${service.relative.path}"/>
+        <delete dir="${service.intermediates.root}" quiet="true" />
         <delete file="${service.build.jar}"/>
         <delete dir="${build.root}/javadoc/services/${servicename}" />
     </target>
-	
+
+
+	<!-- purge the service's build intermediates -->
+    <target name="purge-intermediates" depends="init" description="Purge the service's build intermediates." >
+        <delete dir="${service.intermediates.root}" />
+        <echo message="Purged the build intermediates directory for ${servicename}!" />
+    </target>
+
 	
 	<!-- provide guidance on the various targets -->
     <target name="help" depends="init">
@@ -208,6 +254,7 @@
 		<echo message="    compile-warn-mandatory ..... Compile the service reporting only mandated warnings." />
 		<echo message="    install .................... Install the service for distribution." />
 		<echo message="    purge-install .............. Purge the installed service." />
+		<echo message="    purge-intermediates ........ Purge the service's build intermediates directory." />
     </target>
 
 </project>

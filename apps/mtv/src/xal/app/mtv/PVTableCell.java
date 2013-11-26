@@ -8,7 +8,7 @@ import java.text.*;
 import java.awt.event.*;
 
 import xal.ca.*;
-import xal.tools.swing.FortranNumberFormat;
+import xal.tools.text.FortranNumberFormat;
 
 /**
 * This is an intermediate object to facilitate the table display 

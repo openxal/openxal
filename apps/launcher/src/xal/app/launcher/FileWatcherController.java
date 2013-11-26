@@ -8,7 +8,7 @@
 
 package xal.app.launcher;
 
-import xal.tools.bricks.WindowReference;
+import xal.extension.bricks.WindowReference;
 
 import java.awt.event.ActionEvent;
 import java.io.File;

@@ -10,7 +10,7 @@
 
 package xal.app.orbitcorrect;
 
-import xal.tools.plot.FunctionGraphsJPanel;
+import xal.extension.widgets.plot.FunctionGraphsJPanel;
 
 import java.util.List;
 

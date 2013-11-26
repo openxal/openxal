@@ -8,8 +8,8 @@
 
 package xal.app.bricks;
 
-import xal.application.*;
-import xal.tools.bricks.*;
+import xal.extension.application.*;
+import xal.extension.bricks.*;
 
 import javax.swing.*;
 import javax.swing.tree.*;
@@ -177,7 +177,7 @@ public class CodeAssistant {
             
             public void actionPerformed( final ActionEvent event ) {
 				final StringBuffer buffer = new StringBuffer();
-				buffer.append( "import xal.tools.bricks.WindowReference;" );
+				buffer.append( "import xal.extension.bricks.WindowReference;" );
 				buffer.append( System.getProperty( "line.separator" ) );
 				final StringSelection stringSelection = new StringSelection( buffer.toString() );
 				Toolkit.getDefaultToolkit().getSystemClipboard().setContents( stringSelection, stringSelection );
@@ -192,7 +192,7 @@ public class CodeAssistant {
             
             public void actionPerformed( final ActionEvent event ) {
 				final StringBuffer buffer = new StringBuffer();
-				buffer.append( "from xal.tools.bricks import WindowReference" );
+				buffer.append( "from xal.extension.bricks import WindowReference" );
 				buffer.append( System.getProperty( "line.separator" ) );
 				final StringSelection stringSelection = new StringSelection( buffer.toString() );
 				Toolkit.getDefaultToolkit().getSystemClipboard().setContents( stringSelection, stringSelection );

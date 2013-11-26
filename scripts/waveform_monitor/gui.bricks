@@ -112,11 +112,11 @@
                             <BeanProperty name="oneTouchExpandable" value="true" />
                             <BeanProperty name="dividerSize" value="9" />
                             <ViewNode tag="WaveformPlot">
-                                <ViewProxy type="xal.tools.plot.FunctionGraphsJPanel" />
+                                <ViewProxy type="xal.extension.widgets.plot.FunctionGraphsJPanel" />
                                 <BeanProperty name="name" value="Waveform" />
                             </ViewNode>
                             <ViewNode tag="SpectrumPlot">
-                                <ViewProxy type="xal.tools.plot.FunctionGraphsJPanel" />
+                                <ViewProxy type="xal.extension.widgets.plot.FunctionGraphsJPanel" />
                                 <BeanProperty name="name" value="Spectrum" />
                             </ViewNode>
                         </ViewNode>

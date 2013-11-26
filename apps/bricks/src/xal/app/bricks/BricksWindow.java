@@ -10,8 +10,8 @@
 
 package xal.app.bricks;
 
-import xal.application.*;
-import xal.tools.bricks.*;
+import xal.extension.application.*;
+import xal.extension.bricks.*;
 
 import javax.swing.*;
 import javax.swing.tree.*;

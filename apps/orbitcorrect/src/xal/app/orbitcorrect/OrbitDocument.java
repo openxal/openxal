@@ -19,12 +19,12 @@ import java.awt.event.*;
 import java.util.*;
 import java.text.*;
 
-import xal.application.*;
-import xal.smf.application.*;
-import xal.tools.bricks.WindowReference;
+import xal.extension.application.*;
+import xal.extension.smf.application.*;
+import xal.extension.bricks.WindowReference;
 import xal.tools.data.*;
-import xal.tools.plot.*;
-import xal.tools.swing.KeyValueRecordSelector;
+import xal.extension.widgets.plot.*;
+import xal.extension.widgets.swing.KeyValueRecordSelector;
 import xal.tools.text.FormattedNumber;
 import xal.tools.xml.XmlDataAdaptor;
 import xal.smf.*;

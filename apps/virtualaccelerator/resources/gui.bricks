@@ -1,7 +1,7 @@
 <?xml version = '1.0' encoding = 'UTF-8'?>
 <BricksDocument date="Tue Aug 13 02:54:35 CST 2013" version="1.0.0">
     <RootBrick>
-        <ViewNode customBeanClass="xal.smf.application.DefaultAcceleratorWindow" height="788" tag="MainWindow" width="1000">
+        <ViewNode customBeanClass="xal.extension.smf.application.DefaultAcceleratorWindow" height="788" tag="MainWindow" width="1000">
             <ViewProxy type="javax.swing.JFrame"/>
             <BeanProperty name="title" value="Virtual Accelerator"/>
             <ViewNode tag="Tabbed Pane">
@@ -35,11 +35,11 @@
                     <BeanProperty name="name" value="DiagPlot"/>
                     <BeanProperty name="toolTipText" value=""/>
                     <ViewNode tag="BeamDispPlot">
-                        <ViewProxy type="xal.tools.plot.FunctionGraphsJPanel"/>
+                        <ViewProxy type="xal.extension.widgets.plot.FunctionGraphsJPanel"/>
                         <BeanProperty name="name" value="BeamDispPlot"/>
                     </ViewNode>
                     <ViewNode tag="SigmaPlot">
-                        <ViewProxy type="xal.tools.plot.FunctionGraphsJPanel"/>
+                        <ViewProxy type="xal.extension.widgets.plot.FunctionGraphsJPanel"/>
                         <BeanProperty name="name" value="SigmaPlot"/>
                     </ViewNode>
                 </ViewNode>

@@ -6,8 +6,8 @@ import java.awt.event.*;
 import java.net.*;
 import java.io.*;
 
-import xal.application.*;
-import xal.smf.application.*;
+import xal.extension.application.*;
+import xal.extension.smf.application.*;
 
 /**
  * The main program for the xio  app.

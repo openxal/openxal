@@ -21,13 +21,13 @@ import java.util.*;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 
-import xal.tools.bricks.WindowReference;
+import xal.extension.bricks.WindowReference;
 import xal.tools.data.*;
-import xal.tools.plot.*;
-import xal.tools.apputils.SimpleChartPopupMenu;
+import xal.extension.widgets.plot.*;
+import xal.extension.widgets.apputils.SimpleChartPopupMenu;
 import xal.ca.*;
 import xal.smf.*;
-import xal.smf.widgets.*;
+import xal.extension.widgets.smf.*;
 import xal.tools.correlator.Correlation;
 
 

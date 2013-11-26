@@ -11,8 +11,8 @@ import javax.swing.*;
 import java.awt.event.*;
 import java.util.*;
 
-import xal.application.*;
-import xal.smf.application.*;
+import xal.extension.application.*;
+import xal.extension.smf.application.*;
 import xal.smf.*;
 
 /**

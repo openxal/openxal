@@ -9,7 +9,7 @@
 
 package xal.app.bricks;
 
-import xal.tools.bricks.*;
+import xal.extension.bricks.*;
 
 import javax.swing.*;
 import javax.swing.tree.*;

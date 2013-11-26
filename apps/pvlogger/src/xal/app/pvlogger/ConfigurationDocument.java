@@ -14,17 +14,17 @@ import javax.swing.event.*;
 import java.util.*;
 import java.sql.*;
 
-import xal.application.*;
-import xal.smf.application.AcceleratorDocument;
+import xal.extension.application.*;
+import xal.extension.smf.application.AcceleratorDocument;
 import xal.smf.*;
 import xal.ca.Channel;
-import xal.tools.bricks.WindowReference;
+import xal.extension.bricks.WindowReference;
 import xal.service.pvlogger.*;
 import xal.tools.data.KeyValueSorting;
 import xal.tools.data.KeyValueRecordListener;
 import xal.tools.database.*;
-import xal.tools.swing.*;
-import xal.smf.widgets.NodeChannelSelector;
+import xal.extension.widgets.swing.*;
+import xal.extension.widgets.smf.NodeChannelSelector;
 
 
 /** document for managing the PV Logger configuration */

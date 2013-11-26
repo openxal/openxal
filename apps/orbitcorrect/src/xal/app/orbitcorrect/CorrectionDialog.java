@@ -10,7 +10,7 @@ package xal.app.orbitcorrect;
 
 import xal.smf.impl.*;
 import xal.smf.*;
-//import xal.tools.swing.patternfilter.*;
+//import xal.extension.widgets.swing.patternfilter.*;
 import xal.tools.text.FormattedNumber;
 
 import java.text.*;

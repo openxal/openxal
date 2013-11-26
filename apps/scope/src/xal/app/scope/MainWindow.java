@@ -14,7 +14,7 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.event.*;
 
-import xal.application.*;
+import xal.extension.application.*;
 import xal.tools.apputils.*;
 import xal.tools.IconLib;
 import xal.tools.IconLib.*;

@@ -16,16 +16,17 @@ import javax.swing.text.*;
 import javax.swing.event.*;
 import java.text.DecimalFormat;
 
-import xal.application.*;
-import xal.smf.application.*;
+import xal.extension.application.*;
+import xal.extension.smf.application.*;
 import xal.smf.*;
 import xal.tools.apputils.*;
 import xal.tools.xml.XmlDataAdaptor;
 import xal.smf.data.XMLDataManager;
 import xal.tools.data.*;
-import xal.tools.bricks.WindowReference;
-import xal.smf.widgets.NodeChannelSelector;
-import xal.tools.plot.*;
+import xal.extension.bricks.WindowReference;
+import xal.extension.widgets.smf.NodeChannelSelector;
+import xal.extension.widgets.plot.*;
+import xal.extension.widgets.apputils.SimpleChartPopupMenu;
 import xal.tools.statistics.UnivariateStatistics;
 import xal.ca.Channel;
 

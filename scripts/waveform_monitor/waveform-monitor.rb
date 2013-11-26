@@ -19,43 +19,55 @@ import javax.swing.JFrame
 import javax.swing.JOptionPane
 import javax.swing.SpinnerNumberModel
 
-include_class 'xal.tools.apputils.SimpleChartPopupMenu'
-include_class 'xal.tools.StringJoiner'
-include_class 'xal.tools.plot.RainbowColorGenerator'
-include_class 'xal.tools.plot.FunctionGraphsJPanel'
-include_class 'xal.tools.plot.BasicGraphData'
-include_class 'xal.tools.bricks.WindowReference'
-include_class 'xal.tools.statistics.MutableUnivariateStatistics'
-include_class 'xal.tools.math.DiscreteFourierTransform'
-include_class 'xal.smf.widgets.NodeChannelSelector'
-include_class 'xal.smf.impl.BPM'
-include_class 'xal.smf.data.XMLDataManager'
-include_class 'xal.ca.ConnectionListener'
-include_class 'xal.ca.Channel'
-include_class 'xal.ca.ChannelFactory'
-include_class 'xal.ca.IEventSinkValTime'
-include_class 'xal.ca.Monitor'
-include_class 'xal.application.ImageCaptureManager'
+java_import 'xal.extension.widgets.apputils.SimpleChartPopupMenu'
+java_import 'xal.tools.StringJoiner'
+java_import 'xal.extension.widgets.plot.RainbowColorGenerator'
+java_import 'xal.extension.widgets.plot.FunctionGraphsJPanel'
+java_import 'xal.extension.widgets.plot.BasicGraphData'
+java_import 'xal.extension.bricks.WindowReference'
+java_import 'xal.tools.statistics.MutableUnivariateStatistics'
+java_import 'xal.tools.math.DiscreteFourierTransform'
+java_import 'xal.extension.widgets.smf.NodeChannelSelector'
+java_import 'xal.smf.impl.BPM'
+java_import 'xal.smf.data.XMLDataManager'
+java_import 'xal.ca.ConnectionListener'
+java_import 'xal.ca.Channel'
+java_import 'xal.ca.ChannelFactory'
+java_import 'xal.ca.IEventSinkValTime'
+java_import 'xal.ca.Monitor'
+java_import 'xal.tools.apputils.ImageCaptureManager'
 
 module Java
-	include_class 'java.awt.event.MouseAdapter'
-	include_class 'java.awt.event.MouseListener'
-	include_class 'java.lang.reflect.Array'
-	include_class 'java.lang.Class'
-	include_class 'java.lang.Double'
-	include_class 'java.io.File'
-    include_class 'java.util.Date'
-	include_class 'java.util.List'
-	include_class 'java.lang.Math'
-	include_class 'java.util.ArrayList'
-	include_class 'java.util.Vector'
-	include_class 'java.text.DecimalFormat'
-	include_class 'javax.swing.ButtonGroup'
-	include_class 'javax.swing.Timer'
-	include_class 'javax.swing.ListSelectionModel'
-	include_class 'javax.swing.DefaultListModel'
+	java_import 'java.awt.event.MouseAdapter'
+	java_import 'java.awt.event.MouseListener'
+	java_import 'java.lang.reflect.Array'
+	java_import 'java.lang.Class'
+	java_import 'java.lang.Double'
+	java_import 'java.io.File'
+    java_import 'java.util.Date'
+	java_import 'java.util.List'
+	java_import 'java.lang.Math'
+	java_import 'java.util.ArrayList'
+	java_import 'java.util.Vector'
+	java_import 'java.text.DecimalFormat'
+	java_import 'javax.swing.ButtonGroup'
+	java_import 'javax.swing.Timer'
+	java_import 'javax.swing.ListSelectionModel'
+	java_import 'javax.swing.DefaultListModel'
 end
 
+
+
+# model of functions to resolve Java ambiguities
+module JavaResolver
+	# Construct a SpinnerNumberModel using integer parameters (addresses ambiguous Java constructor)
+	def newSpinnerNumberModel( value, minimum, maximum, step )
+		constructor = SpinnerNumberModel.java_class.constructor( Java::int, Java::int, Java::int, Java::int )
+		return constructor.new_instance( value, minimum, maximum, step )
+	end
+end
+
+include JavaResolver
 
 
 class WaveformReader	
@@ -232,9 +244,9 @@ class ControlApp
 		
 		@range_checkbox.addActionListener self
 		
-		@lower_range_spinner.setModel( SpinnerNumberModel.new( 0, 0, 1500, 1 ) )
+		@lower_range_spinner.setModel( newSpinnerNumberModel( 0, 0, 1500, 1 ) )
 		@lower_range_spinner.addChangeListener self
-		@upper_range_spinner.setModel( SpinnerNumberModel.new( 256, 0, 1500, 1 ) )
+		@upper_range_spinner.setModel( newSpinnerNumberModel( 256, 0, 1500, 1 ) )
 		@upper_range_spinner.addChangeListener self
 		
 		@sample_period_field = @window_reference.getView( "Sample Period Field" )
@@ -345,7 +357,7 @@ class ControlApp
             if ( fresh_reader != nil )     # check that at least one reader is fresh otherwise there is nothing to do
                 readers.each do |reader|
                     waveform = reader.waveform
-                    if waveform != nil:
+                    if waveform != nil
                         refreshDisplay
                         return
                     end

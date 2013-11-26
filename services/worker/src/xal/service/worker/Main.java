@@ -10,7 +10,7 @@
 
 package xal.service.worker;
 
-import xal.tools.services.ServiceDirectory;
+import xal.extension.service.ServiceDirectory;
 
 import java.util.Date;
 

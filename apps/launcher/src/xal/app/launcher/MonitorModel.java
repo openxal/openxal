@@ -11,9 +11,9 @@ package xal.app.launcher;
 import java.util.*;
 import java.util.concurrent.Callable;
 
-import xal.tools.services.*;
+import xal.extension.service.*;
 import xal.tools.dispatch.DispatchQueue;
-import xal.application.ApplicationStatus;
+import xal.extension.application.ApplicationStatus;
 import xal.tools.messaging.MessageCenter;
 
 

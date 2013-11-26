@@ -18,13 +18,13 @@ import java.awt.event.*;
 import javax.swing.event.*;
 import javax.swing.JToggleButton.ToggleButtonModel;
 
-import xal.smf.application.*;
-import xal.application.*;
+import xal.extension.smf.application.*;
+import xal.extension.application.*;
 
 import xal.smf.*;
 import xal.smf.data.*;
 import xal.sim.slg.*;   // for lattice generation
-import xal.tools.extlatgen.*; // t3d and dynac adaptor
+import xal.extension.extlatgen.*; // t3d and dynac adaptor
 import xal.model.probe.*;  // Probe for t3d header
 import xal.model.xml.*;
 import xal.model.xml.ParsingException;
@@ -32,8 +32,8 @@ import xal.model.alg.*;
 import xal.sim.scenario.Scenario;
 import xal.sim.scenario.*;
 
-import xal.tools.apputils.SimpleProbeEditor;
-import xal.tools.apputils.pvlogbrowser.PVLogSnapshotChooser;
+import xal.extension.widgets.apputils.SimpleProbeEditor;
+import xal.service.pvlogger.apputils.browser.PVLogSnapshotChooser;
 import xal.tools.xml.*;
 import xal.tools.data.*;
 

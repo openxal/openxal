@@ -12,10 +12,10 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
 
-import com.cosylab.gui.components.Wheelswitch;
+import xal.extension.widgets.swing.Wheelswitch;
 
 import xal.ca.*;
-import xal.tools.swing.FortranNumberFormat;
+import xal.tools.text.FortranNumberFormat;
 
 /**
  * The window representation / view of an xiodiag document
