@@ -1,5 +1,6 @@
 package xal.tools.beam;
 
+import xal.tools.beam.Twiss3D.IND_3D;
 import xal.tools.math.r3.R3x3;
 import xal.tools.annotation.AProperty.NoEdit;
 import Jama.Matrix;
@@ -68,7 +69,7 @@ public class CovarianceMatrix extends PhaseMatrix {
      *  @return         zero vector
      */
     public static CovarianceMatrix  newZero()   {
-        return new CovarianceMatrix( new Jama.Matrix(DIM, DIM, 0.0) );
+        return new CovarianceMatrix( PhaseMatrix.zero() );
     }
     
     /**
@@ -77,7 +78,7 @@ public class CovarianceMatrix extends PhaseMatrix {
      *  @return         7x7 real identity matrix
      */
     public static CovarianceMatrix  newIdentity()   {
-        return new CovarianceMatrix( Jama.Matrix.identity(DIM,DIM) );
+        return new CovarianceMatrix( PhaseMatrix.identity() );
     }
     
     /**
@@ -123,9 +124,9 @@ public class CovarianceMatrix extends PhaseMatrix {
      */
     public static CovarianceMatrix buildCovariance(Twiss3D envTwiss)  {
         return CovarianceMatrix.buildCorrelation(
-                                    envTwiss.getTwiss(SpaceIndex3D.X), 
-                                    envTwiss.getTwiss(SpaceIndex3D.Y),
-                                    envTwiss.getTwiss(SpaceIndex3D.Z)
+                                    envTwiss.getTwiss(IND_3D.X), 
+                                    envTwiss.getTwiss(IND_3D.Y),
+                                    envTwiss.getTwiss(IND_3D.Z)
                                     );
     }
     
@@ -213,7 +214,7 @@ public class CovarianceMatrix extends PhaseMatrix {
         CovarianceMatrix   matSig;
         
         matSig = buildCorrelation(twissX, twissY, twissZ);
-        matSig.setElem(PhaseIndexHom.HOM, PhaseIndexHom.HOM, 0.0);
+        matSig.setElem(IND.HOM, IND.HOM, 0.0);
 
 
         // Add the average value squared to the covariance matrix to form the correlation matrix        
@@ -276,20 +277,20 @@ public class CovarianceMatrix extends PhaseMatrix {
             throw new IllegalArgumentException("CovarianceMatrix(PhaseMatrix) - argument not symmetric.");
     }
 
-    /**
-     * Constructor for CovarianceMatrix.  Takes a symmetric <code>Jama Matrix</code> 
-     * object to initialize the correlation matrix.
-     * 
-     * @param matInit symmetric <code>Jama Matrix</code> object for initial value
-     * 
-     * @exception IllegalArgumentException  initializing matrix is not symmetric
-     */
-    public CovarianceMatrix(Matrix matInit) throws IllegalArgumentException {
-        super(matInit);
-
-        if (!this.checkSymmetry(this))
-            throw new IllegalArgumentException("CovarianceMatrix(PhaseMatrix) - argument not symmetric.");
-    }
+//    /**
+//     * Constructor for CovarianceMatrix.  Takes a symmetric <code>Jama Matrix</code> 
+//     * object to initialize the correlation matrix.
+//     * 
+//     * @param matInit symmetric <code>Jama Matrix</code> object for initial value
+//     * 
+//     * @exception IllegalArgumentException  initializing matrix is not symmetric
+//     */
+//    public CovarianceMatrix(Matrix matInit) throws IllegalArgumentException {
+//        super(matInit);
+//
+//        if (!this.checkSymmetry(this))
+//            throw new IllegalArgumentException("CovarianceMatrix(PhaseMatrix) - argument not symmetric.");
+//    }
 
     /**
      *  (Re)sets the rms emittances for the beam.  This method scales the X,Y,Z diagonal blocks
@@ -562,7 +563,7 @@ public class CovarianceMatrix extends PhaseMatrix {
      * 
      *  @return     &lt;(z-&lt;z&gt;)*(z-&lt;z&gt;)^T&gt; = &lt;z*z^T&gt; - &lt;z&gt;*&lt;z&gt;^T
      */
-    public CovarianceMatrix computeCovariance() {
+    public CovarianceMatrix computeCentralCovariance() {
         PhaseVector vecMean = this.getMean();
         PhaseMatrix matCorrel = this;
         PhaseMatrix matAve2 = vecMean.outerProd(vecMean);
@@ -592,7 +593,7 @@ public class CovarianceMatrix extends PhaseMatrix {
      */
     public double[] computeRmsEmittances() {
     	//        PhaseMatrix matSig = this.phaseCorrelation();
-        CovarianceMatrix matSig = this.computeCovariance();
+        CovarianceMatrix matSig = this.computeCentralCovariance();
 	
         double ex_2 =
                 matSig.getElem(0, 0) * matSig.getElem(1, 1)
@@ -631,7 +632,7 @@ public class CovarianceMatrix extends PhaseMatrix {
      */
     public Twiss[] computeTwiss() {
     //        return twissParameters(this.phaseCorrelation());
-        CovarianceMatrix matSig = this.computeCovariance();
+        CovarianceMatrix matSig = this.computeCentralCovariance();
 	
         double[] arrEmit; // array of rms emittance values
 

@@ -7,7 +7,7 @@
  */
 package xal.tools.math.r3;
 
-import xal.tools.math.r3.R3x3.Position;
+import xal.tools.math.r3.R3x3.POS;
 
 
 
@@ -27,10 +27,15 @@ import xal.tools.math.r3.R3x3.Position;
  * <br/>
  *  where <b>A</b> is the target matrix, <b>R</b> is an orthogonal 
  *  matrix in <i>SO</i>(3), and <b>D</b> is the diagonal matrix of real 
- *  eigenvales of A.
- *  
+ *  eigenvales of <b>A</b>.
+ *  </p>
+ *  The JAMA matrix package is <em>not</em> explicitly used in this class.
+ *  <p>
+ *  </p>
+ *  <p>
  *  Most of the work of the Jacobi iterations is done in the helper
  *  class <code>{@link JacobiIterate}</code>.
+ *  </p>
  * 
  * @author Christopher K. Allen
  * 
@@ -113,7 +118,7 @@ public class R3x3JacobiDecomposition {
      * 
      * @throws  IllegalArgumentException    matrix is not symmetric
      */
-    public R3x3JacobiDecomposition(R3x3 matTarget) throws IllegalArgumentException {
+    public R3x3JacobiDecomposition(final R3x3 matTarget) throws IllegalArgumentException {
         if (!matTarget.isSymmetric())
             throw new IllegalArgumentException("R3x3JacobiDecomposition: Target matrix is not symmetric");
         
@@ -146,7 +151,7 @@ public class R3x3JacobiDecomposition {
     public double[] getEigenvalues()  {
         double[]    arrEigvals = new double[3];
         
-        for (Position pos : Position.getDiagonal()) {
+        for (POS pos : POS.getDiagonal()) {
             arrEigvals[pos.row()] = this.matDiag.getElem(pos);
         }
         
@@ -200,6 +205,21 @@ public class R3x3JacobiDecomposition {
      */
     
     /** 
+     * <p>
+     * Decomposes the given matrix <b>&sigma;</b> into the product
+     * <br/>
+     * <br/>
+     * &nbsp; &nbsp; <b>&sigma;</b> = <b>RDR</b><sup><i>T</i></sup> ,
+     * <br/>
+     * <br/>
+     * where <b>R</b> &in; <i>O</i>(3) is the conjugating rotation matrix and
+     * <b>D</b> &in; <b>R</b><sub>+</sub><sup>3&times;3</sup> is the diagonal
+     * matrix of eigenvalues of <b>&sigma;</b>.
+     * </p>
+     * <p>
+     * The actual computations are done by the objects of the class 
+     * <code>{@link JacobiIterate}</code>.
+     * </p>
      * 
      * @param matTarget  the covariance matrix of the ellipsoid
      * 
@@ -209,19 +229,17 @@ public class R3x3JacobiDecomposition {
      * @see #setRotation
      * @see #setSemiAxes
      */
-    private void decompose(R3x3  matTarget) 
-        throws IllegalArgumentException
-    {    
+    private void decompose(final R3x3  matTarget) throws IllegalArgumentException {    
         JacobiIterate   iter  = new JacobiIterate(matTarget);
         
         // Initialize the loop
         double  angle = iter.getAngle();    // rotation angle
         R3x3    R     = iter.getRotation(); // rotation matrix
         R3x3    Rt    = R.transpose();      // transpose of rotation matrix          
-        R3x3    D     = matTarget.copy();   // diagonalization matrix
+        R3x3    D     = matTarget;          // diagonalization matrix
 
         this.cntIter = 0;
-        this.matRot = R3x3.identity();
+        this.matRot = R3x3.newIdentity();
 
         while (Math.abs(angle) > ROTATION_TOLERANCE )   {       // while the rotation angle is large
             R     = iter.getRotation();
@@ -284,7 +302,7 @@ class JacobiIterate {
     private R3x3            matTarget;
     
     /** pivot position */
-    private Position        posPivot;
+    private POS             posPivot;
     
     /** rotation angle */
     private double          dblAng;
@@ -303,7 +321,7 @@ class JacobiIterate {
      * 
      * @param   matTarget   matrix for which new iterate parameters are to be computed
      */
-    public JacobiIterate(R3x3   matTarget)  {
+    public JacobiIterate(final R3x3   matTarget)  {
         this.matTarget = matTarget;
         this.posPivot = compPivot();
         this.dblAng = compAngle2();
@@ -321,7 +339,7 @@ class JacobiIterate {
      * 
      * @return  off-diagonal position that we are pivoting upon
      */
-    public Position getPosition()   {
+    public POS getPosition()   {
         return this.posPivot;
     }
     
@@ -355,16 +373,16 @@ class JacobiIterate {
      * 
      * @return  the pivot position as a <code>OffDiagonal</code> enumeration
      */
-    private Position compPivot()    {
+    private POS compPivot()    {
 
         double      cplVal;         // current coupling value
         double      cplMax;         // maximum coupling value
-        Position    posMax;         // position of maximum value
+        POS    posMax;         // position of maximum value
         
-        posMax = Position.XY;
+        posMax = POS.XY;
         cplVal = compCoupling(posMax);
         cplMax = cplVal;
-        for (Position pos : Position.getUpperTriangle()) {
+        for (POS pos : POS.getUpperTriangle()) {
             cplVal = compCoupling(pos);
             
             if (cplVal > cplMax)    {
@@ -399,7 +417,7 @@ class JacobiIterate {
      * @param   pos     off-diagonal position of the target matrix
      * @return          value of the coupling coefficient for given <code>pos</code>
      */
-    private double compCoupling(Position pos)   {
+    private double compCoupling(POS pos)   {
 //        double  dblOffDiag = pos.getValue(matTarget);
 //        double  dblValue_2 = dblOffDiag*dblOffDiag;
 //        
@@ -481,7 +499,7 @@ class JacobiIterate {
      * @return  rotation matrix in SO(2) contained in SO(3)
      */
     private R3x3 compRotation() {
-        R3x3    matRot = R3x3.identity();
+        R3x3    matRot = R3x3.newIdentity();
         double  dblSin = Math.sin(this.dblAng);
         double  dblCos = Math.cos(this.dblAng);
         

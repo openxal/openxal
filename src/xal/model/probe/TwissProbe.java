@@ -10,11 +10,12 @@ package xal.model.probe;
 
 import xal.tools.beam.PhaseMatrix;
 import xal.tools.beam.PhaseVector;
-import xal.tools.beam.SpaceIndex3D;
 import xal.tools.beam.Twiss;
 import xal.tools.beam.Twiss3D;
+import xal.tools.beam.Twiss3D.IND_3D;
 import xal.tools.data.DataAdaptor;
 import xal.tools.data.DataFormatException;
+import xal.tools.math.r3.R3;
 import xal.model.probe.traj.ProbeState;
 import xal.model.probe.traj.TwissProbeState;
 import xal.model.probe.traj.TwissTrajectory;
@@ -54,6 +55,9 @@ public class TwissProbe extends BunchProbe {
     /** accumulated response matrix */
     private PhaseMatrix         matResp;
 
+    /** particle betatron phase (with space charge if present) */
+    private R3                 vecPhsBeta;
+  
     /** current twiss parameters */
     private Twiss3D             envTwiss;
     
@@ -71,28 +75,26 @@ public class TwissProbe extends BunchProbe {
 	 */
 	public TwissProbe() {
         super();
-        this.vecCent = PhaseVector.zero();
+        this.vecCent = PhaseVector.newZero();
         this.matResp = PhaseMatrix.identity();
-        this.envTwiss = new Twiss3D();
+        this.vecPhsBeta = R3.zero();
+        this.envTwiss   = new Twiss3D();
 	};
 
 	/**
 	 * Copy constructor - clones the argument
 	 * 
-	 * @param probe
+	 * @param prbParent
 	 *            <code>TwissProbe</code> object to be cloned
 	 */
-	public TwissProbe(TwissProbe probe) {
-		super(probe);
+	public TwissProbe(TwissProbe prbParent) {
+		super(prbParent);
 
-        this.setCentroid(new PhaseVector( probe.getCentroid() ));
-        this.setResponseMatrix(new PhaseMatrix( probe.getResponseMatrix() ));
-        this.setTwiss(new Twiss3D( probe.getTwiss() ));
+        this.setCentroid(new PhaseVector( prbParent.getCentroid() ));
+        this.setResponseMatrix(new PhaseMatrix( prbParent.getResponseMatrix() ));
+        this.setBetatronPhase(new R3(prbParent.getBetatronPhase()));
+        this.setTwiss(new Twiss3D( prbParent.getTwiss() ));
 	};
-    
-    public TwissProbe copy() {
-        return new TwissProbe( this );
-    }
     
     /**
      * Initializing constructor - initialize from data adaptor
@@ -113,30 +115,14 @@ public class TwissProbe extends BunchProbe {
     }
 
     
-//    /**
-//     * Set the twiss parameters for each phase plane.
-//     * 
-//     * CKA NOTES:
-//     * - The current method signature is misleading.  If there is
-//     * an beam axis offset before this method is called, then that
-//     * offset is preserved, but the previous correlation matrix is
-//     * wiped out.  Thus, even though the method signature suggests
-//     * there will be no offset, there can be.
-//     * 
-//     * @param twiss
-//     *            array of Twiss objects for H, V , long. directions
-//     */
-//    public void initFromTwiss(Twiss[] twiss) {
-//        this.arrTwiss = twiss;
-//        PhaseVector pv = getCorrelation().getMean();
-//        CovarianceMatrix cMat = CovarianceMatrix.buildCorrelation(twiss[0],
-//                twiss[1], twiss[2], pv);
-//        this.setCorrelation(cMat);
-//    }
-
+    /*
+     * Probe Overrides
+     */
+    
     /**
      * Initialize this probe from the one specified.
-     * @param probe the probe from which to initialize this one
+     * 
+     * @param probe to copy
      */
     @Override
     protected void initializeFrom( final Probe probe ) {
@@ -146,19 +132,23 @@ public class TwissProbe extends BunchProbe {
         createTrajectory();
     }
 
-//    /** 
-//     * We want to deprecate this method from the base class <code>BunchProbe</code>
-//     * since we do not use beam current right now.
-//     * 
-//     * @param   dblCurrent  new beam current (not used)
-//     * 
-//     * @deprecated
-//     */
-//    @Override
-//    public void setBeamCurrent(double dblCurrent)   {
-//        super.setBeamCurrent(dblCurrent);
-//    }
-//
+    /**
+     * Make a deep copy of this probe and return it.
+     * 
+     * @return  a clone of this probe object
+     *
+     * @see xal.model.probe.Probe#copy()
+     *
+     * @author Christopher K. Allen
+     * @since  Nov 5, 2013
+     */
+    @Override
+    public TwissProbe copy() {
+        return new TwissProbe( this );
+    }
+    
+
+    
     /**
      * Set the centroid location of the beam bunch in homogeneous
      * coordinates.
@@ -180,12 +170,22 @@ public class TwissProbe extends BunchProbe {
     }
 
     /**
+     * Set the betatron phase for each phase plane.
+     * 
+     * @param vecPhase  vector (&psi;<sub><i>x</i></sub>,&psi;<sub><i>y</i></sub>,&psi;<sub><i>z</i></sub>) 
+     *                  of betatron phases in <b>radians </b>
+     */
+    public void setBetatronPhase(R3 vecPhase) {
+        this.vecPhsBeta = vecPhase;
+    }
+
+    /**
      * Set the Twiss parameters for the given phase plane.
      * 
      * @param   iPlane  phase plane index
      * @param   twiss   twiss parameters
      */
-    public void setTwiss(SpaceIndex3D iPlane, Twiss twiss)   {
+    public void setTwiss(IND_3D iPlane, Twiss twiss)   {
         this.envTwiss.setTwiss(iPlane, twiss);
     }
     
@@ -206,19 +206,6 @@ public class TwissProbe extends BunchProbe {
 	 * Data Query
 	 */
 
-//    /**
-//     * We want to deprecate references to the beam current from the base class
-//     * <code>BunchProbe</code> since we are not considering it right now.
-//     * 
-//     * @return  beam current (not used in dynamics)
-//     * 
-//     * @deprecated  we do not use current in the dynamics
-//     */
-//    @Override
-//    public double   getBeamCurrent()    {
-//        return 0.0; // super.getBeamCurrent();
-//    }
-//    
     /**
      * Get the centroid location of the beam bunch in homogeneous
      * coordinates.
@@ -239,15 +226,16 @@ public class TwissProbe extends BunchProbe {
         return this.matResp;
     }
     
-//    /**
-//     * Get the distribution profile descriptor.
-//     * 
-//     * @return  profile descriptor object for this distribution
-//     */
-//    public ProfileIndex    getProfile()    {
-//        return this.getBunchParameters().getProfile();
-//    }
-//    
+    /**
+     * Returns the betatron phase with space charge for all three phase planes.
+     * 
+     * @return vector (&psi;<sub><i>x</i></sub>,&psi;<sub><i>y</i></sub>,&psi;<sub><i>z</i></sub>) 
+     *                  of betatron phases in <b>radians </b>
+     */
+    public R3 getBetatronPhase() {
+        return this.vecPhsBeta;
+    }
+    
     /**
      * Returns the Twiss parameters for the given phase plane.
      * 
@@ -255,7 +243,7 @@ public class TwissProbe extends BunchProbe {
      * 
      * @return  twiss parameters for given phase plane
      */
-    public Twiss    getTwiss(SpaceIndex3D iPlane)    {
+    public Twiss    getTwiss(IND_3D iPlane)    {
         return this.envTwiss.getTwiss(iPlane);
     }
     
@@ -286,7 +274,7 @@ public class TwissProbe extends BunchProbe {
     public double[] rmsEmittances() {
         double  arrEmit[] = new double[3];
         
-        for (SpaceIndex3D i : SpaceIndex3D.values()) 
+        for (IND_3D i : IND_3D.values()) 
             arrEmit[i.val()] = this.getTwiss(i).getEmittance();
         
         return arrEmit;
@@ -349,6 +337,11 @@ public class TwissProbe extends BunchProbe {
     /**
      * Resets the probe to the saved initial state, if there is one and clears
      * the Trajectory.
+     * 
+     * @see xal.model.probe.Probe#reset()
+     *
+     * @author Christopher K. Allen
+     * @since  Nov 5, 2013
      */
     @Override
     public void reset() {
@@ -369,27 +362,19 @@ public class TwissProbe extends BunchProbe {
     /*
      * Support Methods
      */
-
-//    /**
-//     * Return the <code>BunchDescriptor</code> object encapsulating all the analytic
-//     * parameters describing the bunch.
-//     * 
-//     * @return  analytic parameters describing beam bunch
-//     */
-//    private BunchDescriptor  getBunchParameters()    {
-//        return this.desBunch;
-//    }
-//    
-//    /**
-//     * Set all the analytic bunch description parameters at once.
-//     * 
-//     * @param   desBunch    encapsulation of all the bunch parameters
-//     */
-//    private void setBunchParameters(BunchDescriptor desBunch) {
-//        this.desBunch = desBunch;
-//    }
-//
     
+    /**
+     * Creates a new <code>TwissProbeState</code> object and initializes
+     * it from the data source exposing the given <code>DataAdaptor</code>
+     * interface.
+     * 
+     * @return  the newly instantiated and initialized <code>TwissProbeState</code> object
+     *
+     * @see xal.model.probe.Probe#readStateFrom(xal.tools.data.DataAdaptor)
+     *
+     * @author Christopher K. Allen
+     * @since  Nov 5, 2013
+     */
     @Override
     protected ProbeState readStateFrom(DataAdaptor container) throws ParsingException {
         TwissProbeState state = new TwissProbeState();
@@ -397,3 +382,88 @@ public class TwissProbe extends BunchProbe {
         return state;
     }
 }
+
+/*
+ * Storage
+ */
+
+
+///**
+//* Return the <code>BunchDescriptor</code> object encapsulating all the analytic
+//* parameters describing the bunch.
+//* 
+//* @return  analytic parameters describing beam bunch
+//*/
+//private BunchDescriptor  getBunchParameters()    {
+//  return this.desBunch;
+//}
+//
+///**
+//* Set all the analytic bunch description parameters at once.
+//* 
+//* @param   desBunch    encapsulation of all the bunch parameters
+//*/
+//private void setBunchParameters(BunchDescriptor desBunch) {
+//  this.desBunch = desBunch;
+//}
+//
+
+///**
+//* Set the twiss parameters for each phase plane.
+//* 
+//* CKA NOTES:
+//* - The current method signature is misleading.  If there is
+//* an beam axis offset before this method is called, then that
+//* offset is preserved, but the previous correlation matrix is
+//* wiped out.  Thus, even though the method signature suggests
+//* there will be no offset, there can be.
+//* 
+//* @param twiss
+//*            array of Twiss objects for H, V , long. directions
+//*/
+//public void initFromTwiss(Twiss[] twiss) {
+// this.arrTwiss = twiss;
+// PhaseVector pv = getCorrelation().getMean();
+// CovarianceMatrix cMat = CovarianceMatrix.buildCorrelation(twiss[0],
+//         twiss[1], twiss[2], pv);
+// this.setCorrelation(cMat);
+//}
+
+///** 
+//* We want to deprecate this method from the base class <code>BunchProbe</code>
+//* since we do not use beam current right now.
+//* 
+//* @param   dblCurrent  new beam current (not used)
+//* 
+//* @deprecated
+//*/
+//@Override
+//public void setBeamCurrent(double dblCurrent)   {
+// super.setBeamCurrent(dblCurrent);
+//}
+//
+///**
+//* We want to deprecate references to the beam current from the base class
+//* <code>BunchProbe</code> since we are not considering it right now.
+//* 
+//* @return  beam current (not used in dynamics)
+//* 
+//* @deprecated  we do not use current in the dynamics
+//*/
+//@Override
+//public double   getBeamCurrent()    {
+//return 0.0; // super.getBeamCurrent();
+//}
+//
+
+///**
+//* Get the distribution profile descriptor.
+//* 
+//* @return  profile descriptor object for this distribution
+//*/
+//public ProfileIndex    getProfile()    {
+//return this.getBunchParameters().getProfile();
+//}
+//
+
+

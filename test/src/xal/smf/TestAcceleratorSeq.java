@@ -8,13 +8,14 @@
 
 package xal.smf;
 
-import xal.test.ResourceManager;
+import xal.resources.ResourceManager;
 import xal.smf.data.XMLDataManager;
 import xal.smf.impl.*;
 import xal.smf.impl.qualify.*;
 
 import java.util.*;
 import java.net.URL;
+
 import org.junit.*;
 
 
