@@ -41,8 +41,7 @@ public class MachineSimulatorDocument extends AcceleratorDocument implements Dat
     final MachineModel MODEL;
     
     /** simulated states table model */
-//    final KeyValueFilteredTableModel<IPhaseState> STATES_TABLE_MODEL;
-    final KeyValueFilteredTableModel<ProbeState> STATES_TABLE_MODEL;
+    final KeyValueFilteredTableModel<MachineSimulationRecord> STATES_TABLE_MODEL;
 	
 	
     /** Empty Constructor */
@@ -61,7 +60,7 @@ public class MachineSimulatorDocument extends AcceleratorDocument implements Dat
 		WINDOW_REFERENCE = getDefaultWindowReference( "MainWindow", this );
         
 //        STATES_TABLE_MODEL = new KeyValueFilteredTableModel<IPhaseState>();
-        STATES_TABLE_MODEL = new KeyValueFilteredTableModel<ProbeState>();
+        STATES_TABLE_MODEL = new KeyValueFilteredTableModel<MachineSimulationRecord>();
         
         // initialize the model here
         MODEL = new MachineModel();
@@ -87,26 +86,27 @@ public class MachineSimulatorDocument extends AcceleratorDocument implements Dat
     
     /** configure the main window */
     private void configureWindow( final WindowReference windowReference ) {
-        STATES_TABLE_MODEL.setColumnClassForKeyPaths( Double.class, "position", "kineticEnergy" );
+        STATES_TABLE_MODEL.setColumnClassForKeyPaths( Double.class, "position", "probeState.kineticEnergy" );
 
-        STATES_TABLE_MODEL.setColumnName( "elementId", "Element" );
-        STATES_TABLE_MODEL.setColumnName( "twiss.0.beta", "<html>&beta;<sub>x</sub></html>" );
-        STATES_TABLE_MODEL.setColumnName( "twiss.0.alpha", "<html>&alpha;<sub>x</sub></html>" );
-        STATES_TABLE_MODEL.setColumnName( "twiss.0.gamma", "<html>&gamma;<sub>x</sub></html>" );
-        STATES_TABLE_MODEL.setColumnName( "twiss.0.emittance", "<html>&epsilon;<sub>x</sub></html>" );
-        STATES_TABLE_MODEL.setColumnName( "twiss.0.envelopeRadius", "<html>&sigma;<sub>x</sub></html>" );
+        STATES_TABLE_MODEL.setColumnName( "elementID", "Element" );
+        STATES_TABLE_MODEL.setColumnName( "probeState.kineticEnergy", "Kinetic Energy" );
+        STATES_TABLE_MODEL.setColumnName( "twissParameters.0.beta", "<html>&beta;<sub>x</sub></html>" );
+        STATES_TABLE_MODEL.setColumnName( "twissParameters.0.alpha", "<html>&alpha;<sub>x</sub></html>" );
+        STATES_TABLE_MODEL.setColumnName( "twissParameters.0.gamma", "<html>&gamma;<sub>x</sub></html>" );
+        STATES_TABLE_MODEL.setColumnName( "twissParameters.0.emittance", "<html>&epsilon;<sub>x</sub></html>" );
+        STATES_TABLE_MODEL.setColumnName( "twissParameters.0.envelopeRadius", "<html>&sigma;<sub>x</sub></html>" );
         STATES_TABLE_MODEL.setColumnName( "betatronPhase.toArray.0", "<html>&phi;<sub>x</sub></html>" );
-        STATES_TABLE_MODEL.setColumnName( "twiss.1.beta", "<html>&beta;<sub>y</sub></html>" );
-        STATES_TABLE_MODEL.setColumnName( "twiss.1.alpha", "<html>&alpha;<sub>y</sub></html>" );
-        STATES_TABLE_MODEL.setColumnName( "twiss.1.gamma", "<html>&gamma;<sub>y</sub></html>" );
-        STATES_TABLE_MODEL.setColumnName( "twiss.1.emittance", "<html>&epsilon;<sub>y</sub></html>" );
-        STATES_TABLE_MODEL.setColumnName( "twiss.1.envelopeRadius", "<html>&sigma;<sub>y</sub></html>" );
+        STATES_TABLE_MODEL.setColumnName( "twissParameters.1.beta", "<html>&beta;<sub>y</sub></html>" );
+        STATES_TABLE_MODEL.setColumnName( "twissParameters.1.alpha", "<html>&alpha;<sub>y</sub></html>" );
+        STATES_TABLE_MODEL.setColumnName( "twissParameters.1.gamma", "<html>&gamma;<sub>y</sub></html>" );
+        STATES_TABLE_MODEL.setColumnName( "twissParameters.1.emittance", "<html>&epsilon;<sub>y</sub></html>" );
+        STATES_TABLE_MODEL.setColumnName( "twissParameters.1.envelopeRadius", "<html>&sigma;<sub>y</sub></html>" );
         STATES_TABLE_MODEL.setColumnName( "betatronPhase.toArray.1", "<html>&phi;<sub>y</sub></html>" );
-        STATES_TABLE_MODEL.setColumnName( "twiss.2.beta", "<html>&beta;<sub>z</sub></html>" );
-        STATES_TABLE_MODEL.setColumnName( "twiss.2.alpha", "<html>&alpha;<sub>z</sub></html>" );
-        STATES_TABLE_MODEL.setColumnName( "twiss.2.gamma", "<html>&gamma;<sub>z</sub></html>" );
-        STATES_TABLE_MODEL.setColumnName( "twiss.2.emittance", "<html>&epsilon;<sub>z</sub></html>" );
-        STATES_TABLE_MODEL.setColumnName( "twiss.2.envelopeRadius", "<html>&sigma;<sub>z</sub></html>" );
+        STATES_TABLE_MODEL.setColumnName( "twissParameters.2.beta", "<html>&beta;<sub>z</sub></html>" );
+        STATES_TABLE_MODEL.setColumnName( "twissParameters.2.alpha", "<html>&alpha;<sub>z</sub></html>" );
+        STATES_TABLE_MODEL.setColumnName( "twissParameters.2.gamma", "<html>&gamma;<sub>z</sub></html>" );
+        STATES_TABLE_MODEL.setColumnName( "twissParameters.2.emittance", "<html>&epsilon;<sub>z</sub></html>" );
+        STATES_TABLE_MODEL.setColumnName( "twissParameters.2.envelopeRadius", "<html>&sigma;<sub>z</sub></html>" );
         STATES_TABLE_MODEL.setColumnName( "betatronPhase.toArray.2", "<html>&phi;<sub>z</sub></html>" );
         
         final JTable statesTable = (JTable)windowReference.getView( "States Table" );
@@ -114,7 +114,7 @@ public class MachineSimulatorDocument extends AcceleratorDocument implements Dat
         
         final JTextField statesTableFilterField = (JTextField)windowReference.getView( "States Table Filter Field" );
         STATES_TABLE_MODEL.setInputFilterComponent( statesTableFilterField );
-        STATES_TABLE_MODEL.setMatchingKeyPaths( "elementId" );
+        STATES_TABLE_MODEL.setMatchingKeyPaths( "elementID" );
         
         
         // handle the parameter selections
@@ -134,11 +134,11 @@ public class MachineSimulatorDocument extends AcceleratorDocument implements Dat
         final ActionListener PARAMETER_HANDLER = new ActionListener() {
             public void actionPerformed( final ActionEvent event ) {                
                 // array of standard parameters to display
-                final String[] standardParameterKeys = new String[] { "elementId", "position" };
+                final String[] standardParameterKeys = new String[] { "elementID", "position" };
                 
                 // array of optional scalar parameters to display
                 final List<String> scalarParameterNames = new ArrayList<String>();
-                if ( kineticEnergyCheckbox.isSelected() )  scalarParameterNames.add( "kineticEnergy" );
+                if ( kineticEnergyCheckbox.isSelected() )  scalarParameterNames.add( "probeState.kineticEnergy" );
                 final String[] scalarParameterKeys = new String[ scalarParameterNames.size() ];
                 int scalarParameterIndex = 0;
                 for ( final String scalarParameterName : scalarParameterNames ) {
@@ -214,7 +214,7 @@ public class MachineSimulatorDocument extends AcceleratorDocument implements Dat
             public void actionPerformed( final ActionEvent event ) {
                 System.out.println( "running the model..." );
                 final MachineSimulation simulation = MODEL.runSimulation();
-                STATES_TABLE_MODEL.setRecords( simulation.getStates() );
+                STATES_TABLE_MODEL.setRecords( simulation.getSimulationRecords() );
             }
         });
     }
