@@ -20,12 +20,7 @@ import xal.sim.scenario.AlgorithmFactory;
 import xal.sim.scenario.ProbeFactory;
 import xal.model.probe.*;
 import xal.extension.solver.*;
-//import xal.model.probe.resp.*;
 import xal.model.alg.*;
-//import xal.model.alg.resp.*;
-import xal.model.probe.traj.*;
-//import xal.model.probe.resp.traj.*;
-import xal.smf.proxy.*;
 
 import java.util.*;
 import java.util.logging.*;

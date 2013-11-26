@@ -9,7 +9,16 @@
 
 package xal.app.energymanager;
 
-import xal.tools.data.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import xal.model.probe.Probe;
+import xal.smf.AcceleratorNode;
+import xal.smf.AcceleratorSeq;
+import xal.tools.data.DataAdaptor;
+import xal.tools.data.DataListener;
 import xal.tools.messaging.MessageCenter;
 import xal.extension.solver.*;
 import xal.extension.solver.hint.*;
@@ -17,16 +26,29 @@ import xal.extension.solver.algorithm.*;
 import xal.extension.solver.market.*;
 import xal.extension.solver.solutionjudge.*;
 import xal.model.probe.Probe;
-import xal.model.probe.traj.IPhaseState;
 import xal.smf.*;
 import xal.smf.impl.*;
-
-import java.util.*;
 
 
 /** Stores a solver configuration and the corresponding result. */
 public class SolverSession implements OpticsObjectiveListener, DataListener {
-	/** Message center for dispatching events to registered listeners. */
+
+    
+    /*
+     * Constants
+     */
+    
+    /** index of the X coordinate result */
+    final static public int INT_INDEX_X = 0;
+    
+    /** index of the Y coordinate result */
+    final static public int INT_INDEX_Y = 1;
+    
+    /** index of the Z coordinate result */
+    final static public int INT_INDEX_Z = 2;
+        
+    
+    /** Message center for dispatching events to registered listeners. */
 	private final MessageCenter _messageCenter;
 	
 	/** Proxy which forwards events to registered listeners. */
@@ -167,27 +189,27 @@ public class SolverSession implements OpticsObjectiveListener, DataListener {
 	protected void makeObjectives() {
 		addObjective( new EnergyObjective( 3.0, 0.1 ) );
 		
-		addObjective( new BetaMeanErrorObjective( "Mean Beta Error X", IPhaseState.X, 0.1 ) );
-		addObjective( new BetaMeanErrorObjective( "Mean Beta Error Y", IPhaseState.Y, 0.1 ) );
-		addObjective( new BetaMeanErrorObjective( "Mean Beta Error Z", IPhaseState.Z, 0.1 ) );
+		addObjective( new BetaMeanErrorObjective( "Mean Beta Error X", INT_INDEX_X, 0.1 ) );
+		addObjective( new BetaMeanErrorObjective( "Mean Beta Error Y", INT_INDEX_Y, 0.1 ) );
+		addObjective( new BetaMeanErrorObjective( "Mean Beta Error Z", INT_INDEX_Z, 0.1 ) );
 		
-		addObjective( new BetaWorstErrorObjective( "Worst Beta Error X", IPhaseState.X, 0.1 ) );
-		addObjective( new BetaWorstErrorObjective( "Worst Beta Error Y", IPhaseState.Y, 0.1 ) );
-		addObjective( new BetaWorstErrorObjective( "Worst Beta Error Z", IPhaseState.Z, 0.1 ) );
+		addObjective( new BetaWorstErrorObjective( "Worst Beta Error X", INT_INDEX_X, 0.1 ) );
+		addObjective( new BetaWorstErrorObjective( "Worst Beta Error Y", INT_INDEX_Y, 0.1 ) );
+		addObjective( new BetaWorstErrorObjective( "Worst Beta Error Z", INT_INDEX_Z, 0.1 ) );
 		
-		addObjective( new BetaMaxObjective( "Maximum Beta X", IPhaseState.X, 10.0, 2.0 ) );
-		addObjective( new BetaMaxObjective( "Maximum Beta Y", IPhaseState.Y, 10.0, 2.0 ) );
-		addObjective( new BetaMaxObjective( "Maximum Beta Z", IPhaseState.Z, 10.0, 2.0 ) );
+		addObjective( new BetaMaxObjective( "Maximum Beta X", INT_INDEX_X, 10.0, 2.0 ) );
+		addObjective( new BetaMaxObjective( "Maximum Beta Y", INT_INDEX_Y, 10.0, 2.0 ) );
+		addObjective( new BetaMaxObjective( "Maximum Beta Z", INT_INDEX_Z, 10.0, 2.0 ) );
 		
-		addObjective( new BetaMinObjective( "Minimum Beta X", IPhaseState.X, 5.0, 2.0 ) );
-		addObjective( new BetaMinObjective( "Minimum Beta Y", IPhaseState.Y, 5.0, 2.0 ) );
-		addObjective( new BetaMinObjective( "Minimum Beta Z", IPhaseState.Z, 5.0, 2.0 ) );
+		addObjective( new BetaMinObjective( "Minimum Beta X", INT_INDEX_X, 5.0, 2.0 ) );
+		addObjective( new BetaMinObjective( "Minimum Beta Y", INT_INDEX_Y, 5.0, 2.0 ) );
+		addObjective( new BetaMinObjective( "Minimum Beta Z", INT_INDEX_Z, 5.0, 2.0 ) );
 		
-		addObjective( new EtaMaxObjective( "Maximum Eta X", IPhaseState.X, 3.0, 1.0 ) );
-		addObjective( new EtaMaxObjective( "Maximum Eta Y", IPhaseState.Y, 3.0, 1.0 ) );
+		addObjective( new EtaMaxObjective( "Maximum Eta X", INT_INDEX_X, 3.0, 1.0 ) );
+		addObjective( new EtaMaxObjective( "Maximum Eta Y", INT_INDEX_Y, 3.0, 1.0 ) );
 		
-		addObjective( new EtaMinObjective( "Minimum Eta X", IPhaseState.X, 0.0, 1.0 ) );
-		addObjective( new EtaMinObjective( "Minimum Eta Y", IPhaseState.Y, 0.0, 1.0 ) );
+		addObjective( new EtaMinObjective( "Minimum Eta X", INT_INDEX_X, 0.0, 1.0 ) );
+		addObjective( new EtaMinObjective( "Minimum Eta Y", INT_INDEX_Y, 0.0, 1.0 ) );
 	}
 	
 	
