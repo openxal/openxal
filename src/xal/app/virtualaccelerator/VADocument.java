@@ -9,21 +9,21 @@
 
 package xal.app.virtualaccelerator;
 
-import java.util.*;
-import java.util.prefs.*;
-import java.net.*;
-import java.io.*;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Shape;
 import java.awt.event.*;
 import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.net.URL;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import javax.swing.*;
 import javax.swing.text.*;
 import javax.swing.event.*;
 import javax.swing.JToggleButton.ToggleButtonModel;
+import java.util.*;
 
 import xal.extension.smf.application.*;
 import xal.extension.application.*;
@@ -38,14 +38,13 @@ import xal.smf.impl.qualify.*;
 import xal.model.*;
 import xal.model.probe.*;  // Probe for t3d header
 import xal.model.alg.*;
-import xal.model.probe.traj.IPhaseState;
 import xal.model.probe.traj.TransferMapState;
 import xal.model.probe.traj.ProbeState;
 import xal.model.probe.traj.EnvelopeProbeState;
-import xal.model.probe.traj.ICoordinateState;
 import xal.sim.scenario.*;
 import xal.smf.*;
 import xal.model.xml.*;
+import xal.tools.beam.calc.*;
 
 import xal.tools.xml.*;
 import xal.tools.data.*;
@@ -63,6 +62,17 @@ import xal.tools.dispatch.*;
 
 
 /**
+ * <p>
+ * <h4>CKA NOTES:</h4>
+ * - In method <code>{@link #createDefaultProbe()}</code> a <code>TransferMapProbe</code>
+ * is created in the case of a ring.  The method <code>TransferMapState#setPhaseCoordinates</code>
+ * is called to create an initial offset.  This does nothing because transfer map probes
+ * do not have phase coordinates any longer, the method is deprecated.
+ * <br/>
+ * <br/>
+ * - The offset for the above call is hard coded.  As are many features in this class.
+ * </p>
+ * 
  * VADocument is a custom AcceleratorDocument for virtual accelerator application.
  * @version 1.5 15 Jul 2004
  * @author Paul Chu
@@ -464,13 +474,13 @@ public class VADocument extends AcceleratorDocument implements ActionListener, P
             try {
                 myProbe = ( selectedSequence instanceof xal.smf.Ring ) ? createRingProbe( selectedSequence ) : createEnvelopeProbe( selectedSequence );
                 
-                if ( selectedSequence instanceof xal.smf.Ring ) {
-                    final TransferMapState state = (TransferMapState) myProbe.createProbeState();
-                    // set initial x, y slightly off-axis to introduce betatron oscillation.
-                    state.setPhaseCoordinates( new PhaseVector( 0.01, 0., 0.01, 0., 0., 0. ) );
-                    myProbe.applyState( state );
-                }
-                
+//                if ( selectedSequence instanceof xal.smf.Ring ) {
+//                    final TransferMapState state = (TransferMapState) myProbe.createProbeState();
+//                    // set initial x, y slightly off-axis to introduce betatron oscillation.
+//                    state.setPhaseCoordinates( new PhaseVector( 0.01, 0., 0.01, 0., 0., 0. ) );
+//                    myProbe.applyState( state );
+//                }
+
                 modelScenario.setProbe( myProbe );
             }
             catch ( Exception exception ) {
@@ -1052,6 +1062,9 @@ public class VADocument extends AcceleratorDocument implements ActionListener, P
     
 	/** This method is for populating the diagnostic PVs (only BPMs + WSs for now) */
 	protected void putDiagPVs() {
+	    // CKA Nov 25, 2013
+	    SimpleSimResultsAdaptor    cmpCalcEngine = new SimpleSimResultsAdaptor( modelScenario.getTrajectory() );
+	    
 		/**temporary list data for getting the array bpm and ws datas*/
 		int i = 0;
 		List<Double> tempBPMx = new ArrayList<Double>();
@@ -1068,20 +1081,22 @@ public class VADocument extends AcceleratorDocument implements ActionListener, P
 		List<Double> tempsigmaz = new ArrayList<Double>();
 			      
 		final Iterator<ProbeState> stateIter =modelScenario.getTrajectory().stateIterator();
-	        while ( stateIter.hasNext() ) {	
-	        	EnvelopeProbeState state = (EnvelopeProbeState) stateIter.next();
-	            double position = state.getPosition();
-	            double x= state.phaseMean().getx()* 1000;
-	            double y= state.phaseMean().gety()* 1000;
-	            
-	            final Twiss[] twiss = state.getCorrelationMatrix().computeTwiss();	
-				double sigmaz=twiss[2].getEnvelopeRadius() * 1000;	
-				
-				tempbeampos.add(position);
-				tempbeamx.add(x);
-				tempbeamy.add(y);
-				tempsigmaz.add(sigmaz);
-	        }	        		
+		while ( stateIter.hasNext() ) {
+			final ProbeState state = stateIter.next();
+//			EnvelopeProbeState state = (EnvelopeProbeState) stateIter.next();
+			double position = state.getPosition();
+			final PhaseVector coordinateVector = cmpCalcEngine.computeCoordinatePosition( state );
+			double x = coordinateVector.getx() * 1000;
+			double y = coordinateVector.gety()* 1000;
+
+			final Twiss[] twiss = cmpCalcEngine.computeTwissParameters( state );
+			double sigmaz=twiss[2].getEnvelopeRadius() * 1000;
+			
+			tempbeampos.add(position);
+			tempbeamx.add(x);
+			tempbeamy.add(y);
+			tempsigmaz.add(sigmaz);
+		}	        		
 	
 		double beamp[] = new double[tempbeampos.size()];
 		double beamx[] = new double[tempbeampos.size()];
@@ -1114,33 +1129,37 @@ public class VADocument extends AcceleratorDocument implements ActionListener, P
             final Channel bpmYTBTChannel = bpm.getChannel( BPM.Y_TBT_HANDLE );
 			final Channel bpmAmpAvgChannel = bpm.getChannel( BPM.AMP_AVG_HANDLE );
             
-            
 			try {
 				ProbeState probeState = modelScenario.getTrajectory().stateForElement( bpm.getId() );
 				//System.out.println("Now updating " + bpm.getId());
                 
-				if ( probeState instanceof ICoordinateState ) {
-					final PhaseVector coordinates = ((ICoordinateState)probeState).getFixedOrbit();
-					// For SNS Ring BPM system, we only measure the signal with respect to the center of the beam pipe.
-                    
-                    // TO-DO: the turn by turn arrays should really be generated from betatron motion rather than random data about the nominal
-                    final double[] xTBT = NoiseGenerator.noisyArrayForNominal( coordinates.getx() * 1000.0, DEFAULT_BPM_WAVEFORM_SIZE, DEFAULT_BPM_WAVEFORM_DATA_SIZE, bpmNoise, bpmOffset );
-                    final double xAvg = NoiseGenerator.getAverage( xTBT, DEFAULT_BPM_WAVEFORM_DATA_SIZE );
-                    
-                    final double[] yTBT = NoiseGenerator.noisyArrayForNominal( coordinates.gety() * 1000.0, DEFAULT_BPM_WAVEFORM_SIZE, DEFAULT_BPM_WAVEFORM_DATA_SIZE, bpmNoise, bpmOffset );
-                    final double yAvg = NoiseGenerator.getAverage( yTBT, DEFAULT_BPM_WAVEFORM_DATA_SIZE );
-                    
-					bpmXAvgChannel.putValCallback( xAvg, this );
-                    //                    bpmXTBTChannel.putValCallback( xTBT, this );  // don't post to channel access until the turn by turn data is generated correctly
-					bpmYAvgChannel.putValCallback( yAvg, this );
-                    //                    bpmYTBTChannel.putValCallback( yTBT, this );  // don't post to channel access until the turn by turn data is generated correctly
+	            // CKA - Transfer map probes and Envelope probes both exposed ICoordinateState
+	            //       so we should be able to compute a "fixed orbit" in any context
+	            //
+	            // CKA Nov 25, 2013
+//				if ( probeState instanceof ICoordinateState ) {
+//					final PhaseVector coordinates = ((ICoordinateState)probeState).getFixedOrbit();
+				final PhaseVector coordinates = cmpCalcEngine.computeFixedOrbit(probeState);
 				
-					final double position = bpm.getPosition();
-					tempBPMp.add(position);
-					tempBPMx.add(xAvg);
-					tempBPMy.add(yAvg);				
-				}
-                
+				// For SNS Ring BPM system, we only measure the signal with respect to the center of the beam pipe.
+				
+				// TO-DO: the turn by turn arrays should really be generated from betatron motion rather than random data about the nominal
+				final double[] xTBT = NoiseGenerator.noisyArrayForNominal( coordinates.getx() * 1000.0, DEFAULT_BPM_WAVEFORM_SIZE, DEFAULT_BPM_WAVEFORM_DATA_SIZE, bpmNoise, bpmOffset );
+				final double xAvg = NoiseGenerator.getAverage( xTBT, DEFAULT_BPM_WAVEFORM_DATA_SIZE );
+				
+				final double[] yTBT = NoiseGenerator.noisyArrayForNominal( coordinates.gety() * 1000.0, DEFAULT_BPM_WAVEFORM_SIZE, DEFAULT_BPM_WAVEFORM_DATA_SIZE, bpmNoise, bpmOffset );
+				final double yAvg = NoiseGenerator.getAverage( yTBT, DEFAULT_BPM_WAVEFORM_DATA_SIZE );
+				
+				bpmXAvgChannel.putValCallback( xAvg, this );
+				//                    bpmXTBTChannel.putValCallback( xTBT, this );  // don't post to channel access until the turn by turn data is generated correctly
+				bpmYAvgChannel.putValCallback( yAvg, this );
+				//                    bpmYTBTChannel.putValCallback( yTBT, this );  // don't post to channel access until the turn by turn data is generated correctly
+			
+				final double position = bpm.getPosition();
+				tempBPMp.add(position);
+				tempBPMx.add(xAvg);
+				tempBPMy.add(yAvg);				
+
 				// hardwired BPM amplitude noise and offset to 5% and 0.1mm (randomly) respectively
 				bpmAmpAvgChannel.putVal( NoiseGenerator.setValForPV( 20., 5., 0.1 ) );
 				// calculate the BPM phase (for linac only)
@@ -1185,7 +1204,7 @@ public class VADocument extends AcceleratorDocument implements ActionListener, P
 			try {
 				ProbeState probeState = modelScenario.getTrajectory().stateForElement( ws.getId() );
 				if (modelScenario.getProbe() instanceof EnvelopeProbe) {
-                    final Twiss[] twiss = ( (EnvelopeProbeState)probeState ).getCorrelationMatrix().computeTwiss();
+                    final Twiss[] twiss = ( (EnvelopeProbeState)probeState ).getCovarianceMatrix().computeTwiss();
 					wsX.putValCallback( twiss[0].getEnvelopeRadius() * 1000., this );
 					wsY.putValCallback( twiss[1].getEnvelopeRadius() * 1000., this );
 	
