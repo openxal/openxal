@@ -348,7 +348,7 @@ public class MadGenerator {
 		footerBuffer.append( ", ENERGY=" + NUMBER_FORMAT.format( ( RelativisticParameterConverter.computeGammaFromEnergies(myProbe.getKineticEnergy(), myProbe.getSpeciesRestEnergy() ) * myProbe.getSpeciesRestEnergy() ) / 1.e9 ) + ";\n" );
 		footerBuffer.append( "USE, sequence = " + formatName( myLatticeName ) + ";\n" );
 		if ( myProbe instanceof EnvelopeProbe ) {
-            CovarianceMatrix covarianceMatrix = ((EnvelopeProbe)myProbe).createProbeState().getCorrelationMatrix();
+            CovarianceMatrix covarianceMatrix = ((EnvelopeProbe)myProbe).createProbeState().getCovarianceMatrix();
             
             Twiss[] inputTwiss = covarianceMatrix.computeTwiss();
             
