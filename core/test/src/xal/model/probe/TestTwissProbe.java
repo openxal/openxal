@@ -7,28 +7,16 @@
 package xal.model.probe;
 
 
-import java.io.IOException;
+import junit.framework.JUnit4TestAdapter;
 
-import xal.tools.beam.PhaseVector;
-import xal.tools.beam.SpaceIndex3D;
-import xal.tools.beam.Twiss;
-import xal.tools.beam.Twiss3D;
-import xal.tools.math.r3.R3;
-
-import xal.model.IAlgorithm;
-import xal.model.alg.TwissTracker;
-import xal.model.probe.Probe;
-import xal.model.probe.TwissProbe;
-import xal.model.xml.ParsingException;
-import xal.model.xml.ProbeXmlParser;
-import xal.model.xml.ProbeXmlWriter;
-
-
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import junit.framework.JUnit4TestAdapter;
+import xal.model.alg.TwissTracker;
+import xal.tools.beam.PhaseVector;
+import xal.tools.beam.Twiss;
+import xal.tools.beam.Twiss3D;
+import xal.tools.math.r3.R3;
 
 
 /**
@@ -303,15 +291,15 @@ public class TestTwissProbe {
 //        Assert.assertEquals(TestTwissProbe.BUNCH_CURRENT, probeRest.getBeamCurrent(), 0.0);
 //        Assert.assertEquals(TestTwissProbe.BUNCH_FREQ, probeRest.getBunchFrequency(), 0.0);
 //        Assert.assertEquals(TestTwissProbe.STATE_ANGLE, probeRest.getBetatronPhase().getz(), 0.0);
-//        Assert.assertEquals(TestTwissProbe.TWISS_X.getAlpha(), probeRest.getTwiss(SpaceIndex3D.X).getAlpha(), 0.0);
-//        Assert.assertEquals(TestTwissProbe.TWISS_X.getBeta(), probeRest.getTwiss(SpaceIndex3D.X).getBeta(), 0.0);
-//        Assert.assertEquals(TestTwissProbe.TWISS_X.getEmittance(), probeRest.getTwiss(SpaceIndex3D.X).getEmittance(), 0.0);
-//        Assert.assertEquals(TestTwissProbe.TWISS_Y.getAlpha(), probeRest.getTwiss(SpaceIndex3D.Y).getAlpha(), 0.0);
-//        Assert.assertEquals(TestTwissProbe.TWISS_Y.getBeta(), probeRest.getTwiss(SpaceIndex3D.Y).getBeta(), 0.0);
-//        Assert.assertEquals(TestTwissProbe.TWISS_Y.getEmittance(), probeRest.getTwiss(SpaceIndex3D.Y).getEmittance(), 0.0);
-//        Assert.assertEquals(TestTwissProbe.TWISS_Z.getAlpha(), probeRest.getTwiss(SpaceIndex3D.Z).getAlpha(), 0.0);
-//        Assert.assertEquals(TestTwissProbe.TWISS_Z.getBeta(), probeRest.getTwiss(SpaceIndex3D.Z).getBeta(), 0.0);
-//        Assert.assertEquals(TestTwissProbe.TWISS_Z.getEmittance(), probeRest.getTwiss(SpaceIndex3D.Z).getEmittance(), 0.0);
+//        Assert.assertEquals(TestTwissProbe.TWISS_X.getAlpha(), probeRest.getTwiss(IND_3D.X).getAlpha(), 0.0);
+//        Assert.assertEquals(TestTwissProbe.TWISS_X.getBeta(), probeRest.getTwiss(IND_3D.X).getBeta(), 0.0);
+//        Assert.assertEquals(TestTwissProbe.TWISS_X.getEmittance(), probeRest.getTwiss(IND_3D.X).getEmittance(), 0.0);
+//        Assert.assertEquals(TestTwissProbe.TWISS_Y.getAlpha(), probeRest.getTwiss(IND_3D.Y).getAlpha(), 0.0);
+//        Assert.assertEquals(TestTwissProbe.TWISS_Y.getBeta(), probeRest.getTwiss(IND_3D.Y).getBeta(), 0.0);
+//        Assert.assertEquals(TestTwissProbe.TWISS_Y.getEmittance(), probeRest.getTwiss(IND_3D.Y).getEmittance(), 0.0);
+//        Assert.assertEquals(TestTwissProbe.TWISS_Z.getAlpha(), probeRest.getTwiss(IND_3D.Z).getAlpha(), 0.0);
+//        Assert.assertEquals(TestTwissProbe.TWISS_Z.getBeta(), probeRest.getTwiss(IND_3D.Z).getBeta(), 0.0);
+//        Assert.assertEquals(TestTwissProbe.TWISS_Z.getEmittance(), probeRest.getTwiss(IND_3D.Z).getEmittance(), 0.0);
     }
     
     

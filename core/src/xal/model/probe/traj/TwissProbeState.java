@@ -8,19 +8,16 @@
  */
 package xal.model.probe.traj;
 
-import xal.tools.beam.SpaceIndex3D;
-import xal.tools.beam.PhaseIndex;
-import xal.tools.beam.RelativisticParameterConverter;
-import xal.tools.beam.PhaseVector;
-import xal.tools.beam.PhaseMatrix;
-import xal.tools.beam.Twiss;
-import xal.tools.beam.Twiss3D;
-
-import xal.tools.data.DataAdaptor;
-import xal.tools.data.DataFormatException;
-
 import xal.model.probe.TwissProbe;
 import xal.model.xml.ParsingException;
+import xal.tools.beam.PhaseMatrix;
+import xal.tools.beam.PhaseVector;
+import xal.tools.beam.Twiss;
+import xal.tools.beam.Twiss3D;
+import xal.tools.beam.Twiss3D.IND_3D;
+import xal.tools.data.DataAdaptor;
+import xal.tools.data.DataFormatException;
+import xal.tools.math.r3.R3;
 
 
 
@@ -31,7 +28,7 @@ import xal.model.xml.ParsingException;
  * @version $id:
  * 
  */
-public class TwissProbeState extends BunchProbeState implements IPhaseState {
+public class TwissProbeState extends BunchProbeState {
 
 
 
@@ -48,6 +45,9 @@ public class TwissProbeState extends BunchProbeState implements IPhaseState {
 
     /** element label for response matrix */
     protected static final String   LABEL_RESP = "resp";
+    
+    /** element label for betatron phase */
+    protected static final String   LABEL_PHASE = "phase";
     
     /** element label for twiss parameters */
     protected static final String   LABEL_TWISS = "twiss";
@@ -67,6 +67,9 @@ public class TwissProbeState extends BunchProbeState implements IPhaseState {
     /** accumulated response matrix */
     private PhaseMatrix         matResp;
 
+    /** particle betatron phase (with space charge if present) */
+    private R3                 vecPhsBeta;
+  
     /** current twiss parameters */
     private Twiss3D             envTwiss;
     
@@ -88,10 +91,11 @@ public class TwissProbeState extends BunchProbeState implements IPhaseState {
      */    
     public TwissProbeState() {
         super();
-//        this.desBunch = new BunchDescriptor();
-        this.vecCent = PhaseVector.zero();
-        this.matResp = PhaseMatrix.identity();
-        this.envTwiss = new Twiss3D();
+        
+        this.vecCent    = PhaseVector.newZero();
+        this.matResp    = PhaseMatrix.identity();
+        this.vecPhsBeta = R3.zero();
+        this.envTwiss   = new Twiss3D();
     }
 	
     /**
@@ -100,12 +104,13 @@ public class TwissProbeState extends BunchProbeState implements IPhaseState {
      * 
      * @param probe     <code>TwissProbe</code> containing initializing state information
      */
-    public TwissProbeState(TwissProbe probe) {
+    public TwissProbeState(final TwissProbe probe) {
         super(probe);
-        this.setCentroid(probe.getCentroid());
-        this.setResponseMatrix(probe.getResponseMatrix());
-        this.setTwiss(probe.getTwiss());
-//        this.setBunchParameters(probe.getBunchParameters());
+        
+        this.setCentroid( new PhaseVector( probe.getCentroid() ) );
+        this.setResponseMatrix( new PhaseMatrix( probe.getResponseMatrix() ) );
+        this.setBetatronPhase( new R3( probe.getBetatronPhase() ) );
+        this.setTwiss( new Twiss3D(probe.getTwiss()) );
     }
     
     
@@ -141,14 +146,24 @@ public class TwissProbeState extends BunchProbeState implements IPhaseState {
     public void setResponseMatrix(PhaseMatrix matResp)  {
         this.matResp = matResp;
     }
-    
+
+    /**
+     * Set the betatron phase with space charge for each phase plane.
+     * 
+     * @param vecPhase  vector (&psi;<sub><i>x</i></sub>,&psi;<sub><i>y</i></sub>,&psi;<sub><i>z</i></sub>) 
+     *                  of betatron phases in <b>radians </b>
+     */
+    public void setBetatronPhase(R3 vecPhase) {
+        this.vecPhsBeta = vecPhase;
+    }
+     
     /**
      * Set the Twiss parameters for the given phase plane.
      * 
      * @param   iPlane  phase plane index
      * @param   twiss   twiss parameters
      */
-    public void setTwiss(SpaceIndex3D iPlane, Twiss twiss)   {
+    public void setTwiss(IND_3D iPlane, Twiss twiss)   {
         this.envTwiss.setTwiss(iPlane, twiss);
     }
     
@@ -219,7 +234,7 @@ public class TwissProbeState extends BunchProbeState implements IPhaseState {
      * 
      * @return  twiss parameters for given phase plane
      */
-    public Twiss    getTwiss(SpaceIndex3D iPlane)    {
+    public Twiss    getTwiss(IND_3D iPlane)    {
         return this.envTwiss.getTwiss(iPlane);
     }
     
@@ -248,7 +263,7 @@ public class TwissProbeState extends BunchProbeState implements IPhaseState {
     public double[] rmsEmittances() {
         double  arrEmit[] = new double[3];
         
-        for (SpaceIndex3D i : SpaceIndex3D.values()) 
+        for (IND_3D i : IND_3D.values()) 
             arrEmit[i.val()] = this.getTwiss(i).getEmittance();
         
         return arrEmit;
@@ -289,8 +304,6 @@ public class TwissProbeState extends BunchProbeState implements IPhaseState {
      *  for backward compatibility just to satisfy the IPhaseState interface.
      *
      * @return the fixed orbit vector (x,x',y,y',z,z',1)
-     *  
-     * @see    xal.model.probe.traj.IPhaseState
      */
     public PhaseVector getFixedOrbit() {
         return this.getCentroid();
@@ -308,69 +321,75 @@ public class TwissProbeState extends BunchProbeState implements IPhaseState {
      * @return array(twiss-H, twiss-V, twiss-L)
      */
     public Twiss[] getTwiss() { 
-        Twiss[] arrTwiss = new Twiss[3];
-        
-        for (SpaceIndex3D index : SpaceIndex3D.values())    {
-            arrTwiss[index.val()] = this.getTwiss(index);
-        }
+        Twiss[] arrTwiss = this.envTwiss.getTwiss();
         
         return arrTwiss;
     }
     
-
-    
     /**
-     * <p>
-     * Convenience function for returning the chromatic dispersion as defined by
-     * D.C. Carey in "The Optics of Charged Particle Beams".  This value is taken
-     * from the response matrix in the off-energy column (z').
-     * </p>
-     * <p>
-     * <h4>NOTE:</h4>
-     * For X and Y coordinates We convert to the conventional definition of 
-     * dispersion dx/(dp/p) by dividing the (x|z') element of the first-order response 
-     * matrix by relativistic gamma squared.
-     * <br/>
-     * <br/>
-     * See D.C. Carey, "The Optics of Charged Particle Beams".
-     * </p> 
+     * Returns the betatron phase with space charge for all three phase
+     * planes.
      * 
-     * @param   index   phase coordinate index of desired "dispersion"
-     * 
-     * @return  chromatic dispersion in <b>meters/radian</b> or <b>radians/radian</b>
-     * 
+     * @return  vector (&psi;<sub><i>x</i></sub>,&psi;<sub><i>y</i></sub>,&psi;<sub><i>z</i></sub>) 
+     *                  of betatron phases in <b>radians </b>
      */
-    public double getChromDispersion(PhaseIndex index)  {
-        
-        if (index==PhaseIndex.X || index==PhaseIndex.Y) {
-            double  W  = this.getKineticEnergy();
-            double  Er = this.getSpeciesRestEnergy(); 
-            double  gamma = RelativisticParameterConverter.computeGammaFromEnergies(W, Er);
-            double  d     = this.getResponseMatrix().getElem(index.val(), PhaseMatrix.IND_ZP);
-            
-            return d/(gamma*gamma);
-            
-        } else {
-            double d = this.getResponseMatrix().getElem(index.val(), PhaseMatrix.IND_ZP);
-            
-            return d;
-        }
-    } 
-    
-    
-    /**
-     * Set the "Chromatic dispersion" element of the response matrix.  That is
-     * we set the (index,z') element of the response matrix to the given value.
-     * <br/>
-     * <br/>
-     *  See D.C. Carey, "The Optics of Charged Particle Beams".
-     *  
-     * @param   index   phase coordinate index of desired "dispersion"
-     * @param   d       dispersion in <b>meters/radian</b> or <b>radians/radian</b>
-     */
-    public void setChromDispersion(PhaseIndex index, double d)  {
-        this.getResponseMatrix().setElem(index.val(), PhaseMatrix.IND_ZP, d);
+    public R3 getBetatronPhase() {
+        return this.vecPhsBeta;
     }
+
+//    
+//    /**
+//     * <p>
+//     * Convenience function for returning the chromatic dispersion as defined by
+//     * D.C. Carey in "The Optics of Charged Particle Beams".  This value is taken
+//     * from the response matrix in the off-energy column (z').
+//     * </p>
+//     * <p>
+//     * <h4>NOTE:</h4>
+//     * For X and Y coordinates We convert to the conventional definition of 
+//     * dispersion dx/(dp/p) by dividing the (x|z') element of the first-order response 
+//     * matrix by relativistic gamma squared.
+//     * <br/>
+//     * <br/>
+//     * See D.C. Carey, "The Optics of Charged Particle Beams".
+//     * </p> 
+//     * 
+//     * @param   index   phase coordinate index of desired "dispersion"
+//     * 
+//     * @return  chromatic dispersion in <b>meters/radian</b> or <b>radians/radian</b>
+//     * 
+//     */
+//    public double getChromDispersion(PhaseIndex index)  {
+//        
+//        if (index==PhaseIndex.X || index==PhaseIndex.Y) {
+//            double  W  = this.getKineticEnergy();
+//            double  Er = this.getSpeciesRestEnergy(); 
+//            double  gamma = RelativisticParameterConverter.computeGammaFromEnergies(W, Er);
+//            double  d     = this.getResponseMatrix().getElem(index.val(), PhaseMatrix.IND_ZP);
+//            
+//            return d/(gamma*gamma);
+//            
+//        } else {
+//            double d = this.getResponseMatrix().getElem(index.val(), PhaseMatrix.IND_ZP);
+//            
+//            return d;
+//        }
+//    } 
+//    
+//    
+//    /**
+//     * Set the "Chromatic dispersion" element of the response matrix.  That is
+//     * we set the (index,z') element of the response matrix to the given value.
+//     * <br/>
+//     * <br/>
+//     *  See D.C. Carey, "The Optics of Charged Particle Beams".
+//     *  
+//     * @param   index   phase coordinate index of desired "dispersion"
+//     * @param   d       dispersion in <b>meters/radian</b> or <b>radians/radian</b>
+//     */
+//    public void setChromDispersion(PhaseIndex index, double d)  {
+//        this.getResponseMatrix().setElem(index.val(), PhaseMatrix.IND_ZP, d);
+//    }
 
 
     
@@ -389,13 +408,16 @@ public class TwissProbeState extends BunchProbeState implements IPhaseState {
     protected void addPropertiesTo(DataAdaptor daSink) {
         super.addPropertiesTo(daSink);
         
-        DataAdaptor daProbe = daSink.createChild(TwissProbeState.LABEL_TWISSPROBE);
+        DataAdaptor daProbe = daSink.createChild(LABEL_TWISSPROBE);
         
-        DataAdaptor daCent = daProbe.createChild(TwissProbeState.LABEL_CENT);
+        DataAdaptor daCent = daProbe.createChild(LABEL_CENT);
         this.getCentroid().save(daCent);
         
-        DataAdaptor daResp = daProbe.createChild(TwissProbeState.LABEL_RESP);
+        DataAdaptor daResp = daProbe.createChild(LABEL_RESP);
         this.getResponseMatrix().save(daResp);
+        
+        DataAdaptor daPhase = daProbe.createChild(LABEL_PHASE);
+        this.getBetatronPhase().save(daPhase);
 
         this.getTwiss3D().save(daProbe);
 //        DataAdaptor daTwiss = daProbe.createChild(TwissProbeState.LABEL_TWISS);
@@ -416,21 +438,27 @@ public class TwissProbeState extends BunchProbeState implements IPhaseState {
     {
         super.readPropertiesFrom(daSource);
         
-        DataAdaptor daProbe = daSource.childAdaptor(TwissProbeState.LABEL_TWISSPROBE);
+        DataAdaptor daProbe = daSource.childAdaptor(LABEL_TWISSPROBE);
         if (daProbe == null)
             throw new ParsingException("TwissProbeState#readPropertiesFrom(): no child element = " + LABEL_TWISSPROBE);
         
         try {
-            DataAdaptor daCent = daProbe.childAdaptor(TwissProbeState.LABEL_CENT);
+            DataAdaptor daCent = daProbe.childAdaptor(LABEL_CENT);
             if (daCent != null) {
                 PhaseVector vecCent = new PhaseVector(daCent);
                 this.setCentroid(vecCent);
             }
             
-            DataAdaptor daResp = daProbe.childAdaptor(TwissProbeState.LABEL_RESP);
+            DataAdaptor daResp = daProbe.childAdaptor(LABEL_RESP);
             if (daResp != null) {
                 PhaseMatrix matResp = new PhaseMatrix(daResp);
                 this.setResponseMatrix(matResp);
+            }
+            
+            DataAdaptor daPhase = daProbe.childAdaptor(LABEL_PHASE);
+            if (daPhase != null) {
+                R3  vecPhase = new R3(daPhase);
+                this.setBetatronPhase(vecPhase);
             }
             
 //            DataAdaptor daTwiss = daProbe.childAdaptor(TwissProbeState.LABEL_TWISS);

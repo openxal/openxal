@@ -184,121 +184,121 @@ public class IdealDrift extends ThickElement {
      */
     @Override
     public PhaseMap transferMap(IProbe probe, double dblLen) throws ModelException  {
-    	
-//    	double gamma = probe.getGamma();
-    	
-    	if ((getCloseElements() == null) || (dblLen == 0)) {
-                // Build transfer matrix
-    		PhaseMatrix  matPhi  = new PhaseMatrix();
-                
-    		double mat0[][] = new double [][] {{1.0, dblLen}, {0.0, 1.0}};
 
-    		matPhi.setSubMatrix(0,1, 0,1, mat0);
-    		matPhi.setSubMatrix(2,3, 2,3, mat0);
-		matPhi.setSubMatrix(4,5, 4,5, mat0);
-    		matPhi.setElem(6,6, 1.0);
+        //    	double gamma = probe.getGamma();
 
-    		return new PhaseMap(matPhi);
-  
-    	}
+        if ((getCloseElements() == null) || (dblLen == 0)) {
+            // Build transfer matrix
+            PhaseMatrix  matPhi  = new PhaseMatrix();
+
+            double mat0[][] = new double [][] {{1.0, dblLen}, {0.0, 1.0}};
+
+            matPhi.setSubMatrix(0,1, 0,1, mat0);
+            matPhi.setSubMatrix(2,3, 2,3, mat0);
+            matPhi.setSubMatrix(4,5, 4,5, mat0);
+            matPhi.setElem(6,6, 1.0);
+
+            return new PhaseMap(matPhi);
+
+        }
 
         //sako add permquad components
-    	final double KDriftTh = 0.0000;
-    	KDrift = 0;
-       double dxSum = 0;
-       double dySum = 0;
-       double dzSum = 0;
-        
-       final double q = probe.getSpeciesCharge();
-   	  	
-       int KDriftCount = 0;
-       if (newMethod) {
-        	if (fringes != null) {
-        		for (int ipmq = 0; ipmq < fringes.length; ipmq++) {
-        			FringePMQ fringe = fringes[ipmq];
-        			double K = fringe.getK(probe,dblLen);
-        		
-        			KDrift += K;
-        			KDriftCount++;
-        		}
-        	}
-        } else {
-        	
-        if (this.getCloseElements() != null) {
-            if (debug) {
-            	System.out.println("xxxxxxxxxxxxxx in IdealDrift, s, dblLen  = "+this.getPosition()+" "+dblLen);
+        final double KDriftTh = 0.0000;
+        KDrift = 0;
+        double dxSum = 0;
+        double dySum = 0;
+        double dzSum = 0;
+
+        final double q = probe.getSpeciesCharge();
+
+        int KDriftCount = 0;
+        if (newMethod) {
+            if (fringes != null) {
+                for (int ipmq = 0; ipmq < fringes.length; ipmq++) {
+                    FringePMQ fringe = fringes[ipmq];
+                    double K = fringe.getK(probe,dblLen);
+
+                    KDrift += K;
+                    KDriftCount++;
+                }
             }
-            
-            Iterator<Element> it = this.getCloseElements().iterator();
-            
-            while (it.hasNext()) {
-            	
-            	Element elem = it.next();
-            	if (elem instanceof IdealPermMagQuad) {
-		    IdealPermMagQuad permQuad = (IdealPermMagQuad)elem;
-		    double K  = permQuad.calcK(probe,dblLen);
-            		
-		    dxSum += permQuad.getAlignX();
-		    dySum += permQuad.getAlignY();
-		    dzSum += permQuad.getAlignZ();
-		    
-		    if (debug) {
-			System.out.println("id, K = "+permQuad.getId()+" "+K);
-		    }
-		    
-		    double fld = permQuad.getMagField();
-		    /* Wrong 
+        } else {
+
+            if (this.getCloseElements() != null) {
+                if (debug) {
+                    System.out.println("xxxxxxxxxxxxxx in IdealDrift, s, dblLen  = "+this.getPosition()+" "+dblLen);
+                }
+
+                Iterator<Element> it = this.getCloseElements().iterator();
+
+                while (it.hasNext()) {
+
+                    Element elem = it.next();
+                    if (elem instanceof IdealPermMagQuad) {
+                        IdealPermMagQuad permQuad = (IdealPermMagQuad)elem;
+                        double K  = permQuad.calcK(probe,dblLen);
+
+                        dxSum += permQuad.getAlignX();
+                        dySum += permQuad.getAlignY();
+                        dzSum += permQuad.getAlignZ();
+
+                        if (debug) {
+                            System.out.println("id, K = "+permQuad.getId()+" "+K);
+                        }
+
+                        double fld = permQuad.getMagField();
+                        /* Wrong 
 		      if (q*fld>=0) {
 		      KDrift += K;
 		      } else {
 		      KDrift -= K;
 		      }
-		    */
-		    //fixed on 15 Oct 06
-		    if (q*fld>=0) {
-			KDrift += (K*K);
-		    } else {
-			KDrift -= (K*K);
-		    }
-		    
-		    KDriftCount++;
-            	}
-            }
-            if (debug) {	
-            	System.out.println("xxxxxxxxxxxxxx end IdealDrift ("+this.getId()+"), KDrift, KDriftCount = "+KDrift+" "+KDriftCount);
-            }
+                         */
+                        //fixed on 15 Oct 06
+                        if (q*fld>=0) {
+                            KDrift += (K*K);
+                        } else {
+                            KDrift -= (K*K);
+                        }
 
-            //need to check if this is correct calculations!! (probably not)
-            if (KDriftCount>0) {
-            	dxSum /= KDriftCount;
-            	dySum /= KDriftCount;
-            	dzSum /= KDriftCount;
+                        KDriftCount++;
+                    }
+                }
+                if (debug) {	
+                    System.out.println("xxxxxxxxxxxxxx end IdealDrift ("+this.getId()+"), KDrift, KDriftCount = "+KDrift+" "+KDriftCount);
+                }
+
+                //need to check if this is correct calculations!! (probably not)
+                if (KDriftCount>0) {
+                    dxSum /= KDriftCount;
+                    dySum /= KDriftCount;
+                    dzSum /= KDriftCount;
+                }
             }
         }
-       }
-     
-       if (KDrift>=0) {
-	   KDrift = Math.sqrt(KDrift);
-       } else {
-	   KDrift = -Math.sqrt(-KDrift);
-       }
-       //System.out.println("XAL(PMQ)total K2 = "+KDrift*KDrift);
+
+        if (KDrift>=0) {
+            KDrift = Math.sqrt(KDrift);
+        } else {
+            KDrift = -Math.sqrt(-KDrift);
+        }
+        //System.out.println("XAL(PMQ)total K2 = "+KDrift*KDrift);
 
         if (KDrift > KDriftTh) {
-	    if (debug) {
-	    	System.out.println("KDrift = "+KDrift);
-	    }
-	    //return (IdealPermMagQuad.transferMap(probe,dblLen,KDrift,IdealPermMagQuad.ORIENT_HOR,dxSum,dySum,dzSum));
-        	return (this.transferMap(probe,dblLen,KDrift,IdealPermMagQuad.ORIENT_HOR,dxSum,dySum,dzSum));
+            if (debug) {
+                System.out.println("KDrift = "+KDrift);
+            }
+            //return (IdealPermMagQuad.transferMap(probe,dblLen,KDrift,IdealPermMagQuad.ORIENT_HOR,dxSum,dySum,dzSum));
+            return (this.transferMap(probe,dblLen,KDrift,IdealPermMagQuad.ORIENT_HOR,dxSum,dySum,dzSum));
         } else if (KDrift < -KDriftTh) {
-	    //return (IdealPermMagQuad.transferMap(probe,dblLen,-KDrift,IdealPermMagQuad.ORIENT_VER,dxSum,dySum,dzSum));
-        	return (this.transferMap(probe,dblLen,-KDrift,IdealPermMagQuad.ORIENT_VER,dxSum,dySum,dzSum));
+            //return (IdealPermMagQuad.transferMap(probe,dblLen,-KDrift,IdealPermMagQuad.ORIENT_VER,dxSum,dySum,dzSum));
+            return (this.transferMap(probe,dblLen,-KDrift,IdealPermMagQuad.ORIENT_VER,dxSum,dySum,dzSum));
         } else {
             // Build transfer matrix
             PhaseMatrix  matPhi  = new PhaseMatrix();
-            
+
             double mat0[][] = new double [][] {{1.0, dblLen}, {0.0, 1.0}};
- 
+
             matPhi.setSubMatrix(0,1, 0,1, mat0);
             matPhi.setSubMatrix(2,3, 2,3, mat0);
             matPhi.setSubMatrix(4,5, 4,5, mat0);
