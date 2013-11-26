@@ -9,11 +9,11 @@
  */
 package xal.app.orbitcorrect;
 
-import xal.smf.*;
-import xal.smf.impl.*;
-import xal.tools.data.*;
+import java.util.ArrayList;
+import java.util.List;
 
-import java.util.*;
+import xal.smf.AcceleratorSeq;
+import xal.tools.data.DataListener;
 
 
 /**
