@@ -287,7 +287,7 @@ public class RealNumericIndexer<T> implements Iterable<T> {
 				_records.add( index, newRecord );
 			}
 			else {
-				throw new RuntimeException( "RealNumericIndexer exception while adding a new record." );
+				throw new RuntimeException( "RealNumericIndexer exception while adding a new record at location: " + location + " with index: " + index );
 			}
 		}
 		else {

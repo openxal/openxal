@@ -1,12 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project basedir="." default="run-tests" name="xal.core.test">
-	<import file="../../config.xml"/>
+	<import file="../../config/config.xml"/>
     
 	<description>Test Open XAL Core</description>
 	
     <target name="init">
         <property name="srcroot" value="." />
+		<property name="build.intermediates.core.test" value="${build.intermediates.core}/test" />
+		<property name="build.compile.core.test.root" value="${build.intermediates.core.test}/compile" />
+
         <mkdir dir="${build.root}" />
+        <mkdir dir="${build.intermediates.core.test}" />
     </target>
     
     
@@ -15,9 +19,8 @@
         <mkdir dir="${build.tests.root}" />
         <junit printsummary="yes">
             <classpath>
-                <pathelement location="${build.jar.lib.root}/xal-test.jar" />
-                <pathelement location="${build.jar.lib.root}/xal-core.jar" />
-                <pathelement location="${build.jar.lib.root}/xal-lib.jar" />
+                <pathelement location="${build.intermediates.core.test}/xal-test.jar" />
+                <pathelement location="${build.products.lib}/xal-shared.jar" />
             </classpath>
             
             <formatter type="plain" usefile="false" />
@@ -39,11 +42,15 @@
         <mkdir dir="${build.compile.core.test.root}" />
         <javac debug="true" source="${build.compile.java.source}" target="${build.compile.java.target}" includeAntRuntime="no" deprecation="true" destdir="${build.compile.core.test.root}" srcdir="${srcroot}/${source.code.dir}" includes="**" sourcepath="">
             <classpath>
-                <pathelement location="${build.jar.lib.root}/xal-core.jar" />
-                <pathelement location="${build.jar.lib.root}/xal-lib.jar" />
+                <pathelement location="${build.products.lib}/xal-shared.jar" />
 
-				<!-- compile against external test libraries if any -->
+				<!-- compile against external test libraries in the local test library if any -->
 				<fileset dir="${srcroot}">
+					<include name="lib/*.jar" />
+				</fileset>
+
+				<!-- compile against external test libraries in the common test library if any -->
+				<fileset dir="${common.test.root}">
 					<include name="lib/*.jar" />
 				</fileset>
             </classpath>
@@ -58,8 +65,7 @@
 	
 	<!-- Jar the core test XAL classes -->
     <target  name="jar" depends="init, compile">
-        <mkdir dir="${build.jar.lib.root}" />
-        <jar compress="false" jarfile="${build.jar.lib.root}/xal-test.jar" index="true">
+        <jar compress="false" jarfile="${build.intermediates.core.test}/xal-test.jar" index="true">
 			<fileset dir="${build.compile.core.test.root}" includes="xal/**/*" />
 			<fileset dir="${build.compile.core.test.root}/resources" />
 			
@@ -69,6 +75,25 @@
 					<include name="lib/*.jar" />
 				</patternset>
 			</zipgroupfileset>
+
+			<!-- merge external test libraries if any -->
+			<zipgroupfileset dir="${common.test.root}">
+				<patternset>
+					<include name="lib/*.jar" />
+				</patternset>
+			</zipgroupfileset>
+        </jar>
+    </target>
+
+
+	<!-- Jar the test resources -->
+    <target  name="jar-resources" depends="init, compile">
+        <mkdir dir="${build.intermediates.core}" />
+        <jar compress="true" jarfile="${build.intermediates.core.test}/resources.jar" index="true">
+			<!-- test resources are rooted in the "resources" directory and this prefix must be preserved in the jar file -->
+			<fileset dir="${build.compile.core.test.root}">
+				<include name="resources/**/*" />
+			</fileset>
         </jar>
     </target>
 
@@ -83,7 +108,7 @@
     <target name="clean" depends="init" description="Clean all build products." >
         <delete dir="${build.compile.core.test.root}" />
         <delete dir="${build.tests.root}" />
-        <delete file="${build.jar.lib.root}/xal-test.jar" quiet="true" />
+        <delete file="${build.intermediates.core.test}/xal-test.jar" quiet="true" />
         
         <echo message="Core test cleaned!" />
     </target>
@@ -98,8 +123,9 @@
 		<echo message="    help ....................... Print this message." />
 		<echo message="    all ........................ Build and run the test cases." />
 		<echo message="    clean ...................... Clean compiled classes and build products" />
-		<echo message="    compile .................... Compile the core XAL classes reporting only mandated warnings." />
-		<echo message="    jar: ....................... Assemble the core XAL classes and resources into xal-core.jar" />
+		<echo message="    compile .................... Compile the XAL test classes reporting only mandated warnings." />
+		<echo message="    jar: ....................... Assemble the XAL test classes and resources." />
+		<echo message="    jar-resources: ............. Archive the test resources." />
 		<echo message="    run-tests .................. Build and run the test cases." />
     </target>
 </project>
