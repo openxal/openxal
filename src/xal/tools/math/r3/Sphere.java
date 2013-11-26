@@ -11,8 +11,11 @@ package xal.tools.math.r3;
  *  Represents a sphere in three-space.
  *
  * @author  Christopher Allen
+ * @since   Jan, 2003
  */
 public class Sphere implements java.io.Serializable {
+    
+    
     /** ID for serializable version */
     private static final long serialVersionUID = 1L;
     

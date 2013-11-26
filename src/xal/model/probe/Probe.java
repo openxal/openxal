@@ -12,8 +12,6 @@ import xal.tools.annotation.AProperty.Units;
 import xal.tools.data.DataAdaptor;
 import xal.tools.data.DataFormatException;
 import xal.tools.data.IArchive;
-import xal.tools.data.TransientDataAdaptor;
-
 import xal.model.IAlgorithm;
 import xal.model.IProbe;
 import xal.model.ModelException;
