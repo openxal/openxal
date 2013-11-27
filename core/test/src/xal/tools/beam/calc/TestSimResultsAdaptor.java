@@ -28,7 +28,7 @@ import xal.model.probe.traj.ParticleTrajectory;
 import xal.model.probe.traj.ProbeState;
 import xal.model.probe.traj.TransferMapState;
 import xal.model.probe.traj.TransferMapTrajectory;
-import xal.resources.ResourceManager;
+import xal.test.ResourceManager;
 import xal.sim.scenario.AlgorithmFactory;
 import xal.sim.scenario.ProbeFactory;
 import xal.sim.scenario.Scenario;
