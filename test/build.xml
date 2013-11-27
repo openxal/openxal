@@ -17,7 +17,9 @@
     <!-- run junit tests -->
     <target name="run-tests" depends="all">
         <mkdir dir="${build.tests.root}" />
-        <junit printsummary="yes">
+        <junit printsummary="yes" fork="yes">
+			<jvmarg value="-Dxal.tests.root=${build.tests.root}"/>
+
             <classpath>
                 <pathelement location="${build.intermediates.core.test}/xal-test.jar" />
                 <pathelement location="${build.products.lib}/xal-shared.jar" />

@@ -24,7 +24,7 @@ import xal.model.IAlgorithm;
 import xal.model.ModelException;
 import xal.model.alg.EnvTrackerAdapt;
 import xal.model.probe.EnvelopeProbe;
-import xal.resources.ResourceManager;
+import xal.test.ResourceManager;
 import xal.smf.Accelerator;
 import xal.smf.AcceleratorSeq;
 
