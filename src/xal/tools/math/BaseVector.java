@@ -676,10 +676,8 @@ public abstract class BaseVector<V extends BaseVector<V>> implements IArchive, j
      */
     @Override
     public boolean equals(Object objTest) {
-        boolean bResult = this.equals(objTest);
-        
-        return bResult;
-    } 
+		return this == objTest;
+    }
 
     /**
      *  Convert the contents of the matrix to a string representation.
