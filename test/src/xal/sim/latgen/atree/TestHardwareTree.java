@@ -27,7 +27,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import xal.resources.ResourceManager;
+import xal.test.ResourceManager;
 import xal.sim.latgen.GenerationException;
 import xal.smf.Accelerator;
 import xal.smf.AcceleratorSeq;
