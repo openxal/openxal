@@ -76,8 +76,10 @@ public class IdealMagDipoleFace2 extends ThinElement implements IElectromagnet {
     
     /** Field strength of the dipole magnet */
     private double              dblField = 0.0;
+    
     /** flag to use design field from bending angle and path instead of bfield */
-    private double fieldPathFlag = 0.0;
+    private boolean bolFieldPathFlag = false;
+    
     /** design orbit path length through magnet */
     private double  dblPathLen = 0.0;
     
@@ -90,7 +92,7 @@ public class IdealMagDipoleFace2 extends ThinElement implements IElectromagnet {
      */
     
     /**
-     * Default constructor - creates a new unitialized instance of 
+     * Default constructor - creates a new uninitialized instance of 
      * IdealMagSectorDipole.      
      * This is the constructor called in automatic lattice generation.
      * Thus, all element properties are set following construction.
@@ -153,13 +155,15 @@ public class IdealMagDipoleFace2 extends ThinElement implements IElectromagnet {
     public void setFringeIntegral(double dblFringeInt) {
         this.dblFringeInt = dblFringeInt;
     }
+    
     /**
      * sako to set field path flag
      * @param ba
      */
-    public void setFieldPathFlag(double ba) {
-        fieldPathFlag = ba;
+    public void setFieldPathFlag(boolean ba) {
+        bolFieldPathFlag = ba;
     }
+    
     /**
      * Set the reference (design) orbit path-length through
      * the magnet.
@@ -279,9 +283,10 @@ public class IdealMagDipoleFace2 extends ThinElement implements IElectromagnet {
      * 
      *  @return     field path flag = 1 (use design field) or 0 (use bField parameter)
      */
-    public double getFieldPathFlag() {
-        return fieldPathFlag;
+    public boolean getFieldPathFlag() {
+        return bolFieldPathFlag;
     }
+    
     /**
      * Return the path length of the design trajectory through the
      * magnet.
@@ -412,11 +417,16 @@ public class IdealMagDipoleFace2 extends ThinElement implements IElectromagnet {
         
         final double h0 = this.compDesignCurvature();// h0 polarity = alpha polarity
         double h  = 0;
-        if (getFieldPathFlag() == 0) {
+        if (getFieldPathFlag() == false) {
+            
         	h = BendingMagnet.compCurvature(probe, B);// h polarity = e*B0 polarity
-        } else if (getFieldPathFlag() ==  1)  {
+        	
+        } else if (getFieldPathFlag() ==  true)  {
+            
         	h =  h0;
+        	
         } else {
+            
         	h = this.getK0();
         }
 
