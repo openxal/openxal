@@ -113,8 +113,7 @@ public class IdealMagSectorDipole2 extends ThickElement implements IElectromagne
     private int     enmOrient = ORIENT_HOR;
     
     /** flag to use design field from bending angle and path instead of bfield */
-//    private double fieldPathFlag = 0.0;
-    private boolean fieldPathFlag = false;
+    private double fieldPathFlag = 0.0;
 
 
 
@@ -252,12 +251,10 @@ public class IdealMagSectorDipole2 extends ThickElement implements IElectromagne
     }
 
     /**
-     * sako - to set field path flag.  
-     * <code>true</code> means use design path throughout.
-     * 
-     * @param ba    new field path flag value
+     * sako to set field path flag
+     * @param ba
      */
-    public void setFieldPathFlag(boolean ba) {
+    public void setFieldPathFlag(double ba) {
         fieldPathFlag = ba;
     }
     
@@ -269,13 +266,11 @@ public class IdealMagSectorDipole2 extends ThickElement implements IElectromagne
     /**
      * Return the magnetic field index of the magnet evaluated at the design
      * orbit.   The field index is defined as
-     * <br/>
-     * <br/>
+     * 
      *      n := -(R0/B0)(dB/dR)
-     * <br/>
-     * <br/>
+     * 
      * where R0 is the radius of the design orbit, B0 is the field at the
-     * design orbit (see IdealMagSectorDipole#getField), and dB/dR is the
+     * design orbit (@see IdealMagSectorDipole#getField), and dB/dR is the
      * derivative of the field with respect to the path deflection - evaluated
      * at the design radius R0.
      * 
@@ -328,7 +323,7 @@ public class IdealMagSectorDipole2 extends ThickElement implements IElectromagne
      * 
      *  @return     field path flag = 1 (use design field) or 0 (use bField parameter)
      */
-    public boolean getFieldPathFlag() {
+    public double getFieldPathFlag() {
         return fieldPathFlag;
     }
 
@@ -436,65 +431,6 @@ public class IdealMagSectorDipole2 extends ThickElement implements IElectromagne
         
         return k_quad;
     }
-    
-    /**
-     * <p>
-     * Computes and returns the path length variation factor.  This is the factor by with the 
-     * synchronous particle path length expands or contracts about the design path length when
-     * considering the effects of dipole field strength other than the design value.
-     * Denoting this quantity as <i>w</i> then it can be expressed
-     * <br/>
-     * <br/>
-     * &nbsp; &nbsp; <i>w</i> = 1 - <i>h</i>/<i>h</i><sub>0</sub> ,
-     * <br/>
-     * <br/>
-     * where <i>h</i><sub>0</sub> is the bending curvature of the design field and <i>h</i> is the
-     * bending curvature of the current field strength.  Thus, for a distance &Delta;<i>s</i><sub>0</sub>
-     * along the design path, the synchronous particle actually travels a distance
-     * <br/>
-     * <br/>
-     * &nbsp; &nbsp; &Delta;<i>s</i> = <i>w</i>&Delta;<i>s</i><sub>0</sub>
-     * <br/>
-     * <br/>
-     * along the actual path. 
-     * </p>
-     *  
-     * @param probe     probe moving a some velocity determining the bending curvature
-     * 
-     * @return          the path length variation factor <i>w</i>
-     *
-     * @author Christopher K. Allen
-     * @since  Nov 27, 2013
-     */
-    public double   compPathLengthVariationFactor(IProbe probe) {
-
-        // Get the field magnitude and check that it is not zero.  (If so there is no length variation.)
-        final double B  = this.getMagField();
-        
-        if (B == 0.0) 
-            return 1.0;
-        
-        
-        // Compute the bending curvature for the design and for the current field magnitude
-        double h0 = this.compDesignCurvature();// h0 polarity = alpha polarity
-        double h  = 0;
-        if (getFieldPathFlag() == false) {
-            
-            h = BendingMagnet.compCurvature(probe, B);// h polarity = e*B0 polarity
-            
-        } else {
-            
-            h =  h0;
-            
-        } 
-        
-        /*
-         * Compute and return path variation parameter
-         */
-        final double dblLenFactor = 1.0 - h/h0;
-        
-        return dblLenFactor;
-    }
 
     
 
@@ -560,15 +496,7 @@ public class IdealMagSectorDipole2 extends ThickElement implements IElectromagne
      */
     @Override
     public double elapsedTime(IProbe probe, double dblLen)  {
-        
-        // Convert the given design path length to actual length
-        double  dblLenFac = this.compPathLengthVariationFactor(probe);
-        double  dblLenVar = dblLenFac*dblLen;
-        
-        // Compute the elapsed time drifting to the modified path length
-        double  dblTime = super.compDriftingTime(probe, dblLenVar);
-        
-        return dblTime;
+        return super.compDriftingTime(probe, dblLen);
     }
     
     /**
@@ -618,20 +546,14 @@ public class IdealMagSectorDipole2 extends ThickElement implements IElectromagne
         
         final double B     = this.getMagField();
         final double gamma = probe.getGamma();
-        
-        //
-        // Check for zero fields - we cannot support this
-        //  Actually, now we replace the dipole magnet with a drift space if zero fields are detected.
-        //  This situation assumes a straight section since a real-world beam would likely hit the 
-        //  wall of an unenergized magnetic.
-        //
-        if (( (getFieldPathFlag() == true)  && (getDesignBendingAngle() == 0.) )	|| 
-             ((getFieldPathFlag() == false) && (B == 0.0)) ) 
-        {
-            //      throw new ModelException("IdealMagSectorDipole#transferMap() - cannot support zero fields.");
-        	
-            //sako 27 sep 07 to avoid B=0 problem
-            // Build transfer matrix for a drift space.  Assume the magnet has been replaced by a drift section
+         /*
+         * Check for zero fields - we cannot support this
+         */
+        if (((getFieldPathFlag() != 0.)&&(getDesignBendingAngle() == 0.))
+        		|| ((getFieldPathFlag() == 0.)&&(B == 0.0))) {
+      //      throw new ModelException("IdealMagSectorDipole#transferMap() - cannot support zero fields.");
+        	//sako 27 sep 07 to avoid B=0 problem
+            // Build transfer matrix
     		PhaseMatrix  matPhi  = new PhaseMatrix();
                 
     		double mat0[][] = new double [][] {{1.0, dblLen}, {0.0, 1.0}};
@@ -649,16 +571,11 @@ public class IdealMagSectorDipole2 extends ThickElement implements IElectromagne
         
         final double h0 = this.compDesignCurvature();// h0 polarity = alpha polarity
         double h  = 0;
-        if (getFieldPathFlag() == false) {
-            
+        if (getFieldPathFlag() == 0) {
         	h = BendingMagnet.compCurvature(probe, B);// h polarity = e*B0 polarity
-        	
-        } else if (getFieldPathFlag() ==  true)  {
-            
+        } else if (getFieldPathFlag() ==  1)  {
         	h =  h0;
-        	
         } else {
-            
         	h = this.getK0();
         }
        // 28 Nov 07 H. Sako
@@ -853,7 +770,7 @@ public class IdealMagSectorDipole2 extends ThickElement implements IElectromagne
      * <p>Compute and return the partial deflection angle of the
      * design trajectory at position <i>s</i> within the magnet.
      * Note that <i>s</i> is not the position along the design
-     * trajectory.  That value is found by multiplying the
+     * trajectory.  That value is found by multiply the
      * returned value by the curvature radius.
      * </p>
      * 
@@ -868,33 +785,28 @@ public class IdealMagSectorDipole2 extends ThickElement implements IElectromagne
      * </p>
      * 
      * 
-     *  @param  s   physical distance from magnet entrance location (meters)
+     *  @param  s   physical distance from magnet entrace location (meters)
      * 
      *  @return     the partial deflection angle at distance s
      *  
      *  @author Christopher K. Allen
-     *  @author sako   2007/11/27, exception handling
+     *  sako, 2007/11/27, exception handling
      */
     private double  compCurrentAngle(double s) {
         double  R0 = this.compDesignBendingRadius();
         double  L0 = this.getLength();
-
+        
         double num = R0 - ( (L0/2.0)/R0 )*s;
         //double den = Math.sqrt( s*s + R0*R0 - s*L0 );
-        double den = Math.sqrt( R0*R0 + s*(s - L0) );
-        double ratio = num/den;
-
+        double den = Math.sqrt( R0*R0 +s*(s- L0) );
+         double ratio = num/den;
         if (ratio>1) {
-            
-            ratio = 1;
-        
+        	ratio = 1;
         } else if (ratio<-1) {
-        
-            ratio = -1;
+        	ratio = -1;
         }
-        
         double theta = Math.acos(ratio);
-
+        
         return theta;
     }
 
@@ -903,7 +815,7 @@ public class IdealMagSectorDipole2 extends ThickElement implements IElectromagne
      * design trajectory a position <i>s</i> within the magnet.  This 
      * method may be somewhat faster than 
      * <code>IdealMagSectorDipole#compCurrentAngle(double)</code> by
-     * avoiding the computation of one arc-cosine.  The returned value
+     * avoiding the computation of one arccosine.  The returned value
      * is the derivative of the above function at <i>s</i> = 0 times
      * <i>s</i>.
      * 

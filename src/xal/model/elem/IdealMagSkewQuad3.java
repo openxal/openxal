@@ -140,7 +140,7 @@ public class IdealMagSkewQuad3 extends ThickElement implements IElectromagnet {
      */
     static {
         
-        R3x3  matSO3 = R3x3.rotationZ( - DBL_SKEW_ANGLE);
+        R3x3  matSO3 = R3x3.newRotationZ( - DBL_SKEW_ANGLE);
         
         MAT_SO6_TOQUAD_COORDS = PhaseMatrix.rotationProduct( matSO3 );
         MAT_SO6_TOBEAM_COORDS = MAT_SO6_TOQUAD_COORDS.transpose();

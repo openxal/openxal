@@ -1,11 +1,10 @@
 package xal.model.probe.traj;
 
-import xal.tools.math.r3.R3;
+import xal.model.probe.EnsembleProbe;
+import xal.model.xml.ParsingException;
 import xal.tools.beam.CovarianceMatrix;
 import xal.tools.beam.ens.Ensemble;
 import xal.tools.data.DataAdaptor;
-import xal.model.probe.EnsembleProbe;
-import xal.model.xml.ParsingException;
 
 /**
  * Encapsulates the state of an EnsembleProbe at a particular point in time.
@@ -113,15 +112,15 @@ public class EnsembleProbeState extends BunchProbeState {
     }
 	
 	
-    /**
-	 * Get the betatron phase for all three phase planes.
-     * 
-     * @return  vector (psix,psiy,psiz) of phases in radians
-     */
-    @Override
-    public R3 getBetatronPhase() {
-		throw new UnsupportedOperationException( "This class does not support this method at this time." );
-	}
+//    /**
+//	 * Get the betatron phase for all three phase planes.
+//     * 
+//     * @return  vector (psix,psiy,psiz) of phases in radians
+//     */
+//    @Override
+//    public R3 getBetatronPhase() {
+//		throw new UnsupportedOperationException( "This class does not support this method at this time." );
+//	}
 	
     
     /**
@@ -131,8 +130,8 @@ public class EnsembleProbeState extends BunchProbeState {
      *
      *  @see    xal.tools.beam.CovarianceMatrix
      */
-    public CovarianceMatrix phaseCorrelation() {
-        return getEnsemble().phaseCorrelation();
+    public CovarianceMatrix phaseCovariance() {
+        return getEnsemble().phaseCovariance();
     }
     
 //    /**

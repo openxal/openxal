@@ -262,13 +262,14 @@ public abstract class ProbeState implements IProbeState {
      */
     public double getGamma() {
 
-        if(Double.isNaN(m_dblGamma))
-        {
-	     m_dblGamma = 1. + m_dblW / m_dblParEr;
-	}
-    	return m_dblGamma;
+        if (Double.isNaN(m_dblGamma))  {
+            
+            m_dblGamma = 1. + m_dblW / m_dblParEr;
+        }
+        
+        return m_dblGamma;
     }
-     
+
     
     /*
      * Debugging

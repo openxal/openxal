@@ -105,14 +105,14 @@ public class ProbeStateTest extends TestCase {
 		// create a probe and set some state, capture state in snapshot
 		ParticleProbe probe = new ParticleProbe();
 		probe.setPosition(INITIAL_POSITION);
-		probe.setPhaseCoordinates(PhaseVector.zero());
+		probe.setPhaseCoordinates(PhaseVector.newZero());
 		ProbeState state = probe.createProbeState();
 		
 		//compare the snapshot to the probe
 		assertTrue(state instanceof ParticleProbeState);
 		assertTrue(probe.getPosition() == 
 			((ParticleProbeState)state).getPosition());
-		assertTrue(probe.getPhaseCoordinates().equals(((ParticleProbeState)state).getPhaseCoordinates()));
+		assertTrue(probe.getPhaseCoordinates().isEquivalentTo(((ParticleProbeState)state).getPhaseCoordinates()));
 		
 		// save the state to a trajectory	
 		Trajectory trajectory = probe.createTrajectory();
@@ -137,7 +137,7 @@ public class ProbeStateTest extends TestCase {
 //		probe.setBeamCharge(CHARGE);
         probe.setBunchFrequency(FREQUENCY);
 		probe.setBeamCurrent(CURRENT);
-		probe.setCorrelation((CovarianceMatrix)PhaseMatrix.zero());     // causes class cast exception
+		probe.setCovariance((CovarianceMatrix)PhaseMatrix.zero());     // causes class cast exception
 		ProbeState state = probe.createProbeState();
 		
 		//compare the snapshot to the probe
@@ -150,7 +150,7 @@ public class ProbeStateTest extends TestCase {
             ((EnvelopeProbeState)state).getBunchFrequency());
 		assertTrue(probe.getBeamCurrent() == 
 			((EnvelopeProbeState)state).getBeamCurrent());
-		assertTrue(probe.getCovariance().equals(((EnvelopeProbeState)state).getCorrelationMatrix()));
+		assertTrue(probe.getCovariance().equals(((EnvelopeProbeState)state).getCovarianceMatrix()));
 		
 		// save the state to a trajectory	
 		Trajectory trajectory = probe.createTrajectory();
