@@ -21,10 +21,10 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import xal.model.alg.EnvTrackerAdapt;
+import xal.test.ResourceManager;
 import xal.sim.scenario.ProbeFactory;
 import xal.smf.Accelerator;
 import xal.smf.AcceleratorSeq;
-import xal.test.ResourceManager;
 import xal.tools.beam.CovarianceMatrix;
 
 /**
@@ -103,7 +103,8 @@ public class TestProbeFactory {
         EnvelopeProbe prbTest = ProbeFactory.getEnvelopeProbe( SEQ_TEST, new EnvTrackerAdapt() );
         
         CovarianceMatrix matCov = prbTest.getCovariance();
-        matCov.print();
+        
+        System.out.println(matCov);
         
     }
 

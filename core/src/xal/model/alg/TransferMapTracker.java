@@ -36,6 +36,11 @@ public class TransferMapTracker extends Tracker {
      * Global Constants
      */
     
+    /** probe type recognized by this algorithm */
+    public static final Class<TransferMapProbe>       s_clsProbeType = TransferMapProbe.class;
+
+
+
     /** Label for edit context table containing algorithm parameters - i.e., in "model.params" file */ 
     private static final String STR_LBL_TABLE = "TransferMapTracker";
     
@@ -47,8 +52,7 @@ public class TransferMapTracker extends Tracker {
     /** current version of this algorithm */
     public static final int         s_intVersion = 1;
 
-    /** probe type recognized by this algorithm */
-    public static final Class<TransferMapProbe>       s_clsProbeType = TransferMapProbe.class;
+    
 
 	
     
@@ -170,16 +174,17 @@ public class TransferMapTracker extends Tracker {
      *  @exception ModelException     bad element transfer matrix/corrupt probe state
      */
     protected void advanceState( final TransferMapProbe probe, final IElement ifcElem, final double dblLng ) throws ModelException {
+        
         // Properties of the element
         final PhaseMap mapPhi = ifcElem.transferMap( probe, dblLng );
-      // Compose the transfer maps
+
+        // Set the partial (state) transfer map
+        probe.setPartialTransferMap( mapPhi );
+        
+        // Compose the transfer maps
         final PhaseMap mapProbe = probe.getTransferMap();
         final PhaseMap mapComp = mapPhi.compose( mapProbe );
         probe.setTransferMap( mapComp );
-		
-		final PhaseVector z0 = probe.getPhaseCoordinates();
-		final PhaseVector z1 = mapPhi.apply( z0 );
-        probe.setPhaseCoordinates( z1 );
 	}
 
 }

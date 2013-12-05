@@ -9,6 +9,7 @@
 package xal.test;
 
 import java.net.URL;
+import java.io.File;
 
 import xal.smf.Accelerator;
 import xal.smf.data.XMLDataManager;
@@ -56,4 +57,20 @@ public class ResourceManager {
     static public Accelerator getAcceleratorAtURL( final URL opticsURL ) {
         return opticsURL != null ? XMLDataManager.getInstance( opticsURL ).getAccelerator() : null;
     }
+
+
+	/** Get the fully qualified output file given the relative path within the output directory. */
+	static public File getOutputFile( final String relativePath ) {
+		final String testDirectoryPath = System.getProperty( "xal.tests.root" );
+		if ( testDirectoryPath == null ) {
+			final String errorMessage = "Error getting the output file from ResourceManager. The test directory was null and must be specified using the runtime property: xal.tests.root";
+			System.err.println( errorMessage );
+			throw new RuntimeException( errorMessage );
+		}
+		final File outputDirectory = new File( testDirectoryPath, "output" );
+		final File outputFile = new File( outputDirectory, relativePath );
+		outputFile.getParentFile().mkdirs();
+		//System.out.println( "Output File: " + outputFile.getAbsolutePath() );
+		return outputFile;
+	}
 }

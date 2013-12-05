@@ -10,13 +10,13 @@ import xal.model.alg.TransferMapTracker;
 import xal.model.probe.EnvelopeProbe;
 import xal.model.probe.ParticleProbe;
 import xal.model.probe.TransferMapProbe;
+import xal.test.ResourceManager;
 import xal.sim.scenario.AlgorithmFactory;
 import xal.sim.scenario.ProbeFactory;
 import xal.sim.scenario.Scenario;
 import xal.smf.Accelerator;
 import xal.smf.AcceleratorSeq;
 import xal.smf.data.XMLDataManager;
-import xal.test.ResourceManager;
 
 
 /**

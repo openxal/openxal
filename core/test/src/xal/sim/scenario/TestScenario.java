@@ -23,11 +23,10 @@ import org.junit.Test;
 import xal.model.IAlgorithm;
 import xal.model.ModelException;
 import xal.model.alg.EnvTrackerAdapt;
-import xal.model.alg.Tracker;
 import xal.model.probe.EnvelopeProbe;
+import xal.test.ResourceManager;
 import xal.smf.Accelerator;
 import xal.smf.AcceleratorSeq;
-import xal.test.ResourceManager;
 
 /**
  * Testing scenario generation for the Open XAL online model.
@@ -98,7 +97,7 @@ public class TestScenario {
      * Uses an adaptive envelope probe.
      */
     @Test
-    public void testRunViaNewFromEditContext() {
+    public void testRunFromFactories() {
         Accelerator     accel = ResourceManager.getTestAccelerator();
         AcceleratorSeq  seq   = accel.getSequence(STR_ACCL_SEQ_ID);
         

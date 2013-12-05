@@ -1,16 +1,8 @@
 package xal.model.probe.traj;
 
-import java.io.PrintWriter;
-import java.util.Iterator;
-
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-import xal.model.Lattice;
-import xal.model.ModelException;
-import xal.model.probe.DiagnosticProbe;
-import xal.model.xml.LatticeXmlParser;
-import xal.model.xml.ParsingException;
 
 /**
  * class comment

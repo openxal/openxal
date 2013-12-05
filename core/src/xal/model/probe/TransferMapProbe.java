@@ -16,6 +16,9 @@ import xal.model.probe.traj.ProbeState;
 import xal.model.probe.traj.TransferMapState;
 import xal.model.probe.traj.TransferMapTrajectory;
 import xal.model.xml.ParsingException;
+import xal.tools.beam.PhaseMap;
+import xal.tools.beam.PhaseVector;
+import xal.tools.data.DataAdaptor;
 
 
 /**
@@ -33,12 +36,21 @@ import xal.model.xml.ParsingException;
  * 
  * @author Christopher K. Allen
  * @since  May 28, 2004
+ * @version  Oct 25, 2013
  */
 public class TransferMapProbe extends Probe {
+    
     /** composite transfer map */
     private PhaseMap m_mapTrans;
     
-    /** phase coordinates of the particle location */ 
+    /** the partial transfer map through last modeling element */
+    private PhaseMap    mapPhiElem;
+    
+    /** 
+     * phase coordinates of the particle location  
+     * @deprecated what particle? 
+     */
+    @Deprecated
     private PhaseVector _phaseCoordinates;
     
     
@@ -53,20 +65,20 @@ public class TransferMapProbe extends Probe {
         _phaseCoordinates = new PhaseVector();
     }
 
-    /**
-     * sako for turn by turn running, call instead of reset
-     *
-     *
-     * @author H. Sako
-     * @since  Apr 14, 2011
-     */
-    public void setupNextTurn() {
-        this.setPosition(0);
-        PhaseVector pv = this.getPhaseCoordinates();
-        this.m_trajHist = this.createTrajectory();
-        pv.setz(0);
-        this.setPhaseCoordinates(pv);
-    }
+//    /**
+//     * sako for turn by turn running, call instead of reset
+//     *
+//     *
+//     * @author H. Sako
+//     * @since  Apr 14, 2011
+//     */
+//    public void setupNextTurn() {
+//        this.setPosition(0);
+//        PhaseVector pv = this.getPhaseCoordinates();
+//        this.m_trajHist = this.createTrajectory();
+//        pv.setz(0);
+//        this.setPhaseCoordinates(pv);
+//    }
 
     /**
      * Initializing constructor.  Create a new <code>TransferMapProbe</code> and
@@ -98,6 +110,18 @@ public class TransferMapProbe extends Probe {
         this.m_mapTrans = mapTrans;
     }
     
+    /**
+     * Set the partial transfer map at the current probe
+     * location.
+     * 
+     * @param   mapPhi    transfer map in homogeneous phase coordinates
+     * 
+     * @see xal.model.probe.Probe#createTrajectory()
+     */
+    public void setPartialTransferMap(PhaseMap mapPhi)   {
+        this.mapPhiElem = mapPhi;
+    }
+    
     
      /**
       * Get the composite transfer map for the current probe location.
@@ -109,12 +133,24 @@ public class TransferMapProbe extends Probe {
          return this.m_mapTrans;
      }
     
+     /**
+      * Get the partial transfer map for the current probe location.
+      * 
+      * @return partial transfer map in homogeneous phase space coordinates
+      */
+     public PhaseMap getPartialTransferMap()  {
+         return this.mapPhiElem;
+     }
+    
      
     /** 
      *  Returns homogeneous phase space coordinates of the particle.  The units
      *  are meters and radians.
      *  @return vector (x,x',y,y',z,z',1) of phase space coordinates
+     *  
+     *  @deprecated Transfer maps do not have phase coordinates
      */
+	@Deprecated
     public PhaseVector getPhaseCoordinates()  { 
         return _phaseCoordinates;
     }
@@ -123,12 +159,18 @@ public class TransferMapProbe extends Probe {
     /** 
      *  Set the phase coordinates of the probe.  
      *  @param  vecPhase new homogeneous phase space coordinate vector
+     *  
+     *  @deprecated Transfer maps do not have phase coordinates
      */
+    @Deprecated
     public void setPhaseCoordinates( final PhaseVector vecPhase ) {
         _phaseCoordinates = new PhaseVector( vecPhase );
     }
     
-     
+     /*
+      * Probe Overrides
+      */
+    
     /**
      * Create and return a <code>Trajectory</code> object of the appropriate
      * specialty type - here <code>TransferMapTrajectory</code>.  The 
@@ -166,25 +208,15 @@ public class TransferMapProbe extends Probe {
         final TransferMapState stateTrans = (TransferMapState) state;
         
         super.applyState(state);
-        stateTrans.setTrajectory( (TransferMapTrajectory)m_trajHist );
-        setTransferMap( stateTrans.getTransferMap() );
-        setPhaseCoordinates( stateTrans.getPhaseCoordinates() );
+//        stateTrans.setTrajectory( (TransferMapTrajectory)m_trajHist );
+        this.setTransferMap( stateTrans.getTransferMap() );
+        this.setPartialTransferMap( stateTrans.getStateTransferMap() );
     }
-    
-    
-    /**
-     * Subclasses should override this method to perform any required post processing upon completion 
-     * of algorithm processing.  This method implementation does nothing.
-     */
-    @Override
-    public void performPostProcessing() {
-        final PhaseMap fullTurnMap = m_mapTrans.copy();
-        ((TransferMapTrajectory)getTrajectory()).setFullTurnMap( fullTurnMap );
-    }
-    
+        
     
     /**
      * Initialize this probe from the one specified.
+     * 
      * @param probe the probe from which to initialize this one
      */
     @Override
