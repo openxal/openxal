@@ -300,10 +300,10 @@ public class IdealMagWedgeDipole2 extends ElementSeq implements IElectromagnet {
     /**
      * sako use design field if fieldPathFlag = 1, and use bfield if 0
      */
-    public void setFieldPathFlag(double dblFlag) {
-    	this.getFaceEntr().setFieldPathFlag(dblFlag);
-    	this.getMagBody().setFieldPathFlag(dblFlag);
-    	this.getFaceExit().setFieldPathFlag(dblFlag);
+    public void setFieldPathFlag(boolean bolFlag) {
+    	this.getFaceEntr().setFieldPathFlag(bolFlag);
+    	this.getMagBody().setFieldPathFlag(bolFlag);
+    	this.getFaceExit().setFieldPathFlag(bolFlag);
     }
 
     /**
