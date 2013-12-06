@@ -666,22 +666,6 @@ public abstract class BaseVector<V extends BaseVector<V>> implements IArchive, j
      */
 
     /**
-     * Checks absolute equivalency.  That is, checks whether or not the
-     * argument is this object.
-     * 
-     * @param   objTest     object under equivalency test
-     * 
-     * @return              <code>true</code> if the argument is this object,
-     *                      <code>false</code> otherwise
-     */
-    @Override
-    public boolean equals(Object objTest) {
-        boolean bResult = this.equals(objTest);
-        
-        return bResult;
-    } 
-
-    /**
      *  Convert the contents of the matrix to a string representation.
      *  The format is similar to that of Mathematica. Specifically,
      *  <br/>
