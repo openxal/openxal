@@ -30,7 +30,7 @@ import xal.smf.impl.Marker;
  * @author Ivo List
  */
 public class ScenarioGenerator2 {
-	public static final double EPS = 1.e-5d;
+	public static final double EPS = 1.e-10d;
 	
 	private AcceleratorSeq sequence;
 	private SynchronizationManager syncManager;
@@ -193,7 +193,7 @@ public class ScenarioGenerator2 {
 			//   all the intersections before scanline have already been accounted for
 			//   variable lastThick has the thick element before or under the scanline, if there is one 
 			if (lastThick != null) {
-				if (lastThick.getEndPosition() <= currentElement.getStartPosition()) { // we passed lastThick element
+				if (lastThick.getEndPosition() - currentElement.getStartPosition() <= EPS) { // we passed lastThick element
 					splitElements.add(lastThick);
 					lastThick = null;
 					if (currentElement.isThin())
@@ -218,7 +218,7 @@ public class ScenarioGenerator2 {
 					splitElements.add(currentElement);
 					if (secondPart != null)
 						lastThick = secondPart;  
-				} else { // we have thick & thick intersection
+				} else { // we have thick & thick intersection					
 					throw new ModelException("Two covering thick elements: " + lastThick.toString() + 
 							" and " + currentElement.toString());							
 				}
