@@ -179,6 +179,12 @@ public class ScenarioGenerator2 {
 		return elements;
 	}
 	
+	private void addSplitElement(List<LatticeElement> splitElements, LatticeElement element)
+	{
+		if (element.getLength() > EPS || element.getParts() <= 1) splitElements.add(element);
+	}
+	
+	
 	/**
 	 * <p>Splits all thick elements by thin ones, keeping the order.</p>
 	 * <p>The method also checks if two thick elements cover each other, which should not happen.</p>
@@ -198,10 +204,10 @@ public class ScenarioGenerator2 {
 			//   variable lastThick has the thick element before or under the scanline, if there is one 
 			if (lastThick != null) {
 				if (lastThick.getEndPosition() - currentElement.getStartPosition() <= EPS) { // we passed lastThick element
-					splitElements.add(lastThick);
+					addSplitElement(splitElements, lastThick);
 					lastThick = null;
 					if (currentElement.isThin())
-						splitElements.add(currentElement);
+						addSplitElement(splitElements, currentElement);						
 					else
 						lastThick = currentElement;
 				} else if (currentElement.isThin()) { // we have a thick & thin element intersection
@@ -216,7 +222,7 @@ public class ScenarioGenerator2 {
 						if (secondPart != null) cout.println("\t" + secondPart.toString());
 					}					
 					if (lastThick.getEndPosition() <= currentElement.getCenter()) {
-						splitElements.add(lastThick);
+						addSplitElement(splitElements, lastThick);						
 						lastThick = null;
 					}
 					splitElements.add(currentElement);
@@ -237,7 +243,7 @@ public class ScenarioGenerator2 {
 		
 		// scanline over the last element
 		if (lastThick != null)
-			splitElements.add(lastThick);
+			addSplitElement(splitElements, lastThick);			
 		
 		return splitElements;
 	}
