@@ -145,13 +145,17 @@ public class ScenarioGenerator2 {
 	private List<LatticeElement> collectElements() {
 		int originalPosition = 0; // used to record original position
 		double sequenceLength = sequence.getLength(); // workaround for sequences that don't have length set
-		List<LatticeElement> elements = new ArrayList<LatticeElement>();
+		List<LatticeElement> elements = new ArrayList<LatticeElement>();		
 		
 		elements.add(new LatticeElement(new Marker("BEGIN_" + sequence.getId()), 0.0, 
 				elementMapping.getDefaultConverter(), originalPosition++));
 		
 		for (AcceleratorNode node : sequence.getAllNodes()) {
-			if (node instanceof AcceleratorSeq) continue; // skip the sequences
+			if (node instanceof AcceleratorSeq) {
+				elements.add(new LatticeElement(new Marker("BEGIN_" + node.getId()), sequence.getPosition(node), 
+						elementMapping.getDefaultConverter(), originalPosition++));			
+				continue; 
+			}						
 			
 			LatticeElement element = new LatticeElement(node, sequence.getPosition(node), 
 					elementMapping.getConverter(node), originalPosition++);
