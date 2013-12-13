@@ -22,9 +22,9 @@ import eu.ess.jels.smf.impl.ESSRfCavity;
 public class DTLCellTest extends TestCommon {
 	@Parameters
 	public static Collection<Object[]> probes() {
-		//double energy = 2.5e6, frequency = 4.025e8, current = 0;
+		double energy = 2.5e6, frequency = 4.025e8, current = 0;
 		//double energy = 2.5e9, frequency = 4.025e8, current = 0;
-		double energy = 0.2e6, frequency = 4.025e8, current = 0;
+		//double energy = 0.2e6, frequency = 4.025e8, current = 0;
 		return Arrays.asList(new Object[][]{
 				{setupOpenXALProbe(energy, frequency, current), TWElementMapping.getInstance()},
 				{setupElsProbe(energy, frequency, current), ElsElementMapping.getInstance()},
@@ -299,7 +299,7 @@ public class DTLCellTest extends TestCommon {
 		quad1.setPosition(0.5*Lq1); //always position on center!
 		quad1.setLength(Lq1); // effLength below is actually the only one read 
 		quad1.getMagBucket().setEffLength(Lq1);
-		quad1.setDfltField(0);//B1 * Math.signum(probe.getSpeciesCharge()));
+		quad1.setDfltField(B1 * Math.signum(probe.getSpeciesCharge()));
 		quad1.getMagBucket().setPolarity(1);
 		
 		Quadrupole quad2 = new Quadrupole("quad2") { // there's no setter for type (you need to extend class)
