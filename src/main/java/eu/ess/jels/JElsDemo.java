@@ -1,26 +1,22 @@
 package eu.ess.jels;
 
-import javax.swing.*;
-import javax.swing.JToggleButton.ToggleButtonModel;
-import javax.swing.event.*;
-
-import eu.ess.jels.model.alg.ElsTracker;
-import eu.ess.jels.model.probe.ElsProbe;
-import eu.ess.jels.model.probe.GapEnvelopeProbe;
-
-import java.awt.event.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.IOException;
-import java.net.*;
 import java.util.Iterator;
-import java.util.List;
-import java.util.ResourceBundle;
-import java.util.logging.*;
 
-import xal.application.*;
-import xal.model.IElement;
+import javax.swing.JFrame;
+
 import xal.model.Lattice;
 import xal.model.ModelException;
-import xal.model.probe.*;
+import xal.model.alg.DiagnosticTracker;
+import xal.model.alg.EnvelopeTracker;
+import xal.model.alg.Tracker;
+import xal.model.probe.DiagnosticProbe;
+import xal.model.probe.EnvelopeProbe;
+import xal.model.probe.Probe;
+import xal.model.probe.SynchronousProbe;
+import xal.model.probe.TwissProbe;
 import xal.model.probe.traj.EnvelopeProbeState;
 import xal.model.probe.traj.ProbeState;
 import xal.model.probe.traj.Trajectory;
@@ -28,26 +24,23 @@ import xal.model.xml.LatticeXmlWriter;
 import xal.model.xml.ParsingException;
 import xal.model.xml.ProbeXmlParser;
 import xal.model.xml.ProbeXmlWriter;
-import xal.model.alg.*;
-import xal.sim.scenario.*;
+import xal.sim.scenario.AlgorithmFactory;
+import xal.sim.scenario.ElsElementMapping;
+import xal.sim.scenario.ProbeFactory;
+import xal.sim.scenario.Scenario;
+import xal.sim.scenario.ScenarioGenerator2;
+import xal.sim.scenario.TWElementMapping;
+import xal.smf.Accelerator;
+import xal.smf.AcceleratorSeq;
 import xal.smf.data.XMLDataManager;
-import xal.smf.impl.Dipole;
-import xal.smf.impl.Electromagnet;
-import xal.smf.impl.Magnet;
-import xal.smf.impl.Quadrupole;
-import xal.smf.impl.qualify.AndTypeQualifier;
-import xal.smf.impl.qualify.ElementTypeManager;
-import xal.smf.impl.qualify.KindQualifier;
-import xal.smf.impl.qualify.OrTypeQualifier;
-import xal.smf.impl.qualify.QualifierFactory;
-import xal.smf.impl.qualify.TypeQualifier;
 import xal.smf.proxy.ElectromagnetPropertyAccessor;
-import xal.smf.proxy.RfCavityPropertyAccessor;
-import xal.smf.proxy.RfGapPropertyAccessor;
-import xal.smf.*;
 import xal.tools.beam.Twiss;
 import xal.tools.beam.Twiss3D;
-import xal.tools.plot.*;
+import xal.tools.plot.BasicGraphData;
+import xal.tools.plot.FunctionGraphsJPanel;
+import eu.ess.jels.model.alg.ElsTracker;
+import eu.ess.jels.model.probe.ElsProbe;
+import eu.ess.jels.model.probe.GapEnvelopeProbe;
 
 
 public class JElsDemo {
@@ -64,22 +57,25 @@ public class JElsDemo {
 		
 		/*Scenario scenario = new ScenarioGenerator2(sequence, ElsElementMapping.getInstance()).generateScenario();
 		Probe probe = setupElsProbe();*/
-		// Outputting lattice elements
-		//saveLattice(scenario.getLattice(), "lattice.xml");
-
 		
 		// Creating a probe
 		//Probe probe = loadProbeFromModelParams(sequence);		
 		//Probe probe = loadProbeFromXML();
 		
 		//saveProbe(probe, "envelopeProbe.xml");				
+		
 		scenario.setProbe(probe);			
+		
 		
 				
 		// Setting up synchronization mode
 		scenario.setSynchronizationMode(Scenario.SYNC_MODE_DESIGN);					
 		scenario.resync();
+		
+		// Outputting lattice elements
+		saveLattice(scenario.getLattice(), "lattice.xml");
 				
+		scenario.setStartElementId("BEGIN_mebt");
 		// Running simulation
 		scenario.run();
 		
@@ -119,9 +115,12 @@ public class JElsDemo {
 		    by[i] = twiss[1].getBeta();
 		    bz[i] = twiss[2].getBeta();
 		    w[i] = ps.getKineticEnergy()/1.e6;
-		    System.out.printf("%E %E %E %E %E %E %E\n", ps.getPosition(),
-		    		twiss[0].getEnvelopeRadius(), twiss[1].getEnvelopeRadius(), twiss[2].getEnvelopeRadius(),
-		    		twiss[0].getBeta(), twiss[1].getBeta(), twiss[2].getBeta()/Math.pow(ps.getGamma(), 2));
+		    System.out.printf("%E %E %E %E %E %E %E %E %E %E %E\n", ps.getPosition(), ps.getGamma()-1, 
+		    		twiss[0].getEnvelopeRadius(),twiss[0].getBeta(),
+		    		twiss[1].getEnvelopeRadius(),twiss[1].getBeta(),
+		    		twiss[2].getEnvelopeRadius(),twiss[2].getBeta(),
+		    		twiss[2].getBeta()/Math.pow(ps.getGamma(), 2),
+		    		ps.getTime(), ps.getKineticEnergy());
 		    i=i+1;
 		}
     	final JFrame frame = new JFrame();
@@ -150,7 +149,7 @@ public class JElsDemo {
 	private static Probe setupOpenXALProbe() {
 		EnvelopeTracker envelopeTracker = new EnvelopeTracker();			
 		envelopeTracker.setRfGapPhaseCalculation(true);
-		envelopeTracker.setUseSpacecharge(false);
+		envelopeTracker.setUseSpacecharge(true);
 		envelopeTracker.setEmittanceGrowth(false);
 		envelopeTracker.setStepSize(0.004);
 		envelopeTracker.setProbeUpdatePolicy(Tracker.UPDATE_EXIT);
@@ -158,10 +157,10 @@ public class JElsDemo {
 		EnvelopeProbe envelopeProbe = new GapEnvelopeProbe();
 		envelopeProbe.setAlgorithm(envelopeTracker);
 		envelopeProbe.setSpeciesCharge(-1);
-		envelopeProbe.setSpeciesRestEnergy(9.38272013e8);		
-		//envelopeProbe.setSpeciesRestEnergy(9.3829431e8);
+		//envelopeProbe.setSpeciesRestEnergy(9.38272013e8);		
+		envelopeProbe.setSpeciesRestEnergy(9.3829431e8);
 		//envelopeProbe.setSpeciesRestEnergy(9.39294e8);
-		envelopeProbe.setKineticEnergy(2500000);//energy
+		envelopeProbe.setKineticEnergy(3e6);//energy
 		envelopeProbe.setPosition(0.0);
 		envelopeProbe.setTime(0.0);		
 	
@@ -172,10 +171,10 @@ public class JElsDemo {
 				  new Twiss(3.23,0.381,3.46e-6/ beta_gamma),
 				  new Twiss(0.0196,0.5844,3.8638e-6/ beta_gamma)});*/
 		
-		envelopeProbe.initFromTwiss(new Twiss[]{new Twiss(-0.1763,0.2442,0.2098e-6*1e-6 / beta_gamma),
-				  new Twiss(-0.3247,0.3974,0.2091e-6*1e-6 / beta_gamma),
-				  new Twiss(-0.5283,0.8684,0.2851e-6*1e-6 / beta_gamma)});
-		envelopeProbe.setBeamCurrent(0.0);
+		envelopeProbe.initFromTwiss(new Twiss[]{new Twiss(-0.1763,0.2442,0.2098*1e-6 / beta_gamma),
+				  new Twiss(-0.3247,0.3974,0.2091*1e-6 / beta_gamma),
+				  new Twiss(-0.5283,0.8684,0.2851*1e-6 / beta_gamma)});
+		envelopeProbe.setBeamCurrent(50e-3);
 		envelopeProbe.setBunchFrequency(4.025e8);//frequency
 		
 		return envelopeProbe;
@@ -193,18 +192,18 @@ public class JElsDemo {
 		ElsProbe elsProbe = new ElsProbe();
 		elsProbe.setAlgorithm(elsTracker);
 		elsProbe.setSpeciesCharge(-1);
-		//elsProbe.setSpeciesRestEnergy(9.3829431e8);
-		elsProbe.setSpeciesRestEnergy(9.38272013e8);	
-		elsProbe.setKineticEnergy(2500000);//energy
+		elsProbe.setSpeciesRestEnergy(9.3829431e8);
+		//elsProbe.setSpeciesRestEnergy(9.38272013e8);	
+		elsProbe.setKineticEnergy(3e6);//energy
 		elsProbe.setPosition(0.0);
 		elsProbe.setTime(0.0);		
 				
 		double beta_gamma = elsProbe.getBeta() * elsProbe.getGamma();
 	
 		
-		elsProbe.initFromTwiss(new Twiss[]{new Twiss(-0.1763,0.2442,0.2098e-6*1e-6 / beta_gamma),
-										  new Twiss(-0.3247,0.3974,0.2091e-6*1e-6 / beta_gamma),
-										  new Twiss(-0.5283,0.8684,0.2851e-6*1e-6 / beta_gamma)});
+		elsProbe.initFromTwiss(new Twiss[]{new Twiss(-0.1763,0.2442,0.2098*1e-6 / beta_gamma),
+										  new Twiss(-0.3247,0.3974,0.2091*1e-6 / beta_gamma),
+										  new Twiss(-0.5283,0.8684,0.2851*1e-6 / beta_gamma)});
 		elsProbe.setBeamCurrent(0.0);
 		elsProbe.setBunchFrequency(4.025e8);//frequency
 		
