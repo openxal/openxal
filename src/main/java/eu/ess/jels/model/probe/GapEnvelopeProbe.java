@@ -3,6 +3,14 @@ package eu.ess.jels.model.probe;
 import xal.model.IAlgorithm;
 import xal.model.probe.EnvelopeProbe;
 
+/**
+ * Simple extension of EnvelopeProbe that implements IGapPhaseProbe.
+ * 
+ * Other methods are here as a workaround, so that this probe still works with envelope algorithm.
+ * 
+ * @author Ivo List <ivo.list@cosylab.com>
+ *
+ */
 public class GapEnvelopeProbe extends EnvelopeProbe implements IGapPhaseProbe {
 	/** algorithm providing probe dynamics */
     private IAlgorithm  m_ifcAlg = null;

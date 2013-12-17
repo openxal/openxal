@@ -1,15 +1,20 @@
 package eu.ess.jels.model.probe;
 
 import xal.model.probe.traj.EnvelopeProbeState;
-import xal.tools.annotation.AProperty.Units;
 import xal.tools.beam.Twiss;
 import Jama.Matrix;
 
+
+/**
+ * This is a probe ported from ELS implementation.
+ * State of the beam is kept in 9-vector called envelope. Given by (beta_x,alpha_x,gamma_x, .._y, .._z).
+ * Normalized emmitance is also kept in 3-vector.
+ * 
+ * @author Emanuele Laface, Ivo List <ivo.list@cosylab.com>
+ */
 public class ElsProbe extends GapEnvelopeProbe {
 	private Matrix envelope = new Matrix(9,1,0.0);
-	private Matrix normalized_emmitance = new Matrix(3,1,0.0);
-	private double dlbFreq;
-	private double dblCurrent;
+	private Matrix normalized_emmitance = new Matrix(3,1,0.0);	
 	
 	private Matrix envelope0;
 	private Matrix normalized_emmitance0;
@@ -20,52 +25,6 @@ public class ElsProbe extends GapEnvelopeProbe {
 		ps.setTwiss(getTwiss());
 		return ps;
 	}
-
-	
-    /**
-     * Set the bunch arrival time frequency.
-     * 
-     * @param f     new bunch frequency in <b>Hz</b>
-     */
-    public void setBunchFrequency(double f) {
-        dlbFreq = f;
-    }
- 
-    /**
-     *  Set the total beam current.
-     * 
-     * @param   I   new beam current in <bold>Amperes</bold>
-     */
-    public void setBeamCurrent(double I)    { 
-        dblCurrent = I; 
-    };
-    
-    /**
-     * Returns the bunch frequency, that is the frequency of 
-     * the bunches need to create the beam current.
-     * 
-     * The bunch frequency f is computed from the beam current 
-     * I and bunch charge Q as 
-     *  
-     *      f = I/Q
-     *      
-     * @return  bunch frequency in Hertz
-     */
-	@Units( "Hz" )
-    public double getBunchFrequency()  {
-        return this.dlbFreq;
-    };
-    
-    /** 
-     * Returns the total beam current 
-     * 
-     * @return  beam current in <b>amps</b>
-     */
-	@Units( "amps" )
-    public double getBeamCurrent() { 
-        return dblCurrent;  
-     }
-
 
 	public void initFromTwiss(Twiss[] twiss)
 	{
