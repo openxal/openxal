@@ -427,91 +427,12 @@ public class IdealMagDipoleFace2 extends ThinElement implements IElectromagnet {
             
         default:
             throw new ModelException("IdealMagDipoleFace#transferMap() - bad magnet orientation.");
-    }
+    	}
     
     	matPhi.setElem(4,4,1);
     	matPhi.setElem(5,5,1);    	
     	
     	return new PhaseMap(matPhi);
-    	
-/*        // Get  parameters
-        double B  = this.getMagField(); // opposite
-        double g  = this.getGapHeight();
-        double I2 = this.getFringeIntegral();
-        /*
-        double h  = BendingMagnet.compCurvature(probe, B);
-        if (getFieldPathFlag() != 0.0) {
-        	h = this.compDesignCurvature();
-        }
-        */
-        
-        /*
-        if (((getFieldPathFlag() != 0.)&&(getDesignBendingAngle() == 0.))
-        		|| ((getFieldPathFlag() == 0.)&&(B == 0.0))) {
-     		PhaseMatrix  matPhi  = new PhaseMatrix();
-                
-    		double mat0[][] = new double [][] {{1.0, 0.0}, {0.0, 1.0}};
-
-    		matPhi.setSubMatrix(0,1, 0,1, mat0);
-    		matPhi.setSubMatrix(2,3, 2,3, mat0);
-    		matPhi.setSubMatrix(4,5, 4,5, mat0);
-    		matPhi.setElem(6,6, 1.0);
-
-    		return new PhaseMap(matPhi);
-        }
-        *
-        
-        final double h0 = this.compDesignCurvature();// h0 polarity = alpha polarity
-        double h  = 0;
-        if (getFieldPathFlag() == 0) {
-        	h = BendingMagnet.compCurvature(probe, B);// h polarity = e*B0 polarity
-        } else if (getFieldPathFlag() ==  1)  {
-        	h =  h0;
-        } else {
-        	h = this.getK0();
-        }
-
-       // double q = probe.getSpeciesCharge();
-
-
-        // The fringe field angle from the extended field:
-        double dblAngFace = this.getPoleFaceAngle();
-        double sin  = Math.sin(dblAngFace);
-        double cos  = Math.cos(dblAngFace);
-        double dblAngDefl = g * h * I2 * (1.0 + sin*sin )/cos;
-        //4 feb 08, if g=0, I2 definition is that of SAD definition. without g but times 6
-        if (g==0) {
-        	 dblAngDefl = h * I2 * (1.0 + sin*sin )/cos / 6;
-        }
-    
-        // Compute the transfer matrix components
-//        double      hStar = h * q / Math.abs(q);
-        double      hStar = h ;
-        PhaseMatrix matPhi = PhaseMatrix.identity();
-    
-        switch (this.getOrientation())  {
-            case IElectromagnet.ORIENT_HOR:
-                matPhi.setElem(1,0 , hStar* Math.tan(dblAngFace));
-                matPhi.setElem(3,2, -hStar* Math.tan(dblAngFace - dblAngDefl));
-                break;
-                
-            case IElectromagnet.ORIENT_VER:
-                matPhi.setElem(1,0 , -hStar* Math.tan(dblAngFace - dblAngDefl));
-                matPhi.setElem(3,2,   hStar* Math.tan(dblAngFace));
-                break;
-                
-            default:
-                throw new ModelException("IdealMagDipoleFace#transferMap() - bad magnet orientation.");
-        }
-        
-        
-        //4 Feb 08, sako try to apply align erro be careful.
-      
- 	   PhaseMatrix Phidx = applyAlignError(matPhi);	
-	   matPhi = Phidx;
-
-        return new PhaseMap(matPhi);*/
-
     }
 
 }

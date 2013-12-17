@@ -139,11 +139,6 @@ public class IdealRfGap extends ThinElement implements IRfGap {
     public boolean isFirstGap() { return initialGap;}
      
     
-//    public boolean getCalcPhaseSpread() {
-//        return calcPhaseSpread;
-//    }
-     
-
     /*
      *  IRfGap Interface
      */

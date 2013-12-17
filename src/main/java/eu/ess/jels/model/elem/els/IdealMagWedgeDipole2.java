@@ -6,9 +6,9 @@
  */
 package eu.ess.jels.model.elem.els;
 
-import xal.model.IProbe;
 import xal.model.elem.ElementSeq;
 import xal.model.elem.IElectromagnet;
+import xal.model.elem.IdealMagDipoleFace;
 import xal.tools.math.r3.R3;
 
 /**
@@ -464,26 +464,6 @@ public class IdealMagWedgeDipole2 extends ElementSeq implements IElectromagnet {
     }
 
     
-    
-    /*
-     * Dynamic Parameters
-     */
-    
-    /**
-     * Compute the path curvature within the dipole for the given probe. 
-     * The path curvature is 1/R where R is the bending radius of the dipole
-     * (radius of curvature).  Note that for zero fields the radius of
-     * curvature is infinite while the path curvature is zero.
-     * 
-     * @param   probe   probe object to be deflected
-     * 
-     * @return  dipole path curvature for given probe (in <b>1/meters</b>)
-     */
-    public double   compProbeCurvature(IProbe probe) {
-        return this.getMagBody().compProbeCurvature(probe);
-    }
-
-
 
     /*
      *  IElectromagnet Interface

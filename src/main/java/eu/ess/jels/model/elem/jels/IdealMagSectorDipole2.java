@@ -11,7 +11,6 @@ import java.io.PrintWriter;
 import xal.model.IProbe;
 import xal.model.ModelException;
 import xal.model.elem.IElectromagnet;
-import xal.model.elem.IdealMagSectorDipole;
 import xal.model.elem.ThickElement;
 import xal.tools.beam.PhaseMap;
 import xal.tools.beam.PhaseMatrix;
@@ -332,24 +331,7 @@ public class IdealMagSectorDipole2 extends ThickElement implements IElectromagne
     /*
      * Dynamic Parameters
      */
-    
-    /**
-     * Compute and return the curvature of the design orbit through 
-     * the magnet.  Note that this value is the inverse of the design 
-     * curvature radius R0.
-     * 
-     * @return  the design curvature 1/R0 (in 1/meters)
-     * 
-     * @see IdealMagSectorDipole2#compDesignBendingRadius()
-     */
-    public double  compDesignCurvature()   {
-        double  L0     = this.getDesignPathLength();
-        double  theta0 = this.getDesignBendingAngle();
         
-        double h0 = theta0/L0;
-        return h0;
-    }
-    
     /**
      * Compute and return the bending radius of the design orbit  
      * throught the magnet.  Note that this value is the inverse of  
@@ -384,55 +366,6 @@ public class IdealMagSectorDipole2 extends ThickElement implements IElectromagne
     }
     
     
-    /**
-     * <p>Compute and return the quadrupole focusing constant for the current 
-     * dipole settings and the given probe.  The curvature for the current
-     * magnet settings and probe state is used - making this a dynamic quantity.
-     * The field index does not change within the magnet.
-     * </p>   
-     * 
-     * NOTE:
-     * <p>- This value may be negative if the resulting curvature is negative
-     * This condition means we are bending toward the negative x direction and
-     * does not imply defocusing.
-     * </p>
-     * 
-     * <p>- This value is essentially the same as the field index
-     * of the magnet - the two values differ by a constant, the curvature
-     * squared.  The square-root of this value provides the betatron
-     * phase advance wave number.
-     * </p>
-     * 
-     * <l>
-     *  K_quad := (1/R)(1/B)(dB/dR)
-     * </l
-     * <l>
-     *          = - h^2 * n0
-     * </l>
-     * <p>
-     * where <i>K_quad</i> is the quadrupole focusing constant, <i>R</i> is 
-     * the bending radius at current settings, <i>B</i> is the current magnet 
-     * field strength , <i>h = 1/R</i> is the curvature at the current settings,
-     * and <i>n0</i> is the field index. 
-     * </p> 
-     * 
-     * @param   probe   we use the probe velocity to determine curvature
-     *  
-     * @return          quadrupole focusing constant (in 1/meters^2)
-     */
-    public double   compQuadrupoleConstant(IProbe probe)    {
-        double      n0 = this.getFieldIndex();
-        double      h  = BendingMagnet.compCurvature(probe, this.getMagField());
-        
-        double k_quad = - h*h*n0;
-        
-         if (n0 == 0) {
-        	 k_quad = getQuadComponent();
-         }
-        
-        return k_quad;
-    }
-
     
 
 
@@ -607,30 +540,6 @@ public class IdealMagSectorDipole2 extends ThickElement implements IElectromagne
     /*
      * Internal Support
      */
-
-
-	/**
-     * Compute the step in the design trajectory angle given the physical
-     * step size <i>dL</code> at the current <code>probe</code> position.
-     * 
-     * @param   probe   probe object with magnet domain
-     * @param   dL      physical distance to step within magnet
-     * 
-     * @return  the step angle corresponding to dL (in radians)
-     * 
-     * @author  Christopher K. Allen
-     */
-    private double  compAngleStepSize(IProbe probe, double dL)  {
-        double  s1 = this.compProbeLocation(probe);
-        double  s2 = s1 + dL;
-
-        double  a1 = this.compCurrentAngle(s1);
-        double  a2 = this.compCurrentAngle(s2);
- 
-        double  dAng = a2 - a1;
-        
-        return dAng;
-    }
     
     /**
      * <p>Compute and return the partial deflection angle of the
@@ -676,35 +585,6 @@ public class IdealMagSectorDipole2 extends ThickElement implements IElectromagne
         return theta;
     }
 
-    /**
-     * This method approximates the partial deflection angle of the
-     * design trajectory a position <i>s</i> within the magnet.  This 
-     * method may be somewhat faster than 
-     * <code>IdealMagSectorDipole#compCurrentAngle(double)</code> by
-     * avoiding the computation of one arccosine.  The returned value
-     * is the derivative of the above function at <i>s</i> = 0 times
-     * <i>s</i>.
-     * 
-     *  @param  s   physical distance from magnet entrance location (meters)
-     * 
-     *  @return     the partial deflection angle at distance s
-     *  
-     *  @author Christopher K. Allen
-     *  
-     *  @see    IdealMagSectorDipole#compCurrentAngle(doube)
-     */
-    @SuppressWarnings("unused")
-    private double approxCurrentAngle(double s) {
-        
-        double  h0 = this.compDesignCurvature();
-        double  L0 = this.getLength();
-        
-        double  area = h0*L0/2;
-        
-        return s*h0*Math.sqrt(1 - area*area);
-    }
-    
-    
 
     /*
      *  Testing and Debugging

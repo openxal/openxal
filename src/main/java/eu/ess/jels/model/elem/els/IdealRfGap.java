@@ -7,7 +7,6 @@ package eu.ess.jels.model.elem.els;
 
 import java.io.PrintWriter;
 
-import eu.ess.jels.model.probe.IGapPhaseProbe;
 import xal.model.IModelDataSource;
 import xal.model.IProbe;
 import xal.model.ModelException;
@@ -17,6 +16,7 @@ import xal.model.source.RfGapDataSource;
 import xal.tools.beam.PhaseMap;
 import xal.tools.beam.PhaseMatrix;
 import xal.tools.math.poly.UnivariateRealPolynomial;
+import eu.ess.jels.model.probe.IGapPhaseProbe;
 
 /**
  *  <p>
@@ -136,12 +136,7 @@ public class IdealRfGap extends ThinElement implements IRfGap {
      * return wheteher this gap is the initial gap of a cavity 
      */
     public boolean isFirstGap() { return initialGap;}
-     
     
-//    public boolean getCalcPhaseSpread() {
-//        return calcPhaseSpread;
-//    }
-     
 
     /*
      *  IRfGap Interface

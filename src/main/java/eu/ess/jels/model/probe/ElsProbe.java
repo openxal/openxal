@@ -14,31 +14,13 @@ public class ElsProbe extends GapEnvelopeProbe {
 	private Matrix envelope0;
 	private Matrix normalized_emmitance0;
 	
-	/*@Override
-	public Trajectory createTrajectory() {
-		// TODO Auto-generated method stub
-		return null;
-	}*/
-
     @Override
 	public EnvelopeProbeState createProbeState() {
 		EnvelopeProbeState ps = new EnvelopeProbeState(this);
 		ps.setTwiss(getTwiss());
 		return ps;
 	}
-/*
-	@Override
-	public Probe copy() {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
-	@Override
-	protected ProbeState readStateFrom(DataAdaptor container)
-			throws ParsingException {
-		// TODO Auto-generated method stub
-		return null;
-	}*/
 	
     /**
      * Set the bunch arrival time frequency.
