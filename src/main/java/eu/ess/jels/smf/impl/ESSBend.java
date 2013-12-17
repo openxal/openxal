@@ -2,14 +2,14 @@ package eu.ess.jels.smf.impl;
 
 import xal.smf.impl.qualify.ElementTypeManager;
 import xal.tools.data.DataAdaptor;
-import eu.ess.jels.smf.attr.Magnet2Bucket;
+import eu.ess.jels.smf.attr.ESSMagnetBucket;
 
 /**
  * Extends OpenXal Bend class with orientation and FringeField parameters.
  * 
  * @author Ivo List
  */
-public class Bend extends xal.smf.impl.Bend {
+public class ESSBend extends xal.smf.impl.Bend {
 	
 	/** horizontal dipole type */
     public static final String HORIZONTAL_TYPE = "DH";
@@ -30,16 +30,16 @@ public class Bend extends xal.smf.impl.Bend {
      */
     private static void registerType() {
         ElementTypeManager typeManager = ElementTypeManager.defaultManager();
-        typeManager.registerType(Bend.class, "D");
+        typeManager.registerType(ESSBend.class, "D");
     }
     	
-	private Magnet2Bucket magnet2Bucket = new Magnet2Bucket();
+	private ESSMagnetBucket magnet2Bucket = new ESSMagnetBucket();
 	
 	/**
 	 * Creates Bend with horizontal orientation.
 	 * @param strId node id
 	 */
-	public Bend(String strId) {
+	public ESSBend(String strId) {
 		this(strId, HORIZONTAL);
 	}
 	
@@ -48,7 +48,7 @@ public class Bend extends xal.smf.impl.Bend {
 	 * @param strId node id
 	 * @param orientation orientation of the magnet, either HORIZONTAL or VERTICAL as defined by MagnetType. 
 	 */
-	public Bend(String strId, int orientation) {
+	public ESSBend(String strId, int orientation) {
 		super(strId);		
 		this._type = orientation == HORIZONTAL ? HORIZONTAL_TYPE : VERTICAL_TYPE;
 		setMagBucket(magnet2Bucket);

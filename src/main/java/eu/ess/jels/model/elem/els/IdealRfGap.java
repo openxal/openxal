@@ -3,7 +3,7 @@
  *
  *  Created on October 22, 2002, 1:58 PM
  */
-package eu.ess.jels.model.elem;
+package eu.ess.jels.model.elem.els;
 
 import java.io.PrintWriter;
 

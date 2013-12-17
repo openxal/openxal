@@ -15,7 +15,7 @@ import xal.smf.attr.MagnetBucket;
  * @author  Ivo List 
  */
 
-public class Magnet2Bucket extends MagnetBucket {
+public class ESSMagnetBucket extends MagnetBucket {
     /** ID for serializable version */
     private static final long serialVersionUID = 1L;
         
@@ -40,7 +40,7 @@ public class Magnet2Bucket extends MagnetBucket {
     	return allAttrs;    	
     }
         
-    public Magnet2Bucket() {
+    public ESSMagnetBucket() {
         super();
         
         m_attGap  = new Attribute(0.0);

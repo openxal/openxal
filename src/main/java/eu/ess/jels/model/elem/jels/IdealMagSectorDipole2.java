@@ -4,7 +4,7 @@
  * Created on March 10, 2004
  */
 
-package eu.ess.jels.model.elem;
+package eu.ess.jels.model.elem.jels;
 
 import java.io.PrintWriter;
 
@@ -16,6 +16,7 @@ import xal.model.elem.ThickElement;
 import xal.tools.beam.PhaseMap;
 import xal.tools.beam.PhaseMatrix;
 import xal.tools.beam.optics.BendingMagnet;
+import xal.tools.math.ElementaryFunction;
 
 /**
  * <p>Represents a bending magnetic dipole magnet for a beam in a sector 
@@ -548,274 +549,57 @@ public class IdealMagSectorDipole2 extends ThickElement implements IElectromagne
     	double h=Math.signum(alfa)/Math.abs(rho);
     	double kx=Math.sqrt(1-N)*Math.abs(h);
     	double ky=Math.sqrt(N)*Math.abs(h);
-
+    	double gamma = probe.getGamma();
     	double Deltas=dblLen;
  
-    	if (N==0 && getOrientation() == IElectromagnet.ORIENT_HOR)
+    	if (getOrientation() == IElectromagnet.ORIENT_HOR)
     	{
     		matPhi.setElem(0,0,Math.cos(kx*Deltas));
-    		matPhi.setElem(0,1,Math.sin(kx*Deltas)/kx);
+    		matPhi.setElem(0,1,ElementaryFunction.sinc(kx*Deltas)*Deltas);
     		matPhi.setElem(1,0,-kx*Math.sin(kx*Deltas));
     		matPhi.setElem(1,1,Math.cos(kx*Deltas));
-
-    		matPhi.setElem(2,2,1);
-    		matPhi.setElem(2,3,Deltas);
-    		matPhi.setElem(3,3,1);
-
-    		matPhi.setElem(4,4,1);
-    		//matPhi.setElem(4,5,-Math.pow(h,2)*(kx*Deltas*Math.pow(probe.getBeta(),2)-Math.sin(kx*Deltas))/Math.pow(kx,3)+Deltas/Math.pow(probe.getBeta()*probe.getGamma(),2)*(1-Math.pow(h/kx,2)));
-    		matPhi.setElem(4,5,-Math.pow(h,2)*(kx*Deltas*Math.pow(probe.getBeta(),2)-Math.sin(kx*Deltas))/Math.pow(kx,3)+Deltas/Math.pow(probe.getGamma(),2)*(1-Math.pow(h/kx,2)));
-    		matPhi.setElem(5,5,1);
-
-    		matPhi.setElem(4,0,-h*Math.sin(kx*Deltas)/kx);
-    		matPhi.setElem(4,1,-h*(1-Math.cos(kx*Deltas))/Math.pow(kx,2));
-
-    		matPhi.setElem(0,5,h*(1-Math.cos(kx*Deltas))/Math.pow(kx,2));
-    		matPhi.setElem(1,5,h*Math.sin(kx*Deltas)/kx);
-    	}
-    	if (N==0 && getOrientation()==IElectromagnet.ORIENT_VER)
-    	{
-    		matPhi.setElem(0,0,1);
-    		matPhi.setElem(0,1,Deltas);
-    		matPhi.setElem(1,1,1);
-
-    		matPhi.setElem(2,2,Math.cos(kx*Deltas));
-    		matPhi.setElem(2,3,Math.sin(kx*Deltas)/kx);
-    		matPhi.setElem(3,2,-kx*Math.sin(kx*Deltas));
-    		matPhi.setElem(3,3,Math.cos(kx*Deltas));
-
-    		matPhi.setElem(4,4,1);
-    		//matPhi.setElem(4,5,-Math.pow(h,2)*(kx*Deltas*Math.pow(probe.getBeta(),2)-Math.sin(kx*Deltas))/Math.pow(kx,3)+Deltas/Math.pow(probe.getBeta()*probe.getGamma(),2)*(1-Math.pow(h/kx,2)));
-    		matPhi.setElem(4,5,-Math.pow(h,2)*(kx*Deltas*Math.pow(probe.getBeta(),2)-Math.sin(kx*Deltas))/Math.pow(kx,3)+Deltas/Math.pow(probe.getGamma(),2)*(1-Math.pow(h/kx,2)));
-    		matPhi.setElem(5,5,1);
-
-    		matPhi.setElem(4,2,-h*Math.sin(kx*Deltas)/kx);
-    		matPhi.setElem(4,3,-h*(1-Math.cos(kx*Deltas))/Math.pow(kx,2));
-
-    		matPhi.setElem(2,5,h*(1-Math.cos(kx*Deltas))/Math.pow(kx,2));
-    		matPhi.setElem(3,5,h*Math.sin(kx*Deltas)/kx);
-    	}
-    	if (N>0 && N<1 && getOrientation()==IElectromagnet.ORIENT_HOR)
-    	{
-    		matPhi.setElem(0,0,Math.cos(kx*Deltas));
-    		matPhi.setElem(0,1,Math.sin(kx*Deltas)/kx);
-    		matPhi.setElem(1,0,-kx*Math.sin(kx*Deltas));
-    		matPhi.setElem(1,1,Math.cos(kx*Deltas));
-
+    		
     		matPhi.setElem(2,2,Math.cos(ky*Deltas));
-    		matPhi.setElem(2,3,Math.sin(ky*Deltas)/ky);
+    		matPhi.setElem(2,3,ElementaryFunction.sinc(ky*Deltas)*Deltas);
     		matPhi.setElem(3,2,-ky*Math.sin(ky*Deltas));
     		matPhi.setElem(3,3,Math.cos(ky*Deltas));
 
     		matPhi.setElem(4,4,1);
-    		//matPhi.setElem(4,5,-Math.pow(h,2)*(kx*Deltas*Math.pow(probe.getBeta(),2)-Math.sin(kx*Deltas))/Math.pow(kx,3)+Deltas/Math.pow(probe.getBeta()*probe.getGamma(),2)*(1-Math.pow(h/kx,2)));
-    		matPhi.setElem(4,5,-Math.pow(h,2)*(kx*Deltas*Math.pow(probe.getBeta(),2)-Math.sin(kx*Deltas))/Math.pow(kx,3)+Deltas/Math.pow(probe.getGamma(),2)*(1-Math.pow(h/kx,2)));
+    		matPhi.setElem(4,5,-Math.pow(h*gamma,2)*(kx*Deltas*Math.pow(probe.getBeta(),2)-Math.sin(kx*Deltas))/Math.pow(kx,3)+Deltas*(1-Math.pow(h/kx,2)));
     		matPhi.setElem(5,5,1);
 
-    		matPhi.setElem(4,2,-h*Math.sin(kx*Deltas)/kx);
-    		matPhi.setElem(4,3,-h*(1-Math.cos(kx*Deltas))/Math.pow(kx,2));
+    		matPhi.setElem(4,0,-gamma*h*Math.sin(kx*Deltas)/kx);
+    		matPhi.setElem(4,1,-gamma*h*(1-Math.cos(kx*Deltas))/Math.pow(kx,2));
 
-    		matPhi.setElem(2,5,h*(1-Math.cos(kx*Deltas))/Math.pow(kx,2));
-    		matPhi.setElem(3,5,h*Math.sin(kx*Deltas)/kx);
+    		matPhi.setElem(0,5,gamma*h*(1-Math.cos(kx*Deltas))/Math.pow(kx,2));
+    		matPhi.setElem(1,5,gamma*h*Math.sin(kx*Deltas)/kx);
     	}
     	
+    	if (getOrientation()==IElectromagnet.ORIENT_VER)
+    	{  		
+    		matPhi.setElem(0,0,Math.cos(ky*Deltas));
+    		matPhi.setElem(0,1,ElementaryFunction.sinc(ky*Deltas)*Deltas);
+    		matPhi.setElem(1,0,-ky*Math.sin(ky*Deltas));
+    		matPhi.setElem(1,1,Math.cos(ky*Deltas));
+    		
+    		
+    		matPhi.setElem(2,2,Math.cos(kx*Deltas));
+    		matPhi.setElem(2,3,ElementaryFunction.sinc(kx*Deltas)*Deltas);
+    		matPhi.setElem(3,2,-kx*Math.sin(kx*Deltas));
+    		matPhi.setElem(3,3,Math.cos(kx*Deltas));
+
+    		matPhi.setElem(4,4,1);
+    		matPhi.setElem(4,5,-Math.pow(h*gamma,2)*(kx*Deltas*Math.pow(probe.getBeta(),2)-Math.sin(kx*Deltas))/Math.pow(kx,3)+Deltas*(1-Math.pow(h/kx,2)));
+    		matPhi.setElem(5,5,1);
+
+    		matPhi.setElem(4,2,-gamma*h*Math.sin(kx*Deltas)/kx);
+    		matPhi.setElem(4,3,-gamma*h*(1-Math.cos(kx*Deltas))/Math.pow(kx,2));
+
+    		matPhi.setElem(2,5,gamma*h*(1-Math.cos(kx*Deltas))/Math.pow(kx,2));
+    		matPhi.setElem(3,5,gamma*h*Math.sin(kx*Deltas)/kx);    		
+    	}
+
     	return new PhaseMap(matPhi);
-    	
-    	
-        /*
-         *  Get parameters
-         */
-       /* 
-        final double B     = this.getMagField();
-        final double gamma = probe.getGamma();
-         /*
-         * Check for zero fields - we cannot support this
-         *
-        if (((getFieldPathFlag() != 0.)&&(getDesignBendingAngle() == 0.))
-        		|| ((getFieldPathFlag() == 0.)&&(B == 0.0))) {
-      //      throw new ModelException("IdealMagSectorDipole#transferMap() - cannot support zero fields.");
-        	//sako 27 sep 07 to avoid B=0 problem
-            // Build transfer matrix
-    		PhaseMatrix  matPhi  = new PhaseMatrix();
-                
-    		double mat0[][] = new double [][] {{1.0, dblLen}, {0.0, 1.0}};
-    		matPhi.setSubMatrix(0,1, 0,1, mat0);
-    		matPhi.setSubMatrix(2,3, 2,3, mat0);
-    		matPhi.setSubMatrix(4,5, 4,5, mat0);
-    		matPhi.setElem(6,6, 1.0);
-  
-    		return new PhaseMap(matPhi);
-        }
-        
-        /*
-         * Compute the bending constant h == 1 / bend radius (1/meter)
-         *
-        
-        final double h0 = this.compDesignCurvature();// h0 polarity = alpha polarity
-        double h  = 0;
-        if (getFieldPathFlag() == 0) {
-        	h = BendingMagnet.compCurvature(probe, B);// h polarity = e*B0 polarity
-        } else if (getFieldPathFlag() ==  1)  {
-        	h =  h0;
-        } else {
-        	h = this.getK0();
-        }
-       // 28 Nov 07 H. Sako
-       // alpha definition same as trace3d
-        //regardless sign of the particles, right bend for alpha>0, left bend for alpha<0
-        //since M15 term polarity is h polarity = alpha polarity in both.
-        // for negative particles, B negative -> alpha positive
-             
-        // in trace3d, alpha>0 with x- kick (right)
-        //            alpha>0 with y+ kick (upper)
-        // for both positive and negative particles
-        // rho = alpha/path , same sign with alpha
-        
-        final double R0 = 1.0 / h0;
-        final double R  = 1.0 / h;
-        
-        /*
-         * Compute the arc length step size
-         *
-        final double dAng = this.compAngleStepSize(probe, dblLen);
-        final double dL   = Math.abs( dAng*R0 );
-        
-        /*
-         * Compute path variation parameter
-         *
-        final double zprimeProbe = (R - R0) / (R * gamma * gamma);
-        
-        
-        /*
-         *  Compute quadrupole focusing constants
-         *
-        final double kQuad = this.compQuadrupoleConstant(probe);
-        final double kBend = h*h + kQuad;
-
-        final double kx = Math.sqrt(Math.abs(kBend));
-        final double ky = Math.sqrt(Math.abs(kQuad));
-        
-        /*
-         *
-         * Compute the transfer matrix components.
-         *
-         *
-        
-        double[][] arrZero = new double[][] {{0,0},{0,0}};
-        double[][] arrWork = arrZero;
-        
-        double M05;
-        double M15;
-        double M40;
-        double M41;
-        double M45;
-        double M06;
-        double M16;
-        double M46;
-        
-        
-        if(kBend >= 0.0)
-        {
-            arrWork = QuadrupoleLens.transferFocPlane(kx, dL);
-            M05 = gamma * gamma * h0 * (1. - Math.cos(kx * dL)) / (kx * kx);
-            M15 = gamma * gamma * h0 * Math.sin(kx * dL) / kx;
-            M40 = -h0 * Math.sin(kx * dL) / kx;
-            M41 = -h0 * (1. - Math.cos(kx * dL)) / (kx * kx);
-            M45 = dL - gamma * gamma * h0 * h0 *
-            (kx * dL - Math.sin(kx * dL)) / (kx * kx * kx);
-        }
-        else
-        {
-            arrWork = QuadrupoleLens.transferDefPlane(kx, dL);
-            M05 = gamma * gamma * h0 *
-            (ElementaryFunction.cosh(kx * dL) - 1.) / (kx * kx);
-            M15 = gamma * gamma * h0 * ElementaryFunction.sinh(kx * dL) / kx;
-            M40 = -h0 * ElementaryFunction.sinh(kx * dL) / kx;
-            M41 = -h0 * (ElementaryFunction.cosh(kx * dL) - 1.) / (kx * kx);
-            M45 = dL - gamma * gamma * h0 * h0 *
-            (ElementaryFunction.sinh(kx * dL) - kx * dL)
-            / (kx * kx * kx);
-        }
-        
-        M05 *= R / R0;
-        M15 *= R / R0;
-        M45 *= R / R0;
-        M06 = M05 * zprimeProbe;
-        M16 = M15 * zprimeProbe;
-        M46 = M45 * zprimeProbe;
-        
-        final double[][] arrX = arrWork;
-        
-        
-        arrWork = arrZero;
-        
-        if(kQuad >= 0.0)
-        {
-            arrWork = QuadrupoleLens.transferDefPlane(ky, dL);
-        }
-        else
-        {
-            arrWork = QuadrupoleLens.transferFocPlane(ky, dL);
-        }
-        
-        final double[][] arrY = arrWork;
-        
-        
-        /**
-         *
-         * Build the dipole body tranfer matrix.
-         *
-         *
-        
-        PhaseMatrix matBody = PhaseMatrix.identity();
-   
-        switch (this.getOrientation()) {
-
-        case IElectromagnet.ORIENT_HOR:
-            
-            matBody.setSubMatrix(0, 1, 0, 1, arrX);
-            matBody.setSubMatrix(2, 3, 2, 3, arrY);
-            
-            matBody.setElem(0, 5, M05);
-            matBody.setElem(1, 5, M15);
-            
-            matBody.setElem(4, 0, M40);
-            matBody.setElem(4, 1, M41);
-            matBody.setElem(4, 5, M45);
-            
-            matBody.setElem(0, 6, M06);
-            matBody.setElem(1, 6, M16);
-            matBody.setElem(4, 6, M46);
-            
-            break;
-            
-        case IElectromagnet.ORIENT_VER:
-        	
-            matBody.setSubMatrix(0, 1, 0, 1, arrY);
-            matBody.setSubMatrix(2, 3, 2, 3, arrX);
-            
-            matBody.setElem(2, 5, M05);
-            matBody.setElem(3, 5, M15);
-            
-            matBody.setElem(4, 2, M40);
-            matBody.setElem(4, 3, M41);
-            matBody.setElem(4, 5, M45);
-            
-            matBody.setElem(2, 6, M06);
-            matBody.setElem(3, 6, M16);
-            matBody.setElem(4, 6, M46);
-   
-            break;
-        }
-        
-        //4 Feb 08, sako try to apply align error be careful.
-       
-  	   PhaseMatrix Phidx = applyAlignError(matBody);	
-	   matBody = Phidx;
-
-       return new PhaseMap( matBody );     */
-       
-
     }
     
 

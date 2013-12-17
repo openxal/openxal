@@ -10,7 +10,7 @@ import xal.sim.scenario.ElementMapping;
 import xal.smf.AcceleratorSeq;
 import xal.smf.impl.qualify.MagnetType;
 import xal.tools.beam.IConstants;
-import eu.ess.jels.smf.impl.Bend;
+import eu.ess.jels.smf.impl.ESSBend;
 
 @RunWith(Parameterized.class)
 public class BendTest extends TestCommon {
@@ -313,7 +313,7 @@ public class BendTest extends TestCommon {
 	    double B0 = k/rho*Math.signum(alpha_deg);
 	    //double B0 = b*gamma*Er/(e*c*rho)*Math.signum(alpha);
 			    
-		Bend bend = new Bend("b", HV == 0 ? MagnetType.HORIZONTAL : MagnetType.VERTICAL);
+		ESSBend bend = new ESSBend("b", HV == 0 ? MagnetType.HORIZONTAL : MagnetType.VERTICAL);
 		bend.setPosition(len*0.5); //always position on center!
 		bend.setLength(len); // both paths are used in calculation
 		bend.getMagBucket().setPathLength(len);

@@ -25,7 +25,7 @@ import xal.sim.scenario.ElementMapping;
 import xal.sim.scenario.ElsElementMapping;
 import xal.sim.scenario.Scenario;
 import xal.sim.scenario.ScenarioGenerator2;
-import xal.sim.scenario.TWElementMapping;
+import xal.sim.scenario.JElsElementMapping;
 import xal.smf.AcceleratorSeq;
 import xal.tools.beam.CovarianceMatrix;
 import xal.tools.beam.PhaseMap;
@@ -33,7 +33,7 @@ import xal.tools.beam.PhaseMatrix;
 import xal.tools.beam.Twiss;
 import xal.tools.xml.XmlDataAdaptor;
 import eu.ess.jels.model.alg.ElsTracker;
-import eu.ess.jels.model.elem.IdealRfGap;
+import eu.ess.jels.model.elem.els.IdealRfGap;
 import eu.ess.jels.model.probe.ElsProbe;
 import eu.ess.jels.model.probe.GapEnvelopeProbe;
 
@@ -58,7 +58,7 @@ public abstract class TestCommon {
 		//double energy = 3e6, frequency = 4.025e8, current = 0;
 		double energy = 2.5e9, frequency = 4.025e8, current = 0;
 		return Arrays.asList(new Object[][]{
-					{setupOpenXALProbe(energy, frequency, current), TWElementMapping.getInstance()},
+					{setupOpenXALProbe(energy, frequency, current), JElsElementMapping.getInstance()},
 					{setupElsProbe(energy, frequency, current), ElsElementMapping.getInstance()},					
 					{setupOpenXALProbe(energy, frequency, current), DefaultElementMapping.getInstance()},
 				});
@@ -221,8 +221,8 @@ public abstract class TestCommon {
 					IdealRfGap gap = (IdealRfGap)el;
 					System.out.printf("gap phase=%f E0TL=%E\n", gap.getPhase()*180./Math.PI, gap.getETL());
 				}
-				if (el instanceof eu.ess.jels.model.twelem.IdealRfGap) {
-					eu.ess.jels.model.twelem.IdealRfGap gap = (eu.ess.jels.model.twelem.IdealRfGap)el;
+				if (el instanceof eu.ess.jels.model.elem.jels.IdealRfGap) {
+					eu.ess.jels.model.elem.jels.IdealRfGap gap = (eu.ess.jels.model.elem.jels.IdealRfGap)el;
 					System.out.printf("gap phase=%f E0TL=%E\n", 360+Math.IEEEremainder(gap.getPhase()*180./Math.PI, 360), gap.getETL());
 				}
 			}

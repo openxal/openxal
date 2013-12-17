@@ -1,4 +1,4 @@
-package eu.ess.jels.model.elem;
+package eu.ess.jels.model.elem.els;
 
 import xal.model.IProbe;
 import xal.model.ModelException;

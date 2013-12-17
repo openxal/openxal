@@ -1,8 +1,8 @@
 <?xml version = '1.0' encoding = 'UTF-8'?>
 <!DOCTYPE deviceMapping SYSTEM "xdxf.dtd">
 <deviceMapping>
-   <device type="DH" class="eu.ess.jels.smf.impl.Bend"/>
-   <device type="DV" class="eu.ess.jels.smf.impl.Bend"/> 
+   <device type="DH" class="eu.ess.jels.smf.impl.ESSBend"/>
+   <device type="DV" class="eu.ess.jels.smf.impl.ESSBend"/> 
    <device type="CCL" class="xal.smf.impl.CCL"/>
    <device type="QH" class="xal.smf.impl.Quadrupole"/>
    <device type="QV" class="xal.smf.impl.Quadrupole"/>

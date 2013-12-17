@@ -6,8 +6,8 @@
 
 package xal.sim.scenario;
 
-import eu.ess.jels.model.twelem.IdealMagWedgeDipole2;
-import eu.ess.jels.model.twelem.IdealRfGap;
+import eu.ess.jels.model.elem.jels.IdealMagWedgeDipole2;
+import eu.ess.jels.model.elem.jels.IdealRfGap;
 import xal.model.IComponent;
 import xal.model.IElement;
 import xal.model.ModelException;
@@ -34,12 +34,12 @@ import xal.smf.impl.RfGap;
  * @author Ivo List
  *
  */
-public class TWElementMapping extends ElementMapping {
+public class JElsElementMapping extends ElementMapping {
 	protected static ElementMapping instance;
 	
 	protected ElementConverter defaultConverter;
 
-	protected TWElementMapping() {
+	protected JElsElementMapping() {
 		initialize();
 	}
 	
@@ -50,7 +50,7 @@ public class TWElementMapping extends ElementMapping {
 	 */
 	public static ElementMapping getInstance()
 	{
-		if (instance == null) instance = new TWElementMapping();
+		if (instance == null) instance = new JElsElementMapping();
 		return instance;
 	}
 	
@@ -71,7 +71,7 @@ public class TWElementMapping extends ElementMapping {
 			@Override
 			public IComponent convert(LatticeElement element) {
 				IdealMagWedgeDipole2 dipole = new IdealMagWedgeDipole2();
-				eu.ess.jels.smf.impl.Bend magnet = (eu.ess.jels.smf.impl.Bend) element.getNode();
+				eu.ess.jels.smf.impl.ESSBend magnet = (eu.ess.jels.smf.impl.ESSBend) element.getNode();
 				dipole.setPosition(element.getCenter(), element.getLength());
 
 				// gov.sns.xal.model.elem.ThickDipole xalDipole =

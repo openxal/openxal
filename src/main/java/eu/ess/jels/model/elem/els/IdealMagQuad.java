@@ -8,7 +8,7 @@
  *      03/21/03 CKA    - added JavaBean
  */
 
-package eu.ess.jels.model.elem;
+package eu.ess.jels.model.elem.els;
 
 
 

@@ -12,7 +12,7 @@ import xal.smf.AcceleratorNode;
 import xal.smf.AcceleratorNodeFactory;
 import xal.smf.AcceleratorSeq;
 import xal.tools.data.TransientDataAdaptor;
-import eu.ess.jels.smf.impl.Bend;
+import eu.ess.jels.smf.impl.ESSBend;
 
 @RunWith(JUnit4.class)
 public class BendSerializationTest {
@@ -39,7 +39,7 @@ public class BendSerializationTest {
 		double quadComp = N / (rho*rho);
 		double B0 = 10;		
 	    for (int HV = 0; HV <= 1; HV++) {
-			Bend bend = new Bend("b", HV);
+			ESSBend bend = new ESSBend("b", HV);
 			bend.setPosition(len*0.5); //always position on center!
 			bend.setLength(len); // both paths are used in calculation
 			bend.getMagBucket().setPathLength(len);
@@ -63,14 +63,14 @@ public class BendSerializationTest {
 			bend.write(da);
 			
 			AcceleratorNodeFactory factory = new AcceleratorNodeFactory();
-			factory.registerNodeClass("DV", null, Bend.class);
-			factory.registerNodeClass("DH", null, Bend.class);
+			factory.registerNodeClass("DV", null, ESSBend.class);
+			factory.registerNodeClass("DH", null, ESSBend.class);
 			AcceleratorNode node = factory.createNode(da);
 			node.update(da);
 			
-			assertTrue(node instanceof Bend);
+			assertTrue(node instanceof ESSBend);
 			
-			Bend bend2 = (Bend)node;
+			ESSBend bend2 = (ESSBend)node;
 			assertEquals(bend.getOrientation(), bend2.getOrientation());
 			assertEquals(bend.getGap(), bend2.getGap(), 1e-12);
 			assertEquals(bend.getEntrK1(), bend2.getEntrK1(), 1e-12);

@@ -4,7 +4,7 @@
  * Created on May 20, 2004
  *
  */
-package eu.ess.jels.model.twelem;
+package eu.ess.jels.model.elem.els;
 
 import xal.model.IProbe;
 import xal.model.elem.ElementSeq;

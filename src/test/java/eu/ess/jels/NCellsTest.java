@@ -13,7 +13,7 @@ import xal.model.probe.Probe;
 import xal.sim.scenario.DefaultElementMapping;
 import xal.sim.scenario.ElementMapping;
 import xal.sim.scenario.ElsElementMapping;
-import xal.sim.scenario.TWElementMapping;
+import xal.sim.scenario.JElsElementMapping;
 import xal.smf.AcceleratorSeq;
 import eu.ess.jels.smf.impl.ESSRfCavity;
 import eu.ess.jels.smf.impl.ESSRfGap;
@@ -24,7 +24,7 @@ public class NCellsTest extends TestCommon {
 	public static Collection<Object[]> probes() {
 		double energy = 2.5e6, frequency = 4.025e8, current = 0;
 		return Arrays.asList(new Object[][]{
-				{setupOpenXALProbe(energy, frequency, current), TWElementMapping.getInstance()},
+				{setupOpenXALProbe(energy, frequency, current), JElsElementMapping.getInstance()},
 				{setupElsProbe(energy, frequency, current), ElsElementMapping.getInstance()},
 				//{setupOpenXALProbe(energy, frequency, current), DefaultElementMapping.getInstance()},					
 				});

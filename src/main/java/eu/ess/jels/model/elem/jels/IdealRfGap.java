@@ -3,7 +3,7 @@
  *
  *  Created on October 22, 2002, 1:58 PM
  */
-package eu.ess.jels.model.twelem;
+package eu.ess.jels.model.elem.jels;
 
 import java.io.PrintWriter;
 

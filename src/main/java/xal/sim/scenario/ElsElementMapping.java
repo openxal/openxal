@@ -22,10 +22,10 @@ import xal.smf.impl.EQuad;
 import xal.smf.impl.Electromagnet;
 import xal.smf.impl.Magnet;
 import xal.smf.impl.RfGap;
-import eu.ess.jels.model.elem.IdealDrift;
-import eu.ess.jels.model.elem.IdealMagQuad;
-import eu.ess.jels.model.elem.IdealMagWedgeDipole2;
-import eu.ess.jels.model.elem.IdealRfGap;
+import eu.ess.jels.model.elem.els.IdealDrift;
+import eu.ess.jels.model.elem.els.IdealMagQuad;
+import eu.ess.jels.model.elem.els.IdealMagWedgeDipole2;
+import eu.ess.jels.model.elem.els.IdealRfGap;
 
 /**
  * The default element mapping implemented as singleton.
@@ -70,7 +70,7 @@ public class ElsElementMapping extends ElementMapping {
 			@Override
 			public IComponent convert(LatticeElement element) {
 				IdealMagWedgeDipole2 dipole = new IdealMagWedgeDipole2();
-				eu.ess.jels.smf.impl.Bend magnet = (eu.ess.jels.smf.impl.Bend) element.getNode();
+				eu.ess.jels.smf.impl.ESSBend magnet = (eu.ess.jels.smf.impl.ESSBend) element.getNode();
 				dipole.setPosition(element.getCenter(), element.getLength());
 
 				// gov.sns.xal.model.elem.ThickDipole xalDipole =
