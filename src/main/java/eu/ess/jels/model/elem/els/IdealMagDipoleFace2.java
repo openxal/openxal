@@ -427,7 +427,7 @@ public class IdealMagDipoleFace2 extends ThinElement implements IElectromagnet {
             
         default:
             throw new ModelException("IdealMagDipoleFace#transferMap() - bad magnet orientation.");
-    }
+    	}
     
     	matPhi.setElem(4,4,1);
     	matPhi.setElem(5,5,1);    	

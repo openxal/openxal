@@ -13,6 +13,15 @@ import xal.tools.beam.PhaseMatrix;
 import Jama.Matrix;
 import eu.ess.jels.model.probe.ElsProbe;
 
+
+/**
+ * Propagation of probe as implemented in ELS.
+ * 
+ *  ...
+ * 
+ * @author Emanuele Laface, Ivo List <ivo.list@cosylab.com>
+ *
+ */
 public class ElsTracker extends EnvelopeTracker {
 
     
@@ -206,6 +215,7 @@ public class ElsTracker extends EnvelopeTracker {
         for (int i=0;i<9;i++)
     		for (int j=0;j<9;j++)
     			envelope1.set(i, 0, envelope1.get(i,0)+optics.get(i,j)*envelope.get(j,0));
+        
         // Advance the probe states 
         probe.setEnvelope(envelope1);
     };
