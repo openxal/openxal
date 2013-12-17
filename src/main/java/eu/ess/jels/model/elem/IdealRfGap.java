@@ -315,7 +315,7 @@ public class IdealRfGap extends ThinElement implements IRfGap {
 	    		Phis = gprobe.getLastGapPhase();
 	    		Phis += 2*Math.PI*(position - lastGapPosition)/(lambda*probe.getBeta());
 	    		if (structureMode == 1) Phis += Math.PI;	    		
-	    		setPhase(Phis);
+	    		setPhase(Phis);	    		
     		}
     	}
     	
@@ -338,7 +338,7 @@ public class IdealRfGap extends ThinElement implements IRfGap {
         	        	
         	double C;
         	
-    		if (TTFFit.getCoefs().length != 0)
+    		if (TTFFit.getCoef(0)!=0)
     		{
     			double gamma_middle=gamma_start+E0TL/mass*Math.cos(Phis)/2;    			
     			double beta_middle= computeBetaFromGamma(gamma_middle);

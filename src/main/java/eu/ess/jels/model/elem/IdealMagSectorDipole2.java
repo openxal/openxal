@@ -563,7 +563,8 @@ public class IdealMagSectorDipole2 extends ThickElement implements IElectromagne
     		matPhi.setElem(3,3,1);
 
     		matPhi.setElem(4,4,1);
-    		matPhi.setElem(4,5,-Math.pow(h,2)*(kx*Deltas*Math.pow(probe.getBeta(),2)-Math.sin(kx*Deltas))/Math.pow(kx,3)+Deltas/Math.pow(probe.getBeta()*probe.getGamma(),2)*(1-Math.pow(h/kx,2)));
+    		//matPhi.setElem(4,5,-Math.pow(h,2)*(kx*Deltas*Math.pow(probe.getBeta(),2)-Math.sin(kx*Deltas))/Math.pow(kx,3)+Deltas/Math.pow(probe.getBeta()*probe.getGamma(),2)*(1-Math.pow(h/kx,2)));
+    		matPhi.setElem(4,5,-Math.pow(h,2)*(kx*Deltas*Math.pow(probe.getBeta(),2)-Math.sin(kx*Deltas))/Math.pow(kx,3)+Deltas/Math.pow(probe.getGamma(),2)*(1-Math.pow(h/kx,2)));
     		matPhi.setElem(5,5,1);
 
     		matPhi.setElem(4,0,-h*Math.sin(kx*Deltas)/kx);
@@ -584,7 +585,8 @@ public class IdealMagSectorDipole2 extends ThickElement implements IElectromagne
     		matPhi.setElem(3,3,Math.cos(kx*Deltas));
 
     		matPhi.setElem(4,4,1);
-    		matPhi.setElem(4,5,-Math.pow(h,2)*(kx*Deltas*Math.pow(probe.getBeta(),2)-Math.sin(kx*Deltas))/Math.pow(kx,3)+Deltas/Math.pow(probe.getBeta()*probe.getGamma(),2)*(1-Math.pow(h/kx,2)));
+    		//matPhi.setElem(4,5,-Math.pow(h,2)*(kx*Deltas*Math.pow(probe.getBeta(),2)-Math.sin(kx*Deltas))/Math.pow(kx,3)+Deltas/Math.pow(probe.getBeta()*probe.getGamma(),2)*(1-Math.pow(h/kx,2)));
+    		matPhi.setElem(4,5,-Math.pow(h,2)*(kx*Deltas*Math.pow(probe.getBeta(),2)-Math.sin(kx*Deltas))/Math.pow(kx,3)+Deltas/Math.pow(probe.getGamma(),2)*(1-Math.pow(h/kx,2)));
     		matPhi.setElem(5,5,1);
 
     		matPhi.setElem(4,2,-h*Math.sin(kx*Deltas)/kx);
@@ -606,7 +608,8 @@ public class IdealMagSectorDipole2 extends ThickElement implements IElectromagne
     		matPhi.setElem(3,3,Math.cos(ky*Deltas));
 
     		matPhi.setElem(4,4,1);
-    		matPhi.setElem(4,5,-Math.pow(h,2)*(kx*Deltas*Math.pow(probe.getBeta(),2)-Math.sin(kx*Deltas))/Math.pow(kx,3)+Deltas/Math.pow(probe.getBeta()*probe.getGamma(),2)*(1-Math.pow(h/kx,2)));
+    		//matPhi.setElem(4,5,-Math.pow(h,2)*(kx*Deltas*Math.pow(probe.getBeta(),2)-Math.sin(kx*Deltas))/Math.pow(kx,3)+Deltas/Math.pow(probe.getBeta()*probe.getGamma(),2)*(1-Math.pow(h/kx,2)));
+    		matPhi.setElem(4,5,-Math.pow(h,2)*(kx*Deltas*Math.pow(probe.getBeta(),2)-Math.sin(kx*Deltas))/Math.pow(kx,3)+Deltas/Math.pow(probe.getGamma(),2)*(1-Math.pow(h/kx,2)));
     		matPhi.setElem(5,5,1);
 
     		matPhi.setElem(4,2,-h*Math.sin(kx*Deltas)/kx);
