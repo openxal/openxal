@@ -1,6 +1,7 @@
 package eu.ess.jels.model.probe;
 
 import xal.model.probe.traj.EnvelopeProbeState;
+import xal.tools.beam.CovarianceMatrix;
 import xal.tools.beam.Twiss;
 import Jama.Matrix;
 
@@ -55,6 +56,12 @@ public class ElsProbe extends GapEnvelopeProbe {
 			twiss[i] = new Twiss(envelope.get(3*i+1,0), envelope.get(3*i,0), normalized_emmitance.get(i,0)/(getBeta()*getGamma()));
 		twiss[2].setTwiss(twiss[2].getAlpha(), twiss[2].getBeta()*Math.pow(getGamma(), 2), twiss[2].getEmittance());
 		return twiss;
+	}
+
+	@Override
+	public CovarianceMatrix getCovariance() {
+		Twiss[] twiss = getTwiss();
+		return CovarianceMatrix.buildCorrelation(twiss[0], twiss[1], twiss[2]);		
 	}
 	
 	@Override

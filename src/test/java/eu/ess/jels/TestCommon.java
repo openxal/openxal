@@ -365,7 +365,7 @@ public abstract class TestCommon {
 	}
 	
 	protected void checkTWResults(double gamma, double[][] cov) {
-		double[] alpha = new double[3],beta=new double[3],emit=new double[3], det=new double[3], sigma=new double[3], gama=new double[3];
+		/*double[] alpha = new double[3],beta=new double[3],emit=new double[3], det=new double[3], sigma=new double[3], gama=new double[3];
 			
 		for (int i=0; i<3; i++) 
 			det[i]=Math.sqrt(cov[2*i+0][2*i+0]*cov[2*i+1][2*i+1]-cov[2*i+1][2*i+0]*cov[2*i+0][2*i+1]);		
@@ -374,18 +374,16 @@ public abstract class TestCommon {
 			beta[i]=cov[2*i+0][2*i+0]/det[i];
 			emit[i]=det[i];
 		}
-		
-		beta[2]*=Math.pow(gamma,2);		
-		
-		/*System.out.printf("Tracewin alpha: %E %E %E\n",alpha[0],alpha[1],alpha[2]);
+				
+		System.out.printf("Tracewin alpha: %E %E %E\n",alpha[0],alpha[1],alpha[2]);
 		System.out.printf("Tracewin beta: %E %E %E\n",beta[0],beta[1],beta[2]);
 		System.out.printf("Tracewin emit: %E %E %E\n",emit[0],emit[1],emit[2]);*/
 		
-		Twiss[] t;
+		/*Twiss[] t;
 		if (probe instanceof ElsProbe)
 			t = ((ElsProbe)probe).getTwiss();
 		else 
-			t = ((EnvelopeProbe)probe).getCovariance().computeTwiss();
+			t = ((EnvelopeProbe)probe).getCovariance().computeTwiss();*/
 			
 		/*
 		System.out.printf("TW results differences:\n");
@@ -396,25 +394,22 @@ public abstract class TestCommon {
 		
 		
 		// transform cov
-		if (!(elementMapping instanceof ElsElementMapping)) {
-			for (int i=0; i<6; i++) {
-				cov[i][4]*=gamma;
-				cov[i][5]/=gamma;
-				cov[4][i]*=gamma;				
-				cov[5][i]/=gamma;
-			}
-
-			double cov77[][] = new double[7][7];		
-			for (int i=0; i<6; i++)
-				for (int j=0; j<6; j++)
-					cov77[i][j] = cov[i][j];
-			CovarianceMatrix pcov = ((EnvelopeProbe)probe).getCovariance();
-			PhaseMatrix pcov77 = new PhaseMatrix(new Matrix(cov77));
-			double n = pcov.minus(new PhaseMatrix(new Matrix(cov77))).norm2()/pcov77.norm2();
-			//pm.getFirstOrder().minus(new PhaseMatrix(new Matrix(T77))).print();
-			System.out.printf("TW cov matrix diff: %E\n",n);
+		for (int i=0; i<6; i++) {
+			cov[i][4]*=gamma;
+			cov[i][5]/=gamma;
+			cov[4][i]*=gamma;				
+			cov[5][i]/=gamma;
 		}
-		
+
+		double cov77[][] = new double[7][7];		
+		for (int i=0; i<6; i++)
+			for (int j=0; j<6; j++)
+				cov77[i][j] = cov[i][j];
+		CovarianceMatrix pcov = ((EnvelopeProbe)probe).getCovariance();
+		PhaseMatrix pcov77 = new PhaseMatrix(new Matrix(cov77));
+		double n = pcov.minus(new PhaseMatrix(new Matrix(cov77))).norm2()/pcov77.norm2();
+		//pm.getFirstOrder().minus(new PhaseMatrix(new Matrix(T77))).print();
+		System.out.printf("TW cov matrix diff: %E\n",n);
 	}
 
 }

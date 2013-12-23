@@ -167,55 +167,31 @@ public class ElsTracker extends EnvelopeTracker {
         // Compute optics matrix...          
         Matrix optics = new Matrix(9, 9);
         
-        optics.set(0,0,matrix.getElem(0,0)*matrix.getElem(0,0));
-    	optics.set(0,1,-2.0*matrix.getElem(0,0)*matrix.getElem(0,1));
-    	optics.set(0,2,matrix.getElem(0,1)*matrix.getElem(0,1));
+        double[] det = new double[3];
     	
-    	optics.set(1,0,-matrix.getElem(0,0)*matrix.getElem(1,0));
-    	optics.set(1,1,matrix.getElem(0,0)*matrix.getElem(1,1)+matrix.getElem(0,1)*matrix.getElem(1,0));
-    	optics.set(1,2,-matrix.getElem(0,1)*matrix.getElem(1,1));
+        for (int i = 0; i<3; i++)
+    	{
+    		double M11 = matrix.getElem(2*i+0,2*i+0);
+    		double M12 = matrix.getElem(2*i+0,2*i+1);
+    		double M21 = matrix.getElem(2*i+1,2*i+0);
+    		double M22 = matrix.getElem(2*i+1,2*i+1);
+    		det[i] = M11*M22-M21*M12;
+    		
+    		optics.set(3*i+0, 3*i+0, Math.pow(M11,2));
+    		optics.set(3*i+0, 3*i+1, -2.0*M11*M12);
+    		optics.set(3*i+0, 3*i+2, Math.pow(M12,2));
+    		optics.set(3*i+1, 3*i+0, -M11*M21);
+    		optics.set(3*i+1, 3*i+1, M11*M22+M12*M21);
+    		optics.set(3*i+1, 3*i+2, -M12*M22);
+    		optics.set(3*i+2, 3*i+0, Math.pow(M21,2));
+    		optics.set(3*i+2, 3*i+1, -2.0*M21*M22);
+    		optics.set(3*i+2, 3*i+2, Math.pow(M22,2));
+    	}
     	
-    	optics.set(2,0,matrix.getElem(1,0)*matrix.getElem(1,0));
-    	optics.set(2,1,-2.0*matrix.getElem(1,0)*matrix.getElem(1,1));
-    	optics.set(2,2,matrix.getElem(1,1)*matrix.getElem(1,1));
-
-    	optics.set(3,3,matrix.getElem(2,2)*matrix.getElem(2,2));
-    	optics.set(3,4,-2.0*matrix.getElem(2,2)*matrix.getElem(2,3));
-    	optics.set(3,5,matrix.getElem(2,3)*matrix.getElem(2,3));
-    	optics.set(4,3,-matrix.getElem(2,2)*matrix.getElem(3,2));
-    	optics.set(4,4,matrix.getElem(2,2)*matrix.getElem(3,3)+matrix.getElem(2,3)*matrix.getElem(3,2));
-    	optics.set(4,5,-matrix.getElem(2,3)*matrix.getElem(3,3));
-    	optics.set(5,3,matrix.getElem(3,2)*matrix.getElem(3,2));
-    	optics.set(5,4,-2.0*matrix.getElem(3,2)*matrix.getElem(3,3));
-    	optics.set(5,5,matrix.getElem(3,3)*matrix.getElem(3,3));
-
-    	optics.set(6,6,matrix.getElem(4,4)*matrix.getElem(4,4));
-    	optics.set(6,7,-2.0*matrix.getElem(4,4)*matrix.getElem(4,5));
-    	optics.set(6,8,matrix.getElem(4,5)*matrix.getElem(4,5));
-    	optics.set(7,6,-matrix.getElem(4,4)*matrix.getElem(5,4));
-    	optics.set(7,7,matrix.getElem(4,4)*matrix.getElem(5,5)+matrix.getElem(4,5)*matrix.getElem(5,4));
-    	optics.set(7,8,-matrix.getElem(4,5)*matrix.getElem(5,5));
-    	optics.set(8,6,matrix.getElem(5,4)*matrix.getElem(5,4));
-    	optics.set(8,7,-2.0*matrix.getElem(5,4)*matrix.getElem(5,5));
-    	optics.set(8,8,matrix.getElem(5,5)*matrix.getElem(5,5));
-
-    	double[] det = new double[3];
-		for (int i=0; i<3; i++) 
-			det[i]=Math.sqrt(matrix.getElem(2*i+0,2*i+0)*matrix.getElem(2*i+1,2*i+1)-matrix.getElem(2*i+1,2*i+0)*matrix.getElem(2*i+0,2*i+1));
-
-       	
-    	//optics = optics.times(1./det0);
-    	for (int i = 0; i<9; i++)
-    		for (int j=0; j<9; j++)
-    			optics.set(i, j, optics.get(i,j)/det[i/3]);
-    	
-    	
-        Matrix	envelope1 = new Matrix(9,1);// = optics.times(envelope);        
-        
-        for (int i=0;i<9;i++)
-    		for (int j=0;j<9;j++)
-    			envelope1.set(i, 0, envelope1.get(i,0)+optics.get(i,j)*envelope.get(j,0));
-        
+   		optics = optics.times(1./det[0]);
+    	    
+        Matrix	envelope1 = optics.times(envelope);        
+               
         // Advance the probe states 
         probe.setEnvelope(envelope1);
     };
