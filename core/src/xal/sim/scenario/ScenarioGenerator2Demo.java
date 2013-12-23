@@ -1,5 +1,6 @@
 package xal.sim.scenario;
 import java.io.IOException;
+import java.io.File;
 
 import xal.model.Lattice;
 import xal.model.ModelException;
@@ -20,24 +21,25 @@ public class ScenarioGenerator2Demo {
 		
 		Accelerator accelerator = loadAccelerator();
 		
+		new File("sgtest/new").mkdirs();
+		new File("sgtest/old").mkdirs();
+		
 		for (AcceleratorSeq sequence : accelerator.getSequences()) {			
 			// Generates lattice from SMF accelerator
 			Scenario scenario = Scenario.newScenarioFor(sequence);
 			
-			ScenarioGenerator2 sg = new ScenarioGenerator2(sequence);
+			ScenarioGenerator sg = new ScenarioGenerator(sequence);
+			Scenario scenarioOld = sg.generateScenario();		
 			//Scenario scenario = Scenario.newAndImprovedScenarioFor(sequence);
-			//ScenarioGenerator2 sg = new ScenarioGenerator2(sequence, NewAndImprovedScenarioElementMapping.getInstance());
-			sg.setDebug(true);
-			sg.setVerbose(true);
-			Scenario scenario2 = sg.generateScenario();		
-					
+			//ScenarioGenerator2 sg2 = new ScenarioGenerator2(sequence, NewAndImprovedScenarioElementMapping.getInstance());			
+			
 			// Outputting lattice elements
-			saveLattice(scenario.getLattice(), "old/lattice-"+sequence.getId()+".xml");
-			saveLattice(scenario2.getLattice(), "new/lattice-"+sequence.getId()+".xml");			
+			saveLattice(scenario.getLattice(), "sgtest/new/lattice-"+sequence.getId()+".xml");
+			saveLattice(scenarioOld.getLattice(), "sgtest/old/lattice-"+sequence.getId()+".xml");			
 		}
 	}
 
-	private static void saveLattice(Lattice lattice, String file) {		
+	private static void saveLattice(Lattice lattice, String file) {			
 		try {
 			LatticeXmlWriter.writeXml(lattice, file);
 		} catch (IOException e1) {
