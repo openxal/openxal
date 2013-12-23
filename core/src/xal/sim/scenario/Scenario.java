@@ -51,26 +51,6 @@ public class Scenario {
         syncManager = aSyncMgr;
     }
     
-
-    /**
-     * Creates a new Scenario for the supplied accelerator sequence.
-     * 
-     * @param smfSeq    the accelerator sequence to build a scenario for
-     * @return          a new Scenario for the supplied accelerator sequence
-     * @throws          ModelException error building Scenario
-     */
-    public static Scenario newScenarioFor( final AcceleratorSeq smfSeq ) throws ModelException {
-        // Check if hardware sequence is actually a ring
-        if (smfSeq instanceof Ring) {
-            Ring    smfRing = (Ring)smfSeq;
-            return Scenario.newScenarioFor(smfRing);
-        }
-        
-        // We have a linear accelerator/transport line - process as such
-        ScenarioGenerator generator = new ScenarioGenerator(smfSeq);
-        return generator.generateScenario();
-    }
-    
 	 /**
      * Creates a new Scenario for the supplied accelerator sequence.
      * 
@@ -78,7 +58,7 @@ public class Scenario {
      * @return          a new Scenario for the supplied accelerator sequence
      * @throws          ModelException error building Scenario
      */
-    public static Scenario newScenario2For( final AcceleratorSeq smfSeq ) throws ModelException {
+    public static Scenario newScenarioFor( final AcceleratorSeq smfSeq ) throws ModelException {
        // We have a linear accelerator/transport line - process as such
         ScenarioGenerator2 generator = new ScenarioGenerator2(smfSeq);
         return generator.generateScenario();
@@ -92,7 +72,7 @@ public class Scenario {
      * @return          a new Scenario for the supplied accelerator sequence
      * @throws          ModelException error building Scenario
      */
-    public static Scenario newScenario2For( final AcceleratorSeq smfSeq, ElementMapping elementMapping ) throws ModelException {
+    public static Scenario newScenarioFor( final AcceleratorSeq smfSeq, ElementMapping elementMapping ) throws ModelException {
        // We have a linear accelerator/transport line - process as such
         ScenarioGenerator2 generator = new ScenarioGenerator2(smfSeq, elementMapping);
         return generator.generateScenario();
