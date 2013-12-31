@@ -89,12 +89,12 @@ abstract class ElementConverter {
 		    //  This is an exceptional condition!
 		    //    Something went wrong if we made it here
 		    //    Let's say so
-		    String    strSrc = magnetNode.getId();
-		    String    strMsg = "Encountered an un-oriented electromagnet";
+		    String    strSrc = magnetNode.getId() + "/" + magnetNode.getClass().getName();
+		    String    strMsg = "Encountered an un-oriented electromagnet hardware object";
 		    Logger    logGbl = Logger.getLogger("global");
 		    
 		    logGbl.log(Level.WARNING, strMsg + " : " + strSrc);
-            System.out.println("WARNING!: " + strSrc + " : " + strMsg);
+            System.out.println("WARNING!: " + strMsg + " : " + strSrc);
 		}
 		electromagnetElement.setOrientation(orientation);
 	}
