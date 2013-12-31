@@ -60,7 +60,7 @@ public class Scenario {
      */
     public static Scenario newScenarioFor( final AcceleratorSeq smfSeq ) throws ModelException {
        // We have a linear accelerator/transport line - process as such
-        ScenarioGenerator2 generator = new ScenarioGenerator2(smfSeq);
+        ScenarioGenerator generator = new ScenarioGenerator(smfSeq);
         return generator.generateScenario();
     }
 	
@@ -74,10 +74,11 @@ public class Scenario {
      */
     public static Scenario newScenarioFor( final AcceleratorSeq smfSeq, ElementMapping elementMapping ) throws ModelException {
        // We have a linear accelerator/transport line - process as such
-        ScenarioGenerator2 generator = new ScenarioGenerator2(smfSeq, elementMapping);
+        ScenarioGenerator generator = new ScenarioGenerator(smfSeq, elementMapping);
         return generator.generateScenario();
     }
-	
+
+
     /**
      * Creates a new <code>Scenario</code> object for the explicit case where
      * the <code>AcceleratorSeq</code> object is of type 
@@ -89,18 +90,11 @@ public class Scenario {
      * @throws ModelException   unable to build modeling scenario
      */
     public static Scenario  newScenarioFor( final Ring smfRing ) throws ModelException {
-        ScenarioGenerator genScen = new ScenarioGenerator(smfRing);
+        ScenarioGenerator genScen = new ScenarioGenerator( smfRing );
         return genScen.generateScenario(); 
     }
 
-	
-    public static Scenario newAndImprovedScenarioFor(AcceleratorSeq aSeq) 
-            throws ModelException 
-    {
-        NewAndImprovedScenarioGenerator generator = new NewAndImprovedScenarioGenerator(aSeq);
-        return generator.generateScenario();
-    }       
-    
+
     // Model Operations ========================================================
     
     /**
