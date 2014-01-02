@@ -109,7 +109,7 @@ public class TestSimResultsAdaptor {
             File fileOutput = ResourceManager.getOutputFile(STR_OUTPUT);
             OWTR_OUTPUT = new FileWriter(fileOutput);
             
-            ACCEL_TEST   = XMLDataManager.loadDefaultAccelerator();
+            ACCEL_TEST   = ResourceManager.getTestAccelerator();
             SEQ_TEST     = ACCEL_TEST.findSequence(STR_SEQ_ID);
             MODEL_TEST   = Scenario.newScenarioFor(SEQ_TEST);
             MODEL_TEST.setSynchronizationMode(Scenario.SYNC_MODE_DESIGN);
@@ -139,6 +139,8 @@ public class TestSimResultsAdaptor {
             MODEL_TEST.run();
             
         } catch (Exception e) {
+			System.out.println( "Exception: " + e );
+			e.printStackTrace();
             System.err.println("Unable to initial the static test resources");
             
         }
