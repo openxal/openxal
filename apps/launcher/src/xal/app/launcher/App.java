@@ -76,8 +76,8 @@ public class App implements Comparable<App> {
 	
 	
 	/** get the command to run the application in a local environment */
-	public String getCommand() {
-		return RULE.getCommand( this );
+	public List<String> getCommands() {
+		return RULE.getCommands( this );
 	}
 	
 	

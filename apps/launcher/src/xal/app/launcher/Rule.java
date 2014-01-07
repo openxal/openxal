@@ -11,6 +11,7 @@ package xal.app.launcher;
 import xal.tools.data.*;
 
 import java.io.File;
+import java.util.*;
 import java.util.regex.Pattern;
 
 
@@ -26,7 +27,7 @@ public class Rule implements DataListener {
 	private String _pattern;
 	
 	/** command */
-	private String _command;
+	private List<String> _commands;
 	
 	/** kind of application */
 	private String _kind;
@@ -36,39 +37,49 @@ public class Rule implements DataListener {
 	
 	
 	/** Primary Constructor */
-	public Rule( final String pattern, final String kind, final String command, final boolean excludes ) {
+	public Rule( final String pattern, final String kind, final List<String> commands, final boolean excludes ) {
 		setPattern( pattern );
 		setKind( kind );
-		setCommand( command );
+		setCommands( commands );
 		setExcludes( excludes );
 	}
 	
 	
 	/** Constructor */
-	public Rule( final String pattern, final String kind, final String command ) {
-		this( pattern, kind, command, false );
+	public Rule( final String pattern, final String kind, final List<String> commands ) {
+		this( pattern, kind, commands, false );
 	}
-	
-	
+
+
 	/** Constructor */
-	public Rule( final String pattern, final String command ) {
-		this( pattern, "", command );
+	public Rule( final String pattern, final String kind, final String ... commands ) {
+		this( pattern, kind, toList( commands ) );
 	}
-	
+
 	
 	/** Constructor */
 	public Rule() {
-		this( "*.xyz", "runxyz" );
+		this( "*.xyz", "xyz", "runxyz" );
+	}
+
+
+	/** Convert an array of String values to a list of strings */
+	static private List<String> toList( final String ... values ) {
+		final List<String> list = new ArrayList<>();
+
+		for ( final String value : values ) {
+			list.add( value );
+		}
+
+		return list;
 	}
 	
 	
 	/** create an instance from a data adaptor */
 	static public Rule getInstance( final DataAdaptor adaptor ) {
-		final String pattern = adaptor.stringValue( "pattern" );
-		final String command = adaptor.stringValue( "command" );
-		final String kind = adaptor.hasAttribute( "kind" ) ? adaptor.stringValue( "kind" ) : "";
-		final boolean excludes = adaptor.hasAttribute( "excludes" ) ? adaptor.booleanValue( "excludes" ) : false;
-		return new Rule( pattern, kind, command, excludes );
+		final Rule rule = new Rule( "", "", "" );
+		rule.update( adaptor );
+		return rule;
 	}
 	
 	
@@ -86,23 +97,40 @@ public class Rule implements DataListener {
 	}
 	
 	
-	/** get the command */
-	public String getCommand() {
-		return _command;
+	/** get the commands */
+	public List<String> getCommands() {
+		return _commands;
 	}
-	
-	
-	/** get the command */
-	public String getCommand( final App application ) {
-		return _command.replace( "%f", application.getPath() );
+
+
+	/** set the commands */
+	public void setCommands( final List<String> commands ) {
+		_commands = commands;
 	}
+
 	
-	
-	/** set the command */
-	public void setCommand( final String command ) {
-		_command = command;
+	/** get the commands using the application's specific substitution for file path (%f) and name (%n) */
+	public List<String> getCommands( final App application ) {
+		final List<String> commands = new ArrayList<>( _commands.size() );
+		for ( final String rawCommand : _commands ) {
+			final String command = rawCommand.replace( "%f", application.getPath() ).replace( "%n", application.getLabel() );
+			commands.add( command );
+		}
+		return commands;
 	}
-	
+
+
+	/** insert a command at the specified index */
+	public void insertCommandAtIndex( final String command, final int index ) {
+		_commands.add( index, command );
+	}
+
+
+	/** delete the rule at the specified index */
+	public void deleteCommandAtIndex( final int index ) {
+		_commands.remove( index );
+	}
+
 	
 	/** determine whether matching files are excluded */
 	public boolean excludes() {
@@ -160,8 +188,37 @@ public class Rule implements DataListener {
      * @param adaptor The data adaptor corresponding to this object's data node.
      */
     public void update( final DataAdaptor adaptor ) {
+		// fetch the rule's pattern
 		setPattern( adaptor.stringValue( "pattern" ) );
-		setCommand( adaptor.stringValue( "command" ) );
+
+		// commands are specified in one of two styles
+		// 1) new style is a series of "command" elements nested inside of a single "commands" array element
+		// 2) old style is a single command line specified with a single "command" element
+		if ( adaptor.hasAttribute( "commands" ) ) {
+			final List<DataAdaptor> commandAdaptors = adaptor.childAdaptors( "commands" );
+			final List<String> commands = new ArrayList<String>( commandAdaptors.size() );
+			for ( final DataAdaptor commandAdaptor : commandAdaptors ) {
+				commands.add( commandAdaptor.stringValue( "command" ) );
+			}
+			setCommands( commands );
+		}
+		else if ( adaptor.hasAttribute( "command" ) ) {		// old style
+			// if the command is specified as a single line then split it by white space to get the command array
+			final String commandLine = adaptor.stringValue( "command" );
+			if ( commandLine != null && commandLine.length() > 0 ) {
+				final String[] commandLineArray = commandLine.split( "\\w" );
+				final List<String> commands = new ArrayList<>( commandLineArray.length );
+				for ( final String command : commandLineArray ) {
+					commands.add( command );
+				}
+				setCommands( commands );
+			}
+			else {
+				setCommands( new ArrayList<String>() );
+			}
+		}
+
+		// fetch the rule kind and whether it is excluded
 		setKind( adaptor.hasAttribute( "kind" ) ? adaptor.stringValue( "kind" ) : "" );
 		setExcludes( adaptor.hasAttribute( "excludes" ) ? adaptor.booleanValue( "excludes" ) : false );
     }
@@ -173,7 +230,13 @@ public class Rule implements DataListener {
      */
     public void write( final DataAdaptor adaptor ) {
 		adaptor.setValue( "pattern", _pattern );
-		adaptor.setValue( "command", _command );
+
+		final DataAdaptor commandsAdaptor = adaptor.createChild( "commands" );
+		for ( final String command : _commands ) {
+			final DataAdaptor commandAdaptor = commandsAdaptor.createChild( "command" );
+			commandAdaptor.setValue( "command", command );
+		}
+
 		adaptor.setValue( "kind", _kind );
 		adaptor.setValue( "excludes", _excludes );
     }

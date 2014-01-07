@@ -187,9 +187,12 @@ public class Launcher implements DataListener {
 
 		application.setLastLaunchTime( new Date() );
 
-		final String appCommand = application.getCommand();
-		final String command = _hostConfiguration.getCommand( host, appCommand );
-		return process( command );
+		final List<String> appCommands = application.getCommands();
+
+		// TODO: integrate the app's local commands with the host call
+//		final String command = _hostConfiguration.getCommand( host, appCommand );
+//		return process( command );
+		return null;
 	}
  	
 	

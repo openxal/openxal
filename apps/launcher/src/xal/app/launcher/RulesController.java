@@ -10,6 +10,7 @@ package xal.app.launcher;
 
 import xal.extension.bricks.WindowReference;
 import xal.extension.widgets.swing.KeyValueTableModel;
+import xal.tools.data.KeyValueRecordListener;
 
 import java.awt.event.*;
 import java.util.*;
@@ -24,19 +25,25 @@ public class RulesController {
 	
 	/** table of rules */
 	final private JTable RULES_TABLE;
-	
+
 	/** table model for displaying the rules */
 	final private KeyValueTableModel<Rule> RULES_TABLE_MODEL;
-	
+
+	/** table displaying the list of commands for the selected rule */
+	final private JTable RULE_COMMAND_TABLE;
+
+	/** table model for displaying the list of commands for the selected rule */
+	final private KeyValueTableModel<StringArgument> RULE_COMMAND_TABLE_MODEL;
+
+	/** list of rule commands */
+	private List<StringArgument> _ruleCommands;
+
 	/** field for specifying the selected rule's pattern */
 	final private JTextField RULE_PATTERN_FIELD;
 	
 	/** field for specifying the selected rule's kind */
 	final private JTextField RULE_KIND_FIELD;
-	
-	/** editor for specifying the rule's command */
-	final private JTextField RULE_COMMAND_EDITOR;
-	
+
 	/** checkbox for excluding matching files */
 	final private JCheckBox RULE_EXCLUSION_CHECKBOX;
 	
@@ -55,11 +62,7 @@ public class RulesController {
 		RULE_KIND_FIELD = (JTextField)windowReference.getView( "RuleKindField" );
 		RULE_KIND_FIELD.addActionListener( ruleKindAction() );
 		RULE_KIND_FIELD.addFocusListener( ruleKindFocusHandler() );
-		
-		RULE_COMMAND_EDITOR = (JTextField)windowReference.getView( "RuleCommandField" );
-		RULE_COMMAND_EDITOR.addActionListener( ruleCommandAction() );
-		RULE_COMMAND_EDITOR.addFocusListener( ruleCommandFocusHandler() );
-		
+
 		final JButton deleteRuleButton = (JButton)windowReference.getView( "DeleteRuleButton" );
 		deleteRuleButton.addActionListener( deleteRuleAction() );
 		
@@ -68,18 +71,88 @@ public class RulesController {
 		
 		RULES_TABLE = (JTable)windowReference.getView( "RulesTable" );
 		RULES_TABLE.setSelectionMode( ListSelectionModel.SINGLE_SELECTION );
-		RULES_TABLE_MODEL = new KeyValueTableModel<Rule>( new ArrayList<Rule>(), "pattern", "kind", "command" );
+		RULES_TABLE_MODEL = new KeyValueTableModel<>( new ArrayList<Rule>(), "pattern", "kind", "commands" );
 		RULES_TABLE.setModel( RULES_TABLE_MODEL );
 		
 		RULES_TABLE.getSelectionModel().addListSelectionListener( rulesTableSelectionHandler() );
-		
+
+		_ruleCommands = new ArrayList<StringArgument>();
+
+		RULE_COMMAND_TABLE = (JTable)windowReference.getView( "RuleCommandTable" );
+		RULE_COMMAND_TABLE_MODEL = new KeyValueTableModel<>( _ruleCommands, "value" );
+		RULE_COMMAND_TABLE_MODEL.setColumnName( "value", "Command" );
+		RULE_COMMAND_TABLE_MODEL.setColumnEditable( "value", true );
+		RULE_COMMAND_TABLE_MODEL.addKeyValueRecordListener( new KeyValueRecordListener<KeyValueTableModel<StringArgument>,StringArgument>() {
+			public void recordModified( final KeyValueTableModel<StringArgument> tableModel, final StringArgument argument, final String keyPath, final Object value ) {
+				pushRuleCommandsToModel();
+			}
+		});
+		RULE_COMMAND_TABLE.setModel( RULE_COMMAND_TABLE_MODEL );
+
+		final JButton deleteRuleCommandButton = (JButton)windowReference.getView( "DeleteRuleCommandButton" );
+		deleteRuleCommandButton.addActionListener( new ActionListener() {
+			private static final long serialVersionUID = 1L;
+
+			public void actionPerformed( final ActionEvent event ) {
+				final int[] selectedRows = RULE_COMMAND_TABLE.getSelectedRows();
+				final Set<StringArgument> argumentsToRemove = new HashSet<StringArgument>( selectedRows.length );
+				for ( final int selectedRow : selectedRows ) {
+					final int commandRow = RULE_COMMAND_TABLE.convertRowIndexToModel( selectedRow );
+					argumentsToRemove.add( RULE_COMMAND_TABLE_MODEL.getRecordAtRow( commandRow ) );
+				}
+				_ruleCommands.removeAll( argumentsToRemove );
+				pushRuleCommandsToModel();
+				RULE_COMMAND_TABLE_MODEL.fireTableDataChanged();
+			}
+		});
+
+		final JButton addRuleCommandButton = (JButton)windowReference.getView( "AddRuleCommandButton" );
+		addRuleCommandButton.addActionListener( new ActionListener() {
+			private static final long serialVersionUID = 1L;
+
+			public void actionPerformed( final ActionEvent event ) {
+				final int selectedRow = RULE_COMMAND_TABLE.getSelectedRow();
+				if ( selectedRow >= 0 ) {
+					final int commandRow = RULE_COMMAND_TABLE.convertRowIndexToModel( selectedRow );
+					_ruleCommands.add( commandRow, new StringArgument( "" ) );
+					pushRuleCommandsToModel();
+					RULE_COMMAND_TABLE_MODEL.fireTableDataChanged();
+				}
+			}
+		});
+
 		refreshView();
+	}
+
+
+	/** push the selected rule's commands to the model */
+	private void pushRuleCommandsToModel() {
+		final Rule rule = getSelectedRule();
+		if ( rule != null ) {
+			final List<String> commands = StringArgument.toStrings( _ruleCommands );
+			rule.setCommands( commands );
+		}
+	}
+
+
+	/** refresh the rule command view */
+	private void refreshRuleCommandsView() {
+		final Rule rule = getSelectedRule();
+		if ( rule != null ) {
+			_ruleCommands = StringArgument.toArguments( rule.getCommands() );
+		}
+		else {
+			_ruleCommands = new ArrayList<>();
+
+		}
+		RULE_COMMAND_TABLE_MODEL.setRecords( _ruleCommands );
 	}
 	
 	
 	/** refresh the view with the model data */
 	private void refreshView() {
 		RULES_TABLE_MODEL.setRecords( MODEL.getRules() );
+		refreshRuleCommandsView();
 	}
 	
 	
@@ -201,44 +274,7 @@ public class RulesController {
 			}
 		};
 	}
-	
-	
-	/** action to apply the rule's edits */
-	private AbstractAction ruleCommandAction() {
-		return new AbstractAction() {
-            private static final long serialVersionUID = 1L;
-            
-			public void actionPerformed( final ActionEvent event ) {
-				applyRuleCommandEdit();
-			}
-		};
-	}
-	
-	
-	/** action for handling rule command events */
-	private FocusListener ruleCommandFocusHandler() {
-		return new FocusAdapter() {
-			private String _originalCommand = null;
-			private int _selectedRow = -1;
-			
-			public void focusGained( final FocusEvent event ) {
-				_selectedRow = RULES_TABLE.getSelectedRow();
-				_originalCommand = RULE_COMMAND_EDITOR.getText();
-			}
-			
-			public void focusLost( final FocusEvent event ) {
-				final String text = RULE_COMMAND_EDITOR.getText();
-				if ( text != null && _originalCommand != null ) {
-					if ( !text.equals( _originalCommand ) ) {	// make sure the text actually changed
-						applyRuleCommandEdit( _selectedRow );
-					}
-				}
-				_originalCommand = null;
-				_selectedRow = -1;
-			}
-		};
-	}
-	
+
 	
 	/** apply the rule pattern */
 	private void applyRuleExclusionEdit() {
@@ -254,13 +290,11 @@ public class RulesController {
 		if ( row >= 0 ) {
 			final boolean exclude = RULE_EXCLUSION_CHECKBOX.isSelected();
 			RULE_KIND_FIELD.setEnabled( !exclude );
-			RULE_COMMAND_EDITOR.setEnabled( !exclude );
+			RULE_COMMAND_TABLE.setEnabled( !exclude );
 			MODEL.updateRuleExclusionAt( row, exclude );
 			if ( RULE_EXCLUSION_CHECKBOX.isSelected() ) {
 				RULE_KIND_FIELD.setText( "Excluded" );
 				MODEL.updateRuleKindAt( row, RULE_KIND_FIELD.getText() );				
-				RULE_COMMAND_EDITOR.setText( "" );
-				MODEL.updateRuleCommandAt( row, RULE_COMMAND_EDITOR.getText() );
 			}
 			refreshRuleRow( row );		
 		}
@@ -304,22 +338,25 @@ public class RulesController {
 		}
 	}
 	
-	
-	/** apply the rule pattern */
-	private void applyRuleCommandEdit() {
+
+	/** Get the currently selected rule */
+	private Rule getSelectedRule() {
+		final List<Rule> rules = MODEL.getRules();
+		final int ruleCount = rules.size();
+		if ( rules == null || ruleCount == 0 )  return null;
+
 		final int selectedRow = RULES_TABLE.getSelectedRow();
 		if ( selectedRow >= 0 ) {
-			applyRuleCommandEdit( selectedRow );
+			final int ruleIndex = RULES_TABLE.convertRowIndexToModel( selectedRow );
+			if ( ruleIndex < ruleCount ) {
+				return rules.get( ruleIndex );
+			}
+			else {
+				return null;
+			}
 		}
-	}
-	
-	
-	/** apply the rule pattern */
-	private void applyRuleCommandEdit( final int row ) {
-		if ( row >= 0 ) {
-			final String command = RULE_COMMAND_EDITOR.getText();
-			MODEL.updateRuleCommandAt( row, command );
-			refreshRuleRow( row );		
+		else {
+			return null;
 		}
 	}
 	
@@ -329,24 +366,21 @@ public class RulesController {
 		return new ListSelectionListener() {
 			public void valueChanged( final ListSelectionEvent event ) {
 				if ( !event.getValueIsAdjusting() ) {
-					final int selectedRow = RULES_TABLE.getSelectedRow();
-					final List<Rule> rules = MODEL.getRules();
-					if ( selectedRow >= 0 && selectedRow < rules.size() ) {
-						final Rule rule = rules.get( selectedRow );
+					final Rule rule = getSelectedRule();
+					if ( rule != null ) {
 						RULE_PATTERN_FIELD.setText( rule.getPattern() );
 						RULE_KIND_FIELD.setText( rule.getKind() );
-						RULE_COMMAND_EDITOR.setText( rule.getCommand() );
 						final boolean excludes = rule.excludes();
 						RULE_EXCLUSION_CHECKBOX.setSelected( excludes );
 						RULE_KIND_FIELD.setEnabled( !excludes );
-						RULE_COMMAND_EDITOR.setEnabled( !excludes );
+						RULE_COMMAND_TABLE.setEnabled( !excludes );
 					}
 					else {
 						RULE_PATTERN_FIELD.setText( "" );
 						RULE_KIND_FIELD.setText( "" );
-						RULE_COMMAND_EDITOR.setText( "" );
 						RULE_EXCLUSION_CHECKBOX.setSelected( false );
 					}
+					refreshRuleCommandsView();
 				}
 			}
 		};
