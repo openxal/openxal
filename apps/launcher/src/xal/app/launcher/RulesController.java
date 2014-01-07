@@ -132,6 +132,7 @@ public class RulesController {
 			final List<String> commands = StringArgument.toStrings( _ruleCommands );
 			rule.setCommands( commands );
 		}
+		MODEL.postModifications();
 	}
 
 
