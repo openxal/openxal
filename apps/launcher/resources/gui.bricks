@@ -1,5 +1,5 @@
 <?xml version = '1.0' encoding = 'UTF-8'?>
-<BricksDocument date="Tue Jan 07 15:50:40 EST 2014" version="1.0.0">
+<BricksDocument date="Tue Jan 07 16:30:28 EST 2014" version="1.0.0">
     <RootBrick>
         <ViewNode customBeanClass="xal.extension.application.DefaultXalWindow" height="790" tag="MainWindow" width="1220">
             <ViewProxy type="javax.swing.JFrame"/>
@@ -239,6 +239,11 @@
                                     <ViewNode tag="Horizontal Glue">
                                         <ViewProxy type="javax.swing.Box_HorizontalGlue"/>
                                     </ViewNode>
+                                    <ViewNode tag="Substitution Keys">
+                                        <ViewProxy type="javax.swing.JLabel"/>
+                                        <BeanProperty name="text" value="Substitutions: %f => executable file path, %n => executable name"/>
+                                        <BeanProperty name="toolTipText" value=""/>
+                                    </ViewNode>
                                 </ViewNode>
                             </ViewNode>
                         </ViewNode>
@@ -314,6 +319,10 @@
                                     </ViewNode>
                                     <ViewNode tag="Horizontal Glue">
                                         <ViewProxy type="javax.swing.Box_HorizontalGlue"/>
+                                    </ViewNode>
+                                    <ViewNode tag="Substitutions Label">
+                                        <ViewProxy type="javax.swing.JLabel"/>
+                                        <BeanProperty name="text" value="Substitutions: %h => host, %e => executable commands"/>
                                     </ViewNode>
                                 </ViewNode>
                             </ViewNode>
