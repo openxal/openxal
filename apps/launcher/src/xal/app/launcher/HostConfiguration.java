@@ -25,39 +25,57 @@ public class HostConfiguration implements DataListener {
 	
 	/** enabled host settings */
 	final private List<HostSetting> ENABLED_HOST_SETTINGS;
-	
-	/** template for executing commands on a host */
-	private String _commandTemplate;
-	
+
+	/** list of commands including arguments */
+	private List<String> _commands;
+
 	
 	/** Empty Constructor */
 	public HostConfiguration() {
 		HOST_SETTINGS = new ArrayList<HostSetting>();
 		ENABLED_HOST_SETTINGS = new ArrayList<HostSetting>();
+		_commands = new ArrayList<>();
 	}
 	
 	
-	/** get the command template */
-	public String getCommandTemplate() {
-		return _commandTemplate;
+	/** get the commands */
+	public List<String> getCommands() {
+		return _commands;
 	}
 	
 	
-	/** set the command template */
-	public void setCommandTemplate( final String template ) {
-		_commandTemplate = template;
+	/** set the commands */
+	public void setCommands( final List<String> commands ) {
+		_commands = commands;
 	}
 	
 	
 	/** determine if a host is required for a command */
 	public boolean isHostRequired() {
-		return _commandTemplate.contains( "%h" );
+		// host is required if any command depends on host substitution
+		for ( final String command : _commands ) {
+			if ( command.contains( "%h" ) )  return true;
+		}
+
+		// no command depends on host substitution
+		return false;
 	}
 	
 	
 	/** generate a host command based on a local executable expression by substituting the host for %h and the executable for %e */
-	public String getCommand( final String host, final String executable ) {
-		return _commandTemplate.replace( "%h", host ).replace( "%e", executable );
+	public List<String> getCommands( final String host, final List<String> executable ) {
+		final List<String> substitutedCommands = new ArrayList<>();
+
+		for ( final String command : _commands ) {
+			if ( command.equals( "%e" ) ) {		// replace the command with the executable's list of commands
+				substitutedCommands.addAll( executable );
+			}
+			else {			// substitute the host in each command wherever %h occurs
+				substitutedCommands.add( command.replace( "%h", host ) );
+			}
+		}
+
+		return substitutedCommands;
 	}
 	
 	
@@ -96,7 +114,9 @@ public class HostConfiguration implements DataListener {
 	
 	/** preconfigure when initializing without a document file */
 	public void preConfigure() {
-		setCommandTemplate( "%e" );
+		final List<String> commands = new ArrayList<>(1);
+		commands.add( "%e" );
+		setCommands( commands );
 	}
 	
     
@@ -114,8 +134,31 @@ public class HostConfiguration implements DataListener {
      * @param adaptor The data adaptor corresponding to this object's data node.
      */
     public void update( final DataAdaptor adaptor ) {
-		if ( adaptor.hasAttribute( "commandTemplate" ) ) {
-			setCommandTemplate( adaptor.stringValue( "commandTemplate" ) );
+		// commands are specified in one of two styles
+		// 1) new style is a series of "command" elements nested inside of a single "commands" array element
+		// 2) old style is a single command line specified with a single "commandTemplate" element
+		if ( adaptor.hasAttribute( "commands" ) ) {
+			final List<DataAdaptor> commandAdaptors = adaptor.childAdaptors( "commands" );
+			final List<String> commands = new ArrayList<String>( commandAdaptors.size() );
+			for ( final DataAdaptor commandAdaptor : commandAdaptors ) {
+				commands.add( commandAdaptor.stringValue( "command" ) );
+			}
+			setCommands( commands );
+		}
+		else if ( adaptor.hasAttribute( "commandTemplate" ) ) {		// old style
+			// if the command is specified as a single line then split it by white space to get the command array
+			final String commandLine = adaptor.stringValue( "commandTemplate" );
+			if ( commandLine != null && commandLine.length() > 0 ) {
+				final String[] commandLineArray = commandLine.split( "\\w" );
+				final List<String> commands = new ArrayList<>( commandLineArray.length );
+				for ( final String command : commandLineArray ) {
+					commands.add( command );
+				}
+				setCommands( commands );
+			}
+			else {
+				setCommands( new ArrayList<String>() );
+			}
 		}
 		
 		final List<DataAdaptor> settingAdaptors = adaptor.childAdaptors( HostSetting.DATA_LABEL );
@@ -125,6 +168,7 @@ public class HostConfiguration implements DataListener {
 			setting.update( settingAdaptor );
 			HOST_SETTINGS.add( setting );
 		}
+
 		refreshEnabledHosts();
     }
     
@@ -134,7 +178,11 @@ public class HostConfiguration implements DataListener {
      * @param adaptor The data adaptor corresponding to this object's data node.
      */
     public void write( final DataAdaptor adaptor ) {
-		adaptor.setValue( "commandTemplate", _commandTemplate );
+		final DataAdaptor commandsAdaptor = adaptor.createChild( "commands" );
+		for ( final String command : _commands ) {
+			final DataAdaptor commandAdaptor = commandsAdaptor.createChild( "command" );
+			commandAdaptor.setValue( "command", command );
+		}
 		adaptor.writeNodes( HOST_SETTINGS );
     }
 }

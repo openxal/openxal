@@ -1,5 +1,5 @@
 <?xml version = '1.0' encoding = 'UTF-8'?>
-<BricksDocument date="Mon Jan 06 11:35:36 EST 2014" version="1.0.0">
+<BricksDocument date="Tue Jan 07 15:50:40 EST 2014" version="1.0.0">
     <RootBrick>
         <ViewNode customBeanClass="xal.extension.application.DefaultXalWindow" height="790" tag="MainWindow" width="1220">
             <ViewProxy type="javax.swing.JFrame"/>
@@ -244,45 +244,78 @@
                         </ViewNode>
                     </ViewNode>
                     <ViewNode tag="HostsView">
-                        <ViewProxy type="javax.swing.Box_Vertical"/>
+                        <ViewProxy type="javax.swing.JSplitPane"/>
+                        <BeanProperty name="orientation" value="0"/>
+                        <BeanProperty name="dividerLocation" value="300"/>
                         <BeanProperty name="name" value="Hosts"/>
-                        <BeanProperty name="toolTipText" value="Hosts on which to execute"/>
-                        <ViewNode tag="HostScrollPane">
-                            <ViewProxy type="javax.swing.JScrollPane"/>
-                            <ViewNode tag="HostTable">
-                                <ViewProxy type="javax.swing.JTable"/>
-                                <BeanProperty name="autoResizeMode" value="3"/>
+                        <ViewNode tag="Hosts Editor">
+                            <ViewProxy type="javax.swing.Box_Vertical"/>
+                            <BorderNode tag="Titled Border">
+                                <BorderProxy type="javax.swing.border.TitledBorder"/>
+                                <BeanProperty name="title" value="Hosts"/>
+                            </BorderNode>
+                            <ViewNode tag="HostScrollPane">
+                                <ViewProxy type="javax.swing.JScrollPane"/>
+                                <ViewNode tag="HostTable">
+                                    <ViewProxy type="javax.swing.JTable"/>
+                                    <BeanProperty name="autoResizeMode" value="3"/>
+                                </ViewNode>
+                            </ViewNode>
+                            <ViewNode tag="HostTableControls">
+                                <ViewProxy type="javax.swing.Box_Horizontal"/>
+                                <ViewNode tag="DeleteHostButton">
+                                    <ViewProxy type="javax.swing.JButton"/>
+                                    <BeanProperty group="table" iconName="RowDelete24.gif" name="icon"/>
+                                    <BeanProperty name="text" value=""/>
+                                    <BeanProperty name="toolTipText" value="Delete the selected hosts"/>
+                                </ViewNode>
+                                <ViewNode tag="AddHostButton">
+                                    <ViewProxy type="javax.swing.JButton"/>
+                                    <BeanProperty group="table" iconName="RowInsertAfter24.gif" name="icon"/>
+                                    <BeanProperty name="text" value=""/>
+                                    <BeanProperty name="toolTipText" value="Add Host"/>
+                                </ViewNode>
+                                <ViewNode tag="Horizontal Glue">
+                                    <ViewProxy type="javax.swing.Box_HorizontalGlue"/>
+                                </ViewNode>
                             </ViewNode>
                         </ViewNode>
-                        <ViewNode tag="HostTableControls">
-                            <ViewProxy type="javax.swing.Box_Horizontal"/>
-                            <ViewNode tag="DeleteHostButton">
-                                <ViewProxy type="javax.swing.JButton"/>
-                                <BeanProperty group="table" iconName="RowDelete24.gif" name="icon"/>
-                                <BeanProperty name="text" value=""/>
-                                <BeanProperty name="toolTipText" value="Delete the selected hosts"/>
-                            </ViewNode>
-                            <ViewNode tag="AddHostButton">
-                                <ViewProxy type="javax.swing.JButton"/>
-                                <BeanProperty group="table" iconName="RowInsertAfter24.gif" name="icon"/>
-                                <BeanProperty name="text" value=""/>
-                                <BeanProperty name="toolTipText" value="Add Host"/>
-                            </ViewNode>
-                            <ViewNode tag="Horizontal Glue">
-                                <ViewProxy type="javax.swing.Box_HorizontalGlue"/>
-                            </ViewNode>
-                        </ViewNode>
-                        <ViewNode tag="CommandBox">
-                            <ViewProxy type="javax.swing.Box_Horizontal"/>
-                            <ViewNode tag="Label">
-                                <ViewProxy type="javax.swing.JLabel"/>
-                                <BeanProperty name="text" value="Command: "/>
-                            </ViewNode>
-                            <ViewNode tag="HostCommandField">
-                                <ViewProxy type="javax.swing.JTextField"/>
-                                <BeanProperty name="text" value=""/>
-                                <BeanProperty height="50" name="maximumSize" width="2147483647"/>
-                                <BeanProperty name="toolTipText" value="Host command template"/>
+                        <ViewNode tag="HostCommandEditor">
+                            <ViewProxy type="javax.swing.Box_Vertical"/>
+                            <BorderNode tag="Titled Border">
+                                <BorderProxy type="javax.swing.border.TitledBorder"/>
+                                <BeanProperty name="title" value="Commands Editor"/>
+                            </BorderNode>
+                            <ViewNode tag="CommandBox">
+                                <ViewProxy type="javax.swing.Box_Vertical"/>
+                                <BorderNode tag="Titled Border">
+                                    <BorderProxy type="javax.swing.border.TitledBorder"/>
+                                    <BeanProperty name="title" value="Command and Arguments"/>
+                                </BorderNode>
+                                <ViewNode tag="Scroll Pane">
+                                    <ViewProxy type="javax.swing.JScrollPane"/>
+                                    <ViewNode tag="HostCommandTable">
+                                        <ViewProxy type="javax.swing.JTable"/>
+                                    </ViewNode>
+                                </ViewNode>
+                                <ViewNode tag="HostCommandButtons">
+                                    <ViewProxy type="javax.swing.Box_Horizontal"/>
+                                    <ViewNode tag="DeleteHostCommandButton">
+                                        <ViewProxy type="javax.swing.JButton"/>
+                                        <BeanProperty group="table" iconName="RowDelete24.gif" name="icon"/>
+                                        <BeanProperty name="text" value=""/>
+                                        <BeanProperty name="toolTipText" value="Delete the selected commands"/>
+                                    </ViewNode>
+                                    <ViewNode tag="AddHostCommandButton">
+                                        <ViewProxy type="javax.swing.JButton"/>
+                                        <BeanProperty group="table" iconName="RowInsertAfter24.gif" name="icon"/>
+                                        <BeanProperty name="text" value=""/>
+                                        <BeanProperty name="toolTipText" value="Add a command"/>
+                                    </ViewNode>
+                                    <ViewNode tag="Horizontal Glue">
+                                        <ViewProxy type="javax.swing.Box_HorizontalGlue"/>
+                                    </ViewNode>
+                                </ViewNode>
                             </ViewNode>
                         </ViewNode>
                     </ViewNode>
