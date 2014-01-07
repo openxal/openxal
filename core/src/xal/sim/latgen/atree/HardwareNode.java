@@ -25,7 +25,8 @@ import xal.tools.math.MathException;
  * 
  * 
  * @author Christopher K. Allen
- * @since  Feb 25, 2004
+ * @since  Feb 2004
+ * @version Apr 2011
  *
  */
 public class HardwareNode extends TreeNode {
