@@ -192,13 +192,14 @@ public class Rule implements DataListener {
 		setPattern( adaptor.stringValue( "pattern" ) );
 
 		// commands are specified in one of two styles
-		// 1) new style is a series of "command" elements nested inside of a single "commands" array element
-		// 2) old style is a single command line specified with a single "command" element
-		if ( adaptor.hasAttribute( "commands" ) ) {
-			final List<DataAdaptor> commandAdaptors = adaptor.childAdaptors( "commands" );
-			final List<String> commands = new ArrayList<String>( commandAdaptors.size() );
+		// 1) new style is a series of "command" elements nested inside of the Rules adaptor
+		// 2) old style is a single command line specified as an attribute of the Rules adaptor
+		final List<DataAdaptor> commandAdaptors = adaptor.childAdaptors( "command" );
+		final int commandCount = commandAdaptors.size();
+		if ( commandCount > 0 ) {
+			final List<String> commands = new ArrayList<String>( commandCount );
 			for ( final DataAdaptor commandAdaptor : commandAdaptors ) {
-				commands.add( commandAdaptor.stringValue( "command" ) );
+				commands.add( commandAdaptor.stringValue( "value" ) );
 			}
 			setCommands( commands );
 		}
@@ -231,10 +232,9 @@ public class Rule implements DataListener {
     public void write( final DataAdaptor adaptor ) {
 		adaptor.setValue( "pattern", _pattern );
 
-		final DataAdaptor commandsAdaptor = adaptor.createChild( "commands" );
 		for ( final String command : _commands ) {
-			final DataAdaptor commandAdaptor = commandsAdaptor.createChild( "command" );
-			commandAdaptor.setValue( "command", command );
+			final DataAdaptor commandAdaptor = adaptor.createChild( "command" );
+			commandAdaptor.setValue( "value", command );
 		}
 
 		adaptor.setValue( "kind", _kind );

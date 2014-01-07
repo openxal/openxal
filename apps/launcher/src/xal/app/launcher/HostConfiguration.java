@@ -135,19 +135,20 @@ public class HostConfiguration implements DataListener {
      */
     public void update( final DataAdaptor adaptor ) {
 		// commands are specified in one of two styles
-		// 1) new style is a series of "command" elements nested inside of a single "commands" array element
-		// 2) old style is a single command line specified with a single "commandTemplate" element
-		if ( adaptor.hasAttribute( "commands" ) ) {
-			final List<DataAdaptor> commandAdaptors = adaptor.childAdaptors( "commands" );
-			final List<String> commands = new ArrayList<String>( commandAdaptors.size() );
+		// 1) new style is a series of "command" elements nested inside of the HostConfiguration adaptor
+		// 2) old style is a single command line specified as an attribute of the HostConfiguration adaptor
+		final List<DataAdaptor> commandAdaptors = adaptor.childAdaptors( "command" );
+		final int commandCount = commandAdaptors.size();
+		if ( commandCount > 0 ) {
+			final List<String> commands = new ArrayList<String>( commandCount );
 			for ( final DataAdaptor commandAdaptor : commandAdaptors ) {
-				commands.add( commandAdaptor.stringValue( "command" ) );
+				commands.add( commandAdaptor.stringValue( "value" ) );
 			}
 			setCommands( commands );
 		}
-		else if ( adaptor.hasAttribute( "commandTemplate" ) ) {		// old style
+		else if ( adaptor.hasAttribute( "command" ) ) {		// old style
 			// if the command is specified as a single line then split it by white space to get the command array
-			final String commandLine = adaptor.stringValue( "commandTemplate" );
+			final String commandLine = adaptor.stringValue( "command" );
 			if ( commandLine != null && commandLine.length() > 0 ) {
 				final String[] commandLineArray = commandLine.split( "\\w" );
 				final List<String> commands = new ArrayList<>( commandLineArray.length );
@@ -160,7 +161,7 @@ public class HostConfiguration implements DataListener {
 				setCommands( new ArrayList<String>() );
 			}
 		}
-		
+
 		final List<DataAdaptor> settingAdaptors = adaptor.childAdaptors( HostSetting.DATA_LABEL );
 		HOST_SETTINGS.clear();
 		for ( final DataAdaptor settingAdaptor : settingAdaptors ) {
@@ -178,10 +179,9 @@ public class HostConfiguration implements DataListener {
      * @param adaptor The data adaptor corresponding to this object's data node.
      */
     public void write( final DataAdaptor adaptor ) {
-		final DataAdaptor commandsAdaptor = adaptor.createChild( "commands" );
 		for ( final String command : _commands ) {
-			final DataAdaptor commandAdaptor = commandsAdaptor.createChild( "command" );
-			commandAdaptor.setValue( "command", command );
+			final DataAdaptor commandAdaptor = adaptor.createChild( "command" );
+			commandAdaptor.setValue( "value", command );
 		}
 		adaptor.writeNodes( HOST_SETTINGS );
     }
