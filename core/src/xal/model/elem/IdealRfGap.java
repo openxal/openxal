@@ -99,12 +99,14 @@ public class IdealRfGap extends ThinElement implements IRfGap {
 	private double m_dblFreq = 0.0;
 
     
+    /** CKA: This should be a property of the probe. Not a static variable in the element????? */
     /** Holder for the upstream gap phase. This is used when dynamically 
     * determining the phase advance from gap to gap, using the elapsed
     * time attribute from the probe. You still need this info, to 
     * determine what phase to "slip" from [rad] */
     static private double upstreamExitPhase = 0.;
     
+    /** CKA: This should be a property of the probe. Not a static variable in the element????? */
     /** the time the probe leaves the upstream gap. Used to 
     * calculate the phasew advance when gaps have drifts between them.
     */
@@ -118,7 +120,8 @@ public class IdealRfGap extends ThinElement implements IRfGap {
     
     /** the accelerating cell length  */
     private double cellLength = 0.;
-    
+
+    /** CKA: Why is phi0 a class variable????  It's used only locally in transferMap(). */
     /** the phase at the cell center (used when calculating the phase advance) */
     private double phi0 = 0.;
     
@@ -491,7 +494,7 @@ public class IdealRfGap extends ThinElement implements IRfGap {
         double Q   = Math.abs( probe.getSpeciesCharge() );
         
         theEnergyGain = Q*EL*Math.cos(phi0) * TTFFit.evaluateAt(bc);
-//        System.out.println("theEnergyGain = " + theEnergyGain + ", EL = " + EL + ", TTF = " + TTFFit.evaluateAt(bc) + ", bc = " + bc);
+        System.out.println("theEnergyGain = " + theEnergyGain + ", EL = " + EL + ", TTF = " + TTFFit.evaluateAt(bc) + ", bc = " + bc);
         
         //this means phi0 = 0 has max. acceleartion
         
