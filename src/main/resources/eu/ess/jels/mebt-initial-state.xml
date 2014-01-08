@@ -1,0 +1,10 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<state id="" type="xal.model.probe.traj.EnvelopeProbeState">
+    <species Er="9.3829431E8" q="-1.0"/>
+    <location W="3000000.0" elem="" s="0.0" t="0.0"/>
+    <beam I="0.0" f="0.0" phase="(0.0,0.0,0.0)"/>
+    <envelope 
+        alphaX="-0.1763" betaX="0.2442" emitX="2.621516138971707E-6"
+        alphaY="-0.3247" betaY="0.3974" emitY="2.612769421634814E-6" 
+        alphaZ="-0.5283" betaZ="0.8684" emitZ="3.562413018211791E-6"/>
+</state>

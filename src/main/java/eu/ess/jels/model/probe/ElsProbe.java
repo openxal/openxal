@@ -64,6 +64,11 @@ public class ElsProbe extends GapEnvelopeProbe {
 		return CovarianceMatrix.buildCorrelation(twiss[0], twiss[1], twiss[2]);		
 	}
 	
+	public void setCorrelation(CovarianceMatrix matTau) {
+		initFromTwiss(matTau.computeTwiss());
+	};
+
+	
 	@Override
 	public void reset()
 	{

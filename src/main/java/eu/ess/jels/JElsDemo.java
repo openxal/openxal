@@ -9,14 +9,10 @@ import javax.swing.JFrame;
 
 import xal.model.Lattice;
 import xal.model.ModelException;
-import xal.model.alg.DiagnosticTracker;
 import xal.model.alg.EnvelopeTracker;
 import xal.model.alg.Tracker;
-import xal.model.probe.DiagnosticProbe;
 import xal.model.probe.EnvelopeProbe;
 import xal.model.probe.Probe;
-import xal.model.probe.SynchronousProbe;
-import xal.model.probe.TwissProbe;
 import xal.model.probe.traj.EnvelopeProbeState;
 import xal.model.probe.traj.ProbeState;
 import xal.model.probe.traj.Trajectory;
@@ -24,22 +20,19 @@ import xal.model.xml.LatticeXmlWriter;
 import xal.model.xml.ParsingException;
 import xal.model.xml.ProbeXmlParser;
 import xal.model.xml.ProbeXmlWriter;
-import xal.sim.scenario.AlgorithmFactory;
 import xal.sim.scenario.DefaultElementMapping;
 import xal.sim.scenario.ElementMapping;
 import xal.sim.scenario.ElsElementMapping;
-import xal.sim.scenario.ProbeFactory;
+import xal.sim.scenario.JElsElementMapping;
 import xal.sim.scenario.Scenario;
 import xal.sim.scenario.ScenarioGenerator2;
-import xal.sim.scenario.JElsElementMapping;
 import xal.smf.Accelerator;
 import xal.smf.AcceleratorSeq;
 import xal.smf.data.XMLDataManager;
-import xal.smf.proxy.ElectromagnetPropertyAccessor;
 import xal.tools.beam.Twiss;
-import xal.tools.beam.Twiss3D;
 import xal.tools.plot.BasicGraphData;
 import xal.tools.plot.FunctionGraphsJPanel;
+import xal.tools.xml.XmlDataAdaptor;
 import eu.ess.jels.model.alg.ElsTracker;
 import eu.ess.jels.model.probe.ElsProbe;
 import eu.ess.jels.model.probe.GapEnvelopeProbe;
@@ -63,7 +56,7 @@ public class JElsDemo {
 				
 		// Setup of initial parameters
 		setupInitialParameters(probe);
-				
+        //loadInitialParameters(probe, "mebt-initial-state.xml");				
 		
 		// Loads accelerator
 		AcceleratorSeq sequence = loadAcceleratorSequence();
@@ -198,9 +191,17 @@ public class JElsDemo {
 		// probe.setBunchFrequency(4.025e8); 	
 	}
 	
+	public static void loadInitialParameters(EnvelopeProbe probe, String file) {
+		XmlDataAdaptor document = XmlDataAdaptor.adaptorForUrl( JElsDemo.class.getResource(file).toString(), false);
+        EnvelopeProbeState state = new EnvelopeProbeState();
+        state.load(document.childAdaptor("state"));
+        probe.applyState(state);     
+	}
+	
 	private static Probe loadProbeFromXML(String file) {
 		try {			
 			Probe probe = ProbeXmlParser.parse(file);
+			
 			return probe;
 		} catch (ParsingException e1) {
 			e1.printStackTrace();
@@ -208,8 +209,9 @@ public class JElsDemo {
 		return null;
 	}
 
-	private static void saveProbe(Probe probe, String file) {
+	private static void saveProbe(EnvelopeProbe probe, String file) {		
 		try {
+			probe.setSaveTwissFlag(true);
 			ProbeXmlWriter.writeXml(probe, file);			
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -218,7 +220,7 @@ public class JElsDemo {
 	}
 
 	private static void saveLattice(Lattice lattice, String file) {		
-		lattice.setAuthor("ESS");		
+		lattice.setAuthor(System.getProperty("user.name", "ESS"));		
 		try {
 			LatticeXmlWriter.writeXml(lattice, file);
 		} catch (IOException e1) {
