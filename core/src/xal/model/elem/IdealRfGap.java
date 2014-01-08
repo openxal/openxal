@@ -11,17 +11,10 @@ import xal.model.IElement;
 import xal.model.IModelDataSource;
 import xal.model.IProbe;
 import xal.model.ModelException;
-import xal.model.probe.EnvelopeProbe;
 import xal.model.source.RfGapDataSource;
-
 import xal.tools.beam.PhaseMap;
 import xal.tools.beam.PhaseMatrix;
 import xal.tools.beam.RelativisticParameterConverter;
-import xal.tools.beam.TraceXalUnitConverter;
-import xal.tools.beam.Twiss;
-
-import xal.tools.beam.CovarianceMatrix;
-
 import xal.tools.math.poly.UnivariateRealPolynomial;
 
 /**
@@ -99,14 +92,22 @@ public class IdealRfGap extends ThinElement implements IRfGap {
 	private double m_dblFreq = 0.0;
 
     
-    /** CKA: This should be a property of the probe. Not a static variable in the element????? */
+    /*********************************
+     *  
+     * CKA: This should be a property of the probe. Not a static variable in the element?
+     * <br/>
+     * Moreover, it's never modified.  It retains the value 0 throughout it's existence so
+     * it's not really used anyway. It appears to have been used in the past but commented
+     * out in the method elapsedTime(IProbe).
+     */
+	
     /** Holder for the upstream gap phase. This is used when dynamically 
     * determining the phase advance from gap to gap, using the elapsed
     * time attribute from the probe. You still need this info, to 
     * determine what phase to "slip" from [rad] */
     static private double upstreamExitPhase = 0.;
     
-    /** CKA: This should be a property of the probe. Not a static variable in the element????? */
+    /** CKA: This should be a property of the probe. Not a static variable in the element? */
     /** the time the probe leaves the upstream gap. Used to 
     * calculate the phasew advance when gaps have drifts between them.
     */
@@ -121,7 +122,7 @@ public class IdealRfGap extends ThinElement implements IRfGap {
     /** the accelerating cell length  */
     private double cellLength = 0.;
 
-    /** CKA: Why is phi0 a class variable????  It's used only locally in transferMap(). */
+    /** CKA: Why is phi0 a class variable?  It's used only locally in transferMap(). */
     /** the phase at the cell center (used when calculating the phase advance) */
     private double phi0 = 0.;
     
@@ -434,6 +435,15 @@ public class IdealRfGap extends ThinElement implements IRfGap {
     }
     
     
+    /**
+     * CKA:  The variable phi0 is computed incorrectly.  I don't know why, but I assume it
+     * has something to do with the method of monitoring the time of flight between gaps
+     * (and RF phase advance during that time).  A more robust technique of doing this would probably
+     * involve using the probe itself to do this; elements should not be "aware" of each other, a 
+     * consequence of this static variable method.  In the Element/Algorithm/Probe architecture,
+     * it is the job  of the probe to be aware of the modeling elements.
+     * 
+     */
     /** 
      * Routine to calculate the energy gain along with the phase advanve     
      * a method that is called once by transferMatrix to calculate the energy gain.
@@ -750,6 +760,9 @@ public class IdealRfGap extends ThinElement implements IRfGap {
      
      
     /**
+     * CKA:  I commented out some code that was never used.
+     */
+    /**
      * <p>
      *  Get the transverse focusing constant for a particular probe.  The focusing constant 
      *  is used in the construction of the transfer matrix for the RF gap.  A gap provides
@@ -900,7 +913,11 @@ public class IdealRfGap extends ThinElement implements IRfGap {
     
     
 
-    boolean phaseSpreadT3d = false; //default = false;
+    /**
+     * CKA: I commented out all the deprecated methods and the local variable below that is 
+     * consequently never used.
+     */
+//    boolean phaseSpreadT3d = false; //default = false;
 
 //    /** 
 //     * <p>
