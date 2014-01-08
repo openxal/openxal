@@ -116,10 +116,10 @@ public class IdealMagSkewQuad3 extends ThickElement implements IElectromagnet {
      */
 
     
-    /** Phase coordinate rotation in SO(6) taking beam coords to natural quad coordinates */
+    /** Phase coordinate rotation in SO(6) taking beam coordinates to natural quadrupole coordinates */
     private static PhaseMatrix  MAT_SO6_TOQUAD_COORDS;
     
-    /** Phase coordinate rotation in SO(6) natural quad coordinates to beam coordinates */
+    /** Phase coordinate rotation in SO(6) natural quadrupole coordinates to beam coordinates */
     private static PhaseMatrix  MAT_SO6_TOBEAM_COORDS;
     
 
@@ -262,6 +262,7 @@ public class IdealMagSkewQuad3 extends ThickElement implements IElectromagnet {
      *
      *  @param  dblField    magnetic field (in <b>Tesla/meter</b>).
      */
+    @Override
     public void setMagField(double dblField) {
         this.dblField = dblField;
     };
@@ -274,6 +275,7 @@ public class IdealMagSkewQuad3 extends ThickElement implements IElectromagnet {
      *
      *  @return     magnetic field gradient (in <b>Tesla/meter</b>).
      */
+    @Override
     public double getMagField() {
         return this.dblField;
     };
@@ -287,9 +289,17 @@ public class IdealMagSkewQuad3 extends ThickElement implements IElectromagnet {
      *  object <b>cannot</b> change.  Thus, this method will always return the
      *  value <code>IElectromagnet.ORIENT_NONE</code>
      * </p>
+     * <p>
+     *  NOTE:
+     *  <br>The magnet orientation property has no effect upon the operation of the
+     *  modeling element.  This method is needed to satisfy the
+     *  <code>IElectromagnet</code> interface, which should be 
+     *  re-designed because of this fact.
+     *  </p>
      *  
      *  @return     the value <code>IElectromagnet.ORIENT_NONE</code>
      */
+    @Override
     public int getOrientation() {
         return IElectromagnet.ORIENT_NONE;
     };
@@ -310,6 +320,7 @@ public class IdealMagSkewQuad3 extends ThickElement implements IElectromagnet {
      *
      *  @see    IdealMagSkewQuad3#getOrientation
      */
+    @Override
     public void setOrientation(int enmOrient) {};
 
     

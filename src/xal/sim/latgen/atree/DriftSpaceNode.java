@@ -22,6 +22,8 @@ import xal.tools.math.MathException;
  * </p>
  * 
  * @author Christopher K. Allen
+ * @since  Feb 2004
+ * @version Apr 2011
  */
 public class DriftSpaceNode extends TreeNode {
 
