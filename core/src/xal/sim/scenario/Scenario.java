@@ -51,8 +51,7 @@ public class Scenario {
         syncManager = aSyncMgr;
     }
     
-
-    /**
+	 /**
      * Creates a new Scenario for the supplied accelerator sequence.
      * 
      * @param smfSeq    the accelerator sequence to build a scenario for
@@ -60,18 +59,26 @@ public class Scenario {
      * @throws          ModelException error building Scenario
      */
     public static Scenario newScenarioFor( final AcceleratorSeq smfSeq ) throws ModelException {
-        // Check if hardware sequence is actually a ring
-        if (smfSeq instanceof Ring) {
-            Ring    smfRing = (Ring)smfSeq;
-            return Scenario.newScenarioFor(smfRing);
-        }
-        
-        // We have a linear accelerator/transport line - process as such
+       // We have a linear accelerator/transport line - process as such
         ScenarioGenerator generator = new ScenarioGenerator(smfSeq);
         return generator.generateScenario();
     }
-    
 	
+	 /**
+     * Creates a new Scenario for the supplied accelerator sequence and element mapping.
+     * 	 
+     * @param smfSeq    the accelerator sequence to build a scenario for
+	 * @param elementMapping    the element mapping to build a scenario with
+     * @return          a new Scenario for the supplied accelerator sequence
+     * @throws          ModelException error building Scenario
+     */
+    public static Scenario newScenarioFor( final AcceleratorSeq smfSeq, ElementMapping elementMapping ) throws ModelException {
+       // We have a linear accelerator/transport line - process as such
+        ScenarioGenerator generator = new ScenarioGenerator(smfSeq, elementMapping);
+        return generator.generateScenario();
+    }
+
+
     /**
      * Creates a new <code>Scenario</code> object for the explicit case where
      * the <code>AcceleratorSeq</code> object is of type 
@@ -83,18 +90,11 @@ public class Scenario {
      * @throws ModelException   unable to build modeling scenario
      */
     public static Scenario  newScenarioFor( final Ring smfRing ) throws ModelException {
-        ScenarioGenerator genScen = new ScenarioGenerator(smfRing);
+        ScenarioGenerator genScen = new ScenarioGenerator( smfRing );
         return genScen.generateScenario(); 
     }
 
-	
-    public static Scenario newAndImprovedScenarioFor(AcceleratorSeq aSeq) 
-            throws ModelException 
-    {
-        NewAndImprovedScenarioGenerator generator = new NewAndImprovedScenarioGenerator(aSeq);
-        return generator.generateScenario();
-    }       
-    
+
     // Model Operations ========================================================
     
     /**

@@ -42,12 +42,16 @@ public abstract class CalculationEngine {
 
 
     /** small number used to determine the conditioning of the linear system */
-    static final private double    DBL_EPS = 1.0e-6;
+    static final private double         DBL_EPS = 1.0e-6;
     
     /** the number 2&pi; */
-    static final private double     DBL_2PI = 2 * Math.PI;
+    static final private double         DBL_2PI = 2 * Math.PI;
     
-
+    /** The zero vector that we use for comparisons for numerical checks */
+    static final private R4             VEC_ZERO = R4.newZero();
+    
+    
+    
     /** This is an artifact of <code>TransferMapState</code> number of (phase plane) modes */
     static final private int NUM_MODES = 3;
 
@@ -790,13 +794,20 @@ public abstract class CalculationEngine {
     
             // Extract the transverse divergence-angle vector
             R6    vecdP = matPhi.projectColumn(IND.Zp);
+    
+            // Convert it to transverse momentum 
             R4    vecdp = new R4();
             vecdP.projectOnto(vecdp);
-    
-            // Convert it to momentum
+            
             vecdp.timesEquals( 1.0/(dblGamma*dblGamma) );
     
-    
+            
+            // Check if there is no momemtum spread
+            //  If not, return the zero vector
+            if ( vecdp.isEquivalentTo(VEC_ZERO) )
+                return vecdp;
+
+            
             // Extract the transverse phase space transfer matrix
             //    then set up the fixed point system.
             R4x4  matT = matPhi.projectR4x4();

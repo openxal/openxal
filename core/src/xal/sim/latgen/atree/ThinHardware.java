@@ -14,6 +14,7 @@ import xal.smf.AcceleratorNode;
  * nodes in the proxy tree may <b>not</b> have child nodes.  
  * 
  * @author Christopher K. Allen
+ * @since  Feb 2004
  *
 // * @deprecated  I don't think this is really necessary any more.
  */
