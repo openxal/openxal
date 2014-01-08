@@ -34,7 +34,7 @@ public class Launcher implements DataListener {
 	protected final LaunchBoardListener MESSAGE_BOARD_PROXY;
 	
 	/** environment used to launch applications */
-	private final String[] APP_ENVIRONMENT;
+	private final Map<String,String> APP_ENVIRONMENT;
 	
 	/** host configuration */
 	protected HostConfiguration _hostConfiguration;
@@ -61,7 +61,7 @@ public class Launcher implements DataListener {
 	
 	
 	/** determine the Class Path to use for application environments  */
-	private String[] determineEnvironment() {
+	private Map<String,String> determineEnvironment() {
 		try {
 			// grab the current environment
 			final Map<String,String> environment = new HashMap<String,String>( System.getenv() );
@@ -94,15 +94,8 @@ public class Launcher implements DataListener {
 						System.out.println( "Constructed CLASSPATH: " + classPath );
 					}
 				}
-				
-				final int count = environment.size();
-				final String[] assignments = new String[count];
-				int index = 0;
-				for ( final String name : environment.keySet() ) {
-					assignments[index++] = name + "=" + environment.get( name );
-				}
-				
-				return assignments;
+
+				return environment;
 			}
 		}
 		catch ( Exception exception ) {
@@ -148,8 +141,8 @@ public class Launcher implements DataListener {
 	 * Execute the specified command
 	 * @param command the command to execute
 	 */
-	private Process process( final String command ) throws java.io.IOException {
-		System.out.println( "Executing: " + command );
+	private Process process( final List<String> commands ) throws java.io.IOException {
+		System.out.println( "Executing: " + commands );
 		/*
 		if ( APP_ENVIRONMENT != null ) {
 			System.out.println( "With Environment: " );
@@ -159,16 +152,22 @@ public class Launcher implements DataListener {
 		}
 		*/
 		
-		MESSAGE_BOARD_PROXY.postMessage( this, "Executing: " + command );
+		MESSAGE_BOARD_PROXY.postMessage( this, "Executing: " + commands );
+
+		final ProcessBuilder executor = new ProcessBuilder( commands );
+		final Map<String,String> environment = executor.environment();
+		if ( APP_ENVIRONMENT != null ) {
+			environment.putAll( APP_ENVIRONMENT );
+		}
 		
-		final Process process = Runtime.getRuntime().exec( command, APP_ENVIRONMENT );
+		final Process process = executor.start();
 		
 		// We must flush the subprocess's standard out and standard err streams or else the subprocess will hang if either of its stream buffers becomes full.
 		// Closing the streams also seems to work, but surprisingly results in much slower IO for the child process.
 		BufferFlusher.monitorAndFlushStandardStreams( process );
 		
-		MESSAGE_BOARD_PROXY.postMessage( this, "Executed:  " + command );
-		System.out.println( "Executed: " + command );
+		MESSAGE_BOARD_PROXY.postMessage( this, "Executed:  " + commands );
+		System.out.println( "Executed: " + commands );
 		
 		return process;
 	}
@@ -187,9 +186,9 @@ public class Launcher implements DataListener {
 
 		application.setLastLaunchTime( new Date() );
 
-		final String appCommand = application.getCommand();
-		final String command = _hostConfiguration.getCommand( host, appCommand );
-		return process( command );
+		final List<String> appCommands = application.getCommands();
+		final List<String> commands = _hostConfiguration.getCommands( host, appCommands );
+		return process( commands );
 	}
  	
 	

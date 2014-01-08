@@ -19,6 +19,9 @@ import java.util.regex.Pattern;
 
 /** Watches specified folders for new files of particular types */
 public class FileWatcher implements DataListener {
+	/** Name of the library folder to skip during deep searches under the watched directories. Library directories may contain scripts and jar files which should not be executed directly by the Launcher. */
+	static private final String LIBRARY_FOLDER_NAME = "lib";
+
 	/** default maximum folder depth for which to search for matching files */
 	static private final int DEFAULT_MAX_FOLDER_SEARCH_DEPTH = 1;
 	
@@ -127,7 +130,7 @@ public class FileWatcher implements DataListener {
 			final String resolvedPath = folder.getCanonicalPath();	// absolute path with links resolved
 			final File[] subFiles = folder.listFiles();
 			for ( final File subFile : subFiles ) {
-				if ( subFile.isDirectory() ) {		// deep search
+				if ( subFile.isDirectory() && !subFile.getName().equals( LIBRARY_FOLDER_NAME ) ) {		// deep search but skipping the library folder
 					// ignore hidden files and avoid cycles by checking that the sub folder is not an ancestor of the current folder
 					try {
 						if ( depth < DEFAULT_MAX_FOLDER_SEARCH_DEPTH && !subFile.isHidden() && !resolvedPath.startsWith( subFile.getCanonicalPath() ) ) {

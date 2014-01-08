@@ -125,17 +125,7 @@ public class LaunchModel implements DataListener {
 			postModifications();
 		}		
 	}
-	
-	
-	/** update the rule command at the specified location */
-	public void updateRuleCommandAt( final int index, final String command ) {
-		if ( index >= 0 && index < RULES.size() ) {
-			final Rule rule = RULES.get( index );
-			rule.setCommand( command );
-			postModifications();
-		}
-	}
-	
+
 	
 	/** delete the rule at the specified index */
 	public void deleteRuleAt( final int index ) {
@@ -195,9 +185,9 @@ public class LaunchModel implements DataListener {
 	/** preconfigure the model when initializing without a document file */
 	public void preConfigure() {
 		RULES.clear();
-		RULES.add( new Rule( "*.jar", "Application", "java -DuseDefaultAccelerator=true -jar %f" ) );
-		RULES.add( new Rule( "*.rb", "JRuby", "jruby %f" ) );
-		RULES.add( new Rule( "*.py", "Jython", "jython %f" ) );
+		RULES.add( new Rule( "*.jar", "Application", "java", "-DuseDefaultAccelerator=true", "-jar", "%f" ) );
+		RULES.add( new Rule( "*.rb", "JRuby", "jruby", "%f" ) );
+		RULES.add( new Rule( "*.py", "Jython", "jython", "%f" ) );
 		
 		FILE_WATCHER.preConfigure();
 		
