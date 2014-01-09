@@ -1,5 +1,9 @@
 package xal.sim.run;
 
+import java.io.File;
+import java.io.PrintWriter;
+
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -10,7 +14,10 @@ import xal.model.alg.TransferMapTracker;
 import xal.model.probe.EnvelopeProbe;
 import xal.model.probe.ParticleProbe;
 import xal.model.probe.TransferMapProbe;
+import xal.model.probe.traj.ProbeState;
+import xal.model.probe.traj.Trajectory;
 import xal.test.ResourceManager;
+import xal.tools.beam.calc.TestSimResultsAdaptor;
 import xal.sim.scenario.AlgorithmFactory;
 import xal.sim.scenario.ProbeFactory;
 import xal.sim.scenario.Scenario;
@@ -38,13 +45,22 @@ public class TestRunOnlineModel {
     
     /** URL of the accelerator hardware description file */
     static public String            STRL_URL_ACCEL   = ResourceManager.getTestAcceleratorURL().toString();
+
+    
+    /** Output file location */
+    static private String           STR_FILE_OUTPUT = TestRunOnlineModel.class.getName().replace('.', '/') + ".txt";
+    
+    
+    /** URL where we are dumping the output */
+    static public File              FILE_OUTPUT    = ResourceManager.getOutputFile(STR_FILE_OUTPUT);
     
     
     /** String identifier for accelerator sequence used in testing */
-    static public String            STR_SEQ_ID       = "HEBT1";
+//    static public String            STR_SEQ_ID       = "HEBT1";
+    static public String            STR_SEQ_ID       = "DTL";
     
-    /** String identifier where Courant-Snyder parameters are to be reconstructed */
-    static public String            STR_TARG_ELEM_ID = "Begin_Of_HEBT1";
+//    /** String identifier where Courant-Snyder parameters are to be reconstructed */
+//    static public String            STR_TARG_ELEM_ID = "Begin_Of_HEBT1";
     
     
     /*
@@ -71,6 +87,8 @@ public class TestRunOnlineModel {
     private static TransferMapProbe                 PROBE_XFER_TEST;
     
     
+    /** Persistent storage for test output */
+    private static PrintWriter                      WTR_OUTPUT;
     
     
     /*
@@ -101,6 +119,8 @@ public class TestRunOnlineModel {
             
             // Create and initialize transfer map probe
             PROBE_XFER_TEST = ProbeFactory.getTransferMapProbe(SEQ_TEST, new TransferMapTracker() );
+            
+            WTR_OUTPUT = new PrintWriter(FILE_OUTPUT);
 
         } catch (Exception e) {
             System.err.println("Unable to instantiate TransferMatrixObject");
@@ -108,6 +128,18 @@ public class TestRunOnlineModel {
         }
     }
 
+    /**
+     * Closes the output file stream.
+     * 
+     * @throws Exception
+     *
+     * @author Christopher K. Allen
+     * @since  Jan 7, 2014
+     */
+    @AfterClass
+    public static void tearDownAfterClass() throws Exception {
+        WTR_OUTPUT.close();
+    }
     
     
     
@@ -146,6 +178,8 @@ public class TestRunOnlineModel {
         MODEL_TEST.setProbe(PROBE_ENV_TEST);
         MODEL_TEST.resync();
         MODEL_TEST.run();
+        
+        this.saveSimData();
 	}
 	
     /**
@@ -163,6 +197,8 @@ public class TestRunOnlineModel {
         MODEL_TEST.setProbe(PROBE_PARTL_TEST);
         MODEL_TEST.resync();
         MODEL_TEST.run();
+        
+        this.saveSimData();
     }
     
     /**
@@ -180,5 +216,57 @@ public class TestRunOnlineModel {
         MODEL_TEST.setProbe(PROBE_XFER_TEST);
         MODEL_TEST.resync();
         MODEL_TEST.run();
+        
+        this.saveSimData();
+    }
+    
+    /*
+     * Support Methods
+     */
+
+    /**
+     * Write the current simulation data to disk.
+     *
+     * @author Christopher K. Allen
+     * @since  Jan 7, 2014
+     */
+    private void saveSimData() {
+
+        // Write out header line
+        String  strSimType = MODEL_TEST.getProbe().getClass().getName();
+        WTR_OUTPUT.println("DATA FOR SIMULATION WITH " + strSimType);
+        
+        // Write out the simulation data
+        Trajectory trjData = MODEL_TEST.getTrajectory();
+        
+        for (ProbeState state : trjData) {
+            WTR_OUTPUT.println(state);
+        }
+        
+        // Buffer for the next write
+        WTR_OUTPUT.println();
+        WTR_OUTPUT.flush();
+    }
+    
+    /**
+     * Prints the simulation data to stdout 
+     *
+     * @author Christopher K. Allen
+     * @since  Jan 7, 2014
+     */
+    private void printSimData() {
+
+        // Print out the kinetic energy profile to stdout
+        System.out.println("DATA FOR SIMULATION WITH " + MODEL_TEST.getProbe().getClass().getName());
+        Trajectory trjData = MODEL_TEST.getTrajectory();
+        
+        for (ProbeState state : trjData) {
+            
+            String strId = state.getElementId();
+            double dblW  = state.getKineticEnergy();
+            
+            System.out.println(strId + ": W = " + dblW);
+        }
+
     }
 }
