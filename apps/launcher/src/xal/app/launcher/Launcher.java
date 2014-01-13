@@ -238,6 +238,9 @@ class BufferFlusher implements Runnable {
 	
 	/** flag specifying whether the child process is still alive */
 	private volatile boolean _alive;
+
+	/** true indicates debug flag (xal.debug) set to true and false otherwise */
+	final private boolean DEBUG;
 	
 	
 	/**
@@ -246,6 +249,9 @@ class BufferFlusher implements Runnable {
 	public BufferFlusher(final InputStream stream, final Process process) {
 		_stream = stream;
 		_process = process;
+
+		final String debugFlag = System.getProperty( "xal.debug" );
+		DEBUG = debugFlag != null && Boolean.parseBoolean( debugFlag );
 	}
 	
 	
@@ -262,13 +268,25 @@ class BufferFlusher implements Runnable {
 	
 	/** code to execute */
 	public void run() {
+		final int BUFFER_SIZE = 1024;
+		final byte[] buffer = new byte[BUFFER_SIZE];
 		monitorProcessLife();
 		while(_alive) {
 			try {
 				synchronized(_stream) {
 					// must double check that the subprocess is alive to avoid reading a closed stream
 					if(_alive) {
-						_stream.read();
+						int count = _stream.read( buffer, 0, BUFFER_SIZE );
+						if ( count > 0 ) {
+							// output the text if in debug mode otherwise just ignore it to avoid overwhelming input from every launched and running application
+							if ( DEBUG ) {
+								final String output = new String( buffer, 0, count );
+								System.out.print( output );
+							}
+						}
+						else {
+							return;		// end of buffer reached
+						}
 					}
 				}
 			}
