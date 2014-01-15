@@ -33,7 +33,7 @@ import xal.smf.impl.RfGap;
  * @author Ivo List
  *
  */
-class DefaultElementMapping extends ElementMapping {
+public class DefaultElementMapping extends ElementMapping {
 	protected static ElementMapping instance;
 	
 	protected ElementConverter defaultConverter;
