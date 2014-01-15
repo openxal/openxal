@@ -2,6 +2,7 @@ package eu.ess.jels;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
@@ -24,7 +25,6 @@ import xal.sim.scenario.DefaultElementMapping;
 import xal.sim.scenario.ElementMapping;
 import xal.sim.scenario.ElsElementMapping;
 import xal.sim.scenario.Scenario;
-import xal.sim.scenario.ScenarioGenerator2;
 import xal.sim.scenario.JElsElementMapping;
 import xal.smf.AcceleratorSeq;
 import xal.tools.beam.CovarianceMatrix;
@@ -185,9 +185,8 @@ public abstract class TestCommon {
 		// Generates lattice from SMF accelerator
 		//Scenario scenario = Scenario.newScenarioFor(sequence);		
 		//Scenario scenario = Scenario.newAndImprovedScenarioFor(sequence);
-		ScenarioGenerator2 sg2 = new ScenarioGenerator2(sequence, elementMapping);
-		sg2.setHalfMag(false);
-		scenario = sg2.generateScenario();
+		
+		scenario = Scenario.newScenarioFor(sequence,  elementMapping);
 
 		// Outputting lattice elements
 		//new File("temp/").mkdirs();
@@ -227,7 +226,7 @@ public abstract class TestCommon {
 				}
 			}
 		}
-		pm.getFirstOrder().print();
+		pm.getFirstOrder().print(new PrintWriter(System.out));
 	}
 	
 
@@ -338,7 +337,7 @@ public abstract class TestCommon {
 		for (int i=0; i<6; i++)
 			for (int j=0; j<6; j++)
 				T77[i][j] = T[i][j];
-		PhaseMatrix pm77 = new PhaseMatrix(new Matrix(T77));
+		PhaseMatrix pm77 = new PhaseMatrix(T77);
 		double n = pm.getFirstOrder().minus(pm77).norm2()/pm77.norm2();
 		//pm.getFirstOrder().minus(new PhaseMatrix(new Matrix(T77))).print();
 		System.out.printf("TW transfer matrix diff: %E\n",n);
@@ -354,7 +353,7 @@ public abstract class TestCommon {
 			r.setElem(4, i, r.getElem(4,i)/gamma_end);
 			r.setElem(5, i, r.getElem(5,i)*gamma_end);			
 		}			
-		pm.setFirstOrder(r);
+		pm.setLinearPart(r);
 	}
 
 
@@ -406,8 +405,8 @@ public abstract class TestCommon {
 			for (int j=0; j<6; j++)
 				cov77[i][j] = cov[i][j];
 		CovarianceMatrix pcov = ((EnvelopeProbe)probe).getCovariance();
-		PhaseMatrix pcov77 = new PhaseMatrix(new Matrix(cov77));
-		double n = pcov.minus(new PhaseMatrix(new Matrix(cov77))).norm2()/pcov77.norm2();
+		PhaseMatrix pcov77 = new PhaseMatrix(cov77);
+		double n = pcov.minus(new PhaseMatrix(cov77)).norm2()/pcov77.norm2();
 		//pm.getFirstOrder().minus(new PhaseMatrix(new Matrix(T77))).print();
 		System.out.printf("TW cov matrix diff: %E\n",n);
 	}

@@ -4,17 +4,16 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
-import eu.ess.jels.model.probe.ElsProbe;
 import xal.model.ModelException;
 import xal.model.alg.EnvelopeTracker;
 import xal.model.alg.Tracker;
 import xal.model.probe.EnvelopeProbe;
 import xal.sim.scenario.Scenario;
-import xal.sim.scenario.ScenarioGenerator2;
 import xal.smf.Accelerator;
 import xal.smf.AcceleratorSeq;
 import xal.smf.data.XMLDataManager;
 import xal.tools.beam.Twiss;
+import eu.ess.jels.model.probe.ElsProbe;
 
 @RunWith(JUnit4.class)
 public class FileLoadTest {
@@ -22,9 +21,8 @@ public class FileLoadTest {
 	public void doTest() throws ModelException
 	{
 		AcceleratorSeq sequence = loadAcceleratorSequence("lebt");
-		
-		ScenarioGenerator2 sg2 = new ScenarioGenerator2(sequence);
-		Scenario scenario = sg2.generateScenario();
+				
+		Scenario scenario = Scenario.newScenarioFor(sequence);
 		
 		EnvelopeProbe probe = setupProbeViaJavaCalls();
 		scenario.setProbe(probe);									

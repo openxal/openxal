@@ -16,7 +16,7 @@ import xal.model.elem.IdealMagSkewQuad3;
 import xal.model.elem.IdealMagSolenoid;
 import xal.model.elem.IdealMagSteeringDipole;
 import xal.model.elem.Marker;
-import xal.smf.impl.Bend;
+import xal.smf.AcceleratorSeq;
 import xal.smf.impl.EDipole;
 import xal.smf.impl.EQuad;
 import xal.smf.impl.Electromagnet;
@@ -238,4 +238,5 @@ public class ElsElementMapping extends ElementMapping {
 		putMap("ws", defaultConverter);
 		putMap("marker", defaultConverter);
 	}
+
 }

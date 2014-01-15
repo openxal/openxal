@@ -1,11 +1,7 @@
 package eu.ess.jels;
 
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.util.Iterator;
-
-import javax.swing.JFrame;
 
 import xal.model.Lattice;
 import xal.model.ModelException;
@@ -25,13 +21,10 @@ import xal.sim.scenario.ElementMapping;
 import xal.sim.scenario.ElsElementMapping;
 import xal.sim.scenario.JElsElementMapping;
 import xal.sim.scenario.Scenario;
-import xal.sim.scenario.ScenarioGenerator2;
 import xal.smf.Accelerator;
 import xal.smf.AcceleratorSeq;
 import xal.smf.data.XMLDataManager;
 import xal.tools.beam.Twiss;
-import xal.tools.plot.BasicGraphData;
-import xal.tools.plot.FunctionGraphsJPanel;
 import xal.tools.xml.XmlDataAdaptor;
 import eu.ess.jels.model.alg.ElsTracker;
 import eu.ess.jels.model.probe.ElsProbe;
@@ -44,7 +37,6 @@ public class JElsDemo {
 	public static void main(String[] args) throws InstantiationException, ModelException {
 		System.out.println("Running\n");
 		
-		
 		// Setup (pick combination of elements and algorithm)
 		ElementMapping elementMapping = JElsElementMapping.getInstance(); // JELS element mapping - transfer matrices in OpenXal reference frame
 		//ElementMapping elementMapping = ElsElementMapping.getInstance(); // ELS element mapping - transfer matrices in TraceWin reference frame
@@ -52,8 +44,7 @@ public class JElsDemo {
 		
 		EnvelopeProbe probe = setupOpenXALProbe(); // OpenXAL probe & algorithm
 		//EnvelopeProbe probe = setupElsProbe(); // ELS probe & algorithm
-		
-				
+						
 		// Setup of initial parameters
 		setupInitialParameters(probe);
         //loadInitialParameters(probe, "mebt-initial-state.xml");				
@@ -62,7 +53,7 @@ public class JElsDemo {
 		AcceleratorSeq sequence = loadAcceleratorSequence();
 				
 		// Generates lattice from SMF accelerator
-		Scenario scenario = new ScenarioGenerator2(sequence, elementMapping).generateScenario();		
+		Scenario scenario = Scenario.newScenarioFor(sequence, elementMapping);		
 		scenario.setProbe(probe);			
 						
 		// Setting up synchronization mode
@@ -107,7 +98,7 @@ public class JElsDemo {
 		double [] by = new double[ns];
 		double [] bz = new double[ns];
 		double [] w = new double[ns];
-        BasicGraphData myDataX = new BasicGraphData();
+        //BasicGraphData myDataX = new BasicGraphData();
 		int i = 0;
     	while (iterState.hasNext())
      	{
@@ -117,11 +108,7 @@ public class JElsDemo {
 		    String elem=ps.getElementId() ;
 		    Twiss[] twiss;	
 		    
-			if (probe instanceof ElsProbe)
-				twiss = ps.getTwiss();
-			else 
-				twiss = ps.twissParameters();
-			
+			twiss = ps.twissParameters();			
 			
 		    bx[i] = twiss[0].getBeta();
 		    sx[i] = twiss[0].getEnvelopeRadius();
@@ -138,7 +125,7 @@ public class JElsDemo {
 		}
     	
     	
-    	final JFrame frame = new JFrame();
+    	/*final JFrame frame = new JFrame();
     	FunctionGraphsJPanel plot = new FunctionGraphsJPanel();
      	plot.setVisible(true);
   	    myDataX.addPoint(s, sx);
@@ -154,7 +141,7 @@ public class JElsDemo {
         });
         frame.add(plot);
         frame.setVisible(true);
-        frame.setDefaultCloseOperation(frame.DISPOSE_ON_CLOSE);      	
+        frame.setDefaultCloseOperation(frame.DISPOSE_ON_CLOSE);*/      	
 	}
 
 	private static EnvelopeProbe setupOpenXALProbe() {

@@ -23,7 +23,7 @@ public class ElsProbe extends GapEnvelopeProbe {
     @Override
 	public EnvelopeProbeState createProbeState() {
 		EnvelopeProbeState ps = new EnvelopeProbeState(this);
-		ps.setTwiss(getTwiss());
+		ps.setCovariance(getCovariance());
 		return ps;
 	}
 
@@ -47,8 +47,7 @@ public class ElsProbe extends GapEnvelopeProbe {
 	public void setEnvelope(Matrix envelope) {
 		this.envelope = envelope;
 	}
-
-	@Override
+	
 	public Twiss[] getTwiss()
 	{
 		Twiss[] twiss = new Twiss[3];

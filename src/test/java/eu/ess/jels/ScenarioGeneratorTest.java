@@ -10,7 +10,6 @@ import xal.model.Lattice;
 import xal.model.ModelException;
 import xal.model.xml.LatticeXmlWriter;
 import xal.sim.scenario.Scenario;
-import xal.sim.scenario.ScenarioGenerator2;
 import xal.smf.Accelerator;
 import xal.smf.AcceleratorSeq;
 import xal.smf.data.XMLDataManager;
@@ -26,13 +25,12 @@ public class ScenarioGeneratorTest {
 		
 		for (AcceleratorSeq sequence : accelerator.getSequences()) {			
 			// Generates lattice from SMF accelerator
-			//Scenario scenario = Scenario.newScenarioFor(sequence);
-			ScenarioGenerator2 sg = new ScenarioGenerator2(sequence);
+			//Scenario scenario = Scenario.newScenarioFor(sequence);			
 			//Scenario scenario = Scenario.newAndImprovedScenarioFor(sequence);
 			//ScenarioGenerator2 sg = new ScenarioGenerator2(sequence, NewAndImprovedScenarioElementMapping.getInstance());
-			sg.setDebug(true);
-			sg.setVerbose(true);
-			Scenario escenario = sg.generateScenario();
+			//sg.setDebug(true);
+			//sg.setVerbose(true);
+			Scenario escenario = Scenario.newScenarioFor(sequence);
 			//Scenario scenario = Scenario.newAndImprovedScenarioFor(sequence);
 			
 			// Ensure files
