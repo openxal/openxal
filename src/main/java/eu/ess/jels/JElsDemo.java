@@ -69,6 +69,19 @@ public class JElsDemo {
 		scenario.setSynchronizationMode(Scenario.SYNC_MODE_DESIGN);					
 		scenario.resync();
 		
+		// Manually changing magnet field
+		/*AcceleratorNode mag = sequence.getNodeWithId("MEBT-PBO_QV-1");
+		scenario.setModelInput(mag, ElectromagnetPropertyAccessor.PROPERTY_FIELD, 15);	
+		scenario.resync();*/
+				
+		// Manually changing rfcavity parameters
+		/*AcceleratorNode rfcavity = sequence.getNodeWithId("DTL-TANK-1-CELL-1");
+		scenario.setModelInput(rfcavity, 
+		    RfCavityPropertyAccessor.PROPERTY_AMPLITUDE, 17145); //was 17145.76
+		scenario.setModelInput(rfcavity, 
+		    RfCavityPropertyAccessor.PROPERTY_PHASE, -34); // was -35
+		scenario.resync();  // all rfgaps are updated*/		
+		
 		// Outputting lattice elements
 		//saveLattice(scenario.getLattice(), "lattice.xml");
 						
@@ -83,6 +96,9 @@ public class JElsDemo {
 		EnvelopeProbeState ps = (EnvelopeProbeState) trajectory.stateAtPosition(0); // I was forced to cast from ProbeState to EnvelopeProbeState		
 		Iterator<ProbeState> iterState= trajectory.stateIterator();
      
+		/*ProbeState ps1 = trajectory.stateForElement("MEBT-PBI_BPM-2a");
+		ProbeState ps2 = trajectory.stateAtPosition(101.2);*/
+		
 		int ns= trajectory.numStates();
 		
 		double [] s = new double[ns];
