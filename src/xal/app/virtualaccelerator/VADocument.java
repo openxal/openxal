@@ -756,17 +756,8 @@ public class VADocument extends AcceleratorDocument implements ActionListener, P
 			DataAdaptor da1 = xda.childAdaptor( "VA" );
             
 			//restore accelerator file
-			this.setAcceleratorFilePath( da1.childAdaptor( "accelerator" ).stringValue( "xmlFile" ) );
-            
-			String accelUrl = "file://" + this.getAcceleratorFilePath();
-			try {
-				XMLDataManager dMgr = new XMLDataManager(accelUrl);
-				this.setAccelerator( dMgr.getAccelerator(), this.getAcceleratorFilePath() );
-			} catch (Exception exception) {
-				JOptionPane.showMessageDialog( null, "Hey - I had trouble parsing the accelerator input xml file you fed me", "VA error", JOptionPane.ERROR_MESSAGE );
-			}
-			this.acceleratorChanged();
-            
+			applySelectedAcceleratorWithDefaultPath( da1.childAdaptor( "accelerator" ).stringValue( "xmlFile" ) );
+
 			// set up the right sequence combo from selected primaries:
 			List<DataAdaptor> temp = da1.childAdaptors( "sequences" );
 			if ( temp.isEmpty() )  return; // bail out, nothing left to do
