@@ -68,6 +68,9 @@ public class MachineSimulator implements DataListener {
     /** Set the sequence */
     public void setSequenceProbe( final AcceleratorSeq sequence, final Probe entranceProbe ) throws ModelException {
         if ( !_isRunning ) {
+			// make sure we clear the entrance probe if the sequence changes
+			if ( sequence != _sequence )  _entranceProbe = null;
+
             _sequence = sequence;
             
             _entranceProbe = entranceProbe != null ? copyProbe( entranceProbe ) : sequence != null ? getDefaultProbe( sequence ) : null;
@@ -86,7 +89,6 @@ public class MachineSimulator implements DataListener {
         if ( _sequence != null ) {
             _scenario = Scenario.newScenarioFor( _sequence );
             _scenario.setSynchronizationMode( Scenario.SYNC_MODE_DESIGN );
-            _scenario.setProbe( _entranceProbe );
         }
         else {
             _scenario = null;
@@ -106,10 +108,8 @@ public class MachineSimulator implements DataListener {
      * @return new probe constructed from the given probe
      */
     static private Probe copyProbe( final Probe entranceProbe ) {
-        final Probe probe = Probe.newProbeInitializedFrom( entranceProbe );
-        // todo: need to copy the probe's tracker if we can to avoid editing the shared probe tracker elsewhere
+        final Probe probe = entranceProbe.copy();		// performs a deep copy of the probe including algorithm
         probe.initialize();
-        
         return probe;
     }
 	
@@ -121,9 +121,6 @@ public class MachineSimulator implements DataListener {
 	public void setEntranceProbe( final Probe entranceProbe ) {
 		if ( !_isRunning ) {
 			_entranceProbe = copyProbe( entranceProbe );
-			if ( _scenario != null ) {
-				_scenario.setProbe( _entranceProbe );
-			}
 		}
 		else {
 			throw new RuntimeException( "Can't change probe while a simulation is in progress!" );
@@ -188,7 +185,8 @@ public class MachineSimulator implements DataListener {
 	static public Probe getDefaultProbe( final AcceleratorSeq sequence ) {
 		try {
 			final Probe probe = ( sequence instanceof Ring ) ? createRingProbe( sequence ) : createEnvelopeProbe( sequence );
-			probe.getAlgorithm().setRfGapPhaseCalculation( true );	// make sure we enable the full RF gap phase slip calculation
+			// TODO: need to re-enable the full RF gap phase slip calculation when that code is fixed
+			//probe.getAlgorithm().setRfGapPhaseCalculation( true );	// make sure we enable the full RF gap phase slip calculation
 			return probe;
 		}
 		catch( InstantiationException exception ) {
@@ -229,11 +227,12 @@ public class MachineSimulator implements DataListener {
 	public MachineSimulation run() {
 		try {
 			_isRunning = true;
-			_entranceProbe.reset();            
-			_scenario.resync();			
+			final Probe probe = copyProbe( _entranceProbe );		// perform a deep copy of the entrance probe leaving the entrance probe unmodified
+            _scenario.setProbe( probe );
+			_scenario.resync();
 			_scenario.run();
 			
-			return new MachineSimulation( _entranceProbe );
+			return new MachineSimulation( probe );
 		}
 		catch( Exception exception ) {
 			Logger.getLogger(Logger.GLOBAL_LOGGER_NAME).log( Level.SEVERE, "Exception running the online model.", exception );
