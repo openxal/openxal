@@ -11,10 +11,17 @@ import xal.model.IElement;
 import xal.model.IModelDataSource;
 import xal.model.IProbe;
 import xal.model.ModelException;
+import xal.model.probe.EnvelopeProbe;
 import xal.model.source.RfGapDataSource;
+
 import xal.tools.beam.PhaseMap;
 import xal.tools.beam.PhaseMatrix;
 import xal.tools.beam.RelativisticParameterConverter;
+import xal.tools.beam.TraceXalUnitConverter;
+import xal.tools.beam.Twiss;
+
+import xal.tools.beam.CovarianceMatrix;
+
 import xal.tools.math.poly.UnivariateRealPolynomial;
 
 /**
@@ -92,22 +99,12 @@ public class IdealRfGap extends ThinElement implements IRfGap {
 	private double m_dblFreq = 0.0;
 
     
-    /*********************************
-     *  
-     * CKA: This should be a property of the probe. Not a static variable in the element?
-     * <br/>
-     * Moreover, it's never modified.  It retains the value 0 throughout it's existence so
-     * it's not really used anyway. It appears to have been used in the past but commented
-     * out in the method elapsedTime(IProbe).
-     */
-	
     /** Holder for the upstream gap phase. This is used when dynamically 
     * determining the phase advance from gap to gap, using the elapsed
     * time attribute from the probe. You still need this info, to 
     * determine what phase to "slip" from [rad] */
     static private double upstreamExitPhase = 0.;
     
-    /** CKA: This should be a property of the probe. Not a static variable in the element? */
     /** the time the probe leaves the upstream gap. Used to 
     * calculate the phasew advance when gaps have drifts between them.
     */
@@ -121,8 +118,7 @@ public class IdealRfGap extends ThinElement implements IRfGap {
     
     /** the accelerating cell length  */
     private double cellLength = 0.;
-
-    /** CKA: Why is phi0 a class variable?  It's used only locally in transferMap(). */
+    
     /** the phase at the cell center (used when calculating the phase advance) */
     private double phi0 = 0.;
     
@@ -183,22 +179,8 @@ public class IdealRfGap extends ThinElement implements IRfGap {
 
 
     
-    /**
-     * <p> 
-     * return whether this gap is the initial gap of a cavity
-     * </p>
-     * <p>
-     * <h4>CKA NOTES:</h4>
-     * - This is a very brittle mechanism for identifying cavities and must be
-     * refactored.  Cavities should be containers of <code>IdealRfGap</code> objects,
-     * not implied by an attribute on an RF gap.  
-     * <br/>
-     * <br/>
-     * - The worst part of this architecture is that it requires the algorithm to maintain
-     * <strong>static</strong> variables to keep track of the "cavities" during simulation.
-     * </p>
-     * 
-     * @return  returns the <i>am I the first gap of an RF cavity?</i> flag
+    /** 
+     * return wheteher this gap is the initial gap of a cavity 
      */
     public boolean isFirstGap() { return initialGap;}
      
@@ -279,12 +261,13 @@ public class IdealRfGap extends ThinElement implements IRfGap {
      */
     
     /**
-     *
-     * @see xal.model.elem.Element#initializeFrom(xal.model.IModelDataSource)
-     *
-     * @author Christopher K. Allen
-     * @since  Nov 6, 2013
+     * Initializes this element from the supplied data source.
+     * 
+     * @param source an instance of RfGapDataSource
+     * 
+     * @throws IllegalArgumentException if source not of expected type
      */
+    @SuppressWarnings("deprecation")
     @Override
     public void initializeFrom(IModelDataSource source) throws ModelException {
         
@@ -313,92 +296,59 @@ public class IdealRfGap extends ThinElement implements IRfGap {
      */
     @Override
     public double elapsedTime(IProbe probe)  {
-//        double deltaPhaseCorrection;
-//        double entrancePhase;
-//        double dPhi1;
-//        double dPhi2;
-//        
-//        // Initial energy parameters
-//        double Er = probe.getSpeciesRestEnergy();
-//        double Wi = probe.getKineticEnergy();
-//        double bi = probe.getBeta();
-//        double gi = probe.getGamma();
-//        double dW = this.energyGain(probe);
-//        
-//        // Final energy parameters
-//        double Wf = Wi + dW;
-//        double gf = Wf/Er + 1.0;
-//        double bf = Math.sqrt(1.0 - 1.0/(gf*gf));
-//        
-//        double b0 = (bi + bf)/2.;
-//        double g0 = (gi + gf)/2.;
-//        
-//        // Phase change from drift from start of cell to center of cell
-//        //  gapOffsets have to do with electrical centers != geometric centers, 
-//        //  e.g. DTLs (small effect).
-//        if(!isFirstGap()) {
-//            entrancePhase = upstreamExitPhase;
-//            dPhi1 = 2. * Math.PI * (getCellLength()/2. + gapOffset) * getFrequency() /(bi * IElement.LightSpeed);
-//        }
-//        else {
-//            // phase is prescibed at the center for this guy
-//            dPhi1 = 0.;
-//            entrancePhase = getPhase();
-//        }   
-//        
-//        // phase change from center correction factor:
-//        
-//        //old T.owens way (uses simple "constant T'" scaling with beta)
-//        //deltaPhaseCorrection = -2. * Math.PI * getFrequency() * getE0() * Math.pow(getCellLength(), 2.) / (Math.pow(b0, 3.) * Math.pow(g0, 3.) * Er * IElement.LightSpeed) * (1. + structureMode) * Math.sin(phi0) * TTFPrimeFit.evaluateAt(b0);
-//        
-//        double ETL = getETL();
-//        
-//        //old deltaPhaseCorrection = -2. * Math.PI * getE0() * getCellLength() / (Math.pow(b0, 2.) * Math.pow(g0, 3.) * Er) * Math.sin(phi0) * TTFPrimeFit.evaluateAt(b0);	
-//        //new 
-//        deltaPhaseCorrection = -2. * Math.PI * ETL / ((b0*b0) * (g0*g0*g0) * Er) * Math.sin(phi0) * TTFPrimeFit.evaluateAt(b0);	
-//        
-//        // phase change from drift from center to cell exit:
-//        dPhi2 = 2. * Math.PI * (getCellLength()/2. - gapOffset) * getFrequency() /(bf * IElement.LightSpeed);
-//        
-//        upstreamExitPhase = entrancePhase + dPhi1 + dPhi2 + deltaPhaseCorrection - (2 - structureMode) * Math.PI;
-//        
-//        upstreamExitTime = probe.getTime() + getCellLength()/(2. * bf * IElement.LightSpeed) + deltaPhaseCorrection/ (getFrequency() * 2 *Math.PI);
-//        // update the elapsed time to account for the phase correction term
-////      probe.setTime(deltaPhaseCorrection/(getFrequency() * 2. * Math.PI));
-//        double dT = ( deltaPhaseCorrection/(this.getFrequency() * 2.0 *Math.PI) );
+        double deltaPhaseCorrection;
+        double entrancePhase;
+        double dPhi1;
+        double dPhi2;
         
-		double deltaPhaseCorrection;
-
-		// Initial energy parameters
-		double Er = probe.getSpeciesRestEnergy();
-		double Wi = probe.getKineticEnergy();
-		double bi = probe.getBeta();
-		double gi = probe.getGamma();
-		double dW = this.energyGain(probe);
-
-		// Final energy parameters
-		double Wf = Wi + dW;
-		double gf = Wf / Er + 1.0;
-		double bf = Math.sqrt(1.0 - 1.0 / (gf * gf));
-
-		deltaPhaseCorrection = 0;
-		// phase change from center correction factor:
-		double V0 = getE0() * getCellLength();
-		double bTb = bi * TTFFit.evaluateDerivativeAt(bi);
-		double sin_phase = getPhase();
-		double sinPhi = Math.sin(sin_phase);
-		deltaPhaseCorrection = -(V0 / (gi * gi * gi * bi * bi * Er)) * bTb * sinPhi;
-
-		// update the elapsed time to account for the phase correction term
-		double dT = ((deltaPhaseCorrection) / (this.getFrequency() * 2.0 * Math.PI));
-
-		//the gap offset correction
-		dT = dT + gapOffset * (1. / (bi * IElement.LightSpeed) - 1. / (bf * IElement.LightSpeed));
-
-		//the time when probe will exit this gap
-		upstreamExitTime = probe.getTime() + dT + (getCellLength()/2.) / (bf * IElement.LightSpeed);
-
-//    	System.out.println("dT = " + dT);
+        // Initial energy parameters
+        double Er = probe.getSpeciesRestEnergy();
+        double Wi = probe.getKineticEnergy();
+        double bi = probe.getBeta();
+        double gi = probe.getGamma();
+        double dW = this.energyGain(probe);
+        
+        // Final energy parameters
+        double Wf = Wi + dW;
+        double gf = Wf/Er + 1.0;
+        double bf = Math.sqrt(1.0 - 1.0/(gf*gf));
+        
+        double b0 = (bi + bf)/2.;
+        double g0 = (gi + gf)/2.;
+        
+        // Phase change from drift from start of cell to center of cell
+        //  gapOffsets have to do with electrical centers != geometric centers, 
+        //  e.g. DTLs (small effect).
+        if(!isFirstGap()) {
+            entrancePhase = upstreamExitPhase;
+            dPhi1 = 2. * Math.PI * (getCellLength()/2. + gapOffset) * getFrequency() /(bi * IElement.LightSpeed);
+        }
+        else {
+            // phase is prescibed at the center for this guy
+            dPhi1 = 0.;
+            entrancePhase = getPhase();
+        }   
+        
+        // phase change from center correction factor:
+        
+        //old T.owens way (uses simple "constant T'" scaling with beta)
+        //deltaPhaseCorrection = -2. * Math.PI * getFrequency() * getE0() * Math.pow(getCellLength(), 2.) / (Math.pow(b0, 3.) * Math.pow(g0, 3.) * Er * IElement.LightSpeed) * (1. + structureMode) * Math.sin(phi0) * TTFPrimeFit.evaluateAt(b0);
+        
+        double ETL = getETL();
+        
+        //old deltaPhaseCorrection = -2. * Math.PI * getE0() * getCellLength() / (Math.pow(b0, 2.) * Math.pow(g0, 3.) * Er) * Math.sin(phi0) * TTFPrimeFit.evaluateAt(b0);	
+        //new 
+        deltaPhaseCorrection = -2. * Math.PI * ETL / ((b0*b0) * (g0*g0*g0) * Er) * Math.sin(phi0) * TTFPrimeFit.evaluateAt(b0);	
+        
+        // phase change from drift from center to cell exit:
+        dPhi2 = 2. * Math.PI * (getCellLength()/2. - gapOffset) * getFrequency() /(bf * IElement.LightSpeed);
+        
+        upstreamExitPhase = entrancePhase + dPhi1 + dPhi2 + deltaPhaseCorrection - (2 - structureMode) * Math.PI;
+        
+        upstreamExitTime = probe.getTime() + getCellLength()/(2. * bf * IElement.LightSpeed) + deltaPhaseCorrection/ (getFrequency() * 2 *Math.PI);
+        // update the elapsed time to account for the phase correction term
+//      probe.setTime(deltaPhaseCorrection/(getFrequency() * 2. * Math.PI));
+        double dT = ( deltaPhaseCorrection/(this.getFrequency() * 2.0 *Math.PI) );
         return dT;
     }
     
@@ -435,15 +385,6 @@ public class IdealRfGap extends ThinElement implements IRfGap {
     }
     
     
-    /**
-     * CKA:  The variable phi0 is computed incorrectly.  I don't know why, but I assume it
-     * has something to do with the method of monitoring the time of flight between gaps
-     * (and RF phase advance during that time).  A more robust technique of doing this would probably
-     * involve using the probe itself to do this; elements should not be "aware" of each other, a 
-     * consequence of this static variable method.  In the Element/Algorithm/Probe architecture,
-     * it is the job  of the probe to be aware of the modeling elements.
-     * 
-     */
     /** 
      * Routine to calculate the energy gain along with the phase advanve     
      * a method that is called once by transferMatrix to calculate the energy gain.
@@ -504,7 +445,6 @@ public class IdealRfGap extends ThinElement implements IRfGap {
         double Q   = Math.abs( probe.getSpeciesCharge() );
         
         theEnergyGain = Q*EL*Math.cos(phi0) * TTFFit.evaluateAt(bc);
-        System.out.println("theEnergyGain = " + theEnergyGain + ", EL = " + EL + ", TTF = " + TTFFit.evaluateAt(bc) + ", bc = " + bc);
         
         //this means phi0 = 0 has max. acceleartion
         
@@ -545,8 +485,7 @@ public class IdealRfGap extends ThinElement implements IRfGap {
         if ( probe.getAlgorithm().useRfGapPhaseCalculation() ) { 
             compEnergyGain(probe);
         } else {
-        	compEnergyGain(probe);
-//            simpleEnergyGain(probe);
+            simpleEnergyGain(probe);
         }
         
         // Get probe parameters at initial energy
@@ -554,7 +493,7 @@ public class IdealRfGap extends ThinElement implements IRfGap {
         double Wi = probe.getKineticEnergy();
         double bi = probe.getBeta();
         double gi = probe.getGamma();
-//        double gi_2 = gi*gi;
+        double gi_2 = gi*gi;
         
         double dW = this.energyGain(probe);
         
@@ -562,36 +501,33 @@ public class IdealRfGap extends ThinElement implements IRfGap {
         double Wf = Wi + dW;
         double gf = Wf/Er + 1.0;//gamma final
         double bf = Math.sqrt(1.0 - 1.0/(gf*gf));//beta
-//        double gf_2 = gf*gf;
+        double gf_2 = gf*gf;
 
         // Compute average energy parameters (average)
-//        double ga = this.gammaMidGap(probe);
+        double ga = this.gammaMidGap(probe);
         
         // Compute the momentum reduction
-//        double  bgf = bf*gf;
-//        double  bgi = bi*gi;
-//        double  eta = bgi/bgf;
+        double  bgf = bf*gf;
+        double  bgi = bi*gi;
+        double  eta = bgi/bgf;
 
         // Compute the focusing constants
         double kt;      // transverse focusing
         double kz;      // longitudinal focusing
            
-//        double ps  = this.getPhase();
-//        double sin = Math.sin(ps);
+        double ps  = this.getPhase();
+        double sin = Math.sin(ps);
 
-//        kt = this.compTransFocusing(probe) * sin;
-//        kz = -2.0*kt*ga*ga;
-        kt = this.compTransFocusing(probe);
-        kz = this.compLongFocusing(probe);
+        kt = this.compTransFocusing(probe) * sin;
+        kz = -2.0*kt*ga*ga;
+
 
         if (debugT3d) {
     		System.out.println("bgin, bgf = "+bi*gi+" "+bf*gf);
     	}
 
-//        double arrTran[][] = new double[][] {{1.0, 0.0}, {kt, eta }};
-//        double arrLong[][] = new double[][] {{1.0, 0.0}, {kz/(gf_2), eta*gi_2/gf_2}};
-		double arrTran[][] = new double[][]{{1.0, 0.0}, {kt / (bf * gf), bi * gi / (bf * gf)}};
-		double arrLong[][] = new double[][]{{1.0, 0.0}, {(kz / (bf * gf)) , gi * bi / (gf * bf)}};
+        double arrTran[][] = new double[][] {{1.0, 0.0}, {kt, eta }};
+        double arrLong[][] = new double[][] {{1.0, 0.0}, {kz/(gf_2), eta*gi_2/gf_2}};
         
         PhaseMatrix matPhi = new PhaseMatrix();
         
@@ -760,9 +696,6 @@ public class IdealRfGap extends ThinElement implements IRfGap {
      
      
     /**
-     * CKA:  I commented out some code that was never used.
-     */
-    /**
      * <p>
      *  Get the transverse focusing constant for a particular probe.  The focusing constant 
      *  is used in the construction of the transfer matrix for the RF gap.  A gap provides
@@ -783,73 +716,25 @@ public class IdealRfGap extends ThinElement implements IRfGap {
      */
     public double compTransFocusing(IProbe probe)    {  //calculate kx'
 
-//        double  c = IElement.LightSpeed;
-//        
-//        double  Q = Math.abs( probe.getSpeciesCharge() );
-//        double Er = probe.getSpeciesRestEnergy();
-//        
-//        double ga = this.gammaMidGap(probe);
-//        double bga_2 = ga*ga - 1.0;
-//        
-//        double bf = this.betaFinal(probe);
-//        double gf = this.gammaFinal(probe);
-//
-//        double  ETL = this.getETL();
-////        double  phi = this.getPhase();
-//        double    f = this.getFrequency();
-//        
-//        double   kr = -Math.PI*Q*ETL*f/(c*Er*bga_2*bf*gf);
-////        double   kr = -Math.PI*Q*ETL*f*Math.sin(phi)/(c*Er*bga_2*bf*gf);
+        double  c = IElement.LightSpeed;
         
-		double c = IElement.LightSpeed;
+        double  Q = Math.abs( probe.getSpeciesCharge() );
+        double Er = probe.getSpeciesRestEnergy();
+        
+        double ga = this.gammaMidGap(probe);
+        double bga_2 = ga*ga - 1.0;
+        
+        double bf = this.betaFinal(probe);
+        double gf = this.gammaFinal(probe);
 
-		double Q = Math.abs(probe.getSpeciesCharge());
-		double Er = probe.getSpeciesRestEnergy();
-		double Wi = probe.getKineticEnergy();
-		double gi = Wi / Er + 1.0;
-		double bi = Math.sqrt(1.0 - 1.0 / (gi * gi));
-		
-		double Wbar = Wi + this.energyGain(probe) / 2.0;
-		double gbar = Wbar / Er + 1.0;
-		double bbar = Math.sqrt(1.0 - 1.0 / (gbar * gbar));
-		double bgbar = bbar * gbar;
-
-//		double Wf = Wi + this.energyGain(probe);
-//		double gf = 1 + Wf/Er;
-//		double bf = Math.sqrt(1.0 - 1.0 / (gf * gf));
-		
-//		double ETL = this.getETL();
-		double phi = this.getPhase();
-		double f = this.getFrequency();
-//		double EL = this.getE0()*this.getCellLength();
-		
-		//double ttf_b_avg = theEnergyGain /( Q * EL * Math.cos(phi) );
-//		double theEnergyGain_im = Q * EL * Math.cos(phi) * TTFFit.evaluateAt(bi);
-				
-		
-		//find out new beta final, and if there is a large difference, reevaluate TTF at average beta
-//		double Wf_im = Wi + theEnergyGain_im;
-//		double gf_im = Wf_im / Er + 1.0;
-//		double bf_im = Math.sqrt(1.0 - 1.0 / (gf_im * gf_im));
-		
-		double b_avg = bi;
-//		double TTF_pdiff = 100*(TTFFit.evaluateAt(bf_im)-TTFFit.evaluateAt(bi))/TTFFit.evaluateAt(bi);
-//		if(TTF_pdiff>5)
-//		{
-//			double g_avg = (gi + gf)/2;
-//			b_avg = Math.sqrt(1.0 - 1.0 / (g_avg * g_avg));
-//			//theEnergyGain = Q * EL * Math.cos(phi0) * TTFFit.evaluateAt(b_avg);
-//		}
-//				
-		
-		//double kr = Math.PI * Q * getE0()*ttf_b_avg*getCellLength() * f * Math.sin(-phi) / (c * Er * bgbar * bgbar);
-//        double   kr = Math.PI*Q*ETL*f*Math.sin(-phi)/(q*c*Er*bgbar*bgbar);
-		//double kr = Math.PI * Q * ETL * f * Math.sin(-phi) / (c * Er * bgbar * bgbar);
-		double kr = Math.PI * Q * getE0()*TTFFit.evaluateAt(b_avg)*getCellLength() * f * Math.sin(-phi) / (c * Er * bgbar * bgbar);//should TTF be at bi, or bbar?
-
-//		System.out.println("kr = " + kr);		
-
-		return kr;
+        double  ETL = this.getETL();
+//        double  phi = this.getPhase();
+        double    f = this.getFrequency();
+        
+        double   kr = -Math.PI*Q*ETL*f/(c*Er*bga_2*bf*gf);
+//        double   kr = -Math.PI*Q*ETL*f*Math.sin(phi)/(c*Er*bga_2*bf*gf);
+        
+        return kr;
     };
     
     /**
@@ -876,425 +761,400 @@ public class IdealRfGap extends ThinElement implements IRfGap {
 //    @Deprecated
     public double compLongFocusing(IProbe probe)    {
         
-////        double   c = IProbe.LightSpeed;
-////        double   Q = Math.abs( probe.getSpeciesCharge() );
-////        double  Er = probe.getSpeciesRestEnergy();
-////
-////        double ETL = this.getETL();
-////        double phi = this.getPhase();
-////        double   f = this.getFrequency();
-////        
-////        double  ba = this.betaMidGap(probe);
-////        double  bf = this.betaFinal(probe);
-////        double  gf = this.gammaFinal(probe);
-////        
-////        double kz = 2.0*Math.PI*Q*ETL*Math.sin(phi)*f/(c*Er*bf*gf*ba);
-////        
-////        return kz;
+//        double   c = IProbe.LightSpeed;
+//        double   Q = Math.abs( probe.getSpeciesCharge() );
+//        double  Er = probe.getSpeciesRestEnergy();
 //
-//        // Compute average energy parameters (average)
-//        double ga = this.gammaMidGap(probe);
+//        double ETL = this.getETL();
+//        double phi = this.getPhase();
+//        double   f = this.getFrequency();
 //        
+//        double  ba = this.betaMidGap(probe);
+//        double  bf = this.betaFinal(probe);
+//        double  gf = this.gammaFinal(probe);
 //        
-//        double  kt = this.compTransFocusing(probe);
-//        double  kz = -2.0*kt*ga*ga;
-		double Er = probe.getSpeciesRestEnergy();
-		double Wi = probe.getKineticEnergy();
+//        double kz = 2.0*Math.PI*Q*ETL*Math.sin(phi)*f/(c*Er*bf*gf*ba);
+//        
+//        return kz;
 
-		double Wbar = Wi + this.energyGain(probe) / 2.0;
-		double gbar = Wbar / Er + 1.0;
-
-		double kr = this.compTransFocusing(probe);
-		double kz = -2.0* kr * gbar * gbar;//-2.0 * kr * gbar * gbar;
+        // Compute average energy parameters (average)
+        double ga = this.gammaMidGap(probe);
         
-//		System.out.println("kz = " + kz);
+        
+        double  kt = this.compTransFocusing(probe);
+        double  kz = -2.0*kt*ga*ga;
+        
         return kz;
     };
     
     
 
-    /**
-     * CKA: I commented out all the deprecated methods and the local variable below that is 
-     * consequently never used.
-     */
-//    boolean phaseSpreadT3d = false; //default = false;
+    boolean phaseSpreadT3d = false; //default = false;
 
-//    /** 
-//     * <p>
-//     * Compute the phase spread of the bunch for a probe (based on Trace3D RfGap.f)
-//     * </p>
-//     * <p>
-//     * <h4>CKA Notes:</h4>
-//     * - This method needs to be optimized now that I understand what it is doing.
-//     * In XAL, longitundinal coordinate <i>z</i> is the "phase spread", but in meters. 
-//     * To convert to phase spread <i>&delta;&phi;</i> in radians we have
-//     * <br/>
-//     * <br/>
-//     * &nbsp; &nbsp; &delta;&phi; = 2&pi;<i>z</i/>/(&beta;&lambda;) ,
-//     * <br/>
-//     * <br/>
-//     * where &lambda; is the wavelength of the RF.  So, for &lt;&delta;&phi;<sup>2</sup>&gt;
-//     * we get
-//     * <br/>
-//     * <br/> 
-//     * &nbsp; &nbsp; &lt;&delta;&phi;<sup>2</sup>&gt; = &lt;<i>z</i><sup>2</sup>&gt;2&pi;<i>f</i>
-//     *                                                /(&beta;<i>c</i>) ,
-//     * <br/>
-//     * <br/>
-//     * where <i>f</i> is the RF frequency of the gap and c is the speed of light.
-//     * <br/>
-//     * <br/>
-//     * - For the optional computation <b>phaseSpreadT3d</b> (which apparently is not
-//     * used) I am not sure what is happening, or why <y'y'> is significant?
-//     * </p>
-//     * 
-//     *  @param  probe   we are computing the phase spread for this probe at the current
-//     *                  <code>IdealRfGap</code> condition
-//     *
-//     * @return         phase spread (half width) for this probe (<b>radian</b>)
-//     * 
-//     * @author Hiroyuki Sako
-//     * @author Christopher K. Allen
-//     * @version Nov 6, 2013
-//     *  
-//     * @deprecated  this should be in the algorithm class
-//     */
-//    
-//    @Deprecated
-//    public double phaseSpread(EnvelopeProbe probe) {
-//        
-//        
-//        double phaseSpreadCalculated = 0;
-//        
-////        if (!calcPhaseSpread) {
-////            return phaseSpreadCalculated;
-////        }
-//        //? double dE = getE0() * getCellLength();
-//        //      probe.updateTwiss(probe.getCorrelation(), dE);
-//        //obsolete probe.updateTwiss(probe.getCorrelation());
-//        //obsolete Twiss twiss[] = probe.getTwiss();
-//        Twiss [] twiss = probe.getCovariance().computeTwiss();
-//        //sako
-//        double Er = probe.getSpeciesRestEnergy();
-//        double Wi = probe.getKineticEnergy();
-//        
-//        double Wbar = Wi + this.energyGain(probe)/2.0;
-//        //   double gbar = Wbar/Er + 1.0;
-//        //   double bbar = Math.sqrt(1.0 - 1.0/(gbar*gbar));
-//        
-//        //def
-//        TraceXalUnitConverter t3dxal = TraceXalUnitConverter.newConverter(getFrequency(),Er,Wi);
-//        //temp sako
-//        //   TraceXalUnitConverter t3dxal = TraceXalUnitConverter.newConverter(probe.getBeamFreq(),Er,Wbar);
-//        
-//        Twiss t3dtwissz = t3dxal.xalToTraceLongitudinal(twiss[2]);
-//        
-//        double emitz = t3dtwissz.getEmittance();
-//        double betaz = t3dtwissz.getBeta();
-//        
-//        phaseSpreadCalculated = Math.sqrt(emitz*betaz)*2*Math.PI/360; //radian
-//        
-//        //betaaverage is  not there!!! is it ok?
-//        
-//        //sako for test. Try to use average energy to calculate dphiav
-//        
-//        
-//        if (phaseSpreadT3d) {
-//            
-//            double gbar = Wbar/Er + 1.0;
-//            double bbar = Math.sqrt(1.0 - 1.0/(gbar*gbar));
-//            
-////            double gi = Wi/Er + 1.;
-////            double bi = Math.sqrt(1-1/(gi*gi));
-//            double clight = IProbe.LightSpeed;
-//            double freq = getFrequency();
-//            
-//            double wavel = clight/freq;
-//            
-//            CovarianceMatrix     matCorXAL  = (probe).getCovariance();//this need to be convert to t3d unit
-//            
-////            double lambda = wavel;
-////            double gammai = 1.0 + (Wi / Er);
-////            double vnorm = Math.sqrt(1.0 - (1.0 / (gammai * gammai)));
-//            
-//            
-//            
-//            //      Twiss twissXAL[] = matCorXAL.twissParameters();
-//            
-//            //      Twiss t3dtwissx = t3dxal.xalToTraceTransverse(twiss[0]);
-//            //      Twiss t3dtwissy = t3dxal.xalToTraceTransverse(twiss[1]);
-//            //      CovarianceMatrix matCor = CovarianceMatrix.buildCorrelation(t3dtwissx,t3dtwissy,t3dtwissz);
-//            
-//            
-//            double sigma55 = matCorXAL.getElem(4,4);
-//            
-//            
-//            
-////            double dphit3dcor = 1.0/(vnorm*lambda)/(Math.PI*2.);//probably this is correct
-//            
-//            double dphit3d = 2.*Math.PI*Math.sqrt(sigma55)/(bbar*wavel); 
-//            
-//            phaseSpreadCalculated = dphit3d;//temp
-//        }
-//        
-//        //      DP=TWOPI*H*SQRT(SIG(5,5))/(BAV*WAVEL)
-//        
-//        
-//        return phaseSpreadCalculated;
-//    }
-//    
-//    
+    /** 
+     * Compute the phase spread of the bunch for a probe (based on Trace3D RfGap.f)
+     * 
+     * CKA Notes:
+     * - This method needs to be optimized now that I understand what it is doing.
+     * In XAL, longitundinal coordinate <i>z</i> is the "phase spread", but in meters. 
+     * To convert to phase spread <i>dphi</i> in radians we have
+     * 
+     *      dphi = (z/(beta*lambda))*2*pi
+     *      
+     * where lambda is the wavelength of the RF.  So, for <dphi^2> we get
+     * 
+     *      <dphi^2> = 2*Pi*<z^2>*f/(beta*c)
+     *   
+     * where f is the RF frequency of the gap and c is the speed of light.
+     * 
+     * - For the optional computation <b>phaseSpreadT3d</b> (which apparently is not
+     * used) I am not sure what is happening, or why <y'y'> is significant?
+     * 
+     *  @author Hiroyuki Sako
+     *  @param  probe
+     *
+     * @return         phase spread (half width) for this probe (<b>radian</b>)
+     * 
+     * @deprecated  this should be in the algorithm class
+     */
     
-//    /**
-//     * @deprecated  This should go in the algorithm class
-//     */
-//    @Deprecated
-//    public double correctTransFocusingPhaseSpread(EnvelopeProbe probe) {
-//        double dphi = phaseSpread(probe);
-//        double cor = 1.;
-//        cor = 1-dphi*dphi/14;
-//        //    	if (dphi != 0) {
-//        if (dphi > 0.1) {
-//            cor = 15/dphi/dphi*(3/dphi/dphi*(Math.sin(dphi)/dphi-Math.cos(dphi))-Math.sin(dphi)/dphi);	
+    @Deprecated
+    public double phaseSpread(EnvelopeProbe probe) {
+        
+        
+        double phaseSpreadCalculated = 0;
+        
+//        if (!calcPhaseSpread) {
+//            return phaseSpreadCalculated;
 //        }
-//        //    	}
-//        return cor;
-//    }
-//    
+        //? double dE = getE0() * getCellLength();
+        //      probe.updateTwiss(probe.getCorrelation(), dE);
+        //obsolete probe.updateTwiss(probe.getCorrelation());
+        //obsolete Twiss twiss[] = probe.getTwiss();
+        Twiss [] twiss = probe.getCovariance().computeTwiss();
+        //sako
+        double Er = probe.getSpeciesRestEnergy();
+        double Wi = probe.getKineticEnergy();
+        
+        double Wbar = Wi + this.energyGain(probe)/2.0;
+        //   double gbar = Wbar/Er + 1.0;
+        //   double bbar = Math.sqrt(1.0 - 1.0/(gbar*gbar));
+        
+        //def
+        TraceXalUnitConverter t3dxal = TraceXalUnitConverter.newConverter(getFrequency(),Er,Wi);
+        //temp sako
+        //   TraceXalUnitConverter t3dxal = TraceXalUnitConverter.newConverter(probe.getBeamFreq(),Er,Wbar);
+        
+        Twiss t3dtwissz = t3dxal.xalToTraceLongitudinal(twiss[2]);
+        
+        double emitz = t3dtwissz.getEmittance();
+        double betaz = t3dtwissz.getBeta();
+        
+        phaseSpreadCalculated = Math.sqrt(emitz*betaz)*2*Math.PI/360; //radian
+        
+        //betaaverage is  not there!!! is it ok?
+        
+        //sako for test. Try to use average energy to calculate dphiav
+        
+        
+        if (phaseSpreadT3d) {
+            
+            double gbar = Wbar/Er + 1.0;
+            double bbar = Math.sqrt(1.0 - 1.0/(gbar*gbar));
+            
+//            double gi = Wi/Er + 1.;
+//            double bi = Math.sqrt(1-1/(gi*gi));
+            double clight = IProbe.LightSpeed;
+            double freq = getFrequency();
+            
+            double wavel = clight/freq;
+            
+            CovarianceMatrix     matCorXAL  = (probe).getCovariance();//this need to be convert to t3d unit
+            
+//            double lambda = wavel;
+//            double gammai = 1.0 + (Wi / Er);
+//            double vnorm = Math.sqrt(1.0 - (1.0 / (gammai * gammai)));
+            
+            
+            
+            //      Twiss twissXAL[] = matCorXAL.twissParameters();
+            
+            //      Twiss t3dtwissx = t3dxal.xalToTraceTransverse(twiss[0]);
+            //      Twiss t3dtwissy = t3dxal.xalToTraceTransverse(twiss[1]);
+            //      CovarianceMatrix matCor = CovarianceMatrix.buildCorrelation(t3dtwissx,t3dtwissy,t3dtwissz);
+            
+            
+            double sigma55 = matCorXAL.getElem(4,4);
+            
+            
+            
+//            double dphit3dcor = 1.0/(vnorm*lambda)/(Math.PI*2.);//probably this is correct
+            
+            double dphit3d = 2.*Math.PI*Math.sqrt(sigma55)/(bbar*wavel); 
+            
+            phaseSpreadCalculated = dphit3d;//temp
+        }
+        
+        //      DP=TWOPI*H*SQRT(SIG(5,5))/(BAV*WAVEL)
+        
+        
+        return phaseSpreadCalculated;
+    }
     
-//    /**
-//     ********************************************************************************
-//     //new implementation by sako, 7 Aug 06, to do trans/long simultanously
-//      //used in EnvTrackerAdapt, EnvelopeTracker
-//       *******************************************************************************
-//       *
-//       * @deprecated Should go in algorithm class
-//       */
-//    @Deprecated
-//    public double [] correctSigmaPhaseSpread(IProbe probe) {
-//        
-//        double dfac[] = new double[2];
-//        
-//        double dfacT = 0d;
-//        double dfacL = 0d;
-//        
-//        dfac[0] = 0d;
-//        dfac[1] = 0d;
-//        //transverse
-//        
-//        if (!(probe instanceof EnvelopeProbe)) {
-//            return dfac;
-//        }
-//        
-//        double phi = getPhase();
-//        double dphi = phaseSpread((EnvelopeProbe)probe);
-//        
-//        double tdp = 2*dphi;
-//        double sintdp = Math.sin(tdp);
-//        
-//        
-//        double f2t = 1-tdp*tdp/14;
-//        if (tdp>0.1) {
-//            f2t = 3*(sintdp/tdp-Math.cos(tdp))/tdp/tdp; //APPENDIX F (Trace3D manual)
-//            f2t = 15*(f2t-sintdp/tdp)/tdp/tdp;
-//        }
-//        double sinphi = Math.sin(phi);
-//        double cosphi = Math.cos(phi);
-//        double G1 = 0.5*(1+(sinphi*sinphi-cosphi*cosphi)*f2t);
-//        double Q = probe.getSpeciesCharge();
-//        double h = 1;//harmic number
-//        double m = probe.getSpeciesRestEnergy();
-//        double w = probe.getKineticEnergy();
-//        double dw = energyGain(probe);
-//        double wa = w+dw/2;
-//        double betagammaa = Math.sqrt(wa/m*(2+wa/m));
-//        
-//        double wf = w+dw;
-//        double betagammaf =Math.sqrt(wf/m*(2+wf/m));
-////        double gammai = (w+m)/m;
-////        double betagammai =Math.sqrt(w/m*(2+w/m));
-////        double gammaf = (wf+m)/m;
-////        double gammaa = (wa+m)/m;
-////        double betagamma0 = Math.sqrt(w/m*(2+w/m));
-//        
-//        double clight = IProbe.LightSpeed;
-//        double freq = getFrequency();
-//        double lambda = clight/freq;
-//        
-//        //was def    	
-//        //	double cayd = h*Math.PI*getETL()*Math.abs(Q)/(m*betagammaa*betagammaa*betagamma0*lambda);
-//        //sako 21 jul 06
-//        double cay = h*Math.abs(Q)*Math.PI*getETL()/(m*betagammaa*betagammaa*betagammaf*lambda); //Kx'
-//        double f1 =  1-dphi*dphi/14;
-//        if (dphi > 0.1) {
-//            f1 = 15/dphi/dphi*(3/dphi/dphi*(Math.sin(dphi)/dphi-Math.cos(dphi))-Math.sin(dphi)/dphi);	
-//        }
-//        dfacT = cay*cay*(G1-sinphi*sinphi*f1*f1);
-//        
-//        
-//        //longitudinal
-//        double f2l = 1-tdp*tdp/14;
-//        if (tdp>0.1) {
-//            f2l = 3*(sintdp/tdp-Math.cos(tdp))/tdp/tdp;
-//            f2l = 15*(f2l-sintdp/tdp)/tdp/tdp;
-//        }
-//        
-//        //def	double cayz = 2*cay*gammaa*gammaa;
-//        double cayz = 2*cay; //this is best
-//        double cayp = cayz*cayz*dphi*dphi;
-//        dfacL = cayp*(0.125*cosphi*cosphi+(1./576.)*dphi*dphi*sinphi*sinphi);
-//        
-//        dfac[0] = dfacT;
-//        dfac[1] = dfacL;
-//        
-//        return dfac;
-//    }
-//    
-//    /**
-//     * <p>
-//     * Calculation of emittance increase due to phase spread
-//     * based on calculations in Trace3d (RfGap.f)
-//     * </p>
-//     * <p>
-//     * Used in EnvTrackerAdapt, EnvelopeTracker
-//     * </p>
-//     * <p>
-//     * <h4>CKA Notes:</h4>
-//     * - I think this should go in the <b>Algorithm</b> class.
-//     * It expects an <code>EnvelopeProbe</code> - element objects
-//     * should really not be concerned with the type of probe.
-//     * </p>
-//     *   
-//     * @param probe     envelope probe object (something with emittance and moments)
-//     * 
-//     * @return  the change in emittance after going through this element
-//     * 
-//     * @deprecated  this should go in the algorithm class - it calls phaseSpread(EnvelopeProbe)
-//     */
-//    @Deprecated
-//    public double correctTransSigmaPhaseSpread(IProbe probe) {
-//        
-//        double dfac = 1;
-//        if (!(probe instanceof EnvelopeProbe)) {
-//            return dfac;
-//        }
-//        
-//        double phi = getPhase();
-//        double dphi = phaseSpread((EnvelopeProbe)probe);
-//        double f1   = correctTransFocusingPhaseSpread((EnvelopeProbe)probe);
-//        double tdp = 2*dphi;
-//        double f2 = 1-tdp*tdp/14;
-//        if (tdp>0.1) {
-//            double sintdp = Math.sin(tdp);
-//            f2 = 3*(sintdp/tdp-Math.cos(tdp))/tdp/tdp; //APPENDIX F (Trace3D manual)
-//            f2 = 15*(f2-sintdp/tdp)/tdp/tdp;
-//        }
-//        double sinphi = Math.sin(phi);
-//        double cosphi = Math.cos(phi);
-//        double G1 = 0.5*(1+(sinphi*sinphi-cosphi*cosphi)*f2);
-//        double Q = probe.getSpeciesCharge();
-//        double h = 1;//harmic number
-//        double m = probe.getSpeciesRestEnergy();
-//        double w = probe.getKineticEnergy();
-//        double dw = energyGain(probe);
-//        double wa = w+dw/2;
-//        double betagammaa = Math.sqrt(wa/m*(2+wa/m));
-//        
-//        double wf = w+dw;
-//        double betagammaf =Math.sqrt(wf/m*(2+wf/m));
-//        
-//        
-//        double clight = IProbe.LightSpeed;
-//        double freq = getFrequency();
-//        double lambda = clight/freq;
-//        //    	double cay = h*Math.PI*getETL()*Math.abs(Q)/(m*betagammaa*betagammaa*betagammaa*lambda); //Kx'
-//        //sako 21 jul 06
-//        
-//        double cay = Math.abs(Q)*h*Math.PI*getETL()/(m*betagammaa*betagammaa*betagammaf*lambda); //Kx'
-//        
-//        dfac = cay*cay*(G1-sinphi*sinphi*f1*f1);
-//        
-//        return dfac;
-//        
-//    }
-//    
-//    
-//    /**
-//     * <p>
-//     * Calculation of emittance increase due to phase spread
-//     * based on calculations in Trace3d (RfGap.f)
-//     * </p>
-//     * <p>
-//     * used in EnvTrackerAdapt, EnvelopeTracker
-//     * </p>
-//     * <p>
-//     * <h4>CKA Notes:</h4>
-//     * - I think this should go in the <b>Algorithm</b> class.
-//     * It expects an <code>EnvelopeProbe</code> - element objects
-//     * should really not be concerned with the type of probe.
-//     * </p>
-//     * 
-//     * @param probe envelope-type probe (something with emittance and moments)
-//     * 
-//     * @return  the increase in longitudinal emittance due to finite phase spread
-//     * 
-//     * @deprecated  should go in algorithm class
-//     */
-//    @Deprecated
-//    public double correctLongSigmaPhaseSpread(IProbe probe) {
-//        
-//        double dfac = 1;
-//        if (!(probe instanceof EnvelopeProbe)) {
-//            return dfac;
-//        }
-//        
-//        double phi = getPhase();
-//        double dphi = phaseSpread((EnvelopeProbe)probe);
-//        double tdp = 2*dphi;
-//        
-//        double f2 = 1-tdp*tdp/14;
-//        if (tdp>0.1) {
-//            double sintdp = Math.sin(tdp);
-//            f2 = 3*(sintdp/tdp-Math.cos(tdp))/tdp/tdp;
-//            f2 = 15*(f2-sintdp/tdp)/tdp/tdp;
-//        }
-//        double sinphi = Math.sin(phi);
-//        double cosphi = Math.cos(phi);
-//        
-//        double Q = probe.getSpeciesCharge();
-//        double h = 1;//harmic number
-//        double m = probe.getSpeciesRestEnergy();
-//        double w = probe.getKineticEnergy();
-//        double dw = energyGain(probe);
-//        double wa = w+dw/2;
+    
+    
+    /**
+     * @deprecated  This should go in the algorithm class
+     */
+    @Deprecated
+    public double correctTransFocusingPhaseSpread(EnvelopeProbe probe) {
+        double dphi = phaseSpread(probe);
+        double cor = 1.;
+        cor = 1-dphi*dphi/14;
+        //    	if (dphi != 0) {
+        if (dphi > 0.1) {
+            cor = 15/dphi/dphi*(3/dphi/dphi*(Math.sin(dphi)/dphi-Math.cos(dphi))-Math.sin(dphi)/dphi);	
+        }
+        //    	}
+        return cor;
+    }
+    
+    
+    /**
+     ********************************************************************************
+     //new implementation by sako, 7 Aug 06, to do trans/long simultanously
+      //used in EnvTrackerAdapt, EnvelopeTracker
+       *******************************************************************************
+       *
+       * @deprecated Should go in algorithm class
+       */
+    @Deprecated
+    public double [] correctSigmaPhaseSpread(IProbe probe) {
+        
+        double dfac[] = new double[2];
+        
+        double dfacT = 0d;
+        double dfacL = 0d;
+        
+        dfac[0] = 0d;
+        dfac[1] = 0d;
+        //transverse
+        
+        if (!(probe instanceof EnvelopeProbe)) {
+            return dfac;
+        }
+        
+        double phi = getPhase();
+        double dphi = phaseSpread((EnvelopeProbe)probe);
+        
+        double tdp = 2*dphi;
+        double sintdp = Math.sin(tdp);
+        
+        
+        double f2t = 1-tdp*tdp/14;
+        if (tdp>0.1) {
+            f2t = 3*(sintdp/tdp-Math.cos(tdp))/tdp/tdp; //APPENDIX F (Trace3D manual)
+            f2t = 15*(f2t-sintdp/tdp)/tdp/tdp;
+        }
+        double sinphi = Math.sin(phi);
+        double cosphi = Math.cos(phi);
+        double G1 = 0.5*(1+(sinphi*sinphi-cosphi*cosphi)*f2t);
+        double Q = probe.getSpeciesCharge();
+        double h = 1;//harmic number
+        double m = probe.getSpeciesRestEnergy();
+        double w = probe.getKineticEnergy();
+        double dw = energyGain(probe);
+        double wa = w+dw/2;
+        double betagammaa = Math.sqrt(wa/m*(2+wa/m));
+        
+        double wf = w+dw;
+        double betagammaf =Math.sqrt(wf/m*(2+wf/m));
+//        double gammai = (w+m)/m;
+//        double betagammai =Math.sqrt(w/m*(2+w/m));
+//        double gammaf = (wf+m)/m;
 //        double gammaa = (wa+m)/m;
-//        double betagammaa = Math.sqrt(wa/m*(2+wa/m));
-////        double betagamma0 = Math.sqrt(w/m*(2+w/m));
-//        double clight = IProbe.LightSpeed;
-//        double freq = getFrequency();
-//        double lambda = clight/freq;
-//        
-//        
-//        double wf = w+dw;
-//        double betagammaf =Math.sqrt(wf/m*(2+wf/m));
-//        
-//        //was def    	
-//        //	double cayd = h*Math.PI*getETL()*Math.abs(Q)/(m*betagammaa*betagammaa*betagamma0*lambda);
-//        
-//        //21 jul 06
-//        double cay = h*Math.PI*getETL()*Math.abs(Q)/(m*betagammaa*betagammaa*betagammaf*lambda);
-//        
-//        //	cay = cayd;
-//        
-//        double cayz = 2*cay*gammaa*gammaa;
-//        double cayp = cayz*cayz*dphi*dphi;
-//        dfac = cayp*(0.125*cosphi*cosphi+(1./576.)*dphi*dphi*sinphi*sinphi);
-//        
-//        return dfac;
-//        
-//    }
-//
-//
+//        double betagamma0 = Math.sqrt(w/m*(2+w/m));
+        
+        double clight = IProbe.LightSpeed;
+        double freq = getFrequency();
+        double lambda = clight/freq;
+        
+        //was def    	
+        //	double cayd = h*Math.PI*getETL()*Math.abs(Q)/(m*betagammaa*betagammaa*betagamma0*lambda);
+        //sako 21 jul 06
+        double cay = h*Math.abs(Q)*Math.PI*getETL()/(m*betagammaa*betagammaa*betagammaf*lambda); //Kx'
+        double f1 =  1-dphi*dphi/14;
+        if (dphi > 0.1) {
+            f1 = 15/dphi/dphi*(3/dphi/dphi*(Math.sin(dphi)/dphi-Math.cos(dphi))-Math.sin(dphi)/dphi);	
+        }
+        dfacT = cay*cay*(G1-sinphi*sinphi*f1*f1);
+        
+        
+        //longitudinal
+        
+        double f2l = 1-tdp*tdp/14;
+        if (tdp>0.1) {
+            f2l = 3*(sintdp/tdp-Math.cos(tdp))/tdp/tdp;
+            f2l = 15*(f2l-sintdp/tdp)/tdp/tdp;
+        }
+        
+        //def	double cayz = 2*cay*gammaa*gammaa;
+        double cayz = 2*cay; //this is best
+        double cayp = cayz*cayz*dphi*dphi;
+        dfacL = cayp*(0.125*cosphi*cosphi+(1./576.)*dphi*dphi*sinphi*sinphi);
+        
+        dfac[0] = dfacT;
+        dfac[1] = dfacL;
+        
+        return dfac;
+        
+    }
+    
+    /**
+     * <p>
+     * Calculation of emittance increase due to phase spread
+     * based on calculations in Trace3d (RfGap.f)
+     * </p>
+     * <p>
+     * Used in EnvTrackerAdapt, EnvelopeTracker
+     * </p>
+     * <p>
+     * <h4>CKA Notes:</h4>
+     * - I think this should go in the <b>Algorithm</b> class.
+     * It expects an <code>EnvelopeProbe</code> - element objects
+     * should really not be concerned with the type of probe.
+     * </p>
+     *   
+     * @param probe     envelope probe object (something with emittance and moments)
+     * 
+     * @return  the change in emittance after going through this element
+     * 
+     * @deprecated  this should go in the algorithm class - it calls phaseSpread(EnvelopeProbe)
+     */
+    @Deprecated
+    public double correctTransSigmaPhaseSpread(IProbe probe) {
+        
+        double dfac = 1;
+        if (!(probe instanceof EnvelopeProbe)) {
+            return dfac;
+        }
+        
+        double phi = getPhase();
+        double dphi = phaseSpread((EnvelopeProbe)probe);
+        double f1   = correctTransFocusingPhaseSpread((EnvelopeProbe)probe);
+        double tdp = 2*dphi;
+        double f2 = 1-tdp*tdp/14;
+        if (tdp>0.1) {
+            double sintdp = Math.sin(tdp);
+            f2 = 3*(sintdp/tdp-Math.cos(tdp))/tdp/tdp; //APPENDIX F (Trace3D manual)
+            f2 = 15*(f2-sintdp/tdp)/tdp/tdp;
+        }
+        double sinphi = Math.sin(phi);
+        double cosphi = Math.cos(phi);
+        double G1 = 0.5*(1+(sinphi*sinphi-cosphi*cosphi)*f2);
+        double Q = probe.getSpeciesCharge();
+        double h = 1;//harmic number
+        double m = probe.getSpeciesRestEnergy();
+        double w = probe.getKineticEnergy();
+        double dw = energyGain(probe);
+        double wa = w+dw/2;
+        double betagammaa = Math.sqrt(wa/m*(2+wa/m));
+        
+        double wf = w+dw;
+        double betagammaf =Math.sqrt(wf/m*(2+wf/m));
+        
+        
+        double clight = IProbe.LightSpeed;
+        double freq = getFrequency();
+        double lambda = clight/freq;
+        //    	double cay = h*Math.PI*getETL()*Math.abs(Q)/(m*betagammaa*betagammaa*betagammaa*lambda); //Kx'
+        //sako 21 jul 06
+        
+        double cay = Math.abs(Q)*h*Math.PI*getETL()/(m*betagammaa*betagammaa*betagammaf*lambda); //Kx'
+        
+        dfac = cay*cay*(G1-sinphi*sinphi*f1*f1);
+        
+        return dfac;
+        
+    }
+    
+    
+    /**
+     * <p>
+     * Calculation of emittance increase due to phase spread
+     * based on calculations in Trace3d (RfGap.f)
+     * </p>
+     * <p>
+     * used in EnvTrackerAdapt, EnvelopeTracker
+     * </p>
+     * <p>
+     * <h4>CKA Notes:</h4>
+     * - I think this should go in the <b>Algorithm</b> class.
+     * It expects an <code>EnvelopeProbe</code> - element objects
+     * should really not be concerned with the type of probe.
+     * </p>
+     * 
+     * @param probe envelope-type probe (something with emittance and moments)
+     * 
+     * @return  the increase in longitudinal emittance due to finite phase spread
+     * 
+     * @deprecated  should go in algorithm class
+     */
+    @Deprecated
+    public double correctLongSigmaPhaseSpread(IProbe probe) {
+        
+        double dfac = 1;
+        if (!(probe instanceof EnvelopeProbe)) {
+            return dfac;
+        }
+        
+        double phi = getPhase();
+        double dphi = phaseSpread((EnvelopeProbe)probe);
+        double tdp = 2*dphi;
+        
+        double f2 = 1-tdp*tdp/14;
+        if (tdp>0.1) {
+            double sintdp = Math.sin(tdp);
+            f2 = 3*(sintdp/tdp-Math.cos(tdp))/tdp/tdp;
+            f2 = 15*(f2-sintdp/tdp)/tdp/tdp;
+        }
+        double sinphi = Math.sin(phi);
+        double cosphi = Math.cos(phi);
+        
+        double Q = probe.getSpeciesCharge();
+        double h = 1;//harmic number
+        double m = probe.getSpeciesRestEnergy();
+        double w = probe.getKineticEnergy();
+        double dw = energyGain(probe);
+        double wa = w+dw/2;
+        double gammaa = (wa+m)/m;
+        double betagammaa = Math.sqrt(wa/m*(2+wa/m));
+//        double betagamma0 = Math.sqrt(w/m*(2+w/m));
+        double clight = IProbe.LightSpeed;
+        double freq = getFrequency();
+        double lambda = clight/freq;
+        
+        
+        double wf = w+dw;
+        double betagammaf =Math.sqrt(wf/m*(2+wf/m));
+        
+        //was def    	
+        //	double cayd = h*Math.PI*getETL()*Math.abs(Q)/(m*betagammaa*betagammaa*betagamma0*lambda);
+        
+        //21 jul 06
+        double cay = h*Math.PI*getETL()*Math.abs(Q)/(m*betagammaa*betagammaa*betagammaf*lambda);
+        
+        //	cay = cayd;
+        
+        double cayz = 2*cay*gammaa*gammaa;
+        double cayp = cayz*cayz*dphi*dphi;
+        dfac = cayp*(0.125*cosphi*cosphi+(1./576.)*dphi*dphi*sinphi*sinphi);
+        
+        return dfac;
+        
+    }
+
+
 
 
     
