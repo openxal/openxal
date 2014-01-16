@@ -1,6 +1,6 @@
 <?xml version = '1.0' encoding = 'UTF-8'?>
 <!DOCTYPE sources SYSTEM "xdxf.dtd">
-<sources>
+<sources version="2.0">
     <modelConfig_source name="modelConfig" url="ModelConfig.xml" />
 	<deviceMapping_source name="deviceMapping" url="sns.impl"/>
 	<optics_source name="optics" url="sns.xdxf"/>

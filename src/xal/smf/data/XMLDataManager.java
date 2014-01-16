@@ -404,6 +404,8 @@ public class XMLDataManager {
      * dynamic table files.  
      */
     private class MainManager {
+		static final private String CURRENT_VERSION = "2.0";
+
         static final private String SOURCE_TAG = "sources";
         
         static final private String OPTICS_TAG = "optics_source";
@@ -480,6 +482,16 @@ public class XMLDataManager {
             final String mainUrlSpec = mainUrlSpec();
             final DataAdaptor mainAdaptor = XmlDataAdaptor.adaptorForUrl( mainUrlSpec, false );
             final DataAdaptor sourcesAdaptor = mainAdaptor.childAdaptor( SOURCE_TAG );
+
+			if ( sourcesAdaptor.hasAttribute( "version" ) ) {
+				final String version = sourcesAdaptor.stringValue( "version" );
+				if ( !version.trim().equals( CURRENT_VERSION	) ) {
+					throw new OpticsVersionException( "The optics file, \"" + mainUrlSpec + "\" has an unsupported version: \"" + version + "\". The supported optics format version is \"" + CURRENT_VERSION + "\"." );
+				}
+			}
+			else {
+				throw new OpticsVersionException( "The optics file, \"" + mainUrlSpec + "\" specifies no version. The supported optics format version is \"" + CURRENT_VERSION + "\"." );
+			}
 
             // fetch the optics reference
             final DataAdaptor opticsAdaptor = sourcesAdaptor.childAdaptor( OPTICS_TAG );
