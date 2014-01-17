@@ -7,8 +7,6 @@ package eu.ess.jels.model.elem.jels;
 
 import java.io.PrintWriter;
 
-import eu.ess.jels.model.probe.IGapPhaseProbe;
-import eu.ess.jels.model.probe.GapEnvelopeProbe;
 import xal.model.IModelDataSource;
 import xal.model.IProbe;
 import xal.model.ModelException;
@@ -297,14 +295,13 @@ public class IdealRfGap extends ThinElement implements IRfGap {
     	
     	double Phis;
     	if (isFirstGap()) Phis = getPhase();
-    	else {
-    		IGapPhaseProbe gprobe = (IGapPhaseProbe)probe;  
-    		double lastGapPosition = gprobe.getLastGapPosition();
+    	else {    		 
+    		double lastGapPosition = probe.getLastGapPosition();
     		double position = probe.getPosition();
     		if (lastGapPosition == position) {
     			Phis = getPhase(); // we are visiting gap for the second time
     		} else {
-	    		Phis = gprobe.getLastGapPhase();
+	    		Phis = probe.getLastGapPhase();
 	    		Phis += 2*Math.PI*(position - lastGapPosition)/(lambda*probe.getBeta());
 	    		if (structureMode == 1) Phis += Math.PI;
 	    		setPhase(Phis);
@@ -392,8 +389,8 @@ public class IdealRfGap extends ThinElement implements IRfGap {
     		matPhi.setElem(5,5,(beta_start*Math.pow(gamma_start,2))/(beta_end*Math.pow(gamma_end,2)));
     	}
             
-    	((IGapPhaseProbe)probe).setLastGapPhase(Phis + DeltaPhi);
-    	((IGapPhaseProbe)probe).setLastGapPosition(probe.getPosition());
+    	probe.setLastGapPhase(Phis + DeltaPhi);
+    	probe.setLastGapPosition(probe.getPosition());
     	matPhi.setElem(6,6,1);
         return new PhaseMap(matPhi);
     }

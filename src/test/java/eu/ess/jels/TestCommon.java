@@ -9,7 +9,6 @@ import java.util.Iterator;
 
 import org.junit.runners.Parameterized.Parameters;
 
-import Jama.Matrix;
 import xal.model.IComponent;
 import xal.model.IElement;
 import xal.model.Lattice;
@@ -35,7 +34,6 @@ import eu.ess.jels.model.elem.els.ElsElementMapping;
 import eu.ess.jels.model.elem.els.IdealRfGap;
 import eu.ess.jels.model.elem.jels.JElsElementMapping;
 import eu.ess.jels.model.probe.ElsProbe;
-import eu.ess.jels.model.probe.GapEnvelopeProbe;
 
 public abstract class TestCommon {
 	protected Probe probe;
@@ -73,7 +71,7 @@ public abstract class TestCommon {
 		envelopeTracker.setStepSize(0.004);
 		envelopeTracker.setProbeUpdatePolicy(Tracker.UPDATE_EXIT);
 		
-		EnvelopeProbe envelopeProbe = new GapEnvelopeProbe();
+		EnvelopeProbe envelopeProbe = new EnvelopeProbe();
 		envelopeProbe.setAlgorithm(envelopeTracker);
 		envelopeProbe.setSpeciesCharge(-1);
 		envelopeProbe.setSpeciesRestEnergy(9.3829431e8);

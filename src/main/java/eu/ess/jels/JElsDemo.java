@@ -28,7 +28,6 @@ import eu.ess.jels.model.alg.ElsTracker;
 import eu.ess.jels.model.elem.els.ElsElementMapping;
 import eu.ess.jels.model.elem.jels.JElsElementMapping;
 import eu.ess.jels.model.probe.ElsProbe;
-import eu.ess.jels.model.probe.GapEnvelopeProbe;
 
 
 public class JElsDemo {
@@ -152,7 +151,7 @@ public class JElsDemo {
 		envelopeTracker.setStepSize(0.004);
 		envelopeTracker.setProbeUpdatePolicy(Tracker.UPDATE_EXIT);
 		
-		EnvelopeProbe envelopeProbe = new GapEnvelopeProbe();
+		EnvelopeProbe envelopeProbe = new EnvelopeProbe();
 		envelopeProbe.setAlgorithm(envelopeTracker);		
 		
 		return envelopeProbe;

@@ -1,5 +1,6 @@
 package eu.ess.jels.model.probe;
 
+import xal.model.probe.EnvelopeProbe;
 import xal.model.probe.traj.EnvelopeProbeState;
 import xal.tools.beam.CovarianceMatrix;
 import xal.tools.beam.Twiss;
@@ -13,7 +14,7 @@ import Jama.Matrix;
  * 
  * @author Emanuele Laface, Ivo List <ivo.list@cosylab.com>
  */
-public class ElsProbe extends GapEnvelopeProbe {
+public class ElsProbe extends EnvelopeProbe {
 	private Matrix envelope = new Matrix(9,1,0.0);
 	private Matrix normalized_emmitance = new Matrix(3,1,0.0);	
 	
