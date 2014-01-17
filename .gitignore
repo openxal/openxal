@@ -4,3 +4,9 @@ build/**/*
 /build
 /.classpath
 /.project
+
+# Maven stuff
+target/
+# Eclipse in subprojects
+.classpath/
+.project/
