@@ -27,13 +27,15 @@ import xal.smf.impl.Electromagnet;
 import xal.smf.impl.Magnet;
 import xal.smf.impl.RfGap;
 
+import java.lang.reflect.Method;
+
 /**
  * The default element mapping implemented as singleton.
  * 
  * @author Ivo List
  *
  */
-class DefaultElementMapping extends ElementMapping {
+public class DefaultElementMapping extends ElementMapping {
 	protected static ElementMapping instance;
 	
 	protected ElementConverter defaultConverter;
@@ -43,13 +45,28 @@ class DefaultElementMapping extends ElementMapping {
 	}
 	
 	/**
-	 *  Returns the default element mapping.
+	 *  If xal.sim.scenario.PluginElementMapping is present, then it delegates call to its getInstance() method.
+	 *  Otherwise returns the default element mapping.
 	 *  
-	 * @return the default element mapping
+	 * @return plugin or default element mapping
 	 */
 	public static ElementMapping getInstance()
 	{
-		if (instance == null) instance = new DefaultElementMapping();
+		if (instance == null) {
+			try {
+				// effectively returns ChannelFactoryPlugin.getChannelFactoryInstance()
+				final Class<?> pluginClass = Class.forName( "xal.sim.scenario.PluginElementMapping" );
+				final Method creatorMethod = pluginClass.getMethod( "getInstance" );
+				instance = (ElementMapping)creatorMethod.invoke( null );
+			}
+			catch ( ClassNotFoundException exception ) {
+				instance = new DefaultElementMapping();
+			}
+			catch( Exception exception ) {
+				exception.printStackTrace();
+				throw new RuntimeException( "Failed to load the ChannelFactoryPlugin: " + exception.getMessage() );
+			}			
+		}
 		return instance;
 	}
 	

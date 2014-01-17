@@ -23,7 +23,7 @@ import xal.smf.impl.Magnet;
  * @author Ivo List
  *
  */
-abstract class ElementConverter {
+public abstract class ElementConverter {
 	protected boolean thin = false;
 
 	/**
