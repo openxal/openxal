@@ -60,6 +60,12 @@ public class MachineModel implements DataListener {
         return _simulation;
 	}
 
+
+	/** Get the simulator */
+	public MachineSimulator getSimulator() {
+		return SIMULATOR;
+	}
+
     
     /** provides the name used to identify the class in an external data source. */
     public String dataLabel() {
