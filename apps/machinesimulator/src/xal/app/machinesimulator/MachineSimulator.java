@@ -185,8 +185,7 @@ public class MachineSimulator implements DataListener {
 	static public Probe getDefaultProbe( final AcceleratorSeq sequence ) {
 		try {
 			final Probe probe = ( sequence instanceof Ring ) ? createRingProbe( sequence ) : createEnvelopeProbe( sequence );
-			// TODO: need to re-enable the full RF gap phase slip calculation when that code is fixed
-			//probe.getAlgorithm().setRfGapPhaseCalculation( true );	// make sure we enable the full RF gap phase slip calculation
+			probe.getAlgorithm().setRfGapPhaseCalculation( true );	// make sure we enable the full RF gap phase slip calculation
 			return probe;
 		}
 		catch( InstantiationException exception ) {
@@ -205,7 +204,7 @@ public class MachineSimulator implements DataListener {
 
 	/** create a new envelope probe */
 	static private Probe createEnvelopeProbe( final AcceleratorSeq sequence ) throws InstantiationException {
-		final EnvelopeTracker tracker = AlgorithmFactory.createEnvelopeTracker( sequence );
+		final IAlgorithm tracker = AlgorithmFactory.createEnvTrackerAdapt( sequence );
 		return ProbeFactory.getEnvelopeProbe( sequence, tracker );
 	}
 	

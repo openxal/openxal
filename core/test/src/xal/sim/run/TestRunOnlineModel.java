@@ -56,7 +56,8 @@ public class TestRunOnlineModel {
     
     /** String identifier for accelerator sequence used in testing */
 //    static public String            STR_SEQ_ID       = "HEBT1";
-    static public String            STR_SEQ_ID       = "MEBT-SCL";
+//    static public String            STR_SEQ_ID       = "MEBT-SCL";
+    static public String            STR_SEQ_ID       = "CCL";
     
 //    /** String identifier where Courant-Snyder parameters are to be reconstructed */
 //    static public String            STR_TARG_ELEM_ID = "Begin_Of_HEBT1";
@@ -184,6 +185,27 @@ public class TestRunOnlineModel {
 	}
 	
     /**
+     * Run the online model for an envelope probe.
+     *
+     * @throws ModelException          general synchronization or simulation error ?
+     *                                 
+     * @author Christopher K. Allen
+     * @since  Jul 20, 2012
+     */
+    @Test
+    public void testRunEnvelopeModelWithRfGapCalc() throws ModelException {
+        
+        PROBE_ENV_TEST.reset();
+        PROBE_PARTL_TEST.getAlgorithm().setRfGapPhaseCalculation(true);
+        MODEL_TEST.setProbe(PROBE_ENV_TEST);
+        MODEL_TEST.resync();
+        MODEL_TEST.run();
+        
+        this.saveSimData();
+        this.printSimData();
+    }
+    
+    /**
      * Run the online model for a particle probe.
      *
      * @throws ModelException          general synchronization or simulation error ?
@@ -292,5 +314,7 @@ public class TestRunOnlineModel {
             System.out.println(strId + ": W = " + dblW);
         }
 
+        System.out.println();
+        System.out.println();
     }
 }
