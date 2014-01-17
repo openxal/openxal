@@ -13,6 +13,7 @@ import xal.model.IModelDataSource;
 import xal.model.IProbe;
 import xal.model.ModelException;
 import xal.model.source.RfGapDataSource;
+import xal.tools.beam.RelativisticParameterConverter;
 
 import java.io.PrintWriter;
 
@@ -280,6 +281,55 @@ public class IdealRfGap extends ThinElement implements IRfGap {
 		return cellLength;
 	}
 
+	
+	
+    /*
+     * Operations
+     */
+    
+    /**
+     * Compute the wavelength of the RF.
+     * 
+     * @return  RF wavelength in <b>meters</b>
+     */
+    public double   wavelengthRF()  {
+        
+        // Compute the RF wavelength
+        double c      = IElement.LightSpeed;
+        double f      = getFrequency();
+        double lambda = c/f;
+
+        return lambda;
+    }
+
+    /**
+     * Compute and return the mid-gap normalized velocity for the
+     * given probe.
+     * 
+     * NOTE:
+     * - Because of the state-dependendant nature of the energy calculations
+     * (this needs to be fixed), this function will only work correctly
+     * if the function energyGain() is consistent.
+     * 
+     * @param   probe   probe containing energy information
+     * 
+     * @return  average or "mid-gap" velocity in units of <b>c</b>
+     * 
+     * @see IdealRfGap#energyGain(IProbe)
+     */
+    public double   betaMidGap(IProbe probe)   {
+        
+        // Get probe parameters at initial energy
+        double Er = probe.getSpeciesRestEnergy();
+        double Wi = probe.getKineticEnergy();
+        double dW = this.energyGain(probe);
+        double Wa = Wi + dW/2.0;
+        
+        double beta = RelativisticParameterConverter.computeBetaFromEnergies(Wa, Er);
+        
+        return beta;
+    }
+    
 	/*
 	 *  IElement Interface
 	 */

@@ -17,7 +17,6 @@ import xal.model.probe.TransferMapProbe;
 import xal.model.probe.traj.ProbeState;
 import xal.model.probe.traj.Trajectory;
 import xal.test.ResourceManager;
-import xal.tools.beam.calc.TestSimResultsAdaptor;
 import xal.sim.scenario.AlgorithmFactory;
 import xal.sim.scenario.ProbeFactory;
 import xal.sim.scenario.Scenario;
