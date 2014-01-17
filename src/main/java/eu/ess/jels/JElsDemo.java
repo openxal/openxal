@@ -18,8 +18,6 @@ import xal.model.xml.ProbeXmlParser;
 import xal.model.xml.ProbeXmlWriter;
 import xal.sim.scenario.DefaultElementMapping;
 import xal.sim.scenario.ElementMapping;
-import xal.sim.scenario.ElsElementMapping;
-import xal.sim.scenario.JElsElementMapping;
 import xal.sim.scenario.Scenario;
 import xal.smf.Accelerator;
 import xal.smf.AcceleratorSeq;
@@ -27,6 +25,8 @@ import xal.smf.data.XMLDataManager;
 import xal.tools.beam.Twiss;
 import xal.tools.xml.XmlDataAdaptor;
 import eu.ess.jels.model.alg.ElsTracker;
+import eu.ess.jels.model.elem.els.ElsElementMapping;
+import eu.ess.jels.model.elem.jels.JElsElementMapping;
 import eu.ess.jels.model.probe.ElsProbe;
 import eu.ess.jels.model.probe.GapEnvelopeProbe;
 

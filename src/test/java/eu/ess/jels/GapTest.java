@@ -11,10 +11,10 @@ import xal.model.ModelException;
 import xal.model.probe.Probe;
 import xal.sim.scenario.DefaultElementMapping;
 import xal.sim.scenario.ElementMapping;
-import xal.sim.scenario.ElsElementMapping;
-import xal.sim.scenario.JElsElementMapping;
 import xal.smf.AcceleratorSeq;
 import xal.smf.impl.RfGap;
+import eu.ess.jels.model.elem.els.ElsElementMapping;
+import eu.ess.jels.model.elem.jels.JElsElementMapping;
 import eu.ess.jels.smf.impl.ESSRfCavity;
 
 @RunWith(Parameterized.class)

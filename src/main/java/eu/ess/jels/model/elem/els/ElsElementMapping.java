@@ -4,7 +4,7 @@
  * Created on Oct 3, 2013
  */
 
-package xal.sim.scenario;
+package eu.ess.jels.model.elem.els;
 
 import xal.model.IComponent;
 import xal.model.IElement;
@@ -16,16 +16,14 @@ import xal.model.elem.IdealMagSkewQuad3;
 import xal.model.elem.IdealMagSolenoid;
 import xal.model.elem.IdealMagSteeringDipole;
 import xal.model.elem.Marker;
-import xal.smf.AcceleratorSeq;
+import xal.sim.scenario.ElementConverter;
+import xal.sim.scenario.ElementMapping;
+import xal.sim.scenario.LatticeElement;
 import xal.smf.impl.EDipole;
 import xal.smf.impl.EQuad;
 import xal.smf.impl.Electromagnet;
 import xal.smf.impl.Magnet;
 import xal.smf.impl.RfGap;
-import eu.ess.jels.model.elem.els.IdealDrift;
-import eu.ess.jels.model.elem.els.IdealMagQuad;
-import eu.ess.jels.model.elem.els.IdealMagWedgeDipole2;
-import eu.ess.jels.model.elem.els.IdealRfGap;
 
 /**
  * The default element mapping implemented as singleton.

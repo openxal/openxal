@@ -4,10 +4,8 @@
  * Created on Oct 3, 2013
  */
 
-package xal.sim.scenario;
+package eu.ess.jels.model.elem.jels;
 
-import eu.ess.jels.model.elem.jels.IdealMagWedgeDipole2;
-import eu.ess.jels.model.elem.jels.IdealRfGap;
 import xal.model.IComponent;
 import xal.model.IElement;
 import xal.model.ModelException;
@@ -20,7 +18,9 @@ import xal.model.elem.IdealMagSkewQuad3;
 import xal.model.elem.IdealMagSolenoid;
 import xal.model.elem.IdealMagSteeringDipole;
 import xal.model.elem.Marker;
-import xal.smf.AcceleratorSeq;
+import xal.sim.scenario.ElementConverter;
+import xal.sim.scenario.ElementMapping;
+import xal.sim.scenario.LatticeElement;
 import xal.smf.impl.EDipole;
 import xal.smf.impl.EQuad;
 import xal.smf.impl.Electromagnet;
@@ -39,7 +39,7 @@ public class JElsElementMapping extends ElementMapping {
 	
 	protected ElementConverter defaultConverter;
 
-	protected JElsElementMapping() {
+	public JElsElementMapping() {
 		initialize();
 	}
 	
