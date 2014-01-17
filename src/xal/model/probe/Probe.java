@@ -126,7 +126,12 @@ public abstract class Probe implements IProbe, IArchive {
     
     /** algorithm providing probe dynamics */
     private IAlgorithm  m_ifcAlg = null;
-    
+
+	/** Holding the phase at exit from the last RF gap */
+	private double m_dblLastGapPhase;
+	
+	/** Holding the position of the last RF gap */
+	private double m_dblLastGapPosition;
 
 
     
@@ -881,5 +886,38 @@ public abstract class Probe implements IProbe, IArchive {
      */
     protected double getBetaGamma() { return m_dblBeta*m_dblGamma; };
     
+	/**
+	 * Returns the last phase. This can be used by the next rf gap at the beginning of the calculation.
+	 * @return the phase
+	 */	
+	public double getLastGapPhase()
+	{
+		return m_dblLastGapPhase;
+	}
+	
+	/**
+	 * Sets the last phase. Used at the end of rf gap's calculation.
+	 * @param lastGapPhase the phase
+	 */
+	public void setLastGapPhase(double lastGapPhase)
+	{
+		m_dblLastGapPhase = lastGapPhase;
+	}
+	
+	/**
+	 * Returns the last rf gap position. This can be used by the next rf gap at the beginning of the calculation.
+	 * @return the position of the previous rf gap
+	 */
+	public double getLastGapPosition() {
+		return m_dblLastGapPosition;
+	}
+
+	/**
+	 * Sets the position of the last rf gap. Used at the end of rf gap's calculation.
+	 * @param lastGapPosition the position of current rf gap
+	 */
+	public void setLastGapPosition(double lastGapPosition) {
+		m_dblLastGapPosition = lastGapPosition;
+	}
 
 };
