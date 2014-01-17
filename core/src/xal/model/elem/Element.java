@@ -95,7 +95,7 @@ public abstract class Element implements IElement {
     
     /**
      *  Return the length of this element.  Derived class must
-     *  implement this because it is undetermine whether or not this is a thin
+     *  implement this because it is undetermined whether or not this is a thin
      *  or thick element.
      */
     public abstract double getLength();
