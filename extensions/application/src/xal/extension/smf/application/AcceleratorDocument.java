@@ -71,13 +71,8 @@ abstract public class AcceleratorDocument extends XalDocument {
 			return requestAndSetAccelerator( "No accelerator file has been specified. \n Please select an accelerator file." );
 		}
 		else if ( new File( filePath ).exists() ) {
-			try {
-				setAcceleratorWithPath( filePath );
-				return getAccelerator();
-			}
-			catch( OpticsVersionException exception ) {
-				return requestAndSetAccelerator( exception.getMessage() + " \nPlease select a substitute accelerator." );
-			}
+			setAcceleratorWithPath( filePath );
+			return getAccelerator();
 		}
 		else {
 			return requestAndSetAccelerator( "Cannot locate the accelerator file: \n" + filePath + " \nPlease select a substitute accelerator." );
