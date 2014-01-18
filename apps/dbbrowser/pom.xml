@@ -8,7 +8,7 @@
 		<version>1.0.0-SNAPSHOT</version>
 	</parent>
 	
-	<artifactId>openxal.apps.bricks</artifactId>
+	<artifactId>openxal.apps.dbbrowser</artifactId>
 	<version>1.0.0-SNAPSHOT</version>
 	
 	<build>

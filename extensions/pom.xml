@@ -18,7 +18,7 @@
 	<version>1.0.0-SNAPSHOT</version>
 	
 	<build>
-		<sourceDirectory>.</sourceDirectory>
+		<sourceDirectory>src</sourceDirectory>
 		<resources>
 			<resource><directory>application/resources</directory></resource>
 			<resource><directory>widgets/resources</directory></resource>
@@ -34,7 +34,18 @@
 						<phase>generate-sources</phase>
 						<goals><goal>add-source</goal></goals>
 						<configuration>
-						<sources>
+						<sources>							
+							<source>${project.basedir}/service/src</source>
+							<source>${project.basedir}/bricks/src</source>
+							<source>${project.basedir}/widgets/src</source>
+							<source>${project.basedir}/application/src</source>
+							<source>${project.basedir}/fit/src</source>
+							<source>${project.basedir}/extlatgen/src</source>
+							<source>${project.basedir}/solver/src</source>
+							<source>${project.basedir}/orbit/src</source>
+							<source>${project.basedir}/scan/src</source>
+
+							                          
 							<source>${project.parent.basedir}/services/pvlogger/extension</source>
 							<source>${project.parent.basedir}/services/worker/extension</source>
 						</sources>
