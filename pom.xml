@@ -18,11 +18,16 @@
 	</modules>
 
 	<distributionManagement>
-	    <snapshotRepository>
-	        <id>ad1.esss.dk</id>
-	        <name>ad1.esss.dk-snapshots</name>
-	        <url>https://maven.esss.dk/artifactory/libs-snapshot-local</url>
-	    </snapshotRepository>
+    <repository>
+        <id>ad1.esss.dk</id>
+        <name>ad1.esss.dk-releases</name>
+        <url>http://maven.esss.dk/artifactory/libs-release-local</url>
+    </repository>
+    <snapshotRepository>
+        <id>ad1.esss.dk</id>
+        <name>ad1.esss.dk-snapshots</name>
+        <url>http://maven.esss.dk/artifactory/libs-snapshot-local</url>
+    </snapshotRepository>
 	</distributionManagement>
 	
 	
