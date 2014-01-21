@@ -36,6 +36,9 @@ public class MachineSimulator implements DataListener {
     
     /** indicates whether to use field readback rather than field setpoint when modeling the live machine */
     private boolean _useFieldReadback;
+
+	/** perform full RF Gap phase slip calculation */
+	private boolean _useRFGapPhaseSlipCalculation;
 	
 	/** indicator of whether the simulation is running */
 	private volatile boolean _isRunning;
@@ -45,6 +48,7 @@ public class MachineSimulator implements DataListener {
     public MachineSimulator( final AcceleratorSeq sequence, final Probe entranceProbe ) {
 		_isRunning = false;
         _useFieldReadback = false;  // by default use the field setting
+		_useRFGapPhaseSlipCalculation = true;	// by default perform the full RF Gap phase slip calculation
         
 		try {
             setSequenceProbe( sequence, entranceProbe );
@@ -126,7 +130,23 @@ public class MachineSimulator implements DataListener {
 			throw new RuntimeException( "Can't change probe while a simulation is in progress!" );
 		}
 	}
-    
+
+
+	/** set whether to use the full RF Gap phase slip calculation */
+	public void setUseRFGapPhaseSlipCalculation( final boolean usePhaseSlipCalc ) {
+		_useRFGapPhaseSlipCalculation = usePhaseSlipCalc;
+		final Probe probe = _entranceProbe;
+		if ( probe != null ) {
+			probe.getAlgorithm().setRfGapPhaseCalculation( _useRFGapPhaseSlipCalculation );
+		}
+	}
+
+
+	/** determine whether the full RF Gap phase slip calculation will be used */
+	public boolean getUseRFGapPhaseSlipCalculation() {
+		return _useRFGapPhaseSlipCalculation;
+	}
+	
     
     /** Set whether to use field readback when modeling live machine */
     public void setUseFieldReadback( final boolean useFieldReadback ) {
@@ -182,11 +202,10 @@ public class MachineSimulator implements DataListener {
 	 * @param sequence the sequence for which to get the default probe
 	 * @return the default probe for the specified sequence
 	 */
-	static public Probe getDefaultProbe( final AcceleratorSeq sequence ) {
+	public Probe getDefaultProbe( final AcceleratorSeq sequence ) {
 		try {
 			final Probe probe = ( sequence instanceof Ring ) ? createRingProbe( sequence ) : createEnvelopeProbe( sequence );
-			// TODO: need to re-enable the full RF gap phase slip calculation when that code is fixed
-			//probe.getAlgorithm().setRfGapPhaseCalculation( true );	// make sure we enable the full RF gap phase slip calculation
+			probe.getAlgorithm().setRfGapPhaseCalculation( _useRFGapPhaseSlipCalculation );
 			return probe;
 		}
 		catch( InstantiationException exception ) {
@@ -197,15 +216,15 @@ public class MachineSimulator implements DataListener {
 
 
 	/** create a new ring probe */
-	static private Probe createRingProbe( final AcceleratorSeq sequence ) throws InstantiationException {
+	private Probe createRingProbe( final AcceleratorSeq sequence ) throws InstantiationException {
 		final TransferMapTracker tracker = AlgorithmFactory.createTransferMapTracker( sequence );
 		return ProbeFactory.getTransferMapProbe( sequence, tracker );
 	}
 
 
 	/** create a new envelope probe */
-	static private Probe createEnvelopeProbe( final AcceleratorSeq sequence ) throws InstantiationException {
-		final EnvelopeTracker tracker = AlgorithmFactory.createEnvelopeTracker( sequence );
+	private Probe createEnvelopeProbe( final AcceleratorSeq sequence ) throws InstantiationException {
+		final IAlgorithm tracker = AlgorithmFactory.createEnvTrackerAdapt( sequence );
 		return ProbeFactory.getEnvelopeProbe( sequence, tracker );
 	}
 	
@@ -215,7 +234,7 @@ public class MachineSimulator implements DataListener {
 	 * @param sequence the sequence for which to get the particle's design kinetic energy at the entrance
 	 * @return the default kinetic energy of a particle at the entrance to the sequence
 	 */
-	static public double getDefaultEntranceKineticEnergy( final AcceleratorSeq sequence ) {
+	public double getDefaultEntranceKineticEnergy( final AcceleratorSeq sequence ) {
 		return getDefaultProbe( sequence ).getKineticEnergy();
 	}
 	
@@ -228,6 +247,7 @@ public class MachineSimulator implements DataListener {
 		try {
 			_isRunning = true;
 			final Probe probe = copyProbe( _entranceProbe );		// perform a deep copy of the entrance probe leaving the entrance probe unmodified
+
             _scenario.setProbe( probe );
 			_scenario.resync();
 			_scenario.run();

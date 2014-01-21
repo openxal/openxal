@@ -217,6 +217,15 @@ public class MachineSimulatorDocument extends AcceleratorDocument implements Dat
                 STATES_TABLE_MODEL.setRecords( simulation.getSimulationRecords() );
             }
         });
+
+		
+		final JCheckBox phaseSlipCheckbox = (JCheckBox)windowReference.getView( "Phase Slip Checkbox" );
+		phaseSlipCheckbox.setSelected( MODEL.getSimulator().getUseRFGapPhaseSlipCalculation() );
+		phaseSlipCheckbox.addActionListener( new ActionListener() {
+			public void actionPerformed( final ActionEvent event ) {
+				MODEL.getSimulator().setUseRFGapPhaseSlipCalculation( phaseSlipCheckbox.isSelected() );
+			}
+		});
     }
     
     

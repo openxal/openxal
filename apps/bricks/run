@@ -1,0 +1,2 @@
+#!/bin/sh
+mvn exec:java -Dexec.mainClass=xal.app.bricks.Main

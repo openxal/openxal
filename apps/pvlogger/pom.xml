@@ -8,7 +8,7 @@
 		<version>1.0.0-SNAPSHOT</version>
 	</parent>
 	
-	<artifactId>openxal.apps.bricks</artifactId>
+	<artifactId>openxal.apps.pvlogger</artifactId>
 	<version>1.0.0-SNAPSHOT</version>
 	
 	<build>
@@ -16,8 +16,15 @@
 		<resources>
 			<resource>
 				<directory>resources</directory>
-				<targetPath>xal/app/bricks/resources</targetPath>
+				<targetPath>xal/app/pvlogger/resources</targetPath>
 			</resource>
 		</resources>
 	</build>
+	<dependencies>
+		<dependency>
+			<groupId>org.xal</groupId>
+			<artifactId>openxal.services.pvlogger</artifactId>
+			<version>1.0.0-SNAPSHOT</version>
+		</dependency>
+	</dependencies>
 </project>
