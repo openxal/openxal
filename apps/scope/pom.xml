@@ -8,7 +8,7 @@
 		<version>1.0.0-SNAPSHOT</version>
 	</parent>
 	
-	<artifactId>openxal.apps.bricks</artifactId>
+	<artifactId>openxal.apps.scope</artifactId>
 	<version>1.0.0-SNAPSHOT</version>
 	
 	<build>
@@ -16,7 +16,7 @@
 		<resources>
 			<resource>
 				<directory>resources</directory>
-				<targetPath>xal/app/bricks/resources</targetPath>
+				<targetPath>xal/app/scope/resources</targetPath>
 			</resource>
 		</resources>
 	</build>

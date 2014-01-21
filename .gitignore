@@ -1,12 +1,13 @@
 .DS_Store
-build/**/*
-/bin
-/build
-/.classpath
-/.project
+build
+
+# Eclipse
+.classpath
+.project
+.settings/
 
 # Maven stuff
+bin/
+log/
 target/
-# Eclipse in subprojects
-.classpath/
-.project/
+
