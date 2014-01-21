@@ -17,7 +17,6 @@ import xal.model.probe.TransferMapProbe;
 import xal.model.probe.traj.ProbeState;
 import xal.model.probe.traj.Trajectory;
 import xal.test.ResourceManager;
-import xal.tools.beam.calc.TestSimResultsAdaptor;
 import xal.sim.scenario.AlgorithmFactory;
 import xal.sim.scenario.ProbeFactory;
 import xal.sim.scenario.Scenario;
@@ -57,7 +56,8 @@ public class TestRunOnlineModel {
     
     /** String identifier for accelerator sequence used in testing */
 //    static public String            STR_SEQ_ID       = "HEBT1";
-    static public String            STR_SEQ_ID       = "DTL";
+//    static public String            STR_SEQ_ID       = "MEBT-SCL";
+    static public String            STR_SEQ_ID       = "CCL";
     
 //    /** String identifier where Courant-Snyder parameters are to be reconstructed */
 //    static public String            STR_TARG_ELEM_ID = "Begin_Of_HEBT1";
@@ -115,10 +115,12 @@ public class TestRunOnlineModel {
             PROBE_ENV_TEST = ProbeFactory.getEnvelopeProbe(SEQ_TEST, algEnv);
             
             // Create and initialize the particle probe
-            PROBE_PARTL_TEST = ProbeFactory.createParticleProbe(SEQ_TEST, new ParticleTracker());
+            ParticleTracker algPrt = AlgorithmFactory.createParticleTracker(SEQ_TEST);
+            PROBE_PARTL_TEST = ProbeFactory.createParticleProbe(SEQ_TEST, algPrt);
             
             // Create and initialize transfer map probe
-            PROBE_XFER_TEST = ProbeFactory.getTransferMapProbe(SEQ_TEST, new TransferMapTracker() );
+            TransferMapTracker  algXfer = AlgorithmFactory.createTransferMapTracker(SEQ_TEST);
+            PROBE_XFER_TEST = ProbeFactory.getTransferMapProbe(SEQ_TEST, algXfer );
             
             WTR_OUTPUT = new PrintWriter(FILE_OUTPUT);
 
@@ -183,6 +185,27 @@ public class TestRunOnlineModel {
 	}
 	
     /**
+     * Run the online model for an envelope probe.
+     *
+     * @throws ModelException          general synchronization or simulation error ?
+     *                                 
+     * @author Christopher K. Allen
+     * @since  Jul 20, 2012
+     */
+    @Test
+    public void testRunEnvelopeModelWithRfGapCalc() throws ModelException {
+        
+        PROBE_ENV_TEST.reset();
+        PROBE_PARTL_TEST.getAlgorithm().setRfGapPhaseCalculation(true);
+        MODEL_TEST.setProbe(PROBE_ENV_TEST);
+        MODEL_TEST.resync();
+        MODEL_TEST.run();
+        
+        this.saveSimData();
+        this.printSimData();
+    }
+    
+    /**
      * Run the online model for a particle probe.
      *
      * @throws ModelException          general synchronization or simulation error ?
@@ -199,6 +222,27 @@ public class TestRunOnlineModel {
         MODEL_TEST.run();
         
         this.saveSimData();
+    }
+    
+    /**
+     * Run the online model for a particle probe.
+     *
+     * @throws ModelException          general synchronization or simulation error ?
+     *                                 
+     * @author Christopher K. Allen
+     * @since  Jul 20, 2012
+     */
+    @Test
+    public void testRunParticleModelWithRfGapPhases() throws ModelException {
+        
+        PROBE_PARTL_TEST.reset();
+        PROBE_PARTL_TEST.getAlgorithm().setRfGapPhaseCalculation(true);
+        MODEL_TEST.setProbe(PROBE_PARTL_TEST);
+        MODEL_TEST.resync();
+        MODEL_TEST.run();
+        
+        this.saveSimData();
+        this.printSimData();
     }
     
     /**
@@ -235,6 +279,7 @@ public class TestRunOnlineModel {
         // Write out header line
         String  strSimType = MODEL_TEST.getProbe().getClass().getName();
         WTR_OUTPUT.println("DATA FOR SIMULATION WITH " + strSimType);
+        WTR_OUTPUT.println("  RF Gap Phases " + MODEL_TEST.getProbe().getAlgorithm().useRfGapPhaseCalculation() );
         
         // Write out the simulation data
         Trajectory trjData = MODEL_TEST.getTrajectory();
@@ -258,6 +303,7 @@ public class TestRunOnlineModel {
 
         // Print out the kinetic energy profile to stdout
         System.out.println("DATA FOR SIMULATION WITH " + MODEL_TEST.getProbe().getClass().getName());
+        System.out.println("  RF Gap Phases " + MODEL_TEST.getProbe().getAlgorithm().useRfGapPhaseCalculation() );
         Trajectory trjData = MODEL_TEST.getTrajectory();
         
         for (ProbeState state : trjData) {
@@ -268,5 +314,7 @@ public class TestRunOnlineModel {
             System.out.println(strId + ": W = " + dblW);
         }
 
+        System.out.println();
+        System.out.println();
     }
 }
