@@ -471,12 +471,12 @@ public final class AlgorithmFactory {
         Accelerator     smfAccel  = smfSeq.getAccelerator();
         EditContext     ctxParams = smfAccel.editContext();
         
-        T tkrEnv;
+        T algTracker;
         try {
-            tkrEnv = clsTkr.newInstance();
-            tkrEnv.load(strSeqId, ctxParams);
+            algTracker = clsTkr.newInstance();
+            algTracker.load(strSeqId, ctxParams);
             
-            return tkrEnv;
+            return algTracker;
             
         } catch (IllegalAccessException e) {
             throw new InstantiationException("Unable to access constructor for " + clsTkr.getName() 
