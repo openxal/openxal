@@ -158,6 +158,31 @@ public interface IProbe {
      */
     public void setSpeciesRestEnergy(double m);
    
+   	/**
+	 * Returns the last phase. This can be used by the next rf gap at the beginning of the calculation.
+	 * @return the phase
+	 */	
+	public double getLastGapPhase();
+	
+	/**
+	 * Sets the last phase. Used at the end of rf gap's calculation.
+	 * @param lastGapPhase the phase
+	 */
+	public void setLastGapPhase(double lastGapPhase);
+	
+	/**
+	 * Returns the last rf gap position. This can be used by the next rf gap at the beginning of the calculation.
+	 * @return the position of the previous rf gap
+	 */
+	public double getLastGapPosition();
+
+	/**
+	 * Sets the position of the last rf gap. Used at the end of rf gap's calculation.
+	 * @param lastGapPosition the position of current rf gap
+	 */
+	public void setLastGapPosition(double lastGapPosition);
+   
+   
     /*
      * Propagation
      */
