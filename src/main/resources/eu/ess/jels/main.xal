@@ -1,6 +1,7 @@
 <?xml version = '1.0' encoding = 'UTF-8'?>
 <!DOCTYPE sources SYSTEM "xdxf.dtd">
-<sources>    
+<sources version="2.0">    
 	<deviceMapping_source name="deviceMapping" url="ess.impl"/>
-	<optics_source name="optics" url="ess.xdxf"/>	
+	<optics_source name="optics" url="ess.xdxf"/>
+	<tablegroup_source name="modelparams" url="model.params"/>	
 </sources>
