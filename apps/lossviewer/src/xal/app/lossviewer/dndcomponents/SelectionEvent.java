@@ -1,0 +1,46 @@
+package gov.sns.apps.lossviewer2.dndcomponents;
+
+import gov.sns.apps.lossviewer2.*;
+import java.util.*;
+
+public class SelectionEvent<DetectorType> {
+	
+	private Collection<DetectorType>command;
+	
+	private SelectionHandler source;
+	private Collection<SelectionHandler<DetectorType>> handlers = new HashSet<SelectionHandler<DetectorType>>();
+	
+	public SelectionEvent(Set<DetectorType> selection, SelectionHandler<DetectorType> source){
+		this.command=selection;
+		this.source = source;
+		handlers.add(source);
+	}
+	
+	public void addProcessedHandler(SelectionHandler sh) {
+		handlers.add(sh);
+	}
+	
+	public boolean contains(SelectionHandler sh) {
+		return handlers.contains(sh);
+	}
+	
+	
+	/**
+	 * Returns Command
+	 *
+	 * @return    a  String
+	 */
+	public Collection<DetectorType> getSelection() {
+		return command;
+	}
+	
+	
+	/**
+	 * Returns Source
+	 *
+	 * @return    an Object
+	 */
+	public Object getSource() {
+		return source;
+	}
+}
