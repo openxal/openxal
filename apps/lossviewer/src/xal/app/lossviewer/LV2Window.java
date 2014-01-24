@@ -30,7 +30,7 @@ import javax.swing.plaf.basic.BasicInternalFrameUI;
  */
 public class LV2Window extends AcceleratorWindow implements SwingConstants {
 
-    private LV2Application application;
+    private Main application;
     private JDesktopPane desktop;
     private JTextField msgTextField;
     //private String currentLossSignal;
@@ -38,7 +38,7 @@ public class LV2Window extends AcceleratorWindow implements SwingConstants {
 
     public LV2Window(final XalDocument aDocument) {
         super(aDocument);
-        application = (LV2Application) Application.getAdaptor();
+        application = (Main) Application.getAdaptor();
         desktop = new JDesktopPane();
         desktop.setBackground(new Color(96, 96, 96));
         desktop.setDragMode(JDesktopPane.OUTLINE_DRAG_MODE);

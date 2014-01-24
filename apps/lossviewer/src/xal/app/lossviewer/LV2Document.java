@@ -50,11 +50,11 @@ public class LV2Document extends AcceleratorDocumentWithPreferences {
     public void saveSnapshot(String whatToSave) {
         GregorianCalendar gc = new GregorianCalendar();
 
-        createNewReference(new SimpleDateFormat("MM/dd HH:mm:ss").format(gc.getTime()), ((LV2Application) Application.getAdaptor()).getAllBLMs(null));
+        createNewReference(new SimpleDateFormat("MM/dd HH:mm:ss").format(gc.getTime()), ((Main) Application.getAdaptor()).getAllBLMs(null));
 
 
         String scoreDir = getDefaultFolder().getAbsolutePath();
-        List<LossDetector> detList = ((LV2Application) Application.getAdaptor()).getAllBLMs(whatToSave);
+        List<LossDetector> detList = ((Main) Application.getAdaptor()).getAllBLMs(whatToSave);
         StringBuffer sb = getSnapshotBuffer(detList);
 
         DateFormat dfull = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss");
@@ -136,7 +136,7 @@ public class LV2Document extends AcceleratorDocumentWithPreferences {
             }
         });
     
-        List<LossDetector> allBLMs = ((LV2Application) Application.getAdaptor()).getAllBLMs(null);
+        List<LossDetector> allBLMs = ((Main) Application.getAdaptor()).getAllBLMs(null);
 
 
 
@@ -167,13 +167,13 @@ public class LV2Document extends AcceleratorDocumentWithPreferences {
             }
 
 
-            detSet = ((LV2Application) Application.getAdaptor()).getSequences().get(text);
+            detSet = ((Main) Application.getAdaptor()).getSequences().get(text);
 
             newView.setTitle(text);
             newView.setListName(text);
 
             if (detSet == null) {
-                detSet = ((LV2Application) Application.getAdaptor()).getCombos().get(text);
+                detSet = ((Main) Application.getAdaptor()).getCombos().get(text);
             }
 
             newView.setDetectors(detSet);

@@ -126,7 +126,7 @@ public class DefaultLossView extends LossView {
 			for (DataAdaptor detector : detectors) {
 				String detName = detector.stringValue("name");
 				if (detName != null) {
-					addedDet.add(((LV2Application)Application.getAdaptor())
+					addedDet.add(((Main)Application.getAdaptor())
 								 .getDetector(detName));
 				}
 			}
@@ -137,16 +137,16 @@ public class DefaultLossView extends LossView {
 			for (DataAdaptor detector : detectors) {
 				String detName = detector.stringValue("name");
 				if (detName != null) {
-					removedDet.add(((LV2Application)Application.getAdaptor())
+					removedDet.add(((Main)Application.getAdaptor())
 								 .getDetector(detName));
 				}
 			}
 		}
 		
-		Set<LossDetector> detectors = ((LV2Application)Application.getAdaptor())
+		Set<LossDetector> detectors = ((Main)Application.getAdaptor())
 			.getSequences().get(listName);
 		if(detectors==null)
-			detectors = ((LV2Application)Application.getAdaptor())
+			detectors = ((Main)Application.getAdaptor())
 				.getCombos().get(listName);
 		
 		setDetectors(detectors);

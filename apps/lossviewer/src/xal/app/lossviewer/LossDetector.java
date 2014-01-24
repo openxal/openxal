@@ -127,7 +127,7 @@ public abstract class LossDetector {
         return index;
     }
 
-    public static LossDetector createDetector(LV2Application app, String className,
+    public static LossDetector createDetector(Main app, String className,
             String id, String seqName,
             double position, int index) {
 

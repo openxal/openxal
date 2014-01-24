@@ -34,7 +34,7 @@ import xal.smf.impl.qualify.AndTypeQualifier;
  *
  * @author  somebody
  */
-public class LV2Application extends ApplicationWithPreferences {
+public class Main extends ApplicationWithPreferences {
 
     private static Accelerator localAccelerator = null;
     private Dispatcher dispatcher;
@@ -119,7 +119,7 @@ public class LV2Application extends ApplicationWithPreferences {
     /**
      * Constructor
      */
-    public LV2Application() {
+    public Main() {
         super();
 
         dispatcher = new EpicsDispatcher((String) getPreferences().get("TriggerName"));
@@ -320,7 +320,7 @@ public class LV2Application extends ApplicationWithPreferences {
     static public void main(String[] args) {
         try {
             setOptions(args);
-            LV2Application app = new LV2Application();
+            Main app = new Main();
             AcceleratorApplication.launch(app);
             Logger.getLogger(app.getClass().getCanonicalName()).log(Level.INFO, "JAVA version = " + (System.getProperty("java.runtime.version")));
 
