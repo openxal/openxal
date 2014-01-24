@@ -1,6 +1,6 @@
-package gov.sns.apps.lossviewer2.signals;
+package xal.app.lossviewer.signals;
 
-import gov.sns.ca.*;
+import xal.ca.*;
 import java.util.*;
 import java.util.logging.*;
 

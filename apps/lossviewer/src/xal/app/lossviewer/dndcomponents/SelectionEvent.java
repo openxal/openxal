@@ -1,6 +1,6 @@
-package gov.sns.apps.lossviewer2.dndcomponents;
+package xal.app.lossviewer.dndcomponents;
 
-import gov.sns.apps.lossviewer2.*;
+import xal.app.lossviewer.*;
 import java.util.*;
 
 public class SelectionEvent<DetectorType> {

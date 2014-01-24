@@ -1,6 +1,6 @@
-package gov.sns.apps.lossviewer2;
+package xal.app.lossviewer;
 
-import gov.sns.apps.lossviewer2.signals.*;
+import xal.app.lossviewer.signals.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.lang.reflect.*;
@@ -163,11 +163,11 @@ public class Dispatcher {
 
     private void initializeDefaultTypes() {
         try {
-            Class cl = Class.forName("gov.sns.apps.lossviewer2.signals.TimerSignal");
+            Class cl = Class.forName("xal.app.lossviewer.signals.TimerSignal");
             if (cl != null) {
                 types.put("TimerSignal", (Constructor<Signal>) (cl.getConstructor()));
             }
-            cl = Class.forName("gov.sns.apps.lossviewer2.signals.CASignal");
+            cl = Class.forName("xal.app.lossviewer.signals.CASignal");
             if (cl != null) {
                 types.put("CASignal", (Constructor<Signal>) (cl.getConstructor()));
             }

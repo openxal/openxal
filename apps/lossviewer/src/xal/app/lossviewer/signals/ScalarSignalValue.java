@@ -1,4 +1,4 @@
-package gov.sns.apps.lossviewer2.signals;
+package xal.app.lossviewer.signals;
 
 
 public class ScalarSignalValue implements SignalValue {

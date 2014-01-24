@@ -1,15 +1,16 @@
-package gov.sns.apps.lossviewer2.dndcomponents;
+package xal.app.lossviewer.dndcomponents;
 
-import gov.sns.application.*;
-import gov.sns.apps.lossviewer2.*;
-import gov.sns.apps.lossviewer2.preferences.*;
-import gov.sns.apps.lossviewer2.views.*;
-import gov.sns.tools.data.*;
+import xal.extension.application.*;
+import xal.app.lossviewer.*;
+import xal.app.lossviewer.preferences.*;
+import xal.app.lossviewer.views.*;
 import java.awt.event.*;
 import java.text.*;
 import java.util.*;
 import javax.swing.*;
 import javax.swing.event.*;
+import xal.tools.data.DataAdaptor;
+import xal.tools.data.DataListener;
 
 public class LossTable extends JTable implements SelectionHandler<LossDetector>, DataListener {
 

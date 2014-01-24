@@ -1,6 +1,6 @@
-package gov.sns.apps.lossviewer2;
+package xal.app.lossviewer;
 
-import gov.sns.apps.lossviewer2.signals.*;
+import xal.app.lossviewer.signals.*;
 
 public  interface SpecialProcessor {
 		

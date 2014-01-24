@@ -2,11 +2,12 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package gov.sns.apps.lossviewer2.dndcomponents;
+package xal.app.lossviewer.dndcomponents;
 
-import gov.sns.apps.lossviewer2.views.LossView;
-import gov.sns.tools.data.DataAdaptor;
+import xal.app.lossviewer.views.LossView;
+
 import java.util.Map;
+import xal.tools.data.DataAdaptor;
 
 /**
  *

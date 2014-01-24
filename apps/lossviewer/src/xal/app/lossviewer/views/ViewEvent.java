@@ -1,4 +1,4 @@
-package gov.sns.apps.lossviewer2.views;
+package xal.app.lossviewer.views;
 
 public class ViewEvent {
 	

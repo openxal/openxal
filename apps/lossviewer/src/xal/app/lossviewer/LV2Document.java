@@ -7,14 +7,13 @@
  * Oak Ridge National Laboratory
  * Oak Ridge, TN 37830
  */
-package gov.sns.apps.lossviewer2;
+package xal.app.lossviewer;
 
-import gov.sns.application.*;
-import gov.sns.apps.lossviewer2.preferences.*;
-import gov.sns.apps.lossviewer2.signals.*;
-import gov.sns.apps.lossviewer2.views.*;
-import gov.sns.tools.data.*;
-import gov.sns.tools.xml.*;
+import xal.extension.application.*;
+import xal.app.lossviewer.preferences.*;
+import xal.app.lossviewer.signals.*;
+import xal.app.lossviewer.views.*;
+
 import java.awt.*;
 import java.io.*;
 import java.text.*;
@@ -22,6 +21,8 @@ import java.util.*;
 import javax.swing.*;
 
 import java.util.List;
+import xal.tools.data.DataAdaptor;
+import xal.tools.xml.XmlDataAdaptor;
 
 /**
  * TemplateDocument
@@ -264,7 +265,7 @@ public class LV2Document extends AcceleratorDocumentWithPreferences {
         List<DataAdaptor> vdas = da.childAdaptor("AllViews").childAdaptors("View");
         for (DataAdaptor vda : vdas) {
             DataAdaptor nvda = newVersionDa.createChild("LossView");
-            nvda.setValue("classname", "gov.sns.apps.lossviewer2.views.DefaultLossView");
+            nvda.setValue("classname", "xal.app.lossviewer.views.DefaultLossView");
             nvda.setValue("name", vda.stringValue("name"));
             nvda.setValue("listname", vda.stringValue("name"));
 

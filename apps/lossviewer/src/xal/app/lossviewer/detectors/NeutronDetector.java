@@ -1,7 +1,7 @@
-package gov.sns.apps.lossviewer2.detectors;
+package xal.app.lossviewer.detectors;
 
-import gov.sns.apps.lossviewer2.*;
-import gov.sns.apps.lossviewer2.signals.*;
+import xal.app.lossviewer.*;
+import xal.app.lossviewer.signals.*;
 import java.util.*;
 
 public class NeutronDetector extends IonizationChamber {

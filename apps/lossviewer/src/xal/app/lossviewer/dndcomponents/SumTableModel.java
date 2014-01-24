@@ -2,9 +2,9 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package gov.sns.apps.lossviewer2.dndcomponents;
+package xal.app.lossviewer.dndcomponents;
 
-import gov.sns.apps.lossviewer2.LossDetector;
+import xal.app.lossviewer.LossDetector;
 import java.text.NumberFormat;
 import java.util.HashMap;
 import java.util.List;

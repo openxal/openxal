@@ -1,13 +1,14 @@
-package gov.sns.apps.lossviewer2.views;
+package xal.app.lossviewer.views;
 
-import gov.sns.apps.lossviewer2.*;
-import gov.sns.apps.lossviewer2.signals.*;
-import gov.sns.tools.data.*;
+import xal.app.lossviewer.*;
+import xal.app.lossviewer.signals.*;
+
 
 import java.awt.Container;
 import java.awt.Rectangle;
 import java.util.*;
 import javax.swing.*;
+import xal.tools.data.DataListener;
 
 public interface View<DetectorType> extends DataListener,SignalListener {
 	

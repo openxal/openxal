@@ -2,17 +2,16 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package gov.sns.apps.lossviewer2.dndcomponents.mpspanel;
+package xal.app.lossviewer.dndcomponents.mpspanel;
 
-import gov.sns.apps.lossviewer2.dndcomponents.*;
-import gov.sns.apps.lossviewer2.LossDetector;
-import gov.sns.apps.lossviewer2.signals.ScalarSignalValue;
-import gov.sns.apps.lossviewer2.signals.SignalHistory;
-import gov.sns.apps.lossviewer2.views.View;
-import gov.sns.apps.lossviewer2.views.ViewEvent;
-import gov.sns.apps.lossviewer2.views.ViewListener;
-import gov.sns.tools.data.DataAdaptor;
-import gov.sns.tools.data.DataListener;
+import xal.app.lossviewer.dndcomponents.*;
+import xal.app.lossviewer.LossDetector;
+import xal.app.lossviewer.signals.ScalarSignalValue;
+import xal.app.lossviewer.signals.SignalHistory;
+import xal.app.lossviewer.views.View;
+import xal.app.lossviewer.views.ViewEvent;
+import xal.app.lossviewer.views.ViewListener;
+
 
 
 import java.awt.BasicStroke;
@@ -51,6 +50,8 @@ import org.jfree.data.xy.XYBarDataset;
 import org.jfree.data.xy.XYDataItem;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
+import xal.tools.data.DataAdaptor;
+import xal.tools.data.DataListener;
 
 /**
  *

@@ -7,11 +7,11 @@
  * Oak Ridge National Laboratory
  * Oak Ridge, TN 37830
  */
-package gov.sns.apps.lossviewer2;
+package xal.app.lossviewer;
 
-import gov.sns.application.*;
-import gov.sns.apps.lossviewer2.views.*;
-import gov.sns.xal.smf.application.*;
+import xal.extension.application.*;
+import xal.app.lossviewer.views.*;
+import xal.extension.smf.application.*;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -198,7 +198,7 @@ public class LV2Window extends AcceleratorWindow implements SwingConstants {
         popup.add(pulseLoss);
         popup.add(slow60);
 
-        if (newView.getClass().getName().equals("gov.sns.apps.lossviewer2.views.DefaultLossView")) {
+        if (newView.getClass().getName().equals("xal.app.lossviewer.views.DefaultLossView")) {
 
             final JMenu referenceMenu = new JMenu("References");
 

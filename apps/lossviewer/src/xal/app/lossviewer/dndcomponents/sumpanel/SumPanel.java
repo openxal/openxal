@@ -2,18 +2,17 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package gov.sns.apps.lossviewer2.dndcomponents.sumpanel;
+package xal.app.lossviewer.dndcomponents.sumpanel;
 
-import gov.sns.apps.lossviewer2.LossDetector;
-import gov.sns.apps.lossviewer2.dndcomponents.mpspanel.MPSPanel;
-import gov.sns.apps.lossviewer2.signals.ScalarSignalValue;
-import gov.sns.apps.lossviewer2.signals.SignalHistory;
-import gov.sns.apps.lossviewer2.views.SumView;
-import gov.sns.apps.lossviewer2.views.View;
-import gov.sns.apps.lossviewer2.views.ViewEvent;
-import gov.sns.apps.lossviewer2.views.ViewListener;
-import gov.sns.tools.data.DataAdaptor;
-import gov.sns.tools.data.DataListener;
+import xal.app.lossviewer.LossDetector;
+import xal.app.lossviewer.dndcomponents.mpspanel.MPSPanel;
+import xal.app.lossviewer.signals.ScalarSignalValue;
+import xal.app.lossviewer.signals.SignalHistory;
+import xal.app.lossviewer.views.SumView;
+import xal.app.lossviewer.views.View;
+import xal.app.lossviewer.views.ViewEvent;
+import xal.app.lossviewer.views.ViewListener;
+
 import java.awt.BorderLayout;
 import java.text.DecimalFormat;
 import java.util.Date;
@@ -32,6 +31,8 @@ import org.jfree.data.time.Millisecond;
 import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
 import org.jfree.data.time.TimeSeriesDataItem;
+import xal.tools.data.DataAdaptor;
+import xal.tools.data.DataListener;
 
 /**
  *

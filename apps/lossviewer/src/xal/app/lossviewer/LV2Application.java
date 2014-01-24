@@ -7,21 +7,27 @@
  * Oak Ridge National Laboratory
  * Oak Ridge, TN 37830
  */
-package gov.sns.apps.lossviewer2;
+package xal.app.lossviewer;
 
-import gov.sns.application.*;
-import gov.sns.apps.lossviewer2.preferences.*;
-import gov.sns.apps.lossviewer2.signals.*;
-import gov.sns.xal.smf.*;
-import gov.sns.xal.smf.application.*;
-import gov.sns.xal.smf.data.*;
-import gov.sns.xal.smf.impl.qualify.*;
+import xal.extension.application.*;
+import xal.app.lossviewer.preferences.*;
+import xal.app.lossviewer.signals.*;
+
+import xal.extension.smf.application.*;
+
 import java.io.*;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.prefs.*;
 import javax.swing.*;
+import xal.smf.Accelerator;
+import xal.smf.AcceleratorNode;
+import xal.smf.AcceleratorSeq;
+import xal.smf.AcceleratorSeqCombo;
+import xal.smf.data.OpticsSwitcher;
+import xal.smf.data.XMLDataManager;
+import xal.smf.impl.qualify.AndTypeQualifier;
 
 /**
  * Main is the ApplicationAdaptor for the Template application.
@@ -208,8 +214,8 @@ public class LV2Application extends ApplicationWithPreferences {
 
             //still null, optics not set
             if (localAccelerator == null) {
-                OpticsSwitcher switcher = new OpticsSwitcher((JFrame) null, true);
-                switcher.showNearOwner();
+                OpticsSwitcher switcher = OpticsSwitcher.getInstance();
+                switcher.showDialogNearOwner((JFrame)null);
                 if (switcher.getDefaultOpticsPath() != null) {
                     localAccelerator = XMLDataManager.loadDefaultAccelerator();
                 }

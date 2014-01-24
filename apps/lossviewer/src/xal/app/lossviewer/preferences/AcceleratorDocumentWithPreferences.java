@@ -1,14 +1,16 @@
-package gov.sns.apps.lossviewer2.preferences;
+package xal.app.lossviewer.preferences;
 
-import gov.sns.application.*;
-import gov.sns.tools.data.*;
-import gov.sns.tools.xml.*;
-import gov.sns.xal.smf.application.*;
+import xal.extension.application.*;
+
+import xal.extension.smf.application.*;
 import java.awt.*;
 import java.net.*;
 import java.util.*;
 
 import java.util.List;
+import xal.tools.data.DataAdaptor;
+import xal.tools.data.DataListener;
+import xal.tools.xml.XmlDataAdaptor;
 
 public abstract class AcceleratorDocumentWithPreferences extends AcceleratorDocument
 		implements PreferenceListener,PreferenceModel, DataListener {

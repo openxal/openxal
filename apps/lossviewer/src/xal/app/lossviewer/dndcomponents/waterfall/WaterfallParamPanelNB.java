@@ -9,7 +9,7 @@
  * Created on Mar 25, 2009, 1:47:22 PM
  */
 
-package gov.sns.apps.lossviewer2.dndcomponents.waterfall;
+package xal.app.lossviewer.dndcomponents.waterfall;
 
 /**
  *

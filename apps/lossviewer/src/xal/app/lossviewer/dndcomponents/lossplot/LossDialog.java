@@ -1,4 +1,4 @@
-package gov.sns.apps.lossviewer2.dndcomponents.lossplot;
+package xal.app.lossviewer.dndcomponents.lossplot;
 
 
 

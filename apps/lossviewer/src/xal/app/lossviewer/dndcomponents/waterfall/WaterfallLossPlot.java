@@ -2,24 +2,23 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package gov.sns.apps.lossviewer2.dndcomponents.waterfall;
+package xal.app.lossviewer.dndcomponents.waterfall;
 
-import gov.sns.apps.lossviewer2.LossDetector;
-import gov.sns.apps.lossviewer2.signals.ScalarSignalValue;
-import gov.sns.apps.lossviewer2.signals.SignalEvent;
-import gov.sns.apps.lossviewer2.signals.SignalHistory;
-import gov.sns.apps.lossviewer2.views.View;
-import gov.sns.apps.lossviewer2.views.ViewEvent;
-import gov.sns.apps.lossviewer2.views.ViewListener;
-import gov.sns.apps.lossviewer2.views.WaterView;
-import gov.sns.apps.lossviewer2.waterfall.ColorLegend;
-import gov.sns.apps.lossviewer2.waterfall.DataPoint;
-import gov.sns.apps.lossviewer2.waterfall.DataSlice;
-import gov.sns.apps.lossviewer2.waterfall.DefaultWaterfallData;
-import gov.sns.apps.lossviewer2.waterfall.WaterfallData;
-import gov.sns.apps.lossviewer2.waterfall.WaterfallPanel;
-import gov.sns.tools.data.DataAdaptor;
-import gov.sns.tools.data.DataListener;
+import xal.app.lossviewer.LossDetector;
+import xal.app.lossviewer.signals.ScalarSignalValue;
+import xal.app.lossviewer.signals.SignalEvent;
+import xal.app.lossviewer.signals.SignalHistory;
+import xal.app.lossviewer.views.View;
+import xal.app.lossviewer.views.ViewEvent;
+import xal.app.lossviewer.views.ViewListener;
+import xal.app.lossviewer.views.WaterView;
+import xal.app.lossviewer.waterfall.ColorLegend;
+import xal.app.lossviewer.waterfall.DataPoint;
+import xal.app.lossviewer.waterfall.DataSlice;
+import xal.app.lossviewer.waterfall.DefaultWaterfallData;
+import xal.app.lossviewer.waterfall.WaterfallData;
+import xal.app.lossviewer.waterfall.WaterfallPanel;
+
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
@@ -33,6 +32,8 @@ import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Set;
 import javax.swing.JPanel;
+import xal.tools.data.DataAdaptor;
+import xal.tools.data.DataListener;
 
 /**
  *

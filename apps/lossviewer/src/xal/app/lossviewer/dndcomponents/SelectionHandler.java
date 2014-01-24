@@ -1,6 +1,6 @@
-package gov.sns.apps.lossviewer2.dndcomponents;
-import gov.sns.apps.lossviewer2.*;
-import gov.sns.apps.lossviewer2.views.*;
+package xal.app.lossviewer.dndcomponents;
+import xal.app.lossviewer.*;
+import xal.app.lossviewer.views.*;
 import java.util.*;
 
 public interface SelectionHandler<DetectorType> {

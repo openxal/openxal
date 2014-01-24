@@ -1,7 +1,7 @@
-package gov.sns.apps.lossviewer2.dndcomponents;
+package xal.app.lossviewer.dndcomponents;
 
 
-import gov.sns.apps.lossviewer2.views.*;
+import xal.app.lossviewer.views.*;
 import java.awt.datatransfer.*;
 import java.io.*;
 import java.util.*;

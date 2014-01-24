@@ -1,16 +1,17 @@
-package gov.sns.apps.lossviewer2.views;
+package xal.app.lossviewer.views;
 
-import gov.sns.apps.lossviewer2.dndcomponents.LossTable;
-import gov.sns.application.*;
-import gov.sns.apps.lossviewer2.*;
-import gov.sns.apps.lossviewer2.dndcomponents.*;
-import gov.sns.apps.lossviewer2.dndcomponents.lossplot.*;
-import gov.sns.apps.lossviewer2.signals.*;
-import gov.sns.tools.data.*;
+import xal.app.lossviewer.dndcomponents.LossTable;
+import xal.extension.application.*;
+import xal.app.lossviewer.*;
+
+import xal.app.lossviewer.dndcomponents.lossplot.*;
+import xal.app.lossviewer.signals.*;
+
 import java.util.*;
 import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.table.*;
+import xal.tools.data.DataAdaptor;
 
 public class DefaultLossView extends LossView {
 	

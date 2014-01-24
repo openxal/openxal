@@ -1,8 +1,8 @@
-package gov.sns.apps.lossviewer2.views;
+package xal.app.lossviewer.views;
 
-import gov.sns.apps.lossviewer2.*;
-import gov.sns.apps.lossviewer2.dndcomponents.*;
-import gov.sns.tools.data.*;
+import xal.app.lossviewer.*;
+import xal.app.lossviewer.dndcomponents.*;
+
 import java.awt.*;
 
 import java.util.*;
@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import javax.swing.*;
 
 import java.util.List;
+import xal.tools.data.DataAdaptor;
 
 public abstract class LossView implements SelectionHandler<LossDetector>, View<LossDetector> {
 

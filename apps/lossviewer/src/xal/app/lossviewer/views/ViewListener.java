@@ -1,6 +1,6 @@
-package gov.sns.apps.lossviewer2.views;
+package xal.app.lossviewer.views;
 
-import gov.sns.apps.lossviewer2.views.*;
+import xal.app.lossviewer.views.*;
 
 public interface ViewListener {
 	public void processViewEvent(ViewEvent event);

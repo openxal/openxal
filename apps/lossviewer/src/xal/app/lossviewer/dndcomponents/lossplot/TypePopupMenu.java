@@ -1,9 +1,10 @@
-package gov.sns.apps.lossviewer2.dndcomponents.lossplot;
+package xal.app.lossviewer.dndcomponents.lossplot;
 
-import gov.sns.tools.apputils.*;
+
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
+import xal.extension.widgets.apputils.SimpleChartPopupMenu;
 
 public class TypePopupMenu extends SimpleChartPopupMenu {
 	

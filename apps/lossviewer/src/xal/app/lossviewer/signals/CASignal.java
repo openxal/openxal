@@ -1,6 +1,6 @@
-package gov.sns.apps.lossviewer2.signals;
+package xal.app.lossviewer.signals;
 
-import gov.sns.ca.*;
+import xal.ca.*;
 
 public class CASignal extends AbstractSignal implements ConnectionListener, IEventSinkValTime {
 

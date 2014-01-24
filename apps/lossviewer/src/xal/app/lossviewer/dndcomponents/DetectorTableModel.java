@@ -2,14 +2,14 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package gov.sns.apps.lossviewer2.dndcomponents;
+package xal.app.lossviewer.dndcomponents;
 
 
-import gov.sns.apps.lossviewer2.LossDetector;
-import gov.sns.apps.lossviewer2.signals.ScalarSignalValue;
-import gov.sns.apps.lossviewer2.views.View;
-import gov.sns.apps.lossviewer2.views.ViewEvent;
-import gov.sns.apps.lossviewer2.views.ViewListener;
+import xal.app.lossviewer.LossDetector;
+import xal.app.lossviewer.signals.ScalarSignalValue;
+import xal.app.lossviewer.views.View;
+import xal.app.lossviewer.views.ViewEvent;
+import xal.app.lossviewer.views.ViewListener;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Collection;

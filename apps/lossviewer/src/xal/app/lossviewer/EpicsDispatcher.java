@@ -1,6 +1,6 @@
-package gov.sns.apps.lossviewer2;
+package xal.app.lossviewer;
 
-import gov.sns.ca.*;
+import xal.ca.*;
 import java.util.logging.*;
 
 public class EpicsDispatcher extends Dispatcher implements  ConnectionListener, IEventSinkValTime {

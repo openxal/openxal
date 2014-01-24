@@ -1,6 +1,6 @@
-package gov.sns.apps.lossviewer2.preferences;
+package xal.app.lossviewer.preferences;
 
-import gov.sns.apps.lossviewer2.preferences.*;
+import xal.app.lossviewer.preferences.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;

@@ -2,14 +2,15 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package gov.sns.apps.lossviewer2.views;
+package xal.app.lossviewer.views;
 
-import gov.sns.apps.lossviewer2.dndcomponents.sumpanel.SumPanel;
-import gov.sns.apps.lossviewer2.dndcomponents.SumTable;
-import gov.sns.apps.lossviewer2.signals.SignalEvent;
-import gov.sns.tools.data.DataAdaptor;
+import xal.app.lossviewer.dndcomponents.sumpanel.SumPanel;
+import xal.app.lossviewer.dndcomponents.SumTable;
+import xal.app.lossviewer.signals.SignalEvent;
+
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
+import xal.tools.data.DataAdaptor;
 
 /**
  *

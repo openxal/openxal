@@ -2,10 +2,10 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package gov.sns.apps.lossviewer2.waterfall;
+package xal.app.lossviewer.waterfall;
 
-import gov.sns.tools.plot.ColorGenerator;
-import gov.sns.tools.plot.RainbowColorGenerator;
+import xal.extension.widgets.plot.ColorGenerator;
+import xal.extension.widgets.plot.RainbowColorGenerator;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FontMetrics;

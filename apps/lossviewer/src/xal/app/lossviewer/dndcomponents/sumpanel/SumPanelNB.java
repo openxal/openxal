@@ -5,7 +5,7 @@
  * Created on March 25, 2008, 4:04 PM
  */
 
-package gov.sns.apps.lossviewer2.dndcomponents.sumpanel;
+package xal.app.lossviewer.dndcomponents.sumpanel;
 
 /**
  *

@@ -3,7 +3,7 @@
  * and open the template in the editor.
  */
 
-package gov.sns.apps.lossviewer2.waterfall;
+package xal.app.lossviewer.waterfall;
 
 /**
  *

@@ -1,6 +1,6 @@
-package gov.sns.apps.lossviewer2.signals;
+package xal.app.lossviewer.signals;
 
-import gov.sns.apps.lossviewer2.*;
+import xal.app.lossviewer.*;
 
 public abstract class AbstractSignal implements Signal {
 	private int ID;

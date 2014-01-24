@@ -1,4 +1,4 @@
-package gov.sns.apps.lossviewer2.preferences;
+package xal.app.lossviewer.preferences;
 
 
 public class PreferenceEvent  {

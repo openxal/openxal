@@ -1,7 +1,7 @@
-package gov.sns.apps.lossviewer2.dndcomponents.lossplot;
+package xal.app.lossviewer.dndcomponents.lossplot;
 
-import gov.sns.apps.lossviewer2.*;
-import gov.sns.apps.lossviewer2.signals.*;
+import xal.app.lossviewer.*;
+import xal.app.lossviewer.signals.*;
 import gov.sns.tools.data.*;
 import java.awt.*;
 import java.text.*;

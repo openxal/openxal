@@ -4,7 +4,7 @@
  * Created on February 27, 2008, 11:25 AM
  */
 
-package gov.sns.apps.lossviewer2.dndcomponents.mpspanel;
+package xal.app.lossviewer.dndcomponents.mpspanel;
 
 /**
  *

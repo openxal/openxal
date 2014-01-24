@@ -1,9 +1,9 @@
-package gov.sns.apps.lossviewer2;
+package xal.app.lossviewer;
 
-import gov.sns.apps.lossviewer2.signals.ProcessorFactory;
-import gov.sns.apps.lossviewer2.signals.ScalarSignalValue;
-import gov.sns.apps.lossviewer2.signals.SignalHistory;
-import gov.sns.apps.lossviewer2.signals.SignalValue;
+import xal.app.lossviewer.signals.ProcessorFactory;
+import xal.app.lossviewer.signals.ScalarSignalValue;
+import xal.app.lossviewer.signals.SignalHistory;
+import xal.app.lossviewer.signals.SignalValue;
 
 import java.util.Comparator;
 import java.util.HashMap;
