@@ -26,6 +26,12 @@ auxiliary.show.customizer.message=<message>
                     <location>src</location>
                     <encoding>UTF-8</encoding>
                 </source-folder>
+                <build-file>
+                    <location>../../build/products/apps/lossviewer.jar</location>
+                </build-file>
+                <build-file>
+                    <location>../../build/products/lib/xal-shared.jar</location>
+                </build-file>
             </folders>
             <ide-actions>
                 <action name="build">
@@ -41,7 +47,21 @@ auxiliary.show.customizer.message=<message>
                     <target>clean</target>
                     <target>build</target>
                 </action>
+                <action name="debug">
+                    <script>nbproject/ide-file-targets.xml</script>
+                    <target>debug-nb</target>
+                </action>
             </ide-actions>
+            <export>
+                <type>jar</type>
+                <location>../../build/products/apps/lossviewer.jar</location>
+                <build-target>build</build-target>
+            </export>
+            <export>
+                <type>jar</type>
+                <location>../../build/products/lib/xal-shared.jar</location>
+                <build-target>build</build-target>
+            </export>
             <view>
                 <items>
                     <source-folder style="packages">
@@ -57,6 +77,7 @@ auxiliary.show.customizer.message=<message>
                     <ide-action name="rebuild"/>
                     <ide-action name="clean"/>
                     <ide-action name="run"/>
+                    <ide-action name="debug"/>
                 </context-menu>
             </view>
             <subprojects/>
@@ -65,6 +86,8 @@ auxiliary.show.customizer.message=<message>
             <compilation-unit>
                 <package-root>src</package-root>
                 <classpath mode="compile">../../build/products/lib/xal-shared.jar:lib/jcommon.jar:lib/jfreechart.jar</classpath>
+                <built-to>../../build/products/apps/lossviewer.jar</built-to>
+                <built-to>../../build/products/lib/xal-shared.jar</built-to>
                 <source-level>1.5</source-level>
             </compilation-unit>
         </java-data>

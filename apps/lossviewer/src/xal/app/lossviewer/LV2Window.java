@@ -26,7 +26,7 @@ import javax.swing.plaf.basic.BasicInternalFrameUI;
 /**
  * TemplateViewerWindow
  *
- * @author  somebody
+ * @author somebody
  */
 public class LV2Window extends AcceleratorWindow implements SwingConstants {
 
@@ -46,9 +46,6 @@ public class LV2Window extends AcceleratorWindow implements SwingConstants {
 //		this.setLayout(null);
         initMenu();
         setSize(800, 600);
-
-
-
 
     }
 //    private Map<String, SortedSet<LossDetector>> sequences;
@@ -76,22 +73,19 @@ public class LV2Window extends AcceleratorWindow implements SwingConstants {
         if (refname == null || refname.equals("")) {
             refname = "";
         } else {
-            refname = " #"+refname;
+            refname = " #" + refname;
         }
-        iframe.setTitle(view.getTitle() + " " + title+refname);
+        iframe.setTitle(view.getTitle() + " " + title + refname);
     }
 
     public void addView(final View newView) {
         final JInternalFrame iframe = new JInternalFrame("", true, true, true, true);
         ;
 
-
-
         InternalFrameUI ui = ((InternalFrameUI) (iframe.getUI()));
         if (!(ui instanceof BasicInternalFrameUI)) {
             return;
         }
-
 
         final JComponent titlePane = (((BasicInternalFrameUI) ui).getNorthPane());
         final JPopupMenu popup = new JPopupMenu();
@@ -129,16 +123,8 @@ public class LV2Window extends AcceleratorWindow implements SwingConstants {
             popup.add(mi);
         }
 
-
-
-
-
-
         newView.setParentContainer(iframe);
         iframe.setVisible(true);
-
-
-
 
         iframe.addInternalFrameListener(new InternalFrameAdapter() {
 
@@ -164,13 +150,10 @@ public class LV2Window extends AcceleratorWindow implements SwingConstants {
             }
         };
 
-
         popup.add(new JMenuItem(renameAction));
         //      titlePane.add(popup);
 
-
         //     currentLossSignal = newView.getLossSignal();
-
         JRadioButtonMenuItem pulseLoss = new JRadioButtonMenuItem(new AbstractAction("1 Pulse") {
 
             public void actionPerformed(ActionEvent e) {
@@ -201,7 +184,6 @@ public class LV2Window extends AcceleratorWindow implements SwingConstants {
         if (newView.getClass().getName().equals("xal.app.lossviewer.views.DefaultLossView")) {
 
             final JMenu referenceMenu = new JMenu("References");
-
 
             final AbstractAction a = new AbstractAction() {
 
@@ -237,29 +219,25 @@ public class LV2Window extends AcceleratorWindow implements SwingConstants {
             popup.add(referenceMenu);
         }
 
-
         setIFrameTitle(newView, iframe);
 
+        if (titlePane != null) {
+            titlePane.addMouseListener(new MouseAdapter() {
 
+                public void mousePressed(MouseEvent me) {
+                    if (me.isPopupTrigger()) {
+                        popup.show(titlePane, me.getX(), me.getY());
+                    }
 
-
-        titlePane.addMouseListener(new MouseAdapter() {
-
-            public void mousePressed(MouseEvent me) {
-                if (me.isPopupTrigger()) {
-                    popup.show(titlePane, me.getX(), me.getY());
                 }
 
-            }
-
-            public void mouseReleased(MouseEvent me) {
-                if (me.isPopupTrigger()) {
-                    popup.show(titlePane, me.getX(), me.getY());
+                public void mouseReleased(MouseEvent me) {
+                    if (me.isPopupTrigger()) {
+                        popup.show(titlePane, me.getX(), me.getY());
+                    }
                 }
-            }
-        });
-
-
+            });
+        }
 
     }
 //    private void switchSignal(String lossig){
@@ -324,7 +302,9 @@ public class LV2Window extends AcceleratorWindow implements SwingConstants {
         };
 
         for (int i = 0; i < num; i++) {
-            if (mb.getMenu(i).getText().equals(menuLabel)) {
+            JMenu mnu = mb.getMenu(i);
+            String text = mnu.getText();
+            if (text.equals(menuLabel)) {
                 mainMenu = mb.getMenu(i);
 
                 Map<String, SortedSet<LossDetector>> list;
@@ -370,7 +350,6 @@ public class LV2Window extends AcceleratorWindow implements SwingConstants {
                 waterMenu.add(seqMenuWater);
                 waterMenu.add(comboMenuWater);
 
-
                 for (String sn : list.keySet()) {
                     JMenuItem item = new JMenuItem(seqActionBar);
                     item.setText(sn);
@@ -392,12 +371,9 @@ public class LV2Window extends AcceleratorWindow implements SwingConstants {
                     item.setText(sn);
                     seqMenuWater.add(item);
 
-
                 }
 
-
                 Map<String, SortedSet<LossDetector>> clist = application.getCombos();
-
 
                 for (String sn : clist.keySet()) {
                     JMenuItem item = new JMenuItem(seqActionBar);
@@ -420,7 +396,6 @@ public class LV2Window extends AcceleratorWindow implements SwingConstants {
                     item.setText(sn);
                     comboMenuWater.add(item);
                 }
-
 
                 Action emptyAction = new AbstractAction("Empty") {
 
@@ -453,7 +428,6 @@ public class LV2Window extends AcceleratorWindow implements SwingConstants {
                     }
                 };
 
-
                 barMenu.add(new JMenuItem(emptyAction));
                 mpsMenu.add(new JMenuItem(emptyMPS));
                 sumMenu.add(new JMenuItem(emptySum));
@@ -464,13 +438,9 @@ public class LV2Window extends AcceleratorWindow implements SwingConstants {
             }
         }
 
-
-
     }
 
     protected void customizeCommands(Commander c) {
-
-
 
         c.registerAction(new AbstractAction("export-action") {
 
