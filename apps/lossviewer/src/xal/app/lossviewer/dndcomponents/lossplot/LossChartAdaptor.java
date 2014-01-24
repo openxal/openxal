@@ -1,6 +1,6 @@
 package xal.app.lossviewer.dndcomponents.lossplot;
 
-import gov.sns.tools.apputils.*;
+import xal.tools.apputils.ChartPopupAdaptor;
 
 public interface LossChartAdaptor extends ChartPopupAdaptor {
 	

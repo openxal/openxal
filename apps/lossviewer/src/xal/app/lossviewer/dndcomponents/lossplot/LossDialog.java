@@ -2,12 +2,14 @@ package xal.app.lossviewer.dndcomponents.lossplot;
 
 
 
-import gov.sns.tools.apputils.*;
+
 import java.awt.*;
 import java.awt.event.*;
 import java.text.*;
 import javax.swing.*;
 import javax.swing.border.*;
+import xal.tools.apputils.ChartPopupAdaptor;
+import xal.tools.apputils.SimpleChartDialog;
 
 
 

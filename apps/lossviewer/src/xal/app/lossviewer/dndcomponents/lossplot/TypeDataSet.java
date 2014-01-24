@@ -2,7 +2,7 @@ package xal.app.lossviewer.dndcomponents.lossplot;
 
 import xal.app.lossviewer.*;
 import xal.app.lossviewer.signals.*;
-import gov.sns.tools.data.*;
+
 import java.awt.*;
 import java.text.*;
 import java.util.*;
@@ -12,6 +12,8 @@ import org.jfree.chart.axis.*;
 import org.jfree.data.xy.*;
 
 import java.util.List;
+import xal.tools.data.DataAdaptor;
+import xal.tools.data.DataListener;
 
 public class TypeDataSet extends XYSeriesCollection implements LossChartAdaptor,DataListener {
 	

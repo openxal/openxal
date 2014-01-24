@@ -64,7 +64,7 @@ auxiliary.show.customizer.message=<message>
         <java-data xmlns="http://www.netbeans.org/ns/freeform-project-java/1">
             <compilation-unit>
                 <package-root>src</package-root>
-                <classpath mode="compile">../../build/products/lib/xal-shared.jar</classpath>
+                <classpath mode="compile">../../build/products/lib/xal-shared.jar:lib/jcommon.jar:lib/jfreechart.jar</classpath>
                 <source-level>1.5</source-level>
             </compilation-unit>
         </java-data>

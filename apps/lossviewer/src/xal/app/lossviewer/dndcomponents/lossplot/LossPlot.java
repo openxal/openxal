@@ -3,7 +3,6 @@ package xal.app.lossviewer.dndcomponents.lossplot;
 import xal.app.lossviewer.*;
 import xal.app.lossviewer.preferences.*;
 import xal.app.lossviewer.views.*;
-import gov.sns.tools.data.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
@@ -15,6 +14,8 @@ import org.jfree.chart.renderer.xy.*;
 
 import java.util.List;
 import org.jfree.chart.title.TextTitle;
+import xal.tools.data.DataAdaptor;
+import xal.tools.data.DataListener;
 
 public class LossPlot extends JPanel implements ViewListener, DataListener {
 
