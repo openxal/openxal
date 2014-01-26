@@ -17,24 +17,19 @@ import java.io.PrintWriter;
 import xal.model.IProbe;
 import xal.model.ModelException;
 import xal.model.elem.IElectromagnet;
+import xal.model.elem.ThickElectromagnet;
 import xal.model.elem.ThickElement;
 import xal.tools.beam.PhaseMap;
 import xal.tools.beam.PhaseMatrix;
 
 
-public class IdealMagQuad extends ThickElement implements IElectromagnet {
+public class IdealMagQuad extends ThickElectromagnet {
     /** string type identifier for all IdealMagQuad objects */
     public static final String s_strType = "IdealMagQuad";
 
     /** Parameters for XAL MODEL LATTICE dtd */
     public static final String s_strParamOrient = "Orientation";
     public static final String s_strParamField = "MagField";
-    
-    /** Orientation of quadrupole */
-    private int m_enmOrient = ORIENT_NONE;
-
-    /** Magnetic field strength */
-    private double m_dblField = 0.0;
 
 
     /*
@@ -70,51 +65,6 @@ public class IdealMagQuad extends ThickElement implements IElectromagnet {
     public IdealMagQuad() {
         super(s_strType);
     };
-
-    /*
-     *  IElectromagnet Interface
-     */
-
-    /**
-     *  Return the orientation enumeration code.
-     *
-     *  @return     ORIENT_HOR  - quadrupole focuses in x (horizontal) plane
-     *              ORIENT_VER  - quadrupole focuses in y ( vertical ) plane
-     *              ORIENT_NONE - error
-     */
-    public int getOrientation() {
-        return m_enmOrient;
-    };
-
-    /**  
-     *  Get the magnetic field strength of the electromagnet
-     *
-     *  @return     magnetic field (in <bold>Tesla/meter</bold>).
-     */   
-    public double getMagField() {
-    	return m_dblField;
-     }
-
-    /**
-     *  Set the magnet orientation
-     *  
-     *  @param  enmOrient   magnet orientation enumeration code
-     *
-     *  @see    #getOrientation
-     */
-    public void setOrientation(int enmOrient) {
-        m_enmOrient = enmOrient;
-    };
-
-    /**  
-     *  Set the magnetic field strength of the electromagnet.
-     *
-     *  @param  dblField    magnetic field (in <bold>Tesla/meter</bold>).
-     */
-    public void setMagField(double dblField) {
-        m_dblField = dblField;
-    };
-
 
 
     /*

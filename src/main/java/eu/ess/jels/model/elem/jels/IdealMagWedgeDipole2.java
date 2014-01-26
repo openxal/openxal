@@ -6,10 +6,7 @@
  */
 package eu.ess.jels.model.elem.jels;
 
-import xal.model.IProbe;
-import xal.model.elem.ElementSeq;
-import xal.model.elem.IElectromagnet;
-import xal.model.elem.IdealMagDipoleFace;
+import xal.model.elem.ElectromagnetSeq;
 import xal.tools.math.r3.R3;
 
 /**
@@ -29,7 +26,7 @@ import xal.tools.math.r3.R3;
  * @see xal.model.elem#IdealMagDipoleFace
  *
  */
-public class IdealMagWedgeDipole2 extends ElementSeq implements IElectromagnet {
+public class IdealMagWedgeDipole2 extends ElectromagnetSeq {
 
 
 

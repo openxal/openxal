@@ -13,6 +13,8 @@ import xal.model.ModelException;
 import xal.model.elem.IRfGap;
 import xal.model.elem.ThinElement;
 import xal.model.source.RfGapDataSource;
+import xal.sim.scenario.LatticeElement;
+import xal.smf.impl.RfGap;
 import xal.tools.beam.PhaseMap;
 import xal.tools.beam.PhaseMatrix;
 import xal.tools.math.poly.UnivariateRealPolynomial;
@@ -32,8 +34,7 @@ import xal.tools.math.poly.UnivariateRealPolynomial;
  *@created    November 22, 2005
  */
 public class IdealRfGap extends ThinElement implements IRfGap {
-
-    
+ 
     
 	/*
 	 *  Global Constants
@@ -413,5 +414,19 @@ public class IdealRfGap extends ThinElement implements IRfGap {
         os.println("  Gap phase shift    : " + this.getPhase() );
         os.println("  RF frequency       : " + this.getFrequency() );
     }
+
+    /**
+	 * Conversion method to be provided by the user
+	 * 
+	 * @param latticeElement the SMF node to convert
+	 */
+	@Override
+	public void initializeFrom(LatticeElement element) {		
+		RfGap rfgap = (RfGap) element.getNode();
+		try {
+			initializeFrom(rfgap);
+		} catch (ModelException excpt) {
+		}		
+	}
 }
 
