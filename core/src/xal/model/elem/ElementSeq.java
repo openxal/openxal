@@ -18,6 +18,7 @@ import xal.model.IComposite;
 import xal.model.IElement;
 import xal.model.IProbe;
 import xal.model.ModelException;
+import xal.sim.scenario.LatticeElement;
 
 
 
@@ -125,6 +126,17 @@ public abstract class ElementSeq implements IComposite {
         m_strId = strId;
     }
 
+    
+	/**
+	 * Conversion method to be provided by the user
+	 * 
+	 * @param latticeElement the SMF node to convert
+	 */
+	public void initializeFrom(LatticeElement latticeElement)
+	{
+		setId(latticeElement.getNode().getId());
+	}
+    
     /**
      *  Set the string identifier for the element.
      *

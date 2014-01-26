@@ -7,6 +7,8 @@
 package xal.sim.scenario;
 
 import xal.model.IComponent;
+import xal.model.ModelException;
+import xal.model.elem.ThinElement;
 import xal.smf.AcceleratorNode;
 import xal.smf.impl.Bend;
 import xal.smf.impl.Magnet;
@@ -19,11 +21,11 @@ public class LatticeElement implements Comparable<LatticeElement> {
 	private double start, end;
 	private AcceleratorNode node;
 	private int partnr = 0, parts = 1;	
-	private ElementConverter converter;
+	private Class<? extends IComponent> elementClass;
 	private int originalPosition;
 
 	
-	public LatticeElement(AcceleratorNode node, double position, ElementConverter converter, int originalPosition) {
+	public LatticeElement(AcceleratorNode node, double position, Class<? extends IComponent> elementClass, int originalPosition) {
 		this.node = node;
 		this.position = position;
 
@@ -38,7 +40,7 @@ public class LatticeElement implements Comparable<LatticeElement> {
 			effLength = length;
 		this.length = effLength;
 
-		this.converter = converter;
+		this.elementClass = elementClass;
 				
 		if (isThin())
 			start = end = position;
@@ -50,9 +52,9 @@ public class LatticeElement implements Comparable<LatticeElement> {
 		this.originalPosition = originalPosition;
 	}
 
-	private LatticeElement(AcceleratorNode node, double start, double end, ElementConverter converter, int originalPosition) {
+	private LatticeElement(AcceleratorNode node, double start, double end, Class<? extends IComponent> elementClass, int originalPosition) {
 		this.node = node;	
-		this.converter = converter;
+		this.elementClass = elementClass;
 				
 		this.start = start;
 		this.end = end;
@@ -92,7 +94,7 @@ public class LatticeElement implements Comparable<LatticeElement> {
 		if (splitter.position == start || splitter.position == end) return null;
 		parts *= 2;
 		partnr *= 2;
-		LatticeElement secondPart = new LatticeElement(node, splitter.position, end, converter, originalPosition);
+		LatticeElement secondPart = new LatticeElement(node, splitter.position, end, elementClass, originalPosition);
 		end = splitter.position;
 		secondPart.parts = parts;
 		secondPart.partnr = partnr + 1;		
@@ -100,11 +102,17 @@ public class LatticeElement implements Comparable<LatticeElement> {
 	}
 
 	public boolean isThin() {
-		return length == 0.0 || converter.isThin();
+		return length == 0.0 || ThinElement.class.isAssignableFrom(elementClass);
 	}
 
-	public IComponent convert() {
-		return converter.doConvert(this);
+	public IComponent convert() throws ModelException {		 
+		try {
+			IComponent component = elementClass.newInstance();		
+			component.initializeFrom(this);
+			return component;
+		} catch (InstantiationException | IllegalAccessException e) {
+			throw new ModelException("Exception while instantiating class "+elementClass.getName()+" for node "+node.getId());
+		}
 	}
 
 	@Override

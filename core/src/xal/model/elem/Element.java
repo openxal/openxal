@@ -24,6 +24,7 @@ import xal.model.IProbe;
 import xal.model.IAlgorithm;
 import xal.model.ModelException;
 import xal.model.alg.Tracker;
+import xal.sim.scenario.LatticeElement;
 
 
 
@@ -50,8 +51,8 @@ public abstract class Element implements IElement {
     /*
      *  Local Attributes
      */
-    
-    /** internal unique identifier of element */
+
+	/** internal unique identifier of element */
     private int         m_intUID;
     
     /** the element type identifier */
@@ -177,6 +178,18 @@ public abstract class Element implements IElement {
     public void initializeFrom(IModelDataSource source) throws ModelException {
     }
        
+    
+	/**
+	 * Conversion method to be provided by the user
+	 * 
+	 * @param latticeElement the SMF node to convert
+	 */
+    @Override
+	public void initializeFrom(LatticeElement latticeElement) {
+    	setId(latticeElement.getNode().getId());
+		setPosition(latticeElement.getCenter());
+	}
+    
     /**
      *  Set the string identifier for the element.
      *

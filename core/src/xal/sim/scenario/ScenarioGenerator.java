@@ -132,7 +132,8 @@ class ScenarioGenerator {
 
 		// convert splitElements to mapped elements and adds drift spaces
 		syncManager = new SynchronizationManager();
-		Lattice lattice = convertLatticeAndAddDrift(splitElements);
+		Lattice lattice;		
+		lattice = convertLatticeAndAddDrift(splitElements);
 		return new Scenario(sequence, lattice, syncManager);
 	}
 	
@@ -255,8 +256,9 @@ class ScenarioGenerator {
 	 * <p>Adds drifts between the elements.</p>
 	 * 
 	 * @param splitElements split elements
+	 * @throws ModelException 
 	 * */
-	private Lattice convertLatticeAndAddDrift(List<LatticeElement> splitElements) {
+	private Lattice convertLatticeAndAddDrift(List<LatticeElement> splitElements) throws ModelException {
 		double position = sequence.getPosition(); // always 0.0		
 		int driftCount = 0;
 		

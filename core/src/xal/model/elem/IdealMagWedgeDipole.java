@@ -27,7 +27,7 @@ import xal.model.IProbe;
  * @see xal.model.elem#IdealMagDipoleFace
  *
  */
-public class IdealMagWedgeDipole extends ElementSeq implements IElectromagnet {
+public class IdealMagWedgeDipole extends ElectromagnetSeq {
 
 
 

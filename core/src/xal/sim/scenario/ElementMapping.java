@@ -21,7 +21,7 @@ import xal.smf.AcceleratorNode;
  *
  */
 public abstract class ElementMapping {
-	protected List<Entry<String, ElementConverter>> elementMapping = new ArrayList<>();
+	protected List<Entry<String, Class<? extends IComponent>>> elementMapping = new ArrayList<>();
 
 	/**
 	 * Default converter should produce a general model element like a Marker.
@@ -29,7 +29,7 @@ public abstract class ElementMapping {
 	 *   
 	 * @return default converter
 	 */
-	public abstract ElementConverter getDefaultConverter();
+	public abstract Class<? extends IComponent> getDefaultConverter();
 
 	/**
 	 * Different model may have different implementation of the drift element.
@@ -44,9 +44,11 @@ public abstract class ElementMapping {
 	 * 
 	 * @param node the SMF node
 	 * @return converter for this node
+	 * @throws IllegalAccessException 
+	 * @throws InstantiationException 
 	 */
-	public ElementConverter getConverter(AcceleratorNode node) {
-		for (Entry<String, ElementConverter> tc : elementMapping) {
+	public Class<? extends IComponent> getConverter(AcceleratorNode node) {
+		for (Entry<String, Class<? extends IComponent>> tc : elementMapping) {
 			if (node.isKindOf(tc.getKey()))
 				return tc.getValue();
 		}
@@ -60,7 +62,7 @@ public abstract class ElementMapping {
 	 * @param key node type
 	 * @param value the converter
 	 */
-	protected void putMap(String key, ElementConverter value) {
-		elementMapping.add(new AbstractMap.SimpleImmutableEntry<String, ElementConverter>(key, value));
+	protected void putMap(String key, Class<? extends IComponent> value) {
+		elementMapping.add(new AbstractMap.SimpleImmutableEntry<String, Class<? extends IComponent>>(key, value));
 	}
 }

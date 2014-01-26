@@ -6,26 +6,19 @@
 
 package xal.sim.scenario;
 
+import java.lang.reflect.Method;
+
 import xal.model.IComponent;
-import xal.model.IElement;
-import xal.model.ModelException;
 import xal.model.elem.IdealDrift;
 import xal.model.elem.IdealEDipole;
 import xal.model.elem.IdealEQuad;
 import xal.model.elem.IdealMagQuad;
 import xal.model.elem.IdealMagSextupole;
 import xal.model.elem.IdealMagSkewQuad3;
-import xal.model.elem.IdealMagSolenoid;
 import xal.model.elem.IdealMagSteeringDipole;
 import xal.model.elem.IdealMagWedgeDipole2;
 import xal.model.elem.IdealRfGap;
 import xal.model.elem.Marker;
-import xal.smf.impl.Bend;
-import xal.smf.impl.EDipole;
-import xal.smf.impl.EQuad;
-import xal.smf.impl.Electromagnet;
-import xal.smf.impl.Magnet;
-import xal.smf.impl.RfGap;
 
 /**
  * The default element mapping implemented as singleton.
@@ -34,29 +27,42 @@ import xal.smf.impl.RfGap;
  *
  */
 public class DefaultElementMapping extends ElementMapping {
-	protected static ElementMapping instance;
-	
-	protected ElementConverter defaultConverter;
+	protected static ElementMapping instance;	
 
 	protected DefaultElementMapping() {
 		initialize();
 	}
 	
 	/**
-	 *  Returns the default element mapping.
+	 *  If xal.sim.scenario.PluginElementMapping is present, then it delegates call to its getInstance() method.
+	 *  Otherwise returns the default element mapping.
 	 *  
-	 * @return the default element mapping
+	 * @return plugin or default element mapping
 	 */
 	public static ElementMapping getInstance()
 	{
-		if (instance == null) instance = new DefaultElementMapping();
+		if (instance == null) {
+			try {
+				// effectively returns ChannelFactoryPlugin.getChannelFactoryInstance()
+				final Class<?> pluginClass = Class.forName( "xal.sim.scenario.PluginElementMapping" );
+				final Method creatorMethod = pluginClass.getMethod( "getInstance" );
+				instance = (ElementMapping)creatorMethod.invoke( null );
+			}
+			catch ( ClassNotFoundException exception ) {
+				instance = new DefaultElementMapping();
+			}
+			catch( Exception exception ) {
+				exception.printStackTrace();
+				throw new RuntimeException( "Failed to load the ChannelFactoryPlugin: " + exception.getMessage() );
+			}			
+		}
 		return instance;
 	}
 	
 	
 	@Override
-	public ElementConverter getDefaultConverter() {
-		return defaultConverter;
+	public Class<? extends IComponent> getDefaultConverter() {
+		return Marker.class;
 	}
 
 
@@ -66,170 +72,27 @@ public class DefaultElementMapping extends ElementMapping {
 	}
 	
 	protected void initialize() {
-		putMap("dh", new ElementConverter() {
+		putMap("dh",IdealMagWedgeDipole2.class);
+		putMap(xal.smf.impl.EDipole.s_strType, IdealEDipole.class);
+		putMap("QSC", IdealMagSkewQuad3.class);		
+		putMap("q", IdealMagQuad.class);
+		putMap("qt", IdealMagQuad.class);
+		putMap(xal.smf.impl.EQuad.s_strType, IdealEQuad.class);
+		putMap("pq", IdealMagQuad.class);
+		putMap("S", IdealMagSextupole.class);
+		putMap("SOL", IdealMagQuad.class);
+		putMap("rfgap", IdealRfGap.class);
 
-			@Override
-			public IComponent convert(LatticeElement element) {
-				IdealMagWedgeDipole2 dipole = new IdealMagWedgeDipole2();
-				Bend magnet = (Bend) element.getNode();
-				dipole.setPosition(element.getCenter(), element.getLength());
+		putMap("bcm", Marker.class);
 
-				// gov.sns.xal.model.elem.ThickDipole xalDipole =
-				// new gov.sns.xal.model.elem.ThickDipole();
-				// xalDipole.setId(element.getNode().getId());
-				// xalDipole.setLength(element.getLength());
-				// xalDipole.setMagField(magnet.getDesignField());
-				// xalDipole.setKQuad(magnet.getQuadComponent());
-				// double angle = magnet.getDfltBendAngle()*Math.PI/180. * element.getLength() / magnet.getDfltPathLength();
-				// xalDipole.setReferenceBendAngle(angle);
+		putMap("dch", IdealMagSteeringDipole.class);
+		putMap("dcv", IdealMagSteeringDipole.class);
+		putMap("EKick", IdealMagSteeringDipole.class);
 
-				// Replace ThickDipole object with an IdealMagWedgeDipole2
-				// First retrieve all the physical parameters for a bending dipole				
-				double len_sect = element.getLength();
-				double fld_mag0 = magnet.getDesignField();
-				double len_path0 = magnet.getDfltPathLength();
-				double ang_bend0 = magnet.getDfltBendAngle() * Math.PI / 180.0;
-				double k_quad0 = magnet.getQuadComponent();
-
-				// Now compute the dependent parameters
-				double R_bend0 = len_path0 / ang_bend0;
-				double fld_ind0 = -k_quad0 * R_bend0 * R_bend0;
-
-				double ang_bend = ang_bend0 * (len_sect / len_path0);
-				double len_path = R_bend0 * ang_bend;
-
-				// Set the parameters for the new model element				
-				dipole.setPhysicalLength(len_sect);
-				dipole.setDesignPathLength(len_path);
-				dipole.setMagField(fld_mag0);
-				dipole.setFieldIndex(fld_ind0);
-				dipole.setDesignBendAngle(ang_bend);
-								
-				if (element.getPartNr() == 0) // first piece
-					dipole.setEntrPoleAngle(magnet.getEntrRotAngle() * Math.PI / 180.);
-				if (element.getParts()-1 == element.getPartNr()) // last piece					
-					dipole.setExitPoleAngle(magnet.getExitRotAngle() * Math.PI / 180.);
-				
-				return dipole;
-			}
-		});
-		putMap(xal.smf.impl.EDipole.s_strType, new ElementConverter() {
-
-			@Override
-			public IElement convert(LatticeElement element) {				
-				EDipole magnet = (EDipole) element.getNode();				
-				IdealEDipole dipole = new IdealEDipole();				
-				
-				// need to initialize this because PermanentMagnets aren't synchronized
-				dipole.setVoltage(magnet.getDesignField());
-				return dipole;
-			}
-		});
-		putMap("QSC", new ElementConverter() {
-
-			@Override
-			public IElement convert(LatticeElement element) {
-				Magnet magnet = (Magnet)element.getNode();
-				IdealMagSkewQuad3 skwQuad = new IdealMagSkewQuad3(element.getNode().getId(), magnet.getDesignField(), element.getLength());				
-				return skwQuad;
-			}
-		});
-		ElementConverter quadConverter = new ElementConverter() {
-
-			@Override
-			public IElement convert(LatticeElement element) {
-				Magnet magnet = (Magnet) element.getNode();
-				IdealMagQuad quad = new IdealMagQuad();
-				// need to initialize this because PermanentMagnets aren't synchronized
-				quad.setMagField(magnet.getDesignField());
-				// quad.setEffLength(magnet.getEffLength() * element.getLength() / magnet.getLength());				
-				return quad;			
-			}
-		};
-		putMap("q", quadConverter);
-		putMap("qt", quadConverter);
-		putMap(xal.smf.impl.EQuad.s_strType, new ElementConverter() {
-
-			@Override
-			public IElement convert(LatticeElement element) {				
-				EQuad magnet = (EQuad) element.getNode();
-								 
-				IdealEQuad quad = new IdealEQuad();
-				
-				// need to initialize this because PermanentMagnets aren't synchronized
-				quad.setVoltage(magnet.getDesignField());
-				//      quad.setEffLength(magnet.getEffLength() * element.getLength() / magnet.getLength());				
-				quad.setAperture(magnet.getAper().getAperX());
-				return quad;
-			}
-		});
-		putMap("pq", quadConverter);
-		putMap("S", new ElementConverter() {
-
-			@Override
-			public IElement convert(LatticeElement element) {
-				IdealMagSextupole sextupole = new IdealMagSextupole();				
-				return sextupole;
-			}
-		});
-		putMap("SOL", new ElementConverter() {
-
-			@Override
-			public IElement convert(LatticeElement element) {
-				IdealMagSolenoid sol = new IdealMagSolenoid();
-				Magnet magnet = (Magnet) element.getNode();
-				// need to initialize this because PermanentMagnets aren't synchronized
-				sol.setMagField(magnet.getDesignField());
-				return sol;
-			}
-		});
-		putMap("rfgap", new ElementConverter() {
-
-			@Override
-			public IElement convert(LatticeElement element) {
-				IdealRfGap rfGap = new IdealRfGap();
-				RfGap rfgap = (RfGap) element.getNode();
-				try {
-					rfGap.initializeFrom(rfgap);
-				} catch (ModelException excpt) {
-				}
-				return rfGap;
-			}
-		});
-		defaultConverter = new ElementConverter() {
-			{
-				thin = true;
-			}
-
-			@Override
-			public IElement convert(LatticeElement element) {
-				return new Marker(element.getNode().getId());
-			}
-		};
-
-		putMap("bcm", defaultConverter);
-		ElementConverter steeringMagnet = new ElementConverter() {
-			{
-				thin = true;
-			}
-
-			@Override
-			public IElement convert(LatticeElement element) {
-				IdealMagSteeringDipole dipole = new IdealMagSteeringDipole();
-				Electromagnet magnet = (Electromagnet) element.getNode();
-				dipole.setEffLength(magnet.getEffLength());
-				dipole.setMagField(magnet.getDesignField());
-				return dipole;
-			}
-		};
-		putMap("dch", steeringMagnet);
-		putMap("dcv", steeringMagnet);
-		putMap("EKick", steeringMagnet);
-
-		putMap("bpm", defaultConverter);
-		putMap("bsm", defaultConverter);
-		putMap("blm", defaultConverter);
-		putMap("ws", defaultConverter);
-		putMap("marker", defaultConverter);
+		putMap("bpm",  Marker.class);
+		putMap("bsm",  Marker.class);
+		putMap("blm",  Marker.class);
+		putMap("ws",  Marker.class);
+		putMap("marker",  Marker.class);
 	}
 }

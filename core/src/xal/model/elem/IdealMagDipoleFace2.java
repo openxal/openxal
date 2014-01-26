@@ -31,7 +31,7 @@ import xal.model.ModelException;
  *   
  * @author Christopher K. Allen
  */
-public class IdealMagDipoleFace2 extends ThinElement implements IElectromagnet {
+public class IdealMagDipoleFace2 extends ThinElectromagnet {
 
     
     /*
@@ -62,9 +62,6 @@ public class IdealMagDipoleFace2 extends ThinElement implements IElectromagnet {
     /** K0 (no length) */
     private double K0 = 0;
     
-    /** bending plane of dipole */
-    private int                 enmOrient = ORIENT_NONE;
-    
     /** The dipole gap height (m) */
     private double              dblGap = 0.0;
 
@@ -73,9 +70,6 @@ public class IdealMagDipoleFace2 extends ThinElement implements IElectromagnet {
     
     /** second moment of fringe field defined a al Carey */
     private double              dblFringeInt = 0.0;
-    
-    /** Field strength of the dipole magnet */
-    private double              dblField = 0.0;
     
     /** flag to use design field from bending angle and path instead of bfield */
     private boolean bolFieldPathFlag = false;
@@ -256,27 +250,6 @@ public class IdealMagDipoleFace2 extends ThinElement implements IElectromagnet {
     /*
      *  IElectromagnet Interface
      */
-
-    /**
-     * Return the orientation enumeration code for the bending plane of the 
-     * associated dipole magnet.
-     *
-     *  @return     ORIENT_HOR  - dipole has steering action in x (horizontal) plane
-     *              ORIENT_VER  - dipole has steering action in y (vertical) plane
-     *              ORIENT_NONE - error
-     */
-    public int getOrientation() {
-        return this.enmOrient;
-    };
-
-    /**  
-     *  Get the magnetic field strength of the associated dipole
-     *
-     *  @return     magnetic field (in <bold>Tesla</bold>).
-     */
-    public double getMagField() {
-        return this.dblField;
-    };
     
     /**
      * Return the field path flag.
@@ -324,27 +297,7 @@ public class IdealMagDipoleFace2 extends ThinElement implements IElectromagnet {
         return h0;
     }
     
-    /**
-     *  Set the dipole bending plane orientation
-     *  
-     *  @param  enmOrient   magnet orientation enumeration code
-     *
-     *  @see    #getOrientation
-     */
-    public void setOrientation(int enmOrient) {
-        this.enmOrient = enmOrient;
-    };
-
-    /**  
-     *  Set the magnetic field strength of the dipole electromagnet.
-     *
-     *  @param  dblField    magnetic field (in <bold>Tesla</bold>).
-     */
-    public void setMagField(double dblField) {
-        this.dblField = dblField;
-    };
-
-
+  
     /*
      * IElement Interface
      */

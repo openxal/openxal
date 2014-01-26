@@ -47,7 +47,7 @@ import xal.model.ModelException;
  */
 
 
-public class IdealEDipole extends ThickElement implements IElectrostatic
+public class IdealEDipole extends ThickElectrostatic
 {
 
   /**

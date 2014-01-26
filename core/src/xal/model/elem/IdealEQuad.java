@@ -15,13 +15,11 @@ package xal.model.elem;
 
 import java.io.PrintWriter;
 
+import xal.model.IProbe;
+import xal.sim.scenario.LatticeElement;
 import xal.tools.beam.PhaseMap;
 import xal.tools.beam.PhaseMatrix;
-import xal.tools.beam.optics.DriftSpace;
 import xal.tools.beam.optics.QuadrupoleLens;
-
-
-import xal.model.IProbe;
 
 
 
@@ -31,7 +29,7 @@ import xal.model.IProbe;
  *
  * @author  Carla Benatti, adapted from Christopher K. Allen's IdealMagQuad.java
  */
-public class IdealEQuad extends ThickElement implements IElectrostatic {
+public class IdealEQuad extends ThickElectrostatic {
     
     
     /*
@@ -264,5 +262,14 @@ public class IdealEQuad extends ThickElement implements IElectrostatic {
         os.println("  EQuad orientation : " + this.getOrientation());
     };
     
-    
+    /**
+	 * Conversion method to be provided by the user
+	 * 
+	 * @param latticeElement the SMF node to convert
+	 */
+	@Override
+	public void initializeFrom(LatticeElement element) {
+		super.initializeFrom(element);				
+		setAperture(element.getNode().getAper().getAperX());
+	}    
 };

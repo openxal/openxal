@@ -8,6 +8,8 @@ package xal.model.elem;
 
 import java.io.PrintWriter;
 
+import xal.sim.scenario.LatticeElement;
+import xal.smf.impl.Magnet;
 import xal.tools.beam.PhaseMap;
 import xal.tools.beam.PhaseMatrix;
 import xal.tools.beam.optics.DriftSpace;
@@ -79,7 +81,7 @@ import xal.model.IProbe;
  * @see xal.model.elem#CoordinateRotation
  *
  */
-public class IdealMagSkewQuad3 extends ThickElement implements IElectromagnet {
+public class IdealMagSkewQuad3 extends ThickElectromagnet {
 
 
 
@@ -172,17 +174,6 @@ public class IdealMagSkewQuad3 extends ThickElement implements IElectromagnet {
     }
     
     
-    
-    /*
-     * Local Attributes 
-     */
-
-    /** Magnetic field strength */
-    private double dblField = 0.0;
-
-
-
-
     /*
      * Initialization
      */
@@ -256,30 +247,6 @@ public class IdealMagSkewQuad3 extends ThickElement implements IElectromagnet {
     /*
      *  IElectromagnet Interface
      */
-
-    /**  
-     *  Set the magnetic field strength of the quadrupole electromagnet.
-     *
-     *  @param  dblField    magnetic field (in <b>Tesla/meter</b>).
-     */
-    @Override
-    public void setMagField(double dblField) {
-        this.dblField = dblField;
-    };
-
-
-    /**  
-     *  Get the magnetic field strength of the quadrupole electromagnet.
-     *  Note that because this is a quadrupole element the returned value is
-     *  actually the transverse gradient of the field strength.
-     *
-     *  @return     magnetic field gradient (in <b>Tesla/meter</b>).
-     */
-    @Override
-    public double getMagField() {
-        return this.dblField;
-    };
-
 
 
     /**
@@ -441,9 +408,4 @@ public class IdealMagSkewQuad3 extends ThickElement implements IElectromagnet {
      * Internal Support
      */
      
-
-
-
-
-
 }

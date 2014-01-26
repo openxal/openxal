@@ -22,7 +22,7 @@ import xal.tools.math.r3.R3;
  * @see gov.sns.xal.model.elem#IdealMagFringeQuadFace
  *
  */
-public class IdealMagFringeQuad extends ElementSeq implements IElectromagnet {
+public class IdealMagFringeQuad extends ElectromagnetSeq {
 
 
 
