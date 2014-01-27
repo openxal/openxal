@@ -20,7 +20,7 @@ import xal.smf.AcceleratorNode;
  * @author Ivo List
  *
  */
-public abstract class ElementMapping {
+abstract class ElementMapping {
 	protected List<Entry<String, ElementConverter>> elementMapping = new ArrayList<>();
 
 	/**

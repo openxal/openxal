@@ -11,7 +11,7 @@ import xal.smf.AcceleratorNode;
 import xal.smf.impl.Bend;
 import xal.smf.impl.Magnet;
 
-public class LatticeElement implements Comparable<LatticeElement> {
+class LatticeElement implements Comparable<LatticeElement> {
 	
 
 	private double position;
