@@ -7,11 +7,8 @@ import java.util.logging.*;
 public class ChargeNormalizer extends AbstractSignal implements ConnectionListener {
 
     public void connectionMade(Channel channel) {
-        if (channel == machineModeChannel) {
-            connectMachineMode();
-        } else {
             connectBCM(channel);
-        }
+        
     }
     private String currentBCM = "";
 
@@ -48,32 +45,7 @@ public class ChargeNormalizer extends AbstractSignal implements ConnectionListen
             Logger.getLogger(ChargeNormalizer.this.getClass().getCanonicalName()).log(Level.INFO, ("Normalization BCM changed to " + currentBCM));
         }
     }
-    private void connectMachineMode() {
-        //	System.out.println("Connected MachineMode");
-        Logger.getLogger(this.getClass().getCanonicalName()).log(Level.INFO, ("Machine mode connected"));
-
-        if (machineModeMonitor == null) {
-            try {
-                machineModeMonitor = machineModeChannel.addMonitorValTime(new IEventSinkValTime() {
-
-                    public void eventValue(ChannelTimeRecord record, Channel chan) {
-                        
-                            String mode = record.stringValue();
-                            // set which BCM to use based on machine mode
-                            setBCM(bcmChannelNames.get(mode));
-                            
-                        
-
-                    }
-                }, 1);
-
-            } catch (MonitorException e) {
-            } catch (ConnectionException e) {
-            }
-        }
-
-
-    }
+   
 
     public void connectionDropped(Channel channel) {
         Logger.getLogger(this.getClass().getCanonicalName()).log(Level.WARNING, ("Connection dropped " + channel.channelName()));
@@ -108,9 +80,6 @@ public class ChargeNormalizer extends AbstractSignal implements ConnectionListen
     public void start() {
 
         ChannelFactory cf = ChannelFactory.defaultFactory();
-        machineModeChannel = cf.getChannel(machineModeName);
-        machineModeChannel.addConnectionListener(this);
-        machineModeChannel.requestConnection();
         for (String bcmName : bcmChannelNames.keySet()) {
             Channel ch = cf.getChannel(bcmChannelNames.get(bcmName));
             ch.addConnectionListener(this);
