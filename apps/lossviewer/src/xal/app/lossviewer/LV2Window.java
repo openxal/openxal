@@ -22,6 +22,7 @@ import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.plaf.InternalFrameUI;
 import javax.swing.plaf.basic.BasicInternalFrameUI;
+import xal.app.lossviewer.preferences.ApplicationPreferences;
 
 /**
  * TemplateViewerWindow
@@ -261,13 +262,14 @@ public class LV2Window extends AcceleratorWindow implements SwingConstants {
 
         mb.add(msgTextField);
 
-        JMenu mainMenu;
+        JMenu mainMenu, normMenu;
         int num = mb.getMenuCount();
         String menuLabel = (String) ((LV2Document) document).get("Mainmenu.label");
         String barLabel = (String) ((LV2Document) document).get("Barmenu.label");
         String mpsLabel = (String) ((LV2Document) document).get("MPSmenu.label");
         String sumLabel = (String) ((LV2Document) document).get("Summenu.label");
         String waterLabel = (String) ((LV2Document) document).get("Watermenu.label");
+        String normalizationLabel = (String) ((LV2Document) document).get("Normalizationmenu.label");
 
         Action seqActionBar = new AbstractAction() {
 
@@ -303,8 +305,29 @@ public class LV2Window extends AcceleratorWindow implements SwingConstants {
 
         for (int i = 0; i < num; i++) {
             JMenu mnu = mb.getMenu(i);
+            if(mnu==null){
+                break;              
+            }
             String text = mnu.getText();
-            if (text.equals(menuLabel)) {
+            
+            
+            if(text.equals(normalizationLabel)){
+                normMenu=mb.getMenu(i);
+                final Map<String, String> bcm = getNormBCMs();
+                for(String name :bcm.keySet()){
+                    normMenu.add(new JMenuItem(new AbstractAction(name){
+
+                        public void actionPerformed(ActionEvent e) {
+                           System.out.println(bcm.get(e.getActionCommand()));
+                        }
+                        
+                    }));
+                    
+                }
+                normMenu.setEnabled(true);
+                
+            }
+            else if (text.equals(menuLabel)) {
                 mainMenu = mb.getMenu(i);
 
                 Map<String, SortedSet<LossDetector>> list;
@@ -434,12 +457,25 @@ public class LV2Window extends AcceleratorWindow implements SwingConstants {
                 waterMenu.add(new JMenuItem(emptyWater));
 
                 mainMenu.setEnabled(true);
-                break;
+                
             }
         }
 
     }
 
+    private Map<String,String> getNormBCMs(){
+        Map<String,String> bcms = new TreeMap<String,String>();
+        ApplicationPreferences appPrefs = ((Main)Application.getAdaptor()).getPreferences();
+        Map<String, Object> preferences = appPrefs.getPreferencesFor("BCM.signals.name");
+        for(String prefname: preferences.keySet()){
+            String pvName="BCM.signals.mode"+prefname.substring(prefname.lastIndexOf("."),prefname.length());
+            bcms.put((String)preferences.get(prefname), (String)appPrefs.get(pvName));
+        }
+        
+        return bcms;
+        
+    }
+    
     protected void customizeCommands(Commander c) {
 
         c.registerAction(new AbstractAction("export-action") {
