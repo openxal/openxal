@@ -314,14 +314,18 @@ public class LV2Window extends AcceleratorWindow implements SwingConstants {
             if(text.equals(normalizationLabel)){
                 normMenu=mb.getMenu(i);
                 final Map<String, String> bcm = getNormBCMs();
-                for(String name :bcm.keySet()){
-                    normMenu.add(new JMenuItem(new AbstractAction(name){
-
+                ButtonGroup bg = new ButtonGroup();
+                for(String name : bcm.keySet()){
+                    JRadioButtonMenuItem rb = new JRadioButtonMenuItem(new AbstractAction(name){
+                        
                         public void actionPerformed(ActionEvent e) {
-                           System.out.println(bcm.get(e.getActionCommand()));
+                            changeNormalizationBCM(bcm.get(e.getActionCommand()));
                         }
                         
-                    }));
+                    });
+                    normMenu.add(rb);
+                    bg.add(rb);
+                    
                     
                 }
                 normMenu.setEnabled(true);
@@ -474,6 +478,10 @@ public class LV2Window extends AcceleratorWindow implements SwingConstants {
         
         return bcms;
         
+    }
+    
+    private void changeNormalizationBCM(String newValue){
+        ((Main)Application.getAdaptor()).changeNormalizationBCM(newValue);
     }
     
     protected void customizeCommands(Commander c) {

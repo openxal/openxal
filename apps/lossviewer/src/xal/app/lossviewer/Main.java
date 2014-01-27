@@ -130,6 +130,10 @@ public class Main extends ApplicationWithPreferences {
 
     }
 
+    public void changeNormalizationBCM(String newValue){
+        chargeNormalizer.setBCM(newValue);
+    }
+    ChargeNormalizer chargeNormalizer;
     private void initializeBCMs() {
         String machineModeName = (String) getPreferences().get("BCM.signals.MachineMode");
         Map<String, String> bcmNames = new HashMap<String, String>();
@@ -139,7 +143,7 @@ public class Main extends ApplicationWithPreferences {
             //		System.out.println(labelName + " " + labels.get(e));
             bcmNames.put(labelName, (String) bcmLabels.get(e));
         }
-        AbstractSignal chargeNormalizer = new ChargeNormalizer(machineModeName, bcmNames);
+        chargeNormalizer = new ChargeNormalizer(machineModeName, bcmNames);
         dispatcher.addSignal(chargeNormalizer);
     }
     private List<LossDetector> allBLMs;

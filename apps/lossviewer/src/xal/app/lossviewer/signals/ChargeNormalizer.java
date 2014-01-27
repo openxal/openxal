@@ -41,7 +41,13 @@ public class ChargeNormalizer extends AbstractSignal implements ConnectionListen
             }
         }
     }
-
+    
+    public  void setBCM(String newBCM){
+        synchronized(currentBCM){
+            currentBCM=newBCM;
+            Logger.getLogger(ChargeNormalizer.this.getClass().getCanonicalName()).log(Level.INFO, ("Normalization BCM changed to " + currentBCM));
+        }
+    }
     private void connectMachineMode() {
         //	System.out.println("Connected MachineMode");
         Logger.getLogger(this.getClass().getCanonicalName()).log(Level.INFO, ("Machine mode connected"));
@@ -51,12 +57,12 @@ public class ChargeNormalizer extends AbstractSignal implements ConnectionListen
                 machineModeMonitor = machineModeChannel.addMonitorValTime(new IEventSinkValTime() {
 
                     public void eventValue(ChannelTimeRecord record, Channel chan) {
-                        synchronized (currentBCM) {
+                        
                             String mode = record.stringValue();
                             // set which BCM to use based on machine mode
-                            currentBCM = bcmChannelNames.get(mode);
-                            Logger.getLogger(ChargeNormalizer.this.getClass().getCanonicalName()).log(Level.INFO, ("Normalization BCM changed to " + currentBCM));
-                        }
+                            setBCM(bcmChannelNames.get(mode));
+                            
+                        
 
                     }
                 }, 1);
