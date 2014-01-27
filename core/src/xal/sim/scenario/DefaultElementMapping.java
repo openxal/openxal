@@ -34,28 +34,13 @@ public class DefaultElementMapping extends ElementMapping {
 	}
 	
 	/**
-	 *  If xal.sim.scenario.PluginElementMapping is present, then it delegates call to its getInstance() method.
-	 *  Otherwise returns the default element mapping.
+	 *  Returns the default element mapping.
 	 *  
-	 * @return plugin or default element mapping
+	 * @return the default element mapping
 	 */
 	public static ElementMapping getInstance()
 	{
-		if (instance == null) {
-			try {
-				// effectively returns ChannelFactoryPlugin.getChannelFactoryInstance()
-				final Class<?> pluginClass = Class.forName( "xal.sim.scenario.PluginElementMapping" );
-				final Method creatorMethod = pluginClass.getMethod( "getInstance" );
-				instance = (ElementMapping)creatorMethod.invoke( null );
-			}
-			catch ( ClassNotFoundException exception ) {
-				instance = new DefaultElementMapping();
-			}
-			catch( Exception exception ) {
-				exception.printStackTrace();
-				throw new RuntimeException( "Failed to load the ChannelFactoryPlugin: " + exception.getMessage() );
-			}			
-		}
+		if (instance == null) instance = new DefaultElementMapping();
 		return instance;
 	}
 	
