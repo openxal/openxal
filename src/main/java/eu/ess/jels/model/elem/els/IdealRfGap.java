@@ -7,12 +7,10 @@ package eu.ess.jels.model.elem.els;
 
 import java.io.PrintWriter;
 
-import xal.model.IModelDataSource;
 import xal.model.IProbe;
 import xal.model.ModelException;
 import xal.model.elem.IRfGap;
 import xal.model.elem.ThinElement;
-import xal.model.source.RfGapDataSource;
 import xal.sim.scenario.LatticeElement;
 import xal.smf.impl.RfGap;
 import xal.tools.beam.PhaseMap;
@@ -208,32 +206,7 @@ public class IdealRfGap extends ThinElement implements IRfGap {
     /*
      *  IElement Interface
      */
-    
-    /**
-     * Initializes this element from the supplied data source.
-     * 
-     * @param source an instance of RfGapDataSource
-     * 
-     * @throws IllegalArgumentException if source not of expected type
-     */    
-    @Override
-    public void initializeFrom(IModelDataSource source) throws ModelException {        
-        // Check argument and throw exception if not of expected type
-        if (! (source instanceof RfGapDataSource) )
-            throw new IllegalArgumentException("Expected instance of RfGapDataSource, got: " + source.getClass().getName());
-        RfGapDataSource sourceGap = (RfGapDataSource) source;
         
-        // Initialize from source values
-        initialGap = sourceGap.isFirstGap();
-        cellLength = sourceGap.getGapLength();
-        gapOffset = sourceGap.getGapOffset();
-        TTFPrimeFit = sourceGap.getTTFPrimeFit();
-        TTFFit = sourceGap.getTTFFit();	
-        SPrimeFit = sourceGap.getSPrimeFit();
-        SFit = sourceGap.getSFit();
-        structureMode = sourceGap.getStructureMode();
-    }
-    
     /**
      * Returns the time taken for the probe to propagate through element.
      * 
@@ -424,11 +397,16 @@ public class IdealRfGap extends ThinElement implements IRfGap {
 	@Override
 	public void initializeFrom(LatticeElement element) {		
 		RfGap rfgap = (RfGap) element.getNode();
-		try {
-			initializeFrom(rfgap);
-		} catch (ModelException excpt) {
-		}		
-	}
-    
+		
+	    // Initialize from source values
+	    initialGap = rfgap.isFirstGap();
+	    cellLength = rfgap.getGapLength();
+	    gapOffset = rfgap.getGapOffset();
+	    TTFPrimeFit = rfgap.getTTFPrimeFit();
+	    TTFFit = rfgap.getTTFFit();	
+	    SPrimeFit = rfgap.getSPrimeFit();
+	    SFit = rfgap.getSFit();
+	    structureMode = rfgap.getStructureMode();
+	}    
 }
 
