@@ -1,8 +1,8 @@
 package xal.smf;
 
 import xal.tools.messaging.MessageCenter;
-
 import xal.sim.cfg.ModelConfiguration;
+import xal.sim.scenario.ElementMapping;
 import xal.smf.impl.*;
 import xal.smf.impl.qualify.*;
 import xal.tools.data.*;
@@ -46,7 +46,8 @@ public class Accelerator extends AcceleratorSeq implements /* IElement, */ DataL
 	/** Model configuration manager */
 	private ModelConfiguration     mgrMdlCfg;
 	
-	
+	/** Model element mapping */
+	private ElementMapping     elementMapping;
 
     
     // DataAdaptor interface ----------------------
@@ -276,6 +277,29 @@ public class Accelerator extends AcceleratorSeq implements /* IElement, */ DataL
 	    return this.mgrMdlCfg;
 	}
     
+	/**
+	 * Sets the model element mapping used by this accelerator
+	 * object.
+	 *
+	 * @param elementMapping     the new element mapping 
+	 *
+	 * @author Ivo List
+	 */
+	public void setElementMapping(ElementMapping elementMapping) {
+	    this.elementMapping = elementMapping;
+	}
+	
+	/**
+	 * Returns the model element mapping currently in use
+	 * by this accelerator.
+	 *
+	 * @return     accelerator's model element mapping
+	 *
+	 * @author Ivo List
+	 */
+	public ElementMapping getElementMapping() {
+	    return this.elementMapping;
+	}
 	
 	/**
 	 * Get this accelerator's edit context

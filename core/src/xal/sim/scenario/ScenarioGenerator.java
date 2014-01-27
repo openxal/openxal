@@ -46,7 +46,7 @@ class ScenarioGenerator {
 	 * @param aSequence accelerator sequence to create scenario for
 	 */
 	public ScenarioGenerator( final AcceleratorSeq aSequence ) {
-		this(aSequence, DefaultElementMapping.getInstance());
+		this(aSequence, aSequence.getAccelerator().getElementMapping());
 	}
 
 	

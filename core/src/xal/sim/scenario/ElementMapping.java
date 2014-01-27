@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map.Entry;
 
 import xal.model.IComponent;
+import xal.model.ModelException;
 import xal.smf.AcceleratorNode;
 
 /**
@@ -35,8 +36,9 @@ public abstract class ElementMapping {
 	 * Different model may have different implementation of the drift element.
 	 *   
 	 * @return drift model element
+	 * @throws ModelException 
 	 */
-	public abstract IComponent createDrift(String name, double len);	
+	public abstract IComponent createDrift(String name, double len) throws ModelException;	
 	
 	/**
 	 * Returns converter for the given node.
