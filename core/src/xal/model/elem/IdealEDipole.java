@@ -18,12 +18,11 @@ package xal.model.elem;
 
 import java.io.PrintWriter;
 
-import xal.tools.beam.optics.*;
-import xal.tools.beam.*;
-import xal.tools.math.ElementaryFunction;
-import xal.model.IModelDataSource;
 import xal.model.IProbe;
 import xal.model.ModelException;
+import xal.tools.beam.PhaseMap;
+import xal.tools.beam.PhaseMatrix;
+import xal.tools.beam.optics.BendingMagnet;
 
 
 /**
@@ -199,24 +198,6 @@ public class IdealEDipole extends ThickElectrostatic
   {
     super( s_strType );
   }
-
-
-  /**
-   *
-   * Initializes this element from the supplied source.
-   *
-   * @param source the data source for initialization
-   *
-   * @throws ModelException if error initializing.
-   * @throws IllegalArgumentException if the supplied data source is not a
-   *                                  ThickDipoleDataSource.
-   *
-   */
-
-  public void initializeFrom(IModelDataSource source) throws ModelException
-  {
-  }
-
 
   /**
    *

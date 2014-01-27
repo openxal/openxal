@@ -8,13 +8,11 @@ package xal.model.elem;
 
 import java.io.PrintWriter;
 
+import xal.model.IProbe;
+import xal.model.ModelException;
 import xal.tools.beam.PhaseMap;
 import xal.tools.beam.PhaseMatrix;
 import xal.tools.math.ElementaryFunction;
-
-import xal.model.IModelDataSource;
-import xal.model.IProbe;
-import xal.model.ModelException;
 
 /**
  * Represents a thick magnetic dipole magnet for a beam 
@@ -163,19 +161,6 @@ public class ThickDipole extends ThickElectromagnet {
      */
     public ThickDipole() {
         super(s_strType);
-    }
-
-    /**
-     * Initializes this element from the supplied source.
-     * 
-     * @param source the data source for initialization
-     * 
-     * @throws ModelException if error initializing
-     * @throws IllegalArgumentException if the supplied data source is not a
-     * ThickDipoleDataSource
-     */
-    @Override
-    public void initializeFrom(IModelDataSource source) throws ModelException {
     }
 
     /**

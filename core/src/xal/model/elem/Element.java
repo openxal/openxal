@@ -12,19 +12,16 @@ package xal.model.elem;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 
+import xal.model.IAlgorithm;
 import xal.model.IElement;
-
+import xal.model.IProbe;
+import xal.model.ModelException;
+import xal.model.alg.Tracker;
+import xal.sim.scenario.LatticeElement;
 import xal.tools.beam.IConstants;
 import xal.tools.beam.PhaseMap;
 import xal.tools.beam.PhaseMatrix;
 import xal.tools.math.r3.R3;
-
-import xal.model.IModelDataSource;
-import xal.model.IProbe;
-import xal.model.IAlgorithm;
-import xal.model.ModelException;
-import xal.model.alg.Tracker;
-import xal.sim.scenario.LatticeElement;
 
 
 
@@ -165,19 +162,6 @@ public abstract class Element implements IElement {
         m_strId   = strId;
         dblLatPos = 0.0;
     };
-    
-    /**
-     * Initialize this Element from the supplied object.  Subclasses should
-     * override this method as appropriate, e.g., cast the source to some expected
-     * type and then retrieve values from it.
-     * 
-     * @param source object to initialize element from
-     * 
-     * @throws ModelException if error initializing from source
-     */
-    public void initializeFrom(IModelDataSource source) throws ModelException {
-    }
-       
     
 	/**
 	 * Conversion method to be provided by the user
