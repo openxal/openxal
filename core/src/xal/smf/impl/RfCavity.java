@@ -9,7 +9,6 @@ import xal.ca.Channel;
 import xal.ca.ConnectionException;
 import xal.ca.GetException;
 import xal.ca.PutException;
-import xal.model.source.RfCavityDataSource;
 import xal.smf.AcceleratorNode;
 import xal.smf.AcceleratorSeq;
 import xal.smf.attr.AttributeBucket;
@@ -32,7 +31,7 @@ import xal.tools.math.poly.UnivariateRealPolynomial;
  * @author  Nikolay Malitsky, Christopher K. Allen
  */
 
-public class RfCavity extends AcceleratorSeq implements RfCavityDataSource {
+public class RfCavity extends AcceleratorSeq {
 	/** accessible properties */
 	public enum Property { AMPLITUDE, PHASE }
 

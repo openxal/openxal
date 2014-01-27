@@ -1,10 +1,7 @@
 package xal.smf.impl;
 
-import xal.tools.data.DataAdaptor;
-import xal.smf.AcceleratorNode;
-import xal.smf.attr.AttributeBucket;
-import xal.smf.attr.MagnetBucket;
 import xal.smf.impl.qualify.ElementTypeManager;
+import xal.tools.data.DataAdaptor;
 
 public class EDipole extends Electrostatic {
 
@@ -50,26 +47,10 @@ public class EDipole extends Electrostatic {
      * of the quad is determined by its type: QH or QV
      * @return One of HORIZONTAL or VERTICAL
      */
+	@Override
     public int getOrientation() {
     	return s_strType.equalsIgnoreCase( HORIZONTAL_TYPE ) ? HORIZONTAL : VERTICAL;
-    }
-            
-    
-    /*
-     * Determine whether this EQuad is oriented horizontally.
-     * @return true if this EQuad is oriented horizontally; false otherwise.
-     */
-    final public boolean isHorizontal() {
-        return getOrientation() == HORIZONTAL;
-    }
-    
-    /*
-     * Determine whether this EQuad is oriented vertically.
-     * @return true if this EQuad is oriented vertically; false otherwise.
-     */
-    final public boolean isVertical() {
-        return getOrientation() == VERTICAL;
-    }
+    }          
       
     /**
      * Update the instance with data from the data adaptor.  Overrides the default implementation to 

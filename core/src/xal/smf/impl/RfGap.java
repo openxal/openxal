@@ -3,7 +3,6 @@ package xal.smf.impl;
 import xal.ca.Channel;
 import xal.ca.ConnectionException;
 import xal.ca.GetException;
-import xal.model.source.RfGapDataSource;
 import xal.smf.AcceleratorNode;
 import xal.smf.attr.AttributeBucket;
 import xal.smf.attr.RfCavityBucket;
@@ -24,7 +23,7 @@ import xal.tools.math.poly.UnivariateRealPolynomial;
  * @author  J. Galambos
  */
 
-public class RfGap extends AcceleratorNode implements RfGapDataSource {
+public class RfGap extends AcceleratorNode {
 	/** accessible properties */
 	public enum Property { ETL, PHASE, FREQUENCY, FIELD }
 
