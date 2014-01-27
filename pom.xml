@@ -14,7 +14,7 @@
 		<module>plugins</module>
 		<module>extensions</module>
 		<module>services</module>			
-		<module>apps</module>
+<!--		<module>apps</module>-->
 	</modules>
 
 	<distributionManagement>
