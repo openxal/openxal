@@ -3,9 +3,6 @@
     <type>org.netbeans.modules.ant.freeform</type>
     <configuration>
         <general-data xmlns="http://www.netbeans.org/ns/freeform-project/1">
-            <name>lossviewer</name>
-        </general-data>
-        <general-data xmlns="http://www.netbeans.org/ns/freeform-project/2">
             <!-- Do not use Project Properties customizer when editing this file manually. 
  To prevent the customizer from showing, create nbproject/project.properties file and enter 
 auxiliary.show.customizer=false 
@@ -20,12 +17,6 @@ auxiliary.show.customizer.message=<message>
                     <type>java</type>
                     <location>src</location>
                 </source-folder>
-                <build-file>
-                    <location>../../build/products/lib/xal-shared.jar</location>
-                </build-file>
-                <build-file>
-                    <location>../../build/products/apps/lossviewer.jar</location>
-                </build-file>
             </folders>
             <ide-actions>
                 <action name="build">
@@ -42,16 +33,6 @@ auxiliary.show.customizer.message=<message>
                     <target>build</target>
                 </action>
             </ide-actions>
-            <export>
-                <type>jar</type>
-                <location>../../build/products/lib/xal-shared.jar</location>
-                <build-target>build</build-target>
-            </export>
-            <export>
-                <type>jar</type>
-                <location>../../build/products/apps/lossviewer.jar</location>
-                <build-target>build</build-target>
-            </export>
             <view>
                 <items>
                     <source-folder style="packages">
@@ -69,14 +50,11 @@ auxiliary.show.customizer.message=<message>
                     <ide-action name="run"/>
                 </context-menu>
             </view>
-            <subprojects/>
         </general-data>
         <java-data xmlns="http://www.netbeans.org/ns/freeform-project-java/1">
             <compilation-unit>
                 <package-root>src</package-root>
-                <classpath mode="compile">../../build/products/lib/xal-shared.jar:lib/jcommon.jar:lib/jfreechart.jar</classpath>
-                <built-to>../../build/products/lib/xal-shared.jar</built-to>
-                <built-to>../../build/products/apps/lossviewer.jar</built-to>
+                <classpath mode="compile">../../build/products/lib/xal-shared.jar</classpath>
                 <source-level>1.5</source-level>
             </compilation-unit>
         </java-data>
