@@ -1,7 +1,6 @@
 package xal.smf;
 
 import xal.tools.messaging.MessageCenter;
-import xal.sim.cfg.ModelConfiguration;
 import xal.sim.scenario.ElementMapping;
 import xal.smf.impl.*;
 import xal.smf.impl.qualify.*;
@@ -42,9 +41,6 @@ public class Accelerator extends AcceleratorSeq implements /* IElement, */ DataL
 	
 	/** factory for generating accelerator nodes */
 	private AcceleratorNodeFactory _nodeFactory;
-	
-	/** Model configuration manager */
-	private ModelConfiguration     mgrMdlCfg;
 	
 	/** Model element mapping */
 	private ElementMapping     elementMapping;
@@ -249,32 +245,6 @@ public class Accelerator extends AcceleratorSeq implements /* IElement, */ DataL
 	/** Set the factory used to generate new accelerator nodes */
 	public void setNodeFactory( final AcceleratorNodeFactory nodeFactory ) {
 		_nodeFactory = nodeFactory;
-	}
-	
-	/**
-	 * Sets the model configuration (manager) used by this accelerator
-	 * object.
-	 *
-	 * @param cfgModel     the new model configuration 
-	 *
-	 * @author Christopher K. Allen
-	 * @since  May 23, 2011
-	 */
-	public void setModelConfiguration(ModelConfiguration cfgModel) {
-	    this.mgrMdlCfg = cfgModel;
-	}
-	
-	/**
-	 * Returns the model configuration manager currently in use
-	 * by this accelerator.
-	 *
-	 * @return     accelerator's model configuration
-	 *
-	 * @author Christopher K. Allen
-	 * @since  May 23, 2011
-	 */
-	public ModelConfiguration getModelConfiguration() {
-	    return this.mgrMdlCfg;
 	}
     
 	/**
