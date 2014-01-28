@@ -6,6 +6,8 @@
  */
 package xal.model.elem;
 
+import xal.sim.scenario.LatticeElement;
+import xal.smf.impl.Bend;
 import xal.tools.math.r3.R3;
 
 /**
@@ -439,4 +441,50 @@ public class IdealMagFringeQuad extends ElectromagnetSeq {
         return this.magBody;
     }
 
+	/**
+	 * Conversion method to be provided by the user
+	 * 
+	 * @param latticeElement the SMF node to convert
+	 */
+	@Override
+	public void initializeFrom(LatticeElement element) {
+		super.initializeFrom(element);
+		
+		Bend magnet = (Bend) element.getNode();
+		setPosition(element.getCenter(), element.getLength());
+
+		// gov.sns.xal.model.elem.ThickDipole xalDipole =
+		// new gov.sns.xal.model.elem.ThickDipole();
+		// xalDipole.setId(element.getNode().getId());
+		// xalDipole.setLength(element.getLength());
+		// xalDipole.setMagField(magnet.getDesignField());
+		// xalDipole.setKQuad(magnet.getQuadComponent());
+		// double angle = magnet.getDfltBendAngle()*Math.PI/180. * element.getLength() / magnet.getDfltPathLength();
+		// xalDipole.setReferenceBendAngle(angle);
+
+		// Replace ThickDipole object with an IdealMagWedgeDipole2
+		// First retrieve all the physical parameters for a bending dipole				
+		double len_sect = element.getLength();		
+		double len_path0 = magnet.getDfltPathLength();
+		double ang_bend0 = magnet.getDfltBendAngle() * Math.PI / 180.0;
+		double k_quad0 = magnet.getQuadComponent();
+
+		// Now compute the dependent parameters
+		double R_bend0 = len_path0 / ang_bend0;
+		double fld_ind0 = -k_quad0 * R_bend0 * R_bend0;
+
+		double ang_bend = ang_bend0 * (len_sect / len_path0);
+		double len_path = R_bend0 * ang_bend;
+
+		// Set the parameters for the new model element				
+		setPhysicalLength(len_sect);
+	/*	setDesignPathLength(len_path);		
+		setFieldIndex(fld_ind0);
+		setDesignBendAngle(ang_bend);*/
+						
+		/*if (element.getPartNr() == 0) // first piece
+			setEntrPoleAngle(magnet.getEntrRotAngle() * Math.PI / 180.);
+		if (element.getParts()-1 == element.getPartNr()) // last piece					
+			setExitPoleAngle(magnet.getExitRotAngle() * Math.PI / 180.);*/
+	}
 }

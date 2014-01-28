@@ -671,7 +671,8 @@ public class IdealRfGap extends ThinElement implements IRfGap {
 	 * @param latticeElement the SMF node to convert
 	 */
 	@Override
-	public void initializeFrom(LatticeElement element) {		
+	public void initializeFrom(LatticeElement element) {
+		super.initializeFrom(element);		
 		RfGap rfgap = (RfGap) element.getNode();
 		
 	    // Initialize from source values

@@ -42,7 +42,6 @@ public interface IComponent {
 	 * Conversion method to be provided by the user
 	 * 
 	 * @param latticeElement the SMF node to convert
-	 * @return online model element
 	 */
 	public void initializeFrom(LatticeElement latticeElement);
 

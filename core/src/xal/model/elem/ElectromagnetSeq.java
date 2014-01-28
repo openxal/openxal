@@ -26,7 +26,6 @@ public abstract class ElectromagnetSeq extends ElementSeq implements IElectromag
 	 * Conversion method to be provided by the user
 	 * 
 	 * @param latticeElement the SMF node to convert
-	 * @return online model element
 	 */
     @Override
 	public void initializeFrom(LatticeElement latticeElement) {
@@ -52,6 +51,7 @@ public abstract class ElectromagnetSeq extends ElementSeq implements IElectromag
 //	            System.out.println("WARNING!: " + strMsg + " : " + strSrc);		
 		}
 		setOrientation(orientation);
+		setMagField(magnetNode.getDesignField());
 	}
 	
 }

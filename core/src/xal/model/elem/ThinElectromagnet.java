@@ -106,6 +106,7 @@ public abstract class ThinElectromagnet extends ThinElement implements IElectrom
 //	            System.out.println("WARNING!: " + strMsg + " : " + strSrc);		
 		}
 		setOrientation(orientation);
+		setMagField(magnetNode.getDesignField());
 	}
 	
 }

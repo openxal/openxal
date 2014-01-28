@@ -560,7 +560,6 @@ public class IdealMagWedgeDipole2 extends ElectromagnetSeq {
 	 * Conversion method to be provided by the user
 	 * 
 	 * @param latticeElement the SMF node to convert
-	 * @return online model element
 	 */
 	@Override
 	public void initializeFrom(LatticeElement element) {
