@@ -212,7 +212,17 @@ public class IdealMagSkewQuad3 extends ThickElectromagnet {
         super(STR_TYPE_ID, strId);
     }
 
-    
+    /**
+     * Create new, uninitialized <code>IdealMagSkewQuad3</code> object.
+     * Use this contructor with caution as the length of the magnet is
+     * uninitialized.
+     *  
+     * @author Christopher K. Allen
+     * @since  Mar 14, 2008
+     */
+    public IdealMagSkewQuad3() {
+        super(STR_TYPE_ID);
+    }
     
 
 
