@@ -6,7 +6,10 @@
  */
 package eu.ess.jels.model.elem.jels;
 
+import eu.ess.jels.smf.impl.ESSBend;
 import xal.model.elem.ElectromagnetSeq;
+import xal.sim.scenario.LatticeElement;
+import xal.smf.impl.Bend;
 import xal.tools.math.r3.R3;
 
 /**
@@ -547,4 +550,49 @@ public class IdealMagWedgeDipole2 extends ElectromagnetSeq {
         return this.magBody;
     }
 
+	/**
+	 * Conversion method to be provided by the user
+	 * 
+	 * @param latticeElement the SMF node to convert
+	 */
+	@Override
+	public void initializeFrom(LatticeElement element) {
+		super.initializeFrom(element);
+		
+		ESSBend magnet = (ESSBend) element.getNode();
+		setPosition(element.getCenter(), element.getLength());
+
+		// First retrieve all the physical parameters for a bending dipole				
+		double len_sect = element.getLength();		
+		double len_path0 = magnet.getDfltPathLength();
+		double ang_bend0 = magnet.getDfltBendAngle() * Math.PI / 180.0;
+		double k_quad0 = magnet.getQuadComponent();
+
+		// Now compute the dependent parameters
+		double R_bend0 = len_path0 / ang_bend0;
+		double fld_ind0 = -k_quad0 * R_bend0 * R_bend0;
+
+		double ang_bend = ang_bend0 * (len_sect / len_path0);
+		double len_path = R_bend0 * ang_bend;
+
+		// Set the parameters for the new model element				
+		setPhysicalLength(len_sect);
+		setDesignPathLength(len_path);		
+		setFieldIndex(fld_ind0);
+		setDesignBendAngle(ang_bend);
+		setGapSize(magnet.getGap());
+		
+		if (element.getPartNr() == 0) // first piece
+		{
+			setEntrPoleAngle(magnet.getEntrRotAngle() * Math.PI / 180.);
+			setEntrFringeIntegral(magnet.getEntrK1());
+			setEntrFringeIntegral2(magnet.getEntrK2());
+		}
+		if (element.getParts()-1 == element.getPartNr()) // last piece					
+		{
+			setExitPoleAngle(magnet.getExitRotAngle() * Math.PI / 180.);
+			setExitFringeIntegral(magnet.getExitK1());
+			setExitFringeIntegral2(magnet.getExitK2());
+		}		
+	}
 }

@@ -48,7 +48,7 @@ public class JElsElementMapping extends ElementMapping {
 	}
 	
 	protected void initialize() {
-		putMap("dh", eu.ess.jels.model.elem.els.IdealMagWedgeDipole2.class);
+		putMap("dh", IdealMagWedgeDipole2.class);
 		putMap("q", IdealMagQuad.class);
 		putMap("qt", IdealMagQuad.class);
 		putMap("pq", IdealMagQuad.class);

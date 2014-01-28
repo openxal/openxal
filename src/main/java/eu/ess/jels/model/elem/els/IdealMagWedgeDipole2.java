@@ -7,9 +7,10 @@
 package eu.ess.jels.model.elem.els;
 
 import xal.model.elem.ElectromagnetSeq;
+import xal.model.elem.IdealMagDipoleFace;
 import xal.sim.scenario.LatticeElement;
-import xal.smf.impl.Bend;
 import xal.tools.math.r3.R3;
+import eu.ess.jels.smf.impl.ESSBend;
 
 /**
  * Represents a bending dipole magnet with arbitrary pole face angles.
@@ -556,25 +557,14 @@ public class IdealMagWedgeDipole2 extends ElectromagnetSeq {
 	 * Conversion method to be provided by the user
 	 * 
 	 * @param latticeElement the SMF node to convert
-	 * @return online model element
 	 */
 	@Override
 	public void initializeFrom(LatticeElement element) {
 		super.initializeFrom(element);
 		
-		Bend magnet = (Bend) element.getNode();
+		ESSBend magnet = (ESSBend) element.getNode();
 		setPosition(element.getCenter(), element.getLength());
 
-		// gov.sns.xal.model.elem.ThickDipole xalDipole =
-		// new gov.sns.xal.model.elem.ThickDipole();
-		// xalDipole.setId(element.getNode().getId());
-		// xalDipole.setLength(element.getLength());
-		// xalDipole.setMagField(magnet.getDesignField());
-		// xalDipole.setKQuad(magnet.getQuadComponent());
-		// double angle = magnet.getDfltBendAngle()*Math.PI/180. * element.getLength() / magnet.getDfltPathLength();
-		// xalDipole.setReferenceBendAngle(angle);
-
-		// Replace ThickDipole object with an IdealMagWedgeDipole2
 		// First retrieve all the physical parameters for a bending dipole				
 		double len_sect = element.getLength();		
 		double len_path0 = magnet.getDfltPathLength();
@@ -593,11 +583,20 @@ public class IdealMagWedgeDipole2 extends ElectromagnetSeq {
 		setDesignPathLength(len_path);		
 		setFieldIndex(fld_ind0);
 		setDesignBendAngle(ang_bend);
-						
+		setGapSize(magnet.getGap());
+		
 		if (element.getPartNr() == 0) // first piece
+		{
 			setEntrPoleAngle(magnet.getEntrRotAngle() * Math.PI / 180.);
+			setEntrFringeIntegral(magnet.getEntrK1());
+			setEntrFringeIntegral2(magnet.getEntrK2());
+		}
 		if (element.getParts()-1 == element.getPartNr()) // last piece					
+		{
 			setExitPoleAngle(magnet.getExitRotAngle() * Math.PI / 180.);
+			setExitFringeIntegral(magnet.getExitK1());
+			setExitFringeIntegral2(magnet.getExitK2());
+		}		
 	}
 
 }
