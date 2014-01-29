@@ -18,5 +18,6 @@ public interface NormalizationDevice extends Comparable<NormalizationDevice>{
     String getName();
     String getChargePV();
     int getID();
+    double getScale();
     
 }

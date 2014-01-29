@@ -10,7 +10,7 @@ public class ChargeNormalizer extends AbstractSignal implements ConnectionListen
             connectBCM(channel);
         
     }
-    private String currentBCMPVname = "";
+    private NormalizationDevice currentBCMPVname = null;
 
     private void connectBCM(final Channel channel) {
         //	System.out.println("Connected BCM: "+channel.channelName());
@@ -22,7 +22,7 @@ public class ChargeNormalizer extends AbstractSignal implements ConnectionListen
                     public void eventValue(ChannelTimeRecord record, Channel chan) {
                         boolean amIcurrentBCM = false;
                         synchronized (currentBCMPVname) {
-                            amIcurrentBCM = currentBCMPVname.equals(channel.channelName());
+                            amIcurrentBCM = currentBCMPVname.getChargePV().equals(channel.channelName());
                         }
                         if (amIcurrentBCM) {
                             long tst = (long) (record.getTimestamp().getSeconds() * 1000);
@@ -41,8 +41,9 @@ public class ChargeNormalizer extends AbstractSignal implements ConnectionListen
     
     public  void setBCM(NormalizationDevice newBCM){
         synchronized(currentBCMPVname){
-            currentBCMPVname=newBCM.getChargePV();
-            Logger.getLogger(ChargeNormalizer.this.getClass().getCanonicalName()).log(Level.INFO, ("Normalization BCM changed to " + currentBCMPVname));
+            currentBCMPVname=newBCM;
+            Logger.getLogger(ChargeNormalizer.this.getClass().getCanonicalName()).log(Level.INFO, 
+                    ("Normalization BCM changed to " + currentBCMPVname.getName()));
         }
     }
    
@@ -51,23 +52,22 @@ public class ChargeNormalizer extends AbstractSignal implements ConnectionListen
         Logger.getLogger(this.getClass().getCanonicalName()).log(Level.WARNING, ("Connection dropped " + channel.channelName()));
     //	System.out.println("Connection dropped: " + getID() + " " + channel.channelName());
     }
-    Channel machineModeChannel;
+
     Monitor machineModeMonitor;
     Map<String, Channel> bcmChannels = new HashMap<String, Channel>();
     Map<Channel, Monitor> bcmMonitors = new HashMap<Channel, Monitor>();
    List<NormalizationDevice> normBCMs;
     String machineModeName;
 
-    public ChargeNormalizer(String machineModeName, List<NormalizationDevice> bcmNames) {
-        this.machineModeName = machineModeName;
+    public ChargeNormalizer(List<NormalizationDevice> bcmNames) {
+       
         normBCMs = bcmNames;
         setName("Charge");
-        currentBCMPVname=normBCMs.get(0).getChargePV();
+        currentBCMPVname=normBCMs.get(0);
     }
 
     public void close() {
-        machineModeChannel.disconnect();
-        machineModeChannel.flushIO();
+
         for (String bcmName : bcmChannels.keySet()) {
             bcmChannels.get(bcmName).disconnect();
             bcmChannels.get(bcmName).flushIO();

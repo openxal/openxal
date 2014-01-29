@@ -141,7 +141,7 @@ public class Main extends ApplicationWithPreferences {
     }
     
     private void initializeBCMs() {
-        String machineModeName = (String) getPreferences().get("BCM.signals.MachineMode");
+        
         
         bcms = new ArrayList<NormalizationDevice>();
         
@@ -153,6 +153,7 @@ public class Main extends ApplicationWithPreferences {
             final int id = Integer.parseInt(labelName);
             final String name = (String)getPreferences().get("BCM.signals.name."+id);
             final String pv = (String)bcmLabels.get(e);
+            final double scale = Double.parseDouble( (String)getPreferences().get("BCM.signals.scale."+id));
             
             bcms.add(new NormalizationDevice() {
 
@@ -171,13 +172,17 @@ public class Main extends ApplicationWithPreferences {
                 public int compareTo(NormalizationDevice o) {
                     return getID()-o.getID();
                 }
+
+                public double getScale() {
+                    return scale;
+                }
             });
            
             
         }
         
         Collections.sort(bcms);
-        chargeNormalizer = new ChargeNormalizer(machineModeName, bcms);
+        chargeNormalizer = new ChargeNormalizer(bcms);
         dispatcher.addSignal(chargeNormalizer);
     }
     private List<LossDetector> allBLMs;
