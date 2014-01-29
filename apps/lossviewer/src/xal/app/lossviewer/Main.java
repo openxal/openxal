@@ -9,6 +9,7 @@
  */
 package xal.app.lossviewer;
 
+import com.sun.jmx.snmp.BerDecoder;
 import xal.extension.application.*;
 import xal.app.lossviewer.preferences.*;
 import xal.app.lossviewer.signals.*;
@@ -130,20 +131,53 @@ public class Main extends ApplicationWithPreferences {
 
     }
 
-    public void changeNormalizationBCM(String newValue){
+    public void changeNormalizationBCM(NormalizationDevice newValue){
         chargeNormalizer.setBCM(newValue);
     }
-    ChargeNormalizer chargeNormalizer;
+    private ChargeNormalizer chargeNormalizer;
+    private List<NormalizationDevice> bcms;
+    public List<NormalizationDevice> getBCMs(){
+        return bcms;
+    }
+    
     private void initializeBCMs() {
         String machineModeName = (String) getPreferences().get("BCM.signals.MachineMode");
+        
+        bcms = new ArrayList<NormalizationDevice>();
+        
         Map<String, String> bcmNames = new HashMap<String, String>();
         Map<String, Object> bcmLabels = getPreferences().getPreferencesFor("BCM.signals.mode.");
+        bcms = new ArrayList<NormalizationDevice>(bcmLabels.size());
         for (String e : bcmLabels.keySet()) {
             String labelName = e.substring(e.lastIndexOf('.') + 1, e.length());
-            //		System.out.println(labelName + " " + labels.get(e));
-            bcmNames.put(labelName, (String) bcmLabels.get(e));
+            final int id = Integer.parseInt(labelName);
+            final String name = (String)getPreferences().get("BCM.signals.name."+id);
+            final String pv = (String)bcmLabels.get(e);
+            
+            bcms.add(new NormalizationDevice() {
+
+                public String getName() {
+                    return name;
+                }
+
+                public String getChargePV() {
+                    return pv;
+                }
+
+                public int getID() {
+                    return id;
+                }
+
+                public int compareTo(NormalizationDevice o) {
+                    return getID()-o.getID();
+                }
+            });
+           
+            
         }
-        chargeNormalizer = new ChargeNormalizer(machineModeName, bcmNames);
+        
+        Collections.sort(bcms);
+        chargeNormalizer = new ChargeNormalizer(machineModeName, bcms);
         dispatcher.addSignal(chargeNormalizer);
     }
     private List<LossDetector> allBLMs;

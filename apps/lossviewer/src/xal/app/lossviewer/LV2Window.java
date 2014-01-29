@@ -23,6 +23,7 @@ import javax.swing.event.*;
 import javax.swing.plaf.InternalFrameUI;
 import javax.swing.plaf.basic.BasicInternalFrameUI;
 import xal.app.lossviewer.preferences.ApplicationPreferences;
+import xal.app.lossviewer.signals.NormalizationDevice;
 
 /**
  * TemplateViewerWindow
@@ -313,18 +314,25 @@ public class LV2Window extends AcceleratorWindow implements SwingConstants {
             
             if(text.equals(normalizationLabel)){
                 normMenu=mb.getMenu(i);
-                final Map<String, String> bcm = getNormBCMs();
+                List<NormalizationDevice> bcms = ((Main)Application.getAdaptor()).getBCMs();
                 ButtonGroup bg = new ButtonGroup();
-                for(String name : bcm.keySet()){
-                    JRadioButtonMenuItem rb = new JRadioButtonMenuItem(new AbstractAction(name){
+                int index=0;
+                for(final NormalizationDevice bcm : bcms){
+                    JRadioButtonMenuItem rb = new JRadioButtonMenuItem(new AbstractAction(bcm.getName()){
                         
+                      ///  NormalizationDevice myBCM=bcm;
                         public void actionPerformed(ActionEvent e) {
-                            changeNormalizationBCM(bcm.get(e.getActionCommand()));
+                            changeNormalizationBCM(bcm);
                         }
                         
                     });
+                    if(index==0){
+                        rb.setSelected(true);
+                        changeNormalizationBCM(bcm);
+                    }
                     normMenu.add(rb);
                     bg.add(rb);
+                    index++;
                     
                     
                 }
@@ -480,7 +488,7 @@ public class LV2Window extends AcceleratorWindow implements SwingConstants {
         
     }
     
-    private void changeNormalizationBCM(String newValue){
+    private void changeNormalizationBCM(NormalizationDevice newValue){
         ((Main)Application.getAdaptor()).changeNormalizationBCM(newValue);
     }
     
