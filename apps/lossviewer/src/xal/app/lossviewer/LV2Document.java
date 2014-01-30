@@ -34,7 +34,7 @@ public class LV2Document extends AcceleratorDocumentWithPreferences {
     private Dispatcher dispatcher;
 
     public void removeViewAllViews() {
-        for (View v : allViews) {
+        for (View<?> v : allViews) {
             dispatcher.removeSignalListener(v);
 
         }
@@ -145,7 +145,7 @@ public class LV2Document extends AcceleratorDocumentWithPreferences {
         
 
     }
-    private List<View> allViews = new ArrayList<View>();
+    private List<View<LossDetector>> allViews = new ArrayList<View<LossDetector>>();
 
     public void addDefaultView(String text) {
         addView("Defaultview", text);
@@ -153,7 +153,7 @@ public class LV2Document extends AcceleratorDocumentWithPreferences {
 
     public void addView(String viewname, String text) {
         String className = (String) get(viewname + ".classname");
-        View newView;
+        View<LossDetector> newView;
         try {
             newView = (LossView) (Class.forName(className).getConstructor().newInstance());
             newView.setDocument(this);
@@ -188,12 +188,12 @@ public class LV2Document extends AcceleratorDocumentWithPreferences {
 
     }
 
-    public void removeView(View v) {
+    public void removeView(View<LossDetector> v) {
         dispatcher.removeSignalListener(v);
         allViews.remove(v);
     }
 
-    public void addView(View newView) {
+    public void addView(View<LossDetector> newView) {
         allViews.add(newView);
         if (mainWindow != null) {
             ((LV2Window) mainWindow).addView(newView);
@@ -211,19 +211,19 @@ public class LV2Document extends AcceleratorDocumentWithPreferences {
             mainWindow.setSize(bounds.width, bounds.height);
         }
 
-        for (View view : allViews) {
+        for (View<LossDetector> view : allViews) {
             ((LV2Window) mainWindow).addView(view);
         }
 
     }
-
+    @SuppressWarnings("unchecked")
     public void update(DataAdaptor da) {
         super.update(da);
         List<DataAdaptor> viewDAs = da.childAdaptors("LossView");
         for (DataAdaptor vda : viewDAs) {
             try {
                 String cn = vda.stringValue("classname");
-                View view = (View) (Class.forName(cn).getConstructor().newInstance());
+                View<LossDetector> view = (View<LossDetector>) (Class.forName(cn).getConstructor().newInstance());
                 view.setDocument(this);
                 view.update(vda);
                 addView(view);
@@ -235,7 +235,7 @@ public class LV2Document extends AcceleratorDocumentWithPreferences {
 
     public void write(DataAdaptor da) {
         super.write(da);
-        for (View view : allViews) {
+        for (View<LossDetector> view : allViews) {
             DataAdaptor vda = da.createChild("LossView");
             vda.setValue("classname", view.getClass().getCanonicalName());
             view.write(vda);

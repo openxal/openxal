@@ -160,27 +160,28 @@ public class Dispatcher {
         //System.out.println("Pushing " +result);
         return result;
     }
-
+    @SuppressWarnings("unchecked")
     private void initializeDefaultTypes() {
         try {
-            Class cl = Class.forName("xal.app.lossviewer.signals.TimerSignal");
+            Class<Signal> cl = (Class<Signal>)Class.forName("xal.app.lossviewer.signals.TimerSignal");
             if (cl != null) {
-                types.put("TimerSignal", (Constructor<Signal>) (cl.getConstructor()));
+                types.put("TimerSignal",  cl.getConstructor());
             }
-            cl = Class.forName("xal.app.lossviewer.signals.CASignal");
+            cl = (Class<Signal>)Class.forName("xal.app.lossviewer.signals.CASignal");
             if (cl != null) {
-                types.put("CASignal", (Constructor<Signal>) (cl.getConstructor()));
+                types.put("CASignal", cl.getConstructor());
             }
-        } catch (Exception ex) {
+
+        }catch (Exception ex) {
             ex.printStackTrace();
         }
     }
-
+    @SuppressWarnings("unchecked")
     public Signal createSignal(String signalType, String signalName, int history, String className) {
         try {
-            Class cl = Class.forName(className);
+            Class<Signal> cl = (Class<Signal>)Class.forName(className);
             if (cl != null) {
-                types.put("TimerSignal", (Constructor<Signal>) (cl.getConstructor()));
+                types.put("TimerSignal", cl.getConstructor());
             }
         } catch (Exception ex) {
             ex.printStackTrace();

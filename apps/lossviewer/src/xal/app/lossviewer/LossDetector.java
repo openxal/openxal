@@ -126,7 +126,7 @@ public abstract class LossDetector {
     public int getIndex() {
         return index;
     }
-
+    @SuppressWarnings("unchecked")
     public static LossDetector createDetector(Main app, String className,
             String id, String seqName,
             double position, int index) {
@@ -134,8 +134,8 @@ public abstract class LossDetector {
         LossDetector result = null;
 
         try {
-            Class c = Class.forName(className);
-            result = (LossDetector) (c.getConstructor().newInstance());
+            Class<LossDetector> c = (Class<LossDetector>)Class.forName(className);
+            result = c.getConstructor().newInstance();
             result.setIndex(index);
             result.setName(id);
             result.setPosition(position);

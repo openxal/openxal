@@ -47,12 +47,12 @@ public class ApplicationPreferences implements PreferenceModel{
 		appPreferences = new HashMap<String,Object>();
 		
 		//	Map prefs = Util.loadResourceBundle(Application.getApp().getAdaptor().getPathToResource("defaults"));
-		Map prefs = Util.loadResourceBundle(appAdaptor.getClass().getPackage().getName() + ".resources.defaults");
+		Map<String,String> prefs = Util.loadResourceBundle(appAdaptor.getClass().getPackage().getName() + ".resources.defaults");
 		
 		
-		for (Object e : prefs.keySet()) {
-			String key = (String)e;
-			Object value = ObjectConverter.createObjectFromString((String)prefs.get(e));
+		for (String key : prefs.keySet()) {
+			
+			Object value = ObjectConverter.createObjectFromString((String)prefs.get(key));
 //			System.out.println(key + " " + value);
 			appPreferences.put(key, value);
 			defaultPreferences.put(key, value);
