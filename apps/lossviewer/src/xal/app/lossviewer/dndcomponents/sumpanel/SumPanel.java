@@ -40,14 +40,14 @@ import xal.tools.data.DataListener;
  */
 public class SumPanel extends SumPanelNB implements DataListener, ViewListener {
 
-    private View view;
+    private View<LossDetector> view;
     private TimeSeriesCollection historyDataSet;
     private TimeSeries history;
     private TimeSeries runningAverage;
     private static final int RUNNINGPERIOD = 50;
     private String lossSignal = "Slow60";
 
-    public SumPanel(View v) {
+    public SumPanel(View<LossDetector> v) {
         super();
         this.view = v;
 

@@ -34,7 +34,7 @@ public class BLMAxisFactory {
             }
         }
         if (detectors.size() > 0) {
-            Collections.sort(detectors, detectors.get(0).getComparator());
+            Collections.sort(detectors, LossDetector.getComparator());
         }
 
 

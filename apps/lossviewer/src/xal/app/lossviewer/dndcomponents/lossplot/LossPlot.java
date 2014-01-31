@@ -407,7 +407,7 @@ public class LossPlot extends JPanel implements ViewListener, DataListener {
             } else if ("referenceOFF".equals(event.getCommand())) {
                 reference = false;
             }
-            init(((View) (event.getSource())).getDetectors());
+            init(event.getSource().getDetectors());
         }
     }
     Map<String, TypeDataSet> typeSeries = new HashMap<String, TypeDataSet>();
