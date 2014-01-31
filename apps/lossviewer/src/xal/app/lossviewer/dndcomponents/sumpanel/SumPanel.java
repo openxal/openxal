@@ -231,7 +231,7 @@ public class SumPanel extends SumPanelNB implements DataListener, ViewListener {
         
 
     }
-
+    @SuppressWarnings("unchecked")
     private void runnAv() {
 
         List<TimeSeriesDataItem> items = (List<TimeSeriesDataItem>) history.getItems();

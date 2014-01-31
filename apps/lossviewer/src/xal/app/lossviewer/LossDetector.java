@@ -1,14 +1,13 @@
 package xal.app.lossviewer;
 
-import xal.app.lossviewer.signals.ProcessorFactory;
-import xal.app.lossviewer.signals.ScalarSignalValue;
-import xal.app.lossviewer.signals.SignalHistory;
-import xal.app.lossviewer.signals.SignalValue;
-
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import xal.app.lossviewer.signals.ProcessorFactory;
+import xal.app.lossviewer.signals.ScalarSignalValue;
+import xal.app.lossviewer.signals.SignalHistory;
+import xal.app.lossviewer.signals.SignalValue;
 
 public abstract class LossDetector {
 
