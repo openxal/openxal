@@ -424,7 +424,7 @@ public class XMLDataManager {
 		static final private String DEVICEMAPPING_TAG = "deviceMapping_source";
 		static final private String DEVICEMAPPING_URL_KEY = "url";
 		
-		static final private String MODELCONFIG_TAG = "modelConfig_source";
+		static final private String MODELCONFIG_TAG = "modelElementConfig_source";
 		static final private String MODELCONFIG_URL_KEY = "url";
 		
         static final private String TABLE_GROUP_TAG = "tablegroup_source";
