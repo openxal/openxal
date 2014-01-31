@@ -136,7 +136,7 @@ public class LossTable extends JTable implements SelectionHandler<LossDetector>,
         view.addViewListener(model);
         view.addSelectionListener(this);
         setDragEnabled(true);
-        setTransferHandler(new CollectionTransferHandler());
+        setTransferHandler(new CollectionTransferHandler<LossDetector>());
 
         selectionModel = getSelectionModel();
         selectionModel.addListSelectionListener(new ListSelectionListener() {
@@ -147,7 +147,7 @@ public class LossTable extends JTable implements SelectionHandler<LossDetector>,
                     if (eventPropagation) {
                         Set<LossDetector> selection = model.getSelectedRows(getSelectedRows());
                         if (selection != null) {
-                            fireSelectionUpdate(new SelectionEvent(selection, LossTable.this));
+                            fireSelectionUpdate(new SelectionEvent<LossDetector>(selection, LossTable.this));
                         }
                     }
 
@@ -227,7 +227,7 @@ public class LossTable extends JTable implements SelectionHandler<LossDetector>,
 
     private void addStandardEditing(List<JMenuItem> menuItems) {
 
-        JMenuBar mb = (JMenuBar) (view.getDocument().getMainWindow().getJMenuBar());
+        JMenuBar mb =  (view.getDocument().getMainWindow().getJMenuBar());
         JMenu menu = mb.getMenu(EDIT_MENU_INDEX);
 
         for (int i = 0; i < menu.getItemCount(); i++) {
@@ -333,13 +333,13 @@ public class LossTable extends JTable implements SelectionHandler<LossDetector>,
         eventPropagation = true;
 
     }
-    List<SelectionHandler> selectionListeners = new ArrayList<SelectionHandler>();
+    List<SelectionHandler<LossDetector>> selectionListeners = new ArrayList<SelectionHandler<LossDetector>>();
 
-    public void addSelectionListener(SelectionHandler s) {
+    public void addSelectionListener(SelectionHandler<LossDetector> s) {
         selectionListeners.add(s);
     }
 
-    public void removeSelectionListener(SelectionHandler s) {
+    public void removeSelectionListener(SelectionHandler<LossDetector> s) {
         selectionListeners.remove(s);
     }
 
@@ -347,13 +347,13 @@ public class LossTable extends JTable implements SelectionHandler<LossDetector>,
         selectionListeners.clear();
     }
 
-    public void fireSelectionUpdate(SelectionEvent event) {
-        for (SelectionHandler e : selectionListeners) {
+    public void fireSelectionUpdate(SelectionEvent<LossDetector> event) {
+        for (SelectionHandler<LossDetector> e : selectionListeners) {
             e.processSelectionEvent(event);
         }
     }
 
-    public void processSelectionEvent(SelectionEvent event) {
+    public void processSelectionEvent(SelectionEvent<LossDetector> event) {
 
         if (event.contains(this)) {
             return;
@@ -365,8 +365,8 @@ public class LossTable extends JTable implements SelectionHandler<LossDetector>,
 
     }
 
-    public View getRoot() {
-        return (View) view;
+    public View<LossDetector> getRoot() {
+        return view;
 
     }
     ////////////////////////////
