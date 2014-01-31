@@ -63,7 +63,6 @@ public class PreferencesDialog extends JDialog {
 	
 	public void showPreferenceDialog(AcceleratorDocumentWithPreferences doc) {
 		this.currentDocument = doc;
-	//	tableModel.initializeModel(currentDocument.getDocumentPreferences());
 		propertyTable.setModel(tableModel);
 		invalidate();
 		this.setVisible(true);
@@ -72,7 +71,7 @@ public class PreferencesDialog extends JDialog {
 	private class PropertyTableModel extends AbstractTableModel {
 		
 		private ApplicationPreferences appPrefs;
-//		private Map<String,Object> documentPrefs;
+
 		private String[] keys;
 		
 		private final String[] colNames = new String[]{"Property","Value"};
