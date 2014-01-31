@@ -102,8 +102,18 @@ public class DBConfiguration {
 	 * @return a new connection dictionary from the database configuration
 	 */
 	public ConnectionDictionary newConnectionDictionary( final String accountName, final String serverName ) {
-		final DBAccountConfig account = accountName != null && accountName != "" ? ACCOUNTS.get( accountName ) : ACCOUNTS.get( DEFAULT_ACCOUNT_NAME );
-		final DBServerConfig serverConfig = serverName != null && serverName != "" ? SERVERS.get( serverName ) : SERVERS.get( DEFAULT_SERVER_NAME );
+		final DBAccountConfig account = accountName != null && accountName.length() > 0 ? ACCOUNTS.get( accountName ) : ACCOUNTS.get( DEFAULT_ACCOUNT_NAME );
+
+		// get the default server name for the account if any
+		final String accountServerName = account != null ? account.getDefaultServerName() : null;
+
+		// resolve the server name to use by first selecting the serverName parameter if not null, then falling back to the account's default server name if not null and finally falling back to the DEFAULT_SERVER_NAME
+		final String resolvedServerName = serverName != null && serverName.length() > 0 ? serverName : accountServerName != null && accountServerName.length() > 0 ? accountServerName : DEFAULT_SERVER_NAME;
+
+		System.out.println( "Using the database server: " + resolvedServerName );
+
+		// get the resolved server configuration
+		final DBServerConfig serverConfig = SERVERS.get( resolvedServerName );
 		
 		final ConnectionDictionary connectionDictionary = new ConnectionDictionary();
 		if ( serverConfig != null ) {
@@ -126,7 +136,7 @@ public class DBConfiguration {
 	
 	/** generate a new connection dictionary for the specified account name and the default database server */
 	public ConnectionDictionary newConnectionDictionary( final String accountName ) {
-		return newConnectionDictionary( accountName, DEFAULT_SERVER_NAME );
+		return newConnectionDictionary( accountName, null );
 	}
 	
 	
@@ -212,7 +222,8 @@ public class DBConfiguration {
 			final String name = accountAdaptor.stringValue( "name" );
 			final String user = accountAdaptor.stringValue( "user" );
 			final String password = accountAdaptor.hasAttribute( "password" ) ? accountAdaptor.stringValue( "password" ) : null;
-			accountTable.put( name, new DBAccountConfig( name, user, password ) );
+			final String serverName = accountAdaptor.hasAttribute( "server" ) ? accountAdaptor.stringValue( "server" ) : null;
+			accountTable.put( name, new DBAccountConfig( name, user, password, serverName ) );
 		}
 		
 		return new DBConfiguration( defaultDBAdaptorName, dbAdaptorTable, defaultServerName, serverTable, defaultAccountName, accountTable );
@@ -358,12 +369,17 @@ class DBAccountConfig {
 	
 	/** user's password */
 	final private String PASSWORD;
-	
+
+	/** name of the default server for the specified account if any */
+	final private String DEFAULT_SERVER_NAME;
+
+
 	/** Constructor */
-	public DBAccountConfig( final String name, final String user, final String password ) {
+	public DBAccountConfig( final String name, final String user, final String password, final String defaultServerName ) {
 		NAME = name;
 		USER_NAME = user;
 		PASSWORD = password;
+		DEFAULT_SERVER_NAME = defaultServerName;
 	}
 	
 	
@@ -382,5 +398,11 @@ class DBAccountConfig {
 	/** get the password */
 	public String getPassword() {
 		return PASSWORD;
+	}
+
+
+	/** get the account's default server name */
+	public String getDefaultServerName() {
+		return DEFAULT_SERVER_NAME;
 	}
 }
