@@ -223,6 +223,9 @@ public class LV2Document extends AcceleratorDocumentWithPreferences {
         for (DataAdaptor vda : viewDAs) {
             try {
                 String cn = vda.stringValue("classname");
+                if(cn.startsWith("gov.sns.apps.lossviewer2")){
+                    cn=cn.replace("gov.sns.apps.lossviewer2", this.getClass().getPackage().getName());
+                }
                 View<LossDetector> view = (View<LossDetector>) (Class.forName(cn).getConstructor().newInstance());
                 view.setDocument(this);
                 view.update(vda);
