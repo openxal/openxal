@@ -75,7 +75,7 @@ public class CASignal extends AbstractSignal implements ConnectionListener, IEve
     public void close() {
         if (chan != null) {
             chan.disconnect();
-            chan.flushIO();
+            Channel.flushIO();
         }
     }
 }

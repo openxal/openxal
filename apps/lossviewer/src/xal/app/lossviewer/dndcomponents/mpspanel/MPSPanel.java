@@ -59,7 +59,7 @@ import xal.tools.data.DataListener;
  */
 public class MPSPanel extends MPSPanelNB implements SelectionHandler<LossDetector>, DataListener, ViewListener {
 
-    private View view;
+    private View<LossDetector> view;
     private LossDetector showingDetector;
     private TimeSeriesCollection historyDataSet;
     private TimeSeries history;
@@ -88,7 +88,7 @@ public class MPSPanel extends MPSPanelNB implements SelectionHandler<LossDetecto
         plot.setDomainGridlineStroke(gridLine);
     }
 
-    public MPSPanel(View v) {
+    public MPSPanel(View<LossDetector> v) {
         super();
         this.view = v;
 
@@ -668,7 +668,7 @@ public class MPSPanel extends MPSPanelNB implements SelectionHandler<LossDetecto
             HistoryStats hs = calculateStats(detector);
             dets.add(new LimitValue(detector, hs.propHIHI, hs.propHI, hs.propHw));
         }
-        SwingWorker sw = new PushWorker(this, signalType == PULSE_LOSS, dets, minLimitSw, maxLimitSw, minLimitHw, maxLimitHw);
+        SwingWorker<Boolean,Void> sw = new PushWorker(this, signalType == PULSE_LOSS, dets, minLimitSw, maxLimitSw, minLimitHw, maxLimitHw);
         pushButton.setEnabled(false);
         pushAllButton.setEnabled(false);
         revertButton.setEnabled(false);
@@ -677,7 +677,7 @@ public class MPSPanel extends MPSPanelNB implements SelectionHandler<LossDetecto
     }
 
     private void revertLimits() {
-        SwingWorker sw = new PushWorker(this, signalType == PULSE_LOSS, oldLimits, minLimitSw, maxLimitSw, minLimitHw, maxLimitHw, true);
+        SwingWorker<Boolean,Void> sw = new PushWorker(this, signalType == PULSE_LOSS, oldLimits, minLimitSw, maxLimitSw, minLimitHw, maxLimitHw, true);
         pushButton.setEnabled(false);
         pushAllButton.setEnabled(false);
         revertButton.setEnabled(false);

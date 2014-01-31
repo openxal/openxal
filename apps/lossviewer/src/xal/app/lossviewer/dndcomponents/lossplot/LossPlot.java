@@ -89,7 +89,7 @@ public class LossPlot extends JPanel implements ViewListener, DataListener {
         }
 
     }
-    private View view;
+    private View<LossDetector> view;
     private XYPlot plot;
     private JFreeChart chart;
     ApplicationPreferences preferences;
@@ -97,7 +97,7 @@ public class LossPlot extends JPanel implements ViewListener, DataListener {
     private String currentLossType = "PulseLoss";
     private String currentLossLimit = "HwTrip";
 
-    public LossPlot(View v) {
+    public LossPlot(View<LossDetector> v) {
         super();
         this.view = v;
 

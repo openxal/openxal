@@ -49,7 +49,7 @@ public class WaterfallLossPlot extends JPanel implements ViewListener, DataListe
     private static long TIME_TOLERANCE = 500;
     private Set<LossDetector> detSet;
 
-    public WaterfallLossPlot(View v) {
+    public WaterfallLossPlot(View<LossDetector> v) {
         super();
         this.view = (WaterView) v;
         view.addViewListener(this);
@@ -69,7 +69,7 @@ public class WaterfallLossPlot extends JPanel implements ViewListener, DataListe
             switchLossSignal((String)(event.getArgument()));
         }
         else{
-            init(((View) (event.getSource())).getDetectors());
+            init(event.getSource().getDetectors());
         }
         
     }
