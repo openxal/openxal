@@ -110,8 +110,6 @@ public class DBConfiguration {
 		// resolve the server name to use by first selecting the serverName parameter if not null, then falling back to the account's default server name if not null and finally falling back to the DEFAULT_SERVER_NAME
 		final String resolvedServerName = serverName != null && serverName.length() > 0 ? serverName : accountServerName != null && accountServerName.length() > 0 ? accountServerName : DEFAULT_SERVER_NAME;
 
-		System.out.println( "Using the database server: " + resolvedServerName );
-
 		// get the resolved server configuration
 		final DBServerConfig serverConfig = SERVERS.get( resolvedServerName );
 		
