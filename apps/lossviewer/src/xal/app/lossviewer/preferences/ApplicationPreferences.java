@@ -52,7 +52,7 @@ public class ApplicationPreferences implements PreferenceModel{
 		
 		for (String key : prefs.keySet()) {
 			
-			Object value = ObjectConverter.createObjectFromString((String)prefs.get(key));
+			Object value = ObjectConverter.createObjectFromString(prefs.get(key));
 //			System.out.println(key + " " + value);
 			appPreferences.put(key, value);
 			defaultPreferences.put(key, value);

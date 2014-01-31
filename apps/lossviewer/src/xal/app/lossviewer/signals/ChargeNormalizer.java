@@ -70,7 +70,7 @@ public class ChargeNormalizer extends AbstractSignal implements ConnectionListen
 
         for (String bcmName : bcmChannels.keySet()) {
             bcmChannels.get(bcmName).disconnect();
-            bcmChannels.get(bcmName).flushIO();
+            Channel.flushIO();
         }
     }
 

@@ -61,7 +61,7 @@ public class LV2Window extends AcceleratorWindow implements SwingConstants {
     private List<String> detectorTypes = new ArrayList<String>(Arrays.asList(new String[]{"BLM", "ND"}));
     private List<String> filteredTypes = null;
 
-    private void setIFrameTitle(View view, JInternalFrame iframe) {
+    private void setIFrameTitle(View<LossDetector> view, JInternalFrame iframe) {
         String title = "";
         if ("Slow60".equals(view.getLossSignal())) {
             title = "1 Second";
@@ -80,11 +80,11 @@ public class LV2Window extends AcceleratorWindow implements SwingConstants {
         iframe.setTitle(view.getTitle() + " " + title + refname);
     }
 
-    public void addView(final View newView) {
+    public void addView(final View<LossDetector> newView) {
         final JInternalFrame iframe = new JInternalFrame("", true, true, true, true);
         ;
 
-        InternalFrameUI ui = ((InternalFrameUI) (iframe.getUI()));
+        InternalFrameUI ui = iframe.getUI();
         if (!(ui instanceof BasicInternalFrameUI)) {
             return;
         }

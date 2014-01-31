@@ -210,13 +210,13 @@ public abstract class LossView implements SelectionHandler<LossDetector>, View<L
     public void setSelection(Collection<LossDetector> se) {
         selection = se;
     }
-    List<SelectionHandler> selectionListeners = new ArrayList<SelectionHandler>();
+    List<SelectionHandler<LossDetector>> selectionListeners = new ArrayList<SelectionHandler<LossDetector>>();
 
-    public void addSelectionListener(SelectionHandler s) {
+    public void addSelectionListener(SelectionHandler<LossDetector> s) {
         selectionListeners.add(s);
     }
 
-    public void removeSelectionListener(SelectionHandler s) {
+    public void removeSelectionListener(SelectionHandler<LossDetector> s) {
         selectionListeners.remove(s);
     }
 
@@ -224,13 +224,13 @@ public abstract class LossView implements SelectionHandler<LossDetector>, View<L
         selectionListeners.clear();
     }
 
-    public void fireSelectionUpdate(SelectionEvent event) {
-        for (SelectionHandler e : selectionListeners) {
+    public void fireSelectionUpdate(SelectionEvent<LossDetector> event) {
+        for (SelectionHandler<LossDetector> e : selectionListeners) {
             e.processSelectionEvent(event);
         }
     }
 
-    public void processSelectionEvent(SelectionEvent event) {
+    public void processSelectionEvent(SelectionEvent<LossDetector> event) {
 
         if (event.contains(this)) {
             return;

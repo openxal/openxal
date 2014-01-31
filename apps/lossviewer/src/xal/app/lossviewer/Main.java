@@ -378,10 +378,10 @@ public class Main extends ApplicationWithPreferences {
 
     private void loadDistances() {
 
-        Map distanceMap = Util.loadResourceBundle(getClass().getPackage().getName() + ".resources.distance");
+        Map<String,String> distanceMap = Util.loadResourceBundle(getClass().getPackage().getName() + ".resources.distance");
         for (LossDetector b : allBLMs) {
             String name = b.getName();
-            Object dist = distanceMap.get(name);
+            String dist = distanceMap.get(name);
             if (dist != null) {
                 try {
                     double distance = Double.parseDouble(dist.toString());

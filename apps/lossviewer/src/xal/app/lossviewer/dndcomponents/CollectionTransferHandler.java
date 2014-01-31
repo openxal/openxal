@@ -11,7 +11,7 @@ public class CollectionTransferHandler<DetectorType> extends TransferHandler {
     DataFlavor localListFlavor, serialListFlavor;
     String localListType = DataFlavor.javaJVMLocalObjectMimeType +
                                 ";class=java.util.List";
-    SelectionHandler source = null;
+    SelectionHandler<DetectorType> source = null;
     Collection<DetectorType> selection = null;
     
 
