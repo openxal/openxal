@@ -25,8 +25,8 @@ public class CollectionTransferHandler<DetectorType> extends TransferHandler {
         serialListFlavor = new DataFlavor(Collection.class,
                                               "Collection");
     }
-
-    public boolean importData(JComponent c, Transferable t) {
+    @SuppressWarnings("unchecked")
+    public boolean  importData(JComponent c, Transferable t) {
         SelectionHandler<DetectorType> target = null;
 		Collection<DetectorType> alist;
        
@@ -51,17 +51,7 @@ public class CollectionTransferHandler<DetectorType> extends TransferHandler {
             return false;
         }
 
-        //At this point we use the same code to retrieve the data
-        //locally or serially.
 
-        
-
-        //Prevent the user from dropping data back on itself.
-        
-//        if (source==target) {
-//			System.out.println(source);
-//            return false;
-//        }
 
         View<DetectorType> rootView = target.getRoot();
         rootView.addDetectors(alist);
@@ -103,7 +93,7 @@ public class CollectionTransferHandler<DetectorType> extends TransferHandler {
         if (hasSerialArrayListFlavor(flavors)) { return true; }
         return false;
     }
-
+    @SuppressWarnings("unchecked")
     protected Transferable createTransferable(JComponent c) {
         if (c instanceof SelectionHandler<?>) {
             source = (SelectionHandler<DetectorType>)c;
@@ -113,7 +103,7 @@ public class CollectionTransferHandler<DetectorType> extends TransferHandler {
                 return null;
             }
 
-            return new CollectionTransferable(selection);
+            return new CollectionTransferable<DetectorType>(selection);
         }
         return null;
     }
@@ -122,10 +112,10 @@ public class CollectionTransferHandler<DetectorType> extends TransferHandler {
         return COPY_OR_MOVE;
     }
 
-    public class CollectionTransferable implements Transferable {
-        Collection data;
+    public class CollectionTransferable<DetectorType> implements Transferable {
+        Collection<DetectorType> data;
 
-        public CollectionTransferable(Collection alist) {
+        public CollectionTransferable(Collection<DetectorType> alist) {
             data = alist;
         }
 

@@ -61,7 +61,7 @@ public class DetectorTableModel extends AbstractTableModel
     }
 
     public void processViewEvent(ViewEvent event) {
-        init(((View) (event.getSource())).getDetectors());
+        init(event.getSource().getDetectors());
         fireTableChanged(null);
     }
 
