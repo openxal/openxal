@@ -20,6 +20,7 @@ import xal.tools.data.DataListener;
 public class LossPlot extends JPanel implements ViewListener, DataListener {
 
     public static Paint AVERAGED_COLOR = Color.CYAN;
+    private static final long serialVersionUID = 7533174382225104690L;
     private boolean reference;
 
     public String dataLabel() {
@@ -114,6 +115,7 @@ public class LossPlot extends JPanel implements ViewListener, DataListener {
     protected void initializeLossTypes() {
         ButtonGroup grp = new ButtonGroup();
         Action a = new AbstractAction("1 pulse") {
+            private static final long serialVersionUID = 4377386270269629176L;
 
             public void actionPerformed(ActionEvent e) {
                 JRadioButtonMenuItem src = (JRadioButtonMenuItem) e.getSource();
@@ -132,6 +134,7 @@ public class LossPlot extends JPanel implements ViewListener, DataListener {
         mi.setSelected(true);
 
         a = new AbstractAction("1 second") {
+            private static final long serialVersionUID = 4377386270269629176L;
 
             public void actionPerformed(ActionEvent e) {
                 JRadioButtonMenuItem src = (JRadioButtonMenuItem) e.getSource();
@@ -269,6 +272,7 @@ public class LossPlot extends JPanel implements ViewListener, DataListener {
 //        }
 
         Action avAction = new AbstractAction("Average") {
+            private static final long serialVersionUID = 4377386270269629176L;
 
             public void actionPerformed(ActionEvent event) {
                 switchLossSignal(((JCheckBoxMenuItem) (event.getSource())).isSelected());
@@ -373,6 +377,7 @@ public class LossPlot extends JPanel implements ViewListener, DataListener {
 
     protected void initializeActions() {
         standardAction.add(new AbstractAction("Scale All once") {
+            private static final long serialVersionUID = 4377386270269629176L;
 
             public void actionPerformed(ActionEvent e) {
                 for (TypeDataSet t : typeSeries.values()) {
@@ -381,6 +386,7 @@ public class LossPlot extends JPanel implements ViewListener, DataListener {
             }
         });
         standardAction.add(new AbstractAction("Autoscale All") {
+            private static final long serialVersionUID = 4377386270269629176L;
 
             public void actionPerformed(ActionEvent e) {
                 for (TypeDataSet t : typeSeries.values()) {
@@ -389,6 +395,7 @@ public class LossPlot extends JPanel implements ViewListener, DataListener {
             }
         });
         standardAction.add(new AbstractAction("Freeze All") {
+            private static final long serialVersionUID = 4377386270269629176L;
 
             public void actionPerformed(ActionEvent e) {
                 for (TypeDataSet t : typeSeries.values()) {

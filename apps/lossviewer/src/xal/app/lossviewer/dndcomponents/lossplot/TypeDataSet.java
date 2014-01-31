@@ -16,6 +16,7 @@ import xal.tools.data.DataAdaptor;
 import xal.tools.data.DataListener;
 
 public class TypeDataSet extends XYSeriesCollection implements LossChartAdaptor,DataListener {
+    private static final long serialVersionUID = -2618010493689240660L;
 	
 	
 	public String dataLabel() {
@@ -548,6 +549,7 @@ public class TypeDataSet extends XYSeriesCollection implements LossChartAdaptor,
 }
 
 class MySeries extends XYSeries {
+    private static final long serialVersionUID = 3840484779229701051L;
 	public MySeries(String s) {
 		super(s);
 	}

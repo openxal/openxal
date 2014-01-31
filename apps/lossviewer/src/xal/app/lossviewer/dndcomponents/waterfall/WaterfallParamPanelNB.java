@@ -16,6 +16,7 @@ package xal.app.lossviewer.dndcomponents.waterfall;
  * @author az9
  */
 public class WaterfallParamPanelNB extends javax.swing.JPanel {
+    private static final long serialVersionUID = -2909521003327574596L;
 
     /** Creates new form WaterfallParamPanelNB */
     public WaterfallParamPanelNB() {

@@ -58,6 +58,7 @@ import xal.tools.data.DataListener;
  * @author az9
  */
 public class MPSPanel extends MPSPanelNB implements SelectionHandler<LossDetector>, DataListener, ViewListener {
+    private static final long serialVersionUID = -3143305083569787661L;
 
     private View<LossDetector> view;
     private LossDetector showingDetector;

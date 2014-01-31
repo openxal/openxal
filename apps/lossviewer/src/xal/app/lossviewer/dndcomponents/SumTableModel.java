@@ -16,6 +16,7 @@ import java.util.Set;
  * @author azukov
  */
 public class SumTableModel extends DetectorTableModel {
+    private static final long serialVersionUID = -1978854954476899411L;
     
     private Map<String,Double> weights = new HashMap<String,Double>();
     private Map<String,LossDetector> detectorMap = new HashMap<String,LossDetector>();

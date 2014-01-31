@@ -8,6 +8,7 @@ import java.util.*;
 import javax.swing.*;
 
 public class CollectionTransferHandler<DetectorType> extends TransferHandler {
+    private static final long serialVersionUID = -2822868826299047456L;
     DataFlavor localListFlavor, serialListFlavor;
     String localListType = DataFlavor.javaJVMLocalObjectMimeType +
                                 ";class=java.util.List";

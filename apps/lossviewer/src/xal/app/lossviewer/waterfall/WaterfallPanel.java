@@ -25,6 +25,7 @@ import javax.swing.JPopupMenu;
  * @author az9
  */
 public class WaterfallPanel extends JPanel implements WaterfallDataListener {
+    private static final long serialVersionUID = 5979034276112693437L;
 
     private BufferedImage bImg;
     private BufferedImage footerImg;

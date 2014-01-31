@@ -12,6 +12,7 @@ package xal.app.lossviewer.dndcomponents.sumpanel;
  * @author  azukov
  */
 public class SumPanelNB extends javax.swing.JPanel {
+    private static final long serialVersionUID = -3544297555342476948L;
     
     /** Creates new form SumPanelNB */
     public SumPanelNB() {

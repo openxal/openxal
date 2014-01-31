@@ -31,6 +31,7 @@ import xal.app.lossviewer.signals.NormalizationDevice;
  * @author somebody
  */
 public class LV2Window extends AcceleratorWindow implements SwingConstants {
+    private static final long serialVersionUID = -6955984530557635002L;
 
     private Main application;
     private JDesktopPane desktop;
@@ -107,6 +108,7 @@ public class LV2Window extends AcceleratorWindow implements SwingConstants {
         for (String type : detectorTypes) {
             final JCheckBoxMenuItem mi = new JCheckBoxMenuItem(type);
             mi.setAction(new AbstractAction(type) {
+                private static final long serialVersionUID = 4377386270269629176L;
 
                 public void actionPerformed(ActionEvent e) {
                     JCheckBoxMenuItem item = (JCheckBoxMenuItem) e.getSource();
@@ -136,6 +138,7 @@ public class LV2Window extends AcceleratorWindow implements SwingConstants {
         });
 
         Action renameAction = new AbstractAction("Rename") {
+            private static final long serialVersionUID = 4377386270269629176L;
 
             public void actionPerformed(ActionEvent e) {
                 String oldTitle = newView.getTitle();
@@ -157,6 +160,7 @@ public class LV2Window extends AcceleratorWindow implements SwingConstants {
 
         //     currentLossSignal = newView.getLossSignal();
         JRadioButtonMenuItem pulseLoss = new JRadioButtonMenuItem(new AbstractAction("1 Pulse") {
+            private static final long serialVersionUID = 4377386270269629176L;
 
             public void actionPerformed(ActionEvent e) {
                 newView.switchLossSignal("PulseLoss");
@@ -167,6 +171,7 @@ public class LV2Window extends AcceleratorWindow implements SwingConstants {
         pulseLoss.setSelected(newView.getLossSignal().equals("PulseLoss"));
 
         JRadioButtonMenuItem slow60 = new JRadioButtonMenuItem(new AbstractAction("1 Second") {
+            private static final long serialVersionUID = 4377386270269629176L;
 
             public void actionPerformed(ActionEvent e) {
                 //   switchSignal("Slow60");
@@ -188,6 +193,7 @@ public class LV2Window extends AcceleratorWindow implements SwingConstants {
             final JMenu referenceMenu = new JMenu("References");
 
             final AbstractAction a = new AbstractAction() {
+                private static final long serialVersionUID = -5644390861803492172L;
 
                 public void actionPerformed(ActionEvent ae) {
                     String s = ((JMenuItem) ae.getSource()).getText();
@@ -273,6 +279,7 @@ public class LV2Window extends AcceleratorWindow implements SwingConstants {
         String normalizationLabel = (String) ((LV2Document) document).get("Normalizationmenu.label");
 
         Action seqActionBar = new AbstractAction() {
+            private static final long serialVersionUID = -5644390861803492172L;
 
             public void actionPerformed(ActionEvent e) {
 
@@ -281,6 +288,7 @@ public class LV2Window extends AcceleratorWindow implements SwingConstants {
         };
 
         Action seqActionMPS = new AbstractAction() {
+            private static final long serialVersionUID = -5644390861803492172L;
 
             public void actionPerformed(ActionEvent e) {
 
@@ -289,6 +297,7 @@ public class LV2Window extends AcceleratorWindow implements SwingConstants {
         };
 
         Action seqActionSum = new AbstractAction() {
+            private static final long serialVersionUID = -5644390861803492172L;
 
             public void actionPerformed(ActionEvent e) {
 
@@ -297,6 +306,7 @@ public class LV2Window extends AcceleratorWindow implements SwingConstants {
         };
 
         Action seqActionWater = new AbstractAction() {
+            private static final long serialVersionUID = -5644390861803492172L;
 
             public void actionPerformed(ActionEvent e) {
 
@@ -319,6 +329,7 @@ public class LV2Window extends AcceleratorWindow implements SwingConstants {
                 int index=0;
                 for(final NormalizationDevice bcm : bcms){
                     JRadioButtonMenuItem rb = new JRadioButtonMenuItem(new AbstractAction(bcm.getName()){
+                        private static final long serialVersionUID = 4377386270269629176L;
                         
                       ///  NormalizationDevice myBCM=bcm;
                         public void actionPerformed(ActionEvent e) {
@@ -433,6 +444,7 @@ public class LV2Window extends AcceleratorWindow implements SwingConstants {
                 }
 
                 Action emptyAction = new AbstractAction("Empty") {
+                    private static final long serialVersionUID = 4377386270269629176L;
 
                     public void actionPerformed(ActionEvent e) {
                         ((LV2Document) document).addDefaultView(null);
@@ -440,6 +452,7 @@ public class LV2Window extends AcceleratorWindow implements SwingConstants {
                 };
 
                 Action emptyMPS = new AbstractAction("Empty") {
+                    private static final long serialVersionUID = 4377386270269629176L;
 
                     public void actionPerformed(ActionEvent e) {
 
@@ -448,6 +461,7 @@ public class LV2Window extends AcceleratorWindow implements SwingConstants {
                 };
 
                 Action emptySum = new AbstractAction("Empty") {
+                    private static final long serialVersionUID = 4377386270269629176L;
 
                     public void actionPerformed(ActionEvent e) {
 
@@ -456,6 +470,7 @@ public class LV2Window extends AcceleratorWindow implements SwingConstants {
                 };
 
                 Action emptyWater = new AbstractAction("Empty") {
+                    private static final long serialVersionUID = 4377386270269629176L;
 
                     public void actionPerformed(ActionEvent e) {
 
@@ -495,6 +510,7 @@ public class LV2Window extends AcceleratorWindow implements SwingConstants {
     protected void customizeCommands(Commander c) {
 
         c.registerAction(new AbstractAction("export-action") {
+            private static final long serialVersionUID = 4377386270269629176L;
 
             public void actionPerformed(ActionEvent e) {
 
@@ -502,6 +518,7 @@ public class LV2Window extends AcceleratorWindow implements SwingConstants {
             }
         });
         c.registerAction(new AbstractAction("exportblm-action") {
+            private static final long serialVersionUID = 4377386270269629176L;
 
             public void actionPerformed(ActionEvent e) {
 
@@ -509,6 +526,7 @@ public class LV2Window extends AcceleratorWindow implements SwingConstants {
             }
         });
         c.registerAction(new AbstractAction("exportnd-action") {
+            private static final long serialVersionUID = 4377386270269629176L;
 
             public void actionPerformed(ActionEvent e) {
 

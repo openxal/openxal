@@ -25,6 +25,7 @@ import javax.swing.table.AbstractTableModel;
  */
 public class DetectorTableModel extends AbstractTableModel
         implements ViewListener {
+    private static final long serialVersionUID = 7038424815194779758L;
 
     protected List<String> visibleSignalNames;
     Map<String,Set<String>> allLabelNormalizations;

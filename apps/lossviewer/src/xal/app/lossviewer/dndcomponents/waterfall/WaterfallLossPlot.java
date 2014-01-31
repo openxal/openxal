@@ -40,6 +40,7 @@ import xal.tools.data.DataListener;
  * @author az9
  */
 public class WaterfallLossPlot extends JPanel implements ViewListener, DataListener {
+    private static final long serialVersionUID = 2139482815413493560L;
 
     private WaterView view;
     private int HISTORY_SIZE = 600;
@@ -214,6 +215,7 @@ public class WaterfallLossPlot extends JPanel implements ViewListener, DataListe
     }
 
     private class ParamPanel extends WaterfallParamPanelNB {
+        private static final long serialVersionUID = 6296740258310232913L;
 
         ParamPanel(double max, double min, boolean log) {
             super();

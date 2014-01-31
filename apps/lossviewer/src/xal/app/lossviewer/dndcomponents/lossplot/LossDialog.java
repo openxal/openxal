@@ -14,6 +14,7 @@ import xal.tools.apputils.SimpleChartDialog;
 
 
 public class LossDialog extends SimpleChartDialog implements  SwingConstants {
+    private static final long serialVersionUID = -6473656321262092545L;
     protected ChartPopupAdaptor chartAdaptor;
     protected Component _parent;
 	

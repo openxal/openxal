@@ -13,6 +13,7 @@ import xal.tools.data.DataAdaptor;
 import xal.tools.data.DataListener;
 
 public class LossTable extends JTable implements SelectionHandler<LossDetector>, DataListener {
+    private static final long serialVersionUID = 3583273594890296074L;
 
     private String dataLabel = "LossTable";
     private int EDIT_MENU_INDEX = 1;
@@ -254,6 +255,7 @@ public class LossTable extends JTable implements SelectionHandler<LossDetector>,
 
         }
         Action deleteAction = new AbstractAction("Delete"){
+            private static final long serialVersionUID = 4377386270269629176L;
             public void actionPerformed(ActionEvent e) {
                 view.removeDetectors(getSelection());
             }

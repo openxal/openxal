@@ -14,6 +14,7 @@ import xal.tools.data.DataAdaptor;
  * @author azukov
  */
 public class SumTable extends LossTable {
+    private static final long serialVersionUID = 5568996378691513488L;
 
     private String dataLabel = "SumTable";
 

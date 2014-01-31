@@ -39,6 +39,7 @@ import xal.tools.data.DataListener;
  * @author azukov
  */
 public class SumPanel extends SumPanelNB implements DataListener, ViewListener {
+    private static final long serialVersionUID = -589776116322060246L;
 
     private View<LossDetector> view;
     private TimeSeriesCollection historyDataSet;

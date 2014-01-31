@@ -11,6 +11,7 @@ package xal.app.lossviewer.dndcomponents.mpspanel;
  * @author  azukov
  */
 public class MPSPanelNB extends javax.swing.JPanel {
+    private static final long serialVersionUID = -4398785921224480124L;
     
     /** Creates new form MPSPanelNB */
     public MPSPanelNB() {

@@ -15,6 +15,7 @@ import javax.swing.JComponent;
  * @author az9
  */
 public class ColorLegend extends JComponent {
+    private static final long serialVersionUID = -3581547085597324224L;
 
     private ColorGenerator colorGenerator;
     private BufferedImage bImg;

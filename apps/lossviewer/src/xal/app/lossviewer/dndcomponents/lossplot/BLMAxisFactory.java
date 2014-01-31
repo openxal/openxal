@@ -50,6 +50,7 @@ public class BLMAxisFactory {
             index++;
         }
         SymbolAxis axis = new SymbolAxis("", names) {
+            private static final long serialVersionUID = -2911592900608877261L;
 
             protected void drawGridBandsHorizontal(Graphics2D g2,
                     Rectangle2D plotArea,
