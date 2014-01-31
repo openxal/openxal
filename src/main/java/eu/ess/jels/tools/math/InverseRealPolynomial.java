@@ -4,7 +4,7 @@ import xal.tools.math.poly.UnivariateRealPolynomial;
 
 /**
  * <p>Represents a model function of the form: 
- * x1 + x2(x0/x-1) + x3/2(x0/x-1)^2 + ... + xn/(n-1)!(x0/x-1)^(n-1)
+ * ( 1 + x2(x0/x-1) + x3/2(x0/x-1)^2 + ... + xn/(n-1)!(x0/x-1)^(n-1) ) / x1
  * where x0,x1,...,xn are parameters.</p>
  * 
  * <p>This is an encapsulation of a TTF function as is used in TraceWin.
@@ -103,14 +103,14 @@ public class InverseRealPolynomial extends UnivariateRealPolynomial {
 
     /**
      * Evaluate the model function for the specified value: 
-     * x1 + x2(x0/x-1) + x3/2(x0/x-1)^2 + ... + xn/(n-1)!(x0/x-1)^(n-1)
+     * (1 + x2(x0/x-1) + x3/2(x0/x-1)^2 + ... + xn/(n-1)!(x0/x-1)^(n-1)) / x1
      * where x0,x1,...,xn are coefficients.
      * 
      * @param   dblVal      indeterminate value to evaluate the model function at
      */
     public double evaluateAt(double dblVal) {
         if (this.m_arrCoef == null || this.m_arrCoef.length == 0)
-            return dblVal;
+            return 1.0;
 
         double x0 = m_arrCoef[0];
         if (x0 == 0.0) return 1.0;
@@ -124,14 +124,14 @@ public class InverseRealPolynomial extends UnivariateRealPolynomial {
         	dblAccum += this.getCoef(n) * Math.pow(x0/dblVal-1, n-1) / f;
         }
 
-        return dblAccum;
+        return dblAccum / m_arrCoef[1];
     }
 
     /**
      * Evaluate derivative of the model function for the specified value of the indeterminate.
      * If the coefficient vector has not been specified, it return 0.
      * 
-     * -x2(x0 x^-2) - x3(x0/x-1)(x0 x^-2) - ... - xn/(n-2)!(x0/x-1)^(n-2)(x0 x^-2)
+     * (-x2(x0 x^-2) - x3(x0/x-1)(x0 x^-2) - ... - xn/(n-2)!(x0/x-1)^(n-2)(x0 x^-2)) / x1
      * where x0,x1,...,xn are coefficients.
      * 
      * @param   dblVal      indeterminate value to evaluate the model function derivative
@@ -150,7 +150,7 @@ public class InverseRealPolynomial extends UnivariateRealPolynomial {
         	dblAccum += this.getCoef(n) * Math.pow(x0/dblVal-1, n-2) * x0 / dblVal / dblVal / f;
         }
 
-        return -dblAccum;
+        return -dblAccum / m_arrCoef[1];
     }
 
     public UnivariateRealPolynomial plus(UnivariateRealPolynomial polyAddend)  {
@@ -181,12 +181,12 @@ public class InverseRealPolynomial extends UnivariateRealPolynomial {
         int     N = this.getDegree();
 
         String  x0 = Double.toString(this.getCoef(0));
-        String  strPoly = Double.toString(this.getCoef(1));
+        String  strPoly = "("+Double.toString(this.getCoef(1));
 
         for (int n=2; n<=N; n++)
             strPoly += " + " + this.getCoef(n) + "("+ x0+"/x)^" + (n-1);
 
-        return strPoly;
+        return strPoly + ")/x1";
     }
 
 }

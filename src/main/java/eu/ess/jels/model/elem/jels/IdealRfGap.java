@@ -94,6 +94,11 @@ public class IdealRfGap extends ThinElement implements IRfGap {
     private UnivariateRealPolynomial SPrimeFit;
 
     
+    /** the energy gained in this gap (eV)  */
+    private double energyGain;
+    
+    /** the phase kick correction applied at the gap center [rad] */
+    private double deltaPhi;
     
     
     /*
@@ -215,7 +220,7 @@ public class IdealRfGap extends ThinElement implements IRfGap {
      */
     @Override
     public double elapsedTime(IProbe probe)  {
-    	return 0.0;
+    	return deltaPhi / (getFrequency() * 2.0 * Math.PI);
     }
 
     /** 
@@ -229,9 +234,7 @@ public class IdealRfGap extends ThinElement implements IRfGap {
     @Override
     public double energyGain(IProbe probe)
     {    	
-    	return (gamma_end - 1.0) * probe.getSpeciesRestEnergy() - probe.getKineticEnergy();
-    	//return (gamma_end - probe.getGamma()) * probe.getSpeciesRestEnergy();    	
-    	//return getETL()*Math.cos(getPhase());
+    	return energyGain;
     }
     
     protected double computeBetaFromGamma(double gamma) {    	    
@@ -239,9 +242,6 @@ public class IdealRfGap extends ThinElement implements IRfGap {
         double beta = Math.sqrt(Math.pow(gamma,2) - 1.0)/gamma;
         return beta;
     };
-       
-    private double gamma_end;
-    
     
     /**
      * <p>  
@@ -283,7 +283,7 @@ public class IdealRfGap extends ThinElement implements IRfGap {
     	}
     	
     	double E0TL = getETL();
-    	double DeltaPhi = 0;
+    	
     	if (E0TL==0)
     	{
     		matPhi = PhaseMatrix.identity();    		
@@ -292,8 +292,9 @@ public class IdealRfGap extends ThinElement implements IRfGap {
     	{        	
     		double mass = probe.getSpeciesRestEnergy();
     		double gamma_start=probe.getGamma();
-    		double beta_start=computeBetaFromGamma(gamma_start);//probe.getBeta();
+    		double beta_start=probe.getBeta();
     		
+    		double gamma_end;
     		double beta_end;
     		double gamma_avg;
     		
@@ -309,28 +310,27 @@ public class IdealRfGap extends ThinElement implements IRfGap {
     			double gamma_middle=gamma_start+E0TL/mass*Math.cos(Phis)/2;    			
     			double beta_middle= computeBetaFromGamma(gamma_middle);
     			
-    			// k=betas/beta_middle;
-    			double T=TTFFit.evaluateAt(beta_middle); // = Ts+kTs*(k-1)+k2Ts*pow(k-1,2)/2;
-    			double kT=-beta_middle*TTFFit.evaluateDerivativeAt(beta_middle); // = k*(kTs+k2Ts*(k-1));
-    			double E0TL_scaled=E0TL*T/TTFFit.getCoef(1);
-
-    			gamma_end=gamma_start+E0TL_scaled/mass*Math.cos(Phis);    			
+    			double E0TL_scaled=E0TL*TTFFit.evaluateAt(beta_middle);
+    			double kToverT =-beta_middle*TTFFit.evaluateDerivativeAt(beta_middle)/TTFFit.evaluateAt(beta_middle);
+    			
+    			energyGain = E0TL_scaled*Math.cos(Phis);
+    			gamma_end=gamma_start+energyGain/mass;    			
     			beta_end = computeBetaFromGamma(gamma_end);
     			gamma_avg=(gamma_end+gamma_start)/2;
-    			//double beta_avg=(beta_end+beta_start)/2;
     			double beta_avg = computeBetaFromGamma(gamma_avg);
     
-    			DeltaPhi=E0TL_scaled/mass*Math.sin(Phis)/(Math.pow(gamma_avg,2)*beta_avg)*(kT/T);
+    			deltaPhi=E0TL_scaled/mass*Math.sin(Phis)/(Math.pow(gamma_avg,2)*beta_avg)*(kToverT);
     			kxy=-Math.PI*E0TL_scaled/mass*Math.sin(Phis)/(Math.pow(gamma_avg*beta_avg,2)*lambda);
-    			kx=1-E0TL_scaled/(2*mass)*Math.cos(Phis)/(Math.pow(beta_avg,2)*Math.pow(gamma_avg,3))*(Math.pow(gamma_avg,2)+kT/T);
-    			ky=1-E0TL_scaled/(2*mass)*Math.cos(Phis)/(Math.pow(beta_avg,2)*Math.pow(gamma_avg,3))*(Math.pow(gamma_avg,2)-kT/T);
+    			kx=1-E0TL_scaled/(2*mass)*Math.cos(Phis)/(Math.pow(beta_avg,2)*Math.pow(gamma_avg,3))*(Math.pow(gamma_avg,2)+kToverT);
+    			ky=1-E0TL_scaled/(2*mass)*Math.cos(Phis)/(Math.pow(beta_avg,2)*Math.pow(gamma_avg,3))*(Math.pow(gamma_avg,2)-kToverT);
     			kz=2*Math.PI*(E0TL_scaled/mass)*Math.sin(Phis)/(Math.pow(beta_avg,2)*lambda);
     			
     			C=Math.sqrt((beta_start*gamma_start)/(beta_end*gamma_end*kx*ky));
     		}
     		else
-    		{    			
-    			gamma_end=gamma_start+E0TL/mass*Math.cos(Phis);    			
+    		{   
+    			energyGain = E0TL*Math.cos(Phis);
+    			gamma_end=gamma_start+energyGain/mass;    			
     			beta_end = computeBetaFromGamma(gamma_end);
     			
     			gamma_avg=(gamma_end+gamma_start)/2;
@@ -345,8 +345,6 @@ public class IdealRfGap extends ThinElement implements IRfGap {
     			C=1.0;
     		}
     		
-    		
-
     		matPhi.setElem(0, 0, kx*C);
     		matPhi.setElem(1,0,kxy/(beta_end*gamma_end));
     		matPhi.setElem(1,1,ky*C);
@@ -361,9 +359,9 @@ public class IdealRfGap extends ThinElement implements IRfGap {
     		matPhi.setElem(4,4,gamma_end/gamma_start);
     		matPhi.setElem(5,4,kz/(beta_end*Math.pow(gamma_end,2)*gamma_start));
     		matPhi.setElem(5,5,(beta_start*Math.pow(gamma_start,2))/(beta_end*Math.pow(gamma_end,2)));
-    	}
+    	}    	
             
-    	probe.setLastGapPhase(Phis + DeltaPhi);
+    	probe.setLastGapPhase(Phis + deltaPhi);
     	probe.setLastGapPosition(probe.getPosition());
     	matPhi.setElem(6,6,1);
         return new PhaseMap(matPhi);
