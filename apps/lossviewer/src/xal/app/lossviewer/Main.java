@@ -9,7 +9,6 @@
  */
 package xal.app.lossviewer;
 
-import com.sun.jmx.snmp.BerDecoder;
 import xal.extension.application.*;
 import xal.app.lossviewer.preferences.*;
 import xal.app.lossviewer.signals.*;
