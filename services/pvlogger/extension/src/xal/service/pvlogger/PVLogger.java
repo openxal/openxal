@@ -87,7 +87,7 @@ public class PVLogger {
 	/** generate a new connection dictionary appropriate for browsing logged data */
 	static public ConnectionDictionary newBrowsingConnectionDictionary() {
 		// use the reports account if available, otherwise use the default account
-		return ConnectionDictionary.getPreferredInstance( "reports" );
+		return ConnectionDictionary.getPreferredInstance( "pvlogger-reports", "reports" );
 	}
 	
 	
