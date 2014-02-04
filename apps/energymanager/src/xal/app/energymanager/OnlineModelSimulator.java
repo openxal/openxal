@@ -145,16 +145,10 @@ public class OnlineModelSimulator {
 	 */
 	public void setEntranceProbe( final Probe entranceProbe ) {
 		if ( !_isRunning ) {
-			final Probe probe = Probe.newProbeInitializedFrom( entranceProbe );
-			final Tracker defaultTracker = (Tracker)probe.getAlgorithm();
-			// want to copy the tracker if we can to avoid editing the shared probe tracker elsewhere
-			//if ( defaultTracker.canCopy() ) {
-			final Tracker tracker = (Tracker)defaultTracker.copy();
-			probe.setAlgorithm( tracker );
-			//}
-
+			final Probe probe = copyProbe( entranceProbe );
 			probe.reset();
 			_probe = probe;
+			
 			if ( _scenario != null ) {
 				_scenario.setProbe( probe );
 			}
@@ -163,8 +157,20 @@ public class OnlineModelSimulator {
 			throw new RuntimeException( "Can't change probe while a simulation is in progress!" );
 		}
 	}
-	
-	
+
+
+    /**
+     * Construct a new probe from the given probe
+     * @param otherProbe probe to copy
+     * @return new probe constructed from the given probe
+     */
+    static private Probe copyProbe( final Probe otherProbe ) {
+        final Probe probe = otherProbe.copy();		// performs a deep copy of the probe including algorithm
+        probe.initialize();
+        return probe;
+    }
+
+
 	/**
 	 * Apply the tracker update policy to the current probe (does not stick for future probes)
 	 * @param policy one of the Tracker update policies: UPDATE_ALWAYS, UPDATE_ENTRANCE, UPDATE_EXIT, UPDATE_ENTRANCEANDEXIT
@@ -192,18 +198,30 @@ public class OnlineModelSimulator {
 	 * @return the default probe for the specified sequence
 	 */
 	static public Probe getDefaultProbe( final AcceleratorSeq sequence ) {
-//		final Probe probe = ( sequence instanceof Ring ) ? (Probe)ProbeFactory.getTransferMapProbe( sequence, new TransferMapTracker() ) : (Probe)ProbeFactory.getEnvelopeProbe( sequence, AlgorithmFactory.createEnvelopeTracker(sequence) );
-        Probe probe = null;
         try {
-            probe = (sequence instanceof Ring) ? ProbeFactory.getTransferMapProbe( sequence, AlgorithmFactory.createTransferMapTracker(sequence) ) : ProbeFactory.getEnvelopeProbe( sequence, AlgorithmFactory.createEnvelopeTracker(sequence));
-            
+            final Probe probe = (sequence instanceof Ring) ? createRingProbe( sequence ) : createEnvelopeProbe( sequence );
             probe.getAlgorithm().setRfGapPhaseCalculation( true );	// make sure we enable the full RF gap phase slip calculation
+			return probe;
         }
         catch ( InstantiationException exception ) {
             System.err.println( "Instantiation exception creating probe." );
             exception.printStackTrace();
+			return null;
         }
-		return probe;
+	}
+
+
+	/** create a new ring probe */
+	static private Probe createRingProbe( final AcceleratorSeq sequence ) throws InstantiationException {
+		final TransferMapTracker tracker = AlgorithmFactory.createTransferMapTracker( sequence );
+		return ProbeFactory.getTransferMapProbe( sequence, tracker );
+	}
+
+
+	/** create a new envelope probe */
+	static private Probe createEnvelopeProbe( final AcceleratorSeq sequence ) throws InstantiationException {
+		final IAlgorithm tracker = AlgorithmFactory.createEnvTrackerAdapt( sequence );
+		return ProbeFactory.getEnvelopeProbe( sequence, tracker );
 	}
 	
 	
