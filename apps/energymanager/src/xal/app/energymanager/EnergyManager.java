@@ -552,8 +552,8 @@ public class EnergyManager implements DataListener, ParameterStoreListener, Opti
         final List<AcceleratorNode> evaluationNodes = _sequence.getAllNodesWithQualifier( evaluationQualifier );
 		final OnlineModelSimulator simulator = new OnlineModelSimulator( _sequence, evaluationNodes, _entranceProbe );
 		simulator.applyTrackerUpdatePolicy( xal.model.alg.Tracker.UPDATE_ENTRANCE );
-        final Simulation simulation = simulator.run();
-		
+		final Simulation simulation = runOnlineModelSimulationWithCurrentValues( simulator );
+
 		// update the twiss and location parameters
         try {
             // get the known species for use later in location table
@@ -788,28 +788,39 @@ public class EnergyManager implements DataListener, ParameterStoreListener, Opti
 		
 		return filteredNodes;
 	}
-	
-	
-	/** Run the online model simulation given the current settings. */
-	public Simulation runOnlineModelSimulation() {
+
+
+	/** Run the online model simulation given the current custom settings. */
+	private Simulation runOnlineModelSimulationWithCurrentValues( final OnlineModelSimulator simulator ) {
 		final List<CoreParameter> customParameters = new ArrayList<CoreParameter>();
-		
+
 		final List<CoreParameter> coreParameters = _parameterStore.getCoreParameters();
 		for ( CoreParameter parameter : coreParameters ) {
 			if ( parameter.getActiveSource() != CoreParameter.DESIGN_SOURCE ) {
 				customParameters.add( parameter );
 			}
 		}
-		
-		final OnlineModelSimulator simulator = new OnlineModelSimulator( _sequence, _evaluationNodes, _entranceProbe );
-		
+
+		return runOnlineModelSimulationWithCustomValues( simulator, customParameters );
+	}
+
+
+	/** Run the online model simulation given the specified custom settings. */
+	private Simulation runOnlineModelSimulationWithCustomValues( final OnlineModelSimulator simulator, final List<CoreParameter> customParameters ) {
 		try {
 			simulator.setFixedCustomParameterValues( customParameters );
-			return simulator.run();			
+			return simulator.run();
 		}
 		finally {
 			simulator.cleanup( Collections.<Variable>emptyList(), customParameters );
 		}
+	}
+
+	
+	/** Run the online model simulation given the current settings, sequence, evaluation nodes and entrance probe. */
+	public Simulation runOnlineModelSimulation() {
+		final OnlineModelSimulator simulator = new OnlineModelSimulator( _sequence, _evaluationNodes, _entranceProbe );
+		return runOnlineModelSimulationWithCurrentValues( simulator );
 	}
 	
 	
