@@ -46,7 +46,6 @@ import xal.tools.beam.*;
 //import xal.tools.optimizer.*;
 import xal.extension.solver.*;
 import xal.extension.solver.algorithm.*;
-import xal.model.alg.EnvelopeTracker;
 import xal.extension.solver.hint.InitialDelta;
 
 /**
@@ -535,11 +534,11 @@ public class HEBTOrbitCorrector {
 		 scenario.setSynchronizationMode(Scenario.SYNC_MODE_LIVE);
 		 //scenario.setSynchronizationMode(Scenario.SYNC_MODE_RF_DESIGN);		 
 		 
-		 EnvelopeTracker tracker = null;
+		 IAlgorithm tracker = null;
          
          try {
          
-          tracker = AlgorithmFactory.createEnvelopeTracker(accSeq);
+          tracker = AlgorithmFactory.createEnvTrackerAdapt(accSeq);
 		 
      } catch ( InstantiationException exception ) {
          System.err.println( "Instantiation exception creating tracker." );
