@@ -549,11 +549,11 @@ public class ModelFace extends JPanel{
 			zdatalist.add(zdat[3].getDoubleValue());
 		}
 		
-        EnvelopeTracker etracker = null;
+        IAlgorithm etracker = null;
         
         try {
             
-            etracker = AlgorithmFactory.createEnvelopeTracker(seq);
+            etracker = AlgorithmFactory.createEnvTrackerAdapt(seq);
             
         } catch ( InstantiationException exception ) {
             System.err.println( "Instantiation exception creating tracker." );
