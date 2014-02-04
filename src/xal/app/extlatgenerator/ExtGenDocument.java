@@ -501,7 +501,7 @@ public class ExtGenDocument extends AcceleratorDocument {
                     // if it is part of the Linac
                     
                     try {
-                        myProbe = ProbeFactory.getEnvelopeProbe( selectedSequence, AlgorithmFactory.createEnvelopeTracker( selectedSequence ));
+                        myProbe = ProbeFactory.getEnvelopeProbe( selectedSequence, AlgorithmFactory.createEnvTrackerAdapt( selectedSequence ));
                         
                     } catch ( InstantiationException exception ) {
                         System.err.println( "Instantiation exception creating probe." );
