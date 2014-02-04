@@ -368,7 +368,7 @@ public class BumpGenerator {
 			try {
 				_shouldCancelBumpGeneration = false;
                 try{
-                    _probe = sequence instanceof Ring ? ProbeFactory.getTransferMapProbe( sequence, AlgorithmFactory.createTransferMapTracker(sequence) ) : ProbeFactory.getEnvelopeProbe( sequence, AlgorithmFactory.createEnvelopeTracker( sequence ) );
+                    _probe = sequence instanceof Ring ? ProbeFactory.getTransferMapProbe( sequence, AlgorithmFactory.createTransferMapTracker(sequence) ) : ProbeFactory.getEnvelopeProbe( sequence, AlgorithmFactory.createEnvTrackerAdapt( sequence ) );
                 }
                 catch ( InstantiationException exception ) {
                     System.err.println( "Instantiation exception creating probe." );

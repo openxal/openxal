@@ -499,7 +499,7 @@ public class VADocument extends AcceleratorDocument implements ActionListener, P
     
 	/** create a new envelope probe */
 	static private Probe createEnvelopeProbe( final AcceleratorSeq sequence ) throws InstantiationException {
-		final EnvelopeTracker tracker = AlgorithmFactory.createEnvelopeTracker( sequence );
+		final IAlgorithm tracker = AlgorithmFactory.createEnvTrackerAdapt( sequence );
 		return ProbeFactory.getEnvelopeProbe( sequence, tracker );
 	}
     
