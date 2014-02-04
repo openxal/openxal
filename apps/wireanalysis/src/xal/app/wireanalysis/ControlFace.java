@@ -556,7 +556,7 @@ public class ControlFace extends JPanel {
         
         EnvelopeProbe tempprobe = null;
         try {
-            EnvelopeTracker etracker = AlgorithmFactory.createEnvelopeTracker( seq );
+            IAlgorithm etracker = AlgorithmFactory.createEnvTrackerAdapt( seq );
             tempprobe = ProbeFactory.getEnvelopeProbe(seq, etracker);
             initprobe = ProbeFactory.getEnvelopeProbe(seq, etracker);
             
