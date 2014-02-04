@@ -70,11 +70,11 @@ public class GenDocument extends AcceleratorDocument{
         
         //EnvTrackerAdapt etracker = new EnvTrackerAdapt();
         
-        EnvelopeTracker etracker = null;
+        IAlgorithm etracker = null;
         
         try {
             
-            etracker = AlgorithmFactory.createEnvelopeTracker( seq );
+            etracker = AlgorithmFactory.createEnvTrackerAdapt( seq );
             
         } catch ( InstantiationException exception ) {
             System.err.println( "Instantiation exception creating tracker." );

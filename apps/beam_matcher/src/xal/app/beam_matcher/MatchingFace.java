@@ -43,7 +43,6 @@ import java.util.Iterator;
 import Jama.Matrix;
 
 import xal.model.ModelException;
-import xal.model.alg.EnvelopeTracker;
 import xal.tools.beam.CovarianceMatrix;
 import xal.model.probe.Probe;
 import xal.model.probe.EnvelopeProbe;
@@ -540,7 +539,7 @@ public class MatchingFace extends JPanel{
             
             try {
                 
-                probe = ProbeFactory.getEnvelopeProbe(seq, AlgorithmFactory.createEnvelopeTracker( seq ));
+                probe = ProbeFactory.getEnvelopeProbe(seq, AlgorithmFactory.createEnvTrackerAdapt( seq ));
                 
             } catch ( InstantiationException exception ) {
                 System.err.println( "Instantiation exception creating probe." );
