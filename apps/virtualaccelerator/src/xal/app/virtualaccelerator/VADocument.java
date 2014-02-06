@@ -1076,7 +1076,7 @@ public class VADocument extends AcceleratorDocument implements ActionListener, P
 			final ProbeState state = stateIter.next();
 //			EnvelopeProbeState state = (EnvelopeProbeState) stateIter.next();
 			double position = state.getPosition();
-			final PhaseVector coordinateVector = cmpCalcEngine.computeCoordinatePosition( state );
+			final PhaseVector coordinateVector = cmpCalcEngine.computeFixedOrbit( state );
 			double x = coordinateVector.getx() * 1000;
 			double y = coordinateVector.gety()* 1000;
 
