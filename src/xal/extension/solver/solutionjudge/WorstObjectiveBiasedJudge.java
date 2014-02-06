@@ -83,7 +83,7 @@ public class WorstObjectiveBiasedJudge extends SolutionJudge {
 			
 			// collect the list of each satisfaction
 			for ( final Objective objective : objectives ) {
-				final double satisfaction = trial.getScore( objective ).getSatisfaction();
+				final double satisfaction = trial.getSatisfaction( objective );
 				satisfactions.add( satisfaction );
 			}
 			Collections.sort( satisfactions );		// sort satisfactions from worst to best

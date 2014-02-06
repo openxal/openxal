@@ -139,7 +139,13 @@ public class Trial {
 	 */
 	public double getSatisfaction( final Objective objective ) {
 		final Score score = OBJECTIVE_SCORES.get( objective );
-		return score.getSatisfaction();
+		final double satisfaction = score.getSatisfaction();
+
+		if ( !validateSatisfaction( satisfaction ) ) {
+			throw new RuntimeException( "Objective \"" + objective.getName() + "\" has satisfaction of " + satisfaction + " which is outside the accepted range of 0 to 1." );
+		}
+
+		return satisfaction;
 	}
 	
 	
@@ -148,7 +154,17 @@ public class Trial {
 	 * @param satisfaction the overall satisfaction of this solution
 	 */
 	public void setSatisfaction( final double satisfaction ) {
+		if ( !validateSatisfaction( satisfaction ) ) {
+			throw new IllegalArgumentException( "Attempting to set trial satisfaction to " + satisfaction + " which is outside the accepted range of 0 to 1." );
+		}
+
 		_satisfaction = satisfaction;
+	}
+
+
+	/** Validate that the satisfaciton is within the accepted bounds of 0 to 1. */
+	static private boolean validateSatisfaction( final double satisfaction ) {
+		return satisfaction >= 0 && satisfaction <= 1.0;
 	}
 	
 	
