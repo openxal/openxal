@@ -216,7 +216,19 @@ public class CalculationsOnParticles extends CalculationEngine implements ISimLo
     }
 
     /**
-     *
+     * <p>
+     * <h4>IMPORTANT NOTE</h4>
+     * This method has been modified so it returns exactly the same value as 
+     * {@link #computeCoordinatePosition(ParticleProbeState)}.  This modification is
+     * maintain compatibility with the previous use of <code>computeFixedOrbit()</code>
+     * presented by the trajectory classes for particles, beam envelopes, etc.  They
+     * responded differently depending upon whether the structure producing the simulation
+     * data was from a ring or a linear transport/accelerator structure.
+     * <br/>
+     * <br/>
+     * Thus, <em>ignore all commenting below!</em>
+     * </p>
+     * 
      * <p>
      * Consider first the point in phase space that is invariant under repeated application
      * of the response matrix <b>&Phi;</b> for the entire beamline or ring.  This is under 
@@ -287,10 +299,12 @@ public class CalculationsOnParticles extends CalculationEngine implements ISimLo
      */
     @Override
     public PhaseVector computeFixedOrbit(ParticleProbeState state) {
-        PhaseMatrix matRespLoc = state.getResponseMatrix();
-        PhaseVector vecFxdLoc  = matRespLoc.times( this.vecFxdPt );
+//        PhaseMatrix matRespLoc = state.getResponseMatrix();
+//        PhaseVector vecFxdLoc  = matRespLoc.times( this.vecFxdPt );
         
-        return vecFxdLoc; 
+        PhaseVector vecFxdOrb = this.computeCoordinatePosition(state);
+        
+        return vecFxdOrb; 
     }
 
     /**
