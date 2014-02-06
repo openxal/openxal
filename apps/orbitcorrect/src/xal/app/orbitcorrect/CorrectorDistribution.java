@@ -102,26 +102,83 @@ public class CorrectorDistribution {
 
 
 	/**
-	 * Calculate the mean square of the corrector strengths taken as a fraction of full scale.
-	 * @return   Description of the Return Value
+	 * Calculate the duty load based on how close the fields are to the limits and bias the weight to the worst.
+	 */
+	public double worstBiasedLoad() {
+		final Collection<CorrectorRecord> records = _correctorRecords.values();
+		final int recordCount = records.size();
+
+		if ( recordCount == 0 )  return 0.0;	// nothing more to do
+
+		final List<Double> duties = new ArrayList<>( recordCount );
+
+		for ( CorrectorRecord record : records ) {
+			final CorrectorSupply supply = record.getCorrectorSupply();
+			final double lowerLimit = supply.getLowerFieldLimit();
+			final double upperLimit = supply.getUpperFieldLimit();
+			final double field = record.getField();
+			final double duty = calculateDutyLoad( field, lowerLimit, upperLimit );
+			duties.add( duty );
+		}
+
+		// sort the duties from biggest to smallest
+		Collections.sort( duties );
+		Collections.reverse( duties );
+
+		double dutySum = 0.0;
+		double weightSum = 0.0;
+		double weight = 1.0;
+		for ( final double duty : duties ) {
+			dutySum += duty * weight;
+			weightSum += weight;
+			weight /= 2;	// each successive weight gets halved so most weight on worst duty
+		}
+
+		return dutySum / weightSum;
+	}
+
+
+	/**
+	 * Calculate the duty load based on how close the fields are to the limits and take the mean square.
 	 */
 	public double meanSquareLoad() {
 		final Collection<CorrectorRecord> records = _correctorRecords.values();
-		
+		final int recordCount = records.size();
+
+		if ( recordCount == 0 )  return 0.0;	// nothing more to do
+
 		double squareLoadSum = 0;
 		for ( CorrectorRecord record : records ) {
-			final double limit = 0.01;
-			final double duty = record.getField() / limit;
+			final CorrectorSupply supply = record.getCorrectorSupply();
+			final double lowerLimit = supply.getLowerFieldLimit();
+			final double upperLimit = supply.getUpperFieldLimit();
+			final double field = record.getField();
+			final double duty = calculateDutyLoad( field, lowerLimit, upperLimit );
 			squareLoadSum += duty * duty;
 		}
-		
-		return squareLoadSum / records.size();
+
+		return squareLoadSum / recordCount;
+	}
+
+
+	/** calculate the duty load based on the field and the limits */
+	private double calculateDutyLoad( final double field, final double lowerLimit, final double upperLimit ) {
+		final double range = upperLimit - lowerLimit;
+
+		if ( range == 0.0 || field <= lowerLimit || field >= upperLimit ) {
+			return 1.0;
+		}
+		else {
+			// duty = amplitude * ( field - center )^2 where amplitude is chosen for duty = 1.0 at limits
+			final double center = lowerLimit + range / 2;
+			final double amplitude = 4.0 / ( range * range );
+			return amplitude * ( field - center ) * ( field - center );
+		}
 	}
 
 
 	/**
 	 * Generate a description of this distribution.
-	 * @return   a description of this distribution
 	 */
 	public String toString() {
 		return _correctorRecords.values().toString();
