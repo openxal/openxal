@@ -101,13 +101,15 @@ public class VAServer {
 		
         System.out.println( "type: " + type );
 		for ( AcceleratorNode node : nodes ) {
-            System.out.println( "node: " + node.getId() + ", soft type: " + node.getSoftType() );
+            System.out.println( "node: " + node.getId() + ", soft type: " + node.getSoftType() + ", status: " + node.getStatus() );
 			final Collection<String> handles = processor.getHandlesToProcess( node );
             System.out.println( "handles: " + handles + "\n\n" );
             for ( final String handle : handles ) {
+				System.out.println( "Getting channel for handle: " + handle );
 				final Channel channel = node.getChannel( handle );
 				if ( channel != null ) {
 					final String signal = channel.channelName();
+					System.out.println( "Channel for handle: " + signal );
 					final SignalEntry entry = new SignalEntry( signal, handle );
 					if ( !signals.contains( entry ) ) {
 						signals.add( entry );
