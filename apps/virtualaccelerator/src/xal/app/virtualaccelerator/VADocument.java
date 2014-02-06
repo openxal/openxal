@@ -1131,6 +1131,7 @@ public class VADocument extends AcceleratorDocument implements ActionListener, P
 //				if ( probeState instanceof ICoordinateState ) {
 //					final PhaseVector coordinates = ((ICoordinateState)probeState).getFixedOrbit();
 				final PhaseVector coordinates = cmpCalcEngine.computeFixedOrbit(probeState);
+//                final PhaseVector coordinates = cmpCalcEngine.computeCoordinatePosition(probeState);
 				
 				// For SNS Ring BPM system, we only measure the signal with respect to the center of the beam pipe.
 				
