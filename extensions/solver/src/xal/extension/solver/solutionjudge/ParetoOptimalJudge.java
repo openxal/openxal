@@ -52,7 +52,7 @@
 	 */
 	 private boolean isBetter( final Trial firstSolution, final Trial secondSolution, final List<Objective> objectives ) {
          for ( final Objective objective : objectives ) {
-			 final double firstSatisfaction = firstSolution.getScore( objective ).getSatisfaction();
+			 final double firstSatisfaction = firstSolution.getSatisfaction( objective );
 			 final double secondSatisfaction = secondSolution.getScore( objective ).getSatisfaction();
 			 if( firstSatisfaction >= secondSatisfaction ) {
 				 return true;
