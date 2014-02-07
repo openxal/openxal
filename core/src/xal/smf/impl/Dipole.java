@@ -15,6 +15,10 @@ import xal.ca.*;
  */
 
 abstract public class Dipole extends Electromagnet {
+	/** type for this device */
+    public static final String s_strType = MagnetType.DIPOLE;
+
+
 	// static initializer
     static {
         registerType();
@@ -23,9 +27,9 @@ abstract public class Dipole extends Electromagnet {
     
     /** Register type for qualification */
     private static void registerType() {
-        ElementTypeManager typeManager = ElementTypeManager.defaultManager();
-        typeManager.registerType(Dipole.class, "dipole");
-        typeManager.registerType(Dipole.class, MagnetType.DIPOLE);
+        final ElementTypeManager typeManager = ElementTypeManager.defaultManager();
+        typeManager.registerType( Dipole.class, Dipole.s_strType );
+        typeManager.registerType( Dipole.class, "dipole" );
     }
   
     
@@ -37,6 +41,12 @@ abstract public class Dipole extends Electromagnet {
         super( strID );
         
     }
+
+
+	/** get the type */
+	public String getType() {
+		return s_strType;
+	}
     
 
     /**
