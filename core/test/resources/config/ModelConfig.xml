@@ -11,11 +11,11 @@
         <map smf="xal.smf.impl.Marker" model="xal.model.elem.Marker"/>          
 
 		<map smf="dh" model="xal.model.elem.IdealMagWedgeDipole2"/>
-		<map smf="xal.smf.impl.EDipole.s_strType" model="xal.model.elem.IdealEDipole"/>
+		<map smf="EDipole" model="xal.model.elem.IdealEDipole"/>
 		<map smf="QSC" model="xal.model.elem.IdealMagSkewQuad3"/>		
 		<map smf="q" model="xal.model.elem.IdealMagQuad"/>
 		<map smf="qt" model="xal.model.elem.IdealMagQuad"/>
-		<map smf="xal.smf.impl.EQuad.s_strType" model="xal.model.elem.IdealEQuad"/>
+		<map smf="EQuad" model="xal.model.elem.IdealEQuad"/>
 		<map smf="pq" model="xal.model.elem.IdealMagQuad"/>
 		<map smf="S" model="xal.model.elem.IdealMagSextupole"/>
 		<map smf="SOL" model="xal.model.elem.IdealMagQuad"/>
