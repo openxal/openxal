@@ -11,6 +11,6 @@
 		<account name="pvlogger" user="pvlog" password="pvlog"/>
 	</accounts>
 	<schemas>
-		<schema name="pvlogger" url="pvlogger-postgres-schema.xml">
+		<schema name="pvlogger" url="pvlogger-postgres-schema.xml"/>
 	</schemas>
 </dbconfig>
