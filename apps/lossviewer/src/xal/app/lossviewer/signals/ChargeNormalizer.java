@@ -10,7 +10,7 @@ public class ChargeNormalizer extends AbstractSignal implements ConnectionListen
             connectBCM(channel);
         
     }
-    private NormalizationDevice currentBCMPVname = null;
+    private NormalizationDevice currentBCM = null;
 
     private void connectBCM(final Channel channel) {
         //	System.out.println("Connected BCM: "+channel.channelName());
@@ -21,13 +21,13 @@ public class ChargeNormalizer extends AbstractSignal implements ConnectionListen
 
                     public void eventValue(ChannelTimeRecord record, Channel chan) {
                         boolean amIcurrentBCM = false;
-                        synchronized (currentBCMPVname) {
-                            amIcurrentBCM = currentBCMPVname.getChargePV().equals(channel.channelName());
+                        synchronized (currentBCM) {
+                            amIcurrentBCM = currentBCM.getChargePV().equals(channel.channelName());
                         }
                         if (amIcurrentBCM) {
                             long tst = (long) (record.getTimestamp().getSeconds() * 1000);
                             double v = record.doubleValue();
-                            dispatcher.processNewValue(new ScalarSignalValue(ChargeNormalizer.this, tst, v));
+                            dispatcher.processNewValue(new ScalarSignalValue(ChargeNormalizer.this, tst, v*currentBCM.getScale()));
                         //		System.out.println(chan.channelName()+" is used, charge is "+v);
                         }
                     }
@@ -40,10 +40,10 @@ public class ChargeNormalizer extends AbstractSignal implements ConnectionListen
     }
     
     public  void setBCM(NormalizationDevice newBCM){
-        synchronized(currentBCMPVname){
-            currentBCMPVname=newBCM;
+        synchronized(currentBCM){
+            currentBCM=newBCM;
             Logger.getLogger(ChargeNormalizer.this.getClass().getCanonicalName()).log(Level.INFO, 
-                    ("Normalization BCM changed to " + currentBCMPVname.getName()));
+                    ("Normalization BCM changed to " + currentBCM.getName()));
         }
     }
    
@@ -63,7 +63,7 @@ public class ChargeNormalizer extends AbstractSignal implements ConnectionListen
        
         normBCMs = bcmNames;
         setName("Charge");
-        currentBCMPVname=normBCMs.get(0);
+        currentBCM=normBCMs.get(0);
     }
 
     public void close() {
