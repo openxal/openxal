@@ -1,0 +1,16 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<!DOCTYPE sources SYSTEM "xdxf.dtd">
+<dbconfig>
+	<adaptors default="postgres">
+		<adaptor name="postgres" class="xal.plugin.postgres.PostgresDatabaseAdaptor"/>		
+	</adaptors>
+	<servers default="pvlogger">
+		<server name="pvlogger" url="jdbc:postgresql://localhost:5433/pvlog" adaptor="postgres"/>
+	</servers>
+	<accounts default="pvlogger">
+		<account name="pvlogger" user="pvlog" password="pvlog"/>
+	</accounts>
+	<schemas>
+		<schema name="pvlogger" url="pvlogger-postgres-schema.xml">
+	</schemas>
+</dbconfig>
