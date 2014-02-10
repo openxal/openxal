@@ -9,6 +9,7 @@
 package xal.tools.database;
 
 import xal.tools.xml.XmlDataAdaptor;
+import xal.tools.database.DBConfiguration;
 import xal.tools.data.DataAdaptor;
 
 import java.io.*;
@@ -40,9 +41,12 @@ public class DBConfiguration {
 	/** table of accounts keyed by name */
 	final private Map<String,DBAccountConfig> ACCOUNTS;
 	
+	/** table of schema urls keyed by name */
+	final private Map<String,URL> SCHEMA_URLS;
+	
 	
 	/** Primary Constructor */
-	private DBConfiguration( final String defaultDBAdaptorName, final Map<String,String> dbAdaptorMap, final String defaultServerName, final Map<String,DBServerConfig> servers, final String defaultAccountName, final Map<String,DBAccountConfig> accounts ) {
+	private DBConfiguration( final String defaultDBAdaptorName, final Map<String,String> dbAdaptorMap, final String defaultServerName, final Map<String,DBServerConfig> servers, final String defaultAccountName, final Map<String,DBAccountConfig> accounts, final Map<String,URL> schemaUrls) {
 		DEFAULT_DATABASE_ADAPTOR_NAME = defaultDBAdaptorName;
 		DEFAULT_SERVER_NAME = defaultServerName;
 		DEFAULT_ACCOUNT_NAME = defaultAccountName;
@@ -50,6 +54,7 @@ public class DBConfiguration {
 		DATABASE_ADAPTOR_MAP = dbAdaptorMap;
 		SERVERS = servers;
 		ACCOUNTS = accounts;
+		SCHEMA_URLS = schemaUrls;
 	}
 	
 	
@@ -171,14 +176,14 @@ public class DBConfiguration {
 	
 	
 	/** load a configuration from the specified URL */
-	static public DBConfiguration getInstance( final URL configURL ) {
+	static public DBConfiguration getInstance( final URL configURL ) {		
 		final DataAdaptor documentAdaptor = XmlDataAdaptor.adaptorForUrl( configURL, false );
-		return getInstance( documentAdaptor );
+		return getInstance( documentAdaptor, configURL );
 	}
 	
 	
 	/** load a configuration from the specified configuration document adaptor */
-	static public DBConfiguration getInstance( final DataAdaptor documentAdaptor ) {
+	static public DBConfiguration getInstance( final DataAdaptor documentAdaptor, URL baseURL ) {
 		final DataAdaptor configAdaptor = documentAdaptor.childAdaptor( "dbconfig" );
 		
 		final DataAdaptor dbAdaptorGroup = configAdaptor.childAdaptor( "adaptors" );
@@ -215,7 +220,20 @@ public class DBConfiguration {
 			accountTable.put( name, new DBAccountConfig( name, user, password ) );
 		}
 		
-		return new DBConfiguration( defaultDBAdaptorName, dbAdaptorTable, defaultServerName, serverTable, defaultAccountName, accountTable );
+		final DataAdaptor schemasGroup = configAdaptor.childAdaptor( "schemas" );		
+		final List<DataAdaptor> schemaAdaptors = schemasGroup.childAdaptors( "schema" );
+		final Map<String,URL> schemaUrls = new HashMap<String,URL>();
+		for ( final DataAdaptor schemaAdaptor : schemaAdaptors ) {
+			final String name = schemaAdaptor.stringValue( "name" );			 
+			try {
+				URL url = new URL(baseURL, schemaAdaptor.stringValue( "url" ));
+				schemaUrls.put( name, url );
+			} catch (MalformedURLException e) { 
+				e.printStackTrace();
+			}						
+		}
+		
+		return new DBConfiguration( defaultDBAdaptorName, dbAdaptorTable, defaultServerName, serverTable, defaultAccountName, accountTable, schemaUrls );
 	}
 	
 	
@@ -304,6 +322,15 @@ public class DBConfiguration {
 			final String message = "Failed to instantiate database adaptor for class:  " + className;
 			throw new RuntimeException( message, exception );
 		}
+	}
+	
+	/**
+	 * Returns url location of a file with database schema description
+	 * @param name schema
+	 * @return url pointing to a file
+	 */
+	public URL getSchemaURL(String name) {
+		return SCHEMA_URLS.get(name);		
 	}
 }
 
