@@ -16,6 +16,7 @@
 	<modules>
 		<module>jca</module>
 		<module>mysql</module>
+		<module>postgres</module>
 	</modules>
 	
 	<dependencies>
