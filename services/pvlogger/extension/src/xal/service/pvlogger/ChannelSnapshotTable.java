@@ -128,7 +128,7 @@ class ChannelSnapshotTable {
 		while ( resultSet.next() ) {
 			final String pv = resultSet.getString( PV_COLUMN );
 			final Timestamp timestamp = resultSet.getTimestamp( TIMESTAMP_COLUMN );
-			final BigDecimal[] bigValue = (BigDecimal[])resultSet.getArray( VALUE_COLUMN ).getArray();
+			final Number[] bigValue = (Number[])resultSet.getArray( VALUE_COLUMN ).getArray();
 			final double[] value = toDoubleArray( bigValue );
 			final short status = resultSet.getShort( STATUS_COLUMN );
 			final short severity = resultSet.getShort( SEVERITY_COLUMN );
