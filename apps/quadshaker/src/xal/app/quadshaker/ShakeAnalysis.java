@@ -36,7 +36,6 @@ import xal.model.probe.traj.*;
 import xal.sim.sync.*;
 //import xal.model.probe.resp.traj.*;
 import xal.tools.beam.*;
-import xal.model.alg.EnvelopeTracker;
 
 /**
  *  Description of the Class
@@ -342,11 +341,11 @@ public class ShakeAnalysis {
 			orbitCorrector.setPVLoggerID(pvLogID);
 		}
         
-        EnvelopeTracker tracker = null;
+        IAlgorithm tracker = null;
         
         try {
             
-            tracker = AlgorithmFactory.createEnvelopeTracker( accSeq);
+            tracker = AlgorithmFactory.createEnvTrackerAdapt( accSeq);
             
         } catch ( InstantiationException exception ) {
             System.err.println( "Instantiation exception creating tracker." );

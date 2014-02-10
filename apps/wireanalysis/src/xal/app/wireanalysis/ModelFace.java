@@ -44,6 +44,7 @@ import xal.sim.sync.SynchronizationException;
 import xal.tools.beam.Twiss;
 import xal.smf.*;
 import xal.extension.widgets.apputils.SimpleProbeEditor;
+import xal.model.*;
 import xal.model.probe.*;
 import xal.model.probe.traj.*;
 import xal.tools.xml.XmlDataAdaptor;
@@ -640,11 +641,11 @@ public class ModelFace extends JPanel{
                 //if(!errorcheck());
                 
                 
-                EnvelopeTracker etracker = null;
+                IAlgorithm etracker = null;
                 
                 try {
                     
-                    etracker = AlgorithmFactory.createEnvelopeTracker( seq );
+                    etracker = AlgorithmFactory.createEnvTrackerAdapt( seq );
                     
                 } catch ( InstantiationException exception ) {
                     System.err.println( "Instantiation exception creating tracker." );
@@ -929,11 +930,11 @@ public class ModelFace extends JPanel{
         
 	    String init = (String)elementList.getSelectedItem();
 		
-        EnvelopeTracker etracker = null;
+        IAlgorithm etracker = null;
         
         try {
             
-            etracker = AlgorithmFactory.createEnvelopeTracker( seq );
+            etracker = AlgorithmFactory.createEnvTrackerAdapt( seq );
             
         } catch ( InstantiationException exception ) {
             System.err.println( "Instantiation exception creating tracker." );
@@ -946,7 +947,7 @@ public class ModelFace extends JPanel{
         
         try {
             
-            initprobe = ProbeFactory.getEnvelopeProbe(seq, AlgorithmFactory.createEnvelopeTracker( seq ));
+            initprobe = ProbeFactory.getEnvelopeProbe(seq, AlgorithmFactory.createEnvTrackerAdapt( seq ));
             
             
         } catch ( InstantiationException exception ) {

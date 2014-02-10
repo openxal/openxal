@@ -98,7 +98,7 @@ public class Main extends ApplicationAdaptor {
 
     
     public boolean usesConsole() {
-		return Boolean.valueOf( System.getProperty( "useConsole", "false" ) );
+		return true;
     }
     
 }
