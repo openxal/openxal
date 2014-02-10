@@ -195,8 +195,9 @@ class ClientHandler<ProxyType> implements InvocationHandler {
 	 * @throws xal.extension.service.RemoteMessageException if an exception occurs while invoking this remote message.
      */
     @SuppressWarnings( "unchecked" )    // must cast generic response object to Map
-    synchronized public Object invoke( final Object proxy, final Method method, final Object[] args ) throws RemoteMessageException, RemoteServiceDroppedException {
+	public Object invoke( final Object proxy, final Method method, final Object[] args ) throws RemoteMessageException, RemoteServiceDroppedException {
 		try {
+			System.out.println( "Submit request..." );
 			SERVICE_PROTOCOL.getMethod( method.getName(), method.getParameterTypes() );		// test whether the remote service implements the method
 			return performRemoteServiceCall( method, args );
 		}
