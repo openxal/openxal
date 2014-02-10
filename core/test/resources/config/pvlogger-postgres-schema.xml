@@ -18,7 +18,7 @@
 			<column attribute="timestamp" column="snapshot_dte" />
 			<column attribute="type" column="snapshot_type_nm" />
 			<column attribute="comment" column="cmnt" />
-			<query name="nextPrimaryKey" sql="SELECT pvlog.mach_snapshot_id_seq.nextval FROM dual" />
+			<query name="nextPrimaryKey" sql="SELECT nextval('pvlog.mach_snapshot_id_seq')" />
 		</dbtable>
 		<service name="PHYSICS">
 			<dbtable entity="ChannelSnapshot" name="pvlog.mach_snapshot_sgnl">
@@ -28,7 +28,7 @@
 				<column attribute="value" column="sgnl_val" />
 				<column attribute="status" column="sgnl_stat" />
 				<column attribute="severity" column="sgnl_svrty" />
-				<datatype name="valueArray" type="PVLOG.SGNL_VAL_TYP" />
+				<datatype name="valueArray" type="float8" />
 			</dbtable>
 		</service>
 		<service name="TESTFAC">
@@ -39,7 +39,7 @@
 				<column attribute="value" column="sgnl_val" />
 				<column attribute="status" column="sgnl_stat" />
 				<column attribute="severity" column="sgnl_svrty" />
-				<datatype name="valueArray" type="PVLOG.SGNL_VAL_TYP" />
+				<datatype name="valueArray" type="float8" />
 			</dbtable>
 		</service>
 		<service name="ES&amp;H">
@@ -50,7 +50,7 @@
 				<column attribute="value" column="sgnl_val" />
 				<column attribute="status" column="sgnl_stat" />
 				<column attribute="severity" column="sgnl_svrty" />
-				<datatype name="valueArray" type="PVLOG.SGNL_VAL_TYP" />
+				<datatype name="valueArray" type="float8" />
 			</dbtable>
 		</service>
 	</persistentStore>
