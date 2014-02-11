@@ -22,8 +22,12 @@ import java.util.Date;
 public interface Working {
     /** add two numbers */
     public double add( final double summand, final double addend );
-    
-    
+
+
+	/** add an array of integers and return the sum */
+	public int sumIntegers( final int[] summands );
+
+
     /** get the launch time */
     public Date getLaunchTime();
     

@@ -187,7 +187,7 @@ class ClientHandler<ProxyType> implements InvocationHandler {
 
     /**
      * Invoke the specified method on the proxy to implement the InvocationHandler interface.
-     * The method is evaluated by calling the remote method using XML-RPC.
+     * The method is evaluated by calling the remote method using JSON-RPC.
      * @param proxy The instance on which the method is invoked.  This argument is unused.
      * @param method The method to implement.
      * @param args The array of arguments to pass to the method.
@@ -197,7 +197,6 @@ class ClientHandler<ProxyType> implements InvocationHandler {
     @SuppressWarnings( "unchecked" )    // must cast generic response object to Map
 	public Object invoke( final Object proxy, final Method method, final Object[] args ) throws RemoteMessageException, RemoteServiceDroppedException {
 		try {
-			System.out.println( "Submit request..." );
 			SERVICE_PROTOCOL.getMethod( method.getName(), method.getParameterTypes() );		// test whether the remote service implements the method
 			return performRemoteServiceCall( method, args );
 		}
