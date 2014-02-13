@@ -14,4 +14,11 @@
 	<build>
 		<sourceDirectory>src</sourceDirectory>
 	</build>
+	<dependencies>
+		<dependency>		
+			<groupId>org.xal</groupId>
+			<artifactId>openxal.extensions.worker</artifactId>
+			<version>1.0.0-SNAPSHOT</version>			
+		</dependency>
+	</dependencies>
 </project>

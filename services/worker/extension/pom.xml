@@ -4,27 +4,22 @@
 	
 	<parent>
 		<groupId>org.xal</groupId>
-		<artifactId>openxal</artifactId>
+		<artifactId>openxal.services</artifactId>
 		<version>1.0.0-SNAPSHOT</version>
 	</parent>
 	
-	<artifactId>openxal.services</artifactId>
+	<artifactId>openxal.extensions.worker</artifactId>
 	<version>1.0.0-SNAPSHOT</version>
 	
-	<packaging>pom</packaging>
-	
-	<modules>
-		<module>pvlogger</module>
-		<module>pvlogger/extension</module>
-		<module>worker</module>
-		<module>worker/extension</module>
-	</modules>
+	<build>
+		<sourceDirectory>src</sourceDirectory>
+	</build>
 	
 	<dependencies>
-		<dependency>
+		<dependency>		
 			<groupId>org.xal</groupId>
-			<artifactId>openxal.core</artifactId>
-			<version>1.0.0-SNAPSHOT</version>
-		</dependency>	
+			<artifactId>openxal.extensions.service</artifactId>
+			<version>1.0.0-SNAPSHOT</version>			
+		</dependency>
 	</dependencies>
 </project>
