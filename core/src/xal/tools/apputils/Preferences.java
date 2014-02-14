@@ -2,18 +2,41 @@ package xal.tools.apputils;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.NodeChangeListener;
 import java.util.prefs.PreferenceChangeListener;
 
 public class Preferences extends java.util.prefs.Preferences {
-	java.util.prefs.Preferences sys, usr;
+	protected java.util.prefs.Preferences usr, sys;
+	protected Set<String> usrKeys, sysKeys;
 
 	protected Preferences(java.util.prefs.Preferences usr, java.util.prefs.Preferences sys)
 	{
 		this.usr = usr;
 		this.sys = sys;
 	}	
+	
+	protected boolean useUser(String key)
+	{
+		if (usrKeys == null) {
+			try {
+				sysKeys = new HashSet<String>(Arrays.asList(sys.keys()));			
+			} catch (BackingStoreException e) {
+				e.printStackTrace();
+				sysKeys = new HashSet<>();
+			}
+			try {
+				usrKeys = new HashSet<String>(Arrays.asList(usr.keys()));			
+			} catch (BackingStoreException e) {
+				e.printStackTrace();
+				usrKeys = new HashSet<>();
+			}
+		}
+		return usrKeys.contains(key) || !sysKeys.contains(key);
+	}
 	
 	@Override
 	public String absolutePath() {
@@ -39,7 +62,8 @@ public class Preferences extends java.util.prefs.Preferences {
 
 	@Override
 	public void clear() throws BackingStoreException {
-		usr.clear();		
+		usr.clear();	
+		usrKeys = null;
 	}
 
 	@Override
@@ -63,37 +87,37 @@ public class Preferences extends java.util.prefs.Preferences {
 
 	@Override
 	public String get(String key, String def) {
-		return usr.get(key, sys.get(key, def));
+		return useUser(key) ? usr.get(key, def) : sys.get(key, def);
 	}
 
 	@Override
 	public boolean getBoolean(String key, boolean def) {
-		return usr.getBoolean(key, sys.getBoolean(key, def));
+		return useUser(key) ? usr.getBoolean(key, def) : sys.getBoolean(key, def);
 	}
 
 	@Override
 	public byte[] getByteArray(String key, byte[] def) {
-		return usr.getByteArray(key, sys.getByteArray(key, def));
+		return useUser(key) ? usr.getByteArray(key, def) : sys.getByteArray(key, def);
 	}
 
 	@Override
 	public double getDouble(String key, double def) {
-		return usr.getDouble(key, sys.getDouble(key, def));
+		return useUser(key) ? usr.getDouble(key, def) : sys.getDouble(key, def);
 	}
 
 	@Override
 	public float getFloat(String key, float def) {
-		return usr.getFloat(key, sys.getFloat(key, def));
+		return useUser(key) ? usr.getFloat(key, def) : sys.getFloat(key, def);
 	}
 
 	@Override
 	public int getInt(String key, int def) {
-		return usr.getInt(key, sys.getInt(key, def));
+		return useUser(key) ? usr.getInt(key, def) : sys.getInt(key, def);
 	}
 
 	@Override
 	public long getLong(String key, long def) {
-		return usr.getLong(key, sys.getLong(key, def));
+		return useUser(key) ? usr.getLong(key, def) : sys.getLong(key, def);
 	}
 
 	@Override
@@ -113,7 +137,7 @@ public class Preferences extends java.util.prefs.Preferences {
 
 	@Override
 	public java.util.prefs.Preferences node(String pathName) {
-		return usr.node(pathName);
+		return new Preferences(usr.node(pathName), sys.node(pathName));
 	}
 
 	@Override
@@ -128,8 +152,7 @@ public class Preferences extends java.util.prefs.Preferences {
 
 	@Override
 	public void put(String key, String value) {
-		usr.put(key, value);
-		
+		usr.put(key, value);		
 	}
 
 	@Override
@@ -140,7 +163,6 @@ public class Preferences extends java.util.prefs.Preferences {
 	@Override
 	public void putByteArray(String key, byte[] value) {
 		usr.putByteArray(key, value);
-		
 	}
 
 	@Override
@@ -151,29 +173,28 @@ public class Preferences extends java.util.prefs.Preferences {
 	@Override
 	public void putFloat(String key, float value) {
 		usr.putFloat(key, value);
-		
 	}
 
 	@Override
 	public void putInt(String key, int value) {
 		usr.putInt(key, value);
-		
 	}
 
 	@Override
 	public void putLong(String key, long value) {
 		usr.putLong(key, value);
-		
 	}
 
 	@Override
 	public void remove(String key) {
-		usr.remove(key);		
+		usr.remove(key);	
+		usrKeys = null;
 	}
 
 	@Override
 	public void removeNode() throws BackingStoreException {
 		usr.removeNode();		
+		usrKeys = null;
 	}
 
 	@Override
@@ -183,13 +204,13 @@ public class Preferences extends java.util.prefs.Preferences {
 
 	@Override
 	public void removePreferenceChangeListener(PreferenceChangeListener pcl) {
-		usr.removePreferenceChangeListener(pcl);
-		
+		usr.removePreferenceChangeListener(pcl);		
 	}
 
 	@Override
 	public void sync() throws BackingStoreException {
 		usr.sync();		
+		usrKeys = null;
 	}
 
 	@Override
