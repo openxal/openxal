@@ -56,7 +56,7 @@ public class PreferenceController {
 	 * @return the user preferences for this class
 	 */
 	static protected Preferences getDefaults() {
-		return Preferences.userNodeForPackage(Main.class);
+		return xal.tools.apputils.Preferences.nodeForPackage(Main.class);
 	}
 	
 	

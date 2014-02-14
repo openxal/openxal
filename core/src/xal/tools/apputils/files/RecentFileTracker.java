@@ -71,7 +71,7 @@ public class RecentFileTracker {
 	 * @param preferenceID the ID of the preference to save
 	 */
 	public RecentFileTracker(final int bufferSize, final Class<?> preferenceNode, final String preferenceID) {
-		this(bufferSize, Preferences.userNodeForPackage(preferenceNode), preferenceID);
+		this(bufferSize, xal.tools.apputils.Preferences.nodeForPackage(preferenceNode), preferenceID);
 	}
 	
 	
@@ -172,7 +172,7 @@ public class RecentFileTracker {
      * Get the array of URLs corresponding to recently registered URLs. Fetch the recent items from the list saved in the user's preferences for the preference node.
      * @return The array of recent URLs.
      */
-    public String[] getRecentURLSpecs() {
+    public String[] getRecentURLSpecs() {    	
         final String pathsStr = PREFS.get( PREFERENCE_ID, "" );
 		// check whether the paths are encoded using the new format ( quotes around each URL Spec )
 		if ( pathsStr != null && pathsStr.length() > 2 && pathsStr.startsWith( "\"" ) && pathsStr.endsWith( "\"" ) ) {

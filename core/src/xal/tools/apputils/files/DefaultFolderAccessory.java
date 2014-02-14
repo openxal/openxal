@@ -55,19 +55,19 @@ public class DefaultFolderAccessory implements PropertyChangeListener {
 	
 	/** Constructor */
 	public DefaultFolderAccessory( final Class<?> preferenceNode, final String preferenceID, final String subfolderName ) {
-		this ( Preferences.userNodeForPackage( preferenceNode ), preferenceID, subfolderName );
+		this ( xal.tools.apputils.Preferences.nodeForPackage( preferenceNode ), preferenceID, subfolderName );
 	}
 	
 	
 	/** Constructor */
 	public DefaultFolderAccessory( final Class<?> preferenceNode, final String preferenceID ) {
-		this ( Preferences.userNodeForPackage( preferenceNode ), preferenceID );
+		this ( xal.tools.apputils.Preferences.nodeForPackage( preferenceNode ), preferenceID );
 	}
 	
 	
 	/** Constructor */
 	public DefaultFolderAccessory( final Class<?> preferenceNode ) {
-		this ( Preferences.userNodeForPackage( preferenceNode ), DEFAULT_ID );
+		this ( xal.tools.apputils.Preferences.nodeForPackage( preferenceNode ), DEFAULT_ID );
 	}
 	
 	

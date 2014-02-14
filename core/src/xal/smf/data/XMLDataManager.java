@@ -151,7 +151,7 @@ public class XMLDataManager {
 	 * @return the file path to the default accelerator data source or null if a default hasn't been specified
 	 */
     static public String defaultPath() {
-        Preferences prefs = Preferences.userNodeForPackage( XMLDataManager.class );
+        Preferences prefs = xal.tools.apputils.Preferences.nodeForPackage( XMLDataManager.class );
         String path = prefs.get(MAIN_PATH_PREF_KEY, null);
         return path;
     }
