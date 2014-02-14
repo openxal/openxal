@@ -236,7 +236,7 @@ public class DBConfiguration {
 	 * @return the user preferences for this class
 	 */
 	static protected Preferences getDefaults() {
-		return Preferences.userNodeForPackage( DBConfiguration.class );
+		return xal.tools.apputils.Preferences.nodeForPackage( DBConfiguration.class );
 	}
 	
 	

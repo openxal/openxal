@@ -85,7 +85,7 @@ class JcaSystem extends ChannelSystem {
 				}
 				else {
 					// check the user's preferences
-					final Preferences prefs = Preferences.userNodeForPackage( JcaSystem.class );
+					final Preferences prefs = xal.tools.apputils.Preferences.nodeForPackage( JcaSystem.class );
 					final String preferredContext = prefs.get( "Context", "" );
 					return preferredContext;
 				}

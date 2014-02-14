@@ -61,7 +61,7 @@ class Console {
 	
 	// static initializer
     static {
-		LOG_PREFS = Preferences.userNodeForPackage( Console.class );
+		LOG_PREFS = xal.tools.apputils.Preferences.nodeForPackage( Console.class );
         CONSOLE = new Console();
     }
     

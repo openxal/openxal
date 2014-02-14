@@ -7,10 +7,13 @@ package xal.tools.apputils;
 
 import java.awt.*;
 import java.awt.event.*;
+
 import javax.swing.*;
 import javax.swing.event.*;
+
 import java.util.*;
-import java.util.prefs.*;
+import java.util.prefs.BackingStoreException;
+import java.util.prefs.Preferences;
 import java.io.*;
 import java.net.*;
 import java.text.*;

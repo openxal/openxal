@@ -205,7 +205,7 @@ public final class AnalysisCntrlTDProcedure extends AnalysisController {
 		}
 
 		//get the preference
-		Preferences pref = Preferences.userNodeForPackage(this.getClass());
+		Preferences pref = xal.tools.apputils.Preferences.nodeForPackage(this.getClass());
 		defaultPath = pref.get(defaultPathName, null);
 
 		//set action listener to button
@@ -574,7 +574,7 @@ public final class AnalysisCntrlTDProcedure extends AnalysisController {
 								defaultPath = dataFile.getAbsolutePath();
 								BufferedWriter out = new BufferedWriter(new FileWriter(dataFile));
 
-								Preferences pref = Preferences.userNodeForPackage(this.getClass());
+								Preferences pref = xal.tools.apputils.Preferences.nodeForPackage(this.getClass());
 								try {
 									defaultPath = dataFile.getAbsolutePath();
 									pref.put(defaultPathName, defaultPath);

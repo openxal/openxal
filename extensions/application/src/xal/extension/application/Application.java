@@ -124,7 +124,7 @@ abstract public class Application {
 	
 	/** Load the user's custom properties and set them as the defaults, but do not override existing properties. */
 	static private void loadUserProperties() {
-		final Preferences prefs = Preferences.userNodeForPackage( Application.class );
+		final Preferences prefs = xal.tools.apputils.Preferences.nodeForPackage( Application.class );
 		final String propertiesPath = prefs.get( "UserPropertiesFile", "" );
 		
 		if ( propertiesPath == null || propertiesPath == "" )  return;
