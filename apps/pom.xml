@@ -32,13 +32,17 @@
 		<module>virtualaccelerator</module>
 		<module>xyzcorrelator</module>
 	</modules>
-	
 	<dependencies>
 		<dependency>
 			<groupId>org.xal</groupId>
-			<artifactId>openxal.extensions</artifactId>
-			<version>1.0.0-SNAPSHOT</version>
-		</dependency>					
+			<artifactId>openxal.core</artifactId>
+			<version>1.0.0-SNAPSHOT</version>		
+		</dependency>
+		<dependency>
+			<groupId>org.xal</groupId>
+			<artifactId>openxal.extensions.application</artifactId>
+			<version>1.0.0-SNAPSHOT</version>		
+		</dependency>
 		<dependency>
 			<groupId>org.xal</groupId>
 			<artifactId>openxal.plugins.jca</artifactId>
