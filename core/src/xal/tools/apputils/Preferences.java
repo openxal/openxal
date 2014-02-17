@@ -25,13 +25,11 @@ public class Preferences extends java.util.prefs.Preferences {
 			try {
 				sysKeys = new HashSet<String>(Arrays.asList(sys.keys()));			
 			} catch (BackingStoreException e) {
-				e.printStackTrace();
 				sysKeys = new HashSet<>();
 			}
 			try {
 				usrKeys = new HashSet<String>(Arrays.asList(usr.keys()));			
 			} catch (BackingStoreException e) {
-				e.printStackTrace();
 				usrKeys = new HashSet<>();
 			}
 		}
