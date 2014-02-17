@@ -45,7 +45,13 @@ class TimedBroadcaster<RecordType> extends AbstractBroadcaster<RecordType> {
         timer.setRepeats(true);
         timer.setCoalesce(true);
 	}
-    
+
+
+	/** get the best correlation which may be partial */
+	public Correlation<RecordType> getBestPartialCorrelation() {
+		return bestPartialCorrelation;
+	}
+
     
     /** 
 	 * Get the timer period.
