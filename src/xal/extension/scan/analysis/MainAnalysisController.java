@@ -78,7 +78,7 @@ public class MainAnalysisController {
 	private JTextField xValPanel_Main_Text = null;
 	private JTextField yValPanel_Main_Text = null;
 
-	private static DecimalFormat xyPanel_Main_Format = new DecimalFormat("0.000E0");
+	private static DecimalFormat xyPanel_Main_Format = new DecimalFormat("0.00000E0");
 
 	private static TitledBorder dataReaderBorder = null;
 
