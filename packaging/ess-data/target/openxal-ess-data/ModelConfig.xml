@@ -1,0 +1,19 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<!DOCTYPE ModelConfig SYSTEM "xdxf.dtd">
+
+<configuration>
+    <elements>
+        <default type="xal.model.elem.Marker"/>
+        <drift type="xal.model.elem.IdealDrift"/>
+    </elements>
+    
+    <associations>
+    	<map smf="dh" model="eu.ess.jels.model.elem.jels.IdealMagWedgeDipole2"/>
+		<map smf="q" model="xal.model.elem.IdealMagQuad"/>
+		<map smf="qt" model="xal.model.elem.IdealMagQuad"/>
+		<map smf="pq" model="xal.model.elem.IdealMagQuad"/>
+		<map smf="rfgap" model="eu.ess.jels.model.elem.jels.IdealRfGap"/>
+		<map smf="marker" model="xal.model.elem.Marker"/>
+    </associations>
+</configuration>
+
