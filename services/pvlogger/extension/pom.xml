@@ -6,7 +6,6 @@
 		<groupId>org.xal</groupId>
 		<artifactId>openxal.services</artifactId>
 		<version>1.0.0-SNAPSHOT</version>
-		<relativePath>../..</relativePath>
 	</parent>
 	
 	<artifactId>openxal.extensions.pvlogger</artifactId>
@@ -20,11 +19,11 @@
 			<groupId>org.xal</groupId>
 			<artifactId>openxal.extensions.service</artifactId>
 			<version>1.0.0-SNAPSHOT</version>			
-		</dependency>
+		</dependency>	
 		<dependency>		
 			<groupId>org.xal</groupId>
-			<artifactId>openxal.extensions.recordselector</artifactId>
+			<artifactId>openxal.extensions.widgets</artifactId>
 			<version>1.0.0-SNAPSHOT</version>			
-		</dependency>		
+		</dependency>	
 	</dependencies>
 </project>

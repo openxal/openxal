@@ -18,6 +18,7 @@
 		<module>pvlogger/extension</module>
 		<module>worker</module>
 		<module>worker/extension</module>
+		<module>packaging</module>
 	</modules>
 	
 	<dependencies>

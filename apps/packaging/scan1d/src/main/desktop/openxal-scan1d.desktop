@@ -1,0 +1,8 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=Scan 1D
+Comment=Scan 1D
+Exec=scan1d
+Type=Application
+Categories=openxal;
+

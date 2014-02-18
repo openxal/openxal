@@ -5,7 +5,7 @@
 		<adaptor name="postgres" class="xal.plugin.postgres.PostgresDatabaseAdaptor"/>		
 	</adaptors>
 	<servers default="pvlogger">
-		<server name="pvlogger" url="jdbc:postgresql://localhost:5433/pvlog" adaptor="postgres"/>
+		<server name="pvlogger" url="jdbc:postgresql://localhost:5432/pvlog" adaptor="postgres"/>
 	</servers>
 	<accounts default="pvlogger">
 		<account name="pvlogger" user="pvlog" password="pvlog"/>

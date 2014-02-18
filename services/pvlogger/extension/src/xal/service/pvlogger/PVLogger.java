@@ -407,9 +407,12 @@ public class PVLogger {
 	/** make a new database connection */
 	protected Connection getNewDatabaseConnection() {
 		try {
-			return _connectionDictionary.hasRequiredInfo() ? PersistentStore.connectionInstance( _connectionDictionary ) : null;
+			Connection con = _connectionDictionary.hasRequiredInfo() ? PersistentStore.connectionInstance( _connectionDictionary ) : null; 
+			System.out.println("Connection is "+ con == null ? "null" : con.toString());
+			return con;
 		}
 		catch( Exception exception ) {
+			exception.printStackTrace();
 			return null;
 		}
 	}

@@ -1,0 +1,8 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=Virtual accelerator
+Comment=Virtual accelerator
+Exec=virtualaccelerator
+Type=Application
+Categories=openxal;
+

@@ -1,0 +1,81 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>se.esss.codac.units</groupId>
+	<artifactId>openxal-opticsswitcher</artifactId>
+	<packaging>codac</packaging>
+	<version>1.0</version>
+	<name>Optics Switcher</name>
+
+	<parent>
+		<groupId>org.iter.codac.units</groupId>
+		<artifactId>maven-iter-settings</artifactId>
+		<version>4.1.0</version>
+	</parent>
+
+	<properties>
+		<unit.type>module</unit.type>
+		
+		<openxal.version>1.0.0-SNAPSHOT</openxal.version>
+		
+	</properties>
+
+	<developers>
+		<developer>
+			<id>miroslavpavleski</id>
+			<roles>
+				<role>unit owner</role>
+			</roles>
+		</developer>
+	</developers>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-iter-plugin</artifactId>
+
+				<configuration>
+					<packaging>
+						<package>
+							<dependency>java-${java.version}-${java.vendor}</dependency>
+							<requires version="current">%{codac_rpm_prefix}-openxal-core</requires>
+							<requires version="current">%{codac_rpm_prefix}-openxal-jels</requires>	
+							<requires version="current">%{codac_rpm_prefix}-openxal-ess-data</requires>													
+							<include type="file" source="openxal-opticsswitcher/openxal.apps.opticsswitcher-${openxal.version}.jar" target="lib/openxal/" />
+							<include type="file" source="main/desktop/openxal-apps.menu" target="common/desktop/" />
+							<include type="file" source="main/desktop/openxal-opticsswitcher.desktop" target="common/desktop/" />
+							<include type="script" file="opticsswitcher.sh" scripttype="user" name="opticsswitcher" />
+							<scriptlet type="posttrans"><![CDATA[alternatives --install --quiet /etc/xdg/menus/applications-merged/openxal-apps.menu openxal-apps.menu %{codac_root}/common/desktop/openxal-apps.menu
+											ln -s %{codac_root}/common/desktop/openxal-opticsswitcher.desktop /usr/share/applications > /dev/null
+							]]></scriptlet>
+							<scriptlet type="postun"><![CDATA[ 
+											rm -f /usr/share/applications/openxal-opticsswitcher.desktop > /dev/null								
+							]]></scriptlet>
+						</package>
+					</packaging>
+				</configuration>
+			</plugin>
+			<plugin>
+				<artifactId>maven-resources-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>copy-resources-1</id>
+						<phase>validate</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${project.build.directory}/openxal-opticsswitcher</outputDirectory>
+							<resources>
+								<resource>
+									<directory>${project.basedir}/../../opticsswitcher/target</directory>
+									<include>openxal.apps.opticsswitcher-1.0.0-SNAPSHOT.jar</include>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+</project>
