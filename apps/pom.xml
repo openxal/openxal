@@ -31,7 +31,6 @@
 		<module>scope</module>
 		<module>virtualaccelerator</module>
 		<module>xyzcorrelator</module>
-		<module>packaging</module>
 	</modules>
 	
 	<dependencies>

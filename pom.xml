@@ -16,12 +16,10 @@
 	
 	<modules>
 		<module>core</module>
-	<!--	<module>test</module>-->
+		<module>test</module>
 		<module>plugins</module>
 		<module>extensions</module>
-		<module>services</module>
-			
-				
+		<module>services</module>				
 	</modules>
 	
 	<dependencies>
