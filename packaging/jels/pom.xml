@@ -38,6 +38,7 @@
 					<packaging>
 						<package>
 							<dependency>java-${java.version}-${java.vendor}</dependency>											
+							<requires version="current">%{codac_rpm_prefix}-openxal-core</requires>
 							<include type="file" source="openxal-jels/jels-${jels.version}.jar" target="lib/openxal/" />
 						</package>
 					</packaging>
