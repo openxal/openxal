@@ -6,9 +6,11 @@
 	</adaptors>
 	<servers default="pvlogger">
 		<server name="pvlogger" url="jdbc:postgresql://localhost:5432/pvlog" adaptor="postgres"/>
+		<server name="score" url="jdbc:postgresql://localhost:5432/score" adaptor="postgres"/>
 	</servers>
 	<accounts default="pvlogger">
 		<account name="pvlogger" user="pvlog" password="pvlog"/>
+		<account name="score" user="score" password="score12"/>
 	</accounts>
 	<schemas>
 		<schema name="pvlogger" url="pvlogger-postgres-schema.xml"/>
