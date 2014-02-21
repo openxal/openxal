@@ -1,6 +1,6 @@
 <?xml version = '1.0' encoding = 'UTF-8'?>
 <!DOCTYPE xdxf SYSTEM "xdxf.dtd">
-<xdxf date="02.18.2014" id="ESS" len="602.5016199715232" pos="0.0" system="ESS" type="sequence" ver="">
+<xdxf date="02.18.2014" id="ESS" len="602.5016199715232" pos="0.0" system="ESS" type="sequence" version="2.0">
     <sequence id="lebt" len="2.1" pos="0.28">
         <sequence id="LEBT-SLOT" len="2.1" pos="0.0">
             <sequence id="LEBT-SLOTa" len="1.87" pos="0.0">
