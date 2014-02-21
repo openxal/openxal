@@ -3,17 +3,17 @@
 	<modelVersion>4.0.0</modelVersion>
 	
 	<parent>
-		<groupId>se.esss.ics</groupId>
+		<groupId>se.lu.esss.ics</groupId>
 		<artifactId>ess-java-config</artifactId>
-		<version>1.0.0-SNAPSHOT</version>
+		<version>1.0.0</version>
 	</parent>
 	
-	<groupId>eu.ess.jels</groupId>
+	<groupId>se.lu.esss.ics.jels</groupId>
 	<artifactId>jels</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
-	<name>ESS JEls</name>
+	<name>ESS JElS</name>
 	<url>http://europeanspallationsource.se/</url>
 
 	<dependencies>		

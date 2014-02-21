@@ -8,11 +8,11 @@
     </elements>
     
     <associations>
-    	<map smf="dh" model="eu.ess.jels.model.elem.jels.IdealMagWedgeDipole2"/>
+    	<map smf="dh" model="se.lu.esss.ics.jels.model.elem.jels.IdealMagWedgeDipole2"/>
 		<map smf="q" model="xal.model.elem.IdealMagQuad"/>
 		<map smf="qt" model="xal.model.elem.IdealMagQuad"/>
 		<map smf="pq" model="xal.model.elem.IdealMagQuad"/>
-		<map smf="rfgap" model="eu.ess.jels.model.elem.jels.IdealRfGap"/>
+		<map smf="rfgap" model="se.lu.esss.ics.jels.model.elem.jels.IdealRfGap"/>
 		<map smf="marker" model="xal.model.elem.Marker"/>
     </associations>
 </configuration>
