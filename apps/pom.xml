@@ -101,7 +101,7 @@
 			<scope>runtime</scope>			
 		</dependency>
 		<dependency> <!--comment this out if you don't want apps to run with JELS elements mapping -->
-			<groupId>eu.ess.jels</groupId>
+			<groupId>se.lu.esss.ics.jels</groupId>
 			<artifactId>jels</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 			<scope>runtime</scope>
