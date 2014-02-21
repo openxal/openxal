@@ -3,9 +3,9 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
-		<groupId>se.esss.ics</groupId>
-		<artifactId>ess-java-config</artifactId>
-		<version>1.0.0-SNAPSHOT</version>
+		<groupId>org.iter.codac.units</groupId>
+		<artifactId>maven-iter-settings</artifactId>
+		<version>4.1.0</version>
 	</parent>
 		
 	<groupId>org.xal</groupId>
