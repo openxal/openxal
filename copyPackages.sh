@@ -23,5 +23,4 @@ cp ./apps/packaging/dbbrowser/target/codac-core-4.1-openxal-dbbrowser-4.1.0.v1.0
 cp ./apps/packaging/launcher/target/codac-core-4.1-openxal-launcher-4.1.0.v1.0-1.el6.x86_64.rpm $1
 cp ./apps/packaging/opticsswitcher/target/codac-core-4.1-openxal-opticsswitcher-4.1.0.v1.0-1.el6.x86_64.rpm $1
 cp ./apps/packaging/extlatgenerator/target/codac-core-4.1-openxal-extlatgenerator-4.1.0.v1.0-1.el6.x86_64.rpm $1
-cp ./services/pvlogger/packaging/target/codac-core-4.1-openxal.service.pvlogger-4.1.0.v1.0-1.el6.x86_64.rpm $1
-
+cp ./services/pvlogger/packaging/target/codac-core-4.1-openxal-pvlogger-service-4.1.0.v1.0-1.el6.x86_64.rpm $1
