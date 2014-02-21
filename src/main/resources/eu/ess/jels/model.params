@@ -136,10 +136,37 @@
 		<record name="Accelerator" coordinate="x" alpha="-0.1763" beta="0.2442" emittance="2.621516138971707E-6"/>
 		<record name="Accelerator" coordinate="y" alpha="-0.3247" beta="0.3974" emittance="2.612769421634814E-6"/>
 		<record name="Accelerator" coordinate="z" alpha="-0.5283" beta="0.8684" emittance="3.562413018211791E-6"/>
-		<record name="MEBT" coordinate="x" alpha="-0.1763" beta="0.2442" emittance="2.621516138971707E-6"/>
-		<record name="MEBT" coordinate="y" alpha="-0.3247" beta="0.3974" emittance="2.612769421634814E-6"/>
-		<record name="MEBT" coordinate="z" alpha="-0.5283" beta="0.8684" emittance="3.562413018211791E-6"/>		
-    </table>
+		<record name="lebt" coordinate="x" alpha="-0.1763" beta="0.2442" emittance="2.621516138971707E-6"/>
+		<record name="lebt" coordinate="y" alpha="-0.3247" beta="0.3974" emittance="2.612769421634814E-6"/>
+		<record name="lebt" coordinate="z" alpha="-0.5283" beta="0.8684" emittance="3.562413018211791E-6"/>
+		<record name="rfq" coordinate="x" alpha="-0.1763" beta="0.2442" emittance="2.621516138971707E-6"/>
+		<record name="rfq" coordinate="y" alpha="-0.3247" beta="0.3974" emittance="2.612769421634814E-6"/>
+		<record name="rfq" coordinate="z" alpha="-0.5283" beta="0.8684" emittance="3.562413018211791E-6"/>				
+		<record name="mebt" coordinate="x" alpha="-0.1763" beta="0.2442" emittance="2.621516138971707E-6"/>
+		<record name="mebt" coordinate="y" alpha="-0.3247" beta="0.3974" emittance="2.612769421634814E-6"/>
+		<record name="mebt" coordinate="z" alpha="-0.5283" beta="0.8684" emittance="3.562413018211791E-6"/>	
+		<record name="dtl" coordinate="x" alpha="-0.1763" beta="0.2442" emittance="2.621516138971707E-6"/>
+		<record name="dtl" coordinate="y" alpha="-0.3247" beta="0.3974" emittance="2.612769421634814E-6"/>
+		<record name="dtl" coordinate="z" alpha="-0.5283" beta="0.8684" emittance="3.562413018211791E-6"/>		
+		<record name="spoke" coordinate="x" alpha="-0.1763" beta="0.2442" emittance="2.621516138971707E-6"/>
+		<record name="spoke" coordinate="y" alpha="-0.3247" beta="0.3974" emittance="2.612769421634814E-6"/>
+		<record name="spoke" coordinate="z" alpha="-0.5283" beta="0.8684" emittance="3.562413018211791E-6"/>	
+		<record name="mb" coordinate="x" alpha="-0.1763" beta="0.2442" emittance="2.621516138971707E-6"/>
+		<record name="mb" coordinate="y" alpha="-0.3247" beta="0.3974" emittance="2.612769421634814E-6"/>
+		<record name="mb" coordinate="z" alpha="-0.5283" beta="0.8684" emittance="3.562413018211791E-6"/>	
+		<record name="dtl" coordinate="x" alpha="-0.1763" beta="0.2442" emittance="2.621516138971707E-6"/>
+		<record name="dtl" coordinate="y" alpha="-0.3247" beta="0.3974" emittance="2.612769421634814E-6"/>
+		<record name="dtl" coordinate="z" alpha="-0.5283" beta="0.8684" emittance="3.562413018211791E-6"/>	
+		<record name="sbx" coordinate="x" alpha="-0.1763" beta="0.2442" emittance="2.621516138971707E-6"/>
+		<record name="sbx" coordinate="y" alpha="-0.3247" beta="0.3974" emittance="2.612769421634814E-6"/>
+		<record name="sbx" coordinate="z" alpha="-0.5283" beta="0.8684" emittance="3.562413018211791E-6"/>	
+		<record name="hb" coordinate="x" alpha="-0.1763" beta="0.2442" emittance="2.621516138971707E-6"/>
+		<record name="hb" coordinate="y" alpha="-0.3247" beta="0.3974" emittance="2.612769421634814E-6"/>
+		<record name="hb" coordinate="z" alpha="-0.5283" beta="0.8684" emittance="3.562413018211791E-6"/>			
+		<record name="hebt" coordinate="x" alpha="-0.1763" beta="0.2442" emittance="2.621516138971707E-6"/>
+		<record name="hebt" coordinate="y" alpha="-0.3247" beta="0.3974" emittance="2.612769421634814E-6"/>
+		<record name="hebt" coordinate="z" alpha="-0.5283" beta="0.8684" emittance="3.562413018211791E-6"/>	
+	</table>
     <table name="location">
         <schema>
             <attribute isPrimaryKey="true" name="name" type="java.lang.String" />
@@ -150,7 +177,15 @@
             <attribute isPrimaryKey="false" name="t" type="java.lang.Double" defaultValue="0" />
         </schema>
         <record name="Accelerator" species="HMINUS" W="3.0E6"/>
-        <record name="MEBT" species="HMINUS" W="3.0E6"/>
+        <record name="lebt" species="HMINUS" W="3.0E6"/>
+		<record name="rfq" species="HMINUS" W="3.0E6"/>
+		<record name="mebt" species="HMINUS" W="3.0E6"/>
+		<record name="dtl" species="HMINUS" W="3.0E6"/>
+		<record name="spoke" species="HMINUS" W="3.0E6"/>
+		<record name="mb" species="HMINUS" W="3.0E6"/>
+		<record name="sbx" species="HMINUS" W="3.0E6"/>
+		<record name="hb" species="HMINUS" W="3.0E6"/>
+		<record name="hebt" species="HMINUS" W="3.0E6"/>
 	</table>
 </tablegroup>
 
