@@ -15,9 +15,7 @@
 	
 	<modules>
 		<module>pvlogger</module>
-		<module>pvlogger/extension</module>
 		<module>worker</module>
-		<module>worker/extension</module>
 	</modules>
 	
 	<dependencies>

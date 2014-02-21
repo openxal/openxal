@@ -94,7 +94,7 @@
 							<outputDirectory>${project.build.directory}/pvlogger-data</outputDirectory>
 							<resources>
 								<resource>
-									<directory>${project.basedir}/../../core/test/resources/config</directory>
+									<directory>${project.basedir}/../../../core/test/resources/config</directory>
 									<include>local.dbconfig</include>
 									<include>pvlogger-postgres-schema.xml</include>
 								</resource>
@@ -111,7 +111,7 @@
 							<outputDirectory>${project.build.directory}/pvlogger</outputDirectory>
 							<resources>
 								<resource>
-									<directory>${project.basedir}/../pvlogger/target</directory>
+									<directory>${project.basedir}/../../pvlogger/target</directory>
 									<include>openxal.services.pvlogger-${pvlogger.service.version}.jar</include>
 								</resource>
 							</resources>

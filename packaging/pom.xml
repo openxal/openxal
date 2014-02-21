@@ -43,6 +43,8 @@
 							<include type="file" source="openxal-core/openxal.extensions.bricks-${openxal.version}.jar" target="lib/openxal/" />
 							<include type="file" source="openxal-core/openxal.extensions.extlatgen-${openxal.version}.jar" target="lib/openxal/" />
 							<include type="file" source="openxal-core/openxal.extensions.fit-${openxal.version}.jar" target="lib/openxal/" />
+							<include type="file" source="openxal-core/openxal.extensions.pvlogger-${openxal.version}.jar" target="lib/openxal/" />
+							<include type="file" source="openxal-core/openxal.extensions.worker-${openxal.version}.jar" target="lib/openxal/" />
 							<include type="file" source="openxal-core/openxal.extensions.orbit-${openxal.version}.jar" target="lib/openxal/" />
 							<include type="file" source="openxal-core/openxal.extensions.recordselector-${openxal.version}.jar" target="lib/openxal/" />
 							<include type="file" source="openxal-core/openxal.extensions.scan-${openxal.version}.jar" target="lib/openxal/" />
@@ -105,6 +107,14 @@
 								<resource>
 									<directory>${project.basedir}/../extensions/scan/target</directory>
 									<include>openxal.extensions.scan-${openxal.version}.jar</include>
+								</resource>
+								<resource>
+									<directory>${project.basedir}/../services/pvlogger/extension/target</directory>
+									<include>openxal.extensions.pvlogger-${openxal.version}.jar</include>
+								</resource>
+								<resource>
+									<directory>${project.basedir}/../services/worker/extension/target</directory>
+									<include>openxal.extensions.worker-${openxal.version}.jar</include>
 								</resource>
 								<resource>
 									<directory>${project.basedir}/../extensions/service/target</directory>
