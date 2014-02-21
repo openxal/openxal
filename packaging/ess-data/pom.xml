@@ -59,7 +59,7 @@
 							<outputDirectory>${project.build.directory}/openxal-ess-data</outputDirectory>
 							<resources>
 								<resource>
-									<directory>${project.basedir}/../../target/classes/eu/ess/jels</directory>
+									<directory>${project.basedir}/../../target/classes/se/lu/esss/ics/jels</directory>
 									<include>main.xal</include>
 									<include>ess.impl</include>
 									<include>ess.xdxf</include>
