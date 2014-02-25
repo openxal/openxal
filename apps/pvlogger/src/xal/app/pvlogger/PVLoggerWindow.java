@@ -121,7 +121,7 @@ class PVLoggerWindow extends AcceleratorWindow implements SwingConstants, Scroll
 		_mainModel = _model.getMainModel();
 		
 		SNAPSHOT_BUTTON = new JButton( "Take Snapshot" );
-		SNAPSHOT_BUTTON.setEnabled( false );
+		SNAPSHOT_BUTTON.setEnabled( true );
 		SNAPSHOT_COMMENT_FIELD = new JTextField( "", 40 );
 		SNAPSHOT_COMMENT_FIELD.setMaximumSize( SNAPSHOT_COMMENT_FIELD.getPreferredSize() );
 		SNAPSHOT_RESULT_FIELD = new JLabel( "" );
@@ -304,7 +304,7 @@ class PVLoggerWindow extends AcceleratorWindow implements SwingConstants, Scroll
 	protected void updateSnapshotView() {
 		final LoggerSessionHandler session = _model.getSelectedSessionHandler();
 		final boolean isLogging = session != null ? session.isLogging() : false;
-		SNAPSHOT_BUTTON.setEnabled( isLogging );
+		//SNAPSHOT_BUTTON.setEnabled( isLogging );
 		SNAPSHOT_COMMENT_FIELD.setText( "" );
 		SNAPSHOT_RESULT_FIELD.setText( "" );
 	}
@@ -516,20 +516,14 @@ class PVLoggerWindow extends AcceleratorWindow implements SwingConstants, Scroll
 	/** take and publish a snapshot for the currently selected group */
 	private int takeAndPublishSnapshot( final ActionEvent event, final String comment ) {
 		final LoggerSessionHandler session = _model.getSelectedSessionHandler();
-		final boolean isLogging = session != null ? session.isLogging() : false;
-		if ( isLogging ) {
-			final int snapshotID = session.takeAndPublishSnapshot( comment );
-			if ( snapshotID > 0 ) {
-				SNAPSHOT_RESULT_FIELD.setText( " Snapshot: " + snapshotID );
-			}
-			else {
-				SNAPSHOT_RESULT_FIELD.setText( " Failed snapshot!" );
-			}
-			return snapshotID;
+		final int snapshotID = session.takeAndPublishSnapshot( comment );
+		if ( snapshotID > 0 ) {
+			SNAPSHOT_RESULT_FIELD.setText( " Snapshot: " + snapshotID );
 		}
 		else {
-			return 0;
+			SNAPSHOT_RESULT_FIELD.setText( " Failed snapshot!" );
 		}
+		return snapshotID;
 	}
 	
 	

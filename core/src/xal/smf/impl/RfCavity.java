@@ -46,7 +46,8 @@ public class RfCavity extends AcceleratorSeq {
     static public final String DELTA_TRF_START_HANDLE = "deltaTRFStart";
     static public final String DELTA_TRF_END_HANDLE = "deltaTRFEnd";
     static public final String T_DELAY_HANDLE = "tDelay";
-	
+	static public final String BLANK_BEAM_HANDLE = "blankBeam";
+
     /** accelerator node type */
     public static final String      s_strType = "RF";
     
@@ -440,8 +441,33 @@ public class RfCavity extends AcceleratorSeq {
             gap.setGapPhase( newCavPhase );
         }
     }
-    
 	
+
+    /**
+     * Determine whether the beam is blanked
+     * @return true if the beam is blanked and false if not
+     */
+    public boolean getBlankBeam() throws ConnectionException, GetException {
+        final Channel blankBeamChannel = getAndConnectChannel( BLANK_BEAM_HANDLE );
+        return blankBeamChannel != null ? ( blankBeamChannel.getValEnum() == 1 ? true : false ) : false;
+    }
+
+
+    /**
+     * Blank the beam
+     * @param mode true to blank the beam and false for continuous on
+     */
+    public void setBlankBeam( final boolean mode ) throws ConnectionException, PutException {
+        final Channel blankBeamChannel = getAndConnectChannel( BLANK_BEAM_HANDLE );
+        if ( blankBeamChannel != null ) {
+            blankBeamChannel.putVal( mode ? 1 : 0 );
+        }
+        else {
+            throw new RuntimeException( "Attempting to blank the beam for " + getId() + " but no channel can be found." );
+        }
+    }
+
+
     /** method to return the gaps associated with this cavity */
     public Collection<RfGap> getGaps() { return _gaps; }
     

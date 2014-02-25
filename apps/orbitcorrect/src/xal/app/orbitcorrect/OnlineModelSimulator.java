@@ -13,14 +13,10 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import xal.model.alg.ParticleTracker;
-import xal.model.alg.TransferMapTracker;
+import xal.model.alg.*;
 import xal.model.probe.Probe;
-import xal.model.probe.traj.ProbeState;
-import xal.model.probe.traj.Trajectory;
-import xal.sim.scenario.AlgorithmFactory;
-import xal.sim.scenario.ProbeFactory;
-import xal.sim.scenario.Scenario;
+import xal.model.probe.traj.*;
+import xal.sim.scenario.*;
 import xal.smf.Ring;
 import xal.smf.proxy.ElectromagnetPropertyAccessor;
 import xal.tools.beam.PhaseVector;
@@ -33,99 +29,6 @@ import xal.tools.beam.calc.SimpleSimResultsAdaptor;
  * @since    Sep 07, 2004
  */
 public class OnlineModelSimulator extends MappedSimulator {
-    
-//    /*
-//     * Internal Classes
-//     */
-//    
-//    private static class SimDataProcessor implements ISimLocResults<ProbeState> {
-//
-//        /*
-//         * Local Attributes
-//         */
-//        
-//        /** The simulation data */
-//        private final Trajectory                        traj;
-//        
-//        /** The particle trajectory data processor */
-//        private final ISimLocResults<? extends ProbeState>  engResults;
-//        
-//        
-//        
-//        /**
-//         * @param supplies
-//         * @param bpmAgents
-//         * @return
-//         *
-//         * @author Christopher K. Allen
-//         * @since  Nov 15, 2013
-//         */
-//        public SimDataProcessor(Trajectory traj) {
-//            this.traj = traj;
-//            
-//            if (traj instanceof TransferMapTrajectory) {
-//                TransferMapTrajectory trjXferMap = (TransferMapTrajectory)traj;
-//                
-//                this.engResults = new CalculationsOnMachines(trjXferMap);
-//                
-//            } else if (traj instanceof ParticleTrajectory) {
-//                ParticleTrajectory  trjPart = (ParticleTrajectory)traj;
-//                
-//                this.engResults = new CalculationsOnParticles(trjPart);
-//                
-//            } else {
-//                
-//                throw new IllegalArgumentException("Unknown trajectory type " + traj.getClass());
-//            }
-//            
-//        }
-//        
-//        /*
-//         * ISimLocResults Interface
-//         */
-//        
-//        /**
-//         *
-//         * @see xal.tools.beam.calc.ISimLocResults#computeCoordinatePosition(xal.model.probe.traj.ProbeState)
-//         *
-//         * @author Christopher K. Allen
-//         * @since  Nov 15, 2013
-//         */
-//        @Override
-//        public PhaseVector computeCoordinatePosition(ProbeState state) {
-//            if (state instanceof TransferMapState)
-//            return this.engResults.computeCoordinatePosition((TransferMapState)state);
-//        }
-//
-//        /**
-//         *
-//         * @see xal.tools.beam.calc.ISimLocResults#computeFixedOrbit(xal.model.probe.traj.ProbeState)
-//         *
-//         * @author Christopher K. Allen
-//         * @since  Nov 15, 2013
-//         */
-//        @Override
-//        public PhaseVector computeFixedOrbit(ProbeState state) {
-//            // TODO Auto-generated method stub
-//            return null;
-//        }
-//
-//        /**
-//         *
-//         * @see xal.tools.beam.calc.ISimLocResults#computeChromAberration(xal.model.probe.traj.ProbeState)
-//         *
-//         * @author Christopher K. Allen
-//         * @since  Nov 15, 2013
-//         */
-//        @Override
-//        public PhaseVector computeChromAberration(ProbeState state) {
-//            // TODO Auto-generated method stub
-//            return null;
-//        }
-//        
-//    }
-    
-    
 	/**
 	 * Constructor
 	 * @param orbitModel    The orbit model.

@@ -151,8 +151,9 @@ class ScenarioGenerator {
 		
 		elements.add(new LatticeElement(new Marker("BEGIN_" + sequence.getId()), 0.0, 
 				elementMapping.getDefaultConverter(), originalPosition++));
-		
-		for (AcceleratorNode node : sequence.getAllNodes()) {
+
+		// generate elements for every node in the sequence which is marked as having good status
+		for ( AcceleratorNode node : sequence.getAllNodes( true ) ) {
 			if (node instanceof AcceleratorSeq) {
 				elements.add(new LatticeElement(new Marker("BEGIN_" + node.getId()), sequence.getPosition(node), 
 						elementMapping.getDefaultConverter(), originalPosition++));			

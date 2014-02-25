@@ -8,9 +8,9 @@ package xal.tools.beam.calc;
 
 import xal.tools.beam.calc.ISimulationResults.ISimLocResults;
 import xal.tools.beam.calc.ISimulationResults.ISimEnvResults;
-
 import xal.model.probe.traj.EnvelopeProbeState;
 import xal.model.probe.traj.EnvelopeTrajectory;
+import xal.model.probe.traj.ParticleProbeState;
 import xal.model.probe.traj.ProbeState;
 import xal.tools.beam.CovarianceMatrix;
 import xal.tools.beam.PhaseMatrix;
@@ -226,6 +226,19 @@ public class CalculationsOnBeams extends CalculationEngine implements ISimLocRes
 
     /**
      * <p>
+     * <h4>IMPORTANT NOTE</h4>
+     * This method has been modified so it returns exactly the same value as 
+     * {@link #computeCoordinatePosition(ParticleProbeState)}.  This modification is
+     * maintain compatibility with the previous use of <code>computeFixedOrbit()</code>
+     * presented by the trajectory classes for particles, beam envelopes, etc.  They
+     * responded differently depending upon whether the structure producing the simulation
+     * data was from a ring or a linear transport/accelerator structure.
+     * <br/>
+     * <br/>
+     * Thus, <em>ignore all commenting below!</em>
+     * </p>
+     * 
+     * <p>
      * Consider first the point in phase space that is invariant under repeated application
      * of the response matrix <b>&Phi;</b> for the entire beamline or ring.  This is under 
      * the condition that we decompose <b>&Phi;</b> into its homogeneous and non-homogeneous
@@ -295,10 +308,11 @@ public class CalculationsOnBeams extends CalculationEngine implements ISimLocRes
      */
     @Override
     public PhaseVector computeFixedOrbit(EnvelopeProbeState state) {
-        PhaseMatrix matRespLoc = state.getResponseMatrix();
-        PhaseVector vecFxdLoc  = matRespLoc.times( this.vecFxdPt );
+//        PhaseMatrix matRespLoc = state.getResponseMatrix();
+//        PhaseVector vecFxdLoc  = matRespLoc.times( this.vecFxdPt );
+        PhaseVector vecFxdOrb = this.computeCoordinatePosition(state);
         
-        return vecFxdLoc; 
+        return vecFxdOrb; 
     }
 
     /**
