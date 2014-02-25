@@ -1,7 +1,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>se.esss.codac.units</groupId>
-	<artifactId>openxal-core</artifactId>
+	<artifactId>openxal</artifactId>
 	<packaging>codac</packaging>
 	<version>1.0</version>
 	<name>OpenXAL Core</name>
@@ -34,104 +34,37 @@
 
 				<configuration>
 					<packaging>
-						<package>
-							<dependency>java-${java.version}-${java.vendor}</dependency>
-							<requires version="current">%{codac_rpm_prefix}-openxal-deps</requires>
-							<include type="file" source="openxal-core/openxal.core-${openxal.version}.jar" target="lib/openxal/" />
-							<include type="file" source="openxal-core/openxal.plugins.jca-${openxal.version}.jar" target="lib/openxal/" />
-							<include type="file" source="openxal-core/openxal.plugins.postgres-${openxal.version}.jar" target="lib/openxal/" />
-							<include type="file" source="openxal-core/openxal.extensions.bricks-${openxal.version}.jar" target="lib/openxal/" />
-							<include type="file" source="openxal-core/openxal.extensions.extlatgen-${openxal.version}.jar" target="lib/openxal/" />
-							<include type="file" source="openxal-core/openxal.extensions.fit-${openxal.version}.jar" target="lib/openxal/" />
-							<include type="file" source="openxal-core/openxal.extensions.pvlogger-${openxal.version}.jar" target="lib/openxal/" />
-							<include type="file" source="openxal-core/openxal.extensions.worker-${openxal.version}.jar" target="lib/openxal/" />
-							<include type="file" source="openxal-core/openxal.extensions.orbit-${openxal.version}.jar" target="lib/openxal/" />
-							<include type="file" source="openxal-core/openxal.extensions.recordselector-${openxal.version}.jar" target="lib/openxal/" />
-							<include type="file" source="openxal-core/openxal.extensions.scan-${openxal.version}.jar" target="lib/openxal/" />
-							<include type="file" source="openxal-core/openxal.extensions.service-${openxal.version}.jar" target="lib/openxal/" />
-							<include type="file" source="openxal-core/openxal.extensions.solver-${openxal.version}.jar" target="lib/openxal/" />
-							<include type="file" source="openxal-core/openxal.extensions.widgets-${openxal.version}.jar" target="lib/openxal/" />
-							<include type="file" source="openxal-core/openxal.extensions.application-${openxal.version}.jar" target="lib/openxal/" />
-						</package>
+						<meta>							                            					
+							<summary>CODAC Core System ${codac.version} OpenXAL High Level Applications</summary>
+              <description>Complete OpenXAL distribution</description>
+              
+							<dependency version="current">%{codac_rpm_prefix}-openxal-deps</dependency>
+							<dependency version="current">%{codac_rpm_prefix}-openxal-core</dependency>
+							<dependency version="current">%{codac_rpm_prefix}-openxal-jels</dependency>
+							<dependency version="current">%{codac_rpm_prefix}-openxal-ess-data</dependency>
+							<dependency version="current">%{codac_rpm_prefix}-openxal-pvlogger-service</dependency>
+							
+							<dependency version="current">%{codac_rpm_prefix}-openxal-bricks</dependency>
+							<dependency version="current">%{codac_rpm_prefix}-openxal-dbbrowser</dependency>
+							<dependency version="current">%{codac_rpm_prefix}-openxal-extlatgenerator</dependency>
+							<dependency version="current">%{codac_rpm_prefix}-openxal-knobs</dependency>
+							<dependency version="current">%{codac_rpm_prefix}-openxal-launcher</dependency>
+							<dependency version="current">%{codac_rpm_prefix}-openxal-machinesimulator</dependency>
+							<dependency version="current">%{codac_rpm_prefix}-openxal-mtv</dependency>
+							<dependency version="current">%{codac_rpm_prefix}-openxal-opticseditor</dependency>
+							<dependency version="current">%{codac_rpm_prefix}-openxal-opticsswitcher</dependency>
+							<dependency version="current">%{codac_rpm_prefix}-openxal-orbitcorrect</dependency>
+							<dependency version="current">%{codac_rpm_prefix}-openxal-pvhistogram</dependency>
+							<dependency version="current">%{codac_rpm_prefix}-openxal-pvlogger</dependency>
+							<dependency version="current">%{codac_rpm_prefix}-openxal-scan1d</dependency>
+							<dependency version="current">%{codac_rpm_prefix}-openxal-scan2d</dependency>
+							<dependency version="current">%{codac_rpm_prefix}-openxal-scope</dependency>
+							<dependency version="current">%{codac_rpm_prefix}-openxal-score</dependency>
+							<dependency version="current">%{codac_rpm_prefix}-openxal-virtualaccelerator</dependency>
+							<dependency version="current">%{codac_rpm_prefix}-openxal-xyzcorrelator</dependency>
+						</meta>
 					</packaging>
 				</configuration>
-			</plugin>
-			<plugin>
-				<artifactId>maven-resources-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>copy-resources-1</id>
-						<phase>validate</phase>
-						<goals>
-							<goal>copy-resources</goal>
-						</goals>
-						<configuration>
-							<outputDirectory>${project.build.directory}/openxal-core</outputDirectory>
-							<resources>
-								<resource>
-									<directory>${project.basedir}/../core/target</directory>
-									<include>openxal.core-${openxal.version}.jar</include>
-								</resource>
-								<resource>
-									<directory>${project.basedir}/../plugins/jca/target</directory>
-									<include>openxal.plugins.jca-${openxal.version}.jar</include>
-								</resource>
-								<resource>
-									<directory>${project.basedir}/../plugins/postgres/target</directory>
-									<include>openxal.plugins.postgres-${openxal.version}.jar</include>
-								</resource>
-								<resource>
-									<directory>${project.basedir}/../extensions/application/target</directory>
-									<include>openxal.extensions.application-${openxal.version}.jar</include>
-								</resource>
-								<resource>
-									<directory>${project.basedir}/../extensions/bricks/target</directory>
-									<include>openxal.extensions.bricks-${openxal.version}.jar</include>
-								</resource>
-								<resource>
-									<directory>${project.basedir}/../extensions/extlatgen/target</directory>
-									<include>openxal.extensions.extlatgen-${openxal.version}.jar</include>
-								</resource>
-								<resource>
-									<directory>${project.basedir}/../extensions/fit/target</directory>
-									<include>openxal.extensions.fit-${openxal.version}.jar</include>
-								</resource>
-								<resource>
-									<directory>${project.basedir}/../extensions/orbit/target</directory>
-									<include>openxal.extensions.orbit-${openxal.version}.jar</include>
-								</resource>
-								<resource>
-									<directory>${project.basedir}/../extensions/recordselector/target</directory>
-									<include>openxal.extensions.recordselector-${openxal.version}.jar</include>
-								</resource>
-								<resource>
-									<directory>${project.basedir}/../extensions/scan/target</directory>
-									<include>openxal.extensions.scan-${openxal.version}.jar</include>
-								</resource>
-								<resource>
-									<directory>${project.basedir}/../services/pvlogger/extension/target</directory>
-									<include>openxal.extensions.pvlogger-${openxal.version}.jar</include>
-								</resource>
-								<resource>
-									<directory>${project.basedir}/../services/worker/extension/target</directory>
-									<include>openxal.extensions.worker-${openxal.version}.jar</include>
-								</resource>
-								<resource>
-									<directory>${project.basedir}/../extensions/service/target</directory>
-									<include>openxal.extensions.service-${openxal.version}.jar</include>
-								</resource>
-								<resource>
-									<directory>${project.basedir}/../extensions/solver/target</directory>
-									<include>openxal.extensions.solver-${openxal.version}.jar</include>
-								</resource>
-								<resource>
-									<directory>${project.basedir}/../extensions/widgets/target</directory>
-									<include>openxal.extensions.widgets-${openxal.version}.jar</include>
-								</resource>
-							</resources>
-						</configuration>
-					</execution>
-				</executions>
 			</plugin>
 		</plugins>
 	</build>
