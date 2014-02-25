@@ -32,7 +32,14 @@ public class Main {
 	 * run the service by starting the logger
 	 */
 	protected void run() {
-		model.startLogging();
+		// get flag to test whether logging should be periodic and on-demand (default) or only on-demand
+		final boolean periodicLogging = !Boolean.getBoolean( "xal.logging.noperiod" );
+		if ( periodicLogging ) {
+			model.startLogging();
+		}
+		else {
+			System.out.println( "Warning! Periodic logging has been disabled due to command line flag. Will log on demand only." );
+		}
 		new LoggerService(model);
 	}
 	

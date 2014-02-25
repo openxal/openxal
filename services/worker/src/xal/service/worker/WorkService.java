@@ -23,6 +23,18 @@ public class WorkService implements Working {
         return summand + addend;
     }
 
+
+	/** add the integers and return the resulting sum */
+	public int sumIntegers( final int[] summands ) {
+		int sum = 0;
+
+		for ( final int summand : summands ) {
+			sum += summand;
+		}
+
+		return sum;
+	}
+
     
     /** get the launch time */
     public Date getLaunchTime() {

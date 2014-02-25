@@ -6,6 +6,7 @@
  */
 package xal.tools.beam.calc;
 
+import xal.model.probe.traj.ParticleProbeState;
 import xal.model.probe.traj.ProbeState;
 import xal.tools.beam.PhaseVector;
 import xal.tools.beam.Twiss;
@@ -78,18 +79,55 @@ public interface ISimulationResults {
 
 
         /**
+         * <p>
          * Computes the fixed orbit about which betatron oscillations occur. This
          * value is well-defined for rings but could be ambiguous for beam envelope
          * simulation, especially with regard to method 
-         * <code>{@link #computeCoordinatePosition(ProbeState)}</code>.  In general, however,
-         * the idea is that the return coordinate <b>z</b> in phase space <b>P</b><sup>6</sup> &cong;
+         * <code>{@link #computeCoordinatePosition(ProbeState)}</code>.  The returned
+         * value for some given simulation types are provided below.
+         * </p>
+         * <p>
+         * In general
+         * the idea is that the returned coordinate <b>z</b> in phase space <b>P</b><sup>6</sup> &cong;
          * <b>R</b><sup>6</sup> &times; {1} is invariant under some map 
          * <b>&phi;</b> : <b>P</b><sup>6</sup> &rarr; <b>P</b><sup>6</sup> representing the 
          * dynamics of the system. 
+         * </p>
+         * <p>
+         * <h4>IMPORTANT NOTE</h4>
+         * This method is provided to
+         * maintain compatibility with the previous use of <code>computeFixedOrbit()</code>
+         * presented by the trajectory classes for particles, beam envelopes, etc.  (This method
+         * has been deprecated and discontinued.)  The methods
+         * responded differently depending upon whether the structure producing the simulation
+         * data was from a ring or a linear transport/accelerator structure.  This behavior
+         * has now changed, the method produces different results for <em>different simulation
+         * types</em> (e.g., particle, transfer map, envelope, etc.) rather than different simulation
+         * structures.
+         * </p>
+         * <p>
+         * When the underlying data is produced by a transfer map this method 
+         * <em>should return the fixed
+         * orbit position</em> at the given state.  
+         * When the underlying data is produced by a particle 
+         * then the returned value <em>should be the position of the particle</em>
+         * at the given state location (for its given initial position).
+         * When the underlying data is from a beam envelope then this method <em>should return
+         * the centroid location</em> of the beam bunch (for its given initial condition).
+         * </p>
+         * <p>
+         * You must specify the simulation processing engine for each data type to 
+         * use a <code>SimResultsAdaptor</code>. To reproduce the behavior of the past 
+         * <code>Trajectory#computeFixedOrbit(ProbeState)</code> specify a 
+         * <code>{@link CalculationsOnMachines}</code> simulation data processor for ring
+         * lattices and a <code>{@link CalculationsOnBeams}</code> simulation processor 
+         * for linear lattices.  This configuration is accommodated in the class
+         * <code>{@link SimpleSimResultsAdaptor}</code> exposing this interface.
+         * </p>
          * 
          * @param   state   simulation state where parameters are computed
          *  
-         * @return the reference orbit vector (<i>x,x',y,y',z,z'</i>,1)
+         * @return the reference orbit vector (<i>x,x',y,y',z,z'</i>,1) (see comments)
          */
         public PhaseVector computeFixedOrbit(S state);
         

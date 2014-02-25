@@ -351,7 +351,7 @@ public class Flattener implements ScoreBoardListener, DataListener, OrbitModelLi
 		
 		//problem.addObjective( new SmoothnessObjective( Orbit.X_PLANE, xRmsAngle) );
 		//problem.addObjective( new SmoothnessObjective( Orbit.Y_PLANE, yRmsAngle ) );
-		//problem.addObjective( new CorrectorDutyObjective() );
+		problem.addObjective( new CorrectorDutyObjective() );
 
 		// Setup the solver
 		if ( _solver != null ) {

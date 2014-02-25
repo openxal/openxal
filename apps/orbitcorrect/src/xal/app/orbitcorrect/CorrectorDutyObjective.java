@@ -25,12 +25,11 @@ public class CorrectorDutyObjective extends OrbitObjective {
 
 	/**
 	 * Determines how satisfied the user is with the specified value for this objective.
-	 *
-	 * @param duty  The mean square of fractional corrector duty
+	 * @param dutyScore  The duty score
 	 * @return      the user satisfaction for the specified value
 	 */
-	public double satisfaction( final double duty ) {
-		return 1 - duty;
+	public double satisfaction( final double dutyScore ) {
+		return 1 - dutyScore;
 	}
 
 
@@ -43,7 +42,7 @@ public class CorrectorDutyObjective extends OrbitObjective {
 	 * @return              the mean square corrector duty
 	 */
 	public double score( final Orbit orbit, final CorrectorDistribution distribution ) {
-		return distribution.meanSquareLoad();
+		return distribution.worstBiasedLoad();
 	}
 }
 

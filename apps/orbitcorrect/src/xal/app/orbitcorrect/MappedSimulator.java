@@ -10,13 +10,15 @@
 
 package xal.app.orbitcorrect;
 
-import xal.tools.*;
-import xal.tools.data.*;
-import xal.smf.*;
-import xal.smf.impl.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-import java.util.*;
-import java.util.logging.*;
+import xal.smf.AcceleratorSeq;
+import xal.tools.ArrayMath;
+import xal.tools.data.DataAdaptor;
 
 
 /**
