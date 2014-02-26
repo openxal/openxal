@@ -1,25 +1,18 @@
 /**
  * EnvelopeCurve.java
  *
- * @author Christopher K. Allen
- * @since  Nov 26, 2012
- *
- */
-
-/**
- * EnvelopeCurve.java
- *
  * @author  Christopher K. Allen
  * @since	Nov 26, 2012
  */
-package xal.extension.widgets.olmutils;
+package xal.extension.widgets.olmplot;
+
 
 import java.util.Iterator;
 
+import xal.extension.widgets.olmplot.PLANE;
 import xal.extension.widgets.plot.BasicGraphData;
-import xal.model.probe.traj.EnvelopeProbeState;
+import xal.model.probe.traj.ParticleProbeState;
 import xal.model.probe.traj.Trajectory;
-
 
 /**
  * Graphics object representing a curve in a <code>{@FunctionGraphsJPanel}</code> object.
@@ -29,13 +22,13 @@ import xal.model.probe.traj.Trajectory;
  * @author Christopher K. Allen
  * @since   Nov 26, 2012
  */
-public class EnvelopeCurve extends BasicGraphData {
+public class ParticleCurve extends BasicGraphData {
+
 
     
     /*
      * Local Attributes
      */
-    
     
     /** The phase plane of this curve */
     private final PLANE     plane;
@@ -55,7 +48,7 @@ public class EnvelopeCurve extends BasicGraphData {
      * @author  Christopher K. Allen
      * @since   Nov 26, 2012
      */
-    public  EnvelopeCurve(PLANE plane) {
+    public  ParticleCurve(PLANE plane) {
         super();
         this.plane = plane;
 
@@ -70,18 +63,17 @@ public class EnvelopeCurve extends BasicGraphData {
      * is constructed from the given trajectory data for the given phase plane.
      *
      * @param plane     phase plane of the rms envelope curve
-     * @param trjEnv    object containing the data for the curve
+     * @param trjPrt    object containing the data for the curve
      *
-     * @throws IllegalArgumentException the argument <var>trjEnv</var> is not an envelope 
-     *                                  trajectory object
+     * @throws IllegalArgumentException the argument <var>trjEnv</var> is not a particle trajectory object
      * 
      * @author  Christopher K. Allen
      * @since   Nov 26, 2012
      */
-    public EnvelopeCurve(PLANE plane, Trajectory trjEnv) throws IllegalArgumentException {
+    public ParticleCurve(PLANE plane, Trajectory trjPrt) throws IllegalArgumentException {
         this(plane);
 
-        this.loadCurve(trjEnv);
+        this.loadCurve(trjPrt);
     }
     
     
@@ -93,29 +85,28 @@ public class EnvelopeCurve extends BasicGraphData {
      * Defines the graphics curve according to the RMS envelope
      * trajectory data in the given <code>Trajectory</code> object.
      *
-     * @param trjEnv    online model simulation trajectory containing curve data
+     * @param trjSim    online model simulation trajectory containing curve data
      *
-     * @throws IllegalArgumentException the argument is not an envelope trajectory object
-     *  
+     * @throws IllegalArgumentException the argument is not a particle trajectory object
+     * 
      * @author Christopher K. Allen
      * @since  Nov 26, 2012
      */
-    public  void    loadCurve(Trajectory trjEnv) throws IllegalArgumentException {
+    public  void    loadCurve(Trajectory trjSim) throws IllegalArgumentException {
 
         // Load the trajectory data into the graphs
-        Iterator   iterState = trjEnv.stateIterator();
+        Iterator   iterState = trjSim.stateIterator();
         while (iterState.hasNext()) {
-            Object             objEnv = iterState.next();
+            Object             objPar = iterState.next();
+            if ( !(objPar instanceof ParticleProbeState) )
+                throw new IllegalArgumentException("Argument is not a particle trajectory object");
             
-            if (! (objEnv instanceof EnvelopeProbeState) )
-                throw new IllegalArgumentException("Trajectory object is not an Envelope trajectory");
+            ParticleProbeState statePar = (ParticleProbeState)objPar;
             
-            EnvelopeProbeState stateEnv = (EnvelopeProbeState)objEnv;
-            
-            double  dblPos = stateEnv.getPosition();
-            double  dblSig = this.plane.getRmsEnvelope(stateEnv);
+            double  dblPos = statePar.getPosition();
+            double  dblDis = this.plane.getParticlePos(statePar);
 
-            this.addPoint(dblPos, dblSig);
+            this.addPoint(dblPos, dblDis);
         }
     }
 }

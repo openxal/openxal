@@ -12,11 +12,15 @@
  * @author  Christopher K. Allen
  * @since	Nov 26, 2012
  */
-package xal.extension.widgets.olmutils;
+package xal.extension.widgets.olmplot;
 
 
 import java.awt.Dimension;
 
+import xal.extension.widgets.olmplot.EnvelopeCurve;
+import xal.extension.widgets.olmplot.PLANE;
+import xal.extension.widgets.olmplot.ParticleCurve;
+import xal.extension.widgets.olmplot.TrajectoryGraph;
 import xal.extension.widgets.plot.BasicGraphData;
 import xal.extension.widgets.plot.FunctionGraphsJPanel;
 import xal.model.probe.traj.Trajectory;

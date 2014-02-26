@@ -12,7 +12,7 @@
  * @author  Christopher K. Allen
  * @since	Nov 26, 2012
  */
-package xal.extension.widgets.olmutils;
+package xal.extension.widgets.olmplot;
 
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;

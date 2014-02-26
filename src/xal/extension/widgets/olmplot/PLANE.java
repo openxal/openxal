@@ -1,4 +1,4 @@
-package xal.extension.widgets.olmutils;
+package xal.extension.widgets.olmplot;
 
 
 import java.awt.Color;
