@@ -36,12 +36,8 @@
 						<package>
 							<dependency>java-${java.version}-${java.vendor}</dependency>											
 							<include type="config" source="openxal-ess-data" target="openxal" />
-							<include type="config" source="main/conf/PrefsSetup.class" target="openxal/" />
-							<scriptlet type="posttrans"><![CDATA[
-								cd %{codac_conf}/openxal/
-								java PrefsSetup %{codac_conf}/openxal/ > /dev/null
-								rm PrefsSetup.class > /dev/null
-							]]></scriptlet>
+							<include type="config" source="main/conf/xal.extension.smf.application" target="openxal/" />
+							<include type="config" source="main/conf/xal.smf.data" target="openxal/" />
 						</package>
 					</packaging>
 				</configuration>
