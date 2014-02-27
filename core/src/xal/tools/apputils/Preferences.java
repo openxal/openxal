@@ -62,7 +62,7 @@ public class Preferences extends java.util.prefs.AbstractPreferences {
 	{
 		if (sysPrefs == null) {
 			File confFile = new File(System.getProperty("OPENXAL_CONF", "/etc/openxal") + "/" + fullName());
-			System.out.printf("%s\n", confFile.toString());
+			/*System.out.printf("%s\n", confFile.toString());*/
 			if (confFile.exists()) {
 				sysPrefs = new Properties();
 				try {
