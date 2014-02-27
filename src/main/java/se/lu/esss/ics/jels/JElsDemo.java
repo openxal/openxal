@@ -24,6 +24,7 @@ import xal.sim.scenario.DefaultElementMapping;
 import xal.sim.scenario.ElementMapping;
 import xal.sim.scenario.Scenario;
 import xal.smf.Accelerator;
+import xal.smf.AcceleratorNode;
 import xal.smf.AcceleratorSeq;
 import xal.smf.data.XMLDataManager;
 import xal.tools.beam.Twiss;
@@ -106,7 +107,7 @@ public class JElsDemo {
 		    s[i]= ps.getPosition() ;
 		    String elem=ps.getElementId() ;
 		    Twiss[] twiss;	
-		    
+		   
 			twiss = ps.twissParameters();			
 			
 		    bx[i] = twiss[0].getBeta();
@@ -120,6 +121,19 @@ public class JElsDemo {
 		    		twiss[2].getEnvelopeRadius(),twiss[2].getBeta(),
 		    		twiss[2].getBeta()/Math.pow(ps.getGamma(), 2),
 		    		ps.getTime(), ps.getKineticEnergy());
+		    
+		    /*
+		    if (ps.getElementId().startsWith("BEGIN")) {
+		    	String sec = ps.getElementId().substring(6);
+		    	AcceleratorNode node = sequence.getNodeWithId(sec);
+		    	if (node instanceof AcceleratorSeq && ((AcceleratorSeq)node).getParent() instanceof Accelerator) {	
+			    	char[] axis = new char[]{'x','y','z'};
+			    	for (int j=0; j<3; j++) {
+			    		System.out.printf("<record name=\"%s\" coordinate=\"%c\" alpha=\"%E\" beta=\"%E\" emittance=\"%E\"/>\n", 
+			    				sec, axis[j], twiss[j].getAlpha(), twiss[j].getBeta(), twiss[j].getEmittance());	
+			    	}
+		    	}
+		    }*/
 		    i=i+1;
 		}
     	
