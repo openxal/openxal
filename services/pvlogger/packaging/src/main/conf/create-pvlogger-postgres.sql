@@ -29,6 +29,7 @@ GRANT ALL ON TABLE pvlog.mach_snapshot_type_sgnl TO pvlog;
 -- MachineSnapshot
 -- Description and timepoint of actual snapshot
 CREATE SEQUENCE pvlog.mach_snapshot_id_seq;
+GRANT ALL ON SEQUENCE pvlog.mach_snapshot_id_seq TO pvlog;
 CREATE TABLE pvlog.mach_snapshot (
     snapshot_id integer PRIMARY KEY DEFAULT nextval('mach_snapshot_id_seq'::regclass),
     snapshot_dte timestamp without time zone,
