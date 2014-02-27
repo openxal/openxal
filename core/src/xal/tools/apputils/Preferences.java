@@ -76,7 +76,7 @@ public class Preferences extends java.util.prefs.AbstractPreferences {
 	
 	@Override
 	protected String getSpi(String key) {
-		if (usrContains(key) || !getSysPrefs().contains(key)) return userPrefs.get(key, null);
+		if (usrContains(key) || !getSysPrefs().containsKey(key)) return userPrefs.get(key, null);
 		return getSysPrefs().getProperty(key);
 	}
 
