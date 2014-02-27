@@ -154,9 +154,6 @@
 		<record name="mb" coordinate="x" alpha="-0.1763" beta="0.2442" emittance="2.621516138971707E-6"/>
 		<record name="mb" coordinate="y" alpha="-0.3247" beta="0.3974" emittance="2.612769421634814E-6"/>
 		<record name="mb" coordinate="z" alpha="-0.5283" beta="0.8684" emittance="3.562413018211791E-6"/>	
-		<record name="dtl" coordinate="x" alpha="-0.1763" beta="0.2442" emittance="2.621516138971707E-6"/>
-		<record name="dtl" coordinate="y" alpha="-0.3247" beta="0.3974" emittance="2.612769421634814E-6"/>
-		<record name="dtl" coordinate="z" alpha="-0.5283" beta="0.8684" emittance="3.562413018211791E-6"/>	
 		<record name="sbx" coordinate="x" alpha="-0.1763" beta="0.2442" emittance="2.621516138971707E-6"/>
 		<record name="sbx" coordinate="y" alpha="-0.3247" beta="0.3974" emittance="2.612769421634814E-6"/>
 		<record name="sbx" coordinate="z" alpha="-0.5283" beta="0.8684" emittance="3.562413018211791E-6"/>	
