@@ -11,5 +11,6 @@
    <device type="RF" class="se.lu.esss.ics.jels.smf.impl.ESSRfCavity"/>
    <device type="RG" class="se.lu.esss.ics.jels.smf.impl.ESSRfGap"/>
    <device type="SOL" class="xal.smf.impl.Solenoid"/>
+   <device type="BPM" class="xal.smf.impl.BPM"/>
    <device type="marker" class="xal.smf.impl.Marker"/>
 </deviceMapping>
