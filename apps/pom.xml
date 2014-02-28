@@ -18,22 +18,22 @@
 		<module>dbbrowser</module>
 		<module>extlatgenerator</module>
 		<module>knobs</module>
-		<module>launcher</module>
-		<module>machinesimulator</module>
-		<module>mtv</module>
-		<module>opticseditor</module>
-		<module>opticsswitcher</module>
-		<module>orbitcorrect</module>
-		<module>pvhistogram</module>
-		<module>pvlogger</module>
-		<module>scan1d</module>
-		<module>scan2d</module>
-		<module>scope</module>
-		<module>virtualaccelerator</module>
-		<module>xyzcorrelator</module>
-	</modules>
-	
-	<dependencies>
+			<module>launcher</module>
+			<module>machinesimulator</module>
+			<module>mtv</module>
+			<module>opticseditor</module>
+			<module>opticsswitcher</module>
+			<module>orbitcorrect</module>
+			<module>pvhistogram</module>
+			<module>pvlogger</module>
+			<module>scan1d</module>
+			<module>scan2d</module>
+			<module>scope</module>
+			<module>virtualaccelerator</module>
+			<module>xyzcorrelator</module>
+		</modules>
+
+		<dependencies>
 		<dependency>
 			<groupId>org.xal</groupId>
 			<artifactId>openxal.extensions.widgets</artifactId>

@@ -1,0 +1,29 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<LaunchDocument date="Fri Feb 28 15:42:35 CET 2014" version="2.0.0">
+    <LaunchModel>
+        <Rule excludes="false" kind="Application" pattern="openxal.apps.*.jar">
+            <command value="java"/>
+            <command value="-DOPENXAL_CONF=/etc/opt/codac-4.1/openxal"/>
+            <command value="-DuseDefaultAccelerator=true"/>
+            <command value="-jar"/>
+            <command value="%f"/>
+        </Rule>
+        <Rule excludes="false" kind="JRuby" pattern="*.rb">
+            <command value="jruby"/>
+            <command value="%f"/>
+        </Rule>
+        <Rule excludes="false" kind="Jython" pattern="*.py">
+            <command value="jython"/>
+            <command value="%f"/>
+        </Rule>
+        <FileWatcher>
+            <Paths path="/opt/codac-4.1/lib/openxal"/>
+            <Paths path="/opt/codac-4.1/scripts"/>
+        </FileWatcher>
+        <Launcher>
+            <HostConfiguration>
+                <command value="%e"/>
+            </HostConfiguration>
+        </Launcher>
+    </LaunchModel>
+</LaunchDocument>
