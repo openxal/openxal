@@ -1,14 +1,6 @@
 /**
  * EnvelopeCurve.java
  *
- * @author Christopher K. Allen
- * @since  Nov 26, 2012
- *
- */
-
-/**
- * EnvelopeCurve.java
- *
  * @author  Christopher K. Allen
  * @since	Nov 26, 2012
  */

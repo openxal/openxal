@@ -467,6 +467,7 @@ abstract public class Correlator<SourceType, RecordType, SourceAgentType extends
 		 * Wait and listen for a correlation 
 		 * @param timeout the maximum time (seconds) to wait for a correlation
 		 */
+		@SuppressWarnings( "unchecked" )	// need to cast broadcaster as TimedBroadcaster
 		public Correlation<RecordType> listenWithTimeout( final double timeout ) {
             addListener( this );
             pulseMonitorWithTimeout( timeout );
@@ -483,8 +484,14 @@ abstract public class Correlator<SourceType, RecordType, SourceAgentType extends
             finally {
                 removeListener( this );
             }
-            
-            return correlation;
+
+			// there is a race condition with the timed broadcaster so we must make sure we get its best correlation if any before assuming there is none
+			if ( correlation == null && Correlator.this.broadcaster instanceof TimedBroadcaster ) {
+				final TimedBroadcaster<RecordType> pulsedBroadcaster = (TimedBroadcaster)Correlator.this.broadcaster;
+				correlation = pulsedBroadcaster.getBestPartialCorrelation();
+			}
+
+			return correlation;
         }
         
 		
