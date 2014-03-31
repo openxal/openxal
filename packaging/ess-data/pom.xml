@@ -38,6 +38,9 @@
 							<include type="config" source="openxal-ess-data" target="openxal" />
 							<include type="config" source="main/conf/xal.extension.smf.application" target="openxal/" />
 							<include type="config" source="main/conf/xal.smf.data" target="openxal/" />
+							<include type="script" scripttype="helper" file="openxal-environment" />
+							
+							<include type="altlink" altpath="%{_sysconfdir}/profile.d/openxal-environment" targetroot="CODAC_ROOT" target="bin/openxal-environment" />
 						</package>
 					</packaging>
 				</configuration>

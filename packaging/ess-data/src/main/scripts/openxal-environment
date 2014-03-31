@@ -1,0 +1,4 @@
+#!/bin/sh
+
+export JYTHONPATH=$JYTHONPATH:/opt/codac-4.1/lib/openxal/openxal.library-1.0.0-SNAPSHOT.jar
+export OPENXAL_CONFIG_DIR=/etc/opt/codac-4.1/openxal
