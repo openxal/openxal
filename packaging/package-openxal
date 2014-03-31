@@ -1,0 +1,44 @@
+#!/bin/sh
+
+if [ -z "$1" ]; then
+    echo "Usage: package-openxal DESTINATION_PATH_FOR_RPMs"
+            
+    echo " Command assumes following projects are side-by-side in the directory structure: "
+    echo "  openxal-deps "
+    echo "  openxal"
+    echo "  jels"
+    echo "  openxal-score"
+
+    exit 1
+fi
+
+CUR_DIR_TEMP=`dirname $0`
+CURRENT_DIR=`readlink -f $CUR_DIR_TEMP`
+
+# Clear old rpms
+cd $CURRENT_DIR/../../openxal
+find -iname '*.rpm' | xargs rm -f
+cd $CURRENT_DIR/../../jels
+find -iname '*.rpm' | xargs rm -f
+cd $CURRENT_DIR/../../openxal-score
+find -iname '*.rpm' | xargs rm -f
+
+cd $CURRENT_DIR/helper-scripts
+./package-core && ./package-jels && ./package-pvlogger-service && ./package-apps && ./package-score
+
+if [ $? -ne 0 ]; then
+  echo Failed during packaging parts of OpenXAL Distribution
+	exit 1
+fi
+
+cd $CURRENT_DIR/../../openxal/packaging
+mvn clean && mvn package
+
+if [ $? -ne 0 ]; then
+  echo Failed during creation of OpenXAL Meta Package
+	exit 2
+fi
+
+cd $CURRENT_DIR
+
+$CURRENT_DIR/helper-scripts/copy-rpms $1	

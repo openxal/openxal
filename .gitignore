@@ -10,4 +10,4 @@ build
 bin/
 log/
 target/
-
+dependency-reduced-pom.xml

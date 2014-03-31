@@ -1,0 +1,52 @@
+#!/bin/sh
+
+if [ -z "$1" ]; then
+    echo "Usage: package-openxal COMMAND"
+    echo "   COMMAND = package,install,deploy - appropriate Maven directive"
+    
+    echo " Command assumes following projects are side-by-side in the directory structure: "
+    echo "  openxal-deps "
+    echo "  openxal"
+    echo "  jels"
+    echo "  openxal-score"
+    
+    exit 1
+fi
+
+COMMAND=$1
+CURRENT_DIR_TEMP=`dirname $0`
+CURRENT_DIR=`readlink -f $CURRENT_DIR_TEMP`
+
+
+# Build openxal core libraries first
+cd $CURRENT_DIR/../../openxal
+mvn clean && mvn $COMMAND
+if [ $? -ne 0 ]; then
+  echo Failed on building openxal
+	exit 1
+fi
+
+# Build jels then
+cd $CURRENT_DIR/../../jels
+mvn clean && mvn $COMMAND
+if [ $? -ne 0 ]; then
+	echo Failed on building jels
+	exit 2
+fi
+
+# Build openxal applications
+cd $CURRENT_DIR/../../openxal/apps
+mvn clean && mvn $COMMAND
+if [ $? -ne 0 ]; then
+	echo Failed on building apps
+	exit 3
+fi
+
+# Build openxal-score
+cd $CURRENT_DIR/../../openxal-score
+mvn clean && mvn $COMMAND
+if [ $? -ne 0 ]; then
+	echo Failed on building Score
+	exit 4
+fi
+
