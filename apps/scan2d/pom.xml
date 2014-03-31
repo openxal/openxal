@@ -27,9 +27,11 @@
 				<configuration>
 					<archive>
 						<manifest>
-							<addClasspath>true</addClasspath>
 							<mainClass>xal.app.scan2d.MainScan2D</mainClass>
 						</manifest>
+						<manifestEntries>
+								<Class-Path>openxal.library-${project.version}.jar</Class-Path>
+						</manifestEntries>
 					</archive>
 				</configuration>
 			</plugin>
