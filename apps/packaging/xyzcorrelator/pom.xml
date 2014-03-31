@@ -39,7 +39,6 @@
 						<package>
 							<dependency>java-${java.version}-${java.vendor}</dependency>	
 							<requires version="current">%{codac_rpm_prefix}-openxal-core</requires>
-							<requires version="current">%{codac_rpm_prefix}-openxal-jels</requires>		
 							<requires version="current">%{codac_rpm_prefix}-openxal-ess-data</requires>											
 							<include type="file" source="openxal-xyzcorrelator/openxal.apps.xyzcorrelator-${openxal.version}.jar" target="lib/openxal/" />
 							<include type="file" source="main/desktop/openxal-apps.menu" target="common/desktop/" />

@@ -38,9 +38,7 @@
 							<summary>CODAC Core System ${codac.version} OpenXAL High Level Applications</summary>
               <description>Complete OpenXAL distribution</description>
               
-							<dependency version="current">%{codac_rpm_prefix}-openxal-deps</dependency>
 							<dependency version="current">%{codac_rpm_prefix}-openxal-core</dependency>
-							<dependency version="current">%{codac_rpm_prefix}-openxal-jels</dependency>
 							<dependency version="current">%{codac_rpm_prefix}-openxal-ess-data</dependency>
 							<dependency version="current">%{codac_rpm_prefix}-openxal-pvlogger-service</dependency>
 							

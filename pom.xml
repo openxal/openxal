@@ -19,7 +19,9 @@
 		<module>test</module>
 		<module>plugins</module>
 		<module>extensions</module>
-		<module>services</module>				
+		<module>services</module>
+		
+		<module>library</module>				
 	</modules>
 	
 	<dependencies>
