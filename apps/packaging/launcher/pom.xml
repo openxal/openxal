@@ -41,17 +41,11 @@
 							<requires version="current">%{codac_rpm_prefix}-openxal-core</requires>	
 							<requires version="current">%{codac_rpm_prefix}-openxal-ess-data</requires>												
 							<include type="file" source="openxal-launcher/openxal.apps.launcher-${openxal.version}.jar" target="lib/openxal/" />
-							<include type="file" source="main/desktop/openxal-apps.menu" target="common/desktop/" />
 							<include type="file" source="main/desktop/openxal-launcher.desktop" target="common/desktop/" />
+							<include type="altlink" altpath="%{_usr}/share/applications/openxal-launcher.desktop" targetroot="CODAC_ROOT" target="common/desktop/openxal-launcher.desktop" />
 							<include type="script" file="launcher.sh" scripttype="user" name="launcher" />
 							<include type="config" source="main/conf/xal.app.launcher" target="openxal/" />
 							<include type="config" source="main/conf/main.launch" target="openxal/" />
-							<scriptlet type="posttrans"><![CDATA[alternatives --install --quiet /etc/xdg/menus/applications-merged/openxal-apps.menu openxal-apps.menu %{codac_root}/common/desktop/openxal-apps.menu
-											ln -s %{codac_root}/common/desktop/openxal-launcher.desktop /usr/share/applications > /dev/null
-							]]></scriptlet>
-							<scriptlet type="postun"><![CDATA[ 
-											rm -f /usr/share/applications/openxal-launcher.desktop > /dev/null								
-							]]></scriptlet>
 						</package>
 					</packaging>
 				</configuration>

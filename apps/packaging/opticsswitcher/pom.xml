@@ -41,15 +41,9 @@
 							<requires version="current">%{codac_rpm_prefix}-openxal-core</requires>
 							<requires version="current">%{codac_rpm_prefix}-openxal-ess-data</requires>													
 							<include type="file" source="openxal-opticsswitcher/openxal.apps.opticsswitcher-${openxal.version}.jar" target="lib/openxal/" />
-							<include type="file" source="main/desktop/openxal-apps.menu" target="common/desktop/" />
 							<include type="file" source="main/desktop/openxal-opticsswitcher.desktop" target="common/desktop/" />
+							<include type="altlink" altpath="%{_usr}/share/applications/openxal-opticsswitcher.desktop" targetroot="CODAC_ROOT" target="common/desktop/openxal-opticsswitcher.desktop" />
 							<include type="script" file="opticsswitcher.sh" scripttype="user" name="opticsswitcher" />
-							<scriptlet type="posttrans"><![CDATA[alternatives --install --quiet /etc/xdg/menus/applications-merged/openxal-apps.menu openxal-apps.menu %{codac_root}/common/desktop/openxal-apps.menu
-											ln -s %{codac_root}/common/desktop/openxal-opticsswitcher.desktop /usr/share/applications > /dev/null
-							]]></scriptlet>
-							<scriptlet type="postun"><![CDATA[ 
-											rm -f /usr/share/applications/openxal-opticsswitcher.desktop > /dev/null								
-							]]></scriptlet>
 						</package>
 					</packaging>
 				</configuration>

@@ -41,15 +41,9 @@
 							<requires version="current">%{codac_rpm_prefix}-openxal-core</requires>
 							<requires version="current">%{codac_rpm_prefix}-openxal-ess-data</requires>													
 							<include type="file" source="openxal-pvlogger/openxal.apps.pvlogger-${openxal.version}.jar" target="lib/openxal/" />
-							<include type="file" source="main/desktop/openxal-apps.menu" target="common/desktop/" />
 							<include type="file" source="main/desktop/openxal-pvlogger.desktop" target="common/desktop/" />
+							<include type="altlink" altpath="%{_usr}/share/applications/openxal-pvlogger.desktop" targetroot="CODAC_ROOT" target="common/desktop/openxal-pvlogger.desktop" />
 							<include type="script" file="pvlogger.sh" scripttype="user" name="pvlogger" />
-							<scriptlet type="posttrans"><![CDATA[alternatives --install --quiet /etc/xdg/menus/applications-merged/openxal-apps.menu openxal-apps.menu %{codac_root}/common/desktop/openxal-apps.menu
-											ln -s %{codac_root}/common/desktop/openxal-pvlogger.desktop /usr/share/applications > /dev/null
-							]]></scriptlet>
-							<scriptlet type="postun"><![CDATA[ 
-											rm -f /usr/share/applications/openxal-pvlogger.desktop > /dev/null								
-							]]></scriptlet>
 						</package>
 					</packaging>
 				</configuration>
