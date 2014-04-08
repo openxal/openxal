@@ -1,0 +1,12 @@
+<Menu>
+  <Name>Applications</Name>
+  <Menu>
+    <Name>OpenXAL</Name>
+    <Include>
+      <And>
+        <Category>openxal</Category>
+      </And>
+    </Include>
+  </Menu>
+</Menu>
+

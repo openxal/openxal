@@ -38,9 +38,12 @@
 							<include type="config" source="openxal-ess-data" target="openxal" />
 							<include type="config" source="main/conf/xal.extension.smf.application" target="openxal/" />
 							<include type="config" source="main/conf/xal.smf.data" target="openxal/" />
-							<include type="script" scripttype="helper" file="openxal-environment.sh" />
-							
+	
+							<include type="script" scripttype="helper" file="openxal-environment.sh" />						
 							<include type="altlink" altpath="%{_sysconfdir}/profile.d/openxal-environment.sh" targetroot="CODAC_ROOT" target="bin/openxal-environment.sh" />
+
+							<include type="file" source="main/desktop/openxal.menu" target="common/desktop/" />
+							<include type="altlink" altpath="%{_sysconfdir}/xdg/menus/applications-merged/openxal.menu" targetroot="CODAC_ROOT" target="common/desktop/openxal.menu" />
 						</package>
 					</packaging>
 				</configuration>
