@@ -1,0 +1,71 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>se.esss.codac.units</groupId>
+	<artifactId>openxal</artifactId>
+	<packaging>codac</packaging>
+	<version>1.0</version>
+	<name>OpenXAL Core</name>
+
+	<parent>
+		<groupId>org.iter.codac.units</groupId>
+		<artifactId>maven-iter-settings</artifactId>
+		<version>4.1.0</version>
+	</parent>
+
+	<properties>
+		<unit.type>module</unit.type>
+		<openxal.version>1.0.0-SNAPSHOT</openxal.version>
+	</properties>
+
+	<developers>
+		<developer>
+			<id>miroslavpavleski</id>
+			<roles>
+				<role>unit owner</role>
+			</roles>
+		</developer>
+	</developers>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-iter-plugin</artifactId>
+
+				<configuration>
+					<packaging>
+						<meta>							                            					
+							<summary>CODAC Core System ${codac.version} OpenXAL High Level Applications</summary>
+              <description>Complete OpenXAL distribution</description>
+              
+							<dependency version="current">%{codac_rpm_prefix}-openxal-core</dependency>
+							<dependency version="current">%{codac_rpm_prefix}-openxal-ess-data</dependency>
+							<dependency version="current">%{codac_rpm_prefix}-openxal-pvlogger-service</dependency>
+							
+							<dependency version="current">%{codac_rpm_prefix}-jruby</dependency>
+
+							<dependency version="current">%{codac_rpm_prefix}-openxal-bricks</dependency>
+							<dependency version="current">%{codac_rpm_prefix}-openxal-dbbrowser</dependency>
+							<dependency version="current">%{codac_rpm_prefix}-openxal-extlatgenerator</dependency>
+							<dependency version="current">%{codac_rpm_prefix}-openxal-knobs</dependency>
+							<dependency version="current">%{codac_rpm_prefix}-openxal-launcher</dependency>
+							<dependency version="current">%{codac_rpm_prefix}-openxal-machinesimulator</dependency>
+							<dependency version="current">%{codac_rpm_prefix}-openxal-mtv</dependency>
+							<dependency version="current">%{codac_rpm_prefix}-openxal-opticseditor</dependency>
+							<dependency version="current">%{codac_rpm_prefix}-openxal-opticsswitcher</dependency>
+							<dependency version="current">%{codac_rpm_prefix}-openxal-orbitcorrect</dependency>
+							<dependency version="current">%{codac_rpm_prefix}-openxal-pvhistogram</dependency>
+							<dependency version="current">%{codac_rpm_prefix}-openxal-pvlogger</dependency>
+							<dependency version="current">%{codac_rpm_prefix}-openxal-scan1d</dependency>
+							<dependency version="current">%{codac_rpm_prefix}-openxal-scan2d</dependency>
+							<dependency version="current">%{codac_rpm_prefix}-openxal-scope</dependency>
+							<dependency version="current">%{codac_rpm_prefix}-openxal-score</dependency>
+							<dependency version="current">%{codac_rpm_prefix}-openxal-virtualaccelerator</dependency>
+							<dependency version="current">%{codac_rpm_prefix}-openxal-xyzcorrelator</dependency>
+						</meta>
+					</packaging>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+</project>
