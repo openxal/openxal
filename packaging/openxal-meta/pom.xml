@@ -42,6 +42,8 @@
 							<dependency version="current">%{codac_rpm_prefix}-openxal-ess-data</dependency>
 							<dependency version="current">%{codac_rpm_prefix}-openxal-pvlogger-service</dependency>
 							
+							<dependency version="current">%{codac_rpm_prefix}-jruby</dependency>
+
 							<dependency version="current">%{codac_rpm_prefix}-openxal-bricks</dependency>
 							<dependency version="current">%{codac_rpm_prefix}-openxal-dbbrowser</dependency>
 							<dependency version="current">%{codac_rpm_prefix}-openxal-extlatgenerator</dependency>
