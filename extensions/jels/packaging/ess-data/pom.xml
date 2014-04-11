@@ -1,0 +1,79 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>se.esss.codac.units</groupId>
+	<artifactId>openxal-ess-data</artifactId>
+	<packaging>codac</packaging>
+	<version>1.0</version>
+	<name>ESS Data</name>
+
+	<parent>
+		<groupId>org.iter.codac.units</groupId>
+		<artifactId>maven-iter-settings</artifactId>
+		<version>4.1.0</version>
+	</parent>
+
+	<properties>
+		<unit.type>module</unit.type>
+	</properties>
+
+	<developers>
+		<developer>
+			<id>miroslavpavleski</id>
+			<roles>
+				<role>unit owner</role>
+			</roles>
+		</developer>
+	</developers>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-iter-plugin</artifactId>
+
+				<configuration>
+					<packaging>
+						<package>
+							<dependency>java-${java.version}-${java.vendor}</dependency>											
+							<include type="config" source="openxal-ess-data" target="openxal" />
+							<include type="config" source="main/conf/xal.extension.smf.application" target="openxal/" />
+							<include type="config" source="main/conf/xal.smf.data" target="openxal/" />
+	
+							<include type="script" scripttype="helper" file="openxal-environment.sh" />						
+							<include type="altlink" altpath="%{_sysconfdir}/profile.d/openxal-environment.sh" targetroot="CODAC_ROOT" target="bin/openxal-environment.sh" />
+
+							<include type="file" source="main/desktop/openxal.menu" target="common/desktop/" />
+							<include type="altlink" altpath="%{_sysconfdir}/xdg/menus/applications-merged/openxal.menu" targetroot="CODAC_ROOT" target="common/desktop/openxal.menu" />
+						</package>
+					</packaging>
+				</configuration>
+			</plugin>
+			<plugin>
+				<artifactId>maven-resources-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>copy-resources-1</id>
+						<phase>validate</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${project.build.directory}/openxal-ess-data</outputDirectory>
+							<resources>
+								<resource>
+									<directory>${project.basedir}/../../target/classes/se/lu/esss/ics/jels</directory>
+									<include>main.xal</include>
+									<include>ess.impl</include>
+									<include>ess.xdxf</include>
+									<include>ModelConfig.xml</include>
+									<include>xdxf.dtd</include>
+									<include>model.params</include>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+</project>
