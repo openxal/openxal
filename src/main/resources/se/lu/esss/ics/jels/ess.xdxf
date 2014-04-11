@@ -1,6 +1,6 @@
 <?xml version = '1.0' encoding = 'UTF-8'?>
 <!DOCTYPE xdxf SYSTEM "xdxf.dtd">
-<xdxf date="03.05.2014" id="ESS" len="602.5016199715232" pos="0.0" system="ESS" type="sequence" version="2.0">
+<xdxf date="04.11.2014" id="ESS" len="602.5016199715232" pos="0.0" system="ESS" type="sequence" ver="">
 	<comboseq id="from-mebt">
 		<sequence id="mebt"/>
 		<sequence id="dtl"/>
@@ -9,7 +9,7 @@
 		<sequence id="sbx"/>
 		<sequence id="hb"/>
 		<sequence id="hebt"/>
-	</comboseq>  
+	</comboseq>
     <sequence id="lebt" len="2.1" pos="0.28">
         <node id="LEBT-PBI_BCM-1" len="0.0" pos="0.605" type="marker"/>
         <node id="LEBT-PBO_Coll-1" len="0.0" pos="1.57" type="marker"/>
@@ -22,10 +22,16 @@
         <node id="mlebte" len="0.0" pos="2.1" type="marker"/>
     </sequence>
     <sequence id="rfq" len="3.9965270000000004" pos="2.38">
+        <attributes>
+            <sequence predecessors="lebt"/>
+        </attributes>
         <node id="mrfqb" len="0.0" pos="3.9965270000000004" type="marker"/>
         <node id="mrfqe" len="0.0" pos="3.9965270000000004" type="marker"/>
     </sequence>
     <sequence id="mebt" len="3.6218000000000004" pos="6.376527">
+        <attributes>
+            <sequence predecessors="rfq"/>
+        </attributes>
         <node id="MEBT-PBI_BCM-1" len="0.0" pos="0.13" type="marker"/>
         <node id="MEBT-PBI_BPM-1" len="0.0" pos="0.13" type="BPM">
             <attributes>
@@ -288,6 +294,9 @@
         <node id="mmebte" len="0.0" pos="3.6218000000000004" type="marker"/>
     </sequence>
     <sequence id="dtl" len="31.8261282" pos="9.998327">
+        <attributes>
+            <sequence predecessors="mebt"/>
+        </attributes>
         <sequence id="DTL-TANK-1-CELL-1" len="0.068534" pos="0.0225" type="RF">
             <attributes>
                 <rfcavity STFCoefs="0.0805777,0.0,0.0,0.0" STF_endCoefs="0.0805777,0.0,0.0,0.0" TTFCoefs="0.0805777,0.772147,-0.386355,-0.142834" TTF_endCoefs="0.0805777,0.772147,-0.386355,-0.142834" amp="17145.759903355927" ampFactor="1.0" freq="352.21" phase="-35.0" phaseOffset="0.0" qLoaded="0.0" structureMode="0.0" structureTTF="1.0"/>
@@ -5803,6 +5812,9 @@
         <node id="mdtle" len="0.0" pos="31.8261282" type="marker"/>
     </sequence>
     <sequence id="spoke" len="58.464027633116615" pos="42.424455200000004">
+        <attributes>
+            <sequence predecessors="dtl"/>
+        </attributes>
         <node id="Spk-PBI_BLM-1a" len="0.0" pos="0.1" type="marker"/>
         <node id="Spk-PBO_QH-1" len="0.31" pos="0.255" type="Q">
             <attributes>
@@ -7324,6 +7336,9 @@
         <node id="mspke" len="0.0" pos="58.464027633116615" type="marker"/>
     </sequence>
     <sequence id="mb" len="106.82155962210047" pos="100.88848283311663">
+        <attributes>
+            <sequence predecessors="spoke"/>
+        </attributes>
         <node id="MB-PBI_BLM-1a" len="0.0" pos="0.1" type="marker"/>
         <node id="MB-PBO_QH-1" len="0.41000000000000003" pos="0.30500000000000005" type="Q">
             <attributes>
@@ -10332,6 +10347,9 @@
         <node id="mmbe" len="0.0" pos="106.82155962210047" type="marker"/>
     </sequence>
     <sequence id="sbx" len="7.1214400000000015" pos="207.7100424552171">
+        <attributes>
+            <sequence predecessors="mb"/>
+        </attributes>
         <node id="SBX-PBI_BLM-1a" len="0.0" pos="0.1" type="marker"/>
         <node id="SBX-PBO_QH-1" len="0.41000000000000003" pos="0.30500000000000005" type="Q">
             <attributes>
@@ -10388,6 +10406,9 @@
         </node>
     </sequence>
     <sequence id="hb" len="227.86219358905197" pos="214.8314824552171">
+        <attributes>
+            <sequence predecessors="sbx"/>
+        </attributes>
         <node id="SBX-PBI_BLM-1c" len="0.0" pos="0.1" type="marker"/>
         <node id="SBX-PBO_DH-1" len="0.0" pos="0.1" type="marker"/>
         <node id="SBX-PBI_FC-1" len="0.0" pos="0.1" type="marker"/>
@@ -15589,6 +15610,9 @@
         <node id="mhbe" len="0.0" pos="227.86219358905197" type="marker"/>
     </sequence>
     <sequence id="hebt" len="159.80794392725414" pos="442.693676044269">
+        <attributes>
+            <sequence predecessors="hb"/>
+        </attributes>
         <node id="UHB-PBI_BLM-1a" len="0.0" pos="0.18" type="marker"/>
         <node id="UHB-PBO_QH-1" len="0.25" pos="0.305" type="Q">
             <attributes>
