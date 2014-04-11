@@ -20,8 +20,8 @@
 		<module>plugins</module>
 		<module>extensions</module>
 		<module>services</module>
-		
 		<module>library</module>				
+		<module>apps</module>
 	</modules>
 	
 	<dependencies>

@@ -3,9 +3,9 @@
 	<modelVersion>4.0.0</modelVersion>
 	
 	<parent>
-		<groupId>se.lu.esss.ics</groupId>
-		<artifactId>ess-java-config</artifactId>
-		<version>1.0.0</version>
+		<groupId>org.xal</groupId>
+		<artifactId>openxal.extensions</artifactId>
+		<version>1.0.0-SNAPSHOT</version>
 	</parent>
 	
 	<groupId>se.lu.esss.ics.jels</groupId>
@@ -16,16 +16,12 @@
 	<name>ESS JElS</name>
 	<url>http://europeanspallationsource.se/</url>
 
-	<dependencies>		
-		<dependency>
-			<groupId>org.xal</groupId>
-			<artifactId>openxal.core</artifactId>
-			<version>1.0.0-SNAPSHOT</version>
-		</dependency>
+	<dependencies>
 		<dependency>
 			<groupId>org.xal</groupId>
 			<artifactId>openxal.plugins.jca</artifactId>
-			<version>1.0.0-SNAPSHOT</version>			
+			<version>1.0.0-SNAPSHOT</version>	
+			<scope>runtime</scope>			
 		</dependency>
 	</dependencies>
 </project>

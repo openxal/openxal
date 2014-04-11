@@ -13,8 +13,8 @@ CURRENT_DIR=`dirname $0`
 mkdir -p $DESTINATION
 
 cp $CURRENT_DIR/../../../openxal-score/packaging/target/codac-core-4.1-openxal-score-4.1.0.v1.0-1.el6.x86_64.rpm $DESTINATION
-cp $CURRENT_DIR/../../../jels/packaging/ess-data/target/codac-core-4.1-openxal-ess-data-4.1.0.v1.0-1.el6.x86_64.rpm $DESTINATION
-cp $CURRENT_DIR/../../../openxal/packaging/target/codac-core-4.1-openxal-4.1.0.v1.0-1.el6.x86_64.rpm $DESTINATION
+cp $CURRENT_DIR/../../../openxal/packaging/ess-data/target/codac-core-4.1-openxal-ess-data-4.1.0.v1.0-1.el6.x86_64.rpm $DESTINATION
+cp $CURRENT_DIR/../../../openxal/packaging/openxal-meta/target/codac-core-4.1-openxal-4.1.0.v1.0-1.el6.x86_64.rpm $DESTINATION
 cp $CURRENT_DIR/../../../openxal/core/packaging/target/codac-core-4.1-openxal-core-4.1.0.v1.0-1.el6.x86_64.rpm $DESTINATION
 cp $CURRENT_DIR/../../../openxal/apps/packaging/opticseditor/target/codac-core-4.1-openxal-opticseditor-4.1.0.v1.0-1.el6.x86_64.rpm $DESTINATION
 cp $CURRENT_DIR/../../../openxal/apps/packaging/knobs/target/codac-core-4.1-openxal-knobs-4.1.0.v1.0-1.el6.x86_64.rpm $DESTINATION

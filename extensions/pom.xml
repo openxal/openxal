@@ -23,7 +23,8 @@
 		<module>scan</module>			
 		<module>service</module>			
 		<module>solver</module>			
-		<module>widgets</module>					
+		<module>widgets</module>
+		<module>jels</module>
 		<module>../services/pvlogger/extension</module>			
 		<module>../services/worker/extension</module>					
 	</modules>

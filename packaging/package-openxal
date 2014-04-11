@@ -6,7 +6,6 @@ if [ -z "$1" ]; then
     echo " Command assumes following projects are side-by-side in the directory structure: "
     echo "  openxal-deps "
     echo "  openxal"
-    echo "  jels"
     echo "  openxal-score"
 
     exit 1
@@ -18,13 +17,11 @@ CURRENT_DIR=`readlink -f $CUR_DIR_TEMP`
 # Clear old rpms
 cd $CURRENT_DIR/../../openxal
 find -iname '*.rpm' | xargs rm -f
-cd $CURRENT_DIR/../../jels
-find -iname '*.rpm' | xargs rm -f
 cd $CURRENT_DIR/../../openxal-score
 find -iname '*.rpm' | xargs rm -f
 
 cd $CURRENT_DIR/helper-scripts
-./package-core && ./package-jels && ./package-pvlogger-service && ./package-apps && ./package-score
+./package-core && ./package-pvlogger-service && ./package-apps && ./package-score
 
 if [ $? -ne 0 ]; then
   echo Failed during packaging parts of OpenXAL Distribution
