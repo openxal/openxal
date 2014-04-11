@@ -38,6 +38,7 @@
 							<dependency>java-${java.version}-${java.vendor}</dependency>
 							<requires version="current">%{codac_rpm_prefix}-openxal-core</requires>	
 							<requires version="current">%{codac_rpm_prefix}-openxal-ess-data</requires>												
+							<requires version="current">%{codac_rpm_prefix}-postgres-iter</requires>												
 
 							<include type="config" source="pvlogger-data/local.dbconfig" target="openxal/" />
 							<include type="config" source="pvlogger-data/pvlogger-postgres-schema.xml" target="openxal/" />
