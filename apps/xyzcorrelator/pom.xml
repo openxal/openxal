@@ -41,12 +41,12 @@
 		<dependency>
 			<groupId>org.xal</groupId>
 			<artifactId>openxal.extensions.fit</artifactId>
-			<version>${version}</version>		
+			<version>${project.version}</version>		
 		</dependency>
 		<dependency>
 			<groupId>org.xal</groupId>
 			<artifactId>openxal.extensions.recordselector</artifactId>
-			<version>${version}</version>		
+			<version>${project.version}</version>		
 		</dependency>
 	</dependencies>
 </project>

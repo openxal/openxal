@@ -41,7 +41,7 @@
 			<dependency>
 					<groupId>org.xal</groupId>
 					<artifactId>openxal.services.pvlogger</artifactId>
-					<version>${version}</version>
+					<version>${project.version}</version>
 			</dependency>
 	</dependencies>
 </project>

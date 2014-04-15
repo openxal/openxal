@@ -36,17 +36,17 @@
 		<dependency>		
 			<groupId>org.xal</groupId>
 			<artifactId>openxal.extensions.pvlogger</artifactId>
-			<version>${version}</version>			
+			<version>${project.version}</version>			
 		</dependency>
 		<dependency>		
 			<groupId>org.xal</groupId>
 			<artifactId>openxal.extensions.recordselector</artifactId>
-			<version>${version}</version>			
+			<version>${project.version}</version>			
 		</dependency>
 		<dependency>		
 			<groupId>org.xal</groupId>
 			<artifactId>openxal.plugins.postgres</artifactId>
-			<version>${version}</version>
+			<version>${project.version}</version>
 			<scope>runtime</scope>		
 		</dependency>
 		<dependency>
@@ -58,7 +58,7 @@
 		<dependency>
 			<groupId>org.xal</groupId>
 			<artifactId>openxal.plugins.jca</artifactId>
-			<version>${version}</version>
+			<version>${project.version}</version>
 			<scope>runtime</scope>			
 		</dependency>
 		

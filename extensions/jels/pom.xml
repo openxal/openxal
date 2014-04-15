@@ -20,7 +20,7 @@
 		<dependency>
 			<groupId>org.xal</groupId>
 			<artifactId>openxal.plugins.jca</artifactId>
-			<version>${version}</version>	
+			<version>${project.version}</version>	
 			<scope>runtime</scope>			
 		</dependency>
 	</dependencies>

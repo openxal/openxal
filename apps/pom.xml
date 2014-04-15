@@ -37,79 +37,79 @@
 		<dependency>
 			<groupId>org.xal</groupId>
 			<artifactId>openxal.extensions.widgets</artifactId>
-			<version>${version}</version>
+			<version>${project.version}</version>
 		</dependency>					
 		<dependency>
 			<groupId>org.xal</groupId>
 			<artifactId>openxal.extensions.bricks</artifactId>
-			<version>${version}</version>
+			<version>${project.version}</version>
 		</dependency>					
 		<dependency>
 			<groupId>org.xal</groupId>
 			<artifactId>openxal.extensions.service</artifactId>
-			<version>${version}</version>
+			<version>${project.version}</version>
 		</dependency>					
 		<dependency>
 			<groupId>org.xal</groupId>
 			<artifactId>openxal.extensions.application</artifactId>
-			<version>${version}</version>
+			<version>${project.version}</version>
 		</dependency>					
 		<dependency>
 			<groupId>org.xal</groupId>
 			<artifactId>openxal.extensions.pvlogger</artifactId>
-			<version>${version}</version>
+			<version>${project.version}</version>
 		</dependency>					
 		<dependency>
 			<groupId>org.xal</groupId>
 			<artifactId>openxal.extensions.extlatgen</artifactId>
-			<version>${version}</version>
+			<version>${project.version}</version>
 		</dependency>					
 		<dependency>
 			<groupId>org.xal</groupId>
 			<artifactId>openxal.extensions.solver</artifactId>
-			<version>${version}</version>
+			<version>${project.version}</version>
 		</dependency>					
 		<dependency>
 			<groupId>org.xal</groupId>
 			<artifactId>openxal.extensions.fit</artifactId>
-			<version>${version}</version>
+			<version>${project.version}</version>
 		</dependency>					
 		<dependency>
 			<groupId>org.xal</groupId>
 			<artifactId>openxal.extensions.orbit</artifactId>
-			<version>${version}</version>
+			<version>${project.version}</version>
 		</dependency>					
 		<dependency>
 			<groupId>org.xal</groupId>
 			<artifactId>openxal.extensions.recordselector</artifactId>
-			<version>${version}</version>
+			<version>${project.version}</version>
 		</dependency>					
 		<dependency>
 			<groupId>org.xal</groupId>
 			<artifactId>openxal.extensions.scan</artifactId>
-			<version>${version}</version>
+			<version>${project.version}</version>
 		</dependency>					
 		<dependency>
 			<groupId>org.xal</groupId>
 			<artifactId>openxal.extensions.worker</artifactId>
-			<version>${version}</version>
+			<version>${project.version}</version>
 		</dependency>					
 		<dependency>
 			<groupId>org.xal</groupId>
 			<artifactId>openxal.plugins.jca</artifactId>
-			<version>${version}</version>
+			<version>${project.version}</version>
 			<scope>runtime</scope>			
 		</dependency>
 		<dependency>
 			<groupId>org.xal</groupId>
 			<artifactId>openxal.plugins.postgres</artifactId>
-			<version>${version}</version>
+			<version>${project.version}</version>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>se.lu.esss.ics.jels</groupId>
 			<artifactId>jels</artifactId>
-			<version>${version}</version>
+			<version>${project.version}</version>
 			<scope>runtime</scope>
 		</dependency>	
     </dependencies>

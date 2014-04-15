@@ -20,7 +20,7 @@
 		<dependency>		
 			<groupId>org.xal</groupId>
 			<artifactId>openxal.extensions.service</artifactId>
-			<version>${version}</version>			
+			<version>${project.version}</version>			
 		</dependency>
 	</dependencies>
 </project>

@@ -22,7 +22,7 @@
 		<dependency>
 			<groupId>org.xal</groupId>
 			<artifactId>openxal.core</artifactId>
-			<version>${version}</version>
+			<version>${project.version}</version>
 		</dependency>	
 	</dependencies>
 </project>
