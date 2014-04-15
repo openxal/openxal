@@ -5,11 +5,11 @@
 	<parent>
 		<groupId>org.xal</groupId>
 		<artifactId>openxal.apps</artifactId>
-		<version>1.0.0-SNAPSHOT</version>
+		<version>1.0.0</version>
 	</parent>
 	
 	<artifactId>openxal.apps.mtv</artifactId>
-	<version>1.0.0-SNAPSHOT</version>
+	<version>1.0.0</version>
 	
 	<build>
 		<sourceDirectory>src</sourceDirectory>
