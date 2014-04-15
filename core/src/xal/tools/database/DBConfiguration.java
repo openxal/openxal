@@ -248,13 +248,13 @@ public class DBConfiguration {
 	
 	/** determine whether a defualt configuraiton has been specified */
 	static public boolean hasDefaultConfiguration() {
+		String urlSpec = null;
 		try {
-			final String urlSpec = getDefaultURLSpec();
-			System.out.println("SPEC STRING: "+urlSpec);
-			System.out.println("URL SPEC: "+urlSpec != null && urlSpec != "" && new File( new URL( urlSpec ).toURI() ).exists());
+			urlSpec = getDefaultURLSpec();
 			return urlSpec != null && urlSpec != "" && new File( new URL( urlSpec ).toURI() ).exists();
 		}
 		catch ( Exception exception ) {
+			System.out.println("Database configuration: "+urlSpec);
 			return false;
 		}
 	}
