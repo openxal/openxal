@@ -14,9 +14,7 @@
 
 	<properties>
 		<unit.type>module</unit.type>
-		
-		<openxal.version>1.0.0-SNAPSHOT</openxal.version>
-		
+		<openxal.version>1.0.0</openxal.version>
 	</properties>
 
 	<developers>
@@ -62,7 +60,7 @@
 							<resources>
 								<resource>
 									<directory>${project.basedir}/../../dbbrowser/target</directory>
-									<include>openxal.apps.dbbrowser-1.0.0-SNAPSHOT.jar</include>
+									<include>openxal.apps.dbbrowser-${openxal.version}.jar</include>
 								</resource>
 							</resources>
 						</configuration>
