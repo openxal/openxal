@@ -19,12 +19,12 @@
 		<dependency>		
 			<groupId>org.xal</groupId>
 			<artifactId>openxal.extensions.service</artifactId>
-			<version>1.0.0-SNAPSHOT</version>			
+			<version>${version}</version>			
 		</dependency>	
 		<dependency>		
 			<groupId>org.xal</groupId>
 			<artifactId>openxal.extensions.widgets</artifactId>
-			<version>1.0.0-SNAPSHOT</version>			
+			<version>${version}</version>			
 		</dependency>	
 	</dependencies>
 </project>

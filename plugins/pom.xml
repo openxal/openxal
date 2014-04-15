@@ -23,7 +23,7 @@
 		<dependency>
 			<groupId>org.xal</groupId>
 			<artifactId>openxal.core</artifactId>
-			<version>1.0.0-SNAPSHOT</version>
+			<version>${version}</version>
 		</dependency>
 	</dependencies>
 </project>

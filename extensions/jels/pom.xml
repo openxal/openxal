@@ -10,7 +10,7 @@
 	
 	<groupId>se.lu.esss.ics.jels</groupId>
 	<artifactId>jels</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1.0.0-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
 	<name>ESS JElS</name>
@@ -20,7 +20,7 @@
 		<dependency>
 			<groupId>org.xal</groupId>
 			<artifactId>openxal.plugins.jca</artifactId>
-			<version>1.0.0-SNAPSHOT</version>	
+			<version>${version}</version>	
 			<scope>runtime</scope>			
 		</dependency>
 	</dependencies>

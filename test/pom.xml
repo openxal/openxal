@@ -86,7 +86,7 @@
 		<dependency>
 			<groupId>org.xal</groupId>
 			<artifactId>openxal.plugins.jca</artifactId>
-			<version>1.0.0-SNAPSHOT</version>
+			<version>${version}</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
