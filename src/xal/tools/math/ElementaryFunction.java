@@ -121,6 +121,110 @@ public final class ElementaryFunction {
      */
     
     
+    /*
+     * Algebraic Functions
+     */
+    
+    /**
+     * Computes the factorial of the given integer.  The factorial
+     * <i>n</i>! of the number <i>n</i> is defined
+     * <br/>
+     * <br/>
+     * &nbsp; &nbsp;  <i>n</i>! &equiv; 1 &middot; 2 &middot; &hellip; &middot; (<i>n</i> - 1) &middot; <i>n</i> 
+     *
+     * @param n     integer to be "factorialized"
+     * 
+     * @return      <i>n</i>! = factorial of argument
+     *
+     * @author Christopher K. Allen
+     * @since  Dec 9, 2011
+     */
+    public static final int factorial(int n) {
+        if (n < 0)
+            return 0;
+        
+        int     intFac = 1;
+        
+        for (int i=n; i>0; i++)  
+            intFac *= i;
+            
+        return intFac;
+    }
+    
+    /**
+     * <p>
+     * Returns the value of the first argument raised to the power of the second argument
+     * <i>dblBase</i><sup><i>dblExpon</i></sup>. Special cases:
+     * <br/>
+     * <br/>&middot; If the second argument is positive or negative zero, then the result is 1.0.
+     * <br/>&middot; If the second argument is 1.0, then the result is the same as the first argument.
+     * <br/>&middot; If the second argument is NaN, then the result is NaN.
+     * <br/>&middot; If the first argument is NaN and the second argument is nonzero, then the result is NaN.
+     * <p>
+     * <p>
+     * This method should be used over that of <code>{@link Math#pow(double, double)}</code> whenever the
+     * exponent is an integer.  Since the later must consider the case of non-integer exponents the 
+     * algorithm used there is more expensive than the simple multiplication used here.
+     * </p>
+     * 
+     * @param dblBase   the base of the exponential
+     * @param intExpon  the exponent
+     * 
+     * @return          the value <var>dblBase<sup>dblExpon</var></sup>
+     *
+     * @author Christopher K. Allen
+     * @since  Dec 9, 2011
+     */
+    public static final double pow(double dblBase, int intExpon) {
+        double  dblFac = 1.0;
+        
+        if (intExpon > 0)
+            for (int i=0; i<intExpon; i++) 
+                dblFac *= dblBase;
+        else
+            for (int i=0; i<Math.abs(intExpon); i++) 
+                dblFac /= dblBase;
+        
+        return dblFac;
+    }
+    
+    /**
+     * <p>
+     * Returns the value of the first argument raised to the power of the second argument
+     * <i>intBase</i><sup><i>intExpon</i></sup> where the base is an integer. Special cases:
+     * <br/>
+     * <br/>&middot; If the second argument is positive or negative zero, then the result is 1.0.
+     * <br/>&middot; If the second argument is 1.0, then the result is the same as the first argument.
+     * <br/>&middot; If the second argument is NaN, then the result is NaN.
+     * <br/>&middot; If the first argument is NaN and the second argument is nonzero, then the result is NaN.
+     * <p>
+     * <p>
+     * This method should be used over that of <code>{@link Math#pow(double, double)}</code> whenever both the
+     * base and the exponent are integers.  Since the later must consider the case of non-integer exponents the 
+     * algorithm used here is less expensive.
+     * </p>
+     * 
+     * @param intBase   the base of the exponential
+     * @param intExpon  the exponent
+     * 
+     * @return          the value <var>intBase<sup>intExpon</var></sup>
+     *
+     * @author Christopher K. Allen
+     * @since  Dec 9, 2011
+     */
+    public static final long pow(int intBase, int intExpon) {
+        long    lngFac = 1;
+        
+        if (intExpon > 0)
+            for (int i=0; i<intExpon; i++) 
+                lngFac *= intBase;
+        else
+            for (int i=0; i<Math.abs(intExpon); i++) 
+                lngFac /= intBase;
+        
+        return lngFac;
+    }
+
     
     /*
      * Engineering Functions
