@@ -33,7 +33,6 @@ public class PostgresDatabaseAdaptor extends DatabaseAdaptor {
 	 * @throws xal.tools.database.DatabaseException if a database exception is thrown
 	 */	
 	public Array getArray( final String type, final Connection connection, final Object array ) throws DatabaseException {
-		System.out.println( "Creating Postgres SQL Array..." );        
         Object[] newArray=null;
         
         if (array instanceof byte[]){            
