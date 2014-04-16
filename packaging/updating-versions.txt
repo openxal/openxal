@@ -1,0 +1,28 @@
+-= 1.STEP List Non-Packaging pom.xml-s =-
+
+Update the openxal/pom.xml (parent pom) to the new version, save the file then execute:
+
+    mvn versions:set -DnewVersion=1.0.0
+
+Note: To List the pom.xml-s execute this command: ag -l --ignore '*/packaging/*' --ignore 'packaging*' '1\.0\.0\-SNAPSHOT' .  | sort
+
+
+
+-= 2.STEP List Packaging pom.xml-s =-
+
+ 1. Replace string '<openxal.version>1.0.0-SNAPSHOT</openxal.version>' in the packaging files with newer version
+ 2. Replace the verion of the packaging/pom.xml and apps/packaging/pom.xml poms manually
+ 3. Update the pom.xml versions for the rpm pom to reflect version change (<version>1.0</version> to <version>1.1</version>) if necessary
+
+Note: To List the pom.xml-s execute this command:  ag -l -G  packaging '1\.0\.0\-SNAPSHOT' . | grep 'pom\.xml' | sort
+
+-= 3.STEP List Packaging scripts =-
+
+Replace version strings in the shell files with search & replace.
+
+ag -l -G  packaging '1\.0\.0\-SNAPSHOT' . | grep '\.sh' | sort
+
+
+-= 4. STEP Check for possible forgotten renames =-
+
+ag '1\.0\.0\-SNAPSHOT' .
