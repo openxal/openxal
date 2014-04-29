@@ -32,6 +32,7 @@ import xal.smf.AcceleratorSeq;
 import xal.tools.beam.CovarianceMatrix;
 import xal.tools.beam.PhaseMap;
 import xal.tools.beam.PhaseMatrix;
+import xal.tools.beam.PhaseVector;
 import xal.tools.beam.Twiss;
 import xal.tools.xml.XmlDataAdaptor;
 
@@ -224,7 +225,9 @@ public abstract class TestCommon {
 				}
 			}
 		}
-		pm.getFirstOrder().print(new PrintWriter(System.out));
+		/*PrintWriter pw = new PrintWriter(System.out);
+		pm.getFirstOrder().print(pw);
+		pw.flush();*/
 	}
 	
 
@@ -317,7 +320,7 @@ public abstract class TestCommon {
 				if (initialState == null) initialState = ps;
 			}
 		}
-		
+	
 		// transform T
 	/*	if (!(elementMapping instanceof ElsElementMapping)) {
 			double gamma_start = initialState.getGamma();
@@ -330,7 +333,9 @@ public abstract class TestCommon {
 				T[5][i]/=gamma_end;
 			}			
 		}*/
-		//pm.getFirstOrder().print();
+		/*PrintWriter pw = new PrintWriter(System.out);
+		pm.getFirstOrder().print(pw);
+		pw.flush();*/
 		double T77[][] = new double[7][7];		
 		for (int i=0; i<6; i++)
 			for (int j=0; j<6; j++)
@@ -361,7 +366,11 @@ public abstract class TestCommon {
 		return (x-y)/y;
 	}
 	
-	protected void checkTWResults(double gamma, double[][] cov) {
+	protected void checkTWResults(double gammaTw, double[][] centCovTw66) {
+		checkTWResults(gammaTw, centCovTw66, new double[] {0.,0.,0.,0.,0.,0.});
+	}
+	
+	protected void checkTWResults(double gammaTw, double[][] centCovTw66, double[] meanTw6) {
 		/*double[] alpha = new double[3],beta=new double[3],emit=new double[3], det=new double[3], sigma=new double[3], gama=new double[3];
 			
 		for (int i=0; i<3; i++) 
@@ -387,26 +396,43 @@ public abstract class TestCommon {
 		for (int i = 0; i<3; i++) {
 			System.out.printf("%c:%.0g %.0g %.0g ",'x'+i, tr(t[i].getAlpha(),alpha[i]), tr(t[i].getBeta(),beta[i]), tr(t[i].getEmittance(),emit[i]));	
 		}*/
-		System.out.printf("TW gamma diff: %.2g\n", tr(probe.getGamma(),gamma));
+		System.out.printf("TW gamma diff: %.2g\n", tr(probe.getGamma(),gammaTw));
 		
 		
 		// transform cov
 		for (int i=0; i<6; i++) {
-			cov[i][4]*=gamma;
-			cov[i][5]/=gamma;
-			cov[4][i]*=gamma;				
-			cov[5][i]/=gamma;
+			centCovTw66[i][4]*=gammaTw;
+			centCovTw66[i][5]/=gammaTw;
+			centCovTw66[4][i]*=gammaTw;				
+			centCovTw66[5][i]/=gammaTw;
 		}
 
-		double cov77[][] = new double[7][7];		
+		double centCovTw77[][] = new double[7][7];	
+		double meanTw7[] = new double[7];
 		for (int i=0; i<6; i++)
 			for (int j=0; j<6; j++)
-				cov77[i][j] = cov[i][j];
-		CovarianceMatrix pcov = ((EnvelopeProbe)probe).getCovariance();
-		PhaseMatrix pcov77 = new PhaseMatrix(cov77);
-		double n = pcov.minus(new PhaseMatrix(cov77)).norm2()/pcov77.norm2();
+				centCovTw77[i][j] = centCovTw66[i][j];
+		for (int i=0; i<6; i++)
+			meanTw7[i] = meanTw6[i];
+		meanTw7[6] = 1.0;
+		
+		CovarianceMatrix centCovOx = ((EnvelopeProbe)probe).getCovariance().computeCentralCovariance();
+		PhaseVector meanOx = ((EnvelopeProbe)probe).getCovariance().getMean();
+		PhaseMatrix centCovTw = new PhaseMatrix(centCovTw77);
+		PhaseVector meanTw = new PhaseVector(meanTw7);
+		
+		/*PrintWriter pw = new PrintWriter(System.out);
+		centCovOx.print(pw);
+		meanOx.print(pw);
+		meanOx.minus(meanTw).print(pw);
+		pw.flush();*/
+		
+		double n = centCovOx.minus(centCovTw).norm2()/centCovTw.norm2();
+		double n2 = meanOx.minus(meanTw).norm2();
+		if (meanTw.norm2()>0.) n2/=meanTw.norm2(); 
 		//pm.getFirstOrder().minus(new PhaseMatrix(new Matrix(T77))).print();
 		System.out.printf("TW cov matrix diff: %E\n",n);
+		System.out.printf("TW mean diff: %E\n",n2);
 	}
 
 }

@@ -9,6 +9,7 @@ package se.lu.esss.ics.jels.model.elem.jels;
 import xal.model.IComponent;
 import xal.model.elem.IdealDrift;
 import xal.model.elem.IdealMagQuad;
+import xal.model.elem.IdealMagSteeringDipole;
 import xal.model.elem.Marker;
 import xal.sim.scenario.ElementMapping;
 
@@ -53,6 +54,8 @@ public class JElsElementMapping extends ElementMapping {
 		putMap("qt", IdealMagQuad.class);
 		putMap("pq", IdealMagQuad.class);
 		putMap("rfgap", IdealRfGap.class);
+		putMap("dch", IdealMagSteeringDipole.class);
+		putMap("dcv", IdealMagSteeringDipole.class);
 		putMap("marker", Marker.class);
 	}
 }
