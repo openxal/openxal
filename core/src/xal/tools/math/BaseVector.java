@@ -963,15 +963,15 @@ public abstract class BaseVector<V extends BaseVector<V>> implements IArchive, j
      *
      *  @exception  IllegalArgumentException    argument is not same dimension as this
      */
-    public V minus(V vecAdd){
+    public V minus(V vecSub){
 
         try {
-            JVector     impSub = ((BaseVector<V>)vecAdd).getVector();
-            JVector     impDif = this.getVector().plus( impSub );
+            JVector     impSub = ((BaseVector<V>)vecSub).getVector();
+            JVector     impDif = this.getVector().minus( impSub );
 
-            V vecSum = this.newInstance( impDif );
+            V vecDif = this.newInstance( impDif );
 
-            return vecSum;
+            return vecDif;
             
         } catch (InstantiationException e) {
 
