@@ -56,6 +56,7 @@ GRANT ALL ON TABLE pvlog.mach_snapshot_sgnl TO pvlog;
 
 -- Populate snapshot types
 
-INSERT INTO mach_snapshot_type VALUES ('test_pysics_snapshot', 'test snapshot description', 60, 0, 'PHYSICS');
+INSERT INTO mach_snapshot_type VALUES ('default', 'default snapshot', 30000000000, 0, 'DEFAULT');
+INSERT INTO mach_snapshot_type VALUES ('test_physics_snapshot', 'test snapshot description', 60, 0, 'PHYSICS');
 INSERT INTO mach_snapshot_type VALUES ('test_testfac_snapshot', 'test snapshot description', 60, 0, 'TESTFAC');
 INSERT INTO mach_snapshot_type VALUES ('test_esh_snapshot', 'test snapshot description', 60, 0, 'ES&H');

@@ -14,7 +14,7 @@
 
 	<properties>
 		<unit.type>module</unit.type>
-		<pvlogger.service.version>1.0.0-SNAPSHOT</pvlogger.service.version>
+		<openxal.version>1.0.0</openxal.version>
 	</properties>
 
 	<developers>
@@ -44,8 +44,7 @@
 							<include type="config" source="pvlogger-data/pvlogger-postgres-schema.xml" target="openxal/" />
 							<include type="config" source="main/conf/xal.tools.database" target="openxal/" />
 							<include type="config" source="main/conf/create-pvlogger-postgres.sql" target="openxal/" />
-							<include type="file" source="pvlogger/openxal.services.pvlogger-${pvlogger.service.version}.jar" target="lib/openxal/" />	
-							<include type="file" source="lib/postgresql-9.1-901.jdbc4.jar" target="lib/openxal/" />	
+							<include type="file" source="pvlogger/openxal.services.pvlogger-${openxal.version}.jar" target="lib/openxal/" />	
 							<include type="script" file="pvlogger-service.sh" scripttype="user" name="pvlogger-service" />					
 							<scriptlet type="posttrans"><![CDATA[
 								unset NOCHANGE_EC
@@ -61,24 +60,6 @@
 						</package>
 					</packaging>
 				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-dependency-plugin</artifactId>
-				<executions>					
-					<execution>
-						<id>copy-dependencies</id>
-						<phase>validate</phase>
-						<goals>
-							<goal>copy-dependencies</goal>
-						</goals>
-						<configuration>
-							<outputDirectory>${project.build.directory}/lib</outputDirectory>
-							<includeScope>runtime</includeScope>
-							<overWriteIfNewer>true</overWriteIfNewer>
-						</configuration>
-					</execution>
-				</executions>
 			</plugin>
 			<plugin>
 				<artifactId>maven-resources-plugin</artifactId>
@@ -111,7 +92,7 @@
 							<resources>
 								<resource>
 									<directory>${project.basedir}/../../pvlogger/target</directory>
-									<include>openxal.services.pvlogger-${pvlogger.service.version}.jar</include>
+									<include>openxal.services.pvlogger-${openxal.version}.jar</include>
 								</resource>
 							</resources>
 						</configuration>

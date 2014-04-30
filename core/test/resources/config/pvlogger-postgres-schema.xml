@@ -20,6 +20,17 @@
 			<column attribute="comment" column="cmnt" />
 			<query name="nextPrimaryKey" sql="SELECT nextval('pvlog.mach_snapshot_id_seq')" />
 		</dbtable>
+		<service name="DEFAULT">
+			<dbtable entity="ChannelSnapshot" name="pvlog.mach_snapshot_sgnl">
+				<column attribute="machineSnapshot" column="snapshot_id" />
+				<column attribute="pv" column="sgnl_id" />
+				<column attribute="timestamp" column="sgnl_timestp" />
+				<column attribute="value" column="sgnl_val" />
+				<column attribute="status" column="sgnl_stat" />
+				<column attribute="severity" column="sgnl_svrty" />
+				<datatype name="valueArray" type="float8" />
+			</dbtable>
+		</service>
 		<service name="PHYSICS">
 			<dbtable entity="ChannelSnapshot" name="pvlog.mach_snapshot_sgnl">
 				<column attribute="machineSnapshot" column="snapshot_id" />
