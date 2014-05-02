@@ -1,0 +1,30 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<BricksDocument date="Fri May 02 13:34:35 EDT 2014" version="1.0.0">
+    <RootBrick>
+        <ViewNode height="744" tag="MainWindow" width="1085">
+            <ViewProxy type="javax.swing.JFrame"/>
+            <BeanProperty name="title" value="SCL Quad Fields"/>
+            <ViewNode tag="Main Vertical Layout">
+                <ViewProxy type="javax.swing.Box_Vertical"/>
+                <ViewNode tag="Button Box">
+                    <ViewProxy type="javax.swing.Box_Horizontal"/>
+                    <BeanProperty height="60" name="maximumSize" width="33636"/>
+                    <ViewNode tag="SnapshotButton">
+                        <ViewProxy type="javax.swing.JButton"/>
+                        <BeanProperty group="custom" iconName="snapshot24.gif" name="icon"/>
+                        <BeanProperty name="text" value=""/>
+                        <BeanProperty name="horizontalTextPosition" value="11"/>
+                        <BeanProperty name="toolTipText" value="Take snapshot of this window."/>
+                    </ViewNode>
+                    <ViewNode tag="Horizontal Glue">
+                        <ViewProxy type="javax.swing.Box_HorizontalGlue"/>
+                    </ViewNode>
+                </ViewNode>
+                <ViewNode tag="FieldPlot">
+                    <ViewProxy type="xal.extension.widgets.plot.FunctionGraphsJPanel"/>
+                    <BeanProperty name="name" value="SCL Quadrupole Field Distribution"/>
+                </ViewNode>
+            </ViewNode>
+        </ViewNode>
+    </RootBrick>
+</BricksDocument>
