@@ -56,6 +56,7 @@ module XAL
 	include_package "xal.smf.impl"
 	include_package "xal.ca"
 	include_package "xal.tools.dispatch"
+	include_package "xal.extension.widgets.smf"
 end
 
 
@@ -127,17 +128,19 @@ class ControlApp
 		@window_reference = window_reference
 
 		@main_window = window_reference.getWindow
-		@field_plot = self.loadFieldPlot( window_reference )
 
 		SnapshotHandler.new( window_reference )
+
+		self.fetchSequence
+
+		# the plot needs to be loaded after the sequence is fetched
+		@field_plot = self.loadFieldPlot( window_reference )
 
 		self.fetchMagnets
 	end
 
 
-	def fetchMagnets
-		@willRefresh = false
-
+	def fetchSequence
 		# load the optics for the Ring sequence
 		accelerator = XMLDataManager.loadDefaultAccelerator
 		if accelerator == nil
@@ -152,8 +155,13 @@ class ControlApp
 			exit 0
 		end
 		@sequence = sequence
+	end
 
-		quads = sequence.getNodesOfType( XAL::Quadrupole.s_strType, true )
+
+	def fetchMagnets
+		@willRefresh = false
+
+		quads = @sequence.getNodesOfType( XAL::Quadrupole.s_strType, true )
 		@monitors = []
 		quads.each do |magnet|
 			monitor = FieldMonitor.new( magnet, self )
@@ -190,6 +198,10 @@ class ControlApp
 		plot.setLegendVisible( false )
 
 		SimpleChartPopupMenu.addPopupMenuTo plot
+
+		synopticPanel = XAL::FunctionGraphsXALSynopticAdaptor.assignXALSynopticViewTo( plot, @sequence )
+		window_reference.getView( "Main Vertical Layout" ).add( synopticPanel )
+
 		return plot
 	end
 
