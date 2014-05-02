@@ -127,7 +127,7 @@ class ControlApp
 		@window_reference = window_reference
 
 		@main_window = window_reference.getWindow
-		@field_plot = window_reference.getView( "FieldPlot" )
+		@field_plot = self.loadFieldPlot( window_reference )
 
 		SnapshotHandler.new( window_reference )
 
@@ -182,8 +182,8 @@ class ControlApp
 	end
 
 	
-	def loadFieldPlot( window_reference, viewID )
-		plot = window_reference.getView( viewID )
+	def loadFieldPlot( window_reference )
+		plot = window_reference.getView( "FieldPlot" )
 		plot.setGridLineColor( Color::LIGHT_GRAY )
 		plot.setAxisNameX( "Beamline Position (meters)" )
 		plot.setAxisNameY( "Field Gradient (T/m)" )
