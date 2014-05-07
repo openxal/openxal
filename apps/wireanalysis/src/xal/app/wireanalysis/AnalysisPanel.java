@@ -183,8 +183,8 @@ public class AnalysisPanel extends JPanel{
 
 
     public void makeComponents(){
+		mainPanel = new JPanel();
 		mainPanel.setPreferredSize(new Dimension(460, 575));
-		mainPanel.setPreferredSize(new Dimension(420, 575));
 		mainPanel.setBorder(BorderFactory.createTitledBorder("Profile Analysis"));
 		//mainPanel.setBorder(BorderFactory.createRaisedBevelBorder());
 
