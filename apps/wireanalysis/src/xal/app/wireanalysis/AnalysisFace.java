@@ -100,9 +100,9 @@ public class AnalysisFace extends JPanel{
     }
     
     public void makeComponents(){
+		mainPanel = new JPanel();
 		mainPanel.setPreferredSize(new Dimension(980, 750));
-        mainPanel.setPreferredSize(new Dimension(950, 750));
-        
+
         loadbutton = new JButton("Load Table");
         analyzebutton = new JButton("Get All RMS");
         //	analyzebutton.setEnabled(false);
