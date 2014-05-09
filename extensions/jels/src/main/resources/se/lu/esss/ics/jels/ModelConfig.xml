@@ -12,6 +12,8 @@
 		<map smf="q" model="xal.model.elem.IdealMagQuad"/>
 		<map smf="qt" model="xal.model.elem.IdealMagQuad"/>
 		<map smf="pq" model="xal.model.elem.IdealMagQuad"/>
+		<map smf="dch" model="xal.model.elem.IdealMagSteeringDipole"/>
+		<map smf="dcv" model="xal.model.elem.IdealMagSteeringDipole"/>
 		<map smf="rfgap" model="se.lu.esss.ics.jels.model.elem.jels.IdealRfGap"/>
 		<map smf="marker" model="xal.model.elem.Marker"/>
     </associations>

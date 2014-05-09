@@ -7,6 +7,8 @@
    <device type="Q" class="xal.smf.impl.Quadrupole"/>
    <device type="QH" class="xal.smf.impl.Quadrupole"/>
    <device type="QV" class="xal.smf.impl.Quadrupole"/>
+   <device type="DCV" class="xal.smf.impl.VDipoleCorr"/>
+   <device type="DCH" class="xal.smf.impl.HDipoleCorr"/>
    <device type="QSC" class="xal.smf.impl.Quadrupole"/>
    <device type="RF" class="se.lu.esss.ics.jels.smf.impl.ESSRfCavity"/>
    <device type="RG" class="se.lu.esss.ics.jels.smf.impl.ESSRfGap"/>
