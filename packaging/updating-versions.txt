@@ -1,10 +1,10 @@
 -= 1.STEP List Non-Packaging pom.xml-s =-
 
-Update the openxal/pom.xml (parent pom) to the new version, save the file then execute:
+Update files to new version by executing: 
 
-    mvn versions:set -DnewVersion=1.0.0
+    mvn versions:set -DnewVersion=1.0.2
 
-Note: To List the pom.xml-s execute this command: ag -l --ignore '*/packaging/*' --ignore 'packaging*' '1\.0\.0\-SNAPSHOT' .  | sort
+Note: To List the pom.xml-s execute this command: ag -l --ignore '*/packaging/*' --ignore 'packaging*' '1\.0\.1\-SNAPSHOT' .  | sort
 
 
 

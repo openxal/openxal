@@ -15,7 +15,7 @@
 	<properties>
 		<unit.type>module</unit.type>
 		
-		<openxal.version>1.0.0</openxal.version>
+		<openxal.version>1.0.1-SNAPSHOT</openxal.version>
 	</properties>
 
 	<developers>
