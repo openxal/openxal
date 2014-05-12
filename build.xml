@@ -257,6 +257,7 @@
 			<dirset dir="${extensions.root}" includes="*" />
 			<dirset dir="${plugins.root}" includes="*" />
 			<dirset dir="${services.root}" includes="*/extension" />
+			<dirset dir="${apps.root}" includes="*/extension" />
 		</subant>
 		<echo file="${doc.builder}" append="true">
 			&lt;/sourcepath&gt;
