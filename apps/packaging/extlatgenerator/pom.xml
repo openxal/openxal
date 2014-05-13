@@ -3,7 +3,7 @@
 	<groupId>se.esss.codac.units</groupId>
 	<artifactId>openxal-extlatgenerator</artifactId>
 	<packaging>codac</packaging>
-	<version>1.0</version>
+	<version>1.1</version>
 	<name>Ext Lat Generator</name>
 
 	<parent>
