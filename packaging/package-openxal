@@ -29,7 +29,9 @@ if [ $? -ne 0 ]; then
 fi
 
 cd $CURRENT_DIR/../../openxal/packaging
-mvn clean && mvn package
+
+# Iter Maven ignores user settings, using -s file makes it take it into account
+mvn -s ~/.m2/settings.xml clean && mvn -s ~/.m2/settings.xml package
 
 if [ $? -ne 0 ]; then
   echo Failed during creation of OpenXAL Meta Package

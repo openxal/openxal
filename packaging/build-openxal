@@ -19,7 +19,7 @@ CURRENT_DIR=`readlink -f $CURRENT_DIR_TEMP`
 
 # Build openxal 
 cd $CURRENT_DIR/../../openxal
-mvn clean && mvn $COMMAND
+mvn -s ~/.m2/settings.xml clean && mvn -s ~/.m2/settings.xml $COMMAND
 if [ $? -ne 0 ]; then
   echo Failed on building openxal
 	exit 1
@@ -27,7 +27,9 @@ fi
 
 # Build openxal-score
 cd $CURRENT_DIR/../../openxal-score
-mvn clean && mvn $COMMAND
+
+# Iter Maven somehow ignores user settings which we need for deploying artifacts (identifying on the server)
+mvn -s ~/.m2/settings.xml clean && mvn -s ~/.m2/settings.xml $COMMAND
 if [ $? -ne 0 ]; then
 	echo Failed on building Score
 	exit 4
