@@ -7,7 +7,6 @@ if [ -z "$1" ]; then
     echo " Command assumes following projects are side-by-side in the directory structure: "
     echo "  openxal-deps "
     echo "  openxal"
-    echo "  openxal-score"
     
     exit 1
 fi
@@ -21,17 +20,7 @@ CURRENT_DIR=`readlink -f $CURRENT_DIR_TEMP`
 cd $CURRENT_DIR/../../openxal
 mvn -s ~/.m2/settings.xml clean && mvn -s ~/.m2/settings.xml $COMMAND
 if [ $? -ne 0 ]; then
-  echo Failed on building openxal
-	exit 1
-fi
-
-# Build openxal-score
-cd $CURRENT_DIR/../../openxal-score
-
-# Iter Maven somehow ignores user settings which we need for deploying artifacts (identifying on the server)
-mvn -s ~/.m2/settings.xml clean && mvn -s ~/.m2/settings.xml $COMMAND
-if [ $? -ne 0 ]; then
-	echo Failed on building Score
-	exit 4
+    echo Failed on building openxal
+    exit 2
 fi
 
