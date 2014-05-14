@@ -29,30 +29,20 @@
 			</plugin>
 
 			<!-- Add the correct tests classes -->
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>build-helper-maven-plugin</artifactId>
-				<version>1.8</version>
-				<executions>
-					<execution>
-						<phase>generate-sources</phase>
-						<goals><goal>add-test-source</goal></goals>
-						<configuration>
-						<sources>
-							<source>${project.parent.basedir}/core/test/src</source>
-						</sources>
-					</configuration>
-				</execution>
-				</executions>
-			</plugin>
-
-
-			<!-- Add the resources from core/test -->
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>build-helper-maven-plugin</artifactId>
-				<version>1.8</version>
-				<executions>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <version>1.8</version>
+                <executions>
+                    <execution>
+                        <phase>generate-sources</phase>
+                        <goals><goal>add-test-source</goal></goals>
+                        <configuration>
+                            <sources>
+                            <source>${project.parent.basedir}/core/test/src</source>
+                            </sources>
+                        </configuration>
+                    </execution>
 					<execution>
 						<id>add-test-resource</id>
 						<phase>generate-test-sources</phase>
@@ -66,10 +56,9 @@
 							</resource>
 						</resources>
 						</configuration>
-					</execution> 
-				</executions>
-			</plugin>
-
+					</execution>                     
+                </executions>
+            </plugin>
 		</plugins>
 	</build>
 	<dependencies>
