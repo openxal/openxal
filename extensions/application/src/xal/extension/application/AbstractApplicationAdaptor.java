@@ -25,7 +25,10 @@ import java.net.*;
 abstract public class AbstractApplicationAdaptor implements ApplicationListener {
 	/** wildcard file extension */
 	static public final String WILDCARD_FILE_EXTENSION = FileFilterFactory.WILDCARD_FILE_EXTENSION;
-	
+
+	/** name for the gui bricks resource which may or may not exist */
+	static public final String GUI_BRICKS_RESOURCE = "gui.bricks";
+
 	
 	/**
 	 * Launch the application with the specified document URLs.
@@ -150,8 +153,7 @@ abstract public class AbstractApplicationAdaptor implements ApplicationListener 
 	
 	/** Get the window reference from the resource if any */
 	public WindowReference getDefaultWindowReference( final String tag, final Object... parameters ) {
-		final String path = getGUIDefinitionPath();
-		final URL url = getClass().getResource( path );
+		final URL url = getResourceURL( GUI_BRICKS_RESOURCE );
 		return new WindowReference( url, tag, parameters );
 	}
     
@@ -183,30 +185,7 @@ abstract public class AbstractApplicationAdaptor implements ApplicationListener 
     
     
     // --------- Application resources -----------------------------------------
-    
-    /**
-	 * Subclasses should override this method if the resources folder path is in a location other than the default one.  The default file path is a subfolder called <code>resources</code> 
-     * located within the same folder where the runtime subclass of ApplicationAdaptor resides. Java package path notation is used. For example "xal.app.Myapp.resources".
-     * @return The resource path in classpath notation
-     */
-    public String getResourcesPath() {
-        String packageName = getClass().getPackage().getName();
-        return packageName + ".resources";
-    }
-	
-    
-    /**
-	 * Get the path to the specified named resource which resides in the the resource folder path as specified by the getResourcesPath() method.  For example if 
-	 * the resources path is xal.app.Myapp.resources and we wish to get the resource path to the menudef.properties file, the resourceName to specify 
-	 * would simply be "menudef" and the method would return "xal.app.Myapp.resources.menudef".
-	 * @param resourceName The name of the resource for which to get the path
-     * @return The resource definition properties file path in classpath notation
-	 * @see #getResourcesPath
-     */
-    final public String getPathToResource( final String resourceName ) {
-        return getResourcesPath() + "." + resourceName;
-    }
-	
+
 	
 	/** 
 	 * Get the URL to the specified resource file residing within the resources folder.
@@ -216,45 +195,4 @@ abstract public class AbstractApplicationAdaptor implements ApplicationListener 
 	public URL getResourceURL( final String resourceName ) {
 		return getClass().getResource( "resources/" + resourceName );
 	}
-	
-    
-    /**
-	 * Subclasses should override this method if the menudefinition properties file is in a location other than the default one.  The default file path is 
-     * a properties file called <code>"menudef.properties"</code> located in the resources folder.  Java package path notation is used.  The file's suffix is excluded from the path.
-     * For example "xal.app.Myapp.resources.menudef".
-     * @return The menu definition properties file path in classpath notation
-     */
-    public String getMenuDefinitionPath() {
-        return getPathToResource( "menudef" );
-    }
-    
-    
-    /**
-	 * Subclasses should override this method if the application information properties (displayed in the "About" box) file is in a location other than the default one.  
-     * The default file path is a properties file called <code>"About.properties"</code> located in the resources folder.  Java package path notation is used.  The file's 
-     * suffix is excluded from the path. For example "xal.app.Myapp.resources.About".
-     * @return The application information properties file path in classpath notation
-     */
-    public String getApplicationInfoPath() {
-        return getPathToResource( "About" );
-    }
-    
-    
-    /**
-	 * Subclasses should override this method if the application Help file is in a location other than the default one.  
-     * The default file is an HTML file called <code>"Help.html"</code> located in the resources folder.  Standard relative URL notation is used. For example "resources/Help.html".
-     * @return the relative application help path in posix notation
-     */
-    public String getApplicationHelpPath() {
-        return "resources/Help.html";
-    }	
-    
-    
-    /**
-	 * Subclasses may override this method if the GUI definition file has a different name.  
-     * @return the relative application GUI definition file
-     */
-    public String getGUIDefinitionPath() {
-        return "resources/gui.bricks";
-    }	
 }

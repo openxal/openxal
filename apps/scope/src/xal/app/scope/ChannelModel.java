@@ -67,7 +67,7 @@ public class ChannelModel implements TraceSource, DataListener, TimeModelListene
     static {
 		final String SAMPLE_PERIOD_PV_SUFFIX_KEY = "waveformSamplePeriodPvSuffix";
 		final String DELAY_PV_SUFFIX_KEY = "waveformDelayPvSuffix";
-		java.util.Map<String,String> properties = Util.getPropertiesFromResource( "scope" );
+		java.util.Map<String,String> properties = Util.getPropertiesForResource( "scope.properties" );
 		// use the scope.properties file to get the defaul value, but allow it to be overriden as a command line property
 		SAMPLE_PERIOD_PV_SUFFIX = System.getProperties().getProperty(SAMPLE_PERIOD_PV_SUFFIX_KEY, properties.get(SAMPLE_PERIOD_PV_SUFFIX_KEY));
 		DELAY_PV_SUFFIX = System.getProperties().getProperty(DELAY_PV_SUFFIX_KEY, properties.get(DELAY_PV_SUFFIX_KEY));

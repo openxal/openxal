@@ -94,10 +94,9 @@ abstract class XalAbstractDocument implements Pageable {
 	 * other than the default specified in application adaptor.  The document menu inherits the
 	 * application menu definition.  This custom path allows the document to modify the
 	 * application wide definitions for this document.  By default this method returns null.
-     * @return The menu definition properties file path in classpath notation
-	 * @see ApplicationAdaptor#getPathToResource
+     * @return The menu definition properties file name
      */
-    protected String getCustomMenuDefinitionPath() {
+    protected String getCustomMenuDefinitionResource() {
 		return null;
     }
 	

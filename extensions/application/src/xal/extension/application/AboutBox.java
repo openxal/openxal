@@ -6,6 +6,7 @@
 
 package xal.extension.application;
 
+import java.net.URL;
 import java.util.*;
 import java.util.logging.*;
 import javax.swing.*;
@@ -24,6 +25,9 @@ import java.awt.Dimension;
 class AboutBox {
 	/** the about box instance */
     final static private AboutBox _aboutBox;
+
+	/** resource for the About box information */
+	final static public String ABOUT_INFO_RESOURCE = "About.properties";
 	
 	/** information to display */
 	final protected String _message;
@@ -33,15 +37,14 @@ class AboutBox {
     
 	
     static {
-        final String infoSource = getInfoSource();
-		_aboutBox = ( infoSource != null ) ? new AboutBox( infoSource ) : null;
+		_aboutBox = new AboutBox();
     }
     
     
     /** Creates a new instance of AboutBox */
-    public AboutBox( final String infoSource ) {
+    public AboutBox() {
         _title = "About " + Application.getAdaptor().applicationName();
-        _message = generateMessage( infoSource );
+        _message = generateMessage();
     }
     
     
@@ -56,11 +59,10 @@ class AboutBox {
     
     /**
      * Generate the HTML message that appears in the about box.
-     * @param infoSource The path to the information to display in the about box.
 	 * @return the generated message
      */
-    private String generateMessage( final String infoSource ) {
-        final Map<String,String> appInfo = loadApplicationInfo( infoSource );
+    private String generateMessage() {
+        final Map<String,String> appInfo = loadApplicationInfo();
         
         StringBuffer message = new StringBuffer( "<html>" );
         message.append( "<head>" );
@@ -132,17 +134,16 @@ class AboutBox {
      * Load the application information from the properties file specified by 
      * the application adaptor.  The resource bundle information is stored in 
      * a Map for convenient access.
-     * @param path Path to the source information.
      * @return The map containing the application information
      */
-    private Map<String,String> loadApplicationInfo( final String path ) {
+    private Map<String,String> loadApplicationInfo() {
         Map<String,String> infoMap;
         
         try {
-            infoMap = Util.loadResourceBundle( path );
+            infoMap = Util.getPropertiesForResource( ABOUT_INFO_RESOURCE );
         }
-        catch(MissingResourceException exception) {
-			final String message = "No application \"About Box\" information resource found at: " + path;
+        catch( MissingResourceException exception ) {
+			final String message = "No application \"About Box\" information resource found in the application's resources directory: " + ABOUT_INFO_RESOURCE;
 			Logger.getLogger("global").log( Level.WARNING, message, exception );
             System.err.println( message );
             
@@ -152,15 +153,6 @@ class AboutBox {
         }
         
         return infoMap;
-    }
-    
-    
-    /**
-     * Get the file path of the information source of the about box.
-     * @return the file path of the application about box information
-     */
-    static private String getInfoSource() {
-        return Application.getAdaptor().getApplicationInfoPath();
     }
     
     
