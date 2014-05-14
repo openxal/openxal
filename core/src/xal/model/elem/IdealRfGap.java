@@ -307,7 +307,7 @@ public class IdealRfGap extends ThinElement implements IRfGap {
      * given probe.
      * 
      * NOTE:
-     * - Because of the state-dependendant nature of the energy calculations
+     * - Because of the state-dependent nature of the energy calculations
      * (this needs to be fixed), this function will only work correctly
      * if the function energyGain() is consistent.
      * 
