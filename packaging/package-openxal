@@ -26,7 +26,7 @@ fi
 DESTINATION_DIR="$1"
 if [ -z "$PROJECTDIR" ]; then
     # Assuming we are in openxal/packaging 
-    PROJECTDIR=`readlink -f  $(pwd)/../..`
+    PROJECTDIR=`readlink -f  $(pwd)/..`
     echo PROJECTDIR not defined. Defaulting to $PROJECTDIR
 fi
 
@@ -39,38 +39,36 @@ fi
 #-------------------------------------------------------------------------------
 declare -a RPM_DIRS=(
     # ESS configuration specific data
-    "$PROJECTDIR/openxal/packaging/ess-data"
+    "$PROJECTDIR/packaging/ess-data"
     
     # Core libraries
-    "$PROJECTDIR/openxal/core/packaging"
+    "$PROJECTDIR/core/packaging"
 
     # OpenXAL applications
-    "$PROJECTDIR/openxal/apps/packaging/bricks"
-    "$PROJECTDIR/openxal/apps/packaging/dbbrowser"
-    "$PROJECTDIR/openxal/apps/packaging/extlatgenerator"
-    "$PROJECTDIR/openxal/apps/packaging/knobs"
-    "$PROJECTDIR/openxal/apps/packaging/launcher"
-    "$PROJECTDIR/openxal/apps/packaging/machinesimulator"
-    "$PROJECTDIR/openxal/apps/packaging/mtv"
-    "$PROJECTDIR/openxal/apps/packaging/opticseditor"
-    "$PROJECTDIR/openxal/apps/packaging/opticsswitcher"
-    "$PROJECTDIR/openxal/apps/packaging/orbitcorrect"
-    "$PROJECTDIR/openxal/apps/packaging/pvhistogram"
-    "$PROJECTDIR/openxal/apps/packaging/pvlogger"
-    "$PROJECTDIR/openxal/apps/packaging/scan1d"
-    "$PROJECTDIR/openxal/apps/packaging/scan2d"
-    "$PROJECTDIR/openxal/apps/packaging/scope"
-    "$PROJECTDIR/openxal/apps/packaging/virtualaccelerator"
-    "$PROJECTDIR/openxal/apps/packaging/xyzcorrelator"
+    "$PROJECTDIR/apps/packaging/bricks"
+    "$PROJECTDIR/apps/packaging/dbbrowser"
+    "$PROJECTDIR/apps/packaging/extlatgenerator"
+    "$PROJECTDIR/apps/packaging/knobs"
+    "$PROJECTDIR/apps/packaging/launcher"
+    "$PROJECTDIR/apps/packaging/machinesimulator"
+    "$PROJECTDIR/apps/packaging/mtv"
+    "$PROJECTDIR/apps/packaging/opticseditor"
+    "$PROJECTDIR/apps/packaging/opticsswitcher"
+    "$PROJECTDIR/apps/packaging/orbitcorrect"
+    "$PROJECTDIR/apps/packaging/pvhistogram"
+    "$PROJECTDIR/apps/packaging/pvlogger"
+    "$PROJECTDIR/apps/packaging/scan1d"
+    "$PROJECTDIR/apps/packaging/scan2d"
+    "$PROJECTDIR/apps/packaging/scope"
+    "$PROJECTDIR/apps/packaging/score"
+    "$PROJECTDIR/apps/packaging/virtualaccelerator"
+    "$PROJECTDIR/apps/packaging/xyzcorrelator"
     
     # PV Logger Service
-    "$PROJECTDIR/openxal/services/pvlogger/packaging"
-    
-    # Score Application
-    "$PROJECTDIR/openxal-score/packaging"
-    
+    "$PROJECTDIR/services/pvlogger/packaging"
+        
     # The OpenXAL meta-package
-    "$PROJECTDIR/openxal/packaging/openxal-meta"
+    "$PROJECTDIR/packaging/openxal-meta"
 )
 
 #-------------------------------------------------------------------------------

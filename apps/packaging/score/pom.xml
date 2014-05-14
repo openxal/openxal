@@ -1,0 +1,109 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>se.esss.codac.units</groupId>
+	<artifactId>openxal-score</artifactId>
+	<packaging>codac</packaging>
+	<version>1.1</version>
+	<name>OpenXAL score application</name>
+
+	<parent>
+		<groupId>org.iter.codac.units</groupId>
+		<artifactId>maven-iter-settings</artifactId>
+		<version>4.1.0</version>
+	</parent>
+
+	<properties>
+		<unit.type>module</unit.type>
+		<openxal.version>1.0.1-SNAPSHOT</openxal.version>
+	</properties>
+
+	<developers>
+		<developer>
+			<id>ivolist</id>
+			<roles>
+				<role>unit owner</role>
+			</roles>
+		</developer>
+	</developers>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-iter-plugin</artifactId>
+
+				<configuration>
+					<packaging>
+						<package>
+							<dependency>java-${java.version}-${java.vendor}</dependency>
+							<requires version="current">%{codac_rpm_prefix}-openxal-core</requires>	
+							<requires version="current">%{codac_rpm_prefix}-openxal-pvlogger-service</requires> 
+							
+							<include type="config" source="main/conf/create-score-postgres.sql" target="openxal/" />
+							<include type="file" source="score/openxal.apps.score-${openxal.version}.jar" target="lib/openxal/" />	
+							<include type="file" source="main/desktop/openxal-score.desktop" target="common/desktop/" />
+							<include type="altlink" altpath="%{_usr}/share/applications/openxal-score.desktop" targetroot="CODAC_ROOT" target="common/desktop/openxal-score.desktop" />
+							<include type="script" file="score.sh" scripttype="user" name="score" />
+							<scriptlet type="posttrans"><![CDATA[
+								unset NOCHANGE_EC
+								%{codac_root}/bin/initdb user "score" --create-or-update --password "score12"
+								%{codac_bin}/initdb database "score" --create-with "TEMPLATE = template0 ENCODING = 'UTF8' LC_COLLATE = 'en_US.UTF-8' LC_CTYPE = 'en_US.UTF-8'" --init "%{codac_conf}/openxal/create-score-postgres.sql"
+								if [ $? -eq 0 ]; then
+				  					# create database user or update it's password and permissions
+				  					%{codac_root}/bin/initdb database score --priv-all "score"
+								fi
+							]]></scriptlet>
+						</package>
+					</packaging>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<executions>					
+					<execution>
+						<id>copy-dependencies</id>
+						<phase>validate</phase>
+						<goals>
+							<goal>copy-dependencies</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${project.build.directory}/lib</outputDirectory>
+							<includeScope>runtime</includeScope>
+							<overWriteIfNewer>true</overWriteIfNewer>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<artifactId>maven-resources-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>copy-resources-1</id>
+						<phase>validate</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${project.build.directory}/score</outputDirectory>
+							<resources>
+								<resource>
+									<directory>${project.basedir}/../../score/target</directory>
+									<include>openxal.apps.score-${openxal.version}.jar</include>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+	<dependencies>	
+		<dependency>
+			<groupId>postgresql</groupId>
+			<artifactId>postgresql</artifactId>
+			<version>9.1-901.jdbc4</version>
+			<scope>runtime</scope>
+		</dependency>
+	</dependencies>
+</project>

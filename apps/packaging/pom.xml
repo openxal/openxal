@@ -30,6 +30,7 @@
 		<module>scan1d</module>
 		<module>scan2d</module>
 		<module>scope</module>
+		<module>score</module>
 		<module>virtualaccelerator</module>
 		<module>xyzcorrelator</module>				
 	</modules>	
