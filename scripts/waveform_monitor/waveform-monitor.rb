@@ -371,11 +371,23 @@ class WaveformSelectionHandler
 		@add_waveform_button.addActionListener self
 		@delete_waveform_button.addActionListener self
 	end
+
+	def clearChannelSelector
+		@channel_selector = nil;
+	end
 	
-	def loadAccelerator
+	def loadChannelSelector
 		puts "loading accelerator..."
-		@accelerator = XMLDataManager.loadDefaultAccelerator
-		nodes = @accelerator.getAllNodes true
+		source = @controller.getSelectedSequence
+		if source == nil
+			source = @controller.getAccelerator
+		end
+		nodes = nil
+		if source != nil
+			nodes = source.getAllNodes true
+		else
+			nodes = ArrayList.new
+		end
 		@channel_selector = NodeChannelSelector.getInstanceFromNodes( nodes, @controller.mainWindow, "Pick Waveform Channels" )
 	end
 	
@@ -411,7 +423,7 @@ class WaveformSelectionHandler
 				@list_model.removeElementAt( selected_index )
 			end
 		elsif source == @pick_channel_button
-			if @channel_selector == nil then loadAccelerator end
+			if @channel_selector == nil then loadChannelSelector end
 			channelRefs = @channel_selector.showDialog
 			if channelRefs != nil
 				channelRefs.each { |channelRef| @list_model.addElement channelRef.channel.channelName }
@@ -490,7 +502,7 @@ class WaveformDocument < AcceleratorDocument
 		@sample_period_field.addActionListener self
 		@sample_period_field.setText "#{@sample_period}"
 
-		WaveformSelectionHandler.new( @waveform_pv_list, self )
+		@waveform_selection_handler = WaveformSelectionHandler.new( @waveform_pv_list, self )
 
 		@waveform_analyzer = WaveformAnalyzer.new
 
@@ -528,11 +540,13 @@ class WaveformDocument < AcceleratorDocument
 
 
 	def acceleratorChanged
+		@waveform_selection_handler.clearChannelSelector
 		self.hasChanges = true
 	end
 
 
 	def selectedSequenceChanged
+		@waveform_selection_handler.clearChannelSelector
 		self.hasChanges = true
 	end
 	
