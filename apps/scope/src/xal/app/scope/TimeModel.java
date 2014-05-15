@@ -299,7 +299,7 @@ class MicrosecondUnitsHandler implements TimeUnitsHandler, IEventSinkValue {
     
     static {
 		final String TURN_MHZ_PV_KEY = "turnMHzPV";
-		java.util.Map<String,String> properties = Util.getPropertiesFromResource( "scope" );
+		java.util.Map<String,String> properties = Util.getPropertiesForResource( "scope.properties" );
 		// use the scope.properties file to get the defaul value, but allow it to be overriden as a command line property
 		turnMHzPVName = System.getProperties().getProperty( TURN_MHZ_PV_KEY, properties.get(TURN_MHZ_PV_KEY) );
 	}

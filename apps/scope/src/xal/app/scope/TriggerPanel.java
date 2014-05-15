@@ -15,7 +15,7 @@ import java.awt.event.*;
 import java.util.*;
 
 import xal.ca.view.ChannelNameDocument;
-import xal.tools.NumericParser;
+import xal.tools.text.NumericParser;
 
 
 /**
