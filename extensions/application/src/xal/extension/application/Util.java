@@ -26,7 +26,7 @@ public class Util {
     /**
      * Load the resource bundle specified by the URL.  When the resource bundle is loaded, the properties are stored in a Map for convenience data access.
      * @param resourceURL The URL to the properties file
-     * @return The map equivalent of the resource bundle
+     * @return The map equivalent of the resource bundle or null if the resource was not found
      */
     static public Map<String,String> loadResourceBundle( final URL resourceURL ) throws RuntimeException {
 		final Map<String,String> infoMap = new HashMap<>();
@@ -49,6 +49,10 @@ public class Util {
 
 			return infoMap;
 		}
+		catch( java.io.FileNotFoundException exception ) {
+			// this may be fine as the resource may be optional
+			return null;	// return null to indicate that the resource was missing
+		}
 		catch( Exception exception ) {
 			throw new RuntimeException( "Exception loading bundle from resource: " + resourceURL, exception );
 		}
@@ -56,13 +60,17 @@ public class Util {
 	
 	
 	/**
-	 * Merge the resource bundle from the specified source into the specified map.
+	 * Merge the resource bundle from the specified source into the specified map. If the file does not exist at the source, then nothing is merged as this is intened for optional modifications.
 	 * @param map the map into which the resources should be merged
 	 * @param source URL to the resource to merge
 	 */
     static public void mergeResourceBundle( final Map<String,String> map, final URL source ) {
 		final Map<String,String> sourceBundle = loadResourceBundle( source );
-		
+
+		// if the bundle at the source was not found then we have nothing to merge so we are done
+		if ( sourceBundle == null )  return;
+
+		// merge the properties from the source onto the map (overriding it if conflicting)
 		for ( final String key : sourceBundle.keySet() ) {
 			final String assignment = sourceBundle.get( key );
 			
@@ -103,7 +111,7 @@ public class Util {
      * @throws java.util.MissingResourceException If the resource bundle cannot be found.
 	 * @see #loadResourceBundle
 	 */
-	static public Map<String,String> getPropertiesForResource( final String propertyFile ) throws MissingResourceException {
+	static public Map<String,String> getPropertiesForResource( final String propertyFile ) {
 		return loadResourceBundle( Application.getAdaptor().getResourceURL( propertyFile ) );
 	}
     

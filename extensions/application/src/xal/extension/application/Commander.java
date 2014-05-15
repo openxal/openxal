@@ -139,15 +139,11 @@ public class Commander {
      * Load a custom bundle if one exists.  If a custom bundle exists, it will override and extend the
 	 * properties found in the default bundle.  You can use it to customize your toolbar, menubar and menus.
 	 * @param application the application for which to load the custom bundle.
+	 * @param resourceName name of the properites resource to load.
      */
     protected void loadCustomBundle( final Application application, final String resourceName ) {
         final URL resourceURL = application.getApplicationAdaptor().getResourceURL( resourceName );
-        try {
-            loadBundle( resourceURL );
-        }
-        catch( MissingResourceException exception ) {
-            //System.err.println("No custom bundle found at: " + path);
-        }
+		loadBundle( resourceURL );
     }
 
     
@@ -161,14 +157,7 @@ public class Commander {
         final String menudefResource = document.getCustomMenuDefinitionResource();
 		if ( menudefResource == null )  return;	// no custom document menu definition
 		
-        try {
-			loadCustomBundle( Application.getApp(), menudefResource );
-        }
-        catch( MissingResourceException exception ) {
-			final String message = "No custom document menu bundle found for: " + menudefResource;
-			Logger.getLogger("global").log( Level.WARNING, message, exception );
-            System.err.println( message );
-        }
+		loadCustomBundle( Application.getApp(), menudefResource );
     }
     
     
@@ -182,23 +171,15 @@ public class Commander {
         final String menudefResource = document.getCustomInternalMenuDefinitionResource();
 		if ( menudefResource == null )  return;	// no custom document menu definition
 		
-        try {
-			loadCustomBundle( Application.getApp(), menudefResource );
-        }
-        catch( MissingResourceException exception ) {
-			final String message = "No custom document menu bundle found for: " + menudefResource;
-			Logger.getLogger("global").log( Level.WARNING, message, exception );
-            System.err.println( message );
-        }
+		loadCustomBundle( Application.getApp(), menudefResource );
     }
     
     
     /**
-     * Load a bundle specified by the path in Java classpath notation.  The path 
-     * should refer to a properties file but the path should exclude the suffix.
+     * Load a bundle at the specified URL.
      * @param resourceURL URL to the resource bundle to load
      */
-    protected void loadBundle( final URL resourceURL ) throws MissingResourceException {
+    protected void loadBundle( final URL resourceURL ) {
 		Util.mergeResourceBundle( _controlMap, resourceURL );
     }
     
