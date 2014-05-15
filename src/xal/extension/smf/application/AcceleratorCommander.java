@@ -8,6 +8,9 @@ package xal.extension.smf.application;
 
 import xal.extension.application.*;
 
+import java.net.URL;
+
+
 /**
  * AcceleratorCommander subclasses Commander to provide an accelerator specific 
  * menu in the main menubar.
@@ -33,7 +36,16 @@ public class AcceleratorCommander extends Commander {
      */
     protected void loadDefaultBundle() {
         super.loadDefaultBundle();
-        loadBundle( "xal.extension.smf.application.menudef" );
+
+		final String currentClassName = "xal.extension.smf.application.AcceleratorCommander";
+		try {
+			// need to reference this class directly since subclasses would otherwise override the class
+			final URL resourceURL = Class.forName( currentClassName ).getResource( MENU_DEFINITION_RESOURCE );
+			loadBundle( resourceURL );
+		}
+		catch ( ClassNotFoundException exception ) {
+			throw new RuntimeException( "Error attempting to reference the class: " + currentClassName );
+		}
     }
     
     

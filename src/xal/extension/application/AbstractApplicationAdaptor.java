@@ -13,6 +13,7 @@ import xal.tools.apputils.files.*;
 import xal.extension.bricks.WindowReference;
 
 import java.util.logging.*;
+import java.io.File;
 import java.net.*;
 
 
@@ -25,7 +26,20 @@ import java.net.*;
 abstract public class AbstractApplicationAdaptor implements ApplicationListener {
 	/** wildcard file extension */
 	static public final String WILDCARD_FILE_EXTENSION = FileFilterFactory.WILDCARD_FILE_EXTENSION;
-	
+
+	/** name for the gui bricks resource which may or may not exist */
+	static public final String GUI_BRICKS_RESOURCE = "gui.bricks";
+
+	/** location of the resources directory */
+	private URL _resourcesLocation;
+
+
+	/** Constructor */
+	public AbstractApplicationAdaptor() {
+		// by default, resources are located relative to the adaptor class inside the same jar file
+		setResourcesLocation( this.getClass().getResource( "resources/" ) );
+	}
+
 	
 	/**
 	 * Launch the application with the specified document URLs.
@@ -150,8 +164,7 @@ abstract public class AbstractApplicationAdaptor implements ApplicationListener 
 	
 	/** Get the window reference from the resource if any */
 	public WindowReference getDefaultWindowReference( final String tag, final Object... parameters ) {
-		final String path = getGUIDefinitionPath();
-		final URL url = getClass().getResource( path );
+		final URL url = getResourceURL( GUI_BRICKS_RESOURCE );
 		return new WindowReference( url, tag, parameters );
 	}
     
@@ -183,78 +196,62 @@ abstract public class AbstractApplicationAdaptor implements ApplicationListener 
     
     
     // --------- Application resources -----------------------------------------
-    
-    /**
-	 * Subclasses should override this method if the resources folder path is in a location other than the default one.  The default file path is a subfolder called <code>resources</code> 
-     * located within the same folder where the runtime subclass of ApplicationAdaptor resides. Java package path notation is used. For example "xal.app.Myapp.resources".
-     * @return The resource path in classpath notation
-     */
-    public String getResourcesPath() {
-        String packageName = getClass().getPackage().getName();
-        return packageName + ".resources";
-    }
-	
-    
-    /**
-	 * Get the path to the specified named resource which resides in the the resource folder path as specified by the getResourcesPath() method.  For example if 
-	 * the resources path is xal.app.Myapp.resources and we wish to get the resource path to the menudef.properties file, the resourceName to specify 
-	 * would simply be "menudef" and the method would return "xal.app.Myapp.resources.menudef".
-	 * @param resourceName The name of the resource for which to get the path
-     * @return The resource definition properties file path in classpath notation
-	 * @see #getResourcesPath
-     */
-    final public String getPathToResource( final String resourceName ) {
-        return getResourcesPath() + "." + resourceName;
-    }
-	
-	
+
 	/** 
-	 * Get the URL to the specified resource file residing within the resources folder.
-	 * @param resourceName file name of the resource to reference
-	 * @return the URL to the specified resource
+	 * Subclasses can set the location of the resources directory. This is really used for script based applications that don't reside in a jar file. 
+	 * @param resourcesDirectory normal file system directory specifying the location of the resources directory
 	 */
-	public URL getResourceURL( final String resourceName ) {
-		return getClass().getResource( "resources/" + resourceName );
+	private void setResourcesDirectory( final File resourcesDirectory ) {
+		try {
+			setResourcesLocation( resourcesDirectory.toURI().toURL() );
+		}
+		catch ( MalformedURLException exception ) {
+			throw new RuntimeException( "Bad URL to the application resource specified with the directory: " + resourcesDirectory, exception );
+		}
 	}
-	
-    
-    /**
-	 * Subclasses should override this method if the menudefinition properties file is in a location other than the default one.  The default file path is 
-     * a properties file called <code>"menudef.properties"</code> located in the resources folder.  Java package path notation is used.  The file's suffix is excluded from the path.
-     * For example "xal.app.Myapp.resources.menudef".
-     * @return The menu definition properties file path in classpath notation
-     */
-    public String getMenuDefinitionPath() {
-        return getPathToResource( "menudef" );
-    }
-    
-    
-    /**
-	 * Subclasses should override this method if the application information properties (displayed in the "About" box) file is in a location other than the default one.  
-     * The default file path is a properties file called <code>"About.properties"</code> located in the resources folder.  Java package path notation is used.  The file's 
-     * suffix is excluded from the path. For example "xal.app.Myapp.resources.About".
-     * @return The application information properties file path in classpath notation
-     */
-    public String getApplicationInfoPath() {
-        return getPathToResource( "About" );
-    }
-    
-    
-    /**
-	 * Subclasses should override this method if the application Help file is in a location other than the default one.  
-     * The default file is an HTML file called <code>"Help.html"</code> located in the resources folder.  Standard relative URL notation is used. For example "resources/Help.html".
-     * @return the relative application help path in posix notation
-     */
-    public String getApplicationHelpPath() {
-        return "resources/Help.html";
-    }	
-    
-    
-    /**
-	 * Subclasses may override this method if the GUI definition file has a different name.  
-     * @return the relative application GUI definition file
-     */
-    public String getGUIDefinitionPath() {
-        return "resources/gui.bricks";
-    }	
+
+
+	/**
+	 * Convenience method to set the location of the resources directory by specifying the parent directory of resources. The resources directory is assumed to be named "resources". This is really used for script based applications that don't reside in a jar file.
+	 * @param resourcesParentDirectory normal file system directory specifying the location of the parent directory of the resources
+	 */
+	protected void setResourcesParentDirectory( final File resourcesParentDirectory ) {
+		setResourcesDirectory( new File( resourcesParentDirectory, "resources" ) );
+	}
+
+
+	/**
+	 * Convenience method to set the location of the resources directory by specifying the parent directory of resources. The resources directory is assumed to be named "resources". This is really used for script based applications that don't reside in a jar file.
+	 * @param resourcesParentDirectoryPath full file system directory path specifying the location of the parent directory of the resources
+	 */
+	protected void setResourcesParentDirectoryWithPath( final String resourcesParentDirectoryPath ) {
+		setResourcesParentDirectory( new File( resourcesParentDirectoryPath ) );
+	}
+
+
+	/** Subclasses can set the location of the resources directory */
+	protected void setResourcesLocation( final URL resourcesLocation ) {
+		_resourcesLocation = resourcesLocation;
+	}
+
+
+	/** Get the location of the resources directory */
+	public URL getResourcesLocation() {
+		return _resourcesLocation;
+	}
+
+
+	/**
+	 * Get the URL to the specified resource residing within the resources directory.
+	 * @param resourceSpec specification of the resource relative to the resources URL
+	 * @return the full URL to the specified resource
+	 */
+	public URL getResourceURL( final String resourceSpec ) {
+		try {
+			return new URL( _resourcesLocation, resourceSpec );
+		}
+		catch( MalformedURLException exception ) {
+			throw new RuntimeException( "Bad URL to the application resource: " + resourceSpec, exception );
+		}
+	}
 }
