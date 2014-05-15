@@ -730,7 +730,9 @@ class WaveformSelectionHandler
 		elsif source == @pick_channel_button
 			if @channel_selector == nil then loadAccelerator end
 			channelRefs = @channel_selector.showDialog
-			channelRefs.each { |channelRef| @list_model.addElement channelRef.channel.channelName }
+			if channelRefs != nil
+				channelRefs.each { |channelRef| @list_model.addElement channelRef.channel.channelName }
+			end
 		end
 	end
 	
