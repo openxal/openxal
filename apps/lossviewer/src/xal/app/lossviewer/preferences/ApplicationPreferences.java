@@ -47,8 +47,9 @@ public class ApplicationPreferences implements PreferenceModel{
 		appPreferences = new HashMap<String,Object>();
 		
 		//	Map prefs = Util.loadResourceBundle(Application.getApp().getAdaptor().getPathToResource("defaults"));
-		Map<String,String> prefs = Util.loadResourceBundle(appAdaptor.getClass().getPackage().getName() + ".resources.defaults");
-		
+		//Map<String,String> prefs = Util.loadResourceBundle(appAdaptor.getClass().getPackage().getName() + ".resources.defaults");
+		Map<String,String> prefs = Util.loadResourceBundle( appAdaptor.getResourceURL( "defaults.properties" ) );
+
 		
 		for (String key : prefs.keySet()) {
 			

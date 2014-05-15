@@ -147,16 +147,15 @@ public class DemoDocument extends XalInternalDocument {
     
     
     /**
-	 * Provides the optional document menu bar.  If this method is not supplied, then the document will not have
-	 * its own menu bar.
+	 * Provides the optional document menu bar.  If this method is not supplied, then the document will not have its own menu bar.
      * @return The menu definition properties file path in classpath notation
 	 * @see ApplicationAdaptor#getPathToResource
      */
-    protected String getCustomInternalMenuDefinitionPath() {
-		return Application.getAdaptor().getPathToResource( "docmenu" );
-    }
-    
-    
+	protected String getCustomInternalMenuDefinitionResource() {
+		return "docmenu.properties";
+	}
+
+
     /**
 	 * Register actions specific to this document instance. This code demonstrates how to define custom actions for
 	 * menus for a particular document instance.  This method is optional.  

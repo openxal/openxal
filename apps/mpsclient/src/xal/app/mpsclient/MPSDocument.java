@@ -78,10 +78,9 @@ class MPSDocument extends XalDocument {
 	 * application menu definition.  This custom path allows the document to modify the
 	 * application wide definitions for this document.  By default this method returns null.
      * @return The menu definition properties file path in classpath notation
-	 * @see ApplicationAdaptor#getPathToResource
      */
-    protected String getCustomMenuDefinitionPath() {
-		return Application.getAdaptor().getPathToResource("browser_menu");
+    protected String getCustomMenuDefinitionResource() {
+		return "browser_menu.properties";
     }
     
     
