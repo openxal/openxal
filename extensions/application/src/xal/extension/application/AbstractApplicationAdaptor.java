@@ -13,6 +13,7 @@ import xal.tools.apputils.files.*;
 import xal.extension.bricks.WindowReference;
 
 import java.util.logging.*;
+import java.io.File;
 import java.net.*;
 
 
@@ -28,6 +29,16 @@ abstract public class AbstractApplicationAdaptor implements ApplicationListener 
 
 	/** name for the gui bricks resource which may or may not exist */
 	static public final String GUI_BRICKS_RESOURCE = "gui.bricks";
+
+	/** location of the resources directory */
+	private URL _resourcesLocation;
+
+
+	/** Constructor */
+	public AbstractApplicationAdaptor() {
+		// by default, resources are located relative to the adaptor class inside the same jar file
+		setResourcesLocation( this.getClass().getResource( "resources/" ) );
+	}
 
 	
 	/**
@@ -186,13 +197,61 @@ abstract public class AbstractApplicationAdaptor implements ApplicationListener 
     
     // --------- Application resources -----------------------------------------
 
-	
 	/** 
-	 * Get the URL to the specified resource file residing within the resources folder.
-	 * @param resourceName file name of the resource to reference
-	 * @return the URL to the specified resource
+	 * Subclasses can set the location of the resources directory. This is really used for script based applications that don't reside in a jar file. 
+	 * @param resourcesDirectory normal file system directory specifying the location of the resources directory
 	 */
-	public URL getResourceURL( final String resourceName ) {
-		return getClass().getResource( "resources/" + resourceName );
+	private void setResourcesDirectory( final File resourcesDirectory ) {
+		try {
+			setResourcesLocation( resourcesDirectory.toURI().toURL() );
+		}
+		catch ( MalformedURLException exception ) {
+			throw new RuntimeException( "Bad URL to the application resource specified with the directory: " + resourcesDirectory, exception );
+		}
+	}
+
+
+	/**
+	 * Convenience method to set the location of the resources directory by specifying the parent directory of resources. The resources directory is assumed to be named "resources". This is really used for script based applications that don't reside in a jar file.
+	 * @param resourcesParentDirectory normal file system directory specifying the location of the parent directory of the resources
+	 */
+	protected void setResourcesParentDirectory( final File resourcesParentDirectory ) {
+		setResourcesDirectory( new File( resourcesParentDirectory, "resources" ) );
+	}
+
+
+	/**
+	 * Convenience method to set the location of the resources directory by specifying the parent directory of resources. The resources directory is assumed to be named "resources". This is really used for script based applications that don't reside in a jar file.
+	 * @param resourcesParentDirectoryPath full file system directory path specifying the location of the parent directory of the resources
+	 */
+	protected void setResourcesParentDirectoryWithPath( final String resourcesParentDirectoryPath ) {
+		setResourcesParentDirectory( new File( resourcesParentDirectoryPath ) );
+	}
+
+
+	/** Subclasses can set the location of the resources directory */
+	protected void setResourcesLocation( final URL resourcesLocation ) {
+		_resourcesLocation = resourcesLocation;
+	}
+
+
+	/** Get the location of the resources directory */
+	public URL getResourcesLocation() {
+		return _resourcesLocation;
+	}
+
+
+	/**
+	 * Get the URL to the specified resource residing within the resources directory.
+	 * @param resourceSpec specification of the resource relative to the resources URL
+	 * @return the full URL to the specified resource
+	 */
+	public URL getResourceURL( final String resourceSpec ) {
+		try {
+			return new URL( _resourcesLocation, resourceSpec );
+		}
+		catch( MalformedURLException exception ) {
+			throw new RuntimeException( "Bad URL to the application resource: " + resourceSpec, exception );
+		}
 	}
 }
