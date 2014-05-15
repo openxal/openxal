@@ -19,6 +19,11 @@ import javax.swing.JFrame
 import javax.swing.JOptionPane
 import javax.swing.SpinnerNumberModel
 
+java_import 'xal.extension.application.ApplicationAdaptor'
+java_import 'xal.extension.application.XalDocument'
+java_import 'xal.extension.smf.application.AcceleratorApplication'
+java_import 'xal.extension.smf.application.AcceleratorDocument'
+
 java_import 'xal.extension.widgets.apputils.SimpleChartPopupMenu'
 java_import 'xal.tools.StringJoiner'
 java_import 'xal.extension.widgets.plot.RainbowColorGenerator'
@@ -47,6 +52,7 @@ module Java
     java_import 'java.util.Date'
 	java_import 'java.util.List'
 	java_import 'java.lang.Math'
+	java_import 'java.lang.String'
 	java_import 'java.util.ArrayList'
 	java_import 'java.util.Vector'
 	java_import 'java.text.DecimalFormat'
@@ -212,56 +218,336 @@ end
 
 
 
-class ControlApp
-	include javax.swing.event.ChangeListener
+# handle taking a snapshot of the window
+class SnapshotHandler
 	include java.awt.event.ActionListener
 	
+	def initialize( window_reference )
+		@window = window_reference.getWindow()
+		snapshot_button = window_reference.getView( "SnapshotButton" )
+		snapshot_button.addActionListener( self )
+	end
+	
+	def actionPerformed( event )
+		ImageCaptureManager.defaultManager().saveSnapshot( @window.getContentPane );
+	end
+end
+
+
+
+# handle exporting selected waveforms to a file
+class ExportHandler
+    include java.awt.event.ActionListener
+    
+    # class constants
+    TIME_FORMATTER = Java::java.text.SimpleDateFormat.new( "EEE, MMM d, yyyy HH:mm:ss" )
+    FILENAME_TIME_FORMATTER = Java::java.text.SimpleDateFormat.new( "yyyyMMdd_HHmmss" )
+    
+    # constructor
+    def initialize( controller )
+        @controller = controller
+        self.make_file_chooser
+        export_button = controller.window_reference.getView( "ExportButton" )
+		export_button.addActionListener( self )
+    end
+	
+	def actionPerformed( event )
+        readers = @controller.waveform_readers
+        if readers != nil
+            now = Java::java.util.Date.new
+            
+            output = StringWriter.new
+            timestamp = TIME_FORMATTER.format now
+            output.write( "# #{timestamp}" )
+            output.write( "\n\n" )
+            
+            readers.each do |reader|
+                channelName = reader.waveformPV
+                waveform = reader.waveform
+                
+                if waveform != nil
+                    output.write channelName
+                    output.write "\t"
+                    data_joiner = StringJoiner.new
+                    data_joiner.append waveform.positions
+                    waveform_string = data_joiner.toString
+                    output.write waveform_string
+                    output.write "\n\n"
+                end
+            end
+            output.flush
+            
+            defaultName = "Waveforms_" + FILENAME_TIME_FORMATTER.format( now ) + ".txt"
+            file = self.request_output_file defaultName
+            writer = FileWriter.new file
+            writer.write output.toString
+            writer.flush
+            writer.close
+        else
+            JOptionPane.showMessageDialog( @controller.mainWindow, "Warning!\n No Waveform data was captured.\n There is nothing to write.", "No Data to Write", JOptionPane::WARNING_MESSAGE )
+        end
+	end
+    
+    
+	
+	def make_file_chooser
+		@file_chooser = JFileChooser.new
+		@file_chooser.setFileSelectionMode( JFileChooser::FILES_ONLY )
+		@file_chooser.setMultiSelectionEnabled false
+	end
+    
+	
+	def request_output_file defaultName
+		window = @controller.mainWindow
+		file_chooser = @file_chooser
+		defaultFile = Java::java.io.File.new( file_chooser.getCurrentDirectory(), defaultName )
+		file_chooser.setSelectedFile( defaultFile )
+        
+		status = file_chooser.showSaveDialog( window )
+		if status == JFileChooser::APPROVE_OPTION
+			file = file_chooser.getSelectedFile
+			if file.exists
+				proceed_status = JOptionPane.showOptionDialog( @controller.mainWindow, "Warning, #{file.toString} Exists! \nDo you want to overwrite this file?", "Existing File", JOptionPane::YES_NO_CANCEL_OPTION, JOptionPane::WARNING_MESSAGE, nil, nil, nil )
+				if proceed_status == JOptionPane::CLOSED_OPTION or proceed_status == JOptionPane::CANCEL_OPTION
+					return nil
+                elsif proceed_status == JOptionPane::NO_OPTION
+					return self.request_output_file( defaultName )
+				end
+            else
+				return file
+			end
+        else
+			return nil
+		end
+	end
+
+end
+
+
+
+#implement empty handlers for MouseListener events
+module MouseHandler	
+	include java.awt.event.MouseListener
+    
+	def mouseClicked event
+	end
+	
+	def mouseEntered event
+	end
+	
+	def mouseExited event
+	end
+	
+	def mousePressed event
+	end
+		
+	def mouseReleased event
+	end
+end
+
+
+
+# handle the selection of waveforms to display
+class WaveformSelectionHandler
+	include javax.swing.event.ListSelectionListener
+	include java.awt.event.ActionListener
+	include MouseHandler
+	
+	def initialize( list, controller )
+		@list = list
+		@controller = controller
+		
+		@list_model = DefaultListModel.new
+		@list.setModel @list_model
+		@list.addListSelectionListener self
+		@list.addMouseListener self
+		
+		window_reference = controller.window_reference
+		@pick_channel_button = window_reference.getView( "Add Channel Button" )
+		@add_waveform_button = window_reference.getView( "AddWaveformButton" )
+		@delete_waveform_button = window_reference.getView( "DeleteWaveformButton" )
+		
+		@pick_channel_button.addActionListener self
+		@add_waveform_button.addActionListener self
+		@delete_waveform_button.addActionListener self
+	end
+
+	def clearChannelSelector
+		@channel_selector = nil;
+	end
+	
+	def loadChannelSelector
+		puts "loading accelerator..."
+		source = @controller.getSelectedSequence
+		if source == nil
+			source = @controller.getAccelerator
+		end
+		nodes = nil
+		if source != nil
+			nodes = source.getAllNodes true
+		else
+			nodes = ArrayList.new
+		end
+		@channel_selector = NodeChannelSelector.getInstanceFromNodes( nodes, @controller.mainWindow, "Pick Waveform Channels" )
+	end
+	
+	def valueChanged event
+		if not event.getValueIsAdjusting
+			pvs = @list.getSelectedValues
+			monitorPVs pvs
+		end
+	end
+	
+	def monitorPVs pvs
+		old_readers = @controller.waveform_readers
+		if old_readers != nil
+            old_readers.each { |reader| reader.destroy }
+		end
+        @controller.waveform_readers = []
+		if pvs != nil and pvs.length > 0
+            pvs.each { |pv| @controller.waveform_readers.push( WaveformReader.new( pv ) ) }
+		end
+		@controller.refreshDisplay
+	end
+	
+	def actionPerformed( event )		
+		source = event.getSource
+		if source == @add_waveform_button
+			pv = JOptionPane.showInputDialog( @controller.window_reference.getWindow, "Enter the Waveform PV to add:", "" )
+			if pv != nil and pv.length > 0
+				@list_model.addElement( pv )
+			end
+		elsif source == @delete_waveform_button
+			selected_index = @list.getSelectedIndex
+			if selected_index > -1
+				@list_model.removeElementAt( selected_index )
+			end
+		elsif source == @pick_channel_button
+			if @channel_selector == nil then loadChannelSelector end
+			channelRefs = @channel_selector.showDialog
+			if channelRefs != nil
+				channelRefs.each { |channelRef| @list_model.addElement channelRef.channel.channelName }
+			end
+		end
+	end
+	
+	def mouseClicked event
+		if event.getClickCount == 2
+			selected_index = @list.getSelectedIndex
+			if selected_index > -1
+				selected_PV = @list.getSelectedValue
+				pv = JOptionPane.showInputDialog( @controller.window_reference.getWindow, "Enter the new PV:", selected_PV )
+				@list_model.setElementAt( pv, selected_index )
+				monitorPVs [pv]
+			end
+		end
+	end
+end
+
+
+
+class PlotRefresher
+	include java.awt.event.ActionListener
+	
+	def initialize( controller )
+		@controller = controller
+		Java::Timer.new( 100, self ).start
+	end
+	
+	def actionPerformed( event )
+		@controller.refreshDisplayIfNeeded
+	end
+end
+
+
+
+class WaveformDocument < AcceleratorDocument
+	include javax.swing.event.ChangeListener
+	include java.awt.event.ActionListener
+
+	field_accessor :mainWindow
 	attr_reader :window_reference
-	attr_reader :main_window
 	attr_reader :profile_analyzer
 	attr_reader :file_chooser
 	attr_accessor :waveform_readers
-	
-	def initialize window_reference
+
+	def initialize
+		super	# allows us to access inherited self
+
+		@window_reference = XalDocument.getDefaultWindowReference( "MainWindow", [ self ].to_java )
+
 		@sample_period = 1.0
-		
-		@window_reference = window_reference
-		
-		@main_window = window_reference.getWindow
-		
+
 		@waveform_pv_list = window_reference.getView( "Waveform List" )
 		@waveform_pv_list.setSelectionMode( ListSelectionModel::MULTIPLE_INTERVAL_SELECTION )
-		
+
 		@waveform_plot = loadWaveformPlot( window_reference, "WaveformPlot", "Waveform" )
-        @waveform_plot.setLegendPosition( FunctionGraphsJPanel::LEGEND_POSITION_ARBITRARY );
+		@waveform_plot.setLegendPosition( FunctionGraphsJPanel::LEGEND_POSITION_ARBITRARY );
 
 		@spectrum_plot = loadSpectrumPlot( window_reference, "SpectrumPlot", "Spectrum" )
-        @spectrum_plot.setLegendPosition( FunctionGraphsJPanel::LEGEND_POSITION_ARBITRARY );
-		
+		@spectrum_plot.setLegendPosition( FunctionGraphsJPanel::LEGEND_POSITION_ARBITRARY );
+
 		@range_checkbox = @window_reference.getView( "RangeCheckBox" )
 		@lower_range_spinner = @window_reference.getView( "LowerRangeSpinner" )
 		@upper_range_spinner = @window_reference.getView( "UpperRangeSpinner" )
-		
+
 		@range_checkbox.addActionListener self
-		
+
 		@lower_range_spinner.setModel( newSpinnerNumberModel( 0, 0, 1500, 1 ) )
 		@lower_range_spinner.addChangeListener self
 		@upper_range_spinner.setModel( newSpinnerNumberModel( 256, 0, 1500, 1 ) )
 		@upper_range_spinner.addChangeListener self
-		
+
 		@sample_period_field = @window_reference.getView( "Sample Period Field" )
 		@sample_period_field.addActionListener self
 		@sample_period_field.setText "#{@sample_period}"
-		
-		WaveformSelectionHandler.new( @waveform_pv_list, self )
-		
+
+		@waveform_selection_handler = WaveformSelectionHandler.new( @waveform_pv_list, self )
+
 		@waveform_analyzer = WaveformAnalyzer.new
-		
+
 		PlotRefresher.new( self )
-		
+
 		SnapshotHandler.new( window_reference )
-        
-        ExportHandler.new( self )
+
+		ExportHandler.new( self )
+
+		self.hasChanges = false
+	end
+
+
+	# static initializer since constructor arguments must match inherited Java constructor arguments
+	def self.createFrom( location )
+		document = WaveformDocument.new
+
+		#TODO: load the document
+		document.source = location
+
+		return document
+	end
+
+
+	def makeMainWindow
+		self.mainWindow = @window_reference.getWindow
+		self.hasChanges = false
+	end
+
+
+	def saveDocumentAs( location )
+		#TODO implement saving document
+		puts "need to implement saving document..."
+	end
+
+
+	def acceleratorChanged
+		@waveform_selection_handler.clearChannelSelector
+		self.hasChanges = true
+	end
+
+
+	def selectedSequenceChanged
+		@waveform_selection_handler.clearChannelSelector
+		self.hasChanges = true
 	end
 	
 	
@@ -340,12 +626,6 @@ class ControlApp
 		end
 		@waveform_analyzer.custom_lower_index = lower_index
 		@waveform_analyzer.custom_upper_index = upper_index
-	end
-	
-	
-	def displayWindow
-		@main_window.setDefaultCloseOperation( JFrame::EXIT_ON_CLOSE )
-		@main_window.setVisible( true )
 	end
 	
 	
@@ -535,247 +815,44 @@ end
 
 
 
-# handle taking a snapshot of the window
-class SnapshotHandler
-	include java.awt.event.ActionListener
-	
-	def initialize( window_reference )
-		@window = window_reference.getWindow()
-		snapshot_button = window_reference.getView( "SnapshotButton" )
-		snapshot_button.addActionListener( self )
+class Main < ApplicationAdaptor
+	def initialize
+		super	# allows us to access inherited self
+
+		# locate the enclosing folder and get the bricks file within it
+		folder = File.expand_path File.dirname( __FILE__ )
+		puts "script folder: #{folder}"
+
+		self.setResourcesParentDirectoryWithPath folder
 	end
-	
-	def actionPerformed( event )
-		ImageCaptureManager.defaultManager().saveSnapshot( @window.getContentPane );
+
+
+	def readableDocumentTypes()
+		return [].to_java(Java::String)
+	end
+
+
+	def writableDocumentTypes()
+		return self.readableDocumentTypes
+	end
+
+
+	def newEmptyDocument()
+		return self.newDocument( nil )
+	end
+
+
+	def newDocument( location )
+		return WaveformDocument.createFrom( location )
+	end
+
+
+	def applicationName
+		return "Waveform Monitor";
 	end
 end
 
 
 
-# handle exporting selected waveforms to a file
-class ExportHandler
-    include java.awt.event.ActionListener
-    
-    # class constants
-    TIME_FORMATTER = Java::java.text.SimpleDateFormat.new( "EEE, MMM d, yyyy HH:mm:ss" )
-    FILENAME_TIME_FORMATTER = Java::java.text.SimpleDateFormat.new( "yyyyMMdd_HHmmss" )
-    
-    # constructor
-    def initialize( controller )
-        @controller = controller
-        self.make_file_chooser
-        export_button = controller.window_reference.getView( "ExportButton" )
-		export_button.addActionListener( self )
-    end
-	
-	def actionPerformed( event )
-        readers = @controller.waveform_readers
-        if readers != nil
-            now = Java::java.util.Date.new
-            
-            output = StringWriter.new
-            timestamp = TIME_FORMATTER.format now
-            output.write( "# #{timestamp}" )
-            output.write( "\n\n" )
-            
-            readers.each do |reader|
-                channelName = reader.waveformPV
-                waveform = reader.waveform
-                
-                if waveform != nil
-                    output.write channelName
-                    output.write "\t"
-                    data_joiner = StringJoiner.new
-                    data_joiner.append waveform.positions
-                    waveform_string = data_joiner.toString
-                    output.write waveform_string
-                    output.write "\n\n"
-                end
-            end
-            output.flush
-            
-            defaultName = "Waveforms_" + FILENAME_TIME_FORMATTER.format( now ) + ".txt"
-            file = self.request_output_file defaultName
-            writer = FileWriter.new file
-            writer.write output.toString
-            writer.flush
-            writer.close
-        else
-            JOptionPane.showMessageDialog( @controller.main_window, "Warning!\n No Waveform data was captured.\n There is nothing to write.", "No Data to Write", JOptionPane::WARNING_MESSAGE )
-        end
-	end
-    
-    
-	
-	def make_file_chooser
-		@file_chooser = JFileChooser.new
-		@file_chooser.setFileSelectionMode( JFileChooser::FILES_ONLY )
-		@file_chooser.setMultiSelectionEnabled false
-	end
-    
-	
-	def request_output_file defaultName
-		window = @controller.main_window
-		file_chooser = @file_chooser
-		defaultFile = Java::java.io.File.new( file_chooser.getCurrentDirectory(), defaultName )
-		file_chooser.setSelectedFile( defaultFile )
-        
-		status = file_chooser.showSaveDialog( window )
-		if status == JFileChooser::APPROVE_OPTION
-			file = file_chooser.getSelectedFile
-			if file.exists
-				proceed_status = JOptionPane.showOptionDialog( @controller.main_window, "Warning, #{file.toString} Exists! \nDo you want to overwrite this file?", "Existing File", JOptionPane::YES_NO_CANCEL_OPTION, JOptionPane::WARNING_MESSAGE, nil, nil, nil )
-				if proceed_status == JOptionPane::CLOSED_OPTION or proceed_status == JOptionPane::CANCEL_OPTION
-					return nil
-                elsif proceed_status == JOptionPane::NO_OPTION
-					return self.request_output_file( defaultName )
-				end
-            else
-				return file
-			end
-        else
-			return nil
-		end
-	end
-
-end
-
-
-
-#implement empty handlers for MouseListener events
-module MouseHandler	
-	include java.awt.event.MouseListener
-    
-	def mouseClicked event
-	end
-	
-	def mouseEntered event
-	end
-	
-	def mouseExited event
-	end
-	
-	def mousePressed event
-	end
-		
-	def mouseReleased event
-	end
-end
-
-
-
-# handle the selection of waveforms to display
-class WaveformSelectionHandler
-	include javax.swing.event.ListSelectionListener
-	include java.awt.event.ActionListener
-	include MouseHandler
-	
-	def initialize( list, controller )
-		@list = list
-		@controller = controller
-		
-		@list_model = DefaultListModel.new
-		@list.setModel @list_model
-		@list.addListSelectionListener self
-		@list.addMouseListener self
-		
-		window_reference = controller.window_reference
-		@pick_channel_button = window_reference.getView( "Add Channel Button" )
-		@add_waveform_button = window_reference.getView( "AddWaveformButton" )
-		@delete_waveform_button = window_reference.getView( "DeleteWaveformButton" )
-		
-		@pick_channel_button.addActionListener self
-		@add_waveform_button.addActionListener self
-		@delete_waveform_button.addActionListener self
-	end
-	
-	def loadAccelerator
-		puts "loading accelerator..."
-		@accelerator = XMLDataManager.loadDefaultAccelerator
-		nodes = @accelerator.getAllNodes true
-		@channel_selector = NodeChannelSelector.getInstanceFromNodes( nodes, @controller.main_window, "Pick Waveform Channels" )
-	end
-	
-	def valueChanged event
-		if not event.getValueIsAdjusting
-			pvs = @list.getSelectedValues
-			monitorPVs pvs
-		end
-	end
-	
-	def monitorPVs pvs
-		old_readers = @controller.waveform_readers
-		if old_readers != nil
-            old_readers.each { |reader| reader.destroy }
-		end
-        @controller.waveform_readers = []
-		if pvs != nil and pvs.length > 0
-            pvs.each { |pv| @controller.waveform_readers.push( WaveformReader.new( pv ) ) }
-		end
-		@controller.refreshDisplay
-	end
-	
-	def actionPerformed( event )		
-		source = event.getSource
-		if source == @add_waveform_button
-			pv = JOptionPane.showInputDialog( @controller.window_reference.getWindow, "Enter the Waveform PV to add:", "" )
-			if pv != nil and pv.length > 0
-				@list_model.addElement( pv )
-			end
-		elsif source == @delete_waveform_button
-			selected_index = @list.getSelectedIndex
-			if selected_index > -1
-				@list_model.removeElementAt( selected_index )
-			end
-		elsif source == @pick_channel_button
-			if @channel_selector == nil then loadAccelerator end
-			channelRefs = @channel_selector.showDialog
-			channelRefs.each { |channelRef| @list_model.addElement channelRef.channel.channelName }
-		end
-	end
-	
-	def mouseClicked event
-		if event.getClickCount == 2
-			selected_index = @list.getSelectedIndex
-			if selected_index > -1
-				selected_PV = @list.getSelectedValue
-				pv = JOptionPane.showInputDialog( @controller.window_reference.getWindow, "Enter the new PV:", selected_PV )
-				@list_model.setElementAt( pv, selected_index )
-				monitorPVs [pv]
-			end
-		end
-	end
-end
-
-
-
-class PlotRefresher
-	include java.awt.event.ActionListener
-	
-	def initialize( controller )
-		@controller = controller
-		Java::Timer.new( 100, self ).start
-	end
-	
-	def actionPerformed( event )
-		@controller.refreshDisplayIfNeeded
-	end
-end
-
-
-# load the user interface
-def load_user_interface()
-	# locate the enclosing folder and get the bricks file within it
-	folder = File.dirname( $0 )
-	gui_path = File.join( folder, "gui.bricks" )
-	url = Java::File.new( gui_path ).toURI.toURL
-	
-	# generate a window reference resource and pass the desired constructor arguments
-	window_reference = WindowReference::getDefaultInstance( url, "MainWindow" )
-	
-	main_controller = ControlApp.new window_reference
-	main_controller.displayWindow
-end
-
-
-load_user_interface
+# main entry point
+AcceleratorApplication.launch( Main.new )
