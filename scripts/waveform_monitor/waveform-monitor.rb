@@ -41,9 +41,12 @@ java_import 'xal.ca.ChannelFactory'
 java_import 'xal.ca.IEventSinkValTime'
 java_import 'xal.ca.Monitor'
 java_import 'xal.tools.apputils.ImageCaptureManager'
+java_import 'xal.tools.xml.XmlDataAdaptor'
+java_import 'xal.tools.data.DataAdaptor'
+java_import 'xal.tools.data.DataListener'
+
 
 module Java
-	java_import 'java.awt.event.MouseAdapter'
 	java_import 'java.awt.event.MouseListener'
 	java_import 'java.lang.reflect.Array'
 	java_import 'java.lang.Class'
@@ -397,6 +400,15 @@ class WaveformSelectionHandler
 			monitorPVs pvs
 		end
 	end
+
+	def getChannelPVs
+		return @list_model.toArray
+	end
+
+	def addChannelPV( channelPV )
+		@list_model.addElement channelPV
+		@controller.setHasChanges true
+	end
 	
 	def monitorPVs pvs
 		old_readers = @controller.waveform_readers
@@ -426,7 +438,7 @@ class WaveformSelectionHandler
 			if @channel_selector == nil then loadChannelSelector end
 			channelRefs = @channel_selector.showDialog
 			if channelRefs != nil
-				channelRefs.each { |channelRef| @list_model.addElement channelRef.channel.channelName }
+				channelRefs.each { |channelRef| self.addChannelPV channelRef.channel.channelName }
 			end
 		end
 	end
@@ -464,6 +476,7 @@ end
 class WaveformDocument < AcceleratorDocument
 	include javax.swing.event.ChangeListener
 	include java.awt.event.ActionListener
+	include DataListener
 
 	field_accessor :mainWindow
 	attr_reader :window_reference
@@ -520,8 +533,14 @@ class WaveformDocument < AcceleratorDocument
 	def self.createFrom( location )
 		document = WaveformDocument.new
 
-		#TODO: load the document
 		document.source = location
+
+		if location != nil
+			documentAdaptor = XmlDataAdaptor.adaptorForUrl( location, false )
+			document.update( documentAdaptor.childAdaptor( document.dataLabel ) )
+		end
+
+		document.hasChanges = false
 
 		return document
 	end
@@ -534,8 +553,58 @@ class WaveformDocument < AcceleratorDocument
 
 
 	def saveDocumentAs( location )
-		#TODO implement saving document
-		puts "need to implement saving document..."
+		writeDataTo( self, location )
+	end
+
+
+	def dataLabel()
+		return "WaveformDocument"
+	end
+
+
+	def update( adaptor )
+		# restore the accelerator/sequence if any
+		if adaptor.hasAttribute( "acceleratorPath" )
+			acceleratorPath = adaptor.stringValue( "acceleratorPath" )
+			accelerator = applySelectedAcceleratorWithDefaultPath( acceleratorPath )
+
+			if ( accelerator != nil && adaptor.hasAttribute( "sequence" ) )
+				sequenceID = adaptor.stringValue( "sequence" )
+				setSelectedSequence( accelerator.findSequence( sequenceID ) )
+			end
+		end
+
+		# read the model data
+		modelAdaptor = adaptor.childAdaptor( "model" )
+		channelAdaptors = modelAdaptor.childAdaptors( "waveform-channel" )
+		channelAdaptors.each do |channelAdaptor|
+			channelPV = channelAdaptor.stringValue( "PV" )
+			@waveform_selection_handler.addChannelPV channelPV
+		end
+	end
+
+
+	def write( adaptor )
+		adaptor.setValue( "version", "1.0.0" )
+		adaptor.setValue( "date", Java::Date.new.toString )
+
+		# write the model data
+		modelAdaptor = adaptor.createChild( "model" )
+		channelPVs = @waveform_selection_handler.getChannelPVs
+		channelPVs.each do |channelPV|
+			channelAdaptor = modelAdaptor.createChild( "waveform-channel" )
+			channelAdaptor.setValue( "PV", channelPV )
+		end
+
+		# write the accelerator/sequence if any
+		if self.getAccelerator != nil
+			adaptor.setValue( "acceleratorPath", self.getAcceleratorFilePath )
+
+			sequence = self.getSelectedSequence
+			if sequence != nil
+				adaptor.setValue( "sequence", sequence.getId )
+			end
+		end
 	end
 
 
@@ -828,7 +897,7 @@ class Main < ApplicationAdaptor
 
 
 	def readableDocumentTypes()
-		return [].to_java(Java::String)
+		return [ "wfmon" ].to_java(Java::String)
 	end
 
 
