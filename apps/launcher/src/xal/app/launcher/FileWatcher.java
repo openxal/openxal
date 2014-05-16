@@ -61,8 +61,8 @@ public class FileWatcher implements DataListener {
 			final File applicationsDirectory = jarFile.getParentFile();
 			justWatchFolder( applicationsDirectory );			// watch the applications directory
 			
-			final File deployDirectory = applicationsDirectory.getParentFile().getParentFile();		// deployment directory which holds the jar/apps directory
-			justWatchFolder( new File( deployDirectory, "scripts" ) );	// watch the scripts directory
+			final File productsDirectory = applicationsDirectory.getParentFile();		// products directory is the parent of the apps directory
+			justWatchFolder( new File( productsDirectory, "scripts" ) );	// watch the scripts directory
 		}
 		catch( Exception exception ) {
 			exception.printStackTrace();
