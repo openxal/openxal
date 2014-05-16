@@ -747,7 +747,7 @@ class WaveformDocument < AcceleratorDocument
 		plot.removeAllGraphData
 		plot.setLegendVisible( false );
 		
-		title = "#{pv} Waveform at #{waveform.timestamp}"
+		title = "#{pv} Waveform at #{waveform.timestamp.toString}"
 		plot.setName( title )
 		
 		if waveform != nil
@@ -762,7 +762,7 @@ class WaveformDocument < AcceleratorDocument
 		plot.removeAllGraphData
 		plot.setLegendVisible( false );
 		
-		title = "#{pv} Spectrum at #{waveform.timestamp}"
+		title = "#{pv} Spectrum at #{waveform.timestamp.toString}"
 		plot.setName( title )
 		
 		if waveform != nil
@@ -807,7 +807,7 @@ class WaveformDocument < AcceleratorDocument
 		plot.setLegendColor( Color::BLACK );
 		plot.setLegendVisible( true );
 
-		title = "Waveforms at #{Date.new}"
+		title = "Multiple Waveforms at #{Java::java.util.Date.new.toString}"
 		plot.setName( title )
 		
 		if waveforms != nil and waveforms.length > 1
@@ -861,8 +861,8 @@ class WaveformDocument < AcceleratorDocument
 		plot.setLegendColor( Color::BLACK );
 		plot.setLegendVisible( true );
 		
-		title = "Spectra at #{Date.new}"
-		plot.setName( title )		
+		title = "Multiple Spectra at #{Java::java.util.Date.new.toString}"
+		plot.setName( title )
         
 		if waveforms != nil and waveforms.length > 1
             color_index = 0.0
