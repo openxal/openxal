@@ -1,0 +1,28 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<!DOCTYPE xdxf SYSTEM "xdxf.dtd">
+<xdxf date="02.04.2014" system="sns" ver="2.0.0">
+    <sequence id="IDmp+">
+        <node id="IDmp_Mag:QV01">
+            <attributes>
+                <magnet dfltMagFld="-2.606776592242328"/>
+            </attributes>
+        </node>
+        <node id="Ring_Mag:DH_A13">
+            <attributes>
+                <magnet dfltMagFld="-0.2780190622437148"/>
+            </attributes>
+        </node>
+        <node id="IDmp_Mag:Sptm">
+            <attributes>
+                <magnet dfltMagFld="-0.40970048304699086"/>
+            </attributes>
+        </node>
+    </sequence>
+    <sequence id="IDmp-">
+        <node id="Ring_Mag:DH_A12">
+            <attributes>
+                <magnet dfltMagFld="0.2128568450316049"/>
+            </attributes>
+        </node>
+    </sequence>
+</xdxf>

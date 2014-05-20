@@ -1,0 +1,233 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<!DOCTYPE xdxf SYSTEM "xdxf.dtd">
+<xdxf date="02.04.2014" system="sns" ver="2.0.0">
+    <sequence id="HEBT1">
+        <node id="HEBT_Mag:QV01">
+            <attributes>
+                <magnet dfltMagFld="3.9730718594717955"/>
+            </attributes>
+        </node>
+        <node id="HEBT_Mag:QH02">
+            <attributes>
+                <magnet dfltMagFld="-3.9730718594717955"/>
+            </attributes>
+        </node>
+        <node id="HEBT_Mag:QV03">
+            <attributes>
+                <magnet dfltMagFld="3.9730718594717955"/>
+            </attributes>
+        </node>
+        <node id="HEBT_Mag:QH04">
+            <attributes>
+                <magnet dfltMagFld="-3.9730718594717955"/>
+            </attributes>
+        </node>
+        <node id="HEBT_Mag:QV05">
+            <attributes>
+                <magnet dfltMagFld="3.9730718594717955"/>
+            </attributes>
+        </node>
+        <node id="HEBT_Mag:QH06">
+            <attributes>
+                <magnet dfltMagFld="-3.9730718594717955"/>
+            </attributes>
+        </node>
+        <node id="HEBT_Mag:QV07">
+            <attributes>
+                <magnet dfltMagFld="3.9730718594717955"/>
+            </attributes>
+        </node>
+        <node id="HEBT_Mag:QH08">
+            <attributes>
+                <magnet dfltMagFld="-3.4030128219730416"/>
+            </attributes>
+        </node>
+        <node id="HEBT_Mag:QV09">
+            <attributes>
+                <magnet dfltMagFld="3.031684151783326"/>
+            </attributes>
+        </node>
+        <node id="HEBT_Mag:QH10">
+            <attributes>
+                <magnet dfltMagFld="-2.8248253017086533"/>
+            </attributes>
+        </node>
+        <node id="HEBT_Mag:QV11">
+            <attributes>
+                <magnet dfltMagFld="2.364553563901584"/>
+            </attributes>
+        </node>
+    </sequence>
+    <sequence id="HEBT2">
+        <node id="HEBT_Mag:QH12">
+            <attributes>
+                <magnet dfltMagFld="-2.22645572801318"/>
+            </attributes>
+        </node>
+        <node id="HEBT_Mag:QV13">
+            <attributes>
+                <magnet dfltMagFld="2.0767361770962247"/>
+            </attributes>
+        </node>
+        <node id="HEBT_Mag:QH14">
+            <attributes>
+                <magnet dfltMagFld="-2.22645572801318"/>
+            </attributes>
+        </node>
+        <node id="HEBT_Mag:QV15">
+            <attributes>
+                <magnet dfltMagFld="2.0767361770962247"/>
+            </attributes>
+        </node>
+        <node id="HEBT_Mag:QH16">
+            <attributes>
+                <magnet dfltMagFld="-2.22645572801318"/>
+            </attributes>
+        </node>
+        <node id="HEBT_Mag:QV17">
+            <attributes>
+                <magnet dfltMagFld="2.0767361770962247"/>
+            </attributes>
+        </node>
+        <node id="HEBT_Mag:QH18">
+            <attributes>
+                <magnet dfltMagFld="-2.22645572801318"/>
+            </attributes>
+        </node>
+        <node id="HEBT_Mag:QV19">
+            <attributes>
+                <magnet dfltMagFld="2.0767361770962247"/>
+            </attributes>
+        </node>
+        <node id="HEBT_Mag:QH20">
+            <attributes>
+                <magnet dfltMagFld="-2.456726911682943"/>
+            </attributes>
+        </node>
+        <node id="HEBT_Mag:QV21">
+            <attributes>
+                <magnet dfltMagFld="2.5880839609189485"/>
+            </attributes>
+        </node>
+        <node id="HEBT_Mag:QH22">
+            <attributes>
+                <magnet dfltMagFld="-2.982455488214407"/>
+            </attributes>
+        </node>
+        <node id="HEBT_Mag:QV23">
+            <attributes>
+                <magnet dfltMagFld="2.812720868045968"/>
+            </attributes>
+        </node>
+        <node id="HEBT_Mag:QH24">
+            <attributes>
+                <magnet dfltMagFld="-3.4580014800590018"/>
+            </attributes>
+        </node>
+        <node id="HEBT_Mag:QV25">
+            <attributes>
+                <magnet dfltMagFld="3.2510159523308384"/>
+            </attributes>
+        </node>
+        <node id="HEBT_Mag:QH26">
+            <attributes>
+                <magnet dfltMagFld="-3.262114642199146"/>
+            </attributes>
+        </node>
+        <node id="HEBT_Mag:QV27">
+            <attributes>
+                <magnet dfltMagFld="3.2510159523308384"/>
+            </attributes>
+        </node>
+        <node id="HEBT_Mag:QH28">
+            <attributes>
+                <magnet dfltMagFld="-3.262114642199146"/>
+            </attributes>
+        </node>
+        <node id="HEBT_Mag:QV29">
+            <attributes>
+                <magnet dfltMagFld="3.2510159523308384"/>
+            </attributes>
+        </node>
+        <node id="HEBT_Mag:QH30">
+            <attributes>
+                <magnet dfltMagFld="-4.086425327045073"/>
+            </attributes>
+        </node>
+        <node id="HEBT_Mag:QV31">
+            <attributes>
+                <magnet dfltMagFld="3.2510159523308384"/>
+            </attributes>
+        </node>
+        <node id="HEBT_Mag:QH32">
+            <attributes>
+                <magnet dfltMagFld="-3.262114642199146"/>
+            </attributes>
+        </node>
+        <node id="HEBT_Mag:QV33">
+            <attributes>
+                <magnet dfltMagFld="5.3119164630615705"/>
+            </attributes>
+        </node>
+        <node id="HEBT_Mag:QH34">
+            <attributes>
+                <magnet dfltMagFld="-4.804079185727239"/>
+            </attributes>
+        </node>
+        <node id="HEBT_Mag:DH11">
+            <attributes>
+                <magnet dfltMagFld="0.19614978995876806"/>
+            </attributes>
+        </node>
+        <node id="HEBT_Mag:DH12">
+            <attributes>
+                <magnet dfltMagFld="0.19614978995876806"/>
+            </attributes>
+        </node>
+        <node id="HEBT_Mag:DH13">
+            <attributes>
+                <magnet dfltMagFld="0.19614978995876806"/>
+            </attributes>
+        </node>
+        <node id="HEBT_Mag:DH14">
+            <attributes>
+                <magnet dfltMagFld="0.19614978995876806"/>
+            </attributes>
+        </node>
+        <node id="HEBT_Mag:DH15">
+            <attributes>
+                <magnet dfltMagFld="0.19614978995876806"/>
+            </attributes>
+        </node>
+        <node id="HEBT_Mag:DH16">
+            <attributes>
+                <magnet dfltMagFld="0.19614978995876806"/>
+            </attributes>
+        </node>
+        <node id="HEBT_Mag:DH17">
+            <attributes>
+                <magnet dfltMagFld="0.19614978995876806"/>
+            </attributes>
+        </node>
+        <node id="HEBT_Mag:DH18">
+            <attributes>
+                <magnet dfltMagFld="0.19614978995876806"/>
+            </attributes>
+        </node>
+        <node id="HEBT_Mag:DH25">
+            <attributes>
+                <magnet dfltMagFld="-0.2008944438894996"/>
+            </attributes>
+        </node>
+        <node id="HEBT_Mag:InjSptm">
+            <attributes>
+                <magnet dfltMagFld="0.19665554089353657"/>
+            </attributes>
+        </node>
+        <node id="Ring_Mag:DH_A11">
+            <attributes>
+                <magnet dfltMagFld="0.30671347011767774"/>
+            </attributes>
+        </node>
+    </sequence>
+</xdxf>

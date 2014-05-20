@@ -1,0 +1,17 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<!DOCTYPE xdxf SYSTEM "xdxf.dtd">
+<xdxf date="03.06.2009" system="sns" ver="2.0.0">
+    <sequence id="RTBT1">
+    	<!-- temporary addition by tom p. to support Sarah's study - Aug. 26, 2009 -->
+	<node id="RTBT_POST_SEPTUM" type="marker" pos="20.0" len="0.0" /> 
+    </sequence>
+    
+    	<sequence id="RTBT2">
+		<node id="RTBT_Diag:BPM29">
+			<channelsuite name="bpmsuite">
+				<channel handle="yAvg" valid="false" mod-comment="Y signal is shorted at the feedthrough and unlikely to be repaired, soon." />
+				<channel handle="yTBT" valid="false" mod-comment="Y signal is shorted at the feedthrough and unlikely to be repaired, soon." />
+			</channelsuite>
+		</node>
+	</sequence>
+</xdxf>
