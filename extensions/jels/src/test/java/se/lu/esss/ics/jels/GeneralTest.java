@@ -147,9 +147,9 @@ public class GeneralTest {
 		}
 		
 		double I = compare(dataOX, dataTW, Column.GAMA_1.value, Column.GAMA_1.value);
-		double I2 = compareWithLinearInterpolation(dataOX, dataTW, Column.GAMA_1.value, Column.GAMA_1.value);
+		double I1 = compare(dataOX, dataTW, Column.RMSX.value, Column.RMSX.value);
 		
-		System.out.printf("%E %E\n", I, I2);
+		System.out.printf("%E %E\n", I, I1);
 	}
 	
 	private double[][] loadTWData() throws IOException
@@ -175,7 +175,21 @@ public class GeneralTest {
 	
 	
 	// compare results
-	private double compare(double[][] dataA, double[][] dataB, int colA, int colB) {
+	private double compare(double[][] dataA,double[][] dataB, int colA, int colB) {
+		return integrateL1sup(dataA,dataB,colA,colB)/integrateSup(dataB,colB);
+	}
+	
+	
+	private double integrateSup(double[][] dataA, int colA) {
+		double I = 0.;
+		for (int i = 0; i<dataA.length-1; i++) {
+			I += dataA[i][colA] * (dataA[i+1][0]-dataA[i][1]);
+		}
+		return I;
+	}
+		
+	
+	private double integrateL1sup(double[][] dataA, double[][] dataB, int colA, int colB) {
 		double x0 = Math.min(dataA[0][0], dataB[0][0]);
 		double f0 = dataA[0][colA];
 		double g0 = dataB[0][colB];
@@ -211,7 +225,7 @@ public class GeneralTest {
 	
 	/**
 	 * */
-	private double compareWithLinearInterpolation(double[][] dataA, double[][] dataB, int colA, int colB) {
+	private double integrateL1linear(double[][] dataA, double[][] dataB, int colA, int colB) {
 		
 		// merge the positions together
 		double p[] = new double [dataA.length + dataB.length];
