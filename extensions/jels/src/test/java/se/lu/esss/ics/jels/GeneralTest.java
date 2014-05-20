@@ -146,7 +146,10 @@ public class GeneralTest {
 		    i=i+1;
 		}
 		
-		compare(dataOX, dataTW, Column.GAMA_1.value, Column.GAMA_1.value);
+		double I = compare(dataOX, dataTW, Column.GAMA_1.value, Column.GAMA_1.value);
+		double I2 = compareWithLinearInterpolation(dataOX, dataTW, Column.GAMA_1.value, Column.GAMA_1.value);
+		
+		System.out.printf("%E %E\n", I, I2);
 	}
 	
 	private double[][] loadTWData() throws IOException
@@ -172,8 +175,43 @@ public class GeneralTest {
 	
 	
 	// compare results
-
 	private double compare(double[][] dataA, double[][] dataB, int colA, int colB) {
+		double x0 = Math.min(dataA[0][0], dataB[0][0]);
+		double f0 = dataA[0][colA];
+		double g0 = dataB[0][colB];
+		double I = 0.;
+		
+		for (int i = 0, j = 0; i<dataA.length || j < dataB.length; )
+		{
+			double x1,f1 = f0,g1 = g0;
+			if (j>=dataB.length) {
+				x1 = dataA[i][0];
+				f1 = dataA[i][colA];
+				i++;
+			} else if  (i>=dataA.length) {
+				x1 = dataB[j][0];
+				g1 = dataB[j][colB];
+				j++;
+			} else if (dataA[i][0]<dataB[j][0]) {
+				x1 = dataA[i][0];
+				f1 = dataA[i][colA];
+				i++;
+			} else {
+				x1 = dataB[j][0];
+				g1 = dataB[j][colB];
+				j++;
+			}
+			I+=Math.abs(f0-g0)*(x1-x0);
+			f0 = f1;
+			g0 = g1;
+			x0 = x1;
+		}
+		return I;
+	}
+	
+	/**
+	 * */
+	private double compareWithLinearInterpolation(double[][] dataA, double[][] dataB, int colA, int colB) {
 		
 		// merge the positions together
 		double p[] = new double [dataA.length + dataB.length];
