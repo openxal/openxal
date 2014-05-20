@@ -3,6 +3,7 @@ package se.lu.esss.ics.jels;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -122,7 +123,7 @@ public class GeneralTest {
 	 
 		int ns= trajectory.numStates();
 		
-		double[][] dataOX = new double[ns][11];
+		double[][] dataOX = new double[11][ns];
 	    //BasicGraphData myDataX = new BasicGraphData();
 		int i = 0;
 		while (iterState.hasNext())
@@ -132,87 +133,119 @@ public class GeneralTest {
 		    Twiss[] twiss;	
 			twiss = ps.twissParameters();			
 			
-			dataOX[i][Column.POSITION.value] = ps.getPosition();
-			dataOX[i][Column.GAMA_1.value] = ps.getGamma() - 1.; 
-			dataOX[i][Column.RMSX.value] = twiss[0].getEnvelopeRadius();
-			dataOX[i][Column.RMSXp.value] = Math.sqrt(twiss[0].getGamma()*twiss[0].getEmittance());
-			dataOX[i][Column.RMSY.value] = twiss[1].getEnvelopeRadius();
-			dataOX[i][Column.RMSYp.value] = Math.sqrt(twiss[1].getGamma()*twiss[1].getEmittance());
-			dataOX[i][Column.RMSZ.value] = twiss[2].getEnvelopeRadius()/ps.getGamma();
-			dataOX[i][Column.RMSdpp.value] = Math.sqrt(twiss[2].getGamma()*twiss[2].getEmittance())*ps.getGamma();
-			dataOX[i][Column.RMSZp.value] = Math.sqrt(twiss[2].getGamma()*twiss[2].getEmittance())/ps.getGamma();
-			dataOX[i][Column.BETAX.value] = twiss[0].getBeta();
-			dataOX[i][Column.BETAY.value] = twiss[1].getBeta();		
+			dataOX[Column.POSITION.value][i] = ps.getPosition();
+			dataOX[Column.GAMA_1.value][i] = ps.getGamma() - 1.; 
+			dataOX[Column.RMSX.value][i] = twiss[0].getEnvelopeRadius();
+			dataOX[Column.RMSXp.value][i] = Math.sqrt(twiss[0].getGamma()*twiss[0].getEmittance());
+			dataOX[Column.RMSY.value][i] = twiss[1].getEnvelopeRadius();
+			dataOX[Column.RMSYp.value][i] = Math.sqrt(twiss[1].getGamma()*twiss[1].getEmittance());
+			dataOX[Column.RMSZ.value][i] = twiss[2].getEnvelopeRadius()/ps.getGamma();
+			dataOX[Column.RMSdpp.value][i] = Math.sqrt(twiss[2].getGamma()*twiss[2].getEmittance())*ps.getGamma();
+			dataOX[Column.RMSZp.value][i] = Math.sqrt(twiss[2].getGamma()*twiss[2].getEmittance())/ps.getGamma();
+			dataOX[Column.BETAX.value][i] = twiss[0].getBeta();
+			dataOX[Column.BETAY.value][i] = twiss[1].getBeta();		
 		    i=i+1;
 		}
 		
-		double I = compare(dataOX, dataTW, Column.GAMA_1.value, Column.GAMA_1.value);
-		double I1 = compare(dataOX, dataTW, Column.RMSX.value, Column.RMSX.value);
+		double I = compare(dataOX[0], dataTW[0], dataOX[Column.GAMA_1.value], dataTW[Column.GAMA_1.value]);
+		double I1 = compare(dataOX[0], dataTW[0], dataOX[Column.RMSX.value], dataTW[Column.RMSX.value]);
 		
 		System.out.printf("%E %E\n", I, I1);
 	}
 	
 	private double[][] loadTWData() throws IOException
 	{
+		final int TWcols = 26;
+		int nlines = countLines(GeneralTest.class.getResource("ess_out.txt"));
+		
 		BufferedReader br = new BufferedReader(new InputStreamReader(GeneralTest.class.getResource("ess_out.txt").openStream()));
 		//drop headers
 		br.readLine();
 		br.readLine();
 		
-		List<double[]> lines = new ArrayList<>();
+		double[][] data = new double[TWcols][nlines-2];
 		
 		int i = 0;
-		for(String line; (line = br.readLine()) != null; ) {
-			String cols[] = line.split("\t");
-			double dline[] = new double[cols.length];
-			for (int j = 0; j<cols.length; j++) {
-				dline[j] = new Double(cols[j]);
+		for(String line; (line = br.readLine()) != null; i++) {
+			String cols[] = line.split("\t", TWcols + 1);
+			for (int j = 0; j<TWcols; j++) {
+				data[j][i] = new Double(cols[j]);
 			}
-			lines.add(dline);
 		}
-		return lines.toArray(new double[lines.size()][]);
+		br.close();
+		return data;
 	}
 	
 	
-	// compare results
-	private double compare(double[][] dataA,double[][] dataB, int colA, int colB) {
-		return integrateL1sup(dataA,dataB,colA,colB)/integrateSup(dataB,colB);
+	private int countLines(URL resource) throws IOException {
+		BufferedReader br = new BufferedReader(new InputStreamReader(resource.openStream()));
+		int i = 0;
+		while (br.readLine()!=null) i++;;
+		br.close();
+		return i;
+	}
+
+	/**
+	 * Compares two tabulated functions.
+	 * @param xa x values of first function
+	 * @param xb x values of second function
+	 * @param ya y values of first function
+	 * @param yb y values of second function
+	 * @return returns relative error
+	 */
+	private double compare(double[] xa, double[] xb, double[] ya, double yb[]) {
+		return integrateL1sup(xa,xb,ya,yb)/integrateSup(xb,yb);
 	}
 	
-	
-	private double integrateSup(double[][] dataA, int colA) {
+	/**
+	 * Integrates absolute value of a tabulated function. Interpolation is from left, i.e. f(x)=f(x_i) on [x_i,x_i+1).
+	 * @param x x values of function
+	 * @param y y values of function
+	 * @return the integral
+	 */
+	private double integrateSup(double[] x, double[] y) {
 		double I = 0.;
-		for (int i = 0; i<dataA.length-1; i++) {
-			I += dataA[i][colA] * (dataA[i+1][0]-dataA[i][1]);
+		for (int i = 0; i<x.length-1; i++) {
+			I += Math.abs(y[i]) * (x[i+1]-x[i]);
 		}
 		return I;
 	}
-		
 	
-	private double integrateL1sup(double[][] dataA, double[][] dataB, int colA, int colB) {
-		double x0 = Math.min(dataA[0][0], dataB[0][0]);
-		double f0 = dataA[0][colA];
-		double g0 = dataB[0][colB];
+	/**
+	 * Integrates absolute difference of two tabulated functions. Interpolation is from left, i.e. f(x)=f(x_i) on [x_i,x_i+1).
+	 * @param xa x values of first function
+	 * @param xb x values of second function
+	 * @param ya y values of first function
+	 * @param yb y values of second function
+	 * @return value of the integral
+	 */
+	private double integrateL1sup(double[] xa, double[] xb, double[] ya, double yb[]) {
+		if (xa.length == 0) return integrateSup(xb, yb);
+		if (xb.length == 0) return integrateSup(xa, ya);
+		
+		double x0 = Math.min(xa[0], xb[0]);
+		double f0 = ya[0];
+		double g0 = yb[0];
 		double I = 0.;
 		
-		for (int i = 0, j = 0; i<dataA.length || j < dataB.length; )
+		for (int i = 0, j = 0; i<xa.length || j < xb.length; )
 		{
 			double x1,f1 = f0,g1 = g0;
-			if (j>=dataB.length) {
-				x1 = dataA[i][0];
-				f1 = dataA[i][colA];
+			if (j>=xb.length) {
+				x1 = xa[i];
+				f1 = ya[i];
 				i++;
-			} else if  (i>=dataA.length) {
-				x1 = dataB[j][0];
-				g1 = dataB[j][colB];
+			} else if  (i>=xa.length) {
+				x1 = xb[j];
+				g1 = yb[j];
 				j++;
-			} else if (dataA[i][0]<dataB[j][0]) {
-				x1 = dataA[i][0];
-				f1 = dataA[i][colA];
+			} else if (xa[i]<xb[j]) {
+				x1 = xa[i];
+				f1 = ya[i];
 				i++;
 			} else {
-				x1 = dataB[j][0];
-				g1 = dataB[j][colB];
+				x1 = xb[j];
+				g1 = yb[j];
 				j++;
 			}
 			I+=Math.abs(f0-g0)*(x1-x0);
@@ -224,24 +257,30 @@ public class GeneralTest {
 	}
 	
 	/**
-	 * */
-	private double integrateL1linear(double[][] dataA, double[][] dataB, int colA, int colB) {
+	 * Integrates absolute difference of two tabulated functions. Interpolation is linear.
+	 * @param xa x values of first function
+	 * @param xb x values of second function
+	 * @param ya y values of first function
+	 * @param yb y values of second function
+	 * @return value of the integral
+	 */
+	private double integrateL1linear(double[] xa, double[] xb, double[] ya, double yb[]) {
 		
 		// merge the positions together
-		double p[] = new double [dataA.length + dataB.length];
-		for (int i = 0, j = 0; i<dataA.length || j < dataB.length; )
+		double p[] = new double [xa.length + xb.length];
+		for (int i = 0, j = 0; i<xa.length || j < xb.length; )
 		{
-			if (j>=dataB.length) {
-				p[i+j] = dataA[i][0];
+			if (j>=xb.length) {
+				p[i+j] = xa[i];
 				i++;
-			} else if  (i>=dataA.length) {
-				p[i+j] = dataB[j][0];
+			} else if  (i>=xa.length) {
+				p[i+j] = xb[j];
 				j++;
-			} else if (dataA[i][0]<dataB[j][0]) {
-				p[i+j] = dataA[i][0];
+			} else if (xa[i]<xb[j]) {
+				p[i+j] = xa[i];
 				i++;
 			} else {
-				p[i+j] = dataB[j][0];
+				p[i+j] = xb[j];
 				j++;
 			}
 		}
@@ -249,29 +288,29 @@ public class GeneralTest {
 		// interpolate
 		double f[] = new double[p.length];
 		for (int i = 0, k = 0; i<p.length; i++) {
-			while (k<dataA.length && p[i] >= dataA[k][0]) k++;
-			if (p[i] == dataA[k-1][0]) {
-				f[i] = dataA[k-1][colA];
+			while (k<xa.length && p[i] >= xa[k]) k++;
+			if (p[i] == xa[k-1]) {
+				f[i] = ya[k-1];
 			} else {
 				// interpolate
-				if (k >= dataA.length) break;
-				double a0 = (p[i] - dataA[k-1][0]);
-				double a1 = (dataA[k][0] - p[i]);
-				f[i] = (a0*dataA[k-1][colA] + a1*dataA[k][colA]) / (a0+a1);
+				if (k >= xa.length) break;
+				double a0 = (p[i] - xa[k-1]);
+				double a1 = (xa[k] - p[i]);
+				f[i] = (a0*ya[k-1] + a1*ya[k]) / (a0+a1);
 			}
 		}
 		
 		double g[] = new double[p.length];
 		for (int i = 0, k = 0; i<p.length; i++) {
-			while (k<dataB.length && p[i] >= dataB[k][0]) k++;
-			if (p[i] == dataB[k-1][0]) {
-				g[i] = dataB[k-1][colB];
+			while (k<xb.length && p[i] >= xb[k]) k++;
+			if (p[i] == xb[k-1]) {
+				g[i] = yb[k-1];
 			} else {
 				// interpolate
-				if (k >= dataB.length) break;
-				double a0 = (p[i] - dataB[k-1][0]);
-				double a1 = (dataB[k][0] - p[i]);
-				g[i] = (a0*dataB[k-1][colB] + a1*dataB[k][colB]) / (a0+a1);
+				if (k >= xb.length) break;
+				double a0 = (p[i] - xb[k-1]);
+				double a1 = (xb[k] - p[i]);
+				g[i] = (a0*yb[k-1] + a1*yb[k]) / (a0+a1);
 			}
 		}
 		
