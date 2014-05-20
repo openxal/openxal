@@ -1,0 +1,21 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<!DOCTYPE sources SYSTEM "xdxf.dtd">
+<!-- main xml file for the Feb 2012 beam run -->
+<sources version="2.0">
+	<deviceMapping_source name="deviceMapping" url="sns.impl"/>
+	<modelConfig_source name="modelConfig" url="ModelConfig.modconfig" />
+	<optics_source name="optics" url="sns.xdxf"/>
+	<hardware_status name="Hardware Status" url="hardware_status.xdxf"/>
+	<optics_extra name="alignment" url="alignment.xdxf" />
+	<optics_extra name="Corrector Calibration" url="ring-correctors.xdxf"/>
+	<optics_extra name="Orbit Response Matrix" url="orm-quad.xdxf"/>
+	<optics_extra name="General Device Modifications" url="device-mods.xdxf" />
+	<optics_extra name="SCL 930 MeV" url="SCL.xdxf"/>
+	<optics_extra name="HEBT 930 MeV" url="HEBT.xdxf"/>
+	<optics_extra name="IDMP 930 MeV" url="IDMP.xdxf"/>
+	<optics_extra name="Ring 930 MeV" url="Ring.xdxf"/>
+	<optics_extra name="RTBT 930 MeV" url="RTBT.xdxf"/>
+	<optics_extra name="EDMP 930 MeV" url="EDMP.xdxf"/>
+	<timing_source name="timing" url="timing_pvs.tim"/>
+	<tablegroup_source name="modelparams" url="model.params"/>
+</sources>

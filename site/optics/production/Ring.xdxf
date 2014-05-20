@@ -1,0 +1,454 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<!DOCTYPE xdxf SYSTEM "xdxf.dtd">
+<xdxf date="02.04.2014" system="sns" ver="2.0.0">
+    <sequence id="Ring1">
+        <node id="Ring_Mag:QTV_A12">
+            <attributes>
+                <magnet dfltMagFld="-3.9503736187097043"/>
+            </attributes>
+        </node>
+        <node id="Ring_Mag:QTH_A13">
+            <attributes>
+                <magnet dfltMagFld="3.614218755045485"/>
+            </attributes>
+        </node>
+        <node id="Ring_Mag:DH_A12">
+            <attributes>
+                <magnet dfltMagFld="0.21285524696093638"/>
+            </attributes>
+        </node>
+        <node id="Ring_Mag:DH_A13">
+            <attributes>
+                <magnet dfltMagFld="-0.27801697495303546"/>
+            </attributes>
+        </node>
+    </sequence>
+    <sequence id="Ring2">
+        <node id="Ring_Mag:QTV_B01">
+            <attributes>
+                <magnet dfltMagFld="-2.901892625157186"/>
+            </attributes>
+        </node>
+        <node id="Ring_Mag:QTH_B02">
+            <attributes>
+                <magnet dfltMagFld="3.752115942359781"/>
+            </attributes>
+        </node>
+        <node id="Ring_Mag:QTV_B03">
+            <attributes>
+                <magnet dfltMagFld="-4.0789629474114015"/>
+            </attributes>
+        </node>
+        <node id="Ring_Mag:QTH_B04">
+            <attributes>
+                <magnet dfltMagFld="3.47113933899544"/>
+            </attributes>
+        </node>
+        <node id="Ring_Mag:QTV_B05">
+            <attributes>
+                <magnet dfltMagFld="-4.0789629474114015"/>
+            </attributes>
+        </node>
+        <node id="Ring_Mag:QTH_B06">
+            <attributes>
+                <magnet dfltMagFld="3.47113933899544"/>
+            </attributes>
+        </node>
+        <node id="Ring_Mag:QTV_B07">
+            <attributes>
+                <magnet dfltMagFld="-4.0789629474114015"/>
+            </attributes>
+        </node>
+        <node id="Ring_Mag:QTH_B08">
+            <attributes>
+                <magnet dfltMagFld="3.752115942359781"/>
+            </attributes>
+        </node>
+        <node id="Ring_Mag:QTV_B09">
+            <attributes>
+                <magnet dfltMagFld="-2.901892625157186"/>
+            </attributes>
+        </node>
+        <node id="Ring_Mag:QTH_B10">
+            <attributes>
+                <magnet dfltMagFld="3.614218755045485"/>
+            </attributes>
+        </node>
+        <node id="Ring_Mag:QTV_B11">
+            <attributes>
+                <magnet dfltMagFld="-3.9503736187097043"/>
+            </attributes>
+        </node>
+        <node id="Ring_Mag:QTV_B12">
+            <attributes>
+                <magnet dfltMagFld="-3.9503736187097043"/>
+            </attributes>
+        </node>
+        <node id="Ring_Mag:QTH_B13">
+            <attributes>
+                <magnet dfltMagFld="3.614218755045485"/>
+            </attributes>
+        </node>
+        <node id="Ring_Mag:QTV_C01">
+            <attributes>
+                <magnet dfltMagFld="-2.901892625157186"/>
+            </attributes>
+        </node>
+        <node id="Ring_Mag:QTH_C02">
+            <attributes>
+                <magnet dfltMagFld="3.752115942359781"/>
+            </attributes>
+        </node>
+        <node id="Ring_Mag:QTV_C03">
+            <attributes>
+                <magnet dfltMagFld="-4.0789629474114015"/>
+            </attributes>
+        </node>
+        <node id="Ring_Mag:QTH_C04">
+            <attributes>
+                <magnet dfltMagFld="3.47113933899544"/>
+            </attributes>
+        </node>
+        <node id="Ring_Mag:QTV_C05">
+            <attributes>
+                <magnet dfltMagFld="-4.0789629474114015"/>
+            </attributes>
+        </node>
+        <node id="Ring_Mag:QTH_C06">
+            <attributes>
+                <magnet dfltMagFld="3.47113933899544"/>
+            </attributes>
+        </node>
+        <node id="Ring_Mag:QTV_C07">
+            <attributes>
+                <magnet dfltMagFld="-4.0789629474114015"/>
+            </attributes>
+        </node>
+        <node id="Ring_Mag:QTH_C08">
+            <attributes>
+                <magnet dfltMagFld="3.752115942359781"/>
+            </attributes>
+        </node>
+        <node id="Ring_Mag:QTV_C09">
+            <attributes>
+                <magnet dfltMagFld="-2.901892625157186"/>
+            </attributes>
+        </node>
+        <node id="Ring_Mag:DH_B01">
+            <attributes>
+                <magnet dfltMagFld="0.7399522074097796"/>
+            </attributes>
+        </node>
+        <node id="Ring_Mag:DH_B02">
+            <attributes>
+                <magnet dfltMagFld="0.7399522074097796"/>
+            </attributes>
+        </node>
+        <node id="Ring_Mag:DH_B03">
+            <attributes>
+                <magnet dfltMagFld="0.7399522074097796"/>
+            </attributes>
+        </node>
+        <node id="Ring_Mag:DH_B04">
+            <attributes>
+                <magnet dfltMagFld="0.7399522074097796"/>
+            </attributes>
+        </node>
+        <node id="Ring_Mag:DH_B06">
+            <attributes>
+                <magnet dfltMagFld="0.7399522074097796"/>
+            </attributes>
+        </node>
+        <node id="Ring_Mag:DH_B07">
+            <attributes>
+                <magnet dfltMagFld="0.7399522074097796"/>
+            </attributes>
+        </node>
+        <node id="Ring_Mag:DH_B08">
+            <attributes>
+                <magnet dfltMagFld="0.7399522074097796"/>
+            </attributes>
+        </node>
+        <node id="Ring_Mag:DH_B09">
+            <attributes>
+                <magnet dfltMagFld="0.7399522074097796"/>
+            </attributes>
+        </node>
+        <node id="Ring_Mag:DH_C01">
+            <attributes>
+                <magnet dfltMagFld="0.7399522074097796"/>
+            </attributes>
+        </node>
+        <node id="Ring_Mag:DH_C02">
+            <attributes>
+                <magnet dfltMagFld="0.7399522074097796"/>
+            </attributes>
+        </node>
+        <node id="Ring_Mag:DH_C03">
+            <attributes>
+                <magnet dfltMagFld="0.7399522074097796"/>
+            </attributes>
+        </node>
+        <node id="Ring_Mag:DH_C04">
+            <attributes>
+                <magnet dfltMagFld="0.7399522074097796"/>
+            </attributes>
+        </node>
+        <node id="Ring_Mag:DH_C06">
+            <attributes>
+                <magnet dfltMagFld="0.7399522074097796"/>
+            </attributes>
+        </node>
+        <node id="Ring_Mag:DH_C07">
+            <attributes>
+                <magnet dfltMagFld="0.7399522074097796"/>
+            </attributes>
+        </node>
+        <node id="Ring_Mag:DH_C08">
+            <attributes>
+                <magnet dfltMagFld="0.7399522074097796"/>
+            </attributes>
+        </node>
+        <node id="Ring_Mag:DH_C09">
+            <attributes>
+                <magnet dfltMagFld="0.7399522074097796"/>
+            </attributes>
+        </node>
+    </sequence>
+    <sequence id="Ring3">
+        <node id="Ring_Mag:QTH_C10">
+            <attributes>
+                <magnet dfltMagFld="3.614218755045485"/>
+            </attributes>
+        </node>
+        <node id="Ring_Mag:QTV_C11">
+            <attributes>
+                <magnet dfltMagFld="-3.9503736187097043"/>
+            </attributes>
+        </node>
+    </sequence>
+    <sequence id="Ring4">
+        <node id="Ring_Mag:QTV_C12">
+            <attributes>
+                <magnet dfltMagFld="-3.9503736187097043"/>
+            </attributes>
+        </node>
+        <node id="Ring_Mag:QTH_C13">
+            <attributes>
+                <magnet dfltMagFld="3.614218755045485"/>
+            </attributes>
+        </node>
+        <node id="Ring_Mag:QTV_D01">
+            <attributes>
+                <magnet dfltMagFld="-2.901892625157186"/>
+            </attributes>
+        </node>
+        <node id="Ring_Mag:QTH_D02">
+            <attributes>
+                <magnet dfltMagFld="3.752115942359781"/>
+            </attributes>
+        </node>
+        <node id="Ring_Mag:QTV_D03">
+            <attributes>
+                <magnet dfltMagFld="-4.0789629474114015"/>
+            </attributes>
+        </node>
+        <node id="Ring_Mag:QTH_D04">
+            <attributes>
+                <magnet dfltMagFld="3.47113933899544"/>
+            </attributes>
+        </node>
+        <node id="Ring_Mag:QTV_D05">
+            <attributes>
+                <magnet dfltMagFld="-4.0789629474114015"/>
+            </attributes>
+        </node>
+        <node id="Ring_Mag:QTH_D06">
+            <attributes>
+                <magnet dfltMagFld="3.47113933899544"/>
+            </attributes>
+        </node>
+        <node id="Ring_Mag:QTV_D07">
+            <attributes>
+                <magnet dfltMagFld="-4.0789629474114015"/>
+            </attributes>
+        </node>
+        <node id="Ring_Mag:QTH_D08">
+            <attributes>
+                <magnet dfltMagFld="3.752115942359781"/>
+            </attributes>
+        </node>
+        <node id="Ring_Mag:QTV_D09">
+            <attributes>
+                <magnet dfltMagFld="-2.901892625157186"/>
+            </attributes>
+        </node>
+        <node id="Ring_Mag:QTH_D10">
+            <attributes>
+                <magnet dfltMagFld="3.614218755045485"/>
+            </attributes>
+        </node>
+        <node id="Ring_Mag:QTV_D11">
+            <attributes>
+                <magnet dfltMagFld="-3.9503736187097043"/>
+            </attributes>
+        </node>
+        <node id="Ring_Mag:QTV_D12">
+            <attributes>
+                <magnet dfltMagFld="-3.9503736187097043"/>
+            </attributes>
+        </node>
+        <node id="Ring_Mag:QTH_D13">
+            <attributes>
+                <magnet dfltMagFld="3.614218755045485"/>
+            </attributes>
+        </node>
+        <node id="Ring_Mag:QTV_A01">
+            <attributes>
+                <magnet dfltMagFld="-2.901892625157186"/>
+            </attributes>
+        </node>
+        <node id="Ring_Mag:QTH_A02">
+            <attributes>
+                <magnet dfltMagFld="3.752115942359781"/>
+            </attributes>
+        </node>
+        <node id="Ring_Mag:QTV_A03">
+            <attributes>
+                <magnet dfltMagFld="-4.0789629474114015"/>
+            </attributes>
+        </node>
+        <node id="Ring_Mag:QTH_A04">
+            <attributes>
+                <magnet dfltMagFld="3.47113933899544"/>
+            </attributes>
+        </node>
+        <node id="Ring_Mag:QTV_A05">
+            <attributes>
+                <magnet dfltMagFld="-4.0789629474114015"/>
+            </attributes>
+        </node>
+        <node id="Ring_Mag:QTH_A06">
+            <attributes>
+                <magnet dfltMagFld="3.47113933899544"/>
+            </attributes>
+        </node>
+        <node id="Ring_Mag:QTV_A07">
+            <attributes>
+                <magnet dfltMagFld="-4.0789629474114015"/>
+            </attributes>
+        </node>
+        <node id="Ring_Mag:QTH_A08">
+            <attributes>
+                <magnet dfltMagFld="3.752115942359781"/>
+            </attributes>
+        </node>
+        <node id="Ring_Mag:QTV_A09">
+            <attributes>
+                <magnet dfltMagFld="-2.901892625157186"/>
+            </attributes>
+        </node>
+        <node id="Ring_Mag:DH_D01">
+            <attributes>
+                <magnet dfltMagFld="0.7399522074097796"/>
+            </attributes>
+        </node>
+        <node id="Ring_Mag:DH_D02">
+            <attributes>
+                <magnet dfltMagFld="0.7399522074097796"/>
+            </attributes>
+        </node>
+        <node id="Ring_Mag:DH_D03">
+            <attributes>
+                <magnet dfltMagFld="0.7399522074097796"/>
+            </attributes>
+        </node>
+        <node id="Ring_Mag:DH_D04">
+            <attributes>
+                <magnet dfltMagFld="0.7399522074097796"/>
+            </attributes>
+        </node>
+        <node id="Ring_Mag:DH_D06">
+            <attributes>
+                <magnet dfltMagFld="0.7399522074097796"/>
+            </attributes>
+        </node>
+        <node id="Ring_Mag:DH_D07">
+            <attributes>
+                <magnet dfltMagFld="0.7399522074097796"/>
+            </attributes>
+        </node>
+        <node id="Ring_Mag:DH_D08">
+            <attributes>
+                <magnet dfltMagFld="0.7399522074097796"/>
+            </attributes>
+        </node>
+        <node id="Ring_Mag:DH_D09">
+            <attributes>
+                <magnet dfltMagFld="0.7399522074097796"/>
+            </attributes>
+        </node>
+        <node id="Ring_Mag:DH_A01">
+            <attributes>
+                <magnet dfltMagFld="0.7399522074097796"/>
+            </attributes>
+        </node>
+        <node id="Ring_Mag:DH_A02">
+            <attributes>
+                <magnet dfltMagFld="0.7399522074097796"/>
+            </attributes>
+        </node>
+        <node id="Ring_Mag:DH_A03">
+            <attributes>
+                <magnet dfltMagFld="0.7399522074097796"/>
+            </attributes>
+        </node>
+        <node id="Ring_Mag:DH_A04">
+            <attributes>
+                <magnet dfltMagFld="0.7399522074097796"/>
+            </attributes>
+        </node>
+        <node id="Ring_Mag:DH_A06">
+            <attributes>
+                <magnet dfltMagFld="0.7399522074097796"/>
+            </attributes>
+        </node>
+        <node id="Ring_Mag:DH_A07">
+            <attributes>
+                <magnet dfltMagFld="0.7399522074097796"/>
+            </attributes>
+        </node>
+        <node id="Ring_Mag:DH_A08">
+            <attributes>
+                <magnet dfltMagFld="0.7399522074097796"/>
+            </attributes>
+        </node>
+        <node id="Ring_Mag:DH_A09">
+            <attributes>
+                <magnet dfltMagFld="0.7399522074097796"/>
+            </attributes>
+        </node>
+    </sequence>
+    <sequence id="Ring5">
+        <node id="Ring_Mag:QTH_A10">
+            <attributes>
+                <magnet dfltMagFld="3.614218755045485"/>
+            </attributes>
+        </node>
+        <node id="Ring_Mag:QTV_A11">
+            <attributes>
+                <magnet dfltMagFld="-3.9503736187097043"/>
+            </attributes>
+        </node>
+        <node id="Ring_Mag:DH_A10">
+            <attributes>
+                <magnet dfltMagFld="-0.2111278373823535"/>
+            </attributes>
+        </node>
+        <node id="Ring_Mag:DH_A11">
+            <attributes>
+                <magnet dfltMagFld="0.3067111673972735"/>
+            </attributes>
+        </node>
+    </sequence>
+</xdxf>

@@ -491,8 +491,7 @@ public class BpmViewerDocument extends AcceleratorDocument {
     protected void customizeCommands( Commander commander ) {
 
         // define the "show-view-panel" set raw emittance panel action action
-        setViewlAction =
-            new AbstractAction( "show-view-panel" ) {
+        setViewlAction = new AbstractAction( "show-view-panel" ) {
                 /** serialization ID */
                 private static final long serialVersionUID = 1L;
                 public void actionPerformed( ActionEvent event ) {
@@ -502,8 +501,7 @@ public class BpmViewerDocument extends AcceleratorDocument {
         commander.registerAction( setViewlAction );
 
         // define the "show-set-pvs-panel" set PVs panel appearance action
-        setPVsAction =
-            new AbstractAction( "show-set-pvs-panel" ) {
+        setPVsAction = new AbstractAction( "show-set-pvs-panel" ) {
                 /** serialization ID */
                 private static final long serialVersionUID = 1L;
                 public void actionPerformed( ActionEvent event ) {
@@ -513,8 +511,7 @@ public class BpmViewerDocument extends AcceleratorDocument {
         commander.registerAction( setPVsAction );
 
 
-        setPredefConfigAction =
-            new AbstractAction( "set-predef-config" ) {
+        setPredefConfigAction = new AbstractAction( "set-predef-config" ) {
                 /** serialization ID */
                 private static final long serialVersionUID = 1L;
                 public void actionPerformed( ActionEvent event ) {
@@ -547,9 +544,7 @@ public class BpmViewerDocument extends AcceleratorDocument {
 
     /**  Description of the Method */
     private void makePredefinedConfigurationsPanel() {
-        predefinedConfController = new PredefinedConfController( this,
-            "config",
-            "predefinedConfiguration.bpm" );
+        predefinedConfController = new PredefinedConfController( this, "config", "predefinedConfiguration.bpm" );
         configPanel = predefinedConfController.getJPanel();
         ActionListener selectConfListener =
             new ActionListener() {

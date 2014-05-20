@@ -53,7 +53,7 @@
 
     <!-- Configure path to the core  -->
     <property name="core.root" value="${xal.home}/core" />
-	
+
     <!-- Configure paths for extensions  -->
     <property name="extensions.root" value="${xal.home}/extensions" />
 
@@ -73,4 +73,12 @@
     <!-- Configure paths for scripts  -->
     <property name="scripts.build.root" value="${build.products.root}/scripts" />
     <property name="scripts.install.root" value="${install.root}/scripts" />
+
+	<!-- Configuration path for site specific files -->
+	<property name="site.root" value="${xal.home}/site" />
+    <property name="site.core.root" value="${site.root}/core" />
+    <property name="site.extensions.root" value="${site.root}/extensions" />
+    <property name="site.plugins.root" value="${site.root}/plugins" />
+    <property name="site.apps.root" value="${site.root}/apps" />
+    <property name="site.services.root" value="${site.root}/services" />
 </project>

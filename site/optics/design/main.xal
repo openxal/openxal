@@ -1,0 +1,10 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<!DOCTYPE sources SYSTEM "xdxf.dtd">
+<sources version="2.0">
+    <modelConfig_source name="modelConfig" url="ModelConfig.modconfig" />
+	<deviceMapping_source name="deviceMapping" url="sns.impl"/>
+	<optics_source name="optics" url="sns.xdxf"/>
+	<hardware_status name="Hardware Status" url="hardware_status.xdxf"/>
+	<timing_source name="timing" url="timing_pvs.tim"/>
+	<tablegroup_source name="modelparams" url="model.params"/>
+</sources>
