@@ -111,37 +111,26 @@ public class QuadshakerMain extends ApplicationAdaptor {
 	 *@param  args  The command line arguments
 	 */
 	public static void main(String[] args) {
+		final QuadshakerMain appAdaptor = new QuadshakerMain();
+		URL[] predefConfURLArr = null;
 
 		if(args.length == 0) {
-
-			QuadshakerMain doc = new QuadshakerMain();
-
-			try {
-				Application.launch(doc);
-			} catch(Exception exception) {
-				System.err.println(exception.getMessage());
-				exception.printStackTrace();
-				JOptionPane.showMessageDialog(null, exception.getMessage(),
-						exception.getClass().getName(), JOptionPane.WARNING_MESSAGE);
-			}
-			return;
+			predefConfURLArr = new URL[0];
 		}
-
-		QuadshakerMain doc = new QuadshakerMain();
-
-		URL[] predefConfURLArr = new URL[args.length];
-
-		for(int i = 0; i < args.length; i++) {
-			predefConfURLArr[i] = doc.getClass().getResource("config/" + args[i]);
+		else {
+			predefConfURLArr = new URL[args.length];
+			for( int index = 0; index < args.length; index++ ) {
+				predefConfURLArr[index] = appAdaptor.getResourceURL( "config/" + args[index] );
+			}
 		}
 
 		try {
-			Application.launch(doc, predefConfURLArr);
-		} catch(Exception exception) {
+			Application.launch( appAdaptor, predefConfURLArr );
+		}
+		catch(Exception exception) {
 			System.err.println(exception.getMessage());
 			exception.printStackTrace();
-			JOptionPane.showMessageDialog(null, exception.getMessage(),
-					exception.getClass().getName(), JOptionPane.WARNING_MESSAGE);
+			JOptionPane.showMessageDialog( null, exception.getMessage(), exception.getClass().getName(), JOptionPane.WARNING_MESSAGE );
 		}
 	}
 }
