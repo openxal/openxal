@@ -51,20 +51,58 @@
 
 		<!-- Merge the pure extensions' resources into the compile directory -->
 		<copy todir="${extension.compile.root}" quiet="true" failonerror="false" includeEmptyDirs="false">
+			<!-- mapper extracts the resource path relative to the resources directory -->
 			<regexpmapper handledirsep="true" from="^[^/]+/resources/(.*)$$" to="\1" />
 			<fileset dir="${extensions.root}" includes="*/resources/**/*" />
 		</copy>
 
+		<!-- Merge the site specific pure extensions' resources into the compile directory -->
+		<copy todir="${extension.compile.root}" quiet="true" failonerror="false" includeEmptyDirs="false">
+			<!-- mapper extracts the resource path relative to the resources directory -->
+			<regexpmapper handledirsep="true" from="^[^/]+/resources/(.*)$$" to="\1" />
+			<fileset dir="${site.extensions.root}" includes="*/resources/**/*" />
+		</copy>
+
 		<!-- Merge the plugins' resources into the compile directory -->
 		<copy todir="${extension.compile.root}" quiet="true" failonerror="false" includeEmptyDirs="false">
+			<!-- mapper extracts the resource path relative to the resources directory -->
 			<regexpmapper handledirsep="true" from="^[^/]+/resources/(.*)$$" to="\1" />
 			<fileset dir="${plugins.root}" includes="*/resources/**/*" />
 		</copy>
 
+		<!-- Merge the site specific plugins' resources into the compile directory -->
+		<copy todir="${extension.compile.root}" quiet="true" failonerror="false" includeEmptyDirs="false">
+			<!-- mapper extracts the resource path relative to the resources directory -->
+			<regexpmapper handledirsep="true" from="^[^/]+/resources/(.*)$$" to="\1" />
+			<fileset dir="${site.plugins.root}" includes="*/resources/**/*" />
+		</copy>
+
 		<!-- Merge the services extensions' resources into the compile directory -->
 		<copy todir="${extension.compile.root}" quiet="true" failonerror="false" includeEmptyDirs="false">
+			<!-- mapper extracts the resource path relative to the resources directory -->
 			<regexpmapper handledirsep="true" from="^[^/]+/extension/resources/(.*)$$" to="\1" />
 			<fileset dir="${services.root}" includes="*/extension/resources/**/*" />
+		</copy>
+
+		<!-- Merge the site specific services extensions' resources into the compile directory -->
+		<copy todir="${extension.compile.root}" quiet="true" failonerror="false" includeEmptyDirs="false">
+			<!-- mapper extracts the resource path relative to the resources directory -->
+			<regexpmapper handledirsep="true" from="^[^/]+/extension/resources/(.*)$$" to="\1" />
+			<fileset dir="${site.services.root}" includes="*/extension/resources/**/*" />
+		</copy>
+
+		<!-- Merge the applications extensions' resources into the compile directory -->
+		<copy todir="${extension.compile.root}" quiet="true" failonerror="false" includeEmptyDirs="false">
+			<!-- mapper extracts the resource path relative to the resources directory -->
+			<regexpmapper handledirsep="true" from="^[^/]+/extension/resources/(.*)$$" to="\1" />
+			<fileset dir="${apps.root}" includes="*/extension/resources/**/*" />
+		</copy>
+
+		<!-- Merge the site specific applications extensions' resources into the compile directory -->
+		<copy todir="${extension.compile.root}" quiet="true" failonerror="false" includeEmptyDirs="false">
+			<!-- mapper extracts the resource path relative to the resources directory -->
+			<regexpmapper handledirsep="true" from="^[^/]+/extension/resources/(.*)$$" to="\1" />
+			<fileset dir="${site.apps.root}" includes="*/extension/resources/**/*" />
 		</copy>
 	</target>
 
@@ -81,10 +119,34 @@
 			<fileset dir="${extensions.root}" includes="*/resources/**/*" />
 		</copy>
 
+		<!-- Merge the site specific pure extensions' resources into the extensions build intermedites resources directory -->
+		<copy todir="${extension.intermediates.resources}" quiet="true" failonerror="false" includeEmptyDirs="false">
+			<regexpmapper handledirsep="true" from="^[^/]+/resources/(.*)$$" to="\1" />
+			<fileset dir="${site.extensions.root}" includes="*/resources/**/*" />
+		</copy>
+
 		<!-- Merge the services extensions' resources into the extensions build intermedites resources directory -->
 		<copy todir="${extension.intermediates.resources}" quiet="true" failonerror="false" includeEmptyDirs="false">
 			<regexpmapper handledirsep="true" from="^[^/]+/extension/resources/(.*)$$" to="\1" />
 			<fileset dir="${services.root}" includes="*/extension/resources/**/*" />
+		</copy>
+
+		<!-- Merge the site specific services extensions' resources into the extensions build intermedites resources directory -->
+		<copy todir="${extension.intermediates.resources}" quiet="true" failonerror="false" includeEmptyDirs="false">
+			<regexpmapper handledirsep="true" from="^[^/]+/extension/resources/(.*)$$" to="\1" />
+			<fileset dir="${site.services.root}" includes="*/extension/resources/**/*" />
+		</copy>
+
+		<!-- Merge the applications extensions' resources into the extensions build intermedites resources directory -->
+		<copy todir="${extension.intermediates.resources}" quiet="true" failonerror="false" includeEmptyDirs="false">
+			<regexpmapper handledirsep="true" from="^[^/]+/extension/resources/(.*)$$" to="\1" />
+			<fileset dir="${apps.root}" includes="*/extension/resources/**/*" />
+		</copy>
+
+		<!-- Merge the site specific applications extensions' resources into the extensions build intermedites resources directory -->
+		<copy todir="${extension.intermediates.resources}" quiet="true" failonerror="false" includeEmptyDirs="false">
+			<regexpmapper handledirsep="true" from="^[^/]+/extension/resources/(.*)$$" to="\1" />
+			<fileset dir="${site.apps.root}" includes="*/extension/resources/**/*" />
 		</copy>
 
         <jar compress="true" jarfile="${build.intermediates.extensions}/resources.jar" index="true">
@@ -124,6 +186,11 @@
 
 			<!-- include jars from each service extension -->
 			<zipgroupfileset dir="${services.root}">
+				<include name="*/extension/lib/*.jar" />
+			</zipgroupfileset>
+
+			<!-- include jars from each app extension -->
+			<zipgroupfileset dir="${apps.root}">
 				<include name="*/extension/lib/*.jar" />
 			</zipgroupfileset>
         </jar>

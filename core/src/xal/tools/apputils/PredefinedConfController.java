@@ -67,7 +67,7 @@ public class PredefinedConfController {
 		superDoc = superDocIn;
 		URL predefConfURL = superDoc.getClass().getResource( "resources/" + resourcePathIn + "/" + resourceNameIn );
 
-		resourcePath = resourcePathIn;
+		resourcePath = "resources/" + resourcePathIn;
 		resourceName = resourceNameIn;
 
 		//set JTextArea parameters
@@ -99,6 +99,7 @@ public class PredefinedConfController {
 			tree.addTreeSelectionListener(
 				new TreeSelectionListener() {
 					public void valueChanged(TreeSelectionEvent e) {
+						System.out.println( "Configuration item selected..." );
 						ConfigNode node = (ConfigNode)tree.getLastSelectedPathComponent();
 						if (node == null) {
 							return;

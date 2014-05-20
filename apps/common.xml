@@ -30,6 +30,9 @@
         <property name="app.intermediates.lib.root" value="${app.intermediates.root}" />
         <property name="app.intermediates.resources" value="${app.compile.root}/${app.relative.path}/resources" />
 
+		<property name="site.app.root" value="${site.apps.root}/${app.ref}" />
+		<property name="site.app.resources" value="${site.app.root}/resources" />
+
         <!-- determine whether building should be allowed -->
         <!-- don't build if the build is a batch build and this project explicitly excludes batch building -->
         <condition property="allows.build">
@@ -91,10 +94,11 @@
 				</classpath>
             </javac>
 
-			<!-- Copy the application's resources into the compile directory -->
+			<!-- Copy the application's resources (including site specific) into the compile directory -->
 			<mkdir dir="${app.intermediates.resources}" />
-			<copy todir="${app.intermediates.resources}" quiet="true" failonerror="false">
+			<copy todir="${app.intermediates.resources}" quiet="true" failonerror="false" overwrite="true">
 				<fileset dir="${app.src.root}/resources" />
+				<fileset dir="${site.app.resources}" />
 			</copy>
 		</sequential>
 	</macrodef>
