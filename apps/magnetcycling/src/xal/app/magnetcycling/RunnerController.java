@@ -239,7 +239,7 @@ public class RunnerController {
 	 *  Updates the ps cyclers table using selection in PS Group List
 	 */
 	private void updatePSCyclerTable() {
-		PowerSupplyGroup[] objs = (PowerSupplyGroup[])groupList.getSelectedValuesList().toArray();
+		PowerSupplyGroup[] objs = groupList.getSelectedValuesList().toArray( new PowerSupplyGroup[0] );
 		if(objs.length > 0) {
 			Vector<PowerSupplyCycler> v_tmp = new Vector<PowerSupplyCycler>();
 			runnerPSG.removePowerSupplyCyclers();
