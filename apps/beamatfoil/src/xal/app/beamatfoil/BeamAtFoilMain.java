@@ -132,7 +132,7 @@ public class BeamAtFoilMain extends ApplicationAdaptor {
 		URL[] predefConfURLArr = new URL[args.length];
 
 		for(int i = 0; i < args.length; i++) {
-			predefConfURLArr[i] = doc.getClass().getResource("config/" + args[i]);
+			predefConfURLArr[i] = Application.getAdaptor().getResourceURL( "config/" + args[i] );
 		}
 
 		try {
