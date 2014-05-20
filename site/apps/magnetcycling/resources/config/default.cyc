@@ -1,0 +1,10 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<MAGNETS_CYCLING title="/home/shishlo/tmp/Untitled.cyc">
+    <font name="Monospaced" size="10" style="1"/>
+    <shared_parameters update_time="1.0"/>
+    <RUNNER_CNTRL>
+        <PowerSupplyGroup group_name="HEBT PSs"/>
+        <PowerSupplyGroup group_name="Ring PSs"/>
+        <PowerSupplyGroup group_name="IDump PSs"/>
+    </RUNNER_CNTRL>
+</MAGNETS_CYCLING>
