@@ -130,10 +130,9 @@ public class MainScan1D extends ApplicationAdaptor {
 			AcceleratorApplication.launch( appAdaptor, predefConfURLArr );
 		}
 		catch (Exception exception) {
-				System.err.println(exception.getMessage());
-				exception.printStackTrace();
-				JOptionPane.showMessageDialog( null, exception.getMessage(), exception.getClass().getName(), JOptionPane.WARNING_MESSAGE );
-			}
+			System.err.println(exception.getMessage());
+			exception.printStackTrace();
+			JOptionPane.showMessageDialog( null, exception.getMessage(), exception.getClass().getName(), JOptionPane.WARNING_MESSAGE );
 		}
 	}
 }
