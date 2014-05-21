@@ -21,6 +21,7 @@ import java.util.regex.*;
 import xal.ca.*;
 import xal.extension.widgets.plot.*;
 import xal.extension.application.*;
+import xal.tools.data.DataAdaptor;
 import xal.tools.xml.*;
 import xal.tools.apputils.*;
 import xal.tools.apputils.pvselection.*;
@@ -155,28 +156,11 @@ public class RingbpmviewerDocument extends XalDocument {
 		mainTabbedPanel.add("Preferences", preferencesPanel);
         
 		mainTabbedPanel.setSelectedIndex(0);
-        
-		//initialize the BPMs' names
-		URL init_url = this.getClass().getResource("resources/config/ring_bpms.xml");
-		XmlDataAdaptor root_da = XmlDataAdaptor.adaptorForUrl(init_url, false);
-		XmlDataAdaptor init_da = (XmlDataAdaptor) root_da.childAdaptor("LINES");
-        
-		XmlDataAdaptor ring_bpms_da = (XmlDataAdaptor) init_da.childAdaptor("RING_BPM_TBT_PVs");
-		XmlDataAdaptor hebt_bpms_da = (XmlDataAdaptor) init_da.childAdaptor("HEBT_BPM_PVs");
-		XmlDataAdaptor rtbt_bpms_da = (XmlDataAdaptor) init_da.childAdaptor("RTBT_BPM_PVs");
-        
-		//------------------------------------------
-		//This is new part: we get rid of xml files data
-		//and use accelerator and a status of BPM
-		//        START
-		//-------------------------------------------
-		
+
 		//make new data adaptors from accelerator
 		Accelerator accl = XMLDataManager.loadDefaultAccelerator();
         
-		ring_bpms_da = XmlDataAdaptor.newEmptyDocumentAdaptor();
-		XmlDataAdaptor bpms_tmp_da = (XmlDataAdaptor) ring_bpms_da.createChild("RING_BPM_TBT_PVs");
-		ring_bpms_da = bpms_tmp_da;
+		final DataAdaptor ring_bpms_da = XmlDataAdaptor.newEmptyDocumentAdaptor().createChild("RING_BPM_TBT_PVs");
 		AcceleratorSeq accSeq = accl.findSequence("Ring");
 		java.util.List<AcceleratorNode> bpms_list = accSeq.getAllNodesOfType(BPM.s_strType);
 		Iterator<AcceleratorNode> iter = bpms_list.iterator();
@@ -185,23 +169,21 @@ public class RingbpmviewerDocument extends XalDocument {
 			AcceleratorNode node = iter.next();
 			if(node.getStatus()){
 				String bpm_name = node.getId();
-				XmlDataAdaptor bpm_da = (XmlDataAdaptor) bpms_tmp_da.createChild("RING_BPM");
+				DataAdaptor bpm_da = ring_bpms_da.createChild("RING_BPM");
 				Matcher m = p.matcher(bpm_name);
 				m.find();
 				bpm_da.setValue("name", m.group(1));
-				XmlDataAdaptor pvs_da = (XmlDataAdaptor) bpm_da.createChild("PV_NAMES");
-				XmlDataAdaptor pvx_da = (XmlDataAdaptor) pvs_da.createChild("xTBT");
-				XmlDataAdaptor pvy_da = (XmlDataAdaptor) pvs_da.createChild("yTBT");
-				XmlDataAdaptor pvAmp_da = (XmlDataAdaptor) pvs_da.createChild("ampTBT");
+				DataAdaptor pvs_da = bpm_da.createChild("PV_NAMES");
+				DataAdaptor pvx_da = pvs_da.createChild("xTBT");
+				DataAdaptor pvy_da = pvs_da.createChild("yTBT");
+				DataAdaptor pvAmp_da = pvs_da.createChild("ampTBT");
 				pvx_da.setValue("name", bpm_name+":xTBT");
 				pvy_da.setValue("name", bpm_name+":yTBT");
 				pvAmp_da.setValue("name", bpm_name+":ampTBT");
 			}
 		}
 		
-		hebt_bpms_da = XmlDataAdaptor.newEmptyDocumentAdaptor();
-		bpms_tmp_da = (XmlDataAdaptor) hebt_bpms_da.createChild("HEBT_BPM_PVs");
-		hebt_bpms_da = bpms_tmp_da;
+		final DataAdaptor hebt_bpms_da = XmlDataAdaptor.newEmptyDocumentAdaptor().createChild("HEBT_BPM_PVs");
 		accSeq = accl.findSequence("HEBT");
 		bpms_list = accSeq.getAllNodesOfType(BPM.s_strType);
 		iter = bpms_list.iterator();
@@ -210,24 +192,22 @@ public class RingbpmviewerDocument extends XalDocument {
 			AcceleratorNode node = iter.next();
 			if(node.getStatus()){
 				String bpm_name = node.getId();
-				XmlDataAdaptor bpm_da = (XmlDataAdaptor) bpms_tmp_da.createChild("TRANSF_LINE_BPM");
+				DataAdaptor bpm_da = hebt_bpms_da.createChild("TRANSF_LINE_BPM");
 				Matcher m = p.matcher(bpm_name);
 				m.find();
 				bpm_da.setValue("name", m.group(1));
 				bpm_da.setValue("disabled", false);
-				XmlDataAdaptor pvs_da = (XmlDataAdaptor) bpm_da.createChild("PV_NAMES");
-				XmlDataAdaptor pvx_da = (XmlDataAdaptor) pvs_da.createChild("xAvg");
-				XmlDataAdaptor pvy_da = (XmlDataAdaptor) pvs_da.createChild("yAvg");
-				XmlDataAdaptor pvAmp_da = (XmlDataAdaptor) pvs_da.createChild("amplitudeAvg");
+				DataAdaptor pvs_da = bpm_da.createChild("PV_NAMES");
+				DataAdaptor pvx_da = pvs_da.createChild("xAvg");
+				DataAdaptor pvy_da = pvs_da.createChild("yAvg");
+				DataAdaptor pvAmp_da = pvs_da.createChild("amplitudeAvg");
 				pvx_da.setValue("name", bpm_name+":xAvg");
 				pvy_da.setValue("name", bpm_name+":yAvg");
 				pvAmp_da.setValue("name", bpm_name+":amplitudeAvg");
 			}
 		}
 		
-		rtbt_bpms_da = XmlDataAdaptor.newEmptyDocumentAdaptor();
-		bpms_tmp_da = (XmlDataAdaptor) rtbt_bpms_da.createChild("RTBT_BPM_PVs");
-		rtbt_bpms_da = bpms_tmp_da;
+		final DataAdaptor rtbt_bpms_da = XmlDataAdaptor.newEmptyDocumentAdaptor().createChild("RTBT_BPM_PVs");
 		accSeq = accl.findSequence("RTBT");
 		bpms_list = accSeq.getAllNodesOfType(BPM.s_strType);
 		iter = bpms_list.iterator();
@@ -236,47 +216,27 @@ public class RingbpmviewerDocument extends XalDocument {
 			AcceleratorNode node = iter.next();
 			if(node.getStatus()){
 				String bpm_name = node.getId();
-				XmlDataAdaptor bpm_da = (XmlDataAdaptor) bpms_tmp_da.createChild("TRANSF_LINE_BPM");
+				DataAdaptor bpm_da = rtbt_bpms_da.createChild("TRANSF_LINE_BPM");
 				Matcher m = p.matcher(bpm_name);
 				m.find();
 				bpm_da.setValue("name", m.group(1));
 				bpm_da.setValue("disabled", false);
-				XmlDataAdaptor pvs_da = (XmlDataAdaptor) bpm_da.createChild("PV_NAMES");
-				XmlDataAdaptor pvx_da = (XmlDataAdaptor) pvs_da.createChild("xAvg");
-				XmlDataAdaptor pvy_da = (XmlDataAdaptor) pvs_da.createChild("yAvg");
-				XmlDataAdaptor pvAmp_da = (XmlDataAdaptor) pvs_da.createChild("amplitudeAvg");
+				DataAdaptor pvs_da = bpm_da.createChild("PV_NAMES");
+				DataAdaptor pvx_da = pvs_da.createChild("xAvg");
+				DataAdaptor pvy_da = pvs_da.createChild("yAvg");
+				DataAdaptor pvAmp_da = pvs_da.createChild("amplitudeAvg");
 				pvx_da.setValue("name", bpm_name+":xAvg");
 				pvy_da.setValue("name", bpm_name+":yAvg");
 				pvAmp_da.setValue("name", bpm_name+":ampAvg");
 			}
 		}
-		
-		//------------------------------------------
-		//This is new part: we get rid of xml files data
-		//and use accelerator and a status of BPM
-		//        STOP
-		//-------------------------------------------
-		
+
 		ringBPMsController.init(ring_bpms_da);
 		hebtBPMsController.init(hebt_bpms_da);
 		rtbtBPMsController.init(rtbt_bpms_da);
         
-		ringBPMsWaveFormController.getListenToEPICS_Button().setModel(
-                                                                      ringBPMsController.getListenToEPICS_Button().getModel()
-                                                                      );
-        
-		//The HEBT and RTBT controllers will be independent
-		//    in the sense of EPICS listening if the following is commented
-		/**
-         hebtBPMsController.getListenToEPICS_Button().setModel(
-         ringBPMsController.getListenToEPICS_Button().getModel()
-         );
-         
-         rtbtBPMsController.getListenToEPICS_Button().setModel(
-         ringBPMsController.getListenToEPICS_Button().getModel()
-         );
-         */
-        
+		ringBPMsWaveFormController.getListenToEPICS_Button().setModel( ringBPMsController.getListenToEPICS_Button().getModel() );
+
 		ringBPMsController.setListenToEPICS(false);
         
 		ringBPMsWaveFormController.init(ringBPMsController.getRingBPMset());
