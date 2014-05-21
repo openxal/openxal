@@ -1,0 +1,18 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<CONFIGURATIONS tree_name = "ROOT" text="ROOT for predefined BPM Viewer configurations">
+    <TEST tree_name = "TEST" text="Predefined Scalar PV Viewer configuration as a test.">
+           <conf tree_name = "Test Scalar PV Viewer config." url="test.spv" text="The test configuration with data."/>
+    </TEST>
+    <WARM_LINAC tree_name = "WARM LINAC" text="Predefined configurations for the warm linac.">
+           <conf tree_name = "BPMs' Phases" url="warm_bpm.spv" text="The warm linac BPMs' Phases."/>
+           <conf tree_name = "RF Cavities' Phases" url="warm_linac_rfphases.spv" text="The warm linac RF Cavities' Phases."/>
+    </WARM_LINAC>
+    <SCL_LINAC tree_name = "SCL" text="Predefined configurations for the superconducting linac.">
+           <conf tree_name = "RF Cavities' Phases" url="scl_rf_phases.spv" text="The superconducting linac RF phases."/>
+           <conf tree_name = "RF Cavities' Amplitudes" url="scl_rf_amplitudes.spv" text="The superconducting linac RF amplitudes."/>
+           <conf tree_name = "BPMs' Phases" url="scl_bpm_phases.spv" text="The superconducting linac BPMs' phases."/>
+    </SCL_LINAC>
+    <WHOLE_LINAC tree_name = "WHOLE LINAC" text="Predefined configurations for the whole linac.">
+           <conf tree_name = "BPM Phases'" url="linac_bpms.spv" text="The whole linac BPMs' phases."/>
+    </WHOLE_LINAC>
+</CONFIGURATIONS>

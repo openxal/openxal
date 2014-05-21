@@ -193,6 +193,7 @@ public class ScalarpvviewerDocument extends XalDocument {
 	 *@param  url  Description of the Parameter
 	 */
 	public void readScalarpvviewerDocument(URL url) {
+		System.out.println( "Read scalar PV Viewer document: " + url );
 		try {
 			//read the document content from the persistent storage
 			String xmlData = "";
@@ -260,7 +261,7 @@ public class ScalarpvviewerDocument extends XalDocument {
 					viewValuesPanel.listenModeOn(params_uc.booleanValue("listenToEPICS"));
 					viewChartsPanel.recordOn(params_uc.booleanValue("recordChartFromEPICS"));
 					//set PVs
-                    for (final DataAdaptor pvDA : scalarpvviewerData_Adaptor.childAdaptors()) {
+                    for ( final DataAdaptor pvDA : scalarpvviewerData_Adaptor.childAdaptors( "ScalarPV" ) ) {
 						String pvName = pvDA.stringValue("pvName");
 						double refVal = pvDA.doubleValue("referenceValue");
 						double val = 0.;
@@ -458,9 +459,7 @@ public class ScalarpvviewerDocument extends XalDocument {
 	 *  Description of the Method
 	 */
 	private void makePredefinedConfigurationsPanel() {
-		predefinedConfController = new PredefinedConfController(this,
-				"config",
-				"predefinedConfiguration.spv");
+		predefinedConfController = new PredefinedConfController( this, "config", "predefinedConfiguration.spv");
 		configPanel = predefinedConfController.getJPanel();
 		ActionListener selectConfListener =
 			new ActionListener() {
