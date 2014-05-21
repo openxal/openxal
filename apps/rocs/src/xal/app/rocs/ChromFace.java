@@ -7,6 +7,7 @@
 /*************************************************************/
 
 package xal.app.rocs;
+
 import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.border.*;
@@ -17,6 +18,7 @@ import java.util.*;
 import java.util.List;
 import java.io.*;
 import java.lang.*;
+import xal.extension.application.Application;
 import xal.extension.widgets.swing.*;
 import xal.tools.apputils.EdgeLayout;
 import java.text.NumberFormat;
@@ -77,7 +79,7 @@ public class ChromFace extends JPanel implements OpticsListener{
     //Member function Constructor
     public ChromFace(GenDocument aDocument, GenWindow parent){
 	
-	url = getClass().getResource("resources/Chrom_623_620.dat");
+	url = Application.getAdaptor().getResourceURL( "Chrom_623_620.dat" );
 	doc=aDocument;
 	doc.addOpticsListener(this);
 	window = parent;
