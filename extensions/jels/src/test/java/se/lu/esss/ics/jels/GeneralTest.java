@@ -24,6 +24,7 @@ import xal.smf.Accelerator;
 import xal.smf.AcceleratorSeq;
 import xal.smf.data.XMLDataManager;
 import xal.tools.beam.Twiss;
+import static org.junit.Assert.*;
 
 public class GeneralTest {
 
@@ -79,21 +80,26 @@ public class GeneralTest {
 	
 	
 	enum Column {
-		POSITION(0),
-		GAMA_1(1),
-		RMSX(2),
-		RMSXp(3),
-		RMSY(4),
-		RMSYp(5),
-		RMSZ(6),
-		RMSdpp(7),
-		RMSZp(8),
-		BETAX(9),
-		BETAY(10);
+		POSITION(0,0, 0.),
+		GAMA_1(1,1, 1e-3),
+		RMSX(2,2,1e-1),
+		RMSXp(3,3,1e-1),
+		RMSY(4,4,1e-1),
+		RMSYp(5,5,1e-1),
+		RMSZ(6,6,1e-1),
+		RMSdpp(7,7,1e-1),
+		RMSZp(8,8,1e-1),
+		BETAX(9,24,0.5),
+		BETAY(10,25,0.5);
 		
-		int value;
-		private Column(int value) {
-			this.value = value;
+		int openxal;
+		int tracewin;
+		double allowedError;
+		
+		private Column(int openxal, int tracewin, double allowedError) {
+			this.openxal = openxal;
+			this.tracewin = tracewin;
+			this.allowedError = allowedError;
 		}
 	}
 	// run
@@ -133,24 +139,27 @@ public class GeneralTest {
 		    Twiss[] twiss;	
 			twiss = ps.twissParameters();			
 			
-			dataOX[Column.POSITION.value][i] = ps.getPosition();
-			dataOX[Column.GAMA_1.value][i] = ps.getGamma() - 1.; 
-			dataOX[Column.RMSX.value][i] = twiss[0].getEnvelopeRadius();
-			dataOX[Column.RMSXp.value][i] = Math.sqrt(twiss[0].getGamma()*twiss[0].getEmittance());
-			dataOX[Column.RMSY.value][i] = twiss[1].getEnvelopeRadius();
-			dataOX[Column.RMSYp.value][i] = Math.sqrt(twiss[1].getGamma()*twiss[1].getEmittance());
-			dataOX[Column.RMSZ.value][i] = twiss[2].getEnvelopeRadius()/ps.getGamma();
-			dataOX[Column.RMSdpp.value][i] = Math.sqrt(twiss[2].getGamma()*twiss[2].getEmittance())*ps.getGamma();
-			dataOX[Column.RMSZp.value][i] = Math.sqrt(twiss[2].getGamma()*twiss[2].getEmittance())/ps.getGamma();
-			dataOX[Column.BETAX.value][i] = twiss[0].getBeta();
-			dataOX[Column.BETAY.value][i] = twiss[1].getBeta();		
+			dataOX[Column.POSITION.openxal][i] = ps.getPosition();
+			dataOX[Column.GAMA_1.openxal][i] = ps.getGamma() - 1.; 
+			dataOX[Column.RMSX.openxal][i] = twiss[0].getEnvelopeRadius();
+			dataOX[Column.RMSXp.openxal][i] = Math.sqrt(twiss[0].getGamma()*twiss[0].getEmittance());
+			dataOX[Column.RMSY.openxal][i] = twiss[1].getEnvelopeRadius();
+			dataOX[Column.RMSYp.openxal][i] = Math.sqrt(twiss[1].getGamma()*twiss[1].getEmittance());
+			dataOX[Column.RMSZ.openxal][i] = twiss[2].getEnvelopeRadius()/ps.getGamma();
+			dataOX[Column.RMSdpp.openxal][i] = Math.sqrt(twiss[2].getGamma()*twiss[2].getEmittance())*ps.getGamma();
+			dataOX[Column.RMSZp.openxal][i] = Math.sqrt(twiss[2].getGamma()*twiss[2].getEmittance())/ps.getGamma();
+			dataOX[Column.BETAX.openxal][i] = twiss[0].getBeta();
+			dataOX[Column.BETAY.openxal][i] = twiss[1].getBeta();		
 		    i=i+1;
 		}
 		
-		double I = compare(dataOX[0], dataTW[0], dataOX[Column.GAMA_1.value], dataTW[Column.GAMA_1.value]);
-		double I1 = compare(dataOX[0], dataTW[0], dataOX[Column.RMSX.value], dataTW[Column.RMSX.value]);
-		
-		System.out.printf("%E %E\n", I, I1);
+		Column[] allCols = Column.values();
+		for (int j = 1; j < allCols.length; j++) {
+			double e = compare(dataOX[0], dataTW[0], dataOX[allCols[j].openxal], dataTW[allCols[j].tracewin]);
+			System.out.printf("%s: %E\n",allCols[j].name(), e);
+			assertTrue(allCols[j].name()+" not within the allowed error", e < allCols[j].allowedError);
+			//System.out.printf("%E %E\n",dataOX[allCols[j].openxal][0], dataTW[allCols[j].tracewin][0]);
+		}
 	}
 	
 	private double[][] loadTWData() throws IOException
