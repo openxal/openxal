@@ -7,6 +7,7 @@
 /*************************************************************/
 
 package xal.app.rocs;
+
 import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.border.*;
@@ -18,6 +19,7 @@ import java.util.List;
 import java.io.*;
 import java.lang.*;
 import xal.extension.widgets.swing.*;
+import xal.extension.application.Application;
 import xal.tools.apputils.EdgeLayout;
 import java.text.NumberFormat;
 import xal.tools.messaging.*;
@@ -64,7 +66,7 @@ public class TuneFace extends JPanel implements OpticsListener{
     boolean tuneKnown = false;
     GenDocument doc; 
     GenWindow window;
-    URL url = getClass().getResource("resources/tuneGridMaster.dat");
+    URL url = Application.getAdaptor().getResourceURL( "tuneGridMaster.dat" );
     int i;
 //   quad error set of 01/06/2008 
 //    double fac_qv03a05a07 = 1/(1-1.7/100.0);

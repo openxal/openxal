@@ -1,0 +1,25 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<Scalar_PV_VIEWER title="Warm Linac RF Cavities' Phases">
+    <font name="Monospaced" size="12" style="1"/>
+    <Panels_titles charts_panel_title="Phases vs. Time" values_panel_title="Phases of Cavities"/>
+	<PARAMETERS lastMemorizingTime="NEVER"/>
+    <UpdateController updateTime="3.0"  ChartUpdateTime="15.0"  listenToEPICS="true" recordChartFromEPICS="true" />
+    <ScalarPV pvName="RFQ_LLRF:FCM1:cavPhaseAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="MEBT_LLRF:FCM1:cavPhaseAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="MEBT_LLRF:FCM2:cavPhaseAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="MEBT_LLRF:FCM3:cavPhaseAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="MEBT_LLRF:FCM4:cavPhaseAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="DTL_LLRF:FCM1:cavPhaseAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="DTL_LLRF:FCM2:cavPhaseAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="DTL_LLRF:FCM3:cavPhaseAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="DTL_LLRF:FCM4:cavPhaseAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="DTL_LLRF:FCM5:cavPhaseAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="DTL_LLRF:FCM6:cavPhaseAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="CCL_LLRF:FCM1:cavPhaseAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="CCL_LLRF:FCM2:cavPhaseAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="CCL_LLRF:FCM3:cavPhaseAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="CCL_LLRF:FCM4:cavPhaseAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+</Scalar_PV_VIEWER>
+
+%==================time chart data=================================
+

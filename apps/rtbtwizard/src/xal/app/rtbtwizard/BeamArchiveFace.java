@@ -28,6 +28,7 @@ import xal.ca.*;
 import xal.smf.*;
 import xal.smf.impl.*;
 
+import xal.extension.application.Application;
 import xal.extension.bricks.WindowReference;
 import xal.tools.database.*;
 import xal.tools.data.*;
@@ -178,7 +179,7 @@ public class BeamArchiveFace {
 	
 	/** load the archive configuration file */
 	protected PersistentStore loadArchiveConfiguration() {
-		final URL configurationURL = getClass().getResource( "resources/archiveConfiguration.xml" );
+		final URL configurationURL = Application.getAdaptor().getResourceURL( "archiveConfiguration.xml" );
 		final DataAdaptor configurationAdaptor = XmlDataAdaptor.adaptorForUrl( configurationURL, false ).childAdaptor( "ArchiveConfiguration" );
 		final DataAdaptor persistentStoreAdaptor = configurationAdaptor.childAdaptor( "PersistentStore" );
 		return new PersistentStore( persistentStoreAdaptor );

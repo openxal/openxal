@@ -1,6 +1,9 @@
 
 
 package xal.app.rocs;
+
+import xal.extension.application.Application;
+
 import java.math.*;
 import java.util.*;
 import java.io.*;
@@ -29,7 +32,7 @@ public class ChromSettings{
 	i=0;
 	j=0;
 
-	URL url = getClass().getResource("resources/Chrom_623_620.dat");
+	URL url = Application.getAdaptor().getResourceURL( "Chrom_623_620.dat" );
 	InputStream is = url.openStream();
 	InputStreamReader isr = new InputStreamReader(is);
 	BufferedReader br = new BufferedReader(isr);

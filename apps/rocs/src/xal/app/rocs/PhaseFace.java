@@ -7,6 +7,7 @@
 /*************************************************************/
 
 package xal.app.rocs;
+
 import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.border.*;
@@ -18,6 +19,7 @@ import java.util.List;
 import java.io.*;
 import java.lang.*;
 import xal.extension.widgets.swing.*;
+import xal.extension.application.Application;
 import xal.tools.apputils.EdgeLayout;
 import java.text.NumberFormat;
 import xal.tools.messaging.*;
@@ -80,7 +82,7 @@ public class PhaseFace extends JPanel implements OpticsListener{
 		
 	doc=aDocument;
 	doc.addOpticsListener(this);
-	url = getClass().getResource("resources/Phase_623_620_Achromat.dat");
+	url = Application.getAdaptor().getResourceURL( "Phase_623_620_Achromat.dat" );
 	window = parent;
 	
 	setPreferredSize(new Dimension(500,600));
@@ -295,7 +297,7 @@ public class PhaseFace extends JPanel implements OpticsListener{
 	
 	Achr.addActionListener(new ActionListener(){ 
 	    public void actionPerformed(ActionEvent e) {
-		url = getClass().getResource("resources/Phase_623_620_Achromat.dat");
+		url = Application.getAdaptor().getResourceURL( "Phase_623_620_Achromat.dat" );
 		scrollX[0].Enable();
 		scrollY[0].Enable();
 		callRead();
@@ -305,7 +307,7 @@ public class PhaseFace extends JPanel implements OpticsListener{
 
 	NoAchr.addActionListener(new ActionListener(){ 
 	    public void actionPerformed(ActionEvent e) {
-		url = getClass().getResource("resources/Phase_623_620_NoAchromat.dat");
+		url = Application.getAdaptor().getResourceURL( "Phase_623_620_NoAchromat.dat" );
 		scrollX[0].Enable();
 		scrollY[0].setValue(ydefault);
 		scrollY[0].Disable();

@@ -110,42 +110,30 @@ public class MagnetcyclingMain extends ApplicationAdaptor {
 	 *
 	 *@param  args  The command line arguments
 	 */
-	public static void main(String[] args) {
+	public static void main( final String[] args ) {
 
-		if(args.length == 0) {
-// TODO: Need to find a mechanism for loading preconfigured documents
-//			MagnetcyclingMain doc = new MagnetcyclingMain();
-//
-//			URL[] predefConfURLArr = new URL[1];
-//			predefConfURLArr[0] = doc.getClass().getResource("config/HEBT_Ring_ini.cyc");
+		final MagnetcyclingMain appAdaptor = new MagnetcyclingMain();
+		URL[] predefConfURLArr;
 
-			try {
-				Application.launch( new MagnetcyclingMain() );
-				//Application.launch(doc, predefConfURLArr);
-			} catch(Exception exception) {
-				System.err.println(exception.getMessage());
-				exception.printStackTrace();
-				JOptionPane.showMessageDialog(null, exception.getMessage(),
-						exception.getClass().getName(), JOptionPane.WARNING_MESSAGE);
-			}
-			return;
+		// if no args are supplied, load the HEBT/Ring configuration
+		if( args.length == 0 ) {
+			predefConfURLArr = new URL[1];
+			predefConfURLArr[0] = appAdaptor.getResourceURL( "config/HEBT_Ring_ini.cyc" );
 		}
-
-		MagnetcyclingMain doc = new MagnetcyclingMain();
-
-		URL[] predefConfURLArr = new URL[args.length];
-
-		for(int i = 0; i < args.length; i++) {
-			predefConfURLArr[i] = doc.getClass().getResource("config/" + args[i]);
+		else {		// load the specified configurations
+			predefConfURLArr = new URL[args.length];
+			for( int index = 0; index < args.length; index++ ) {
+				predefConfURLArr[index] = appAdaptor.getResourceURL( "config/" + args[index] );
+			}
 		}
 
 		try {
-			Application.launch(doc, predefConfURLArr);
-		} catch(Exception exception) {
-			System.err.println(exception.getMessage());
+			Application.launch( appAdaptor, predefConfURLArr );
+		}
+		catch(Exception exception) {
+			System.err.println( exception.getMessage() );
 			exception.printStackTrace();
-			JOptionPane.showMessageDialog(null, exception.getMessage(),
-					exception.getClass().getName(), JOptionPane.WARNING_MESSAGE);
+			JOptionPane.showMessageDialog( null, exception.getMessage(), exception.getClass().getName(), JOptionPane.WARNING_MESSAGE );
 		}
 	}
 }

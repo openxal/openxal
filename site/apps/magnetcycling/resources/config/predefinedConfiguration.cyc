@@ -1,0 +1,6 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<CONFIGURATIONS tree_name = "ROOT" text="ROOT for predefined Magnet Cycling configurations">
+    <TEST tree_name = "ALL" text="Predefined Magnet Cycling configurations">
+           <conf tree_name = "Test Magnet Cycling  config." url="test.cyc" text="The Magnet Cycling test configuration with data."/>
+    </TEST>
+</CONFIGURATIONS>

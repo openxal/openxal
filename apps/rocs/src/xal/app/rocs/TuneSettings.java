@@ -12,10 +12,14 @@
 /************************************************************************/
 
 package xal.app.rocs;
+
+import xal.extension.application.Application;
+
 import java.math.*;
 import java.util.*;
 import java.io.*;
 import java.net.URL;
+
 
 public class TuneSettings{
     
@@ -42,7 +46,7 @@ public class TuneSettings{
 	j = 0;
 	
 	//Begin reading in data and       
-	URL url = getClass().getResource("resources/tuneGridMaster.dat");
+	URL url = Application.getAdaptor().getResourceURL( "tuneGridMaster.dat" );
 	InputStream is = url.openStream();
 	InputStreamReader isr = new InputStreamReader(is);
 	BufferedReader br = new BufferedReader(isr);

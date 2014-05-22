@@ -60,7 +60,6 @@ public class ParseWireFile{
         ArrayList<Double> szraw = new ArrayList<Double>();
         
         //Open the file.
-        //URL url = getClass().getResource(filename);
         
         URL url = newfile.toURI().toURL();
         
