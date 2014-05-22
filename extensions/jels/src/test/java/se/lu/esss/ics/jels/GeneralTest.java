@@ -1,85 +1,39 @@
 package se.lu.esss.ics.jels;
 
+import static org.junit.Assert.assertTrue;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 
 import org.junit.Test;
 
-import se.lu.esss.ics.jels.model.elem.jels.JElsElementMapping;
 import xal.model.ModelException;
-import xal.model.alg.EnvelopeTracker;
-import xal.model.alg.Tracker;
-import xal.model.probe.EnvelopeProbe;
+import xal.model.probe.Probe;
 import xal.model.probe.traj.EnvelopeProbeState;
 import xal.model.probe.traj.ProbeState;
 import xal.model.probe.traj.Trajectory;
-import xal.sim.scenario.ElementMapping;
+import xal.model.xml.ParsingException;
+import xal.model.xml.ProbeXmlParser;
 import xal.sim.scenario.Scenario;
 import xal.smf.Accelerator;
 import xal.smf.AcceleratorSeq;
 import xal.smf.data.XMLDataManager;
 import xal.tools.beam.Twiss;
-import static org.junit.Assert.*;
 
+
+/**
+ * Runs a battery of test located in resources folder.
+ * 
+ * @author Ivo List <ivo.list@cosylab.com>
+ */
 public class GeneralTest {
-
-	// load test
-	// load probe
-
-	private static EnvelopeProbe setupOpenXALProbe() {
-		EnvelopeTracker envelopeTracker = new EnvelopeTracker();			
-		envelopeTracker.setRfGapPhaseCalculation(true);
-		envelopeTracker.setUseSpacecharge(true);
-		envelopeTracker.setEmittanceGrowth(false);
-		envelopeTracker.setStepSize(0.004);
-		envelopeTracker.setProbeUpdatePolicy(Tracker.UPDATE_EXIT);
-		
-		EnvelopeProbe envelopeProbe = new EnvelopeProbe();
-		envelopeProbe.setAlgorithm(envelopeTracker);		
-		
-		return envelopeProbe;
-	}
-	
-	public static void setupInitialParameters(EnvelopeProbe probe) {
-		probe.setSpeciesCharge(-1);
-		probe.setSpeciesRestEnergy(9.3829431e8);
-		//elsProbe.setSpeciesRestEnergy(9.38272013e8);	
-		probe.setKineticEnergy(3e6);//energy
-		probe.setPosition(0.0);
-		probe.setTime(0.0);		
-				
-		double beta_gamma = probe.getBeta() * probe.getGamma();
-	
-		
-		probe.initFromTwiss(new Twiss[]{new Twiss(-0.1763,0.2442,0.2098*1e-6 / beta_gamma),
-										  new Twiss(-0.3247,0.3974,0.2091*1e-6 / beta_gamma),
-										  new Twiss(-0.5283,0.8684,0.2851*1e-6 / beta_gamma)});
-		probe.setBeamCurrent(0.0);
-		//probe.setBeamCurrent(50e-3);
-		
-		// probe.setBunchFrequency(4.025e8); 	
-	}
-	
-	// load optics
-	
-	private static AcceleratorSeq loadAcceleratorSequence() {
-		/* Loading SMF model */				
-		Accelerator accelerator = XMLDataManager.acceleratorWithUrlSpec(JElsDemo.class.getResource("main.xal").toString());
-				
-		if (accelerator == null)
-		{			
-			throw new Error("Accelerator is empty. Could not load the default accelerator.");
-		} 			
-		return accelerator;
-	}
-	
-	
-	enum Column {
+	/**
+	 * Describes Openxal, Tracewin columns/functions of the results. Sets allowed error on each function.
+	 * */
+	private static enum Column {
 		POSITION(0,0, 0.),
 		GAMA_1(1,1, 1e-3),
 		RMSX(2,2,1e-1),
@@ -102,14 +56,99 @@ public class GeneralTest {
 			this.allowedError = allowedError;
 		}
 	}
-	// run
+	
+	/**
+	 * Runs a batch of tests located in the resources.
+	 * Each test contains probe file with initial parameters and result files from TraceWin.
+	 * @throws IOException
+	 * @throws ModelException
+	 */
 	@Test
-	public void run() throws ModelException, IOException 
+	public void runGeneralTests() throws IOException, ModelException
 	{
-		double dataTW[][] = loadTWData();
+		double dataTW[][] = loadTWData(GeneralTest.class.getResource("tracewin.0.txt"));
+		Probe probe = loadProbeFromXML(GeneralTest.class.getResource("probe.0.xml").toString());
+        double dataOX[][] = run(probe);
+        
+        Column[] allCols = Column.values();
+		for (int j = 1; j < allCols.length; j++) {
+			double e = compare(dataOX[0], dataTW[0], dataOX[allCols[j].openxal], dataTW[allCols[j].tracewin]);
+			System.out.printf("%s: %E\n",allCols[j].name(), e);
+			assertTrue(allCols[j].name()+" not within the allowed error", e < allCols[j].allowedError);
+			//System.out.printf("%E %E\n",dataOX[allCols[j].openxal][0], dataTW[allCols[j].tracewin][0]);
+		}
+	}
+	
+	
+	/**
+	 * Loads tracewin data from file
+	 * @param twdata path to tracewin file
+	 * @return data
+	 * @throws IOException
+	 */
+	private double[][] loadTWData(URL twdata) throws IOException
+	{
+		final int TWcols = 26;
+		int nlines = countLines(twdata);
 		
-		EnvelopeProbe probe = setupOpenXALProbe(); // OpenXAL probe & algorithm
-		setupInitialParameters(probe);
+		BufferedReader br = new BufferedReader(new InputStreamReader(twdata.openStream()));
+		//drop headers
+		br.readLine();
+		br.readLine();
+		
+		double[][] data = new double[TWcols][nlines-2];
+		
+		int i = 0;
+		for(String line; (line = br.readLine()) != null; i++) {
+			String cols[] = line.split("\t", TWcols + 1);
+			for (int j = 0; j<TWcols; j++) {
+				data[j][i] = new Double(cols[j]);
+			}
+		}
+		br.close();
+		return data;
+	}
+	
+	/**
+	 * Loads OpenXal probe with initial parameters from a file
+	 * @param file OpenXal probe file
+	 * @return the probe
+	 */
+	private static Probe loadProbeFromXML(String file) {
+		try {			
+			Probe probe = ProbeXmlParser.parse(file);			
+			return probe;
+		} catch (ParsingException e1) {
+			e1.printStackTrace();
+		}		
+		return null;
+	}
+
+	
+	/**
+	 * Loads default accelerator from the resources.
+	 * @return the accelerator
+	 */
+	private static AcceleratorSeq loadAcceleratorSequence() {
+		/* Loading SMF model */				
+		Accelerator accelerator = XMLDataManager.acceleratorWithUrlSpec(JElsDemo.class.getResource("main.xal").toString());
+				
+		if (accelerator == null)
+		{			
+			throw new Error("Accelerator is empty. Could not load the default accelerator.");
+		} 			
+		return accelerator;
+	}
+	
+	/**
+	 * Runs the default accelerator with the give probe
+	 * @param probe probe
+	 * @return results from simulation
+	 * @throws ModelException
+	 * @throws IOException
+	 */
+	public double[][] run(Probe probe) throws ModelException, IOException 
+	{
 	    AcceleratorSeq sequence = loadAcceleratorSequence();
 		Scenario scenario = Scenario.newScenarioFor(sequence);		
 		scenario.setProbe(probe);			
@@ -153,39 +192,15 @@ public class GeneralTest {
 		    i=i+1;
 		}
 		
-		Column[] allCols = Column.values();
-		for (int j = 1; j < allCols.length; j++) {
-			double e = compare(dataOX[0], dataTW[0], dataOX[allCols[j].openxal], dataTW[allCols[j].tracewin]);
-			System.out.printf("%s: %E\n",allCols[j].name(), e);
-			assertTrue(allCols[j].name()+" not within the allowed error", e < allCols[j].allowedError);
-			//System.out.printf("%E %E\n",dataOX[allCols[j].openxal][0], dataTW[allCols[j].tracewin][0]);
-		}
+		return dataOX;
 	}
-	
-	private double[][] loadTWData() throws IOException
-	{
-		final int TWcols = 26;
-		int nlines = countLines(GeneralTest.class.getResource("ess_out.txt"));
 		
-		BufferedReader br = new BufferedReader(new InputStreamReader(GeneralTest.class.getResource("ess_out.txt").openStream()));
-		//drop headers
-		br.readLine();
-		br.readLine();
-		
-		double[][] data = new double[TWcols][nlines-2];
-		
-		int i = 0;
-		for(String line; (line = br.readLine()) != null; i++) {
-			String cols[] = line.split("\t", TWcols + 1);
-			for (int j = 0; j<TWcols; j++) {
-				data[j][i] = new Double(cols[j]);
-			}
-		}
-		br.close();
-		return data;
-	}
-	
-	
+	/**
+	 * A helper procedure to count the lines in a file.
+	 * @param resource the file
+	 * @return number of lines
+	 * @throws IOException
+	 */
 	private int countLines(URL resource) throws IOException {
 		BufferedReader br = new BufferedReader(new InputStreamReader(resource.openStream()));
 		int i = 0;
