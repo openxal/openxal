@@ -113,35 +113,28 @@ public class BpmViewerMain extends ApplicationAdaptor {
      *@param  args  The command line arguments
      */
     public static void main(String[] args) {
+		final BpmViewerMain appAdaptor = new BpmViewerMain();
+		URL[] predefConfURLArr = null;
 
-        if (args.length == 0) {
-            try {
-                AcceleratorApplication.launch(new BpmViewerMain());
-            } catch (Exception exception) {
-                System.err.println(exception.getMessage());
-                exception.printStackTrace();
-                JOptionPane.showMessageDialog(null, exception.getMessage(),
-                    exception.getClass().getName(), JOptionPane.WARNING_MESSAGE);
-            }
-            return;
-        }
 
-        BpmViewerMain doc = new BpmViewerMain();
+		if ( args.length == 0 ) {
+			predefConfURLArr = new URL[0];
+		}
+		else {
+			predefConfURLArr = new URL[args.length];
+			for ( int index = 0; index < args.length; index++ ) {
+				predefConfURLArr[index] = appAdaptor.getResourceURL( "config/" + args[index] );
+			}
+		}
 
-        URL[] predefConfURLArr = new URL[args.length];
-
-        for (int i = 0; i < args.length; i++) {
-            predefConfURLArr[i] = doc.getClass().getResource("resources/" + args[i]);
-        }
-
-        try {
-            AcceleratorApplication.launch(doc, predefConfURLArr);
-        } catch (Exception exception) {
-            System.err.println(exception.getMessage());
-            exception.printStackTrace();
-            JOptionPane.showMessageDialog(null, exception.getMessage(),
-                exception.getClass().getName(), JOptionPane.WARNING_MESSAGE);
-        }
+		try {
+			Application.launch( appAdaptor, predefConfURLArr );
+		}
+		catch (Exception exception) {
+			System.err.println(exception.getMessage());
+			exception.printStackTrace();
+			JOptionPane.showMessageDialog( null, exception.getMessage(), exception.getClass().getName(), JOptionPane.WARNING_MESSAGE );
+		}
     }
 }
 
