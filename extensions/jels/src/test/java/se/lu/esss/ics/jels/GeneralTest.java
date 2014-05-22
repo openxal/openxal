@@ -29,6 +29,7 @@ import xal.tools.beam.Twiss;
  * 
  * @author Ivo List <ivo.list@cosylab.com>
  */
+
 public class GeneralTest {
 	/**
 	 * Describes Openxal, Tracewin columns/functions of the results. Sets allowed error on each function.
@@ -66,17 +67,22 @@ public class GeneralTest {
 	@Test
 	public void runGeneralTests() throws IOException, ModelException
 	{
-		double dataTW[][] = loadTWData(GeneralTest.class.getResource("tracewin.0.txt"));
-		Probe probe = loadProbeFromXML(GeneralTest.class.getResource("probe.0.xml").toString());
-        double dataOX[][] = run(probe);
-        
-        Column[] allCols = Column.values();
-		for (int j = 1; j < allCols.length; j++) {
-			double e = compare(dataOX[0], dataTW[0], dataOX[allCols[j].openxal], dataTW[allCols[j].tracewin]);
-			System.out.printf("%s: %E\n",allCols[j].name(), e);
-			assertTrue(allCols[j].name()+" not within the allowed error", e < allCols[j].allowedError);
-			//System.out.printf("%E %E\n",dataOX[allCols[j].openxal][0], dataTW[allCols[j].tracewin][0]);
+		int i = 0;
+		while (GeneralTest.class.getResource("probe."+i+".xml") != null) {
+			double dataTW[][] = loadTWData(GeneralTest.class.getResource("tracewin."+i+".txt"));
+			Probe probe = loadProbeFromXML(GeneralTest.class.getResource("probe."+i+".xml").toString());
+	        double dataOX[][] = run(probe);
+	        
+	        Column[] allCols = Column.values();
+			for (int j = 1; j < allCols.length; j++) {
+				double e = compare(dataOX[0], dataTW[0], dataOX[allCols[j].openxal], dataTW[allCols[j].tracewin]);
+				System.out.printf("%s: %E\n",allCols[j].name(), e);
+				assertTrue(allCols[j].name()+" not within the allowed error", e < allCols[j].allowedError);
+				//System.out.printf("%E %E\n",dataOX[allCols[j].openxal][0], dataTW[allCols[j].tracewin][0]);
+			}
+			i++;
 		}
+		
 	}
 	
 	
