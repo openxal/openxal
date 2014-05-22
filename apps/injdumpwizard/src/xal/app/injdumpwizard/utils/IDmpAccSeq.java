@@ -2,12 +2,9 @@ package xal.app.injdumpwizard.utils;
 
 
 import java.util.*;
-import gov.sns.tools.optimizer.ParameterProxy;
-import gov.sns.tools.optimizer.SimplexSearchAlgorithm;
-import gov.sns.tools.optimizer.Solver;
-import gov.sns.tools.optimizer.Scorer;
-import gov.sns.tools.optimizer.SolveStopperFactory;
-		
+import xal.extension.solver.*;
+import xal.extension.solver.hint.*;
+
 import xal.extension.widgets.plot.BasicGraphData;
 
 /**
@@ -59,8 +56,10 @@ class  IDmpAccSeq{
 	double ws01_y = 0.;
 	
 	//Init. cond. (x,xp,y,yp)
-	Vector<ParameterProxy> initProxyV = new Vector<ParameterProxy>();
-	
+	final private Vector<ValueRef> initProxyV = new Vector<>();
+	final private Problem _problem;
+
+
 	public IDmpAccSeq(){
 		
 		//make sequence
@@ -88,18 +87,22 @@ class  IDmpAccSeq{
 			double end_pos = accElmV.get(i-1).getPosition() + accElmV.get(i-1).length/2.0;
 			accElmV.get(i).setPosition(end_pos + accElmV.get(i).length/2.0);
 		}
-		
-		//for(int i = 0; i < accElmV.size(); i++){
-		//	System.out.println("debug i="+i+" pos="+accElmV.get(i).getPosition());
-		//}
-		
-		//initial coordinates
-		initProxyV.add(new ParameterProxy("x",0.0,0.005));
-		initProxyV.add(new ParameterProxy("xp",0.0,0.005));
-		initProxyV.add(new ParameterProxy("y",0.0,0.005));
-		initProxyV.add(new ParameterProxy("yp",0.0,0.005));
-		
+
+		final double tolerance = 1.0;	// 90% tolerance level for score of 1.0 mm error
+
+		// minimize inverse square of score
+		_problem = ProblemFactory.getInverseSquareMinimizerProblem( new ArrayList<Variable>(), new OrbitScorer(), tolerance );
+		_problem.addHint( new InitialDelta( 0.005 ) );	// initial delta for all variables
+
+		//variables for initial coordinates
+		final String[] variableNames = { "x", "xp", "y", "yp" };
+		for ( final String variableName : variableNames ) {
+			final Variable variable = new Variable( variableName, 0.0, -1.0, 1.0 );
+			_problem.addVariable( variable );
+			initProxyV.add( _problem.getValueReference( variable ) );
+		}
 	}
+
 	
 	public void setMagnetCoefs(double quad_coef, double dch_coef, double dcv_coef){
 		quad.field_coef = quad_coef;
@@ -165,72 +168,43 @@ class  IDmpAccSeq{
 		//System.out.println("debug track from IDmpAccSeq ========================");
 	}
 	
-	public void findOrbit(){
-		
-		initProxyV.get(0).setValue(0.0);
-		initProxyV.get(1).setValue(0.0);
-		initProxyV.get(2).setValue(0.0);
-		initProxyV.get(3).setValue(0.0);
-		
-		initProxyV.get(0).setStep(0.005);
-		initProxyV.get(1).setStep(0.005);
-		initProxyV.get(2).setStep(0.005);
-		initProxyV.get(3).setStep(0.005);
-			
-		Scorer scorer = new Scorer(){
-			public double score(){
-				track();
-				double diff = 0.;
-				if(bpm00_use){
-					diff = diff + (bpm00.outX - bpm00_x)*(bpm00.outX - bpm00_x);
-					diff = diff + (bpm00.outY - bpm00_y)*(bpm00.outY - bpm00_y);
-				}
-				if(bpm01_use){
-					diff = diff + (bpm01.outX - bpm01_x)*(bpm01.outX - bpm01_x);
-					diff = diff + (bpm01.outY - bpm01_y)*(bpm01.outY - bpm01_y);
-				}
-				if(bpm02_use){
-					diff = diff + (bpm02.outX - bpm02_x)*(bpm02.outX - bpm02_x);
-					diff = diff + (bpm02.outY - bpm02_y)*(bpm02.outY - bpm02_y);
-				}
-				if(bpm03_use){
-					diff = diff + (bpm03.outX - bpm03_x)*(bpm03.outX - bpm03_x);
-					diff = diff + (bpm03.outY - bpm03_y)*(bpm03.outY - bpm03_y);
-				}
-				if(ws01_use){
-					diff = diff + (ws01.outX - ws01_x)*(ws01.outX - ws01_x);
-					diff = diff + (ws01.outY - ws01_y)*(ws01.outY - ws01_y);
-				}
-				return diff*1000.*1000.;
-			}
-		};
-		
-		SimplexSearchAlgorithm algorithm = new SimplexSearchAlgorithm();
-		Solver solver = new Solver();
-		solver.setScorer(scorer);
-		solver.setSearchAlgorithm(algorithm);
-		solver.setVariables(initProxyV);
-		solver.setStopper( SolveStopperFactory.maxIterationStopper(500));
-		solver.solve();
+	public void findOrbit() {
+		Solver solver = new Solver( SolveStopperFactory.maxEvaluationsStopper( 500 ) );
+		solver.solve( _problem );
 		
 		track();
-		//debug printing
-		/**		
-		System.out.println("debug x0 ="+initProxyV.get(0).getValue()*1000.);
-		System.out.println("debug xp0="+initProxyV.get(1).getValue()*1000.);
-		System.out.println("debug y0 ="+initProxyV.get(2).getValue()*1000.);
-		System.out.println("debug yp0="+initProxyV.get(3).getValue()*1000.);
-
-		System.out.println("debug score="+Math.sqrt(scorer.score()));
-	  for(int i = 0; i < accElmV.size(); i++){
-			AccElem accElem = accElmV.get(i);
-			System.out.println("debug i="+i+" pos="+accElem.getPosition()+
-				" x="+(accElem.outX*1000.)+" y="+(accElem.outY*1000.));
-		}
-		*/
-		
-		
 	}
+
+
+	// internal class providing the score for problem to minimize the RMS orbit difference in millimeters
+	private class OrbitScorer implements Scorer {
+		public double score( final Trial trial, final List<Variable> variables ) {
+			track();
+			double diff = 0.;
+			if(bpm00_use){
+				diff = diff + (bpm00.outX - bpm00_x)*(bpm00.outX - bpm00_x);
+				diff = diff + (bpm00.outY - bpm00_y)*(bpm00.outY - bpm00_y);
+			}
+			if(bpm01_use){
+				diff = diff + (bpm01.outX - bpm01_x)*(bpm01.outX - bpm01_x);
+				diff = diff + (bpm01.outY - bpm01_y)*(bpm01.outY - bpm01_y);
+			}
+			if(bpm02_use){
+				diff = diff + (bpm02.outX - bpm02_x)*(bpm02.outX - bpm02_x);
+				diff = diff + (bpm02.outY - bpm02_y)*(bpm02.outY - bpm02_y);
+			}
+			if(bpm03_use){
+				diff = diff + (bpm03.outX - bpm03_x)*(bpm03.outX - bpm03_x);
+				diff = diff + (bpm03.outY - bpm03_y)*(bpm03.outY - bpm03_y);
+			}
+			if(ws01_use){
+				diff = diff + (ws01.outX - ws01_x)*(ws01.outX - ws01_x);
+				diff = diff + (ws01.outY - ws01_y)*(ws01.outY - ws01_y);
+			}
+			return Math.sqrt( diff*1000. );
+		}
+	}
+
 
 	/**
 	* Sets the momentum of the protons in eV/c.

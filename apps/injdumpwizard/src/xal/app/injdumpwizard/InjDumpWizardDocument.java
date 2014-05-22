@@ -234,13 +234,13 @@ public class InjDumpWizardDocument extends AcceleratorDocument {
 		wsWrapper.setWS(ws);
 
 		java.util.List<BPM> bpms = seq.<BPM>getAllNodesWithQualifier( KindQualifier.qualifierWithStatusAndType( true, BPM.s_strType ) );
-		BPM bpm = (BPM) bpms.get(0);
+		BPM bpm = bpms.get(0);
 		bpm00Wrapper.setBPM(bpm);
-		bpm = (BPM) bpms.get(1);
+		bpm = bpms.get(1);
 		bpm01Wrapper.setBPM(bpm);
-		bpm = (BPM) bpms.get(2);
+		bpm = bpms.get(2);
 		bpm02Wrapper.setBPM(bpm);
-		bpm = (BPM) bpms.get(3);
+		bpm = bpms.get(3);
 		bpm03Wrapper.setBPM(bpm);
 		
 		java.util.List<Electromagnet> mags = seq.<Electromagnet>getAllNodesWithQualifier( KindQualifier.qualifierWithStatusAndType( true, Electromagnet.s_strType ) );
@@ -252,11 +252,16 @@ public class InjDumpWizardDocument extends AcceleratorDocument {
 		//System.out.println("debug dcv ="+dcv.getId());
 		magnetsWrapper.setMagnets(quad,dch,dcv);
 
-		final ParticleTracker tracker = AlgorithmFactory.createParticleTracker( seq );
-		final Probe probe =  ProbeFactory.createParticleProbe( seq, tracker );
-		double momentum = probe.getSpeciesRestEnergy()*probe.getBeta()*probe.getGamma();
-		positionCalculator.setMomentum(momentum);
-		//System.out.println("debug momentum="+momentum);		
+		try {
+			final ParticleTracker tracker = AlgorithmFactory.createParticleTracker( seq );
+			final Probe probe =  ProbeFactory.createParticleProbe( seq, tracker );
+			double momentum = probe.getSpeciesRestEnergy()*probe.getBeta()*probe.getGamma();
+			positionCalculator.setMomentum(momentum);
+			//System.out.println("debug momentum="+momentum);
+		}
+		catch ( InstantiationException exception ) {
+			throw new RuntimeException( "Exception instantiating the model.", exception );
+		}
 		
 		//start monitoring all PVs
 		switcherToSimulatedH0.startMonitorPVs();
@@ -278,7 +283,6 @@ public class InjDumpWizardDocument extends AcceleratorDocument {
 	 *@param  url  Description of the Parameter
 	 */
 	public void readInjDumpWizardDocument(URL url) {
-
 		//read the document content from the persistent storage
 
 		XmlDataAdaptor readAdp = null;
@@ -387,7 +391,7 @@ public class InjDumpWizardDocument extends AcceleratorDocument {
 	 *  This method will call IDmpPositionCalculator to read BPM transformation table.
 	 */	
 	 private void readBPMTransformationTable(){
-		 URL dataURL = this.getClass().getResource("data/bpm_transf_table.dat");
+		 final URL dataURL = Application.getAdaptor().getResourceURL( "data/bpm_transf_table.dat" );
 		 try {
 			 InputStream inps = dataURL.openStream();		
 			 positionCalculator.readBPMTransformationTable(inps);
