@@ -21,7 +21,7 @@ import xal.extension.application.*;
 import java.util.Timer.*;
 
 import xal.tools.data.*;
-import xal.extension.smf.application.*;
+import xal.extension.application.smf.*;
 import xal.smf.data.*;
 import xal.smf.*;
 import xal.smf.impl.*;

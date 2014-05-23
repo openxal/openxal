@@ -4,7 +4,7 @@ import javax.swing.*;
 import java.net.*;
 
 import xal.extension.application.*;
-import xal.extension.smf.application.*;
+import xal.extension.application.smf.*;
 
 public class Main extends ApplicationAdaptor {
     private URL url;

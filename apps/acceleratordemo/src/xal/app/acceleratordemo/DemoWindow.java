@@ -10,7 +10,7 @@ import javax.swing.*;
 import java.util.*;
 
 import xal.extension.application.*;
-import xal.extension.smf.application.*;
+import xal.extension.application.smf.*;
 
 /**
  * DemoWindow is a demo subclass of AcceleratorWindow used in the demo application.  This 

@@ -11,7 +11,7 @@ import java.awt.event.*;
 import java.net.*;
 
 import xal.extension.application.*;
-import xal.extension.smf.application.AcceleratorApplication;
+import xal.extension.application.smf.AcceleratorApplication;
 
 /**
  *  BpmViewerMain is a concrete subclass of ApplicationAdaptor for the bpmViewer

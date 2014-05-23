@@ -10,7 +10,7 @@ import java.util.*;
 import java.awt.*;
 
 import xal.extension.application.*;
-import xal.extension.smf.application.*;
+import xal.extension.application.smf.*;
 
 /**
  *  BpmViewerWindow is a subclass of XalWindow used in the bpmViewer

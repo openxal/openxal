@@ -14,7 +14,7 @@ import java.awt.*;
 import java.awt.event.*;
 
 import xal.extension.application.*;
-import xal.extension.smf.application.*;
+import xal.extension.application.smf.*;
 import xal.tools.apputils.EdgeLayout;
 import xal.extension.widgets.apputils.SimpleChartPopupMenu;
 import xal.extension.widgets.plot.*;

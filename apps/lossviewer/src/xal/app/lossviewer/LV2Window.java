@@ -11,7 +11,7 @@ package xal.app.lossviewer;
 
 import xal.extension.application.*;
 import xal.app.lossviewer.views.*;
-import xal.extension.smf.application.*;
+import xal.extension.application.smf.*;
 
 import java.awt.BorderLayout;
 import java.awt.Color;

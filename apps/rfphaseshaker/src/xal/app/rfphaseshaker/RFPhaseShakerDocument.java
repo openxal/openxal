@@ -24,7 +24,7 @@ import xal.tools.xml.*;
 import xal.tools.apputils.*;
 import xal.extension.widgets.swing.*;
 
-import xal.extension.smf.application.AcceleratorDocument;
+import xal.extension.application.smf.AcceleratorDocument;
 
 import xal.smf.data.XMLDataManager;
 import xal.tools.data.DataAdaptor;

@@ -12,7 +12,7 @@ import javax.swing.*;
 import java.net.*;
 
 import xal.extension.application.*;
-import xal.extension.smf.application.*;
+import xal.extension.application.smf.*;
 
 /**
  * This is the main class for the PV timestamp checking application.  

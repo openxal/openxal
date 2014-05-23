@@ -6,7 +6,7 @@
 //  Copyright 2008 Oak Ridge National Lab. All rights reserved.
 //
 
-package xal.extension.smf.application;
+package xal.extension.application.smf;
 
 import xal.extension.bricks.WindowReference;
 import xal.smf.*;

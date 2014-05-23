@@ -14,7 +14,7 @@ package xal.app.ptsd;
 import xal.extension.application.Application;
 import xal.extension.application.ApplicationAdaptor;
 import xal.extension.application.XalDocument;
-import xal.extension.smf.application.AcceleratorApplication;
+import xal.extension.application.smf.AcceleratorApplication;
 
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Handler;

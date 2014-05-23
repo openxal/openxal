@@ -20,7 +20,7 @@ import javax.swing.JOptionPane;
 
 import xal.extension.application.ApplicationAdaptor;
 import xal.extension.application.XalDocument;
-import xal.extension.smf.application.AcceleratorApplication;
+import xal.extension.application.smf.AcceleratorApplication;
 
 public class Main extends ApplicationAdaptor {
     private URL url;

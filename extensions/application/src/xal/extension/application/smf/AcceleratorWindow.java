@@ -4,7 +4,7 @@
  * Created on May 20, 2003, 12:37 PM
  */
 
-package xal.extension.smf.application;
+package xal.extension.application.smf;
 
 import xal.extension.application.*;
 

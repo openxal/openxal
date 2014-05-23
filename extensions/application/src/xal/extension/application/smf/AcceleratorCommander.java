@@ -4,7 +4,7 @@
  * Created on May 20, 2003, 12:37 PM
  */
 
-package xal.extension.smf.application;
+package xal.extension.application.smf;
 
 import xal.extension.application.*;
 
@@ -37,7 +37,7 @@ public class AcceleratorCommander extends Commander {
     protected void loadDefaultBundle() {
         super.loadDefaultBundle();
 
-		final String currentClassName = "xal.extension.smf.application.AcceleratorCommander";
+		final String currentClassName = "xal.extension.application.smf.AcceleratorCommander";
 		try {
 			// need to reference this class directly since subclasses would otherwise override the class
 			final URL resourceURL = Class.forName( currentClassName ).getResource( MENU_DEFINITION_RESOURCE );

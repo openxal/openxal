@@ -1,7 +1,7 @@
 <?xml version = '1.0' encoding = 'UTF-8'?>
 <BricksDocument date="Thu May 15 10:33:45 EDT 2014" version="1.0.0">
     <RootBrick>
-        <ViewNode customBeanClass="xal.extension.smf.application.DefaultAcceleratorWindow" height="744" tag="MainWindow" width="1085">
+        <ViewNode customBeanClass="xal.extension.application.smf.DefaultAcceleratorWindow" height="744" tag="MainWindow" width="1085">
             <ViewProxy type="javax.swing.JFrame"/>
             <BeanProperty name="title" value="Waveform Monitor"/>
             <ViewNode tag="Main Vertical Layout">

@@ -15,7 +15,7 @@ import java.util.*;
 import java.sql.*;
 
 import xal.extension.application.*;
-import xal.extension.smf.application.AcceleratorDocument;
+import xal.extension.application.smf.AcceleratorDocument;
 import xal.smf.*;
 import xal.ca.Channel;
 import xal.extension.bricks.WindowReference;

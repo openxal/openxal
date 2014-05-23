@@ -14,7 +14,7 @@ import java.awt.event.*;
 import java.net.*;
 
 import xal.extension.application.*;
-import xal.extension.smf.application.*;
+import xal.extension.application.smf.*;
 
 /**
  *
