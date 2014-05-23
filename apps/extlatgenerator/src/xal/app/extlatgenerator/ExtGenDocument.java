@@ -18,7 +18,7 @@ import java.awt.event.*;
 import javax.swing.event.*;
 import javax.swing.JToggleButton.ToggleButtonModel;
 
-import xal.extension.smf.application.*;
+import xal.extension.application.smf.*;
 import xal.extension.application.*;
 
 import xal.smf.*;
