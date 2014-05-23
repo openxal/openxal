@@ -11,7 +11,7 @@
 package xal.app.pvlogger;
 
 import xal.extension.application.*;
-import xal.extension.smf.application.*;
+import xal.extension.application.smf.*;
 import xal.service.pvlogger.*;
 
 
