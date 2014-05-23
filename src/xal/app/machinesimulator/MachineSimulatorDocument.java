@@ -15,7 +15,7 @@ import javax.swing.text.*;
 import javax.swing.event.*;
 
 import xal.extension.application.*;
-import xal.extension.smf.application.*;
+import xal.extension.application.smf.*;
 import xal.smf.*;
 import xal.tools.apputils.*;
 import xal.tools.xml.XmlDataAdaptor;
