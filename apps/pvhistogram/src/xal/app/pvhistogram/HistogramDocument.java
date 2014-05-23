@@ -17,7 +17,7 @@ import javax.swing.event.*;
 import java.text.DecimalFormat;
 
 import xal.extension.application.*;
-import xal.extension.smf.application.*;
+import xal.extension.application.smf.*;
 import xal.smf.*;
 import xal.tools.apputils.*;
 import xal.tools.xml.XmlDataAdaptor;

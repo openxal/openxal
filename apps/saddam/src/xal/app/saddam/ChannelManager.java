@@ -16,7 +16,7 @@ import java.awt.Toolkit;
 
 import xal.ca.*;
 import xal.extension.application.*;
-import xal.extension.smf.application.*;
+import xal.extension.application.smf.*;
 import xal.smf.*;
 import xal.smf.impl.*;
 import xal.smf.impl.qualify.*;

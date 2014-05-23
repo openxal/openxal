@@ -7,7 +7,7 @@ import java.net.*;
 import java.io.*;
 
 import xal.extension.application.*;
-import xal.extension.smf.application.*;
+import xal.extension.application.smf.*;
 
 /**
  * The main program for the xio  app.

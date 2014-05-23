@@ -18,7 +18,7 @@ import java.util.*;
 import javax.swing.tree.DefaultTreeModel;
 
 import xal.extension.application.*;
-import xal.extension.smf.application.*;
+import xal.extension.application.smf.*;
 import xal.ca.*;
 import xal.extension.widgets.plot.*;
 import xal.extension.widgets.swing.*;

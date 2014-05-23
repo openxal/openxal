@@ -22,7 +22,7 @@ import javax.swing.border.*;
 import java.text.*;
 
 import xal.extension.application.XalDocument;
-import xal.extension.smf.application.AcceleratorWindow;
+import xal.extension.application.smf.AcceleratorWindow;
 import xal.extension.widgets.plot.*;
 import xal.tools.apputils.*;
 import xal.extension.widgets.swing.*;

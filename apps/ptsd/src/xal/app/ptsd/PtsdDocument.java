@@ -15,7 +15,7 @@ package xal.app.ptsd;
 import xal.tools.data.DataAdaptor;
 import xal.tools.xml.XmlDataAdaptor;
 import xal.smf.AcceleratorSeqCombo;
-import xal.extension.smf.application.AcceleratorDocument;
+import xal.extension.application.smf.AcceleratorDocument;
 import xal.smf.data.XMLDataManager;
 import xal.smf.AcceleratorSeq;
 
@@ -239,7 +239,7 @@ class PtsdDocument extends AcceleratorDocument {
      * @since 	Jul 23, 2008
      * @author  Christopher K. Allen
      *
-     * @see gov.sns.xal.extension.smf.application.AcceleratorDocument#acceleratorChanged()
+     * @see gov.sns.xal.extension.application.smf.AcceleratorDocument#acceleratorChanged()
      */
     @Override
     public void acceleratorChanged() {
@@ -257,7 +257,7 @@ class PtsdDocument extends AcceleratorDocument {
      * @since 	Jul 23, 2008
      * @author  Christopher K. Allen
      *
-     * @see gov.sns.xal.extension.smf.application.AcceleratorDocument#selectedSequenceChanged()
+     * @see gov.sns.xal.extension.application.smf.AcceleratorDocument#selectedSequenceChanged()
      */
     @Override
     public void selectedSequenceChanged() {

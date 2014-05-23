@@ -21,8 +21,8 @@ import javax.swing.SpinnerNumberModel
 
 java_import 'xal.extension.application.ApplicationAdaptor'
 java_import 'xal.extension.application.XalDocument'
-java_import 'xal.extension.smf.application.AcceleratorApplication'
-java_import 'xal.extension.smf.application.AcceleratorDocument'
+java_import 'xal.extension.application.smf.AcceleratorApplication'
+java_import 'xal.extension.application.smf.AcceleratorDocument'
 
 java_import 'xal.extension.widgets.apputils.SimpleChartPopupMenu'
 java_import 'xal.tools.StringJoiner'

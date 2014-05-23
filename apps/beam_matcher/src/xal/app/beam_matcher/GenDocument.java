@@ -13,7 +13,7 @@ import java.util.*;
 import javax.swing.text.*;
 import java.util.HashMap;
 
-import xal.extension.smf.application.*;
+import xal.extension.application.smf.*;
 import xal.smf.*;
 import xal.smf.data.*;
 import xal.extension.application.*;

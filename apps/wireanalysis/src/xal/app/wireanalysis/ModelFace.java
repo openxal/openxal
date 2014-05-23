@@ -60,7 +60,7 @@ import xal.extension.solver.algorithm.*;
 import xal.extension.solver.market.*;
 import xal.extension.solver.solutionjudge.*;
 import xal.tools.beam.*;
-import xal.extension.smf.application.*;
+import xal.extension.application.smf.*;
 import xal.extension.application.*;
 import xal.sim.scenario.AlgorithmFactory;
 import xal.sim.scenario.ProbeFactory;

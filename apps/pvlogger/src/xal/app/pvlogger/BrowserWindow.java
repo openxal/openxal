@@ -12,7 +12,7 @@ package xal.app.pvlogger;
 
 import xal.service.pvlogger.*;
 import xal.extension.application.*;
-import xal.extension.smf.application.*;
+import xal.extension.application.smf.*;
 import xal.tools.database.*;
 import xal.tools.apputils.files.RecentFileTracker;
 import xal.service.pvlogger.apputils.browser.*;

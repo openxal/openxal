@@ -50,7 +50,7 @@ import xal.service.pvlogger.sim.PVLoggerDataSource;
 import xal.smf.*;
 import xal.tools.xml.*;
 import xal.tools.data.*;
-import xal.extension.smf.application.*;
+import xal.extension.application.smf.*;
 import xal.smf.*;
 import xal.smf.impl.*;
 import xal.smf.data.XMLDataManager;

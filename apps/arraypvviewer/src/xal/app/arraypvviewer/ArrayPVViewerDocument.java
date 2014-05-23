@@ -18,7 +18,7 @@ import xal.extension.widgets.plot.FunctionGraphsJPanel;
 import xal.extension.widgets.plot.IncrementalColors;
 import xal.tools.xml.XmlDataAdaptor;
 import xal.tools.data.DataAdaptor;
-import xal.extension.smf.application.*;
+import xal.extension.application.smf.*;
 
 import java.awt.BorderLayout;
 import java.awt.Color;

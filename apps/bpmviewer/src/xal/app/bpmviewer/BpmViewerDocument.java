@@ -25,7 +25,7 @@ import xal.tools.xml.*;
 import xal.tools.apputils.*;
 import xal.tools.apputils.pvselection.*;
 import xal.extension.widgets.swing.*;
-import xal.extension.smf.application.*;
+import xal.extension.application.smf.*;
 
 
 /**

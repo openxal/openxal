@@ -1,7 +1,7 @@
 <?xml version = '1.0' encoding = 'UTF-8'?>
 <BricksDocument date="Tue Jan 31 11:04:44 EST 2012" version="1.0.0">
     <RootBrick>
-        <ViewNode customBeanClass="xal.extension.smf.application.DefaultAcceleratorWindow" height="764" tag="MainWindow" width="1134">
+        <ViewNode customBeanClass="xal.extension.application.smf.DefaultAcceleratorWindow" height="764" tag="MainWindow" width="1134">
             <ViewProxy type="javax.swing.JFrame" />
             <BeanProperty name="title" value="Orbit Correction" />
             <ViewNode tag="Main View">
