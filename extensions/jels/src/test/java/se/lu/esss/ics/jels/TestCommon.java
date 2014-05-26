@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 
+import org.junit.Test;
 import org.junit.runners.Parameterized.Parameters;
 
 import se.lu.esss.ics.jels.model.alg.ElsTracker;
@@ -37,6 +38,7 @@ import xal.tools.beam.Twiss;
 import xal.tools.xml.XmlDataAdaptor;
 
 public abstract class TestCommon {
+	protected static double SpeciesCharge = -1;
 	protected Probe probe;
 	protected ElementMapping elementMapping;
 	protected Scenario scenario;
@@ -50,7 +52,6 @@ public abstract class TestCommon {
 		this.probe = probe;
 		this.elementMapping = elementMapping;
 	}
-	
 
 	@Parameters
 	public static Collection<Object[]> probes() {
@@ -74,7 +75,7 @@ public abstract class TestCommon {
 		
 		EnvelopeProbe envelopeProbe = new EnvelopeProbe();
 		envelopeProbe.setAlgorithm(envelopeTracker);
-		envelopeProbe.setSpeciesCharge(-1);
+		envelopeProbe.setSpeciesCharge(SpeciesCharge);
 		envelopeProbe.setSpeciesRestEnergy(9.3829431e8);
 		envelopeProbe.setKineticEnergy(energy);//energy
 		envelopeProbe.setPosition(0.0);
@@ -284,7 +285,7 @@ public abstract class TestCommon {
 			b0+=Math.pow(elsBeta[i],2);
 		}		
 		
-		//System.out.printf("ELS results diff: %E %E %E\n", Math.abs(elsPosition-probe.getPosition())/elsPosition, Math.sqrt(e/e0), Math.sqrt(b/b0));
+		System.out.printf("ELS results diff: %E %E %E\n", Math.abs(elsPosition-probe.getPosition())/elsPosition, Math.sqrt(e/e0), Math.sqrt(b/b0));
 	}
 	
 	public void checkTWTransferMatrix(double T[][]) throws ModelException
