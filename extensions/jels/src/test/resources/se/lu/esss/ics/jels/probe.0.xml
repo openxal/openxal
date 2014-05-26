@@ -1,9 +1,9 @@
 <?xml version = '1.0' encoding = 'UTF-8'?>
 <probe time="22.5.2014 9:58:15" type="xal.model.probe.EnvelopeProbe">
-    <comment text=""/>
+    <comment author="Ivo List" date="2014-05-22" text="Default probe"/>
     <algorithm type="xal.model.alg.EnvelopeTracker" ver="4">
-        <tracker calcRfGapPhase="true" debug="false" update="2"/>
-        <options emitgrowth="false" scheff="true" stepsize="0.004" useSpacecharge="true"/>
+        <tracker calcRfGapPhase="true" debug="false" update="1"/>
+        <options emitgrowth="false" scheff="true" stepsize="0.1" useSpacecharge="true"/>
     </algorithm>
     <state id="" type="xal.model.probe.traj.EnvelopeProbeState">
         <species Er="9.3829431E8" q="-1.0"/>
