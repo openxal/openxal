@@ -2,12 +2,10 @@ package se.lu.esss.ics.jels;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 
-import org.junit.Test;
 import org.junit.runners.Parameterized.Parameters;
 
 import se.lu.esss.ics.jels.model.alg.ElsTracker;
@@ -26,7 +24,6 @@ import xal.model.probe.Probe;
 import xal.model.probe.traj.ProbeState;
 import xal.model.probe.traj.Trajectory;
 import xal.model.xml.LatticeXmlWriter;
-import xal.sim.scenario.DefaultElementMapping;
 import xal.sim.scenario.ElementMapping;
 import xal.sim.scenario.Scenario;
 import xal.smf.AcceleratorSeq;
@@ -65,6 +62,13 @@ public abstract class TestCommon {
 	}
 	
 	public static EnvelopeProbe setupOpenXALProbe(double energy, double frequency, double current) {
+		return setupOpenXALProbe(energy, frequency, current, 
+				new double[][]{{-0.1763,0.2442,0.2098e-6},
+				  	{-0.3247,0.3974,0.2091e-6},
+				  	{-0.5283,0.8684,0.2851e-6}});
+	}
+	
+	public static EnvelopeProbe setupOpenXALProbe(double energy, double frequency, double current, double twiss[][]) {
 		// Envelope probe and tracker
 		EnvelopeTracker envelopeTracker = new EnvelopeTracker();			
 		envelopeTracker.setRfGapPhaseCalculation(true);
@@ -98,9 +102,9 @@ public abstract class TestCommon {
 		 */
 		double beta_gamma = envelopeProbe.getBeta() * envelopeProbe.getGamma();
 		
-		envelopeProbe.initFromTwiss(new Twiss[]{new Twiss(-0.1763,0.2442,0.2098e-6*1e-6 / beta_gamma),
-				  new Twiss(-0.3247,0.3974,0.2091e-6*1e-6 / beta_gamma),
-				  new Twiss(-0.5283,0.8684,0.2851e-6*1e-6 / beta_gamma)});
+		envelopeProbe.initFromTwiss(new Twiss[]{new Twiss(twiss[0][0], twiss[0][1], twiss[0][2]*1e-6 / beta_gamma),
+				  new Twiss(twiss[1][0], twiss[1][1], twiss[1][2]*1e-6 / beta_gamma),
+				  new Twiss(twiss[2][0], twiss[2][1], twiss[2][2]*1e-6 / beta_gamma)});
 		envelopeProbe.setBeamCurrent(current);
 		envelopeProbe.setBunchFrequency(frequency);//frequency
 		
