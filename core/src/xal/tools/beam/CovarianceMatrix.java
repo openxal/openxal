@@ -120,10 +120,10 @@ public class CovarianceMatrix extends PhaseMatrix {
      * 
      * @return  correlation matrix with statistical properties of argument
      * 
-     * @see CovarianceMatrix#buildCorrelation(Twiss, Twiss, Twiss)
+     * @see CovarianceMatrix#buildCovariance(Twiss, Twiss, Twiss)
      */
     public static CovarianceMatrix buildCovariance(Twiss3D envTwiss)  {
-        return CovarianceMatrix.buildCorrelation(
+        return CovarianceMatrix.buildCovariance(
                                     envTwiss.getTwiss(IND_3D.X), 
                                     envTwiss.getTwiss(IND_3D.Y),
                                     envTwiss.getTwiss(IND_3D.Z)
@@ -163,7 +163,7 @@ public class CovarianceMatrix extends PhaseMatrix {
      *
      *  @return     correlation matrix corresponding to the above twiss parameters
      */
-    public static CovarianceMatrix buildCorrelation(Twiss twissX, Twiss twissY, Twiss twissZ) {
+    public static CovarianceMatrix buildCovariance(Twiss twissX, Twiss twissY, Twiss twissZ) {
         
         CovarianceMatrix matCorr = new CovarianceMatrix(PhaseMatrix.zero());
 
@@ -208,12 +208,12 @@ public class CovarianceMatrix extends PhaseMatrix {
      *
      *  @return     correlation matrix corresponding to the above twiss parameters and mean value vector
      */
-    public static CovarianceMatrix buildCorrelation(Twiss twissX, Twiss twissY, Twiss twissZ, PhaseVector vecCen) {
+    public static CovarianceMatrix buildCovariance(Twiss twissX, Twiss twissY, Twiss twissZ, PhaseVector vecCen) {
         
         // Build the covariance matrix
         CovarianceMatrix   matSig;
         
-        matSig = buildCorrelation(twissX, twissY, twissZ);
+        matSig = buildCovariance(twissX, twissY, twissZ);
         matSig.setElem(IND.HOM, IND.HOM, 0.0);
 
 
