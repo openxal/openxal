@@ -40,6 +40,11 @@
 			<copy todir="${core.intermediates.resources}" quiet="true" failonerror="false">
 				<fileset dir="${srcroot}/resources" />
 			</copy>
+
+			<!-- Copy the core's site specific resources into the compile directory -->
+			<copy todir="${core.intermediates.resources}" quiet="true" failonerror="false" overwrite="true">
+				<fileset dir="${site.core.resources}" />
+			</copy>
 		</sequential>
 	</macrodef>
 	
@@ -65,7 +70,8 @@
 	<!-- Jar the core resources plus those of any subdirectory -->
     <target  name="jar-resources" depends="init">
         <mkdir dir="${build.intermediates.core}" />
-        <jar compress="true" jarfile="${build.intermediates.core}/resources.jar" index="true">
+        <jar compress="true" jarfile="${build.intermediates.core}/resources.jar" index="true" duplicate="preserve">
+			<fileset dir="${site.core.root}/resources" erroronmissingdir="false" />	<!-- site resources first since duplicate flag preserves the first version encountered -->
 			<fileset dir="resources" />
         </jar>
 

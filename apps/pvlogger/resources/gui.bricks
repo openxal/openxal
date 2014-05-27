@@ -1,7 +1,7 @@
 <?xml version = '1.0' encoding = 'UTF-8'?>
 <BricksDocument date="Thu Jan 20 10:06:18 EST 2011" version="1.0.0">
     <RootBrick>
-        <ViewNode customBeanClass="xal.extension.smf.application.DefaultAcceleratorWindow" height="739" tag="ConfigurationWindow" width="900">
+        <ViewNode customBeanClass="xal.extension.application.smf.DefaultAcceleratorWindow" height="739" tag="ConfigurationWindow" width="900">
             <ViewProxy type="javax.swing.JFrame"/>
             <ViewNode tag="Main View">
                 <ViewProxy type="javax.swing.Box_Vertical"/>

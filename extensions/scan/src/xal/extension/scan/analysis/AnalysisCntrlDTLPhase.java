@@ -11,6 +11,7 @@ import java.io.*;
 
 import xal.tools.data.DataAdaptor;
 import xal.tools.apputils.*;
+import xal.extension.application.Application;
 import xal.extension.scan.*;
 import xal.extension.widgets.apputils.SimpleChartPopupMenu;
 import xal.extension.widgets.plot.*;
@@ -1126,7 +1127,7 @@ public final class AnalysisCntrlDTLPhase extends AnalysisController {
 
 		//============READ DPHI Vs. AMPLITUDE =====================================================
 
-		URL dataURL = mainController.getMainScanDocument().getClass().getResource("data/" + fNameWvsA);
+		URL dataURL = Application.getAdaptor().getResourceURL( "data/" + fNameWvsA );
 
 		try {
 			InputStream inps = dataURL.openStream();
@@ -1185,7 +1186,7 @@ public final class AnalysisCntrlDTLPhase extends AnalysisController {
 
 		//============READ k shift coeff. Vs. AMPLITUDE =====================================================
 
-		dataURL = mainController.getMainScanDocument().getClass().getResource("data/" + fNameKSvsA);
+		dataURL = Application.getAdaptor().getResourceURL( "data/" + fNameKSvsA );
 
 		try {
 			InputStream inps = dataURL.openStream();

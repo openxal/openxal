@@ -1,7 +1,7 @@
 <?xml version = '1.0' encoding = 'UTF-8'?>
 <BricksDocument date="Fri Jan 17 16:19:13 EST 2014" version="1.0.0">
     <RootBrick>
-        <ViewNode customBeanClass="xal.extension.smf.application.DefaultAcceleratorWindow" height="736" tag="MainWindow" width="1046">
+        <ViewNode customBeanClass="xal.extension.application.smf.DefaultAcceleratorWindow" height="736" tag="MainWindow" width="1046">
             <ViewProxy type="javax.swing.JFrame"/>
             <BeanProperty name="title" value="Machine Simulator"/>
             <ViewNode tag="MainView">

@@ -30,6 +30,9 @@
         <property name="service.intermediates.lib.root" value="${service.intermediates.root}" />
         <property name="service.intermediates.resources" value="${service.compile.root}/${service.relative.path}/resources" />
 
+		<property name="site.service.root" value="${site.services.root}/${servicename}" />
+		<property name="site.service.resources" value="${site.service.root}/resources" />
+
         <!-- determine whether building should be allowed -->
         <!-- don't build if the build is a batch build and this project explicitly excludes batch building -->
         <condition property="allows.build">
@@ -91,10 +94,11 @@
 				</classpath>
             </javac>
 
-			<!-- Copy the service's resources into the compile directory -->
+			<!-- Copy the service's resources (including site specific) into the compile directory -->
 			<mkdir dir="${service.intermediates.resources}" />
-			<copy todir="${service.intermediates.resources}" quiet="true" failonerror="false">
+			<copy todir="${service.intermediates.resources}" quiet="true" failonerror="false" overwrite="true">
 				<fileset dir="${service.src.root}/resources" />
+				<fileset dir="${site.service.resources}" />
 			</copy>
 		</sequential>
 	</macrodef>
