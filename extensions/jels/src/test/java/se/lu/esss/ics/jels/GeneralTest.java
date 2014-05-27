@@ -7,11 +7,17 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Formatter;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Locale;
 
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameters;
 
 import xal.model.ModelException;
 import xal.model.probe.Probe;
@@ -34,6 +40,7 @@ import xal.tools.beam.Twiss;
  * @author Ivo List <ivo.list@cosylab.com>
  */
 
+@RunWith(Parameterized.class)
 public class GeneralTest {
 	/**
 	 * Describes Openxal, Tracewin columns/functions of the results. Sets allowed error on each function.
@@ -71,37 +78,52 @@ public class GeneralTest {
 		}
 	}
 	
+	protected Probe probe;
+	protected URL tracewinData;
+	
+	public GeneralTest(Probe probe, URL tracewinData)
+	{
+		this.probe = probe;
+		this.tracewinData = tracewinData;
+	}
+	
+	@Parameters
+	public static Collection<Object[]> tests() {
+		List<Object []> tests = new ArrayList<>();
+		int i = 0;
+		while (GeneralTest.class.getResource("probe."+i+".xml") != null) {
+			Probe probe = loadProbeFromXML(GeneralTest.class.getResource("probe."+i+".xml").toString());
+			tests.add(new Object[]{probe, GeneralTest.class.getResource("tracewin."+i+".txt")});
+			i++;
+		}
+		return tests;
+	}	
+	
 	/**
-	 * Runs a batch of tests located in the resources.
+	 * Runs a test located in the resources.
 	 * Each test contains probe file with initial parameters and result files from TraceWin.
 	 * @throws IOException
 	 * @throws ModelException
 	 */
 	@Test
-	public void runGeneralTests() throws IOException, ModelException
+	public void runTest() throws IOException, ModelException
 	{
-		int i = 0;
-		while (GeneralTest.class.getResource("probe."+i+".xml") != null) {
-			double dataTW[][] = loadTWData(GeneralTest.class.getResource("tracewin."+i+".txt"));
-			Probe probe = loadProbeFromXML(GeneralTest.class.getResource("probe."+i+".xml").toString());
-	        double dataOX[][] = run(probe);
-	        
-	        System.out.printf("%s\n", probe.getComment());
-	        Column[] allCols = Column.values();
-			for (int j = 1; j < allCols.length; j++) {
-				double e = compare(dataOX[0], dataTW[0], dataOX[allCols[j].openxal], dataTW[allCols[j].tracewin]);
-				System.out.printf("%s: %E\n",allCols[j].name(), e);
-				assertTrue(allCols[j].name()+" not within the allowed error", e < allCols[j].allowedError);
-				//System.out.printf("%E %E\n",dataOX[allCols[j].openxal][0], dataTW[allCols[j].tracewin][0]);
-			}
-			//saveResults("openxal."+i+".txt", dataOX);
-			i++;
+		double dataTW[][] = loadTWData(tracewinData);
+        double dataOX[][] = run(probe);
+        
+        System.out.printf("%s\n", probe.getComment());
+        Column[] allCols = Column.values();
+		for (int j = 1; j < allCols.length; j++) {
+			double e = compare(dataOX[0], dataTW[0], dataOX[allCols[j].openxal], dataTW[allCols[j].tracewin]);
+			System.out.printf("%s: %E\n",allCols[j].name(), e);
+			assertTrue(allCols[j].name()+" not within the allowed error", e < allCols[j].allowedError);
+			//System.out.printf("%E %E\n",dataOX[allCols[j].openxal][0], dataTW[allCols[j].tracewin][0]);
 		}
-		
+		//saveResults("openxal."+i+".txt", dataOX);
 	}
 	
 	
-	protected void saveResults(String file, double[][] data) throws FileNotFoundException {
+	protected static void saveResults(String file, double[][] data) throws FileNotFoundException {
 		Formatter f = new Formatter(file);
 		for (int i=0; i<data[0].length; i++) {
 			for (int j=0; j<data.length; j++)
@@ -192,7 +214,7 @@ public class GeneralTest {
 	 * @throws ModelException
 	 * @throws IOException
 	 */
-	public double[][] run(Probe probe, AcceleratorSeq sequence) throws ModelException, IOException 
+	public static double[][] run(Probe probe, AcceleratorSeq sequence) throws ModelException, IOException 
 	{
 		Scenario scenario = Scenario.newScenarioFor(sequence);		
 		scenario.setProbe(probe);			
@@ -346,6 +368,7 @@ public class GeneralTest {
 	 * @param yb y values of second function
 	 * @return value of the integral
 	 */
+	@SuppressWarnings("unused")
 	private double integrateL1linear(double[] xa, double[] xb, double[] ya, double yb[]) {
 		
 		// merge the positions together

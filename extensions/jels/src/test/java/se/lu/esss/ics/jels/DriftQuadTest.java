@@ -10,14 +10,14 @@ import xal.model.probe.EnvelopeProbe;
 import xal.model.probe.Probe;
 import xal.smf.AcceleratorSeq;
 
-public class DriftQuadTest extends GeneralTest {
+public class DriftQuadTest {
 
 	
 	@Test @Ignore
 	public void runGeneralTests() throws IOException, ModelException
 	{
-		Probe probea = loadProbeFromXML(GeneralTest.class.getResource("probe.0.xml").toString());
-		Probe probeb = loadProbeFromXML(GeneralTest.class.getResource("probe.3.xml").toString());
+		Probe probea = GeneralTest.loadProbeFromXML(GeneralTest.class.getResource("probe.0.xml").toString());
+		Probe probeb = GeneralTest.loadProbeFromXML(GeneralTest.class.getResource("probe.3.xml").toString());
 		probeb = TestCommon.setupOpenXALProbe(3e6, 4.025e8, 0.0,
 				new double[][]{{-0.1763,0.3,0.2098},
 		  		{-0.3247,0.4,0.2091},
@@ -30,17 +30,17 @@ public class DriftQuadTest extends GeneralTest {
         	quad.setPosition(i*0.035);
         	seq.setLength(i*0.035+0.070);
         	probea.reset();
-    		double dataOX[][] = run(probea, seq);
+    		double dataOX[][] = GeneralTest.run(probea, seq);
             System.out.printf("%s\n", probea.getComment());
-    		saveResults("openxal.quada."+i+".txt", dataOX);
+            GeneralTest.saveResults("openxal.quada."+i+".txt", dataOX);
         }
         for (int i=0; i<3; i++) {
         	quad.setPosition(i*0.035);
         	seq.setLength(i*0.035+0.070);
         	probeb.reset();
-        	double dataOX[][] = run(probeb, seq);
+        	double dataOX[][] = GeneralTest.run(probeb, seq);
             System.out.printf("%s\n", probeb.getComment());
-    		saveResults("openxal.quadb."+i+".txt", dataOX);
+            GeneralTest.saveResults("openxal.quadb."+i+".txt", dataOX);
         }
 		
 	}
