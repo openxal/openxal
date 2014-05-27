@@ -7,7 +7,7 @@
     </algorithm>
     <state id="" type="xal.model.probe.traj.EnvelopeProbeState">
         <species Er="9.3829431E8" q="-1.0"/>
-        <location W="2.90e6" elem="" s="0.0" t="0.0"/>
+        <location W="3.00e6" elem="" s="0.0" t="0.0"/>
         <beam I="0.0" f="0.0"/>
         <envelope 
 			alphaX="-0.1763" betaX="0.3" emitX="2.621516138971707E-6"
