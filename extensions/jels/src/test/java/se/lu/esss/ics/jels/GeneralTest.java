@@ -3,10 +3,7 @@ package se.lu.esss.ics.jels;
 import static org.junit.Assert.assertTrue;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
@@ -17,9 +14,6 @@ import java.util.Locale;
 import org.junit.Test;
 
 import xal.model.ModelException;
-import xal.model.alg.EnvelopeTracker;
-import xal.model.alg.Tracker;
-import xal.model.probe.EnvelopeProbe;
 import xal.model.probe.Probe;
 import xal.model.probe.traj.EnvelopeProbeState;
 import xal.model.probe.traj.ProbeState;
@@ -44,7 +38,7 @@ public class GeneralTest {
 	/**
 	 * Describes Openxal, Tracewin columns/functions of the results. Sets allowed error on each function.
 	 * */
-	private static enum Column {
+	static enum Column {
 		POSITION(0,0, 0.),
 		GAMA_1(1,1, 1e-2),
 		RMSX(2,2,2e-1),
@@ -59,8 +53,8 @@ public class GeneralTest {
 		CENTXp(10,13,1e-1),
 		CENTY(11,14,1e-1),
 		CENTYp(12,15,1e-1),
-		CENTZ(13,16,1e-1),
-		CENTdpp(14,17,1e-1),
+		CENTZ(13,16,1.),
+		CENTdpp(14,17,1.),
 		//CENTZp(15,18,1e-1),
 		
 		BETAX(15,24,0.3),
@@ -97,7 +91,7 @@ public class GeneralTest {
 			for (int j = 1; j < allCols.length; j++) {
 				double e = compare(dataOX[0], dataTW[0], dataOX[allCols[j].openxal], dataTW[allCols[j].tracewin]);
 				System.out.printf("%s: %E\n",allCols[j].name(), e);
-				if (i < 3) assertTrue(allCols[j].name()+" not within the allowed error", e < allCols[j].allowedError);
+				assertTrue(allCols[j].name()+" not within the allowed error", e < allCols[j].allowedError);
 				//System.out.printf("%E %E\n",dataOX[allCols[j].openxal][0], dataTW[allCols[j].tracewin][0]);
 			}
 			//saveResults("openxal."+i+".txt", dataOX);
@@ -107,7 +101,7 @@ public class GeneralTest {
 	}
 	
 	
-	private void saveResults(String file, double[][] data) throws FileNotFoundException {
+	protected void saveResults(String file, double[][] data) throws FileNotFoundException {
 		Formatter f = new Formatter(file);
 		for (int i=0; i<data[0].length; i++) {
 			for (int j=0; j<data.length; j++)
@@ -124,7 +118,7 @@ public class GeneralTest {
 	 * @return data
 	 * @throws IOException
 	 */
-	private double[][] loadTWData(URL twdata) throws IOException
+	protected double[][] loadTWData(URL twdata) throws IOException
 	{
 		final int TWcols = 26;
 		int nlines = countLines(twdata);
@@ -152,7 +146,7 @@ public class GeneralTest {
 	 * @param file OpenXal probe file
 	 * @return the probe
 	 */
-	private static Probe loadProbeFromXML(String file) {
+	protected static Probe loadProbeFromXML(String file) {
 		try {			
 			Probe probe = ProbeXmlParser.parse(file);
 			return probe;
@@ -185,9 +179,21 @@ public class GeneralTest {
 	 * @throws ModelException
 	 * @throws IOException
 	 */
-	public double[][] run(Probe probe) throws ModelException, IOException 
+	public double[][] run(Probe probe) throws ModelException, IOException
 	{
-	    AcceleratorSeq sequence = loadAcceleratorSequence();
+		 AcceleratorSeq sequence = loadAcceleratorSequence();
+		 return run(probe, sequence);
+	}
+	
+	/**
+	 * Runs given sequence with the give probe
+	 * @param probe probe
+	 * @return results from simulation
+	 * @throws ModelException
+	 * @throws IOException
+	 */
+	public double[][] run(Probe probe, AcceleratorSeq sequence) throws ModelException, IOException 
+	{
 		Scenario scenario = Scenario.newScenarioFor(sequence);		
 		scenario.setProbe(probe);			
 						
@@ -265,7 +271,7 @@ public class GeneralTest {
 	 * @param yb y values of second function
 	 * @return returns relative error
 	 */
-	private double compare(double[] xa, double[] xb, double[] ya, double yb[]) {
+	protected double compare(double[] xa, double[] xb, double[] ya, double yb[]) {
 		double d = integrateL1sup(xa,xb,ya,yb);
 		double a = integrateSup(xb,yb);
 		//System.out.printf("%E %E\n", d, a);

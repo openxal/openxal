@@ -225,7 +225,7 @@ public class JElsDemo {
 		return null;
 	}
 
-	private static void saveProbe(EnvelopeProbe probe, String file) {		
+	static void saveProbe(EnvelopeProbe probe, String file) {		
 		try {
 			probe.setSaveTwissFlag(true);
 			ProbeXmlWriter.writeXml(probe, file);			
