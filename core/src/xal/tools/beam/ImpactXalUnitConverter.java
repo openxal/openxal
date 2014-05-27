@@ -517,7 +517,7 @@ public class ImpactXalUnitConverter {
         Twiss xalZ = impactToXalLongitudinal(t3dZ);
 
         // Build correlation matrix and return
-        return CovarianceMatrix.buildCorrelation(xalX, xalY, xalZ);
+        return CovarianceMatrix.buildCovariance(xalX, xalY, xalZ);
     }
 
     /**
@@ -591,7 +591,7 @@ public class ImpactXalUnitConverter {
         PhaseVector xalMean = centroid;
 
         // Build correlation matrix and return
-        return CovarianceMatrix.buildCorrelation(xalX, xalY, xalZ, xalMean);
+        return CovarianceMatrix.buildCovariance(xalX, xalY, xalZ, xalMean);
     }
 
     /**

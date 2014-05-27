@@ -193,8 +193,8 @@ public final class ElementaryFunction {
      * Returns the value of the first argument raised to the power of the second argument
      * <i>intBase</i><sup><i>intExpon</i></sup> where the base is an integer. Special cases:
      * <br/>
-     * <br/>&middot; If the second argument is positive or negative zero, then the result is 1.0.
-     * <br/>&middot; If the second argument is 1.0, then the result is the same as the first argument.
+     * <br/>&middot; If the second argument is positive or negative zero, then the result is 1.
+     * <br/>&middot; If the second argument is 1, then the result is the same as the first argument.
      * <br/>&middot; If the second argument is NaN, then the result is NaN.
      * <br/>&middot; If the first argument is NaN and the second argument is nonzero, then the result is NaN.
      * <p>
