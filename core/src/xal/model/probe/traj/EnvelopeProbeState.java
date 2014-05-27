@@ -515,7 +515,7 @@ public class EnvelopeProbeState extends BunchProbeState /* implements IPhaseStat
             
             DataAdaptor parNode = container.childAdaptor(EnvelopeProbeState.CENTROID_LABEL);
             if (parNode == null) {
-                this.setCovariance(CovarianceMatrix.buildCorrelation(twiss[0], twiss[1], twiss[2]));
+                this.setCovariance(CovarianceMatrix.buildCovariance(twiss[0], twiss[1], twiss[2]));
 //              throw new ParsingException("EnvelopeProbeState#readPropertiesFrom(): no child element = " + EnvelopeProbeState.PARTICLE_LABEL);
             } else {
 //                if (parNode.hasAttribute(EnvelopeProbeState.X_LABEL)) {
@@ -533,7 +533,7 @@ public class EnvelopeProbeState extends BunchProbeState /* implements IPhaseStat
                     String      strCent = parNode.stringValue(EnvelopeProbeState.VALUE_LABEL);
                     PhaseVector vecCent = new PhaseVector(strCent);
                     
-                    this.setCovariance(CovarianceMatrix.buildCorrelation(twiss[0], twiss[1], twiss[2], vecCent));
+                    this.setCovariance(CovarianceMatrix.buildCovariance(twiss[0], twiss[1], twiss[2], vecCent));
                 }
                 
             }
