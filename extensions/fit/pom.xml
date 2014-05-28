@@ -18,7 +18,6 @@
 		<dependency>
 			<groupId>org.xal</groupId>
 			<artifactId>openxal.extensions.solver</artifactId>
-			<version>${project.version}</version>
 		</dependency>	
 	</dependencies>
 </project>

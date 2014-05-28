@@ -21,12 +21,10 @@
 		<dependency>
 			<groupId>org.xal</groupId>
 			<artifactId>openxal.extensions.widgets</artifactId>
-			<version>${project.version}</version>
 		</dependency>	
 		<dependency>
 			<groupId>org.xal</groupId>
 			<artifactId>openxal.extensions.bricks</artifactId>
-			<version>${project.version}</version>
 		</dependency>	
 	</dependencies>
 </project>

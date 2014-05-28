@@ -12,9 +12,8 @@
 	<version>1.0.1-SNAPSHOT</version>
 	
 	<build>
-		<sourceDirectory>src</sourceDirectory>
-        
-        <plugins>
+		<sourceDirectory>src</sourceDirectory> 
+  	<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>
@@ -32,35 +31,25 @@
 			</plugin>
 		</plugins>
 	</build>
+
 	<dependencies>
 		<dependency>		
 			<groupId>org.xal</groupId>
 			<artifactId>openxal.extensions.pvlogger</artifactId>
-			<version>${project.version}</version>			
 		</dependency>
 		<dependency>		
 			<groupId>org.xal</groupId>
 			<artifactId>openxal.extensions.recordselector</artifactId>
-			<version>${project.version}</version>			
 		</dependency>
 		<dependency>		
 			<groupId>org.xal</groupId>
 			<artifactId>openxal.plugins.postgres</artifactId>
-			<version>${project.version}</version>
 			<scope>runtime</scope>		
 		</dependency>
 		<dependency>
-			<groupId>postgresql</groupId>
-			<artifactId>postgresql</artifactId>
-			<version>9.1-901.jdbc4</version>
-			<scope>runtime</scope>
-		</dependency>	
-		<dependency>
 			<groupId>org.xal</groupId>
 			<artifactId>openxal.plugins.jca</artifactId>
-			<version>${project.version}</version>
 			<scope>runtime</scope>			
 		</dependency>
-		
 	</dependencies>
 </project>

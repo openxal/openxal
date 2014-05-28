@@ -14,4 +14,12 @@
 	<build>
 		<sourceDirectory>src</sourceDirectory>
 	</build>
+	
+	<dependencies>
+		<dependency>
+			<groupId>postgresql</groupId>
+			<artifactId>postgresql</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+	</dependencies>
 </project>

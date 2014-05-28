@@ -42,14 +42,7 @@
 		<dependency>		
 			<groupId>org.xal</groupId>
 			<artifactId>openxal.plugins.postgres</artifactId>
-			<version>1.0.1-SNAPSHOT</version>
 			<scope>runtime</scope>		
-		</dependency>
-		<dependency>
-			<groupId>postgresql</groupId>
-			<artifactId>postgresql</artifactId>
-			<version>9.1-901.jdbc4</version>
-			<scope>runtime</scope>
 		</dependency>
 	</dependencies>
 </project>

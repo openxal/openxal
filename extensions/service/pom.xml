@@ -18,7 +18,6 @@
 		<dependency>
 			<groupId>javax.jmdns</groupId>
 			<artifactId>jmdns</artifactId>
-			<version>3.4.2.353-openxal</version>
 		</dependency>		
 	</dependencies>
 </project>

@@ -65,17 +65,14 @@
 		<dependency>
 			<groupId>gov.nist.math.jama</groupId>
 			<artifactId>jama</artifactId>
-			<version>1.0.2-openxal</version>
 		</dependency>
 		<dependency>
 			<groupId>net.sf.jsci</groupId>
 			<artifactId>jsci</artifactId>
-			<version>1.1-openxal</version>	
 		</dependency>
 		<dependency>
 			<groupId>org.xal</groupId>
 			<artifactId>openxal.plugins.jca</artifactId>
-			<version>${project.version}</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>

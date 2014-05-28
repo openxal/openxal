@@ -18,7 +18,6 @@
 		<dependency>		
 			<groupId>org.xal</groupId>
 			<artifactId>openxal.extensions.worker</artifactId>
-			<version>${project.version}</version>			
 		</dependency>
 	</dependencies>
 </project>
