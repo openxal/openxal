@@ -1,32 +1,18 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>se.esss.codac.units</groupId>
-	<artifactId>openxal-opticseditor</artifactId>
-	<packaging>codac</packaging>
-	<version>1.1</version>
-	<name>Optics Editor</name>
-
 	<parent>
-		<groupId>org.iter.codac.units</groupId>
-		<artifactId>maven-iter-settings</artifactId>
-		<version>4.1.0</version>
+		<groupId>org.xal</groupId>
+		<artifactId>openxal.apps.packaging</artifactId>
+		<version>1.0.1-SNAPSHOT</version>
 	</parent>
 
-	<properties>
-		<unit.type>module</unit.type>
-		
-		<openxal.version>1.0.1-SNAPSHOT</openxal.version>		
-	</properties>
+	<groupId>se.esss.codac.units</groupId>
+	<artifactId>openxal-opticseditor</artifactId>
+	<version>1.1</version>
 
-	<developers>
-		<developer>
-			<id>miroslavpavleski</id>
-			<roles>
-				<role>unit owner</role>
-			</roles>
-		</developer>
-	</developers>
-
+	<packaging>codac</packaging>
+	<name>Optics Editor</name>
+	
 	<build>
 		<plugins>
 			<plugin>

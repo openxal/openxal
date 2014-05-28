@@ -3,9 +3,10 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
-		<groupId>org.iter.codac.units</groupId>
-		<artifactId>maven-iter-settings</artifactId>
-		<version>4.1.0</version>
+		<groupId>org.xal</groupId>
+		<artifactId>openxal-packaging</artifactId>
+		<version>1.0.1-SNAPSHOT</version>
+		<relativePath>../../packaging/pom.xml</relativePath>
 	</parent>
 		
 	<groupId>org.xal</groupId>

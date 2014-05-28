@@ -1,15 +1,38 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
+	
+	<parent>
+		<groupId>org.iter.codac.units</groupId>
+		<artifactId>maven-iter-settings</artifactId>
+		<version>4.1.0</version>
+	</parent>
 		
 	<groupId>org.xal</groupId>
 	<artifactId>openxal-packaging</artifactId>
 	<version>1.0.1-SNAPSHOT</version>
 	
 	<packaging>pom</packaging>
+
+	<properties>
+		<unit.type>module</unit.type>
+		<openxal.version>1.0.1-SNAPSHOT</openxal.version>
+	</properties>
 	
+	<developers>
+		<developer>
+			<id>miroslavpavleski</id>
+			<roles>
+				<role>unit owner</role>
+			</roles>
+		</developer>
+	</developers>
+
 	<modules>
 		<module>ess-data</module>				
-		<module>openxal-meta</module>				
+		<module>openxal-meta</module>		
+		<module>../core/packaging</module>
+		<module>../services/pvlogger/packaging</module>
+		<module>../apps/packaging</module>		
 	</modules>
 </project>
