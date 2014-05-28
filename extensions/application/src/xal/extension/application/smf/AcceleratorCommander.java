@@ -7,6 +7,7 @@
 package xal.extension.application.smf;
 
 import xal.extension.application.*;
+import xal.tools.ResourceManager;
 
 import java.net.URL;
 
@@ -37,15 +38,9 @@ public class AcceleratorCommander extends Commander {
     protected void loadDefaultBundle() {
         super.loadDefaultBundle();
 
-		final String currentClassName = "xal.extension.application.smf.AcceleratorCommander";
-		try {
-			// need to reference this class directly since subclasses would otherwise override the class
-			final URL resourceURL = Class.forName( currentClassName ).getResource( MENU_DEFINITION_RESOURCE );
-			loadBundle( resourceURL );
-		}
-		catch ( ClassNotFoundException exception ) {
-			throw new RuntimeException( "Error attempting to reference the class: " + currentClassName );
-		}
+		// need to reference this class directly since subclasses would otherwise override the class
+		final URL resourceURL = ResourceManager.getResourceURL( AcceleratorCommander.class, MENU_DEFINITION_RESOURCE );
+		loadBundle( resourceURL );
     }
     
     
