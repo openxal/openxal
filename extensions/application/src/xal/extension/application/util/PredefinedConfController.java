@@ -104,7 +104,7 @@ public class PredefinedConfController {
 						configFileURL = null;
 						if (node.isConfig()) {
 							String fileName = node.getURL_String();
-							Application.getAdaptor().getResourceURL( resourcePath + "/" + fileName );
+							configFileURL = Application.getAdaptor().getResourceURL( resourcePath + "/" + fileName );
 						}
 						descriptionText.setText(null);
 						descriptionText.setText("Description: " + node.getDescription());
@@ -131,14 +131,17 @@ public class PredefinedConfController {
 								if (extSelectionListener != null && url != null) {
 									ActionEvent actEvnt = new ActionEvent(url, 0, "selected");
 									extSelectionListener.actionPerformed(actEvnt);
-								} else {
+								}
+								else {
+									System.out.println( "url: " + url + ", external selection listener: " + extSelectionListener );
 									messageText.setText(null);
 									messageText.setText("Please, select a configuration from the tree.");
 									Toolkit.getDefaultToolkit().beep();
 								}
-							} else {
+							}
+							else {
 								messageText.setText(null);
-								messageText.setText("Please, select a configuration from the tree.");
+								messageText.setText( "The selected node is not a config. Please, select a configuration from the tree." );
 								Toolkit.getDefaultToolkit().beep();
 							}
 						}
@@ -161,7 +164,9 @@ public class PredefinedConfController {
 						if (extSelectionListener != null && url != null) {
 							ActionEvent actEvnt = new ActionEvent(url, 0, "selected");
 							extSelectionListener.actionPerformed(actEvnt);
-						} else {
+						}
+						else {
+							System.out.println( "url: " + url + ", external selection listener: " + extSelectionListener );
 							messageText.setText(null);
 							messageText.setText("Please, select a configuration from the tree.");
 							Toolkit.getDefaultToolkit().beep();
