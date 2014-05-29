@@ -61,7 +61,7 @@ public class ElsProbe extends EnvelopeProbe {
 	@Override
 	public CovarianceMatrix getCovariance() {
 		Twiss[] twiss = getTwiss();
-		return CovarianceMatrix.buildCorrelation(twiss[0], twiss[1], twiss[2]);		
+		return CovarianceMatrix.buildCovariance(twiss[0], twiss[1], twiss[2]);		
 	}
 	
 	public void setCorrelation(CovarianceMatrix matTau) {
