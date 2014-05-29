@@ -3,7 +3,7 @@
  *
  *  Created on June 17, 2004, 01:18 PM
  */
-package xal.tools.apputils;
+package xal.extension.application.util;
 
 import javax.swing.*;
 import java.net.*;
@@ -12,19 +12,19 @@ import java.awt.event.*;
 import javax.swing.tree.*;
 import javax.swing.event.*;
 
+import xal.extension.application.Application;
 import xal.tools.data.DataAdaptor;
 import xal.tools.xml.*;
 
+
 /**
  *  PredefinedConfController provides a panel with a configuration tree and can
- *  register and event of choosing the configuration.
+ *  register and event of choosing the configuration. 
+ *  Loads the configuration files from the application's resources.
  *
  *@author    shishlo
  */
 public class PredefinedConfController {
-
-	private Object superDoc = null;
-
 	private JTextField messageText = new JTextField(10);
 
 	private String resourcePath = null;
@@ -53,21 +53,18 @@ public class PredefinedConfController {
 
 
 	/**
-	 *  PredefinedConfController constructor. The first parameter superDocIn is a
-	 *  XalDocument for which the configuration will be used. resourcePathIn -
+	 *  PredefinedConfController constructor. resourcePathIn -
 	 *  directory name for configuration files for this particular subclass of
 	 *  XalDocument. It is usually "config". resourceNameIn - the name of XML file
 	 *  with a configuration structure.
 	 *
-	 *@param  superDocIn      Description of the Parameter
 	 *@param  resourcePathIn  Description of the Parameter
 	 *@param  resourceNameIn  Description of the Parameter
 	 */
-	public PredefinedConfController(Object superDocIn, String resourcePathIn, String resourceNameIn) {
-		superDoc = superDocIn;
-		URL predefConfURL = superDoc.getClass().getResource( "resources/" + resourcePathIn + "/" + resourceNameIn );
+	public PredefinedConfController( final String resourcePathIn, final String resourceNameIn ) {
+		URL predefConfURL = Application.getAdaptor().getResourceURL( resourcePathIn + "/" + resourceNameIn );
 
-		resourcePath = "resources/" + resourcePathIn;
+		resourcePath = resourcePathIn;
 		resourceName = resourceNameIn;
 
 		//set JTextArea parameters
@@ -107,7 +104,7 @@ public class PredefinedConfController {
 						configFileURL = null;
 						if (node.isConfig()) {
 							String fileName = node.getURL_String();
-							configFileURL = superDoc.getClass().getResource(resourcePath + "/" + fileName);
+							Application.getAdaptor().getResourceURL( resourcePath + "/" + fileName );
 						}
 						descriptionText.setText(null);
 						descriptionText.setText("Description: " + node.getDescription());
@@ -129,7 +126,7 @@ public class PredefinedConfController {
 							configFileURL = null;
 							if (node.isConfig()) {
 								String fileName = node.getURL_String();
-								configFileURL = superDoc.getClass().getResource(resourcePath + "/" + fileName);
+								configFileURL = Application.getAdaptor().getResourceURL( resourcePath + "/" + fileName );
 								URL url = getSelectedConfigFileURL();
 								if (extSelectionListener != null && url != null) {
 									ActionEvent actEvnt = new ActionEvent(url, 0, "selected");
