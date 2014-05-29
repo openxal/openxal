@@ -18,7 +18,7 @@ Note: To List the pom.xml-s execute this command:  ag -l -G  packaging '1\.0\.0\
 
 -= 3.STEP List Packaging scripts =-
 
-Replace version strings in the shell files with search & replace.
+Replace version string in packaging/ess-data/src/main/scripts/openxal-environment.sh.
 
 ag -l -G  packaging '1\.0\.0\-SNAPSHOT' . | grep '\.sh' | sort
 
