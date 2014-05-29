@@ -15,15 +15,21 @@ import java.util.regex.*;
 /** Provide normalized methods for getting resources */
 abstract public class ResourceManager {
 	/** pattern to match an XAL package name */
-	static final Pattern XAL_PACKAGE_PATTERN = Pattern.compile( "^xal\\.(\\w+)\\.(\\w+)(\\..*)?$" );
+	static final protected Pattern XAL_PACKAGE_PATTERN = Pattern.compile( "^xal\\.(\\w+)\\.(\\w+)(\\..*)?$" );
 
 	/** default resource manager */
-	static final ResourceManager DEFAULT_MANAGER;
+	static final private ResourceManager DEFAULT_MANAGER;
 
 
 	/** static initializer */
 	static {
-		DEFAULT_MANAGER = new JarredResourceManager();
+		DEFAULT_MANAGER = getJarredResourceManager();
+	}
+
+
+	/** get the singleton instance of the jarred resource manager */
+	static private JarredResourceManager getJarredResourceManager() {
+		return JarredResourceManager.getInstance();
 	}
 
 
@@ -49,6 +55,22 @@ abstract public class ResourceManager {
 
 /** Resource manager that loads resources from jar files  */
 class JarredResourceManager extends ResourceManager {
+	/** singleton instance */
+	final static private JarredResourceManager RESOURCE_MANAGER;
+
+
+	// static initializer
+	static {
+		RESOURCE_MANAGER = new JarredResourceManager();
+	}
+
+
+	/** get the singleton instance */
+	static public JarredResourceManager getInstance() {
+		return RESOURCE_MANAGER;
+	}
+
+
 	/**
 	 * Get the URL to the specified resource relative to the specified class
 	 * @param rootClass class at the root of the group (this class must be at the same location as the resources directory in the jar file)
