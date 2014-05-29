@@ -91,7 +91,7 @@ class JarredResourceManager extends ResourceManager {
 			pathBuilder.append( "/" + resourcePath );
 
 			final String path = pathBuilder.toString();
-			System.out.println( "Fetching container resource with path: " + path );
+//			System.out.println( "Fetching container resource with path: " + path );
 			return rootClass.getResource( path );
 		}
 		else {
