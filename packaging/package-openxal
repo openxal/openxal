@@ -43,6 +43,9 @@ declare -a RPM_DIRS=(
     # Core libraries
     "$PROJECTDIR/core/packaging"
 
+    # PV Logger Service
+    "$PROJECTDIR/services/pvlogger/packaging"
+ 
     # OpenXAL applications
     "$PROJECTDIR/apps/packaging/bricks"
     "$PROJECTDIR/apps/packaging/dbbrowser"
@@ -62,10 +65,7 @@ declare -a RPM_DIRS=(
     "$PROJECTDIR/apps/packaging/score"
     "$PROJECTDIR/apps/packaging/virtualaccelerator"
     "$PROJECTDIR/apps/packaging/xyzcorrelator"
-    
-    # PV Logger Service
-    "$PROJECTDIR/services/pvlogger/packaging"
-        
+           
     # The OpenXAL meta-package
     "$PROJECTDIR/packaging/openxal-meta"
 )
