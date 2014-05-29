@@ -12,7 +12,7 @@ import java.awt.event.*;
 import java.util.*;
 
 import xal.extension.application.*;
-import xal.extension.smf.application.*;
+import xal.extension.application.smf.*;
 import xal.smf.*;
 
 /**

@@ -4,9 +4,12 @@
  * Created on May 20, 2003, 12:37 PM
  */
 
-package xal.extension.smf.application;
+package xal.extension.application.smf;
 
 import xal.extension.application.*;
+
+import java.net.URL;
+
 
 /**
  * AcceleratorCommander subclasses Commander to provide an accelerator specific 
@@ -33,7 +36,16 @@ public class AcceleratorCommander extends Commander {
      */
     protected void loadDefaultBundle() {
         super.loadDefaultBundle();
-        loadBundle( "xal.extension.smf.application.menudef" );
+
+		final String currentClassName = "xal.extension.application.smf.AcceleratorCommander";
+		try {
+			// need to reference this class directly since subclasses would otherwise override the class
+			final URL resourceURL = Class.forName( currentClassName ).getResource( MENU_DEFINITION_RESOURCE );
+			loadBundle( resourceURL );
+		}
+		catch ( ClassNotFoundException exception ) {
+			throw new RuntimeException( "Error attempting to reference the class: " + currentClassName );
+		}
     }
     
     

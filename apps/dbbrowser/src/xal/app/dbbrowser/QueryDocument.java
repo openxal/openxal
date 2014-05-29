@@ -102,21 +102,20 @@ public class QueryDocument  extends XalDocument {
         mainWindow = new QueryWindow(this);
         queryWindow().getQueryView().setDocument(sqlDocument);        
     }
-    
-    
+
+
     /**
-     * Subclasses should override this method if this document should use a menu definition
+	 * Subclasses should override this method if this document should use a menu definition
 	 * other than the default specified in application adaptor.  The document menu inherits the
 	 * application menu definition.  This custom path allows the document to modify the
 	 * application wide definitions for this document.  By default this method returns null.
-     * @return The menu definition properties file path in classpath notation
-	 * @see ApplicationAdaptor#getPathToResource
+     * @return The menu definition properties file name
      */
-    protected String getCustomMenuDefinitionPath() {
-		return Application.getAdaptor().getPathToResource( "query_menu" );
+    protected String getCustomMenuDefinitionResource() {
+		return "query_menu.properties";
     }
-	
-	
+
+
 	/**
 	 * Convenience method for getting the query window cast to the QueryWindow class
 	 * @return this document's query window

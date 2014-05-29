@@ -28,7 +28,11 @@ import java.util.logging.*;
 class HelpWindow extends JFrame implements SwingConstants {
     /** serialization ID */
     private static final long serialVersionUID = 1L;
-    
+
+	/** name for the help starting point resource which may or may not exist */
+	static public final String HELP_START_RESOURCE = "Help.html";
+
+
     // -------- static variables -----------------------------------------------
 	final static private URL _homePage;
     static private HelpWindow _helpWindow;
@@ -163,8 +167,7 @@ class HelpWindow extends JFrame implements SwingConstants {
      * @return The URL of the help contents.
      */
     static private URL getHelpSource() {
-        String helpPath = Application.getAdaptor().getApplicationHelpPath();
-        return Application.getAdaptor().getClass().getResource( helpPath );
+        return Application.getAdaptor().getResourceURL( HELP_START_RESOURCE );
     }
     
     

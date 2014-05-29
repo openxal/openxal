@@ -15,7 +15,7 @@ import java.util.*;
 import java.sql.*;
 
 import xal.extension.application.*;
-import xal.extension.smf.application.AcceleratorDocument;
+import xal.extension.application.smf.AcceleratorDocument;
 import xal.smf.*;
 import xal.ca.Channel;
 import xal.extension.bricks.WindowReference;
@@ -392,13 +392,12 @@ public class ConfigurationDocument extends AcceleratorDocument {
     
     /**
 	 * Get a custom menu definition for this document
-     * @return The menu definition properties file path in classpath notation
-	 * @see ApplicationAdaptor#getPathToResource
+     * @return The menu definition properties file
      */
-    protected String getCustomMenuDefinitionPath() {
-		return Application.getAdaptor().getPathToResource( "configuration-menu" );
+    protected String getCustomMenuDefinitionResource() {
+		return "configuration-menu.properties";
     }
-	
+
 	
 	/** implement save command to do nothing */
 	public void saveDocumentAs( final java.net.URL theURL ) {}

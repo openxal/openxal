@@ -11,7 +11,7 @@
 package xal.app.opticseditor;
 
 import xal.extension.application.*;
-import xal.extension.smf.application.*;
+import xal.extension.application.smf.*;
 import xal.smf.data.XMLDataManager;
 
 

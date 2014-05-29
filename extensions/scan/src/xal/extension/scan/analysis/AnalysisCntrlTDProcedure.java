@@ -15,6 +15,7 @@ import java.util.prefs.*;
 import xal.tools.data.DataAdaptor;
 import xal.extension.scan.*;
 import xal.extension.widgets.plot.*;
+import xal.extension.application.Application;
 import xal.tools.apputils.VerticalLayout;
 import xal.extension.widgets.swing.*;
 import xal.tools.text.FortranNumberFormat;
@@ -815,7 +816,7 @@ public final class AnalysisCntrlTDProcedure extends AnalysisController {
 		theoryData.clean();
 		fileName_TheoryData = fileName_TheoryData_In;
 
-		URL dataURL = mainController.getMainScanDocument().getClass().getResource("data/delta_t/" + fileName_TheoryData);
+		URL dataURL = Application.getAdaptor().getResourceURL( "data/delta_t/" + fileName_TheoryData );
 
 		try {
 			InputStream inps = dataURL.openStream();

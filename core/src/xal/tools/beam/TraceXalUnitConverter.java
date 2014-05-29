@@ -558,7 +558,7 @@ public class TraceXalUnitConverter {
         Twiss xalZ = traceToXalLongitudinal(t3dZ);
 
         // Build correlation matrix and return
-        return CovarianceMatrix.buildCorrelation(xalX, xalY, xalZ);
+        return CovarianceMatrix.buildCovariance(xalX, xalY, xalZ);
     }
 
     /**
@@ -632,7 +632,7 @@ public class TraceXalUnitConverter {
         PhaseVector xalMean = traceToXalCoordinates(centroid);
 
         // Build correlation matrix and return
-        return CovarianceMatrix.buildCorrelation(xalX, xalY, xalZ, xalMean);
+        return CovarianceMatrix.buildCovariance(xalX, xalY, xalZ, xalMean);
     }
 
     /**
