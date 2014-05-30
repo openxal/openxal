@@ -17,7 +17,7 @@ import java.util.regex.*;
 
 /** Provide normalized methods for getting resources */
 abstract public class ResourceManager {
-	static final protected String RESOURCES_FILE_SEARCH_PROPERTY = "OPENXAL_FIND_RESOURCES_IN_HOME";
+	static final protected String RESOURCES_FILE_SEARCH_PROPERTY = "OPENXAL_FIND_RESOURCES_IN_ROOT";
 
 	/** pattern to match an XAL package name */
 	static final protected Pattern XAL_PACKAGE_PATTERN = Pattern.compile( "^xal\\.(\\w+)\\.(\\w+)(\\..*)?$" );
@@ -236,20 +236,21 @@ class FileResourceManager extends ResourceManager {
 	 * @param path to the resource relative to the group's resources directory
 	 */
 	public URL fetchResourceURL( final Class<?> rootClass, final String resourcePath ) {
-		final URL directResourceURL = fetchDirectResourceURL( rootClass, resourcePath );
-		return directResourceURL != null ? directResourceURL : fetchContainerResourceURL( rootClass, resourcePath );
+		final URL coreResourceURL = fetchCoreResourceURL( rootClass, resourcePath );
+		return coreResourceURL != null ? coreResourceURL : fetchContainerResourceURL( rootClass, resourcePath );
 	}
 
 
 	/** Look relative to the class (applies to core) */
-	private URL fetchDirectResourceURL( final Class<?> rootClass, final String resourcePath ) {
+	private URL fetchCoreResourceURL( final Class<?> rootClass, final String resourcePath ) {
 		try {
-			final File siteCoreResource = fetchDirectResourceFile( rootClass, "site", resourcePath );
+			// first try to find a site specific resource
+			final File siteCoreResource = fetchCoreResourceFile( rootClass, "site", resourcePath );
 			if ( siteCoreResource.exists() ) {
 				return siteCoreResource.toURI().toURL();
 			}
-			else {
-				final File coreResource = fetchDirectResourceFile( rootClass, null, resourcePath );
+			else {		// next try to find the resource in the common component
+				final File coreResource = fetchCoreResourceFile( rootClass, null, resourcePath );
 				if ( coreResource.exists() ) {
 					return coreResource.toURI().toURL();
 				}
@@ -265,19 +266,21 @@ class FileResourceManager extends ResourceManager {
 
 
 	/** Look relative to the class (applies to core) */
-	private File fetchDirectResourceFile( final Class<?> rootClass, final String prefix, final String resourcePath ) {
+	private File fetchCoreResourceFile( final Class<?> rootClass, final String prefix, final String resourcePath ) {
 		final File baseFile = prefix != null ? new File( ROOT_FILE, prefix ) : ROOT_FILE;
 		final File coreDirectory = new File( baseFile, "core" );
 		final File resourcesDirectory = new File( coreDirectory, "resources" );
 
+		// replace package dot delimiter with URL slash delimiter (should work on all platforms if we use URLs here instead of files)
 		final String packagePath = rootClass.getPackage().getName().replaceAll( "\\.", "/" );
 		final String pathFromResources = packagePath + "/" + resourcePath;
 
+		// use URLs to avoid file system path separator dependencies
 		try {
 			final URL resourcesURL = resourcesDirectory.toURI().toURL();
 			final URL resourceURL = new URL( resourcesURL, pathFromResources );
 
-			return new File( resourcesURL.toURI() );
+			return new File( resourceURL.toURI() );
 		}
 		catch( MalformedURLException exception ) {
 			throw new RuntimeException( "Malformed URL when fetching resource URL from file.", exception );
@@ -290,29 +293,60 @@ class FileResourceManager extends ResourceManager {
 
 	/** Look in the container's corresponding resources directory */
 	public URL fetchContainerResourceURL( final Class<?> rootClass, final String resourcePath ) {
+		try {
+			// first try to find a site specific resource
+			final File siteContainerResource = fetchContainerResourceFile( rootClass, "site", resourcePath );
+			if ( siteContainerResource.exists() ) {
+				return siteContainerResource.toURI().toURL();
+			}
+			else {		// next try to find the resource in the common component
+				final File containerResource = fetchContainerResourceFile( rootClass, null, resourcePath );
+				if ( containerResource.exists() ) {
+					return containerResource.toURI().toURL();
+				}
+				else {
+					return null;
+				}
+			}
+		}
+		catch( MalformedURLException exception ) {
+			throw new RuntimeException( "Malformed URL when fetching container resource URL from file.", exception );
+		}
+	}
+
+
+	/** Look in the container's corresponding resources directory */
+	public File fetchContainerResourceFile( final Class<?> rootClass, final String prefix, final String resourcePath ) {
 		final String[] packageParts = getPackagePathParts( rootClass );
 
 		if ( packageParts != null ) {
-			final String containerType = packageParts[0];	// e.g. extension, plugin, app, service
+			final String containerType = packageParts[0];	// e.g. app, extension, plugin, service
 			final String container = packageParts[1];		// e.g. application, widgets, pvlogger, scan1d, launcher
 
-			final StringBuilder pathBuilder = new StringBuilder( "/xal/" );
-			pathBuilder.append( containerType );
-			pathBuilder.append( "/" + container + "/resources" );
+			final File baseDirectory = prefix != null ? new File( ROOT_FILE, prefix ) : ROOT_FILE;	// e.g. ${OPENXAL_HOME} or ${OPENXAL_HOME}/site
+			final File containerTypeRoot = new File( baseDirectory, containerType + "s" );		// e.g. ${OPENXAL_HOME}/extensions
+			final File containerDirectory = new File( containerTypeRoot, container );			// e.g. ${OPENXAL_HOME}/extensions/application
+			final File resourcesDirectory = new File( containerDirectory, "resources" );		// e.g. ${OPENXAL_HOME}/extensions/application/resources
 
-			if ( packageParts.length == 3 ) {
-				final String packageSuffix = packageParts[2];
-				if ( packageSuffix != null && packageSuffix.length() > 0 ) {
-					final String suffixPath = packageSuffix.replaceAll( "\\.", "/" );
-					pathBuilder.append( suffixPath );
-				}
+			// replace package dot delimiter with URL slash delimiter (should work on all platforms if we use URLs here instead of files)
+			final String packagePath = rootClass.getPackage().getName().replaceAll( "\\.", "/" );		// e.g. xal/extension/application/smf
+			final String packagePrefix = "xal/" + containerType + "/" + container;
+			final String relativePackagePath = packagePath.length() == packagePrefix.length() ? null : packagePath.substring( packagePrefix.length() + 1 );		// e.g. smf  (strip initial /)
+			final String pathFromResources = relativePackagePath != null ? relativePackagePath + "/" + resourcePath : resourcePath;		// e.g. smf/menudef.properties
+
+			// use URLs to avoid file system path separator dependencies
+			try {
+				final URL resourcesURL = resourcesDirectory.toURI().toURL();
+				final URL resourceURL = new URL( resourcesURL, pathFromResources );		// e.g. file://${OPENXAL_HOME}/extensions/application/resources/smf/menudef.properties
+
+				return new File( resourceURL.toURI() );		// e.g. ${OPENXAL_HOME}/extensions/application/resources/smf/menudef.properties
 			}
-
-			pathBuilder.append( "/" + resourcePath );
-
-			final String path = pathBuilder.toString();
-			//			System.out.println( "Fetching container resource with path: " + path );
-			return rootClass.getResource( path );
+			catch( MalformedURLException exception ) {
+				throw new RuntimeException( "Malformed URL when fetching resource URL from file.", exception );
+			}
+			catch( URISyntaxException exception ) {
+				throw new RuntimeException( "URI syntax exception when fetching resource URL from file.", exception );
+			}
 		}
 		else {
 			return null;
