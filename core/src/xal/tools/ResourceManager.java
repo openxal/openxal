@@ -114,17 +114,17 @@ class JarredResourceManager extends ResourceManager {
 	}
 
 
-	/** Look in the container's corresponding resources directory */
+	/** Look in the component's corresponding resources directory */
 	public URL fetchContainerResourceURL( final Class<?> rootClass, final String resourcePath ) {
 		final PackagePartition packagePartition = PackagePartition.getValidInstance( rootClass );
 
 		if ( packagePartition != null ) {
-			final String containerType = packagePartition.COMPONENT_TYPE;	// e.g. app, extension, plugin, service
-			final String container = packagePartition.COMPONENT_NAME;		// e.g. application, widgets, pvlogger, scan1d, launcher
+			final String componentType = packagePartition.COMPONENT_TYPE;	// e.g. app, extension, plugin, service
+			final String component = packagePartition.COMPONENT_NAME;		// e.g. application, widgets, pvlogger, scan1d, launcher
 
 			final StringBuilder pathBuilder = new StringBuilder( "/" + packagePartition.PACKAGE_PREFIX + "/" );		// e.g. "/xal/"
-			pathBuilder.append( containerType );
-			pathBuilder.append( "/" + container + "/resources" );
+			pathBuilder.append( componentType );
+			pathBuilder.append( "/" + component + "/resources" );
 
 			final String packageSuffix = packagePartition.PACKAGE_SUFFIX;
 			if ( packageSuffix != null && packageSuffix.length() > 0 ) {
@@ -135,7 +135,7 @@ class JarredResourceManager extends ResourceManager {
 			pathBuilder.append( "/" + resourcePath );
 
 			final String path = pathBuilder.toString();
-//			System.out.println( "Fetching container resource with path: " + path );
+//			System.out.println( "Fetching component resource with path: " + path );
 			return rootClass.getResource( path );
 		}
 		else {
@@ -215,10 +215,10 @@ class FileResourceManager extends ResourceManager {
 			return coreResourceURL;
 		}
 		else {
-			// look for the resource based on the package's container (e.g. extension, app, service, etc.)
-			final URL containerResourceURL = fetchContainerResourceURL( rootClass, false, resourcePath );
-			if ( containerResourceURL != null ) {
-				return containerResourceURL;
+			// look for the resource based on the package's component (e.g. extension, app, service, etc.)
+			final URL componentResourceURL = fetchContainerResourceURL( rootClass, false, resourcePath );
+			if ( componentResourceURL != null ) {
+				return componentResourceURL;
 			}
 			else {
 				// sometimes resources for apps and services are associated with a corresponding app/service specific extension (e.g. services/pvlogger/extension/resources/configuraiton.xml)
@@ -278,7 +278,7 @@ class FileResourceManager extends ResourceManager {
 	}
 
 
-	/** Look in the container's corresponding resources directory */
+	/** Look in the component's corresponding resources directory */
 	public URL fetchContainerResourceURL( final Class<?> rootClass, final boolean includeExtension,  final String resourcePath ) {
 		try {
 			// first try to find a site specific resource
@@ -287,9 +287,9 @@ class FileResourceManager extends ResourceManager {
 				return siteContainerResource.toURI().toURL();
 			}
 			else {		// next try to find the resource in the common component
-				final File containerResource = fetchContainerResourceFile( rootClass, null, includeExtension, resourcePath );
-				if ( containerResource != null && containerResource.exists() ) {
-					return containerResource.toURI().toURL();
+				final File componentResource = fetchContainerResourceFile( rootClass, null, includeExtension, resourcePath );
+				if ( componentResource != null && componentResource.exists() ) {
+					return componentResource.toURI().toURL();
 				}
 				else {
 					return null;
@@ -297,29 +297,29 @@ class FileResourceManager extends ResourceManager {
 			}
 		}
 		catch( MalformedURLException exception ) {
-			throw new RuntimeException( "Malformed URL when fetching container resource URL from file.", exception );
+			throw new RuntimeException( "Malformed URL when fetching component resource URL from file.", exception );
 		}
 	}
 
 
-	/** Look in the container's corresponding resources directory */
+	/** Look in the component's corresponding resources directory */
 	public File fetchContainerResourceFile( final Class<?> rootClass, final String prefix, final boolean includeExtension, final String resourcePath ) {
 		final PackagePartition packagePartition = PackagePartition.getValidInstance( rootClass );
 
 		if ( packagePartition != null ) {
-			final String containerType = packagePartition.COMPONENT_TYPE;	// e.g. app, extension, plugin, service
-			final String container = packagePartition.COMPONENT_NAME;		// e.g. application, widgets, pvlogger, scan1d, launcher
+			final String componentType = packagePartition.COMPONENT_TYPE;	// e.g. app, extension, plugin, service
+			final String component = packagePartition.COMPONENT_NAME;		// e.g. application, widgets, pvlogger, scan1d, launcher
 
 			final File baseDirectory = prefix != null ? new File( ROOT_FILE, prefix ) : ROOT_FILE;	// e.g. ${OPENXAL_HOME} or ${OPENXAL_HOME}/site
 			if ( !baseDirectory.exists() )  return null;
 
-			final File containerTypeRoot = new File( baseDirectory, containerType + "s" );		// e.g. ${OPENXAL_HOME}/extensions
-			if ( !containerTypeRoot.exists() )  return null;
+			final File componentTypeRoot = new File( baseDirectory, componentType + "s" );		// e.g. ${OPENXAL_HOME}/extensions
+			if ( !componentTypeRoot.exists() )  return null;
 
-			final File containerDirectory = new File( containerTypeRoot, container );			// e.g. ${OPENXAL_HOME}/extensions/application
-			if ( !containerDirectory.exists() )  return null;
+			final File componentDirectory = new File( componentTypeRoot, component );			// e.g. ${OPENXAL_HOME}/extensions/application
+			if ( !componentDirectory.exists() )  return null;
 
-			final File resourcesParent = includeExtension ? new File( containerDirectory, "extension" ) : containerDirectory;		// e.g. ${OPENXAL_HOME}/site/services/pvlogger/extension
+			final File resourcesParent = includeExtension ? new File( componentDirectory, "extension" ) : componentDirectory;		// e.g. ${OPENXAL_HOME}/site/services/pvlogger/extension
 			if ( !resourcesParent.exists() )  return null;
 
 			final File resourcesDirectory = new File( resourcesParent, "resources" );		// e.g. ${OPENXAL_HOME}/extensions/application/resources
