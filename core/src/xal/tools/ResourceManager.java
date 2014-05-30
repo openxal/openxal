@@ -8,12 +8,17 @@
 
 package xal.tools;
 
+import java.io.File;
 import java.net.URL;
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.util.regex.*;
 
 
 /** Provide normalized methods for getting resources */
 abstract public class ResourceManager {
+	static final protected String RESOURCES_FILE_SEARCH_PROPERTY = "OPENXAL_FIND_RESOURCES_IN_HOME";
+
 	/** pattern to match an XAL package name */
 	static final protected Pattern XAL_PACKAGE_PATTERN = Pattern.compile( "^xal\\.(\\w+)\\.(\\w+)(\\..*)?$" );
 
@@ -23,7 +28,29 @@ abstract public class ResourceManager {
 
 	/** static initializer */
 	static {
-		DEFAULT_MANAGER = getJarredResourceManager();
+		DEFAULT_MANAGER = useFileResourceManager() ? getFileResourceManager() : getJarredResourceManager();
+	}
+
+
+	/** determine whether to use the file resource manager by first looking at the OPENXAL_FIND_RESOURCES_IN_HOME property and then the corresponding environment variable if necessary */
+	static private boolean useFileResourceManager() {
+		// the property set to true indicates whether to find resources under the OPENXAL_HOME directory instead of the jar files
+		final boolean hasProperty = System.getProperty( RESOURCES_FILE_SEARCH_PROPERTY ) != null;
+
+		// first check system properties and if it exists then use it's value
+		if ( hasProperty ) {
+			return Boolean.getBoolean( RESOURCES_FILE_SEARCH_PROPERTY );
+		}
+		else {		// check for an environment variable of the same name
+			final String environment = System.getenv( RESOURCES_FILE_SEARCH_PROPERTY );
+			return Boolean.parseBoolean( environment );
+		}
+	}
+
+
+	/** get the singleton instance of the jarred resource manager */
+	static private FileResourceManager getFileResourceManager() {
+		return FileResourceManager.getInstance();
 	}
 
 
@@ -48,6 +75,30 @@ abstract public class ResourceManager {
 	 */
 	static public URL getResourceURL( final Class<?> rootClass, final String resourcePath ) {
 		return DEFAULT_MANAGER.fetchResourceURL( rootClass, resourcePath );
+	}
+
+
+	/** Get the parts of package path: containerType, container and possibly the suffix (e.g. extension -> application -> smf */
+	static protected String[] getPackagePathParts( final Class<?> rootClass ) {
+		final String packageName = rootClass.getPackage().getName();
+		final Matcher packageMatcher = XAL_PACKAGE_PATTERN.matcher( packageName );
+		final int groupCount = packageMatcher.groupCount();
+
+		final String[] parts = new String[groupCount];
+
+		if ( packageMatcher.matches() && groupCount >= 2 ) {
+			parts[0] = packageMatcher.group(1);	// e.g. extension, plugin, app, service
+			parts[1] = packageMatcher.group( 2 );		// e.g. application, widgets, pvlogger, scan1d, launcher
+
+			if ( groupCount == 3 ) {
+				parts[2] = packageMatcher.group( 3 );
+			}
+
+			return parts;
+		}
+		else {
+			return null;
+		}
 	}
 }
 
@@ -90,20 +141,18 @@ class JarredResourceManager extends ResourceManager {
 
 	/** Look in the container's corresponding resources directory */
 	public URL fetchContainerResourceURL( final Class<?> rootClass, final String resourcePath ) {
-		final String packageName = rootClass.getPackage().getName();
-		final Matcher packageMatcher = XAL_PACKAGE_PATTERN.matcher( packageName );
-		final int groupCount = packageMatcher.groupCount();
+		final String[] packageParts = getPackagePathParts( rootClass );
 
-		if ( packageMatcher.matches() && groupCount >= 2 ) {
-			final String containerType = packageMatcher.group(1);	// e.g. extension, plugin, app, service
-			final String container = packageMatcher.group( 2 );		// e.g. application, widgets, pvlogger, scan1d, launcher
+		if ( packageParts != null ) {
+			final String containerType = packageParts[0];	// e.g. extension, plugin, app, service
+			final String container = packageParts[1];		// e.g. application, widgets, pvlogger, scan1d, launcher
 
 			final StringBuilder pathBuilder = new StringBuilder( "/xal/" );
 			pathBuilder.append( containerType );
 			pathBuilder.append( "/" + container + "/resources" );
 
-			if ( groupCount == 3 ) {
-				final String packageSuffix = packageMatcher.group( 3 );
+			if ( packageParts.length == 3 ) {
+				final String packageSuffix = packageParts[2];
 				if ( packageSuffix != null && packageSuffix.length() > 0 ) {
 					final String suffixPath = packageSuffix.replaceAll( "\\.", "/" );
 					pathBuilder.append( suffixPath );
@@ -114,6 +163,155 @@ class JarredResourceManager extends ResourceManager {
 
 			final String path = pathBuilder.toString();
 //			System.out.println( "Fetching container resource with path: " + path );
+			return rootClass.getResource( path );
+		}
+		else {
+			return null;
+		}
+	}
+}
+
+
+
+/** Resource manager that loads resources from file system  */
+class FileResourceManager extends ResourceManager {
+	/** root location of the project */
+	final static private String PROJECT_HOME_PROPERTY = "OPENXAL_HOME";
+
+	/** singleton instance */
+	final static private FileResourceManager RESOURCE_MANAGER;
+
+	/** root relative to which the resources will be found */
+	final private File ROOT_FILE;
+
+
+	// static initializer
+	static {
+		RESOURCE_MANAGER = createInstance();
+	}
+
+
+	/** get the singleton instance */
+	static public FileResourceManager getInstance() {
+		return RESOURCE_MANAGER;
+	}
+
+
+	/** create an instance using the system properties */
+	static private FileResourceManager createInstance() {
+		final String home = getProjectHomePath();
+		if ( home != null ) {
+			return new FileResourceManager( home );
+		}
+		else {
+			throw new RuntimeException( RESOURCES_FILE_SEARCH_PROPERTY + " property set to true, but " +  PROJECT_HOME_PROPERTY + " is not set, so cannot initialize ResourceManager." );
+		}
+	}
+
+
+	/** Constructor */
+	public FileResourceManager( final String rootPath ) {
+		ROOT_FILE = new File( rootPath );
+	}
+
+
+	/** Constructor */
+	public FileResourceManager( final File rootFile ) {
+		ROOT_FILE = rootFile;
+	}
+
+
+	/** get the path to the project home based on the OPENXAL_HOME property or corresponding environment variable if necessary */
+	static private String getProjectHomePath() {
+		// the property set to true indicates whether to find resources under the OPENXAL_HOME directory instead of the jar files
+		final String path = System.getProperty( PROJECT_HOME_PROPERTY );
+
+		return path != null ? path : System.getenv( PROJECT_HOME_PROPERTY );
+	}
+
+
+	/**
+	 * Get the URL to the specified resource relative to the specified class
+	 * @param rootClass class at the root of the group (this class must be at the same location as the resources directory in the jar file)
+	 * @param path to the resource relative to the group's resources directory
+	 */
+	public URL fetchResourceURL( final Class<?> rootClass, final String resourcePath ) {
+		final URL directResourceURL = fetchDirectResourceURL( rootClass, resourcePath );
+		return directResourceURL != null ? directResourceURL : fetchContainerResourceURL( rootClass, resourcePath );
+	}
+
+
+	/** Look relative to the class (applies to core) */
+	private URL fetchDirectResourceURL( final Class<?> rootClass, final String resourcePath ) {
+		try {
+			final File siteCoreResource = fetchDirectResourceFile( rootClass, "site", resourcePath );
+			if ( siteCoreResource.exists() ) {
+				return siteCoreResource.toURI().toURL();
+			}
+			else {
+				final File coreResource = fetchDirectResourceFile( rootClass, null, resourcePath );
+				if ( coreResource.exists() ) {
+					return coreResource.toURI().toURL();
+				}
+				else {
+					return null;
+				}
+			}
+		}
+		catch( MalformedURLException exception ) {
+			throw new RuntimeException( "Malformed URL when fetching resource URL from file.", exception );
+		}
+	}
+
+
+	/** Look relative to the class (applies to core) */
+	private File fetchDirectResourceFile( final Class<?> rootClass, final String prefix, final String resourcePath ) {
+		final File baseFile = prefix != null ? new File( ROOT_FILE, prefix ) : ROOT_FILE;
+		final File coreDirectory = new File( baseFile, "core" );
+		final File resourcesDirectory = new File( coreDirectory, "resources" );
+
+		final String packagePath = rootClass.getPackage().getName().replaceAll( "\\.", "/" );
+		final String pathFromResources = packagePath + "/" + resourcePath;
+
+		try {
+			final URL resourcesURL = resourcesDirectory.toURI().toURL();
+			final URL resourceURL = new URL( resourcesURL, pathFromResources );
+
+			return new File( resourcesURL.toURI() );
+		}
+		catch( MalformedURLException exception ) {
+			throw new RuntimeException( "Malformed URL when fetching resource URL from file.", exception );
+		}
+		catch( URISyntaxException exception ) {
+			throw new RuntimeException( "URI syntax exception when fetching resource URL from file.", exception );
+		}
+	}
+
+
+	/** Look in the container's corresponding resources directory */
+	public URL fetchContainerResourceURL( final Class<?> rootClass, final String resourcePath ) {
+		final String[] packageParts = getPackagePathParts( rootClass );
+
+		if ( packageParts != null ) {
+			final String containerType = packageParts[0];	// e.g. extension, plugin, app, service
+			final String container = packageParts[1];		// e.g. application, widgets, pvlogger, scan1d, launcher
+
+			final StringBuilder pathBuilder = new StringBuilder( "/xal/" );
+			pathBuilder.append( containerType );
+			pathBuilder.append( "/" + container + "/resources" );
+
+			if ( packageParts.length == 3 ) {
+				final String packageSuffix = packageParts[2];
+				if ( packageSuffix != null && packageSuffix.length() > 0 ) {
+					final String suffixPath = packageSuffix.replaceAll( "\\.", "/" );
+					pathBuilder.append( suffixPath );
+				}
+			}
+
+			pathBuilder.append( "/" + resourcePath );
+
+			final String path = pathBuilder.toString();
+			//			System.out.println( "Fetching container resource with path: " + path );
 			return rootClass.getResource( path );
 		}
 		else {
