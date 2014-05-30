@@ -19,9 +19,6 @@ import java.util.regex.*;
 abstract public class ResourceManager {
 	static final protected String RESOURCES_FILE_SEARCH_PROPERTY = "OPENXAL_FIND_RESOURCES_IN_ROOT";
 
-	/** pattern to match an XAL package name */
-	static final protected Pattern XAL_PACKAGE_PATTERN = Pattern.compile( "^xal\\.(\\w+)\\.(\\w+)(\\..*)?$" );
-
 	/** default resource manager */
 	static final private ResourceManager DEFAULT_MANAGER;
 
@@ -78,30 +75,6 @@ abstract public class ResourceManager {
 		//System.out.println( "Resource URL: " + resourceURL + " for resource: " + resourcePath + " relative to package: " + rootClass.getPackage().getName() );
 		return resourceURL;
 	}
-
-
-	/** Get the parts of package path: containerType, container and possibly the suffix (e.g. extension -> application -> smf */
-	static protected String[] getPackagePathParts( final Class<?> rootClass ) {
-		final String packageName = rootClass.getPackage().getName();
-		final Matcher packageMatcher = XAL_PACKAGE_PATTERN.matcher( packageName );
-		final int groupCount = packageMatcher.groupCount();
-
-		final String[] parts = new String[groupCount];
-
-		if ( packageMatcher.matches() && groupCount >= 2 ) {
-			parts[0] = packageMatcher.group(1);	// e.g. extension, plugin, app, service
-			parts[1] = packageMatcher.group( 2 );		// e.g. application, widgets, pvlogger, scan1d, launcher
-
-			if ( groupCount == 3 ) {
-				parts[2] = packageMatcher.group( 3 );
-			}
-
-			return parts;
-		}
-		else {
-			return null;
-		}
-	}
 }
 
 
@@ -143,22 +116,20 @@ class JarredResourceManager extends ResourceManager {
 
 	/** Look in the container's corresponding resources directory */
 	public URL fetchContainerResourceURL( final Class<?> rootClass, final String resourcePath ) {
-		final String[] packageParts = getPackagePathParts( rootClass );
+		final PackagePartition packagePartition = PackagePartition.getValidInstance( rootClass );
 
-		if ( packageParts != null ) {
-			final String containerType = packageParts[0];	// e.g. extension, plugin, app, service
-			final String container = packageParts[1];		// e.g. application, widgets, pvlogger, scan1d, launcher
+		if ( packagePartition != null ) {
+			final String containerType = packagePartition.COMPONENT_TYPE;	// e.g. app, extension, plugin, service
+			final String container = packagePartition.COMPONENT_NAME;		// e.g. application, widgets, pvlogger, scan1d, launcher
 
-			final StringBuilder pathBuilder = new StringBuilder( "/xal/" );
+			final StringBuilder pathBuilder = new StringBuilder( "/" + packagePartition.PACKAGE_PREFIX + "/" );		// e.g. "/xal/"
 			pathBuilder.append( containerType );
 			pathBuilder.append( "/" + container + "/resources" );
 
-			if ( packageParts.length == 3 ) {
-				final String packageSuffix = packageParts[2];
-				if ( packageSuffix != null && packageSuffix.length() > 0 ) {
-					final String suffixPath = packageSuffix.replaceAll( "\\.", "/" );
-					pathBuilder.append( suffixPath );
-				}
+			final String packageSuffix = packagePartition.PACKAGE_SUFFIX;
+			if ( packageSuffix != null && packageSuffix.length() > 0 ) {
+				final String suffixPath = packageSuffix.replaceAll( "\\.", "/" );
+				pathBuilder.append( "/" + suffixPath );
 			}
 
 			pathBuilder.append( "/" + resourcePath );
@@ -333,11 +304,11 @@ class FileResourceManager extends ResourceManager {
 
 	/** Look in the container's corresponding resources directory */
 	public File fetchContainerResourceFile( final Class<?> rootClass, final String prefix, final boolean includeExtension, final String resourcePath ) {
-		final String[] packageParts = getPackagePathParts( rootClass );
+		final PackagePartition packagePartition = PackagePartition.getValidInstance( rootClass );
 
-		if ( packageParts != null ) {
-			final String containerType = packageParts[0];	// e.g. app, extension, plugin, service
-			final String container = packageParts[1];		// e.g. application, widgets, pvlogger, scan1d, launcher
+		if ( packagePartition != null ) {
+			final String containerType = packagePartition.COMPONENT_TYPE;	// e.g. app, extension, plugin, service
+			final String container = packagePartition.COMPONENT_NAME;		// e.g. application, widgets, pvlogger, scan1d, launcher
 
 			final File baseDirectory = prefix != null ? new File( ROOT_FILE, prefix ) : ROOT_FILE;	// e.g. ${OPENXAL_HOME} or ${OPENXAL_HOME}/site
 			if ( !baseDirectory.exists() )  return null;
@@ -355,9 +326,8 @@ class FileResourceManager extends ResourceManager {
 			if ( !resourcesDirectory.exists() )  return null;
 
 			// replace package dot delimiter with URL slash delimiter (should work on all platforms if we use URLs here instead of files)
-			final String packagePath = rootClass.getPackage().getName().replaceAll( "\\.", "/" );		// e.g. xal/extension/application/smf
-			final String packagePrefix = "xal/" + containerType + "/" + container;
-			final String relativePackagePath = packagePath.length() == packagePrefix.length() ? null : packagePath.substring( packagePrefix.length() + 1 );		// e.g. smf  (strip initial /)
+			final String packageSuffix = packagePartition.PACKAGE_SUFFIX;
+			final String relativePackagePath = packageSuffix != null ? packageSuffix.replaceAll( "\\.", "/" ) : null;		// e.g. smf  (replacing dots with /)
 			final String pathFromResources = relativePackagePath != null ? relativePackagePath + "/" + resourcePath : resourcePath;		// e.g. smf/menudef.properties
 
 			// use URLs to avoid file system path separator dependencies
@@ -377,5 +347,69 @@ class FileResourceManager extends ResourceManager {
 		else {
 			return null;
 		}
+	}
+}
+
+
+
+/** package parsed into parts */
+class PackagePartition {
+	/** pattern to match an XAL package name */
+	static final protected Pattern XAL_PACKAGE_PATTERN = Pattern.compile( "^(\\w+)\\.(\\w+)\\.(\\w+)(\\..+)?$" );
+
+	/** package name */
+	final public String PACKAGE_NAME;
+
+	/** prefix to the package */
+	final public String PACKAGE_PREFIX;		// e.g. xal
+
+	/** component type */
+	final public String COMPONENT_TYPE;		// e.g. app, extension, plugin, service
+
+	/** name of the component */
+	final public String COMPONENT_NAME;		// e.g. application, widgets, pvlogger, scan1d, launcher
+
+	/** package suffix */
+	final public String PACKAGE_SUFFIX;		// e.g. smf in xal.extension.application.smf
+
+
+	/** Constructor */
+	public PackagePartition( final Class<?> rootClass ) {
+		PACKAGE_NAME = rootClass.getPackage().getName();
+
+		final Matcher packageMatcher = XAL_PACKAGE_PATTERN.matcher( PACKAGE_NAME );
+		final int groupCount = packageMatcher.groupCount();
+
+		final String[] parts = new String[groupCount];
+
+		if ( packageMatcher.matches() ) {
+			PACKAGE_PREFIX = groupCount > 0 ? packageMatcher.group( 1 ) : null;		// e.g. xal
+
+			COMPONENT_TYPE = groupCount > 1 ? packageMatcher.group( 2 ) : null;		// e.g. extension
+
+			COMPONENT_NAME = groupCount > 2 ? packageMatcher.group( 3 ) : null;		// e.g. application
+
+			// last package substring stripping the leading "."
+			if ( groupCount > 3 ) {
+				final String rawSuffix = packageMatcher.group( 4 );
+				PACKAGE_SUFFIX = rawSuffix != null ? rawSuffix.substring(1) : null;		// e.g. smf
+			}
+			else {
+				PACKAGE_SUFFIX = null;
+			}
+		}
+		else {
+			PACKAGE_PREFIX = null;
+			COMPONENT_TYPE = null;
+			COMPONENT_NAME = null;
+			PACKAGE_SUFFIX = null;
+		}
+	}
+
+
+	/** get an instance of the package partition if it has at least the three required parts (everything but suffix) or null if not */
+	static public PackagePartition getValidInstance( final Class<?> rootClass ) {
+		final PackagePartition partition = new PackagePartition( rootClass );
+		return partition.COMPONENT_NAME != null ? partition : null;		// if it has the component name it has prefix, type and name and thus is valid
 	}
 }
