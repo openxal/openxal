@@ -74,7 +74,9 @@ abstract public class ResourceManager {
 	 * @param path to the resource relative to the group's resources directory
 	 */
 	static public URL getResourceURL( final Class<?> rootClass, final String resourcePath ) {
-		return DEFAULT_MANAGER.fetchResourceURL( rootClass, resourcePath );
+		final URL resourceURL = DEFAULT_MANAGER.fetchResourceURL( rootClass, resourcePath );
+		//System.out.println( "Resource URL: " + resourceURL + " for resource: " + resourcePath + " relative to package: " + rootClass.getPackage().getName() );
+		return resourceURL;
 	}
 
 
@@ -236,8 +238,22 @@ class FileResourceManager extends ResourceManager {
 	 * @param path to the resource relative to the group's resources directory
 	 */
 	public URL fetchResourceURL( final Class<?> rootClass, final String resourcePath ) {
+		// first look for the resource in core
 		final URL coreResourceURL = fetchCoreResourceURL( rootClass, resourcePath );
-		return coreResourceURL != null ? coreResourceURL : fetchContainerResourceURL( rootClass, resourcePath );
+		if ( coreResourceURL != null ) {
+			return coreResourceURL;
+		}
+		else {
+			// look for the resource based on the package's container (e.g. extension, app, service, etc.)
+			final URL containerResourceURL = fetchContainerResourceURL( rootClass, false, resourcePath );
+			if ( containerResourceURL != null ) {
+				return containerResourceURL;
+			}
+			else {
+				// sometimes resources for apps and services are associated with a corresponding app/service specific extension (e.g. services/pvlogger/extension/resources/configuraiton.xml)
+				return fetchContainerResourceURL( rootClass, true, resourcePath );
+			}
+		}
 	}
 
 
@@ -292,15 +308,15 @@ class FileResourceManager extends ResourceManager {
 
 
 	/** Look in the container's corresponding resources directory */
-	public URL fetchContainerResourceURL( final Class<?> rootClass, final String resourcePath ) {
+	public URL fetchContainerResourceURL( final Class<?> rootClass, final boolean includeExtension,  final String resourcePath ) {
 		try {
 			// first try to find a site specific resource
-			final File siteContainerResource = fetchContainerResourceFile( rootClass, "site", resourcePath );
+			final File siteContainerResource = fetchContainerResourceFile( rootClass, "site", includeExtension, resourcePath );
 			if ( siteContainerResource.exists() ) {
 				return siteContainerResource.toURI().toURL();
 			}
 			else {		// next try to find the resource in the common component
-				final File containerResource = fetchContainerResourceFile( rootClass, null, resourcePath );
+				final File containerResource = fetchContainerResourceFile( rootClass, null, includeExtension, resourcePath );
 				if ( containerResource.exists() ) {
 					return containerResource.toURI().toURL();
 				}
@@ -316,7 +332,7 @@ class FileResourceManager extends ResourceManager {
 
 
 	/** Look in the container's corresponding resources directory */
-	public File fetchContainerResourceFile( final Class<?> rootClass, final String prefix, final String resourcePath ) {
+	public File fetchContainerResourceFile( final Class<?> rootClass, final String prefix, final boolean includeExtension, final String resourcePath ) {
 		final String[] packageParts = getPackagePathParts( rootClass );
 
 		if ( packageParts != null ) {
@@ -326,7 +342,8 @@ class FileResourceManager extends ResourceManager {
 			final File baseDirectory = prefix != null ? new File( ROOT_FILE, prefix ) : ROOT_FILE;	// e.g. ${OPENXAL_HOME} or ${OPENXAL_HOME}/site
 			final File containerTypeRoot = new File( baseDirectory, containerType + "s" );		// e.g. ${OPENXAL_HOME}/extensions
 			final File containerDirectory = new File( containerTypeRoot, container );			// e.g. ${OPENXAL_HOME}/extensions/application
-			final File resourcesDirectory = new File( containerDirectory, "resources" );		// e.g. ${OPENXAL_HOME}/extensions/application/resources
+			final File resourcesParent = includeExtension ? new File( containerDirectory, "extension" ) : containerDirectory;		// e.g. ${OPENXAL_HOME}/site/services/pvlogger/extension
+			final File resourcesDirectory = new File( resourcesParent, "resources" );		// e.g. ${OPENXAL_HOME}/extensions/application/resources
 
 			// replace package dot delimiter with URL slash delimiter (should work on all platforms if we use URLs here instead of files)
 			final String packagePath = rootClass.getPackage().getName().replaceAll( "\\.", "/" );		// e.g. xal/extension/application/smf
