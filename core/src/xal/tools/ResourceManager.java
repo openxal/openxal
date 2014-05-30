@@ -312,12 +312,12 @@ class FileResourceManager extends ResourceManager {
 		try {
 			// first try to find a site specific resource
 			final File siteContainerResource = fetchContainerResourceFile( rootClass, "site", includeExtension, resourcePath );
-			if ( siteContainerResource.exists() ) {
+			if ( siteContainerResource != null && siteContainerResource.exists() ) {
 				return siteContainerResource.toURI().toURL();
 			}
 			else {		// next try to find the resource in the common component
 				final File containerResource = fetchContainerResourceFile( rootClass, null, includeExtension, resourcePath );
-				if ( containerResource.exists() ) {
+				if ( containerResource != null && containerResource.exists() ) {
 					return containerResource.toURI().toURL();
 				}
 				else {
@@ -340,10 +340,19 @@ class FileResourceManager extends ResourceManager {
 			final String container = packageParts[1];		// e.g. application, widgets, pvlogger, scan1d, launcher
 
 			final File baseDirectory = prefix != null ? new File( ROOT_FILE, prefix ) : ROOT_FILE;	// e.g. ${OPENXAL_HOME} or ${OPENXAL_HOME}/site
+			if ( !baseDirectory.exists() )  return null;
+
 			final File containerTypeRoot = new File( baseDirectory, containerType + "s" );		// e.g. ${OPENXAL_HOME}/extensions
+			if ( !containerTypeRoot.exists() )  return null;
+
 			final File containerDirectory = new File( containerTypeRoot, container );			// e.g. ${OPENXAL_HOME}/extensions/application
+			if ( !containerDirectory.exists() )  return null;
+
 			final File resourcesParent = includeExtension ? new File( containerDirectory, "extension" ) : containerDirectory;		// e.g. ${OPENXAL_HOME}/site/services/pvlogger/extension
+			if ( !resourcesParent.exists() )  return null;
+
 			final File resourcesDirectory = new File( resourcesParent, "resources" );		// e.g. ${OPENXAL_HOME}/extensions/application/resources
+			if ( !resourcesDirectory.exists() )  return null;
 
 			// replace package dot delimiter with URL slash delimiter (should work on all platforms if we use URLs here instead of files)
 			final String packagePath = rootClass.getPackage().getName().replaceAll( "\\.", "/" );		// e.g. xal/extension/application/smf
