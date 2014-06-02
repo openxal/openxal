@@ -8,6 +8,7 @@
 
 package xal.extension.widgets.swing;
 
+import xal.tools.ResourceManager;
 import xal.tools.data.*;
 import xal.extension.bricks.WindowReference;
 
@@ -37,7 +38,7 @@ public class KeyValueRecordSelector<RecordType> {
 	
 	/** Primary Constructor */
 	protected KeyValueRecordSelector( final KeyValueFilteredTableModel<RecordType> tableModel, final JFrame owner, final String title, final String filterPrompt ) {
-		final URL uiURL = KeyValueRecordSelector.class.getResource( "RecordSelector.bricks" );
+		final URL uiURL = ResourceManager.getResourceURL( KeyValueRecordSelector.class, "RecordSelector.bricks" );
 		final WindowReference windowReference = new WindowReference( uiURL, "RecordSelectorDialog", owner, title );
 		DIALOG = (JDialog)windowReference.getWindow();
 		DIALOG.setTitle( title );
