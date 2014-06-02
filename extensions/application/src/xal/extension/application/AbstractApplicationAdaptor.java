@@ -9,6 +9,7 @@
 
 package xal.extension.application;
 
+import xal.tools.ResourceManager;
 import xal.tools.apputils.files.*;
 import xal.extension.bricks.WindowReference;
 
@@ -31,13 +32,13 @@ abstract public class AbstractApplicationAdaptor implements ApplicationListener 
 	static public final String GUI_BRICKS_RESOURCE = "gui.bricks";
 
 	/** location of the resources directory */
-	private URL _resourcesLocation;
+	private ApplicationResourceManager _resourceManager;
 
 
 	/** Constructor */
 	public AbstractApplicationAdaptor() {
-		// by default, resources are located relative to the adaptor class inside the same jar file
-		setResourcesLocation( this.getClass().getResource( "resources/" ) );
+		// resources are located using the default resource manager
+		setResourcesLocation( null );
 	}
 
 	
@@ -216,7 +217,12 @@ abstract public class AbstractApplicationAdaptor implements ApplicationListener 
 	 * @param resourcesParentDirectory normal file system directory specifying the location of the parent directory of the resources
 	 */
 	protected void setResourcesParentDirectory( final File resourcesParentDirectory ) {
-		setResourcesDirectory( new File( resourcesParentDirectory, "resources" ) );
+		if ( resourcesParentDirectory != null ) {
+			setResourcesDirectory( new File( resourcesParentDirectory, "resources" ) );
+		}
+		else {
+			setResourcesLocation( null );
+		}
 	}
 
 
@@ -225,19 +231,23 @@ abstract public class AbstractApplicationAdaptor implements ApplicationListener 
 	 * @param resourcesParentDirectoryPath full file system directory path specifying the location of the parent directory of the resources
 	 */
 	protected void setResourcesParentDirectoryWithPath( final String resourcesParentDirectoryPath ) {
-		setResourcesParentDirectory( new File( resourcesParentDirectoryPath ) );
+		if ( resourcesParentDirectoryPath != null ) {
+			setResourcesParentDirectory( new File( resourcesParentDirectoryPath ) );
+		}
+		else {
+			setResourcesLocation( null );
+		}
 	}
 
 
-	/** Subclasses can set the location of the resources directory */
+	/** Subclasses can set the location of the resources directory. Setting it to null will use the default resource manager. */
 	protected void setResourcesLocation( final URL resourcesLocation ) {
-		_resourcesLocation = resourcesLocation;
-	}
-
-
-	/** Get the location of the resources directory */
-	public URL getResourcesLocation() {
-		return _resourcesLocation;
+		if ( resourcesLocation != null ) {
+			_resourceManager = new LocationApplicationResourceManager( resourcesLocation );
+		}
+		else {
+			_resourceManager = ApplicationResourceManager.getDefaultInstance();
+		}
 	}
 
 
@@ -247,8 +257,67 @@ abstract public class AbstractApplicationAdaptor implements ApplicationListener 
 	 * @return the full URL to the specified resource
 	 */
 	public URL getResourceURL( final String resourceSpec ) {
+		return _resourceManager.getResourceURL( this, resourceSpec );
+	}
+}
+
+
+
+/** abstract resource manager for applications */
+abstract class ApplicationResourceManager {
+	/** get the named resource for the specified application */
+	abstract public URL getResourceURL( final AbstractApplicationAdaptor adaptor, final String resourceSpec );
+
+
+	/** get the singleton instance */
+	static public DefaultApplicationResourceManager getDefaultInstance() {
+		return DefaultApplicationResourceManager.getInstance();
+	}
+}
+
+
+
+/** resource manager for applications that uses the default resource manager */
+class DefaultApplicationResourceManager extends ApplicationResourceManager {
+	/** singleton resource manager */
+	final static private DefaultApplicationResourceManager DEFAULT_RESOURCE_MANAGER;
+
+
+	// static initializer
+	static {
+		DEFAULT_RESOURCE_MANAGER = new DefaultApplicationResourceManager();
+	}
+
+
+	/** get the singleton instance */
+	static public DefaultApplicationResourceManager getInstance() {
+		return DEFAULT_RESOURCE_MANAGER;
+	}
+
+
+	/** get the named resource for the specified application */
+	public URL getResourceURL( final AbstractApplicationAdaptor adaptor, final String resourceSpec ) {
+		return ResourceManager.getResourceURL( adaptor.getClass(), resourceSpec );
+	}
+}
+
+
+/** resource manager for applications that uses a specific location to search for resources (suitable for script based applications) */
+class LocationApplicationResourceManager extends ApplicationResourceManager {
+	/** location of the resources directory */
+	final private URL RESOURCES_LOCATION;
+
+
+	/** Constructor */
+	public LocationApplicationResourceManager( final URL resourcesLocation ) {
+		RESOURCES_LOCATION = resourcesLocation;
+	}
+
+
+	/** get the named resource for the specified application */
+	public URL getResourceURL( final AbstractApplicationAdaptor adaptor, final String resourceSpec ) {
 		try {
-			return new URL( _resourcesLocation, resourceSpec );
+			return new URL( RESOURCES_LOCATION, resourceSpec );
 		}
 		catch( MalformedURLException exception ) {
 			throw new RuntimeException( "Bad URL to the application resource: " + resourceSpec, exception );
