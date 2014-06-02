@@ -10,6 +10,7 @@ package xal.extension.application.smf;
 
 import xal.extension.bricks.WindowReference;
 import xal.smf.*;
+import xal.tools.ResourceManager;
 
 import java.net.URL;
 import java.util.*;
@@ -111,7 +112,7 @@ class ComboSequenceComposer {
 		
 		final List<AcceleratorSeq> sequences = accelerator.getSequences();
 		
-		final URL uiURL = ComboSequenceComposer.class.getResource( "ui.bricks" );
+		final URL uiURL = ResourceManager.getResourceURL( ComboSequenceComposer.class, "ui.bricks" );
 		final WindowReference windowReference = new WindowReference( uiURL, "ComboSequenceComposer", owner, "Combo Sequence Composer" );
 		final JDialog dialog = (JDialog)windowReference.getWindow();
 		
