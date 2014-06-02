@@ -9,6 +9,7 @@
 package xal.tools.xml;
 
 import xal.tools.data.*;
+import xal.test.ResourceManager;
 
 import java.util.List;
 import java.net.URL;
@@ -51,7 +52,7 @@ public class TestXMLDataAdaptor {
     
     @Test
     public void testFileReading() {
-        final URL documentURL = this.getClass().getResource( "SampleData.xml" );
+        final URL documentURL = ResourceManager.getResourceURL( getClass(), "SampleData.xml" );
         
         try {
             final DataAdaptor documentAdaptor = XmlDataAdaptor.adaptorForUrl( documentURL, false );
