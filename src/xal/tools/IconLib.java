@@ -66,7 +66,8 @@ public class IconLib {
      * @return The URL to the specified icon
 	 */
 	static public URL getIconURL( final IconGroup group, final String iconName ) {
-		return IconLib.class.getResource( getPathToIcon( group, iconName ) );
+		final String path = getPathToIcon( group, iconName );
+		return ResourceManager.getResourceURL( IconLib.class, path );
 	}
 	
 	
@@ -99,7 +100,8 @@ public class IconLib {
      * @return The URL to the specified icon
 	 */
 	static public URL getIconURL( final String group, final String iconName ) {
-		return IconLib.class.getResource( getPathToIcon( group, iconName ) );
+		final String path = getPathToIcon( group, iconName );
+		return ResourceManager.getResourceURL( IconLib.class, path );
 	}
 	
 	
