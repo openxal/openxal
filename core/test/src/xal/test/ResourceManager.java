@@ -23,8 +23,18 @@ public class ResourceManager {
      * @return URL to the resource or null if there is none found
      */
     static public URL getResourceURL( final String resourcePath ) {
-        return ResourceManager.class.getResource( resourcePath );
+        return getResourceURL( ResourceManager.class, resourcePath );
     }
+
+
+	/**
+	 * Get the URL to the specified resource relative to the specified class
+	 * @param rootClass class at the root of the group (this class must be at the same location as the resources directory in the jar file)
+	 * @param path to the resource relative to the group's resources directory
+	 */
+	static public URL getResourceURL( final Class<?> rootClass, final String resourcePath ) {
+		return xal.tools.ResourceManager.getResourceURL( "test", rootClass, resourcePath );
+	}
 
 
     /** Load and get the default test accelerator */

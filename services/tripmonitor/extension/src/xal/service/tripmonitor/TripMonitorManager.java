@@ -11,6 +11,7 @@ package xal.service.tripmonitor;
 import java.net.URL;
 import java.util.*;
 
+import xal.tools.ResourceManager;
 import xal.tools.data.*;
 import xal.tools.xml.XmlDataAdaptor;
 
@@ -32,7 +33,7 @@ public class TripMonitorManager {
 	public TripMonitorManager() {
 		TRIP_MONITORS = new ArrayList<TripMonitor>();
 		
-		final URL url = getClass().getResource( "config.xml" );
+		final URL url = ResourceManager.getResourceURL( getClass(), "config.xml" );
         if(url == null) System.out.println("URL IS NULL");
 		final DataAdaptor mainAdaptor = XmlDataAdaptor.adaptorForUrl( url, false );
 		load( mainAdaptor.childAdaptor( "Configuration" ) );		

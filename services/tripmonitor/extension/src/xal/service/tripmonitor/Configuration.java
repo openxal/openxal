@@ -11,6 +11,7 @@ package xal.service.tripmonitor;
 import java.util.*;
 import java.net.URL;
 
+import xal.tools.ResourceManager;
 import xal.tools.data.DataAdaptor;
 import xal.tools.xml.XmlDataAdaptor;
 
@@ -26,7 +27,7 @@ public class Configuration {
 	
 	/** Constructor */
 	public Configuration() {
-		final URL url = getClass().getResource( "config.xml" );
+		final URL url = ResourceManager.getResourceURL( getClass(), "config.xml" );
 		final DataAdaptor mainAdaptor = XmlDataAdaptor.adaptorForUrl( url, false );
 		final DataAdaptor configurationAdaptor = mainAdaptor.childAdaptor( "Configuration" );
 		final List<DataAdaptor> monitorAdaptors = configurationAdaptor.childAdaptors( TripMonitorFilter.DATA_LABEL );
