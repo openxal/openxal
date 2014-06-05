@@ -27,7 +27,7 @@ import java.util.TreeMap;
  * @version $id:
  * 
  */
-public abstract class Trajectory implements IArchive, Iterable<ProbeState> {
+public class Trajectory implements IArchive, Iterable<ProbeState> {
 	
     /*
      * Global Constants
