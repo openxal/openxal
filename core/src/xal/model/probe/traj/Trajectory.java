@@ -27,7 +27,7 @@ import java.util.TreeMap;
  * @version $id:
  * 
  */
-public class Trajectory implements IArchive, Iterable<ProbeState> {
+public class Trajectory<S extends ProbeState> implements IArchive, Iterable<S> {
 	
     /*
      * Global Constants
@@ -196,15 +196,16 @@ public class Trajectory implements IArchive, Iterable<ProbeState> {
     /*
      *  Local Attributes
      */
+    private ProbeStateFactory<S> factory;
      
     /** any user comments regard the trajectory */
     private String description = "";
     
     /** the history of probe states along the trajectory */
-    private RealNumericIndexer<ProbeState>      _history;
+    private RealNumericIndexer<S>      _history;
     
     /** Probe states by element name */
-    private final ElementStateMap<ProbeState>   mapStates;
+    private final ElementStateMap<S>   mapStates;
     
     /** time stamp of trajectory */
     private Date                                timestamp = new Date();
@@ -216,6 +217,9 @@ public class Trajectory implements IArchive, Iterable<ProbeState> {
     // Factory Methods ========================================================
 
 
+    
+    // I think this will have to be rewritten once the other trajectory classes
+    //   are gone since there will be no way to instantiate [newInstance()]
     /**
      * Read the contents of the supplied <code>DataAdaptor</code> and return
      * an instance of the appropriate Trajectory species.
@@ -224,17 +228,17 @@ public class Trajectory implements IArchive, Iterable<ProbeState> {
      * @return a Trajectory for the contents of the DataAdaptor
      * @throws ParsingException error encountered reading the DataAdaptor
      */
-    public static Trajectory readFrom(DataAdaptor container)
+    public static Trajectory<?> readFrom(DataAdaptor container)
         throws ParsingException {
         DataAdaptor daptTraj = container.childAdaptor(Trajectory.TRAJ_LABEL);
         if (daptTraj == null)
             throw new ParsingException("Trajectory#readFrom() - DataAdaptor contains no trajectory node");
         
         String type = container.stringValue(Trajectory.TYPE_LABEL);
-        Trajectory trajectory;
+        Trajectory<?> trajectory;
         try {
             Class<?> trajectoryClass = Class.forName(type);
-            trajectory = (Trajectory) trajectoryClass.newInstance();
+            trajectory = (Trajectory<?>) trajectoryClass.newInstance();
         } catch (Exception e) {
             e.printStackTrace();
             throw new ParsingException(e.getMessage());
@@ -249,12 +253,19 @@ public class Trajectory implements IArchive, Iterable<ProbeState> {
 
     // ************* abstract protocol specification
 
+    
+    // This is only used by SyncTraj, TranMapTraj, and this.readStatesFrom()
+    //   Not sure if this will still be needed.
     /**
      * Creates a new <code>ProbeState</code> object with the proper type for the trajectory.
      * 
      * @return      new, empty <code>ProbeState</code> object
+     * @throws IllegalAccessException 
+     * @throws InstantiationException 
      */
-    protected abstract ProbeState newProbeState();
+    protected S newProbeState(ProbeStateFactory<S> factory) {
+    	return factory.create();
+    }
 
     /**
      * Override this method in subclasses to add subclass-specific properties to
@@ -286,10 +297,15 @@ public class Trajectory implements IArchive, Iterable<ProbeState> {
      * Create a new, empty <code>Trajectory</code> object.
      */
     public Trajectory() {
-		this._history  = new RealNumericIndexer<ProbeState>();
-        this.mapStates = new ElementStateMap<ProbeState>();
+		this._history  = new RealNumericIndexer<S>();
+        this.mapStates = new ElementStateMap<S>();
     }
 	
+    public Trajectory(ProbeStateFactory<S> factory) {
+    	this.factory = factory;
+    	this._history = new RealNumericIndexer<S>();
+    	this.mapStates = new ElementStateMap<S>();
+    }
 
     /**
      * Set the user comment string
@@ -320,7 +336,7 @@ public class Trajectory implements IArchive, Iterable<ProbeState> {
      *  @param  probe   target probe object
      */
     public void update(Probe probe) {
-        ProbeState state = probe.createProbeState();
+        S state = (S) probe.createProbeState(); // is this safe?
         saveState(state);
     }
 
@@ -328,7 +344,7 @@ public class Trajectory implements IArchive, Iterable<ProbeState> {
      * Save the <code>ProbeState</code> object directly to the trajectory at the tail.
      * @param state     new addition to trajectory
      */
-    public void saveState( final ProbeState state ) {
+    public void saveState( final S state ) {
         double  dblPos = state.getPosition();
         _history.add( dblPos, state );
         
@@ -341,7 +357,7 @@ public class Trajectory implements IArchive, Iterable<ProbeState> {
      * 
      * @return  the most recent <code>ProbeState</code> in the history
      */
-    public ProbeState   popLastState()  {
+    public S popLastState()  {
         return _history.remove( _history.size() - 1 );
     }
 
@@ -368,7 +384,7 @@ public class Trajectory implements IArchive, Iterable<ProbeState> {
     /**
      * Return an Iterator over the iterator's states.
      */
-    public Iterator<ProbeState> stateIterator() {
+    public Iterator<S> stateIterator() {
         return _history.iterator();
     }
     
@@ -387,7 +403,7 @@ public class Trajectory implements IArchive, Iterable<ProbeState> {
      * 
      * @return the probe's initial state or null
      */
-    public ProbeState initialState() {
+    public S initialState() {
         return stateWithIndex(0);
     }
 	
@@ -405,7 +421,7 @@ public class Trajectory implements IArchive, Iterable<ProbeState> {
 	 *
 	 * @return a new list of this trajectory's states
 	 */
-	protected List<ProbeState> getStates() {
+	protected List<S> getStates() {
 		return _history.toList();
 	}
 	
@@ -413,8 +429,8 @@ public class Trajectory implements IArchive, Iterable<ProbeState> {
      * Returns the probe state at the specified position.  Returns null if there
      * is no state for the specified position.
      */
-    public ProbeState stateAtPosition(double pos) {
-        for(ProbeState state : _history) {
+    public S stateAtPosition(double pos) {
+        for(S state : _history) {
             if (state.getPosition() == pos)
                 return state;
         }
@@ -427,11 +443,14 @@ public class Trajectory implements IArchive, Iterable<ProbeState> {
 	 * @param position the position for which to find a state
 	 * @return the state nearest the specified position
 	 */
-	public ProbeState stateNearestPosition( final double position ) {
+	public S stateNearestPosition( final double position ) {
 		final int index = _history.getClosestIndex( position );
 		return _history.size() > 0 ? _history.get( index ) : null;
 	}
 
+	
+	// Does the return type need to be an array?  Otherwise an ArrayList would
+	//   support generics
     /**
      * Returns the states that fall within the specified position range, inclusive.
      * @param low lower bound on position range
@@ -442,10 +461,11 @@ public class Trajectory implements IArchive, Iterable<ProbeState> {
     public ProbeState[] statesInPositionRange( final double low, final double high ) {
 		final int[] range = _history.getIndicesWithinLocationRange( low, high );
 		if ( range != null ) {
-			final List<ProbeState> result = new ArrayList<ProbeState>( range[1] - range[0] + 1 );
+			final List<S> result = new ArrayList<S>( range[1] - range[0] + 1 );
 			for ( int index = range[0] ; index <= range[1] ; index++ ) {
 				result.add( _history.get( index ) );
 			}
+			//
 			final ProbeState[] resultArray = new ProbeState[result.size()];
 			return result.toArray( resultArray );
 		}
@@ -470,7 +490,7 @@ public class Trajectory implements IArchive, Iterable<ProbeState> {
      */
     public ProbeState[] statesForElement_old(String strElemId) {
         List<ProbeState> result = new ArrayList<ProbeState>();
-        Iterator<ProbeState> it = stateIterator();
+        Iterator<S> it = stateIterator();
         while (it.hasNext()) {
             ProbeState state = it.next();
             if ((state.getElementId().equals(strElemId))
@@ -507,8 +527,8 @@ public class Trajectory implements IArchive, Iterable<ProbeState> {
      * @since  Jun 5, 2013
      */
     public ProbeState[] statesForElement(String strElemId) {
-        RealNumericIndexer<ProbeState>    setStates = this.mapStates.getStates(strElemId);
-        List<ProbeState>                  lstStates = setStates.toList();
+        RealNumericIndexer<S>    setStates = this.mapStates.getStates(strElemId);
+        List<S>                  lstStates = setStates.toList();
         
         ProbeState[] arrStates = new ProbeState[lstStates.size()];
         return lstStates.toArray(arrStates);
@@ -522,9 +542,9 @@ public class Trajectory implements IArchive, Iterable<ProbeState> {
     public int[] indicesForElement(String element) {
         List<Integer> indices = new ArrayList<Integer>();
         int c1 = 0;
-        Iterator<ProbeState> it = stateIterator();
+        Iterator<S> it = stateIterator();
         while (it.hasNext()) {
-            ProbeState state = it.next();
+            S state = it.next();
             if ((state.getElementId().equals(element)
             		|| state.getElementId().equals(element+"y"))) {
                 indices.add(c1);
@@ -544,7 +564,7 @@ public class Trajectory implements IArchive, Iterable<ProbeState> {
      * @param i index of state to return
      * @return state corresponding to specified index
      */
-    public ProbeState stateWithIndex(int i) {
+    public S stateWithIndex(int i) {
         try {
             return _history.get(i); 
         } catch (IndexOutOfBoundsException e) {
@@ -567,7 +587,7 @@ public class Trajectory implements IArchive, Iterable<ProbeState> {
      * @author Christopher K. Allen
      * @since  Oct 28, 2013
      */
-    public Iterator<ProbeState> iterator() {
+    public Iterator<S> iterator() {
         return this._history.iterator();
     }
 
@@ -588,7 +608,7 @@ public class Trajectory implements IArchive, Iterable<ProbeState> {
         buf.append("Time: " + getTimestamp() + "\n");
         buf.append("Description: " + getDescription() + "\n");
         buf.append("States: " + _history.size() + "\n");
-        Iterator<ProbeState> it = stateIterator();
+        Iterator<S> it = stateIterator();
         while (it.hasNext()) {
             buf.append(it.next().toString() + "\n");
         }
@@ -670,7 +690,7 @@ public class Trajectory implements IArchive, Iterable<ProbeState> {
                 throw new ParsingException(
                     "Expected state element, got: " + childNode.name());
             }
-            ProbeState state = newProbeState();
+            S state = newProbeState();
             state.load(childNode);
             saveState(state);
         }
@@ -681,7 +701,7 @@ public class Trajectory implements IArchive, Iterable<ProbeState> {
      * @param container     <code>DataAdaptor</code> to receive trajectory history
      */
     private void addStatesTo(DataAdaptor container) {
-        Iterator<ProbeState> it = stateIterator();
+        Iterator<S> it = stateIterator();
         while (it.hasNext()) {
             ProbeState ps = it.next();
             ps.save(container);

@@ -18,7 +18,8 @@ import xal.model.xml.ParsingException;
  * @version $id:
  * 
  */
-public class EnvelopeProbeState extends BunchProbeState /* implements IPhaseState */ {
+public class EnvelopeProbeState extends BunchProbeState implements 
+  ProbeStateFactory<EnvelopeProbeState> /* implements IPhaseState */ {
 
 
 
@@ -576,8 +577,12 @@ public class EnvelopeProbeState extends BunchProbeState /* implements IPhaseStat
     public String toString() {
         return super.toString() + " covariance: " + getCovarianceMatrix().toString() 
                                 + ", response: " + this.getResponseMatrix().toString();
-    }   
-    
+    }
+
+	@Override
+	public EnvelopeProbeState create() {
+		return new EnvelopeProbeState();
+	}
 
 
 //    /*
