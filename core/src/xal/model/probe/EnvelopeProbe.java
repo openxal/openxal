@@ -12,8 +12,8 @@ import xal.model.probe.traj.EnvelopeProbeState;
 import xal.model.probe.traj.EnvelopeTrajectory;
 import xal.model.probe.traj.ProbeState
 ;
+import xal.model.probe.traj.Trajectory;
 import xal.model.xml.ParsingException;
-
 import xal.tools.beam.CovarianceMatrix;
 import xal.tools.beam.PhaseMatrix;
 import xal.tools.beam.PhaseVector;
@@ -468,8 +468,34 @@ public class EnvelopeProbe extends BunchProbe {
      * @see EnvelopeTrajectory#stateResponse(String, String)
      */
     public PhaseMatrix stateResponse(String elemFrom, String elemTo) {
-        return ((EnvelopeTrajectory) this.getTrajectory()).stateResponse(
-                elemFrom, elemTo);
+//        return ((EnvelopeTrajectory) this.getTrajectory()).stateResponse(
+//                elemFrom, elemTo);
+    	
+    	Trajectory<EnvelopeProbeState> trajectory = new Trajectory<EnvelopeProbeState>();
+    	
+		// find starting index
+		int[] arrIndFrom = trajectory.indicesForElement(elemFrom);
+
+		int[] arrIndTo = trajectory.indicesForElement(elemTo);
+
+		if (arrIndFrom.length == 0 || arrIndTo.length == 0)
+			throw new IllegalArgumentException("unknown element id");
+
+		int indFrom, indTo;
+		indTo = arrIndTo[arrIndTo.length - 1]; // use last state before start element
+
+		EnvelopeProbeState stateTo =
+			(EnvelopeProbeState) trajectory.stateWithIndex(indTo);
+		PhaseMatrix matTo = stateTo.getResponseMatrix();
+		
+		indFrom = arrIndFrom[0] - 1;
+		if (indFrom < 0) return matTo; // response from beginning of machine
+		
+		EnvelopeProbeState stateFrom =
+			(EnvelopeProbeState) trajectory.stateWithIndex(indFrom);
+		PhaseMatrix matFrom = stateFrom.getResponseMatrix();
+		
+		return matTo.times(matFrom.inverse());
     }
 
     
@@ -497,8 +523,8 @@ public class EnvelopeProbe extends BunchProbe {
 	 * @return a new, empty <code>EnvelopeTrajectory</code> object
 	 */
     @Override
-	public EnvelopeTrajectory createTrajectory() {
-		return new EnvelopeTrajectory();
+	public Trajectory<EnvelopeProbeState> createTrajectory() {
+		return new Trajectory<EnvelopeProbeState>();
 	}
 
 	/**

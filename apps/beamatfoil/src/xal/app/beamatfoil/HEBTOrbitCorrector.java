@@ -579,7 +579,7 @@ public class HEBTOrbitCorrector {
 			 double L = corr_mag.getEffLength();
 			 double c = 2.997924E+8;
 			 double res_coeff = (L * c) / (W0 * beta * gamma);
-			 PhaseMatrix phMatr = trajectory.stateResponse(corrElm.getName(),foil.getId());
+			 PhaseMatrix phMatr = probe.stateResponse(corrElm.getName(),foil.getId());
 			 double mPos = 0.;
 			 double mAngle = 0.;
 			 if(corrElm.getName().indexOf(":DCH") > 0) {

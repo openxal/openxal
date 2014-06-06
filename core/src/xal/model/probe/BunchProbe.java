@@ -14,10 +14,11 @@ package xal.model.probe;
 import xal.tools.annotation.AProperty.NoEdit;
 import xal.tools.annotation.AProperty.Units;
 import xal.tools.math.r3.R3;
-
 import xal.model.probe.traj.BeamTrajectory;
 import xal.model.probe.traj.BunchProbeState;
+import xal.model.probe.traj.EnvelopeProbeState;
 import xal.model.probe.traj.ProbeState;
+import xal.model.probe.traj.Trajectory;
 
 
 
@@ -264,7 +265,7 @@ public abstract class BunchProbe extends Probe {
      * @version  Nov 5, 2013
      */
     @Override
-    public abstract BeamTrajectory createTrajectory();
+    public abstract Trajectory<?> createTrajectory();
     
     /**
      * Just restating <code>Probe.{@link #createProbeState()}</code>

@@ -690,7 +690,7 @@ public class Trajectory<S extends ProbeState> implements IArchive, Iterable<S> {
                 throw new ParsingException(
                     "Expected state element, got: " + childNode.name());
             }
-            S state = newProbeState();
+            S state = newProbeState(this.factory);
             state.load(childNode);
             saveState(state);
         }
