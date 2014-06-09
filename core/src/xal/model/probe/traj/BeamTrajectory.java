@@ -7,6 +7,6 @@ package xal.model.probe.traj;
  * @version $id:
  * 
  */
-public abstract class BeamTrajectory extends Trajectory {
+public abstract class BeamTrajectory extends Trajectory<ProbeState> {
 
 }

@@ -5,6 +5,7 @@ import xal.model.alg.DiagnosticTracker;
 import xal.model.probe.traj.DiagnosticProbeState;
 import xal.model.probe.traj.DiagnosticProbeTrajectory;
 import xal.model.probe.traj.ProbeState;
+import xal.model.probe.traj.Trajectory;
 import xal.model.xml.ParsingException;
 
 /**
@@ -82,8 +83,8 @@ public class DiagnosticProbe extends Probe {
 	// ************ required Trajectory protocol
 	
 	@Override
-	public DiagnosticProbeTrajectory createTrajectory() {
-		return new DiagnosticProbeTrajectory();
+	public Trajectory<DiagnosticProbeState> createTrajectory() {
+		return new Trajectory<DiagnosticProbeState>();
 	}
 	
 	@Override

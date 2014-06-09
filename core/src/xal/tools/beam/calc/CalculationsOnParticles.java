@@ -9,6 +9,7 @@ package xal.tools.beam.calc;
 import xal.model.probe.traj.ParticleProbeState;
 import xal.model.probe.traj.ParticleTrajectory;
 import xal.model.probe.traj.ProbeState;
+import xal.model.probe.traj.Trajectory;
 import xal.tools.beam.PhaseMatrix;
 import xal.tools.beam.PhaseVector;
 import xal.tools.beam.Twiss;
@@ -30,7 +31,7 @@ public class CalculationsOnParticles extends CalculationEngine implements ISimLo
      */
     
     /** The trajectory around one turn of the ring */
-    private final ParticleTrajectory        trjSimul;
+    private final Trajectory<? extends ProbeState>        trjSimul;
     
     /** The final envelope probe state (at the end of the simulation ) */
     private final ParticleProbeState        staFinal;
@@ -54,13 +55,14 @@ public class CalculationsOnParticles extends CalculationEngine implements ISimLo
      * <code>CalculationsOnParticles</code> object for process the simulation
      * data contained in the given particle trajectory object.
      *
-     * @param   trjPart     simulation data for a particle
+     * @param   trajectory     simulation data for a particle
      *
      * @author Christopher K. Allen
      * @since  Nov 14, 2013
      */
-    public CalculationsOnParticles(ParticleTrajectory trjPart) {
-        ProbeState  pstFinal = trjPart.finalState();
+    
+    public CalculationsOnParticles(Trajectory<ParticleProbeState> trajectory) {
+        ProbeState  pstFinal = trajectory.finalState();
         
         // Check for correct probe types
         if ( !( pstFinal instanceof ParticleProbeState) )
@@ -69,21 +71,22 @@ public class CalculationsOnParticles extends CalculationEngine implements ISimLo
                     + pstFinal.getClass().getName()
                     );
         
-        this.trjSimul  = trjPart;
+        this.trjSimul  = trajectory;
         this.staFinal  = (ParticleProbeState)pstFinal;
         this.matResp   = this.staFinal.getResponseMatrix();
         
         this.vecPhsAdv = super.calculatePhaseAdvPerCell(this.matResp);
         this.vecFxdPt  = super.calculateFixedPoint(this.matResp);
         this.arrTwsMch = super.calculateMatchedTwiss(this.matResp); 
-    }
+	}
 
     
     /*
      * Attributes and Properties
      */
-    
-    /**
+
+
+	/**
      * Returns the simulation trajectory from which all the machine properties are
      * computed.
      * 
@@ -92,7 +95,7 @@ public class CalculationsOnParticles extends CalculationEngine implements ISimLo
      * @author Christopher K. Allen
      * @since  Nov 7, 2013
      */
-    public ParticleTrajectory   getTrajectory() {
+    public Trajectory<? extends ProbeState>   getTrajectory() {
         return this.trjSimul;
     }
     

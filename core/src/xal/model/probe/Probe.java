@@ -120,7 +120,7 @@ public abstract class Probe implements IProbe, IArchive {
     private ProbeState m_stateInit;
     
     /** Current probe m_trajHist */
-    protected Trajectory m_trajHist;
+    protected Trajectory<? extends ProbeState> m_trajHist;
     
     
     
@@ -414,7 +414,7 @@ public abstract class Probe implements IProbe, IArchive {
      *  @return     Trajectory object of the proper sub-type for the probe type 
      */
 	@NoEdit	// editors should not access this property
-    public Trajectory getTrajectory() {
+    public Trajectory<? extends ProbeState> getTrajectory() {
         if (m_trajHist == null) {
             this.m_trajHist = createTrajectory();
         }

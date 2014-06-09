@@ -17,6 +17,7 @@ import xal.tools.data.DataAdaptor;
 import xal.tools.data.DataFormatException;
 import xal.tools.math.r3.R3;
 import xal.model.probe.traj.ProbeState;
+import xal.model.probe.traj.Trajectory;
 import xal.model.probe.traj.TwissProbeState;
 import xal.model.probe.traj.TwissTrajectory;
 import xal.model.xml.ParsingException;
@@ -305,8 +306,8 @@ public class TwissProbe extends BunchProbe {
 	 * @return a new, empty <code>EnvelopeTrajectory</code> object
 	 */
     @Override
-	public TwissTrajectory createTrajectory() {
-		return new TwissTrajectory();
+	public Trajectory<TwissProbeState> createTrajectory() {
+		return new Trajectory<TwissProbeState>();
 	}
 
 	/**

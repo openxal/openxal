@@ -8,7 +8,7 @@ package xal.model.probe.traj;
  * @version $id:
  * 
  */
-public class DiagnosticProbeTrajectory extends Trajectory {
+public class DiagnosticProbeTrajectory extends Trajectory<ProbeState> {
 
 
 	// ************** required Trajectory protocol

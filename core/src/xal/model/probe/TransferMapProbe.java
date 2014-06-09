@@ -10,9 +10,9 @@ import xal.tools.annotation.AProperty.NoEdit;
 import xal.tools.beam.PhaseMap;
 import xal.tools.beam.PhaseVector;
 import xal.tools.data.DataAdaptor;
-
 import xal.model.probe.traj.EnvelopeProbeState;
 import xal.model.probe.traj.ProbeState;
+import xal.model.probe.traj.Trajectory;
 import xal.model.probe.traj.TransferMapState;
 import xal.model.probe.traj.TransferMapTrajectory;
 import xal.model.xml.ParsingException;
@@ -179,8 +179,8 @@ public class TransferMapProbe extends Probe {
      * @see xal.model.probe.Probe#createTrajectory()
      */
     @Override
-    public TransferMapTrajectory createTrajectory() {
-        return new TransferMapTrajectory();
+    public Trajectory<TransferMapState> createTrajectory() {
+        return new Trajectory<TransferMapState>();
     }
     
     

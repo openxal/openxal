@@ -79,26 +79,20 @@ public class SimpleSimResultsAdaptor extends SimResultsAdaptor implements ISimLo
      * @author Christopher K. Allen
      * @since  Nov 7, 2013
      */
-    public SimpleSimResultsAdaptor(Trajectory datSim) throws IllegalArgumentException {
+	public SimpleSimResultsAdaptor(Trajectory<? extends ProbeState> datSim) throws IllegalArgumentException {
         super();
         
 
-        if (datSim instanceof TransferMapTrajectory) {
-            TransferMapTrajectory   trj = (TransferMapTrajectory)datSim;
-
-            CalculationsOnRings calRings  = new CalculationsOnRings(trj);
+        if (datSim.getStateType() instanceof TransferMapState) {
+            CalculationsOnRings calRings  = new CalculationsOnRings(datSim);
             super.registerCalcEngine(TransferMapState.class, calRings);;
 
-        } else if (datSim instanceof EnvelopeTrajectory) {
-            EnvelopeTrajectory trj = (EnvelopeTrajectory)datSim;
-
-            CalculationsOnBeams calBeams = new CalculationsOnBeams(trj);
+        } else if (datSim.getStateType() instanceof EnvelopeProbeState) {
+            CalculationsOnBeams calBeams = new CalculationsOnBeams(datSim);
             super.registerCalcEngine(EnvelopeProbeState.class, calBeams);
             
-        } else if (datSim instanceof ParticleTrajectory) {
-            ParticleTrajectory trj = (ParticleTrajectory)datSim;
-            
-            CalculationsOnParticles calPart = new CalculationsOnParticles(trj);
+        } else if (datSim.getStateType() instanceof ParticleProbeState) {  
+            CalculationsOnParticles calPart = new CalculationsOnParticles(datSim);
             super.registerCalcEngine(ParticleProbeState.class, calPart);
 
         } else {

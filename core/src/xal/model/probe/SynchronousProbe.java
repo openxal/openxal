@@ -9,6 +9,7 @@ import xal.tools.math.r3.R3;
 import xal.model.probe.traj.ProbeState;
 import xal.model.probe.traj.SynchronousState;
 import xal.model.probe.traj.SynchronousTrajectory;
+import xal.model.probe.traj.Trajectory;
 import xal.model.xml.ParsingException;
 
 
@@ -138,8 +139,8 @@ public class SynchronousProbe extends Probe {
      * @see xal.model.probe.Probe#createTrajectory()
      */
      @Override
-     public SynchronousTrajectory createTrajectory() {
-         return new SynchronousTrajectory();
+     public Trajectory<SynchronousState> createTrajectory() {
+         return new Trajectory<SynchronousState>();
     }
      
     /**

@@ -9,6 +9,7 @@ package xal.tools.beam.calc;
 import xal.tools.beam.calc.ISimulationResults.ISimLocResults;
 import xal.tools.beam.calc.ISimulationResults.ISimEnvResults;
 import xal.model.probe.traj.ProbeState;
+import xal.model.probe.traj.Trajectory;
 import xal.model.probe.traj.TransferMapState;
 import xal.model.probe.traj.TransferMapTrajectory;
 import xal.tools.beam.PhaseMap;
@@ -40,7 +41,7 @@ public class CalculationsOnMachines extends CalculationEngine  implements ISimLo
      */
     
     /** The trajectory around one turn of the ring */
-    private final TransferMapTrajectory trjSimFull;
+    private final Trajectory<? extends ProbeState> trjSimFull;
     
     /** The final transfer map probe state (at the end of the ring) */
     private final TransferMapState      staFinal;
@@ -70,15 +71,15 @@ public class CalculationsOnMachines extends CalculationEngine  implements ISimLo
      * for a periodic cell.
      * </p>
      *
-     * @param  trjSim  the simulation data for the ring, a "transfer map trajectory" object
+     * @param  datSim  the simulation data for the ring, a "transfer map trajectory" object
      *
      * @throws IllegalArgumentException the trajectory does not contain <code>TransferMapState</code> objects
      *
      * @author Christopher K. Allen
      * @since  Nov 7, 2013
      */
-    public CalculationsOnMachines(TransferMapTrajectory trjSim) throws IllegalArgumentException {
-        ProbeState  pstFinal = trjSim.finalState();
+    public CalculationsOnMachines(Trajectory<? extends ProbeState> datSim) throws IllegalArgumentException {
+        ProbeState  pstFinal = datSim.finalState();
         
         // Check for correct probe types
         if ( !( pstFinal instanceof TransferMapState) )
@@ -87,7 +88,7 @@ public class CalculationsOnMachines extends CalculationEngine  implements ISimLo
                     + pstFinal.getClass().getName()
                     );
         
-        this.trjSimFull = trjSim;
+        this.trjSimFull = datSim;
         this.staFinal   = (TransferMapState)pstFinal;
         this.mapPhiFull = this.staFinal.getTransferMap();
         this.arrTwsMch  = super.calculateMatchedTwiss(this.mapPhiFull.getFirstOrder()); 
@@ -107,7 +108,7 @@ public class CalculationsOnMachines extends CalculationEngine  implements ISimLo
      * @author Christopher K. Allen
      * @since  Nov 7, 2013
      */
-    public TransferMapTrajectory   getTrajectory() {
+    public Trajectory<? extends ProbeState>   getTrajectory() {
         return this.trjSimFull;
     }
     

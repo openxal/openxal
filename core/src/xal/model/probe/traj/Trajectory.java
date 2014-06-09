@@ -196,6 +196,11 @@ public class Trajectory<S extends ProbeState> implements IArchive, Iterable<S> {
     /*
      *  Local Attributes
      */
+    
+    /** ProbeState type for use when testing "instanceof" */
+    private S stateType;
+    
+    /** factory for creating ProbeState types from the generic type */
     private ProbeStateFactory<S> factory;
      
     /** any user comments regard the trajectory */
@@ -321,11 +326,9 @@ public class Trajectory<S extends ProbeState> implements IArchive, Iterable<S> {
      */
     public void setTimestamp(long lngTimeStamp) { timestamp = new Date(lngTimeStamp);  }
 
-
-
-
-
-    
+    public S getStateType() {
+    	return newProbeState(this.factory);
+    }   
 
     // ************* Trajectory Operations
 

@@ -22,8 +22,8 @@ public class TransferMapTrajectory extends Trajectory {
 //	static final private int NUM_MODES = 3;
 	
 	/** full turn map at the lattice origin */
-	@Deprecated
-	final private PhaseMap _originFullTurnMap;
+//	@Deprecated
+//	final private PhaseMap _originFullTurnMap;
 	
 //	/** tunes for x, y and z */
 //	@Deprecated
@@ -42,13 +42,13 @@ public class TransferMapTrajectory extends Trajectory {
 	/**
 	 * Constructor
 	 */
-	public TransferMapTrajectory() {
-		_originFullTurnMap = new PhaseMap();
+//	public TransferMapTrajectory() {
+//		_originFullTurnMap = new PhaseMap();
 //		_tunes = new double[3];
 //		_fullTunes = new double[3];
 //		_needsTuneCalculation = true;
 //		 _needsFullTuneCalculation = true;
-	}
+//	}
 
 
     /**
@@ -60,13 +60,13 @@ public class TransferMapTrajectory extends Trajectory {
      * @see gov.sns.xal.model.probe.traj.Trajectory#newProbeState()
      * @see gov.sns.xal.model.probe.traj.TransferMapState
      */
-    @Override
-    protected ProbeState newProbeState() {
-        return new TransferMapState();
+//    @Override
+//    protected ProbeState newProbeState() {
+//        return new TransferMapState();
         
         // CKA - removed since we never reference the backpointer to the trajectory
 //        return new TransferMapState( this, null, null );
-    }
+//    }
 	
 	/**
 	 * Set the full turn map to the one specified.
@@ -75,18 +75,18 @@ public class TransferMapTrajectory extends Trajectory {
 	 * 
 	 * @deprecated This is not a parameter you can change post simulation
 	 */
-    @Deprecated
-	public void setFullTurnMap( final PhaseMap fullTurnMap ) {
-		_originFullTurnMap.setFrom( fullTurnMap );
-	}
+//    @Deprecated
+//	public void setFullTurnMap( final PhaseMap fullTurnMap ) {
+//		_originFullTurnMap.setFrom( fullTurnMap );
+//	}
 	
 	
 	/**
 	 * Get the full turn map at the origin.
 	 */
-	public PhaseMap getFullTurnMapAtOrigin() {
-		return _originFullTurnMap;
-	}
+//	public PhaseMap getFullTurnMapAtOrigin() {
+//		return _originFullTurnMap;
+//	}
 	
 	
 //	/**

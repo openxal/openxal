@@ -14,6 +14,7 @@ import xal.tools.math.r3.R3;
 import xal.model.probe.traj.EnsembleProbeState;
 import xal.model.probe.traj.EnsembleTrajectory;
 import xal.model.probe.traj.ProbeState;
+import xal.model.probe.traj.Trajectory;
 import xal.model.xml.ParsingException;
 
 /**
@@ -80,8 +81,8 @@ public class EnsembleProbe extends BunchProbe {
      * @return  a new, empty <code>EnsembleTrajectory</code> for saving the probe's history
      */
     @Override
-    public EnsembleTrajectory createTrajectory() {
-        return new EnsembleTrajectory();
+    public Trajectory<EnsembleProbeState> createTrajectory() {
+        return new Trajectory<EnsembleProbeState>();
     }
     
     

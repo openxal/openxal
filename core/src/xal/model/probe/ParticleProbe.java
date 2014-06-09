@@ -11,10 +11,10 @@ import xal.tools.beam.PhaseMatrix;
 import xal.tools.beam.PhaseVector;
 import xal.tools.data.DataAdaptor;
 import xal.tools.annotation.AProperty.NoEdit;
-
 import xal.model.probe.traj.ParticleProbeState;
 import xal.model.probe.traj.ParticleTrajectory;
 import xal.model.probe.traj.ProbeState;
+import xal.model.probe.traj.Trajectory;
 import xal.model.xml.ParsingException;
 
 
@@ -190,8 +190,8 @@ public class ParticleProbe extends Probe {
      * @see xal.model.probe.Probe#createTrajectory()
      */
     @Override
-    public ParticleTrajectory createTrajectory() {
-        return new ParticleTrajectory();
+    public Trajectory<ParticleProbeState> createTrajectory() {
+        return new Trajectory<ParticleProbeState>();
     }
     
     /**

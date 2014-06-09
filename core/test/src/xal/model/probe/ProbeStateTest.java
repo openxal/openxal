@@ -87,11 +87,11 @@ public class ProbeStateTest extends TestCase {
 			((DiagnosticProbeState)state).getElementsVisited());
 		
 		// save the state to a trajectory	
-		Trajectory trajectory = probe.createTrajectory();
-		trajectory.saveState(state);
+		Trajectory<DiagnosticProbeState> trajectory = probe.createTrajectory();
+		trajectory.saveState((DiagnosticProbeState)state);
 		
 		assertTrue(trajectory.stateAtPosition(INITIAL_POSITION) == state);
-		assertTrue(trajectory instanceof DiagnosticProbeTrajectory);
+		assertTrue(trajectory.getStateType() instanceof DiagnosticProbeState);
 	}
 	
     /**
@@ -115,11 +115,11 @@ public class ProbeStateTest extends TestCase {
 		assertTrue(probe.getPhaseCoordinates().isEquivalentTo(((ParticleProbeState)state).getPhaseCoordinates()));
 		
 		// save the state to a trajectory	
-		Trajectory trajectory = probe.createTrajectory();
-		trajectory.saveState(state);
+		Trajectory<ParticleProbeState> trajectory = probe.createTrajectory();
+		trajectory.saveState((ParticleProbeState)state);
 		
 		assertTrue(trajectory.stateAtPosition(INITIAL_POSITION) == state);
-		assertTrue(trajectory instanceof ParticleTrajectory);
+		assertTrue(trajectory.getStateType() instanceof ParticleProbeState);
 	}
 
     /**
@@ -153,11 +153,11 @@ public class ProbeStateTest extends TestCase {
 		assertTrue(probe.getCovariance().equals(((EnvelopeProbeState)state).getCovarianceMatrix()));
 		
 		// save the state to a trajectory	
-		Trajectory trajectory = probe.createTrajectory();
-		trajectory.saveState(state);
+		Trajectory<EnvelopeProbeState> trajectory = probe.createTrajectory();
+		trajectory.saveState((EnvelopeProbeState)state);
 		
 		assertTrue(trajectory.stateAtPosition(INITIAL_POSITION) == state);
-		assertTrue(trajectory instanceof EnvelopeTrajectory);
+		assertTrue(trajectory.getStateType() instanceof EnvelopeProbeState);
 	}
 
     /**
@@ -197,11 +197,11 @@ public class ProbeStateTest extends TestCase {
 			((EnsembleProbeState)state).getFieldCalculation());
 		
 		// save the state to a trajectory	
-		Trajectory trajectory = probe.createTrajectory();
-		trajectory.saveState(state);
+		Trajectory<EnsembleProbeState> trajectory = probe.createTrajectory();
+		trajectory.saveState((EnsembleProbeState)state);
 		
 		assertTrue(trajectory.stateAtPosition(INITIAL_POSITION) == state);
-		assertTrue(trajectory instanceof EnsembleTrajectory);
+		assertTrue(trajectory.getStateType() instanceof EnsembleProbeState);
 		
 	}
 

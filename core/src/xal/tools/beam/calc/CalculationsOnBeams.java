@@ -12,6 +12,7 @@ import xal.model.probe.traj.EnvelopeProbeState;
 import xal.model.probe.traj.EnvelopeTrajectory;
 import xal.model.probe.traj.ParticleProbeState;
 import xal.model.probe.traj.ProbeState;
+import xal.model.probe.traj.Trajectory;
 import xal.tools.beam.CovarianceMatrix;
 import xal.tools.beam.PhaseMatrix;
 import xal.tools.beam.PhaseVector;
@@ -38,7 +39,7 @@ public class CalculationsOnBeams extends CalculationEngine implements ISimLocRes
      */
     
     /** The trajectory around one turn of the ring */
-    private final EnvelopeTrajectory        trjSimul;
+    private final Trajectory<? extends ProbeState> trjSimul;
     
     /** The initial envelope probe state (at the start of the simulation) */
     private final EnvelopeProbeState        staInit;
@@ -73,8 +74,8 @@ public class CalculationsOnBeams extends CalculationEngine implements ISimLocRes
      * @author Christopher K. Allen
      * @since  Oct 22, 2013
      */
-    public CalculationsOnBeams(EnvelopeTrajectory trjBeam) {
-        ProbeState  pstFinal = trjBeam.finalState();
+    public CalculationsOnBeams(Trajectory<? extends ProbeState> datSim) {
+        ProbeState  pstFinal = datSim.finalState();
         
         // Check for correct probe types
         if ( !( pstFinal instanceof EnvelopeProbeState) )
@@ -83,8 +84,8 @@ public class CalculationsOnBeams extends CalculationEngine implements ISimLocRes
                     + pstFinal.getClass().getName()
                     );
         
-        this.trjSimul  = trjBeam;
-        this.staInit   = (EnvelopeProbeState)trjBeam.initialState();
+        this.trjSimul  = datSim;
+        this.staInit   = (EnvelopeProbeState)datSim.initialState();
         this.staFinal  = (EnvelopeProbeState)pstFinal;
         this.matResp   = this.staFinal.getResponseMatrix();
         
@@ -107,7 +108,7 @@ public class CalculationsOnBeams extends CalculationEngine implements ISimLocRes
      * @author Christopher K. Allen
      * @since  Nov 7, 2013
      */
-    public EnvelopeTrajectory   getTrajectory() {
+    public Trajectory<? extends ProbeState> getTrajectory() {
         return this.trjSimul;
     }
     

@@ -28,6 +28,7 @@ import xal.model.probe.traj.ParticleTrajectory;
 import xal.model.probe.traj.ProbeState;
 import xal.model.probe.traj.TransferMapState;
 import xal.model.probe.traj.TransferMapTrajectory;
+import xal.model.probe.traj.Trajectory;
 import xal.test.ResourceManager;
 import xal.sim.scenario.AlgorithmFactory;
 import xal.sim.scenario.ProbeFactory;
@@ -187,10 +188,11 @@ public class TestSimResultsAdaptor {
     */
    @Before
    public void setUp() throws Exception {
-       this.calPartPart = new CalculationsOnParticles( (ParticleTrajectory)PROBE_PARTL_TEST.getTrajectory() );
-       this.calXferMach = new CalculationsOnMachines( (TransferMapTrajectory)PROBE_XFER_TEST.getTrajectory() );
-       this.calXferRing = new CalculationsOnRings( (TransferMapTrajectory) PROBE_XFER_TEST.getTrajectory() );
-       this.calEnvBeam  = new CalculationsOnBeams( (EnvelopeTrajectory)PROBE_ENV_TEST.getTrajectory() );
+	   //had to change these to .create() instead of .get() in order to work JMF
+       this.calPartPart = new CalculationsOnParticles( PROBE_PARTL_TEST.createTrajectory() );
+       this.calXferMach = new CalculationsOnMachines( PROBE_XFER_TEST.createTrajectory() );
+       this.calXferRing = new CalculationsOnRings(  PROBE_XFER_TEST.createTrajectory() );
+       this.calEnvBeam  = new CalculationsOnBeams( PROBE_ENV_TEST.createTrajectory() );
        
        this.cmpSimResults = new SimResultsAdaptor();
 
@@ -226,7 +228,7 @@ public class TestSimResultsAdaptor {
         // Do computations on the particle trajectory
         OWTR_OUTPUT.write("\nParticleTrajectory: computeCordinatePosition");
         OWTR_OUTPUT.write("\n");
-        ParticleTrajectory  trjPart = (ParticleTrajectory)PROBE_PARTL_TEST.getTrajectory();
+        Trajectory<? extends ProbeState>  trjPart = PROBE_PARTL_TEST.getTrajectory();
         for (ProbeState state : trjPart) {
             PhaseVector vecPos = this.cmpSimResults.computeCoordinatePosition(state);
             
@@ -238,7 +240,7 @@ public class TestSimResultsAdaptor {
         // Do computations on the transfer map trajectory
         OWTR_OUTPUT.write("\nTransferMapTrajectory: computeCoordinatePosition");
         OWTR_OUTPUT.write("\n");
-        TransferMapTrajectory   trjXfer = (TransferMapTrajectory)PROBE_XFER_TEST.getTrajectory();
+        Trajectory<? extends ProbeState>   trjXfer = PROBE_XFER_TEST.getTrajectory();
         for (ProbeState state : trjXfer) {
             PhaseVector vecPos = this.cmpSimResults.computeCoordinatePosition(state);
             
@@ -250,7 +252,7 @@ public class TestSimResultsAdaptor {
         // Do computations on the envelope trajectory
         OWTR_OUTPUT.write("\nEnvelopeTrajectory: computeCoordinatePosition");
         OWTR_OUTPUT.write("\n");
-        EnvelopeTrajectory   trjEnv = (EnvelopeTrajectory)PROBE_ENV_TEST.getTrajectory();
+        Trajectory<? extends ProbeState>   trjEnv = PROBE_ENV_TEST.getTrajectory();
         for (ProbeState state : trjEnv) {
             PhaseVector vecPos = this.cmpSimResults.computeCoordinatePosition(state);
             
@@ -270,7 +272,7 @@ public class TestSimResultsAdaptor {
         // Do computations on the particle trajectory
         OWTR_OUTPUT.write("\nParticleTrajectory: computeFixedOrbit");
         OWTR_OUTPUT.write("\n");
-        ParticleTrajectory  trjPart = (ParticleTrajectory)PROBE_PARTL_TEST.getTrajectory();
+        Trajectory<? extends ProbeState>  trjPart = PROBE_PARTL_TEST.getTrajectory();
         for (ProbeState state : trjPart) {
             PhaseVector vecPos = this.cmpSimResults.computeFixedOrbit(state);
 
@@ -282,7 +284,7 @@ public class TestSimResultsAdaptor {
         // Do computations on the transfer map trajectory
         OWTR_OUTPUT.write("\nTransferMapTrajectory: computeFixedOrbit");
         OWTR_OUTPUT.write("\n");
-        TransferMapTrajectory   trjXfer = (TransferMapTrajectory)PROBE_XFER_TEST.getTrajectory();
+        Trajectory<? extends ProbeState>   trjXfer = PROBE_XFER_TEST.getTrajectory();
         for (ProbeState state : trjXfer) {
             PhaseVector vecPos = this.cmpSimResults.computeFixedOrbit(state);
 
@@ -294,7 +296,7 @@ public class TestSimResultsAdaptor {
         // Do computations on the envelope trajectory
         OWTR_OUTPUT.write("\nEnvelopeTrajectory: computeFixedOrbit");
         OWTR_OUTPUT.write("\n");
-        EnvelopeTrajectory   trjEnv = (EnvelopeTrajectory)PROBE_ENV_TEST.getTrajectory();
+        Trajectory<? extends ProbeState>   trjEnv = PROBE_ENV_TEST.getTrajectory();
         for (ProbeState state : trjEnv) {
             PhaseVector vecPos = this.cmpSimResults.computeFixedOrbit(state);
 
@@ -313,7 +315,7 @@ public class TestSimResultsAdaptor {
         // Do computations on the particle trajectory
         OWTR_OUTPUT.write("\nParticleTrajectory: computeChromAberration");
         OWTR_OUTPUT.write("\n");
-        ParticleTrajectory  trjPart = (ParticleTrajectory)PROBE_PARTL_TEST.getTrajectory();
+        Trajectory<? extends ProbeState>  trjPart = PROBE_PARTL_TEST.getTrajectory();
         for (ProbeState state : trjPart) {
             PhaseVector vecPos = this.cmpSimResults.computeChromAberration(state);
             
@@ -325,7 +327,7 @@ public class TestSimResultsAdaptor {
         // Do computations on the transfer map trajectory
         OWTR_OUTPUT.write("\nTransferMapTrajectory: computeChromAberration");
         OWTR_OUTPUT.write("\n");
-        TransferMapTrajectory   trjXfer = (TransferMapTrajectory)PROBE_XFER_TEST.getTrajectory();
+        Trajectory<? extends ProbeState>   trjXfer = PROBE_XFER_TEST.getTrajectory();
         for (ProbeState state : trjXfer) {
             PhaseVector vecPos = this.cmpSimResults.computeChromAberration(state);
             
@@ -337,7 +339,7 @@ public class TestSimResultsAdaptor {
         // Do computations on the envelope trajectory
         OWTR_OUTPUT.write("\nEnvelopeTrajectory: computeChromAberration");
         OWTR_OUTPUT.write("\n");
-        EnvelopeTrajectory   trjEnv = (EnvelopeTrajectory)PROBE_ENV_TEST.getTrajectory();
+        Trajectory<? extends ProbeState>  trjEnv = PROBE_ENV_TEST.getTrajectory();
         for (ProbeState state : trjEnv) {
             PhaseVector vecPos = this.cmpSimResults.computeChromAberration(state);
 
@@ -356,7 +358,7 @@ public class TestSimResultsAdaptor {
         // Do computations on the transfer map trajectory
         OWTR_OUTPUT.write("\nTransferMapTrajectory: computeTwissParameters");
         OWTR_OUTPUT.write("\n");
-        TransferMapTrajectory   trjXfer = (TransferMapTrajectory)PROBE_XFER_TEST.getTrajectory();
+        Trajectory<? extends ProbeState> trjXfer = PROBE_XFER_TEST.getTrajectory();
         for (ProbeState state : trjXfer) {
             Twiss[] arrTwiss = this.cmpSimResults.computeTwissParameters(state);
             Twiss3D t3dMach  = new Twiss3D(arrTwiss);
@@ -368,7 +370,7 @@ public class TestSimResultsAdaptor {
 
         // Do computations on the EnvelopeTrajectory
         OWTR_OUTPUT.write("\nEnvelopeTrajectory: computeTwissParameters");
-        EnvelopeTrajectory  trjEnv = (EnvelopeTrajectory)PROBE_ENV_TEST.getTrajectory();
+        Trajectory<? extends ProbeState> trjEnv = PROBE_ENV_TEST.getTrajectory();
         for (ProbeState state : trjEnv) {
             Twiss[] arrTwiss = this.cmpSimResults.computeTwissParameters(state);
             Twiss3D t3dBeam = new Twiss3D(arrTwiss);
@@ -388,7 +390,7 @@ public class TestSimResultsAdaptor {
         // Do computations on the transfer map trajectory
         OWTR_OUTPUT.write("\nTransferMapTrajectory: computeBetatronPhase");
         OWTR_OUTPUT.write("\n");
-        TransferMapTrajectory   trjXfer = (TransferMapTrajectory)PROBE_XFER_TEST.getTrajectory();
+        Trajectory<? extends ProbeState>  trjXfer = PROBE_XFER_TEST.getTrajectory();
         for (ProbeState state : trjXfer) {
             R3  vecPhase = this.cmpSimResults.computeBetatronPhase(state);
 
@@ -399,7 +401,7 @@ public class TestSimResultsAdaptor {
 
         // Do computations on the EnvelopeTrajectory
         OWTR_OUTPUT.write("\nEnvelopeTrajectory: computeBetatronPhase");
-        EnvelopeTrajectory  trjEnv = (EnvelopeTrajectory)PROBE_ENV_TEST.getTrajectory();
+        Trajectory<? extends ProbeState> trjEnv = PROBE_ENV_TEST.getTrajectory();
         for (ProbeState state : trjEnv) {
             R3 vecPhase = this.cmpSimResults.computeBetatronPhase(state);
 
@@ -418,7 +420,7 @@ public class TestSimResultsAdaptor {
         // Do computations on the transfer map trajectory
         OWTR_OUTPUT.write("\nTransferMapTrajectory: computeChromDispersion");
         OWTR_OUTPUT.write("\n");
-        TransferMapTrajectory   trjXfer = (TransferMapTrajectory)PROBE_XFER_TEST.getTrajectory();
+        Trajectory<? extends ProbeState>  trjXfer = PROBE_XFER_TEST.getTrajectory();
         for (ProbeState state : trjXfer) {
             PhaseVector vecPhase = this.cmpSimResults.computeChromDispersion(state);
 
@@ -429,7 +431,7 @@ public class TestSimResultsAdaptor {
 
         // Do computations on the EnvelopeTrajectory
         OWTR_OUTPUT.write("\nEnvelopeTrajectory: computeChromDispersion");
-        EnvelopeTrajectory  trjEnv = (EnvelopeTrajectory)PROBE_ENV_TEST.getTrajectory();
+        Trajectory<? extends ProbeState> trjEnv = PROBE_ENV_TEST.getTrajectory();
         for (ProbeState state : trjEnv) {
             PhaseVector vecPhase = this.cmpSimResults.computeChromDispersion(state);
 
