@@ -3,11 +3,13 @@ package xal.app.beamatfoil;
 import java.text.*;
 import java.awt.*;
 import java.awt.event.*;
+
 import javax.swing.*;
 import javax.swing.table.*;
 import javax.swing.text.*;
 import javax.swing.event.*;
 import javax.swing.border.*;
+
 import java.util.*;
 import java.io.*;
 import java.util.List;
@@ -15,23 +17,17 @@ import java.beans.*;
 
 import xal.extension.widgets.swing.Wheelswitch;
 import xal.tools.text.FortranNumberFormat;
-
 import xal.ca.*;
-
 import xal.extension.widgets.plot.*;
 import xal.tools.apputils.*;
 import xal.extension.widgets.swing.*;
 import xal.tools.xml.*;
-
 import xal.service.pvlogger.*;
 import xal.tools.database.*;
-
 import xal.smf.proxy.ElectromagnetPropertyAccessor;
-
 import xal.smf.*;
 import xal.smf.impl.*;
 import xal.smf.impl.qualify.*;
-
 import xal.model.*;
 import xal.sim.scenario.*;
 import xal.service.pvlogger.sim.PVLoggerDataSource;
@@ -40,8 +36,6 @@ import xal.model.probe.*;
 //import xal.model.probe.resp.*;
 import xal.model.probe.traj.*;
 import xal.sim.sync.*;
-//import xal.model.probe.resp.traj.*;
-
 import xal.tools.beam.*;
 //import xal.tools.optimizer.*;
 import xal.extension.solver.*;
@@ -565,7 +559,7 @@ public class HEBTOrbitCorrector {
 			 return false;
 		 }
 		 
-		 EnvelopeTrajectory trajectory = (EnvelopeTrajectory) probe.getTrajectory();
+		 Trajectory<EnvelopeProbeState> trajectory = probe.createTrajectory();
 		 
 		 AcceleratorNode foil = accSeq.getNodeWithId("Ring_Inj:Foil");
 		 

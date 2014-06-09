@@ -1202,10 +1202,10 @@ public class MatchingFace extends JPanel{
         //                      one_sigmaX4 = wireScanData.wireScanHorizByName("HEBT_Diag:WS04");
         //
         //              }
-        EnvelopeTrajectory traj= (EnvelopeTrajectory)probe.getTrajectory();
+        Trajectory<EnvelopeProbeState> traj = probe.createTrajectory();
         
         //              System.out.println("trajectory is = "  traj);
-        Iterator<ProbeState> iterState= traj.stateIterator();
+        Iterator<EnvelopeProbeState> iterState= traj.stateIterator();
         
         while(iterState.hasNext()){
             EnvelopeProbeState state= (EnvelopeProbeState)iterState.next();
@@ -1263,7 +1263,7 @@ public class MatchingFace extends JPanel{
         double[] xrdata = new double[datasize];
         double[] yrdata = new double[datasize];
         
-        traj= (EnvelopeTrajectory)probe.getTrajectory();
+        //traj = probe.createTrajectory();
         EnvelopeProbeState newstate;
         Twiss[] newtwiss;
         double rx, ry;

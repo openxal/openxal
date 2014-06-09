@@ -575,7 +575,7 @@ public class ModelFace extends JPanel{
 		catch(Exception exception){
 			exception.printStackTrace();
 		}
-		EnvelopeTrajectory traj= (EnvelopeTrajectory)probe.getTrajectory();
+		Trajectory<EnvelopeProbeState> traj= probe.createTrajectory();
 		//resetPlot();
 		
 		//Convert units to meters for each BSM rms
@@ -653,7 +653,7 @@ public class ModelFace extends JPanel{
 			exception.printStackTrace();
 		}
         
-		EnvelopeTrajectory traj= (EnvelopeTrajectory)probe.getTrajectory();
+		Trajectory<EnvelopeProbeState> traj= probe.createTrajectory();
 		double error = 0.0;
 		int size = namelist.size();
 		double rz=0;
@@ -844,11 +844,11 @@ public class ModelFace extends JPanel{
 		ArrayList<Double> sdata = new ArrayList<Double>();
 		ArrayList<Double> zdata = new ArrayList<Double>();
         
-		EnvelopeTrajectory traj= (EnvelopeTrajectory)probe.getTrajectory();
-		Iterator<ProbeState> iterState= traj.stateIterator();
+		Trajectory<EnvelopeProbeState> traj = probe.createTrajectory();
+		Iterator<EnvelopeProbeState> iterState = traj.stateIterator();
         
 		while(iterState.hasNext()){
-			EnvelopeProbeState state= (EnvelopeProbeState)iterState.next();
+			EnvelopeProbeState state = (EnvelopeProbeState)iterState.next();
 			sdata.add(state.getPosition());
             
             CovarianceMatrix covarianceMatrix = state.getCovarianceMatrix();
@@ -890,7 +890,7 @@ public class ModelFace extends JPanel{
 		double[] srdata = new double[datasize];
 		double[] zrdata = new double[datasize];
 		
-		traj= (EnvelopeTrajectory)probe.getTrajectory();
+		//traj = probe.createTrajectory();
 		EnvelopeProbeState newstate;
 		Twiss[] newtwiss;
 		double rz;

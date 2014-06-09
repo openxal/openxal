@@ -159,12 +159,12 @@ class GenericMarkerCoordinateTransfer extends CoordinateTransfer {
 	
 	
 	/** get the transfer matrix from the transfer map trajectory */
-	protected PhaseMatrix getTransferMatrix( final Trajectory trajectory, final AcceleratorNode fromNode, final AcceleratorNode toNode ) {
-		if ( trajectory instanceof EnvelopeTrajectory ) {
-			return getTransferMatrix( (EnvelopeTrajectory)trajectory, fromNode, toNode );
+	protected PhaseMatrix getTransferMatrix( final Trajectory<?> trajectory, final AcceleratorNode fromNode, final AcceleratorNode toNode ) {
+		if ( trajectory.getStateType() instanceof EnvelopeProbeState ) {
+			return getTransferMatrix( trajectory, fromNode, toNode );
 		}
-		else if ( trajectory instanceof TransferMapTrajectory ) {
-			return getTransferMatrix( (TransferMapTrajectory)trajectory, fromNode, toNode );
+		else if ( trajectory.getStateType() instanceof TransferMapState ) {
+			return getTransferMatrix( trajectory, fromNode, toNode );
 		}
 		else {
 			throw new RuntimeException( "Trajectory must be either TransferMap or Envelope, but instead it is:  " + trajectory.getClass() );
@@ -173,7 +173,7 @@ class GenericMarkerCoordinateTransfer extends CoordinateTransfer {
 	
 	
 	/** get the transfer matrix from the transfer map trajectory */
-	protected PhaseMatrix getTransferMatrix( final EnvelopeTrajectory trajectory, final AcceleratorNode fromNode, final AcceleratorNode toNode ) {
+	protected PhaseMatrix getTransferMatrix( final Trajectory<EnvelopeProbeState> trajectory, final AcceleratorNode fromNode, final AcceleratorNode toNode ) {
 		final PhaseMatrix fromMatrix = ((EnvelopeProbeState)trajectory.stateForElement( fromNode.getId() )).getResponseMatrix();
 		final PhaseMatrix toMatrix = ((EnvelopeProbeState)trajectory.stateForElement( toNode.getId() )).getResponseMatrix();
 		return getTransferMatrix( fromMatrix, toMatrix );
