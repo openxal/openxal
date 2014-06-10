@@ -372,7 +372,7 @@ public class ShakeAnalysis {
 			return;
 		}
         
-		EnvelopeTrajectory trajectory = (EnvelopeTrajectory) probe.getTrajectory();
+		Trajectory<EnvelopeProbeState> trajectory = probe.createTrajectory();
         
 		for(int i = 0, n = quadsTableModel.getListModel().size(); i < n; i++) {
 			Quad_Element quadElm =  quadsTableModel.getListModel().get(i);
@@ -423,7 +423,7 @@ public class ShakeAnalysis {
 					double coefY = (coeffMapY.get(bpmElm)).doubleValue();
 					double coefErrX = (coeffErrMapX.get(bpmElm)).doubleValue();
 					double coefErrY = (coeffErrMapY.get(bpmElm)).doubleValue();
-					PhaseMatrix phMatr = trajectory.stateResponse(quadElm.getName(), bpmElm.getName());
+					PhaseMatrix phMatr = probe.stateResponse(quadElm.getName(), bpmElm.getName());
 					double m01 = phMatr.getElem(0, 1);
 					double m23 = phMatr.getElem(2, 3);
 					if(coefErrX > 0. && coefErrY > 0. && Math.abs(m01) > 0. && Math.abs(m23) > 0.) {
@@ -463,7 +463,7 @@ public class ShakeAnalysis {
 				Quadrupole quad =  quadIdMap.get(quadElm.getName());
 				double quad_pos = accSeq.getPosition(quad);
 				if(quad_pos > corr_pos) {
-					PhaseMatrix phMatr = trajectory.stateResponse(corrElm.getName(), quadElm.getName());
+					PhaseMatrix phMatr = probe.stateResponse(corrElm.getName(), quadElm.getName());
 					double me = 0.;
 					if(corrElm.getName().indexOf(":DCH") > 0) {
 						me = phMatr.getElem(0, 1);
