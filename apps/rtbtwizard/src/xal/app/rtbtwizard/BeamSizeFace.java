@@ -9,12 +9,14 @@ import xal.tools.apputils.EdgeLayout;
 import xal.tools.messaging.*;
 import xal.ca.*;
 import xal.tools.data.*;
-import java.text.NumberFormat;
 
+import java.text.NumberFormat;
 import java.util.*;
 import java.io.*;
+
 import javax.swing.*;
 import javax.swing.event.*;
+
 import java.awt.*;
 import java.awt.event.*;
 
@@ -32,13 +34,17 @@ import xal.model.xml.*;
 //import xal.tools.optimizer.*;
 import xal.tools.beam.Twiss;
 import xal.extension.widgets.plot.*;
+
 import java.text.NumberFormat;
+
 import xal.extension.widgets.swing.DecimalField;
 import xal.tools.apputils.EdgeLayout;
 import xal.tools.data.*;
 import xal.tools.xml.XmlDataAdaptor;
 import xal.tools.beam.*;
+
 import java.text.DecimalFormat;
+
 import xal.extension.solver.*;
 //import xal.tools.formula.*;
 import xal.extension.solver.hint.*;
@@ -540,7 +546,7 @@ public class BeamSizeFace extends JPanel{
             exception.printStackTrace();
         }
         
-        EnvelopeTrajectory traj= (EnvelopeTrajectory)probe.getTrajectory();
+        Trajectory<EnvelopeProbeState> traj = probe.createTrajectory();
         double error = 0.0;
         int size = namelist.size();
         double rx=0;
@@ -975,9 +981,9 @@ public class BeamSizeFace extends JPanel{
 		}
         
 		//probe.reset();
-		EnvelopeTrajectory traj= (EnvelopeTrajectory)probe.getTrajectory();
+		Trajectory<EnvelopeProbeState> traj = probe.createTrajectory();
 		//System.out.println("trajectory is = " + traj);
-		Iterator<ProbeState> iterState= traj.stateIterator();
+		Iterator<EnvelopeProbeState> iterState= traj.stateIterator();
         
 		while(iterState.hasNext()){
 			EnvelopeProbeState state= (EnvelopeProbeState)iterState.next();
@@ -1027,7 +1033,7 @@ public class BeamSizeFace extends JPanel{
 		double[] xrdata = new double[datasize];
 		double[] yrdata = new double[datasize];
         
-		traj= (EnvelopeTrajectory)probe.getTrajectory();
+		//traj= (EnvelopeTrajectory)probe.getTrajectory();
 		EnvelopeProbeState newstate;
 		Twiss[] newtwiss;
 		double rx, ry;
