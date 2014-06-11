@@ -764,7 +764,7 @@ public class BeamSizeFace extends JPanel{
 		DecimalFormat decfor =  new DecimalFormat("###.000");
 		int size = fullnamelist.size();
         
-		EnvelopeTrajectory traj= (EnvelopeTrajectory)probe.getTrajectory();
+		Trajecotry<EnvelopeProbeState> traj= probe.getTrajectory();
 		EnvelopeProbeState newstate;
 		Twiss[] newtwiss;
 		double rx, ry;

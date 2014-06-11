@@ -52,6 +52,9 @@ public class EnsembleProbe extends BunchProbe {
     /** the particle ensemble */
     private Ensemble    m_ensPhase;
     
+    /** probe trajectory */
+    private Trajectory<EnsembleProbeState> trajectory;
+    
     
     
     
@@ -78,14 +81,29 @@ public class EnsembleProbe extends BunchProbe {
     /**
      * Creates a trajectory of the proper type for saving the probe's history.
      * 
-     * @return  a new, empty <code>EnsembleTrajectory</code> for saving the probe's history
+     * @return  a new, empty <code>Trajectory&lt;EnsembleProbeState&gt;</code> 
+     * 		for saving the probe's history
+     * 
+     * @author Jonathan Freed
      */
     @Override
     public Trajectory<EnsembleProbeState> createTrajectory() {
-        return new Trajectory<EnsembleProbeState>();
+        this.trajectory = new Trajectory<EnsembleProbeState>();
+    	return this.trajectory;
     }
     
-    
+    /**
+     * Retrieves the trajectory of the proper type for the probe.
+     * 
+     * @return a <code>Trajectory&lt;EnsembleProbeState&gt;</code> that is the 
+     * 		trajectory of the probe
+     * 
+     * @author Jonathan Freed
+     */
+	@Override
+	public Trajectory<EnsembleProbeState> getTrajectory() {
+		return this.trajectory;
+	}
 
 
     // BunchProbe Base Support =================================================
@@ -224,4 +242,5 @@ public class EnsembleProbe extends BunchProbe {
         state.load(container);
         return state;
     }
+
 }

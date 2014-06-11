@@ -19,6 +19,7 @@ import xal.model.probe.traj.BunchProbeState;
 import xal.model.probe.traj.EnvelopeProbeState;
 import xal.model.probe.traj.ProbeState;
 import xal.model.probe.traj.Trajectory;
+import xal.model.probe.traj.TransferMapState;
 
 
 
@@ -54,6 +55,9 @@ public abstract class BunchProbe extends Probe {
     
     /** Beam current */
     private double  dblCurrent = 0.0;
+    
+    /** probe trajectory */
+    private Trajectory<BunchProbeState> trajectory;
 
 //    /** particle betatron phase with space charge */
 //    protected R3 vecPhsBeta;
@@ -255,17 +259,35 @@ public abstract class BunchProbe extends Probe {
     /*
      * Probe Overrides
      */
-    
-    /**
-     * Just restating <code>Probe.{@link #createTrajectory()}</code>.
-     *
-     * @see xal.model.probe.Probe#createTrajectory()
-     *
-     * @author Christopher K. Allen
-     * @version  Nov 5, 2013
+
+    /************************************************************************** 
+     * Not sure if these need to be overridden yet, or if they need their own
+     * implementation.  If implemented, the subclasses (Twiss, Ensemble, and 
+     * Envelope) will all have issues.
+     *  - Jonathan Freed
      */
-    @Override
-    public abstract Trajectory<?> createTrajectory();
+//	/**
+//	 * Creates a <code>Trajectory&lt;?&gt;</code> object of 
+//	 * the proper type for saving the probe's history.
+//	 * 
+//	 * @return a new, empty <code>Trajectory&lt;?&gt;</code> 
+//	 * 		for saving the probe's history
+//	 * 
+//	 * @author Jonathan Freed
+//	 */
+//    @Override
+//    public abstract Trajectory<?> createTrajectory();
+//    
+//    /**
+//     * Retrieves the trajectory of the proper type for the probe.
+//     * 
+//     * @return a <code>Trajectory&lt;?&gt;</code> that is the 
+//     * 		trajectory of the probe
+//     * 
+//     * @author Jonathan Freed
+//     */
+//    @Override
+//    public abstract Trajectory<?> getTrajectory();
     
     /**
      * Just restating <code>Probe.{@link #createProbeState()}</code>

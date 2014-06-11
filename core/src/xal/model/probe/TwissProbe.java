@@ -18,6 +18,7 @@ import xal.tools.data.DataFormatException;
 import xal.tools.math.r3.R3;
 import xal.model.probe.traj.ProbeState;
 import xal.model.probe.traj.Trajectory;
+import xal.model.probe.traj.TransferMapState;
 import xal.model.probe.traj.TwissProbeState;
 import xal.model.probe.traj.TwissTrajectory;
 import xal.model.xml.ParsingException;
@@ -61,6 +62,9 @@ public class TwissProbe extends BunchProbe {
   
     /** current twiss parameters */
     private Twiss3D             envTwiss;
+    
+    /** probe trajectory */
+    private Trajectory<TwissProbeState> trajectory;
     
     
     
@@ -300,15 +304,32 @@ public class TwissProbe extends BunchProbe {
 	}
 
 	/**
-	 * Creates a <code>Trajectory</code> object of the proper type for saving
-	 * the probe's history.
+	 * Creates a <code>Trajectory&lt;TwissProbeState&gt;</code> object of the
+	 * proper type for saving the probe's history.
 	 * 
-	 * @return a new, empty <code>EnvelopeTrajectory</code> object
+	 * @return a new, empty <code>Trajectory&lt;TwissProbeState&gt;</code> 
+	 * 		for saving the probe's history
+	 * 
+	 * @author Jonathan Freed
 	 */
     @Override
 	public Trajectory<TwissProbeState> createTrajectory() {
-		return new Trajectory<TwissProbeState>();
+		this.trajectory = new Trajectory<TwissProbeState>();
+		return this.trajectory;
 	}
+    
+    /**
+     * Retrieves the trajectory of the proper type for the probe.
+     * 
+     * @return a <code>Trajectory&lt;TwissProbeState&gt;</code> that is the 
+     * 		trajectory of the probe
+     * 
+     * @author Jonathan Freed
+     */
+    @Override
+    public Trajectory<TwissProbeState> getTrajectory() {
+    	return this.trajectory;
+    }
 
 	/**
 	 * Apply the contents of ProbeState to update my current state. The argument

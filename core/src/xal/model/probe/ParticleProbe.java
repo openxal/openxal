@@ -11,6 +11,7 @@ import xal.tools.beam.PhaseMatrix;
 import xal.tools.beam.PhaseVector;
 import xal.tools.data.DataAdaptor;
 import xal.tools.annotation.AProperty.NoEdit;
+import xal.model.probe.traj.EnvelopeProbeState;
 import xal.model.probe.traj.ParticleProbeState;
 import xal.model.probe.traj.ParticleTrajectory;
 import xal.model.probe.traj.ProbeState;
@@ -42,6 +43,8 @@ public class ParticleProbe extends Probe {
     /** response matrix for initial coordinate sensitivity */
     private PhaseMatrix     matResp;
     
+    /** probe trajectory */
+    private Trajectory<ParticleProbeState> trajectory;
     
 
     /*
@@ -178,20 +181,32 @@ public class ParticleProbe extends Probe {
      * Trajectory Support
      */
 
-    /**
-     * Creates a new <code>Trajectory</code> object for <code>ParticleProbe</code> types.
-     * 
-     * @return  new, empty <code>ParticleTrajectory</code> object
-     * 
-     * @author Christopher K. Allen
-     * @since  Aug 13, 2002
-     * @version Nov 14, 2013
-     * 
-     * @see xal.model.probe.Probe#createTrajectory()
-     */
+	/**
+	 * Creates a <code>Trajectory&lt;ParticleProbeState&gt;</code> object of the
+	 * proper type for saving the probe's history.
+	 * 
+	 * @return a new, empty <code>Trajectory&lt;ParticleProbeState&gt;</code> 
+	 * 		for saving the probe's history
+	 * 
+	 * @author Jonathan Freed
+	 */
     @Override
     public Trajectory<ParticleProbeState> createTrajectory() {
-        return new Trajectory<ParticleProbeState>();
+        this.trajectory = new Trajectory<ParticleProbeState>();
+        return this.trajectory;
+    }
+    
+    /**
+     * Retrieves the trajectory of the proper type for the probe.
+     * 
+     * @return a <code>Trajectory&lt;ParticleProbeState&gt;</code> that is the 
+     * 		trajectory of the probe
+     * 
+     * @author Jonathan Freed
+     */
+    @Override
+    public Trajectory<ParticleProbeState> getTrajectory() {
+    	return this.trajectory;
     }
     
     /**

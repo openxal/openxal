@@ -222,6 +222,14 @@ public abstract class Probe implements IProbe, IArchive {
     public abstract Trajectory<?> createTrajectory();
     
     /**
+     * Require concrete implementations to override this method to retrieve a 
+     * <code>Trajectory</code> object of the appropriate species.
+     * 
+     * @return the <code>Trajectory</code> object for the given probe type
+     */
+    public abstract Trajectory<?> getTrajectory();
+    
+    /**
      * Captures the probe's state in a ProbeState of the appropriate species.
      */
     public abstract ProbeState createProbeState();
@@ -308,7 +316,7 @@ public abstract class Probe implements IProbe, IArchive {
      */
     public Probe(Probe probe)   {
         this.deepCopyProbeBase(probe);
-    };
+    }
     
 
 
@@ -408,18 +416,18 @@ public abstract class Probe implements IProbe, IArchive {
 
 
     
-    /**
-     *  Get the state history of the probe.
-     * 
-     *  @return     Trajectory object of the proper sub-type for the probe type 
-     */
-	@NoEdit	// editors should not access this property
-    public Trajectory<? extends ProbeState> getTrajectory() {
-        if (m_trajHist == null) {
-            this.m_trajHist = createTrajectory();
-        }
-        return m_trajHist; 
-    };
+//    /**
+//     *  Get the state history of the probe.
+//     * 
+//     *  @return     Trajectory object of the proper sub-type for the probe type 
+//     */
+//	@NoEdit	// editors should not access this property
+//    public Trajectory<? extends ProbeState> getTrajectory() {
+//        if (m_trajHist == null) {
+//            this.m_trajHist = createTrajectory();
+//        }
+//        return m_trajHist; 
+//    }
     
     
       

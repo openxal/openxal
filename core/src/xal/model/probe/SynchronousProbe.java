@@ -6,6 +6,7 @@ package xal.model.probe;
 
 import xal.tools.data.DataAdaptor;
 import xal.tools.math.r3.R3;
+import xal.model.probe.traj.ParticleProbeState;
 import xal.model.probe.traj.ProbeState;
 import xal.model.probe.traj.SynchronousState;
 import xal.model.probe.traj.SynchronousTrajectory;
@@ -38,7 +39,8 @@ public class SynchronousProbe extends Probe {
     /** synchronous particle betatron phase without space charge */
     private R3                  m_vecPhsBeta;
     
-    
+    /** probe trajectory */
+    private Trajectory<SynchronousState> trajectory;
 
 
     /*
@@ -129,19 +131,33 @@ public class SynchronousProbe extends Probe {
      * Trajectory Support
      */
 
-    /**
-     * Create and return a <code>Trajectory</code> object of the appropriate
-     * specialty type - here <code>SynchronousTrajectory</code>.  The 
-     * trajectory object is empty, containing no particle history.
-     * 
-     * @return  empty trajectory object for this probe type
-     * 
-     * @see xal.model.probe.Probe#createTrajectory()
-     */
+ 	/**
+ 	 * Creates a <code>Trajectory&lt;SynchronousState&gt;</code> object of the
+ 	 * proper type for saving the probe's history.
+ 	 * 
+ 	 * @return a new, empty <code>Trajectory&lt;SynchronousState&gt;</code> 
+ 	 * 		for saving the probe's history
+ 	 * 
+ 	 * @author Jonathan Freed
+ 	 */
      @Override
      public Trajectory<SynchronousState> createTrajectory() {
-         return new Trajectory<SynchronousState>();
-    }
+         this.trajectory = new Trajectory<SynchronousState>();
+         return this.trajectory;
+     }
+     
+     /**
+      * Retrieves the trajectory of the proper type for the probe.
+      * 
+      * @return a <code>Trajectory&lt;SynchronousState&gt;</code> that is the 
+      * 		trajectory of the probe
+      * 
+      * @author Jonathan Freed
+      */
+     @Override
+     public Trajectory<SynchronousState> getTrajectory() {
+     	return this.trajectory;
+     }
      
     /**
      * Return a new <code>ProbeState</code> object, of the appropriate type,
@@ -154,7 +170,7 @@ public class SynchronousProbe extends Probe {
      @Override
      public SynchronousState createProbeState() {
          return new SynchronousState(this);
-    }
+     }
      
     /**
      * Capture the current probe state to the <code>ProbeState</code> argument.  Note

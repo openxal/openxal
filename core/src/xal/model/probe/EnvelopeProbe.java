@@ -98,6 +98,9 @@ public class EnvelopeProbe extends BunchProbe {
 
 	/** envelope state */
 	private CovarianceMatrix  matSigam;
+	
+	/** probe trajectory */
+	private Trajectory<EnvelopeProbeState> trajectory;
 
 //    /** 
 //     * <p>
@@ -517,16 +520,33 @@ public class EnvelopeProbe extends BunchProbe {
 	}
 
 	/**
-	 * Creates a <code>Trajectory</code> object of the proper type for saving
-	 * the probe's history.
+	 * Creates a <code>Trajectory&lt;EnvelopeProbeState&gt;</code> object of the
+	 * proper type for saving the probe's history.
 	 * 
-	 * @return a new, empty <code>EnvelopeTrajectory</code> object
+	 * @return a new, empty <code>Trajectory&lt;EnvelopeProbeState&gt;</code> 
+	 * 		for saving the probe's history
+	 * 
+	 * @author Jonathan Freed
 	 */
     @Override
 	public Trajectory<EnvelopeProbeState> createTrajectory() {
-		return new Trajectory<EnvelopeProbeState>();
-	}
+		this.trajectory = new Trajectory<EnvelopeProbeState>();
+		return this.trajectory;
+    }
 
+    /**
+     * Retrieves the trajectory of the proper type for the probe.
+     * 
+     * @return a <code>Trajectory&lt;EnvelopeProbeState&gt;</code> that is the 
+     * 		trajectory of the probe
+     * 
+     * @author Jonathan Freed
+     */
+    @Override
+    public Trajectory<EnvelopeProbeState> getTrajectory() {
+    	return this.trajectory;
+    }
+    
 	/**
 	 * Apply the contents of ProbeState to update my current state. The argument
 	 * supplying the new state should be of concrete type

@@ -11,6 +11,7 @@ import xal.tools.beam.PhaseMap;
 import xal.tools.beam.PhaseVector;
 import xal.tools.data.DataAdaptor;
 import xal.model.probe.traj.EnvelopeProbeState;
+import xal.model.probe.traj.ParticleProbeState;
 import xal.model.probe.traj.ProbeState;
 import xal.model.probe.traj.Trajectory;
 import xal.model.probe.traj.TransferMapState;
@@ -45,6 +46,9 @@ public class TransferMapProbe extends Probe {
     
     /** the partial transfer map through last modeling element */
     private PhaseMap    mapPhiElem;
+    
+    /** probe trajectory */
+    private Trajectory<TransferMapState> trajectory;
     
     /** 
      * phase coordinates of the particle location  
@@ -171,18 +175,33 @@ public class TransferMapProbe extends Probe {
       * Probe Overrides
       */
     
-    /**
-     * Create and return a <code>Trajectory</code> object of the appropriate
-     * specialty type - here <code>TransferMapTrajectory</code>.  The 
-     * trajectory object is empty, containing no particle history.
-     * @return  empty trajectory object for this probe type
-     * @see xal.model.probe.Probe#createTrajectory()
-     */
+	/**
+	 * Creates a <code>Trajectory&lt;TransferMapState&gt;</code> object of the
+	 * proper type for saving the probe's history.
+	 * 
+	 * @return a new, empty <code>Trajectory&lt;TransferMapState&gt;</code> 
+	 * 		for saving the probe's history
+	 * 
+	 * @author Jonathan Freed
+	 */
     @Override
     public Trajectory<TransferMapState> createTrajectory() {
-        return new Trajectory<TransferMapState>();
+        this.trajectory = new Trajectory<TransferMapState>();
+        return this.trajectory;
     }
     
+    /**
+     * Retrieves the trajectory of the proper type for the probe.
+     * 
+     * @return a <code>Trajectory&lt;TransferMapState&gt;</code> that is the 
+     * 		trajectory of the probe
+     * 
+     * @author Jonathan Freed
+     */
+    @Override
+    public Trajectory<TransferMapState> getTrajectory() {
+    	return this.trajectory;
+    }
     
     /**
      * Return a new <code>ProbeState</code> object, of the appropriate type,

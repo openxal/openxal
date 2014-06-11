@@ -19,6 +19,9 @@ public class DiagnosticProbe extends Probe {
 
 	// count the number of elements visited	
 	private int elementsVisited = 0;
+	
+	/** probe trajectory */
+	private Trajectory<DiagnosticProbeState> trajectory;
 
 
 	// ************ constructors
@@ -81,10 +84,19 @@ public class DiagnosticProbe extends Probe {
 
 
 	// ************ required Trajectory protocol
-	
+    
+    /**
+     * Creates a trajectory of the proper type for saving the probe's history.
+     * 
+     * @return a new, empty <code>Trajectory&lt;DiagnosticProbeState&gt;</code> 
+     * 		for saving the probe's history. 
+     * 
+     * @author Jonathan Freed
+     */ 
 	@Override
 	public Trajectory<DiagnosticProbeState> createTrajectory() {
-		return new Trajectory<DiagnosticProbeState>();
+		this.trajectory = new Trajectory<DiagnosticProbeState>();
+		return this.trajectory;
 	}
 	
 	@Override
@@ -106,4 +118,17 @@ public class DiagnosticProbe extends Probe {
         state.load(container);
         return state;
     }
+
+    /**
+     * Retrieves the trajectory of the proper type for the probe
+     * 
+     * @return a <code>Trajectory&lt;DiagnosticProbeState&gt;</code> that is the 
+     * 		trajectory of the probe
+     * 
+     * @author Jonathan Freed
+     */ 
+	@Override
+	public Trajectory<DiagnosticProbeState> getTrajectory() {
+		return this.trajectory;
+	}
 }
