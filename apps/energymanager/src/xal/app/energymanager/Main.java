@@ -10,7 +10,7 @@
 package xal.app.energymanager;
 
 import xal.extension.application.*;
-import xal.extension.smf.application.*;
+import xal.extension.application.smf.*;
 
 
 /**

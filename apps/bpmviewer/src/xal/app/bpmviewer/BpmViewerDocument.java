@@ -21,11 +21,12 @@ import xal.tools.data.DataAdaptor;
 import xal.ca.*;
 import xal.extension.widgets.plot.*;
 import xal.extension.application.*;
+import xal.extension.application.util.PredefinedConfController;
 import xal.tools.xml.*;
 import xal.tools.apputils.*;
 import xal.tools.apputils.pvselection.*;
 import xal.extension.widgets.swing.*;
-import xal.extension.smf.application.*;
+import xal.extension.application.smf.*;
 
 
 /**
@@ -544,7 +545,7 @@ public class BpmViewerDocument extends AcceleratorDocument {
 
     /**  Description of the Method */
     private void makePredefinedConfigurationsPanel() {
-        predefinedConfController = new PredefinedConfController( this, "config", "predefinedConfiguration.bpm" );
+        predefinedConfController = new PredefinedConfController( "config", "predefinedConfiguration.bpm" );
         configPanel = predefinedConfController.getJPanel();
         ActionListener selectConfListener =
             new ActionListener() {

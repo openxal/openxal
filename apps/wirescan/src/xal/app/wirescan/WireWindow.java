@@ -37,7 +37,7 @@ import xal.ca.*;
 import xal.tools.apputils.*;
 import xal.service.pvlogger.RemoteLoggingCenter;
 import xal.smf.*;
-import xal.extension.smf.application.*;
+import xal.extension.application.smf.*;
 import xal.smf.impl.*;
 import xal.tools.correlator.*;   // for correlattion
 

@@ -1,0 +1,91 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<Scalar_PV_VIEWER title="SC Linac RF Cavities' Phases">
+    <font name="Monospaced" size="12" style="1"/>
+    <Panels_titles charts_panel_title="Phases vs. Time" values_panel_title="Phases of SCL Cavities"/>
+	<PARAMETERS lastMemorizingTime="NEVER"/>
+    <UpdateController updateTime="3.0"  ChartUpdateTime="15.0"  listenToEPICS="false" recordChartFromEPICS="true" />
+    <ScalarPV pvName="SCL_LLRF:FCM01a:cavPhaseAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM01b:cavPhaseAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM01c:cavPhaseAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM02a:cavPhaseAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM02b:cavPhaseAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM02c:cavPhaseAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM03a:cavPhaseAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM03b:cavPhaseAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM03c:cavPhaseAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM04a:cavPhaseAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM04b:cavPhaseAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM04c:cavPhaseAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM05a:cavPhaseAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM05b:cavPhaseAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM05c:cavPhaseAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM06a:cavPhaseAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM06b:cavPhaseAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM06c:cavPhaseAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM07a:cavPhaseAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM07b:cavPhaseAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM07c:cavPhaseAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM08a:cavPhaseAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM08b:cavPhaseAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM08c:cavPhaseAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM09a:cavPhaseAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM09b:cavPhaseAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM09c:cavPhaseAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM10a:cavPhaseAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM10b:cavPhaseAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM10c:cavPhaseAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM11a:cavPhaseAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM11b:cavPhaseAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM11c:cavPhaseAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM12a:cavPhaseAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM12b:cavPhaseAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM12c:cavPhaseAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM12d:cavPhaseAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM13a:cavPhaseAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM13b:cavPhaseAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM13c:cavPhaseAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM13d:cavPhaseAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM14a:cavPhaseAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM14b:cavPhaseAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM14c:cavPhaseAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM14d:cavPhaseAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM15a:cavPhaseAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM15b:cavPhaseAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM15c:cavPhaseAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM15d:cavPhaseAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM16a:cavPhaseAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM16b:cavPhaseAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM16c:cavPhaseAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM16d:cavPhaseAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM17a:cavPhaseAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM17b:cavPhaseAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM17c:cavPhaseAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM17d:cavPhaseAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM18a:cavPhaseAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM18b:cavPhaseAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM18c:cavPhaseAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM18d:cavPhaseAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM19a:cavPhaseAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM19b:cavPhaseAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM19c:cavPhaseAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM19d:cavPhaseAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM20a:cavPhaseAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM20b:cavPhaseAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM20c:cavPhaseAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM20d:cavPhaseAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM21a:cavPhaseAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM21b:cavPhaseAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM21c:cavPhaseAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM21d:cavPhaseAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM22a:cavPhaseAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM22b:cavPhaseAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM22c:cavPhaseAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM22d:cavPhaseAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM23a:cavPhaseAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM23b:cavPhaseAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM23c:cavPhaseAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM23d:cavPhaseAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+</Scalar_PV_VIEWER>
+
+%==================time chart data=================================
+

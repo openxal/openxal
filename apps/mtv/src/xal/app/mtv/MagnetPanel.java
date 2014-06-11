@@ -13,7 +13,7 @@ import java.awt.event.*;
 import java.util.*;
 import javax.swing.Timer;
 import xal.extension.application.*;
-import xal.extension.smf.application.*;
+import xal.extension.application.smf.*;
 import xal.smf.*;
 import xal.smf.impl.*;
 import xal.ca.*;

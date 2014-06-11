@@ -11,7 +11,7 @@ import java.awt.event.*;
 import java.net.*;
 
 import xal.extension.application.*;
-import xal.extension.smf.application.AcceleratorApplication;
+import xal.extension.application.smf.AcceleratorApplication;
 
 /**
  *  MainScan1D is a concrete subclass of ApplicationAdaptor for one dimensional
@@ -112,34 +112,27 @@ public class MainScan1D extends ApplicationAdaptor {
 	 *@param  args  The command line arguments
 	 */
 	public static void main(String[] args) {
+		final MainScan1D appAdaptor = new MainScan1D();
+		URL[] predefConfURLArr = null;
 
-		if (args.length == 0) {
-			try {
-				AcceleratorApplication.launch(new MainScan1D());
-			} catch (Exception exception) {
-				System.err.println(exception.getMessage());
-				exception.printStackTrace();
-				JOptionPane.showMessageDialog(null, exception.getMessage(),
-						exception.getClass().getName(), JOptionPane.WARNING_MESSAGE);
-			}
-			return;
+
+		if ( args.length == 0 ) {
+			predefConfURLArr = new URL[0];
 		}
-
-		MainScan1D doc = new MainScan1D();
-
-		URL[] predefConfURLArr = new URL[args.length];
-
-		for (int i = 0; i < args.length; i++) {
-			predefConfURLArr[i] = doc.getClass().getResource("config/" + args[i]);
+		else {
+			predefConfURLArr = new URL[args.length];
+			for ( int index = 0; index < args.length; index++ ) {
+				predefConfURLArr[index] = appAdaptor.getResourceURL( "config/" + args[index] );
+			}
 		}
 
 		try {
-			AcceleratorApplication.launch(doc, predefConfURLArr);
-		} catch (Exception exception) {
+			AcceleratorApplication.launch( appAdaptor, predefConfURLArr );
+		}
+		catch (Exception exception) {
 			System.err.println(exception.getMessage());
 			exception.printStackTrace();
-			JOptionPane.showMessageDialog(null, exception.getMessage(),
-					exception.getClass().getName(), JOptionPane.WARNING_MESSAGE);
+			JOptionPane.showMessageDialog( null, exception.getMessage(), exception.getClass().getName(), JOptionPane.WARNING_MESSAGE );
 		}
 	}
 }

@@ -1,7 +1,7 @@
 <?xml version = '1.0' encoding = 'UTF-8'?>
 <BricksDocument date="Tue Aug 13 02:54:35 CST 2013" version="1.0.0">
     <RootBrick>
-        <ViewNode customBeanClass="xal.extension.smf.application.DefaultAcceleratorWindow" height="788" tag="MainWindow" width="1000">
+        <ViewNode customBeanClass="xal.extension.application.smf.DefaultAcceleratorWindow" height="788" tag="MainWindow" width="1000">
             <ViewProxy type="javax.swing.JFrame"/>
             <BeanProperty name="title" value="Virtual Accelerator"/>
             <ViewNode tag="Tabbed Pane">

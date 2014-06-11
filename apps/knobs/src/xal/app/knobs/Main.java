@@ -9,7 +9,7 @@
 package xal.app.knobs;
 
 import xal.extension.application.*;
-import xal.extension.smf.application.*;
+import xal.extension.application.smf.*;
 
 import java.net.URL;
 

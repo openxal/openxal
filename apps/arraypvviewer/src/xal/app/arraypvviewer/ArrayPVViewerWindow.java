@@ -6,7 +6,7 @@
 package xal.app.arraypvviewer;
 
 import xal.extension.application.XalDocument;
-import xal.extension.smf.application.*;
+import xal.extension.application.smf.*;
 
 import java.awt.BorderLayout;
 import java.awt.Color;

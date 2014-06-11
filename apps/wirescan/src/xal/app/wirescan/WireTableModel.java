@@ -11,7 +11,7 @@ import javax.swing.table.AbstractTableModel;
 
 import xal.extension.application.*;
 import xal.smf.*;
-import xal.extension.smf.application.*;
+import xal.extension.application.smf.*;
 import xal.smf.impl.*;
 
 /**

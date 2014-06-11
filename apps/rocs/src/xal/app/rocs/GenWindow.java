@@ -17,7 +17,7 @@ import java.lang.*;
 import java.text.NumberFormat;
 import xal.extension.widgets.swing.*;
 import xal.extension.application.*;
-import xal.extension.smf.application.*;
+import xal.extension.application.smf.*;
 
 /**
  * GenWindow is a subclass of XalWindow used in the ring optics application.  

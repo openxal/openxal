@@ -7,6 +7,9 @@
 /************************************************************************/
 
 package xal.app.rocs;
+
+import xal.extension.application.Application;
+
 import java.math.*;
 import java.util.*;
 import java.io.*;
@@ -49,12 +52,12 @@ public class PhaseSettings{
 
 	//Begin reading in data and 
 	if(choice == 0){
-	    url = getClass().getResource("resources/Phase_623_620_Achromat.dat");
+	    url = Application.getAdaptor().getResourceURL( "Phase_623_620_Achromat.dat" );
 	    is = url.openStream();
 	    isr = new InputStreamReader(is);
 	}
 	else{
-	    url = getClass().getResource("resources/Phase_623_620_NoAchromat.dat");
+	    url = Application.getAdaptor().getResourceURL( "Phase_623_620_NoAchromat.dat" );
 	    is = url.openStream();
 	    isr = new InputStreamReader(is);
 	}

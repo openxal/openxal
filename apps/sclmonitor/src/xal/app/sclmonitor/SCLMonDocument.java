@@ -15,7 +15,7 @@ import xal.tools.xml.XmlDataAdaptor;
 import xal.smf.AcceleratorSeq;
 import xal.smf.AcceleratorSeqCombo;
 import xal.smf.AcceleratorNode;
-import xal.extension.smf.application.*;
+import xal.extension.application.smf.*;
 import xal.smf.data.XMLDataManager;
 import xal.extension.application.*;
 import xal.service.pvlogger.*;

@@ -11,7 +11,7 @@
 package xal.app.acceleratorapplicationtemplate;
 
 import xal.extension.application.*;
-import xal.extension.smf.application.*;
+import xal.extension.application.smf.*;
 
 import javax.swing.*;
 

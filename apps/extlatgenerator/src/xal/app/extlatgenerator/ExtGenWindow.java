@@ -10,7 +10,7 @@ import javax.swing.*;
 import java.util.*;
 
 import xal.extension.application.*;
-import xal.extension.smf.application.*;
+import xal.extension.application.smf.*;
 
 /**
  * MyWindow is a demo subclass of XalWindow used in the demo application.  This 

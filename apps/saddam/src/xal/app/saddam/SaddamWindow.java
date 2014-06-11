@@ -14,7 +14,7 @@ import javax.swing.border.*;
 import java.text.*;
 
 import xal.extension.application.*;
-import xal.extension.smf.application.*;
+import xal.extension.application.smf.*;
 import xal.smf.impl.*;
 import xal.tools.apputils.*;
 import xal.extension.widgets.swing.*;

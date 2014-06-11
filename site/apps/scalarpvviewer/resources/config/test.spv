@@ -1,0 +1,24 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<Scalar_PV_VIEWER title="Test Scalar PVs Viewer">
+    <font name="Monospaced" size="14" style="0"/>
+    <Panels_titles charts_panel_title="CHARTS PANEL" values_panel_title="PVs Values PANEL"/>
+	<PARAMETERS lastMemorizingTime="NEVER"/>
+    <UpdateController updateTime="3.0" ChartUpdateTime="10.0" listenToEPICS="false" recordChartFromEPICS="true" />
+    <ScalarPV pvName="Test_pv_1" referenceValue="1.1" showDif="true" showDifChart="true" showRef="true" showRefChart="false" showValue="true" showValueChart="false"/>
+    <ScalarPV pvName="Test_pv_2" referenceValue="2.1" showDif="true" showDifChart="true" showRef="true" showRefChart="false" showValue="true" showValueChart="false"/>
+    <ScalarPV pvName="Test_pv_3" referenceValue="3.1" showDif="true" showDifChart="true" showRef="true" showRefChart="false" showValue="true" showValueChart="false"/>
+    <ScalarPV pvName="Test_pv_4" referenceValue="4.1" showDif="true" showDifChart="true" showRef="true" showRefChart="false" showValue="true" showValueChart="false"/>
+    <ScalarPV pvName="Test_pv_5" referenceValue="5.1" showDif="true" showDifChart="true" showRef="true" showRefChart="false" showValue="true" showValueChart="false"/>
+</Scalar_PV_VIEWER>
+
+%  Test_pv_1 Test_pv_2 Test_pv_3 Test_pv_4 Test_pv_5
+%==================time chart data=================================
+ 500000101.1  11 12 13 14.1 15
+ 500001102.2  11.1 13 12 14.2 14
+ 500002103.3  11.2 14 11 14.3 13
+ 500003104.4  11.3 15 10 14.4 12
+ 500004105.5  11.4 16 11 14.5 11
+ 500005106.6  11.5 17 12 14.6 10
+ 500006107.7  11.6 18 14 14.7 11
+ 500007108.8  11.7 19 15 14.8 12
+ 500008109.9  11.8 18 16 14.9 13

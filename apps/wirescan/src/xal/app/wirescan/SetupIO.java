@@ -14,7 +14,7 @@ import xal.extension.application.*;
 import xal.tools.data.*;
 import xal.tools.xml.*;
 import xal.smf.*;
-import xal.extension.smf.application.*;
+import xal.extension.application.smf.*;
 import xal.smf.data.*;
 
 /**

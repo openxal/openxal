@@ -204,7 +204,7 @@ public class EnvelopeProbe extends BunchProbe {
     public void initFromTwiss(Twiss[] twiss) {
 //        this.arrTwiss = twiss;
         PhaseVector pv = getCovariance().getMean();
-        CovarianceMatrix cMat = CovarianceMatrix.buildCorrelation(twiss[0],
+        CovarianceMatrix cMat = CovarianceMatrix.buildCovariance(twiss[0],
                 twiss[1], twiss[2], pv);
         this.setCovariance(cMat);
     }

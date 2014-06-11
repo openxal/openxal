@@ -12,7 +12,7 @@ import java.awt.event.*;
 import java.net.*;
 
 import xal.extension.application.*;
-import xal.extension.smf.application.AcceleratorApplication;
+import xal.extension.application.smf.AcceleratorApplication;
 
 /**
  * MainScan2D is a concrete subclass of ApplicationAdaptor 
@@ -96,36 +96,27 @@ public class MainScan2D extends ApplicationAdaptor {
 
     /** The main method of the application. */
     static public void main(String[] args) {
+		final MainScan2D appAdaptor = new MainScan2D();
+		URL[] predefConfURLArr = null;
 
-	if(args.length == 0){
-	    try {
-		AcceleratorApplication.launch( new MainScan2D() );
-	    }
-	    catch(Exception exception) {
-		System.err.println( exception.getMessage() );
-		exception.printStackTrace();
-		JOptionPane.showMessageDialog(null, exception.getMessage(),
-					      exception.getClass().getName(), JOptionPane.WARNING_MESSAGE);
-	    }
-	    return;
-	}
 
-	MainScan2D doc = new MainScan2D();
+		if ( args.length == 0 ) {
+			predefConfURLArr = new URL[0];
+		}
+		else {
+			predefConfURLArr = new URL[args.length];
+			for ( int index = 0; index < args.length; index++ ) {
+				predefConfURLArr[index] = appAdaptor.getResourceURL( "config/" + args[index] );
+			}
+		}
 
-	URL [] predefConfURLArr = new URL[args.length];
-
-	for(int i = 0; i < args.length; i++){
-            predefConfURLArr[i] = doc.getClass().getResource("config/"+args[i]);
-	}
-
-	try{
-	    AcceleratorApplication.launch( doc , predefConfURLArr);
-	}
-	catch(Exception exception) {
-	    System.err.println( exception.getMessage() );
-	    exception.printStackTrace();
-	    JOptionPane.showMessageDialog(null, exception.getMessage(),
-					  exception.getClass().getName(), JOptionPane.WARNING_MESSAGE);
-	}
+		try {
+			AcceleratorApplication.launch( appAdaptor, predefConfURLArr );
+		}
+		catch (Exception exception) {
+			System.err.println(exception.getMessage());
+			exception.printStackTrace();
+			JOptionPane.showMessageDialog( null, exception.getMessage(), exception.getClass().getName(), JOptionPane.WARNING_MESSAGE );
+		}
     }
 }

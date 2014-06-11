@@ -16,7 +16,7 @@ import java.awt.event.*;
 import java.net.*;
 import xal.extension.widgets.swing.*;
 import xal.extension.application.*;
-import xal.extension.smf.application.*;
+import xal.extension.application.smf.*;
 
 /**
  * This is the main class for the loss viewer application.

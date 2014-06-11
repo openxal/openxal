@@ -8,7 +8,7 @@ package xal.app.arraypvviewer;
 import xal.extension.application.Application;
 import xal.extension.application.ApplicationAdaptor;
 import xal.extension.application.XalDocument;
-import xal.extension.smf.application.AcceleratorApplication;
+import xal.extension.application.smf.AcceleratorApplication;
 
 import java.net.URL;
 
@@ -121,35 +121,28 @@ public class ArrayPVViewerMain extends ApplicationAdaptor {
      *@param  args  The command line arguments
      */
     public static void main(String[] args) {
+		final ArrayPVViewerMain appAdaptor = new ArrayPVViewerMain();
+		URL[] predefConfURLArr = null;
 
-        if (args.length == 0) {
-            try {
-                AcceleratorApplication.launch(new ArrayPVViewerMain());
-            } catch (Exception exception) {
-                System.err.println(exception.getMessage());
-                exception.printStackTrace();
-                JOptionPane.showMessageDialog(null, exception.getMessage(),
-                    exception.getClass().getName(), JOptionPane.WARNING_MESSAGE);
-            }
-            return;
-        }
 
-        ArrayPVViewerMain doc = new ArrayPVViewerMain();
+		if ( args.length == 0 ) {
+			predefConfURLArr = new URL[0];
+		}
+		else {
+			predefConfURLArr = new URL[args.length];
+			for ( int index = 0; index < args.length; index++ ) {
+				predefConfURLArr[index] = appAdaptor.getResourceURL( "config/" + args[index] );
+			}
+		}
 
-        URL[] predefConfURLArr = new URL[args.length];
-
-        for (int i = 0; i < args.length; i++) {
-            predefConfURLArr[i] = doc.getClass().getResource("resources/" + args[i]);
-        }
-
-        try {
-           AcceleratorApplication.launch(doc, predefConfURLArr);
-        } catch (Exception exception) {
-            System.err.println(exception.getMessage());
-            exception.printStackTrace();
-            JOptionPane.showMessageDialog(null, exception.getMessage(),
-                exception.getClass().getName(), JOptionPane.WARNING_MESSAGE);
-        }
+		try {
+			AcceleratorApplication.launch( appAdaptor, predefConfURLArr );
+		}
+		catch (Exception exception) {
+			System.err.println(exception.getMessage());
+			exception.printStackTrace();
+			JOptionPane.showMessageDialog( null, exception.getMessage(), exception.getClass().getName(), JOptionPane.WARNING_MESSAGE );
+		}
     }
 }
 

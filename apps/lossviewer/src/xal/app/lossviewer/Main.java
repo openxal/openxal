@@ -13,7 +13,7 @@ import xal.extension.application.*;
 import xal.app.lossviewer.preferences.*;
 import xal.app.lossviewer.signals.*;
 
-import xal.extension.smf.application.*;
+import xal.extension.application.smf.*;
 
 import java.io.*;
 import java.util.*;

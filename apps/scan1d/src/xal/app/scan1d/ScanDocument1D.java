@@ -28,7 +28,8 @@ import xal.tools.apputils.pvselection.*;
 import xal.extension.widgets.swing.*;
 import xal.extension.scan.*;
 import xal.extension.scan.analysis.*;
-import xal.extension.smf.application.*;
+import xal.extension.application.util.PredefinedConfController;
+import xal.extension.application.smf.*;
 
 import xal.service.pvlogger.*;
 import xal.tools.database.*;
@@ -1276,7 +1277,7 @@ public class ScanDocument1D extends AcceleratorDocument {
 	 *  Description of the Method
 	 */
 	private void makePredefinedConfigurationsPanel() {
-		predefinedConfController = new PredefinedConfController( this, "config", "predefinedConfiguration.scan1D" );
+		predefinedConfController = new PredefinedConfController( "config", "predefinedConfiguration.scan1D" );
 		configPanel = predefinedConfController.getJPanel();
 		ActionListener selectConfListener =
 			new ActionListener() {

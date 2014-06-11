@@ -18,7 +18,7 @@ import javax.swing.text.*;
 import java.awt.event.*;
 import javax.swing.event.*;
 
-import xal.extension.smf.application.*;
+import xal.extension.application.smf.*;
 import xal.smf.impl.MagnetMainSupply;
 import xal.extension.application.*;
 import xal.ca.*;

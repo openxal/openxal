@@ -20,7 +20,7 @@ import javax.swing.event.*;
 import java.awt.*;
 import java.awt.event.*;
 
-import xal.extension.smf.application.*;
+import xal.extension.application.smf.*;
 import xal.smf.data.*;
 import xal.smf.*;
 import xal.smf.impl.*;

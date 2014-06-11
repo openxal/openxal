@@ -7,9 +7,9 @@ package xal.app.arraypvviewer;
 
 import xal.extension.application.Commander;
 import xal.extension.application.XalDocument;
+import xal.extension.application.util.PredefinedConfController;
 import xal.app.arraypvviewer.*;
 import xal.ca.ChannelFactory;
-import xal.tools.apputils.PredefinedConfController;
 import xal.tools.apputils.VerticalLayout;
 import xal.tools.apputils.pvselection.PVTreeNode;
 import xal.tools.apputils.pvselection.PVsSelector;
@@ -18,7 +18,7 @@ import xal.extension.widgets.plot.FunctionGraphsJPanel;
 import xal.extension.widgets.plot.IncrementalColors;
 import xal.tools.xml.XmlDataAdaptor;
 import xal.tools.data.DataAdaptor;
-import xal.extension.smf.application.*;
+import xal.extension.application.smf.*;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -511,9 +511,7 @@ public class ArrayPVViewerDocument extends AcceleratorDocument {
 	 *  Description of the Method
 	 */
 	private void makePredefinedConfigurationsPanel() {
-		predefinedConfController = new PredefinedConfController(this,
-				"config",
-				"predefinedConfiguration.apv");
+		predefinedConfController = new PredefinedConfController( "config", "predefinedConfiguration.apv" );
 		configPanel = predefinedConfController.getJPanel();
 		ActionListener selectConfListener =
 			new ActionListener() {

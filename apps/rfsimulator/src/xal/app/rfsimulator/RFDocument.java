@@ -35,7 +35,7 @@ import xal.tools.data.DataAdaptor;
 import xal.tools.xml.XmlDataAdaptor;
 
 import xal.smf.*;
-import xal.extension.smf.application.*;
+import xal.extension.application.smf.*;
 
 public class RFDocument extends AcceleratorDocument {
    /*

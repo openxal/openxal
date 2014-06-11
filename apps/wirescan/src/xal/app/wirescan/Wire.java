@@ -7,7 +7,7 @@ package xal.app.wirescan;
 import javax.swing.JOptionPane;
 
 import xal.extension.application.*;
-import xal.extension.smf.application.*;
+import xal.extension.application.smf.*;
 import xal.smf.impl.*;
 
 /**

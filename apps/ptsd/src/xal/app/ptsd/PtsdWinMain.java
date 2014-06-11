@@ -11,7 +11,7 @@
 package xal.app.ptsd;
 
 import xal.extension.application.XalDocument;
-import xal.extension.smf.application.AcceleratorWindow;
+import xal.extension.application.smf.AcceleratorWindow;
 
 import javax.swing.JFrame;
 import javax.swing.SwingConstants;

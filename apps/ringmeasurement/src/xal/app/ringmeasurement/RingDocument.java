@@ -19,12 +19,12 @@ import java.io.*;
 import xal.extension.application.*;
 import xal.tools.data.DataAdaptor;
 import xal.tools.xml.XmlDataAdaptor;
-import xal.extension.smf.application.*;
+import xal.extension.application.smf.*;
 import xal.smf.data.XMLDataManager;
 import xal.smf.*;
 import xal.tools.apputils.files.*;
 
-import xal.extension.smf.application.*;
+import xal.extension.application.smf.*;
 import xal.smf.impl.*;
 import xal.smf.data.*;
 import xal.extension.application.*;
