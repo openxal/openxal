@@ -9,7 +9,6 @@ package xal.model.probe;
 import xal.model.ModelException;
 import xal.model.alg.EnvTrackerAdapt;
 import xal.model.probe.traj.EnvelopeProbeState;
-import xal.model.probe.traj.EnvelopeTrajectory;
 import xal.model.probe.traj.ProbeState
 ;
 import xal.model.probe.traj.Trajectory;

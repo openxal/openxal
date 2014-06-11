@@ -18,9 +18,7 @@ import xal.tools.data.DataFormatException;
 import xal.tools.math.r3.R3;
 import xal.model.probe.traj.ProbeState;
 import xal.model.probe.traj.Trajectory;
-import xal.model.probe.traj.TransferMapState;
 import xal.model.probe.traj.TwissProbeState;
-import xal.model.probe.traj.TwissTrajectory;
 import xal.model.xml.ParsingException;
 
 /**

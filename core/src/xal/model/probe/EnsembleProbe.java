@@ -12,7 +12,6 @@ import xal.tools.beam.ens.Ensemble;
 import xal.tools.data.DataAdaptor;
 import xal.tools.math.r3.R3;
 import xal.model.probe.traj.EnsembleProbeState;
-import xal.model.probe.traj.EnsembleTrajectory;
 import xal.model.probe.traj.ProbeState;
 import xal.model.probe.traj.Trajectory;
 import xal.model.xml.ParsingException;

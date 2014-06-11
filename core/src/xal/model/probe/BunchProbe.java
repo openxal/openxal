@@ -11,15 +11,9 @@
 package xal.model.probe;
 
 
-import xal.tools.annotation.AProperty.NoEdit;
 import xal.tools.annotation.AProperty.Units;
-import xal.tools.math.r3.R3;
-import xal.model.probe.traj.BeamTrajectory;
 import xal.model.probe.traj.BunchProbeState;
-import xal.model.probe.traj.EnvelopeProbeState;
 import xal.model.probe.traj.ProbeState;
-import xal.model.probe.traj.Trajectory;
-import xal.model.probe.traj.TransferMapState;
 
 
 
@@ -56,8 +50,8 @@ public abstract class BunchProbe extends Probe {
     /** Beam current */
     private double  dblCurrent = 0.0;
     
-    /** probe trajectory */
-    private Trajectory<BunchProbeState> trajectory;
+//    /** probe trajectory */
+//    private Trajectory<BunchProbeState> trajectory;
 
 //    /** particle betatron phase with space charge */
 //    protected R3 vecPhsBeta;

@@ -197,8 +197,8 @@ public class Trajectory<S extends ProbeState> implements IArchive, Iterable<S> {
      *  Local Attributes
      */
     
-    /** ProbeState type for use when testing "instanceof" */
-    private S stateType;
+//    /** ProbeState type for use when testing "instanceof" */
+//    private S stateType;
     
     /** factory for creating ProbeState types from the generic type */
     private ProbeStateFactory<S> factory;

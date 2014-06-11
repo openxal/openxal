@@ -6,10 +6,8 @@ package xal.model.probe;
 
 import xal.tools.data.DataAdaptor;
 import xal.tools.math.r3.R3;
-import xal.model.probe.traj.ParticleProbeState;
 import xal.model.probe.traj.ProbeState;
 import xal.model.probe.traj.SynchronousState;
-import xal.model.probe.traj.SynchronousTrajectory;
 import xal.model.probe.traj.Trajectory;
 import xal.model.xml.ParsingException;
 

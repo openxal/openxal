@@ -6,9 +6,6 @@
 
 package xal.model.probe.traj;
 
-import xal.tools.math.r3.R3;
-import xal.tools.beam.Twiss;
-import xal.tools.beam.PhaseMatrix;
 import xal.tools.beam.PhaseMap;
 import xal.tools.beam.PhaseVector;
 import xal.tools.data.DataAdaptor;
