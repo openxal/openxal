@@ -276,7 +276,7 @@ public class Scenario {
      * @return the Trajectory obtained by running the model
      * @throws IllegalStateException if the probe or trajectory is null
      */
-    public Trajectory getTrajectory() {
+    public Trajectory<? extends ProbeState> getTrajectory() {
         if (probe == null)
             throw new IllegalStateException("scenario doesn't contain a probe");
         if (probe.getTrajectory() == null)

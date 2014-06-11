@@ -100,7 +100,7 @@ public class MatchingFace extends JPanel{
     GenDocument doc;
     Scenario model;
     EnvelopeProbe probe;
-    Trajectory traj;
+    //Trajectory<?> traj;
     ProbeState state;
     PhaseVector coordinates;
     ArrayList<Variable> variables = new ArrayList<Variable>();
@@ -1202,8 +1202,10 @@ public class MatchingFace extends JPanel{
         //                      one_sigmaX4 = wireScanData.wireScanHorizByName("HEBT_Diag:WS04");
         //
         //              }
-        Trajectory<EnvelopeProbeState> traj = probe.createTrajectory();
-        
+        Trajectory<EnvelopeProbeState> traj = probe.getTrajectory();
+        if (traj == null){
+        	traj = probe.createTrajectory();
+        }
         //              System.out.println("trajectory is = "  traj);
         Iterator<EnvelopeProbeState> iterState= traj.stateIterator();
         
@@ -1263,7 +1265,11 @@ public class MatchingFace extends JPanel{
         double[] xrdata = new double[datasize];
         double[] yrdata = new double[datasize];
         
-        //traj = probe.createTrajectory();
+        //what is the point of this line?
+        //I commented it out since traj is instantiated earlier in this method.
+        // - Jonathan Freed
+        //traj = probe.getTrajectory();
+        
         EnvelopeProbeState newstate;
         Twiss[] newtwiss;
         double rx, ry;

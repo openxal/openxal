@@ -55,14 +55,14 @@ public class CalculationsOnParticles extends CalculationEngine implements ISimLo
      * <code>CalculationsOnParticles</code> object for process the simulation
      * data contained in the given particle trajectory object.
      *
-     * @param   trajectory     simulation data for a particle
+     * @param   datSim     simulation data for a particle
      *
      * @author Christopher K. Allen
      * @since  Nov 14, 2013
      */
     
-    public CalculationsOnParticles(Trajectory<ParticleProbeState> trajectory) {
-        ProbeState  pstFinal = trajectory.finalState();
+    public CalculationsOnParticles(Trajectory<? extends ProbeState> datSim) {
+        ProbeState  pstFinal = datSim.finalState();
         
         // Check for correct probe types
         if ( !( pstFinal instanceof ParticleProbeState) )
@@ -71,7 +71,7 @@ public class CalculationsOnParticles extends CalculationEngine implements ISimLo
                     + pstFinal.getClass().getName()
                     );
         
-        this.trjSimul  = trajectory;
+        this.trjSimul  = datSim;
         this.staFinal  = (ParticleProbeState)pstFinal;
         this.matResp   = this.staFinal.getResponseMatrix();
         
