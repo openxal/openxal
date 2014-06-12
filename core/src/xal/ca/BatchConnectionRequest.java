@@ -77,6 +77,7 @@ public class BatchConnectionRequest extends java.lang.Object {
 	/** dispose of the queue */
 	protected void finalize() throws Throwable {
 		RESOURCE_SYNC_QUEUE.dispose();
+		super.finalize();
 	}
 	
 	
