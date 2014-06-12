@@ -69,9 +69,11 @@ abstract public class Monitor {
     
     /**
      *  Make sure monitoring is shut down before destruction
+     * @throws Throwable 
      */
-    protected void finalize()  {
+    protected void finalize() throws Throwable  {
         clear();
+        super.finalize();
     }
     
     
