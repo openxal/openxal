@@ -326,6 +326,7 @@ public class BrowserModel {
 				attribute.nullable = result.getString( "IS_NULLABLE" );
 				attributes.add( attribute );
 			}
+			result.close();
 
 			final List<String> primaryKeys = fetchPrimaryKeys( schema, table );
 			for ( final TableAttribute attribute : attributes ) {
