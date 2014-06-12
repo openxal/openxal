@@ -68,7 +68,7 @@ public class PreferenceController {
 	static public URL getDefaultDocumentURL() throws MalformedURLException {
 		String urlSpec = getDefaultDocumentURLSpec();
 		
-		if ( urlSpec == "" || urlSpec == null ) {
+		if ( "".equals(urlSpec) || urlSpec == null ) {
 			return null;
 		}
 		else {
