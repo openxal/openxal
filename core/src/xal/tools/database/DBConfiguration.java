@@ -251,7 +251,7 @@ public class DBConfiguration {
 		String urlSpec = null;
 		try {
 			urlSpec = getDefaultURLSpec();
-			return urlSpec != null && urlSpec != "" && new File( new URL( urlSpec ).toURI() ).exists();
+			return urlSpec != null && !"".equals(urlSpec) && new File( new URL( urlSpec ).toURI() ).exists();
 		}
 		catch ( Exception exception ) {
 			System.out.println("Database configuration: "+urlSpec);

@@ -163,7 +163,7 @@ public class Accelerator extends AcceleratorSeq implements /* IElement, */ DataL
 	 */
     @SuppressWarnings( { "unchecked", "rawtypes" } )
 	private AcceleratorSeqCombo instantiateComboSequence(String comboType, String comboID, DataAdaptor comboAdaptor) throws ClassNotFoundException {
-		if ( comboType == null || comboType == "" ) {
+		if ( comboType == null || "".equals(comboType) ) {
 			return AcceleratorSeqCombo.getInstance(comboID, this, comboAdaptor);
 		}
 		try {

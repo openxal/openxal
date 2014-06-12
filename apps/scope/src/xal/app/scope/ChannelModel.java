@@ -385,7 +385,7 @@ public class ChannelModel implements TraceSource, DataListener, TimeModelListene
 				_samplePeriod = 0;
 				_waveformDelay = 0;
 
-				if ( channelName == null || channelName == "" || channelName.length() == 0 ) {
+				if ( channelName == null || "".equals(channelName) || channelName.length() == 0 ) {
 					_channel = null;
 				}
 				else {
