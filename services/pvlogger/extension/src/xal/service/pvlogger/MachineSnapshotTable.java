@@ -84,9 +84,7 @@ class MachineSnapshotTable {
 		if(queryStatement != null) {
 			queryStatement.close();
 		}
-		if( record  != null) {
-			record .close();
-		}
+		record.close();
 		return l;
 	}
 
@@ -108,18 +106,14 @@ class MachineSnapshotTable {
 			if(queryStatement != null) {
 				queryStatement.close();
 			}
-			if( record  != null) {
-				record .close();
-			}
+			record.close();
 			return new MachineSnapshot( primaryKey, type, timestamp, comment, new ChannelSnapshot[0] );
 		}
 		else {
 			if(queryStatement != null) {
 				queryStatement.close();
 			}
-			if( record  != null) {
-				record .close();
-			}
+			record.close();
 			return null;
 		}
 	}
@@ -171,9 +165,7 @@ class MachineSnapshotTable {
 		if(queryStatement != null) {
 			queryStatement.close();
 		}
-		if(snapshotResult  != null) {
-			snapshotResult.close();
-		}
+		snapshotResult.close();
 		return snapshots.toArray( new MachineSnapshot[snapshots.size()] );
 	}
 
@@ -204,9 +196,7 @@ class MachineSnapshotTable {
 		if(queryStatement != null) {
 			queryStatement.close();
 		}
-		if(snapshotResult  != null) {
-			snapshotResult.close();
-		}
+		snapshotResult.close();
 		return snapshots.toArray( new MachineSnapshot[snapshots.size()] );
 	}
 
