@@ -74,7 +74,8 @@ class SnapshotGroupTable {
 			final ChannelGroup group = newChannelGroup( connection, resultSet );
 			groups.add( group );
 		}
-		
+		resultSet.close();
+		groupsQueryStatement.close();
 		return groups;
 	}
 	
@@ -90,7 +91,12 @@ class SnapshotGroupTable {
 		groupQueryStatement.setString( 1, type );
 		
 		final ResultSet resultSet = groupQueryStatement.executeQuery();
-		return resultSet.next() ? newChannelGroup( connection, resultSet ) : null;
+		try {
+			return resultSet.next() ? newChannelGroup( connection, resultSet ) : null;
+		} finally {
+			resultSet.close();
+			groupQueryStatement.close();
+		}
 	}
 	
 	
@@ -119,6 +125,7 @@ class SnapshotGroupTable {
 		while ( result.next() ) {
 			types.add( result.getString( PRIMARY_KEY ) );
 		}
+		result.close();
 		return types.toArray( new String[types.size()] );		
 	}
 	
@@ -138,6 +145,8 @@ class SnapshotGroupTable {
 		while ( result.next() ) {
 			types.add( result.getString( PRIMARY_KEY ) );
 		}
+		result.close();
+		statement.close();
 		return types.toArray( new String[types.size()] );		
 	}
 	
