@@ -559,7 +559,7 @@ public class HEBTOrbitCorrector {
 			 return false;
 		 }
 		 
-		 Trajectory<EnvelopeProbeState> trajectory = probe.createTrajectory();
+		 Trajectory<EnvelopeProbeState> trajectory = probe.getTrajectory();
 		 
 		 AcceleratorNode foil = accSeq.getNodeWithId("Ring_Inj:Foil");
 		 

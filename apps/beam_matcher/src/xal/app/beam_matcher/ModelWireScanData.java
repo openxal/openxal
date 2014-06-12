@@ -109,7 +109,7 @@ public class ModelWireScanData {
      * Debugging
      */
     public ArrayList<Double> extractWsOneBeamSize(Scenario model, String STR_WS_ID) {
-        Trajectory traj = model.getTrajectory();
+        Trajectory<?> traj = model.getTrajectory();
         
         ProbeState targ = traj.stateForElement(STR_WS_ID);
         

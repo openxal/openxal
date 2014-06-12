@@ -48,7 +48,6 @@ import xal.model.probe.Probe;
 import xal.model.probe.EnvelopeProbe;
 import xal.sim.scenario.ProbeFactory;
 import xal.model.probe.traj.EnvelopeProbeState;
-import xal.model.probe.traj.EnvelopeTrajectory;
 import xal.model.probe.traj.ProbeState;
 import xal.model.probe.traj.Trajectory;
 import xal.sim.scenario.Scenario;
@@ -1203,9 +1202,7 @@ public class MatchingFace extends JPanel{
         //
         //              }
         Trajectory<EnvelopeProbeState> traj = probe.getTrajectory();
-        if (traj == null){
-        	traj = probe.createTrajectory();
-        }
+
         //              System.out.println("trajectory is = "  traj);
         Iterator<EnvelopeProbeState> iterState= traj.stateIterator();
         

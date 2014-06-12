@@ -575,7 +575,7 @@ public class ModelFace extends JPanel{
 		catch(Exception exception){
 			exception.printStackTrace();
 		}
-		Trajectory<EnvelopeProbeState> traj= probe.createTrajectory();
+		Trajectory<EnvelopeProbeState> traj= probe.getTrajectory();
 		//resetPlot();
 		
 		//Convert units to meters for each BSM rms
@@ -653,7 +653,7 @@ public class ModelFace extends JPanel{
 			exception.printStackTrace();
 		}
         
-		Trajectory<EnvelopeProbeState> traj= probe.createTrajectory();
+		Trajectory<EnvelopeProbeState> traj= probe.getTrajectory();
 		double error = 0.0;
 		int size = namelist.size();
 		double rz=0;
@@ -844,7 +844,7 @@ public class ModelFace extends JPanel{
 		ArrayList<Double> sdata = new ArrayList<Double>();
 		ArrayList<Double> zdata = new ArrayList<Double>();
         
-		Trajectory<EnvelopeProbeState> traj = probe.createTrajectory();
+		Trajectory<EnvelopeProbeState> traj = probe.getTrajectory();
 		Iterator<EnvelopeProbeState> iterState = traj.stateIterator();
         
 		while(iterState.hasNext()){
@@ -890,7 +890,7 @@ public class ModelFace extends JPanel{
 		double[] srdata = new double[datasize];
 		double[] zrdata = new double[datasize];
 		
-		//traj = probe.createTrajectory();
+		//traj = probe.getTrajectory();
 		EnvelopeProbeState newstate;
 		Twiss[] newtwiss;
 		double rz;

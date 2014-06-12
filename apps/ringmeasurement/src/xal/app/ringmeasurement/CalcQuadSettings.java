@@ -15,7 +15,7 @@ import xal.sim.scenario.ProbeFactory;
 import xal.model.alg.TransferMapTracker;
 import xal.sim.scenario.Scenario;
 import xal.sim.sync.SynchronizationException;
-import xal.model.probe.traj.TransferMapTrajectory;
+import xal.model.probe.traj.Trajectory;
 import xal.model.probe.traj.TransferMapState;
 import xal.tools.beam.calc.CalculationsOnRings;
 import xal.tools.math.r3.R3;
@@ -54,7 +54,7 @@ public class CalcQuadSettings implements Runnable {
     
 	TransferMapProbe myProbe;
     
-	TransferMapTrajectory traj;
+	Trajectory<TransferMapState> traj;
     
 	double stepSize = 0.1;
     
@@ -271,7 +271,7 @@ public class CalcQuadSettings implements Runnable {
         
 		// get the online model calculated BPM phase
 		myProbe = (TransferMapProbe) scenario.getProbe();
-		traj = (TransferMapTrajectory) myProbe.getTrajectory();
+		traj = myProbe.getTrajectory();
         
 		// CKA - this resource is no longer needed
 //		// get the 1st BPM betatron phase as the reference

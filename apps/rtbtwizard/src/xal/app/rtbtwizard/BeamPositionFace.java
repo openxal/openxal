@@ -9,15 +9,20 @@ import xal.tools.apputils.EdgeLayout;
 import xal.tools.messaging.*;
 import xal.ca.*;
 import xal.tools.data.*;
+
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.io.*;
+
 import javax.swing.*;
 import javax.swing.event.*;
+
 import java.awt.*;
 import java.awt.event.*;
+
 import xal.extension.application.*;
+
 import java.util.Timer.*;
 
 import xal.tools.data.*;
@@ -35,14 +40,18 @@ import xal.model.xml.*;
 //import xal.tools.optimizer.*;
 import xal.tools.beam.Twiss;
 import xal.extension.widgets.plot.*;
+
 import java.text.NumberFormat;
+
 import xal.extension.widgets.swing.DecimalField;
 import xal.tools.apputils.EdgeLayout;
 import xal.tools.data.*;
 import xal.tools.xml.XmlDataAdaptor;
 import xal.tools.beam.*;
 import xal.tools.statistics.*;
+
 import java.text.DecimalFormat;
+
 import xal.service.pvlogger.sim.PVLoggerDataSource;
 import xal.extension.widgets.apputils.SimpleProbeEditor;
 
@@ -566,7 +575,7 @@ public class BeamPositionFace extends JPanel{
             exception.printStackTrace();
         }
         
-        final Trajectory particleTrajectory = scenario.getTrajectory();
+        final Trajectory<?> particleTrajectory = scenario.getTrajectory();
         final ParticleProbeState windowstate = (ParticleProbeState)particleTrajectory.stateForElement("RTBT_Vac:VIW");
         final ParticleProbeState targetstate = (ParticleProbeState)particleTrajectory.stateForElement("RTBT:Tgt");
         PhaseVector windowcoords = windowstate.getPhaseCoordinates();
@@ -634,8 +643,8 @@ public class BeamPositionFace extends JPanel{
             exception.printStackTrace();
         }
         
-        Trajectory traj= probe.getTrajectory();
-        Iterator<ProbeState> iterState= traj.stateIterator();
+        Trajectory<TransferMapState> traj= probe.getTrajectory();
+        Iterator<?> iterState= traj.stateIterator();
         
         while(iterState.hasNext()){
             ParticleProbeState state= (ParticleProbeState)iterState.next();

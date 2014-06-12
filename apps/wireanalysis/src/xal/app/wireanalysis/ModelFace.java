@@ -13,8 +13,11 @@ import javax.swing.event.*;
 import javax.swing.border.*;
 import javax.swing.JOptionPane;
 import javax.swing.table.*;
+
 import java.awt.*;
+
 import javax.swing.*;
+
 import java.awt.event.*;
 import java.util.*;
 import java.util.Timer.*;
@@ -29,11 +32,15 @@ import xal.tools.apputils.EdgeLayout;
 import xal.tools.apputils.files.RecentFileTracker;
 import xal.extension.widgets.plot.*;
 import xal.tools.data.*;
+
 import java.text.NumberFormat;
+
 import xal.tools.messaging.*;
 import xal.ca.*;
+
 import java.text.NumberFormat;
 import java.text.DecimalFormat;
+
 import xal.tools.apputils.NonConsecutiveSeqSelector;
 import xal.extension.widgets.apputils.SimpleProbeEditor;
 import xal.extension.widgets.apputils.SimpleChartPopupMenu;
@@ -82,7 +89,7 @@ public class ModelFace extends JPanel{
 	private EnvelopeProbe initprobe;
     private Scenario scenario;
 	private Scenario solvermodel;
-    private EnvelopeTrajectory traj;
+    private Trajectory<EnvelopeProbeState> traj;
     private ArrayList<AcceleratorSeq> sectionnames = new ArrayList<AcceleratorSeq>();
     private ArrayList<AcceleratorSeq> seqlist = new ArrayList<AcceleratorSeq>();
     private ArrayList<AcceleratorNode> nodes = new ArrayList<AcceleratorNode>();
@@ -665,8 +672,8 @@ public class ModelFace extends JPanel{
                     plds.closeConnection();
                 }catch(Exception ex){}
                 
-                EnvelopeTrajectory traj = (EnvelopeTrajectory) tempprobe.getTrajectory();
-                Iterator iterState= traj.stateIterator();
+                Trajectory<EnvelopeProbeState> traj = tempprobe.getTrajectory();
+                Iterator<EnvelopeProbeState> iterState= traj.stateIterator();
                 EnvelopeProbeState state = (EnvelopeProbeState)iterState.next();
                 CovarianceMatrix covarianceMatrix = state.getCovarianceMatrix();
                 Twiss[] twiss = covarianceMatrix.computeTwiss();
@@ -970,7 +977,7 @@ public class ModelFace extends JPanel{
 			e.printStackTrace();
 		}
 		
-		EnvelopeTrajectory traj = (EnvelopeTrajectory)tempprobe.getTrajectory();
+		Trajectory<EnvelopeProbeState> traj = tempprobe.getTrajectory();
 		EnvelopeProbeState newstate = (EnvelopeProbeState)traj.stateForElement(init);
 		initprobe.applyState(newstate);
 		modelinitialized = true;
@@ -1177,8 +1184,8 @@ public class ModelFace extends JPanel{
 			e.printStackTrace();
 		}
 		
-		EnvelopeTrajectory traj = (EnvelopeTrajectory) tempprobe.getTrajectory();
-        Iterator<ProbeState> iterState= traj.stateIterator();
+		Trajectory<EnvelopeProbeState> traj = tempprobe.getTrajectory();
+        Iterator<?> iterState= traj.stateIterator();
         EnvelopeProbeState state= (EnvelopeProbeState)iterState.next();
         
         CovarianceMatrix covarianceMatrix = state.getCovarianceMatrix();
@@ -1237,7 +1244,7 @@ public class ModelFace extends JPanel{
 			exception.printStackTrace();
 		}
         
-		EnvelopeTrajectory traj= (EnvelopeTrajectory)solverprobe.getTrajectory();
+		Trajectory<EnvelopeProbeState> traj= solverprobe.getTrajectory();
 		double error = 0.0;
 		int size = Wirenamelist.size();
 		double rx=0;
@@ -1274,7 +1281,7 @@ public class ModelFace extends JPanel{
 			exception.printStackTrace();
 		}
 		
-		EnvelopeTrajectory traj= (EnvelopeTrajectory)solverprobe.getTrajectory();
+		Trajectory<EnvelopeProbeState> traj= solverprobe.getTrajectory();
 		double xerror = 0.0;
 		double yerror = 0.0;
 		int size = Wirenamelist.size();
@@ -1320,8 +1327,8 @@ public class ModelFace extends JPanel{
 		ArrayList<Double> hdata = new ArrayList<Double>();
 		ArrayList<Double> vdata = new ArrayList<Double>();
         
-		EnvelopeTrajectory traj= (EnvelopeTrajectory)solverprobe.getTrajectory();
-		Iterator<ProbeState> iterState= traj.stateIterator();
+		Trajectory<EnvelopeProbeState> traj= solverprobe.getTrajectory();
+		Iterator<EnvelopeProbeState> iterState= traj.stateIterator();
         
         
 		while(iterState.hasNext()){
@@ -1371,7 +1378,7 @@ public class ModelFace extends JPanel{
 		double[] srdata = new double[datasize];
 		double[] xrdata = new double[datasize];
 		double[] yrdata = new double[datasize];
-		traj= (EnvelopeTrajectory)solverprobe.getTrajectory();
+		traj= solverprobe.getTrajectory();
 		EnvelopeProbeState newstate;
 		Twiss[] newtwiss;
 		double rx, ry;
@@ -1412,7 +1419,7 @@ public class ModelFace extends JPanel{
 		double[] srdata = new double[datasize];
 		double[] xrdata = new double[datasize];
 		double[] yrdata = new double[datasize];
-		traj= (EnvelopeTrajectory)solverprobe.getTrajectory();
+		traj= solverprobe.getTrajectory();
 		EnvelopeProbeState newstate;
         
 		for(int i =0; i<datasize; i++){
@@ -1454,8 +1461,8 @@ public class ModelFace extends JPanel{
         catch(Exception exception){
 			exception.printStackTrace();
         }
-        EnvelopeTrajectory traj= (EnvelopeTrajectory)solverprobe.getTrajectory();
-        Iterator<ProbeState> iterState= traj.stateIterator();
+        Trajectory<EnvelopeProbeState> traj= solverprobe.getTrajectory();
+        Iterator<EnvelopeProbeState> iterState= traj.stateIterator();
         
         while(iterState.hasNext()){
             EnvelopeProbeState state= (EnvelopeProbeState)iterState.next();
@@ -1484,7 +1491,7 @@ public class ModelFace extends JPanel{
     
     public void resetTwissTable(ArrayList<Variable> vars, Trial trial){
 		Iterator<Variable> itr = vars.iterator();
-		traj= (EnvelopeTrajectory)solverprobe.getTrajectory();
+		traj= solverprobe.getTrajectory();
 		EnvelopeProbeState newstate = (EnvelopeProbeState)traj.statesForElement((String)elementList.getSelectedItem())[0];
 		
 		double T = newstate.getKineticEnergy();

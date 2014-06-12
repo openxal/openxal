@@ -69,7 +69,7 @@ public class BeamExcursionOrbitAdaptor {
 	
 	
 	/** update the map with the specified scenario trajectory */
-	public void update( final Trajectory trajectory ) {
+	public void update( final Trajectory<?> trajectory ) {
 		try {
 			final AcceleratorSeq sequence = _sequence;
 			

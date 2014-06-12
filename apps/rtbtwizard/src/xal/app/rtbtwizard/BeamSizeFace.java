@@ -446,7 +446,7 @@ public class BeamSizeFace extends JPanel{
         String time = solvertimefield.getText();
         double solvetime= new Double(Double.parseDouble(time));
         
-        EnvelopeTrajectory traj= (EnvelopeTrajectory)probe.getTrajectory();
+        Trajectory<EnvelopeProbeState> traj= probe.getTrajectory();
         EnvelopeProbeState state = (EnvelopeProbeState)traj.statesForElement(namelist.get(0))[0];
         //EnvelopeProbeState state =(EnvelopeProbeState)traj.statesForElement("RTBT_Diag:WS20")[0];
        
@@ -546,7 +546,7 @@ public class BeamSizeFace extends JPanel{
             exception.printStackTrace();
         }
         
-        Trajectory<EnvelopeProbeState> traj = probe.createTrajectory();
+        Trajectory<EnvelopeProbeState> traj = probe.getTrajectory();
         double error = 0.0;
         int size = namelist.size();
         double rx=0;
@@ -764,7 +764,7 @@ public class BeamSizeFace extends JPanel{
 		DecimalFormat decfor =  new DecimalFormat("###.000");
 		int size = fullnamelist.size();
         
-		Trajecotry<EnvelopeProbeState> traj= probe.getTrajectory();
+		Trajectory<EnvelopeProbeState> traj= probe.getTrajectory();
 		EnvelopeProbeState newstate;
 		Twiss[] newtwiss;
 		double rx, ry;
@@ -981,7 +981,7 @@ public class BeamSizeFace extends JPanel{
 		}
         
 		//probe.reset();
-		Trajectory<EnvelopeProbeState> traj = probe.createTrajectory();
+		Trajectory<EnvelopeProbeState> traj = probe.getTrajectory();
 		//System.out.println("trajectory is = " + traj);
 		Iterator<EnvelopeProbeState> iterState= traj.stateIterator();
         

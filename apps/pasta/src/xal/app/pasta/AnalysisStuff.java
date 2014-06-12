@@ -509,7 +509,7 @@ public class AnalysisStuff {
     private void cavOffCalc() {
         
 	    // some model stuff
-	    Trajectory traj;
+	    Trajectory<?> traj;
 	    //EnvelopeProbeState state0, state1, state2;
 	    ProbeState state0, state1, state2;
 	    ProbeState[] states;
@@ -601,7 +601,7 @@ public class AnalysisStuff {
 	    cavPhaseScaledMax = (phaseCavMeasured.get(phaseCavMeasured.size()-1)).doubleValue();
         
 	    // some model stuff
-	    Trajectory traj;
+	    Trajectory<?> traj;
 	    //EnvelopeProbeState state0, state1, state2;
 	    ProbeState state0, state1, state2;
 	    ProbeState[] states;

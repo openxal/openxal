@@ -159,6 +159,15 @@ class GenericMarkerCoordinateTransfer extends CoordinateTransfer {
 	
 	
 	/** get the transfer matrix from the transfer map trajectory */
+	
+	/** 
+	 * These getTransferMatrix functions had to be rewritten to implement the generic Trajectory
+	 * and could be simplified from multiple functions, to just the two.  I left the old functions
+	 * commented out.
+	 * 
+	 * - Jonathan M. Freed
+	 * 
+	 */
 	protected PhaseMatrix getTransferMatrix( final Trajectory<? extends ProbeState> trajectory, final AcceleratorNode fromNode, final AcceleratorNode toNode ) {
 		if ( trajectory.getStateType() instanceof EnvelopeProbeState ) {
 			//return getTransferMatrix( trajectory, fromNode, toNode );

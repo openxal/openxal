@@ -87,7 +87,7 @@ public class Simulation {
 	final protected List<AcceleratorNode> _evaluationNodes;
 	
 	/** trajectory */
-	final protected Trajectory _trajectory;
+	final protected Trajectory<?> _trajectory;
 	
 	/** kinetic energy */
 	final protected double _outputKineticEnergy;
@@ -234,7 +234,7 @@ public class Simulation {
 	 * Get the trajectory.
 	 * @return the trajectory.
 	 */
-	public Trajectory getTrajectory() {
+	public Trajectory<?> getTrajectory() {
 		return _trajectory;
 	}
 	
@@ -708,7 +708,7 @@ public class Simulation {
 	/** Find the node's corresponding state from the state iterator */
 	static protected interface StateFinder {
 		/** find the trajectory's states corresponding to the specified nodes */
-		public ProbeState[] findStates( final List<AcceleratorNode> nodes, final Trajectory trajectory );
+		public ProbeState[] findStates( final List<AcceleratorNode> nodes, final Trajectory<?> trajectory );
 	}
 	
 	
@@ -719,8 +719,8 @@ public class Simulation {
 	static protected StateFinder newFirstStateFinder() {
 		return new StateFinder() {
 			@Override
-            public ProbeState[] findStates( final List<AcceleratorNode> nodes, final Trajectory trajectory ) {
-				final Iterator<ProbeState> stateIter = trajectory.stateIterator();
+            public ProbeState[] findStates( final List<AcceleratorNode> nodes, final Trajectory<?> trajectory ) {
+				final Iterator<?> stateIter = trajectory.stateIterator();
 				final ProbeState[] states = new ProbeState[ nodes.size() ];
 				
 				int index = 0;
@@ -728,7 +728,7 @@ public class Simulation {
 					final String nodeID = node.getId();
                     //System.out.println( "Searching for node: " + nodeID );
 					while ( stateIter.hasNext() ) {
-						final ProbeState state = stateIter.next();
+						final ProbeState state = (ProbeState) stateIter.next();
                         //System.out.println( "Testing state: " + state.getElementId() );
 						if ( state.getElementId().startsWith( nodeID ) ) {
 							states[ index++ ] = state;

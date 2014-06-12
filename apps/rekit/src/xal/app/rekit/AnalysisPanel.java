@@ -16,9 +16,11 @@ import java.util.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.text.NumberFormat;
+
 import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.table.*;
+
 import java.lang.Math.*;
 import java.lang.String;
 import java.text.DecimalFormat;
@@ -110,7 +112,7 @@ public class AnalysisPanel extends JPanel{
 	Accelerator accl = new Accelerator();
 	ParticleProbe probe;
 	Scenario scenario;
-	ParticleTrajectory traj;
+	Trajectory<ParticleProbeState> traj;
 	ParticleProbeState state;
 	PhaseVector coordinates;
 	
@@ -476,7 +478,7 @@ public class AnalysisPanel extends JPanel{
 			System.out.println(e);
 		}
 		
-		ParticleTrajectory traj = (ParticleTrajectory)probe.getTrajectory();
+		Trajectory<ParticleProbeState> traj = probe.getTrajectory();
 		state = (ParticleProbeState)traj.stateForElement("RTBT_Mag:ExSptm");
 		coordinates = state.getPhaseCoordinates();
 		
@@ -619,7 +621,7 @@ public class AnalysisPanel extends JPanel{
 			System.out.println(e);
 		}
 
-		traj = (ParticleTrajectory)probe.getTrajectory();
+		traj = probe.getTrajectory();
 		state = (ParticleProbeState)traj.stateForElement("RTBT_Mag:ExSptm");
 		coordinates = state.getPhaseCoordinates();
 		error = ((coordinates.gety()-yGoalField.getDoubleValue())*(coordinates.gety()-yGoalField.getDoubleValue()))
@@ -654,7 +656,7 @@ public class AnalysisPanel extends JPanel{
 	}
 
 
-	void plot(Trajectory traj){
+	void plot(Trajectory<ParticleProbeState> traj){
 		
 		plotPanel.removeAllGraphData();
 		BasicGraphData ygraphdata = new BasicGraphData();
@@ -665,7 +667,7 @@ public class AnalysisPanel extends JPanel{
 		ArrayList<Double> ydata = new ArrayList<Double>();
 		ArrayList<Double> pydata = new ArrayList<Double>();
 		
-		Iterator<ProbeState> iterState= traj.stateIterator();
+		Iterator<ParticleProbeState> iterState= traj.stateIterator();
 		
 		while(iterState.hasNext()){
 			state = (ParticleProbeState)iterState.next();

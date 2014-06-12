@@ -17,7 +17,6 @@ import xal.sim.scenario.*;
 import xal.model.probe.traj.*;
 import xal.smf.impl.*;
 import xal.tools.beam.PhaseMatrix;
-
 import Jama.Matrix;
 
 
@@ -30,7 +29,7 @@ public class OrbitMatcher {
 	final List<? extends AcceleratorNode> MEASURED_NODES;
 	
 	/** trajectory from which to get the transfer matrices */
-	protected MatrixTrajectory _trajectory;
+	protected Trajectory<?> _trajectory;
 	
 	/** horizontal beam position transform */
 	protected BeamPositionTransform _xBeamPositionTransform;
@@ -40,7 +39,7 @@ public class OrbitMatcher {
 	
 	
 	/** Constructor */
-	public OrbitMatcher( final AcceleratorNode targetNode, final List<? extends AcceleratorNode> measuredNodes, final MatrixTrajectory trajectory ) {
+	public OrbitMatcher( final AcceleratorNode targetNode, final List<? extends AcceleratorNode> measuredNodes, final Trajectory<?> trajectory ) {
 		TARGET_NODE = targetNode;
 		MEASURED_NODES = measuredNodes;
 		
@@ -61,7 +60,7 @@ public class OrbitMatcher {
 	
 	
 	/** set the trajectory */
-	public void setTrajectory( final MatrixTrajectory trajectory ) {
+	public void setTrajectory( final Trajectory<?> trajectory ) {
 		_trajectory = trajectory;
 		
 		final List<TransferRow> xTransferRows = new ArrayList<TransferRow>( MEASURED_NODES.size() );

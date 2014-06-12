@@ -9,11 +9,13 @@ package xal.app.beamatfoil;
 
 import java.awt.*;
 import java.awt.event.*;
+
 import javax.swing.*;
 import javax.swing.table.*;
 import javax.swing.text.*;
 import javax.swing.event.*;
 import javax.swing.border.*;
+
 import java.util.*;
 import java.io.*;
 import java.util.List;
@@ -21,35 +23,24 @@ import java.beans.*;
 
 import xal.extension.widgets.swing.Wheelswitch;
 import xal.tools.text.FortranNumberFormat;
-
 import xal.ca.*;
-
 import xal.extension.widgets.plot.*;
 import xal.tools.apputils.*;
 import xal.extension.widgets.swing.*;
 import xal.tools.xml.*;
-
 import xal.service.pvlogger.*;
 import xal.tools.database.*;
-
 import xal.smf.proxy.ElectromagnetPropertyAccessor;
-
 import xal.smf.*;
 import xal.smf.impl.*;
 import xal.smf.impl.qualify.*;
-
 import xal.model.*;
 import xal.sim.scenario.*;
 import xal.service.pvlogger.sim.PVLoggerDataSource.*;
 import xal.model.probe.*;
-//import xal.model.alg.resp.*;
-//import xal.model.probe.resp.*;
-import xal.model.probe.traj.MatrixTrajectory;
-import xal.model.probe.traj.TransferMapTrajectory;
+import xal.model.probe.traj.Trajectory;
 import xal.model.probe.traj.TransferMapState;
 import xal.sim.sync.*;
-//import xal.model.probe.resp.traj.*;
-
 import xal.tools.beam.*;
 import xal.model.alg.TransferMapTracker;
 
@@ -545,7 +536,7 @@ public class RingFoilPosCorrector {
             return false;
         }
         
-        TransferMapTrajectory trajectory = (TransferMapTrajectory) probe.getTrajectory();
+        Trajectory<TransferMapState> trajectory = probe.getTrajectory();
         
         makePhaseMatrix(trajectory);
         
@@ -609,7 +600,7 @@ public class RingFoilPosCorrector {
                 messageTextLocal.setText("Can not run scenario! Stop!");
                 return false;
             }
-            trajectory = (TransferMapTrajectory) probe.getTrajectory();
+            trajectory =  probe.getTrajectory();
             //System.out.println("debug i="+i + "======================================");
             makePhaseMatrix(trajectory);
             PhaseVector bpmEndPHV_new = BPM10_BPM13_phm.times(bpmStartPHV);
@@ -634,7 +625,7 @@ public class RingFoilPosCorrector {
     }
     
 	
-    private void makePhaseMatrix(TransferMapTrajectory trajectory){
+    private void makePhaseMatrix(Trajectory<TransferMapState> trajectory){
         //trajectory - it is from ring start to finish
         //BPM_A10 - DH_A10 - DH_A11 - Foil - finish
         //start - DH_A12 - DH_A13 - Ring_Diag:BPM_A13
@@ -665,7 +656,7 @@ public class RingFoilPosCorrector {
      *  Method getTransferMatrix(String, String) was removed from TransferMapTrajectory
      *  Parameters changed to strings to fit this program
      */
-	protected PhaseMatrix getTransferMatrix( final TransferMapTrajectory trajectory, final String fromNode, final String toNode ) {
+	protected PhaseMatrix getTransferMatrix( final Trajectory<TransferMapState> trajectory, final String fromNode, final String toNode ) {
 		final PhaseMatrix fromMatrix = ((TransferMapState)trajectory.stateForElement( fromNode )).getTransferMap().getFirstOrder();
 		final PhaseMatrix toMatrix = ((TransferMapState)trajectory.stateForElement( toNode )).getTransferMap().getFirstOrder();
 		return getTransferMatrix( fromMatrix, toMatrix );
@@ -780,7 +771,7 @@ public class RingFoilPosCorrector {
             return false;
         }
         
-        TransferMapTrajectory trajectory = (TransferMapTrajectory) probe.getTrajectory();
+        Trajectory<TransferMapState> trajectory = probe.getTrajectory();
         
         makePhaseMatrix(trajectory);
         

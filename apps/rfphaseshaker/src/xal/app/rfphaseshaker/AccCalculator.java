@@ -6,6 +6,7 @@
 package xal.app.rfphaseshaker;
 
 import java.util.*;
+
 import javax.swing.*;
 
 import xal.smf.AcceleratorSeq;
@@ -14,15 +15,12 @@ import xal.smf.AcceleratorNode;
 import xal.smf.impl.BPM;
 import xal.smf.impl.RfCavity;
 import xal.sim.scenario.AlgorithmFactory;
-
-
 import xal.sim.scenario.Scenario;
 import xal.model.probe.ParticleProbe;
 import xal.model.alg.ParticleTracker;
 import xal.sim.scenario.ProbeFactory;
 import xal.model.ModelException;
 import xal.model.probe.traj.Trajectory;
-
 import xal.extension.widgets.plot.BasicGraphData;
 
 
@@ -293,7 +291,7 @@ public class AccCalculator {
                 return;
             }
             
-            Trajectory traj = scenario.getProbe().getTrajectory();
+            Trajectory<?> traj = scenario.getProbe().getTrajectory();
             eKinOut = traj.finalState().getKineticEnergy();
             timeOut = traj.finalState().getTime();
             
@@ -366,7 +364,7 @@ public class AccCalculator {
                 return;
             }
             
-            Trajectory traj = scenario.getProbe().getTrajectory();
+            Trajectory<?> traj = scenario.getProbe().getTrajectory();
             eKinOut = traj.finalState().getKineticEnergy();
             timeOut = traj.finalState().getTime();
             

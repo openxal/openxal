@@ -845,8 +845,8 @@ public class EnergyManager implements DataListener, ParameterStoreListener, Opti
 	/** Scale the design magnet fields of the specified magnets to the energy based on the current RF settings. */
 	public void scaleMagnetFieldsToEnergy( final List<LiveParameter> magnetParameters ) {
 		final Simulation simulation = runOnlineModelSimulation();
-		final Trajectory trajectory = simulation.getTrajectory();
-		final Trajectory designTrajectory = getDesignSimulation().getTrajectory();
+		final Trajectory<?> trajectory = simulation.getTrajectory();
+		final Trajectory<?> designTrajectory = getDesignSimulation().getTrajectory();
 		
 		for ( LiveParameter parameter : magnetParameters ) {
 			final ElectromagnetAgent agent = (ElectromagnetAgent)parameter.getNodeAgent();

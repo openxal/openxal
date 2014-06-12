@@ -36,7 +36,6 @@ import xal.model.probe.Probe;
 import xal.model.probe.traj.ProbeState;
 import xal.model.probe.traj.Trajectory;
 import xal.model.probe.traj.TransferMapState;
-import xal.model.probe.traj.TransferMapTrajectory;
 import xal.sim.scenario.AlgorithmFactory;
 import xal.sim.scenario.ProbeFactory;
 import xal.sim.scenario.Scenario;
@@ -177,7 +176,7 @@ public class MIALive extends JPanel{
 	Accelerator accl = new Accelerator();
 	Probe probe;
 	Scenario scenario;
-	Trajectory traj;
+	Trajectory<?> traj;
 	ProbeState state;
 	Twiss[] twiss = new Twiss[2];
 
@@ -601,7 +600,7 @@ public class MIALive extends JPanel{
 
 	        // CKA - Down cast the simulation trajectory results to the proper type then
 	        //   create a ring parameter calculation engine for processing
-	        TransferMapTrajectory  trjSimulation = (TransferMapTrajectory)traj;
+	        Trajectory<TransferMapState>  trjSimulation = (Trajectory<TransferMapState>) traj;
 	        CalculationsOnRings         cmpRingParams = new CalculationsOnRings(trjSimulation);
 
 	        int j = 0;
@@ -676,7 +675,7 @@ public class MIALive extends JPanel{
 			
             // CKA - Down cast the simulation trajectory results to the proper type then
             //   create a ring parameter calculation engine for processing
-            TransferMapTrajectory  trjSimulation = (TransferMapTrajectory)traj;
+            Trajectory<TransferMapState>  trjSimulation = (Trajectory<TransferMapState>) traj;
             CalculationsOnRings         cmpRingParams = new CalculationsOnRings(trjSimulation);
 
 			int j = 0;

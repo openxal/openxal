@@ -81,7 +81,7 @@ public class OnlineModelSimulator extends MappedSimulator {
 			scenario.setSynchronizationMode( Scenario.SYNC_MODE_RF_DESIGN );
 			scenario.resync();
 			scenario.run();
-			final Trajectory initialTrajectory = probe.getTrajectory();
+			final Trajectory<?> initialTrajectory = probe.getTrajectory();
 			
             // CKA - Nov 25, 2013
 			SimpleSimResultsAdaptor  cmpCalcEngine = new SimpleSimResultsAdaptor(initialTrajectory);
@@ -129,7 +129,7 @@ public class OnlineModelSimulator extends MappedSimulator {
 				scenario.resyncFromCache();
 				scenario.run();
 				
-				final Trajectory trajectory = probe.getTrajectory();
+				final Trajectory<?> trajectory = probe.getTrajectory();
 				
 				// CKA - Nov 25, 2013
 				final SimpleSimResultsAdaptor cmpCalcEngineResp = new SimpleSimResultsAdaptor(trajectory);

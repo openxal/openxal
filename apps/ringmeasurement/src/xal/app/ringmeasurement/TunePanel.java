@@ -40,7 +40,7 @@ import xal.model.probe.TransferMapProbe;
 import xal.sim.scenario.ProbeFactory;
 import xal.model.alg.TransferMapTracker;
 import xal.sim.scenario.Scenario;
-import xal.model.probe.traj.TransferMapTrajectory;
+import xal.model.probe.traj.Trajectory;
 import xal.model.probe.traj.TransferMapState;
 import xal.service.pvlogger.sim.PVLoggerDataSource;
 
@@ -627,7 +627,7 @@ public class TunePanel extends JPanel implements ConnectionListener,
 			scenario.resync();
 			scenario.run();
 
-			TransferMapTrajectory traj = (TransferMapTrajectory) scenario
+			Trajectory<TransferMapState> traj = (Trajectory<TransferMapState>) scenario
 					.getTrajectory();
 
 			double xSum = 0.;

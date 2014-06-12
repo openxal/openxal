@@ -14,8 +14,11 @@ import javax.swing.event.*;
 import javax.swing.border.*;
 import javax.swing.JOptionPane;
 import javax.swing.table.*;
+
 import java.awt.*;
+
 import javax.swing.*;
+
 import java.awt.event.*;
 import java.util.*;
 import java.util.Timer.*;
@@ -36,10 +39,11 @@ import xal.tools.beam.*;
 import xal.tools.xml.*;
 import xal.tools.data.*;
 import xal.tools.messaging.*;
+
 import java.util.HashMap;
+
 import xal.tools.xml.XmlDataAdaptor;
 import xal.tools.apputils.*;
-
 import xal.model.probe.traj.*;
 import xal.model.probe.*;
 import xal.model.xml.*;
@@ -47,13 +51,17 @@ import xal.sim.scenario.*;
 import xal.model.alg.*;
 import xal.service.pvlogger.*;
 import xal.extension.solver.*;
+
 import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.border.*;
 import javax.swing.JOptionPane;
 import javax.swing.table.*;
+
 import java.awt.*;
+
 import javax.swing.*;
+
 import java.awt.event.*;
 import java.util.*;
 import java.util.Timer.*;
@@ -61,17 +69,22 @@ import java.net.URL;
 import java.util.List;
 import java.io.*;
 import java.lang.*;
+
 import xal.extension.widgets.swing.*;
 import xal.tools.statistics.*;
 import xal.tools.apputils.EdgeLayout;
 import xal.tools.apputils.files.RecentFileTracker;
 import xal.extension.widgets.plot.*;
 import xal.tools.data.*;
+
 import java.text.NumberFormat;
+
 import xal.tools.messaging.*;
 import xal.ca.*;
+
 import java.text.NumberFormat;
 import java.text.DecimalFormat;
+
 //import com.sun.org.apache.xpath.internal.operations.Variable;
 import xal.tools.apputils.NonConsecutiveSeqSelector;
 import xal.extension.widgets.apputils.SimpleProbeEditor;
@@ -574,7 +587,7 @@ public class ControlFace extends JPanel {
             model.run();
         } catch(Exception e){}
 		
-        EnvelopeTrajectory traj = (EnvelopeTrajectory)tempprobe.getTrajectory();
+        Trajectory<EnvelopeProbeState> traj = tempprobe.getTrajectory();
 		EnvelopeProbeState newstate = (EnvelopeProbeState)traj.stateForElement(init);
 		initprobe.setKineticEnergy(newstate.getKineticEnergy());
 		System.out.println("Current Energy in update probe is " + newstate.getKineticEnergy());
@@ -690,7 +703,7 @@ public class ControlFace extends JPanel {
             localmodel.run();
         }catch(Exception e){}
 		
-        EnvelopeTrajectory traj = (EnvelopeTrajectory)localprobe.getTrajectory();
+        Trajectory<EnvelopeProbeState> traj = localprobe.getTrajectory();
 		EnvelopeProbeState newstate = (EnvelopeProbeState)traj.statesForElement(Id)[0];
 		
         CovarianceMatrix covarianceMatrix = newstate.getCovarianceMatrix();
@@ -932,7 +945,7 @@ public class ControlFace extends JPanel {
     
 	public double calcError2(){
 		
-        EnvelopeTrajectory traj= (EnvelopeTrajectory) solverprobe.getTrajectory();
+        Trajectory<EnvelopeProbeState> traj = solverprobe.getTrajectory();
         ArrayList<EnvelopeProbeState> state = new ArrayList<EnvelopeProbeState>();
         ArrayList<Double> AlphaX = new ArrayList<Double>();
         ArrayList<Double> AlphaY = new ArrayList<Double>();
@@ -1034,7 +1047,7 @@ public class ControlFace extends JPanel {
 	
 	public void showTargetVals(){
         Probe probe=solvermodel.getProbe();
-		EnvelopeTrajectory traj= (EnvelopeTrajectory) probe.getTrajectory();
+		Trajectory<?> traj = probe.getTrajectory();
         EnvelopeProbeState target = (EnvelopeProbeState)traj.statesForElement((String)targetlist.getSelectedItem())[0];
 	}
 	
@@ -1050,8 +1063,8 @@ public class ControlFace extends JPanel {
 		BasicGraphData xgraphdata = new BasicGraphData();
 		BasicGraphData ygraphdata = new BasicGraphData();
 		
-		EnvelopeTrajectory traj= (EnvelopeTrajectory)solverprobe.getTrajectory();
-		Iterator<ProbeState> iterState= traj.stateIterator();
+		Trajectory<EnvelopeProbeState> traj = solverprobe.getTrajectory();
+		Iterator<?> iterState = traj.stateIterator();
 		boolean firstpos = true;
 		double offset = 0.0;
 		
@@ -1124,7 +1137,7 @@ public class ControlFace extends JPanel {
 		double[] srdata = new double[datasize];
 		double[] xrdata = new double[datasize];
 		double[] yrdata = new double[datasize];
-		traj= (EnvelopeTrajectory)solverprobe.getTrajectory();
+		traj= solverprobe.getTrajectory();
 		EnvelopeProbeState newstate;
 		Twiss[] newtwiss;
 		double rx, ry;
@@ -1203,7 +1216,7 @@ public class ControlFace extends JPanel {
 	
 	
 	public void resetControlTables(){
-		EnvelopeTrajectory traj= (EnvelopeTrajectory)solverprobe.getTrajectory();
+		Trajectory<EnvelopeProbeState> traj = solverprobe.getTrajectory();
 		EnvelopeProbeState state;
 		
 		for(int i = 0; i < controltables.size(); i++){
@@ -1222,7 +1235,7 @@ public class ControlFace extends JPanel {
 	
 	
 	void resetResultsTable(){
-		EnvelopeTrajectory traj= (EnvelopeTrajectory)solverprobe.getTrajectory();
+		Trajectory<EnvelopeProbeState> traj = solverprobe.getTrajectory();
 		resultsdatatablemodel.clearAllData();
 		
 		boolean beginrecord = false;

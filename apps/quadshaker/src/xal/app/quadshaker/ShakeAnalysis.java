@@ -372,7 +372,7 @@ public class ShakeAnalysis {
 			return;
 		}
         
-		Trajectory<EnvelopeProbeState> trajectory = probe.createTrajectory();
+		Trajectory<EnvelopeProbeState> trajectory = probe.getTrajectory();
         
 		for(int i = 0, n = quadsTableModel.getListModel().size(); i < n; i++) {
 			Quad_Element quadElm =  quadsTableModel.getListModel().get(i);
