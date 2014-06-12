@@ -19,16 +19,17 @@ import java.awt.event.ActionListener;
 import java.net.URL;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+
 import javax.swing.*;
 import javax.swing.text.*;
 import javax.swing.event.*;
 import javax.swing.JToggleButton.ToggleButtonModel;
+
 import java.util.*;
 
 import xal.extension.application.smf.*;
 import xal.extension.application.*;
 import xal.extension.bricks.WindowReference;
-
 import xal.ca.*;
 import xal.smf.*;
 import xal.smf.attr.*;
@@ -45,7 +46,6 @@ import xal.sim.scenario.*;
 import xal.smf.*;
 import xal.model.xml.*;
 import xal.tools.beam.calc.*;
-
 import xal.tools.xml.*;
 import xal.tools.data.*;
 import xal.tools.beam.Twiss;
@@ -1071,7 +1071,7 @@ public class VADocument extends AcceleratorDocument implements ActionListener, P
 		List<Double> tempbeamy = new ArrayList<Double>();	
 		List<Double> tempsigmaz = new ArrayList<Double>();
 			      
-		final Iterator<ProbeState> stateIter =modelScenario.getTrajectory().stateIterator();
+		final Iterator<? extends ProbeState> stateIter =modelScenario.getTrajectory().stateIterator();
 		while ( stateIter.hasNext() ) {
 			final ProbeState state = stateIter.next();
 //			EnvelopeProbeState state = (EnvelopeProbeState) stateIter.next();
