@@ -177,7 +177,7 @@ public class TransferMapProbe extends Probe {
 	 * @return a new, empty <code>Trajectory&lt;TransferMapState&gt;</code> 
 	 * 		for saving the probe's history
 	 * 
-	 * @author Jonathan Freed
+	 * @author Jonathan M. Freed
 	 */
     @Override
     public Trajectory<TransferMapState> createTrajectory() {
@@ -191,7 +191,7 @@ public class TransferMapProbe extends Probe {
      * @return a <code>Trajectory&lt;TransferMapState&gt;</code> that is the 
      * 		trajectory of the probe
      * 
-     * @author Jonathan Freed
+     * @author Jonathan M. Freed
      */
     @Override
     public Trajectory<TransferMapState> getTrajectory() {

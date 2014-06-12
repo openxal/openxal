@@ -136,7 +136,7 @@ public class SynchronousProbe extends Probe {
  	 * @return a new, empty <code>Trajectory&lt;SynchronousState&gt;</code> 
  	 * 		for saving the probe's history
  	 * 
- 	 * @author Jonathan Freed
+ 	 * @author Jonathan M. Freed
  	 */
      @Override
      public Trajectory<SynchronousState> createTrajectory() {
@@ -150,7 +150,7 @@ public class SynchronousProbe extends Probe {
       * @return a <code>Trajectory&lt;SynchronousState&gt;</code> that is the 
       * 		trajectory of the probe
       * 
-      * @author Jonathan Freed
+      * @author Jonathan M. Freed
       */
      @Override
      public Trajectory<SynchronousState> getTrajectory() {

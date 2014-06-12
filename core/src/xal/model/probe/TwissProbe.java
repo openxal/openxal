@@ -308,7 +308,7 @@ public class TwissProbe extends BunchProbe {
 	 * @return a new, empty <code>Trajectory&lt;TwissProbeState&gt;</code> 
 	 * 		for saving the probe's history
 	 * 
-	 * @author Jonathan Freed
+	 * @author Jonathan M. Freed
 	 */
     @Override
 	public Trajectory<TwissProbeState> createTrajectory() {
@@ -322,7 +322,7 @@ public class TwissProbe extends BunchProbe {
      * @return a <code>Trajectory&lt;TwissProbeState&gt;</code> that is the 
      * 		trajectory of the probe
      * 
-     * @author Jonathan Freed
+     * @author Jonathan M. Freed
      */
     @Override
     public Trajectory<TwissProbeState> getTrajectory() {

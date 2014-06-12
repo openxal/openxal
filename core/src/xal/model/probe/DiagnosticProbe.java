@@ -90,7 +90,8 @@ public class DiagnosticProbe extends Probe {
      * @return a new, empty <code>Trajectory&lt;DiagnosticProbeState&gt;</code> 
      * 		for saving the probe's history. 
      * 
-     * @author Jonathan Freed
+     * @author Jonathan M. Freed
+     * @
      */ 
 	@Override
 	public Trajectory<DiagnosticProbeState> createTrajectory() {
@@ -124,7 +125,7 @@ public class DiagnosticProbe extends Probe {
      * @return a <code>Trajectory&lt;DiagnosticProbeState&gt;</code> that is the 
      * 		trajectory of the probe
      * 
-     * @author Jonathan Freed
+     * @author Jonathan M. Freed
      */ 
 	@Override
 	public Trajectory<DiagnosticProbeState> getTrajectory() {

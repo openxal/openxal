@@ -525,7 +525,7 @@ public class EnvelopeProbe extends BunchProbe {
 	 * @return a new, empty <code>Trajectory&lt;EnvelopeProbeState&gt;</code> 
 	 * 		for saving the probe's history
 	 * 
-	 * @author Jonathan Freed
+	 * @author Jonathan M. Freed
 	 */
     @Override
 	public Trajectory<EnvelopeProbeState> createTrajectory() {
@@ -539,7 +539,7 @@ public class EnvelopeProbe extends BunchProbe {
      * @return a <code>Trajectory&lt;EnvelopeProbeState&gt;</code> that is the 
      * 		trajectory of the probe
      * 
-     * @author Jonathan Freed
+     * @author Jonathan M. Freed
      */
     @Override
     public Trajectory<EnvelopeProbeState> getTrajectory() {

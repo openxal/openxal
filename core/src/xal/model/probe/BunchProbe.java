@@ -258,7 +258,7 @@ public abstract class BunchProbe extends Probe {
      * Not sure if these need to be overridden yet, or if they need their own
      * implementation.  If implemented, the subclasses (Twiss, Ensemble, and 
      * Envelope) will all have issues.
-     *  - Jonathan Freed
+     *  - Jonathan M. Freed
      */
 //	/**
 //	 * Creates a <code>Trajectory&lt;?&gt;</code> object of 
@@ -267,7 +267,7 @@ public abstract class BunchProbe extends Probe {
 //	 * @return a new, empty <code>Trajectory&lt;?&gt;</code> 
 //	 * 		for saving the probe's history
 //	 * 
-//	 * @author Jonathan Freed
+//	 * @author Jonathan M. Freed
 //	 */
 //    @Override
 //    public abstract Trajectory<?> createTrajectory();
@@ -278,7 +278,7 @@ public abstract class BunchProbe extends Probe {
 //     * @return a <code>Trajectory&lt;?&gt;</code> that is the 
 //     * 		trajectory of the probe
 //     * 
-//     * @author Jonathan Freed
+//     * @author Jonathan M. Freed
 //     */
 //    @Override
 //    public abstract Trajectory<?> getTrajectory();

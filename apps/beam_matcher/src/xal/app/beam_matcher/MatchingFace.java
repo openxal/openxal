@@ -1267,7 +1267,7 @@ public class MatchingFace extends JPanel{
         
         //what is the point of this line?
         //I commented it out since traj is instantiated earlier in this method.
-        // - Jonathan Freed
+        // - Jonathan M. Freed
         //traj = probe.getTrajectory();
         
         EnvelopeProbeState newstate;
