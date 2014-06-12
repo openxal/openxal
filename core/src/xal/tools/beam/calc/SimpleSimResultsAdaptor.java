@@ -7,13 +7,10 @@
 package xal.tools.beam.calc;
 
 import xal.model.probe.traj.EnvelopeProbeState;
-import xal.model.probe.traj.EnvelopeTrajectory;
 import xal.model.probe.traj.ParticleProbeState;
-import xal.model.probe.traj.ParticleTrajectory;
 import xal.model.probe.traj.ProbeState;
 import xal.model.probe.traj.Trajectory;
 import xal.model.probe.traj.TransferMapState;
-import xal.model.probe.traj.TransferMapTrajectory;
 import xal.tools.beam.calc.ISimulationResults.ISimEnvResults;
 import xal.tools.beam.calc.ISimulationResults.ISimLocResults;
 
