@@ -292,6 +292,11 @@ public class R4x4 extends SquareMatrix<R4x4> {
     public R4x4(R4x4 matParent) throws UnsupportedOperationException {
         super(matParent);
     }
+
+	@Override
+	protected R4x4 newInstance() {
+		return new R4x4();
+	}
     
     
     

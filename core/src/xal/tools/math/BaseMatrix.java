@@ -86,13 +86,6 @@ public abstract class BaseMatrix<M extends BaseMatrix<M>> implements IArchive {
     /** number of matrix columns */
     private final int               cntCols;
     
-
-    /** class type of child class */
-    protected final Class<M>        clsType;
-    
-    /** zero-argument constructor for this type */
-    protected final Constructor<M>  ctrType;
-    
     /** internal matrix implementation */
     protected final Jama.Matrix     matImpl;
 
@@ -721,21 +714,8 @@ public abstract class BaseMatrix<M extends BaseMatrix<M>> implements IArchive {
      * @author Christopher K. Allen
      * @since  Oct 1, 2013
      */
-    protected M newInstance() throws InstantiationException {
-        try {
-            M matNewInst = this.ctrType.newInstance();
+    protected abstract M newInstance();
     
-            return matNewInst;
-    
-        } catch (InstantiationException   | 
-                IllegalAccessException   | 
-                IllegalArgumentException | 
-                InvocationTargetException e) {
-    
-            throw new InstantiationException("Unable to copy matrix " + this.getClass().getName());
-        }
-    }
-
     /**
      * Creates a new instance of this matrix type initialized to the given
      * implementation matrix.
@@ -777,22 +757,10 @@ public abstract class BaseMatrix<M extends BaseMatrix<M>> implements IArchive {
      * @throws UnsupportedOperationException  child class has not defined a public, zero-argument constructor
      */
     @SuppressWarnings("unchecked")
-    protected BaseMatrix(int cntRows, int cntCols) throws UnsupportedOperationException {
-        
-        try {
-            this.clsType = (Class<M>) this.getClass();
-            
-            this.ctrType = this.clsType.getConstructor();
-            this.cntRows = cntRows;
-            this.cntCols = cntCols;
-            this.matImpl = new Jama.Matrix(cntRows, cntCols, 0.0);
-            
-        } catch (NoSuchMethodException | SecurityException e) {
-            
-            throw new UnsupportedOperationException("Could not find public, zero-argument constructor for " 
-                    + this.clsType.getName()
-                    );
-        }
+    protected BaseMatrix(int cntRows, int cntCols) /*throws UnsupportedOperationException*/ {
+        this.cntRows = cntRows;
+        this.cntCols = cntCols;
+        this.matImpl = new Jama.Matrix(cntRows, cntCols, 0.0);
     }
 
     /**
@@ -807,7 +775,7 @@ public abstract class BaseMatrix<M extends BaseMatrix<M>> implements IArchive {
      * @author Christopher K. Allen
      * @since  Sep 25, 2013
      */
-    protected BaseMatrix(M matParent) throws UnsupportedOperationException {
+    protected BaseMatrix(M matParent) {
         this(matParent.getRowCnt(), matParent.getColCnt());
         
         BaseMatrix<M> matBase = (BaseMatrix<M>)matParent;

@@ -1034,4 +1034,9 @@ public class PhaseVector extends BaseVector<PhaseVector> implements java.io.Seri
         
         os.flush();
     }
+
+	@Override
+	protected PhaseVector newInstance() {
+		return new PhaseVector();
+	}
 }

@@ -164,4 +164,10 @@ public class R4 extends BaseVector<R4> {
     public R4(double[] arrVals) {
         super(INT_SIZE, arrVals);
     }
+
+
+	@Override
+	protected R4 newInstance() {
+		return new R4();
+	}
 }

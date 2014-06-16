@@ -620,6 +620,11 @@ public class R3 extends BaseVector<R3> implements java.io.Serializable {
 
         return new R3(x1*x1, x2*x2, x3*x3);
     }
+
+	@Override
+	protected R3 newInstance() {
+		return new R3();
+	}
     
     
     

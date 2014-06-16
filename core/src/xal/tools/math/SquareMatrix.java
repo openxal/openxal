@@ -156,20 +156,11 @@ public abstract class SquareMatrix<M extends SquareMatrix<M>> extends BaseMatrix
      *  @return     transposed copy of this matrix or <code>null</code> if error
      */
     public M transpose()  {
-        try {
-            
-            Jama.Matrix impTrans = this.getMatrix().transpose();
-            M           matTrans = this.newInstance();
-            matTrans.assignMatrix(impTrans);
-            
-            return matTrans;
-            
-        } catch (InstantiationException e) {
-            
-            System.err.println("Unable to instantiate resultant vector");
-
-            return null;
-        }
+        Jama.Matrix impTrans = this.getMatrix().transpose();
+        M           matTrans = this.newInstance();
+        matTrans.assignMatrix(impTrans);
+        
+        return matTrans;
     }
 
     /**
@@ -187,20 +178,11 @@ public abstract class SquareMatrix<M extends SquareMatrix<M>> extends BaseMatrix
      *  @return     the algebraic inverse of this matrix or <code>null</code> if error
      */
     public M inverse()    {
-        try {
-            
-            Jama.Matrix impInv = this.getMatrix().inverse();
-            M           matInv = this.newInstance();
-            matInv.assignMatrix(impInv);
-            
-            return matInv;
-            
-        } catch (InstantiationException e) {
-            
-            System.err.println("Unable to instantiate resultant vector");
-
-            return null;
-        }
+        Jama.Matrix impInv = this.getMatrix().inverse();
+        M           matInv = this.newInstance();
+        matInv.assignMatrix(impInv);
+        
+        return matInv;
     }
     
     /**

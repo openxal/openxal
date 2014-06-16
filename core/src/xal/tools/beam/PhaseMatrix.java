@@ -978,6 +978,11 @@ public class PhaseMatrix extends SquareMatrix<PhaseMatrix> implements java.io.Se
         
         return dblNorm;
     }
+
+	@Override
+	protected PhaseMatrix newInstance() {
+		return new PhaseMatrix();
+	}
     
 //    /**
 //     *  Set a submatrix within the phase matrix.

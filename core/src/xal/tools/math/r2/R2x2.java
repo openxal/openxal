@@ -533,6 +533,11 @@ public class R2x2 extends SquareMatrix<R2x2> implements java.io.Serializable {
         return new R2(x, y);
     }
 
+	@Override
+	protected R2x2 newInstance() {
+		return new R2x2();
+	}
+
 //    /**
 //     *  Matrix multiplication.  
 //     *

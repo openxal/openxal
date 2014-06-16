@@ -383,6 +383,11 @@ public class TrnsPhaseMatrix extends SquareMatrix<TrnsPhaseMatrix> {
         super(INT_SIZE, strValues);
         this.setElem(IND.HOM, IND.HOM, 1.0);
     }
+
+	@Override
+	protected TrnsPhaseMatrix newInstance() {
+		return new TrnsPhaseMatrix();
+	}
     
 
 
