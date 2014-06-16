@@ -331,21 +331,11 @@ public class R2x2 extends SquareMatrix<R2x2> implements java.io.Serializable {
      * 
      * @param   matTarget   matrix to be copied
      * 
-     * @return              a deep copy of the argument object, 
-     *                      or <code>null</code> if there was an instantiation error
+     * @return              a deep copy of the argument object
      * 
      */
     public static R2x2  clone(R2x2 matTarget) {
-        try {
-            return matTarget.copy();
-            
-        } catch (InstantiationException e) {
-            
-            System.err.println("Error instatiating " + R2x2.class.getName());
-            e.printStackTrace();
-            
-            return null;
-        }
+    	return matTarget.copy();
     }
     
     /**

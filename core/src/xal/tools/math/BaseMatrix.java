@@ -295,10 +295,8 @@ public abstract class BaseMatrix<M extends BaseMatrix<M>> implements IArchive {
      * object is completely decoupled from the original.
      * 
      * @return  a deep copy object of this matrix
-     * 
-     * @throws InstantiationException error in new object construction
      */
-    public M copy() throws InstantiationException {
+    public M copy() {
     
         M  matClone = this.newInstance();
         ((BaseMatrix<M>)matClone).assignMatrix( this.getMatrix() );
@@ -349,19 +347,11 @@ public abstract class BaseMatrix<M extends BaseMatrix<M>> implements IArchive {
      *                  or <code>null</code> if error
      */
     public M plus(M matAddend) {
-        try {
-            Jama.Matrix    impAdd = ((BaseMatrix<M>)matAddend).getMatrix();
-            Jama.Matrix    impSum = this.getMatrix().plus( impAdd );
-            M              matAns = this.newInstance(impSum);
-    
-            return matAns;
-    
-        } catch (InstantiationException e) {
-    
-            System.err.println("Unable to instantiate resultant vector");
-    
-            return null;
-        }
+        Jama.Matrix    impAdd = ((BaseMatrix<M>)matAddend).getMatrix();
+        Jama.Matrix    impSum = this.getMatrix().plus( impAdd );
+        M              matAns = this.newInstance(impSum);
+
+        return matAns;
     }
 
     /**
@@ -385,19 +375,11 @@ public abstract class BaseMatrix<M extends BaseMatrix<M>> implements IArchive {
      *                      or <code>null</code> if an error occurred
      */
     public M minus(M matSub) {
-        try {
-            Jama.Matrix    impSub = ((BaseMatrix<M>)matSub).getMatrix();
-            Jama.Matrix    impDif = this.getMatrix().minus( impSub );
-            M              matAns = this.newInstance(impDif);
-    
-            return matAns;
-    
-        } catch (InstantiationException e) {
-    
-            System.err.println("Unable to instantiate resultant vector");
-            
-            return null;
-        }
+        Jama.Matrix    impSub = ((BaseMatrix<M>)matSub).getMatrix();
+        Jama.Matrix    impDif = this.getMatrix().minus( impSub );
+        M              matAns = this.newInstance(impDif);
+
+        return matAns;
     }
 
     /**
@@ -709,8 +691,6 @@ public abstract class BaseMatrix<M extends BaseMatrix<M>> implements IArchive {
      * 
      * @return  uninitialized matrix object of type <code>M</code>
      * 
-     * @throws InstantiationException   error occurred in the reflection constructor
-     *
      * @author Christopher K. Allen
      * @since  Oct 1, 2013
      */
@@ -723,13 +703,11 @@ public abstract class BaseMatrix<M extends BaseMatrix<M>> implements IArchive {
      * @param   impInit implementation matrix containing initialization values    
      * 
      * @return          initialized matrix object of type <code>M</code>
-     * 
-     * @throws InstantiationException   error occurred in the reflection constructor
      *
      * @author Christopher K. Allen
      * @since  Oct 1, 2013
      */
-    protected M newInstance(Jama.Matrix impInit) throws InstantiationException {
+    protected M newInstance(Jama.Matrix impInit) {
         
         M   matNewInst = this.newInstance();
         
