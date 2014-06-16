@@ -71,16 +71,47 @@ public class ResourceManager {
 
 	/** Get the fully qualified output file given the relative path within the output directory. */
 	static public File getOutputFile( final String relativePath ) {
-		final String testDirectoryPath = System.getProperty( "xal.tests.root" );
-		if ( testDirectoryPath == null ) {
-			final String errorMessage = "Error getting the output file from ResourceManager. The test directory was null and must be specified using the runtime property: xal.tests.root";
+		final File testDirectory = getTestDirectory();
+		if ( testDirectory == null ) {
+			final String errorMessage = "Error getting the output file from ResourceManager. The test directory was null and must be specified using the runtime property, xal.tests.root or an environment variable of the same name.";
 			System.err.println( errorMessage );
 			throw new RuntimeException( errorMessage );
 		}
-		final File outputDirectory = new File( testDirectoryPath, "output" );
+		final File outputDirectory = new File( testDirectory, "output" );
 		final File outputFile = new File( outputDirectory, relativePath );
 		outputFile.getParentFile().mkdirs();
 		//System.out.println( "Output File: " + outputFile.getAbsolutePath() );
 		return outputFile;
+	}
+
+
+	/** get the test directory path */
+	static private File getTestDirectory() {
+		final String TEST_DIRECTORY_PROPERTY = "xal.tests.root";
+		final String testDirectoryPropertyPath = System.getProperty( TEST_DIRECTORY_PROPERTY );
+
+		// first check system properties and if it exists then use it's value
+		if ( testDirectoryPropertyPath != null ) {
+			//System.out.println( "Getting the test directory from the property." );
+			return new File( testDirectoryPropertyPath );
+		}
+		else {		// check for an environment variable of the same name
+			final String testDirectoryEnvironmentPath = System.getenv( TEST_DIRECTORY_PROPERTY );
+			if ( testDirectoryEnvironmentPath != null ) {
+				//System.out.println( "Getting the test directory from the environment variable." );
+				return new File( testDirectoryEnvironmentPath );
+			}
+			else {	// check if the xal home path is specified and if so build the tests path relative to it
+				//System.out.println( "Getting the test directory from the home path." );
+				final String homePath = xal.tools.ResourceManager.getProjectHomePath();
+				if ( homePath != null ) {
+					final File buildDir = new File( homePath, "build" );
+					return new File( buildDir, "tests" );
+				}
+				else {
+					return null;
+				}
+			}
+		}
 	}
 }
