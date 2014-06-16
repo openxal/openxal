@@ -173,4 +173,10 @@ public class R6 extends BaseVector<R6> {
         super(INT_SIZE, arrVals);
     }
 
+
+	@Override
+	protected R6 newInstance() {
+		return new R6();
+	}
+
 }

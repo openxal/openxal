@@ -267,4 +267,10 @@ public class TrnsPhaseVector extends BaseVector<TrnsPhaseVector> {
         super(INT_SIZE, arrVals);
     }
 
+
+	@Override
+	protected TrnsPhaseVector newInstance() {
+		return new TrnsPhaseVector();
+	}
+
 }

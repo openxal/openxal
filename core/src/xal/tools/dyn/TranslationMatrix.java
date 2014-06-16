@@ -34,4 +34,10 @@ public class TranslationMatrix extends PhaseMatrix {
 		setElem(2,2,1+dy);
 		setElem(4,4,1+dz);
 	}
+
+
+	@Override
+	protected PhaseMatrix newInstance() {
+		return new TranslationMatrix(0.,0.,0.);
+	}
 }

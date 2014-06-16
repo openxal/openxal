@@ -703,4 +703,9 @@ public class CovarianceMatrix extends PhaseMatrix {
             }
         return true;
     }
+
+	@Override
+	protected PhaseMatrix newInstance() {
+		return new PhaseMatrix();
+	}
 }

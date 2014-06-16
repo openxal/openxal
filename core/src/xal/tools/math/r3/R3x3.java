@@ -809,6 +809,11 @@ public class R3x3 extends SquareMatrix<R3x3> implements java.io.Serializable {
         return new R3(x, y, z);
     }
 
+	@Override
+	protected R3x3 newInstance() {
+		return new R3x3();
+	}
+
 //    /**
 //     *  Matrix multiplication.  
 //     *
