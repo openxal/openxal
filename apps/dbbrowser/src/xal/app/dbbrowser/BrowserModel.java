@@ -382,6 +382,8 @@ public class BrowserModel {
 				}
 				records.add( record );
 			}
+			resultSet.close();
+			statement.close();
 
 			return records;
 		}
