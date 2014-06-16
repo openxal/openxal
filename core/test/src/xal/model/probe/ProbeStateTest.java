@@ -9,13 +9,9 @@ import xal.model.probe.EnsembleProbe;
 import xal.model.probe.EnvelopeProbe;
 import xal.model.probe.ParticleProbe;
 import xal.model.probe.traj.DiagnosticProbeState;
-import xal.model.probe.traj.DiagnosticProbeTrajectory;
 import xal.model.probe.traj.EnsembleProbeState;
-import xal.model.probe.traj.EnsembleTrajectory;
 import xal.model.probe.traj.EnvelopeProbeState;
-import xal.model.probe.traj.EnvelopeTrajectory;
 import xal.model.probe.traj.ParticleProbeState;
-import xal.model.probe.traj.ParticleTrajectory;
 import xal.model.probe.traj.ProbeState;
 import xal.model.probe.traj.Trajectory;
 

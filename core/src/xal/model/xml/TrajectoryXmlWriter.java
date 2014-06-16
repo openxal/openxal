@@ -30,7 +30,7 @@ public class TrajectoryXmlWriter {
 	 * 
 	 * @throws IOException error writing to fileURI
 	 */
-	public static void writeXml(Trajectory trajectory, String fileURI) 
+	public static void writeXml(Trajectory<?> trajectory, String fileURI) 
 			throws IOException {
 		TrajectoryXmlWriter writer = new TrajectoryXmlWriter();
 		writer.writeTrajectoryToFile(trajectory, fileURI);
@@ -44,7 +44,7 @@ public class TrajectoryXmlWriter {
 	 * 
 	 * @throws IOException error writing to fileURI
 	 */
-	public void writeTrajectoryToFile(Trajectory trajectory, String fileURI) 
+	public void writeTrajectoryToFile(Trajectory<?> trajectory, String fileURI) 
 			throws IOException {
 		XmlDataAdaptor document = 
 			XmlDataAdaptor.newEmptyDocumentAdaptor(null, null);

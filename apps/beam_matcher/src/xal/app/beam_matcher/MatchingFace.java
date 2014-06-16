@@ -1202,7 +1202,6 @@ public class MatchingFace extends JPanel{
         //
         //              }
         Trajectory<EnvelopeProbeState> traj = probe.getTrajectory();
-
         //              System.out.println("trajectory is = "  traj);
         Iterator<EnvelopeProbeState> iterState= traj.stateIterator();
         
