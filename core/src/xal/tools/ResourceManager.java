@@ -106,6 +106,15 @@ abstract public class ResourceManager {
 		//System.out.println( "Resource URL: " + resourceURL + " for resource: " + resourcePath + " relative to package: " + rootClass.getPackage().getName() );
 		return resourceURL;
 	}
+
+
+	/** get the path to the project home based on the "xal.home" property or corresponding "OPENXAL_HOME" environment variable if necessary */
+	static public String getProjectHomePath() {
+		// the property set to true indicates whether to find resources under the OPENXAL_HOME directory instead of the jar files
+		final String path = System.getProperty( "xal.home" );
+
+		return path != null ? path : System.getenv( "OPENXAL_HOME" );
+	}
 }
 
 
@@ -225,15 +234,6 @@ class FileResourceManager extends ResourceManager {
 	/** Constructor */
 	public FileResourceManager( final File rootFile ) {
 		ROOT_FILE = rootFile;
-	}
-
-
-	/** get the path to the project home based on the OPENXAL_HOME property or corresponding environment variable if necessary */
-	static private String getProjectHomePath() {
-		// the property set to true indicates whether to find resources under the OPENXAL_HOME directory instead of the jar files
-		final String path = System.getProperty( PROJECT_HOME_PROPERTY );
-
-		return path != null ? path : System.getenv( PROJECT_HOME_PROPERTY );
 	}
 
 
