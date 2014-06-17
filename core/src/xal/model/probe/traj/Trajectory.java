@@ -306,6 +306,15 @@ public class Trajectory<S extends ProbeState> implements IArchive, Iterable<S> {
         this.mapStates = new ElementStateMap<S>();
     }
 	
+    /**
+     * Create a new <code>Trajectory</code> given a <code>ProbeStateFactory&lt;S&gt;
+     * </code>which is used to create the correct <code>ProbeState</code> type.
+     * 
+     * @param factory - the <code>ProbeStateFactory&lt;S&gt;</code> used to 
+     * 		instantiate the type <code><b>S</code></b>
+     * 
+     * @author Jonathan M. Freed
+     */
     public Trajectory(ProbeStateFactory<S> factory) {
     	this.factory = factory;
     	this._history = new RealNumericIndexer<S>();
@@ -326,6 +335,14 @@ public class Trajectory<S extends ProbeState> implements IArchive, Iterable<S> {
      */
     public void setTimestamp(long lngTimeStamp) { timestamp = new Date(lngTimeStamp);  }
 
+    /** 
+     * Gets an instance of the generic type <b><code>S</code></b>.  This is commonly used to test 
+     * <code>instanceof</code> on <b><code>S</code></b>.
+     * 
+     * @return a <code>ProbeState</code> of type <b><code>S</code></b> instance
+     * 
+     * @author Jonathan M. Freed
+     */
     public S getStateType() {
     	return newProbeState(this.factory);
     }   
@@ -338,8 +355,9 @@ public class Trajectory<S extends ProbeState> implements IArchive, Iterable<S> {
      * 
      *  @param  probe   target probe object
      */
-    public void update(Probe probe) {
-        S state = (S) probe.createProbeState(); // is this safe?
+    //@SuppressWarnings("unchecked")
+	public void update(Probe probe) {
+        S state = (S) probe.createProbeState(); // is this safe? JMF
         saveState(state);
     }
 

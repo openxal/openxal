@@ -470,8 +470,13 @@ public class EnvelopeProbe extends BunchProbe {
      * @see EnvelopeTrajectory#stateResponse(String, String)
      */
     public PhaseMatrix stateResponse(String elemFrom, String elemTo) {
-//        return ((EnvelopeTrajectory) this.getTrajectory()).stateResponse(
-//                elemFrom, elemTo);
+    	
+        //return ((EnvelopeTrajectory) this.getTrajectory()).stateResponse(
+        //        elemFrom, elemTo);
+    	
+    	// Moved implementation to here from the EnvelopeTrajectory class when we changed 
+    	// to generic Trajectory.  The function used to just be a wrapper as shown above.
+    	// - JMF
     	
     	Trajectory<EnvelopeProbeState> trajectory = new Trajectory<EnvelopeProbeState>();
     	
