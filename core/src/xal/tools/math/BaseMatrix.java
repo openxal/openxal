@@ -86,13 +86,6 @@ public abstract class BaseMatrix<M extends BaseMatrix<M>> implements IArchive {
     /** number of matrix columns */
     private final int               cntCols;
     
-
-    /** class type of child class */
-    protected final Class<M>        clsType;
-    
-    /** zero-argument constructor for this type */
-    protected final Constructor<M>  ctrType;
-    
     /** internal matrix implementation */
     protected final Jama.Matrix     matImpl;
 
@@ -302,10 +295,8 @@ public abstract class BaseMatrix<M extends BaseMatrix<M>> implements IArchive {
      * object is completely decoupled from the original.
      * 
      * @return  a deep copy object of this matrix
-     * 
-     * @throws InstantiationException error in new object construction
      */
-    public M copy() throws InstantiationException {
+    public M copy() {
     
         M  matClone = this.newInstance();
         ((BaseMatrix<M>)matClone).assignMatrix( this.getMatrix() );
@@ -356,19 +347,11 @@ public abstract class BaseMatrix<M extends BaseMatrix<M>> implements IArchive {
      *                  or <code>null</code> if error
      */
     public M plus(M matAddend) {
-        try {
-            Jama.Matrix    impAdd = ((BaseMatrix<M>)matAddend).getMatrix();
-            Jama.Matrix    impSum = this.getMatrix().plus( impAdd );
-            M              matAns = this.newInstance(impSum);
-    
-            return matAns;
-    
-        } catch (InstantiationException e) {
-    
-            System.err.println("Unable to instantiate resultant vector");
-    
-            return null;
-        }
+        Jama.Matrix    impAdd = ((BaseMatrix<M>)matAddend).getMatrix();
+        Jama.Matrix    impSum = this.getMatrix().plus( impAdd );
+        M              matAns = this.newInstance(impSum);
+
+        return matAns;
     }
 
     /**
@@ -392,19 +375,11 @@ public abstract class BaseMatrix<M extends BaseMatrix<M>> implements IArchive {
      *                      or <code>null</code> if an error occurred
      */
     public M minus(M matSub) {
-        try {
-            Jama.Matrix    impSub = ((BaseMatrix<M>)matSub).getMatrix();
-            Jama.Matrix    impDif = this.getMatrix().minus( impSub );
-            M              matAns = this.newInstance(impDif);
-    
-            return matAns;
-    
-        } catch (InstantiationException e) {
-    
-            System.err.println("Unable to instantiate resultant vector");
-            
-            return null;
-        }
+        Jama.Matrix    impSub = ((BaseMatrix<M>)matSub).getMatrix();
+        Jama.Matrix    impDif = this.getMatrix().minus( impSub );
+        M              matAns = this.newInstance(impDif);
+
+        return matAns;
     }
 
     /**
@@ -712,30 +687,39 @@ public abstract class BaseMatrix<M extends BaseMatrix<M>> implements IArchive {
     }
 
     /**
+     * <p>
      * Creates a new, uninitialized instance of this matrix type.
+     * </p>
+     * <p>
+     * NOTE:
+     * &middot; This method was made abstract by Ivo List.  Rather than use 
+     * reflection to instantiate new objects, this function is now delegated
+     * to the concrete classes.  This architecture is more robust and allows
+     * the compiler to do more error checking.
+     * </p>
      * 
      * @return  uninitialized matrix object of type <code>M</code>
      * 
-     * @throws InstantiationException   error occurred in the reflection constructor
-     *
+     * @author Ivo List
      * @author Christopher K. Allen
      * @since  Oct 1, 2013
      */
-    protected M newInstance() throws InstantiationException {
-        try {
-            M matNewInst = this.ctrType.newInstance();
+    protected abstract M newInstance();
+//    protected M newInstance() throws InstantiationException {
+//        try {
+//            M matNewInst = this.ctrType.newInstance();
+//    
+//            return matNewInst;
+//    
+//        } catch (InstantiationException   | 
+//                IllegalAccessException   | 
+//                IllegalArgumentException | 
+//                InvocationTargetException e) {
+//    
+//            throw new InstantiationException("Unable to copy matrix " + this.getClass().getName());
+//        }
+//    }
     
-            return matNewInst;
-    
-        } catch (InstantiationException   | 
-                IllegalAccessException   | 
-                IllegalArgumentException | 
-                InvocationTargetException e) {
-    
-            throw new InstantiationException("Unable to copy matrix " + this.getClass().getName());
-        }
-    }
-
     /**
      * Creates a new instance of this matrix type initialized to the given
      * implementation matrix.
@@ -743,13 +727,11 @@ public abstract class BaseMatrix<M extends BaseMatrix<M>> implements IArchive {
      * @param   impInit implementation matrix containing initialization values    
      * 
      * @return          initialized matrix object of type <code>M</code>
-     * 
-     * @throws InstantiationException   error occurred in the reflection constructor
      *
      * @author Christopher K. Allen
      * @since  Oct 1, 2013
      */
-    protected M newInstance(Jama.Matrix impInit) throws InstantiationException {
+    protected M newInstance(Jama.Matrix impInit) {
         
         M   matNewInst = this.newInstance();
         
@@ -777,22 +759,10 @@ public abstract class BaseMatrix<M extends BaseMatrix<M>> implements IArchive {
      * @throws UnsupportedOperationException  child class has not defined a public, zero-argument constructor
      */
     @SuppressWarnings("unchecked")
-    protected BaseMatrix(int cntRows, int cntCols) throws UnsupportedOperationException {
-        
-        try {
-            this.clsType = (Class<M>) this.getClass();
-            
-            this.ctrType = this.clsType.getConstructor();
-            this.cntRows = cntRows;
-            this.cntCols = cntCols;
-            this.matImpl = new Jama.Matrix(cntRows, cntCols, 0.0);
-            
-        } catch (NoSuchMethodException | SecurityException e) {
-            
-            throw new UnsupportedOperationException("Could not find public, zero-argument constructor for " 
-                    + this.clsType.getName()
-                    );
-        }
+    protected BaseMatrix(int cntRows, int cntCols) /*throws UnsupportedOperationException*/ {
+        this.cntRows = cntRows;
+        this.cntCols = cntCols;
+        this.matImpl = new Jama.Matrix(cntRows, cntCols, 0.0);
     }
 
     /**
@@ -807,7 +777,7 @@ public abstract class BaseMatrix<M extends BaseMatrix<M>> implements IArchive {
      * @author Christopher K. Allen
      * @since  Sep 25, 2013
      */
-    protected BaseMatrix(M matParent) throws UnsupportedOperationException {
+    protected BaseMatrix(M matParent) {
         this(matParent.getRowCnt(), matParent.getColCnt());
         
         BaseMatrix<M> matBase = (BaseMatrix<M>)matParent;
