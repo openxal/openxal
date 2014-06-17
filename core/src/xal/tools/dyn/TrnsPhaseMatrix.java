@@ -384,6 +384,15 @@ public class TrnsPhaseMatrix extends SquareMatrix<TrnsPhaseMatrix> {
         this.setElem(IND.HOM, IND.HOM, 1.0);
     }
 
+	/**
+     * Handles object creation required by the base class. 
+     *
+	 * @see xal.tools.math.BaseMatrix#newInstance()
+	 *
+	 * @author Ivo List
+	 * @author Christopher K. Allen
+	 * @since  Jun 17, 2014
+	 */
 	@Override
 	protected TrnsPhaseMatrix newInstance() {
 		return new TrnsPhaseMatrix();

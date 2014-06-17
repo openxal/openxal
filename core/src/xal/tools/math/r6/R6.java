@@ -174,6 +174,15 @@ public class R6 extends BaseVector<R6> {
     }
 
 
+	/**
+	 * Handles object creation required by the base class. 
+	 *
+	 * @see xal.tools.math.BaseVector#newInstance()
+	 *
+	 * @Ivo List
+	 * @author Christopher K. Allen
+	 * @since  Jun 17, 2014
+	 */
 	@Override
 	protected R6 newInstance() {
 		return new R6();

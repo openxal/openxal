@@ -523,6 +523,15 @@ public class R2x2 extends SquareMatrix<R2x2> implements java.io.Serializable {
         return new R2(x, y);
     }
 
+	/**
+     * Handles object creation required by the base class. 
+     *
+	 * @see xal.tools.math.BaseMatrix#newInstance()
+	 *
+	 * @author Ivo List
+	 * @author Christopher K. Allen
+	 * @since  Jun 17, 2014
+	 */
 	@Override
 	protected R2x2 newInstance() {
 		return new R2x2();

@@ -268,6 +268,15 @@ public class TrnsPhaseVector extends BaseVector<TrnsPhaseVector> {
     }
 
 
+	/**
+     * Handles object creation required by the base class. 
+	 *
+	 * @see xal.tools.math.BaseVector#newInstance()
+	 *
+	 * @author Ivo List
+	 * @author Christopher K. Allen
+	 * @since  Jun 17, 2014
+	 */
 	@Override
 	protected TrnsPhaseVector newInstance() {
 		return new TrnsPhaseVector();
