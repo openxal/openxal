@@ -241,7 +241,7 @@ public class MonitoredPV {
 	 * @param  channelName  The new channelName value
 	 */
 	public void setChannelName( final String channelName ) {
-		if ( channelName != null && channelName != "" && channelName.length() > 0 ) {
+		if ( channelName != null && !channelName.isEmpty() ) {
 			final Channel channel = ChannelFactory.defaultFactory().getChannel( channelName );
 			setChannel( channel );
 		}
