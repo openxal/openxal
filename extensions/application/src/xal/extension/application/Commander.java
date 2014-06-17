@@ -186,7 +186,7 @@ public class Commander {
         final JMenuBar menuBar = new JMenuBar();
         
 		final String menubarStr = _controlMap.get( "menubar" );
-		if ( menubarStr == null || "".equals(menubarStr) )  return null;		// check if a menubar definition was found
+		if ( menubarStr == null || menubarStr.isEmpty() )  return null;		// check if a menubar definition was found
 		
         final String[] menuKeys = Util.getTokens( menubarStr );
         

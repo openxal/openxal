@@ -447,7 +447,11 @@ public class PVLogger {
 	/** sql connections should be closed manually 
 	 * @throws Throwable */
 	protected void finalize() throws Throwable{
-		closeConnection();
-		super.finalize();
+		try {
+			closeConnection();
+		}
+		finally {
+			super.finalize();
+		}
 	}
 }

@@ -72,8 +72,12 @@ abstract public class Monitor {
      * @throws Throwable 
      */
     protected void finalize() throws Throwable  {
-        clear();
-        super.finalize();
+		try {
+			clear();
+		}
+		finally {
+			super.finalize();
+		}
     }
     
     

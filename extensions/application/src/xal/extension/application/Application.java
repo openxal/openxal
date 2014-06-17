@@ -127,7 +127,7 @@ abstract public class Application {
 		final Preferences prefs = Preferences.userNodeForPackage( Application.class );
 		final String propertiesPath = prefs.get( "UserPropertiesFile", "" );
 		
-		if ( propertiesPath == null || "".equals(propertiesPath) )  return;
+		if ( propertiesPath == null || propertiesPath.isEmpty() )  return;
 				
 		try {
 			final FileInputStream propertiesStream = new FileInputStream( propertiesPath );

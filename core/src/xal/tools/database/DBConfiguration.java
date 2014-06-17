@@ -232,7 +232,7 @@ public class DBConfiguration {
 	static public boolean hasDefaultConfiguration() {
 		try {
 			final String urlSpec = getDefaultURLSpec();
-			return urlSpec != null && !"".equals(urlSpec) && new File( new URL( urlSpec ).toURI() ).exists();
+			return urlSpec != null && !urlSpec.isEmpty() && new File( new URL( urlSpec ).toURI() ).exists();
 		}
 		catch ( Exception exception ) {
 			return false;
