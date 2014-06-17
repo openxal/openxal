@@ -271,6 +271,20 @@ public class R6x6 extends SquareMatrix<R6x6> {
     public R6x6(R6x6 matParent) throws UnsupportedOperationException {
         super(matParent);
     }
+
+	/**
+     * Handles object creation required by the base class. 
+     *
+	 * @see xal.tools.math.BaseMatrix#newInstance()
+	 *
+	 * @author Ivo List
+	 * @author Christopher K. Allen
+	 * @since  Jun 17, 2014
+	 */
+	@Override
+	protected R6x6 newInstance() {
+		return new R6x6();
+	}
     
     
     
