@@ -53,7 +53,7 @@ class SnapshotGroupChannelTable {
 		while ( resultSet.next() ) {
 			pvs.add( resultSet.getString( CHANNEL_COLUMN ) );
 		}
-		
+		resultSet.close();
 		return pvs.toArray( new String[pvs.size()] );
 	}
 	

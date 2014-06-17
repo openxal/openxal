@@ -92,7 +92,7 @@ class PreferenceController implements SwingConstants {
 			public void insertUpdate(DocumentEvent event) {
 				try {
 					final String text = correlatorTimeField.getText().trim();
-					if ( text != "" && text != null && !text.equals(".") ) {
+					if ( !"".equals(text) && text != null && !".".equals(text) ) {
 						Double.parseDouble(text);
 					}
 				}

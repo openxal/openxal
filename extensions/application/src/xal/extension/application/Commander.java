@@ -186,7 +186,7 @@ public class Commander {
         final JMenuBar menuBar = new JMenuBar();
         
 		final String menubarStr = _controlMap.get( "menubar" );
-		if ( menubarStr == null || menubarStr == "" )  return null;		// check if a menubar definition was found
+		if ( menubarStr == null || "".equals(menubarStr) )  return null;		// check if a menubar definition was found
 		
         final String[] menuKeys = Util.getTokens( menubarStr );
         
@@ -562,7 +562,7 @@ public class Commander {
 	public String getLabel( final String itemID ) {
 		final String explicitLabel = getItemFieldProperty( itemID, "label" );
 		// if the explicit label is not set then default to the item ID itself for the label
-		return ( explicitLabel == null || explicitLabel == "" ) ? itemID : explicitLabel;
+		return ( explicitLabel == null || "".equals(explicitLabel) ) ? itemID : explicitLabel;
 	}
     
     
@@ -963,7 +963,7 @@ class ItemState {
 	
 	/** Parse the string to generate the item state */
 	public static ItemState getState( final String description ) {
-		if ( description == null || description == "" ) {
+		if ( description == null || "".equals(description) ) {
 			return DEFAULT_STATE;
 		}
 		

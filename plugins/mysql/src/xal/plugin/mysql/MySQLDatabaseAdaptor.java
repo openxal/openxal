@@ -72,7 +72,7 @@ public class MySQLDatabaseAdaptor extends DatabaseAdaptor {
 			while ( result.next() ) {
 				schemas.add( result.getString( "TABLE_CAT" ) );
 			}
-
+			result.close();
 			return schemas;
 		}
 		catch ( SQLException exception ) {

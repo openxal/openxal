@@ -231,9 +231,11 @@ public class MonitoredArrayPV {
 
 	/**
 	 *  Removes the monitored PV.
+	 * @throws Throwable 
 	 */
-	protected void finalize() {
+	protected void finalize() throws Throwable {
 		MonitoredPV.removeMonitoredPV(mpv);
+		super.finalize();
 	}
 
 }
