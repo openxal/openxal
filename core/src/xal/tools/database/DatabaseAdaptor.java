@@ -96,7 +96,7 @@ public abstract class DatabaseAdaptor {
 			while ( result.next() ) {
 				schemas.add( result.getString( "TABLE_SCHEM" ) );
 			}
-			
+			result.close();
 			return schemas;
 		}
 		catch ( SQLException exception ) {
@@ -132,7 +132,7 @@ public abstract class DatabaseAdaptor {
 				String name = result.getString( "TABLE_NAME" );
 				tables.add( name );
 			}
-
+			result.close();
 			return tables;
 		}
 		catch ( SQLException exception ) {
@@ -170,7 +170,7 @@ public abstract class DatabaseAdaptor {
 				final String column = result.getString( "COLUMN_NAME" );
 				primaryKeys.add( column );
 			}
-
+			result.close();
 			return primaryKeys;
 		}
 		catch ( SQLException exception ) {
