@@ -99,7 +99,12 @@ public class DispatchTimer {
 
 	/** release resources held by this timer */
 	protected void finalize() throws Throwable {
-		dispose();
+		try {
+			dispose();
+		}
+		finally {
+			super.finalize();
+		}
 	}
 
 

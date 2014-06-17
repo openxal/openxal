@@ -156,20 +156,11 @@ public abstract class SquareMatrix<M extends SquareMatrix<M>> extends BaseMatrix
      *  @return     transposed copy of this matrix or <code>null</code> if error
      */
     public M transpose()  {
-        try {
-            
-            Jama.Matrix impTrans = this.getMatrix().transpose();
-            M           matTrans = this.newInstance();
-            matTrans.assignMatrix(impTrans);
-            
-            return matTrans;
-            
-        } catch (InstantiationException e) {
-            
-            System.err.println("Unable to instantiate resultant vector");
-
-            return null;
-        }
+        Jama.Matrix impTrans = this.getMatrix().transpose();
+        M           matTrans = this.newInstance();
+        matTrans.assignMatrix(impTrans);
+        
+        return matTrans;
     }
 
     /**
@@ -187,20 +178,11 @@ public abstract class SquareMatrix<M extends SquareMatrix<M>> extends BaseMatrix
      *  @return     the algebraic inverse of this matrix or <code>null</code> if error
      */
     public M inverse()    {
-        try {
-            
-            Jama.Matrix impInv = this.getMatrix().inverse();
-            M           matInv = this.newInstance();
-            matInv.assignMatrix(impInv);
-            
-            return matInv;
-            
-        } catch (InstantiationException e) {
-            
-            System.err.println("Unable to instantiate resultant vector");
-
-            return null;
-        }
+        Jama.Matrix impInv = this.getMatrix().inverse();
+        M           matInv = this.newInstance();
+        matInv.assignMatrix(impInv);
+        
+        return matInv;
     }
     
     /**
@@ -264,28 +246,16 @@ public abstract class SquareMatrix<M extends SquareMatrix<M>> extends BaseMatrix
         // Solve the matrix-vector system in the Jama package
         Jama.Matrix impState = impL.solve(impObs);
         
+        V   vecSoln = vecObs.newInstance();
         
-        try {
-            @SuppressWarnings("unchecked")
-            Class<V>        clsVec = (Class<V>) vecObs.getClass();
-            Constructor<V> ctrVec = clsVec.getConstructor();
+        for (int i=0; i<this.getSize(); i++) {
+            double dblVal = impState.get(i,  0);
             
-            V   vecSoln = ctrVec.newInstance();
-            
-            for (int i=0; i<this.getSize(); i++) {
-                double dblVal = impState.get(i,  0);
-                
-                vecSoln.setElem(i,  dblVal);
-            }
-            
-            return vecSoln;
-            
-        } catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
-            
-            System.err.println("Unable to instantiate resultant vector");
-
-            return null;
+            vecSoln.setElem(i,  dblVal);
         }
+        
+        return vecSoln;
+ 
     }
 
     /**
@@ -381,18 +351,10 @@ public abstract class SquareMatrix<M extends SquareMatrix<M>> extends BaseMatrix
      *                      or <code>null</code> if an error occurred
      */
     public M    times(double s) {
-        try {
-            Jama.Matrix impPrd = this.getMatrix().times(s);
-            M           matAns = this.newInstance(impPrd);
-            
-            return matAns;
-            
-        } catch (InstantiationException e) {
-            
-            System.err.println("Unable to instantiate resultant vector");
-            
-            return null;
-        }
+        Jama.Matrix impPrd = this.getMatrix().times(s);
+        M           matAns = this.newInstance(impPrd);
+        
+        return matAns;
     }
     
     /**
@@ -432,39 +394,25 @@ public abstract class SquareMatrix<M extends SquareMatrix<M>> extends BaseMatrix
      * @since  Oct 11, 2013
      */
     public <V extends BaseVector<V>> V times(V vecFac) throws IllegalArgumentException {
-        
         // Check sizes
         if ( vecFac.getSize() != this.getSize() ) 
             throw new IllegalArgumentException(vecFac.getClass().getName() + " vector must have compatible size");
+    
+        V   vecSoln = vecFac.newInstance();
         
-        try {
-            @SuppressWarnings("unchecked")
-            Class<V>        clsVec = (Class<V>) vecFac.getClass();
-            Constructor<V>  ctrVec = clsVec.getConstructor();
-            
-            V   vecSoln = ctrVec.newInstance();
-            
-            for (int i=0; i<this.getSize(); i++) {
-                double dblSum = 0.0;
+        for (int i=0; i<this.getSize(); i++) {
+            double dblSum = 0.0;
 
-                for (int j=0; j<this.getSize(); j++) {
-                    double dblFac = this.getElem(i, j)*vecFac.getElem(j);
-                 
-                    dblSum += dblFac;
-                }
-                
-                vecSoln.setElem(i,  dblSum);
+            for (int j=0; j<this.getSize(); j++) {
+                double dblFac = this.getElem(i, j)*vecFac.getElem(j);
+             
+                dblSum += dblFac;
             }
             
-            return vecSoln;
-            
-        } catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
-            
-            System.err.println("Unable to instantiate resultant vector");
-
-            return null;
+            vecSoln.setElem(i,  dblSum);
         }
         
+        return vecSoln;
     }
     
     /**
@@ -477,20 +425,12 @@ public abstract class SquareMatrix<M extends SquareMatrix<M>> extends BaseMatrix
      *                      or <code>null</code> if an error occurred
      */
     public M    times(M matRight) {
-        try {
-            BaseMatrix<M> matBase = (BaseMatrix<M>)matRight;
-            Jama.Matrix     impMult = matBase.getMatrix();
-            Jama.Matrix     impProd = this.getMatrix().times( impMult);
-            M               matAns  = this.newInstance(impProd);
+        BaseMatrix<M> matBase = (BaseMatrix<M>)matRight;
+        Jama.Matrix     impMult = matBase.getMatrix();
+        Jama.Matrix     impProd = this.getMatrix().times( impMult);
+        M               matAns  = this.newInstance(impProd);
 
-            return matAns;
-
-        } catch (InstantiationException e) {
-
-            System.err.println("Unable to instantiate resultant vector");
-            
-            return null;
-        }
+        return matAns;
     }
     
     /**
@@ -527,21 +467,13 @@ public abstract class SquareMatrix<M extends SquareMatrix<M>> extends BaseMatrix
      *  @return             matPhi*this*matPhi^T, or <code>null</code> if an error occurred
      */
     public M    conjugateTrans(M matPhi) {
-        try {
-            Jama.Matrix impPhi  = ((BaseMatrix<M>)matPhi).getMatrix();
-            Jama.Matrix impPhiT = impPhi.transpose();
-            Jama.Matrix impAns  = impPhi.times( this.getMatrix().times( impPhiT) );
-            
-            M   matAns = this.newInstance(impAns);
-            
-            return matAns;
-            
-        } catch (InstantiationException e) {
-            
-            System.err.println("Unable to instantiate resultant vector");
-            
-            return null;
-        }
+        Jama.Matrix impPhi  = ((BaseMatrix<M>)matPhi).getMatrix();
+        Jama.Matrix impPhiT = impPhi.transpose();
+        Jama.Matrix impAns  = impPhi.times( this.getMatrix().times( impPhiT) );
+        
+        M   matAns = this.newInstance(impAns);
+        
+        return matAns;
     };
     
     /**
@@ -564,22 +496,14 @@ public abstract class SquareMatrix<M extends SquareMatrix<M>> extends BaseMatrix
      *
      *  @return             matPhi*this*matPhi<sup>-1</sup>
      */
-    public M conjugateInv(M matPhi) {
-        try {
-            Jama.Matrix impPhi = ((BaseMatrix<M>)matPhi).getMatrix();
-            Jama.Matrix impInv = impPhi.inverse();
-            Jama.Matrix impAns = impPhi.times( this.getMatrix().times( impInv) );
-            
-            M   matAns = this.newInstance(impAns);
-            
-            return matAns;
-            
-        } catch (InstantiationException e) {
-            
-            System.err.println("Unable to instantiate resultant vector");
-            
-            return null;
-        }
+    public M conjugateInv(M matPhi) {  
+        Jama.Matrix impPhi = ((BaseMatrix<M>)matPhi).getMatrix();
+        Jama.Matrix impInv = impPhi.inverse();
+        Jama.Matrix impAns = impPhi.times( this.getMatrix().times( impInv) );
+        
+        M   matAns = this.newInstance(impAns);
+        
+        return matAns;
     };
     
     
