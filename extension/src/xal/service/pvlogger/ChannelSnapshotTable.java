@@ -137,9 +137,7 @@ class ChannelSnapshotTable {
 		if( snapshotQuery != null) {
 			snapshotQuery.close();
 		}
-		if( resultSet != null) {
-			resultSet.close();
-		}
+		resultSet.close();
 		return snapshots.toArray( new ChannelSnapshot[snapshots.size()] );
 	}
 
