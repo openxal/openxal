@@ -225,7 +225,7 @@ abstract public class XalInternalWindow extends JInternalFrame implements XalDoc
 		String windowTitle = "Untitled";
 		final String documentTitle = _document.getTitle();
 		
-		if ( documentTitle != null && documentTitle != "" ) {
+		if ( documentTitle != null && !documentTitle.isEmpty() ) {
 			windowTitle = documentTitle;
 			
 			if ( _document.hasChanges() ) {
