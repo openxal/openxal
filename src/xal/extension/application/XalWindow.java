@@ -211,7 +211,7 @@ public abstract class XalWindow extends JFrame implements XalDocumentView, XalDo
         final StringBuffer windowTitle = new StringBuffer( Application.getApp().getApplicationAdaptor().applicationName() );
 		
 		String documentTitle = document.getTitle();
-		if ( documentTitle != null && documentTitle != "" ) {
+		if ( documentTitle != null && !documentTitle.isEmpty() ) {
 			windowTitle.append( " - " + documentTitle );
 			
 			final boolean documentModified = document.hasChanges();
