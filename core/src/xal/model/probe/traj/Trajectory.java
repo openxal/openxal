@@ -336,16 +336,15 @@ public class Trajectory<S extends ProbeState> implements IArchive, Iterable<S> {
     public void setTimestamp(long lngTimeStamp) { timestamp = new Date(lngTimeStamp);  }
 
     /** 
-     * Gets an instance of the generic type <b><code>S</code></b>.  This is commonly used to test 
-     * <code>instanceof</code> on <b><code>S</code></b>.
+     * Gets a <code>Class&lt;S&gt;</code> object of the generic type <b><code>S</code></b>.  This is commonly to do 
+     * <code>instanceof</code>-like tests on <b><code>S</code></b>.
      * 
-     * @return a <code>ProbeState</code> of type <b><code>S</code></b> instance
+     * @return a <code>Class&lt;S&gt;</code> object for the class <b><code>S</code></b>
      * 
      * @author Jonathan M. Freed
      */
-    public S getStateType() {
-    	S state = initialState();
-    	return state;
+    public Class<S> getStateClass() {
+    	return (Class<S>) initialState().getClass();
     	//return newProbeState(this.factory);
     }   
 
@@ -715,11 +714,11 @@ public class Trajectory<S extends ProbeState> implements IArchive, Iterable<S> {
             }
             
             //*********************************************************
-            String type = container.stringValue(ProbeState.TYPE_LABEL);
+            String type = childNode.stringValue(ProbeState.TYPE_LABEL);
             S probeState;
             try {
                 Class<?> probeStateClass = Class.forName(type);
-                probeState = (S) probeStateClass.newInstance();
+                probeState = (S) probeStateClass.newInstance(); // is this safe? JMF
             } catch (Exception e) {
                 e.printStackTrace();
                 throw new ParsingException(e.getMessage());

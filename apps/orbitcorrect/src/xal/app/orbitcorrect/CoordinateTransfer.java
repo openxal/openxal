@@ -169,13 +169,13 @@ class GenericMarkerCoordinateTransfer extends CoordinateTransfer {
 	 * 
 	 */
 	protected PhaseMatrix getTransferMatrix( final Trajectory<? extends ProbeState> trajectory, final AcceleratorNode fromNode, final AcceleratorNode toNode ) {
-		if ( trajectory.getStateType() instanceof EnvelopeProbeState ) {
+		if ( (trajectory.getStateClass()).isInstance(EnvelopeProbeState.class) ) {
 			//return getTransferMatrix( trajectory, fromNode, toNode );
 			final PhaseMatrix fromMatrix = ((EnvelopeProbeState)trajectory.stateForElement( fromNode.getId() )).getResponseMatrix();
 			final PhaseMatrix toMatrix = ((EnvelopeProbeState)trajectory.stateForElement( toNode.getId() )).getResponseMatrix();
 			return getTransferMatrix( fromMatrix, toMatrix );
 		}
-		else if ( trajectory.getStateType() instanceof TransferMapState ) {
+		else if ( (trajectory.getStateClass()).isInstance(TransferMapState.class) ) {
 			//return getTransferMatrix( trajectory, fromNode, toNode );
 			final PhaseMatrix fromMatrix = ((TransferMapState)trajectory.stateForElement( fromNode.getId() )).getTransferMap().getFirstOrder();
 			final PhaseMatrix toMatrix = ((TransferMapState)trajectory.stateForElement( toNode.getId() )).getTransferMap().getFirstOrder();
