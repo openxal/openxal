@@ -344,7 +344,9 @@ public class Trajectory<S extends ProbeState> implements IArchive, Iterable<S> {
      * @author Jonathan M. Freed
      */
     public S getStateType() {
-    	return newProbeState(this.factory);
+    	S state = initialState();
+    	return state;
+    	//return newProbeState(this.factory);
     }   
 
     // ************* Trajectory Operations
@@ -711,9 +713,21 @@ public class Trajectory<S extends ProbeState> implements IArchive, Iterable<S> {
                 throw new ParsingException(
                     "Expected state element, got: " + childNode.name());
             }
-            S state = newProbeState(this.factory);
-            state.load(childNode);
-            saveState(state);
+            
+            //*********************************************************
+            String type = container.stringValue(ProbeState.TYPE_LABEL);
+            S probeState;
+            try {
+                Class<?> probeStateClass = Class.forName(type);
+                probeState = (S) probeStateClass.newInstance();
+            } catch (Exception e) {
+                e.printStackTrace();
+                throw new ParsingException(e.getMessage());
+            }
+            
+            //S state = newProbeState(this.factory);
+            probeState.load(childNode);
+            saveState(probeState);
         }
     }
 
