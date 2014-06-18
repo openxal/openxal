@@ -117,7 +117,7 @@ final public class DampedSinusoidFit {
 		NUM_POINTS = count;
 		
 		_waveformError = new double[count];
-		
+
 		_initialOffsetCalculated = false;
 		_initialOffset = null;
 		_offset = Double.NaN;
@@ -147,6 +147,7 @@ final public class DampedSinusoidFit {
 		
 		_initialAmplitudeCalculated = false;
 		_initialAmplitude = Double.NaN;
+		_amplitude = Double.NaN;
     }
 	
 	
@@ -213,7 +214,7 @@ final public class DampedSinusoidFit {
 		
 		return amplitude * Math.pow( growthFactor, index ) * Math.sin( 2 * Math.PI * frequency * index + phase ) + offset;
 	}
-	
+
 	
 	/** calculate the initial waveform error */
 	private void fitInitialWaveformError() {
@@ -982,5 +983,36 @@ final public class DampedSinusoidFit {
 		}
 		_initialAmplitude = calculateAmplitude( gfactor, mu, phase, zeroedWaveform, getInitialWaveformError() );
 		_initialAmplitudeCalculated = true;
+	}
+
+
+	/**
+	 * Convenience method to calculate the fitted waveform over the specified positions
+	 * @param positions array of positions over which to calculate the waveform
+	 * @return array holding the calculated waveform over each of the positions
+	 */
+	public double[] getFittedWaveform( final double[] positions ) {
+		final double[] waveform = new double[positions.length];
+		calculateFittedWaveform( positions, waveform );
+		return waveform;
+	}
+
+
+	/** 
+	 * Convenience method to calculate the fitted waveform over the specified positions 
+	 * @param positions array of positions over which to calculate the waveform
+	 * @param array big enough to hold the calculated waveform over each of the positions
+	 */
+	public void calculateFittedWaveform( final double[] positions, double[] waveform ) {
+		final double offset = Double.isNaN( _offset ) ? getInitialOffset() : _offset;
+		final double growthFactor = Double.isNaN( _growthFactor ) ? getInitialGrowthFactor() : _growthFactor;
+		final double frequency = Double.isNaN( _frequency ) ? getInitialFrequency() : _frequency;
+		final double amplitude = Double.isNaN( _amplitude ) ? getInitialAmplitude() : _amplitude;
+		final double phase = Double.isNaN( _phase ) ? getInitialPhase() : _phase;
+
+		for ( int index = 0 ; index < waveform.length ; index++ ) {
+			final double position = positions[index];
+			waveform[index] = amplitude * Math.pow( growthFactor, position ) * Math.sin( 2 * Math.PI * frequency * position + phase ) + offset;
+		}
 	}
 }
