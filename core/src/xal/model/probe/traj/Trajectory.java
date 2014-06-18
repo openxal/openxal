@@ -15,6 +15,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.lang.reflect.*;
 
 /**
  * Manages the history for a probe.  Saves <code>ProbeState</code> objects,
@@ -196,12 +197,6 @@ public class Trajectory<S extends ProbeState> implements IArchive, Iterable<S> {
     /*
      *  Local Attributes
      */
-    
-//    /** ProbeState type for use when testing "instanceof" */
-//    private S stateType;
-    
-    /** factory for creating ProbeState types from the generic type */
-    private ProbeStateFactory<S> factory;
      
     /** any user comments regard the trajectory */
     private String description = "";
@@ -258,19 +253,6 @@ public class Trajectory<S extends ProbeState> implements IArchive, Iterable<S> {
 
     // ************* abstract protocol specification
 
-    
-    // This is only used by SyncTraj, TranMapTraj, and this.readStatesFrom()
-    //   Not sure if this will still be needed.
-    /**
-     * Creates a new <code>ProbeState</code> object with the proper type for the trajectory.
-     * 
-     * @return      new, empty <code>ProbeState</code> object
-     * @throws IllegalAccessException 
-     * @throws InstantiationException 
-     */
-    protected S newProbeState(ProbeStateFactory<S> factory) {
-    	return factory.create();
-    }
 
     /**
      * Override this method in subclasses to add subclass-specific properties to
@@ -305,21 +287,6 @@ public class Trajectory<S extends ProbeState> implements IArchive, Iterable<S> {
 		this._history  = new RealNumericIndexer<S>();
         this.mapStates = new ElementStateMap<S>();
     }
-	
-    /**
-     * Create a new <code>Trajectory</code> given a <code>ProbeStateFactory&lt;S&gt;
-     * </code>which is used to create the correct <code>ProbeState</code> type.
-     * 
-     * @param factory - the <code>ProbeStateFactory&lt;S&gt;</code> used to 
-     * 		instantiate the type <code><b>S</code></b>
-     * 
-     * @author Jonathan M. Freed
-     */
-    public Trajectory(ProbeStateFactory<S> factory) {
-    	this.factory = factory;
-    	this._history = new RealNumericIndexer<S>();
-    	this.mapStates = new ElementStateMap<S>();
-    }
 
     /**
      * Set the user comment string
@@ -343,9 +310,12 @@ public class Trajectory<S extends ProbeState> implements IArchive, Iterable<S> {
      * 
      * @author Jonathan M. Freed
      */
-    public Class<S> getStateClass() {
+    //@SuppressWarnings("unchecked")
+	public Class<S> getStateClass() {
+    	
+    	//gets Class<S> by reflection but not sure how/if this works. - JMF
+    	//return (Class<S>) ((ParameterizedType) this.getClass().getGenericSuperclass()).getActualTypeArguments()[0];
     	return (Class<S>) initialState().getClass();
-    	//return newProbeState(this.factory);
     }   
 
     // ************* Trajectory Operations
