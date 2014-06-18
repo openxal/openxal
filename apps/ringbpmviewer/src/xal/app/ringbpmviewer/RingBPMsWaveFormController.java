@@ -728,19 +728,19 @@ public class RingBPMsWaveFormController {
         
         
         
-        System.arraycopy(y_arr , i_min , waveform, 0, i_max);
-        fitter = new DampedSinusoidFit(waveform);
-        
+        System.arraycopy( y_arr, i_min, waveform, 0, i_max );
+        fitter = new DampedSinusoidFit( waveform );
 
 
 		double[] resArrX = new double[i_size];
 		double[] resArrY = new double[i_size];
 
-//		for(int i = 0; i < i_size; i++) {
-//			int ii = i + i_min;
-//			resArrX[i] = x_arr[ii];
-//			resArrY[i] = fitter.getValue(resArrX[i]);
-//		}
+		for(int i = 0; i < i_size; i++) {
+			int ii = i + i_min;
+			resArrX[i] = x_arr[ii];
+		}
+
+		fitter.calculateFittedWaveform( resArrX, resArrY );
 
 		if(showResults) {
 			pvWF.setAnalysisData(resArrX, resArrY);
