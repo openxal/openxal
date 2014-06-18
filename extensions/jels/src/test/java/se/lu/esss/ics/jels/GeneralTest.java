@@ -120,6 +120,9 @@ public class GeneralTest {
 			//System.out.printf("%E %E\n",dataOX[allCols[j].openxal][0], dataTW[allCols[j].tracewin][0]);
 		}
 		//saveResults("openxal."+i+".txt", dataOX);
+		dataTW = null;
+		dataOX = null;
+		System.gc();
 	}
 	
 	
@@ -156,7 +159,7 @@ public class GeneralTest {
 		for(String line; (line = br.readLine()) != null; i++) {
 			String cols[] = line.split("\t", TWcols + 1);
 			for (int j = 0; j<TWcols; j++) {
-				data[j][i] = new Double(cols[j]);
+				data[j][i] = Double.parseDouble(cols[j]);
 			}
 		}
 		br.close();
@@ -204,7 +207,7 @@ public class GeneralTest {
 	public double[][] run(Probe probe) throws ModelException, IOException
 	{
 		 AcceleratorSeq sequence = loadAcceleratorSequence();
-		 return run(probe, sequence);
+		 return run(probe.copy(), sequence);
 	}
 	
 	/**
