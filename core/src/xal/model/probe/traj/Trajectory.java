@@ -15,7 +15,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-import java.lang.reflect.*;
 
 /**
  * Manages the history for a probe.  Saves <code>ProbeState</code> objects,
@@ -310,12 +309,8 @@ public class Trajectory<S extends ProbeState> implements IArchive, Iterable<S> {
      * 
      * @author Jonathan M. Freed
      */
-    //@SuppressWarnings("unchecked")
-	public Class<S> getStateClass() {
-    	
-    	//gets Class<S> by reflection but not sure how/if this works. - JMF
-    	//return (Class<S>) ((ParameterizedType) this.getClass().getGenericSuperclass()).getActualTypeArguments()[0];
-    	return (Class<S>) initialState().getClass();
+	public Class<?> getStateClass() {
+    	return initialState().getClass();
     }   
 
     // ************* Trajectory Operations
@@ -326,9 +321,9 @@ public class Trajectory<S extends ProbeState> implements IArchive, Iterable<S> {
      * 
      *  @param  probe   target probe object
      */
-    //@SuppressWarnings("unchecked")
+    @SuppressWarnings("unchecked")
 	public void update(Probe probe) {
-        S state = (S) probe.createProbeState(); // is this safe? JMF
+        S state = (S) probe.createProbeState();
         saveState(state);
     }
 
@@ -673,7 +668,8 @@ public class Trajectory<S extends ProbeState> implements IArchive, Iterable<S> {
      * 
      * @param container <code>DataAdaptor</code> containing the child state nodes
      */
-    private void readStatesFrom(DataAdaptor container)
+    @SuppressWarnings("unchecked")
+	private void readStatesFrom(DataAdaptor container)
         throws ParsingException {
         Iterator<? extends DataAdaptor> childNodes = container.childAdaptors().iterator();
         while (childNodes.hasNext()) {
@@ -688,7 +684,7 @@ public class Trajectory<S extends ProbeState> implements IArchive, Iterable<S> {
             S probeState;
             try {
                 Class<?> probeStateClass = Class.forName(type);
-                probeState = (S) probeStateClass.newInstance(); // is this safe? JMF
+                probeState = (S) probeStateClass.newInstance();
             } catch (Exception e) {
                 e.printStackTrace();
                 throw new ParsingException(e.getMessage());

@@ -80,15 +80,15 @@ public class SimpleSimResultsAdaptor extends SimResultsAdaptor implements ISimLo
         super();
         
 
-        if (datSim.getStateType() instanceof TransferMapState) {
+        if ((datSim.getStateClass()).isInstance(TransferMapState.class)) {
             CalculationsOnRings calRings  = new CalculationsOnRings(datSim);
             super.registerCalcEngine(TransferMapState.class, calRings);;
 
-        } else if (datSim.getStateType() instanceof EnvelopeProbeState) {
+        } else if ((datSim.getStateClass()).isInstance(EnvelopeProbeState.class)) {
             CalculationsOnBeams calBeams = new CalculationsOnBeams(datSim);
             super.registerCalcEngine(EnvelopeProbeState.class, calBeams);
             
-        } else if (datSim.getStateType() instanceof ParticleProbeState) {  
+        } else if ((datSim.getStateClass()).isInstance(ParticleProbeState.class)) {  
             CalculationsOnParticles calPart = new CalculationsOnParticles(datSim);
             super.registerCalcEngine(ParticleProbeState.class, calPart);
 

@@ -87,7 +87,7 @@ public class ProbeStateTest extends TestCase {
 		trajectory.saveState((DiagnosticProbeState)state);
 		
 		assertTrue(trajectory.stateAtPosition(INITIAL_POSITION) == state);
-		assertTrue(trajectory.getStateType() instanceof DiagnosticProbeState);
+		assertTrue((trajectory.getStateClass()).isInstance(DiagnosticProbeState.class));
 	}
 	
     /**
@@ -115,7 +115,7 @@ public class ProbeStateTest extends TestCase {
 		trajectory.saveState((ParticleProbeState)state);
 		
 		assertTrue(trajectory.stateAtPosition(INITIAL_POSITION) == state);
-		assertTrue(trajectory.getStateType() instanceof ParticleProbeState);
+		assertTrue((trajectory.getStateClass()).isInstance(ParticleProbeState.class));
 	}
 
     /**
@@ -153,7 +153,7 @@ public class ProbeStateTest extends TestCase {
 		trajectory.saveState((EnvelopeProbeState)state);
 		
 		assertTrue(trajectory.stateAtPosition(INITIAL_POSITION) == state);
-		assertTrue(trajectory.getStateType() instanceof EnvelopeProbeState);
+		assertTrue((trajectory.getStateClass()).isInstance(EnvelopeProbeState.class));
 	}
 
     /**
@@ -197,7 +197,7 @@ public class ProbeStateTest extends TestCase {
 		trajectory.saveState((EnsembleProbeState)state);
 		
 		assertTrue(trajectory.stateAtPosition(INITIAL_POSITION) == state);
-		assertTrue(trajectory.getStateType() instanceof EnsembleProbeState);
+		assertTrue((trajectory.getStateClass()).isInstance(EnsembleProbeState.class));
 		
 	}
 
