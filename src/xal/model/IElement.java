@@ -84,20 +84,4 @@ public interface IElement extends IComponent {
      *  @see    #transferMap(IProbe, double)
      */
     public PhaseMap transferMap(IProbe probe, double dblLen) throws ModelException;
-    
-    
-    
-    /*
-     * Parameter Initialization
-     */
-    
-    /**
-     * Initializes component from the supplied data source.
-     * 
-     * @param source    the data source to initialize from
-     * 
-     * @throws ModelException if error initializing from source
-     */
-    public void initializeFrom(IModelDataSource source) throws ModelException;
-
 };

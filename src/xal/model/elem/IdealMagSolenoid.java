@@ -16,7 +16,7 @@ import java.io.PrintWriter;
  * @author Christopher K. Allen
  * @since   Apr 19, 2011
  */
-public class IdealMagSolenoid  extends ThickElement implements IElectromagnet {
+public class IdealMagSolenoid  extends ThickElectromagnet {
 
     
     /*
@@ -29,20 +29,6 @@ public class IdealMagSolenoid  extends ThickElement implements IElectromagnet {
     public static final String s_strParamField = "MagField";
 
     
-    
-    /*
-     * Local Attributes
-     */
-    
-    /** Orientation of quadrupole */
-    private int m_enmOrient = ORIENT_NONE;
-
-    /** Magnetic field strength */
-    private double m_dblField = 0.0;
-
-
-
-
     /*
      * Initialization
      */
@@ -69,53 +55,6 @@ public class IdealMagSolenoid  extends ThickElement implements IElectromagnet {
     public IdealMagSolenoid() {
         super(s_strType);
     };
-
-
-
-    /*
-     *  IElectromagnet Interface
-     */
-
-    /**
-     *  Return the orientation enumeration code.
-     *
-     *  @return     ORIENT_HOR  
-     *              ORIENT_VER  
-     *              ORIENT_NONE 
-     */
-    public int getOrientation() {
-        return m_enmOrient;
-    };
-
-    /**  
-     *  Get the magnetic field strength of the electromagnet
-     *
-     *  @return     magnetic field (in <bold>Tesla</bold>).
-     */
-    public double getMagField() {
-        return m_dblField;
-    };
-
-    /**
-     *  Set the magnet orientation
-     *  
-     *  @param  enmOrient   magnet orientation enumeration code
-     *
-     *  @see    #getOrientation
-     */
-    public void setOrientation(int enmOrient) {
-        m_enmOrient = enmOrient;
-    };
-
-    /**  
-     *  Set the magnetic field strength of the electromagnet.
-     *
-     *  @param  dblField    magnetic field (in <bold>Tesla</bold>).
-     */
-    public void setMagField(double dblField) {
-        m_dblField = dblField;
-    };
-
 
 
     /*
