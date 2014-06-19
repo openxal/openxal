@@ -32,7 +32,7 @@ import xal.model.ModelException;
  *
  * @author  Hiroyuki Sako
  */
-public class IdealPermMagQuad extends ThickElement implements IElectromagnet {
+public class IdealPermMagQuad extends ThickElectromagnet {
 
 
 	static final boolean debugT3d = false;
@@ -67,13 +67,7 @@ public class IdealPermMagQuad extends ThickElement implements IElectromagnet {
    public void setBRhoScaling(double d) {
     	// TODO Auto-generated method stub
     	bRhoScaling = d;
-    }
-
-    /** Orientation of quadrupole */
-    private int m_enmOrient = ORIENT_NONE;
-
-    /** Magnetic field strength */
-    private double m_dblField = 0.0;
+    }   
 
     public double K = 0;
 
@@ -218,59 +212,6 @@ public class IdealPermMagQuad extends ThickElement implements IElectromagnet {
     public IdealPermMagQuad() {
         super(s_strType);
     };
-
-
-
-    /*
-     *  IElectromagnet Interface
-     */
-
-    /**
-     *  Return the orientation enumeration code.
-     *
-     *  @return     ORIENT_HOR  - dipole has steering action in x (horizontal) plane
-     *              ORIENT_VER  - dipole has steering action in y (vertical) plane
-     *              ORIENT_NONE - error
-     */
-    public int getOrientation() {
-        return m_enmOrient; 
-
-    };
-
-    /**  
-     *  Get the magnetic field strength of the electromagnet
-     *
-     *  @return     magnetic field (in <bold>Tesla</bold>).
-     */
-    public double getMagField() {
-    	if (fieldPathFlag == 0) {
-    		return m_dblField;
-    	} else {
-    		return getBRhoScaling()*m_dblField;
-    	}
-    };
-
-    /**
-     *  Set the magnet orientation
-     *  
-     *  @param  enmOrient   magnet orientation enumeration code
-     *
-     *  @see    #getOrientation
-     */
-    public void setOrientation(int enmOrient) {
-        m_enmOrient = enmOrient;
-    };
-
-    /**  
-     *  Set the magnetic field strength of the electromagnet.
-     *
-     *  @param  dblField    magnetic field (in <bold>Tesla</bold>).
-     */
-    public void setMagField(double dblField) {
-        m_dblField = dblField;
-    };
-
-
 
     /*
      *  ThickElement Protocol

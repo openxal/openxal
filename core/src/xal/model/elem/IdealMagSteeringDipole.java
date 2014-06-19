@@ -16,6 +16,9 @@ import java.io.PrintWriter;
 import xal.model.IProbe;
 import xal.model.ModelException;
 import xal.model.PropagationException;
+import xal.sim.scenario.LatticeElement;
+import xal.smf.impl.Electromagnet;
+import xal.smf.impl.Magnet;
 import xal.tools.beam.IConstants;
 import xal.tools.beam.PhaseMap;
 import xal.tools.beam.PhaseMatrix;
@@ -28,7 +31,7 @@ import xal.tools.beam.PhaseMatrix;
  *
  * @author  Christopher Allen
  */
-public class IdealMagSteeringDipole extends ThinElement implements IElectromagnet {
+public class IdealMagSteeringDipole extends ThinElectromagnet {
 
     
     
@@ -58,12 +61,6 @@ public class IdealMagSteeringDipole extends ThinElement implements IElectromagne
     /*
      *  Local Attributes
      */
-    
-    /** Orientation of dipole */
-    private int                 m_enmOrient = ORIENT_NONE;
-    
-    /** Field strength of the dipole magnet */
-    private double              m_dblField = 0.0;
 
     /** effective length of the dipole magnet */
     private double              m_dblLenEff = 0.0;
@@ -178,58 +175,7 @@ public class IdealMagSteeringDipole extends ThinElement implements IElectromagne
      *
      *  @return     angle kick (<b>in rad</b>)
      */
-    public double   getAngleKick()  { return m_dblAngleKick; };
-    
-    
-    
-    /*
-     *  IElectromagnet Interface
-     */
-    
-    /**
-     *  Return the orientation enumeration code.
-     *
-     *  @return     ORIENT_HOR  - dipole has steering action in x (horizontal) plane
-     *              ORIENT_VER  - dipole has steering action in y (vertical) plane
-     *              ORIENT_NONE - error
-     */
-    public int getOrientation()     { return m_enmOrient; };
-
-    /**
-     *  Return the current magnetic field
-     *
-     *  @return     magnetic field string (<b>in Tesla</b>)
-     */
-    public double getMagField()     { 
-       // if (getOrientation() == IElectromagnet.ORIENT_VER)
-       //     return -m_dblField; 
-       // else 
-       //     return m_dblField;
-        
-       return m_dblField; 
-    }
-    
-    /**
-     *  Set the magnet orientation
-     *  
-     *  @param  enmOrient   magnet orientation enumeration code
-     *
-     *  @see    #getOrientation
-     */
-    public void setOrientation(int enmOrient)   {
-        m_enmOrient = enmOrient;
-    };
-    
-    /** 
-     *  Set the field amplitude of the dipole magnet
-     *
-     *  @param  dblAmp  magnetic field strength (<b>in Tesla</b>)
-     */
-    public void setMagField(double dblAmp)   {
-        m_dblField = dblAmp;
-    };
-    
-    
+    public double   getAngleKick()  { return m_dblAngleKick; };    
     
     /*
      *  IElement Interface
@@ -350,4 +296,17 @@ public class IdealMagSteeringDipole extends ThinElement implements IElectromagne
         os.println("  magnetic field     : " + this.getMagField() );
         os.println("  magnet orientation : " + this.getOrientation() );
     }
+    
+    
+	/**
+	 * Conversion method to be provided by the user
+	 * 
+	 * @param latticeElement the SMF node to convert
+	 */
+	@Override
+	public void initializeFrom(LatticeElement element) {
+		super.initializeFrom(element);
+		Magnet magnet = (Magnet) element.getNode();
+		setEffLength(magnet.getEffLength());		
+	}
 }

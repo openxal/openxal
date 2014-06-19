@@ -4,6 +4,8 @@
  */
 package xal.model;
 
+import xal.sim.scenario.LatticeElement;
+
 
 /**
  * Base interface for any structural modeling object.  Interfaces derived from
@@ -36,6 +38,12 @@ public interface IComponent {
     String  getId();
     
 
+	/**
+	 * Conversion method to be provided by the user
+	 * 
+	 * @param latticeElement the SMF node to convert
+	 */
+	public void initializeFrom(LatticeElement latticeElement);
 
     /*
      * Component Operations

@@ -8,13 +8,11 @@ package xal.model.elem;
 
 import java.io.PrintWriter;
 
+import xal.model.IProbe;
+import xal.model.ModelException;
 import xal.tools.beam.PhaseMap;
 import xal.tools.beam.PhaseMatrix;
 import xal.tools.math.ElementaryFunction;
-
-import xal.model.IModelDataSource;
-import xal.model.IProbe;
-import xal.model.ModelException;
 
 /**
  * Represents a thick magnetic dipole magnet for a beam 
@@ -33,7 +31,7 @@ import xal.model.ModelException;
  *
  * @author  jdg
  */
-public class ThickDipole extends ThickElement implements IElectromagnet {
+public class ThickDipole extends ThickElectromagnet {
 
     /*
      *  Global Attributes
@@ -53,9 +51,6 @@ public class ThickDipole extends ThickElement implements IElectromagnet {
      *  Attributes
      */
 
-    /** Magnetic field strength (T) */
-    private double field = 0.0;
-
     /** Path length in the magnet (m) */
     private double pathLength = 0.0;
 
@@ -74,9 +69,6 @@ public class ThickDipole extends ThickElement implements IElectromagnet {
      */
     private double fringeIntegral = 0.;
 
-    /** Orientation of diople
-     * for now hardwired to horizontal. This intrerface needs a general angle. */
-    private int m_enmOrient = ORIENT_HOR;
 
     /** The quadrupole term = 1/(B-rho) * dB_y/dx */
     private double k1 = 0.;
@@ -172,19 +164,6 @@ public class ThickDipole extends ThickElement implements IElectromagnet {
     }
 
     /**
-     * Initializes this element from the supplied source.
-     * 
-     * @param source the data source for initialization
-     * 
-     * @throws ModelException if error initializing
-     * @throws IllegalArgumentException if the supplied data source is not a
-     * ThickDipoleDataSource
-     */
-    @Override
-    public void initializeFrom(IModelDataSource source) throws ModelException {
-    }
-
-    /**
      * Sets the entrance angle of the beam into the dipole.
      * 
      * @param   dblAng      entrance angle in <b>radians</b>
@@ -223,50 +202,6 @@ public class ThickDipole extends ThickElement implements IElectromagnet {
      * Gets the quad. field index term = 1/B-rho * d B_y/dx
      */
     public double getKQuad() { return k1; }
-
-    /*
-     *  IElectromagnet Interface
-     */
-
-    /**
-     *  Return the orientation enumeration code.
-     *
-     *  @return     ORIENT_HOR  - dipole has steering action in x (horizontal) plane
-     *              ORIENT_VER  - dipole has steering action in y (vertical) plane
-     *              ORIENT_NONE - error
-     */
-    public int getOrientation() {
-        return m_enmOrient;
-    }
-
-    /**  
-     *  Get the magnetic field strength of the electromagnet
-     *
-     *  @return     magnetic field (in <bold>Tesla</bold>).
-     */
-    public double getMagField() {
-        return field;
-    }
-
-    /**
-     *  Set the magnet orientation
-     *  
-     *  @param  enmOrient   magnet orientation enumeration code
-     *
-     *  @see    #getOrientation
-     */
-    public void setOrientation(int enmOrient) {
-        m_enmOrient = enmOrient;
-    }
-
-    /**  
-     *  Set the magnetic field strength of the electromagnet.
-     *
-     *  @param  dblField    magnetic field (in <bold>Tesla</bold>).
-     */
-    public void setMagField(double dblField) {
-        field = dblField;
-    }
 
     /*
      *  ThickElement Abstract Functions
