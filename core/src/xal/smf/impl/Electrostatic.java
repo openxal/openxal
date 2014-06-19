@@ -178,4 +178,28 @@ public class Electrostatic extends AcceleratorNode {
         powerSupplyAdaptor.setValue( "main", mainSupplyId );
     }
 	
+    /**
+     * Get the orientation of the magnet as defined by MagnetType.  The orientation
+     * of the quad is determined by its type: QH or QV
+     * @return One of HORIZONTAL or VERTICAL
+     */
+    public int getOrientation() {
+    	return NO_ORIENTATION;
+    }
+    
+    /*
+     * Determine whether this EQuad is oriented horizontally.
+     * @return true if this EQuad is oriented horizontally; false otherwise.
+     */
+    public boolean isHorizontal() {
+        return getOrientation() == HORIZONTAL;
+    }
+    
+    /*
+     * Determine whether this EQuad is oriented vertically.
+     * @return true if this EQuad is oriented vertically; false otherwise.
+     */
+    public boolean isVertical() {
+        return getOrientation() == VERTICAL;
+    }    
 }

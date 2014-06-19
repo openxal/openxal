@@ -1,8 +1,7 @@
 package xal.smf;
 
 import xal.tools.messaging.MessageCenter;
-
-import xal.sim.cfg.ModelConfiguration;
+import xal.sim.scenario.ElementMapping;
 import xal.smf.impl.*;
 import xal.smf.impl.qualify.*;
 import xal.tools.data.*;
@@ -43,10 +42,8 @@ public class Accelerator extends AcceleratorSeq implements /* IElement, */ DataL
 	/** factory for generating accelerator nodes */
 	private AcceleratorNodeFactory _nodeFactory;
 	
-	/** Model configuration manager */
-	private ModelConfiguration     mgrMdlCfg;
-	
-	
+	/** Model element mapping */
+	private ElementMapping     elementMapping;
 
     
     // DataAdaptor interface ----------------------
@@ -249,33 +246,30 @@ public class Accelerator extends AcceleratorSeq implements /* IElement, */ DataL
 	public void setNodeFactory( final AcceleratorNodeFactory nodeFactory ) {
 		_nodeFactory = nodeFactory;
 	}
-	
+    
 	/**
-	 * Sets the model configuration (manager) used by this accelerator
+	 * Sets the model element mapping used by this accelerator
 	 * object.
 	 *
-	 * @param cfgModel     the new model configuration 
+	 * @param elementMapping     the new element mapping 
 	 *
-	 * @author Christopher K. Allen
-	 * @since  May 23, 2011
+	 * @author Ivo List
 	 */
-	public void setModelConfiguration(ModelConfiguration cfgModel) {
-	    this.mgrMdlCfg = cfgModel;
+	public void setElementMapping(ElementMapping elementMapping) {
+	    this.elementMapping = elementMapping;
 	}
 	
 	/**
-	 * Returns the model configuration manager currently in use
+	 * Returns the model element mapping currently in use
 	 * by this accelerator.
 	 *
-	 * @return     accelerator's model configuration
+	 * @return     accelerator's model element mapping
 	 *
-	 * @author Christopher K. Allen
-	 * @since  May 23, 2011
+	 * @author Ivo List
 	 */
-	public ModelConfiguration getModelConfiguration() {
-	    return this.mgrMdlCfg;
+	public ElementMapping getElementMapping() {
+	    return this.elementMapping;
 	}
-    
 	
 	/**
 	 * Get this accelerator's edit context

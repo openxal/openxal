@@ -25,7 +25,7 @@ import xal.model.ModelException;
  *
  *  @see    D.C. Carey, The Optics of Charged Particle Beams (Harwood, 1987)
  */
-public class IdealMagFringeQuadFace extends ThinElement implements IElectromagnet {
+public class IdealMagFringeQuadFace extends ThinElectromagnet {
 
     /*
      *  Global Attributes
@@ -44,9 +44,7 @@ public class IdealMagFringeQuadFace extends ThinElement implements IElectromagne
      *  Local Attributes
      */
     
-    /** bending plane of dipole */
-    private int                 enmOrient = ORIENT_NONE;
-   
+  
    
     /** bending plane of dipole */
     private boolean                 entrFlag = true;
@@ -71,9 +69,7 @@ public class IdealMagFringeQuadFace extends ThinElement implements IElectromagne
     private double              dblFringeInt1 = 0.0;
     /** 2nd moment of fringe field defined a al H. Matsuda */
     private double              dblFringeInt2 = 0.0;
-   
-    /** Field strength of the dipole magnet */
-    private double              dblField = 0.0;
+
     /** flag to use design field from bending angle and path instead of bfield */
     private double fieldPathFlag = 0.0;
     /** K1 (T/m) length excluded */
@@ -205,14 +201,7 @@ public class IdealMagFringeQuadFace extends ThinElement implements IElectromagne
         return this.entrFlag;
     };
 
-    /**  
-     *  Get the magnetic field strength of the associated dipole
-     *
-     *  @return     magnetic field (in <bold>Tesla</bold>).
-     */
-    public double getMagField() {
-        return this.dblField;
-    };
+
     
     /**
      * Return the field path flag.
@@ -225,15 +214,6 @@ public class IdealMagFringeQuadFace extends ThinElement implements IElectromagne
   
     
     
- 
-    /**  
-     *  Set the magnetic field strength of the dipole electromagnet.
-     *
-     *  @param  dblField    magnetic field (in <bold>Tesla</bold>).
-     */
-    public void setMagField(double dblField) {
-        this.dblField = dblField;
-    };
 
 
     /*
@@ -345,28 +325,5 @@ public class IdealMagFringeQuadFace extends ThinElement implements IElectromagne
         return new PhaseMap(matPhi);
 
     }
-
-    /**
-     * Return the orientation enumeration code for the bending plane of the 
-     * associated dipole magnet.
-     *
-     *  @return     ORIENT_HOR  - dipole has steering action in x (horizontal) plane
-     *              ORIENT_VER  - dipole has steering action in y (vertical) plane
-     *              ORIENT_NONE - error
-     */
-    public int getOrientation() {
-        return this.enmOrient;
-    };
-
-    /**
-     *  Set the dipole bending plane orientation
-     *  
-     *  @param  enmOrient   magnet orientation enumeration code
-     *
-     *  @see    #getOrientation
-     */
-    public void setOrientation(int enmOrient) {
-        this.enmOrient = enmOrient;
-    };
 
 }

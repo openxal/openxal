@@ -28,7 +28,7 @@ import xal.model.IProbe;
  *
  * @author Jeff Holmes
  */
-public class IdealMagSkewQuad extends IdealMagQuad implements IElectromagnet {
+public class IdealMagSkewQuad extends IdealMagQuad {
     /** string type identifier for all IdealMagSkewQuad objects */
     public static final String s_strType = "IdealMagSkewQuad";
 

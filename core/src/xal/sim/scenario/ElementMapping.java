@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map.Entry;
 
 import xal.model.IComponent;
+import xal.model.ModelException;
 import xal.smf.AcceleratorNode;
 
 /**
@@ -20,8 +21,8 @@ import xal.smf.AcceleratorNode;
  * @author Ivo List
  *
  */
-abstract class ElementMapping {
-	protected List<Entry<String, ElementConverter>> elementMapping = new ArrayList<>();
+public abstract class ElementMapping {
+	protected List<Entry<String, Class<? extends IComponent>>> elementMapping = new ArrayList<>();
 
 	/**
 	 * Default converter should produce a general model element like a Marker.
@@ -29,14 +30,15 @@ abstract class ElementMapping {
 	 *   
 	 * @return default converter
 	 */
-	public abstract ElementConverter getDefaultConverter();
+	public abstract Class<? extends IComponent> getDefaultConverter();
 
 	/**
 	 * Different model may have different implementation of the drift element.
 	 *   
 	 * @return drift model element
+	 * @throws ModelException 
 	 */
-	public abstract IComponent createDrift(String name, double len);	
+	public abstract IComponent createDrift(String name, double len) throws ModelException;	
 	
 	/**
 	 * Returns converter for the given node.
@@ -44,9 +46,11 @@ abstract class ElementMapping {
 	 * 
 	 * @param node the SMF node
 	 * @return converter for this node
+	 * @throws IllegalAccessException 
+	 * @throws InstantiationException 
 	 */
-	public ElementConverter getConverter(AcceleratorNode node) {
-		for (Entry<String, ElementConverter> tc : elementMapping) {
+	public Class<? extends IComponent> getConverter(AcceleratorNode node) {
+		for (Entry<String, Class<? extends IComponent>> tc : elementMapping) {
 			if (node.isKindOf(tc.getKey()))
 				return tc.getValue();
 		}
@@ -60,7 +64,7 @@ abstract class ElementMapping {
 	 * @param key node type
 	 * @param value the converter
 	 */
-	protected void putMap(String key, ElementConverter value) {
-		elementMapping.add(new AbstractMap.SimpleImmutableEntry<String, ElementConverter>(key, value));
+	protected void putMap(String key, Class<? extends IComponent> value) {
+		elementMapping.add(new AbstractMap.SimpleImmutableEntry<String, Class<? extends IComponent>>(key, value));
 	}
 }

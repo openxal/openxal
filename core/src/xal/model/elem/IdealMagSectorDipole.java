@@ -38,7 +38,7 @@ import xal.model.ModelException;
  * @see D.C. Carey, The Optics of Charged Particle Beams (Harwood, 1987)
  * @see H. Wiedemann, Particle Accelerator Physics I, 2nd Ed. (Springer, 1999)    
  */
-public class IdealMagSectorDipole extends ThickElement implements IElectromagnet {
+public class IdealMagSectorDipole extends ThickElectromagnet {
 
 
 
@@ -66,14 +66,10 @@ public class IdealMagSectorDipole extends ThickElement implements IElectromagnet
     /** The gap height (m) */
     private double m_dblGap = 0.0;
 
-    /** Magnetic field strength (T) */
-    private double m_dblField = 0.0;
 
     /** magnet field index -(R0/B0)(dB/dR) */
     private double m_dblFldInd = 0.0;
-    
-    /** Orientation of diople. */
-    private int m_enmOrient = ORIENT_HOR;
+
     
     //hs
     /** Path length in the magnet (m) */
@@ -247,54 +243,7 @@ public class IdealMagSectorDipole extends ThickElement implements IElectromagnet
 //        return h;
     }
 
-
-
-    /*
-     *  IElectromagnet Interface
-     */
-
-    /**
-     *  Return the orientation enumeration code specifying the bending plane.
-     *
-     *  @return     ORIENT_HOR  - dipole has steering action in x (horizontal) plane
-     *              ORIENT_VER  - dipole has steering action in y (vertical) plane
-     *              ORIENT_NONE - error
-     */
-    public int getOrientation() {
-	return m_enmOrient;
-    };
-
-    /**  
-     *  Get the magnetic field strength of the dipole electromagnet
-     *
-     *  @return     magnetic field (in <bold>Tesla</bold>).
-     */
-    public double getMagField() {
-	return m_dblField;
-    };
-
-    /**
-     *  Set the dipole magnet bending orientation
-     *  
-     *  @param  enmOrient   magnet orientation enumeration code
-     *
-     *  @see    #getOrientation
-     */
-    public void setOrientation(int enmOrient) {
-	m_enmOrient = enmOrient;
-    };
-
-    /**  
-     *  Set the magnetic field strength of the dipole electromagnet.
-     *
-     *  @param  dblField    magnetic field (in <bold>Tesla</bold>).
-     */
-    public void setMagField(double dblField) {
-	m_dblField = dblField;
-    };
-
-
-
+   
     /*
      *  ThickElement Protocol
      */
