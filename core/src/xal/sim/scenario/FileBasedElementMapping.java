@@ -66,16 +66,20 @@ public class FileBasedElementMapping extends ElementMapping {
 	}
 
 
+	@SuppressWarnings( "unchecked" )
 	private void setDrift(String stringValue) throws ClassNotFoundException {
 		driftElement = (Class<? extends IComponent>) Class.forName(stringValue);
 		
 	}
 
+	
+	@SuppressWarnings( "unchecked" )
 	private void setDefault(String stringValue) throws ClassNotFoundException {
 		defaultElement = (Class<? extends IComponent>) Class.forName(stringValue);		
 	}
 
 
+	@SuppressWarnings( "unchecked" )
 	private void putMap(String smf, String model) throws ClassNotFoundException {
 		putMap(smf, (Class<? extends IComponent>)Class.forName(model));
 	}
