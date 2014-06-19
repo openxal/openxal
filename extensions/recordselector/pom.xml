@@ -13,8 +13,11 @@
 	
 	<build>
 		<sourceDirectory>src</sourceDirectory>
-		<resources>		
-			<resource><directory>resources</directory></resource>
+		<resources>
+			<resource>
+				<directory>resources</directory>
+				<targetPath>xal/extension/widgets</targetPath>
+			</resource>
 		</resources>
 	</build>
 	<dependencies>

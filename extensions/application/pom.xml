@@ -14,7 +14,10 @@
 	<build>
 		<sourceDirectory>src</sourceDirectory>
 		<resources>
-			<resource><directory>resources</directory></resource>			
+			<resource>
+				<directory>resources</directory>
+				<targetPath>xal/extension/application/resources</targetPath>
+			</resource>
 		</resources>
 	</build>
 	<dependencies>
