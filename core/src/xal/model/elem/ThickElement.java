@@ -9,6 +9,7 @@ package xal.model.elem;
 
 import xal.model.IProbe;
 import xal.model.ModelException;
+import xal.sim.scenario.LatticeElement;
 import xal.tools.beam.PhaseMap;
 
 
@@ -78,6 +79,17 @@ public abstract class ThickElement extends Element {
         super(strType, strId);        
         this.setLength(dblLen);
     };
+    
+	/**
+	 * Conversion method to be provided by the user
+	 * 
+	 * @param latticeElement the SMF node to convert
+	 */
+    @Override
+	public void initializeFrom(LatticeElement latticeElement) {
+    	super.initializeFrom(latticeElement);
+		setLength(latticeElement.getLength());		
+	}
     
     /**
      *  Set the length of the element.

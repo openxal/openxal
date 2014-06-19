@@ -5,17 +5,17 @@
  */
 package xal.model.elem;
 
-import xal.tools.beam.PhaseMap;
-import xal.tools.beam.PhaseMatrix;
-import xal.tools.math.poly.UnivariateRealPolynomial;
+import java.io.PrintWriter;
+
 import xal.model.IElement;
-import xal.model.IModelDataSource;
 import xal.model.IProbe;
 import xal.model.ModelException;
-import xal.model.source.RfGapDataSource;
+import xal.sim.scenario.LatticeElement;
+import xal.smf.impl.RfGap;
+import xal.tools.beam.PhaseMap;
+import xal.tools.beam.PhaseMatrix;
 import xal.tools.beam.RelativisticParameterConverter;
-
-import java.io.PrintWriter;
+import xal.tools.math.poly.UnivariateRealPolynomial;
 
 /**
  *  <p>
@@ -333,33 +333,6 @@ public class IdealRfGap extends ThinElement implements IRfGap {
 	/*
 	 *  IElement Interface
 	 */
-	
-	/**
-	 *  Initializes this element from the supplied data source.
-	 *
-	 *@param  source                     an instance of RfGapDataSource
-	 *@exception  ModelException         The Exception
-	 *@throws  IllegalArgumentException  if source not of expected type
-	 */
-	@Override
-    public void initializeFrom(IModelDataSource source) throws ModelException {
-
-		// Check argument and throw exception if not of expected type
-		if(!(source instanceof RfGapDataSource)) {
-			throw new IllegalArgumentException("Expected instance of RfGapDataSource, got: " + source.getClass().getName()); //$NON-NLS-1$
-		}
-		RfGapDataSource sourceGap = (RfGapDataSource) source;
-
-		// Initialize from source values
-		initialGap = sourceGap.isFirstGap();
-		cellLength = sourceGap.getGapLength();
-		gapOffset = sourceGap.getGapOffset();
-		TTFPrimeFit = sourceGap.getTTFPrimeFit();
-		TTFFit = sourceGap.getTTFFit();
-		SPrimeFit = sourceGap.getSPrimeFit();
-		SFit = sourceGap.getSFit();
-		structureMode = sourceGap.getStructureMode();
-	}
 
 	/**
 	 *  Returns the time taken for the probe to propagate through element.
@@ -690,6 +663,27 @@ public class IdealRfGap extends ThinElement implements IRfGap {
 		os.println("  Gap phase shift    : " + this.getPhase()); //$NON-NLS-1$
 		os.println("  RF frequency       : " + this.getFrequency()); //$NON-NLS-1$
 		os.println("  Axial field E0     : " + this.getE0() );
+	}
+	
+	/**
+	 * Conversion method to be provided by the user
+	 * 
+	 * @param latticeElement the SMF node to convert
+	 */
+	@Override
+	public void initializeFrom(LatticeElement element) {
+		super.initializeFrom(element);		
+		RfGap rfgap = (RfGap) element.getNode();
+		
+	    // Initialize from source values
+	    initialGap = rfgap.isFirstGap();
+	    cellLength = rfgap.getGapLength();
+	    gapOffset = rfgap.getGapOffset();
+	    TTFPrimeFit = rfgap.getTTFPrimeFit();
+	    TTFFit = rfgap.getTTFFit();	
+	    SPrimeFit = rfgap.getSPrimeFit();
+	    SFit = rfgap.getSFit();
+	    structureMode = rfgap.getStructureMode();
 	}
 }
 

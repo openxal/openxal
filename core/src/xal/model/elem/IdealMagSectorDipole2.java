@@ -50,7 +50,7 @@ import xal.model.ModelException;
  * @see xal.model.elem.IdealMagSectorDipole2
  * @see xal.model.elem.ThickDipole
  */
-public class IdealMagSectorDipole2 extends ThickElement implements IElectromagnet {
+public class IdealMagSectorDipole2 extends ThickElectromagnet {
 
 
 
@@ -105,12 +105,6 @@ public class IdealMagSectorDipole2 extends ThickElement implements IElectromagne
       */
 	private double dblQuadComponent = 0.0;
 
-    
-    /** Magnetic field strength (T) */
-    private double  dblMagFld = 0.0;
-
-    /** Orientation of dipole. */
-    private int     enmOrient = ORIENT_HOR;
     
     /** flag to use design field from bending angle and path instead of bfield */
 //    private double bolFieldPathFlag = 0.0;
@@ -495,56 +489,7 @@ public class IdealMagSectorDipole2 extends ThickElement implements IElectromagne
         
         return dblLenFactor;
     }
-
-    
-
-
-    /*
-     *  IElectromagnet Interface
-     */
-    
-    /**
-     *  Return the orientation enumeration code specifying the bending plane.
-     *
-     *  @return     ORIENT_HOR  - dipole has steering action in x (horizontal) plane
-     *              ORIENT_VER  - dipole has steering action in y (vertical) plane
-     *              ORIENT_NONE - error
-     */
-    public int getOrientation() {
-        return this.enmOrient;
-    };
-    
-    /**  
-     *  Get the magnetic field strength of the dipole electromagnet
-     *
-     *  @return     magnetic field (in <bold>Tesla</bold>).
-     */
-    public double getMagField() {
-        return this.dblMagFld;
-    };
-    
-    /**
-     *  Set the dipole magnet bending orientation
-     *  
-     *  @param  enmOrient   magnet orientation enumeration code
-     *
-     *  @see    #getOrientation
-     */
-    public void setOrientation(int enmOrient) {
-        this.enmOrient = enmOrient;
-    };
-    
-    /**  
-     *  Set the magnetic field strength of the dipole electromagnet.
-     *
-     *  @param  dblField    magnetic field (in <bold>Tesla</bold>).
-     */
-    public void setMagField(double dblField) {
-        this.dblMagFld = dblField;
-    };
-    
-    
-    
+ 
     /*
      *  ThickElement Protocol
      */
