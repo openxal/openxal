@@ -416,6 +416,19 @@ public class PhaseVector extends BaseVector<PhaseVector> implements java.io.Seri
         this.setVector(strTokens);
     }
     
+    /**
+     * Handles object creation required by the base class.
+     *  
+     * @see xal.tools.math.BaseVector#newInstance()
+     *
+     * @author Ivo List
+     * @author Christopher K. Allen
+     * @since  Jun 17, 2014
+     */
+    @Override
+    protected PhaseVector newInstance() {
+        return new PhaseVector();
+    }
 
 //    /** 
 //     * Return a deep copy object of the current <code>PhaseVector<code> object.
@@ -1035,8 +1048,4 @@ public class PhaseVector extends BaseVector<PhaseVector> implements java.io.Seri
         os.flush();
     }
 
-	@Override
-	protected PhaseVector newInstance() {
-		return new PhaseVector();
-	}
 }

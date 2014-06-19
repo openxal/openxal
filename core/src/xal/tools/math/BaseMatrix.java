@@ -687,14 +687,38 @@ public abstract class BaseMatrix<M extends BaseMatrix<M>> implements IArchive {
     }
 
     /**
+     * <p>
      * Creates a new, uninitialized instance of this matrix type.
+     * </p>
+     * <p>
+     * NOTE:
+     * &middot; This method was made abstract by Ivo List.  Rather than use 
+     * reflection to instantiate new objects, this function is now delegated
+     * to the concrete classes.  This architecture is more robust and allows
+     * the compiler to do more error checking.
+     * </p>
      * 
      * @return  uninitialized matrix object of type <code>M</code>
      * 
+     * @author Ivo List
      * @author Christopher K. Allen
      * @since  Oct 1, 2013
      */
     protected abstract M newInstance();
+//    protected M newInstance() throws InstantiationException {
+//        try {
+//            M matNewInst = this.ctrType.newInstance();
+//    
+//            return matNewInst;
+//    
+//        } catch (InstantiationException   | 
+//                IllegalAccessException   | 
+//                IllegalArgumentException | 
+//                InvocationTargetException e) {
+//    
+//            throw new InstantiationException("Unable to copy matrix " + this.getClass().getName());
+//        }
+//    }
     
     /**
      * Creates a new instance of this matrix type initialized to the given

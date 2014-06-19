@@ -441,6 +441,72 @@ public class PhaseMatrix extends SquareMatrix<PhaseMatrix> implements java.io.Se
      * Initialization
      */
     
+    /*
+         *  Assignment
+         */
+        
+    //    /**
+    //     *  Parsing assignment - set the <code>PhaseMatrix</code> value
+    //     *  according to a token string of element values.  
+    //     *
+    //     *  The token string argument is assumed to be one-dimensional and packed by
+    //     *  column (aka FORTRAN).
+    //     *
+    //     *  @param  strValues   token vector of 7x7=49 numeric values
+    //     *
+    //     *  @exception  IllegalArgumentException    wrong number of token strings
+    //     *  @exception  NumberFormatException       bad number format, unparseable
+    //     */
+    //    public void setMatrix(String strValues)
+    //        throws NumberFormatException, IllegalArgumentException
+    //    {
+    //        
+    //        // Error check the number of token strings
+    //        StringTokenizer     tokArgs = new StringTokenizer(strValues, " ,()[]{}"); //$NON-NLS-1$
+    //        
+    //        if (tokArgs.countTokens() != 49)
+    //            throw new IllegalArgumentException("PhaseMatrix#setMatrix - wrong number of token strings: " + strValues); //$NON-NLS-1$
+    //        
+    //        
+    //        // Extract initial phase coordinate values
+    //        for (int i=0; i<INT_SIZE; i++)
+    //            for (int j=0; j<INT_SIZE; j++) {
+    //                String  strVal = tokArgs.nextToken();
+    //                double  dblVal = Double.valueOf(strVal).doubleValue();
+    //            
+    //                this.setElem(i,j, dblVal);
+    //            }
+    //    }
+        
+    //    /**
+    //     *  Element assignment - assigns matrix element to the specified value
+    //     *
+    //     *  @param  i       row index
+    //     *  @param  j       column index
+    //     *  @param  s       new matrix element value
+    //     *
+    //     *  @exception  ArrayIndexOutOfBoundsException  index must be in {0,1,2,3,4,5,6}
+    //     */
+    //    public void setElem(int i, int j, double s) 
+    //        throws ArrayIndexOutOfBoundsException
+    //    {
+    //        this.getMatrix().set(i,j, s);
+    //    }
+        
+    /**
+     * Handles object creation required by the base class. 
+     *
+     * @see xal.tools.math.BaseMatrix#newInstance()
+     *
+     * @author Ivo List
+     * @author Christopher K. Allen
+     * @since  Jun 17, 2014
+     */
+    @Override
+    protected PhaseMatrix newInstance() {
+        return new PhaseMatrix();
+    }
+
     /** 
      *  Creates a new instance of PhaseMatrix initialized to zero.
      */
@@ -978,11 +1044,6 @@ public class PhaseMatrix extends SquareMatrix<PhaseMatrix> implements java.io.Se
         
         return dblNorm;
     }
-
-	@Override
-	protected PhaseMatrix newInstance() {
-		return new PhaseMatrix();
-	}
     
 //    /**
 //     *  Set a submatrix within the phase matrix.

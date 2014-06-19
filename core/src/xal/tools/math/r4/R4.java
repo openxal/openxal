@@ -166,6 +166,15 @@ public class R4 extends BaseVector<R4> {
     }
 
 
+	/**
+     * Handles object creation required by the base class. 
+     *
+	 * @see xal.tools.math.BaseVector#newInstance()
+	 *
+	 * @author Ivo List
+	 * @author Christopher K. Allen
+	 * @since  Jun 17, 2014
+	 */
 	@Override
 	protected R4 newInstance() {
 		return new R4();

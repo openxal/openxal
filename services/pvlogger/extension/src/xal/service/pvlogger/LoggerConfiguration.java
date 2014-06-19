@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Set;
 import java.net.URL;
 
+import xal.tools.ResourceManager;
 import xal.tools.data.DataAdaptor;
 import xal.tools.database.DBConfiguration;
 import xal.tools.xml.XmlDataAdaptor;
@@ -34,7 +35,7 @@ public class LoggerConfiguration {
 		URL configurationURL = null;
 		DBConfiguration dbConfig = DBConfiguration.getInstance();
 		if (dbConfig != null) configurationURL = dbConfig.getSchemaURL("pvlogger");
-		if (configurationURL == null) configurationURL = getClass().getResource( "configuration.xml" );		
+		if (configurationURL == null) configurationURL = ResourceManager.getResourceURL( getClass(), "configuration.xml" );
 		final DataAdaptor configurationAdaptor = XmlDataAdaptor.adaptorForUrl( configurationURL, false ).childAdaptor( "Configuration" );
 		
 		final DataAdaptor persistentStoreAdaptor = configurationAdaptor.childAdaptor( "persistentStore" );

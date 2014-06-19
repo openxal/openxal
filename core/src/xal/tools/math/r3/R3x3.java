@@ -801,6 +801,15 @@ public class R3x3 extends SquareMatrix<R3x3> implements java.io.Serializable {
         return new R3(x, y, z);
     }
 
+	/**
+     * Handles object creation required by the base class. 
+     *
+	 * @see xal.tools.math.BaseMatrix#newInstance()
+	 * 
+	 * @author Ivo List
+	 * @author Christopher K. Allen
+	 * @since  Jun 17, 2014
+	 */
 	@Override
 	protected R3x3 newInstance() {
 		return new R3x3();

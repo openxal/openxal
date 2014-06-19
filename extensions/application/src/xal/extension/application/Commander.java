@@ -6,6 +6,7 @@
 
 package xal.extension.application;
 
+import xal.tools.ResourceManager;
 import xal.tools.IconLib;
 import xal.tools.IconLib.*;
 
@@ -112,16 +113,9 @@ public class Commander {
     
     /** Load the default bundle. */
     protected void loadDefaultBundle() {
-		final String currentClassName = "xal.extension.application.Commander";
-
-		try {
-			// need to reference this class directly since subclasses would otherwise override the class
-			final URL resourceURL = Class.forName( currentClassName ).getResource( MENU_DEFINITION_RESOURCE );
-			loadBundle( resourceURL );
-		}
-		catch ( ClassNotFoundException exception ) {
-			throw new RuntimeException( "Error attempting to reference the class: " + currentClassName );
-		}
+		// need to reference this class directly since subclasses would otherwise override the class
+		final URL resourceURL = ResourceManager.getResourceURL( Commander.class, MENU_DEFINITION_RESOURCE );
+		loadBundle( resourceURL );
     }
     
     
@@ -192,7 +186,7 @@ public class Commander {
         final JMenuBar menuBar = new JMenuBar();
         
 		final String menubarStr = _controlMap.get( "menubar" );
-		if ( menubarStr == null || "".equals(menubarStr) )  return null;		// check if a menubar definition was found
+		if ( menubarStr == null || menubarStr.isEmpty() )  return null;		// check if a menubar definition was found
 		
         final String[] menuKeys = Util.getTokens( menubarStr );
         

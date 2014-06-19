@@ -36,6 +36,15 @@ public class TranslationMatrix extends PhaseMatrix {
 	}
 
 
+	/**
+     * Handles object creation required by the base class. 
+     *
+	 * @see xal.tools.beam.PhaseMatrix#newInstance()
+	 *
+	 * @author Ivo List
+	 * @author Christopher K. Allen
+	 * @since  Jun 17, 2014
+	 */
 	@Override
 	protected PhaseMatrix newInstance() {
 		return new TranslationMatrix(0.,0.,0.);
