@@ -235,7 +235,13 @@ public class Scenario {
             throw new IllegalStateException(
                 "must initialize probe before running model");
         
-        // Set the starting and stoping elements
+        // TODO - remove debugging code
+//        System.out.println("HO HO HO I am in xal.sim.Scenario#run()");
+//        System.out.println("  getStartElementId() = " + this.getStartElementId());
+//        System.out.println("  getStopElementId() = " + this.getStopElementId());
+//        System.out.println();
+        
+        // Set the starting and stopping elements
         IAlgorithm  alg = probe.getAlgorithm();
         
         if (this.getStartElementId() != null)
