@@ -5,12 +5,12 @@
 	<parent>
         <groupId>se.lu.esss.ics</groupId>
         <artifactId>ess-java-config</artifactId>
-        <version>1.0.0</version>
+        <version>1.1.0</version>
 	</parent>
 		
 	<groupId>org.xal</groupId>
 	<artifactId>openxal</artifactId>
-	<version>1.0.1-SNAPSHOT</version>
+	<version>1.0.1</version>
 	
 	<packaging>pom</packaging>
 	
