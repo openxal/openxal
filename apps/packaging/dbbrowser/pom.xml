@@ -4,12 +4,12 @@
 	<parent>
 		<groupId>org.xal</groupId>
 		<artifactId>openxal.apps.packaging</artifactId>
-		<version>1.1</version>
+		<version>1.2</version>
 	</parent>
 
 	<groupId>se.esss.codac.units</groupId>
 	<artifactId>openxal-dbbrowser</artifactId>
-	<version>1.1</version>
+	<version>1.2</version>
 
 	<packaging>codac</packaging>
 	<name>DB Browser</name>

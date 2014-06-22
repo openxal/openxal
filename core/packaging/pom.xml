@@ -4,13 +4,13 @@
 	<parent>
 		<groupId>org.xal</groupId>
 		<artifactId>openxal-packaging</artifactId>
-		<version>1.1</version>
+		<version>1.2</version>
 		<relativePath>../../packaging/pom.xml</relativePath>
 	</parent>
 	
 	<groupId>se.esss.codac.units</groupId>
 	<artifactId>openxal-core</artifactId>
-	<version>1.1</version>
+	<version>1.2</version>
 
 	<packaging>codac</packaging>
 

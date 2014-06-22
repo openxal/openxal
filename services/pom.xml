@@ -5,11 +5,11 @@
 	<parent>
 		<groupId>org.xal</groupId>
 		<artifactId>openxal</artifactId>
-		<version>1.0.1</version>
+		<version>1.0.2-SNAPSHOT</version>
 	</parent>
 	
 	<artifactId>openxal.services</artifactId>
-	<version>1.0.1</version>
+	<version>1.0.2-SNAPSHOT</version>
 	
 	<packaging>pom</packaging>
 	
