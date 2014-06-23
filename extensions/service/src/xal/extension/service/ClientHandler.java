@@ -420,8 +420,12 @@ class SerialRemoteMessageProcessor {
 
     /** dispose of resources upon collection */
     protected void finalize() throws Throwable {
-        dispose();
-		super.finalize();
+		try {
+			dispose();
+		}
+		finally {
+			super.finalize();
+		}
     }
 
 
