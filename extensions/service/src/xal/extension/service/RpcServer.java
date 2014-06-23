@@ -51,6 +51,8 @@ public class RpcServer {
         REMOTE_REQUEST_HANDLERS = new Hashtable<String,RemoteRequestHandler<?>>();
         SERVER_SOCKET = new ServerSocket( 0 );
         REMOTE_SOCKETS = new HashSet<Socket>();
+
+		System.out.println( "Listening on: " + getHost() + ":" + getPort() );
     }
     
     
@@ -154,6 +156,17 @@ public class RpcServer {
     private void processRemoteEvents( final Socket remoteSocket ) {
         new Thread( new Runnable() {
             public void run() {
+				if ( !remoteSocket.isClosed() ) {
+					// process the initial handshake
+					try {
+						WebSocketIO.processHandshake( remoteSocket );
+					}
+					catch ( Exception exception ) {
+						throw new RuntimeException( "Exception handling handshake", exception );
+					}
+				}
+
+				// process the messages as they arrive
                 while( !remoteSocket.isClosed() ) {
                     try {
 						String jsonRequest = null;
