@@ -1,6 +1,4 @@
 <?xml version = '1.0' encoding = 'UTF-8'?>
-<!DOCTYPE ModelConfig SYSTEM "xdxf.dtd">
-
 <configuration>
     <elements>
         <default type="xal.model.elem.Marker"/>
