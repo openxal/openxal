@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE sources SYSTEM "xdxf.dtd">
 <sources version="2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="main.xsd">
 	<modelElementConfig_source name="modelElementConfig" url="ModelConfig.xml" />
 	<deviceMapping_source name="deviceMapping" url="sns.impl"/>
