@@ -151,14 +151,19 @@ class WebSocketIO {
 
 		// TODO: need to handle case of longer payloads (i.e. length == 127 or 126 codes which needs further processing to get payload length)
 
-		final byte[] mask = new byte[4];
-		System.arraycopy( rawBytes, offset, mask, 0, 4 );
-		offset += 4;
-
 		final StringBuilder resultBuilder = new StringBuilder();
+
+		PayloadReader payloadReader = PayloadReader.getInstance();
+		if ( masked ) {
+			final byte[] mask = new byte[4];
+			System.arraycopy( rawBytes, offset, mask, 0, 4 );
+			offset += 4;
+
+			payloadReader = new MaskPayloadReader( mask, offset );
+		}
+
 		for ( int index = offset ; index < rawBytes.length ; index++ ) {
-			int position = index - offset;
-			int charCode = mask[position%4] ^ rawBytes[index];
+			int charCode = payloadReader.readCharCode( rawBytes, index );
 			final char[] chars = Character.toChars( charCode );
 			resultBuilder.append( chars );
 		}
@@ -175,3 +180,49 @@ class WebSocketIO {
 		return DatatypeConverter.printBase64Binary( rawInputBytes );
 	}
 }
+
+
+
+class PayloadReader {
+	/** direct reader singleton */
+	final private static PayloadReader DEFAULT_READER = new PayloadReader();
+
+
+	/** get the default instance */
+	static public PayloadReader getInstance() {
+		return DEFAULT_READER;
+	}
+
+
+	/** read the specified character directly */
+	public int readCharCode( final byte[] inputBuffer, final int index ) {
+		return inputBuffer[index];
+	}
+}
+
+
+
+class MaskPayloadReader extends PayloadReader {
+	/** mask to use */
+	final private byte[] MASK;
+
+	/** offset from the payload start */
+	final private int PAYLOAD_OFFSET;
+
+
+	/** Constructor */
+	public MaskPayloadReader( final byte[] mask, final int payloadOffset ) {
+		MASK = mask;
+		PAYLOAD_OFFSET = payloadOffset;
+	}
+
+
+	/** read the specified character and mask it */
+	public int readCharCode( final byte[] inputBuffer, final int index ) {
+		final int position = index - PAYLOAD_OFFSET;			// relative to payload start
+		return MASK[position%4] ^ inputBuffer[index];
+	}
+}
+
+
+
