@@ -157,7 +157,7 @@ class WebSocketIO {
 				break;
 
 			default:
-				// payload length is simply the length
+				// payload length is simply the lengthCode itself
 				break;
 		}
 
