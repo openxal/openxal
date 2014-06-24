@@ -99,7 +99,7 @@ public class TimingSourceTest extends AbstractXMLValidationTest {
 		
 		//Correct root element.
 		Element root = document.createElement("timing");
-		root.setAttributeNS("http://www.w3.org/2001/XMLSchema-instance", "xsi:noNamespaceSchemaLocation", "https://hudson.esss.dk/job/OpenXAL/lastSuccessfulBuild/artifact/build/schemas/xdxf_1_0.xsd");
+		root.setAttributeNS("http://www.w3.org/2001/XMLSchema-instance", "xsi:noNamespaceSchemaLocation", "http://sourceforge.net/p/xaldev/openxal/ci/master/tree/core/resources/xal/schemas/xdxf.xsd?format=raw");
 		document.appendChild(root);
 		try {
 			validator.validate(new DOMSource(document));

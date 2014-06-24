@@ -1,6 +1,6 @@
 <?xml version = '1.0' encoding = 'UTF-8'?>
 <xdxf xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:noNamespaceSchemaLocation="https://hudson.esss.dk/job/OpenXAL/lastSuccessfulBuild/artifact/build/schemas/xdxf_1_0.xsd"
+	xsi:noNamespaceSchemaLocation="http://sourceforge.net/p/xaldev/openxal/ci/master/tree/core/resources/xal/schemas/xdxf.xsd?format=raw"
 	system="test" ver="1.0.0" date="Wed Jun 26 10:16:58 EST 2013">
 	<sequence id="LEBT" len=".3">
 		<attributes>

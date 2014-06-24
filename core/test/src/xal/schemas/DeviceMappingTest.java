@@ -98,7 +98,7 @@ public class DeviceMappingTest extends AbstractXMLValidationTest {
 		
 		//Correct root element.
 		Element root = document.createElement("deviceMapping");
-		root.setAttributeNS("http://www.w3.org/2001/XMLSchema-instance", "xsi:noNamespaceSchemaLocation", "https://hudson.esss.dk/job/OpenXAL/lastSuccessfulBuild/artifact/build/schemas/impl_1_0.xsd");
+		root.setAttributeNS("http://www.w3.org/2001/XMLSchema-instance", "xsi:noNamespaceSchemaLocation", "http://sourceforge.net/p/xaldev/openxal/ci/master/tree/core/resources/xal/schemas/impl.xsd?format=raw");
 		document.appendChild(root);
 		try {
 			validator.validate(new DOMSource(document));
