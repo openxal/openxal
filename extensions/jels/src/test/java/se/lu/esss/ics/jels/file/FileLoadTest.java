@@ -4,6 +4,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
+import se.lu.esss.ics.jels.JElsDemo;
 import se.lu.esss.ics.jels.model.probe.ElsProbe;
 import xal.model.ModelException;
 import xal.model.alg.EnvelopeTracker;
@@ -51,7 +52,7 @@ public class FileLoadTest {
 
 	private static AcceleratorSeq loadAcceleratorSequence(String name) {
 		/* Loading SMF model */				
-		Accelerator accelerator = XMLDataManager.acceleratorWithPath("target/test-classes/config/main.xal");
+		Accelerator accelerator = XMLDataManager.acceleratorWithUrlSpec(JElsDemo.class.getResource("main.xal").toString());
 		if (accelerator == null)
 		{			
 			throw new Error("Accelerator is empty. Could not load the default accelerator.");

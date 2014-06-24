@@ -1,6 +1,0 @@
-<?xml version = '1.0' encoding = 'UTF-8'?>
-<!DOCTYPE sources SYSTEM "xdxf.dtd">
-<sources version="2.0">    
-	<deviceMapping_source name="deviceMapping" url="ess.impl"/>
-	<optics_source name="optics" url="lebt.xdxf"/>	
-</sources>

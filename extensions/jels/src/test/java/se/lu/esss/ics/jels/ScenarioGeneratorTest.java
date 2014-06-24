@@ -54,7 +54,7 @@ public class ScenarioGeneratorTest {
 
 	private static Accelerator loadAccelerator() {
 		/* Loading SMF model */		
-		Accelerator accelerator = XMLDataManager.acceleratorWithPath("src/test/resources/config/main.xal");
+		Accelerator accelerator = XMLDataManager.acceleratorWithUrlSpec(JElsDemo.class.getResource("main.xal").toString());
 		
 		if (accelerator == null)
 		{			
