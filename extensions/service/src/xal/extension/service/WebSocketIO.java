@@ -142,14 +142,28 @@ class WebSocketIO {
 		final boolean fin = ( head1 & 0b10000000 ) == 0b10000000;
 		final byte opcode = (byte)( head1 & 0b00001111 );
 		final boolean masked = ( head2 & 0b10000000 ) == 0b10000000;
-		final byte length = (byte)( head2 & 0b01111111 );
+		final byte lengthCode = (byte)( head2 & 0b01111111 );
 
-		System.out.println( "fin: " + fin + ", opcode: " + opcode + ", masked: " + masked + ", length: " + length );
+		System.out.println( "fin: " + fin + ", opcode: " + opcode + ", masked: " + masked + ", length: " + lengthCode );
+
+		// TODO: might be wise to add some length validation
+		switch ( lengthCode ) {
+			case 126:
+				offset += 2;	// payload length defined by next 2 bytes though we won't extract it
+				break;
+
+			case 127:
+				offset += 8;	// payload length defined by next 8 bytes though we won't extract it
+				break;
+
+			default:
+				// payload length is simply the length
+				break;
+		}
+
 		// TODO: need to check the fin bit to see whether more data is coming
 
 		// TODO: need to check the opcode to see what kind of data has arrived (e.g. continuation, text, data, ping or pong)
-
-		// TODO: need to handle case of longer payloads (i.e. length == 127 or 126 codes which needs further processing to get payload length)
 
 		final StringBuilder resultBuilder = new StringBuilder();
 
@@ -168,7 +182,7 @@ class WebSocketIO {
 			resultBuilder.append( chars );
 		}
 
-		System.out.println( "Result: " + resultBuilder.toString() );
+		System.out.println( "Result:\n" + resultBuilder.toString() );
 
 		return resultBuilder.toString();
 	}
