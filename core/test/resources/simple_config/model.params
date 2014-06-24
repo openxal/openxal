@@ -1,6 +1,6 @@
 <?xml version = '1.0' encoding = 'UTF-8'?>
 <tablegroup xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:noNamespaceSchemaLocation="https://hudson.esss.dk/job/OpenXAL/lastSuccessfulBuild/artifact/build/schemas/tablegroup_1_0.xsd">
+	xsi:noNamespaceSchemaLocation="http://sourceforge.net/p/xaldev/openxal/ci/master/tree/core/resources/xal/schemas/tablegroup.xsd?format=raw">
     <table name="species">
         <schema>
             <attribute isPrimaryKey="true" name="name" type="java.lang.String" />
