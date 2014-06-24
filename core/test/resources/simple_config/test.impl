@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <deviceMapping xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-	xsi:noNamespaceSchemaLocation="https://hudson.esss.dk/job/OpenXAL/lastSuccessfulBuild/artifact/build/schemas/impl_1_0.xsd">
+	xsi:noNamespaceSchemaLocation="file:///c:/Data/ESS/code/openxal/core/resources/xal/schemas/impl.xsd">
    <device type="DH" class="xal.smf.impl.Bend"/>
    <device type="BCM" class="xal.smf.impl.CurrentMonitor"/>
    <device type="BLM" class="xal.smf.impl.BLM"/>
