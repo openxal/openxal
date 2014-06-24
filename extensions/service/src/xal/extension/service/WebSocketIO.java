@@ -139,12 +139,15 @@ class WebSocketIO {
 		final byte head2 = rawBytes[1];
 		offset += 2;
 
-		final boolean fin = ( head1 & 0b10000000 ) != 0;
+		final boolean fin = ( head1 & 0b10000000 ) == 0b10000000;
 		final byte opcode = (byte)( head1 & 0b00001111 );
-		final boolean masked = ( head2 & 0b10000000 ) != 0;
+		final boolean masked = ( head2 & 0b10000000 ) == 0b10000000;
 		final byte length = (byte)( head2 & 0b01111111 );
 
 		System.out.println( "fin: " + fin + ", opcode: " + opcode + ", masked: " + masked + ", length: " + length );
+		// TODO: need to check the fin bit to see whether more data is coming
+
+		// TODO: need to check the opcode to see what kind of data has arrived (e.g. continuation, text, data, ping or pong)
 
 		// TODO: need to handle case of longer payloads (i.e. length == 127 or 126 codes which needs further processing to get payload length)
 
