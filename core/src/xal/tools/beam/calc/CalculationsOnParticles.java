@@ -30,7 +30,7 @@ public class CalculationsOnParticles extends CalculationEngine implements ISimLo
      */
     
     /** The trajectory around one turn of the ring */
-    private final Trajectory<? extends ProbeState>        trjSimul;
+    private final Trajectory<ParticleProbeState>        trjSimul;
     
     /** The final envelope probe state (at the end of the simulation ) */
     private final ParticleProbeState        staFinal;
@@ -60,18 +60,11 @@ public class CalculationsOnParticles extends CalculationEngine implements ISimLo
      * @since  Nov 14, 2013
      */
     
-    public CalculationsOnParticles(Trajectory<? extends ProbeState> datSim) {
-        ProbeState  pstFinal = datSim.finalState();
-        
-        // Check for correct probe types
-        if ( !( pstFinal instanceof ParticleProbeState) )
-            throw new IllegalArgumentException(
-                    "Trajectory states are not EnvelopeProbeStates? - " 
-                    + pstFinal.getClass().getName()
-                    );
-        
+    public CalculationsOnParticles(Trajectory<ParticleProbeState> datSim) {
+        ParticleProbeState  pstFinal = datSim.finalState();
+
         this.trjSimul  = datSim;
-        this.staFinal  = (ParticleProbeState)pstFinal;
+        this.staFinal  = pstFinal;
         this.matResp   = this.staFinal.getResponseMatrix();
         
         this.vecPhsAdv = super.calculatePhaseAdvPerCell(this.matResp);
@@ -94,7 +87,7 @@ public class CalculationsOnParticles extends CalculationEngine implements ISimLo
      * @author Christopher K. Allen
      * @since  Nov 7, 2013
      */
-    public Trajectory<? extends ProbeState>   getTrajectory() {
+    public Trajectory<ParticleProbeState>   getTrajectory() {
         return this.trjSimul;
     }
     

@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -399,7 +400,7 @@ public class Trajectory<S extends ProbeState> implements IArchive, Iterable<S> {
      * 
      * @return the probe's final state or null
      */
-    public ProbeState finalState() {
+    public S finalState() {
         return stateWithIndex(numStates()-1);
     }
     
@@ -445,7 +446,7 @@ public class Trajectory<S extends ProbeState> implements IArchive, Iterable<S> {
      * @return an array of <code>ProbeState</code> objects whose position falls
      * within the specified range
      */
-    public ProbeState[] statesInPositionRange( final double low, final double high ) {
+    public List<S> statesInPositionRange( final double low, final double high ) {
 		final int[] range = _history.getIndicesWithinLocationRange( low, high );
 		if ( range != null ) {
 			final List<S> result = new ArrayList<S>( range[1] - range[0] + 1 );
@@ -453,11 +454,13 @@ public class Trajectory<S extends ProbeState> implements IArchive, Iterable<S> {
 				result.add( _history.get( index ) );
 			}
 			//
-			final ProbeState[] resultArray = new ProbeState[result.size()];
-			return result.toArray( resultArray );
+//			final ProbeState[] resultArray = new ProbeState[result.size()];
+//			return result.toArray( resultArray );
+			return result;
 		}
 		else {
-			return new ProbeState[0];
+//			return new ProbeState[0];
+		    return new LinkedList<S>();
 		}
     }
 	
@@ -466,8 +469,9 @@ public class Trajectory<S extends ProbeState> implements IArchive, Iterable<S> {
 	 * @param elemID the name of the element for which to get the probe state
 	 * @return The first probe state for the specified element.
 	 */
-	public ProbeState stateForElement( final String elemID ) {
-		return statesForElement( elemID )[0];
+	public S stateForElement( final String elemID ) {
+//		return statesForElement( elemID )[0];
+	    return statesForElement( elemID ).get(0);
 	}
 	
     /**
@@ -475,7 +479,7 @@ public class Trajectory<S extends ProbeState> implements IArchive, Iterable<S> {
      * @param strElemId    the name of the element to search for
      * @return             an array of <code>ProbeState</code> objects for that element
      */
-    public ProbeState[] statesForElement_old(String strElemId) {
+    public ProbeState[] statesForElement_OLD(String strElemId) {
         List<ProbeState> result = new ArrayList<ProbeState>();
         Iterator<S> it = stateIterator();
         while (it.hasNext()) {
@@ -513,12 +517,13 @@ public class Trajectory<S extends ProbeState> implements IArchive, Iterable<S> {
      * @author Christopher K. Allen
      * @since  Jun 5, 2013
      */
-    public ProbeState[] statesForElement(String strElemId) {
+    public List<S> statesForElement(String strElemId) {
         RealNumericIndexer<S>    setStates = this.mapStates.getStates(strElemId);
         List<S>                  lstStates = setStates.toList();
         
-        ProbeState[] arrStates = new ProbeState[lstStates.size()];
-        return lstStates.toArray(arrStates);
+//        ProbeState[] arrStates = new ProbeState[lstStates.size()];
+//        return lstStates.toArray(arrStates);
+        return lstStates;
     }
 
     /**

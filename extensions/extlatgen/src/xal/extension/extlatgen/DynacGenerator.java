@@ -300,7 +300,7 @@ public class DynacGenerator {
             // for rf gaps
             else if(element.getType().equals("rfgap")) {
                 // get TTF etc.
-                ProbeState state = myScenario.getTrajectory().statesForElement(element.getAcceleratorNode().getId())[0];
+                ProbeState state = myScenario.getTrajectory().statesForElement(element.getAcceleratorNode().getId()).get(0);
                 double gamma = 1. + state.getKineticEnergy()/state.getSpeciesRestEnergy();
                 double beta = Math.sqrt(1.-1./(gamma*gamma));
                 double TTF = ((RfGap) element.getAcceleratorNode()).getTTFFit().evaluateAt(beta);
