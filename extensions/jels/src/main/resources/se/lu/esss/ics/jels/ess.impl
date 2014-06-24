@@ -1,5 +1,4 @@
 <?xml version = '1.0' encoding = 'UTF-8'?>
-<!DOCTYPE deviceMapping SYSTEM "xdxf.dtd">
 <deviceMapping xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:noNamespaceSchemaLocation="http://sourceforge.net/p/xaldev/openxal/ci/master/tree/core/resources/xal/schemas/impl.xsd?format=raw">
    <device type="DH" class="se.lu.esss.ics.jels.smf.impl.ESSBend"/>

@@ -1,5 +1,4 @@
 <?xml version = '1.0' encoding = 'UTF-8'?>
-<!DOCTYPE xdxf SYSTEM "xdxf.dtd">
 <xdxf xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:noNamespaceSchemaLocation="http://sourceforge.net/p/xaldev/openxal/ci/master/tree/core/resources/xal/schemas/xdxf.xsd?format=raw"
 	date="05.09.2014" id="ESS" len="602.5016199715232" pos="0.0" system="ESS" type="sequence" ver="">

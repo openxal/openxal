@@ -1,5 +1,4 @@
 <?xml version = '1.0' encoding = 'UTF-8'?>
-<!DOCTYPE sources SYSTEM "xdxf.dtd">
 <dbconfig>
 	<adaptors default="postgres">
 		<adaptor name="postgres" class="xal.plugin.postgres.PostgresDatabaseAdaptor"/>		
