@@ -171,9 +171,9 @@ public class RpcServer {
                     try {
 						String jsonRequest = null;
 						try {
-							jsonRequest = SocketMessageIO.readMessage( remoteSocket );
+							jsonRequest = WebSocketIO.readMessage( remoteSocket );
 						}
-						catch( SocketMessageIO.SocketPrematurelyClosedException exception ) {
+						catch( Exception exception ) {
 							throw new RemoteClientDroppedException( "Session has been closed during read..." );
 						}
 						

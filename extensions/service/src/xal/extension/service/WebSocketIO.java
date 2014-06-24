@@ -112,12 +112,14 @@ class WebSocketIO {
 
 	/** Read the message from the socket and return it */
 	static String readMessage( final Socket socket ) throws java.net.SocketException, java.io.IOException {
+		System.out.println( "Waiting for a websocket message..." );
+
 		final int BUFFER_SIZE = socket.getReceiveBufferSize();
-		final char[] streamBuffer = new char[BUFFER_SIZE];
+		final byte[] streamBuffer = new byte[BUFFER_SIZE];
 		final InputStream readStream = socket.getInputStream();
-		final BufferedReader reader = new BufferedReader( new InputStreamReader( readStream ) );
-		final StringBuilder inputBuffer = new StringBuilder();
-		boolean moreToRead = true;
+		final BufferedInputStream reader = new BufferedInputStream( readStream );
+		final ByteArrayOutputStream rawByteBuffer = new ByteArrayOutputStream();
+
 		do {
 			final int readCount = reader.read( streamBuffer, 0, BUFFER_SIZE );
 
@@ -125,12 +127,42 @@ class WebSocketIO {
 				throw new RuntimeException( "The remote socket has closed while reading the remote response..." );
 			}
 			else if  ( readCount > 0 ) {
-				inputBuffer.append( streamBuffer, 0, readCount );
-				moreToRead = streamBuffer[readCount - 1] != '\0';
+				rawByteBuffer.write( streamBuffer, 0, readCount );
 			}
-		} while ( reader.ready() || readStream.available() > 0 || moreToRead );
+		} while ( readStream.available() > 0 );
 
-		return inputBuffer.toString().trim();
+		final byte[] rawBytes = rawByteBuffer.toByteArray();
+
+		int offset = 0;
+
+		final byte head1 = rawBytes[0];
+		final byte head2 = rawBytes[1];
+		offset += 2;
+
+		final boolean fin = ( head1 & 0b10000000 ) != 0;
+		final byte opcode = (byte)( head1 & 0b00001111 );
+		final boolean masked = ( head2 & 0b10000000 ) != 0;
+		final byte length = (byte)( head2 & 0b01111111 );
+
+		System.out.println( "fin: " + fin + ", opcode: " + opcode + ", masked: " + masked + ", length: " + length );
+
+		// TODO: need to handle case of longer payloads (i.e. length == 127 or 126 codes which needs further processing to get payload length)
+
+		final byte[] mask = new byte[4];
+		System.arraycopy( rawBytes, offset, mask, 0, 4 );
+		offset += 4;
+
+		final StringBuilder resultBuilder = new StringBuilder();
+		for ( int index = offset ; index < rawBytes.length ; index++ ) {
+			int position = index - offset;
+			int charCode = mask[position%4] ^ rawBytes[index];
+			final char[] chars = Character.toChars( charCode );
+			resultBuilder.append( chars );
+		}
+
+		System.out.println( "Result: " + resultBuilder.toString() );
+
+		return resultBuilder.toString();
 	}
 
 
