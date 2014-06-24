@@ -178,6 +178,8 @@ public class RpcServer {
 						}
 						
                         final Object requestObject = MESSAGE_CODER.decode( jsonRequest );
+						System.out.println( "JSON Request: " + jsonRequest );
+						System.out.println( "Request Object: " + requestObject );
                         if ( requestObject instanceof Map ) {
 							final Writer output = new OutputStreamWriter( remoteSocket.getOutputStream() );
                             final Map<String,Object> request = (Map<String,Object>)requestObject;
@@ -201,6 +203,7 @@ public class RpcServer {
                                 response.put( "error", result.getRuntimeExceptionWrapper() );
                                 
                                 final String jsonResponse = MESSAGE_CODER.encode( response );
+								System.out.println( "Response: " + jsonResponse );
                                 output.write( jsonResponse );
 								output.write( REMOTE_MESSAGE_TERMINATOR );
                                 output.flush();
