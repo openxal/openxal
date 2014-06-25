@@ -25,9 +25,6 @@ import java.util.logging.*;
  */
 //public class RpcServer extends WebServer {
 public class RpcServer {
-	/** terminator for remote messages */
-	final static char REMOTE_MESSAGE_TERMINATOR = SocketMessageIO.REMOTE_MESSAGE_TERMINATOR;
-
     /** delimeter for encoding remote messages */
     final static private String REMOTE_MESSAGE_DELIMITER = "#";
     
@@ -180,19 +177,15 @@ public class RpcServer {
 						
                         final Object requestObject = MESSAGE_CODER.decode( jsonRequest );
 						System.out.println( "JSON Request: " + jsonRequest );
-						System.out.println( "Request Object: " + requestObject );
-						System.out.println( "Request Object Class: " + requestObject.getClass() );
                         if ( requestObject instanceof Map ) {
 							System.out.println( "Writing output..." );
-							final Writer output = new OutputStreamWriter( remoteSocket.getOutputStream() );
                             final Map<String,Object> request = (Map<String,Object>)requestObject;
                             final String message = (String)request.get( "message" );
 							System.out.println( "Request Message: " + message );
                             final String[] messageParts = decodeRemoteMessage( message );
                             final String serviceName = messageParts[0];
                             final String methodName = messageParts[1];
-							System.out.println( "Request Service: " + serviceName );
-							System.out.println( "Request Method: " + methodName );
+							System.out.println( "Request Service: " + serviceName + ", Method: " + methodName );
                             final Number requestID = (Number)request.get( "id" );
 							System.out.println( "request ID: " + requestID );
                             final List<Object> params = (List<Object>)request.get( "params" );
@@ -213,8 +206,7 @@ public class RpcServer {
                                 
                                 final String jsonResponse = MESSAGE_CODER.encode( response );
 								System.out.println( "Response: " + jsonResponse );
-                                output.write( jsonResponse );
-                                output.flush();
+								WebSocketIO.sendMessage( remoteSocket, jsonResponse );
                             }
                         }
                     }
