@@ -105,8 +105,26 @@ class WebSocketIO {
 
 
 	/** send the message */
-	static void sendMessage( final Socket socket, final String message ) {
+	static void sendMessage( final Socket socket, final String message ) throws java.net.SocketException, java.io.IOException {
+		final StringBuilder responseBuilder = new StringBuilder();
 
+		final byte opcode = 1;		// response is text
+		final int byte1 = opcode | 0b10000000;
+
+		// TODO: need to test for and handle arbitrary length
+		final int byte2 = message.length();
+
+		responseBuilder.append( message );
+
+		System.out.println( "byte1: " + byte1 + ", byte2: " + byte2 );
+
+		final OutputStream output = socket.getOutputStream();
+		output.write( byte1 );
+		output.write( byte2 );
+
+		final byte[] messageBytes = message.getBytes( Charset.forName( "UTF-8" ) );
+		output.write( messageBytes, 0, messageBytes.length );
+		output.flush();
 	}
 
 
