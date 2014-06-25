@@ -137,22 +137,43 @@ class WebSocketIO {
 
 	/** send the message */
 	static void sendMessage( final Socket socket, final String message ) throws java.net.SocketException, java.io.IOException {
-		final StringBuilder responseBuilder = new StringBuilder();
+		final OutputStream output = socket.getOutputStream();
 
 		final byte opcode = 1;		// response is text
 		final int byte1 = opcode | 0b10000000;
-
-		// TODO: need to test for and handle arbitrary length
-		final int byte2 = message.length();
-
-		responseBuilder.append( message );
-
-		System.out.println( "byte1: " + byte1 + ", byte2: " + byte2 );
-
-		final OutputStream output = socket.getOutputStream();
 		output.write( byte1 );
-		output.write( byte2 );
 
+		final int messageLength = message.length();
+
+		if ( messageLength < 126 ) {
+			output.write( messageLength );
+		}
+		else if ( messageLength < 65536 ) {
+			output.write( 126 );
+
+			// write the length as two bytes
+			short shortLen = (short)messageLength;
+			final byte[] lenBytes = new byte[2];
+			for ( int index = 0 ; index < 2 ; index++ ) {
+				lenBytes[1-index] = (byte)( shortLen & 0xff );
+				shortLen = (short)( shortLen >> 8 );
+			}
+			output.write( lenBytes, 0, 2 );
+		}
+		else {
+			output.write( 127 );
+
+			// write the length as 8 bytes
+			long longLen = (long)messageLength;
+			final byte[] lenBytes = new byte[8];
+			for ( int index = 0 ; index < 8 ; index++ ) {
+				lenBytes[7-index] = (byte)( longLen & 0xff );
+				longLen = (long)( longLen >> 8 );
+			}
+			output.write( lenBytes, 0, 8 );
+		}
+
+		// write the raw message
 		final byte[] messageBytes = message.getBytes( Charset.forName( "UTF-8" ) );
 		output.write( messageBytes, 0, messageBytes.length );
 		output.flush();
