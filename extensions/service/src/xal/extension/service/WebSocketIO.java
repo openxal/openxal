@@ -22,6 +22,14 @@ class WebSocketIO {
 	static final private String HANDSHAKE_ENCODE_KEY = "258EAFA5-E914-47DA-95CA-C5AB0DC85B11";
 
 
+
+	/** Send the handshake (from the client) generating a random security value and process the response. Returns true upon success. */
+	static boolean performHandshake( final Socket socket ) throws java.net.SocketException, java.io.IOException, SocketPrematurelyClosedException {
+		sendHandshakeRequest( socket );
+		return processResponseHandshake( socket );
+	}
+
+
 	/** Send the handshake (from the client) generating a random security value. Use this method when you don't need to valide the header response. */
 	static void sendHandshakeRequest( final Socket socket ) throws java.net.SocketException, java.io.IOException {
 		sendHandshakeRequest( socket, new Random().nextLong() );
@@ -111,7 +119,7 @@ class WebSocketIO {
 
 
 	/** process the handshake response for the socket without any validation */
-	static boolean processResponseHandshake( final Socket socket ) throws java.net.SocketException, java.io.IOException {
+	static boolean processResponseHandshake( final Socket socket ) throws java.net.SocketException, java.io.IOException, WebSocketIO.SocketPrematurelyClosedException {
 		final int BUFFER_SIZE = socket.getReceiveBufferSize();
 		final char[] streamBuffer = new char[BUFFER_SIZE];
 		final InputStream readStream = socket.getInputStream();
@@ -123,7 +131,7 @@ class WebSocketIO {
 			final int readCount = reader.read( streamBuffer, 0, BUFFER_SIZE );
 
 			if ( readCount == -1 ) {     // the session has been closed
-				throw new RuntimeException( "The remote socket has closed while reading the remote response..." );
+				throw new SocketPrematurelyClosedException( "The remote socket has closed while reading the remote response..." );
 			}
 			else if  ( readCount > 0 ) {
 				inputBuffer.append( streamBuffer, 0, readCount );
@@ -181,9 +189,7 @@ class WebSocketIO {
 
 
 	/** Read the message from the socket and return it */
-	static String readMessage( final Socket socket ) throws java.net.SocketException, java.io.IOException {
-		System.out.println( "Waiting for a websocket message..." );
-
+	static String readMessage( final Socket socket ) throws java.net.SocketException, java.io.IOException, WebSocketIO.SocketPrematurelyClosedException {
 		final int BUFFER_SIZE = socket.getReceiveBufferSize();
 		final byte[] streamBuffer = new byte[BUFFER_SIZE];
 		final InputStream readStream = socket.getInputStream();
@@ -194,7 +200,7 @@ class WebSocketIO {
 			final int readCount = reader.read( streamBuffer, 0, BUFFER_SIZE );
 
 			if ( readCount == -1 ) {     // the session has been closed
-				throw new RuntimeException( "The remote socket has closed while reading the remote response..." );
+				throw new SocketPrematurelyClosedException( "The remote socket has closed while reading the remote response..." );
 			}
 			else if  ( readCount > 0 ) {
 				rawByteBuffer.write( streamBuffer, 0, readCount );
@@ -214,7 +220,7 @@ class WebSocketIO {
 		final boolean masked = ( head2 & 0b10000000 ) == 0b10000000;
 		final byte lengthCode = (byte)( head2 & 0b01111111 );
 
-		System.out.println( "fin: " + fin + ", opcode: " + opcode + ", masked: " + masked + ", length: " + lengthCode );
+		//System.out.println( "fin: " + fin + ", opcode: " + opcode + ", masked: " + masked + ", length: " + lengthCode );
 
 		// TODO: might be wise to add some length validation
 		switch ( lengthCode ) {
@@ -252,8 +258,6 @@ class WebSocketIO {
 			resultBuilder.append( chars );
 		}
 
-		System.out.println( "Result:\n" + resultBuilder.toString() );
-
 		return resultBuilder.toString();
 	}
 
@@ -262,6 +266,20 @@ class WebSocketIO {
 	static private String toBase64( final String input ) {
 		final byte[] rawInputBytes = input.getBytes( Charset.forName( "UTF-8" ) );
 		return DatatypeConverter.printBase64Binary( rawInputBytes );
+	}
+
+
+	
+	/** Exception indicating that the socket closed prematurely */
+	static public class SocketPrematurelyClosedException extends Exception {
+		/** required serial version ID */
+		static final long serialVersionUID = 0L;
+
+
+		/** Constructor */
+		public SocketPrematurelyClosedException( final String message ) {
+			super( message );
+		}
 	}
 }
 
