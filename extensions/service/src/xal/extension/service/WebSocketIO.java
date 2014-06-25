@@ -197,6 +197,7 @@ class WebSocketIO {
 
 
 
+/** Reads the payload directly without masking */
 class PayloadReader {
 	/** direct reader singleton */
 	final private static PayloadReader DEFAULT_READER = new PayloadReader();
@@ -216,6 +217,7 @@ class PayloadReader {
 
 
 
+/** Reads the payload when there is a mask */
 class MaskPayloadReader extends PayloadReader {
 	/** mask to use */
 	final private byte[] MASK;
