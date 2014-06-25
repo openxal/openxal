@@ -22,9 +22,15 @@ class WebSocketIO {
 	static final private String HANDSHAKE_ENCODE_KEY = "258EAFA5-E914-47DA-95CA-C5AB0DC85B11";
 
 
-	/** send the handshake (from the client) */
+	/** Send the handshake (from the client) generating a random security value. Use this method when you don't need to valide the header response. */
 	static void sendHandshakeRequest( final Socket socket ) throws java.net.SocketException, java.io.IOException {
-		final String randomKey = String.valueOf( new Random().nextLong() );
+		sendHandshakeRequest( socket, new Random().nextLong() );
+	}
+
+
+	/** Initiate the handshake (from the client) passing a random value for the security key. Use this method when you want to validate the header response. */
+	static void sendHandshakeRequest( final Socket socket, final long randomSecurityValue ) throws java.net.SocketException, java.io.IOException {
+		final String randomKey = String.valueOf( randomSecurityValue );
 		final String encodedRandomKey = toBase64( randomKey );	// base64 encoded random key
 
 		final Writer writer = new OutputStreamWriter( socket.getOutputStream() );
@@ -82,7 +88,7 @@ class WebSocketIO {
 
 
 	/** process the handshake with the socket */
-	static boolean processHandshake( final Socket socket ) throws java.net.SocketException, java.io.IOException {
+	static boolean processRequestHandshake( final Socket socket ) throws java.net.SocketException, java.io.IOException {
 		final int BUFFER_SIZE = socket.getReceiveBufferSize();
 		final char[] streamBuffer = new char[BUFFER_SIZE];
 		final InputStream readStream = socket.getInputStream();
@@ -101,6 +107,31 @@ class WebSocketIO {
 		} while ( reader.ready() || readStream.available() > 0 );
 
 		return sendHandshakeResponse( socket, inputBuffer.toString() );
+	}
+
+
+	/** process the handshake response for the socket without any validation */
+	static boolean processResponseHandshake( final Socket socket ) throws java.net.SocketException, java.io.IOException {
+		final int BUFFER_SIZE = socket.getReceiveBufferSize();
+		final char[] streamBuffer = new char[BUFFER_SIZE];
+		final InputStream readStream = socket.getInputStream();
+		final BufferedReader reader = new BufferedReader( new InputStreamReader( readStream ) );
+		final StringBuilder inputBuffer = new StringBuilder();
+
+		// empty out the buffer and store the header info
+		do {
+			final int readCount = reader.read( streamBuffer, 0, BUFFER_SIZE );
+
+			if ( readCount == -1 ) {     // the session has been closed
+				throw new RuntimeException( "The remote socket has closed while reading the remote response..." );
+			}
+			else if  ( readCount > 0 ) {
+				inputBuffer.append( streamBuffer, 0, readCount );
+			}
+		} while ( reader.ready() || readStream.available() > 0 );
+
+		// TODO: might want to validate the response handshake
+		return true;
 	}
 
 

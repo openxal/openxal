@@ -157,7 +157,7 @@ public class RpcServer {
 				if ( !remoteSocket.isClosed() ) {
 					// process the initial handshake
 					try {
-						WebSocketIO.processHandshake( remoteSocket );
+						WebSocketIO.processRequestHandshake( remoteSocket );
 					}
 					catch ( Exception exception ) {
 						throw new RuntimeException( "Exception handling handshake", exception );
