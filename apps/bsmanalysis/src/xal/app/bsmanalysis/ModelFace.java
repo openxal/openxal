@@ -583,7 +583,7 @@ public class ModelFace extends JPanel{
 		Iterator<Double> itr = templist.iterator();
 		System.out.println("namelist is " + namelist);
 		for(int i=0; i<namelist.size(); i++){
-			EnvelopeProbeState state = (EnvelopeProbeState)traj.statesForElement(namelist.get(i))[0];
+			EnvelopeProbeState state = traj.statesForElement(namelist.get(i)).get(0);
 			double T = state.getKineticEnergy();
 			double m = state.getSpeciesRestEnergy();
 			double gamma = T/m + 1;
@@ -595,7 +595,7 @@ public class ModelFace extends JPanel{
 			zdatalist.set(i, d);
 			//System.out.println("zdata is at " + i + " is " + zdatalist.get(i) + " at element " + namelist.get(i) + " with energy " + T + " and v " + v);
 		}
-		EnvelopeProbeState state = (EnvelopeProbeState)traj.statesForElement("Begin_Of_CCL")[0];
+		EnvelopeProbeState state = traj.statesForElement("Begin_Of_CCL").get(0);
         
         CovarianceMatrix covarianceMatrix = state.getCovarianceMatrix();
         Twiss[] twiss = covarianceMatrix.computeTwiss();
@@ -659,7 +659,7 @@ public class ModelFace extends JPanel{
 		double rz=0;
         for(int i =0; i<size; i++){
 			String name = namelist.get(i);
-			EnvelopeProbeState state = (EnvelopeProbeState)traj.statesForElement(name)[0];
+			EnvelopeProbeState state = traj.statesForElement(name).get(0);
             
             CovarianceMatrix covarianceMatrix = state.getCovarianceMatrix();
             Twiss[] twiss = covarianceMatrix.computeTwiss();
@@ -848,7 +848,7 @@ public class ModelFace extends JPanel{
 		Iterator<EnvelopeProbeState> iterState = traj.stateIterator();
         
 		while(iterState.hasNext()){
-			EnvelopeProbeState state = (EnvelopeProbeState)iterState.next();
+			EnvelopeProbeState state = iterState.next();
 			sdata.add(state.getPosition());
             
             CovarianceMatrix covarianceMatrix = state.getCovarianceMatrix();
@@ -896,7 +896,7 @@ public class ModelFace extends JPanel{
 		double rz;
 		
 		for(int i =0; i<datasize; i++){
-			newstate = (EnvelopeProbeState)traj.statesForElement(namelist.get(i))[0];
+			newstate = traj.statesForElement(namelist.get(i)).get(0);
 			srdata[i]=newstate.getPosition();
 			zrdata[i]=1000.0*(zdatalist.get(i)).doubleValue();
 			if(plotunitbox.getSelectedIndex() == 1){

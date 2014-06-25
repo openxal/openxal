@@ -657,8 +657,8 @@ public class RingFoilPosCorrector {
      *  Parameters changed to strings to fit this program
      */
 	protected PhaseMatrix getTransferMatrix( final Trajectory<TransferMapState> trajectory, final String fromNode, final String toNode ) {
-		final PhaseMatrix fromMatrix = ((TransferMapState)trajectory.stateForElement( fromNode )).getTransferMap().getFirstOrder();
-		final PhaseMatrix toMatrix = ((TransferMapState)trajectory.stateForElement( toNode )).getTransferMap().getFirstOrder();
+		final PhaseMatrix fromMatrix = (trajectory.stateForElement( fromNode )).getTransferMap().getFirstOrder();
+		final PhaseMatrix toMatrix = (trajectory.stateForElement( toNode )).getTransferMap().getFirstOrder();
 		return getTransferMatrix( fromMatrix, toMatrix );
 	}
     

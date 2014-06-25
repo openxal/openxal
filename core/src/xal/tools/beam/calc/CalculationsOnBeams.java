@@ -73,7 +73,7 @@ public class CalculationsOnBeams extends CalculationEngine implements ISimLocRes
      * @author Christopher K. Allen
      * @since  Oct 22, 2013
      */
-    public CalculationsOnBeams(Trajectory<? extends ProbeState> datSim) {
+    public CalculationsOnBeams(Trajectory<EnvelopeProbeState> datSim) {
         ProbeState  pstFinal = datSim.finalState();
         
         // Check for correct probe types
@@ -84,7 +84,7 @@ public class CalculationsOnBeams extends CalculationEngine implements ISimLocRes
                     );
         
         this.trjSimul  = datSim;
-        this.staInit   = (EnvelopeProbeState)datSim.initialState();
+        this.staInit   = datSim.initialState();
         this.staFinal  = (EnvelopeProbeState)pstFinal;
         this.matResp   = this.staFinal.getResponseMatrix();
         

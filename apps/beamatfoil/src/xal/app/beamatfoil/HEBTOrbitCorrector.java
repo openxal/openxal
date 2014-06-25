@@ -566,7 +566,7 @@ public class HEBTOrbitCorrector {
 		 for(int i = 0, n = corrV.size(); i < n; i++) {
 			 Corr_Element corrElm = corrV.get(i);
 			 Electromagnet corr_mag = corrElm.getMagnet();
-			 ProbeState probeState = trajectory.statesForElement(corr_mag.getId())[0];
+			 ProbeState probeState = trajectory.statesForElement(corr_mag.getId()).get(0);
 			 double W0 = probeState.getSpeciesRestEnergy();
 			 double gamma = probeState.getGamma();
 			 double beta = Math.sqrt(1.0 - 1.0 / (gamma * gamma));

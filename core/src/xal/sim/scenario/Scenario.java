@@ -281,7 +281,7 @@ public class Scenario {
             throw new IllegalStateException("scenario doesn't contain a probe");
         if (probe.getTrajectory() == null)
             throw new IllegalStateException("model not yet run");
-        return probe.getTrajectory();
+        return  probe.getTrajectory();
     }
         
     
@@ -332,7 +332,7 @@ public class Scenario {
      * @return array of trajectory states for specified element id
      * @throws ModelException if the probe is not yet propagated
      */
-    public ProbeState[] trajectoryStatesForElement( final String id ) throws ModelException {
+    public List<? extends ProbeState> trajectoryStatesForElement( final String id ) throws ModelException {
         if (probe == null)
             throw new ModelException("Probe is null");
         return probe.getTrajectory().statesForElement(id);

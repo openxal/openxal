@@ -295,8 +295,7 @@ public class CalcQuadSettings implements Runnable {
         
 		double sum = 0.;
 		for (int i = 1; i < bpms.size(); i++) {
-			TransferMapState state = (TransferMapState) traj
-            .stateForElement(bpms.get(i));
+			TransferMapState state = traj.stateForElement(bpms.get(i));
 			if (!tp.badBPMs.contains(new Integer(i))) {
 			    
 			    // CKA - This

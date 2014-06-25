@@ -512,7 +512,7 @@ public class AnalysisStuff {
 	    Trajectory<?> traj;
 	    //EnvelopeProbeState state0, state1, state2;
 	    ProbeState state0, state1, state2;
-	    ProbeState[] states;
+	    java.util.List<? extends ProbeState> states;
 	    double time0;
 	    
 	    theDoc.theCavity.updateDesignAmp(0.); // turn off the cavity
@@ -536,17 +536,17 @@ public class AnalysisStuff {
 		    RfGap gap0 = al.get(0);
 		    states = traj.statesForElement(gap0.getId());
 		    //state0 = (EnvelopeProbeState) states[0];
-		    state0 = states[0];
+		    state0 = states.get(0);
 		    //System.out.println("time0 = " + state0.getElementId() + " " + state0.getTime());
 		    time0 = state0.getTime();
 		    
 		    states = traj.statesForElement(theDoc.BPM1.getId());
 		    //state1 = (EnvelopeProbeState) states[0];
-		    state1 = states[0];
+		    state1 = states.get(0);
 		    
 		    states = traj.statesForElement(theDoc.BPM2.getId());
 		    //state2 = (EnvelopeProbeState) states[0];
-		    state2 = states[0];
+		    state2 = states.get(0);
             
 		    BPM1TimeCavOff = getTime(state1, theDoc.BPM1) - time0;
 		    BPM2TimeCavOff = getTime(state2, theDoc.BPM2) - time0;
@@ -604,7 +604,7 @@ public class AnalysisStuff {
 	    Trajectory<?> traj;
 	    //EnvelopeProbeState state0, state1, state2;
 	    ProbeState state0, state1, state2;
-	    ProbeState[] states;
+	    java.util.List<? extends ProbeState> states;
 	    Twiss[] twiss1, twiss2;
 	    
 	    double ampModel = (ampValueV.get(i)).doubleValue();
@@ -645,19 +645,19 @@ public class AnalysisStuff {
 				    RfGap gap0 = al.get(0);
 				    states = traj.statesForElement(gap0.getId());
 				    //state0 = (EnvelopeProbeState) states[0];
-				    state0 = states[0];
+				    state0 = states.get(0);
 				    //System.out.println("time0 = " + state0.getElementId() + " " + state0.getTime());
 				    time0 = state0.getTime();
 				    
 				    states =traj.statesForElement(firstBPM.getId()); //traj.statesForElement(theDoc.BPM1.getId());
 				    //state1 = (EnvelopeProbeState) states[0];
-				    state1 = states[0];
+				    state1 = states.get(0);
 				    //twiss1 = state1.phaseCorrelation().twissParameters();
 				    //betaZ1 = twiss1[2].getBeta();
 				    
 				    states = traj.statesForElement(secondBPM.getId()); //traj.statesForElement(theDoc.BPM2.getId());
 				    //state2 = (EnvelopeProbeState) states[0];
-				    state2 = states[0];
+				    state2 = states.get(0);
 				    //twiss2 = state2.phaseCorrelation().twissParameters();
 				    //betaZ2 = twiss2[2].getBeta();
 				    WOut = state1.getKineticEnergy()/1.e6;
@@ -1058,9 +1058,9 @@ public class AnalysisStuff {
 	    cavAmpSetpoint = pvs[ind] + (theDoc.theDesignAmp - svs[ind])*slope;
         
         runModel(cavityVoltage, theDoc.theDesignPhase, WIn*1.e6);
-        Trajectory traj = theModel.getProbe().getTrajectory();
-        ProbeState[] states =traj.statesForElement(firstBPM.getId());
-        ProbeState state = states[0];
+        Trajectory<?> traj = theModel.getProbe().getTrajectory();
+        java.util.List<? extends ProbeState> states =traj.statesForElement(firstBPM.getId());
+        ProbeState state = states.get(0);
         WOutCalc = state.getKineticEnergy()/1.e6;
         /*
          

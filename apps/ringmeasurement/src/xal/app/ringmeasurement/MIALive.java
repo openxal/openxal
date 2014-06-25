@@ -74,7 +74,6 @@ import xal.extension.application.smf.*;
 import xal.smf.*;
 import xal.smf.data.XMLDataManager;
 import xal.extension.application.*;
-
 import Jama.Matrix;
 import Jama.SingularValueDecomposition;
 
@@ -600,7 +599,8 @@ public class MIALive extends JPanel{
 
 	        // CKA - Down cast the simulation trajectory results to the proper type then
 	        //   create a ring parameter calculation engine for processing
-	        Trajectory<TransferMapState>  trjSimulation = (Trajectory<TransferMapState>) traj;
+	        @SuppressWarnings("unchecked")
+            Trajectory<TransferMapState>  trjSimulation = (Trajectory<TransferMapState>) traj;
 	        CalculationsOnRings         cmpRingParams = new CalculationsOnRings(trjSimulation);
 
 	        int j = 0;
@@ -675,6 +675,7 @@ public class MIALive extends JPanel{
 			
             // CKA - Down cast the simulation trajectory results to the proper type then
             //   create a ring parameter calculation engine for processing
+            @SuppressWarnings("unchecked")
             Trajectory<TransferMapState>  trjSimulation = (Trajectory<TransferMapState>) traj;
             CalculationsOnRings         cmpRingParams = new CalculationsOnRings(trjSimulation);
 

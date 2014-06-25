@@ -627,8 +627,8 @@ public class TunePanel extends JPanel implements ConnectionListener,
 			scenario.resync();
 			scenario.run();
 
-			Trajectory<TransferMapState> traj = (Trajectory<TransferMapState>) scenario
-					.getTrajectory();
+            @SuppressWarnings("unchecked")
+            Trajectory<TransferMapState> traj = (Trajectory<TransferMapState>) scenario.getTrajectory();
 
 			double xSum = 0.;
 			double ySum = 0.;
@@ -782,7 +782,7 @@ public class TunePanel extends JPanel implements ConnectionListener,
 					yPhaseDiff[i] = yPhaseDiff[i] + 2. * Math.PI;
 				
 				// get model BPM phase difference
-				TransferMapState state = (TransferMapState) traj
+				TransferMapState state =  traj
 				.stateForElement(goodBPMs.get(i));
 				
 				// CKA - This

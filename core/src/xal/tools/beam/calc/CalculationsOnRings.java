@@ -74,7 +74,7 @@ public class CalculationsOnRings extends CalculationsOnMachines {
      * @since  Oct 22, 2013
      */
     
-    public CalculationsOnRings(Trajectory<? extends ProbeState> datSim) {
+    public CalculationsOnRings(Trajectory<TransferMapState> datSim) {
         super(datSim);
 //      ProbeState  pstFinal = trjRing.finalState();
 //      

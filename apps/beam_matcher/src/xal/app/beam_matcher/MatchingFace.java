@@ -1206,7 +1206,7 @@ public class MatchingFace extends JPanel{
         Iterator<EnvelopeProbeState> iterState= traj.stateIterator();
         
         while(iterState.hasNext()){
-            EnvelopeProbeState state= (EnvelopeProbeState)iterState.next();
+            EnvelopeProbeState state= iterState.next();
             sdata.add(state.getPosition());
             
             CovarianceMatrix covarianceMatrix = state.getCovarianceMatrix();
@@ -1270,7 +1270,7 @@ public class MatchingFace extends JPanel{
         Twiss[] newtwiss;
         double rx, ry;
         for(i =0; i<datasize; i++){
-            newstate = (EnvelopeProbeState)traj.statesForElement(namelist.get(i))[0];
+            newstate = traj.statesForElement(namelist.get(i)).get(0);
             srdata[i]=newstate.getPosition();
             System.out.println(beamMatcherDataTableModel2.getValueAt(i, 1));
             xrdata[i]=wireScanData.wireScanHorizByNameCA(lstName[i]);

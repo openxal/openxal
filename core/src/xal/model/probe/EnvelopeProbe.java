@@ -490,15 +490,13 @@ public class EnvelopeProbe extends BunchProbe {
 		int indFrom, indTo;
 		indTo = arrIndTo[arrIndTo.length - 1]; // use last state before start element
 
-		EnvelopeProbeState stateTo =
-			(EnvelopeProbeState) trajectory.stateWithIndex(indTo);
+		EnvelopeProbeState stateTo = trajectory.stateWithIndex(indTo);
 		PhaseMatrix matTo = stateTo.getResponseMatrix();
 		
 		indFrom = arrIndFrom[0] - 1;
 		if (indFrom < 0) return matTo; // response from beginning of machine
 		
-		EnvelopeProbeState stateFrom =
-			(EnvelopeProbeState) trajectory.stateWithIndex(indFrom);
+		EnvelopeProbeState stateFrom = trajectory.stateWithIndex(indFrom);
 		PhaseMatrix matFrom = stateFrom.getResponseMatrix();
 		
 		return matTo.times(matFrom.inverse());

@@ -227,7 +227,7 @@ public abstract class Probe implements IProbe, IArchive {
      * 
      * @return the <code>Trajectory</code> object for the given probe type
      */
-    public abstract Trajectory<?> getTrajectory();
+    public abstract Trajectory<? extends ProbeState> getTrajectory();
     
     /**
      * Captures the probe's state in a ProbeState of the appropriate species.

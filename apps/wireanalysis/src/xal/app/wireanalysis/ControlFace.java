@@ -588,7 +588,7 @@ public class ControlFace extends JPanel {
         } catch(Exception e){}
 		
         Trajectory<EnvelopeProbeState> traj = tempprobe.getTrajectory();
-		EnvelopeProbeState newstate = (EnvelopeProbeState)traj.stateForElement(init);
+		EnvelopeProbeState newstate = traj.stateForElement(init);
 		initprobe.setKineticEnergy(newstate.getKineticEnergy());
 		System.out.println("Current Energy in update probe is " + newstate.getKineticEnergy());
 		initprobe.setPosition(seq.getPosition(seq.getNodeWithId(init)));
@@ -704,7 +704,7 @@ public class ControlFace extends JPanel {
         }catch(Exception e){}
 		
         Trajectory<EnvelopeProbeState> traj = localprobe.getTrajectory();
-		EnvelopeProbeState newstate = (EnvelopeProbeState)traj.statesForElement(Id)[0];
+		EnvelopeProbeState newstate = traj.statesForElement(Id).get(0);
 		
         CovarianceMatrix covarianceMatrix = newstate.getCovarianceMatrix();
         Twiss[] twiss = covarianceMatrix.computeTwiss();
@@ -954,7 +954,7 @@ public class ControlFace extends JPanel {
         
 		//Creates and array of Twiss values that we are trying to control
         for(int i = 0; i < controltables.size(); i++){
-			state.add((EnvelopeProbeState) traj.statesForElement(controltables.get(i).getColumnName(0))[0]);
+			state.add(traj.statesForElement(controltables.get(i).getColumnName(0)).get(0));
             CovarianceMatrix covarianceMatrix = state.get(i).getCovarianceMatrix();
             Twiss[] twiss = covarianceMatrix.computeTwiss();
             
@@ -1048,7 +1048,7 @@ public class ControlFace extends JPanel {
 	public void showTargetVals(){
         Probe probe=solvermodel.getProbe();
 		Trajectory<?> traj = probe.getTrajectory();
-        EnvelopeProbeState target = (EnvelopeProbeState)traj.statesForElement((String)targetlist.getSelectedItem())[0];
+        EnvelopeProbeState target = (EnvelopeProbeState)traj.statesForElement((String)targetlist.getSelectedItem()).get(0);
 	}
 	
 	
@@ -1152,7 +1152,7 @@ public class ControlFace extends JPanel {
 		}
 		
 		for(int i = 0; i<datasize; i++){
-			newstate = (EnvelopeProbeState)traj.statesForElement(controltables.get(i).getColumnName(0))[0];
+			newstate = traj.statesForElement(controltables.get(i).getColumnName(0)).get(0);
 			srdata[i]=newstate.getPosition()-offset;
             if(betaplot){
 				if((Boolean)controltables.get(i).getValueAt(0,4)){
@@ -1220,7 +1220,7 @@ public class ControlFace extends JPanel {
 		EnvelopeProbeState state;
 		
 		for(int i = 0; i < controltables.size(); i++){
-			state = (EnvelopeProbeState) traj.statesForElement(controltables.get(i).getColumnName(0))[0];
+			state = traj.statesForElement(controltables.get(i).getColumnName(0)).get(0);
             CovarianceMatrix covarianceMatrix = state.getCovarianceMatrix();
             Twiss[] twiss = covarianceMatrix.computeTwiss();
             
@@ -1248,7 +1248,7 @@ public class ControlFace extends JPanel {
 			if(beginrecord){
 				ArrayList<Object> tabledata = new ArrayList<Object>();
 				System.out.println("name is " + name);
-				EnvelopeProbeState state = (EnvelopeProbeState)traj.stateForElement(name);
+				EnvelopeProbeState state = traj.stateForElement(name);
                 CovarianceMatrix covarianceMatrix = state.getCovarianceMatrix();
                 Twiss[] twiss = covarianceMatrix.computeTwiss();
                 

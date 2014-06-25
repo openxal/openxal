@@ -17,16 +17,15 @@ import xal.model.probe.traj.ProbeState;
 import xal.model.xml.ParsingException;
 import xal.model.xml.ProbeXmlParser;
 import xal.model.xml.ProbeXmlWriter;
-
 import xal.sim.scenario.Scenario;
 import xal.sim.slg.LatticeError;
 import xal.sim.sync.SynchronizationException;
-
 import xal.smf.AcceleratorNode;
 import xal.smf.AcceleratorSeq;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 import javax.swing.event.EventListenerList;
 
@@ -436,7 +435,7 @@ public class ModelProxy {
 			AcceleratorNode node = scenario.nodeWithId(id);
 			Element elem = (Element) scenario.elementsMappedTo(node).get(0);
 			String latticeElementId = elem.getId();
-			state = scenario.trajectoryStatesForElement(latticeElementId)[0];
+			state = scenario.trajectoryStatesForElement(latticeElementId).get(0);
 		} catch (LatticeError e) {
 			throw new ModelException(e.getMessage());
 		}
@@ -456,11 +455,14 @@ public class ModelProxy {
 		} catch (LatticeError e) {
 			throw new ModelException(e.getMessage());
 		}
-		states = scenario.trajectoryStatesForElement(id);
+		List<? extends ProbeState> lstStates= scenario.trajectoryStatesForElement(id);
+		
+		ProbeState[]  arrStates = new ProbeState[lstStates.size()];
+		states = lstStates.toArray(arrStates);
 		return states;
 	}
 
-	/**Check wether the model proxy has a valid lattice and take actions. If the lattice is not
+	/**Check whether the model proxy has a valid lattice and take actions. If the lattice is not
 	 * valid all ModelProxyListeners will be notified by calling 
 	 * {@link xal.sim.mpx.sns.xal.model.mpx.ModelProxyListener#missingInputToRunModel missingInputToRunModel}
 	 * and and an {@link java.lang.Error} will be thrown.
