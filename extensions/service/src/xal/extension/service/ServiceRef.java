@@ -86,7 +86,7 @@ public class ServiceRef {
     /** get the service address given the service info */
     private static String getHostAddress( final ServiceInfo info ) {
         final String[] hostAddresses = info.getHostAddresses();
-        final String hostAddress = hostAddresses.length > 0 ? hostAddresses[0] : null;
+        final String hostAddress = hostAddresses != null && hostAddresses.length > 0 ? hostAddresses[0] : null;
 		return hostAddress;
     }
 	
