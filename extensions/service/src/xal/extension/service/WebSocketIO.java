@@ -196,6 +196,7 @@ class WebSocketIO {
 		final BufferedInputStream reader = new BufferedInputStream( readStream );
 		final ByteArrayOutputStream rawByteBuffer = new ByteArrayOutputStream();
 
+		// TODO: really need to keep processing the stream until we have exactly the bytes we expect
 		do {
 			final int readCount = reader.read( streamBuffer, 0, BUFFER_SIZE );
 
