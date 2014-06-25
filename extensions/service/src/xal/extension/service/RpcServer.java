@@ -144,6 +144,7 @@ public class RpcServer {
     public <ProtocolType> void addHandler( final String serviceName, final Class<ProtocolType> protocol, final ProtocolType provider ) {
         final RemoteRequestHandler<ProtocolType> handler = new RemoteRequestHandler<ProtocolType>( serviceName, protocol, provider );
         REMOTE_REQUEST_HANDLERS.put( serviceName, handler );
+		System.out.println( "Added request handler with service name: " + serviceName );
     }
     
     
@@ -180,17 +181,25 @@ public class RpcServer {
                         final Object requestObject = MESSAGE_CODER.decode( jsonRequest );
 						System.out.println( "JSON Request: " + jsonRequest );
 						System.out.println( "Request Object: " + requestObject );
+						System.out.println( "Request Object Class: " + requestObject.getClass() );
                         if ( requestObject instanceof Map ) {
+							System.out.println( "Writing output..." );
 							final Writer output = new OutputStreamWriter( remoteSocket.getOutputStream() );
                             final Map<String,Object> request = (Map<String,Object>)requestObject;
                             final String message = (String)request.get( "message" );
+							System.out.println( "Request Message: " + message );
                             final String[] messageParts = decodeRemoteMessage( message );
                             final String serviceName = messageParts[0];
                             final String methodName = messageParts[1];
+							System.out.println( "Request Service: " + serviceName );
+							System.out.println( "Request Method: " + methodName );
                             final Number requestID = (Number)request.get( "id" );
+							System.out.println( "request ID: " + requestID );
                             final List<Object> params = (List<Object>)request.get( "params" );
-                            
+							System.out.println( "Params: " + params );
+
                             final RemoteRequestHandler<?> handler = REMOTE_REQUEST_HANDLERS.get( serviceName );
+							System.out.println( "Request handler: " + handler );
                             final EvaluationResult result = handler.evaluateRequest( methodName, params );
                             
                             // methods marked with the OneWay annotation return immediately and do not provide any response
@@ -205,7 +214,6 @@ public class RpcServer {
                                 final String jsonResponse = MESSAGE_CODER.encode( response );
 								System.out.println( "Response: " + jsonResponse );
                                 output.write( jsonResponse );
-								output.write( REMOTE_MESSAGE_TERMINATOR );
                                 output.flush();
                             }
                         }
