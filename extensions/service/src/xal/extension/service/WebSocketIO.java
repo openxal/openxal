@@ -10,6 +10,7 @@ package xal.extension.service;
 
 import java.net.Socket;
 import java.io.*;
+import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.security.*;
 import java.util.*;
@@ -145,6 +146,8 @@ class WebSocketIO {
 
 	/** send the message */
 	static void sendMessage( final Socket socket, final String message ) throws java.net.SocketException, java.io.IOException {
+		System.out.println( "Sending message of length: " + message.length() );
+
 		final OutputStream output = socket.getOutputStream();
 
 		final byte opcode = 1;		// response is text
@@ -160,25 +163,35 @@ class WebSocketIO {
 			output.write( 126 );
 
 			// write the length as two bytes
-			short shortLen = (short)messageLength;
-			final byte[] lenBytes = new byte[2];
-			for ( int index = 0 ; index < 2 ; index++ ) {
-				lenBytes[1-index] = (byte)( shortLen & 0xff );
-				shortLen = (short)( shortLen >> 8 );
+			try {
+				short shortLen = (short)messageLength;
+				final byte[] lenBytes = new byte[2];
+				final ByteBuffer lenByteBuffer = ByteBuffer.wrap( lenBytes );
+				lenByteBuffer.putShort( 0, shortLen );
+				output.write( lenBytes, 0, 2 );
 			}
-			output.write( lenBytes, 0, 2 );
+			catch( RuntimeException exception ) {
+				System.out.println( "Exception writing short message length: " + exception );
+				exception.printStackTrace();
+				throw exception;
+			}
 		}
 		else {
 			output.write( 127 );
 
 			// write the length as 8 bytes
-			long longLen = (long)messageLength;
-			final byte[] lenBytes = new byte[8];
-			for ( int index = 0 ; index < 8 ; index++ ) {
-				lenBytes[7-index] = (byte)( longLen & 0xff );
-				longLen = (long)( longLen >> 8 );
+			try {
+				long longLen = (long)messageLength;
+				final byte[] lenBytes = new byte[8];
+				final ByteBuffer lenByteBuffer = ByteBuffer.wrap( lenBytes );
+				lenByteBuffer.putLong( 0, longLen );
+				output.write( lenBytes, 0, 8 );
 			}
-			output.write( lenBytes, 0, 8 );
+			catch( RuntimeException exception ) {
+				System.out.println( "Exception writing long message length: " + exception );
+				exception.printStackTrace();
+				throw exception;
+			}
 		}
 
 		// write the raw message
@@ -191,75 +204,85 @@ class WebSocketIO {
 	/** Read the message from the socket and return it */
 	static String readMessage( final Socket socket ) throws java.net.SocketException, java.io.IOException, WebSocketIO.SocketPrematurelyClosedException {
 		final int BUFFER_SIZE = socket.getReceiveBufferSize();
-		final byte[] streamBuffer = new byte[BUFFER_SIZE];
 		final InputStream readStream = socket.getInputStream();
-		final BufferedInputStream reader = new BufferedInputStream( readStream );
-		final ByteArrayOutputStream rawByteBuffer = new ByteArrayOutputStream();
-
-		// TODO: really need to keep processing the stream until we have exactly the bytes we expect
-		do {
-			final int readCount = reader.read( streamBuffer, 0, BUFFER_SIZE );
-
-			if ( readCount == -1 ) {     // the session has been closed
-				throw new SocketPrematurelyClosedException( "The remote socket has closed while reading the remote response..." );
-			}
-			else if  ( readCount > 0 ) {
-				rawByteBuffer.write( streamBuffer, 0, readCount );
-			}
-		} while ( readStream.available() > 0 );
-
-		final byte[] rawBytes = rawByteBuffer.toByteArray();
+		final StreamByteReader byteReader = new StreamByteReader( readStream, BUFFER_SIZE );
 
 		int offset = 0;
 
-		final byte head1 = rawBytes[0];
-		final byte head2 = rawBytes[1];
-		offset += 2;
+		try {
+			final byte head1 = byteReader.nextByte();
+			final byte head2 = byteReader.nextByte();
+			offset += 2;
 
-		final boolean fin = ( head1 & 0b10000000 ) == 0b10000000;
-		final byte opcode = (byte)( head1 & 0b00001111 );
-		final boolean masked = ( head2 & 0b10000000 ) == 0b10000000;
-		final byte lengthCode = (byte)( head2 & 0b01111111 );
+			final boolean fin = ( head1 & 0b10000000 ) == 0b10000000;
+			final byte opcode = (byte)( head1 & 0b00001111 );
+			final boolean masked = ( head2 & 0b10000000 ) == 0b10000000;
+			final byte lengthCode = (byte)( head2 & 0b01111111 );
 
-		//System.out.println( "fin: " + fin + ", opcode: " + opcode + ", masked: " + masked + ", length: " + lengthCode );
+			System.out.println( "fin: " + fin + ", opcode: " + opcode + ", masked: " + masked + ", length code: " + lengthCode );
 
-		// TODO: might be wise to add some length validation
-		switch ( lengthCode ) {
-			case 126:
-				offset += 2;	// payload length defined by next 2 bytes though we won't extract it
-				break;
+			int dataLength = 0;
+			switch ( lengthCode ) {
+				case 126:
+					// payload length defined by next 2 bytes
+					try {
+						final byte[] lenBytes = byteReader.nextBytes( 2 );
+						final ByteBuffer lenByteBuffer = ByteBuffer.wrap( lenBytes );
+						dataLength = lenByteBuffer.getShort();
+					}
+					catch( RuntimeException exception ) {
+						System.out.println( "Exception getting short message length: " + exception );
+						exception.printStackTrace();
+						throw exception;
+					}
+					break;
 
-			case 127:
-				offset += 8;	// payload length defined by next 8 bytes though we won't extract it
-				break;
+				case 127:
+					// payload length defined by next 8 bytes
+					try {
+						final byte[] lenBytes = byteReader.nextBytes( 8 );
+						final ByteBuffer lenByteBuffer = ByteBuffer.wrap( lenBytes );
+						dataLength = (int)lenByteBuffer.getLong();
+					}
+					catch( RuntimeException exception ) {
+						System.out.println( "Exception getting long message length: " + exception );
+						exception.printStackTrace();
+						throw exception;
+					}
+					break;
 
-			default:
-				// payload length is simply the lengthCode itself
-				break;
+				default:
+					// payload length is simply the lengthCode itself
+					dataLength = lengthCode;
+					break;
+			}
+			System.out.println( "Payload Length: " + dataLength );
+
+			// TODO: need to check the fin bit to see whether more data is coming
+
+			// TODO: need to check the opcode to see what kind of data has arrived (e.g. continuation, text, data, ping or pong)
+
+			final StringBuilder resultBuilder = new StringBuilder();
+
+			PayloadReader payloadReader = PayloadReader.getInstance();
+			if ( masked ) {
+				final byte[] mask = byteReader.nextBytes( 4 );
+				payloadReader = new MaskPayloadReader( mask, offset );
+			}
+
+
+			final byte[] dataBytes = byteReader.nextBytes( dataLength );
+			for ( int index = 0 ; index < dataBytes.length ; index++ ) {
+				int charCode = payloadReader.readCharCode( dataBytes, index );
+				final char[] chars = Character.toChars( charCode );
+				resultBuilder.append( chars );
+			}
+
+			return resultBuilder.toString();
 		}
-
-		// TODO: need to check the fin bit to see whether more data is coming
-
-		// TODO: need to check the opcode to see what kind of data has arrived (e.g. continuation, text, data, ping or pong)
-
-		final StringBuilder resultBuilder = new StringBuilder();
-
-		PayloadReader payloadReader = PayloadReader.getInstance();
-		if ( masked ) {
-			final byte[] mask = new byte[4];
-			System.arraycopy( rawBytes, offset, mask, 0, 4 );
-			offset += 4;
-
-			payloadReader = new MaskPayloadReader( mask, offset );
+		catch( StreamByteReader.StreamPrematurelyClosedException exception ) {
+			throw new SocketPrematurelyClosedException( "The remote socket has closed while reading the message..." );
 		}
-
-		for ( int index = offset ; index < rawBytes.length ; index++ ) {
-			int charCode = payloadReader.readCharCode( rawBytes, index );
-			final char[] chars = Character.toChars( charCode );
-			resultBuilder.append( chars );
-		}
-
-		return resultBuilder.toString();
 	}
 
 
@@ -326,6 +349,103 @@ class MaskPayloadReader extends PayloadReader {
 	public int readCharCode( final byte[] inputBuffer, final int index ) {
 		final int position = index - PAYLOAD_OFFSET;			// relative to payload start
 		return MASK[position%4] ^ inputBuffer[index];
+	}
+}
+
+
+
+/** read bytes from a stream as requested */
+class StreamByteReader {
+	/** stream of data from which to read */
+	final private InputStream SOURCE_STREAM;
+
+	/** buffer size for reading from the stream */
+	final private int BUFFER_SIZE;
+
+	/** current position */
+	private int _position;
+
+	/** stack of bytes */
+	private byte[] _byteStack;
+
+
+	/** Constructor */
+	public StreamByteReader( final InputStream inputStream, final int bufferSize ) {
+		SOURCE_STREAM = inputStream;
+		BUFFER_SIZE = bufferSize;
+
+		_position = 0;
+		_byteStack = new byte[0];
+	}
+
+
+	/** read the next byte waiting for data from the stream if necessary */
+	public byte nextByte() throws java.io.IOException, StreamPrematurelyClosedException {
+		final int position = _position;
+
+		if ( position < _byteStack.length ) {
+			final byte nextByte = _byteStack[position];
+			_position += 1;
+			return nextByte;
+		}
+		else {
+			final byte[] streamBuffer = new byte[BUFFER_SIZE];
+			final InputStream readStream = SOURCE_STREAM;
+			final BufferedInputStream reader = new BufferedInputStream( readStream );
+			final ByteArrayOutputStream rawByteBuffer = new ByteArrayOutputStream();
+
+			do {
+				final int readCount = reader.read( streamBuffer, 0, BUFFER_SIZE );
+
+				if ( readCount == -1 ) {     // the session has been closed
+					throw new StreamPrematurelyClosedException( "The stream has closed while reading the remote response..." );
+				}
+				else if  ( readCount > 0 ) {
+					rawByteBuffer.write( streamBuffer, 0, readCount );
+				}
+			} while ( readStream.available() > 0 );
+
+			_byteStack = rawByteBuffer.toByteArray();
+			_position = 0;
+
+			return nextByte();
+		}
+	}
+
+
+	/** read and return the next specified count of bytes */
+	public byte[] nextBytes( final int count ) throws java.io.IOException, StreamPrematurelyClosedException {
+		final byte[] result = new byte[count];
+		nextBytes( result );
+		return result;
+	}
+
+
+	/** read the next bytes into the specified destination */
+	public void nextBytes( final byte[] destination ) throws java.io.IOException, StreamPrematurelyClosedException {
+		nextBytes( destination, 0, destination.length );
+	}
+
+
+	/** read the next bytes into the specified destination */
+	public void nextBytes( final byte[] destination, final int offset, final int count ) throws java.io.IOException, StreamPrematurelyClosedException {
+		int position = offset;
+		for ( int index = 0 ; index < count ; index++ ) {
+			destination[position++] = nextByte();
+		}
+	}
+
+
+	/** Exception indicating that the socket closed prematurely */
+	static public class StreamPrematurelyClosedException extends Exception {
+		/** required serial version ID */
+		static final long serialVersionUID = 0L;
+
+
+		/** Constructor */
+		public StreamPrematurelyClosedException( final String message ) {
+			super( message );
+		}
 	}
 }
 
