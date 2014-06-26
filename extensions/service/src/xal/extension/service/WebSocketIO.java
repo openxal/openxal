@@ -171,7 +171,7 @@ class WebSocketIO {
 				output.write( lenBytes, 0, 2 );
 			}
 			catch( RuntimeException exception ) {
-				System.out.println( "Exception writing short message length: " + exception );
+				System.err.println( "Exception writing short message length: " + exception );
 				exception.printStackTrace();
 				throw exception;
 			}
@@ -188,7 +188,7 @@ class WebSocketIO {
 				output.write( lenBytes, 0, 8 );
 			}
 			catch( RuntimeException exception ) {
-				System.out.println( "Exception writing long message length: " + exception );
+				System.err.println( "Exception writing long message length: " + exception );
 				exception.printStackTrace();
 				throw exception;
 			}
@@ -231,7 +231,7 @@ class WebSocketIO {
 						dataLength = lenByteBuffer.getShort();
 					}
 					catch( RuntimeException exception ) {
-						System.out.println( "Exception getting short message length: " + exception );
+						System.err.println( "Exception getting short message length: " + exception );
 						exception.printStackTrace();
 						throw exception;
 					}
@@ -245,7 +245,7 @@ class WebSocketIO {
 						dataLength = (int)lenByteBuffer.getLong();
 					}
 					catch( RuntimeException exception ) {
-						System.out.println( "Exception getting long message length: " + exception );
+						System.err.println( "Exception getting long message length: " + exception );
 						exception.printStackTrace();
 						throw exception;
 					}
@@ -256,7 +256,6 @@ class WebSocketIO {
 					dataLength = lengthCode;
 					break;
 			}
-			System.out.println( "Payload Length: " + dataLength );
 
 			// TODO: need to check the fin bit to see whether more data is coming
 
