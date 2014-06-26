@@ -36,7 +36,7 @@ import java.util.Date;
  *
  * @author  Christopher K. Allen
  */
-public abstract class Probe implements IProbe, IArchive {
+public abstract class Probe<S extends ProbeState> implements IProbe, IArchive {
     /*
      * global attributes
      */
@@ -113,19 +113,22 @@ public abstract class Probe implements IProbe, IArchive {
 
 
     
-    /** toggle m_trajHist tracking for a probe */
-    private boolean m_bolTrack = true;
+    /** toggle trajHist tracking for a probe */
+    private boolean         bolTrack = true;
     
     /** initial state of probe, set when initialize is called */
-    private ProbeState m_stateInit;
+    private S               stateInit;
     
-    /** Current probe m_trajHist */
-    protected Trajectory<? extends ProbeState> m_trajHist;
+    /** current state of the probe - defines the probe */
+    private S               stateCurrent;
+    
+    /** Current probe trajHist */
+    protected Trajectory<S> trajHist;
     
     
     
     /** algorithm providing probe dynamics */
-    private IAlgorithm  m_ifcAlg = null;
+    private IAlgorithm  algTracker = null;
     
 
 
@@ -182,7 +185,7 @@ public abstract class Probe implements IProbe, IArchive {
      * type, initialized to the argument <code>Probe</code>.
      * 
      * NOTE: There is now a reset() method that is preferable to this one.  It
-     * clears the probe m_trajHist and restores the initial state saved in the
+     * clears the probe trajHist and restores the initial state saved in the
      * initialize() method, without creating a new probe instance.
      * 
      * @param probeInit     <code>Probe</code> object containing initial data
@@ -219,7 +222,7 @@ public abstract class Probe implements IProbe, IArchive {
      * 
      * @return a <code>Trajectory</code> of the appropriate species for this probe type
      */
-    public abstract Trajectory<?> createTrajectory();
+    public abstract Trajectory<S> createTrajectory();
     
     /**
      * Require concrete implementations to override this method to retrieve a 
@@ -227,17 +230,17 @@ public abstract class Probe implements IProbe, IArchive {
      * 
      * @return the <code>Trajectory</code> object for the given probe type
      */
-    public abstract Trajectory<? extends ProbeState> getTrajectory();
+    public abstract Trajectory<S> getTrajectory();
     
     /**
      * Captures the probe's state in a ProbeState of the appropriate species.
      */
-    public abstract ProbeState createProbeState();
+    public abstract S createProbeState();
     
     /**
      * Creates a deep copy of the probe
      */
-    public abstract Probe copy();
+    public abstract Probe<S> copy();
     
     /**
      * Apply the contents of ProbeState to update my current state.  Subclass
@@ -305,7 +308,7 @@ public abstract class Probe implements IProbe, IArchive {
      *  @param  ifcAlg      default dynamics algorithm for probe
      */
     protected Probe(IAlgorithm ifcAlg) {
-        this.m_ifcAlg = ifcAlg;
+        this.algTracker = ifcAlg;
     }
     
     /**
@@ -314,7 +317,7 @@ public abstract class Probe implements IProbe, IArchive {
      *  
      *  @param  probe   Probe object to be cloned 
      */
-    public Probe(Probe probe)   {
+    public Probe(Probe<S> probe)   {
         this.deepCopyProbeBase(probe);
     }
     
@@ -381,16 +384,16 @@ public abstract class Probe implements IProbe, IArchive {
     public boolean setAlgorithm(IAlgorithm ifcAlg) { 
         if (!ifcAlg.validProbe(this)) return false;
         
-        m_ifcAlg = ifcAlg;
+        algTracker = ifcAlg;
         return true;
     };
    
     /**
-     *  Set particle m_trajHist tracking for probes.
+     *  Set particle trajHist tracking for probes.
      *
      *  @param  bolTrack    turn tracking on or off
      */
-    public void setTracking(boolean bolTrack) { m_bolTrack = bolTrack; };
+    public void setTracking(boolean bolTrack) { this.bolTrack = bolTrack; };
 
     
     
@@ -423,10 +426,10 @@ public abstract class Probe implements IProbe, IArchive {
 //     */
 //	@NoEdit	// editors should not access this property
 //    public Trajectory<? extends ProbeState> getTrajectory() {
-//        if (m_trajHist == null) {
+//        if (trajHist == null) {
 //            this.m_trajHist = createTrajectory();
 //        }
-//        return m_trajHist; 
+//        return trajHist; 
 //    }
     
     
@@ -582,28 +585,32 @@ public abstract class Probe implements IProbe, IArchive {
      * Initializes the probe, resetting state as necessary.
      */
     public void initialize() {
-    	this.m_stateInit = this.createProbeState();
-        this.m_trajHist = this.createTrajectory();
+    	this.stateInit = this.createProbeState();
+    	this.stateCurrent = this.stateInit;
+    	
+        this.trajHist = this.createTrajectory();
 //        this.getAlgorithm().initialize();  // CKA - I think these should be uncommented
     }
     
     /**
      * Resets the probe to the saved initial state, if there is one and clears
-     * the m_trajHist.
+     * the trajHist.
      */
     public void reset() {
-    	if (m_stateInit != null)
-    		this.applyState(m_stateInit);
-    	this.m_trajHist = this.createTrajectory();
+    	if (stateInit != null) { 
+    		this.applyState(stateInit);
+    		this.stateCurrent = stateInit.copy();
+    	}
+    	this.trajHist = this.createTrajectory();
 //        this.getAlgorithm().initialize(); // CKA - I think these should be uncommented
     }
 
     /**
-     *  Save the probe state into m_trajHist.
+     *  Save the probe state into trajHist.
      */
     public void update() throws ModelException  {
     	
-        if (!m_bolTrack) return;
+        if (!bolTrack) return;
         
         this.getTrajectory().update(this);
     };
@@ -623,7 +630,7 @@ public abstract class Probe implements IProbe, IArchive {
      *
      *  @return         interface to probe dynamics
      */
-    public IAlgorithm getAlgorithm()    { return m_ifcAlg; };
+    public IAlgorithm getAlgorithm()    { return algTracker; };
 
 
     /**
@@ -836,11 +843,11 @@ public abstract class Probe implements IProbe, IArchive {
 
         this.m_dblBeta  = probe.m_dblBeta;
         this.m_dblGamma = probe.m_dblGamma;
-        this.m_bolTrack = probe.m_bolTrack;
+        this.bolTrack = probe.bolTrack;
         
         
         // Copy the algorithm object if we have one
-        this.m_ifcAlg = null;
+        this.algTracker = null;
         final IAlgorithm algorithm = probe.getAlgorithm();
         if ( algorithm != null )   {
             this.setAlgorithm( algorithm.copy() );

@@ -222,7 +222,7 @@ public class TransferMapProbe extends Probe {
         final TransferMapState stateTrans = (TransferMapState) state;
         
         super.applyState(state);
-//        stateTrans.setTrajectory( (TransferMapTrajectory)m_trajHist );
+//        stateTrans.setTrajectory( (TransferMapTrajectory)trajHist );
         this.setTransferMap( stateTrans.getTransferMap() );
         this.setPartialTransferMap( stateTrans.getStateTransferMap() );
     }

@@ -14,7 +14,7 @@ import xal.model.xml.ParsingException;
  * @version $id:
  * 
  */
-public abstract class ProbeState implements IProbeState {
+public abstract class ProbeState<S extends ProbeState> implements IProbeState {
 
 
 
@@ -102,6 +102,28 @@ public abstract class ProbeState implements IProbeState {
      *  Default constructor - creates an empty <code>ProbeState</code> object. 
      */    
     public ProbeState() {
+    }
+    
+    /**
+     * Copyo constructor for ProbeState.  Initializes the new
+     * <code>ProbeState</code> objects with the state attributes
+     * of the given probe state.
+     *
+     * @param state     initializing state
+     *
+     * @author Christopher K. Allen
+     * @since  Jun 26, 2014
+     */
+    public ProbeState(ProbeState<S> state) {
+        
+        /** Species charge */
+        this.m_dblParQ = state.m_dblParQ;
+        this.m_dblParEr = state.m_dblParEr;
+        this.m_strElemId = state.m_strElemId;
+        this.m_dblPos = state.m_dblPos;
+        this.m_dblTime = state.m_dblTime;
+        this.m_dblW = state.m_dblW;
+        this.m_dblGamma = state.m_dblGamma;
     }
     
     /**
@@ -272,9 +294,15 @@ public abstract class ProbeState implements IProbeState {
 
     
     /*
-     * Debugging
+     * Object Overrides
      */
 
+
+    public abstract S copy();
+    
+//    public <S extends ProbeState> ProbeState<S> copy() {
+//        return new ProbeState(this);
+//    }
 
     /**
      *  Return a textual representation of the <code>ProbeState</code> internal state.
