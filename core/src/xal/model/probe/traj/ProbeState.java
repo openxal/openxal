@@ -11,7 +11,9 @@ import xal.model.xml.ParsingException;
  * extensions to this class should be developed for each type of probe.
  * 
  * @author Craig McChesney
- * @version $id:
+ * @author Christopher K. Allen
+ * 
+ * @version June 26, 2014
  * 
  */
 public abstract class ProbeState<S extends ProbeState<S>> implements IProbeState {
@@ -110,7 +112,6 @@ public abstract class ProbeState<S extends ProbeState<S>> implements IProbeState
      * Initialization
      */
 
-
     /**
      *  Default constructor - creates an empty <code>ProbeState</code> object. 
      */    
@@ -127,15 +128,15 @@ public abstract class ProbeState<S extends ProbeState<S>> implements IProbeState
      * @author Christopher K. Allen
      * @since  Jun 26, 2014
      */
-    public ProbeState(ProbeState<S> state) {
+    public ProbeState(S state) {
         
-        this.m_dblParQ = state.m_dblParQ;
-        this.m_dblParEr = state.m_dblParEr;
-        this.m_strElemId = state.m_strElemId;
-        this.m_dblPos = state.m_dblPos;
-        this.m_dblTime = state.m_dblTime;
-        this.m_dblW = state.m_dblW;
-        this.m_dblGamma = state.m_dblGamma;
+        this.m_dblParQ = state.getSpeciesCharge();
+        this.m_dblParEr = state.getSpeciesRestEnergy();
+        this.m_strElemId = state.getElementId();
+        this.m_dblPos = state.getPosition();
+        this.m_dblTime = state.getTime();
+        this.m_dblW = state.getKineticEnergy();
+        this.m_dblGamma = state.getGamma();
     }
     
     /**

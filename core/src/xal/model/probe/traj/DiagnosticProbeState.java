@@ -9,17 +9,54 @@ import xal.model.xml.ParsingException;
  * point in time.
  * 
  * @author Craig McChesney
- * @version $id:
+ * @author Christopher K. Allen
+ * 
+ * @version June 26, 2014
  * 
  */
-public class DiagnosticProbeState extends ProbeState {
-		
+public class DiagnosticProbeState extends ProbeState<DiagnosticProbeState> {
+
+    
+    /*
+     * Global Constants
+     */
+    
+    /** DataAdaptor node label */
+    private static final String DIAG_LABEL = "diagnostic";
+    
+    /** DataAdaptor attribute tag */
+    private static final String COUNT_LABEL = "count";
+    
+
+    /*
+     * Local Attributes
+     */
+    
     /** The accumulator for counting the model elements traversed by the probe at this state */
 	private int elementsVisited;
 	
 	
-	// *********** constructors
 	
+	/*
+	 * Base Class Interface
+	 */
+	
+	/**
+	 * Makes a clone of this probe state and returns it.
+	 * 
+	 * @see xal.model.probe.traj.ProbeState#copy()
+	 *
+	 * @author Christopher K. Allen
+	 * @since  Jun 26, 2014
+	 */
+	public DiagnosticProbeState copy() {
+	    return new DiagnosticProbeState(this);
+	}
+
+	
+	/*
+	 * Initialization
+	 */
 	
 	/**
 	 * Creates a new <code>DiagnosticProbeState</code>.
@@ -59,8 +96,10 @@ public class DiagnosticProbeState extends ProbeState {
 	}
 	
 	
-	// *********** diagnostic probe state accessing
-	
+
+	/*
+	 * Property Accessors
+	 */
 	
     /**
      * Returns the number of elements traversed by probe at this state.
@@ -89,9 +128,6 @@ public class DiagnosticProbeState extends ProbeState {
 	
 	// ************* I/O support
 
-	
-    private static final String DIAG_LABEL = "diagnostic";
-	private static final String COUNT_LABEL = "count";
 	
 	@Override
     protected void addPropertiesTo(DataAdaptor container) {
