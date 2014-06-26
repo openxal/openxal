@@ -600,7 +600,7 @@ public abstract class Probe<S extends ProbeState> implements IProbe, IArchive {
     public void reset() {
     	if (stateInit != null) { 
     		this.applyState(stateInit);
-    		this.stateCurrent = stateInit.copy();
+    		this.stateCurrent = stateCurrent.copy();
     	}
     	this.trajHist = this.createTrajectory();
 //        this.getAlgorithm().initialize(); // CKA - I think these should be uncommented

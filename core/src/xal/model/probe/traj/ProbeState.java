@@ -14,7 +14,7 @@ import xal.model.xml.ParsingException;
  * @version $id:
  * 
  */
-public abstract class ProbeState implements IProbeState {
+public abstract class ProbeState<S extends ProbeState<S>> implements IProbeState {
 
 
 
@@ -91,6 +91,19 @@ public abstract class ProbeState implements IProbeState {
 //    protected boolean bolSaveTwiss = false;
 //    
     
+    /*
+     * Abstract Methods
+     */
+    
+    /**
+     * Creates a new clone of this object.
+     * 
+     * @return  a deep copy of this object.
+     *
+     * @author Christopher K. Allen
+     * @since  Jun 26, 2014
+     */
+    public abstract S copy();
     
     
     /*
@@ -114,7 +127,7 @@ public abstract class ProbeState implements IProbeState {
      * @author Christopher K. Allen
      * @since  Jun 26, 2014
      */
-    public ProbeState(ProbeState state) {
+    public ProbeState(ProbeState<S> state) {
         
         this.m_dblParQ = state.m_dblParQ;
         this.m_dblParEr = state.m_dblParEr;
@@ -131,7 +144,7 @@ public abstract class ProbeState implements IProbeState {
      * 
      * @param probe     <code>Probe</code> object containing initial values
      */
-    public ProbeState(Probe probe) {
+    public ProbeState(Probe<S> probe) {
         this.setSpeciesCharge( probe.getSpeciesCharge() );
         this.setSpeciesRestEnergy( probe.getSpeciesRestEnergy() );
 
@@ -140,6 +153,12 @@ public abstract class ProbeState implements IProbeState {
         this.setTime( probe.getTime() );
         this.setKineticEnergy( probe.getKineticEnergy() );
     }
+    
+    
+    
+    /*
+     * Attributes
+     */
     
     /** 
      *  Set the charge of the particle species in the beam 
@@ -295,13 +314,6 @@ public abstract class ProbeState implements IProbeState {
     /*
      * Object Overrides
      */
-
-
-    public abstract ProbeState copy();
-    
-//    public <S extends ProbeState> ProbeState<S> copy() {
-//        return new ProbeState(this);
-//    }
 
     /**
      *  Return a textual representation of the <code>ProbeState</code> internal state.
