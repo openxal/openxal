@@ -36,7 +36,7 @@ import java.util.Date;
  *
  * @author  Christopher K. Allen
  */
-public abstract class Probe<S extends ProbeState> implements IProbe, IArchive {
+public abstract class Probe<S extends ProbeState<S>> implements IProbe, IArchive {
     /*
      * global attributes
      */
@@ -120,7 +120,7 @@ public abstract class Probe<S extends ProbeState> implements IProbe, IArchive {
     private S               stateInit;
     
     /** current state of the probe - defines the probe */
-    private S               stateCurrent;
+    protected S             stateCurrent;
     
     /** Current probe trajHist */
     protected Trajectory<S> trajHist;

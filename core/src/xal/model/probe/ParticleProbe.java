@@ -35,14 +35,11 @@ public class ParticleProbe extends Probe<ParticleProbeState> {
      *  Local Attributes
      */
     
-    /** phase coordinates of the particle location */ 
-    private PhaseVector     vecCoords;
-    
-    /** response matrix for initial coordinate sensitivity */
-    private PhaseMatrix     matResp;
-    
-    /** probe trajectory */
-    private Trajectory<ParticleProbeState> trajectory;
+//    /** phase coordinates of the particle location */ 
+//    private PhaseVector     vecCoords;
+//    
+//    /** response matrix for initial coordinate sensitivity */
+//    private PhaseMatrix     matResp;
     
 
     /*
@@ -55,8 +52,12 @@ public class ParticleProbe extends Probe<ParticleProbeState> {
      */
     public ParticleProbe() {
         super( );
-        this.vecCoords = new PhaseVector();
-        this.matResp = PhaseMatrix.identity();
+        
+        this.setPhaseCoordinates(new PhaseVector());
+        this.setResponseMatrix(PhaseMatrix.identity());
+        
+//        this.vecCoords = new PhaseVector();
+//        this.matResp = PhaseMatrix.identity();
     }
     
     /**
@@ -96,7 +97,8 @@ public class ParticleProbe extends Probe<ParticleProbeState> {
      *                      <b>z</b> = (<i>x, x', y, y', z, z', </i>1)<sup><i>T</i></sup>
 	 */
     public void setPhaseCoordinates(PhaseVector vecPhase) {
-        this.vecCoords = new PhaseVector(vecPhase);
+    	this.stateCurrent.setPhaseCoordinates(vecPhase);
+    	//this.vecCoords = new PhaseVector(vecPhase);
     }
 	
     
@@ -120,7 +122,8 @@ public class ParticleProbe extends Probe<ParticleProbeState> {
      *                  &part;<b>z</b>/&part;<b>z</b><sub>0</sub>the matResp to set
      */
     public void setResponseMatrix(PhaseMatrix matResp) {
-        this.matResp = matResp;
+        this.stateCurrent.setResponseMatrix(matResp);
+    	//this.matResp = matResp;
     }
 
     /*
@@ -134,7 +137,8 @@ public class ParticleProbe extends Probe<ParticleProbeState> {
      *  @return     vector (x,x',y,y',z,z',1) of phase space coordinates
      */
     public PhaseVector getPhaseCoordinates()  { 
-    	return this.vecCoords;
+    	return this.stateCurrent.getPhaseCoordinates();
+    	//return this.vecCoords;
     }
 
     /**
@@ -157,7 +161,8 @@ public class ParticleProbe extends Probe<ParticleProbeState> {
      *          &part;<b>z</b>/&part;<b>z</b><sub>0</sub>
      */
     public PhaseMatrix getResponseMatrix() {
-        return matResp;
+        return this.stateCurrent.getResponseMatrix();
+    	//return matResp;
     }
 
     /**
@@ -170,7 +175,8 @@ public class ParticleProbe extends Probe<ParticleProbeState> {
 	@NoEdit
     @Deprecated
 	public PhaseVector getFixedOrbit() {
-    	return this.vecCoords;		
+		return this.stateCurrent.getFixedOrbit();
+    	//return this.vecCoords;		
 	}
 
     
@@ -190,8 +196,7 @@ public class ParticleProbe extends Probe<ParticleProbeState> {
 	 */
     @Override
     public Trajectory<ParticleProbeState> createTrajectory() {
-        this.trajectory = new Trajectory<ParticleProbeState>();
-        return this.trajectory;
+        return new Trajectory<ParticleProbeState>();
     }
     
     /**
@@ -204,7 +209,7 @@ public class ParticleProbe extends Probe<ParticleProbeState> {
      */
     @Override
     public Trajectory<ParticleProbeState> getTrajectory() {
-    	return this.trajectory;
+    	return this.trajHist;
     }
     
     /**
