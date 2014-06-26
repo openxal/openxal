@@ -59,6 +59,23 @@ public class SynchronousState extends ProbeState {
         this.m_dblPhsRf = 0.0;
         this.m_vecPhsBeta = R3.zero();
     }
+    
+    /**
+     * Copy constructor for SynchronousState.  Initializes the new
+     * <code>SynchronousState</code> objects with the state attributes
+     * of the given <code>SynchronousState</code>.
+     *
+     * @param synchronousState     initializing state
+     *
+     * @author Christopher K. Allen, Jonathan M. Freed
+     * @since  Jun 26, 2014
+     */
+    public SynchronousState(SynchronousState synchronousState){
+    	super(synchronousState);
+    	
+    	this.m_dblPhsRf		= synchronousState.m_dblPhsRf;
+    	this.m_vecPhsBeta	= synchronousState.m_vecPhsBeta;
+    }
 
     /**
      * Copy constructor.  Create a new <code>SynchronousState</code> object

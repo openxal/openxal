@@ -130,6 +130,26 @@ public class EnvelopeProbeState extends BunchProbeState {
         this.matRespNoSpaceCharge = PhaseMatrix.identity();
     	this.matCov = new CovarianceMatrix();
     }
+    
+    /**
+     * Copy constructor for EnvelopeProbeState.  Initializes the new
+     * <code>EnvelopeProbeState</code> objects with the state attributes
+     * of the given <code>EnvelopeProbeState</code>.
+     *
+     * @param EnvelopeProbeState     initializing state
+     *
+     * @author Christopher K. Allen, Jonathan M. Freed
+     * @since  Jun 26, 2014
+     */
+    public EnvelopeProbeState(EnvelopeProbeState envelopeProbeState){
+    	super(envelopeProbeState);
+    	
+    	this.bolSaveTwiss	= envelopeProbeState.bolSaveTwiss;
+    	this.matCov			= envelopeProbeState.matCov;
+    	this.matPert		= envelopeProbeState.matResp;
+    	this.matResp		= envelopeProbeState.matPert;
+    	this.matRespNoSpaceCharge = envelopeProbeState.matRespNoSpaceCharge;
+    }
 	
     /**
      * Initializing Constructor.  Create a new <code>EnvelopeProbeState</code> object and

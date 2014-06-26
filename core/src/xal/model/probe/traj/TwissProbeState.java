@@ -97,6 +97,25 @@ public class TwissProbeState extends BunchProbeState {
         this.vecPhsBeta = R3.zero();
         this.envTwiss   = new Twiss3D();
     }
+    
+    /**
+     * Copy constructor for TwissProbeState.  Initializes the new
+     * <code>TwissProbeState</code> objects with the state attributes
+     * of the given <code>TwissProbeState</code>.
+     *
+     * @param twissProbeState     initializing state
+     *
+     * @author Christopher K. Allen, Jonathan M. Freed
+     * @since  Jun 26, 2014
+     */
+    public TwissProbeState(TwissProbeState twissProbeState){
+    	super(twissProbeState);
+    	
+    	this.envTwiss	= twissProbeState.envTwiss;
+    	this.matResp	= twissProbeState.matResp;
+    	this.vecCent	= twissProbeState.vecCent;
+    	this.vecPhsBeta	= twissProbeState.vecPhsBeta;
+    }
 	
     /**
      * Initializing Constructor.  Create a new <code>TwissProbeState</code> object and
