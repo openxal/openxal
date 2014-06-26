@@ -36,7 +36,7 @@ import java.util.Date;
  *
  * @author  Christopher K. Allen
  */
-public abstract class Probe<S extends ProbeState> implements IProbe, IArchive {
+public abstract class Probe<S extends ProbeState<S>> implements IProbe, IArchive {
     /*
      * global attributes
      */
@@ -236,6 +236,35 @@ public abstract class Probe<S extends ProbeState> implements IProbe, IArchive {
      * Captures the probe's state in a ProbeState of the appropriate species.
      */
     public abstract S createProbeState();
+    
+    
+    /*
+     * ---------------------------------------------------------------
+     *
+     * TODO 
+     * 
+     * Jonathan, I had to add this method for the work I am doing in 
+     * ProbeState.  This should replace the abstract method 
+     * createProbeState().  We'll deal with that later.
+     */
+    
+    /**
+     * This method returns a clone of the current state of this probe.
+     * That is, the <code>ProbeState</code> object is a representation of this
+     * probe at the moment this method was called.
+     * 
+     * @return  a deep copy of the current state of this probe
+     *
+     * @author Christopher K. Allen
+     * @since  Jun 26, 2014
+     */
+    public S cloneCurrentProbeState() {
+        return this.stateCurrent.copy();
+    }
+    
+    /*
+     * ---------------------------------------------------------------
+     */
    
     
     /**
