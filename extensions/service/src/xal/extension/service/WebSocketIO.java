@@ -146,7 +146,7 @@ class WebSocketIO {
 
 	/** send the message */
 	static void sendMessage( final Socket socket, final String message ) throws java.net.SocketException, java.io.IOException {
-		System.out.println( "Sending message of length: " + message.length() );
+		//System.out.println( "Sending message of length: " + message.length() );
 
 		final OutputStream output = socket.getOutputStream();
 
@@ -203,7 +203,7 @@ class WebSocketIO {
 
 	/** Read the message from the socket and return it */
 	static String readMessage( final Socket socket ) throws java.net.SocketException, java.io.IOException, WebSocketIO.SocketPrematurelyClosedException {
-		System.out.println( "Reading message..." );
+		//System.out.println( "Reading message..." );
 
 		final int BUFFER_SIZE = socket.getReceiveBufferSize();
 		final InputStream readStream = socket.getInputStream();
@@ -218,7 +218,7 @@ class WebSocketIO {
 			final boolean masked = ( head2 & 0b10000000 ) == 0b10000000;
 			final byte lengthCode = (byte)( head2 & 0b01111111 );
 
-			System.out.println( "fin: " + fin + ", opcode: " + opcode + ", masked: " + masked + ", length code: " + lengthCode );
+			//System.out.println( "fin: " + fin + ", opcode: " + opcode + ", masked: " + masked + ", length code: " + lengthCode );
 
 			int dataLength = 0;
 			switch ( lengthCode ) {
@@ -268,8 +268,6 @@ class WebSocketIO {
 				payloadReader = new MaskPayloadReader( mask );
 			}
 
-			System.out.println( "Reading message of length: " + dataLength );
-
 			try {
 				final byte[] dataBytes = byteReader.nextBytes( dataLength );
 				for ( int index = 0 ; index < dataBytes.length ; index++ ) {
@@ -282,9 +280,6 @@ class WebSocketIO {
 				System.err.println( "Exception reading characters: " + exception );
 				exception.printStackTrace();
 			}
-
-			System.out.println( "Read message: \n" );
-			System.out.println( resultBuilder.toString() );
 
 			return resultBuilder.toString();
 		}
