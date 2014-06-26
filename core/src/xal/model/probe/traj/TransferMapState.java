@@ -89,6 +89,24 @@ public class TransferMapState extends ProbeState /* implements IPhaseState */ {
         // CKA - removing the backpointer to the trajectory since it is never referenced
 //        this( null, null, null );
     }
+    
+    /**
+     * Copy constructor for TransferMapState.  Initializes the new
+     * <code>TransferMapState</code> objects with the state attributes
+     * of the given <code>TransferMapState</code>.
+     *
+     * @param transferMapState     initializing state
+     *
+     * @author Christopher K. Allen, Jonathan M. Freed
+     * @since  Jun 26, 2014
+     */
+    public TransferMapState(TransferMapState transferMapState){
+    	super(transferMapState);
+    	
+    	this._phaseCoordinates	= transferMapState._phaseCoordinates;
+    	this.mapPhiCmp	= transferMapState.mapPhiCmp;
+    	this.mapPhiPart	= transferMapState.mapPhiPart;
+    }
 
 
 //    /**

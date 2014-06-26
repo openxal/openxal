@@ -55,6 +55,23 @@ public class EnsembleProbeState extends BunchProbeState {
     public EnsembleProbeState() {
         m_ensPhase = new Ensemble();
     }
+    
+    /**
+     * Copy constructor for EnsembleProbeState.  Initializes the new
+     * <code>EnsembleProbeState</code> objects with the state attributes
+     * of the given <code>EnsembleProbeState</code>.
+     *
+     * @param ensembleProbeState     initializing state
+     *
+     * @author Christopher K. Allen, Jonathan M. Freed
+     * @since  Jun 26, 2014
+     */
+    public EnsembleProbeState(EnsembleProbeState ensembleProbeState){
+    	super(ensembleProbeState);
+    	
+    	this.m_enmFldCalc	= ensembleProbeState.m_enmFldCalc;
+    	this.m_ensPhase		= ensembleProbeState.m_ensPhase;
+    }
 
     /**
      * Initializing Constructor.  Create a new <code>EnsembleProbeState</code> object and

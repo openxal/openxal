@@ -63,6 +63,24 @@ public class ParticleProbeState extends ProbeState /*implements ICoordinateState
         this.matResp = PhaseMatrix.identity();
     }
     
+    
+    /**
+     * Copy constructor for ParticleProbeState.  Initializes the new
+     * <code>ParticleProbeState</code> objects with the state attributes
+     * of the given <code>ParticleProbeState</code>.
+     *
+     * @param particleProbeState     initializing state
+     *
+     * @author Christopher K. Allen, Jonathan M. Freed
+     * @since  Jun 26, 2014
+     */
+    public ParticleProbeState(ParticleProbeState particleProbeState){
+    	super(particleProbeState);
+    	
+    	this.m_vecCoords	= particleProbeState.m_vecCoords;
+    	this.matResp		= particleProbeState.matResp;
+    }
+    
     /**
      * Initializing constructor.  Creates a new <code>ParticleProbeState</code> object
      * which contains a deep copy of the state of the given probe object.
@@ -170,6 +188,17 @@ public class ParticleProbeState extends ProbeState /*implements ICoordinateState
      * Object Overrides
      */
      
+    /**
+     * Copies and returns a new, identical instance of <b>this</b> 
+     * <code>ParticleProbeState</code>.
+     * 
+     * @returns a copy of <b>this</b> <code>ParticleProbeState</code>
+     */
+    @Override
+    public ParticleProbeState copy(){
+    	return new ParticleProbeState(this);
+    }
+    
      
     /**
      * Write out the state information in text form.

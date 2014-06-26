@@ -28,7 +28,7 @@ import xal.model.xml.ParsingException;
  * 
  */
 
-public class ParticleProbe extends Probe {
+public class ParticleProbe extends Probe<ParticleProbeState> {
 
     
     /*

@@ -31,6 +31,22 @@ public class DiagnosticProbeState extends ProbeState {
 	}
 	
     /**
+     * Copy constructor for DiagnosticProbeState.  Initializes the new
+     * <code>DisagnosticProbeState</code> objects with the state attributes
+     * of the given <code>DiagnosticProbeState</code>.
+     *
+     * @param diagnosticProbeState     initializing state
+     *
+     * @author Christopher K. Allen, Jonathan M. Freed
+     * @since  Jun 26, 2014
+     */
+	public DiagnosticProbeState(DiagnosticProbeState diagnosticProbeState){
+		super(diagnosticProbeState);
+		
+		this.elementsVisited = diagnosticProbeState.elementsVisited;
+	}
+	
+    /**
      * Creates a new <code>DiagnosticProbeState</code> with the
      * state initialized from the given <code>DiagnosticProbe</code>.
      *

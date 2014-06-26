@@ -98,6 +98,23 @@ public abstract class BunchProbeState extends ProbeState /* implements IPhaseSta
     }
     
     /**
+     * Copy constructor for BunchProbeState.  Initializes the new
+     * <code>BunchProbeState</code> objects with the state attributes
+     * of the given <code>BunchProbeState</code>.
+     *
+     * @param bunchProbeState     initializing state
+     *
+     * @author Christopher K. Allen, Jonathan M. Freed
+     * @since  Jun 26, 2014
+     */
+    public BunchProbeState(BunchProbeState bunchProbeState){
+    	super(bunchProbeState);
+    	
+    	this.dblBmCurr	= bunchProbeState.dblBmCurr;
+    	this.dlbBunFreq	= bunchProbeState.dlbBunFreq;
+    }
+    
+    /**
      * Initializing constructor.  Creates a new <code>BunchProbe</code> object initialized 
      * to the argument's state.
      * 
