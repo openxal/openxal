@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="US-ASCII">
+<title>Online Model</title>
+</head>
+<body>
+<h1>The Online Model</h1>
+<p> <h2>Introduction</h2>
+Here we list some general notes and descriptions of the online model operation.
+</p>
+<p> <h2>Simulation Results</h2>
+Simulation results are saved as <i>probe states</i> in a <i>trajectory</i> object.  That is,
+depending upon the type of simulation (particle, envelope, transfer map, etc.), the results are
+encapsulated by objects derived from the base class <code>ProbeState</S></code> and aggregated
+in the ordered <code>Trajectory</code> object. Here we cover the way the online model saves 
+probe states.  
+</p>
+<p>
+Here is what is happening when you run a scenario.
+<table>
+  <tr> 
+    <td>
+      &nbsp; &nbsp;
+    </td>
+    <td>
+      &middot; If a starting element is specified the online model saves the initializing probe state 
+      as the first state in the trajectory.  
+When the starting element is reached the next probe state to be saved depends upon the values of the probeUpdatePolicy attribute:
+    </td>
+  <tr>
+    <td>
+      &nbsp; &nbsp;
+    </td>
+    <td>
+      The online model then propagates the probe through
+      the model lattice with the initial state intact until it reaches the starting element.
+    </td>
+  </tr>
+  </tr>
+</table>
+Tracker.UPDATE_ENTRANCE  the probe state is saved to the trajectory then the probe is propagated through the element
+Tracker.UPDATE_EXIT  the probe is propagated through the element then its state saved to the trajectory
+Tracker.UPDATE_ALWAYS  the probe state is saved every time the probe is moved (e.g., after a space charge kick), but only when moved.
+Tracker.UPDATE_ENTRANCEANDEXIT  the probe state is saved to the the trajectory, the probe is propagated through the element, then again saved 
+The default value is Tracker.UPDATE_EXIT
+The above process is essential the same when you do not have a starting element specified, it's just that there is usually a marker node at the beginning of any sequence and the state of a marker is irrelevant of exit or entrance.
+ 
+Really it depends upon where you need the probe states.
+ 
+Recall that there can be multiple modeling elements that map to the same hardware node.  Plus there can be multiple probe states that map to the same modeling element (especially so with space charge).  When you ask the trajectory object for the states of a hardware node you're going to get all of them, I.e. Trajectory#statesForElement(String) : ProbeState[].  The method Trajectory#stateForElement(String) : ProbeState just returns the first one.
+ 
+If you need the initial state of the start element in the trajectory here are a couple options
+You can set the Tracker#setProbeUpdatePolicy() to Tracker.UPDATE_ENTRANCEANDEXIT.  Then both the entrance and exit states of every element between the start element and the stop element will be in the trajectory
+You can set the Probe#setCurrentElementId() to the ID of the start element.  Thus, when the propagation is initiated, the initial state of the probe is saved to the trajectory with the ID of the start element, and will be returned with a call to trajectory#statesForElement(String).
+ 
+I have attached a modified version of your script where I implement these solutions (one is implemented, one is next to it but commented out).
+ 
+In the mean time, I can attempt some modifications where the initial state of the the start element is saved whenever a starting element is specified.  This will require significant, but not unreasonable, time under the hood.  However there is currently a feature request for automatically putting marker elements at the beginning of every thick modeling element.  If this were done, the issue would essentially go away.
+ 
+Let me know what you what to do.  If you need the initial probe state and the quick fixes won't work I will do the modification.  If you can defer for a while maybe waiting for the marker implementation will work (It could be 6 months or more though).
+</p>
+</body>
+
+
+<br/>
+<br/>Christopher K. Allen
+<br/>June, 2014
+</html>
