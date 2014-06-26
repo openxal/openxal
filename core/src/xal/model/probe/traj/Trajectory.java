@@ -28,7 +28,7 @@ import java.util.TreeMap;
  * @version $id:
  * 
  */
-public class Trajectory<S extends ProbeState> implements IArchive, Iterable<S> {
+public class Trajectory<S extends ProbeState<S>> implements IArchive, Iterable<S> {
 	
     /*
      * Global Constants
@@ -303,8 +303,8 @@ public class Trajectory<S extends ProbeState> implements IArchive, Iterable<S> {
     public void setTimestamp(long lngTimeStamp) { timestamp = new Date(lngTimeStamp);  }
 
     /** 
-     * Gets a <code>Class&lt;S&gt;</code> object of the generic type <b><code>S</code></b>.  This is commonly to do 
-     * <code>instanceof</code>-like tests on <b><code>S</code></b>.
+     * Gets a <code>Class&lt;S&gt;</code> object of the generic type <b><code>S</code></b>.  This is commonly 
+     * used to do <code>instanceof</code> tests on <b><code>S</code></b>.
      * 
      * @return a <code>Class&lt;S&gt;</code> object for the class <b><code>S</code></b>
      * 

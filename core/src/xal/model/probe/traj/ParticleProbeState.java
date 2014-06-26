@@ -14,7 +14,7 @@ import xal.model.xml.ParsingException;
  * @version $id:
  * 
  */
-public class ParticleProbeState extends ProbeState /*implements ICoordinateState */ {
+public class ParticleProbeState extends ProbeState<ParticleProbeState> /*implements ICoordinateState */ {
 
 
 
