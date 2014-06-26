@@ -203,16 +203,15 @@ class WebSocketIO {
 
 	/** Read the message from the socket and return it */
 	static String readMessage( final Socket socket ) throws java.net.SocketException, java.io.IOException, WebSocketIO.SocketPrematurelyClosedException {
+		System.out.println( "Reading message..." );
+
 		final int BUFFER_SIZE = socket.getReceiveBufferSize();
 		final InputStream readStream = socket.getInputStream();
 		final StreamByteReader byteReader = new StreamByteReader( readStream, BUFFER_SIZE );
 
-		int offset = 0;
-
 		try {
 			final byte head1 = byteReader.nextByte();
 			final byte head2 = byteReader.nextByte();
-			offset += 2;
 
 			final boolean fin = ( head1 & 0b10000000 ) == 0b10000000;
 			final byte opcode = (byte)( head1 & 0b00001111 );
@@ -266,16 +265,26 @@ class WebSocketIO {
 			PayloadReader payloadReader = PayloadReader.getInstance();
 			if ( masked ) {
 				final byte[] mask = byteReader.nextBytes( 4 );
-				payloadReader = new MaskPayloadReader( mask, offset );
+				payloadReader = new MaskPayloadReader( mask );
 			}
 
+			System.out.println( "Reading message of length: " + dataLength );
 
-			final byte[] dataBytes = byteReader.nextBytes( dataLength );
-			for ( int index = 0 ; index < dataBytes.length ; index++ ) {
-				int charCode = payloadReader.readCharCode( dataBytes, index );
-				final char[] chars = Character.toChars( charCode );
-				resultBuilder.append( chars );
+			try {
+				final byte[] dataBytes = byteReader.nextBytes( dataLength );
+				for ( int index = 0 ; index < dataBytes.length ; index++ ) {
+					int charCode = payloadReader.readCharCode( dataBytes, index );
+					final char[] chars = Character.toChars( charCode );
+					resultBuilder.append( chars );
+				}
 			}
+			catch( Exception exception ) {
+				System.err.println( "Exception reading characters: " + exception );
+				exception.printStackTrace();
+			}
+
+			System.out.println( "Read message: \n" );
+			System.out.println( resultBuilder.toString() );
 
 			return resultBuilder.toString();
 		}
@@ -333,21 +342,16 @@ class MaskPayloadReader extends PayloadReader {
 	/** mask to use */
 	final private byte[] MASK;
 
-	/** offset from the payload start */
-	final private int PAYLOAD_OFFSET;
-
 
 	/** Constructor */
-	public MaskPayloadReader( final byte[] mask, final int payloadOffset ) {
+	public MaskPayloadReader( final byte[] mask ) {
 		MASK = mask;
-		PAYLOAD_OFFSET = payloadOffset;
 	}
 
 
 	/** read the specified character and mask it */
 	public int readCharCode( final byte[] inputBuffer, final int index ) {
-		final int position = index - PAYLOAD_OFFSET;			// relative to payload start
-		return MASK[position%4] ^ inputBuffer[index];
+		return MASK[index%4] ^ inputBuffer[index];
 	}
 }
 
