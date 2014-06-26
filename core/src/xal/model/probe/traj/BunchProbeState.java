@@ -27,7 +27,7 @@ import xal.model.xml.ParsingException;
  * @version $id:
  * 
  */
-public abstract class BunchProbeState extends ProbeState /* implements IPhaseState */ {
+public abstract class BunchProbeState<S extends ProbeState<S>> extends ProbeState<S> /* implements IPhaseState */ {
 
 
     /*
@@ -95,6 +95,23 @@ public abstract class BunchProbeState extends ProbeState /* implements IPhaseSta
      */
     public BunchProbeState() {
 //        this.vecPhsBeta = new R3();
+    }
+    
+    /**
+     * Copy constructor for BunchProbeState.  Initializes the new
+     * <code>BunchProbeState</code> objects with the state attributes
+     * of the given <code>BunchProbeState</code>.
+     *
+     * @param bunchProbeState     initializing state
+     *
+     * @author Christopher K. Allen, Jonathan M. Freed
+     * @since  Jun 26, 2014
+     */
+    public BunchProbeState(BunchProbeState bunchProbeState){
+    	super(bunchProbeState);
+    	
+    	this.dblBmCurr	= bunchProbeState.dblBmCurr;
+    	this.dlbBunFreq	= bunchProbeState.dlbBunFreq;
     }
     
     /**

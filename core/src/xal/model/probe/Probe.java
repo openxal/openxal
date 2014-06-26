@@ -236,6 +236,7 @@ public abstract class Probe<S extends ProbeState> implements IProbe, IArchive {
      * Captures the probe's state in a ProbeState of the appropriate species.
      */
     public abstract S createProbeState();
+   
     
     /**
      * Creates a deep copy of the probe
