@@ -88,20 +88,6 @@ public class EnsembleProbe extends BunchProbe<EnsembleProbeState> {
     public Trajectory<EnsembleProbeState> createTrajectory() {
         return new Trajectory<EnsembleProbeState>();
     }
-    
-    /**
-     * Retrieves the trajectory of the proper type for the probe.
-     * 
-     * @return a <code>Trajectory&lt;EnsembleProbeState&gt;</code> that is the 
-     * 		trajectory of the probe
-     * 
-     * @author Jonathan M. Freed
-     */
-	@Override
-	public Trajectory<EnsembleProbeState> getTrajectory() {
-		return this.trajHist;
-	}
-
 
     // BunchProbe Base Support =================================================
     

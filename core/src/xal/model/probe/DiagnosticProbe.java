@@ -99,19 +99,6 @@ public class DiagnosticProbe extends Probe<DiagnosticProbeState> {
 		return new Trajectory<DiagnosticProbeState>();
 	}
 	
-    /**
-     * Retrieves the trajectory of the proper type for the probe
-     * 
-     * @return a <code>Trajectory&lt;DiagnosticProbeState&gt;</code> that is the 
-     * 		trajectory of the probe
-     * 
-     * @author Jonathan M. Freed
-     */ 
-	@Override
-	public Trajectory<DiagnosticProbeState> getTrajectory() {
-		return this.trajHist;
-	}
-	
 	@Override
 	public DiagnosticProbeState createProbeState() {
 		return new DiagnosticProbeState(this);

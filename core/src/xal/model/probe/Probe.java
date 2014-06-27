@@ -259,14 +259,6 @@ public abstract class Probe<S extends ProbeState<S>> implements IProbe, IArchive
     public abstract Trajectory<S> createTrajectory();
     
     /**
-     * Require concrete implementations to override this method to retrieve a 
-     * <code>Trajectory</code> object of the appropriate species.
-     * 
-     * @return the <code>Trajectory</code> object for the given probe type
-     */
-    public abstract Trajectory<S> getTrajectory();
-    
-    /**
      * Captures the probe's state in a ProbeState of the appropriate species.
      */
     public abstract S createProbeState();
@@ -491,18 +483,27 @@ public abstract class Probe<S extends ProbeState<S>> implements IProbe, IArchive
 
 
     
-//    /**
-//     *  Get the state history of the probe.
-//     * 
-//     *  @return     Trajectory object of the proper sub-type for the probe type 
-//     */
-//	@NoEdit	// editors should not access this property
-//    public Trajectory<? extends ProbeState> getTrajectory() {
-//        if (trajHist == null) {
-//            this.m_trajHist = createTrajectory();
-//        }
-//        return trajHist; 
-//    }
+    //TODO - Chris, this is the behavior that is in the working set in the 
+    //		repository right now, however I know you weren't the biggest fan
+    //		of this implementation. 
+    //		Should it just return the trajHist even if it's null, since it 
+    //      is a 'get'?  Or should we leave it as it was before and have it 
+    //		create a new trajectory if there isn't one?
+    //		It seems like since we changed the constructors to initialize the 
+    //		Trajectory, trajHist will never be null, so a simple 'get' should
+    //		be fine.
+    /**
+     *  Get the state history of the probe.
+     * 
+     *  @return     Trajectory object of the proper sub-type for the probe type 
+     */
+	@NoEdit	// editors should not access this property
+    public Trajectory<S> getTrajectory() {
+        if (trajHist == null) {
+            this.trajHist = createTrajectory();
+        }
+        return trajHist; 
+    }
     
     
       

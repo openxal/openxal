@@ -555,19 +555,6 @@ public class EnvelopeProbe extends BunchProbe<EnvelopeProbeState> {
 	public Trajectory<EnvelopeProbeState> createTrajectory() {
 		return new Trajectory<EnvelopeProbeState>();
     }
-
-    /**
-     * Retrieves the trajectory of the proper type for the probe.
-     * 
-     * @return a <code>Trajectory&lt;EnvelopeProbeState&gt;</code> that is the 
-     * 		trajectory of the probe
-     * 
-     * @author Jonathan M. Freed
-     */
-    @Override
-    public Trajectory<EnvelopeProbeState> getTrajectory() {
-    	return this.trajHist;
-    }
     
 	/**
 	 * Apply the contents of ProbeState to update my current state. The argument

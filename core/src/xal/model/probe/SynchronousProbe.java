@@ -146,19 +146,6 @@ public class SynchronousProbe extends Probe<SynchronousState> {
          return new Trajectory<SynchronousState>();
      }
      
-     /**
-      * Retrieves the trajectory of the proper type for the probe.
-      * 
-      * @return a <code>Trajectory&lt;SynchronousState&gt;</code> that is the 
-      * 		trajectory of the probe
-      * 
-      * @author Jonathan M. Freed
-      */
-     @Override
-     public Trajectory<SynchronousState> getTrajectory() {
-     	return this.trajHist;
-     }
-     
     /**
      * Return a new <code>ProbeState</code> object, of the appropriate type,
      * initialized to the current state of this probe.

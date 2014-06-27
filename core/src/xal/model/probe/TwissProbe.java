@@ -330,19 +330,6 @@ public class TwissProbe extends BunchProbe<TwissProbeState> {
 	public Trajectory<TwissProbeState> createTrajectory() {
 		return new Trajectory<TwissProbeState>();
 	}
-    
-    /**
-     * Retrieves the trajectory of the proper type for the probe.
-     * 
-     * @return a <code>Trajectory&lt;TwissProbeState&gt;</code> that is the 
-     * 		trajectory of the probe
-     * 
-     * @author Jonathan M. Freed
-     */
-    @Override
-    public Trajectory<TwissProbeState> getTrajectory() {
-    	return this.trajHist;
-    }
 
 	/**
 	 * Apply the contents of ProbeState to update my current state. The argument

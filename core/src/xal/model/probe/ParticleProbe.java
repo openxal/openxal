@@ -199,19 +199,6 @@ public class ParticleProbe extends Probe<ParticleProbeState> {
     }
     
     /**
-     * Retrieves the trajectory of the proper type for the probe.
-     * 
-     * @return a <code>Trajectory&lt;ParticleProbeState&gt;</code> that is the 
-     * 		trajectory of the probe
-     * 
-     * @author Jonathan M. Freed
-     */
-    @Override
-    public Trajectory<ParticleProbeState> getTrajectory() {
-    	return this.trajHist;
-    }
-    
-    /**
      * Captures the probe's state and return it as a new <code>ProbeState</code>
      * object.
      * 

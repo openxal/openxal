@@ -193,19 +193,6 @@ public class TransferMapProbe extends Probe<TransferMapState> {
     }
     
     /**
-     * Retrieves the trajectory of the proper type for the probe.
-     * 
-     * @return a <code>Trajectory&lt;TransferMapState&gt;</code> that is the 
-     * 		trajectory of the probe
-     * 
-     * @author Jonathan M. Freed
-     */
-    @Override
-    public Trajectory<TransferMapState> getTrajectory() {
-    	return this.trajHist;
-    }
-    
-    /**
      * Return a new <code>ProbeState</code> object, of the appropriate type,
      * initialized to the current state of this probe.
      * @return  probe state object of type <code>TransferMapState</code>
