@@ -189,18 +189,6 @@ public class ParticleProbeState extends ProbeState<ParticleProbeState> /*impleme
      */
      
     /**
-     * Copies and returns a new, identical instance of <b>this</b> 
-     * <code>ParticleProbeState</code>.
-     * 
-     * @returns a copy of <b>this</b> <code>ParticleProbeState</code>
-     */
-    @Override
-    public ParticleProbeState copy(){
-    	return new ParticleProbeState(this);
-    }
-    
-     
-    /**
      * Write out the state information in text form.
      * 
      * @return  internal state information as a <code>String</code>.
@@ -214,6 +202,17 @@ public class ParticleProbeState extends ProbeState<ParticleProbeState> /*impleme
     /*
      * ProbeState Overrides
      */    
+     
+    /**
+     * Copies and returns a new, identical instance of <b>this</b> 
+     * <code>ParticleProbeState</code>.
+     * 
+     * @returns a copy of <b>this</b> <code>ParticleProbeState</code>
+     */
+    @Override
+    public ParticleProbeState copy(){
+        return new ParticleProbeState(this);
+    }
      
     /**
      * Save the state values particular to <code>BunchProbeState</code> objects

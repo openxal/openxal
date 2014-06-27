@@ -14,7 +14,7 @@ import xal.model.xml.ParsingException;
 /**
  * @author Christopher K. Allen
  */
-public class SynchronousState extends ProbeState {
+public class SynchronousState extends ProbeState<SynchronousState> {
     
 
     /*
@@ -65,16 +65,16 @@ public class SynchronousState extends ProbeState {
      * <code>SynchronousState</code> objects with the state attributes
      * of the given <code>SynchronousState</code>.
      *
-     * @param synchronousState     initializing state
+     * @param stateSync     initializing state
      *
      * @author Christopher K. Allen, Jonathan M. Freed
      * @since  Jun 26, 2014
      */
-    public SynchronousState(SynchronousState synchronousState){
-    	super(synchronousState);
+    public SynchronousState(SynchronousState stateSync){
+    	super(stateSync);
     	
-    	this.m_dblPhsRf		= synchronousState.m_dblPhsRf;
-    	this.m_vecPhsBeta	= synchronousState.m_vecPhsBeta;
+    	this.m_dblPhsRf		= stateSync.m_dblPhsRf;
+    	this.m_vecPhsBeta	= stateSync.m_vecPhsBeta;
     }
 
     /**
@@ -139,9 +139,23 @@ public class SynchronousState extends ProbeState {
 
 
     /*
-     * ProbeState Protocol
+     * ProbeState Overrides
      */
 
+    /**
+     * Implements the clone operation required by the base class
+     * <code>ProbeState</code>
+     *
+     * @see xal.model.probe.traj.ProbeState#copy()
+     *
+     * @author Christopher K. Allen
+     * @since  Jun 27, 2014
+     */
+    @Override
+    public SynchronousState copy() {
+        return new SynchronousState(this);
+    }
+    
     /**
      * Save the probe state values to a data store represented by the 
      * <code>DataAdaptor</code> interface.
@@ -186,6 +200,11 @@ public class SynchronousState extends ProbeState {
             this.setRfPhase( daptSync.doubleValue(SynchronousState.ATTR_PHASERF) );
     }
 
+    
+    /*
+     * Object Overrides
+     */
+    
     /**
      * Returns a string representation of this particle state.  Currently returns only 
      * the super class implementation.

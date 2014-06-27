@@ -298,7 +298,7 @@ public abstract class Probe<S extends ProbeState<S>> implements IProbe, IArchive
      *  </p>
      *  <p>
      *  The state information for a particular probe should be stored as children
-     *  of the "state" data adaptor, anaologous to the XML representation.
+     *  of the "state" data adaptor, analogous to the XML representation.
      *  </p>
      *
      *  @param  daptState   the "state" parent adaptor containing probe data

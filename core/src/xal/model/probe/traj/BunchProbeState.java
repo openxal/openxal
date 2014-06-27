@@ -27,7 +27,7 @@ import xal.model.xml.ParsingException;
  * @version $id:
  * 
  */
-public abstract class BunchProbeState<S extends ProbeState<S>> extends ProbeState<S> /* implements IPhaseState */ {
+public abstract class BunchProbeState<S extends BunchProbeState<S>> extends ProbeState<S>  {
 
 
     /*
@@ -59,31 +59,6 @@ public abstract class BunchProbeState<S extends ProbeState<S>> extends ProbeStat
     /** Beam current */
     private double  dblBmCurr = 0.0;
     
-//    /** betatron phase of bunch in three phase planes */
-//    protected R3    vecPhsBeta;
-
-
-//  /** Beam charge */
-//  private double m_dblBmQ = 0.0;
-//
-
-    /*
-     * Required Implementation
-     */    
-    
-//    /** 
-//     *  Abstract - Returns the correlation matrix (sigma matrix) in homogeneous
-//     *  phase space coordinates.
-//     *
-//     *  @return         <zz^T> =| <x*x>  <x*xp>  <x*y>  <x*yp>  <x*z>  <x*zp>  <x>  |
-//     *                          | <xp*x> <xp*xp> <xp*y> <xp*yp> <xp*z> <xp*zp> <xp> |
-//     *                            ...
-//     *
-//     *  @see    gov.sns.tools.beam.PhaseMatrix
-//     */
-//    public abstract CovarianceMatrix phaseCorrelation();
-
-
 
     /*
      * Initialization
@@ -94,7 +69,8 @@ public abstract class BunchProbeState<S extends ProbeState<S>> extends ProbeStat
      *
      */
     public BunchProbeState() {
-//        this.vecPhsBeta = new R3();
+        this.dblBmCurr = 0.0;
+        this.dlbBunFreq = 0.0;
     }
     
     /**
@@ -102,16 +78,17 @@ public abstract class BunchProbeState<S extends ProbeState<S>> extends ProbeStat
      * <code>BunchProbeState</code> objects with the state attributes
      * of the given <code>BunchProbeState</code>.
      *
-     * @param bunchProbeState     initializing state
+     * @param state     initializing state
      *
-     * @author Christopher K. Allen, Jonathan M. Freed
+     * @author Christopher K. Allen
+     * @author Jonathan M. Freed
      * @since  Jun 26, 2014
      */
-    public BunchProbeState(BunchProbeState bunchProbeState){
-    	super(bunchProbeState);
+    public BunchProbeState(S state){
+    	super(state);
     	
-    	this.dblBmCurr	= bunchProbeState.dblBmCurr;
-    	this.dlbBunFreq	= bunchProbeState.dlbBunFreq;
+    	this.dblBmCurr	= state.getBeamCurrent();
+    	this.dlbBunFreq	= state.getBunchFrequency();
     }
     
     /**
@@ -126,8 +103,6 @@ public abstract class BunchProbeState<S extends ProbeState<S>> extends ProbeStat
         this.setBeamCurrent(probe.getBeamCurrent());
 //        this.setBetatronPhase(probe.getBetatronPhase());
     }
-
-    
     
     /**
      * Set the bunch arrival time frequency.
@@ -147,24 +122,6 @@ public abstract class BunchProbeState<S extends ProbeState<S>> extends ProbeStat
         dblBmCurr = I;
     }
     
-//    /**
-//     * Set the betatron phase of the bunch centroid for each phase plane.
-//     * 
-//     * @param   vecPhase vector (psix,psiy,psiz) of betratron phases in <b>radians</b>
-//     */
-//    public void setBetatronPhase(R3 vecPhase) {
-//        this.vecPhsBeta = vecPhase;
-//    }
-
-//    /**
-//     *  Set the total beam charge 
-//     * 
-//     *  @param  Q   beam charge in <bold>Coulombs</bold>
-//     */
-//    public void setBeamCharge(double Q) {
-//        m_dblBmQ = Q;
-//    }
-
     
     
     /*

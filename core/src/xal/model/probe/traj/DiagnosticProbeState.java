@@ -38,23 +38,6 @@ public class DiagnosticProbeState extends ProbeState<DiagnosticProbeState> {
 	
 	
 	/*
-	 * Base Class Interface
-	 */
-	
-	/**
-	 * Makes a clone of this probe state and returns it.
-	 * 
-	 * @see xal.model.probe.traj.ProbeState#copy()
-	 *
-	 * @author Christopher K. Allen
-	 * @since  Jun 26, 2014
-	 */
-	public DiagnosticProbeState copy() {
-	    return new DiagnosticProbeState(this);
-	}
-
-	
-	/*
 	 * Initialization
 	 */
 	
@@ -126,9 +109,31 @@ public class DiagnosticProbeState extends ProbeState<DiagnosticProbeState> {
 	}
 
 	
-	// ************* I/O support
-
-	
+    /*
+     * ProbeState Overrides
+     */
+    
+    /**
+     * Implements the clone operation required by the base class
+     * <code>ProbeState</code>.
+     *
+     * @see xal.model.probe.traj.ProbeState#copy()
+     *
+     * @author Christopher K. Allen
+     * @since  Jun 26, 2014
+     */
+    @Override
+    public DiagnosticProbeState copy() {
+        return new DiagnosticProbeState(this);
+    }
+    
+	/**
+	 *
+	 * @see xal.model.probe.traj.ProbeState#addPropertiesTo(xal.tools.data.DataAdaptor)
+	 *
+	 * @author Christopher K. Allen
+	 * @since  Jun 27, 2014
+	 */
 	@Override
     protected void addPropertiesTo(DataAdaptor container) {
 		super.addPropertiesTo(container);
@@ -137,6 +142,13 @@ public class DiagnosticProbeState extends ProbeState<DiagnosticProbeState> {
 		diagNode.setValue(COUNT_LABEL, String.valueOf(getElementsVisited()));
 	}
 	
+	/**
+	 *
+	 * @see xal.model.probe.traj.ProbeState#readPropertiesFrom(xal.tools.data.DataAdaptor)
+	 *
+	 * @author Christopher K. Allen
+	 * @since  Jun 27, 2014
+	 */
 	@Override
     protected void readPropertiesFrom(DataAdaptor container) 
 			throws ParsingException {
@@ -150,9 +162,20 @@ public class DiagnosticProbeState extends ProbeState<DiagnosticProbeState> {
 	}
 	
 	
-	// ************** Object overrides
+
+	/*
+	 * Object Overrides
+	 */
 	
 	
+	/**
+	 * Returns a representation of the internal state as a string.
+	 *
+	 * @see xal.model.probe.traj.ProbeState#toString()
+	 *
+	 * @author Christopher K. Allen
+	 * @since  Jun 27, 2014
+	 */
 	@Override
     public String toString() {
 		return super.toString() + " count: " + getElementsVisited();

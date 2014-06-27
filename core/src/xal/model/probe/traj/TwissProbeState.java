@@ -28,7 +28,7 @@ import xal.tools.math.r3.R3;
  * @version $id:
  * 
  */
-public class TwissProbeState extends BunchProbeState {
+public class TwissProbeState extends BunchProbeState<TwissProbeState> {
 
 
 
@@ -74,9 +74,6 @@ public class TwissProbeState extends BunchProbeState {
     private Twiss3D             envTwiss;
     
     
-//    /** the analytic bunch properties */
-//    private BunchDescriptor     desBunch;
-//    
     
     
     
@@ -413,9 +410,22 @@ public class TwissProbeState extends BunchProbeState {
 
     
     /*
-     * Support Methods
+     * ProbeState Overrides
      */ 
     
+    /**
+     * Implements the clone operation required by the base class
+     * <code>ProbeState</code>.
+     *
+     * @see xal.model.probe.traj.ProbeState#copy()
+     *
+     * @author Christopher K. Allen
+     * @since  Jun 27, 2014
+     */
+    @Override
+    public TwissProbeState  copy() {
+        return new TwissProbeState(this);
+    }
     
     /**
      * Save the state values particular to <code>TwissProbeState</code> objects

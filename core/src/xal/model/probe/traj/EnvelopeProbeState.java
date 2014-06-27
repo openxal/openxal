@@ -18,7 +18,7 @@ import xal.model.xml.ParsingException;
  * @version $id:
  * 
  */
-public class EnvelopeProbeState extends BunchProbeState { 
+public class EnvelopeProbeState extends BunchProbeState<EnvelopeProbeState> { 
 //    implements ProbeStateFactory<EnvelopeProbeState> /* implements IPhaseState */ {
 
 
@@ -172,6 +172,28 @@ public class EnvelopeProbeState extends BunchProbeState {
 
     }
     
+    
+    /*
+     * Base Class Interface
+     */
+    
+    /**
+     * Implements the cloning operation required by the base class
+     * <code>ProbeState</code>.
+     *
+     * @see xal.model.probe.traj.ProbeState#copy()
+     *
+     * @author Christopher K. Allen
+     * @since  Jun 27, 2014
+     */
+    @Override
+    public EnvelopeProbeState   copy() {
+        return new EnvelopeProbeState(this);
+    }
+    
+    /*
+     * Attribute Setters
+     */
     
     /**
      * <p>
