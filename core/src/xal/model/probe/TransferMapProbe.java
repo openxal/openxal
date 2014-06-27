@@ -11,7 +11,6 @@ import xal.tools.beam.PhaseMap;
 import xal.tools.beam.PhaseVector;
 import xal.tools.data.DataAdaptor;
 import xal.model.probe.traj.EnvelopeProbeState;
-import xal.model.probe.traj.ProbeState;
 import xal.model.probe.traj.Trajectory;
 import xal.model.probe.traj.TransferMapState;
 import xal.model.xml.ParsingException;
@@ -34,23 +33,23 @@ import xal.model.xml.ParsingException;
  * @since  May 28, 2004
  * @version  Oct 25, 2013
  */
-public class TransferMapProbe extends Probe {
+public class TransferMapProbe extends Probe<TransferMapState> {
     
-    /** composite transfer map */
-    private PhaseMap m_mapTrans;
-    
-    /** the partial transfer map through last modeling element */
-    private PhaseMap    mapPhiElem;
-    
-    /** probe trajectory */
-    private Trajectory<TransferMapState> trajectory;
+//    /** composite transfer map */
+//    private PhaseMap m_mapTrans;
+//    
+//    /** the partial transfer map through last modeling element */
+//    private PhaseMap    mapPhiElem;
+//    
+//    /** probe trajectory */
+//    private Trajectory<TransferMapState> trajectory;
     
     /** 
      * phase coordinates of the particle location  
      * @deprecated what particle? 
      */
-    @Deprecated
-    private PhaseVector _phaseCoordinates;
+//    @Deprecated
+//    private PhaseVector _phaseCoordinates;
     
     
     /**
@@ -60,8 +59,11 @@ public class TransferMapProbe extends Probe {
     public TransferMapProbe() {
         super();
         
-        m_mapTrans = PhaseMap.identity();
-        _phaseCoordinates = new PhaseVector();
+        this.setTransferMap(PhaseMap.identity());
+        this.setPhaseCoordinates(new PhaseVector());
+        
+//        m_mapTrans = PhaseMap.identity();
+//        _phaseCoordinates = new PhaseVector();
     }
 
 //    /**
@@ -87,8 +89,8 @@ public class TransferMapProbe extends Probe {
     public TransferMapProbe( final TransferMapProbe probe ) {
         super(probe);
         
-        this.setTransferMap( new PhaseMap( probe.m_mapTrans) );
-        this.setPhaseCoordinates( new PhaseVector(probe._phaseCoordinates) );
+        this.setTransferMap( new PhaseMap( probe.getTransferMap()) );
+        this.setPhaseCoordinates( new PhaseVector(probe.getPhaseCoordinates()) );
     }
     
     @Override
@@ -106,7 +108,8 @@ public class TransferMapProbe extends Probe {
      * @see xal.model.probe.Probe#createTrajectory()
      */
     public void setTransferMap(PhaseMap mapTrans)   {
-        this.m_mapTrans = mapTrans;
+        this.stateCurrent.setTransferMap(mapTrans);
+    	//this.m_mapTrans = mapTrans;
     }
     
     /**
@@ -118,7 +121,8 @@ public class TransferMapProbe extends Probe {
      * @see xal.model.probe.Probe#createTrajectory()
      */
     public void setPartialTransferMap(PhaseMap mapPhi)   {
-        this.mapPhiElem = mapPhi;
+        this.stateCurrent.setPartialTransferMap(mapPhi);
+    	//this.mapPhiElem = mapPhi;
     }
     
     
@@ -129,7 +133,8 @@ public class TransferMapProbe extends Probe {
       */
 	 @NoEdit	// editors should not edit this parameter as it is for internal setting
      public PhaseMap getTransferMap()  {
-         return this.m_mapTrans;
+         return this.stateCurrent.getTransferMap();
+		 //return this.m_mapTrans;
      }
     
      /**
@@ -138,7 +143,8 @@ public class TransferMapProbe extends Probe {
       * @return partial transfer map in homogeneous phase space coordinates
       */
      public PhaseMap getPartialTransferMap()  {
-         return this.mapPhiElem;
+         return this.stateCurrent.getPartialTransferMap();
+    	 //return this.mapPhiElem;
      }
     
      
@@ -151,7 +157,8 @@ public class TransferMapProbe extends Probe {
      */
 	@Deprecated
     public PhaseVector getPhaseCoordinates()  { 
-        return _phaseCoordinates;
+		return this.stateCurrent.getPhaseCoordinates();
+        //return _phaseCoordinates;
     }
     
     
@@ -163,7 +170,8 @@ public class TransferMapProbe extends Probe {
      */
     @Deprecated
     public void setPhaseCoordinates( final PhaseVector vecPhase ) {
-        _phaseCoordinates = new PhaseVector( vecPhase );
+        this.stateCurrent.setPhaseCoordinates(vecPhase);
+    	//_phaseCoordinates = new PhaseVector( vecPhase );
     }
     
      /*
@@ -181,8 +189,7 @@ public class TransferMapProbe extends Probe {
 	 */
     @Override
     public Trajectory<TransferMapState> createTrajectory() {
-        this.trajectory = new Trajectory<TransferMapState>();
-        return this.trajectory;
+        return new Trajectory<TransferMapState>();
     }
     
     /**
@@ -195,7 +202,7 @@ public class TransferMapProbe extends Probe {
      */
     @Override
     public Trajectory<TransferMapState> getTrajectory() {
-    	return this.trajectory;
+    	return this.trajHist;
     }
     
     /**
@@ -217,7 +224,7 @@ public class TransferMapProbe extends Probe {
      * @exception IllegalArgumentException  argument is not of type <code>TransferMapState</code>
      */
     @Override
-    public void applyState( final ProbeState state ) {
+    public void applyState( final TransferMapState state ) {
         if ( !(state instanceof TransferMapState) ) throw new IllegalArgumentException("invalid probe state");
         final TransferMapState stateTrans = (TransferMapState) state;
         
@@ -234,7 +241,7 @@ public class TransferMapProbe extends Probe {
      * @param probe the probe from which to initialize this one
      */
     @Override
-    protected void initializeFrom( final Probe probe ) {
+    protected void initializeFrom( final Probe<TransferMapState> probe ) {
         super.initializeFrom( probe );
         
         applyState( probe.createProbeState() );
@@ -242,7 +249,7 @@ public class TransferMapProbe extends Probe {
     }
     
     @Override
-    protected ProbeState readStateFrom(DataAdaptor container) throws ParsingException {
+    protected TransferMapState readStateFrom(DataAdaptor container) throws ParsingException {
         TransferMapState state = new TransferMapState();
         state.load(container);
         return state;

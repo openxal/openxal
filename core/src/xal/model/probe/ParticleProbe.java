@@ -12,7 +12,6 @@ import xal.tools.beam.PhaseVector;
 import xal.tools.data.DataAdaptor;
 import xal.tools.annotation.AProperty.NoEdit;
 import xal.model.probe.traj.ParticleProbeState;
-import xal.model.probe.traj.ProbeState;
 import xal.model.probe.traj.Trajectory;
 import xal.model.xml.ParsingException;
 
@@ -239,7 +238,7 @@ public class ParticleProbe extends Probe<ParticleProbeState> {
      * @exception IllegalArgumentException  argument is not of type <code>ParticleProbeState</code>
      */   
     @Override
-    public void applyState(ProbeState state) {
+    public void applyState(ParticleProbeState state) {
         
         // Check if state is the right type
         if (!(state instanceof ParticleProbeState))
@@ -254,7 +253,7 @@ public class ParticleProbe extends Probe<ParticleProbeState> {
     }
     
     @Override
-    protected ProbeState readStateFrom(DataAdaptor container) throws ParsingException {
+    protected ParticleProbeState readStateFrom(DataAdaptor container) throws ParsingException {
         ParticleProbeState state = new ParticleProbeState();
         state.load(container);
         return state;

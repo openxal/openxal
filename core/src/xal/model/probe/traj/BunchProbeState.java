@@ -191,6 +191,45 @@ public abstract class BunchProbeState<S extends BunchProbeState<S>> extends Prob
             
         }
     }
+    
+    /** 
+     * <p>
+     *  Returns the generalized, three-dimensional beam perveance <i>K</i>.  
+     *  This value is defined to be
+     *  </p>
+     *  
+     *      K = (Q/4*pi*e0)*(1/gamma^3*beta^2)*(|q|/ER) 
+     *  
+     *  <p>
+     *  where <i>Q</i> is the bunch charge, <i>e0</i> is the permittivity
+     *  of free space, <i>gamma</i> is the relativitic factor, <i>beta</i> is 
+     *  the normalized design velocity, <i>q</i> is the charge of the beam
+     *  particles and <i>ER</i> is the rest energy of the beam partiles.
+     *  </p>
+     *  
+     *  <p>
+     *  NOTES:
+     *  - The value (1/4*pi*e0) is equal to 1e-7*c^2 where <i>c</i> is the
+     *  speed of light. 
+     *  
+     *  @return generalized beam perveance <b>Units: radians^2/meter</b>
+     *  
+     *  @author Christopher K. Allen
+     */
+    public double beamPerveance() {
+    	
+        // Get some shorthand
+        double c     = LightSpeed;
+        double gamma = this.getGamma();
+        double bg2   = gamma*gamma - 1.0;
+
+        // Compute independent terms
+        double  dblPermT = 1.0e-7*c*c*this.bunchCharge();
+        double  dblRelaT = 1.0/(gamma*bg2);
+        double  dblEnerT = Math.abs(super.getSpeciesCharge())/super.getSpeciesRestEnergy();
+        
+        return dblPermT*dblRelaT*dblEnerT;  
+    }
 
 //
 //    /*

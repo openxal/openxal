@@ -12,7 +12,6 @@ import xal.tools.beam.ens.Ensemble;
 import xal.tools.data.DataAdaptor;
 import xal.tools.math.r3.R3;
 import xal.model.probe.traj.EnsembleProbeState;
-import xal.model.probe.traj.ProbeState;
 import xal.model.probe.traj.Trajectory;
 import xal.model.xml.ParsingException;
 
@@ -23,7 +22,7 @@ import xal.model.xml.ParsingException;
  *
  * @author  Christopher Allen
  */
-public class EnsembleProbe extends BunchProbe {
+public class EnsembleProbe extends BunchProbe<EnsembleProbeState> {
     
     /*
      *  Global Attributes
@@ -45,14 +44,14 @@ public class EnsembleProbe extends BunchProbe {
      *  Attributes
      */
     
-    /** field calculation method */
-    private int         m_enmFldCalc;
+//    /** field calculation method */
+//    private int         m_enmFldCalc;
+//    
+//    /** the particle ensemble */
+//    private Ensemble    m_ensPhase;
     
-    /** the particle ensemble */
-    private Ensemble    m_ensPhase;
-    
-    /** probe trajectory */
-    private Trajectory<EnsembleProbeState> trajectory;
+//    /** probe trajectory */
+//    private Trajectory<EnsembleProbeState> trajectory;
     
     
     
@@ -87,8 +86,7 @@ public class EnsembleProbe extends BunchProbe {
      */
     @Override
     public Trajectory<EnsembleProbeState> createTrajectory() {
-        this.trajectory = new Trajectory<EnsembleProbeState>();
-    	return this.trajectory;
+        return new Trajectory<EnsembleProbeState>();
     }
     
     /**
@@ -101,7 +99,7 @@ public class EnsembleProbe extends BunchProbe {
      */
 	@Override
 	public Trajectory<EnsembleProbeState> getTrajectory() {
-		return this.trajectory;
+		return this.trajHist;
 	}
 
 
@@ -113,7 +111,8 @@ public class EnsembleProbe extends BunchProbe {
      *  @return     (homogeneous) phase space coordinates of ensemble centroid
      */
     public PhaseVector  phaseMean()   {
-        return getEnsemble().phaseMean();
+        return this.stateCurrent.phaseMean();
+    	//return getEnsemble().phaseMean();
     }
     
     /**
@@ -124,7 +123,8 @@ public class EnsembleProbe extends BunchProbe {
      *  @see    xal.tools.beam.PhaseMatrix
      */
     public CovarianceMatrix  getCorrelation()    {
-        return getEnsemble().phaseCovariance();
+    	return this.stateCurrent.phaseCovariance();
+        //return getEnsemble().phaseCovariance();
     }
     
     
@@ -140,7 +140,8 @@ public class EnsembleProbe extends BunchProbe {
     public EnsembleProbe() {
         super( );
         
-        m_ensPhase = new Ensemble();
+        this.setEnsemble(new Ensemble());
+        //m_ensPhase = new Ensemble();
     };
     
     /**
@@ -166,7 +167,10 @@ public class EnsembleProbe extends BunchProbe {
      *
      *  @param  enmFldCalc  field calculation method enumeration
      */
-    public void setFieldCalculation(int enmFldCalc)  { m_enmFldCalc = enmFldCalc; };
+    public void setFieldCalculation(int enmFldCalc)  { 
+    	this.stateCurrent.setFieldCalculation(enmFldCalc);
+    	//m_enmFldCalc = enmFldCalc; 
+    }
     
     /**
      *  Set the EnsembleProbe state to the value of the argument
@@ -176,8 +180,9 @@ public class EnsembleProbe extends BunchProbe {
      *  @param  ens     <code>Ensemble</code> object to be copied
      */
     public void setEnsemble(Ensemble ens)   { 
-        m_ensPhase = new Ensemble(ens); 
-    };
+        this.stateCurrent.setEnsemble(ens);
+    	//m_ensPhase = new Ensemble(ens); 
+    }
 
     
     
@@ -188,12 +193,18 @@ public class EnsembleProbe extends BunchProbe {
     /**
      * Return the field calculation method
      */
-    public int getFieldCalculation() { return m_enmFldCalc; }
+    public int getFieldCalculation() { 
+    	return this.stateCurrent.getFieldCalculation();
+    	//return m_enmFldCalc; 
+    }
     
     /**
      *  Return the Ensemble state object
      */
-    public Ensemble getEnsemble() { return m_ensPhase; };
+    public Ensemble getEnsemble() { 
+    	return this.stateCurrent.getEnsemble();
+    	//return m_ensPhase; 
+    }
     
 
     /**
@@ -205,9 +216,9 @@ public class EnsembleProbe extends BunchProbe {
      *
      */
     public R3   electricField(R3 ptFld) {
-        R3      vecE = new R3();
-        
-        return vecE;
+        return this.stateCurrent.electricField(ptFld);
+    	//R3      vecE = new R3();
+        //return vecE;
     }
     
     
@@ -227,7 +238,7 @@ public class EnsembleProbe extends BunchProbe {
      * @exception   IllegalArgumentException    wrong <code>ProbeState</code> sub-type for this probe
      */
     @Override
-    public void applyState(ProbeState state) {
+    public void applyState(EnsembleProbeState state) {
         if (!(state instanceof EnsembleProbeState))
             throw new IllegalArgumentException("invalid probe state");
         super.applyState(state);
@@ -236,7 +247,7 @@ public class EnsembleProbe extends BunchProbe {
     }
     
     @Override
-    protected ProbeState readStateFrom(DataAdaptor container) throws ParsingException {
+    protected EnsembleProbeState readStateFrom(DataAdaptor container) throws ParsingException {
         EnsembleProbeState state = new EnsembleProbeState();
         state.load(container);
         return state;

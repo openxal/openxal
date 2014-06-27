@@ -54,7 +54,7 @@ import xal.tools.data.DataAdaptor;
  * @see xal.model.probe.traj.EnvelopeProbeState
  */
 
-public class EnvelopeProbe extends BunchProbe {
+public class EnvelopeProbe extends BunchProbe<EnvelopeProbeState> {
 
     
     
@@ -84,21 +84,21 @@ public class EnvelopeProbe extends BunchProbe {
 	 * Local Attributes
 	 */
 
-	/** first-order response matrix from the initial state */
-	private PhaseMatrix        matResp;
-    
-	/** first-order response matrix from the initial state (no space charge) */
-	private PhaseMatrix        matRespNoSpaceCharge;
-   
-    
-    /** first-order response matrix of current slice of element **/
-    private PhaseMatrix        matPert;
-
-	/** envelope state */
-	private CovarianceMatrix  matSigam;
-	
-	/** probe trajectory */
-	private Trajectory<EnvelopeProbeState> trajectory;
+//	/** first-order response matrix from the initial state */
+//	private PhaseMatrix        matResp;
+//    
+//	/** first-order response matrix from the initial state (no space charge) */
+//	private PhaseMatrix        matRespNoSpaceCharge;
+//   
+//    
+//    /** first-order response matrix of current slice of element **/
+//    private PhaseMatrix        matPert;
+//
+//	/** envelope state */
+//	private CovarianceMatrix  matSigam;
+//	
+//	/** probe trajectory */
+//	private Trajectory<EnvelopeProbeState> trajectory;
 
 //    /** 
 //     * <p>
@@ -138,8 +138,8 @@ public class EnvelopeProbe extends BunchProbe {
      * 
      * @deprecated  associated with attribute <code>arrTwiss</code>
      */
-	@Deprecated
-    private boolean            bolSaveTwiss = false;
+//	@Deprecated
+//    private boolean            bolSaveTwiss = false;
 
     
 
@@ -151,10 +151,15 @@ public class EnvelopeProbe extends BunchProbe {
 	 * Default Constructor. Creates a new, empty instance of EnvelopeProbe
 	 */
 	public EnvelopeProbe() {
-		this.matResp = PhaseMatrix.identity();
-		this.matRespNoSpaceCharge = PhaseMatrix.identity();
-		this.matPert  = PhaseMatrix.identity();
-		this.matSigam = CovarianceMatrix.newIdentity();
+		this.setResponseMatrix(PhaseMatrix.identity());
+		this.setResponseMatrixNoSpaceCharge(PhaseMatrix.identity());
+		this.setCurrentResponseMatrix(PhaseMatrix.identity());
+		this.setCovariance(CovarianceMatrix.newIdentity());
+		
+//		this.matResp = PhaseMatrix.identity();
+//		this.matRespNoSpaceCharge = PhaseMatrix.identity();
+//		this.matPert  = PhaseMatrix.identity();
+//		this.matSigam = CovarianceMatrix.newIdentity();
 	};
 
 	/**
@@ -213,7 +218,7 @@ public class EnvelopeProbe extends BunchProbe {
      * @param probe the probe from which to initialize this one
      */
     @Override
-    protected void initializeFrom( final Probe probe ) {
+    protected void initializeFrom( final Probe<EnvelopeProbeState> probe ) {
         super.initializeFrom( probe );
         
         applyState( probe.createProbeState() );
@@ -260,7 +265,8 @@ public class EnvelopeProbe extends BunchProbe {
      */
     @Deprecated
     public void setSaveTwissFlag(boolean bolSaveTwiss)    {
-        this.bolSaveTwiss = bolSaveTwiss;
+    	this.stateCurrent.setSaveTwissFlag(bolSaveTwiss);
+        //this.bolSaveTwiss = bolSaveTwiss;
     }
     
     /**
@@ -272,7 +278,8 @@ public class EnvelopeProbe extends BunchProbe {
 	 * @see xal.tools.beam.CovarianceMatrix
 	 */
 	public void setCovariance(CovarianceMatrix matTau) {
-		this.matSigam = matTau;
+		this.stateCurrent.setCovariance(matTau);
+		//this.matSigam = matTau;
 	};
 
 //	/**
@@ -304,7 +311,8 @@ public class EnvelopeProbe extends BunchProbe {
 	 *            first-order response matrix in homogeneous coordinates
 	 */
 	public void setResponseMatrix(PhaseMatrix matResp) {
-		this.matResp = matResp;
+		this.stateCurrent.setResponseMatrix(matResp);
+		//this.matResp = matResp;
 	}
 	
 	
@@ -318,7 +326,8 @@ public class EnvelopeProbe extends BunchProbe {
 	 *            first-order response matrix in homogeneous coordinates
 	 */
 	public void setResponseMatrixNoSpaceCharge(PhaseMatrix matResp) {
-		this.matRespNoSpaceCharge = matResp;
+		this.stateCurrent.setResponseMatrixNoSpaceCharge(matResp);
+		//this.matRespNoSpaceCharge = matResp;
 	}
 
     /**
@@ -328,7 +337,8 @@ public class EnvelopeProbe extends BunchProbe {
      * @param matRespCurr   current response matrix factor
      */
 	public void setCurrentResponseMatrix(PhaseMatrix matRespCurr) {
-		this.matPert = matRespCurr;
+		this.stateCurrent.setPerturbationMatrix(matRespCurr);
+		//this.matPert = matRespCurr;
 	}
 
     
@@ -345,7 +355,8 @@ public class EnvelopeProbe extends BunchProbe {
      * @return  the 7x7 matrix <z*z^T> in homogeneous coordinates
      */
     public CovarianceMatrix getCovariance() {
-        return matSigam;
+        return this.stateCurrent.getCovarianceMatrix();
+    	//return matSigam;
     }
 	/**
 	 * Get the first-order response matrix accumulated by the Envelope since its
@@ -355,7 +366,8 @@ public class EnvelopeProbe extends BunchProbe {
 	 * @return first-order response matrix in homogeneous coordinates
 	 */
 	public PhaseMatrix getResponseMatrix() {
-		return this.matResp;
+		return this.stateCurrent.getResponseMatrix();
+		//return this.matResp;
 	}
 	/**
 	 * Get the first-order response matrix accumulated by the Envelope since its
@@ -365,7 +377,8 @@ public class EnvelopeProbe extends BunchProbe {
 	 * @return first-order response matrix in homogeneous coordinates
 	 */
 	public PhaseMatrix getResponseMatrixNoSpaceCharge() {
-		return this.matRespNoSpaceCharge;
+		return this.stateCurrent.getResponseMatrixNoSpaceCharge();
+		//return this.matRespNoSpaceCharge;
 	}
 
     /**
@@ -376,7 +389,8 @@ public class EnvelopeProbe extends BunchProbe {
      * @return  last factor of the response matrix
      */
 	public PhaseMatrix getCurrentResponseMatrix() {
-		return this.matPert;
+		return this.getCurrentResponseMatrix();
+		//return this.matPert;
 	}
 
 
@@ -427,7 +441,8 @@ public class EnvelopeProbe extends BunchProbe {
      */
     @Deprecated
     public boolean getSaveTwissFlag()   {
-        return this.bolSaveTwiss;
+        return this.stateCurrent.getSaveTwissFlag();
+    	//return this.bolSaveTwiss;
     }
     
     
@@ -443,7 +458,8 @@ public class EnvelopeProbe extends BunchProbe {
      *  @return     <(z-<z>)*(z-<z>)^T> = <z*z^T> - <z>*<z>^T
      */
     public CovarianceMatrix  phaseCovariance() {
-        return getCovariance().computeCentralCovariance();
+        return this.stateCurrent.centralCovariance();
+    	//return getCovariance().computeCentralCovariance();
     }
     
     /** 
@@ -452,7 +468,8 @@ public class EnvelopeProbe extends BunchProbe {
      *  @return         <z> = (<x>, <xp>, <y>, <yp>, <z>, <zp>, 1)^T
      */
     public PhaseVector phaseMean()  {
-        return getCovariance().getMean();
+    	return this.stateCurrent.phaseMean();
+        //return getCovariance().getMean();
     }
 
     
@@ -531,8 +548,7 @@ public class EnvelopeProbe extends BunchProbe {
 	 */
     @Override
 	public Trajectory<EnvelopeProbeState> createTrajectory() {
-		this.trajectory = new Trajectory<EnvelopeProbeState>();
-		return this.trajectory;
+		return new Trajectory<EnvelopeProbeState>();
     }
 
     /**
@@ -545,7 +561,7 @@ public class EnvelopeProbe extends BunchProbe {
      */
     @Override
     public Trajectory<EnvelopeProbeState> getTrajectory() {
-    	return this.trajectory;
+    	return this.trajHist;
     }
     
 	/**
@@ -562,7 +578,7 @@ public class EnvelopeProbe extends BunchProbe {
 	 */
     @SuppressWarnings("deprecation")
     @Override
-	public void applyState(ProbeState state) {
+	public void applyState(EnvelopeProbeState state) {
 		if (!(state instanceof EnvelopeProbeState))
 			throw new IllegalArgumentException("invalid probe state");
 		EnvelopeProbeState stateEnv = (EnvelopeProbeState) state;
@@ -787,7 +803,7 @@ public class EnvelopeProbe extends BunchProbe {
      * @version  Oct 31, 2013
      */
     @Override
-    protected ProbeState readStateFrom(DataAdaptor container) throws ParsingException {
+    protected EnvelopeProbeState readStateFrom(DataAdaptor container) throws ParsingException {
         EnvelopeProbeState state = new EnvelopeProbeState();
         state.load(container);
         return state;

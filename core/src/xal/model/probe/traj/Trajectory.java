@@ -322,9 +322,8 @@ public class Trajectory<S extends ProbeState<S>> implements IArchive, Iterable<S
      * 
      *  @param  probe   target probe object
      */
-    @SuppressWarnings("unchecked")
-	public void update(Probe probe) {
-        S state = (S) probe.createProbeState();
+	public void update(Probe<S> probe) {
+        S state = probe.createProbeState();
         saveState(state);
     }
 

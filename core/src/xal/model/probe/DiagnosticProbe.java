@@ -3,7 +3,6 @@ package xal.model.probe;
 import xal.tools.data.DataAdaptor;
 import xal.model.alg.DiagnosticTracker;
 import xal.model.probe.traj.DiagnosticProbeState;
-import xal.model.probe.traj.ProbeState;
 import xal.model.probe.traj.Trajectory;
 import xal.model.xml.ParsingException;
 
@@ -14,13 +13,13 @@ import xal.model.xml.ParsingException;
  * @version $id:
  * 
  */
-public class DiagnosticProbe extends Probe {
+public class DiagnosticProbe extends Probe<DiagnosticProbeState> {
 
-	// count the number of elements visited	
-	private int elementsVisited = 0;
-	
-	/** probe trajectory */
-	private Trajectory<DiagnosticProbeState> trajectory;
+//	// count the number of elements visited	
+//	private int elementsVisited = 0;
+//	
+//	/** probe trajectory */
+//	private Trajectory<DiagnosticProbeState> trajectory;
 
 
 	// ************ constructors
@@ -36,7 +35,7 @@ public class DiagnosticProbe extends Probe {
     
     public DiagnosticProbe(DiagnosticProbe copy) {
         super( copy );
-        this.elementsVisited = copy.elementsVisited;
+        this.setElementsVisited(copy.getElementsVisited());
     }
 
 
@@ -56,7 +55,8 @@ public class DiagnosticProbe extends Probe {
      * @since  Apr 19, 2011
      */
     public int getElementsVisited() {
-    	return elementsVisited;
+    	return this.stateCurrent.getElementsVisited();
+    	//return elementsVisited;
     }
     
     /**
@@ -68,7 +68,8 @@ public class DiagnosticProbe extends Probe {
      * @since  Apr 19, 2011
      */
     public void setElementsVisited(int n) {
-    	elementsVisited = n;
+    	this.stateCurrent.setElementsVisited(n);
+    	//elementsVisited = n;
     }
     
     /**
@@ -78,7 +79,8 @@ public class DiagnosticProbe extends Probe {
      * @since  Apr 19, 2011
      */
     public void incrementElementsVisited() {
-    	++elementsVisited;
+    	this.stateCurrent.incrementElementsVisited();
+    	//++elementsVisited;
     }
 
 
@@ -91,34 +93,12 @@ public class DiagnosticProbe extends Probe {
      * 		for saving the probe's history. 
      * 
      * @author Jonathan M. Freed
-     * @
      */ 
 	@Override
 	public Trajectory<DiagnosticProbeState> createTrajectory() {
-		this.trajectory = new Trajectory<DiagnosticProbeState>();
-		return this.trajectory;
+		return new Trajectory<DiagnosticProbeState>();
 	}
 	
-	@Override
-	public DiagnosticProbeState createProbeState() {
-		return new DiagnosticProbeState(this);
-	}
-	
-	@Override
-    public void applyState(ProbeState state) {
-		if (! (state instanceof DiagnosticProbeState))
-			throw new IllegalArgumentException("invalid probe state");
-		super.applyState(state);
-		setElementsVisited(((DiagnosticProbeState)state).getElementsVisited());
-	}	
-	
-    @Override
-    protected ProbeState readStateFrom(DataAdaptor container) throws ParsingException {
-        DiagnosticProbeState state = new DiagnosticProbeState();
-        state.load(container);
-        return state;
-    }
-
     /**
      * Retrieves the trajectory of the proper type for the probe
      * 
@@ -129,6 +109,29 @@ public class DiagnosticProbe extends Probe {
      */ 
 	@Override
 	public Trajectory<DiagnosticProbeState> getTrajectory() {
-		return this.trajectory;
+		return this.trajHist;
 	}
+	
+	@Override
+	public DiagnosticProbeState createProbeState() {
+		return new DiagnosticProbeState(this);
+	}
+	
+	@Override
+    public void applyState(DiagnosticProbeState state) {
+		if (! (state instanceof DiagnosticProbeState))
+			throw new IllegalArgumentException("invalid probe state");
+		super.applyState(state);
+		setElementsVisited(((DiagnosticProbeState)state).getElementsVisited());
+	}	
+	
+    @Override
+    protected DiagnosticProbeState readStateFrom(DataAdaptor container) throws ParsingException {
+        DiagnosticProbeState state = new DiagnosticProbeState();
+        state.load(container);
+        return state;
+    }
 }
+
+
+

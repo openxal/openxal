@@ -33,7 +33,7 @@ public class DiagnosticProbeState extends ProbeState<DiagnosticProbeState> {
      */
     
     /** The accumulator for counting the model elements traversed by the probe at this state */
-	private int elementsVisited;
+	private int elementsVisited = 0;
 	
 	
 	
@@ -107,7 +107,16 @@ public class DiagnosticProbeState extends ProbeState<DiagnosticProbeState> {
 	public void setElementsVisited(int n) {
 		elementsVisited = n;
 	}
-
+	
+    /**
+     * Increments the number of element traversed by 1.
+     *
+     * @author Christopher K. Allen
+     * @since  Apr 19, 2011
+     */
+    public void incrementElementsVisited() {
+    	++elementsVisited;
+    }
 	
     /*
      * ProbeState Overrides

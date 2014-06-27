@@ -3,8 +3,10 @@ package xal.model.probe.traj;
 import xal.model.probe.EnsembleProbe;
 import xal.model.xml.ParsingException;
 import xal.tools.beam.CovarianceMatrix;
+import xal.tools.beam.PhaseVector;
 import xal.tools.beam.ens.Ensemble;
 import xal.tools.data.DataAdaptor;
+import xal.tools.math.r3.R3;
 
 /**
  * Encapsulates the state of an EnsembleProbe at a particular point in time.
@@ -124,11 +126,33 @@ public class EnsembleProbeState extends BunchProbeState<EnsembleProbeState> {
     public Ensemble getEnsemble() {
         return m_ensPhase;
     }
+    
+    /**
+     *  Get the electric field at a point in R3 from the ensemble.
+     *
+     *  @param  ptFld       field point to evaluation ensemble field
+     *  
+     *  @return             electric field at field point
+     *
+     */
+    public R3   electricField(R3 ptFld) {
+    	R3      vecE = new R3();
+        return vecE;
+    }
 
     
     /*
      * Computed Quantities
      */
+    
+    /**
+     *  Return the coordinates of the ensemble centroid.
+     *
+     *  @return     (homogeneous) phase space coordinates of ensemble centroid
+     */
+    public PhaseVector  phaseMean()   {
+    	return getEnsemble().phaseMean();
+    }
     
     /**
      *  Return the correlation matrix of the distribution

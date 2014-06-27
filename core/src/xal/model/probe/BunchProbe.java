@@ -35,7 +35,7 @@ import xal.model.probe.traj.ProbeState;
  * @author  Christopher K. Allen
  * @since   Nov 2, 2002
  */
-public abstract class BunchProbe extends Probe {
+public abstract class BunchProbe<S extends BunchProbeState<S>> extends Probe<S> {
     
     
     
@@ -44,11 +44,11 @@ public abstract class BunchProbe extends Probe {
      */
 
     
-    /** bunch frequency in Hz */
-    private double  dlbFreq = 0.0;
-    
-    /** Beam current */
-    private double  dblCurrent = 0.0;
+//    /** bunch frequency in Hz */
+//    private double  dlbFreq = 0.0;
+//    
+//    /** Beam current */
+//    private double  dblCurrent = 0.0;
     
 //    /** probe trajectory */
 //    private Trajectory<BunchProbeState> trajectory;
@@ -101,7 +101,7 @@ public abstract class BunchProbe extends Probe {
      *
      *  @param  probe   BunchProbe object to be cloned
      */
-    public BunchProbe(BunchProbe probe)   {
+    public BunchProbe(BunchProbe<S> probe)   {
         super(probe);
         //Not sure what the purpose of this is
         //this.setBunchFrequency(this.getBunchFrequency());
@@ -116,7 +116,8 @@ public abstract class BunchProbe extends Probe {
      * @param f     new bunch frequency in <b>Hz</b>
      */
     public void setBunchFrequency(double f) {
-        this.dlbFreq = f;
+        this.stateCurrent.setBunchFrequency(f);
+    	//this.dlbFreq = f;
     }
  
     /**
@@ -125,7 +126,8 @@ public abstract class BunchProbe extends Probe {
      * @param   I   new beam current in <bold>Amperes</bold>
      */
     public void setBeamCurrent(double I)    { 
-        dblCurrent = I; 
+        this.stateCurrent.setBeamCurrent(I);
+    	//dblCurrent = I; 
     };
     
 
@@ -168,7 +170,8 @@ public abstract class BunchProbe extends Probe {
      */
 	@Units( "Hz" )
     public double getBunchFrequency()  {
-        return this.dlbFreq;
+        return this.stateCurrent.getBunchFrequency();
+		//return this.dlbFreq;
     };
     
     /** 
@@ -178,7 +181,8 @@ public abstract class BunchProbe extends Probe {
      */
 	@Units( "amps" )
     public double getBeamCurrent() { 
-        return dblCurrent;  
+        return this.stateCurrent.getBeamCurrent();
+		//return dblCurrent;  
      }
 
 //    /**
@@ -201,13 +205,14 @@ public abstract class BunchProbe extends Probe {
      * @return  beam charge in <b>coulombs</b>
      */
     public double bunchCharge() {
-        if (this.getBunchFrequency() > 0.0) {
-            return this.getBeamCurrent()/this.getBunchFrequency();
-            
-        } else {
-            return 0.0;
-            
-        }
+    	return this.stateCurrent.bunchCharge();  	
+//        if (this.getBunchFrequency() > 0.0) {
+//            return this.getBeamCurrent()/this.getBunchFrequency();
+//            
+//        } else {
+//            return 0.0;
+//            
+//        }
     }
 
     /** 
@@ -235,18 +240,19 @@ public abstract class BunchProbe extends Probe {
      *  @author Christopher K. Allen
      */
     public double beamPerveance() {
-        
-        // Get some shorthand
-        double c     = LightSpeed;
-        double gamma = this.getGamma();
-        double bg2   = gamma*gamma - 1.0;
-
-        // Compute independent terms
-        double  dblPermT = 1.0e-7*c*c*this.bunchCharge();
-        double  dblRelaT = 1.0/(gamma*bg2);
-        double  dblEnerT = Math.abs(super.getSpeciesCharge())/super.getSpeciesRestEnergy();
-        
-        return dblPermT*dblRelaT*dblEnerT;  
+        return this.stateCurrent.beamPerveance();
+    	
+//        // Get some shorthand
+//        double c     = LightSpeed;
+//        double gamma = this.getGamma();
+//        double bg2   = gamma*gamma - 1.0;
+//
+//        // Compute independent terms
+//        double  dblPermT = 1.0e-7*c*c*this.bunchCharge();
+//        double  dblRelaT = 1.0/(gamma*bg2);
+//        double  dblEnerT = Math.abs(super.getSpeciesCharge())/super.getSpeciesRestEnergy();
+//        
+//        return dblPermT*dblRelaT*dblEnerT;  
     }
 
     
@@ -254,35 +260,6 @@ public abstract class BunchProbe extends Probe {
      * Probe Overrides
      */
 
-    /************************************************************************** 
-     * Not sure if these need to be overridden yet, or if they need their own
-     * implementation.  If implemented, the subclasses (Twiss, Ensemble, and 
-     * Envelope) will all have issues.
-     *  - Jonathan M. Freed
-     */
-//	/**
-//	 * Creates a <code>Trajectory&lt;?&gt;</code> object of 
-//	 * the proper type for saving the probe's history.
-//	 * 
-//	 * @return a new, empty <code>Trajectory&lt;?&gt;</code> 
-//	 * 		for saving the probe's history
-//	 * 
-//	 * @author Jonathan M. Freed
-//	 */
-//    @Override
-//    public abstract Trajectory<?> createTrajectory();
-//    
-//    /**
-//     * Retrieves the trajectory of the proper type for the probe.
-//     * 
-//     * @return a <code>Trajectory&lt;?&gt;</code> that is the 
-//     * 		trajectory of the probe
-//     * 
-//     * @author Jonathan M. Freed
-//     */
-//    @Override
-//    public abstract Trajectory<?> getTrajectory();
-    
     /**
      * Just restating <code>Probe.{@link #createProbeState()}</code>
      *
@@ -292,7 +269,7 @@ public abstract class BunchProbe extends Probe {
      * @since  Nov 5, 2013
      */
     @Override
-    public abstract BunchProbeState createProbeState();
+    public abstract S createProbeState();
     
     /**
      * Apply the contents of ProbeState to update my current state.  Subclass
@@ -304,7 +281,7 @@ public abstract class BunchProbe extends Probe {
      * @exception   IllegalArgumentException    wrong <code>ProbeState</code> subtype for this probe
      */
     @Override
-    public void applyState(ProbeState state) {
+    public void applyState(S state) {
         if (!(state instanceof BunchProbeState))
             throw new IllegalArgumentException("invalid probe state");
         BunchProbeState  stateBunch = (BunchProbeState)state;

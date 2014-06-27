@@ -160,7 +160,7 @@ public abstract class Probe<S extends ProbeState<S>> implements IProbe, IArchive
      * @return a Probe for the contents of the DataAdaptor
      * @throws ParsingException error encountered reading the DataAdaptor
      */
-    public static Probe readFrom(DataAdaptor container)
+    public static Probe<?> readFrom(DataAdaptor container)
             throws ParsingException {
                 
         DataAdaptor daptProbe = container.childAdaptor(Probe.PROBE_LABEL);
@@ -168,10 +168,10 @@ public abstract class Probe<S extends ProbeState<S>> implements IProbe, IArchive
             throw new ParsingException("Probe#readFrom() - no Probe data node.");
             
         String type = daptProbe.stringValue(Probe.TYPE_LABEL);
-        Probe probe;
+        Probe<?> probe;
         try {
             Class<?> probeClass = Class.forName(type);
-            probe = (Probe) probeClass.newInstance();
+            probe = (Probe<?>) probeClass.newInstance();
         } catch (Exception e) {
             e.printStackTrace();
             throw new ParsingException(e.getMessage());
@@ -192,11 +192,11 @@ public abstract class Probe<S extends ProbeState<S>> implements IProbe, IArchive
      * 
      * @return              new <code>Probe</code> object initialized to argument 
      */
-    public static Probe newProbeInitializedFrom( final Probe probeInit ) {
+    public static Probe<?> newProbeInitializedFrom( final Probe<?> probeInit ) {
         Class<?> pClass = probeInit.getClass();
-        Probe pNew;
+        Probe<?> pNew;
         try {
-            pNew = (Probe) pClass.newInstance();
+            pNew = (Probe<?>) pClass.newInstance();
         } catch (InstantiationException e) {
             e.printStackTrace();
             return null;
@@ -279,7 +279,7 @@ public abstract class Probe<S extends ProbeState<S>> implements IProbe, IArchive
      * 
      * @param state     <code>ProbeState</code> object containing new probe state data
      */
-    public void applyState(ProbeState state) {
+    public void applyState(S state) {
         setSpeciesRestEnergy(state.getSpeciesRestEnergy());
         setSpeciesCharge(state.getSpeciesCharge());
 
@@ -359,8 +359,8 @@ public abstract class Probe<S extends ProbeState<S>> implements IProbe, IArchive
      * 
      * @param probe the probe from which to initialize this one
      */
-    protected void initializeFrom( final Probe probe ) {
-        final ProbeState initialState = probe.getTrajectory().initialState();
+    protected void initializeFrom( final Probe<S> probe ) {
+        final S initialState = probe.getTrajectory().initialState();
         if ( initialState != null ) {
             applyState( initialState );         
         }
@@ -760,7 +760,7 @@ public abstract class Probe<S extends ProbeState<S>> implements IProbe, IArchive
         DataAdaptor daptState   = daptProbe.childAdaptor(ProbeState.STATE_LABEL);
         if (daptState == null) 
             throw new DataFormatException("Probe#load() - no state data");
-        ProbeState state;
+        S state;
         try {
             state = readStateFrom(daptState);
         } catch (ParsingException e) {
@@ -777,7 +777,7 @@ public abstract class Probe<S extends ProbeState<S>> implements IProbe, IArchive
      * @return a ProbeState for the contents of the DataAdaptor
      * @throws ParsingException error encountered reading the DataAdaptor
      */
-    protected abstract ProbeState readStateFrom(DataAdaptor container) throws ParsingException;
+    protected abstract S readStateFrom(DataAdaptor container) throws ParsingException;
     
   
 //
@@ -842,7 +842,7 @@ public abstract class Probe<S extends ProbeState<S>> implements IProbe, IArchive
         this.getAlgorithm().save(daProbe);
                 
         // Save the probe state information
-        ProbeState state = createProbeState();
+        S state = createProbeState();
         state.save(daProbe);  
     }
     
@@ -860,7 +860,7 @@ public abstract class Probe<S extends ProbeState<S>> implements IProbe, IArchive
      *
      *  @param  probe   probe object whose Probe base is to be deep copied into this
      */
-    protected void  deepCopyProbeBase(Probe probe)    {
+    protected void  deepCopyProbeBase(Probe<S> probe)    {
         
         // Copy all the Probe base attributes
         this.m_dblParQ  = probe.m_dblParQ;

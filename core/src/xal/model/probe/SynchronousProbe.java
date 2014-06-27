@@ -6,7 +6,6 @@ package xal.model.probe;
 
 import xal.tools.data.DataAdaptor;
 import xal.tools.math.r3.R3;
-import xal.model.probe.traj.ProbeState;
 import xal.model.probe.traj.SynchronousState;
 import xal.model.probe.traj.Trajectory;
 import xal.model.xml.ParsingException;
@@ -20,7 +19,7 @@ import xal.model.xml.ParsingException;
  * 
  * @author Christopher K. Allen
  */
-public class SynchronousProbe extends Probe {
+public class SynchronousProbe extends Probe<SynchronousState> {
 
 
 
@@ -31,14 +30,14 @@ public class SynchronousProbe extends Probe {
      
      
      
-    /** Synchronous particle position with respect to any RF drive phase */
-    private double              m_dblPhsRf;
-
-    /** synchronous particle betatron phase without space charge */
-    private R3                  m_vecPhsBeta;
-    
-    /** probe trajectory */
-    private Trajectory<SynchronousState> trajectory;
+//    /** Synchronous particle position with respect to any RF drive phase */
+//    private double              m_dblPhsRf;
+//
+//    /** synchronous particle betatron phase without space charge */
+//    private R3                  m_vecPhsBeta;
+//    
+//    /** probe trajectory */
+//    private Trajectory<SynchronousState> trajectory;
 
 
     /*
@@ -81,7 +80,8 @@ public class SynchronousProbe extends Probe {
      * @param vecPhase      vector (psix,psiy,psiz) of betatron phases in <b>radians</b>
      */
     public void     setBetatronPhase(R3 vecPhase)   {
-        this.m_vecPhsBeta = vecPhase;
+        this.stateCurrent.setBetatronPhase(vecPhase);
+    	//this.m_vecPhsBeta = vecPhase;
     }
     
     /**
@@ -91,7 +91,8 @@ public class SynchronousProbe extends Probe {
      * @param dblPhase      synchronous particle phase w.r.t. RF in <b>radians</b>
      */
     public void     setRfPhase(double dblPhase) {
-        this.m_dblPhsRf = dblPhase;
+        this.setRfPhase(dblPhase);
+    	//this.m_dblPhsRf = dblPhase;
     }
     
     
@@ -107,7 +108,8 @@ public class SynchronousProbe extends Probe {
       * @return     phase location of synchronous particle in <b>radians</b>
       */
      public double  getRfPhase()    {
-         return this.m_dblPhsRf;
+         return this.stateCurrent.getRfPhase();
+    	 //return this.m_dblPhsRf;
      }
      
      /**
@@ -118,7 +120,8 @@ public class SynchronousProbe extends Probe {
       * @return vector (sigx,sigy,sigz) of phase advances without space charge
       */
      public R3      getBetatronPhase()  {
-         return this.m_vecPhsBeta;
+         return this.stateCurrent.getBetatronPhase();
+    	 //return this.m_vecPhsBeta;
      }
     
     
@@ -140,8 +143,7 @@ public class SynchronousProbe extends Probe {
  	 */
      @Override
      public Trajectory<SynchronousState> createTrajectory() {
-         this.trajectory = new Trajectory<SynchronousState>();
-         return this.trajectory;
+         return new Trajectory<SynchronousState>();
      }
      
      /**
@@ -154,7 +156,7 @@ public class SynchronousProbe extends Probe {
       */
      @Override
      public Trajectory<SynchronousState> getTrajectory() {
-     	return this.trajectory;
+     	return this.trajHist;
      }
      
     /**
@@ -179,7 +181,7 @@ public class SynchronousProbe extends Probe {
      * @exception IllegalArgumentException  argument is not of type <code>SynchronousState</code>
      */   
     @Override
-    public void applyState(ProbeState state) {
+    public void applyState(SynchronousState state) {
         if (!(state instanceof SynchronousState))
             throw new IllegalArgumentException("invalid probe state");
         SynchronousState    stateSync = (SynchronousState) state;
@@ -190,7 +192,7 @@ public class SynchronousProbe extends Probe {
     }
     
     @Override
-    protected ProbeState readStateFrom(DataAdaptor container) throws ParsingException {
+    protected SynchronousState readStateFrom(DataAdaptor container) throws ParsingException {
         SynchronousState state = new SynchronousState();
         state.load(container);
         return state;
