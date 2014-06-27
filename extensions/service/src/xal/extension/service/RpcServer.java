@@ -182,7 +182,7 @@ public class RpcServer {
                             final String serviceName = messageParts[0];
                             final String methodName = messageParts[1];
                             final Number requestID = (Number)request.get( "id" );
-                            final List<Object> params = (List<Object>)request.get( "params" );
+							final Object[] params = (Object[])request.get( "params" );
 
                             final RemoteRequestHandler<?> handler = REMOTE_REQUEST_HANDLERS.get( serviceName );
                             final EvaluationResult result = handler.evaluateRequest( methodName, params );
@@ -285,12 +285,10 @@ class RemoteRequestHandler<ProtocolType> {
     
     
     /** Evaluate the request */
-    public EvaluationResult evaluateRequest( final String methodName, final List<Object> params ) {
-        final Object[] methodParams = new Object[ params.size() ];
+    public EvaluationResult evaluateRequest( final String methodName, final Object[] methodParams ) {
         final Class<?>[] methodParamTypes = new Class<?>[ methodParams.length ];
         for ( int index = 0 ; index < methodParams.length ; index++ ) {
-            final Object param = params.get( index );
-            methodParams[index] = param;
+            final Object param = methodParams[index];
             methodParamTypes[index] = param != null ? param.getClass() : null;
         }
                 

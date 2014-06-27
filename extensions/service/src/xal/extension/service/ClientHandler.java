@@ -209,14 +209,8 @@ class ClientHandler<ProxyType> implements InvocationHandler {
 	/** perform the remote service call */
 	private Object performRemoteServiceCall( final Method method, final Object[] args ) throws RemoteMessageException, RemoteServiceDroppedException {
         try {
-            final List<Object> params = new ArrayList<Object>();
-			if ( args != null ) {
-                for ( final Object arg : args ) {
-                    params.add( arg );
-                }
-			}
-
             final long requestID = getNextRequestID();
+			final Object[] params = args != null ? args : new Object[0];
 
             final String methodName = method.getName();
             final Map<String,Object> request = new HashMap<String,Object>();
