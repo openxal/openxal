@@ -137,16 +137,13 @@ public class RpcServer {
 		}
 	}
     
-    
+
+	/** add a handler to associate with the specified service and provider */
     public <ProtocolType> void addHandler( final String serviceName, final Class<ProtocolType> protocol, final ProtocolType provider ) {
         final RemoteRequestHandler<ProtocolType> handler = new RemoteRequestHandler<ProtocolType>( serviceName, protocol, provider );
         REMOTE_REQUEST_HANDLERS.put( serviceName, handler );
     }
-    
-    
-    public void removeHandler( final String serviceName ) {
-    }
-    
+
     
     /** process remote socket events */
     @SuppressWarnings( "unchecked" )    // need to cast generic request object to Map
