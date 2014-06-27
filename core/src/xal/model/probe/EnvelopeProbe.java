@@ -484,7 +484,11 @@ public class EnvelopeProbe extends BunchProbe<EnvelopeProbeState> {
      * @return      response matrix from elemFrom to elemTo
      * 
      * @see EnvelopeTrajectory#stateResponse(String, String)
+     * 
+     * @deprecated  This calculation should be done using the utility class
+     *              xal.tools.beam.calc.CalculationsOnMachines
      */
+    @Deprecated
     public PhaseMatrix stateResponse(String elemFrom, String elemTo) {
     	
         //return ((EnvelopeTrajectory) this.getTrajectory()).stateResponse(
@@ -494,7 +498,8 @@ public class EnvelopeProbe extends BunchProbe<EnvelopeProbeState> {
     	// to generic Trajectory.  The function used to just be a wrapper as shown above.
     	// - JMF
     	
-    	Trajectory<EnvelopeProbeState> trajectory = new Trajectory<EnvelopeProbeState>();
+//    	Trajectory<EnvelopeProbeState> trajectory = new Trajectory<EnvelopeProbeState>();
+    	Trajectory<EnvelopeProbeState> trajectory = this.getTrajectory();
     	
 		// find starting index
 		int[] arrIndFrom = trajectory.indicesForElement(elemFrom);

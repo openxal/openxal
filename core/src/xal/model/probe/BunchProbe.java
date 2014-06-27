@@ -13,7 +13,6 @@ package xal.model.probe;
 
 import xal.tools.annotation.AProperty.Units;
 import xal.model.probe.traj.BunchProbeState;
-import xal.model.probe.traj.ProbeState;
 
 
 
@@ -130,18 +129,6 @@ public abstract class BunchProbe<S extends BunchProbeState<S>> extends Probe<S> 
     	//dblCurrent = I; 
     };
     
-
-//    /**
-//     * Set the betatron phase with space charge for each phase plane.
-//     * 
-//     * @param vecPhase
-//     *            vector (psix,psiy,psiz) of betatron phases in <b>radians </b>
-//     */
-//    public void setBetatronPhase(R3 vecPhase) {
-//        this.vecPhsBeta = vecPhase;
-//        //this.m_vecPhsBeta = new R3(vecPhase);
-//        // TODO - optimize the redundant copy
-//    }
 
 //    /**
 //     *  Set the total beam charge 
@@ -282,16 +269,10 @@ public abstract class BunchProbe<S extends BunchProbeState<S>> extends Probe<S> 
      */
     @Override
     public void applyState(S state) {
-        if (!(state instanceof BunchProbeState))
-            throw new IllegalArgumentException("invalid probe state");
-        BunchProbeState  stateBunch = (BunchProbeState)state;
         
-        super.applyState(stateBunch);
-        this.setBunchFrequency( stateBunch.getBunchFrequency() );
-        this.setBeamCurrent( stateBunch.getBeamCurrent() );
-//        this.setBetatronPhase(stateBunch.getBunchBetatronPhase());
-        
-//  setElapsedTime(((BunchProbeState)state).getElapsedTime());
+        super.applyState(state);
+        this.setBunchFrequency( state.getBunchFrequency() );
+        this.setBeamCurrent( state.getBeamCurrent() );
     }
 
     
