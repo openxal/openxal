@@ -238,10 +238,11 @@ class WebSocketIO {
 
 				case 127:
 					// payload length defined by next 8 bytes
+					// TODO: Need to handle true 8 byte lengths. Java only accepts 4 byte lengths (i.e. int) for arrays, so the following code really only supports processing 4 byte lengths even though it reads the 8 byte length.
 					try {
 						final byte[] lenBytes = byteReader.nextBytes( 8 );
 						final ByteBuffer lenByteBuffer = ByteBuffer.wrap( lenBytes );
-						dataLength = (int)lenByteBuffer.getLong();
+						dataLength = (int)lenByteBuffer.getLong();	// cast the long to int since arrays only allow 32 bit lengths
 					}
 					catch( RuntimeException exception ) {
 						System.err.println( "Exception getting long message length: " + exception );
