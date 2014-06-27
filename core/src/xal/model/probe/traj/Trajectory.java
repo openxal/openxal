@@ -72,7 +72,7 @@ public class Trajectory<S extends ProbeState<S>> implements IArchive, Iterable<S
      * @author Christopher K. Allen
      * @since  Jun 5, 2013
      */
-    private static class ElementStateMap<S extends ProbeState>  {
+    private static class ElementStateMap<S extends ProbeState<S>>  {
         
         /*
          * Local Attributes
@@ -707,7 +707,7 @@ public class Trajectory<S extends ProbeState<S>> implements IArchive, Iterable<S
     private void addStatesTo(DataAdaptor container) {
         Iterator<S> it = stateIterator();
         while (it.hasNext()) {
-            ProbeState ps = it.next();
+            S ps = it.next();
             ps.save(container);
         }
     }

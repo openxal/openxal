@@ -20,17 +20,23 @@ import xal.model.probe.traj.ProbeState;
 import xal.model.probe.traj.Trajectory;
 import xal.model.xml.ParsingException;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.util.Date;
 
 
 /**
+ * <p>
  *  Provides a base class implementation of the IProbe interface that is useful for
  *  most standard probe types.  This class provides most of the functionality necessary
  *  for the implementation of the IProbe interface, <bold>except</bold> a definition
  *  and implementation of a probe "state".  Thus, it is up to base classes to provide
  *  and implement the particular aspect of a beam the probe represents.
+ *  </p>
+ *  
+ *  TODO The initial state has no access
  *
  *  
  *
@@ -134,7 +140,8 @@ public abstract class Probe<S extends ProbeState<S>> implements IProbe, IArchive
 
     
     /*
-     *  Derived Parameters
+     *  Derived Parameters - These are state parameters 
+     *      (depend upon other state parameters)
      */
     
     /** Collective speed w.r.t. the speed of light */
@@ -194,20 +201,47 @@ public abstract class Probe<S extends ProbeState<S>> implements IProbe, IArchive
      */
     public static Probe<?> newProbeInitializedFrom( final Probe<?> probeInit ) {
         Class<?> pClass = probeInit.getClass();
-        Probe<?> pNew;
+        
         try {
-            pNew = (Probe<?>) pClass.newInstance();
+//            pNew = (Probe<?>) pClass.newInstance();
+            Constructor<?>   ctorCopy = pClass.getConstructor(pClass);
+            Probe<?>         pNew     = (Probe<?>) ctorCopy.newInstance(probeInit);
+            
+            return pNew;
+            
         } catch (InstantiationException e) {
+            System.err.println("Unable to intialize from " + probeInit.toString());
             e.printStackTrace();
             return null;
+            
         } catch (IllegalAccessException e) {
+            System.err.println("Unable to intialize from " + probeInit.toString());
             e.printStackTrace();
             return null;
+            
+        } catch (NoSuchMethodException e) {
+            System.err.println("Unable to intialize from " + probeInit.toString());
+            e.printStackTrace();
+            return null;
+
+        } catch (SecurityException e) {
+            System.err.println("Unable to intialize from " + probeInit.toString());
+            e.printStackTrace();
+            return null;
+
+        } catch (IllegalArgumentException e) {
+            System.err.println("Unable to intialize from " + probeInit.toString());
+            e.printStackTrace();
+            return null;
+
+        } catch (InvocationTargetException e) {
+            System.err.println("Unable to intialize from " + probeInit.toString());
+            e.printStackTrace();
+            return null;
+            
         }
 		
-		pNew.initializeFrom( probeInit );
-		
-        return pNew;
+//		pNew.initializeFrom( probeInit );
     }
 	
 	
@@ -326,9 +360,14 @@ public abstract class Probe<S extends ProbeState<S>> implements IProbe, IArchive
      *  Creates a new instance of Probe.
      *  Since Probe is an abstract base only derived classes may call constructor.
      *
-     *  @param  ifcAlg      default dynamics algorithm for probe
      */
     protected Probe() {
+        this.stateInit    = this.createProbeState();
+        this.stateCurrent = this.createProbeState();
+        
+        this.trajHist = this.createTrajectory();
+        
+        this.algTracker = null;
     }
     
     /** 
@@ -338,6 +377,8 @@ public abstract class Probe<S extends ProbeState<S>> implements IProbe, IArchive
      *  @param  ifcAlg      default dynamics algorithm for probe
      */
     protected Probe(IAlgorithm ifcAlg) {
+        this();
+        
         this.algTracker = ifcAlg;
     }
     
@@ -348,6 +389,7 @@ public abstract class Probe<S extends ProbeState<S>> implements IProbe, IArchive
      *  @param  probe   Probe object to be cloned 
      */
     public Probe(Probe<S> probe)   {
+        this();
         this.deepCopyProbeBase(probe);
     }
     
@@ -360,7 +402,7 @@ public abstract class Probe<S extends ProbeState<S>> implements IProbe, IArchive
      * @param probe the probe from which to initialize this one
      */
     protected void initializeFrom( final Probe<S> probe ) {
-        final S initialState = probe.getTrajectory().initialState();
+        final S initialState = (S)probe.getTrajectory().initialState();
         if ( initialState != null ) {
             applyState( initialState );         
         }
@@ -616,7 +658,7 @@ public abstract class Probe<S extends ProbeState<S>> implements IProbe, IArchive
      */
     public void initialize() {
     	this.stateInit = this.createProbeState();
-    	this.stateCurrent = this.stateInit;
+    	this.stateCurrent = this.createProbeState();
     	
         this.trajHist = this.createTrajectory();
 //        this.getAlgorithm().initialize();  // CKA - I think these should be uncommented
@@ -628,8 +670,7 @@ public abstract class Probe<S extends ProbeState<S>> implements IProbe, IArchive
      */
     public void reset() {
     	if (stateInit != null) { 
-    		this.applyState(stateInit);
-    		this.stateCurrent = stateCurrent.copy();
+    		this.stateCurrent = stateInit.copy();
     	}
     	this.trajHist = this.createTrajectory();
 //        this.getAlgorithm().initialize(); // CKA - I think these should be uncommented
