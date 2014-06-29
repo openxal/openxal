@@ -6,7 +6,7 @@
         <options emitgrowth="false" scheff="true" stepsize="0.1" useSpacecharge="true"/>
     </algorithm>
     <state id="" type="xal.model.probe.traj.EnvelopeProbeState">
-        <species Er="9.3829431E8" q="-1.0"/>
+        <species Er="9.3827202900E8" q="1.0"/>
         <location W="3.10e6" elem="" s="0.0" t="0.0"/>
         <beam I="0.0" f="0.0"/>
         <envelope 

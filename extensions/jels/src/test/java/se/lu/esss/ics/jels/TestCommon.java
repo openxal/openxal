@@ -35,7 +35,7 @@ import xal.tools.beam.Twiss;
 import xal.tools.xml.XmlDataAdaptor;
 
 public abstract class TestCommon {
-	protected static double SpeciesCharge = -1;
+	protected static double SpeciesCharge = 1;
 	protected Probe probe;
 	protected ElementMapping elementMapping;
 	protected Scenario scenario;

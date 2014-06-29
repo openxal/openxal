@@ -299,7 +299,7 @@ public class DTLCellTest extends TestCommon {
 		quad1.setPosition(0.5*Lq1); //always position on center!
 		quad1.setLength(Lq1); // effLength below is actually the only one read 
 		quad1.getMagBucket().setEffLength(Lq1);
-		quad1.setDfltField(B1 * Math.signum(probe.getSpeciesCharge()));
+		quad1.setDfltField(B1);
 		quad1.getMagBucket().setPolarity(1);
 		
 		Quadrupole quad2 = new Quadrupole("quad2") { // there's no setter for type (you need to extend class)
@@ -308,7 +308,7 @@ public class DTLCellTest extends TestCommon {
 		quad2.setPosition(L-0.5*Lq2); //always position on center!
 		quad2.setLength(Lq2); // effLength below is actually the only one read 
 		quad2.getMagBucket().setEffLength(Lq2);
-		quad2.setDfltField(B2 * Math.signum(probe.getSpeciesCharge()));
+		quad2.setDfltField(B2);
 		quad2.getMagBucket().setPolarity(1);
 		
 		

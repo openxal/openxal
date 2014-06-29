@@ -201,7 +201,7 @@ public class QuadTest extends SingleElementTest {
 		quad.setPosition(L*1e-3*0.5); //always position on center!
 		quad.setLength(L*1e-3); // effLength below is actually the only one read 
 		quad.getMagBucket().setEffLength(L*1e-3);
-		quad.setDfltField(G*Math.signum(SpeciesCharge));
+		quad.setDfltField(G);
 		quad.getMagBucket().setPolarity(1);
 		quad.getAper().setAperX(R*1e-3);
 		quad.getAper().setAperY(R*1e-3);

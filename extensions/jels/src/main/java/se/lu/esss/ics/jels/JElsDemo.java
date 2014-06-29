@@ -188,8 +188,8 @@ public class JElsDemo {
 
 
 	public static void setupInitialParameters(EnvelopeProbe probe) {
-		probe.setSpeciesCharge(-1);
-		probe.setSpeciesRestEnergy(9.3829431e8);
+		probe.setSpeciesCharge(1);
+		probe.setSpeciesRestEnergy(9.3827202900E8);
 		//elsProbe.setSpeciesRestEnergy(9.38272013e8);	
 		probe.setKineticEnergy(3e6);//energy
 		probe.setPosition(0.0);

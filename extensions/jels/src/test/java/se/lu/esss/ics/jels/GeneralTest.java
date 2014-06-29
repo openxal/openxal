@@ -119,7 +119,7 @@ public class GeneralTest {
 			assertTrue(allCols[j].name()+" not within the allowed error", e < allCols[j].allowedError);
 			//System.out.printf("%E %E\n",dataOX[allCols[j].openxal][0], dataTW[allCols[j].tracewin][0]);
 		}
-		//saveResults("openxal."+i+".txt", dataOX);
+		//saveResults(tracewinData.getFile() + ".out", dataOX);
 		dataTW = null;
 		dataOX = null;
 		System.gc();
@@ -173,6 +173,7 @@ public class GeneralTest {
 	 */
 	protected static Probe loadProbeFromXML(String file) {
 		try {			
+			
 			Probe probe = ProbeXmlParser.parse(file);
 			return probe;
 		} catch (ParsingException e1) {

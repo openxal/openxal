@@ -6,12 +6,12 @@
         <options emitgrowth="false" scheff="false" stepsize="0.1"/>
     </algorithm>
     <state id="" type="xal.model.probe.traj.EnvelopeProbeState">
-        <species Er="9.3829431E8" q="-1.0"/>
+        <species Er="9.3827202900E8" q="1.0"/>
         <location W="3.00e6" elem="" s="0.0" t="0.0"/>
         <beam I="0.0" f="0.0"/>
         <envelope 
 			alphaX="-0.1763" betaX="0.3" emitX="2.621516138971707E-6"
 			alphaY="-0.3247" betaY="0.4" emitY="2.612769421634814E-6"
-			alphaZ="-0.5283" betaZ="0.8" emitZ="3.562413018211791E-6"/>
+			alphaZ="-0.5283" betaZ="0.9" emitZ="3.562413018211791E-6"/>
     </state>
 </probe>
