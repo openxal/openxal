@@ -212,7 +212,7 @@ public class ParticleProbe extends Probe<ParticleProbeState> {
      */
     @Override
     public ParticleProbeState createProbeState() {
-        return new ParticleProbeState(this);
+	        return new ParticleProbeState(this);
     }
     
     

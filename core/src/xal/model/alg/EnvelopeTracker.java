@@ -297,7 +297,8 @@ public class EnvelopeTracker extends EnvelopeTrackerBase {
 
 
             // Store the current probe state (for rollback)
-            ProbeState  state0 = probe.createProbeState();
+            EnvelopeProbeState state0 = probe.cloneCurrentProbeState();
+        	//ProbeState  state0 = probe.createProbeState();
 
 
             // Get half-step transfer matrix at current probe location

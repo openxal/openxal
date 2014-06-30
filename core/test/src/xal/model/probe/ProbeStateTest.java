@@ -73,7 +73,7 @@ public class ProbeStateTest extends TestCase {
 		DiagnosticProbe probe = new DiagnosticProbe();
 		probe.setPosition(INITIAL_POSITION);
 		probe.incrementElementsVisited();
-		ProbeState state = probe.createProbeState();
+		DiagnosticProbeState state = probe.createProbeState();
 		
 		//compare the snapshot to the probe
 		assertTrue(state instanceof DiagnosticProbeState);
@@ -102,7 +102,7 @@ public class ProbeStateTest extends TestCase {
 		ParticleProbe probe = new ParticleProbe();
 		probe.setPosition(INITIAL_POSITION);
 		probe.setPhaseCoordinates(PhaseVector.newZero());
-		ProbeState state = probe.createProbeState();
+		ParticleProbeState state = probe.createProbeState();
 		
 		//compare the snapshot to the probe
 		assertTrue(state instanceof ParticleProbeState);
@@ -134,7 +134,7 @@ public class ProbeStateTest extends TestCase {
         probe.setBunchFrequency(FREQUENCY);
 		probe.setBeamCurrent(CURRENT);
 		probe.setCovariance((CovarianceMatrix)PhaseMatrix.zero());     // causes class cast exception
-		ProbeState state = probe.createProbeState();
+		EnvelopeProbeState state = probe.createProbeState();
 		
 		//compare the snapshot to the probe
 		assertTrue(state instanceof EnvelopeProbeState);
@@ -176,7 +176,7 @@ public class ProbeStateTest extends TestCase {
 		probe.setBeamCurrent(CURRENT);
 		probe.setEnsemble(new Ensemble());
 		probe.setFieldCalculation(EnsembleProbe.FLDCALC_NONE);
-		ProbeState state = probe.createProbeState();
+		EnsembleProbeState state = probe.createProbeState();
 		
 		//compare the snapshot to the probe
 		assertTrue(state instanceof EnsembleProbeState);
