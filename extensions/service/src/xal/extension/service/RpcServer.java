@@ -25,9 +25,6 @@ import java.util.logging.*;
  */
 //public class RpcServer extends WebServer {
 public class RpcServer {
-	/** terminator for remote messages */
-	final static char REMOTE_MESSAGE_TERMINATOR = SocketMessageIO.REMOTE_MESSAGE_TERMINATOR;
-
     /** delimeter for encoding remote messages */
     final static private String REMOTE_MESSAGE_DELIMITER = "#";
     
@@ -51,6 +48,8 @@ public class RpcServer {
         REMOTE_REQUEST_HANDLERS = new Hashtable<String,RemoteRequestHandler<?>>();
         SERVER_SOCKET = new ServerSocket( 0 );
         REMOTE_SOCKETS = new HashSet<Socket>();
+
+//		System.out.println( "Listening on: " + getHost() + ":" + getPort() );
     }
     
     
@@ -73,8 +72,8 @@ public class RpcServer {
         }
         catch(UnknownHostException exception) {
 			final String message = "Error getting the host name of the RPC Server.";
-			Logger.getLogger("global").log( Level.SEVERE, message, exception );
-            System.err.println(exception);
+			Logger.getLogger( "global" ).log( Level.SEVERE, message, exception );
+            System.err.println( exception );
             return null;
         }
     }
@@ -138,43 +137,56 @@ public class RpcServer {
 		}
 	}
     
-    
+
+	/** add a handler to associate with the specified service and provider */
     public <ProtocolType> void addHandler( final String serviceName, final Class<ProtocolType> protocol, final ProtocolType provider ) {
         final RemoteRequestHandler<ProtocolType> handler = new RemoteRequestHandler<ProtocolType>( serviceName, protocol, provider );
         REMOTE_REQUEST_HANDLERS.put( serviceName, handler );
     }
-    
-    
-    public void removeHandler( final String serviceName ) {
+
+
+	/** remove the registered handler */
+	public void removeHandler( final String serviceName ) {
+		REMOTE_REQUEST_HANDLERS.remove( serviceName );
     }
-    
-    
+
+
     /** process remote socket events */
     @SuppressWarnings( "unchecked" )    // need to cast generic request object to Map
     private void processRemoteEvents( final Socket remoteSocket ) {
         new Thread( new Runnable() {
             public void run() {
+				if ( !remoteSocket.isClosed() ) {
+					// process the initial handshake
+					try {
+						WebSocketIO.processRequestHandshake( remoteSocket );
+					}
+					catch ( Exception exception ) {
+						throw new RuntimeException( "Exception handling handshake", exception );
+					}
+				}
+
+				// process the messages as they arrive
                 while( !remoteSocket.isClosed() ) {
                     try {
 						String jsonRequest = null;
 						try {
-							jsonRequest = SocketMessageIO.readMessage( remoteSocket );
+							jsonRequest = WebSocketIO.readMessage( remoteSocket );
 						}
-						catch( SocketMessageIO.SocketPrematurelyClosedException exception ) {
+						catch( Exception exception ) {
 							throw new RemoteClientDroppedException( "Session has been closed during read..." );
 						}
 						
                         final Object requestObject = MESSAGE_CODER.decode( jsonRequest );
                         if ( requestObject instanceof Map ) {
-							final Writer output = new OutputStreamWriter( remoteSocket.getOutputStream() );
                             final Map<String,Object> request = (Map<String,Object>)requestObject;
                             final String message = (String)request.get( "message" );
                             final String[] messageParts = decodeRemoteMessage( message );
                             final String serviceName = messageParts[0];
                             final String methodName = messageParts[1];
                             final Number requestID = (Number)request.get( "id" );
-                            final List<Object> params = (List<Object>)request.get( "params" );
-                            
+							final Object[] params = (Object[])request.get( "params" );
+
                             final RemoteRequestHandler<?> handler = REMOTE_REQUEST_HANDLERS.get( serviceName );
                             final EvaluationResult result = handler.evaluateRequest( methodName, params );
                             
@@ -188,9 +200,7 @@ public class RpcServer {
                                 response.put( "error", result.getRuntimeExceptionWrapper() );
                                 
                                 final String jsonResponse = MESSAGE_CODER.encode( response );
-                                output.write( jsonResponse );
-								output.write( REMOTE_MESSAGE_TERMINATOR );
-                                output.flush();
+								WebSocketIO.sendMessage( remoteSocket, jsonResponse );
                             }
                         }
                     }
@@ -278,12 +288,10 @@ class RemoteRequestHandler<ProtocolType> {
     
     
     /** Evaluate the request */
-    public EvaluationResult evaluateRequest( final String methodName, final List<Object> params ) {
-        final Object[] methodParams = new Object[ params.size() ];
+    public EvaluationResult evaluateRequest( final String methodName, final Object[] methodParams ) {
         final Class<?>[] methodParamTypes = new Class<?>[ methodParams.length ];
         for ( int index = 0 ; index < methodParams.length ; index++ ) {
-            final Object param = params.get( index );
-            methodParams[index] = param;
+            final Object param = methodParams[index];
             methodParamTypes[index] = param != null ? param.getClass() : null;
         }
                 
