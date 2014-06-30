@@ -716,6 +716,8 @@
 						SCLCavity class is used to represent an SCL RF cavity.
 					</xs:documentation>
 				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="EMS">
 			</xs:enumeration>		
 		</xs:restriction>
 	</xs:simpleType>
@@ -1188,17 +1190,17 @@
 						</xs:documentation>
 					</xs:annotation>
 					<xs:complexType>
-						<xs:attribute name="len" type="xs:double" use="required">
+						<xs:attribute name="len" type="xs:double">
 							<xs:annotation>
 								<xs:documentation>the effective magnetic length [m]</xs:documentation>
 							</xs:annotation>
 						</xs:attribute>
-						<xs:attribute name="dfltMagFld" type="xs:double" use="required">
+						<xs:attribute name="dfltMagFld" type="xs:double">
 							<xs:annotation>
 								<xs:documentation>dfltMagField is the default field value (T for dipole, T/m for quad, etc.)</xs:documentation>
 							</xs:annotation>
 						</xs:attribute>
-						<xs:attribute name="polarity" use="required">
+						<xs:attribute name="polarity">
 							<xs:annotation>
 								<xs:documentation>
 									polarity - is the polarity flag/default polarity value.
@@ -1374,7 +1376,7 @@
 								<xs:documentation>the default phase (deg)</xs:documentation>
 							</xs:annotation>
 						</xs:attribute>
-						<xs:attribute name="freq" type="xs:double" use="required">
+						<xs:attribute name="freq" type="xs:double">
 							<xs:annotation>
 								<xs:documentation>the frequency (MHz)</xs:documentation>
 							</xs:annotation>
@@ -1446,7 +1448,7 @@
 								</xs:documentation>
 							</xs:annotation>
 						</xs:attribute>
-						<xs:attribute name="structureMode" use="required">
+						<xs:attribute name="structureMode">
 							<xs:annotation>
 								<xs:documentation>flag for the structure type (0 or pi mode)</xs:documentation>
 							</xs:annotation>
@@ -1617,17 +1619,18 @@
 	</xs:element>
 	<xs:element name="channelsuite">
 		<xs:complexType>
-			<xs:sequence>
-				<xs:element name="channel" minOccurs="0" maxOccurs="unbounded">
+			<xs:choice maxOccurs="unbounded">
+				<xs:element name="channel" minOccurs="0">
 					<xs:complexType>
 						<xs:attribute name="handle" type="xs:string" use="required" /> <!--  TODO: this enumeration may be restricted -->
 						<xs:attribute name="signal" type="xs:string" />
 						<xs:attribute name="settable" type="xs:boolean" />
 						<xs:attribute name="valid" type="xs:boolean" />
 						<xs:attribute name="transform" type="xs:string" />
+						<xs:attribute name="mod-comment" type="xs:string" />
 					</xs:complexType>
 				</xs:element>
-				<xs:element name="transform" minOccurs="0" maxOccurs="unbounded">
+				<xs:element name="transform" minOccurs="0">
 					<xs:complexType>
 						<xs:attribute name="name" type="xs:string" use="required" />
 						<xs:attribute name="type" use="required">
@@ -1646,7 +1649,7 @@
 						<xs:attribute name="offset" type="xs:double" />
 					</xs:complexType>
 				</xs:element>
-			</xs:sequence>
+			</xs:choice>
 			<xs:attribute name="name" type="xs:string">
 				<xs:annotation>
 					<xs:documentation>not used </xs:documentation>
