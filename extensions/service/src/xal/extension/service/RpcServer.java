@@ -144,7 +144,13 @@ public class RpcServer {
         REMOTE_REQUEST_HANDLERS.put( serviceName, handler );
     }
 
-    
+
+	/** remove the registered handler */
+	public void removeHandler( final String serviceName ) {
+		REMOTE_REQUEST_HANDLERS.remove( serviceName );
+    }
+
+
     /** process remote socket events */
     @SuppressWarnings( "unchecked" )    // need to cast generic request object to Map
     private void processRemoteEvents( final Socket remoteSocket ) {
