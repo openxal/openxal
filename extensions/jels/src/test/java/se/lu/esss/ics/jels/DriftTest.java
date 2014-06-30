@@ -1,73 +1,121 @@
 package se.lu.esss.ics.jels;
-import org.junit.Test;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameters;
 
-import xal.model.ModelException;
-import xal.model.probe.Probe;
-import xal.sim.scenario.ElementMapping;
+import se.lu.esss.ics.jels.model.elem.jels.JElsElementMapping;
 import xal.smf.AcceleratorSeq;
 
 @RunWith(Parameterized.class)
-public class DriftTest extends TestCommon {
+public class DriftTest extends SingleElementTest {
 	
-	public DriftTest(Probe probe, ElementMapping elementMapping)
-	{
-		super(probe, elementMapping);
+	
+	public DriftTest(SingleElementTestData data) {
+		super(data);
 	}
+
 	
-	@Test
-	public void doDriftTest() throws InstantiationException, ModelException {
-				
-		// DRIFT 95 15 0
-		AcceleratorSeq sequence = drift(95e-3, 0., 0.);	
-			
-		run(sequence);
+	@Parameters
+	public static Collection<Object[]> tests() {
+		final double frequency = 4.025e8, current = 0;
 		
-		//printResults();
-		if (initialEnergy == 3e6) {
-			checkELSResults(9.500000E-02, new double[]{9.098807E-04, 1.124765E-03, 1.864477E-03},
-					new double[] {3.158031E-01, 4.841974E-01, 9.758203E-01});
+		List<Object []> tests = new ArrayList<>();
+		
+		// basic test, E=3MeV		
+		tests.add(new Object[] {new SingleElementTestData() {{
+			probe = setupOpenXALProbe( 3e6, frequency, current); 
+			elementMapping = JElsElementMapping.getInstance();
+			sequence = drift(95e-3, 0., 0.);
 			
-			
-			checkTWTransferMatrix(new double[][]{
+			// TW transfer matrix
+			TWTransferMatrix = new double[][]{
 					{+1.000000e+00, +9.500000e-02, +0.000000e+00, +0.000000e+00, +0.000000e+00, +0.000000e+00}, 
 					{+0.000000e+00, +1.000000e+00, +0.000000e+00, +0.000000e+00, +0.000000e+00, +0.000000e+00}, 
 					{+0.000000e+00, +0.000000e+00, +1.000000e+00, +9.500000e-02, +0.000000e+00, +0.000000e+00}, 
 					{+0.000000e+00, +0.000000e+00, +0.000000e+00, +1.000000e+00, +0.000000e+00, +0.000000e+00}, 
 					{+0.000000e+00, +0.000000e+00, +0.000000e+00, +0.000000e+00, +1.000000e+00, +9.439542e-02}, 
 					{+0.000000e+00, +0.000000e+00, +0.000000e+00, +0.000000e+00, +0.000000e+00, +1.000000e+00}, 		
-			});
+			};
 			
-			checkTWResults(1.003197291, new double[][] {
+			// TW correlation matrix
+			TWGamma = 1.003197291; 
+			TWCorrelationMatrix = new double[][] {
 					{+8.278830e-13, +1.513708e-12, +0.000000e+00, +0.000000e+00, +0.000000e+00, +0.000000e+00},
 					{+1.513708e-12, +1.106878e-11, +0.000000e+00, +0.000000e+00, +0.000000e+00, +0.000000e+00}, 
 					{+0.000000e+00, +0.000000e+00, +1.265096e-12, +1.538810e-12, +0.000000e+00, +0.000000e+00}, 
 					{+0.000000e+00, +0.000000e+00, +1.538810e-12, +7.267826e-12, +0.000000e+00, +0.000000e+00}, 
 					{+0.000000e+00, +0.000000e+00, +0.000000e+00, +0.000000e+00, +3.476275e-12, +2.380509e-12}, 
 					{+0.000000e+00, +0.000000e+00, +0.000000e+00, +0.000000e+00, +2.380509e-12, +5.280827e-12}
-			});
-		}
-		if (initialEnergy == 2.5e9) {
-			checkTWTransferMatrix(new double[][]{
-					{+1.000000e+00, +9.500000e-02, +0.000000e+00, +0.000000e+00, +0.000000e+00, +0.000000e+00}, 
-					{+0.000000e+00, +1.000000e+00, +0.000000e+00, +0.000000e+00, +0.000000e+00, +0.000000e+00}, 
-					{+0.000000e+00, +0.000000e+00, +1.000000e+00, +9.500000e-02, +0.000000e+00, +0.000000e+00}, 
-					{+0.000000e+00, +0.000000e+00, +0.000000e+00, +1.000000e+00, +0.000000e+00, +0.000000e+00}, 
-					{+0.000000e+00, +0.000000e+00, +0.000000e+00, +0.000000e+00, +1.000000e+00, +7.074825e-03}, 
-					{+0.000000e+00, +0.000000e+00, +0.000000e+00, +0.000000e+00, +0.000000e+00, +1.000000e+00}, 
-	
-			});
+			};
 			
-			checkTWResults(3.664409209, new double[][] {
-					{+1.879417e-14, +3.436341e-14, +0.000000e+00, +0.000000e+00, +0.000000e+00, +0.000000e+00}, 
-					{+3.436341e-14, +2.512778e-13, +0.000000e+00, +0.000000e+00, +0.000000e+00, +0.000000e+00}, 
-					{+0.000000e+00, +0.000000e+00, +2.871956e-14, +3.493326e-14, +0.000000e+00, +0.000000e+00}, 
-					{+0.000000e+00, +0.000000e+00, +3.493326e-14, +1.649904e-13, +0.000000e+00, +0.000000e+00}, 
-					{+0.000000e+00, +0.000000e+00, +0.000000e+00, +0.000000e+00, +5.914705e-15, +5.404107e-14}, 
-					{+0.000000e+00, +0.000000e+00, +0.000000e+00, +0.000000e+00, +5.404107e-14, +1.599526e-12}, 
-			});
-		}
+			// ELS results
+			elsPosition = 9.500000E-02;
+			elsSigma = new double[]{9.098807E-04, 1.124765E-03, 1.864477E-03};
+			elsBeta = new double[] {3.158031E-01, 4.841974E-01, 9.758203E-01};			
+		}}});
+		
+		// high energy test, E=2.5GeV		
+		tests.add(new Object[] {new SingleElementTestData() {{
+				probe = setupOpenXALProbe( 2.5e9, frequency, current); 
+				elementMapping = JElsElementMapping.getInstance();
+				sequence = drift(95e-3, 0., 0.);
+				
+				// TW transfer matrix
+				TWTransferMatrix = new double[][]{
+						{+1.000000e+00, +9.500000e-02, +0.000000e+00, +0.000000e+00, +0.000000e+00, +0.000000e+00}, 
+						{+0.000000e+00, +1.000000e+00, +0.000000e+00, +0.000000e+00, +0.000000e+00, +0.000000e+00}, 
+						{+0.000000e+00, +0.000000e+00, +1.000000e+00, +9.500000e-02, +0.000000e+00, +0.000000e+00}, 
+						{+0.000000e+00, +0.000000e+00, +0.000000e+00, +1.000000e+00, +0.000000e+00, +0.000000e+00}, 
+						{+0.000000e+00, +0.000000e+00, +0.000000e+00, +0.000000e+00, +1.000000e+00, +7.074825e-03}, 
+						{+0.000000e+00, +0.000000e+00, +0.000000e+00, +0.000000e+00, +0.000000e+00, +1.000000e+00}, 
+				};
+				
+				// TW correlation matrix
+				TWGamma = 3.664409209; 
+				TWCorrelationMatrix = new double[][] {
+						{+1.879417e-14, +3.436341e-14, +0.000000e+00, +0.000000e+00, +0.000000e+00, +0.000000e+00}, 
+						{+3.436341e-14, +2.512778e-13, +0.000000e+00, +0.000000e+00, +0.000000e+00, +0.000000e+00}, 
+						{+0.000000e+00, +0.000000e+00, +2.871956e-14, +3.493326e-14, +0.000000e+00, +0.000000e+00}, 
+						{+0.000000e+00, +0.000000e+00, +3.493326e-14, +1.649904e-13, +0.000000e+00, +0.000000e+00}, 
+						{+0.000000e+00, +0.000000e+00, +0.000000e+00, +0.000000e+00, +5.914705e-15, +5.404107e-14}, 
+						{+0.000000e+00, +0.000000e+00, +0.000000e+00, +0.000000e+00, +5.404107e-14, +1.599526e-12},
+				};
+				
+			}}});
+
+		// space charge test, I=30mA		
+		tests.add(new Object[] {new SingleElementTestData() {{
+				probe = setupOpenXALProbe2( 3e6, frequency, 30e-3); 
+				elementMapping = JElsElementMapping.getInstance();
+				sequence = drift(95e-3, 0., 0.);
+				
+				// TW transfer matrix
+				TWTransferMatrix = new double[][]{
+						{+1.000000e+00, +9.500000e-02, +0.000000e+00, +0.000000e+00, +0.000000e+00, +0.000000e+00}, 
+						{+0.000000e+00, +1.000000e+00, +0.000000e+00, +0.000000e+00, +0.000000e+00, +0.000000e+00}, 
+						{+0.000000e+00, +0.000000e+00, +1.000000e+00, +9.500000e-02, +0.000000e+00, +0.000000e+00}, 
+						{+0.000000e+00, +0.000000e+00, +0.000000e+00, +1.000000e+00, +0.000000e+00, +0.000000e+00}, 
+						{+0.000000e+00, +0.000000e+00, +0.000000e+00, +0.000000e+00, +1.000000e+00, +9.439542e-02}, 
+						{+0.000000e+00, +0.000000e+00, +0.000000e+00, +0.000000e+00, +0.000000e+00, +1.000000e+00}, 		
+					};
+				
+				// TW correlation matrix
+				TWGamma = 1.003197291;
+				TWCorrelationMatrix = new double [][] {
+						{+8.870559e-07, +2.185591e-06, +0.000000e+00, +0.000000e+00, +0.000000e+00, +0.000000e+00}, 
+						{+2.185591e-06, +1.313238e-05, +0.000000e+00, +0.000000e+00, +0.000000e+00, +0.000000e+00}, 
+						{+0.000000e+00, +0.000000e+00, +1.336515e-06, +2.336272e-06, +0.000000e+00, +0.000000e+00}, 
+						{+0.000000e+00, +0.000000e+00, +2.336272e-06, +9.191618e-06, +0.000000e+00, +0.000000e+00}, 
+						{+0.000000e+00, +0.000000e+00, +0.000000e+00, +0.000000e+00, +3.578086e-06, +3.498884e-06}, 
+						{+0.000000e+00, +0.000000e+00, +0.000000e+00, +0.000000e+00, +3.498884e-06, +6.968244e-06}};
+
+			}}});
+		
+		return tests;
 	}
 	
 	/**
@@ -77,7 +125,7 @@ public class DriftTest extends TestCommon {
 	 * @param Ry aperture y
 	 * @return sequence with drift
 	 */
-	public AcceleratorSeq drift(double L, double R, double Ry)
+	public static AcceleratorSeq drift(double L, double R, double Ry)
 	{
 		AcceleratorSeq sequence = new AcceleratorSeq("DriftTest");
 		sequence.setLength(L);

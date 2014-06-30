@@ -74,7 +74,7 @@ public class JElsDemo {
 		scenario.resync();  // all rfgaps are updated*/		
 		
 		// Outputting lattice elements
-		//saveLattice(scenario.getLattice(), "lattice.xml");
+		saveLattice(scenario.getLattice(), "lattice.xml");
 						
 		// Running simulation
 		scenario.setStartElementId("BEGIN_mebt");

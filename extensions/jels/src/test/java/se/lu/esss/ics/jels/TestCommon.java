@@ -2,6 +2,7 @@ package se.lu.esss.ics.jels;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
@@ -67,12 +68,19 @@ public abstract class TestCommon {
 				  	{-0.3247,0.3974,0.2091e-6},
 				  	{-0.5283,0.8684,0.2851e-6}});
 	}
+
+	public static EnvelopeProbe setupOpenXALProbe2(double energy, double frequency, double current) {
+		return setupOpenXALProbe(energy, frequency, current, 
+				new double[][]{{-0.1763,0.2442,0.2098},
+				  	{-0.3247,0.3974,0.2091},
+				  	{-0.5283,0.8684,0.2851}});
+	}
 	
 	public static EnvelopeProbe setupOpenXALProbe(double energy, double frequency, double current, double twiss[][]) {
 		// Envelope probe and tracker
 		EnvelopeTracker envelopeTracker = new EnvelopeTracker();			
 		envelopeTracker.setRfGapPhaseCalculation(true);
-		envelopeTracker.setUseSpacecharge(false);
+		envelopeTracker.setUseSpacecharge(true);
 		envelopeTracker.setEmittanceGrowth(false);
 		envelopeTracker.setStepSize(0.004);
 		envelopeTracker.setProbeUpdatePolicy(Tracker.UPDATE_EXIT);
@@ -426,12 +434,14 @@ public abstract class TestCommon {
 		PhaseMatrix centCovTw = new PhaseMatrix(centCovTw77);
 		PhaseVector meanTw = new PhaseVector(meanTw7);
 		
-		/*PrintWriter pw = new PrintWriter(System.out);
-		centCovOx.print(pw);
+		PrintWriter pw = new PrintWriter(System.out);
+		/*centCovOx.print(pw);
 		meanOx.print(pw);
 		meanOx.minus(meanTw).print(pw);
 		pw.flush();*/
-		
+		centCovOx.print(pw);
+		centCovTw.print(pw);
+		pw.flush();
 		double n = centCovOx.minus(centCovTw).norm2()/centCovTw.norm2();
 		double n2 = meanOx.minus(meanTw).norm2();
 		if (meanTw.norm2()>0.) n2/=meanTw.norm2(); 
