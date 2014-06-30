@@ -97,25 +97,25 @@ public abstract class Probe<S extends ProbeState<S>> implements IProbe, IArchive
         
 
         
-    /** Species charge */
-    private double  m_dblParQ = 0.0;
-    
-    /** Species rest energy */
-    private double  m_dblParEr = 0.0;
-    
-
-
-    /** Current lattice element probe is visiting */
-    private String  m_strElemId = "";
-    
-    /** Current probe position in beamline */
-    private double m_dblPos = 0.0;
-    
-    /** The time elapsed from the beginning of the tracking (sec) */
-    private double m_dblTime = 0.0;
-    
-    /** Probe's kinetic Energy */
-    private double  m_dblW = 0.0;
+//    /** Species charge */
+//    private double  m_dblParQ = 0.0;
+//    
+//    /** Species rest energy */
+//    private double  m_dblParEr = 0.0;
+//    
+//
+//
+//    /** Current lattice element probe is visiting */
+//    private String  m_strElemId = "";
+//    
+//    /** Current probe position in beamline */
+//    private double m_dblPos = 0.0;
+//    
+//    /** The time elapsed from the beginning of the tracking (sec) */
+//    private double m_dblTime = 0.0;
+//    
+//    /** Probe's kinetic Energy */
+//    private double  m_dblW = 0.0;
 
 
     
@@ -144,11 +144,11 @@ public abstract class Probe<S extends ProbeState<S>> implements IProbe, IArchive
      *      (depend upon other state parameters)
      */
     
-    /** Collective speed w.r.t. the speed of light */
-    private double m_dblBeta = 0.0;
-    
-    /** Collective relativistic factor */
-    private double m_dblGamma = 0.0;
+//    /** Collective speed w.r.t. the speed of light */
+//    private double m_dblBeta = 0.0;
+//    
+//    /** Collective relativistic factor */
+//    private double m_dblGamma = 0.0;
     
     
     
@@ -394,7 +394,7 @@ public abstract class Probe<S extends ProbeState<S>> implements IProbe, IArchive
      * @param probe the probe from which to initialize this one
      */
     protected void initializeFrom( final Probe<S> probe ) {
-        final S initialState = (S)probe.getTrajectory().initialState();
+        final S initialState = probe.getTrajectory().initialState();
         if ( initialState != null ) {
             applyState( initialState );         
         }
@@ -428,7 +428,10 @@ public abstract class Probe<S extends ProbeState<S>> implements IProbe, IArchive
      *  
      *  @param  q       species particle charge in units of positive electron charge
      */
-    public void setSpeciesCharge(double q) { m_dblParQ = q; };
+    public void setSpeciesCharge(double q) { 
+    	this.stateCurrent.setSpeciesCharge(q);
+    	//m_dblParQ = q; 
+    }
     
     
     /** 
@@ -436,7 +439,10 @@ public abstract class Probe<S extends ProbeState<S>> implements IProbe, IArchive
      *
      *  @param  Er      particle rest energy (<b>electron-volts</b>)
      */
-    public void setSpeciesRestEnergy(double Er) { m_dblParEr = Er; };
+    public void setSpeciesRestEnergy(double Er) { 
+    	this.stateCurrent.setSpeciesRestEnergy(Er);
+    	//m_dblParEr = Er; 
+    }
 
 
 
@@ -517,7 +523,10 @@ public abstract class Probe<S extends ProbeState<S>> implements IProbe, IArchive
      *  
      *  @return     particle species charge (<b>Coulombs</b>)
      */
-    public double getSpeciesCharge() { return m_dblParQ; }
+    public double getSpeciesCharge() { 
+    	return this.stateCurrent.getSpeciesCharge();
+    	//return m_dblParQ; 
+    }
     
     /** 
      *  Returns the rest energy of particle species 
@@ -525,14 +534,18 @@ public abstract class Probe<S extends ProbeState<S>> implements IProbe, IArchive
      *  @return     particle species rest energy (<b>electron-volts</b>)
      */
 	@Units( "eV" )
-    public double getSpeciesRestEnergy() { return m_dblParEr; }
+    public double getSpeciesRestEnergy() { 
+		return this.stateCurrent.getSpeciesRestEnergy();
+		//return m_dblParEr; 
+	}
     
     /** Returns the momentum
      * 
      * @return particle momentum
      */
     public double getMomentum() {
-    	return (getSpeciesRestEnergy()*getGamma()*getBeta());
+    	return this.stateCurrent.getMomentum();
+    	//return (getSpeciesRestEnergy()*getGamma()*getBeta());
     }
     
     /**
@@ -540,7 +553,10 @@ public abstract class Probe<S extends ProbeState<S>> implements IProbe, IArchive
      * 
      * @return id of current lattice element
      */
-    public String getCurrentElement() { return m_strElemId; };
+    public String getCurrentElement() { 
+    	return this.stateCurrent.getElementId();
+    	//return m_strElemId; 
+    }
     
     /** 
      *  Returns the current beam-line position of the probe 
@@ -548,7 +564,10 @@ public abstract class Probe<S extends ProbeState<S>> implements IProbe, IArchive
      *  @return     probe position (<b>meters</b>)
      */
 	@Units( "meters" )
-    public double getPosition() { return m_dblPos; };
+    public double getPosition() { 
+		return this.stateCurrent.getPosition();
+		//return m_dblPos; 
+	}
     
     /**
      * Return the time elapsed since the probe began propagation.
@@ -557,7 +576,8 @@ public abstract class Probe<S extends ProbeState<S>> implements IProbe, IArchive
      */
 	@Units( "seconds" )
     public double   getTime()   {
-        return this.m_dblTime;
+        return this.stateCurrent.getTime();
+		//return this.m_dblTime;
     }
     
     /**
@@ -568,7 +588,10 @@ public abstract class Probe<S extends ProbeState<S>> implements IProbe, IArchive
      *  @return     probe kinetic energy    (<b>electron-volts</b>)
      */
 	@Units( "eV" )
-    public double getKineticEnergy()   { return m_dblW; };
+    public double getKineticEnergy()   { 
+		return this.stateCurrent.getKineticEnergy();
+		//return m_dblW; 
+	}
 
     
     /** 
@@ -576,7 +599,10 @@ public abstract class Probe<S extends ProbeState<S>> implements IProbe, IArchive
      *
      *  @return     normalized probe velocity v/c (<b>unitless</b>
      */
-    public double getBeta() { return m_dblBeta;  }
+    public double getBeta() { 
+    	return this.stateCurrent.getBeta();
+    	//return m_dblBeta;  
+    }
     
     /** 
      *  Returns the relativistic parameter corresponding to the probe 
@@ -587,7 +613,10 @@ public abstract class Probe<S extends ProbeState<S>> implements IProbe, IArchive
      *
      *  @return     probe relatistic factor (<b>unitless</b>)
      */
-    public double getGamma() { return m_dblGamma; }
+    public double getGamma() { 
+    	return this.stateCurrent.getGamma();
+    	//return m_dblGamma; 
+    }
 
 
     
@@ -596,7 +625,10 @@ public abstract class Probe<S extends ProbeState<S>> implements IProbe, IArchive
      * 
      * @param id  element id of current lattice element
      */
-    public void setCurrentElement(String id) {m_strElemId = id; };
+    public void setCurrentElement(String id) {
+    	this.stateCurrent.setElementId(id);
+    	//m_strElemId = id; 
+    }
     
     /** 
      *  Set the current position of the probe along the beamline.
@@ -605,7 +637,10 @@ public abstract class Probe<S extends ProbeState<S>> implements IProbe, IArchive
      *
      *  @see    #getPosition
      */
-    public void setPosition(double s)  { m_dblPos = s; };
+    public void setPosition(double s)  { 
+    	this.stateCurrent.setPosition(s);
+    	//m_dblPos = s; 
+    }
     
     /** 
      * Set the current time since the probe began propagating
@@ -616,7 +651,8 @@ public abstract class Probe<S extends ProbeState<S>> implements IProbe, IArchive
      */
 	@NoEdit	// editors should not edit this property
     public void setTime(double dblTime) {
-        this.m_dblTime = dblTime;
+        this.stateCurrent.setTime(dblTime);
+		//this.m_dblTime = dblTime;
     }
     
 
@@ -627,10 +663,11 @@ public abstract class Probe<S extends ProbeState<S>> implements IProbe, IArchive
      *
      *  @see    #getKineticEnergy
      */
-    public void setKineticEnergy(double W)    { 
-        m_dblW = W; 
-        m_dblGamma = this.computeGammaFromW(m_dblW);
-        m_dblBeta = this.computeBetaFromGamma(m_dblGamma);
+    public void setKineticEnergy(double W)    {
+    	this.stateCurrent.setKineticEnergy(W);  	
+//        m_dblW = W; 
+//        m_dblGamma = this.computeGammaFromW(m_dblW);
+//        m_dblBeta = this.computeBetaFromGamma(m_dblGamma);
     };
 
 
@@ -905,7 +942,14 @@ public abstract class Probe<S extends ProbeState<S>> implements IProbe, IArchive
     protected void  deepCopyProbeBase(Probe<S> probe)    {
         
         // Copy all the Probe base attributes
-        this.m_dblParQ  = probe.m_dblParQ;
+
+    	// all of these could be copied by simply copying the 
+    	// stateCurrent to the new Probe - JMF
+    	// TODO - Chris, is this the way we should do the deep copy here?
+    	//		Just simply copy the stateCurrent to the new Probe.
+    	
+    	/*
+    	this.m_dblParQ  = probe.m_dblParQ;
         this.m_dblParEr = probe.m_dblParEr;
 
 
@@ -915,6 +959,12 @@ public abstract class Probe<S extends ProbeState<S>> implements IProbe, IArchive
 
         this.m_dblBeta  = probe.m_dblBeta;
         this.m_dblGamma = probe.m_dblGamma;
+        */
+        
+        
+        this.stateCurrent = probe.stateCurrent.copy();
+        
+        
         this.bolTrack = probe.bolTrack;
         
         
@@ -926,6 +976,10 @@ public abstract class Probe<S extends ProbeState<S>> implements IProbe, IArchive
         }
     };
 
+    
+    //TODO - Chris, can these last 4 "helper" functions be removed since they aren't being used anywhere? 
+    //		I've implemented them in ProbeState in order to calculate values for Beta and Gamma in the 
+    //		setKineticEngery() method.
 
     /** 
      *  Computes the relatavistic factor gamma from the current beta value
@@ -945,7 +999,7 @@ public abstract class Probe<S extends ProbeState<S>> implements IProbe, IArchive
      *  @return         relatavistic factor gamma
      */
     protected double computeGammaFromW(double W)   {
-        double gamma = W/m_dblParEr + 1.0;
+        double gamma = W/(this.getSpeciesRestEnergy()) + 1.0;
         
         return gamma;
     };
@@ -966,7 +1020,10 @@ public abstract class Probe<S extends ProbeState<S>> implements IProbe, IArchive
     /** 
      *  Convenience function for multiplication of beta * gamma
      */
-    protected double getBetaGamma() { return m_dblBeta*m_dblGamma; };
+    protected double getBetaGamma() { 
+    	return (this.getBeta())*(this.getGamma());
+    	//return m_dblBeta*m_dblGamma; 
+    }
     
 
 };

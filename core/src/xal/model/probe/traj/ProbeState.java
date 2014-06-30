@@ -2,7 +2,6 @@ package xal.model.probe.traj;
 
 import xal.tools.data.DataAdaptor;
 import xal.tools.data.DataFormatException;
-
 import xal.model.probe.Probe;
 import xal.model.xml.ParsingException;
 
@@ -85,6 +84,7 @@ public abstract class ProbeState<S extends ProbeState<S>> implements IProbeState
     /** Probe's relativistic gamma */
     private double  m_dblGamma = Double.NaN;
     
+    private double m_dblBeta = 0.0;
     
 //  CKA This does not belong here
 //      We have not way of knowing whether or not the  
@@ -137,6 +137,7 @@ public abstract class ProbeState<S extends ProbeState<S>> implements IProbeState
         this.m_dblTime = state.getTime();
         this.m_dblW = state.getKineticEnergy();
         this.m_dblGamma = state.getGamma();
+        this.m_dblBeta = state.getBeta();
     }
     
     /**
@@ -211,6 +212,9 @@ public abstract class ProbeState<S extends ProbeState<S>> implements IProbeState
      */
     public void setKineticEnergy(double W) {
         m_dblW = W;
+        
+        m_dblGamma = this.computeGammaFromW(m_dblW);
+        m_dblBeta = this.computeBetaFromGamma(m_dblGamma);
     }
     
     /**
@@ -254,6 +258,14 @@ public abstract class ProbeState<S extends ProbeState<S>> implements IProbeState
     public double getSpeciesRestEnergy() { return m_dblParEr; }
     
 
+    /** Returns the momentum
+     * 
+     * @return particle momentum
+     */
+    public double getMomentum() {
+    	return (getSpeciesRestEnergy()*getGamma()*getBeta());
+    }
+    
 
     /**
      * Returns the id of the lattice element associated with this state.
@@ -293,6 +305,14 @@ public abstract class ProbeState<S extends ProbeState<S>> implements IProbeState
     	return m_dblW;
     }
     
+    /** 
+     *  Returns the probe velocity normalized to the speed of light. 
+     *
+     *  @return     normalized probe velocity v/c (<b>unitless</b>
+     */
+    public double getBeta() { 
+    	return m_dblBeta;  
+    }
     
     /**
      *  Return the relativistic gamma of the probe.  Depending upon the probe type,
@@ -386,6 +406,48 @@ public abstract class ProbeState<S extends ProbeState<S>> implements IProbeState
                     e.getMessage());
         }
     }
+    
+    
+    /** 
+     *  Computes the relatavistic factor gamma from the current beta value
+     *  
+     *  @param  beta    speed of probe w.r.t. the speed of light
+     *  @return         relatavistic factor gamma
+     */
+    protected double computeGammaFromBeta(double beta) { 
+        return 1.0/Math.sqrt(1.0 - beta*beta); 
+    };
+    
+    /**
+     *  Convenience function for computing the relatistic factor gamma from the 
+     *  probe's kinetic energy (using the particle species rest energy m_dblParEr).
+     *
+     *  @param  W       kinetic energy of the probe
+     *  @return         relatavistic factor gamma
+     */
+    protected double computeGammaFromW(double W)   {
+        double gamma = W/m_dblParEr + 1.0;
+        
+        return gamma;
+    };
+    
+    /**
+     *  Convenience function for computing the probe's velocity beta (w.r.t. the 
+     *  speed of light) from the relatistic factor gamma.
+     *
+     *  @param beta     relatavistic factor gamma
+     *  @return         speed of probe (w.r.t. speed of light)
+     */
+    protected double computeBetaFromGamma(double gamma) {
+        double beta = Math.sqrt(1.0 - 1.0/(gamma*gamma));
+
+        return beta;
+    };
+    
+    /** 
+     *  Convenience function for multiplication of beta * gamma
+     */
+    protected double getBetaGamma() { return m_dblBeta*m_dblGamma; };
 
 
     /*

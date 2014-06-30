@@ -97,7 +97,7 @@ public abstract class BunchProbeState<S extends BunchProbeState<S>> extends Prob
      * 
      * @param probe     probe object with which to initialize this state
      */
-    public BunchProbeState(BunchProbe probe) {
+    public BunchProbeState(BunchProbe<S> probe) {
         super(probe);
         this.setBunchFrequency(probe.getBunchFrequency());
         this.setBeamCurrent(probe.getBeamCurrent());
