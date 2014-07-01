@@ -553,7 +553,7 @@ public class EnvelopeProbe extends BunchProbe<EnvelopeProbeState> {
 	 */
     @Override
 	public Trajectory<EnvelopeProbeState> createTrajectory() {
-		return new Trajectory<EnvelopeProbeState>();
+		return new Trajectory<EnvelopeProbeState>(EnvelopeProbeState.class);
     }
     
 	/**
