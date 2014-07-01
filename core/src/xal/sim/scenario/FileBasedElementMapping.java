@@ -12,6 +12,11 @@ import java.util.List;
 
 import xal.model.IComponent;
 import xal.model.ModelException;
+<<<<<<< HEAD
+=======
+import xal.model.elem.IdealDrift;
+import xal.model.elem.Marker;
+>>>>>>> master
 import xal.tools.data.DataAdaptor;
 import xal.tools.xml.XmlDataAdaptor;
 
@@ -27,7 +32,10 @@ public class FileBasedElementMapping extends ElementMapping {
 	protected Class<? extends IComponent> defaultElement;
 	protected Class<? extends IComponent> driftElement;
 	
-	protected FileBasedElementMapping() {		
+	/** Model Configuration schema */
+    final public static String elementMappingSchema = "/xal/schemas/ModelConfig.xsd";
+	
+	protected FileBasedElementMapping() {
 	}
 	
 	@Override
@@ -46,23 +54,37 @@ public class FileBasedElementMapping extends ElementMapping {
 		}		
 	}
 
-	public static ElementMapping loadFrom(URL urlModelConfig) throws ClassNotFoundException {
-		DataAdaptor daDoc = XmlDataAdaptor.adaptorForUrl(urlModelConfig, false);
-		FileBasedElementMapping elementMapping = new FileBasedElementMapping();
+	public static ElementMapping loadFrom(String urlModelConfig, String schemaUrl) {
+		
+			DataAdaptor daDoc = XmlDataAdaptor.adaptorForUrl(urlModelConfig, false, schemaUrl);
+			FileBasedElementMapping elementMapping = new FileBasedElementMapping();
+				
+			DataAdaptor daCfg = daDoc.childAdaptor( "configuration" );	    
+			DataAdaptor daAssoc = daCfg.childAdaptor("associations");        
+			List<DataAdaptor> lstSrcDas = daAssoc.childAdaptors("map");
+			for (DataAdaptor daSrc : lstSrcDas) {
+				try {
+					elementMapping.putMap(daSrc.stringValue("smf"), daSrc.stringValue("model"));                      
+				} catch (ClassNotFoundException e) {
+					System.err.println("ClassNotFound when loading " + urlModelConfig + ": " + e.getMessage());
+				}
+			}
 			
-	    DataAdaptor daCfg = daDoc.childAdaptor( "configuration" );	    
-        DataAdaptor daAssoc = daCfg.childAdaptor("associations");        
-        List<DataAdaptor> lstSrcDas = daAssoc.childAdaptors("map");
-        for (DataAdaptor daSrc : lstSrcDas) {
-            elementMapping.putMap(daSrc.stringValue("smf"), daSrc.stringValue("model"));                      
-        }
-        
-        DataAdaptor daElements = daCfg.childAdaptor("elements");
-        
-        elementMapping.setDefault(daElements.childAdaptor("default").stringValue("type"));
-        elementMapping.setDrift(daElements.childAdaptor("drift").stringValue("type"));
-        
-        return elementMapping;
+			DataAdaptor daElements = daCfg.childAdaptor("elements");
+			
+			try {
+				elementMapping.setDefault(daElements.childAdaptor("default").stringValue("type"));
+			} catch (ClassNotFoundException e) {
+				System.err.println("ClassNotFound when loading " + urlModelConfig + ", using default default: " + e.getMessage());
+				elementMapping.defaultElement = Marker.class;
+			}
+			try {
+				elementMapping.setDrift(daElements.childAdaptor("drift").stringValue("type"));
+			} catch (ClassNotFoundException e) {
+				System.err.println("ClassNotFound when loading " + urlModelConfig + ", using default drift: " + e.getMessage());
+				elementMapping.driftElement = IdealDrift.class;
+			}
+			return elementMapping;
 	}
 
 
