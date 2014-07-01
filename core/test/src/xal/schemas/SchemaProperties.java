@@ -11,7 +11,7 @@ import org.junit.Assert;
  * Key constants are provided for easier access to any known property.
  * @author <a href='jakob.battelino@cosylab.com'>Jakob Battelino Prelog</a>
  */
-public final class TestProperties {
+public final class SchemaProperties {
 	
 	/**	Property key for directory containing external XML files.	*/
 	public static final String KEY_DIR_EXTERNAL_XMLS = "dir.xml.external";
@@ -43,7 +43,7 @@ public final class TestProperties {
 	 */
 	private static Properties getProperties() {
 		if(testProperties == null) {
-			InputStream propertiesFile = TestProperties.class.getResourceAsStream(FILE_TEST_PROPERTIES);
+			InputStream propertiesFile = SchemaProperties.class.getResourceAsStream(FILE_TEST_PROPERTIES);
 			Properties tempProperties = new Properties();
 			try {
 				tempProperties.load(propertiesFile);

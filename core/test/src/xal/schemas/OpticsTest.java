@@ -9,7 +9,7 @@ import org.w3c.dom.Document;
  * Unit test case for <code>xdxf.xsd</code> XML schema using <code>*.xdxf</code> structure.
  * @author <a href='jakob.battelino@cosylab.com'>Jakob Battelino Prelog</a>
  */
-public class OpticsTest extends AbstractXMLValidationTest {
+public class OpticsTest extends AbstractXMLValidation {
 	
 	@Override
 	public void progressiveSchemaValidation() {

@@ -17,7 +17,7 @@ import org.w3c.dom.Element;
  * Unit test case for <code>main.xsd</code> XML schema using <code>main.xal</code> structure.
  * @author <a href='jakob.battelino@cosylab.com'>Jakob Battelino Prelog</a>
  */
-public class MainTest extends AbstractXMLValidationTest {
+public class MainTest extends AbstractXMLValidation {
 	
 	/**
 	 * Progressive XML schema validation method.<br/>
