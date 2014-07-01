@@ -283,15 +283,25 @@ public class Trajectory<S extends ProbeState<S>> implements IArchive, Iterable<S
 
     // ************ initialization
     
-    /**
-     * Create a new, empty <code>Trajectory</code> object.
-     */
-    public Trajectory() {
-        this._history  = new RealNumericIndexer<S>();
-        this.mapStates = new ElementStateMap<S>();
-        this.clsStates = null;
-    }
+//    /**
+//     * Create a new, empty <code>Trajectory</code> object.
+//     */
+//    public Trajectory() {
+//        this._history  = new RealNumericIndexer<S>();
+//        this.mapStates = new ElementStateMap<S>();
+//        this.clsStates = null;
+//    }
     
+    /**
+     * Creates a new <code>Trajectory</code> given the <code>Class&lt;S&gt;</code>
+     * object of the underlying <code>ProbeState</code> type, <code><b>S</b></code>.
+     * 
+     * 
+     * @param clsStates - the <code>Class&lt;S&gt;</code> object of the underlying
+     * 		underlying <code>ProbeState</code> type
+     * 
+     * @since Jul 1, 2014
+     */
     public Trajectory(Class<S> clsStates) {
         this._history  = new RealNumericIndexer<S>();
         this.mapStates = new ElementStateMap<S>();
@@ -313,18 +323,14 @@ public class Trajectory<S extends ProbeState<S>> implements IArchive, Iterable<S
     public void setTimestamp(long lngTimeStamp) { timestamp = new Date(lngTimeStamp);  }
 
     /** 
-     * Gets a <code>Class&lt;S&gt;</code> object of the generic type <b><code>S</code></b>.  This is commonly 
-     * used to do <code>instanceof</code> tests on <b><code>S</code></b>.
+     * Gets the <code>Class&lt;S&gt;</code> object of the generic type <b><code>S</code></b>. 
      * 
      * @return a <code>Class&lt;S&gt;</code> object for the class <b><code>S</code></b>
      * 
      * @author Jonathan M. Freed
      */
-	public Class<?> getStateClass() {
-	    if (this.clsStates != null) 
-	        return this.clsStates;
-	    else
-	        return initialState().getClass();
+	public Class<S> getStateClass() {
+		return this.clsStates;
     }   
 
     // ************* Trajectory Operations

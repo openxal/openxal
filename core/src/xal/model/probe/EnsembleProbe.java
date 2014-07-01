@@ -86,7 +86,7 @@ public class EnsembleProbe extends BunchProbe<EnsembleProbeState> {
      */
     @Override
     public Trajectory<EnsembleProbeState> createTrajectory() {
-        return new Trajectory<EnsembleProbeState>();
+        return new Trajectory<EnsembleProbeState>(EnsembleProbeState.class);
     }
 
     // BunchProbe Base Support =================================================

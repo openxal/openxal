@@ -328,7 +328,7 @@ public class TwissProbe extends BunchProbe<TwissProbeState> {
 	 */
     @Override
 	public Trajectory<TwissProbeState> createTrajectory() {
-		return new Trajectory<TwissProbeState>();
+		return new Trajectory<TwissProbeState>(TwissProbeState.class);
 	}
 
 	/**

@@ -354,6 +354,7 @@ public abstract class Probe<S extends ProbeState<S>> implements IProbe, IArchive
      *
      */
     protected Probe() {
+
     	this.stateCurrent = this.createProbeState();
         this.stateInit    = this.createProbeState();
         

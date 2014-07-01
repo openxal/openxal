@@ -143,7 +143,7 @@ public class SynchronousProbe extends Probe<SynchronousState> {
  	 */
      @Override
      public Trajectory<SynchronousState> createTrajectory() {
-         return new Trajectory<SynchronousState>();
+         return new Trajectory<SynchronousState>(SynchronousState.class);
      }
      
     /**
