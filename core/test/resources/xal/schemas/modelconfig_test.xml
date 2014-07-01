@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="ModelConfig.xsd">
+	<elements>
+		<default type="fake.package.model.Default"/>
+		<drift type="fake.package.model.Drift"/>
+	</elements>
+	<associations>
+		<map smf="fake.package.Map1" model="fake.package.model.Map1"/>
+		<map smf="fake.package.Map2" model="fake.package.model.Map2"/>
+		<map smf="fake.package.Map3" model="fake.package.model.Map3"/>
+	</associations>
+</configuration>

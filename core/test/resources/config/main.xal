@@ -1,10 +1,10 @@
-<?xml version = '1.0' encoding = 'UTF-8'?>
-<!DOCTYPE sources SYSTEM "xdxf.dtd">
-<sources version="2.0">
-    <modelElementConfig_source name="modelElementConfig" url="ModelConfig.xml" />
+<?xml version="1.0" encoding="UTF-8"?>
+<sources version="2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="http://sourceforge.net/p/xaldev/openxal/ci/master/tree/core/resources/xal/schemas/main.xsd?format=raw">
+	<modelElementConfig_source name="modelElementConfig" url="ModelConfig.xml" />
 	<deviceMapping_source name="deviceMapping" url="sns.impl"/>
 	<optics_source name="optics" url="sns.xdxf"/>
 	<hardware_status name="Hardware Status" url="hardware_status.xdxf"/>
 	<timing_source name="timing" url="timing_pvs.tim"/>
-	<tablegroup_source name="modelparams" url="model.params"/>
+	<tablegroup_source name="modelparams" url="model.params"/>	
 </sources>

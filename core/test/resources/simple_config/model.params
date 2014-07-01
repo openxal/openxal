@@ -1,0 +1,130 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<tablegroup xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="http://sourceforge.net/p/xaldev/openxal/ci/master/tree/core/resources/xal/schemas/tablegroup.xsd?format=raw">
+    <table name="species">
+        <schema>
+            <attribute isPrimaryKey="true" name="name" type="java.lang.String" />
+            <attribute isPrimaryKey="false" name="mass" type="java.lang.Double" />
+            <attribute isPrimaryKey="false" name="charge" type="java.lang.Double" />
+        </schema>
+        <record name="HMINUS" mass="9.39294E8" charge="-1" />
+        <record name="PROTON" mass="9.38272E8" charge="1" />        
+    </table>
+	
+    
+	<table name="beam">
+		<schema>
+			<attribute isPrimaryKey="true" name="name" type="java.lang.String" />
+            <attribute isPrimaryKey="false" name="current" type="java.lang.Double" />
+            <attribute isPrimaryKey="false" name="bunchFreq" type="java.lang.Double" />
+            <attribute isPrimaryKey="false" name="phase" type="java.lang.String" />
+            <attribute isPrimaryKey="false" name="charge" type="java.lang.Double" />
+		</schema>
+		<record name="default" current="0.020" bunchFreq="402.5e6" phase="(0,0,0)" charge="4.96894E-11" />
+		<record name="IDmp+" current="0.0" bunchFreq="1.0" phase="(0,0,0)" charge="4.96894E-11" />
+	</table>
+    
+    
+    <table name="Algorithm">
+        <!-- This table is going to be deprecated.  We should not support a "default algorithm" for every probe -->
+	    <schema>
+			<attribute isPrimaryKey="true"  name="name"           type="java.lang.String" />
+			<attribute isPrimaryKey="false" name="type"           type="java.lang.String" defaultValue="xal.model.alg.EnvTrackerAdapt" />
+			<attribute isPrimaryKey="false" name="update" 		  type="java.lang.Integer" defaultValue="2" />
+			<attribute isPrimaryKey="false" name="debug"          type="java.lang.Boolean" defaultValue="false" />
+			<attribute isPrimaryKey="false" name="calcRfGapPhase" type="java.lang.Boolean" defaultValue="false" />
+		</schema>
+		<record name="default" />
+    </table>
+    
+    <table name="SynchronousTracker">
+        <schema>
+            <attribute isPrimaryKey="true"  name="name"         type="java.lang.String" />
+        </schema>
+        <record name="default" />
+    </table>
+    
+    <table name="ParticleTracker">
+        <schema>
+            <attribute isPrimaryKey="true"  name="name"         type="java.lang.String" />
+        </schema>
+        <record name="default" />
+    </table>
+    
+    <table name="TransferMapTracker">
+        <schema>
+            <attribute isPrimaryKey="true"  name="name"         type="java.lang.String" />
+        </schema>
+        <record name="default" />
+    </table>
+    
+    <table name="TwissTracker">
+        <schema>
+            <attribute isPrimaryKey="true"  name="name"         type="java.lang.String" />
+            <attribute isPrimaryKey="false" name="emitgrowth"   type="java.lang.Boolean" defaultValue="false" />
+            <attribute isPrimaryKey="false" name="scheff"       type="java.lang.Boolean" defaultValue="true" />
+            <attribute isPrimaryKey="false" name="stepsize"     type="java.lang.Double" defaultValue="0.004" />
+        </schema>
+        <record name="default" />
+    </table>
+    
+    <table name="Trace3dTracker">
+        <schema>
+            <attribute isPrimaryKey="true"  name="name"         type="java.lang.String" />
+            <attribute isPrimaryKey="false" name="stepsize"     type="java.lang.Double" defaultValue="0.004" />
+        </schema>
+        <record name="default" />
+    </table>
+    
+    <table name="EnvelopeBaseTracker">
+	    <schema>
+			<attribute isPrimaryKey="true"  name="name"         type="java.lang.String" />
+			<attribute isPrimaryKey="false" name="emitgrowth"   type="java.lang.Boolean" defaultValue="false" />
+			<attribute isPrimaryKey="false" name="scheff"       type="java.lang.Boolean" defaultValue="true" />
+			<attribute isPrimaryKey="false" name="stepsize"     type="java.lang.Double" defaultValue="0.004" />
+		</schema>
+		<record name="default" />
+    </table>
+    
+	<table name="EnvTrackerAdapt">
+		<schema>
+			<attribute isPrimaryKey="true" name="name" type="java.lang.String" />
+            <attribute isPrimaryKey="false" name="errortol" type="java.lang.Double" defaultValue="1.0E-5" />
+            <attribute isPrimaryKey="false" name="initstep" type="java.lang.Double" defaultValue="0.01" />
+            <attribute isPrimaryKey="false" name="maxstep" type="java.lang.Double" defaultValue="0.0" />
+            <attribute isPrimaryKey="false" name="norm" type="java.lang.Integer" defaultValue="0" />
+            <attribute isPrimaryKey="false" name="order" type="java.lang.Integer" defaultValue="2" />
+            <attribute isPrimaryKey="false" name="slack" type="java.lang.Double" defaultValue="0.05" />
+            <attribute isPrimaryKey="false" name="maxiter" type="java.lang.Integer" defaultValue="50" />
+            <attribute isPrimaryKey="false" name="maxstepdriftpmq" type="java.lang.Double" defaultValue="0.0" />
+		</schema>
+		<record name="default" />
+	</table>
+    
+    
+	<table name="twiss">
+		<schema>
+			<attribute isPrimaryKey="true" name="name" type="java.lang.String" />
+		    <attribute isPrimaryKey="true" name="coordinate" type="java.lang.String" />
+			<attribute isPrimaryKey="false" name="alpha" type="java.lang.Double" />
+			<attribute isPrimaryKey="false" name="beta" type="java.lang.Double" />
+			<attribute isPrimaryKey="false" name="emittance" type="java.lang.Double" />
+		</schema>
+		<record name="MEBT" coordinate="x" alpha="-1.620000" beta=" 0.155000" emittance="+3.02000e-006"/>
+		<record name="MEBT" coordinate="y" alpha=" 3.230000" beta=" 0.381000" emittance="+3.46000e-006"/>
+		<record name="MEBT" coordinate="z" alpha=" 0.019600" beta=" 0.584400" emittance="+3.86380e-006"/>	
+  	</table>
+	
+    <table name="location">
+        <schema>
+            <attribute isPrimaryKey="true" name="name" type="java.lang.String" />
+            <attribute isPrimaryKey="false" name="species" type="java.lang.String" />
+            <attribute isPrimaryKey="false" name="W" type="java.lang.Double" />
+            <attribute isPrimaryKey="false" name="elem" type="java.lang.String" defaultValue="" />
+            <attribute isPrimaryKey="false" name="s" type="java.lang.Double" defaultValue="0" />
+            <attribute isPrimaryKey="false" name="t" type="java.lang.Double" defaultValue="0" />
+        </schema>
+        <record name="MEBT" species="HMINUS" W="2.5E6"/>       
+	</table>
+</tablegroup>
+
