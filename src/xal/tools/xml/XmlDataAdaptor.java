@@ -10,7 +10,12 @@ import java.util.*;
 import java.util.regex.PatternSyntaxException;
 import java.io.*;
 import java.net.*;
+
+import javax.xml.XMLConstants;
 import javax.xml.parsers.*;
+import javax.xml.validation.Schema;
+import javax.xml.validation.SchemaFactory;
+
 import org.w3c.dom.*;
 
 import xal.tools.data.*;
@@ -543,6 +548,25 @@ public class XmlDataAdaptor implements DataAdaptor {
         }
     }
     
+    /**
+     * Generate an XmlDataAdaptor from a urlPath, given dtd validating option, and given schemaUrl
+     */
+    static public XmlDataAdaptor adaptorForUrl( final String urlPath, final boolean isValidating, String schemaUrl) throws ParseException, ResourceNotFoundException {
+        try {
+            DocumentBuilder builder = newDocumentBuilder( isValidating, XmlDataAdaptor.class.getResource(schemaUrl) );
+            Document document = builder.parse( urlPath );
+
+            return new XmlDataAdaptor( document );
+        }
+        catch( java.io.FileNotFoundException exception ) {
+            throw new ResourceNotFoundException( exception );
+        }
+        catch( Exception exception ) {
+            throw new ParseException( exception );
+        }
+    }
+
+    
     
     /**
      * Generate an XmlDataAdaptor from a urlPath and given dtd validating option
@@ -587,6 +611,19 @@ public class XmlDataAdaptor implements DataAdaptor {
         return factory.newDocumentBuilder();
     }
     
+    
+    /** Create a new document builder with the given DTD validation, and schemaUrl */
+    static protected DocumentBuilder newDocumentBuilder(boolean isValidating, URL schemaUrl) throws Exception {
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        factory.setValidating(isValidating);
+		
+        factory.setNamespaceAware(true);
+        SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+        Schema schema = schemaFactory.newSchema(schemaUrl);
+        factory.setSchema(schema);
+        
+        return factory.newDocumentBuilder();
+    }
     
     
     /*
