@@ -12,11 +12,8 @@ import java.util.List;
 
 import xal.model.IComponent;
 import xal.model.ModelException;
-<<<<<<< HEAD
-=======
 import xal.model.elem.IdealDrift;
 import xal.model.elem.Marker;
->>>>>>> master
 import xal.tools.data.DataAdaptor;
 import xal.tools.xml.XmlDataAdaptor;
 
