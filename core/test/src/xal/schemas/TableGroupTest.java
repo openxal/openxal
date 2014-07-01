@@ -16,7 +16,7 @@ import org.w3c.dom.Element;
  * Unit test case for <code>tablegroup.xsd</code> XML schema using <code>model.params</code> structure.
  * @author <a href='jakob.battelino@cosylab.com'>Jakob Battelino Prelog</a>
  */
-public class TableGroupTest extends AbstractXMLValidationTest {
+public class TableGroupTest extends AbstractXMLValidation {
 	
 	@Override
 	public void progressiveSchemaValidation() {

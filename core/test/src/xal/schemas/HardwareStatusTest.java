@@ -16,7 +16,7 @@ import org.w3c.dom.Element;
  * Unit test case for <code>xdxf.xsd</code> XML schema using <code>hardware_status.xdxf</code> structure.
  * @author <a href='jakob.battelino@cosylab.com'>Jakob Battelino Prelog</a>
  */
-public class HardwareStatusTest extends AbstractXMLValidationTest {
+public class HardwareStatusTest extends AbstractXMLValidation {
 	
 	/**
 	 * Progressive XML schema validation method.<br/>
