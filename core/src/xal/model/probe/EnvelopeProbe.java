@@ -390,7 +390,7 @@ public class EnvelopeProbe extends BunchProbe<EnvelopeProbeState> {
      * @return  last factor of the response matrix
      */
 	public PhaseMatrix getCurrentResponseMatrix() {
-		return this.getCurrentResponseMatrix();
+		return this.stateCurrent.getPerturbationMatrix();
 		//return this.matPert;
 	}
 

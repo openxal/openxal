@@ -69,37 +69,37 @@ public class SimpleSimResultsAdaptor extends SimResultsAdaptor implements ISimLo
      * machine calculation engine based upon the type of the given simulation
      * trajectory. 
      *
-     * @param datSim  simulation data that is going to be processed
+     * @param trajectory  simulation data that is going to be processed
      * 
      * @throws IllegalArgumentException the simulation data is of an unknown type
      *
      * @author Christopher K. Allen
      * @since  Nov 7, 2013
      */
-	public SimpleSimResultsAdaptor(Trajectory<? extends ProbeState<?>> datSim) throws IllegalArgumentException {
+	public SimpleSimResultsAdaptor(Trajectory<? extends ProbeState> trajectory) throws IllegalArgumentException {
         super();
         
 
-        Class<?> clsTrajState = datSim.getStateClass();
+        Class<?> clsTrajState = trajectory.getStateClass();
         
         if ( clsTrajState.equals(TransferMapState.class) ) {
             @SuppressWarnings("unchecked")
-            CalculationsOnRings calRings  = new CalculationsOnRings((Trajectory<TransferMapState>)datSim);
+            CalculationsOnRings calRings  = new CalculationsOnRings((Trajectory<TransferMapState>)trajectory);
             super.registerCalcEngine(TransferMapState.class, calRings);;
 
         } else if (clsTrajState.equals(EnvelopeProbeState.class)) {
             @SuppressWarnings("unchecked")
-            CalculationsOnBeams calBeams = new CalculationsOnBeams((Trajectory<EnvelopeProbeState>)datSim);
+            CalculationsOnBeams calBeams = new CalculationsOnBeams((Trajectory<EnvelopeProbeState>)trajectory);
             super.registerCalcEngine(EnvelopeProbeState.class, calBeams);
             
         } else if (clsTrajState.equals(ParticleProbeState.class)) {  
             @SuppressWarnings("unchecked")
-            CalculationsOnParticles calPart = new CalculationsOnParticles((Trajectory<ParticleProbeState>)datSim);
+            CalculationsOnParticles calPart = new CalculationsOnParticles((Trajectory<ParticleProbeState>)trajectory);
             super.registerCalcEngine(ParticleProbeState.class, calPart);
 
         } else {
 
-            throw new IllegalArgumentException("Unknown simulation data type " + datSim.getClass().getName());
+            throw new IllegalArgumentException("Unknown simulation data type " + trajectory.getClass().getName());
         }
         
 //        // Create the machine parameter calculation engine according to the
