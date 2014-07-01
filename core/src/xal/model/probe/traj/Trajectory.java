@@ -207,8 +207,11 @@ public class Trajectory<S extends ProbeState<S>> implements IArchive, Iterable<S
     /** Probe states by element name */
     private final ElementStateMap<S>   mapStates;
     
+    /** Type class of the underlying state objects */
+    private final Class<S>            clsStates;
+    
     /** time stamp of trajectory */
-    private Date                                timestamp = new Date();
+    private Date                      timestamp = new Date();
 
 
 
@@ -284,8 +287,15 @@ public class Trajectory<S extends ProbeState<S>> implements IArchive, Iterable<S
      * Create a new, empty <code>Trajectory</code> object.
      */
     public Trajectory() {
-		this._history  = new RealNumericIndexer<S>();
+        this._history  = new RealNumericIndexer<S>();
         this.mapStates = new ElementStateMap<S>();
+        this.clsStates = null;
+    }
+    
+    public Trajectory(Class<S> clsStates) {
+        this._history  = new RealNumericIndexer<S>();
+        this.mapStates = new ElementStateMap<S>();
+        this.clsStates = clsStates;
     }
 
     /**
@@ -311,7 +321,10 @@ public class Trajectory<S extends ProbeState<S>> implements IArchive, Iterable<S
      * @author Jonathan M. Freed
      */
 	public Class<?> getStateClass() {
-    	return initialState().getClass();
+	    if (this.clsStates != null) 
+	        return this.clsStates;
+	    else
+	        return initialState().getClass();
     }   
 
     // ************* Trajectory Operations
