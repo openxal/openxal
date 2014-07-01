@@ -11,6 +11,7 @@ import xal.tools.beam.PhaseVector;
 import xal.tools.beam.ens.Ensemble;
 import xal.tools.data.DataAdaptor;
 import xal.tools.math.r3.R3;
+import xal.model.probe.traj.DiagnosticProbeState;
 import xal.model.probe.traj.EnsembleProbeState;
 import xal.model.probe.traj.Trajectory;
 import xal.model.xml.ParsingException;
@@ -71,10 +72,22 @@ public class EnsembleProbe extends BunchProbe<EnsembleProbeState> {
      * @return a <code>EnsembleProbeState</code> encapsulating the probe's current state
      */
     @Override
-    public EnsembleProbeState createEmptyProbeState() {
-        return new EnsembleProbeState();
+    public EnsembleProbeState createProbeState() {
+        return new EnsembleProbeState(this);
     }
     
+	/**
+	 * Creates a new, empty <code>EnsembleProbeState</code>.
+	 * 
+	 * @return a new, empty <code>EnsembleProbeState</code>
+	 * 
+	 * @author Jonathan M. Freed
+	 * @since Jul 1, 2014
+	 */
+	@Override
+	public EnsembleProbeState createEmptyProbeState(){
+		return new EnsembleProbeState();
+	}
     
     /**
      * Creates a trajectory of the proper type for saving the probe's history.

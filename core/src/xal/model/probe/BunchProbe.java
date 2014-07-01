@@ -248,12 +248,21 @@ public abstract class BunchProbe<S extends BunchProbeState<S>> extends Probe<S> 
      */
 
     /**
-     * Just restating <code>Probe.{@link #createEmptyProbeState()}</code>
+     * Just restating <code>Probe.{@link #createProbeState()}</code>
      *
-     * @see xal.model.probe.Probe#createEmptyProbeState()
+     * @see xal.model.probe.Probe#createProbeState()
      *
      * @author Christopher K. Allen
      * @since  Nov 5, 2013
+     */
+    @Override
+    public abstract S createProbeState();
+    
+    /**
+     * Just restating <code>Probe.{@link #createEmptyProbeState()}</code>.
+     * 
+     * @author Jonathan M. Freed
+     * @since Jul 1, 2014
      */
     @Override
     public abstract S createEmptyProbeState();

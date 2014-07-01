@@ -11,6 +11,7 @@ import xal.tools.beam.PhaseMatrix;
 import xal.tools.beam.PhaseVector;
 import xal.tools.data.DataAdaptor;
 import xal.tools.annotation.AProperty.NoEdit;
+import xal.model.probe.traj.DiagnosticProbeState;
 import xal.model.probe.traj.ParticleProbeState;
 import xal.model.probe.traj.Trajectory;
 import xal.model.xml.ParsingException;
@@ -208,12 +209,25 @@ public class ParticleProbe extends Probe<ParticleProbeState> {
      * @since  Aug 13, 2002
      * @version Nov 14, 2013
      * 
-     * @see xal.model.probe.Probe#createEmptyProbeState()
+     * @see xal.model.probe.Probe#createProbeState()
      */
     @Override
-    public ParticleProbeState createEmptyProbeState() {
-	        return new ParticleProbeState();
+    public ParticleProbeState createProbeState() {
+	        return new ParticleProbeState(this);
     }
+    
+	/**
+	 * Creates a new, empty <code>ParticleProbeState</code>.
+	 * 
+	 * @return a new, empty <code>ParticleProbeState</code>
+	 * 
+	 * @author Jonathan M. Freed
+	 * @since Jul 1, 2014
+	 */
+	@Override
+	public ParticleProbeState createEmptyProbeState(){
+		return new ParticleProbeState();
+	}
     
     
     /**

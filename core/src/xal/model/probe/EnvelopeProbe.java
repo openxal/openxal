@@ -8,6 +8,7 @@ package xal.model.probe;
 
 import xal.model.ModelException;
 import xal.model.alg.EnvTrackerAdapt;
+import xal.model.probe.traj.DiagnosticProbeState;
 import xal.model.probe.traj.EnvelopeProbeState;
 import xal.model.probe.traj.ProbeState;
 import xal.model.probe.traj.Trajectory;
@@ -538,7 +539,20 @@ public class EnvelopeProbe extends BunchProbe<EnvelopeProbeState> {
 	 *         current state
 	 */
     @Override
-	public EnvelopeProbeState createEmptyProbeState() {
+	public EnvelopeProbeState createProbeState() {
+		return new EnvelopeProbeState(this);
+	}
+    
+	/**
+	 * Creates a new, empty <code>EnvelopeProbeState</code>.
+	 * 
+	 * @return a new, empty <code>EnvelopeProbeState</code>
+	 * 
+	 * @author Jonathan M. Freed
+	 * @since Jul 1, 2014
+	 */
+	@Override
+	public EnvelopeProbeState createEmptyProbeState(){
 		return new EnvelopeProbeState();
 	}
 

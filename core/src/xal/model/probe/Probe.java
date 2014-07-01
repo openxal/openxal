@@ -260,9 +260,20 @@ public abstract class Probe<S extends ProbeState<S>> implements IProbe, IArchive
     
     /**
      * Captures the probe's state in a ProbeState of the appropriate species.
+     * 
      */
-    public abstract S createEmptyProbeState();
+    public abstract S createProbeState();
     
+
+    /**
+     * Creates a new, blank <code>ProbeState</code> of the appropriate species.
+     * 
+     * @return a new, blank <code>ProbeState</code>
+     * 
+     * @author Jonathan M. Freed
+     * @since Jul 1, 2014
+     */
+    public abstract S createEmptyProbeState(); 
     
     /*
      * ---------------------------------------------------------------
@@ -685,8 +696,8 @@ public abstract class Probe<S extends ProbeState<S>> implements IProbe, IArchive
      * Initializes the probe, resetting state as necessary.
      */
     public void initialize() {
-    	this.stateInit = this.createEmptyProbeState();
-    	this.stateCurrent = this.createEmptyProbeState();
+    	this.stateInit = this.createProbeState();
+    	this.stateCurrent = this.createProbeState();
     	
         this.trajHist = this.createTrajectory();
 //        this.getAlgorithm().initialize();  // CKA - I think these should be uncommented
@@ -911,7 +922,7 @@ public abstract class Probe<S extends ProbeState<S>> implements IProbe, IArchive
         this.getAlgorithm().save(daProbe);
                 
         // Save the probe state information
-        S state = createEmptyProbeState();
+        S state = createProbeState();
         state.save(daProbe);  
     }
     

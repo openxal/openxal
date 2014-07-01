@@ -6,6 +6,7 @@ package xal.model.probe;
 
 import xal.tools.data.DataAdaptor;
 import xal.tools.math.r3.R3;
+import xal.model.probe.traj.DiagnosticProbeState;
 import xal.model.probe.traj.SynchronousState;
 import xal.model.probe.traj.Trajectory;
 import xal.model.xml.ParsingException;
@@ -152,12 +153,25 @@ public class SynchronousProbe extends Probe<SynchronousState> {
      * 
      * @return  probe state object of type <code>SynchronousState</code>
      * 
-     * @see xal.model.probe.Probe#createEmptyProbeState()
+     * @see xal.model.probe.Probe#createProbeState()
      */
      @Override
-     public SynchronousState createEmptyProbeState() {
-         return new SynchronousState();
+     public SynchronousState createProbeState() {
+         return new SynchronousState(this);
      }
+     
+ 	/**
+ 	 * Creates a new, empty <code>SynchronousState</code>.
+ 	 * 
+ 	 * @return a new, empty <code>SynchronousState</code>
+ 	 * 
+ 	 * @author Jonathan M. Freed
+ 	 * @since Jul 1, 2014
+ 	 */
+ 	@Override
+ 	public SynchronousState createEmptyProbeState(){
+ 		return new SynchronousState();
+ 	}
      
     /**
      * Capture the current probe state to the <code>ProbeState</code> argument.  Note

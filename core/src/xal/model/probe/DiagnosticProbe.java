@@ -100,7 +100,20 @@ public class DiagnosticProbe extends Probe<DiagnosticProbeState> {
 	}
 	
 	@Override
-	public DiagnosticProbeState createEmptyProbeState() {
+	public DiagnosticProbeState createProbeState() {
+		return new DiagnosticProbeState(this);
+	}
+	
+	/**
+	 * Creates a new, empty <code>DiagnosticProbeState</code>.
+	 * 
+	 * @return a new, empty <code>DiagnosticProbeState</code>
+	 * 
+	 * @author Jonathan M. Freed
+	 * @since Jul 1, 2014
+	 */
+	@Override
+	public DiagnosticProbeState createEmptyProbeState(){
 		return new DiagnosticProbeState();
 	}
 	

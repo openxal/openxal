@@ -597,7 +597,7 @@ public class EnvTrackerAdapt extends EnvelopeTrackerBase {
         double      h = this.getStepSize();     // the current step size
         double      L = elem.getLength();       // length of the element
         EnvelopeProbeState stateRef =           // initial state of the probe 
-            probe.createEmptyProbeState();
+            probe.createProbeState();
 
         //default temporary commented out 
         double          charge = probe.bunchCharge(); // this doesnt work for PMQ space-charge=0.. why?
@@ -655,7 +655,7 @@ public class EnvTrackerAdapt extends EnvelopeTrackerBase {
                 this.rollbackProbe(probe, stateRef);
 
             } else {                        // our step size meets accuracy critereon - advance probe
-                stateRef = probe.createEmptyProbeState();
+                stateRef = probe.createProbeState();
                 s       += h;
             }
             h  = hp;            // use the new step size

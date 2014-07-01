@@ -10,6 +10,7 @@ import xal.tools.annotation.AProperty.NoEdit;
 import xal.tools.beam.PhaseMap;
 import xal.tools.beam.PhaseVector;
 import xal.tools.data.DataAdaptor;
+import xal.model.probe.traj.DiagnosticProbeState;
 import xal.model.probe.traj.EnvelopeProbeState;
 import xal.model.probe.traj.Trajectory;
 import xal.model.probe.traj.TransferMapState;
@@ -196,13 +197,25 @@ public class TransferMapProbe extends Probe<TransferMapState> {
      * Return a new <code>ProbeState</code> object, of the appropriate type,
      * initialized to the current state of this probe.
      * @return  probe state object of type <code>TransferMapState</code>
-     * @see xal.model.probe.Probe#createEmptyProbeState()
+     * @see xal.model.probe.Probe#createProbeState()
      */
     @Override
-    public TransferMapState createEmptyProbeState() {
-        return new TransferMapState();
+    public TransferMapState createProbeState() {
+        return new TransferMapState(this);
     }
     
+	/**
+	 * Creates a new, empty <code>TransferMapState</code>.
+	 * 
+	 * @return a new, empty <code>TransferMapState</code>
+	 * 
+	 * @author Jonathan M. Freed
+	 * @since Jul 1, 2014
+	 */
+	@Override
+	public TransferMapState createEmptyProbeState(){
+		return new TransferMapState();
+	}
     
     /**
      * Capture the current probe state to the <code>ProbeState</code> argument.  Note

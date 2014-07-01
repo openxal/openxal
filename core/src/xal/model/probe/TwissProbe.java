@@ -16,6 +16,7 @@ import xal.tools.beam.Twiss3D.IND_3D;
 import xal.tools.data.DataAdaptor;
 import xal.tools.data.DataFormatException;
 import xal.tools.math.r3.R3;
+import xal.model.probe.traj.DiagnosticProbeState;
 import xal.model.probe.traj.Trajectory;
 import xal.model.probe.traj.TwissProbeState;
 import xal.model.xml.ParsingException;
@@ -313,7 +314,20 @@ public class TwissProbe extends BunchProbe<TwissProbeState> {
 	 *         current state
 	 */
     @Override
-	public TwissProbeState createEmptyProbeState() {
+	public TwissProbeState createProbeState() {
+		return new TwissProbeState(this);
+	}
+    
+	/**
+	 * Creates a new, empty <code>TwissProbeState</code>.
+	 * 
+	 * @return a new, empty <code>TwissProbeState</code>
+	 * 
+	 * @author Jonathan M. Freed
+	 * @since Jul 1, 2014
+	 */
+	@Override
+	public TwissProbeState createEmptyProbeState(){
 		return new TwissProbeState();
 	}
 
