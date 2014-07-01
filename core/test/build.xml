@@ -27,7 +27,7 @@
             
             <formatter type="plain" usefile="false" />
             
-            <batchtest todir="${build.tests.root}" skipNonTests="true">
+            <batchtest todir="${build.tests.root}">
                 <fileset dir="${build.compile.core.test.root}"> 
                     <include name="**/*Test*.class"/> 
                     <exclude name="xal/resources/**/*"/> 
