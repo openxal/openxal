@@ -1,28 +1,6 @@
 <?xml version = '1.0' encoding = 'UTF-8'?>
-<!DOCTYPE tablegroup [
-    <!ELEMENT tablegroup (table*) >
-	
-    <!ELEMENT table (schema, record*) >
-	<!ATTLIST table name NMTOKEN #REQUIRED >
-	<!ATTLIST table recordClass CDATA #IMPLIED >
-	
-	<!ELEMENT schema (attribute*) >
-	
-	<!ELEMENT attribute EMPTY >
-	<!ATTLIST attribute isPrimaryKey (true|false) #IMPLIED>
-	<!ATTLIST attribute name NMTOKEN #REQUIRED >
-	<!ATTLIST attribute type CDATA #REQUIRED >
-	<!ATTLIST attribute defaultValue CDATA #IMPLIED>
-	
-	<!ELEMENT record EMPTY >
-	<!ATTLIST record name NMTOKEN #REQUIRED >
-	<!ATTLIST record mass CDATA #IMPLIED >
-	<!ATTLIST record charge CDATA #IMPLIED >
-	<!ATTLIST record species CDATA #IMPLIED >
-	<!ATTLIST record KE CDATA #IMPLIED >
-]>
-
-<tablegroup>
+<tablegroup xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xsi:noNamespaceSchemaLocation="http://sourceforge.net/p/xaldev/openxal/ci/master/tree/core/resources/xal/schemas/tablegroup.xsd?format=raw">
     <table name="species">
         <schema>
             <attribute isPrimaryKey="true" name="name" type="java.lang.String" />

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sources xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="main.xsd">
+	<modelElementConfig_source name="fake" url="fake.xml"/>
+	<deviceMapping_source name="fake" url="fake.xml"/>
+	<optics_source name="fake" url="fake.xml"/>
+	<optics_extra name="oe" url="fake.xml"/>
+	<optics_extra name="oe2" url="fake.xml"/>
+	<hardware_status name="fake" url="fake.xml"/>
+	<timing_source name="fake" url="fake.xml"/>
+	<tablegroup_source name="tg" url="fake.xml"/>
+	<tablegroup_source name="tg2" url="fake.xml"/>
+</sources>
