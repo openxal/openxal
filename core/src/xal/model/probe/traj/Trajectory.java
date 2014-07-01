@@ -342,7 +342,7 @@ public class Trajectory<S extends ProbeState<S>> implements IArchive, Iterable<S
      *  @param  probe   target probe object
      */
 	public void update(Probe<S> probe) {
-        S state = probe.createProbeState();
+        S state = probe.createEmptyProbeState();
         saveState(state);
     }
 

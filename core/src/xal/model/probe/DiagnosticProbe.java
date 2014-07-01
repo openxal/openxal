@@ -100,8 +100,8 @@ public class DiagnosticProbe extends Probe<DiagnosticProbeState> {
 	}
 	
 	@Override
-	public DiagnosticProbeState createProbeState() {
-		return new DiagnosticProbeState(this);
+	public DiagnosticProbeState createEmptyProbeState() {
+		return new DiagnosticProbeState();
 	}
 	
 	@Override

@@ -261,7 +261,7 @@ public abstract class Probe<S extends ProbeState<S>> implements IProbe, IArchive
     /**
      * Captures the probe's state in a ProbeState of the appropriate species.
      */
-    public abstract S createProbeState();
+    public abstract S createEmptyProbeState();
     
     
     /*
@@ -354,9 +354,10 @@ public abstract class Probe<S extends ProbeState<S>> implements IProbe, IArchive
      *
      */
     protected Probe() {
-
-    	this.stateCurrent = this.createProbeState();
-        this.stateInit    = this.createProbeState();
+    	
+    	//need to simply initialize an empty probe state
+    	this.stateCurrent = this.createEmptyProbeState();
+        this.stateInit    = this.createEmptyProbeState();
         
         this.trajHist = this.createTrajectory();
         
@@ -383,7 +384,7 @@ public abstract class Probe<S extends ProbeState<S>> implements IProbe, IArchive
      */
     public Probe(Probe<S> probe)   {
         this();
-        this.deepCopyProbeBase(probe);
+        this.deepCopy(probe);
     }
     
 
@@ -490,15 +491,6 @@ public abstract class Probe<S extends ProbeState<S>> implements IProbe, IArchive
 
 
     
-    //TODO - Chris, this is the behavior that is in the working set in the 
-    //		repository right now, however I know you weren't the biggest fan
-    //		of this implementation. 
-    //		Should it just return the trajHist even if it's null, since it 
-    //      is a 'get'?  Or should we leave it as it was before and have it 
-    //		create a new trajectory if there isn't one?
-    //		It seems like since we changed the constructors to initialize the 
-    //		Trajectory, trajHist will never be null, so a simple 'get' should
-    //		be fine.
     /**
      *  Get the state history of the probe.
      * 
@@ -506,9 +498,6 @@ public abstract class Probe<S extends ProbeState<S>> implements IProbe, IArchive
      */
 	@NoEdit	// editors should not access this property
     public Trajectory<S> getTrajectory() {
-        if (trajHist == null) {
-            this.trajHist = createTrajectory();
-        }
         return trajHist; 
     }
     
@@ -696,8 +685,8 @@ public abstract class Probe<S extends ProbeState<S>> implements IProbe, IArchive
      * Initializes the probe, resetting state as necessary.
      */
     public void initialize() {
-    	this.stateInit = this.createProbeState();
-    	this.stateCurrent = this.createProbeState();
+    	this.stateInit = this.createEmptyProbeState();
+    	this.stateCurrent = this.createEmptyProbeState();
     	
         this.trajHist = this.createTrajectory();
 //        this.getAlgorithm().initialize();  // CKA - I think these should be uncommented
@@ -922,7 +911,7 @@ public abstract class Probe<S extends ProbeState<S>> implements IProbe, IArchive
         this.getAlgorithm().save(daProbe);
                 
         // Save the probe state information
-        S state = createProbeState();
+        S state = createEmptyProbeState();
         state.save(daProbe);  
     }
     
@@ -940,7 +929,7 @@ public abstract class Probe<S extends ProbeState<S>> implements IProbe, IArchive
      *
      *  @param  probe   probe object whose Probe base is to be deep copied into this
      */
-    protected void  deepCopyProbeBase(Probe<S> probe)    {
+    protected void  deepCopy(Probe<S> probe)    {
         
         // Copy all the Probe base attributes
 
@@ -982,49 +971,49 @@ public abstract class Probe<S extends ProbeState<S>> implements IProbe, IArchive
     //		I've implemented them in ProbeState in order to calculate values for Beta and Gamma in the 
     //		setKineticEngery() method.
 
-    /** 
-     *  Computes the relatavistic factor gamma from the current beta value
-     *  
-     *  @param  beta    speed of probe w.r.t. the speed of light
-     *  @return         relatavistic factor gamma
-     */
-    protected double computeGammaFromBeta(double beta) { 
-        return 1.0/Math.sqrt(1.0 - beta*beta); 
-    };
-    
-    /**
-     *  Convenience function for computing the relatistic factor gamma from the 
-     *  probe's kinetic energy (using the particle species rest energy m_dblParEr).
-     *
-     *  @param  W       kinetic energy of the probe
-     *  @return         relatavistic factor gamma
-     */
-    protected double computeGammaFromW(double W)   {
-        double gamma = W/(this.getSpeciesRestEnergy()) + 1.0;
-        
-        return gamma;
-    };
-    
-    /**
-     *  Convenience function for computing the probe's velocity beta (w.r.t. the 
-     *  speed of light) from the relatistic factor gamma.
-     *
-     *  @param beta     relatavistic factor gamma
-     *  @return         speed of probe (w.r.t. speed of light)
-     */
-    protected double computeBetaFromGamma(double gamma) {
-        double beta = Math.sqrt(1.0 - 1.0/(gamma*gamma));
-
-        return beta;
-    };
-    
-    /** 
-     *  Convenience function for multiplication of beta * gamma
-     */
-    protected double getBetaGamma() { 
-    	return (this.getBeta())*(this.getGamma());
-    	//return m_dblBeta*m_dblGamma; 
-    }
+//    /** 
+//     *  Computes the relatavistic factor gamma from the current beta value
+//     *  
+//     *  @param  beta    speed of probe w.r.t. the speed of light
+//     *  @return         relatavistic factor gamma
+//     */
+//    protected double computeGammaFromBeta(double beta) { 
+//        return 1.0/Math.sqrt(1.0 - beta*beta); 
+//    };
+//    
+//    /**
+//     *  Convenience function for computing the relatistic factor gamma from the 
+//     *  probe's kinetic energy (using the particle species rest energy m_dblParEr).
+//     *
+//     *  @param  W       kinetic energy of the probe
+//     *  @return         relatavistic factor gamma
+//     */
+//    protected double computeGammaFromW(double W)   {
+//        double gamma = W/(this.getSpeciesRestEnergy()) + 1.0;
+//        
+//        return gamma;
+//    };
+//    
+//    /**
+//     *  Convenience function for computing the probe's velocity beta (w.r.t. the 
+//     *  speed of light) from the relatistic factor gamma.
+//     *
+//     *  @param beta     relatavistic factor gamma
+//     *  @return         speed of probe (w.r.t. speed of light)
+//     */
+//    protected double computeBetaFromGamma(double gamma) {
+//        double beta = Math.sqrt(1.0 - 1.0/(gamma*gamma));
+//
+//        return beta;
+//    };
+//    
+//    /** 
+//     *  Convenience function for multiplication of beta * gamma
+//     */
+//    protected double getBetaGamma() { 
+//    	return (this.getBeta())*(this.getGamma());
+//    	//return m_dblBeta*m_dblGamma; 
+//    }
     
 
 };

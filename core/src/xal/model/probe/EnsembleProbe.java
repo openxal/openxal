@@ -71,8 +71,8 @@ public class EnsembleProbe extends BunchProbe<EnsembleProbeState> {
      * @return a <code>EnsembleProbeState</code> encapsulating the probe's current state
      */
     @Override
-    public EnsembleProbeState createProbeState() {
-        return new EnsembleProbeState(this);
+    public EnsembleProbeState createEmptyProbeState() {
+        return new EnsembleProbeState();
     }
     
     

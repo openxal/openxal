@@ -89,7 +89,7 @@ public class T3dGenerator {
         ((DecimalFormat) nf).setMaximumFractionDigits(5);
         nf.setGroupingUsed(false);
         
-        CovarianceMatrix covarianceMatrix = myProbe.createProbeState().getCovarianceMatrix();
+        CovarianceMatrix covarianceMatrix = myProbe.createEmptyProbeState().getCovarianceMatrix();
         
         Twiss[] twiss = covarianceMatrix.computeTwiss();
         // for T3d header

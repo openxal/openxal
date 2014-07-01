@@ -152,11 +152,11 @@ public class SynchronousProbe extends Probe<SynchronousState> {
      * 
      * @return  probe state object of type <code>SynchronousState</code>
      * 
-     * @see xal.model.probe.Probe#createProbeState()
+     * @see xal.model.probe.Probe#createEmptyProbeState()
      */
      @Override
-     public SynchronousState createProbeState() {
-         return new SynchronousState(this);
+     public SynchronousState createEmptyProbeState() {
+         return new SynchronousState();
      }
      
     /**

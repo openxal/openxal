@@ -221,7 +221,7 @@ public class EnvelopeProbe extends BunchProbe<EnvelopeProbeState> {
     protected void initializeFrom( final Probe<EnvelopeProbeState> probe ) {
         super.initializeFrom( probe );
         
-        applyState( probe.createProbeState() );
+        applyState( probe.cloneCurrentProbeState() );
         createTrajectory();
     }
 
@@ -538,8 +538,8 @@ public class EnvelopeProbe extends BunchProbe<EnvelopeProbeState> {
 	 *         current state
 	 */
     @Override
-	public EnvelopeProbeState createProbeState() {
-		return new EnvelopeProbeState(this);
+	public EnvelopeProbeState createEmptyProbeState() {
+		return new EnvelopeProbeState();
 	}
 
 	/**
@@ -571,18 +571,14 @@ public class EnvelopeProbe extends BunchProbe<EnvelopeProbeState> {
     @SuppressWarnings("deprecation")
     @Override
 	public void applyState(EnvelopeProbeState state) {
-		if (!(state instanceof EnvelopeProbeState))
-			throw new IllegalArgumentException("invalid probe state");
-		EnvelopeProbeState stateEnv = (EnvelopeProbeState) state;
-
-		super.applyState(stateEnv);
-		this.setCovariance(stateEnv.getCovarianceMatrix());
-		this.setResponseMatrix(stateEnv.getResponseMatrix());
-		this.setResponseMatrixNoSpaceCharge(stateEnv.getResponseMatrixNoSpaceCharge());
-        this.setCurrentResponseMatrix(stateEnv.getPerturbationMatrix());
+		super.applyState(state);
+		this.setCovariance(state.getCovarianceMatrix());
+		this.setResponseMatrix(state.getResponseMatrix());
+		this.setResponseMatrixNoSpaceCharge(state.getResponseMatrixNoSpaceCharge());
+        this.setCurrentResponseMatrix(state.getPerturbationMatrix());
 		//obsolete this.setTwiss(stateEnv.getTwiss());
 //        this.setTwiss(stateEnv.twissParameters());
-        this.setSaveTwissFlag(stateEnv.getSaveTwissFlag());
+        this.setSaveTwissFlag(state.getSaveTwissFlag());
 	}
 
     

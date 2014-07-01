@@ -185,11 +185,10 @@ public class TestSimResultsAdaptor {
     */
    @Before
    public void setUp() throws Exception {
-	   //had to change these to .create() instead of .get() in order to work JMF
-       this.calPartPart = new CalculationsOnParticles( PROBE_PARTL_TEST.createTrajectory() );
-       this.calXferMach = new CalculationsOnMachines( PROBE_XFER_TEST.createTrajectory() );
-       this.calXferRing = new CalculationsOnRings(  PROBE_XFER_TEST.createTrajectory() );
-       this.calEnvBeam  = new CalculationsOnBeams( PROBE_ENV_TEST.createTrajectory() );
+       this.calPartPart = new CalculationsOnParticles( PROBE_PARTL_TEST.getTrajectory() );
+       this.calXferMach = new CalculationsOnMachines( PROBE_XFER_TEST.getTrajectory() );
+       this.calXferRing = new CalculationsOnRings(  PROBE_XFER_TEST.getTrajectory() );
+       this.calEnvBeam  = new CalculationsOnBeams( PROBE_ENV_TEST.getTrajectory() );
        
        this.cmpSimResults = new SimResultsAdaptor();
 

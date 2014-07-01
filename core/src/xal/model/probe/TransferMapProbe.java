@@ -196,11 +196,11 @@ public class TransferMapProbe extends Probe<TransferMapState> {
      * Return a new <code>ProbeState</code> object, of the appropriate type,
      * initialized to the current state of this probe.
      * @return  probe state object of type <code>TransferMapState</code>
-     * @see xal.model.probe.Probe#createProbeState()
+     * @see xal.model.probe.Probe#createEmptyProbeState()
      */
     @Override
-    public TransferMapState createProbeState() {
-        return new TransferMapState(this);
+    public TransferMapState createEmptyProbeState() {
+        return new TransferMapState();
     }
     
     
@@ -231,7 +231,7 @@ public class TransferMapProbe extends Probe<TransferMapState> {
     protected void initializeFrom( final Probe<TransferMapState> probe ) {
         super.initializeFrom( probe );
         
-        applyState( probe.createProbeState() );
+        applyState( probe.cloneCurrentProbeState() );
         createTrajectory();
     }
     

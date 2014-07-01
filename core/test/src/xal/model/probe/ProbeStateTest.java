@@ -73,21 +73,21 @@ public class ProbeStateTest extends TestCase {
 		DiagnosticProbe probe = new DiagnosticProbe();
 		probe.setPosition(INITIAL_POSITION);
 		probe.incrementElementsVisited();
-		DiagnosticProbeState state = probe.createProbeState();
+		DiagnosticProbeState state = probe.cloneCurrentProbeState();
 		
 		//compare the snapshot to the probe
 		assertTrue(state instanceof DiagnosticProbeState);
 		assertTrue(probe.getPosition() == 
-			((DiagnosticProbeState)state).getPosition());
+			state.getPosition());
 		assertTrue(probe.getElementsVisited() == 
-			((DiagnosticProbeState)state).getElementsVisited());
+			state.getElementsVisited());
 		
 		// save the state to a trajectory	
-		Trajectory<DiagnosticProbeState> trajectory = probe.createTrajectory();
-		trajectory.saveState((DiagnosticProbeState)state);
+		Trajectory<DiagnosticProbeState> trajectory = probe.getTrajectory();
+		trajectory.saveState(state);
 		
 		assertTrue(trajectory.stateAtPosition(INITIAL_POSITION) == state);
-		assertTrue((trajectory.getStateClass()).isInstance(DiagnosticProbeState.class));
+		assertTrue((trajectory.getStateClass()).equals(DiagnosticProbeState.class));
 	}
 	
     /**
@@ -102,20 +102,20 @@ public class ProbeStateTest extends TestCase {
 		ParticleProbe probe = new ParticleProbe();
 		probe.setPosition(INITIAL_POSITION);
 		probe.setPhaseCoordinates(PhaseVector.newZero());
-		ParticleProbeState state = probe.createProbeState();
+		ParticleProbeState state = probe.cloneCurrentProbeState();
 		
 		//compare the snapshot to the probe
 		assertTrue(state instanceof ParticleProbeState);
 		assertTrue(probe.getPosition() == 
-			((ParticleProbeState)state).getPosition());
-		assertTrue(probe.getPhaseCoordinates().isEquivalentTo(((ParticleProbeState)state).getPhaseCoordinates()));
+			state.getPosition());
+		assertTrue(probe.getPhaseCoordinates().isEquivalentTo(state.getPhaseCoordinates()));
 		
 		// save the state to a trajectory	
-		Trajectory<ParticleProbeState> trajectory = probe.createTrajectory();
-		trajectory.saveState((ParticleProbeState)state);
+		Trajectory<ParticleProbeState> trajectory = probe.getTrajectory();
+		trajectory.saveState(state);
 		
 		assertTrue(trajectory.stateAtPosition(INITIAL_POSITION) == state);
-		assertTrue((trajectory.getStateClass()).isInstance(ParticleProbeState.class));
+		assertTrue((trajectory.getStateClass()).equals(ParticleProbeState.class));
 	}
 
     /**
@@ -134,26 +134,26 @@ public class ProbeStateTest extends TestCase {
         probe.setBunchFrequency(FREQUENCY);
 		probe.setBeamCurrent(CURRENT);
 		probe.setCovariance((CovarianceMatrix)PhaseMatrix.zero());     // causes class cast exception
-		EnvelopeProbeState state = probe.createProbeState();
+		EnvelopeProbeState state = probe.cloneCurrentProbeState();
 		
 		//compare the snapshot to the probe
 		assertTrue(state instanceof EnvelopeProbeState);
 		assertTrue(probe.getPosition() == 
-			((EnvelopeProbeState)state).getPosition());
+			state.getPosition());
 		assertTrue(probe.bunchCharge() == 
-			((EnvelopeProbeState)state).bunchCharge());
+			state.bunchCharge());
         assertTrue(probe.getBunchFrequency() == 
-            ((EnvelopeProbeState)state).getBunchFrequency());
+            state.getBunchFrequency());
 		assertTrue(probe.getBeamCurrent() == 
-			((EnvelopeProbeState)state).getBeamCurrent());
-		assertTrue(probe.getCovariance().equals(((EnvelopeProbeState)state).getCovarianceMatrix()));
+			state.getBeamCurrent());
+		assertTrue(probe.getCovariance().equals(state.getCovarianceMatrix()));
 		
 		// save the state to a trajectory	
-		Trajectory<EnvelopeProbeState> trajectory = probe.createTrajectory();
-		trajectory.saveState((EnvelopeProbeState)state);
+		Trajectory<EnvelopeProbeState> trajectory = probe.getTrajectory();
+		trajectory.saveState(state);
 		
 		assertTrue(trajectory.stateAtPosition(INITIAL_POSITION) == state);
-		assertTrue((trajectory.getStateClass()).isInstance(EnvelopeProbeState.class));
+		assertTrue((trajectory.getStateClass()).equals(EnvelopeProbeState.class));
 	}
 
     /**
@@ -176,28 +176,28 @@ public class ProbeStateTest extends TestCase {
 		probe.setBeamCurrent(CURRENT);
 		probe.setEnsemble(new Ensemble());
 		probe.setFieldCalculation(EnsembleProbe.FLDCALC_NONE);
-		EnsembleProbeState state = probe.createProbeState();
+		EnsembleProbeState state = probe.cloneCurrentProbeState();
 		
 		//compare the snapshot to the probe
 		assertTrue(state instanceof EnsembleProbeState);
 		assertTrue(probe.getPosition() == 
-			((EnsembleProbeState)state).getPosition());
+			state.getPosition());
 		assertTrue(probe.bunchCharge() == 
-			((EnsembleProbeState)state).bunchCharge());
+			state.bunchCharge());
         assertTrue(probe.getBunchFrequency() == 
-            ((EnsembleProbeState)state).getBunchFrequency());
+            state.getBunchFrequency());
 		assertTrue(probe.getBeamCurrent() == 
-			((EnsembleProbeState)state).getBeamCurrent());
+			state.getBeamCurrent());
 //		assertTrue(probe.getEnsemble().equals(((EnsembleProbeState)state).getEnsemble()));
 		assertTrue(probe.getFieldCalculation() == 
-			((EnsembleProbeState)state).getFieldCalculation());
+			state.getFieldCalculation());
 		
 		// save the state to a trajectory	
-		Trajectory<EnsembleProbeState> trajectory = probe.createTrajectory();
-		trajectory.saveState((EnsembleProbeState)state);
+		Trajectory<EnsembleProbeState> trajectory = probe.getTrajectory();
+		trajectory.saveState(state);
 		
 		assertTrue(trajectory.stateAtPosition(INITIAL_POSITION) == state);
-		assertTrue((trajectory.getStateClass()).isInstance(EnsembleProbeState.class));
+		assertTrue((trajectory.getStateClass()).equals(EnsembleProbeState.class));
 		
 	}
 

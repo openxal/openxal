@@ -136,7 +136,7 @@ public class TwissProbe extends BunchProbe<TwissProbeState> {
     protected void initializeFrom( final Probe<TwissProbeState> probe ) {
         super.initializeFrom( probe );
         
-        applyState( probe.createProbeState() );
+        applyState( probe.cloneCurrentProbeState() );
         createTrajectory();
     }
 
@@ -313,8 +313,8 @@ public class TwissProbe extends BunchProbe<TwissProbeState> {
 	 *         current state
 	 */
     @Override
-	public TwissProbeState createProbeState() {
-		return new TwissProbeState(this);
+	public TwissProbeState createEmptyProbeState() {
+		return new TwissProbeState();
 	}
 
 	/**

@@ -272,7 +272,7 @@ public class ModelProxy {
 		bPropagated = false;
 		
 		if (probe instanceof EnvelopeProbe) {
-			initProbeState = (EnvelopeProbeState) probe.createProbeState();
+			initProbeState = (EnvelopeProbeState) probe.createEmptyProbeState();
 
 			// Corrected 8/2011 - CKA
 //			initTwiss = ((EnvelopeProbe) probe).getTwiss();

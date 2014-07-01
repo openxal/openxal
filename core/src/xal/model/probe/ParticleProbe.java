@@ -208,11 +208,11 @@ public class ParticleProbe extends Probe<ParticleProbeState> {
      * @since  Aug 13, 2002
      * @version Nov 14, 2013
      * 
-     * @see xal.model.probe.Probe#createProbeState()
+     * @see xal.model.probe.Probe#createEmptyProbeState()
      */
     @Override
-    public ParticleProbeState createProbeState() {
-	        return new ParticleProbeState(this);
+    public ParticleProbeState createEmptyProbeState() {
+	        return new ParticleProbeState();
     }
     
     
