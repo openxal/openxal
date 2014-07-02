@@ -20,28 +20,8 @@ public class TestJSONCoding {
     public void testNullEncoding() {
         Assert.assertTrue( "null" == JSONCoder.defaultEncode( (Object)null ) );
     }
-    
-    
-    @Test
-    public void testDoubleEncoding() {
-        checkEncodingEquality( -5.3E5 );
-        checkEncodingEquality( -17.8 );
-        checkEncodingEquality( 5.3 );
-        checkEncodingEquality( 2.5E17 );
-        checkEncodingEquality( 6.2E-23 );
-    }
-    
-    
-    @Test
-    public void testLongEncoding() {
-        checkEncodingEquality( 0L );
-        checkEncodingEquality( -100L );
-        checkEncodingEquality( 100L );
-        checkEncodingEquality( 127444986353848L );
-        checkEncodingEquality( -142015908198098L );
-    }
-    
-    
+
+
     @Test
     public void testBooleanEncoding() {
         checkEncodingEquality( true );
@@ -60,29 +40,7 @@ public class TestJSONCoding {
     public void testNullDecoding() {
         Assert.assertTrue( null == JSONCoder.defaultDecode( "null" ) );
     }
-    
-    
-    @Test
-    public void testDoubleDecoding() {
-        checkValueEquality( 5.3 );
-        checkValueEquality( 0.0 );
-        checkValueEquality( -100.0 );
-        checkValueEquality( -17.2976 );
-        checkValueEquality( -32.698E53 );
-        checkValueEquality( 7.5E-102 );
-    }
-    
-    
-    @Test
-    public void testLongDecoding() {
-        checkValueEquality( 5L );
-        checkValueEquality( 0L );
-        checkValueEquality( -100L );
-        checkValueEquality( -17L );
-        checkValueEquality( 3268249075299837591L );
-        checkValueEquality( -751510751908751578L );
-    }
-    
+
     
     @Test
     public void testBooleanDecoding() {
@@ -96,8 +54,20 @@ public class TestJSONCoding {
         checkStringEquality( "Hello, World", "\"Hello, World\"" );
         checkStringEquality( "String with an \"internal\" string.", "\"String with an \\\"internal\\\" string.\"" );
     }
-    
-    
+
+	
+	@Test
+	public void testNumericDecoding() {
+		checkDecodingEquality( "{\"__XALTYPE\": \"java.lang.Integer\", \"value\": 2}", 2 );
+		checkDecodingEquality( "{\"__XALTYPE\": \"int\", \"value\": 2}", 2 );
+		checkDecodingEquality( "{\"__XALTYPE\": \"long\", \"value\": 2}", 2L );
+		checkDecodingEquality( "{\"__XALTYPE\": \"java.lang.Double\", \"value\": 3.14159}", 3.14159 );
+		checkDecodingEquality( "{\"__XALTYPE\": \"double\", \"value\": 3.14159}", 3.14159 );
+		checkDecodingEquality( "{\"__XALTYPE\": \"java.lang.Double\", \"value\": 35}", 35.0 );
+		checkDecodingEquality( "{\"__XALTYPE\": \"double\", \"value\": 35}", 35.0 );
+	}
+
+
     @Test
     public void testNumericEncodingDecoding() {
         checkEncodingDecoding( (byte)89 );
@@ -106,9 +76,29 @@ public class TestJSONCoding {
         checkEncodingDecoding( 325822043801L );
         checkEncodingDecoding( (float)56.4 );
         checkEncodingDecoding( 56.4 );
+		checkEncodingDecoding( -5.3E5 );
+		checkEncodingDecoding( -17.8 );
+		checkEncodingDecoding( 5.3 );
+		checkEncodingDecoding( 2.5E17 );
+		checkEncodingDecoding( 6.2E-23 );
+		checkEncodingDecoding( 5.3 );
+		checkEncodingDecoding( 0.0 );
+		checkEncodingDecoding( -100.0 );
+		checkEncodingDecoding( -17.2976 );
+		checkEncodingDecoding( -32.698E53 );
+		checkEncodingDecoding( 7.5E-102 );
+		checkEncodingDecoding( 0L );
+		checkEncodingDecoding( 5L );
+		checkEncodingDecoding( -17L );
+		checkEncodingDecoding( -100L );
+		checkEncodingDecoding( 100L );
+		checkEncodingDecoding( 127444986353848L );
+		checkEncodingDecoding( -142015908198098L );
+		checkEncodingDecoding( 3268249075299837591L );
+		checkEncodingDecoding( -751510751908751578L );
     }
-    
-    
+
+
     @Test
     public void testBooleanEncodingDecoding() {
         checkEncodingDecoding( true );
@@ -359,8 +349,15 @@ public class TestJSONCoding {
             assertEquality( Array.get( controlArray, index ), Array.get( testArray, index ) );
         }
     }
-    
-    
+
+
+	/** check whether the coder can decode the json coding to match the specified control value */
+	static private <DataType> void checkDecodingEquality( final String coding, final DataType controlValue ) {
+		final Object testValue = JSONCoder.defaultDecode( coding );
+		assertEquality( controlValue, testValue );
+	}
+
+
     /** Assert whether the control value equals the test value */
     static private void assertEquality( final Object controlValue, final Object testValue ) {
         Assert.assertTrue( controlValue == testValue || controlValue.equals( testValue ) );
