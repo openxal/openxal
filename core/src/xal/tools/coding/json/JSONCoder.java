@@ -1442,14 +1442,21 @@ class MutableConversionAdaptorStore extends ConversionAdaptorStore {
      * Register the custom type by class and its associated adaptor 
      * @param type type to identify and process for encoding and decoding
      * @param adaptor translator between the custom type and representation JSON constructs
+	 * @param alternateKeys zero or more alternate names used to reference the adaptor (e.g. "double" for "java.lang.Double")
      */
-    public <CustomType,RepresentationType> void registerType( final Class<?> type, final ConversionAdaptor<CustomType,RepresentationType> adaptor ) {
+    public <CustomType,RepresentationType> void registerType( final Class<?> type, final ConversionAdaptor<CustomType,RepresentationType> adaptor, final String ... alternateKeys ) {
         registerType( type.getName(), adaptor );
+
+		if ( alternateKeys != null ) {
+			for ( final String key : alternateKeys ) {
+				registerType( key, adaptor );
+			}
+		}
     }
-    
-    
-    /** 
-     * Register the custom type by name and its associated adaptor 
+
+
+    /**
+     * Register the custom type by name and its associated adaptor
      * @param type type to identify and process for encoding and decoding
      * @param adaptor translator between the custom type and representation JSON constructs
      */
@@ -1484,7 +1491,7 @@ class MutableConversionAdaptorStore extends ConversionAdaptorStore {
 			public Byte toNative( final JSONNumber representation ) {
 				return representation.byteValue();
 			}
-		});
+		}, "byte" );
 
         registerType( Short.class, new ConversionAdaptor<Short,JSONNumber>() {
             /** convert the custom type to a representation in terms of representation JSON constructs */
@@ -1497,7 +1504,7 @@ class MutableConversionAdaptorStore extends ConversionAdaptorStore {
             public Short toNative( final JSONNumber representation ) {
                 return representation.shortValue();
             }
-        });
+        }, "short" );
 
         registerType( Integer.class, new ConversionAdaptor<Integer,JSONNumber>() {
             /** convert the custom type to a representation in terms of representation JSON constructs */
@@ -1510,7 +1517,7 @@ class MutableConversionAdaptorStore extends ConversionAdaptorStore {
             public Integer toNative( final JSONNumber representation ) {
                 return representation.intValue();
             }
-        });
+        }, "int" );
 
 		registerType( Long.class, new ConversionAdaptor<Long,JSONNumber>() {
 			/** convert the custom type to a representation in terms of representation JSON constructs */
@@ -1523,7 +1530,7 @@ class MutableConversionAdaptorStore extends ConversionAdaptorStore {
 			public Long toNative( final JSONNumber representation ) {
 				return representation.longValue();
 			}
-		});
+		}, "long" );
 
         registerType( Float.class, new ConversionAdaptor<Float,JSONNumber>() {
             /** convert the custom type to a representation in terms of representation JSON constructs */
@@ -1536,7 +1543,7 @@ class MutableConversionAdaptorStore extends ConversionAdaptorStore {
             public Float toNative( final JSONNumber representation ) {
                 return representation.floatValue();
             }
-        });
+        }, "float" );
 
 		registerType( Double.class, new ConversionAdaptor<Double,JSONNumber>() {
 			/** convert the custom type to a representation in terms of representation JSON constructs */
@@ -1549,7 +1556,7 @@ class MutableConversionAdaptorStore extends ConversionAdaptorStore {
 			public Double toNative( final JSONNumber representation ) {
 				return representation.doubleValue();
 			}
-		});
+		}, "double" );
 
         registerType( Date.class, new ConversionAdaptor<Date,JSONNumber>() {
             /** convert the custom type to a representation in terms of representation JSON constructs */

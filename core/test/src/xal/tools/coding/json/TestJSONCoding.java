@@ -54,8 +54,20 @@ public class TestJSONCoding {
         checkStringEquality( "Hello, World", "\"Hello, World\"" );
         checkStringEquality( "String with an \"internal\" string.", "\"String with an \\\"internal\\\" string.\"" );
     }
-    
-    
+
+	
+	@Test
+	public void testNumericDecoding() {
+		checkDecodingEquality( "{\"__XALTYPE\": \"java.lang.Integer\", \"value\": 2}", 2 );
+		checkDecodingEquality( "{\"__XALTYPE\": \"int\", \"value\": 2}", 2 );
+		checkDecodingEquality( "{\"__XALTYPE\": \"long\", \"value\": 2}", 2L );
+		checkDecodingEquality( "{\"__XALTYPE\": \"java.lang.Double\", \"value\": 3.14159}", 3.14159 );
+		checkDecodingEquality( "{\"__XALTYPE\": \"double\", \"value\": 3.14159}", 3.14159 );
+		checkDecodingEquality( "{\"__XALTYPE\": \"java.lang.Double\", \"value\": 35}", 35.0 );
+		checkDecodingEquality( "{\"__XALTYPE\": \"double\", \"value\": 35}", 35.0 );
+	}
+
+
     @Test
     public void testNumericEncodingDecoding() {
         checkEncodingDecoding( (byte)89 );
@@ -337,8 +349,15 @@ public class TestJSONCoding {
             assertEquality( Array.get( controlArray, index ), Array.get( testArray, index ) );
         }
     }
-    
-    
+
+
+	/** check whether the coder can decode the json coding to match the specified control value */
+	static private <DataType> void checkDecodingEquality( final String coding, final DataType controlValue ) {
+		final Object testValue = JSONCoder.defaultDecode( coding );
+		assertEquality( controlValue, testValue );
+	}
+
+
     /** Assert whether the control value equals the test value */
     static private void assertEquality( final Object controlValue, final Object testValue ) {
         Assert.assertTrue( controlValue == testValue || controlValue.equals( testValue ) );
