@@ -942,32 +942,10 @@ public abstract class Probe<S extends ProbeState<S>> implements IProbe, IArchive
      */
     protected void  deepCopy(Probe<S> probe)    {
         
-        // Copy all the Probe base attributes
-
-    	// all of these could be copied by simply copying the 
-    	// stateCurrent to the new Probe - JMF
-    	// TODO - Chris, is this the way we should do the deep copy here?
-    	//		Just simply copy the stateCurrent to the new Probe.
-    	
-    	/*
-    	this.m_dblParQ  = probe.m_dblParQ;
-        this.m_dblParEr = probe.m_dblParEr;
-
-
-        this.m_dblPos   = probe.m_dblPos;
-        this.m_dblTime  = probe.m_dblTime;
-        this.m_dblW     = probe.m_dblW;
-
-        this.m_dblBeta  = probe.m_dblBeta;
-        this.m_dblGamma = probe.m_dblGamma;
-        */
-        
-        
+        // Copy all the Probe base attributes by copying the current ProbeState        
         this.stateCurrent = probe.stateCurrent.copy();
-        
-        
+             
         this.bolTrack = probe.bolTrack;
-        
         
         // Copy the algorithm object if we have one
         this.algTracker = null;
@@ -976,55 +954,5 @@ public abstract class Probe<S extends ProbeState<S>> implements IProbe, IArchive
             this.setAlgorithm( algorithm.copy() );
         }
     };
-
     
-    //TODO - Chris, can these last 4 "helper" functions be removed since they aren't being used anywhere? 
-    //		I've implemented them in ProbeState in order to calculate values for Beta and Gamma in the 
-    //		setKineticEngery() method.
-
-//    /** 
-//     *  Computes the relatavistic factor gamma from the current beta value
-//     *  
-//     *  @param  beta    speed of probe w.r.t. the speed of light
-//     *  @return         relatavistic factor gamma
-//     */
-//    protected double computeGammaFromBeta(double beta) { 
-//        return 1.0/Math.sqrt(1.0 - beta*beta); 
-//    };
-//    
-//    /**
-//     *  Convenience function for computing the relatistic factor gamma from the 
-//     *  probe's kinetic energy (using the particle species rest energy m_dblParEr).
-//     *
-//     *  @param  W       kinetic energy of the probe
-//     *  @return         relatavistic factor gamma
-//     */
-//    protected double computeGammaFromW(double W)   {
-//        double gamma = W/(this.getSpeciesRestEnergy()) + 1.0;
-//        
-//        return gamma;
-//    };
-//    
-//    /**
-//     *  Convenience function for computing the probe's velocity beta (w.r.t. the 
-//     *  speed of light) from the relatistic factor gamma.
-//     *
-//     *  @param beta     relatavistic factor gamma
-//     *  @return         speed of probe (w.r.t. speed of light)
-//     */
-//    protected double computeBetaFromGamma(double gamma) {
-//        double beta = Math.sqrt(1.0 - 1.0/(gamma*gamma));
-//
-//        return beta;
-//    };
-//    
-//    /** 
-//     *  Convenience function for multiplication of beta * gamma
-//     */
-//    protected double getBetaGamma() { 
-//    	return (this.getBeta())*(this.getGamma());
-//    	//return m_dblBeta*m_dblGamma; 
-//    }
-    
-
 };
