@@ -439,8 +439,8 @@ public abstract class TestCommon {
 		meanOx.print(pw);
 		meanOx.minus(meanTw).print(pw);
 		pw.flush();*/
-		centCovOx.print(pw);
-		centCovTw.print(pw);
+		//centCovOx.print(pw);
+	//	centCovTw.print(pw);
 		pw.flush();
 		double n = centCovOx.minus(centCovTw).norm2()/centCovTw.norm2();
 		double n2 = meanOx.minus(meanTw).norm2();
