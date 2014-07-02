@@ -32,7 +32,7 @@ public class FileBasedElementMapping extends ElementMapping {
 	/** Model Configuration schema */
     final public static String elementMappingSchema = "/xal/schemas/ModelConfig.xsd";
 	
-	protected FileBasedElementMapping() {		
+	protected FileBasedElementMapping() {
 	}
 	
 	@Override
