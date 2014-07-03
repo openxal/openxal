@@ -177,4 +177,21 @@ public class R4 extends BaseVector<R4> {
     public R4(R4 matParent) {
         super(matParent);
     }
+    
+    /*
+     * Object Method Overrides
+     */
+    
+    /**
+     * Creates and returns a deep copy of <b>this</b> vector.
+     * 
+     * @see xal.tools.math.BaseVector#clone()
+     * 
+     * @author Jonathan M. Freed
+     * @since Jul 3, 2014
+     */
+    @Override
+    public R4 clone(){
+    	return new R4(this);
+    }
 }

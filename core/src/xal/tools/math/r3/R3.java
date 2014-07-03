@@ -447,6 +447,19 @@ public class R3 extends BaseVector<R3> implements java.io.Serializable {
     /*
      *  Object method overrides
      */
+    
+    /**
+     * Creates and returns a deep copy of <b>this</b> vector.
+     * 
+     * @see xal.tools.math.BaseVector#clone()
+     * 
+     * @author Jonathan M. Freed
+     * @since Jul 3, 2014
+     */
+    @Override 
+    public R3 clone(){
+    	return new R3(this);
+    }
      
     /**
      *  Convert the vector contents to a string.
