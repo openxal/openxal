@@ -1,9 +1,8 @@
 package xal.tools.beam;
 
+import xal.tools.annotation.AProperty.NoEdit;
 import xal.tools.beam.Twiss3D.IND_3D;
 import xal.tools.math.r3.R3x3;
-import xal.tools.annotation.AProperty.NoEdit;
-import Jama.Matrix;
 
 
 /**
@@ -229,6 +228,24 @@ public class CovarianceMatrix extends PhaseMatrix {
 
 
 
+    /*
+     * Object Overrides
+     */
+    
+    /**
+     * Creates and returns a deep copy of this matrix.
+     *
+     * @see xal.tools.math.BaseMatrix#clone()
+     *
+     * @author Christopher K. Allen
+     * @since  Jul 3, 2014
+     */
+    @Override
+    public CovarianceMatrix clone() {
+        return new CovarianceMatrix(this);
+    }
+
+    
 
     /*
      *  Initialization

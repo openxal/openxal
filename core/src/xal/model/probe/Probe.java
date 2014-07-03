@@ -188,12 +188,16 @@ public abstract class Probe<S extends ProbeState<S>> implements IProbe, IArchive
     }
 
     /**
+     * <p>
      * Clone factory method.  Creates a new <code>Probe</code> object, of the appropriate
      * type, initialized to the argument <code>Probe</code>.
-     * 
-     * NOTE: There is now a reset() method that is preferable to this one.  It
+     * </p>
+     * <p>
+     * <h4>NOTE:</h4>
+     * There is now a reset() method that is preferable to this one.  It
      * clears the probe trajHist and restores the initial state saved in the
      * initialize() method, without creating a new probe instance.
+     * </p>
      * 
      * @param probeInit     <code>Probe</code> object containing initial data
      * 

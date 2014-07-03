@@ -438,6 +438,24 @@ public class PhaseMatrix extends SquareMatrix<PhaseMatrix> implements java.io.Se
     
     
     /*
+     * Object Overrides
+     */
+    
+    /**
+     * Creates and returns a deep copy of this matrix.
+     *
+     * @see xal.tools.math.BaseMatrix#clone()
+     *
+     * @author Christopher K. Allen
+     * @since  Jul 3, 2014
+     */
+    @Override
+    public PhaseMatrix clone() {
+        return new PhaseMatrix(this);
+    }
+
+    
+    /*
      * Initialization
      */
     

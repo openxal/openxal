@@ -14,6 +14,7 @@ import xal.tools.math.SquareMatrix;
 import xal.tools.math.r2.R2x2;
 import xal.tools.math.r3.R3x3;
 import xal.tools.math.r3.R3x3.POS;
+import xal.tools.math.r6.R6x6;
 
 /**
  *  <p>
@@ -221,6 +222,24 @@ public class R4x4 extends SquareMatrix<R4x4> {
         return new R4x4(strTokens);
     }
     
+    
+    /*
+     * Object Overrides
+     */
+    
+    /**
+     * Creates and returns a deep copy of this matrix.
+     *
+     * @see xal.tools.math.BaseMatrix#clone()
+     *
+     * @author Christopher K. Allen
+     * @since  Jul 3, 2014
+     */
+    @Override
+    public R4x4 clone() {
+        return new R4x4(this);
+    }
+
     
     /*
      * Initialization

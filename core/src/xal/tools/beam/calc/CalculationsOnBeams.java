@@ -74,18 +74,18 @@ public class CalculationsOnBeams extends CalculationEngine implements ISimLocRes
      * @since  Oct 22, 2013
      */
     public CalculationsOnBeams(Trajectory<EnvelopeProbeState> datSim) {
-        ProbeState  pstFinal = datSim.finalState();
-        
-        // Check for correct probe types
-        if ( !( pstFinal instanceof EnvelopeProbeState) )
-            throw new IllegalArgumentException(
-                    "Trajectory states are not EnvelopeProbeStates? - " 
-                    + pstFinal.getClass().getName()
-                    );
+//        EnvelopeProbeState  pstFinal = datSim.finalState();
+//        
+//        // Check for correct probe types
+//        if ( !( pstFinal instanceof EnvelopeProbeState) )
+//            throw new IllegalArgumentException(
+//                    "Trajectory states are not EnvelopeProbeStates? - " 
+//                    + pstFinal.getClass().getName()
+//                    );
         
         this.trjSimul  = datSim;
         this.staInit   = datSim.initialState();
-        this.staFinal  = (EnvelopeProbeState)pstFinal;
+        this.staFinal  = datSim.finalState();
         this.matResp   = this.staFinal.getResponseMatrix();
         
         this.vecPhsAdv = super.calculatePhaseAdvPerCell(this.matResp);

@@ -168,7 +168,7 @@ public abstract class ProbeState<S extends ProbeState<S>> implements IProbeState
      *  @param  q       species particle charge (<b>Coulombs</b>)
      */
     public void setSpeciesCharge(double q) { 
-        m_dblParQ = q; 
+       this.m_dblParQ = q; 
     }
     
     
@@ -178,7 +178,7 @@ public abstract class ProbeState<S extends ProbeState<S>> implements IProbeState
      *  @param  Er      particle rest energy (<b>electron-volts</b>)
      */
     public void setSpeciesRestEnergy(double Er) { 
-        m_dblParEr = Er; 
+        this.m_dblParEr = Er; 
     }
 
 
@@ -191,7 +191,7 @@ public abstract class ProbeState<S extends ProbeState<S>> implements IProbeState
      *  @see    #getPosition
      */
     public void setPosition(double s) {
-    	m_dblPos = s;
+    	this.m_dblPos = s;
     }
     
     /** 
@@ -200,7 +200,7 @@ public abstract class ProbeState<S extends ProbeState<S>> implements IProbeState
      * @param   dblTime     elapsed time in <b>seconds</b>
      */
     public void setTime(double dblTime) {
-        m_dblTime = dblTime; 
+        this.m_dblTime = dblTime; 
      }
 
     /**
@@ -211,10 +211,10 @@ public abstract class ProbeState<S extends ProbeState<S>> implements IProbeState
      *  @see    #getKineticEnergy
      */
     public void setKineticEnergy(double W) {
-        m_dblW = W;
+        this.m_dblW = W;
         
-        m_dblGamma = this.computeGammaFromW(m_dblW);
-        m_dblBeta = this.computeBetaFromGamma(m_dblGamma);
+        this.m_dblGamma = this.computeGammaFromW(m_dblW);
+        this.m_dblBeta = this.computeBetaFromGamma(m_dblGamma);
     }
     
     /**

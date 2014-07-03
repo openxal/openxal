@@ -125,10 +125,12 @@ public class EnvelopeProbeState extends BunchProbeState<EnvelopeProbeState> {
      * Default constructor.  Create a new, empty <code>EnvelopeProbeState<code> object.
      */    
     public EnvelopeProbeState() {
+        super();
+        
+        this.matCov = CovarianceMatrix.newIdentity();
         this.matPert = PhaseMatrix.identity();
         this.matResp = PhaseMatrix.identity();
         this.matRespNoSpaceCharge = PhaseMatrix.identity();
-    	this.matCov = new CovarianceMatrix();
     }
     
     /**
@@ -141,14 +143,14 @@ public class EnvelopeProbeState extends BunchProbeState<EnvelopeProbeState> {
      * @author Christopher K. Allen, Jonathan M. Freed
      * @since  Jun 26, 2014
      */
-    public EnvelopeProbeState(EnvelopeProbeState envelopeProbeState){
-    	super(envelopeProbeState);
+    public EnvelopeProbeState(EnvelopeProbeState prsEnv){
+    	super(prsEnv);
     	
-    	this.bolSaveTwiss	= envelopeProbeState.bolSaveTwiss;
-    	this.matCov			= envelopeProbeState.matCov;
-    	this.matPert		= envelopeProbeState.matResp;
-    	this.matResp		= envelopeProbeState.matPert;
-    	this.matRespNoSpaceCharge = envelopeProbeState.matRespNoSpaceCharge;
+    	this.bolSaveTwiss	= prsEnv.bolSaveTwiss;
+    	this.matCov			= prsEnv.matCov.clone();
+    	this.matPert		= prsEnv.matPert.clone();
+    	this.matResp		= prsEnv.matResp.clone();
+    	this.matRespNoSpaceCharge = prsEnv.matRespNoSpaceCharge.clone();
     }
 	
     /**
@@ -159,10 +161,12 @@ public class EnvelopeProbeState extends BunchProbeState<EnvelopeProbeState> {
      */
     public EnvelopeProbeState(EnvelopeProbe probe) {
         super(probe);
-        this.setCovariance(probe.getCovariance());
-        this.setResponseMatrix(probe.getResponseMatrix());
-        this.setResponseMatrixNoSpaceCharge(probe.getResponseMatrixNoSpaceCharge());
-        this.setPerturbationMatrix(probe.getCurrentResponseMatrix());
+        
+        this.setCovariance( probe.getCovariance().clone() );
+        this.setResponseMatrix( probe.getResponseMatrix().clone() );
+        this.setResponseMatrixNoSpaceCharge( probe.getResponseMatrixNoSpaceCharge().clone() );
+        this.setPerturbationMatrix( probe.getCurrentResponseMatrix().clone() );
+
         //obsolete this.setTwiss(probe.getTwiss());
 //        this.twissParams = probe.getCovariance().computeTwiss();
 //        this.bolSaveTwiss = probe.getSaveTwissFlag();

@@ -8,7 +8,6 @@ package xal.model.probe;
 
 import xal.model.ModelException;
 import xal.model.alg.EnvTrackerAdapt;
-import xal.model.probe.traj.DiagnosticProbeState;
 import xal.model.probe.traj.EnvelopeProbeState;
 import xal.model.probe.traj.ProbeState;
 import xal.model.probe.traj.Trajectory;
@@ -173,11 +172,10 @@ public class EnvelopeProbe extends BunchProbe<EnvelopeProbeState> {
 		super(probe);
 
         //PhaseMatrix copy constructor does a deep copy
-		this.setResponseMatrix(new PhaseMatrix(probe.getResponseMatrix()));
-		this.setResponseMatrixNoSpaceCharge(new PhaseMatrix(probe.getResponseMatrixNoSpaceCharge()));
-		this.setCurrentResponseMatrix(new PhaseMatrix(probe.getCurrentResponseMatrix()));
-//		this.setBetatronPhase(new R3(probe.getBetatronPhase()));
-		this.setCovariance(new CovarianceMatrix(probe.getCovariance()));
+        this.setCovariance( probe.getCovariance().clone() );
+		this.setResponseMatrix( probe.getResponseMatrix().clone() );
+		this.setResponseMatrixNoSpaceCharge( probe.getResponseMatrixNoSpaceCharge().clone() );
+		this.setCurrentResponseMatrix( probe.getCurrentResponseMatrix().clone() );
 	};
     
     /**
@@ -585,11 +583,17 @@ public class EnvelopeProbe extends BunchProbe<EnvelopeProbeState> {
     @SuppressWarnings("deprecation")
     @Override
 	public void applyState(EnvelopeProbeState state) {
-		super.applyState(state);
-		this.setCovariance(state.getCovarianceMatrix());
-		this.setResponseMatrix(state.getResponseMatrix());
-		this.setResponseMatrixNoSpaceCharge(state.getResponseMatrixNoSpaceCharge());
-        this.setCurrentResponseMatrix(state.getPerturbationMatrix());
+		
+        this.stateCurrent = state.copy();
+        
+//        super.applyState(state);
+//		
+//		this.setCovariance( state.getCovarianceMatrix());
+//		this.setResponseMatrix(state.getResponseMatrix());
+//		this.setResponseMatrixNoSpaceCharge(state.getResponseMatrixNoSpaceCharge());
+//        this.setCurrentResponseMatrix(state.getPerturbationMatrix());
+        
+        
 		//obsolete this.setTwiss(stateEnv.getTwiss());
 //        this.setTwiss(stateEnv.twissParameters());
         this.setSaveTwissFlag(state.getSaveTwissFlag());
