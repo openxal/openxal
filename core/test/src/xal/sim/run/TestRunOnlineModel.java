@@ -176,7 +176,8 @@ public class TestRunOnlineModel {
 	@Test
 	public void testRunEnvelopeModel() throws ModelException {
 		
-        PROBE_ENV_TEST.reset();
+        //PROBE_ENV_TEST.reset();
+        PROBE_ENV_TEST.initialize();
         MODEL_TEST.setProbe(PROBE_ENV_TEST);
         MODEL_TEST.resync();
         MODEL_TEST.run();
@@ -195,8 +196,9 @@ public class TestRunOnlineModel {
     @Test
     public void testRunEnvelopeModelWithRfGapCalc() throws ModelException {
         
-        PROBE_ENV_TEST.reset();
-        PROBE_ENV_TEST.getAlgorithm().setRfGapPhaseCalculation(true);
+        //PROBE_ENV_TEST.reset();
+    	PROBE_ENV_TEST.initialize();
+    	PROBE_ENV_TEST.getAlgorithm().setRfGapPhaseCalculation(true);
         MODEL_TEST.setProbe(PROBE_ENV_TEST);
         MODEL_TEST.resync();
         MODEL_TEST.run();
