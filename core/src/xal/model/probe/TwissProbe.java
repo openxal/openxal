@@ -132,7 +132,10 @@ public class TwissProbe extends BunchProbe<TwissProbeState> {
      * Initialize this probe from the one specified.
      * 
      * @param probe to copy
+     * 
+     * @deprecated  Never used
      */
+    @Deprecated
     @Override
     protected void initializeFrom( final Probe<TwissProbeState> probe ) {
         super.initializeFrom( probe );

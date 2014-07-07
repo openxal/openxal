@@ -215,7 +215,10 @@ public class EnvelopeProbe extends BunchProbe<EnvelopeProbeState> {
     /**
      * Initialize this probe from the one specified.
      * @param probe the probe from which to initialize this one
+     * 
+     * @deprecated  Never used
      */
+    @Deprecated
     @Override
     protected void initializeFrom( final Probe<EnvelopeProbeState> probe ) {
         super.initializeFrom( probe );

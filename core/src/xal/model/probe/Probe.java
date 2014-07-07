@@ -279,6 +279,16 @@ public abstract class Probe<S extends ProbeState<S>> implements IProbe, IArchive
      */
     public abstract S createEmptyProbeState(); 
     
+    /**
+     * Read the contents of the supplied <code>DataAdaptor</code> and return
+     * an instance of the appropriate Trajectory species.
+     * 
+     * @param container <code>DataAdaptor</code> to read a Trajectory from
+     * @return a ProbeState for the contents of the DataAdaptor
+     * @throws ParsingException error encountered reading the DataAdaptor
+     */
+    protected abstract S readStateFrom(DataAdaptor container) throws ParsingException;
+    
     /*
      * ---------------------------------------------------------------
      *
@@ -409,7 +419,11 @@ public abstract class Probe<S extends ProbeState<S>> implements IProbe, IArchive
      * Initialize this probe from the one specified.
      * 
      * @param probe the probe from which to initialize this one
+     * 
+     * @deprecated  This method is only called from child class overrides
+     *              which are never called themselves.
      */
+    @Deprecated
     protected void initializeFrom( final Probe<S> probe ) {
         final S initialState = probe.getTrajectory().initialState();
         if ( initialState != null ) {
@@ -422,6 +436,31 @@ public abstract class Probe<S extends ProbeState<S>> implements IProbe, IArchive
     }
     
     
+
+    /**
+         * <p>
+         * Resets the probe to the saved initial state, if there is one and clears
+         * the trajHist.
+         * </p>
+         * <p>
+         * <h4>CKA NOTES:</h4>
+         * These notes concern the refactoring of the probe component
+         * in order to tighten the typing.
+         * <br/>
+         * <br/>
+         * &middot; The new behavior should be the same as before, only 
+         * the implementation differs.  The current state is set to a clone
+         * of the (previously saved) initial state.
+         * &middot; The trajectory is cleared.
+         * </p>
+         */
+        public void reset() {
+        	if (stateInit != null) { 
+        		this.stateCurrent = stateInit.copy();
+        	}
+        	this.trajHist = this.createTrajectory();
+    //        this.getAlgorithm().initialize(); // CKA - I think these should be uncommented
+        }
 
     /**
      *  Provide a user comment associated with the probe
@@ -439,27 +478,6 @@ public abstract class Probe<S extends ProbeState<S>> implements IProbe, IArchive
 
     
 
-
-    /** 
-     *  Set the charge of the particle species in the beam 
-     *  
-     *  @param  q       species particle charge in units of positive electron charge
-     */
-    public void setSpeciesCharge(double q) { 
-    	this.stateCurrent.setSpeciesCharge(q);
-    	//m_dblParQ = q; 
-    }
-    
-    
-    /** 
-     *  Set the rest energy of a single particle in the beam 
-     *
-     *  @param  Er      particle rest energy (<b>electron-volts</b>)
-     */
-    public void setSpeciesRestEnergy(double Er) { 
-    	this.stateCurrent.setSpeciesRestEnergy(Er);
-    	//m_dblParEr = Er; 
-    }
 
 
 
@@ -503,9 +521,6 @@ public abstract class Probe<S extends ProbeState<S>> implements IProbe, IArchive
 	@NoEdit	// editors should not access this property
     public Date     getTimestamp()              { return m_dateStamp; };
 
-
-
-    
     /**
      *  Get the state history of the probe.
      * 
@@ -516,8 +531,16 @@ public abstract class Probe<S extends ProbeState<S>> implements IProbe, IArchive
         return trajHist; 
     }
     
+    /** 
+     * Returns the momentum
+     * 
+     * @return particle momentum
+     */
+    public double getMomentum() {
+        return this.stateCurrent.getMomentum();
+        //return (getSpeciesRestEnergy()*getGamma()*getBeta());
+    }
     
-      
     
     /*
      *  IProbe Interface
@@ -528,6 +551,7 @@ public abstract class Probe<S extends ProbeState<S>> implements IProbe, IArchive
      *  
      *  @return     particle species charge (<b>Coulombs</b>)
      */
+    @Override
     public double getSpeciesCharge() { 
     	return this.stateCurrent.getSpeciesCharge();
     	//return m_dblParQ; 
@@ -539,25 +563,18 @@ public abstract class Probe<S extends ProbeState<S>> implements IProbe, IArchive
      *  @return     particle species rest energy (<b>electron-volts</b>)
      */
 	@Units( "eV" )
+    @Override
     public double getSpeciesRestEnergy() { 
 		return this.stateCurrent.getSpeciesRestEnergy();
 		//return m_dblParEr; 
 	}
-    
-    /** Returns the momentum
-     * 
-     * @return particle momentum
-     */
-    public double getMomentum() {
-    	return this.stateCurrent.getMomentum();
-    	//return (getSpeciesRestEnergy()*getGamma()*getBeta());
-    }
     
     /**
      * Returns the id of the current lattice element that the probe is visiting.
      * 
      * @return id of current lattice element
      */
+    @Override
     public String getCurrentElement() { 
     	return this.stateCurrent.getElementId();
     	//return m_strElemId; 
@@ -569,6 +586,7 @@ public abstract class Probe<S extends ProbeState<S>> implements IProbe, IArchive
      *  @return     probe position (<b>meters</b>)
      */
 	@Units( "meters" )
+    @Override
     public double getPosition() { 
 		return this.stateCurrent.getPosition();
 		//return m_dblPos; 
@@ -580,6 +598,7 @@ public abstract class Probe<S extends ProbeState<S>> implements IProbe, IArchive
      * @return      elapsed time in <b>seconds</b>
      */
 	@Units( "seconds" )
+    @Override
     public double   getTime()   {
         return this.stateCurrent.getTime();
 		//return this.m_dblTime;
@@ -593,6 +612,7 @@ public abstract class Probe<S extends ProbeState<S>> implements IProbe, IArchive
      *  @return     probe kinetic energy    (<b>electron-volts</b>)
      */
 	@Units( "eV" )
+    @Override
     public double getKineticEnergy()   { 
 		return this.stateCurrent.getKineticEnergy();
 		//return m_dblW; 
@@ -604,6 +624,7 @@ public abstract class Probe<S extends ProbeState<S>> implements IProbe, IArchive
      *
      *  @return     normalized probe velocity v/c (<b>unitless</b>
      */
+    @Override
     public double getBeta() { 
     	return this.stateCurrent.getBeta();
     	//return m_dblBeta;  
@@ -618,18 +639,18 @@ public abstract class Probe<S extends ProbeState<S>> implements IProbe, IArchive
      *
      *  @return     probe relatistic factor (<b>unitless</b>)
      */
+    @Override
     public double getGamma() { 
     	return this.stateCurrent.getGamma();
     	//return m_dblGamma; 
     }
 
-
-    
     /**
      * Set the current lattice element id.
      * 
      * @param id  element id of current lattice element
      */
+    @Override
     public void setCurrentElement(String id) {
     	this.stateCurrent.setElementId(id);
     	//m_strElemId = id; 
@@ -642,6 +663,7 @@ public abstract class Probe<S extends ProbeState<S>> implements IProbe, IArchive
      *
      *  @see    #getPosition
      */
+    @Override
     public void setPosition(double s)  { 
     	this.stateCurrent.setPosition(s);
     	//m_dblPos = s; 
@@ -655,11 +677,11 @@ public abstract class Probe<S extends ProbeState<S>> implements IProbe, IArchive
      * @author jdg
      */
 	@NoEdit	// editors should not edit this property
+    @Override
     public void setTime(double dblTime) {
         this.stateCurrent.setTime(dblTime);
 		//this.m_dblTime = dblTime;
     }
-    
 
     /**
      *  Set the current kinetic energy of the probe.
@@ -668,12 +690,36 @@ public abstract class Probe<S extends ProbeState<S>> implements IProbe, IArchive
      *
      *  @see    #getKineticEnergy
      */
+    @Override
     public void setKineticEnergy(double W)    {
     	this.stateCurrent.setKineticEnergy(W);  	
 //        m_dblW = W; 
 //        m_dblGamma = this.computeGammaFromW(m_dblW);
 //        m_dblBeta = this.computeBetaFromGamma(m_dblGamma);
     };
+    
+    /** 
+     *  Set the charge of the particle species in the beam 
+     *  
+     *  @param  q       species particle charge in units of positive electron charge
+     */
+    @Override
+    public void setSpeciesCharge(double q) { 
+        this.stateCurrent.setSpeciesCharge(q);
+        //m_dblParQ = q; 
+    }
+    
+    /** 
+     *  Set the rest energy of a single particle in the beam 
+     *
+     *  @param  Er      particle rest energy (<b>electron-volts</b>)
+     */
+    @Override
+    public void setSpeciesRestEnergy(double Er) { 
+        this.stateCurrent.setSpeciesRestEnergy(Er);
+        //m_dblParEr = Er; 
+    }
+
 
 
 
@@ -697,8 +743,36 @@ public abstract class Probe<S extends ProbeState<S>> implements IProbe, IArchive
 //    }
 //
     /**
+     * <p>
      * Initializes the probe, resetting state as necessary.
+     * </p>
+     * <p>
+     * <h4>CKA NOTES:</h4>
+     * These notes concern the refactoring of the probe component
+     * in order to tighten the typing.
+     * <br/>
+     * <br/>
+     * &middot; In order to make this method compatible with the previous
+     * behavior it must set the saved "initial state" to the current
+     * probe state.  The previous incarnation assigned the new initial
+     * state by calling the {@link #createProbeState()} method to which
+     * created a new probe state representing the current state of the probe.
+     * <br/>
+     * &middot; The trajectory is cleared, that is, there is no longer
+     * any history in the probe
+     * </br>
+     * &middot; Thus, <tt>initialize()</tt> is really a poor choice, since
+     * all that is done is
+     * <br/>
+     * <br/>
+     * &nbsp; &nbsp; - The initial state is reset to the current state
+     * <br/>
+     * &nbsp; &nbsp; - The trajectory is cleared
+     * </p>
+     * 
+     * TODO Set the initial state to the current state
      */
+    @Override
     public void initialize() {
     	this.stateInit = this.cloneCurrentProbeState();
     	this.stateCurrent = this.cloneCurrentProbeState();
@@ -706,54 +780,52 @@ public abstract class Probe<S extends ProbeState<S>> implements IProbe, IArchive
         this.trajHist = this.createTrajectory();
 //        this.getAlgorithm().initialize();  // CKA - I think these should be uncommented
     }
-    
-    /**
-     * Resets the probe to the saved initial state, if there is one and clears
-     * the trajHist.
-     */
-    public void reset() {
-    	if (stateInit != null) { 
-    		this.stateCurrent = stateInit.copy();
-    	}
-    	this.trajHist = this.createTrajectory();
-//        this.getAlgorithm().initialize(); // CKA - I think these should be uncommented
-    }
 
     /**
      *  Save the probe state into trajHist.
      */
+    @Override
     public void update() throws ModelException  {
-    	
+        
         if (!bolTrack) return;
         
         this.getTrajectory().update(this);
     };
-	
-	
-	/**
-	 * Subclasses should override this method to perform any required post processing upon completion 
-	 * of algorithm processing.  This method implementation does nothing.
-	 */
-	public void performPostProcessing() {
-	}
-
-   
+    
+    /**
+     * Subclasses should override this method to perform any required post processing upon completion 
+     * of algorithm processing.  This method implementation does nothing.
+     * 
+     * @deprecated     I don't think this gets used.
+     */
+    @Deprecated
+    @Override
+    public void performPostProcessing() {
+    }
 
     /**
      *  Return the algorithm defining the probes dynamics.
      *
      *  @return         interface to probe dynamics
      */
+    @Override
     public IAlgorithm getAlgorithm()    { return algTracker; };
-
 
     /**
      * Return the archiving interface for this object.
      * 
      * @see xal.tools.data.IArchive
      */
-	@NoEdit	// hide this property so it doesn't appear in editors
+    @NoEdit // hide this property so it doesn't appear in editors
+    @Override
     public IArchive getArchive()        { return this; };
+
+
+    
+    
+    
+
+   
 
     
     // Object Overrides ========================================================
@@ -852,16 +924,6 @@ public abstract class Probe<S extends ProbeState<S>> implements IProbe, IArchive
         }
         this.applyState(state);
     };
-    
-    /**
-     * Read the contents of the supplied <code>DataAdaptor</code> and return
-     * an instance of the appropriate Trajectory species.
-     * 
-     * @param container <code>DataAdaptor</code> to read a Trajectory from
-     * @return a ProbeState for the contents of the DataAdaptor
-     * @throws ParsingException error encountered reading the DataAdaptor
-     */
-    protected abstract S readStateFrom(DataAdaptor container) throws ParsingException;
     
   
 //

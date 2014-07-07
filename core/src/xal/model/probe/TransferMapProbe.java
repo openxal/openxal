@@ -247,7 +247,10 @@ public class TransferMapProbe extends Probe<TransferMapState> {
      * Initialize this probe from the one specified.
      * 
      * @param probe the probe from which to initialize this one
+     * 
+     * @deprecated  Never Used
      */
+    @Deprecated
     @Override
     protected void initializeFrom( final Probe<TransferMapState> probe ) {
         super.initializeFrom( probe );
