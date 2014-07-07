@@ -196,7 +196,7 @@ public class TestRunOnlineModel {
     public void testRunEnvelopeModelWithRfGapCalc() throws ModelException {
         
         PROBE_ENV_TEST.reset();
-        PROBE_PARTL_TEST.getAlgorithm().setRfGapPhaseCalculation(true);
+        PROBE_ENV_TEST.getAlgorithm().setRfGapPhaseCalculation(true);
         MODEL_TEST.setProbe(PROBE_ENV_TEST);
         MODEL_TEST.resync();
         MODEL_TEST.run();

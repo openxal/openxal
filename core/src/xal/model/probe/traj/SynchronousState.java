@@ -74,7 +74,7 @@ public class SynchronousState extends ProbeState<SynchronousState> {
     	super(stateSync);
     	
     	this.m_dblPhsRf		= stateSync.m_dblPhsRf;
-    	this.m_vecPhsBeta	= stateSync.m_vecPhsBeta;
+    	this.m_vecPhsBeta	= stateSync.m_vecPhsBeta.clone();
     }
 
     /**
@@ -85,7 +85,7 @@ public class SynchronousState extends ProbeState<SynchronousState> {
      */
     public SynchronousState(SynchronousProbe probe) {
         super(probe);
-        this.setBetatronPhase( probe.getBetatronPhase() );
+        this.setBetatronPhase( probe.getBetatronPhase().clone() );
         this.setRfPhase( probe.getRfPhase() );
     }
     

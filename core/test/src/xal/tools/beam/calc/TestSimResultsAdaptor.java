@@ -113,7 +113,8 @@ public class TestSimResultsAdaptor {
             // Create and initialize the particle probe
             ParticleTracker algPart = AlgorithmFactory.createParticleTracker(SEQ_TEST);
             PROBE_PARTL_TEST = ProbeFactory.createParticleProbe(SEQ_TEST, algPart);
-            PROBE_PARTL_TEST.reset();
+            PROBE_PARTL_TEST.initialize();
+            //PROBE_PARTL_TEST.reset();
             MODEL_TEST.setProbe(PROBE_PARTL_TEST);
             MODEL_TEST.resync();
             MODEL_TEST.run();
@@ -125,10 +126,15 @@ public class TestSimResultsAdaptor {
             // Create and initialize transfer map probe
             TransferMapTracker algXferMap = AlgorithmFactory.createTransferMapTracker(SEQ_TEST);
             PROBE_XFER_TEST = ProbeFactory.getTransferMapProbe(SEQ_TEST, algXferMap );
-            PROBE_XFER_TEST.reset();
+            PROBE_XFER_TEST.initialize();
+            //PROBE_XFER_TEST.reset();
             MODEL_TEST.setProbe(PROBE_XFER_TEST);
             MODEL_TEST.resync();
             MODEL_TEST.run();
+            
+            System.out.println("\nTransferMap Trajectory");
+            Trajectory<TransferMapState> trjTrnsMap = (Trajectory<TransferMapState>) MODEL_TEST.getTrajectory();
+            System.out.println(trjTrnsMap);
 
             // Create and initialize the envelope probe
             EnvTrackerAdapt algEnv = AlgorithmFactory.createEnvTrackerAdapt(SEQ_TEST);

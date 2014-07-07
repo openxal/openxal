@@ -77,8 +77,8 @@ public class ParticleProbeState extends ProbeState<ParticleProbeState> /*impleme
     public ParticleProbeState(ParticleProbeState particleProbeState){
     	super(particleProbeState);
     	
-    	this.m_vecCoords	= particleProbeState.m_vecCoords;
-    	this.matResp		= particleProbeState.matResp;
+    	this.m_vecCoords	= particleProbeState.m_vecCoords.clone();
+    	this.matResp		= particleProbeState.matResp.clone();
     }
     
     /**
@@ -89,8 +89,8 @@ public class ParticleProbeState extends ProbeState<ParticleProbeState> /*impleme
      */
     public ParticleProbeState(ParticleProbe probe) {
         super(probe);
-        this.setPhaseCoordinates( new PhaseVector(probe.getPhaseCoordinates()) );
-        this.setResponseMatrix( new PhaseMatrix(probe.getResponseMatrix()) );
+        this.setPhaseCoordinates( new PhaseVector(probe.getPhaseCoordinates().clone()) );
+        this.setResponseMatrix( new PhaseMatrix(probe.getResponseMatrix().clone()) );
     }
     
     /** 

@@ -108,10 +108,12 @@ public class TwissProbeState extends BunchProbeState<TwissProbeState> {
     public TwissProbeState(TwissProbeState twissProbeState){
     	super(twissProbeState);
     	
+    	//TODO - this.envTwiss needs to be set to a clone of twissProbeState.envTwiss
+    	// JMF
     	this.envTwiss	= twissProbeState.envTwiss;
-    	this.matResp	= twissProbeState.matResp;
-    	this.vecCent	= twissProbeState.vecCent;
-    	this.vecPhsBeta	= twissProbeState.vecPhsBeta;
+    	this.matResp	= twissProbeState.matResp.clone();
+    	this.vecCent	= twissProbeState.vecCent.clone();
+    	this.vecPhsBeta	= twissProbeState.vecPhsBeta.clone();
     }
 	
     /**
@@ -123,9 +125,11 @@ public class TwissProbeState extends BunchProbeState<TwissProbeState> {
     public TwissProbeState(final TwissProbe probe) {
         super(probe);
         
-        this.setCentroid( new PhaseVector( probe.getCentroid() ) );
-        this.setResponseMatrix( new PhaseMatrix( probe.getResponseMatrix() ) );
-        this.setBetatronPhase( new R3( probe.getBetatronPhase() ) );
+        this.setCentroid( new PhaseVector( probe.getCentroid().clone() ) );
+        this.setResponseMatrix( new PhaseMatrix( probe.getResponseMatrix().clone() ) );
+        this.setBetatronPhase( new R3( probe.getBetatronPhase().clone() ) );
+        // TODO - needs to be set to a clone as well
+        // JMF
         this.setTwiss( new Twiss3D(probe.getTwiss()) );
     }
     

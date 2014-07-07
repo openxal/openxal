@@ -61,6 +61,10 @@ public class TransferMapProbe extends Probe<TransferMapState> {
         super();
         
         this.setTransferMap(PhaseMap.identity());
+        
+        //added by JMF 7/7/14
+        this.setPartialTransferMap(PhaseMap.identity());
+        
         this.setPhaseCoordinates(new PhaseVector());
         
 //        m_mapTrans = PhaseMap.identity();
@@ -91,6 +95,10 @@ public class TransferMapProbe extends Probe<TransferMapState> {
         super(probe);
         
         this.setTransferMap( new PhaseMap( probe.getTransferMap()) );
+        
+        //added by JMF 7/7/14
+        this.setPartialTransferMap(new PhaseMap(probe.getPartialTransferMap()));
+        
         this.setPhaseCoordinates( new PhaseVector(probe.getPhaseCoordinates()) );
     }
     

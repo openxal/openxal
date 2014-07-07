@@ -79,8 +79,12 @@ public class TransferMapState extends ProbeState<TransferMapState> {
      * initialize to zero state values. 
      */
     public TransferMapState() {
+        super();
+    	
+        this.setTransferMap( PhaseMap.identity() );
+        this.setPartialTransferMap( PhaseMap.identity() );
         
-        setTransferMap( null );
+        this.setPhaseCoordinates( PhaseVector.newZero() );
     }
     
     /**
@@ -96,9 +100,12 @@ public class TransferMapState extends ProbeState<TransferMapState> {
     public TransferMapState(TransferMapState transferMapState){
     	super(transferMapState);
     	
-    	this._phaseCoordinates	= transferMapState._phaseCoordinates;
-    	this.mapPhiCmp	= transferMapState.mapPhiCmp;
-    	this.mapPhiPart	= transferMapState.mapPhiPart;
+    	//this._phaseCoordinates	= transferMapState._phaseCoordinates.clone();
+    	// TODO - these need to be set to clones of transferMapState's attributes,
+    	// not pointed to the same object
+    	// JMF
+    	this.mapPhiCmp	= transferMapState.mapPhiCmp.copy();
+    	this.mapPhiPart	= transferMapState.mapPhiPart.copy();
     }
 
 
@@ -109,8 +116,10 @@ public class TransferMapState extends ProbeState<TransferMapState> {
     public TransferMapState( final TransferMapProbe probe ) {
         super( probe );
 
-        setTransferMap( probe.getTransferMap() );
-        setPartialTransferMap( probe.getPartialTransferMap() );
+        // TODO - these need to be set to clones as well
+        // JMF
+        setTransferMap( probe.getTransferMap().copy() );
+        setPartialTransferMap( probe.getPartialTransferMap().copy() );
     }
 
 

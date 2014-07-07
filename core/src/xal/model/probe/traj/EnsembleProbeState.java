@@ -72,6 +72,9 @@ public class EnsembleProbeState extends BunchProbeState<EnsembleProbeState> {
     	super(ensembleProbeState);
     	
     	this.m_enmFldCalc	= ensembleProbeState.m_enmFldCalc;
+    	//TODO - this.m_ensPahse needs to be set to a clone of ensembelProbeState.m_ensPhase,
+    	// not simply point to the same object
+    	// JMF
     	this.m_ensPhase		= ensembleProbeState.m_ensPhase;
     }
 
@@ -84,6 +87,8 @@ public class EnsembleProbeState extends BunchProbeState<EnsembleProbeState> {
     public EnsembleProbeState(EnsembleProbe probe) {
         super(probe);
         this.setFieldCalculation( probe.getFieldCalculation() );
+        //TODO - should be probe.getEnsemble().clone()
+        // JMF
         this.setEnsemble( probe.getEnsemble() );
     }
 
