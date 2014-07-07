@@ -235,7 +235,7 @@ public class JElsDemo {
 		}
 	}
 
-	private static void saveLattice(Lattice lattice, String file) {		
+	static void saveLattice(Lattice lattice, String file) {		
 		lattice.setAuthor(System.getProperty("user.name", "ESS"));		
 		try {
 			LatticeXmlWriter.writeXml(lattice, file);
