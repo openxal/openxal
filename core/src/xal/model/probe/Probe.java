@@ -775,7 +775,7 @@ public abstract class Probe<S extends ProbeState<S>> implements IProbe, IArchive
     @Override
     public void initialize() {
     	this.stateInit = this.cloneCurrentProbeState();
-    	this.stateCurrent = this.cloneCurrentProbeState();
+    	//this.stateCurrent = this.cloneCurrentProbeState();
     	
         this.trajHist = this.createTrajectory();
 //        this.getAlgorithm().initialize();  // CKA - I think these should be uncommented
