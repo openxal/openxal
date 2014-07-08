@@ -113,14 +113,17 @@ public class TestRunOnlineModel {
             // Create and initialize the envelope probe
             EnvTrackerAdapt algEnv = AlgorithmFactory.createEnvTrackerAdapt(SEQ_TEST);
             PROBE_ENV_TEST = ProbeFactory.getEnvelopeProbe(SEQ_TEST, algEnv);
+            PROBE_ENV_TEST.initialize();
             
             // Create and initialize the particle probe
             ParticleTracker algPrt = AlgorithmFactory.createParticleTracker(SEQ_TEST);
             PROBE_PARTL_TEST = ProbeFactory.createParticleProbe(SEQ_TEST, algPrt);
+            PROBE_PARTL_TEST.initialize();
             
             // Create and initialize transfer map probe
             TransferMapTracker  algXfer = AlgorithmFactory.createTransferMapTracker(SEQ_TEST);
             PROBE_XFER_TEST = ProbeFactory.getTransferMapProbe(SEQ_TEST, algXfer );
+            PROBE_XFER_TEST.initialize();
             
             WTR_OUTPUT = new PrintWriter(FILE_OUTPUT);
 
@@ -176,8 +179,7 @@ public class TestRunOnlineModel {
 	@Test
 	public void testRunEnvelopeModel() throws ModelException {
 		
-        //PROBE_ENV_TEST.reset();
-        PROBE_ENV_TEST.initialize();
+        PROBE_ENV_TEST.reset();
         MODEL_TEST.setProbe(PROBE_ENV_TEST);
         MODEL_TEST.resync();
         MODEL_TEST.run();
@@ -196,8 +198,7 @@ public class TestRunOnlineModel {
     @Test
     public void testRunEnvelopeModelWithRfGapCalc() throws ModelException {
         
-        //PROBE_ENV_TEST.reset();
-    	PROBE_ENV_TEST.initialize();
+        PROBE_ENV_TEST.reset();
     	PROBE_ENV_TEST.getAlgorithm().setRfGapPhaseCalculation(true);
         MODEL_TEST.setProbe(PROBE_ENV_TEST);
         MODEL_TEST.resync();

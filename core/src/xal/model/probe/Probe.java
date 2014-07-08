@@ -36,9 +36,6 @@ import java.util.Date;
  *  and implement the particular aspect of a beam the probe represents.
  *  </p>
  *  
- *  TODO The initial state has no access
- *
- *  
  *
  * @author  Christopher K. Allen
  */
