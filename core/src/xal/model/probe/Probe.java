@@ -94,31 +94,7 @@ public abstract class Probe<S extends ProbeState<S>> implements IProbe, IArchive
     
     /** Time stamp associated with probe */
     private Date    m_dateStamp = new Date();
-        
 
-        
-//    /** Species charge */
-//    private double  m_dblParQ = 0.0;
-//    
-//    /** Species rest energy */
-//    private double  m_dblParEr = 0.0;
-//    
-//
-//
-//    /** Current lattice element probe is visiting */
-//    private String  m_strElemId = "";
-//    
-//    /** Current probe position in beamline */
-//    private double m_dblPos = 0.0;
-//    
-//    /** The time elapsed from the beginning of the tracking (sec) */
-//    private double m_dblTime = 0.0;
-//    
-//    /** Probe's kinetic Energy */
-//    private double  m_dblW = 0.0;
-
-
-    
     /** toggle trajHist tracking for a probe */
     private boolean         bolTrack = true;
     
@@ -131,27 +107,8 @@ public abstract class Probe<S extends ProbeState<S>> implements IProbe, IArchive
     /** Current probe trajHist */
     protected Trajectory<S> trajHist;
     
-    
-    
     /** algorithm providing probe dynamics */
     private IAlgorithm  algTracker = null;
-    
-
-
-    
-    /*
-     *  Derived Parameters - These are state parameters 
-     *      (depend upon other state parameters)
-     */
-    
-//    /** Collective speed w.r.t. the speed of light */
-//    private double m_dblBeta = 0.0;
-//    
-//    /** Collective relativistic factor */
-//    private double m_dblGamma = 0.0;
-    
-    
-    
     
     
     /*
@@ -289,16 +246,6 @@ public abstract class Probe<S extends ProbeState<S>> implements IProbe, IArchive
      */
     protected abstract S readStateFrom(DataAdaptor container) throws ParsingException;
     
-    /*
-     * ---------------------------------------------------------------
-     *
-     * TODO 
-     * 
-     * Jonathan, I had to add this method for the work I am doing in 
-     * ProbeState.  This should replace the abstract method 
-     * createProbeState().  We'll deal with that later.
-     */
-    
     /**
      * This method returns a clone of the current state of this probe.
      * That is, the <code>ProbeState</code> object is a representation of this
@@ -413,8 +360,6 @@ public abstract class Probe<S extends ProbeState<S>> implements IProbe, IArchive
     }
     
 
-
-
     /**
      * Initialize this probe from the one specified.
      * 
@@ -438,29 +383,29 @@ public abstract class Probe<S extends ProbeState<S>> implements IProbe, IArchive
     
 
     /**
-         * <p>
-         * Resets the probe to the saved initial state, if there is one and clears
-         * the trajHist.
-         * </p>
-         * <p>
-         * <h4>CKA NOTES:</h4>
-         * These notes concern the refactoring of the probe component
-         * in order to tighten the typing.
-         * <br/>
-         * <br/>
-         * &middot; The new behavior should be the same as before, only 
-         * the implementation differs.  The current state is set to a clone
-         * of the (previously saved) initial state.
-         * &middot; The trajectory is cleared.
-         * </p>
-         */
-        public void reset() {
-        	if (stateInit != null) { 
-        		this.stateCurrent = stateInit.copy();
-        	}
-        	this.trajHist = this.createTrajectory();
-    //        this.getAlgorithm().initialize(); // CKA - I think these should be uncommented
+    * <p>
+    * Resets the probe to the saved initial state, if there is one and clears
+    * the trajHist.
+    * </p>
+    * <p>
+    * <h4>CKA NOTES:</h4>
+    * These notes concern the refactoring of the probe component
+    * in order to tighten the typing.
+    * <br/>
+    * <br/>
+    * &middot; The new behavior should be the same as before, only 
+    * the implementation differs.  The current state is set to a clone
+    * of the (previously saved) initial state.
+    * &middot; The trajectory is cleared.
+    * </p>
+    */
+    public void reset() {
+    	if (stateInit != null) { 
+    		this.stateCurrent = stateInit.copy();
         }
+        this.trajHist = this.createTrajectory();
+//        this.getAlgorithm().initialize(); // CKA - I think these should be uncommented
+    }
 
     /**
      *  Provide a user comment associated with the probe
@@ -538,7 +483,6 @@ public abstract class Probe<S extends ProbeState<S>> implements IProbe, IArchive
      */
     public double getMomentum() {
         return this.stateCurrent.getMomentum();
-        //return (getSpeciesRestEnergy()*getGamma()*getBeta());
     }
     
     
@@ -554,7 +498,6 @@ public abstract class Probe<S extends ProbeState<S>> implements IProbe, IArchive
     @Override
     public double getSpeciesCharge() { 
     	return this.stateCurrent.getSpeciesCharge();
-    	//return m_dblParQ; 
     }
     
     /** 
@@ -566,7 +509,6 @@ public abstract class Probe<S extends ProbeState<S>> implements IProbe, IArchive
     @Override
     public double getSpeciesRestEnergy() { 
 		return this.stateCurrent.getSpeciesRestEnergy();
-		//return m_dblParEr; 
 	}
     
     /**
@@ -577,7 +519,6 @@ public abstract class Probe<S extends ProbeState<S>> implements IProbe, IArchive
     @Override
     public String getCurrentElement() { 
     	return this.stateCurrent.getElementId();
-    	//return m_strElemId; 
     }
     
     /** 
@@ -589,7 +530,6 @@ public abstract class Probe<S extends ProbeState<S>> implements IProbe, IArchive
     @Override
     public double getPosition() { 
 		return this.stateCurrent.getPosition();
-		//return m_dblPos; 
 	}
     
     /**
@@ -601,7 +541,6 @@ public abstract class Probe<S extends ProbeState<S>> implements IProbe, IArchive
     @Override
     public double   getTime()   {
         return this.stateCurrent.getTime();
-		//return this.m_dblTime;
     }
     
     /**
@@ -615,7 +554,6 @@ public abstract class Probe<S extends ProbeState<S>> implements IProbe, IArchive
     @Override
     public double getKineticEnergy()   { 
 		return this.stateCurrent.getKineticEnergy();
-		//return m_dblW; 
 	}
 
     
@@ -627,7 +565,6 @@ public abstract class Probe<S extends ProbeState<S>> implements IProbe, IArchive
     @Override
     public double getBeta() { 
     	return this.stateCurrent.getBeta();
-    	//return m_dblBeta;  
     }
     
     /** 
@@ -642,7 +579,6 @@ public abstract class Probe<S extends ProbeState<S>> implements IProbe, IArchive
     @Override
     public double getGamma() { 
     	return this.stateCurrent.getGamma();
-    	//return m_dblGamma; 
     }
 
     /**
@@ -653,7 +589,6 @@ public abstract class Probe<S extends ProbeState<S>> implements IProbe, IArchive
     @Override
     public void setCurrentElement(String id) {
     	this.stateCurrent.setElementId(id);
-    	//m_strElemId = id; 
     }
     
     /** 
@@ -666,7 +601,6 @@ public abstract class Probe<S extends ProbeState<S>> implements IProbe, IArchive
     @Override
     public void setPosition(double s)  { 
     	this.stateCurrent.setPosition(s);
-    	//m_dblPos = s; 
     }
     
     /** 
@@ -680,7 +614,6 @@ public abstract class Probe<S extends ProbeState<S>> implements IProbe, IArchive
     @Override
     public void setTime(double dblTime) {
         this.stateCurrent.setTime(dblTime);
-		//this.m_dblTime = dblTime;
     }
 
     /**
@@ -693,9 +626,6 @@ public abstract class Probe<S extends ProbeState<S>> implements IProbe, IArchive
     @Override
     public void setKineticEnergy(double W)    {
     	this.stateCurrent.setKineticEnergy(W);  	
-//        m_dblW = W; 
-//        m_dblGamma = this.computeGammaFromW(m_dblW);
-//        m_dblBeta = this.computeBetaFromGamma(m_dblGamma);
     };
     
     /** 
@@ -706,7 +636,6 @@ public abstract class Probe<S extends ProbeState<S>> implements IProbe, IArchive
     @Override
     public void setSpeciesCharge(double q) { 
         this.stateCurrent.setSpeciesCharge(q);
-        //m_dblParQ = q; 
     }
     
     /** 
@@ -716,8 +645,7 @@ public abstract class Probe<S extends ProbeState<S>> implements IProbe, IArchive
      */
     @Override
     public void setSpeciesRestEnergy(double Er) { 
-        this.stateCurrent.setSpeciesRestEnergy(Er);
-        //m_dblParEr = Er; 
+        this.stateCurrent.setSpeciesRestEnergy(Er); 
     }
 
 

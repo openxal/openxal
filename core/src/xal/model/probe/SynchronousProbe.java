@@ -6,7 +6,6 @@ package xal.model.probe;
 
 import xal.tools.data.DataAdaptor;
 import xal.tools.math.r3.R3;
-import xal.model.probe.traj.DiagnosticProbeState;
 import xal.model.probe.traj.SynchronousState;
 import xal.model.probe.traj.Trajectory;
 import xal.model.xml.ParsingException;
@@ -21,24 +20,6 @@ import xal.model.xml.ParsingException;
  * @author Christopher K. Allen
  */
 public class SynchronousProbe extends Probe<SynchronousState> {
-
-
-
-
-    /*
-     * Local Attributes
-     */
-     
-     
-     
-//    /** Synchronous particle position with respect to any RF drive phase */
-//    private double              m_dblPhsRf;
-//
-//    /** synchronous particle betatron phase without space charge */
-//    private R3                  m_vecPhsBeta;
-//    
-//    /** probe trajectory */
-//    private Trajectory<SynchronousState> trajectory;
 
 
     /*
@@ -82,7 +63,6 @@ public class SynchronousProbe extends Probe<SynchronousState> {
      */
     public void     setBetatronPhase(R3 vecPhase)   {
         this.stateCurrent.setBetatronPhase(vecPhase);
-    	//this.m_vecPhsBeta = vecPhase;
     }
     
     /**
@@ -93,7 +73,6 @@ public class SynchronousProbe extends Probe<SynchronousState> {
      */
     public void     setRfPhase(double dblPhase) {
         this.setRfPhase(dblPhase);
-    	//this.m_dblPhsRf = dblPhase;
     }
     
     
@@ -110,7 +89,6 @@ public class SynchronousProbe extends Probe<SynchronousState> {
       */
      public double  getRfPhase()    {
          return this.stateCurrent.getRfPhase();
-    	 //return this.m_dblPhsRf;
      }
      
      /**
@@ -122,7 +100,6 @@ public class SynchronousProbe extends Probe<SynchronousState> {
       */
      public R3      getBetatronPhase()  {
          return this.stateCurrent.getBetatronPhase();
-    	 //return this.m_vecPhsBeta;
      }
     
     

@@ -15,12 +15,6 @@ import xal.model.xml.ParsingException;
  */
 public class DiagnosticProbe extends Probe<DiagnosticProbeState> {
 
-//	// count the number of elements visited	
-//	private int elementsVisited = 0;
-//	
-//	/** probe trajectory */
-//	private Trajectory<DiagnosticProbeState> trajectory;
-
 
 	// ************ constructors
 	
@@ -56,7 +50,6 @@ public class DiagnosticProbe extends Probe<DiagnosticProbeState> {
      */
     public int getElementsVisited() {
     	return this.stateCurrent.getElementsVisited();
-    	//return elementsVisited;
     }
     
     /**
@@ -69,7 +62,6 @@ public class DiagnosticProbe extends Probe<DiagnosticProbeState> {
      */
     public void setElementsVisited(int n) {
     	this.stateCurrent.setElementsVisited(n);
-    	//elementsVisited = n;
     }
     
     /**
@@ -80,7 +72,6 @@ public class DiagnosticProbe extends Probe<DiagnosticProbeState> {
      */
     public void incrementElementsVisited() {
     	this.stateCurrent.incrementElementsVisited();
-    	//++elementsVisited;
     }
 
 

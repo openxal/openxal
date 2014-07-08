@@ -11,7 +11,6 @@ import xal.tools.beam.PhaseVector;
 import xal.tools.beam.ens.Ensemble;
 import xal.tools.data.DataAdaptor;
 import xal.tools.math.r3.R3;
-import xal.model.probe.traj.DiagnosticProbeState;
 import xal.model.probe.traj.EnsembleProbeState;
 import xal.model.probe.traj.Trajectory;
 import xal.model.xml.ParsingException;
@@ -40,21 +39,6 @@ public class EnsembleProbe extends BunchProbe<EnsembleProbeState> {
     
     /** use grid Fourier transform method */
     public final static int     FLDCALC_GRIDFT = 3;
-
-    /*
-     *  Attributes
-     */
-    
-//    /** field calculation method */
-//    private int         m_enmFldCalc;
-//    
-//    /** the particle ensemble */
-//    private Ensemble    m_ensPhase;
-    
-//    /** probe trajectory */
-//    private Trajectory<EnsembleProbeState> trajectory;
-    
-    
     
     
     /*
@@ -111,7 +95,6 @@ public class EnsembleProbe extends BunchProbe<EnsembleProbeState> {
      */
     public PhaseVector  phaseMean()   {
         return this.stateCurrent.phaseMean();
-    	//return getEnsemble().phaseMean();
     }
     
     /**
@@ -123,7 +106,6 @@ public class EnsembleProbe extends BunchProbe<EnsembleProbeState> {
      */
     public CovarianceMatrix  getCorrelation()    {
     	return this.stateCurrent.phaseCovariance();
-        //return getEnsemble().phaseCovariance();
     }
     
     
@@ -140,7 +122,6 @@ public class EnsembleProbe extends BunchProbe<EnsembleProbeState> {
         super( );
         
         this.setEnsemble(new Ensemble());
-        //m_ensPhase = new Ensemble();
     };
     
     /**
@@ -168,7 +149,6 @@ public class EnsembleProbe extends BunchProbe<EnsembleProbeState> {
      */
     public void setFieldCalculation(int enmFldCalc)  { 
     	this.stateCurrent.setFieldCalculation(enmFldCalc);
-    	//m_enmFldCalc = enmFldCalc; 
     }
     
     /**
@@ -180,7 +160,6 @@ public class EnsembleProbe extends BunchProbe<EnsembleProbeState> {
      */
     public void setEnsemble(Ensemble ens)   { 
         this.stateCurrent.setEnsemble(ens);
-    	//m_ensPhase = new Ensemble(ens); 
     }
 
     
@@ -194,7 +173,6 @@ public class EnsembleProbe extends BunchProbe<EnsembleProbeState> {
      */
     public int getFieldCalculation() { 
     	return this.stateCurrent.getFieldCalculation();
-    	//return m_enmFldCalc; 
     }
     
     /**
@@ -202,7 +180,6 @@ public class EnsembleProbe extends BunchProbe<EnsembleProbeState> {
      */
     public Ensemble getEnsemble() { 
     	return this.stateCurrent.getEnsemble();
-    	//return m_ensPhase; 
     }
     
 
@@ -216,8 +193,6 @@ public class EnsembleProbe extends BunchProbe<EnsembleProbeState> {
      */
     public R3   electricField(R3 ptFld) {
         return this.stateCurrent.electricField(ptFld);
-    	//R3      vecE = new R3();
-        //return vecE;
     }
     
     

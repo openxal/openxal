@@ -16,7 +16,6 @@ import xal.tools.beam.Twiss3D.IND_3D;
 import xal.tools.data.DataAdaptor;
 import xal.tools.data.DataFormatException;
 import xal.tools.math.r3.R3;
-import xal.model.probe.traj.DiagnosticProbeState;
 import xal.model.probe.traj.Trajectory;
 import xal.model.probe.traj.TwissProbeState;
 import xal.model.xml.ParsingException;
@@ -42,32 +41,6 @@ import xal.model.xml.ParsingException;
  */
 
 public class TwissProbe extends BunchProbe<TwissProbeState> {
-    
-    
-    
-    /*
-	 * Local Attributes
-	 */
-
-//    /** centroid position in phase space */
-//    private PhaseVector         vecCent;
-//    
-//    /** accumulated response matrix */
-//    private PhaseMatrix         matResp;
-//
-//    /** particle betatron phase (with space charge if present) */
-//    private R3                 vecPhsBeta;
-//  
-//    /** current twiss parameters */
-//    private Twiss3D             envTwiss;
-//    
-//    /** probe trajectory */
-//    private Trajectory<TwissProbeState> trajectory;
-//    
-    
-    
-
-    
 
 	/*
 	 * Initialization
@@ -83,11 +56,6 @@ public class TwissProbe extends BunchProbe<TwissProbeState> {
         this.setResponseMatrix(PhaseMatrix.identity());
         this.setBetatronPhase(R3.zero());
         this.setTwiss(new Twiss3D());
-        
-//        this.vecCent = PhaseVector.newZero();
-//        this.matResp = PhaseMatrix.identity();
-//        this.vecPhsBeta = R3.zero();
-//        this.envTwiss   = new Twiss3D();
 	};
 
 	/**
@@ -169,7 +137,6 @@ public class TwissProbe extends BunchProbe<TwissProbeState> {
      */
     public void setCentroid(PhaseVector vecCentroid)   {
         this.stateCurrent.setCentroid(vecCentroid);
-    	//this.vecCent = vecCentroid;
     }
     
     /**
@@ -180,7 +147,6 @@ public class TwissProbe extends BunchProbe<TwissProbeState> {
      */
     public void setResponseMatrix(PhaseMatrix matResp)  {
         this.stateCurrent.setResponseMatrix(matResp);
-    	//this.matResp = matResp;
     }
 
     /**
@@ -191,7 +157,6 @@ public class TwissProbe extends BunchProbe<TwissProbeState> {
      */
     public void setBetatronPhase(R3 vecPhase) {
     	this.stateCurrent.setBetatronPhase(vecPhase);
-        //this.vecPhsBeta = vecPhase;
     }
 
     /**
@@ -202,7 +167,6 @@ public class TwissProbe extends BunchProbe<TwissProbeState> {
      */
     public void setTwiss(IND_3D iPlane, Twiss twiss)   {
         this.stateCurrent.setTwiss(iPlane, twiss);
-    	//this.envTwiss.setTwiss(iPlane, twiss);
     }
     
     /** 
@@ -214,7 +178,6 @@ public class TwissProbe extends BunchProbe<TwissProbeState> {
      */
     public void setTwiss(Twiss3D envTwiss) {
         this.stateCurrent.setTwiss(envTwiss);
-    	//this.envTwiss = envTwiss;
     }
     
     
@@ -231,7 +194,6 @@ public class TwissProbe extends BunchProbe<TwissProbeState> {
      */
     public PhaseVector  getCentroid()   {
         return this.stateCurrent.getCentroid();
-    	//return this.vecCent;
     }
     
     /**
@@ -242,7 +204,6 @@ public class TwissProbe extends BunchProbe<TwissProbeState> {
      */
     public PhaseMatrix getResponseMatrix()  {
         return this.stateCurrent.getResponseMatrix();
-    	//return this.matResp;
     }
     
     /**
@@ -253,7 +214,6 @@ public class TwissProbe extends BunchProbe<TwissProbeState> {
      */
     public R3 getBetatronPhase() {
         return this.stateCurrent.getBetatronPhase();
-    	//return this.vecPhsBeta;
     }
     
     /**
@@ -265,7 +225,6 @@ public class TwissProbe extends BunchProbe<TwissProbeState> {
      */
     public Twiss    getTwiss(IND_3D iPlane)    {
         return this.stateCurrent.getTwiss(iPlane);
-    	//return this.envTwiss.getTwiss(iPlane);
     }
     
     /** 
@@ -276,7 +235,6 @@ public class TwissProbe extends BunchProbe<TwissProbeState> {
      */
     public Twiss3D getTwiss() {
     	return this.stateCurrent.getTwiss3D();
-        //return this.envTwiss;
     }
     
     
@@ -295,12 +253,6 @@ public class TwissProbe extends BunchProbe<TwissProbeState> {
      */
     public double[] rmsEmittances() {
     	return this.stateCurrent.rmsEmittances();
-//        double  arrEmit[] = new double[3];
-//        
-//        for (IND_3D i : IND_3D.values()) 
-//            arrEmit[i.val()] = this.getTwiss(i).getEmittance();
-//        
-//        return arrEmit;
     }
     
     

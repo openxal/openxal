@@ -10,7 +10,6 @@ import xal.tools.annotation.AProperty.NoEdit;
 import xal.tools.beam.PhaseMap;
 import xal.tools.beam.PhaseVector;
 import xal.tools.data.DataAdaptor;
-import xal.model.probe.traj.DiagnosticProbeState;
 import xal.model.probe.traj.EnvelopeProbeState;
 import xal.model.probe.traj.Trajectory;
 import xal.model.probe.traj.TransferMapState;
@@ -36,22 +35,6 @@ import xal.model.xml.ParsingException;
  */
 public class TransferMapProbe extends Probe<TransferMapState> {
     
-//    /** composite transfer map */
-//    private PhaseMap m_mapTrans;
-//    
-//    /** the partial transfer map through last modeling element */
-//    private PhaseMap    mapPhiElem;
-//    
-//    /** probe trajectory */
-//    private Trajectory<TransferMapState> trajectory;
-    
-    /** 
-     * phase coordinates of the particle location  
-     * @deprecated what particle? 
-     */
-//    @Deprecated
-//    private PhaseVector _phaseCoordinates;
-    
     
     /**
      * Default constructor.  Create a new <code>TransferMapProbe</code> with
@@ -66,9 +49,6 @@ public class TransferMapProbe extends Probe<TransferMapState> {
         this.setPartialTransferMap(PhaseMap.identity());
         
         this.setPhaseCoordinates(new PhaseVector());
-        
-//        m_mapTrans = PhaseMap.identity();
-//        _phaseCoordinates = new PhaseVector();
     }
 
 //    /**
@@ -118,7 +98,6 @@ public class TransferMapProbe extends Probe<TransferMapState> {
      */
     public void setTransferMap(PhaseMap mapTrans)   {
         this.stateCurrent.setTransferMap(mapTrans);
-    	//this.m_mapTrans = mapTrans;
     }
     
     /**
@@ -131,7 +110,6 @@ public class TransferMapProbe extends Probe<TransferMapState> {
      */
     public void setPartialTransferMap(PhaseMap mapPhi)   {
         this.stateCurrent.setPartialTransferMap(mapPhi);
-    	//this.mapPhiElem = mapPhi;
     }
     
     
@@ -143,7 +121,6 @@ public class TransferMapProbe extends Probe<TransferMapState> {
 	 @NoEdit	// editors should not edit this parameter as it is for internal setting
      public PhaseMap getTransferMap()  {
          return this.stateCurrent.getTransferMap();
-		 //return this.m_mapTrans;
      }
     
      /**
@@ -153,7 +130,6 @@ public class TransferMapProbe extends Probe<TransferMapState> {
       */
      public PhaseMap getPartialTransferMap()  {
          return this.stateCurrent.getPartialTransferMap();
-    	 //return this.mapPhiElem;
      }
     
      
@@ -167,7 +143,6 @@ public class TransferMapProbe extends Probe<TransferMapState> {
 	@Deprecated
     public PhaseVector getPhaseCoordinates()  { 
 		return this.stateCurrent.getPhaseCoordinates();
-        //return _phaseCoordinates;
     }
     
     
@@ -180,7 +155,6 @@ public class TransferMapProbe extends Probe<TransferMapState> {
     @Deprecated
     public void setPhaseCoordinates( final PhaseVector vecPhase ) {
         this.stateCurrent.setPhaseCoordinates(vecPhase);
-    	//_phaseCoordinates = new PhaseVector( vecPhase );
     }
     
      /*

@@ -37,28 +37,6 @@ import xal.model.probe.traj.BunchProbeState;
 public abstract class BunchProbe<S extends BunchProbeState<S>> extends Probe<S> {
     
     
-    
-    /*
-     * Local Attributes
-     */
-
-    
-//    /** bunch frequency in Hz */
-//    private double  dlbFreq = 0.0;
-//    
-//    /** Beam current */
-//    private double  dblCurrent = 0.0;
-    
-//    /** probe trajectory */
-//    private Trajectory<BunchProbeState> trajectory;
-
-//    /** particle betatron phase with space charge */
-//    protected R3 vecPhsBeta;
-    
-//    /** Beam charge */
-//    private double m_dblBmQ = 0.0;
-   
-    
     /*
      *  Abstract Methods
      */
@@ -116,7 +94,6 @@ public abstract class BunchProbe<S extends BunchProbeState<S>> extends Probe<S> 
      */
     public void setBunchFrequency(double f) {
         this.stateCurrent.setBunchFrequency(f);
-    	//this.dlbFreq = f;
     }
  
     /**
@@ -126,7 +103,6 @@ public abstract class BunchProbe<S extends BunchProbeState<S>> extends Probe<S> 
      */
     public void setBeamCurrent(double I)    { 
         this.stateCurrent.setBeamCurrent(I);
-    	//dblCurrent = I; 
     };
     
 
@@ -158,7 +134,6 @@ public abstract class BunchProbe<S extends BunchProbeState<S>> extends Probe<S> 
 	@Units( "Hz" )
     public double getBunchFrequency()  {
         return this.stateCurrent.getBunchFrequency();
-		//return this.dlbFreq;
     };
     
     /** 
@@ -169,7 +144,6 @@ public abstract class BunchProbe<S extends BunchProbeState<S>> extends Probe<S> 
 	@Units( "amps" )
     public double getBeamCurrent() { 
         return this.stateCurrent.getBeamCurrent();
-		//return dblCurrent;  
      }
 
 //    /**
@@ -193,13 +167,6 @@ public abstract class BunchProbe<S extends BunchProbeState<S>> extends Probe<S> 
      */
     public double bunchCharge() {
     	return this.stateCurrent.bunchCharge();  	
-//        if (this.getBunchFrequency() > 0.0) {
-//            return this.getBeamCurrent()/this.getBunchFrequency();
-//            
-//        } else {
-//            return 0.0;
-//            
-//        }
     }
 
     /** 
@@ -228,18 +195,6 @@ public abstract class BunchProbe<S extends BunchProbeState<S>> extends Probe<S> 
      */
     public double beamPerveance() {
         return this.stateCurrent.beamPerveance();
-    	
-//        // Get some shorthand
-//        double c     = LightSpeed;
-//        double gamma = this.getGamma();
-//        double bg2   = gamma*gamma - 1.0;
-//
-//        // Compute independent terms
-//        double  dblPermT = 1.0e-7*c*c*this.bunchCharge();
-//        double  dblRelaT = 1.0/(gamma*bg2);
-//        double  dblEnerT = Math.abs(super.getSpeciesCharge())/super.getSpeciesRestEnergy();
-//        
-//        return dblPermT*dblRelaT*dblEnerT;  
     }
 
     

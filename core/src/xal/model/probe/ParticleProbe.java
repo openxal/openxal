@@ -11,7 +11,6 @@ import xal.tools.beam.PhaseMatrix;
 import xal.tools.beam.PhaseVector;
 import xal.tools.data.DataAdaptor;
 import xal.tools.annotation.AProperty.NoEdit;
-import xal.model.probe.traj.DiagnosticProbeState;
 import xal.model.probe.traj.ParticleProbeState;
 import xal.model.probe.traj.Trajectory;
 import xal.model.xml.ParsingException;
@@ -30,17 +29,6 @@ import xal.model.xml.ParsingException;
 
 public class ParticleProbe extends Probe<ParticleProbeState> {
 
-    
-    /*
-     *  Local Attributes
-     */
-    
-//    /** phase coordinates of the particle location */ 
-//    private PhaseVector     vecCoords;
-//    
-//    /** response matrix for initial coordinate sensitivity */
-//    private PhaseMatrix     matResp;
-    
 
     /*
      * Initialization
@@ -55,9 +43,6 @@ public class ParticleProbe extends Probe<ParticleProbeState> {
         
         this.setPhaseCoordinates(new PhaseVector());
         this.setResponseMatrix(PhaseMatrix.identity());
-        
-//        this.vecCoords = new PhaseVector();
-//        this.matResp = PhaseMatrix.identity();
     }
     
     /**
@@ -98,7 +83,6 @@ public class ParticleProbe extends Probe<ParticleProbeState> {
 	 */
     public void setPhaseCoordinates(PhaseVector vecPhase) {
     	this.stateCurrent.setPhaseCoordinates(vecPhase);
-    	//this.vecCoords = new PhaseVector(vecPhase);
     }
 	
     
@@ -123,7 +107,6 @@ public class ParticleProbe extends Probe<ParticleProbeState> {
      */
     public void setResponseMatrix(PhaseMatrix matResp) {
         this.stateCurrent.setResponseMatrix(matResp);
-    	//this.matResp = matResp;
     }
 
     /*
@@ -138,7 +121,6 @@ public class ParticleProbe extends Probe<ParticleProbeState> {
      */
     public PhaseVector getPhaseCoordinates()  { 
     	return this.stateCurrent.getPhaseCoordinates();
-    	//return this.vecCoords;
     }
 
     /**
@@ -162,7 +144,6 @@ public class ParticleProbe extends Probe<ParticleProbeState> {
      */
     public PhaseMatrix getResponseMatrix() {
         return this.stateCurrent.getResponseMatrix();
-    	//return matResp;
     }
 
     /**
@@ -175,8 +156,7 @@ public class ParticleProbe extends Probe<ParticleProbeState> {
 	@NoEdit
     @Deprecated
 	public PhaseVector getFixedOrbit() {
-		return this.stateCurrent.getFixedOrbit();
-    	//return this.vecCoords;		
+		return this.stateCurrent.getFixedOrbit();	
 	}
 
     
