@@ -80,9 +80,6 @@ public class EnvelopeProbe extends BunchProbe<EnvelopeProbeState> {
     }
     
     
-    /*
-	 * Local Attributes
-	 */
 
 
 //    /** 
@@ -136,6 +133,8 @@ public class EnvelopeProbe extends BunchProbe<EnvelopeProbeState> {
 	 * Default Constructor. Creates a new, empty instance of EnvelopeProbe
 	 */
 	public EnvelopeProbe() {
+		super();
+		
 		this.setResponseMatrix(PhaseMatrix.identity());
 		this.setResponseMatrixNoSpaceCharge(PhaseMatrix.identity());
 		this.setCurrentResponseMatrix(PhaseMatrix.identity());
@@ -148,7 +147,7 @@ public class EnvelopeProbe extends BunchProbe<EnvelopeProbeState> {
 	 * @param probe
 	 *            <code>EnvelopeProbe</code> object to be cloned
 	 */
-	public EnvelopeProbe(EnvelopeProbe probe) {
+	public EnvelopeProbe(final EnvelopeProbe probe) {
 		super(probe);
 
         //PhaseMatrix copy constructor does a deep copy
@@ -539,36 +538,36 @@ public class EnvelopeProbe extends BunchProbe<EnvelopeProbeState> {
 		return new Trajectory<EnvelopeProbeState>(EnvelopeProbeState.class);
     }
     
-	/**
-	 * Apply the contents of ProbeState to update my current state. The argument
-	 * supplying the new state should be of concrete type
-	 * <code>EnvelopeProbeState</code>.
-	 * 
-	 * @param state
-	 *            <code>ProbeState</code> object containing new probe state
-	 *            data
-	 * 
-	 * @exception IllegalArgumentException
-	 *                wrong <code>ProbeState</code> subtype for this probe
-	 */
-    @SuppressWarnings("deprecation")
-    @Override
-	public void applyState(EnvelopeProbeState state) {
-		
-        this.stateCurrent = state.copy();
-        
-//        super.applyState(state);
+//	/**
+//	 * Apply the contents of ProbeState to update my current state. The argument
+//	 * supplying the new state should be of concrete type
+//	 * <code>EnvelopeProbeState</code>.
+//	 * 
+//	 * @param state
+//	 *            <code>ProbeState</code> object containing new probe state
+//	 *            data
+//	 * 
+//	 * @exception IllegalArgumentException
+//	 *                wrong <code>ProbeState</code> subtype for this probe
+//	 */
+////    @SuppressWarnings("deprecation")
+//    @Override
+//	public void applyState(EnvelopeProbeState state) {
 //		
-//		this.setCovariance( state.getCovarianceMatrix());
-//		this.setResponseMatrix(state.getResponseMatrix());
-//		this.setResponseMatrixNoSpaceCharge(state.getResponseMatrixNoSpaceCharge());
-//        this.setCurrentResponseMatrix(state.getPerturbationMatrix());
-        
-        
-		//obsolete this.setTwiss(stateEnv.getTwiss());
-//        this.setTwiss(stateEnv.twissParameters());
-        this.setSaveTwissFlag(state.getSaveTwissFlag());
-	}
+//        this.stateCurrent = state.copy();
+//        
+////        super.applyState(state);
+////		
+////		this.setCovariance( state.getCovarianceMatrix());
+////		this.setResponseMatrix(state.getResponseMatrix());
+////		this.setResponseMatrixNoSpaceCharge(state.getResponseMatrixNoSpaceCharge());
+////        this.setCurrentResponseMatrix(state.getPerturbationMatrix());
+//        
+//        
+//		//obsolete this.setTwiss(stateEnv.getTwiss());
+////        this.setTwiss(stateEnv.twissParameters());
+////        this.setSaveTwissFlag(state.getSaveTwissFlag());
+//	}
 
     
     /**

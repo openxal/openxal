@@ -64,7 +64,7 @@ public class TwissProbe extends BunchProbe<TwissProbeState> {
 	 * @param prbParent
 	 *            <code>TwissProbe</code> object to be cloned
 	 */
-	public TwissProbe(TwissProbe prbParent) {
+	public TwissProbe(final TwissProbe prbParent) {
 		super(prbParent);
 
         this.setCentroid(new PhaseVector( prbParent.getCentroid() ));
@@ -300,29 +300,29 @@ public class TwissProbe extends BunchProbe<TwissProbeState> {
 		return new Trajectory<TwissProbeState>(TwissProbeState.class);
 	}
 
-	/**
-	 * Apply the contents of ProbeState to update my current state. The argument
-	 * supplying the new state should be of concrete type
-	 * <code>TwissProbeState</code>.
-	 * 
-	 * @param state
-	 *            <code>ProbeState</code> object containing new probe state
-	 *            data
-	 * 
-	 * @exception IllegalArgumentException
-	 *                wrong <code>ProbeState</code> subtype for this probe
-	 */
-    @Override
-	public void applyState(TwissProbeState state) {
-		if (!(state instanceof TwissProbeState))
-			throw new IllegalArgumentException("invalid probe state");
-		TwissProbeState stateTwiss = (TwissProbeState) state;
-
-		super.applyState(stateTwiss);
-        this.setCentroid(stateTwiss.getCentroid());
-		this.setResponseMatrix(stateTwiss.getResponseMatrix());
-        this.setTwiss(stateTwiss.getTwiss3D());
-	}
+//	/**
+//	 * Apply the contents of ProbeState to update my current state. The argument
+//	 * supplying the new state should be of concrete type
+//	 * <code>TwissProbeState</code>.
+//	 * 
+//	 * @param state
+//	 *            <code>ProbeState</code> object containing new probe state
+//	 *            data
+//	 * 
+//	 * @exception IllegalArgumentException
+//	 *                wrong <code>ProbeState</code> subtype for this probe
+//	 */
+//    @Override
+//	public void applyState(TwissProbeState state) {
+//		if (!(state instanceof TwissProbeState))
+//			throw new IllegalArgumentException("invalid probe state");
+//		TwissProbeState stateTwiss = (TwissProbeState) state;
+//
+//		super.applyState(stateTwiss);
+//        this.setCentroid(stateTwiss.getCentroid());
+//		this.setResponseMatrix(stateTwiss.getResponseMatrix());
+//        this.setTwiss(stateTwiss.getTwiss3D());
+//	}
 
     
     /**

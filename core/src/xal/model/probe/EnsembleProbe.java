@@ -132,7 +132,7 @@ public class EnsembleProbe extends BunchProbe<EnsembleProbeState> {
      * 
      *  @param  probe   object to be copied
      */
-    public EnsembleProbe(EnsembleProbe probe)   {
+    public EnsembleProbe(final EnsembleProbe probe)   {
         super(probe);
         
         this.setEnsemble( new Ensemble( probe.getEnsemble() ) );
@@ -203,22 +203,22 @@ public class EnsembleProbe extends BunchProbe<EnsembleProbeState> {
  
 
 
-    /**
-     * Apply the contents of ProbeState to update my current state.  The argument
-     * supplying the new state should be of concrete type <code>EnsembleProbeState</code>.
-     * 
-     * @param state     <code>ProbeState</code> object containing new probe state data
-     * 
-     * @exception   IllegalArgumentException    wrong <code>ProbeState</code> sub-type for this probe
-     */
-    @Override
-    public void applyState(EnsembleProbeState state) {
-        if (!(state instanceof EnsembleProbeState))
-            throw new IllegalArgumentException("invalid probe state");
-        super.applyState(state);
-        setFieldCalculation(((EnsembleProbeState)state).getFieldCalculation());
-        setEnsemble(((EnsembleProbeState)state).getEnsemble());
-    }
+//    /**
+//     * Apply the contents of ProbeState to update my current state.  The argument
+//     * supplying the new state should be of concrete type <code>EnsembleProbeState</code>.
+//     * 
+//     * @param state     <code>ProbeState</code> object containing new probe state data
+//     * 
+//     * @exception   IllegalArgumentException    wrong <code>ProbeState</code> sub-type for this probe
+//     */
+//    @Override
+//    public void applyState(EnsembleProbeState state) {
+//        if (!(state instanceof EnsembleProbeState))
+//            throw new IllegalArgumentException("invalid probe state");
+//        super.applyState(state);
+//        setFieldCalculation(((EnsembleProbeState)state).getFieldCalculation());
+//        setEnsemble(((EnsembleProbeState)state).getEnsemble());
+//    }
     
     @Override
     protected EnsembleProbeState readStateFrom(DataAdaptor container) throws ParsingException {

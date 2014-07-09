@@ -267,6 +267,16 @@ public abstract class Probe<S extends ProbeState<S>> implements IProbe, IArchive
      */
     public abstract Probe<S> copy();
     
+    
+    /**
+     * Applies the properties of the state that is passed in to the current
+     * state of the probe.
+     * 
+     * @param state - the state to apply to the probe
+     * 
+     * @author Jonathan M. Freed
+     * @since Jul 9, 2014
+     */
     /**
      * Apply the contents of ProbeState to update my current state.  Subclass
      * implementations should call super.applyState to ensure superclass
@@ -275,13 +285,15 @@ public abstract class Probe<S extends ProbeState<S>> implements IProbe, IArchive
      * @param state     <code>ProbeState</code> object containing new probe state data
      */
     public void applyState(S state) {
-        setSpeciesRestEnergy(state.getSpeciesRestEnergy());
-        setSpeciesCharge(state.getSpeciesCharge());
-
-        setCurrentElement(state.getElementId());
-        setPosition(state.getPosition());
-        setTime(state.getTime());
-        setKineticEnergy(state.getKineticEnergy());
+    	this.stateCurrent = state.copy();
+    	
+//        setSpeciesRestEnergy(state.getSpeciesRestEnergy());
+//        setSpeciesCharge(state.getSpeciesCharge());
+//
+//        setCurrentElement(state.getElementId());
+//        setPosition(state.getPosition());
+//        setTime(state.getTime());
+//        setKineticEnergy(state.getKineticEnergy());
     }
     
     
@@ -339,7 +351,7 @@ public abstract class Probe<S extends ProbeState<S>> implements IProbe, IArchive
      *
      *  @param  ifcAlg      default dynamics algorithm for probe
      */
-    protected Probe(IAlgorithm ifcAlg) {
+    protected Probe(final IAlgorithm ifcAlg) {
         this();
         
         this.algTracker = ifcAlg;
@@ -351,7 +363,7 @@ public abstract class Probe<S extends ProbeState<S>> implements IProbe, IArchive
      *  
      *  @param  probe   Probe object to be cloned 
      */
-    public Probe(Probe<S> probe)   {
+    public Probe(final Probe<S> probe)   {
         this();
         this.deepCopy(probe);
     }
@@ -695,12 +707,10 @@ public abstract class Probe<S extends ProbeState<S>> implements IProbe, IArchive
      * &nbsp; &nbsp; - The trajectory is cleared
      * </p>
      * 
-     * TODO Set the initial state to the current state
      */
     @Override
     public void initialize() {
     	this.stateInit = this.cloneCurrentProbeState();
-    	//this.stateCurrent = this.cloneCurrentProbeState();
     	
         this.trajHist = this.createTrajectory();
 //        this.getAlgorithm().initialize();  // CKA - I think these should be uncommented

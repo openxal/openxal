@@ -27,7 +27,7 @@ public class DiagnosticProbe extends Probe<DiagnosticProbeState> {
         super( new DiagnosticTracker() );        
     }
     
-    public DiagnosticProbe(DiagnosticProbe copy) {
+    public DiagnosticProbe(final DiagnosticProbe copy) {
         super( copy );
         this.setElementsVisited(copy.getElementsVisited());
     }
@@ -108,14 +108,15 @@ public class DiagnosticProbe extends Probe<DiagnosticProbeState> {
 		return new DiagnosticProbeState();
 	}
 	
-	@Override
-    public void applyState(DiagnosticProbeState state) {
-		if (! (state instanceof DiagnosticProbeState))
-			throw new IllegalArgumentException("invalid probe state");
-		super.applyState(state);
-		setElementsVisited(((DiagnosticProbeState)state).getElementsVisited());
-	}	
-	
+//	@Override
+//    public void applyState(DiagnosticProbeState state) {
+//		this.stateCurrent = state.copy();
+////		if (! (state instanceof DiagnosticProbeState))
+////			throw new IllegalArgumentException("invalid probe state");
+////		super.applyState(state);
+////		setElementsVisited(((DiagnosticProbeState)state).getElementsVisited());
+//	}	
+//	
     @Override
     protected DiagnosticProbeState readStateFrom(DataAdaptor container) throws ParsingException {
         DiagnosticProbeState state = new DiagnosticProbeState();

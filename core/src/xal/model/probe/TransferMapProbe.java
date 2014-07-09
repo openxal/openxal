@@ -44,8 +44,6 @@ public class TransferMapProbe extends Probe<TransferMapState> {
         super();
         
         this.setTransferMap(PhaseMap.identity());
-        
-        //added by JMF 7/7/14
         this.setPartialTransferMap(PhaseMap.identity());
         
         this.setPhaseCoordinates(new PhaseVector());
@@ -75,8 +73,6 @@ public class TransferMapProbe extends Probe<TransferMapState> {
         super(probe);
         
         this.setTransferMap( new PhaseMap( probe.getTransferMap()) );
-        
-        //added by JMF 7/7/14
         this.setPartialTransferMap(new PhaseMap(probe.getPartialTransferMap()));
         
         this.setPhaseCoordinates( new PhaseVector(probe.getPhaseCoordinates()) );
@@ -199,22 +195,22 @@ public class TransferMapProbe extends Probe<TransferMapState> {
 		return new TransferMapState();
 	}
     
-    /**
-     * Capture the current probe state to the <code>ProbeState</code> argument.  Note
-     * that the argument must be of the concrete type <code>TransferMapState</code>.
-     * @param   state   <code>ProbeState</code> to receive this probe's state information
-     * @exception IllegalArgumentException  argument is not of type <code>TransferMapState</code>
-     */
-    @Override
-    public void applyState( final TransferMapState state ) {
-        if ( !(state instanceof TransferMapState) ) throw new IllegalArgumentException("invalid probe state");
-        final TransferMapState stateTrans = (TransferMapState) state;
-        
-        super.applyState(state);
-//        stateTrans.setTrajectory( (TransferMapTrajectory)trajHist );
-        this.setTransferMap( stateTrans.getTransferMap() );
-        this.setPartialTransferMap( stateTrans.getStateTransferMap() );
-    }
+//    /**
+//     * Capture the current probe state to the <code>ProbeState</code> argument.  Note
+//     * that the argument must be of the concrete type <code>TransferMapState</code>.
+//     * @param   state   <code>ProbeState</code> to receive this probe's state information
+//     * @exception IllegalArgumentException  argument is not of type <code>TransferMapState</code>
+//     */
+//    @Override
+//    public void applyState( final TransferMapState state ) {
+//        if ( !(state instanceof TransferMapState) ) throw new IllegalArgumentException("invalid probe state");
+//        final TransferMapState stateTrans = (TransferMapState) state;
+//        
+//        super.applyState(state);
+////        stateTrans.setTrajectory( (TransferMapTrajectory)trajHist );
+//        this.setTransferMap( stateTrans.getTransferMap() );
+//        this.setPartialTransferMap( stateTrans.getStateTransferMap() );
+//    }
         
     
     /**

@@ -39,7 +39,7 @@ public class SynchronousProbe extends Probe<SynchronousState> {
     /**
      * @param probe
      */
-    public SynchronousProbe(SynchronousProbe probe) {
+    public SynchronousProbe(final SynchronousProbe probe) {
         super(probe);
         this.setRfPhase( probe.getRfPhase() );
         this.setBetatronPhase( new R3(probe.getBetatronPhase()) );
@@ -150,24 +150,24 @@ public class SynchronousProbe extends Probe<SynchronousState> {
  		return new SynchronousState();
  	}
      
-    /**
-     * Capture the current probe state to the <code>ProbeState</code> argument.  Note
-     * that the argument must be of the concrete type <code>SynchronousState</code>.
-     * 
-     * @param   state   <code>ProbeState</code> to receive this probe's state information
-     * 
-     * @exception IllegalArgumentException  argument is not of type <code>SynchronousState</code>
-     */   
-    @Override
-    public void applyState(SynchronousState state) {
-        if (!(state instanceof SynchronousState))
-            throw new IllegalArgumentException("invalid probe state");
-        SynchronousState    stateSync = (SynchronousState) state;
-        
-        super.applyState(state);
-        this.setBetatronPhase( stateSync.getBetatronPhase() );
-        this.setRfPhase( stateSync.getRfPhase() );
-    }
+//    /**
+//     * Capture the current probe state to the <code>ProbeState</code> argument.  Note
+//     * that the argument must be of the concrete type <code>SynchronousState</code>.
+//     * 
+//     * @param   state   <code>ProbeState</code> to receive this probe's state information
+//     * 
+//     * @exception IllegalArgumentException  argument is not of type <code>SynchronousState</code>
+//     */   
+//    @Override
+//    public void applyState(SynchronousState state) {
+//        if (!(state instanceof SynchronousState))
+//            throw new IllegalArgumentException("invalid probe state");
+//        SynchronousState    stateSync = (SynchronousState) state;
+//        
+//        super.applyState(state);
+//        this.setBetatronPhase( stateSync.getBetatronPhase() );
+//        this.setRfPhase( stateSync.getRfPhase() );
+//    }
     
     @Override
     protected SynchronousState readStateFrom(DataAdaptor container) throws ParsingException {

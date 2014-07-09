@@ -78,10 +78,8 @@ public abstract class BunchProbe<S extends BunchProbeState<S>> extends Probe<S> 
      *
      *  @param  probe   BunchProbe object to be cloned
      */
-    public BunchProbe(BunchProbe<S> probe)   {
-        super(probe);
-        //Not sure what the purpose of this is
-        //this.setBunchFrequency(this.getBunchFrequency());
+    public BunchProbe(final BunchProbe<S> probe)   {
+        super(probe);       
         this.setBunchFrequency(probe.getBunchFrequency());
         this.setBeamCurrent(probe.getBeamCurrent());
 //        this.setBetatronPhase(new R3(probe.getBetatronPhase()));
@@ -222,22 +220,23 @@ public abstract class BunchProbe<S extends BunchProbeState<S>> extends Probe<S> 
     @Override
     public abstract S createEmptyProbeState();
     
-    /**
-     * Apply the contents of ProbeState to update my current state.  Subclass
-     * implementations should call super.applyState to ensure superclass
-     * state is applied.
-     * 
-     * @param state     <code>ProbeState</code> object containing new probe state data
-     * 
-     * @exception   IllegalArgumentException    wrong <code>ProbeState</code> subtype for this probe
-     */
-    @Override
-    public void applyState(S state) {
-        
-        super.applyState(state);
-        this.setBunchFrequency( state.getBunchFrequency() );
-        this.setBeamCurrent( state.getBeamCurrent() );
-    }
+
+//    /**
+//     * Applies the properties of the state that is passed in to the current
+//     * state of the probe.
+//     * 
+//     * @param state - the state to apply to the probe
+//     * 
+//     * @author Jonathan M. Freed
+//     * @since Jul 9, 2014
+//     */
+//    @Override
+//    public void applyState(final S state) {
+//        this.stateCurrent = state.copy();
+////        super.applyState(state);
+////        this.setBunchFrequency( state.getBunchFrequency() );
+////        this.setBeamCurrent( state.getBeamCurrent() );
+//    }
 
     
     
