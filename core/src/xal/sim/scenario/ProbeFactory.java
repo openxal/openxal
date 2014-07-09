@@ -141,6 +141,9 @@ public class ProbeFactory {
 		
 		boolean success = initializeLocation( probe, locationID, sequence);
 		
+		// initialize the probe so the initial state is set
+	    probe.initialize();
+		
 		return success ? probe : null;
 	}
 	
@@ -175,6 +178,9 @@ public class ProbeFactory {
 		
 		boolean success = initializeLocation( probe, locationID, sequence);
 		
+		// initialize the probe so the initial state is set
+	    probe.initialize();
+		
 		return success ? probe : null;
 	}
 	
@@ -207,6 +213,9 @@ public class ProbeFactory {
 	    bolResult &= ProbeFactory.initializeBeam(prbTwiss, seqParent);
 	    bolResult &= ProbeFactory.initializeTwiss(prbTwiss, strLocId, seqParent);
 	 
+	    // initialize the probe so the initial state is set
+	    prbTwiss.initialize();
+	    
 	    return bolResult ? prbTwiss : null;
 	}
 	
@@ -241,6 +250,9 @@ public class ProbeFactory {
 		boolean success = initializeLocation( probe, sequence.getEntranceID(), sequence);
 		success &= initializeBeam( probe, sequence );
 		success &= initializeTwiss( probe, locationID, sequence );
+		
+		// initialize the probe so the initial state is set
+		probe.initialize();
 		
 		return success ? probe : null;
 	}

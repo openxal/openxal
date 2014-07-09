@@ -113,17 +113,14 @@ public class TestRunOnlineModel {
             // Create and initialize the envelope probe
             EnvTrackerAdapt algEnv = AlgorithmFactory.createEnvTrackerAdapt(SEQ_TEST);
             PROBE_ENV_TEST = ProbeFactory.getEnvelopeProbe(SEQ_TEST, algEnv);
-            PROBE_ENV_TEST.initialize();
             
             // Create and initialize the particle probe
             ParticleTracker algPrt = AlgorithmFactory.createParticleTracker(SEQ_TEST);
             PROBE_PARTL_TEST = ProbeFactory.createParticleProbe(SEQ_TEST, algPrt);
-            PROBE_PARTL_TEST.initialize();
             
             // Create and initialize transfer map probe
             TransferMapTracker  algXfer = AlgorithmFactory.createTransferMapTracker(SEQ_TEST);
             PROBE_XFER_TEST = ProbeFactory.getTransferMapProbe(SEQ_TEST, algXfer );
-            PROBE_XFER_TEST.initialize();
             
             WTR_OUTPUT = new PrintWriter(FILE_OUTPUT);
 

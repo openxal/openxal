@@ -406,6 +406,7 @@ public class CalculationsOnMachines extends CalculationEngine  implements ISimLo
      */
     @Override
     public Twiss[] computeTwissParameters(TransferMapState state) {
+    	
         PhaseMatrix matFullTrn = this.calculateFullLatticeMatrixAt(state);
         Twiss[]     arrTwsMtch = super.calculateMatchedTwiss(matFullTrn);
         
