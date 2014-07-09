@@ -143,7 +143,7 @@ public class EnvelopeProbeState extends BunchProbeState<EnvelopeProbeState> {
      * @author Christopher K. Allen, Jonathan M. Freed
      * @since  Jun 26, 2014
      */
-    public EnvelopeProbeState(EnvelopeProbeState prsEnv){
+    public EnvelopeProbeState(final EnvelopeProbeState prsEnv){
     	super(prsEnv);
     	
     	this.bolSaveTwiss	= prsEnv.bolSaveTwiss;
@@ -159,7 +159,7 @@ public class EnvelopeProbeState extends BunchProbeState<EnvelopeProbeState> {
      * 
      * @param probe     <code>EnvelopeProbe</code> containing initializing state information
      */
-    public EnvelopeProbeState(EnvelopeProbe probe) {
+    public EnvelopeProbeState(final EnvelopeProbe probe) {
         super(probe);
         
         this.setCovariance( probe.getCovariance().clone() );

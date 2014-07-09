@@ -105,12 +105,10 @@ public class TwissProbeState extends BunchProbeState<TwissProbeState> {
      * @author Christopher K. Allen, Jonathan M. Freed
      * @since  Jun 26, 2014
      */
-    public TwissProbeState(TwissProbeState twissProbeState){
+    public TwissProbeState(final TwissProbeState twissProbeState){
     	super(twissProbeState);
     	
-    	//TODO - this.envTwiss needs to be set to a clone of twissProbeState.envTwiss
-    	// JMF
-    	this.envTwiss	= twissProbeState.envTwiss;
+    	this.envTwiss	= twissProbeState.envTwiss.copy();
     	this.matResp	= twissProbeState.matResp.clone();
     	this.vecCent	= twissProbeState.vecCent.clone();
     	this.vecPhsBeta	= twissProbeState.vecPhsBeta.clone();
@@ -128,10 +126,13 @@ public class TwissProbeState extends BunchProbeState<TwissProbeState> {
         this.setCentroid( new PhaseVector( probe.getCentroid().clone() ) );
         this.setResponseMatrix( new PhaseMatrix( probe.getResponseMatrix().clone() ) );
         this.setBetatronPhase( new R3( probe.getBetatronPhase().clone() ) );
-        // TODO - needs to be set to a clone as well
-        // JMF
-        this.setTwiss( new Twiss3D(probe.getTwiss()) );
+        this.setTwiss( new Twiss3D(probe.getTwiss().copy()) );
     }
+    
+    
+    /*
+     * Property Accessors
+     */
     
     
 //    /** 
@@ -197,12 +198,6 @@ public class TwissProbeState extends BunchProbeState<TwissProbeState> {
     public void setTwiss(Twiss3D arrTwiss) {
         this.envTwiss = arrTwiss;
     }
-    
-    
-    
-    /*
-     * Attribute Queries
-     */
      	
 	
 //    /**

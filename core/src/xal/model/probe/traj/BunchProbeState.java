@@ -69,6 +69,7 @@ public abstract class BunchProbeState<S extends BunchProbeState<S>> extends Prob
      *
      */
     public BunchProbeState() {
+    	super();
         this.dblBmCurr = 0.0;
         this.dlbBunFreq = 0.0;
     }
@@ -84,7 +85,7 @@ public abstract class BunchProbeState<S extends BunchProbeState<S>> extends Prob
      * @author Jonathan M. Freed
      * @since  Jun 26, 2014
      */
-    public BunchProbeState(S state){
+    public BunchProbeState(final S state){
     	super(state);
     	
     	this.dblBmCurr	= state.getBeamCurrent();
@@ -97,12 +98,16 @@ public abstract class BunchProbeState<S extends BunchProbeState<S>> extends Prob
      * 
      * @param probe     probe object with which to initialize this state
      */
-    public BunchProbeState(BunchProbe<S> probe) {
+    public BunchProbeState(final BunchProbe<S> probe) {
         super(probe);
         this.setBunchFrequency(probe.getBunchFrequency());
         this.setBeamCurrent(probe.getBeamCurrent());
 //        this.setBetatronPhase(probe.getBetatronPhase());
     }
+    
+    /*
+     * Property Accessors
+     */
     
     /**
      * Set the bunch arrival time frequency.
@@ -121,12 +126,6 @@ public abstract class BunchProbeState<S extends BunchProbeState<S>> extends Prob
     public void setBeamCurrent(double I) {
         dblBmCurr = I;
     }
-    
-    
-    
-    /*
-     * Attribute Query
-     */
     
     /**
      * <p>

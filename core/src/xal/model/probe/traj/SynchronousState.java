@@ -56,8 +56,8 @@ public class SynchronousState extends ProbeState<SynchronousState> {
      */
     public SynchronousState() {
         super();
-        this.m_dblPhsRf = 0.0;
-        this.m_vecPhsBeta = R3.zero();
+        this.m_dblPhsRf		= 0.0;
+        this.m_vecPhsBeta	= R3.zero();
     }
     
     /**
@@ -70,7 +70,7 @@ public class SynchronousState extends ProbeState<SynchronousState> {
      * @author Christopher K. Allen, Jonathan M. Freed
      * @since  Jun 26, 2014
      */
-    public SynchronousState(SynchronousState stateSync){
+    public SynchronousState(final SynchronousState stateSync){
     	super(stateSync);
     	
     	this.m_dblPhsRf		= stateSync.m_dblPhsRf;
@@ -83,11 +83,16 @@ public class SynchronousState extends ProbeState<SynchronousState> {
      *  
      * @param probe     probe containing initializing state information
      */
-    public SynchronousState(SynchronousProbe probe) {
+    public SynchronousState(final SynchronousProbe probe) {
         super(probe);
         this.setBetatronPhase( probe.getBetatronPhase().clone() );
         this.setRfPhase( probe.getRfPhase() );
     }
+    
+    
+    /*
+     * Property Accessors 
+     */
     
     /**
      * Set the betatron phase of the synchronous particle without space charge.
@@ -111,11 +116,6 @@ public class SynchronousState extends ProbeState<SynchronousState> {
         this.m_dblPhsRf = dblPhase;
     }
     
-
-    
-    /*
-     * Attribute Query
-     */
     
     /**
      * Return the betatron phase advances in each plane.
@@ -215,7 +215,6 @@ public class SynchronousState extends ProbeState<SynchronousState> {
      */
     @Override
     public String toString() {
-        // TODO Auto-generated method stub
         return super.toString();
     }
 

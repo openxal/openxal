@@ -9,7 +9,6 @@ package xal.model.probe.traj;
 import xal.tools.beam.PhaseMap;
 import xal.tools.beam.PhaseVector;
 import xal.tools.data.DataAdaptor;
-
 import xal.model.probe.Probe;
 import xal.model.probe.TransferMapProbe;
 import xal.model.xml.ParsingException;
@@ -97,13 +96,10 @@ public class TransferMapState extends ProbeState<TransferMapState> {
      * @author Christopher K. Allen, Jonathan M. Freed
      * @since  Jun 26, 2014
      */
-    public TransferMapState(TransferMapState transferMapState){
+    public TransferMapState(final TransferMapState transferMapState){
     	super(transferMapState);
     	
-    	//this._phaseCoordinates	= transferMapState._phaseCoordinates.clone();
-    	// TODO - these need to be set to clones of transferMapState's attributes,
-    	// not pointed to the same object
-    	// JMF
+    	this._phaseCoordinates	= transferMapState._phaseCoordinates.clone();
     	this.mapPhiCmp	= transferMapState.mapPhiCmp.copy();
     	this.mapPhiPart	= transferMapState.mapPhiPart.copy();
     }
@@ -113,16 +109,21 @@ public class TransferMapState extends ProbeState<TransferMapState> {
      * Initializing constructor - create a new <code>TransferMapState</code> object and initialize it to the current state of the given probe.
      * @param probe probe object with initial state information
      */
-    public TransferMapState( final TransferMapProbe probe ) {
+    @SuppressWarnings("deprecation")
+	public TransferMapState( final TransferMapProbe probe ) {
         super( probe );
 
-        // TODO - these need to be set to clones as well
-        // JMF
-        setTransferMap( probe.getTransferMap().copy() );
-        setPartialTransferMap( probe.getPartialTransferMap().copy() );
+        this.setPhaseCoordinates( probe.getPhaseCoordinates().clone() );
+        this.setTransferMap( probe.getTransferMap().copy() );
+        this.setPartialTransferMap( probe.getPartialTransferMap().copy() );
     }
 
 
+    /*
+     * Property Accessors
+     */
+    
+    
     /**
      * Set the current composite transfer map up to the current probe location.
      * @param   mapTrans    transfer map in homogeneous phase coordinates
@@ -156,11 +157,6 @@ public class TransferMapState extends ProbeState<TransferMapState> {
     public void setStateTransferMap( final PhaseMap mapTrans ) {
         this.mapPhiPart = ( mapTrans != null ) ? mapTrans : PhaseMap.identity();
     }
-
-
-    /*
-     * Attribute Query
-     */
     
     /**
      * Get the composite transfer map at this state location.  The

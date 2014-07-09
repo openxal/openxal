@@ -128,7 +128,7 @@ public abstract class ProbeState<S extends ProbeState<S>> implements IProbeState
      * @author Christopher K. Allen
      * @since  Jun 26, 2014
      */
-    public ProbeState(S state) {
+    public ProbeState(final S state) {
         
         this.m_dblParQ = state.getSpeciesCharge();
         this.m_dblParEr = state.getSpeciesRestEnergy();
@@ -146,7 +146,7 @@ public abstract class ProbeState<S extends ProbeState<S>> implements IProbeState
      * 
      * @param probe     <code>Probe</code> object containing initial values
      */
-    public ProbeState(Probe<S> probe) {
+    public ProbeState(final Probe<S> probe) {
         this.setSpeciesCharge( probe.getSpeciesCharge() );
         this.setSpeciesRestEnergy( probe.getSpeciesRestEnergy() );
 
@@ -159,7 +159,7 @@ public abstract class ProbeState<S extends ProbeState<S>> implements IProbeState
     
     
     /*
-     * Attributes
+     * Property Accessors
      */
     
     /** 
@@ -181,8 +181,7 @@ public abstract class ProbeState<S extends ProbeState<S>> implements IProbeState
         this.m_dblParEr = Er; 
     }
 
-
-
+    
     /** 
      *  Set the current position of the probe along the beamline.
      *
@@ -232,11 +231,6 @@ public abstract class ProbeState<S extends ProbeState<S>> implements IProbeState
 //    }
 //    
 
-
-    /*
-     *  Data Query 
-     */
-
 //    //sako
 //    public boolean getUseTwiss() {
 //        return bolSaveTwiss;
@@ -248,14 +242,18 @@ public abstract class ProbeState<S extends ProbeState<S>> implements IProbeState
      *  
      *  @return     particle species charge (<b>Coulombs</b>)
      */
-    public double getSpeciesCharge() { return m_dblParQ; }
+    public double getSpeciesCharge() { 
+    	return m_dblParQ; 
+    }
     
     /** 
      *  Returns the rest energy of particle species 
      *
      *  @return     particle species rest energy (<b>electron-volts</b>)
      */
-    public double getSpeciesRestEnergy() { return m_dblParEr; }
+    public double getSpeciesRestEnergy() { 
+    	return m_dblParEr; 
+    }
     
 
     /** Returns the momentum
@@ -292,7 +290,7 @@ public abstract class ProbeState<S extends ProbeState<S>> implements IProbeState
      */
     public double getTime() { 
         return m_dblTime;
-    };
+    }
     
     /**
      *  Return the kinetic energy of the probe.  Depending upon the probe type,
@@ -416,7 +414,7 @@ public abstract class ProbeState<S extends ProbeState<S>> implements IProbeState
      */
     protected double computeGammaFromBeta(double beta) { 
         return 1.0/Math.sqrt(1.0 - beta*beta); 
-    };
+    }
     
     /**
      *  Convenience function for computing the relatistic factor gamma from the 
@@ -429,7 +427,7 @@ public abstract class ProbeState<S extends ProbeState<S>> implements IProbeState
         double gamma = W/m_dblParEr + 1.0;
         
         return gamma;
-    };
+    }
     
     /**
      *  Convenience function for computing the probe's velocity beta (w.r.t. the 
@@ -442,12 +440,14 @@ public abstract class ProbeState<S extends ProbeState<S>> implements IProbeState
         double beta = Math.sqrt(1.0 - 1.0/(gamma*gamma));
 
         return beta;
-    };
+    }
     
     /** 
      *  Convenience function for multiplication of beta * gamma
      */
-    protected double getBetaGamma() { return m_dblBeta*m_dblGamma; };
+    protected double getBetaGamma() { 
+    	return m_dblBeta*m_dblGamma; 
+    }
 
 
     /*

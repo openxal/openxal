@@ -48,6 +48,7 @@ public class DiagnosticProbeState extends ProbeState<DiagnosticProbeState> {
 	 * @since   Apr 19, 2011
 	 */
 	public DiagnosticProbeState() {
+		super();
 	}
 	
     /**
@@ -60,7 +61,7 @@ public class DiagnosticProbeState extends ProbeState<DiagnosticProbeState> {
      * @author Christopher K. Allen, Jonathan M. Freed
      * @since  Jun 26, 2014
      */
-	public DiagnosticProbeState(DiagnosticProbeState diagnosticProbeState){
+	public DiagnosticProbeState(final DiagnosticProbeState diagnosticProbeState){
 		super(diagnosticProbeState);
 		
 		this.elementsVisited = diagnosticProbeState.elementsVisited;
@@ -73,7 +74,7 @@ public class DiagnosticProbeState extends ProbeState<DiagnosticProbeState> {
      * @author  Christopher K. Allen
      * @since   Apr 19, 2011
      */
-	public DiagnosticProbeState(DiagnosticProbe probe) {
+	public DiagnosticProbeState(final DiagnosticProbe probe) {
 		super(probe);
 		this.elementsVisited = probe.getElementsVisited();
 	}

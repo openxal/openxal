@@ -68,14 +68,12 @@ public class EnsembleProbeState extends BunchProbeState<EnsembleProbeState> {
      * @author Christopher K. Allen, Jonathan M. Freed
      * @since  Jun 26, 2014
      */
-    public EnsembleProbeState(EnsembleProbeState ensembleProbeState){
+    public EnsembleProbeState(final EnsembleProbeState ensembleProbeState){
     	super(ensembleProbeState);
     	
     	this.m_enmFldCalc	= ensembleProbeState.m_enmFldCalc;
-    	//TODO - this.m_ensPahse needs to be set to a clone of ensembelProbeState.m_ensPhase,
-    	// not simply point to the same object
-    	// JMF
-    	this.m_ensPhase		= ensembleProbeState.m_ensPhase;
+
+    	this.m_ensPhase		= ensembleProbeState.m_ensPhase.deepCopy();
     }
 
     /**
@@ -84,15 +82,19 @@ public class EnsembleProbeState extends BunchProbeState<EnsembleProbeState> {
      * 
      * @param probe     <code>EnsembleProbe</code> containing initializing state information
      */
-    public EnsembleProbeState(EnsembleProbe probe) {
+    public EnsembleProbeState(final EnsembleProbe probe) {
         super(probe);
         this.setFieldCalculation( probe.getFieldCalculation() );
-        //TODO - should be probe.getEnsemble().clone()
-        // JMF
-        this.setEnsemble( probe.getEnsemble() );
+
+        this.setEnsemble( probe.getEnsemble().deepCopy() );
     }
-
-
+    
+    
+    /*
+     * Property Accessors
+     */
+    
+    
     /**
      *  Set the field calculation method
      *
@@ -112,11 +114,6 @@ public class EnsembleProbeState extends BunchProbeState<EnsembleProbeState> {
     public void setEnsemble(Ensemble ens) {
         m_ensPhase = new Ensemble(ens);
     }
-
-
-    /*
-     *  Data Query
-     */
     
     /**
      * Return the field calculation method
