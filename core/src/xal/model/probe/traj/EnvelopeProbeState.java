@@ -625,31 +625,31 @@ public class EnvelopeProbeState extends BunchProbeState<EnvelopeProbeState> {
                                 + ", response: " + this.getResponseMatrix().toString();
     }
 
-	/**
-	 * TODO This method should override an abstract method in the base class
-	 * <code>Probe</code>.  If <code>Probe</code> is refactored so that it
-	 * has a type template parameter <code>S</code>, say
-	 * <br/>
-	 * <br/>
-	 * &nbsp; &nbsp; <code>class Probe&lt;S extends ProbeState&gt;</code>
-	 * <br/>
-	 * <br/>
-	 * then this method simply creates the typed probe state and exactly fills
-	 * out the virtual method, which should have a signature
-     * <br/>
-     * <br/>
-     * &nbsp; &nbsp; <code>public S ProbeState#create()</code>
-     * <br/>
-     * <br/>
-	 *  
-	 * @return new, uninitialized probe state
-	 *
-	 * @author Christopher K. Allen
-	 * @since  Jun 24, 2014
-	 */
-	public EnvelopeProbeState create() {
-		return new EnvelopeProbeState();
-	}
+//	/**
+//	 * TODO This method should override an abstract method in the base class
+//	 * <code>Probe</code>.  If <code>Probe</code> is refactored so that it
+//	 * has a type template parameter <code>S</code>, say
+//	 * <br/>
+//	 * <br/>
+//	 * &nbsp; &nbsp; <code>class Probe&lt;S extends ProbeState&gt;</code>
+//	 * <br/>
+//	 * <br/>
+//	 * then this method simply creates the typed probe state and exactly fills
+//	 * out the virtual method, which should have a signature
+//     * <br/>
+//     * <br/>
+//     * &nbsp; &nbsp; <code>public S ProbeState#create()</code>
+//     * <br/>
+//     * <br/>
+//	 *  
+//	 * @return new, uninitialized probe state
+//	 *
+//	 * @author Christopher K. Allen
+//	 * @since  Jun 24, 2014
+//	 */
+//	public EnvelopeProbeState create() {
+//		return new EnvelopeProbeState();
+//	}
 
 
 //    /*
