@@ -298,11 +298,11 @@ public class Trajectory<S extends ProbeState<S>> implements IArchive, Iterable<S
      * 
      * 
      * @param clsStates - the <code>Class&lt;S&gt;</code> object of the underlying
-     * 		underlying <code>ProbeState</code> type
+     * 		<code>ProbeState</code> type
      * 
      * @since Jul 1, 2014
      */
-    public Trajectory(Class<S> clsStates) {
+    public Trajectory(final Class<S> clsStates) {
         this._history  = new RealNumericIndexer<S>();
         this.mapStates = new ElementStateMap<S>();
         this.clsStates = clsStates;
