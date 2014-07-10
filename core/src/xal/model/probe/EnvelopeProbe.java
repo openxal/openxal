@@ -111,15 +111,15 @@ public class EnvelopeProbe extends BunchProbe<EnvelopeProbeState> {
 //    private Twiss[]            arrTwiss;
 
 
-    /** 
-     * behavior flag - save correlation data as twiss parameters 
-     * 
-     * CKA NOTES:
-     * - As this attribute relates to the above attributes, I am 
-     * deprecating it as well.
-     * 
-     * @deprecated  associated with attribute <code>arrTwiss</code>
-     */
+//    /** 
+//     * behavior flag - save correlation data as twiss parameters 
+//     * 
+//     * CKA NOTES:
+//     * - As this attribute relates to the above attributes, I am 
+//     * deprecating it as well.
+//     * 
+//     * @deprecated  associated with attribute <code>arrTwiss</code>
+//     */
 //	@Deprecated
 //    private boolean            bolSaveTwiss = false;
 
