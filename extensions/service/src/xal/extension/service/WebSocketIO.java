@@ -227,7 +227,10 @@ class WebSocketIO {
 					try {
 						final byte[] lenBytes = byteReader.nextBytes( 2 );
 						final ByteBuffer lenByteBuffer = ByteBuffer.wrap( lenBytes );
-						dataLength = lenByteBuffer.getShort();
+						final short shortLen = lenByteBuffer.getShort();
+
+						// since Java doesn't have unsigned short, we must take care to interpret negative numbers properly
+						dataLength = shortLen >= 0 ? shortLen : 65536 + shortLen;
 					}
 					catch( RuntimeException exception ) {
 						System.err.println( "Exception getting short message length: " + exception );
