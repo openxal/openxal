@@ -30,8 +30,16 @@ public interface Working {
 
     /** get the launch time */
     public Date getLaunchTime();
-    
-    
+
+
+	/** calculate the sinusoid waveform from zero to 2pi */
+	public double[] generateSinusoid( final double amplitude, final double frequency, final double phase, final int numPoints );
+
+
+	/** say hello to the person with the specified name */
+	public String sayHelloTo( final String name );
+
+
     /** shutdown the service */
     @OneWay
     public void shutdown( final int code );
