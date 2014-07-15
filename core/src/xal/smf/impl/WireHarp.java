@@ -23,7 +23,7 @@ import xal.smf.impl.profile.SignalAttrSet;
 import xal.smf.impl.profile.SignalSet;
 import xal.smf.impl.qualify.ElementTypeManager;
 import xal.smf.scada.AScada;
-import xal.smf.scada.BadStructException;
+import xal.smf.scada.BadStructDefinition;
 import xal.smf.scada.ScadaAnnotationException;
 import xal.smf.scada.ScadaFieldMap;
 import xal.smf.scada.ScadaRecord;
@@ -1058,7 +1058,7 @@ public class WireHarp extends ProfileDevice {
          * @author Christopher K. Allen
          */
         public static DataRaw  aquire(WireHarp smfHarp) 
-                throws ConnectionException, GetException, ScadaAnnotationException, BadStructException 
+                throws ConnectionException, GetException, ScadaAnnotationException, BadStructDefinition 
         {
             return new DataRaw(smfHarp);
         }
@@ -1117,7 +1117,7 @@ public class WireHarp extends ProfileDevice {
          * @author Christopher K. Allen
          * @since  Feb 12, 2013
          */
-        public DataRaw(WireHarp smfHarp) throws ConnectionException, GetException, ScadaAnnotationException, BadStructException  {
+        public DataRaw(WireHarp smfHarp) throws ConnectionException, GetException, ScadaAnnotationException, BadStructDefinition  {
             super(smfHarp);
 
 //            DaqConfig   cfgDaq = DaqConfig.acquire(smfHarp);
@@ -1178,7 +1178,7 @@ public class WireHarp extends ProfileDevice {
          * @author Christopher K. Allen
          */
         public static DataFit   aquire(WireHarp smfHarp) 
-                throws ConnectionException, GetException, ScadaAnnotationException, BadStructException 
+                throws ConnectionException, GetException, ScadaAnnotationException, BadStructDefinition 
         {
             return new DataFit(smfHarp);
         }
@@ -1233,7 +1233,7 @@ public class WireHarp extends ProfileDevice {
          * @since  Feb 12, 2013
          */
         public DataFit(WireHarp smfHarp) throws ScadaAnnotationException,
-        ConnectionException, GetException, BadStructException
+        ConnectionException, GetException, BadStructDefinition
         {
             super(smfHarp);
 
