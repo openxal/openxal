@@ -1,5 +1,5 @@
 /**
- * ScadaStruct.java
+ * ScadaRecord.java
  *
  *  Created	: Dec 17, 2009
  *  Author      : Christopher K. Allen 
@@ -32,6 +32,11 @@ import java.util.MissingResourceException;
  * Typically the structure will consist of a 
  * set of fields on a one-to-one basis with 
  * a related set of PVs. 
+ * 
+ * <p>
+ * <b>Ported from XAL on Jul 15, 2014.</b><br>
+ * &middot; Jonathan M. Freed
+ * </p>
  *
  * @since  Dec 16, 2009
  * @author Christopher K. Allen

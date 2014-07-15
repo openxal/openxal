@@ -31,6 +31,11 @@ import java.lang.annotation.Target;
  * positively indicate it a class containing <code>AScada</code> fields
  * and/or records.  Many SCADA operations and classes require this.
  * </p>  
+ * 
+ * <p>
+ * <b>Ported from XAL on Jul 15, 2014.</b><br>
+ * &middot; Jonathan M. Freed
+ * </p>
  *
  * @author Christopher K. Allen
  * @since   Feb 8, 2011

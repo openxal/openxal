@@ -20,6 +20,11 @@ import java.lang.annotation.Target;
  * the position array and the value array are included here.  Also, the
  * types of these arrays can be specified.
  * </p>
+ * 
+ * <p>
+ * <b>Ported from XAL on Jul 15, 2014.</b><br>
+ * &middot; Jonathan M. Freed
+ * </p>
  *
  * @author Christopher K. Allen
  * @since   Jan 20, 2013

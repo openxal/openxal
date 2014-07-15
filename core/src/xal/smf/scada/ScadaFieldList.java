@@ -17,6 +17,11 @@ import java.util.List;
  * parsed from a SCADA data structure. The field descriptors are sorted by
  * the ordering encountered in the declaration of fields in the SCADA data
  * structure.
+ * 
+ * <p>
+ * <b>Ported from XAL on Jul 15, 2014.</b><br>
+ * &middot; Jonathan M. Freed
+ * </p>
  *
  * @author Christopher K. Allen
  * @since   Mar 9, 2011

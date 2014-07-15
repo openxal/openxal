@@ -10,6 +10,11 @@ package xal.smf.scada;
  * Exception thrown when the annotations necessary to 
  * describe the SCADA operations, for the current class
  * or data structure, are inconsistent, invalid, or missing.
+ * 
+ * <p>
+ * <b>Ported from XAL on Jul 15, 2014.</b><br>
+ * &middot; Jonathan M. Freed
+ * </p>
  *
  * @author Christopher K. Allen
  * @since   Sep 22, 2011

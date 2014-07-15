@@ -21,6 +21,11 @@ import xal.smf.scada.ScadaFieldDescriptor;
  * Data structure containing the signal properties of the
  * the profile data sets acquired from a wire profile device.
  *
+ * <p>
+ * <b>Ported from XAL on Jul 15, 2014.</b><br>
+ * &middot; Jonathan M. Freed
+ * </p>
+ * 
  * @since  Feb 23, 2010
  * @author Christopher K. Allen
  */

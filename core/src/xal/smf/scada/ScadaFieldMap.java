@@ -27,6 +27,11 @@ import java.util.List;
  * to be eradicated.  It is too clumsy and the Java Annotation mechanism seems
  * more appropriate.
  * </p>
+ * 
+ * <p>
+ * <b>Ported from XAL on Jul 15, 2014.</b><br>
+ * &middot; Jonathan M. Freed
+ * </p>
  *
  *
  * @author Christopher K. Allen

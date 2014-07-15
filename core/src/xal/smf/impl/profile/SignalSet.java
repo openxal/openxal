@@ -44,6 +44,10 @@ import java.util.MissingResourceException;
  * <code>{@link WireScanner.ASignal}</code> annotation.
  * </p>
  *
+ * <p>
+ * <b>Ported from XAL on Jul 15, 2014.</b><br>
+ * &middot; Jonathan M. Freed
+ * </p>
  *
  * @since  Nov 13, 2009
  * @version Mar 05, 2013

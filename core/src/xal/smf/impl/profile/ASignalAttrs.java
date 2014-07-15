@@ -21,6 +21,11 @@ import java.lang.annotation.Target;
  * of the <code>WireScanner.SignalAttrs</code> data structure. 
  * </p>
  * 
+ * <p>
+ * <b>Ported from XAL on Jul 15, 2014.</b><br>
+ * &middot; Jonathan M. Freed
+ * </p>
+ * 
  * @author  Christopher K. Allen
  * @since   Oct 3, 2011
  * @version March 19, 2013

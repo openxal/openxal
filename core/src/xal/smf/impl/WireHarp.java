@@ -43,6 +43,11 @@ import xal.smf.scada.ScadaRecord;
  * <code>DaqConfig.CNT_WIRES</code> since there is no way to dynamically
  * acquire this value.
  * </p>  
+ * 
+ * <p>
+ * <b>Ported from XAL on Jul 15, 2014.</b><br>
+ * &middot; Jonathan M. Freed
+ * </p>
  *
  * @author Christopher K. Allen
  * @since   Jan 9, 2013

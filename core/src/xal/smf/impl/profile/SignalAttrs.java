@@ -22,6 +22,10 @@ import java.util.List;
 /**
  * Quantitative properties of a signal.
  *
+ * <p>
+ * <b>Ported from XAL on Jul 15, 2014.</b><br>
+ * &middot; Jonathan M. Freed
+ * </p>
  *
  * @since  Feb 19, 2010
  * @author Christopher K. Allen

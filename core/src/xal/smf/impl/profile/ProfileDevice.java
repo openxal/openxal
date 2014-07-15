@@ -46,6 +46,11 @@ import xal.smf.scada.ScadaFieldList;
  * since this class has no device type of its own.  It simply represents the common behavior
  * of profile data acquisition devices.
  * </p>
+ * 
+ * <p>
+ * <b>Ported from XAL on Jul 15, 2014.</b><br>
+ * &middot; Jonathan M. Freed
+ * </p>
  *
  *
  * @author Christopher K. Allen

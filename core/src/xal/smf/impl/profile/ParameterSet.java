@@ -18,6 +18,11 @@ import xal.smf.scada.ScadaRecord;
  * type can be used directly as parameters for
  * <code>ProfileDevice</code> objects.
  * 
+ * <p>
+ * <b>Ported from XAL on Jul 15, 2014.</b><br>
+ * &middot; Jonathan M. Freed
+ * </p>
+ * 
  * @since  Dec 18, 2009
  * @author Christopher K. Allen
  */

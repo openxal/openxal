@@ -40,6 +40,11 @@ import java.util.List;
  * annotation.
  * </p>
  * 
+ * <p>
+ * <b>Ported from XAL on Jul 15, 2014.</b><br>
+ * &middot; Jonathan M. Freed
+ * </p>
+ * 
  * @author Christopher K. Allen
  * @since  Jan 30, 2013
  */

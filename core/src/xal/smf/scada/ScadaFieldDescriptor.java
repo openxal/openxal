@@ -17,6 +17,11 @@ import java.util.List;
  * <code>ScadaFieldDescriptor</code> objects are immutable.
  * </p>  
  *
+ * <p>
+ * <b>Ported from XAL on Jul 15, 2014.</b><br>
+ * &middot; Jonathan M. Freed
+ * </p>
+ *
  * @since  Dec 18, 2009
  * @author Christopher K. Allen
  */
