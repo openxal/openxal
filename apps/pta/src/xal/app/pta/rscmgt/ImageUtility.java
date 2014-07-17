@@ -23,6 +23,11 @@ import javax.swing.ImageIcon;
  * <code>{@link javax.swing.ImageIcon}</code>
  * objects.
  * </p>
+ * 
+ * <p>
+ * <b>Ported from XAL on Jul 17, 2014.</b><br>
+ * &middot; Jonathan M. Freed
+ * </p>
  *
  * @since  Jun 15, 2009
  * @author Christopher K. Allen

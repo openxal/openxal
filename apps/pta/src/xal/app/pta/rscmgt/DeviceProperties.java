@@ -26,7 +26,11 @@ import java.util.Properties;
  * attributes are available programmatically using the enumeration
  * <code>APP</code> which provides methods for type conversion.
  * </p>
- * 
+ *
+ * <p>
+ * <b>Ported from XAL on Jul 17, 2014.</b><br>
+ * &middot; Jonathan M. Freed
+ * </p>
  *
  * @since  Jun 17, 2009
  * @author Christopher K. Allen

@@ -40,6 +40,11 @@ import javax.swing.JTabbedPane;
  * expose the <code>{@link xal.app.pta.tools.property.Property.IProperty}</code> 
  * interface.  With these conditions the properties can be displayed properly.
  * </p>
+ * 
+ * <p>
+ * <b>Ported from XAL on Jul 17, 2014.</b><br>
+ * &middot; Jonathan M. Freed
+ * </p>
  *
  * @author Christopher K. Allen
  * @since   Jan 14, 2011

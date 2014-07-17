@@ -23,6 +23,11 @@ import javax.swing.ImageIcon;
  * <p>
  * Utility class for managing the resources of the application.
  * </p>
+ * 
+ * <p>
+ * <b>Ported from XAL on Jul 17, 2014.</b><br>
+ * &middot; Jonathan M. Freed
+ * </p>
  *
  * @since  Jun 23, 2010
  * @author Christopher K. Allen
