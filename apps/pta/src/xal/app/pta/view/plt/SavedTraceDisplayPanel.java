@@ -27,6 +27,7 @@ import xal.ca.GetException;
 import xal.ca.MonitorException;
 import xal.ca.PutException;
 import xal.tools.math.Interval;
+import xal.tools.math.MathException;
 import xal.extension.widgets.plot.FunctionGraphsJPanel;
 import xal.smf.NoSuchChannelException;
 import xal.smf.impl.WireScanner;
@@ -769,14 +770,24 @@ public class SavedTraceDisplayPanel extends JPanel {
         
         double  dblMin = DeviceProperties.getMinLimit(fdAvgLng).asDouble();
         double  dblMax = DeviceProperties.getMaxLimit(fdAvgLng).asDouble();
-        this.ivlAvgLng = new Interval(dblMin, dblMax);
+        try {
+			this.ivlAvgLng = new Interval(dblMin, dblMax);
+		} catch (MathException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
         // Setup the processing window starting value domain
         ScadaFieldDescriptor fdAvgBgn = WireScanner.PrcgConfig.FLD_MAP.get("avgBgn");
         
         dblMin = DeviceProperties.getMinLimit(fdAvgBgn).asDouble();
         dblMax = DeviceProperties.getMaxLimit(fdAvgBgn).asDouble();
-        this.ivlAvgBgn = new Interval(dblMin, dblMax);
+        try {
+			this.ivlAvgBgn = new Interval(dblMin, dblMax);
+		} catch (MathException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
         
         // Set up the trace plots 

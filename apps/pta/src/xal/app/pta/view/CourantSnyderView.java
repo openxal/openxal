@@ -22,7 +22,7 @@ import xal.app.pta.daq.MeasurementData;
 import xal.app.pta.view.cmn.DeviceSelectorList;
 import xal.app.pta.view.cmn.DeviceSelectorPanel;
 import xal.app.pta.view.cmn.DeviceSelectorPanel.IDeviceSelectionListener;
-import xal.tools.plot.FunctionGraphsJPanel;
+import xal.extension.widgets.plot.FunctionGraphsJPanel;
 import xal.smf.Accelerator;
 import xal.smf.AcceleratorNode;
 
@@ -46,7 +46,7 @@ import javax.swing.event.ListSelectionListener;
  * @author Christopher K. Allen
  * @since   Dec 15, 2011
  */
-public class CourantSynderView extends JPanel implements IDocView, IConfigView, IDeviceSelectionListener, ListSelectionListener {
+public class CourantSnyderView extends JPanel implements IDocView, IConfigView, IDeviceSelectionListener, ListSelectionListener {
 
     /*
      * Global Constants 
@@ -103,7 +103,7 @@ public class CourantSynderView extends JPanel implements IDocView, IConfigView, 
      * @author  Christopher K. Allen
      * @since   Dec 16, 2011
      */
-    public CourantSynderView(MainDocument docMain) {
+    public CourantSnyderView(MainDocument docMain) {
         super();
         this.docMain = docMain;
     }

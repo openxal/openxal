@@ -12,6 +12,7 @@ import xal.ca.ConnectionException;
 import xal.ca.GetException;
 import xal.tools.data.DataAdaptor;
 import xal.smf.impl.WireScanner;
+import xal.smf.impl.WireScanner.DataLivePt;
 import xal.smf.impl.profile.ProfileDevice.ANGLE;
 import xal.smf.impl.profile.ProfileDevice.IProfileData;
 import xal.smf.impl.profile.SignalAttrSet;
@@ -83,7 +84,7 @@ public class ScannerData implements IProfileData, Serializable {
 //      setFldDsc.addAll( lstFdFit );
 //      setFldDsc.addAll( lstFdTrc );
 
-        List<ScadaFieldDescriptor>   lstFdLiv  = getFldDescrLst(WireScanner.DataLive.class);
+        List<ScadaFieldDescriptor>   lstFdLiv  = getFldDescrLst(DataLivePt.class);
         List<ScadaFieldDescriptor>   lstFdRaw  = getFldDescrLst(WireScanner.DataRaw.class);
         List<ScadaFieldDescriptor>   lstFdFit  = getFldDescrLst(WireScanner.DataFit.class);
         List<ScadaFieldDescriptor>   lstFdTrc  = getFldDescrLst(WireScanner.Trace.class);

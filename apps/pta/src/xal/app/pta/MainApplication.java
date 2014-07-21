@@ -96,7 +96,7 @@ import javax.swing.JOptionPane;
  * @since  Jun 11, 2009
  * @version 2.0 {@code date}
  * 
- * @see gov.sns.application.ApplicationAdaptor
+ * @see xal.extension.application.ApplicationAdaptor
  */
 public class MainApplication extends ApplicationAdaptor {
 
@@ -181,7 +181,7 @@ public class MainApplication extends ApplicationAdaptor {
          * dialog.
          * 
          * @since Apr 18, 2012
-         * @see gov.sns.application.Application#showsWelcomeDialogAtLaunch()
+         * @see xal.extension.application.Application#showsWelcomeDialogAtLaunch()
          */
         @Override
         protected boolean showsWelcomeDialogAtLaunch() {
@@ -759,8 +759,8 @@ public class MainApplication extends ApplicationAdaptor {
                 return;
         }
 
-//        MainDocument    docNew  = new gov.sns.apps.pta.MainDocument(this);
-        MainDocument    docNew  = new gov.sns.apps.pta.MainDocument();
+//        MainDocument    docNew  = new xal.app.pta.MainDocument(this);
+        MainDocument    docNew  = new xal.app.pta.MainDocument();
         MainApplication.getApplicationProxy().produceDocument(docNew, true);
 
         this.docMain.closeDocument();
@@ -1163,7 +1163,7 @@ public class MainApplication extends ApplicationAdaptor {
      * @since 	Jun 8, 2009
      * @author  Christopher K. Allen
      *
-     * @see gov.sns.application.AbstractApplicationAdaptor#applicationName()
+     * @see xal.extension.application.AbstractApplicationAdaptor#applicationName()
      */
     @Override
     public String applicationName() {
@@ -1176,7 +1176,7 @@ public class MainApplication extends ApplicationAdaptor {
      * @since 	Jul 29, 2009
      * @author  Christopher K. Allen
      *
-     * @see gov.sns.application.AbstractApplicationAdaptor#applicationFinishedLaunching()
+     * @see xal.extension.application.AbstractApplicationAdaptor#applicationFinishedLaunching()
      */
     @Override
     public void applicationFinishedLaunching() {
@@ -1191,7 +1191,7 @@ public class MainApplication extends ApplicationAdaptor {
 //     * @since 	Jul 29, 2009
 //     * @author  Christopher K. Allen
 //     *
-//     * @see gov.sns.application.AbstractApplicationAdaptor#applicationWillOpenInitialDocuments()
+//     * @see xal.extension.application.AbstractApplicationAdaptor#applicationWillOpenInitialDocuments()
 //     */
 //    @Override
 //    public void applicationWillOpenInitialDocuments() {
@@ -1205,7 +1205,7 @@ public class MainApplication extends ApplicationAdaptor {
      * @since 	Jul 29, 2009
      * @author  Christopher K. Allen
      *
-     * @see gov.sns.application.AbstractApplicationAdaptor#applicationWillQuit()
+     * @see xal.extension.application.AbstractApplicationAdaptor#applicationWillQuit()
      */
     @Override
     public void applicationWillQuit() {
@@ -1222,9 +1222,9 @@ public class MainApplication extends ApplicationAdaptor {
      * @since 	Jul 29, 2009
      * @author  Christopher K. Allen
      *
-     * @see gov.sns.application.AbstractApplicationAdaptor#customizeCommands(gov.sns.application.Commander)
-     * @see gov.sns.application.Commander
-     * @see gov.sns.apps.pta.cmdmgt.CommandSet
+     * @see xal.extension.application.AbstractApplicationAdaptor#customizeCommands(xal.extension.application.Commander)
+     * @see xal.extension.application.Commander
+     * @see xal.app.pta.cmdmgt.CommandSet
      */
     @Override
     protected void customizeCommands(Commander commander) {
@@ -1259,7 +1259,7 @@ public class MainApplication extends ApplicationAdaptor {
      * @since   Jun 8, 2009
      * @author  Christopher K. Allen
      *
-     * @see gov.sns.application.AbstractApplicationAdaptor#writableDocumentTypes()
+     * @see xal.extension.application.AbstractApplicationAdaptor#writableDocumentTypes()
      */
     @Override
     public String[] writableDocumentTypes() {
@@ -1271,7 +1271,7 @@ public class MainApplication extends ApplicationAdaptor {
      * @since   Jun 8, 2009
      * @author  Christopher K. Allen
      *
-     * @see gov.sns.application.AbstractApplicationAdaptor#readableDocumentTypes()
+     * @see xal.extension.application.AbstractApplicationAdaptor#readableDocumentTypes()
      */
     @Override
     public String[] readableDocumentTypes() {
@@ -1297,7 +1297,7 @@ public class MainApplication extends ApplicationAdaptor {
      * @since 	Jun 8, 2009
      * @author  Christopher K. Allen
      *
-     * @see gov.sns.application.ApplicationAdaptor#newDocument(java.net.URL)
+     * @see xal.extension.application.ApplicationAdaptor#newDocument(java.net.URL)
      */
     @Override
     public XalDocument newDocument(java.net.URL url) {
@@ -1305,8 +1305,8 @@ public class MainApplication extends ApplicationAdaptor {
             if (!docMain.closeDocument())
                 return null;
         
-        this.docMain = new gov.sns.apps.pta.MainDocument();
-//        this.docMain = new gov.sns.apps.pta.MainDocument(this);
+        this.docMain = new xal.app.pta.MainDocument();
+//        this.docMain = new xal.app.pta.MainDocument(this);
         this.docMain.openDocument(url);
 
         getEventLogger().logInfo(this.getClass(), "A new document has been created at " + url.toString());
@@ -1332,7 +1332,7 @@ public class MainApplication extends ApplicationAdaptor {
      * @since 	Jun 8, 2009
      * @author  Christopher K. Allen
      *
-     * @see gov.sns.application.ApplicationAdaptor#newEmptyDocument()
+     * @see xal.extension.application.ApplicationAdaptor#newEmptyDocument()
      */
     @Override
     public XalDocument newEmptyDocument() {
@@ -1340,8 +1340,8 @@ public class MainApplication extends ApplicationAdaptor {
             if (!docMain.closeDocument())
                 return null;
         
-        this.docMain = new gov.sns.apps.pta.MainDocument();
-//        this.docMain = new gov.sns.apps.pta.MainDocument(this);
+        this.docMain = new xal.app.pta.MainDocument();
+//        this.docMain = new xal.app.pta.MainDocument(this);
 
         getEventLogger().logInfo(this.getClass(), "A new empty document has been created.");
         

@@ -255,7 +255,7 @@ public class ScannerTestingPanel extends JPanel {
         this.pnlDaqPlot.setLiveDataButtonVisible(false);
         this.pnlDaqPlot.setClearDataButton(false);
         
-        this.pnlScanCtrlr = new ScanControlPanelDepr()
+        this.pnlScanCtrlr = new ScanControlPanelDepr();
 //        this.pnlScanCtrlr = new ScanControlPanel();
         ;
         this.pnlScanStat = new ScanProgressPanel();

@@ -11,7 +11,6 @@ import xal.app.pta.tools.property.PropertiesManager;
 import xal.app.pta.tools.property.Property;
 import xal.app.pta.tools.property.Property.IProperty;
 import xal.app.pta.tools.property.PropertyPanel;
-import xal.tools.apputils.PropertyManager;
 
 import java.awt.Dialog;
 import java.awt.GridBagConstraints;
