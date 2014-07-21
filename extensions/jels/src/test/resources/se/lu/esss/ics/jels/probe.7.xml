@@ -1,0 +1,61 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<probe time="22.5.2014 9:58:15" type="xal.model.probe.EnvelopeProbe">
+    <comment author="Ivo List" date="2014-05-22" text="Default probe"/>
+    <algorithm type="xal.model.alg.EnvelopeTracker" ver="4">
+        <tracker calcRfGapPhase="true" debug="false" update="1"/>
+        <options emitgrowth="false" scheff="true" stepsize="0.1" useSpacecharge="true"/>
+              <!--  <adapt errortol="0.001" initstep="0.004" maxiter="50" maxstep="0.0" maxstepdriftpmq="0.0" norm="0" order="2" slack="0.0"/>-->
+    </algorithm>
+    <state id="" type="xal.model.probe.traj.EnvelopeProbeState">
+        <species Er="9.3827202900E8" q="1.0"/>
+        <location W="3.00e6" elem="" s="0.0" t="0.0"/>
+        <beam I="30.0e-3" f="352.21e6"/>
+        <envelope 
+			alphaX="-0.1763" betaX="0.2442" emitX="2.621516138971707E-6"
+			alphaY="-0.3247" betaY="0.3974" emitY="2.612769421634814E-6"
+			alphaZ="-0.5283" betaZ="0.8684" emitZ="3.562413018211791E-6"/>
+    </state>
+</probe>
+<!--
++6.401666e-07 +4.621678e-07 +0.000000e+00 +0.000000e+00 +0.000000e+00 +0.000000e+00 
++4.621678e-07 +1.106865e-05 +0.000000e+00 +0.000000e+00 +0.000000e+00 +0.000000e+00 
++0.000000e+00 +0.000000e+00 +1.038302e-06 +8.483561e-07 +0.000000e+00 +0.000000e+00 
++0.000000e+00 +0.000000e+00 +8.483561e-07 +7.267739e-06 +0.000000e+00 +0.000000e+00 
++0.000000e+00 +0.000000e+00 +0.000000e+00 +0.000000e+00 +3.073875e-06 +1.882000e-06 
++0.000000e+00 +0.000000e+00 +0.000000e+00 +0.000000e+00 +1.882000e-06 +5.280765e-06 
+
+=3,073875e-06/sqrt(3,073875e-06*5,280765e-06 - 1,882000e-06*1,882000e-06)*(1,003197367^2)
+=0,003197367*938,27202900
+
+=0,2098/0,079775903/1,003197367
+=0,2091/0,079775903/1,003197367
+=sqrt(3,073875e-06*5,280765e-06 - 1,882000e-06*1,882000e-06)
+
+                                X-X'
+ Emit [rms] = 0.2098  Pi.mm.mrad [ Norm. ]
+ Emit [100%] = 5.2450  Pi.mm.mrad [ Norm. ]
+ Beta = 0.2442  mm/Pi.mrad
+ Alpha = -0.1763
+                               Y-Y'
+ Emit [rms] = 0.2091  Pi.mm.mrad [ Norm. ]
+ Emit [100%] = 5.2275  Pi.mm.mrad [ Norm. ]
+ Beta = 0.3974  mm/Pi.mrad
+ Alpha = -0.3247
+                               Z-Dp
+ Emit [rms] = 0.0285  Pi.mm.% [ Norm. ]
+ Emit [100%] = 0.7128  Pi.mm.% [ Norm. ]
+ Beta = 8.6287  mm/Pi.%
+ Alpha = -0.5283
+                               X-Y
+ Emit [rms] = 0.8153  mm² [ Norm. ]
+ Emit [100%] = 20.3821  mm² [ Norm. ]
+ Beta = 0.7852  
+ Alpha = -0.0000
+                              
+ Beta = 0.079775903   Gamma = 1.003197367
+ Mo  = 938.27202900 MeV
+
+                              4D (X-X'-Y-Y')
+ E [rms] = 0.0438691800  (Pi.mm.mrad) ² [ Norm. ]
+                              6D (X-X'-Y-Y'-Z-dp/p)
+ E [rms] = 0.0125071032  (Pi.mm.mrad) ³ [ Norm. ]-->
