@@ -23,6 +23,89 @@ import java.util.*;
  * @author  tap
  */
 public class TimingCenter implements DataListener {
+	
+    /**
+     * Enumeration of the possible values of the Beam Model process variable.
+     * These are string values, or indexed integers, so providing an enumeration
+     * set helps avoid the brittleness of hard-coding the values.
+     *
+     * @author Christopher K. Allen
+     * @since   Nov 4, 2011
+     */
+    public enum BEAM_MODE {
+
+        /** Error!  The beam mode is in a condition of unknown state. */
+        UNKNOWN("Unknown!"),
+        
+        /** The beam is off (no beam mode) */
+        OFF("Off"),
+        
+        /** We are testing the Machine Protection System */
+        MPSTEST("MPS Test"),
+        
+        /** The largest possible beam macro-pulse is 10 microseconds long */
+        MCRSEC_10("10 uSec"),
+
+        /** The largest possible beam macro-pulse is 50 microseconds long */
+        MCRSEC_50("50 uSec"),
+        
+        /** The largest possible beam macro-pulse is 100 microseconds long */
+        MCRSEC_100("100 uSec"),
+        
+        /** The largest possible beam macro-pulse is 1 milliseconds long */
+        MILSEC_1("1 mSec"),
+        
+        /** We are at full throttle - the beam can be all long as other systems allow */
+        FULLPWR("Full Power");
+        
+        /**
+         * Returns the string value of the enumeration constant.
+         * 
+         * @return  value of the PV which this enumeration constant represents
+         *
+         * @author Christopher K. Allen
+         * @since  Nov 4, 2011
+         */
+        public String   getPvValue() {
+            return this.strVal;
+        }
+        
+        /**
+         * Check whether or not the given string is lexically equivalent 
+         * to the PV value represented by this enumeration constant
+         *
+         * @param strPvVal
+         * 
+         * @return  <code>true</code> if the given string is this beam mode value,
+         *          <code>false</code> otherwise
+         *
+         * @author Christopher K. Allen
+         * @since  Nov 4, 2011
+         */
+        public boolean isPvValue(String strPvVal) {
+            int intCmp = this.strVal.compareTo(strPvVal);
+            
+            return intCmp == 0;
+        }
+
+        /** the string value of the PV which this constant represents */
+        private String      strVal;
+        
+        /** 
+         * Create a new, initialized <code>BEAM_MODE</code> enumeration
+         * constant.
+         * 
+         * @param strVal    value of the PV which this constant represents
+         *
+         * @author  Christopher K. Allen
+         * @since   Nov 4, 2011
+         */
+        private BEAM_MODE(String strVal) {
+            this.strVal = strVal;
+        }
+        
+    }
+	
 	static final public String DATA_LABEL = "timing";
 	
     /** channel suite associated with this node */
@@ -76,6 +159,25 @@ public class TimingCenter implements DataListener {
 	
 	/** Machine Mode */
 	public static final String MACHINE_MODE_HANDLE = "machineMode";
+	
+    /**
+     * <p> 
+     * CKA 11/04/11: Beam mode specifying maximum pulse length.
+     * </p>
+     * <p>
+     * String values: 
+     * <br/>    "Off", 
+     * <br/>    "Standby", 
+     * <br/>    "MPS Test", 
+     * <br/>    "10 uSec", 
+     * <br/>    "50 uSec", 
+     * <br/>    "100 uSec",
+     * <br/>    "1 mSec", 
+     * <br/>    "Full Power", 
+     * <br/>    "Unknown!"
+     * </p>
+     */
+	public static final String BEAM_MODE_HANDLE ="beamMode";
 	
 	/** Active Flavor */
 	public static final String ACTIVE_FLAVOR_HANDLE = "activeFlavor";

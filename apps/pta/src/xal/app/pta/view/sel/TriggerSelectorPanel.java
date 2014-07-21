@@ -20,7 +20,7 @@ import xal.smf.NoSuchChannelException;
 import xal.smf.impl.WireScanner;
 import xal.smf.impl.profile.ProfileDevice;
 import xal.smf.scada.ScadaFieldDescriptor;
-import xal.smf.scada.PvDescriptor;
+import xal.smf.scada.XalPvDescriptor;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -711,15 +711,15 @@ public class TriggerSelectorPanel extends JPanel {
     private void buildMonitorPool(WireScanner ws) {
         this.mplTrgParms.emptyPool();
         
-//        PvDescriptor      pvdTrgDly = WireScanner.TrgConfig.PARAM.DELAY.getPvDescriptor();
-        PvDescriptor         pvdTrgDly = WireScanner.TrgConfig.FLD_MAP.get("delay");
+//        XalPvDescriptor      pvdTrgDly = WireScanner.TrgConfig.PARAM.DELAY.getXalPvDescriptor();
+        XalPvDescriptor         pvdTrgDly = WireScanner.TrgConfig.FLD_MAP.get("delay");
         SmfPvMonitor.IAction actTrgDly = new TrgDelayMonAction(this.knbTrgDly, this.whlTrgDly);
         SmfPvMonitor         monTrgDly = new SmfPvMonitor(ws, pvdTrgDly);
         monTrgDly.addAction(actTrgDly);
         this.mplTrgParms.addMonitor(monTrgDly);
         
-//        PvDescriptor        pvdTrgEvt = WireScanner.TrgConfig.PARAM.TRGEVT.getPvDescriptor();
-        PvDescriptor           pvdTrgEvt = WireScanner.TrgConfig.FLD_MAP.get("event");
+//        XalPvDescriptor        pvdTrgEvt = WireScanner.TrgConfig.PARAM.TRGEVT.getXalPvDescriptor();
+        XalPvDescriptor           pvdTrgEvt = WireScanner.TrgConfig.FLD_MAP.get("event");
         SmfPvMonitor.IAction   actTrgEvt = new TriggerEventMonAction(this.pnlTrgEvt);
         SmfPvMonitor           monTrgEvt = new SmfPvMonitor(ws, pvdTrgEvt);
         monTrgEvt.addAction(actTrgEvt);

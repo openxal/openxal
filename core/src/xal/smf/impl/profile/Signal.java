@@ -7,7 +7,7 @@
 package xal.smf.impl.profile;
 
 import xal.smf.scada.AScada;
-import xal.smf.scada.BadStructDefinition;
+import xal.smf.scada.BadStructException;
 import xal.smf.scada.ScadaAnnotationException;
 import xal.smf.scada.ScadaFieldDescriptor;
 import xal.smf.scada.ScadaRecord;
@@ -251,7 +251,7 @@ public class Signal extends ScadaRecord {
      * @author Christopher K. Allen
      * @since  Feb 7, 2013
      */
-    static public Signal    createConnectedSignal(ASignal annSig) throws BadStructDefinition, ScadaAnnotationException {
+    static public Signal    createConnectedSignal(ASignal annSig) throws BadStructException, ScadaAnnotationException {
         List<ScadaFieldDescriptor>  lstDscr = new LinkedList<ScadaFieldDescriptor>();
         
         for ( Signal.FIELD enmFld : FIELD.values() ) {
@@ -307,7 +307,7 @@ public class Signal extends ScadaRecord {
      * @author Christopher K. Allen
      * @since  Feb 7, 2013
      */
-    public Signal() throws BadStructDefinition {
+    public Signal() throws BadStructException {
         super();
     }
     
@@ -322,7 +322,7 @@ public class Signal extends ScadaRecord {
      * @author Christopher K. Allen
      * @since  Feb 1, 2013
      */
-    protected Signal(List<ScadaFieldDescriptor> lstFldDscr) throws BadStructDefinition {
+    protected Signal(List<ScadaFieldDescriptor> lstFldDscr) throws BadStructException {
         super(lstFldDscr);
     }
     

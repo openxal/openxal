@@ -16,7 +16,7 @@ import xal.tools.xml.XmlDataAdaptor;
 import xal.smf.AcceleratorNode;
 import xal.smf.AcceleratorSeq;
 import xal.smf.impl.profile.ProfileDevice;
-import xal.smf.scada.BadStructDefinition;
+import xal.smf.scada.BadStructException;
 import xal.smf.scada.ScadaFieldDescriptor;
 import xal.smf.scada.ScadaRecord;
 
@@ -244,7 +244,7 @@ public abstract class DeviceConfig implements DataListener {
      * @author Christopher K. Allen
      * @since  Apr 16, 2014
      */
-    public void acquireConfiguration(ProfileDevice smfDev) throws ConnectionException, GetException, BadStructDefinition {
+    public void acquireConfiguration(ProfileDevice smfDev) throws ConnectionException, GetException, BadStructException {
         for (ScadaRecord rec : this.getScadaRecords()) {
             rec.loadHardwareValues(smfDev);
         }
@@ -271,7 +271,7 @@ public abstract class DeviceConfig implements DataListener {
      * @since  May 1, 2012
      */
     public void     applyConfiguration(ProfileDevice   smfDev) 
-        throws BadStructDefinition, ConnectionException, PutException
+        throws BadStructException, ConnectionException, PutException
     {
         for (ScadaRecord rec : this.getScadaRecords()) {
             rec.setHardwareValues(smfDev);
@@ -297,7 +297,7 @@ public abstract class DeviceConfig implements DataListener {
      * @since  May 1, 2012
      */
     public boolean  appyConfigurationById(AcceleratorSeq smfSeq) 
-        throws BadStructDefinition, ConnectionException, PutException
+        throws BadStructException, ConnectionException, PutException
     {
         AcceleratorNode smfDev = smfSeq.getNodeWithId(this.strDevId);
         

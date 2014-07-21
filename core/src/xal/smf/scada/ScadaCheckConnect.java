@@ -392,7 +392,7 @@ public class ScadaCheckConnect {
      * @since  Feb 4, 2011
      */
     public synchronized boolean  testConnection(Class<?> clsScada, double dblTmOut) 
-        throws BadStructDefinition 
+        throws BadStructException 
     {
         
         // Check for no test
@@ -476,7 +476,7 @@ public class ScadaCheckConnect {
      * @since  Feb 4, 2011
      */
     private void loadChannel(AcceleratorNode smfDev, String strHnd, TestChannelList lstRequests) 
-        throws BadStructDefinition
+        throws BadStructException
     {
         // Retrieve the channel object from the accelerator device
         Channel     chnReq = smfDev.findChannel(strHnd);
@@ -484,7 +484,7 @@ public class ScadaCheckConnect {
         if (chnReq == null) {
             String strMsg = "No channel " + strHnd  //$NON-NLS-1$
             + " on device " + smfDev.getId(); //$NON-NLS-1$
-            throw new BadStructDefinition(strMsg);
+            throw new BadStructException(strMsg);
     
         }
     

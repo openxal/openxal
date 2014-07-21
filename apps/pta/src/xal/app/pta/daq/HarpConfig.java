@@ -15,7 +15,7 @@ import xal.tools.data.DataListener;
 import xal.smf.AcceleratorNode;
 import xal.smf.AcceleratorSeq;
 import xal.smf.impl.WireHarp;
-import xal.smf.scada.BadStructDefinition;
+import xal.smf.scada.BadStructException;
 import xal.smf.scada.ScadaRecord;
 
 import java.io.Serializable;
@@ -248,7 +248,7 @@ public class HarpConfig extends DeviceConfig implements DataListener, Serializab
      * @since  May 1, 2012
      */
     public void     configureDevice(WireHarp   smfHarp) 
-        throws BadStructDefinition, ConnectionException, PutException
+        throws BadStructException, ConnectionException, PutException
     {
         this.devConfig.setHardwareValues(smfHarp);
         this.devStatus.setHardwareValues(smfHarp);
@@ -274,7 +274,7 @@ public class HarpConfig extends DeviceConfig implements DataListener, Serializab
      * @since  May 1, 2012
      */
     public boolean  appyConfigurationById(AcceleratorSeq smfSeq) 
-        throws BadStructDefinition, ConnectionException, PutException
+        throws BadStructException, ConnectionException, PutException
     {
         AcceleratorNode smfDev = smfSeq.getNodeWithId(this.getDeviceId());
         

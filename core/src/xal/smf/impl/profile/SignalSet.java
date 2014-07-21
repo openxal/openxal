@@ -11,7 +11,7 @@ import xal.ca.GetException;
 import xal.tools.data.DataAdaptor;
 import xal.tools.data.DataListener;
 import xal.smf.impl.WireScanner;
-import xal.smf.scada.BadStructDefinition;
+import xal.smf.scada.BadStructException;
 import xal.smf.scada.ScadaAnnotationException;
 import xal.smf.scada.ScadaFieldDescriptor;
 
@@ -231,7 +231,7 @@ public abstract class SignalSet implements DataListener {
      * @author Christopher K. Allen
      */
     public void loadHardwareValues(ProfileDevice smfDev) 
-            throws BadStructDefinition, ConnectionException, GetException 
+            throws BadStructException, ConnectionException, GetException 
     {
         this.hor.loadHardwareValues(smfDev);
         this.ver.loadHardwareValues(smfDev);
@@ -293,7 +293,7 @@ public abstract class SignalSet implements DataListener {
      * @see gov.sns.tools.data.DataListener#update(gov.sns.tools.data.DataAdaptor)
      */
     @Override
-    public void update(DataAdaptor adaptor) throws MissingResourceException, BadStructDefinition {
+    public void update(DataAdaptor adaptor) throws MissingResourceException, BadStructException {
         DataAdaptor daptSig = adaptor.childAdaptor( this.dataLabel() );
 
         hor.update(daptSig);
@@ -406,7 +406,7 @@ public abstract class SignalSet implements DataListener {
      * @since   Jan 31, 2013
      */
     protected SignalSet(ProfileDevice smfDev) 
-        throws ScadaAnnotationException, ConnectionException, GetException, BadStructDefinition 
+        throws ScadaAnnotationException, ConnectionException, GetException, BadStructException 
     {
         this();
         this.loadHardwareValues(smfDev);

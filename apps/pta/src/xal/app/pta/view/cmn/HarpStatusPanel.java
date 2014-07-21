@@ -23,7 +23,7 @@ import xal.ca.MonitorException;
 import xal.smf.NoSuchChannelException;
 import xal.smf.impl.WireHarp;
 import xal.smf.impl.WireScanner;
-import xal.smf.scada.BadStructDefinition;
+import xal.smf.scada.BadStructException;
 import xal.smf.scada.ScadaFieldDescriptor;
 import xal.smf.scada.ScadaFieldList;
 
@@ -256,7 +256,7 @@ public class HarpStatusPanel extends JPanel {
                 return false;
             }
             
-        } catch (BadStructDefinition e) {
+        } catch (BadStructException e) {
             this.appLogger().logWarning(getClass(), e.getMessage() +  " for device " + smfHarp.getId() + " for parameter in " + clsScada);
             return false;
 

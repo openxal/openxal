@@ -21,9 +21,9 @@ import xal.ca.PutException;
 import xal.tools.data.DataListener;
 import xal.smf.AcceleratorNode;
 import xal.smf.NoSuchChannelException;
-import xal.smf.impl.WireScanner.DataLive;
+import xal.smf.impl.WireScanner.DataLivePt;
 import xal.smf.impl.profile.ASignal.ASet;
-import xal.smf.scada.BadStructDefinition;
+import xal.smf.scada.BadStructException;
 import xal.smf.scada.BatchConnectionTest;
 import xal.smf.scada.XalPvDescriptor;
 import xal.smf.scada.ScadaAnnotationException;
@@ -328,7 +328,7 @@ public abstract class ProfileDevice extends AcceleratorNode {
         public ScadaFieldDescriptor getSignalPosFd(Class<? extends SignalSet> clsData) throws ScadaAnnotationException  {
 
             if (  !clsData.isAnnotationPresent(ASet.class) )
-                throw new ScadaAnnotationException("No signal information present for class " + DataLive.class);
+                throw new ScadaAnnotationException("No signal information present for class " + DataLivePt.class);
 
             ASet        annSigSet = clsData.getAnnotation(ASet.class);
             ASignal     annSig;
@@ -769,7 +769,7 @@ public abstract class ProfileDevice extends AcceleratorNode {
      * @see ParameterSet
      */
     public <T extends ParameterSet> T acquireConfig(Class<T> clsType)
-            throws ConnectionException, GetException, BadStructDefinition {
+            throws ConnectionException, GetException, BadStructException {
 
         try {
             Constructor<T>  ctorCfg = clsType.getConstructor(clsType);
@@ -778,22 +778,22 @@ public abstract class ProfileDevice extends AcceleratorNode {
             return cfgAcq;
 
         } catch (SecurityException e) {
-            throw new BadStructDefinition("Could not access constructor for " + clsType.getName(), e);
+            throw new BadStructException("Could not access constructor for " + clsType.getName(), e);
 
         } catch (NoSuchMethodException e) {
-            throw new BadStructDefinition("Could not access constructor for " + clsType.getName(), e);
+            throw new BadStructException("Could not access constructor for " + clsType.getName(), e);
 
         } catch (IllegalArgumentException e) {
-            throw new BadStructDefinition("Bad constructor argument for " + clsType.getName(), e);
+            throw new BadStructException("Bad constructor argument for " + clsType.getName(), e);
 
         } catch (InstantiationException e) {
-            throw new BadStructDefinition("Could not access instantiate instance of " + clsType.getName(), e);
+            throw new BadStructException("Could not access instantiate instance of " + clsType.getName(), e);
 
         } catch (IllegalAccessException e) {
-            throw new BadStructDefinition("Could not access constructor for " + clsType.getName(), e);
+            throw new BadStructException("Could not access constructor for " + clsType.getName(), e);
 
         } catch (InvocationTargetException e) {
-            throw new BadStructDefinition("An exception was thrown by constructor for " + clsType.getName(), e);
+            throw new BadStructException("An exception was thrown by constructor for " + clsType.getName(), e);
 
         }
     }
@@ -819,7 +819,7 @@ public abstract class ProfileDevice extends AcceleratorNode {
      * @see Data
      */
     public <T extends SignalSet> T acquireData(Class<T> clsType)
-            throws ConnectionException, GetException, BadStructDefinition {
+            throws ConnectionException, GetException, BadStructException {
 
         try {
             Constructor<T>  ctorData = clsType.getConstructor(clsType);
@@ -828,22 +828,22 @@ public abstract class ProfileDevice extends AcceleratorNode {
             return dataAcq;
 
         } catch (SecurityException e) {
-            throw new BadStructDefinition("Could not access constructor for " + clsType.getName(), e);
+            throw new BadStructException("Could not access constructor for " + clsType.getName(), e);
 
         } catch (NoSuchMethodException e) {
-            throw new BadStructDefinition("Could not access constructor for " + clsType.getName(), e);
+            throw new BadStructException("Could not access constructor for " + clsType.getName(), e);
 
         } catch (IllegalArgumentException e) {
-            throw new BadStructDefinition("Bad constructor argument for " + clsType.getName(), e);
+            throw new BadStructException("Bad constructor argument for " + clsType.getName(), e);
 
         } catch (InstantiationException e) {
-            throw new BadStructDefinition("Could not access instantiate instance of " + clsType.getName(), e);
+            throw new BadStructException("Could not access instantiate instance of " + clsType.getName(), e);
 
         } catch (IllegalAccessException e) {
-            throw new BadStructDefinition("Could not access constructor for " + clsType.getName(), e);
+            throw new BadStructException("Could not access constructor for " + clsType.getName(), e);
 
         } catch (InvocationTargetException e) {
-            throw new BadStructDefinition("An exception was thrown by constructor for " + clsType.getName(), e);
+            throw new BadStructException("An exception was thrown by constructor for " + clsType.getName(), e);
 
         }
     }
@@ -942,13 +942,13 @@ public abstract class ProfileDevice extends AcceleratorNode {
      * @since  Feb 4, 2011
      */
     public synchronized boolean testConnection(Class<?> clsScada, double dblTmOut)
-            throws BadStructDefinition, BadChannelException 
+            throws BadStructException, BadChannelException 
     {
     
         Collection<ScadaFieldDescriptor>    setFds = new ScadaFieldList(clsScada);
     
         if (setFds.size() == 0)
-            throw new BadStructDefinition("Class is not a SCADA data structure"); //$NON-NLS-1$
+            throw new BadStructException("Class is not a SCADA data structure"); //$NON-NLS-1$
     
         return this.testConnection(setFds, dblTmOut);
     }

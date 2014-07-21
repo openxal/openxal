@@ -211,12 +211,12 @@ public class BatchConnectionTest {
      * @since  Mar 16, 2011
      */
     public synchronized boolean testConnection(Class<?> clsScada, double dblTmOut) 
-        throws BadStructDefinition, BadChannelException 
+        throws BadStructException, BadChannelException 
     {
         ScadaFieldList  lstFldDescr = new ScadaFieldList(clsScada);
         
         if (lstFldDescr.size() == 0)
-            throw new BadStructDefinition("Class contains no SCADA field annotations");
+            throw new BadStructException("Class contains no SCADA field annotations");
         
         return this.testConnection(lstFldDescr, dblTmOut);
     }

@@ -22,7 +22,7 @@ import xal.ca.MonitorException;
 import xal.smf.NoSuchChannelException;
 import xal.smf.impl.WireScanner;
 import xal.smf.impl.WireScanner.DevStatus;
-import xal.smf.scada.BadStructDefinition;
+import xal.smf.scada.BadStructException;
 import xal.smf.scada.ScadaFieldDescriptor;
 import xal.smf.scada.ScadaFieldList;
 
@@ -283,7 +283,7 @@ public class ScannerStatusPanel extends JPanel {
                 return false;
             }
             
-        } catch (BadStructDefinition e) {
+        } catch (BadStructException e) {
             this.appLogger().logWarning(getClass(), e.getMessage() +  " for device " + ws.getId() + " for parameter in " + clsScada);
             return false;
 
