@@ -793,12 +793,10 @@ public abstract class EnvelopeTrackerBase extends Tracker {
         PhaseMatrix     matPhiSc;       // space charge transfer matrix for dblLen
         
         if (corr < EnvelopeTrackerBase.TOLER_CORRELATION) { // beam is upright
-            double g_2 = gamma*gamma;
-
             // Compute elliptic integrals
-            double RDx = EllipticIntegral.RD(covYY, g_2*covZZ, covXX)/EnvelopeTrackerBase.CONST_UNIFORM_BEAM;
-            double RDy = EllipticIntegral.RD(g_2*covZZ, covXX, covYY)/EnvelopeTrackerBase.CONST_UNIFORM_BEAM;
-            double RDz = EllipticIntegral.RD(covXX, covYY, g_2*covZZ)/EnvelopeTrackerBase.CONST_UNIFORM_BEAM;
+            double RDx = EllipticIntegral.RD(covYY, covZZ, covXX)/EnvelopeTrackerBase.CONST_UNIFORM_BEAM;
+            double RDy = EllipticIntegral.RD(covZZ, covXX, covYY)/EnvelopeTrackerBase.CONST_UNIFORM_BEAM;
+            double RDz = EllipticIntegral.RD(covXX, covYY, covZZ)/EnvelopeTrackerBase.CONST_UNIFORM_BEAM;
           
             // Compute defocusing constants in the laboratory frame
             double kx = gamma*dblLen*K*RDx;
