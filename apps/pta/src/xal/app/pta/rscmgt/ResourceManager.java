@@ -7,7 +7,7 @@
 package xal.app.pta.rscmgt;
 
 import xal.app.pta.MainApplication;
-import xal.tools.apputils.iconlib.IconLib;
+import xal.tools.IconLib;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -283,7 +283,7 @@ public class ResourceManager {
         if (strRscName.startsWith("IconLib")) {
             String[]    arrTokens = strRscName.split(":");
 
-            ImageIcon icon = IconLib.getImageIcon(arrTokens[1], arrTokens[2]);
+            ImageIcon icon = (ImageIcon) IconLib.getIcon(arrTokens[1], arrTokens[2]);
             
             return icon;
         }

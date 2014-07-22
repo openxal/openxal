@@ -28,8 +28,6 @@ import xal.smf.NoSuchChannelException;
 import xal.smf.impl.WireScanner;
 import xal.smf.impl.WireScanner.CMD;
 import xal.smf.impl.WireScanner.CMDARG;
-import xal.tools.math.MathException;
-
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -398,13 +396,7 @@ public class ConfigRemotePrcgView extends JPanel
         this.selTrcInd = new TraceIndexSelector();
         this.selTrcInd.setEnabled(false);
         
-        //      Set up the trace plots
-        try {
-			this.pnlTrcDisplay = new SavedTraceDisplayPanel();
-		} catch (MathException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+        this.pnlTrcDisplay = new SavedTraceDisplayPanel();
         this.pnlTrcDisplay.setModifyHardwareParameters(true);
         this.pnlTrcDisplay.addParameterChangeListener( new ProcessWindowUpdateAction() );
 
