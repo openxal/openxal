@@ -23,6 +23,11 @@ import javax.swing.border.BevelBorder;
 /**
  * Displays beam profile data as three separate plots, one for each 
  * diagnostic plane. 
+ * 
+ * <p>
+ * <b>Ported from XAL on Jul 18, 2014.</b><br>
+ * &middot; Jonathan M. Freed
+ * </p>
  *
  * @since  Jul 16, 2009
  * @author Christopher K. Allen

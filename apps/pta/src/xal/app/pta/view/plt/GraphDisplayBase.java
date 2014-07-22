@@ -30,6 +30,11 @@ import javax.swing.JPanel;
 
 /**
  * Base class for classes that Display beam profile data. 
+ * 
+ * <p>
+ * <b>Ported from XAL on Jul 18, 2014.</b><br>
+ * &middot; Jonathan M. Freed
+ * </p>
  *
  * @since  Mar 29, 2009
  * @author Christopher K. Allen

@@ -57,6 +57,11 @@ import javax.swing.border.TitledBorder;
  * the processing parameters.  This includes the profile measurements,
  * the profile fits, and the statistics.
  * </p>
+ * 
+ * <p>
+ * <b>Ported from XAL on Jul 18, 2014.</b><br>
+ * &middot; Jonathan M. Freed
+ * </p>
  *
  * @since  May 12, 2010
  * @author Christopher K. Allen

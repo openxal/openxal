@@ -46,6 +46,11 @@ import javax.swing.event.ListSelectionListener;
 /**
  * Analyzes measurement data taken from the profile device.  Normalizes the data and computes the beam positions
  * and sizes along with confidence intervals for the values.
+ * 
+ * <p>
+ * <b>Ported from XAL on Jul 18, 2014.</b><br>
+ * &middot; Jonathan M. Freed
+ * </p>
  *
  * @author Christopher K. Allen
  * @since   Nov 16, 2011

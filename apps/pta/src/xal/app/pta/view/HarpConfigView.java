@@ -8,15 +8,11 @@ package xal.app.pta.view;
 
 import xal.app.pta.IConfigView;
 import xal.app.pta.MainConfiguration;
-import xal.app.pta.MainScanController;
 import xal.app.pta.rscmgt.AppProperties;
 import xal.app.pta.view.cmn.DeviceSelectorPanel;
 import xal.app.pta.view.cmn.HarpStatusPanel;
-import xal.app.pta.view.cmn.ScannerStatusPanel;
-import xal.app.pta.view.cmn.ScannerTestingPanel;
 import xal.app.pta.view.devcfg.DeviceConfigBasePanel;
 import xal.app.pta.view.devcfg.HarpConfigDisplay;
-import xal.app.pta.view.devcfg.ScannerConfigDisplay;
 import xal.app.pta.view.plt.LiveDisplayBase.FORMAT;
 import xal.app.pta.view.plt.LiveHarpDisplayPanel;
 import xal.smf.Accelerator;
@@ -41,6 +37,11 @@ import javax.swing.border.TitledBorder;
  * Displays the configuration parameters for each harp
  * device, along with its current status.  Allow the user to make
  * changes to these configuration parameters.
+ * 
+ * <p>
+ * <b>Ported from XAL on Jul 18, 2014.</b><br>
+ * &middot; Jonathan M. Freed
+ * </p>
  *
  * @since  Nov 12, 2009
  * @author Christopher K. Allen

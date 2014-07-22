@@ -29,6 +29,11 @@ import javax.swing.SwingConstants;
  * being run by the <code>{@link MainScanController}</code> object. 
  * That is, the scan is displayed in either the "easy scan" mode, or the default 
  * "expert scan" mode. 
+ * 
+ * <p>
+ * <b>Ported from XAL on Jul 18, 2014.</b><br>
+ * &middot; Jonathan M. Freed
+ * </p>
  *
  * @author Christopher K. Allen
  * @since   Nov 15, 2011

@@ -35,6 +35,10 @@ import javax.swing.JPanel;
  * monitoring the actuator position, and plotting the measured data, 
  * respectively.
  * 
+ * <p>
+ * <b>Ported from XAL on Jul 18, 2014.</b><br>
+ * &middot; Jonathan M. Freed
+ * </p>
  *
  * @author Christopher K. Allen
  * @since   Nov 10, 2011

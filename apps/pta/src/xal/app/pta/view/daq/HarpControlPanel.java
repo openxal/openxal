@@ -50,6 +50,11 @@ import javax.swing.border.TitledBorder;
  * retrieve the data elsewhere once the scan is complete. 
  * </p>
  *
+ * <p>
+ * <b>Ported from XAL on Jul 18, 2014.</b><br>
+ * &middot; Jonathan M. Freed
+ * </p>
+ * 
  * @since  April 24, 2014
  * @author Christopher K. Allen
  */

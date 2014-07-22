@@ -62,6 +62,11 @@ import javax.swing.JPanel;
  * on the graph must call this method, for example, from an event response
  * object.  Other than that, this class only reads processing window parameters
  * in order to display the window. 
+ * 
+ * <p>
+ * <b>Ported from XAL on Jul 18, 2014.</b><br>
+ * &middot; Jonathan M. Freed
+ * </p>
  *
  * @author Christopher K. Allen
  * @since   Mar 30, 2011

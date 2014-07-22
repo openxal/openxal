@@ -18,6 +18,11 @@ import java.util.List;
 /**
  * Adds common features for wire scanner live operation display.
  *
+ * <p>
+ * <b>Ported from XAL on Jul 18, 2014.</b><br>
+ * &middot; Jonathan M. Freed
+ * </p>
+ *
  * @author Christopher K. Allen
  * @since  Apr 23, 2014
  */

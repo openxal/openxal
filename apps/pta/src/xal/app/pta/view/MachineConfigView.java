@@ -64,6 +64,11 @@ import javax.swing.event.ListSelectionListener;
  * This class provides the user a GUI for managing the machine configuration.
  * That this, he or she can save and restore all the wire scanner device
  * configurations for a convenient, consistent measurement environment.
+ * 
+ * <p>
+ * <b>Ported from XAL on Jul 18, 2014.</b><br>
+ * &middot; Jonathan M. Freed
+ * </p>
  *
  * @author  Christopher K. Allen
  * @since   Apr 30, 2012

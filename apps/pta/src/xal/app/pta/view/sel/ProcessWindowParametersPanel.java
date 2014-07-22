@@ -39,6 +39,11 @@ import javax.swing.JPanel;
 /**
  * Second version of the (sub)panel used for selecting
  * the trigger timing for wire scanner devices. 
+ * 
+ * <p>
+ * <b>Ported from XAL on Jul 18, 2014.</b><br>
+ * &middot; Jonathan M. Freed
+ * </p>
  *
  * @since  Apr 13, 2010
  * @author Christopher K. Allen

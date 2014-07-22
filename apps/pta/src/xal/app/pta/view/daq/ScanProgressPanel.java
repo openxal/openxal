@@ -44,6 +44,10 @@ import javax.swing.JProgressBar;
  * Displays (dynamically) the device actuator position, velocity,
  * and accelerator in text format and in graphical format.
  *
+ * <p>
+ * <b>Ported from XAL on Jul 18, 2014.</b><br>
+ * &middot; Jonathan M. Freed
+ * </p>
  *
  * @since   Apr 6, 2010
  * @version Oct 12, 2011

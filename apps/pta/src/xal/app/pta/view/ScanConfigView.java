@@ -36,6 +36,11 @@ import javax.swing.border.TitledBorder;
  * Displays the configuration parameters for each wire scanner
  * device, along with its current status.  Allow the user to make
  * changes to these configuration parameters.
+ * 
+ * <p>
+ * <b>Ported from XAL on Jul 18, 2014.</b><br>
+ * &middot; Jonathan M. Freed
+ * </p>
  *
  * @since  Nov 12, 2009
  * @author Christopher K. Allen

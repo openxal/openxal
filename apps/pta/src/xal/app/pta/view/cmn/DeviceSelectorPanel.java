@@ -49,6 +49,11 @@ import javax.swing.tree.TreeSelectionModel;
  * Displays the supported SMF devices, allows the user to
  * select one or more of these devices, then fires an event
  * to registered listeners that a selection has occurred.
+ * 
+ * <p>
+ * <b>Ported from XAL on Jul 18, 2014.</b><br>
+ * &middot; Jonathan M. Freed
+ * </p>
  *
  * @since  Aug 19, 2009
  * @author Christopher K. Allen

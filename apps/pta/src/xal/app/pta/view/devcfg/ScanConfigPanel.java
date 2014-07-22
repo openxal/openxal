@@ -32,6 +32,11 @@ import java.util.List;
  * set of scanning parameter for the wire scanner.  These
  * parameters are located in the data structure
  * <code>{@link xal.smf.impl.WireScanner.ScanConfig}</code>.
+ * 
+ * <p>
+ * <b>Ported from XAL on Jul 18, 2014.</b><br>
+ * &middot; Jonathan M. Freed
+ * </p>
  *
  * @since  Jan 16, 2010
  * @author Christopher K. Allen

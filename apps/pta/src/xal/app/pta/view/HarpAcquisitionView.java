@@ -48,6 +48,11 @@ import javax.swing.border.TitledBorder;
  * - I am working on a robust implementation that generalizes
  * profile devices but it is requiring more effort than anticipated.  This is a stop gap.
  * </p>
+ * 
+ * <p>
+ * <b>Ported from XAL on Jul 18, 2014.</b><br>
+ * &middot; Jonathan M. Freed
+ * </p>
  *
  * @since  Dec 13, 2013
  * @author Christopher K. Allen

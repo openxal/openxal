@@ -43,6 +43,11 @@ import javax.swing.border.BevelBorder;
  * Displays the status parameters of a wire scanner device.
  * The parameters are monitored on channel access and displayed
  * in real time.
+ * 
+ * <p>
+ * <b>Ported from XAL on Jul 18, 2014.</b><br>
+ * &middot; Jonathan M. Freed
+ * </p>
  *
  * @author Christopher K. Allen
  * @since  May 6, 2014

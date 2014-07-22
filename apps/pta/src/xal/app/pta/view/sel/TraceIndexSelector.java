@@ -26,6 +26,11 @@ import javax.swing.event.ChangeListener;
 /**
  * Allows user to select the current trace index (scan step index)
  * using a slider component and/or a text field.
+ * 
+ * <p>
+ * <b>Ported from XAL on Jul 18, 2014.</b><br>
+ * &middot; Jonathan M. Freed
+ * </p>
  *
  * @since  Jun 8, 2010
  * @author Christopher K. Allen

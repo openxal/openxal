@@ -41,6 +41,11 @@ import javax.swing.border.BevelBorder;
 /**
  * Displays the on-board data processing
  * parameters.
+ * 
+ * <p>
+ * <b>Ported from XAL on Jul 18, 2014.</b><br>
+ * &middot; Jonathan M. Freed
+ * </p>
  *
  * @since  Jan 15, 2010
  * @author Christopher K. Allen

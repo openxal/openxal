@@ -31,6 +31,11 @@ import javax.swing.JTextArea;
 /**
  * GUI panel for displaying and modifying the triggering
  * configuration parameters of a wire scanner device.
+ * 
+ * <p>
+ * <b>Ported from XAL on Jul 18, 2014.</b><br>
+ * &middot; Jonathan M. Freed
+ * </p>
  *
  * @since  Jan 19, 2010
  * @author Christopher K. Allen

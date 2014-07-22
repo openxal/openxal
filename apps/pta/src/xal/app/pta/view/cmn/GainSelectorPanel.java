@@ -22,6 +22,11 @@ import javax.swing.JRadioButton;
 /**
  * Implements the user interface for selecting the DAQ
  * gain circuit as a group of radio buttons.
+ * 
+ * <p>
+ * <b>Ported from XAL on Jul 18, 2014.</b><br>
+ * &middot; Jonathan M. Freed
+ * </p>
  *
  * @since  Dec 23, 2009
  * @author Christopher K. Allen

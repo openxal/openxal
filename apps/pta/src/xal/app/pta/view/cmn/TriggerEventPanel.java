@@ -23,6 +23,10 @@ import javax.swing.JPanel;
  * supported timing triggering event configuration
  * parameter.
  *
+ * <p>
+ * <b>Ported from XAL on Jul 18, 2014.</b><br>
+ * &middot; Jonathan M. Freed
+ * </p>
  *
  * @since  Jan 20, 2010
  * @author Christopher K. Allen

@@ -28,6 +28,10 @@ import javax.swing.JTextField;
 
 /**
  *
+ * <p>
+ * <b>Ported from XAL on Jul 18, 2014.</b><br>
+ * &middot; Jonathan M. Freed
+ * </p>
  *
  * @since  Apr 23, 2010
  * @author Christopher K. Allen

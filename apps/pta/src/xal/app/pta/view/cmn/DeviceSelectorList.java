@@ -16,6 +16,11 @@ import javax.swing.event.ListSelectionListener;
  * GUI component providing the display of a list of selectable
  * SMF devices.  The user may choose a single instance amongst 
  * this list.  
+ * 
+ * <p>
+ * <b>Ported from XAL on Jul 18, 2014.</b><br>
+ * &middot; Jonathan M. Freed
+ * </p>
  *
  *
  * @since  Jan 20, 2010

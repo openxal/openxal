@@ -41,6 +41,11 @@ import javax.swing.JTextField;
  * that is, it only operates the hardware.  You must
  * retrieve the data elsewhere once the scan is complete. 
  * </p>
+ * 
+ * <p>
+ * <b>Ported from XAL on Jul 18, 2014.</b><br>
+ * &middot; Jonathan M. Freed
+ * </p>
  *
  * @since  Sep 16, 2009
  * @author Christopher K. Allen

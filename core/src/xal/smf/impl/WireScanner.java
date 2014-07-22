@@ -70,6 +70,11 @@ import java.util.concurrent.RejectedExecutionException;
  * class that generalizes to the <code>WireHarp</code>
  * </p>  
  * 
+ * <p>
+ * <b>Ported from XAL on Jul 21, 2014. (Over-wrote old WireScanner 
+ * implementation.)</b><br>
+ * &middot; Jonathan M. Freed
+ * </p>
  *
  *
  * @since  Mar 26, 2009 Version 1.0

@@ -35,6 +35,11 @@ import javax.swing.event.ListSelectionListener;
  * Displays the measurement data taken from the profile devices. 
  * Includes graphs of the data and the fit along with the 
  * statistics computed by the device control software.
+ * 
+ * <p>
+ * <b>Ported from XAL on Jul 18, 2014.</b><br>
+ * &middot; Jonathan M. Freed
+ * </p>
  *
  * @since  Apr 22, 2010
  * @author Christopher K. Allen

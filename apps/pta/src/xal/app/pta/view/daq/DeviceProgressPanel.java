@@ -26,6 +26,11 @@ import javax.swing.table.TableCellRenderer;
  * Displays the table of profile diagnostic devices under
  * control.  Also displays progress bar during data
  * acquisition process.
+ * 
+ * <p>
+ * <b>Ported from XAL on Jul 18, 2014.</b><br>
+ * &middot; Jonathan M. Freed
+ * </p>
  *
  * @since  Sep 16, 2009
  * @author Christopher K. Allen

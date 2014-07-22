@@ -62,6 +62,11 @@ import javax.swing.border.TitledBorder;
  * <code>{@link DeviceConfigBasePanel#getParamDescriptors()}</code> should only contain
  * numeric parameters.
  * </p>
+ * 
+ * <p>
+ * <b>Ported from XAL on Jul 18, 2014.</b><br>
+ * &middot; Jonathan M. Freed
+ * </p>
  *
  * @param <PSet>        parameter set class - derived from <code>WireScanner.ParameterSet</code> 
  *

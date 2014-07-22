@@ -38,6 +38,11 @@ import javax.swing.JRadioButton;
  * <p>
  * NOTE: 
  * </p>
+ * 
+ * <p>
+ * <b>Ported from XAL on Jul 18, 2014.</b><br>
+ * &middot; Jonathan M. Freed
+ * </p>
  *
  * @since  Feb 18, 2010
  * @author Christopher K. Allen

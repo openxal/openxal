@@ -24,6 +24,11 @@ import javax.swing.BoxLayout;
 /**
  * Displays beam profile data on one plot, one for each 
  * diagnostic plane has a separate curve. 
+ * 
+ * <p>
+ * <b>Ported from XAL on Jul 18, 2014.</b><br>
+ * &middot; Jonathan M. Freed
+ * </p>
  *
  * @since  Mar 29, 2009
  * @author Christopher K. Allen

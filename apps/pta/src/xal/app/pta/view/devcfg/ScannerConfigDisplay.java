@@ -42,6 +42,11 @@ import javax.swing.event.ChangeListener;
  * of which this class is a child.  In this manner we can save a lot of real estate
  * although at the cost of tabbing through all the panels.
  * </p>
+ * 
+ * <p>
+ * <b>Ported from XAL on Jul 18, 2014.</b><br>
+ * &middot; Jonathan M. Freed
+ * </p>
  *
  * @author Christopher K. Allen
  * @since   Oct 10, 2011

@@ -30,6 +30,11 @@ import javax.swing.JTextArea;
 /**
  * GUI panel for configuring and displaying the data acquisition sampling parameters of 
  * a wire scanner device.
+ * 
+ * <p>
+ * <b>Ported from XAL on Jul 18, 2014.</b><br>
+ * &middot; Jonathan M. Freed
+ * </p>
  *
  * @since   May 6, 2014
  * @author  Christopher K. Allen

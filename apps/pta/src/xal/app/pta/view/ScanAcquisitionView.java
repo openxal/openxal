@@ -39,6 +39,11 @@ import javax.swing.border.TitledBorder;
 
 /**
  * GUI for controlling the profile device data acquisition.
+ * 
+ * <p>
+ * <b>Ported from XAL on Jul 18, 2014.</b><br>
+ * &middot; Jonathan M. Freed
+ * </p>
  *
  * @since  Jun 10, 2009
  * @author Christopher K. Allen

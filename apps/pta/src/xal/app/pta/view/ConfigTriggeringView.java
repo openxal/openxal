@@ -34,6 +34,11 @@ import javax.swing.border.TitledBorder;
 /**
  * Displays the triggering configuration parameters for each wire scanner,
  * allowing the using to adjust the timing for best signal integrity.
+ * 
+ * <p>
+ * <b>Ported from XAL on Jul 18, 2014.</b><br>
+ * &middot; Jonathan M. Freed
+ * </p>
  *
  * @since  April 1, 2010
  * @author Christopher K. Allen

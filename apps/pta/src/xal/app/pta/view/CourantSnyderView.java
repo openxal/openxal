@@ -41,6 +41,11 @@ import javax.swing.event.ListSelectionListener;
  * to compute the Courant-Snyder parameters, and the reconstruction location, 
  * are specified here.
  * 
+ * <p>
+ * <b>Ported from XAL on Jul 18, 2014.</b><br>
+ * &middot; Jonathan M. Freed
+ * </p>
+ * 
  * TODO: Finish!
  *
  * @author Christopher K. Allen
