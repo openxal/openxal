@@ -12,6 +12,7 @@
    <device type="CVG" class="xal.smf.impl.CvgGauge"/>
    <device type="DTLTank" class="xal.smf.impl.DTLTank"/>
    <device type="EKick" class="xal.smf.impl.ExtractionKicker"/>
+   <device type="EMS" class="xal.smf.impl.Marker"/>
    <device type="DCH" class="xal.smf.impl.HDipoleCorr"/>
    <device type="IG" class="xal.smf.impl.IonGauge"/>
    <device type="ND" class="xal.smf.impl.NeutronDetector"/>
