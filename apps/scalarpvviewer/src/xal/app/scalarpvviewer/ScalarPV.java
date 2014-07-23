@@ -516,8 +516,13 @@ public class ScalarPV {
 	 *  Removes the monitored PV.
 	 */
 	@Override
-    protected void finalize() {
-		MonitoredPV.removeMonitoredPV(mpv);
+    protected void finalize() throws Throwable {
+		try {
+			MonitoredPV.removeMonitoredPV(mpv);
+		}
+		finally {
+			super.finalize();
+		}
 	}
 
 }
