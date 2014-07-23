@@ -10,6 +10,7 @@ import xal.extension.widgets.plot.DateGraphFormat;
 import xal.extension.widgets.plot.GraphDataOperations;
 import xal.extension.scan.MonitoredPV;
 import xal.extension.scan.UpdatingEventController;
+import xal.tools.statistics.RunningWeightedStatistics;
 
 import java.awt.Color;
 import java.awt.event.ActionEvent;
@@ -50,6 +51,9 @@ public class ScalarPV {
 	private MonitoredPV mpv = null;
 	private ActionListener updateListener = null;
 
+	/** maintain a running weighted value to suppress noise */
+	private RunningWeightedStatistics _valueStatistics;
+
 	private static int nextIndex = 0;
 
 
@@ -59,6 +63,7 @@ public class ScalarPV {
 	 *@param  ucIn  Update controller
 	 */
 	public ScalarPV(UpdatingEventController ucIn) {
+		_valueStatistics = new RunningWeightedStatistics( 0.1 );	// use a weight of 0.1 (approximately like averaging over the last 10 values)
 
 		gd_val.addPoint((nextIndex) - 0.125, 0.);
 		gd_ref.addPoint((nextIndex) + 0.125, 0.);
@@ -470,12 +475,13 @@ public class ScalarPV {
 	 *  Sets the current value from PV
 	 */
 	public void measure() {
-		double val = 0.;
-		if (mpv.isGood()) {
-			val = phase_wrap(mpv.getValue());
+		if ( mpv.isGood() ) {
+			final double val = phase_wrap(mpv.getValue());
+			_valueStatistics.addSample( val );
+
+			gd_val.setPoint( 1, gd_val.getX(0), _valueStatistics.mean() );
+			gd_dif.setPoint( 1, gd_dif.getX(0), phase_wrap( gd_val.getY(1) - gd_ref.getY(1) ) );
 		}
-		gd_val.setPoint(1, gd_val.getX(0), val);
-		gd_dif.setPoint(1, gd_dif.getX(0), phase_wrap(gd_val.getY(1) - gd_ref.getY(1)));
 	}
 
 
@@ -484,11 +490,8 @@ public class ScalarPV {
 	 */
 	public void memorize() {
 		double time = DateGraphFormat.getSeconds(new java.util.Date());
-		double val = 0.;
-		if (mpv.isGood()) {
-			val = phase_wrap(mpv.getValue());
-		}
-		addChartPoint(time, val);
+		final double val = _valueStatistics.population() > 0 ? phase_wrap( _valueStatistics.mean() ) : 0.0;
+		addChartPoint( time, val );
 	}
 
 
