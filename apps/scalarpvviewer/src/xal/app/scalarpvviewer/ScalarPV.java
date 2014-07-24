@@ -22,6 +22,8 @@ import java.awt.event.ActionListener;
  *@author    shishlo
  */
 public class ScalarPV {
+	/** default count of pulses used in averaging (effective since we are using exponential weighted averaging) */
+	final static public int DEFAULT_AVERAGING_PULSE_COUNT = 10;
 
 	//graph data to display current value and reference values
 	//these graph data include only two points each
@@ -63,7 +65,7 @@ public class ScalarPV {
 	 *@param  ucIn  Update controller
 	 */
 	public ScalarPV(UpdatingEventController ucIn) {
-		_valueStatistics = new RunningWeightedStatistics( 0.1 );	// use a weight of 0.1 (approximately like averaging over the last 10 values)
+		setAveragingPulseCount( DEFAULT_AVERAGING_PULSE_COUNT );
 
 		gd_val.addPoint((nextIndex) - 0.125, 0.);
 		gd_ref.addPoint((nextIndex) + 0.125, 0.);
@@ -104,6 +106,24 @@ public class ScalarPV {
 		setDifColor(Color.magenta);
 
 	}
+
+
+	/** set the averaging pulse count */
+	public void setAveragingPulseCount( final int pulseCount ) {
+		final RunningWeightedStatistics valueStatistics = new RunningWeightedStatistics( 1.0 / pulseCount );
+
+		// if the current statistics already has data, prime the new one with data to simulate the specified history for the mean
+		if ( _valueStatistics != null && _valueStatistics.population() > 0 ) {
+			final int population = Math.min( pulseCount, _valueStatistics.population() );	// take the minimum since we only need pulseCount items to reach the asymptotic weighting (don't want to loop thousands of times)
+			final double mean = _valueStatistics.mean();
+			for ( int index = 0 ; index < population ; index++ ) {
+				valueStatistics.addSample( mean );
+			}
+		}
+
+		_valueStatistics = valueStatistics;
+	}
+
 
 	/**
 	 *  Returns the wrapped value if the wrapping switch is on

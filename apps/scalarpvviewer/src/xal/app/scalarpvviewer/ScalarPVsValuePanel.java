@@ -67,10 +67,13 @@ public class ScalarPVsValuePanel {
 	//cntrl panel
 	private final JLabel cntrlPanelTitle_Label = new JLabel("=UPDATE CONTROL=", JLabel.CENTER);
 	private final JRadioButton autoUpdate_Button = new JRadioButton("Listen to EPICS", false);
-	private final JSpinner freq_cntrlPanel_Spinner = new JSpinner(new SpinnerNumberModel(1, 1, 300, 1));
+	private final JSpinner freq_cntrlPanel_Spinner = new JSpinner(new SpinnerNumberModel( 1, 1, 300, 1 ));
 	private final JLabel cntrlPanelTime_Label = new JLabel("Update Time [sec]", JLabel.LEFT);
 	private final JButton setRefButton = new JButton("Memorize as Ref.");
 	private final JButton wrapButton = new JButton("Wrap Phases");
+
+	private final JSpinner averagingSpinner = new JSpinner( new SpinnerNumberModel( ScalarPV.DEFAULT_AVERAGING_PULSE_COUNT, 1, 100, 1 ) );
+	private final JLabel averagingLabel = new JLabel( "Averging [pulses]", JLabel.LEFT );
 
 	private final JLabel lastTimeLabel_Label = new JLabel("Last Time Memorized at:", JLabel.CENTER);
 	private final JLabel lastTimeText_Label = new JLabel("NEVER", JLabel.CENTER);
@@ -122,6 +125,11 @@ public class ScalarPVsValuePanel {
 		tmp_panel_2.add(freq_cntrlPanel_Spinner);
 		tmp_panel_2.add(cntrlPanelTime_Label);
 
+		JPanel averagingPanel = new JPanel();
+		averagingPanel.setLayout( new FlowLayout( FlowLayout.LEFT, 1, 1 ) );
+		averagingPanel.add( averagingSpinner );
+		averagingPanel.add( averagingLabel );
+
 		JPanel tmp_panel_3 = new JPanel();
 		tmp_panel_3.setLayout(new FlowLayout(FlowLayout.LEFT, 4, 1));
 		tmp_panel_3.add(setRefButton);
@@ -131,9 +139,10 @@ public class ScalarPVsValuePanel {
 		tmp_panel_3_1.add(wrapButton);
 		
 		JPanel tmp_panel_4 = new JPanel();
-		tmp_panel_4.setLayout(new GridLayout(4, 1, 1, 1));
+		tmp_panel_4.setLayout(new GridLayout(5, 1, 1, 1));
 		tmp_panel_4.add(tmp_panel_1);
 		tmp_panel_4.add(tmp_panel_2);
+		tmp_panel_4.add( averagingPanel );
 		tmp_panel_4.add(tmp_panel_3);
 		tmp_panel_4.add(tmp_panel_3_1);
 
@@ -203,6 +212,13 @@ public class ScalarPVsValuePanel {
 					}
 				}
 			});
+
+		averagingSpinner.addChangeListener( new ChangeListener() {
+			public void stateChanged( final ChangeEvent event ) {
+				final int pulseCount = (Integer)averagingSpinner.getValue();
+				spvs.setAveragingPulseCount( pulseCount );
+			}
+		});
 
 		setRefButton.addActionListener(
 			new ActionListener() {
@@ -363,10 +379,14 @@ public class ScalarPVsValuePanel {
 		autoUpdate_Button.setFont(fnt);
 		lastTimeLabel_Label.setFont(fnt);
 		lastTimeText_Label.setFont(fnt);
+		averagingLabel.setFont( fnt );
 
 		freq_cntrlPanel_Spinner.setFont(fnt);
 		((JSpinner.DefaultEditor) freq_cntrlPanel_Spinner.getEditor()).getTextField().setFont(fnt);
 		cntrlPanelTime_Label.setFont(fnt);
+
+		averagingSpinner.setFont( fnt );
+		((JSpinner.DefaultEditor) averagingSpinner.getEditor()).getTextField().setFont(fnt);
 
 		setRefButton.setFont(fnt);
 		wrapButton.setFont(fnt);
