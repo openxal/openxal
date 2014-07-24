@@ -1,0 +1,20 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xsi:noNamespaceSchemaLocation="http://sourceforge.net/p/xaldev/openxal/ci/master/tree/core/resources/xal/schemas/ModelConfig.xsd?format=raw">
+    <elements>
+        <default type="xal.model.elem.Marker"/>
+        <drift type="xal.model.elem.IdealDrift"/>
+    </elements>
+    
+    <associations>
+    	<map smf="dh" model="se.lu.esss.ics.jels.model.elem.jels.IdealMagWedgeDipole2"/>
+		<map smf="q" model="xal.model.elem.IdealMagQuad"/>
+		<map smf="qt" model="xal.model.elem.IdealMagQuad"/>
+		<map smf="pq" model="xal.model.elem.IdealMagQuad"/>
+		<map smf="dch" model="xal.model.elem.IdealMagSteeringDipole"/>
+		<map smf="dcv" model="xal.model.elem.IdealMagSteeringDipole"/>
+		<map smf="rfgap" model="se.lu.esss.ics.jels.model.elem.jels.IdealRfGap"/>
+		<map smf="marker" model="xal.model.elem.Marker"/>
+    </associations>
+</configuration>
+

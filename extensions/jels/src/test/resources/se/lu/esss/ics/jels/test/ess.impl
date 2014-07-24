@@ -1,0 +1,18 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<deviceMapping xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="http://sourceforge.net/p/xaldev/openxal/ci/master/tree/core/resources/xal/schemas/impl.xsd?format=raw">
+   <device type="DH" class="se.lu.esss.ics.jels.smf.impl.ESSBend"/>
+   <device type="DV" class="se.lu.esss.ics.jels.smf.impl.ESSBend"/> 
+   <device type="CCL" class="xal.smf.impl.CCL"/>
+   <device type="Q" class="xal.smf.impl.Quadrupole"/>
+   <device type="QH" class="xal.smf.impl.Quadrupole"/>
+   <device type="QV" class="xal.smf.impl.Quadrupole"/>
+   <device type="DCV" class="xal.smf.impl.VDipoleCorr"/>
+   <device type="DCH" class="xal.smf.impl.HDipoleCorr"/>
+   <device type="QSC" class="xal.smf.impl.Quadrupole"/>
+   <device type="RF" class="se.lu.esss.ics.jels.smf.impl.ESSRfCavity"/>
+   <device type="RG" class="se.lu.esss.ics.jels.smf.impl.ESSRfGap"/>
+   <device type="SOL" class="xal.smf.impl.Solenoid"/>
+   <device type="BPM" class="xal.smf.impl.BPM"/>
+   <device type="marker" class="xal.smf.impl.Marker"/>
+</deviceMapping>

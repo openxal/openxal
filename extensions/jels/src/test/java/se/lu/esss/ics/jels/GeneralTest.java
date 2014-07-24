@@ -111,6 +111,8 @@ public class GeneralTest {
 		double dataTW[][] = loadTWData(tracewinData);
         double dataOX[][] = run(probe);
         
+        //saveResults(tracewinData.getFile() + ".out", dataOX);
+        
         System.out.printf("%s\n", probe.getComment());
         Column[] allCols = Column.values();
 		for (int j = 1; j < allCols.length; j++) {
@@ -119,7 +121,7 @@ public class GeneralTest {
 			assertTrue(allCols[j].name()+" not within the allowed error", e < allCols[j].allowedError);
 			//System.out.printf("%E %E\n",dataOX[allCols[j].openxal][0], dataTW[allCols[j].tracewin][0]);
 		}
-		//saveResults(tracewinData.getFile() + ".out", dataOX);
+		
 		dataTW = null;
 		dataOX = null;
 		System.gc();
@@ -189,7 +191,7 @@ public class GeneralTest {
 	 */
 	private static AcceleratorSeq loadAcceleratorSequence() {
 		/* Loading SMF model */				
-		Accelerator accelerator = XMLDataManager.acceleratorWithUrlSpec(JElsDemo.class.getResource("main.xal").toString());
+		Accelerator accelerator = XMLDataManager.acceleratorWithUrlSpec(JElsDemo.class.getResource("test/main.xal").toString());
 				
 		if (accelerator == null)
 		{			
@@ -205,7 +207,7 @@ public class GeneralTest {
 	 * @throws ModelException
 	 * @throws IOException
 	 */
-	public double[][] run(Probe probe) throws ModelException, IOException
+	public static double[][] run(Probe probe) throws ModelException, IOException
 	{
 		 AcceleratorSeq sequence = loadAcceleratorSequence();
 		 return run(probe.copy(), sequence);
@@ -229,8 +231,9 @@ public class GeneralTest {
 						
 		// Running simulation
 		scenario.setStartElementId("BEGIN_mebt");
+		//scenario.setStopElementId("DR16");
 		scenario.run();
-		
+		//JElsDemo.saveLattice(scenario.getLattice(), "lattice.xml");
 		// Getting results
 		Trajectory trajectory = probe.getTrajectory();
 		
