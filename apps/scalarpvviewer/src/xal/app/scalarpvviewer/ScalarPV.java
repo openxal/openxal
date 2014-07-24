@@ -10,6 +10,7 @@ import xal.extension.widgets.plot.DateGraphFormat;
 import xal.extension.widgets.plot.GraphDataOperations;
 import xal.extension.scan.MonitoredPV;
 import xal.extension.scan.UpdatingEventController;
+import xal.tools.statistics.RunningWeightedStatistics;
 
 import java.awt.Color;
 import java.awt.event.ActionEvent;
@@ -21,6 +22,8 @@ import java.awt.event.ActionListener;
  *@author    shishlo
  */
 public class ScalarPV {
+	/** default count of pulses used in averaging (effective since we are using exponential weighted averaging) */
+	final static public int DEFAULT_AVERAGING_PULSE_COUNT = 10;
 
 	//graph data to display current value and reference values
 	//these graph data include only two points each
@@ -50,6 +53,9 @@ public class ScalarPV {
 	private MonitoredPV mpv = null;
 	private ActionListener updateListener = null;
 
+	/** maintain a running weighted value to suppress noise */
+	private RunningWeightedStatistics _valueStatistics;
+
 	private static int nextIndex = 0;
 
 
@@ -59,6 +65,7 @@ public class ScalarPV {
 	 *@param  ucIn  Update controller
 	 */
 	public ScalarPV(UpdatingEventController ucIn) {
+		setAveragingPulseCount( DEFAULT_AVERAGING_PULSE_COUNT );
 
 		gd_val.addPoint((nextIndex) - 0.125, 0.);
 		gd_ref.addPoint((nextIndex) + 0.125, 0.);
@@ -99,6 +106,24 @@ public class ScalarPV {
 		setDifColor(Color.magenta);
 
 	}
+
+
+	/** set the averaging pulse count */
+	public void setAveragingPulseCount( final int pulseCount ) {
+		final RunningWeightedStatistics valueStatistics = new RunningWeightedStatistics( 1.0 / pulseCount );
+
+		// if the current statistics already has data, prime the new one with data to simulate the specified history for the mean
+		if ( _valueStatistics != null && _valueStatistics.population() > 0 ) {
+			final int population = Math.min( pulseCount, _valueStatistics.population() );	// take the minimum since we only need pulseCount items to reach the asymptotic weighting (don't want to loop thousands of times)
+			final double mean = _valueStatistics.mean();
+			for ( int index = 0 ; index < population ; index++ ) {
+				valueStatistics.addSample( mean );
+			}
+		}
+
+		_valueStatistics = valueStatistics;
+	}
+
 
 	/**
 	 *  Returns the wrapped value if the wrapping switch is on
@@ -470,12 +495,13 @@ public class ScalarPV {
 	 *  Sets the current value from PV
 	 */
 	public void measure() {
-		double val = 0.;
-		if (mpv.isGood()) {
-			val = phase_wrap(mpv.getValue());
+		if ( mpv.isGood() ) {
+			final double val = phase_wrap(mpv.getValue());
+			_valueStatistics.addSample( val );
+
+			gd_val.setPoint( 1, gd_val.getX(0), _valueStatistics.mean() );
+			gd_dif.setPoint( 1, gd_dif.getX(0), phase_wrap( gd_val.getY(1) - gd_ref.getY(1) ) );
 		}
-		gd_val.setPoint(1, gd_val.getX(0), val);
-		gd_dif.setPoint(1, gd_dif.getX(0), phase_wrap(gd_val.getY(1) - gd_ref.getY(1)));
 	}
 
 
@@ -484,11 +510,8 @@ public class ScalarPV {
 	 */
 	public void memorize() {
 		double time = DateGraphFormat.getSeconds(new java.util.Date());
-		double val = 0.;
-		if (mpv.isGood()) {
-			val = phase_wrap(mpv.getValue());
-		}
-		addChartPoint(time, val);
+		final double val = _valueStatistics.population() > 0 ? phase_wrap( _valueStatistics.mean() ) : 0.0;
+		addChartPoint( time, val );
 	}
 
 
@@ -516,8 +539,13 @@ public class ScalarPV {
 	 *  Removes the monitored PV.
 	 */
 	@Override
-    protected void finalize() {
-		MonitoredPV.removeMonitoredPV(mpv);
+    protected void finalize() throws Throwable {
+		try {
+			MonitoredPV.removeMonitoredPV(mpv);
+		}
+		finally {
+			super.finalize();
+		}
 	}
 
 }

@@ -33,6 +33,9 @@ public class ScalarPVs {
 
 	private JTextField messageTextLocal = new JTextField();
 
+	/** count of pulses used in averaging (effective since we are using exponential weighted averaging) */
+	private int _averagingPulseCount = ScalarPV.DEFAULT_AVERAGING_PULSE_COUNT;
+
 
 	/**
 	 *  Constructor for the ScalarPVs object
@@ -41,6 +44,22 @@ public class ScalarPVs {
 	 */
 	public ScalarPVs(UpdatingEventController ucIn) {
 		uc = ucIn;
+	}
+
+
+	/** set the averaging pulse count */
+	public int getAveragingPulseCount() {
+		return _averagingPulseCount;
+	}
+
+
+	/** set the averaging pulse count */
+	public void setAveragingPulseCount( final int pulseCount ) {
+		_averagingPulseCount = pulseCount;
+
+		for ( final ScalarPV scalarPV : spvV ) {
+			scalarPV.setAveragingPulseCount( pulseCount );
+		}
 	}
 
 
@@ -180,6 +199,7 @@ public class ScalarPVs {
 	 */
 	public void addScalarPV(String pvName, double refVal) {
 		ScalarPV spv = new ScalarPV(uc);
+		spv.setAveragingPulseCount( _averagingPulseCount );
 		spv.getMonitoredPV().setChannelName(pvName);
 		spv.getMonitoredPV().startMonitor();
 		int n = spvV.size();
