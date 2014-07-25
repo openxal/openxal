@@ -138,16 +138,18 @@ public class JElsDemo {
 					twiss[0].getBeta(),
 					twiss[1].getBeta());
 		    
-		    /*
-		    if (ps.getElementId().startsWith("BEGIN")) {
+		    
+		    /*if (ps.getElementId().startsWith("BEGIN")) {
 		    	String sec = ps.getElementId().substring(6);
 		    	AcceleratorNode node = sequence.getNodeWithId(sec);
 		    	if (node instanceof AcceleratorSeq && ((AcceleratorSeq)node).getParent() instanceof Accelerator) {	
 			    	char[] axis = new char[]{'x','y','z'};
 			    	for (int j=0; j<3; j++) {
 			    		System.out.printf("<record name=\"%s\" coordinate=\"%c\" alpha=\"%E\" beta=\"%E\" emittance=\"%E\"/>\n", 
-			    				sec, axis[j], twiss[j].getAlpha(), twiss[j].getBeta(), twiss[j].getEmittance());	
+			    				sec, axis[j], twiss[j].getAlpha(), twiss[j].getBeta(), twiss[j].getEmittance());
 			    	}
+			    	System.out.printf("<record name=\"%s\" species=\"PROTON\" W=\"%E\"/>\n", 
+		    				sec, ps.getKineticEnergy());
 		    	}
 		    }*/
 		    i=i+1;
