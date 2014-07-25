@@ -746,6 +746,41 @@ public class BeamEllipsoid {
         return  M;
     }
 
+    /**
+     * Return the complete transformation from the beam inertial
+     * coordinates to the ellipsoid inertial coordinates.  The tranform takes coordinates
+     * in the beam frame to the natural coordinates of the ellipsoid - this 
+     * coordinate system has the centroid as the origin and the ellipsoid semi-axes
+     * are aligned to the coordinate axes.  Denoting the returned transformation as
+     * <b>M</b>, then it is composed of the following factors
+     * <br/>
+     * <br/>
+     *  &nbsp; &nbsp;  <b>M</b> = <b>R<sub>0</sub>*T<sub>0</sub></b>
+     * <br/>
+     * <br/>
+     * where <b>T<sub>0</sub></b> is
+     * the Galilean transform to the ellipsoid centroid coordinates, and <b>R<sub>0</sub></b>
+     * is the rotation that aligns the ellipsoid semi-axes to the coorinates axes 
+     * putting it into standard position.
+     * 
+     * @return  tranformation taking beam inertial coordinates to ellipse inertial coordinates
+     * 
+     * @see BeamEllipsoid#getTranslation()
+     * @see BeamEllipsoid#getRotation()
+     */
+    public PhaseMatrix  getBeamToEllipseTransform() {
+
+        // Get transform matrices
+        PhaseMatrix     T0 = this.getTranslation();
+        PhaseMatrix     R0 = this.getRotation();
+
+        // Build the transform to ellipsoid coordinates in beam frame
+        PhaseMatrix     M  = R0.times(T0);
+
+        return  M;
+    }
+
+    
     /** 
      * <p>
      * Calculates the transfer matrix generator for space charge effects from
@@ -896,7 +931,7 @@ public class BeamEllipsoid {
 
 
         // Compute the laboratory/beam frame transform 
-        PhaseMatrix     M  = this.getLabToBeamTransform();
+        PhaseMatrix     M  = this.getBeamToEllipseTransform();
         PhaseMatrix     Mi = M.inverse(); 
 
         // compute defocusing constants
