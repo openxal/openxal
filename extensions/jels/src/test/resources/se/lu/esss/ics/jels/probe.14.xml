@@ -1,0 +1,19 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<probe time="22.5.2014 9:58:15" type="xal.model.probe.EnvelopeProbe">
+    <comment author="Ivo List" date="2014-05-22" text="Space charge test I=62.5mA, off-center for -0.1,-0.1,-0.1 mm"/>
+    <algorithm type="xal.model.alg.EnvelopeTracker" ver="4">
+        <tracker calcRfGapPhase="true" debug="false" update="1"/>
+        <options emitgrowth="false" scheff="true" stepsize="0.1" useSpacecharge="true"/>
+              <!--  <adapt errortol="0.001" initstep="0.004" maxiter="50" maxstep="0.0" maxstepdriftpmq="0.0" norm="0" order="2" slack="0.0"/>-->
+    </algorithm>
+    <state id="" type="xal.model.probe.traj.EnvelopeProbeState">
+        <species Er="9.3827202900E8" q="1.0"/>
+        <location W="3.00e6" elem="" s="0.0" t="0.0"/>
+        <beam I="62.5e-3" f="352.21e6"/>
+        <envelope 
+			alphaX="-0.1763" betaX="0.2442" emitX="2.621516138971707E-6"
+			alphaY="-0.3247" betaY="0.3974" emitY="2.612769421634814E-6"
+			alphaZ="-0.5283" betaZ="0.8684" emitZ="3.562413018211791E-6"/>
+        <centroid value="-0.1e-3,0.,-0.1e-3,0.,-0.1e-3,0.,1"/>
+    </state>
+</probe>
