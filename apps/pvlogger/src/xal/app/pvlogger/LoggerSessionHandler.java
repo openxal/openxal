@@ -116,6 +116,8 @@ public class LoggerSessionHandler {
 	 * @return true if the data was successfully updated and false if not.
 	 */
 	public boolean update() {
+		final List<Map<String,Object>> channelTables = new ArrayList<>();
+
 		UPDATE_QUEUE.dispatchSync( new Runnable() {
 			public void run() {
 				try {
@@ -147,7 +149,7 @@ public class LoggerSessionHandler {
 
 					final Date lastChannelEventTime = _remoteProxy.getLastChannelEventTime( _groupType );
 					if ( !lastChannelEventTime.equals(_lastChannelEventTime) ) {
-						final List<Map<String,Object>> channelTables = _remoteProxy.getChannels( _groupType );
+						channelTables.addAll( _remoteProxy.getChannels( _groupType ) );
 						_lastChannelEventTime = lastChannelEventTime;
 						processChannels( channelTables );
 					}
@@ -159,7 +161,12 @@ public class LoggerSessionHandler {
 			}
 		});
 
+		// these postings need to happen outside of the blocking update queue to avoid deadlock due to callbacks
+		if ( !channelTables.isEmpty() ) {
+			_postProxy.channelsChanged( this, _channelRefs );
+		}
 		_postProxy.loggerSessionUpdated( this );
+
 		return true;
 	}
 	
@@ -170,7 +177,7 @@ public class LoggerSessionHandler {
 	 * is constructed for each such channel table.
 	 * @param channelTables the list of channel information about the remote logger's channels
 	 */
-	protected void processChannels( final List<Map<String,Object>> channelTables ) {
+	private void processChannels( final List<Map<String,Object>> channelTables ) {
 		_channelRefs = new ArrayList<ChannelRef>( channelTables.size() );
 
 		for ( final Map<String,Object> channelTable : channelTables ) {
@@ -178,8 +185,6 @@ public class LoggerSessionHandler {
 			Boolean connected = (Boolean)channelTable.get( RemoteLogging.CHANNEL_CONNECTED );
 			_channelRefs.add( new ChannelRef( pv, connected ) );
 		}
-		
-		_postProxy.channelsChanged( this, _channelRefs );
 	}
 	
 	

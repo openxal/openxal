@@ -30,14 +30,14 @@ import org.xml.sax.SAXException;
  * Some <code>protected</code> utility methods for reading documents and schemas are also provided.
  * @author <a href='jakob.battelino@cosylab.com'>Jakob Battelino Prelog</a>
  */
-public abstract class AbstractXMLValidationTest {
+public abstract class AbstractXMLValidation {
 	
 	/**	Path to a directory where the XML files to be tested against XML schemas are.	*/
-	protected static final String DIR_EXTERNAL_XMLS = TestProperties.getProperty(TestProperties.KEY_DIR_EXTERNAL_XMLS);
+	protected static final String DIR_EXTERNAL_XMLS = SchemaProperties.getProperty(SchemaProperties.KEY_DIR_EXTERNAL_XMLS);
 	/**	Path to a directory where the XML schemas that will be tested are.	*/
-	protected static final String DIR_SCHEMAS = TestProperties.getProperty(TestProperties.KEY_DIR_SCHEMAS);
+	protected static final String DIR_SCHEMAS = SchemaProperties.getProperty(SchemaProperties.KEY_DIR_SCHEMAS);
 	/**	Path to a directory where the XML files to test the XML schemas with are.	*/
-	protected static final String DIR_TEST_XMLS = TestProperties.getProperty(TestProperties.KEY_DIR_TEST_XMLS);
+	protected static final String DIR_TEST_XMLS = SchemaProperties.getProperty(SchemaProperties.KEY_DIR_TEST_XMLS);
 	
 	/**
 	 * Basic XML schema validation method.<br/>
@@ -165,7 +165,7 @@ public abstract class AbstractXMLValidationTest {
 	 * @see #getDocumentBuilder()
 	 */
 	protected static Document readDocument(String xmlFileName) throws ParserConfigurationException, SAXException, IOException {
-		Document document = getDocumentBuilder().parse(AbstractXMLValidationTest.class.getResourceAsStream(xmlFileName));
+		Document document = getDocumentBuilder().parse(AbstractXMLValidation.class.getResourceAsStream(xmlFileName));
 		return document;
 	}
 	
@@ -181,7 +181,7 @@ public abstract class AbstractXMLValidationTest {
 	 */
 	protected static Schema readSchema(String schemaFileName, String schemaLanguage) throws SAXException, NullPointerException {
 		SchemaFactory factory = SchemaFactory.newInstance(schemaLanguage);
-		Schema schema = factory.newSchema(AbstractXMLValidationTest.class.getResource(schemaFileName));
+		Schema schema = factory.newSchema(AbstractXMLValidation.class.getResource(schemaFileName));
 		return schema;
 	}
 	

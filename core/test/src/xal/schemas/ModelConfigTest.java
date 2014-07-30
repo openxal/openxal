@@ -17,7 +17,7 @@ import org.w3c.dom.Element;
  * Unit test case for <code>ModelConfig.xsd</code> XML schema using <code>ModelConfig.xml</code> structure.
  * @author <a href='jakob.battelino@cosylab.com'>Jakob Battelino Prelog</a>
  */
-public class ModelConfigTest extends AbstractXMLValidationTest {
+public class ModelConfigTest extends AbstractXMLValidation {
 	
 	@Override
 	public void progressiveSchemaValidation() {

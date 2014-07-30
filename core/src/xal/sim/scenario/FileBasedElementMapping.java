@@ -32,7 +32,7 @@ public class FileBasedElementMapping extends ElementMapping {
 	/** Model Configuration schema */
     final public static String elementMappingSchema = "/xal/schemas/ModelConfig.xsd";
 	
-	protected FileBasedElementMapping() {		
+	protected FileBasedElementMapping() {
 	}
 	
 	@Override
@@ -90,11 +90,14 @@ public class FileBasedElementMapping extends ElementMapping {
 		
 	}
 
+
+	@SuppressWarnings( "unchecked" )
 	private void setDefault(String stringValue) throws ClassNotFoundException {
 		defaultElement = (Class<? extends IComponent>) Class.forName(stringValue);		
 	}
 
 
+	@SuppressWarnings( "unchecked" )
 	private void putMap(String smf, String model) throws ClassNotFoundException {
 		putMap(smf, (Class<? extends IComponent>)Class.forName(model));
 	}

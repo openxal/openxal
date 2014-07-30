@@ -17,7 +17,7 @@ import org.w3c.dom.Element;
  * Unit test case for <code>xdxf.xsd</code> XML schema using <code>timing_pvs.tim</code> structure.
  * @author <a href='jakob.battelino@cosylab.com'>Jakob Battelino Prelog</a>
  */
-public class TimingSourceTest extends AbstractXMLValidationTest {
+public class TimingSourceTest extends AbstractXMLValidation {
 	
 	/**
 	 * Progressive XML schema validation method.<br/>

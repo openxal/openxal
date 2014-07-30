@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="US-ASCII">
+<title>Online Model</title>
+</head>
+<body>
+<h1>The Online Model</h1>
+<h2>Introduction</h2>
+<p>
+Here we list some general notes and descriptions of the online model operation.
+The procedure for running simulations is well documented in many other sources,
+including the <a href="http://xaldev.sourceforge.net/">official Open XAL web site</a> 
+and the <a href="https://ess-ics.atlassian.net/wiki/display/SCA/OpenXAL">ESS Open XAL web site</a>.
+</p>
+<h2>Running Simulations</h2>
+<h4>Scenarios</h4>
+<p>
+To simulate a section of beamline, one first needs to create an online model object for
+that beamline.  This object is of type <code>xal.sim.Scenario</code>.  The scenario object
+is instantiated for a particular <code>AcceleratorSeq</code> object representing the 
+section of beamline to be simulated.
+</p>
+<h4>Probes</h4>
+<p>
+The type of simulation is determined by the type of <i>probe</i> object used in the
+simulation; that is, provided to the scenario object.  For example, to simulate a
+single particle, or beam centroid, a probe of type 
+<code>xal.model.probe.ParticleProbe</code> is used.  For an envelope simulation an
+<code>xal.model.probe.EnvelopeProbe</code> object would be instantiated.  To create
+these probes a factory class exists, <code>xal.sim.scenario.ProbeFactory</code>.
+However, an <i>algorithm</i> object must first be created before a probe can be
+instantiated with the factory (see below).  
+</p>
+<h4>Synchronization</h4>
+<p>
+Once the algorithm, probe, and scenario are created, before the simulation can be run
+a synchronization scheme must be chosen.  This is done with the method 
+<code>Scenario.setSynchronizationMode()</code>.  Listed below are the possible arguments
+for this method and their result.
+<br/>
+<br/>
+&nbsp; &nbsp; SYNC_MODE_LIVE - synchronizes the beamline model parameters to the live machine values
+<br/>
+&nbsp; &nbsp; SYNC_MODE_DESIGN - set the beamline model parameters to the machine design values
+<br/>
+&nbsp; &nbsp; SYNC_MODE_RF_DESIGN - the RF parameters are set to design, all others are live values
+<br/>
+<br/>
+There is one other option.  The <code>PVLogger</code> service can be used to retrieve historical
+machine states and align all the model parameters to these values.  The class that performs this
+function is <code>xal.service.pvlogger.sim</code>.
+</p>
+<h4>Simulation Process</h4>
+<p>
+Simulation results are saved as <i>probe states</i> in a <i>trajectory</i> object.  That is,
+depending upon the type of simulation (particle, envelope, transfer map, etc.), the results are
+encapsulated by objects derived from the base class <code>ProbeState</code> and aggregated
+in the ordered <code>Trajectory</code> object. Here we cover the way the online model saves 
+probe states.  
+</p>
+<p>
+The following is what happens when you run a scenario:
+</p>
+<table>
+  <tr> 
+    <td>
+      &nbsp; &nbsp;
+    </td>
+    <td>
+      &middot; If a starting element is specified the online model saves the initializing probe 
+      state as the first state in the trajectory.  
+     </td>
+  </tr>
+  <tr>
+    <td>
+      &nbsp; &nbsp;
+    </td>
+     <td>
+        &middot; When the starting element is reached the next probe state to be saved depends
+        upon the values of the <code>probeUpdatePolicy</code> attribute of the algorithm
+        object (see below).
+    </td>
+  </tr>
+  <tr>
+    <td>
+      &nbsp; &nbsp;
+    </td>
+    <td>
+      &middot; The online model then transports the probe through
+      the model lattice with the initial state intact until it reaches the starting element.
+    </td>
+  </tr>
+  <tr>
+    <td>
+        &nbsp; &nbsp;
+    </td>
+    <td>
+        &middot; Once the start element is reached the online model begins propagation the probe through
+        the beamline until it reaches either the
+        stopping element if one is specified, or the end of the sequence if no stopping element
+        is specified.
+    </td>
+  </tr>
+  <tr>
+    <td>
+        &nbsp; &nbsp;
+    </td>
+    <td>
+        &middot; The dynamics of the probe propagation depend upon both the type of the probe
+        (e.g., particle, envelope, transfer map, etc.) the algorithm provided to, and maintained by, 
+        the probe.  
+    </td>
+  </tr>
+</table>
+<p>
+Note that a single probe type may have many different methods of propagation, for example,
+an <code>EnvelopeProbe</code> may have an <code>EnvelopeTracker</code>, 
+<code>EnvelopeBackTracker</code>, <code>EnvTrackerAdapt</code>, etc.
+</p>
+
+<h4>Dynamics</h4>
+<p>
+The dynamics of the simulation are contained in the <code>algorithm</code>
+component of the online model.  Algorithms classes are derived from the base
+class <code>xal.model.alg.Tracker</code>, which contains the boiler plate functionality
+for any algorithm.  Algorithms understand how to propagate specific probe types
+through the model beamline.  They are implementations of specific dynamics.  Since there
+may be many different ways to model the dynamics of a beam aspect there can be many 
+different algorithms for the same probe type.  Thus, it is necessary to provide
+each probe a specific algorithm object.  There is an algorithm factory, 
+<code>xal.sim.scenario.AlgorithmFactory</code>, for creating algorithms.
+</p>
+
+<h2>Simulation Results</h2>
+<p>
+The results of an online model simulation are contained in a <code>Trajectory</code>
+object maintained by the probe.  The trajectory is an ordered aggregation of 
+<code>ProbeState</code>-derived objects.  They contain the state of the probe
+at specified instances along the beamline (see below).  The attributes of the 
+state are particular to the type of probe being simulated.
+</p>
+<h4>The Probe Update Policy</h4> 
+<p>
+Each probe maintains an algorithm object, as mentioned above. The value of 
+the<code>probeUpdatePolicy</code> attribute in this algorithm object determines
+the way the simulation results (i.e., "probe states") are stored in the trajectory.
+</p>
+<table>
+  <tr>
+    <td>
+      &nbsp; &nbsp;
+    </td>
+    <td>
+        <code>Tracker.UPDATE_ENTRANCE</code> &middot; the probe state is saved to the trajectory then the probe is propagated through the element
+    </td>
+  </tr>
+  <tr>
+    <td>
+      &nbsp; &nbsp;
+    </td>
+    <td>
+        <code>Tracker.UPDATE_EXIT</code> &middot; the probe is propagated through the element then its state saved to the trajectory
+    </td>
+  </tr>
+  <tr>
+    <td>
+      &nbsp; &nbsp;
+    </td>
+    <td>
+        <code>Tracker.UPDATE_ALWAYS</code> &middot; the probe state is saved every time the probe is moved (e.g., after a space charge kick), but only when moved.
+    </td>
+  </tr>
+  <tr>
+    <td>
+      &nbsp; &nbsp;
+    </td>
+    <td>
+        <code>Tracker.UPDATE_ENTRANCEANDEXIT</code> &middot; the probe state is saved to the the trajectory, the probe is propagated through the element, then again saved 
+    </td>
+  </tr>
+</table>
+<p>
+The default value is <code>Tracker.UPDATE_EXIT</code>.
+</p>
+<p>
+The above behaviors are essentially the same when you do not have a starting element specified.
+Here there is usually a marker node at the beginning of any sequence and the state
+of a marker is the same irrelevant of exit or entrance.
+Choice of the <i>probeUpdatePolicy</i> depends upon where you need the probe states (see below).
+</p>
+<p>
+There can be multiple modeling elements that map to the same hardware node.  
+Plus there can be multiple probe states that map to the same modeling element (especially so with space charge).  
+When you ask the trajectory object for the states of a hardware node you will 
+get all of them.  The convenience method 
+<code>Trajectory#statesForElement(String) : ProbeState[].  The method Trajectory#stateForElement(String) : ProbeState </code>
+just returns the first one.
+</p>
+<h4>Retrieving the First State</h4>
+<p>
+If you require that the initial state of the start element be in the trajectory the following 
+are are a couple options:
+<br/>
+<br/>
+&middot; You can set the <code>Tracker#setProbeUpdatePolicy()</code> to <code>Tracker.UPDATE_ENTRANCEANDEXIT</code>.  
+Then both the entrance and exit states of every element between the start element and the stop element will
+be in the trajectory.
+<br/>
+&middot; You can set the <code>Probe#setCurrentElementId()</code> to the ID of the start element.  
+Thus, when the propagation is initiated, the initial state of the probe is saved to the trajectory with the ID 
+of the start element, and will be returned with a call to 
+<code>Trajectory#statesForElement(String)</code>.
+</p>
+ 
+<h2>Processing Simulation Results</h2>
+<p>
+There are a variety of tools for processing the simulation results of the online model.  
+In particular there is a suite of tools in the <code>xal.tools.beam.calc</code> package that
+performs direct calculations on the <code>Trajectory</code> objects produced in the simulation.
+The calculations depend upon the type of the <code>ProbeState</code> objects contained in
+the trajectory.  For example, the class <code>CalculationsOnMachines</code> expects  
+<code>TransferMapState</code> objects since such states are completely determined by the
+beamline, and not any beam.  The components of <code>xal.tools.beam.calc</code> are
+well documented and we refer the reader to the Javadoc for this package.
+</p>
+</body>
+
+
+<br/>
+<br/>Christopher K. Allen
+<br/>June, 2014
+</html>

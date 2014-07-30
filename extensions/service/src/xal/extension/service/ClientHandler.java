@@ -209,14 +209,8 @@ class ClientHandler<ProxyType> implements InvocationHandler {
 	/** perform the remote service call */
 	private Object performRemoteServiceCall( final Method method, final Object[] args ) throws RemoteMessageException, RemoteServiceDroppedException {
         try {
-            final List<Object> params = new ArrayList<Object>();
-			if ( args != null ) {
-                for ( final Object arg : args ) {
-                    params.add( arg );
-                }
-			}
-
             final long requestID = getNextRequestID();
+			final Object[] params = args != null ? args : new Object[0];
 
             final String methodName = method.getName();
             final Map<String,Object> request = new HashMap<String,Object>();
@@ -357,9 +351,6 @@ class PendingResult {
 
 /** Remote message processor that can handle serial (noncurrent) requests over the same socket. */
 class SerialRemoteMessageProcessor {
-	/** terminator for remote messages */
-	final static char REMOTE_MESSAGE_TERMINATOR = SocketMessageIO.REMOTE_MESSAGE_TERMINATOR;
-
     /** socket for sending and receiving remote messages */
     final private Socket REMOTE_SOCKET;
 
@@ -377,6 +368,13 @@ class SerialRemoteMessageProcessor {
         MESSAGE_CODER = messageCoder;
 
         REMOTE_SOCKET = makeRemoteSocket( host, port );
+
+		try {
+			WebSocketIO.performHandshake( REMOTE_SOCKET );
+		}
+		catch ( Exception exception ) {
+			throw new RuntimeException( "Exception creating new remote socket.", exception );
+		}
     }
 
 
@@ -420,8 +418,12 @@ class SerialRemoteMessageProcessor {
 
     /** dispose of resources upon collection */
     protected void finalize() throws Throwable {
-        dispose();
-		super.finalize();
+		try {
+			dispose();
+		}
+		finally {
+			super.finalize();
+		}
     }
 
 
@@ -429,7 +431,7 @@ class SerialRemoteMessageProcessor {
     @SuppressWarnings( "unchecked" )    // no way to know response Object type at compile time
     private void processRemoteResponse( final PendingResult pendingResult ) throws java.net.SocketException, java.io.IOException {
 		try {
-			final String jsonResponse = SocketMessageIO.readMessage( REMOTE_SOCKET );
+			final String jsonResponse = WebSocketIO.readMessage( REMOTE_SOCKET );
 			if ( jsonResponse != null ) {
 				final Object responseObject = MESSAGE_CODER.decode( jsonResponse );
 				if ( responseObject instanceof Map ) {
@@ -442,7 +444,7 @@ class SerialRemoteMessageProcessor {
 				}
 			}
 		}
-		catch( SocketMessageIO.SocketPrematurelyClosedException exception ) {
+		catch( WebSocketIO.SocketPrematurelyClosedException exception ) {
 			cleanupClosedSocket( pendingResult, new RemoteServiceDroppedException( "The remote socket has closed while reading the remote response..." ) );
 		}
     }
@@ -463,10 +465,7 @@ class SerialRemoteMessageProcessor {
     /** Submit the remote request */
     public PendingResult submitRemoteRequest( final String jsonRequest, final boolean hasResponse ) {
 		try {
-			final Writer writer = new OutputStreamWriter( REMOTE_SOCKET.getOutputStream() );
-			writer.write( jsonRequest );
-			writer.write( REMOTE_MESSAGE_TERMINATOR );
-			writer.flush();
+			WebSocketIO.sendMessage( REMOTE_SOCKET, jsonRequest );
 
 			if ( hasResponse ) {
 				final PendingResult pendingResult = new PendingResult();
