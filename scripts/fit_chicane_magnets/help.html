@@ -1,0 +1,52 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title>Chicane Closure Help</title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="824.41">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 17.0px Helvetica}
+    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+    p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
+    p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 15.0px Helvetica}
+    p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #002891}
+    p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; text-align: center; font: 12.0px Helvetica; color: #999999}
+    span.s1 {color: #000000}
+    span.s2 {color: #002891}
+    span.s3 {color: #fc4904}
+  </style>
+</head>
+<body>
+<p class="p1"><b>Chicane Closure</b></p>
+<p class="p2"><br></p>
+<p class="p3">This Script enables you to measure the closure of the chicane magnets and proposes a new set of ratios which can then be specified within a knob.</p>
+<p class="p2"><br></p>
+<p class="p4"><b>Procedure</b></p>
+<ol>
+  <li style="margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica">Switch the beam to single shot mode</li>
+  <li style="margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica">Open the orbit correction application and view the horizontal Ring orbit</li>
+  <li style="margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica">Launch the chicane closure script if it isn't already running.</li>
+  <ul>
+    <li style="margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica">open a terminal and login as physics</li>
+    <li style="margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #002891"><span class="s1">type: </span><i>close_chicane_magnets</i></li>
+  </ul>
+  <li style="margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica">Select the <span class="s2"><i>Magnets</i></span> tab to view the present chicane magnet fields and the present scale factors which indicate the relative ratios used when applying field changes. Upon startup these scales are determined by the initial fields. You can edit these scales in the table if you desire to start from a different set of ratios.</li>
+  <li style="margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica">Go back to the <span class="s2"><i>Procedure</i></span> tab. In stage one, you will set the initial chicane magnet fields. The actual field change should be small but big enough that you will observe a meaningful orbit difference. <span class="s3">Warning, if the change is too big, the script will fail to yield a correct result.</span> The default change should be fine.</li>
+  <li style="margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica">Press the <span class="s2"><i>Run</i></span> button to apply the fields and move to the next stage.</li>
+  <li style="margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica">Circulate beam into the ring and make sure that the orbit is reasonable.</li>
+  <li style="margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica">Press the <span class="s2"><i>Run</i></span> button to take a snapshot of the orbit and move to the next stage.</li>
+  <li style="margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica">The chicane fields will be changed to another set of trial fields. Press the <span class="s2"><i>Run</i></span> button to apply these fields.</li>
+  <li style="margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica">Circulate beam into the ring and make sure that the orbit is reasonable.</li>
+  <li style="margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica">Press the <span class="s2"><i>Run</i></span> button to take a snapshot of the orbit and move to the next stage. This stage may take a couple minutes before it completes as it is processing the data and fitting the measured ripple to yield a set of proposed scales.</li>
+  <li style="margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica">Select the <span class="s2"><i>Ripple</i></span> tab to view the ripple that was measured.</li>
+  <li style="margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica">Select the <span class="s2"><i>Magnets</i></span> tab to view the report. It should show the field errors responsible for the ripple along with the proposed scales and the measured ripple RMS and the proposed RMS. The proposed RMS Fit should be significantly smaller than the measured RMS otherwise the fit won't be good.</li>
+  <li style="margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica">Press the <span class="s2"><i>Copy Report</i></span> button to copy this report to the clipboard and paste it into the logbook or a text editor or spreadsheet immediately to record the report.</li>
+  <li style="margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica">Select the <span class="s2"><i>Procedure</i></span> tab and press the <span class="s2"><i>Run</i></span> button to use the proposed scales for another experiment. Repeat the steps beginning with the setting the initial field. The measured ripple should be significantly smaller with the proposed scales.</li>
+  <li style="margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica">When you are satisfied with the results, you can create a new chicane knob that should be closed.</li>
+</ol>
+<br>
+  <div style="margin: 0.0px 0.0px 0.0px 0.0px; text-align: center; font: 12.0px Helvetica; color: #999999">Last Document Revision: March 23, 2007</div>
+  <div style="margin: 0.0px 0.0px 0.0px 0.0px; text-align: center; font: 12.0px Helvetica; color: #999999">Document Author: Tom Pelaia</div>
+</body>
+</html>
