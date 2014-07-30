@@ -113,14 +113,22 @@ public class GeneralTest {
         
         //saveResults(tracewinData.getFile() + ".out", dataOX);
         
-        System.out.printf("%s\n", probe.getComment());
+        System.out.printf("%s\t", probe.getComment());
         Column[] allCols = Column.values();
+        StringBuilder message = new StringBuilder();
+        boolean ok = true;
 		for (int j = 1; j < allCols.length; j++) {
 			double e = compare(dataOX[0], dataTW[0], dataOX[allCols[j].openxal], dataTW[allCols[j].tracewin]);
-			System.out.printf("%s: %E\n",allCols[j].name(), e);
-			assertTrue(allCols[j].name()+" not within the allowed error", e < allCols[j].allowedError);
+			//System.out.printf("%s: %E %c %E\n",allCols[j].name(), e, e < allCols[j].allowedError ? '<' : '>', allCols[j].allowedError);
+			System.out.printf("%E\t", e);
+			if (e >= allCols[j].allowedError) {
+				message.append(allCols[j].name()).append(" ");
+				ok = false;
+			}
 			//System.out.printf("%E %E\n",dataOX[allCols[j].openxal][0], dataTW[allCols[j].tracewin][0]);
 		}
+		System.out.println();
+		assertTrue(message.append("are not within the allowed error").toString(), ok);
 		
 		dataTW = null;
 		dataOX = null;
