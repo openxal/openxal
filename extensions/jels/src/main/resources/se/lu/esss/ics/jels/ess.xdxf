@@ -1,7 +1,7 @@
 <?xml version = '1.0' encoding = 'UTF-8'?>
 <xdxf xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
  	xsi:noNamespaceSchemaLocation="http://sourceforge.net/p/xaldev/openxal/ci/master/tree/core/resources/xal/schemas/xdxf.xsd?format=raw"
-	date="07.24.2014" id="ESS" len="596.6914855007044" pos="0.0" system="ESS" type="sequence" ver="">
+	date="07.30.2014" system="ESS" ver="">
 	<comboseq id="from-mebt">
 		<sequence id="mebt"/>
 		<sequence id="dtl"/>
@@ -20,6 +20,21 @@
                 <channel handle="fieldRB" settable="false" signal="QP1:B"/>
             </channelsuite>
             <ps main="QP1-PS"/>
+        </node>
+        <node id="BPM1" len="0.0" pos="0.2" type="BPM">
+            <attributes>
+                <bpm frequency="3.5221E8" length="1.0" orientation="1"/>
+            </attributes>
+            <channelsuite>
+                <channel handle="xAvg" settable="false" signal="BPM1:XAvg"/>
+                <channel handle="yAvg" settable="false" signal="BPM1:YAvg"/>
+                <channel handle="xTBT" settable="false" signal="BPM1:XTBT"/>
+                <channel handle="yTBT" settable="false" signal="BPM1:YTBT"/>
+                <channel handle="phaseAvg" settable="false" signal="BPM1:PhsAvg"/>
+                <channel handle="amplitudeAvg" settable="false" signal="BPM1:AmpAvg"/>
+                <channel handle="ampTBT" settable="false" signal="BPM1:AmpTBT"/>
+                <channel handle="phaseTBT" settable="false" signal="BPM1:PhsTBT"/>
+            </channelsuite>
         </node>
         <node id="TS1-VC" len="0.0" pos="0.2" type="DCV">
             <attributes>
@@ -60,6 +75,21 @@
                 <channel handle="fieldRB" settable="false" signal="QP3:B"/>
             </channelsuite>
             <ps main="QP3-PS"/>
+        </node>
+        <node id="BPM2" len="0.0" pos="0.39999999999999997" type="BPM">
+            <attributes>
+                <bpm frequency="3.5221E8" length="1.0" orientation="1"/>
+            </attributes>
+            <channelsuite>
+                <channel handle="xAvg" settable="false" signal="BPM2:XAvg"/>
+                <channel handle="yAvg" settable="false" signal="BPM2:YAvg"/>
+                <channel handle="xTBT" settable="false" signal="BPM2:XTBT"/>
+                <channel handle="yTBT" settable="false" signal="BPM2:YTBT"/>
+                <channel handle="phaseAvg" settable="false" signal="BPM2:PhsAvg"/>
+                <channel handle="amplitudeAvg" settable="false" signal="BPM2:AmpAvg"/>
+                <channel handle="ampTBT" settable="false" signal="BPM2:AmpTBT"/>
+                <channel handle="phaseTBT" settable="false" signal="BPM2:PhsTBT"/>
+            </channelsuite>
         </node>
         <node id="TS2-VC" len="0.0" pos="0.39999999999999997" type="DCV">
             <attributes>
@@ -117,6 +147,21 @@
                 <channel handle="fieldRB" settable="false" signal="QP5:B"/>
             </channelsuite>
             <ps main="QP5-PS"/>
+        </node>
+        <node id="BPM3" len="0.0" pos="0.75" type="BPM">
+            <attributes>
+                <bpm frequency="3.5221E8" length="1.0" orientation="1"/>
+            </attributes>
+            <channelsuite>
+                <channel handle="xAvg" settable="false" signal="BPM3:XAvg"/>
+                <channel handle="yAvg" settable="false" signal="BPM3:YAvg"/>
+                <channel handle="xTBT" settable="false" signal="BPM3:XTBT"/>
+                <channel handle="yTBT" settable="false" signal="BPM3:YTBT"/>
+                <channel handle="phaseAvg" settable="false" signal="BPM3:PhsAvg"/>
+                <channel handle="amplitudeAvg" settable="false" signal="BPM3:AmpAvg"/>
+                <channel handle="ampTBT" settable="false" signal="BPM3:AmpTBT"/>
+                <channel handle="phaseTBT" settable="false" signal="BPM3:PhsTBT"/>
+            </channelsuite>
         </node>
         <node id="TS3-VC" len="0.0" pos="0.75" type="DCV">
             <attributes>
@@ -185,6 +230,21 @@
             </channelsuite>
             <ps main="QP8-PS"/>
         </node>
+        <node id="BPM4" len="0.0" pos="2.090000000039998" type="BPM">
+            <attributes>
+                <bpm frequency="3.5221E8" length="1.0" orientation="1"/>
+            </attributes>
+            <channelsuite>
+                <channel handle="xAvg" settable="false" signal="BPM4:XAvg"/>
+                <channel handle="yAvg" settable="false" signal="BPM4:YAvg"/>
+                <channel handle="xTBT" settable="false" signal="BPM4:XTBT"/>
+                <channel handle="yTBT" settable="false" signal="BPM4:YTBT"/>
+                <channel handle="phaseAvg" settable="false" signal="BPM4:PhsAvg"/>
+                <channel handle="amplitudeAvg" settable="false" signal="BPM4:AmpAvg"/>
+                <channel handle="ampTBT" settable="false" signal="BPM4:AmpTBT"/>
+                <channel handle="phaseTBT" settable="false" signal="BPM4:PhsTBT"/>
+            </channelsuite>
+        </node>
         <node id="TS4-VC" len="0.0" pos="2.090000000039998" type="DCV">
             <attributes>
                 <magnet bendAngle="0.0" dfltMagFld="0.0" dipoleEntrRotAngle="0.0" dipoleExitRotAngle="0.0" dipoleQuadComponent="0.0" len="0.0" pathLength="0.0" polarity="1.0"/>
@@ -224,6 +284,21 @@
                 <channel handle="fieldRB" settable="false" signal="QP10:B"/>
             </channelsuite>
             <ps main="QP10-PS"/>
+        </node>
+        <node id="BPM5" len="0.0" pos="2.2900000000499974" type="BPM">
+            <attributes>
+                <bpm frequency="3.5221E8" length="1.0" orientation="1"/>
+            </attributes>
+            <channelsuite>
+                <channel handle="xAvg" settable="false" signal="BPM5:XAvg"/>
+                <channel handle="yAvg" settable="false" signal="BPM5:YAvg"/>
+                <channel handle="xTBT" settable="false" signal="BPM5:XTBT"/>
+                <channel handle="yTBT" settable="false" signal="BPM5:YTBT"/>
+                <channel handle="phaseAvg" settable="false" signal="BPM5:PhsAvg"/>
+                <channel handle="amplitudeAvg" settable="false" signal="BPM5:AmpAvg"/>
+                <channel handle="ampTBT" settable="false" signal="BPM5:AmpTBT"/>
+                <channel handle="phaseTBT" settable="false" signal="BPM5:PhsTBT"/>
+            </channelsuite>
         </node>
         <node id="TS5-VC" len="0.0" pos="2.2900000000499974" type="DCV">
             <attributes>
@@ -265,6 +340,21 @@
             </channelsuite>
             <ps main="QP12-PS"/>
         </node>
+        <node id="BPM6" len="0.0" pos="2.490000000049997" type="BPM">
+            <attributes>
+                <bpm frequency="3.5221E8" length="1.0" orientation="1"/>
+            </attributes>
+            <channelsuite>
+                <channel handle="xAvg" settable="false" signal="BPM6:XAvg"/>
+                <channel handle="yAvg" settable="false" signal="BPM6:YAvg"/>
+                <channel handle="xTBT" settable="false" signal="BPM6:XTBT"/>
+                <channel handle="yTBT" settable="false" signal="BPM6:YTBT"/>
+                <channel handle="phaseAvg" settable="false" signal="BPM6:PhsAvg"/>
+                <channel handle="amplitudeAvg" settable="false" signal="BPM6:AmpAvg"/>
+                <channel handle="ampTBT" settable="false" signal="BPM6:AmpTBT"/>
+                <channel handle="phaseTBT" settable="false" signal="BPM6:PhsTBT"/>
+            </channelsuite>
+        </node>
         <node id="TS6-VC" len="0.0" pos="2.490000000049997" type="DCV">
             <attributes>
                 <magnet bendAngle="0.0" dfltMagFld="0.0" dipoleEntrRotAngle="0.0" dipoleExitRotAngle="0.0" dipoleQuadComponent="0.0" len="0.0" pathLength="0.0" polarity="1.0"/>
@@ -304,6 +394,21 @@
                 <channel handle="fieldRB" settable="false" signal="QP14:B"/>
             </channelsuite>
             <ps main="QP14-PS"/>
+        </node>
+        <node id="BPM7" len="0.0" pos="2.940000000049997" type="BPM">
+            <attributes>
+                <bpm frequency="3.5221E8" length="1.0" orientation="1"/>
+            </attributes>
+            <channelsuite>
+                <channel handle="xAvg" settable="false" signal="BPM7:XAvg"/>
+                <channel handle="yAvg" settable="false" signal="BPM7:YAvg"/>
+                <channel handle="xTBT" settable="false" signal="BPM7:XTBT"/>
+                <channel handle="yTBT" settable="false" signal="BPM7:YTBT"/>
+                <channel handle="phaseAvg" settable="false" signal="BPM7:PhsAvg"/>
+                <channel handle="amplitudeAvg" settable="false" signal="BPM7:AmpAvg"/>
+                <channel handle="ampTBT" settable="false" signal="BPM7:AmpTBT"/>
+                <channel handle="phaseTBT" settable="false" signal="BPM7:PhsTBT"/>
+            </channelsuite>
         </node>
         <node id="TS7-VC" len="0.0" pos="2.940000000049997" type="DCV">
             <attributes>
@@ -362,6 +467,21 @@
             </channelsuite>
             <ps main="QP16-PS"/>
         </node>
+        <node id="BPM8" len="0.0" pos="3.2900000000499965" type="BPM">
+            <attributes>
+                <bpm frequency="3.5221E8" length="1.0" orientation="1"/>
+            </attributes>
+            <channelsuite>
+                <channel handle="xAvg" settable="false" signal="BPM8:XAvg"/>
+                <channel handle="yAvg" settable="false" signal="BPM8:YAvg"/>
+                <channel handle="xTBT" settable="false" signal="BPM8:XTBT"/>
+                <channel handle="yTBT" settable="false" signal="BPM8:YTBT"/>
+                <channel handle="phaseAvg" settable="false" signal="BPM8:PhsAvg"/>
+                <channel handle="amplitudeAvg" settable="false" signal="BPM8:AmpAvg"/>
+                <channel handle="ampTBT" settable="false" signal="BPM8:AmpTBT"/>
+                <channel handle="phaseTBT" settable="false" signal="BPM8:PhsTBT"/>
+            </channelsuite>
+        </node>
         <node id="TS8-VC" len="0.0" pos="3.2900000000499965" type="DCV">
             <attributes>
                 <magnet bendAngle="0.0" dfltMagFld="0.0" dipoleEntrRotAngle="0.0" dipoleExitRotAngle="0.0" dipoleQuadComponent="0.0" len="0.0" pathLength="0.0" polarity="1.0"/>
@@ -402,6 +522,21 @@
             </channelsuite>
             <ps main="QP18-PS"/>
         </node>
+        <node id="BPM9" len="0.0" pos="3.4900000000599958" type="BPM">
+            <attributes>
+                <bpm frequency="3.5221E8" length="1.0" orientation="1"/>
+            </attributes>
+            <channelsuite>
+                <channel handle="xAvg" settable="false" signal="BPM9:XAvg"/>
+                <channel handle="yAvg" settable="false" signal="BPM9:YAvg"/>
+                <channel handle="xTBT" settable="false" signal="BPM9:XTBT"/>
+                <channel handle="yTBT" settable="false" signal="BPM9:YTBT"/>
+                <channel handle="phaseAvg" settable="false" signal="BPM9:PhsAvg"/>
+                <channel handle="amplitudeAvg" settable="false" signal="BPM9:AmpAvg"/>
+                <channel handle="ampTBT" settable="false" signal="BPM9:AmpTBT"/>
+                <channel handle="phaseTBT" settable="false" signal="BPM9:PhsTBT"/>
+            </channelsuite>
+        </node>
         <node id="TS9-VC" len="0.0" pos="3.4900000000599958" type="DCV">
             <attributes>
                 <magnet bendAngle="0.0" dfltMagFld="0.0" dipoleEntrRotAngle="0.0" dipoleExitRotAngle="0.0" dipoleQuadComponent="0.0" len="0.0" pathLength="0.0" polarity="1.0"/>
@@ -441,6 +576,21 @@
                 <channel handle="fieldRB" settable="false" signal="QP20:B"/>
             </channelsuite>
             <ps main="QP20-PS"/>
+        </node>
+        <node id="BPM10" len="0.0" pos="3.6900000000599955" type="BPM">
+            <attributes>
+                <bpm frequency="3.5221E8" length="1.0" orientation="1"/>
+            </attributes>
+            <channelsuite>
+                <channel handle="xAvg" settable="false" signal="BPM10:XAvg"/>
+                <channel handle="yAvg" settable="false" signal="BPM10:YAvg"/>
+                <channel handle="xTBT" settable="false" signal="BPM10:XTBT"/>
+                <channel handle="yTBT" settable="false" signal="BPM10:YTBT"/>
+                <channel handle="phaseAvg" settable="false" signal="BPM10:PhsAvg"/>
+                <channel handle="amplitudeAvg" settable="false" signal="BPM10:AmpAvg"/>
+                <channel handle="ampTBT" settable="false" signal="BPM10:AmpTBT"/>
+                <channel handle="phaseTBT" settable="false" signal="BPM10:PhsTBT"/>
+            </channelsuite>
         </node>
         <node id="TS10-VC" len="0.0" pos="3.6900000000599955" type="DCV">
             <attributes>
@@ -1173,6 +1323,21 @@
                 <ps main="DTL19B-PS"/>
             </node>
         </sequence>
+        <node id="BPM11" len="0.0" pos="1.7192970000000005" type="BPM">
+            <attributes>
+                <bpm frequency="3.5221E8" length="1.0" orientation="1"/>
+            </attributes>
+            <channelsuite>
+                <channel handle="xAvg" settable="false" signal="BPM11:XAvg"/>
+                <channel handle="yAvg" settable="false" signal="BPM11:YAvg"/>
+                <channel handle="xTBT" settable="false" signal="BPM11:XTBT"/>
+                <channel handle="yTBT" settable="false" signal="BPM11:YTBT"/>
+                <channel handle="phaseAvg" settable="false" signal="BPM11:PhsAvg"/>
+                <channel handle="amplitudeAvg" settable="false" signal="BPM11:AmpAvg"/>
+                <channel handle="ampTBT" settable="false" signal="BPM11:AmpTBT"/>
+                <channel handle="phaseTBT" settable="false" signal="BPM11:PhsTBT"/>
+            </channelsuite>
+        </node>
         <sequence id="DTL20" len="0.10535" pos="1.7192970000000005" type="RF">
             <attributes>
                 <rfcavity STFCoefs="0.123776,0.0,0.0,0.0" STF_endCoefs="0.123776,0.0,0.0,0.0" TTFCoefs="0.123776,0.871051,-0.238095,-0.163851" TTF_endCoefs="0.123776,0.871051,-0.238095,-0.163851" amp="4.980234224886981" ampFactor="1.0" freq="352.21" phase="-31.89" phaseOffset="0.0" qLoaded="0.0" structureMode="0.0" structureTTF="1.0"/>
@@ -1893,6 +2058,21 @@
                 <ps main="DTL39B-PS"/>
             </node>
         </sequence>
+        <node id="BPM12" len="0.0" pos="4.152796" type="BPM">
+            <attributes>
+                <bpm frequency="3.5221E8" length="1.0" orientation="1"/>
+            </attributes>
+            <channelsuite>
+                <channel handle="xAvg" settable="false" signal="BPM12:XAvg"/>
+                <channel handle="yAvg" settable="false" signal="BPM12:YAvg"/>
+                <channel handle="xTBT" settable="false" signal="BPM12:XTBT"/>
+                <channel handle="yTBT" settable="false" signal="BPM12:YTBT"/>
+                <channel handle="phaseAvg" settable="false" signal="BPM12:PhsAvg"/>
+                <channel handle="amplitudeAvg" settable="false" signal="BPM12:AmpAvg"/>
+                <channel handle="ampTBT" settable="false" signal="BPM12:AmpTBT"/>
+                <channel handle="phaseTBT" settable="false" signal="BPM12:PhsTBT"/>
+            </channelsuite>
+        </node>
         <sequence id="DTL40" len="0.140047" pos="4.152796" type="RF">
             <attributes>
                 <rfcavity STFCoefs="0.164507,0.0,0.0,0.0" STF_endCoefs="0.164507,0.0,0.0,0.0" TTFCoefs="0.164507,0.907965,-0.174971,-0.139967" TTF_endCoefs="0.164507,0.907965,-0.174971,-0.139967" amp="4.230952893907458" ampFactor="1.0" freq="352.21" phase="-28.61" phaseOffset="0.0" qLoaded="0.0" structureMode="0.0" structureTTF="1.0"/>
@@ -2613,6 +2793,21 @@
                 <ps main="DTL59B-PS"/>
             </node>
         </sequence>
+        <node id="BPM13" len="0.0" pos="7.291820000000001" type="BPM">
+            <attributes>
+                <bpm frequency="3.5221E8" length="1.0" orientation="1"/>
+            </attributes>
+            <channelsuite>
+                <channel handle="xAvg" settable="false" signal="BPM13:XAvg"/>
+                <channel handle="yAvg" settable="false" signal="BPM13:YAvg"/>
+                <channel handle="xTBT" settable="false" signal="BPM13:XTBT"/>
+                <channel handle="yTBT" settable="false" signal="BPM13:YTBT"/>
+                <channel handle="phaseAvg" settable="false" signal="BPM13:PhsAvg"/>
+                <channel handle="amplitudeAvg" settable="false" signal="BPM13:AmpAvg"/>
+                <channel handle="ampTBT" settable="false" signal="BPM13:AmpTBT"/>
+                <channel handle="phaseTBT" settable="false" signal="BPM13:PhsTBT"/>
+            </channelsuite>
+        </node>
         <sequence id="DTL60" len="0.173361" pos="7.291820000000001" type="RF">
             <attributes>
                 <rfcavity STFCoefs="0.206602,0.0,0.0,0.0" STF_endCoefs="0.206602,0.0,0.0,0.0" TTFCoefs="0.206602,0.906912,-0.178381,-0.148088" TTF_endCoefs="0.206602,0.906912,-0.178381,-0.148088" amp="3.7026519543789003" ampFactor="1.0" freq="352.21" phase="-30.0" phaseOffset="0.0" qLoaded="0.0" structureMode="0.0" structureTTF="1.0"/>
@@ -3061,6 +3256,21 @@
                 <ps main="DTL71B-PS"/>
             </node>
         </sequence>
+        <node id="BPM14" len="0.0" pos="9.502342000000002" type="BPM">
+            <attributes>
+                <bpm frequency="3.5221E8" length="1.0" orientation="1"/>
+            </attributes>
+            <channelsuite>
+                <channel handle="xAvg" settable="false" signal="BPM14:XAvg"/>
+                <channel handle="yAvg" settable="false" signal="BPM14:YAvg"/>
+                <channel handle="xTBT" settable="false" signal="BPM14:XTBT"/>
+                <channel handle="yTBT" settable="false" signal="BPM14:YTBT"/>
+                <channel handle="phaseAvg" settable="false" signal="BPM14:PhsAvg"/>
+                <channel handle="amplitudeAvg" settable="false" signal="BPM14:AmpAvg"/>
+                <channel handle="ampTBT" settable="false" signal="BPM14:AmpTBT"/>
+                <channel handle="phaseTBT" settable="false" signal="BPM14:PhsTBT"/>
+            </channelsuite>
+        </node>
         <sequence id="DTL72" len="0.19546000000000002" pos="9.502342000000002" type="RF">
             <attributes>
                 <rfcavity STFCoefs="0.229692,0.0,0.0,0.0" STF_endCoefs="0.229692,0.0,0.0,0.0" TTFCoefs="0.229692,0.892917,-0.20438,-0.166406" TTF_endCoefs="0.229692,0.892917,-0.20438,-0.166406" amp="4.772236509200014" ampFactor="1.0" freq="352.21" phase="-25.5" phaseOffset="0.0" qLoaded="0.0" structureMode="0.0" structureTTF="1.0"/>
@@ -3509,6 +3719,21 @@
                 <ps main="DTL83B-PS"/>
             </node>
         </sequence>
+        <node id="BPM15" len="0.0" pos="11.966541000000001" type="BPM">
+            <attributes>
+                <bpm frequency="3.5221E8" length="1.0" orientation="1"/>
+            </attributes>
+            <channelsuite>
+                <channel handle="xAvg" settable="false" signal="BPM15:XAvg"/>
+                <channel handle="yAvg" settable="false" signal="BPM15:YAvg"/>
+                <channel handle="xTBT" settable="false" signal="BPM15:XTBT"/>
+                <channel handle="yTBT" settable="false" signal="BPM15:YTBT"/>
+                <channel handle="phaseAvg" settable="false" signal="BPM15:PhsAvg"/>
+                <channel handle="amplitudeAvg" settable="false" signal="BPM15:AmpAvg"/>
+                <channel handle="ampTBT" settable="false" signal="BPM15:AmpTBT"/>
+                <channel handle="phaseTBT" settable="false" signal="BPM15:PhsTBT"/>
+            </channelsuite>
+        </node>
         <sequence id="DTL84" len="0.216923" pos="11.966541000000001" type="RF">
             <attributes>
                 <rfcavity STFCoefs="0.254909,0.0,0.0,0.0" STF_endCoefs="0.254909,0.0,0.0,0.0" TTFCoefs="0.254909,0.883933,-0.221536,-0.180331" TTF_endCoefs="0.254909,0.883933,-0.221536,-0.180331" amp="4.423911201738805" ampFactor="1.0" freq="352.21" phase="-25.5" phaseOffset="0.0" qLoaded="0.0" structureMode="0.0" structureTTF="1.0"/>
@@ -3957,6 +4182,21 @@
                 <ps main="DTL95B-PS"/>
             </node>
         </sequence>
+        <node id="BPM16" len="0.0" pos="14.678927" type="BPM">
+            <attributes>
+                <bpm frequency="3.5221E8" length="1.0" orientation="1"/>
+            </attributes>
+            <channelsuite>
+                <channel handle="xAvg" settable="false" signal="BPM16:XAvg"/>
+                <channel handle="yAvg" settable="false" signal="BPM16:YAvg"/>
+                <channel handle="xTBT" settable="false" signal="BPM16:XTBT"/>
+                <channel handle="yTBT" settable="false" signal="BPM16:YTBT"/>
+                <channel handle="phaseAvg" settable="false" signal="BPM16:PhsAvg"/>
+                <channel handle="amplitudeAvg" settable="false" signal="BPM16:AmpAvg"/>
+                <channel handle="ampTBT" settable="false" signal="BPM16:AmpTBT"/>
+                <channel handle="phaseTBT" settable="false" signal="BPM16:PhsTBT"/>
+            </channelsuite>
+        </node>
         <sequence id="DTL96" len="0.243143" pos="14.678927" type="RF">
             <attributes>
                 <rfcavity STFCoefs="0.279121,0.0,0.0,0.0" STF_endCoefs="0.279121,0.0,0.0,0.0" TTFCoefs="0.279121,0.860346,-0.265191,-0.21035" TTF_endCoefs="0.279121,0.860346,-0.265191,-0.21035" amp="4.083203196965257" ampFactor="1.0" freq="352.21" phase="-34.0" phaseOffset="0.0" qLoaded="0.0" structureMode="0.0" structureTTF="1.0"/>
@@ -4337,6 +4577,21 @@
                 <ps main="DTL105B-PS"/>
             </node>
         </sequence>
+        <node id="BPM17" len="0.0" pos="17.123677999999995" type="BPM">
+            <attributes>
+                <bpm frequency="3.5221E8" length="1.0" orientation="1"/>
+            </attributes>
+            <channelsuite>
+                <channel handle="xAvg" settable="false" signal="BPM17:XAvg"/>
+                <channel handle="yAvg" settable="false" signal="BPM17:YAvg"/>
+                <channel handle="xTBT" settable="false" signal="BPM17:XTBT"/>
+                <channel handle="yTBT" settable="false" signal="BPM17:YTBT"/>
+                <channel handle="phaseAvg" settable="false" signal="BPM17:PhsAvg"/>
+                <channel handle="amplitudeAvg" settable="false" signal="BPM17:AmpAvg"/>
+                <channel handle="ampTBT" settable="false" signal="BPM17:AmpTBT"/>
+                <channel handle="phaseTBT" settable="false" signal="BPM17:PhsTBT"/>
+            </channelsuite>
+        </node>
         <sequence id="DTL106" len="0.25196" pos="17.123677999999995" type="RF">
             <attributes>
                 <rfcavity STFCoefs="0.296073,0.0,0.0,0.0" STF_endCoefs="0.296073,0.0,0.0,0.0" TTFCoefs="0.296073,0.858965,-0.268051,-0.213534" TTF_endCoefs="0.296073,0.858965,-0.268051,-0.213534" amp="3.864470685653842" ampFactor="1.0" freq="352.21" phase="-25.5" phaseOffset="0.0" qLoaded="0.0" structureMode="0.0" structureTTF="1.0"/>
@@ -4717,6 +4972,21 @@
                 <ps main="DTL115B-PS"/>
             </node>
         </sequence>
+        <node id="BPM18" len="0.0" pos="19.71458399999999" type="BPM">
+            <attributes>
+                <bpm frequency="3.5221E8" length="1.0" orientation="1"/>
+            </attributes>
+            <channelsuite>
+                <channel handle="xAvg" settable="false" signal="BPM18:XAvg"/>
+                <channel handle="yAvg" settable="false" signal="BPM18:YAvg"/>
+                <channel handle="xTBT" settable="false" signal="BPM18:XTBT"/>
+                <channel handle="yTBT" settable="false" signal="BPM18:YTBT"/>
+                <channel handle="phaseAvg" settable="false" signal="BPM18:PhsAvg"/>
+                <channel handle="amplitudeAvg" settable="false" signal="BPM18:AmpAvg"/>
+                <channel handle="ampTBT" settable="false" signal="BPM18:AmpTBT"/>
+                <channel handle="phaseTBT" settable="false" signal="BPM18:PhsTBT"/>
+            </channelsuite>
+        </node>
         <sequence id="DTL116" len="0.267702" pos="19.71458399999999" type="RF">
             <attributes>
                 <rfcavity STFCoefs="0.314571,0.0,0.0,0.0" STF_endCoefs="0.314571,0.0,0.0,0.0" TTFCoefs="0.314571,0.844283,-0.294998,-0.231134" TTF_endCoefs="0.314571,0.844283,-0.294998,-0.231134" amp="3.6938779424158574" ampFactor="1.0" freq="352.21" phase="-25.5" phaseOffset="0.0" qLoaded="0.0" structureMode="0.0" structureTTF="1.0"/>
@@ -5097,6 +5367,21 @@
                 <ps main="DTL125B-PS"/>
             </node>
         </sequence>
+        <node id="BPM19" len="0.0" pos="22.453655999999995" type="BPM">
+            <attributes>
+                <bpm frequency="3.5221E8" length="1.0" orientation="1"/>
+            </attributes>
+            <channelsuite>
+                <channel handle="xAvg" settable="false" signal="BPM19:XAvg"/>
+                <channel handle="yAvg" settable="false" signal="BPM19:YAvg"/>
+                <channel handle="xTBT" settable="false" signal="BPM19:XTBT"/>
+                <channel handle="yTBT" settable="false" signal="BPM19:YTBT"/>
+                <channel handle="phaseAvg" settable="false" signal="BPM19:PhsAvg"/>
+                <channel handle="amplitudeAvg" settable="false" signal="BPM19:AmpAvg"/>
+                <channel handle="ampTBT" settable="false" signal="BPM19:AmpTBT"/>
+                <channel handle="phaseTBT" settable="false" signal="BPM19:PhsTBT"/>
+            </channelsuite>
+        </node>
         <sequence id="DTL126" len="0.28941500000000003" pos="22.453655999999995" type="RF">
             <attributes>
                 <rfcavity STFCoefs="0.332241,0.0,0.0,0.0" STF_endCoefs="0.332241,0.0,0.0,0.0" TTFCoefs="0.332241,0.813287,-0.350755,-0.262946" TTF_endCoefs="0.332241,0.813287,-0.350755,-0.262946" amp="3.4532808233756107" ampFactor="1.0" freq="352.21" phase="-34.0" phaseOffset="0.0" qLoaded="0.0" structureMode="0.0" structureTTF="1.0"/>
@@ -5477,6 +5762,21 @@
                 <ps main="DTL135B-PS"/>
             </node>
         </sequence>
+        <node id="BPM20" len="0.0" pos="25.345582" type="BPM">
+            <attributes>
+                <bpm frequency="3.5221E8" length="1.0" orientation="1"/>
+            </attributes>
+            <channelsuite>
+                <channel handle="xAvg" settable="false" signal="BPM20:XAvg"/>
+                <channel handle="yAvg" settable="false" signal="BPM20:YAvg"/>
+                <channel handle="xTBT" settable="false" signal="BPM20:XTBT"/>
+                <channel handle="yTBT" settable="false" signal="BPM20:YTBT"/>
+                <channel handle="phaseAvg" settable="false" signal="BPM20:PhsAvg"/>
+                <channel handle="amplitudeAvg" settable="false" signal="BPM20:AmpAvg"/>
+                <channel handle="ampTBT" settable="false" signal="BPM20:AmpTBT"/>
+                <channel handle="phaseTBT" settable="false" signal="BPM20:PhsTBT"/>
+            </channelsuite>
+        </node>
         <sequence id="DTL136" len="0.29543200000000003" pos="25.345582" type="RF">
             <attributes>
                 <rfcavity STFCoefs="0.347156,0.0,0.0,0.0" STF_endCoefs="0.347156,0.0,0.0,0.0" TTFCoefs="0.347156,0.805743,-0.363867,-0.268545" TTF_endCoefs="0.347156,0.805743,-0.363867,-0.268545" amp="3.3570656033718445" ampFactor="1.0" freq="352.21" phase="-25.5" phaseOffset="0.0" qLoaded="0.0" structureMode="0.0" structureTTF="1.0"/>
@@ -5789,6 +6089,21 @@
                 <ps main="DTL143B-PS"/>
             </node>
         </sequence>
+        <node id="BPM21" len="0.0" pos="27.748087" type="BPM">
+            <attributes>
+                <bpm frequency="3.5221E8" length="1.0" orientation="1"/>
+            </attributes>
+            <channelsuite>
+                <channel handle="xAvg" settable="false" signal="BPM21:XAvg"/>
+                <channel handle="yAvg" settable="false" signal="BPM21:YAvg"/>
+                <channel handle="xTBT" settable="false" signal="BPM21:XTBT"/>
+                <channel handle="yTBT" settable="false" signal="BPM21:YTBT"/>
+                <channel handle="phaseAvg" settable="false" signal="BPM21:PhsAvg"/>
+                <channel handle="amplitudeAvg" settable="false" signal="BPM21:AmpAvg"/>
+                <channel handle="ampTBT" settable="false" signal="BPM21:AmpTBT"/>
+                <channel handle="phaseTBT" settable="false" signal="BPM21:PhsTBT"/>
+            </channelsuite>
+        </node>
         <sequence id="DTL144" len="0.306522" pos="27.748087" type="RF">
             <attributes>
                 <rfcavity STFCoefs="0.360187,0.0,0.0,0.0" STF_endCoefs="0.360187,0.0,0.0,0.0" TTFCoefs="0.360187,0.792637,-0.387146,-0.280604" TTF_endCoefs="0.360187,0.792637,-0.387146,-0.280604" amp="3.2596424339497028" ampFactor="1.0" freq="352.21" phase="-25.5" phaseOffset="0.0" qLoaded="0.0" structureMode="0.0" structureTTF="1.0"/>
@@ -6101,6 +6416,21 @@
                 <ps main="DTL151B-PS"/>
             </node>
         </sequence>
+        <node id="BPM22" len="0.0" pos="30.234105000000003" type="BPM">
+            <attributes>
+                <bpm frequency="3.5221E8" length="1.0" orientation="1"/>
+            </attributes>
+            <channelsuite>
+                <channel handle="xAvg" settable="false" signal="BPM22:XAvg"/>
+                <channel handle="yAvg" settable="false" signal="BPM22:YAvg"/>
+                <channel handle="xTBT" settable="false" signal="BPM22:XTBT"/>
+                <channel handle="yTBT" settable="false" signal="BPM22:YTBT"/>
+                <channel handle="phaseAvg" settable="false" signal="BPM22:PhsAvg"/>
+                <channel handle="amplitudeAvg" settable="false" signal="BPM22:AmpAvg"/>
+                <channel handle="ampTBT" settable="false" signal="BPM22:AmpTBT"/>
+                <channel handle="phaseTBT" settable="false" signal="BPM22:PhsTBT"/>
+            </channelsuite>
+        </node>
         <sequence id="DTL152" len="0.31368900000000005" pos="30.234105000000003" type="RF">
             <attributes>
                 <rfcavity STFCoefs="0.372765,0.0,0.0,0.0" STF_endCoefs="0.372765,0.0,0.0,0.0" TTFCoefs="0.372765,0.787373,-0.396605,-0.285949" TTF_endCoefs="0.372765,0.787373,-0.396605,-0.285949" amp="3.213620734466405" ampFactor="1.0" freq="352.21" phase="-30.0" phaseOffset="0.0" qLoaded="0.0" structureMode="0.0" structureTTF="1.0"/>
@@ -6413,6 +6743,21 @@
                 <ps main="DTL159B-PS"/>
             </node>
         </sequence>
+        <node id="BPM23" len="0.0" pos="32.811839000000006" type="BPM">
+            <attributes>
+                <bpm frequency="3.5221E8" length="1.0" orientation="1"/>
+            </attributes>
+            <channelsuite>
+                <channel handle="xAvg" settable="false" signal="BPM23:XAvg"/>
+                <channel handle="yAvg" settable="false" signal="BPM23:YAvg"/>
+                <channel handle="xTBT" settable="false" signal="BPM23:XTBT"/>
+                <channel handle="yTBT" settable="false" signal="BPM23:YTBT"/>
+                <channel handle="phaseAvg" settable="false" signal="BPM23:PhsAvg"/>
+                <channel handle="amplitudeAvg" settable="false" signal="BPM23:AmpAvg"/>
+                <channel handle="ampTBT" settable="false" signal="BPM23:AmpTBT"/>
+                <channel handle="phaseTBT" settable="false" signal="BPM23:PhsTBT"/>
+            </channelsuite>
+        </node>
         <sequence id="DTL160" len="0.32624400000000003" pos="32.811839000000006" type="RF">
             <attributes>
                 <rfcavity STFCoefs="0.383364,0.0,0.0,0.0" STF_endCoefs="0.383364,0.0,0.0,0.0" TTFCoefs="0.383364,0.767817,-0.43071,-0.30098" TTF_endCoefs="0.383364,0.767817,-0.43071,-0.30098" amp="3.182558913452826" ampFactor="1.0" freq="352.21" phase="-25.5" phaseOffset="0.0" qLoaded="0.0" structureMode="0.0" structureTTF="1.0"/>
@@ -6725,6 +7070,21 @@
                 <ps main="DTL167B-PS"/>
             </node>
         </sequence>
+        <node id="BPM24" len="0.0" pos="35.458366000000005" type="BPM">
+            <attributes>
+                <bpm frequency="3.5221E8" length="1.0" orientation="1"/>
+            </attributes>
+            <channelsuite>
+                <channel handle="xAvg" settable="false" signal="BPM24:XAvg"/>
+                <channel handle="yAvg" settable="false" signal="BPM24:YAvg"/>
+                <channel handle="xTBT" settable="false" signal="BPM24:XTBT"/>
+                <channel handle="yTBT" settable="false" signal="BPM24:YTBT"/>
+                <channel handle="phaseAvg" settable="false" signal="BPM24:PhsAvg"/>
+                <channel handle="amplitudeAvg" settable="false" signal="BPM24:AmpAvg"/>
+                <channel handle="ampTBT" settable="false" signal="BPM24:AmpTBT"/>
+                <channel handle="phaseTBT" settable="false" signal="BPM24:PhsTBT"/>
+            </channelsuite>
+        </node>
         <sequence id="DTL168" len="0.336626" pos="35.458366000000005" type="RF">
             <attributes>
                 <rfcavity STFCoefs="0.395563,0.0,0.0,0.0" STF_endCoefs="0.395563,0.0,0.0,0.0" TTFCoefs="0.395563,0.754261,-0.454217,-0.31078" TTF_endCoefs="0.395563,0.754261,-0.454217,-0.31078" amp="3.0969357874880816" ampFactor="1.0" freq="352.21" phase="-25.5" phaseOffset="0.0" qLoaded="0.0" structureMode="0.0" structureTTF="1.0"/>
@@ -7037,6 +7397,21 @@
                 <ps main="DTL175B-PS"/>
             </node>
         </sequence>
+        <node id="BPM25" len="0.0" pos="38.17514900000001" type="BPM">
+            <attributes>
+                <bpm frequency="3.5221E8" length="1.0" orientation="1"/>
+            </attributes>
+            <channelsuite>
+                <channel handle="xAvg" settable="false" signal="BPM25:XAvg"/>
+                <channel handle="yAvg" settable="false" signal="BPM25:YAvg"/>
+                <channel handle="xTBT" settable="false" signal="BPM25:XTBT"/>
+                <channel handle="yTBT" settable="false" signal="BPM25:YTBT"/>
+                <channel handle="phaseAvg" settable="false" signal="BPM25:PhsAvg"/>
+                <channel handle="amplitudeAvg" settable="false" signal="BPM25:AmpAvg"/>
+                <channel handle="ampTBT" settable="false" signal="BPM25:AmpTBT"/>
+                <channel handle="phaseTBT" settable="false" signal="BPM25:PhsTBT"/>
+            </channelsuite>
+        </node>
         <sequence id="DTL176" len="0.34071100000000004" pos="38.17514900000001" type="RF">
             <attributes>
                 <rfcavity STFCoefs="0.407182,0.0,0.0,0.0" STF_endCoefs="0.407182,0.0,0.0,0.0" TTFCoefs="0.407182,0.755187,-0.452884,-0.311376" TTF_endCoefs="0.407182,0.755187,-0.452884,-0.311376" amp="3.088957624332397" ampFactor="1.0" freq="352.21" phase="-37.5" phaseOffset="0.0" qLoaded="0.0" structureMode="0.0" structureTTF="1.0"/>
@@ -7218,6 +7593,21 @@
                 </attributes>
             </node>
         </sequence>
+        <node id="BPM26" len="0.0" pos="4.900002973794043" type="BPM">
+            <attributes>
+                <bpm frequency="3.5221E8" length="1.0" orientation="1"/>
+            </attributes>
+            <channelsuite>
+                <channel handle="xAvg" settable="false" signal="BPM26:XAvg"/>
+                <channel handle="yAvg" settable="false" signal="BPM26:YAvg"/>
+                <channel handle="xTBT" settable="false" signal="BPM26:XTBT"/>
+                <channel handle="yTBT" settable="false" signal="BPM26:YTBT"/>
+                <channel handle="phaseAvg" settable="false" signal="BPM26:PhsAvg"/>
+                <channel handle="amplitudeAvg" settable="false" signal="BPM26:AmpAvg"/>
+                <channel handle="ampTBT" settable="false" signal="BPM26:AmpTBT"/>
+                <channel handle="phaseTBT" settable="false" signal="BPM26:PhsTBT"/>
+            </channelsuite>
+        </node>
         <node id="QP25" len="0.31" pos="5.055002973794044" type="Q">
             <attributes>
                 <magnet bendAngle="0.0" dfltMagFld="4.91604" dipoleEntrRotAngle="0.0" dipoleExitRotAngle="0.0" dipoleQuadComponent="0.0" len="0.31" pathLength="0.0" polarity="1.0"/>
@@ -7326,6 +7716,21 @@
                 </attributes>
             </node>
         </sequence>
+        <node id="BPM27" len="0.0" pos="9.160005947588088" type="BPM">
+            <attributes>
+                <bpm frequency="3.5221E8" length="1.0" orientation="1"/>
+            </attributes>
+            <channelsuite>
+                <channel handle="xAvg" settable="false" signal="BPM27:XAvg"/>
+                <channel handle="yAvg" settable="false" signal="BPM27:YAvg"/>
+                <channel handle="xTBT" settable="false" signal="BPM27:XTBT"/>
+                <channel handle="yTBT" settable="false" signal="BPM27:YTBT"/>
+                <channel handle="phaseAvg" settable="false" signal="BPM27:PhsAvg"/>
+                <channel handle="amplitudeAvg" settable="false" signal="BPM27:AmpAvg"/>
+                <channel handle="ampTBT" settable="false" signal="BPM27:AmpTBT"/>
+                <channel handle="phaseTBT" settable="false" signal="BPM27:PhsTBT"/>
+            </channelsuite>
+        </node>
         <node id="QP27" len="0.31" pos="9.315005947588087" type="Q">
             <attributes>
                 <magnet bendAngle="0.0" dfltMagFld="4.43403" dipoleEntrRotAngle="0.0" dipoleExitRotAngle="0.0" dipoleQuadComponent="0.0" len="0.31" pathLength="0.0" polarity="1.0"/>
@@ -7434,6 +7839,21 @@
                 </attributes>
             </node>
         </sequence>
+        <node id="BPM28" len="0.0" pos="13.420008921382134" type="BPM">
+            <attributes>
+                <bpm frequency="3.5221E8" length="1.0" orientation="1"/>
+            </attributes>
+            <channelsuite>
+                <channel handle="xAvg" settable="false" signal="BPM28:XAvg"/>
+                <channel handle="yAvg" settable="false" signal="BPM28:YAvg"/>
+                <channel handle="xTBT" settable="false" signal="BPM28:XTBT"/>
+                <channel handle="yTBT" settable="false" signal="BPM28:YTBT"/>
+                <channel handle="phaseAvg" settable="false" signal="BPM28:PhsAvg"/>
+                <channel handle="amplitudeAvg" settable="false" signal="BPM28:AmpAvg"/>
+                <channel handle="ampTBT" settable="false" signal="BPM28:AmpTBT"/>
+                <channel handle="phaseTBT" settable="false" signal="BPM28:PhsTBT"/>
+            </channelsuite>
+        </node>
         <node id="QP29" len="0.31" pos="13.575008921382134" type="Q">
             <attributes>
                 <magnet bendAngle="0.0" dfltMagFld="4.35422" dipoleEntrRotAngle="0.0" dipoleExitRotAngle="0.0" dipoleQuadComponent="0.0" len="0.31" pathLength="0.0" polarity="1.0"/>
@@ -7542,6 +7962,21 @@
                 </attributes>
             </node>
         </sequence>
+        <node id="BPM29" len="0.0" pos="17.68001189517618" type="BPM">
+            <attributes>
+                <bpm frequency="3.5221E8" length="1.0" orientation="1"/>
+            </attributes>
+            <channelsuite>
+                <channel handle="xAvg" settable="false" signal="BPM29:XAvg"/>
+                <channel handle="yAvg" settable="false" signal="BPM29:YAvg"/>
+                <channel handle="xTBT" settable="false" signal="BPM29:XTBT"/>
+                <channel handle="yTBT" settable="false" signal="BPM29:YTBT"/>
+                <channel handle="phaseAvg" settable="false" signal="BPM29:PhsAvg"/>
+                <channel handle="amplitudeAvg" settable="false" signal="BPM29:AmpAvg"/>
+                <channel handle="ampTBT" settable="false" signal="BPM29:AmpTBT"/>
+                <channel handle="phaseTBT" settable="false" signal="BPM29:PhsTBT"/>
+            </channelsuite>
+        </node>
         <node id="QP31" len="0.31" pos="17.83501189517618" type="Q">
             <attributes>
                 <magnet bendAngle="0.0" dfltMagFld="4.2961" dipoleEntrRotAngle="0.0" dipoleExitRotAngle="0.0" dipoleQuadComponent="0.0" len="0.31" pathLength="0.0" polarity="1.0"/>
@@ -7650,6 +8085,21 @@
                 </attributes>
             </node>
         </sequence>
+        <node id="BPM30" len="0.0" pos="21.94001486897022" type="BPM">
+            <attributes>
+                <bpm frequency="3.5221E8" length="1.0" orientation="1"/>
+            </attributes>
+            <channelsuite>
+                <channel handle="xAvg" settable="false" signal="BPM30:XAvg"/>
+                <channel handle="yAvg" settable="false" signal="BPM30:YAvg"/>
+                <channel handle="xTBT" settable="false" signal="BPM30:XTBT"/>
+                <channel handle="yTBT" settable="false" signal="BPM30:YTBT"/>
+                <channel handle="phaseAvg" settable="false" signal="BPM30:PhsAvg"/>
+                <channel handle="amplitudeAvg" settable="false" signal="BPM30:AmpAvg"/>
+                <channel handle="ampTBT" settable="false" signal="BPM30:AmpTBT"/>
+                <channel handle="phaseTBT" settable="false" signal="BPM30:PhsTBT"/>
+            </channelsuite>
+        </node>
         <node id="QP33" len="0.31" pos="22.09501486897022" type="Q">
             <attributes>
                 <magnet bendAngle="0.0" dfltMagFld="4.24712" dipoleEntrRotAngle="0.0" dipoleExitRotAngle="0.0" dipoleQuadComponent="0.0" len="0.31" pathLength="0.0" polarity="1.0"/>
@@ -7758,6 +8208,21 @@
                 </attributes>
             </node>
         </sequence>
+        <node id="BPM31" len="0.0" pos="26.20001784276426" type="BPM">
+            <attributes>
+                <bpm frequency="3.5221E8" length="1.0" orientation="1"/>
+            </attributes>
+            <channelsuite>
+                <channel handle="xAvg" settable="false" signal="BPM31:XAvg"/>
+                <channel handle="yAvg" settable="false" signal="BPM31:YAvg"/>
+                <channel handle="xTBT" settable="false" signal="BPM31:XTBT"/>
+                <channel handle="yTBT" settable="false" signal="BPM31:YTBT"/>
+                <channel handle="phaseAvg" settable="false" signal="BPM31:PhsAvg"/>
+                <channel handle="amplitudeAvg" settable="false" signal="BPM31:AmpAvg"/>
+                <channel handle="ampTBT" settable="false" signal="BPM31:AmpTBT"/>
+                <channel handle="phaseTBT" settable="false" signal="BPM31:PhsTBT"/>
+            </channelsuite>
+        </node>
         <node id="QP35" len="0.31" pos="26.355017842764262" type="Q">
             <attributes>
                 <magnet bendAngle="0.0" dfltMagFld="4.20906" dipoleEntrRotAngle="0.0" dipoleExitRotAngle="0.0" dipoleQuadComponent="0.0" len="0.31" pathLength="0.0" polarity="1.0"/>
@@ -7866,6 +8331,21 @@
                 </attributes>
             </node>
         </sequence>
+        <node id="BPM32" len="0.0" pos="30.460020816558302" type="BPM">
+            <attributes>
+                <bpm frequency="3.5221E8" length="1.0" orientation="1"/>
+            </attributes>
+            <channelsuite>
+                <channel handle="xAvg" settable="false" signal="BPM32:XAvg"/>
+                <channel handle="yAvg" settable="false" signal="BPM32:YAvg"/>
+                <channel handle="xTBT" settable="false" signal="BPM32:XTBT"/>
+                <channel handle="yTBT" settable="false" signal="BPM32:YTBT"/>
+                <channel handle="phaseAvg" settable="false" signal="BPM32:PhsAvg"/>
+                <channel handle="amplitudeAvg" settable="false" signal="BPM32:AmpAvg"/>
+                <channel handle="ampTBT" settable="false" signal="BPM32:AmpTBT"/>
+                <channel handle="phaseTBT" settable="false" signal="BPM32:PhsTBT"/>
+            </channelsuite>
+        </node>
         <node id="QP37" len="0.31" pos="30.615020816558303" type="Q">
             <attributes>
                 <magnet bendAngle="0.0" dfltMagFld="4.22769" dipoleEntrRotAngle="0.0" dipoleExitRotAngle="0.0" dipoleQuadComponent="0.0" len="0.31" pathLength="0.0" polarity="1.0"/>
@@ -7974,6 +8454,21 @@
                 </attributes>
             </node>
         </sequence>
+        <node id="BPM33" len="0.0" pos="34.72002379035235" type="BPM">
+            <attributes>
+                <bpm frequency="3.5221E8" length="1.0" orientation="1"/>
+            </attributes>
+            <channelsuite>
+                <channel handle="xAvg" settable="false" signal="BPM33:XAvg"/>
+                <channel handle="yAvg" settable="false" signal="BPM33:YAvg"/>
+                <channel handle="xTBT" settable="false" signal="BPM33:XTBT"/>
+                <channel handle="yTBT" settable="false" signal="BPM33:YTBT"/>
+                <channel handle="phaseAvg" settable="false" signal="BPM33:PhsAvg"/>
+                <channel handle="amplitudeAvg" settable="false" signal="BPM33:AmpAvg"/>
+                <channel handle="ampTBT" settable="false" signal="BPM33:AmpTBT"/>
+                <channel handle="phaseTBT" settable="false" signal="BPM33:PhsTBT"/>
+            </channelsuite>
+        </node>
         <node id="QP39" len="0.31" pos="34.87502379035235" type="Q">
             <attributes>
                 <magnet bendAngle="0.0" dfltMagFld="4.23853" dipoleEntrRotAngle="0.0" dipoleExitRotAngle="0.0" dipoleQuadComponent="0.0" len="0.31" pathLength="0.0" polarity="1.0"/>
@@ -8082,6 +8577,21 @@
                 </attributes>
             </node>
         </sequence>
+        <node id="BPM34" len="0.0" pos="38.980026764146395" type="BPM">
+            <attributes>
+                <bpm frequency="3.5221E8" length="1.0" orientation="1"/>
+            </attributes>
+            <channelsuite>
+                <channel handle="xAvg" settable="false" signal="BPM34:XAvg"/>
+                <channel handle="yAvg" settable="false" signal="BPM34:YAvg"/>
+                <channel handle="xTBT" settable="false" signal="BPM34:XTBT"/>
+                <channel handle="yTBT" settable="false" signal="BPM34:YTBT"/>
+                <channel handle="phaseAvg" settable="false" signal="BPM34:PhsAvg"/>
+                <channel handle="amplitudeAvg" settable="false" signal="BPM34:AmpAvg"/>
+                <channel handle="ampTBT" settable="false" signal="BPM34:AmpTBT"/>
+                <channel handle="phaseTBT" settable="false" signal="BPM34:PhsTBT"/>
+            </channelsuite>
+        </node>
         <node id="QP41" len="0.31" pos="39.135026764146396" type="Q">
             <attributes>
                 <magnet bendAngle="0.0" dfltMagFld="4.25718" dipoleEntrRotAngle="0.0" dipoleExitRotAngle="0.0" dipoleQuadComponent="0.0" len="0.31" pathLength="0.0" polarity="1.0"/>
@@ -8190,6 +8700,21 @@
                 </attributes>
             </node>
         </sequence>
+        <node id="BPM35" len="0.0" pos="43.24002973794044" type="BPM">
+            <attributes>
+                <bpm frequency="3.5221E8" length="1.0" orientation="1"/>
+            </attributes>
+            <channelsuite>
+                <channel handle="xAvg" settable="false" signal="BPM35:XAvg"/>
+                <channel handle="yAvg" settable="false" signal="BPM35:YAvg"/>
+                <channel handle="xTBT" settable="false" signal="BPM35:XTBT"/>
+                <channel handle="yTBT" settable="false" signal="BPM35:YTBT"/>
+                <channel handle="phaseAvg" settable="false" signal="BPM35:PhsAvg"/>
+                <channel handle="amplitudeAvg" settable="false" signal="BPM35:AmpAvg"/>
+                <channel handle="ampTBT" settable="false" signal="BPM35:AmpTBT"/>
+                <channel handle="phaseTBT" settable="false" signal="BPM35:PhsTBT"/>
+            </channelsuite>
+        </node>
         <node id="QP43" len="0.31" pos="43.39502973794044" type="Q">
             <attributes>
                 <magnet bendAngle="0.0" dfltMagFld="4.28209" dipoleEntrRotAngle="0.0" dipoleExitRotAngle="0.0" dipoleQuadComponent="0.0" len="0.31" pathLength="0.0" polarity="1.0"/>
@@ -8298,6 +8823,21 @@
                 </attributes>
             </node>
         </sequence>
+        <node id="BPM36" len="0.0" pos="47.500032711734484" type="BPM">
+            <attributes>
+                <bpm frequency="3.5221E8" length="1.0" orientation="1"/>
+            </attributes>
+            <channelsuite>
+                <channel handle="xAvg" settable="false" signal="BPM36:XAvg"/>
+                <channel handle="yAvg" settable="false" signal="BPM36:YAvg"/>
+                <channel handle="xTBT" settable="false" signal="BPM36:XTBT"/>
+                <channel handle="yTBT" settable="false" signal="BPM36:YTBT"/>
+                <channel handle="phaseAvg" settable="false" signal="BPM36:PhsAvg"/>
+                <channel handle="amplitudeAvg" settable="false" signal="BPM36:AmpAvg"/>
+                <channel handle="ampTBT" settable="false" signal="BPM36:AmpTBT"/>
+                <channel handle="phaseTBT" settable="false" signal="BPM36:PhsTBT"/>
+            </channelsuite>
+        </node>
         <node id="QP45" len="0.31" pos="47.655032711734485" type="Q">
             <attributes>
                 <magnet bendAngle="0.0" dfltMagFld="4.2995" dipoleEntrRotAngle="0.0" dipoleExitRotAngle="0.0" dipoleQuadComponent="0.0" len="0.31" pathLength="0.0" polarity="1.0"/>
@@ -8406,6 +8946,21 @@
                 </attributes>
             </node>
         </sequence>
+        <node id="BPM37" len="0.0" pos="51.76003568552853" type="BPM">
+            <attributes>
+                <bpm frequency="3.5221E8" length="1.0" orientation="1"/>
+            </attributes>
+            <channelsuite>
+                <channel handle="xAvg" settable="false" signal="BPM37:XAvg"/>
+                <channel handle="yAvg" settable="false" signal="BPM37:YAvg"/>
+                <channel handle="xTBT" settable="false" signal="BPM37:XTBT"/>
+                <channel handle="yTBT" settable="false" signal="BPM37:YTBT"/>
+                <channel handle="phaseAvg" settable="false" signal="BPM37:PhsAvg"/>
+                <channel handle="amplitudeAvg" settable="false" signal="BPM37:AmpAvg"/>
+                <channel handle="ampTBT" settable="false" signal="BPM37:AmpTBT"/>
+                <channel handle="phaseTBT" settable="false" signal="BPM37:PhsTBT"/>
+            </channelsuite>
+        </node>
         <node id="QP47" len="0.31" pos="51.91503568552853" type="Q">
             <attributes>
                 <magnet bendAngle="0.0" dfltMagFld="3.47505" dipoleEntrRotAngle="0.0" dipoleExitRotAngle="0.0" dipoleQuadComponent="0.0" len="0.31" pathLength="0.0" polarity="1.0"/>
@@ -8519,6 +9074,21 @@
         <attributes>
             <sequence predecessors="spoke"/>
         </attributes>
+        <node id="BPM38" len="0.0" pos="0.19697" type="BPM">
+            <attributes>
+                <bpm frequency="7.0442E8" length="1.0" orientation="1"/>
+            </attributes>
+            <channelsuite>
+                <channel handle="xAvg" settable="false" signal="BPM38:XAvg"/>
+                <channel handle="yAvg" settable="false" signal="BPM38:YAvg"/>
+                <channel handle="xTBT" settable="false" signal="BPM38:XTBT"/>
+                <channel handle="yTBT" settable="false" signal="BPM38:YTBT"/>
+                <channel handle="phaseAvg" settable="false" signal="BPM38:PhsAvg"/>
+                <channel handle="amplitudeAvg" settable="false" signal="BPM38:AmpAvg"/>
+                <channel handle="ampTBT" settable="false" signal="BPM38:AmpTBT"/>
+                <channel handle="phaseTBT" settable="false" signal="BPM38:PhsTBT"/>
+            </channelsuite>
+        </node>
         <node id="QP49" len="0.41000000000000003" pos="0.40197000000000005" type="Q">
             <attributes>
                 <magnet bendAngle="0.0" dfltMagFld="3.42596" dipoleEntrRotAngle="0.0" dipoleExitRotAngle="0.0" dipoleQuadComponent="0.0" len="0.41000000000000003" pathLength="0.0" polarity="1.0"/>
@@ -8739,6 +9309,21 @@
                 </attributes>
             </node>
         </sequence>
+        <node id="BPM39" len="0.0" pos="8.716966769768039" type="BPM">
+            <attributes>
+                <bpm frequency="7.0442E8" length="1.0" orientation="1"/>
+            </attributes>
+            <channelsuite>
+                <channel handle="xAvg" settable="false" signal="BPM39:XAvg"/>
+                <channel handle="yAvg" settable="false" signal="BPM39:YAvg"/>
+                <channel handle="xTBT" settable="false" signal="BPM39:XTBT"/>
+                <channel handle="yTBT" settable="false" signal="BPM39:YTBT"/>
+                <channel handle="phaseAvg" settable="false" signal="BPM39:PhsAvg"/>
+                <channel handle="amplitudeAvg" settable="false" signal="BPM39:AmpAvg"/>
+                <channel handle="ampTBT" settable="false" signal="BPM39:AmpTBT"/>
+                <channel handle="phaseTBT" settable="false" signal="BPM39:PhsTBT"/>
+            </channelsuite>
+        </node>
         <node id="QP51" len="0.41000000000000003" pos="8.921966769768039" type="Q">
             <attributes>
                 <magnet bendAngle="0.0" dfltMagFld="3.61552" dipoleEntrRotAngle="0.0" dipoleExitRotAngle="0.0" dipoleQuadComponent="0.0" len="0.41000000000000003" pathLength="0.0" polarity="1.0"/>
@@ -8959,6 +9544,21 @@
                 </attributes>
             </node>
         </sequence>
+        <node id="BPM40" len="0.0" pos="17.23696353953607" type="BPM">
+            <attributes>
+                <bpm frequency="7.0442E8" length="1.0" orientation="1"/>
+            </attributes>
+            <channelsuite>
+                <channel handle="xAvg" settable="false" signal="BPM40:XAvg"/>
+                <channel handle="yAvg" settable="false" signal="BPM40:YAvg"/>
+                <channel handle="xTBT" settable="false" signal="BPM40:XTBT"/>
+                <channel handle="yTBT" settable="false" signal="BPM40:YTBT"/>
+                <channel handle="phaseAvg" settable="false" signal="BPM40:PhsAvg"/>
+                <channel handle="amplitudeAvg" settable="false" signal="BPM40:AmpAvg"/>
+                <channel handle="ampTBT" settable="false" signal="BPM40:AmpTBT"/>
+                <channel handle="phaseTBT" settable="false" signal="BPM40:PhsTBT"/>
+            </channelsuite>
+        </node>
         <node id="QP53" len="0.41000000000000003" pos="17.44196353953607" type="Q">
             <attributes>
                 <magnet bendAngle="0.0" dfltMagFld="3.79032" dipoleEntrRotAngle="0.0" dipoleExitRotAngle="0.0" dipoleQuadComponent="0.0" len="0.41000000000000003" pathLength="0.0" polarity="1.0"/>
@@ -9179,6 +9779,21 @@
                 </attributes>
             </node>
         </sequence>
+        <node id="BPM41" len="0.0" pos="25.7569603093041" type="BPM">
+            <attributes>
+                <bpm frequency="7.0442E8" length="1.0" orientation="1"/>
+            </attributes>
+            <channelsuite>
+                <channel handle="xAvg" settable="false" signal="BPM41:XAvg"/>
+                <channel handle="yAvg" settable="false" signal="BPM41:YAvg"/>
+                <channel handle="xTBT" settable="false" signal="BPM41:XTBT"/>
+                <channel handle="yTBT" settable="false" signal="BPM41:YTBT"/>
+                <channel handle="phaseAvg" settable="false" signal="BPM41:PhsAvg"/>
+                <channel handle="amplitudeAvg" settable="false" signal="BPM41:AmpAvg"/>
+                <channel handle="ampTBT" settable="false" signal="BPM41:AmpTBT"/>
+                <channel handle="phaseTBT" settable="false" signal="BPM41:PhsTBT"/>
+            </channelsuite>
+        </node>
         <node id="QP55" len="0.41000000000000003" pos="25.9619603093041" type="Q">
             <attributes>
                 <magnet bendAngle="0.0" dfltMagFld="4.03196" dipoleEntrRotAngle="0.0" dipoleExitRotAngle="0.0" dipoleQuadComponent="0.0" len="0.41000000000000003" pathLength="0.0" polarity="1.0"/>
@@ -9399,6 +10014,21 @@
                 </attributes>
             </node>
         </sequence>
+        <node id="BPM42" len="0.0" pos="34.27695707907214" type="BPM">
+            <attributes>
+                <bpm frequency="7.0442E8" length="1.0" orientation="1"/>
+            </attributes>
+            <channelsuite>
+                <channel handle="xAvg" settable="false" signal="BPM42:XAvg"/>
+                <channel handle="yAvg" settable="false" signal="BPM42:YAvg"/>
+                <channel handle="xTBT" settable="false" signal="BPM42:XTBT"/>
+                <channel handle="yTBT" settable="false" signal="BPM42:YTBT"/>
+                <channel handle="phaseAvg" settable="false" signal="BPM42:PhsAvg"/>
+                <channel handle="amplitudeAvg" settable="false" signal="BPM42:AmpAvg"/>
+                <channel handle="ampTBT" settable="false" signal="BPM42:AmpTBT"/>
+                <channel handle="phaseTBT" settable="false" signal="BPM42:PhsTBT"/>
+            </channelsuite>
+        </node>
         <node id="QP57" len="0.41000000000000003" pos="34.48195707907214" type="Q">
             <attributes>
                 <magnet bendAngle="0.0" dfltMagFld="4.33297" dipoleEntrRotAngle="0.0" dipoleExitRotAngle="0.0" dipoleQuadComponent="0.0" len="0.41000000000000003" pathLength="0.0" polarity="1.0"/>
@@ -9619,6 +10249,21 @@
                 </attributes>
             </node>
         </sequence>
+        <node id="BPM43" len="0.0" pos="42.796953848840175" type="BPM">
+            <attributes>
+                <bpm frequency="7.0442E8" length="1.0" orientation="1"/>
+            </attributes>
+            <channelsuite>
+                <channel handle="xAvg" settable="false" signal="BPM43:XAvg"/>
+                <channel handle="yAvg" settable="false" signal="BPM43:YAvg"/>
+                <channel handle="xTBT" settable="false" signal="BPM43:XTBT"/>
+                <channel handle="yTBT" settable="false" signal="BPM43:YTBT"/>
+                <channel handle="phaseAvg" settable="false" signal="BPM43:PhsAvg"/>
+                <channel handle="amplitudeAvg" settable="false" signal="BPM43:AmpAvg"/>
+                <channel handle="ampTBT" settable="false" signal="BPM43:AmpTBT"/>
+                <channel handle="phaseTBT" settable="false" signal="BPM43:PhsTBT"/>
+            </channelsuite>
+        </node>
         <node id="QP59" len="0.41000000000000003" pos="43.001953848840174" type="Q">
             <attributes>
                 <magnet bendAngle="0.0" dfltMagFld="4.64928" dipoleEntrRotAngle="0.0" dipoleExitRotAngle="0.0" dipoleQuadComponent="0.0" len="0.41000000000000003" pathLength="0.0" polarity="1.0"/>
@@ -9839,6 +10484,21 @@
                 </attributes>
             </node>
         </sequence>
+        <node id="BPM44" len="0.0" pos="51.31695061860821" type="BPM">
+            <attributes>
+                <bpm frequency="7.0442E8" length="1.0" orientation="1"/>
+            </attributes>
+            <channelsuite>
+                <channel handle="xAvg" settable="false" signal="BPM44:XAvg"/>
+                <channel handle="yAvg" settable="false" signal="BPM44:YAvg"/>
+                <channel handle="xTBT" settable="false" signal="BPM44:XTBT"/>
+                <channel handle="yTBT" settable="false" signal="BPM44:YTBT"/>
+                <channel handle="phaseAvg" settable="false" signal="BPM44:PhsAvg"/>
+                <channel handle="amplitudeAvg" settable="false" signal="BPM44:AmpAvg"/>
+                <channel handle="ampTBT" settable="false" signal="BPM44:AmpTBT"/>
+                <channel handle="phaseTBT" settable="false" signal="BPM44:PhsTBT"/>
+            </channelsuite>
+        </node>
         <node id="QP61" len="0.41000000000000003" pos="51.52195061860821" type="Q">
             <attributes>
                 <magnet bendAngle="0.0" dfltMagFld="4.75345" dipoleEntrRotAngle="0.0" dipoleExitRotAngle="0.0" dipoleQuadComponent="0.0" len="0.41000000000000003" pathLength="0.0" polarity="1.0"/>
@@ -10059,6 +10719,21 @@
                 </attributes>
             </node>
         </sequence>
+        <node id="BPM45" len="0.0" pos="59.836947388376245" type="BPM">
+            <attributes>
+                <bpm frequency="7.0442E8" length="1.0" orientation="1"/>
+            </attributes>
+            <channelsuite>
+                <channel handle="xAvg" settable="false" signal="BPM45:XAvg"/>
+                <channel handle="yAvg" settable="false" signal="BPM45:YAvg"/>
+                <channel handle="xTBT" settable="false" signal="BPM45:XTBT"/>
+                <channel handle="yTBT" settable="false" signal="BPM45:YTBT"/>
+                <channel handle="phaseAvg" settable="false" signal="BPM45:PhsAvg"/>
+                <channel handle="amplitudeAvg" settable="false" signal="BPM45:AmpAvg"/>
+                <channel handle="ampTBT" settable="false" signal="BPM45:AmpTBT"/>
+                <channel handle="phaseTBT" settable="false" signal="BPM45:PhsTBT"/>
+            </channelsuite>
+        </node>
         <node id="QP63" len="0.41000000000000003" pos="60.041947388376244" type="Q">
             <attributes>
                 <magnet bendAngle="0.0" dfltMagFld="4.61548" dipoleEntrRotAngle="0.0" dipoleExitRotAngle="0.0" dipoleQuadComponent="0.0" len="0.41000000000000003" pathLength="0.0" polarity="1.0"/>
@@ -10279,6 +10954,21 @@
                 </attributes>
             </node>
         </sequence>
+        <node id="BPM46" len="0.0" pos="68.35694415814427" type="BPM">
+            <attributes>
+                <bpm frequency="7.0442E8" length="1.0" orientation="1"/>
+            </attributes>
+            <channelsuite>
+                <channel handle="xAvg" settable="false" signal="BPM46:XAvg"/>
+                <channel handle="yAvg" settable="false" signal="BPM46:YAvg"/>
+                <channel handle="xTBT" settable="false" signal="BPM46:XTBT"/>
+                <channel handle="yTBT" settable="false" signal="BPM46:YTBT"/>
+                <channel handle="phaseAvg" settable="false" signal="BPM46:PhsAvg"/>
+                <channel handle="amplitudeAvg" settable="false" signal="BPM46:AmpAvg"/>
+                <channel handle="ampTBT" settable="false" signal="BPM46:AmpTBT"/>
+                <channel handle="phaseTBT" settable="false" signal="BPM46:PhsTBT"/>
+            </channelsuite>
+        </node>
         <node id="QP65" len="0.41000000000000003" pos="68.56194415814427" type="Q">
             <attributes>
                 <magnet bendAngle="0.0" dfltMagFld="4.34084" dipoleEntrRotAngle="0.0" dipoleExitRotAngle="0.0" dipoleQuadComponent="0.0" len="0.41000000000000003" pathLength="0.0" polarity="1.0"/>
@@ -10504,6 +11194,21 @@
         <attributes>
             <sequence predecessors="mb"/>
         </attributes>
+        <node id="BPM47" len="0.0" pos="0.196975" type="BPM">
+            <attributes>
+                <bpm frequency="7.0442E8" length="1.0" orientation="1"/>
+            </attributes>
+            <channelsuite>
+                <channel handle="xAvg" settable="false" signal="BPM47:XAvg"/>
+                <channel handle="yAvg" settable="false" signal="BPM47:YAvg"/>
+                <channel handle="xTBT" settable="false" signal="BPM47:XTBT"/>
+                <channel handle="yTBT" settable="false" signal="BPM47:YTBT"/>
+                <channel handle="phaseAvg" settable="false" signal="BPM47:PhsAvg"/>
+                <channel handle="amplitudeAvg" settable="false" signal="BPM47:AmpAvg"/>
+                <channel handle="ampTBT" settable="false" signal="BPM47:AmpTBT"/>
+                <channel handle="phaseTBT" settable="false" signal="BPM47:PhsTBT"/>
+            </channelsuite>
+        </node>
         <node id="QP67" len="0.41000000000000003" pos="0.401975" type="Q">
             <attributes>
                 <magnet bendAngle="0.0" dfltMagFld="4.42231" dipoleEntrRotAngle="0.0" dipoleExitRotAngle="0.0" dipoleQuadComponent="0.0" len="0.41000000000000003" pathLength="0.0" polarity="1.0"/>
@@ -10704,6 +11409,21 @@
                 </attributes>
             </node>
         </sequence>
+        <node id="BPM48" len="0.0" pos="8.716978858209592" type="BPM">
+            <attributes>
+                <bpm frequency="7.0442E8" length="1.0" orientation="1"/>
+            </attributes>
+            <channelsuite>
+                <channel handle="xAvg" settable="false" signal="BPM48:XAvg"/>
+                <channel handle="yAvg" settable="false" signal="BPM48:YAvg"/>
+                <channel handle="xTBT" settable="false" signal="BPM48:XTBT"/>
+                <channel handle="yTBT" settable="false" signal="BPM48:YTBT"/>
+                <channel handle="phaseAvg" settable="false" signal="BPM48:PhsAvg"/>
+                <channel handle="amplitudeAvg" settable="false" signal="BPM48:AmpAvg"/>
+                <channel handle="ampTBT" settable="false" signal="BPM48:AmpTBT"/>
+                <channel handle="phaseTBT" settable="false" signal="BPM48:PhsTBT"/>
+            </channelsuite>
+        </node>
         <node id="QP69" len="0.41000000000000003" pos="8.921978858209592" type="Q">
             <attributes>
                 <magnet bendAngle="0.0" dfltMagFld="4.66419" dipoleEntrRotAngle="0.0" dipoleExitRotAngle="0.0" dipoleQuadComponent="0.0" len="0.41000000000000003" pathLength="0.0" polarity="1.0"/>
@@ -10904,6 +11624,21 @@
                 </attributes>
             </node>
         </sequence>
+        <node id="BPM49" len="0.0" pos="17.23698271641918" type="BPM">
+            <attributes>
+                <bpm frequency="7.0442E8" length="1.0" orientation="1"/>
+            </attributes>
+            <channelsuite>
+                <channel handle="xAvg" settable="false" signal="BPM49:XAvg"/>
+                <channel handle="yAvg" settable="false" signal="BPM49:YAvg"/>
+                <channel handle="xTBT" settable="false" signal="BPM49:XTBT"/>
+                <channel handle="yTBT" settable="false" signal="BPM49:YTBT"/>
+                <channel handle="phaseAvg" settable="false" signal="BPM49:PhsAvg"/>
+                <channel handle="amplitudeAvg" settable="false" signal="BPM49:AmpAvg"/>
+                <channel handle="ampTBT" settable="false" signal="BPM49:AmpTBT"/>
+                <channel handle="phaseTBT" settable="false" signal="BPM49:PhsTBT"/>
+            </channelsuite>
+        </node>
         <node id="QP71" len="0.41000000000000003" pos="17.44198271641918" type="Q">
             <attributes>
                 <magnet bendAngle="0.0" dfltMagFld="4.67069" dipoleEntrRotAngle="0.0" dipoleExitRotAngle="0.0" dipoleQuadComponent="0.0" len="0.41000000000000003" pathLength="0.0" polarity="1.0"/>
@@ -11104,6 +11839,21 @@
                 </attributes>
             </node>
         </sequence>
+        <node id="BPM50" len="0.0" pos="25.75698657462877" type="BPM">
+            <attributes>
+                <bpm frequency="7.0442E8" length="1.0" orientation="1"/>
+            </attributes>
+            <channelsuite>
+                <channel handle="xAvg" settable="false" signal="BPM50:XAvg"/>
+                <channel handle="yAvg" settable="false" signal="BPM50:YAvg"/>
+                <channel handle="xTBT" settable="false" signal="BPM50:XTBT"/>
+                <channel handle="yTBT" settable="false" signal="BPM50:YTBT"/>
+                <channel handle="phaseAvg" settable="false" signal="BPM50:PhsAvg"/>
+                <channel handle="amplitudeAvg" settable="false" signal="BPM50:AmpAvg"/>
+                <channel handle="ampTBT" settable="false" signal="BPM50:AmpTBT"/>
+                <channel handle="phaseTBT" settable="false" signal="BPM50:PhsTBT"/>
+            </channelsuite>
+        </node>
         <node id="QP73" len="0.41000000000000003" pos="25.961986574628767" type="Q">
             <attributes>
                 <magnet bendAngle="0.0" dfltMagFld="4.65116" dipoleEntrRotAngle="0.0" dipoleExitRotAngle="0.0" dipoleQuadComponent="0.0" len="0.41000000000000003" pathLength="0.0" polarity="1.0"/>
@@ -11304,6 +12054,21 @@
                 </attributes>
             </node>
         </sequence>
+        <node id="BPM51" len="0.0" pos="34.27699043283836" type="BPM">
+            <attributes>
+                <bpm frequency="7.0442E8" length="1.0" orientation="1"/>
+            </attributes>
+            <channelsuite>
+                <channel handle="xAvg" settable="false" signal="BPM51:XAvg"/>
+                <channel handle="yAvg" settable="false" signal="BPM51:YAvg"/>
+                <channel handle="xTBT" settable="false" signal="BPM51:XTBT"/>
+                <channel handle="yTBT" settable="false" signal="BPM51:YTBT"/>
+                <channel handle="phaseAvg" settable="false" signal="BPM51:PhsAvg"/>
+                <channel handle="amplitudeAvg" settable="false" signal="BPM51:AmpAvg"/>
+                <channel handle="ampTBT" settable="false" signal="BPM51:AmpTBT"/>
+                <channel handle="phaseTBT" settable="false" signal="BPM51:PhsTBT"/>
+            </channelsuite>
+        </node>
         <node id="QP75" len="0.41000000000000003" pos="34.48199043283836" type="Q">
             <attributes>
                 <magnet bendAngle="0.0" dfltMagFld="4.61144" dipoleEntrRotAngle="0.0" dipoleExitRotAngle="0.0" dipoleQuadComponent="0.0" len="0.41000000000000003" pathLength="0.0" polarity="1.0"/>
@@ -11504,6 +12269,21 @@
                 </attributes>
             </node>
         </sequence>
+        <node id="BPM52" len="0.0" pos="42.79699429104794" type="BPM">
+            <attributes>
+                <bpm frequency="7.0442E8" length="1.0" orientation="1"/>
+            </attributes>
+            <channelsuite>
+                <channel handle="xAvg" settable="false" signal="BPM52:XAvg"/>
+                <channel handle="yAvg" settable="false" signal="BPM52:YAvg"/>
+                <channel handle="xTBT" settable="false" signal="BPM52:XTBT"/>
+                <channel handle="yTBT" settable="false" signal="BPM52:YTBT"/>
+                <channel handle="phaseAvg" settable="false" signal="BPM52:PhsAvg"/>
+                <channel handle="amplitudeAvg" settable="false" signal="BPM52:AmpAvg"/>
+                <channel handle="ampTBT" settable="false" signal="BPM52:AmpTBT"/>
+                <channel handle="phaseTBT" settable="false" signal="BPM52:PhsTBT"/>
+            </channelsuite>
+        </node>
         <node id="QP77" len="0.41000000000000003" pos="43.001994291047936" type="Q">
             <attributes>
                 <magnet bendAngle="0.0" dfltMagFld="4.55819" dipoleEntrRotAngle="0.0" dipoleExitRotAngle="0.0" dipoleQuadComponent="0.0" len="0.41000000000000003" pathLength="0.0" polarity="1.0"/>
@@ -11704,6 +12484,21 @@
                 </attributes>
             </node>
         </sequence>
+        <node id="BPM53" len="0.0" pos="51.316998149257515" type="BPM">
+            <attributes>
+                <bpm frequency="7.0442E8" length="1.0" orientation="1"/>
+            </attributes>
+            <channelsuite>
+                <channel handle="xAvg" settable="false" signal="BPM53:XAvg"/>
+                <channel handle="yAvg" settable="false" signal="BPM53:YAvg"/>
+                <channel handle="xTBT" settable="false" signal="BPM53:XTBT"/>
+                <channel handle="yTBT" settable="false" signal="BPM53:YTBT"/>
+                <channel handle="phaseAvg" settable="false" signal="BPM53:PhsAvg"/>
+                <channel handle="amplitudeAvg" settable="false" signal="BPM53:AmpAvg"/>
+                <channel handle="ampTBT" settable="false" signal="BPM53:AmpTBT"/>
+                <channel handle="phaseTBT" settable="false" signal="BPM53:PhsTBT"/>
+            </channelsuite>
+        </node>
         <node id="QP79" len="0.41000000000000003" pos="51.52199814925751" type="Q">
             <attributes>
                 <magnet bendAngle="0.0" dfltMagFld="4.49554" dipoleEntrRotAngle="0.0" dipoleExitRotAngle="0.0" dipoleQuadComponent="0.0" len="0.41000000000000003" pathLength="0.0" polarity="1.0"/>
@@ -11904,6 +12699,21 @@
                 </attributes>
             </node>
         </sequence>
+        <node id="BPM54" len="0.0" pos="59.83700200746709" type="BPM">
+            <attributes>
+                <bpm frequency="7.0442E8" length="1.0" orientation="1"/>
+            </attributes>
+            <channelsuite>
+                <channel handle="xAvg" settable="false" signal="BPM54:XAvg"/>
+                <channel handle="yAvg" settable="false" signal="BPM54:YAvg"/>
+                <channel handle="xTBT" settable="false" signal="BPM54:XTBT"/>
+                <channel handle="yTBT" settable="false" signal="BPM54:YTBT"/>
+                <channel handle="phaseAvg" settable="false" signal="BPM54:PhsAvg"/>
+                <channel handle="amplitudeAvg" settable="false" signal="BPM54:AmpAvg"/>
+                <channel handle="ampTBT" settable="false" signal="BPM54:AmpTBT"/>
+                <channel handle="phaseTBT" settable="false" signal="BPM54:PhsTBT"/>
+            </channelsuite>
+        </node>
         <node id="QP81" len="0.41000000000000003" pos="60.04200200746709" type="Q">
             <attributes>
                 <magnet bendAngle="0.0" dfltMagFld="4.42761" dipoleEntrRotAngle="0.0" dipoleExitRotAngle="0.0" dipoleQuadComponent="0.0" len="0.41000000000000003" pathLength="0.0" polarity="1.0"/>
@@ -12104,6 +12914,21 @@
                 </attributes>
             </node>
         </sequence>
+        <node id="BPM55" len="0.0" pos="68.35700586567668" type="BPM">
+            <attributes>
+                <bpm frequency="7.0442E8" length="1.0" orientation="1"/>
+            </attributes>
+            <channelsuite>
+                <channel handle="xAvg" settable="false" signal="BPM55:XAvg"/>
+                <channel handle="yAvg" settable="false" signal="BPM55:YAvg"/>
+                <channel handle="xTBT" settable="false" signal="BPM55:XTBT"/>
+                <channel handle="yTBT" settable="false" signal="BPM55:YTBT"/>
+                <channel handle="phaseAvg" settable="false" signal="BPM55:PhsAvg"/>
+                <channel handle="amplitudeAvg" settable="false" signal="BPM55:AmpAvg"/>
+                <channel handle="ampTBT" settable="false" signal="BPM55:AmpTBT"/>
+                <channel handle="phaseTBT" settable="false" signal="BPM55:PhsTBT"/>
+            </channelsuite>
+        </node>
         <node id="QP83" len="0.41000000000000003" pos="68.56200586567668" type="Q">
             <attributes>
                 <magnet bendAngle="0.0" dfltMagFld="4.3573" dipoleEntrRotAngle="0.0" dipoleExitRotAngle="0.0" dipoleQuadComponent="0.0" len="0.41000000000000003" pathLength="0.0" polarity="1.0"/>
@@ -12304,6 +13129,21 @@
                 </attributes>
             </node>
         </sequence>
+        <node id="BPM56" len="0.0" pos="76.87700972388629" type="BPM">
+            <attributes>
+                <bpm frequency="7.0442E8" length="1.0" orientation="1"/>
+            </attributes>
+            <channelsuite>
+                <channel handle="xAvg" settable="false" signal="BPM56:XAvg"/>
+                <channel handle="yAvg" settable="false" signal="BPM56:YAvg"/>
+                <channel handle="xTBT" settable="false" signal="BPM56:XTBT"/>
+                <channel handle="yTBT" settable="false" signal="BPM56:YTBT"/>
+                <channel handle="phaseAvg" settable="false" signal="BPM56:PhsAvg"/>
+                <channel handle="amplitudeAvg" settable="false" signal="BPM56:AmpAvg"/>
+                <channel handle="ampTBT" settable="false" signal="BPM56:AmpTBT"/>
+                <channel handle="phaseTBT" settable="false" signal="BPM56:PhsTBT"/>
+            </channelsuite>
+        </node>
         <node id="QP85" len="0.41000000000000003" pos="77.08200972388629" type="Q">
             <attributes>
                 <magnet bendAngle="0.0" dfltMagFld="4.28562" dipoleEntrRotAngle="0.0" dipoleExitRotAngle="0.0" dipoleQuadComponent="0.0" len="0.41000000000000003" pathLength="0.0" polarity="1.0"/>
@@ -12504,6 +13344,21 @@
                 </attributes>
             </node>
         </sequence>
+        <node id="BPM57" len="0.0" pos="85.3970135820959" type="BPM">
+            <attributes>
+                <bpm frequency="7.0442E8" length="1.0" orientation="1"/>
+            </attributes>
+            <channelsuite>
+                <channel handle="xAvg" settable="false" signal="BPM57:XAvg"/>
+                <channel handle="yAvg" settable="false" signal="BPM57:YAvg"/>
+                <channel handle="xTBT" settable="false" signal="BPM57:XTBT"/>
+                <channel handle="yTBT" settable="false" signal="BPM57:YTBT"/>
+                <channel handle="phaseAvg" settable="false" signal="BPM57:PhsAvg"/>
+                <channel handle="amplitudeAvg" settable="false" signal="BPM57:AmpAvg"/>
+                <channel handle="ampTBT" settable="false" signal="BPM57:AmpTBT"/>
+                <channel handle="phaseTBT" settable="false" signal="BPM57:PhsTBT"/>
+            </channelsuite>
+        </node>
         <node id="QP87" len="0.41000000000000003" pos="85.60201358209589" type="Q">
             <attributes>
                 <magnet bendAngle="0.0" dfltMagFld="4.21468" dipoleEntrRotAngle="0.0" dipoleExitRotAngle="0.0" dipoleQuadComponent="0.0" len="0.41000000000000003" pathLength="0.0" polarity="1.0"/>
@@ -12704,6 +13559,21 @@
                 </attributes>
             </node>
         </sequence>
+        <node id="BPM58" len="0.0" pos="93.9170174403055" type="BPM">
+            <attributes>
+                <bpm frequency="7.0442E8" length="1.0" orientation="1"/>
+            </attributes>
+            <channelsuite>
+                <channel handle="xAvg" settable="false" signal="BPM58:XAvg"/>
+                <channel handle="yAvg" settable="false" signal="BPM58:YAvg"/>
+                <channel handle="xTBT" settable="false" signal="BPM58:XTBT"/>
+                <channel handle="yTBT" settable="false" signal="BPM58:YTBT"/>
+                <channel handle="phaseAvg" settable="false" signal="BPM58:PhsAvg"/>
+                <channel handle="amplitudeAvg" settable="false" signal="BPM58:AmpAvg"/>
+                <channel handle="ampTBT" settable="false" signal="BPM58:AmpTBT"/>
+                <channel handle="phaseTBT" settable="false" signal="BPM58:PhsTBT"/>
+            </channelsuite>
+        </node>
         <node id="QP89" len="0.41000000000000003" pos="94.1220174403055" type="Q">
             <attributes>
                 <magnet bendAngle="0.0" dfltMagFld="4.14457" dipoleEntrRotAngle="0.0" dipoleExitRotAngle="0.0" dipoleQuadComponent="0.0" len="0.41000000000000003" pathLength="0.0" polarity="1.0"/>
@@ -12904,6 +13774,21 @@
                 </attributes>
             </node>
         </sequence>
+        <node id="BPM59" len="0.0" pos="102.4370212985151" type="BPM">
+            <attributes>
+                <bpm frequency="7.0442E8" length="1.0" orientation="1"/>
+            </attributes>
+            <channelsuite>
+                <channel handle="xAvg" settable="false" signal="BPM59:XAvg"/>
+                <channel handle="yAvg" settable="false" signal="BPM59:YAvg"/>
+                <channel handle="xTBT" settable="false" signal="BPM59:XTBT"/>
+                <channel handle="yTBT" settable="false" signal="BPM59:YTBT"/>
+                <channel handle="phaseAvg" settable="false" signal="BPM59:PhsAvg"/>
+                <channel handle="amplitudeAvg" settable="false" signal="BPM59:AmpAvg"/>
+                <channel handle="ampTBT" settable="false" signal="BPM59:AmpTBT"/>
+                <channel handle="phaseTBT" settable="false" signal="BPM59:PhsTBT"/>
+            </channelsuite>
+        </node>
         <node id="QP91" len="0.41000000000000003" pos="102.6420212985151" type="Q">
             <attributes>
                 <magnet bendAngle="0.0" dfltMagFld="4.07573" dipoleEntrRotAngle="0.0" dipoleExitRotAngle="0.0" dipoleQuadComponent="0.0" len="0.41000000000000003" pathLength="0.0" polarity="1.0"/>
@@ -13104,6 +13989,21 @@
                 </attributes>
             </node>
         </sequence>
+        <node id="BPM60" len="0.0" pos="110.95702515672471" type="BPM">
+            <attributes>
+                <bpm frequency="7.0442E8" length="1.0" orientation="1"/>
+            </attributes>
+            <channelsuite>
+                <channel handle="xAvg" settable="false" signal="BPM60:XAvg"/>
+                <channel handle="yAvg" settable="false" signal="BPM60:YAvg"/>
+                <channel handle="xTBT" settable="false" signal="BPM60:XTBT"/>
+                <channel handle="yTBT" settable="false" signal="BPM60:YTBT"/>
+                <channel handle="phaseAvg" settable="false" signal="BPM60:PhsAvg"/>
+                <channel handle="amplitudeAvg" settable="false" signal="BPM60:AmpAvg"/>
+                <channel handle="ampTBT" settable="false" signal="BPM60:AmpTBT"/>
+                <channel handle="phaseTBT" settable="false" signal="BPM60:PhsTBT"/>
+            </channelsuite>
+        </node>
         <node id="QP93" len="0.41000000000000003" pos="111.16202515672471" type="Q">
             <attributes>
                 <magnet bendAngle="0.0" dfltMagFld="4.00926" dipoleEntrRotAngle="0.0" dipoleExitRotAngle="0.0" dipoleQuadComponent="0.0" len="0.41000000000000003" pathLength="0.0" polarity="1.0"/>
@@ -13304,6 +14204,21 @@
                 </attributes>
             </node>
         </sequence>
+        <node id="BPM61" len="0.0" pos="119.47702901493432" type="BPM">
+            <attributes>
+                <bpm frequency="7.0442E8" length="1.0" orientation="1"/>
+            </attributes>
+            <channelsuite>
+                <channel handle="xAvg" settable="false" signal="BPM61:XAvg"/>
+                <channel handle="yAvg" settable="false" signal="BPM61:YAvg"/>
+                <channel handle="xTBT" settable="false" signal="BPM61:XTBT"/>
+                <channel handle="yTBT" settable="false" signal="BPM61:YTBT"/>
+                <channel handle="phaseAvg" settable="false" signal="BPM61:PhsAvg"/>
+                <channel handle="amplitudeAvg" settable="false" signal="BPM61:AmpAvg"/>
+                <channel handle="ampTBT" settable="false" signal="BPM61:AmpTBT"/>
+                <channel handle="phaseTBT" settable="false" signal="BPM61:PhsTBT"/>
+            </channelsuite>
+        </node>
         <node id="QP95" len="0.41000000000000003" pos="119.68202901493432" type="Q">
             <attributes>
                 <magnet bendAngle="0.0" dfltMagFld="3.94492" dipoleEntrRotAngle="0.0" dipoleExitRotAngle="0.0" dipoleQuadComponent="0.0" len="0.41000000000000003" pathLength="0.0" polarity="1.0"/>
@@ -13504,6 +14419,21 @@
                 </attributes>
             </node>
         </sequence>
+        <node id="BPM62" len="0.0" pos="127.99703287314392" type="BPM">
+            <attributes>
+                <bpm frequency="7.0442E8" length="1.0" orientation="1"/>
+            </attributes>
+            <channelsuite>
+                <channel handle="xAvg" settable="false" signal="BPM62:XAvg"/>
+                <channel handle="yAvg" settable="false" signal="BPM62:YAvg"/>
+                <channel handle="xTBT" settable="false" signal="BPM62:XTBT"/>
+                <channel handle="yTBT" settable="false" signal="BPM62:YTBT"/>
+                <channel handle="phaseAvg" settable="false" signal="BPM62:PhsAvg"/>
+                <channel handle="amplitudeAvg" settable="false" signal="BPM62:AmpAvg"/>
+                <channel handle="ampTBT" settable="false" signal="BPM62:AmpTBT"/>
+                <channel handle="phaseTBT" settable="false" signal="BPM62:PhsTBT"/>
+            </channelsuite>
+        </node>
         <node id="QP97" len="0.41000000000000003" pos="128.20203287314393" type="Q">
             <attributes>
                 <magnet bendAngle="0.0" dfltMagFld="3.88326" dipoleEntrRotAngle="0.0" dipoleExitRotAngle="0.0" dipoleQuadComponent="0.0" len="0.41000000000000003" pathLength="0.0" polarity="1.0"/>
@@ -13704,6 +14634,21 @@
                 </attributes>
             </node>
         </sequence>
+        <node id="BPM63" len="0.0" pos="136.51703673135356" type="BPM">
+            <attributes>
+                <bpm frequency="7.0442E8" length="1.0" orientation="1"/>
+            </attributes>
+            <channelsuite>
+                <channel handle="xAvg" settable="false" signal="BPM63:XAvg"/>
+                <channel handle="yAvg" settable="false" signal="BPM63:YAvg"/>
+                <channel handle="xTBT" settable="false" signal="BPM63:XTBT"/>
+                <channel handle="yTBT" settable="false" signal="BPM63:YTBT"/>
+                <channel handle="phaseAvg" settable="false" signal="BPM63:PhsAvg"/>
+                <channel handle="amplitudeAvg" settable="false" signal="BPM63:AmpAvg"/>
+                <channel handle="ampTBT" settable="false" signal="BPM63:AmpTBT"/>
+                <channel handle="phaseTBT" settable="false" signal="BPM63:PhsTBT"/>
+            </channelsuite>
+        </node>
         <node id="QP99" len="0.41000000000000003" pos="136.72203673135357" type="Q">
             <attributes>
                 <magnet bendAngle="0.0" dfltMagFld="3.82467" dipoleEntrRotAngle="0.0" dipoleExitRotAngle="0.0" dipoleQuadComponent="0.0" len="0.41000000000000003" pathLength="0.0" polarity="1.0"/>
@@ -13904,6 +14849,21 @@
                 </attributes>
             </node>
         </sequence>
+        <node id="BPM64" len="0.0" pos="145.0370405895632" type="BPM">
+            <attributes>
+                <bpm frequency="7.0442E8" length="1.0" orientation="1"/>
+            </attributes>
+            <channelsuite>
+                <channel handle="xAvg" settable="false" signal="BPM64:XAvg"/>
+                <channel handle="yAvg" settable="false" signal="BPM64:YAvg"/>
+                <channel handle="xTBT" settable="false" signal="BPM64:XTBT"/>
+                <channel handle="yTBT" settable="false" signal="BPM64:YTBT"/>
+                <channel handle="phaseAvg" settable="false" signal="BPM64:PhsAvg"/>
+                <channel handle="amplitudeAvg" settable="false" signal="BPM64:AmpAvg"/>
+                <channel handle="ampTBT" settable="false" signal="BPM64:AmpTBT"/>
+                <channel handle="phaseTBT" settable="false" signal="BPM64:PhsTBT"/>
+            </channelsuite>
+        </node>
         <node id="QP101" len="0.41000000000000003" pos="145.2420405895632" type="Q">
             <attributes>
                 <magnet bendAngle="0.0" dfltMagFld="3.76704" dipoleEntrRotAngle="0.0" dipoleExitRotAngle="0.0" dipoleQuadComponent="0.0" len="0.41000000000000003" pathLength="0.0" polarity="1.0"/>
@@ -14104,6 +15064,21 @@
                 </attributes>
             </node>
         </sequence>
+        <node id="BPM65" len="0.0" pos="153.55704444777282" type="BPM">
+            <attributes>
+                <bpm frequency="7.0442E8" length="1.0" orientation="1"/>
+            </attributes>
+            <channelsuite>
+                <channel handle="xAvg" settable="false" signal="BPM65:XAvg"/>
+                <channel handle="yAvg" settable="false" signal="BPM65:YAvg"/>
+                <channel handle="xTBT" settable="false" signal="BPM65:XTBT"/>
+                <channel handle="yTBT" settable="false" signal="BPM65:YTBT"/>
+                <channel handle="phaseAvg" settable="false" signal="BPM65:PhsAvg"/>
+                <channel handle="amplitudeAvg" settable="false" signal="BPM65:AmpAvg"/>
+                <channel handle="ampTBT" settable="false" signal="BPM65:AmpTBT"/>
+                <channel handle="phaseTBT" settable="false" signal="BPM65:PhsTBT"/>
+            </channelsuite>
+        </node>
         <node id="QP103" len="0.41000000000000003" pos="153.76204444777284" type="Q">
             <attributes>
                 <magnet bendAngle="0.0" dfltMagFld="3.71245" dipoleEntrRotAngle="0.0" dipoleExitRotAngle="0.0" dipoleQuadComponent="0.0" len="0.41000000000000003" pathLength="0.0" polarity="1.0"/>
@@ -14304,6 +15279,21 @@
                 </attributes>
             </node>
         </sequence>
+        <node id="BPM66" len="0.0" pos="162.07704830598246" type="BPM">
+            <attributes>
+                <bpm frequency="7.0442E8" length="1.0" orientation="1"/>
+            </attributes>
+            <channelsuite>
+                <channel handle="xAvg" settable="false" signal="BPM66:XAvg"/>
+                <channel handle="yAvg" settable="false" signal="BPM66:YAvg"/>
+                <channel handle="xTBT" settable="false" signal="BPM66:XTBT"/>
+                <channel handle="yTBT" settable="false" signal="BPM66:YTBT"/>
+                <channel handle="phaseAvg" settable="false" signal="BPM66:PhsAvg"/>
+                <channel handle="amplitudeAvg" settable="false" signal="BPM66:AmpAvg"/>
+                <channel handle="ampTBT" settable="false" signal="BPM66:AmpTBT"/>
+                <channel handle="phaseTBT" settable="false" signal="BPM66:PhsTBT"/>
+            </channelsuite>
+        </node>
         <node id="QP105" len="0.41000000000000003" pos="162.28204830598247" type="Q">
             <attributes>
                 <magnet bendAngle="0.0" dfltMagFld="3.65952" dipoleEntrRotAngle="0.0" dipoleExitRotAngle="0.0" dipoleQuadComponent="0.0" len="0.41000000000000003" pathLength="0.0" polarity="1.0"/>
@@ -14504,6 +15494,21 @@
                 </attributes>
             </node>
         </sequence>
+        <node id="BPM67" len="0.0" pos="170.5970521641921" type="BPM">
+            <attributes>
+                <bpm frequency="7.0442E8" length="1.0" orientation="1"/>
+            </attributes>
+            <channelsuite>
+                <channel handle="xAvg" settable="false" signal="BPM67:XAvg"/>
+                <channel handle="yAvg" settable="false" signal="BPM67:YAvg"/>
+                <channel handle="xTBT" settable="false" signal="BPM67:XTBT"/>
+                <channel handle="yTBT" settable="false" signal="BPM67:YTBT"/>
+                <channel handle="phaseAvg" settable="false" signal="BPM67:PhsAvg"/>
+                <channel handle="amplitudeAvg" settable="false" signal="BPM67:AmpAvg"/>
+                <channel handle="ampTBT" settable="false" signal="BPM67:AmpTBT"/>
+                <channel handle="phaseTBT" settable="false" signal="BPM67:PhsTBT"/>
+            </channelsuite>
+        </node>
         <node id="QP107" len="0.41000000000000003" pos="170.8020521641921" type="Q">
             <attributes>
                 <magnet bendAngle="0.0" dfltMagFld="3.60903" dipoleEntrRotAngle="0.0" dipoleExitRotAngle="0.0" dipoleQuadComponent="0.0" len="0.41000000000000003" pathLength="0.0" polarity="1.0"/>
@@ -14709,6 +15714,21 @@
         <attributes>
             <sequence predecessors="hb"/>
         </attributes>
+        <node id="BPM68" len="0.0" pos="0.2562" type="BPM">
+            <attributes>
+                <bpm frequency="7.0442E8" length="1.0" orientation="1"/>
+            </attributes>
+            <channelsuite>
+                <channel handle="xAvg" settable="false" signal="BPM68:XAvg"/>
+                <channel handle="yAvg" settable="false" signal="BPM68:YAvg"/>
+                <channel handle="xTBT" settable="false" signal="BPM68:XTBT"/>
+                <channel handle="yTBT" settable="false" signal="BPM68:YTBT"/>
+                <channel handle="phaseAvg" settable="false" signal="BPM68:PhsAvg"/>
+                <channel handle="amplitudeAvg" settable="false" signal="BPM68:AmpAvg"/>
+                <channel handle="ampTBT" settable="false" signal="BPM68:AmpTBT"/>
+                <channel handle="phaseTBT" settable="false" signal="BPM68:PhsTBT"/>
+            </channelsuite>
+        </node>
         <node id="QP109" len="0.41000000000000003" pos="0.4612" type="Q">
             <attributes>
                 <magnet bendAngle="0.0" dfltMagFld="4.70545" dipoleEntrRotAngle="0.0" dipoleExitRotAngle="0.0" dipoleQuadComponent="0.0" len="0.41000000000000003" pathLength="0.0" polarity="1.0"/>
@@ -14793,6 +15813,21 @@
             </channelsuite>
             <ps main="ST89-HC-PS"/>
         </node>
+        <node id="BPM69" len="0.0" pos="9.1862" type="BPM">
+            <attributes>
+                <bpm frequency="7.0442E8" length="1.0" orientation="1"/>
+            </attributes>
+            <channelsuite>
+                <channel handle="xAvg" settable="false" signal="BPM69:XAvg"/>
+                <channel handle="yAvg" settable="false" signal="BPM69:YAvg"/>
+                <channel handle="xTBT" settable="false" signal="BPM69:XTBT"/>
+                <channel handle="yTBT" settable="false" signal="BPM69:YTBT"/>
+                <channel handle="phaseAvg" settable="false" signal="BPM69:PhsAvg"/>
+                <channel handle="amplitudeAvg" settable="false" signal="BPM69:AmpAvg"/>
+                <channel handle="ampTBT" settable="false" signal="BPM69:AmpTBT"/>
+                <channel handle="phaseTBT" settable="false" signal="BPM69:PhsTBT"/>
+            </channelsuite>
+        </node>
         <node id="QP112" len="0.41000000000000003" pos="9.9912" type="Q">
             <attributes>
                 <magnet bendAngle="0.0" dfltMagFld="-3.96079" dipoleEntrRotAngle="0.0" dipoleExitRotAngle="0.0" dipoleQuadComponent="0.0" len="0.41000000000000003" pathLength="0.0" polarity="1.0"/>
@@ -14848,6 +15883,21 @@
                 <channel handle="fieldRB" settable="false" signal="ST91-HC:B"/>
             </channelsuite>
             <ps main="ST91-HC-PS"/>
+        </node>
+        <node id="BPM70" len="0.0" pos="17.7062" type="BPM">
+            <attributes>
+                <bpm frequency="7.0442E8" length="1.0" orientation="1"/>
+            </attributes>
+            <channelsuite>
+                <channel handle="xAvg" settable="false" signal="BPM70:XAvg"/>
+                <channel handle="yAvg" settable="false" signal="BPM70:YAvg"/>
+                <channel handle="xTBT" settable="false" signal="BPM70:XTBT"/>
+                <channel handle="yTBT" settable="false" signal="BPM70:YTBT"/>
+                <channel handle="phaseAvg" settable="false" signal="BPM70:PhsAvg"/>
+                <channel handle="amplitudeAvg" settable="false" signal="BPM70:AmpAvg"/>
+                <channel handle="ampTBT" settable="false" signal="BPM70:AmpTBT"/>
+                <channel handle="phaseTBT" settable="false" signal="BPM70:PhsTBT"/>
+            </channelsuite>
         </node>
         <node id="QP114" len="0.41000000000000003" pos="18.5112" type="Q">
             <attributes>
@@ -14905,6 +15955,21 @@
             </channelsuite>
             <ps main="ST93-HC-PS"/>
         </node>
+        <node id="BPM71" len="0.0" pos="26.226200000000002" type="BPM">
+            <attributes>
+                <bpm frequency="7.0442E8" length="1.0" orientation="1"/>
+            </attributes>
+            <channelsuite>
+                <channel handle="xAvg" settable="false" signal="BPM71:XAvg"/>
+                <channel handle="yAvg" settable="false" signal="BPM71:YAvg"/>
+                <channel handle="xTBT" settable="false" signal="BPM71:XTBT"/>
+                <channel handle="yTBT" settable="false" signal="BPM71:YTBT"/>
+                <channel handle="phaseAvg" settable="false" signal="BPM71:PhsAvg"/>
+                <channel handle="amplitudeAvg" settable="false" signal="BPM71:AmpAvg"/>
+                <channel handle="ampTBT" settable="false" signal="BPM71:AmpTBT"/>
+                <channel handle="phaseTBT" settable="false" signal="BPM71:PhsTBT"/>
+            </channelsuite>
+        </node>
         <node id="QP116" len="0.41000000000000003" pos="27.031200000000002" type="Q">
             <attributes>
                 <magnet bendAngle="0.0" dfltMagFld="-3.82791" dipoleEntrRotAngle="0.0" dipoleExitRotAngle="0.0" dipoleQuadComponent="0.0" len="0.41000000000000003" pathLength="0.0" polarity="1.0"/>
@@ -14960,6 +16025,21 @@
                 <channel handle="fieldRB" settable="false" signal="ST95-HC:B"/>
             </channelsuite>
             <ps main="ST95-HC-PS"/>
+        </node>
+        <node id="BPM72" len="0.0" pos="34.7462" type="BPM">
+            <attributes>
+                <bpm frequency="7.0442E8" length="1.0" orientation="1"/>
+            </attributes>
+            <channelsuite>
+                <channel handle="xAvg" settable="false" signal="BPM72:XAvg"/>
+                <channel handle="yAvg" settable="false" signal="BPM72:YAvg"/>
+                <channel handle="xTBT" settable="false" signal="BPM72:XTBT"/>
+                <channel handle="yTBT" settable="false" signal="BPM72:YTBT"/>
+                <channel handle="phaseAvg" settable="false" signal="BPM72:PhsAvg"/>
+                <channel handle="amplitudeAvg" settable="false" signal="BPM72:AmpAvg"/>
+                <channel handle="ampTBT" settable="false" signal="BPM72:AmpTBT"/>
+                <channel handle="phaseTBT" settable="false" signal="BPM72:PhsTBT"/>
+            </channelsuite>
         </node>
         <node id="QP118" len="0.41000000000000003" pos="35.5512" type="Q">
             <attributes>
@@ -15017,6 +16097,21 @@
             </channelsuite>
             <ps main="ST97-HC-PS"/>
         </node>
+        <node id="BPM73" len="0.0" pos="43.2662" type="BPM">
+            <attributes>
+                <bpm frequency="7.0442E8" length="1.0" orientation="1"/>
+            </attributes>
+            <channelsuite>
+                <channel handle="xAvg" settable="false" signal="BPM73:XAvg"/>
+                <channel handle="yAvg" settable="false" signal="BPM73:YAvg"/>
+                <channel handle="xTBT" settable="false" signal="BPM73:XTBT"/>
+                <channel handle="yTBT" settable="false" signal="BPM73:YTBT"/>
+                <channel handle="phaseAvg" settable="false" signal="BPM73:PhsAvg"/>
+                <channel handle="amplitudeAvg" settable="false" signal="BPM73:AmpAvg"/>
+                <channel handle="ampTBT" settable="false" signal="BPM73:AmpTBT"/>
+                <channel handle="phaseTBT" settable="false" signal="BPM73:PhsTBT"/>
+            </channelsuite>
+        </node>
         <node id="QP120" len="0.41000000000000003" pos="44.0712" type="Q">
             <attributes>
                 <magnet bendAngle="0.0" dfltMagFld="-4.62783" dipoleEntrRotAngle="0.0" dipoleExitRotAngle="0.0" dipoleQuadComponent="0.0" len="0.41000000000000003" pathLength="0.0" polarity="1.0"/>
@@ -15072,6 +16167,21 @@
                 <channel handle="fieldRB" settable="false" signal="ST99-HC:B"/>
             </channelsuite>
             <ps main="ST99-HC-PS"/>
+        </node>
+        <node id="BPM74" len="0.0" pos="51.786199999999994" type="BPM">
+            <attributes>
+                <bpm frequency="7.0442E8" length="1.0" orientation="1"/>
+            </attributes>
+            <channelsuite>
+                <channel handle="xAvg" settable="false" signal="BPM74:XAvg"/>
+                <channel handle="yAvg" settable="false" signal="BPM74:YAvg"/>
+                <channel handle="xTBT" settable="false" signal="BPM74:XTBT"/>
+                <channel handle="yTBT" settable="false" signal="BPM74:YTBT"/>
+                <channel handle="phaseAvg" settable="false" signal="BPM74:PhsAvg"/>
+                <channel handle="amplitudeAvg" settable="false" signal="BPM74:AmpAvg"/>
+                <channel handle="ampTBT" settable="false" signal="BPM74:AmpTBT"/>
+                <channel handle="phaseTBT" settable="false" signal="BPM74:PhsTBT"/>
+            </channelsuite>
         </node>
         <node id="QP122" len="0.41000000000000003" pos="52.59119999999999" type="Q">
             <attributes>
@@ -15129,6 +16239,21 @@
             </channelsuite>
             <ps main="ST101-HC-PS"/>
         </node>
+        <node id="BPM75" len="0.0" pos="60.30619999999999" type="BPM">
+            <attributes>
+                <bpm frequency="7.0442E8" length="1.0" orientation="1"/>
+            </attributes>
+            <channelsuite>
+                <channel handle="xAvg" settable="false" signal="BPM75:XAvg"/>
+                <channel handle="yAvg" settable="false" signal="BPM75:YAvg"/>
+                <channel handle="xTBT" settable="false" signal="BPM75:XTBT"/>
+                <channel handle="yTBT" settable="false" signal="BPM75:YTBT"/>
+                <channel handle="phaseAvg" settable="false" signal="BPM75:PhsAvg"/>
+                <channel handle="amplitudeAvg" settable="false" signal="BPM75:AmpAvg"/>
+                <channel handle="ampTBT" settable="false" signal="BPM75:AmpTBT"/>
+                <channel handle="phaseTBT" settable="false" signal="BPM75:PhsTBT"/>
+            </channelsuite>
+        </node>
         <node id="QP124" len="0.41000000000000003" pos="61.11119999999999" type="Q">
             <attributes>
                 <magnet bendAngle="0.0" dfltMagFld="-4.62783" dipoleEntrRotAngle="0.0" dipoleExitRotAngle="0.0" dipoleQuadComponent="0.0" len="0.41000000000000003" pathLength="0.0" polarity="1.0"/>
@@ -15184,6 +16309,21 @@
                 <channel handle="fieldRB" settable="false" signal="ST103-HC:B"/>
             </channelsuite>
             <ps main="ST103-HC-PS"/>
+        </node>
+        <node id="BPM76" len="0.0" pos="68.82619999999999" type="BPM">
+            <attributes>
+                <bpm frequency="7.0442E8" length="1.0" orientation="1"/>
+            </attributes>
+            <channelsuite>
+                <channel handle="xAvg" settable="false" signal="BPM76:XAvg"/>
+                <channel handle="yAvg" settable="false" signal="BPM76:YAvg"/>
+                <channel handle="xTBT" settable="false" signal="BPM76:XTBT"/>
+                <channel handle="yTBT" settable="false" signal="BPM76:YTBT"/>
+                <channel handle="phaseAvg" settable="false" signal="BPM76:PhsAvg"/>
+                <channel handle="amplitudeAvg" settable="false" signal="BPM76:AmpAvg"/>
+                <channel handle="ampTBT" settable="false" signal="BPM76:AmpTBT"/>
+                <channel handle="phaseTBT" settable="false" signal="BPM76:PhsTBT"/>
+            </channelsuite>
         </node>
         <node id="QP126" len="0.41000000000000003" pos="69.63119999999998" type="Q">
             <attributes>
@@ -15241,6 +16381,21 @@
             </channelsuite>
             <ps main="ST105-HC-PS"/>
         </node>
+        <node id="BPM77" len="0.0" pos="77.34619999999998" type="BPM">
+            <attributes>
+                <bpm frequency="7.0442E8" length="1.0" orientation="1"/>
+            </attributes>
+            <channelsuite>
+                <channel handle="xAvg" settable="false" signal="BPM77:XAvg"/>
+                <channel handle="yAvg" settable="false" signal="BPM77:YAvg"/>
+                <channel handle="xTBT" settable="false" signal="BPM77:XTBT"/>
+                <channel handle="yTBT" settable="false" signal="BPM77:YTBT"/>
+                <channel handle="phaseAvg" settable="false" signal="BPM77:PhsAvg"/>
+                <channel handle="amplitudeAvg" settable="false" signal="BPM77:AmpAvg"/>
+                <channel handle="ampTBT" settable="false" signal="BPM77:AmpTBT"/>
+                <channel handle="phaseTBT" settable="false" signal="BPM77:PhsTBT"/>
+            </channelsuite>
+        </node>
         <node id="QP128" len="0.41000000000000003" pos="78.15119999999997" type="Q">
             <attributes>
                 <magnet bendAngle="0.0" dfltMagFld="-4.62783" dipoleEntrRotAngle="0.0" dipoleExitRotAngle="0.0" dipoleQuadComponent="0.0" len="0.41000000000000003" pathLength="0.0" polarity="1.0"/>
@@ -15296,6 +16451,21 @@
                 <channel handle="fieldRB" settable="false" signal="ST107-HC:B"/>
             </channelsuite>
             <ps main="ST107-HC-PS"/>
+        </node>
+        <node id="BPM78" len="0.0" pos="85.86619999999998" type="BPM">
+            <attributes>
+                <bpm frequency="7.0442E8" length="1.0" orientation="1"/>
+            </attributes>
+            <channelsuite>
+                <channel handle="xAvg" settable="false" signal="BPM78:XAvg"/>
+                <channel handle="yAvg" settable="false" signal="BPM78:YAvg"/>
+                <channel handle="xTBT" settable="false" signal="BPM78:XTBT"/>
+                <channel handle="yTBT" settable="false" signal="BPM78:YTBT"/>
+                <channel handle="phaseAvg" settable="false" signal="BPM78:PhsAvg"/>
+                <channel handle="amplitudeAvg" settable="false" signal="BPM78:AmpAvg"/>
+                <channel handle="ampTBT" settable="false" signal="BPM78:AmpTBT"/>
+                <channel handle="phaseTBT" settable="false" signal="BPM78:PhsTBT"/>
+            </channelsuite>
         </node>
         <node id="QP130" len="0.41000000000000003" pos="86.67119999999997" type="Q">
             <attributes>
@@ -15353,6 +16523,21 @@
             </channelsuite>
             <ps main="ST109-HC-PS"/>
         </node>
+        <node id="BPM79" len="0.0" pos="94.38619999999997" type="BPM">
+            <attributes>
+                <bpm frequency="7.0442E8" length="1.0" orientation="1"/>
+            </attributes>
+            <channelsuite>
+                <channel handle="xAvg" settable="false" signal="BPM79:XAvg"/>
+                <channel handle="yAvg" settable="false" signal="BPM79:YAvg"/>
+                <channel handle="xTBT" settable="false" signal="BPM79:XTBT"/>
+                <channel handle="yTBT" settable="false" signal="BPM79:YTBT"/>
+                <channel handle="phaseAvg" settable="false" signal="BPM79:PhsAvg"/>
+                <channel handle="amplitudeAvg" settable="false" signal="BPM79:AmpAvg"/>
+                <channel handle="ampTBT" settable="false" signal="BPM79:AmpTBT"/>
+                <channel handle="phaseTBT" settable="false" signal="BPM79:PhsTBT"/>
+            </channelsuite>
+        </node>
         <node id="QP132" len="0.41000000000000003" pos="95.19119999999997" type="Q">
             <attributes>
                 <magnet bendAngle="0.0" dfltMagFld="-4.93169" dipoleEntrRotAngle="0.0" dipoleExitRotAngle="0.0" dipoleQuadComponent="0.0" len="0.41000000000000003" pathLength="0.0" polarity="1.0"/>
@@ -15408,6 +16593,21 @@
                 <channel handle="fieldRB" settable="false" signal="ST111-HC:B"/>
             </channelsuite>
             <ps main="ST111-HC-PS"/>
+        </node>
+        <node id="BPM80" len="0.0" pos="102.90619999999997" type="BPM">
+            <attributes>
+                <bpm frequency="7.0442E8" length="1.0" orientation="1"/>
+            </attributes>
+            <channelsuite>
+                <channel handle="xAvg" settable="false" signal="BPM80:XAvg"/>
+                <channel handle="yAvg" settable="false" signal="BPM80:YAvg"/>
+                <channel handle="xTBT" settable="false" signal="BPM80:XTBT"/>
+                <channel handle="yTBT" settable="false" signal="BPM80:YTBT"/>
+                <channel handle="phaseAvg" settable="false" signal="BPM80:PhsAvg"/>
+                <channel handle="amplitudeAvg" settable="false" signal="BPM80:AmpAvg"/>
+                <channel handle="ampTBT" settable="false" signal="BPM80:AmpTBT"/>
+                <channel handle="phaseTBT" settable="false" signal="BPM80:PhsTBT"/>
+            </channelsuite>
         </node>
         <node id="QP134" len="0.41000000000000003" pos="103.71119999999996" type="Q">
             <attributes>
@@ -15465,6 +16665,21 @@
             </channelsuite>
             <ps main="ST113-HC-PS"/>
         </node>
+        <node id="BPM81" len="0.0" pos="111.42619999999997" type="BPM">
+            <attributes>
+                <bpm frequency="7.0442E8" length="1.0" orientation="1"/>
+            </attributes>
+            <channelsuite>
+                <channel handle="xAvg" settable="false" signal="BPM81:XAvg"/>
+                <channel handle="yAvg" settable="false" signal="BPM81:YAvg"/>
+                <channel handle="xTBT" settable="false" signal="BPM81:XTBT"/>
+                <channel handle="yTBT" settable="false" signal="BPM81:YTBT"/>
+                <channel handle="phaseAvg" settable="false" signal="BPM81:PhsAvg"/>
+                <channel handle="amplitudeAvg" settable="false" signal="BPM81:AmpAvg"/>
+                <channel handle="ampTBT" settable="false" signal="BPM81:AmpTBT"/>
+                <channel handle="phaseTBT" settable="false" signal="BPM81:PhsTBT"/>
+            </channelsuite>
+        </node>
         <node id="QP136" len="0.41000000000000003" pos="112.23119999999996" type="Q">
             <attributes>
                 <magnet bendAngle="0.0" dfltMagFld="-5.65051" dipoleEntrRotAngle="0.0" dipoleExitRotAngle="0.0" dipoleQuadComponent="0.0" len="0.41000000000000003" pathLength="0.0" polarity="1.0"/>
@@ -15520,6 +16735,21 @@
                 <channel handle="fieldRB" settable="false" signal="ST115-HC:B"/>
             </channelsuite>
             <ps main="ST115-HC-PS"/>
+        </node>
+        <node id="BPM82" len="0.0" pos="119.94619999999996" type="BPM">
+            <attributes>
+                <bpm frequency="7.0442E8" length="1.0" orientation="1"/>
+            </attributes>
+            <channelsuite>
+                <channel handle="xAvg" settable="false" signal="BPM82:XAvg"/>
+                <channel handle="yAvg" settable="false" signal="BPM82:YAvg"/>
+                <channel handle="xTBT" settable="false" signal="BPM82:XTBT"/>
+                <channel handle="yTBT" settable="false" signal="BPM82:YTBT"/>
+                <channel handle="phaseAvg" settable="false" signal="BPM82:PhsAvg"/>
+                <channel handle="amplitudeAvg" settable="false" signal="BPM82:AmpAvg"/>
+                <channel handle="ampTBT" settable="false" signal="BPM82:AmpTBT"/>
+                <channel handle="phaseTBT" settable="false" signal="BPM82:PhsTBT"/>
+            </channelsuite>
         </node>
         <node id="QP138" len="0.41000000000000003" pos="120.75119999999995" type="Q">
             <attributes>
@@ -15577,6 +16807,21 @@
             </channelsuite>
             <ps main="ST117-HC-PS"/>
         </node>
+        <node id="BPM83" len="0.0" pos="128.46619999999996" type="BPM">
+            <attributes>
+                <bpm frequency="7.0442E8" length="1.0" orientation="1"/>
+            </attributes>
+            <channelsuite>
+                <channel handle="xAvg" settable="false" signal="BPM83:XAvg"/>
+                <channel handle="yAvg" settable="false" signal="BPM83:YAvg"/>
+                <channel handle="xTBT" settable="false" signal="BPM83:XTBT"/>
+                <channel handle="yTBT" settable="false" signal="BPM83:YTBT"/>
+                <channel handle="phaseAvg" settable="false" signal="BPM83:PhsAvg"/>
+                <channel handle="amplitudeAvg" settable="false" signal="BPM83:AmpAvg"/>
+                <channel handle="ampTBT" settable="false" signal="BPM83:AmpTBT"/>
+                <channel handle="phaseTBT" settable="false" signal="BPM83:PhsTBT"/>
+            </channelsuite>
+        </node>
         <node id="QP140" len="0.41000000000000003" pos="129.27119999999996" type="Q">
             <attributes>
                 <magnet bendAngle="0.0" dfltMagFld="-7.01991" dipoleEntrRotAngle="0.0" dipoleExitRotAngle="0.0" dipoleQuadComponent="0.0" len="0.41000000000000003" pathLength="0.0" polarity="1.0"/>
@@ -15604,6 +16849,21 @@
                 <channel handle="fieldRB" settable="false" signal="ST118-HC:B"/>
             </channelsuite>
             <ps main="ST118-HC-PS"/>
+        </node>
+        <node id="BPM84" len="0.0" pos="130.45270000000997" type="BPM">
+            <attributes>
+                <bpm frequency="7.0442E8" length="1.0" orientation="1"/>
+            </attributes>
+            <channelsuite>
+                <channel handle="xAvg" settable="false" signal="BPM84:XAvg"/>
+                <channel handle="yAvg" settable="false" signal="BPM84:YAvg"/>
+                <channel handle="xTBT" settable="false" signal="BPM84:XTBT"/>
+                <channel handle="yTBT" settable="false" signal="BPM84:YTBT"/>
+                <channel handle="phaseAvg" settable="false" signal="BPM84:PhsAvg"/>
+                <channel handle="amplitudeAvg" settable="false" signal="BPM84:AmpAvg"/>
+                <channel handle="ampTBT" settable="false" signal="BPM84:AmpTBT"/>
+                <channel handle="phaseTBT" settable="false" signal="BPM84:PhsTBT"/>
+            </channelsuite>
         </node>
         <node id="BEND1" len="1.7999999454837996" pos="131.35269997275188" type="DV">
             <attributes>
@@ -15642,6 +16902,21 @@
                 <channel handle="fieldRB" settable="false" signal="ST119-HC:B"/>
             </channelsuite>
             <ps main="ST119-HC-PS"/>
+        </node>
+        <node id="BPM85" len="0.0" pos="139.21776994549376" type="BPM">
+            <attributes>
+                <bpm frequency="7.0442E8" length="1.0" orientation="1"/>
+            </attributes>
+            <channelsuite>
+                <channel handle="xAvg" settable="false" signal="BPM85:XAvg"/>
+                <channel handle="yAvg" settable="false" signal="BPM85:YAvg"/>
+                <channel handle="xTBT" settable="false" signal="BPM85:XTBT"/>
+                <channel handle="yTBT" settable="false" signal="BPM85:YTBT"/>
+                <channel handle="phaseAvg" settable="false" signal="BPM85:PhsAvg"/>
+                <channel handle="amplitudeAvg" settable="false" signal="BPM85:AmpAvg"/>
+                <channel handle="ampTBT" settable="false" signal="BPM85:AmpTBT"/>
+                <channel handle="phaseTBT" settable="false" signal="BPM85:PhsTBT"/>
+            </channelsuite>
         </node>
         <node id="QP142" len="0.41000000000000003" pos="140.02276994549376" type="Q">
             <attributes>
@@ -15699,6 +16974,21 @@
             </channelsuite>
             <ps main="ST121-HC-PS"/>
         </node>
+        <node id="BPM86" len="0.0" pos="149.96933994549374" type="BPM">
+            <attributes>
+                <bpm frequency="7.0442E8" length="1.0" orientation="1"/>
+            </attributes>
+            <channelsuite>
+                <channel handle="xAvg" settable="false" signal="BPM86:XAvg"/>
+                <channel handle="yAvg" settable="false" signal="BPM86:YAvg"/>
+                <channel handle="xTBT" settable="false" signal="BPM86:XTBT"/>
+                <channel handle="yTBT" settable="false" signal="BPM86:YTBT"/>
+                <channel handle="phaseAvg" settable="false" signal="BPM86:PhsAvg"/>
+                <channel handle="amplitudeAvg" settable="false" signal="BPM86:AmpAvg"/>
+                <channel handle="ampTBT" settable="false" signal="BPM86:AmpTBT"/>
+                <channel handle="phaseTBT" settable="false" signal="BPM86:PhsTBT"/>
+            </channelsuite>
+        </node>
         <node id="QP144" len="0.41000000000000003" pos="150.77433994549375" type="Q">
             <attributes>
                 <magnet bendAngle="0.0" dfltMagFld="-6.76785" dipoleEntrRotAngle="0.0" dipoleExitRotAngle="0.0" dipoleQuadComponent="0.0" len="0.41000000000000003" pathLength="0.0" polarity="1.0"/>
@@ -15754,6 +17044,21 @@
                 <channel handle="fieldRB" settable="false" signal="ST123-HC:B"/>
             </channelsuite>
             <ps main="ST123-HC-PS"/>
+        </node>
+        <node id="BPM87" len="0.0" pos="160.72090994549376" type="BPM">
+            <attributes>
+                <bpm frequency="7.0442E8" length="1.0" orientation="1"/>
+            </attributes>
+            <channelsuite>
+                <channel handle="xAvg" settable="false" signal="BPM87:XAvg"/>
+                <channel handle="yAvg" settable="false" signal="BPM87:YAvg"/>
+                <channel handle="xTBT" settable="false" signal="BPM87:XTBT"/>
+                <channel handle="yTBT" settable="false" signal="BPM87:YTBT"/>
+                <channel handle="phaseAvg" settable="false" signal="BPM87:PhsAvg"/>
+                <channel handle="amplitudeAvg" settable="false" signal="BPM87:AmpAvg"/>
+                <channel handle="ampTBT" settable="false" signal="BPM87:AmpTBT"/>
+                <channel handle="phaseTBT" settable="false" signal="BPM87:PhsTBT"/>
+            </channelsuite>
         </node>
         <node id="QP146" len="0.41000000000000003" pos="161.52590994549377" type="Q">
             <attributes>
@@ -15811,6 +17116,21 @@
             </channelsuite>
             <ps main="ST125-HC-PS"/>
         </node>
+        <node id="BPM88" len="0.0" pos="171.47247994549377" type="BPM">
+            <attributes>
+                <bpm frequency="7.0442E8" length="1.0" orientation="1"/>
+            </attributes>
+            <channelsuite>
+                <channel handle="xAvg" settable="false" signal="BPM88:XAvg"/>
+                <channel handle="yAvg" settable="false" signal="BPM88:YAvg"/>
+                <channel handle="xTBT" settable="false" signal="BPM88:XTBT"/>
+                <channel handle="yTBT" settable="false" signal="BPM88:YTBT"/>
+                <channel handle="phaseAvg" settable="false" signal="BPM88:PhsAvg"/>
+                <channel handle="amplitudeAvg" settable="false" signal="BPM88:AmpAvg"/>
+                <channel handle="ampTBT" settable="false" signal="BPM88:AmpTBT"/>
+                <channel handle="phaseTBT" settable="false" signal="BPM88:PhsTBT"/>
+            </channelsuite>
+        </node>
         <node id="QP148" len="0.41000000000000003" pos="172.27747994549378" type="Q">
             <attributes>
                 <magnet bendAngle="0.0" dfltMagFld="-6.76785" dipoleEntrRotAngle="0.0" dipoleExitRotAngle="0.0" dipoleQuadComponent="0.0" len="0.41000000000000003" pathLength="0.0" polarity="1.0"/>
@@ -15866,6 +17186,21 @@
                 <channel handle="fieldRB" settable="false" signal="ST127-HC:B"/>
             </channelsuite>
             <ps main="ST127-HC-PS"/>
+        </node>
+        <node id="BPM89" len="0.0" pos="182.2240499454938" type="BPM">
+            <attributes>
+                <bpm frequency="7.0442E8" length="1.0" orientation="1"/>
+            </attributes>
+            <channelsuite>
+                <channel handle="xAvg" settable="false" signal="BPM89:XAvg"/>
+                <channel handle="yAvg" settable="false" signal="BPM89:YAvg"/>
+                <channel handle="xTBT" settable="false" signal="BPM89:XTBT"/>
+                <channel handle="yTBT" settable="false" signal="BPM89:YTBT"/>
+                <channel handle="phaseAvg" settable="false" signal="BPM89:PhsAvg"/>
+                <channel handle="amplitudeAvg" settable="false" signal="BPM89:AmpAvg"/>
+                <channel handle="ampTBT" settable="false" signal="BPM89:AmpTBT"/>
+                <channel handle="phaseTBT" settable="false" signal="BPM89:PhsTBT"/>
+            </channelsuite>
         </node>
         <node id="QP150" len="0.41000000000000003" pos="183.0290499454938" type="Q">
             <attributes>
@@ -15923,6 +17258,21 @@
             </channelsuite>
             <ps main="ST129-HC-PS"/>
         </node>
+        <node id="BPM90" len="0.0" pos="192.9756199454938" type="BPM">
+            <attributes>
+                <bpm frequency="7.0442E8" length="1.0" orientation="1"/>
+            </attributes>
+            <channelsuite>
+                <channel handle="xAvg" settable="false" signal="BPM90:XAvg"/>
+                <channel handle="yAvg" settable="false" signal="BPM90:YAvg"/>
+                <channel handle="xTBT" settable="false" signal="BPM90:XTBT"/>
+                <channel handle="yTBT" settable="false" signal="BPM90:YTBT"/>
+                <channel handle="phaseAvg" settable="false" signal="BPM90:PhsAvg"/>
+                <channel handle="amplitudeAvg" settable="false" signal="BPM90:AmpAvg"/>
+                <channel handle="ampTBT" settable="false" signal="BPM90:AmpTBT"/>
+                <channel handle="phaseTBT" settable="false" signal="BPM90:PhsTBT"/>
+            </channelsuite>
+        </node>
         <node id="QP152" len="0.41000000000000003" pos="193.7806199454938" type="Q">
             <attributes>
                 <magnet bendAngle="0.0" dfltMagFld="-7.01991" dipoleEntrRotAngle="0.0" dipoleExitRotAngle="0.0" dipoleQuadComponent="0.0" len="0.41000000000000003" pathLength="0.0" polarity="1.0"/>
@@ -15950,6 +17300,21 @@
                 <channel handle="fieldRB" settable="false" signal="ST130-HC:B"/>
             </channelsuite>
             <ps main="ST130-HC-PS"/>
+        </node>
+        <node id="BPM91" len="0.0" pos="194.9621199454938" type="BPM">
+            <attributes>
+                <bpm frequency="7.0442E8" length="1.0" orientation="1"/>
+            </attributes>
+            <channelsuite>
+                <channel handle="xAvg" settable="false" signal="BPM91:XAvg"/>
+                <channel handle="yAvg" settable="false" signal="BPM91:YAvg"/>
+                <channel handle="xTBT" settable="false" signal="BPM91:XTBT"/>
+                <channel handle="yTBT" settable="false" signal="BPM91:YTBT"/>
+                <channel handle="phaseAvg" settable="false" signal="BPM91:PhsAvg"/>
+                <channel handle="amplitudeAvg" settable="false" signal="BPM91:AmpAvg"/>
+                <channel handle="ampTBT" settable="false" signal="BPM91:AmpTBT"/>
+                <channel handle="phaseTBT" settable="false" signal="BPM91:PhsTBT"/>
+            </channelsuite>
         </node>
         <node id="BEND2" len="1.7999999454837996" pos="195.86211991823572" type="DV">
             <attributes>
@@ -16021,6 +17386,36 @@
             </channelsuite>
             <ps main="TS42-HC-PS"/>
         </node>
+        <node id="BPM92" len="0.0" pos="201.86211989098766" type="BPM">
+            <attributes>
+                <bpm frequency="7.0442E8" length="1.0" orientation="1"/>
+            </attributes>
+            <channelsuite>
+                <channel handle="xAvg" settable="false" signal="BPM92:XAvg"/>
+                <channel handle="yAvg" settable="false" signal="BPM92:YAvg"/>
+                <channel handle="xTBT" settable="false" signal="BPM92:XTBT"/>
+                <channel handle="yTBT" settable="false" signal="BPM92:YTBT"/>
+                <channel handle="phaseAvg" settable="false" signal="BPM92:PhsAvg"/>
+                <channel handle="amplitudeAvg" settable="false" signal="BPM92:AmpAvg"/>
+                <channel handle="ampTBT" settable="false" signal="BPM92:AmpTBT"/>
+                <channel handle="phaseTBT" settable="false" signal="BPM92:PhsTBT"/>
+            </channelsuite>
+        </node>
+        <node id="BPM93" len="0.0" pos="201.86211989098766" type="BPM">
+            <attributes>
+                <bpm frequency="7.0442E8" length="1.0" orientation="1"/>
+            </attributes>
+            <channelsuite>
+                <channel handle="xAvg" settable="false" signal="BPM93:XAvg"/>
+                <channel handle="yAvg" settable="false" signal="BPM93:YAvg"/>
+                <channel handle="xTBT" settable="false" signal="BPM93:XTBT"/>
+                <channel handle="yTBT" settable="false" signal="BPM93:YTBT"/>
+                <channel handle="phaseAvg" settable="false" signal="BPM93:PhsAvg"/>
+                <channel handle="amplitudeAvg" settable="false" signal="BPM93:AmpAvg"/>
+                <channel handle="ampTBT" settable="false" signal="BPM93:AmpTBT"/>
+                <channel handle="phaseTBT" settable="false" signal="BPM93:PhsTBT"/>
+            </channelsuite>
+        </node>
         <node id="QP155" len="0.8" pos="203.56211989098767" type="Q">
             <attributes>
                 <magnet bendAngle="0.0" dfltMagFld="6.3253" dipoleEntrRotAngle="0.0" dipoleExitRotAngle="0.0" dipoleQuadComponent="0.0" len="0.8" pathLength="0.0" polarity="1.0"/>
@@ -16030,6 +17425,36 @@
                 <channel handle="fieldRB" settable="false" signal="QP155:B"/>
             </channelsuite>
             <ps main="QP155-PS"/>
+        </node>
+        <node id="BPM94" len="0.0" pos="204.06211989098767" type="BPM">
+            <attributes>
+                <bpm frequency="7.0442E8" length="1.0" orientation="1"/>
+            </attributes>
+            <channelsuite>
+                <channel handle="xAvg" settable="false" signal="BPM94:XAvg"/>
+                <channel handle="yAvg" settable="false" signal="BPM94:YAvg"/>
+                <channel handle="xTBT" settable="false" signal="BPM94:XTBT"/>
+                <channel handle="yTBT" settable="false" signal="BPM94:YTBT"/>
+                <channel handle="phaseAvg" settable="false" signal="BPM94:PhsAvg"/>
+                <channel handle="amplitudeAvg" settable="false" signal="BPM94:AmpAvg"/>
+                <channel handle="ampTBT" settable="false" signal="BPM94:AmpTBT"/>
+                <channel handle="phaseTBT" settable="false" signal="BPM94:PhsTBT"/>
+            </channelsuite>
+        </node>
+        <node id="BPM95" len="0.0" pos="204.06211989098767" type="BPM">
+            <attributes>
+                <bpm frequency="7.0442E8" length="1.0" orientation="1"/>
+            </attributes>
+            <channelsuite>
+                <channel handle="xAvg" settable="false" signal="BPM95:XAvg"/>
+                <channel handle="yAvg" settable="false" signal="BPM95:YAvg"/>
+                <channel handle="xTBT" settable="false" signal="BPM95:XTBT"/>
+                <channel handle="yTBT" settable="false" signal="BPM95:YTBT"/>
+                <channel handle="phaseAvg" settable="false" signal="BPM95:PhsAvg"/>
+                <channel handle="amplitudeAvg" settable="false" signal="BPM95:AmpAvg"/>
+                <channel handle="ampTBT" settable="false" signal="BPM95:AmpTBT"/>
+                <channel handle="phaseTBT" settable="false" signal="BPM95:PhsTBT"/>
+            </channelsuite>
         </node>
         <node id="QP156" len="0.8" pos="204.96211989098768" type="Q">
             <attributes>
@@ -16260,6 +17685,96 @@
                 <channel handle="fieldRB" settable="false" signal="QP158:B"/>
             </channelsuite>
             <ps main="QP158-PS"/>
+        </node>
+        <node id="BPM96" len="0.0" pos="218.38874989098784" type="BPM">
+            <attributes>
+                <bpm frequency="7.0442E8" length="1.0" orientation="1"/>
+            </attributes>
+            <channelsuite>
+                <channel handle="xAvg" settable="false" signal="BPM96:XAvg"/>
+                <channel handle="yAvg" settable="false" signal="BPM96:YAvg"/>
+                <channel handle="xTBT" settable="false" signal="BPM96:XTBT"/>
+                <channel handle="yTBT" settable="false" signal="BPM96:YTBT"/>
+                <channel handle="phaseAvg" settable="false" signal="BPM96:PhsAvg"/>
+                <channel handle="amplitudeAvg" settable="false" signal="BPM96:AmpAvg"/>
+                <channel handle="ampTBT" settable="false" signal="BPM96:AmpTBT"/>
+                <channel handle="phaseTBT" settable="false" signal="BPM96:PhsTBT"/>
+            </channelsuite>
+        </node>
+        <node id="BPM97" len="0.0" pos="218.38874989098784" type="BPM">
+            <attributes>
+                <bpm frequency="7.0442E8" length="1.0" orientation="1"/>
+            </attributes>
+            <channelsuite>
+                <channel handle="xAvg" settable="false" signal="BPM97:XAvg"/>
+                <channel handle="yAvg" settable="false" signal="BPM97:YAvg"/>
+                <channel handle="xTBT" settable="false" signal="BPM97:XTBT"/>
+                <channel handle="yTBT" settable="false" signal="BPM97:YTBT"/>
+                <channel handle="phaseAvg" settable="false" signal="BPM97:PhsAvg"/>
+                <channel handle="amplitudeAvg" settable="false" signal="BPM97:AmpAvg"/>
+                <channel handle="ampTBT" settable="false" signal="BPM97:AmpTBT"/>
+                <channel handle="phaseTBT" settable="false" signal="BPM97:PhsTBT"/>
+            </channelsuite>
+        </node>
+        <node id="BPM98" len="0.0" pos="220.38874989098784" type="BPM">
+            <attributes>
+                <bpm frequency="7.0442E8" length="1.0" orientation="1"/>
+            </attributes>
+            <channelsuite>
+                <channel handle="xAvg" settable="false" signal="BPM98:XAvg"/>
+                <channel handle="yAvg" settable="false" signal="BPM98:YAvg"/>
+                <channel handle="xTBT" settable="false" signal="BPM98:XTBT"/>
+                <channel handle="yTBT" settable="false" signal="BPM98:YTBT"/>
+                <channel handle="phaseAvg" settable="false" signal="BPM98:PhsAvg"/>
+                <channel handle="amplitudeAvg" settable="false" signal="BPM98:AmpAvg"/>
+                <channel handle="ampTBT" settable="false" signal="BPM98:AmpTBT"/>
+                <channel handle="phaseTBT" settable="false" signal="BPM98:PhsTBT"/>
+            </channelsuite>
+        </node>
+        <node id="BPM99" len="0.0" pos="220.38874989098784" type="BPM">
+            <attributes>
+                <bpm frequency="7.0442E8" length="1.0" orientation="1"/>
+            </attributes>
+            <channelsuite>
+                <channel handle="xAvg" settable="false" signal="BPM99:XAvg"/>
+                <channel handle="yAvg" settable="false" signal="BPM99:YAvg"/>
+                <channel handle="xTBT" settable="false" signal="BPM99:XTBT"/>
+                <channel handle="yTBT" settable="false" signal="BPM99:YTBT"/>
+                <channel handle="phaseAvg" settable="false" signal="BPM99:PhsAvg"/>
+                <channel handle="amplitudeAvg" settable="false" signal="BPM99:AmpAvg"/>
+                <channel handle="ampTBT" settable="false" signal="BPM99:AmpTBT"/>
+                <channel handle="phaseTBT" settable="false" signal="BPM99:PhsTBT"/>
+            </channelsuite>
+        </node>
+        <node id="BPM100" len="0.0" pos="242.51064989098785" type="BPM">
+            <attributes>
+                <bpm frequency="7.0442E8" length="1.0" orientation="1"/>
+            </attributes>
+            <channelsuite>
+                <channel handle="xAvg" settable="false" signal="BPM100:XAvg"/>
+                <channel handle="yAvg" settable="false" signal="BPM100:YAvg"/>
+                <channel handle="xTBT" settable="false" signal="BPM100:XTBT"/>
+                <channel handle="yTBT" settable="false" signal="BPM100:YTBT"/>
+                <channel handle="phaseAvg" settable="false" signal="BPM100:PhsAvg"/>
+                <channel handle="amplitudeAvg" settable="false" signal="BPM100:AmpAvg"/>
+                <channel handle="ampTBT" settable="false" signal="BPM100:AmpTBT"/>
+                <channel handle="phaseTBT" settable="false" signal="BPM100:PhsTBT"/>
+            </channelsuite>
+        </node>
+        <node id="BPM101" len="0.0" pos="242.51064989098785" type="BPM">
+            <attributes>
+                <bpm frequency="7.0442E8" length="1.0" orientation="1"/>
+            </attributes>
+            <channelsuite>
+                <channel handle="xAvg" settable="false" signal="BPM101:XAvg"/>
+                <channel handle="yAvg" settable="false" signal="BPM101:YAvg"/>
+                <channel handle="xTBT" settable="false" signal="BPM101:XTBT"/>
+                <channel handle="yTBT" settable="false" signal="BPM101:YTBT"/>
+                <channel handle="phaseAvg" settable="false" signal="BPM101:PhsAvg"/>
+                <channel handle="amplitudeAvg" settable="false" signal="BPM101:AmpAvg"/>
+                <channel handle="ampTBT" settable="false" signal="BPM101:AmpTBT"/>
+                <channel handle="phaseTBT" settable="false" signal="BPM101:PhsTBT"/>
+            </channelsuite>
         </node>
         <node id="QP159" len="0.0" pos="242.51064989099785" type="Q">
             <attributes>
