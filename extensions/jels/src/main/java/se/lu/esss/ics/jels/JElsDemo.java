@@ -3,6 +3,7 @@ package se.lu.esss.ics.jels;
 import java.io.IOException;
 import java.util.Iterator;
 
+import se.lu.esss.ics.jels.GeneralTest.Column;
 import se.lu.esss.ics.jels.model.alg.ElsTracker;
 import se.lu.esss.ics.jels.model.elem.els.ElsElementMapping;
 import se.lu.esss.ics.jels.model.elem.jels.JElsElementMapping;
@@ -27,6 +28,7 @@ import xal.smf.Accelerator;
 import xal.smf.AcceleratorNode;
 import xal.smf.AcceleratorSeq;
 import xal.smf.data.XMLDataManager;
+import xal.tools.beam.PhaseVector;
 import xal.tools.beam.Twiss;
 import xal.tools.xml.XmlDataAdaptor;
 
@@ -115,23 +117,39 @@ public class JElsDemo {
 		    by[i] = twiss[1].getBeta();
 		    bz[i] = twiss[2].getBeta();
 		    w[i] = ps.getKineticEnergy()/1.e6;
-		    System.out.printf("%E %E %E %E %E %E %E %E %E %E %E\n", ps.getPosition(), ps.getGamma()-1, 
-		    		twiss[0].getEnvelopeRadius(),twiss[0].getBeta(),
-		    		twiss[1].getEnvelopeRadius(),twiss[1].getBeta(),
-		    		twiss[2].getEnvelopeRadius(),twiss[2].getBeta(),
-		    		twiss[2].getBeta()/Math.pow(ps.getGamma(), 2),
-		    		ps.getTime(), ps.getKineticEnergy());
+		    PhaseVector mean = ps.phaseMean();
+			
+		    System.out.printf("%E %E %E %E %E %E %E %E %E %E %E %E %E %E %E %E %E\n", ps.getPosition(), ps.getGamma()-1, 		
+					twiss[0].getEnvelopeRadius(),
+					Math.sqrt(twiss[0].getGamma()*twiss[0].getEmittance()),
+					twiss[1].getEnvelopeRadius(),
+					Math.sqrt(twiss[1].getGamma()*twiss[1].getEmittance()),
+					twiss[2].getEnvelopeRadius()/ps.getGamma(),
+					Math.sqrt(twiss[2].getGamma()*twiss[2].getEmittance())*ps.getGamma(),
+					Math.sqrt(twiss[2].getGamma()*twiss[2].getEmittance())/ps.getGamma(),
+				
+					mean.getx(),
+					mean.getxp(),
+					mean.gety(),
+					mean.getyp(),
+					mean.getz(),
+					mean.getzp(),
+				
+					twiss[0].getBeta(),
+					twiss[1].getBeta());
 		    
-		    /*
-		    if (ps.getElementId().startsWith("BEGIN")) {
+		    
+		    /*if (ps.getElementId().startsWith("BEGIN")) {
 		    	String sec = ps.getElementId().substring(6);
 		    	AcceleratorNode node = sequence.getNodeWithId(sec);
 		    	if (node instanceof AcceleratorSeq && ((AcceleratorSeq)node).getParent() instanceof Accelerator) {	
 			    	char[] axis = new char[]{'x','y','z'};
 			    	for (int j=0; j<3; j++) {
 			    		System.out.printf("<record name=\"%s\" coordinate=\"%c\" alpha=\"%E\" beta=\"%E\" emittance=\"%E\"/>\n", 
-			    				sec, axis[j], twiss[j].getAlpha(), twiss[j].getBeta(), twiss[j].getEmittance());	
+			    				sec, axis[j], twiss[j].getAlpha(), twiss[j].getBeta(), twiss[j].getEmittance());
 			    	}
+			    	System.out.printf("<record name=\"%s\" species=\"PROTON\" W=\"%E\"/>\n", 
+		    				sec, ps.getKineticEnergy());
 		    	}
 		    }*/
 		    i=i+1;
@@ -162,7 +180,7 @@ public class JElsDemo {
 		envelopeTracker.setRfGapPhaseCalculation(true);
 		envelopeTracker.setUseSpacecharge(true);
 		envelopeTracker.setEmittanceGrowth(false);
-		envelopeTracker.setStepSize(0.004);
+		envelopeTracker.setStepSize(0.1);
 		envelopeTracker.setProbeUpdatePolicy(Tracker.UPDATE_EXIT);
 		
 		EnvelopeProbe envelopeProbe = new EnvelopeProbe();
@@ -191,20 +209,18 @@ public class JElsDemo {
 		probe.setSpeciesCharge(1);
 		probe.setSpeciesRestEnergy(9.3827202900E8);
 		//elsProbe.setSpeciesRestEnergy(9.38272013e8);	
-		probe.setKineticEnergy(3e6);//energy
+		probe.setKineticEnergy(3.6217853e6);//energy
 		probe.setPosition(0.0);
 		probe.setTime(0.0);		
 				
 		double beta_gamma = probe.getBeta() * probe.getGamma();
 	
 		
-		probe.initFromTwiss(new Twiss[]{new Twiss(-0.1763,0.2442,0.2098*1e-6 / beta_gamma),
-										  new Twiss(-0.3247,0.3974,0.2091*1e-6 / beta_gamma),
-										  new Twiss(-0.5283,0.8684,0.2851*1e-6 / beta_gamma)});
-		probe.setBeamCurrent(0.0);
-		//probe.setBeamCurrent(50e-3);
-		
-		// probe.setBunchFrequency(4.025e8); 	
+		probe.initFromTwiss(new Twiss[]{new Twiss(-0.051805615,0.20954703,0.25288*1e-6 / beta_gamma),
+										  new Twiss(-0.30984478,0.37074849,0.251694*1e-6 / beta_gamma),
+										  new Twiss(-0.48130325,0.92564505,0.3615731*1e-6 / beta_gamma)});
+		probe.setBeamCurrent(62.5e-3);
+		probe.setBunchFrequency(352.21e6); 	
 	}
 	
 	public static void loadInitialParameters(EnvelopeProbe probe, String file) {
