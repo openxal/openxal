@@ -598,7 +598,8 @@ public abstract class BaseMatrix<M extends BaseMatrix<M>> implements IArchive {
      */
     @Override
     public boolean equals(Object objTest) {
-        boolean bResult = this.equals(objTest);
+        //boolean bResult = this.equals(objTest);	// this code causes an infinite recursion
+		final boolean bResult = super.equals( objTest );
         
         return bResult;
     }
