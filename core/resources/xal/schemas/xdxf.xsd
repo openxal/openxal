@@ -1257,6 +1257,11 @@
 								<xs:documentation>quadrupole component for bend dipole</xs:documentation>
 							</xs:annotation>
 						</xs:attribute>
+						<xs:attribute name="entrK1" type="xs:double"/>
+						<xs:attribute name="entrK2" type="xs:double"/>
+						<xs:attribute name="exitK1" type="xs:double"/>
+						<xs:attribute name="exitK2" type="xs:double"/>
+						<xs:attribute name="gap" type="xs:double"/>
 					</xs:complexType>
 				</xs:element>
 				<xs:element name="aperture" minOccurs="0">
@@ -1422,6 +1427,13 @@
 							<xs:annotation>
 								<xs:documentation>quadratic fit coefficients for the transit time factor as a function
 									of beta for the end cells (constant, linear, quad)
+								</xs:documentation>
+							</xs:annotation>
+						</xs:attribute>
+						<xs:attribute name="TTF_startCoefs" type="doubleArrayType">
+							<xs:annotation>
+								<xs:documentation>quadratic fit coefficients for the transit time factor as a function
+									of beta for the start cells (constant, linear, quad)
 								</xs:documentation>
 							</xs:annotation>
 						</xs:attribute>
