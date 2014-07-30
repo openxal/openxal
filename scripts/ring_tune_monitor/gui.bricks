@@ -1,0 +1,152 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<BricksDocument date="Tue Nov 16 13:21:41 EST 2010" version="1.0.0">
+    <RootBrick>
+        <ViewNode height="754" tag="MainWindow" width="1222">
+            <ViewProxy type="javax.swing.JFrame"/>
+            <BeanProperty name="title" value="Ring Tune Monitor"/>
+            <ViewNode tag="Main Vertical Layout">
+                <ViewProxy type="javax.swing.Box_Vertical"/>
+                <ViewNode tag="Controls Box">
+                    <ViewProxy type="javax.swing.Box_Horizontal"/>
+                    <ViewNode tag="SnapshotButton">
+                        <ViewProxy type="javax.swing.JButton"/>
+                        <BeanProperty group="custom" iconName="snapshot24.gif" name="icon"/>
+                        <BeanProperty name="text" value=""/>
+                        <BeanProperty name="horizontalTextPosition" value="11"/>
+                        <BeanProperty name="toolTipText" value="Take snapshot of this window."/>
+                    </ViewNode>
+                    <ViewNode tag="RangeBox">
+                        <ViewProxy type="javax.swing.Box_Horizontal"/>
+                        <BeanProperty height="32" name="minimumSize" width="300"/>
+                        <BeanProperty height="32" name="preferredSize" width="310"/>
+                        <BeanProperty height="32771" name="maximumSize" width="400"/>
+                        <BorderNode tag="Titled Border">
+                            <BorderProxy type="javax.swing.border.TitledBorder"/>
+                            <BeanProperty name="title" value="Waveform Range"/>
+                        </BorderNode>
+                        <ViewNode tag="RangeCheckBox">
+                            <ViewProxy type="javax.swing.JCheckBox"/>
+                            <BeanProperty name="selected" value="true"/>
+                            <BeanProperty name="text" value="Use Range"/>
+                            <BeanProperty name="toolTipText" value="Check to use the specified range otherwise the full waveform will be used."/>
+                        </ViewNode>
+                        <ViewNode tag="LowerRangeSpinner">
+                            <ViewProxy type="javax.swing.JSpinner"/>
+                            <BeanProperty name="enabled" value="true"/>
+                            <BeanProperty name="toolTipText" value="Lower end of range to analyze"/>
+                        </ViewNode>
+                        <ViewNode tag="UpperRangeSpinner">
+                            <ViewProxy type="javax.swing.JSpinner"/>
+                            <BeanProperty name="enabled" value="true"/>
+                            <BeanProperty name="toolTipText" value="Upper end of range to analyze"/>
+                        </ViewNode>
+                        <BorderNode tag="Titled Border">
+                            <BorderProxy type="javax.swing.border.TitledBorder"/>
+                            <BeanProperty name="title" value="Waveform Range"/>
+                        </BorderNode>
+                    </ViewNode>
+                    <ViewNode tag="Horizontal Glue">
+                        <ViewProxy type="javax.swing.Box_HorizontalGlue"/>
+                    </ViewNode>
+                    <ViewNode tag="Tune Box">
+                        <ViewProxy type="javax.swing.Box_Horizontal"/>
+                        <BorderNode tag="Titled Border">
+                            <BorderProxy type="javax.swing.border.TitledBorder"/>
+                            <BeanProperty name="title" value="Tunes"/>
+                        </BorderNode>
+                        <ViewNode tag="FastFittingCheckbox">
+                            <ViewProxy type="javax.swing.JCheckBox"/>
+                            <BeanProperty name="text" value="Fast Fitting"/>
+                            <BeanProperty name="toolTipText" value="Check to enable fast (but less accurate) updates."/>
+                        </ViewNode>
+                        <ViewNode tag="TuneAveragingCheckbox">
+                            <ViewProxy type="javax.swing.JCheckBox"/>
+                            <BeanProperty name="text" value="Averaging"/>
+                            <BeanProperty name="name" value="Tune Averaging"/>
+                            <BeanProperty name="toolTipText" value="Average the tune over all samples until cleared"/>
+                        </ViewNode>
+                        <ViewNode tag="Horizontal Tune Field">
+                            <ViewProxy type="javax.swing.JTextField"/>
+                            <BeanProperty name="horizontalAlignment" value="4"/>
+                            <BeanProperty name="text" value="0"/>
+                            <BeanProperty height="28" name="minimumSize" width="100"/>
+                            <BeanProperty height="28" name="maximumSize" width="150"/>
+                            <BeanProperty name="name" value="Text Field"/>
+                            <BeanProperty name="columns" value="10"/>
+                            <BeanProperty name="toolTipText" value="Horizontal Tune"/>
+                            <BeanProperty name="scrollOffset" value="0"/>
+                            <BeanProperty name="editable" value="false"/>
+                            <BeanProperty alpha="255" blue="0" green="0" name="foreground" red="153"/>
+                        </ViewNode>
+                        <ViewNode tag="Vertical Tune Field">
+                            <ViewProxy type="javax.swing.JTextField"/>
+                            <BeanProperty name="horizontalAlignment" value="4"/>
+                            <BeanProperty name="text" value="0"/>
+                            <BeanProperty height="28" name="minimumSize" width="100"/>
+                            <BeanProperty height="28" name="maximumSize" width="150"/>
+                            <BeanProperty name="name" value="Text Field"/>
+                            <BeanProperty name="columns" value="10"/>
+                            <BeanProperty name="toolTipText" value="Vertical Tune"/>
+                            <BeanProperty name="scrollOffset" value="0"/>
+                            <BeanProperty name="editable" value="false"/>
+                            <BeanProperty alpha="255" blue="0" green="102" name="foreground" red="0"/>
+                        </ViewNode>
+                        <ViewNode tag="LiveTunesCheckbox">
+                            <ViewProxy type="javax.swing.JCheckBox"/>
+                            <BeanProperty name="selected" value="false"/>
+                            <BeanProperty name="text" value="Live"/>
+                            <BeanProperty name="actionCommand" value="Live"/>
+                            <BeanProperty name="toolTipText" value="Enable Live Tune updates"/>
+                            <BeanProperty name="verifyInputWhenFocusTarget" value="false"/>
+                        </ViewNode>
+                        <ViewNode tag="ClearAverage">
+                            <ViewProxy type="javax.swing.JButton"/>
+                            <BeanProperty name="enabled" value="false"/>
+                            <BeanProperty group="custom" iconName="Clear24.gif" name="icon"/>
+                            <BeanProperty name="text" value=""/>
+                            <BeanProperty name="toolTipText" value="Clear the running average"/>
+                        </ViewNode>
+                        <ViewNode tag="UpdateTunesButton">
+                            <ViewProxy type="javax.swing.JButton"/>
+                            <BeanProperty group="general" iconName="Refresh24.gif" name="icon"/>
+                            <BeanProperty name="text" value=""/>
+                            <BeanProperty name="name" value="Button"/>
+                            <BeanProperty name="toolTipText" value="Refresh the fitted tunes"/>
+                        </ViewNode>
+                        <ViewNode tag="CopyTunesButton">
+                            <ViewProxy type="javax.swing.JButton"/>
+                            <BeanProperty group="general" iconName="Copy24.gif" name="icon"/>
+                            <BeanProperty name="text" value=""/>
+                            <BeanProperty name="toolTipText" value="Copy the fitted tunes to the clipboard"/>
+                        </ViewNode>
+                        <BorderNode tag="Titled Border">
+                            <BorderProxy type="javax.swing.border.TitledBorder"/>
+                            <BeanProperty name="title" value="Tunes"/>
+                        </BorderNode>
+                    </ViewNode>
+                </ViewNode>
+                <ViewNode tag="MainPane">
+                    <ViewProxy type="javax.swing.JSplitPane"/>
+                    <BeanProperty height="50" name="minimumSize" width="32000"/>
+                    <BeanProperty height="284" name="preferredSize" width="32000"/>
+                    <BeanProperty name="dividerLocation" value="225"/>
+                    <ViewNode tag="SelectionPanel">
+                        <ViewProxy type="javax.swing.Box_Vertical"/>
+                        <ViewNode tag="BPM Selection Pane">
+                            <ViewProxy type="javax.swing.JScrollPane"/>
+                            <ViewNode tag="BPM Selection List">
+                                <ViewProxy type="javax.swing.JList"/>
+                                <BeanProperty name="selectionMode" value="0"/>
+                                <BeanProperty name="toolTipText" value="Ring BPMs"/>
+                            </ViewNode>
+                        </ViewNode>
+                    </ViewNode>
+                    <ViewNode tag="SpectrumPlot">
+                        <ViewProxy type="xal.extension.widgets.plot.FunctionGraphsJPanel"/>
+                        <BeanProperty name="name" value="Spectrum"/>
+                    </ViewNode>
+                </ViewNode>
+            </ViewNode>
+        </ViewNode>
+    </RootBrick>
+</BricksDocument>

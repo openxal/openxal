@@ -1,0 +1,55 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<BricksDocument date="Fri May 11 14:23:21 EDT 2007" version="1.0.0">
+    <RootBrick>
+        <ViewNode height="492" tag="MainWindow" width="755">
+            <ViewProxy type="javax.swing.JFrame"/>
+            <BeanProperty name="title" value="SCL Cavity Waveform Capture"/>
+            <ViewNode tag="MainContent">
+                <ViewProxy type="javax.swing.Box_Vertical"/>
+                <BeanProperty height="173" name="preferredSize" width="150"/>
+                <ViewNode tag="DataBox">
+                    <ViewProxy type="javax.swing.Box_Horizontal"/>
+                    <ViewNode tag="CavityScroller">
+                        <ViewProxy type="javax.swing.JScrollPane"/>
+                        <BeanProperty height="140" name="preferredSize" width="160"/>
+                        <BeanProperty height="23" name="minimumSize" width="100"/>
+                        <BeanProperty height="32767" name="maximumSize" width="250"/>
+                        <ViewNode tag="CavityList">
+                            <ViewProxy type="javax.swing.JList"/>
+                        </ViewNode>
+                    </ViewNode>
+                    <ViewNode tag="WaveformPlot">
+                        <ViewProxy type="xal.extension.widgets.plot.FunctionGraphsJPanel"/>
+                    </ViewNode>
+                </ViewNode>
+                <ViewNode tag="ButtonBox">
+                    <ViewProxy type="javax.swing.Box_Horizontal"/>
+                    <BorderNode tag="Etched Border">
+                        <BorderProxy type="javax.swing.border.EtchedBorder"/>
+                    </BorderNode>
+                    <ViewNode tag="Horizontal Glue">
+                        <ViewProxy type="javax.swing.Box_HorizontalGlue"/>
+                    </ViewNode>
+                    <ViewNode tag="CaptureButton">
+                        <ViewProxy type="javax.swing.JButton"/>
+                        <BeanProperty name="text" value="Capture"/>
+                        <BeanProperty name="toolTipText" value="Capture waveforms for selected cavity"/>
+                    </ViewNode>
+                    <ViewNode tag="PlotButton">
+                        <ViewProxy type="javax.swing.JButton"/>
+                        <BeanProperty name="text" value="Plot"/>
+                        <BeanProperty name="toolTipText" value="Plot the waveforms"/>
+                    </ViewNode>
+                    <ViewNode tag="SaveButton">
+                        <ViewProxy type="javax.swing.JButton"/>
+                        <BeanProperty name="text" value="Save..."/>
+                        <BeanProperty name="toolTipText" value="Save waveform data to a file"/>
+                    </ViewNode>
+                    <BorderNode tag="Etched Border">
+                        <BorderProxy type="javax.swing.border.EtchedBorder"/>
+                    </BorderNode>
+                </ViewNode>
+            </ViewNode>
+        </ViewNode>
+    </RootBrick>
+</BricksDocument>
