@@ -1,7 +1,7 @@
 <?xml version = '1.0' encoding = 'UTF-8'?>
 <xdxf xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
  	xsi:noNamespaceSchemaLocation="http://sourceforge.net/p/xaldev/openxal/ci/master/tree/core/resources/xal/schemas/xdxf.xsd?format=raw"
- 	date="06.29.2014" id="ESS" len="602.5016199715232" pos="0.0" system="ESS" type="sequence" ver="">
+ 	date="06.29.2014" system="ESS" ver="">
 	<comboseq id="from-mebt">
 		<sequence id="mebt"/>
 		<sequence id="dtl"/>
