@@ -108,19 +108,25 @@ class AccNode:
 		return (diffX*diffX+diffY*diffY)
 
 	def track(self,phaseVector):
+#		print "Tracking Node: %s" % ( self.getId() )
+#		print "\t Input phase vector: %s" % ( phaseVector )
+#		print "\t Phase Matrix: %s" % ( self.phMatr )
+
 		if(self.offSetX != None):
 			phaseVector.setx(phaseVector.getx()+self.offSetX/1000.)
 		if(self.offSetY != None):
 			phaseVector.sety(phaseVector.gety()+self.offSetY/1000.)
 		self.posX = phaseVector.getx()*1000.
 		self.posY = phaseVector.gety()*1000.
-
-		if self.phMatr != None:
+		if(self.phMatr != None):
 			phaseVector = self.phMatr.times(phaseVector)
 		if(self.offSetX != None):
 			phaseVector.setx(phaseVector.getx()-self.offSetX/1000.)
 		if(self.offSetY != None):
 			phaseVector.sety(phaseVector.gety()-self.offSetY/1000.)
+
+#		print "\t Output phase vector: %s\n" % ( phaseVector )
+
 		return phaseVector
 		
 	def track1(self,phaseVector):
@@ -168,8 +174,15 @@ class AccCalculator(Scorer):
 		#-----------------------------
 		scenario = Scenario.newScenarioFor(accSeq)
 		scenario.setSynchronizationMode(Scenario.SYNC_MODE_RF_DESIGN)
-		ptracker = EnvelopeTracker()
-		probe = ProbeFactory.getEnvelopeProbe(accSeq, ptracker)
+#		ptracker = EnvelopeTracker()
+#		probe = ProbeFactory.getEnvelopeProbe(accSeq, ptracker)
+
+#		ptracker = AlgorithmFactory.createEnvTrackerAdapt( accSeq )
+#		probe = ProbeFactory.getEnvelopeProbe( accSeq, ptracker )
+
+		ptracker = AlgorithmFactory.createParticleTracker( accSeq )
+		probe = ProbeFactory.createParticleProbe( accSeq, ptracker )
+
 		scenario.setProbe(probe)
 		probe.reset()
 		#probe.setBeamCharge(0.0)
@@ -194,6 +207,14 @@ class AccCalculator(Scorer):
 			phMatrE = phMatr2.times(phMatr1.inverse())
 			phMatr0 = phMatr2
 			#print "debug id=",nodeId," matr=",phMatrE.toString()
+
+#			print "node: %s" % ( nodeId )
+#			print "\t matr1: %s" % ( phMatr1 )
+#			print "\t matr2: %s" % ( phMatr2 )
+#			print "\t matrD: %s" % ( phMatrD )
+#			print "\t matrE: %s" % ( phMatrE )
+#			print ""
+
 			accNodeD = AccNode("general")
 			accNodeE = AccNode(nodeId,node)
 			accNodeD.setPhMatr(phMatrD)
@@ -228,16 +249,23 @@ class AccCalculator(Scorer):
 		yp0 = self.yp0_Proxy.getValue()
 		phaseVector = PhaseVector(x0/1000.,xp0/1000.,y0/1000.,yp0/1000.,0.,0.)
 
-		print x0, xp0, y0, yp0
-		#print phaseVector
+		#print x0, xp0, y0, yp0
+#		print "Input phase vector: %s" % ( phaseVector )
 
 		for accNode in self.accNodes:
 			phaseVector = accNode.track(phaseVector)
+
+#		print "Output phase vector: %s" % ( phaseVector )
+
 		diff2 = 0.
 		for accNode in self.AccNodeBPMs:
 			diff2 = diff2 + accNode.getDiff2()
+
 		if(len(self.AccNodeBPMs) > 0):
 			diff2 = diff2 /len(self.AccNodeBPMs)
+
+#		print "Mean diff2: %s" % ( diff2 )
+
 		return diff2
 
 	def track1(self):
@@ -564,26 +592,26 @@ class PlotActionListener(ActionListener):
 		objective = AccCalcObjective()
 		self.problem.addObjective( objective )
 
-		hint = InitialDelta( 0.5 )
+		hint = InitialDelta( 0.01 )
 		self.problem.addHint( hint )
 
-		x0_var = Variable( "x0", 0.0, -10.0, 10.0 )
-		hint.addInitialDelta( x0_var, 0.5 )
+		x0_var = Variable( "x0", 0.0, -1.0, 1.0 )
+		hint.addInitialDelta( x0_var, 0.01 )
 		self.problem.addVariable( x0_var )
 		self.x0_Proxy = self.problem.getValueReference( x0_var )
 
-		xp0_var = Variable( "xp0", 0.0, -10.0, 10.0 )
-		hint.addInitialDelta( xp0_var, 0.5 )
+		xp0_var = Variable( "xp0", 0.0, -1.0, 1.0 )
+		hint.addInitialDelta( xp0_var, 0.01 )
 		self.problem.addVariable( xp0_var )
 		self.xp0_Proxy = self.problem.getValueReference( xp0_var )
 
-		y0_var = Variable( "y0", 0.0, -10.0, 10.0 )
-		hint.addInitialDelta( y0_var, 0.5 )
+		y0_var = Variable( "y0", 0.0, -1.0, 1.0 )
+		hint.addInitialDelta( y0_var, 0.01 )
 		self.problem.addVariable( y0_var )
 		self.y0_Proxy = self.problem.getValueReference( y0_var )
 
-		yp0_var = Variable( "yp0", 0.0, -10.0, 10.0 )
-		hint.addInitialDelta( yp0_var, 0.5 )
+		yp0_var = Variable( "yp0", 0.0, -1.0, 1.0 )
+		hint.addInitialDelta( yp0_var, 0.01 )
 		self.problem.addVariable( yp0_var )
 		self.yp0_Proxy = self.problem.getValueReference( yp0_var )
 
@@ -595,12 +623,13 @@ class PlotActionListener(ActionListener):
 
 		self.accCalc = AccCalculator(accSeq , nodes, offSetsFileName, variable_proxies )
 		accCalc = self.accCalc
-		self.problem.setEvaluator( ScoringEvaluator( self.accCalc, self.problem.getVariables(), objective ) )
+		evaluator = ScoringEvaluator( self.accCalc, self.problem.getVariables(), objective )
+		self.problem.setEvaluator( evaluator )
 
 		textArea.setText(null)
 		plotsBeforePanel.removeAll()
 		#find initial conditions
-		solver = Solver( SolveStopperFactory.maxEvaluationsStopper(2000) )
+		solver = Solver( SolveStopperFactory.maxEvaluationsStopper(1000) )
 		res = "Score= %6.4f maxDiff= %6.3f \n"%(accCalc.raw_score(),accCalc.getMaxDiff())
 		textArea.append(res)
 		textArea.append("===after CCL entrance coord. fit ===\n")
@@ -609,13 +638,22 @@ class PlotActionListener(ActionListener):
 		best_solution = scoreboard.getBestSolution()
 		print best_solution
 
+		# apply the best solution to the model so the variable proxies represent the optimal values
+		evaluator.evaluate( best_solution )
+
 		res = "Score= %6.4f maxDiff= %6.3f \n"%(accCalc.raw_score(),accCalc.getMaxDiff())
 		textArea.append(res)
 		textArea.append("=== CCL entrance coordinates ===\n")
-		x0 = best_solution.getTrialPoint().getValue( x0_var )
-		xp0 = best_solution.getTrialPoint().getValue( xp0_var )
-		y0 = best_solution.getTrialPoint().getValue( y0_var )
-		yp0 = best_solution.getTrialPoint().getValue( yp0_var )
+#		x0 = best_solution.getTrialPoint().getValue( x0_var )
+#		xp0 = best_solution.getTrialPoint().getValue( xp0_var )
+#		y0 = best_solution.getTrialPoint().getValue( y0_var )
+#		yp0 = best_solution.getTrialPoint().getValue( yp0_var )
+
+		x0 = self.x0_Proxy.getValue()
+		xp0 = self.xp0_Proxy.getValue()
+		y0 = self.y0_Proxy.getValue()
+		yp0 = self.yp0_Proxy.getValue()
+
 		textArea.append("x0 [mm]  = %6.3f \n"%x0)
 		textArea.append("xp0[mrad]= %6.3f \n"%xp0)
 		textArea.append("y0 [mm]  = %6.3f \n"%y0)
