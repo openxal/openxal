@@ -3,7 +3,6 @@ package se.lu.esss.ics.jels;
 import java.io.IOException;
 import java.util.Iterator;
 
-import se.lu.esss.ics.jels.GeneralTest.Column;
 import se.lu.esss.ics.jels.model.alg.ElsTracker;
 import se.lu.esss.ics.jels.model.elem.els.ElsElementMapping;
 import se.lu.esss.ics.jels.model.elem.jels.JElsElementMapping;
