@@ -21,7 +21,7 @@ public class FileLoadTest {
 	@Test
 	public void doTest() throws ModelException
 	{
-		AcceleratorSeq sequence = loadAcceleratorSequence("lebt");
+		AcceleratorSeq sequence = loadAcceleratorSequence("mebt");
 				
 		Scenario scenario = Scenario.newScenarioFor(sequence);
 		
