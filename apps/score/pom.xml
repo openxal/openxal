@@ -5,11 +5,11 @@
 	<parent>
 		<groupId>org.xal</groupId>
 		<artifactId>openxal.apps</artifactId>
-		<version>1.0.2-SNAPSHOT</version>
+		<version>1.0.2</version>
 	</parent>
 	
 	<artifactId>openxal.apps.score</artifactId>
-	<version>1.0.2-SNAPSHOT</version>
+	<version>1.0.2</version>
 	
 	<build>
 		<sourceDirectory>src</sourceDirectory>

@@ -6,7 +6,7 @@
 export OPENXAL_CONFIG_DIR=/etc/opt/codac-4.1/openxal
 
 # 2. Openxal version
-export OPENXAL_VERSION=1.0.2-SNAPSHOT
+export OPENXAL_VERSION=1.0.2
 
 # 3. Jython classpath setup
 # Jython version on CODAC 4.1 is 2.2.1. so JYTHONPATH actually won't be used 
