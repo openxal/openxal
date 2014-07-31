@@ -1,0 +1,43 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<!DOCTYPE deviceMapping SYSTEM "xdxf.dtd">
+<deviceMapping>
+   <device type="DH" class="gov.sns.xal.smf.impl.Bend"/>
+   <device type="BLM" class="gov.sns.xal.smf.impl.BLM"/>
+   <device type="BPM" class="gov.sns.xal.smf.impl.BPM"/>
+   <device type="RBPM" class="gov.sns.xal.smf.impl.RingBPM"/>
+   <device type="CCL" class="gov.sns.xal.smf.impl.CCL"/>
+   <device type="BCM" class="gov.sns.xal.smf.impl.CurrentMonitor"/>
+   <device type="CVG" class="gov.sns.xal.smf.impl.CvgGauge"/>
+   <device type="DTLTank" class="gov.sns.xal.smf.impl.DTLTank"/>
+   <device type="EKick" class="gov.sns.xal.smf.impl.ExtractionKicker"/>
+   <device type="DCH" class="gov.sns.xal.smf.impl.HDipoleCorr"/>
+   <device type="IG" class="gov.sns.xal.smf.impl.IonGauge"/>
+   <device type="ND" class="gov.sns.xal.smf.impl.NeutronDetector"/>
+   <device type="PMQH" class="gov.sns.xal.smf.impl.PermQuadrupole"/>
+   <device type="PMQV" class="gov.sns.xal.smf.impl.PermQuadrupole"/>
+   <device type="LW" class="gov.sns.xal.smf.impl.Marker"/>
+   <device type="QH" class="gov.sns.xal.smf.impl.Quadrupole"/>
+   <device type="QV" class="gov.sns.xal.smf.impl.Quadrupole"/>
+   <device type="QSC" class="gov.sns.xal.smf.impl.Quadrupole"/>
+   <device type="Bnch" class="gov.sns.xal.smf.impl.ReBuncher"/>
+   <device type="RF" class="gov.sns.xal.smf.impl.RfCavity"/>
+   <device type="RG" class="gov.sns.xal.smf.impl.RfGap"/>
+   <device type="SCLCavity" class="gov.sns.xal.smf.impl.SCLCavity"/>
+   <device type="SH" class="gov.sns.xal.smf.impl.Sextupole"/>
+   <device type="SV" class="gov.sns.xal.smf.impl.Sextupole"/>
+   <device type="SSH" class="gov.sns.xal.smf.impl.Sextupole"/>
+   <device type="SSV" class="gov.sns.xal.smf.impl.Sextupole"/>
+   <device type="QTH" class="gov.sns.xal.smf.impl.TrimmedQuadrupole"/>
+   <device type="QTV" class="gov.sns.xal.smf.impl.TrimmedQuadrupole"/>
+   <device type="DCV" class="gov.sns.xal.smf.impl.VDipoleCorr"/>
+   <device type="marker" class="gov.sns.xal.smf.impl.Marker"/>
+   <device type="VIW" class="gov.sns.xal.smf.impl.Marker"/>
+   <device type="Foil" class="gov.sns.xal.smf.impl.Marker"/>
+   <device type="Tgt" class="gov.sns.xal.smf.impl.Marker"/>
+   <device type="Harp" class="gov.sns.xal.smf.impl.Marker"/>
+   <device type="Harp" softType="Version 1.0.0" class="gov.sns.xal.smf.impl.Marker"/>
+   <device type="Harp" softType="Version 2.0.0" class="gov.sns.xal.smf.impl.WireHarp"/>
+   <device type="WS" class="gov.sns.xal.smf.impl.ProfileMonitor"/>
+   <device type="WS" softType="Version 1.0.0" class="gov.sns.xal.smf.impl.ProfileMonitor"/>
+   <device type="WS" softType="Version 2.0.0" class="gov.sns.xal.smf.impl.WireScanner"/>
+</deviceMapping>

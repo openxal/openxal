@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="US-ASCII" ?>
+
+
+<!-- EXTENDED DESCRIPTION EXCHANGE FORMAT (XDXF)
+  -       Document Type Definition
+  -
+  -  Version   : 1.2.0
+  -  Author    : Christopher K. Allen, Paul C. Chu
+  -  Modified  : June, 2002
+  -
+  -->
+
+
+<!-- ################################################################### -->
+<!-- XDXF Edit Context -->
+
+<!ELEMENT sources ( optics_source, optics_extra*, timing_source, tablegroup_source* ) >
+
+<!ELEMENT optics_source EMPTY >
+<!ATTLIST optics_source name NMTOKEN #REQUIRED >
+<!ATTLIST optics_source url NMTOKEN #REQUIRED >
+
+<!ELEMENT timing_source EMPTY >
+<!ATTLIST timing_source name NMTOKEN #REQUIRED >
+<!ATTLIST timing_source url NMTOKEN #REQUIRED >
+
+<!ELEMENT deviceMapping_source EMPTY >
+<!ATTLIST deviceMapping_source name NMTOKEN #REQUIRED >
+<!ATTLIST deviceMapping_source url NMTOKEN #REQUIRED >
+
+<!ELEMENT optics_extra EMPTY >
+<!ATTLIST optics_extra name NMTOKEN #REQUIRED >
+<!ATTLIST optics_extra url NMTOKEN #REQUIRED >
+
+<!ELEMENT tablegroup_source EMPTY >
+<!ATTLIST tablegroup_source name NMTOKEN #IMPLIED >
+<!ATTLIST tablegroup_source url NMTOKEN #IMPLIED >
+
+<!ELEMENT table ( schema, record+ ) >
+<!ATTLIST table name NMTOKEN #REQUIRED >
+<!ATTLIST table recordClass NMTOKEN #IMPLIED >
+
+<!ELEMENT schema ( attribute+ ) >
+
+<!ELEMENT tablegroup ( table+ ) >
+
+<!ELEMENT attribute EMPTY >
+<!ATTLIST attribute isPrimaryKey NMTOKEN #IMPLIED >
+<!ATTLIST attribute name NMTOKEN #REQUIRED >
+<!ATTLIST attribute type NMTOKEN #REQUIRED >
+
+<!ELEMENT record EMPTY >
+<!ATTLIST record alphaX NMTOKEN #IMPLIED >
+<!ATTLIST record alphaY NMTOKEN #IMPLIED >
+<!ATTLIST record alphaZ NMTOKEN #IMPLIED >
+<!ATTLIST record beamCharge NMTOKEN #IMPLIED >
+<!ATTLIST record beamCurrent NMTOKEN #IMPLIED >
+<!ATTLIST record betaX NMTOKEN #IMPLIED >
+<!ATTLIST record betaY NMTOKEN #IMPLIED >
+<!ATTLIST record betaZ NMTOKEN #IMPLIED >
+<!ATTLIST record eX NMTOKEN #IMPLIED >
+<!ATTLIST record eY NMTOKEN #IMPLIED >
+<!ATTLIST record eZ NMTOKEN #IMPLIED >
+<!ATTLIST record envelopeID NMTOKEN #IMPLIED >
+<!ATTLIST record particleCharge NMTOKEN #IMPLIED >
+<!ATTLIST record particleID NMTOKEN #IMPLIED >
+<!ATTLIST record particleKineticEnergy CDATA #IMPLIED >
+<!ATTLIST record particleRestEnergy CDATA #IMPLIED >
+<!ATTLIST record position NMTOKEN #IMPLIED >
+<!ATTLIST record x NMTOKEN #IMPLIED >
+<!ATTLIST record xp NMTOKEN #IMPLIED >
+<!ATTLIST record y NMTOKEN #IMPLIED >
+<!ATTLIST record yp NMTOKEN #IMPLIED >
+<!ATTLIST record z NMTOKEN #IMPLIED >
+<!ATTLIST record zp NMTOKEN #IMPLIED >
+
+
+<!-- ################################################################### -->
+<!-- XDXF Attribute Library -->
+
+<!ELEMENT attributes ( align | magnet | rfgap )* >
+
+<!ELEMENT align EMPTY >
+<!ATTLIST align pitch NMTOKEN #IMPLIED >
+<!ATTLIST align roll NMTOKEN #IMPLIED >
+<!ATTLIST align x NMTOKEN #IMPLIED >
+<!ATTLIST align y NMTOKEN #IMPLIED >
+<!ATTLIST align yaw NMTOKEN #IMPLIED >
+<!ATTLIST align z NMTOKEN #IMPLIED >
+
+<!ELEMENT aperture EMPTY>
+<!ATTLIST aperture shape  CDATA   #IMPLIED >
+<!ATTLIST aperture x      NMTOKEN #IMPLIED >
+<!ATTLIST aperture y      NMTOKEN #IMPLIED >
+
+<!ELEMENT displacement EMPTY>
+<!ATTLIST displacement x     NMTOKEN #IMPLIED >
+<!ATTLIST displacement y     NMTOKEN #IMPLIED >
+<!ATTLIST displacement z     NMTOKEN #IMPLIED >
+
+<!ELEMENT magnet EMPTY >
+<!ATTLIST magnet dfltMagFld NMTOKEN #IMPLIED >
+<!ATTLIST magnet len NMTOKEN #REQUIRED >
+<!ATTLIST magnet polarity NMTOKEN #IMPLIED >
+
+<!ELEMENT rfgap EMPTY >
+<!ATTLIST rfgap TTF NMTOKEN #REQUIRED >
+<!ATTLIST rfgap ampFactor NMTOKEN #IMPLIED >
+<!ATTLIST rfgap amp NMTOKEN #IMPLIED >
+<!ATTLIST rfgap freq NMTOKEN #IMPLIED >
+<!ATTLIST rfgap length NMTOKEN #REQUIRED >
+<!ATTLIST rfgap phaseFactor NMTOKEN #IMPLIED >
+<!ATTLIST rfgap phase NMTOKEN #IMPLIED >
+
+<!ELEMENT rotation EMPTY>
+<!ATTLIST rotation phi   NMTOKEN #IMPLIED >
+<!ATTLIST rotation theta NMTOKEN #IMPLIED >
+<!ATTLIST rotation psi   NMTOKEN #IMPLIED >
+
+<!ELEMENT twiss EMPTY >
+<!ATTLIST twiss ax CDATA #IMPLIED >
+<!ATTLIST twiss ay CDATA #IMPLIED >
+<!ATTLIST twiss az CDATA #IMPLIED >
+<!ATTLIST twiss bx CDATA #IMPLIED >
+<!ATTLIST twiss by CDATA #IMPLIED >
+<!ATTLIST twiss bz CDATA #IMPLIED >
+<!ATTLIST twiss etpx CDATA #IMPLIED >
+<!ATTLIST twiss etpy CDATA #IMPLIED >
+<!ATTLIST twiss etx CDATA #IMPLIED >
+<!ATTLIST twiss ety CDATA #IMPLIED >
+<!ATTLIST twiss mux CDATA #IMPLIED >
+<!ATTLIST twiss muy CDATA #IMPLIED >
+<!ATTLIST twiss x CDATA #IMPLIED >
+<!ATTLIST twiss y CDATA #IMPLIED >
+
+
+<!-- ################################################################### -->
+<!-- Device Signals -->
+
+<!ELEMENT channel EMPTY >
+<!ATTLIST channel handle NMTOKEN #REQUIRED >
+<!ATTLIST channel settable ( false | true ) #IMPLIED >
+<!ATTLIST channel signal NMTOKEN #REQUIRED >
+
+<!ELEMENT channelsuite ( channel* ) >
+<!ATTLIST channelsuite name NMTOKEN #IMPLIED >
+
+
+<!-- ################################################################### -->
+<!-- Timing Signals -->
+
+<!ELEMENT timing ( channelsuite ) >
+
+<!-- ################################################################### -->
+<!-- Device Mapping -->
+
+<!ELEMENT deviceMapping ( device+ ) >
+<!ELEMENT device EMPTY >
+<!ATTLIST device type NMTOKEN #REQUIRED >
+<!ATTLIST device class NMTOKEN #REQUIRED >
+
+<!-- ################################################################### -->
+<!-- XDXF Data Structure -->
+
+<!ELEMENT xdxf ( sequence+ ) >
+<!ATTLIST xdxf date CDATA #REQUIRED >
+<!ATTLIST xdxf system NMTOKEN #REQUIRED >
+<!ATTLIST xdxf ver NMTOKEN #REQUIRED >
+
+<!ELEMENT comment (#PCDATA)>
+<!ATTLIST comment author CDATA  #IMPLIED >
+<!ATTLIST comment date CDATA  #IMPLIED >
+
+<!ELEMENT sequence ( channelsuite | node+ | sequence )* >
+<!ATTLIST sequence id NMTOKEN #REQUIRED >
+<!ATTLIST sequence len NMTOKEN #IMPLIED >
+<!ATTLIST sequence pos NMTOKEN #IMPLIED >
+<!ATTLIST sequence type NMTOKEN #IMPLIED >
+
+<!ELEMENT node ( attributes, channelsuite? ) >
+<!ATTLIST node id ID #REQUIRED >
+<!ATTLIST node len NMTOKEN #IMPLIED >
+<!ATTLIST node pos NMTOKEN #REQUIRED >
+<!ATTLIST node type ( BCM | Bnch | BPM | DCH | DCV | QH | QV | PMQH | PMQV | RG | WS ) #REQUIRED >
+
