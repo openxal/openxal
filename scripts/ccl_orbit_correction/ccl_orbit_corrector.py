@@ -592,26 +592,26 @@ class PlotActionListener(ActionListener):
 		objective = AccCalcObjective()
 		self.problem.addObjective( objective )
 
-		hint = InitialDelta( 0.01 )
+		hint = InitialDelta( 0.5 )
 		self.problem.addHint( hint )
 
-		x0_var = Variable( "x0", 0.0, -1.0, 1.0 )
-		hint.addInitialDelta( x0_var, 0.01 )
+		x0_var = Variable( "x0", 0.0, -10.0, 10.0 )
+		hint.addInitialDelta( x0_var, 0.5 )
 		self.problem.addVariable( x0_var )
 		self.x0_Proxy = self.problem.getValueReference( x0_var )
 
-		xp0_var = Variable( "xp0", 0.0, -1.0, 1.0 )
-		hint.addInitialDelta( xp0_var, 0.01 )
+		xp0_var = Variable( "xp0", 0.0, -10.0, 10.0 )
+		hint.addInitialDelta( xp0_var, 0.5 )
 		self.problem.addVariable( xp0_var )
 		self.xp0_Proxy = self.problem.getValueReference( xp0_var )
 
-		y0_var = Variable( "y0", 0.0, -1.0, 1.0 )
-		hint.addInitialDelta( y0_var, 0.01 )
+		y0_var = Variable( "y0", 0.0, -10.0, 10.0 )
+		hint.addInitialDelta( y0_var, 0.5 )
 		self.problem.addVariable( y0_var )
 		self.y0_Proxy = self.problem.getValueReference( y0_var )
 
-		yp0_var = Variable( "yp0", 0.0, -1.0, 1.0 )
-		hint.addInitialDelta( yp0_var, 0.01 )
+		yp0_var = Variable( "yp0", 0.0, -10.0, 10.0 )
+		hint.addInitialDelta( yp0_var, 0.5 )
 		self.problem.addVariable( yp0_var )
 		self.yp0_Proxy = self.problem.getValueReference( yp0_var )
 
@@ -629,7 +629,7 @@ class PlotActionListener(ActionListener):
 		textArea.setText(null)
 		plotsBeforePanel.removeAll()
 		#find initial conditions
-		solver = Solver( SolveStopperFactory.maxEvaluationsStopper(1000) )
+		solver = Solver( SolveStopperFactory.maxEvaluationsStopper(5000) )
 		res = "Score= %6.4f maxDiff= %6.3f \n"%(accCalc.raw_score(),accCalc.getMaxDiff())
 		textArea.append(res)
 		textArea.append("===after CCL entrance coord. fit ===\n")
