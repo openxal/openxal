@@ -643,10 +643,10 @@ class PlotActionListener(ActionListener):
 		solver.solve( self.problem )
 		scoreboard = solver.getScoreBoard()
 		best_solution = scoreboard.getBestSolution()
-		print best_solution
+#		print best_solution
 
 		# apply the best solution to the model so the variable proxies represent the optimal values
-		evaluator.evaluate( best_solution )
+		self.problem.evaluate( best_solution )
 
 		res = "Score= %6.4f maxDiff= %6.3f \n"%(accCalc.raw_score(),accCalc.getMaxDiff())
 		textArea.append(res)
@@ -780,7 +780,7 @@ class CorrectActionListener(ActionListener):
 #		print best_solution
 
 		# apply the best solution to the model so the variable proxies represent the optimal values
-		evaluator.evaluate( best_solution )
+		problem.evaluate( best_solution )
 
 		textArea.append( "Orbit H score after  = %6.4f \n"%orbCorrH.raw_score() )
 		#orbCorrH.printCorrectors()
@@ -814,12 +814,12 @@ class CorrectActionListener(ActionListener):
 		solver.solve( problem )
 		scoreboard = solver.getScoreBoard()
 		best_solution = scoreboard.getBestSolution()
-		#		print best_solution
+		print scoreboard
 
 		# apply the best solution to the model so the variable proxies represent the optimal values
-		evaluator.evaluate( best_solution )
+		problem.evaluate( best_solution )
 		
-		textArea.append("Orbit V score after  = %6.4f \n"%orbCorrV.raw_score())
+		textArea.append( "Orbit V score after  = %6.4f \n"%orbCorrV.raw_score() )
 
 		#orbCorrV.printCorrectors()
 		#print solver.getScoreboard().toString()
