@@ -637,7 +637,7 @@ class PlotActionListener(ActionListener):
 		textArea.setText(null)
 		plotsBeforePanel.removeAll()
 		#find initial conditions
-		solver = Solver( SolveStopperFactory.maxEvaluationsStopper( 5000 ) )
+		solver = Solver( SolveStopperFactory.maxEvaluationsStopper( 2500 ) )
 		res = "Score= %6.4f maxDiff= %6.3f \n"%(accCalc.raw_score(),accCalc.getMaxDiff())
 		textArea.append(res)
 		textArea.append("===after CCL entrance coord. fit ===\n")
