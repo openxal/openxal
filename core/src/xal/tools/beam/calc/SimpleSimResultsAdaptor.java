@@ -76,7 +76,7 @@ public class SimpleSimResultsAdaptor extends SimResultsAdaptor implements ISimLo
      * @author Christopher K. Allen
      * @since  Nov 7, 2013
      */
-	public SimpleSimResultsAdaptor(Trajectory<? extends ProbeState> trajectory) throws IllegalArgumentException {
+	public SimpleSimResultsAdaptor(Trajectory<? extends ProbeState<?>> trajectory) throws IllegalArgumentException {
         super();
         
 

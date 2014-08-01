@@ -33,7 +33,7 @@ public class MachineSimulation {
         
         final Iterator<?> stateIter = trajectory.stateIterator();
         while ( stateIter.hasNext() ) {
-            final ProbeState state = (ProbeState) stateIter.next();
+            final ProbeState<?> state = (ProbeState<?>) stateIter.next();
 			final MachineSimulationRecord simulationRecord = new MachineSimulationRecord( resultsAdaptor, state );
             SIMULATION_RECORDS.add( simulationRecord );
         }

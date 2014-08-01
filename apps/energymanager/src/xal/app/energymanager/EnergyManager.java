@@ -742,7 +742,7 @@ public class EnergyManager implements DataListener, ParameterStoreListener, Opti
 		
 		final Simulation simulation = getOptimizer().getBestSimulation();
 		if ( simulation != null ) {
-			final ProbeState[] states = simulation.getStates();
+			final ProbeState<?>[] states = simulation.getStates();
 			final double[] positions = simulation.getPositions();
 			final double[] kineticEnergy = simulation.getKineticEnergy();
 			final double[][] beta = simulation.getBeta();
@@ -851,8 +851,8 @@ public class EnergyManager implements DataListener, ParameterStoreListener, Opti
 		for ( LiveParameter parameter : magnetParameters ) {
 			final ElectromagnetAgent agent = (ElectromagnetAgent)parameter.getNodeAgent();
 			final String nodeID = agent.getNode().getId();
-			final ProbeState state = trajectory.stateForElement( nodeID );
-			final ProbeState designState = designTrajectory.stateForElement( nodeID );
+			final ProbeState<?> state = trajectory.stateForElement( nodeID );
+			final ProbeState<?> designState = designTrajectory.stateForElement( nodeID );
 			agent.preserveDesignInfluence( state.getKineticEnergy(), designState.getKineticEnergy(), state.getSpeciesRestEnergy() );
 		}
 	}

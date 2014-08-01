@@ -19,7 +19,7 @@ import xal.tools.math.r3.R3;
 /** MachineSimulation is the simulation result for a simulation on an accelerator sequence  */
 public class MachineSimulationRecord {
 	/** probe state wrapped by this record */
-	private final ProbeState PROBE_STATE;
+	private final ProbeState<?> PROBE_STATE;
 
 	/** twiss parameters */
 	private final Twiss[] TWISS_PARAMETERS;
@@ -29,7 +29,7 @@ public class MachineSimulationRecord {
 
 
 	/** Constructor */
-    public MachineSimulationRecord( final SimResultsAdaptor resultsAdaptor, final ProbeState probeState ) {
+    public MachineSimulationRecord( final SimResultsAdaptor resultsAdaptor, final ProbeState<?> probeState ) {
 		PROBE_STATE = probeState;
 		TWISS_PARAMETERS = resultsAdaptor.computeTwissParameters( probeState );
 		BETATRON_PHASE = resultsAdaptor.computeBetatronPhase( probeState );
@@ -37,7 +37,7 @@ public class MachineSimulationRecord {
 
 
 	/** get the wrapped probe state */
-	public ProbeState getProbeState() {
+	public ProbeState<?> getProbeState() {
 		return PROBE_STATE;
 	}
 
