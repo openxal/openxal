@@ -581,6 +581,7 @@ class ScoringEvaluator(Evaluator):
 	def evaluate( self, trial ):
 		score = self.scorer.score( trial, self.variables )
 		trial.setScore( self.objective, score )
+		#print "score: %s" % score
 
 
 #-----------------------------------------
@@ -762,7 +763,7 @@ class CorrectActionListener(ActionListener):
 		evaluator = ScoringEvaluator( orbCorrH, problem.getVariables(), objective )
 		problem.setEvaluator( evaluator )
 
-		solver = Solver( SolveStopperFactory.maxEvaluationsStopper(5000) )
+		solver = Solver( SolveStopperFactory.maxEvaluationsStopper(1000) )
 
 #		solver = Solver()
 #		solver.setScorer(orbCorrH)
@@ -777,7 +778,7 @@ class CorrectActionListener(ActionListener):
 		solver.solve( problem )
 		scoreboard = solver.getScoreBoard()
 		best_solution = scoreboard.getBestSolution()
-#		print best_solution
+		#print scoreboard
 
 		# apply the best solution to the model so the variable proxies represent the optimal values
 		problem.evaluate( best_solution )
@@ -797,10 +798,10 @@ class CorrectActionListener(ActionListener):
 
 		orbCorrV = OrbitCorr( accCalc,accNodeForCorr,dcorrsV,"DCV", problem, hint )
 
-		evaluator = ScoringEvaluator( orbCorrH, problem.getVariables(), objective )
+		evaluator = ScoringEvaluator( orbCorrV, problem.getVariables(), objective )
 		problem.setEvaluator( evaluator )
 
-		solver = Solver( SolveStopperFactory.maxEvaluationsStopper(5000) )
+		solver = Solver( SolveStopperFactory.maxEvaluationsStopper(1000) )
 
 #		solver = Solver()
 #		solver.setScorer(orbCorrV)
@@ -814,7 +815,7 @@ class CorrectActionListener(ActionListener):
 		solver.solve( problem )
 		scoreboard = solver.getScoreBoard()
 		best_solution = scoreboard.getBestSolution()
-		print scoreboard
+		#print scoreboard
 
 		# apply the best solution to the model so the variable proxies represent the optimal values
 		problem.evaluate( best_solution )
