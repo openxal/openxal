@@ -24,23 +24,13 @@ from xal.smf import *
 from xal.smf.data import *
 from xal.model import *
 from xal.model.probe import *
-from xal.model.alg import EnvTrackerAdapt
-from xal.model.xml import *
-from xal.tools.beam import Twiss
 from xal.sim.scenario import *
-from xal.service.pvlogger.sim import *
 from xal.tools.beam import *
-from xal.tools.xml import XmlDataAdaptor
 from xal.extension.widgets.plot import *
-from xal.extension.widgets.apputils import SimpleChartPopupMenu
-#from gov.sns.xal.smf.proxy import *
 from xal.smf.data import *
 from xal.model.alg import *
-#from gov.sns.xal.model.alg.resp import *
 from xal.model.probe import *
-#from gov.sns.xal.model.probe.resp import *
 from xal.model.probe.traj import *
-from xal.sim.mpx import *
 from xal.smf.impl.qualify import *
 from xal.smf.impl import *
 from xal.extension.solver import *
@@ -174,8 +164,6 @@ class AccCalculator(Scorer):
 		#-----------------------------
 		scenario = Scenario.newScenarioFor(accSeq)
 		scenario.setSynchronizationMode(Scenario.SYNC_MODE_RF_DESIGN)
-#		ptracker = EnvelopeTracker()
-#		probe = ProbeFactory.getEnvelopeProbe(accSeq, ptracker)
 
 #		ptracker = AlgorithmFactory.createEnvTrackerAdapt( accSeq )
 #		probe = ProbeFactory.getEnvelopeProbe( accSeq, ptracker )
@@ -306,14 +294,21 @@ class AccCorr:
 	particular quad. These coffitients multiplied by the corrector's field
 	will give the orbit change at the position of the quad.
 	"""
-	def __init__( self, dcorr):
+	def __init__( self, dcorr, problem, hint ):
 		self.dcorr = dcorr
 		self.dicCoeff = {}
 		self.memB = dcorr.getField()
 		self.maxB = dcorr.upperFieldLimit()
 		self.minB = dcorr.lowerFieldLimit()
 		step = math.fabs(self.maxB*0.15)
-		self.fieldProxy = ParameterProxy(dcorr.getId()+":B", self.memB, step)
+
+		field_variable = Variable( dcorr.getId()+":B", self.memB, self.minB, self.maxB )
+		problem.addVariable( field_variable )
+		hint.addInitialDelta( field_variable, step )
+		self.fieldProxy = problem.getValueReference( field_variable )
+
+		#self.fieldProxy = ParameterProxy(dcorr.getId()+":B", self.memB, step)
+
 		self.width =math.fabs(self.maxB)*0.02
 		self.hight = 10.0
 
@@ -365,7 +360,7 @@ class OrbitCorr(Scorer):
 	form accCalc.
 	orientation = "DCH" or "DCV"
 	"""
-	def __init__( self, accCalc, accSeq, dcorrs, orientation):
+	def __init__( self, accCalc, accSeq, dcorrs, orientation, problem, hint ):
 		if(orientation != "DCH" and orientation != "DCV"):
 			print "orientation should be DCH or DCV!"
 			print "orientation =",orientation
@@ -378,11 +373,17 @@ class OrbitCorr(Scorer):
 		#------------------------------------------------
 		scenario = Scenario.newScenarioFor(accSeq)
 		scenario.setSynchronizationMode(Scenario.SYNC_MODE_RF_DESIGN)
-		ptracker = EnvelopeTracker()
-		probe = ProbeFactory.getEnvelopeProbe(accSeq, ptracker)
+
+#		ptracker = EnvelopeTracker()
+#		probe = ProbeFactory.getEnvelopeProbe(accSeq, ptracker)
+
+		ptracker = AlgorithmFactory.createEnvTrackerAdapt( accSeq )
+		probe = ProbeFactory.getEnvelopeProbe( accSeq, ptracker )
+
 		scenario.setProbe(probe)
 		probe.reset()
-		probe.setBeamCharge(0.0)
+		#probe.setBeamCharge(0.0)
+		probe.setBeamCurrent( 0.0 )
 		scenario.resync()
 		scenario.run()
 		traj = scenario.getTrajectory()
@@ -391,7 +392,7 @@ class OrbitCorr(Scorer):
 		self.accCorrs = []
 		self.proxiesV = Vector()
 		for dcorr in  dcorrs:
-			accCorr = AccCorr(dcorr)
+			accCorr = AccCorr( dcorr, problem, hint )
 			probeState = traj.statesForElement(dcorr.getId())[0]
 			W0 = probeState.getSpeciesRestEnergy()
 			gamma = probeState.getGamma()
@@ -434,7 +435,12 @@ class OrbitCorr(Scorer):
 	def getTrajDic(self):
 		return self.dicQuadsTraj
 
-	def score( self ):
+
+	def score( self, trial, variables ):
+		return self.raw_score()
+
+
+	def raw_score( self ):
 		""" Returns resulting orbit deviation"""
 		for quad in self.dicQuadsTraj_Init.keys():
 			self.dicQuadsTraj[quad] = self.dicQuadsTraj_Init[quad]
@@ -556,12 +562,13 @@ frame.setSize(Dimension(800,600))
 frame.show()
 
 
-class AccCalcObjective(Objective):
-	def __init__( self ):
-		Objective.__init__( self, "AccCalcObjective" )
+class MinimizingObjective(Objective):
+	def __init__( self, tolerance ):
+		Objective.__init__( self, "MinimizingObjective" )
+		self.tolerance = tolerance
 
 	def satisfaction( self, score ):
-		satisfaction = SatisfactionCurve.inverseSatisfaction( score, 0.01 )
+		satisfaction = SatisfactionCurve.inverseSatisfaction( score, self.tolerance )
 		return satisfaction
 
 
@@ -589,7 +596,7 @@ class PlotActionListener(ActionListener):
 	
 	def actionPerformed(self,e):
 		self.problem = Problem()
-		objective = AccCalcObjective()
+		objective = MinimizingObjective( 0.05 )
 		self.problem.addObjective( objective )
 
 		hint = InitialDelta( 0.5 )
@@ -629,7 +636,7 @@ class PlotActionListener(ActionListener):
 		textArea.setText(null)
 		plotsBeforePanel.removeAll()
 		#find initial conditions
-		solver = Solver( SolveStopperFactory.maxEvaluationsStopper(5000) )
+		solver = Solver( SolveStopperFactory.maxEvaluationsStopper( 5000 ) )
 		res = "Score= %6.4f maxDiff= %6.3f \n"%(accCalc.raw_score(),accCalc.getMaxDiff())
 		textArea.append(res)
 		textArea.append("===after CCL entrance coord. fit ===\n")
@@ -733,6 +740,7 @@ corrV_Qualifier.andStatus(true)
 dcorrsH = accNodeForCorr.getAllNodesWithQualifier(corrH_Qualifier)
 dcorrsV = accNodeForCorr.getAllNodesWithQualifier(corrV_Qualifier)
 
+
 class CorrectActionListener(ActionListener):
 	def actionPerformed(self,e):
 		if(plotActionListener.getAccCalc() == None):
@@ -740,29 +748,79 @@ class CorrectActionListener(ActionListener):
 			return
 		accCalc = plotActionListener.getAccCalc()
 		#accCalc.track1()
-		orbCorrH = OrbitCorr(accCalc,accNodeForCorr,dcorrsH,"DCH")
-		solver = Solver()
-		solver.setScorer(orbCorrH)
-		solver.setVariables(orbCorrH.getProxiesV())
-		stopper = SolveStopperFactory.maxIterationStopper(1000)
-		solver.setStopper(stopper)
+
+		# Flatten the horizontal orbit
+		problem = Problem()
+		objective = MinimizingObjective( 0.05 )
+		problem.addObjective( objective )
+
+		hint = InitialDelta()
+		problem.addHint( hint )
+
+		orbCorrH = OrbitCorr( accCalc,accNodeForCorr,dcorrsH,"DCH", problem, hint )
+
+		evaluator = ScoringEvaluator( orbCorrH, problem.getVariables(), objective )
+		problem.setEvaluator( evaluator )
+
+		solver = Solver( SolveStopperFactory.maxEvaluationsStopper(5000) )
+
+#		solver = Solver()
+#		solver.setScorer(orbCorrH)
+#		solver.setVariables(orbCorrH.getProxiesV())
+#		stopper = SolveStopperFactory.maxIterationStopper(1000)
+#		solver.setStopper(stopper)
+#		solver.solve()
+
 		textArea.append("====== orbit correction ===== \n")
-		textArea.append("Orbit H score before = %6.4f \n"%orbCorrH.score())
-		solver.solve()
-		textArea.append("Orbit H score after  = %6.4f \n"%orbCorrH.score())
+		textArea.append( "Orbit H score before = %6.4f \n"%orbCorrH.raw_score() )
+
+		solver.solve( problem )
+		scoreboard = solver.getScoreBoard()
+		best_solution = scoreboard.getBestSolution()
+#		print best_solution
+
+		# apply the best solution to the model so the variable proxies represent the optimal values
+		evaluator.evaluate( best_solution )
+
+		textArea.append( "Orbit H score after  = %6.4f \n"%orbCorrH.raw_score() )
 		#orbCorrH.printCorrectors()
 		#print solver.getScoreboard().toString()
 		#accCalc.track1()
-		orbCorrV = OrbitCorr(accCalc,accNodeForCorr,dcorrsV,"DCV")
-		solver = Solver()
-		solver.setScorer(orbCorrV)
-		solver.setVariables(orbCorrV.getProxiesV())
-		stopper = SolveStopperFactory.maxIterationStopper(1000)
-		solver.setStopper(stopper)
+
+		# Flatten the vertical orbit
+		problem = Problem()
+		objective = MinimizingObjective( 0.05 )
+		problem.addObjective( objective )
+
+		hint = InitialDelta()
+		problem.addHint( hint )
+
+		orbCorrV = OrbitCorr( accCalc,accNodeForCorr,dcorrsV,"DCV", problem, hint )
+
+		evaluator = ScoringEvaluator( orbCorrH, problem.getVariables(), objective )
+		problem.setEvaluator( evaluator )
+
+		solver = Solver( SolveStopperFactory.maxEvaluationsStopper(5000) )
+
+#		solver = Solver()
+#		solver.setScorer(orbCorrV)
+#		solver.setVariables(orbCorrV.getProxiesV())
+#		stopper = SolveStopperFactory.maxIterationStopper(1000)
+#		solver.setStopper(stopper)
+
 		textArea.append("-------------------\n")
-		textArea.append("Orbit V score before = %6.4f \n"%orbCorrV.score())
-		solver.solve()
-		textArea.append("Orbit V score after  = %6.4f \n"%orbCorrV.score())
+		textArea.append("Orbit V score before = %6.4f \n"%orbCorrV.raw_score())
+
+		solver.solve( problem )
+		scoreboard = solver.getScoreBoard()
+		best_solution = scoreboard.getBestSolution()
+		#		print best_solution
+
+		# apply the best solution to the model so the variable proxies represent the optimal values
+		evaluator.evaluate( best_solution )
+		
+		textArea.append("Orbit V score after  = %6.4f \n"%orbCorrV.raw_score())
+
 		#orbCorrV.printCorrectors()
 		#print solver.getScoreboard().toString()
 		#============PLOTTING=======================
