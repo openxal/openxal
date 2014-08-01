@@ -1071,9 +1071,9 @@ public class VADocument extends AcceleratorDocument implements ActionListener, P
 		List<Double> tempbeamy = new ArrayList<Double>();	
 		List<Double> tempsigmaz = new ArrayList<Double>();
 			      
-		final Iterator<? extends ProbeState> stateIter =modelScenario.getTrajectory().stateIterator();
+		final Iterator<? extends ProbeState<?>> stateIter =modelScenario.getTrajectory().stateIterator();
 		while ( stateIter.hasNext() ) {
-			final ProbeState state = stateIter.next();
+			final ProbeState<?> state = stateIter.next();
 //			EnvelopeProbeState state = (EnvelopeProbeState) stateIter.next();
 			double position = state.getPosition();
 			final PhaseVector coordinateVector = cmpCalcEngine.computeFixedOrbit( state );
@@ -1121,7 +1121,7 @@ public class VADocument extends AcceleratorDocument implements ActionListener, P
 			final Channel bpmAmpAvgChannel = bpm.getChannel( BPM.AMP_AVG_HANDLE );
             
 			try {
-				ProbeState probeState = modelScenario.getTrajectory().stateForElement( bpm.getId() );
+				ProbeState<?> probeState = modelScenario.getTrajectory().stateForElement( bpm.getId() );
 				//System.out.println("Now updating " + bpm.getId());
                 
 	            // CKA - Transfer map probes and Envelope probes both exposed ICoordinateState
@@ -1194,7 +1194,7 @@ public class VADocument extends AcceleratorDocument implements ActionListener, P
 			Channel wsY = ws.getChannel(ProfileMonitor.V_SIGMA_M_HANDLE);
             
 			try {
-				ProbeState probeState = modelScenario.getTrajectory().stateForElement( ws.getId() );
+				ProbeState<?> probeState = modelScenario.getTrajectory().stateForElement( ws.getId() );
 				if (modelScenario.getProbe() instanceof EnvelopeProbe) {
                     final Twiss[] twiss = ( (EnvelopeProbeState)probeState ).getCovarianceMatrix().computeTwiss();
 					wsX.putValCallback( twiss[0].getEnvelopeRadius() * 1000., this );

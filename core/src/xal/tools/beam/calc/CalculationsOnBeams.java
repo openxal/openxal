@@ -38,7 +38,7 @@ public class CalculationsOnBeams extends CalculationEngine implements ISimLocRes
      */
     
     /** The trajectory around one turn of the ring */
-    private final Trajectory<? extends ProbeState> trjSimul;
+    private final Trajectory<? extends ProbeState<?>> trjSimul;
     
     /** The initial envelope probe state (at the start of the simulation) */
     private final EnvelopeProbeState        staInit;
@@ -107,7 +107,7 @@ public class CalculationsOnBeams extends CalculationEngine implements ISimLocRes
      * @author Christopher K. Allen
      * @since  Nov 7, 2013
      */
-    public Trajectory<? extends ProbeState> getTrajectory() {
+    public Trajectory<? extends ProbeState<?>> getTrajectory() {
         return this.trjSimul;
     }
     

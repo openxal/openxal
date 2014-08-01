@@ -11,11 +11,7 @@ package xal.app.orbitcorrect;
 import java.util.*;
 
 import xal.smf.*;
-import xal.model.alg.*;
-import xal.model.probe.*;
-import xal.sim.scenario.*;
 import xal.model.probe.traj.*;
-import xal.smf.impl.*;
 import xal.tools.beam.PhaseMatrix;
 
 
@@ -32,7 +28,7 @@ abstract public class CoordinateTransfer {
 	
 	
 	/** generate the transfer map from the trajectory */
-	abstract public void generateTransferMap( final Trajectory<? extends ProbeState> trajectory, final AcceleratorSeq sequence );
+	abstract public void generateTransferMap( final Trajectory<? extends ProbeState<?>> trajectory, final AcceleratorSeq sequence );
 }
 
 
@@ -56,7 +52,7 @@ class BPMCoordinateTransfer extends CoordinateTransfer {
 	
 	
 	/** generate the transfer map from the trajectory */
-	public void generateTransferMap( final Trajectory<? extends ProbeState> trajectory, final AcceleratorSeq sequence ) {}	
+	public void generateTransferMap( final Trajectory<? extends ProbeState<?>> trajectory, final AcceleratorSeq sequence ) {}	
 }
 
 
@@ -110,7 +106,7 @@ class GenericMarkerCoordinateTransfer extends CoordinateTransfer {
 	
 	
 	/** generate the transfer map from the trajectory */
-	public void generateTransferMap( final Trajectory<? extends ProbeState> trajectory, final AcceleratorSeq sequence ) {
+	public void generateTransferMap( final Trajectory<? extends ProbeState<?>> trajectory, final AcceleratorSeq sequence ) {
 		// get the transfer matrix from BPM A to BPM B
 		final PhaseMatrix transferAB = getTransferMatrix( trajectory, BPM_REF_A.getBPM(), BPM_REF_B.getBPM() );
 		
@@ -168,7 +164,7 @@ class GenericMarkerCoordinateTransfer extends CoordinateTransfer {
 	 * - Jonathan M. Freed
 	 * 
 	 */
-	protected PhaseMatrix getTransferMatrix( final Trajectory<? extends ProbeState> trajectory, final AcceleratorNode fromNode, final AcceleratorNode toNode ) {
+	protected PhaseMatrix getTransferMatrix( final Trajectory<? extends ProbeState<?>> trajectory, final AcceleratorNode fromNode, final AcceleratorNode toNode ) {
 		if ( (trajectory.getStateClass()).isInstance(EnvelopeProbeState.class) ) {
 			//return getTransferMatrix( trajectory, fromNode, toNode );
 			final PhaseMatrix fromMatrix = ((EnvelopeProbeState)trajectory.stateForElement( fromNode.getId() )).getResponseMatrix();

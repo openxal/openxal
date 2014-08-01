@@ -383,7 +383,7 @@ public class ShakeAnalysis {
 			//} else {
 			//	field = scenario.getModelInput(quad, ElectromagnetPropertyAccessor.PROPERTY_FIELD).getDoubleValue();
 			//}
-			ProbeState probeState = trajectory.statesForElement(quadElm.getName()).get(0);
+			EnvelopeProbeState probeState = trajectory.statesForElement(quadElm.getName()).get(0);
 			//-------------------------------------------
 			//W0,TK in eV
 			//L in [m]
@@ -449,7 +449,7 @@ public class ShakeAnalysis {
 			Corr_Element corrElm =  corrV.get(i);
 			corrElm.clearCoeffsMap();
 			Electromagnet corr_mag = corrElm.getMagnet();
-			ProbeState probeState = trajectory.statesForElement(corr_mag.getId()).get(0);
+			EnvelopeProbeState probeState = trajectory.statesForElement(corr_mag.getId()).get(0);
 			double W0 = probeState.getSpeciesRestEnergy();
 			double gamma = probeState.getGamma();
 			double beta = Math.sqrt(1.0 - 1.0 / (gamma * gamma));

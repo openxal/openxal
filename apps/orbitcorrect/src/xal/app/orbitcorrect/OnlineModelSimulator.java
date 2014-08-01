@@ -95,7 +95,7 @@ public class OnlineModelSimulator extends MappedSimulator {
 	            // CKA - Nov 25, 2013
 //				ICoordinateState state = (ICoordinateState)initialTrajectory.stateForElement( bpmAgent.getID() );
 //				PhaseVector coordinates = state.getFixedOrbit();
-                ProbeState  state = initialTrajectory.stateForElement( bpmAgent.getID() );
+                ProbeState<?>  state = initialTrajectory.stateForElement( bpmAgent.getID() );
                 PhaseVector coordinates = cmpCalcEngine.computeFixedOrbit(state);
 				
 				xInitial[bpmIndex] = coordinates.getx();

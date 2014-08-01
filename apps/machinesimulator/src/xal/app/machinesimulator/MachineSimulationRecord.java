@@ -8,8 +8,6 @@
 
 package xal.app.machinesimulator;
 
-import java.util.List;
-
 import xal.model.probe.traj.ProbeState;
 import xal.tools.beam.calc.SimResultsAdaptor;
 import xal.tools.beam.Twiss;

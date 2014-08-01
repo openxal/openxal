@@ -427,8 +427,8 @@ public class ModelProxy {
 	 * @return the probe state for the center of that node.
 	 * @throws ModelException
 	 */
-	public ProbeState stateForElement(String id) throws ModelException {
-		ProbeState state;
+	public ProbeState<?> stateForElement(String id) throws ModelException {
+		ProbeState<?> state;
 		try {
 			checkLattice();
 			checkProbe();
@@ -447,17 +447,17 @@ public class ModelProxy {
 	 * @return an array probe states for the given element.
 	 * @throws ModelException
 	 */
-	public ProbeState[] statesForElement(String id) throws ModelException {
-		ProbeState[] states;
+	public ProbeState<?>[] statesForElement(String id) throws ModelException {
+		ProbeState<?>[] states;
 		try {
 			checkLattice();
 			checkProbe();
 		} catch (LatticeError e) {
 			throw new ModelException(e.getMessage());
 		}
-		List<? extends ProbeState> lstStates= scenario.trajectoryStatesForElement(id);
+		List<? extends ProbeState<?>> lstStates= scenario.trajectoryStatesForElement(id);
 		
-		ProbeState[]  arrStates = new ProbeState[lstStates.size()];
+		ProbeState<?>[]  arrStates = new ProbeState[lstStates.size()];
 		states = lstStates.toArray(arrStates);
 		return states;
 	}

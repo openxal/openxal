@@ -47,7 +47,7 @@ public interface ISimulationResults {
      * @author Christopher K. Allen
      * @since  Nov 15, 2013
      */
-    public interface ISimLocResults<S extends ProbeState> extends ISimulationResults  {
+    public interface ISimLocResults<S> extends ISimulationResults  {
 
         /**
          * <p> 
@@ -172,7 +172,7 @@ public interface ISimulationResults {
      * @since   2/9/05
      * @version Nov 7, 2013
      */
-    public interface ISimEnvResults<S extends ProbeState>  extends ISimulationResults {
+    public interface ISimEnvResults<S>  extends ISimulationResults {
         
 
         /*

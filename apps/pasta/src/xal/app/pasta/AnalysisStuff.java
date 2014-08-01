@@ -469,7 +469,7 @@ public class AnalysisStuff {
     }
     
     /** this method returns the phase of a node in a trajectory, relative to the first point in the model run for this state. */
-    private double getPhase( ProbeState state, BPM bpm) {
+    private double getPhase( ProbeState<?> state, BPM bpm) {
 	    double freq = bpm.getBPMBucket().getFrequency() * 1.e6;
 	    
 	    // correction time for electrode being offset from the BPM center:
@@ -495,7 +495,7 @@ public class AnalysisStuff {
 	    return phase;
     }
     
-    private double getTime(ProbeState state, BPM bpm) {
+    private double getTime(ProbeState<?> state, BPM bpm) {
 	    
 	    // correction time for electrode being offset from the BPM center:
 	    double gamma = 1. + state.getKineticEnergy()/state.getSpeciesRestEnergy();
@@ -511,8 +511,8 @@ public class AnalysisStuff {
 	    // some model stuff
 	    Trajectory<?> traj;
 	    //EnvelopeProbeState state0, state1, state2;
-	    ProbeState state0, state1, state2;
-	    java.util.List<? extends ProbeState> states;
+	    ProbeState<?> state0, state1, state2;
+	    java.util.List<? extends ProbeState<?>> states;
 	    double time0;
 	    
 	    theDoc.theCavity.updateDesignAmp(0.); // turn off the cavity
@@ -603,8 +603,8 @@ public class AnalysisStuff {
 	    // some model stuff
 	    Trajectory<?> traj;
 	    //EnvelopeProbeState state0, state1, state2;
-	    ProbeState state0, state1, state2;
-	    java.util.List<? extends ProbeState> states;
+	    ProbeState<?> state0, state1, state2;
+	    java.util.List<? extends ProbeState<?>> states;
 	    Twiss[] twiss1, twiss2;
 	    
 	    double ampModel = (ampValueV.get(i)).doubleValue();
@@ -1059,8 +1059,8 @@ public class AnalysisStuff {
         
         runModel(cavityVoltage, theDoc.theDesignPhase, WIn*1.e6);
         Trajectory<?> traj = theModel.getProbe().getTrajectory();
-        java.util.List<? extends ProbeState> states =traj.statesForElement(firstBPM.getId());
-        ProbeState state = states.get(0);
+        java.util.List<? extends ProbeState<?>> states =traj.statesForElement(firstBPM.getId());
+        ProbeState<?> state = states.get(0);
         WOutCalc = state.getKineticEnergy()/1.e6;
         /*
          

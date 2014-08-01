@@ -220,16 +220,16 @@ public class CalculationsOnRings extends CalculationsOnMachines {
         PhaseMatrix matXfrCur;
         
         // We sum up the partial phase advance from each trajectory state
-        for (ProbeState state : super.getTrajectory()) {
+        for (TransferMapState state : super.getTrajectory()) {
             
             // Compute the full-turn map at this state location
-            TransferMapState    tmsCurr = (TransferMapState)state;
-            PhaseMatrix         matFull = this.calculateFullLatticeMatrixAt(tmsCurr);
+            //TransferMapState    tmsCurr = (TransferMapState)state;
+            PhaseMatrix         matFull = this.calculateFullLatticeMatrixAt(state);
             
             // For this state location, compute the matched twiss parameters and 
             //  the transfer matrix from the previous state to here. 
             arrTwsCur = super.calculateMatchedTwiss(matFull);
-            matXfrCur = tmsCurr.getTransferMap().getFirstOrder();
+            matXfrCur = state.getTransferMap().getFirstOrder();
             
             PhaseMatrix matXfrStep = matXfrCur.times(  matXfrPrv.inverse()  );
             

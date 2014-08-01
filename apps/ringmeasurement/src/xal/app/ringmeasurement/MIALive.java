@@ -176,7 +176,7 @@ public class MIALive extends JPanel{
 	Probe probe;
 	Scenario scenario;
 	Trajectory<?> traj;
-	ProbeState state;
+	ProbeState<?> state;
 	Twiss[] twiss = new Twiss[2];
 
 	/* Structures to store BPM data */
