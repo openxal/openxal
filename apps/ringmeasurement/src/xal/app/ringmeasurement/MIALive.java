@@ -173,10 +173,10 @@ public class MIALive extends JPanel{
 	/* Components for setting up the accelerator */
 	public AcceleratorSeqCombo seq;
 	Accelerator accl = new Accelerator();
-	Probe probe;
+	Probe<? extends ProbeState<?>> probe;
 	Scenario scenario;
-	Trajectory<?> traj;
-	ProbeState<?> state;
+	Trajectory<? extends ProbeState<?>> traj;
+	ProbeState<? extends ProbeState<?>> state;
 	Twiss[] twiss = new Twiss[2];
 
 	/* Structures to store BPM data */

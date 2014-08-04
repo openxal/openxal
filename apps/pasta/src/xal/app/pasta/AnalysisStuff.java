@@ -137,7 +137,7 @@ public class AnalysisStuff {
     
     // model stuff
     /** the probe to use for the model */
-    protected Probe theProbe;
+    protected Probe<? extends ProbeState<?>> theProbe;
     /** the default file for the probe file */
     protected File probeFile;
     /** the default filename for the probe file */
@@ -469,7 +469,7 @@ public class AnalysisStuff {
     }
     
     /** this method returns the phase of a node in a trajectory, relative to the first point in the model run for this state. */
-    private double getPhase( ProbeState<?> state, BPM bpm) {
+    private double getPhase( ProbeState<? extends ProbeState<?>> state, BPM bpm) {
 	    double freq = bpm.getBPMBucket().getFrequency() * 1.e6;
 	    
 	    // correction time for electrode being offset from the BPM center:

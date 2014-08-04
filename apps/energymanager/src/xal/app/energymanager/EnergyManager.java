@@ -56,7 +56,7 @@ public class EnergyManager implements DataListener, ParameterStoreListener, Opti
 	protected Simulation _designSimulation;
 	
 	/** the custom probe to use in simulations */
-	protected Probe _entranceProbe;
+	protected Probe<?> _entranceProbe;
 	
 	/** position range of nodes for evaluating a simulation */
 	protected double[] _evaluationRange;
@@ -217,7 +217,7 @@ public class EnergyManager implements DataListener, ParameterStoreListener, Opti
 	 * Set the entrance probe.
 	 * @param probe the new entrance probe
 	 */
-	public void setEntranceProbe( final Probe probe ) {
+	public void setEntranceProbe( final Probe<?> probe ) {
 		if ( _entranceProbe != probe ) {
 			_entranceProbe = probe;			
 		}
@@ -234,7 +234,7 @@ public class EnergyManager implements DataListener, ParameterStoreListener, Opti
 	 * Get the entrance probe.
 	 * @return the entrance probe
 	 */
-	public Probe getEntranceProbe() {
+	public Probe<?> getEntranceProbe() {
 		return _entranceProbe;
 	}
 	
@@ -731,7 +731,7 @@ public class EnergyManager implements DataListener, ParameterStoreListener, Opti
 	 * @param writer the writer to which the results should be written
 	 */
 	public void exportTwiss( final java.io.Writer writer ) throws java.io.IOException {
-		final Probe probe = getEntranceProbe();
+		final Probe<?> probe = getEntranceProbe();
 		
 		writer.write( "# Generator:  Energy Manager \n" );
 		writer.write( "# Twiss Exported:  " + new SimpleDateFormat( "MMM dd, yyyy HH:mm:ss" ).format( new Date() ) + "\n" );

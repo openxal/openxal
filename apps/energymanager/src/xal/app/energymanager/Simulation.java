@@ -172,7 +172,7 @@ public class Simulation {
 	 * 
 	 * @throws IllegalArgumentException    the probe is not a recognized type
 	 */
-	public Simulation( final Probe probe, final List<AcceleratorNode> evaluationNodes ) 
+	public Simulation( final Probe<?> probe, final List<AcceleratorNode> evaluationNodes ) 
 	        throws IllegalArgumentException
 	{
 		_evaluationNodes = evaluationNodes;

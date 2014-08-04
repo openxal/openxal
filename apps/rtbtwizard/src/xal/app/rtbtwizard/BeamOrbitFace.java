@@ -47,6 +47,7 @@ import xal.extension.widgets.plot.CurveData;
 import xal.extension.widgets.plot.FunctionGraphsJPanel;
 import xal.model.probe.Probe;
 import xal.model.probe.TransferMapProbe;
+import xal.model.probe.traj.ProbeState;
 import xal.model.probe.traj.Trajectory;
 import xal.model.probe.traj.TransferMapState;
 import xal.service.pvlogger.sim.PVLoggerDataSource;
@@ -529,8 +530,7 @@ class TargetBeamPositionMatcher {
 		final Scenario scenario = getScenario( SEQUENCE, probe );
 		scenario.resync();
 		scenario.run();
-		@SuppressWarnings("unchecked")
-        final Trajectory<?> trajectory = scenario.getTrajectory();
+        final Trajectory<? extends ProbeState<?>> trajectory = scenario.getTrajectory();
 		final AcceleratorNode targetNode = SEQUENCE.getNodesOfType( "Tgt" ).get( 0 );
         
 		@SuppressWarnings("unchecked")
@@ -561,7 +561,7 @@ class TargetBeamPositionMatcher {
 	}
 	
 	
-	static protected Scenario getScenario( final AcceleratorSeq sequence, final Probe probe ) throws Exception {
+	static protected Scenario getScenario( final AcceleratorSeq sequence, final Probe<? extends ProbeState<?>> probe ) throws Exception {
 		final Scenario scenario = Scenario.newScenarioFor( sequence );
 		scenario.setSynchronizationMode( Scenario.SYNC_MODE_RF_DESIGN );
 		scenario.setStartNode( "RTBT_Diag:BPM15" );

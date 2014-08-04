@@ -85,6 +85,7 @@ import xal.ca.*;
 import java.text.NumberFormat;
 import java.text.DecimalFormat;
 
+
 //import com.sun.org.apache.xpath.internal.operations.Variable;
 import xal.tools.apputils.NonConsecutiveSeqSelector;
 import xal.extension.widgets.apputils.SimpleProbeEditor;
@@ -1046,8 +1047,8 @@ public class ControlFace extends JPanel {
     
 	
 	public void showTargetVals(){
-        Probe probe=solvermodel.getProbe();
-		Trajectory<?> traj = probe.getTrajectory();
+        EnvelopeProbe probe = (EnvelopeProbe) solvermodel.getProbe();
+		Trajectory<EnvelopeProbeState> traj = probe.getTrajectory();
         EnvelopeProbeState target = (EnvelopeProbeState)traj.statesForElement((String)targetlist.getSelectedItem()).get(0);
 	}
 	

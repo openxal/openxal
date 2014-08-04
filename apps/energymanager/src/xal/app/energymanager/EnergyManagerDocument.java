@@ -272,7 +272,7 @@ public class EnergyManagerDocument extends AcceleratorDocument implements DataLi
 	 * @param model the model posting the event
 	 * @param entranceProbe the new entrance probe
 	 */
-	public void entranceProbeChanged( final EnergyManager model, final Probe entranceProbe ) {
+	public void entranceProbeChanged( final EnergyManager model, final Probe<?> entranceProbe ) {
 		setHasChanges( true );
 	}
 	

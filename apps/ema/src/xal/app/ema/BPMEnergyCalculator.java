@@ -36,7 +36,7 @@ public class BPMEnergyCalculator implements Runnable {
 	private Thread calcThread;
 	
 	/** the constructor */
-	public BPMEnergyCalculator(Probe probe, BPMController cont) {
+	public BPMEnergyCalculator(Probe<?> probe, BPMController cont) {
 		keepOn = false;
 		bpmController = cont;
 		energyFinder = new EnergyFinder(probe, 402.5);

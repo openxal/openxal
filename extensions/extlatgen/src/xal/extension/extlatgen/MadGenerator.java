@@ -24,6 +24,7 @@ import xal.smf.impl.Electromagnet;
 import xal.ca.*;
 import xal.sim.slg.*; // for lattice generation
 import xal.model.probe.*; // Probe for Mad header
+import xal.model.probe.traj.ProbeState;
 // import gov.sns.xal.model.probe.traj.EnvelopeProbeState;
 import xal.sim.scenario.Scenario;
 import xal.tools.beam.Twiss;
@@ -49,7 +50,7 @@ public class MadGenerator {
 	final static NumberFormat NUMBER_FORMAT;
     
 	/** Probe for initial condition */
-	protected Probe myProbe;
+	protected Probe<? extends ProbeState<?>> myProbe;
     
 	protected java.util.List<AcceleratorSeq> _sequenceChain = null;
     
@@ -104,18 +105,18 @@ public class MadGenerator {
 	 * @param envProbe envelope probe
 	 */
 	public MadGenerator( String latticeName, java.util.List<AcceleratorSeq> sequenceChain, TransferMapProbe envProbe ) {
-		this( latticeName, sequenceChain, (Probe)envProbe );
+		this( latticeName, sequenceChain, (Probe<? extends ProbeState<?>>)envProbe );
 	}
     
 	
 	/** Constructor */
 	public MadGenerator(String latticeName, java.util.List<AcceleratorSeq> sequenceChain, EnvelopeProbe envProbe) {
-		this( latticeName, sequenceChain, (Probe)envProbe );
+		this( latticeName, sequenceChain, (Probe<? extends ProbeState<?>>)envProbe );
 	}
     
     
 	/** Constructor */
-	public MadGenerator( final String latticeName, final java.util.List<AcceleratorSeq> sequenceChain, final Probe envProbe) {
+	public MadGenerator( final String latticeName, final java.util.List<AcceleratorSeq> sequenceChain, final Probe<? extends ProbeState<?>> envProbe) {
 		myLatticeName = latticeName;
 		myProbe = envProbe;
 		_sequenceChain = sequenceChain;

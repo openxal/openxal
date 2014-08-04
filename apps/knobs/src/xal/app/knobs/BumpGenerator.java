@@ -62,10 +62,10 @@ public class BumpGenerator {
 	protected Scenario _scenario;
 	
 	/** online model probe */
-	protected Probe _probe;
+	protected Probe<? extends ProbeState<?>> _probe;
 	
 	/** base trajectory */
-	protected Trajectory<?> _baseTrajectory;
+	protected Trajectory<? extends ProbeState<?>> _baseTrajectory;
 	
 	
 	/** lock for synchronizing runs */

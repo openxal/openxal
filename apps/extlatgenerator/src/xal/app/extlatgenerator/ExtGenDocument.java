@@ -12,26 +12,26 @@ package xal.app.extlatgenerator;
 import java.util.*;
 import java.net.*;
 import java.io.*;
+
 import javax.swing.*;
 import javax.swing.text.*;
+
 import java.awt.event.*;
+
 import javax.swing.event.*;
 import javax.swing.JToggleButton.ToggleButtonModel;
 
 import xal.extension.application.smf.*;
 import xal.extension.application.*;
-
 import xal.smf.*;
 import xal.smf.data.*;
 import xal.sim.slg.*;   // for lattice generation
 import xal.extension.extlatgen.*; // t3d and dynac adaptor
 import xal.model.probe.*;  // Probe for t3d header
+import xal.model.probe.traj.ProbeState;
 import xal.model.xml.*;
-import xal.model.xml.ParsingException;
 import xal.model.alg.*;
-import xal.sim.scenario.Scenario;
 import xal.sim.scenario.*;
-
 import xal.extension.widgets.apputils.SimpleProbeEditor;
 import xal.service.pvlogger.apputils.browser.PVLogSnapshotChooser;
 import xal.tools.xml.*;
@@ -52,7 +52,7 @@ public class ExtGenDocument extends AcceleratorDocument {
     protected PlainDocument textDocument;
     
     protected Lattice lattice = null;
-    private Probe myProbe;
+    private Probe<? extends ProbeState<?>> myProbe;
     
 	/** flag for the data source to use */
 	private String _dataSourceFlag;
@@ -223,7 +223,7 @@ public class ExtGenDocument extends AcceleratorDocument {
 	
 	
 	/** create a new MAD generator */
-	private MadGenerator getMadGeneratorInstance( final Probe probe, final List<AcceleratorSeq> sequences ) {
+	private MadGenerator getMadGeneratorInstance( final Probe<? extends ProbeState<?>> probe, final List<AcceleratorSeq> sequences ) {
 		if ( probe instanceof TransferMapProbe ) {
 			return new MadGenerator( sequences, (TransferMapProbe)probe );
 		}
@@ -237,7 +237,7 @@ public class ExtGenDocument extends AcceleratorDocument {
 	
 	
 	/** create a new MAD generator */
-	private MadGenerator getMadGeneratorInstance( final Probe probe ) {
+	private MadGenerator getMadGeneratorInstance( final Probe<? extends ProbeState<?>> probe ) {
 		final List<AcceleratorSeq> selectedSequences = getSelectedSequenceList();
 		
 		if ( selectedSequences.size() == 1 ) {
@@ -288,7 +288,7 @@ public class ExtGenDocument extends AcceleratorDocument {
             private static final long serialVersionUID = 1L;
 			public void actionPerformed(ActionEvent event) {
 				if ( myProbe != null ) {
-                    final Probe probe = Probe.newProbeInitializedFrom( myProbe );
+                    final Probe<? extends ProbeState<?>> probe = Probe.newProbeInitializedFrom( myProbe );
 					final SimpleProbeEditor probeEditor = new SimpleProbeEditor( getMainWindow() , probe );
 					//final JDialog probeEditorDialog = probeEditor.createSimpleProbeEditor( probe );
 					myProbe = probeEditor.getProbe();

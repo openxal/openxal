@@ -31,7 +31,7 @@ public interface EnergyManagerListener {
 	 * @param model the model posting the event
 	 * @param entranceProbe the new entrance probe
 	 */
-	public void entranceProbeChanged( EnergyManager model, Probe entranceProbe );
+	public void entranceProbeChanged( EnergyManager model, Probe<?> entranceProbe );
 	
 	
 	/** 

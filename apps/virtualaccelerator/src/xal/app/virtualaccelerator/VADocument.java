@@ -90,7 +90,7 @@ public class VADocument extends AcceleratorDocument implements ActionListener, P
 	/** For on-line model */
 	protected Scenario modelScenario;
     
-	private Probe myProbe;
+	private Probe<? extends ProbeState<?>> myProbe;
     
 	String dataSource = Scenario.SYNC_MODE_LIVE;
     
@@ -491,14 +491,14 @@ public class VADocument extends AcceleratorDocument implements ActionListener, P
     
     
 	/** create a new ring probe */
-	static private Probe createRingProbe( final AcceleratorSeq sequence ) throws InstantiationException {
+	static private TransferMapProbe createRingProbe( final AcceleratorSeq sequence ) throws InstantiationException {
 		final TransferMapTracker tracker = AlgorithmFactory.createTransferMapTracker( sequence );
 		return ProbeFactory.getTransferMapProbe( sequence, tracker );
 	}
     
     
 	/** create a new envelope probe */
-	static private Probe createEnvelopeProbe( final AcceleratorSeq sequence ) throws InstantiationException {
+	static private EnvelopeProbe createEnvelopeProbe( final AcceleratorSeq sequence ) throws InstantiationException {
 		final IAlgorithm tracker = AlgorithmFactory.createEnvTrackerAdapt( sequence );
 		return ProbeFactory.getEnvelopeProbe( sequence, tracker );
 	}
@@ -1121,7 +1121,7 @@ public class VADocument extends AcceleratorDocument implements ActionListener, P
 			final Channel bpmAmpAvgChannel = bpm.getChannel( BPM.AMP_AVG_HANDLE );
             
 			try {
-				ProbeState<?> probeState = modelScenario.getTrajectory().stateForElement( bpm.getId() );
+				ProbeState<? extends ProbeState<?>> probeState = modelScenario.getTrajectory().stateForElement( bpm.getId() );
 				//System.out.println("Now updating " + bpm.getId());
                 
 	            // CKA - Transfer map probes and Envelope probes both exposed ICoordinateState
@@ -1194,7 +1194,7 @@ public class VADocument extends AcceleratorDocument implements ActionListener, P
 			Channel wsY = ws.getChannel(ProfileMonitor.V_SIGMA_M_HANDLE);
             
 			try {
-				ProbeState<?> probeState = modelScenario.getTrajectory().stateForElement( ws.getId() );
+				ProbeState<? extends ProbeState<?>> probeState = modelScenario.getTrajectory().stateForElement( ws.getId() );
 				if (modelScenario.getProbe() instanceof EnvelopeProbe) {
                     final Twiss[] twiss = ( (EnvelopeProbeState)probeState ).getCovarianceMatrix().computeTwiss();
 					wsX.putValCallback( twiss[0].getEnvelopeRadius() * 1000., this );

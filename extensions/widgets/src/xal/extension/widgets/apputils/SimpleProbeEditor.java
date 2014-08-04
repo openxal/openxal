@@ -16,16 +16,20 @@ import java.awt.event.ActionListener;
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import java.awt.Frame;
+
 import javax.swing.*;
 import javax.swing.table.*;
+
 import java.util.*;
 
 import xal.tools.annotation.AProperty.NoEdit;
 import xal.tools.annotation.AProperty.Units;
 import xal.model.probe.Probe;
+import xal.model.probe.traj.ProbeState;
 import xal.model.IAlgorithm;
 import xal.extension.widgets.swing.*;
 import xal.tools.data.*;
+
 import java.beans.*;
 import java.lang.reflect.*;
 
@@ -42,7 +46,7 @@ public class SimpleProbeEditor extends JDialog {
     final private List<PropertyRecord> PROBE_PROPERTY_RECORDS;
 
     /** Probe that is being edited */
-    final private Probe PROBE;
+    final private Probe<? extends ProbeState<?>> PROBE;
 
 	/** model column for the value in the property table */
 	final private int PROPERTY_TABLE_VALUE_COLUMN;
@@ -51,7 +55,7 @@ public class SimpleProbeEditor extends JDialog {
     /* Constructor that takes a window parent
      * and a probe to fetch properties from
      */
-    public SimpleProbeEditor( final Frame owner, final Probe probe ) {
+    public SimpleProbeEditor( final Frame owner, final Probe<? extends ProbeState<?>> probe ) {
         super( owner, "Probe Editor", true );	//Set JDialog's owner, title, and modality
         
         PROBE = probe;					// Set the probe to edit
@@ -79,7 +83,7 @@ public class SimpleProbeEditor extends JDialog {
 	 * Get the probe to edit
      * @return probe associated with this editor
      */
-    public Probe getProbe() {
+    public Probe<? extends ProbeState<?>> getProbe() {
         return PROBE;
     }
 
