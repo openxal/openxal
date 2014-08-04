@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" version="1.0">
-
 	<xs:simpleType name="nodeType">
+		<xs:union memberTypes="knownNodeTypes xs:string"/>
+	</xs:simpleType>
+	<xs:simpleType name="knownNodeTypes">
 		<xs:annotation>
 			<xs:documentation>
 				Node type describes the type of accelerator device.
@@ -1074,7 +1076,7 @@
 
 	<xs:simpleType name="doubleArrayType">
 		<xs:restriction base="xs:string">
-			<xs:pattern value="((\+|-)?([0-9]+(\.[0-9]*)?|\.[0-9]+),.*)*(\+|-)?([0-9]+(\.[0-9]*)?|\.[0-9]+)"/>
+			<xs:pattern value="((\+|-)?([0-9]+(\.[0-9]*)?|\.[0-9]+)((e|E)(\+|-)?[0-9]+)?,.*)*(\+|-)?([0-9]+(\.[0-9]*)?|\.[0-9]+)((e|E)(\+|-)?[0-9]+)?"/>
 		</xs:restriction>
 	</xs:simpleType>
 
