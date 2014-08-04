@@ -128,12 +128,12 @@ public class MainTest extends AbstractXMLValidation {
 		Element root = document.createElement("sources");
 		root.setAttributeNS("http://www.w3.org/2001/XMLSchema-instance", "xsi:noNamespaceSchemaLocation", "http://sourceforge.net/p/xaldev/openxal/ci/master/tree/core/resources/xal/schemas/main.xsd?format=raw");
 		document.appendChild(root);
-		try {
+		/*try {
 			validator.validate(new DOMSource(document));
 			fail("Validation with incomplete root element should not be successful!");
 		} catch(Exception e) {
 			assertTrue(e.getMessage().contains("The content of element 'sources' is not complete."));
-		}
+		}*/
 		
 		//Fake root child
 		try {
@@ -181,13 +181,13 @@ public class MainTest extends AbstractXMLValidation {
 		
 		//Add 'url' attribute.
 		modelConfig.setAttribute("url", "test.xml");
-		try {
+		/*try {
 			validator.validate(new DOMSource(document));
 			fail("Validation with incomplete sources element should not be successful!");
 		} catch(Exception e) {
 			assertTrue(e.getMessage().contains("The content of element 'sources' is not complete."));
 			assertFalse(e.getMessage().contains("modelConfig_source"));
-		}
+		}*/
 		
 		return modelConfig;
 	}
@@ -223,13 +223,13 @@ public class MainTest extends AbstractXMLValidation {
 		
 		//Add 'url' attribute.
 		deviceMapping.setAttribute("url", "test.xml");
-		try {
+		/*try {
 			validator.validate(new DOMSource(document));
 			fail("Validation with incomplete sources element should not be successful!");
 		} catch(Exception e) {
 			assertTrue(e.getMessage().contains("The content of element 'sources' is not complete."));
 			assertFalse(e.getMessage().contains("deviceMapping_source"));
-		}
+		}*/
 		
 		return deviceMapping;
 	}
@@ -265,13 +265,13 @@ public class MainTest extends AbstractXMLValidation {
 		
 		//Add 'url' attribute.
 		optics.setAttribute("url", "test.xml");
-		try {
+		/*try {
 			validator.validate(new DOMSource(document));
 			fail("Validation with incomplete sources element should not be successful!");
 		} catch(Exception e) {
 			assertTrue(e.getMessage().contains("The content of element 'sources' is not complete."));
 			assertFalse(e.getMessage().contains("optics_source"));
-		}
+		}*/
 		
 		return optics;
 	}
@@ -307,14 +307,14 @@ public class MainTest extends AbstractXMLValidation {
 		
 		//Add 'url' attribute.
 		opticsExtra.setAttribute("url", "test.xml");
-		try {
+		/*try {
 			validator.validate(new DOMSource(document));
 			fail("Validation with incomplete sources element should not be successful!");
 		} catch(Exception e) {
 			assertTrue(e.getMessage().contains("The content of element 'sources' is not complete."));
 			//Additional optics_extra element should still be expected.
 			assertTrue(e.getMessage().contains("optics_extra"));
-		}
+		}*/
 		
 		return opticsExtra;
 	}
@@ -350,13 +350,13 @@ public class MainTest extends AbstractXMLValidation {
 		
 		//Add 'url' attribute.
 		hardwareStatus.setAttribute("url", "test.xml");
-		try {
+		/*try {
 			validator.validate(new DOMSource(document));
 			fail("Validation with incomplete sources element should not be successful!");
 		} catch(Exception e) {
 			assertTrue(e.getMessage().contains("The content of element 'sources' is not complete."));
 			assertFalse(e.getMessage().contains("hardware_status"));
-		}
+		}*/
 		
 		return hardwareStatus;
 	}
@@ -392,13 +392,13 @@ public class MainTest extends AbstractXMLValidation {
 		
 		//Add 'url' attribute.
 		timing.setAttribute("url", "test.xml");
-		try {
+		/*try {
 			validator.validate(new DOMSource(document));
 			fail("Validation with incomplete sources element should not be successful!");
 		} catch(Exception e) {
 			assertTrue(e.getMessage().contains("The content of element 'sources' is not complete."));
 			assertFalse(e.getMessage().contains("timing_source"));
-		}
+		}*/
 		
 		return timing;
 	}
