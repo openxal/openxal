@@ -6,7 +6,7 @@
 	</xs:complexType>
 	<xs:element name="sources">
 		<xs:complexType>
-			<xs:sequence>				
+			<xs:choice maxOccurs="unbounded">				
 					<!--  <xs:element name="modelConfig_source" type="configSpec"/> --> <!-- removed due to new element mapping -->
 					<xs:element name="modelElementConfig_source" type="configSpec"/>
 					<xs:element name="deviceMapping_source" type="configSpec"/>
@@ -35,7 +35,7 @@
 								</xs:documentation>
 						</xs:annotation>
 					</xs:element>				
-			</xs:sequence>
+			</xs:choice>
 			<xs:attribute name="version" type="xs:decimal"/>
 		</xs:complexType>
 		<xs:unique name="tablegroup_name">
