@@ -496,7 +496,9 @@ public class Trajectory<S extends ProbeState<S>> implements IArchive, Iterable<S
      * Returns the states associated with the specified element.
      * @param strElemId    the name of the element to search for
      * @return             an array of <code>ProbeState</code> objects for that element
+     * @deprecated
      */
+	@Deprecated
     public ProbeState[] statesForElement_OLD(String strElemId) {
         List<ProbeState> result = new ArrayList<ProbeState>();
         Iterator<S> it = stateIterator();

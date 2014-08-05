@@ -252,7 +252,7 @@ public class ModelProxy {
 			}
  */
 			// get new probe
-			Probe p;
+			Probe<? extends ProbeState<?>> p;
 			try {
 				p = ProbeXmlParser.parse(probeMasterFile.getPath());
 			} catch (ParsingException e) {
@@ -267,7 +267,7 @@ public class ModelProxy {
 	 * Setter for a new probe.
 	 * @param aProbe the new probe object.
 	 */
-	public void setNewProbe(Probe aProbe) {
+	public void setNewProbe(Probe<? extends ProbeState<?>> aProbe) {
 		probe = aProbe;
 		bPropagated = false;
 		
@@ -370,7 +370,7 @@ public class ModelProxy {
 	/**Getter for the on-line-model {@link gov.sns.xal.model.probe.Probe probe} property.
 	 * @return the on-line-model probe. If probe is not set yet <code>null</code> is retuned.
 	 */
-	public Probe getProbe() {
+	public Probe<?> getProbe() {
 		try {
 			checkProbe();
 		} catch (LatticeError e) {
