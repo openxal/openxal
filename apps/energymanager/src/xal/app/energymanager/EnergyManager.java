@@ -56,7 +56,7 @@ public class EnergyManager implements DataListener, ParameterStoreListener, Opti
 	protected Simulation _designSimulation;
 	
 	/** the custom probe to use in simulations */
-	protected Probe<?> _entranceProbe;
+	protected Probe<? extends ProbeState<?>> _entranceProbe;
 	
 	/** position range of nodes for evaluating a simulation */
 	protected double[] _evaluationRange;
@@ -217,7 +217,7 @@ public class EnergyManager implements DataListener, ParameterStoreListener, Opti
 	 * Set the entrance probe.
 	 * @param probe the new entrance probe
 	 */
-	public void setEntranceProbe( final Probe<?> probe ) {
+	public void setEntranceProbe( final Probe<? extends ProbeState<?>> probe ) {
 		if ( _entranceProbe != probe ) {
 			_entranceProbe = probe;			
 		}
@@ -234,7 +234,7 @@ public class EnergyManager implements DataListener, ParameterStoreListener, Opti
 	 * Get the entrance probe.
 	 * @return the entrance probe
 	 */
-	public Probe<?> getEntranceProbe() {
+	public Probe<? extends ProbeState<?>> getEntranceProbe() {
 		return _entranceProbe;
 	}
 	
@@ -731,7 +731,7 @@ public class EnergyManager implements DataListener, ParameterStoreListener, Opti
 	 * @param writer the writer to which the results should be written
 	 */
 	public void exportTwiss( final java.io.Writer writer ) throws java.io.IOException {
-		final Probe<?> probe = getEntranceProbe();
+		final Probe<? extends ProbeState<?>> probe = getEntranceProbe();
 		
 		writer.write( "# Generator:  Energy Manager \n" );
 		writer.write( "# Twiss Exported:  " + new SimpleDateFormat( "MMM dd, yyyy HH:mm:ss" ).format( new Date() ) + "\n" );
@@ -845,14 +845,14 @@ public class EnergyManager implements DataListener, ParameterStoreListener, Opti
 	/** Scale the design magnet fields of the specified magnets to the energy based on the current RF settings. */
 	public void scaleMagnetFieldsToEnergy( final List<LiveParameter> magnetParameters ) {
 		final Simulation simulation = runOnlineModelSimulation();
-		final Trajectory<?> trajectory = simulation.getTrajectory();
-		final Trajectory<?> designTrajectory = getDesignSimulation().getTrajectory();
+		final Trajectory<? extends ProbeState<?>> trajectory = simulation.getTrajectory();
+		final Trajectory<? extends ProbeState<?>> designTrajectory = getDesignSimulation().getTrajectory();
 		
 		for ( LiveParameter parameter : magnetParameters ) {
 			final ElectromagnetAgent agent = (ElectromagnetAgent)parameter.getNodeAgent();
 			final String nodeID = agent.getNode().getId();
-			final ProbeState<?> state = trajectory.stateForElement( nodeID );
-			final ProbeState<?> designState = designTrajectory.stateForElement( nodeID );
+			final ProbeState<? extends ProbeState<?>> state = trajectory.stateForElement( nodeID );
+			final ProbeState<? extends ProbeState<?>> designState = designTrajectory.stateForElement( nodeID );
 			agent.preserveDesignInfluence( state.getKineticEnergy(), designState.getKineticEnergy(), state.getSpeciesRestEnergy() );
 		}
 	}

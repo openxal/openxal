@@ -1,6 +1,7 @@
 package xal.model.xml;
 
 import xal.tools.xml.XmlDataAdaptor;
+import xal.model.probe.traj.ProbeState;
 import xal.model.probe.traj.Trajectory;
 
 /**
@@ -24,7 +25,7 @@ public class TrajectoryXmlParser {
 	 * @param fileUri the URI specifying the XML file to parse
 	 * @return the Trajectory object described by the XML file
 	 */
-	public static Trajectory<?> parse(String fileUri) throws ParsingException {
+	public static Trajectory<? extends ProbeState<?>> parse(String fileUri) throws ParsingException {
 		TrajectoryXmlParser parser = new TrajectoryXmlParser();
 		return parser.parseTrajectoryFile(fileUri);
 	}
@@ -36,7 +37,7 @@ public class TrajectoryXmlParser {
 	 * @param fileUri the URI specifying the XML file to parse
 	 * @return the Trajectory object described by the XML file
 	 */
-	public Trajectory<?> parseTrajectoryFile(String fileUri) 
+	public Trajectory<? extends ProbeState<?>> parseTrajectoryFile(String fileUri) 
 			throws ParsingException {
 		XmlDataAdaptor document = 
 			XmlDataAdaptor.adaptorForUrl(fileUri, false);

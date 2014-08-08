@@ -284,7 +284,7 @@ public class TestRunOnlineModel {
         // Write out the simulation data
         Trajectory<? extends ProbeState<?>> trjData = MODEL_TEST.getTrajectory();
         
-        for (ProbeState<?> state : trjData) {
+        for (ProbeState<? extends ProbeState<?>> state : trjData) {
             WTR_OUTPUT.println(state);
         }
         
@@ -306,7 +306,7 @@ public class TestRunOnlineModel {
         System.out.println("  RF Gap Phases " + MODEL_TEST.getProbe().getAlgorithm().useRfGapPhaseCalculation() );
         Trajectory<? extends ProbeState<?>> trjData = MODEL_TEST.getTrajectory();
         
-        for (ProbeState<?> state : trjData) {
+        for (ProbeState<? extends ProbeState<?>> state : trjData) {
             
             String strId = state.getElementId();
             double dblW  = state.getKineticEnergy();

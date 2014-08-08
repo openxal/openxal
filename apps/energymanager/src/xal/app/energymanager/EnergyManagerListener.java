@@ -11,6 +11,7 @@ package xal.app.energymanager;
 
 import xal.smf.*;
 import xal.model.probe.Probe;
+import xal.model.probe.traj.ProbeState;
 
 import java.util.*;
 
@@ -31,7 +32,7 @@ public interface EnergyManagerListener {
 	 * @param model the model posting the event
 	 * @param entranceProbe the new entrance probe
 	 */
-	public void entranceProbeChanged( EnergyManager model, Probe<?> entranceProbe );
+	public void entranceProbeChanged( EnergyManager model, Probe<? extends ProbeState<?>> entranceProbe );
 	
 	
 	/** 

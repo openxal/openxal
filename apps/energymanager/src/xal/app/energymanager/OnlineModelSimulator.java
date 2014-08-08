@@ -19,6 +19,7 @@ import xal.sim.scenario.Scenario;
 import xal.sim.scenario.AlgorithmFactory;
 import xal.sim.scenario.ProbeFactory;
 import xal.model.probe.*;
+import xal.model.probe.traj.ProbeState;
 import xal.extension.solver.*;
 import xal.model.alg.*;
 
@@ -35,7 +36,7 @@ public class OnlineModelSimulator {
 	protected List<AcceleratorNode> _evaluationNodes;
 	
 	/** the probe used in the online model run */
-	protected Probe<?> _probe;
+	protected Probe<? extends ProbeState<?>> _probe;
 	
 	/** the scenario used in the online model run */
 	protected Scenario _scenario;
@@ -53,7 +54,7 @@ public class OnlineModelSimulator {
 	 * @param evaluationNodes The nodes at which twiss parameters are evaluated
 	 * @param entranceProbe the custom initial probe
 	 */
-	public OnlineModelSimulator( final AcceleratorSeq sequence, final List<AcceleratorNode> evaluationNodes, final Probe<?> entranceProbe ) {
+	public OnlineModelSimulator( final AcceleratorSeq sequence, final List<AcceleratorNode> evaluationNodes, final Probe<? extends ProbeState<?>> entranceProbe ) {
 		_isRunning = false;
 		_sequence = sequence;
 
@@ -143,9 +144,9 @@ public class OnlineModelSimulator {
 	 * Set the entrance probe.
 	 * @param entranceProbe the new entrance probe
 	 */
-	public void setEntranceProbe( final Probe<?> entranceProbe ) {
+	public void setEntranceProbe( final Probe<? extends ProbeState<?>> entranceProbe ) {
 		if ( !_isRunning ) {
-			final Probe<?> probe = copyProbe( entranceProbe );
+			final Probe<? extends ProbeState<?>> probe = copyProbe( entranceProbe );
 			probe.reset();
 			_probe = probe;
 			
@@ -164,8 +165,8 @@ public class OnlineModelSimulator {
      * @param otherProbe probe to copy
      * @return new probe constructed from the given probe
      */
-    static private Probe<?> copyProbe( final Probe<?> otherProbe ) {
-        final Probe<?> probe = otherProbe.copy();		// performs a deep copy of the probe including algorithm
+    static private Probe<? extends ProbeState<?>> copyProbe( final Probe<? extends ProbeState<?>> otherProbe ) {
+        final Probe<? extends ProbeState<?>> probe = otherProbe.copy();		// performs a deep copy of the probe including algorithm
         probe.initialize();
         return probe;
     }
@@ -187,7 +188,7 @@ public class OnlineModelSimulator {
 	 * Get the probe.
 	 * @return the probe used in the simulation
 	 */
-	public Probe<?> getProbe() {
+	public Probe<? extends ProbeState<?>> getProbe() {
 		return _probe;
 	}
 	
@@ -197,9 +198,9 @@ public class OnlineModelSimulator {
 	 * @param sequence the sequence for which to get the default probe
 	 * @return the default probe for the specified sequence
 	 */
-	static public Probe<?> getDefaultProbe( final AcceleratorSeq sequence ) {
+	static public Probe<? extends ProbeState<?>> getDefaultProbe( final AcceleratorSeq sequence ) {
         try {
-            final Probe<?> probe = (sequence instanceof Ring) ? createRingProbe( sequence ) : createEnvelopeProbe( sequence );
+            final Probe<? extends ProbeState<?>> probe = (sequence instanceof Ring) ? createRingProbe( sequence ) : createEnvelopeProbe( sequence );
             probe.getAlgorithm().setRfGapPhaseCalculation( true );	// make sure we enable the full RF gap phase slip calculation
 			return probe;
         }
@@ -212,14 +213,14 @@ public class OnlineModelSimulator {
 
 
 	/** create a new ring probe */
-	static private Probe<?> createRingProbe( final AcceleratorSeq sequence ) throws InstantiationException {
+	static private Probe<? extends ProbeState<?>> createRingProbe( final AcceleratorSeq sequence ) throws InstantiationException {
 		final TransferMapTracker tracker = AlgorithmFactory.createTransferMapTracker( sequence );
 		return ProbeFactory.getTransferMapProbe( sequence, tracker );
 	}
 
 
 	/** create a new envelope probe */
-	static private Probe<?> createEnvelopeProbe( final AcceleratorSeq sequence ) throws InstantiationException {
+	static private Probe<? extends ProbeState<?>> createEnvelopeProbe( final AcceleratorSeq sequence ) throws InstantiationException {
 		final IAlgorithm tracker = AlgorithmFactory.createEnvTrackerAdapt( sequence );
 		return ProbeFactory.getEnvelopeProbe( sequence, tracker );
 	}

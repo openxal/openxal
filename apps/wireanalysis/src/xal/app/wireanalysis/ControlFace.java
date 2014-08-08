@@ -1065,7 +1065,7 @@ public class ControlFace extends JPanel {
 		BasicGraphData ygraphdata = new BasicGraphData();
 		
 		Trajectory<EnvelopeProbeState> traj = solverprobe.getTrajectory();
-		Iterator<?> iterState = traj.stateIterator();
+		Iterator<EnvelopeProbeState> iterState = traj.stateIterator();
 		boolean firstpos = true;
 		double offset = 0.0;
 		

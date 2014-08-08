@@ -1185,7 +1185,7 @@ public class ModelFace extends JPanel{
 		}
 		
 		Trajectory<EnvelopeProbeState> traj = tempprobe.getTrajectory();
-        Iterator<?> iterState= traj.stateIterator();
+        Iterator<? extends ProbeState<?>> iterState= traj.stateIterator();
         EnvelopeProbeState state= (EnvelopeProbeState)iterState.next();
         
         CovarianceMatrix covarianceMatrix = state.getCovarianceMatrix();

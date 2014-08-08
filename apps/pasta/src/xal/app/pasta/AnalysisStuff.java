@@ -509,9 +509,9 @@ public class AnalysisStuff {
     private void cavOffCalc() {
         
 	    // some model stuff
-	    Trajectory<?> traj;
+	    Trajectory<? extends ProbeState<?>> traj;
 	    //EnvelopeProbeState state0, state1, state2;
-	    ProbeState<?> state0, state1, state2;
+	    ProbeState<? extends ProbeState<?>> state0, state1, state2;
 	    java.util.List<? extends ProbeState<?>> states;
 	    double time0;
 	    
@@ -601,9 +601,9 @@ public class AnalysisStuff {
 	    cavPhaseScaledMax = (phaseCavMeasured.get(phaseCavMeasured.size()-1)).doubleValue();
         
 	    // some model stuff
-	    Trajectory<?> traj;
+	    Trajectory<? extends ProbeState<?>> traj;
 	    //EnvelopeProbeState state0, state1, state2;
-	    ProbeState<?> state0, state1, state2;
+	    ProbeState<? extends ProbeState<?>> state0, state1, state2;
 	    java.util.List<? extends ProbeState<?>> states;
 	    Twiss[] twiss1, twiss2;
 	    
@@ -1058,9 +1058,9 @@ public class AnalysisStuff {
 	    cavAmpSetpoint = pvs[ind] + (theDoc.theDesignAmp - svs[ind])*slope;
         
         runModel(cavityVoltage, theDoc.theDesignPhase, WIn*1.e6);
-        Trajectory<?> traj = theModel.getProbe().getTrajectory();
+        Trajectory<? extends ProbeState<?>> traj = theModel.getProbe().getTrajectory();
         java.util.List<? extends ProbeState<?>> states =traj.statesForElement(firstBPM.getId());
-        ProbeState<?> state = states.get(0);
+        ProbeState<? extends ProbeState<?>> state = states.get(0);
         WOutCalc = state.getKineticEnergy()/1.e6;
         /*
          

@@ -13,6 +13,7 @@ import xal.extension.application.*;
 import xal.extension.application.smf.*;
 import xal.smf.*;
 import xal.model.probe.*;
+import xal.model.probe.traj.ProbeState;
 import xal.model.alg.*;
 import xal.tools.data.*;
 import xal.extension.widgets.apputils.SimpleProbeEditor;
@@ -22,12 +23,12 @@ import xal.tools.apputils.files.RecentFileTracker;
 import javax.swing.*;
 import javax.swing.table.*;
 import javax.swing.border.*;
+
 import java.awt.*;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.event.*;
+
 import javax.swing.event.*;
+
 import java.text.*;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -194,7 +195,7 @@ public class EnergyManagerWindow extends AcceleratorWindow implements EnergyMana
             public void actionPerformed( final ActionEvent event ) {
 				try {
 					final SimpleProbeEditor probeEditor;
-					final Probe<?> probe = Probe.newProbeInitializedFrom( getModel().getEntranceProbe() );
+					final Probe<? extends ProbeState<?>> probe = Probe.newProbeInitializedFrom( getModel().getEntranceProbe() );
 //					final JDialog probeEditorDialog = probeEditor.createSimpleProbeEditor( probe );
                     probeEditor = new SimpleProbeEditor( EnergyManagerWindow.this , probe );
 					final Tracker algorithm = (Tracker)probe.getAlgorithm();
@@ -1253,7 +1254,7 @@ public class EnergyManagerWindow extends AcceleratorWindow implements EnergyMana
 	 * @param model the model posting the event
 	 * @param entranceProbe the new entrance probe
 	 */
-	public void entranceProbeChanged( final EnergyManager model, final xal.model.probe.Probe<?> entranceProbe ) {}
+	public void entranceProbeChanged( final EnergyManager model, final xal.model.probe.Probe<? extends ProbeState<?>> entranceProbe ) {}
 		
 	
 	/** 

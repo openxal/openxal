@@ -100,7 +100,7 @@ public class MatchingFace extends JPanel{
     Scenario model;
     EnvelopeProbe probe;
     //Trajectory<?> traj;
-    ProbeState<?> state;
+    ProbeState<? extends ProbeState<?>> state;
     PhaseVector coordinates;
     ArrayList<Variable> variables = new ArrayList<Variable>();
     ArrayList<Objective> objectives = new ArrayList<Objective>();

@@ -231,17 +231,18 @@ public class Trajectory<S extends ProbeState<S>> implements IArchive, Iterable<S
      * @return a Trajectory for the contents of the DataAdaptor
      * @throws ParsingException error encountered reading the DataAdaptor
      */
-    public static Trajectory<?> readFrom(DataAdaptor container)
+    @SuppressWarnings("unchecked")
+	public static Trajectory<? extends ProbeState<?>> readFrom(DataAdaptor container)
         throws ParsingException {
         DataAdaptor daptTraj = container.childAdaptor(Trajectory.TRAJ_LABEL);
         if (daptTraj == null)
             throw new ParsingException("Trajectory#readFrom() - DataAdaptor contains no trajectory node");
         
         String type = container.stringValue(Trajectory.TYPE_LABEL);
-        Trajectory<?> trajectory;
+        Trajectory<? extends ProbeState<?>> trajectory;
         try {
             Class<?> trajectoryClass = Class.forName(type);
-            trajectory = (Trajectory<?>) trajectoryClass.newInstance();
+            trajectory = (Trajectory<? extends ProbeState<?>>) trajectoryClass.newInstance();
         } catch (Exception e) {
             e.printStackTrace();
             throw new ParsingException(e.getMessage());
