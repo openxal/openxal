@@ -6,7 +6,6 @@
  */
 package xal.tools.beam.calc;
 
-import xal.model.probe.traj.ParticleProbeState;
 import xal.model.probe.traj.ProbeState;
 import xal.tools.beam.PhaseVector;
 import xal.tools.beam.Twiss;

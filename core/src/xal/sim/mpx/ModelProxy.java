@@ -44,7 +44,7 @@ public class ModelProxy {
 	private boolean bLattice;
 	private boolean bPropagated = false;
 	protected Scenario scenario;
-	protected Probe probe = null;
+	protected Probe<? extends ProbeState<?>> probe = null;
 	
 	private EnvelopeProbeState initProbeState;
 	private Twiss[] initTwiss;
@@ -188,8 +188,10 @@ public class ModelProxy {
 			
 			// initialize the probe properly
 			if (probe instanceof EnvelopeProbe) {
-				((EnvelopeProbe) probe).initFromTwiss(initTwiss);
-				probe.applyState(initProbeState);
+				EnvelopeProbe envProbe = ((EnvelopeProbe) probe);
+				envProbe.initFromTwiss(initTwiss);
+				envProbe.applyState(initProbeState);
+				probe = envProbe.copy();
 			}
 			
 			probe.initialize();
@@ -457,7 +459,7 @@ public class ModelProxy {
 		}
 		List<? extends ProbeState<?>> lstStates= scenario.trajectoryStatesForElement(id);
 		
-		ProbeState<?>[]  arrStates = new ProbeState[lstStates.size()];
+		ProbeState<?>[]  arrStates = new ProbeState<?>[lstStates.size()];
 		states = lstStates.toArray(arrStates);
 		return states;
 	}

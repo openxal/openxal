@@ -32,6 +32,7 @@ import xal.smf.impl.ProfileMonitor;
 import xal.smf.impl.BPM;
 import xal.smf.impl.Electromagnet;
 import xal.model.probe.Probe;
+import xal.model.probe.ParticleProbe;
 import xal.sim.scenario.ProbeFactory;
 import xal.sim.scenario.AlgorithmFactory;
 import xal.model.alg.ParticleTracker;
@@ -254,7 +255,7 @@ public class InjDumpWizardDocument extends AcceleratorDocument {
 
 		try {
 			final ParticleTracker tracker = AlgorithmFactory.createParticleTracker( seq );
-			final Probe probe =  ProbeFactory.createParticleProbe( seq, tracker );
+			final ParticleProbe probe =  ProbeFactory.createParticleProbe( seq, tracker );
 			double momentum = probe.getSpeciesRestEnergy()*probe.getBeta()*probe.getGamma();
 			positionCalculator.setMomentum(momentum);
 			//System.out.println("debug momentum="+momentum);
