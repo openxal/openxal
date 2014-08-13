@@ -46,7 +46,7 @@ import xal.tools.beam.calc.ISimulationResults.ISimLocResults;
  * @see CalculationsOnRings
  * @see CalculationsOnBeams
  */
-public class SimpleSimResultsAdaptor extends SimResultsAdaptor implements ISimLocResults<ProbeState>, ISimEnvResults<ProbeState> {
+public class SimpleSimResultsAdaptor extends SimResultsAdaptor {
 
     
     /*
@@ -77,25 +77,28 @@ public class SimpleSimResultsAdaptor extends SimResultsAdaptor implements ISimLo
      * @since  Nov 7, 2013
      */
 	public SimpleSimResultsAdaptor(Trajectory<? extends ProbeState<?>> trajectory) throws IllegalArgumentException {
-        super();
+        //super();
         
 
         Class<?> clsTrajState = trajectory.getStateClass();
         
         if ( clsTrajState.equals(TransferMapState.class) ) {
+        	SimResultsAdaptor<TransferMapState> sra = new SimResultsAdaptor<TransferMapState>();
             @SuppressWarnings("unchecked")
             CalculationsOnRings calRings  = new CalculationsOnRings((Trajectory<TransferMapState>)trajectory);
-            super.registerCalcEngine(TransferMapState.class, calRings);;
+            sra.registerCalcEngine(TransferMapState.class, calRings);;
 
         } else if (clsTrajState.equals(EnvelopeProbeState.class)) {
+        	SimResultsAdaptor<EnvelopeProbeState> sra = new SimResultsAdaptor<EnvelopeProbeState>();
             @SuppressWarnings("unchecked")
             CalculationsOnBeams calBeams = new CalculationsOnBeams((Trajectory<EnvelopeProbeState>)trajectory);
-            super.registerCalcEngine(EnvelopeProbeState.class, calBeams);
+            sra.registerCalcEngine(EnvelopeProbeState.class, calBeams);
             
         } else if (clsTrajState.equals(ParticleProbeState.class)) {  
+        	SimResultsAdaptor<ParticleProbeState> sra = new SimResultsAdaptor<ParticleProbeState>();
             @SuppressWarnings("unchecked")
             CalculationsOnParticles calPart = new CalculationsOnParticles((Trajectory<ParticleProbeState>)trajectory);
-            super.registerCalcEngine(ParticleProbeState.class, calPart);
+            sra.registerCalcEngine(ParticleProbeState.class, calPart);
 
         } else {
 
