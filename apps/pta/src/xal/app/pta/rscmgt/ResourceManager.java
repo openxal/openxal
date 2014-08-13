@@ -6,7 +6,6 @@
  */
 package xal.app.pta.rscmgt;
 
-import xal.app.pta.MainApplication;
 import xal.tools.IconLib;
 
 import java.io.File;
