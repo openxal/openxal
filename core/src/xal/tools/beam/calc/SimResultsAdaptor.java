@@ -45,7 +45,7 @@ import xal.tools.math.r3.R3;
  * @author Christopher K. Allen
  * @since  Nov 15, 2013
  */
-public class SimResultsAdaptor<S extends ProbeState<S>> implements ISimLocResults<S>, ISimEnvResults<S> {
+public class SimResultsAdaptor implements ISimLocResults<ProbeState<?>>, ISimEnvResults<ProbeState<?>> {
 
     
     /*
@@ -53,10 +53,10 @@ public class SimResultsAdaptor<S extends ProbeState<S>> implements ISimLocResult
      */
     
     /** map of probe state types to ISimLocResults calculation engine types */
-    private final Map<Class<S>, ISimLocResults<S>>   mapArgToLocCalc;
+    private final Map<Class<? extends ProbeState<?>>, ISimLocResults<ProbeState<?>>>   mapArgToLocCalc;
     
     /** map of probe state types to ISimEnvResults calculation engine types */
-    private final Map<Class<S>, ISimEnvResults<S>>   mapArgToEnvCalc;
+    private final Map<Class<? extends ProbeState<?>>, ISimEnvResults<ProbeState<?>>>   mapArgToEnvCalc;
     
     
     
@@ -72,8 +72,8 @@ public class SimResultsAdaptor<S extends ProbeState<S>> implements ISimLocResult
      * @since  Nov 15, 2013
      */
     public SimResultsAdaptor() {
-        this.mapArgToLocCalc = new HashMap<Class<S>, ISimLocResults<S>>();
-        this.mapArgToEnvCalc = new HashMap<Class<S>, ISimEnvResults<S>>();
+        this.mapArgToLocCalc = new HashMap<Class<? extends ProbeState<?>>, ISimLocResults<ProbeState<?>>>();
+        this.mapArgToEnvCalc = new HashMap<Class<? extends ProbeState<?>>, ISimEnvResults<ProbeState<?>>>();
     }
 
     /**
@@ -95,23 +95,17 @@ public class SimResultsAdaptor<S extends ProbeState<S>> implements ISimLocResult
         
         if (iCalcEngine instanceof ISimLocResults<?>) {
             @SuppressWarnings("unchecked")
-            ISimLocResults<S> calcLocEngine = (ISimLocResults<S>)iCalcEngine;
+            ISimLocResults<ProbeState<?>> calcLocEngine = (ISimLocResults<ProbeState<?>>)iCalcEngine;
 
-            @SuppressWarnings("unchecked")
-			Class<S> clsS = (Class<S>)clsType;
-            
-            this.mapArgToLocCalc.put(clsS, calcLocEngine);
+            this.mapArgToLocCalc.put(clsType, calcLocEngine);
             bolRegistered = true;
         }  
         
         if (iCalcEngine instanceof ISimEnvResults<?>) {
             @SuppressWarnings("unchecked")
-            ISimEnvResults<S> calcEnvEngine = (ISimEnvResults<S>)iCalcEngine;
+            ISimEnvResults<ProbeState<?>> calcEnvEngine = (ISimEnvResults<ProbeState<?>>)iCalcEngine;
 
-            @SuppressWarnings("unchecked")
-			Class<S> clsS = (Class<S>)clsType;
-            
-            this.mapArgToEnvCalc.put(clsS, calcEnvEngine);
+            this.mapArgToEnvCalc.put(clsType, calcEnvEngine);
             bolRegistered = true;
         }
 
@@ -134,9 +128,9 @@ public class SimResultsAdaptor<S extends ProbeState<S>> implements ISimLocResult
      * @since  Nov 19, 2013
      */
     @Override
-    public PhaseVector computeCoordinatePosition(S state) throws IllegalArgumentException {
+    public PhaseVector computeCoordinatePosition(ProbeState<?> state) throws IllegalArgumentException {
         
-        ISimLocResults<S>    iCalcEngine = this.retrieveLocCalcEngine(state);
+        ISimLocResults<ProbeState<?>>    iCalcEngine = this.retrieveLocCalcEngine(state);
 
         return iCalcEngine.computeCoordinatePosition(state);
     }
@@ -149,9 +143,9 @@ public class SimResultsAdaptor<S extends ProbeState<S>> implements ISimLocResult
      * @since  Nov 19, 2013
      */
     @Override
-    public PhaseVector computeFixedOrbit(S state) {
+    public PhaseVector computeFixedOrbit(ProbeState<?> state) {
         
-        ISimLocResults<S>    iCalcEngine = this.retrieveLocCalcEngine(state);
+        ISimLocResults<ProbeState<?>>    iCalcEngine = this.retrieveLocCalcEngine(state);
 
         return iCalcEngine.computeFixedOrbit(state);
     }
@@ -164,9 +158,9 @@ public class SimResultsAdaptor<S extends ProbeState<S>> implements ISimLocResult
      * @since  Nov 19, 2013
      */
     @Override
-    public PhaseVector computeChromAberration(S state) {
+    public PhaseVector computeChromAberration(ProbeState<?> state) {
         
-        ISimLocResults<S>    iCalcEngine = this.retrieveLocCalcEngine(state);
+        ISimLocResults<ProbeState<?>>    iCalcEngine = this.retrieveLocCalcEngine(state);
 
         return iCalcEngine.computeChromAberration(state);
     }
@@ -184,9 +178,9 @@ public class SimResultsAdaptor<S extends ProbeState<S>> implements ISimLocResult
      * @since  Nov 19, 2013
      */
     @Override
-    public Twiss[] computeTwissParameters(S state) {
+    public Twiss[] computeTwissParameters(ProbeState<?> state) {
         
-        ISimEnvResults<S>  iCalcEngine = this.retrieveEnvCalcEngine(state);
+        ISimEnvResults<ProbeState<?>>  iCalcEngine = this.retrieveEnvCalcEngine(state);
         
         return iCalcEngine.computeTwissParameters(state);
     }
@@ -199,9 +193,9 @@ public class SimResultsAdaptor<S extends ProbeState<S>> implements ISimLocResult
      * @since  Nov 19, 2013
      */
     @Override
-    public R3 computeBetatronPhase(S state) {
+    public R3 computeBetatronPhase(ProbeState<?> state) {
         
-        ISimEnvResults<S>  iCalcEngine = this.retrieveEnvCalcEngine(state);
+        ISimEnvResults<ProbeState<?>>  iCalcEngine = this.retrieveEnvCalcEngine(state);
         
         return iCalcEngine.computeBetatronPhase(state);
     }
@@ -214,9 +208,9 @@ public class SimResultsAdaptor<S extends ProbeState<S>> implements ISimLocResult
      * @since  Nov 19, 2013
      */
     @Override
-    public PhaseVector computeChromDispersion(S state) {
+    public PhaseVector computeChromDispersion(ProbeState<?> state) {
         
-        ISimEnvResults<S>  iCalcEngine = this.retrieveEnvCalcEngine(state);
+        ISimEnvResults<ProbeState<?>>  iCalcEngine = this.retrieveEnvCalcEngine(state);
         
         return iCalcEngine.computeChromDispersion(state);
     }
@@ -246,9 +240,9 @@ public class SimResultsAdaptor<S extends ProbeState<S>> implements ISimLocResult
      * @author Christopher K. Allen
      * @since  Nov 19, 2013
      */
-    private ISimLocResults<S> retrieveLocCalcEngine(S state) throws IllegalArgumentException {
+    private ISimLocResults<ProbeState<?>> retrieveLocCalcEngine(ProbeState<? >state) throws IllegalArgumentException {
         
-        ISimLocResults<S>    iCalcEngine = this.mapArgToLocCalc.get(state.getClass());
+        ISimLocResults<ProbeState<?>>    iCalcEngine = this.mapArgToLocCalc.get(state.getClass());
         if (iCalcEngine == null)
             throw new IllegalArgumentException("No simulation data calculation engine for probe state type " + state.getClass());
         
@@ -275,9 +269,9 @@ public class SimResultsAdaptor<S extends ProbeState<S>> implements ISimLocResult
      * @author Christopher K. Allen
      * @since  Nov 19, 2013
      */
-    private ISimEnvResults<S> retrieveEnvCalcEngine(S state) throws IllegalArgumentException {
+    private ISimEnvResults<ProbeState<?>> retrieveEnvCalcEngine(ProbeState<?> state) throws IllegalArgumentException {
         
-        ISimEnvResults<S>    iCalcEngine = this.mapArgToEnvCalc.get(state.getClass());
+        ISimEnvResults<ProbeState<?>>    iCalcEngine = this.mapArgToEnvCalc.get(state.getClass());
         if (iCalcEngine == null)
             throw new IllegalArgumentException("No simulation data calculation engine for probe state type " + state.getClass());
         

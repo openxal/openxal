@@ -160,7 +160,7 @@ public class Simulation {
 	
 	
 	/** The machine parameter calculation engine */
-    private ISimEnvResults<ProbeState>     _modelStatesAdaptor;
+    private ISimEnvResults<ProbeState<?>>     _modelStatesAdaptor;
 	
     
     /*

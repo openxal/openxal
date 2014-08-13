@@ -11,8 +11,6 @@ import xal.model.probe.traj.ParticleProbeState;
 import xal.model.probe.traj.ProbeState;
 import xal.model.probe.traj.Trajectory;
 import xal.model.probe.traj.TransferMapState;
-import xal.tools.beam.calc.ISimulationResults.ISimEnvResults;
-import xal.tools.beam.calc.ISimulationResults.ISimLocResults;
 
 /**
  * <p>
@@ -77,28 +75,28 @@ public class SimpleSimResultsAdaptor extends SimResultsAdaptor {
      * @since  Nov 7, 2013
      */
 	public SimpleSimResultsAdaptor(Trajectory<? extends ProbeState<?>> trajectory) throws IllegalArgumentException {
-        //super();
+        super();
         
 
         Class<?> clsTrajState = trajectory.getStateClass();
         
         if ( clsTrajState.equals(TransferMapState.class) ) {
-        	SimResultsAdaptor<TransferMapState> sra = new SimResultsAdaptor<TransferMapState>();
+//        	SimResultsAdaptor<TransferMapState> sra = new SimResultsAdaptor<TransferMapState>();
             @SuppressWarnings("unchecked")
             CalculationsOnRings calRings  = new CalculationsOnRings((Trajectory<TransferMapState>)trajectory);
-            sra.registerCalcEngine(TransferMapState.class, calRings);;
+            super.registerCalcEngine(TransferMapState.class, calRings);;
 
         } else if (clsTrajState.equals(EnvelopeProbeState.class)) {
-        	SimResultsAdaptor<EnvelopeProbeState> sra = new SimResultsAdaptor<EnvelopeProbeState>();
+//        	SimResultsAdaptor<EnvelopeProbeState> sra = new SimResultsAdaptor<EnvelopeProbeState>();
             @SuppressWarnings("unchecked")
             CalculationsOnBeams calBeams = new CalculationsOnBeams((Trajectory<EnvelopeProbeState>)trajectory);
-            sra.registerCalcEngine(EnvelopeProbeState.class, calBeams);
+            super.registerCalcEngine(EnvelopeProbeState.class, calBeams);
             
         } else if (clsTrajState.equals(ParticleProbeState.class)) {  
-        	SimResultsAdaptor<ParticleProbeState> sra = new SimResultsAdaptor<ParticleProbeState>();
+//        	SimResultsAdaptor<ParticleProbeState> sra = new SimResultsAdaptor<ParticleProbeState>();
             @SuppressWarnings("unchecked")
             CalculationsOnParticles calPart = new CalculationsOnParticles((Trajectory<ParticleProbeState>)trajectory);
-            sra.registerCalcEngine(ParticleProbeState.class, calPart);
+            super.registerCalcEngine(ParticleProbeState.class, calPart);
 
         } else {
 
