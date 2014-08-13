@@ -1,0 +1,182 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<BricksDocument date="Mon Dec 31 11:57:26 EST 2007" version="1.0.0">
+    <RootBrick>
+        <ViewNode height="754" tag="MainWindow" width="1222">
+            <ViewProxy type="javax.swing.JFrame"/>
+            <BeanProperty name="title" value="Scan 1D Scatter Plot"/>
+            <ViewNode tag="Main Vertical Layout">
+                <ViewProxy type="javax.swing.Box_Vertical"/>
+                <ViewNode tag="Button Box">
+                    <ViewProxy type="javax.swing.Box_Horizontal"/>
+                    <ViewNode tag="OpenButton">
+                        <ViewProxy type="javax.swing.JButton"/>
+                        <BeanProperty name="text" value=""/>
+                        <BeanProperty group="general" iconName="Open24.gif" name="icon"/>
+                        <BeanProperty name="toolTipText" value="Open a Scan 1D ASCII data file"/>
+                    </ViewNode>
+                    <ViewNode tag="SnapshotButton">
+                        <ViewProxy type="javax.swing.JButton"/>
+                        <BeanProperty name="text" value=""/>
+                        <BeanProperty group="custom" iconName="snapshot24.gif" name="icon"/>
+                        <BeanProperty name="toolTipText" value="Take snapshot of this window."/>
+                        <BeanProperty name="horizontalTextPosition" value="11"/>
+                    </ViewNode>
+                    <ViewNode tag="ExportButton">
+                        <ViewProxy type="javax.swing.JButton"/>
+                        <BeanProperty name="text" value=""/>
+                        <BeanProperty name="label" value=""/>
+                        <BeanProperty group="general" iconName="Export24.gif" name="icon"/>
+                        <BeanProperty name="toolTipText" value="Export data with centroids translated to zero"/>
+                    </ViewNode>
+                    <ViewNode tag="Horizontal Glue">
+                        <ViewProxy type="javax.swing.Box_HorizontalGlue"/>
+                    </ViewNode>
+                    <ViewNode tag="RangeBox">
+                        <ViewProxy type="javax.swing.Box_Horizontal"/>
+                        <BeanProperty height="32" name="preferredSize" width="310"/>
+                        <BeanProperty height="32" name="minimumSize" width="300"/>
+                        <BeanProperty height="32771" name="maximumSize" width="400"/>
+                        <BorderNode tag="Lowered Bevel">
+                            <BorderProxy type="javax.swing.border.BevelBorder_Lowered"/>
+                        </BorderNode>
+                        <ViewNode tag="RangeCheckBox">
+                            <ViewProxy type="javax.swing.JCheckBox"/>
+                            <BeanProperty name="text" value="Use Range"/>
+                        </ViewNode>
+                        <ViewNode tag="LowerRangeSpinner">
+                            <ViewProxy type="javax.swing.JSpinner"/>
+                            <BeanProperty name="enabled" value="false"/>
+                            <BeanProperty name="toolTipText" value="Lower end of range to analyze"/>
+                        </ViewNode>
+                        <ViewNode tag="UpperRangeSpinner">
+                            <ViewProxy type="javax.swing.JSpinner"/>
+                            <BeanProperty name="enabled" value="false"/>
+                            <BeanProperty name="toolTipText" value="Upper end of range to analyze"/>
+                        </ViewNode>
+                        <BorderNode tag="Lowered Bevel">
+                            <BorderProxy type="javax.swing.border.BevelBorder_Lowered"/>
+                        </BorderNode>
+                    </ViewNode>
+                    <ViewNode tag="Horizontal Glue">
+                        <ViewProxy type="javax.swing.Box_HorizontalGlue"/>
+                    </ViewNode>
+                    <ViewNode tag="Plot Style">
+                        <ViewProxy type="javax.swing.Box_Horizontal"/>
+                        <BorderNode tag="Lowered Bevel">
+                            <BorderProxy type="javax.swing.border.BevelBorder_Lowered"/>
+                        </BorderNode>
+                        <ViewNode tag="ScatterRadioButton">
+                            <ViewProxy type="javax.swing.JRadioButton"/>
+                            <BeanProperty name="selected" value="true"/>
+                            <BeanProperty name="text" value="Scatter"/>
+                        </ViewNode>
+                        <ViewNode tag="SpectrumRadioButton">
+                            <ViewProxy type="javax.swing.JRadioButton"/>
+                            <BeanProperty name="text" value="Spectrum"/>
+                        </ViewNode>
+                        <BorderNode tag="Lowered Bevel">
+                            <BorderProxy type="javax.swing.border.BevelBorder_Lowered"/>
+                        </BorderNode>
+                    </ViewNode>
+                    <ViewNode tag="Horizontal Glue">
+                        <ViewProxy type="javax.swing.Box_HorizontalGlue"/>
+                    </ViewNode>
+                    <ViewNode tag="CentroidBox">
+                        <ViewProxy type="javax.swing.Box_Horizontal"/>
+                        <BeanProperty height="32" name="preferredSize" width="250"/>
+                        <BeanProperty height="28" name="minimumSize" width="150"/>
+                        <BeanProperty height="35" name="maximumSize" width="350"/>
+                        <BorderNode tag="Etched Border">
+                            <BorderProxy type="javax.swing.border.EtchedBorder"/>
+                        </BorderNode>
+                        <ViewNode tag="Label">
+                            <ViewProxy type="javax.swing.JLabel"/>
+                            <BeanProperty name="text" value="Centroid: "/>
+                        </ViewNode>
+                        <ViewNode tag="X_CenterField">
+                            <ViewProxy type="javax.swing.JTextField"/>
+                            <BeanProperty name="editable" value="false"/>
+                            <BeanProperty name="horizontalAlignment" value="11"/>
+                            <BeanProperty name="text" value="0.0"/>
+                            <BeanProperty name="toolTipText" value="Mean X"/>
+                            <BeanProperty name="columns" value="8"/>
+                        </ViewNode>
+                        <ViewNode tag="Y_CenterField">
+                            <ViewProxy type="javax.swing.JTextField"/>
+                            <BeanProperty name="editable" value="false"/>
+                            <BeanProperty name="horizontalAlignment" value="11"/>
+                            <BeanProperty name="text" value="0.0"/>
+                            <BeanProperty name="toolTipText" value="Mean Y"/>
+                            <BeanProperty name="columns" value="8"/>
+                        </ViewNode>
+                        <BorderNode tag="Etched Border">
+                            <BorderProxy type="javax.swing.border.EtchedBorder"/>
+                        </BorderNode>
+                    </ViewNode>
+                    <ViewNode tag="RMS Box">
+                        <ViewProxy type="javax.swing.Box_Horizontal"/>
+                        <BeanProperty height="32" name="preferredSize" width="250"/>
+                        <BeanProperty height="28" name="minimumSize" width="150"/>
+                        <BeanProperty height="35" name="maximumSize" width="350"/>
+                        <BorderNode tag="Etched Border">
+                            <BorderProxy type="javax.swing.border.EtchedBorder"/>
+                        </BorderNode>
+                        <ViewNode tag="Label">
+                            <ViewProxy type="javax.swing.JLabel"/>
+                            <BeanProperty name="text" value="RMS: "/>
+                        </ViewNode>
+                        <ViewNode tag="RMS_WidthField">
+                            <ViewProxy type="javax.swing.JTextField"/>
+                            <BeanProperty name="editable" value="false"/>
+                            <BeanProperty name="horizontalAlignment" value="11"/>
+                            <BeanProperty name="text" value="0.0"/>
+                            <BeanProperty name="toolTipText" value="RMS Width"/>
+                            <BeanProperty name="columns" value="8"/>
+                        </ViewNode>
+                        <ViewNode tag="RMS_HeightField">
+                            <ViewProxy type="javax.swing.JTextField"/>
+                            <BeanProperty name="editable" value="false"/>
+                            <BeanProperty name="horizontalAlignment" value="11"/>
+                            <BeanProperty name="text" value="0.0"/>
+                            <BeanProperty name="toolTipText" value="RMS Height"/>
+                            <BeanProperty name="columns" value="8"/>
+                        </ViewNode>
+                        <BorderNode tag="Etched Border">
+                            <BorderProxy type="javax.swing.border.EtchedBorder"/>
+                        </BorderNode>
+                    </ViewNode>
+                </ViewNode>
+                <ViewNode tag="MainPane">
+                    <ViewProxy type="javax.swing.JSplitPane"/>
+                    <BeanProperty height="284" name="preferredSize" width="32000"/>
+                    <BeanProperty height="50" name="minimumSize" width="32000"/>
+                    <BeanProperty name="dividerLocation" value="225"/>
+                    <ViewNode tag="SelectionPanel">
+                        <ViewProxy type="javax.swing.Box_Vertical"/>
+                        <ViewNode tag="X SelectionScrollPane">
+                            <ViewProxy type="javax.swing.JScrollPane"/>
+                            <ViewNode tag="X SelectionList">
+                                <ViewProxy type="javax.swing.JList"/>
+                                <BeanProperty name="selectionMode" value="0"/>
+                                <BeanProperty name="toolTipText" value="X Data"/>
+                            </ViewNode>
+                        </ViewNode>
+                        <ViewNode tag="Y SelectionScrollPane">
+                            <ViewProxy type="javax.swing.JScrollPane"/>
+                            <ViewNode tag="Y Selection List">
+                                <ViewProxy type="javax.swing.JList"/>
+                                <BeanProperty name="selectionMode" value="0"/>
+                                <BeanProperty name="toolTipText" value="Y Data"/>
+                            </ViewNode>
+                        </ViewNode>
+                    </ViewNode>
+                    <ViewNode tag="ScatterPlot">
+                        <ViewProxy type="xal.extension.widgets.plot.FunctionGraphsJPanel"/>
+                        <BeanProperty name="name" value="Scatter Plot"/>
+                        <BeanProperty name="legendVisible" value="false"/>
+                    </ViewNode>
+                </ViewNode>
+            </ViewNode>
+        </ViewNode>
+    </RootBrick>
+</BricksDocument>
