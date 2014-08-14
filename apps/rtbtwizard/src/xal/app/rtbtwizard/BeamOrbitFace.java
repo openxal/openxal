@@ -508,7 +508,7 @@ class TargetBeamPositionMatcher {
 		final Scenario scenario = getScenario( SEQUENCE, probe );
 		scenario.resync();
 		scenario.run();
-		final MatrixTrajectory trajectory = (MatrixTrajectory)scenario.getTrajectory();
+		final TransferMapTrajectory trajectory = (TransferMapTrajectory)scenario.getTrajectory();
 		final AcceleratorNode targetNode = SEQUENCE.getNodesOfType( "Tgt" ).get( 0 );
         
 		final double[] xTargetBeamPositionAndError = X_BEAM_POSITION_MATCHER.getMatchingTargetBeamPositionAndError( targetNode, xBpmAgents, trajectory );
@@ -526,7 +526,7 @@ class TargetBeamPositionMatcher {
 	static protected Probe getProbe( final AcceleratorSeq sequence ) {
 		try {
             
-            return ProbeFactory.getTransferMapProbe(sequence, AlgorithmFactory.createTransferMapTracker(sequence));
+            return ProbeFactory.getTransferMapProbe( sequence, AlgorithmFactory.createTransferMapTracker( sequence ) );
             
         } catch ( InstantiationException exception ) {
             System.err.println( "Instantiation exception creating probe." );
@@ -577,7 +577,7 @@ class TargetPlaneBeamPositionMatcher {
     
     
 	/** determine the best matching target beam position vector (x, y) */
-	public double[] getMatchingTargetBeamPositionAndError( final AcceleratorNode targetNode, final List<BpmAgent> bpmAgents, final MatrixTrajectory trajectory ) throws Exception {
+	public double[] getMatchingTargetBeamPositionAndError( final AcceleratorNode targetNode, final List<BpmAgent> bpmAgents, final TransferMapTrajectory trajectory ) throws Exception {
 		final int bpmCount = bpmAgents.size();
 		final List<BPM> bpms = new ArrayList<BPM>( bpmCount );
 		final double[] beamPositions = new double[ bpmCount ];
@@ -886,7 +886,7 @@ class PVLoggerSnapshot {
 class ViewScreenMeasurement {
 	final protected PVLoggerSnapshot _snapshot;
 	final protected double[] _beamPosition;
-	protected MatrixTrajectory _trajectory;
+	protected TransferMapTrajectory _trajectory;
 	protected AcceleratorSeq _sequence;
 	
 	
@@ -913,17 +913,17 @@ class ViewScreenMeasurement {
 	}
 	
 	
-	public MatrixTrajectory getTrajectory( final AcceleratorSeq sequence ) throws Exception {
+	public TransferMapTrajectory getTrajectory( final AcceleratorSeq sequence ) throws Exception {
 		return _trajectory != null && sequence == _sequence ? _trajectory : calculateTrajectory( sequence );
 	}
 	
 	
-	protected MatrixTrajectory calculateTrajectory( final AcceleratorSeq sequence ) throws Exception {
+	protected TransferMapTrajectory calculateTrajectory( final AcceleratorSeq sequence ) throws Exception {
 		_sequence = sequence;
 		final PVLoggerSnapshot snapshot = _snapshot;
 		final Scenario scenario = getScenario( snapshot.getDataSource() );
 		scenario.run();
-		final MatrixTrajectory trajectory = (MatrixTrajectory)scenario.getTrajectory();
+		final TransferMapTrajectory trajectory = (TransferMapTrajectory)scenario.getTrajectory();
 		_trajectory = trajectory;
 		return trajectory;
 	}
@@ -1256,7 +1256,7 @@ class TargetOrbitAnalysis {
 	
 	/** use the online model to predict the target position given the positions measured at the bpms */
 	protected TargetAnalysisResultRecord predictWithMatcher( final List<BPM> bpms, final ViewScreenMeasurement measurement ) throws Exception {
-		final MatrixTrajectory trajectory = measurement.getTrajectory( SEQUENCE );
+		final TransferMapTrajectory trajectory = measurement.getTrajectory( SEQUENCE );
 		final double measuredBeamPosition = PLANE_ADAPTOR.getViewScreenBeamPosition( measurement );
 		final PVLoggerSnapshot snapshot = measurement.getSnapshot();
 		final int bpmCount = bpms.size();
