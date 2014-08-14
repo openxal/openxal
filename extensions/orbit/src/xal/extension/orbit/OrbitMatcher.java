@@ -29,24 +29,38 @@ public class OrbitMatcher {
 	/** list of nodes for which we have measured beam positions */
 	final List<? extends AcceleratorNode> MEASURED_NODES;
 	
-	/** trajectory from which to get the transfer matrices */
-	protected MatrixTrajectory _trajectory;
+	/** trajectory wrapper from which to get the transfer matrices */
+	private TrajectoryWrapper _trajectoryWrapper;
 	
 	/** horizontal beam position transform */
 	protected BeamPositionTransform _xBeamPositionTransform;
 	
 	/** vertical beam position transform */
 	protected BeamPositionTransform _yBeamPositionTransform;
-	
+
+
+	/** Constructor */
+	private OrbitMatcher( final AcceleratorNode targetNode, final List<? extends AcceleratorNode> measuredNodes ) {
+		TARGET_NODE = targetNode;
+		MEASURED_NODES = measuredNodes;
+	}
+
 	
 	/** Constructor */
 	public OrbitMatcher( final AcceleratorNode targetNode, final List<? extends AcceleratorNode> measuredNodes, final MatrixTrajectory trajectory ) {
-		TARGET_NODE = targetNode;
-		MEASURED_NODES = measuredNodes;
-		
+		this( targetNode, measuredNodes );
+
 		setTrajectory( trajectory );
 	}
-	
+
+
+	/** Constructor */
+	public OrbitMatcher( final AcceleratorNode targetNode, final List<? extends AcceleratorNode> measuredNodes, final TransferMapTrajectory trajectory ) {
+		this( targetNode, measuredNodes );
+
+		setTrajectory( trajectory );
+	}
+
 	
 	/** get the best matching horizontal beam position in mm at the target node based on the beam position measurements in mm at the measurement nodes */
 	public double getHorizontalTargetBeamPosition( final double[] measuredBeamPositions ) {
@@ -62,18 +76,32 @@ public class OrbitMatcher {
 	
 	/** set the trajectory */
 	public void setTrajectory( final MatrixTrajectory trajectory ) {
-		_trajectory = trajectory;
-		
+		_trajectoryWrapper = new MatrixTrajectoryWrapper( trajectory );
+
+		processTrajectory();
+	}
+
+
+	/** set the trajectory */
+	public void setTrajectory( final TransferMapTrajectory trajectory ) {
+		_trajectoryWrapper = new TransferMapTrajectoryWrapper( trajectory );
+
+		processTrajectory();
+	}
+
+
+	/** process a trajectory */
+	private void processTrajectory() {
 		final List<TransferRow> xTransferRows = new ArrayList<TransferRow>( MEASURED_NODES.size() );
 		final List<TransferRow> yTransferRows = new ArrayList<TransferRow>( MEASURED_NODES.size() );
-		
+
 		for ( final AcceleratorNode node : MEASURED_NODES ) {
 			// we need to get the transfer matrix from the target node to the measurement node (see the equations)
 			final PhaseMatrix transferMatrix = getTransferMatrix( TARGET_NODE, node );
 			xTransferRows.add( extractHorizontalSubMatrix( transferMatrix ) );
 			yTransferRows.add( extractVerticalSubMatrix( transferMatrix ) );
 		}
-		
+
 		_xBeamPositionTransform = new BeamPositionTransform( xTransferRows );
 		_yBeamPositionTransform = new BeamPositionTransform( yTransferRows );
 	}
@@ -101,8 +129,61 @@ public class OrbitMatcher {
 	
 	/** get the transfer matrix from the transfer map trajectory */
 	protected PhaseMatrix getTransferMatrix( final AcceleratorNode fromNode, final AcceleratorNode toNode ) {
-		return _trajectory.getTransferMatrix( fromNode.getId(), toNode.getId() );
-		//return _trajectory.getTransferMatrix( toNode.getId(), fromNode.getId() );
+		return _trajectoryWrapper.getTransferMatrix( fromNode, toNode );
+	}
+}
+
+
+
+/** wrap a trajectory for processing */
+abstract class TrajectoryWrapper {
+	/** get the transfer matrix from the transfer map trajectory */
+	abstract public PhaseMatrix getTransferMatrix( final AcceleratorNode fromNode, final AcceleratorNode toNode );
+}
+
+
+
+/** wrapper for processing on a matrix trajectory */
+class MatrixTrajectoryWrapper extends TrajectoryWrapper {
+	/** matrix trajectory */
+	final private MatrixTrajectory TRAJECTORY;
+
+
+	/** Constructor */
+	public MatrixTrajectoryWrapper( final MatrixTrajectory trajectory ) {
+		TRAJECTORY = trajectory;
+	}
+
+
+	/** get the transfer matrix from the transfer map trajectory */
+	public PhaseMatrix getTransferMatrix( final AcceleratorNode fromNode, final AcceleratorNode toNode ) {
+		return TRAJECTORY.getTransferMatrix( fromNode.getId(), toNode.getId() );
+	}
+}
+
+
+
+/** wrapper for processing on a transfer map trajectory */
+class TransferMapTrajectoryWrapper extends TrajectoryWrapper {
+	/** transfer map trajectory */
+	final private TransferMapTrajectory TRAJECTORY;
+
+
+	/** Constructor */
+	public TransferMapTrajectoryWrapper( final TransferMapTrajectory trajectory ) {
+		TRAJECTORY = trajectory;
+	}
+
+
+	/** get the transfer matrix from the transfer map trajectory */
+	public PhaseMatrix getTransferMatrix( final AcceleratorNode fromNode, final AcceleratorNode toNode ) {
+		final TransferMapState fromState = (TransferMapState)TRAJECTORY.stateForElement( fromNode.getId() );
+		final TransferMapState toState = (TransferMapState)TRAJECTORY.stateForElement( toNode.getId() );
+
+		final PhaseMatrix fromMatrix = fromState.getTransferMap().getFirstOrder();
+		final PhaseMatrix toMatrix = toState.getTransferMap().getFirstOrder();
+
+		return toMatrix.times( fromMatrix.inverse() );
 	}
 }
 
