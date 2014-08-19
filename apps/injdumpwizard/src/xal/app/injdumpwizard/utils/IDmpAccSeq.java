@@ -188,7 +188,10 @@ class  IDmpAccSeq{
 
 		Solver solver = new Solver( SolveStopperFactory.maxEvaluationsStopper( 500 ) );
 		solver.solve( _problem );
-		
+
+		final Trial bestSolution = solver.getScoreBoard().getBestSolution();
+		_problem.evaluate( bestSolution );	// force the variable references to take the optimal values
+
 		track();
 	}
 
