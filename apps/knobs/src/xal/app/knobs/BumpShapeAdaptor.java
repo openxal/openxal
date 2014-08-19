@@ -100,7 +100,7 @@ abstract public class BumpShapeAdaptor {
      * @author Christopher K. Allen
      * @since  Nov 12, 2013
      */
-    public void resetTrajectory(Trajectory<? extends ProbeState<?>> traj) {
+    public void resetTrajectory(Trajectory<?> traj) {
         this.prcSimData = new SimpleSimResultsAdaptor(traj);
     }
     

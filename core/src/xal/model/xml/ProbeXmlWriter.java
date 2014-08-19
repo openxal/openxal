@@ -5,10 +5,8 @@ import java.io.IOException;
 
 import org.w3c.dom.Document;
 
-import xal.tools.xml.XmlDataAdaptor;
-import xal.model.probe.EnvelopeProbe;
 import xal.model.probe.Probe;
-import xal.model.probe.traj.ProbeState;
+import xal.tools.xml.XmlDataAdaptor;
 
 /**
  * Saves probe instances to an XML file.
@@ -45,7 +43,7 @@ public class ProbeXmlWriter {
 	 * 
 	 * @throws IOException error writing to fileURI
 	 */
-	public static void writeXml(Probe<? extends ProbeState<?>> aProbe, String fileURI) 
+	public static void writeXml(Probe<?> aProbe, String fileURI) 
 			throws IOException {
 		ProbeXmlWriter writer = new ProbeXmlWriter();
 		XmlDataAdaptor doc = writer.writeProbeToDoc(aProbe);
@@ -68,7 +66,7 @@ public class ProbeXmlWriter {
 	 * 
 	 * @return a DOM for the supplied lattice
 	 */
-	public static Document documentForProbe(Probe<? extends ProbeState<?>> probe) throws IOException {
+	public static Document documentForProbe(Probe<?> probe) throws IOException {
 		ProbeXmlWriter writer = new ProbeXmlWriter();
 		XmlDataAdaptor doc = writer.writeProbeToDoc(probe);
 		return doc.document();
@@ -81,7 +79,7 @@ public class ProbeXmlWriter {
 	 * 
 	 * @throws IOException error writing to fileURI
 	 */
-	public XmlDataAdaptor writeProbeToDoc(Probe<? extends ProbeState<?>> aProbe) 
+	public XmlDataAdaptor writeProbeToDoc(Probe<?> aProbe) 
 	throws IOException {
 //	    return writeProbeToDoc(aProbe, false);
 	    XmlDataAdaptor document = 

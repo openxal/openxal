@@ -70,7 +70,7 @@ public class OpticsOptimizer implements ScoreBoardListener, SolverSessionListene
 	/**
 	 * Constructor
 	 */
-	public OpticsOptimizer( final AcceleratorSeq sequence, final List<AcceleratorNode> evaluationNodes, final Probe<? extends ProbeState<?>> entranceProbe, final ParameterStore parameterStore ) {
+	public OpticsOptimizer( final AcceleratorSeq sequence, final List<AcceleratorNode> evaluationNodes, final Probe<?> entranceProbe, final ParameterStore parameterStore ) {
 		this( new SolverSession( sequence.getId(), sequence, evaluationNodes, entranceProbe, parameterStore.getCoreParameters() ) );
 	}
 	
@@ -170,7 +170,7 @@ public class OpticsOptimizer implements ScoreBoardListener, SolverSessionListene
 	 * Set the entrance probe.
 	 * @param entranceProbe the new entrance probe
 	 */
-	public void setEntranceProbe( final Probe<? extends ProbeState<?>> entranceProbe ) {
+	public void setEntranceProbe( final Probe<?> entranceProbe ) {
 		if ( !isRunning() ) {
 			_activeSolverSession.setEntranceProbe( entranceProbe );			
 		}

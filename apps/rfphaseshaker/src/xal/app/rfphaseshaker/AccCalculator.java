@@ -185,6 +185,8 @@ public class AccCalculator {
         }
         
         double kinEnergyIni = probe.getKineticEnergy();
+        
+        // TODO CKA - NEVER USED
         double rfFreq_Init = 1.0e+6*((RfCavity)rfCalcNodeV.get(0).accNode).getCavFreq();
         
         Vector<String> startNodeIdV = new Vector<String>();
@@ -292,7 +294,7 @@ public class AccCalculator {
                 return;
             }
             
-            Trajectory<? extends ProbeState<?>> traj = scenario.getProbe().getTrajectory();
+            Trajectory<?> traj = scenario.getProbe().getTrajectory();
             eKinOut = traj.finalState().getKineticEnergy();
             timeOut = traj.finalState().getTime();
             
@@ -303,6 +305,8 @@ public class AccCalculator {
                 if(position >= s_start && position < s_stop){
                     double pos = traj.stateNearestPosition(position).getPosition();
                     double time_state = traj.stateNearestPosition(position).getTime();
+                    
+                    // TODO CKA - NEVER USED
                     double energy_tmp = traj.stateNearestPosition(position).getKineticEnergy();
                     //System.out.println(" "+pos+"                 "+energy_tmp+"                        "+ time_state);
                     positionsV.add(new Double(pos));
@@ -372,7 +376,7 @@ public class AccCalculator {
             for(int j = 0; j < n_graph_points; j++){
                 double position = j*s_step;
                 if(position >= s_start && position < s_stop){
-                    double pos = traj.stateNearestPosition(position).getPosition();
+                    double pos = traj.stateNearestPosition(position).getPosition();   // TODO CKA - NEVER USED
                     double time_state = traj.stateNearestPosition(position).getTime();
                     shakedTimeInV.add(new Double(time_state));
                 }
@@ -503,7 +507,7 @@ public class AccCalculator {
         for(DevTreeNode rfNode : rfCalcNodeV){
             if(rfNode.isOn == true){
                 RfCavity rfCav = (RfCavity) rfNode.accNode;
-                double freq = 1.0e+6*rfCav.getCavFreq();
+                double freq = 1.0e+6*rfCav.getCavFreq();     // TODO CKA - NEVER USED
                 rfNode.hashT.put("rffrequency",new Double(1.0e+6*rfCav.getCavFreq()));
                 try{
                     double livePhase = rfCav.channelSuite().getChannel("cavPhaseSet").getValDbl();
@@ -618,7 +622,7 @@ public class AccCalculator {
         experGD.removeAllPoints();
         for(DevTreeNode bpmNode : bpmNodeV){		
             if(bpmNode.isOn == true){
-                BPM bpm = (BPM) bpmNode.accNode;
+                BPM bpm = (BPM) bpmNode.accNode;    // TODO CKA - NEVER USED
                 int nm = bpmNode.hashT.get("n_measurements").intValue();
                 double slopeSum = bpmNode.hashT.get("slopeSum").doubleValue();
                 double slopeSum2 = bpmNode.hashT.get("slopeSum2").doubleValue();

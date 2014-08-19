@@ -31,6 +31,7 @@ import xal.tools.beam.Twiss;
 import xal.tools.beam.TraceXalUnitConverter;
 import xal.tools.beam.RelativisticParameterConverter;
 import xal.tools.beam.CovarianceMatrix;
+// TODO: CKA - Used Imports
 
 /**
  * MadGenerator generates MAD input file from XAL lattice view. Usage: create a
@@ -50,7 +51,7 @@ public class MadGenerator {
 	final static NumberFormat NUMBER_FORMAT;
     
 	/** Probe for initial condition */
-	protected Probe<? extends ProbeState<?>> myProbe;
+	protected Probe<?> myProbe;
     
 	protected java.util.List<AcceleratorSeq> _sequenceChain = null;
     
@@ -105,18 +106,18 @@ public class MadGenerator {
 	 * @param envProbe envelope probe
 	 */
 	public MadGenerator( String latticeName, java.util.List<AcceleratorSeq> sequenceChain, TransferMapProbe envProbe ) {
-		this( latticeName, sequenceChain, (Probe<? extends ProbeState<?>>)envProbe );
+		this( latticeName, sequenceChain, (Probe<?>)envProbe );
 	}
     
 	
 	/** Constructor */
 	public MadGenerator(String latticeName, java.util.List<AcceleratorSeq> sequenceChain, EnvelopeProbe envProbe) {
-		this( latticeName, sequenceChain, (Probe<? extends ProbeState<?>>)envProbe );
+		this( latticeName, sequenceChain, (Probe<?>)envProbe );
 	}
     
     
 	/** Constructor */
-	public MadGenerator( final String latticeName, final java.util.List<AcceleratorSeq> sequenceChain, final Probe<? extends ProbeState<?>> envProbe) {
+	public MadGenerator( final String latticeName, final java.util.List<AcceleratorSeq> sequenceChain, final Probe<?> envProbe) {
 		myLatticeName = latticeName;
 		myProbe = envProbe;
 		_sequenceChain = sequenceChain;
@@ -180,6 +181,7 @@ public class MadGenerator {
 		final FileWriter MAD_WRITER = new FileWriter( mad_file );
 		final Date today = new Date();
         
+		// TODO: CKA - NEVER USED		
 		TraceXalUnitConverter uc = TraceXalUnitConverter.newConverter( 402500000., myProbe.getSpeciesRestEnergy(), myProbe.getKineticEnergy() );
         
 		double momentum = RelativisticParameterConverter.computeMomentumFromEnergies( myProbe.getKineticEnergy(), myProbe.getSpeciesRestEnergy() ) / 1.e9;
@@ -196,11 +198,11 @@ public class MadGenerator {
 		MAD_ELEMENTS = new ArrayList<MadElement>();
 		for (int i = 0; i < _sequenceChain.size(); i++) {
 			Lattice myLattice = createLattice( _sequenceChain.get(i) );
-			int elementCount = myLattice.len();
+			int elementCount = myLattice.len();      // TODO: CKA - NEVER USED
 			LatticeIterator ilat = myLattice.latticeIterator();
-			int counter = 1;
-			int devTypeInd = 1;
-			String devStr = "";
+			int counter = 1;         // TODO: CKA - NEVER USED
+			int devTypeInd = 1;      // TODO: CKA - NEVER USED
+			String devStr = "";      // TODO: CKA - NEVER USED
 			AcceleratorNode currentThickNode = null;	// there can at most be one thick node at any location
 			double currentThickNodePath = 0.0;			// total current path taken through the thick node (only bends modify and use this variable)
 			

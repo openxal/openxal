@@ -530,7 +530,7 @@ class TargetBeamPositionMatcher {
 		final Scenario scenario = getScenario( SEQUENCE, probe );
 		scenario.resync();
 		scenario.run();
-        final Trajectory<? extends ProbeState<?>> trajectory = scenario.getTrajectory();
+        final Trajectory<?> trajectory = scenario.getTrajectory();
 		final AcceleratorNode targetNode = SEQUENCE.getNodesOfType( "Tgt" ).get( 0 );
         
 		@SuppressWarnings("unchecked")
@@ -561,7 +561,7 @@ class TargetBeamPositionMatcher {
 	}
 	
 	
-	static protected Scenario getScenario( final AcceleratorSeq sequence, final Probe<? extends ProbeState<?>> probe ) throws Exception {
+	static protected Scenario getScenario( final AcceleratorSeq sequence, final Probe<?> probe ) throws Exception {
 		final Scenario scenario = Scenario.newScenarioFor( sequence );
 		scenario.setSynchronizationMode( Scenario.SYNC_MODE_RF_DESIGN );
 		scenario.setStartNode( "RTBT_Diag:BPM15" );
@@ -1241,7 +1241,7 @@ class TargetOrbitAnalysis {
 	/** use the online model to predict the target position given the positions measured at the bpms */
 	public void performAnalysis( final List<BPM> bpms ) throws Exception {
 		final int measurementCount = VIEW_SCREEN_MEASUREMENTS.size();
-		double meanDifference = 0.0;
+		double meanDifference = 0.0;      // TODO: CKA - NEVER USED
 		final Matrix diag = new Matrix( measurementCount, 2 );
 		final Matrix viewScreenMeas = new Matrix( measurementCount, 1 );
 		final List<TargetAnalysisResultRecord> rawResults = new ArrayList<TargetAnalysisResultRecord>( measurementCount );

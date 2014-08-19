@@ -59,7 +59,7 @@ import xal.extension.widgets.apputils.SimpleProbeEditor;
 import xal.service.pvlogger.apputils.browser.PVLogSnapshotChooser;
 import xal.service.pvlogger.sim.PVLoggerDataSource;
 import xal.tools.dispatch.*;
-
+//TODO: CKA - Many unused imports
 
 /**
  * <p>
@@ -90,7 +90,7 @@ public class VADocument extends AcceleratorDocument implements ActionListener, P
 	/** For on-line model */
 	protected Scenario modelScenario;
     
-	private Probe<? extends ProbeState<?>> myProbe;
+	private Probe<?> myProbe;
     
 	String dataSource = Scenario.SYNC_MODE_LIVE;
     
@@ -136,7 +136,7 @@ public class VADocument extends AcceleratorDocument implements ActionListener, P
     
 	private volatile boolean vaRunning = false;
 	// add by liyong
-	private java.util.List<AcceleratorNode> nodes;
+	private java.util.List<AcceleratorNode> nodes;     // TODO: CKA - NEVER USED
 	private java.util.List<RfCavity> rfCavities;
     
 	private java.util.List<Electromagnet> mags;
@@ -213,7 +213,7 @@ public class VADocument extends AcceleratorDocument implements ActionListener, P
 		setSource( url );
         
 		// queue to synchronize readbacks with setpoints as well as the online model
-		final DispatchQueue modelSyncQueue = DispatchQueue.createSerialQueue( "Model Sync Queue" );
+		final DispatchQueue modelSyncQueue = DispatchQueue.createSerialQueue( "Model Sync Queue" );  // TODO: CKA - NEVER USED
 		MODEL_SYNC_TIMER = DispatchTimer.getCoalescingInstance( DispatchQueue.createSerialQueue( "" ), getOnlineModelSynchronizer() );
         
 		// set the default model sync period to 1 second
@@ -1115,13 +1115,13 @@ public class VADocument extends AcceleratorDocument implements ActionListener, P
 		// for BPMs
         for ( final BPM bpm : bpms ) {
 			final Channel bpmXAvgChannel = bpm.getChannel( BPM.X_AVG_HANDLE );
-			final Channel bpmXTBTChannel = bpm.getChannel( BPM.X_TBT_HANDLE );
+			final Channel bpmXTBTChannel = bpm.getChannel( BPM.X_TBT_HANDLE );   // TODO: CKA - NEVER USED
 			final Channel bpmYAvgChannel = bpm.getChannel( BPM.Y_AVG_HANDLE );
-            final Channel bpmYTBTChannel = bpm.getChannel( BPM.Y_TBT_HANDLE );
+            final Channel bpmYTBTChannel = bpm.getChannel( BPM.Y_TBT_HANDLE );  // TODO: CKA - NEVER USED
 			final Channel bpmAmpAvgChannel = bpm.getChannel( BPM.AMP_AVG_HANDLE );
             
 			try {
-				ProbeState<? extends ProbeState<?>> probeState = modelScenario.getTrajectory().stateForElement( bpm.getId() );
+				ProbeState<?> probeState = modelScenario.getTrajectory().stateForElement( bpm.getId() );
 				//System.out.println("Now updating " + bpm.getId());
                 
 	            // CKA - Transfer map probes and Envelope probes both exposed ICoordinateState
@@ -1194,7 +1194,7 @@ public class VADocument extends AcceleratorDocument implements ActionListener, P
 			Channel wsY = ws.getChannel(ProfileMonitor.V_SIGMA_M_HANDLE);
             
 			try {
-				ProbeState<? extends ProbeState<?>> probeState = modelScenario.getTrajectory().stateForElement( ws.getId() );
+				ProbeState<?> probeState = modelScenario.getTrajectory().stateForElement( ws.getId() );
 				if (modelScenario.getProbe() instanceof EnvelopeProbe) {
                     final Twiss[] twiss = ( (EnvelopeProbeState)probeState ).getCovarianceMatrix().computeTwiss();
 					wsX.putValCallback( twiss[0].getEnvelopeRadius() * 1000., this );
@@ -1396,7 +1396,7 @@ public class VADocument extends AcceleratorDocument implements ActionListener, P
             mags = getSelectedSequence().<Electromagnet>getAllNodesWithQualifier( typeQualifier );
 			
 			// get all the rf cavities
-			typeQualifier = typeQualifier = QualifierFactory.qualifierWithStatusAndTypes( true, RfCavity.s_strType );
+			typeQualifier = typeQualifier = QualifierFactory.qualifierWithStatusAndTypes( true, RfCavity.s_strType );  // TODO: CKA - No Effect
 			rfCavities = getSelectedSequence().getAllInclusiveNodesWithQualifier( typeQualifier );
 			
 			// get all the BPMs

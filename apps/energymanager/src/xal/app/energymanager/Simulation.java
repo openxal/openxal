@@ -87,7 +87,7 @@ public class Simulation {
 	final protected List<AcceleratorNode> _evaluationNodes;
 	
 	/** trajectory */
-	final protected Trajectory<? extends ProbeState<?>> _trajectory;
+	final protected Trajectory<?> _trajectory;
 	
 	/** kinetic energy */
 	final protected double _outputKineticEnergy;
@@ -172,7 +172,7 @@ public class Simulation {
 	 * 
 	 * @throws IllegalArgumentException    the probe is not a recognized type
 	 */
-	public Simulation( final Probe<? extends ProbeState<?>> probe, final List<AcceleratorNode> evaluationNodes ) 
+	public Simulation( final Probe<?> probe, final List<AcceleratorNode> evaluationNodes ) 
 	        throws IllegalArgumentException
 	{
 		_evaluationNodes = evaluationNodes;
@@ -234,7 +234,7 @@ public class Simulation {
 	 * Get the trajectory.
 	 * @return the trajectory.
 	 */
-	public Trajectory<? extends ProbeState<?>> getTrajectory() {
+	public Trajectory<?> getTrajectory() {
 		return _trajectory;
 	}
 	
@@ -708,7 +708,7 @@ public class Simulation {
 	/** Find the node's corresponding state from the state iterator */
 	static protected interface StateFinder {
 		/** find the trajectory's states corresponding to the specified nodes */
-		public ProbeState<?>[] findStates( final List<AcceleratorNode> nodes, final Trajectory<? extends ProbeState<?>> trajectory );
+		public ProbeState<?>[] findStates( final List<AcceleratorNode> nodes, final Trajectory<?> trajectory );
 	}
 	
 	
@@ -719,7 +719,7 @@ public class Simulation {
 	static protected StateFinder newFirstStateFinder() {
 		return new StateFinder() {
 			@Override
-            public ProbeState<?>[] findStates( final List<AcceleratorNode> nodes, final Trajectory<? extends ProbeState<?>> trajectory ) {
+            public ProbeState<?>[] findStates( final List<AcceleratorNode> nodes, final Trajectory<?> trajectory ) {
 				final Iterator<? extends ProbeState<?>> stateIter = trajectory.stateIterator();
 				final ProbeState<?>[] states = new ProbeState[ nodes.size() ];
 				
@@ -728,7 +728,7 @@ public class Simulation {
 					final String nodeID = node.getId();
                     //System.out.println( "Searching for node: " + nodeID );
 					while ( stateIter.hasNext() ) {
-						final ProbeState<?> state = (ProbeState<?>) stateIter.next();
+						final ProbeState<?> state = stateIter.next();
                         //System.out.println( "Testing state: " + state.getElementId() );
 						if ( state.getElementId().startsWith( nodeID ) ) {
 							states[ index++ ] = state;

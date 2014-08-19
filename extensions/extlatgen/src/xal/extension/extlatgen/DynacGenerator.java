@@ -45,7 +45,7 @@ public class DynacGenerator {
     
     protected String myLatticeName = null;
     
-    private boolean mebtInd = false;
+    private boolean mebtInd = false;        // TODO: CKA - NEVER USED
     
     private AcceleratorSeq myAccSeq;
     private Scenario myScenario;
@@ -142,7 +142,7 @@ public class DynacGenerator {
         
         
         LatticeIterator ilat=myLattice.latticeIterator();
-        int counter = 1;
+        int counter = 1;        // TODO: CKA - NEVER USED
         String str = dynac_header;
         //       int devTypeInd = 1;
         String devStr = "";

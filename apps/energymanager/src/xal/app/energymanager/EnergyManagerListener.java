@@ -9,11 +9,11 @@
 
 package xal.app.energymanager;
 
-import xal.smf.*;
-import xal.model.probe.Probe;
-import xal.model.probe.traj.ProbeState;
+import java.util.List;
 
-import java.util.*;
+import xal.model.probe.Probe;
+import xal.smf.AcceleratorNode;
+import xal.smf.AcceleratorSeq;
 
 
 /** Interface for receivers of energy manager events. */
@@ -32,7 +32,7 @@ public interface EnergyManagerListener {
 	 * @param model the model posting the event
 	 * @param entranceProbe the new entrance probe
 	 */
-	public void entranceProbeChanged( EnergyManager model, Probe<? extends ProbeState<?>> entranceProbe );
+	public void entranceProbeChanged( EnergyManager model, Probe<?> entranceProbe );
 	
 	
 	/** 

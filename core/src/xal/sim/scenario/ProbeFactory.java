@@ -24,7 +24,6 @@ import xal.model.probe.Probe;
 import xal.model.probe.TransferMapProbe;
 import xal.model.probe.TwissProbe;
 import xal.model.probe.traj.BunchProbeState;
-import xal.model.probe.traj.ProbeState;
 import xal.smf.Accelerator;
 import xal.smf.AcceleratorSeq;
 import xal.tools.beam.Twiss;
@@ -305,7 +304,7 @@ public class ProbeFactory {
 	 * 
 	 * @return           true for successful initialization and false if it fails
 	 */
-	private static boolean initializeLocation( final Probe<? extends ProbeState<?>> probe, final String locationID, final AcceleratorSeq sequence) {
+	private static boolean initializeLocation( final Probe<?> probe, final String locationID, final AcceleratorSeq sequence) {
 		final EditContext editContext = sequence.getAccelerator().editContext();
 //		System.out.println("editContext = "+editContext);
 		final DataTable speciesTable = editContext.getTable( SPECIES_TABLE );

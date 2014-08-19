@@ -8,7 +8,6 @@ package xal.tools.beam.calc;
 
 import xal.model.probe.traj.EnvelopeProbeState;
 import xal.model.probe.traj.ParticleProbeState;
-import xal.model.probe.traj.ProbeState;
 import xal.model.probe.traj.Trajectory;
 import xal.model.probe.traj.TransferMapState;
 
@@ -74,7 +73,7 @@ public class SimpleSimResultsAdaptor extends SimResultsAdaptor {
      * @author Christopher K. Allen
      * @since  Nov 7, 2013
      */
-	public SimpleSimResultsAdaptor(Trajectory<? extends ProbeState<?>> trajectory) throws IllegalArgumentException {
+	public SimpleSimResultsAdaptor(Trajectory<?> trajectory) throws IllegalArgumentException {
         super();
         
 

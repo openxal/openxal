@@ -33,7 +33,7 @@ public class Scenario {
 	public static final String SYNC_MODE_RF_DESIGN = "RF_DESIGN";
 	
     private Lattice                         lattice;
-    private Probe<? extends ProbeState<?>>  probe;
+    private Probe<?>                        probe;
     private final SynchronizationManager    syncManager;
     private final AcceleratorSeq            _sequence;
     
@@ -276,7 +276,7 @@ public class Scenario {
      * @return the Trajectory obtained by running the model
      * @throws IllegalStateException if the probe or trajectory is null
      */
-    public Trajectory<? extends ProbeState<?>> getTrajectory() {
+    public Trajectory<?> getTrajectory() {
         if (probe == null)
             throw new IllegalStateException("scenario doesn't contain a probe");
         if (probe.getTrajectory() == null)
@@ -420,7 +420,7 @@ public class Scenario {
      * 
      * @param aProbe the probe to be used by the scenario
      */
-    public void setProbe( final Probe<? extends ProbeState<?>> aProbe ) {
+    public void setProbe( final Probe<?> aProbe ) {
         probe = aProbe;
     }
     
@@ -430,7 +430,7 @@ public class Scenario {
      * 
      * @return the scenario's current probe or null
      */
-    public Probe<? extends ProbeState<?>> getProbe() {
+    public Probe<?> getProbe() {
         return probe;
     }
     

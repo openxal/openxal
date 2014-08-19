@@ -72,6 +72,7 @@ import xal.extension.application.*;
 import xal.sim.scenario.AlgorithmFactory;
 import xal.sim.scenario.ProbeFactory;
 import xal.tools.beam.CovarianceMatrix;
+//TODO: CKA - OVER HALF THE IMPORTS ARE NEVER USED
 
 public class ModelFace extends JPanel{
     
@@ -90,7 +91,7 @@ public class ModelFace extends JPanel{
     private Scenario scenario;
 	private Scenario solvermodel;
     private Trajectory<EnvelopeProbeState> traj;
-    private ArrayList<AcceleratorSeq> sectionnames = new ArrayList<AcceleratorSeq>();
+    private ArrayList<AcceleratorSeq> sectionnames = new ArrayList<AcceleratorSeq>();   // TODO: CKA - NEVER USED
     private ArrayList<AcceleratorSeq> seqlist = new ArrayList<AcceleratorSeq>();
     private ArrayList<AcceleratorNode> nodes = new ArrayList<AcceleratorNode>();
     private AcceleratorSeqCombo solveforseq;
@@ -104,7 +105,7 @@ public class ModelFace extends JPanel{
     private JButton solvebutton;
     private JButton loadbutton;
     private JButton probeeditbutton;
-    private JButton pvloggerbutton;
+    private JButton pvloggerbutton;     // TODO: CKA - NEVER USED
     private JButton store;
     private JButton average;
 	private JButton clearbutton;
@@ -126,7 +127,7 @@ public class ModelFace extends JPanel{
     private ArrayList<String> filesloaded;
     ArrayList<Object> seqlistnames = new ArrayList<Object>();
     
-    private String lastusedelement;
+    private String lastusedelement;     // TODO: CKA - NEVER USED
     private JLabel machinestatelabel;
     private JLabel usepvlabel;
     private JLabel errorlabel;
@@ -145,11 +146,11 @@ public class ModelFace extends JPanel{
     private boolean useHEBT = false;
     private boolean useRTBT = false;
     
-    private boolean plotable = false;
-    private boolean edmrms = true;
-    private boolean userrms = true;
+    private boolean plotable = false;       // TODO: CKA - NEVER USED
+    private boolean edmrms = true;          // TODO: CKA - NEVER USED
+    private boolean userrms = true;         // TODO: CKA - NEVER USED
     private boolean elementchanged = true;
-    private boolean probeedited = false;
+    private boolean probeedited = false;    // TODO: CKA - NEVER USED
     
     private JButton exportbutton;
     private JFileChooser fc;
@@ -223,8 +224,8 @@ public class ModelFace extends JPanel{
 		fitresultsdatatable = doc.resultsdatatable;
 		pvloggermap = doc.masterpvloggermap;
         
-		double alphax=currenttwiss[0]; double betax=currenttwiss[1];
-		double alphay=currenttwiss[3]; double betay=currenttwiss[4];
+		double alphax=currenttwiss[0]; double betax=currenttwiss[1];      // TODO: CKA - NEVER USED
+		double alphay=currenttwiss[3]; double betay=currenttwiss[4];      // TODO: CKA - NEVER USED
         
 		makeComponents(); //Creation of all GUI components
 		addComponents();  //Add all components to the layout and panels
@@ -355,7 +356,7 @@ public class ModelFace extends JPanel{
                 NonConsecutiveSeqSelector selector = new NonConsecutiveSeqSelector();
                 selector.selectSequence();
                 seqlistnames = selector.getSeqList();
-                Iterator itr = seqlistnames.iterator();
+                Iterator itr = seqlistnames.iterator();     // TODO: CKA - Raw Type
                 seqlist.clear();
                 nodes.clear();
                 
@@ -366,7 +367,7 @@ public class ModelFace extends JPanel{
                 }
                 solveforseq = new AcceleratorSeqCombo("choosen",seqlist);
                 ArrayList<AcceleratorSeq> sequences =(ArrayList<AcceleratorSeq>) accl.getSequences();
-                int p=sequences.indexOf(accl.getSequence((String)seqlistnames.iterator().next()));
+                int p=sequences.indexOf(accl.getSequence((String)seqlistnames.iterator().next()));  // TODO: CKA - NEVER USED
                 for(int i=0;i<nodes.size();i++)
                 {
                     elementList.addItem(nodes.get(i).getId());
@@ -536,7 +537,7 @@ public class ModelFace extends JPanel{
         
         probeeditbutton.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e) {
-                SimpleProbeEditor spe = new SimpleProbeEditor(doc.getAcceleratorWindow(), scenario.getProbe());
+                SimpleProbeEditor spe = new SimpleProbeEditor(doc.getAcceleratorWindow(), scenario.getProbe());  // TODO: CKA - NEVER USED
                 //		spe.createSimpleProbeEditor(scenario.getProbe());
                 System.out.println("In probe and beam current is " + initprobe.getBeamCurrent());
                 
@@ -676,7 +677,7 @@ public class ModelFace extends JPanel{
                 Iterator<EnvelopeProbeState> iterState= traj.stateIterator();
                 EnvelopeProbeState state = iterState.next();
                 CovarianceMatrix covarianceMatrix = state.getCovarianceMatrix();
-                Twiss[] twiss = covarianceMatrix.computeTwiss();
+                Twiss[] twiss = covarianceMatrix.computeTwiss();    // TODO: CKA - NEVER USED
                 
                 limitdialog.add(set);
                 limitdialog.pack();
@@ -1185,7 +1186,7 @@ public class ModelFace extends JPanel{
 		}
 		
 		Trajectory<EnvelopeProbeState> traj = tempprobe.getTrajectory();
-        Iterator<? extends ProbeState<?>> iterState= traj.stateIterator();
+        Iterator<?> iterState= traj.stateIterator();
         EnvelopeProbeState state= (EnvelopeProbeState)iterState.next();
         
         CovarianceMatrix covarianceMatrix = state.getCovarianceMatrix();
@@ -1380,8 +1381,8 @@ public class ModelFace extends JPanel{
 		double[] yrdata = new double[datasize];
 		traj= solverprobe.getTrajectory();
 		EnvelopeProbeState newstate;
-		Twiss[] newtwiss;
-		double rx, ry;
+		Twiss[] newtwiss;         // TODO: CKA - NEVER USED
+		double rx, ry;            // TODO: CKA - NEVER USED
 		
 		for(int i =0; i<datasize; i++){
 			newstate = traj.statesForElement(Wirenamelist.get(i)).get(0);

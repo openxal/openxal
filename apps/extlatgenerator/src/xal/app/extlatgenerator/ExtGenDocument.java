@@ -52,7 +52,7 @@ public class ExtGenDocument extends AcceleratorDocument {
     protected PlainDocument textDocument;
     
     protected Lattice lattice = null;
-    private Probe<? extends ProbeState<?>> myProbe;
+    private Probe<?> myProbe;
     
 	/** flag for the data source to use */
 	private String _dataSourceFlag;
@@ -124,7 +124,7 @@ public class ExtGenDocument extends AcceleratorDocument {
                 return; // bail out, nothing left to do
             
             ArrayList<AcceleratorSeq> seqs = new ArrayList<AcceleratorSeq>();
-            List<DataAdaptor> selectedSeqList = null;
+            List<DataAdaptor> selectedSeqList = null;           // CKA - never used
             DataAdaptor da2a = da1.childAdaptor("sequences");
             String seqName = da2a.stringValue("name");
             
@@ -223,7 +223,7 @@ public class ExtGenDocument extends AcceleratorDocument {
 	
 	
 	/** create a new MAD generator */
-	private MadGenerator getMadGeneratorInstance( final Probe<? extends ProbeState<?>> probe, final List<AcceleratorSeq> sequences ) {
+	private MadGenerator getMadGeneratorInstance( final Probe<?> probe, final List<AcceleratorSeq> sequences ) {
 		if ( probe instanceof TransferMapProbe ) {
 			return new MadGenerator( sequences, (TransferMapProbe)probe );
 		}
@@ -237,7 +237,7 @@ public class ExtGenDocument extends AcceleratorDocument {
 	
 	
 	/** create a new MAD generator */
-	private MadGenerator getMadGeneratorInstance( final Probe<? extends ProbeState<?>> probe ) {
+	private MadGenerator getMadGeneratorInstance( final Probe<?> probe ) {
 		final List<AcceleratorSeq> selectedSequences = getSelectedSequenceList();
 		
 		if ( selectedSequences.size() == 1 ) {
@@ -288,7 +288,7 @@ public class ExtGenDocument extends AcceleratorDocument {
             private static final long serialVersionUID = 1L;
 			public void actionPerformed(ActionEvent event) {
 				if ( myProbe != null ) {
-                    final Probe<? extends ProbeState<?>> probe = Probe.newProbeInitializedFrom( myProbe );
+                    final Probe<?> probe = Probe.newProbeInitializedFrom( myProbe );
 					final SimpleProbeEditor probeEditor = new SimpleProbeEditor( getMainWindow() , probe );
 					//final JDialog probeEditorDialog = probeEditor.createSimpleProbeEditor( probe );
 					myProbe = probeEditor.getProbe();

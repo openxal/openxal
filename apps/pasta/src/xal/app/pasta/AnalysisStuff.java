@@ -77,7 +77,7 @@ public class AnalysisStuff {
     protected double minBPMAmp = 5.;
     
     /** a multiplier used to get evaluation points more dense near the scan edges */
-    private double stepMultiplier = 1.1;
+    private double stepMultiplier = 1.1;        // CKA - NEVER USED
     private double rad2deg = 180./Math.PI;
     
     /** defines the phase quadrant to work in */
@@ -137,7 +137,7 @@ public class AnalysisStuff {
     
     // model stuff
     /** the probe to use for the model */
-    protected Probe<? extends ProbeState<?>> theProbe;
+    protected Probe<?> theProbe;
     /** the default file for the probe file */
     protected File probeFile;
     /** the default filename for the probe file */
@@ -468,7 +468,10 @@ public class AnalysisStuff {
 	    theDoc.myWindow().plotModelData();
     }
     
-    /** this method returns the phase of a node in a trajectory, relative to the first point in the model run for this state. */
+    /** this method returns the phase of a node in a trajectory, relative to the first point in the model run for this state. 
+     * 
+     * CKA - NEVER USED
+     */
     private double getPhase( ProbeState<? extends ProbeState<?>> state, BPM bpm) {
 	    double freq = bpm.getBPMBucket().getFrequency() * 1.e6;
 	    
@@ -509,9 +512,9 @@ public class AnalysisStuff {
     private void cavOffCalc() {
         
 	    // some model stuff
-	    Trajectory<? extends ProbeState<?>> traj;
+	    Trajectory<?> traj;
 	    //EnvelopeProbeState state0, state1, state2;
-	    ProbeState<? extends ProbeState<?>> state0, state1, state2;
+	    ProbeState<?> state0, state1, state2;
 	    java.util.List<? extends ProbeState<?>> states;
 	    double time0;
 	    
@@ -590,6 +593,8 @@ public class AnalysisStuff {
 	    
 	    // calculate phasesCavModelScaledV and phaseDiffsBPMModelV here
 	    
+        // CKA - The values of betaZ1, betaZ2, sigmaz1, sigmaz2 are never used
+        
 	    boolean firstPass = true;
 	    double time0, time1, time2, deltaPhi, deltaPhi0, diff0;
 	    double cavPhase, cavPhaseScaled, betaZ1, betaZ2, phase1, phase2, diff;
@@ -1024,7 +1029,7 @@ public class AnalysisStuff {
     /** method to estimate the phase and amplitude settings from present state of analysis */
     
     protected void updateSetpoints() {
-	    double  WOutModel0, WOutModel1;
+	    double  WOutModel0, WOutModel1;    // CKA - these variables are never used
 	    
 	    if ( theDoc.BPM1 == null ||
             paramMeasuredVals.size() < 1 || ampValueV.size() < 1) {
@@ -1058,9 +1063,9 @@ public class AnalysisStuff {
 	    cavAmpSetpoint = pvs[ind] + (theDoc.theDesignAmp - svs[ind])*slope;
         
         runModel(cavityVoltage, theDoc.theDesignPhase, WIn*1.e6);
-        Trajectory<? extends ProbeState<?>> traj = theModel.getProbe().getTrajectory();
+        Trajectory<?> traj = theModel.getProbe().getTrajectory();
         java.util.List<? extends ProbeState<?>> states =traj.statesForElement(firstBPM.getId());
-        ProbeState<? extends ProbeState<?>> state = states.get(0);
+        ProbeState<?> state = states.get(0);
         WOutCalc = state.getKineticEnergy()/1.e6;
         /*
          

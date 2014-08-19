@@ -9,22 +9,27 @@
 
 package xal.app.energymanager;
 
-import xal.tools.*;
-import xal.smf.*;
-import xal.smf.impl.*;
-import xal.smf.impl.qualify.*;
-import xal.tools.beam.*;
-import xal.model.*;
-import xal.sim.scenario.Scenario;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import xal.extension.solver.Variable;
+import xal.model.IAlgorithm;
+import xal.model.alg.Tracker;
+import xal.model.alg.TransferMapTracker;
+import xal.model.probe.Probe;
 import xal.sim.scenario.AlgorithmFactory;
 import xal.sim.scenario.ProbeFactory;
-import xal.model.probe.*;
-import xal.model.probe.traj.ProbeState;
-import xal.extension.solver.*;
-import xal.model.alg.*;
-
-import java.util.*;
-import java.util.logging.*;
+import xal.sim.scenario.Scenario;
+import xal.smf.AcceleratorNode;
+import xal.smf.AcceleratorSeq;
+import xal.smf.Ring;
+import xal.smf.impl.Quadrupole;
+import xal.smf.impl.RfCavity;
+import xal.smf.impl.qualify.OrTypeQualifier;
 
 
 /** Simulate the optics using the online model. */
@@ -36,7 +41,7 @@ public class OnlineModelSimulator {
 	protected List<AcceleratorNode> _evaluationNodes;
 	
 	/** the probe used in the online model run */
-	protected Probe<? extends ProbeState<?>> _probe;
+	protected Probe<?> _probe;
 	
 	/** the scenario used in the online model run */
 	protected Scenario _scenario;
@@ -54,7 +59,7 @@ public class OnlineModelSimulator {
 	 * @param evaluationNodes The nodes at which twiss parameters are evaluated
 	 * @param entranceProbe the custom initial probe
 	 */
-	public OnlineModelSimulator( final AcceleratorSeq sequence, final List<AcceleratorNode> evaluationNodes, final Probe<? extends ProbeState<?>> entranceProbe ) {
+	public OnlineModelSimulator( final AcceleratorSeq sequence, final List<AcceleratorNode> evaluationNodes, final Probe<?> entranceProbe ) {
 		_isRunning = false;
 		_sequence = sequence;
 
@@ -144,9 +149,9 @@ public class OnlineModelSimulator {
 	 * Set the entrance probe.
 	 * @param entranceProbe the new entrance probe
 	 */
-	public void setEntranceProbe( final Probe<? extends ProbeState<?>> entranceProbe ) {
+	public void setEntranceProbe( final Probe<?> entranceProbe ) {
 		if ( !_isRunning ) {
-			final Probe<? extends ProbeState<?>> probe = copyProbe( entranceProbe );
+			final Probe<?> probe = copyProbe( entranceProbe );
 			probe.reset();
 			_probe = probe;
 			
@@ -165,8 +170,8 @@ public class OnlineModelSimulator {
      * @param otherProbe probe to copy
      * @return new probe constructed from the given probe
      */
-    static private Probe<? extends ProbeState<?>> copyProbe( final Probe<? extends ProbeState<?>> otherProbe ) {
-        final Probe<? extends ProbeState<?>> probe = otherProbe.copy();		// performs a deep copy of the probe including algorithm
+    static private Probe<?> copyProbe( final Probe<?> otherProbe ) {
+        final Probe<?> probe = otherProbe.copy();		// performs a deep copy of the probe including algorithm
         probe.initialize();
         return probe;
     }
@@ -188,7 +193,7 @@ public class OnlineModelSimulator {
 	 * Get the probe.
 	 * @return the probe used in the simulation
 	 */
-	public Probe<? extends ProbeState<?>> getProbe() {
+	public Probe<?> getProbe() {
 		return _probe;
 	}
 	
@@ -198,9 +203,9 @@ public class OnlineModelSimulator {
 	 * @param sequence the sequence for which to get the default probe
 	 * @return the default probe for the specified sequence
 	 */
-	static public Probe<? extends ProbeState<?>> getDefaultProbe( final AcceleratorSeq sequence ) {
+	static public Probe<?> getDefaultProbe( final AcceleratorSeq sequence ) {
         try {
-            final Probe<? extends ProbeState<?>> probe = (sequence instanceof Ring) ? createRingProbe( sequence ) : createEnvelopeProbe( sequence );
+            final Probe<?> probe = (sequence instanceof Ring) ? createRingProbe( sequence ) : createEnvelopeProbe( sequence );
             probe.getAlgorithm().setRfGapPhaseCalculation( true );	// make sure we enable the full RF gap phase slip calculation
 			return probe;
         }
@@ -213,14 +218,14 @@ public class OnlineModelSimulator {
 
 
 	/** create a new ring probe */
-	static private Probe<? extends ProbeState<?>> createRingProbe( final AcceleratorSeq sequence ) throws InstantiationException {
+	static private Probe<?> createRingProbe( final AcceleratorSeq sequence ) throws InstantiationException {
 		final TransferMapTracker tracker = AlgorithmFactory.createTransferMapTracker( sequence );
 		return ProbeFactory.getTransferMapProbe( sequence, tracker );
 	}
 
 
 	/** create a new envelope probe */
-	static private Probe<? extends ProbeState<?>> createEnvelopeProbe( final AcceleratorSeq sequence ) throws InstantiationException {
+	static private Probe<?> createEnvelopeProbe( final AcceleratorSeq sequence ) throws InstantiationException {
 		final IAlgorithm tracker = AlgorithmFactory.createEnvTrackerAdapt( sequence );
 		return ProbeFactory.getEnvelopeProbe( sequence, tracker );
 	}

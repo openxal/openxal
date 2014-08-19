@@ -44,7 +44,7 @@ public class ModelProxy {
 	private boolean bLattice;
 	private boolean bPropagated = false;
 	protected Scenario scenario;
-	protected Probe<? extends ProbeState<?>> probe = null;
+	protected Probe<?> probe = null;
 	
 	private EnvelopeProbeState initProbeState;
 	private Twiss[] initTwiss;
@@ -236,7 +236,7 @@ public class ModelProxy {
 	 * @param  probeFile the file for the probe definition in XML.
 	 */
 	public void setNewProbe(File probeFile) throws LatticeError {
-		XmlDataAdaptor probeXmlAdptr;
+		XmlDataAdaptor probeXmlAdptr;     // TODO: CKA - NEVER USED
 		if (probeFile.equals(probeMasterFile)) {
 			return;
 		} else {
@@ -254,7 +254,7 @@ public class ModelProxy {
 			}
  */
 			// get new probe
-			Probe<? extends ProbeState<?>> p;
+			Probe<?> p;
 			try {
 				p = ProbeXmlParser.parse(probeMasterFile.getPath());
 			} catch (ParsingException e) {
@@ -269,7 +269,7 @@ public class ModelProxy {
 	 * Setter for a new probe.
 	 * @param aProbe the new probe object.
 	 */
-	public void setNewProbe(Probe<? extends ProbeState<?>> aProbe) {
+	public void setNewProbe(Probe<?> aProbe) {
 		probe = aProbe;
 		bPropagated = false;
 		
