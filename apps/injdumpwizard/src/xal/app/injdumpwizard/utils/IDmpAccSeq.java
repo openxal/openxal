@@ -178,7 +178,7 @@ class  IDmpAccSeq{
 		//variables for initial coordinates
 		final String[] variableNames = { "x", "xp", "y", "yp" };
 		for ( final String variableName : variableNames ) {
-			final Variable variable = new Variable( variableName, 0.0, -10.0, 10.0 );
+			final Variable variable = new Variable( variableName, 0.0, -50.0, 50.0 );
 			_problem.addVariable( variable );
 			initProxyV.add( _problem.getValueReference( variable ) );
 		}
@@ -186,7 +186,7 @@ class  IDmpAccSeq{
 		final Evaluator evaluator = new ScoringEvaluator( new OrbitScorer(), _problem.getVariables(), objective );
 		_problem.setEvaluator( evaluator );
 
-		Solver solver = new Solver( SolveStopperFactory.maxEvaluationsStopper( 500 ) );
+		Solver solver = new Solver( SolveStopperFactory.maxEvaluationsStopper( 10000 ) );
 		solver.solve( _problem );
 
 		final Trial bestSolution = solver.getScoreBoard().getBestSolution();
