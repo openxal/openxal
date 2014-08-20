@@ -186,7 +186,7 @@ class  IDmpAccSeq{
 		final Evaluator evaluator = new ScoringEvaluator( new OrbitScorer(), _problem.getVariables(), objective );
 		_problem.setEvaluator( evaluator );
 
-		Solver solver = new Solver( SolveStopperFactory.maxEvaluationsStopper( 10000 ) );
+		Solver solver = new Solver( SolveStopperFactory.maxEvaluationsStopper( 5000 ) );
 		solver.solve( _problem );
 
 		final Trial bestSolution = solver.getScoreBoard().getBestSolution();
