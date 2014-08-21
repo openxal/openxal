@@ -161,7 +161,7 @@ public class DemoDocument extends XalInternalDocument {
 	 * menus for a particular document instance.  This method is optional.  
      * @param commander The commander with which to register the custom commands.
      */
-    protected void customizeCommands( final Commander commander ) {
+    public void customizeCommands( final Commander commander ) {
         final Action t1Action = new AbstractAction( "do-t1" ) {
             /** serialization ID */
             private static final long serialVersionUID = 1L;

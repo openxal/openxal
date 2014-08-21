@@ -183,7 +183,7 @@ public class ScalarpvviewerDocument extends XalDocument {
 	 *  Dispose of ScalarpvviewerDocument resources. This method overrides an empty
 	 *  superclass method.
 	 */
-	protected void freeCustomResources() {
+	public void freeCustomResources() {
 		cleanUp();
 	}
 
@@ -397,7 +397,7 @@ public class ScalarpvviewerDocument extends XalDocument {
 	 *@param  commander  Description of the Parameter
 	 */
 
-	protected void customizeCommands(Commander commander) {
+	public void customizeCommands(Commander commander) {
 
 		// define the "show-view-values-panel" set raw emittance panel action action
 		setViewValuesAction =

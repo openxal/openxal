@@ -106,7 +106,7 @@ public class GenDocument extends AcceleratorDocument implements DataListener{
     /** 
      * Customize any special button commands.
      */
-    protected void customizeCommands(Commander commander) {
+    public void customizeCommands(Commander commander) {
     }
 
     /**

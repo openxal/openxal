@@ -504,7 +504,7 @@ public class VADocument extends AcceleratorDocument implements ActionListener, P
 	}
     
     
-	protected void customizeCommands(Commander commander) {
+	public void customizeCommands(Commander commander) {
         
 		// action for probe XML file open
         //Remove probe file functionality
@@ -744,7 +744,7 @@ public class VADocument extends AcceleratorDocument implements ActionListener, P
 	
 	
 	/** handle this document being closed */
-	protected void willClose() {
+	public void willClose() {
 		System.out.println( "Document will be closed" );
 		destroyServer();
 	}

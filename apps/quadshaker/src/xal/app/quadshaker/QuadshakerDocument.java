@@ -301,7 +301,7 @@ public class QuadshakerDocument extends AcceleratorDocument {
 	 *  Dispose of QuadshakerDocument resources. This method overrides an empty
 	 *  superclass method.
 	 */
-	protected void freeCustomResources() {
+	public void freeCustomResources() {
 		cleanUp();
 	}
 
@@ -433,7 +433,7 @@ public class QuadshakerDocument extends AcceleratorDocument {
 	 *@param  commander  Description of the Parameter
 	 */
 
-	protected void customizeCommands(Commander commander) {
+	public void customizeCommands(Commander commander) {
 		// define the "save-data-to-ascii" action
 		Action dumpDataToASCIIAction =
 			new AbstractAction("save-data-to-ascii") {

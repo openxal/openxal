@@ -256,7 +256,7 @@ public class ExtGenDocument extends AcceleratorDocument {
 	}
     
     
-    protected void customizeCommands(Commander commander) {
+    public void customizeCommands(Commander commander) {
         
 		// action for probe XML file open
 		Action openprobeAction = new AbstractAction() {

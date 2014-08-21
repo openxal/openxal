@@ -58,7 +58,7 @@ public class ScopeDocument extends XalDocument implements DataListener, SettingL
 	/**
 	 * Dispose of document resources
 	 */
-	protected void freeCustomResources() {
+	public void freeCustomResources() {
 		model = null;
 		windowAdaptor = null;
 	}
