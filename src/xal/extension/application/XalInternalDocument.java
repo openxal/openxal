@@ -154,7 +154,7 @@ abstract public class XalInternalDocument extends XalAbstractDocument {
 	
 	
 	/** Free document resources. */
-	final protected void freeResources() {
+	final public void freeResources() {
 		super.freeResources();
 		
 		_mainWindow.removeInternalFrameListener( _windowEventHandler );
