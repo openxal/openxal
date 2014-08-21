@@ -180,7 +180,7 @@ class OpticsEditorDocument extends XalDocument {
 	 * Register custom commands. 
      * @param commander The commander with which to register the custom commands.
      */
-    protected void customizeCommands( final Commander commander ) {
+    public void customizeCommands( final Commander commander ) {
         final Action enableNodesAction = new AbstractAction( "enable-nodes" ) {
             /** serialization ID */
             private static final long serialVersionUID = 1L;
