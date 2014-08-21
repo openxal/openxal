@@ -93,7 +93,7 @@ class PVLoggerDocument extends AcceleratorDocument {
 	/**
 	 * Override the inherited method to dispose of the model before the document is closed.
 	 */
-	protected void willClose() {
+	public void willClose() {
 		_model.dispose();
 	}
 }

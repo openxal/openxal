@@ -104,7 +104,7 @@ public class EnergyManagerDocument extends AcceleratorDocument implements DataLi
 	
 	
 	/** Dispose of this document's resources. */
-	protected void freeCustomResources() {
+	public void freeCustomResources() {
 		if ( _model != null ) {
 			_model.removeEnergyManagerListener( this );
 			_model.removeEnergyManagerListener( (EnergyManagerWindow)getMainWindow() );

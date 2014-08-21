@@ -192,7 +192,7 @@ public class TimeStampDocument extends AcceleratorDocument {
 		});
 	}
 
-	protected void customizeCommands(Commander commander) {
+	public void customizeCommands(Commander commander) {
 
 		// action for starting PV monitoring
 		startModel.setEnabled(true);

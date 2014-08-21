@@ -111,7 +111,7 @@ public class QueryDocument  extends XalDocument {
 	 * application wide definitions for this document.  By default this method returns null.
      * @return The menu definition properties file name
      */
-    protected String getCustomMenuDefinitionResource() {
+    public String getCustomMenuDefinitionResource() {
 		return "query_menu.properties";
     }
 
