@@ -300,7 +300,7 @@ class WebSocketIO {
 	}
 
 
-	
+
 	/** Exception indicating that the socket closed prematurely */
 	static public class SocketPrematurelyClosedException extends Exception {
 		/** required serial version ID */
@@ -384,34 +384,40 @@ class StreamByteReader {
 	/** read the next byte waiting for data from the stream if necessary */
 	public byte nextByte() throws java.io.IOException, StreamPrematurelyClosedException {
 		final int position = _position;
-
-		if ( position < _byteStack.length ) {
-			final byte nextByte = _byteStack[position];
-			_position += 1;
-			return nextByte;
+		if ( position >= _byteStack.length ) {
+			popNextBytes();
 		}
-		else {
-			final byte[] streamBuffer = new byte[BUFFER_SIZE];
-			final InputStream readStream = SOURCE_STREAM;
-			final BufferedInputStream reader = new BufferedInputStream( readStream );
-			final ByteArrayOutputStream rawByteBuffer = new ByteArrayOutputStream();
 
-			do {
-				final int readCount = reader.read( streamBuffer, 0, BUFFER_SIZE );
+		final byte nextByte = _byteStack[_position];
+		_position += 1;
 
-				if ( readCount == -1 ) {     // the session has been closed
-					throw new StreamPrematurelyClosedException( "The stream has closed while reading the remote response..." );
-				}
-				else if  ( readCount > 0 ) {
-					rawByteBuffer.write( streamBuffer, 0, readCount );
-				}
-			} while ( readStream.available() > 0 );
+		return nextByte;
+	}
 
-			_byteStack = rawByteBuffer.toByteArray();
-			_position = 0;
 
-			return nextByte();
-		}
+	private void popNextBytes() throws java.io.IOException, StreamPrematurelyClosedException {
+		final byte[] streamBuffer = new byte[BUFFER_SIZE];
+		final InputStream readStream = SOURCE_STREAM;
+		final BufferedInputStream reader = new BufferedInputStream( readStream );
+		final ByteArrayOutputStream rawByteBuffer = new ByteArrayOutputStream();
+
+		do {
+			final int readCount = reader.read( streamBuffer, 0, BUFFER_SIZE );
+
+			if ( readCount == -1 ) {     // the session has been closed
+				throw new StreamPrematurelyClosedException( "The stream has closed while reading the remote response..." );
+			}
+			else if  ( readCount > 0 ) {
+				rawByteBuffer.write( streamBuffer, 0, readCount );
+			}
+
+			if ( readCount < BUFFER_SIZE ) {
+				break;
+			}
+		} while ( true );
+
+		_byteStack = rawByteBuffer.toByteArray();
+		_position = 0;
 	}
 
 
@@ -442,8 +448,8 @@ class StreamByteReader {
 	static public class StreamPrematurelyClosedException extends Exception {
 		/** required serial version ID */
 		static final long serialVersionUID = 0L;
-
-
+		
+		
 		/** Constructor */
 		public StreamPrematurelyClosedException( final String message ) {
 			super( message );
