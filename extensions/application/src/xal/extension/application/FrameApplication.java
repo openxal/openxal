@@ -99,9 +99,11 @@ public class FrameApplication extends Application implements XalDocumentListener
 			});
 		}
 		catch ( InterruptedException exception ) {
+			exception.printStackTrace();
 			throw new RuntimeException( exception );
 		}
 		catch ( java.lang.reflect.InvocationTargetException exception ) {
+			exception.printStackTrace();
 			throw new RuntimeException( exception );
 		}
 		
