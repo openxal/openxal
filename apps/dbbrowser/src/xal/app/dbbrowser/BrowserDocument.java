@@ -88,7 +88,7 @@ class BrowserDocument extends XalDocument {
     
     
     /** Hook indicating that the window was opened. */
-    protected void windowOpened() {
+    public void windowOpened() {
         final BrowserWindow window = (BrowserWindow)mainWindow;
         window.showConnectionRequest();
     }
