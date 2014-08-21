@@ -88,7 +88,7 @@ public class OrbitDocument extends AcceleratorDocument implements DataListener, 
 	
 	
 	/** Dispose of this document's resources. */
-	protected void freeCustomResources() {
+	public void freeCustomResources() {
 		if ( _model != null ) {
 			_model.dispose();
 			_model = null;
@@ -367,7 +367,7 @@ public class OrbitDocument extends AcceleratorDocument implements DataListener, 
 	 * Register actions specific to this document instance.
 	 * @param commander  The commander with which to register the custom commands.
 	 */
-	protected void customizeCommands( final Commander commander ) {
+	public void customizeCommands( final Commander commander ) {
 		final Action addLiveOrbitAction = new AbstractAction( "add-live-orbit" ) {
             
             private static final long serialVersionUID = 1L;
