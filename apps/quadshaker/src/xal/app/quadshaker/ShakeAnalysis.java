@@ -3,29 +3,26 @@ package xal.app.quadshaker;
 import java.text.*;
 import java.awt.*;
 import java.awt.event.*;
+
 import javax.swing.*;
 import javax.swing.text.*;
 import javax.swing.event.*;
 import javax.swing.border.*;
+
 import java.util.*;
 
 import xal.ca.*;
-
 import xal.extension.widgets.plot.*;
 import xal.tools.apputils.*;
 import xal.extension.widgets.swing.*;
 import xal.extension.widgets.apputils.SimpleChartPopupMenu;
 import xal.tools.xml.*;
-
 import xal.service.pvlogger.*;
 import xal.tools.database.*;
-
 import xal.smf.proxy.ElectromagnetPropertyAccessor;
-
 import xal.smf.*;
 import xal.smf.impl.*;
 import xal.smf.impl.qualify.*;
-
 import xal.model.*;
 import xal.sim.scenario.*;
 import xal.service.pvlogger.sim.PVLoggerDataSource;
@@ -36,6 +33,9 @@ import xal.model.probe.traj.*;
 import xal.sim.sync.*;
 //import xal.model.probe.resp.traj.*;
 import xal.tools.beam.*;
+import xal.tools.beam.calc.CalculationsOnBeams;
+// TODO: CKA - Many Unused Imports
+
 
 /**
  *  Description of the Class
@@ -49,7 +49,7 @@ public class ShakeAnalysis {
     
 	//Tables and List models for BPMs and Quads
 	private QuadsTable quadsTableModel = null;
-	private BPMsTable bpmsTableModel = null;
+	private BPMsTable bpmsTableModel = null;       // TODO: CKA - NEVER USED
     
 	//Orbit corrector controller
 	//The data will be initialized after analysis
@@ -271,6 +271,8 @@ public class ShakeAnalysis {
     
 	/**
 	 *  Clear the graph region of the sub-panel.
+	 *  
+	 *  TODO: CKA - NEVER USED
 	 */
 	private void clearGraphs() {
 		clearGraphData();
@@ -373,6 +375,7 @@ public class ShakeAnalysis {
 		}
         
 		Trajectory<EnvelopeProbeState> trajectory = probe.getTrajectory();
+		CalculationsOnBeams            cobCalcEng = new CalculationsOnBeams(trajectory);
         
 		for(int i = 0, n = quadsTableModel.getListModel().size(); i < n; i++) {
 			Quad_Element quadElm =  quadsTableModel.getListModel().get(i);
@@ -395,7 +398,7 @@ public class ShakeAnalysis {
 			double W0 = probeState.getSpeciesRestEnergy();
 			double gamma = probeState.getGamma();
 			double beta = Math.sqrt(1.0 - 1.0 / (gamma * gamma));
-			double TK = probeState.getKineticEnergy();
+			double TK = probeState.getKineticEnergy();       // TODO: CKA - NEVER USED
 			double L = quad.getEffLength();
 			double c = 2.997924E+8;
 			double res_coeff = (W0 * beta * gamma / (L * c));
@@ -409,8 +412,8 @@ public class ShakeAnalysis {
 			HashMap<BPM_Element, Double> coeffMapY = quadElm.getSensitivityCoefsY();
 			HashMap<BPM_Element, Double> coeffErrMapX = quadElm.getSensitivityCoefsErrX();
 			HashMap<BPM_Element, Double> coeffErrMapY = quadElm.getSensitivityCoefsErrY();
-			HashMap<BPM_Element, Double> offsetMapX = quadElm.getOffsetMapX();
-			HashMap<BPM_Element, Double> offsetMapY = quadElm.getOffsetMapY();
+			HashMap<BPM_Element, Double> offsetMapX = quadElm.getOffsetMapX();       // TODO: CKA - NEVER USED
+			HashMap<BPM_Element, Double> offsetMapY = quadElm.getOffsetMapY();       // TODO: CKA - NEVER USED
 			quadElm.clearOffsetData();
 			Iterator<BPM_Element> bpm_itr = coeffMapX.keySet().iterator();
 			while(bpm_itr.hasNext()) {
@@ -423,7 +426,11 @@ public class ShakeAnalysis {
 					double coefY = (coeffMapY.get(bpmElm)).doubleValue();
 					double coefErrX = (coeffErrMapX.get(bpmElm)).doubleValue();
 					double coefErrY = (coeffErrMapY.get(bpmElm)).doubleValue();
-					PhaseMatrix phMatr = probe.stateResponse(quadElm.getName(), bpmElm.getName());
+
+					// CKA 8/22/2014
+//					PhaseMatrix phMatr = probe.stateResponse(quadElm.getName(), bpmElm.getName());
+					PhaseMatrix phMatr = cobCalcEng.computeTransferMatrix(quadElm.getName(), bpmElm.getName());
+					
 					double m01 = phMatr.getElem(0, 1);
 					double m23 = phMatr.getElem(2, 3);
 					if(coefErrX > 0. && coefErrY > 0. && Math.abs(m01) > 0. && Math.abs(m23) > 0.) {
@@ -463,7 +470,11 @@ public class ShakeAnalysis {
 				Quadrupole quad =  quadIdMap.get(quadElm.getName());
 				double quad_pos = accSeq.getPosition(quad);
 				if(quad_pos > corr_pos) {
-					PhaseMatrix phMatr = probe.stateResponse(corrElm.getName(), quadElm.getName());
+				    
+				    // CKA  8/22/2014
+//					PhaseMatrix phMatr = probe.stateResponse(corrElm.getName(), quadElm.getName());
+					PhaseMatrix phMatr = cobCalcEng.computeTransferMatrix(corrElm.getName(), quadElm.getName());
+					
 					double me = 0.;
 					if(corrElm.getName().indexOf(":DCH") > 0) {
 						me = phMatr.getElem(0, 1);

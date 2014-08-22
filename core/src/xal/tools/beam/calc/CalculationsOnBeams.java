@@ -38,7 +38,7 @@ public class CalculationsOnBeams extends CalculationEngine implements ISimLocRes
      */
     
     /** The trajectory around one turn of the ring */
-    private final Trajectory<?> trjSimul;
+    private final Trajectory<EnvelopeProbeState> trjSimul;
     
     /** The initial envelope probe state (at the start of the simulation) */
     private final EnvelopeProbeState        staInit;
@@ -107,7 +107,7 @@ public class CalculationsOnBeams extends CalculationEngine implements ISimLocRes
      * @author Christopher K. Allen
      * @since  Nov 7, 2013
      */
-    public Trajectory<?> getTrajectory() {
+    public Trajectory<EnvelopeProbeState> getTrajectory() {
         return this.trjSimul;
     }
     
@@ -198,6 +198,50 @@ public class CalculationsOnBeams extends CalculationEngine implements ISimLocRes
      */
     public Twiss[]  periodMatchedTwiss() {
         return this.arrTwsMch;
+    }
+    
+    
+    /*
+     * Local Operations
+     */
+
+    /**
+     * Returns the state response matrix calculated from the front face of
+     * elemFrom to the back face of elemTo. This is a convenience wrapper to
+     * the real method in the trajectory class
+     * 
+     * @param elemFrom  String identifying starting lattice element
+     * @param elemTo    String identifying ending lattice element
+     * 
+     * @return      response matrix from elemFrom to elemTo
+     * 
+     * @see EnvelopeTrajectory#computeTransferMatrix(String, String)
+     */
+    public PhaseMatrix computeTransferMatrix(String elemFrom, String elemTo) {
+        
+        Trajectory<EnvelopeProbeState> trajectory = this.getTrajectory();
+        
+        // find starting index
+        int[] arrIndFrom = trajectory.indicesForElement(elemFrom);
+
+        int[] arrIndTo = trajectory.indicesForElement(elemTo);
+
+        if (arrIndFrom.length == 0 || arrIndTo.length == 0)
+            throw new IllegalArgumentException("unknown element id");
+
+        int indFrom, indTo;
+        indTo = arrIndTo[arrIndTo.length - 1]; // use last state before start element
+
+        EnvelopeProbeState stateTo = trajectory.stateWithIndex(indTo);
+        PhaseMatrix matTo = stateTo.getResponseMatrix();
+        
+        indFrom = arrIndFrom[0] - 1;
+        if (indFrom < 0) return matTo; // response from beginning of machine
+        
+        EnvelopeProbeState stateFrom = trajectory.stateWithIndex(indFrom);
+        PhaseMatrix matFrom = stateFrom.getResponseMatrix();
+        
+        return matTo.times(matFrom.inverse());
     }
 
 

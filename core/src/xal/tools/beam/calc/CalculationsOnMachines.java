@@ -36,6 +36,55 @@ public class CalculationsOnMachines extends CalculationEngine  implements ISimLo
 
     
     /*
+     * Global Operations
+     */
+    
+    /**
+     * Convenience method for computing the transfer matrix between two state locations, say <i>S</i><sub>1</sub>
+     * and <i>S</i><sub>2</sub>.  Let <i>s</i><sub>0</sub> be the axis location of the beamline
+     * entrance, <i>s</i><sub>1</sub> the location of state <i>S</i><sub>1</sub>, and 
+     * <i>s</i><sub>2</sub> the location of state <i>S</i><sub>2</sub>.  Each state object <i>S<sub>n</sub></i>
+     * contains the transfer matrix <b>&Phi;</b>(<i>s<sub>n</sub></i>,<i>s</i><sub>0</sub>)
+     * which takes phases coordinates at the beamline entrance to the position of state <i>S<sub>n</sub></i>. 
+     * The transfer matrix
+     * <b>&Phi;</b>(<i>s</i><sub>2</sub>,<i>s</i><sub>1</sub>) taking phase coordinates <b>z</b><sub>1</sub>
+     * (and covariance matrix <b>&sigma;</b><sub>1</sub>)
+     * from position <i>s</i><sub>1</sub> to position <i>s</i><sub>2</sub> is then given
+     * by
+     * <br/>
+     * <br/>
+     * &nbsp; &nbsp; <b>&Phi;</b>(<i>s</i><sub>2</sub>,<i>s</i><sub>1</sub>) = 
+     *                  <b>&Phi;</b>(<i>s</i><sub>2</sub>,<i>s</i><sub>0</sub>)
+     *                  <b>&Phi;</b>(<i>s</i><sub>1</sub>,<i>s</i><sub>0</sub>)<sup>-1</sup> ,
+     * <br/>
+     * <br/>
+     * where <b>&Phi;</b>(<i>s</i><sub>2</sub>,<i>s</i><sub>0</sub>) is the transfer matrix between
+     * the beamline entrance <i>s</i><sub>0</sub> and the position <i>s</i><sub>2</sub>
+     * of state <i>S</i><sub>2</sub>, and <b>&Phi;</b>(<i>s</i><sub>1</sub>,<i>s</i><sub>0</sub>) is the
+     * transfer matrix between the beamline entrance <i>s</i><sub>0</sub> and the position <i>s</i><sub>1</sub>
+     * of state <i>S</i><sub>1</sub>.
+     * 
+     * @param state1    trajectory state <i>S</i><sub>1</sub> of starting location <i>s</i><sub>1</sub> 
+     * @param state2    trajectory state <i>S</i><sub>2</sub> of final location <i>s</i><sub>2</sub>
+     * 
+     * @return          transfer matrix <b>&Phi;</b>(<i>s</i><sub>2</sub>,<i>s</i><sub>1</sub>) between
+     *                  locations <i>s</i><sub>1</sub> and <i>s</i><sub>2</sub>
+     *
+     * @author Christopher K. Allen
+     * @since  Jun 23, 2014
+     */
+    public static PhaseMatrix  computeTransferMatrix(TransferMapState state1, TransferMapState state2) {
+        PhaseMatrix matPhi1 = state1.getStateTransferMap().getFirstOrder();
+        PhaseMatrix matPhi2 = state2.getStateTransferMap().getFirstOrder();
+        
+        PhaseMatrix matPhi1inv = matPhi1.inverse();
+        PhaseMatrix matPhi21   = matPhi2.times( matPhi1inv );
+        
+        return matPhi21;
+    }
+
+
+    /*
      * Local Attributes
      */
     
@@ -144,49 +193,51 @@ public class CalculationsOnMachines extends CalculationEngine  implements ISimLo
      */
     
     /**
-     * Convenience method for computing the transfer matrix between two state locations, say <i>S</i><sub>1</sub>
-     * and <i>S</i><sub>2</sub>.  Let <i>s</i><sub>0</sub> be the axis location of the beamline
-     * entrance, <i>s</i><sub>1</sub> the location of state <i>S</i><sub>1</sub>, and 
-     * <i>s</i><sub>2</sub> the location of state <i>S</i><sub>2</sub>.  Each state object <i>S<sub>n</sub></i>
-     * contains the transfer matrix <b>&Phi;</b>(<i>s<sub>n</sub></i>,<i>s</i><sub>0</sub>)
-     * which takes phases coordinates at the beamline entrance to the position of state <i>S<sub>n</sub></i>. 
-     * The transfer matrix
-     * <b>&Phi;</b>(<i>s</i><sub>2</sub>,<i>s</i><sub>1</sub>) taking phase coordinates <b>z</b><sub>1</sub>
-     * (and covariance matrix <b>&sigma;</b><sub>1</sub>)
-     * from position <i>s</i><sub>1</sub> to position <i>s</i><sub>2</sub> is then given
-     * by
-     * <br/>
-     * <br/>
-     * &nbsp; &nbsp; <b>&Phi;</b>(<i>s</i><sub>2</sub>,<i>s</i><sub>1</sub>) = 
-     *                  <b>&Phi;</b>(<i>s</i><sub>2</sub>,<i>s</i><sub>0</sub>)
-     *                  <b>&Phi;</b>(<i>s</i><sub>1</sub>,<i>s</i><sub>0</sub>)<sup>-1</sup> ,
-     * <br/>
-     * <br/>
-     * where <b>&Phi;</b>(<i>s</i><sub>2</sub>,<i>s</i><sub>0</sub>) is the transfer matrix between
-     * the beamline entrance <i>s</i><sub>0</sub> and the position <i>s</i><sub>2</sub>
-     * of state <i>S</i><sub>2</sub>, and <b>&Phi;</b>(<i>s</i><sub>1</sub>,<i>s</i><sub>0</sub>) is the
-     * transfer matrix between the beamline entrance <i>s</i><sub>0</sub> and the position <i>s</i><sub>1</sub>
-     * of state <i>S</i><sub>1</sub>.
+     * <p>
+     * Returns the state response matrix calculated from the front face of
+     * elemFrom to the back face of elemTo. This is a convenience wrapper to
+     * the real method in the trajectory class
+     * </p>
+     * <p>
+     * This method was moved here from EnvelopeTrajectory/EnvelopeProbe where
+     * it was eliminated since <code>Trajectory</code> was genericized.
+     * </p>
      * 
-     * @param state1    trajectory state <i>S</i><sub>1</sub> of starting location <i>s</i><sub>1</sub> 
-     * @param state2    trajectory state <i>S</i><sub>2</sub> of final location <i>s</i><sub>2</sub>
+     * @param strIdElemFrom  String identifying starting lattice element
+     * @param strIdElemTo    String identifying ending lattice element
      * 
-     * @return          transfer matrix <b>&Phi;</b>(<i>s</i><sub>2</sub>,<i>s</i><sub>1</sub>) between
-     *                  locations <i>s</i><sub>1</sub> and <i>s</i><sub>2</sub>
-     *
-     * @author Christopher K. Allen
-     * @since  Jun 23, 2014
+     * @return      response matrix from elemFrom to elemTo
+     * 
+     * @see EnvelopeTrajectory#computeTransferMatrix(String, String)
+     * 
      */
-    public PhaseMatrix  computeTransferMatrix(TransferMapState state1, TransferMapState state2) {
-        PhaseMatrix matPhi1 = state1.getStateTransferMap().getFirstOrder();
-        PhaseMatrix matPhi2 = state2.getStateTransferMap().getFirstOrder();
+    public PhaseMatrix computeTransferMatrix(String strIdElemFrom, String strIdElemTo) {
         
-        PhaseMatrix matPhi1inv = matPhi1.inverse();
-        PhaseMatrix matPhi21   = matPhi2.times( matPhi1inv );
+        Trajectory<TransferMapState> trajectory = this.getTrajectory();
         
-        return matPhi21;
+        // find starting index
+        int[] arrIndFrom = trajectory.indicesForElement(strIdElemFrom);
+
+        int[] arrIndTo = trajectory.indicesForElement(strIdElemTo);
+
+        if (arrIndFrom.length == 0 || arrIndTo.length == 0)
+            throw new IllegalArgumentException("unknown element id");
+
+        int indFrom, indTo;
+        indTo = arrIndTo[arrIndTo.length - 1]; // use last state before start element
+
+        TransferMapState stateTo = trajectory.stateWithIndex(indTo);
+        PhaseMatrix matTo = stateTo.getTransferMap().getFirstOrder();
+        
+        indFrom = arrIndFrom[0] - 1;
+        if (indFrom < 0) return matTo; // response from beginning of machine
+        
+        TransferMapState stateFrom = trajectory.stateWithIndex(indFrom);
+        PhaseMatrix matFrom = stateFrom.getTransferMap().getFirstOrder();
+        
+        return matTo.times(matFrom.inverse());
     }
-    
+
     
     /*
      * ISimLocResults Interface

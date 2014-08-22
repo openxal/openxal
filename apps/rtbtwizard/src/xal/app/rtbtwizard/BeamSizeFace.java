@@ -42,6 +42,7 @@ import xal.tools.apputils.EdgeLayout;
 import xal.tools.data.*;
 import xal.tools.xml.XmlDataAdaptor;
 import xal.tools.beam.*;
+import xal.tools.beam.calc.CalculationsOnBeams;
 
 import java.text.DecimalFormat;
 
@@ -53,6 +54,8 @@ import xal.extension.solver.market.*;
 import xal.extension.solver.solutionjudge.*;
 import xal.service.pvlogger.sim.PVLoggerDataSource;
 import xal.extension.widgets.apputils.SimpleProbeEditor;
+// TODO: CKA - Half the Imports are Unused
+
 /**
  * Performs matching to find steerer strengths for desired injection
  * spot position and angle on the foil.
@@ -556,7 +559,7 @@ public class BeamSizeFace extends JPanel{
         //System.out.println("first is " + namelist.get(0));
         
         for(int i =0; i<size; i++){
-            String name = namelist.get(i);
+            String name = namelist.get(i);      // TODO: CKA - NEVER USED
             //EnvelopeProbeState state = (EnvelopeProbeState)traj.statesForElement("RTBT_Diag:WS21")[0];
             EnvelopeProbeState state = traj.statesForElement(namelist.get(i)).get(0);
             
@@ -649,22 +652,26 @@ public class BeamSizeFace extends JPanel{
         catch(Exception exception){
             exception.printStackTrace();
         }
-        
-        PhaseMatrix matRef = (probe).stateResponse(currentElem, refStart);
+  
+        // CKA 8/22/2014
+        Trajectory<EnvelopeProbeState> traj = probe.getTrajectory();
+        CalculationsOnBeams             cobCalcEng = new CalculationsOnBeams(traj);
+        PhaseMatrix matRef = cobCalcEng.computeTransferMatrix(currentElem, refStart);
+//        PhaseMatrix matRef = (probe).stateResponse(currentElem, refStart);
         
         //PhaseMatrix matRef = ((EnvelopeProbe)probe).stateResponse(currentElem, "RTBT_Mag:QH20");
         double Rs11 = matRef.getElem(0, 0);
         double Rs12 = matRef.getElem(0, 1);
-        double Rs16 = matRef.getElem(0, 5);
+        double Rs16 = matRef.getElem(0, 5);        // TODO: CKA - NEVER USED
         double Rs21 = matRef.getElem(1, 0);
         double Rs22 = matRef.getElem(1, 1);
-        double Rs26 = matRef.getElem(1, 5);
+        double Rs26 = matRef.getElem(1, 5);       // TODO: CKA - NEVER USED
         double Rs33 = matRef.getElem(2, 2);
         double Rs34 = matRef.getElem(2, 3);
-        double Rs36 = matRef.getElem(2, 5);
+        double Rs36 = matRef.getElem(2, 5);       // TODO: CKA - NEVER USED
         double Rs43 = matRef.getElem(3, 2);
         double Rs44 = matRef.getElem(3, 3);
-        double Rs46 = matRef.getElem(3, 5);
+        double Rs46 = matRef.getElem(3, 5);       // TODO: CKA - NEVER USED
         
         double alphax=currenttwiss[0]; double betax=currenttwiss[1];
         double alphay=currenttwiss[3]; double betay=currenttwiss[4];
@@ -1035,8 +1042,8 @@ public class BeamSizeFace extends JPanel{
         
 		//traj= (EnvelopeTrajectory)probe.getTrajectory();
 		EnvelopeProbeState newstate;
-		Twiss[] newtwiss;
-		double rx, ry;
+		Twiss[] newtwiss;       // TODO: CKA - NEVER USED
+		double rx, ry;          // TODO: CKA - NEVER USED
         
 		for(int i =0; i<datasize; i++){
 			newstate = traj.statesForElement(namelist.get(i)).get(0);

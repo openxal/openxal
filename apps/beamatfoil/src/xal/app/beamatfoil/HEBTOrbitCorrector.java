@@ -37,10 +37,12 @@ import xal.model.probe.*;
 import xal.model.probe.traj.*;
 import xal.sim.sync.*;
 import xal.tools.beam.*;
+import xal.tools.beam.calc.CalculationsOnBeams;
 //import xal.tools.optimizer.*;
 import xal.extension.solver.*;
 import xal.extension.solver.algorithm.*;
 import xal.extension.solver.hint.InitialDelta;
+// TODO: CKA - Over half the imports are unused
 
 /**
  *  Description of the Class
@@ -109,7 +111,7 @@ public class HEBTOrbitCorrector {
 	//message text field. It is actually message text field from Window
 	private JTextField messageTextLocal = new JTextField();
 
-	private double min_sum = 10.0e+20;
+	private double min_sum = 10.0e+20;     // TODO: CKA - NEVER USED
     
     
     //create a problem for solver
@@ -560,6 +562,7 @@ public class HEBTOrbitCorrector {
 		 }
 		 
 		 Trajectory<EnvelopeProbeState> trajectory = probe.getTrajectory();
+         CalculationsOnBeams            cobCalcEng = new CalculationsOnBeams(trajectory);
 		 
 		 AcceleratorNode foil = accSeq.getNodeWithId("Ring_Inj:Foil");
 		 
@@ -573,7 +576,11 @@ public class HEBTOrbitCorrector {
 			 double L = corr_mag.getEffLength();
 			 double c = 2.997924E+8;
 			 double res_coeff = (L * c) / (W0 * beta * gamma);
-			 PhaseMatrix phMatr = probe.stateResponse(corrElm.getName(),foil.getId());
+			 
+			// CKA 8/22/2014
+//			 PhaseMatrix phMatr = probe.stateResponse(corrElm.getName(),foil.getId()); 
+			 PhaseMatrix phMatr = cobCalcEng.computeTransferMatrix(corrElm.getName(), foil.getId());
+			 
 			 double mPos = 0.;
 			 double mAngle = 0.;
 			 if(corrElm.getName().indexOf(":DCH") > 0) {
@@ -639,7 +646,7 @@ public class HEBTOrbitCorrector {
 		
 		min_sum = 10.0e+20;
 		
-		Scorer scorer = new Scorer(){
+		Scorer scorer = new Scorer(){     // TODO: CKA - The value is NEVER USED
 			public double score(Trial trial, List<Variable> scoreVariables){
 				//sum calculations
 				double sum_fields = 0.;
@@ -739,7 +746,7 @@ public class HEBTOrbitCorrector {
                 /** ID for serializable version */
                 private static final long serialVersionUID = 1L;
                 
-				public Class getColumnClass(int columnIndex) {
+				public Class getColumnClass(int columnIndex) {  // TODO: CKA - Unchecked Conversion
 					if(columnIndex == 0 || columnIndex == 1 || columnIndex == 2) {
 						return String.class;
 					}

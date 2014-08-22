@@ -452,7 +452,7 @@ public class EnvelopeProbe extends BunchProbe<EnvelopeProbeState> {
      * 
      * @return      response matrix from elemFrom to elemTo
      * 
-     * @see EnvelopeTrajectory#stateResponse(String, String)
+     * @see EnvelopeTrajectory#computeTransferMatrix(String, String)
      * 
      * @deprecated  This calculation should be done using the utility class
      *              xal.tools.beam.calc.CalculationsOnMachines
