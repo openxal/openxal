@@ -105,8 +105,8 @@ public class ResourceManager {
     
     
     /** Name of the resources directory relative to the location of <code>MainApplication</code> */
-//    public static String                        STR_DIR_RESOURCES = "resources/";
-    public static String						STR_DIR_RESOURCES = System.getenv("OPENXAL_HOME") + "/apps/pta/resources/";
+    public static String                        STR_DIR_RESOURCES = "resources/";
+//    public static String						STR_DIR_RESOURCES = System.getenv("OPENXAL_HOME") + "/apps/pta/resources/";
     
     
     
