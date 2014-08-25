@@ -1023,7 +1023,22 @@ public class PhaseVector extends BaseVector<PhaseVector> implements java.io.Seri
         return strVec;
     }
     
+    /*
+     * Object Method Overrides
+     */
     
+    /**
+     * Creates and returns a deep copy of <b>this</b> vector.
+     * 
+     * @see xal.tools.math.BaseVector#clone()
+     * 
+     * @author Jonathan M. Freed
+     * @since Jul 3, 2014
+     */
+    @Override
+    public PhaseVector clone(){
+    	return new PhaseVector(this);
+    }
     
     
     

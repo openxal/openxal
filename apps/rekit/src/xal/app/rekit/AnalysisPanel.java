@@ -11,33 +11,52 @@
 
 package xal.app.rekit;
 
-import java.io.*;                                                              
-import java.util.*;
-import java.awt.*;
-import java.awt.event.*;
-import java.text.NumberFormat;
-import javax.swing.*;
-import javax.swing.event.*;
-import javax.swing.table.*;
-import java.lang.Math.*;
-import java.lang.String;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.util.ArrayList;
+import java.util.Iterator;
 
-import xal.tools.apputils.EdgeLayout;
-import xal.tools.beam.*;
-import xal.extension.solver.*;
-import xal.extension.solver.algorithm.*;
+import javax.swing.ButtonGroup;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+
+import xal.extension.solver.Evaluator;
+import xal.extension.solver.Objective;
+import xal.extension.solver.Problem;
+import xal.extension.solver.SolveStopperFactory;
+import xal.extension.solver.Solver;
+import xal.extension.solver.Stopper;
+import xal.extension.solver.Trial;
+import xal.extension.solver.Variable;
+import xal.extension.solver.algorithm.RandomShrinkSearch;
+import xal.extension.widgets.plot.BasicGraphData;
+import xal.extension.widgets.plot.FunctionGraphsJPanel;
+import xal.extension.widgets.plot.GridLimits;
 import xal.extension.widgets.swing.DecimalField;
-import xal.model.*;
-import xal.model.probe.*;
+import xal.model.ModelException;
 import xal.model.alg.ParticleTracker;
-import xal.model.probe.traj.*;
-import xal.sim.scenario.*;
-import xal.smf.*;
-import xal.smf.data.*;
-import xal.smf.impl.*;
-import xal.smf.proxy.*;
-import xal.extension.widgets.plot.*;
+import xal.model.probe.ParticleProbe;
+import xal.model.probe.traj.ParticleProbeState;
+import xal.model.probe.traj.Trajectory;
+import xal.sim.scenario.AlgorithmFactory;
+import xal.sim.scenario.ProbeFactory;
+import xal.sim.scenario.Scenario;
+import xal.smf.Accelerator;
+import xal.smf.AcceleratorNode;
+import xal.smf.AcceleratorSeqCombo;
+import xal.smf.data.XMLDataManager;
+import xal.smf.proxy.ElectromagnetPropertyAccessor;
+import xal.tools.apputils.EdgeLayout;
+import xal.tools.beam.PhaseVector;
 
 /**
  * This is the display panel for the extraction kicker restoration application.
@@ -110,7 +129,7 @@ public class AnalysisPanel extends JPanel{
 	Accelerator accl = new Accelerator();
 	ParticleProbe probe;
 	Scenario scenario;
-	ParticleTrajectory traj;
+	Trajectory<ParticleProbeState> traj;
 	ParticleProbeState state;
 	PhaseVector coordinates;
 	
@@ -476,8 +495,8 @@ public class AnalysisPanel extends JPanel{
 			System.out.println(e);
 		}
 		
-		ParticleTrajectory traj = (ParticleTrajectory)probe.getTrajectory();
-		state = (ParticleProbeState)traj.stateForElement("RTBT_Mag:ExSptm");
+		Trajectory<ParticleProbeState> traj = probe.getTrajectory();
+		state = traj.stateForElement("RTBT_Mag:ExSptm");
 		coordinates = state.getPhaseCoordinates();
 		
 		/* Display the resulting y and py */
@@ -619,8 +638,8 @@ public class AnalysisPanel extends JPanel{
 			System.out.println(e);
 		}
 
-		traj = (ParticleTrajectory)probe.getTrajectory();
-		state = (ParticleProbeState)traj.stateForElement("RTBT_Mag:ExSptm");
+		traj = probe.getTrajectory();
+		state = traj.stateForElement("RTBT_Mag:ExSptm");
 		coordinates = state.getPhaseCoordinates();
 		error = ((coordinates.gety()-yGoalField.getDoubleValue())*(coordinates.gety()-yGoalField.getDoubleValue()))
 				+10.0*((coordinates.getyp()-pyGoalField.getDoubleValue())*(coordinates.getyp()-pyGoalField.getDoubleValue()));
@@ -654,7 +673,7 @@ public class AnalysisPanel extends JPanel{
 	}
 
 
-	void plot(Trajectory traj){
+	void plot(Trajectory<ParticleProbeState> traj){
 		
 		plotPanel.removeAllGraphData();
 		BasicGraphData ygraphdata = new BasicGraphData();
@@ -665,10 +684,10 @@ public class AnalysisPanel extends JPanel{
 		ArrayList<Double> ydata = new ArrayList<Double>();
 		ArrayList<Double> pydata = new ArrayList<Double>();
 		
-		Iterator<ProbeState> iterState= traj.stateIterator();
+		Iterator<ParticleProbeState> iterState= traj.stateIterator();
 		
 		while(iterState.hasNext()){
-			state = (ParticleProbeState)iterState.next();
+			state = iterState.next();
 			coordinates = state.getPhaseCoordinates();
 			double s = state.getPosition();
 			double y =  1000.0*coordinates.gety();
@@ -678,9 +697,9 @@ public class AnalysisPanel extends JPanel{
 			pydata.add(py);
 		}
 		
-		double exsptmpos = ((ParticleProbeState)traj.stateForElement("RTBT_Mag:ExSptm")).getPosition();
+		double exsptmpos = (traj.stateForElement("RTBT_Mag:ExSptm")).getPosition();
 		int size = ydata.size() - 1;
-		ParticleProbeState bpmc10state = (ParticleProbeState)traj.stateForElement("Ring_Mag:QTH_C10");
+		ParticleProbeState bpmc10state = traj.stateForElement("Ring_Mag:QTH_C10");
 		double bpmc10pos = bpmc10state.getPosition();
 		double bpmc10y = 1000.0*(bpmc10state.getPhaseCoordinates()).gety();
 		

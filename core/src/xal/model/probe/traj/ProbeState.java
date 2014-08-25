@@ -2,7 +2,6 @@ package xal.model.probe.traj;
 
 import xal.tools.data.DataAdaptor;
 import xal.tools.data.DataFormatException;
-
 import xal.model.probe.Probe;
 import xal.model.xml.ParsingException;
 
@@ -11,10 +10,12 @@ import xal.model.xml.ParsingException;
  * extensions to this class should be developed for each type of probe.
  * 
  * @author Craig McChesney
- * @version $id:
+ * @author Christopher K. Allen
+ * 
+ * @version June 26, 2014
  * 
  */
-public abstract class ProbeState implements IProbeState {
+public abstract class ProbeState<S extends ProbeState<S>> implements IProbeState {
 
 
 
@@ -83,6 +84,7 @@ public abstract class ProbeState implements IProbeState {
     /** Probe's relativistic gamma */
     private double  m_dblGamma = Double.NaN;
     
+    private double m_dblBeta = 0.0;
     
 //  CKA This does not belong here
 //      We have not way of knowing whether or not the  
@@ -91,12 +93,24 @@ public abstract class ProbeState implements IProbeState {
 //    protected boolean bolSaveTwiss = false;
 //    
     
+    /*
+     * Abstract Methods
+     */
+    
+    /**
+     * Creates a new clone of this object.
+     * 
+     * @return  a deep copy of this object.
+     *
+     * @author Christopher K. Allen
+     * @since  Jun 26, 2014
+     */
+    public abstract S copy();
     
     
     /*
      * Initialization
      */
-
 
     /**
      *  Default constructor - creates an empty <code>ProbeState</code> object. 
@@ -105,12 +119,34 @@ public abstract class ProbeState implements IProbeState {
     }
     
     /**
+     * Copy constructor for ProbeState.  Initializes the new
+     * <code>ProbeState</code> objects with the state attributes
+     * of the given probe state.
+     *
+     * @param state     initializing state
+     *
+     * @author Christopher K. Allen
+     * @since  Jun 26, 2014
+     */
+    public ProbeState(final S state) {
+        
+        this.m_dblParQ = state.getSpeciesCharge();
+        this.m_dblParEr = state.getSpeciesRestEnergy();
+        this.m_strElemId = state.getElementId();
+        this.m_dblPos = state.getPosition();
+        this.m_dblTime = state.getTime();
+        this.m_dblW = state.getKineticEnergy();
+        this.m_dblGamma = state.getGamma();
+        this.m_dblBeta = state.getBeta();
+    }
+    
+    /**
      * Initializing Constructor.  Creates a <code>ProbeState</code> object initialized
      * to the state of the <code>Probe</code> argument.
      * 
      * @param probe     <code>Probe</code> object containing initial values
      */
-    public ProbeState(Probe probe) {
+    public ProbeState(final Probe<S> probe) {
         this.setSpeciesCharge( probe.getSpeciesCharge() );
         this.setSpeciesRestEnergy( probe.getSpeciesRestEnergy() );
 
@@ -120,13 +156,19 @@ public abstract class ProbeState implements IProbeState {
         this.setKineticEnergy( probe.getKineticEnergy() );
     }
     
+    
+    
+    /*
+     * Property Accessors
+     */
+    
     /** 
      *  Set the charge of the particle species in the beam 
      *  
      *  @param  q       species particle charge (<b>Coulombs</b>)
      */
     public void setSpeciesCharge(double q) { 
-        m_dblParQ = q; 
+       this.m_dblParQ = q; 
     }
     
     
@@ -136,11 +178,10 @@ public abstract class ProbeState implements IProbeState {
      *  @param  Er      particle rest energy (<b>electron-volts</b>)
      */
     public void setSpeciesRestEnergy(double Er) { 
-        m_dblParEr = Er; 
+        this.m_dblParEr = Er; 
     }
 
-
-
+    
     /** 
      *  Set the current position of the probe along the beamline.
      *
@@ -149,7 +190,7 @@ public abstract class ProbeState implements IProbeState {
      *  @see    #getPosition
      */
     public void setPosition(double s) {
-    	m_dblPos = s;
+    	this.m_dblPos = s;
     }
     
     /** 
@@ -158,7 +199,7 @@ public abstract class ProbeState implements IProbeState {
      * @param   dblTime     elapsed time in <b>seconds</b>
      */
     public void setTime(double dblTime) {
-        m_dblTime = dblTime; 
+        this.m_dblTime = dblTime; 
      }
 
     /**
@@ -169,7 +210,10 @@ public abstract class ProbeState implements IProbeState {
      *  @see    #getKineticEnergy
      */
     public void setKineticEnergy(double W) {
-        m_dblW = W;
+        this.m_dblW = W;
+        
+        this.m_dblGamma = this.computeGammaFromW(m_dblW);
+        this.m_dblBeta = this.computeBetaFromGamma(m_dblGamma);
     }
     
     /**
@@ -187,11 +231,6 @@ public abstract class ProbeState implements IProbeState {
 //    }
 //    
 
-
-    /*
-     *  Data Query 
-     */
-
 //    //sako
 //    public boolean getUseTwiss() {
 //        return bolSaveTwiss;
@@ -203,16 +242,28 @@ public abstract class ProbeState implements IProbeState {
      *  
      *  @return     particle species charge (<b>Coulombs</b>)
      */
-    public double getSpeciesCharge() { return m_dblParQ; }
+    public double getSpeciesCharge() { 
+    	return m_dblParQ; 
+    }
     
     /** 
      *  Returns the rest energy of particle species 
      *
      *  @return     particle species rest energy (<b>electron-volts</b>)
      */
-    public double getSpeciesRestEnergy() { return m_dblParEr; }
+    public double getSpeciesRestEnergy() { 
+    	return m_dblParEr; 
+    }
     
 
+    /** Returns the momentum
+     * 
+     * @return particle momentum
+     */
+    public double getMomentum() {
+    	return (getSpeciesRestEnergy()*getGamma()*getBeta());
+    }
+    
 
     /**
      * Returns the id of the lattice element associated with this state.
@@ -239,7 +290,7 @@ public abstract class ProbeState implements IProbeState {
      */
     public double getTime() { 
         return m_dblTime;
-    };
+    }
     
     /**
      *  Return the kinetic energy of the probe.  Depending upon the probe type,
@@ -252,6 +303,14 @@ public abstract class ProbeState implements IProbeState {
     	return m_dblW;
     }
     
+    /** 
+     *  Returns the probe velocity normalized to the speed of light. 
+     *
+     *  @return     normalized probe velocity v/c (<b>unitless</b>
+     */
+    public double getBeta() { 
+    	return m_dblBeta;  
+    }
     
     /**
      *  Return the relativistic gamma of the probe.  Depending upon the probe type,
@@ -272,9 +331,8 @@ public abstract class ProbeState implements IProbeState {
 
     
     /*
-     * Debugging
+     * Object Overrides
      */
-
 
     /**
      *  Return a textual representation of the <code>ProbeState</code> internal state.
@@ -345,6 +403,50 @@ public abstract class ProbeState implements IProbeState {
             throw new DataFormatException("error loading from adaptor: " + 
                     e.getMessage());
         }
+    }
+    
+    
+    /** 
+     *  Computes the relatavistic factor gamma from the current beta value
+     *  
+     *  @param  beta    speed of probe w.r.t. the speed of light
+     *  @return         relatavistic factor gamma
+     */
+    protected double computeGammaFromBeta(double beta) { 
+        return 1.0/Math.sqrt(1.0 - beta*beta); 
+    }
+    
+    /**
+     *  Convenience function for computing the relatistic factor gamma from the 
+     *  probe's kinetic energy (using the particle species rest energy m_dblParEr).
+     *
+     *  @param  W       kinetic energy of the probe
+     *  @return         relatavistic factor gamma
+     */
+    protected double computeGammaFromW(double W)   {
+        double gamma = W/m_dblParEr + 1.0;
+        
+        return gamma;
+    }
+    
+    /**
+     *  Convenience function for computing the probe's velocity beta (w.r.t. the 
+     *  speed of light) from the relatistic factor gamma.
+     *
+     *  @param beta     relatavistic factor gamma
+     *  @return         speed of probe (w.r.t. speed of light)
+     */
+    protected double computeBetaFromGamma(double gamma) {
+        double beta = Math.sqrt(1.0 - 1.0/(gamma*gamma));
+
+        return beta;
+    }
+    
+    /** 
+     *  Convenience function for multiplication of beta * gamma
+     */
+    protected double getBetaGamma() { 
+    	return m_dblBeta*m_dblGamma; 
     }
 
 

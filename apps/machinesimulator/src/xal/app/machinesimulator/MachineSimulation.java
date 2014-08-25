@@ -25,15 +25,15 @@ public class MachineSimulation {
     
     
 	/** Constructor */
-    public MachineSimulation( final Probe probe ) {
-        final Trajectory trajectory = probe.getTrajectory();
+    public MachineSimulation( final Probe<?> probe ) {
+        final Trajectory<?> trajectory = probe.getTrajectory();
 		final SimpleSimResultsAdaptor resultsAdaptor = new SimpleSimResultsAdaptor( trajectory );
 
         SIMULATION_RECORDS = new ArrayList<MachineSimulationRecord>( trajectory.numStates() );
         
-        final Iterator<ProbeState> stateIter = trajectory.stateIterator();
+        final Iterator<? extends ProbeState<?>> stateIter = trajectory.stateIterator();
         while ( stateIter.hasNext() ) {
-            final ProbeState state = stateIter.next();
+            final ProbeState<?> state = stateIter.next();
 			final MachineSimulationRecord simulationRecord = new MachineSimulationRecord( resultsAdaptor, state );
             SIMULATION_RECORDS.add( simulationRecord );
         }

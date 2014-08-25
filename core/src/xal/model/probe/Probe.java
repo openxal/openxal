@@ -20,23 +20,26 @@ import xal.model.probe.traj.ProbeState;
 import xal.model.probe.traj.Trajectory;
 import xal.model.xml.ParsingException;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.util.Date;
 
 
 /**
+ * <p>
  *  Provides a base class implementation of the IProbe interface that is useful for
  *  most standard probe types.  This class provides most of the functionality necessary
  *  for the implementation of the IProbe interface, <bold>except</bold> a definition
  *  and implementation of a probe "state".  Thus, it is up to base classes to provide
  *  and implement the particular aspect of a beam the probe represents.
- *
+ *  </p>
  *  
  *
  * @author  Christopher K. Allen
  */
-public abstract class Probe implements IProbe, IArchive {
+public abstract class Probe<S extends ProbeState<S>> implements IProbe, IArchive {
     /*
      * global attributes
      */
@@ -88,60 +91,21 @@ public abstract class Probe implements IProbe, IArchive {
     
     /** Time stamp associated with probe */
     private Date    m_dateStamp = new Date();
-        
 
-        
-    /** Species charge */
-    private double  m_dblParQ = 0.0;
-    
-    /** Species rest energy */
-    private double  m_dblParEr = 0.0;
-    
-
-
-    /** Current lattice element probe is visiting */
-    private String  m_strElemId = "";
-    
-    /** Current probe position in beamline */
-    private double m_dblPos = 0.0;
-    
-    /** The time elapsed from the beginning of the tracking (sec) */
-    private double m_dblTime = 0.0;
-    
-    /** Probe's kinetic Energy */
-    private double  m_dblW = 0.0;
-
-
-    
-    /** toggle m_trajHist tracking for a probe */
-    private boolean m_bolTrack = true;
+    /** toggle trajHist tracking for a probe */
+    private boolean         bolTrack = true;
     
     /** initial state of probe, set when initialize is called */
-    private ProbeState m_stateInit;
+    private S               stateInit;
     
-    /** Current probe m_trajHist */
-    protected Trajectory m_trajHist;
+    /** current state of the probe - defines the probe */
+    protected S             stateCurrent;
     
-    
+    /** Current probe trajHist */
+    protected Trajectory<S> trajHist;
     
     /** algorithm providing probe dynamics */
-    private IAlgorithm  m_ifcAlg = null;
-    
-
-
-    
-    /*
-     *  Derived Parameters
-     */
-    
-    /** Collective speed w.r.t. the speed of light */
-    private double m_dblBeta = 0.0;
-    
-    /** Collective relativistic factor */
-    private double m_dblGamma = 0.0;
-    
-    
-    
+    private IAlgorithm  algTracker = null;
     
     
     /*
@@ -157,7 +121,7 @@ public abstract class Probe implements IProbe, IArchive {
      * @return a Probe for the contents of the DataAdaptor
      * @throws ParsingException error encountered reading the DataAdaptor
      */
-    public static Probe readFrom(DataAdaptor container)
+    public static Probe<?> readFrom(DataAdaptor container)
             throws ParsingException {
                 
         DataAdaptor daptProbe = container.childAdaptor(Probe.PROBE_LABEL);
@@ -165,10 +129,10 @@ public abstract class Probe implements IProbe, IArchive {
             throw new ParsingException("Probe#readFrom() - no Probe data node.");
             
         String type = daptProbe.stringValue(Probe.TYPE_LABEL);
-        Probe probe;
+        Probe<?> probe;
         try {
             Class<?> probeClass = Class.forName(type);
-            probe = (Probe) probeClass.newInstance();
+            probe = (Probe<?>) probeClass.newInstance();
         } catch (Exception e) {
             e.printStackTrace();
             throw new ParsingException(e.getMessage());
@@ -178,33 +142,64 @@ public abstract class Probe implements IProbe, IArchive {
     }
 
     /**
+     * <p>
      * Clone factory method.  Creates a new <code>Probe</code> object, of the appropriate
      * type, initialized to the argument <code>Probe</code>.
-     * 
-     * NOTE: There is now a reset() method that is preferable to this one.  It
-     * clears the probe m_trajHist and restores the initial state saved in the
+     * </p>
+     * <p>
+     * <h4>NOTE:</h4>
+     * There is now a reset() method that is preferable to this one.  It
+     * clears the probe trajHist and restores the initial state saved in the
      * initialize() method, without creating a new probe instance.
+     * </p>
      * 
      * @param probeInit     <code>Probe</code> object containing initial data
      * 
      * @return              new <code>Probe</code> object initialized to argument 
      */
-    public static Probe newProbeInitializedFrom( final Probe probeInit ) {
+    public static Probe<?> newProbeInitializedFrom( final Probe<?> probeInit ) {
         Class<?> pClass = probeInit.getClass();
-        Probe pNew;
+        
         try {
-            pNew = (Probe) pClass.newInstance();
+//            pNew = (Probe<?>) pClass.newInstance();
+            Constructor<?>   ctorCopy = pClass.getConstructor(pClass);
+            Probe<?>         pNew     = (Probe<?>) ctorCopy.newInstance(probeInit);
+            
+            return pNew;
+            
         } catch (InstantiationException e) {
+            System.err.println("Unable to intialize from " + probeInit.toString());
             e.printStackTrace();
             return null;
+            
         } catch (IllegalAccessException e) {
+            System.err.println("Unable to intialize from " + probeInit.toString());
             e.printStackTrace();
             return null;
+            
+        } catch (NoSuchMethodException e) {
+            System.err.println("Unable to intialize from " + probeInit.toString());
+            e.printStackTrace();
+            return null;
+
+        } catch (SecurityException e) {
+            System.err.println("Unable to intialize from " + probeInit.toString());
+            e.printStackTrace();
+            return null;
+
+        } catch (IllegalArgumentException e) {
+            System.err.println("Unable to intialize from " + probeInit.toString());
+            e.printStackTrace();
+            return null;
+
+        } catch (InvocationTargetException e) {
+            System.err.println("Unable to intialize from " + probeInit.toString());
+            e.printStackTrace();
+            return null;
+            
         }
 		
-		pNew.initializeFrom( probeInit );
-		
-        return pNew;
+//		pNew.initializeFrom( probeInit );
     }
 	
 	
@@ -219,18 +214,69 @@ public abstract class Probe implements IProbe, IArchive {
      * 
      * @return a <code>Trajectory</code> of the appropriate species for this probe type
      */
-    public abstract Trajectory createTrajectory();
+    public abstract Trajectory<S> createTrajectory();
     
     /**
      * Captures the probe's state in a ProbeState of the appropriate species.
+     * 
      */
-    public abstract ProbeState createProbeState();
+    public abstract S createProbeState();
+    
+
+    /**
+     * Creates a new, blank <code>ProbeState</code> of the appropriate species.
+     * 
+     * @return a new, blank <code>ProbeState</code>
+     * 
+     * @author Jonathan M. Freed
+     * @since Jul 1, 2014
+     */
+    public abstract S createEmptyProbeState(); 
+    
+    /**
+     * Read the contents of the supplied <code>DataAdaptor</code> and return
+     * an instance of the appropriate Trajectory species.
+     * 
+     * @param container <code>DataAdaptor</code> to read a Trajectory from
+     * @return a ProbeState for the contents of the DataAdaptor
+     * @throws ParsingException error encountered reading the DataAdaptor
+     */
+    protected abstract S readStateFrom(DataAdaptor container) throws ParsingException;
+    
+    /**
+     * This method returns a clone of the current state of this probe.
+     * That is, the <code>ProbeState</code> object is a representation of this
+     * probe at the moment this method was called.
+     * 
+     * @return  a deep copy of the current state of this probe
+     *
+     * @author Christopher K. Allen
+     * @since  Jun 26, 2014
+     */
+    public S cloneCurrentProbeState() {
+        return this.stateCurrent.copy();
+    }
+    
+    /*
+     * ---------------------------------------------------------------
+     */
+   
     
     /**
      * Creates a deep copy of the probe
      */
-    public abstract Probe copy();
+    public abstract Probe<S> copy();
     
+    
+    /**
+     * Applies the properties of the state that is passed in to the current
+     * state of the probe.
+     * 
+     * @param state - the state to apply to the probe
+     * 
+     * @author Jonathan M. Freed
+     * @since Jul 9, 2014
+     */
     /**
      * Apply the contents of ProbeState to update my current state.  Subclass
      * implementations should call super.applyState to ensure superclass
@@ -238,14 +284,16 @@ public abstract class Probe implements IProbe, IArchive {
      * 
      * @param state     <code>ProbeState</code> object containing new probe state data
      */
-    public void applyState(ProbeState state) {
-        setSpeciesRestEnergy(state.getSpeciesRestEnergy());
-        setSpeciesCharge(state.getSpeciesCharge());
-
-        setCurrentElement(state.getElementId());
-        setPosition(state.getPosition());
-        setTime(state.getTime());
-        setKineticEnergy(state.getKineticEnergy());
+    public void applyState(S state) {
+    	this.stateCurrent = state.copy();
+    	
+//        setSpeciesRestEnergy(state.getSpeciesRestEnergy());
+//        setSpeciesCharge(state.getSpeciesCharge());
+//
+//        setCurrentElement(state.getElementId());
+//        setPosition(state.getPosition());
+//        setTime(state.getTime());
+//        setKineticEnergy(state.getKineticEnergy());
     }
     
     
@@ -257,7 +305,7 @@ public abstract class Probe implements IProbe, IArchive {
      *  </p>
      *  <p>
      *  The state information for a particular probe should be stored as children
-     *  of the "state" data adaptor, anaologous to the XML representation.
+     *  of the "state" data adaptor, analogous to the XML representation.
      *  </p>
      *
      *  @param  daptState   the "state" parent adaptor containing probe data
@@ -285,9 +333,16 @@ public abstract class Probe implements IProbe, IArchive {
      *  Creates a new instance of Probe.
      *  Since Probe is an abstract base only derived classes may call constructor.
      *
-     *  @param  ifcAlg      default dynamics algorithm for probe
      */
     protected Probe() {
+    	
+    	//need to simply initialize an empty probe state
+    	this.stateCurrent = this.createEmptyProbeState();
+        this.stateInit    = this.createEmptyProbeState();
+        
+        this.trajHist = this.createTrajectory();
+        
+        this.algTracker = null;
     }
     
     /** 
@@ -296,8 +351,10 @@ public abstract class Probe implements IProbe, IArchive {
      *
      *  @param  ifcAlg      default dynamics algorithm for probe
      */
-    protected Probe(IAlgorithm ifcAlg) {
-        this.m_ifcAlg = ifcAlg;
+    protected Probe(final IAlgorithm ifcAlg) {
+        this();
+        
+        this.algTracker = ifcAlg;
     }
     
     /**
@@ -306,20 +363,23 @@ public abstract class Probe implements IProbe, IArchive {
      *  
      *  @param  probe   Probe object to be cloned 
      */
-    public Probe(Probe probe)   {
-        this.deepCopyProbeBase(probe);
-    };
+    public Probe(final Probe<S> probe)   {
+        this();
+        this.deepCopy(probe);
+    }
     
-
-
 
     /**
      * Initialize this probe from the one specified.
      * 
      * @param probe the probe from which to initialize this one
+     * 
+     * @deprecated  This method is only called from child class overrides
+     *              which are never called themselves.
      */
-    protected void initializeFrom( final Probe probe ) {
-        final ProbeState initialState = probe.getTrajectory().initialState();
+    @Deprecated
+    protected void initializeFrom( final Probe<S> probe ) {
+        final S initialState = probe.getTrajectory().initialState();
         if ( initialState != null ) {
             applyState( initialState );         
         }
@@ -330,6 +390,31 @@ public abstract class Probe implements IProbe, IArchive {
     }
     
     
+
+    /**
+    * <p>
+    * Resets the probe to the saved initial state, if there is one and clears
+    * the trajHist.
+    * </p>
+    * <p>
+    * <h4>CKA NOTES:</h4>
+    * These notes concern the refactoring of the probe component
+    * in order to tighten the typing.
+    * <br/>
+    * <br/>
+    * &middot; The new behavior should be the same as before, only 
+    * the implementation differs.  The current state is set to a clone
+    * of the (previously saved) initial state.
+    * &middot; The trajectory is cleared.
+    * </p>
+    */
+    public void reset() {
+    	if (stateInit != null) { 
+    		this.stateCurrent = stateInit.copy();
+        }
+        this.trajHist = this.createTrajectory();
+//        this.getAlgorithm().initialize(); // CKA - I think these should be uncommented
+    }
 
     /**
      *  Provide a user comment associated with the probe
@@ -348,21 +433,6 @@ public abstract class Probe implements IProbe, IArchive {
     
 
 
-    /** 
-     *  Set the charge of the particle species in the beam 
-     *  
-     *  @param  q       species particle charge in units of positive electron charge
-     */
-    public void setSpeciesCharge(double q) { m_dblParQ = q; };
-    
-    
-    /** 
-     *  Set the rest energy of a single particle in the beam 
-     *
-     *  @param  Er      particle rest energy (<b>electron-volts</b>)
-     */
-    public void setSpeciesRestEnergy(double Er) { m_dblParEr = Er; };
-
 
 
     /**
@@ -373,16 +443,16 @@ public abstract class Probe implements IProbe, IArchive {
     public boolean setAlgorithm(IAlgorithm ifcAlg) { 
         if (!ifcAlg.validProbe(this)) return false;
         
-        m_ifcAlg = ifcAlg;
+        algTracker = ifcAlg;
         return true;
     };
    
     /**
-     *  Set particle m_trajHist tracking for probes.
+     *  Set particle trajHist tracking for probes.
      *
      *  @param  bolTrack    turn tracking on or off
      */
-    public void setTracking(boolean bolTrack) { m_bolTrack = bolTrack; };
+    public void setTracking(boolean bolTrack) { this.bolTrack = bolTrack; };
 
     
     
@@ -405,24 +475,25 @@ public abstract class Probe implements IProbe, IArchive {
 	@NoEdit	// editors should not access this property
     public Date     getTimestamp()              { return m_dateStamp; };
 
-
-
-    
     /**
      *  Get the state history of the probe.
      * 
      *  @return     Trajectory object of the proper sub-type for the probe type 
      */
 	@NoEdit	// editors should not access this property
-    public Trajectory getTrajectory() {
-        if (m_trajHist == null) {
-            this.m_trajHist = createTrajectory();
-        }
-        return m_trajHist; 
-    };
+    public Trajectory<S> getTrajectory() {
+        return trajHist; 
+    }
     
+    /** 
+     * Returns the momentum
+     * 
+     * @return particle momentum
+     */
+    public double getMomentum() {
+        return this.stateCurrent.getMomentum();
+    }
     
-      
     
     /*
      *  IProbe Interface
@@ -433,7 +504,10 @@ public abstract class Probe implements IProbe, IArchive {
      *  
      *  @return     particle species charge (<b>Coulombs</b>)
      */
-    public double getSpeciesCharge() { return m_dblParQ; }
+    @Override
+    public double getSpeciesCharge() { 
+    	return this.stateCurrent.getSpeciesCharge();
+    }
     
     /** 
      *  Returns the rest energy of particle species 
@@ -441,22 +515,20 @@ public abstract class Probe implements IProbe, IArchive {
      *  @return     particle species rest energy (<b>electron-volts</b>)
      */
 	@Units( "eV" )
-    public double getSpeciesRestEnergy() { return m_dblParEr; }
-    
-    /** Returns the momentum
-     * 
-     * @return particle momentum
-     */
-    public double getMomentum() {
-    	return (getSpeciesRestEnergy()*getGamma()*getBeta());
-    }
+    @Override
+    public double getSpeciesRestEnergy() { 
+		return this.stateCurrent.getSpeciesRestEnergy();
+	}
     
     /**
      * Returns the id of the current lattice element that the probe is visiting.
      * 
      * @return id of current lattice element
      */
-    public String getCurrentElement() { return m_strElemId; };
+    @Override
+    public String getCurrentElement() { 
+    	return this.stateCurrent.getElementId();
+    }
     
     /** 
      *  Returns the current beam-line position of the probe 
@@ -464,7 +536,10 @@ public abstract class Probe implements IProbe, IArchive {
      *  @return     probe position (<b>meters</b>)
      */
 	@Units( "meters" )
-    public double getPosition() { return m_dblPos; };
+    @Override
+    public double getPosition() { 
+		return this.stateCurrent.getPosition();
+	}
     
     /**
      * Return the time elapsed since the probe began propagation.
@@ -472,8 +547,9 @@ public abstract class Probe implements IProbe, IArchive {
      * @return      elapsed time in <b>seconds</b>
      */
 	@Units( "seconds" )
+    @Override
     public double   getTime()   {
-        return this.m_dblTime;
+        return this.stateCurrent.getTime();
     }
     
     /**
@@ -484,7 +560,10 @@ public abstract class Probe implements IProbe, IArchive {
      *  @return     probe kinetic energy    (<b>electron-volts</b>)
      */
 	@Units( "eV" )
-    public double getKineticEnergy()   { return m_dblW; };
+    @Override
+    public double getKineticEnergy()   { 
+		return this.stateCurrent.getKineticEnergy();
+	}
 
     
     /** 
@@ -492,7 +571,10 @@ public abstract class Probe implements IProbe, IArchive {
      *
      *  @return     normalized probe velocity v/c (<b>unitless</b>
      */
-    public double getBeta() { return m_dblBeta;  }
+    @Override
+    public double getBeta() { 
+    	return this.stateCurrent.getBeta();
+    }
     
     /** 
      *  Returns the relativistic parameter corresponding to the probe 
@@ -503,16 +585,20 @@ public abstract class Probe implements IProbe, IArchive {
      *
      *  @return     probe relatistic factor (<b>unitless</b>)
      */
-    public double getGamma() { return m_dblGamma; }
+    @Override
+    public double getGamma() { 
+    	return this.stateCurrent.getGamma();
+    }
 
-
-    
     /**
      * Set the current lattice element id.
      * 
      * @param id  element id of current lattice element
      */
-    public void setCurrentElement(String id) {m_strElemId = id; };
+    @Override
+    public void setCurrentElement(String id) {
+    	this.stateCurrent.setElementId(id);
+    }
     
     /** 
      *  Set the current position of the probe along the beamline.
@@ -521,7 +607,10 @@ public abstract class Probe implements IProbe, IArchive {
      *
      *  @see    #getPosition
      */
-    public void setPosition(double s)  { m_dblPos = s; };
+    @Override
+    public void setPosition(double s)  { 
+    	this.stateCurrent.setPosition(s);
+    }
     
     /** 
      * Set the current time since the probe began propagating
@@ -531,10 +620,10 @@ public abstract class Probe implements IProbe, IArchive {
      * @author jdg
      */
 	@NoEdit	// editors should not edit this property
+    @Override
     public void setTime(double dblTime) {
-        this.m_dblTime = dblTime;
+        this.stateCurrent.setTime(dblTime);
     }
-    
 
     /**
      *  Set the current kinetic energy of the probe.
@@ -543,11 +632,31 @@ public abstract class Probe implements IProbe, IArchive {
      *
      *  @see    #getKineticEnergy
      */
-    public void setKineticEnergy(double W)    { 
-        m_dblW = W; 
-        m_dblGamma = this.computeGammaFromW(m_dblW);
-        m_dblBeta = this.computeBetaFromGamma(m_dblGamma);
+    @Override
+    public void setKineticEnergy(double W)    {
+    	this.stateCurrent.setKineticEnergy(W);  	
     };
+    
+    /** 
+     *  Set the charge of the particle species in the beam 
+     *  
+     *  @param  q       species particle charge in units of positive electron charge
+     */
+    @Override
+    public void setSpeciesCharge(double q) { 
+        this.stateCurrent.setSpeciesCharge(q);
+    }
+    
+    /** 
+     *  Set the rest energy of a single particle in the beam 
+     *
+     *  @param  Er      particle rest energy (<b>electron-volts</b>)
+     */
+    @Override
+    public void setSpeciesRestEnergy(double Er) { 
+        this.stateCurrent.setSpeciesRestEnergy(Er); 
+    }
+
 
 
 
@@ -571,60 +680,87 @@ public abstract class Probe implements IProbe, IArchive {
 //    }
 //
     /**
+     * <p>
      * Initializes the probe, resetting state as necessary.
+     * </p>
+     * <p>
+     * <h4>CKA NOTES:</h4>
+     * These notes concern the refactoring of the probe component
+     * in order to tighten the typing.
+     * <br/>
+     * <br/>
+     * &middot; In order to make this method compatible with the previous
+     * behavior it must set the saved "initial state" to the current
+     * probe state.  The previous incarnation assigned the new initial
+     * state by calling the {@link #createProbeState()} method to which
+     * created a new probe state representing the current state of the probe.
+     * <br/>
+     * &middot; The trajectory is cleared, that is, there is no longer
+     * any history in the probe
+     * </br>
+     * &middot; Thus, <tt>initialize()</tt> is really a poor choice, since
+     * all that is done is
+     * <br/>
+     * <br/>
+     * &nbsp; &nbsp; - The initial state is reset to the current state
+     * <br/>
+     * &nbsp; &nbsp; - The trajectory is cleared
+     * </p>
+     * 
      */
+    @Override
     public void initialize() {
-    	this.m_stateInit = this.createProbeState();
-        this.m_trajHist = this.createTrajectory();
+    	this.stateInit = this.cloneCurrentProbeState();
+    	
+        this.trajHist = this.createTrajectory();
 //        this.getAlgorithm().initialize();  // CKA - I think these should be uncommented
-    }
-    
-    /**
-     * Resets the probe to the saved initial state, if there is one and clears
-     * the m_trajHist.
-     */
-    public void reset() {
-    	if (m_stateInit != null)
-    		this.applyState(m_stateInit);
-    	this.m_trajHist = this.createTrajectory();
-//        this.getAlgorithm().initialize(); // CKA - I think these should be uncommented
     }
 
     /**
-     *  Save the probe state into m_trajHist.
+     *  Save the probe state into trajHist.
      */
+    @Override
     public void update() throws ModelException  {
-    	
-        if (!m_bolTrack) return;
+        
+        if (!bolTrack) return;
         
         this.getTrajectory().update(this);
     };
-	
-	
-	/**
-	 * Subclasses should override this method to perform any required post processing upon completion 
-	 * of algorithm processing.  This method implementation does nothing.
-	 */
-	public void performPostProcessing() {
-	}
-
-   
+    
+    /**
+     * Subclasses should override this method to perform any required post processing upon completion 
+     * of algorithm processing.  This method implementation does nothing.
+     * 
+     * @deprecated     I don't think this gets used.
+     */
+    @Deprecated
+    @Override
+    public void performPostProcessing() {
+    }
 
     /**
      *  Return the algorithm defining the probes dynamics.
      *
      *  @return         interface to probe dynamics
      */
-    public IAlgorithm getAlgorithm()    { return m_ifcAlg; };
-
+    @Override
+    public IAlgorithm getAlgorithm()    { return algTracker; };
 
     /**
      * Return the archiving interface for this object.
      * 
      * @see xal.tools.data.IArchive
      */
-	@NoEdit	// hide this property so it doesn't appear in editors
+    @NoEdit // hide this property so it doesn't appear in editors
+    @Override
     public IArchive getArchive()        { return this; };
+
+
+    
+    
+    
+
+   
 
     
     // Object Overrides ========================================================
@@ -715,7 +851,7 @@ public abstract class Probe implements IProbe, IArchive {
         DataAdaptor daptState   = daptProbe.childAdaptor(ProbeState.STATE_LABEL);
         if (daptState == null) 
             throw new DataFormatException("Probe#load() - no state data");
-        ProbeState state;
+        S state;
         try {
             state = readStateFrom(daptState);
         } catch (ParsingException e) {
@@ -723,16 +859,6 @@ public abstract class Probe implements IProbe, IArchive {
         }
         this.applyState(state);
     };
-    
-    /**
-     * Read the contents of the supplied <code>DataAdaptor</code> and return
-     * an instance of the appropriate Trajectory species.
-     * 
-     * @param container <code>DataAdaptor</code> to read a Trajectory from
-     * @return a ProbeState for the contents of the DataAdaptor
-     * @throws ParsingException error encountered reading the DataAdaptor
-     */
-    protected abstract ProbeState readStateFrom(DataAdaptor container) throws ParsingException;
     
   
 //
@@ -797,7 +923,7 @@ public abstract class Probe implements IProbe, IArchive {
         this.getAlgorithm().save(daProbe);
                 
         // Save the probe state information
-        ProbeState state = createProbeState();
+        S state = createProbeState();
         state.save(daProbe);  
     }
     
@@ -815,71 +941,19 @@ public abstract class Probe implements IProbe, IArchive {
      *
      *  @param  probe   probe object whose Probe base is to be deep copied into this
      */
-    protected void  deepCopyProbeBase(Probe probe)    {
+    protected void  deepCopy(Probe<S> probe)    {
         
-        // Copy all the Probe base attributes
-        this.m_dblParQ  = probe.m_dblParQ;
-        this.m_dblParEr = probe.m_dblParEr;
-
-
-        this.m_dblPos   = probe.m_dblPos;
-        this.m_dblTime  = probe.m_dblTime;
-        this.m_dblW     = probe.m_dblW;
-
-        this.m_dblBeta  = probe.m_dblBeta;
-        this.m_dblGamma = probe.m_dblGamma;
-        this.m_bolTrack = probe.m_bolTrack;
-        
+        // Copy all the Probe base attributes by copying the current ProbeState        
+        this.stateCurrent = probe.stateCurrent.copy();
+             
+        this.bolTrack = probe.bolTrack;
         
         // Copy the algorithm object if we have one
-        this.m_ifcAlg = null;
+        this.algTracker = null;
         final IAlgorithm algorithm = probe.getAlgorithm();
         if ( algorithm != null )   {
             this.setAlgorithm( algorithm.copy() );
         }
     };
-
-
-    /** 
-     *  Computes the relatavistic factor gamma from the current beta value
-     *  
-     *  @param  beta    speed of probe w.r.t. the speed of light
-     *  @return         relatavistic factor gamma
-     */
-    protected double computeGammaFromBeta(double beta) { 
-        return 1.0/Math.sqrt(1.0 - beta*beta); 
-    };
     
-    /**
-     *  Convenience function for computing the relatistic factor gamma from the 
-     *  probe's kinetic energy (using the particle species rest energy m_dblParEr).
-     *
-     *  @param  W       kinetic energy of the probe
-     *  @return         relatavistic factor gamma
-     */
-    protected double computeGammaFromW(double W)   {
-        double gamma = W/m_dblParEr + 1.0;
-        
-        return gamma;
-    };
-    
-    /**
-     *  Convenience function for computing the probe's velocity beta (w.r.t. the 
-     *  speed of light) from the relatistic factor gamma.
-     *
-     *  @param beta     relatavistic factor gamma
-     *  @return         speed of probe (w.r.t. speed of light)
-     */
-    protected double computeBetaFromGamma(double gamma) {
-        double beta = Math.sqrt(1.0 - 1.0/(gamma*gamma));
-
-        return beta;
-    };
-    
-    /** 
-     *  Convenience function for multiplication of beta * gamma
-     */
-    protected double getBetaGamma() { return m_dblBeta*m_dblGamma; };
-    
-
 };

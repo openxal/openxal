@@ -20,6 +20,10 @@ import xal.tools.data.IArchive;
  */
 public interface IProbeState extends IArchive {
     
+	
+    /** Speed of light in vacuum (meters/second) */
+    public final double LightSpeed = 299792458;  
+	
     /** 
 	*  Set the charge of the particle species in the beam 
 	*  

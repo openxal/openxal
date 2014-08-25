@@ -40,7 +40,7 @@ import xal.model.probe.TransferMapProbe;
 import xal.sim.scenario.ProbeFactory;
 import xal.model.alg.TransferMapTracker;
 import xal.sim.scenario.Scenario;
-import xal.model.probe.traj.TransferMapTrajectory;
+import xal.model.probe.traj.Trajectory;
 import xal.model.probe.traj.TransferMapState;
 import xal.service.pvlogger.sim.PVLoggerDataSource;
 
@@ -627,8 +627,8 @@ public class TunePanel extends JPanel implements ConnectionListener,
 			scenario.resync();
 			scenario.run();
 
-			TransferMapTrajectory traj = (TransferMapTrajectory) scenario
-					.getTrajectory();
+            @SuppressWarnings("unchecked")
+            Trajectory<TransferMapState> traj = (Trajectory<TransferMapState>) scenario.getTrajectory();
 
 			double xSum = 0.;
 			double ySum = 0.;
@@ -782,7 +782,7 @@ public class TunePanel extends JPanel implements ConnectionListener,
 					yPhaseDiff[i] = yPhaseDiff[i] + 2. * Math.PI;
 				
 				// get model BPM phase difference
-				TransferMapState state = (TransferMapState) traj
+				TransferMapState state =  traj
 				.stateForElement(goodBPMs.get(i));
 				
 				// CKA - This

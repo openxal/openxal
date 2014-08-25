@@ -48,7 +48,6 @@ import xal.model.probe.Probe;
 import xal.model.probe.EnvelopeProbe;
 import xal.sim.scenario.ProbeFactory;
 import xal.model.probe.traj.EnvelopeProbeState;
-import xal.model.probe.traj.EnvelopeTrajectory;
 import xal.model.probe.traj.ProbeState;
 import xal.model.probe.traj.Trajectory;
 import xal.sim.scenario.Scenario;
@@ -100,8 +99,8 @@ public class MatchingFace extends JPanel{
     GenDocument doc;
     Scenario model;
     EnvelopeProbe probe;
-    Trajectory traj;
-    ProbeState state;
+    //Trajectory<?> traj;
+    ProbeState<?> state;
     PhaseVector coordinates;
     ArrayList<Variable> variables = new ArrayList<Variable>();
     ArrayList<Objective> objectives = new ArrayList<Objective>();
@@ -1202,13 +1201,12 @@ public class MatchingFace extends JPanel{
         //                      one_sigmaX4 = wireScanData.wireScanHorizByName("HEBT_Diag:WS04");
         //
         //              }
-        EnvelopeTrajectory traj= (EnvelopeTrajectory)probe.getTrajectory();
-        
+        Trajectory<EnvelopeProbeState> traj = probe.getTrajectory();
         //              System.out.println("trajectory is = "  traj);
-        Iterator<ProbeState> iterState= traj.stateIterator();
+        Iterator<EnvelopeProbeState> iterState= traj.stateIterator();
         
         while(iterState.hasNext()){
-            EnvelopeProbeState state= (EnvelopeProbeState)iterState.next();
+            EnvelopeProbeState state= iterState.next();
             sdata.add(state.getPosition());
             
             CovarianceMatrix covarianceMatrix = state.getCovarianceMatrix();
@@ -1263,12 +1261,16 @@ public class MatchingFace extends JPanel{
         double[] xrdata = new double[datasize];
         double[] yrdata = new double[datasize];
         
-        traj= (EnvelopeTrajectory)probe.getTrajectory();
+        //what is the point of this line?
+        //I commented it out since traj is instantiated earlier in this method.
+        // - Jonathan M. Freed
+        //traj = probe.getTrajectory();
+        
         EnvelopeProbeState newstate;
         Twiss[] newtwiss;
         double rx, ry;
         for(i =0; i<datasize; i++){
-            newstate = (EnvelopeProbeState)traj.statesForElement(namelist.get(i))[0];
+            newstate = traj.statesForElement(namelist.get(i)).get(0);
             srdata[i]=newstate.getPosition();
             System.out.println(beamMatcherDataTableModel2.getValueAt(i, 1));
             xrdata[i]=wireScanData.wireScanHorizByNameCA(lstName[i]);

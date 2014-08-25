@@ -4,3 +4,5 @@ build/**/*
 /build
 /.classpath
 /.project
+/doc
+/.pydevproject

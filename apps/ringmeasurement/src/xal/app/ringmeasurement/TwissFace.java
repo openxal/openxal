@@ -44,7 +44,6 @@ import xal.model.probe.TransferMapProbe;
 import xal.sim.scenario.ProbeFactory;
 import xal.model.alg.TransferMapTracker;
 import xal.sim.scenario.Scenario;
-import xal.model.probe.traj.TransferMapTrajectory;
 import xal.model.probe.traj.TransferMapState;
 import xal.service.pvlogger.sim.PVLoggerDataSource;
 import xal.smf.*;

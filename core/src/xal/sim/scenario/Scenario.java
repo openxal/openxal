@@ -32,10 +32,10 @@ public class Scenario {
     public static final String SYNC_MODE_DESIGN = "DESIGN";
 	public static final String SYNC_MODE_RF_DESIGN = "RF_DESIGN";
 	
-    private Lattice lattice;
-    private Probe probe;
-    private final SynchronizationManager syncManager;
-    private final AcceleratorSeq _sequence;
+    private Lattice                         lattice;
+    private Probe<?>                        probe;
+    private final SynchronizationManager    syncManager;
+    private final AcceleratorSeq            _sequence;
     
     /** element from which to start propagation */
     private String idElemStart = null;
@@ -282,12 +282,12 @@ public class Scenario {
      * @return the Trajectory obtained by running the model
      * @throws IllegalStateException if the probe or trajectory is null
      */
-    public Trajectory getTrajectory() {
+    public Trajectory<?> getTrajectory() {
         if (probe == null)
             throw new IllegalStateException("scenario doesn't contain a probe");
         if (probe.getTrajectory() == null)
             throw new IllegalStateException("model not yet run");
-        return probe.getTrajectory();
+        return  probe.getTrajectory();
     }
         
     
@@ -338,7 +338,7 @@ public class Scenario {
      * @return array of trajectory states for specified element id
      * @throws ModelException if the probe is not yet propagated
      */
-    public ProbeState[] trajectoryStatesForElement( final String id ) throws ModelException {
+    public List<? extends ProbeState<?>> trajectoryStatesForElement( final String id ) throws ModelException {
         if (probe == null)
             throw new ModelException("Probe is null");
         return probe.getTrajectory().statesForElement(id);
@@ -426,7 +426,7 @@ public class Scenario {
      * 
      * @param aProbe the probe to be used by the scenario
      */
-    public void setProbe( final Probe aProbe ) {
+    public void setProbe( final Probe<?> aProbe ) {
         probe = aProbe;
     }
     
@@ -436,7 +436,7 @@ public class Scenario {
      * 
      * @return the scenario's current probe or null
      */
-    public Probe getProbe() {
+    public Probe<?> getProbe() {
         return probe;
     }
     

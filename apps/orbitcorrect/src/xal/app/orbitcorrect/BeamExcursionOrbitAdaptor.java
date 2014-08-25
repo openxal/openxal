@@ -69,7 +69,7 @@ public class BeamExcursionOrbitAdaptor {
 	
 	
 	/** update the map with the specified scenario trajectory */
-	public void update( final Trajectory trajectory ) {
+	public void update( final Trajectory<?> trajectory ) {
 		try {
 			final AcceleratorSeq sequence = _sequence;
 			
@@ -100,14 +100,14 @@ public class BeamExcursionOrbitAdaptor {
 			
 			if ( sequence != null ) {
                 
-                final Probe probe;
+                final Probe<?> probe;
                 
                 probe = (sequence instanceof Ring) ? ProbeFactory.getTransferMapProbe( sequence, AlgorithmFactory.createTransferMapTracker(sequence)) : ProbeFactory.getEnvelopeProbe( sequence, AlgorithmFactory.createEnvTrackerAdapt(sequence));
 
             // the transfer matrices that matter are the ones for the coherent bunch motion
-				if ( probe instanceof BunchProbe ) {
+				if ( probe instanceof BunchProbe<?> ) {
                     //Do not need anymore ((BunchProbe)probe).setBeamCharge( 0.0 );
-					((BunchProbe)probe).setBeamCurrent( 0.0 );
+					((BunchProbe<?>)probe).setBeamCurrent( 0.0 );
 				}
 				final Scenario scenario = Scenario.newScenarioFor( _sequence );
 				scenario.setProbe( probe );
@@ -255,7 +255,10 @@ public class BeamExcursionOrbitAdaptor {
 		}
 		
 		
-		/** get the BPM Agents closest to the beam marker */
+		/** get the BPM Agents closest to the beam marker 
+		 * 
+		 * CKA - Never used 
+		 */
 		public BpmAgent[] getBPMAgents() {
 			return bpmAgents;
 		}
@@ -271,7 +274,10 @@ public class BeamExcursionOrbitAdaptor {
 		}
 		
 		
-		/** consider the BPM agents as candidates for this cluster */
+		/** consider the BPM agents as candidates for this cluster 
+		 * 
+		 * CKA - Never used
+		 */
 		public void considerBPMs( final List<BpmAgent> bpmAgents, final AcceleratorSeq sequence ) {
 			for ( final BpmAgent bpmAgent : bpmAgents ) {
 				considerBPM( bpmAgent, sequence );

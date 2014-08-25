@@ -36,7 +36,6 @@ import xal.model.probe.Probe;
 import xal.model.probe.traj.ProbeState;
 import xal.model.probe.traj.Trajectory;
 import xal.model.probe.traj.TransferMapState;
-import xal.model.probe.traj.TransferMapTrajectory;
 import xal.sim.scenario.AlgorithmFactory;
 import xal.sim.scenario.ProbeFactory;
 import xal.sim.scenario.Scenario;
@@ -75,10 +74,9 @@ import xal.extension.application.smf.*;
 import xal.smf.*;
 import xal.smf.data.XMLDataManager;
 import xal.extension.application.*;
-
 import Jama.Matrix;
 import Jama.SingularValueDecomposition;
-
+// TODO CKA - Over half the imports are never used
 
 /**
  * Class for calculating beta functions via MIA analysis from live BPM data.
@@ -175,10 +173,10 @@ public class MIALive extends JPanel{
 	/* Components for setting up the accelerator */
 	public AcceleratorSeqCombo seq;
 	Accelerator accl = new Accelerator();
-	Probe probe;
+	Probe<?> probe;
 	Scenario scenario;
-	Trajectory traj;
-	ProbeState state;
+	Trajectory<?> traj;
+	ProbeState<?> state;
 	Twiss[] twiss = new Twiss[2];
 
 	/* Structures to store BPM data */
@@ -531,7 +529,7 @@ public class MIALive extends JPanel{
 		BPMSelectorPane.getHorizontalScrollBar().setValue(1);
 		BPMDataTableModel.fireTableDataChanged();
 
-		String BPMName;
+		String BPMName;    // TODO CKA - NEVER USED
 		for (int i = 0; i < numBPMs; i++) {
 			ArrayList<Object> tableData = new ArrayList<Object>();
 			tableData.add(BPMAgents[i].name().substring(14));
@@ -601,7 +599,8 @@ public class MIALive extends JPanel{
 
 	        // CKA - Down cast the simulation trajectory results to the proper type then
 	        //   create a ring parameter calculation engine for processing
-	        TransferMapTrajectory  trjSimulation = (TransferMapTrajectory)traj;
+	        @SuppressWarnings("unchecked")
+            Trajectory<TransferMapState>  trjSimulation = (Trajectory<TransferMapState>) traj;
 	        CalculationsOnRings         cmpRingParams = new CalculationsOnRings(trjSimulation);
 
 	        int j = 0;
@@ -676,7 +675,8 @@ public class MIALive extends JPanel{
 			
             // CKA - Down cast the simulation trajectory results to the proper type then
             //   create a ring parameter calculation engine for processing
-            TransferMapTrajectory  trjSimulation = (TransferMapTrajectory)traj;
+            @SuppressWarnings("unchecked")
+            Trajectory<TransferMapState>  trjSimulation = (Trajectory<TransferMapState>) traj;
             CalculationsOnRings         cmpRingParams = new CalculationsOnRings(trjSimulation);
 
 			int j = 0;
@@ -837,7 +837,7 @@ public class MIALive extends JPanel{
 		/* Calculate and subtract off mean offsets. */
 		for (int i = 0; i < numBPMs; i++) {
 			double xsum = 0.0; 
-			double ysum = 0.0; 
+			double ysum = 0.0;            // TODO CKA - VALUE IS NEVER USED
 			double xoffset = 0.0; 
 			double yoffset = 0.0; 
 			for (int j = 0; j < numTurns; j++) {
@@ -879,7 +879,7 @@ public class MIALive extends JPanel{
 		yBeta = new double[numBPMs];
 
 		/* Calculate unscaled beta values and fill BPM position array */
-		String BPMName;
+		String BPMName;        // TODO CKA - NEVER USED
 		for (int i = 0; i < xVArray.length; i++) {
 			if (BPMAgents[i].isOkay()) {
 				BPMPosition[i] = BPMAgents[i].getPosition();
