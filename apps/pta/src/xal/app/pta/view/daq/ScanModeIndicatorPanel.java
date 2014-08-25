@@ -10,7 +10,7 @@ import xal.app.pta.MainScanController;
 import xal.app.pta.MainScanController.SCAN_MODE;
 import xal.app.pta.rscmgt.AppProperties;
 import xal.app.pta.rscmgt.ImageUtility;
-import xal.app.pta.rscmgt.ResourceManager;
+import xal.app.pta.rscmgt.PtaResourceManager;
 import xal.smf.impl.WireScanner;
 
 import java.awt.Color;
@@ -238,21 +238,21 @@ public class ScanModeIndicatorPanel extends JPanel implements MainScanController
         
         // The unspecified scan label
         String      strLocUnspScrIcon = AppProperties.ICON.SCAN_MODE_UNSPEC.getValue().asString();
-        ImageIcon   icnUspecScr       = ResourceManager.getImageIcon(strLocUnspScrIcon);
+        ImageIcon   icnUspecScr       = PtaResourceManager.getImageIcon(strLocUnspScrIcon);
         ImageIcon   icnUnspecScrSm    = ImageUtility.createThumbnailIcon(icnUspecScr);
         this.lblUnspecScan = new JLabel(" Unspecified ", icnUnspecScrSm, SwingConstants.LEFT);
         this.lblUnspecScan.setToolTipText(" No scan run yet ");
         
         // The expert scan label
         String      strLocXprtScrIcon = AppProperties.ICON.SCAN_MODE_XPRT.getValue().asString();
-        ImageIcon   icnXprtScr        = ResourceManager.getImageIcon(strLocXprtScrIcon);
+        ImageIcon   icnXprtScr        = PtaResourceManager.getImageIcon(strLocXprtScrIcon);
         ImageIcon   icnXprtScrSm      = ImageUtility.createThumbnailIcon(icnXprtScr);
         this.lblXprtScan = new JLabel(" Expert ", icnXprtScrSm, SwingConstants.LEFT);
         this.lblXprtScan.setToolTipText("Expert scan mode");
         
         // The easy scan label
         String      strLocEzScrIcon   = AppProperties.ICON.SCAN_MODE_EZ.getValue().asString();
-        ImageIcon   icnEzScr          = ResourceManager.getImageIcon(strLocEzScrIcon);
+        ImageIcon   icnEzScr          = PtaResourceManager.getImageIcon(strLocEzScrIcon);
         ImageIcon   icnEzScrSm        = ImageUtility.createThumbnailIcon(icnEzScr);
         this.lblEzScan = new JLabel(" Easy   ", icnEzScrSm, SwingConstants.LEFT);
         this.lblEzScan.setToolTipText("Easy scan mode");

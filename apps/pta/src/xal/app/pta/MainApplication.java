@@ -17,7 +17,7 @@ import xal.app.pta.cmdmgt.FileMenuCommands;
 import xal.app.pta.daq.MeasurementData;
 import xal.app.pta.rscmgt.AppProperties;
 import xal.app.pta.rscmgt.PropertyDisplayDialog;
-import xal.app.pta.rscmgt.ResourceManager;
+import xal.app.pta.rscmgt.PtaResourceManager;
 import xal.app.pta.tools.cptblty.WireAnalysisFormatter;
 import xal.app.pta.tools.logging.IEventLogger;
 import xal.app.pta.tools.logging.JavaLogger;
@@ -1428,7 +1428,7 @@ public class MainApplication extends ApplicationAdaptor {
         
         // Get the splash screen image
         String  strUrlIcon = AppProperties.SPLASH.ICON.getValue().asString();
-        ImageIcon   icnScr = ResourceManager.getImageIcon(strUrlIcon);
+        ImageIcon   icnScr = PtaResourceManager.getImageIcon(strUrlIcon);
     
         
         // Splash screen title

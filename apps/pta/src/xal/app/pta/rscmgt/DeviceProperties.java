@@ -105,7 +105,7 @@ public class DeviceProperties extends PropertiesManager {
      */
     static {
         try {
-            Properties  PROP_CONFIG = ResourceManager.getProperties(STR_FILE_CONFIG);
+            Properties  PROP_CONFIG = PtaResourceManager.getProperties(STR_FILE_CONFIG);
             
             MGR_DEV_PROPS = new DeviceProperties(PROP_CONFIG);
             

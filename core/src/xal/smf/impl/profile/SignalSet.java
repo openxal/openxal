@@ -210,9 +210,9 @@ public abstract class SignalSet implements DataListener {
     public void setSignal(ProfileDevice.ANGLE angle, Signal signal) {
         
         switch (angle) {
-        case HOR: this.hor = signal;
-        case VER: this.ver = signal;
-        case DIA: this.dia = signal;
+        case HOR: this.hor = signal; break;
+        case VER: this.ver = signal; break;
+        case DIA: this.dia = signal; break;
         default:  ;
         }
     }

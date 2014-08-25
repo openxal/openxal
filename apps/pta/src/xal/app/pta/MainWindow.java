@@ -16,7 +16,7 @@ import xal.app.pta.cmdmgt.ToolBarCommands;
 import xal.app.pta.cmdmgt.WindowMenuCommands;
 import xal.app.pta.daq.MeasurementData;
 import xal.app.pta.rscmgt.AppProperties;
-import xal.app.pta.rscmgt.ResourceManager;
+import xal.app.pta.rscmgt.PtaResourceManager;
 import xal.app.pta.tools.logging.IEventLogger;
 import xal.app.pta.tools.swing.PersistentTextEditorPane;
 import xal.app.pta.tools.swing.TextEditorPane;
@@ -660,7 +660,7 @@ public class MainWindow extends XalWindow implements IDocView, ComponentListener
         this.appMainPanel.setLayout(new BoxLayout(appMainPanel, BoxLayout.Y_AXIS));
         
         String  strNameIcon = AppProperties.APP.ICON.getValue().asString();
-        ImageIcon icnApp = ResourceManager.getImageIcon(strNameIcon);
+        ImageIcon icnApp = PtaResourceManager.getImageIcon(strNameIcon);
         
         this.setIconImage(icnApp.getImage());
         this.appMainPanel.setVisible(true);

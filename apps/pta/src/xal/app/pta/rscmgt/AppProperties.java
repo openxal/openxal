@@ -1318,7 +1318,7 @@ public final class AppProperties extends PropertiesManager  {
      */
     static {
         try {
-            Properties  propsDefault = ResourceManager.getProperties( STR_FILE_DEFAULT );
+            Properties  propsDefault = PtaResourceManager.getProperties( STR_FILE_DEFAULT );
             
             MGR_APP_PROPS = new AppProperties(propsDefault);
             

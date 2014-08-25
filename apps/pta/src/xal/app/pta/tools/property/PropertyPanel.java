@@ -299,7 +299,7 @@ public class PropertyPanel extends JPanel {
 //        String          strUpdateIconPath = AppProperties.APPLY.ICON.getValue().asString();
 //        String          strUpdateLbl      = AppProperties.APPLY.LABEL.getValue().asString();
 //        String          strUpdateLblPad   = String.format(" %s", strUpdateLbl); 
-//        ImageIcon       icnUpdate          = ResourceManager.getImageIcon(strUpdateIconPath);
+//        ImageIcon       icnUpdate          = PtaResourceManager.getImageIcon(strUpdateIconPath);
         
         String          strUpdateLblPad = "  Apply";
         ImageIcon       icnUpdate       = AppProperties.ICON.APPLY.getValue().asIcon();

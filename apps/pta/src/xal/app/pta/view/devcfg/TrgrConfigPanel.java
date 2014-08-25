@@ -8,7 +8,7 @@ package xal.app.pta.view.devcfg;
 
 import xal.app.pta.MainApplication;
 import xal.app.pta.rscmgt.AppProperties;
-import xal.app.pta.rscmgt.ResourceManager;
+import xal.app.pta.rscmgt.PtaResourceManager;
 import xal.app.pta.view.cmn.TriggerEventPanel;
 import xal.ca.ConnectionException;
 import xal.ca.GetException;
@@ -274,7 +274,7 @@ public class TrgrConfigPanel extends DeviceConfigBasePanel<WireScanner.TrgConfig
         this.pnlTrgEvt = new TriggerEventPanel();
         
         String      strPathIconWarn = AppProperties.ICON.PRCG_WARNING.getValue().asString();
-        ImageIcon   imgIconWarning  = ResourceManager.getImageIcon(strPathIconWarn);
+        ImageIcon   imgIconWarning  = PtaResourceManager.getImageIcon(strPathIconWarn);
         JLabel      lblIconWarning  = new JLabel(imgIconWarning);
         Color       clrTextWarning  = this.getBackground();
         

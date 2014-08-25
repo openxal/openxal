@@ -7,7 +7,7 @@
 package xal.app.pta.tools.property;
 
 
-import xal.app.pta.rscmgt.ResourceManager;
+import xal.app.pta.rscmgt.PtaResourceManager;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -439,7 +439,7 @@ public class Property {
     public ImageIcon    asIcon() {
         String  strPropVal = this.asString();
         
-        ImageIcon   icnVal = ResourceManager.getImageIcon(strPropVal);
+        ImageIcon   icnVal = PtaResourceManager.getImageIcon(strPropVal);
         
         return icnVal;
     }

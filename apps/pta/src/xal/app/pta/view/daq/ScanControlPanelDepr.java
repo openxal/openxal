@@ -12,7 +12,7 @@ import xal.app.pta.MainScanController.IScanControllerListener;
 import xal.app.pta.MainScanController.MOTION_STATE;
 import xal.app.pta.MainScanController.SCAN_MODE;
 import xal.app.pta.rscmgt.AppProperties;
-import xal.app.pta.rscmgt.ResourceManager;
+import xal.app.pta.rscmgt.PtaResourceManager;
 import xal.app.pta.tools.ca.SmfPvMonitor;
 import xal.app.pta.tools.ca.SmfPvMonitorPool;
 import xal.app.pta.tools.logging.IEventLogger;
@@ -562,19 +562,19 @@ public class ScanControlPanelDepr extends JPanel implements IScanControllerListe
         // Create the scan control buttons
         String  strPathIconStart = AppProperties.ICON.SCAN_START.getValue().asString(); 
         this.butScan  = new JButton(" Start Scan ",
-                          ResourceManager.getImageIcon(strPathIconStart) );
+                          PtaResourceManager.getImageIcon(strPathIconStart) );
         
         String  strPathIconAbort = AppProperties.ICON.SCAN_ABORT.getValue().asString();
         this.butAbort = new JButton(" Abort Scan",
-                        ResourceManager.getImageIcon(strPathIconAbort) );
+                        PtaResourceManager.getImageIcon(strPathIconAbort) );
         
         String  strPathIconStop = AppProperties.ICON.SCAN_STOP.getValue().asString();
         this.butStop  = new JButton(" Stop Fork   ",
-                        ResourceManager.getImageIcon(strPathIconStop) );
+                        PtaResourceManager.getImageIcon(strPathIconStop) );
         
         String strPathIconPark = AppProperties.ICON.SCAN_PARK.getValue().asString();
         this.butPark  = new JButton(" Park              ",
-                        ResourceManager.getImageIcon(strPathIconPark) );
+                        PtaResourceManager.getImageIcon(strPathIconPark) );
         
 
         // Initialize button state

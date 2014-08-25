@@ -244,9 +244,9 @@ public abstract class SignalAttrSet implements DataListener {
     public void setSignalAttrs(ProfileDevice.ANGLE angle, SignalAttrs attrSignal) {
         
         switch (angle) {
-        case HOR: this.hor = attrSignal;
-        case VER: this.ver = attrSignal;
-        case DIA: this.dia = attrSignal;
+        case HOR: this.hor = attrSignal; break;
+        case VER: this.ver = attrSignal; break;
+        case DIA: this.dia = attrSignal; break;
         default:  ;
         }
     }
@@ -265,9 +265,9 @@ public abstract class SignalAttrSet implements DataListener {
     public SignalAttrs   getSignalAttrs(ProfileDevice.ANGLE angle) {
         
         switch (angle) {
-        case HOR: return this.hor;
-        case VER: return this.ver;
-        case DIA: return this.dia;
+        case HOR: return this.hor; 
+        case VER: return this.ver; 
+        case DIA: return this.dia; 
         default:  return null;
         }
     }

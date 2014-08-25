@@ -15,7 +15,7 @@ import xal.app.pta.MainScanController.SCAN_MODE;
 import xal.app.pta.daq.ScannerData;
 import xal.app.pta.daq.MeasurementData;
 import xal.app.pta.rscmgt.AppProperties;
-import xal.app.pta.rscmgt.ResourceManager;
+import xal.app.pta.rscmgt.PtaResourceManager;
 import xal.app.pta.tools.ca.SmfPvMonitor;
 import xal.app.pta.tools.ca.SmfPvMonitorPool;
 import xal.app.pta.tools.logging.IEventLogger;
@@ -962,27 +962,27 @@ public class ScanControlPanel extends JPanel implements IScanControllerListener 
         // Create the DAQ control buttons
         String  strPathIconStart = AppProperties.ICON.SCAN_START.getValue().asString(); 
         this.butScanXp  = new JButton(" Start Scan ",
-                          ResourceManager.getImageIcon(strPathIconStart) );
+                          PtaResourceManager.getImageIcon(strPathIconStart) );
         
         String  strPathIconEasy = AppProperties.ICON.SCAN_EASY.getValue().asString();
         this.butScanEz    = new JButton(" Easy Scan ", 
-                          ResourceManager.getImageIcon(strPathIconEasy) );
+                          PtaResourceManager.getImageIcon(strPathIconEasy) );
         
         String  strPathIconAbort = AppProperties.ICON.SCAN_ABORT.getValue().asString();
         this.butAbort = new JButton(" Abort Scan",
-                        ResourceManager.getImageIcon(strPathIconAbort) );
+                        PtaResourceManager.getImageIcon(strPathIconAbort) );
         
         String  strPathIconStop = AppProperties.ICON.SCAN_STOP.getValue().asString();
         this.butStop  = new JButton(" Stop Fork   ",
-                        ResourceManager.getImageIcon(strPathIconStop) );
+                        PtaResourceManager.getImageIcon(strPathIconStop) );
         
         String strPathIconPark = AppProperties.ICON.SCAN_PARK.getValue().asString();
         this.butPark  = new JButton(" Park              ",
-                        ResourceManager.getImageIcon(strPathIconPark) );
+                        PtaResourceManager.getImageIcon(strPathIconPark) );
                         
         String  strPathIconAcquire = AppProperties.ICON.DAQ_ACQUIRE.getValue().asString();
         this.butAcquire = new JButton(" (re)Acquire ",
-                        ResourceManager.getImageIcon(strPathIconAcquire) );
+                        PtaResourceManager.getImageIcon(strPathIconAcquire) );
 
         this.enableScanAndDaqButtons(false);
         this.enableAbortAndReturnButtons(false);

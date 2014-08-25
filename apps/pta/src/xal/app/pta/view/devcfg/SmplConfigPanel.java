@@ -7,7 +7,7 @@
 package xal.app.pta.view.devcfg;
 
 import xal.app.pta.rscmgt.AppProperties;
-import xal.app.pta.rscmgt.ResourceManager;
+import xal.app.pta.rscmgt.PtaResourceManager;
 import xal.app.pta.view.cmn.GainSelectorPanel;
 import xal.ca.ConnectionException;
 import xal.ca.GetException;
@@ -438,7 +438,7 @@ public class SmplConfigPanel extends DeviceConfigBasePanel<WireScanner.SmplConfi
         this.pnlGain = new GainSelectorPanel();
         
         String      strPathIconWarn = AppProperties.ICON.SMPL_WARNING.getValue().asString();
-        ImageIcon   imgIconWarning  = ResourceManager.getImageIcon(strPathIconWarn);
+        ImageIcon   imgIconWarning  = PtaResourceManager.getImageIcon(strPathIconWarn);
         JLabel      lblIconWarning  = new JLabel(imgIconWarning);
         Color       clrTextWarning  = this.getBackground();
         

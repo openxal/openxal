@@ -8,7 +8,7 @@ package xal.app.pta.cmdmgt;
 
 import xal.extension.application.Commander;
 import xal.app.pta.rscmgt.ImageUtility;
-import xal.app.pta.rscmgt.ResourceManager;
+import xal.app.pta.rscmgt.PtaResourceManager;
 
 import java.awt.event.ActionEvent;
 import java.io.IOException;
@@ -158,7 +158,7 @@ public abstract class Command extends AbstractAction {
             
             // Load the command properties
             try {
-                CLS_PROPS_CMD_CFG = ResourceManager.getProperties(STR_FILE_CMD_CFG);
+                CLS_PROPS_CMD_CFG = PtaResourceManager.getProperties(STR_FILE_CMD_CFG);
                 
             } catch (IOException e) {
                 String strMsg = "CommandSet: Missing or corrupted file ";
@@ -345,7 +345,7 @@ public abstract class Command extends AbstractAction {
         if (strVal == null)
             return null;
         
-        ImageIcon icnFull = ResourceManager.getImageIcon(strVal);
+        ImageIcon icnFull = PtaResourceManager.getImageIcon(strVal);
         ImageIcon icnTBar = ImageUtility.createToolbarIcon(icnFull);
         
         return icnTBar;
@@ -368,7 +368,7 @@ public abstract class Command extends AbstractAction {
         if (strVal == null) 
             return null;
         
-        Icon icnFull = ResourceManager.getImageIcon(strVal);
+        Icon icnFull = PtaResourceManager.getImageIcon(strVal);
         
         return icnFull;
     }

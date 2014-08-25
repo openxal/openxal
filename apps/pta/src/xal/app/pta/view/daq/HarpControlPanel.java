@@ -12,7 +12,7 @@ import xal.app.pta.MainHarpController;
 import xal.app.pta.daq.MeasurementData;
 import xal.app.pta.daq.HarpData;
 import xal.app.pta.rscmgt.AppProperties;
-import xal.app.pta.rscmgt.ResourceManager;
+import xal.app.pta.rscmgt.PtaResourceManager;
 import xal.app.pta.tools.logging.IEventLogger;
 import xal.app.pta.tools.swing.NumberTextField;
 import xal.ca.BadChannelException;
@@ -828,15 +828,15 @@ public class HarpControlPanel extends JPanel implements MainHarpController.IHarp
         // Create the DAQ control buttons
         String  strPathIconStart = AppProperties.ICON.SCAN_START.getValue().asString(); 
         this.butDaq  = new JButton(" Start Sampling ",
-                          ResourceManager.getImageIcon(strPathIconStart) );
+                          PtaResourceManager.getImageIcon(strPathIconStart) );
         
         String  strPathIconAbort = AppProperties.ICON.SCAN_ABORT.getValue().asString();
         this.butAbort = new JButton(" Abort Sampling ",
-                        ResourceManager.getImageIcon(strPathIconAbort) );
+                        PtaResourceManager.getImageIcon(strPathIconAbort) );
         
         String  strPathIconAcquire = AppProperties.ICON.DAQ_ACQUIRE.getValue().asString();
         this.butAcquire = new JButton(" (re)Acquire ",
-                        ResourceManager.getImageIcon(strPathIconAcquire) );
+                        PtaResourceManager.getImageIcon(strPathIconAcquire) );
 
         this.enableDaqButtons(false);
         this.enableAbortButtons(false);

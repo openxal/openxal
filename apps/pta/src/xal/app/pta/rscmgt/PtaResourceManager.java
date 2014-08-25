@@ -6,6 +6,8 @@
  */
 package xal.app.pta.rscmgt;
 
+import xal.app.pta.MainApplication;
+import xal.tools.ResourceManager;
 import xal.tools.IconLib;
 
 import java.io.File;
@@ -21,7 +23,7 @@ import javax.swing.ImageIcon;
 
 /**
 /**
- * <h4>ResourceManager</h4>
+ * <h4>PtaResourceManager</h4>
  * <p>
  * Utility class for managing the resources of the application.
  * </p>
@@ -34,7 +36,7 @@ import javax.swing.ImageIcon;
  * @since  Jun 23, 2010
  * @author Christopher K. Allen
  */
-public class ResourceManager {
+public class PtaResourceManager {
     
     
 //    /*
@@ -61,7 +63,7 @@ public class ResourceManager {
 //        try {
 //            CharBuffer          bufCat = CharBuffer.allocate(1000);
 //
-//            URL                 urlCat = ResourceManager.class.getResource("../resources/About.properties");
+//            URL                 urlCat = PtaResourceManager.class.getResource("../resources/About.properties");
 //            InputStream         isCat  = urlCat.openStream();
 //            InputStreamReader   isrCat = new InputStreamReader(isCat);
 //            isrCat.read(bufCat);
@@ -75,7 +77,7 @@ public class ResourceManager {
 //        }
 //        
 //        try {
-//            URL         urlAppCfg = ResourceManager.class.getResource("../resources/AppConfiguration.properties");
+//            URL         urlAppCfg = PtaResourceManager.class.getResource("../resources/AppConfiguration.properties");
 //            InputStream isAppCfg  = urlAppCfg.openStream();
 //            Properties  prpAppCfg = new Properties();
 //            prpAppCfg.load(isAppCfg);
@@ -105,9 +107,9 @@ public class ResourceManager {
     
     
     /** Name of the resources directory relative to the location of <code>MainApplication</code> */
-    public static String                        STR_DIR_RESOURCES = "resources/";
+//    public static String                        STR_DIR_RESOURCES = "resources/";
 //    public static String						STR_DIR_RESOURCES = System.getenv("OPENXAL_HOME") + "/apps/pta/resources/";
-    
+    public static String                        STR_DIR_RESOURCES = ResourceManager.getResourceURL(MainApplication.class, "/resources").toString();
     
     
 
@@ -120,7 +122,7 @@ public class ResourceManager {
      * Load the singleton class objects.
      */
     static {
-        PREFS_CONFIG = Preferences.userNodeForPackage( ResourceManager.class );
+        PREFS_CONFIG = Preferences.userNodeForPackage( PtaResourceManager.class );
     }
     
     
@@ -169,7 +171,7 @@ public class ResourceManager {
      * @author Christopher K. Allen
      */
     public static URL getResourceUrl(String strLocalName)       {
-        String  strPathRel = ResourceManager.STR_DIR_RESOURCES + strLocalName;
+        String  strPathRel = PtaResourceManager.STR_DIR_RESOURCES + strLocalName;
         
         File file = new File(strPathRel);
         URI uri = file.toURI();
@@ -202,7 +204,7 @@ public class ResourceManager {
      * @author Christopher K. Allen
      */
     public static InputStream   openResource(String strRscName) throws IOException {
-        URL             urlSrc  = ResourceManager.getResourceUrl(strRscName);
+        URL             urlSrc  = PtaResourceManager.getResourceUrl(strRscName);
         InputStream     isPath  = urlSrc.openStream();
         
         return isPath;
@@ -303,7 +305,7 @@ public class ResourceManager {
         }
         
         // The image file is local to the application
-        URL       urlIcon  = ResourceManager.getResourceUrl(strRscName);
+        URL       urlIcon  = PtaResourceManager.getResourceUrl(strRscName);
         ImageIcon icnImage = new ImageIcon(urlIcon);
 
         return icnImage;
@@ -318,11 +320,11 @@ public class ResourceManager {
     
     /**
      * Utility class - prevent any instances of
-     * <code>ResourceManager</code> objects.
+     * <code>PtaResourceManager</code> objects.
      *
      *
      * @since     Jun 16, 2009
      * @author    Christopher K. Allen
      */
-    private ResourceManager()      {};
+    private PtaResourceManager()      {};
 }

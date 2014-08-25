@@ -9,7 +9,7 @@ package xal.app.pta.view.devcfg;
 import xal.app.pta.MainApplication;
 import xal.app.pta.rscmgt.AppProperties;
 import xal.app.pta.rscmgt.DeviceProperties;
-import xal.app.pta.rscmgt.ResourceManager;
+import xal.app.pta.rscmgt.PtaResourceManager;
 import xal.app.pta.tools.swing.BndNumberTextField;
 import xal.app.pta.tools.swing.NumberTextField.FMT;
 import xal.ca.ConnectionException;
@@ -569,16 +569,16 @@ public class PrcgConfigPanel extends DeviceConfigBasePanel<WireScanner.PrcgConfi
         
         // Create the choose head, body, and tail buttons
         String      strPathIconHead = AppProperties.ICON.PRCG_BMHEAD.getValue().asString();
-        ImageIcon   imgIconBeamHead = ResourceManager.getImageIcon(strPathIconHead);
+        ImageIcon   imgIconBeamHead = PtaResourceManager.getImageIcon(strPathIconHead);
         this.butHead = new JButton(" Select for Beam Head ", imgIconBeamHead);
 
         String      strPathIconBody = AppProperties.ICON.PRCG_BMBODY.getValue().asString();
-        ImageIcon   imgIconBeamBody = ResourceManager.getImageIcon(strPathIconBody);
+        ImageIcon   imgIconBeamBody = PtaResourceManager.getImageIcon(strPathIconBody);
         this.butBody = new JButton(" Select for Beam Body ", imgIconBeamBody);
 
         
         String      strPathIconTail = AppProperties.ICON.PRCG_BMTAIL.getValue().asString();
-        ImageIcon   imgIconBeamTail = ResourceManager.getImageIcon(strPathIconTail);
+        ImageIcon   imgIconBeamTail = PtaResourceManager.getImageIcon(strPathIconTail);
         this.butTail = new JButton(" Select for Beam Tail ", imgIconBeamTail);
         
         
