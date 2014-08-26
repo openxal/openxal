@@ -264,28 +264,35 @@ class WebSocketIO {
 
 			// TODO: need to check the opcode to see what kind of data has arrived (e.g. continuation, text, data, ping or pong)
 
-			final StringBuilder resultBuilder = new StringBuilder();
 
-			PayloadReader payloadReader = PayloadReader.getInstance();
+			MaskPayloadReader maskPayloadReader = null;
 			if ( masked ) {
 				final byte[] mask = byteReader.nextBytes( 4 );
-				payloadReader = new MaskPayloadReader( mask );
+				maskPayloadReader = new MaskPayloadReader( mask );
 			}
 
 			try {
-				final byte[] dataBytes = byteReader.nextBytes( dataLength );
-				for ( int index = 0 ; index < dataBytes.length ; index++ ) {
-					int charCode = payloadReader.readCharCode( dataBytes, index );
-					final char[] chars = Character.toChars( charCode );
-					resultBuilder.append( chars );
+				final byte[] rawDataBytes = byteReader.nextBytes( dataLength );
+				byte[] dataBytes = null;
+
+				if ( masked ) {
+					dataBytes = new byte[dataLength];
+					for ( int index = 0 ; index < dataLength ; index++ ) {
+						dataBytes[index] = maskPayloadReader.readCharCode( rawDataBytes, index );
+					}
 				}
+				else {
+					dataBytes = rawDataBytes;
+				}
+
+				final String result = new String( dataBytes, 0, dataLength, "UTF-8" );
+				return result;
 			}
 			catch( Exception exception ) {
 				System.err.println( "Exception reading characters: " + exception );
 				exception.printStackTrace();
+				return "";
 			}
-
-			return resultBuilder.toString();
 		}
 		catch( StreamByteReader.StreamPrematurelyClosedException exception ) {
 			throw new SocketPrematurelyClosedException( "The remote socket has closed while reading the message..." );
@@ -300,7 +307,7 @@ class WebSocketIO {
 	}
 
 
-	
+
 	/** Exception indicating that the socket closed prematurely */
 	static public class SocketPrematurelyClosedException extends Exception {
 		/** required serial version ID */
@@ -316,28 +323,8 @@ class WebSocketIO {
 
 
 
-/** Reads the payload directly without masking */
-class PayloadReader {
-	/** direct reader singleton */
-	final private static PayloadReader DEFAULT_READER = new PayloadReader();
-
-
-	/** get the default instance */
-	static public PayloadReader getInstance() {
-		return DEFAULT_READER;
-	}
-
-
-	/** read the specified character directly */
-	public int readCharCode( final byte[] inputBuffer, final int index ) {
-		return inputBuffer[index];
-	}
-}
-
-
-
 /** Reads the payload when there is a mask */
-class MaskPayloadReader extends PayloadReader {
+class MaskPayloadReader {
 	/** mask to use */
 	final private byte[] MASK;
 
@@ -349,8 +336,8 @@ class MaskPayloadReader extends PayloadReader {
 
 
 	/** read the specified character and mask it */
-	public int readCharCode( final byte[] inputBuffer, final int index ) {
-		return MASK[index%4] ^ inputBuffer[index];
+	public byte readCharCode( final byte[] inputBuffer, final int index ) {
+		return (byte)( MASK[index%4] ^ inputBuffer[index] );
 	}
 }
 
@@ -384,34 +371,40 @@ class StreamByteReader {
 	/** read the next byte waiting for data from the stream if necessary */
 	public byte nextByte() throws java.io.IOException, StreamPrematurelyClosedException {
 		final int position = _position;
-
-		if ( position < _byteStack.length ) {
-			final byte nextByte = _byteStack[position];
-			_position += 1;
-			return nextByte;
+		if ( position >= _byteStack.length ) {
+			popNextBytes();
 		}
-		else {
-			final byte[] streamBuffer = new byte[BUFFER_SIZE];
-			final InputStream readStream = SOURCE_STREAM;
-			final BufferedInputStream reader = new BufferedInputStream( readStream );
-			final ByteArrayOutputStream rawByteBuffer = new ByteArrayOutputStream();
 
-			do {
-				final int readCount = reader.read( streamBuffer, 0, BUFFER_SIZE );
+		final byte nextByte = _byteStack[_position];
+		_position += 1;
 
-				if ( readCount == -1 ) {     // the session has been closed
-					throw new StreamPrematurelyClosedException( "The stream has closed while reading the remote response..." );
-				}
-				else if  ( readCount > 0 ) {
-					rawByteBuffer.write( streamBuffer, 0, readCount );
-				}
-			} while ( readStream.available() > 0 );
+		return nextByte;
+	}
 
-			_byteStack = rawByteBuffer.toByteArray();
-			_position = 0;
 
-			return nextByte();
-		}
+	private void popNextBytes() throws java.io.IOException, StreamPrematurelyClosedException {
+		final byte[] streamBuffer = new byte[BUFFER_SIZE];
+		final InputStream readStream = SOURCE_STREAM;
+		final BufferedInputStream reader = new BufferedInputStream( readStream );
+		final ByteArrayOutputStream rawByteBuffer = new ByteArrayOutputStream();
+
+		do {
+			final int readCount = reader.read( streamBuffer, 0, BUFFER_SIZE );
+
+			if ( readCount == -1 ) {     // the session has been closed
+				throw new StreamPrematurelyClosedException( "The stream has closed while reading the remote response..." );
+			}
+			else if  ( readCount > 0 ) {
+				rawByteBuffer.write( streamBuffer, 0, readCount );
+			}
+
+			if ( readCount < BUFFER_SIZE ) {
+				break;
+			}
+		} while ( true );
+
+		_byteStack = rawByteBuffer.toByteArray();
+		_position = 0;
 	}
 
 
@@ -443,7 +436,7 @@ class StreamByteReader {
 		/** required serial version ID */
 		static final long serialVersionUID = 0L;
 
-
+		
 		/** Constructor */
 		public StreamPrematurelyClosedException( final String message ) {
 			super( message );
