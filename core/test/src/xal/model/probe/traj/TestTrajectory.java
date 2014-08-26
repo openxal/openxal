@@ -6,7 +6,7 @@
  */
 package xal.model.probe.traj;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.fail;
 
 import java.util.Iterator;
 import java.util.List;
@@ -29,7 +29,7 @@ import xal.sim.scenario.Scenario;
 import xal.sim.sync.SynchronizationException;
 import xal.smf.Accelerator;
 import xal.smf.AcceleratorSeq;
-import xal.test.ResourceManager;
+import xal.smf.data.XMLDataManager;
 
 /**
  * Class of test cases for class <code>{@link Trajectory}</code>.
@@ -45,7 +45,7 @@ public class TestTrajectory {
      */
     
     /** Accelerator sequence used for testing */
-    public static final String     STR_ACCL_SEQ_ID = "HEBT1";
+    public static final String     STR_ACCL_SEQ_ID = "HEBT2";
     
     
     /** Bending Dipole ID */
@@ -60,10 +60,10 @@ public class TestTrajectory {
      */
     
     /** Accelerator hardware under test */
-    private static final Accelerator    ACCEL_TEST = ResourceManager.getTestAccelerator();
+    private static Accelerator    ACCEL_TEST;
     
     /** Accelerator sequence under test */
-    private static final AcceleratorSeq SEQ_TEST = ACCEL_TEST.getSequence(STR_ACCL_SEQ_ID);
+    private static AcceleratorSeq SEQ_TEST;
 
     
     /*
@@ -98,6 +98,8 @@ public class TestTrajectory {
     @BeforeClass
     public static void setUpBeforeClass() throws Exception {
         try {
+            ACCEL_TEST = XMLDataManager.loadDefaultAccelerator();
+            SEQ_TEST   = ACCEL_TEST.getSequence(STR_ACCL_SEQ_ID);
             MODEL_TEST = Scenario.newScenarioFor(SEQ_TEST);
             
             IAlgorithm      algor = AlgorithmFactory.createEnvTrackerAdapt(SEQ_TEST);

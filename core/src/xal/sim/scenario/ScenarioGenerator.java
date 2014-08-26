@@ -170,7 +170,8 @@ class ScenarioGenerator {
 			if (element.getEndPosition() > sequenceLength) sequenceLength = element.getEndPosition();
 			
 			if (halfMag && node instanceof Magnet && !element.isThin()) {
-				LatticeElement center = new LatticeElement(new Marker("ELEMENT_CENTER:" + node.getId()), element.getCenter(),
+//				LatticeElement center = new LatticeElement(new Marker("ELEMENT_CENTER:" + node.getId()), element.getCenter(),
+              LatticeElement center = new LatticeElement(new Marker(node.getId() + ":ELEMENT_CENTER"), element.getCenter(),
 						elementMapping.getDefaultConverter(), 0);
 				elements.add(center);
 			}

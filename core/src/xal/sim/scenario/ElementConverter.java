@@ -6,9 +6,6 @@
 
 package xal.sim.scenario;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import xal.model.IComponent;
 import xal.model.elem.Element;
 import xal.model.elem.ElementSeq;
