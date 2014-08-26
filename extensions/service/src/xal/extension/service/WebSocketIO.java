@@ -264,28 +264,35 @@ class WebSocketIO {
 
 			// TODO: need to check the opcode to see what kind of data has arrived (e.g. continuation, text, data, ping or pong)
 
-			final StringBuilder resultBuilder = new StringBuilder();
 
-			PayloadReader payloadReader = PayloadReader.getInstance();
+			MaskPayloadReader maskPayloadReader = null;
 			if ( masked ) {
 				final byte[] mask = byteReader.nextBytes( 4 );
-				payloadReader = new MaskPayloadReader( mask );
+				maskPayloadReader = new MaskPayloadReader( mask );
 			}
 
 			try {
-				final byte[] dataBytes = byteReader.nextBytes( dataLength );
-				for ( int index = 0 ; index < dataBytes.length ; index++ ) {
-					int charCode = payloadReader.readCharCode( dataBytes, index );
-					final char[] chars = Character.toChars( charCode );
-					resultBuilder.append( chars );
+				final byte[] rawDataBytes = byteReader.nextBytes( dataLength );
+				byte[] dataBytes = null;
+
+				if ( masked ) {
+					dataBytes = new byte[dataLength];
+					for ( int index = 0 ; index < dataLength ; index++ ) {
+						dataBytes[index] = maskPayloadReader.readCharCode( rawDataBytes, index );
+					}
 				}
+				else {
+					dataBytes = rawDataBytes;
+				}
+
+				final String result = new String( dataBytes, 0, dataLength, "UTF-8" );
+				return result;
 			}
 			catch( Exception exception ) {
 				System.err.println( "Exception reading characters: " + exception );
 				exception.printStackTrace();
+				return "";
 			}
-
-			return resultBuilder.toString();
 		}
 		catch( StreamByteReader.StreamPrematurelyClosedException exception ) {
 			throw new SocketPrematurelyClosedException( "The remote socket has closed while reading the message..." );
@@ -316,28 +323,8 @@ class WebSocketIO {
 
 
 
-/** Reads the payload directly without masking */
-class PayloadReader {
-	/** direct reader singleton */
-	final private static PayloadReader DEFAULT_READER = new PayloadReader();
-
-
-	/** get the default instance */
-	static public PayloadReader getInstance() {
-		return DEFAULT_READER;
-	}
-
-
-	/** read the specified character directly */
-	public int readCharCode( final byte[] inputBuffer, final int index ) {
-		return inputBuffer[index];
-	}
-}
-
-
-
 /** Reads the payload when there is a mask */
-class MaskPayloadReader extends PayloadReader {
+class MaskPayloadReader {
 	/** mask to use */
 	final private byte[] MASK;
 
@@ -349,8 +336,8 @@ class MaskPayloadReader extends PayloadReader {
 
 
 	/** read the specified character and mask it */
-	public int readCharCode( final byte[] inputBuffer, final int index ) {
-		return MASK[index%4] ^ inputBuffer[index];
+	public byte readCharCode( final byte[] inputBuffer, final int index ) {
+		return (byte)( MASK[index%4] ^ inputBuffer[index] );
 	}
 }
 
