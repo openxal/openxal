@@ -10,7 +10,9 @@ import junit.framework.TestSuite;
  * @author Craig McChesney
  * @version $id:
  * 
+ * @deprecated  Replaced by TestTrajectory
  */
+@Deprecated
 public class TrajectoryTest extends TestCase {
 
 	private static final String XML_IN = "xml/ModelValidation.lat.mod.xal.xml";

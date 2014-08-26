@@ -9,6 +9,7 @@ import xal.model.xml.ParsingException;
 
 import java.util.AbstractMap;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.Iterator;
@@ -444,6 +445,28 @@ public class Trajectory<S extends ProbeState<S>> implements IArchive, Iterable<S
             
             return lstStates;
         }
+        
+        /**
+         * Return all the states managed by this map as a list.
+         * 
+         * @return      all probe states managed by this element state map
+         *
+         * @author Christopher K. Allen
+         * @since  Aug 26, 2014
+         */
+        public List<S>  getAllStates() {
+            List<S>     lstStates = new LinkedList<S>();
+            Collection< RealNumericIndexer<S> > setLists = this.mapStateList.values();
+            
+            for (RealNumericIndexer<S> rni : setLists) {
+                Iterator<S> iter = rni.iterator();
+                while (iter.hasNext()) {
+                    S state = iter.next();
+                    lstStates.add(state);
+                }
+            }
+            return lstStates;
+        }
     }
 
 
@@ -458,8 +481,8 @@ public class Trajectory<S extends ProbeState<S>> implements IArchive, Iterable<S
     private RealNumericIndexer<S>      _history;
     
     /** Probe states by element name */
-//    private final ElementStateMap<S>   mapStates;
-    private final NodeIdToElemStates     mapStates;
+    private final ElementStateMap<S>   mapStates;
+//    private final NodeIdToElemStates     mapStates;
     
     /** Type class of the underlying state objects */
     private final Class<S>            clsStates;
@@ -559,8 +582,8 @@ public class Trajectory<S extends ProbeState<S>> implements IArchive, Iterable<S
      */
     public Trajectory(final Class<S> clsStates) {
         this._history  = new RealNumericIndexer<S>();
-//        this.mapStates = new ElementStateMap<S>();
-        this.mapStates = new NodeIdToElemStates();
+        this.mapStates = new ElementStateMap<S>();
+//        this.mapStates = new NodeIdToElemStates();
         this.clsStates = clsStates;
     }
 
@@ -679,12 +702,26 @@ public class Trajectory<S extends ProbeState<S>> implements IArchive, Iterable<S
     }
     
 	/**
-	 * Get the list of states.
+	 * Get the list of all states in this trajectory managed by the
+	 * state map.
 	 *
 	 * @return a new list of this trajectory's states
 	 */
-	protected List<S> getStates() {
-		return _history.toList();
+	public List<S> getStatesViaStateMap() {
+		return this.mapStates.getAllStates();
+	}
+	
+	/**
+	 * Returns a list of all the states in this trajectory managed by
+	 * the state numeric (position) indexer.
+	 * 
+	 * @return
+	 *
+	 * @author Christopher K. Allen
+	 * @since  Aug 26, 2014
+	 */
+	public List<S> getStatesViaIndexer() {
+	    return this._history.toList();
 	}
 	
     /**
