@@ -741,80 +741,137 @@ class ArrayEncoder extends SoftValueEncoder {
 
 
 
-/** Base class of decoders */
-abstract class AbstractDecoder<DataType> {
-	/** archive to parse */
-	final protected String ARCHIVE;
-	
-	/** unparsed remainder of the source string after parsing */
-	protected String _remainder;
-	
-	
+/** Decode JSON into an object graph */
+class JSONDecoder<DataType> {
+	/** JSON archive to parse */
+	final private String JSON_ARCHIVE;
+
+	/** store of conversion adaptors to use when instantiating new instances from the JSON archive */
+	final private ConversionAdaptorStore CONVERSION_ADAPTOR_STORE;
+
+	/** stores references to objects already decoded and referenced in new objects */
+	private KeyedReferenceStore _referenceStore;
+
+	/** current position of the scanner in the archive */
+	private int _scanPosition;
+
+	/** decoder for arrays */
+	private ArrayDecoder _arrayDecoder;
+
+	/** decoder for dictionaries */
+	private DictionaryDecoder _dictionaryDecoder;
+
+
 	/** Constructor */
-	protected AbstractDecoder( final String archive ) {
-		ARCHIVE = archive;
+	protected JSONDecoder( final String jsonArchive, final ConversionAdaptorStore conversionAdaptorStore ) {
+		JSON_ARCHIVE = jsonArchive.trim();
+		CONVERSION_ADAPTOR_STORE = conversionAdaptorStore;
+
+		_scanPosition = 0;
+		_referenceStore = null;
+		_arrayDecoder = null;
+		_dictionaryDecoder = null;
 	}
-	
-	
-	/** decode the source to extract the next object */	
-	abstract protected DataType decode();
-	
-	
-	/** get the unparsed remainder of the source string */
-	protected String getRemainder() {
-		return _remainder;
-	}
-	
-	
-	/** check for a match of the archive against the specified pattern, update the remainder and return the matching string */
-	protected String processMatch( final Pattern pattern ) {
-		final Matcher matcher = pattern.matcher( ARCHIVE );
-		matcher.find();
-		final int nextIndex = matcher.end();
-		_remainder = ARCHIVE.length() > nextIndex ? ARCHIVE.substring( nextIndex ) : null;
-		return matcher.group();
-	}
-	
-	
+
+
 	/** Get a decoder for the archive */
-	public static AbstractDecoder<?> getInstance( final String archive, final ConversionAdaptorStore conversionAdaptorStore ) {
-        return AbstractDecoder.getInstance( archive, conversionAdaptorStore, new KeyedReferenceStore() );
-	}	
-	
-	
-	/** Get a decoder for the archive */
-	protected static AbstractDecoder<?> getInstance( final String archive, final ConversionAdaptorStore conversionAdaptorStore, final KeyedReferenceStore referenceStore ) {
-		final String source = archive.trim();
-		if ( source.length() > 0 ) {
-			final char firstChar = source.charAt( 0 );
-			switch ( firstChar ) {
-				case '+': case '-': case '.':
-				case '0': case '1': case '2': case '3': case '4': case '5': case '6': case '7': case '8': case '9':
-					return new NumberDecoder( source );
-				case 't': case 'f':
-					return new BooleanDecoder( source );
-				case 'n':
-					return new NullDecoder( source );
-				case '\"':
-					return new StringDecoder( source );
-				case '[':
-					return new ArrayDecoder( source, conversionAdaptorStore, referenceStore );
-				case '{':
-					return new DictionaryDecoder( source, conversionAdaptorStore, referenceStore );
-				default:
-					return null;
-			}
+	public static JSONDecoder<?> getInstance( final String jsonArchive, final ConversionAdaptorStore conversionAdaptorStore ) {
+		return new JSONDecoder<?>( jsonArchive, conversionAdaptorStore );
+	}
+
+
+	/** get the current scan position */
+	public int getScanPosition() {
+		return _scanPosition;
+	}
+
+
+	/** advance the scan position the specified number of steps */
+	public void advanceScanPosition( final int scanLength ) {
+		_scanPosition += scanLength;
+	}
+
+
+	/** get the JSON Archive */
+	public String getArchive() {
+		return JSON_ARCHIVE;
+	}
+
+
+	/** decode the archive */
+	public Object decode() {
+		_scanPosition = 0;
+		_referenceStore = new KeyedReferenceStore();
+
+		_arrayDecoder = new ArrayDecoder( CONVERSION_ADAPTOR_STORE, _referenceStore );
+		_dictionaryDecoder = new DictionaryDecoder( CONVERSION_ADAPTOR_STORE, _referenceStore );
+
+		return parseNext();
+	}
+
+
+	/** parse the next object starting at the current scan position and advancing it */
+	public Object parseNext() {
+		final AbstractDecoder<?> nextDecoder = nextDecoder();
+		if ( nextDecoder != null ) {
+			return nextDecoder.decode( this );
 		}
 		else {
 			return null;
 		}
-	}	
+	}
+
+
+	/** get the next decoder */
+	private AbstractDecoder<?> nextDecoder() {
+		if ( _scanPosition < JSON_ARCHIVE.length() ) {
+			final char nextChar = JSON_ARCHIVE.charAt( _position );
+
+			switch ( nextChar ) {
+			case '+': case '-': case '.':
+			case '0': case '1': case '2': case '3': case '4': case '5': case '6': case '7': case '8': case '9':
+				return new NumberDecoder.getInstance();
+			case 't': case 'f':
+				return new BooleanDecoder.getInstance();
+			case 'n':
+				return new NullDecoder.getInstance();
+			case '\"':
+				return new StringDecoder.getInstance();
+			case '[':
+				return _arrayDecoder;
+			case '{':
+				return _dictionaryDecoder;
+			default:
+				if ( Character.isWhiteSpace( nextChar ) ) {		// ignore whitespace
+					++_scanPosition;	// increment the scan position
+					return nextDecoder();
+				}
+				else {
+					return null;
+				}
+			}
+		}
+		else {
+			return null;	// nothing left to parse
+		}
+	}
+}
+
+
+
+/** Base class of decoders */
+abstract class AbstractDecoder<DataType> {
+	/** decode the source to extract the next object */
+	abstract protected DataType decode( final JSONDecoder source );
 }
 
 
 
 /** decode a number from a source string */
 class NumberDecoder extends AbstractDecoder<JSONNumber> {
+	/** default number decoder */
+	static private final NumberDecoder DEFAULT_DECODER;
+
 	/** pattern for matching a number */
 	static final Pattern NUMBER_PATTERN;
 	
@@ -822,17 +879,18 @@ class NumberDecoder extends AbstractDecoder<JSONNumber> {
 	// static initializer
 	static {
 		NUMBER_PATTERN = Pattern.compile( "[+-]?((\\d+\\.?\\d*)|(\\.?\\d+))([eE][+-]?\\d+)?" );
+		DEFAULT_DECODER = new NumberDecoder();
 	}
 	
-	
-	/** Constructor */
-	protected NumberDecoder( final String archive ) {
-		super( archive );
+
+	/** get an instance of the number decoder */
+	static public NumberDecoder getInstance() {
+		return DEFAULT_DECODER;
 	}
 	
 	
 	/** decode the source to extract the next object */	
-	protected JSONNumber decode() {
+	protected JSONNumber decode( final JSONDecoder source ) {
 		final String match = processMatch( NUMBER_PATTERN );
         // doubles always have a decimal point even if the fraction is zero, so the absence of a period indicates a long integer
         if ( match != null ) {
@@ -848,26 +906,46 @@ class NumberDecoder extends AbstractDecoder<JSONNumber> {
 
 /** decode a boolean from a source string */
 class BooleanDecoder extends AbstractDecoder<Boolean> {
-	/** pattern for matching booleans */
-	static final Pattern BOOLEAN_PATTERN;
-	
+	/** default boolean decoder */
+	static private final BooleanDecoder DEFAULT_DECODER;
+
 	
 	// static initializer
 	static {
-		BOOLEAN_PATTERN = Pattern.compile( "(true)|(false)" );
+		DEFAULT_DECODER = new BooleanDecoder();
 	}
-	
-	
-	/** Constructor */
-	protected BooleanDecoder( final String archive ) {
-		super( archive );
+
+
+	/** get an instance of the number decoder */
+	static public BooleanDecoder getInstance() {
+		return DEFAULT_DECODER;
 	}
-	
+
 	
 	/** decode the source to extract the next object */	
-	protected Boolean decode() {
-		final String match = processMatch( BOOLEAN_PATTERN );
-		return match != null ? Boolean.valueOf( match ) : null;
+	protected Boolean decode( final JSONDecoder source ) {
+		final int startScanPosition = source.getScanPosition();
+		final String archive = source.getArchive();
+		final char firstChar = archive.charAt( startScanPosition );
+
+		final int scanLength = firstChar == 't' ? 4 : 5;
+		if ( startScanPosition + scanLength <= archive.length() ) {
+			final String input = archive.substring( startScanPosition, startScanPosition + scanLength );
+			if ( input.equals( "true" ) ) {
+				source.advanceScanPosition( scanLength );
+				return true;
+			}
+			else if ( input.equals( "false" ) ) {
+				source.advanceScanPosition( scanLength );
+				return false;
+			}
+			else {
+				throw new RuntimeException( "JSON boolean parse exception at position: " + startScanPosition );
+			}
+		}
+		else {
+			throw new RuntimeException( "JSON boolean decode exception at position: " + startScanPosition + ". The input terminated prematurely." );
+		}
 	}
 }
 
@@ -875,26 +953,42 @@ class BooleanDecoder extends AbstractDecoder<Boolean> {
 
 /** decode a null identifier from a source string */
 class NullDecoder extends AbstractDecoder<Object> {
-	/** pattern for matching the null identifier */
-	static final Pattern NULL_PATTERN;
-	
-	
+	/** default null decoder */
+	static private final NullDecoder DEFAULT_DECODER;
+
+
 	// static initializer
 	static {
-		NULL_PATTERN = Pattern.compile( "null" );
+		DEFAULT_DECODER = new NullDecoder();
 	}
-	
-	
-	/** Constructor */
-	protected NullDecoder( final String archive ) {
-		super( archive );
+
+
+	/** get an instance of the number decoder */
+	static public NullDecoder getInstance() {
+		return DEFAULT_DECODER;
 	}
-	
-	
-	/** decode the source to extract the next object */	
-	protected Object decode() {
-		final String match = processMatch( NULL_PATTERN );
-		return null;
+
+
+	/** decode the source to extract the next object */
+	protected Object decode( final JSONDecoder source ) {
+		final int startScanPosition = source.getScanPosition();
+		final String archive = source.getArchive();
+		final char firstChar = archive.charAt( startScanPosition );
+
+		final int scanLength = 4;
+		if ( startScanPosition + scanLength <= archive.length() ) {
+			final String input = archive.substring( startScanPosition, startScanPosition + scanLength );
+			if ( input.equals( "null" ) ) {
+				source.advanceScanPosition( scanLength );
+				return null;
+			}
+			else {
+				throw new RuntimeException( "JSON null parse exception at position: " + startScanPosition );
+			}
+		}
+		else {
+			throw new RuntimeException( "JSON null decode exception at position: " + startScanPosition + ". The input terminated prematurely." );
+		}
 	}
 }
 
@@ -902,61 +996,64 @@ class NullDecoder extends AbstractDecoder<Object> {
 
 /** decode a string from a source string */
 class StringDecoder extends AbstractDecoder<String> {
-	/** pattern for matching a string */
-	static final Pattern STRING_PATTERN;
-	
-	
+	/** default string decoder */
+	static private final StringDecoder DEFAULT_DECODER;
+
+
 	// static initializer
 	static {
-		// a string begins and ends with a quotation mark and no unescaped quotation marks in between them
-		STRING_PATTERN = Pattern.compile( "\\\"(((\\\\)+\")|[^\"])*\\\"" );
+		DEFAULT_DECODER = new StringDecoder();
 	}
-	
-	
-	/** Constructor */
-	protected StringDecoder( final String archive ) {
-		super( archive );
+
+
+	/** get an instance of the number decoder */
+	static public StringDecoder getInstance() {
+		return DEFAULT_DECODER;
 	}
-	
-	
-	/** decode the source to extract the next object */	
-	protected String decode() {
-		final String match = processMatch( STRING_PATTERN );
-		if ( match != null ) {
-			final int length = match.length();
-			return length > 0 ? unescape( match.substring( 1, length-1 ) ) : "";
-		}
-		else {
-			return null;
-		}
-	}
-	
-	
-	/** unescape (replace occurences of a backslash and a character by the character itself) the input and return the resulting string */
-	static private String unescape( final String input ) {
-		final StringBuffer buffer = new StringBuffer();
-		unescapeToBuffer( buffer, input );
-		return buffer.toString();
-	}
-	
-	
-	/** unescape the input and append the text to the buffer */
-	static private void unescapeToBuffer( final StringBuffer buffer, final String input ) {
-		if ( input != null && input.length() > 0 ) {
-			final int location = input.indexOf( '\\' );
-			if ( location < 0 ) {
-				buffer.append( input );
+
+
+	/** decode the source starting at the specified position */
+	private String decode( final JSONDecoder source, final int startPosition ) {
+		final String archive = source.getArchive();
+		final int archiveLength = archive.length();
+
+		int position = startPosition;
+		while( true ) {
+			if ( position < archiveLength ) {
+				throw new RuntimeException( "JSON String decode exception at position: " + source.getScanPosition() + ". The input terminated prematurely." );
 			}
-			else {
-				buffer.append( input.substring( 0, location ) );
-				final int inputLength = input.length();
-				if ( inputLength > location ) {
-					buffer.append( input.charAt( location + 1 ) );
-					final String remainder = inputLength > location + 1 ? input.substring( location + 2 ) : null;
-					unescapeToBuffer( buffer, remainder );
+
+			final char nextChar = archive.charAt( position );
+
+			if ( nextChar == '\\' ) {	// escape character => replace with next character literally
+				String prefix = "";
+				if ( position > startPosition ) {
+					prefix = archive.substring( startPosition, position - 1 );	// grab what we've already parsed preceding the escape character
 				}
+				position += 1;	// skip the escape character
+				final char literalChar = archive.charAt( position );	// this is the character immediatel following the escape character to process literally
+				return prefix + literalChar + decode( source, position + 1 );		// combine the prefix, literal character and continue processing the characters following it normally
+			}
+			else if ( nextChar == '\"' ) {		// terminating quotation mark
+				break;
+			}
+			else {		// normal character
+				position += 1;		// increment the scan position
 			}
 		}
+
+		return archive.substring( startPosition, position );
+	}
+
+
+	/** decode the source to extract the next object */
+	protected String decode( final JSONDecoder source ) {
+		final int startScanPosition = source.getScanPosition();
+		final String archive = source.getArchive();
+		final int archiveLength = archive.length();
+
+		// start decoding the string at the character immediately following the initial quotation mark
+		return decode( source, startScanPosition + 1 );
 	}
 }
 
