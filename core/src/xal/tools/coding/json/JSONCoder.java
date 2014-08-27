@@ -891,14 +891,18 @@ class NumberDecoder extends AbstractDecoder<JSONNumber> {
 	
 	/** decode the source to extract the next object */	
 	protected JSONNumber decode( final JSONDecoder source ) {
-		final String match = processMatch( NUMBER_PATTERN );
-        // doubles always have a decimal point even if the fraction is zero, so the absence of a period indicates a long integer
-        if ( match != null ) {
-			return JSONNumber.valueOf( match );
-        }
-        else {
-            return null;
-        }
+		final int startScanPosition = source.getScanPosition();
+		final Matcher matcher = NUMBER_PATTERN.matcher( source.getArchive() );
+		if ( matcher.find( startScanPosition ) ) {
+			final String match = matcher.group();
+			if ( match != null ) {
+				source.advanceScanPosition( matcher.end() - startScanPosition );
+				return JSONNumber.valueOf( match );
+			}
+			else {
+				throw new RuntimeException( "JSON Number parse exception at position: " + startScanPosition );
+			}
+		}
 	}
 }
 
@@ -1035,6 +1039,7 @@ class StringDecoder extends AbstractDecoder<String> {
 				return prefix + literalChar + decode( source, position + 1 );		// combine the prefix, literal character and continue processing the characters following it normally
 			}
 			else if ( nextChar == '\"' ) {		// terminating quotation mark
+				source.advanceScanPosition( position - source.getScanPosition() + 1 );
 				break;
 			}
 			else {		// normal character
