@@ -755,9 +755,6 @@ class JSONDecoder<DataType> {
 	/** current position of the scanner in the archive */
 	private int _scanPosition;
 
-	/** decoder for arrays */
-	private ArrayDecoder _arrayDecoder;
-
 	/** decoder for dictionaries */
 	private DictionaryDecoder _dictionaryDecoder;
 
@@ -786,6 +783,12 @@ class JSONDecoder<DataType> {
 	}
 
 
+	/** set the scan postion */
+	public void setScanPosition( final int scanPosition ) {
+		_scanPosition = scanPosition;
+	}
+
+
 	/** advance the scan position the specified number of steps */
 	public void advanceScanPosition( final int scanLength ) {
 		_scanPosition += scanLength;
@@ -803,14 +806,13 @@ class JSONDecoder<DataType> {
 		_scanPosition = 0;
 		_referenceStore = new KeyedReferenceStore();
 
-		_arrayDecoder = new ArrayDecoder( CONVERSION_ADAPTOR_STORE, _referenceStore );
 		_dictionaryDecoder = new DictionaryDecoder( CONVERSION_ADAPTOR_STORE, _referenceStore );
 
 		return parseNext();
 	}
 
 
-	/** parse the next object starting at the current scan position and advancing it */
+	/** parse the next object starting at the current scan position and advance the scan position */
 	public Object parseNext() {
 		final AbstractDecoder<?> nextDecoder = nextDecoder();
 		if ( nextDecoder != null ) {
@@ -830,15 +832,15 @@ class JSONDecoder<DataType> {
 			switch ( nextChar ) {
 			case '+': case '-': case '.':
 			case '0': case '1': case '2': case '3': case '4': case '5': case '6': case '7': case '8': case '9':
-				return new NumberDecoder.getInstance();
+				return NumberDecoder.getInstance();
 			case 't': case 'f':
-				return new BooleanDecoder.getInstance();
+				return BooleanDecoder.getInstance();
 			case 'n':
-				return new NullDecoder.getInstance();
+				return NullDecoder.getInstance();
 			case '\"':
-				return new StringDecoder.getInstance();
+				return StringDecoder.getInstance();
 			case '[':
-				return _arrayDecoder;
+				return ArrayDecoder.getInstance();
 			case '{':
 				return _dictionaryDecoder;
 			default:
@@ -1039,7 +1041,7 @@ class StringDecoder extends AbstractDecoder<String> {
 				return prefix + literalChar + decode( source, position + 1 );		// combine the prefix, literal character and continue processing the characters following it normally
 			}
 			else if ( nextChar == '\"' ) {		// terminating quotation mark
-				source.advanceScanPosition( position - source.getScanPosition() + 1 );
+				source.setScanPosition( position + 1 );
 				break;
 			}
 			else {		// normal character
@@ -1066,62 +1068,56 @@ class StringDecoder extends AbstractDecoder<String> {
 
 /** decode an array from a source string */
 class ArrayDecoder extends AbstractDecoder<Object[]> {
-    /** custom type adaptors */
-    final private ConversionAdaptorStore CONVERSION_ADAPTOR_STORE;
-    
-    /** reference store */
-    final private KeyedReferenceStore REFERENCE_STORE;
-    
-    
-	/** Constructor */
-	protected ArrayDecoder( final String archive, final ConversionAdaptorStore conversionAdaptorStore, final KeyedReferenceStore referenceStore ) {
-		super( archive );
-        CONVERSION_ADAPTOR_STORE = conversionAdaptorStore;
-        REFERENCE_STORE = referenceStore;
+	/** default null decoder */
+	static private final ArrayDecoder DEFAULT_DECODER;
+
+
+	// static initializer
+	static {
+		DEFAULT_DECODER = new ArrayDecoder();
 	}
-	
-	
-	/** decode the source to extract the next object */	
-	protected Object[] decode() {
-		final String arrayString = ARCHIVE.substring( 1 ).trim();	// strip the leading bracket
+
+
+	/** get an instance of the number decoder */
+	static public ArrayDecoder getInstance() {
+		return DEFAULT_DECODER;
+	}
+
+
+	/** decode the source to extract the next object */
+	protected Object[] decode( final JSONDecoder source ) {
 		final List<Object> items = new ArrayList<Object>();
-		appendItems( items, arrayString );
+		appendItems( source, items );
 		return items.toArray();
 	}
-	
+
 	
 	/** append to the items the parsed items from the array string */
-	private void appendItems( final List<Object> items, final String arrayString ) {
-		if ( arrayString != null && arrayString.length() > 0 ) {
-			try {
-				if ( arrayString.charAt( 0 ) == ']' ) {
-					_remainder = arrayString.substring( 1 ).trim();
-					return;
-				}
-				else {
-					final AbstractDecoder<?> itemDecoder = AbstractDecoder.getInstance( arrayString, CONVERSION_ADAPTOR_STORE, REFERENCE_STORE );
-					items.add( itemDecoder.decode() );
-					final String itemRemainder = itemDecoder.getRemainder().trim();
-					final char closure = itemRemainder.charAt( 0 );
-					final String archiveRemainder = itemRemainder.substring(1).trim();
-					switch ( closure ) {
-						case ',':
-							appendItems( items, archiveRemainder );
-							return;
-						case ']':
-							_remainder = archiveRemainder;
-							return;
-						default:
-							throw new RuntimeException( "Invalid array closure mark: " + closure );
-					}
-				}
+	private void appendItems( final JSONDecoder source, final List<Object> items ) {
+		final int startScanPosition = source.getScanPosition();
+		final String archive = source.getArchive();
+		final int archiveLength = archive.length();
+
+		int position = startScanPosition + 1;	// start at first character after leading bracket
+		while( true ) {
+			if ( position < archiveLength ) {
+				throw new RuntimeException( "JSON Array decode exception at position: " + source.getScanPosition() + ". The input terminated prematurely." );
 			}
-			catch ( Exception exception ) {
-				exception.printStackTrace();
+
+			final char nextChar = archive.charAt( position );
+
+			if ( Character.isWhiteSpace( nextChar ) ) {		// ignore whitespace and keep going
+				++position;
 			}
-		}
-		else {
-			_remainder = null;
+			else if ( nextChar == ']' ) {	// closing bracket of array
+				source.setScanPosition( position + 1 );
+				return;		// we're done with this array
+			}
+			else {		// process the next array item
+				final Object item = source.parseNext();
+				items.add( item );
+				position = source.getScanPosition();
+			}
 		}
 	}
 }
