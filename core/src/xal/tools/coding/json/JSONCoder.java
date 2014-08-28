@@ -755,9 +755,6 @@ class JSONDecoder<DataType> {
 	/** current position of the scanner in the archive */
 	private int _scanPosition;
 
-	/** decoder for dictionaries */
-	private DictionaryDecoder _dictionaryDecoder;
-
 
 	/** Constructor */
 	protected JSONDecoder( final String jsonArchive, final ConversionAdaptorStore conversionAdaptorStore ) {
@@ -766,8 +763,6 @@ class JSONDecoder<DataType> {
 
 		_scanPosition = 0;
 		_referenceStore = null;
-		_arrayDecoder = null;
-		_dictionaryDecoder = null;
 	}
 
 
@@ -801,12 +796,22 @@ class JSONDecoder<DataType> {
 	}
 
 
+	/** get the conversion adaptor store */
+	public ConversionAdaptorStore getConversionAdaptorStore() {
+		return CONVERSION_ADAPTOR_STORE;
+	}
+
+
+	/** get the keyed reference store */
+	public KeyedReferenceStore getReferenceStore() {
+		return _referenceStore;
+	}
+
+
 	/** decode the archive */
 	public Object decode() {
 		_scanPosition = 0;
 		_referenceStore = new KeyedReferenceStore();
-
-		_dictionaryDecoder = new DictionaryDecoder( CONVERSION_ADAPTOR_STORE, _referenceStore );
 
 		return parseNext();
 	}
@@ -842,7 +847,7 @@ class JSONDecoder<DataType> {
 			case '[':
 				return ArrayDecoder.getInstance();
 			case '{':
-				return _dictionaryDecoder;
+				return DictionaryDecoder.getInstance();
 			default:
 				if ( Character.isWhiteSpace( nextChar ) ) {		// ignore whitespace
 					++_scanPosition;	// increment the scan position
