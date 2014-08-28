@@ -121,6 +121,7 @@ public class TestJSONCoding {
     @Test
     public void testArrayEncodingDecoding() {
 		checkArrayEncodingDecoding( new Object[] { "Hello", "World" } );    // Object array with standard types
+		checkArrayEncodingDecoding( new Object[] {} );		// Empty object array
 		checkArrayEncodingDecoding( new Object[] { "Hello, World", 2.0 } );    // Object array with standard types
         checkArrayEncodingDecoding( new Object[] { "Hello, World", 2.0, 5000L } );    // Object array with standard types
         checkArrayEncodingDecoding( new Object[] { "Hello, World", 25, new Date() } );    // Object array with extended types
@@ -191,13 +192,16 @@ public class TestJSONCoding {
     
     
     @Test
-    public void testMapEncodingDecoding() {        
+    public void testMapEncodingDecoding() {
         final Map<String,Object> simpleMap = new HashMap<String,Object>();
         simpleMap.put( "info", null );
         simpleMap.put( "x", 41.8 );
         simpleMap.put( "y", -2.6 );
         simpleMap.put( "comment", "Just a point" );
         checkEncodingDecoding( simpleMap );
+
+		// test empty dictionary
+		checkEncodingDecoding( new HashMap<String,Object>() );
     }
     
     
