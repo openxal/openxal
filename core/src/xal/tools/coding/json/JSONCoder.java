@@ -1119,11 +1119,17 @@ class ArrayDecoder extends AbstractDecoder<Object[]> {
 				++position;
 			}
 			else if ( expectingNextItem ) {		// process the next array item
-				expectingNextItem = false;		// need a comma before we can begin parsing the next item
-				source.setScanPosition( position );
-				final Object item = source.parseNext();
-				items.add( item );
-				position = source.getScanPosition();	// get the current scan position after having scanned the item
+				if ( items.size() == 0 && nextChar == ']' ) {	// we've got an empty array
+					source.setScanPosition( position + 1 );
+					return;		// we're done with this array
+				}
+				else {
+					expectingNextItem = false;		// need a comma before we can begin parsing the next item
+					source.setScanPosition( position );
+					final Object item = source.parseNext();
+					items.add( item );
+					position = source.getScanPosition();	// get the current scan position after having scanned the item
+				}
 			}
 			else {		// not expecting a new item so we expect either a comma or closing bracket
 				switch( nextChar ) {
@@ -1253,43 +1259,49 @@ class DictionaryDecoder extends AbstractDecoder<Object> {
 				++position;
 			}
 			else if ( expectingNextPair ) {		// process the next key/value pair
-				expectingNextPair = false;
-				
-				// parse the key
-				source.setScanPosition( position );
-				final Object keyObject = source.parseNext();
-				if ( ! ( keyObject instanceof String ) ) {
-					throw new RuntimeException( "JSON Dictionary decode exception at position: " + startScanPosition + ". The key at position, " + position + " is not a String as it should be." );
+				if ( dictionary.size() == 0 && nextChar == '}' ) {	// we've got an empty dictionary
+					source.setScanPosition( position + 1 );
+					return;		// we're done with this dictionary
 				}
+				else {
+					expectingNextPair = false;
 
-				final String key = (String)keyObject;
-				position = source.getScanPosition();	// get the current scan position after having scanned the key
-
-				// search for the comma while skipping white space
-				while ( true ) {
-					if ( position >= archiveLength ) {
-						throw new RuntimeException( "JSON Dictionary decode exception at position: " + startScanPosition + ". The input terminated prematurely." );
+					// parse the key
+					source.setScanPosition( position );
+					final Object keyObject = source.parseNext();
+					if ( ! ( keyObject instanceof String ) ) {
+						throw new RuntimeException( "JSON Dictionary decode exception at position: " + startScanPosition + ". The key at position, " + position + " is not a String as it should be." );
 					}
 
-					final char nextSeparatorChar = archive.charAt( position );
+					final String key = (String)keyObject;
+					position = source.getScanPosition();	// get the current scan position after having scanned the key
 
-					if ( Character.isWhitespace( nextSeparatorChar ) ) {		// ignore whitespace and keep going
-						++position;
+					// search for the comma while skipping white space
+					while ( true ) {
+						if ( position >= archiveLength ) {
+							throw new RuntimeException( "JSON Dictionary decode exception at position: " + startScanPosition + ". The input terminated prematurely." );
+						}
+
+						final char nextSeparatorChar = archive.charAt( position );
+
+						if ( Character.isWhitespace( nextSeparatorChar ) ) {		// ignore whitespace and keep going
+							++position;
+						}
+						else if ( nextSeparatorChar == ':' ) {	// now we got the colon
+							++position;
+							break;
+						}
+						else {
+							throw new RuntimeException( "Dictionary decode parse exception at position: " + position + ". Invalid character: " + nextChar );
+						}
 					}
-					else if ( nextSeparatorChar == ':' ) {	// now we got the colon
-						++position;
-						break;
-					}
-					else {
-						throw new RuntimeException( "Dictionary decode parse exception at position: " + position + ". Invalid character: " + nextChar );
-					}
+
+					// now parse the value
+					source.setScanPosition( position );
+					final Object value = source.parseNext();
+					dictionary.put( key, value );
+					position = source.getScanPosition();	// get the current scan position after having scanned the value
 				}
-
-				// now parse the value
-				source.setScanPosition( position );
-				final Object value = source.parseNext();
-				dictionary.put( key, value );
-				position = source.getScanPosition();	// get the current scan position after having scanned the value
 			}
 			else {		// not whitespace and not expecting a key/value pair
 				switch( nextChar ) {
