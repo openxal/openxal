@@ -1107,6 +1107,7 @@ class ArrayDecoder extends AbstractDecoder<Object[]> {
 		final int archiveLength = archive.length();
 
 		int position = startScanPosition + 1;	// start at first character after leading bracket
+		boolean expectingNextItem = true;		// indicates that the next thing we expect is an item
 		while( true ) {
 			if ( position >= archiveLength ) {
 				throw new RuntimeException( "JSON Array decode exception at position: " + startScanPosition + ". The input terminated prematurely." );
@@ -1117,14 +1118,25 @@ class ArrayDecoder extends AbstractDecoder<Object[]> {
 			if ( Character.isWhitespace( nextChar ) ) {		// ignore whitespace and keep going
 				++position;
 			}
-			else if ( nextChar == ']' ) {	// closing bracket of array
-				source.setScanPosition( position + 1 );
-				return;		// we're done with this array
-			}
-			else {		// process the next array item
+			else if ( expectingNextItem ) {		// process the next array item
+				expectingNextItem = false;		// need a comma before we can begin parsing the next item
+				source.setScanPosition( position );
 				final Object item = source.parseNext();
 				items.add( item );
 				position = source.getScanPosition();	// get the current scan position after having scanned the item
+			}
+			else {		// not expecting a new item so we expect either a comma or closing bracket
+				switch( nextChar ) {
+					case ']':		// closing bracket of array
+						source.setScanPosition( position + 1 );
+						return;		// we're done with this array
+					case ',':		// comma preceding next item
+						expectingNextItem = true;		// comma indicates we are awaiting the next item
+						++position;
+						break;
+					default:
+						throw new RuntimeException( "JSON Array decode exception. Encountered invalid character, " + nextChar + " at position, " + position + "." );
+				}
 			}
 		}
 	}
@@ -1243,8 +1255,12 @@ class DictionaryDecoder extends AbstractDecoder<Object> {
 				source.setScanPosition( position + 1 );
 				return;		// we're done with this dictionary
 			}
+			else if ( nextChar == ',' ) {	// begin next key/value pair
+				++position;
+			}
 			else {		// process the next key/value pair
 				// parse the key
+				source.setScanPosition( position );
 				final Object keyObject = source.parseNext();
 				if ( ! ( keyObject instanceof String ) ) {
 					throw new RuntimeException( "JSON Dictionary decode exception at position: " + startScanPosition + ". The key at position, " + position + " is not a String as it should be." );
@@ -1264,7 +1280,7 @@ class DictionaryDecoder extends AbstractDecoder<Object> {
 					if ( Character.isWhitespace( nextSeparatorChar ) ) {		// ignore whitespace and keep going
 						++position;
 					}
-					else if ( nextSeparatorChar == ',' ) {	// now we got our comma
+					else if ( nextSeparatorChar == ':' ) {	// now we got the colon
 						++position;
 						break;
 					}
@@ -1274,6 +1290,7 @@ class DictionaryDecoder extends AbstractDecoder<Object> {
 				}
 
 				// now parse the value
+				source.setScanPosition( position );
 				final Object value = source.parseNext();
 				dictionary.put( key, value );
 				position = source.getScanPosition();	// get the current scan position after having scanned the value
