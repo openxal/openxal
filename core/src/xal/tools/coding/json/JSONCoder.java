@@ -1107,7 +1107,7 @@ class ArrayDecoder extends AbstractDecoder<Object[]> {
 		final int archiveLength = archive.length();
 
 		int position = startScanPosition + 1;	// start at first character after leading bracket
-		boolean expectingNextItem = true;		// indicates that the next thing we expect is an item
+		boolean expectingNextItem = true;		// indicates that the next thing we expect is an item (or white space)
 		while( true ) {
 			if ( position >= archiveLength ) {
 				throw new RuntimeException( "JSON Array decode exception at position: " + startScanPosition + ". The input terminated prematurely." );
@@ -1241,6 +1241,7 @@ class DictionaryDecoder extends AbstractDecoder<Object> {
 		final int archiveLength = archive.length();
 
 		int position = startScanPosition + 1;	// start at first character after leading bracket
+		boolean expectingNextPair = true;		// indicates whether the scanner expects a key value pair next (or white space)
 		while( true ) {
 			if ( position >= archiveLength ) {
 				throw new RuntimeException( "JSON Dictionary decode exception at position: " + startScanPosition + ". The input terminated prematurely." );
@@ -1251,14 +1252,9 @@ class DictionaryDecoder extends AbstractDecoder<Object> {
 			if ( Character.isWhitespace( nextChar ) ) {		// ignore whitespace and keep going
 				++position;
 			}
-			else if ( nextChar == '}' ) {	// closing brace of dictionary
-				source.setScanPosition( position + 1 );
-				return;		// we're done with this dictionary
-			}
-			else if ( nextChar == ',' ) {	// begin next key/value pair
-				++position;
-			}
-			else {		// process the next key/value pair
+			else if ( expectingNextPair ) {		// process the next key/value pair
+				expectingNextPair = false;
+				
 				// parse the key
 				source.setScanPosition( position );
 				final Object keyObject = source.parseNext();
@@ -1294,6 +1290,19 @@ class DictionaryDecoder extends AbstractDecoder<Object> {
 				final Object value = source.parseNext();
 				dictionary.put( key, value );
 				position = source.getScanPosition();	// get the current scan position after having scanned the value
+			}
+			else {		// not whitespace and not expecting a key/value pair
+				switch( nextChar ) {
+					case '}':		// closing brace of dictionary
+						source.setScanPosition( position + 1 );
+						return;		// we're done with this dictionary
+					case ',':		// comma preceding next item
+						expectingNextPair = true;		// comma indicates we are awaiting the next key/value pair
+						++position;
+						break;
+					default:
+						throw new RuntimeException( "JSON Dictionary decode exception. Encountered invalid character, " + nextChar + " at position, " + position + "." );
+				}
 			}
 		}
 	}
