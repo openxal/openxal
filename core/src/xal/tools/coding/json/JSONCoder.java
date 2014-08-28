@@ -1042,7 +1042,7 @@ class StringDecoder extends AbstractDecoder<String> {
 			if ( nextChar == '\\' ) {	// escape character => replace with next character literally
 				String prefix = "";
 				if ( position > startPosition ) {
-					prefix = archive.substring( startPosition, position - 1 );	// grab what we've already parsed preceding the escape character
+					prefix = archive.substring( startPosition, position );	// grab what we've already parsed preceding the escape character
 				}
 				position += 1;	// skip the escape character
 				final char literalChar = archive.charAt( position );	// this is the character immediatel following the escape character to process literally
