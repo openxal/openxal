@@ -105,7 +105,7 @@ public class JSONCoder implements Coder {
 	 * @return an object with the data described in the archive
 	 */
     public Object decode( final String archive ) {
-        final AbstractDecoder<?> decoder = AbstractDecoder.getInstance( archive, new ConversionAdaptorStore( CONVERSION_ADAPTOR_STORE ) );
+        final JSONDecoder decoder = JSONDecoder.getInstance( archive, new ConversionAdaptorStore( CONVERSION_ADAPTOR_STORE ) );
 		return decoder != null ? decoder.decode() : null;
     }
 	
@@ -742,7 +742,7 @@ class ArrayEncoder extends SoftValueEncoder {
 
 
 /** Decode JSON into an object graph */
-class JSONDecoder<DataType> {
+class JSONDecoder {
 	/** JSON archive to parse */
 	final private String JSON_ARCHIVE;
 
@@ -767,8 +767,8 @@ class JSONDecoder<DataType> {
 
 
 	/** Get a decoder for the archive */
-	public static JSONDecoder<?> getInstance( final String jsonArchive, final ConversionAdaptorStore conversionAdaptorStore ) {
-		return new JSONDecoder<?>( jsonArchive, conversionAdaptorStore );
+	public static JSONDecoder getInstance( final String jsonArchive, final ConversionAdaptorStore conversionAdaptorStore ) {
+		return new JSONDecoder( jsonArchive, conversionAdaptorStore );
 	}
 
 
@@ -832,7 +832,7 @@ class JSONDecoder<DataType> {
 	/** get the next decoder */
 	private AbstractDecoder<?> nextDecoder() {
 		if ( _scanPosition < JSON_ARCHIVE.length() ) {
-			final char nextChar = JSON_ARCHIVE.charAt( _position );
+			final char nextChar = JSON_ARCHIVE.charAt( _scanPosition );
 
 			switch ( nextChar ) {
 			case '+': case '-': case '.':
@@ -849,7 +849,7 @@ class JSONDecoder<DataType> {
 			case '{':
 				return DictionaryDecoder.getInstance();
 			default:
-				if ( Character.isWhiteSpace( nextChar ) ) {		// ignore whitespace
+				if ( Character.isWhitespace( nextChar ) ) {		// ignore whitespace
 					++_scanPosition;	// increment the scan position
 					return nextDecoder();
 				}
@@ -909,6 +909,9 @@ class NumberDecoder extends AbstractDecoder<JSONNumber> {
 			else {
 				throw new RuntimeException( "JSON Number parse exception at position: " + startScanPosition );
 			}
+		}
+		else {
+			throw new RuntimeException( "JSON Number parse exception at position: " + startScanPosition );
 		}
 	}
 }
@@ -1111,7 +1114,7 @@ class ArrayDecoder extends AbstractDecoder<Object[]> {
 
 			final char nextChar = archive.charAt( position );
 
-			if ( Character.isWhiteSpace( nextChar ) ) {		// ignore whitespace and keep going
+			if ( Character.isWhitespace( nextChar ) ) {		// ignore whitespace and keep going
 				++position;
 			}
 			else if ( nextChar == ']' ) {	// closing bracket of array
@@ -1149,12 +1152,12 @@ class DictionaryDecoder extends AbstractDecoder<Object> {
 
 	/** decode the source to extract the next object */
 	@SuppressWarnings( "unchecked" )    // no way to validate representation value and type at compile time
-	protected Object[] decode( final JSONDecoder source ) {
+	protected Object decode( final JSONDecoder source ) {
 		final Map<String,Object> dictionary = new HashMap<String,Object>();
 		appendItems( source, dictionary );
 
-		final ConversionAdaptorStore conversionAdaptorStore = store.getConversionAdaptorStore();
-		final KeyedReferenceStore referenceStore = store.getReferenceStore();
+		final ConversionAdaptorStore conversionAdaptorStore = source.getConversionAdaptorStore();
+		final KeyedReferenceStore referenceStore = source.getReferenceStore();
 
 		if ( dictionary.containsKey( ExtensionEncoder.EXTENDED_TYPE_KEY ) && dictionary.containsKey( ExtensionEncoder.EXTENDED_VALUE_KEY ) ) {
 			// decode object of extended type
@@ -1233,7 +1236,7 @@ class DictionaryDecoder extends AbstractDecoder<Object> {
 
 			final char nextChar = archive.charAt( position );
 
-			if ( Character.isWhiteSpace( nextChar ) ) {		// ignore whitespace and keep going
+			if ( Character.isWhitespace( nextChar ) ) {		// ignore whitespace and keep going
 				++position;
 			}
 			else if ( nextChar == '}' ) {	// closing brace of dictionary
@@ -1243,7 +1246,7 @@ class DictionaryDecoder extends AbstractDecoder<Object> {
 			else {		// process the next key/value pair
 				// parse the key
 				final Object keyObject = source.parseNext();
-				if ( !keyObject instanceof String ) {
+				if ( ! ( keyObject instanceof String ) ) {
 					throw new RuntimeException( "JSON Dictionary decode exception at position: " + startScanPosition + ". The key at position, " + position + " is not a String as it should be." );
 				}
 
@@ -1256,17 +1259,17 @@ class DictionaryDecoder extends AbstractDecoder<Object> {
 						throw new RuntimeException( "JSON Dictionary decode exception at position: " + startScanPosition + ". The input terminated prematurely." );
 					}
 
-					final char nextChar = archive.charAt( position );
+					final char nextSeparatorChar = archive.charAt( position );
 
-					if ( Character.isWhiteSpace( nextChar ) ) {		// ignore whitespace and keep going
+					if ( Character.isWhitespace( nextSeparatorChar ) ) {		// ignore whitespace and keep going
 						++position;
 					}
-					else if ( nextChar == ',' ) {	// now we got our comma
+					else if ( nextSeparatorChar == ',' ) {	// now we got our comma
 						++position;
 						break;
 					}
 					else {
-						throw new RuntimeException( "Dictionary decode parse exception at position: " + position ". Invalid character: " + nextChar );
+						throw new RuntimeException( "Dictionary decode parse exception at position: " + position + ". Invalid character: " + nextChar );
 					}
 				}
 
