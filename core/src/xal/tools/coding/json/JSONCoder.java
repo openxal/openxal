@@ -1073,7 +1073,7 @@ class StringDecoder extends AbstractDecoder<String> {
 
 /** decode an array from a source string */
 class ArrayDecoder extends AbstractDecoder<Object[]> {
-	/** default null decoder */
+	/** default array decoder */
 	static private final ArrayDecoder DEFAULT_DECODER;
 
 
@@ -1106,7 +1106,7 @@ class ArrayDecoder extends AbstractDecoder<Object[]> {
 		int position = startScanPosition + 1;	// start at first character after leading bracket
 		while( true ) {
 			if ( position < archiveLength ) {
-				throw new RuntimeException( "JSON Array decode exception at position: " + source.getScanPosition() + ". The input terminated prematurely." );
+				throw new RuntimeException( "JSON Array decode exception at position: " + startScanPosition + ". The input terminated prematurely." );
 			}
 
 			final char nextChar = archive.charAt( position );
@@ -1121,7 +1121,7 @@ class ArrayDecoder extends AbstractDecoder<Object[]> {
 			else {		// process the next array item
 				final Object item = source.parseNext();
 				items.add( item );
-				position = source.getScanPosition();
+				position = source.getScanPosition();	// get the current scan position after having scanned the item
 			}
 		}
 	}
@@ -1131,139 +1131,161 @@ class ArrayDecoder extends AbstractDecoder<Object[]> {
 
 /** decode a dictionary from a source string */
 class DictionaryDecoder extends AbstractDecoder<Object> {
-    /** custom type adaptors */
-    final private ConversionAdaptorStore CONVERSION_ADAPTOR_STORE;
-    
-    /** reference store */
-    final private KeyedReferenceStore REFERENCE_STORE;
+	/** default dictionary decoder */
+	static private final DictionaryDecoder DEFAULT_DECODER;
 
-    
-	/** Constructor */
-	protected DictionaryDecoder( final String archive, final ConversionAdaptorStore conversionAdaptorStore, final KeyedReferenceStore referenceStore ) {
-		super( archive );
-        CONVERSION_ADAPTOR_STORE = conversionAdaptorStore;
-        REFERENCE_STORE = referenceStore;
+
+	// static initializer
+	static {
+		DEFAULT_DECODER = new DictionaryDecoder();
 	}
-	
-	
-	/** decode the source to extract the next object */	
-    @SuppressWarnings( "unchecked" )    // no way to validate representation value and type at compile time
-	protected Object decode() {
-		final String dictionaryString = ARCHIVE.substring( 1 ).trim();	// strip the leading brace
+
+
+	/** get an instance of the number decoder */
+	static public DictionaryDecoder getInstance() {
+		return DEFAULT_DECODER;
+	}
+
+
+	/** decode the source to extract the next object */
+	@SuppressWarnings( "unchecked" )    // no way to validate representation value and type at compile time
+	protected Object[] decode( final JSONDecoder source ) {
 		final Map<String,Object> dictionary = new HashMap<String,Object>();
-		appendItems( dictionary, dictionaryString );
-        
-        if ( dictionary.containsKey( ExtensionEncoder.EXTENDED_TYPE_KEY ) && dictionary.containsKey( ExtensionEncoder.EXTENDED_VALUE_KEY ) ) {
-            // decode object of extended type
-            final String extendedType = (String)dictionary.get( ExtensionEncoder.EXTENDED_TYPE_KEY );
-            final Object representationValue = dictionary.get( ExtensionEncoder.EXTENDED_VALUE_KEY );
-            return toNative( representationValue, extendedType );
-        }
-        else if ( dictionary.containsKey( TypedArrayEncoder.ARRAY_ITEM_TYPE_KEY ) && dictionary.containsKey( TypedArrayEncoder.ARRAY_KEY ) ) {
-            // decode array of with a specified component type from a generic object array
-            final String componentType = (String)dictionary.get( TypedArrayEncoder.ARRAY_ITEM_TYPE_KEY );
-            final Object[] objectArray = (Object[])dictionary.get( TypedArrayEncoder.ARRAY_KEY );
-            
-            try {
-                final Class<?> primitiveClass = TypedArrayEncoder.getPrimitiveType( componentType );
-                final Class<?> componentClass = primitiveClass != null ? primitiveClass : Class.forName( componentType );
-                final String componentObjectType = TypedArrayEncoder.getObjectTypeForClass( componentClass );   // this allows us to handle primitive wrappers
-                final Class<?> componentObjectClass = Class.forName( componentObjectType ); 
-                final Object array = Array.newInstance( componentClass, objectArray.length );
-                for ( int index = 0 ; index < objectArray.length ; index++ ) {
-                    final Object rawItem = objectArray[index];
-                    // if the raw item is an extended type it will automatically have been decoded unless it is of the common component type in which case we tranlate it
-                    final Object item = componentObjectClass.isInstance( rawItem ) ? rawItem : toNative( rawItem, componentObjectType );
-                    Array.set( array, index, item );
-                }
-                return array;
-            }
-            catch( Exception exception ) {
-                exception.printStackTrace();
-                throw new RuntimeException( "Exception decoding a typed array of type: " + componentType, exception );
-            }
-        }
-        else if ( dictionary.containsKey( SerializationEncoder.SERIALIZATION_VALUE_KEY ) ) {
-            final byte[] serializationData = (byte[])dictionary.get( SerializationEncoder.SERIALIZATION_VALUE_KEY );
-            
-            try {
-                final ByteArrayInputStream byteInputStream = new ByteArrayInputStream( serializationData );
-                final ObjectInputStream objectInputStream = new ObjectInputStream( byteInputStream );
-                final Object value = objectInputStream.readObject();
-                objectInputStream.close();
-                byteInputStream.close();
-                return value;
-            }
-            catch ( Exception exception ) {
-                throw new RuntimeException( "Exception decoding serialized object from dictionary: " + dictionary, exception );
-            }
-        }
-        else if ( dictionary.containsKey( SoftValueEncoder.OBJECT_ID_KEY ) && dictionary.containsKey( SoftValueEncoder.VALUE_KEY ) ) {
-            // decode a referenced object definition and store it
-            final JSONNumber itemID = (JSONNumber)dictionary.get( SoftValueEncoder.OBJECT_ID_KEY );
-            final Object item = dictionary.get( SoftValueEncoder.VALUE_KEY );
-            REFERENCE_STORE.store( itemID.longValue(), item );
-            return item;
-        }
-        else if ( dictionary.containsKey( ReferenceEncoder.REFERENCE_KEY ) ) {
-            // decode a reference to an object in the store
-            final JSONNumber itemID = (JSONNumber)dictionary.get( ReferenceEncoder.REFERENCE_KEY );
-            return REFERENCE_STORE.get( itemID.longValue() );
-        }
-        else {
-            return dictionary;
-        }
+		appendItems( source, dictionary );
+
+		final ConversionAdaptorStore conversionAdaptorStore = store.getConversionAdaptorStore();
+		final KeyedReferenceStore referenceStore = store.getReferenceStore();
+
+		if ( dictionary.containsKey( ExtensionEncoder.EXTENDED_TYPE_KEY ) && dictionary.containsKey( ExtensionEncoder.EXTENDED_VALUE_KEY ) ) {
+			// decode object of extended type
+			final String extendedType = (String)dictionary.get( ExtensionEncoder.EXTENDED_TYPE_KEY );
+			final Object representationValue = dictionary.get( ExtensionEncoder.EXTENDED_VALUE_KEY );
+			return toNative( conversionAdaptorStore, representationValue, extendedType );
+		}
+		else if ( dictionary.containsKey( TypedArrayEncoder.ARRAY_ITEM_TYPE_KEY ) && dictionary.containsKey( TypedArrayEncoder.ARRAY_KEY ) ) {
+			// decode array of with a specified component type from a generic object array
+			final String componentType = (String)dictionary.get( TypedArrayEncoder.ARRAY_ITEM_TYPE_KEY );
+			final Object[] objectArray = (Object[])dictionary.get( TypedArrayEncoder.ARRAY_KEY );
+
+			try {
+				final Class<?> primitiveClass = TypedArrayEncoder.getPrimitiveType( componentType );
+				final Class<?> componentClass = primitiveClass != null ? primitiveClass : Class.forName( componentType );
+				final String componentObjectType = TypedArrayEncoder.getObjectTypeForClass( componentClass );   // this allows us to handle primitive wrappers
+				final Class<?> componentObjectClass = Class.forName( componentObjectType );
+				final Object array = Array.newInstance( componentClass, objectArray.length );
+				for ( int index = 0 ; index < objectArray.length ; index++ ) {
+					final Object rawItem = objectArray[index];
+					// if the raw item is an extended type it will automatically have been decoded unless it is of the common component type in which case we tranlate it
+					final Object item = componentObjectClass.isInstance( rawItem ) ? rawItem : toNative( conversionAdaptorStore, rawItem, componentObjectType );
+					Array.set( array, index, item );
+				}
+				return array;
+			}
+			catch( Exception exception ) {
+				exception.printStackTrace();
+				throw new RuntimeException( "Exception decoding a typed array of type: " + componentType, exception );
+			}
+		}
+		else if ( dictionary.containsKey( SerializationEncoder.SERIALIZATION_VALUE_KEY ) ) {
+			final byte[] serializationData = (byte[])dictionary.get( SerializationEncoder.SERIALIZATION_VALUE_KEY );
+
+			try {
+				final ByteArrayInputStream byteInputStream = new ByteArrayInputStream( serializationData );
+				final ObjectInputStream objectInputStream = new ObjectInputStream( byteInputStream );
+				final Object value = objectInputStream.readObject();
+				objectInputStream.close();
+				byteInputStream.close();
+				return value;
+			}
+			catch ( Exception exception ) {
+				throw new RuntimeException( "Exception decoding serialized object from dictionary: " + dictionary, exception );
+			}
+		}
+		else if ( dictionary.containsKey( SoftValueEncoder.OBJECT_ID_KEY ) && dictionary.containsKey( SoftValueEncoder.VALUE_KEY ) ) {
+			// decode a referenced object definition and store it
+			final JSONNumber itemID = (JSONNumber)dictionary.get( SoftValueEncoder.OBJECT_ID_KEY );
+			final Object item = dictionary.get( SoftValueEncoder.VALUE_KEY );
+			referenceStore.store( itemID.longValue(), item );
+			return item;
+		}
+		else if ( dictionary.containsKey( ReferenceEncoder.REFERENCE_KEY ) ) {
+			// decode a reference to an object in the store
+			final JSONNumber itemID = (JSONNumber)dictionary.get( ReferenceEncoder.REFERENCE_KEY );
+			return referenceStore.get( itemID.longValue() );
+		}
+		else {
+			return dictionary;
+		}
 	}
-    
-    
+
+
+	/** append to the items the parsed items from the array string */
+	private void appendItems( final JSONDecoder source, final Map<String,Object> dictionary ) {
+		final int startScanPosition = source.getScanPosition();
+		final String archive = source.getArchive();
+		final int archiveLength = archive.length();
+
+		int position = startScanPosition + 1;	// start at first character after leading bracket
+		while( true ) {
+			if ( position < archiveLength ) {
+				throw new RuntimeException( "JSON Dictionary decode exception at position: " + startScanPosition + ". The input terminated prematurely." );
+			}
+
+			final char nextChar = archive.charAt( position );
+
+			if ( Character.isWhiteSpace( nextChar ) ) {		// ignore whitespace and keep going
+				++position;
+			}
+			else if ( nextChar == '}' ) {	// closing brace of dictionary
+				source.setScanPosition( position + 1 );
+				return;		// we're done with this dictionary
+			}
+			else {		// process the next key/value pair
+				// parse the key
+				final Object keyObject = source.parseNext();
+				if ( !keyObject instanceof String ) {
+					throw new RuntimeException( "JSON Dictionary decode exception at position: " + startScanPosition + ". The key at position, " + position + " is not a String as it should be." );
+				}
+
+				final String key = (String)keyObject;
+				position = source.getScanPosition();	// get the current scan position after having scanned the key
+
+				// search for the comma while skipping white space
+				while ( true ) {
+					if ( position < archiveLength ) {
+						throw new RuntimeException( "JSON Dictionary decode exception at position: " + startScanPosition + ". The input terminated prematurely." );
+					}
+
+					final char nextChar = archive.charAt( position );
+
+					if ( Character.isWhiteSpace( nextChar ) ) {		// ignore whitespace and keep going
+						++position;
+					}
+					else if ( nextChar == ',' ) {	// now we got our comma
+						++position;
+						break;
+					}
+					else {
+						throw new RuntimeException( "Dictionary decode parse exception at position: " + position ". Invalid character: " + nextChar );
+					}
+				}
+
+				// now parse the value
+				final Object value = source.parseNext();
+				dictionary.put( key, value );
+				position = source.getScanPosition();	// get the current scan position after having scanned the value
+			}
+		}
+	}
+
+
     /** Convert the representation value to native using the specified extension type */
     @SuppressWarnings( {"unchecked", "rawtypes"} )
-    private Object toNative( final Object representationValue, final String extendedType ) {
-        final ConversionAdaptor adaptor = CONVERSION_ADAPTOR_STORE.getConversionAdaptor( extendedType );
+    private Object toNative( final ConversionAdaptorStore conversionAdaptorStore, final Object representationValue, final String extendedType ) {
+        final ConversionAdaptor adaptor = conversionAdaptorStore.getConversionAdaptor( extendedType );
         if ( adaptor == null )  throw new RuntimeException( "Missing JSON adaptor for type: " + extendedType );
         return adaptor.toNative( representationValue );
     }
-	
-	
-	/** append to the items the parsed items from the array string */
-	private void appendItems( final Map<String,Object> dictionary, final String dictionaryString ) {
-		if ( dictionaryString != null && dictionaryString.length() > 0 ) {
-			try {
-				if ( dictionaryString.charAt( 0 ) == '}' ) {
-					_remainder = dictionaryString.substring( 1 ).trim();
-					return;
-				}
-				else {
-					final StringDecoder keyDecoder = new StringDecoder( dictionaryString );
-					final String key = keyDecoder.decode();
-					final String keyRemainder = keyDecoder.getRemainder();
-					final String valueBuffer = keyRemainder.trim().substring( 1 );	// trim spaces and strip the leading colon
-					final AbstractDecoder<?> valueDecoder = AbstractDecoder.getInstance( valueBuffer, CONVERSION_ADAPTOR_STORE, REFERENCE_STORE );
-					final Object value = valueDecoder.decode();
-					dictionary.put( key, value );
-					final String itemRemainder = valueDecoder.getRemainder().trim();
-					final char closure = itemRemainder.charAt( 0 );
-					final String archiveRemainder = itemRemainder.substring(1).trim();
-					switch ( closure ) {
-						case ',':
-							appendItems( dictionary, archiveRemainder );
-							return;
-						case '}':
-							_remainder = archiveRemainder;
-							return;
-						default:
-							throw new RuntimeException( "Invalid dictionary closure mark: " + closure );
-					}
-				}
-			}
-			catch ( Exception exception ) {
-				exception.printStackTrace();
-			}
-		}
-		else {
-			_remainder = null;
-		}
-	}
 }
 
 
