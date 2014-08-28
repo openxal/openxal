@@ -120,6 +120,8 @@ public class TestJSONCoding {
     
     @Test
     public void testArrayEncodingDecoding() {
+		checkArrayEncodingDecoding( new Object[] { "Hello", "World" } );    // Object array with standard types
+		checkArrayEncodingDecoding( new Object[] { "Hello, World", 2.0 } );    // Object array with standard types
         checkArrayEncodingDecoding( new Object[] { "Hello, World", 2.0, 5000L } );    // Object array with standard types
         checkArrayEncodingDecoding( new Object[] { "Hello, World", 25, new Date() } );    // Object array with extended types
         checkArrayEncodingDecoding( new String[] { "Hello", "World", "This is just a test!" } );    // standard type array
@@ -301,7 +303,7 @@ public class TestJSONCoding {
         Assert.assertTrue( shared_0 == shared_1 );      // verify that references are preserved (objects that share the same instance prior to encoding do so when regenerated)
         Assert.assertTrue( shared_0 != other );         // verify that different instances that are equal prior to encoding do not share the same instance after regeneration
     }
-    
+
     
     /** check whether the coder can encode values */
     static private <DataType> void checkEncodingEquality( final DataType value ) {
