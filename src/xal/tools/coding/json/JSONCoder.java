@@ -105,7 +105,7 @@ public class JSONCoder implements Coder {
 	 * @return an object with the data described in the archive
 	 */
     public Object decode( final String archive ) {
-        final AbstractDecoder<?> decoder = AbstractDecoder.getInstance( archive, new ConversionAdaptorStore( CONVERSION_ADAPTOR_STORE ) );
+        final JSONDecoder decoder = JSONDecoder.getInstance( archive, new ConversionAdaptorStore( CONVERSION_ADAPTOR_STORE ) );
 		return decoder != null ? decoder.decode() : null;
     }
 	
@@ -741,80 +741,144 @@ class ArrayEncoder extends SoftValueEncoder {
 
 
 
-/** Base class of decoders */
-abstract class AbstractDecoder<DataType> {
-	/** archive to parse */
-	final protected String ARCHIVE;
-	
-	/** unparsed remainder of the source string after parsing */
-	protected String _remainder;
-	
-	
+/** Decode JSON into an object graph */
+class JSONDecoder {
+	/** JSON archive to parse */
+	final private String JSON_ARCHIVE;
+
+	/** store of conversion adaptors to use when instantiating new instances from the JSON archive */
+	final private ConversionAdaptorStore CONVERSION_ADAPTOR_STORE;
+
+	/** stores references to objects already decoded and referenced in new objects */
+	private KeyedReferenceStore _referenceStore;
+
+	/** current position of the scanner in the archive */
+	private int _scanPosition;
+
+
 	/** Constructor */
-	protected AbstractDecoder( final String archive ) {
-		ARCHIVE = archive;
+	protected JSONDecoder( final String jsonArchive, final ConversionAdaptorStore conversionAdaptorStore ) {
+		JSON_ARCHIVE = jsonArchive.trim();
+		CONVERSION_ADAPTOR_STORE = conversionAdaptorStore;
+
+		_scanPosition = 0;
+		_referenceStore = null;
 	}
-	
-	
-	/** decode the source to extract the next object */	
-	abstract protected DataType decode();
-	
-	
-	/** get the unparsed remainder of the source string */
-	protected String getRemainder() {
-		return _remainder;
-	}
-	
-	
-	/** check for a match of the archive against the specified pattern, update the remainder and return the matching string */
-	protected String processMatch( final Pattern pattern ) {
-		final Matcher matcher = pattern.matcher( ARCHIVE );
-		matcher.find();
-		final int nextIndex = matcher.end();
-		_remainder = ARCHIVE.length() > nextIndex ? ARCHIVE.substring( nextIndex ) : null;
-		return matcher.group();
-	}
-	
-	
+
+
 	/** Get a decoder for the archive */
-	public static AbstractDecoder<?> getInstance( final String archive, final ConversionAdaptorStore conversionAdaptorStore ) {
-        return AbstractDecoder.getInstance( archive, conversionAdaptorStore, new KeyedReferenceStore() );
-	}	
-	
-	
-	/** Get a decoder for the archive */
-	protected static AbstractDecoder<?> getInstance( final String archive, final ConversionAdaptorStore conversionAdaptorStore, final KeyedReferenceStore referenceStore ) {
-		final String source = archive.trim();
-		if ( source.length() > 0 ) {
-			final char firstChar = source.charAt( 0 );
-			switch ( firstChar ) {
-				case '+': case '-': case '.':
-				case '0': case '1': case '2': case '3': case '4': case '5': case '6': case '7': case '8': case '9':
-					return new NumberDecoder( source );
-				case 't': case 'f':
-					return new BooleanDecoder( source );
-				case 'n':
-					return new NullDecoder( source );
-				case '\"':
-					return new StringDecoder( source );
-				case '[':
-					return new ArrayDecoder( source, conversionAdaptorStore, referenceStore );
-				case '{':
-					return new DictionaryDecoder( source, conversionAdaptorStore, referenceStore );
-				default:
-					return null;
-			}
+	public static JSONDecoder getInstance( final String jsonArchive, final ConversionAdaptorStore conversionAdaptorStore ) {
+		return new JSONDecoder( jsonArchive, conversionAdaptorStore );
+	}
+
+
+	/** get the current scan position */
+	public int getScanPosition() {
+		return _scanPosition;
+	}
+
+
+	/** set the scan postion */
+	public void setScanPosition( final int scanPosition ) {
+		_scanPosition = scanPosition;
+	}
+
+
+	/** advance the scan position the specified number of steps */
+	public void advanceScanPosition( final int scanLength ) {
+		_scanPosition += scanLength;
+	}
+
+
+	/** get the JSON Archive */
+	public String getArchive() {
+		return JSON_ARCHIVE;
+	}
+
+
+	/** get the conversion adaptor store */
+	public ConversionAdaptorStore getConversionAdaptorStore() {
+		return CONVERSION_ADAPTOR_STORE;
+	}
+
+
+	/** get the keyed reference store */
+	public KeyedReferenceStore getReferenceStore() {
+		return _referenceStore;
+	}
+
+
+	/** decode the archive */
+	public Object decode() {
+		_scanPosition = 0;
+		_referenceStore = new KeyedReferenceStore();
+
+		return parseNext();
+	}
+
+
+	/** parse the next object starting at the current scan position and advance the scan position */
+	public Object parseNext() {
+		final AbstractDecoder<?> nextDecoder = nextDecoder();
+		if ( nextDecoder != null ) {
+			return nextDecoder.decode( this );
 		}
 		else {
 			return null;
 		}
-	}	
+	}
+
+
+	/** get the next decoder */
+	private AbstractDecoder<?> nextDecoder() {
+		if ( _scanPosition < JSON_ARCHIVE.length() ) {
+			final char nextChar = JSON_ARCHIVE.charAt( _scanPosition );
+
+			switch ( nextChar ) {
+			case '+': case '-': case '.':
+			case '0': case '1': case '2': case '3': case '4': case '5': case '6': case '7': case '8': case '9':
+				return NumberDecoder.getInstance();
+			case 't': case 'f':
+				return BooleanDecoder.getInstance();
+			case 'n':
+				return NullDecoder.getInstance();
+			case '\"':
+				return StringDecoder.getInstance();
+			case '[':
+				return ArrayDecoder.getInstance();
+			case '{':
+				return DictionaryDecoder.getInstance();
+			default:
+				if ( Character.isWhitespace( nextChar ) ) {		// ignore whitespace
+					++_scanPosition;	// increment the scan position
+					return nextDecoder();
+				}
+				else {
+					return null;
+				}
+			}
+		}
+		else {
+			return null;	// nothing left to parse
+		}
+	}
+}
+
+
+
+/** Base class of decoders */
+abstract class AbstractDecoder<DataType> {
+	/** decode the source to extract the next object */
+	abstract protected DataType decode( final JSONDecoder source );
 }
 
 
 
 /** decode a number from a source string */
 class NumberDecoder extends AbstractDecoder<JSONNumber> {
+	/** default number decoder */
+	static private final NumberDecoder DEFAULT_DECODER;
+
 	/** pattern for matching a number */
 	static final Pattern NUMBER_PATTERN;
 	
@@ -822,25 +886,33 @@ class NumberDecoder extends AbstractDecoder<JSONNumber> {
 	// static initializer
 	static {
 		NUMBER_PATTERN = Pattern.compile( "[+-]?((\\d+\\.?\\d*)|(\\.?\\d+))([eE][+-]?\\d+)?" );
+		DEFAULT_DECODER = new NumberDecoder();
 	}
 	
-	
-	/** Constructor */
-	protected NumberDecoder( final String archive ) {
-		super( archive );
+
+	/** get an instance of the number decoder */
+	static public NumberDecoder getInstance() {
+		return DEFAULT_DECODER;
 	}
 	
 	
 	/** decode the source to extract the next object */	
-	protected JSONNumber decode() {
-		final String match = processMatch( NUMBER_PATTERN );
-        // doubles always have a decimal point even if the fraction is zero, so the absence of a period indicates a long integer
-        if ( match != null ) {
-			return JSONNumber.valueOf( match );
-        }
-        else {
-            return null;
-        }
+	protected JSONNumber decode( final JSONDecoder source ) {
+		final int startScanPosition = source.getScanPosition();
+		final Matcher matcher = NUMBER_PATTERN.matcher( source.getArchive() );
+		if ( matcher.find( startScanPosition ) ) {
+			final String match = matcher.group();
+			if ( match != null ) {
+				source.advanceScanPosition( matcher.end() - startScanPosition );
+				return JSONNumber.valueOf( match );
+			}
+			else {
+				throw new RuntimeException( "JSON Number parse exception at position: " + startScanPosition );
+			}
+		}
+		else {
+			throw new RuntimeException( "JSON Number parse exception at position: " + startScanPosition );
+		}
 	}
 }
 
@@ -848,26 +920,46 @@ class NumberDecoder extends AbstractDecoder<JSONNumber> {
 
 /** decode a boolean from a source string */
 class BooleanDecoder extends AbstractDecoder<Boolean> {
-	/** pattern for matching booleans */
-	static final Pattern BOOLEAN_PATTERN;
-	
+	/** default boolean decoder */
+	static private final BooleanDecoder DEFAULT_DECODER;
+
 	
 	// static initializer
 	static {
-		BOOLEAN_PATTERN = Pattern.compile( "(true)|(false)" );
+		DEFAULT_DECODER = new BooleanDecoder();
 	}
-	
-	
-	/** Constructor */
-	protected BooleanDecoder( final String archive ) {
-		super( archive );
+
+
+	/** get an instance of the number decoder */
+	static public BooleanDecoder getInstance() {
+		return DEFAULT_DECODER;
 	}
-	
+
 	
 	/** decode the source to extract the next object */	
-	protected Boolean decode() {
-		final String match = processMatch( BOOLEAN_PATTERN );
-		return match != null ? Boolean.valueOf( match ) : null;
+	protected Boolean decode( final JSONDecoder source ) {
+		final int startScanPosition = source.getScanPosition();
+		final String archive = source.getArchive();
+		final char firstChar = archive.charAt( startScanPosition );
+
+		final int scanLength = firstChar == 't' ? 4 : 5;
+		if ( startScanPosition + scanLength <= archive.length() ) {
+			final String input = archive.substring( startScanPosition, startScanPosition + scanLength );
+			if ( input.equals( "true" ) ) {
+				source.advanceScanPosition( scanLength );
+				return true;
+			}
+			else if ( input.equals( "false" ) ) {
+				source.advanceScanPosition( scanLength );
+				return false;
+			}
+			else {
+				throw new RuntimeException( "JSON boolean parse exception at position: " + startScanPosition );
+			}
+		}
+		else {
+			throw new RuntimeException( "JSON boolean decode exception at position: " + startScanPosition + ". The input terminated prematurely." );
+		}
 	}
 }
 
@@ -875,26 +967,42 @@ class BooleanDecoder extends AbstractDecoder<Boolean> {
 
 /** decode a null identifier from a source string */
 class NullDecoder extends AbstractDecoder<Object> {
-	/** pattern for matching the null identifier */
-	static final Pattern NULL_PATTERN;
-	
-	
+	/** default null decoder */
+	static private final NullDecoder DEFAULT_DECODER;
+
+
 	// static initializer
 	static {
-		NULL_PATTERN = Pattern.compile( "null" );
+		DEFAULT_DECODER = new NullDecoder();
 	}
-	
-	
-	/** Constructor */
-	protected NullDecoder( final String archive ) {
-		super( archive );
+
+
+	/** get an instance of the number decoder */
+	static public NullDecoder getInstance() {
+		return DEFAULT_DECODER;
 	}
-	
-	
-	/** decode the source to extract the next object */	
-	protected Object decode() {
-		final String match = processMatch( NULL_PATTERN );
-		return null;
+
+
+	/** decode the source to extract the next object */
+	protected Object decode( final JSONDecoder source ) {
+		final int startScanPosition = source.getScanPosition();
+		final String archive = source.getArchive();
+		final char firstChar = archive.charAt( startScanPosition );
+
+		final int scanLength = 4;
+		if ( startScanPosition + scanLength <= archive.length() ) {
+			final String input = archive.substring( startScanPosition, startScanPosition + scanLength );
+			if ( input.equals( "null" ) ) {
+				source.advanceScanPosition( scanLength );
+				return null;
+			}
+			else {
+				throw new RuntimeException( "JSON null parse exception at position: " + startScanPosition );
+			}
+		}
+		else {
+			throw new RuntimeException( "JSON null decode exception at position: " + startScanPosition + ". The input terminated prematurely." );
+		}
 	}
 }
 
@@ -902,61 +1010,65 @@ class NullDecoder extends AbstractDecoder<Object> {
 
 /** decode a string from a source string */
 class StringDecoder extends AbstractDecoder<String> {
-	/** pattern for matching a string */
-	static final Pattern STRING_PATTERN;
-	
-	
+	/** default string decoder */
+	static private final StringDecoder DEFAULT_DECODER;
+
+
 	// static initializer
 	static {
-		// a string begins and ends with a quotation mark and no unescaped quotation marks in between them
-		STRING_PATTERN = Pattern.compile( "\\\"(((\\\\)+\")|[^\"])*\\\"" );
+		DEFAULT_DECODER = new StringDecoder();
 	}
-	
-	
-	/** Constructor */
-	protected StringDecoder( final String archive ) {
-		super( archive );
+
+
+	/** get an instance of the number decoder */
+	static public StringDecoder getInstance() {
+		return DEFAULT_DECODER;
 	}
-	
-	
-	/** decode the source to extract the next object */	
-	protected String decode() {
-		final String match = processMatch( STRING_PATTERN );
-		if ( match != null ) {
-			final int length = match.length();
-			return length > 0 ? unescape( match.substring( 1, length-1 ) ) : "";
-		}
-		else {
-			return null;
-		}
-	}
-	
-	
-	/** unescape (replace occurences of a backslash and a character by the character itself) the input and return the resulting string */
-	static private String unescape( final String input ) {
-		final StringBuffer buffer = new StringBuffer();
-		unescapeToBuffer( buffer, input );
-		return buffer.toString();
-	}
-	
-	
-	/** unescape the input and append the text to the buffer */
-	static private void unescapeToBuffer( final StringBuffer buffer, final String input ) {
-		if ( input != null && input.length() > 0 ) {
-			final int location = input.indexOf( '\\' );
-			if ( location < 0 ) {
-				buffer.append( input );
+
+
+	/** decode the source starting at the specified position */
+	private String decode( final JSONDecoder source, final int startPosition ) {
+		final String archive = source.getArchive();
+		final int archiveLength = archive.length();
+
+		int position = startPosition;
+		while( true ) {
+			if ( position >= archiveLength ) {
+				throw new RuntimeException( "JSON String decode exception at position: " + source.getScanPosition() + ". The input terminated prematurely." );
 			}
-			else {
-				buffer.append( input.substring( 0, location ) );
-				final int inputLength = input.length();
-				if ( inputLength > location ) {
-					buffer.append( input.charAt( location + 1 ) );
-					final String remainder = inputLength > location + 1 ? input.substring( location + 2 ) : null;
-					unescapeToBuffer( buffer, remainder );
+
+			final char nextChar = archive.charAt( position );
+
+			if ( nextChar == '\\' ) {	// escape character => replace with next character literally
+				String prefix = "";
+				if ( position > startPosition ) {
+					prefix = archive.substring( startPosition, position );	// grab what we've already parsed preceding the escape character
 				}
+				position += 1;	// skip the escape character
+				final char literalChar = archive.charAt( position );	// this is the character immediatel following the escape character to process literally
+				return prefix + literalChar + decode( source, position + 1 );		// combine the prefix, literal character and continue processing the characters following it normally
+			}
+			else if ( nextChar == '"' ) {		// terminating quotation mark
+				source.setScanPosition( position + 1 );
+				break;
+			}
+			else {		// normal character
+				position += 1;		// increment the scan position
 			}
 		}
+
+		return archive.substring( startPosition, position );
+	}
+
+
+	/** decode the source to extract the next object */
+	protected String decode( final JSONDecoder source ) {
+		final int startScanPosition = source.getScanPosition();
+		final String archive = source.getArchive();
+		final int archiveLength = archive.length();
+
+		// start decoding the string at the character immediately following the initial quotation mark
+		return decode( source, startScanPosition + 1 );
 	}
 }
 
@@ -964,62 +1076,74 @@ class StringDecoder extends AbstractDecoder<String> {
 
 /** decode an array from a source string */
 class ArrayDecoder extends AbstractDecoder<Object[]> {
-    /** custom type adaptors */
-    final private ConversionAdaptorStore CONVERSION_ADAPTOR_STORE;
-    
-    /** reference store */
-    final private KeyedReferenceStore REFERENCE_STORE;
-    
-    
-	/** Constructor */
-	protected ArrayDecoder( final String archive, final ConversionAdaptorStore conversionAdaptorStore, final KeyedReferenceStore referenceStore ) {
-		super( archive );
-        CONVERSION_ADAPTOR_STORE = conversionAdaptorStore;
-        REFERENCE_STORE = referenceStore;
+	/** default array decoder */
+	static private final ArrayDecoder DEFAULT_DECODER;
+
+
+	// static initializer
+	static {
+		DEFAULT_DECODER = new ArrayDecoder();
 	}
-	
-	
-	/** decode the source to extract the next object */	
-	protected Object[] decode() {
-		final String arrayString = ARCHIVE.substring( 1 ).trim();	// strip the leading bracket
+
+
+	/** get an instance of the number decoder */
+	static public ArrayDecoder getInstance() {
+		return DEFAULT_DECODER;
+	}
+
+
+	/** decode the source to extract the next object */
+	protected Object[] decode( final JSONDecoder source ) {
 		final List<Object> items = new ArrayList<Object>();
-		appendItems( items, arrayString );
+		appendItems( source, items );
 		return items.toArray();
 	}
-	
+
 	
 	/** append to the items the parsed items from the array string */
-	private void appendItems( final List<Object> items, final String arrayString ) {
-		if ( arrayString != null && arrayString.length() > 0 ) {
-			try {
-				if ( arrayString.charAt( 0 ) == ']' ) {
-					_remainder = arrayString.substring( 1 ).trim();
-					return;
+	private void appendItems( final JSONDecoder source, final List<Object> items ) {
+		final int startScanPosition = source.getScanPosition();
+		final String archive = source.getArchive();
+		final int archiveLength = archive.length();
+
+		int position = startScanPosition + 1;	// start at first character after leading bracket
+		boolean expectingNextItem = true;		// indicates that the next thing we expect is an item (or white space)
+		while( true ) {
+			if ( position >= archiveLength ) {
+				throw new RuntimeException( "JSON Array decode exception at position: " + startScanPosition + ". The input terminated prematurely." );
+			}
+
+			final char nextChar = archive.charAt( position );
+
+			if ( Character.isWhitespace( nextChar ) ) {		// ignore whitespace and keep going
+				++position;
+			}
+			else if ( expectingNextItem ) {		// process the next array item
+				if ( items.size() == 0 && nextChar == ']' ) {	// we've got an empty array
+					source.setScanPosition( position + 1 );
+					return;		// we're done with this array
 				}
 				else {
-					final AbstractDecoder<?> itemDecoder = AbstractDecoder.getInstance( arrayString, CONVERSION_ADAPTOR_STORE, REFERENCE_STORE );
-					items.add( itemDecoder.decode() );
-					final String itemRemainder = itemDecoder.getRemainder().trim();
-					final char closure = itemRemainder.charAt( 0 );
-					final String archiveRemainder = itemRemainder.substring(1).trim();
-					switch ( closure ) {
-						case ',':
-							appendItems( items, archiveRemainder );
-							return;
-						case ']':
-							_remainder = archiveRemainder;
-							return;
-						default:
-							throw new RuntimeException( "Invalid array closure mark: " + closure );
-					}
+					expectingNextItem = false;		// need a comma before we can begin parsing the next item
+					source.setScanPosition( position );
+					final Object item = source.parseNext();
+					items.add( item );
+					position = source.getScanPosition();	// get the current scan position after having scanned the item
 				}
 			}
-			catch ( Exception exception ) {
-				exception.printStackTrace();
+			else {		// not expecting a new item so we expect either a comma or closing bracket
+				switch( nextChar ) {
+					case ']':		// closing bracket of array
+						source.setScanPosition( position + 1 );
+						return;		// we're done with this array
+					case ',':		// comma preceding next item
+						expectingNextItem = true;		// comma indicates we are awaiting the next item
+						++position;
+						break;
+					default:
+						throw new RuntimeException( "JSON Array decode exception. Encountered invalid character, " + nextChar + " at position, " + position + "." );
+				}
 			}
-		}
-		else {
-			_remainder = null;
 		}
 	}
 }
@@ -1028,139 +1152,181 @@ class ArrayDecoder extends AbstractDecoder<Object[]> {
 
 /** decode a dictionary from a source string */
 class DictionaryDecoder extends AbstractDecoder<Object> {
-    /** custom type adaptors */
-    final private ConversionAdaptorStore CONVERSION_ADAPTOR_STORE;
-    
-    /** reference store */
-    final private KeyedReferenceStore REFERENCE_STORE;
+	/** default dictionary decoder */
+	static private final DictionaryDecoder DEFAULT_DECODER;
 
-    
-	/** Constructor */
-	protected DictionaryDecoder( final String archive, final ConversionAdaptorStore conversionAdaptorStore, final KeyedReferenceStore referenceStore ) {
-		super( archive );
-        CONVERSION_ADAPTOR_STORE = conversionAdaptorStore;
-        REFERENCE_STORE = referenceStore;
+
+	// static initializer
+	static {
+		DEFAULT_DECODER = new DictionaryDecoder();
 	}
-	
-	
-	/** decode the source to extract the next object */	
-    @SuppressWarnings( "unchecked" )    // no way to validate representation value and type at compile time
-	protected Object decode() {
-		final String dictionaryString = ARCHIVE.substring( 1 ).trim();	// strip the leading brace
+
+
+	/** get an instance of the number decoder */
+	static public DictionaryDecoder getInstance() {
+		return DEFAULT_DECODER;
+	}
+
+
+	/** decode the source to extract the next object */
+	@SuppressWarnings( "unchecked" )    // no way to validate representation value and type at compile time
+	protected Object decode( final JSONDecoder source ) {
 		final Map<String,Object> dictionary = new HashMap<String,Object>();
-		appendItems( dictionary, dictionaryString );
-        
-        if ( dictionary.containsKey( ExtensionEncoder.EXTENDED_TYPE_KEY ) && dictionary.containsKey( ExtensionEncoder.EXTENDED_VALUE_KEY ) ) {
-            // decode object of extended type
-            final String extendedType = (String)dictionary.get( ExtensionEncoder.EXTENDED_TYPE_KEY );
-            final Object representationValue = dictionary.get( ExtensionEncoder.EXTENDED_VALUE_KEY );
-            return toNative( representationValue, extendedType );
-        }
-        else if ( dictionary.containsKey( TypedArrayEncoder.ARRAY_ITEM_TYPE_KEY ) && dictionary.containsKey( TypedArrayEncoder.ARRAY_KEY ) ) {
-            // decode array of with a specified component type from a generic object array
-            final String componentType = (String)dictionary.get( TypedArrayEncoder.ARRAY_ITEM_TYPE_KEY );
-            final Object[] objectArray = (Object[])dictionary.get( TypedArrayEncoder.ARRAY_KEY );
-            
-            try {
-                final Class<?> primitiveClass = TypedArrayEncoder.getPrimitiveType( componentType );
-                final Class<?> componentClass = primitiveClass != null ? primitiveClass : Class.forName( componentType );
-                final String componentObjectType = TypedArrayEncoder.getObjectTypeForClass( componentClass );   // this allows us to handle primitive wrappers
-                final Class<?> componentObjectClass = Class.forName( componentObjectType ); 
-                final Object array = Array.newInstance( componentClass, objectArray.length );
-                for ( int index = 0 ; index < objectArray.length ; index++ ) {
-                    final Object rawItem = objectArray[index];
-                    // if the raw item is an extended type it will automatically have been decoded unless it is of the common component type in which case we tranlate it
-                    final Object item = componentObjectClass.isInstance( rawItem ) ? rawItem : toNative( rawItem, componentObjectType );
-                    Array.set( array, index, item );
-                }
-                return array;
-            }
-            catch( Exception exception ) {
-                exception.printStackTrace();
-                throw new RuntimeException( "Exception decoding a typed array of type: " + componentType, exception );
-            }
-        }
-        else if ( dictionary.containsKey( SerializationEncoder.SERIALIZATION_VALUE_KEY ) ) {
-            final byte[] serializationData = (byte[])dictionary.get( SerializationEncoder.SERIALIZATION_VALUE_KEY );
-            
-            try {
-                final ByteArrayInputStream byteInputStream = new ByteArrayInputStream( serializationData );
-                final ObjectInputStream objectInputStream = new ObjectInputStream( byteInputStream );
-                final Object value = objectInputStream.readObject();
-                objectInputStream.close();
-                byteInputStream.close();
-                return value;
-            }
-            catch ( Exception exception ) {
-                throw new RuntimeException( "Exception decoding serialized object from dictionary: " + dictionary, exception );
-            }
-        }
-        else if ( dictionary.containsKey( SoftValueEncoder.OBJECT_ID_KEY ) && dictionary.containsKey( SoftValueEncoder.VALUE_KEY ) ) {
-            // decode a referenced object definition and store it
-            final JSONNumber itemID = (JSONNumber)dictionary.get( SoftValueEncoder.OBJECT_ID_KEY );
-            final Object item = dictionary.get( SoftValueEncoder.VALUE_KEY );
-            REFERENCE_STORE.store( itemID.longValue(), item );
-            return item;
-        }
-        else if ( dictionary.containsKey( ReferenceEncoder.REFERENCE_KEY ) ) {
-            // decode a reference to an object in the store
-            final JSONNumber itemID = (JSONNumber)dictionary.get( ReferenceEncoder.REFERENCE_KEY );
-            return REFERENCE_STORE.get( itemID.longValue() );
-        }
-        else {
-            return dictionary;
-        }
+		appendItems( source, dictionary );
+
+		final ConversionAdaptorStore conversionAdaptorStore = source.getConversionAdaptorStore();
+		final KeyedReferenceStore referenceStore = source.getReferenceStore();
+
+		if ( dictionary.containsKey( ExtensionEncoder.EXTENDED_TYPE_KEY ) && dictionary.containsKey( ExtensionEncoder.EXTENDED_VALUE_KEY ) ) {
+			// decode object of extended type
+			final String extendedType = (String)dictionary.get( ExtensionEncoder.EXTENDED_TYPE_KEY );
+			final Object representationValue = dictionary.get( ExtensionEncoder.EXTENDED_VALUE_KEY );
+			return toNative( conversionAdaptorStore, representationValue, extendedType );
+		}
+		else if ( dictionary.containsKey( TypedArrayEncoder.ARRAY_ITEM_TYPE_KEY ) && dictionary.containsKey( TypedArrayEncoder.ARRAY_KEY ) ) {
+			// decode array of with a specified component type from a generic object array
+			final String componentType = (String)dictionary.get( TypedArrayEncoder.ARRAY_ITEM_TYPE_KEY );
+			final Object[] objectArray = (Object[])dictionary.get( TypedArrayEncoder.ARRAY_KEY );
+
+			try {
+				final Class<?> primitiveClass = TypedArrayEncoder.getPrimitiveType( componentType );
+				final Class<?> componentClass = primitiveClass != null ? primitiveClass : Class.forName( componentType );
+				final String componentObjectType = TypedArrayEncoder.getObjectTypeForClass( componentClass );   // this allows us to handle primitive wrappers
+				final Class<?> componentObjectClass = Class.forName( componentObjectType );
+				final Object array = Array.newInstance( componentClass, objectArray.length );
+				for ( int index = 0 ; index < objectArray.length ; index++ ) {
+					final Object rawItem = objectArray[index];
+					// if the raw item is an extended type it will automatically have been decoded unless it is of the common component type in which case we tranlate it
+					final Object item = componentObjectClass.isInstance( rawItem ) ? rawItem : toNative( conversionAdaptorStore, rawItem, componentObjectType );
+					Array.set( array, index, item );
+				}
+				return array;
+			}
+			catch( Exception exception ) {
+				exception.printStackTrace();
+				throw new RuntimeException( "Exception decoding a typed array of type: " + componentType, exception );
+			}
+		}
+		else if ( dictionary.containsKey( SerializationEncoder.SERIALIZATION_VALUE_KEY ) ) {
+			final byte[] serializationData = (byte[])dictionary.get( SerializationEncoder.SERIALIZATION_VALUE_KEY );
+
+			try {
+				final ByteArrayInputStream byteInputStream = new ByteArrayInputStream( serializationData );
+				final ObjectInputStream objectInputStream = new ObjectInputStream( byteInputStream );
+				final Object value = objectInputStream.readObject();
+				objectInputStream.close();
+				byteInputStream.close();
+				return value;
+			}
+			catch ( Exception exception ) {
+				throw new RuntimeException( "Exception decoding serialized object from dictionary: " + dictionary, exception );
+			}
+		}
+		else if ( dictionary.containsKey( SoftValueEncoder.OBJECT_ID_KEY ) && dictionary.containsKey( SoftValueEncoder.VALUE_KEY ) ) {
+			// decode a referenced object definition and store it
+			final JSONNumber itemID = (JSONNumber)dictionary.get( SoftValueEncoder.OBJECT_ID_KEY );
+			final Object item = dictionary.get( SoftValueEncoder.VALUE_KEY );
+			referenceStore.store( itemID.longValue(), item );
+			return item;
+		}
+		else if ( dictionary.containsKey( ReferenceEncoder.REFERENCE_KEY ) ) {
+			// decode a reference to an object in the store
+			final JSONNumber itemID = (JSONNumber)dictionary.get( ReferenceEncoder.REFERENCE_KEY );
+			return referenceStore.get( itemID.longValue() );
+		}
+		else {
+			return dictionary;
+		}
 	}
-    
-    
+
+
+	/** append to the items the parsed items from the array string */
+	private void appendItems( final JSONDecoder source, final Map<String,Object> dictionary ) {
+		final int startScanPosition = source.getScanPosition();
+		final String archive = source.getArchive();
+		final int archiveLength = archive.length();
+
+		int position = startScanPosition + 1;	// start at first character after leading bracket
+		boolean expectingNextPair = true;		// indicates whether the scanner expects a key value pair next (or white space)
+		while( true ) {
+			if ( position >= archiveLength ) {
+				throw new RuntimeException( "JSON Dictionary decode exception at position: " + startScanPosition + ". The input terminated prematurely." );
+			}
+
+			final char nextChar = archive.charAt( position );
+
+			if ( Character.isWhitespace( nextChar ) ) {		// ignore whitespace and keep going
+				++position;
+			}
+			else if ( expectingNextPair ) {		// process the next key/value pair
+				if ( dictionary.size() == 0 && nextChar == '}' ) {	// we've got an empty dictionary
+					source.setScanPosition( position + 1 );
+					return;		// we're done with this dictionary
+				}
+				else {
+					expectingNextPair = false;
+
+					// parse the key
+					source.setScanPosition( position );
+					final Object keyObject = source.parseNext();
+					if ( ! ( keyObject instanceof String ) ) {
+						throw new RuntimeException( "JSON Dictionary decode exception at position: " + startScanPosition + ". The key at position, " + position + " is not a String as it should be." );
+					}
+
+					final String key = (String)keyObject;
+					position = source.getScanPosition();	// get the current scan position after having scanned the key
+
+					// search for the comma while skipping white space
+					while ( true ) {
+						if ( position >= archiveLength ) {
+							throw new RuntimeException( "JSON Dictionary decode exception at position: " + startScanPosition + ". The input terminated prematurely." );
+						}
+
+						final char nextSeparatorChar = archive.charAt( position );
+
+						if ( Character.isWhitespace( nextSeparatorChar ) ) {		// ignore whitespace and keep going
+							++position;
+						}
+						else if ( nextSeparatorChar == ':' ) {	// now we got the colon
+							++position;
+							break;
+						}
+						else {
+							throw new RuntimeException( "Dictionary decode parse exception at position: " + position + ". Invalid character: " + nextChar );
+						}
+					}
+
+					// now parse the value
+					source.setScanPosition( position );
+					final Object value = source.parseNext();
+					dictionary.put( key, value );
+					position = source.getScanPosition();	// get the current scan position after having scanned the value
+				}
+			}
+			else {		// not whitespace and not expecting a key/value pair
+				switch( nextChar ) {
+					case '}':		// closing brace of dictionary
+						source.setScanPosition( position + 1 );
+						return;		// we're done with this dictionary
+					case ',':		// comma preceding next item
+						expectingNextPair = true;		// comma indicates we are awaiting the next key/value pair
+						++position;
+						break;
+					default:
+						throw new RuntimeException( "JSON Dictionary decode exception. Encountered invalid character, " + nextChar + " at position, " + position + "." );
+				}
+			}
+		}
+	}
+
+
     /** Convert the representation value to native using the specified extension type */
     @SuppressWarnings( {"unchecked", "rawtypes"} )
-    private Object toNative( final Object representationValue, final String extendedType ) {
-        final ConversionAdaptor adaptor = CONVERSION_ADAPTOR_STORE.getConversionAdaptor( extendedType );
+    private Object toNative( final ConversionAdaptorStore conversionAdaptorStore, final Object representationValue, final String extendedType ) {
+        final ConversionAdaptor adaptor = conversionAdaptorStore.getConversionAdaptor( extendedType );
         if ( adaptor == null )  throw new RuntimeException( "Missing JSON adaptor for type: " + extendedType );
         return adaptor.toNative( representationValue );
     }
-	
-	
-	/** append to the items the parsed items from the array string */
-	private void appendItems( final Map<String,Object> dictionary, final String dictionaryString ) {
-		if ( dictionaryString != null && dictionaryString.length() > 0 ) {
-			try {
-				if ( dictionaryString.charAt( 0 ) == '}' ) {
-					_remainder = dictionaryString.substring( 1 ).trim();
-					return;
-				}
-				else {
-					final StringDecoder keyDecoder = new StringDecoder( dictionaryString );
-					final String key = keyDecoder.decode();
-					final String keyRemainder = keyDecoder.getRemainder();
-					final String valueBuffer = keyRemainder.trim().substring( 1 );	// trim spaces and strip the leading colon
-					final AbstractDecoder<?> valueDecoder = AbstractDecoder.getInstance( valueBuffer, CONVERSION_ADAPTOR_STORE, REFERENCE_STORE );
-					final Object value = valueDecoder.decode();
-					dictionary.put( key, value );
-					final String itemRemainder = valueDecoder.getRemainder().trim();
-					final char closure = itemRemainder.charAt( 0 );
-					final String archiveRemainder = itemRemainder.substring(1).trim();
-					switch ( closure ) {
-						case ',':
-							appendItems( dictionary, archiveRemainder );
-							return;
-						case '}':
-							_remainder = archiveRemainder;
-							return;
-						default:
-							throw new RuntimeException( "Invalid dictionary closure mark: " + closure );
-					}
-				}
-			}
-			catch ( Exception exception ) {
-				exception.printStackTrace();
-			}
-		}
-		else {
-			_remainder = null;
-		}
-	}
 }
 
 
