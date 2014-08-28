@@ -1033,7 +1033,7 @@ class StringDecoder extends AbstractDecoder<String> {
 
 		int position = startPosition;
 		while( true ) {
-			if ( position < archiveLength ) {
+			if ( position >= archiveLength ) {
 				throw new RuntimeException( "JSON String decode exception at position: " + source.getScanPosition() + ". The input terminated prematurely." );
 			}
 
@@ -1048,7 +1048,7 @@ class StringDecoder extends AbstractDecoder<String> {
 				final char literalChar = archive.charAt( position );	// this is the character immediatel following the escape character to process literally
 				return prefix + literalChar + decode( source, position + 1 );		// combine the prefix, literal character and continue processing the characters following it normally
 			}
-			else if ( nextChar == '\"' ) {		// terminating quotation mark
+			else if ( nextChar == '"' ) {		// terminating quotation mark
 				source.setScanPosition( position + 1 );
 				break;
 			}
@@ -1108,7 +1108,7 @@ class ArrayDecoder extends AbstractDecoder<Object[]> {
 
 		int position = startScanPosition + 1;	// start at first character after leading bracket
 		while( true ) {
-			if ( position < archiveLength ) {
+			if ( position >= archiveLength ) {
 				throw new RuntimeException( "JSON Array decode exception at position: " + startScanPosition + ". The input terminated prematurely." );
 			}
 
@@ -1230,7 +1230,7 @@ class DictionaryDecoder extends AbstractDecoder<Object> {
 
 		int position = startScanPosition + 1;	// start at first character after leading bracket
 		while( true ) {
-			if ( position < archiveLength ) {
+			if ( position >= archiveLength ) {
 				throw new RuntimeException( "JSON Dictionary decode exception at position: " + startScanPosition + ". The input terminated prematurely." );
 			}
 
@@ -1255,7 +1255,7 @@ class DictionaryDecoder extends AbstractDecoder<Object> {
 
 				// search for the comma while skipping white space
 				while ( true ) {
-					if ( position < archiveLength ) {
+					if ( position >= archiveLength ) {
 						throw new RuntimeException( "JSON Dictionary decode exception at position: " + startScanPosition + ". The input terminated prematurely." );
 					}
 
