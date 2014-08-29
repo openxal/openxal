@@ -30,6 +30,7 @@
 		<map smf="bsm" model="xal.model.elem.Marker"/>
 		<map smf="blm" model="xal.model.elem.Marker"/>
 		<map smf="ws" model="xal.model.elem.Marker"/>
+		<map smf="harp" model="xal.model.elem.Marker"/>
 		<map smf="marker" model="xal.model.elem.Marker"/>
 	</associations>
 
