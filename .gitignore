@@ -6,3 +6,6 @@ build/**/*
 /.project
 /doc
 /.pydevproject
+/crazy
+/.settings
+/.gitignore

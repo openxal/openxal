@@ -9,12 +9,14 @@ import xal.model.xml.ParsingException;
 
 import java.util.AbstractMap;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.NavigableMap;
 import java.util.TreeMap;
 
 /**
@@ -84,11 +86,16 @@ public class Trajectory<S extends ProbeState<S>> implements IArchive, Iterable<S
      */
     private class NodeIdToElemStates {
 
+        /** Comparator defining the order of String ID keys in the tree map */
+        private final Comparator<String>                        cmpKeyOrder;
+        
+        
         /** Map of SMF node identifiers to probe states within all modeling elements */
         private final TreeMap<String, RealNumericIndexer<S>>    mapNodeToStates;
         
         /** The last map entry to be accessed when adding a new probe state */
         private Map.Entry<String, RealNumericIndexer<S>>        entryLast;
+        
         
         /*
          * Initialization
@@ -104,16 +111,19 @@ public class Trajectory<S extends ProbeState<S>> implements IArchive, Iterable<S
 
             // Create the comparator for ordering the tree map nodes according to node IDs
             //  Then create the map itself
-            Comparator<String>  cmpIdOrder = new Comparator<String>() {
+            this.cmpKeyOrder = new Comparator<String>() {
 
                 @Override
                 public int compare(String strId1, String strId2) {
                     
-                    if (strId2.startsWith(strId1))
-                        return -1;
+                    if ( strId1.contentEquals(strId2) )
+                        return 0;
                     
-                    else if (strId1.startsWith(strId2))
-                        return +1;
+                    else if (strId2.contains(strId1) ) 
+                        return 0;
+                    
+                    else if (strId1.contains(strId2))
+                        return 0;
                     
                     else
                         return strId1.compareTo(strId2);
@@ -122,13 +132,13 @@ public class Trajectory<S extends ProbeState<S>> implements IArchive, Iterable<S
                 
             };
             
-            this.mapNodeToStates = new TreeMap<String, RealNumericIndexer<S>>(cmpIdOrder);
+            this.mapNodeToStates = new TreeMap<String, RealNumericIndexer<S>>(cmpKeyOrder);
             
             // Create a blank last map entry
-            String                  ideEmpty   = new String("ZzZzXxXxXxXxXx999888777666555444333222111WwWwWwWwYYyy");
+            String                  ideEmpty   = new String("XXX - Root Node");
             RealNumericIndexer<S>   setIdEmpty = new RealNumericIndexer<S>();
             
-            this.mapNodeToStates.put(ideEmpty, setIdEmpty);
+//            this.mapNodeToStates.put(ideEmpty, setIdEmpty);
             this.entryLast = new AbstractMap.SimpleEntry<String, RealNumericIndexer<S>>(ideEmpty, setIdEmpty);
         }
 
@@ -169,7 +179,8 @@ public class Trajectory<S extends ProbeState<S>> implements IArchive, Iterable<S
             
             // The state is a member of the last equivalence class accessed
 //            if ( this.entryLast.getKey().equals(strNodeId) ) {
-            if ( strNodeId.startsWith(strIdLast) ) {
+//            if ( strNodeId.startsWith(strIdLast) ) {
+            if ( this.cmpKeyOrder.compare(strNodeId,strIdLast) == 0 ) {
                 RealNumericIndexer<S> setStates = this.entryLast.getValue();
                 
                 setStates.add(dblPos, state);
@@ -178,43 +189,50 @@ public class Trajectory<S extends ProbeState<S>> implements IArchive, Iterable<S
             
             // This is a new equivalence class - that is, different then the last accessed
             //      Get the list of states corresponding to the ID class
-            Map.Entry<String, RealNumericIndexer<S>> entNode = this.mapNodeToStates.floorEntry(strNodeId);
+            RealNumericIndexer<S> setStates = this.mapNodeToStates.get(strNodeId);
             
             // If there is no element list for this ID class, create one and add it to the map
-            if (entNode == null) {
+            if (setStates == null) {
                 this.createNewEquivClass(strNodeId, state);
                 
                 return;
             }
             
+            setStates.add(dblPos, state);
+
+            // This will have the same equiv. class ID
+            this.updateLastEntry(strNodeId, setStates);
+            
             // Retrieve the entry key and value (state set) then process the given state
-            String                  strMapKey = entNode.getKey();
-            RealNumericIndexer<S>   setStates = entNode.getValue();
+//            String                  strMapKey = entNode.getKey();
+//            RealNumericIndexer<S>   setStates = entNode.getValue();
+//            RealNumericIndexer<S>   setStates = entNode;
+//            String                  strMapKey = strNodeId;
            
             // Map key is a substring of the argument Node ID
-            if ( strNodeId.startsWith(strMapKey) ) {
-                setStates.add(dblPos, state);
-
-                // This will have the same equiv. class ID
-                this.updateLastEntry(strMapKey, setStates);
-                
-                return;
-            }
+//            if ( strNodeId.startsWith(strMapKey) ) {
+//                setStates.add(dblPos, state);
+//
+//                // This will have the same equiv. class ID
+//                this.updateLastEntry(strMapKey, setStates);
+//                
+//                return;
+//            }
                 
             // Argument ID is a substring of the map key
-            if ( strMapKey.startsWith(strNodeId) ) {
-                this.mapNodeToStates.remove(strMapKey);
-                this.mapNodeToStates.put(strNodeId, setStates);
-                setStates.add(dblPos, state);
-
-                // Save the last list to be accessed
-                this.updateLastEntry(strNodeId, setStates);
-            }
+//            if ( strMapKey.startsWith(strNodeId) ) {
+//                this.mapNodeToStates.remove(strMapKey);
+//                this.mapNodeToStates.put(strNodeId, setStates);
+//                setStates.add(dblPos, state);
+//
+//                // Save the last list to be accessed
+//                this.updateLastEntry(strNodeId, setStates);
+//            }
                 
             // Neither ID is a substring of the other
             //      We are definitely looking at a different hardware node.
             //      Create a new equivalence class
-            this.createNewEquivClass(strNodeId, state);
+//            this.createNewEquivClass(strNodeId, state);
         }
         
         /**
@@ -231,29 +249,59 @@ public class Trajectory<S extends ProbeState<S>> implements IArchive, Iterable<S
          * @author Christopher K. Allen
          * @since  Aug 14, 2014
          */
-        public RealNumericIndexer<S>    getStates(String strNodeId) {
+//        public RealNumericIndexer<S>    getStates(String strNodeId) {
+        public List<S>    getStates(String strNodeId) {
             
             // Specific case; We get lucky, the given node ID is in the last equivalence class accessed
             String                    strIdLast = this.entryLast.getKey();
             
-            if ( strNodeId.startsWith(strIdLast) ) {
+            if ( this.cmpKeyOrder.compare(strNodeId, strIdLast) == 0) {
                 RealNumericIndexer<S> setStates = this.entryLast.getValue();
                 
-                return setStates;
+                return setStates.toList();
             }
             
             // The general case: We must get the list of states corresponding to the ID class
-            Map.Entry<String, RealNumericIndexer<S>> entNode   = this.mapNodeToStates.floorEntry(strNodeId);
-            String                                   strClsId  = entNode.getKey();
-            RealNumericIndexer<S>                    setStates = entNode.getValue();
+//            Map.Entry<String, RealNumericIndexer<S>> entNode   = this.mapNodeToStates.floorEntry(strNodeId);
+            NavigableMap<String, RealNumericIndexer<S>> mapSub  = this.mapNodeToStates.tailMap(strNodeId, true);
+            Collection<RealNumericIndexer<S>>           setSub  = mapSub.values();
+            List<S>                                  lstStates  = new LinkedList<S>();
+            for (RealNumericIndexer<S> rni : setSub) {
+                lstStates.addAll( rni.toList() );
+            }
             
-            if ( strNodeId.startsWith(strClsId) )
-                return setStates;
-            
-            else
-                return null;
+            return lstStates;
+//            String                                   strClsId  = entNode.getKey();
+//            RealNumericIndexer<S>                    setStates = entNode.getValue();
+//            
+//            if ( strNodeId.startsWith(strClsId) )
+//                return setStates;
+//            
+//            else
+//                return null;
         }
         
+        /**
+         * Return all the states managed by this map as a list.
+         * 
+         * @return      all probe states managed by this element state map
+         *
+         * @author Christopher K. Allen
+         * @since  Aug 26, 2014
+         */
+        public List<S>  getAllStates() {
+            List<S>     lstStates = new LinkedList<S>();
+            Collection< RealNumericIndexer<S> > setLists = this.mapNodeToStates.values();
+            
+            for (RealNumericIndexer<S> rni : setLists) {
+                Iterator<S> iter = rni.iterator();
+                while (iter.hasNext()) {
+                    S state = iter.next();
+                    lstStates.add(state);
+                }
+            }
+            return lstStates;
+        }
         /*
          * Support Methods
          */
@@ -442,6 +490,28 @@ public class Trajectory<S extends ProbeState<S>> implements IArchive, Iterable<S
         public RealNumericIndexer<S>  getStates(String strElemId) {
             RealNumericIndexer<S> lstStates = this.mapStateList.get(strElemId);
             
+            return lstStates;
+        }
+        
+        /**
+         * Return all the states managed by this map as a list.
+         * 
+         * @return      all probe states managed by this element state map
+         *
+         * @author Christopher K. Allen
+         * @since  Aug 26, 2014
+         */
+        public List<S>  getAllStates() {
+            List<S>     lstStates = new LinkedList<S>();
+            Collection< RealNumericIndexer<S> > setLists = this.mapStateList.values();
+            
+            for (RealNumericIndexer<S> rni : setLists) {
+                Iterator<S> iter = rni.iterator();
+                while (iter.hasNext()) {
+                    S state = iter.next();
+                    lstStates.add(state);
+                }
+            }
             return lstStates;
         }
     }
@@ -679,12 +749,26 @@ public class Trajectory<S extends ProbeState<S>> implements IArchive, Iterable<S
     }
     
 	/**
-	 * Get the list of states.
+	 * Get the list of all states in this trajectory managed by the
+	 * state map.
 	 *
 	 * @return a new list of this trajectory's states
 	 */
-	protected List<S> getStates() {
-		return _history.toList();
+	public List<S> getStatesViaStateMap() {
+		return this.mapStates.getAllStates();
+	}
+	
+	/**
+	 * Returns a list of all the states in this trajectory managed by
+	 * the state numeric (position) indexer.
+	 * 
+	 * @return
+	 *
+	 * @author Christopher K. Allen
+	 * @since  Aug 26, 2014
+	 */
+	public List<S> getStatesViaIndexer() {
+	    return this._history.toList();
 	}
 	
     /**
@@ -740,12 +824,18 @@ public class Trajectory<S extends ProbeState<S>> implements IArchive, Iterable<S
 	
 	/**
 	 * Get the probe state for the specified element ID.
-	 * @param elemID the name of the element for which to get the probe state
+	 * @param strElemID the name of the element for which to get the probe state
 	 * @return The first probe state for the specified element.
 	 */
-	public S stateForElement( final String elemID ) {
+	public S stateForElement( final String strElemID ) {
 //		return statesForElement( elemID )[0];
-	    return statesForElement( elemID ).get(0);
+	    List<S>    lstStates = this.statesForElement(strElemID);
+	    
+	    if (lstStates == null)
+	        return null;
+	    
+	    return lstStates.get(0);
+//	    return statesForElement( elemID ).get(0);
 	}
 	
     /**
@@ -795,12 +885,17 @@ public class Trajectory<S extends ProbeState<S>> implements IArchive, Iterable<S
      * @since  Jun 5, 2013
      */
     public List<S> statesForElement(String strElemId) {
-        RealNumericIndexer<S>    setStates = this.mapStates.getStates(strElemId);
-        List<S>                  lstStates = setStates.toList();
+//        RealNumericIndexer<S>    setStates = this.mapStates.getStates(strElemId);
+        List<S>    lstStates = this.mapStates.getStates(strElemId);
+        if (lstStates == null)
+            return null;
+        return lstStates;
         
 //        ProbeState[] arrStates = new ProbeState[lstStates.size()];
 //        return lstStates.toArray(arrStates);
-        return lstStates;
+//        List<S>                  lstStates = setStates.toList();
+//        
+//        return lstStates;
     }
 
     /**
@@ -989,4 +1084,55 @@ public class Trajectory<S extends ProbeState<S>> implements IArchive, Iterable<S
         }
     }
 
+}
+
+class IdEquivClass implements Comparator<IdEquivClass> { 
+    
+    /*
+     * Local Attributes
+     */
+    
+    /** Size of the string regular expression */
+    private final int   cntChars;
+    
+    /** The root Id */
+    private String      strIdRoot;
+    
+    
+    /*
+     * Initialization
+     */
+    
+    public IdEquivClass(String strIdRoot) {
+        this.strIdRoot = strIdRoot;
+        this.cntChars = strIdRoot.length();
+    }
+    
+    public IdEquivClass(int cntSzRoot, String strMemberId) {
+        this.cntChars = cntSzRoot;
+        this.strIdRoot = strMemberId.substring(0, cntSzRoot);
+    }
+    
+    public boolean  isMember(String strId) {
+        
+        boolean bolResult = strId.matches(this.strIdRoot);
+        return bolResult;
+    }
+
+    /*
+     * Comparator Interface
+     */
+    
+    /**
+     *
+     * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
+     *
+     * @author Christopher K. Allen
+     * @since  Aug 28, 2014
+     */
+    @Override
+    public int compare(IdEquivClass id1, IdEquivClass id2) {
+        
+        return 0;
+    }
 }
