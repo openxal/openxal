@@ -702,7 +702,7 @@ public class HEBTOrbitCorrector {
 		};
 
 		problem.setEvaluator( new ScoringEvaluator( scorer, objective, problem.getVariables() ) );
-		Solver solver = new Solver( SolveStopperFactory.maxEvaluationsStopper( 1000 ) );
+		Solver solver = new Solver( SolveStopperFactory.maxEvaluationsStopper( 5000 ) );
 		solver.solve( problem );
 
 		// get the best solution and evaluate the problem using it to update the value references for the best solution
