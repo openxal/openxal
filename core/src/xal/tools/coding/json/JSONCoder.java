@@ -223,13 +223,13 @@ class JSONEncoder {
 
 
 /** Base class of encoders */
-abstract class AbstractEncoder {
+abstract class AbstractEncoder<DataType> {
 	/** preprocess the object graph prior to encoding so the references can be resolved and encoded in order (definition first then any references to it) */
-	abstract public void preprocess( final JSONEncoder encoder, final Object value );
+	abstract public void preprocess( final JSONEncoder encoder, final DataType value );
 
 
 	/** encode the specified object to the JSON builder */
-	abstract public void encode( final JSONEncoder encoder, final StringBuilder jsonBuilder, final Object value );
+	abstract public void encode( final JSONEncoder encoder, final StringBuilder jsonBuilder, final DataType value );
 
 
 //    /** encode the value using the coder */
@@ -298,7 +298,7 @@ abstract class AbstractEncoder {
 
 
 /** Base class of encoders for hard objects (not references) */
-abstract class HardEncoder<DataType> extends AbstractEncoder {
+abstract class HardEncoder<DataType> extends AbstractEncoder<DataType> {
 	/** preprocess the object graph prior to encoding so the references can be resolved and encoded in order (definition first then any references to it) */
 	public void preprocess( final JSONEncoder encoder, final Object value ) {}
 }
@@ -306,7 +306,10 @@ abstract class HardEncoder<DataType> extends AbstractEncoder {
 
 
 /** Base class of encoders for objects that support references */
-abstract class SoftValueEncoder extends AbstractEncoder {
+abstract class SoftValueEncoder<DataType> extends AbstractEncoder<DataType> {
+	/** key to indicate a reference */
+	static final public String REFERENCE_KEY = "__XALREF";
+
     /** key identifies an object that is referenced */
     static final public String OBJECT_ID_KEY = "__XALID";
     
@@ -314,36 +317,43 @@ abstract class SoftValueEncoder extends AbstractEncoder {
     static final public String VALUE_KEY = "value";
 
 
-    /** encode an object ID and value if there are multiple references to the value, otherwise just encode the value */
-    public void encode() {
-		final IdentityReference<?> reference = null;
-        if ( REFERENCE.hasMultiple() ) {
-            final String valueEncoding = encodeValueForReference();
-            return DictionaryEncoder.encodeKeyValueStringPairs( new KeyValueStringPair( OBJECT_ID_KEY, NumberEncoder.encode( REFERENCE.getID() ) ), new KeyValueStringPair( VALUE_KEY, valueEncoding ) );
-        }
-        else {
-            return encodeValue();
-        }
-    }
-}
+	/** encode the specified object to the JSON builder */
+	public void encode( final JSONEncoder encoder, final StringBuilder jsonBuilder, final DataType value ) {
+		if ( allowsReference( value ) ) {
+			final ReferenceStore referenceStore = encoder.getReferenceStore();
+			final IdentityReference<DataType> identityReference = referenceStore.getIdentityReference( value );
+			if ( identityReference.hasMultiple() ) {
+				if ( identityReference.isEncoded() ) {
+					// TODO: encode a reference to the encoded item
+					// encode a reference to the encoded item
+				} else {
+					// TODO: encode the item along with a reference ID so it can be referenced by subsequent matching items
+//					encodeRaw( encoder, jsonBuilder, value	);
+//					return DictionaryEncoder.encodeKeyValueStringPairs( new KeyValueStringPair( OBJECT_ID_KEY, NumberEncoder.encode( identityReference.getID() ) ), new KeyValueStringPair( VALUE_KEY, valueEncoding ) );
+				}
+			} else {
+				encodeRaw( encoder, jsonBuilder, value() );
+			}
+		} else {
+			encodeRaw( encoder, jsonBuilder, value );
+		}
+	}
 
 
-/** encoder for references */
-class ReferenceEncoder extends AbstractEncoder {
-    /** key to indicate a reference */
-    static final public String REFERENCE_KEY = "__XALREF";
+	/** determine whether the value allows referencing */
+	public boolean allowsReference( final DataType value ) {
+		return true;
+	}
 
 
-    /** encode the reference to JSON */
-    public String encode() {
-        return DictionaryEncoder.encodeKeyValueStringPairs( new KeyValueStringPair( REFERENCE_KEY, NumberEncoder.encode( REFERENCE_ID ) ) );
-    }
+	/** encode the raw value directly */
+	abstract public void encodeRaw( final JSONEncoder encoder, final StringBuilder jsonBuilder, final DataType value );
 }
 
 
 
 /** encode a null to JSON */
-class NullEncoder extends AbstractEncoder {
+class NullEncoder extends AbstractEncoder<Object> {
     /** encoder singleton */
     static final private NullEncoder SHARED_ENCODER;
     
@@ -369,7 +379,7 @@ class NullEncoder extends AbstractEncoder {
 
 
 /** encode a string to JSON */
-class StringEncoder extends SoftValueEncoder {
+class StringEncoder extends SoftValueEncoder<String> {
 	/** encoder singleton */
 	static final private StringEncoder SHARED_ENCODER;
 
@@ -387,7 +397,7 @@ class StringEncoder extends SoftValueEncoder {
 
 
     /** determine whether the string allows referencing */
-    static public boolean allowsReference( final String value ) {
+	public boolean allowsReference( final String value ) {
         return value.length() > 20;     // don't bother using references unless the string is long enough to warrant the overhead
     }
 
@@ -407,18 +417,23 @@ class StringEncoder extends SoftValueEncoder {
 			final ReferenceStore referenceStore = encoder.getReferenceStore();
 			final IdentityReference identityReference = referenceStore.getIdentityReference( value );
 			if ( identityReference.hasMultiple() ) {
-				// TODO: implement the reference encoding
+				if ( identityReference.isEncoded() ) {
+					// encode a reference to the encoded item
+				} else {
+					final String valueEncoding = encodeValueForReference();
+					return DictionaryEncoder.encodeKeyValueStringPairs( new KeyValueStringPair( OBJECT_ID_KEY, NumberEncoder.encode( REFERENCE.getID() ) ), new KeyValueStringPair( VALUE_KEY, valueEncoding ) );
+				}
 			} else {
-				encodeString( encoder, jsonBuilder, value.toString() );
+				encodeRaw( encoder, jsonBuilder, value.toString() );
 			}
 		} else {
-			encodeString( encoder, jsonBuilder, value.toString() );
+			encodeRaw( encoder, jsonBuilder, value.toString() );
 		}
 	}
 
 
 	/** encode the string */
-	private void encodeString( final JSONEncoder encoder, final StringBuilder jsonBuilder, final String value ) {
+	public void encodeRaw( final JSONEncoder encoder, final StringBuilder jsonBuilder, final String value ) {
 		jsonBuilder.append( "\"" + value.replace( "\\", "\\\\" ).replace( "\"", "\\\"" ) + "\"" );
 	}
 }
@@ -464,7 +479,7 @@ class NumberEncoder extends HardEncoder<JSONNumber> {
 
 
 /** encode a hash map to JSON */
-class DictionaryEncoder extends SoftValueEncoder {
+class DictionaryEncoder extends SoftValueEncoder<Map<String,Object>> {
     /** map of item encoders keyed by the corresponding orignal map keys */
     final private Map<String,AbstractEncoder> ENCODER_MAP;
     
@@ -759,7 +774,7 @@ class TypedArrayEncoder extends DictionaryEncoder {
 
 
 /** encode an array to JSON */
-class ArrayEncoder extends SoftValueEncoder {
+class ArrayEncoder extends SoftValueEncoder<Object[]> {
     /** array of encoders each of which corresponds to an item in the original array */
     final private AbstractEncoder[] ITEM_ENCODERS;
     
