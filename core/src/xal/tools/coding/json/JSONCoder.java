@@ -126,7 +126,51 @@ public class JSONCoder implements Coder {
      * @return a JSON string representing the value
      */
     public String encode( final Object value ) {
-        return AbstractEncoder.encode( value, new ConversionAdaptorStore( CONVERSION_ADAPTOR_STORE ) );
+        return JSONEncoder.encode( value, new ConversionAdaptorStore( CONVERSION_ADAPTOR_STORE ) );
+	}
+}
+
+
+
+/** encode an object graph into JSON */
+class JSONEncoder {
+	/** value to encode */
+	final private Object ROOT_VALUE;
+
+	/** store of conversion adaptors to use when instantiating new instances from the JSON archive */
+	final private ConversionAdaptorStore CONVERSION_ADAPTOR_STORE;
+
+	/** stores references to objects already decoded and referenced in new objects */
+	private ReferenceStore _referenceStore;
+
+
+	/** Constructor */
+	protected JSONEncoder( final Object value, final ConversionAdaptorStore conversionAdaptorStore ) {
+		ROOT_VALUE = value;
+		CONVERSION_ADAPTOR_STORE = conversionAdaptorStore;
+
+		_referenceStore = null;
+	}
+
+
+	/** Get a decoder for the archive */
+	public static JSONEncoder getInstance( final Object value, final ConversionAdaptorStore conversionAdaptorStore ) {
+		return new JSONEncoder( value, conversionAdaptorStore );
+	}
+
+
+	/** encode the specified value */
+	public String encode() {
+		_referenceStore = new ReferenceStore();
+
+		// TODO: implement the JSON encoding...
+		return null;
+	}
+
+
+	/** encode the specified value into JSON */
+	static public String encode( final Object value, final ConversionAdaptorStore conversionAdaptorStore ) {
+		return JSONEncoder.getInstance( value, conversionAdaptorStore ).encode();
 	}
 }
 
@@ -1399,6 +1443,18 @@ class ReferenceStore {
         final EqualityReference<ItemType> equalityReference = (EqualityReference<ItemType>)EQUALITY_REFERENCES.get( item );
         return equalityReference.add( item, ++_objectCounter );
     }
+
+
+	/** get the item's identify reference */
+	@SuppressWarnings( "unchecked" )    // no way to test type at compile time
+	public <ItemType> IdentityReference<ItemType> getIdentityReference( final ItemType item ) {
+		if ( EQUALITY_REFERENCES.containsKey( item ) ) {
+			final EqualityReference<ItemType> equalityReference = (EqualityReference<ItemType>)EQUALITY_REFERENCES.get( item );
+			return equalityReference.getIdentityReference( item );
+		} else {
+			return null;
+		}
+	}
 }
 
 
@@ -1417,17 +1473,32 @@ class EqualityReference<ItemType> {
     
     /** add the object to the set of equals */
     public IdentityReference<ItemType> add( final ItemType item, final long uniqueID ) {
-        for ( final IdentityReference<ItemType> reference : IDENTITY_REFERENCES ) {
-            if ( reference.getItem() == item ) {
-                reference.setHasMultiple( true );
-                return reference;
-            }
-        }
-        
-        final IdentityReference<ItemType> reference = new IdentityReference<ItemType>( item, uniqueID );
-        IDENTITY_REFERENCES.add( reference );
-        return reference;
+		final IdentityReference<ItemType> existingReference = getIdentityReference( item );
+
+		if ( existingReference != null ) {
+			existingReference.setHasMultiple( true );
+			return existingReference;
+		} else {
+			// create a new reference
+			final IdentityReference<ItemType> reference = new IdentityReference<ItemType>( item, uniqueID );
+			IDENTITY_REFERENCES.add( reference );
+			return reference;
+		}
     }
+
+
+	/** get the identity reference for the specified item */
+	public IdentityReference<ItemType> getIdentityReference( final ItemType item ) {
+		// search for references that are identical
+		for ( final IdentityReference<ItemType> reference : IDENTITY_REFERENCES ) {
+			if ( reference.getItem() == item ) {
+				return reference;
+			}
+		}
+
+		// no reference found
+		return null;
+	}
 }
 
 
@@ -1442,6 +1513,9 @@ class IdentityReference<ItemType> {
     
     /** indicates multiple references to the item */
     private boolean _hasMultiple;
+
+	/** indicates that the reference has already been assigned */
+	private boolean _isEncoded;
     
     
     /** Constructor */
@@ -1449,6 +1523,7 @@ class IdentityReference<ItemType> {
         ITEM = item;
         ID = uniqueID;
         _hasMultiple = false;
+		_isEncoded = false;
     }
     
     
@@ -1474,6 +1549,18 @@ class IdentityReference<ItemType> {
     public void setHasMultiple( final boolean hasMultiple ) {
         _hasMultiple = hasMultiple;
     }
+
+
+	/** gets whether this reference has been encoded so future encoding can just be references */
+	public boolean isEncoded() {
+		return _isEncoded;
+	}
+
+
+	/** sets whether this reference has been encoded */
+	public void setEncoded( final boolean isEncoded ) {
+		_isEncoded = isEncoded;
+	}
 }
 
 
