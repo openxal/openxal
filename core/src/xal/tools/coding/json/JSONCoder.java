@@ -134,9 +134,6 @@ public class JSONCoder implements Coder {
 
 /** encode an object graph into JSON */
 class JSONEncoder {
-	/** value to encode */
-	final private Object ROOT_VALUE;
-
 	/** store of conversion adaptors to use when instantiating new instances from the JSON archive */
 	final private ConversionAdaptorStore CONVERSION_ADAPTOR_STORE;
 
@@ -159,18 +156,67 @@ class JSONEncoder {
 	}
 
 
+	/** get the reference store */
+	public ReferenceStore getReferenceStore() {
+		return _referenceStore;
+	}
+
+
 	/** encode the specified value */
-	public String encode() {
+	public String encode( final Object value ) {
 		_referenceStore = new ReferenceStore();
 
-		// TODO: implement the JSON encoding...
-		return null;
+		final AbstractEncoder rootEncoder = getEncoder( value );
+		rootEncoder.preprocess( this, value );
+
+		final StringBuilder jsonBuilder = new StringBuilder();
+		rootEncoder.encode( this, jsonBuilder, value );
+
+		return jsonBuilder.toString();
 	}
 
 
 	/** encode the specified value into JSON */
 	static public String encode( final Object value, final ConversionAdaptorStore conversionAdaptorStore ) {
-		return JSONEncoder.getInstance( value, conversionAdaptorStore ).encode();
+		return JSONEncoder.getInstance( conversionAdaptorStore ).encode( value );
+	}
+
+
+	/** get the encoder for the specified value */
+	@SuppressWarnings( "unchecked" )    // no way to guarantee at compile time conversion types
+	static protected AbstractEncoder getEncoder( final Object value ) {
+		final Class<?> valueClass = value != null ? value.getClass() : null;
+
+		if ( valueClass == null ) {
+			return NullEncoder.getInstance();
+		}
+		else if ( valueClass.equals( Boolean.class ) ) {
+			return BooleanEncoder.getInstance();
+		}
+		// handle each immediate concrete subclass of Number
+		else if ( valueClass.equals( JSONNumber.class ) ) {
+			return NumberEncoder.getInstance();
+		}
+		else if ( valueClass.equals( String.class ) ) {
+			return StringEncoder.getInstance();
+		}
+		else {      // these are the ones that support references
+			if ( valueClass.equals( HashMap.class ) ) {  // no way to check at compile time that the key type is string
+				return DictionaryEncoder.getInstance();
+			}
+			else if ( valueClass.isArray() ) {
+				return ArrayEncoder.getInstance();
+			}
+			else if ( conversionAdaptorStore.isExtendedClass( valueClass ) ) {  // if the type is not among the standard ones then look to extensions
+				return ExtensionEncoder.getInstance();
+			}
+			else if ( value instanceof Serializable ) {
+				return SerializationEncoder.getInstance();
+			}
+			else {
+				throw new RuntimeException( "No JSON support for the object of type: " + valueClass );
+			}
+		}
 	}
 }
 
@@ -178,81 +224,83 @@ class JSONEncoder {
 
 /** Base class of encoders */
 abstract class AbstractEncoder {
-    /** encode the value using the coder */
-    static public String encode( final Object value, final ConversionAdaptorStore conversionAdaptorStore ) {
-        return record( value, conversionAdaptorStore ).encode();
-    }
-    
-    /** encode the archived value to JSON */
-    abstract public String encode();
-    
-    
-    /** Mark that this encoder is a member of a collection of the specified type. Does nothing by default, but subclasses may have a custom behavior. */
-    public void setIsMemberOfCollectionWithType( final String collectionType ) {}
+	/** preprocess the object graph prior to encoding so the references can be resolved and encoded in order (definition first then any references to it) */
+	abstract public void preprocess( final JSONEncoder encoder, final Object value );
 
-    
-    /** record the value for encoding later */
-    static public AbstractEncoder record( final Object value, final ConversionAdaptorStore conversionAdaptorStore ) {
-        return record( value, conversionAdaptorStore, new ReferenceStore() );
-    }
-    
-    
-    /** record a value for encoding later and store references in the supplied store */
-    @SuppressWarnings( "unchecked" )    // no way to guarantee at compile time conversion types
-    static protected AbstractEncoder record( final Object value, final ConversionAdaptorStore conversionAdaptorStore, final ReferenceStore referenceStore ) {
-        final Class<?> valueClass = value != null ? value.getClass() : null;
-        
-		if ( valueClass == null ) {
-			return NullEncoder.getInstance();
-		}
-        else if ( valueClass.equals( Boolean.class ) ) {
-            return new BooleanEncoder( (Boolean)value );
-        }
-		// handle each immediate concrete subclass of Number
-		else if ( valueClass.equals( JSONNumber.class ) ) {
-			return new NumberEncoder( (JSONNumber)value );
-		}
-        else if ( valueClass.equals( String.class ) ) {
-            final String stringValue = (String)value;
-            final IdentityReference<?> reference = StringEncoder.allowsReference( stringValue ) ? referenceStore.store( value ) : null;
-            return reference != null && reference.hasMultiple() ? new ReferenceEncoder( reference.getID() ) : new StringEncoder( stringValue, reference );
-        }
-        else {      // these are the ones that support references
-            final IdentityReference<?> reference = referenceStore.store( value );
-            if ( reference.hasMultiple() ) {
-                return new ReferenceEncoder( reference.getID() );
-            }
-            else if ( valueClass.equals( HashMap.class ) ) {  // no way to check at compile time that the key type is string
-                return new DictionaryEncoder( (HashMap<String,Object>)value, conversionAdaptorStore, reference, referenceStore );
-            }
-            else if ( valueClass.isArray() ) {
-                return ArrayEncoder.getInstance( value, conversionAdaptorStore, reference, referenceStore );
-            }
-            else if ( conversionAdaptorStore.isExtendedClass( valueClass ) ) {  // if the type is not among the standard ones then look to extensions
-                return new ExtensionEncoder( value, conversionAdaptorStore, reference, referenceStore );
-            }
-            else if ( value instanceof Serializable ) {
-                return new SerializationEncoder( value, conversionAdaptorStore, reference, referenceStore );
-            }
-            else {
-                throw new RuntimeException( "No JSON support for the object of type: " + valueClass );
-            }
-        }
-    }
+
+	/** encode the specified object to the JSON builder */
+	abstract public void encode( final JSONEncoder encoder, final StringBuilder jsonBuilder, final Object value );
+
+
+//    /** encode the value using the coder */
+//    static public String encode( final Object value, final ConversionAdaptorStore conversionAdaptorStore ) {
+//        return record( value, conversionAdaptorStore ).encode();
+//    }
+//    
+//    /** encode the archived value to JSON */
+//    abstract public String encode();
+//    
+//    
+//    /** Mark that this encoder is a member of a collection of the specified type. Does nothing by default, but subclasses may have a custom behavior. */
+//    public void setIsMemberOfCollectionWithType( final String collectionType ) {}
+//
+//    
+//    /** record the value for encoding later */
+//    static public AbstractEncoder record( final Object value, final ConversionAdaptorStore conversionAdaptorStore ) {
+//        return record( value, conversionAdaptorStore, new ReferenceStore() );
+//    }
+//    
+//    
+//    /** record a value for encoding later and store references in the supplied store */
+//    @SuppressWarnings( "unchecked" )    // no way to guarantee at compile time conversion types
+//    static protected AbstractEncoder record( final Object value, final ConversionAdaptorStore conversionAdaptorStore, final ReferenceStore referenceStore ) {
+//        final Class<?> valueClass = value != null ? value.getClass() : null;
+//        
+//		if ( valueClass == null ) {
+//			return NullEncoder.getInstance();
+//		}
+//        else if ( valueClass.equals( Boolean.class ) ) {
+//            return new BooleanEncoder( (Boolean)value );
+//        }
+//		// handle each immediate concrete subclass of Number
+//		else if ( valueClass.equals( JSONNumber.class ) ) {
+//			return new NumberEncoder( (JSONNumber)value );
+//		}
+//        else if ( valueClass.equals( String.class ) ) {
+//            final String stringValue = (String)value;
+//            final IdentityReference<?> reference = StringEncoder.allowsReference( stringValue ) ? referenceStore.store( value ) : null;
+//            return reference != null && reference.hasMultiple() ? new ReferenceEncoder( reference.getID() ) : new StringEncoder( stringValue, reference );
+//        }
+//        else {      // these are the ones that support references
+//            final IdentityReference<?> reference = referenceStore.store( value );
+//            if ( reference.hasMultiple() ) {
+//                return new ReferenceEncoder( reference.getID() );
+//            }
+//            else if ( valueClass.equals( HashMap.class ) ) {  // no way to check at compile time that the key type is string
+//                return new DictionaryEncoder( (HashMap<String,Object>)value, conversionAdaptorStore, reference, referenceStore );
+//            }
+//            else if ( valueClass.isArray() ) {
+//                return ArrayEncoder.getInstance( value, conversionAdaptorStore, reference, referenceStore );
+//            }
+//            else if ( conversionAdaptorStore.isExtendedClass( valueClass ) ) {  // if the type is not among the standard ones then look to extensions
+//                return new ExtensionEncoder( value, conversionAdaptorStore, reference, referenceStore );
+//            }
+//            else if ( value instanceof Serializable ) {
+//                return new SerializationEncoder( value, conversionAdaptorStore, reference, referenceStore );
+//            }
+//            else {
+//                throw new RuntimeException( "No JSON support for the object of type: " + valueClass );
+//            }
+//        }
+//    }
 }
 
 
 
 /** Base class of encoders for hard objects (not references) */
 abstract class HardEncoder<DataType> extends AbstractEncoder {
-    /** value to encode */
-    final protected DataType VALUE;
-    
-    
-    /** Constructor */
-    public HardEncoder( final DataType value ) {
-        VALUE = value;
-    }
+	/** preprocess the object graph prior to encoding so the references can be resolved and encoded in order (definition first then any references to it) */
+	public void preprocess( final JSONEncoder encoder, final Object value ) {}
 }
 
 
@@ -265,18 +313,10 @@ abstract class SoftValueEncoder extends AbstractEncoder {
     /** key for the referenced value */
     static final public String VALUE_KEY = "value";
 
-    /** reference to this value */
-    final private IdentityReference<?> REFERENCE;
-    
-    
-    /** Constructor */
-    public SoftValueEncoder( final IdentityReference<?> reference ) {
-        REFERENCE = reference;
-    }
-    
-    
+
     /** encode an object ID and value if there are multiple references to the value, otherwise just encode the value */
-    public String encode() {
+    public void encode() {
+		final IdentityReference<?> reference = null;
         if ( REFERENCE.hasMultiple() ) {
             final String valueEncoding = encodeValueForReference();
             return DictionaryEncoder.encodeKeyValueStringPairs( new KeyValueStringPair( OBJECT_ID_KEY, NumberEncoder.encode( REFERENCE.getID() ) ), new KeyValueStringPair( VALUE_KEY, valueEncoding ) );
@@ -285,16 +325,6 @@ abstract class SoftValueEncoder extends AbstractEncoder {
             return encodeValue();
         }
     }
-    
-    
-    /** Encode the value for a reference which by default just encodes the value. Subclasses may override for custom behavior. */
-    protected String encodeValueForReference() {
-        return encodeValue();
-    }
-    
-    
-    /** encode just the value */
-    abstract String encodeValue();
 }
 
 
@@ -302,17 +332,8 @@ abstract class SoftValueEncoder extends AbstractEncoder {
 class ReferenceEncoder extends AbstractEncoder {
     /** key to indicate a reference */
     static final public String REFERENCE_KEY = "__XALREF";
-    
-    /** ID of referenced object */
-    final private long REFERENCE_ID;
-    
-    
-    /** Constructor */
-    public ReferenceEncoder( final long referenceID ) {
-        REFERENCE_ID = referenceID;
-    }
-    
-    
+
+
     /** encode the reference to JSON */
     public String encode() {
         return DictionaryEncoder.encodeKeyValueStringPairs( new KeyValueStringPair( REFERENCE_KEY, NumberEncoder.encode( REFERENCE_ID ) ) );
@@ -337,55 +358,69 @@ class NullEncoder extends AbstractEncoder {
     static public NullEncoder getInstance() {
         return SHARED_ENCODER;
     }
-    
-    
-    /** Constructor */
-    private NullEncoder() {}
-    
-    
-    /** encode the archived value to JSON */
-    public String encode() {
-        return "null";
-    }
+
+
+	/** encode the specified object to the JSON builder */
+	public void encode( final JSONEncoder encoder, final StringBuilder jsonBuilder, final Object value ) {
+		jsonBuilder.append( "null" );
+	}
 }
 
 
 
 /** encode a string to JSON */
 class StringEncoder extends SoftValueEncoder {
-    /** value to encode */
-    final private String VALUE;
-    
-    
-    /** Constructor */
-    public StringEncoder( final String value, final IdentityReference<?> reference ) {
-        super( reference );
-        VALUE = value;
-    }
-    
-    
+	/** encoder singleton */
+	static final private StringEncoder SHARED_ENCODER;
+
+
+	// static initializer
+	static {
+		SHARED_ENCODER = new StringEncoder();
+	}
+
+
+	/** get the shared instance */
+	static public StringEncoder getInstance() {
+		return SHARED_ENCODER;
+	}
+
+
     /** determine whether the string allows referencing */
     static public boolean allowsReference( final String value ) {
         return value.length() > 20;     // don't bother using references unless the string is long enough to warrant the overhead
     }
-    
-    
-    /** encode an object ID and value if there are multiple references to the value, otherwise just encode the value */
-    public String encode() {
-        return allowsReference( VALUE ) ? super.encode() : encodeValue();
-    }
-    
-    
-    /** encode the archived value to JSON */
-    public String encodeValue() {
-        return encode( VALUE );
-    }
-    
-    
-    /** encode a string */
-    static public String encode( final String value ) {
-        return "\"" + value.replace( "\\", "\\\\" ).replace( "\"", "\\\"" ) + "\"";
-    }
+
+
+	/** preprocess the object graph prior to encoding so the references can be resolved and encoded in order (definition first then any references to it) */
+	public void preprocess( final JSONEncoder encoder, final Object value ) {
+		if ( allowsReference( value ) ) {
+			final ReferenceStore referenceStore = encoder.getReferenceStore();
+			referenceStore.store( value );
+		}
+	}
+
+
+	/** encode the specified object to the JSON builder */
+	public void encode( final JSONEncoder encoder, final StringBuilder jsonBuilder, final Object value ) {
+		if ( allowsReference( value ) ) {
+			final ReferenceStore referenceStore = encoder.getReferenceStore();
+			final IdentityReference identityReference = referenceStore.getIdentityReference( value );
+			if ( identityReference.hasMultiple() ) {
+				// TODO: implement the reference encoding
+			} else {
+				encodeString( encoder, jsonBuilder, value.toString() );
+			}
+		} else {
+			encodeString( encoder, jsonBuilder, value.toString() );
+		}
+	}
+
+
+	/** encode the string */
+	private void encodeString( final JSONEncoder encoder, final StringBuilder jsonBuilder, final String value ) {
+		jsonBuilder.append( "\"" + value.replace( "\\", "\\\\" ).replace( "\"", "\\\"" ) + "\"" );
+	}
 }
 
 
