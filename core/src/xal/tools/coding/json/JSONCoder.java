@@ -183,7 +183,7 @@ class JSONEncoder {
 
 	/** get the encoder for the specified value */
 	@SuppressWarnings( "unchecked" )    // no way to guarantee at compile time conversion types
-	static protected AbstractEncoder<?> getEncoder( final Object value ) {
+	protected AbstractEncoder<?> getEncoder( final Object value ) {
 		final Class<?> valueClass = value != null ? value.getClass() : null;
 
 		if ( valueClass == null ) {
@@ -206,7 +206,7 @@ class JSONEncoder {
 			else if ( valueClass.isArray() ) {
 				return ArrayEncoder.getInstance();
 			}
-			else if ( conversionAdaptorStore.isExtendedClass( valueClass ) ) {  // if the type is not among the standard ones then look to extensions
+			else if ( CONVERSION_ADAPTOR_STORE.isExtendedClass( valueClass ) ) {  // if the type is not among the standard ones then look to extensions
 				return ExtensionEncoder.getInstance();
 			}
 			else if ( value instanceof Serializable ) {
@@ -260,12 +260,19 @@ abstract class SoftValueEncoder<DataType> extends AbstractEncoder<DataType> {
 			final IdentityReference<?> identityReference = referenceStore.getIdentityReference( value );
 			if ( identityReference.hasMultiple() ) {
 				if ( identityReference.isEncoded() ) {
-					// TODO: encode a reference to the encoded item
-					// encode a reference to the encoded item
+					// create dictionary with the reference
+					final Map<String,Object> dictionary = new HashMap<>();
+					dictionary.put( REFERENCE_KEY, identityReference.getID() );		// reference ID
+					DictionaryEncoder.getInstance().encodeRaw( encoder, jsonBuilder, dictionary );		// encode this dictionary directly
 				} else {
-					// TODO: encode the item along with a reference ID so it can be referenced by subsequent matching items
-//					encodeRaw( encoder, jsonBuilder, value	);
-//					return DictionaryEncoder.encodeKeyValueStringPairs( new KeyValueStringPair( OBJECT_ID_KEY, NumberEncoder.encode( identityReference.getID() ) ), new KeyValueStringPair( VALUE_KEY, valueEncoding ) );
+					// first mark the reference as encoded in case there is a nested reference to itself
+					identityReference.setEncoded( true );		// further encoding of the value will be encoded as references
+
+					// create dictionary with the value so we can generate an object that can be referenced
+					final Map<String,Object> dictionary = new HashMap<>();
+					dictionary.put( OBJECT_ID_KEY, identityReference.getID() );		// reference ID
+					dictionary.put( VALUE_KEY, value );								// value
+					DictionaryEncoder.getInstance().encodeRaw( encoder, jsonBuilder, dictionary );		// encode this dictionary directly
 				}
 			} else {
 				encodeRaw( encoder, jsonBuilder, value );
@@ -343,29 +350,6 @@ class StringEncoder extends SoftValueEncoder<String> {
 		if ( allowsReference( value ) ) {
 			final ReferenceStore referenceStore = encoder.getReferenceStore();
 			referenceStore.store( value );
-		}
-	}
-
-
-	/** encode the specified object to the JSON builder */
-	public void encode( final JSONEncoder encoder, final StringBuilder jsonBuilder, final Object value ) {
-		if ( allowsReference( value ) ) {
-			final ReferenceStore referenceStore = encoder.getReferenceStore();
-			final IdentityReference<?> identityReference = referenceStore.getIdentityReference( value );
-			if ( identityReference.hasMultiple() ) {
-				if ( identityReference.isEncoded() ) {
-					// TODO: encode a reference to the encoded item
-				} else {
-					// TODO: encode the item to be referenced
-//					final String valueEncoding = encodeValueForReference();
-//					DictionaryEncoder.encodeKeyValueStringPairs( new KeyValueStringPair( OBJECT_ID_KEY, NumberEncoder.encode( REFERENCE.getID() ) ), new KeyValueStringPair( VALUE_KEY, valueEncoding ) );
-					identityReference.setEncoded( true );
-				}
-			} else {
-				encodeRaw( encoder, jsonBuilder, value );
-			}
-		} else {
-			encodeRaw( encoder, jsonBuilder, value );
 		}
 	}
 
@@ -453,37 +437,6 @@ class DictionaryEncoder extends SoftValueEncoder<Map<String,Object>> {
 		return SHARED_ENCODER;
 	}
 
-    
-    /** encode key value string pairs to the specified builder where the value (but not the key) is already encoded */
-    static public void encodeKeyValueStringPairs( final StringBuilder builder, final KeyValueStringPair ... keyValuePairs ) {
-        builder.append( "{" );
-        
-        int index = 0;
-        for ( final KeyValueStringPair keyValuePair : keyValuePairs ) {
-            switch ( index ) {
-                case 0:
-                    break;
-                default:
-                    builder.append( ", " );
-                    break;
-            }
-            builder.append( StringEncoder.toJSON( keyValuePair.KEY ) );
-            builder.append( ": " );
-            builder.append( keyValuePair.VALUE );
-            ++index;
-        }
-        
-        builder.append( "}" );
-    }
-
-
-	/** encode key value string pairs where the value is already encoded */
-	static public String encodeKeyValueStringPairs( final KeyValueStringPair ... keyValuePairs ) {
-		final StringBuilder builder = new StringBuilder();
-		encodeKeyValueStringPairs( builder, keyValuePairs );
-		return builder.toString();
-	}
-
 
 	/** preprocess the object graph prior to encoding so the references can be resolved and encoded in order (definition first then any references to it) */
 	@SuppressWarnings( "unchecked" )	// need to cast the value to Map<String,Object>
@@ -494,7 +447,7 @@ class DictionaryEncoder extends SoftValueEncoder<Map<String,Object>> {
 			final Object entryValue = entry.getValue();
 
 			StringEncoder.getInstance().preprocess( encoder, entryKey );
-			JSONEncoder.getEncoder( value ).preprocess( encoder, entryValue );
+			encoder.getEncoder( value ).preprocess( encoder, entryValue );
 		}
 	}
 
@@ -520,9 +473,9 @@ class DictionaryEncoder extends SoftValueEncoder<Map<String,Object>> {
 			StringEncoder.getInstance().encode( encoder, jsonBuilder, entryKey );
 
 			jsonBuilder.append( ": " );
-			
+
 			final Object entryValue = entry.getValue();
-			JSONEncoder.getEncoder( entryValue ).encode( encoder, jsonBuilder, entryValue );
+			encoder.getEncoder( entryValue ).encode( encoder, jsonBuilder, entryValue );
 
 			++index;
 		}
@@ -762,21 +715,21 @@ class TypedArrayEncoder extends DictionaryEncoder {
 
 /** encode an array to JSON */
 class ArrayEncoder extends SoftValueEncoder<Object[]> {
-    /** array of encoders each of which corresponds to an item in the original array */
-    final private AbstractEncoder[] ITEM_ENCODERS;
-    
-    
-    /** Constructor */
-    public ArrayEncoder( final Object array, final ConversionAdaptorStore conversionAdaptorStore, final IdentityReference<?> reference, final ReferenceStore referenceStore ) {
-        super( reference );
-        
-        final int arrayLength = Array.getLength( array );
-        ITEM_ENCODERS = new AbstractEncoder[ arrayLength ];
-        for ( int index = 0 ; index < arrayLength ; index++ ) {
-            ITEM_ENCODERS[index] = AbstractEncoder.record( Array.get( array, index ), conversionAdaptorStore, referenceStore );
-        }
-    }
-    
+	/** encoder singleton */
+	static final private ArrayEncoder SHARED_ENCODER;
+
+
+	// static initializer
+	static {
+		SHARED_ENCODER = new ArrayEncoder();
+	}
+
+
+	/** get the shared instance */
+	static public ArrayEncoder getInstance() {
+		return SHARED_ENCODER;
+	}
+
     
     /** Set the component type */
     public void setComponentType( final String componentType ) {
