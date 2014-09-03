@@ -438,27 +438,25 @@ class NumberEncoder extends HardEncoder<Number> {
 
 /** encode a hash map to JSON */
 class DictionaryEncoder extends SoftValueEncoder<Map<String,Object>> {
-    /** map of item encoders keyed by the corresponding orignal map keys */
-    final private Map<String,AbstractEncoder> ENCODER_MAP;
-    
-    
-    /** Constructor */
-    public DictionaryEncoder( final HashMap<String,Object> map, final ConversionAdaptorStore conversionAdaptorStore, final IdentityReference<?> reference, final ReferenceStore referenceStore ) {
-        super( reference );
-        
-        ENCODER_MAP = new HashMap<String,AbstractEncoder>( map.size() );
-        final Set<Map.Entry<String,Object>> entries = map.entrySet();
-        for ( final Map.Entry<String,Object> entry : entries ) {
-            final AbstractEncoder itemEncoder = AbstractEncoder.record( entry.getValue(), conversionAdaptorStore, referenceStore );
-            ENCODER_MAP.put( entry.getKey(), itemEncoder );
-        }
-    }
+	/** encoder singleton */
+	static final private DictionaryEncoder SHARED_ENCODER;
+
+
+	// static initializer
+	static {
+		SHARED_ENCODER = new DictionaryEncoder();
+	}
+
+
+	/** get the shared instance */
+	static public DictionaryEncoder getInstance() {
+		return SHARED_ENCODER;
+	}
 
     
-    /** encode key value string pairs where the value is already encoded */
-    static public String encodeKeyValueStringPairs( final KeyValueStringPair ... keyValuePairs ) {
-        final StringBuffer buffer = new StringBuffer();
-        buffer.append( "{" );
+    /** encode key value string pairs to the specified builder where the value (but not the key) is already encoded */
+    static public void encodeKeyValueStringPairs( final StringBuilder builder, final KeyValueStringPair ... keyValuePairs ) {
+        builder.append( "{" );
         
         int index = 0;
         for ( final KeyValueStringPair keyValuePair : keyValuePairs ) {
@@ -466,40 +464,71 @@ class DictionaryEncoder extends SoftValueEncoder<Map<String,Object>> {
                 case 0:
                     break;
                 default:
-                    buffer.append( ", " );
+                    builder.append( ", " );
                     break;
             }
-            buffer.append( StringEncoder.encode( keyValuePair.KEY ) );
-            buffer.append( ": " );
-            buffer.append( keyValuePair.VALUE );
+            builder.append( StringEncoder.toJSON( keyValuePair.KEY ) );
+            builder.append( ": " );
+            builder.append( keyValuePair.VALUE );
             ++index;
         }
         
-        buffer.append( "}" );
-        return buffer.toString();
+        builder.append( "}" );
     }
-    
-    
-    /** encode the archived value to JSON */
-    public String encodeValue() {
-        final Set<Map.Entry<String,AbstractEncoder>> entries = ENCODER_MAP.entrySet();
-        final KeyValueStringPair[] keyValuePairs = new KeyValueStringPair[ entries.size() ];
-        int index = 0;
-        for ( final Map.Entry<String,AbstractEncoder> entry : entries ) {
-            final String key = entry.getKey();
-            final AbstractEncoder itemEncoder = entry.getValue();
-            final String value = itemEncoder.encode();
-            keyValuePairs[index] = new KeyValueStringPair( key, value );
-            ++index;
-        }
-        return encodeKeyValueStringPairs( keyValuePairs );
-    }
-    
-    
-    /** Get the item encoder for the specified key */
-    protected AbstractEncoder getItemEncoderForKey( final String key ) {
-        return ENCODER_MAP.get( key );
-    }
+
+
+	/** encode key value string pairs where the value is already encoded */
+	static public String encodeKeyValueStringPairs( final KeyValueStringPair ... keyValuePairs ) {
+		final StringBuilder builder = new StringBuilder();
+		encodeKeyValueStringPairs( builder, keyValuePairs );
+		return builder.toString();
+	}
+
+
+	/** preprocess the object graph prior to encoding so the references can be resolved and encoded in order (definition first then any references to it) */
+	@SuppressWarnings( "unchecked" )	// need to cast the value to Map<String,Object>
+	public void preprocess( final JSONEncoder encoder, final Object value ) {
+		final Map<String,Object> dictionary = (Map<String,Object>)value;
+		for ( final Map.Entry<String,Object> entry : dictionary.entrySet() ) {
+			final String entryKey = entry.getKey();
+			final Object entryValue = entry.getValue();
+
+			StringEncoder.getInstance().preprocess( encoder, entryKey );
+			JSONEncoder.getEncoder( value ).preprocess( encoder, entryValue );
+		}
+	}
+
+
+	/** encode the string */
+	@SuppressWarnings( "unchecked" )	// need to cast the value to Map<String,Object>
+	public void encodeRaw( final JSONEncoder encoder, final StringBuilder jsonBuilder, final Object value ) {
+		final Map<String,Object> dictionary = (Map<String,Object>)value;
+
+		jsonBuilder.append( "{" );
+
+		int index = 0;
+		for ( final Map.Entry<String,Object> entry : dictionary.entrySet() ) {
+			switch ( index ) {
+				case 0:
+					break;
+				default:
+					jsonBuilder.append( ", " );
+					break;
+			}
+
+			final String entryKey = entry.getKey();
+			StringEncoder.getInstance().encode( encoder, jsonBuilder, entryKey );
+
+			jsonBuilder.append( ": " );
+			
+			final Object entryValue = entry.getValue();
+			JSONEncoder.getEncoder( entryValue ).encode( encoder, jsonBuilder, entryValue );
+
+			++index;
+		}
+
+		jsonBuilder.append( "}" );
+	}
 }
 
 
