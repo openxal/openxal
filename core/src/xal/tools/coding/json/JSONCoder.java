@@ -142,8 +142,7 @@ class JSONEncoder {
 
 
 	/** Constructor */
-	protected JSONEncoder( final Object value, final ConversionAdaptorStore conversionAdaptorStore ) {
-		ROOT_VALUE = value;
+	protected JSONEncoder( final ConversionAdaptorStore conversionAdaptorStore ) {
 		CONVERSION_ADAPTOR_STORE = conversionAdaptorStore;
 
 		_referenceStore = null;
@@ -151,8 +150,8 @@ class JSONEncoder {
 
 
 	/** Get a decoder for the archive */
-	public static JSONEncoder getInstance( final Object value, final ConversionAdaptorStore conversionAdaptorStore ) {
-		return new JSONEncoder( value, conversionAdaptorStore );
+	public static JSONEncoder getInstance( final ConversionAdaptorStore conversionAdaptorStore ) {
+		return new JSONEncoder( conversionAdaptorStore );
 	}
 
 
@@ -166,7 +165,7 @@ class JSONEncoder {
 	public String encode( final Object value ) {
 		_referenceStore = new ReferenceStore();
 
-		final AbstractEncoder rootEncoder = getEncoder( value );
+		final AbstractEncoder<?> rootEncoder = getEncoder( value );
 		rootEncoder.preprocess( this, value );
 
 		final StringBuilder jsonBuilder = new StringBuilder();
@@ -184,7 +183,7 @@ class JSONEncoder {
 
 	/** get the encoder for the specified value */
 	@SuppressWarnings( "unchecked" )    // no way to guarantee at compile time conversion types
-	static protected AbstractEncoder getEncoder( final Object value ) {
+	static protected AbstractEncoder<?> getEncoder( final Object value ) {
 		final Class<?> valueClass = value != null ? value.getClass() : null;
 
 		if ( valueClass == null ) {
@@ -225,74 +224,11 @@ class JSONEncoder {
 /** Base class of encoders */
 abstract class AbstractEncoder<DataType> {
 	/** preprocess the object graph prior to encoding so the references can be resolved and encoded in order (definition first then any references to it) */
-	abstract public void preprocess( final JSONEncoder encoder, final DataType value );
+	abstract public void preprocess( final JSONEncoder encoder, final Object value );
 
 
 	/** encode the specified object to the JSON builder */
-	abstract public void encode( final JSONEncoder encoder, final StringBuilder jsonBuilder, final DataType value );
-
-
-//    /** encode the value using the coder */
-//    static public String encode( final Object value, final ConversionAdaptorStore conversionAdaptorStore ) {
-//        return record( value, conversionAdaptorStore ).encode();
-//    }
-//    
-//    /** encode the archived value to JSON */
-//    abstract public String encode();
-//    
-//    
-//    /** Mark that this encoder is a member of a collection of the specified type. Does nothing by default, but subclasses may have a custom behavior. */
-//    public void setIsMemberOfCollectionWithType( final String collectionType ) {}
-//
-//    
-//    /** record the value for encoding later */
-//    static public AbstractEncoder record( final Object value, final ConversionAdaptorStore conversionAdaptorStore ) {
-//        return record( value, conversionAdaptorStore, new ReferenceStore() );
-//    }
-//    
-//    
-//    /** record a value for encoding later and store references in the supplied store */
-//    @SuppressWarnings( "unchecked" )    // no way to guarantee at compile time conversion types
-//    static protected AbstractEncoder record( final Object value, final ConversionAdaptorStore conversionAdaptorStore, final ReferenceStore referenceStore ) {
-//        final Class<?> valueClass = value != null ? value.getClass() : null;
-//        
-//		if ( valueClass == null ) {
-//			return NullEncoder.getInstance();
-//		}
-//        else if ( valueClass.equals( Boolean.class ) ) {
-//            return new BooleanEncoder( (Boolean)value );
-//        }
-//		// handle each immediate concrete subclass of Number
-//		else if ( valueClass.equals( JSONNumber.class ) ) {
-//			return new NumberEncoder( (JSONNumber)value );
-//		}
-//        else if ( valueClass.equals( String.class ) ) {
-//            final String stringValue = (String)value;
-//            final IdentityReference<?> reference = StringEncoder.allowsReference( stringValue ) ? referenceStore.store( value ) : null;
-//            return reference != null && reference.hasMultiple() ? new ReferenceEncoder( reference.getID() ) : new StringEncoder( stringValue, reference );
-//        }
-//        else {      // these are the ones that support references
-//            final IdentityReference<?> reference = referenceStore.store( value );
-//            if ( reference.hasMultiple() ) {
-//                return new ReferenceEncoder( reference.getID() );
-//            }
-//            else if ( valueClass.equals( HashMap.class ) ) {  // no way to check at compile time that the key type is string
-//                return new DictionaryEncoder( (HashMap<String,Object>)value, conversionAdaptorStore, reference, referenceStore );
-//            }
-//            else if ( valueClass.isArray() ) {
-//                return ArrayEncoder.getInstance( value, conversionAdaptorStore, reference, referenceStore );
-//            }
-//            else if ( conversionAdaptorStore.isExtendedClass( valueClass ) ) {  // if the type is not among the standard ones then look to extensions
-//                return new ExtensionEncoder( value, conversionAdaptorStore, reference, referenceStore );
-//            }
-//            else if ( value instanceof Serializable ) {
-//                return new SerializationEncoder( value, conversionAdaptorStore, reference, referenceStore );
-//            }
-//            else {
-//                throw new RuntimeException( "No JSON support for the object of type: " + valueClass );
-//            }
-//        }
-//    }
+	abstract public void encode( final JSONEncoder encoder, final StringBuilder jsonBuilder, final Object value );
 }
 
 
@@ -318,10 +254,10 @@ abstract class SoftValueEncoder<DataType> extends AbstractEncoder<DataType> {
 
 
 	/** encode the specified object to the JSON builder */
-	public void encode( final JSONEncoder encoder, final StringBuilder jsonBuilder, final DataType value ) {
+	public void encode( final JSONEncoder encoder, final StringBuilder jsonBuilder, final Object value ) {
 		if ( allowsReference( value ) ) {
 			final ReferenceStore referenceStore = encoder.getReferenceStore();
-			final IdentityReference<DataType> identityReference = referenceStore.getIdentityReference( value );
+			final IdentityReference<?> identityReference = referenceStore.getIdentityReference( value );
 			if ( identityReference.hasMultiple() ) {
 				if ( identityReference.isEncoded() ) {
 					// TODO: encode a reference to the encoded item
@@ -332,7 +268,7 @@ abstract class SoftValueEncoder<DataType> extends AbstractEncoder<DataType> {
 //					return DictionaryEncoder.encodeKeyValueStringPairs( new KeyValueStringPair( OBJECT_ID_KEY, NumberEncoder.encode( identityReference.getID() ) ), new KeyValueStringPair( VALUE_KEY, valueEncoding ) );
 				}
 			} else {
-				encodeRaw( encoder, jsonBuilder, value() );
+				encodeRaw( encoder, jsonBuilder, value );
 			}
 		} else {
 			encodeRaw( encoder, jsonBuilder, value );
@@ -341,19 +277,19 @@ abstract class SoftValueEncoder<DataType> extends AbstractEncoder<DataType> {
 
 
 	/** determine whether the value allows referencing */
-	public boolean allowsReference( final DataType value ) {
+	public boolean allowsReference( final Object value ) {
 		return true;
 	}
 
 
 	/** encode the raw value directly */
-	abstract public void encodeRaw( final JSONEncoder encoder, final StringBuilder jsonBuilder, final DataType value );
+	abstract public void encodeRaw( final JSONEncoder encoder, final StringBuilder jsonBuilder, final Object value );
 }
 
 
 
 /** encode a null to JSON */
-class NullEncoder extends AbstractEncoder<Object> {
+class NullEncoder extends HardEncoder<Object> {
     /** encoder singleton */
     static final private NullEncoder SHARED_ENCODER;
     
@@ -415,26 +351,34 @@ class StringEncoder extends SoftValueEncoder<String> {
 	public void encode( final JSONEncoder encoder, final StringBuilder jsonBuilder, final Object value ) {
 		if ( allowsReference( value ) ) {
 			final ReferenceStore referenceStore = encoder.getReferenceStore();
-			final IdentityReference identityReference = referenceStore.getIdentityReference( value );
+			final IdentityReference<?> identityReference = referenceStore.getIdentityReference( value );
 			if ( identityReference.hasMultiple() ) {
 				if ( identityReference.isEncoded() ) {
-					// encode a reference to the encoded item
+					// TODO: encode a reference to the encoded item
 				} else {
-					final String valueEncoding = encodeValueForReference();
-					return DictionaryEncoder.encodeKeyValueStringPairs( new KeyValueStringPair( OBJECT_ID_KEY, NumberEncoder.encode( REFERENCE.getID() ) ), new KeyValueStringPair( VALUE_KEY, valueEncoding ) );
+					// TODO: encode the item to be referenced
+//					final String valueEncoding = encodeValueForReference();
+//					DictionaryEncoder.encodeKeyValueStringPairs( new KeyValueStringPair( OBJECT_ID_KEY, NumberEncoder.encode( REFERENCE.getID() ) ), new KeyValueStringPair( VALUE_KEY, valueEncoding ) );
+					identityReference.setEncoded( true );
 				}
 			} else {
-				encodeRaw( encoder, jsonBuilder, value.toString() );
+				encodeRaw( encoder, jsonBuilder, value );
 			}
 		} else {
-			encodeRaw( encoder, jsonBuilder, value.toString() );
+			encodeRaw( encoder, jsonBuilder, value );
 		}
 	}
 
 
 	/** encode the string */
-	public void encodeRaw( final JSONEncoder encoder, final StringBuilder jsonBuilder, final String value ) {
-		jsonBuilder.append( "\"" + value.replace( "\\", "\\\\" ).replace( "\"", "\\\"" ) + "\"" );
+	public void encodeRaw( final JSONEncoder encoder, final StringBuilder jsonBuilder, final Object value ) {
+		jsonBuilder.append( toJSON( value.toString() ) );
+	}
+
+
+	/** encode a String value as a JSON String */
+	public static String toJSON( final String value ) {
+		return "\"" + value.replace( "\\", "\\\\" ).replace( "\"", "\\\"" ) + "\"";
 	}
 }
 
@@ -442,38 +386,52 @@ class StringEncoder extends SoftValueEncoder<String> {
 
 /** encode a boolean to JSON */
 class BooleanEncoder extends HardEncoder<Boolean> {
-    /** Constructor */
-    public BooleanEncoder( final Boolean value ) {
-        super( value );
-    }
-    
-    
-    /** encode the archived value to JSON */
-    public String encode() {
-		return VALUE.booleanValue() ? "true" : "false";
-    }
+	/** encoder singleton */
+	static final private BooleanEncoder SHARED_ENCODER;
+
+
+	// static initializer
+	static {
+		SHARED_ENCODER = new BooleanEncoder();
+	}
+
+
+	/** get the shared instance */
+	static public BooleanEncoder getInstance() {
+		return SHARED_ENCODER;
+	}
+
+
+	/** encode the specified object to the JSON builder */
+	public void encode( final JSONEncoder encoder, final StringBuilder jsonBuilder, final Object value ) {
+		jsonBuilder.append( ((Boolean)value).booleanValue() ? "true" : "false" );
+	}
 }
 
 
 
 /** encode a number to JSON */
-class NumberEncoder extends HardEncoder<JSONNumber> {
-    /** Constructor */
-    public NumberEncoder( final JSONNumber value ) {
-        super( value );
-    }
-    
-    
-    /** encode the archived value to JSON */
-    public String encode() {
-		return encode( VALUE );
-    }
-    
-    
-    /** encode a numeric value */
-    static public String encode( final Number value ) {		// we will encode any number not just a JSONNumber
-        return value.toString();
-    }
+class NumberEncoder extends HardEncoder<Number> {
+	/** encoder singleton */
+	static final private NumberEncoder SHARED_ENCODER;
+
+
+	// static initializer
+	static {
+		SHARED_ENCODER = new NumberEncoder();
+	}
+
+
+	/** get the shared instance */
+	static public NumberEncoder getInstance() {
+		return SHARED_ENCODER;
+	}
+
+
+	/** encode the specified object to the JSON builder */
+	public void encode( final JSONEncoder encoder, final StringBuilder jsonBuilder, final Object value ) {
+		jsonBuilder.append( value.toString() );
+	}
 }
 
 
@@ -1323,9 +1281,9 @@ class DictionaryDecoder extends AbstractDecoder<Object> {
 			referenceStore.store( itemID.longValue(), item );
 			return item;
 		}
-		else if ( dictionary.containsKey( ReferenceEncoder.REFERENCE_KEY ) ) {
+		else if ( dictionary.containsKey( SoftValueEncoder.REFERENCE_KEY ) ) {
 			// decode a reference to an object in the store
-			final JSONNumber itemID = (JSONNumber)dictionary.get( ReferenceEncoder.REFERENCE_KEY );
+			final JSONNumber itemID = (JSONNumber)dictionary.get( SoftValueEncoder.REFERENCE_KEY );
 			return referenceStore.get( itemID.longValue() );
 		}
 		else {
