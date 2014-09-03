@@ -60,6 +60,10 @@ public abstract class ElementSeq implements IComposite {
     /** element instance identifier of element */
     private String      m_strId;
     
+    /** Identifier string of the model hardware node */
+    private String      strSmfId;
+    
+
     /** user comments regarding this sequence */
     private String      m_strComment;
 
@@ -147,6 +151,21 @@ public abstract class ElementSeq implements IComposite {
     };
 
     /**
+     * Sets the string identifier of the hardware node which this
+     * element models.  Node that this sequence probably models an
+     * accelerator sector, or logical unit.  Thus, this ID is likely
+     * of the type "HEBT", "RING", "DTL", etc.
+     * 
+     * @param strSmfId  identifier for the modeled hardware node (SMF object)
+     *
+     * @author Christopher K. Allen
+     * @since  Sep 2, 2014
+     */
+    public void setHardwareNodeId(String strSmfId) {
+        this.strSmfId = strSmfId;
+    }
+
+    /**
      *  Sets any user comment associated with this sequence.
      *
      *  @param  strComment  string containing user comments
@@ -155,11 +174,7 @@ public abstract class ElementSeq implements IComposite {
         m_strComment = strComment;
     }
 
-
-
-
-
-
+    
     /*
      * Probe Propagation
      */
@@ -175,6 +190,7 @@ public abstract class ElementSeq implements IComposite {
      *
      *  @return     type identifier for ElementSeq
      */
+    @Override
     public String getType() { return m_strType; }
     
     /**  
@@ -182,14 +198,31 @@ public abstract class ElementSeq implements IComposite {
      *
      *  @return     sequence identifier
      */
+    @Override
     public String getId() { return m_strId; }
     
+    /**
+     * Returns the string identifier of the hardware node which this
+     * element models.  This value is likely a sector of an accelerator
+     * structure, such as "HEBT", "RING", "MEBT", etc.
+     * 
+     * @return      the identifier string of the hardware this element models
+     *
+     * @author Christopher K. Allen
+     * @since  Sep 2, 2014
+     */
+    @Override
+    public String   getHardwareNodeId() {
+        return this.strSmfId;
+    }
+
     /**  
      *  Return the length of the sequence.  The length of the sequence is determined but
      *  summing the lengths of all the contained IElement objects.
      *
      *  @return     total length of the sequence (in <bold>meters</bold>)
      */
+    @Override
     public double getLength() {
         double len = 0.0;
         for(IComponent comp : getCompList()) {
@@ -207,6 +240,7 @@ public abstract class ElementSeq implements IComposite {
      *
      * @see xal.model.IComponent#propagate(xal.model.IProbe, double)
      */
+    @Override
     public void propagate(IProbe probe, double pos) throws ModelException { 
     	propagate(probe);
     }
@@ -218,6 +252,7 @@ public abstract class ElementSeq implements IComposite {
      *
      *  @exception  ModelException    an error occurred while advancing the probe state
      */
+    @Override
     public void propagate(IProbe probe) throws ModelException {
         for(IComponent comp : getCompList()) {
             comp.propagate(probe);
@@ -242,6 +277,7 @@ public abstract class ElementSeq implements IComposite {
      *
      * @see xal.model.IComponent#propagate(xal.model.IProbe, double)
      */
+    @Override
     public void backPropagate(IProbe probe, double pos) throws ModelException { 
     	backPropagate(probe);
     }
@@ -264,6 +300,7 @@ public abstract class ElementSeq implements IComposite {
      *
      *  @exception  ModelException    an error occurred while advancing the probe state
      */
+    @Override
     public void backPropagate(IProbe probe) throws ModelException {
         for(IComponent comp : getReverseCompList()) {
             comp.backPropagate(probe);
@@ -278,10 +315,27 @@ public abstract class ElementSeq implements IComposite {
      * 
      * @see     java.util.Iterator
      */ 
+    @Override
     public Iterator<IComponent> localIterator() {
         return this.getCompList().iterator();
     }
      
+    /**
+     * Return an <code>Iterator</code> object that iterates over <b>every</b> 
+     * <code>IComponent</code> object in this composite.  For 
+     * <code>IComponent</code> which are also composite the parent is 
+     * returned first, then all its children.  This would be in reverse
+     * order.
+     * 
+     * @return  <code>Iterator</code> interface to iterator object
+     * 
+     * @see     java.util.Iterator
+     */
+    @Override
+    public Iterator<IComponent> globalIterator()  {
+        return new CompositeGlobalIterator(this);
+    }
+    
     /**
      * Return an <code>Iterator</code> object that iterates over the direct
      * descendants only of this composite element, in reverse order.
@@ -297,21 +351,6 @@ public abstract class ElementSeq implements IComposite {
         return this.getReverseCompList().iterator();
     }
      
-    /**
-     * Return an <code>Iterator</code> object that iterates over <b>every</b> 
-     * <code>IComponent</code> object in this composite.  For 
-     * <code>IComponent</code> which are also composite the parent is 
-     * returned first, then all its children.  This would be in reverse
-     * order.
-     * 
-     * @return  <code>Iterator</code> interface to iterator object
-     * 
-     * @see     java.util.Iterator
-     */
-    public Iterator<IComponent> globalIterator()  {
-        return new CompositeGlobalIterator(this);
-    }
-    
     /**
      * Return an <code>Iterator</code> object that iterates over <b>every</b> 
      * <code>IComponent</code> object in this composite.  For 
@@ -342,6 +381,7 @@ public abstract class ElementSeq implements IComposite {
      *
      *  @return         number of direct descendants
      */
+    @Override
     public int  getChildCount() { return this.getCompList().size(); };
     
     /**
@@ -352,6 +392,7 @@ public abstract class ElementSeq implements IComposite {
      *
      *  @return             child at position indChild
      */
+    @Override
     public IComponent getChild(int indChild) {
         return this.getCompList().get(indChild);
     }
@@ -369,6 +410,7 @@ public abstract class ElementSeq implements IComposite {
 
      *  @param  iComp   new component object
      */
+    @Override
     public void addChild(IComponent iComp)   {
         this.getCompList().add(iComp);
         this.getReverseCompList().add(0, iComp);
@@ -382,6 +424,7 @@ public abstract class ElementSeq implements IComposite {
      * 
      * @return  return true if element was found and removed, false otherwise
      */
+    @Override
     public boolean remove(IComponent iComp)    {
         
         // Inspect each child for specified element

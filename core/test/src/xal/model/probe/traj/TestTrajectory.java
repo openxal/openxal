@@ -30,6 +30,7 @@ import xal.sim.sync.SynchronizationException;
 import xal.smf.Accelerator;
 import xal.smf.AcceleratorSeq;
 import xal.smf.data.XMLDataManager;
+import xal.tools.beam.PhaseVector;
 
 /**
  * Class of test cases for class <code>{@link Trajectory}</code>.
@@ -45,7 +46,8 @@ public class TestTrajectory {
      */
     
     /** Accelerator sequence used for testing */
-    public static final String     STR_ACCL_SEQ_ID = "HEBT2";
+//    public static final String     STR_ACCL_SEQ_ID = "HEBT2";
+    public static final String     STR_ACCL_SEQ_ID = "SCLMed";
     
     
     /** Bending Dipole ID */
@@ -244,6 +246,24 @@ public class TestTrajectory {
         System.out.println("STATES for " + STR_DH1_ID);
         for (TransferMapState state : lstStates) {
             System.out.println("  " + state.getElementId() + " at position " + state.getPosition());
+        }
+        
+    }
+    
+    /**
+     * Test method for {@link xal.model.probe.traj.Trajectory#statesForElement(java.lang.String)}.
+     */
+    @Test
+    public final void testParticleProbe() {
+        PROBE_PARTC.setPhaseCoordinates(new PhaseVector(0.001, 0, 0, 0, 0, 0) );
+        PROBE_PARTC.initialize();
+        
+        @SuppressWarnings("unchecked")
+        Trajectory<ParticleProbeState>    trjPartc = (Trajectory<ParticleProbeState>)this.runModel(PROBE_PARTC);
+        
+        System.out.println("PARTICLE PROBE STATES");
+        for (ParticleProbeState state : trjPartc.getStatesViaIndexer()) {
+            System.out.println("  " + state.getElementId() + " at position " + state.getPosition() + ": z = " + state.getPhaseCoordinates());
         }
         
     }

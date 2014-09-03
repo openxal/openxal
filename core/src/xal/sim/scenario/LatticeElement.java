@@ -109,6 +109,7 @@ public class LatticeElement implements Comparable<LatticeElement> {
 		try {
 			IComponent component = elementClass.newInstance();		
 			component.initializeFrom(this);
+			
 			return component;
 		} catch (InstantiationException | IllegalAccessException e) {
 			throw new ModelException("Exception while instantiating class "+elementClass.getName()+" for node "+node.getId(), e);

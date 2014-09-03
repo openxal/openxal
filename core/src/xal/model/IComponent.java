@@ -37,6 +37,14 @@ public interface IComponent {
      */
     String  getId();
     
+    /**
+     * Get the string identifier of the hardware node being modeled
+     * by this element.
+     * 
+     * @return      SMF hardware node this element maps to
+     */
+    public String   getHardwareNodeId();
+    
 
 	/**
 	 * Conversion method to be provided by the user

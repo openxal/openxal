@@ -530,6 +530,22 @@ public abstract class Probe<S extends ProbeState<S>> implements IProbe, IArchive
     	return this.stateCurrent.getElementId();
     }
     
+    /**
+     * Returns the identifier of the hardware modeled by the
+     * element associated with this state.
+     * 
+     * @return  hardware ID of the associated modeling element
+     *
+     * @see xal.model.IProbe#getCurrentHardwareId()
+     *
+     * @author Christopher K. Allen
+     * @since  Sep 3, 2014
+     */
+    @Override
+    public String getCurrentHardwareId() {
+        return this.stateCurrent.getHardwareNodeId();
+    }
+    
     /** 
      *  Returns the current beam-line position of the probe 
      *  
@@ -598,6 +614,20 @@ public abstract class Probe<S extends ProbeState<S>> implements IProbe, IArchive
     @Override
     public void setCurrentElement(String id) {
     	this.stateCurrent.setElementId(id);
+    }
+    
+    /**
+     * Sets the identifier of the hardware modeled by the
+     * current element.
+     * 
+     * @see xal.model.IProbe#setCurrentHardwareId(java.lang.String)
+     *
+     * @author Christopher K. Allen
+     * @since  Sep 3, 2014
+     */
+    @Override
+    public void setCurrentHardwareId(String strSmfId) {
+        this.stateCurrent.setHardwareNodeId(strSmfId);
     }
     
     /** 

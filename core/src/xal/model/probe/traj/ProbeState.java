@@ -71,6 +71,9 @@ public abstract class ProbeState<S extends ProbeState<S>> implements IProbeState
 
     /** element id */
     private String m_strElemId = "";
+    
+    /** hardware node ID */
+    private String  strSmfId = "";
 
     /** Current probe position in beamline */
     private double m_dblPos = 0.0;
@@ -225,6 +228,18 @@ public abstract class ProbeState<S extends ProbeState<S>> implements IProbeState
         m_strElemId = id;
     }
     
+    /**
+     * Sets the hardware node ID modeled by the element owning this state.
+     * 
+     * @param strSmfId  hardware ID of the state
+     *
+     * @author Christopher K. Allen
+     * @since  Sep 3, 2014
+     */
+    public void setHardwareNodeId(String strSmfId) {
+        this.strSmfId = strSmfId;
+    }
+    
 //    //sako
 //    public void setUseTwiss(boolean bool) {
 //        bolSaveTwiss = bool;
@@ -272,6 +287,19 @@ public abstract class ProbeState<S extends ProbeState<S>> implements IProbeState
      */
     public String getElementId() {
         return m_strElemId;
+    }
+    
+    /**
+     * Returns the identifier of the hardware node modeled by the
+     * associated modeling element for this state.
+     * 
+     * @return  hardware ID of this state's modeling element
+     *
+     * @author Christopher K. Allen
+     * @since  Sep 3, 2014
+     */
+    public String getHardwareNodeId() {
+        return this.strSmfId;
     }
     
     /** 

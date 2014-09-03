@@ -171,8 +171,11 @@ class ScenarioGenerator {
 			if (element.getEndPosition() > sequenceLength) sequenceLength = element.getEndPosition();
 			
 			if (halfMag && node instanceof Magnet && !element.isThin()) {
-//				LatticeElement center = new LatticeElement(new Marker("ELEMENT_CENTER:" + node.getId()), element.getCenter(),
-              LatticeElement center = new LatticeElement(new Marker(node.getId() + ":ELEMENT_CENTER"), element.getCenter(),
+			    
+			    // CKA: NOTE that "ELEMENT_CENTER" is bound to Element#initializeFrom() in order \
+			    //   to set Element's hardware ID attribute.  If changed you must modify both!
+				LatticeElement center = new LatticeElement(new Marker("ELEMENT_CENTER:" + node.getId()), element.getCenter(),
+//              LatticeElement center = new LatticeElement(new Marker(node.getId() + ":ELEMENT_CENTER"), element.getCenter(),
 						elementMapping.getDefaultConverter(), 0);
 				elements.add(center);
 			}
@@ -285,6 +288,7 @@ class ScenarioGenerator {
 		
 		Lattice lattice = new Lattice();
 		lattice.setId(sequence.getId());
+		lattice.setHardwareNodeId(sequence.getEntranceID());
 		lattice.setVersion(" ");
 		lattice.setAuthor("W.-D. Klotz");		
 		lattice.setComments(lattice.getAuthor() + LatticeXmlParser.s_strAttrSep + new Date() 
