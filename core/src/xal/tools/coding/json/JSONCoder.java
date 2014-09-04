@@ -264,7 +264,7 @@ abstract class SoftValueEncoder<DataType> extends AbstractEncoder<DataType> {
 		if ( allowsReference( value ) ) {
 			final ReferenceStore referenceStore = encoder.getReferenceStore();
 			final IdentityReference<?> identityReference = referenceStore.getIdentityReference( value );
-			if ( identityReference.hasMultiple() ) {
+			if ( identityReference != null && identityReference.hasMultiple() ) {
 				if ( identityReference.isEncoded() ) {
 					// create dictionary with the reference
 					final Map<String,Object> dictionary = new HashMap<>();
