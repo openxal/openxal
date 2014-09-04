@@ -857,7 +857,8 @@ class ArrayEncoder extends SoftValueEncoder<Object[]> {
     /** Determine whether the array is of a common extended type */
     static private boolean isTypedArray( final Object array ) {
         final Class<?> itemClass = array.getClass().getComponentType();
-        return itemClass != null && itemClass != Object.class;
+		final boolean isTyped = itemClass != null && itemClass != Object.class && !JSONCoder.isStandardType( itemClass.getName() );
+		return isTyped;
     }
 }
 
