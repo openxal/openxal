@@ -161,6 +161,12 @@ class JSONEncoder {
 	}
 
 
+	/** get the conversion adaptor store */
+	public ConversionAdaptorStore getConversionAdaptorStore() {
+		return CONVERSION_ADAPTOR_STORE;
+	}
+
+
 	/** encode the specified value */
 	public String encode( final Object value ) {
 		_referenceStore = new ReferenceStore();
@@ -441,6 +447,9 @@ class DictionaryEncoder extends SoftValueEncoder<Map<String,Object>> {
 	/** preprocess the object graph prior to encoding so the references can be resolved and encoded in order (definition first then any references to it) */
 	@SuppressWarnings( "unchecked" )	// need to cast the value to Map<String,Object>
 	public void preprocess( final JSONEncoder encoder, final Object value ) {
+		final ReferenceStore referenceStore = encoder.getReferenceStore();
+		referenceStore.store( value );
+
 		final Map<String,Object> dictionary = (Map<String,Object>)value;
 		for ( final Map.Entry<String,Object> entry : dictionary.entrySet() ) {
 			final String entryKey = entry.getKey();
@@ -486,94 +495,97 @@ class DictionaryEncoder extends SoftValueEncoder<Map<String,Object>> {
 
 
 /** encoder for extensions which piggybacks on the dictionary encoder */
-class ExtensionEncoder extends DictionaryEncoder {
-    /** custom key identifying a custom type translated in terms of JSON representations */
-    static final public String EXTENDED_TYPE_KEY = "__XALTYPE";
-    
-    /** custom key identifying a custom value to translate in terms of JSON representations */
-    static final public String EXTENDED_VALUE_KEY = "value";
-    
-    /** extended type of the value */
-    final private String _extensionType;
-    
-    /** indicates whether this encoder represents a typed collection item matching the batch type. */
-    private boolean _isTypedCollectionItem;
-    
-    
-    /** Constructor */
-    public ExtensionEncoder( final Object value, final ConversionAdaptorStore conversionAdaptorStore, final IdentityReference<?> reference, final ReferenceStore referenceStore ) {
-        super( getValueRep( value, conversionAdaptorStore ), conversionAdaptorStore, reference, referenceStore );
-        _extensionType = getValueType( value );
-    }
-    
-    
-    /** Mark that this encoder is a member of a collection of the specified type. If the type matches the extension type we may encode just the representation value (unless it is a reference). */
-    public void setIsMemberOfCollectionWithType( final String collectionType ) {
-        _isTypedCollectionItem = collectionType.equals( _extensionType );
-    }
-    
-    
-    /** get the value representation as a dictionary keyed for the extended type and value */
-    @SuppressWarnings( { "unchecked", "rawtypes" } )
-    static private HashMap<String,Object> getValueRep( final Object value, final ConversionAdaptorStore conversionAdaptorStore ) {
-        final String valueType = getValueType( value );
-        final ConversionAdaptor adaptor = conversionAdaptorStore.getConversionAdaptor( valueType );
-        if ( adaptor != null ) {
-            final HashMap<String,Object> valueRep = new HashMap<String,Object>();
-            final Object representationValue = adaptor.toRepresentation( value );
-            valueRep.put( EXTENDED_TYPE_KEY, valueType );
-            valueRep.put( EXTENDED_VALUE_KEY, representationValue );
-            return valueRep;
-        }
-        else {
-            throw new RuntimeException( "No coder for encoding objects of type: " + valueType );
-        }
-    }
-    
+class ExtensionEncoder extends SoftValueEncoder<Object> {
+	/** custom key identifying a custom type translated in terms of JSON representations */
+	static final public String EXTENDED_TYPE_KEY = "__XALTYPE";
+
+	/** custom key identifying a custom value to translate in terms of JSON representations */
+	static final public String EXTENDED_VALUE_KEY = "value";
+
+	/** encoder singleton */
+	static final private ExtensionEncoder SHARED_ENCODER;
+
+
+	// static initializer
+	static {
+		SHARED_ENCODER = new ExtensionEncoder();
+	}
+
+
+	/** get the shared instance */
+	static public ExtensionEncoder getInstance() {
+		return SHARED_ENCODER;
+	}
+
     
     /** get the value type for the specified value */
     static private String getValueType( final Object value ) {
         return value.getClass().getName();
     }
-    
-    
-    /** get the extention type */
-    public String getExtensionType() {
-        return _extensionType;
-    }
-    
-    
-    /** get the representation encoder */
-    public AbstractEncoder getRepresentationEncoder() {
-        return getItemEncoderForKey( EXTENDED_VALUE_KEY );
-    }
-    
-    
-    /** Always encode the full extension (not just representation) when encoding a reference. */
-    protected String encodeValueForReference() {
-        return super.encodeValue();
-    }
-    
-    
-    /** encode just the representation value if it is part of a batched type, otherwise encode the full extension */
-    public String encodeValue() {
-        return _isTypedCollectionItem ? getRepresentationEncoder().encode() : super.encodeValue();
-    }
+
+
+	/** preprocess the object graph prior to encoding so the references can be resolved and encoded in order (definition first then any references to it) */
+	public void preprocess( final JSONEncoder encoder, final Object value ) {
+		final ReferenceStore referenceStore = encoder.getReferenceStore();
+		referenceStore.store( value );
+
+		// NOTE: don't want to reference the dictionary itself, but just the dictionary's keys and values
+		// create dictionary with the value so we can generate an object that can be referenced
+//		final ConversionAdaptorStore conversionAdaptorStore = encoder.getConversionAdaptorStore();
+//		final HashMap<String,Object> valueRep = getValueRep( value, conversionAdaptorStore );
+//		DictionaryEncoder.getInstance().preprocess( encoder, valueRep );		// preprocess the value rep
+	}
+
+
+	/** encode the string */
+	public void encodeRaw( final JSONEncoder encoder, final StringBuilder jsonBuilder, final Object value ) {
+		// create dictionary with the value so we can generate an object that can be referenced
+		final ConversionAdaptorStore conversionAdaptorStore = encoder.getConversionAdaptorStore();
+		final HashMap<String,Object> valueRep = getValueRep( value, conversionAdaptorStore );
+		DictionaryEncoder.getInstance().encodeRaw( encoder, jsonBuilder, valueRep );		// encode this dictionary directly
+	}
+
+
+	/** get the value representation as a dictionary keyed for the extended type and value */
+	@SuppressWarnings( { "unchecked", "rawtypes" } )
+	static private HashMap<String,Object> getValueRep( final Object value, final ConversionAdaptorStore conversionAdaptorStore ) {
+		final String valueType = getValueType( value );
+		final ConversionAdaptor adaptor = conversionAdaptorStore.getConversionAdaptor( valueType );
+		if ( adaptor != null ) {
+			final HashMap<String,Object> valueRep = new HashMap<String,Object>();
+			final Object representationValue = adaptor.toRepresentation( value );
+			valueRep.put( EXTENDED_TYPE_KEY, valueType );
+			valueRep.put( EXTENDED_VALUE_KEY, representationValue );
+			return valueRep;
+		}
+		else {
+			throw new RuntimeException( "No coder for encoding objects of type: " + valueType );
+		}
+	}
 }
 
 
 
 /** encoder for serialized objects which piggybacks on the dictionary encoder */
-class SerializationEncoder extends DictionaryEncoder {
+class SerializationEncoder extends SoftValueEncoder<Serializable> {
     /** custom key identifying the serialization byte array */
     static final public String SERIALIZATION_VALUE_KEY = "__XALSERIALIZATION";
-    
-    
-    /** Constructor */
-    public SerializationEncoder( final Object value, final ConversionAdaptorStore conversionAdaptorStore, final IdentityReference<?> reference, final ReferenceStore referenceStore ) {
-        super( getValueRep( value ), conversionAdaptorStore, reference, referenceStore );
-    }
-    
+
+	/** encoder singleton */
+	static final private SerializationEncoder SHARED_ENCODER;
+
+
+	// static initializer
+	static {
+		SHARED_ENCODER = new SerializationEncoder();
+	}
+
+
+	/** get the shared instance */
+	static public SerializationEncoder getInstance() {
+		return SHARED_ENCODER;
+	}
+
     
     /** get the serialization byte array */
     @SuppressWarnings( "unchecked" )
@@ -596,6 +608,26 @@ class SerializationEncoder extends DictionaryEncoder {
             throw new RuntimeException( "Exception serializing object: " + value , exception );
         }
     }
+
+
+	/** preprocess the object graph prior to encoding so the references can be resolved and encoded in order (definition first then any references to it) */
+	public void preprocess( final JSONEncoder encoder, final Object value ) {
+		final ReferenceStore referenceStore = encoder.getReferenceStore();
+		referenceStore.store( value );
+
+		// NOTE: don't want to reference the dictionary itself, but just the dictionary's keys and values
+		// create dictionary with the value so we can generate an object that can be referenced
+		//		final HashMap<String,Object> valueRep = getValueRep( value );
+		//		DictionaryEncoder.getInstance().preprocess( encoder, valueRep );		// preprocess the value rep
+	}
+
+
+	/** encode the string */
+	public void encodeRaw( final JSONEncoder encoder, final StringBuilder jsonBuilder, final Object value ) {
+		// create dictionary with the value so we can generate an object that can be referenced
+		final HashMap<String,Object> valueRep = getValueRep( value );
+		DictionaryEncoder.getInstance().encodeRaw( encoder, jsonBuilder, valueRep );		// encode this dictionary directly
+	}
 }
 
 
