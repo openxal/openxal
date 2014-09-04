@@ -456,7 +456,7 @@ class DictionaryEncoder extends SoftValueEncoder<Map<String,Object>> {
 			final Object entryValue = entry.getValue();
 
 			StringEncoder.getInstance().preprocess( encoder, entryKey );
-			encoder.getEncoder( value ).preprocess( encoder, entryValue );
+			encoder.getEncoder( entryValue ).preprocess( encoder, entryValue );
 		}
 	}
 
