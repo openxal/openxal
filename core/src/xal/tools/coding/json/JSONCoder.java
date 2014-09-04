@@ -210,7 +210,7 @@ class JSONEncoder {
 				return DictionaryEncoder.getInstance();
 			}
 			else if ( valueClass.isArray() ) {
-				return ArrayEncoder.getInstance();
+				return ArrayEncoder.getInstance( value );
 			}
 			else if ( CONVERSION_ADAPTOR_STORE.isExtendedClass( valueClass ) ) {  // if the type is not among the standard ones then look to extensions
 				return ExtensionEncoder.getInstance();
@@ -633,7 +633,7 @@ class SerializationEncoder extends SoftValueEncoder<Serializable> {
 
 
 /** encoder for an array of items of a common extended type which piggybacks on the dictionary encoder */
-class TypedArrayEncoder extends SoftValueEncoder<Object> {
+class TypedArrayEncoder extends ArrayEncoder {
     /** primitive type wrappers keyed by type */
     final static private Map<Class<?>,Class<?>> PRIMITIVE_TYPE_WRAPPERS;
 
@@ -779,50 +779,49 @@ class ArrayEncoder extends SoftValueEncoder<Object[]> {
 
 
 	/** get the shared instance */
-	static public ArrayEncoder getInstance() {
-		return SHARED_ENCODER;
+	static public ArrayEncoder getInstance( final Object value ) {
+		return isTypedArray( value ) ? TypedArrayEncoder.getInstance() : SHARED_ENCODER;
 	}
 
-    
-    /** Set the component type */
-    public void setComponentType( final String componentType ) {
-        for ( final AbstractEncoder itemEncoder : ITEM_ENCODERS ) {
-            itemEncoder.setIsMemberOfCollectionWithType( componentType );
-        }
-    }
-    
-    
-    /** Get an instance that can encode arrays and efficiently arrays of extended types */
-    static public SoftValueEncoder getInstance( final Object array, final ConversionAdaptorStore conversionAdaptorStore, final IdentityReference<?> reference, final ReferenceStore referenceStore ) {
-        return isTypedArray( array ) ? new TypedArrayEncoder( array, conversionAdaptorStore, reference, referenceStore ) : new ArrayEncoder( array, conversionAdaptorStore, reference, referenceStore );
-    }
-    
-    
+
+	/** preprocess the object graph prior to encoding so the references can be resolved and encoded in order (definition first then any references to it) */
+	public void preprocess( final JSONEncoder encoder, final Object value ) {
+		final ReferenceStore referenceStore = encoder.getReferenceStore();
+		referenceStore.store( value );
+
+		final Object[] array = (Object[])value;
+		for ( final Object item : array ) {
+			encoder.getEncoder( item ).preprocess( encoder, item );
+		}
+	}
+
+
+	/** encode the string */
+	public void encodeRaw( final JSONEncoder encoder, final StringBuilder jsonBuilder, final Object value ) {
+		final Object[] array = (Object[])value;
+
+		jsonBuilder.append( "[" );
+		for ( int index = 0 ; index < array.length ; index++ ) {
+			switch ( index ) {
+				case 0:
+					break;
+				default:
+					jsonBuilder.append( ", " );
+					break;
+			}
+
+			// encode the item
+			final Object item = array[index];
+			encoder.getEncoder( item ).encode( encoder, jsonBuilder, item );
+		}
+		jsonBuilder.append( "]" );
+	}
+
+
     /** Determine whether the array is of a common extended type */
     static private boolean isTypedArray( final Object array ) {
         final Class<?> itemClass = array.getClass().getComponentType();
         return itemClass != null && itemClass != Object.class;
-    }
-    
-    
-    /** encode the archived value to JSON */
-    public String encodeValue() {
-        final int count = ITEM_ENCODERS.length;
-        final StringBuffer buffer = new StringBuffer();
-        buffer.append( "[" );
-        for ( int index = 0 ; index < count ; index++ ) {
-            switch ( index ) {
-                case 0:
-                    break;
-                default:
-                    buffer.append( ", " );
-                    break;
-            }
-            final AbstractEncoder itemEncoder = ITEM_ENCODERS[index];
-            buffer.append( itemEncoder.encode() );
-        }
-        buffer.append( "]" );
-        return buffer.toString();
     }
 }
 
