@@ -299,12 +299,12 @@ abstract class SoftValueEncoder<DataType> extends AbstractEncoder<DataType> {
 	private void encodeReferenceSource( final JSONEncoder encoder, final StringBuilder jsonBuilder, final Object value, final long referenceID ) {
 		jsonBuilder.append( "{" );
 
-		jsonBuilder.append( "\"" + OBJECT_ID_KEY + "\"" );
+		StringEncoder.getInstance().encodeRaw( encoder, jsonBuilder, OBJECT_ID_KEY );
 		jsonBuilder.append( " : " );
 		NumberEncoder.getInstance().encode( encoder, jsonBuilder, referenceID );
 
 		jsonBuilder.append( ", " );
-		jsonBuilder.append( "\"" + VALUE_KEY + "\"" );
+		StringEncoder.getInstance().encodeRaw( encoder, jsonBuilder, VALUE_KEY );
 		jsonBuilder.append( " : " );
 		encoder.getEncoder( value ).encodeRaw( encoder, jsonBuilder, value );
 
