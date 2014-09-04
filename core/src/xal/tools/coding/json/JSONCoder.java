@@ -712,29 +712,28 @@ class TypedArrayEncoder extends ArrayEncoder {
 
 
 	/** encode the string */
-	public void encodeRaw( final JSONEncoder encoder, final StringBuilder jsonBuilder, final Object value ) {
-		// create dictionary with the value so we can generate an object that can be referenced
-		final ConversionAdaptorStore conversionAdaptorStore = encoder.getConversionAdaptorStore();
-		final HashMap<String,Object> genericArrayRep = getArrayRep( value, conversionAdaptorStore );
-		DictionaryEncoder.getInstance().encodeRaw( encoder, jsonBuilder, genericArrayRep );		// encode this dictionary directly
+	public void encodeRaw( final JSONEncoder encoder, final StringBuilder jsonBuilder, final Object array ) {
+		final String itemType = getComponentType( array );
+		final int arrayLength = Array.getLength( array );
+		final Object[] objectArray = new Object[ arrayLength ];    // encode as a generic object array
+		for ( int index = 0 ; index < arrayLength ; index++ ) {
+			objectArray[index] = Array.get( array, index );
+		}
+
+		jsonBuilder.append( "{" );
+
+		StringEncoder.getInstance().encodeRaw( encoder, jsonBuilder, ARRAY_ITEM_TYPE_KEY );
+		jsonBuilder.append( " : " );
+		StringEncoder.getInstance().encodeRaw( encoder, jsonBuilder, itemType );
+
+		jsonBuilder.append( ", " );
+		StringEncoder.getInstance().encodeRaw( encoder, jsonBuilder, ARRAY_KEY );
+		jsonBuilder.append( " : " );
+		super.encodeRaw( encoder, jsonBuilder, objectArray );
+
+		jsonBuilder.append( "}" );
 	}
 
-    
-    /** get the value representation as a dictionary keyed for the array item type and generic object array */
-    @SuppressWarnings( "unchecked" )
-    static private HashMap<String,Object> getArrayRep( final Object array, final ConversionAdaptorStore conversionAdaptorStore ) {
-        final String itemType = getComponentType( array );
-        final HashMap<String,Object> arrayRep = new HashMap<String,Object>();
-        final int arrayLength = Array.getLength( array );
-        final Object[] objectArray = new Object[ arrayLength ];    // encode as a generic object array
-        for ( int index = 0 ; index < arrayLength ; index++ ) {
-            objectArray[index] = Array.get( array, index );
-        }
-        arrayRep.put( ARRAY_ITEM_TYPE_KEY, itemType );
-        arrayRep.put( ARRAY_KEY, objectArray );
-        return arrayRep;
-    }
-    
     
     /** Get the component type appropriate for an Object (e.g. wrapper for a primitive) */
     private static String getComponentObjectType( final Object array ) {
