@@ -714,6 +714,10 @@ class TypedArrayEncoder extends ArrayEncoder {
 	/** encode the string */
 	public void encodeRaw( final JSONEncoder encoder, final StringBuilder jsonBuilder, final Object array ) {
 		final String itemType = getComponentType( array );
+
+		final ConversionAdaptorStore conversionAdaptorStore = encoder.getConversionAdaptorStore();
+		final boolean isItemExtendedType = conversionAdaptorStore.isExtendedType( itemType );
+
 		final int arrayLength = Array.getLength( array );
 		final Object[] objectArray = new Object[ arrayLength ];    // encode as a generic object array
 		for ( int index = 0 ; index < arrayLength ; index++ ) {
@@ -729,9 +733,51 @@ class TypedArrayEncoder extends ArrayEncoder {
 		jsonBuilder.append( ", " );
 		StringEncoder.getInstance().encodeRaw( encoder, jsonBuilder, ARRAY_KEY );
 		jsonBuilder.append( " : " );
-		super.encodeRaw( encoder, jsonBuilder, objectArray );
+
+		final boolean isExtendedType = conversionAdaptorStore.isExtendedType( itemType );
+		if ( !isExtendedType ) {
+			super.encodeRaw( encoder, jsonBuilder, objectArray );
+		}
+		else {
+			@SuppressWarnings( "rawtypes" )
+			final ConversionAdaptor adaptor = conversionAdaptorStore.getConversionAdaptor( itemType );
+			if ( adaptor != null ) {
+				encodeExtendedTypeArray( encoder, jsonBuilder, objectArray, adaptor );
+			}
+			else {
+				throw new RuntimeException( "Unknown extended type: " + itemType );
+			}
+		}
 
 		jsonBuilder.append( "}" );
+	}
+
+
+	/** manually encode the extended type array by excluding the extended type for each item since it is already included as a common type for the entire array */
+	@SuppressWarnings( "rawtypes" )
+	private void encodeExtendedTypeArray( final JSONEncoder encoder, final StringBuilder jsonBuilder, final Object value, final ConversionAdaptor adaptor ) {
+		final String itemType = getComponentType( value );
+
+		final Object[] array = (Object[])value;
+
+		jsonBuilder.append( "[" );
+		for ( int index = 0 ; index < array.length ; index++ ) {
+			switch ( index ) {
+				case 0:
+					break;
+				default:
+					jsonBuilder.append( ", " );
+					break;
+			}
+
+			// encode the item
+			final Object item = array[index];
+			@SuppressWarnings( "unchecked" )
+			final Object representationValue = adaptor.toRepresentation( item );
+			encoder.getEncoder( representationValue ).encode( encoder, jsonBuilder, representationValue );
+		}
+		jsonBuilder.append( "]" );
+
 	}
 
     
