@@ -633,7 +633,7 @@ class SerializationEncoder extends SoftValueEncoder<Serializable> {
 
 
 /** encoder for an array of items of a common extended type which piggybacks on the dictionary encoder */
-class TypedArrayEncoder extends DictionaryEncoder {
+class TypedArrayEncoder extends SoftValueEncoder<Object> {
     /** primitive type wrappers keyed by type */
     final static private Map<Class<?>,Class<?>> PRIMITIVE_TYPE_WRAPPERS;
 
@@ -645,23 +645,44 @@ class TypedArrayEncoder extends DictionaryEncoder {
     
     /** primitive classes keyed by type name */
     static final private Map<String,Class<?>> PRIMITIVE_CLASSES;
-    
+
+	/** encoder singleton */
+	static final private TypedArrayEncoder SHARED_ENCODER;
+
     
     // static initializer
     static {
         PRIMITIVE_CLASSES = generatePrimitiveClassMap();
         PRIMITIVE_TYPE_WRAPPERS = populatePrimitiveTypeWrappers();
+
+		SHARED_ENCODER = new TypedArrayEncoder();
     }
-    
-    
-    /** Constructor */
-    public TypedArrayEncoder( final Object array, final ConversionAdaptorStore conversionAdaptorStore, final IdentityReference<?> reference, final ReferenceStore referenceStore ) {
-        super( getArrayRep( array, conversionAdaptorStore ), conversionAdaptorStore, reference, referenceStore );
-        final String componentType = getComponentObjectType( array );
-        final ArrayEncoder arrayEncoder = (ArrayEncoder)getItemEncoderForKey( ARRAY_KEY );
-        arrayEncoder.setComponentType( componentType );
-    }
-    
+
+	
+	/** get the shared instance */
+	static public TypedArrayEncoder getInstance() {
+		return SHARED_ENCODER;
+	}
+
+
+	/** preprocess the object graph prior to encoding so the references can be resolved and encoded in order (definition first then any references to it) */
+	public void preprocess( final JSONEncoder encoder, final Object value ) {
+		final ReferenceStore referenceStore = encoder.getReferenceStore();
+		referenceStore.store( value );
+
+		// NOTE: don't want to reference the dictionary itself, but just the dictionary's keys and values
+		// create dictionary with the value so we can generate an object that can be referenced
+	}
+
+
+	/** encode the string */
+	public void encodeRaw( final JSONEncoder encoder, final StringBuilder jsonBuilder, final Object value ) {
+		// create dictionary with the value so we can generate an object that can be referenced
+		final ConversionAdaptorStore conversionAdaptorStore = encoder.getConversionAdaptorStore();
+		final HashMap<String,Object> genericArrayRep = getArrayRep( value, conversionAdaptorStore );
+		DictionaryEncoder.getInstance().encodeRaw( encoder, jsonBuilder, genericArrayRep );		// encode this dictionary directly
+	}
+
     
     /** get the value representation as a dictionary keyed for the array item type and generic object array */
     @SuppressWarnings( "unchecked" )
@@ -686,7 +707,7 @@ class TypedArrayEncoder extends DictionaryEncoder {
     }
     
     
-    /** Get the type appropriate for an Object (e.g. wrapper for a primitive) of the specified raw type */
+    /** Get the type appropriate for an instance of the specified class (e.g. wrapper for a primitive) of the specified raw type */
     public static String getObjectTypeForClass( final Class<?> rawClass ) {
         final Class<?> wrapperClass = PRIMITIVE_TYPE_WRAPPERS.get( rawClass );
         final Class<?> objectClass = wrapperClass != null ? wrapperClass : rawClass;
