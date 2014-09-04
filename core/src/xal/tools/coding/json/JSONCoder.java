@@ -235,6 +235,10 @@ abstract class AbstractEncoder<DataType> {
 
 	/** encode the specified object to the JSON builder */
 	abstract public void encode( final JSONEncoder encoder, final StringBuilder jsonBuilder, final Object value );
+
+
+	/** encode the specified object to the JSON builder */
+	abstract public void encodeRaw( final JSONEncoder encoder, final StringBuilder jsonBuilder, final Object value );
 }
 
 
@@ -243,6 +247,12 @@ abstract class AbstractEncoder<DataType> {
 abstract class HardEncoder<DataType> extends AbstractEncoder<DataType> {
 	/** preprocess the object graph prior to encoding so the references can be resolved and encoded in order (definition first then any references to it) */
 	public void preprocess( final JSONEncoder encoder, final Object value ) {}
+
+
+	/** encode the specified object to the JSON builder */
+	public void encode( final JSONEncoder encoder, final StringBuilder jsonBuilder, final Object value ) {
+		encodeRaw( encoder, jsonBuilder, value );
+	}
 }
 
 
@@ -267,18 +277,13 @@ abstract class SoftValueEncoder<DataType> extends AbstractEncoder<DataType> {
 			if ( identityReference != null && identityReference.hasMultiple() ) {
 				if ( identityReference.isEncoded() ) {
 					// create dictionary with the reference
-					final Map<String,Object> dictionary = new HashMap<>();
-					dictionary.put( REFERENCE_KEY, identityReference.getID() );		// reference ID
-					DictionaryEncoder.getInstance().encodeRaw( encoder, jsonBuilder, dictionary );		// encode this dictionary directly
+					encodeReference( encoder, jsonBuilder, value, identityReference.getID() );
 				} else {
 					// first mark the reference as encoded in case there is a nested reference to itself
 					identityReference.setEncoded( true );		// further encoding of the value will be encoded as references
 
 					// create dictionary with the value so we can generate an object that can be referenced
-					final Map<String,Object> dictionary = new HashMap<>();
-					dictionary.put( OBJECT_ID_KEY, identityReference.getID() );		// reference ID
-					dictionary.put( VALUE_KEY, value );								// value
-					DictionaryEncoder.getInstance().encodeRaw( encoder, jsonBuilder, dictionary );		// encode this dictionary directly
+					encodeReferenceSource( encoder, jsonBuilder, value, identityReference.getID() );
 				}
 			} else {
 				encodeRaw( encoder, jsonBuilder, value );
@@ -286,6 +291,37 @@ abstract class SoftValueEncoder<DataType> extends AbstractEncoder<DataType> {
 		} else {
 			encodeRaw( encoder, jsonBuilder, value );
 		}
+	}
+
+
+	/** encode the string */
+	@SuppressWarnings( "unchecked" )	// need to cast the value to Map<String,Object>
+	private void encodeReferenceSource( final JSONEncoder encoder, final StringBuilder jsonBuilder, final Object value, final long referenceID ) {
+		jsonBuilder.append( "{" );
+
+		jsonBuilder.append( "\"" + OBJECT_ID_KEY + "\"" );
+		jsonBuilder.append( " : " );
+		NumberEncoder.getInstance().encode( encoder, jsonBuilder, referenceID );
+
+		jsonBuilder.append( ", " );
+		jsonBuilder.append( "\"" + VALUE_KEY + "\"" );
+		jsonBuilder.append( " : " );
+		encoder.getEncoder( value ).encodeRaw( encoder, jsonBuilder, value );
+
+		jsonBuilder.append( "}" );
+	}
+
+
+	/** encode the string */
+	@SuppressWarnings( "unchecked" )	// need to cast the value to Map<String,Object>
+	private void encodeReference( final JSONEncoder encoder, final StringBuilder jsonBuilder, final Object value, final long referenceID ) {
+		jsonBuilder.append( "{" );
+
+		jsonBuilder.append( "\"" + REFERENCE_KEY + "\"" );
+		jsonBuilder.append( " : " );
+		NumberEncoder.getInstance().encode( encoder, jsonBuilder, referenceID );
+
+		jsonBuilder.append( "}" );
 	}
 
 
@@ -320,7 +356,7 @@ class NullEncoder extends HardEncoder<Object> {
 
 
 	/** encode the specified object to the JSON builder */
-	public void encode( final JSONEncoder encoder, final StringBuilder jsonBuilder, final Object value ) {
+	public void encodeRaw( final JSONEncoder encoder, final StringBuilder jsonBuilder, final Object value ) {
 		jsonBuilder.append( "null" );
 	}
 }
@@ -393,7 +429,7 @@ class BooleanEncoder extends HardEncoder<Boolean> {
 
 
 	/** encode the specified object to the JSON builder */
-	public void encode( final JSONEncoder encoder, final StringBuilder jsonBuilder, final Object value ) {
+	public void encodeRaw( final JSONEncoder encoder, final StringBuilder jsonBuilder, final Object value ) {
 		jsonBuilder.append( ((Boolean)value).booleanValue() ? "true" : "false" );
 	}
 }
@@ -419,7 +455,7 @@ class NumberEncoder extends HardEncoder<Number> {
 
 
 	/** encode the specified object to the JSON builder */
-	public void encode( final JSONEncoder encoder, final StringBuilder jsonBuilder, final Object value ) {
+	public void encodeRaw( final JSONEncoder encoder, final StringBuilder jsonBuilder, final Object value ) {
 		jsonBuilder.append( value.toString() );
 	}
 }
