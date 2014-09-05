@@ -136,6 +136,7 @@ public abstract class ProbeState<S extends ProbeState<S>> implements IProbeState
         this.m_dblParQ = state.getSpeciesCharge();
         this.m_dblParEr = state.getSpeciesRestEnergy();
         this.m_strElemId = state.getElementId();
+        this.strSmfId = state.getHardwareNodeId();
         this.m_dblPos = state.getPosition();
         this.m_dblTime = state.getTime();
         this.m_dblW = state.getKineticEnergy();
@@ -154,6 +155,7 @@ public abstract class ProbeState<S extends ProbeState<S>> implements IProbeState
         this.setSpeciesRestEnergy( probe.getSpeciesRestEnergy() );
 
         this.setElementId( probe.getCurrentElement() );
+        this.setHardwareNodeId( probe.getCurrentHardwareId() );
         this.setPosition( probe.getPosition() );
         this.setTime( probe.getTime() );
         this.setKineticEnergy( probe.getKineticEnergy() );

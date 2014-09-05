@@ -164,7 +164,7 @@ public abstract class Element implements IElement {
         this.m_intUID  = s_cntInstances++;
         this.m_strType = strType;
         this.m_strId   = strId;
-        this.strSmfId = null;
+        this.strSmfId = "";
         this.dblLatPos = 0.0;
     };
     
@@ -175,17 +175,20 @@ public abstract class Element implements IElement {
 	 */
     @Override
 	public void initializeFrom(LatticeElement latticeElement) {
-    	setId(latticeElement.getNode().getId());
-    	setHardwareNodeId(latticeElement.getNode().getId());
+        String  strElemId = latticeElement.getModelingElementId();
+        String  strSmfId  = latticeElement.getNode().getId();
+        
+    	setId( strElemId != null ? strElemId : strSmfId);
+    	setHardwareNodeId(strSmfId);
 		setPosition(latticeElement.getCenter());
 		
-        // CKA: Added to include hardware ID attribute for the new element.
-        //   This is bound to ScenarioGenerator#collectElements(). 
-        //   If "ELEMENT_CENTER" is changed you must modify both!
-        if ( this instanceof Marker && 
-             this.getId().startsWith("ELEMENT_CENTER")
-             )
-            setHardwareNodeId(this.getId().replace("ELEMENT_SEQUENCE:", "") );
+//        // CKA: Added to include hardware ID attribute for the new element.
+//        //   This is bound to ScenarioGenerator#collectElements(). 
+//        //   If "ELEMENT_CENTER" is changed you must modify both!
+//        if ( this instanceof Marker && 
+//             this.getId().startsWith("ELEMENT_CENTER")
+//             )
+//            setHardwareNodeId(this.getId().replace("ELEMENT_SEQUENCE:", "") );
 	}
     
     /**

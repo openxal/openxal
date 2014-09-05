@@ -46,8 +46,8 @@ public class TestTrajectory {
      */
     
     /** Accelerator sequence used for testing */
-//    public static final String     STR_ACCL_SEQ_ID = "HEBT2";
-    public static final String     STR_ACCL_SEQ_ID = "SCLMed";
+    public static final String     STR_ACCL_SEQ_ID = "HEBT2";
+//    public static final String     STR_ACCL_SEQ_ID = "SCLMed";
     
     
     /** Bending Dipole ID */
@@ -162,6 +162,76 @@ public class TestTrajectory {
     }
  
     /**
+     * Iterates through all the states in the trajectory using a
+     * for each construct.
+     * 
+     * @author Christopher K. Allen
+     * @since  Sep 5, 2014
+     */
+    @Test
+    public final void testStateIterator() {
+        Trajectory<ParticleProbeState>  trjPartc = this.runModel(PROBE_PARTC);
+        
+        System.out.println();
+        System.out.println("STATES retrieved iteratation using the Iterable<> interface");
+        int index = 0;
+        for (ParticleProbeState state : trjPartc) {
+            System.out.println("  " + index 
+                    + " " + state.getElementId()
+                    + " from " + state.getHardwareNodeId()
+                    + " at position " + state.getPosition()
+                    );
+            index++;
+        }
+    }
+    
+    /**
+     * Test method for {@link xal.model.probe.traj.Trajectory#stateForElement(java.lang.String)}.
+     */
+    @Test
+    public final void testStateForElement() {
+        Trajectory<TransferMapState>    trjXfer = this.runModel(PROBE_XFER);
+        
+        System.out.println();
+        System.out.println("SINGLE STATE for " + STR_DH1_ID);
+        TransferMapState state1 = trjXfer.stateForElement(STR_DH1_ID);
+        System.out.println("  " + state1.getElementId() + " at position " + state1.getPosition());
+        
+        System.out.println();
+        System.out.println("SINGLE STATE for " + STR_DH2_ID);
+        TransferMapState state2 = trjXfer.stateForElement(STR_DH2_ID);
+        System.out.println("  " + state2.getElementId() + " at position " + state2.getPosition());
+    }
+
+    /**
+     * Test method for {@link xal.model.probe.traj.Trajectory#statesForElement(java.lang.String)}.
+     */
+    @Test
+    public final void testStatesForElement() {
+        Trajectory<TransferMapState>    trjXfer = this.runModel(PROBE_XFER);
+        
+        System.out.println();
+        System.out.println("STATES for " + STR_DH1_ID);
+        for (TransferMapState state : trjXfer.statesForElement(STR_DH1_ID)) {
+            System.out.println("  " + state.getElementId() + " at position " + state.getPosition());
+        }
+        
+        System.out.println();
+        System.out.println("STATES for " + STR_DH2_ID);
+        for (TransferMapState state : trjXfer.statesForElement(STR_DH2_ID)) {
+            System.out.println("  " + state.getElementId() + " at position " + state.getPosition());
+        }
+        
+    }
+    
+    /**
+     * Test method for {@link xal.model.probe.traj.Trajectory#stateAtPosition(double)}.
+     */
+    @Test
+    public final void testStateAtPosition() {
+    }
+
+    /**
      * Prints out all the states in the trajectory to standard out as retrieved
      * by the internal numeric indexer.
      *
@@ -170,15 +240,18 @@ public class TestTrajectory {
      */
     @Test
     public final void testGetStateViaIndexer() {
-        @SuppressWarnings("unchecked")
-        Trajectory<TransferMapState>    trjXfer = (Trajectory<TransferMapState>)this.runModel(PROBE_XFER);
+        Trajectory<TransferMapState>    trjXfer = this.runModel(PROBE_XFER);
         
         List<TransferMapState>     lstStates = trjXfer.getStatesViaIndexer();
         System.out.println();
         System.out.println("STATES retrieved by the INDEXER");
         int index = 0;
         for (TransferMapState state : lstStates) {
-            System.out.println("  " + index + " " + state.getElementId() + " at position " + state.getPosition());
+            System.out.println("  " + index 
+                             + " " + state.getElementId()
+                             + " from " + state.getHardwareNodeId()
+                             + " at position " + state.getPosition()
+                             );
             index++;
         }
     }
@@ -192,8 +265,7 @@ public class TestTrajectory {
      */
     @Test
     public final void testGetStateViaMap() {
-        @SuppressWarnings("unchecked")
-        Trajectory<TransferMapState>    trjXfer = (Trajectory<TransferMapState>)this.runModel(PROBE_XFER);
+        Trajectory<TransferMapState>    trjXfer = this.runModel(PROBE_XFER);
         
         List<TransferMapState>     lstStates = trjXfer.getStatesViaStateMap();
         System.out.println();
@@ -206,50 +278,20 @@ public class TestTrajectory {
     }
     
     /**
-     * Test method for {@link xal.model.probe.traj.Trajectory#stateAtPosition(double)}.
-     */
-    @Test
-    public final void testStateAtPosition() {
-    }
-
-    /**
-     * Test method for {@link xal.model.probe.traj.Trajectory#stateForElement(java.lang.String)}.
-     */
-    @Test
-    public final void testStateForElement() {
-    }
-
-    /**
      * Test method for {@link xal.model.probe.traj.Trajectory#statesForElement_OLD(java.lang.String)}.
      */
     @Test
     public final void testStatesForElement_OLD() {
-        @SuppressWarnings("unchecked")
-        Trajectory<TransferMapState>    trjXfer = (Trajectory<TransferMapState>)this.runModel(PROBE_XFER);
+        Trajectory<TransferMapState>    trjXfer = this.runModel(PROBE_XFER);
         
         List<TransferMapState>     lstStates = trjXfer.statesForElement(STR_DH1_ID);
+        System.out.println();
         System.out.println("STATES for " + STR_DH1_ID);
         for (TransferMapState state : lstStates) {
             System.out.println("  " + state.getElementId() + " at position " + state.getPosition());
         }
     }
 
-    /**
-     * Test method for {@link xal.model.probe.traj.Trajectory#statesForElement(java.lang.String)}.
-     */
-    @Test
-    public final void testStatesForElement() {
-        @SuppressWarnings("unchecked")
-        Trajectory<TransferMapState>    trjXfer = (Trajectory<TransferMapState>)this.runModel(PROBE_XFER);
-        
-        List<TransferMapState>     lstStates = trjXfer.statesForElement(STR_DH1_ID);
-        System.out.println("STATES for " + STR_DH1_ID);
-        for (TransferMapState state : lstStates) {
-            System.out.println("  " + state.getElementId() + " at position " + state.getPosition());
-        }
-        
-    }
-    
     /**
      * Test method for {@link xal.model.probe.traj.Trajectory#statesForElement(java.lang.String)}.
      */
@@ -258,9 +300,9 @@ public class TestTrajectory {
         PROBE_PARTC.setPhaseCoordinates(new PhaseVector(0.001, 0, 0, 0, 0, 0) );
         PROBE_PARTC.initialize();
         
-        @SuppressWarnings("unchecked")
-        Trajectory<ParticleProbeState>    trjPartc = (Trajectory<ParticleProbeState>)this.runModel(PROBE_PARTC);
+        Trajectory<ParticleProbeState>    trjPartc = this.runModel(PROBE_PARTC);
         
+        System.out.println();
         System.out.println("PARTICLE PROBE STATES");
         for (ParticleProbeState state : trjPartc.getStatesViaIndexer()) {
             System.out.println("  " + state.getElementId() + " at position " + state.getPosition() + ": z = " + state.getPhaseCoordinates());
@@ -285,7 +327,7 @@ public class TestTrajectory {
      * @author Christopher K. Allen
      * @since  Aug 25, 2014
      */
-    private Trajectory<?>   runModel(Probe<?> prbTest) {
+    private <S extends ProbeState<S>> Trajectory<S>   runModel(Probe<S> prbTest) {
         
         try {
             prbTest.reset();
@@ -293,7 +335,7 @@ public class TestTrajectory {
             MODEL_TEST.resync();
             MODEL_TEST.run();
             
-            Trajectory<?>   trjTest = MODEL_TEST.getTrajectory();
+            Trajectory<S>   trjTest = MODEL_TEST.getTrajectory();
             
             return trjTest;
             

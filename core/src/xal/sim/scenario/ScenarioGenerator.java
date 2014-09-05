@@ -174,9 +174,10 @@ class ScenarioGenerator {
 			    
 			    // CKA: NOTE that "ELEMENT_CENTER" is bound to Element#initializeFrom() in order \
 			    //   to set Element's hardware ID attribute.  If changed you must modify both!
-				LatticeElement center = new LatticeElement(new Marker("ELEMENT_CENTER:" + node.getId()), element.getCenter(),
-//              LatticeElement center = new LatticeElement(new Marker(node.getId() + ":ELEMENT_CENTER"), element.getCenter(),
+//				LatticeElement center = new LatticeElement(new Marker("ELEMENT_CENTER:" + node.getId()), element.getCenter(),
+              LatticeElement center = new LatticeElement(new Marker(node.getId()), element.getCenter(),
 						elementMapping.getDefaultConverter(), 0);
+              center.setModelingElementId("ELEMENT_CENTER:" + node.getId());    // CKA Sep 5, 2014
 				elements.add(center);
 			}
 		}

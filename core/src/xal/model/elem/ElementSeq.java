@@ -128,6 +128,7 @@ public abstract class ElementSeq implements IComposite {
         m_lstCompsBackward = new ArrayList<IComponent>(szReserve);
         m_strType = strType;
         m_strId = strId;
+        strSmfId = "";
     }
 
     
@@ -138,7 +139,12 @@ public abstract class ElementSeq implements IComposite {
 	 */
 	public void initializeFrom(LatticeElement latticeElement)
 	{
-		setId(latticeElement.getNode().getId());
+        String  strElemId = latticeElement.getModelingElementId();
+        String  strSmfId  = latticeElement.getNode().getId();
+        
+        setId( strElemId != null ? strElemId : strSmfId);
+        setHardwareNodeId(strSmfId);
+//		setId(latticeElement.getNode().getId());
 	}
     
     /**
