@@ -18,7 +18,7 @@ import java.io.*;
 public class TestJSONCoding {
     @Test
     public void testNullEncoding() {
-        Assert.assertTrue( "null" == JSONCoder.defaultEncode( (Object)null ) );
+        Assert.assertTrue( "null".equals( JSONCoder.defaultEncode( (Object)null ) ) );
     }
 
 
