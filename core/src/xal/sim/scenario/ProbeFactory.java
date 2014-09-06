@@ -25,6 +25,8 @@ import xal.model.probe.TransferMapProbe;
 import xal.model.probe.TwissProbe;
 import xal.smf.Accelerator;
 import xal.smf.AcceleratorSeq;
+import xal.tools.beam.CovarianceMatrix;
+import xal.tools.beam.PhaseVector;
 import xal.tools.beam.Twiss;
 import xal.tools.beam.Twiss3D;
 import xal.tools.data.DataTable;
@@ -51,6 +53,12 @@ public class ProbeFactory {
 	/** table name for the twiss parameters */
 	protected final static String TWISS_TABLE = "twiss";
 	
+	/** table name for phase coordinates */
+	protected final static String PHASECOORD_TABLE = "PhaseCoordinates";
+	
+    /** table name for phase coordinates */
+    protected final static String CENTRCOORD_TABLE = "CentroidCoordinates";
+    
 	/** table name for the location records */
 	protected final static String LOCATION_TABLE = "location";
 
@@ -68,6 +76,11 @@ public class ProbeFactory {
 
 	/** parameter name for mass */
 	protected final static String MASS_PARAM = "mass";
+	
+	/** XML attribute name for the phase coordinates themselves */
+	protected final static String PHASECOORD_VALUE_PARAM = "coordinates";
+	
+    
 
 
 //	/**
@@ -134,6 +147,10 @@ public class ProbeFactory {
 			return null;
 		}
 		
+		// Set the initial phase coordinates if they are defined in the model.params file
+		initializeCoordinates(probe, locationID, sequence);
+		
+		// Initialize the location parameters.  If this fails we have to quit
 		boolean success = initializeLocation( probe, locationID, sequence);
 		
 		return success ? probe : null;
@@ -173,6 +190,20 @@ public class ProbeFactory {
 		return success ? probe : null;
 	}
 	
+	/**
+     * Create and initialize a new <code>TwissProbe</code> object with the default parameters
+     * in the <tt>model.params</tt> file.  The parameters are taken for the entrance location 
+     * of the provided accelerator hardware sequence.  The
+     * given algorithm object is also verified and attached to the probe.
+     *   
+     * @param seqParent    accelerator sequence containing the location
+     * @param algDynamics  algorithm used for the simulation 
+     * 
+     * @return             new, initialized <code>TwissProbe</code> object 
+	 *
+	 * @author Christopher K. Allen
+	 * @since  Sep 6, 2014
+	 */
 	public static TwissProbe getTwissProbe( final AcceleratorSeq seqParent, final IAlgorithm algDynamics ) {
 	    return ProbeFactory.getTwissProbe( seqParent.getEntranceID(), seqParent, algDynamics);
 	}
@@ -318,6 +349,44 @@ public class ProbeFactory {
 		return true;
 	}
 	
+	/**
+	 * Retrieves the phase coordinates from the model.params file for the given
+	 * location ID and uses them to set the initial phase coordinates of the
+	 * given particle probe.  This is basically an optional operation; if the
+	 * phase coordinates table is missing, or the entry for the location ID is
+	 * missing then the operation simply quits and the probe is left unaltered.
+	 * Thus, it is always safe to call this methods.
+	 * 
+	 * @param probe        probe whose phase coordinates are to be initialized 
+	 * @param strLocId     record name (i.e. "accelerator position") containing phase coordinates
+	 * @param smfSeq       the accelerator sequence being modeled
+	 *
+	 * @author Christopher K. Allen
+	 * @since  Sep 6, 2014
+	 */
+	private static void initializeCoordinates(final ParticleProbe probe, final String strLocId, final AcceleratorSeq smfSeq ) {
+	    // Get the edit context and look for the phase coordinates table
+        final EditContext editContext = smfSeq.getAccelerator().editContext();
+        final DataTable tblPhsCoords  = editContext.getTable( PHASECOORD_TABLE );
+        if (tblPhsCoords == null)
+            return;
+        
+        // If the table is there look for a record with the given location ID
+        final GenericRecord recCoords = tblPhsCoords.record( "name", strLocId );
+        if ( recCoords == null ) {
+            return;
+        }
+        
+        //
+
+        // Get the phase coordinate string from the record and create a new
+        //  phase vector object to be the initial phase coordinates of the probe
+        String  strPhsCoord = recCoords.stringValueForKey( PHASECOORD_VALUE_PARAM );
+	    PhaseVector    vecCoords = PhaseVector.parse(strPhsCoord);
+	    
+	    probe.setPhaseCoordinates(vecCoords);
+	}
+	
 	
 	/**
 	 * Initialize the beam parameters of the probe with the specified sequence and algorithm.
@@ -370,6 +439,7 @@ public class ProbeFactory {
         
         return true;
 	}
+	
 	/**
 	 * Initialize the covariance matrix of the given probe using the Twiss parameters in the
 	 * <tt>model.params</tt> file.  
@@ -397,7 +467,15 @@ public class ProbeFactory {
 //		final Twiss[] twissVector = new Twiss[] { getTwiss( twissX ), getTwiss( twissY ), getTwiss( twissZ ) };
 
 		final Twiss[] twissVector = getTwissArray( locationID, editContext );
-		probe.initFromTwiss( twissVector );
+		final PhaseVector vecCent = getCentroidLocation( locationID, editContext );
+		
+		CovarianceMatrix  matCov;
+		if (vecCent != null) 
+		    matCov = CovarianceMatrix.buildCovariance(twissVector[0], twissVector[1], twissVector[2], vecCent);
+		else
+            matCov = CovarianceMatrix.buildCovariance(twissVector[0], twissVector[1], twissVector[2]);
+		    
+		probe.setCovariance(matCov);
 		
 		return true;
 	}
@@ -447,5 +525,41 @@ public class ProbeFactory {
 		
 		return new Twiss( alpha, beta, emittance );
 	}
+	
+    /**
+     * Retrieves the phase vector representing the (envelope) centroid location
+     * from the given edit context.  If there is no such entry then the
+     * <code>null</code> value is returned.
+     *  
+     * @param strLocId      record name in the centroid location table
+     * @param editContext   edit context containing centroid location table
+     * 
+     * @return              phase vector representing the envelope centroid location
+     *
+     * @author Christopher K. Allen
+     * @since  Sep 6, 2014
+     */
+    private static PhaseVector getCentroidLocation( final String strLocId, final EditContext editContext) {
+
+        // Look for the centroid coordinates table
+        final DataTable tblCentCoords = editContext.getTable( CENTRCOORD_TABLE );
+        if (tblCentCoords == null)
+            return null;
+        
+        // If the table is there look for a record with the given location ID
+        final GenericRecord recCoords = tblCentCoords.record( "name", strLocId );
+        if ( recCoords == null ) {
+            return null;
+        }
+
+        // Get the phase coordinate string from the record and create a new
+        //  phase vector object to be the initial centroid coordinates of the probe
+        String       strPhsCoord = recCoords.stringValueForKey( PHASECOORD_VALUE_PARAM );
+        PhaseVector    vecCoords = PhaseVector.parse(strPhsCoord);
+        
+        return vecCoords;
+    }
+    
+	
 }
 
