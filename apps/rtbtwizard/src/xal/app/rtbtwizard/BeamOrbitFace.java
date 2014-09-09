@@ -530,16 +530,18 @@ class TargetBeamPositionMatcher {
 		final Scenario scenario = getScenario( SEQUENCE, probe );
 		scenario.resync();
 		scenario.run();
-        final Trajectory<?> trajectory = scenario.getTrajectory();
-		final AcceleratorNode targetNode = SEQUENCE.getNodesOfType( "Tgt" ).get( 0 );
+        final Trajectory<TransferMapState> trajectory = scenario.getTrajectory();
+        final AcceleratorNode targetNode = SEQUENCE.getNodesOfType( "Tgt" ).get( 0 );
         
-		@SuppressWarnings("unchecked")
-        final double[] xTargetBeamPositionAndError = X_BEAM_POSITION_MATCHER.getMatchingTargetBeamPositionAndError( targetNode, xBpmAgents, (Trajectory<TransferMapState>)trajectory );
+//		@SuppressWarnings("unchecked")
+//        final double[] xTargetBeamPositionAndError = X_BEAM_POSITION_MATCHER.getMatchingTargetBeamPositionAndError( targetNode, xBpmAgents, (Trajectory<TransferMapState>)trajectory );
+        final double[] xTargetBeamPositionAndError = X_BEAM_POSITION_MATCHER.getMatchingTargetBeamPositionAndError( targetNode, xBpmAgents, trajectory );
 		final double xTargetPosition = xTargetBeamPositionAndError[0];
 		final double xTargetPositionError = xTargetBeamPositionAndError[1];
         
-		@SuppressWarnings("unchecked")
-        final double[] yTargetBeamPositionAndError = Y_BEAM_POSITION_MATCHER.getMatchingTargetBeamPositionAndError( targetNode, yBpmAgents, (Trajectory<TransferMapState>)trajectory );
+//		@SuppressWarnings("unchecked")
+//        final double[] yTargetBeamPositionAndError = Y_BEAM_POSITION_MATCHER.getMatchingTargetBeamPositionAndError( targetNode, yBpmAgents, (Trajectory<TransferMapState>)trajectory );
+        final double[] yTargetBeamPositionAndError = Y_BEAM_POSITION_MATCHER.getMatchingTargetBeamPositionAndError( targetNode, yBpmAgents, trajectory );
 		final double yTargetPosition = yTargetBeamPositionAndError[0];
 		final double yTargetPositionError = yTargetBeamPositionAndError[1];
         
@@ -947,8 +949,7 @@ class ViewScreenMeasurement {
 		final PVLoggerSnapshot snapshot = _snapshot;
 		final Scenario scenario = getScenario( snapshot.getDataSource() );
 		scenario.run();
-		@SuppressWarnings("unchecked")
-        final Trajectory<TransferMapState> trajectory = (Trajectory<TransferMapState>) scenario.getTrajectory();
+        final Trajectory<TransferMapState> trajectory = scenario.getTrajectory();
 		_trajectory = trajectory;
 		return trajectory;
 	}

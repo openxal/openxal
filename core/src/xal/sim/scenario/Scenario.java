@@ -288,6 +288,7 @@ public class Scenario {
         if (probe.getTrajectory() == null)
             throw new IllegalStateException("model not yet run");
         
+        @SuppressWarnings("unchecked")
         Trajectory<S>   trj = (Trajectory<S>) probe.getTrajectory();
         return trj;
         

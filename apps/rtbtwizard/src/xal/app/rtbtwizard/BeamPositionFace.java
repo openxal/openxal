@@ -576,7 +576,7 @@ public class BeamPositionFace extends JPanel{
             exception.printStackTrace();
         }
         
-        final Trajectory<?> particleTrajectory = scenario.getTrajectory();
+        final Trajectory<ParticleProbeState> particleTrajectory = scenario.getTrajectory();
         final ParticleProbeState windowstate = (ParticleProbeState)particleTrajectory.stateForElement("RTBT_Vac:VIW");
         final ParticleProbeState targetstate = (ParticleProbeState)particleTrajectory.stateForElement("RTBT:Tgt");
         PhaseVector windowcoords = windowstate.getPhaseCoordinates();    // TODO CKA - NEVER USED
