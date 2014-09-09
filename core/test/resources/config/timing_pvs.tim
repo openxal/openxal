@@ -1,6 +1,6 @@
 <?xml version = '1.0' encoding = 'UTF-8'?>
-<!DOCTYPE timing SYSTEM "xdxf.dtd">
-<timing>
+<timing xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="http://sourceforge.net/p/xaldev/openxal/ci/master/tree/core/resources/xal/schemas/xdxf.xsd?format=raw">
 	<channelsuite name="timingsuite">
         <!-- beam trigger PV: 0=Trigger, 1=Counting -->
 		<channel handle="trigger" signal="ICS_Tim:Gate_BeamOn:SSTrigger"/>

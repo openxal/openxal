@@ -1,6 +1,6 @@
 <?xml version = '1.0' encoding = 'UTF-8'?>
 <!DOCTYPE xdxf SYSTEM "xdxf.dtd">
-<xdxf system="sns" ver="2.0.0" date="Tue Sep 10 09:00:11 EDT 2013">
+<xdxf system="sns" ver="2.0.0" date="Wed Jul 23 10:35:06 EDT 2014">
   <comboseq id="MEBT-DTL">
 	  <sequence id="MEBT"/>
 	  <sequence id="DTL1"/>
@@ -1164,12 +1164,17 @@
           <channel handle="phaseTBT" signal="MEBT_Diag:BPM10:beamPA" settable="false"/>
        </channelsuite>
     </node>
-    <node type="EMS" id="MEBT_Diag:EMS_X" pos="2.448" len="0" status="true">
+    <node type="EMS" id="MEBT_Diag:EMS_X" pos="2.442" len="0" status="true">
        <attributes>
           <align x="0.0" y="0.0" z="0.0" pitch="0" yaw="0" roll="0"/>
        </attributes>
     </node>
-    <node type="EMS" id="MEBT_Diag:EMS_Y" pos="2.448" len="0" status="true">
+    <node type="EMS" id="MEBT_Diag:EMS_Y" pos="2.442" len="0" status="true">
+       <attributes>
+          <align x="0.0" y="0.0" z="0.0" pitch="0" yaw="0" roll="0"/>
+       </attributes>
+    </node>
+    <node type="BSM" id="MEBT_Diag:LBSM" pos="2.578" len="0.0" status="true">
        <attributes>
           <align x="0.0" y="0.0" z="0.0" pitch="0" yaw="0" roll="0"/>
        </attributes>
@@ -31144,7 +31149,7 @@
           <channel handle="lossInt" signal="RTBT_Diag:BLM30:Slow60PulsesTotalLoss" settable="false"/>
        </channelsuite>
     </node>
-    <node type="Harp" id="RTBT_Diag:Harp30" pos="88.546004" len="0.0" status="true">
+    <node type="Harp" softType="Version 2.0.0" id="RTBT_Diag:Harp30" pos="88.546004" len="0.0" status="true">
        <attributes>
           <align x="0.0" y="0.0" z="0.0" pitch="0" yaw="0" roll="0"/>
        </attributes>
@@ -34252,6 +34257,16 @@
           <channel handle="B_Book" signal="MEBT_Mag:PS_QV13:B_Book"/>
        </channelsuite>
     </ps>
+    <ps type="main" id="MEBT_Mag:PS_SPARE">
+       <channelsuite name="pssuite">
+          <channel handle="I" signal="MEBT_Mag:PS_SPARE:I"/>
+          <channel handle="I_Set" signal="MEBT_Mag:PS_SPARE:I_Set"/>
+          <channel handle="fieldSet" signal="MEBT_Mag:PS_SPARE:B_Set"/>
+          <channel handle="psFieldRB" signal="MEBT_Mag:PS_SPARE:B"/>
+          <channel handle="cycleState" signal="MEBT_Mag:PS_SPARE:cycleState"/>
+          <channel handle="cycleEnable" signal="MEBT_Mag:PS_SPARE:cycleEnable"/>
+       </channelsuite>
+    </ps>
     <ps type="main" id="RTBT_Mag:PS_DCH06">
        <channelsuite name="pssuite">
           <channel handle="I" signal="RTBT_Mag:PS_DCH06:I"/>
@@ -36306,6 +36321,146 @@
           <channel handle="psFieldRB" signal="Ring_Mag:PS_ExtSpt:B"/>
           <channel handle="cycleState" signal="Ring_Mag:PS_ExtSpt:cycleState"/>
           <channel handle="cycleEnable" signal="Ring_Mag:PS_ExtSpt:cycleEnable"/>
+       </channelsuite>
+    </ps>
+    <ps type="main" id="Ring_Mag:PS_Extr01">
+       <channelsuite name="pssuite">
+          <channel handle="I" signal="Ring_Mag:PS_Extr01:I"/>
+          <channel handle="I_Set" signal="Ring_Mag:PS_Extr01:I_Set"/>
+          <channel handle="fieldSet" signal="Ring_Mag:PS_Extr01:B_Set"/>
+          <channel handle="psFieldRB" signal="Ring_Mag:PS_Extr01:B"/>
+          <channel handle="cycleState" signal="Ring_Mag:PS_Extr01:cycleState"/>
+          <channel handle="cycleEnable" signal="Ring_Mag:PS_Extr01:cycleEnable"/>
+       </channelsuite>
+    </ps>
+    <ps type="main" id="Ring_Mag:PS_Extr02">
+       <channelsuite name="pssuite">
+          <channel handle="I" signal="Ring_Mag:PS_Extr02:I"/>
+          <channel handle="I_Set" signal="Ring_Mag:PS_Extr02:I_Set"/>
+          <channel handle="fieldSet" signal="Ring_Mag:PS_Extr02:B_Set"/>
+          <channel handle="psFieldRB" signal="Ring_Mag:PS_Extr02:B"/>
+          <channel handle="cycleState" signal="Ring_Mag:PS_Extr02:cycleState"/>
+          <channel handle="cycleEnable" signal="Ring_Mag:PS_Extr02:cycleEnable"/>
+       </channelsuite>
+    </ps>
+    <ps type="main" id="Ring_Mag:PS_Extr03">
+       <channelsuite name="pssuite">
+          <channel handle="I" signal="Ring_Mag:PS_Extr03:I"/>
+          <channel handle="I_Set" signal="Ring_Mag:PS_Extr03:I_Set"/>
+          <channel handle="fieldSet" signal="Ring_Mag:PS_Extr03:B_Set"/>
+          <channel handle="psFieldRB" signal="Ring_Mag:PS_Extr03:B"/>
+          <channel handle="cycleState" signal="Ring_Mag:PS_Extr03:cycleState"/>
+          <channel handle="cycleEnable" signal="Ring_Mag:PS_Extr03:cycleEnable"/>
+       </channelsuite>
+    </ps>
+    <ps type="main" id="Ring_Mag:PS_Extr04">
+       <channelsuite name="pssuite">
+          <channel handle="I" signal="Ring_Mag:PS_Extr04:I"/>
+          <channel handle="I_Set" signal="Ring_Mag:PS_Extr04:I_Set"/>
+          <channel handle="fieldSet" signal="Ring_Mag:PS_Extr04:B_Set"/>
+          <channel handle="psFieldRB" signal="Ring_Mag:PS_Extr04:B"/>
+          <channel handle="cycleState" signal="Ring_Mag:PS_Extr04:cycleState"/>
+          <channel handle="cycleEnable" signal="Ring_Mag:PS_Extr04:cycleEnable"/>
+       </channelsuite>
+    </ps>
+    <ps type="main" id="Ring_Mag:PS_Extr05">
+       <channelsuite name="pssuite">
+          <channel handle="I" signal="Ring_Mag:PS_Extr05:I"/>
+          <channel handle="I_Set" signal="Ring_Mag:PS_Extr05:I_Set"/>
+          <channel handle="fieldSet" signal="Ring_Mag:PS_Extr05:B_Set"/>
+          <channel handle="psFieldRB" signal="Ring_Mag:PS_Extr05:B"/>
+          <channel handle="cycleState" signal="Ring_Mag:PS_Extr05:cycleState"/>
+          <channel handle="cycleEnable" signal="Ring_Mag:PS_Extr05:cycleEnable"/>
+       </channelsuite>
+    </ps>
+    <ps type="main" id="Ring_Mag:PS_Extr06">
+       <channelsuite name="pssuite">
+          <channel handle="I" signal="Ring_Mag:PS_Extr06:I"/>
+          <channel handle="I_Set" signal="Ring_Mag:PS_Extr06:I_Set"/>
+          <channel handle="fieldSet" signal="Ring_Mag:PS_Extr06:B_Set"/>
+          <channel handle="psFieldRB" signal="Ring_Mag:PS_Extr06:B"/>
+          <channel handle="cycleState" signal="Ring_Mag:PS_Extr06:cycleState"/>
+          <channel handle="cycleEnable" signal="Ring_Mag:PS_Extr06:cycleEnable"/>
+       </channelsuite>
+    </ps>
+    <ps type="main" id="Ring_Mag:PS_Extr07">
+       <channelsuite name="pssuite">
+          <channel handle="I" signal="Ring_Mag:PS_Extr07:I"/>
+          <channel handle="I_Set" signal="Ring_Mag:PS_Extr07:I_Set"/>
+          <channel handle="fieldSet" signal="Ring_Mag:PS_Extr07:B_Set"/>
+          <channel handle="psFieldRB" signal="Ring_Mag:PS_Extr07:B"/>
+          <channel handle="cycleState" signal="Ring_Mag:PS_Extr07:cycleState"/>
+          <channel handle="cycleEnable" signal="Ring_Mag:PS_Extr07:cycleEnable"/>
+       </channelsuite>
+    </ps>
+    <ps type="main" id="Ring_Mag:PS_Extr08">
+       <channelsuite name="pssuite">
+          <channel handle="I" signal="Ring_Mag:PS_Extr08:I"/>
+          <channel handle="I_Set" signal="Ring_Mag:PS_Extr08:I_Set"/>
+          <channel handle="fieldSet" signal="Ring_Mag:PS_Extr08:B_Set"/>
+          <channel handle="psFieldRB" signal="Ring_Mag:PS_Extr08:B"/>
+          <channel handle="cycleState" signal="Ring_Mag:PS_Extr08:cycleState"/>
+          <channel handle="cycleEnable" signal="Ring_Mag:PS_Extr08:cycleEnable"/>
+       </channelsuite>
+    </ps>
+    <ps type="main" id="Ring_Mag:PS_Extr09">
+       <channelsuite name="pssuite">
+          <channel handle="I" signal="Ring_Mag:PS_Extr09:I"/>
+          <channel handle="I_Set" signal="Ring_Mag:PS_Extr09:I_Set"/>
+          <channel handle="fieldSet" signal="Ring_Mag:PS_Extr09:B_Set"/>
+          <channel handle="psFieldRB" signal="Ring_Mag:PS_Extr09:B"/>
+          <channel handle="cycleState" signal="Ring_Mag:PS_Extr09:cycleState"/>
+          <channel handle="cycleEnable" signal="Ring_Mag:PS_Extr09:cycleEnable"/>
+       </channelsuite>
+    </ps>
+    <ps type="main" id="Ring_Mag:PS_Extr10">
+       <channelsuite name="pssuite">
+          <channel handle="I" signal="Ring_Mag:PS_Extr10:I"/>
+          <channel handle="I_Set" signal="Ring_Mag:PS_Extr10:I_Set"/>
+          <channel handle="fieldSet" signal="Ring_Mag:PS_Extr10:B_Set"/>
+          <channel handle="psFieldRB" signal="Ring_Mag:PS_Extr10:B"/>
+          <channel handle="cycleState" signal="Ring_Mag:PS_Extr10:cycleState"/>
+          <channel handle="cycleEnable" signal="Ring_Mag:PS_Extr10:cycleEnable"/>
+       </channelsuite>
+    </ps>
+    <ps type="main" id="Ring_Mag:PS_Extr11">
+       <channelsuite name="pssuite">
+          <channel handle="I" signal="Ring_Mag:PS_Extr11:I"/>
+          <channel handle="I_Set" signal="Ring_Mag:PS_Extr11:I_Set"/>
+          <channel handle="fieldSet" signal="Ring_Mag:PS_Extr11:B_Set"/>
+          <channel handle="psFieldRB" signal="Ring_Mag:PS_Extr11:B"/>
+          <channel handle="cycleState" signal="Ring_Mag:PS_Extr11:cycleState"/>
+          <channel handle="cycleEnable" signal="Ring_Mag:PS_Extr11:cycleEnable"/>
+       </channelsuite>
+    </ps>
+    <ps type="main" id="Ring_Mag:PS_Extr12">
+       <channelsuite name="pssuite">
+          <channel handle="I" signal="Ring_Mag:PS_Extr12:I"/>
+          <channel handle="I_Set" signal="Ring_Mag:PS_Extr12:I_Set"/>
+          <channel handle="fieldSet" signal="Ring_Mag:PS_Extr12:B_Set"/>
+          <channel handle="psFieldRB" signal="Ring_Mag:PS_Extr12:B"/>
+          <channel handle="cycleState" signal="Ring_Mag:PS_Extr12:cycleState"/>
+          <channel handle="cycleEnable" signal="Ring_Mag:PS_Extr12:cycleEnable"/>
+       </channelsuite>
+    </ps>
+    <ps type="main" id="Ring_Mag:PS_Extr13">
+       <channelsuite name="pssuite">
+          <channel handle="I" signal="Ring_Mag:PS_Extr13:I"/>
+          <channel handle="I_Set" signal="Ring_Mag:PS_Extr13:I_Set"/>
+          <channel handle="fieldSet" signal="Ring_Mag:PS_Extr13:B_Set"/>
+          <channel handle="psFieldRB" signal="Ring_Mag:PS_Extr13:B"/>
+          <channel handle="cycleState" signal="Ring_Mag:PS_Extr13:cycleState"/>
+          <channel handle="cycleEnable" signal="Ring_Mag:PS_Extr13:cycleEnable"/>
+       </channelsuite>
+    </ps>
+    <ps type="main" id="Ring_Mag:PS_Extr14">
+       <channelsuite name="pssuite">
+          <channel handle="I" signal="Ring_Mag:PS_Extr14:I"/>
+          <channel handle="I_Set" signal="Ring_Mag:PS_Extr14:I_Set"/>
+          <channel handle="fieldSet" signal="Ring_Mag:PS_Extr14:B_Set"/>
+          <channel handle="psFieldRB" signal="Ring_Mag:PS_Extr14:B"/>
+          <channel handle="cycleState" signal="Ring_Mag:PS_Extr14:cycleState"/>
+          <channel handle="cycleEnable" signal="Ring_Mag:PS_Extr14:cycleEnable"/>
        </channelsuite>
     </ps>
     <ps type="main" id="Ring_Mag:PS_IKickH01">

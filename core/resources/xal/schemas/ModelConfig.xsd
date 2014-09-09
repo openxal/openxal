@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" version="1.0">
+
+	<xs:complexType name="className">
+		<xs:attribute name="type" type="xs:string" use="required"/>
+	</xs:complexType>
+		
+	<xs:complexType name="associations-map">		
+		<xs:attribute name="smf" type="xs:string" use="required"/>
+		<xs:attribute name="model" type="xs:string" use="required"/>	
+	</xs:complexType>
+	
+	<xs:element name="configuration">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="elements">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="default" type="className"/>
+							<xs:element name="drift" type="className"/>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="associations">
+					<xs:annotation>
+						<xs:documentation>
+							Implementation: xal.sim.cfg.ArchiveItemList<br/>
+						</xs:documentation>
+					</xs:annotation>
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="map" type="associations-map" maxOccurs="unbounded"/>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>

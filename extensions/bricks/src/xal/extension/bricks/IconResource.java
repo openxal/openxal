@@ -42,7 +42,7 @@ public class IconResource extends ImageIcon {
 	/** create a new instance */
 	static IconResource getInstance( final URL contextURL, final String group, final String iconName ) {
 		try {
-			final URL imageURL = group != null && group != "" ? IconLib.getIconURL( group, iconName ) : new URL( contextURL, iconName );
+			final URL imageURL = group != null && !group.isEmpty() ? IconLib.getIconURL( group, iconName ) : new URL( contextURL, iconName );
 			return new IconResource( imageURL, group, iconName );
 		}
 		catch ( Exception exception ) {

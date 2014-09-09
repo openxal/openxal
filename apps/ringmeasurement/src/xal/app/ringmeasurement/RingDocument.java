@@ -236,7 +236,7 @@ import xal.sim.scenario.*;
 	public void selectedSequenceChanged() {
 	}
 	
-	protected void customizeCommands(Commander commander) {
+	public void customizeCommands(Commander commander) {
 		//online action
 		online.setSelected(true);
 		online.addActionListener(new ActionListener() {

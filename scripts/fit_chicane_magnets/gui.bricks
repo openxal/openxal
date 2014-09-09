@@ -1,0 +1,202 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<BricksDocument date="Thu Jul 12 11:36:44 EDT 2007" version="1.0.0">
+    <RootBrick>
+        <ViewNode height="316" tag="MainWindow" width="762">
+            <ViewProxy type="javax.swing.JFrame"/>
+            <BeanProperty name="title" value="Chicane Magnet Fitting"/>
+            <ViewNode tag="Main Tabs">
+                <ViewProxy type="javax.swing.JTabbedPane"/>
+                <ViewNode tag="Procedure">
+                    <ViewProxy type="javax.swing.Box_Vertical"/>
+                    <BeanProperty name="name" value="Procedure"/>
+                    <ViewNode tag="InitialFieldAmplitude">
+                        <ViewProxy type="javax.swing.Box_Horizontal"/>
+                        <ViewNode tag="InitialFieldAmplitudeStage">
+                            <ViewProxy type="javax.swing.JRadioButton"/>
+                            <BeanProperty name="selected" value="true"/>
+                            <BeanProperty name="text" value="Initial Field Amplitude"/>
+                            <BeanProperty name="label" value="Will set Initial Field Amplitude change(fraction):"/>
+                        </ViewNode>
+                        <ViewNode tag="Horizontal Glue">
+                            <ViewProxy type="javax.swing.Box_HorizontalGlue"/>
+                        </ViewNode>
+                        <ViewNode tag="InitialAmplitudeField">
+                            <ViewProxy type="javax.swing.JTextField"/>
+                            <BeanProperty name="debugGraphicsOptions" value="0"/>
+                            <BeanProperty name="horizontalAlignment" value="4"/>
+                            <BeanProperty name="text" value="0.01"/>
+                            <BeanProperty name="toolTipText" value="First field excursion (fraction)"/>
+                            <BeanProperty name="columns" value="8"/>
+                            <BeanProperty height="50" name="maximumSize" width="120"/>
+                        </ViewNode>
+                    </ViewNode>
+                    <ViewNode tag="InitialBeamCirculation">
+                        <ViewProxy type="javax.swing.Box_Horizontal"/>
+                        <ViewNode tag="InitialBeamCirculationStage">
+                            <ViewProxy type="javax.swing.JRadioButton"/>
+                            <BeanProperty name="text" value="Please circulate beam then press &quot;next&quot;"/>
+                            <BeanProperty name="label" value="Please circulate beam then press &quot;Run&quot;"/>
+                        </ViewNode>
+                        <ViewNode tag="Horizontal Glue">
+                            <ViewProxy type="javax.swing.Box_HorizontalGlue"/>
+                        </ViewNode>
+                    </ViewNode>
+                    <ViewNode tag="FinalFieldAmplitude">
+                        <ViewProxy type="javax.swing.Box_Horizontal"/>
+                        <ViewNode tag="FinalFieldAmplitudeStage">
+                            <ViewProxy type="javax.swing.JRadioButton"/>
+                            <BeanProperty name="text" value="Initial Field Amplitude"/>
+                            <BeanProperty name="label" value="Will set Final Field Amplitude change(fraction):"/>
+                        </ViewNode>
+                        <ViewNode tag="Horizontal Glue">
+                            <ViewProxy type="javax.swing.Box_HorizontalGlue"/>
+                        </ViewNode>
+                        <ViewNode tag="FinalAmplitudeField">
+                            <ViewProxy type="javax.swing.JTextField"/>
+                            <BeanProperty name="debugGraphicsOptions" value="0"/>
+                            <BeanProperty name="horizontalAlignment" value="4"/>
+                            <BeanProperty name="text" value="0.26"/>
+                            <BeanProperty name="toolTipText" value="Final field excursion (fraction)"/>
+                            <BeanProperty height="50" name="maximumSize" width="120"/>
+                            <BeanProperty name="columns" value="8"/>
+                        </ViewNode>
+                    </ViewNode>
+                    <ViewNode tag="FinalBeamCirculation">
+                        <ViewProxy type="javax.swing.Box_Horizontal"/>
+                        <ViewNode tag="FinalBeamCirculationStage">
+                            <ViewProxy type="javax.swing.JRadioButton"/>
+                            <BeanProperty name="text" value="Please circulate beam then press &quot;next&quot;"/>
+                            <BeanProperty name="label" value="Please circulate beam then press &quot;Run&quot;"/>
+                        </ViewNode>
+                        <ViewNode tag="Horizontal Glue">
+                            <ViewProxy type="javax.swing.Box_HorizontalGlue"/>
+                        </ViewNode>
+                    </ViewNode>
+                    <ViewNode tag="Optimize">
+                        <ViewProxy type="javax.swing.Box_Horizontal"/>
+                        <ViewNode tag="OptimizeStage">
+                            <ViewProxy type="javax.swing.JRadioButton"/>
+                            <BeanProperty name="text" value="Optimize"/>
+                            <BeanProperty name="toolTipText" value="Find the optimal fields."/>
+                        </ViewNode>
+                        <ViewNode tag="Horizontal Glue">
+                            <ViewProxy type="javax.swing.Box_HorizontalGlue"/>
+                        </ViewNode>
+                        <ViewNode tag="MagnetVariableScroller">
+                            <ViewProxy type="javax.swing.JScrollPane"/>
+                            <ViewNode tag="MagnetVariableTable">
+                                <ViewProxy type="javax.swing.JTable"/>
+                            </ViewNode>
+                        </ViewNode>
+                        <ViewNode tag="Horizontal Glue">
+                            <ViewProxy type="javax.swing.Box_HorizontalGlue"/>
+                        </ViewNode>
+                        <ViewNode tag="SolvingDurationField">
+                            <ViewProxy type="javax.swing.JFormattedTextField"/>
+                            <BeanProperty name="verifyInputWhenFocusTarget" value="true"/>
+                            <BeanProperty name="debugGraphicsOptions" value="0"/>
+                            <BeanProperty name="horizontalAlignment" value="4"/>
+                            <BeanProperty name="text" value="60.0"/>
+                            <BeanProperty height="22" name="preferredSize" width="104"/>
+                            <BeanProperty name="toolTipText" value="Maximum Solving Time (seconds)"/>
+                            <BeanProperty name="columns" value="8"/>
+                            <BeanProperty height="22" name="maximumSize" width="104"/>
+                        </ViewNode>
+                    </ViewNode>
+                    <ViewNode tag="Iterate">
+                        <ViewProxy type="javax.swing.Box_Horizontal"/>
+                        <ViewNode tag="IterateStage">
+                            <ViewProxy type="javax.swing.JRadioButton"/>
+                            <BeanProperty name="text" value="Iterate using the proposed scales."/>
+                            <BeanProperty name="label" value="Iterate using the proposed scales."/>
+                            <BeanProperty name="toolTipText" value="Iterate using the proposed scales."/>
+                        </ViewNode>
+                        <ViewNode tag="Horizontal Glue">
+                            <ViewProxy type="javax.swing.Box_HorizontalGlue"/>
+                        </ViewNode>
+                    </ViewNode>
+                    <ViewNode tag="Vertical Glue">
+                        <ViewProxy type="javax.swing.Box_VerticalGlue"/>
+                    </ViewNode>
+                    <ViewNode tag="ButtonRow">
+                        <ViewProxy type="javax.swing.Box_Horizontal"/>
+                        <BeanProperty name="name" value="Procedure"/>
+                        <BorderNode tag="Etched Border">
+                            <BorderProxy type="javax.swing.border.EtchedBorder"/>
+                        </BorderNode>
+                        <ViewNode tag="Horizontal Glue">
+                            <ViewProxy type="javax.swing.Box_HorizontalGlue"/>
+                        </ViewNode>
+                        <ViewNode tag="RunButton">
+                            <ViewProxy type="javax.swing.JButton"/>
+                            <BeanProperty name="text" value="next"/>
+                            <BeanProperty name="label" value="Run"/>
+                            <BeanProperty name="name" value="Run"/>
+                        </ViewNode>
+                        <BorderNode tag="Etched Border">
+                            <BorderProxy type="javax.swing.border.EtchedBorder"/>
+                        </BorderNode>
+                    </ViewNode>
+                </ViewNode>
+                <ViewNode tag="RipplePlot">
+                    <ViewProxy type="xal.extension.widgets.plot.FunctionGraphsJPanel"/>
+                    <BeanProperty name="name" value="Ripple"/>
+                </ViewNode>
+                <ViewNode tag="Magnets">
+                    <ViewProxy type="javax.swing.Box_Vertical"/>
+                    <BeanProperty name="name" value="Magnets"/>
+                    <ViewNode tag="Summary">
+                        <ViewProxy type="javax.swing.Box_Horizontal"/>
+                        <ViewNode tag="RippleRMSLabel">
+                            <ViewProxy type="javax.swing.JLabel"/>
+                            <BeanProperty name="text" value="Measured RMS Ripple (mm):  "/>
+                        </ViewNode>
+                        <ViewNode tag="RippleRMSResult">
+                            <ViewProxy type="javax.swing.JLabel"/>
+                            <BeanProperty name="text" value="?"/>
+                            <BeanProperty alpha="255" blue="204" green="0" name="foreground" red="0"/>
+                        </ViewNode>
+                        <ViewNode tag="Horizontal Glue">
+                            <ViewProxy type="javax.swing.Box_HorizontalGlue"/>
+                        </ViewNode>
+                        <ViewNode tag="FitRMSLabel">
+                            <ViewProxy type="javax.swing.JLabel"/>
+                            <BeanProperty name="text" value="Proposed RMS Ripple (mm):  "/>
+                        </ViewNode>
+                        <ViewNode tag="FitRMSResult">
+                            <ViewProxy type="javax.swing.JLabel"/>
+                            <BeanProperty name="text" value="?"/>
+                            <BeanProperty alpha="255" blue="153" green="51" name="foreground" red="0"/>
+                        </ViewNode>
+                    </ViewNode>
+                    <ViewNode tag="MagnetsScrollPane">
+                        <ViewProxy type="javax.swing.JScrollPane"/>
+                        <BeanProperty name="name" value="Results"/>
+                        <ViewNode tag="MagnetTable">
+                            <ViewProxy type="javax.swing.JTable"/>
+                        </ViewNode>
+                    </ViewNode>
+                    <ViewNode tag="Horizontal Box">
+                        <ViewProxy type="javax.swing.Box_Horizontal"/>
+                        <ViewNode tag="Horizontal Glue">
+                            <ViewProxy type="javax.swing.Box_HorizontalGlue"/>
+                        </ViewNode>
+                        <ViewNode tag="CopyReportButton">
+                            <ViewProxy type="javax.swing.JButton"/>
+                            <BeanProperty name="text" value="Copy Report"/>
+                            <BeanProperty name="toolTipText" value="Copy report to clipboard"/>
+                        </ViewNode>
+                    </ViewNode>
+                </ViewNode>
+                <ViewNode tag="HelpScrollPane">
+                    <ViewProxy type="javax.swing.JScrollPane"/>
+                    <BeanProperty name="name" value="Help"/>
+                    <ViewNode tag="HelpEditorPane">
+                        <ViewProxy type="javax.swing.JEditorPane"/>
+                        <BeanProperty name="editable" value="false"/>
+                    </ViewNode>
+                </ViewNode>
+            </ViewNode>
+        </ViewNode>
+    </RootBrick>
+</BricksDocument>

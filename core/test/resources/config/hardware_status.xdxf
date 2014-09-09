@@ -1,5 +1,7 @@
 <?xml version = '1.0' encoding = 'UTF-8'?>
-<xdxf date="Wed Jul 21 14:16:24 EDT 2010" version="1.0.0">
+<xdxf date="Wed Jul 21 14:16:24 EDT 2010" version="1.0.0" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xsi:noNamespaceSchemaLocation="http://sourceforge.net/p/xaldev/openxal/ci/master/tree/core/resources/xal/schemas/xdxf.xsd?format=raw">
     <sequence id="LDmp">
         <node exclude="false" id="LDmp_Diag:BPM01" status="false"/>
     </sequence>

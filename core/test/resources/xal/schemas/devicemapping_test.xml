@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<deviceMapping xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="impl.xsd">
+   <device type="D11" class="fake.package.DeviceA"/>
+   <device type="D12" class="fake.package.DeviceA"/>
+   <device type="D2" class="fake.package.DeviceB"/>
+   <device type="D2" softType="v1" class="fake.package.DeviceB"/>
+   <device type="D2" softType="v2" class="fake.package.DeviceC"/>
+</deviceMapping>

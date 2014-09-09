@@ -103,7 +103,7 @@ public class XalPvDescriptor {
         this.strHandleRb = strHandleRb;
         this.strHandleSet = strHandleSet;
         
-        if (strHandleSet != "" && strHandleSet != null) {
+        if ( strHandleSet != null && !strHandleSet.isEmpty() ) {
             this.bolControllable = true;
         } else {
             this.bolControllable = false;

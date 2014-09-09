@@ -6,7 +6,9 @@
 
 package xal.smf.data;
 
-import xal.sim.cfg.ModelConfiguration;
+import xal.sim.scenario.DefaultElementMapping;
+import xal.sim.scenario.ElementMapping;
+import xal.sim.scenario.FileBasedElementMapping;
 import xal.smf.Accelerator;
 import xal.smf.AcceleratorNodeFactory;
 import xal.smf.TimingCenter;
@@ -17,9 +19,16 @@ import xal.tools.data.*;
 import xal.tools.URLUtil;
 
 import org.w3c.dom.*;
+
 import java.util.*;
 import java.util.prefs.Preferences;
 import java.net.*;
+
+import javax.xml.XMLConstants;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.validation.Schema;
+import javax.xml.validation.SchemaFactory;
+import javax.xml.validation.Validator;
 
 
 /*****************************************************************************
@@ -42,24 +51,30 @@ public class XMLDataManager {
 	
 	/** manage the bindings of device types to AcceleratorNode subclasses */
 	final private DeviceManager DEVICE_MANAGER;
-	
-	/** Loads the model configuration information */
-	final private ModelConfigLoader   ldrModelConfig;
+		
 	
     private MainManager mainManager;
     private AcceleratorManager acceleratorManager;
     private TableManager tableManager;
-	private TimingDataManager _timingManager;
+	private TimingDataManager _timingManager;	
+	private ElementMapping elementMapping;
 	
 	
     /** Primary Constructor */
     public XMLDataManager( final String urlPath ) {
-		DEVICE_MANAGER = new DeviceManager();
-		ldrModelConfig = new ModelConfigLoader();
+		DEVICE_MANAGER = new DeviceManager();		
 		_timingManager = new TimingDataManager();
         acceleratorManager = new AcceleratorManager();
         tableManager = new TableManager();
         mainManager = new MainManager( urlPath );
+        try {
+            mainManager.refresh();
+        }
+        catch( XmlDataAdaptor.ResourceNotFoundException exception ) {
+            // if the file doesn't exist, don't load it
+            System.err.println( exception );
+            exception.printStackTrace();
+        }
     }
 	
 	
@@ -207,6 +222,24 @@ public class XMLDataManager {
         setMainUrlSpec(urlSpec);
     }
     
+    /** 
+	 * Get absolute URL specifications given a URL spec relative to the main URL
+	 * @return absolute URL specification
+	 */
+    public String absoluteUrlSpec( final String urlSpec ) {
+        URL mainUrl = mainUrl();
+        URL absoluteUrl = null;
+        
+        try {
+            absoluteUrl = new URL( mainUrl, urlSpec );
+        }
+        catch( MalformedURLException excpt ) {
+            System.err.println( excpt );
+            excpt.printStackTrace();
+        }
+        
+        return absoluteUrl.toString();
+    }
     
 	/**
 	 * Get the URL spec to the accelerator optics.
@@ -423,7 +456,7 @@ public class XMLDataManager {
 		static final private String DEVICEMAPPING_TAG = "deviceMapping_source";
 		static final private String DEVICEMAPPING_URL_KEY = "url";
 		
-		static final private String MODELCONFIG_TAG = "modelConfig_source";
+		static final private String MODELCONFIG_TAG = "modelElementConfig_source";
 		static final private String MODELCONFIG_URL_KEY = "url";
 		
         static final private String TABLE_GROUP_TAG = "tablegroup_source";
@@ -432,19 +465,11 @@ public class XMLDataManager {
         
         
         protected URL mainUrl;   /** URL of main XML source */
-		
+		protected String mainSchema = "/xal/schemas/main.xsd";
 		
 		/** Constructor */
         public MainManager( final String urlSpec ) {
             setMainUrlSpec( urlSpec );
-            try {
-                refresh();
-            }
-            catch( XmlDataAdaptor.ResourceNotFoundException exception ) {
-                // if the file doesn't exist, don't load it
-                System.err.println( exception );
-                exception.printStackTrace();
-            }
         }
 
         
@@ -469,8 +494,8 @@ public class XMLDataManager {
                 System.err.println( excpt );
                 excpt.printStackTrace();
             }
-        }
-        
+        }       
+                
         
         /**  Sample XML input file to parse
          * <sources>
@@ -480,7 +505,7 @@ public class XMLDataManager {
          */
         public void refresh() {
             final String mainUrlSpec = mainUrlSpec();
-            final DataAdaptor mainAdaptor = XmlDataAdaptor.adaptorForUrl( mainUrlSpec, false );
+            final DataAdaptor mainAdaptor = XmlDataAdaptor.adaptorForUrl( mainUrlSpec, false,  mainSchema );
             final DataAdaptor sourcesAdaptor = mainAdaptor.childAdaptor( SOURCE_TAG );
 
 			if ( sourcesAdaptor.hasAttribute( "version" ) ) {
@@ -516,48 +541,27 @@ public class XMLDataManager {
             final DataAdaptor timingReferenceAdaptor = sourcesAdaptor.childAdaptor( TIMING_TAG );
 			if ( timingReferenceAdaptor != null ) {
 				final String timingRelativeURL = timingReferenceAdaptor.stringValue( TIMING_URL_KEY );
-				
-				try {
-					final URL timingURL = new URL( mainUrl, timingRelativeURL );
-					_timingManager.setURLSpec( timingURL.toString() );
-				}
-				catch( MalformedURLException excpt ) {
-					System.err.println( excpt );
-					excpt.printStackTrace();
-				}
+				final String timingURL = absoluteUrlSpec( timingRelativeURL );
+				_timingManager.setURLSpec( timingURL, acceleratorManager.xdxfSchema );				
 			}
 			
 			// fetch the device mapping
             final DataAdaptor deviceMappingReferenceAdaptor = sourcesAdaptor.childAdaptor( DEVICEMAPPING_TAG );
 			if ( deviceMappingReferenceAdaptor != null ) {
 				final String deviceMappingURL = deviceMappingReferenceAdaptor.stringValue( DEVICEMAPPING_URL_KEY );
-				
-				try {
-					final URL deviceURL = new URL( mainUrl, deviceMappingURL );
-					DEVICE_MANAGER.setURL( deviceURL );
-				}
-				catch ( MalformedURLException excpt ){
-					System.err.println( excpt );
-					excpt.printStackTrace();
-				}
+				DEVICE_MANAGER.setURL(absoluteUrlSpec( deviceMappingURL ));				
 			}
 			
 			// fetch the model configuration
 			final DataAdaptor daModelConfig = sourcesAdaptor.childAdaptor( MODELCONFIG_TAG );
 			if ( daModelConfig != null ) {
 			    final String strUrlModelCfg = daModelConfig.stringValue( MODELCONFIG_URL_KEY );
-
-			    try {
-			        final URL urlModelConfig = new URL( mainUrl, strUrlModelCfg );
-			        ldrModelConfig.setURL( urlModelConfig );
-			    }
-			    catch ( MalformedURLException excpt ){
-			        System.err.println( excpt );
-			        excpt.printStackTrace();
-			    }
+				final String urlModelConfig = absoluteUrlSpec( strUrlModelCfg );
+				elementMapping = FileBasedElementMapping.loadFrom(urlModelConfig, FileBasedElementMapping.elementMappingSchema );
+			} else {
+				elementMapping = DefaultElementMapping.getInstance();
 			}
-
-            
+			
             // fetch the table group references
             final List<DataAdaptor> tableAdaptors = sourcesAdaptor.childAdaptors( TABLE_GROUP_TAG );
             tableManager.clear();
@@ -618,13 +622,15 @@ public class XMLDataManager {
         private String opticsUrlSpec;
         private List<String> extraUrlSpecs;
 		private String _hardwareStatusURLSpec;
-        
+		private String xdxfSchema;
+        public static final String acceleratorTag = "xdxf";
         
 		/** Constructor */
         public AcceleratorManager() {
             dtdUrlSpec = "xdxf.dtd";     // default DTD file
             extraUrlSpecs = new ArrayList<String>();
-			_hardwareStatusURLSpec = null;
+			_hardwareStatusURLSpec = null;			
+			xdxfSchema = "/xal/schemas/xdxf.xsd";
         }
         
         
@@ -632,27 +638,6 @@ public class XMLDataManager {
         public String opticsUrlSpec() {
             return opticsUrlSpec;
         }
-        
-        
-        /** 
-		 * Get absolute URL specifications given a URL spec relative to the main URL
-		 * @return absolute URL specification
-		 */
-        public String absoluteUrlSpec( final String urlSpec ) {
-            URL mainUrl = mainUrl();
-            URL absoluteUrl = null;
-            
-            try {
-                absoluteUrl = new URL( mainUrl, urlSpec );
-            }
-            catch( MalformedURLException excpt ) {
-                System.err.println( excpt );
-                excpt.printStackTrace();
-            }
-            
-            return absoluteUrl.toString();
-        }
-
 
 		/** set the optics URL spec */
         public void setOpticsUrlSpec( final String urlSpec ) {
@@ -691,22 +676,20 @@ public class XMLDataManager {
         
         
         /** Parse the accelerator from the optics URL with the specified DTD validation flag */
-        public Accelerator getAccelerator( final boolean isValidating ) throws XmlDataAdaptor.ParseException {
+        public Accelerator getAccelerator( final boolean isValidating ) throws XmlDataAdaptor.ParseException {        	
             String absoluteUrlSpec = absoluteUrlSpec( opticsUrlSpec );
-            XmlDataAdaptor adaptor = XmlDataAdaptor.adaptorForUrl( absoluteUrlSpec, isValidating );
+            XmlDataAdaptor adaptor = XmlDataAdaptor.adaptorForUrl( absoluteUrlSpec, isValidating, xdxfSchema );
 			
             Document document = adaptor.document();
-            DocumentType docType = document.getDoctype();
-            String acceleratorTag = docType.getName();
-			
-            dtdUrlSpec = docType.getSystemId();
+            DocumentType docType = document.getDoctype();            
+			if (docType != null) dtdUrlSpec = docType.getSystemId();                        
             
             DataAdaptor accelAdaptor = adaptor.childAdaptor( acceleratorTag );
             Accelerator accelerator = new Accelerator();
 			
 			accelerator.setNodeFactory( DEVICE_MANAGER.getNodeFactory() );
 			
-			accelerator.setModelConfiguration( ldrModelConfig.getModelConfiguration() );
+			accelerator.setElementMapping(elementMapping);
 			
 			EditContext editContext = tableManager.readEditContext( isValidating );
 			accelerator.setEditContext( editContext );
@@ -749,7 +732,7 @@ public class XMLDataManager {
         /** update the accelerator with data from the optics URL with a DTD validation flag */
         public void updateAccelerator( final String urlSpec, final Accelerator accelerator, final boolean isValidating ) throws XmlDataAdaptor.ParseException {
             String absoluteUrlSpec = absoluteUrlSpec( urlSpec );
-            XmlDataAdaptor adaptor = XmlDataAdaptor.adaptorForUrl( absoluteUrlSpec, isValidating );
+            XmlDataAdaptor adaptor = XmlDataAdaptor.adaptorForUrl( absoluteUrlSpec, isValidating,  xdxfSchema );
             
             String acceleratorTag = accelerator.dataLabel();
             
@@ -773,6 +756,8 @@ public class XMLDataManager {
 		
 		public static final String DEVICE_MAPPING = "deviceMapping";
     	
+		private final String deviceMappingSchema = "/xal/schemas/impl.xsd";
+		
     	final private HashMap<String, String> _deviceMap;
 		
 		/** factory for generating accelerator nodes */
@@ -795,8 +780,8 @@ public class XMLDataManager {
 //    		return _deviceMap;
 //    	}
 		
-    	public void setURL( final URL url ) {
-    		final XmlDataAdaptor deviceMappingDocumentAdaptor = XmlDataAdaptor.adaptorForUrl( url, false );
+    	public void setURL( final String url ) {
+    		final XmlDataAdaptor deviceMappingDocumentAdaptor = XmlDataAdaptor.adaptorForUrl( url, false, deviceMappingSchema );
 			final DataAdaptor deviceMappingAdaptor = deviceMappingDocumentAdaptor.childAdaptor( DeviceManager.DEVICE_MAPPING );
 			
 			final List<DataAdaptor> deviceAdaptors = deviceMappingAdaptor.childAdaptors( DEVICE_TAG );
@@ -817,90 +802,6 @@ public class XMLDataManager {
 			}
 			_nodeFactory = nodeFactory;
     	}
-    }
-	
-    /**
-     * Loads the model configuration description from a given
-     * URL specifying the configuration file (see <code>{@link #setURL(URL)}</code>.  
-     * The configuration information is encapsulated as a 
-     * <code>{@link ModelConfiguration}</code> object.  This object
-     * is instantiated then attached to the SMF accelerator object.
-     *
-     * @author Christopher K. Allen
-     * @since   May 24, 2011
-     */
-    private class ModelConfigLoader {
-        
-        /*
-         * Local Attributes
-         */
-        
-        /** The (global) model configuration manager */
-        public ModelConfiguration       mgrMdlCfg;
-        
-        
-        /*
-         * Initialization
-         */
-        
-        /**
-         * Creates a new <code>ModelConfigLoader</code> model
-         * configuration loading class.
-         *
-         * @author  Christopher K. Allen
-         * @since   May 24, 2011
-         */
-        public ModelConfigLoader() {
-        }
-        
-        
-        /*
-         * Operations
-         */
-        
-        /**
-         * Returns the online model configuration manager, presumably after it 
-         * has been loaded with the call to <code>{@link #setURL(URL)}</code>.
-         *
-         * @return  online model configuration manager
-         *
-         * @author Christopher K. Allen
-         * @since  May 24, 2011
-         */
-        public ModelConfiguration   getModelConfiguration() {
-            return this.mgrMdlCfg;
-        }
-        
-        /**
-         * Loads the the model configuration information from the file with
-         * the given URL.  The model configuration information is encapsulated
-         * in a class object <code>{@link ModelConfiguration}</code> which may
-         * be recover with the method <code>{@link #getModelConfiguration()}</code>.
-         *
-         * @param url   model configuration file location
-         *
-         * @author Christopher K. Allen
-         * @since  May 24, 2011
-         */
-        public void setURL( final URL url ) {
-            
-            try {
-                this.mgrMdlCfg = new ModelConfiguration(url);
-                
-            } catch (ResourceNotFoundException e) {
-                System.err.println("Unable to find model configuration file: " + url);
-                e.printStackTrace();
-                
-            } catch (ParseException e) {
-                System.err.println("Unable to find model configuration file: " + url);
-                e.printStackTrace();
-
-            } catch (ClassNotFoundException e) {
-                System.err.println("Unknown class in model configuration file: " + e.getMessage());
-                e.printStackTrace();
-            }
-        }
-        
     }
     
     /***************************************************************************

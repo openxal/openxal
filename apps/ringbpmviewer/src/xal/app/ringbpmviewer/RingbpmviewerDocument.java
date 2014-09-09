@@ -162,12 +162,10 @@ public class RingbpmviewerDocument extends XalDocument {
         
 		final DataAdaptor ring_bpms_da = XmlDataAdaptor.newEmptyDocumentAdaptor().createChild("RING_BPM_TBT_PVs");
 		AcceleratorSeq accSeq = accl.findSequence("Ring");
-		java.util.List<AcceleratorNode> bpms_list = accSeq.getAllNodesOfType(BPM.s_strType);
-		Iterator<AcceleratorNode> iter = bpms_list.iterator();
+		java.util.List<BPM> bpms_list = accSeq.<BPM>getAllNodesOfType(BPM.s_strType);
 		Pattern p = Pattern.compile(":BPM_((.*))");
-		while(iter.hasNext()){
-			AcceleratorNode node = iter.next();
-			if(node.getStatus()){
+		for ( final BPM node : bpms_list ) {
+			if( node.getStatus() ) {
 				String bpm_name = node.getId();
 				DataAdaptor bpm_da = ring_bpms_da.createChild("RING_BPM");
 				Matcher m = p.matcher(bpm_name);
@@ -177,20 +175,18 @@ public class RingbpmviewerDocument extends XalDocument {
 				DataAdaptor pvx_da = pvs_da.createChild("xTBT");
 				DataAdaptor pvy_da = pvs_da.createChild("yTBT");
 				DataAdaptor pvAmp_da = pvs_da.createChild("ampTBT");
-				pvx_da.setValue("name", bpm_name+":xTBT");
-				pvy_da.setValue("name", bpm_name+":yTBT");
-				pvAmp_da.setValue("name", bpm_name+":ampTBT");
+				pvx_da.setValue( "name", node.findChannel( BPM.X_TBT_HANDLE ).channelName() );
+				pvy_da.setValue( "name", node.findChannel( BPM.Y_TBT_HANDLE ).channelName() );
+				pvAmp_da.setValue( "name", node.findChannel( BPM.AMP_TBT_HANDLE ).channelName() );
 			}
 		}
 		
 		final DataAdaptor hebt_bpms_da = XmlDataAdaptor.newEmptyDocumentAdaptor().createChild("HEBT_BPM_PVs");
 		accSeq = accl.findSequence("HEBT");
 		bpms_list = accSeq.getAllNodesOfType(BPM.s_strType);
-		iter = bpms_list.iterator();
 		p = Pattern.compile(":BPM((.*))");
-		while(iter.hasNext()){
-			AcceleratorNode node = iter.next();
-			if(node.getStatus()){
+		for ( final BPM node : bpms_list ) {
+			if( node.getStatus() ) {
 				String bpm_name = node.getId();
 				DataAdaptor bpm_da = hebt_bpms_da.createChild("TRANSF_LINE_BPM");
 				Matcher m = p.matcher(bpm_name);
@@ -201,20 +197,18 @@ public class RingbpmviewerDocument extends XalDocument {
 				DataAdaptor pvx_da = pvs_da.createChild("xAvg");
 				DataAdaptor pvy_da = pvs_da.createChild("yAvg");
 				DataAdaptor pvAmp_da = pvs_da.createChild("amplitudeAvg");
-				pvx_da.setValue("name", bpm_name+":xAvg");
-				pvy_da.setValue("name", bpm_name+":yAvg");
-				pvAmp_da.setValue("name", bpm_name+":amplitudeAvg");
+				pvx_da.setValue( "name", node.findChannel( BPM.X_TBT_HANDLE ).channelName() );
+				pvy_da.setValue( "name", node.findChannel( BPM.Y_TBT_HANDLE ).channelName() );
+				pvAmp_da.setValue( "name", node.findChannel( BPM.AMP_TBT_HANDLE ).channelName() );
 			}
 		}
 		
 		final DataAdaptor rtbt_bpms_da = XmlDataAdaptor.newEmptyDocumentAdaptor().createChild("RTBT_BPM_PVs");
 		accSeq = accl.findSequence("RTBT");
 		bpms_list = accSeq.getAllNodesOfType(BPM.s_strType);
-		iter = bpms_list.iterator();
 		p = Pattern.compile(":BPM((.*))");
-		while(iter.hasNext()){
-			AcceleratorNode node = iter.next();
-			if(node.getStatus()){
+		for ( final BPM node : bpms_list ) {
+			if( node.getStatus() ) {
 				String bpm_name = node.getId();
 				DataAdaptor bpm_da = rtbt_bpms_da.createChild("TRANSF_LINE_BPM");
 				Matcher m = p.matcher(bpm_name);
@@ -225,9 +219,9 @@ public class RingbpmviewerDocument extends XalDocument {
 				DataAdaptor pvx_da = pvs_da.createChild("xAvg");
 				DataAdaptor pvy_da = pvs_da.createChild("yAvg");
 				DataAdaptor pvAmp_da = pvs_da.createChild("amplitudeAvg");
-				pvx_da.setValue("name", bpm_name+":xAvg");
-				pvy_da.setValue("name", bpm_name+":yAvg");
-				pvAmp_da.setValue("name", bpm_name+":ampAvg");
+				pvx_da.setValue( "name", node.findChannel( BPM.X_TBT_HANDLE ).channelName() );
+				pvy_da.setValue( "name", node.findChannel( BPM.Y_TBT_HANDLE ).channelName() );
+				pvAmp_da.setValue( "name", node.findChannel( BPM.AMP_TBT_HANDLE ).channelName() );
 			}
 		}
 
@@ -305,7 +299,7 @@ public class RingbpmviewerDocument extends XalDocument {
 	 *  Dispose of RingbpmviewerDocument resources. This method overrides an empty
 	 *  superclass method.
 	 */
-	protected void freeCustomResources() {
+	public void freeCustomResources() {
 		cleanUp();
 	}
     
@@ -449,7 +443,7 @@ public class RingbpmviewerDocument extends XalDocument {
 	 *@param  commander  Description of the Parameter
 	 */
     
-	protected void customizeCommands(Commander commander) {
+	public void customizeCommands(Commander commander) {
 	}
     
     

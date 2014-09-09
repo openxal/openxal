@@ -106,7 +106,7 @@ public class WireDoc extends AcceleratorDocument {
 	 * @param commander		Commander currently being used
 	 * @see Commander
 	 */
-	protected void customizeCommands(Commander commander) {
+	public void customizeCommands(Commander commander) {
 		Action exportDataAction = new AbstractAction() {
             private static final long serialVersionUID = 1L;
 			                          public void actionPerformed(ActionEvent event) {

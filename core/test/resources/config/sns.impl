@@ -1,6 +1,6 @@
-<?xml version = '1.0' encoding = 'UTF-8'?>
-<!DOCTYPE deviceMapping SYSTEM "xdxf.dtd">
-<deviceMapping>
+<?xml version="1.0" encoding="UTF-8"?>
+<deviceMapping xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="http://sourceforge.net/p/xaldev/openxal/ci/master/tree/core/resources/xal/schemas/impl.xsd?format=raw">
    <device type="DH" class="xal.smf.impl.Bend"/>
    <device type="BCM" class="xal.smf.impl.CurrentMonitor"/>
    <device type="BLM" class="xal.smf.impl.BLM"/>

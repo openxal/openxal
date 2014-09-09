@@ -1,6 +1,7 @@
 <?xml version = '1.0' encoding = 'UTF-8'?>
-<!DOCTYPE xdxf SYSTEM "xdxf.dtd">
-<xdxf system="sns" ver="2.0.0" date="Thu Feb 03 10:16:58 EST 2011">
+<xdxf xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="http://sourceforge.net/p/xaldev/openxal/ci/master/tree/core/resources/xal/schemas/xdxf.xsd?format=raw"
+	system="sns" ver="2.0.0" date="Thu Feb 03 10:16:58 EST 2011">
   <comboseq id="MEBT-DTL">
 	  <sequence id="MEBT"/>
 	  <sequence id="DTL1"/>

@@ -32,7 +32,7 @@ abstract public class XalDocument extends XalAbstractDocument {
 	final static public int NO_OPTION = XalAbstractDocument.NO_OPTION;
 	
     // basic document instance variables
-    protected XalWindow mainWindow;     // The main window for the document
+    public XalWindow mainWindow;     // The main window for the document
     
     // messaging
     protected XalDocumentListener documentListenerProxy;    // The proxy for document events
@@ -129,7 +129,7 @@ abstract public class XalDocument extends XalAbstractDocument {
 	/**
 	 * Free document resources.
 	 */
-	final protected void freeResources() {
+	final public void freeResources() {
 		super.freeResources();
 		
 		documentListenerProxy = null;

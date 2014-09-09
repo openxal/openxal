@@ -54,7 +54,7 @@ public class XALTreeNode extends HandleNode {
     private void defineSeqNodes() {
 		// collecting all sequences
 		for (int i=0; i<allSeqs.length; i++) {
-			if(allSeqs[i].getType()!="Bnch") {
+			if( !"Bnch".equals( allSeqs[i].getType() ) ) {
 				Vector<String> typeV = new Vector<String>();
 				java.util.List<AcceleratorNode> nodes = allSeqs[i].getAllNodes();
 				for ( final AcceleratorNode node : nodes ) {

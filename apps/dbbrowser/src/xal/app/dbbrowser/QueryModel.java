@@ -43,10 +43,12 @@ public class QueryModel {
 			while ( resultSet.next() ) {
 				for ( int column = 1 ; column <= columnCount ; column++ ) {
 					final Object data = getValue( resultSet, column, columnTypes[column-1] );
-					results.append( data + "\t" );
+					results.append( data ).append( '\t' );
 				}
-				results.append('\n');
+				results.append( '\n' );
 			}
+			resultSet.close();
+			statement.close();
 			return results.toString();
 		}
 		catch( SQLException exception ) {

@@ -1127,25 +1127,36 @@ public class AnalysisStuff {
 		public PastaScorer() {}
 		
 		public double  score( final Trial trial, final java.util.List<Variable> variables ) {
+			final TrialPoint trialPoint = trial.getTrialPoint();
+
 			// set the quantities used in function evaluation
 			// to the solver guesses:
 			if(variableList.get("WIn") != null)
-				WIn = (variableList.get("WIn")).getInitialValue();
+				WIn = trialPoint.getValue( variableList.get("WIn") );
+
 			if(variableList.get("PhaseOffset") != null)
-				cavPhaseOffset = (variableList.get("PhaseOffset")).getInitialValue();
+				cavPhaseOffset = trialPoint.getValue( variableList.get("PhaseOffset") );
 			
 			if(variableList.get("AmpFac") != null) {
 				Variable pp =  variableList.get("AmpFac");
-				cavityVoltage = pp.getInitialValue();
+				cavityVoltage = trialPoint.getValue( pp );
 				updateAmpFactors();
 			}
 			
 			if(variableList.get("Fudge") != null)  {
-				theDoc.fudgePhaseOffset =(variableList.get("Fudge")).getInitialValue();
+				theDoc.fudgePhaseOffset = trialPoint.getValue( variableList.get("Fudge") );
 			}
 			// calculate error term for these settings:
 			System.out.print("scan at " + WIn + "  " + cavPhaseOffset + "  " + cavityVoltage + "  " + theDoc.fudgePhaseOffset + "  ");
-			return doCalc();
+			final double score = doCalc();
+
+//			System.out.println( "" );
+//			for ( final Variable variable : variables ) {
+//				System.out.println( variable.getName() + ": " + trialPoint.getValue( variable ) );
+//			}
+//			System.out.println( "Score: " + score );
+
+			return score;
 		}
 		
 	}

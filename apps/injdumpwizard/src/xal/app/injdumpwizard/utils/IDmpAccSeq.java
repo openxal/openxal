@@ -57,7 +57,7 @@ class  IDmpAccSeq{
 	
 	//Init. cond. (x,xp,y,yp)
 	final private Vector<ValueRef> initProxyV = new Vector<>();
-	final private Problem _problem;
+	private Problem _problem;
 
 
 	public IDmpAccSeq(){
@@ -88,16 +88,13 @@ class  IDmpAccSeq{
 			accElmV.get(i).setPosition(end_pos + accElmV.get(i).length/2.0);
 		}
 
-		final double tolerance = 1.0;	// 90% tolerance level for score of 1.0 mm error
-
 		// minimize inverse square of score
-		_problem = ProblemFactory.getInverseSquareMinimizerProblem( new ArrayList<Variable>(), new OrbitScorer(), tolerance );
-		_problem.addHint( new InitialDelta( 0.005 ) );	// initial delta for all variables
+		_problem = new Problem();
 
 		//variables for initial coordinates
 		final String[] variableNames = { "x", "xp", "y", "yp" };
 		for ( final String variableName : variableNames ) {
-			final Variable variable = new Variable( variableName, 0.0, -1.0, 1.0 );
+			final Variable variable = new Variable( variableName, 0.0, -10.0, 10.0 );
 			_problem.addVariable( variable );
 			initProxyV.add( _problem.getValueReference( variable ) );
 		}
@@ -159,8 +156,8 @@ class  IDmpAccSeq{
 		coords_in[3] = initProxyV.get(3).getValue();
 		for(int i = 0, n = accElmV.size(); i < n; i++){
 			accElmV.get(i).track(coords_in,coords_out);
-			//System.out.println("debug track from IDmpAccSeq ind="+i+" init x,xp,y,yp="+coords_in[0]+" "+coords_in[1]+" "+coords_in[2]+" "+coords_in[3]+" ");
-			//System.out.println("debug track from IDmpAccSeq ind="+i+" out  x,xp,y,yp="+coords_out[0]+" "+coords_out[1]+" "+coords_out[2]+" "+coords_out[3]+" ");
+//			System.out.println("debug track from IDmpAccSeq ind="+i+" init x,xp,y,yp="+coords_in[0]+" "+coords_in[1]+" "+coords_in[2]+" "+coords_in[3]+" ");
+//			System.out.println("debug track from IDmpAccSeq ind="+i+" out  x,xp,y,yp="+coords_out[0]+" "+coords_out[1]+" "+coords_out[2]+" "+coords_out[3]+" ");
 			for(int j = 0; j < 4; j++){
 				coords_in[j] = coords_out[j];
 			}
@@ -169,9 +166,32 @@ class  IDmpAccSeq{
 	}
 	
 	public void findOrbit() {
-		Solver solver = new Solver( SolveStopperFactory.maxEvaluationsStopper( 500 ) );
-		solver.solve( _problem );
+		// minimize inverse square of score
+		initProxyV.clear();
 		
+		_problem = new Problem();
+		final double tolerance = 0.1;	// 90% tolerance level for score of 1.0 mm error
+		final Objective objective = new MinimizingObjective( tolerance );
+		_problem.addObjective( objective );
+		_problem.addHint( new InitialDelta( 0.01 ) );	// initial delta for all variables
+
+		//variables for initial coordinates
+		final String[] variableNames = { "x", "xp", "y", "yp" };
+		for ( final String variableName : variableNames ) {
+			final Variable variable = new Variable( variableName, 0.0, -50.0, 50.0 );
+			_problem.addVariable( variable );
+			initProxyV.add( _problem.getValueReference( variable ) );
+		}
+
+		final Evaluator evaluator = new ScoringEvaluator( new OrbitScorer(), _problem.getVariables(), objective );
+		_problem.setEvaluator( evaluator );
+
+		Solver solver = new Solver( SolveStopperFactory.maxEvaluationsStopper( 5000 ) );
+		solver.solve( _problem );
+
+		final Trial bestSolution = solver.getScoreBoard().getBestSolution();
+		_problem.evaluate( bestSolution );	// force the variable references to take the optimal values
+
 		track();
 	}
 
@@ -400,6 +420,57 @@ class  IDmpAccSeq{
 		void makeTrM(){
 			trM[3][4] = field*field_coef*c*eff_length/momentum;
 		}
-	}		
+	}
+}
+
+
+
+/** objective for minimization with tolerance */
+class MinimizingObjective extends Objective {
+	/** tolerance for offset from minimum */
+	private final double TOLERANCE;
+
+
+	/** Constructor */
+	public MinimizingObjective( final double tolerance ) {
+		super( "MinimizingObjective" );
+		TOLERANCE = tolerance;
+	}
+
+
+	/** satisfaction with the specifies score */
+	public double satisfaction( final double score ) {
+		final double satisfaction = SatisfactionCurve.inverseSatisfaction( score, TOLERANCE );
+		return satisfaction;
+	}
+}
+
+
+
+/** evaluator for scoring the objectives */
+class ScoringEvaluator implements Evaluator {
+	/** scorer */
+	final private Scorer SCORER;
+
+	/** objective to score */
+	final private Objective OBJECTIVE;
+
+	/** variables */
+	final List<Variable> VARIABLES;
+
+	
+	/** Constructor */
+	public ScoringEvaluator( final Scorer scorer, final List<Variable> variables, final Objective objective ) {
+		SCORER = scorer;
+		VARIABLES = variables;
+		OBJECTIVE = objective;
+	}
+
+
+	/** evaluate the trial */
+	public void evaluate( final Trial trial ) {
+		final double score = SCORER.score( trial, VARIABLES );
+		trial.setScore( OBJECTIVE, score );
+	}
 }
 

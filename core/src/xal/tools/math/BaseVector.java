@@ -348,13 +348,6 @@ public abstract class BaseVector<V extends BaseVector<V>> implements IArchive, j
      *  Local Attributes
      */
 
-    /** class type of child class */
-    private final Class<V>          clsType;
-        
-    /** zero-argument constructor for this type */
-    private final Constructor<V>    ctrType;
-
-
     /** internal matrix implementation */
     private final JVector           vecImpl;
 
@@ -487,7 +480,7 @@ public abstract class BaseVector<V extends BaseVector<V>> implements IArchive, j
         // Error check the number of token strings
         StringTokenizer     tokArgs = new StringTokenizer(strValues, " ,()[]{}");
         
-        if (tokArgs.countTokens() != this.getSize()*this.getSize())
+        if (tokArgs.countTokens() != this.getSize())
             throw new IllegalArgumentException("Vector, wrong number of token in string initializer: " + strValues);
         
         
@@ -720,10 +713,8 @@ public abstract class BaseVector<V extends BaseVector<V>> implements IArchive, j
      *  Perform a deep copy of this Vector object and return it.
      *  
      *  @return     a cloned copy of this vector
-     *  
-     * @throws InstantiationException  unable to instantiate child object
      */
-    public V copyVector() throws InstantiationException    {
+    public V copyVector() {
         V  vecClone = this.newInstance();
         ((BaseVector<V>)vecClone).assignVector( this.getVector() );
             
@@ -869,20 +860,11 @@ public abstract class BaseVector<V extends BaseVector<V>> implements IArchive, j
      * @since  Oct 10, 2013
      */
     public V negate() {
-    
-        try {
-            JVector impNeg = this.getVector().negate();
-            
-            V vecNeg = this.newInstance(impNeg);
-            
-            return vecNeg;
-            
-        } catch (InstantiationException e) {
-            
-            System.err.println("Unable to instantiate resultant vector");
-
-            return null;
-        }
+        JVector impNeg = this.getVector().negate();
+        
+        V vecNeg = this.newInstance(impNeg);
+        
+        return vecNeg;
     }
     
     /**
@@ -917,26 +899,16 @@ public abstract class BaseVector<V extends BaseVector<V>> implements IArchive, j
      *  @param  vecAdd     vector added to this one (addend)
      *  
      *  @return            sum of this vector and given vector, 
-     *                     or <code>null</code> if instantiation error occurred
      *
      *  @exception  IllegalArgumentException    argument is not same dimension as this
      */
     public V plus(V vecAdd){
+        JVector     impAdd = ((BaseVector<V>)vecAdd).getVector();
+        JVector     impSum = this.getVector().plus( impAdd );
 
-        try {
-            JVector     impAdd = ((BaseVector<V>)vecAdd).getVector();
-            JVector     impSum = this.getVector().plus( impAdd );
+        V vecSum = this.newInstance( impSum );
 
-            V vecSum = this.newInstance( impSum );
-
-            return vecSum;
-            
-        } catch (InstantiationException e) {
-
-            System.err.println("Unable to instantiate resultant vector");
-
-            return null;
-        }
+        return vecSum;
     };
     
     /**
@@ -959,27 +931,17 @@ public abstract class BaseVector<V extends BaseVector<V>> implements IArchive, j
      *  @param  vecSub     vector subtracted from this one (subtrahend)
      *  
      *  @return            difference of this vector and the given vector, 
-     *                     or <code>null</code> if instantiation error occurred
      *
      *  @exception  IllegalArgumentException    argument is not same dimension as this
      */
     public V minus(V vecSub){
+        JVector     impSub = ((BaseVector<V>)vecSub).getVector();
+        JVector     impDif = this.getVector().minus( impSub );
 
-        try {
-            JVector     impSub = ((BaseVector<V>)vecSub).getVector();
-            JVector     impDif = this.getVector().minus( impSub );
+        V vecDif = this.newInstance( impDif );
 
-            V vecDif = this.newInstance( impDif );
-
-            return vecDif;
-            
-        } catch (InstantiationException e) {
-
-            System.err.println("Unable to instantiate resultant vector");
-
-            return null;
-        }
-    };
+        return vecDif;
+    }
     
     /** 
      *  Scalar multiplication
@@ -991,18 +953,10 @@ public abstract class BaseVector<V extends BaseVector<V>> implements IArchive, j
     public V times(double s)   {
         JVector impProd = this.getVector().times(s);
         
-        try {
-            V       vecProd = this.newInstance(impProd);
-            
-            return vecProd;
-            
-        } catch (InstantiationException e) {
-
-            System.err.println("Unable to instantiate resultant vector");
-
-            return null;
-        }
-    };
+        V       vecProd = this.newInstance(impProd);
+        
+        return vecProd;
+    }
     
 
     /** 
@@ -1063,8 +1017,7 @@ public abstract class BaseVector<V extends BaseVector<V>> implements IArchive, j
      *
      *  @param  mat     matrix operator
      *
-     *  @return         result of vector-matrix product, or <code>null</code>
-     *                  if InstantiationException occurs.
+     *  @return         result of vector-matrix product
      *
      *  @exception  IllegalArgumentException    dimensions must agree
      */
@@ -1075,27 +1028,19 @@ public abstract class BaseVector<V extends BaseVector<V>> implements IArchive, j
             throw new IllegalArgumentException("matrix and vector must be of compatible dimensions");
         
         // Perform covariant multiplication
-        try {
-            V   vecProd = this.newInstance();
-            for (int j=0; j<this.getSize(); j++) {
+        V   vecProd = this.newInstance();
+        for (int j=0; j<this.getSize(); j++) {
+            
+            double  dblSum = 0.0;
+            for (int i=0; i<this.getSize(); i++) {
                 
-                double  dblSum = 0.0;
-                for (int i=0; i<this.getSize(); i++) {
-                    
-                    dblSum += mat.getElem(i, j)*this.getElem(i);
-                }
-                
-                vecProd.setElem(j, dblSum);
+                dblSum += mat.getElem(i, j)*this.getElem(i);
             }
             
-            return vecProd;
-            
-        } catch (InstantiationException e) {
-
-            System.err.println("Unable to instantiate resultant vector");
-
-            return null;
+            vecProd.setElem(j, dblSum);
         }
+        
+        return vecProd;
     };
     
     /** 
@@ -1113,28 +1058,20 @@ public abstract class BaseVector<V extends BaseVector<V>> implements IArchive, j
         if (this.getSize() != mat.getSize())
             throw new IllegalArgumentException("matrix and vector must be of compatible dimensions");
         
-        // Perform contra-variant multiplication
-        try {
-            V   vecProd = this.newInstance();
-            for (int i=0; i<this.getSize(); i++) {
+        // Perform contra-variant multiplication    
+        V   vecProd = this.newInstance();
+        for (int i=0; i<this.getSize(); i++) {
+            
+            double  dblSum = 0.0;
+            for (int j=0; j<this.getSize(); j++) {
                 
-                double  dblSum = 0.0;
-                for (int j=0; j<this.getSize(); j++) {
-                    
-                    dblSum += mat.getElem(i, j)*this.getElem(i);
-                }
-                
-                vecProd.setElem(i, dblSum);
+                dblSum += mat.getElem(i, j)*this.getElem(i);
             }
             
-            return vecProd;
-            
-        } catch (InstantiationException e) {
-
-            System.err.println("Unable to instantiate resultant vector");
-
-            return null;
+            vecProd.setElem(i, dblSum);
         }
+        
+        return vecProd;
     };
     
 //    public <M extends SquareMatrix<M>> V linearSoln(M matL) throws IllegalArgumentException {
@@ -1332,21 +1269,8 @@ public abstract class BaseVector<V extends BaseVector<V>> implements IArchive, j
      *  
      * @throws UnsupportedOperationException  base class has not defined a public, zero-argument constructor
      */
-    @SuppressWarnings("unchecked")
-    protected BaseVector(int intSize) throws UnsupportedOperationException {
-        
-        try {
-            this.clsType = (Class<V>) this.getClass();
-            
-            this.ctrType = this.clsType.getConstructor();
-            this.vecImpl = new JVector(intSize);
-            
-        } catch (NoSuchMethodException | SecurityException e) {
-            
-            throw new UnsupportedOperationException("Could not find public, zero-argument constructor for " 
-                    + this.clsType.getName()
-                    );
-        }
+    protected BaseVector(int intSize) {
+    	this.vecImpl = new JVector(intSize);
     }
 
     /**
@@ -1496,27 +1420,11 @@ public abstract class BaseVector<V extends BaseVector<V>> implements IArchive, j
      * Creates a new, uninitialized instance of this vector type.
      * 
      * @return  uninitialized vector object of type <code>V</code>
-     * 
-     * @throws InstantiationException   error occurred in the reflection constructor
-     *
      * @author Christopher K. Allen
      * @since  Oct 1, 2013
      */
-    private V newInstance() throws InstantiationException {
-        try {
-            V vecNewInst = this.ctrType.newInstance();
-
-            return vecNewInst;
-
-        } catch (InstantiationException   | 
-                IllegalAccessException   | 
-                IllegalArgumentException | 
-                InvocationTargetException e) {
-
-            throw new InstantiationException("Unable to copy vector " + this.getClass().getName());
-        }
-    }
-
+    protected abstract V newInstance();
+    
     /**
      * Creates a new instance of this vector type initialized to the given
      * implementation matrix.
@@ -1524,14 +1432,10 @@ public abstract class BaseVector<V extends BaseVector<V>> implements IArchive, j
      * @param   vecInit implementation vector containing initialization values    
      * 
      * @return          initialized vector object of type <code>V</code>
-     * 
-     * @throws InstantiationException   error occurred in the reflection constructor
-     *
      * @author Christopher K. Allen
      * @since  Oct 1, 2013
      */
-    private V newInstance(JVector vecInit) throws InstantiationException {
-        
+    private V newInstance(JVector vecInit) {
         V   vecNewInst = this.newInstance();
         
         ((BaseVector<V>)vecNewInst).assignVector(vecInit);

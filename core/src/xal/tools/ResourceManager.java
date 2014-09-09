@@ -15,7 +15,12 @@ import java.net.URISyntaxException;
 import java.util.regex.*;
 
 
-/** Provide normalized methods for getting resources */
+/** 
+ * Provide normalized methods for getting resources 
+ * There are two separate mechanisms for getting resources (jar based and file based)
+ * - The jar based resource manager is the standard mechanism and it searches for resources in the binary's jar files. This the only option that should be used in production.
+ * - The file based resource manager can be set as the default if the environment variable OPENXAL_FIND_RESOURCES_IN_ROOT is set to true. The OPENXAL_HOME environment variable must be set to the root of the project. The file based resource manager searches for resources directly on the file system relative to the project. This may be useful in development for IDE's that compile code in real time and do not generate the usual jar files. This option should not be used in production.
+ */
 abstract public class ResourceManager {
 	static final protected String RESOURCES_FILE_SEARCH_PROPERTY = "OPENXAL_FIND_RESOURCES_IN_ROOT";
 
@@ -61,19 +66,54 @@ abstract public class ResourceManager {
 	 * Get the URL to the specified resource relative to the specified class
 	 * @param rootClass class at the root of the group (this class must be at the same location as the resources directory in the jar file)
 	 * @param path to the resource relative to the group's resources directory
+	 * @return URL to the resource
 	 */
-	abstract public URL fetchResourceURL( final Class<?> rootClass, final String resourcePath );
+	public URL fetchResourceURL( final Class<?> rootClass, final String resourcePath ) {
+		return fetchResourceURL( null, rootClass, resourcePath );
+	}
+
+
+	/**
+	 * Get the URL to the specified resource relative to the specified class
+	 * @param subdomain subdomain under which to search (e.g. for "core" with a subdomain of "test" we must search "core/test")
+	 * @param rootClass class at the root of the group (this class must be at the same location as the resources directory in the jar file)
+	 * @param path to the resource relative to the group's resources directory
+	 * @return URL to the resource
+	 */
+	abstract public URL fetchResourceURL( final String subdomain, final Class<?> rootClass, final String resourcePath );
 
 
 	/**
 	 * Get the URL to the specified resource relative to the specified class
 	 * @param rootClass class at the root of the group (this class must be at the same location as the resources directory in the jar file)
 	 * @param path to the resource relative to the group's resources directory
+	 * @return URL to the resource
 	 */
 	static public URL getResourceURL( final Class<?> rootClass, final String resourcePath ) {
-		final URL resourceURL = DEFAULT_MANAGER.fetchResourceURL( rootClass, resourcePath );
+		return getResourceURL( null, rootClass, resourcePath );
+	}
+
+
+	/**
+	 * Get the URL to the specified resource relative to the specified class
+	 * @param subdomain subdomain under which to search (e.g. for "core" with a subdomain of "test" we must search "core/test")
+	 * @param rootClass class at the root of the group (this class must be at the same location as the resources directory in the jar file)
+	 * @param path to the resource relative to the group's resources directory
+	 * @return URL to the resource
+	 */
+	static public URL getResourceURL( final String subdomain, final Class<?> rootClass, final String resourcePath ) {
+		final URL resourceURL = DEFAULT_MANAGER.fetchResourceURL( subdomain, rootClass, resourcePath );
 		//System.out.println( "Resource URL: " + resourceURL + " for resource: " + resourcePath + " relative to package: " + rootClass.getPackage().getName() );
 		return resourceURL;
+	}
+
+
+	/** get the path to the project home based on the "xal.home" property or corresponding "OPENXAL_HOME" environment variable if necessary */
+	static public String getProjectHomePath() {
+		// the property set to true indicates whether to find resources under the OPENXAL_HOME directory instead of the jar files
+		final String path = System.getProperty( "xal.home" );
+
+		return path != null ? path : System.getenv( "OPENXAL_HOME" );
 	}
 }
 
@@ -99,10 +139,13 @@ class JarredResourceManager extends ResourceManager {
 
 	/**
 	 * Get the URL to the specified resource relative to the specified class
+	 * @param subdomain subdomain under which to search (e.g. for "core" with a subdomain of "test" we must search "core/test")
 	 * @param rootClass class at the root of the group (this class must be at the same location as the resources directory in the jar file)
 	 * @param path to the resource relative to the group's resources directory
+	 * @return URL to the resource
 	 */
-	public URL fetchResourceURL( final Class<?> rootClass, final String resourcePath ) {
+	public URL fetchResourceURL( final String subdomain, final Class<?> rootClass, final String resourcePath ) {
+		//System.out.println( "Using the Jarred Resource Manager to fetch for resource: " + resourcePath + " in subdomain: " + subdomain );
 		final URL directResourceURL = fetchDirectResourceURL( rootClass, resourcePath );
 		return directResourceURL != null ? directResourceURL : fetchContainerResourceURL( rootClass, resourcePath );
 	}
@@ -194,23 +237,18 @@ class FileResourceManager extends ResourceManager {
 	}
 
 
-	/** get the path to the project home based on the OPENXAL_HOME property or corresponding environment variable if necessary */
-	static private String getProjectHomePath() {
-		// the property set to true indicates whether to find resources under the OPENXAL_HOME directory instead of the jar files
-		final String path = System.getProperty( PROJECT_HOME_PROPERTY );
-
-		return path != null ? path : System.getenv( PROJECT_HOME_PROPERTY );
-	}
-
-
 	/**
 	 * Get the URL to the specified resource relative to the specified class
+	 * @param subdomain subdomain under which to search (e.g. for "core" with a subdomain of "test" we must search "core/test")
 	 * @param rootClass class at the root of the group (this class must be at the same location as the resources directory in the jar file)
 	 * @param path to the resource relative to the group's resources directory
+	 * @return URL to the resource
 	 */
-	public URL fetchResourceURL( final Class<?> rootClass, final String resourcePath ) {
+	public URL fetchResourceURL( final String subdomain, final Class<?> rootClass, final String resourcePath ) {
+		//System.out.println( "Using the File Resource Manager to fetch for resource: " + resourcePath + " in subdomain: " + subdomain );
+
 		// first look for the resource in core
-		final URL coreResourceURL = fetchCoreResourceURL( rootClass, resourcePath );
+		final URL coreResourceURL = fetchCoreResourceURL( subdomain, rootClass, resourcePath );
 		if ( coreResourceURL != null ) {
 			return coreResourceURL;
 		}
@@ -229,15 +267,16 @@ class FileResourceManager extends ResourceManager {
 
 
 	/** Look relative to the class (applies to core) */
-	private URL fetchCoreResourceURL( final Class<?> rootClass, final String resourcePath ) {
+	private URL fetchCoreResourceURL( final String subdomain, final Class<?> rootClass, final String resourcePath ) {
+		//System.out.println( "Fetching core resource: " + resourcePath + " with subdomain: " + subdomain );
 		try {
 			// first try to find a site specific resource
-			final File siteCoreResource = fetchCoreResourceFile( rootClass, "site", resourcePath );
+			final File siteCoreResource = fetchCoreResourceFile( subdomain, rootClass, "site", resourcePath );
 			if ( siteCoreResource.exists() ) {
 				return siteCoreResource.toURI().toURL();
 			}
 			else {		// next try to find the resource in the common component
-				final File coreResource = fetchCoreResourceFile( rootClass, null, resourcePath );
+				final File coreResource = fetchCoreResourceFile( subdomain, rootClass, null, resourcePath );
 				if ( coreResource.exists() ) {
 					return coreResource.toURI().toURL();
 				}
@@ -253,14 +292,21 @@ class FileResourceManager extends ResourceManager {
 
 
 	/** Look relative to the class (applies to core) */
-	private File fetchCoreResourceFile( final Class<?> rootClass, final String prefix, final String resourcePath ) {
+	private File fetchCoreResourceFile( final String subdomain, final Class<?> rootClass, final String prefix, final String resourcePath ) {
 		final File baseFile = prefix != null ? new File( ROOT_FILE, prefix ) : ROOT_FILE;
 		final File coreDirectory = new File( baseFile, "core" );
-		final File resourcesDirectory = new File( coreDirectory, "resources" );
+		final File subdomainDirectory = subdomain != null ? new File( coreDirectory, subdomain ) : coreDirectory;	// search under the core's subdomain (e.g. "test) if any otherwise search directly under core
+		final File resourcesDirectory = new File( subdomainDirectory, "resources" );
 
-		// replace package dot delimiter with URL slash delimiter (should work on all platforms if we use URLs here instead of files)
-		final String packagePath = rootClass.getPackage().getName().replaceAll( "\\.", "/" );
-		final String pathFromResources = packagePath + "/" + resourcePath;
+		String pathFromResources;
+		if ( resourcePath.startsWith( "/" ) ) {		// resource path is absolute and hence relative to "resources" root
+			pathFromResources = resourcePath.substring( 1 );	// strip the leading "/"
+		}
+		else {			// resource path is relative and hence relative to the root class's package
+			// replace package dot delimiter with URL slash delimiter (should work on all platforms if we use URLs here instead of files)
+			final String packagePath = rootClass.getPackage().getName().replaceAll( "\\.", "/" );
+			pathFromResources = packagePath + "/" + resourcePath;
+		}
 
 		// use URLs to avoid file system path separator dependencies
 		try {
@@ -325,10 +371,16 @@ class FileResourceManager extends ResourceManager {
 			final File resourcesDirectory = new File( resourcesParent, "resources" );		// e.g. ${OPENXAL_HOME}/extensions/application/resources
 			if ( !resourcesDirectory.exists() )  return null;
 
-			// replace package dot delimiter with URL slash delimiter (should work on all platforms if we use URLs here instead of files)
-			final String packageSuffix = packagePartition.PACKAGE_SUFFIX;
-			final String relativePackagePath = packageSuffix != null ? packageSuffix.replaceAll( "\\.", "/" ) : null;		// e.g. smf  (replacing dots with /)
-			final String pathFromResources = relativePackagePath != null ? relativePackagePath + "/" + resourcePath : resourcePath;		// e.g. smf/menudef.properties
+			String pathFromResources;
+			if ( resourcePath.startsWith( "/" ) ) {		// resource path is absolute and hence relative to "resources" root
+				pathFromResources = resourcePath.substring( 1 );	// strip the leading "/"
+			}
+			else {			// resource path is relative and hence relative to the root class's package suffix (i.e. relative to component)
+				// replace package dot delimiter with URL slash delimiter (should work on all platforms if we use URLs here instead of files)
+				final String packageSuffix = packagePartition.PACKAGE_SUFFIX;
+				final String relativePackagePath = packageSuffix != null ? packageSuffix.replaceAll( "\\.", "/" ) : null;		// e.g. smf  (replacing dots with /)
+				pathFromResources = relativePackagePath != null ? relativePackagePath + "/" + resourcePath : resourcePath;		// e.g. smf/menudef.properties
+			}
 
 			// use URLs to avoid file system path separator dependencies
 			try {

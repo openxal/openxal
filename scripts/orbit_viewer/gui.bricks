@@ -1,0 +1,52 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<BricksDocument date="Tue Jun 03 13:55:02 EDT 2008" version="1.0.0">
+    <RootBrick>
+        <ViewNode height="601" tag="MainWindow" width="949">
+            <ViewProxy type="javax.swing.JFrame"/>
+            <BeanProperty name="title" value="Ring Orbit"/>
+            <ViewNode tag="Main Vertical Layout">
+                <ViewProxy type="javax.swing.Box_Vertical"/>
+                <ViewNode tag="Button Box">
+                    <ViewProxy type="javax.swing.Box_Horizontal"/>
+                    <ViewNode tag="SnapshotButton">
+                        <ViewProxy type="javax.swing.JButton"/>
+                        <BeanProperty name="text" value=""/>
+                        <BeanProperty group="custom" iconName="snapshot24.gif" name="icon"/>
+                        <BeanProperty name="toolTipText" value="Take snapshot of this window."/>
+                        <BeanProperty name="horizontalTextPosition" value="11"/>
+                    </ViewNode>
+                    <ViewNode tag="Horizontal Glue">
+                        <ViewProxy type="javax.swing.Box_HorizontalGlue"/>
+                    </ViewNode>
+                    <ViewNode tag="Label">
+                        <ViewProxy type="javax.swing.JLabel"/>
+                        <BeanProperty name="text" value="Ring Origin: "/>
+                    </ViewNode>
+                    <ViewNode tag="RingOriginSlider">
+                        <ViewProxy type="javax.swing.JSlider"/>
+                        <BeanProperty name="paintTicks" value="true"/>
+                        <BeanProperty name="minorTickSpacing" value="5"/>
+                        <BeanProperty name="value" value="0"/>
+                        <BeanProperty name="majorTickSpacing" value="25"/>
+                        <BeanProperty name="toolTipText" value="Shift the ring origin on the plot"/>
+                        <BeanProperty name="name" value="RingOriginSlider"/>
+                    </ViewNode>
+                    <ViewNode tag="Horizontal Glue">
+                        <ViewProxy type="javax.swing.Box_HorizontalGlue"/>
+                    </ViewNode>
+                    <ViewNode tag="RefreshButton">
+                        <ViewProxy type="javax.swing.JButton"/>
+                        <BeanProperty name="text" value="Refresh"/>
+                    </ViewNode>
+                </ViewNode>
+                <ViewNode tag="OrbitPlot">
+                    <ViewProxy type="xal.extension.widgets.plot.FunctionGraphsJPanel"/>
+                    <BeanProperty name="name" value="Orbit Plot"/>
+                </ViewNode>
+                <ViewNode tag="SynopticContainer">
+                    <ViewProxy type="javax.swing.Box_Horizontal"/>
+                </ViewNode>
+            </ViewNode>
+        </ViewNode>
+    </RootBrick>
+</BricksDocument>

@@ -102,7 +102,7 @@ public class EventBufferDocument extends XalDocument {
 	 * application wide definitions for this document.  By default this method returns null.
      * @return The menu definition properties file path in classpath notation
      */
-    protected String getCustomMenuDefinitionResource() {
+    public String getCustomMenuDefinitionResource() {
 		return "buffer_menu.properties";
     }
 	

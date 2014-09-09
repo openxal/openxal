@@ -85,7 +85,7 @@ abstract class XalAbstractDocument implements Pageable {
      * @param commander The commander that manages commands.
      * @see Commander#registerAction(Action)
      */
-    protected void customizeCommands( final Commander commander ) {
+    public void customizeCommands( final Commander commander ) {
     }
     
     
@@ -96,7 +96,7 @@ abstract class XalAbstractDocument implements Pageable {
 	 * application wide definitions for this document.  By default this method returns null.
      * @return The menu definition properties file name
      */
-    protected String getCustomMenuDefinitionResource() {
+    public String getCustomMenuDefinitionResource() {
 		return null;
     }
 	
@@ -183,7 +183,7 @@ abstract class XalAbstractDocument implements Pageable {
 	 * a file store.
 	 * @return the file path of the document or the default empty document file path as appropriate
 	 */
-	protected String getDisplayFilePath() {		
+	public String getDisplayFilePath() {
 		return (source != null) ? source.getPath() : getEmptyDocumentPath();
 	}
 	
@@ -220,7 +220,7 @@ abstract class XalAbstractDocument implements Pageable {
 	 * @param baseName the base name to use for an empty document
 	 * @return "{baseName}." + the first writable document type or simply "{baseName}" if there are none 
 	 */
-	protected String getNewDocumentName( final String baseName ) {
+	public String getNewDocumentName( final String baseName ) {
 		String[] writableTypes = writableDocumentTypes();
 		String[] readableTypes = Application.getAdaptor().readableDocumentTypes();
 		
@@ -242,7 +242,7 @@ abstract class XalAbstractDocument implements Pageable {
 	 * Get the default file path to use for empty documents
 	 * @return "Untitled." + the first writable document type or simply "Untitled" if there are none 
 	 */
-	protected String getEmptyDocumentPath() {
+	public String getEmptyDocumentPath() {
 		return getNewDocumentName( "Untitled" );
 	}
     
@@ -350,7 +350,7 @@ abstract class XalAbstractDocument implements Pageable {
 	/**
 	 * Free document resources.
 	 */
-	protected void freeResources() {
+	public void freeResources() {
 		freeCustomResources();
 		_messageCenter = null;
 	}
@@ -360,22 +360,22 @@ abstract class XalAbstractDocument implements Pageable {
 	 * Dispose of custom document resources.  Subclasses should override this method
 	 * to provide custom disposal of resources.  The default implementation does nothing.
 	 */
-	protected void freeCustomResources() {}
+	public void freeCustomResources() {}
     
     
     /**
 	 * Called when the document will be closed.  The default implementation does nothing.
      * Subclasses should override this method if they need to handle this event.
      */
-    protected void willClose() {}
+    public void willClose() {}
     
     
     /** Hook indicating that the window will be opened. Called after the window is created but before it is displayed by the document. */
-    protected void windowWillOpen() {}
+    public void windowWillOpen() {}
     
     
     /** Hook indicating that the window was opened. */
-    protected void windowOpened() {}
+    public void windowOpened() {}
     
     
     /**

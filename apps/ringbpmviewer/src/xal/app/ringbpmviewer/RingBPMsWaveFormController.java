@@ -65,6 +65,7 @@ public class RingBPMsWaveFormController {
 	private AnalysisWFPanel analysisWFPanelAmp = new AnalysisWFPanel();
 
 	//analyzer from fitting package
+	final private Object FITTER_LOCK = new Object();
 	private DampedSinusoidFit fitter;
 	private FortranNumberFormat fmt = new FortranNumberFormat("G10.4");
 	//-------------------------------------------------------------
@@ -229,7 +230,7 @@ public class RingBPMsWaveFormController {
 		analysisWFPanelX.addAnalysisButtonListener(
 			new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					synchronized(fitter) {
+					synchronized( FITTER_LOCK ) {
 
 						messageTextLocal.setText(null);
 
@@ -256,7 +257,7 @@ public class RingBPMsWaveFormController {
 		analysisWFPanelY.addAnalysisButtonListener(
 			new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					synchronized(fitter) {
+					synchronized( FITTER_LOCK ) {
 
 						messageTextLocal.setText(null);
 
@@ -283,7 +284,7 @@ public class RingBPMsWaveFormController {
 		analysisWFPanelAmp.addAnalysisButtonListener(
 			new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					synchronized(fitter) {
+					synchronized( FITTER_LOCK ) {
 						messageTextLocal.setText(null);
 						messageTextLocal.setText("This analysis is not implemented yet.");
 					}
@@ -727,19 +728,19 @@ public class RingBPMsWaveFormController {
         
         
         
-        System.arraycopy(y_arr , i_min , waveform, 0, i_max);
-        fitter = new DampedSinusoidFit(waveform);
-        
+        System.arraycopy( y_arr, i_min, waveform, 0, i_max );
+        fitter = new DampedSinusoidFit( waveform );
 
 
 		double[] resArrX = new double[i_size];
 		double[] resArrY = new double[i_size];
 
-//		for(int i = 0; i < i_size; i++) {
-//			int ii = i + i_min;
-//			resArrX[i] = x_arr[ii];
-//			resArrY[i] = fitter.getValue(resArrX[i]);
-//		}
+		for(int i = 0; i < i_size; i++) {
+			int ii = i + i_min;
+			resArrX[i] = x_arr[ii];
+		}
+
+		fitter.calculateFittedWaveform( resArrX, resArrY );
 
 		if(showResults) {
 			pvWF.setAnalysisData(resArrX, resArrY);

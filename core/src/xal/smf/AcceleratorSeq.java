@@ -125,7 +125,7 @@ public class AcceleratorSeq extends AcceleratorNode implements DataListener {
     /** support for dataListener */
     private void addChildSequence( final DataAdaptor sequenceAdaptor, final Accelerator accelerator, final AcceleratorNodeFactory nodeFactory ) throws ClassNotFoundException {
         String sequenceType = sequenceAdaptor.stringValue( "type" );
-        if ( sequenceType == null || sequenceType == "" ) {   // it's just a plain sequence
+        if ( sequenceType == null || sequenceType.isEmpty() ) {   // it's just a plain sequence
             String sequenceId = sequenceAdaptor.stringValue( "id" );
             // check if we already have the sequence
             AcceleratorSeq sequence = (AcceleratorSeq)getNodeWithId( sequenceId );

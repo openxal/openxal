@@ -292,6 +292,20 @@ public class R4x4 extends SquareMatrix<R4x4> {
     public R4x4(R4x4 matParent) throws UnsupportedOperationException {
         super(matParent);
     }
+
+	/**
+     * Handles object creation required by the base class.
+     *  
+	 * @see xal.tools.math.BaseMatrix#newInstance()
+	 *
+	 * @author Ivo List
+	 * @author Christopher K. Allen
+	 * @since  Jun 17, 2014
+	 */
+	@Override
+	protected R4x4 newInstance() {
+		return new R4x4();
+	}
     
     
     

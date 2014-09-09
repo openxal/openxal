@@ -1,6 +1,6 @@
 <?xml version = '1.0' encoding = 'UTF-8'?>
 <!DOCTYPE xdxf SYSTEM "xdxf.dtd">
-<xdxf system="sns" ver="2.0.0" date="Fri Feb 07 12:37:54 EST 2014">
+<xdxf system="sns" ver="2.0.0" date="Wed Jul 23 10:35:06 EDT 2014">
   <comboseq id="MEBT-DTL">
 	  <sequence id="MEBT"/>
 	  <sequence id="DTL1"/>
@@ -31149,7 +31149,7 @@
           <channel handle="lossInt" signal="RTBT_Diag:BLM30:Slow60PulsesTotalLoss" settable="false"/>
        </channelsuite>
     </node>
-    <node type="Harp" id="RTBT_Diag:Harp30" pos="88.546004" len="0.0" status="true">
+    <node type="Harp" softType="Version 2.0.0" id="RTBT_Diag:Harp30" pos="88.546004" len="0.0" status="true">
        <attributes>
           <align x="0.0" y="0.0" z="0.0" pitch="0" yaw="0" roll="0"/>
        </attributes>
