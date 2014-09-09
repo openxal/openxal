@@ -627,8 +627,9 @@ public class TunePanel extends JPanel implements ConnectionListener,
 			scenario.resync();
 			scenario.run();
 
-            @SuppressWarnings("unchecked")
-            Trajectory<TransferMapState> traj = (Trajectory<TransferMapState>) scenario.getTrajectory();
+//            @SuppressWarnings("unchecked")
+//            Trajectory<TransferMapState> traj = (Trajectory<TransferMapState>) scenario.getTrajectory();
+            Trajectory<TransferMapState> traj = scenario.getTrajectory();
 
 			double xSum = 0.;
 			double ySum = 0.;
