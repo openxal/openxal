@@ -1,4 +1,4 @@
-# This script is SCL Tune Wizard OPEN XAL app
+# This script is SCL Tune Wizard OPEN XAL app. It performs the SCL RF phase scan.
 
 import sys
 import math
