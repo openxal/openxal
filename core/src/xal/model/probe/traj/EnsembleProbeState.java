@@ -3,8 +3,10 @@ package xal.model.probe.traj;
 import xal.model.probe.EnsembleProbe;
 import xal.model.xml.ParsingException;
 import xal.tools.beam.CovarianceMatrix;
+import xal.tools.beam.PhaseVector;
 import xal.tools.beam.ens.Ensemble;
 import xal.tools.data.DataAdaptor;
+import xal.tools.math.r3.R3;
 
 /**
  * Encapsulates the state of an EnsembleProbe at a particular point in time.
@@ -13,7 +15,7 @@ import xal.tools.data.DataAdaptor;
  * @version $id:
  * 
  */
-public class EnsembleProbeState extends BunchProbeState {
+public class EnsembleProbeState extends BunchProbeState<EnsembleProbeState> {
 	
 
 
@@ -55,6 +57,24 @@ public class EnsembleProbeState extends BunchProbeState {
     public EnsembleProbeState() {
         m_ensPhase = new Ensemble();
     }
+    
+    /**
+     * Copy constructor for EnsembleProbeState.  Initializes the new
+     * <code>EnsembleProbeState</code> objects with the state attributes
+     * of the given <code>EnsembleProbeState</code>.
+     *
+     * @param ensembleProbeState     initializing state
+     *
+     * @author Christopher K. Allen, Jonathan M. Freed
+     * @since  Jun 26, 2014
+     */
+    public EnsembleProbeState(final EnsembleProbeState ensembleProbeState){
+    	super(ensembleProbeState);
+    	
+    	this.m_enmFldCalc	= ensembleProbeState.m_enmFldCalc;
+
+    	this.m_ensPhase		= ensembleProbeState.m_ensPhase.deepCopy();
+    }
 
     /**
      * Initializing Constructor.  Create a new <code>EnsembleProbeState</code> object and
@@ -62,13 +82,19 @@ public class EnsembleProbeState extends BunchProbeState {
      * 
      * @param probe     <code>EnsembleProbe</code> containing initializing state information
      */
-    public EnsembleProbeState(EnsembleProbe probe) {
+    public EnsembleProbeState(final EnsembleProbe probe) {
         super(probe);
         this.setFieldCalculation( probe.getFieldCalculation() );
-        this.setEnsemble( probe.getEnsemble() );
+
+        this.setEnsemble( probe.getEnsemble().deepCopy() );
     }
-
-
+    
+    
+    /*
+     * Property Accessors
+     */
+    
+    
     /**
      *  Set the field calculation method
      *
@@ -88,14 +114,6 @@ public class EnsembleProbeState extends BunchProbeState {
     public void setEnsemble(Ensemble ens) {
         m_ensPhase = new Ensemble(ens);
     }
-
-
-
-
-
-    /*
-     *  Data Query
-     */
     
     /**
      * Return the field calculation method
@@ -110,18 +128,33 @@ public class EnsembleProbeState extends BunchProbeState {
     public Ensemble getEnsemble() {
         return m_ensPhase;
     }
-	
-	
-//    /**
-//	 * Get the betatron phase for all three phase planes.
-//     * 
-//     * @return  vector (psix,psiy,psiz) of phases in radians
-//     */
-//    @Override
-//    public R3 getBetatronPhase() {
-//		throw new UnsupportedOperationException( "This class does not support this method at this time." );
-//	}
-	
+    
+    /**
+     *  Get the electric field at a point in R3 from the ensemble.
+     *
+     *  @param  ptFld       field point to evaluation ensemble field
+     *  
+     *  @return             electric field at field point
+     *
+     */
+    public R3   electricField(R3 ptFld) {
+    	R3      vecE = new R3();
+        return vecE;
+    }
+
+    
+    /*
+     * Computed Quantities
+     */
+    
+    /**
+     *  Return the coordinates of the ensemble centroid.
+     *
+     *  @return     (homogeneous) phase space coordinates of ensemble centroid
+     */
+    public PhaseVector  phaseMean()   {
+    	return getEnsemble().phaseMean();
+    }
     
     /**
      *  Return the correlation matrix of the distribution
@@ -134,41 +167,25 @@ public class EnsembleProbeState extends BunchProbeState {
         return getEnsemble().phaseCovariance();
     }
     
-//    /**
-//     *  Return the coordinates of the ensemble centroid.
-//     *
-//     *  @return     (homogeneous) phase space coordinates of ensemble centroid
-//     */
-//    public PhaseVector phaseMean() {
-//        return getEnsemble().phaseMean();
-//    }
-    
-    
     
     /*
-     * Debugging
+     * ProbeState Overrides
      */
-     
-     
+    
     /**
-     * Write out state information to a string.
-     * 
-     * @return     text version of internal state data
+     * Implements the clone operation required by the base class
+     * <code>ProbeState</code>
+     *
+     * @see xal.model.probe.traj.ProbeState#copy()
+     *
+     * @author Christopher K. Allen
+     * @since  Jun 27, 2014
      */
     @Override
-    public String toString() {
-        return super.toString() + " calc: " + getFieldCalculation() + 
-                " ens: " + getEnsemble().toString();
+    public EnsembleProbeState   copy() {
+        return new EnsembleProbeState(this);
     }
-        
-        
-        
-	
-    /*
-     * Support Methods
-     */ 
-    
-    
+
     /**
      * Save the state values particular to <code>EnsembleProbeState</code> objects
      * to the data sink.
@@ -205,4 +222,20 @@ public class EnsembleProbeState extends BunchProbeState {
         setEnsemble(new Ensemble());
     }
     
+
+    /*
+     * Object Overrides
+     */
+     
+    /**
+     * Write out state information to a string.
+     * 
+     * @return     text version of internal state data
+     */
+    @Override
+    public String toString() {
+        return super.toString() + " calc: " + getFieldCalculation() + 
+                " ens: " + getEnsemble().toString();
+    }
+        
 }

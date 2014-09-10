@@ -109,11 +109,14 @@ public class ModelWireScanData {
      * Debugging
      */
     public ArrayList<Double> extractWsOneBeamSize(Scenario model, String STR_WS_ID) {
-        Trajectory traj = model.getTrajectory();
+//        Trajectory<? extends ProbeState<?>> traj = model.getTrajectory();
+//        
+//        ProbeState<?> targ = traj.stateForElement(STR_WS_ID);
+//        
+//        EnvelopeProbeState	state = (EnvelopeProbeState)targ;
+        Trajectory<EnvelopeProbeState> traj = model.getTrajectory();
+        EnvelopeProbeState             state = traj.stateForElement(STR_WS_ID);
         
-        ProbeState targ = traj.stateForElement(STR_WS_ID);
-        
-        EnvelopeProbeState	state = (EnvelopeProbeState)targ;
         CovarianceMatrix covarianceMatrix = state.getCovarianceMatrix();
         Twiss[] arrTwiss = covarianceMatrix.computeTwiss();
         

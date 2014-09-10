@@ -70,7 +70,7 @@ abstract public class BumpShapeAdaptor {
     
     /** get the orbit */
 //    abstract public double[] getOrbit( final PlaneAdaptor planeAdaptor, final IPhaseState bumpState, final IPhaseState endState, final int elementCount );
-    abstract public double[] getOrbit( final PlaneAdaptor planeAdaptor, final ProbeState bumpState, final ProbeState endState, final int elementCount );
+    abstract public double[] getOrbit( final PlaneAdaptor planeAdaptor, final ProbeState<?> bumpState, final ProbeState<?> endState, final int elementCount );
 
 
     /*
@@ -100,7 +100,7 @@ abstract public class BumpShapeAdaptor {
      * @author Christopher K. Allen
      * @since  Nov 12, 2013
      */
-    public void resetTrajectory(Trajectory traj) {
+    public void resetTrajectory(Trajectory<?> traj) {
         this.prcSimData = new SimpleSimResultsAdaptor(traj);
     }
     
@@ -145,7 +145,7 @@ class BumpOffsetAdaptor extends BumpShapeAdaptor {
 //	}
 
     /** get the orbit */
-    public double[] getOrbit( final PlaneAdaptor planeAdaptor, final ProbeState bumpState, final ProbeState endState, final int elementCount ) {
+    public double[] getOrbit( final PlaneAdaptor planeAdaptor, final ProbeState<?> bumpState, final ProbeState<?> endState, final int elementCount ) {
         final int orbitSize = getOrbitSize( elementCount );
         final double[] orbit = new double[orbitSize];   // bump offset, end offset and end angle and possibly the bump angle
         
@@ -200,7 +200,7 @@ class BumpAngleAdaptor extends BumpShapeAdaptor {
 //	}
 
     /** get the orbit */
-    public double[] getOrbit( final PlaneAdaptor planeAdaptor, final ProbeState bumpState, final ProbeState endState, final int elementCount ) {
+    public double[] getOrbit( final PlaneAdaptor planeAdaptor, final ProbeState<?> bumpState, final ProbeState<?> endState, final int elementCount ) {
         final int orbitSize = getOrbitSize( elementCount );
         final double[] orbit = new double[orbitSize];   // bump angle, end offset and end angle and possibly bump offset
         

@@ -9,11 +9,9 @@ package xal.model.probe;
 import xal.model.ModelException;
 import xal.model.alg.EnvTrackerAdapt;
 import xal.model.probe.traj.EnvelopeProbeState;
-import xal.model.probe.traj.EnvelopeTrajectory;
-import xal.model.probe.traj.ProbeState
-;
+import xal.model.probe.traj.ProbeState;
+import xal.model.probe.traj.Trajectory;
 import xal.model.xml.ParsingException;
-
 import xal.tools.beam.CovarianceMatrix;
 import xal.tools.beam.PhaseMatrix;
 import xal.tools.beam.PhaseVector;
@@ -56,7 +54,7 @@ import xal.tools.data.DataAdaptor;
  * @see xal.model.probe.traj.EnvelopeProbeState
  */
 
-public class EnvelopeProbe extends BunchProbe {
+public class EnvelopeProbe extends BunchProbe<EnvelopeProbeState> {
 
     
     
@@ -82,22 +80,7 @@ public class EnvelopeProbe extends BunchProbe {
     }
     
     
-    /*
-	 * Local Attributes
-	 */
 
-	/** first-order response matrix from the initial state */
-	private PhaseMatrix        matResp;
-    
-	/** first-order response matrix from the initial state (no space charge) */
-	private PhaseMatrix        matRespNoSpaceCharge;
-   
-    
-    /** first-order response matrix of current slice of element **/
-    private PhaseMatrix        matPert;
-
-	/** envelope state */
-	private CovarianceMatrix  matSigam;
 
 //    /** 
 //     * <p>
@@ -128,17 +111,17 @@ public class EnvelopeProbe extends BunchProbe {
 //    private Twiss[]            arrTwiss;
 
 
-    /** 
-     * behavior flag - save correlation data as twiss parameters 
-     * 
-     * CKA NOTES:
-     * - As this attribute relates to the above attributes, I am 
-     * deprecating it as well.
-     * 
-     * @deprecated  associated with attribute <code>arrTwiss</code>
-     */
-	@Deprecated
-    private boolean            bolSaveTwiss = false;
+//    /** 
+//     * behavior flag - save correlation data as twiss parameters 
+//     * 
+//     * CKA NOTES:
+//     * - As this attribute relates to the above attributes, I am 
+//     * deprecating it as well.
+//     * 
+//     * @deprecated  associated with attribute <code>arrTwiss</code>
+//     */
+//	@Deprecated
+//    private boolean            bolSaveTwiss = false;
 
     
 
@@ -150,10 +133,12 @@ public class EnvelopeProbe extends BunchProbe {
 	 * Default Constructor. Creates a new, empty instance of EnvelopeProbe
 	 */
 	public EnvelopeProbe() {
-		this.matResp = PhaseMatrix.identity();
-		this.matRespNoSpaceCharge = PhaseMatrix.identity();
-		this.matPert  = PhaseMatrix.identity();
-		this.matSigam = CovarianceMatrix.newIdentity();
+		super();
+		
+		this.setResponseMatrix(PhaseMatrix.identity());
+		this.setResponseMatrixNoSpaceCharge(PhaseMatrix.identity());
+		this.setCurrentResponseMatrix(PhaseMatrix.identity());
+		this.setCovariance(CovarianceMatrix.newIdentity());
 	};
 
 	/**
@@ -162,15 +147,14 @@ public class EnvelopeProbe extends BunchProbe {
 	 * @param probe
 	 *            <code>EnvelopeProbe</code> object to be cloned
 	 */
-	public EnvelopeProbe(EnvelopeProbe probe) {
+	public EnvelopeProbe(final EnvelopeProbe probe) {
 		super(probe);
 
         //PhaseMatrix copy constructor does a deep copy
-		this.setResponseMatrix(new PhaseMatrix(probe.getResponseMatrix()));
-		this.setResponseMatrixNoSpaceCharge(new PhaseMatrix(probe.getResponseMatrixNoSpaceCharge()));
-		this.setCurrentResponseMatrix(new PhaseMatrix(probe.getCurrentResponseMatrix()));
-//		this.setBetatronPhase(new R3(probe.getBetatronPhase()));
-		this.setCovariance(new CovarianceMatrix(probe.getCovariance()));
+        this.setCovariance( probe.getCovariance().clone() );
+		this.setResponseMatrix( probe.getResponseMatrix().clone() );
+		this.setResponseMatrixNoSpaceCharge( probe.getResponseMatrixNoSpaceCharge().clone() );
+		this.setCurrentResponseMatrix( probe.getCurrentResponseMatrix().clone() );
 	};
     
     /**
@@ -210,12 +194,15 @@ public class EnvelopeProbe extends BunchProbe {
     /**
      * Initialize this probe from the one specified.
      * @param probe the probe from which to initialize this one
+     * 
+     * @deprecated  Never used
      */
+    @Deprecated
     @Override
-    protected void initializeFrom( final Probe probe ) {
+    protected void initializeFrom( final Probe<EnvelopeProbeState> probe ) {
         super.initializeFrom( probe );
         
-        applyState( probe.createProbeState() );
+        applyState( probe.cloneCurrentProbeState() );
         createTrajectory();
     }
 
@@ -259,7 +246,7 @@ public class EnvelopeProbe extends BunchProbe {
      */
     @Deprecated
     public void setSaveTwissFlag(boolean bolSaveTwiss)    {
-        this.bolSaveTwiss = bolSaveTwiss;
+    	this.stateCurrent.setSaveTwissFlag(bolSaveTwiss);
     }
     
     /**
@@ -271,7 +258,7 @@ public class EnvelopeProbe extends BunchProbe {
 	 * @see xal.tools.beam.CovarianceMatrix
 	 */
 	public void setCovariance(CovarianceMatrix matTau) {
-		this.matSigam = matTau;
+		this.stateCurrent.setCovariance(matTau);
 	};
 
 //	/**
@@ -303,7 +290,7 @@ public class EnvelopeProbe extends BunchProbe {
 	 *            first-order response matrix in homogeneous coordinates
 	 */
 	public void setResponseMatrix(PhaseMatrix matResp) {
-		this.matResp = matResp;
+		this.stateCurrent.setResponseMatrix(matResp);
 	}
 	
 	
@@ -317,7 +304,7 @@ public class EnvelopeProbe extends BunchProbe {
 	 *            first-order response matrix in homogeneous coordinates
 	 */
 	public void setResponseMatrixNoSpaceCharge(PhaseMatrix matResp) {
-		this.matRespNoSpaceCharge = matResp;
+		this.stateCurrent.setResponseMatrixNoSpaceCharge(matResp);
 	}
 
     /**
@@ -327,7 +314,7 @@ public class EnvelopeProbe extends BunchProbe {
      * @param matRespCurr   current response matrix factor
      */
 	public void setCurrentResponseMatrix(PhaseMatrix matRespCurr) {
-		this.matPert = matRespCurr;
+		this.stateCurrent.setPerturbationMatrix(matRespCurr);
 	}
 
     
@@ -344,7 +331,7 @@ public class EnvelopeProbe extends BunchProbe {
      * @return  the 7x7 matrix <z*z^T> in homogeneous coordinates
      */
     public CovarianceMatrix getCovariance() {
-        return matSigam;
+        return this.stateCurrent.getCovarianceMatrix();
     }
 	/**
 	 * Get the first-order response matrix accumulated by the Envelope since its
@@ -354,7 +341,7 @@ public class EnvelopeProbe extends BunchProbe {
 	 * @return first-order response matrix in homogeneous coordinates
 	 */
 	public PhaseMatrix getResponseMatrix() {
-		return this.matResp;
+		return this.stateCurrent.getResponseMatrix();
 	}
 	/**
 	 * Get the first-order response matrix accumulated by the Envelope since its
@@ -364,7 +351,7 @@ public class EnvelopeProbe extends BunchProbe {
 	 * @return first-order response matrix in homogeneous coordinates
 	 */
 	public PhaseMatrix getResponseMatrixNoSpaceCharge() {
-		return this.matRespNoSpaceCharge;
+		return this.stateCurrent.getResponseMatrixNoSpaceCharge();
 	}
 
     /**
@@ -375,7 +362,7 @@ public class EnvelopeProbe extends BunchProbe {
      * @return  last factor of the response matrix
      */
 	public PhaseMatrix getCurrentResponseMatrix() {
-		return this.matPert;
+		return this.stateCurrent.getPerturbationMatrix();
 	}
 
 
@@ -426,7 +413,7 @@ public class EnvelopeProbe extends BunchProbe {
      */
     @Deprecated
     public boolean getSaveTwissFlag()   {
-        return this.bolSaveTwiss;
+        return this.stateCurrent.getSaveTwissFlag();
     }
     
     
@@ -442,7 +429,7 @@ public class EnvelopeProbe extends BunchProbe {
      *  @return     <(z-<z>)*(z-<z>)^T> = <z*z^T> - <z>*<z>^T
      */
     public CovarianceMatrix  phaseCovariance() {
-        return getCovariance().computeCentralCovariance();
+        return this.stateCurrent.centralCovariance();
     }
     
     /** 
@@ -451,7 +438,7 @@ public class EnvelopeProbe extends BunchProbe {
      *  @return         <z> = (<x>, <xp>, <y>, <yp>, <z>, <zp>, 1)^T
      */
     public PhaseVector phaseMean()  {
-        return getCovariance().getMean();
+    	return this.stateCurrent.phaseMean();
     }
 
     
@@ -465,11 +452,45 @@ public class EnvelopeProbe extends BunchProbe {
      * 
      * @return      response matrix from elemFrom to elemTo
      * 
-     * @see EnvelopeTrajectory#stateResponse(String, String)
+     * @see EnvelopeTrajectory#computeTransferMatrix(String, String)
+     * 
+     * @deprecated  This calculation should be done using the utility class
+     *              xal.tools.beam.calc.CalculationsOnMachines
      */
+    @Deprecated
     public PhaseMatrix stateResponse(String elemFrom, String elemTo) {
-        return ((EnvelopeTrajectory) this.getTrajectory()).stateResponse(
-                elemFrom, elemTo);
+    	
+        //return ((EnvelopeTrajectory) this.getTrajectory()).stateResponse(
+        //        elemFrom, elemTo);
+    	
+    	// Moved implementation to here from the EnvelopeTrajectory class when we changed 
+    	// to generic Trajectory.  The function used to just be a wrapper as shown above.
+    	// - JMF
+    	
+//    	Trajectory<EnvelopeProbeState> trajectory = new Trajectory<EnvelopeProbeState>();
+    	Trajectory<EnvelopeProbeState> trajectory = this.getTrajectory();
+    	
+		// find starting index
+		int[] arrIndFrom = trajectory.indicesForElement(elemFrom);
+
+		int[] arrIndTo = trajectory.indicesForElement(elemTo);
+
+		if (arrIndFrom.length == 0 || arrIndTo.length == 0)
+			throw new IllegalArgumentException("unknown element id");
+
+		int indFrom, indTo;
+		indTo = arrIndTo[arrIndTo.length - 1]; // use last state before start element
+
+		EnvelopeProbeState stateTo = trajectory.stateWithIndex(indTo);
+		PhaseMatrix matTo = stateTo.getResponseMatrix();
+		
+		indFrom = arrIndFrom[0] - 1;
+		if (indFrom < 0) return matTo; // response from beginning of machine
+		
+		EnvelopeProbeState stateFrom = trajectory.stateWithIndex(indFrom);
+		PhaseMatrix matFrom = stateFrom.getResponseMatrix();
+		
+		return matTo.times(matFrom.inverse());
     }
 
     
@@ -489,46 +510,64 @@ public class EnvelopeProbe extends BunchProbe {
 	public EnvelopeProbeState createProbeState() {
 		return new EnvelopeProbeState(this);
 	}
-
+    
 	/**
-	 * Creates a <code>Trajectory</code> object of the proper type for saving
-	 * the probe's history.
+	 * Creates a new, empty <code>EnvelopeProbeState</code>.
 	 * 
-	 * @return a new, empty <code>EnvelopeTrajectory</code> object
+	 * @return a new, empty <code>EnvelopeProbeState</code>
+	 * 
+	 * @author Jonathan M. Freed
+	 * @since Jul 1, 2014
 	 */
-    @Override
-	public EnvelopeTrajectory createTrajectory() {
-		return new EnvelopeTrajectory();
+	@Override
+	public EnvelopeProbeState createEmptyProbeState(){
+		return new EnvelopeProbeState();
 	}
 
 	/**
-	 * Apply the contents of ProbeState to update my current state. The argument
-	 * supplying the new state should be of concrete type
-	 * <code>EnvelopeProbeState</code>.
+	 * Creates a <code>Trajectory&lt;EnvelopeProbeState&gt;</code> object of the
+	 * proper type for saving the probe's history.
 	 * 
-	 * @param state
-	 *            <code>ProbeState</code> object containing new probe state
-	 *            data
+	 * @return a new, empty <code>Trajectory&lt;EnvelopeProbeState&gt;</code> 
+	 * 		for saving the probe's history
 	 * 
-	 * @exception IllegalArgumentException
-	 *                wrong <code>ProbeState</code> subtype for this probe
+	 * @author Jonathan M. Freed
 	 */
-    @SuppressWarnings("deprecation")
     @Override
-	public void applyState(ProbeState state) {
-		if (!(state instanceof EnvelopeProbeState))
-			throw new IllegalArgumentException("invalid probe state");
-		EnvelopeProbeState stateEnv = (EnvelopeProbeState) state;
-
-		super.applyState(stateEnv);
-		this.setCovariance(stateEnv.getCovarianceMatrix());
-		this.setResponseMatrix(stateEnv.getResponseMatrix());
-		this.setResponseMatrixNoSpaceCharge(stateEnv.getResponseMatrixNoSpaceCharge());
-        this.setCurrentResponseMatrix(stateEnv.getPerturbationMatrix());
-		//obsolete this.setTwiss(stateEnv.getTwiss());
-//        this.setTwiss(stateEnv.twissParameters());
-        this.setSaveTwissFlag(stateEnv.getSaveTwissFlag());
-	}
+	public Trajectory<EnvelopeProbeState> createTrajectory() {
+		return new Trajectory<EnvelopeProbeState>(EnvelopeProbeState.class);
+    }
+    
+//	/**
+//	 * Apply the contents of ProbeState to update my current state. The argument
+//	 * supplying the new state should be of concrete type
+//	 * <code>EnvelopeProbeState</code>.
+//	 * 
+//	 * @param state
+//	 *            <code>ProbeState</code> object containing new probe state
+//	 *            data
+//	 * 
+//	 * @exception IllegalArgumentException
+//	 *                wrong <code>ProbeState</code> subtype for this probe
+//	 */
+////    @SuppressWarnings("deprecation")
+//    @Override
+//	public void applyState(EnvelopeProbeState state) {
+//		
+//        this.stateCurrent = state.copy();
+//        
+////        super.applyState(state);
+////		
+////		this.setCovariance( state.getCovarianceMatrix());
+////		this.setResponseMatrix(state.getResponseMatrix());
+////		this.setResponseMatrixNoSpaceCharge(state.getResponseMatrixNoSpaceCharge());
+////        this.setCurrentResponseMatrix(state.getPerturbationMatrix());
+//        
+//        
+//		//obsolete this.setTwiss(stateEnv.getTwiss());
+////        this.setTwiss(stateEnv.twissParameters());
+////        this.setSaveTwissFlag(state.getSaveTwissFlag());
+//	}
 
     
     /**
@@ -740,7 +779,7 @@ public class EnvelopeProbe extends BunchProbe {
      * @version  Oct 31, 2013
      */
     @Override
-    protected ProbeState readStateFrom(DataAdaptor container) throws ParsingException {
+    protected EnvelopeProbeState readStateFrom(DataAdaptor container) throws ParsingException {
         EnvelopeProbeState state = new EnvelopeProbeState();
         state.load(container);
         return state;

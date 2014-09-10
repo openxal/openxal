@@ -4,3 +4,8 @@ build/**/*
 /build
 /.classpath
 /.project
+/doc
+/.pydevproject
+/crazy
+/.settings
+/.gitignore

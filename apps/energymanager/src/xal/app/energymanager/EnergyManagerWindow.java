@@ -9,35 +9,57 @@
 
 package xal.app.energymanager;
 
-import xal.extension.application.*;
-import xal.extension.application.smf.*;
-import xal.smf.*;
-import xal.model.probe.*;
-import xal.model.alg.*;
-import xal.tools.data.*;
-import xal.extension.widgets.apputils.SimpleProbeEditor;
-//import xal.tools.apputils.NumericCellRenderer;
-import xal.tools.apputils.files.RecentFileTracker;
-
-import javax.swing.*;
-import javax.swing.table.*;
-import javax.swing.border.*;
-import java.awt.*;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.event.*;
-import javax.swing.event.*;
-import java.text.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.Writer;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
-import java.io.*;
+
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.JCheckBox;
+import javax.swing.JComponent;
+import javax.swing.JFileChooser;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.ListSelectionModel;
+import javax.swing.SwingConstants;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+
+import xal.extension.application.Commander;
+import xal.extension.application.XalDocument;
+import xal.extension.application.smf.AcceleratorWindow;
+import xal.extension.widgets.apputils.SimpleProbeEditor;
+import xal.model.alg.Tracker;
+import xal.model.probe.Probe;
+import xal.smf.AcceleratorNode;
+import xal.smf.AcceleratorSeq;
+//import xal.tools.apputils.NumericCellRenderer;
+import xal.tools.apputils.files.RecentFileTracker;
+import xal.tools.data.KeyValueQualifier;
+import xal.tools.data.Qualifier;
+import xal.tools.data.SortOrdering;
 
 
 /** Main window. */
@@ -194,10 +216,10 @@ public class EnergyManagerWindow extends AcceleratorWindow implements EnergyMana
             public void actionPerformed( final ActionEvent event ) {
 				try {
 					final SimpleProbeEditor probeEditor;
-					final Probe probe = Probe.newProbeInitializedFrom( getModel().getEntranceProbe() );
+					final Probe<?> probe = Probe.newProbeInitializedFrom( getModel().getEntranceProbe() );
 //					final JDialog probeEditorDialog = probeEditor.createSimpleProbeEditor( probe );
                     probeEditor = new SimpleProbeEditor( EnergyManagerWindow.this , probe );
-					final Tracker algorithm = (Tracker)probe.getAlgorithm();
+					final Tracker algorithm = (Tracker)probe.getAlgorithm(); // CKA never used
 					getModel().setEntranceProbe( probeEditor.getProbe() );
 				}
 				catch( Exception exception ) {
@@ -884,7 +906,7 @@ public class EnergyManagerWindow extends AcceleratorWindow implements EnergyMana
 		
 		// file format should be a line for each cavity:  cavityID	amplitude phase
 		try {
-			final BufferedReader reader = new BufferedReader( new FileReader( file ) );
+			final BufferedReader reader = new BufferedReader( new FileReader( file ) ); // CKA - never closed
 			while ( reader.ready() ) {
 				try {
 					final String line = reader.readLine();					
@@ -1253,7 +1275,7 @@ public class EnergyManagerWindow extends AcceleratorWindow implements EnergyMana
 	 * @param model the model posting the event
 	 * @param entranceProbe the new entrance probe
 	 */
-	public void entranceProbeChanged( final EnergyManager model, final xal.model.probe.Probe entranceProbe ) {}
+	public void entranceProbeChanged( final EnergyManager model, final xal.model.probe.Probe<?> entranceProbe ) {}
 		
 	
 	/** 

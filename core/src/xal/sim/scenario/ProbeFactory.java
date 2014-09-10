@@ -23,6 +23,7 @@ import xal.model.probe.ParticleProbe;
 import xal.model.probe.Probe;
 import xal.model.probe.TransferMapProbe;
 import xal.model.probe.TwissProbe;
+import xal.model.probe.traj.BunchProbeState;
 import xal.smf.Accelerator;
 import xal.smf.AcceleratorSeq;
 import xal.tools.beam.Twiss;
@@ -37,6 +38,11 @@ import xal.tools.math.r3.R3;
 
 /**
  * ProbeFactory is a factory for generating probes.
+ * 
+ * TODO 
+ *    <br/> &middot; Let's do the proper type of the probe species on the methods
+ *    <br/> &middot; Perhaps we could rename the <code>get</code>-prefixed methods to
+ *                   a more conventional naming (e.g., <code>create</code>-)
  *
  * @author   tap
  * @since    Sep 03, 2004
@@ -136,6 +142,9 @@ public class ProbeFactory {
 		
 		boolean success = initializeLocation( probe, locationID, sequence);
 		
+		// initialize the probe so the initial state is set
+	    probe.initialize();
+		
 		return success ? probe : null;
 	}
 	
@@ -170,6 +179,9 @@ public class ProbeFactory {
 		
 		boolean success = initializeLocation( probe, locationID, sequence);
 		
+		// initialize the probe so the initial state is set
+	    probe.initialize();
+		
 		return success ? probe : null;
 	}
 	
@@ -202,6 +214,9 @@ public class ProbeFactory {
 	    bolResult &= ProbeFactory.initializeBeam(prbTwiss, seqParent);
 	    bolResult &= ProbeFactory.initializeTwiss(prbTwiss, strLocId, seqParent);
 	 
+	    // initialize the probe so the initial state is set
+	    prbTwiss.initialize();
+	    
 	    return bolResult ? prbTwiss : null;
 	}
 	
@@ -236,6 +251,9 @@ public class ProbeFactory {
 		boolean success = initializeLocation( probe, sequence.getEntranceID(), sequence);
 		success &= initializeBeam( probe, sequence );
 		success &= initializeTwiss( probe, locationID, sequence );
+		
+		// initialize the probe so the initial state is set
+		probe.initialize();
 		
 		return success ? probe : null;
 	}
@@ -286,7 +304,7 @@ public class ProbeFactory {
 	 * 
 	 * @return           true for successful initialization and false if it fails
 	 */
-	private static boolean initializeLocation( final Probe probe, final String locationID, final AcceleratorSeq sequence) {
+	private static boolean initializeLocation( final Probe<?> probe, final String locationID, final AcceleratorSeq sequence) {
 		final EditContext editContext = sequence.getAccelerator().editContext();
 //		System.out.println("editContext = "+editContext);
 		final DataTable speciesTable = editContext.getTable( SPECIES_TABLE );
@@ -326,7 +344,7 @@ public class ProbeFactory {
 	 * @param sequence   the sequence for which to initialize the probe
 	 * @return           true for successful initialization and false if it fails
 	 */
-	private static boolean initializeBeam( final BunchProbe probe, final AcceleratorSeq sequence) {
+	private static boolean initializeBeam( final BunchProbe<? extends BunchProbeState<?>> probe, final AcceleratorSeq sequence) {
 		final EditContext editContext = sequence.getAccelerator().editContext();
 		final DataTable beamTable = editContext.getTable( BEAM_TABLE );
 		

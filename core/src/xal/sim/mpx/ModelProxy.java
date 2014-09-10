@@ -17,16 +17,15 @@ import xal.model.probe.traj.ProbeState;
 import xal.model.xml.ParsingException;
 import xal.model.xml.ProbeXmlParser;
 import xal.model.xml.ProbeXmlWriter;
-
 import xal.sim.scenario.Scenario;
 import xal.sim.slg.LatticeError;
 import xal.sim.sync.SynchronizationException;
-
 import xal.smf.AcceleratorNode;
 import xal.smf.AcceleratorSeq;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 import javax.swing.event.EventListenerList;
 
@@ -45,7 +44,7 @@ public class ModelProxy {
 	private boolean bLattice;
 	private boolean bPropagated = false;
 	protected Scenario scenario;
-	protected Probe probe = null;
+	protected Probe<?> probe = null;
 	
 	private EnvelopeProbeState initProbeState;
 	private Twiss[] initTwiss;
@@ -189,8 +188,10 @@ public class ModelProxy {
 			
 			// initialize the probe properly
 			if (probe instanceof EnvelopeProbe) {
-				((EnvelopeProbe) probe).initFromTwiss(initTwiss);
-				probe.applyState(initProbeState);
+				EnvelopeProbe envProbe = ((EnvelopeProbe) probe);
+				envProbe.initFromTwiss(initTwiss);
+				envProbe.applyState(initProbeState);
+				probe = envProbe.copy();
 			}
 			
 			probe.initialize();
@@ -235,7 +236,7 @@ public class ModelProxy {
 	 * @param  probeFile the file for the probe definition in XML.
 	 */
 	public void setNewProbe(File probeFile) throws LatticeError {
-		XmlDataAdaptor probeXmlAdptr;
+		XmlDataAdaptor probeXmlAdptr;     // TODO: CKA - NEVER USED
 		if (probeFile.equals(probeMasterFile)) {
 			return;
 		} else {
@@ -253,7 +254,7 @@ public class ModelProxy {
 			}
  */
 			// get new probe
-			Probe p;
+			Probe<?> p;
 			try {
 				p = ProbeXmlParser.parse(probeMasterFile.getPath());
 			} catch (ParsingException e) {
@@ -268,7 +269,7 @@ public class ModelProxy {
 	 * Setter for a new probe.
 	 * @param aProbe the new probe object.
 	 */
-	public void setNewProbe(Probe aProbe) {
+	public void setNewProbe(Probe<?> aProbe) {
 		probe = aProbe;
 		bPropagated = false;
 		
@@ -371,7 +372,7 @@ public class ModelProxy {
 	/**Getter for the on-line-model {@link gov.sns.xal.model.probe.Probe probe} property.
 	 * @return the on-line-model probe. If probe is not set yet <code>null</code> is retuned.
 	 */
-	public Probe getProbe() {
+	public Probe<?> getProbe() {
 		try {
 			checkProbe();
 		} catch (LatticeError e) {
@@ -428,15 +429,15 @@ public class ModelProxy {
 	 * @return the probe state for the center of that node.
 	 * @throws ModelException
 	 */
-	public ProbeState stateForElement(String id) throws ModelException {
-		ProbeState state;
+	public ProbeState<?> stateForElement(String id) throws ModelException {
+		ProbeState<?> state;
 		try {
 			checkLattice();
 			checkProbe();
 			AcceleratorNode node = scenario.nodeWithId(id);
 			Element elem = (Element) scenario.elementsMappedTo(node).get(0);
 			String latticeElementId = elem.getId();
-			state = scenario.trajectoryStatesForElement(latticeElementId)[0];
+			state = scenario.trajectoryStatesForElement(latticeElementId).get(0);
 		} catch (LatticeError e) {
 			throw new ModelException(e.getMessage());
 		}
@@ -448,19 +449,22 @@ public class ModelProxy {
 	 * @return an array probe states for the given element.
 	 * @throws ModelException
 	 */
-	public ProbeState[] statesForElement(String id) throws ModelException {
-		ProbeState[] states;
+	public ProbeState<?>[] statesForElement(String id) throws ModelException {
+		ProbeState<?>[] states;
 		try {
 			checkLattice();
 			checkProbe();
 		} catch (LatticeError e) {
 			throw new ModelException(e.getMessage());
 		}
-		states = scenario.trajectoryStatesForElement(id);
+		List<? extends ProbeState<?>> lstStates= scenario.trajectoryStatesForElement(id);
+		
+		ProbeState<?>[]  arrStates = new ProbeState<?>[lstStates.size()];
+		states = lstStates.toArray(arrStates);
 		return states;
 	}
 
-	/**Check wether the model proxy has a valid lattice and take actions. If the lattice is not
+	/**Check whether the model proxy has a valid lattice and take actions. If the lattice is not
 	 * valid all ModelProxyListeners will be notified by calling 
 	 * {@link xal.sim.mpx.sns.xal.model.mpx.ModelProxyListener#missingInputToRunModel missingInputToRunModel}
 	 * and and an {@link java.lang.Error} will be thrown.

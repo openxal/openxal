@@ -3,11 +3,13 @@ package xal.app.beamatfoil;
 import java.text.*;
 import java.awt.*;
 import java.awt.event.*;
+
 import javax.swing.*;
 import javax.swing.table.*;
 import javax.swing.text.*;
 import javax.swing.event.*;
 import javax.swing.border.*;
+
 import java.util.*;
 import java.io.*;
 import java.util.List;
@@ -15,23 +17,17 @@ import java.beans.*;
 
 import xal.extension.widgets.swing.Wheelswitch;
 import xal.tools.text.FortranNumberFormat;
-
 import xal.ca.*;
-
 import xal.extension.widgets.plot.*;
 import xal.tools.apputils.*;
 import xal.extension.widgets.swing.*;
 import xal.tools.xml.*;
-
 import xal.service.pvlogger.*;
 import xal.tools.database.*;
-
 import xal.smf.proxy.ElectromagnetPropertyAccessor;
-
 import xal.smf.*;
 import xal.smf.impl.*;
 import xal.smf.impl.qualify.*;
-
 import xal.model.*;
 import xal.sim.scenario.*;
 import xal.service.pvlogger.sim.PVLoggerDataSource;
@@ -40,13 +36,13 @@ import xal.model.probe.*;
 //import xal.model.probe.resp.*;
 import xal.model.probe.traj.*;
 import xal.sim.sync.*;
-//import xal.model.probe.resp.traj.*;
-
 import xal.tools.beam.*;
+import xal.tools.beam.calc.CalculationsOnBeams;
 //import xal.tools.optimizer.*;
 import xal.extension.solver.*;
 import xal.extension.solver.algorithm.*;
 import xal.extension.solver.hint.InitialDelta;
+// TODO: CKA - Over half the imports are unused
 
 /**
  *  Description of the Class
@@ -115,7 +111,7 @@ public class HEBTOrbitCorrector {
 	//message text field. It is actually message text field from Window
 	private JTextField messageTextLocal = new JTextField();
 
-	private double min_sum = 10.0e+20;
+	private double min_sum = 10.0e+20;     // TODO: CKA - NEVER USED
     
     
     //create a problem for solver
@@ -565,21 +561,26 @@ public class HEBTOrbitCorrector {
 			 return false;
 		 }
 		 
-		 EnvelopeTrajectory trajectory = (EnvelopeTrajectory) probe.getTrajectory();
+		 Trajectory<EnvelopeProbeState> trajectory = probe.getTrajectory();
+         CalculationsOnBeams            cobCalcEng = new CalculationsOnBeams(trajectory);
 		 
 		 AcceleratorNode foil = accSeq.getNodeWithId("Ring_Inj:Foil");
 		 
 		 for(int i = 0, n = corrV.size(); i < n; i++) {
 			 Corr_Element corrElm = corrV.get(i);
 			 Electromagnet corr_mag = corrElm.getMagnet();
-			 ProbeState probeState = trajectory.statesForElement(corr_mag.getId())[0];
+			 EnvelopeProbeState probeState = trajectory.statesForElement(corr_mag.getId()).get(0);
 			 double W0 = probeState.getSpeciesRestEnergy();
 			 double gamma = probeState.getGamma();
 			 double beta = Math.sqrt(1.0 - 1.0 / (gamma * gamma));
 			 double L = corr_mag.getEffLength();
 			 double c = 2.997924E+8;
 			 double res_coeff = (L * c) / (W0 * beta * gamma);
-			 PhaseMatrix phMatr = trajectory.stateResponse(corrElm.getName(),foil.getId());
+			 
+			// CKA 8/22/2014
+//			 PhaseMatrix phMatr = probe.stateResponse(corrElm.getName(),foil.getId()); 
+			 PhaseMatrix phMatr = cobCalcEng.computeTransferMatrix(corrElm.getName(), foil.getId());
+			 
 			 double mPos = 0.;
 			 double mAngle = 0.;
 			 if(corrElm.getName().indexOf(":DCH") > 0) {
@@ -646,7 +647,7 @@ public class HEBTOrbitCorrector {
 		
 		min_sum = 10.0e+20;
 		
-		Scorer scorer = new Scorer(){
+		Scorer scorer = new Scorer(){     // TODO: CKA - The value is NEVER USED
 			public double score(Trial trial, List<Variable> scoreVariables){
 				//sum calculations
 				double sum_fields = 0.;
@@ -744,7 +745,7 @@ public class HEBTOrbitCorrector {
                 /** ID for serializable version */
                 private static final long serialVersionUID = 1L;
                 
-				public Class getColumnClass(int columnIndex) {
+				public Class getColumnClass(int columnIndex) {  // TODO: CKA - Unchecked Conversion
 					if(columnIndex == 0 || columnIndex == 1 || columnIndex == 2) {
 						return String.class;
 					}

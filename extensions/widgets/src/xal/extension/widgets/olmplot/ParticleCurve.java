@@ -70,7 +70,7 @@ public class ParticleCurve extends BasicGraphData {
      * @author  Christopher K. Allen
      * @since   Nov 26, 2012
      */
-    public ParticleCurve(PLANE plane, Trajectory trjPrt) throws IllegalArgumentException {
+    public ParticleCurve(PLANE plane, Trajectory<ParticleProbeState> trjPrt) throws IllegalArgumentException {
         this(plane);
 
         this.loadCurve(trjPrt);
@@ -92,10 +92,10 @@ public class ParticleCurve extends BasicGraphData {
      * @author Christopher K. Allen
      * @since  Nov 26, 2012
      */
-    public  void    loadCurve(Trajectory trjSim) throws IllegalArgumentException {
+    public  void    loadCurve(Trajectory<ParticleProbeState> trjSim) throws IllegalArgumentException {
 
         // Load the trajectory data into the graphs
-        Iterator   iterState = trjSim.stateIterator();
+        Iterator<ParticleProbeState>   iterState = trjSim.stateIterator();
         while (iterState.hasNext()) {
             Object             objPar = iterState.next();
             if ( !(objPar instanceof ParticleProbeState) )
