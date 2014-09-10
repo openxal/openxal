@@ -14,10 +14,16 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import xal.model.elem.IdealMagQuad;
+import xal.model.elem.IdealRfGap;
+import xal.sim.scenario.Scenario;
 import xal.smf.data.XMLDataManager;
 import xal.smf.impl.Quadrupole;
-import xal.smf.impl.RfCavity;
+import xal.smf.impl.RfGap;
 import xal.smf.impl.SCLCavity;
+import xal.smf.proxy.ElectromagnetPropertyAccessor;
+import xal.smf.proxy.RfCavityPropertyAccessor;
+import xal.smf.proxy.RfGapPropertyAccessor;
 import xal.tools.ResourceManager;
 
 /**
@@ -55,7 +61,7 @@ public class TestCompareLiveAccelerator {
      */
     
     /** The design Accelerator under test */
-    static private Accelerator          ACCEL_DESIGN;
+    static private Accelerator          ACCEL_DSGN;
     
     /** The production Accelerator under test */
     static private Accelerator          ACCEL_PROD;
@@ -65,7 +71,14 @@ public class TestCompareLiveAccelerator {
     static private AcceleratorSeq     SEQ_PROD;
 
     /** The design Accelerator Sequence under test */
-    static private AcceleratorSeq     SEQ_DESIGN;
+    static private AcceleratorSeq     SEQ_DSGN;
+    
+    
+    /** The online model of the design accelerator sequence */
+    static private Scenario           MOD_DSGN;
+
+    /** The online model of the production accelerator sequence */
+    static private Scenario           MOD_PROD;
 
     
     /*
@@ -100,11 +113,19 @@ public class TestCompareLiveAccelerator {
      */
     @BeforeClass
     public static void setUpBeforeClass() throws Exception {
-        ACCEL_DESIGN = loadAccelerator(STR_CFGFILE_DESIGN);
-        ACCEL_PROD   = loadAccelerator(STR_CFGFILE_PROD);
+        ACCEL_DSGN = loadAccelerator(STR_CFGFILE_DESIGN);
+        ACCEL_PROD = loadAccelerator(STR_CFGFILE_PROD);
         
-        SEQ_DESIGN = ACCEL_DESIGN.getSequence(STR_ID_TESTSEQ);
-        SEQ_PROD   = ACCEL_PROD.getSequence(STR_ID_TESTSEQ);
+        SEQ_DSGN = ACCEL_DSGN.getSequence(STR_ID_TESTSEQ);
+        SEQ_PROD = ACCEL_PROD.getSequence(STR_ID_TESTSEQ);
+        
+        MOD_DSGN = Scenario.newScenarioFor(SEQ_DSGN);
+        MOD_DSGN.setSynchronizationMode(Scenario.SYNC_MODE_DESIGN);
+        MOD_DSGN.resync();
+        
+        MOD_PROD = Scenario.newScenarioFor(SEQ_PROD);
+        MOD_PROD.setSynchronizationMode(Scenario.SYNC_MODE_LIVE);
+        MOD_PROD.resync();
     }
 
     /**
@@ -126,8 +147,8 @@ public class TestCompareLiveAccelerator {
         String  strId1 = "SCL_Mag:QH04";
         String  strId2 = "SCL_Mag:QV04";
         
-        AcceleratorNode     smfDesign1 = SEQ_DESIGN.getNodeWithId(strId1);
-        AcceleratorNode     smfDesign2 = SEQ_DESIGN.getNodeWithId(strId2);
+        AcceleratorNode     smfDesign1 = SEQ_DSGN.getNodeWithId(strId1);
+        AcceleratorNode     smfDesign2 = SEQ_DSGN.getNodeWithId(strId2);
         
         System.out.println("Node 1 = " + smfDesign1);
         System.out.println("Node 2 = " + smfDesign2);
@@ -139,8 +160,70 @@ public class TestCompareLiveAccelerator {
      * Test method for {@link xal.smf.AcceleratorSeq#getNodesOfType(java.lang.String)}.
      */
     @Test
+    public final void testCompareRfGapDesignAndProd() {
+        List<AcceleratorNode> lstNodesDesign = SEQ_DSGN.getAllNodesOfType(RfGap.s_strType);
+        List<AcceleratorNode> lstNodesProd = SEQ_PROD.getAllNodesOfType(RfGap.s_strType);
+        
+        System.out.println("RF GAP NODE COMPARISON - Design Versus Production");
+        System.out.println("Design Sequence Node Count     = " + lstNodesDesign.size());
+        System.out.println("Production Sequence Node Count = " + lstNodesProd.size());
+        System.out.println();
+        
+        int cntNodes = lstNodesProd.size() < lstNodesDesign.size() ? lstNodesProd.size() : lstNodesDesign.size();
+        
+        for (int index=0; index<cntNodes; index++) {
+            RfGap     smfDsgn = (RfGap) lstNodesDesign.get(index);
+            RfGap     smfProd = (RfGap) lstNodesProd.get(index);
+            
+            System.out.println("  Design    : " + smfDsgn.getId() + " s=" + smfDsgn.getPosition() + ", Edft=" + smfDsgn.getGapDfltAmp() + ", phi_dft=" + smfProd.getGapDfltPhase());
+            System.out.println("  Production: " + smfProd.getId() + " s=" + smfProd.getPosition() + ", Edft=" + smfProd.getGapDfltAmp() + ", phi_dft=" + smfProd.getGapDfltPhase());
+            System.out.println();
+        }
+    }
+    
+    /**
+     * Compares the current live values of RF gaps with their reported default
+     * values for production case.
+     */
+    @Test
+    public final void testCompareRfGapsLiveAndProd() {
+        if (!BOL_LIVE_TESTS)
+            return;
+        
+        List<AcceleratorNode> lstNodesProd = SEQ_PROD.getAllNodesOfType(RfGap.s_strType);
+        
+        System.out.println("RF GAP NODE COMPARISON - Live Values Versus Production");
+        System.out.println("Production Sequence Node Count = " + lstNodesProd.size());
+        System.out.println();
+        
+        try {
+        
+            double[]        arrDummy = {0,1};
+            
+            for (AcceleratorNode smfNode : lstNodesProd) {
+                RfGap       smfProd = (RfGap) smfNode;
+                IdealRfGap  modProd = (IdealRfGap)MOD_PROD.elementsMappedTo(smfProd).get(0);
+
+                System.out.println("RF Gap " + smfProd.getId() + " s=" + smfProd.getPosition() );
+                System.out.println("  Production : " + " ETLdft=" + smfProd.getGapDfltE0TL() + ", phi_dft=" + smfProd.getGapDfltPhase());
+                System.out.println("  Live Values: " + " ETLavg=" + smfProd.getGapE0TL() + ", phi_avg=" + smfProd.getGapPhaseAvg() + 
+                        ", ETLlive=" + smfProd.getLivePropertyValue(RfGapPropertyAccessor.PROPERTY_ETL,arrDummy));
+                System.out.println("  Live Model : " + " ETLmod=" + modProd.getETL() + ", phi_mod=" + modProd.getPhase());
+                System.out.println();
+            }
+
+        } catch (Exception e) {
+            fail("Exception occurred: " + e.getMessage());
+            
+        }
+    }
+
+    /**
+     * Test method for {@link xal.smf.AcceleratorSeq#getNodesOfType(java.lang.String)}.
+     */
+    @Test
     public final void testCompareQuadrupoleDesignAndProd() {
-        List<AcceleratorNode> lstNodesDesign = SEQ_DESIGN.getAllNodesOfType(Quadrupole.s_strType);
+        List<AcceleratorNode> lstNodesDesign = SEQ_DSGN.getAllNodesOfType(Quadrupole.s_strType);
         List<AcceleratorNode> lstNodesProd = SEQ_PROD.getAllNodesOfType(Quadrupole.s_strType);
         
         System.out.println("QUADRUPOLE NODE COMPARISON - Design Versus Production");
@@ -160,7 +243,6 @@ public class TestCompareLiveAccelerator {
         }
     }
     
-
     /**
      * Compares the current live values of quadrupoles with their reported default
      * values for production case.
@@ -177,13 +259,17 @@ public class TestCompareLiveAccelerator {
         System.out.println();
         
         try {
+            
+            double[]    arrDummy = {0,1};
         
             for (AcceleratorNode smfNode : lstNodesProd) {
                 Quadrupole     smfProd = (Quadrupole) smfNode;
+                IdealMagQuad   modProd = (IdealMagQuad)MOD_PROD.elementsMappedTo(smfProd).get(0);
 
                 System.out.println("Quadrupole " + smfProd.getId() + " s=" + smfProd.getPosition() );
                 System.out.println("  Production : " + " B=" + smfProd.getDfltField());
-                System.out.println("  Live Values: " + " B=" + smfProd.getFieldReadback());
+                System.out.println("  Live Values: " + " B=" + smfProd.getFieldReadback() + ", Blive=" + smfProd.getLivePropertyValue(ElectromagnetPropertyAccessor.PROPERTY_FIELD, arrDummy));
+                System.out.println("  Live Model : " + " B=" + modProd.getMagField());
                 System.out.println();
             }
 
@@ -198,7 +284,7 @@ public class TestCompareLiveAccelerator {
      */
     @Test
     public final void testCompareScCavitiesDesignAndProduction() {
-        List<AcceleratorNode> lstNodesDesign = SEQ_DESIGN.getAllNodesOfType(SCLCavity.s_strType);
+        List<AcceleratorNode> lstNodesDesign = SEQ_DSGN.getAllNodesOfType(SCLCavity.s_strType);
         List<AcceleratorNode> lstNodesProd = SEQ_PROD.getAllNodesOfType(SCLCavity.s_strType);
         
         System.out.println("SCL CAVITY NODE COMPARISON - Design Versus Production");
@@ -235,12 +321,14 @@ public class TestCompareLiveAccelerator {
         
         try {
         
+            double[]        arrDummy = {0,1};
+            
             for (AcceleratorNode smfNode : lstNodesProd) {
                 SCLCavity smfProd = (SCLCavity) smfNode;
 
                 System.out.println("SCL Cavity " + smfProd.getId() + " s=" + smfProd.getPosition() );
                 System.out.println("  Production : " + " Vdft=" + smfProd.getDfltCavAmp() + ", phi_dft=" + smfProd.getDfltCavPhase() + ", TTF=" + smfProd.getStructureTTF());
-                System.out.println("  Live Values: " + " Vavg=" + smfProd.getCavAmpAvg() + ", phi_avg=" + smfProd.getCavPhaseAvg() + ", V*TTF=" + smfProd.getStructureTTF()*smfProd.getCavAmpAvg() + " Vset=" + smfProd.getCavAmpSetPoint());
+                System.out.println("  Live Values: " + " Vavg=" + smfProd.getCavAmpAvg() + ", phi_avg=" + smfProd.getCavPhaseAvg() + ", V*TTF=" + smfProd.getStructureTTF()*smfProd.getCavAmpAvg() + " Vset=" + smfProd.getCavAmpSetPoint() + ", Vlive=" +  smfProd.getLivePropertyValue(RfCavityPropertyAccessor.PROPERTY_AMPLITUDE,  arrDummy));
                 System.out.println();
             }
 
