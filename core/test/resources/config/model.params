@@ -105,6 +105,23 @@
 		<record name="RTBT2" errortol="1.0e-8" initstep="0.1" maxiter="1000" />
 	</table>
     
+    <table name="PhaseCoordinates">
+        <schema>
+            <attribute isPrimaryKey="true" name="name" type="java.lang.String" />
+            <attribute isPrimaryKey="false" name="classification" type="java.lang.String" />
+            <attribute isPrimaryKey="false" name="coordinates" type="java.lang.String" />
+        </schema>
+        <record name="HEBT2" classification="particle" coordinates="(0.01, 0, 0, 0, 0, 0)" />
+    </table>
+    
+    <table name="CentroidCoordinates">
+        <schema>
+            <attribute isPrimaryKey="true" name="name" type="java.lang.String" />
+            <attribute isPrimaryKey="false" name="classification" type="java.lang.String" />
+            <attribute isPrimaryKey="false" name="coordinates" type="java.lang.String" />
+        </schema>
+        <record name="HEBT2" classification="centroid" coordinates="(0.01, 0, 0, 0, 0, 0)" />
+    </table>
     
 	<table name="twiss">
 		<schema>

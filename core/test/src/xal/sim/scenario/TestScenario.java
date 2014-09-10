@@ -24,6 +24,7 @@ import xal.model.IAlgorithm;
 import xal.model.ModelException;
 import xal.model.alg.EnvTrackerAdapt;
 import xal.model.probe.EnvelopeProbe;
+import xal.model.probe.ParticleProbe;
 import xal.test.ResourceManager;
 import xal.smf.Accelerator;
 import xal.smf.AcceleratorSeq;
@@ -38,7 +39,8 @@ public class TestScenario {
 
     
     /** Accelerator sequence used for testing */
-    public static final String     STR_ACCL_SEQ_ID = "MEBT";
+//    public static final String     STR_ACCL_SEQ_ID = "MEBT";
+    public static final String     STR_ACCL_SEQ_ID = "HEBT2";
     
     
     
@@ -117,7 +119,33 @@ public class TestScenario {
             fail("Unable to run Scenario");
             e.printStackTrace();
         }
+    }
+
+    /**
+     * Test method for {@link xal.sim.scenario.Scenario#run()}.
+     * Uses an adaptive envelope probe.
+     */
+    @Test
+    public void testRunParticleProbeFromFactories() {
+        Accelerator     accel = ResourceManager.getTestAccelerator();
+        AcceleratorSeq  seq   = accel.getSequence(STR_ACCL_SEQ_ID);
         
+        try {
+            Scenario        model = Scenario.newScenarioFor(seq);
+            IAlgorithm      algor = AlgorithmFactory.createParticleTracker(seq);
+            ParticleProbe   probe = ProbeFactory.createParticleProbe(seq, algor);
+            
+            probe.initialize();
+            model.setProbe( probe );
+            model.resync();
+            
+            model.run();
+            
+        } catch (ModelException | InstantiationException e) {
+
+            fail("Unable to run Scenario");
+            e.printStackTrace();
+        }
     }
 
     /**
