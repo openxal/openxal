@@ -1735,7 +1735,14 @@ public class ModelFace extends JPanel{
             while(itr.hasNext()){
                 TargetObjective objective = (TargetObjective)itr.next();
                 error = calcError(_variables, trial);
-                trial.setScore(objective, error);
+				if ( Double.isNaN( error ) ) {
+//					System.out.println( "Veto trial with NaN error..." );
+					trial.vetoTrial( new TrialVeto( trial, null, "NaN error" ) );
+				}
+				else {
+//					System.out.println( "Setting score for error: " + error );
+					trial.setScore(objective, error);
+				}
             }
             
         }
