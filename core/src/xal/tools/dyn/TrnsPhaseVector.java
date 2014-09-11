@@ -266,6 +266,23 @@ public class TrnsPhaseVector extends BaseVector<TrnsPhaseVector> {
     public TrnsPhaseVector(double[] arrVals) throws ArrayIndexOutOfBoundsException {
         super(INT_SIZE, arrVals);
     }
+    
+    /*
+     * Object Method Overrides
+     */
+    
+    /**
+     * Creates and returns a deep copy of <b>this</b> vector.
+     * 
+     * @see xal.tools.math.BaseVector#clone()
+     * 
+     * @author Jonathan M. Freed
+     * @since Jul 3, 2014
+     */
+    @Override
+    public TrnsPhaseVector clone(){
+    	return new TrnsPhaseVector(this);
+    }
 
 
 	/**

@@ -11,6 +11,7 @@ package xal.tools.math.r2;
 
 import xal.tools.math.IIndex;
 import xal.tools.math.SquareMatrix;
+import xal.tools.math.r6.R6x6;
 
 
 
@@ -357,9 +358,22 @@ public class R2x2 extends SquareMatrix<R2x2> implements java.io.Serializable {
     }
     
     
+    /*
+     * Object Overrides
+     */
     
-    
-    
+    /**
+     * Creates and returns a deep copy of this matrix.
+     *
+     * @see xal.tools.math.BaseMatrix#clone()
+     *
+     * @author Christopher K. Allen
+     * @since  Jul 3, 2014
+     */
+    @Override
+    public R2x2 clone() {
+        return new R2x2(this);
+    }
     
     
     /*

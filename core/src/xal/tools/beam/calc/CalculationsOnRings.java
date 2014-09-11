@@ -7,8 +7,8 @@
 package xal.tools.beam.calc;
 
 import xal.model.probe.traj.ProbeState;
+import xal.model.probe.traj.Trajectory;
 import xal.model.probe.traj.TransferMapState;
-import xal.model.probe.traj.TransferMapTrajectory;
 import xal.tools.beam.PhaseMatrix;
 import xal.tools.beam.PhaseVector;
 import xal.tools.beam.Twiss;
@@ -73,26 +73,27 @@ public class CalculationsOnRings extends CalculationsOnMachines {
      * @author Christopher K. Allen
      * @since  Oct 22, 2013
      */
-    public CalculationsOnRings(TransferMapTrajectory trjRing) throws IllegalArgumentException {
-        super(trjRing);
-//        ProbeState  pstFinal = trjRing.finalState();
-//        
-//        // Check for correct probe types
-//        if ( !( pstFinal instanceof TransferMapState) )
-//            throw new IllegalArgumentException(
-//                    "Trajectory states are not TransferMapStates? - " 
-//                    + pstFinal.getClass().getName()
-//                    );
-        
-//        this.trjSimFull   = trjRing;
-//        this.staFinal  = (TransferMapState)pstFinal;
-//        this.matPhiFull = this.staFinal.getTransferMap().getFirstOrder();
-        PhaseMatrix matPhiFull = super.getFullTransferMap().getFirstOrder();
-        
-        this.vecPhsAdv = super.calculatePhaseAdvPerCell(matPhiFull);
-        this.vecFxdPt  = super.calculateFixedPoint(matPhiFull);
-    }
+    
+    public CalculationsOnRings(Trajectory<TransferMapState> datSim) {
+        super(datSim);
+//      ProbeState  pstFinal = trjRing.finalState();
+//      
+//      // Check for correct probe types
+//      if ( !( pstFinal instanceof TransferMapState) )
+//          throw new IllegalArgumentException(
+//                  "Trajectory states are not TransferMapStates? - " 
+//                  + pstFinal.getClass().getName()
+//                  );
+      
 
+//      this.trjSimFull   = trjRing;
+//      this.staFinal  = (TransferMapState)pstFinal;
+//      this.matPhiFull = this.staFinal.getTransferMap().getFirstOrder();
+      PhaseMatrix matPhiFull = super.getFullTransferMap().getFirstOrder();
+      
+      this.vecPhsAdv = super.calculatePhaseAdvPerCell(matPhiFull);
+      this.vecFxdPt  = super.calculateFixedPoint(matPhiFull);
+	}
     
     /*
      * Ring Attributes at Entrance
@@ -110,7 +111,8 @@ public class CalculationsOnRings extends CalculationsOnMachines {
 //        return null;
 //    }
     
-    /**
+
+	/**
      * <p>
      * Returns the betatron phase advances for the ring entrance (which are computed 
      * at instantiation).  The returned value is the calculation
@@ -218,16 +220,16 @@ public class CalculationsOnRings extends CalculationsOnMachines {
         PhaseMatrix matXfrCur;
         
         // We sum up the partial phase advance from each trajectory state
-        for (ProbeState state : super.getTrajectory()) {
+        for (TransferMapState state : super.getTrajectory()) {
             
             // Compute the full-turn map at this state location
-            TransferMapState    tmsCurr = (TransferMapState)state;
-            PhaseMatrix         matFull = this.calculateFullLatticeMatrixAt(tmsCurr);
+            //TransferMapState    tmsCurr = (TransferMapState)state;
+            PhaseMatrix         matFull = this.calculateFullLatticeMatrixAt(state);
             
             // For this state location, compute the matched twiss parameters and 
             //  the transfer matrix from the previous state to here. 
             arrTwsCur = super.calculateMatchedTwiss(matFull);
-            matXfrCur = tmsCurr.getTransferMap().getFirstOrder();
+            matXfrCur = state.getTransferMap().getFirstOrder();
             
             PhaseMatrix matXfrStep = matXfrCur.times(  matXfrPrv.inverse()  );
             

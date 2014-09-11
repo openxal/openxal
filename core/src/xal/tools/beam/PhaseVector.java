@@ -10,6 +10,7 @@ package xal.tools.beam;
 
 import java.io.PrintWriter;
 import java.util.EnumSet;
+import java.util.StringTokenizer;
 
 import xal.tools.annotation.AProperty.NoEdit;
 import xal.tools.annotation.AProperty.Units;
@@ -514,6 +515,60 @@ public class PhaseVector extends BaseVector<PhaseVector> implements java.io.Seri
 //        this.getMatrix().set(i.val(), 0, dblVal);
 //    }
 //    
+    /**
+     * Must override this method to ignore any missing homogeneous coordinate 
+     * since it is understood that this value is always there and unchanging.
+     *
+     * @see xal.tools.math.BaseVector#setVector(java.lang.String)
+     *
+     * @author Christopher K. Allen
+     * @since  Sep 6, 2014
+     */
+    @Override
+    public void setVector(String strValues) {
+        
+        // Error check the number of token strings
+        StringTokenizer     tokArgs = new StringTokenizer(strValues, " ,()[]{}");
+        
+        if (tokArgs.countTokens() < 6)
+            throw new IllegalArgumentException("Missing Values: You must have at least 6 values for a PhaseVector " + strValues);
+        
+        // Extract initial phase coordinate values
+        for (int i=0; i<6; i++) {
+            String  strVal = tokArgs.nextToken();
+            double  dblVal = Double.valueOf(strVal).doubleValue();
+
+            this.setElem(i,dblVal);
+        }
+    }
+    
+    /**
+     * Must override this method to ignore any missing homogeneous coordinate 
+     * since it is understood that this value is always there and unchanging.
+     *
+     * @see xal.tools.math.BaseVector#setVector(double[])
+     *
+     * @author Christopher K. Allen
+     * @since  Sep 6, 2014
+     */
+    public void setVector(double[] arrVector) throws ArrayIndexOutOfBoundsException {
+        
+        // Check the dimensions of the argument double array
+        if (arrVector.length < 6)
+            throw new ArrayIndexOutOfBoundsException(
+                    "Missing values: You need at least 6 values for a PhaseVector - " 
+                   + arrVector
+                   );
+        
+        // Set the elements of this array to that given by the corresponding 
+        //  argument entries
+        for (int i=0; i<6; i++) {
+            double dblVal = arrVector[i];
+
+            this.setElem(i, dblVal);
+        }
+    }
+
     /**
      *  Set the element at index.  Note that you cannot change the last element value,
      *  it must remain 1.
@@ -1023,7 +1078,22 @@ public class PhaseVector extends BaseVector<PhaseVector> implements java.io.Seri
         return strVec;
     }
     
+    /*
+     * Object Method Overrides
+     */
     
+    /**
+     * Creates and returns a deep copy of <b>this</b> vector.
+     * 
+     * @see xal.tools.math.BaseVector#clone()
+     * 
+     * @author Jonathan M. Freed
+     * @since Jul 3, 2014
+     */
+    @Override
+    public PhaseVector clone(){
+    	return new PhaseVector(this);
+    }
     
     
     
