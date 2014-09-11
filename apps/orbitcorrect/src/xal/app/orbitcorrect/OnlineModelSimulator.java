@@ -65,7 +65,7 @@ public class OnlineModelSimulator extends MappedSimulator {
 		    // Create the probe according to the sequence type then run an online model
 //            final Probe probe = (_sequence instanceof Ring) ? ProbeFactory.getTransferMapProbe( _sequence, AlgorithmFactory.createTransferMapTracker(_sequence) ) : ProbeFactory.createParticleProbe(_sequence, AlgorithmFactory.createParticleTracker(_sequence));
 		
-		    final Probe probe;
+		    final Probe<?> probe;
 		    if (_sequence instanceof Ring) {
 		        TransferMapTracker    algXferMap = AlgorithmFactory.createTransferMapTracker(_sequence);
 		        probe = ProbeFactory.getTransferMapProbe(_sequence, algXferMap);
@@ -81,7 +81,7 @@ public class OnlineModelSimulator extends MappedSimulator {
 			scenario.setSynchronizationMode( Scenario.SYNC_MODE_RF_DESIGN );
 			scenario.resync();
 			scenario.run();
-			final Trajectory initialTrajectory = probe.getTrajectory();
+			final Trajectory<?> initialTrajectory = probe.getTrajectory();
 			
             // CKA - Nov 25, 2013
 			SimpleSimResultsAdaptor  cmpCalcEngine = new SimpleSimResultsAdaptor(initialTrajectory);
@@ -95,7 +95,7 @@ public class OnlineModelSimulator extends MappedSimulator {
 	            // CKA - Nov 25, 2013
 //				ICoordinateState state = (ICoordinateState)initialTrajectory.stateForElement( bpmAgent.getID() );
 //				PhaseVector coordinates = state.getFixedOrbit();
-                ProbeState  state = initialTrajectory.stateForElement( bpmAgent.getID() );
+                ProbeState<?>  state = initialTrajectory.stateForElement( bpmAgent.getID() );
                 PhaseVector coordinates = cmpCalcEngine.computeFixedOrbit(state);
 				
 				xInitial[bpmIndex] = coordinates.getx();
@@ -129,7 +129,7 @@ public class OnlineModelSimulator extends MappedSimulator {
 				scenario.resyncFromCache();
 				scenario.run();
 				
-				final Trajectory trajectory = probe.getTrajectory();
+				final Trajectory<?> trajectory = probe.getTrajectory();
 				
 				// CKA - Nov 25, 2013
 				final SimpleSimResultsAdaptor cmpCalcEngineResp = new SimpleSimResultsAdaptor(trajectory);
@@ -147,7 +147,7 @@ public class OnlineModelSimulator extends MappedSimulator {
 					    // CKA - Nov 25, 2013
 //						final ICoordinateState state = (ICoordinateState)trajectory.stateForElement( bpmAgent.getID() );
 //						final PhaseVector coordinates = state.getFixedOrbit();
-					    final ProbeState  state       = trajectory.stateForElement( bpmAgent.getID() );
+					    final ProbeState<?>  state       = trajectory.stateForElement( bpmAgent.getID() );
 					    final PhaseVector coordinates = cmpCalcEngineResp.computeFixedOrbit(state);
 						
 						// need factor of 1000 to convert from meters to mm
