@@ -45,7 +45,7 @@ public class DynacGenerator {
     
     protected String myLatticeName = null;
     
-    private boolean mebtInd = false;
+    private boolean mebtInd = false;        // TODO: CKA - NEVER USED
     
     private AcceleratorSeq myAccSeq;
     private Scenario myScenario;
@@ -97,7 +97,7 @@ public class DynacGenerator {
                                                                       myProbe.getSpeciesRestEnergy(),
                                                                       myProbe.getKineticEnergy());
         // for Dynac header
-        CovarianceMatrix covarianceMatrix = myProbe.createProbeState().getCovarianceMatrix();
+        CovarianceMatrix covarianceMatrix = myProbe.getCovariance();
         
         Twiss[] twiss = covarianceMatrix.computeTwiss();
         String dynac_header =
@@ -142,7 +142,7 @@ public class DynacGenerator {
         
         
         LatticeIterator ilat=myLattice.latticeIterator();
-        int counter = 1;
+        int counter = 1;        // TODO: CKA - NEVER USED
         String str = dynac_header;
         //       int devTypeInd = 1;
         String devStr = "";
@@ -300,7 +300,7 @@ public class DynacGenerator {
             // for rf gaps
             else if(element.getType().equals("rfgap")) {
                 // get TTF etc.
-                ProbeState state = myScenario.getTrajectory().statesForElement(element.getAcceleratorNode().getId())[0];
+                ProbeState<?> state = myScenario.getTrajectory().statesForElement(element.getAcceleratorNode().getId()).get(0);
                 double gamma = 1. + state.getKineticEnergy()/state.getSpeciesRestEnergy();
                 double beta = Math.sqrt(1.-1./(gamma*gamma));
                 double TTF = ((RfGap) element.getAcceleratorNode()).getTTFFit().evaluateAt(beta);
