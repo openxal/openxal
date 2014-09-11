@@ -171,6 +171,19 @@ public class Twiss3D implements IArchive {
         this.load(daSource);
     }
     
+
+    /**
+     * Creates a new, cloned instance of <b>this</b> <code>Twiss3D</code>.
+     *
+     * @return a clone of <b>this</b> <code>Twiss3D</code>
+     * 
+     * @author Jonathan M. Freed
+     * @since Jul 9, 2014
+     */
+    public Twiss3D copy(){
+    	return new Twiss3D(this);
+    }
+    
     /**
      * Set the Twiss parameters for the given phase plane.
      * 

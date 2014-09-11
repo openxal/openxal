@@ -1,6 +1,10 @@
+/.pydevproject
 .DS_Store
 build/**/*
 /bin
 /build
 /.classpath
 /.project
+/doc
+/.gitignore
+/.settings

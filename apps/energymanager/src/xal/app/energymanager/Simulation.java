@@ -87,7 +87,7 @@ public class Simulation {
 	final protected List<AcceleratorNode> _evaluationNodes;
 	
 	/** trajectory */
-	final protected Trajectory _trajectory;
+	final protected Trajectory<?> _trajectory;
 	
 	/** kinetic energy */
 	final protected double _outputKineticEnergy;
@@ -126,7 +126,7 @@ public class Simulation {
 	protected double[] _positions;
 	
 	/** the phase states */
-	protected ProbeState[] _states;
+	protected ProbeState<?>[] _states;
 	
 	/** element IDs */
 	protected String[] _evaluationElementIDs;
@@ -160,7 +160,7 @@ public class Simulation {
 	
 	
 	/** The machine parameter calculation engine */
-    private ISimEnvResults<ProbeState>     _modelStatesAdaptor;
+    private ISimEnvResults<ProbeState<?>>     _modelStatesAdaptor;
 	
     
     /*
@@ -172,7 +172,7 @@ public class Simulation {
 	 * 
 	 * @throws IllegalArgumentException    the probe is not a recognized type
 	 */
-	public Simulation( final Probe probe, final List<AcceleratorNode> evaluationNodes ) 
+	public Simulation( final Probe<?> probe, final List<AcceleratorNode> evaluationNodes ) 
 	        throws IllegalArgumentException
 	{
 		_evaluationNodes = evaluationNodes;
@@ -234,7 +234,7 @@ public class Simulation {
 	 * Get the trajectory.
 	 * @return the trajectory.
 	 */
-	public Trajectory getTrajectory() {
+	public Trajectory<?> getTrajectory() {
 		return _trajectory;
 	}
 	
@@ -435,7 +435,7 @@ public class Simulation {
 	 * Get the phase states array corresponding to the evaluation nodes.
 	 * @return the array of phase states
 	 */
-	public ProbeState[] getStates() {
+	public ProbeState<?>[] getStates() {
     	if ( _states == null ) {
 			populateStates();
 		}
@@ -472,7 +472,7 @@ public class Simulation {
 	
 	/** populate positions */
 	protected void populatePositions() {
-		final ProbeState[] states = getStates();
+		final ProbeState<?>[] states = getStates();
 		final double[] positions = new double[ states.length ];
 		
 		for ( int index = 0 ; index < states.length ; index++ ) {
@@ -485,7 +485,7 @@ public class Simulation {
 	
 	/** populate evaluation element and node IDs */
 	protected void populateEvaluationElementAndNodeIDs() {
-		final ProbeState[] states = getStates();
+		final ProbeState<?>[] states = getStates();
         //System.out.println( "State count: " + states.length );
 		final int numNodes = _evaluationNodes.size();
 		
@@ -493,7 +493,7 @@ public class Simulation {
 		_evaluationElementIDs = new String[ numNodes ];
 		
 		for ( int index = 0 ; index < numNodes ; index++ ) {
-            final ProbeState state = states[index];
+            final ProbeState<?> state = states[index];
 			_evaluationNodeIDs[ index ] = _evaluationNodes.get( index ).getId();
             //System.out.println( "index: " + index + ", node: " + _evaluationNodeIDs[ index ] + ", state: " + state );
             if ( state != null ) {
@@ -505,11 +505,11 @@ public class Simulation {
 	
 	/** populate alpha */
 	protected void populateAlpha() {
-		final ProbeState[] states = getStates();
+		final ProbeState<?>[] states = getStates();
 		final double[][] alpha = new double[ Z_INDEX + 1 ][ states.length ];
 		
 		for ( int index = 0 ; index < states.length ; index++ ) {
-		    ProbeState    state = states[index];
+		    ProbeState<?>    state = states[index];
 		    
 		    
 //			final Twiss[] twiss = states[ index ].getTwiss();
@@ -526,12 +526,12 @@ public class Simulation {
 	
 	/** populate Beta */
 	protected void populateBeta() {
-		final ProbeState[] states = getStates();
+		final ProbeState<?>[] states = getStates();
 		final double[][] beta = new double[ Z_INDEX + 1 ][ states.length ];
 		
 		for ( int index = 0 ; index < states.length ; index++ ) {
 //			final Twiss[] arrTwiss = states[ index ].getTwiss();
-			ProbeState    state    = states[ index ];
+			ProbeState<?>    state    = states[ index ];
 			final Twiss[] arrTwiss = _modelStatesAdaptor.computeTwissParameters(state);
 			
 			for ( int axis = 0 ; axis <= Z_INDEX ; axis++ ) {
@@ -545,12 +545,12 @@ public class Simulation {
 	
 	/** populate emittance */
 	protected void populateEmittance() {
-		final ProbeState[] states = getStates();
+		final ProbeState<?>[] states = getStates();
 		final double[][] emittance = new double[ Z_INDEX + 1 ][ states.length ];
 		
 		for ( int index = 0 ; index < states.length ; index++ ) {
 //			final Twiss[] twiss = states[ index ].getTwiss();
-		    ProbeState    state = states[ index ];
+		    ProbeState<?>    state = states[ index ];
 		    final Twiss[] twiss = _modelStatesAdaptor.computeTwissParameters(state);
 		    
 			for ( int axis = 0 ; axis <= Z_INDEX ; axis++ ) {
@@ -564,11 +564,11 @@ public class Simulation {
 	
 	/** populate chromatic dispersion */
 	protected void populateChromaticDispersion() {
-		final ProbeState[] states = getStates();
+		final ProbeState<?>[] states = getStates();
 		final double[][] eta = new double[ Z_INDEX + 1 ][ states.length ];
 		
 		for ( int index = 0 ; index < states.length ; index++ ) {
-		    ProbeState    state   = states[ index ];
+		    ProbeState<?>    state   = states[ index ];
 		    PhaseVector   vecDisp = _modelStatesAdaptor.computeChromDispersion(state);
 		    
 		    eta[X_INDEX][index] = vecDisp.getElem(IND.X);
@@ -588,14 +588,14 @@ public class Simulation {
 	private void populateChargeAndEnergy() {
 //		final IPhaseState[] states = getStates();
 
-	    final ProbeState[] states = getStates();
+	    final ProbeState<?>[] states = getStates();
 		final double[] kineticEnergy = new double[ states.length ];
         final double[] restEnergy = new double[ states.length ];
         final double[] speciesCharge = new double[ states.length ];
 		
 		for ( int index = 0 ; index < states.length ; index++ ) {
 //            final IPhaseState state = states[ index ];
-            final ProbeState state = states[ index ];
+            final ProbeState<?> state = states[ index ];
             
 			kineticEnergy[ index  ] = CONVERT_EV_TO_MEV * state.getKineticEnergy();	// kinetic energy in MeV
             restEnergy[ index ] = CONVERT_EV_TO_MEV * state.getSpeciesRestEnergy();   // rest energy in MeV
@@ -613,7 +613,7 @@ public class Simulation {
 		final double[] minBeta = new double[] { Double.MAX_VALUE, Double.MAX_VALUE, Double.MAX_VALUE };
 		final double[] maxBeta = new double[] { 0, 0, 0 };
 		
-		final ProbeState[] states = getStates();
+		final ProbeState<?>[] states = getStates();
 		
 		for ( int index = 0 ; index < states.length ; index++ ) {
 //			final Twiss[] twiss = states[ index ].getTwiss();
@@ -646,7 +646,7 @@ public class Simulation {
 		final double[] maxEta = new double[] { Double.MIN_VALUE, Double.MIN_VALUE, 0.0 };
 		
 		final double[][] dispersion = getEta();
-		final ProbeState[] states = getStates();
+		final ProbeState<?>[] states = getStates();
 		
 		for ( int index = 0 ; index < states.length ; index++ ) {
 			for ( int axis = 0 ; axis < Z_INDEX ; axis++ ) {
@@ -708,7 +708,7 @@ public class Simulation {
 	/** Find the node's corresponding state from the state iterator */
 	static protected interface StateFinder {
 		/** find the trajectory's states corresponding to the specified nodes */
-		public ProbeState[] findStates( final List<AcceleratorNode> nodes, final Trajectory trajectory );
+		public ProbeState<?>[] findStates( final List<AcceleratorNode> nodes, final Trajectory<?> trajectory );
 	}
 	
 	
@@ -719,16 +719,16 @@ public class Simulation {
 	static protected StateFinder newFirstStateFinder() {
 		return new StateFinder() {
 			@Override
-            public ProbeState[] findStates( final List<AcceleratorNode> nodes, final Trajectory trajectory ) {
-				final Iterator<ProbeState> stateIter = trajectory.stateIterator();
-				final ProbeState[] states = new ProbeState[ nodes.size() ];
+            public ProbeState<?>[] findStates( final List<AcceleratorNode> nodes, final Trajectory<?> trajectory ) {
+				final Iterator<? extends ProbeState<?>> stateIter = trajectory.stateIterator();
+				final ProbeState<?>[] states = new ProbeState[ nodes.size() ];
 				
 				int index = 0;
 				for ( final AcceleratorNode node : nodes ) {
 					final String nodeID = node.getId();
                     //System.out.println( "Searching for node: " + nodeID );
 					while ( stateIter.hasNext() ) {
-						final ProbeState state = stateIter.next();
+						final ProbeState<?> state = stateIter.next();
                         //System.out.println( "Testing state: " + state.getElementId() );
 						if ( state.getElementId().startsWith( nodeID ) ) {
 							states[ index++ ] = state;

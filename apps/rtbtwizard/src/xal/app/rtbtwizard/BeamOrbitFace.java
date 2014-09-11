@@ -8,37 +8,59 @@
 
 package xal.app.rtbtwizard;
 
-import java.awt.datatransfer.*;
-import java.awt.event.*;
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.Toolkit;
-import javax.swing.*;
-import javax.swing.event.*;
-import javax.swing.table.*;
-import java.text.*;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import Jama.*;
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JFormattedTextField;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
+import javax.swing.event.AncestorEvent;
+import javax.swing.event.AncestorListener;
+import javax.swing.table.AbstractTableModel;
 
-import xal.ca.*;
-import xal.smf.*;
-import xal.smf.impl.*;
-import xal.extension.widgets.plot.*;
-import xal.tools.messaging.MessageCenter;
-import xal.tools.statistics.RunningWeightedStatistics;
-import xal.tools.text.FormattedNumber;
-import xal.model.alg.*;
-import xal.model.probe.*;
-import xal.model.probe.traj.*;
-import xal.sim.scenario.*;
+import xal.ca.Channel;
 import xal.extension.orbit.OrbitMatcher;
+import xal.extension.widgets.plot.BasicGraphData;
+import xal.extension.widgets.plot.CurveData;
+import xal.extension.widgets.plot.FunctionGraphsJPanel;
+import xal.model.probe.Probe;
+import xal.model.probe.TransferMapProbe;
+import xal.model.probe.traj.ProbeState;
+import xal.model.probe.traj.Trajectory;
+import xal.model.probe.traj.TransferMapState;
 import xal.service.pvlogger.sim.PVLoggerDataSource;
+import xal.sim.scenario.AlgorithmFactory;
+import xal.sim.scenario.ProbeFactory;
+import xal.sim.scenario.Scenario;
+import xal.smf.AcceleratorNode;
+import xal.smf.AcceleratorSeq;
+import xal.smf.impl.BPM;
+import xal.smf.impl.Electromagnet;
+import xal.smf.impl.MagnetMainSupply;
+import xal.tools.text.FormattedNumber;
+import Jama.Matrix;
 
 
 /** view providing an alternative beam position measurement based on matching measurements from multiple BPMs */
@@ -504,18 +526,22 @@ class TargetBeamPositionMatcher {
 	/** determine the best matching target beam position vector (x, y) */
 	public BeamPosition getMatchingTargetBeamPosition( final List<BpmAgent> xBpmAgents, final List<BpmAgent> yBpmAgents ) throws Exception {
 		// TODO: much has changed since the original code was written. X and Y should be abstracted to avoid code duplication.
-		final Probe probe = getProbe( SEQUENCE );
+		final TransferMapProbe probe = getProbe( SEQUENCE );
 		final Scenario scenario = getScenario( SEQUENCE, probe );
 		scenario.resync();
 		scenario.run();
-		final TransferMapTrajectory trajectory = (TransferMapTrajectory)scenario.getTrajectory();
-		final AcceleratorNode targetNode = SEQUENCE.getNodesOfType( "Tgt" ).get( 0 );
+        final Trajectory<TransferMapState> trajectory = scenario.getTrajectory();
+        final AcceleratorNode targetNode = SEQUENCE.getNodesOfType( "Tgt" ).get( 0 );
         
-		final double[] xTargetBeamPositionAndError = X_BEAM_POSITION_MATCHER.getMatchingTargetBeamPositionAndError( targetNode, xBpmAgents, trajectory );
+//		@SuppressWarnings("unchecked")
+//        final double[] xTargetBeamPositionAndError = X_BEAM_POSITION_MATCHER.getMatchingTargetBeamPositionAndError( targetNode, xBpmAgents, (Trajectory<TransferMapState>)trajectory );
+        final double[] xTargetBeamPositionAndError = X_BEAM_POSITION_MATCHER.getMatchingTargetBeamPositionAndError( targetNode, xBpmAgents, trajectory );
 		final double xTargetPosition = xTargetBeamPositionAndError[0];
 		final double xTargetPositionError = xTargetBeamPositionAndError[1];
         
-		final double[] yTargetBeamPositionAndError = Y_BEAM_POSITION_MATCHER.getMatchingTargetBeamPositionAndError( targetNode, yBpmAgents, trajectory );
+//		@SuppressWarnings("unchecked")
+//        final double[] yTargetBeamPositionAndError = Y_BEAM_POSITION_MATCHER.getMatchingTargetBeamPositionAndError( targetNode, yBpmAgents, (Trajectory<TransferMapState>)trajectory );
+        final double[] yTargetBeamPositionAndError = Y_BEAM_POSITION_MATCHER.getMatchingTargetBeamPositionAndError( targetNode, yBpmAgents, trajectory );
 		final double yTargetPosition = yTargetBeamPositionAndError[0];
 		final double yTargetPositionError = yTargetBeamPositionAndError[1];
         
@@ -523,7 +549,7 @@ class TargetBeamPositionMatcher {
 	}
 	
 	
-	static protected Probe getProbe( final AcceleratorSeq sequence ) {
+	static protected TransferMapProbe getProbe( final AcceleratorSeq sequence ) {
 		try {
             
             return ProbeFactory.getTransferMapProbe( sequence, AlgorithmFactory.createTransferMapTracker( sequence ) );
@@ -537,7 +563,7 @@ class TargetBeamPositionMatcher {
 	}
 	
 	
-	static protected Scenario getScenario( final AcceleratorSeq sequence, final Probe probe ) throws Exception {
+	static protected Scenario getScenario( final AcceleratorSeq sequence, final Probe<?> probe ) throws Exception {
 		final Scenario scenario = Scenario.newScenarioFor( sequence );
 		scenario.setSynchronizationMode( Scenario.SYNC_MODE_RF_DESIGN );
 		scenario.setStartNode( "RTBT_Diag:BPM15" );
@@ -577,7 +603,7 @@ class TargetPlaneBeamPositionMatcher {
     
     
 	/** determine the best matching target beam position vector (x, y) */
-	public double[] getMatchingTargetBeamPositionAndError( final AcceleratorNode targetNode, final List<BpmAgent> bpmAgents, final TransferMapTrajectory trajectory ) throws Exception {
+	public double[] getMatchingTargetBeamPositionAndError( final AcceleratorNode targetNode, final List<BpmAgent> bpmAgents, final Trajectory<TransferMapState> trajectory ) throws Exception {
 		final int bpmCount = bpmAgents.size();
 		final List<BPM> bpms = new ArrayList<BPM>( bpmCount );
 		final double[] beamPositions = new double[ bpmCount ];
@@ -886,7 +912,7 @@ class PVLoggerSnapshot {
 class ViewScreenMeasurement {
 	final protected PVLoggerSnapshot _snapshot;
 	final protected double[] _beamPosition;
-	protected TransferMapTrajectory _trajectory;
+	protected Trajectory<TransferMapState> _trajectory;
 	protected AcceleratorSeq _sequence;
 	
 	
@@ -913,17 +939,17 @@ class ViewScreenMeasurement {
 	}
 	
 	
-	public TransferMapTrajectory getTrajectory( final AcceleratorSeq sequence ) throws Exception {
-		return _trajectory != null && sequence == _sequence ? _trajectory : calculateTrajectory( sequence );
+	public Trajectory<TransferMapState> getTrajectory( final AcceleratorSeq sequence ) throws Exception {
+		return (_trajectory != null && sequence == _sequence ? _trajectory : calculateTrajectory( sequence ));
 	}
 	
 	
-	protected TransferMapTrajectory calculateTrajectory( final AcceleratorSeq sequence ) throws Exception {
+    protected Trajectory<TransferMapState> calculateTrajectory( final AcceleratorSeq sequence ) throws Exception {
 		_sequence = sequence;
 		final PVLoggerSnapshot snapshot = _snapshot;
 		final Scenario scenario = getScenario( snapshot.getDataSource() );
 		scenario.run();
-		final TransferMapTrajectory trajectory = (TransferMapTrajectory)scenario.getTrajectory();
+        final Trajectory<TransferMapState> trajectory = scenario.getTrajectory();
 		_trajectory = trajectory;
 		return trajectory;
 	}
@@ -931,13 +957,13 @@ class ViewScreenMeasurement {
 	
 	/** generate a new scenario given the data source */
 	protected Scenario getScenario( final PVLoggerDataSource dataSource ) throws Exception {
-		final Probe probe = getProbe();
+		final TransferMapProbe probe = getProbe();
 		return getScenario( probe, dataSource );
 	}
 	
 	
 	/** get a scenario with the specified probe and data source */
-	protected Scenario getScenario( final Probe probe, final PVLoggerDataSource dataSource ) throws Exception {
+	protected Scenario getScenario( final TransferMapProbe probe, final PVLoggerDataSource dataSource ) throws Exception {
 		final Scenario scenario = Scenario.newScenarioFor( _sequence );
 		scenario.setSynchronizationMode( Scenario.SYNC_MODE_DESIGN );
 		final Scenario loggerScenario = dataSource.setModelSource( _sequence, scenario );
@@ -948,9 +974,9 @@ class ViewScreenMeasurement {
 	
 	
 	/** get a new probe */
-	protected Probe getProbe() {
+	protected TransferMapProbe getProbe() {
 		
-        Probe probe = null;
+        TransferMapProbe probe = null;
         
         try {
             
@@ -1216,7 +1242,7 @@ class TargetOrbitAnalysis {
 	/** use the online model to predict the target position given the positions measured at the bpms */
 	public void performAnalysis( final List<BPM> bpms ) throws Exception {
 		final int measurementCount = VIEW_SCREEN_MEASUREMENTS.size();
-		double meanDifference = 0.0;
+		double meanDifference = 0.0;      // TODO: CKA - NEVER USED
 		final Matrix diag = new Matrix( measurementCount, 2 );
 		final Matrix viewScreenMeas = new Matrix( measurementCount, 1 );
 		final List<TargetAnalysisResultRecord> rawResults = new ArrayList<TargetAnalysisResultRecord>( measurementCount );
@@ -1256,7 +1282,7 @@ class TargetOrbitAnalysis {
 	
 	/** use the online model to predict the target position given the positions measured at the bpms */
 	protected TargetAnalysisResultRecord predictWithMatcher( final List<BPM> bpms, final ViewScreenMeasurement measurement ) throws Exception {
-		final TransferMapTrajectory trajectory = measurement.getTrajectory( SEQUENCE );
+		final Trajectory<TransferMapState> trajectory = measurement.getTrajectory( SEQUENCE );
 		final double measuredBeamPosition = PLANE_ADAPTOR.getViewScreenBeamPosition( measurement );
 		final PVLoggerSnapshot snapshot = measurement.getSnapshot();
 		final int bpmCount = bpms.size();

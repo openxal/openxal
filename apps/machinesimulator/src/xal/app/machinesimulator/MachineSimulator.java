@@ -12,6 +12,7 @@ import xal.tools.data.*;
 import xal.model.*;
 import xal.model.alg.*;
 import xal.model.probe.*;
+import xal.model.probe.traj.ProbeState;
 import xal.sim.scenario.*;
 import xal.smf.*;
 import xal.smf.impl.Electromagnet;
@@ -29,7 +30,7 @@ public class MachineSimulator implements DataListener {
     private AcceleratorSeq _sequence;
 	
 	/** the probe used in the online model run */
-	private Probe _entranceProbe;
+	private Probe<?> _entranceProbe;
 	
 	/** the scenario used in the online model run */
 	private Scenario _scenario;
@@ -45,7 +46,7 @@ public class MachineSimulator implements DataListener {
 
     
 	/** Constructor */
-    public MachineSimulator( final AcceleratorSeq sequence, final Probe entranceProbe ) {
+    public MachineSimulator( final AcceleratorSeq sequence, final Probe<?> entranceProbe ) {
 		_isRunning = false;
         _useFieldReadback = false;  // by default use the field setting
 		_useRFGapPhaseSlipCalculation = true;	// by default perform the full RF Gap phase slip calculation
@@ -70,7 +71,7 @@ public class MachineSimulator implements DataListener {
     
     
     /** Set the sequence */
-    public void setSequenceProbe( final AcceleratorSeq sequence, final Probe entranceProbe ) throws ModelException {
+    public void setSequenceProbe( final AcceleratorSeq sequence, final Probe<?> entranceProbe ) throws ModelException {
         if ( !_isRunning ) {
 			// make sure we clear the entrance probe if the sequence changes
 			if ( sequence != _sequence )  _entranceProbe = null;
@@ -111,8 +112,8 @@ public class MachineSimulator implements DataListener {
      * @param entranceProbe probe to copy
      * @return new probe constructed from the given probe
      */
-    static private Probe copyProbe( final Probe entranceProbe ) {
-        final Probe probe = entranceProbe.copy();		// performs a deep copy of the probe including algorithm
+    static private Probe<? extends ProbeState<?>> copyProbe( final Probe<?> entranceProbe ) {
+        final Probe<? extends ProbeState<?>> probe = entranceProbe.copy();		// performs a deep copy of the probe including algorithm
         probe.initialize();
         return probe;
     }
@@ -122,7 +123,7 @@ public class MachineSimulator implements DataListener {
 	 * Set the entrance probe.
 	 * @param entranceProbe the new entrance probe
 	 */
-	public void setEntranceProbe( final Probe entranceProbe ) {
+	public void setEntranceProbe( final Probe<?> entranceProbe ) {
 		if ( !_isRunning ) {
 			_entranceProbe = copyProbe( entranceProbe );
 		}
@@ -135,7 +136,7 @@ public class MachineSimulator implements DataListener {
 	/** set whether to use the full RF Gap phase slip calculation */
 	public void setUseRFGapPhaseSlipCalculation( final boolean usePhaseSlipCalc ) {
 		_useRFGapPhaseSlipCalculation = usePhaseSlipCalc;
-		final Probe probe = _entranceProbe;
+		final Probe<?> probe = _entranceProbe;
 		if ( probe != null ) {
 			probe.getAlgorithm().setRfGapPhaseCalculation( _useRFGapPhaseSlipCalculation );
 		}
@@ -192,7 +193,7 @@ public class MachineSimulator implements DataListener {
 	 * Get the entrance probe.
 	 * @return the probe used in the simulation
 	 */
-	public Probe getEntranceProbe() {
+	public Probe<?> getEntranceProbe() {
 		return _entranceProbe;
 	}
 	
@@ -202,9 +203,9 @@ public class MachineSimulator implements DataListener {
 	 * @param sequence the sequence for which to get the default probe
 	 * @return the default probe for the specified sequence
 	 */
-	public Probe getDefaultProbe( final AcceleratorSeq sequence ) {
+	public Probe<?> getDefaultProbe( final AcceleratorSeq sequence ) {
 		try {
-			final Probe probe = ( sequence instanceof Ring ) ? createRingProbe( sequence ) : createEnvelopeProbe( sequence );
+			final Probe<?> probe = ( sequence instanceof Ring ) ? createRingProbe( sequence ) : createEnvelopeProbe( sequence );
 			probe.getAlgorithm().setRfGapPhaseCalculation( _useRFGapPhaseSlipCalculation );
 			return probe;
 		}
@@ -216,14 +217,14 @@ public class MachineSimulator implements DataListener {
 
 
 	/** create a new ring probe */
-	private Probe createRingProbe( final AcceleratorSeq sequence ) throws InstantiationException {
+	private TransferMapProbe createRingProbe( final AcceleratorSeq sequence ) throws InstantiationException {
 		final TransferMapTracker tracker = AlgorithmFactory.createTransferMapTracker( sequence );
 		return ProbeFactory.getTransferMapProbe( sequence, tracker );
 	}
 
 
 	/** create a new envelope probe */
-	private Probe createEnvelopeProbe( final AcceleratorSeq sequence ) throws InstantiationException {
+	private EnvelopeProbe createEnvelopeProbe( final AcceleratorSeq sequence ) throws InstantiationException {
 		final IAlgorithm tracker = AlgorithmFactory.createEnvTrackerAdapt( sequence );
 		return ProbeFactory.getEnvelopeProbe( sequence, tracker );
 	}
@@ -246,7 +247,7 @@ public class MachineSimulator implements DataListener {
 	public MachineSimulation run() {
 		try {
 			_isRunning = true;
-			final Probe probe = copyProbe( _entranceProbe );		// perform a deep copy of the entrance probe leaving the entrance probe unmodified
+			final Probe<?> probe = copyProbe( _entranceProbe );		// perform a deep copy of the entrance probe leaving the entrance probe unmodified
 
             _scenario.setProbe( probe );
 			_scenario.resync();

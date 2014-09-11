@@ -13,6 +13,7 @@ import xal.extension.application.*;
 import xal.extension.application.smf.*;
 import xal.smf.*;
 import xal.model.probe.Probe;
+import xal.model.probe.traj.ProbeState;
 import xal.smf.data.XMLDataManager;
 import xal.tools.data.*;
 import xal.tools.xml.XmlDataAdaptor;
@@ -272,7 +273,7 @@ public class EnergyManagerDocument extends AcceleratorDocument implements DataLi
 	 * @param model the model posting the event
 	 * @param entranceProbe the new entrance probe
 	 */
-	public void entranceProbeChanged( final EnergyManager model, final Probe entranceProbe ) {
+	public void entranceProbeChanged( final EnergyManager model, final Probe<?> entranceProbe ) {
 		setHasChanges( true );
 	}
 	

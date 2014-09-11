@@ -15,6 +15,7 @@ import xal.model.elem.ChargeExchangeFoil;
 import xal.model.elem.IdealMagQuad;
 import xal.model.elem.IdealRfGap;
 import xal.model.probe.EnvelopeProbe;
+import xal.model.probe.traj.EnvelopeProbeState;
 import xal.model.probe.traj.ProbeState;
 import xal.tools.beam.CovarianceMatrix;
 import xal.tools.beam.PhaseMap;
@@ -329,7 +330,8 @@ public class EnvelopeBacktracker extends EnvelopeTrackerBase {
             
 
             // Store the current probe state (for rollback)
-            ProbeState  state0 = probe.createProbeState();
+            EnvelopeProbeState state0 = probe.cloneCurrentProbeState();
+        	//ProbeState  state0 = probe.createProbeState();
 
 
             // Get half-step back-propagation matrix at current probe location

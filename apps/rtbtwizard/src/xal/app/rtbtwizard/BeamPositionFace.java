@@ -9,15 +9,20 @@ import xal.tools.apputils.EdgeLayout;
 import xal.tools.messaging.*;
 import xal.ca.*;
 import xal.tools.data.*;
+
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.io.*;
+
 import javax.swing.*;
 import javax.swing.event.*;
+
 import java.awt.*;
 import java.awt.event.*;
+
 import xal.extension.application.*;
+
 import java.util.Timer.*;
 
 import xal.tools.data.*;
@@ -35,16 +40,21 @@ import xal.model.xml.*;
 //import xal.tools.optimizer.*;
 import xal.tools.beam.Twiss;
 import xal.extension.widgets.plot.*;
+
 import java.text.NumberFormat;
+
 import xal.extension.widgets.swing.DecimalField;
 import xal.tools.apputils.EdgeLayout;
 import xal.tools.data.*;
 import xal.tools.xml.XmlDataAdaptor;
 import xal.tools.beam.*;
 import xal.tools.statistics.*;
+
 import java.text.DecimalFormat;
+
 import xal.service.pvlogger.sim.PVLoggerDataSource;
 import xal.extension.widgets.apputils.SimpleProbeEditor;
+// TODO CKA - OVER HALF THE IMPORTS ARE NEVER USED
 
 /**
  * Performs matching to find steerer strengths for desired injection
@@ -82,7 +92,7 @@ public class BeamPositionFace extends JPanel{
     public JTable resultstable;
     private volatile boolean collectflag;
     public java.util.Timer timer;
-    private JFileChooser fc;
+    private JFileChooser fc;         // TODO CKA - NEVER USED
     protected Date startTime;
     
     JScrollPane resultsscrollpane;
@@ -368,7 +378,7 @@ public class BeamPositionFace extends JPanel{
                 }
                 else{
                     //First clear out old background values.
-                    Iterator itr = agents.iterator();
+                    Iterator itr = agents.iterator();   // CKA - Raw Type
                     while(itr.hasNext()){
                         BpmAgent bpmagent = (BpmAgent)itr.next();
                         (bpmxaverages.get(bpmagent.name())).clear();
@@ -412,7 +422,7 @@ public class BeamPositionFace extends JPanel{
                 File filePath = Application.getApp().getDefaultDocumentFolder();
                 File file = new File(filePath, fileString);
                 JPanel dummypanel = new JPanel();
-                BeamPositionFace face = new BeamPositionFace(doc, dummypanel);
+                BeamPositionFace face = new BeamPositionFace(doc, dummypanel);   // TODO CKA - NEVER USED
                 try{
                     (BeamPositionFace.this).writeFile(file);
                     System.out.println("done writing " + file + " to " + filePath);
@@ -566,10 +576,10 @@ public class BeamPositionFace extends JPanel{
             exception.printStackTrace();
         }
         
-        final Trajectory particleTrajectory = scenario.getTrajectory();
-        final ParticleProbeState windowstate = (ParticleProbeState)particleTrajectory.stateForElement("RTBT_Vac:VIW");
-        final ParticleProbeState targetstate = (ParticleProbeState)particleTrajectory.stateForElement("RTBT:Tgt");
-        PhaseVector windowcoords = windowstate.getPhaseCoordinates();
+        final Trajectory<ParticleProbeState> particleTrajectory = scenario.getTrajectory();
+        final ParticleProbeState windowstate = particleTrajectory.stateForElement("RTBT_Vac:VIW");
+        final ParticleProbeState targetstate = particleTrajectory.stateForElement("RTBT:Tgt");
+        PhaseVector windowcoords = windowstate.getPhaseCoordinates();    // TODO CKA - NEVER USED
         PhaseVector targetcoords = targetstate.getPhaseCoordinates();
 
         //System.out.println("bpm 1 " + bpm1coords.getx() +  " " +bpm1coords.gety());
@@ -577,7 +587,7 @@ public class BeamPositionFace extends JPanel{
         //System.out.println("Window " + windowcoords.getx() +  " " +windowcoords.gety());
         System.out.println("Target " + 1000.0*targetcoords.getx() +  " " + 1000.0*targetcoords.gety());
         
-        DecimalFormat decfor =  new DecimalFormat("###.000");
+        DecimalFormat decfor =  new DecimalFormat("###.000");    // TODO CKA - NEVER USED
         
         data[0] = 1000*targetcoords.getx();
         data[1] = 1000*targetcoords.gety();
@@ -634,8 +644,8 @@ public class BeamPositionFace extends JPanel{
             exception.printStackTrace();
         }
         
-        Trajectory traj= probe.getTrajectory();
-        Iterator<ProbeState> iterState= traj.stateIterator();
+        Trajectory<TransferMapState> traj= probe.getTrajectory();
+        Iterator<?> iterState= traj.stateIterator();
         
         while(iterState.hasNext()){
             ParticleProbeState state= (ParticleProbeState)iterState.next();

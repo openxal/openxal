@@ -8,6 +8,7 @@ package xal.app.ema;
 import xal.tools.beam.EnergyFinder;
 import xal.tools.correlator.Correlation;
 import xal.model.probe.Probe;
+import xal.model.probe.traj.ProbeState;
 import xal.ca.*;
 
 import java.util.*;
@@ -36,7 +37,7 @@ public class BPMEnergyCalculator implements Runnable {
 	private Thread calcThread;
 	
 	/** the constructor */
-	public BPMEnergyCalculator(Probe probe, BPMController cont) {
+	public BPMEnergyCalculator(Probe<? extends ProbeState<?>> probe, BPMController cont) {
 		keepOn = false;
 		bpmController = cont;
 		energyFinder = new EnergyFinder(probe, 402.5);
