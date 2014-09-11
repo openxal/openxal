@@ -59,7 +59,7 @@ public class CoordinateMap {
 	 * @param trajectory initial online model trajectory to use for generating the maps to the target node
 	 * @param sequence accelerator sequence which is necessary to handle the ring correctly
 	 */
-	public CoordinateMap( final AcceleratorNode targetNode, final AcceleratorNode nodeA, final AcceleratorNode nodeB, final Trajectory trajectory, final AcceleratorSeq sequence ) {
+	public CoordinateMap( final AcceleratorNode targetNode, final AcceleratorNode nodeA, final AcceleratorNode nodeB, final Trajectory<TransferMapState> trajectory, final AcceleratorSeq sequence ) {
 		SEQUENCE = sequence;
 
 		TARGET_NODE = targetNode;
@@ -84,7 +84,7 @@ public class CoordinateMap {
 	 * @param nodeB second accelerator node for which we have a position
 	 * @param trajectory online model trajectory to use for generating the maps to the target node
 	 */
-	public CoordinateMap( final AcceleratorNode targetNode, final AcceleratorNode nodeA, final AcceleratorNode nodeB, final Trajectory trajectory ) {
+	public CoordinateMap( final AcceleratorNode targetNode, final AcceleratorNode nodeA, final AcceleratorNode nodeB, final Trajectory<TransferMapState> trajectory ) {
 		this( targetNode, nodeA, nodeB, trajectory, null );
 	}
 
@@ -245,7 +245,7 @@ public class CoordinateMap {
 
 
 	/** get the transfer matrix from the transfer map trajectory */
-	private PhaseMatrix getTransferMatrix( final Trajectory trajectory, final AcceleratorNode fromNode, final AcceleratorNode toNode ) {
+	private PhaseMatrix getTransferMatrix( final Trajectory<TransferMapState> trajectory, final AcceleratorNode fromNode, final AcceleratorNode toNode ) {
 		if ( SEQUENCE.isLinear() ) {
 			return getLinearTransferMatrix( trajectory, fromNode, toNode );
 		}
