@@ -28,7 +28,7 @@ import xal.tools.math.r3.R3;
  * @version $id:
  * 
  */
-public class TwissProbeState extends BunchProbeState {
+public class TwissProbeState extends BunchProbeState<TwissProbeState> {
 
 
 
@@ -74,9 +74,6 @@ public class TwissProbeState extends BunchProbeState {
     private Twiss3D             envTwiss;
     
     
-//    /** the analytic bunch properties */
-//    private BunchDescriptor     desBunch;
-//    
     
     
     
@@ -97,6 +94,25 @@ public class TwissProbeState extends BunchProbeState {
         this.vecPhsBeta = R3.zero();
         this.envTwiss   = new Twiss3D();
     }
+    
+    /**
+     * Copy constructor for TwissProbeState.  Initializes the new
+     * <code>TwissProbeState</code> objects with the state attributes
+     * of the given <code>TwissProbeState</code>.
+     *
+     * @param twissProbeState     initializing state
+     *
+     * @author Christopher K. Allen, Jonathan M. Freed
+     * @since  Jun 26, 2014
+     */
+    public TwissProbeState(final TwissProbeState twissProbeState){
+    	super(twissProbeState);
+    	
+    	this.envTwiss	= twissProbeState.envTwiss.copy();
+    	this.matResp	= twissProbeState.matResp.clone();
+    	this.vecCent	= twissProbeState.vecCent.clone();
+    	this.vecPhsBeta	= twissProbeState.vecPhsBeta.clone();
+    }
 	
     /**
      * Initializing Constructor.  Create a new <code>TwissProbeState</code> object and
@@ -107,11 +123,16 @@ public class TwissProbeState extends BunchProbeState {
     public TwissProbeState(final TwissProbe probe) {
         super(probe);
         
-        this.setCentroid( new PhaseVector( probe.getCentroid() ) );
-        this.setResponseMatrix( new PhaseMatrix( probe.getResponseMatrix() ) );
-        this.setBetatronPhase( new R3( probe.getBetatronPhase() ) );
-        this.setTwiss( new Twiss3D(probe.getTwiss()) );
+        this.setCentroid( new PhaseVector( probe.getCentroid().clone() ) );
+        this.setResponseMatrix( new PhaseMatrix( probe.getResponseMatrix().clone() ) );
+        this.setBetatronPhase( new R3( probe.getBetatronPhase().clone() ) );
+        this.setTwiss( new Twiss3D(probe.getTwiss().copy()) );
     }
+    
+    
+    /*
+     * Property Accessors
+     */
     
     
 //    /** 
@@ -177,12 +198,6 @@ public class TwissProbeState extends BunchProbeState {
     public void setTwiss(Twiss3D arrTwiss) {
         this.envTwiss = arrTwiss;
     }
-    
-    
-    
-    /*
-     * Attribute Queries
-     */
      	
 	
 //    /**
@@ -394,9 +409,22 @@ public class TwissProbeState extends BunchProbeState {
 
     
     /*
-     * Support Methods
+     * ProbeState Overrides
      */ 
     
+    /**
+     * Implements the clone operation required by the base class
+     * <code>ProbeState</code>.
+     *
+     * @see xal.model.probe.traj.ProbeState#copy()
+     *
+     * @author Christopher K. Allen
+     * @since  Jun 27, 2014
+     */
+    @Override
+    public TwissProbeState  copy() {
+        return new TwissProbeState(this);
+    }
     
     /**
      * Save the state values particular to <code>TwissProbeState</code> objects

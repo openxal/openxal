@@ -16,9 +16,8 @@ import xal.tools.beam.Twiss3D.IND_3D;
 import xal.tools.data.DataAdaptor;
 import xal.tools.data.DataFormatException;
 import xal.tools.math.r3.R3;
-import xal.model.probe.traj.ProbeState;
+import xal.model.probe.traj.Trajectory;
 import xal.model.probe.traj.TwissProbeState;
-import xal.model.probe.traj.TwissTrajectory;
 import xal.model.xml.ParsingException;
 
 /**
@@ -41,30 +40,7 @@ import xal.model.xml.ParsingException;
  * @author Craig McChesney
  */
 
-public class TwissProbe extends BunchProbe {
-    
-    
-    
-    /*
-	 * Local Attributes
-	 */
-
-    /** centroid position in phase space */
-    private PhaseVector         vecCent;
-    
-    /** accumulated response matrix */
-    private PhaseMatrix         matResp;
-
-    /** particle betatron phase (with space charge if present) */
-    private R3                 vecPhsBeta;
-  
-    /** current twiss parameters */
-    private Twiss3D             envTwiss;
-    
-    
-    
-
-    
+public class TwissProbe extends BunchProbe<TwissProbeState> {
 
 	/*
 	 * Initialization
@@ -75,10 +51,11 @@ public class TwissProbe extends BunchProbe {
 	 */
 	public TwissProbe() {
         super();
-        this.vecCent = PhaseVector.newZero();
-        this.matResp = PhaseMatrix.identity();
-        this.vecPhsBeta = R3.zero();
-        this.envTwiss   = new Twiss3D();
+        
+        this.setCentroid(PhaseVector.newZero());
+        this.setResponseMatrix(PhaseMatrix.identity());
+        this.setBetatronPhase(R3.zero());
+        this.setTwiss(new Twiss3D());
 	};
 
 	/**
@@ -87,7 +64,7 @@ public class TwissProbe extends BunchProbe {
 	 * @param prbParent
 	 *            <code>TwissProbe</code> object to be cloned
 	 */
-	public TwissProbe(TwissProbe prbParent) {
+	public TwissProbe(final TwissProbe prbParent) {
 		super(prbParent);
 
         this.setCentroid(new PhaseVector( prbParent.getCentroid() ));
@@ -123,12 +100,15 @@ public class TwissProbe extends BunchProbe {
      * Initialize this probe from the one specified.
      * 
      * @param probe to copy
+     * 
+     * @deprecated  Never used
      */
+    @Deprecated
     @Override
-    protected void initializeFrom( final Probe probe ) {
+    protected void initializeFrom( final Probe<TwissProbeState> probe ) {
         super.initializeFrom( probe );
         
-        applyState( probe.createProbeState() );
+        applyState( probe.cloneCurrentProbeState() );
         createTrajectory();
     }
 
@@ -156,7 +136,7 @@ public class TwissProbe extends BunchProbe {
      * @param   vecCentroid     new centroid of the bunch (x,x',y,y',z,z',1)
      */
     public void setCentroid(PhaseVector vecCentroid)   {
-        this.vecCent = vecCentroid;
+        this.stateCurrent.setCentroid(vecCentroid);
     }
     
     /**
@@ -166,7 +146,7 @@ public class TwissProbe extends BunchProbe {
      * @param matResp   first-order response matrix in homogeneous coordinates
      */
     public void setResponseMatrix(PhaseMatrix matResp)  {
-        this.matResp = matResp;
+        this.stateCurrent.setResponseMatrix(matResp);
     }
 
     /**
@@ -176,7 +156,7 @@ public class TwissProbe extends BunchProbe {
      *                  of betatron phases in <b>radians </b>
      */
     public void setBetatronPhase(R3 vecPhase) {
-        this.vecPhsBeta = vecPhase;
+    	this.stateCurrent.setBetatronPhase(vecPhase);
     }
 
     /**
@@ -186,7 +166,7 @@ public class TwissProbe extends BunchProbe {
      * @param   twiss   twiss parameters
      */
     public void setTwiss(IND_3D iPlane, Twiss twiss)   {
-        this.envTwiss.setTwiss(iPlane, twiss);
+        this.stateCurrent.setTwiss(iPlane, twiss);
     }
     
     /** 
@@ -197,7 +177,7 @@ public class TwissProbe extends BunchProbe {
      * @see xal.tools.beam.Twiss
      */
     public void setTwiss(Twiss3D envTwiss) {
-        this.envTwiss = envTwiss;
+        this.stateCurrent.setTwiss(envTwiss);
     }
     
     
@@ -213,7 +193,7 @@ public class TwissProbe extends BunchProbe {
      * @return  centroid of the bunch (x,x',y,y',z,z',1)
      */
     public PhaseVector  getCentroid()   {
-        return this.vecCent;
+        return this.stateCurrent.getCentroid();
     }
     
     /**
@@ -223,7 +203,7 @@ public class TwissProbe extends BunchProbe {
      * @return  first-order response matrix in homogeneous coordinates
      */
     public PhaseMatrix getResponseMatrix()  {
-        return this.matResp;
+        return this.stateCurrent.getResponseMatrix();
     }
     
     /**
@@ -233,7 +213,7 @@ public class TwissProbe extends BunchProbe {
      *                  of betatron phases in <b>radians </b>
      */
     public R3 getBetatronPhase() {
-        return this.vecPhsBeta;
+        return this.stateCurrent.getBetatronPhase();
     }
     
     /**
@@ -244,7 +224,7 @@ public class TwissProbe extends BunchProbe {
      * @return  twiss parameters for given phase plane
      */
     public Twiss    getTwiss(IND_3D iPlane)    {
-        return this.envTwiss.getTwiss(iPlane);
+        return this.stateCurrent.getTwiss(iPlane);
     }
     
     /** 
@@ -253,8 +233,8 @@ public class TwissProbe extends BunchProbe {
      * 
      * @return array(twiss-H, twiss-V, twiss-L)
      */
-    public Twiss3D getTwiss() { 
-        return this.envTwiss;
+    public Twiss3D getTwiss() {
+    	return this.stateCurrent.getTwiss3D();
     }
     
     
@@ -272,12 +252,7 @@ public class TwissProbe extends BunchProbe {
      * @return array (ex,ey,ez) of rms emittances
      */
     public double[] rmsEmittances() {
-        double  arrEmit[] = new double[3];
-        
-        for (IND_3D i : IND_3D.values()) 
-            arrEmit[i.val()] = this.getTwiss(i).getEmittance();
-        
-        return arrEmit;
+    	return this.stateCurrent.rmsEmittances();
     }
     
     
@@ -297,41 +272,57 @@ public class TwissProbe extends BunchProbe {
 	public TwissProbeState createProbeState() {
 		return new TwissProbeState(this);
 	}
-
+    
 	/**
-	 * Creates a <code>Trajectory</code> object of the proper type for saving
-	 * the probe's history.
+	 * Creates a new, empty <code>TwissProbeState</code>.
 	 * 
-	 * @return a new, empty <code>EnvelopeTrajectory</code> object
+	 * @return a new, empty <code>TwissProbeState</code>
+	 * 
+	 * @author Jonathan M. Freed
+	 * @since Jul 1, 2014
 	 */
-    @Override
-	public TwissTrajectory createTrajectory() {
-		return new TwissTrajectory();
+	@Override
+	public TwissProbeState createEmptyProbeState(){
+		return new TwissProbeState();
 	}
 
 	/**
-	 * Apply the contents of ProbeState to update my current state. The argument
-	 * supplying the new state should be of concrete type
-	 * <code>TwissProbeState</code>.
+	 * Creates a <code>Trajectory&lt;TwissProbeState&gt;</code> object of the
+	 * proper type for saving the probe's history.
 	 * 
-	 * @param state
-	 *            <code>ProbeState</code> object containing new probe state
-	 *            data
+	 * @return a new, empty <code>Trajectory&lt;TwissProbeState&gt;</code> 
+	 * 		for saving the probe's history
 	 * 
-	 * @exception IllegalArgumentException
-	 *                wrong <code>ProbeState</code> subtype for this probe
+	 * @author Jonathan M. Freed
 	 */
     @Override
-	public void applyState(ProbeState state) {
-		if (!(state instanceof TwissProbeState))
-			throw new IllegalArgumentException("invalid probe state");
-		TwissProbeState stateTwiss = (TwissProbeState) state;
-
-		super.applyState(stateTwiss);
-        this.setCentroid(stateTwiss.getCentroid());
-		this.setResponseMatrix(stateTwiss.getResponseMatrix());
-        this.setTwiss(stateTwiss.getTwiss3D());
+	public Trajectory<TwissProbeState> createTrajectory() {
+		return new Trajectory<TwissProbeState>(TwissProbeState.class);
 	}
+
+//	/**
+//	 * Apply the contents of ProbeState to update my current state. The argument
+//	 * supplying the new state should be of concrete type
+//	 * <code>TwissProbeState</code>.
+//	 * 
+//	 * @param state
+//	 *            <code>ProbeState</code> object containing new probe state
+//	 *            data
+//	 * 
+//	 * @exception IllegalArgumentException
+//	 *                wrong <code>ProbeState</code> subtype for this probe
+//	 */
+//    @Override
+//	public void applyState(TwissProbeState state) {
+//		if (!(state instanceof TwissProbeState))
+//			throw new IllegalArgumentException("invalid probe state");
+//		TwissProbeState stateTwiss = (TwissProbeState) state;
+//
+//		super.applyState(stateTwiss);
+//        this.setCentroid(stateTwiss.getCentroid());
+//		this.setResponseMatrix(stateTwiss.getResponseMatrix());
+//        this.setTwiss(stateTwiss.getTwiss3D());
+//	}
 
     
     /**
@@ -376,7 +367,7 @@ public class TwissProbe extends BunchProbe {
      * @since  Nov 5, 2013
      */
     @Override
-    protected ProbeState readStateFrom(DataAdaptor container) throws ParsingException {
+    protected TwissProbeState readStateFrom(DataAdaptor container) throws ParsingException {
         TwissProbeState state = new TwissProbeState();
         state.load(container);
         return state;

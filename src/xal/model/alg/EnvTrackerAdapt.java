@@ -1055,7 +1055,7 @@ public class EnvTrackerAdapt extends EnvelopeTrackerBase {
      * @see Tracker#advanceProbe
      * @see EnvTrackerAdapt#advanceState
      */
-    private void    rollbackProbe(EnvelopeProbe probe, ProbeState stateRef) {
+    private void    rollbackProbe(EnvelopeProbe probe, EnvelopeProbeState stateRef) {
         probe.applyState(stateRef);
         
         if (this.getProbeUpdatePolicy() == Tracker.UPDATE_ALWAYS)  {

@@ -638,6 +638,7 @@ public abstract class Tracker implements IAlgorithm, IArchive {
             return;
         
        probe.setCurrentElement(elem.getId());
+       probe.setCurrentHardwareId(elem.getHardwareNodeId());
 //     sako *** IMPORTANT CHANGES
 //        this is now moved to Element.propagate this.setElemPosition(0.0);
         
