@@ -8,6 +8,7 @@ package xal.tools.math.r6;
 
 import xal.tools.math.IIndex;
 import xal.tools.math.BaseVector;
+import xal.tools.math.r4.R4;
 
 /**
  * Class <code></code>.
@@ -172,10 +173,41 @@ public class R6 extends BaseVector<R6> {
     public R6(double[] arrVals) {
         super(INT_SIZE, arrVals);
     }
+    
+    /**
+     * Copy constructor for <code>R6</code>.  Creates a cloned copy of the 
+     * given parent object.
+     *
+     * @param matParent     template object for which the deep copy is performed
+     *
+     * @author Jonathan M. Freed
+     * @since  Jul 3, 2014
+     */
+    public R6(R6 matParent) {
+        super(matParent);
+    }
+
+
+    /*
+     * Object Method Overrides
+     */
+    
+    /**
+     * Creates and returns a deep copy of <b>this</b> vector.
+     * 
+     * @see xal.tools.math.BaseVector#clone()
+     * 
+     * @author Jonathan M. Freed
+     * @since Jul 3, 2014
+     */
+    @Override
+    public R6 clone(){
+    	return new R6(this);
+    }
 
 
 	/**
-	 * Handles object creation required by the base class. 
+	 * Handles object creation required by the base class.
 	 *
 	 * @see xal.tools.math.BaseVector#newInstance()
 	 *

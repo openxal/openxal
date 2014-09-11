@@ -26,6 +26,7 @@ import xal.extension.solver.algorithm.*;
 import xal.extension.solver.market.*;
 import xal.extension.solver.solutionjudge.*;
 import xal.model.probe.Probe;
+import xal.model.probe.traj.ProbeState;
 import xal.smf.*;
 import xal.smf.impl.*;
 
@@ -97,7 +98,7 @@ public class SolverSession implements OpticsObjectiveListener, DataListener {
 	/**
 	 * Constructor
 	 */
-	public SolverSession( final String name, final AcceleratorSeq sequence, final List<AcceleratorNode> evaluationNodes, final Probe entranceProbe, final List<CoreParameter> coreParameters ) {
+	public SolverSession( final String name, final AcceleratorSeq sequence, final List<AcceleratorNode> evaluationNodes, final Probe<?> entranceProbe, final List<CoreParameter> coreParameters ) {
 		_messageCenter = new MessageCenter( "Solver Session" );
 		_eventProxy = _messageCenter.registerSource( this, SolverSessionListener.class );
 		
@@ -179,7 +180,7 @@ public class SolverSession implements OpticsObjectiveListener, DataListener {
 	 * Set the entrance probe.
 	 * @param entranceProbe the new entrance probe
 	 */
-	public void setEntranceProbe( final Probe entranceProbe ) {
+	public void setEntranceProbe( final Probe<?> entranceProbe ) {
 		_simulator.setEntranceProbe( entranceProbe );
 	}
 	

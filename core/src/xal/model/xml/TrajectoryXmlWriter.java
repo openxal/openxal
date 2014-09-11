@@ -3,8 +3,8 @@ package xal.model.xml;
 import java.io.File;
 import java.io.IOException;
 
-import xal.tools.xml.XmlDataAdaptor;
 import xal.model.probe.traj.Trajectory;
+import xal.tools.xml.XmlDataAdaptor;
 
 /**
  * Writes a Trajectory object to an XML document.  This class simply creates an
@@ -30,7 +30,7 @@ public class TrajectoryXmlWriter {
 	 * 
 	 * @throws IOException error writing to fileURI
 	 */
-	public static void writeXml(Trajectory trajectory, String fileURI) 
+	public static void writeXml(Trajectory<?> trajectory, String fileURI) 
 			throws IOException {
 		TrajectoryXmlWriter writer = new TrajectoryXmlWriter();
 		writer.writeTrajectoryToFile(trajectory, fileURI);
@@ -44,7 +44,7 @@ public class TrajectoryXmlWriter {
 	 * 
 	 * @throws IOException error writing to fileURI
 	 */
-	public void writeTrajectoryToFile(Trajectory trajectory, String fileURI) 
+	public void writeTrajectoryToFile(Trajectory<?> trajectory, String fileURI) 
 			throws IOException {
 		XmlDataAdaptor document = 
 			XmlDataAdaptor.newEmptyDocumentAdaptor(null, null);

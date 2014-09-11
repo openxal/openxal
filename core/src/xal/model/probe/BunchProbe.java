@@ -11,13 +11,8 @@
 package xal.model.probe;
 
 
-import xal.tools.annotation.AProperty.NoEdit;
 import xal.tools.annotation.AProperty.Units;
-import xal.tools.math.r3.R3;
-
-import xal.model.probe.traj.BeamTrajectory;
 import xal.model.probe.traj.BunchProbeState;
-import xal.model.probe.traj.ProbeState;
 
 
 
@@ -39,27 +34,8 @@ import xal.model.probe.traj.ProbeState;
  * @author  Christopher K. Allen
  * @since   Nov 2, 2002
  */
-public abstract class BunchProbe extends Probe {
+public abstract class BunchProbe<S extends BunchProbeState<S>> extends Probe<S> {
     
-    
-    
-    /*
-     * Local Attributes
-     */
-
-    
-    /** bunch frequency in Hz */
-    private double  dlbFreq = 0.0;
-    
-    /** Beam current */
-    private double  dblCurrent = 0.0;
-
-//    /** particle betatron phase with space charge */
-//    protected R3 vecPhsBeta;
-    
-//    /** Beam charge */
-//    private double m_dblBmQ = 0.0;
-   
     
     /*
      *  Abstract Methods
@@ -102,10 +78,8 @@ public abstract class BunchProbe extends Probe {
      *
      *  @param  probe   BunchProbe object to be cloned
      */
-    public BunchProbe(BunchProbe probe)   {
-        super(probe);
-        //Not sure what the purpose of this is
-        //this.setBunchFrequency(this.getBunchFrequency());
+    public BunchProbe(final BunchProbe<S> probe)   {
+        super(probe);       
         this.setBunchFrequency(probe.getBunchFrequency());
         this.setBeamCurrent(probe.getBeamCurrent());
 //        this.setBetatronPhase(new R3(probe.getBetatronPhase()));
@@ -117,7 +91,7 @@ public abstract class BunchProbe extends Probe {
      * @param f     new bunch frequency in <b>Hz</b>
      */
     public void setBunchFrequency(double f) {
-        this.dlbFreq = f;
+        this.stateCurrent.setBunchFrequency(f);
     }
  
     /**
@@ -126,21 +100,9 @@ public abstract class BunchProbe extends Probe {
      * @param   I   new beam current in <bold>Amperes</bold>
      */
     public void setBeamCurrent(double I)    { 
-        dblCurrent = I; 
+        this.stateCurrent.setBeamCurrent(I);
     };
     
-
-//    /**
-//     * Set the betatron phase with space charge for each phase plane.
-//     * 
-//     * @param vecPhase
-//     *            vector (psix,psiy,psiz) of betatron phases in <b>radians </b>
-//     */
-//    public void setBetatronPhase(R3 vecPhase) {
-//        this.vecPhsBeta = vecPhase;
-//        //this.m_vecPhsBeta = new R3(vecPhase);
-//        // TODO - optimize the redundant copy
-//    }
 
 //    /**
 //     *  Set the total beam charge 
@@ -169,7 +131,7 @@ public abstract class BunchProbe extends Probe {
      */
 	@Units( "Hz" )
     public double getBunchFrequency()  {
-        return this.dlbFreq;
+        return this.stateCurrent.getBunchFrequency();
     };
     
     /** 
@@ -179,7 +141,7 @@ public abstract class BunchProbe extends Probe {
      */
 	@Units( "amps" )
     public double getBeamCurrent() { 
-        return dblCurrent;  
+        return this.stateCurrent.getBeamCurrent();
      }
 
 //    /**
@@ -202,13 +164,7 @@ public abstract class BunchProbe extends Probe {
      * @return  beam charge in <b>coulombs</b>
      */
     public double bunchCharge() {
-        if (this.getBunchFrequency() > 0.0) {
-            return this.getBeamCurrent()/this.getBunchFrequency();
-            
-        } else {
-            return 0.0;
-            
-        }
+    	return this.stateCurrent.bunchCharge();  	
     }
 
     /** 
@@ -236,36 +192,14 @@ public abstract class BunchProbe extends Probe {
      *  @author Christopher K. Allen
      */
     public double beamPerveance() {
-        
-        // Get some shorthand
-        double c     = LightSpeed;
-        double gamma = this.getGamma();
-        double bg2   = gamma*gamma - 1.0;
-
-        // Compute independent terms
-        double  dblPermT = 1.0e-7*c*c*this.bunchCharge();
-        double  dblRelaT = 1.0/(gamma*bg2);
-        double  dblEnerT = Math.abs(super.getSpeciesCharge())/super.getSpeciesRestEnergy();
-        
-        return dblPermT*dblRelaT*dblEnerT;  
+        return this.stateCurrent.beamPerveance();
     }
 
     
     /*
      * Probe Overrides
      */
-    
-    /**
-     * Just restating <code>Probe.{@link #createTrajectory()}</code>.
-     *
-     * @see xal.model.probe.Probe#createTrajectory()
-     *
-     * @author Christopher K. Allen
-     * @version  Nov 5, 2013
-     */
-    @Override
-    public abstract BeamTrajectory createTrajectory();
-    
+
     /**
      * Just restating <code>Probe.{@link #createProbeState()}</code>
      *
@@ -275,30 +209,34 @@ public abstract class BunchProbe extends Probe {
      * @since  Nov 5, 2013
      */
     @Override
-    public abstract BunchProbeState createProbeState();
+    public abstract S createProbeState();
     
     /**
-     * Apply the contents of ProbeState to update my current state.  Subclass
-     * implementations should call super.applyState to ensure superclass
-     * state is applied.
+     * Just restating <code>Probe.{@link #createEmptyProbeState()}</code>.
      * 
-     * @param state     <code>ProbeState</code> object containing new probe state data
-     * 
-     * @exception   IllegalArgumentException    wrong <code>ProbeState</code> subtype for this probe
+     * @author Jonathan M. Freed
+     * @since Jul 1, 2014
      */
     @Override
-    public void applyState(ProbeState state) {
-        if (!(state instanceof BunchProbeState))
-            throw new IllegalArgumentException("invalid probe state");
-        BunchProbeState  stateBunch = (BunchProbeState)state;
-        
-        super.applyState(stateBunch);
-        this.setBunchFrequency( stateBunch.getBunchFrequency() );
-        this.setBeamCurrent( stateBunch.getBeamCurrent() );
-//        this.setBetatronPhase(stateBunch.getBunchBetatronPhase());
-        
-//  setElapsedTime(((BunchProbeState)state).getElapsedTime());
-    }
+    public abstract S createEmptyProbeState();
+    
+
+//    /**
+//     * Applies the properties of the state that is passed in to the current
+//     * state of the probe.
+//     * 
+//     * @param state - the state to apply to the probe
+//     * 
+//     * @author Jonathan M. Freed
+//     * @since Jul 9, 2014
+//     */
+//    @Override
+//    public void applyState(final S state) {
+//        this.stateCurrent = state.copy();
+////        super.applyState(state);
+////        this.setBunchFrequency( state.getBunchFrequency() );
+////        this.setBeamCurrent( state.getBeamCurrent() );
+//    }
 
     
     

@@ -62,10 +62,10 @@ public class BumpGenerator {
 	protected Scenario _scenario;
 	
 	/** online model probe */
-	protected Probe _probe;
+	protected Probe<?> _probe;
 	
 	/** base trajectory */
-	protected Trajectory _baseTrajectory;
+	protected Trajectory<?> _baseTrajectory;
 	
 	
 	/** lock for synchronizing runs */
@@ -230,11 +230,11 @@ public class BumpGenerator {
 	protected double[] getBaseOrbit( final AcceleratorNode bumpNode, final AcceleratorNode endNode ) {
 		final PlaneAdaptor planeAdaptor = _planeAdaptor;
 		
-		final Trajectory trajectory = _baseTrajectory;
+		final Trajectory<?> trajectory = _baseTrajectory;
 //		final IPhaseState bumpState = (IPhaseState)trajectory.statesForElement( bumpNode.getId() )[0];
 //		final IPhaseState endState = (IPhaseState)trajectory.statesForElement( endNode.getId() )[0];
-        final ProbeState bumpState = trajectory.statesForElement( bumpNode.getId() )[0];
-        final ProbeState endState = trajectory.statesForElement( endNode.getId() )[0];
+        final ProbeState<?> bumpState = trajectory.statesForElement( bumpNode.getId() ).get(0);
+        final ProbeState<?> endState = trajectory.statesForElement( endNode.getId() ).get(0);
 		
 		return _bumpShapeAdaptor.getOrbit( planeAdaptor, bumpState, endState, _elementCount );
 	}
@@ -273,15 +273,15 @@ public class BumpGenerator {
 			_scenario.resyncFromCache();
 			_scenario.run();
 			_scenario.removeModelInput( magnet, ElectromagnetPropertyAccessor.PROPERTY_FIELD );
-			final Trajectory trajectory = _probe.getTrajectory();
+			final Trajectory<?> trajectory = _probe.getTrajectory();
 			
 			// Reset the simulation data processor
 			this._bumpShapeAdaptor.resetTrajectory(trajectory);
 			
 //			final IPhaseState bumpState = (IPhaseState)trajectory.statesForElement( bumpNode.getId() )[0];
 //			final IPhaseState endState = (IPhaseState)trajectory.statesForElement( endNode.getId() )[0];
-            final ProbeState bumpState = trajectory.statesForElement( bumpNode.getId() )[0];
-            final ProbeState endState  = trajectory.statesForElement( endNode.getId() )[0];
+            final ProbeState<?> bumpState = trajectory.statesForElement( bumpNode.getId() ).get(0);
+            final ProbeState<?> endState  = trajectory.statesForElement( endNode.getId() ).get(0);
 			
 			final double[] response = _bumpShapeAdaptor.getOrbit( planeAdaptor, bumpState, endState, _elementCount );
 			// adjust the response to account for the base orbit offset and scale by amplitude to get the response per unit of magnetic field

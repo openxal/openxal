@@ -71,7 +71,7 @@ public class EnvelopeCurve extends BasicGraphData {
      * @author  Christopher K. Allen
      * @since   Nov 26, 2012
      */
-    public EnvelopeCurve(PLANE plane, Trajectory trjEnv) throws IllegalArgumentException {
+    public EnvelopeCurve(PLANE plane, Trajectory<EnvelopeProbeState> trjEnv) throws IllegalArgumentException {
         this(plane);
 
         this.loadCurve(trjEnv);
@@ -93,10 +93,10 @@ public class EnvelopeCurve extends BasicGraphData {
      * @author Christopher K. Allen
      * @since  Nov 26, 2012
      */
-    public  void    loadCurve(Trajectory trjEnv) throws IllegalArgumentException {
+    public  void    loadCurve(Trajectory<EnvelopeProbeState> trjEnv) throws IllegalArgumentException {
 
         // Load the trajectory data into the graphs
-        Iterator   iterState = trjEnv.stateIterator();
+        Iterator<EnvelopeProbeState>   iterState = trjEnv.stateIterator();
         while (iterState.hasNext()) {
             Object             objEnv = iterState.next();
             

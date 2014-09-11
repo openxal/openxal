@@ -12,8 +12,7 @@ import xal.tools.beam.ens.Ensemble;
 import xal.tools.data.DataAdaptor;
 import xal.tools.math.r3.R3;
 import xal.model.probe.traj.EnsembleProbeState;
-import xal.model.probe.traj.EnsembleTrajectory;
-import xal.model.probe.traj.ProbeState;
+import xal.model.probe.traj.Trajectory;
 import xal.model.xml.ParsingException;
 
 /**
@@ -23,7 +22,7 @@ import xal.model.xml.ParsingException;
  *
  * @author  Christopher Allen
  */
-public class EnsembleProbe extends BunchProbe {
+public class EnsembleProbe extends BunchProbe<EnsembleProbeState> {
     
     /*
      *  Global Attributes
@@ -40,18 +39,6 @@ public class EnsembleProbe extends BunchProbe {
     
     /** use grid Fourier transform method */
     public final static int     FLDCALC_GRIDFT = 3;
-
-    /*
-     *  Attributes
-     */
-    
-    /** field calculation method */
-    private int         m_enmFldCalc;
-    
-    /** the particle ensemble */
-    private Ensemble    m_ensPhase;
-    
-    
     
     
     /*
@@ -73,19 +60,31 @@ public class EnsembleProbe extends BunchProbe {
         return new EnsembleProbeState(this);
     }
     
+	/**
+	 * Creates a new, empty <code>EnsembleProbeState</code>.
+	 * 
+	 * @return a new, empty <code>EnsembleProbeState</code>
+	 * 
+	 * @author Jonathan M. Freed
+	 * @since Jul 1, 2014
+	 */
+	@Override
+	public EnsembleProbeState createEmptyProbeState(){
+		return new EnsembleProbeState();
+	}
     
     /**
      * Creates a trajectory of the proper type for saving the probe's history.
      * 
-     * @return  a new, empty <code>EnsembleTrajectory</code> for saving the probe's history
+     * @return  a new, empty <code>Trajectory&lt;EnsembleProbeState&gt;</code> 
+     * 		for saving the probe's history
+     * 
+     * @author Jonathan M. Freed
      */
     @Override
-    public EnsembleTrajectory createTrajectory() {
-        return new EnsembleTrajectory();
+    public Trajectory<EnsembleProbeState> createTrajectory() {
+        return new Trajectory<EnsembleProbeState>(EnsembleProbeState.class);
     }
-    
-    
-
 
     // BunchProbe Base Support =================================================
     
@@ -95,7 +94,7 @@ public class EnsembleProbe extends BunchProbe {
      *  @return     (homogeneous) phase space coordinates of ensemble centroid
      */
     public PhaseVector  phaseMean()   {
-        return getEnsemble().phaseMean();
+        return this.stateCurrent.phaseMean();
     }
     
     /**
@@ -106,7 +105,7 @@ public class EnsembleProbe extends BunchProbe {
      *  @see    xal.tools.beam.PhaseMatrix
      */
     public CovarianceMatrix  getCorrelation()    {
-        return getEnsemble().phaseCovariance();
+    	return this.stateCurrent.phaseCovariance();
     }
     
     
@@ -122,7 +121,7 @@ public class EnsembleProbe extends BunchProbe {
     public EnsembleProbe() {
         super( );
         
-        m_ensPhase = new Ensemble();
+        this.setEnsemble(new Ensemble());
     };
     
     /**
@@ -133,7 +132,7 @@ public class EnsembleProbe extends BunchProbe {
      * 
      *  @param  probe   object to be copied
      */
-    public EnsembleProbe(EnsembleProbe probe)   {
+    public EnsembleProbe(final EnsembleProbe probe)   {
         super(probe);
         
         this.setEnsemble( new Ensemble( probe.getEnsemble() ) );
@@ -148,7 +147,9 @@ public class EnsembleProbe extends BunchProbe {
      *
      *  @param  enmFldCalc  field calculation method enumeration
      */
-    public void setFieldCalculation(int enmFldCalc)  { m_enmFldCalc = enmFldCalc; };
+    public void setFieldCalculation(int enmFldCalc)  { 
+    	this.stateCurrent.setFieldCalculation(enmFldCalc);
+    }
     
     /**
      *  Set the EnsembleProbe state to the value of the argument
@@ -158,8 +159,8 @@ public class EnsembleProbe extends BunchProbe {
      *  @param  ens     <code>Ensemble</code> object to be copied
      */
     public void setEnsemble(Ensemble ens)   { 
-        m_ensPhase = new Ensemble(ens); 
-    };
+        this.stateCurrent.setEnsemble(ens);
+    }
 
     
     
@@ -170,12 +171,16 @@ public class EnsembleProbe extends BunchProbe {
     /**
      * Return the field calculation method
      */
-    public int getFieldCalculation() { return m_enmFldCalc; }
+    public int getFieldCalculation() { 
+    	return this.stateCurrent.getFieldCalculation();
+    }
     
     /**
      *  Return the Ensemble state object
      */
-    public Ensemble getEnsemble() { return m_ensPhase; };
+    public Ensemble getEnsemble() { 
+    	return this.stateCurrent.getEnsemble();
+    }
     
 
     /**
@@ -187,9 +192,7 @@ public class EnsembleProbe extends BunchProbe {
      *
      */
     public R3   electricField(R3 ptFld) {
-        R3      vecE = new R3();
-        
-        return vecE;
+        return this.stateCurrent.electricField(ptFld);
     }
     
     
@@ -200,27 +203,28 @@ public class EnsembleProbe extends BunchProbe {
  
 
 
-    /**
-     * Apply the contents of ProbeState to update my current state.  The argument
-     * supplying the new state should be of concrete type <code>EnsembleProbeState</code>.
-     * 
-     * @param state     <code>ProbeState</code> object containing new probe state data
-     * 
-     * @exception   IllegalArgumentException    wrong <code>ProbeState</code> sub-type for this probe
-     */
-    @Override
-    public void applyState(ProbeState state) {
-        if (!(state instanceof EnsembleProbeState))
-            throw new IllegalArgumentException("invalid probe state");
-        super.applyState(state);
-        setFieldCalculation(((EnsembleProbeState)state).getFieldCalculation());
-        setEnsemble(((EnsembleProbeState)state).getEnsemble());
-    }
+//    /**
+//     * Apply the contents of ProbeState to update my current state.  The argument
+//     * supplying the new state should be of concrete type <code>EnsembleProbeState</code>.
+//     * 
+//     * @param state     <code>ProbeState</code> object containing new probe state data
+//     * 
+//     * @exception   IllegalArgumentException    wrong <code>ProbeState</code> sub-type for this probe
+//     */
+//    @Override
+//    public void applyState(EnsembleProbeState state) {
+//        if (!(state instanceof EnsembleProbeState))
+//            throw new IllegalArgumentException("invalid probe state");
+//        super.applyState(state);
+//        setFieldCalculation(((EnsembleProbeState)state).getFieldCalculation());
+//        setEnsemble(((EnsembleProbeState)state).getEnsemble());
+//    }
     
     @Override
-    protected ProbeState readStateFrom(DataAdaptor container) throws ParsingException {
+    protected EnsembleProbeState readStateFrom(DataAdaptor container) throws ParsingException {
         EnsembleProbeState state = new EnsembleProbeState();
         state.load(container);
         return state;
     }
+
 }
