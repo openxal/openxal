@@ -657,6 +657,19 @@ public abstract class BaseVector<V extends BaseVector<V>> implements IArchive, j
     /*
      *  Object method overrides
      */
+    
+    /**
+     * Base classes must override the clone operation in order to 
+     * make deep copies of the current object.  This operation cannot
+     * be done without the exact type.
+     *
+     * @see java.lang.Object#clone()
+     *
+     * @author Jonathan M. Freed
+     * @since  Jul 3, 2014
+     */
+    @Override
+    public abstract V   clone();
 
     /**
      *  Convert the contents of the matrix to a string representation.
@@ -703,6 +716,7 @@ public abstract class BaseVector<V extends BaseVector<V>> implements IArchive, j
         return (((int) bits) ^ ((int) (bits >> 32)));
     }           
 
+    
 
 
     /*

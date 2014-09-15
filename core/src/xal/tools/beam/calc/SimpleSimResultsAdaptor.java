@@ -7,15 +7,9 @@
 package xal.tools.beam.calc;
 
 import xal.model.probe.traj.EnvelopeProbeState;
-import xal.model.probe.traj.EnvelopeTrajectory;
 import xal.model.probe.traj.ParticleProbeState;
-import xal.model.probe.traj.ParticleTrajectory;
-import xal.model.probe.traj.ProbeState;
 import xal.model.probe.traj.Trajectory;
 import xal.model.probe.traj.TransferMapState;
-import xal.model.probe.traj.TransferMapTrajectory;
-import xal.tools.beam.calc.ISimulationResults.ISimEnvResults;
-import xal.tools.beam.calc.ISimulationResults.ISimLocResults;
 
 /**
  * <p>
@@ -49,7 +43,7 @@ import xal.tools.beam.calc.ISimulationResults.ISimLocResults;
  * @see CalculationsOnRings
  * @see CalculationsOnBeams
  */
-public class SimpleSimResultsAdaptor extends SimResultsAdaptor implements ISimLocResults<ProbeState>, ISimEnvResults<ProbeState> {
+public class SimpleSimResultsAdaptor extends SimResultsAdaptor {
 
     
     /*
@@ -72,38 +66,40 @@ public class SimpleSimResultsAdaptor extends SimResultsAdaptor implements ISimLo
      * machine calculation engine based upon the type of the given simulation
      * trajectory. 
      *
-     * @param datSim  simulation data that is going to be processed
+     * @param trajectory  simulation data that is going to be processed
      * 
      * @throws IllegalArgumentException the simulation data is of an unknown type
      *
      * @author Christopher K. Allen
      * @since  Nov 7, 2013
      */
-    public SimpleSimResultsAdaptor(Trajectory datSim) throws IllegalArgumentException {
+	public SimpleSimResultsAdaptor(Trajectory<?> trajectory) throws IllegalArgumentException {
         super();
         
 
-        if (datSim instanceof TransferMapTrajectory) {
-            TransferMapTrajectory   trj = (TransferMapTrajectory)datSim;
-
-            CalculationsOnRings calRings  = new CalculationsOnRings(trj);
+        Class<?> clsTrajState = trajectory.getStateClass();
+        
+        if ( clsTrajState.equals(TransferMapState.class) ) {
+//        	SimResultsAdaptor<TransferMapState> sra = new SimResultsAdaptor<TransferMapState>();
+            @SuppressWarnings("unchecked")
+            CalculationsOnRings calRings  = new CalculationsOnRings((Trajectory<TransferMapState>)trajectory);
             super.registerCalcEngine(TransferMapState.class, calRings);;
 
-        } else if (datSim instanceof EnvelopeTrajectory) {
-            EnvelopeTrajectory trj = (EnvelopeTrajectory)datSim;
-
-            CalculationsOnBeams calBeams = new CalculationsOnBeams(trj);
+        } else if (clsTrajState.equals(EnvelopeProbeState.class)) {
+//        	SimResultsAdaptor<EnvelopeProbeState> sra = new SimResultsAdaptor<EnvelopeProbeState>();
+            @SuppressWarnings("unchecked")
+            CalculationsOnBeams calBeams = new CalculationsOnBeams((Trajectory<EnvelopeProbeState>)trajectory);
             super.registerCalcEngine(EnvelopeProbeState.class, calBeams);
             
-        } else if (datSim instanceof ParticleTrajectory) {
-            ParticleTrajectory trj = (ParticleTrajectory)datSim;
-            
-            CalculationsOnParticles calPart = new CalculationsOnParticles(trj);
+        } else if (clsTrajState.equals(ParticleProbeState.class)) {  
+//        	SimResultsAdaptor<ParticleProbeState> sra = new SimResultsAdaptor<ParticleProbeState>();
+            @SuppressWarnings("unchecked")
+            CalculationsOnParticles calPart = new CalculationsOnParticles((Trajectory<ParticleProbeState>)trajectory);
             super.registerCalcEngine(ParticleProbeState.class, calPart);
 
         } else {
 
-            throw new IllegalArgumentException("Unknown simulation data type " + datSim.getClass().getName());
+            throw new IllegalArgumentException("Unknown simulation data type " + trajectory.getClass().getName());
         }
         
 //        // Create the machine parameter calculation engine according to the

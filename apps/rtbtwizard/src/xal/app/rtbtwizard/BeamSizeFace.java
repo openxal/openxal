@@ -9,12 +9,14 @@ import xal.tools.apputils.EdgeLayout;
 import xal.tools.messaging.*;
 import xal.ca.*;
 import xal.tools.data.*;
-import java.text.NumberFormat;
 
+import java.text.NumberFormat;
 import java.util.*;
 import java.io.*;
+
 import javax.swing.*;
 import javax.swing.event.*;
+
 import java.awt.*;
 import java.awt.event.*;
 
@@ -32,13 +34,18 @@ import xal.model.xml.*;
 //import xal.tools.optimizer.*;
 import xal.tools.beam.Twiss;
 import xal.extension.widgets.plot.*;
+
 import java.text.NumberFormat;
+
 import xal.extension.widgets.swing.DecimalField;
 import xal.tools.apputils.EdgeLayout;
 import xal.tools.data.*;
 import xal.tools.xml.XmlDataAdaptor;
 import xal.tools.beam.*;
+import xal.tools.beam.calc.CalculationsOnBeams;
+
 import java.text.DecimalFormat;
+
 import xal.extension.solver.*;
 //import xal.tools.formula.*;
 import xal.extension.solver.hint.*;
@@ -47,6 +54,8 @@ import xal.extension.solver.market.*;
 import xal.extension.solver.solutionjudge.*;
 import xal.service.pvlogger.sim.PVLoggerDataSource;
 import xal.extension.widgets.apputils.SimpleProbeEditor;
+// TODO: CKA - Half the Imports are Unused
+
 /**
  * Performs matching to find steerer strengths for desired injection
  * spot position and angle on the foil.
@@ -440,8 +449,8 @@ public class BeamSizeFace extends JPanel{
         String time = solvertimefield.getText();
         double solvetime= new Double(Double.parseDouble(time));
         
-        EnvelopeTrajectory traj= (EnvelopeTrajectory)probe.getTrajectory();
-        EnvelopeProbeState state = (EnvelopeProbeState)traj.statesForElement(namelist.get(0))[0];
+        Trajectory<EnvelopeProbeState> traj= probe.getTrajectory();
+        EnvelopeProbeState state = traj.statesForElement(namelist.get(0)).get(0);
         //EnvelopeProbeState state =(EnvelopeProbeState)traj.statesForElement("RTBT_Diag:WS20")[0];
        
         
@@ -540,7 +549,7 @@ public class BeamSizeFace extends JPanel{
             exception.printStackTrace();
         }
         
-        EnvelopeTrajectory traj= (EnvelopeTrajectory)probe.getTrajectory();
+        Trajectory<EnvelopeProbeState> traj = probe.getTrajectory();
         double error = 0.0;
         int size = namelist.size();
         double rx=0;
@@ -550,9 +559,9 @@ public class BeamSizeFace extends JPanel{
         //System.out.println("first is " + namelist.get(0));
         
         for(int i =0; i<size; i++){
-            String name = namelist.get(i);
+            String name = namelist.get(i);      // TODO: CKA - NEVER USED
             //EnvelopeProbeState state = (EnvelopeProbeState)traj.statesForElement("RTBT_Diag:WS21")[0];
-            EnvelopeProbeState state = (EnvelopeProbeState)traj.statesForElement(namelist.get(i))[0];
+            EnvelopeProbeState state = traj.statesForElement(namelist.get(i)).get(0);
             
             CovarianceMatrix covarianceMatrix = state.getCovarianceMatrix();
             Twiss[] twiss = covarianceMatrix.computeTwiss();
@@ -643,22 +652,26 @@ public class BeamSizeFace extends JPanel{
         catch(Exception exception){
             exception.printStackTrace();
         }
-        
-        PhaseMatrix matRef = (probe).stateResponse(currentElem, refStart);
+  
+        // CKA 8/22/2014
+        Trajectory<EnvelopeProbeState> traj = probe.getTrajectory();
+        CalculationsOnBeams             cobCalcEng = new CalculationsOnBeams(traj);
+        PhaseMatrix matRef = cobCalcEng.computeTransferMatrix(currentElem, refStart);
+//        PhaseMatrix matRef = (probe).stateResponse(currentElem, refStart);
         
         //PhaseMatrix matRef = ((EnvelopeProbe)probe).stateResponse(currentElem, "RTBT_Mag:QH20");
         double Rs11 = matRef.getElem(0, 0);
         double Rs12 = matRef.getElem(0, 1);
-        double Rs16 = matRef.getElem(0, 5);
+        double Rs16 = matRef.getElem(0, 5);        // TODO: CKA - NEVER USED
         double Rs21 = matRef.getElem(1, 0);
         double Rs22 = matRef.getElem(1, 1);
-        double Rs26 = matRef.getElem(1, 5);
+        double Rs26 = matRef.getElem(1, 5);       // TODO: CKA - NEVER USED
         double Rs33 = matRef.getElem(2, 2);
         double Rs34 = matRef.getElem(2, 3);
-        double Rs36 = matRef.getElem(2, 5);
+        double Rs36 = matRef.getElem(2, 5);       // TODO: CKA - NEVER USED
         double Rs43 = matRef.getElem(3, 2);
         double Rs44 = matRef.getElem(3, 3);
-        double Rs46 = matRef.getElem(3, 5);
+        double Rs46 = matRef.getElem(3, 5);       // TODO: CKA - NEVER USED
         
         double alphax=currenttwiss[0]; double betax=currenttwiss[1];
         double alphay=currenttwiss[3]; double betay=currenttwiss[4];
@@ -758,7 +771,7 @@ public class BeamSizeFace extends JPanel{
 		DecimalFormat decfor =  new DecimalFormat("###.000");
 		int size = fullnamelist.size();
         
-		EnvelopeTrajectory traj= (EnvelopeTrajectory)probe.getTrajectory();
+		Trajectory<EnvelopeProbeState> traj= probe.getTrajectory();
 		EnvelopeProbeState newstate;
 		Twiss[] newtwiss;
 		double rx, ry;
@@ -768,7 +781,7 @@ public class BeamSizeFace extends JPanel{
 			tabledata[i][2] = new Double(0.0);
 		}
 		for(int i = istart; i<size; i++){
-			newstate = (EnvelopeProbeState)traj.statesForElement(fullnamelist.get(i))[0];
+			newstate = traj.statesForElement(fullnamelist.get(i)).get(0);
             
             CovarianceMatrix covarianceMatrix = newstate.getCovarianceMatrix();
             newtwiss = covarianceMatrix.computeTwiss();
@@ -782,7 +795,7 @@ public class BeamSizeFace extends JPanel{
 		}
         
 		harparea=((Double)tabledata[4][1]).doubleValue()*((Double)tabledata[4][2]).doubleValue();;
-		newstate = (EnvelopeProbeState)traj.statesForElement("RTBT_Vac:VIW")[0];
+		newstate = traj.statesForElement("RTBT_Vac:VIW").get(0);
         
         CovarianceMatrix covarianceMatrix = newstate.getCovarianceMatrix();
         newtwiss = covarianceMatrix.computeTwiss();
@@ -790,7 +803,7 @@ public class BeamSizeFace extends JPanel{
 		ry = 1000*newtwiss[1].getEnvelopeRadius();
 		tabledata[5][1] = new Double(decfor.format(rx));
 		tabledata[5][2] = new Double(decfor.format(ry));
-		newstate = (EnvelopeProbeState)traj.statesForElement("RTBT:Tgt")[0];
+		newstate = traj.statesForElement("RTBT:Tgt").get(0);
         
         covarianceMatrix = newstate.getCovarianceMatrix();
         newtwiss = covarianceMatrix.computeTwiss();
@@ -975,12 +988,12 @@ public class BeamSizeFace extends JPanel{
 		}
         
 		//probe.reset();
-		EnvelopeTrajectory traj= (EnvelopeTrajectory)probe.getTrajectory();
+		Trajectory<EnvelopeProbeState> traj = probe.getTrajectory();
 		//System.out.println("trajectory is = " + traj);
-		Iterator<ProbeState> iterState= traj.stateIterator();
+		Iterator<EnvelopeProbeState> iterState= traj.stateIterator();
         
 		while(iterState.hasNext()){
-			EnvelopeProbeState state= (EnvelopeProbeState)iterState.next();
+			EnvelopeProbeState state= iterState.next();
 			sdata.add(state.getPosition());
             
             CovarianceMatrix covarianceMatrix = state.getCovarianceMatrix();
@@ -1027,13 +1040,13 @@ public class BeamSizeFace extends JPanel{
 		double[] xrdata = new double[datasize];
 		double[] yrdata = new double[datasize];
         
-		traj= (EnvelopeTrajectory)probe.getTrajectory();
+		//traj= (EnvelopeTrajectory)probe.getTrajectory();
 		EnvelopeProbeState newstate;
-		Twiss[] newtwiss;
-		double rx, ry;
+		Twiss[] newtwiss;       // TODO: CKA - NEVER USED
+		double rx, ry;          // TODO: CKA - NEVER USED
         
 		for(int i =0; i<datasize; i++){
-			newstate = (EnvelopeProbeState)traj.statesForElement(namelist.get(i))[0];
+			newstate = traj.statesForElement(namelist.get(i)).get(0);
 			srdata[i]=newstate.getPosition();
 			xrdata[i]=((Double)xdatalist.get(i)).doubleValue();
 			yrdata[i]=((Double)ydatalist.get(i)).doubleValue();

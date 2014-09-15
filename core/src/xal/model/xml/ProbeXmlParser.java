@@ -1,9 +1,8 @@
 package xal.model.xml;
 
+import xal.model.probe.Probe;
 import xal.tools.data.DataAdaptor;
 import xal.tools.xml.XmlDataAdaptor;
-
-import xal.model.probe.Probe;
 
 /**
  * Parses the description of a <code>Probe</code> from an XML file.  Returns
@@ -30,7 +29,7 @@ public class ProbeXmlParser {
 	 * @param fileUri the URI specifying the XML file to parse
 	 * @return the Probe object described by the XML file
 	 */
-	public static Probe parse(String fileUri) throws ParsingException {
+	public static Probe<?> parse(String fileUri) throws ParsingException {
 		ProbeXmlParser parser = new ProbeXmlParser();
 		return parser.parseProbeFile(fileUri);
 	}
@@ -49,7 +48,7 @@ public class ProbeXmlParser {
 	 * @author Christopher K. Allen
 	 * @since  Apr 14, 2011
 	 */
-	public static Probe parseDataAdaptor(DataAdaptor adaptor) throws ParsingException {
+	public static Probe<?> parseDataAdaptor(DataAdaptor adaptor) throws ParsingException {
 		ProbeXmlParser parser = new ProbeXmlParser();
 		return parser.parseAdaptor(adaptor);
 	}
@@ -65,7 +64,7 @@ public class ProbeXmlParser {
 	 * @param fileUri the URI specifying the XML file to parse
 	 * @return the Probe object described by the XML file
 	 */
-	public Probe parseProbeFile(String fileUri) throws ParsingException {
+	public Probe<?> parseProbeFile(String fileUri) throws ParsingException {
 		XmlDataAdaptor document = XmlDataAdaptor.adaptorForUrl(fileUri, false);
 		return parseAdaptor(document);
 	}
@@ -86,7 +85,7 @@ public class ProbeXmlParser {
 	 * @author Christopher K. Allen
 	 * @since  Apr 14, 2011
 	 */
-	public Probe parseAdaptor(DataAdaptor adaptor) throws ParsingException {
+	public Probe<?> parseAdaptor(DataAdaptor adaptor) throws ParsingException {
 		return Probe.readFrom(adaptor);
 	}
 

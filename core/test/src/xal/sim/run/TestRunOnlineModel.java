@@ -14,8 +14,11 @@ import xal.model.alg.TransferMapTracker;
 import xal.model.probe.EnvelopeProbe;
 import xal.model.probe.ParticleProbe;
 import xal.model.probe.TransferMapProbe;
+import xal.model.probe.traj.EnvelopeProbeState;
+import xal.model.probe.traj.ParticleProbeState;
 import xal.model.probe.traj.ProbeState;
 import xal.model.probe.traj.Trajectory;
+import xal.model.probe.traj.TransferMapState;
 import xal.test.ResourceManager;
 import xal.sim.scenario.AlgorithmFactory;
 import xal.sim.scenario.ProbeFactory;
@@ -181,7 +184,9 @@ public class TestRunOnlineModel {
         MODEL_TEST.resync();
         MODEL_TEST.run();
         
-        this.saveSimData();
+        Trajectory<EnvelopeProbeState>   trjData = MODEL_TEST.getTrajectory();
+        
+        this.saveSimData(trjData);
 	}
 	
     /**
@@ -196,13 +201,15 @@ public class TestRunOnlineModel {
     public void testRunEnvelopeModelWithRfGapCalc() throws ModelException {
         
         PROBE_ENV_TEST.reset();
-        PROBE_PARTL_TEST.getAlgorithm().setRfGapPhaseCalculation(true);
+    	PROBE_ENV_TEST.getAlgorithm().setRfGapPhaseCalculation(true);
         MODEL_TEST.setProbe(PROBE_ENV_TEST);
         MODEL_TEST.resync();
         MODEL_TEST.run();
         
-        this.saveSimData();
-        this.printSimData();
+        Trajectory<EnvelopeProbeState>   trjData = MODEL_TEST.getTrajectory();
+        
+        this.saveSimData(trjData);
+        this.printSimData(trjData);
     }
     
     /**
@@ -221,7 +228,9 @@ public class TestRunOnlineModel {
         MODEL_TEST.resync();
         MODEL_TEST.run();
         
-        this.saveSimData();
+        Trajectory<ParticleProbeState>   trjData = MODEL_TEST.getTrajectory();
+        
+        this.saveSimData(trjData);
     }
     
     /**
@@ -241,8 +250,10 @@ public class TestRunOnlineModel {
         MODEL_TEST.resync();
         MODEL_TEST.run();
         
-        this.saveSimData();
-        this.printSimData();
+        Trajectory<ParticleProbeState>   trjData = MODEL_TEST.getTrajectory();
+        
+        this.saveSimData(trjData);
+        this.printSimData(trjData);
     }
     
     /**
@@ -261,7 +272,9 @@ public class TestRunOnlineModel {
         MODEL_TEST.resync();
         MODEL_TEST.run();
         
-        this.saveSimData();
+        Trajectory<TransferMapState>    trjData = MODEL_TEST.getTrajectory();
+        
+        this.saveSimData(trjData);
     }
     
     /*
@@ -274,7 +287,7 @@ public class TestRunOnlineModel {
      * @author Christopher K. Allen
      * @since  Jan 7, 2014
      */
-    private void saveSimData() {
+    private <S extends ProbeState<S>> void saveSimData(Trajectory<S> trjData) {
 
         // Write out header line
         String  strSimType = MODEL_TEST.getProbe().getClass().getName();
@@ -282,9 +295,9 @@ public class TestRunOnlineModel {
         WTR_OUTPUT.println("  RF Gap Phases " + MODEL_TEST.getProbe().getAlgorithm().useRfGapPhaseCalculation() );
         
         // Write out the simulation data
-        Trajectory trjData = MODEL_TEST.getTrajectory();
+//        Trajectory<?> trjData = MODEL_TEST.getTrajectory();
         
-        for (ProbeState state : trjData) {
+        for (S state : trjData) {
             WTR_OUTPUT.println(state);
         }
         
@@ -299,14 +312,14 @@ public class TestRunOnlineModel {
      * @author Christopher K. Allen
      * @since  Jan 7, 2014
      */
-    private void printSimData() {
+    private <S extends ProbeState<S>>void printSimData(Trajectory<S> trjData) {
 
         // Print out the kinetic energy profile to stdout
         System.out.println("DATA FOR SIMULATION WITH " + MODEL_TEST.getProbe().getClass().getName());
         System.out.println("  RF Gap Phases " + MODEL_TEST.getProbe().getAlgorithm().useRfGapPhaseCalculation() );
-        Trajectory trjData = MODEL_TEST.getTrajectory();
+//        Trajectory<?> trjData = MODEL_TEST.getTrajectory();
         
-        for (ProbeState state : trjData) {
+        for (S state : trjData) {
             
             String strId = state.getElementId();
             double dblW  = state.getKineticEnergy();

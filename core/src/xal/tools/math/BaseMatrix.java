@@ -97,6 +97,22 @@ public abstract class BaseMatrix<M extends BaseMatrix<M>> implements IArchive {
     protected final Jama.Matrix     matImpl;
 
     
+    /*
+     * Object Overrides
+     */
+    
+    /**
+     * Base classes must override the clone operation in order to 
+     * make deep copies of the current object.  This operation cannot
+     * be done without the exact type.
+     *
+     * @see java.lang.Object#clone()
+     *
+     * @author Christopher K. Allen
+     * @since  Jul 3, 2014
+     */
+    @Override
+    public abstract M   clone();
     
     
     /*

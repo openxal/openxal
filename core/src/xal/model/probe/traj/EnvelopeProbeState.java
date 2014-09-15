@@ -18,7 +18,8 @@ import xal.model.xml.ParsingException;
  * @version $id:
  * 
  */
-public class EnvelopeProbeState extends BunchProbeState /* implements IPhaseState */ {
+public class EnvelopeProbeState extends BunchProbeState<EnvelopeProbeState> { 
+//    implements ProbeStateFactory<EnvelopeProbeState> /* implements IPhaseState */ {
 
 
 
@@ -124,10 +125,32 @@ public class EnvelopeProbeState extends BunchProbeState /* implements IPhaseStat
      * Default constructor.  Create a new, empty <code>EnvelopeProbeState<code> object.
      */    
     public EnvelopeProbeState() {
+        super();
+        
+        this.matCov = CovarianceMatrix.newIdentity();
         this.matPert = PhaseMatrix.identity();
         this.matResp = PhaseMatrix.identity();
         this.matRespNoSpaceCharge = PhaseMatrix.identity();
-    	this.matCov = new CovarianceMatrix();
+    }
+    
+    /**
+     * Copy constructor for EnvelopeProbeState.  Initializes the new
+     * <code>EnvelopeProbeState</code> objects with the state attributes
+     * of the given <code>EnvelopeProbeState</code>.
+     *
+     * @param EnvelopeProbeState     initializing state
+     *
+     * @author Christopher K. Allen, Jonathan M. Freed
+     * @since  Jun 26, 2014
+     */
+    public EnvelopeProbeState(final EnvelopeProbeState prsEnv){
+    	super(prsEnv);
+    	
+    	this.bolSaveTwiss	= prsEnv.bolSaveTwiss;
+    	this.matCov			= prsEnv.matCov.clone();
+    	this.matPert		= prsEnv.matPert.clone();
+    	this.matResp		= prsEnv.matResp.clone();
+    	this.matRespNoSpaceCharge = prsEnv.matRespNoSpaceCharge.clone();
     }
 	
     /**
@@ -136,12 +159,14 @@ public class EnvelopeProbeState extends BunchProbeState /* implements IPhaseStat
      * 
      * @param probe     <code>EnvelopeProbe</code> containing initializing state information
      */
-    public EnvelopeProbeState(EnvelopeProbe probe) {
+    public EnvelopeProbeState(final EnvelopeProbe probe) {
         super(probe);
-        this.setCovariance(probe.getCovariance());
-        this.setResponseMatrix(probe.getResponseMatrix());
-        this.setResponseMatrixNoSpaceCharge(probe.getResponseMatrixNoSpaceCharge());
-        this.setPerturbationMatrix(probe.getCurrentResponseMatrix());
+        
+        this.setCovariance( probe.getCovariance().clone() );
+        this.setResponseMatrix( probe.getResponseMatrix().clone() );
+        this.setResponseMatrixNoSpaceCharge( probe.getResponseMatrixNoSpaceCharge().clone() );
+        this.setPerturbationMatrix( probe.getCurrentResponseMatrix().clone() );
+
         //obsolete this.setTwiss(probe.getTwiss());
 //        this.twissParams = probe.getCovariance().computeTwiss();
 //        this.bolSaveTwiss = probe.getSaveTwissFlag();
@@ -151,6 +176,28 @@ public class EnvelopeProbeState extends BunchProbeState /* implements IPhaseStat
 
     }
     
+    
+    /*
+     * Base Class Interface
+     */
+    
+    /**
+     * Implements the cloning operation required by the base class
+     * <code>ProbeState</code>.
+     *
+     * @see xal.model.probe.traj.ProbeState#copy()
+     *
+     * @author Christopher K. Allen
+     * @since  Jun 27, 2014
+     */
+    @Override
+    public EnvelopeProbeState   copy() {
+        return new EnvelopeProbeState(this);
+    }
+    
+    /*
+     * Attribute Setters
+     */
     
     /**
      * <p>
@@ -576,8 +623,33 @@ public class EnvelopeProbeState extends BunchProbeState /* implements IPhaseStat
     public String toString() {
         return super.toString() + " covariance: " + getCovarianceMatrix().toString() 
                                 + ", response: " + this.getResponseMatrix().toString();
-    }   
-    
+    }
+
+//	/**
+//	 * TODO This method should override an abstract method in the base class
+//	 * <code>Probe</code>.  If <code>Probe</code> is refactored so that it
+//	 * has a type template parameter <code>S</code>, say
+//	 * <br/>
+//	 * <br/>
+//	 * &nbsp; &nbsp; <code>class Probe&lt;S extends ProbeState&gt;</code>
+//	 * <br/>
+//	 * <br/>
+//	 * then this method simply creates the typed probe state and exactly fills
+//	 * out the virtual method, which should have a signature
+//     * <br/>
+//     * <br/>
+//     * &nbsp; &nbsp; <code>public S ProbeState#create()</code>
+//     * <br/>
+//     * <br/>
+//	 *  
+//	 * @return new, uninitialized probe state
+//	 *
+//	 * @author Christopher K. Allen
+//	 * @since  Jun 24, 2014
+//	 */
+//	public EnvelopeProbeState create() {
+//		return new EnvelopeProbeState();
+//	}
 
 
 //    /*
