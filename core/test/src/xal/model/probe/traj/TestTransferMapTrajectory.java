@@ -18,7 +18,6 @@ import xal.sim.scenario.ProbeFactory;
 import xal.model.probe.TransferMapProbe;
 import xal.model.probe.traj.ProbeState;
 import xal.model.probe.traj.TransferMapState;
-import xal.model.probe.traj.TransferMapTrajectory;
 import xal.sim.scenario.Scenario;
 import xal.smf.Accelerator;
 import xal.smf.AcceleratorSeq;
@@ -47,7 +46,7 @@ public class TestTransferMapTrajectory {
     
     private static TransferMapProbe     PROBE;
     
-    private static TransferMapTrajectory    TRAJ;
+    private static Trajectory<TransferMapState>    TRAJ;
     
     
     @BeforeClass
@@ -81,7 +80,7 @@ public class TestTransferMapTrajectory {
                 MODEL.resync();
                 MODEL.run();
 
-                TRAJ = (TransferMapTrajectory)MODEL.getTrajectory();
+                TRAJ = MODEL.getTrajectory();
     }
 
     
@@ -111,9 +110,10 @@ public class TestTransferMapTrajectory {
     public void printElementsInTrajectory() {
         System.out.print("\n\nSTATES BY ELEMENT IN TRAJECTORY\n");
         int cnt = 0;
-        Iterator<ProbeState>  iter = (Iterator<ProbeState>)TRAJ.stateIterator();
+        Iterator<TransferMapState>  iter = TRAJ.iterator();
         while (iter.hasNext()) {
-            ProbeState state = iter.next();
+            TransferMapState state = iter.next();
+            
             String  strElemId = state.getElementId();
             double  dblPos    = state.getPosition();
             double  dblKin    = state.getKineticEnergy();
@@ -135,9 +135,9 @@ public class TestTransferMapTrajectory {
         System.out.print("\n\nSTATE-BY-STATE TRANSFER MATRICES IN TRAJECTORY\n");
         int cnt    = 0;
         TransferMapState state1 = (TransferMapState) TRAJ.initialState();
-        Iterator<ProbeState> iter = TRAJ.iterator();
+        Iterator<TransferMapState> iter = TRAJ.iterator();
         while ( iter.hasNext() ) {
-            TransferMapState state2 = (TransferMapState) iter.next(); 
+            TransferMapState state2 = iter.next(); 
             String strId1 = state1.getElementId();
             String strId2 = state2.getElementId();
 //            PhaseMatrix matXfer = TRAJ.getTransferMatrix(strId1, strId2);
@@ -157,7 +157,7 @@ public class TestTransferMapTrajectory {
     public void testGetFullTrajectoryTransferMatrix() {
         System.out.print("\n\nENTRANCE-TO-ELEMENT TRANSFER MATRICES IN TRAJECTORY\n");
         int cnt    = 0;
-        Iterator<ProbeState> iter =  TRAJ.stateIterator();
+        Iterator<TransferMapState> iter =  TRAJ.iterator();
         while ( iter.hasNext() ) {
             TransferMapState state = (TransferMapState) iter.next(); 
             String strId1 = state.getElementId();
