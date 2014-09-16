@@ -54,7 +54,7 @@
 			<attribute isPrimaryKey="false" name="type"           type="java.lang.String" defaultValue="xal.model.alg.EnvTrackerAdapt" />
 			<attribute isPrimaryKey="false" name="update" 		  type="java.lang.Integer" defaultValue="2" />
 			<attribute isPrimaryKey="false" name="debug"          type="java.lang.Boolean" defaultValue="false" />
-			<attribute isPrimaryKey="false" name="calcRfGapPhase" type="java.lang.Boolean" defaultValue="false" />
+			<attribute isPrimaryKey="false" name="calcRfGapPhase" type="java.lang.Boolean" defaultValue="true" />
 		</schema>
 		<record name="default" />
     </table>
