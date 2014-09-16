@@ -189,6 +189,7 @@ public class TestParticleProbeTrajectory {
      * @author Christopher K. Allen
      * @since  Sep 12, 2014
      */
+    @SuppressWarnings("unused")
     private static void spawnGraphFrame(final GraphFrame frm) {
         
         /**
@@ -261,6 +262,7 @@ public class TestParticleProbeTrajectory {
      * @author Christopher K. Allen
      * @since  Sep 12, 2014
      */
+    @SuppressWarnings("unused")
     @Test
     public final void testPlotDesignAndProduction() {
         if (BOL_MAKE_PLOTS == false)
@@ -268,8 +270,8 @@ public class TestParticleProbeTrajectory {
         
         runModels();
         
-        Trajectory  trjDsgn = MOD_DSGN.getTrajectory();
-        Trajectory  trjProd = MOD_PROD.getTrajectory();
+        Trajectory<ParticleProbeState>  trjDsgn = MOD_DSGN.getTrajectory();
+        Trajectory<ParticleProbeState>  trjProd = MOD_PROD.getTrajectory();
 
         for (PLANE plane : PLANE.values()) {
             final ParticleCurve crvDsgn = new ParticleCurve(plane, trjDsgn);
@@ -301,8 +303,8 @@ public class TestParticleProbeTrajectory {
         try {
             runModels();
             
-            Trajectory  trjDsgn = MOD_DSGN.getTrajectory();
-            Trajectory  trjProd = MOD_PROD.getTrajectory();
+            Trajectory<ParticleProbeState>  trjDsgn = MOD_DSGN.getTrajectory();
+            Trajectory<ParticleProbeState>  trjProd = MOD_PROD.getTrajectory();
 
             WTR_OUTPUT.write("DESIGN TRAJECTORY\n");
             this.writeTrajectory(trjDsgn);
@@ -334,11 +336,11 @@ public class TestParticleProbeTrajectory {
      * @author Christopher K. Allen
      * @since  Sep 15, 2014
      */
-    private void writeTrajectory(Trajectory trj) throws IOException {
+    private void writeTrajectory(Trajectory<ParticleProbeState> trj) throws IOException {
         
-        Iterator<?>    itr = trj.stateIterator();
+        Iterator<ParticleProbeState>    itr = trj.iterator();
         while (itr.hasNext()) {
-            ParticleProbeState  state = (ParticleProbeState)itr.next();
+            ParticleProbeState  state     = itr.next();
             String              strElemId = state.getElementId();
             double              dblPos    = state.getPosition();
             PhaseVector         vecState  = state.getPhaseCoordinates();

@@ -6,30 +6,24 @@
  */
 package xal.model.probe.traj;
 
-import xal.tools.beam.PhaseMatrix;
-import xal.tools.beam.calc.CalculationsOnMachines;
-import xal.model.IComponent;
-import xal.model.IElement;
-import xal.model.Lattice;
-import xal.model.ModelException;
-import xal.model.alg.TransferMapTracker;
-import xal.model.elem.Element;
-import xal.sim.scenario.ProbeFactory;
-import xal.model.probe.TransferMapProbe;
-import xal.model.probe.traj.ProbeState;
-import xal.model.probe.traj.TransferMapState;
-import xal.sim.scenario.Scenario;
-import xal.smf.Accelerator;
-import xal.smf.AcceleratorSeq;
-import xal.smf.AcceleratorSeqCombo;
-import xal.smf.data.XMLDataManager;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import xal.model.IComponent;
+import xal.model.Lattice;
+import xal.model.ModelException;
+import xal.model.alg.TransferMapTracker;
+import xal.model.probe.TransferMapProbe;
+import xal.sim.scenario.ProbeFactory;
+import xal.sim.scenario.Scenario;
+import xal.smf.Accelerator;
+import xal.smf.AcceleratorSeq;
+import xal.smf.data.XMLDataManager;
+import xal.tools.beam.PhaseMatrix;
 
 /**
  * Class <code></code>.
@@ -134,7 +128,7 @@ public class TestTransferMapTrajectory {
         
         System.out.print("\n\nSTATE-BY-STATE TRANSFER MATRICES IN TRAJECTORY\n");
         int cnt    = 0;
-        TransferMapState state1 = (TransferMapState) TRAJ.initialState();
+        TransferMapState state1 = TRAJ.initialState();
         Iterator<TransferMapState> iter = TRAJ.iterator();
         while ( iter.hasNext() ) {
             TransferMapState state2 = iter.next(); 
@@ -159,7 +153,7 @@ public class TestTransferMapTrajectory {
         int cnt    = 0;
         Iterator<TransferMapState> iter =  TRAJ.iterator();
         while ( iter.hasNext() ) {
-            TransferMapState state = (TransferMapState) iter.next(); 
+            TransferMapState state = iter.next(); 
             String strId1 = state.getElementId();
 //            PhaseMatrix matXfer = TRAJ.getTransferMatrix(strId1, strId2);
             PhaseMatrix matXfer = state.getTransferMap().getFirstOrder();

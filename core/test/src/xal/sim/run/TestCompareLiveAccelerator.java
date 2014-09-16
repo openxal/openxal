@@ -279,7 +279,7 @@ public class TestCompareLiveAccelerator {
             MOD_DSGN.setProbe(prbDsgn);
             MOD_DSGN.run();
             
-            Trajectory  trjDsgn = MOD_DSGN.getTrajectory();
+            Trajectory<ParticleProbeState>  trjDsgn = MOD_DSGN.getTrajectory();
 
             ParticleTracker algProd = AlgorithmFactory.createParticleTracker(SEQ_PROD);
             ParticleProbe   prbProd = ProbeFactory.createParticleProbe(SEQ_PROD, algProd);
@@ -287,13 +287,13 @@ public class TestCompareLiveAccelerator {
             MOD_PROD.setProbe(prbProd);
             MOD_PROD.run();
             
-            Trajectory  trjProd = MOD_PROD.getTrajectory();
+            Trajectory<ParticleProbeState>  trjProd = MOD_PROD.getTrajectory();
             
             for (AcceleratorNode smfNode : lstNodesProd) {
                 BPM                 smfProd = (BPM) smfNode;
-                ParticleProbeState  ppsProd = (ParticleProbeState)trjProd.stateForElement(smfProd.getId());
+                ParticleProbeState  ppsProd = trjProd.stateForElement(smfProd.getId());
                 PhaseVector         vecProd = ppsProd.getPhaseCoordinates();
-                ParticleProbeState  ppsDsgn = (ParticleProbeState)trjDsgn.stateForElement(smfProd.getId());
+                ParticleProbeState  ppsDsgn = trjDsgn.stateForElement(smfProd.getId());
                 PhaseVector         vecDsgn = ppsDsgn.getPhaseCoordinates();
 
                 this.typeOut("BPM " + smfProd.getId() + " s=" + smfProd.getPosition() );
