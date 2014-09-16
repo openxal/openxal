@@ -631,6 +631,29 @@ public abstract class ElementSeq implements IComposite {
         return  this.m_lstCompsForward;
     }
     
+    /**
+     * Returns a list of <em>all</em> elements contained in this
+     * sequence, more specifically, all leaf elements.
+     * 
+     * @return  list containing all <code>IComponent</code> class 
+     *          elements in this sequence
+     *
+     * @author Christopher K. Allen
+     * @since  Sep 11, 2014
+     */
+    public List<IComponent> getAllElements() {
+        List<IComponent>        lstCmps = new ArrayList<>();
+        Iterator<IComponent>    itrCmps =  this.globalIterator();
+        
+        while (itrCmps.hasNext()) {
+            IComponent cmp = itrCmps.next();
+            
+            lstCmps.add(cmp);
+        }
+        
+        return lstCmps;
+    }
+    
     
     /**
      *  Concatenate the indicated <code>ElementSeq</code> object
