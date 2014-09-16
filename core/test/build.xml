@@ -30,7 +30,8 @@
             <batchtest todir="${build.tests.root}">
                 <fileset dir="${build.compile.core.test.root}"> 
                     <include name="**/*Test*.class"/> 
-                    <exclude name="xal/resources/**/*"/> 
+					<exclude name="**/*Test*$*.class"/>		<!-- exclude anonymous classes because they inherit the outer class name and would inadvertantly match -->
+                    <exclude name="xal/resources/**/*"/>
                 </fileset> 
                 
                 <formatter type="plain" usefile="true"/>
