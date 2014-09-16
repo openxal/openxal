@@ -64,7 +64,10 @@ public class TestCompareLiveAccelerator {
     private static final boolean        BOL_TYPE_STOUT = false;
     
     /** Flag used for running tests involving live accelerator */
-    private static final boolean        BOL_LIVE_TESTS = true;
+    private static final boolean        BOL_LIVE_TESTS = false;
+    
+    /** Flag used for comparing the design and production trajectories (otherwise just compute design) */
+    private static final boolean        BOL_COMPARE = false;
     
 
     /** Location of the output file */
@@ -121,16 +124,19 @@ public class TestCompareLiveAccelerator {
      * Loads an SMF accelerator object given the path relative to the
      * Open XAL project home (i.e., OPENXAL_HOME).
      * 
-     * @param strPathRel    relative path to the accelerator configuration file
+     * @param arrPathRel    relative path to the accelerator configuration file
      * 
      * @return              SMF accelerator object loaded from the given path
      *
      * @author Christopher K. Allen
      * @since  Sep 8, 2014
      */
-    private static Accelerator loadAccelerator(String strPathRel) {
+    private static Accelerator loadAccelerator(String... arrPathRel) {
+        if (arrPathRel.length == 0)
+            return XMLDataManager.loadDefaultAccelerator();
+        
         String  strPathXal = ResourceManager.getProjectHomePath();
-        String  strFileAccel = strPathXal + strPathRel;
+        String  strFileAccel = strPathXal + arrPathRel[0];
         
         Accelerator accel = XMLDataManager.acceleratorWithPath(strFileAccel);
         return accel;
@@ -165,9 +171,15 @@ public class TestCompareLiveAccelerator {
      */
     @BeforeClass
     public static void setUpBeforeClass() throws Exception {
-        ACCEL_DSGN = loadAccelerator(STR_CFGFILE_DSGN);
-        ACCEL_PROD = loadAccelerator(STR_CFGFILE_PROD);
-        
+
+        if (BOL_COMPARE) {
+            ACCEL_DSGN = loadAccelerator(STR_CFGFILE_DSGN);
+            ACCEL_PROD = loadAccelerator(STR_CFGFILE_PROD);
+        } else {
+            ACCEL_DSGN = loadAccelerator();
+            ACCEL_PROD = loadAccelerator();
+        }
+
         SEQ_DSGN = ACCEL_DSGN.getSequence(STR_ID_TESTSEQ);
         SEQ_PROD = ACCEL_PROD.getSequence(STR_ID_TESTSEQ);
         

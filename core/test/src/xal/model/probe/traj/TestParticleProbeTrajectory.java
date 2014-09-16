@@ -10,8 +10,8 @@ import static org.junit.Assert.fail;
 
 import java.awt.Dimension;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.util.Iterator;
 
 import org.junit.AfterClass;
@@ -48,11 +48,13 @@ public class TestParticleProbeTrajectory {
     
     
     /** Flag used for indicating whether to type out to stout or file */
-    private static final boolean        BOL_TYPE_STOUT = false;
+    private static final boolean        BOL_TYPE_STOUT = true;
     
     /** Flag used for running tests involving live accelerator */
     private static final boolean        BOL_MAKE_PLOTS = false;
     
+    /** Flag used for comparing the design and production trajectories (otherwise just compute design) */
+    private static final boolean        BOL_COMPARE = false;
     
 
     /** Location of the design accelerator configuration */
@@ -97,10 +99,9 @@ public class TestParticleProbeTrajectory {
     
     
     /** The results output file stream */
-    static private FileWriter         WTR_OUTPUT;
+    static private PrintStream        PRN_OUTPUT;
 
-    
-    
+
     /*
      * Global Methods
      */
@@ -117,7 +118,7 @@ public class TestParticleProbeTrajectory {
      * @since  Sep 8, 2014
      */
     private static Accelerator loadAccelerator(String ...arrPathRel) {
-        if (arrPathRel == null)
+        if (arrPathRel.length == 0)
             return XMLDataManager.loadDefaultAccelerator();
         String  strPathRel = arrPathRel[0];
         String  strPathXal = ResourceManager.getProjectHomePath();
@@ -180,37 +181,37 @@ public class TestParticleProbeTrajectory {
         }
     }
     
-    /**
-     * Creates a thread for the given frame to display itself then
-     * spawns the thread
-     * 
-     * @param frm   graphics frame to be given its own thread and launched
-     *
-     * @author Christopher K. Allen
-     * @since  Sep 12, 2014
-     */
-    @SuppressWarnings("unused")
-    private static void spawnGraphFrame(final GraphFrame frm) {
-        
-        /**
-         * Create an interface that displays the given frame. 
-         *
-         * @see java.lang.Runnable#run()
-         *
-         * @author Christopher K. Allen
-         * @since  Sep 12, 2014
-         */
-        Runnable lmbFrame = new Runnable() {
-
-            @Override
-            public void run() {
-                frm.display();
-            }
-        };
-        
-        Thread  thrFrame = new Thread(lmbFrame);
-        thrFrame.start();
-    }
+//    /**
+//     * Creates a thread for the given frame to display itself then
+//     * spawns the thread
+//     * 
+//     * @param frm   graphics frame to be given its own thread and launched
+//     *
+//     * @author Christopher K. Allen
+//     * @since  Sep 12, 2014
+//     */
+//    @SuppressWarnings("unused")
+//    private static void spawnGraphFrame(final GraphFrame frm) {
+//        
+//        /**
+//         * Create an interface that displays the given frame. 
+//         *
+//         * @see java.lang.Runnable#run()
+//         *
+//         * @author Christopher K. Allen
+//         * @since  Sep 12, 2014
+//         */
+//        Runnable lmbFrame = new Runnable() {
+//
+//            @Override
+//            public void run() {
+//                frm.display();
+//            }
+//        };
+//        
+//        Thread  thrFrame = new Thread(lmbFrame);
+//        thrFrame.start();
+//    }
     
     
     /**
@@ -221,9 +222,15 @@ public class TestParticleProbeTrajectory {
      */
     @BeforeClass
     public static void setUpBeforeClass() throws Exception {
-        ACCEL_DSGN = loadAccelerator(STR_CFGFILE_DSGN);
-        ACCEL_PROD = loadAccelerator(STR_CFGFILE_PROD);
         
+        if (BOL_COMPARE) {
+            ACCEL_DSGN = loadAccelerator(STR_CFGFILE_DSGN);
+            ACCEL_PROD = loadAccelerator(STR_CFGFILE_PROD);
+        } else {
+            ACCEL_DSGN = loadAccelerator();
+            ACCEL_PROD = loadAccelerator();
+        }
+
         SEQ_DSGN = ACCEL_DSGN.getSequence(STR_ID_TESTSEQ);
         SEQ_PROD = ACCEL_PROD.getSequence(STR_ID_TESTSEQ);
         
@@ -235,10 +242,12 @@ public class TestParticleProbeTrajectory {
         MOD_PROD.setSynchronizationMode(Scenario.SYNC_MODE_DESIGN);
         MOD_PROD.resync();
         
-        if (!BOL_TYPE_STOUT) {
+        if (BOL_TYPE_STOUT) {
+            PRN_OUTPUT = System.out;
+        } else {
             File       fileOut = createOutputFile(STR_FILENAME_OUTPUT);
             
-            WTR_OUTPUT = new FileWriter(fileOut);
+            PRN_OUTPUT = new PrintStream(fileOut);
         }
     }
 
@@ -251,7 +260,7 @@ public class TestParticleProbeTrajectory {
     @AfterClass
     public static void tearDownAfterClass() throws Exception {
         if (!BOL_TYPE_STOUT) {
-            WTR_OUTPUT.close();
+            PRN_OUTPUT.close();
         }
     }
 
@@ -262,7 +271,6 @@ public class TestParticleProbeTrajectory {
      * @author Christopher K. Allen
      * @since  Sep 12, 2014
      */
-    @SuppressWarnings("unused")
     @Test
     public final void testPlotDesignAndProduction() {
         if (BOL_MAKE_PLOTS == false)
@@ -304,15 +312,10 @@ public class TestParticleProbeTrajectory {
             runModels();
             
             Trajectory<ParticleProbeState>  trjDsgn = MOD_DSGN.getTrajectory();
-            Trajectory<ParticleProbeState>  trjProd = MOD_PROD.getTrajectory();
-
-            WTR_OUTPUT.write("DESIGN TRAJECTORY\n");
-            this.writeTrajectory(trjDsgn);
-            WTR_OUTPUT.write("\n");
+            this.writeTrajectory("DESIGN TRAJECTORY", trjDsgn);
             
-            WTR_OUTPUT.write("PRODUCTION TRACTORY\n");
-            this.writeTrajectory(trjProd);
-            WTR_OUTPUT.write("\n");
+            Trajectory<ParticleProbeState>  trjProd = MOD_PROD.getTrajectory();
+            this.writeTrajectory("PRODUCTION TRACTORY", trjProd);
 
         } catch (Exception e) {
             
@@ -336,8 +339,11 @@ public class TestParticleProbeTrajectory {
      * @author Christopher K. Allen
      * @since  Sep 15, 2014
      */
-    private void writeTrajectory(Trajectory<ParticleProbeState> trj) throws IOException {
+    private void writeTrajectory(String strTitle, Trajectory<ParticleProbeState> trj) throws IOException {
+
+        PrintStream     prs = PRN_OUTPUT;
         
+        prs.println(strTitle);
         Iterator<ParticleProbeState>    itr = trj.iterator();
         while (itr.hasNext()) {
             ParticleProbeState  state     = itr.next();
@@ -345,10 +351,10 @@ public class TestParticleProbeTrajectory {
             double              dblPos    = state.getPosition();
             PhaseVector         vecState  = state.getPhaseCoordinates();
 
-            String strLine = strElemId + " " + dblPos + " " + vecState.toString() + "\n";
-            WTR_OUTPUT.write(strLine);
+            String strLine = strElemId + " " + dblPos + " " + vecState.toString();
+            prs.println(strLine);
         }
-
+        prs.println();
     }
 
 }
