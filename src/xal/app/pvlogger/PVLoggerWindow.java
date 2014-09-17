@@ -186,9 +186,6 @@ class PVLoggerWindow extends AcceleratorWindow implements SwingConstants, Scroll
 				DispatchQueue.getMainQueue().dispatchAsync( new Runnable() {
 					public void run() {
 						updateLoggerTable();
-						for ( final RemoteLoggerRecord record : records ) {
-							record.setUpdateListener( PVLoggerWindow.this );
-						}
 					}
 				});
 			}
@@ -198,7 +195,12 @@ class PVLoggerWindow extends AcceleratorWindow implements SwingConstants, Scroll
 
 	/** update the logger table */
 	private void updateLoggerTable() {
-		LOGGER_TABLE_MODEL.setRecords( _mainModel.getRemoteLoggers() );
+		final java.util.List<RemoteLoggerRecord> records = _mainModel.getRemoteLoggers();
+		for ( final RemoteLoggerRecord record : records ) {
+			record.setUpdateListener( PVLoggerWindow.this );
+		}
+
+		LOGGER_TABLE_MODEL.setRecords( records );
 	}
 	
 	
