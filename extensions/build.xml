@@ -224,6 +224,7 @@
 				&lt;pathelement location="${build.intermediates.shared}/xal-core.jar" /&gt;
 				&lt;pathelement location="${build.intermediates.extensions}/lib.jar" /&gt;
 			&lt;/classpath&gt;
+			&lt;compilerarg value="-Xlint" /&gt;
 		</echo>
 
 		<!-- loop over every extension directory and add the source code -->

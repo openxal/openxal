@@ -103,6 +103,25 @@ public class IdealMagWedgeDipole2 extends ElectromagnetSeq {
         this.getFaceEntr().setId(strId + "Entr");
         this.getFaceExit().setId(strId + "Exit");
     }
+    
+    /**
+     * Overrides the default <code>setHardwareNodeId(String)</code> method
+     * for the <code>ElementSeq</code> base class so we can set the
+     * hardware node IDs for the composite elements.
+     *
+     * @see xal.model.elem.ElementSeq#setHardwareNodeId(java.lang.String)
+     *
+     * @author Christopher K. Allen
+     * @since  Sep 5, 2014
+     */
+    @Override
+    public void setHardwareNodeId(String strSmfId) {
+        super.setHardwareNodeId(strSmfId);
+        
+        this.getMagBody().setHardwareNodeId(strSmfId);
+        this.getFaceEntr().setHardwareNodeId(strSmfId);
+        this.getFaceExit().setHardwareNodeId(strSmfId);
+    }
 
     /**
      * Set the alignment parameters for the magnet.

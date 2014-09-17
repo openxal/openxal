@@ -63,6 +63,17 @@ public interface IProbe {
      * @return <code>String</code> id of current lattice element
      */
     public String getCurrentElement();
+    
+    /**
+     * Returns the identifier of the hardware being modeling
+     * by the current element.
+     * 
+     * @return  hardware ID of the current modeling element
+     *
+     * @author Christopher K. Allen
+     * @since  Sep 3, 2014
+     */
+    public String getCurrentHardwareId();
 
     /** 
      *  Returns the current beam-line position of the probe 
@@ -113,6 +124,17 @@ public interface IProbe {
      * @param id <code>String</code> id of current lattice element.
      */
     public void setCurrentElement(String id);
+    
+    /**
+     * Sets the string identifier of the hardware node modeled by
+     * the current element.
+     * 
+     * @param strSmfId  hardware ID of the current modeling element
+     *
+     * @author Christopher K. Allen
+     * @since  Sep 3, 2014
+     */
+    public void setCurrentHardwareId(String strSmfId);
 
     /** 
      *  Set the current position of the probe along the beamline.

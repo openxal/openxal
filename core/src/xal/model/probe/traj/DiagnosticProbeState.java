@@ -9,17 +9,37 @@ import xal.model.xml.ParsingException;
  * point in time.
  * 
  * @author Craig McChesney
- * @version $id:
+ * @author Christopher K. Allen
+ * 
+ * @version June 26, 2014
  * 
  */
-public class DiagnosticProbeState extends ProbeState {
-		
+public class DiagnosticProbeState extends ProbeState<DiagnosticProbeState> {
+
+    
+    /*
+     * Global Constants
+     */
+    
+    /** DataAdaptor node label */
+    private static final String DIAG_LABEL = "diagnostic";
+    
+    /** DataAdaptor attribute tag */
+    private static final String COUNT_LABEL = "count";
+    
+
+    /*
+     * Local Attributes
+     */
+    
     /** The accumulator for counting the model elements traversed by the probe at this state */
-	private int elementsVisited;
+	private int elementsVisited = 0;
 	
 	
-	// *********** constructors
 	
+	/*
+	 * Initialization
+	 */
 	
 	/**
 	 * Creates a new <code>DiagnosticProbeState</code>.
@@ -28,6 +48,23 @@ public class DiagnosticProbeState extends ProbeState {
 	 * @since   Apr 19, 2011
 	 */
 	public DiagnosticProbeState() {
+		super();
+	}
+	
+    /**
+     * Copy constructor for DiagnosticProbeState.  Initializes the new
+     * <code>DisagnosticProbeState</code> objects with the state attributes
+     * of the given <code>DiagnosticProbeState</code>.
+     *
+     * @param diagnosticProbeState     initializing state
+     *
+     * @author Christopher K. Allen, Jonathan M. Freed
+     * @since  Jun 26, 2014
+     */
+	public DiagnosticProbeState(final DiagnosticProbeState diagnosticProbeState){
+		super(diagnosticProbeState);
+		
+		this.elementsVisited = diagnosticProbeState.elementsVisited;
 	}
 	
     /**
@@ -37,14 +74,16 @@ public class DiagnosticProbeState extends ProbeState {
      * @author  Christopher K. Allen
      * @since   Apr 19, 2011
      */
-	public DiagnosticProbeState(DiagnosticProbe probe) {
+	public DiagnosticProbeState(final DiagnosticProbe probe) {
 		super(probe);
 		this.elementsVisited = probe.getElementsVisited();
 	}
 	
 	
-	// *********** diagnostic probe state accessing
-	
+
+	/*
+	 * Property Accessors
+	 */
 	
     /**
      * Returns the number of elements traversed by probe at this state.
@@ -69,14 +108,42 @@ public class DiagnosticProbeState extends ProbeState {
 	public void setElementsVisited(int n) {
 		elementsVisited = n;
 	}
-
 	
-	// ************* I/O support
-
+    /**
+     * Increments the number of element traversed by 1.
+     *
+     * @author Christopher K. Allen
+     * @since  Apr 19, 2011
+     */
+    public void incrementElementsVisited() {
+    	++elementsVisited;
+    }
 	
-    private static final String DIAG_LABEL = "diagnostic";
-	private static final String COUNT_LABEL = "count";
-	
+    /*
+     * ProbeState Overrides
+     */
+    
+    /**
+     * Implements the clone operation required by the base class
+     * <code>ProbeState</code>.
+     *
+     * @see xal.model.probe.traj.ProbeState#copy()
+     *
+     * @author Christopher K. Allen
+     * @since  Jun 26, 2014
+     */
+    @Override
+    public DiagnosticProbeState copy() {
+        return new DiagnosticProbeState(this);
+    }
+    
+	/**
+	 *
+	 * @see xal.model.probe.traj.ProbeState#addPropertiesTo(xal.tools.data.DataAdaptor)
+	 *
+	 * @author Christopher K. Allen
+	 * @since  Jun 27, 2014
+	 */
 	@Override
     protected void addPropertiesTo(DataAdaptor container) {
 		super.addPropertiesTo(container);
@@ -85,6 +152,13 @@ public class DiagnosticProbeState extends ProbeState {
 		diagNode.setValue(COUNT_LABEL, String.valueOf(getElementsVisited()));
 	}
 	
+	/**
+	 *
+	 * @see xal.model.probe.traj.ProbeState#readPropertiesFrom(xal.tools.data.DataAdaptor)
+	 *
+	 * @author Christopher K. Allen
+	 * @since  Jun 27, 2014
+	 */
 	@Override
     protected void readPropertiesFrom(DataAdaptor container) 
 			throws ParsingException {
@@ -98,9 +172,20 @@ public class DiagnosticProbeState extends ProbeState {
 	}
 	
 	
-	// ************** Object overrides
+
+	/*
+	 * Object Overrides
+	 */
 	
 	
+	/**
+	 * Returns a representation of the internal state as a string.
+	 *
+	 * @see xal.model.probe.traj.ProbeState#toString()
+	 *
+	 * @author Christopher K. Allen
+	 * @since  Jun 27, 2014
+	 */
 	@Override
     public String toString() {
 		return super.toString() + " count: " + getElementsVisited();

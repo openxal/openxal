@@ -166,7 +166,7 @@ public class DirectedStep extends SearchAlgorithm {
 		for ( int index = 0 ; index < gradient.length ; index++ ) {
 			final Variable variable = variables.get( index );
 			final double limit = gradient[index] > 0 ? variable.getUpperLimit() : variable.getLowerLimit();
-			if ( gradient[index] != 0.0 ) {
+			if ( gradient[index] != 0.0 && !Double.isNaN( gradient[index] ) ) {
 				maxScale = Math.min( maxScale, ( limit - originPoint.getValue( variable ) ) / gradient[index] );
 			}
 		}
@@ -244,7 +244,10 @@ public class DirectedStep extends SearchAlgorithm {
 		final Map<Variable,Number> valueMap = new HashMap<Variable,Number>( variables.size() );
 		for ( int index = 0 ; index < gradient.length ; index++ ) {
 			final Variable variable = variables.get( index );
-			final double value = originPoint.getValue( variable ) + gradient[index] * scale;
+
+			// gradient component can be NaN if the corresponding variable's lower and upper limits match (e.g. when the variable isn't really variable)
+			final double delta = Double.isNaN( gradient[index] ) ? 0.0 : gradient[index] * scale;
+			final double value = originPoint.getValue( variable ) + delta;
 			final double lowerLimit = variable.getLowerLimit();
 			final double upperLimit = variable.getUpperLimit();
 			final double trialValue = value < lowerLimit ? lowerLimit : value > upperLimit ? upperLimit : value;

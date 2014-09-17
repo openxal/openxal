@@ -269,7 +269,7 @@ public class ArrayPVViewerDocument extends AcceleratorDocument {
 	 *  superclass method.
 	 */
 	@Override
-    protected void freeCustomResources() {
+    public void freeCustomResources() {
 		cleanUp();
 	}
 
@@ -448,7 +448,7 @@ public class ArrayPVViewerDocument extends AcceleratorDocument {
 	 */
 
 	@Override
-    protected void customizeCommands(Commander commander) {
+    public void customizeCommands(Commander commander) {
 
 		// define the "show-view-panel" set raw emittance panel action action
 		setViewlAction =

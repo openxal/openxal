@@ -56,7 +56,7 @@ class TripDocument extends XalDocument {
 	
 	
 	/** Free document resources. */
-	final protected void freeCustomResources() {
+	final public void freeCustomResources() {
 		_historyController.clearDatabaseConnection();
 		super.freeCustomResources();
 	}

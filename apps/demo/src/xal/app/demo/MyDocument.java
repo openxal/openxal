@@ -132,7 +132,7 @@ public class MyDocument extends XalDocument {
      * Register custom actions for the document.
      * @param commander The commander with which to register the custom commands.
      */
-    protected void customizeCommands( final Commander commander ) {
+    public void customizeCommands( final Commander commander ) {
         // define the "Export" demo action
         final Action exportAction = new AbstractAction( "export-data" ) {
             /** serialization identifier */

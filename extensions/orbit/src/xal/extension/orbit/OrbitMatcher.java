@@ -8,17 +8,14 @@
 
 package xal.extension.orbit;
 
-import java.util.*;
-
-import xal.smf.*;
-import xal.model.alg.*;
-import xal.model.probe.*;
-import xal.sim.scenario.*;
-import xal.model.probe.traj.*;
-import xal.smf.impl.*;
-import xal.tools.beam.PhaseMatrix;
+import java.util.ArrayList;
+import java.util.List;
 
 import Jama.Matrix;
+import xal.model.probe.traj.Trajectory;
+import xal.model.probe.traj.TransferMapState;
+import xal.smf.AcceleratorNode;
+import xal.tools.beam.PhaseMatrix;
 
 
 /** using the online model (ignoring coupling), determines a beam position and momentum at an element which best matches the measured positions at a series of specified elements */
@@ -30,23 +27,21 @@ public class OrbitMatcher {
 	final List<? extends AcceleratorNode> MEASURED_NODES;
 	
 	/** trajectory from which to get the transfer matrices */
-	protected MatrixTrajectory _trajectory;
-	
+	protected Trajectory<TransferMapState> _trajectory;
+
 	/** horizontal beam position transform */
 	protected BeamPositionTransform _xBeamPositionTransform;
 	
 	/** vertical beam position transform */
 	protected BeamPositionTransform _yBeamPositionTransform;
-	
-	
+
+
 	/** Constructor */
-	public OrbitMatcher( final AcceleratorNode targetNode, final List<? extends AcceleratorNode> measuredNodes, final MatrixTrajectory trajectory ) {
+	public OrbitMatcher( final AcceleratorNode targetNode, final List<? extends AcceleratorNode> measuredNodes, final Trajectory<TransferMapState> trajectory ) {
 		TARGET_NODE = targetNode;
 		MEASURED_NODES = measuredNodes;
-		
-		setTrajectory( trajectory );
 	}
-	
+
 	
 	/** get the best matching horizontal beam position in mm at the target node based on the beam position measurements in mm at the measurement nodes */
 	public double getHorizontalTargetBeamPosition( final double[] measuredBeamPositions ) {
@@ -61,19 +56,19 @@ public class OrbitMatcher {
 	
 	
 	/** set the trajectory */
-	public void setTrajectory( final MatrixTrajectory trajectory ) {
+	public void setTrajectory( final Trajectory<TransferMapState> trajectory ) {
 		_trajectory = trajectory;
 		
 		final List<TransferRow> xTransferRows = new ArrayList<TransferRow>( MEASURED_NODES.size() );
 		final List<TransferRow> yTransferRows = new ArrayList<TransferRow>( MEASURED_NODES.size() );
-		
+
 		for ( final AcceleratorNode node : MEASURED_NODES ) {
 			// we need to get the transfer matrix from the target node to the measurement node (see the equations)
 			final PhaseMatrix transferMatrix = getTransferMatrix( TARGET_NODE, node );
 			xTransferRows.add( extractHorizontalSubMatrix( transferMatrix ) );
 			yTransferRows.add( extractVerticalSubMatrix( transferMatrix ) );
 		}
-		
+
 		_xBeamPositionTransform = new BeamPositionTransform( xTransferRows );
 		_yBeamPositionTransform = new BeamPositionTransform( yTransferRows );
 	}
@@ -101,8 +96,18 @@ public class OrbitMatcher {
 	
 	/** get the transfer matrix from the transfer map trajectory */
 	protected PhaseMatrix getTransferMatrix( final AcceleratorNode fromNode, final AcceleratorNode toNode ) {
-		return _trajectory.getTransferMatrix( fromNode.getId(), toNode.getId() );
-		//return _trajectory.getTransferMatrix( toNode.getId(), fromNode.getId() );
+//		return _trajectory.getTransferMatrix( fromNode.getId(), toNode.getId() );
+//		return _trajectory.getTransferMatrix( toNode.getId(), fromNode.getId() );
+	    TransferMapState   S1 = this._trajectory.stateForElement(fromNode.getId());
+	    TransferMapState   S2 = this._trajectory.stateForElement(toNode.getId() );
+	    
+	    PhaseMatrix    matPhi1 = S1.getTransferMap().getFirstOrder();
+	    PhaseMatrix    matPhi2 = S2.getTransferMap().getFirstOrder();
+	    
+	    PhaseMatrix    matPhi1inv = matPhi1.inverse();
+	    PhaseMatrix    matPhi21   = matPhi2.times( matPhi1inv );
+	    
+	    return matPhi21;
 	}
 }
 

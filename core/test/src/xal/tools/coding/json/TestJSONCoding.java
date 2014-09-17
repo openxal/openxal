@@ -18,7 +18,7 @@ import java.io.*;
 public class TestJSONCoding {
     @Test
     public void testNullEncoding() {
-        Assert.assertTrue( "null" == JSONCoder.defaultEncode( (Object)null ) );
+        Assert.assertTrue( "null".equals( JSONCoder.defaultEncode( (Object)null ) ) );
     }
 
 
@@ -120,6 +120,9 @@ public class TestJSONCoding {
     
     @Test
     public void testArrayEncodingDecoding() {
+		checkArrayEncodingDecoding( new Object[] { "Hello", "World" } );    // Object array with standard types
+		checkArrayEncodingDecoding( new Object[] {} );		// Empty object array
+		checkArrayEncodingDecoding( new Object[] { "Hello, World", 2.0 } );    // Object array with standard types
         checkArrayEncodingDecoding( new Object[] { "Hello, World", 2.0, 5000L } );    // Object array with standard types
         checkArrayEncodingDecoding( new Object[] { "Hello, World", 25, new Date() } );    // Object array with extended types
         checkArrayEncodingDecoding( new String[] { "Hello", "World", "This is just a test!" } );    // standard type array
@@ -189,13 +192,16 @@ public class TestJSONCoding {
     
     
     @Test
-    public void testMapEncodingDecoding() {        
+    public void testMapEncodingDecoding() {
         final Map<String,Object> simpleMap = new HashMap<String,Object>();
         simpleMap.put( "info", null );
         simpleMap.put( "x", 41.8 );
         simpleMap.put( "y", -2.6 );
         simpleMap.put( "comment", "Just a point" );
         checkEncodingDecoding( simpleMap );
+
+		// test empty dictionary
+		checkEncodingDecoding( new HashMap<String,Object>() );
     }
     
     
@@ -301,7 +307,7 @@ public class TestJSONCoding {
         Assert.assertTrue( shared_0 == shared_1 );      // verify that references are preserved (objects that share the same instance prior to encoding do so when regenerated)
         Assert.assertTrue( shared_0 != other );         // verify that different instances that are equal prior to encoding do not share the same instance after regeneration
     }
-    
+
     
     /** check whether the coder can encode values */
     static private <DataType> void checkEncodingEquality( final DataType value ) {

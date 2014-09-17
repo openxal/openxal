@@ -79,7 +79,7 @@ class MPSDocument extends XalDocument {
 	 * application wide definitions for this document.  By default this method returns null.
      * @return The menu definition properties file path in classpath notation
      */
-    protected String getCustomMenuDefinitionResource() {
+    public String getCustomMenuDefinitionResource() {
 		return "browser_menu.properties";
     }
     
@@ -106,7 +106,7 @@ class MPSDocument extends XalDocument {
 	/**
 	 * Override the inherited method to dispose of the model before the document is closed.
 	 */
-	protected void willClose() {
+	public void willClose() {
 		_model.dispose();
 	}
 }

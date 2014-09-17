@@ -11,10 +11,8 @@ import xal.tools.beam.PhaseMatrix;
 import xal.tools.beam.PhaseVector;
 import xal.tools.data.DataAdaptor;
 import xal.tools.annotation.AProperty.NoEdit;
-
 import xal.model.probe.traj.ParticleProbeState;
-import xal.model.probe.traj.ParticleTrajectory;
-import xal.model.probe.traj.ProbeState;
+import xal.model.probe.traj.Trajectory;
 import xal.model.xml.ParsingException;
 
 
@@ -29,20 +27,8 @@ import xal.model.xml.ParsingException;
  * 
  */
 
-public class ParticleProbe extends Probe {
+public class ParticleProbe extends Probe<ParticleProbeState> {
 
-    
-    /*
-     *  Local Attributes
-     */
-    
-    /** phase coordinates of the particle location */ 
-    private PhaseVector     vecCoords;
-    
-    /** response matrix for initial coordinate sensitivity */
-    private PhaseMatrix     matResp;
-    
-    
 
     /*
      * Initialization
@@ -54,8 +40,9 @@ public class ParticleProbe extends Probe {
      */
     public ParticleProbe() {
         super( );
-        this.vecCoords = new PhaseVector();
-        this.matResp = PhaseMatrix.identity();
+        
+        this.setPhaseCoordinates(new PhaseVector());
+        this.setResponseMatrix(PhaseMatrix.identity());
     }
     
     /**
@@ -64,7 +51,7 @@ public class ParticleProbe extends Probe {
      *
      *  @param  probe   ParticleProbe object to be cloned
      */
-    public ParticleProbe(ParticleProbe probe)   {
+    public ParticleProbe(final ParticleProbe probe)   {
         super(probe);
         
         // Copy phase coordinate vector
@@ -95,7 +82,7 @@ public class ParticleProbe extends Probe {
      *                      <b>z</b> = (<i>x, x', y, y', z, z', </i>1)<sup><i>T</i></sup>
 	 */
     public void setPhaseCoordinates(PhaseVector vecPhase) {
-        this.vecCoords = new PhaseVector(vecPhase);
+    	this.stateCurrent.setPhaseCoordinates(vecPhase);
     }
 	
     
@@ -119,7 +106,7 @@ public class ParticleProbe extends Probe {
      *                  &part;<b>z</b>/&part;<b>z</b><sub>0</sub>the matResp to set
      */
     public void setResponseMatrix(PhaseMatrix matResp) {
-        this.matResp = matResp;
+        this.stateCurrent.setResponseMatrix(matResp);
     }
 
     /*
@@ -133,7 +120,7 @@ public class ParticleProbe extends Probe {
      *  @return     vector (x,x',y,y',z,z',1) of phase space coordinates
      */
     public PhaseVector getPhaseCoordinates()  { 
-    	return this.vecCoords;
+    	return this.stateCurrent.getPhaseCoordinates();
     }
 
     /**
@@ -156,7 +143,7 @@ public class ParticleProbe extends Probe {
      *          &part;<b>z</b>/&part;<b>z</b><sub>0</sub>
      */
     public PhaseMatrix getResponseMatrix() {
-        return matResp;
+        return this.stateCurrent.getResponseMatrix();
     }
 
     /**
@@ -169,7 +156,7 @@ public class ParticleProbe extends Probe {
 	@NoEdit
     @Deprecated
 	public PhaseVector getFixedOrbit() {
-    	return this.vecCoords;		
+		return this.stateCurrent.getFixedOrbit();	
 	}
 
     
@@ -178,20 +165,18 @@ public class ParticleProbe extends Probe {
      * Trajectory Support
      */
 
-    /**
-     * Creates a new <code>Trajectory</code> object for <code>ParticleProbe</code> types.
-     * 
-     * @return  new, empty <code>ParticleTrajectory</code> object
-     * 
-     * @author Christopher K. Allen
-     * @since  Aug 13, 2002
-     * @version Nov 14, 2013
-     * 
-     * @see xal.model.probe.Probe#createTrajectory()
-     */
+	/**
+	 * Creates a <code>Trajectory&lt;ParticleProbeState&gt;</code> object of the
+	 * proper type for saving the probe's history.
+	 * 
+	 * @return a new, empty <code>Trajectory&lt;ParticleProbeState&gt;</code> 
+	 * 		for saving the probe's history
+	 * 
+	 * @author Jonathan M. Freed
+	 */
     @Override
-    public ParticleTrajectory createTrajectory() {
-        return new ParticleTrajectory();
+    public Trajectory<ParticleProbeState> createTrajectory() {
+        return new Trajectory<ParticleProbeState>(ParticleProbeState.class);
     }
     
     /**
@@ -208,35 +193,48 @@ public class ParticleProbe extends Probe {
      */
     @Override
     public ParticleProbeState createProbeState() {
-        return new ParticleProbeState(this);
+	        return new ParticleProbeState(this);
     }
     
+	/**
+	 * Creates a new, empty <code>ParticleProbeState</code>.
+	 * 
+	 * @return a new, empty <code>ParticleProbeState</code>
+	 * 
+	 * @author Jonathan M. Freed
+	 * @since Jul 1, 2014
+	 */
+	@Override
+	public ParticleProbeState createEmptyProbeState(){
+		return new ParticleProbeState();
+	}
     
-    /**
-     * Capture the current probe state to the <code>ProbeState</code> argument.  Note
-     * that the argument must be of the concrete type <code>ParticleProbeState</code>.
-     * 
-     * @param   state   <code>ProbeState</code> to receive this probe's state information
-     * 
-     * @exception IllegalArgumentException  argument is not of type <code>ParticleProbeState</code>
-     */   
-    @Override
-    public void applyState(ProbeState state) {
-        
-        // Check if state is the right type
-        if (!(state instanceof ParticleProbeState))
-            throw new IllegalArgumentException("invalid probe state");
-        
-        ParticleProbeState  pps = (ParticleProbeState)state;
-        
-        // Set the properties of this probe according to the probe state
-        super.applyState(pps);
-        this.setPhaseCoordinates( pps.getPhaseCoordinates() );
-        this.setResponseMatrix( pps.getResponseMatrix() );
-    }
+    
+//    /**
+//     * Capture the current probe state to the <code>ProbeState</code> argument.  Note
+//     * that the argument must be of the concrete type <code>ParticleProbeState</code>.
+//     * 
+//     * @param   state   <code>ProbeState</code> to receive this probe's state information
+//     * 
+//     * @exception IllegalArgumentException  argument is not of type <code>ParticleProbeState</code>
+//     */   
+//    @Override
+//    public void applyState(ParticleProbeState state) {
+//        
+//        // Check if state is the right type
+//        if (!(state instanceof ParticleProbeState))
+//            throw new IllegalArgumentException("invalid probe state");
+//        
+//        ParticleProbeState  pps = (ParticleProbeState)state;
+//        
+//        // Set the properties of this probe according to the probe state
+//        super.applyState(pps);
+//        this.setPhaseCoordinates( pps.getPhaseCoordinates() );
+//        this.setResponseMatrix( pps.getResponseMatrix() );
+//    }
     
     @Override
-    protected ProbeState readStateFrom(DataAdaptor container) throws ParsingException {
+    protected ParticleProbeState readStateFrom(DataAdaptor container) throws ParsingException {
         ParticleProbeState state = new ParticleProbeState();
         state.load(container);
         return state;

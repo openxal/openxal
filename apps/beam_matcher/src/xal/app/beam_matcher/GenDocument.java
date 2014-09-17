@@ -169,7 +169,7 @@ public class GenDocument extends AcceleratorDocument{
     /**
      * Customize any special button commands.
      */
-    protected void customizeCommands(Commander commander) {
+    public void customizeCommands(Commander commander) {
     }
     
     /**

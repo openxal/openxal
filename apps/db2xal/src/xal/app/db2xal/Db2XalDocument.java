@@ -87,7 +87,7 @@ public class Db2XalDocument extends AcceleratorDocument implements DataListener 
 			return;
 	}
 
-	protected void customizeCommands(Commander commander) {
+	public void customizeCommands(Commander commander) {
 
 		// action for popping up sequence chooser
 		Action showSeqsAction = new AbstractAction() {

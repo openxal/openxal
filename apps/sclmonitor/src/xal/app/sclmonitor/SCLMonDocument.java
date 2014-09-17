@@ -348,7 +348,7 @@ class SCLMonDocument extends AcceleratorDocument {
 		
 	}
 
-	protected void customizeCommands(Commander commander) {
+	public void customizeCommands(Commander commander) {
 		// action for snapshot SCL HOM waveforms to the PV Logger
 		snapAction = new AbstractAction() {
 			static final long serialVersionUID = 100;

@@ -13,6 +13,28 @@ import xal.smf.AcceleratorNode;
 import xal.smf.impl.Bend;
 import xal.smf.impl.Magnet;
 
+/**
+ * <p>
+ * <h4>CKA NOTES:</h4>
+ * &middot; I have modified this objects so it carries the additional attribute
+ * of the <em>modeling element</em> identifier.  This is in contrast to the hardware node
+ * identifier from which it maps.
+ * <br/>
+ * <br/>
+ * &middot; The idea is that probes states produced by simulation will carry this attribute
+ * <b>if</b> it has been set.  If not, then the probe state will have the same attribute
+ * ID as the hardware node.
+ * <br/>
+ * <br/>
+ * &middot; Note that probe states now carry two identifier attributes, one for the modeling
+ * element, and one for the SMF hardware node from which it came.
+ * </p>
+ *
+ * @author Ivo List
+ * @author Christopher K. Allen
+ * @since    Oct 3, 2013
+ * @version  Sep 5, 2014
+ */
 public class LatticeElement implements Comparable<LatticeElement> {
 	
 
@@ -23,9 +45,13 @@ public class LatticeElement implements Comparable<LatticeElement> {
 	private int partnr = 0, parts = 1;	
 	private Class<? extends IComponent> elementClass;
 	private int originalPosition;
+	
+	/** CKA Modeling element identifier, which can be different that the Accelerater node's ID */
+	private String     strElemId;
 
 	
 	public LatticeElement(AcceleratorNode node, double position, Class<? extends IComponent> elementClass, int originalPosition) {
+	    this.strElemId = null;
 		this.node = node;
 		this.position = position;
 
@@ -53,6 +79,7 @@ public class LatticeElement implements Comparable<LatticeElement> {
 	}
 
 	private LatticeElement(AcceleratorNode node, double start, double end, Class<? extends IComponent> elementClass, int originalPosition) {
+	    this.strElemId = null;
 		this.node = node;	
 		this.elementClass = elementClass;
 				
@@ -64,7 +91,33 @@ public class LatticeElement implements Comparable<LatticeElement> {
 	}
 
 	
-	public double getStartPosition() {
+	/**
+	 * Sets the (optional) string identifier for the modeling element that
+	 * this object will create.
+	 * 
+     * @param strElemId     identifier for the modeling element created
+     * 
+     * @author Christopher K. Allen
+     * @since  Sep 5, 2014
+     */
+    public void setModelingElementId(String strElemId) {
+        this.strElemId = strElemId;
+    }
+
+    /**
+     * Returns the identifier string to be used for the modeling element created
+     * by this object.
+     * 
+     * @return  the element ID of the created object
+     * 
+     * @author Christopher K. Allen
+     * @since  Sep 5, 2014
+     */
+    public String getModelingElementId() {
+        return strElemId;
+    }
+
+    public double getStartPosition() {
 		return start;
 	}
 
@@ -109,6 +162,7 @@ public class LatticeElement implements Comparable<LatticeElement> {
 		try {
 			IComponent component = elementClass.newInstance();		
 			component.initializeFrom(this);
+			
 			return component;
 		} catch (InstantiationException | IllegalAccessException e) {
 			throw new ModelException("Exception while instantiating class "+elementClass.getName()+" for node "+node.getId(), e);

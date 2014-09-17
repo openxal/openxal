@@ -37,12 +37,15 @@ public class FileFilterFactory {
      * @param fileTypes An array of file types to accept
      * @return The file chooser that accepts the specified file types (same file chooser as the argument)
      */
-    static public JFileChooser applyFileFilters(JFileChooser fileChooser, final String[] fileTypes) {        
+    static public JFileChooser applyFileFilters( final JFileChooser fileChooser, final String[] fileTypes ) {
         for ( int index = 0 ; index < fileTypes.length ; index++ ) {
             FileFilter filter = getFileFilter(fileTypes[index]);
             fileChooser.addChoosableFileFilter(filter);
         }
-        fileChooser.addChoosableFileFilter( getSupportedFileFilter(fileTypes) );
+
+		final FileFilter aggregateFilter = getSupportedFileFilter( fileTypes );
+        fileChooser.addChoosableFileFilter( aggregateFilter );
+		fileChooser.setFileFilter( aggregateFilter );
         
         return fileChooser;
     }
