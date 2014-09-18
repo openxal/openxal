@@ -447,7 +447,7 @@ public class ScannerConfigDisplay extends JTabbedPane /* implements IConfigView 
         
         // Create the device configuration panels
         for (PANE pane : PANE.values()) {
-            String                                                      strTitle = pane.getPaneTitle();
+            String                                          strTitle = pane.getPaneTitle();
             DeviceConfigBasePanel<? extends ParameterSet>   pnlPSet  = pane.createPane();
 
             MainConfiguration.getInstance().registerView(pnlPSet);

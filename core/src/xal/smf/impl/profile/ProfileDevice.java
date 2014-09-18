@@ -883,22 +883,22 @@ public abstract class ProfileDevice extends AcceleratorNode {
      *  @throws gov.sns.ca.MonitorException        general monitor failure
      */
     public Monitor createMonitor(XalPvDescriptor.IPvDescriptor pvdFld, IEventSinkValue snkEvents, int ...mskEvtType)
-            throws ConnectionException, MonitorException,
-            NoSuchChannelException {
-                // Check if there is an event type mask given in the argument list
-                int             intEvtType;
-                if (mskEvtType.length == 1) 
-                    intEvtType = mskEvtType[0];
-                else
-                    intEvtType = Monitor.VALUE;
-            
-                // Retrieve the channel and create the monitor
-                final String  strHnd  = pvdFld.getPvDescriptor().getRbHandle();
-                final Channel channel = getAndConnectChannel( strHnd );
-                final Monitor monitor = channel.addMonitorValue(snkEvents, intEvtType);
-            
-                return monitor;
-            }
+            throws ConnectionException, MonitorException, NoSuchChannelException 
+    {
+        // Check if there is an event type mask given in the argument list
+        int             intEvtType;
+        if (mskEvtType.length == 1) 
+            intEvtType = mskEvtType[0];
+        else
+            intEvtType = Monitor.VALUE;
+
+        // Retrieve the channel and create the monitor
+        final String  strHnd  = pvdFld.getPvDescriptor().getRbHandle();
+        final Channel channel = getAndConnectChannel( strHnd );
+        final Monitor monitor = channel.addMonitorValue(snkEvents, intEvtType);
+
+        return monitor;
+    }
 
 
 
@@ -915,10 +915,10 @@ public abstract class ProfileDevice extends AcceleratorNode {
      * @since  Dec 17, 2009
      * @author Christopher K. Allen
      */
-    public void configureHardware(ParameterSet datPvFlds) throws PutException,
-            ConnectionException {
-                datPvFlds.setHardwareValues(this);
-            }
+    public void configureHardware(ParameterSet datPvFlds) throws PutException, ConnectionException 
+    {
+        datPvFlds.setHardwareValues(this);
+    }
 
 
 

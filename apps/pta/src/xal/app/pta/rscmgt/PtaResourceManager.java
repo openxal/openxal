@@ -109,7 +109,7 @@ public class PtaResourceManager {
     /** Name of the resources directory relative to the location of <code>MainApplication</code> */
 //    public static String                        STR_DIR_RESOURCES = "resources/";
 //    public static String						STR_DIR_RESOURCES = System.getenv("OPENXAL_HOME") + "/apps/pta/resources/";
-    public static String                        STR_DIR_RESOURCES = ResourceManager.getResourceURL(MainApplication.class, "/resources").toString();
+//    public static String                        STR_DIR_RESOURCES = ResourceManager.getResourceURL(MainApplication.class, "resources").toString();
     
     
 
@@ -171,21 +171,25 @@ public class PtaResourceManager {
      * @author Christopher K. Allen
      */
     public static URL getResourceUrl(String strLocalName)       {
-        String  strPathRel = PtaResourceManager.STR_DIR_RESOURCES + strLocalName;
+        URL     urlLocalName = ResourceManager.getResourceURL(MainApplication.class, strLocalName);
+
+        return urlLocalName;
         
-        File file = new File(strPathRel);
-        URI uri = file.toURI();
-        URL url = null;
-		try {
-			url = uri.toURL();
-		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-        
-        //URL     urlResrc   = MainApplication.class.getResource(strPathRel);
-                
-        return url;
+//        String  strPathRel   = urlLocalName.toString();
+//        
+//        File file = new File(strPathRel);
+//        URI uri = file.toURI();
+//        URL url = null;
+//		try {
+//			url = uri.toURL();
+//		} catch (MalformedURLException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//        
+//        //URL     urlResrc   = MainApplication.class.getResource(strPathRel);
+//                
+//        return url;
     }
 
 

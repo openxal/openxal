@@ -626,7 +626,9 @@ public class NumberTextField extends JTextField {
             Number  numInput = this.fmtDispl.parse(strInput);
             String  strDispl = this.fmtDispl.format(numInput);
 
-            setText(strDispl);
+            // TODO: Clean this up
+//            setText(strDispl);
+            this.setDisplayValueSilently(numInput);
             setBackground( this.getBkgndNormalColor() );
             
         } catch (ParseException e) {

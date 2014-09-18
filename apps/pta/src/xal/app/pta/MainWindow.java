@@ -690,7 +690,7 @@ public class MainWindow extends XalWindow implements IDocView, ComponentListener
         MainConfiguration.getInstance().registerView(this.viewWsDaq);
 //        MainApplication.getDaqController().registerControllerListener(this.viewDaq);
         
-        // Harp data acquisitiion view
+        // Harp data acquisition view
         this.viewHarpDaq = new HarpAcquisitionView(this.getDocument());
         this.getDocument().registerView(this.viewHarpDaq);
         MainConfiguration.getInstance().registerView(viewHarpDaq);;

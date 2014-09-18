@@ -564,6 +564,7 @@ public class MachineConfigView extends JPanel implements IConfigView {
         this.txtCfgFileLoc = new JTextField( strDefFldr );
         this.txtCfgFileLoc.setHorizontalAlignment(SwingConstants.LEFT);
         this.txtCfgFileLoc.setEditable(false);
+        this.txtCfgFileLoc.setEnabled(true);
         
         this.txtCfgFileNm  = new JTextField(" Default ");
         this.txtCfgFileNm.setHorizontalAlignment(SwingConstants.LEFT);
@@ -954,14 +955,17 @@ public class MachineConfigView extends JPanel implements IConfigView {
             Collection<String>    setSuccessIds = this.mgrDevCfg.applyConfiguration(urlLoc);
             
             this.pnlDevRestore.setDevicesSelected(setSuccessIds);
-//            Set<String> setDevIds = this.mgrDevCfg.getDeviceIds();
-//            this.pnlDevSel.setDevicesSelected(setDevIds);
 
-            this.txtCfgStatus.setText("Restored configuration to " + urlLoc.toString());
-            this.txtCfgFileNm.setText(urlLoc.toString());
-            this.txtCfgFileLoc.setText( this.locConfigFiles.getDefaultFolder().getPath() );
+            // Update the status text boxes with the result of the restore operation
+            File        fileLoc = new File( urlLoc.getPath() );
+            String      strName = fileLoc.getName();
+            String      strPath = fileLoc.getPath().replace(strName, "");
             
-            MainApplication.getEventLogger().logInfo(this.getClass(), "Restored machine configuration from " + urlLoc.toString()); 
+            this.txtCfgStatus.setText("Restored configuration to " + strName);
+            this.txtCfgFileNm.setText( strName );
+            this.txtCfgFileLoc.setText( strPath );
+            
+            MainApplication.getEventLogger().logInfo(this.getClass(), "Restored machine configuration from " + strName ); 
 
             
         } catch (Exception e) {

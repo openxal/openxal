@@ -470,8 +470,8 @@ public class MachineConfig implements DataListener {
                 Constructor<DeviceConfig> ctorType = clsType.getConstructor();
                 DeviceConfig              devCfg   = ctorType.newInstance();
                 
-                String  strDevId = devCfg.getDeviceId();
                 devCfg.update(daptCfg);
+                String  strDevId = devCfg.getDeviceId();
                 
                 this.mapMchnCfg.put(strDevId, devCfg);
                 

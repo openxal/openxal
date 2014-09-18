@@ -205,7 +205,7 @@ public class ScanConfigView extends JPanel
      */
     @Override
     public void updateConfiguration(MainConfiguration cfgMain) {
-//        this.pnlDevConfig.refreshDisplay();
+        this.pnlDevConfig.refreshDisplay();
     }
 
 

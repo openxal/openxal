@@ -389,7 +389,7 @@ public class MainDocument extends AcceleratorDocument implements DataListener{
      * @see gov.sns.application.XalAbstractDocument#customizeCommands(gov.sns.application.Commander)
      */
     @Override
-    protected void customizeCommands(Commander commander) {
+    public void customizeCommands(Commander commander) {
 
     }
 
