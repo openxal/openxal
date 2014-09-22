@@ -558,8 +558,8 @@ public class DeviceSelectorPanel extends JPanel implements TreeSelectionListener
          */
         private class TableColorKeyRenderer implements TableCellRenderer {
 
-            /** Serialization version */
-            private static final long serialVersionUID = 1L;
+//            /** Serialization version */
+//            private static final long serialVersionUID = 1L;
 
             
             /**
@@ -1089,7 +1089,7 @@ public class DeviceSelectorPanel extends JPanel implements TreeSelectionListener
     private Accelerator                                 smfAccel;
     
     /** Array of valid profile device types */
-    private final Class<? extends AcceleratorNode>[]    arrDevTypes;
+    private final Class<?>[]                            arrDevTypes;
 
     /** List of currently selected devices */
     private final List<AcceleratorNode>                 lstSelNodes;
@@ -1123,6 +1123,7 @@ public class DeviceSelectorPanel extends JPanel implements TreeSelectionListener
      * @since     Aug 19, 2009
      * @author    Christopher K. Allen
      */
+    @SafeVarargs
     public DeviceSelectorPanel(MainWindow winMain, Class<? extends AcceleratorNode>... arrDevTypes) {
         this(winMain.getDocument().getAccelerator(), arrDevTypes);
 //        this.bolSngSelect = false;
@@ -1148,7 +1149,7 @@ public class DeviceSelectorPanel extends JPanel implements TreeSelectionListener
      * @since     Aug 19, 2009
      * @author    Christopher K. Allen
      */
-    public DeviceSelectorPanel(Accelerator smfAccel, Class<? extends AcceleratorNode>... arrDevTypes) {
+    public DeviceSelectorPanel(Accelerator smfAccel, Class<?>... arrDevTypes) {
         this.bolSngSelect = false;
 //        this.bolTblVisible = true;
         
@@ -1609,7 +1610,7 @@ public class DeviceSelectorPanel extends JPanel implements TreeSelectionListener
      * @author Christopher K. Allen
      */
     private boolean     validDevice(AcceleratorNode nodeDev) {
-        for (Class<? extends AcceleratorNode> typeValidDev : this.arrDevTypes) {
+        for (Class<?> typeValidDev : this.arrDevTypes) {
             if (nodeDev.getClass() == typeValidDev)
                 return true;
         }

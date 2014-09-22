@@ -324,8 +324,9 @@ public class ScanControlPanel extends JPanel implements IScanControllerListener 
      * @since     Sep 16, 2009
      * @author    Christopher K. Allen
      */
-    public ScanControlPanel(MainDocument docMain) {
-        this.docMain = docMain;
+    public ScanControlPanel() {
+//        this.docMain = docMain;
+        this.docMain = MainApplication.getApplicationDocument();
         this.ctlDaq  = MainScanController.getInstance();
         this.ctlDaq.registerControllerListener(this);
         

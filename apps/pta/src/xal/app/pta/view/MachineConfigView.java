@@ -160,7 +160,7 @@ public class MachineConfigView extends JPanel implements IConfigView {
          */
         public URL  getSelectedFile() throws MalformedURLException {
             
-            String  strFileName = (String)this.pnlFileList.getSelectedValue();
+            String  strFileName = this.pnlFileList.getSelectedValue();
             
             if (strFileName == null)
                 return null;

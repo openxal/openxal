@@ -35,7 +35,7 @@ public class DeviceSelectorList extends JPanel {
      * @author Christopher K. Allen
      * @since   Mar 23, 2011
      */
-    static class DeviceListModel extends AbstractListModel {
+    static class DeviceListModel extends AbstractListModel<Object> {
 
         /** The serialization version */
         private static final long serialVersionUID = 1L;
@@ -130,7 +130,7 @@ public class DeviceSelectorList extends JPanel {
      */
 
     /** The GUI display list box */
-    private final JList             lbxDevs;
+    private final JList<Object>                       lbxDevs;
 
     /** The list box data model */
     private final DeviceSelectorList.DeviceListModel   modDevs;
@@ -151,7 +151,7 @@ public class DeviceSelectorList extends JPanel {
         JLabel lblTrgEvt = new JLabel("Device");
 
         this.modDevs = new DeviceListModel();
-        this.lbxDevs = new JList( this.modDevs );
+        this.lbxDevs = new JList<Object>( this.modDevs );
         this.lbxDevs.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
         JScrollPane paneTrgEvt = new JScrollPane(this.lbxDevs);

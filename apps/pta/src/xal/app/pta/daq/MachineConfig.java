@@ -249,6 +249,7 @@ public class MachineConfig implements DataListener {
      * 
      * @deprecated  Should not be necessary since all data has an ID
      */
+    @Deprecated
     public MachineConfig() {
         this.datTmStmp  = null;
         this.lngPvLogId = -1;

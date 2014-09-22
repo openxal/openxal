@@ -197,6 +197,7 @@ public class ScannerData implements ProfileDevice.IProfileData, Serializable {
     /** The PV log ID of the machine state at measurement 
      * @deprecated  Not used
      */
+    @Deprecated
     public long                            lngPvLogId;
     
     /** Configuration of the measurement device for the data set */

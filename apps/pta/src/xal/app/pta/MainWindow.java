@@ -30,7 +30,6 @@ import xal.app.pta.view.ScanAcquisitionView;
 import xal.app.pta.view.DataAnalysisView;
 import xal.app.pta.view.DataInspectionView;
 import xal.smf.Accelerator;
-import xal.tools.math.MathException;
 
 import java.awt.Dimension;
 import java.awt.event.ComponentEvent;
@@ -728,13 +727,16 @@ public class MainWindow extends XalWindow implements IDocView, ComponentListener
         this.viewTrgCfg = new ConfigTriggeringView(smfAccel);
 //        this.getDocument().registerView(this.viewTrgCfg);
         MainConfiguration.getInstance().registerView(this.viewTrgCfg);
+
+        // Build the remote processing parameter view (for setting up the device controller)
+        this.viewPrcCfg = new ConfigRemotePrcgView(smfAccel);
+//        try {
+//            
+//		} catch (Exception e) {
+//		    
+//			e.printStackTrace();
+//		}
         
-        try {
-			this.viewPrcCfg = new ConfigRemotePrcgView(smfAccel);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 //        this.getDocument().registerView(this.viewPrcCfg);
         MainConfiguration.getInstance().registerView(this.viewPrcCfg);
 

@@ -6,21 +6,6 @@
  */
 package xal.app.pta.view;
 
-import xal.app.pta.MainScanController;
-import xal.app.pta.IConfigView;
-import xal.app.pta.MainConfiguration;
-import xal.app.pta.view.cmn.DeviceSelectorPanel;
-import xal.app.pta.view.daq.ScanControlPanelDepr;
-import xal.app.pta.view.daq.ScanProgressPanel;
-import xal.app.pta.view.plt.LiveScanDisplayPanel;
-import xal.app.pta.view.plt.LiveDisplayBase;
-import xal.app.pta.view.plt.LiveTraceDisplayPanel;
-import xal.app.pta.view.plt.LiveDisplayBase.FORMAT;
-import xal.app.pta.view.sel.TriggerSelectorPanel;
-import xal.smf.Accelerator;
-import xal.smf.AcceleratorNode;
-import xal.smf.impl.WireScanner;
-
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -30,6 +15,21 @@ import java.util.List;
 
 import javax.swing.JPanel;
 import javax.swing.border.TitledBorder;
+
+import xal.app.pta.IConfigView;
+import xal.app.pta.MainConfiguration;
+import xal.app.pta.MainScanController;
+import xal.app.pta.view.cmn.DeviceSelectorPanel;
+import xal.app.pta.view.daq.ScanControlPanel;
+import xal.app.pta.view.daq.ScanProgressPanel;
+import xal.app.pta.view.plt.LiveDisplayBase;
+import xal.app.pta.view.plt.LiveDisplayBase.FORMAT;
+import xal.app.pta.view.plt.LiveScanDisplayPanel;
+import xal.app.pta.view.plt.LiveTraceDisplayPanel;
+import xal.app.pta.view.sel.TriggerSelectorPanel;
+import xal.smf.Accelerator;
+import xal.smf.AcceleratorNode;
+import xal.smf.impl.WireScanner;
 
 /**
  * Displays the triggering configuration parameters for each wire scanner,
@@ -64,6 +64,8 @@ public class ConfigTriggeringView extends JPanel
     /** The application hardware devices */
     private final Accelerator           smfAccel;
     
+//    /** handle to the main document of the application */
+//    private final MainDocument          docMain;
     
     //
     // Device Control 
@@ -89,9 +91,12 @@ public class ConfigTriggeringView extends JPanel
     /** Edit display of the timing configuration parameters */
     private TriggerSelectorPanel        pnlTrgSel;
     
-    /** The scan control panel */
-    private ScanControlPanelDepr            pnlScanCtrl;
+//    /** The scan control panel */
+//    private ScanControlPanelDepr            pnlScanCtrl;
 
+    /** The scan control panel */
+    private ScanControlPanel            pnlScanCtrl;
+    
     /** The scan actuator position display */
     private ScanProgressPanel        pnlPosDspl;
     
@@ -115,8 +120,8 @@ public class ConfigTriggeringView extends JPanel
      */
     public ConfigTriggeringView(Accelerator smfAccel) {
         this.smfAccel = smfAccel;
-        
-//        this.ctrDevCtrl = new ScannerController();
+
+//        this.docMain    = MainApplication.getApplicationDocument();
         this.ctrDevCtrl = MainScanController.getInstance();
         
         this.buildGuiComponents();
@@ -212,7 +217,6 @@ public class ConfigTriggeringView extends JPanel
      * @since  Aug 19, 2009
      * @author Christopher K. Allen
      */
-    @SuppressWarnings("unchecked")
     private void buildGuiComponents(){
 
         // The device selector panel
@@ -227,9 +231,10 @@ public class ConfigTriggeringView extends JPanel
         this.pnlTrgSel.setBorder( new TitledBorder("Timing Parameters") );
         
         // The device status monitor panel
-        this.pnlScanCtrl = new ScanControlPanelDepr();
+//        this.pnlScanCtrl = new ScanControlPanelDepr();
 //        this.pnlScanCtrl.setBorder( new TitledBorder("Actuator Control") );
-        this.pnlScanCtrl.setDaqController(this.ctrDevCtrl);
+//      this.pnlScanCtrl.setDaqController(this.ctrDevCtrl);
+        this.pnlScanCtrl = new ScanControlPanel();
         
         // The position display panel
         this.pnlPosDspl = new ScanProgressPanel();
@@ -349,7 +354,8 @@ public class ConfigTriggeringView extends JPanel
      * @author Christopher K. Allen
      */
     private void clearAllPanels() {
-        this.pnlScanCtrl.clearDevice();
+//        this.pnlScanCtrl.clearDevice();
+        this.pnlScanCtrl.clearDevices();
         this.pnlPosDspl.clearDevice();
         this.pnlTrgSel.clearDevice();
         this.pnlPltTrace.clearGraphs();

@@ -279,7 +279,7 @@ public class ScanAcquisitionView extends JPanel implements IDocView, IConfigView
         this.pnlScanInd.setBorder(new TitledBorder("Latest Scan Mode") );
         
         // The DAQ device controller GUI component 
-        this.pnlDaqCtrl = new ScanControlPanel(this.docMain);
+        this.pnlDaqCtrl = new ScanControlPanel();
         
         // The live acquisition data display
         this.pnlAcqDatPlt = new LiveScanDisplayPanel(FORMAT.MULTIGRAPH_HOR);

@@ -1164,21 +1164,25 @@ public final class AppProperties extends PropertiesManager  {
         /** Width of the profile data plots 
          * @deprecated Not used
          */
+        @Deprecated
         TREE_WD("DevSelTreeTotalWd"), //$NON-NLS-1$
         
         /** Height of the profile data plots 
          * @deprecated Not used
          */
+        @Deprecated
         TREE_HT("DevSelTableTotalHt"), //$NON-NLS-1$
         
         /** Width of the profile data plots 
          * @deprecated Not used
          */
+        @Deprecated
         TABLE_WD("DevSelTableTotalWd"), //$NON-NLS-1$
         
         /** Height of the profile data plots 
          * @deprecated Not used
          */
+        @Deprecated
         TABLE_HT("DevSelTableTotalHt"), //$NON-NLS-1$
         
         /** Device Id column width */
@@ -1238,22 +1242,26 @@ public final class AppProperties extends PropertiesManager  {
      * 
      * @deprecated not used
      */
+    @Deprecated
     public enum SCAN_CFG implements xal.app.pta.tools.property.Property.IProperty {
         /** Apply changes button icon 
          * @deprecated not used 
          */
+        @Deprecated
         APPLY_ICON("ScanConfigApplyIcon"), //$NON-NLS-1$
         
         /** 
          * Width of the profile data plots 
          * @deprecated  not used
          */
+        @Deprecated
         TOTAL_WD("ScanConfigPanelWd"), //$NON-NLS-1$
         
         /** 
          * Height of the profile data plots
          * @deprecated not used 
          */
+        @Deprecated
         TOTAL_HT("ScanConfigPanelHt"); //$NON-NLS-1$
         
         

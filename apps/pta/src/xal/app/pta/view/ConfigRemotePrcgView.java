@@ -379,10 +379,7 @@ public class ConfigRemotePrcgView extends JPanel
     @SuppressWarnings("unchecked")
     private void buildGuiComponents() {
         // The device selector panel
-        this.pnlDevSelector = new DeviceSelectorPanel(this.smfAccel,
-//                        ProfileMonitor.class,
-                        WireScanner.class
-                        );
+        this.pnlDevSelector = new DeviceSelectorPanel(this.smfAccel, WireScanner.class);
         this.pnlDevSelector.setSingleSelectionMode(true);
         this.pnlDevSelector.setDeviceTableVisible(false);
         this.pnlDevSelector.registerDeviceSelectedListener(this);

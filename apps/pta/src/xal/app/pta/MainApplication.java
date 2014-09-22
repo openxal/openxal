@@ -647,6 +647,7 @@ public class MainApplication extends ApplicationAdaptor {
     private MainApplication() {
         this.displaySplashScreen();
 
+        APP_MAIN = this;
 //        this.winMain  = null;
         this.docMain  = null;
 //        this.cfgMain  = null;

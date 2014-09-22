@@ -15,7 +15,7 @@
 package xal.app.pta.view.cmn;
 
 import xal.app.pta.MainScanController;
-import xal.app.pta.view.daq.ScanControlPanelDepr;
+import xal.app.pta.view.daq.ScanControlPanel;
 import xal.app.pta.view.daq.ScanProgressPanel;
 //import xal.app.pta.view.daq.ScanProgressPanel;
 import xal.app.pta.view.plt.LiveScanDisplayPanel;
@@ -83,8 +83,8 @@ public class ScannerTestingPanel extends JPanel {
     //
     
     /** Scan controller */
-    private ScanControlPanelDepr        pnlScanCtrlr;
-//    private ScanControlPanel        pnlScanCtrlr;
+//    private ScanControlPanelDepr        pnlScanCtrlr;
+    private ScanControlPanel        pnlScanCtrlr;
     
     /** Scan status read back */
     private ScanProgressPanel         pnlScanStat;
@@ -110,6 +110,24 @@ public class ScannerTestingPanel extends JPanel {
         this.buildGuiPanel();
     }
     
+    
+    /*
+     * Queries
+     */
+    
+    /**
+     * Returns the profile device currently under test.
+     * 
+     * @return  the wire scanner which this panel is currently testing
+     *
+     * @author Christopher K. Allen
+     * @since  Sep 22, 2014
+     */
+    public WireScanner  getDevice() {
+        return this.smfSelDev;
+    }
+    
+    
     /*
      * Operations
      */
@@ -132,7 +150,7 @@ public class ScannerTestingPanel extends JPanel {
             
         this.ctrDaq = ctrDaq;
 //        this.ctrDaq.registerControllerListener(this);
-        this.pnlScanCtrlr.setDaqController(ctrDaq);   // CKA 5/5/2014
+//        this.pnlScanCtrlr.setDaqController(ctrDaq);   // CKA 5/5/2014
         this.ctrDaq.registerControllerListener(this.pnlDaqPlot);
     }
     
@@ -167,7 +185,7 @@ public class ScannerTestingPanel extends JPanel {
     public void clearDevice() {
         this.smfSelDev = null;
         
-        this.pnlScanCtrlr.clearDevice();
+        this.pnlScanCtrlr.clearDevices();
         this.pnlDaqPlot.clearGraphs();
         this.pnlScanStat.clearDevice();
     }
@@ -185,7 +203,6 @@ public class ScannerTestingPanel extends JPanel {
 //     */
 //    @Override
 //    public void scanInitiated(List<WireScanner> lstDevs) {
-//        // TODO Auto-generated method stub
 //        
 //    }
 //
@@ -195,7 +212,6 @@ public class ScannerTestingPanel extends JPanel {
 //     */
 //    @Override
 //    public void scanCompleted(List<WireScanner> lstDevs) {
-//        // TODO Auto-generated method stub
 //        
 //    }
 //
@@ -205,7 +221,6 @@ public class ScannerTestingPanel extends JPanel {
 //     */
 //    @Override
 //    public void scanAborted() {
-//        // TODO Auto-generated method stub
 //        
 //    }
 //
@@ -215,7 +230,6 @@ public class ScannerTestingPanel extends JPanel {
 //     */
 //    @Override
 //    public void scanActuatorsStopped() {
-//        // TODO Auto-generated method stub
 //        
 //    }
 //
@@ -225,7 +239,6 @@ public class ScannerTestingPanel extends JPanel {
 //     */
 //    @Override
 //    public void scanActuatorsParked() {
-//        // TODO Auto-generated method stub
 //        
 //    }
 //
@@ -235,7 +248,6 @@ public class ScannerTestingPanel extends JPanel {
 //     */
 //    @Override
 //    public void scanDeviceFailure(WireScanner smfDev) {
-//        // TODO Auto-generated method stub
 //        
 //    }
 
@@ -259,8 +271,8 @@ public class ScannerTestingPanel extends JPanel {
         this.pnlDaqPlot.setLiveDataButtonVisible(false);
         this.pnlDaqPlot.setClearDataButton(false);
         
-        this.pnlScanCtrlr = new ScanControlPanelDepr();
-//        this.pnlScanCtrlr = new ScanControlPanel();
+//        this.pnlScanCtrlr = new ScanControlPanelDepr();
+        this.pnlScanCtrlr = new ScanControlPanel();
         ;
         this.pnlScanStat = new ScanProgressPanel();
     }
