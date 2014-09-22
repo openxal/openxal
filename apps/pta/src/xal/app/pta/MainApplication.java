@@ -849,14 +849,14 @@ public class MainApplication extends ApplicationAdaptor {
      */
     public void menuFileSaveAs() {
         if (this.docMain == null) {
-            this.getMainDocument().displayWarning("Empty Document", "No save operation.");
+            this.getMainDocument().displayWarning("Empty Document!", "Save operation not available.");
             return;
         }
         
-        if (!this.docMain.hasChanges()) {
-            this.getMainDocument().displayWarning("No Changes", "Nothing to save.");
-            return;
-        }
+//        if (!this.docMain.hasChanges()) {
+//            this.getMainDocument().displayWarning("No Changes", "Nothing to save.");
+//            return;
+//        }
         
         // Get the file chooser dialogue
         AcceleratorApplication appGbl  = MainApplication.getAcceleratorApplication();

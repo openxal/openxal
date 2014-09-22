@@ -490,7 +490,7 @@ public class MachineConfigView extends JPanel implements IConfigView {
         }
 
         int intResponse = JOptionPane.showConfirmDialog(this, 
-                "This action will overwrite " + urlSource.getPath() + ".", 
+                "This action will overwite the configuration file " + urlSource.getPath() + ".", 
                 "WARNING", 
                 JOptionPane.OK_CANCEL_OPTION);
         if (intResponse == JOptionPane.CANCEL_OPTION)

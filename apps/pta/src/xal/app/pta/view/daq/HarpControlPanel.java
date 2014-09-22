@@ -559,6 +559,7 @@ public class HarpControlPanel extends JPanel implements MainHarpController.IHarp
             MeasurementData  setMsmt = MeasurementData.acquire( lstDevProf );
 
             this.docMain.setMeasurementData(setMsmt);
+            this.updateStatusComment("Acquired harp data");
             
         } catch (ConnectionException e) {
             this.getLogger().logException(getClass(), e, "Static Acquisition: Unable to connect to " + this.lstSelDevs);

@@ -662,6 +662,7 @@ public class ScanControlPanel extends JPanel implements IScanControllerListener 
             MeasurementData  setMsmt = MeasurementData.acquire( lstDevProf );
 
             this.docMain.setMeasurementData(setMsmt);
+            this.updateStatusComment("Acquired scanner data");
             
         } catch (ConnectionException e) {
             this.getLogger().logException(getClass(), e, "Static Acquisition: Unable to connect to " + this.lstSelDevs);

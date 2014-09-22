@@ -440,9 +440,10 @@ public class MainDocument extends AcceleratorDocument implements DataListener{
             this.update( daData );
             this.setHasChanges(false);
             this.setSource(url);
-
-            for (IDocView view : this.lstViews) 
-                view.updateMeasurementData(this);
+            // This is not necessary since the MainDocument#update() method
+            //  fires the updateMeasurementData event when setting the new measurement data.
+//            for (IDocView view : this.lstViews) 
+//                view.updateMeasurementData(this);
 
             getLogger().logInfo(this.getClass(), "Loaded application data from file " + url); //$NON-NLS-1$
 
@@ -626,6 +627,10 @@ public class MainDocument extends AcceleratorDocument implements DataListener{
 
     /**
      * Instructs the receiver to update its data based on the given adaptor.
+     * The new measurement data is read in from the given data source. 
+     * The {@link #setMeasurementData(MeasurementData)} method is called
+     * to install the new data, thus, firing an {@link IDocView#updateMeasurementData(MainDocument)}
+     * event.
      * 
      * @param daptSrc The data adaptor corresponding to this object's data 
      *                  node.

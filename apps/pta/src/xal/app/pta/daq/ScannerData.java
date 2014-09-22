@@ -13,8 +13,8 @@ import xal.ca.GetException;
 import xal.tools.data.DataAdaptor;
 import xal.smf.impl.WireScanner;
 import xal.smf.impl.WireScanner.DataLivePt;
+import xal.smf.impl.profile.ProfileDevice;
 import xal.smf.impl.profile.ProfileDevice.ANGLE;
-import xal.smf.impl.profile.ProfileDevice.IProfileData;
 import xal.smf.impl.profile.SignalAttrSet;
 import xal.smf.impl.profile.SignalSet;
 import xal.smf.scada.ScadaAnnotationException;
@@ -39,7 +39,7 @@ import javax.swing.JOptionPane;
  * @since  Feb 3, 2010
  * @author Christopher K. Allen
  */
-public class ScannerData implements IProfileData, Serializable {
+public class ScannerData implements ProfileDevice.IProfileData, Serializable {
 
 
     
@@ -52,13 +52,16 @@ public class ScannerData implements IProfileData, Serializable {
     
     
     /** The format version for persistent storage */
-    private static final long  LNG_VAL_FMTVER = 2;
+    private static final long  LNG_VAL_FMTVER = 3;
     
     /** The data label for measurement data - used in <code>DataAdaptors</code> */
     public static final String  STR_LBL_PARENT = ScannerData.class.getCanonicalName();
     
     /** The data format version attribute used in <code>DataListener</code> implementation */
     private static final String STR_ATTR_FMTVER = "ver";
+    
+    /** The device type ID attribute used in <code>DataListener</code> implementation */
+    private static final String STR_ATTR_TYPID = "type";
     
     /** The device ID attribute used in <code>DataListener</code> implementation */
     private static final String STR_ATTR_DEVID = "dev";
@@ -180,7 +183,10 @@ public class ScannerData implements IProfileData, Serializable {
     //  Data Source
     //
     
-    /** The acquisition device */
+    /** The acquisition device type ID */
+    public String                         strTypId;
+    
+    /** The acquisition device ID */
     public String                          strDevId;
 
     
@@ -244,6 +250,7 @@ public class ScannerData implements IProfileData, Serializable {
      * @author    Christopher K. Allen
      */
     public ScannerData() throws ScadaAnnotationException {
+        this.strTypId = null;
         this.strDevId = null;
         
         this.cfgDevice = new ScannerConfig();
@@ -297,7 +304,8 @@ public class ScannerData implements IProfileData, Serializable {
      * @author    Christopher K. Allen
      */
     public ScannerData(WireScanner ws) throws ConnectionException, GetException {
-        this.strDevId  = ws.getId();
+        this.strTypId = ws.getType(); 
+        this.strDevId = ws.getId();
 
         // Attempt to collect the wire scanner configuration information
         //  Send a warning to the user if a failure occurs but continue
@@ -376,6 +384,20 @@ public class ScannerData implements IProfileData, Serializable {
     /*
      * IProfileData Interface
      */
+
+    /**
+     * Returns the SMF device type identifier used to uniquely identifier
+     * the hardware. 
+     *
+     * @see xal.smf.impl.profile.ProfileDevice.IProfileData#getDeviceTypeId()
+     *
+     * @author Christopher K. Allen
+     * @since  Sep 22, 2014
+     */
+    @Override
+    public String getDeviceTypeId() {
+        return this.strTypId;
+    }
 
     /**
      * Returns the identifier of the data acquisition device producing
@@ -507,6 +529,7 @@ public class ScannerData implements IProfileData, Serializable {
     public void write(DataAdaptor snkData) {
         
         DataAdaptor     daptDev = snkData.createChild( this.dataLabel() );
+        daptDev.setValue(STR_ATTR_TYPID, this.strTypId);
         daptDev.setValue(STR_ATTR_DEVID, this.strDevId);
         daptDev.setValue(STR_ATTR_FMTVER, LNG_VAL_FMTVER);
         
@@ -535,7 +558,6 @@ public class ScannerData implements IProfileData, Serializable {
      */
     @Override
     public void update(DataAdaptor daptSrc) {
-//        DataAdaptor     daptDev = daptSrc.childAdaptor(this.dataLabel());
         DataAdaptor     daptDev = daptSrc;
         
         this.strDevId = daptDev.stringValue(STR_ATTR_DEVID);
@@ -557,6 +579,11 @@ public class ScannerData implements IProfileData, Serializable {
             this.cfgDevice.update(daptDev);
             
         }
+        
+        if (lngFmtVer >= 3)
+            this.strTypId = daptDev.stringValue(STR_ATTR_TYPID);
+        else
+            this.strTypId = "unknown";
         
 //        this.cfgActr.update(daptDev);
 //        this.cfgPrcg.update(daptDev);

@@ -308,8 +308,6 @@ public abstract class LiveDisplayBase extends JPanel  {
 //            this.getDisplayPlot().setCurveThickness(SZ_CRV_RAW);
             this.getDisplayPlot().displayRawData(datDev);
             }
-            
-            
     }
 
     

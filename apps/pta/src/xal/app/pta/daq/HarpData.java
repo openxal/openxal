@@ -59,6 +59,9 @@ public class HarpData implements IProfileData,  Serializable {
     /** The data format version attribute used in <code>DataListener</code> implementation */
     private static final String STR_ATTR_FMTVER = "ver";
     
+    /** The device type ID attribute used in <code>DataListener</code> implementation */
+    private static final String STR_ATTR_TYPID = "type";
+    
     /** The device ID attribute used in <code>DataListener</code> implementation */
     private static final String STR_ATTR_DEVID = "dev";
 
@@ -151,8 +154,11 @@ public class HarpData implements IProfileData,  Serializable {
     //  Data Source
     //
     
+    /** The acquisition device type ID */
+    public String       strTypId;
+    
     /** The acquisition device */
-    public String strDevId;
+    public String       strDevId;
     
     
     //
@@ -199,6 +205,7 @@ public class HarpData implements IProfileData,  Serializable {
      * @author    Christopher K. Allen
      */
     public HarpData() throws ScadaAnnotationException {
+        this.strTypId = null;
         this.strDevId = null;
         
         this.cfgDevice = new HarpConfig();
@@ -236,7 +243,8 @@ public class HarpData implements IProfileData,  Serializable {
      * @author    Christopher K. Allen
      */
     public HarpData(WireHarp smfHarp) throws ConnectionException, GetException {
-        this.strDevId  = smfHarp.getId();
+        this.strTypId = smfHarp.getType(); 
+        this.strDevId = smfHarp.getId();
 
         // Attempt to collect the wire scanner configuration information
         //  Send a warning to the user if a failure occurs but continue
@@ -294,7 +302,7 @@ public class HarpData implements IProfileData,  Serializable {
      * &middot; Nothing is done to the position values of signals, they are unchanged of
      * current writing.
      * <br/>
-     * &middot; Standard deviation quantites are weighted vectorally.
+     * &middot; Standard deviation quantities are weighted vectorally.
      * <br/>
      * &middot; The device configuration parameters remain unchanged
      * </p>
@@ -318,6 +326,21 @@ public class HarpData implements IProfileData,  Serializable {
      * IProfileData Interface
      */
     
+    /**
+     * Returns the SMF device type identifier that uniquely identifies a hardware
+     * a type of accelerator hardware. 
+     *
+     * @see xal.smf.impl.profile.ProfileDevice.IProfileData#getDeviceTypeId()
+     *
+     * @author Christopher K. Allen
+     * @since  Sep 22, 2014
+     */
+    @Override
+    public String getDeviceTypeId() {
+        
+        return this.strTypId;
+    }
+
     /**
      * Returns the identifier of the data acquisition device producing
      * this data set.
@@ -475,6 +498,7 @@ public class HarpData implements IProfileData,  Serializable {
     public void write(DataAdaptor snkData) {
         
         DataAdaptor     daptDev = snkData.createChild( this.dataLabel() );
+        daptDev.setValue(STR_ATTR_TYPID, this.strTypId);
         daptDev.setValue(STR_ATTR_DEVID, this.strDevId);
         daptDev.setValue(STR_ATTR_FMTVER, LNG_VAL_FMTVER);
         
@@ -507,7 +531,7 @@ public class HarpData implements IProfileData,  Serializable {
         
         long    lngFmtVer = daptDev.longValue(STR_ATTR_FMTVER);
         
-        if (lngFmtVer == LNG_VAL_FMTVER) {
+        if (lngFmtVer >= 1) {
             
             this.cfgDevice.update(daptDev);
             
@@ -521,7 +545,11 @@ public class HarpData implements IProfileData,  Serializable {
             MainApplication.getEventLogger().logError(this.getClass(), "Data unreadable, has bad version format.");
 
         }
-        
+
+        if (lngFmtVer >= 2) 
+            this.strTypId = daptDev.stringValue(STR_ATTR_TYPID);
+        else
+            this.strTypId = "unknown";
         
     }
     

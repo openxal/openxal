@@ -8,6 +8,7 @@ package xal.app.pta.view.plt;
 
 import xal.app.pta.MainHarpController;
 import xal.app.pta.MainScanController;
+import xal.app.pta.daq.MeasurementData;
 import xal.app.pta.tools.ca.SmfPvMonitor;
 import xal.app.pta.tools.ca.SmfPvMonitorPool;
 import xal.ca.ChannelRecord;
@@ -18,6 +19,7 @@ import xal.extension.widgets.plot.BasicGraphData;
 import xal.smf.NoSuchChannelException;
 import xal.smf.impl.WireHarp;
 import xal.smf.impl.profile.ProfileDevice.ANGLE;
+import xal.smf.impl.profile.ProfileDevice.IProfileData;
 import xal.smf.impl.profile.ProfileDevice.IProfileDomain;
 import xal.smf.scada.BadStructException;
 import xal.smf.scada.XalPvDescriptor;
@@ -401,6 +403,34 @@ public class LiveHarpDisplayPanel extends LiveDisplayBase implements MainHarpCon
      * Base Class Overrides
      */
     
+    /**
+     * Override the base class implementation so that we only display data for
+     * harp devices.
+     *
+     * @see xal.app.pta.view.plt.LiveDisplayBase#displayRawData(xal.app.pta.daq.MeasurementData, java.util.Map)
+     *
+     * @author Christopher K. Allen
+     * @since  Sep 22, 2014
+     */
+    @Override
+    public void displayRawData(MeasurementData datMsmt, Map<String, Color> mapDevClr) {
+        for (IProfileData datDev : datMsmt.getDataSet()) {
+            
+            // Make sure the data is from a harp device
+            if ( datDev.getDeviceTypeId() != WireHarp.STR_TYPE_ID ) 
+                continue;
+
+            String  strDevId = datDev.getDeviceId();
+            Color   clrDevKey = mapDevClr.get(strDevId);
+
+            super.getDisplayPlot().setCurveLabel(strDevId);
+            super.getDisplayPlot().setCurvePoints(true);
+            super.getDisplayPlot().setCurveColor(clrDevKey);
+            super.getDisplayPlot().displayRawData(datDev);
+        }
+    }
+
+
     /**
      * Must stop monitoring before we clear the graphs.
      *

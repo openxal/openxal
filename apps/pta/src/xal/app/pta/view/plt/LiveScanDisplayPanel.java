@@ -9,6 +9,8 @@ package xal.app.pta.view.plt;
 import xal.app.pta.IDocView;
 import xal.app.pta.MainDocument;
 import xal.app.pta.MainScanController;
+import xal.app.pta.daq.MeasurementData;
+import xal.app.pta.daq.ScannerData;
 import xal.app.pta.tools.ca.SmfPvMonitor;
 import xal.ca.Channel;
 import xal.ca.ChannelRecord;
@@ -19,12 +21,14 @@ import xal.smf.NoSuchChannelException;
 import xal.smf.impl.WireHarp;
 import xal.smf.impl.WireScanner;
 import xal.smf.impl.profile.ProfileDevice.ANGLE;
+import xal.smf.impl.profile.ProfileDevice.IProfileData;
 import xal.smf.impl.profile.ProfileDevice.IProfileDomain;
 import xal.smf.scada.XalPvDescriptor;
 
 import java.awt.Color;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -229,10 +233,11 @@ public class LiveScanDisplayPanel extends LiveScanDisplayBase  {
     public LiveScanDisplayPanel(FORMAT fmtDspl) {
         super(fmtDspl);
     }
+   
     
     
     /*
-     * Override: MainScanController.IDaqControllerListener Interface
+     *  MainScanController.IDaqControllerListener Interface
      */
     
     /**
@@ -277,9 +282,34 @@ public class LiveScanDisplayPanel extends LiveScanDisplayBase  {
 
     
     /*
-     * LiveScanDisplayBase Abstract Methods
+     * Base Class Overrides
      */
-    
+
+    /**
+     *
+     * @see xal.app.pta.view.plt.LiveDisplayBase#displayRawData(xal.app.pta.daq.MeasurementData, java.util.Map)
+     *
+     * @author Christopher K. Allen
+     * @since  Sep 22, 2014
+     */
+    @Override
+    public void displayRawData(MeasurementData datMsmt, Map<String, Color> mapDevClr) {
+        for (IProfileData datDev : datMsmt.getDataSet()) {
+
+            // Make sure the data is from a harp device
+            if ( datDev.getDeviceTypeId() != WireScanner.s_strType ) 
+                continue;
+
+            String  strDevId = datDev.getDeviceId();
+            Color   clrDevKey = mapDevClr.get(strDevId);
+
+            super.getDisplayPlot().setCurveLabel(strDevId);
+            super.getDisplayPlot().setCurvePoints(true);
+            super.getDisplayPlot().setCurveColor(clrDevKey);
+            super.getDisplayPlot().displayRawData(datDev);
+        }
+    }
+
     /**
      * Builds the pool of monitors for live data acquisition 
      * monitoring. Also adds the corresponding <code>BasicGraphData</code>

@@ -148,6 +148,17 @@ public abstract class ProfileDevice extends AcceleratorNode {
         public String           getDeviceId();
         
         /**
+         * Returns the device type identifier string of the device that produced
+         * the current data.
+         * 
+         * @return      string identifier of the acquisition device (i.e., "ws", "harp", etc.)
+         *
+         * @author Christopher K. Allen
+         * @since  Sep 22, 2014
+         */
+        public String           getDeviceTypeId();
+        
+        /**
          * Returns the length of each signal in the data set, that is, the number of
          * samples in the signals.
          * 
