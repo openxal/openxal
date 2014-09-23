@@ -151,6 +151,12 @@ public class SavedTraceDisplayPanel extends JPanel {
     /** Index of the vertical line showing the end of the processing window */
     private static final int            IND_END_PRC_WND = 1;
     
+    
+    /** 
+     * The scaling factor used to convert between trace abscissa units and 
+     * the processing window location units.  Scale from seconds to micro-seconds. 
+     * */
+    private static final double         DBL_SCALE_PRCG_WND = 1.0e6;  
 
         
     /*
@@ -189,10 +195,10 @@ public class SavedTraceDisplayPanel extends JPanel {
     /** The maximum index of the set of traces */
     private int                         indTrcMax;
     
-    /** Interval of allowed values for the processing window start */
+    /** Interval of allowed values for the processing window start (scaled to micro-seconds) */
     private Interval                    ivlAvgBgn;
     
-    /** Interval of allowed values for the processing window length */
+    /** Interval of allowed values for the processing window length (scaled to micro-seconds) */
     private Interval                    ivlAvgLng;
     
  
@@ -314,34 +320,52 @@ public class SavedTraceDisplayPanel extends JPanel {
      * displayed.
      *
      * @param angGraph  graph whose processing window is modified
-     * @param dblMin    the minimum time value of the processing window
-     * @param dblMax    the maximum time value of the processing window
+     * @param dblMin    the minimum time value of the processing window (in micro-seconds)
+     * @param dblMax    the maximum time value of the processing window (in micro-seconds)
      *
      * @author Christopher K. Allen
      * @since  Mar 30, 2011
      */
     public void     setProcessingWindowDisplay(WireScanner.ANGLE angGraph, double dblMin, double dblMax) {
         
+        this.pltTrace.setVerticalLineDragging(false);
+
+        // If the lines are mixed up we'll just bail out
+        if (dblMin > dblMax)
+            return;
+        
         double  dblTimMin = dblMin;
         double  dblTimMax = dblMax;
         
         // Get the window start value and check against limits
         if (dblTimMin > this.ivlAvgBgn.getMax()) {
+            
             dblTimMin = this.ivlAvgBgn.getMax();
-
-            this.pltTrace.setVerticalLine(angGraph, IND_BEG_PRC_WND, dblTimMin);
+            
+        } else if (dblTimMin < this.ivlAvgBgn.getMin()) {
+            
+            dblTimMin = this.ivlAvgBgn.getMin();
         }
+            
+        this.pltTrace.setVerticalLine(angGraph, IND_BEG_PRC_WND, dblTimMin);
+        
             
         // Get the window duration value and check against limits
         double  dblDurLng = dblTimMax - dblTimMin;
         
         if (dblDurLng > this.ivlAvgLng.getMax()) {
-            dblDurLng = this.ivlAvgLng.getMax();
-            dblTimMax = dblTimMin + dblDurLng;
             
-            this.pltTrace.setVerticalLine(angGraph, IND_END_PRC_WND, dblTimMax);
-            this.pltTrace.refreshPlots();
+            dblDurLng = this.ivlAvgLng.getMax();
+            
+        } else if (dblDurLng < this.ivlAvgLng.getMin()) {
+            
+            dblDurLng = this.ivlAvgLng.getMin();
         }
+        dblTimMax = dblTimMin + dblDurLng;
+
+        this.pltTrace.setVerticalLine(angGraph, IND_END_PRC_WND, dblTimMax);
+        this.pltTrace.setVerticalLineDragging(true);
+        this.pltTrace.refreshPlots();
     }
 
     /**
@@ -365,22 +389,32 @@ public class SavedTraceDisplayPanel extends JPanel {
         double  dblTimMin = dblMin;
         
         // Get the window start value and check against limits
-        if (dblTimMin > this.ivlAvgBgn.getMax()) 
+        if (dblTimMin > this.ivlAvgBgn.getMax()) {
+            
             dblTimMin = this.ivlAvgBgn.getMax();
-
+            
+        } else if (dblTimMin < this.ivlAvgBgn.getMin()) {
+            
+            dblTimMin = this.ivlAvgBgn.getMin();
+        }
+            
         this.pltTrace.setVerticalLine(IND_BEG_PRC_WND, dblTimMin);
         
             
         // Get the window duration value and check against limits
         double  dblDurLng = dblTimMax - dblTimMin;
         
-        if (dblDurLng > this.ivlAvgLng.getMax()) 
-            dblDurLng = this.ivlAvgLng.getMax();
-            dblTimMax = dblTimMin + dblDurLng;
+        if (dblDurLng > this.ivlAvgLng.getMax()) {
             
+            dblDurLng = this.ivlAvgLng.getMax();
+            
+        } else if (dblDurLng < this.ivlAvgLng.getMin()) {
+            
+            dblDurLng = this.ivlAvgLng.getMin();
+        }
+        dblTimMax = dblTimMin + dblDurLng;
+
         this.pltTrace.setVerticalLine(IND_END_PRC_WND, dblTimMax);
-        
-        
         this.pltTrace.setVerticalLineDragging(true);
         this.pltTrace.refreshPlots();
     }
@@ -626,12 +660,12 @@ public class SavedTraceDisplayPanel extends JPanel {
         try {
             WireScanner.PrcgConfig  cfgPrcg = WireScanner.PrcgConfig.acquire(smfDev);
             
-            cfgPrcg.avgBgn = dblBeg;
-            cfgPrcg.avgLng = dblLng;
+            cfgPrcg.avgBgn = dblBeg / DBL_SCALE_PRCG_WND;
+            cfgPrcg.avgLng = dblLng / DBL_SCALE_PRCG_WND;
             
             smfDev.configureHardware(cfgPrcg);
-            smfDev.runCommand(CMD.RESET);
-            smfDev.runCommand(CMD.UPDATE);
+//            smfDev.runCommand(CMD.RESET);
+//            smfDev.runCommand(CMD.UPDATE);
             
             // Notify all the action listeners of the change in parameter values
             ActionEvent         evt = new ActionEvent(this, 0, "SavedTraceDisplayPanel#configureHardwareFromGraph");
@@ -647,12 +681,12 @@ public class SavedTraceDisplayPanel extends JPanel {
         } catch (PutException e) {
             getLogger().logException(getClass(), e, "Unable to send to " + smfDev.getId());
             
-        } catch (InterruptedException e) {
-            getLogger().logException(getClass(), e, "Command buffer thread interrupted for " + smfDev.getId());
-            
+//        } catch (InterruptedException e) {
+//            getLogger().logException(getClass(), e, "Command buffer thread interrupted for " + smfDev.getId());
+//            
         }
         
-        this.pltTrace.setVerticalLineDragging(false);
+        this.pltTrace.setVerticalLineDragging(true);
     }
 
     
@@ -719,8 +753,8 @@ public class SavedTraceDisplayPanel extends JPanel {
             // Get the new trace process parameters and display processing window
             cfgPrcg = WireScanner.PrcgConfig.acquire(this.smfDev);
             
-            double      dblPosBgn = cfgPrcg.avgBgn;
-            double      dblPosEnd = cfgPrcg.avgBgn + cfgPrcg.avgLng;
+            double      dblPosBgn = DBL_SCALE_PRCG_WND * cfgPrcg.avgBgn;
+            double      dblPosEnd = DBL_SCALE_PRCG_WND * (cfgPrcg.avgBgn + cfgPrcg.avgLng);
             
             
             // Set the processing window on the trace screen
@@ -773,25 +807,33 @@ public class SavedTraceDisplayPanel extends JPanel {
         // Setup the processing window length value domain
         ScadaFieldDescriptor fdAvgLng = WireScanner.PrcgConfig.FLD_MAP.get("avgLng");
         
-        double  dblMin = DeviceProperties.getMinLimit(fdAvgLng).asDouble();
-        double  dblMax = DeviceProperties.getMaxLimit(fdAvgLng).asDouble();
+        double  dblMin = DBL_SCALE_PRCG_WND * DeviceProperties.getMinLimit(fdAvgLng).asDouble();
+        double  dblMax = DBL_SCALE_PRCG_WND * DeviceProperties.getMaxLimit(fdAvgLng).asDouble();
+        double  dblIni = DBL_SCALE_PRCG_WND * DeviceProperties.getInitialValue(fdAvgLng).asDouble();
         try {
+            
 			this.ivlAvgLng = new Interval(dblMin, dblMax);
+			
 		} catch (MathException e) {
-			// TODO Auto-generated catch block
+		    
 			e.printStackTrace();
+			MainApplication.getEventLogger().logError(this.getClass(), "Unable to create trace averaging interval");
 		}
 
         // Setup the processing window starting value domain
         ScadaFieldDescriptor fdAvgBgn = WireScanner.PrcgConfig.FLD_MAP.get("avgBgn");
         
-        dblMin = DeviceProperties.getMinLimit(fdAvgBgn).asDouble();
-        dblMax = DeviceProperties.getMaxLimit(fdAvgBgn).asDouble();
+        dblMin = DBL_SCALE_PRCG_WND * DeviceProperties.getMinLimit(fdAvgBgn).asDouble();
+        dblMax = DBL_SCALE_PRCG_WND * DeviceProperties.getMaxLimit(fdAvgBgn).asDouble();
         try {
+            
 			this.ivlAvgBgn = new Interval(dblMin, dblMax);
+			
 		} catch (MathException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+
+		    e.printStackTrace();
+            MainApplication.getEventLogger().logError(this.getClass(), "Unable to create trace averaging interval");
+            
 		}
 
         
@@ -802,8 +844,8 @@ public class SavedTraceDisplayPanel extends JPanel {
         this.pltTrace.setVerticalLineDragging(false);
 
         //  Setup the processing window
-        this.pltTrace.addVerticalLine(this.ivlAvgBgn.getMax(), Color.RED);
-        this.pltTrace.addVerticalLine(this.ivlAvgBgn.getMax()+this.ivlAvgLng.getMax(), Color.RED);
+        this.pltTrace.addVerticalLine(this.ivlAvgBgn.getMin(), Color.RED);
+        this.pltTrace.addVerticalLine(this.ivlAvgBgn.getMin()+dblIni, Color.RED);
 
         //  Setup the processing window modification event responses       
         for (WireScanner.ANGLE angGraph : WireScanner.ANGLE.values()) {
@@ -856,7 +898,7 @@ public class SavedTraceDisplayPanel extends JPanel {
         
         try {
             // Monitor changes in the processing window start time PV
-            XalPvDescriptor         pvdAvgBgn = WireScanner.PrcgConfig.FLD_MAP.get("avgBgn");
+            XalPvDescriptor      pvdAvgBgn = WireScanner.PrcgConfig.FLD_MAP.get("avgBgn");
             CaResponseHandler    actAvgBgn = new CaResponseHandler(this, "updateProcessingWindowHandler");
             SmfPvMonitor         monAvgBgn = new SmfPvMonitor(ws, pvdAvgBgn);
             actAvgBgn.setLogger(getLogger());
@@ -864,7 +906,7 @@ public class SavedTraceDisplayPanel extends JPanel {
             this.mplPrcgParms.addMonitor(monAvgBgn);
 
             // Monitor changes in the processing window duration PV
-            XalPvDescriptor         pvdAvgLng = WireScanner.PrcgConfig.FLD_MAP.get("avgLng");
+            XalPvDescriptor      pvdAvgLng = WireScanner.PrcgConfig.FLD_MAP.get("avgLng");
             CaResponseHandler    actAvgLng = new CaResponseHandler(this, "updateProcessingWindowHandler");
             SmfPvMonitor         monAvgLng = new SmfPvMonitor(ws, pvdAvgLng);
             actAvgLng.setLogger(getLogger());

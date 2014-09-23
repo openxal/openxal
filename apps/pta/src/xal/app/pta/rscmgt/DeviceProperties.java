@@ -61,6 +61,9 @@ public class DeviceProperties extends PropertiesManager {
     /** Suffix used for minimum values */
     public static final String STR_MIN = ".MIN";
     
+    /** Suffix used for initial values */
+    public static final String STR_INI = ".INIT";
+    
     /** Suffix used for values field */
     public static final String STR_VALS = ".VALS";
     
@@ -375,6 +378,54 @@ public class DeviceProperties extends PropertiesManager {
     {
 //        String          strKey = pfdParam.getClass().getName()+ "." + pfdParam.getFieldName() + STR_MAX;
         String          strKey = pfdParam.getRbHandle() + STR_MAX;
+        Property        value  = MGR_DEV_PROPS.getProperty(strKey);
+
+        if (value.isNull())
+            throw new IllegalArgumentException("Unable to find value for key " + strKey);
+
+        return value;
+    }
+    
+    /**
+     * <p>
+     * Returns the initial value for the given parameter.  This is meant as a convenient
+     * value to initialize a parameter.
+     * </p>
+     * <p>
+     * Note the parameter
+     * is identified by its enumeration constant.  The key for
+     * the returned value is formed from the dot-separated
+     * concatenation
+     * <br/>
+     * <br/>
+     * <tt>className</tt> + "." + <tt>enumName</tt> + "." + <tt>"INIT"</tt>
+     * <br/>
+     * <br/>
+     * where <tt>className</tt> is the formal class
+     * name of the enumeration and <tt>enumName</tt>  is the
+     * name of the enumeration constant.  This key is then used
+     * to access the value in the configuration file 
+     * (see {@link #STR_FILE_CONFIG})
+     * </p>
+     * <p>
+     * <h4>NOTE:</h4>
+     * &middot; This value is returned as a {@link Property} object
+     * since we do not know the (numeric) type of the value.
+     * </p>
+     *
+     * @param pfdParam  enumeration constant
+     * 
+     * @return  the maximum value of the parameter as a <code>PropertyValue</code> object
+     * 
+     * @throws IllegalArgumentException  the key was not found in the configuration file
+     * 
+     * @since  Dec 21, 2009
+     * @author Christopher K. Allen
+     */
+    public static Property      getInitialValue(ScadaFieldDescriptor pfdParam)
+        throws IllegalArgumentException
+    {
+        String          strKey = pfdParam.getRbHandle() + STR_INI;
         Property        value  = MGR_DEV_PROPS.getProperty(strKey);
 
         if (value.isNull())

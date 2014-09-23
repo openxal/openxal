@@ -121,7 +121,11 @@ abstract public class GraphDisplayBase extends JPanel {
     /** curve thickness */
     private final Map<ANGLE,Integer>     mapCrvSz;
     
+    /** vertical line event action listeners */
+    private final Map<ANGLE, ActionListener>    mapVerLnActs;
     
+    /** horizontal line event action listeners */
+    private final Map<ANGLE, ActionListener>    mapHorLnActs;
 
     
     
@@ -144,6 +148,8 @@ abstract public class GraphDisplayBase extends JPanel {
         this.mapCrvPts = new HashMap<ANGLE, Boolean>();
         this.mapCrvLbl = new HashMap<ANGLE, String>();
         this.mapCrvSz  = new HashMap<ANGLE, Integer>();
+        this.mapVerLnActs = new HashMap<>();
+        this.mapHorLnActs = new HashMap<>();
         
         this.configure();
     }
@@ -610,8 +616,14 @@ abstract public class GraphDisplayBase extends JPanel {
      * @since  Mar 24, 2011
      */
     public void setVerticalLineDragging(WireScanner.ANGLE angle, boolean bolDrag) {
-        for (FunctionGraphsJPanel plt : this.getDataGraphs(angle))
+        for (FunctionGraphsJPanel plt : this.getDataGraphs(angle)) {
+            if (bolDrag)
+                plt.addDraggedVerLinesListener( this.mapVerLnActs.get(angle) );
+            else
+                plt.addDraggedVerLinesListener( null );
+            
             plt.setDraggingVerLinesGraphMode(bolDrag);
+        }
     }
     
     /**
@@ -643,7 +655,8 @@ abstract public class GraphDisplayBase extends JPanel {
      */
     public void addDraggedVerLinesListener(WireScanner.ANGLE angle, ActionListener lsnActDragged) {
             
-        for (FunctionGraphsJPanel plt : this.getDataGraphs(angle))
+        this.mapVerLnActs.put(angle, lsnActDragged);
+        for (FunctionGraphsJPanel plt : this.getDataGraphs(angle)) 
             plt.addDraggedVerLinesListener(lsnActDragged);
     }
     
@@ -769,6 +782,79 @@ abstract public class GraphDisplayBase extends JPanel {
     public void moveHorizontalLine(int index, double dblPos) {
         for (WireScanner.ANGLE angle : WireScanner.ANGLE.values())
             this.moveHorizontalLine(angle, index, dblPos);
+    }
+    
+    /**
+     * Allows any horizontal line on the given graphs to be dragged within the
+     * plot by the user.
+     *
+     * @param angle     projection plane for the affected graphs
+     * @param bolDrag   value <code>true</code> enables dragging,
+     *                  value <code>false</code> disables dragging
+     *
+     * @author Christopher K. Allen
+     * @since  Mar 24, 2011
+     */
+    public void setHorizontalLineDragging(WireScanner.ANGLE angle, boolean bolDrag) {
+        for (FunctionGraphsJPanel plt : this.getDataGraphs(angle)) {
+            if (bolDrag)
+                plt.addDraggedHorLinesListener( this.mapHorLnActs.get(angle) );
+            else
+                plt.addDraggedHorLinesListener( null );
+            
+            plt.setDraggingHorLinesGraphMode(bolDrag);
+        }
+    }
+    
+    /**
+     * Allows any horizontal line on all the graphs to be dragged within the
+     * plot by the user.
+     *
+     * @param bolDrag   value <code>true</code> enables dragging,
+     *                  value <code>false</code> disables dragging
+     *
+     * @author Christopher K. Allen
+     * @since  Mar 24, 2011
+     */
+    public void setHorizontalLineDragging(boolean bolDrag) {
+        for (WireScanner.ANGLE angle : WireScanner.ANGLE.values()) 
+            this.setHorizontalLineDragging(angle, bolDrag);
+    }
+    
+    /**
+     * Add a dragged horizontal line action to each plot corresponding to
+     * the given angle.  The <code>{@link FunctionGraphsJPanel}</code>
+     * currently supports only one dragged horizontal line listener, so this
+     * method replaces any listener previously set.
+     *
+     * @param angle             applies to graphs supporting this projection angle
+     * @param lsnActDragged     action response to a movement of an horizontal line
+     *
+     * @author Christopher K. Allen
+     * @since  Mar 28, 2011
+     */
+    public void addDraggedHorLinesListener(WireScanner.ANGLE angle, ActionListener lsnActDragged) {
+            
+        this.mapHorLnActs.put(angle, lsnActDragged);
+        for (FunctionGraphsJPanel plt : this.getDataGraphs(angle)) 
+            plt.addDraggedHorLinesListener(lsnActDragged);
+    }
+    
+    /**
+     * Add a dragged horizontal line action to each plot.
+     * The <code>{@link FunctionGraphsJPanel}</code>
+     * currently supports only one dragged horizontal line listener, so this
+     * method replaces any listener previously set.
+     *
+     * @param lsnActDragged     action response to a movement of an horizontal line
+     *
+     * @author Christopher K. Allen
+     * @since  Mar 28, 2011
+     */
+    public void addDraggedHorLinesListener(ActionListener lsnActDragged) {
+            
+        for (WireScanner.ANGLE angle : WireScanner.ANGLE.values())
+            this.addDraggedVerLinesListener(angle, lsnActDragged);
     }
     
     

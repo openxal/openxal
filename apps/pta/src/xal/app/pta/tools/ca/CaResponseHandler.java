@@ -75,7 +75,7 @@ public class CaResponseHandler implements ActionListener, SmfPvMonitor.IAction {
     
     
     /**
-     * Creates a new <code>CaResponseHandler</cod> for the given
+     * Creates a new <code>CaResponseHandler</code> for the given
      * object and method.  When the <code>{@link #actionPerformed(ActionEvent)}</code>
      * method is called the given method spawn a thread to invoke the 
      * method provided on the given object, after sleeping for 
