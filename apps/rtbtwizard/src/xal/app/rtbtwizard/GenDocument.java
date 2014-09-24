@@ -188,7 +188,7 @@ public class GenDocument extends AcceleratorDocument implements DataListener{
     String mode;
     
     Monitor bcmMonitor;
-    Marker harp;
+    AcceleratorNode harp;
     Channel harpxch;
     Channel harpych;
     Channel repratech;
@@ -223,7 +223,7 @@ public class GenDocument extends AcceleratorDocument implements DataListener{
 		
 		createAgents(rtbtseq);
 		//nbpmagents=rtbtagents.size();
-		harp = (Marker)(((ArrayList)rtbtseq.getNodesOfType("Harp")).get(0));
+		harp = rtbtseq.getNodesOfType( "Harp" ).get(0);
 		harpxch=harp.getChannel("xRMS");
 		harpych=harp.getChannel("yRMS");
 		harpxch.requestConnection();
