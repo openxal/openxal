@@ -24,6 +24,7 @@ import xal.app.pta.tools.logging.JavaLogger;
 import xal.app.pta.tools.logging.NullLogger;
 import xal.app.pta.tools.swing.SplashWindow;
 import xal.service.pvlogger.RemoteLoggingCenter;
+import xal.tools.ResourceManager;
 import xal.extension.application.smf.AcceleratorApplication;
 
 import java.awt.Dimension;
@@ -572,7 +573,8 @@ public class MainApplication extends ApplicationAdaptor {
     public static File  createDropFile(String strFileName) {
     
         // Check that the drop location exists, create it if not
-        File            fileDir     = new File(MainApplication.STR_PATH_DROP);
+        String   strDirHome  = System.getProperty("user.home");
+        File     fileDir     = new File(strDirHome, MainApplication.STR_PATH_DROP);
         
         if (!fileDir.exists()) {
             fileDir.mkdirs();
@@ -584,8 +586,7 @@ public class MainApplication extends ApplicationAdaptor {
         }
         
         // Create the drop file
-        String          strFilePath = MainApplication.STR_PATH_DROP + strFileName;
-        File            fileDrop    = new File(strFilePath);
+        File            fileDrop    = new File(fileDir, strFileName);
         
         try {
             if (!fileDrop.exists()) {
