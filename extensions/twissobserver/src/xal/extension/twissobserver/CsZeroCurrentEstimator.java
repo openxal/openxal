@@ -4,10 +4,10 @@
  * @author Christopher K. Allen
  * @since  Apr 18, 2013
  */
-package xal.tools.twissobserver;
+package xal.extension.twissobserver;
 
-import gov.sns.tools.beam.CorrelationMatrix;
-import gov.sns.xal.model.ModelException;
+import xal.tools.beam.CovarianceMatrix;
+import xal.model.ModelException;
 
 import java.util.ArrayList;
 
@@ -94,7 +94,7 @@ public class CsZeroCurrentEstimator extends CourantSnyderEstimator {
      * @author Christopher K. Allen
      * @since  Aug 31, 2012
      */
-    public CorrelationMatrix computeReconstruction(String strRecDevId, ArrayList<Measurement> arrData)
+    public CovarianceMatrix computeReconstruction(String strRecDevId, ArrayList<Measurement> arrData)
         throws ModelException 
     {
         this.genTransMat.generateWithoutSpaceCharge();
@@ -103,7 +103,7 @@ public class CsZeroCurrentEstimator extends CourantSnyderEstimator {
         Matrix  vecMmtsVer = this.computeReconSubFunction(PHASEPLANE.VER, strRecDevId, arrData);
         Matrix  vecMmtsLng = this.computeReconSubFunction(PHASEPLANE.LNG, strRecDevId, arrData);
 
-        CorrelationMatrix   matSig = PHASEPLANE.constructCovariance(vecMmtsHor, vecMmtsVer, vecMmtsLng);
+        CovarianceMatrix   matSig = PHASEPLANE.constructCovariance(vecMmtsHor, vecMmtsVer, vecMmtsLng);
 
         super.matCurrF     = matSig;
         super.matCurrSigma = matSig;
@@ -123,7 +123,8 @@ public class CsZeroCurrentEstimator extends CourantSnyderEstimator {
      * {@link #computeReconstruction(String, ArrayList)}.
      * 
      * @param strRecDevId   ID of the device where the reconstruction is performed
-     * @param dblBmChg      beam charge - <em>Ignored</em>
+     * @param dblBnchFreq   bunch arrival frequency - <em>Ignored</em>
+     * @param dblBmCurr     beam current - <em>Ignored</em>
      * @param arrData       measurement data consisting of RMS beam sizes
      * 
      * @return              block diagonal covariance matrix containing second-order moments
@@ -134,10 +135,10 @@ public class CsZeroCurrentEstimator extends CourantSnyderEstimator {
      * @author Christopher K. Allen
      * @since  May 1, 2013
      */
-    public CorrelationMatrix    computeReconstruction(String strRecDevId, double dblBmChg, ArrayList<Measurement> arrMsmts) 
+    public CovarianceMatrix    computeReconstruction(String strRecDevId, double dblBnchFreq, double dblBmCurr, ArrayList<Measurement> arrMsmts) 
         throws ModelException 
     {
-        CorrelationMatrix  matSigRec = this.computeReconstruction(strRecDevId, arrMsmts);
+        CovarianceMatrix  matSigRec = this.computeReconstruction(strRecDevId, arrMsmts);
         
         return matSigRec;
     }

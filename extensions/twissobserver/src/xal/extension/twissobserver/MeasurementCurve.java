@@ -4,13 +4,14 @@
  * @author Christopher K. Allen
  * @since  Apr 29, 2013
  */
-package xal.tools.twissobserver;
+package xal.extension.twissobserver;
 
-import gov.sns.tools.plot.BasicGraphData;
-import gov.sns.xal.model.plot.PLANE;
-import gov.sns.xal.model.plot.TrajectoryGraph;
-import gov.sns.xal.smf.AcceleratorNode;
-import gov.sns.xal.smf.AcceleratorSeq;
+import xal.extension.widgets.plot.BasicGraphData;
+
+import xal.extension.widgets.olmplot.PLANE;
+import xal.extension.widgets.olmplot.TrajectoryGraph;
+import xal.smf.AcceleratorNode;
+import xal.smf.AcceleratorSeq;
 
 import java.util.ArrayList;
 

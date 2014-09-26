@@ -12,14 +12,14 @@
  * @author  Christopher K. Allen
  * @since	Jul 20, 2012
  */
-package xal.tools.twissobserver;
+package xal.extension.twissobserver;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 
 import Jama.Matrix;
-import gov.sns.tools.beam.CorrelationMatrix;
-import gov.sns.tools.beam.PhaseMatrix;
+import xal.tools.beam.CovarianceMatrix;
+import xal.tools.beam.PhaseMatrix;
 
 /**
  * Enumeration of the mechanical motion phase planes for use in 
@@ -66,8 +66,8 @@ public enum PHASEPLANE {
      * @author Christopher K. Allen
      * @since  Aug 31, 2012
      */
-    static public CorrelationMatrix   constructCovariance(Matrix vecMmtsHor, Matrix vecMmtsVer, Matrix vecMmtsLng) {
-        CorrelationMatrix       matSig = CorrelationMatrix.newZero();
+    static public CovarianceMatrix   constructCovariance(Matrix vecMmtsHor, Matrix vecMmtsVer, Matrix vecMmtsLng) {
+        CovarianceMatrix       matSig = CovarianceMatrix.newZero();
         
         for (int i=0; i<2; i++)
             for (int j=0; j<2; j++) {
@@ -206,7 +206,7 @@ public enum PHASEPLANE {
      * @author Christopher K. Allen
      * @since  Mar 27, 2013
      */
-    public CorrelationMatrix  getCovarianceBasis(int indBasis) throws ArrayIndexOutOfBoundsException {
+    public CovarianceMatrix  getCovarianceBasis(int indBasis) throws ArrayIndexOutOfBoundsException {
         return this.arrCovBasis.get(indBasis);
     }
     
@@ -256,7 +256,7 @@ public enum PHASEPLANE {
      * @author Christopher K. Allen
      * @since  Mar 27, 2013
      */
-    public Matrix   extractCovarianceVector(CorrelationMatrix matCov) {
+    public Matrix   extractCovarianceVector(CovarianceMatrix matCov) {
         Matrix  vecCov = new Matrix(3,1);
         
         vecCov.set(0, 0, matCov.getElem(iMatOffset,     iMatOffset) );
@@ -281,7 +281,7 @@ public enum PHASEPLANE {
     private final ArrayList<PhaseMatrix>        arrStdBasis;
     
     /** Covariance basis matrices for covariance space covered by this phase plane */
-    private final ArrayList<CorrelationMatrix>  arrCovBasis;
+    private final ArrayList<CovarianceMatrix>  arrCovBasis;
     
     
     /*
@@ -298,7 +298,7 @@ public enum PHASEPLANE {
     private PHASEPLANE(final int indCovMat, String strFldNm) {
         this.iMatOffset  = indCovMat;
         this.arrStdBasis = new ArrayList<PhaseMatrix>();
-        this.arrCovBasis = new ArrayList<CorrelationMatrix>();
+        this.arrCovBasis = new ArrayList<CovarianceMatrix>();
         
         this.initBmSzFld(strFldNm);
         this.initStdBasis();
@@ -360,16 +360,16 @@ public enum PHASEPLANE {
      * @since  Mar 27, 2013
      */
     private void initCovBasis() {
-        CorrelationMatrix matBasis1 = CorrelationMatrix.newZero();
+        CovarianceMatrix matBasis1 = CovarianceMatrix.newZero();
         matBasis1.setElem(this.iMatOffset, this.iMatOffset, 1.0);
         this.arrCovBasis.add(matBasis1);
         
-        CorrelationMatrix matBasis2 = CorrelationMatrix.newZero();
+        CovarianceMatrix matBasis2 = CovarianceMatrix.newZero();
         matBasis2.setElem(this.iMatOffset,     this.iMatOffset + 1,  1.0);
         matBasis2.setElem(this.iMatOffset + 1, this.iMatOffset,      1.0);
         this.arrCovBasis.add(matBasis2);
         
-        CorrelationMatrix matBasis3 = CorrelationMatrix.newZero();
+        CovarianceMatrix matBasis3 = CovarianceMatrix.newZero();
         matBasis3.setElem(this.iMatOffset + 1, this.iMatOffset + 1, 1.0);
         this.arrCovBasis.add(matBasis3);
     }

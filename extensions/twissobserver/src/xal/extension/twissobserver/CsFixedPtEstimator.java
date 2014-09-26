@@ -5,12 +5,12 @@
  *  Author  : Christopher K. Allen 
  *            Eric Dai
  */
-package xal.tools.twissobserver;
+package xal.extension.twissobserver;
 
-import gov.sns.tools.beam.CorrelationMatrix;
-import gov.sns.tools.beam.PhaseMatrix;
-import gov.sns.tools.collections.LinearBuffer;
-import gov.sns.xal.model.ModelException;
+import xal.tools.beam.CovarianceMatrix;
+import xal.tools.beam.PhaseMatrix;
+import xal.tools.collections.LinearBuffer;
+import xal.model.ModelException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -29,7 +29,7 @@ import Jama.Matrix;
  * by using the zero-current value covariance matrix as the initialize guess
  * (see <code>{@link #computeCovarianceZeroCurrent(String, ArrayList)}</code>).  The zero-current
  * covariance matrix is passed to the method 
- * <code>{@link #computeCovarianceFiniteCurrent(String, double, CorrelationMatrix, ArrayList)}</code>.
+ * <code>{@link #computeCovarianceFiniteCurrent(String, double, CovarianceMatrix, ArrayList)}</code>.
  * </p>
  * <p>
  * A <code>{@link TransferMatrixGenerator}</code> object must be supplied
@@ -363,7 +363,7 @@ public class CsFixedPtEstimator extends CourantSnyderEstimator {
      * by using the zero-current value covariance matrix as the initialize guess
      * (see <code>{@link #computeCovarianceZeroCurrent(String, ArrayList)}</code>).  The zero-current
      * covariance matrix is passed to the method 
-     * <code>{@link #computeCovarianceFiniteCurrent(String, double, CorrelationMatrix, ArrayList)}</code>.
+     * <code>{@link #computeCovarianceFiniteCurrent(String, double, CovarianceMatrix, ArrayList)}</code>.
      * </p>
      * <p>
      * <h4>NOTE:</h4>
@@ -372,7 +372,8 @@ public class CsFixedPtEstimator extends CourantSnyderEstimator {
      * </p> 
      *
      * @param strRecDevId   ID of the device where the reconstruction is to be performed
-     * @param dblBnchChg    amount of bunch charge in Coulombs
+     * @param dblBnchFreq   bunch arrival frequency (in Hz)
+     * @param dblBmCurr     beam current (in Hz)
      * @param arrData       the profile measurement data used for the reconstruction
      *  
      * @return  block diagonal covariance matrix (uncoupled in the phase planes) containing the second-order
@@ -384,13 +385,13 @@ public class CsFixedPtEstimator extends CourantSnyderEstimator {
      * @author Christopher K. Allen
      * @since  Aug 30, 2012
      */
-    public CorrelationMatrix computeReconstruction(String strRecDevId, double dblBnchChg, ArrayList<Measurement> arrData)
+    public CovarianceMatrix computeReconstruction(String strRecDevId, double dblBnchFreq, double dblBmCurr, ArrayList<Measurement> arrData)
         throws ModelException, ConvergenceException
     {
         
         // Compute the initial position, compute the solution, then return it
-        CorrelationMatrix   matSig0 = this.computeZeroCurrReconFunction(strRecDevId, arrData);
-        CorrelationMatrix   matSig1 = this.computeReconstruction(strRecDevId, dblBnchChg, matSig0, arrData);
+        CovarianceMatrix   matSig0 = this.computeZeroCurrReconFunction(strRecDevId, arrData);
+        CovarianceMatrix   matSig1 = this.computeReconstruction(strRecDevId, dblBnchFreq, dblBmCurr, matSig0, arrData);
         
         return matSig1;
     }
@@ -412,7 +413,8 @@ public class CsFixedPtEstimator extends CourantSnyderEstimator {
      * </p> 
      *
      * @param strRecDevId   ID of the device where the reconstruction is to be performed
-     * @param dblBnchChg    amount of bunch charge in Coulombs
+     * @param dblBnchFreq   bunch arrival frequency (in Hz), typically a sub-harmonic of machine frequency
+     * @param dblBmCurr     beam current (in Amperes)
      * @param matSigInit    the initial covariance matrix (guess) used to start the algorithm 
      * @param arrData       the profile measurement data used for the reconstruction
      *  
@@ -425,10 +427,11 @@ public class CsFixedPtEstimator extends CourantSnyderEstimator {
      * @author Christopher K. Allen
      * @since  Aug 30, 2012
      */
-    public CorrelationMatrix computeReconstruction(
+    public CovarianceMatrix computeReconstruction(
             String strRecDevId, 
-            double dblBnchChg, 
-            CorrelationMatrix matSigInit, 
+            double dblBnchFreq, 
+            double dblBmCurr,
+            CovarianceMatrix matSigInit, 
             ArrayList<Measurement> arrData
             )
         throws ModelException, ConvergenceException
@@ -445,14 +448,14 @@ public class CsFixedPtEstimator extends CourantSnyderEstimator {
 
         int                 cntIter = 0;
         double              dblErr  = this.dblConvErr;
-        CorrelationMatrix   matSig0 = matSigInit;
+        CovarianceMatrix   matSig0 = matSigInit;
 
         
         // Keep iterating unless we hit the maximum number
         while (cntIter++ < this.cntMaxIter) {
 
             // Compute the new covariance matrix from the current one
-            CorrelationMatrix   matSig1 = this.iterateNext(matSig0, strRecDevId, dblBnchChg, arrData);
+            CovarianceMatrix   matSig1 = this.iterateNext(matSig0, strRecDevId, dblBnchFreq, dblBmCurr, arrData);
 
             // Compute the convergence error
             //  If it is less than the maximum return the solution
@@ -461,11 +464,11 @@ public class CsFixedPtEstimator extends CourantSnyderEstimator {
             
             dblErr = super.dblConvErr;
             
-            //  Print out debug info
+            //  Type out debug info
             if (super.isDebuggingOn()) {
                 System.out.println("  Iteration Method:  At iteration# " + cntIter ); 
                 System.out.println("    alpha=" + this.dblCurrAlpha + ", residual error=" + this.dblResErr + ", convergence error=" + this.dblConvErr);
-                matSig1.print(this.fmtMatrix, 12);
+                System.out.print( matSig1.toStringMatrix(this.fmtMatrix, 12) );
                 System.out.println("  -------------------------------------------------\n");
             }
 
@@ -494,7 +497,8 @@ public class CsFixedPtEstimator extends CourantSnyderEstimator {
      *
      * @param matSig0       initial beam state (i.e., second-order moments) at reconstruction location
      * @param strRecDevId   ID of device where Courant-Snyder parameters are reconstructed
-     * @param dblBnchChg    beam bunch charge (in Coulombs)
+     * @param dblBnchFreq   bunch arrival frequency (in Hz)
+     * @param dblBmCurr     beam current (in Amperes)
      * @param arrData       the measured profile data.
      * 
      * @return              the next iterate of second-order moments at the reconstruction location
@@ -504,12 +508,12 @@ public class CsFixedPtEstimator extends CourantSnyderEstimator {
      * @author Christopher K. Allen
      * @since  Sep 10, 2012
      */
-    private CorrelationMatrix    iterateNext(CorrelationMatrix matSig0, String strRecDevId, double dblBnchChg, ArrayList<Measurement> arrData) 
+    private CovarianceMatrix    iterateNext(CovarianceMatrix matSig0, String strRecDevId, double dblBnchFreq, double dblBmCurr, ArrayList<Measurement> arrData) 
         throws ModelException 
     {
         
         // Compute the transfer matrices between stations 
-        this.genTransMat.generateWithSpaceCharge(null, dblBnchChg, matSig0);
+        this.genTransMat.generateWithSpaceCharge(null, dblBnchFreq, dblBmCurr, matSig0);
 
         // Recurse through all the phase planes computing the new value of the recursion function
         Map<PHASEPLANE, Matrix> mapFcurr = new HashMap<PHASEPLANE, Matrix>();
@@ -526,14 +530,14 @@ public class CsFixedPtEstimator extends CourantSnyderEstimator {
         Matrix  vecMmtsVer = mapFcurr.get(PHASEPLANE.VER);
         Matrix  vecMmtsLng = mapFcurr.get(PHASEPLANE.LNG);
         
-        CorrelationMatrix   covF1 = PHASEPLANE.constructCovariance(vecMmtsHor, vecMmtsVer, vecMmtsLng);
+        CovarianceMatrix   covF1 = PHASEPLANE.constructCovariance(vecMmtsHor, vecMmtsVer, vecMmtsLng);
         
         // Construct the new covariance matrix computed from the data and the observation matrix
         //  Algorithm for generating new covariance matrix from old
         double              dblAlpha = this.computeAlpha();
         
         PhaseMatrix         matSig1  = covF1.times(dblAlpha).plus( matSig0.times( 1.0 - dblAlpha ) ); 
-        CorrelationMatrix   covSig1  = new CorrelationMatrix( matSig1 );
+        CovarianceMatrix   covSig1  = new CovarianceMatrix( matSig1 );
 
         //  Recurse through all the phase planes computing the change in the recursion function from
         //      this iteration and the last iteration, and the change in the moment vectors that 

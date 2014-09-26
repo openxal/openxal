@@ -12,7 +12,7 @@
  * @author  Christopher K. Allen
  * @since	Sep 4, 2012
  */
-package xal.tools.twissobserver;
+package xal.extension.twissobserver;
 
 import java.util.concurrent.ExecutionException;
 

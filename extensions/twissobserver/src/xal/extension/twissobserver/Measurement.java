@@ -1,5 +1,10 @@
-package xal.tools.twissobserver;
-
+/**
+ * MeasurementCurve.java
+ *
+ * @author Christopher K. Allen
+ * @since  Apr 29, 2013
+ */
+package xal.extension.twissobserver;
 
 
 /**

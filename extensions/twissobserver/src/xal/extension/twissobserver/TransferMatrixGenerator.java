@@ -6,37 +6,46 @@
  * All rights reserved.
  *
  */
-package xal.tools.twissobserver;
+package xal.extension.twissobserver;
 
 
-import gov.sns.tools.beam.CorrelationMatrix;
-import gov.sns.tools.beam.PhaseMap;
-import gov.sns.tools.beam.PhaseMatrix;
-import gov.sns.xal.model.ModelException;
-import gov.sns.xal.model.alg.EnvTrackerAdapt;
-import gov.sns.xal.model.alg.TransferMapTracker;
-import gov.sns.xal.model.probe.EnvelopeProbe;
-import gov.sns.xal.model.probe.ProbeFactory;
-import gov.sns.xal.model.probe.TransferMapProbe;
-import gov.sns.xal.model.probe.traj.EnvelopeProbeState;
-import gov.sns.xal.model.probe.traj.EnvelopeTrajectory;
-import gov.sns.xal.model.probe.traj.Trajectory;
-import gov.sns.xal.model.probe.traj.TransferMapState;
-import gov.sns.xal.model.probe.traj.TransferMapTrajectory;
-import gov.sns.xal.model.pvlogger.PVLoggerDataSource;
-import gov.sns.xal.model.scenario.Scenario;
-import gov.sns.xal.model.sync.SynchronizationException;
-import gov.sns.xal.smf.AcceleratorSeq;
+import xal.tools.beam.CovarianceMatrix;
+import xal.tools.beam.PhaseMap;
+import xal.tools.beam.PhaseMatrix;
+import xal.model.ModelException;
+import xal.model.alg.EnvTrackerAdapt;
+import xal.model.alg.TransferMapTracker;
+import xal.model.probe.EnvelopeProbe;
+import xal.model.probe.TransferMapProbe;
+import xal.model.probe.traj.EnvelopeProbeState;
+import xal.model.probe.traj.Trajectory;
+import xal.model.probe.traj.TransferMapState;
+
+import xal.service.pvlogger.sim.PVLoggerDataSource;
+
+import xal.sim.scenario.AlgorithmFactory;
+import xal.sim.scenario.Scenario;
+import xal.sim.scenario.ProbeFactory;
+import xal.sim.sync.SynchronizationException;
+import xal.smf.AcceleratorSeq;
 
 
 /**
  * <p>
- * Class for generating transfer matrices for the XAL accelerator beamlines.  The
- * transfer matrices are for the hardware systems only, no space charge is assumed.
+ * Class for generating transfer matrices for the XAL accelerator beamlines. For economic
+ * reasons the simulation is first run using methods {@link #generateWithoutSpaceCharge()}
+ * for the zero-current case or {@link #generateWithSpaceCharge(double, double, CovarianceMatrix)}
+ * for the finite beam current case.  Once the simulation is completed transfer
+ * matrices between any two beamline elements may be retrieved with the method
+ * {@link #retrieveTransferMatrix(String, String)}.  Note that when space charge is
+ * present an initial covariance matrix for the beam must be supplied.  The matrix
+ * describes the beam sizes at the entrance to the beamline. 
  * </p>
+ * 
  * @author Eric Dai
  * @author Christopher K Allen
  * @since June 8, 2012
+ * @version Sep 25, 2014
  */
 public class TransferMatrixGenerator {
 
@@ -95,30 +104,37 @@ public class TransferMatrixGenerator {
         }
     }
     
-    
 	
 	/*
 	 * Local Attributes
 	 */
+    
 	/** Accelerator sequence where transfer maps are being computed */
     private AcceleratorSeq     smfSeq;
     
 
-	/** Transfer map probe used for simulation without space charge */
-	private TransferMapProbe   mdlTmapProbe;
-	
-	/** Envelope probe used to simulation with space charge */
-	private EnvelopeProbe      mdlEnvProbe;
-	
+    /** Indicates whether space charge was included in the transfer matrix calculation */
+    private boolean             bolScheff;
+
+
     /** Model of the above hardware */
     private Scenario           mdlBeamline;
     
-    /** The probe propagation history through machine */
-    private Trajectory         mdlTraj;
+    
+    /** Transfer map probe used for simulation without space charge */
+    private TransferMapProbe   mdlTmapProbe;
+    
+    /** Envelope probe used to simulation with space charge */
+    private EnvelopeProbe      mdlEnvProbe;
+    
+
+    /** The envelope probe propagation history through machine */
+    private Trajectory<EnvelopeProbeState>      mdlTrjEnv;
+    
+    /** The transfer map probe propagation history through the machine */
+    private Trajectory<TransferMapState>        mdlTrjMap;
     
 	
-
-
 	
 	/*
 	 * Initialization
@@ -158,37 +174,43 @@ public class TransferMatrixGenerator {
      * @param smfSeq       the desired sequence for transfer matrix computation
      * @param enmSyn       source of machine parameters
 
-	 * @throws ModelException  and error occurred when instantiating the machine model
+	 * @throws ModelException  and error occurred when instantiating the machine model or a component
 	 */
 	public TransferMatrixGenerator(AcceleratorSeq  smfSeq, SYNC enmSyn) throws ModelException {
 	    
         // Get the sequence we are working in
-        this.smfSeq = smfSeq;
-        
-        
-        // Create the zero-current probe 
-        TransferMapTracker algXmap = new TransferMapTracker();
+	    this.smfSeq = smfSeq;
 
-        this.mdlTmapProbe = ProbeFactory.getTransferMapProbe(this.smfSeq, algXmap);
-        this.mdlTmapProbe.reset(); 
+	    try {
+	        // Create the zero-current probe 
+	        TransferMapTracker algXmap = AlgorithmFactory.createTransferMapTracker(smfSeq);
 
-        
-        // Create the finite space charge probe
-        EnvTrackerAdapt    algEnvTrk = new EnvTrackerAdapt();
-        algEnvTrk.setMaxIterations(1000);
-        
-        // Create and initialize the envelope probe
-        this.mdlEnvProbe = ProbeFactory.getEnvelopeProbe(this.smfSeq, algEnvTrk);
-        this.mdlEnvProbe.reset();
+	        this.mdlTmapProbe = ProbeFactory.getTransferMapProbe(this.smfSeq, algXmap);
+	        this.mdlTmapProbe.reset(); 
 
 
-        // Create the model and load the parameters from the saved PV Logger data
-        this.mdlBeamline = Scenario.newScenarioFor(smfSeq);
-        this.setSynchronizationMode(enmSyn);
-   
+	        // Create the finite space charge probe
+	        EnvTrackerAdapt    algEnvTrk = AlgorithmFactory.createEnvTrackerAdapt(smfSeq);
+	        algEnvTrk.setMaxIterations(1000);
+
+	        // Create and initialize the envelope probe
+	        this.mdlEnvProbe = ProbeFactory.getEnvelopeProbe(this.smfSeq, algEnvTrk);
+	        this.mdlEnvProbe.reset();
+
+
+	        // Create the model and load the parameters from the saved PV Logger data
+	        this.mdlBeamline = Scenario.newScenarioFor(smfSeq);
+	        this.setSynchronizationMode(enmSyn);
+
+	    } catch (InstantiationException e) {
+
+	        throw new ModelException("Unable to instantiate tracker algorithm: " + e.getMessage());
+	    }
         
         // Obviate uninitialized objects
-        this.mdlTraj  = null;
+        this.bolScheff = false;
+        this.mdlTrjMap = null;
+        this.mdlTrjEnv = null;
 	}
 	
     /**
@@ -262,7 +284,8 @@ public class TransferMatrixGenerator {
         this.mdlBeamline.run();
         
         // Save the trajectory
-        this.mdlTraj = this.mdlBeamline.getTrajectory();
+        this.mdlTrjMap = this.mdlBeamline.getTrajectory();
+        this.bolScheff = false;
 	}
 	
 	/**
@@ -274,11 +297,17 @@ public class TransferMatrixGenerator {
      * </p>
      * <p>
      * This methods is a direct proxy to 
-     * <code>{@link #generateWithSpaceCharge(String, double, CorrelationMatrix)}</code>
+     * <code>{@link #generateWithSpaceCharge(String, double, CovarianceMatrix)}</code>
      * using <code>null</code> as the first argument.
      * </p>
+     * <p>
+     * <h4>NOTE</h4>
+     * &middot; Bunch charge (the target parameter) is given by beam current divided
+     * by bunch frequency.
+     * </p>
      * 
-     * @param dblBnchChg       beam bunch charge in Coulombs
+     * @param dblBnchFreq      bunch arrival frequency (in Hz)
+     * @param dblBeamCurr      beam current (in Amperes)
      * @param matInitState     initial state of the beam, initial covariance matrix
      * 
      * @throws ModelException  general error during model synchronization or simulation
@@ -286,12 +315,14 @@ public class TransferMatrixGenerator {
 	 * @author Christopher K. Allen
 	 * @since  Mar 28, 2013
 	 * 
-	 * @see    #generateWithSpaceCharge(String, double, CorrelationMatrix)
+	 * @see    #generateWithSpaceCharge(String, double, CovarianceMatrix)
 	 */
-	public void generateWithSpaceCharge(double dblBnchChg, CorrelationMatrix matInitState)
+//	public void generateWithSpaceCharge(double dblBnchChg, CovarianceMatrix matInitState)
+    public void generateWithSpaceCharge(double dblBnchFreq, double dblBeamCurr, CovarianceMatrix matInitState)
 	        throws ModelException 
     {
-	    this.generateWithSpaceCharge(null, dblBnchChg, matInitState);
+//	    this.generateWithSpaceCharge(null, dblBnchChg, matInitState);
+        this.generateWithSpaceCharge(null, dblBnchFreq, dblBeamCurr, matInitState);
     }
 	
 	/**
@@ -309,7 +340,7 @@ public class TransferMatrixGenerator {
 	 * <p>
 	 * <h4>NOTE:</h4>
 	 * &middot; Bunch charge <i>Q</i> is given by beam current <i>I</i> divided by
-	 *          machine frequency <i>f</i>.  Specifically, <i>Q</i> = <i>I</i>/<i>f</i>.
+	 *          bunch frequency <i>f</i>.  Specifically, <i>Q</i> = <i>I</i>/<i>f</i>.
 	 * </p> 
 	 *
      * @param strDevIdStart    ID of device with which to start the simulation,
@@ -322,14 +353,17 @@ public class TransferMatrixGenerator {
 	 * @author Christopher K. Allen
 	 * @since  Jul 26, 2012
 	 */
-	public void generateWithSpaceCharge(String strDevIdStart, double dblBnchChg, CorrelationMatrix matInitState)
+//	public void generateWithSpaceCharge(String strDevIdStart, double dblBnchChg, CovarianceMatrix matInitState)
+    public void generateWithSpaceCharge(String strDevIdStart, double dblBnchFreq, double dblBeamCurr, CovarianceMatrix matInitState)
 	    throws ModelException 
 	{
 	    
 	    // Initialize the probe
         this.mdlEnvProbe.reset();
-	    this.mdlEnvProbe.setCorrelation(matInitState);
-	    this.mdlEnvProbe.setBeamCharge(dblBnchChg);
+	    this.mdlEnvProbe.setCovariance(matInitState);
+//	    this.mdlEnvProbe.setBeamCharge(dblBnchChg);
+	    this.mdlEnvProbe.setBunchFrequency(dblBnchFreq);
+	    this.mdlEnvProbe.setBeamCurrent(dblBeamCurr);
 	    
 
 	    // Load the probe into the model, synchronize the model parameters, 
@@ -342,7 +376,8 @@ public class TransferMatrixGenerator {
 	    
 	    
 	    // Save the trajectory
-	    this.mdlTraj = this.mdlBeamline.getTrajectory();
+	    this.mdlTrjEnv = this.mdlBeamline.getTrajectory();
+	    this.bolScheff = true;
 	}
 	
 	/**
@@ -351,7 +386,7 @@ public class TransferMatrixGenerator {
      * of the current accelerator sequence to the entrance of the given element.
      * This method is viable only after a call to methods 
      * <code>{@link #generateWithoutSpaceCharge()}</code> or 
-     * <code>{@link #generateWithSpaceCharge(String, double, CorrelationMatrix)}</code>.
+     * <code>{@link #generateWithSpaceCharge(String, double, CovarianceMatrix)}</code>.
      * 
      * @param strElemStop     string identifier of the terminal element
      * 
@@ -360,22 +395,21 @@ public class TransferMatrixGenerator {
      * @throws IllegalStateException   The transfer matrices have not been generated yet
 	 *
      * @see    #generateWithoutSpaceCharge()
-     * @see    #generateWithSpaceCharge(String, double, CorrelationMatrix)
+     * @see    #generateWithSpaceCharge(String, double, CovarianceMatrix)
      * 
 	 * @author Christopher K. Allen
 	 * @since  Jul 27, 2012
 	 */
 	public PhaseMatrix retrieveTransferMatrix(String strElemStop) throws IllegalStateException {
 	    
-        // Error condition - the simulation hasn't been run yet
-        if (this.mdlTraj == null)
-            throw new IllegalStateException("No transfer matrices, model has not been run");
-        
         // The transfer matrices are beam independent
-        if (this.mdlTraj instanceof TransferMapTrajectory) {
-            TransferMapTrajectory  trjMap = (TransferMapTrajectory)this.mdlTraj;
+        if (this.bolScheff == false) {
+
+            // Error condition - the simulation hasn't been run yet
+            if (this.mdlTrjMap == null)
+                throw new IllegalStateException("No transfer matrices, model has not been run");
             
-            TransferMapState    stateElem = (TransferMapState)trjMap.stateForElement(strElemStop);
+            TransferMapState    stateElem = this.mdlTrjMap.stateForElement(strElemStop);
             PhaseMap            mapPhi    = stateElem.getTransferMap();
             PhaseMatrix matPhi = mapPhi.getFirstOrder();
             
@@ -383,10 +417,13 @@ public class TransferMatrixGenerator {
         }
         
         // The transfer matrices contain space charge effects
-        if (this.mdlTraj instanceof EnvelopeTrajectory) {
-            EnvelopeTrajectory      trjEnv = (EnvelopeTrajectory)this.mdlTraj;
+        if (this.bolScheff) {
+
+            // Error condition - the simulation hasn't been run yet
+            if (this.mdlTrjEnv == null)
+                throw new IllegalStateException("No transfer matrices, model has not been run");
             
-            EnvelopeProbeState  stateEnv = (EnvelopeProbeState)trjEnv.stateForElement(strElemStop);
+            EnvelopeProbeState  stateEnv = this.mdlTrjEnv.stateForElement(strElemStop);
             PhaseMatrix         matPhi   = stateEnv.getResponseMatrix();
             
             return matPhi;
@@ -402,7 +439,7 @@ public class TransferMatrixGenerator {
 	 * to the entrance of the given stop element (within the current accelerator sequence).
 	 * This method is viable only after a call to methods 
 	 * <code>{@link #generateWithoutSpaceCharge()}</code> or 
-	 * <code>{@link #generateWithSpaceCharge(String, double, CorrelationMatrix)}</code>.
+	 * <code>{@link #generateWithSpaceCharge(String, double, CovarianceMatrix)}</code>.
 	 * 
 	 * @param strElemStart    string identifier of the starting element
 	 * @param strElemStop     string identifier of the terminal element
@@ -412,31 +449,43 @@ public class TransferMatrixGenerator {
      * @throws IllegalStateException   The transfer matrices have not been generated yet
      * 
      * @see    #generateWithoutSpaceCharge()
-     * @see    #generateWithSpaceCharge(String, double, CorrelationMatrix)
+     * @see    #generateWithSpaceCharge(String, double, CovarianceMatrix)
 	 *
 	 * @author Christopher K. Allen
 	 * @since  Jul 18, 2012
 	 */
 	public PhaseMatrix retrieveTransferMatrix(String strElemStart, String strElemStop) throws IllegalStateException {
 	    
-	    // Error condition - the simulation hasn't been run yet
-	    if (this.mdlTraj == null)
-	        throw new IllegalStateException("No transfer matrices, model has not been run");
-	    
 	    // The transfer matrices are beam independent
-	    if (this.mdlTraj instanceof TransferMapTrajectory) {
-	        TransferMapTrajectory  trjMap = (TransferMapTrajectory)this.mdlTraj;
+	    if (this.bolScheff == false) {
 	        
-	        PhaseMatrix matPhi = trjMap.getTransferMatrix(strElemStart, strElemStop);
+	        // Error condition - the simulation hasn't been run yet
+	        if (this.mdlTrjMap == null)
+	            throw new IllegalStateException("No transfer matrices, model has not been run");
+	        
+	        TransferMapState state1 = this.mdlTrjMap.stateForElement(strElemStart);
+	        TransferMapState state2 = this.mdlTrjMap.stateForElement(strElemStop);
+	        
+	        PhaseMatrix      matPhi1 = state1.getTransferMap().getFirstOrder();
+	        PhaseMatrix      matPhi2 = state2.getTransferMap().getFirstOrder();
+	        PhaseMatrix      matPhi  = matPhi2.times( matPhi1.inverse() );
 	        
 	        return matPhi;
 	    }
 	    
 	    // The transfer matrices contain space charge effects 
-        if (this.mdlTraj instanceof EnvelopeTrajectory) {
-            EnvelopeTrajectory trjEnv = (EnvelopeTrajectory)this.mdlTraj;
+        if (this.bolScheff) {
+
+            // Error condition - the simulation hasn't been run yet
+            if (this.mdlTrjEnv == null)
+                throw new IllegalStateException("No transfer matrices, model has not been run");
             
-            PhaseMatrix matPhi = trjEnv.getTransferMatrix(strElemStart, strElemStop);
+            EnvelopeProbeState  state1 = this.mdlTrjEnv.stateForElement(strElemStart);
+            EnvelopeProbeState  state2 = this.mdlTrjEnv.stateForElement(strElemStop);
+            
+            PhaseMatrix         matPhi1 = state1.getResponseMatrix();
+            PhaseMatrix         matPhi2 = state2.getResponseMatrix();
+            PhaseMatrix         matPhi  = matPhi2.times( matPhi1.inverse() );
             
             return matPhi;
         }

@@ -4,22 +4,21 @@
  * @author  Christopher K. Allen
  * @since	Sep 6, 2012
  */
-package xal.tools.twissobserver;
+package xal.extension.twissobserver;
 
 import java.util.ArrayList;
 
-import xal.tools.twissobserver.TransferMatrixGenerator.SYNC;
-import gov.sns.tools.beam.CorrelationMatrix;
-import gov.sns.xal.model.ModelException;
-import gov.sns.xal.model.alg.EnvTrackerAdapt;
-import gov.sns.xal.model.probe.EnvelopeProbe;
-import gov.sns.xal.model.probe.ProbeFactory;
-import gov.sns.xal.model.probe.traj.EnvelopeProbeState;
-import gov.sns.xal.model.probe.traj.EnvelopeTrajectory;
-import gov.sns.xal.model.probe.traj.Trajectory;
-import gov.sns.xal.model.pvlogger.PVLoggerDataSource;
-import gov.sns.xal.model.scenario.Scenario;
-import gov.sns.xal.smf.AcceleratorSeq;
+import xal.tools.beam.CovarianceMatrix;
+import xal.extension.twissobserver.TransferMatrixGenerator.SYNC;
+import xal.model.ModelException;
+import xal.model.alg.EnvTrackerAdapt;
+import xal.model.probe.EnvelopeProbe;
+import xal.model.probe.traj.EnvelopeProbeState;
+import xal.model.probe.traj.Trajectory;
+import xal.service.pvlogger.sim.PVLoggerDataSource;
+import xal.sim.scenario.ProbeFactory;
+import xal.sim.scenario.Scenario;
+import xal.smf.AcceleratorSeq;
 
 /**
  * This class is an auxiliary tool for providing the longitudinal component of a 
@@ -157,10 +156,10 @@ public class BunchLengthSimulator {
      * @author Christopher K. Allen
      * @since  Sep 6, 2012
      */
-    public void generateBunchLengths(ArrayList<Measurement> arrMsmts, double dblBmChrg)
+    public void generateBunchLengths(ArrayList<Measurement> arrMsmts, double dblBnchFreq, double dblBmCurr)
         throws ModelException
     {
-        this.generateBunchLengths(arrMsmts, 1.0, dblBmChrg);
+        this.generateBunchLengths(arrMsmts, 1.0, dblBnchFreq, dblBmCurr);
     }
     
     /**
@@ -181,10 +180,10 @@ public class BunchLengthSimulator {
      * @author Christopher K. Allen
      * @since  Sep 6, 2012
      */
-    public void generateBunchLengths(ArrayList<Measurement> arrMsmts, double dblScale, double dblBmChrg)
+    public void generateBunchLengths(ArrayList<Measurement> arrMsmts, double dblScale, double dblBnchFreq, double dblBmCurr)
         throws ModelException
     {
-        this.generateBunchLengths(arrMsmts, dblScale, dblBmChrg, null);
+        this.generateBunchLengths(arrMsmts, dblScale, dblBnchFreq, dblBmCurr, null);
     }
     
     /**
@@ -207,16 +206,16 @@ public class BunchLengthSimulator {
      * @author Christopher K. Allen
      * @since  Jul 26, 2012
      */
-    public void generateBunchLengths(ArrayList<Measurement> arrMsmts, double dblScale, double dblBmChrg, CorrelationMatrix matInitState) 
+    public void generateBunchLengths(ArrayList<Measurement> arrMsmts, double dblScale, double dblBnchFreq, double dblBmCurr, CovarianceMatrix matInitState) 
         throws ModelException 
     {
-        EnvelopeTrajectory  trjEnv = this.runSimulation(dblBmChrg, matInitState);
+        Trajectory<EnvelopeProbeState>  trjEnv = this.runSimulation(dblBnchFreq, dblBmCurr, matInitState);
         
         for (Measurement msmt : arrMsmts) {
-            EnvelopeProbeState steProbe = (EnvelopeProbeState)trjEnv.stateForElement(msmt.strDevId);
+            EnvelopeProbeState steProbe  = trjEnv.stateForElement(msmt.strDevId);
             
-            CorrelationMatrix   matCov    = steProbe.phaseCorrelation();
-            double              dblSigLng = matCov.getSigmaZ()*dblScale;
+            CovarianceMatrix   matCov    = steProbe.getCovarianceMatrix();
+            double             dblSigLng = matCov.getSigmaZ()*dblScale;
             
             msmt.dblSigLng = dblSigLng;
         }
@@ -241,14 +240,15 @@ public class BunchLengthSimulator {
      * @author Christopher K. Allen
      * @since  Sep 6, 2012
      */
-    private EnvelopeTrajectory  runSimulation(double dblBmChrg, CorrelationMatrix matInitState) 
+    private Trajectory<EnvelopeProbeState>  runSimulation(double dblBnchFreq, double dblBmCurr, CovarianceMatrix matInitState) 
         throws ModelException 
     {
 
         // Create and initialize the envelope probe
         if (matInitState != null)
-            this.mdlProbe.setCorrelation(matInitState);
-        this.mdlProbe.setBeamCharge(dblBmChrg);
+            this.mdlProbe.setCovariance(matInitState);
+        this.mdlProbe.setBunchFrequency(dblBnchFreq);
+        this.mdlProbe.setBeamCurrent(dblBmCurr);
         this.mdlProbe.reset();
         
         // Load the probe into the model, synchronize the model parameters, 
@@ -258,13 +258,8 @@ public class BunchLengthSimulator {
         this.mdlBeamline.run();
         
         // Extract and type the trajectory
-        Trajectory trjBase = this.mdlBeamline.getTrajectory();
+        Trajectory<EnvelopeProbeState> trjBase = this.mdlBeamline.getTrajectory();
         
-        if (! (trjBase instanceof EnvelopeTrajectory) )
-            throw new ModelException("Simulation did not produce an EnvelopeTrajectory");
-        
-        EnvelopeTrajectory  trjEnv = (EnvelopeTrajectory)trjBase;
-        
-        return trjEnv;
+        return trjBase;
     }
 }

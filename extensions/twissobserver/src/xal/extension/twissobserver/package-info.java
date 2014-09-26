@@ -113,4 +113,4 @@
  * @author Christopher K. Allen
  * @since  Sep 24, 2014
  */
-package xal.tools.twissobserver;
+package xal.extension.twissobserver;

@@ -4,11 +4,11 @@
  * @author Christopher K. Allen
  * @since  Apr 15, 2013
  */
-package xal.tools.twissobserver;
+package xal.extension.twissobserver;
 
-import gov.sns.tools.beam.CorrelationMatrix;
-import gov.sns.tools.beam.PhaseMatrix;
-import gov.sns.xal.model.ModelException;
+import xal.tools.beam.CovarianceMatrix;
+import xal.tools.beam.PhaseMatrix;
+import xal.model.ModelException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -120,8 +120,8 @@ public class CsContinuationEstimator extends CourantSnyderEstimator {
     /** Default fractional perturbation of moment vector used to compute the partial of the recursion function */
     public static final double  DBL_DEL_MMT_FRAC = 0.01;
     
-    /** Default fractional perturbation of the charge used to compute the partial of the recursion function */
-    public static final double  DBL_DEL_CHRG_FRAC = 0.05;
+    /** Default fractional perturbation of the beam current used to compute the partial of the recursion function */
+    public static final double  DBL_DEL_CURR_FRAC = 0.05;
     
     
 
@@ -137,15 +137,15 @@ public class CsContinuationEstimator extends CourantSnyderEstimator {
     private CsFixedPtEstimator     slnEmbed;
     
     
-    /** Number of beam charge steps - method 2 */
-    private int         cntChgSteps;
+    /** Number of beam current steps - method 2 */
+    private int         cntCurSteps;
     
     
     /** Derivative fractional step (0,1) for computing partials w.r.t. moments - method 2 */
     private double      dblDelMmtPct;
     
-    /** Derivative fractional step (0,1) for computing partials w.r.t. beam charge - method 2*/
-    private double      dblDelChgPct;
+    /** Derivative fractional step (0,1) for computing partials w.r.t. beam current - method 2*/
+    private double      dblDelCurPct;
     
     
 
@@ -163,30 +163,30 @@ public class CsContinuationEstimator extends CourantSnyderEstimator {
      * @since  Apr 15, 2013
      */
     public CsContinuationEstimator(TransferMatrixGenerator genTransMat) {
-        this(BOL_FIX_PT_SRCH, CNT_CHRG_STEPS, DBL_DEL_MMT_FRAC, DBL_DEL_CHRG_FRAC, genTransMat);
+        this(BOL_FIX_PT_SRCH, CNT_CHRG_STEPS, DBL_DEL_MMT_FRAC, DBL_DEL_CURR_FRAC, genTransMat);
     }
     
     /**
      * Creates a new instance of <code>ContinuationSolution</code>.
      *
      * @param bol2ndSrch    use the fixed point secondary search between beam charge steps 
-     * @param cntChgSteps   number of steps used to move (continuously) from zero charge to full charge
+     * @param cntCurSteps   number of steps used to move (continuously) from zero charge to full charge
      * @param dblDelMmtFrac the fractional perturbation in moment vector used to compute the partial of the recursion function
-     * @param dblDelChgFrac the fractional perturbation of the beam charged used to compute the recursion function partial
+     * @param dblDelCurFrac the fractional perturbation of the beam current used to compute the recursion function partial
      * @param genTransMat   a pre-configured transfer matrix engine used internally.   
      *
      * @author Christopher K. Allen
      * @since  Apr 15, 2013
      */
-    public CsContinuationEstimator(boolean bol2ndSrch, int cntChgSteps, double dblDelMmtFrac, double dblDelChgFrac, TransferMatrixGenerator genTransMat) {
+    public CsContinuationEstimator(boolean bol2ndSrch, int cntChgSteps, double dblDelMmtFrac, double dblDelCurFrac, TransferMatrixGenerator genTransMat) {
         super(false, genTransMat);
         
         this.bol2ndSrch = bol2ndSrch;
         this.slnEmbed   = new CsFixedPtEstimator(genTransMat);
         
-        this.cntChgSteps  = cntChgSteps;
-        this.dblDelChgPct = dblDelMmtFrac;
-        this.dblDelMmtPct = dblDelChgFrac;
+        this.cntCurSteps  = cntChgSteps;
+        this.dblDelCurPct = dblDelCurFrac;
+        this.dblDelMmtPct = dblDelMmtFrac;
     }
 
     
@@ -228,14 +228,14 @@ public class CsContinuationEstimator extends CourantSnyderEstimator {
      * where &Delta;<i>q</i> &equiv; <i>q*</i>/<i>N<sub>q</sub></i> .
      * </p>
      * 
-     * @param cntChgSteps   number of steps used to approach the true beam charge solution from the 
+     * @param cntCurSteps   number of steps used to approach the true beam charge solution from the 
      *                      zero current solution using the continuation method
      *
      * @author Christopher K. Allen
      * @since  Apr 2, 2013
      */
     public void setBeamChargeSteps(int cntChgSteps) {
-        this.cntChgSteps = cntChgSteps;
+        this.cntCurSteps = cntChgSteps;
     }
     
     /**
@@ -253,13 +253,13 @@ public class CsContinuationEstimator extends CourantSnyderEstimator {
      * <br/>
      * </p>
      *
-     * @param dblDelChgPct  a value in (0,1) indicating the fraction of the current charge used as perturbation
+     * @param dblDelCurPct  a value in (0,1) indicating the fraction of the current charge used as perturbation
      *
      * @author Christopher K. Allen
      * @since  Nov 28, 2012
      */
     public void setChargeDerivPerturb(double dblDelChgPct) {
-        this.dblDelChgPct = dblDelChgPct;
+        this.dblDelCurPct = dblDelChgPct;
     }
     
     /**
@@ -354,46 +354,47 @@ public class CsContinuationEstimator extends CourantSnyderEstimator {
      * </p>
      * 
      * @param strRecDevId   ID of the device where the reconstruction is to be performed
-     * @param dblBnchChg    bunch charge corresponding to the given data (in Coulombs)
+     * @param dblBnchFreq   bunch arrival frequency for the given data (in Hz)
+     * @param dblBmCurr     beam current (in Amperes)
      * @param arrData       the profile measurement data used for the reconstruction
      *  
      * @return  block diagonal covariance matrix (uncoupled in the phase planes) containing the second-order
      *          moments of the beam at the reconstruction location
      *          
      * @throws ModelException       error occurred during the transfer matrix computations
-     * @throws ConvergenceException this is for the internal call to {@link #computeReconstruction(String, double, CorrelationMatrix, ArrayList)}
+     * @throws ConvergenceException this is for the internal call to {@link #computeReconstruction(String, double, CovarianceMatrix, ArrayList)}
      *
      * @author Christopher K. Allen
      * @since  Apr 2, 2013
      */
-    public CorrelationMatrix computeReconstruction(String strRecDevId, double dblBnchChg, ArrayList<Measurement> arrData)
+    public CovarianceMatrix computeReconstruction(String strRecDevId, double dblBnchFreq, double dblBmCurr, ArrayList<Measurement> arrData)
         throws ModelException
     {
         // "Convergence" does not make sense here, unless we run the secondary search
         super.dblConvErr = Double.NaN;
         
         // Compute the initial values
-        double              dblDelQ = dblBnchChg/this.cntChgSteps;
-        CorrelationMatrix   matSig0 = this.computeZeroCurrReconFunction(strRecDevId, arrData);
+        double             dblDelI = dblBmCurr/this.cntCurSteps;
+        CovarianceMatrix   matSig0 = this.computeZeroCurrReconFunction(strRecDevId, arrData);
 
         this.matCurrSigma = matSig0;
         this.matCurrF     = matSig0;
         
-        // Initialize the iterative charge stepping
-        double              dblCurrChg = 0.0;
+        // Initialize the iterative beam current stepping
+        double              dblCurrI = 0.0;
 
         // Compute the solution curve step by step by incrementing the beam charge
-        for (int n=1; n<=this.cntChgSteps; n++) {
+        for (int n=1; n<=this.cntCurSteps; n++) {
 
-            dblCurrChg = n*dblDelQ;
+            dblCurrI = n*dblDelI;
             
             // Compute the new covariance matrix from the current one
-            CorrelationMatrix   matSig1 = this.iterateNext(matSig0, strRecDevId, dblCurrChg, dblDelQ, arrData);
+            CovarianceMatrix   matSig1 = this.iterateNext(matSig0, strRecDevId, dblBnchFreq, dblCurrI, dblDelI, arrData);
 
             // Move the current solution value back onto the solution curve
             if (this.bol2ndSrch) {
                 try {
-                    matSig1 = this.slnEmbed.computeReconstruction(strRecDevId, dblCurrChg, matSig1, arrData);
+                    matSig1 = this.slnEmbed.computeReconstruction(strRecDevId, dblBnchFreq, dblCurrI, matSig1, arrData);
 
                     super.dblConvErr = this.slnEmbed.getReconConvergenceError();
                     
@@ -423,11 +424,11 @@ public class CsContinuationEstimator extends CourantSnyderEstimator {
             //  Print out debug info
             if (super.isDebuggingOn()) {
                 System.out.println("----Continuation Method: Charge step# " + n +
-                                   " charge=" + dblCurrChg + 
+                                   " charge=" + dblCurrI + 
                                    ", residual error=" + super.getReconResidualError() + 
                                    ", converge error=" + super.getReconConvergenceError()
                                    );
-                matSig1.print(fmtMatrix, 12);
+                System.out.print( matSig1.toStringMatrix(fmtMatrix, 12) );
                 System.out.println("-------------------------------------------------\n");
             }
 
@@ -439,7 +440,7 @@ public class CsContinuationEstimator extends CourantSnyderEstimator {
         //  Report the error if in debug mode
         //  Then return the computed answer
         if (bolDebug)
-            System.out.println("Used " + this.cntChgSteps + " charge steps with final residual error " + super.getReconResidualError() + ", and convergence error " + super.getReconConvergenceError());
+            System.out.println("Used " + this.cntCurSteps + " charge steps with final residual error " + super.getReconResidualError() + ", and convergence error " + super.getReconConvergenceError());
         
         return matSig0;
     }
@@ -509,6 +510,7 @@ public class CsContinuationEstimator extends CourantSnyderEstimator {
      * 
      * @param matSig0       current solution iterate
      * @param strRecDevId   ID of device where reconstruction is located
+     * @param dblBnchFreq   bunch arrival frequency (in Hz)
      * @param dblBnchChg    beam charge to use in current iterate
      * @param dblDelChg     increase in beam charge for returned iterate
      * @param arrData       the reconstruction problem data
@@ -520,9 +522,10 @@ public class CsContinuationEstimator extends CourantSnyderEstimator {
      * @author Christopher K. Allen
      * @since  Apr 2, 2013
      */
-    private CorrelationMatrix    iterateNext(
-            CorrelationMatrix matSig0, 
+    private CovarianceMatrix    iterateNext(
+            CovarianceMatrix matSig0, 
             String strRecDevId, 
+            double dblBnchFreq,
             double dblBnchChg, 
             double dblDelChg,
             ArrayList<Measurement> arrData
@@ -539,12 +542,12 @@ public class CsContinuationEstimator extends CourantSnyderEstimator {
             Matrix  matId     = Matrix.identity(cntDim, cntDim);
 
             // Compute the moment function resolvent
-            Matrix  matDFdSig = this.computePartialWrtMoments(plane, matSig0, strRecDevId, dblBnchChg, arrData);
+            Matrix  matDFdSig = this.computePartialWrtMoments(plane, matSig0, strRecDevId, dblBnchFreq, dblBnchChg, arrData);
             Matrix  matDGdSig    = matDFdSig.minus(matId);
             Matrix  matDGdSigInv = matDGdSig.inverse();
             
             // Compute the partial of the solution curve w.r.t. charge and store
-            Matrix  vecDFdq   = this.computePartialWrtCharge(plane, matSig0, strRecDevId, dblBnchChg, arrData);
+            Matrix  vecDFdq   = this.computePartialWrtCharge(plane, matSig0, strRecDevId, dblBnchFreq, dblBnchChg, arrData);
             Matrix  vecDSigDq = matDGdSigInv.times(vecDFdq);
             
             mapVecDSigdq.put(plane, vecDSigDq);
@@ -554,8 +557,8 @@ public class CsContinuationEstimator extends CourantSnyderEstimator {
         Matrix  vecDelSigVer = mapVecDSigdq.get(PHASEPLANE.VER).times(dblDelChg);
         Matrix  vecDelSigLng = mapVecDSigdq.get(PHASEPLANE.LNG).times(dblDelChg);
         
-        CorrelationMatrix   matDelSig = PHASEPLANE.constructCovariance(vecDelSigHor, vecDelSigVer, vecDelSigLng);
-        CorrelationMatrix   matSig1   = new CorrelationMatrix( matSig0.plus(matDelSig) );
+        CovarianceMatrix   matDelSig = PHASEPLANE.constructCovariance(vecDelSigHor, vecDelSigVer, vecDelSigLng);
+        CovarianceMatrix   matSig1   = new CovarianceMatrix( matSig0.plus(matDelSig) );
         
         return matSig1;
     }
@@ -581,26 +584,33 @@ public class CsContinuationEstimator extends CourantSnyderEstimator {
      * <br/>
      * where &epsilon; is the parameter provided by method {@link #setChargeDerivativeStepPercent(double)}.
      * </p>
+     * 
+     * @param   plane       phase plane we are using
+     * @param   matSig0     covariance matrix we are computing partials about
+     * @param   strDevId    the device at the beamline location
+     * @param   dblBnchFreq arrival frequency of the beam bunches
+     * @param   dblBmCurr   current beam current
+     * @param   arrMsmts    the measurement data 
      *           
      * @throws ModelException   Failed to generate transfer matrices due to a simulation error 
      *
      */
-    private Matrix  computePartialWrtCharge(PHASEPLANE plane, CorrelationMatrix matSig0, String strRecDevId, double dblChg, ArrayList<Measurement> arrMsmts) 
+    private Matrix  computePartialWrtCharge(PHASEPLANE plane, CovarianceMatrix matSig0, String strRecDevId, double dblBnchFreq, double dblChg, ArrayList<Measurement> arrMsmts) 
         throws ModelException 
     {
         
         // Compute the current moment vector
-        this.genTransMat.generateWithSpaceCharge(dblChg, matSig0);
+        this.genTransMat.generateWithSpaceCharge(dblBnchFreq, dblChg, matSig0);
         Matrix  vecMmtsInit = this.computeReconSubFunction(plane, strRecDevId, arrMsmts);
         
         // Perturb the beam charge and recompute the moment vector
-        double  dblChgPert  = (1.0 + this.dblDelChgPct)*dblChg;
-        this.genTransMat.generateWithSpaceCharge(dblChgPert, matSig0);
+        double  dblChgPert  = (1.0 + this.dblDelCurPct)*dblChg;
+        this.genTransMat.generateWithSpaceCharge(dblBnchFreq, dblChgPert, matSig0);
         Matrix  vecMmtsPert = this.computeReconSubFunction(plane, strRecDevId, arrMsmts);
         
         // Approximate the moment vector derivative by finite difference
         Matrix vecDelF = vecMmtsPert.minus(vecMmtsInit);
-        Matrix vecDFdq = vecDelF.times(1.0/(this.dblDelChgPct*dblChg));
+        Matrix vecDFdq = vecDelF.times(1.0/(this.dblDelCurPct*dblChg));
         
         return vecDFdq;
     }
@@ -640,7 +650,8 @@ public class CsContinuationEstimator extends CourantSnyderEstimator {
      * @param plane         phase plane to compute partials
      * @param matSig0       initial beam state (i.e., second-order moments) at reconstruction location
      * @param strRecDevId   ID of device where Courant-Snyder parameters are reconstructed
-     * @param dblChg        beam bunch charge <i>q</i><sub>0</sub> (in Coulombs)
+     * @param dblBnchFreq   beam bunch arrival frequency (in Hz)
+     * @param dblChg        beam bunch current<i>I</i><sub>0</sub> (in Amperes)
      * @param arrMsmts      the measured profile data
      * 
      * @return  the partial derivative <b>F</b>/&part;<b>&sigma;</b> of the recursion operator <b>F</b>  
@@ -650,7 +661,7 @@ public class CsContinuationEstimator extends CourantSnyderEstimator {
      * @author Christopher K. Allen
      * @since  Apr 1, 2013
      */
-    private Matrix  computePartialWrtMoments(PHASEPLANE plane, CorrelationMatrix matSig0, String strRecDevId, double dblChg, ArrayList<Measurement> arrMsmts)
+    private Matrix  computePartialWrtMoments(PHASEPLANE plane, CovarianceMatrix matSig0, String strRecDevId, double dblBnchFreq, double dblChg, ArrayList<Measurement> arrMsmts)
         throws ModelException
     {
         
@@ -661,7 +672,7 @@ public class CsContinuationEstimator extends CourantSnyderEstimator {
         
         // Compute the current value of F(sig0,q) from the initial moments (and charge)
         //  These values are the point in the range of F that which sig0 maps to 
-        this.genTransMat.generateWithSpaceCharge(dblChg, matSig0);
+        this.genTransMat.generateWithSpaceCharge(dblBnchFreq, dblChg, matSig0);
         Matrix  vecMmtsInit = this.computeReconSubFunction(plane, strRecDevId, arrMsmts);
         
         // Perturb each moment and recompute the result
@@ -674,11 +685,11 @@ public class CsContinuationEstimator extends CourantSnyderEstimator {
             double  dblMmt0    = vecSig0.get(i, 0);
             double  dblMmtPert = this.dblDelMmtPct*dblMmt0;
             
-            CorrelationMatrix matBasis  = plane.getCovarianceBasis(i);
+            CovarianceMatrix matBasis  = plane.getCovarianceBasis(i);
             PhaseMatrix       matPert   = matBasis.times(dblMmtPert);
-            CorrelationMatrix matDelSig = new CorrelationMatrix( matSig0.plus(matPert) );
+            CovarianceMatrix matDelSig = new CovarianceMatrix( matSig0.plus(matPert) );
             
-            this.genTransMat.generateWithSpaceCharge(dblChg, matDelSig);
+            this.genTransMat.generateWithSpaceCharge(dblBnchFreq, dblChg, matDelSig);
             Matrix  vecMmtsPert = this.computeReconSubFunction(plane, strRecDevId, arrMsmts);
             Matrix  vecDelF     = vecMmtsPert.minus(vecMmtsInit);
             Matrix  vecDFdSig   = vecDelF.times(1.0/dblMmtPert);

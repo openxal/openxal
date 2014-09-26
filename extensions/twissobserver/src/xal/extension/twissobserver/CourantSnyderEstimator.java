@@ -4,12 +4,12 @@
  * @author Christopher K. Allen
  * @since  Apr 12, 2013
  */
-package xal.tools.twissobserver;
+package xal.extension.twissobserver;
 
-import gov.sns.tools.beam.CorrelationMatrix;
-import gov.sns.tools.beam.PhaseMatrix;
-import gov.sns.tools.beam.Twiss;
-import gov.sns.xal.model.ModelException;
+import xal.tools.beam.CovarianceMatrix;
+import xal.tools.beam.PhaseMatrix;
+import xal.tools.beam.Twiss;
+import xal.model.ModelException;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -27,7 +27,7 @@ import Jama.Matrix;
  * location.  This is the set of second-order moments of the beam distribution.  Since the
  * measurement data cannot show coupling between phase planes, the covariance matrix is
  * block diagonal where the 2&times;2 blocks correspond to each independent phase plane
- * (see <code>{@link CorrelationMatrix}</code>).  If the measurement data is zero
+ * (see <code>{@link CovarianceMatrix}</code>).  If the measurement data is zero
  * for any phase plane, then the diagonal block corresponding to that phase plane is also zero.
  * </p>
  * <p>
@@ -62,7 +62,8 @@ public abstract class CourantSnyderEstimator {
      * </p>
      * 
      * @param strRecDevId   ID of the device where the reconstruction is to be performed
-     * @param dblBnchChg    bunch charge corresponding to the given data (in Coulombs)
+     * @param dblBnchFreq   bunch arrival frequency (in Hz)
+     * @param dblBmCurr     beam current (in Amperes)
      * @param arrData       the profile measurement data used for the reconstruction
      *  
      * @return  block diagonal covariance matrix containing the second-order
@@ -73,7 +74,7 @@ public abstract class CourantSnyderEstimator {
      * @author Christopher K. Allen
      * @since  Apr 2, 2013
      */
-    public abstract CorrelationMatrix computeReconstruction(String strRecDevId, double dblBnchChg, ArrayList<Measurement> arrData) throws Exception;
+    public abstract CovarianceMatrix computeReconstruction(String strRecDevId, double dblBnchFreq, double dblBmCurr, ArrayList<Measurement> arrData) throws Exception;
     
     
     
@@ -119,10 +120,10 @@ public abstract class CourantSnyderEstimator {
     protected double            dblConvErr;
     
     /** The last recorded moment solution */
-    protected CorrelationMatrix matCurrSigma;
+    protected CovarianceMatrix matCurrSigma;
     
     /** The last recorded recursion function value */
-    protected CorrelationMatrix matCurrF;
+    protected CovarianceMatrix matCurrF;
 
     
     /*
@@ -216,7 +217,7 @@ public abstract class CourantSnyderEstimator {
      * @author Christopher K. Allen
      * @since  Nov 21, 2012
      */
-    public CorrelationMatrix getReconstruction() {
+    public CovarianceMatrix getReconstruction() {
         return this.matCurrSigma;
     }
 
@@ -269,7 +270,7 @@ public abstract class CourantSnyderEstimator {
     /**
      * Returns the recursion function for a zero-current beam at the given device location and
      * for the given profile measurement data.  This method actually returns the results of 
-     * <code>{@link #computeReconFunction(CorrelationMatrix, double, String, ArrayList)}</code>
+     * <code>{@link #computeReconFunction(CovarianceMatrix, double, String, ArrayList)}</code>
      * for zero current and undefined initial beam moments.
      * 
      * @param strRecDevId   device ID where the Courant-Snyder parameters are being reconstructed
@@ -283,10 +284,10 @@ public abstract class CourantSnyderEstimator {
      * @author Christopher K. Allen
      * @since  Apr 18, 2013
      */
-    public CorrelationMatrix computeZeroCurrReconFunction(String strRecDevId, ArrayList<Measurement> arrData)
+    public CovarianceMatrix computeZeroCurrReconFunction(String strRecDevId, ArrayList<Measurement> arrData)
         throws ModelException
     {
-        return this.computeReconFunction(null, 0.0, strRecDevId, arrData);
+        return this.computeReconFunction(null, 0.0, 0.0, strRecDevId, arrData);
     }
     
     /**
@@ -312,23 +313,24 @@ public abstract class CourantSnyderEstimator {
      * @author Christopher K. Allen
      * @since  Apr 18, 2013
      */
-    public CorrelationMatrix computeReconFunction(CorrelationMatrix matSig0, 
-                                                      double dblChrg, 
+    public CovarianceMatrix computeReconFunction(CovarianceMatrix matSig0, 
+                                                      double dblBnchFreq, 
+                                                      double dblBeamCurr,
                                                       String strRecDevId,
                                                       ArrayList<Measurement> arrData
                                                       ) 
         throws ModelException
     {
-        if (dblChrg == 0.0)
+        if (dblBeamCurr == 0.0)
             this.genTransMat.generateWithoutSpaceCharge();
         else
-            this.genTransMat.generateWithSpaceCharge(dblChrg, matSig0);
+            this.genTransMat.generateWithSpaceCharge(dblBnchFreq, dblBeamCurr, matSig0);
         
         Matrix  vecMmtsHor = this.computeReconSubFunction(PHASEPLANE.HOR, strRecDevId, arrData);
         Matrix  vecMmtsVer = this.computeReconSubFunction(PHASEPLANE.VER, strRecDevId, arrData);
         Matrix  vecMmtsLng = this.computeReconSubFunction(PHASEPLANE.LNG, strRecDevId, arrData);
         
-        CorrelationMatrix   matSig = PHASEPLANE.constructCovariance(vecMmtsHor, vecMmtsVer, vecMmtsLng);
+        CovarianceMatrix   matSig = PHASEPLANE.constructCovariance(vecMmtsHor, vecMmtsVer, vecMmtsLng);
         
         this.matCurrSigma = matSig;
         this.dblResErr  = this.computeResidualError(matSig, strRecDevId, arrData);
@@ -484,7 +486,7 @@ public abstract class CourantSnyderEstimator {
      * @return  Observation matrix for the given data and target location
      * 
      * @see TransferMatrixGenerator#generateWithoutSpaceCharge()
-     * @see TransferMatrixGenerator#generateWithSpaceCharge(String, double, CorrelationMatrix)
+     * @see TransferMatrixGenerator#generateWithSpaceCharge(String, double, CovarianceMatrix)
      * 
      * @throws IllegalArgumentException unknown phase plane or unknown device 
      * @throws IllegalStateException    transfer matrices have not been generated
@@ -537,7 +539,7 @@ public abstract class CourantSnyderEstimator {
      * @author Christopher K. Allen
      * @since  Nov 15, 2012
      */
-    protected double computeResidualError(CorrelationMatrix matSigSoln, String strRecDevId, ArrayList<Measurement> arrData) {
+    protected double computeResidualError(CovarianceMatrix matSigSoln, String strRecDevId, ArrayList<Measurement> arrData) {
         int     N = arrData.size();
     
         double  dblErrTotal = 0.0;
@@ -580,7 +582,7 @@ public abstract class CourantSnyderEstimator {
      * @author Christopher K. Allen
      * @since  Apr 5, 2013
      */
-    protected double computeConvergenceError(CorrelationMatrix matSig1, CorrelationMatrix matSig0) {
+    protected double computeConvergenceError(CovarianceMatrix matSig1, CovarianceMatrix matSig0) {
         PhaseMatrix     matDispl = matSig1.minus( matSig0 );
         double          dblErr2  = matDispl.normF();
     
