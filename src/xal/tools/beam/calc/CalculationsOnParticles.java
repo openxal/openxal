@@ -17,11 +17,21 @@ import xal.tools.math.r3.R3;
 import xal.tools.math.r6.R6;
 
 /**
- * Class <code></code>.
- *
+ * <p>
+ * Provides processing functions appropriate for single particle simulation data.
+ * </p>
+ * <p>
+ * Additional class methods provide access to computed quantities used by the
+ * class for the above processing, such as the "periodic fixed orbit", "periodic
+ * betatron phase advance", and "period matched Twiss parameter".  These parameters
+ * make not make sense here, as we make the very broad assumption that the particle
+ * is in a periodic system and the simulation data is taken about <i>n</i> periods,
+ * but they are available.  
+ * </p>    
  *
  * @author Christopher K. Allen
  * @since  Nov 14, 2013
+ * @version Sep 25, 2014
  */
 public class CalculationsOnParticles extends CalculationEngine implements ISimLocResults<ParticleProbeState> {
 
