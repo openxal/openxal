@@ -315,14 +315,14 @@ public abstract class ScadaPacket implements DataListener {
      * @return              <code>true</code> if all connections were successful,
      *                      <code>false</code> if not all connection were made within given time
      *                      
-     * @throws BadStructDefinition      the data structure is not defined properly (bad PV Descriptor)
+     * @throws BadStructException      the data structure is not defined properly (bad PV Descriptor)
 //     * @throws InterruptedException     Unknown interruption occurred while waiting for connections
      *
      * @author Christopher K. Allen
      * @since  Feb 4, 2011
      */
     public static boolean  testConnection(Class<? extends ScadaPacket> clsScada, AcceleratorNode smfDev, double dblTmOut) 
-        throws BadStructDefinition 
+        throws BadStructException 
     {
         
         // Check for no test
@@ -331,7 +331,7 @@ public abstract class ScadaPacket implements DataListener {
         
         // Check that data structure is tagged for channel access
         if (! clsScada.isAnnotationPresent(Scada.class) )
-            throw new BadStructDefinition("The data structure is not annotated as 'Scada'");
+            throw new BadStructException("The data structure is not annotated as 'Scada'");
         
         // Here is where we store all the requests
         List<Channel>    lstReqChns = new LinkedList<Channel>();
@@ -395,7 +395,7 @@ public abstract class ScadaPacket implements DataListener {
      * @since  Feb 4, 2011
      */
     protected static void requestAndMonitorConnection(AcceleratorNode smfDev, String strHnd, List<Channel> lstReqChns) 
-        throws BadStructDefinition
+        throws BadStructException
     {
         // Retrieve the channel object from the accelerator device
         Channel     chnReq = smfDev.findChannel(strHnd);
@@ -403,7 +403,7 @@ public abstract class ScadaPacket implements DataListener {
         if (chnReq == null) {
             String strMsg = "No channel " + strHnd 
             + " on device " + smfDev.getId();
-            throw new BadStructDefinition(strMsg);
+            throw new BadStructException(strMsg);
     
         }
     
@@ -458,7 +458,7 @@ public abstract class ScadaPacket implements DataListener {
      *
      * @param smfDev    hardware device from which values are obtained
      * 
-     * @throws BadStructDefinition  data structure fields are ill-defined/incompatible 
+     * @throws BadStructException  data structure fields are ill-defined/incompatible 
      * @throws ConnectionException  unable to connect to a descriptor read back channel 
      * @throws GetException         unable to get PV value from channel access or
      * 
@@ -466,7 +466,7 @@ public abstract class ScadaPacket implements DataListener {
      * @author Christopher K. Allen
      */
     public void loadHardwareValues(AcceleratorNode smfDev) 
-        throws BadStructDefinition, ConnectionException, GetException 
+        throws BadStructException, ConnectionException, GetException 
     {
         for (FieldDescriptor pfdFld : this.arrFldDscr) {
             String      strFldNm = pfdFld.getFieldName();
@@ -482,7 +482,7 @@ public abstract class ScadaPacket implements DataListener {
      *
      * @param smfDev    hardware device to receive new parameter values
      * 
-     * @throws BadStructDefinition  data structure fields are ill-defined/incompatible 
+     * @throws BadStructException  data structure fields are ill-defined/incompatible 
      * @throws ConnectionException  unable to connect to PV channel
      * @throws PutException  general put exception (unable to set all parameter values)
      * 
@@ -490,7 +490,7 @@ public abstract class ScadaPacket implements DataListener {
      * @author Christopher K. Allen
      */
     public void     setHardwareValues(AcceleratorNode smfDev) 
-        throws BadStructDefinition, ConnectionException, PutException 
+        throws BadStructException, ConnectionException, PutException 
     {
         for (IFieldDescriptor pfdFld : this.arrFldDscr) {
             String          strFldNm = pfdFld.getFieldName();
@@ -578,12 +578,12 @@ public abstract class ScadaPacket implements DataListener {
      * @author  Christopher K. Allen
      *
      * @throws  MissingResourceException        a data field was missing from the data source
-     * @throws BadStructDefinition  data structure fields are ill-defined/incompatible
+     * @throws BadStructException  data structure fields are ill-defined/incompatible
      *  
      * @see xal.tools.data.DataListener#update(xal.tools.data.DataAdaptor)
      */
     @Override
-    public void update(DataAdaptor daptSrc) throws MissingResourceException, BadStructDefinition {
+    public void update(DataAdaptor daptSrc) throws MissingResourceException, BadStructException {
         String          strLabel = this.dataLabel();
         DataAdaptor     daptVals = daptSrc.childAdaptor(strLabel);
 
@@ -639,13 +639,13 @@ public abstract class ScadaPacket implements DataListener {
                 }
 
             } catch (IllegalAccessException e) {
-                throw new BadStructDefinition("Data field " + strFldName + " is ill-defined.", e);
+                throw new BadStructException("Data field " + strFldName + " is ill-defined.", e);
                 
             } catch (SecurityException e) {
-                throw new BadStructDefinition("Data field " + strFldName + " is ill-defined.", e);
+                throw new BadStructException("Data field " + strFldName + " is ill-defined.", e);
 
             } catch (NoSuchFieldException e) {
-                throw new BadStructDefinition("Data field " + strFldName + " is ill-defined.", e);
+                throw new BadStructException("Data field " + strFldName + " is ill-defined.", e);
                 
             }
         }
@@ -661,12 +661,12 @@ public abstract class ScadaPacket implements DataListener {
      * @since 	Mar 3, 2010
      * @author  Christopher K. Allen
      *
-     * @throws BadStructDefinition  data structure fields are ill-defined/incompatible
+     * @throws BadStructException  data structure fields are ill-defined/incompatible
      *  
      * @see xal.tools.data.DataListener#write(xal.tools.data.DataAdaptor)
      */
     @Override
-    public void write(DataAdaptor daptSink) throws BadStructDefinition {
+    public void write(DataAdaptor daptSink) throws BadStructException {
         String          strLabel = this.dataLabel();
         DataAdaptor     daptVals = daptSink.createChild(strLabel);
         
@@ -693,13 +693,13 @@ public abstract class ScadaPacket implements DataListener {
                 }
 
             } catch (IllegalAccessException e) {
-                throw new BadStructDefinition("Data field " + strFldName + " is ill-defined.", e);
+                throw new BadStructException("Data field " + strFldName + " is ill-defined.", e);
                 
             } catch (SecurityException e) {
-                throw new BadStructDefinition("Data field " + strFldName + " is ill-defined.", e);
+                throw new BadStructException("Data field " + strFldName + " is ill-defined.", e);
 
             } catch (NoSuchFieldException e) {
-                throw new BadStructDefinition("Data field " + strFldName + " is ill-defined.", e);
+                throw new BadStructException("Data field " + strFldName + " is ill-defined.", e);
                 
             }
         }
@@ -761,7 +761,7 @@ public abstract class ScadaPacket implements DataListener {
      * @param strHndPv      the (get) channel handle for the PV 
      * @param smfDev        the PV belongs to this device
      * 
-     * @throws BadStructDefinition  data structure fields are ill-defined/incompatible 
+     * @throws BadStructException  data structure fields are ill-defined/incompatible 
      * @throws ConnectionException  unable to connect to descriptor read back channel
      * @throws GetException         unable to get PV value
      * 
@@ -769,7 +769,7 @@ public abstract class ScadaPacket implements DataListener {
      * @author Christopher K. Allen
      */
     protected void setFieldFromPV(String strFldName, String strHndPv, AcceleratorNode smfDev) 
-        throws BadStructDefinition, ConnectionException, GetException
+        throws BadStructException, ConnectionException, GetException
     {
         
         try {
@@ -840,32 +840,32 @@ public abstract class ScadaPacket implements DataListener {
                                   "Unknown data type " + strType + 
                                   " for channel handle " + strHndPv;
                 System.err.println(strMsg);
-                throw new BadStructDefinition(strMsg);
+                throw new BadStructException(strMsg);
             }
 
         } catch (SecurityException e) {
             String  strMsg = "ScadaPacket#getHardwareValues:"
                 + " unable to initialize field " + strFldName
                 + ", incompatible types for " + strHndPv;
-            throw new BadStructDefinition(strMsg, e);
+            throw new BadStructException(strMsg, e);
             
         } catch (NoSuchFieldException e) {
             String  strMsg = "ScadaPacket#getHardwareValues:"
                 + " unable to initialize field " + strFldName
                 + ", incompatible types for " + strHndPv;
-            throw new BadStructDefinition(strMsg, e);
+            throw new BadStructException(strMsg, e);
             
         } catch (IllegalArgumentException e) {
             String  strMsg = "ScadaPacket#getHardwareValues:"
                 + " unable to initialize field " + strFldName
                 + ", incompatible types for " + strHndPv;
-            throw new BadStructDefinition(strMsg, e);
+            throw new BadStructException(strMsg, e);
             
         } catch (IllegalAccessException e) {
             String  strMsg = "ScadaPacket#getHardwareValues:"
                 + " unable to initialize field " + strFldName
                 + ", incompatible types for " + strHndPv;
-            throw new BadStructDefinition(strMsg, e);
+            throw new BadStructException(strMsg, e);
             
         }
     }
@@ -888,7 +888,7 @@ public abstract class ScadaPacket implements DataListener {
      * @param strHndPv      handle of the (set) PV channel
      * @param smfDev        Hardware device containing the PV
      * 
-     * @throws BadStructDefinition  general field incompatibility exception 
+     * @throws BadStructException  general field incompatibility exception 
      * @throws ConnectionException  unable to connect to descriptor set value channel
      * @throws PutException         unable to set PV value
      * 
@@ -896,7 +896,7 @@ public abstract class ScadaPacket implements DataListener {
      * @author Christopher K. Allen
      */
     protected void setPvFromField(String strFldName, String  strHndPv, AcceleratorNode smfDev) 
-        throws BadStructDefinition, ConnectionException, PutException
+        throws BadStructException, ConnectionException, PutException
     {
 
         try {
@@ -952,22 +952,22 @@ public abstract class ScadaPacket implements DataListener {
                 "Unknown data type " + strType + 
                 " for channel handle " + strHndPv;
                 System.err.println(strMsg);
-                throw new BadStructDefinition(strMsg);
+                throw new BadStructException(strMsg);
                 
             }
             
             
         } catch (SecurityException e) {
-            throw new BadStructDefinition("ScadaPacket#getPv(): Security Exception: inaccessible field " + strFldName);
+            throw new BadStructException("ScadaPacket#getPv(): Security Exception: inaccessible field " + strFldName);
             
         } catch (NoSuchFieldException e) {
-            throw new BadStructDefinition("ScadaPacket#getPv(): ERROR: No such field " + strFldName);
+            throw new BadStructException("ScadaPacket#getPv(): ERROR: No such field " + strFldName);
             
         } catch (IllegalArgumentException e) {
-            throw new BadStructDefinition("ScadaPacket#getPv(): Illegal type conversion for field " + strFldName);
+            throw new BadStructException("ScadaPacket#getPv(): Illegal type conversion for field " + strFldName);
 
         } catch (IllegalAccessException e) {
-            throw new BadStructDefinition("ScadaPacket#getPv(): Illegal access attempt for field " + strFldName);
+            throw new BadStructException("ScadaPacket#getPv(): Illegal access attempt for field " + strFldName);
 
         }
     }

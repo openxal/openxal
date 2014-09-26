@@ -24,7 +24,8 @@ import xal.tools.math.r6.R6;
  * Class for performing calculations on data obtained from simulating linacs and
  * beam transport systems.  The class performs the calculation exposed in the
  * <code>ISimEnvResults</code> interface.  They are performed in the context
- * of a linear accelerator or transport system.
+ * of a linear accelerator or transport system acting upon a beam bunch, the
+ * simulation data being a trajectory of <code>EnvelopeProbeStates</code>.
  *
  *
  * @author Christopher K. Allen

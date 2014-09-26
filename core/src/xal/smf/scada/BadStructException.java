@@ -20,7 +20,7 @@ import xal.smf.scada.ScadaPacket.IFieldDescriptor;
  * @since  Mar 4, 2010
  * @author Christopher K. Allen
  */
-public class BadStructDefinition extends RuntimeException {
+public class BadStructException extends RuntimeException {
     
     /**  Serialization version*/
     private static final long serialVersionUID = 1L;
@@ -32,7 +32,7 @@ public class BadStructDefinition extends RuntimeException {
      * @since     Mar 4, 2010
      * @author    Christopher K. Allen
      */
-    public BadStructDefinition() {
+    public BadStructException() {
         super();
     }
     
@@ -45,7 +45,7 @@ public class BadStructDefinition extends RuntimeException {
      * @since     Mar 4, 2010
      * @author    Christopher K. Allen
      */
-    public BadStructDefinition(String strMsg) {
+    public BadStructException(String strMsg) {
         super(strMsg);
     }
     
@@ -59,7 +59,7 @@ public class BadStructDefinition extends RuntimeException {
      * @since     Mar 4, 2010
      * @author    Christopher K. Allen
      */
-    public BadStructDefinition(Exception e)  {
+    public BadStructException(Exception e)  {
         super(e);
     }
     
@@ -72,7 +72,7 @@ public class BadStructDefinition extends RuntimeException {
      * @since     Mar 4, 2010
      * @author    Christopher K. Allen
      */
-    public BadStructDefinition(String strMsg, Exception e) {
+    public BadStructException(String strMsg, Exception e) {
         super(strMsg, e);
     }
 }
