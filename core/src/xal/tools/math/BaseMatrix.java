@@ -8,8 +8,6 @@ package xal.tools.math;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.StringTokenizer;
@@ -23,7 +21,7 @@ import Jama.Matrix;
 /**
  * <p>
  * Class <code>BaseMatrix</code>.  This is a base class for objects representing
- * real matrix objects.  Thus it contains basic matrix operations where the interacting
+ * real-number matrix objects.  Thus it contains basic matrix operations where the interacting
  * objects are all of type <code>M</code>, or vectors of the singular type <code>V</code>.
  * (If matrix and vectors are not of compatible dimensions the operations fail.)
  * The template parameter <code>M</code> is the type of the child class.  This 
@@ -54,7 +52,11 @@ public abstract class BaseMatrix<M extends BaseMatrix<M>> implements IArchive {
      */
     
     
-   /** Attribute marker for data managed by IArchive interface */
+   /** The default character width of matrices when displayed using {@link #toStringMatrix()}  */
+    private static final int INT_COL_WD_DFLT = 15;
+
+
+    /** Attribute marker for data managed by IArchive interface */
     public static final String ATTR_DATA = "values";
     
 
@@ -679,6 +681,7 @@ public abstract class BaseMatrix<M extends BaseMatrix<M>> implements IArchive {
      * Returns a string representation of this matrix.  The string contains 
      * multiple lines, one for each row of the matrix.  Within each line the
      * matrix entries are formatted according to the given number format.  
+     * The default column width is used.
      * The string should resemble the usual matrix format when printed out.
      * 
      * @param   fmt     <code>NumberFormat</code> object containing output format for matrix entries
@@ -689,10 +692,28 @@ public abstract class BaseMatrix<M extends BaseMatrix<M>> implements IArchive {
      * @since  Feb 8, 2013
      */
     public String   toStringMatrix(NumberFormat fmt) {
+        return  this.toStringMatrix(fmt, INT_COL_WD_DFLT);
+    }
+    
+    /**
+     * Returns a string representation of this matrix.  The string contains 
+     * multiple lines, one for each row of the matrix.  Within each line the
+     * matrix entries are formatted according to the given number format.  
+     * The string should resemble the usual matrix format when printed out.
+     * 
+     * @param   fmt         <code>NumberFormat</code> object containing output format for matrix entries
+     * @param   intColWd    number of characters used for each column (padding is with spaces)
+     * 
+     * @return  multiple line formatted string containing matrix elements in matrix format
+     *
+     * @author Christopher K. Allen
+     * @since  Feb 8, 2013
+     */
+    public String   toStringMatrix(NumberFormat fmt, int intColWd) {
         StringWriter sw = new StringWriter();
         PrintWriter  pw = new PrintWriter(sw);
         
-        matImpl.print(pw, fmt, 15);
+        matImpl.print(pw, fmt, intColWd);
         
         return  sw.toString();
     }
@@ -821,7 +842,6 @@ public abstract class BaseMatrix<M extends BaseMatrix<M>> implements IArchive {
      *  
      * @throws UnsupportedOperationException  child class has not defined a public, zero-argument constructor
      */
-    @SuppressWarnings("unchecked")
     protected BaseMatrix(int cntRows, int cntCols) /*throws UnsupportedOperationException*/ {
         this.cntRows = cntRows;
         this.cntCols = cntCols;
