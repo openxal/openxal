@@ -1,0 +1,11 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<xdxf date="Wed Jul 21 14:16:24 EDT 2010" version="1.0.0">
+    <sequence id="HEBT2">
+
+        <node type = "marker" id="LSIP21" pos = "84.1" len = "0" />
+        <node type = "marker" id="LSIP2" pos = "84.2" len = "0" />
+        <node type = "marker" id="LSIP22" pos = "84.3" len = "0" />
+
+    </sequence>
+</xdxf>
+

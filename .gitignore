@@ -7,6 +7,6 @@ build/**/*
 /.project
 /doc
 /.settings
-/.pydevproject
 /output
 /.gitignore
+/.xal

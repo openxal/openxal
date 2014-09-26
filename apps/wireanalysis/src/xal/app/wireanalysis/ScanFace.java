@@ -165,7 +165,7 @@ public class ScanFace extends JPanel{
             WireScanner ws = itr.next();
             try{
                 //					ws.runCommand(ws.SCAN_COMMAND);
-                ws.runCommand(WireScanner.CMD.SCAN);
+                ws.runCommand(WireScanner.CMD.XPRT_SCAN);
             }
             catch(ConnectionException ce){
                 System.out.println("Can not connect to " + ws.getId());
