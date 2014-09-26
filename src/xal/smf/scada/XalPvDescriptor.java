@@ -6,6 +6,7 @@
  */
 package xal.smf.scada;
 
+
 /**
  * Encapsulates the properties of an EPICS process
  * variable, as referenced through the XAL channel
@@ -110,6 +111,28 @@ public class XalPvDescriptor {
         }
     }
     
+    /**
+     * Copy constructor.  Creats a new a deep copy of
+     * the given PV Descriptor.
+     * 
+     * <p>
+     * <b>NOTE:</b> Added to implement the functionality of PvDescriptor in XAL.<br>
+     * &middot; Jonathan M. Freed <br>
+     * &middot; Jul 15, 2014
+     * </p>
+     * 
+     * @param pvd   PV descriptor to be copied
+     *
+     * @author  Christopher K. Allen
+     * @since   Mar 10, 2011
+     */
+    public XalPvDescriptor(XalPvDescriptor pvd) {
+        this.clsType = pvd.clsType;
+        this.strHandleRb = pvd.strHandleRb;
+        this.strHandleSet = pvd.strHandleSet;
+        this.bolControllable = pvd.bolControllable;
+    }
+    
     
     /*
      * Attributes
@@ -166,6 +189,53 @@ public class XalPvDescriptor {
      */
     public boolean      isControllable()        {
         return this.bolControllable;
+    }
+    
+    
+    /*
+     * Object Overrides
+     */
+
+    /**
+     * Returns a deep copy of this object, as deep as you can
+     * get anyway.
+     * 
+     * <p>
+     * <b>NOTE:</b> Added to implement the functionality of PvDescriptor in XAL.<br>
+     * &middot; Jonathan M. Freed <br>
+     * &middot; Jul 15, 2014
+     * </p>
+     * 
+     * @since Apr 19, 2012
+     * @see java.lang.Object#clone()
+     */
+    @Override
+    protected Object clone() throws CloneNotSupportedException {
+        XalPvDescriptor    pvdCopy = new XalPvDescriptor(this.clsType, this.strHandleRb, this.strHandleSet);
+        
+        return pvdCopy;
+    }
+    
+    /**
+     * Write out the readback and set signal names for this PV descriptor.
+     *
+     * <p>
+     * <b>NOTE:</b> Added to implement the functionality of PvDescriptor in XAL.<br>
+     * &middot; Jonathan M. Freed <br>
+     * &middot; Jul 15, 2014
+     * </p>
+     *
+     * @see java.lang.Object#toString()
+     *
+     * @author Christopher K. Allen
+     * @since  Apr 29, 2014
+     */
+    @Override
+    public String   toString() {
+        String strBuf = "PV Descriptor RB = " + this.strHandleRb + ", SET = " + this.strHandleSet + ", TYPE = " + this.clsType;
+        
+        return strBuf;
+    
     }
 
 }
