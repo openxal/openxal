@@ -197,19 +197,20 @@ public abstract class BunchProbeState<S extends BunchProbeState<S>> extends Prob
      *  This value is defined to be
      *  </p>
      *  
-     *      K = (Q/4*pi*e0)*(1/gamma^3*beta^2)*(|q|/ER) 
+     *      <i>K</i> = (<i>Q</i>/4*&pi;*<i>&epsilon;</i><sub>0</sub>)(1/&gamma;<sup>3</sup>&beta;<sup>2</sup>)(|<i>q</i>|/<i>E<sub>R</sub></i>) 
      *  
      *  <p>
-     *  where <i>Q</i> is the bunch charge, <i>e0</i> is the permittivity
-     *  of free space, <i>gamma</i> is the relativitic factor, <i>beta</i> is 
-     *  the normalized design velocity, <i>q</i> is the charge of the beam
-     *  particles and <i>ER</i> is the rest energy of the beam partiles.
+     *  where <i>Q</i> is the bunch charge, <i>&epsilon;</i><sub>0</sub> is the permittivity
+     *  of free space, <i>&gamma;</i> is the relativistic factor, <i>&beta;</i> is 
+     *  the normalized design velocity, <i>q</i> is the individual particle charge 
+     *  and <i>E<sub>R</sub></i> is the rest energy of the beam particles.
      *  </p>
      *  
      *  <p>
-     *  NOTES:
-     *  - The value (1/4*pi*e0) is equal to 1e-7*c^2 where <i>c</i> is the
-     *  speed of light. 
+     *  <h4>NOTES:</h4>
+     *  - The value (1/4&pi;&epsilon;<sub>0</sub>) is equal to 10<sup>-7</sup><i>c</i><sup>2</sup>
+     *  where <i>c</i> is the speed of light.
+     *  </p> 
      *  
      *  @return generalized beam perveance <b>Units: radians^2/meter</b>
      *  
