@@ -28,6 +28,11 @@ import java.lang.annotation.Target;
  * structures used for data acquisition and control.
  * The fields of such classes correspond to XAL
  * <code>{@link Channel}</code>s.
+ * 
+ * <p>
+ * <b>Ported from XAL on Jul 15, 2014.</b><br>
+ * &middot; Jonathan M. Freed
+ * </p>
  *
  * @author Christopher K. Allen
  * @since   Feb 8, 2011
