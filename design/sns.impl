@@ -38,7 +38,7 @@
    <device type="VIW" class="xal.smf.impl.Marker"/>
    <device type="Foil" class="xal.smf.impl.Marker"/>
    <device type="Tgt" class="xal.smf.impl.Marker"/>
-   <device type="Harp" class="xal.smf.impl.Marker"/>
+   <device type="Harp" softType="Version 2.0.0" class="xal.smf.impl.WireHarp"/>
    <device type="WS" class="xal.smf.impl.ProfileMonitor"/>
    <device type="WS" softType="Version 1.0.0" class="xal.smf.impl.ProfileMonitor"/>
    <device type="WS" softType="Version 2.0.0" class="xal.smf.impl.WireScanner"/>
