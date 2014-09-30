@@ -133,7 +133,7 @@ class BricksWindow extends XalWindow implements SwingConstants, BrickListener {
 	 * Register actions for the custom menu items.
      * @param commander The commander with which to register the custom commands.
      */
-    protected void customizeCommands( final Commander commander ) {		
+    public void customizeCommands( final Commander commander ) {
         final Action moveDownViewAction = new AbstractAction( "move-down-view" ) {
             /** serialization identifier */
             private static final long serialVersionUID = 1L;
@@ -170,7 +170,7 @@ class BricksWindow extends XalWindow implements SwingConstants, BrickListener {
     
 	
 	/** Dispose of custom window resources. */
-	protected void freeCustomResources() {
+	public void freeCustomResources() {
 		ROOT_BRICK.disposeAllWindows();
 	}
 	

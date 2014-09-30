@@ -314,7 +314,7 @@ public class MainDocument extends AcceleratorDocument implements DataListener{
      * @see gov.sns.application.XalDocument#closeDocument()
      */
     @Override
-    protected boolean closeDocument() {
+    public boolean closeDocument() {
 
         documentListenerProxy.documentWillClose(this);
         super.willClose();

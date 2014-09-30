@@ -63,7 +63,7 @@ abstract class XalAbstractDocument implements Pageable {
     
     
     /** Register this document as a source of DocumentListener events. */
-    protected void registerEvents() {
+    public void registerEvents() {
         _messageCenter = new MessageCenter("Xal Document Messaging");
     }
     
@@ -73,7 +73,7 @@ abstract class XalAbstractDocument implements Pageable {
     
     
     /** Subclasses must implement this method to make their custom main window. */
-    abstract protected void makeMainWindow();
+    abstract public void makeMainWindow();
     
     
     /**
@@ -132,7 +132,7 @@ abstract class XalAbstractDocument implements Pageable {
 	 * Get the default document folder.
 	 * @return the default folder for documents or null if none has been set.
 	 */
-	protected java.io.File getDefaultFolder() {
+	public java.io.File getDefaultFolder() {
 		return Application.getApp().getDefaultDocumentFolder();
 	}
     
@@ -141,7 +141,7 @@ abstract class XalAbstractDocument implements Pageable {
 	 * Get the default document folder as a URL.
 	 * @return the default folder for documents as a URL or null if none has been set.
 	 */
-	protected URL getDefaultFolderURL() {
+	public URL getDefaultFolderURL() {
 		return Application.getApp().getDefaultDocumentFolderURL();
 	}
 	
@@ -172,7 +172,7 @@ abstract class XalAbstractDocument implements Pageable {
 	 * the file path of the document or the default empty document file path if the document
 	 * does not have a file store.
 	 */
-	protected void generateDocumentTitle() {
+	public void generateDocumentTitle() {
 		setTitle( getDisplayFilePath() );
 	}
 	
@@ -192,7 +192,7 @@ abstract class XalAbstractDocument implements Pageable {
 	 * Get the base file name to use when saving a new file.
 	 * @return the new file name for new documents and the source's file path for existing documents
 	 */
-	protected String getFileNameForSaving() {
+	public String getFileNameForSaving() {
 		return source != null ? new File( source.getPath() ).getName() : getNewFileName();
 	}	
 	
@@ -201,7 +201,7 @@ abstract class XalAbstractDocument implements Pageable {
 	 * Get the prefix for a new file (precedes timestamp) defaulting to the application name. Subclasses can override this method to provide an alternative prefix.
 	 * @return prefix for a new file
 	 */
-	protected String getNewFileNamePrefix() {
+	public String getNewFileNamePrefix() {
 		return Application.getApp().getApplicationAdaptor().applicationName();
 	}
 	
@@ -210,7 +210,7 @@ abstract class XalAbstractDocument implements Pageable {
 	 * Get the file name (including extension but without path) for a new file. Subclasses can override this method to provide an alternative name.
 	 * @return file name for a new file
 	 */
-	protected String getNewFileName() {
+	public String getNewFileName() {
 		return getNewDocumentName( "Untitled" );
 	}
 	
@@ -283,7 +283,7 @@ abstract class XalAbstractDocument implements Pageable {
      * @param dataRoot DataListener root of the document to save
      * @param url The URL to which the document should be saved.
      */
-    protected void writeDataTo( final DataListener dataRoot, final URL url ) {
+    public void writeDataTo( final DataListener dataRoot, final URL url ) {
         try {
             final XmlDataAdaptor documentAdaptor = XmlDataAdaptor.newEmptyDocumentAdaptor();
             documentAdaptor.writeNode( dataRoot );
@@ -317,7 +317,7 @@ abstract class XalAbstractDocument implements Pageable {
      * @param dataRoot DataListener root of the document to save
      * @param url The URL to which the document should be saved.
      */
-    protected void handleDataWrittenTo( final DataListener dataRoot, final URL url ) {}
+    public void handleDataWrittenTo( final DataListener dataRoot, final URL url ) {}
  	
 	
     /**
@@ -333,7 +333,7 @@ abstract class XalAbstractDocument implements Pageable {
      * user is given an opportunity to not close the document so they can save 
      * the changes.
      */
-    abstract protected boolean closeDocument();
+    abstract public boolean closeDocument();
 	
 	
 	/**

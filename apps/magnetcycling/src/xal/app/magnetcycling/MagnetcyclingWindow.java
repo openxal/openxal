@@ -129,7 +129,7 @@ public class MagnetcyclingWindow extends XalWindow {
    *  Dispose of MagnetcyclingWindow resources. This method overrides an empty
    *  superclass method.
    */
-  protected void freeCustomResources() {
+  public void freeCustomResources() {
     mainPanel = null;
   }
 }

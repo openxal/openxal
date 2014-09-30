@@ -84,7 +84,7 @@ public class EventBufferDocument extends XalDocument {
 	 * the file path of the document or the default empty document file path if the document
 	 * does not have a file store.
 	 */
-	protected void generateDocumentTitle() {
+	public void generateDocumentTitle() {
 		if ( _requestHandler == null ) {
 			setTitle("Buffer");
 		}

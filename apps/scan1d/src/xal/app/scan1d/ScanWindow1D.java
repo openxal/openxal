@@ -99,7 +99,7 @@ public class ScanWindow1D extends AcceleratorWindow {
      * Dispose of ScanWindow1D resources.  
      * This method overrides an empty superclass method.
      */
-    protected void freeCustomResources(){
+    public void freeCustomResources(){
 	mainPanel = null;  
     }  
 }

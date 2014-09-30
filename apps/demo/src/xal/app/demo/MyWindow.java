@@ -47,7 +47,7 @@ public class MyWindow extends XalWindow {
 	 * the actions are application wide.
      * @param commander The commander with which to register the custom commands.
      */
-    protected void customizeCommands( final Commander commander ) {
+    public void customizeCommands( final Commander commander ) {
         // define a toggle "edit" action
 		final ToggleButtonModel editModel = new ToggleButtonModel();
 		editModel.setSelected(true);

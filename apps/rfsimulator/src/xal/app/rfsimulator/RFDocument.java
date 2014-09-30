@@ -242,7 +242,7 @@ public class RFDocument extends AcceleratorDocument {
 	setHasChanges(false);          
     }  
     
-    protected void makeMainWindow() {  
+    public void makeMainWindow() {
                        
         controller = new RFController(this);
         rfmonitor = new RFMonitor(this);        

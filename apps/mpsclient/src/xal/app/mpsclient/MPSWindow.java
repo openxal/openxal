@@ -844,7 +844,7 @@ class MPSWindow extends XalWindow implements SwingConstants, DataKeys, ScrollPan
      * Register actions specific to this window instance. 
      * @param commander The commander with which to register the custom commands.
      */
-    protected void customizeCommands(Commander commander) {
+    public void customizeCommands(Commander commander) {
 		// setup the "reload signals" action
         _reloadSignalsAction = new AbstractAction("reload-signals") {
             

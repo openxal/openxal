@@ -129,7 +129,7 @@ public class RingbpmviewerWindow extends XalWindow {
    *  Dispose of RingbpmviewerWindow resources. This method overrides an empty
    *  superclass method.
    */
-  protected void freeCustomResources() {
+  public void freeCustomResources() {
     mainPanel = null;
   }
 }

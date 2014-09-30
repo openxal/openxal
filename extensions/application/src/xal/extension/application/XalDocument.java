@@ -45,7 +45,7 @@ abstract public class XalDocument extends XalAbstractDocument {
     
     
     /** Register this document as a source of DocumentListener events. */
-    protected void registerEvents() {
+    public void registerEvents() {
 		super.registerEvents();
         documentListenerProxy = _messageCenter.registerSource(this, XalDocumentListener.class);
     }
@@ -112,7 +112,7 @@ abstract public class XalDocument extends XalAbstractDocument {
      * user is given an opportunity to not close the document so they can save 
      * the changes.
      */
-    protected boolean closeDocument() {
+    public boolean closeDocument() {
 		if ( warnUserOfUnsavedChangesWhenClosing() && hasChanges() ) {
 			if ( !mainWindow.userPermitsCloseWithUnsavedChanges() )  return false;
 		}
