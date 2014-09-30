@@ -295,6 +295,13 @@ public final class AppProperties extends PropertiesManager  {
         /** (Re)acquisition of data from diagnostic device */
         DAQ_ACQUIRE("IconDaqAcquire"), //$NON-NLS-1$
 
+        
+        /** Computational analysis - Analyze Courant-Snyder parameters */
+        ANL_TWISS("IconAnlCourantSnyder"),
+        
+        /** Computational analysis - Estimate Courant-Snyder parameters */
+        CMP_TWISS("IconCmpCourantSnyder"),
+        
 
         /** Data Analysis - select for the head of the beam */
         PRCG_BMHEAD("IconPrcgSelBeamHead"),
@@ -892,6 +899,16 @@ public final class AppProperties extends PropertiesManager  {
      */
     public enum NUMERIC implements xal.app.pta.tools.property.Property.IProperty {
 
+        /** The default maximum number of iterations for the Courant-Snyder fixed point method */
+        CSFP_MAXITER("NumCsFixedPtMaxIter"),
+        
+        /** The default maximum error tolerance for the Courant-Snyder fixed point method */
+        CSFP_MAXERROR("NumCsFixedPtMaxError"),
+        
+        /** The default numerical tuning parameter used in the fixed point Courant-Snyder reconstruction method */
+        CSFP_ALPHA("NumCsFixedPtAlpha"),
+        
+        
         /** The numeric format to display position values (typically in mm)  */
         FMT_POSVALS("NumFormtPosValues"),
         

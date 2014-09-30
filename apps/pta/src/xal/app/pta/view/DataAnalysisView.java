@@ -295,7 +295,7 @@ public class DataAnalysisView extends JPanel implements IDocView, IConfigView, L
     /** The profile signal plots */
     private MultiGraphDisplayPanel      pltSignals;
     
-    /** Label for single parameters */
+    /** Label for signal parameters */
     private JLabel                     lblSigParms; 
    
     /** The signal properties in horizontal plane */

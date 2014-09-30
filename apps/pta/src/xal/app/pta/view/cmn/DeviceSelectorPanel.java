@@ -1611,7 +1611,7 @@ public class DeviceSelectorPanel extends JPanel implements TreeSelectionListener
      */
     private boolean     validDevice(AcceleratorNode nodeDev) {
         for (Class<?> typeValidDev : this.arrDevTypes) {
-            if (nodeDev.getClass() == typeValidDev)
+            if ( typeValidDev.isInstance(nodeDev) )
                 return true;
         }
         

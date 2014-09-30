@@ -24,7 +24,6 @@ import xal.app.pta.tools.logging.JavaLogger;
 import xal.app.pta.tools.logging.NullLogger;
 import xal.app.pta.tools.swing.SplashWindow;
 import xal.service.pvlogger.RemoteLoggingCenter;
-import xal.tools.ResourceManager;
 import xal.extension.application.smf.AcceleratorApplication;
 
 import java.awt.Dimension;
@@ -918,6 +917,18 @@ public class MainApplication extends ApplicationAdaptor {
             return;
         }
         
+        if (this.docMain.hasChanges()) {
+            int iResp = this.docMain.displayConfirmDialog(
+                    "WARNING!", 
+                    "Overwrite existing data in " + docMain.getSource().toString() + "?"
+                    );
+            if (iResp == XalDocument.NO_OPTION) {
+                this.menuFileSaveAs();
+                return;
+            }
+        }
+        
+        // Overwrite the current data set
         this.docMain.saveDocument();
     }
     
@@ -963,6 +974,10 @@ public class MainApplication extends ApplicationAdaptor {
     public void menuFileExport() {
         // Get the measurement data
         MeasurementData     datMsmt = this.docMain.getMeasurementData();
+        
+        // Check if there is any data to export
+        if (datMsmt.getDataSet().size() == 0)
+            this.docMain.displayError("ERROR", "No measurement data to export.");
         
         //Initialize the file chooser
         AcceleratorApplication  appGbl  = AcceleratorApplication.getAcceleratorApp();
