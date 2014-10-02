@@ -98,7 +98,7 @@ class BrowserWindow extends XalWindow implements SwingConstants {
 	 *
 	 * @param commander  The commander with which to register the custom commands.
 	 */
-	protected void customizeCommands( Commander commander ) {
+	public void customizeCommands( Commander commander ) {
 		// define the "database connect" action
 		Action connectAction =
 			new AbstractAction( "connect-database" ) {
