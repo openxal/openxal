@@ -130,7 +130,7 @@ public class BeamAtFoilWindow extends XalWindow {
    *  Dispose of BeamAtFoilWindow resources. This method overrides an empty
    *  superclass method.
    */
-  protected void freeCustomResources() {
+  public void freeCustomResources() {
     mainPanel = null;
   }
 }

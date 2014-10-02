@@ -67,7 +67,7 @@ class MPSDocument extends XalDocument {
 	 * the file path of the document or the default empty document file path if the document
 	 * does not have a file store.
 	 */
-	protected void generateDocumentTitle() {
+	public void generateDocumentTitle() {
 		setTitle("Browser");
 	}
     

@@ -1230,7 +1230,7 @@ public class MainApplication extends ApplicationAdaptor {
      * @see xal.app.pta.cmdmgt.CommandSet
      */
     @Override
-    protected void customizeCommands(Commander commander) {
+    public void customizeCommands(Commander commander) {
         try {
             this.cmdsFile = new FileMenuCommands( this );
             this.cmdsFile.register(commander);

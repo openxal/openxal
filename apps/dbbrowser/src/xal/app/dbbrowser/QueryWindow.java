@@ -101,7 +101,7 @@ public class QueryWindow extends XalWindow implements SwingConstants {
      * Register actions specific to this window instance.
      * @param commander The commander with which to register the custom commands.
      */
-    protected void customizeCommands( final Commander commander ) {
+    public void customizeCommands( final Commander commander ) {
 		// define the "execute query" action
 		
         commander.registerAction( new AbstractAction( "execute-query" ) {

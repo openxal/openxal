@@ -590,7 +590,7 @@ public class MainWindow extends XalWindow implements IDocView, ComponentListener
      * @see gov.sns.application.XalWindow#closeWindow()
      */
     @Override
-    protected void closeWindow() {
+    public void closeWindow() {
         this.getDocument().setNotes( this.paneNotes.getText() );
         this.paneBugRpt.closeBackingStore();
         super.closeWindow();
@@ -605,7 +605,7 @@ public class MainWindow extends XalWindow implements IDocView, ComponentListener
      * @see gov.sns.application.XalAbstractDocument#customizeCommands(gov.sns.application.Commander)
      */
     @Override
-    protected void customizeCommands(Commander commander) {
+    public void customizeCommands(Commander commander) {
 
         this.setCmds = new LinkedList<CommandSet>();
 

@@ -98,7 +98,7 @@ import xal.sim.scenario.*;
 	
 	}
 
-	protected void makeMainWindow() {
+	public void makeMainWindow() {
 		mainWindow = new RingWindow(this);
 				
 		// restore from saved document

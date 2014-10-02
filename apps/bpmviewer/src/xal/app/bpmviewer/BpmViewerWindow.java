@@ -116,7 +116,7 @@ public class BpmViewerWindow extends AcceleratorWindow {
      *  Dispose of BpmViewerWindow resources. This method overrides an empty
      *  superclass method.
      */
-    protected void freeCustomResources() {
+    public void freeCustomResources() {
         mainPanel = null;
     }
 }

@@ -130,7 +130,7 @@ public class QuadshakerWindow extends XalWindow {
    *  Dispose of QuadshakerWindow resources. This method overrides an empty
    *  superclass method.
    */
-  protected void freeCustomResources() {
+  public void freeCustomResources() {
     mainPanel = null;
   }
 }

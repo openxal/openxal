@@ -122,7 +122,7 @@ public class ArrayPVViewerWindow extends AcceleratorWindow {
      *  superclass method.
      */
     @Override
-    protected void freeCustomResources() {
+    public void freeCustomResources() {
         mainPanel = null;
     }
 }

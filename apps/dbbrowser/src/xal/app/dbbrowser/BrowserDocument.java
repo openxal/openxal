@@ -58,7 +58,7 @@ class BrowserDocument extends XalDocument {
 	 * the file path of the document or the default emtpy document file path if the document
 	 * does not have a file store.
 	 */
-	protected void generateDocumentTitle() {
+	public void generateDocumentTitle() {
 		if ( _model != null ) {
 			String user = _model.getUser();
 			String databaseURL = _model.getDatabaseURL();

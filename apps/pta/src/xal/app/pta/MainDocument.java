@@ -304,6 +304,16 @@ public class MainDocument extends AcceleratorDocument implements DataListener{
     }
 
 
+	/**
+	 * Overriden to disable warning users of unsaved changes.
+	 * @return false to disable the warning of unsaved changes
+	 */
+	@Override
+	public boolean warnUserOfUnsavedChangesWhenClosing() {
+		return false;
+	}
+
+
     /**
      * Ask the user if he/she really wants to close.  If so,
      * free the resources and close the document.
@@ -313,16 +323,16 @@ public class MainDocument extends AcceleratorDocument implements DataListener{
      *
      * @see gov.sns.application.XalDocument#closeDocument()
      */
-    @Override
-    protected boolean closeDocument() {
-
-        documentListenerProxy.documentWillClose(this);
-        super.willClose();
-        documentListenerProxy.documentHasClosed(this);
-        super.freeResources();
-
-        return true;
-    }
+//    @Override
+//    public boolean closeDocument() {
+//
+//        documentListenerProxy.documentWillClose(this);
+//        super.willClose();
+//        documentListenerProxy.documentHasClosed(this);
+//        super.freeResources();
+//
+//        return true;
+//    }
 
 
 

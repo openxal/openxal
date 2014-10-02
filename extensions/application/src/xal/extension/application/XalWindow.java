@@ -67,13 +67,13 @@ public abstract class XalWindow extends JFrame implements XalDocumentView, XalDo
     
 
     /** Register the event handlers */
-    protected void registerEvents() {
+    public void registerEvents() {
         addWindowListener( newWindowHandler() );
     }
     
     
     /** Make the frame and populate the menubar and toolbar. */
-    protected void makeFrame() {
+    public void makeFrame() {
         setDefaultCloseOperation( WindowConstants.DO_NOTHING_ON_CLOSE );
         makeLayout();
         
@@ -92,7 +92,7 @@ public abstract class XalWindow extends JFrame implements XalDocumentView, XalDo
     
     
     /** Subclasses should override this method to provide a custom Commander. */
-    protected Commander makeCommander() {
+    public Commander makeCommander() {
         // create a document commander
         return new Commander( Application.getApp().getCommander(), document );
     }
@@ -108,7 +108,7 @@ public abstract class XalWindow extends JFrame implements XalDocumentView, XalDo
 	
 	
     /** Override this method to register custom commands. */
-    protected void customizeCommands( final Commander commander ) {}
+    public void customizeCommands( final Commander commander ) {}
     
 	
     /** Make the window layout. */
@@ -121,7 +121,7 @@ public abstract class XalWindow extends JFrame implements XalDocumentView, XalDo
 	 * Close this window.  Check to see if the document has unsaved changes and 
      * if so warn the user and allow them to cancel the close operation.
      */
-    protected void closeWindow() {
+    public void closeWindow() {
         releaseWindow();
     }
 	
@@ -148,7 +148,7 @@ public abstract class XalWindow extends JFrame implements XalDocumentView, XalDo
     
     
     /** Create a new window listener. */
-    protected WindowListener newWindowHandler() {
+    public WindowListener newWindowHandler() {
         return new WindowAdapter() {
             public void windowClosing( final WindowEvent event ) {
                 document.closeDocument();
@@ -186,7 +186,7 @@ public abstract class XalWindow extends JFrame implements XalDocumentView, XalDo
     
     
     /** Dispose of this window and remove its association with the document. */
-    final protected void releaseWindow() {
+    final public void releaseWindow() {
 		freeCustomResources();
         dispose();
         document.removeXalDocumentListener( this );
@@ -198,7 +198,7 @@ public abstract class XalWindow extends JFrame implements XalDocumentView, XalDo
 	 * Dispose of custom window resources.  Subclasses should override this method
 	 * to provide custom disposal of resources.  The default implementation does nothing.
 	 */
-	protected void freeCustomResources() {
+	public void freeCustomResources() {
 	}
 	
 	
@@ -207,7 +207,7 @@ public abstract class XalWindow extends JFrame implements XalDocumentView, XalDo
 	 * The title displays the application name, the document title if any and an asterisk
 	 * if the document has unsaved changes.
 	 */
-	protected void generateWindowTitle() {
+	public void generateWindowTitle() {
         final StringBuffer windowTitle = new StringBuffer( Application.getApp().getApplicationAdaptor().applicationName() );
 		
 		String documentTitle = document.getTitle();

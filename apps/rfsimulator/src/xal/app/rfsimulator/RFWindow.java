@@ -104,7 +104,7 @@ public class RFWindow extends AcceleratorWindow {
                 return mainPane;
         }
                       
-        protected void freeCustomResources() {
+        public void freeCustomResources() {
                 mainPane = null;
         }        
 }

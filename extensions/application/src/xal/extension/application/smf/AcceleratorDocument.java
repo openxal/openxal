@@ -46,7 +46,7 @@ abstract public class AcceleratorDocument extends XalDocument {
 	
 	
 	/** Generate and set the title for this document. */
-	protected void generateDocumentTitle() {
+	public void generateDocumentTitle() {
 		final String filePath = getDisplayFilePath();
 		final String title = selectedSequence != null ? " (" + selectedSequence.getId() + ") - " + filePath : filePath;
 		setTitle( title );
@@ -57,7 +57,7 @@ abstract public class AcceleratorDocument extends XalDocument {
 	 * Get the prefix for a new file (precedes timestamp) defaulting to the selected sequence ID if any or the super class's default if no sequence is selected.
 	 * @return prefix for a new file
 	 */
-	protected String getNewFileNamePrefix() {
+	public String getNewFileNamePrefix() {
 		return selectedSequence != null ? selectedSequence.getId().replace( ":", "-" ) : super.getNewFileNamePrefix();
 	}
 	
