@@ -26,7 +26,7 @@ abstract public class AcceleratorWindow extends XalWindow {
      * Subclasses should override this method to provide a custom Commander.
      * @return The commander with support for Accelerator based applications.
      */
-    protected Commander makeCommander() {
+    public Commander makeCommander() {
         return new AcceleratorCommander(Application.getApp().getCommander(), document);
     }
 }
