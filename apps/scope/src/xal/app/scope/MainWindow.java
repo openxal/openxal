@@ -82,7 +82,7 @@ public class MainWindow extends XalWindow implements SwingConstants, DataListene
     /**
      * Dispose of this window and remove its association with the document.
      */
-    protected void freeCustomResources() {
+    public void freeCustomResources() {
 		scopeScreen = null;
 		screenConsole = null;
 		channelPanel = null;
