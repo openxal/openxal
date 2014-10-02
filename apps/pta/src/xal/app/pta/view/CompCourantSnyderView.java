@@ -23,11 +23,9 @@ import java.util.LinkedList;
 import java.util.List;
 
 import javax.swing.Box;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.SwingConstants;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -36,10 +34,7 @@ import xal.app.pta.IDocView;
 import xal.app.pta.MainConfiguration;
 import xal.app.pta.MainDocument;
 import xal.app.pta.daq.MeasurementData;
-import xal.app.pta.rscmgt.AppProperties;
-import xal.app.pta.rscmgt.PtaResourceManager;
-import xal.app.pta.tools.swing.NumberTextField;
-import xal.app.pta.tools.swing.NumberTextField.FMT;
+import xal.app.pta.view.analysis.CompCsFixedPtPanel;
 import xal.app.pta.view.cmn.DeviceSelectorList;
 import xal.app.pta.view.cmn.DeviceSelectorPanel;
 import xal.app.pta.view.cmn.DeviceSelectorPanel.IDeviceSelectionListener;
@@ -74,267 +69,7 @@ public class CompCourantSnyderView extends JPanel implements IDocView, IConfigVi
      * Internal Classes
      */
     
-    /**
-     * GUI class manages the user interaction for computing Courant-Snyder parameters
-     * from profile measurement data. This class is responsible for initiating the
-     * calculations and grabbing some numerical parameters input from the user.
-     * The actually calculations are done elsewhere.  In particular, the actions
-     * here are delegated to class <code>CompCourantSnyderView</code>. 
-     *
-     *
-     * @author Christopher K. Allen
-     * @since  Sep 30, 2014
-     */
-    public class CompCsFixedPointPanel extends JPanel {
-        
-        /** The maximum number of fixed point iterations */
-        private NumberTextField             txtMaxStps;
-        
-        /** The maximum error tolerance */
-        private NumberTextField             txtMaxErr;
-        
-        /** Fixed point tuning parameter */
-        private NumberTextField             txtFpAlpha;
-        
-        
-        
-        /** User action for reconstructing the Courant-Snyder parameters */
-        private JButton                     butRecon;
-     
-        
-        
-        /*
-         * Support Methods
-         */
-
-        /**
-         * Constructor for CompCsFixedPointPanel.
-         *
-         *
-         * @author Christopher K. Allen
-         * @since  Sep 30, 2014
-         */
-        public CompCsFixedPointPanel() {
-            super();
-            
-            this.guiBuildComponents();
-            this.guiBuildActions();
-            this.guiLayoutComponents();
-            this.guiInitialize();
-        }
-
-        /**
-         * Creates the individual GUI components.
-         * 
-         * @since  Dec 13, 2011
-         * @author Christopher K. Allen
-         */
-        private void guiBuildComponents() {
-            Integer     intMaxIter = AppProperties.NUMERIC.CSFP_MAXITER.getValue().asInteger();
-            this.txtMaxStps = new NumberTextField(FMT.INT, intMaxIter);
-            
-            Double      dblMaxErr = AppProperties.NUMERIC.CSFP_MAXERROR.getValue().asDouble();
-            this.txtMaxErr = new NumberTextField(FMT.ENGR_3, dblMaxErr);
-            
-            Double      dblAlpha = AppProperties.NUMERIC.CSFP_ALPHA.getValue().asDouble();
-            this.txtFpAlpha = new NumberTextField(FMT.DEC_3, dblAlpha);
-            
-//            String      strLocIcn = AppProperties.ICON.CMP_TWISS.getValue().asString();
-//            ImageIcon   icnRecon = PtaResourceManager.getImageIcon(strLocIcn);
-//            this.butRecon = new JButton(icnRecon);
-            this.butRecon = new JButton("Compute");
-        }
-        
-        /**
-         * Define the actions of the interactive GUI components.
-         *
-         * @author Christopher K. Allen
-         * @since  Sep 30, 2014
-         */
-        private void guiBuildActions() {
-            
-            // The maximum number of iterations has been changed
-            ActionListener  actMaxIter = new ActionListener() {
-
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    Number nmbMaxIter = CompCsFixedPointPanel.this.txtMaxStps.getDisplayValue();
-                    String strMaxIter = nmbMaxIter.toString();
-                    AppProperties.NUMERIC.CSFP_MAXITER.getValue().set(strMaxIter);
-                }
-            };
-            this.txtMaxStps.addActionListener(actMaxIter);
-            
-            // The maximum number of iterations has been changed
-            ActionListener  actMaxErr = new ActionListener() {
-
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    Number nmbMaxErr = CompCsFixedPointPanel.this.txtMaxErr.getDisplayValue();
-                    String strMaxErr = nmbMaxErr.toString();
-                    AppProperties.NUMERIC.CSFP_MAXERROR.getValue().set(strMaxErr);
-                }
-            };
-            this.txtMaxErr.addActionListener(actMaxErr);
-            
-            // The maximum number of iterations has been changed
-            ActionListener  actFpAlpha = new ActionListener() {
-
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    Number nmbFpAlpha = CompCsFixedPointPanel.this.txtFpAlpha.getDisplayValue();
-                    String strFpAlpha = nmbFpAlpha.toString();
-                    AppProperties.NUMERIC.CSFP_MAXERROR.getValue().set(strFpAlpha);
-                }
-            };
-            this.txtFpAlpha.addActionListener(actFpAlpha);
-            
-            // The compute CS parameters button
-            ActionListener  actCompute = new ActionListener() {
-
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    CompCourantSnyderView.this.computeCourantSnyder();
-                }
-            };
-            this.butRecon.addActionListener(actCompute);
-        }
-        
-        /**
-         * Lay out all the GUI components to make the user interface.
-         *
-         * @since  Dec 13, 2011
-         * @author Christopher K. Allen
-         */
-        private void guiLayoutComponents() {
-            this.setLayout( new GridBagLayout() );
-            
-            GridBagConstraints       gbcLayout = new GridBagConstraints();
-
-            gbcLayout.insets = new Insets(0,0,5,5);
-            
-            // The Title
-            String      strUrlIcon = AppProperties.ICON.CMP_TWISS.getValue().asString();
-            ImageIcon   imgTitle = PtaResourceManager.getImageIcon(strUrlIcon);
-            JLabel      lblTitle = new JLabel("Courant Snyder Fixed-Point Reconstruction", imgTitle, SwingConstants.CENTER);
-            
-            gbcLayout.gridx = 0;
-            gbcLayout.gridy = 0;
-            gbcLayout.gridwidth  = 2;
-            gbcLayout.gridheight = 1;
-            gbcLayout.fill    = GridBagConstraints.HORIZONTAL;
-            gbcLayout.weightx = 0.0;
-            gbcLayout.weighty = 0.0;
-            gbcLayout.anchor = GridBagConstraints.CENTER;
-            this.add( lblTitle, gbcLayout );
-
-            // The maximum iterations 
-            gbcLayout.gridx = 0;
-            gbcLayout.gridy = 1;
-            gbcLayout.gridwidth  = 1;
-            gbcLayout.gridheight = 1;
-            gbcLayout.fill    = GridBagConstraints.NONE;
-            gbcLayout.weightx = 0.0;
-            gbcLayout.weighty = 0.0;
-            gbcLayout.anchor = GridBagConstraints.LINE_END;
-            this.add( new JLabel("Maximum Iterations "), gbcLayout );
-            
-            gbcLayout.gridx = 1;
-            gbcLayout.gridy = 1;
-            gbcLayout.gridwidth  = 1;
-            gbcLayout.gridheight = 1;
-            gbcLayout.fill    = GridBagConstraints.HORIZONTAL;
-            gbcLayout.weightx = 0.1;
-            gbcLayout.weighty = 0.0;
-            gbcLayout.anchor = GridBagConstraints.LINE_START;
-            this.add( this.txtMaxStps, gbcLayout );
-            
-            // The maximum error tolerance
-            gbcLayout.gridx = 0;
-            gbcLayout.gridy = 2;
-            gbcLayout.gridwidth  = 1;
-            gbcLayout.gridheight = 1;
-            gbcLayout.fill    = GridBagConstraints.NONE;
-            gbcLayout.weightx = 0.0;
-            gbcLayout.weighty = 0.0;
-            gbcLayout.anchor = GridBagConstraints.LINE_END;
-            this.add( new JLabel("Maximum Error"), gbcLayout );
-            
-            gbcLayout.gridx = 1;
-            gbcLayout.gridy = 2;
-            gbcLayout.gridwidth  = 1;
-            gbcLayout.gridheight = 1;
-            gbcLayout.fill    = GridBagConstraints.HORIZONTAL;
-            gbcLayout.weightx = 0.1;
-            gbcLayout.weighty = 0.0;
-            gbcLayout.anchor = GridBagConstraints.LINE_START;
-            this.add( this.txtMaxErr, gbcLayout );
-            
-            // Reconstruction location
-            gbcLayout.gridx = 0;
-            gbcLayout.gridy = 3;
-            gbcLayout.gridwidth  = 1;
-            gbcLayout.gridheight = 1;
-            gbcLayout.fill    = GridBagConstraints.NONE;
-            gbcLayout.weightx = 0.0;
-            gbcLayout.weighty = 0.0;
-            gbcLayout.anchor = GridBagConstraints.LINE_END;
-            this.add( new JLabel("Tuning Parameter"), gbcLayout );
-
-            gbcLayout.gridx = 1;
-            gbcLayout.gridy = 3;
-            gbcLayout.gridwidth  = 1;
-            gbcLayout.gridheight = 1;
-            gbcLayout.fill    = GridBagConstraints.HORIZONTAL;
-            gbcLayout.weightx = 0.1;
-            gbcLayout.weighty = 0.0;
-            gbcLayout.anchor = GridBagConstraints.LINE_START;
-            this.add( this.txtFpAlpha, gbcLayout );
-
-            // Compute button
-//            gbcLayout.gridx = 0;
-//            gbcLayout.gridy = 4;
-//            gbcLayout.gridwidth  = 1;
-//            gbcLayout.gridheight = 1;
-//            gbcLayout.fill    = GridBagConstraints.NONE;
-//            gbcLayout.weightx = 0.0;
-//            gbcLayout.weighty = 0.0;
-//            gbcLayout.anchor = GridBagConstraints.LINE_END;
-//            this.add( new JLabel("Compute"), gbcLayout );
-            
-            gbcLayout.gridx = 1;
-            gbcLayout.gridy = 4;
-            gbcLayout.gridwidth  = 1;
-            gbcLayout.gridheight = 1;
-            gbcLayout.fill    = GridBagConstraints.HORIZONTAL;
-            gbcLayout.weightx = 0.1;
-            gbcLayout.weighty = 0.0;
-            gbcLayout.anchor = GridBagConstraints.LINE_START;
-            this.add( this.butRecon, gbcLayout );
-        }
-        
-        /**
-         * Initializes the GUI to the current
-         * measurement data (if there is any).
-         * 
-         * @since  Apr 23, 2010
-         * @author Christopher K. Allen
-         */
-        private void guiInitialize() {
-            
-        }
-        
-        /**
-         * Clears out all data in the GUI display.
-         * 
-         * @since  Apr 27, 2010
-         * @author Christopher K. Allen
-         */
-        private void clearAll() {
-            
-        }
-
-    }
+    
     
     
     
@@ -376,7 +111,7 @@ public class CompCourantSnyderView extends JPanel implements IDocView, IConfigVi
     private DeviceSelectorList          lbxMmtData;
     
     /** The fixed point reconstruction algorithm interface */
-    private CompCsFixedPointPanel       pnlFxdPtCltr;
+    private CompCsFixedPtPanel       pnlFxdPtCltr;
 
     
     /** The profile signal plots */
@@ -386,8 +121,11 @@ public class CompCourantSnyderView extends JPanel implements IDocView, IConfigVi
     private MeasurementCurve            pltMmts;
     
     
-    
+    /** User action for reconstructing the Courant-Snyder parameters */
+    private JButton                     butRecon;
+ 
 
+    
     /*
      * Initialization
      */
@@ -546,11 +284,16 @@ public class CompCourantSnyderView extends JPanel implements IDocView, IConfigVi
         this.lbxMmtData.setMultiSelectionMode(true);
         this.lbxMmtData.registerSelectionListener(this);
         
-        this.pnlFxdPtCltr = new CompCsFixedPointPanel();
+        this.pnlFxdPtCltr = new CompCsFixedPtPanel();
         
         this.pltEnvs = new FunctionGraphsJPanel();
         this.pltEnvs.setLegendVisible(true);
         this.pltEnvs.setLegendKeyString("");
+
+//      String      strLocIcn = AppProperties.ICON.CMP_TWISS.getValue().asString();
+//      ImageIcon   icnRecon = PtaResourceManager.getImageIcon(strLocIcn);
+//      this.butRecon = new JButton(icnRecon);
+      this.butRecon = new JButton("Compute");
     }
     
     /**
@@ -561,6 +304,15 @@ public class CompCourantSnyderView extends JPanel implements IDocView, IConfigVi
      */
     private void guiBuildActions() {
         
+        // The compute CS parameters button
+        ActionListener  actCompute = new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                CompCourantSnyderView.this.computeCourantSnyder();
+            }
+        };
+        this.butRecon.addActionListener(actCompute);
     }
     
     /**
@@ -588,15 +340,22 @@ public class CompCourantSnyderView extends JPanel implements IDocView, IConfigVi
         this.add( this.pltEnvs, gbcLayout );
         
         // Device data selection list
+        Box     boxReconData = Box.createVerticalBox();
+        JLabel  lblReconData = new JLabel("Reconstruction Data");
+        
+        boxReconData.add(lblReconData);
+        boxReconData.add(Box.createVerticalStrut(10));
+        boxReconData.add(this.lbxMmtData);
+        
         gbcLayout.gridx = 0;
         gbcLayout.gridy = 1;
         gbcLayout.gridwidth  = 1;
         gbcLayout.gridheight = 1;
-        gbcLayout.fill    = GridBagConstraints.BOTH;
+        gbcLayout.fill    = GridBagConstraints.VERTICAL;
         gbcLayout.weightx = 0.0;
         gbcLayout.weighty = 0.1;
         gbcLayout.anchor = GridBagConstraints.LINE_START;
-        this.add( this.lbxMmtData, gbcLayout );
+        this.add( boxReconData, gbcLayout );
         
         // Reconstruction location
         Box     boxReconLoc = Box.createVerticalBox();
@@ -627,17 +386,17 @@ public class CompCourantSnyderView extends JPanel implements IDocView, IConfigVi
         this.add( this.pnlFxdPtCltr, gbcLayout );
 
         
-//        // Compute button
-//        gbcLayout.gridx = 2;
-//        gbcLayout.gridy = 1;
-//        gbcLayout.gridwidth  = 1;
-//        gbcLayout.gridheight = 1;
-//        gbcLayout.fill    = GridBagConstraints.BOTH;
-//        gbcLayout.weightx = 0.0;
-//        gbcLayout.weighty = 0.1;
-//        gbcLayout.anchor = GridBagConstraints.CENTER;
-//        this.add( this.butRecon, gbcLayout );
-//        
+        // Compute button
+        gbcLayout.gridx = 2;
+        gbcLayout.gridy = 2;
+        gbcLayout.gridwidth  = 1;
+        gbcLayout.gridheight = 1;
+        gbcLayout.fill    = GridBagConstraints.HORIZONTAL;
+        gbcLayout.weightx = 0.1;
+        gbcLayout.weighty = 0.0;
+        gbcLayout.anchor = GridBagConstraints.CENTER;
+        this.add( this.butRecon, gbcLayout );
+        
     }
     
     /**

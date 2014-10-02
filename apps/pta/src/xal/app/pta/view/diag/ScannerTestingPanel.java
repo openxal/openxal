@@ -12,7 +12,7 @@
  * @author  Christopher K. Allen
  * @since	Nov 10, 2011
  */
-package xal.app.pta.view.cmn;
+package xal.app.pta.view.diag;
 
 import xal.app.pta.MainScanController;
 import xal.app.pta.view.daq.ScanControlPanel;

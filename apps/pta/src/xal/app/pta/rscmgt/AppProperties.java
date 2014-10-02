@@ -299,6 +299,10 @@ public final class AppProperties extends PropertiesManager  {
         /** Computational analysis - Analyze Courant-Snyder parameters */
         ANL_TWISS("IconAnlCourantSnyder"),
         
+        
+        /** Computational progress */
+        CMP_PROGRESS("IconCmpProgress"),
+        
         /** Computational analysis - Estimate Courant-Snyder parameters */
         CMP_TWISS("IconCmpCourantSnyder"),
         
@@ -953,6 +957,59 @@ public final class AppProperties extends PropertiesManager  {
          */
         @SuppressWarnings("synthetic-access")
         private NUMERIC(String strPropName) {
+            this.valProperty = MGR_APP_PROPS.getProperty(strPropName);
+        }
+        
+    }
+    
+    /**
+     * Enumeration of the various beam parameters used for simulation purposes.
+     *
+     * @author Christopher K. Allen
+     * @since   Dec 15, 2011
+     */
+    public enum SIM implements xal.app.pta.tools.property.Property.IProperty {
+
+        /** The arrival frequency of beam bunches, typically a sub-harmonic of machine RF */
+        BNCHFREQ("SimBunchFrequency"),
+        
+        /** The allowable error tolerance for beam quantities computed from measurement data */
+        BMCURR("SimBeamCurrent");
+
+        /**
+         * Return the property value associated with this
+         * enumeration constant.
+         * 
+         * @return      value of the property as a 
+         *              <code>PropertyValue</code> object
+         *              
+         * @author  Christopher K. Allen
+         * @since Dec 15, 2011
+         * 
+         * @see xal.app.pta.tools.property.Property.IProperty#getValue()
+         */
+        @Override
+        public Property getValue() {
+            return this.valProperty;
+        }
+        
+        /*
+         * Private Stuff
+         */
+        
+        /** The property value object */
+        private final Property       valProperty;
+        
+        /**
+         * Create the plot property enumeration constant.
+         * 
+         * @param strPropName   name of the plot property
+         *
+         * @author  Christopher K. Allen
+         * @since   Oct 28, 2011
+         */
+        @SuppressWarnings("synthetic-access")
+        private SIM(String strPropName) {
             this.valProperty = MGR_APP_PROPS.getProperty(strPropName);
         }
         

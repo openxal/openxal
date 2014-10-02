@@ -8,6 +8,8 @@ package xal.tools.beam;
 
 
 import java.io.PrintWriter;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 import xal.tools.math.r2.R2;
 
@@ -48,6 +50,115 @@ public class Twiss implements java.io.Serializable {
     private static final long serialVersionUID = 1L;
 
     
+    /*
+     * Inner Classes
+     */
+    
+    /**
+     * Enumeration of the Courant-Snyder parameters used.  Intended for
+     * expediting display of these parameters. 
+     *
+     * @author Christopher K. Allen
+     * @since  Oct 2, 2014
+     */
+    public enum PROP {
+        
+        /** The Courant-Snyder alpha parameter */
+        ALPHA("alpha", "getAlpha"),
+        
+        /** The Courant-Snyder beta parameter */
+        BETA("beta", "getBeta"),
+        
+        /** The Courant-Snyder emittance */
+        EMIT("emittance", "getEmittance");
+        
+        /**
+         * Returns the label of the property in the data structure
+         * which corresponds to this enumeration constant.
+         *
+         * @return  property label
+         * 
+         * @since  Nov 13, 2009
+         * @author Christopher K. Allen
+         */
+        public String       getPropertyLabel() {
+            return this.strFldLbl;
+        }
+
+        /**
+         * Using reflection, we return the value of the field that this
+         * enumeration constant represents, within the given data structure.
+         *
+         * @param data      <code>Twiss</code> data structure having field corresponding to this constant
+         * 
+         * @return          value of the given data structure's field 
+         * 
+         * @since  Apr 22, 2010
+         * @author Christopher K. Allen
+         */
+        public double       getPropertyValue(Twiss data) {
+
+            try {
+                Method      mthFldGtr = this.mthFldGtr;
+                double      dblFldVal = (Double) mthFldGtr.invoke(data);
+
+                return dblFldVal;
+
+            } catch (SecurityException e) {
+                System.err.println("SERIOUS ERROR: Twiss$PROP#getPropertyValue()"); //$NON-NLS-1$
+                e.printStackTrace();
+
+            } catch (IllegalArgumentException e) {
+                System.err.println("SERIOUS ERROR: Twiss$PROP#getPropertyValue()"); //$NON-NLS-1$
+                e.printStackTrace();
+
+            } catch (IllegalAccessException e) {
+                System.err.println("SERIOUS ERROR: Twiss$PROP#getPropertyValue()"); //$NON-NLS-1$
+                e.printStackTrace();
+
+            } catch (InvocationTargetException e) {
+                System.err.println("SERIOUS ERROR: Twiss$PROP#getPropertyValue()"); //$NON-NLS-1$
+                e.printStackTrace();
+
+            }
+
+            return 0.0;
+        }
+
+        
+        
+        /** The property label */
+        private final String        strFldLbl;
+        
+        /** name of the field in the data structure */
+        private Method              mthFldGtr;
+
+        
+        /** 
+         * Create the property enumeration constant with given label.
+         * 
+         * @param strLabel     label for the signal property 
+         * @param strFldGtr    the name of the getter method for the field corresponding to this enumeration constant
+         */
+        private PROP(String strLabel, String strFldGtr) {
+            this.strFldLbl = strLabel;
+            this.mthFldGtr = null;
+            
+            try {
+                this.mthFldGtr = Twiss.class.getMethod( strFldGtr );
+                
+            } catch (SecurityException e) {
+                System.err.println("SERIOUS ERROR: Twiss$PROP#PROP() - getter inaccessible: " + strFldGtr); //$NON-NLS-1$
+                e.printStackTrace();
+
+            } catch (NoSuchMethodException e) {
+                System.err.println("SERIOUS ERROR: Twiss$PROP#PROP() no getter method " + strFldGtr); //$NON-NLS-1$
+                e.printStackTrace();
+            }
+        }
+    }
+
+        
     /*
      *  Global Operations
      */
@@ -135,6 +246,7 @@ public class Twiss implements java.io.Serializable {
     public static Twiss createFromEquivalentBeam(double dblEnvRad, double dblEnvSlp, double dblEmit) {
         double dblAlpha  = -dblEnvRad*dblEnvSlp/dblEmit;
         double dblBeta   = dblEnvRad*dblEnvRad/dblEmit;
+        @SuppressWarnings("unused")
         double dblGamma  = (1.0 + dblAlpha*dblAlpha)/dblBeta;
    
         return new Twiss(dblAlpha, dblBeta, dblEmit);
@@ -253,6 +365,11 @@ public class Twiss implements java.io.Serializable {
     public double getGamma()    { return m_dblGamma; };
     
     /**
+     *  Return the beam emittance
+     */
+    public double getEmittance()    { return m_dblEmitt; };
+    
+    /**
      *  Return the envelope radius extent
      */
     public double getEnvelopeRadius()   { return m_dblEnvRad; };
@@ -262,13 +379,9 @@ public class Twiss implements java.io.Serializable {
      */
     public double getEnvelopeSlope()    { return m_dblEnvSlp; };
     
-    /**
-     *  Return the beam emittance
-     */
-    public double getEmittance()    { return m_dblEmitt; };
-    
     
     /**
+     * <pre>
      *  Return the Twiss matrix associated with these Twiss parameters.
      *  This matrix has the form
      *
@@ -278,6 +391,7 @@ public class Twiss implements java.io.Serializable {
      *  so that the equation of the phase space ellipse is given by
      *
      *      (x,x')*S*(x,x') = emittance
+     * </pre>
      *  
      *  @return     2x2 Twiss matrix
      */
@@ -330,12 +444,14 @@ public class Twiss implements java.io.Serializable {
     }
 
     /**
+     * <pre>
      *  Computes and returns the semi-axes of the phase space ellipse
      *  represented by the Twiss parameters.  
      *
      *  NOTE:
      *  Since the ellipse may be rotated these values do not necessarily
      *  correspond to any particular values of x, and x' in the phase plane.
+     * </pre>
      *
      *  @return     two-dimension array of semi-axes (a,b)
      */
@@ -362,11 +478,14 @@ public class Twiss implements java.io.Serializable {
 
 
     /**
+     * <pre>
      *  Compute and return the eigenvalues of the Twiss matrix.  This matrix has
      *  the form
      *
      *          | gamma  alpha |
      *          | alpha  beta  |
+     *          
+     * </pre>
      *
      *  @return     eigenvalues of the above matrix
      */
@@ -392,11 +511,14 @@ public class Twiss implements java.io.Serializable {
     }
 
     /**
+     * <pre>
      *  Compute and return the eigenvectors of the Twiss matrix.  This matrix has
      *  the form
      *
      *          | gamma  alpha |
      *          | alpha  beta  |
+     *          
+     * </pre>
      *
      *  @return     two-element array of eigenvectors of the above matrix
      */
