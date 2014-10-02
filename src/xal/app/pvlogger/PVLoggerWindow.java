@@ -668,7 +668,7 @@ class PVLoggerWindow extends AcceleratorWindow implements SwingConstants, Scroll
      * Register actions specific to this window instance. 
      * @param commander The commander with which to register the custom commands.
      */
-    protected void customizeCommands(Commander commander) {		
+    public void customizeCommands(Commander commander) {
 		// setup the start logging selection action
         resumeLoggingSelectionAction = new AbstractAction("resume-logging-selections") {
 			/** required UID for serialization */
