@@ -39,8 +39,8 @@ abstract public class XalInternalDocument extends XalAbstractDocument {
 	/** desktop menubar to display when this document is selected */
 	private JMenuBar _desktopMenubar;
 	    
-    /** the document event proxy */
-    protected XalInternalDocumentListener _documentListenerProxy;    // The proxy for document events
+    /** proxy for dispatching document events */
+    private XalInternalDocumentListener DOCUMENT_LISTENER_PROXY;
     
     
     /** Constructor for new documents */
@@ -52,19 +52,19 @@ abstract public class XalInternalDocument extends XalAbstractDocument {
     /** Register this document as a source of DocumentListener events. */
     public void registerEvents() {
 		super.registerEvents();
-        _documentListenerProxy = _messageCenter.registerSource( this, XalInternalDocumentListener.class );
+        DOCUMENT_LISTENER_PROXY = MESSAGE_CENTER.registerSource( this, XalInternalDocumentListener.class );
     }
     
     
     /** Add the listener for events from this document. */
     public void addXalInternalDocumentListener( final XalInternalDocumentListener listener ) {
-        _messageCenter.registerTarget( listener, this, XalInternalDocumentListener.class );
+        MESSAGE_CENTER.registerTarget( listener, this, XalInternalDocumentListener.class );
     }
     
     
     /** Remove the listener from event from this document. */
     public void removeXalInternalDocumentListener( final XalInternalDocumentListener listener ) {
-        _messageCenter.removeTarget( listener, this, XalInternalDocumentListener.class );
+        MESSAGE_CENTER.removeTarget( listener, this, XalInternalDocumentListener.class );
     }
     
     
@@ -109,7 +109,7 @@ abstract public class XalInternalDocument extends XalAbstractDocument {
      */
     public void setTitle( final String newTitle ) {
 		super.setTitle( newTitle );
-        _documentListenerProxy.titleChanged( this, newTitle );
+        if ( DOCUMENT_LISTENER_PROXY != null )  DOCUMENT_LISTENER_PROXY.titleChanged( this, newTitle );
     }	
     
     
@@ -120,7 +120,7 @@ abstract public class XalInternalDocument extends XalAbstractDocument {
     public void setHasChanges( final boolean changeStatus ) {
         if ( changeStatus != hasChanges() ) {
 			super.setHasChanges( changeStatus );
-            _documentListenerProxy.hasChangesChanged( this, changeStatus );
+            if ( DOCUMENT_LISTENER_PROXY != null )  DOCUMENT_LISTENER_PROXY.hasChangesChanged( this, changeStatus );
         }
     }
 	
@@ -143,9 +143,9 @@ abstract public class XalInternalDocument extends XalAbstractDocument {
 			if ( !_mainWindow.userPermitsCloseWithUnsavedChanges() )  return false;
 		}
 		
-        _documentListenerProxy.documentWillClose( this );
+        DOCUMENT_LISTENER_PROXY.documentWillClose( this );
         willClose();
-        _documentListenerProxy.documentHasClosed( this );
+        DOCUMENT_LISTENER_PROXY.documentHasClosed( this );
 		
 		freeResources();
 		
@@ -160,7 +160,7 @@ abstract public class XalInternalDocument extends XalAbstractDocument {
 		_mainWindow.removeInternalFrameListener( _windowEventHandler );
 		
 		_windowEventHandler = null;
-		_documentListenerProxy = null;
+		DOCUMENT_LISTENER_PROXY = null;
 		_mainWindow = null;
 	}
     
@@ -216,12 +216,12 @@ abstract public class XalInternalDocument extends XalAbstractDocument {
 		
 		/** Handle the window being activated. */
 		public void internalFrameActivated( final InternalFrameEvent event ) {
-			_documentListenerProxy.documentActivated( XalInternalDocument.this );
+			DOCUMENT_LISTENER_PROXY.documentActivated( XalInternalDocument.this );
 		}
 		
 		/** Handle the window being deactivated. */
 		public void internalFrameDeactivated( final InternalFrameEvent event ) {
-			_documentListenerProxy.documentDeactivated( XalInternalDocument.this );
+			DOCUMENT_LISTENER_PROXY.documentDeactivated( XalInternalDocument.this );
 		}		
 	}
 }

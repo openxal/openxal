@@ -32,7 +32,10 @@ abstract class XalAbstractDocument implements Pageable {
 	// public static constants for confirmation dialogs
 	final static public int YES_OPTION = JOptionPane.YES_OPTION;
 	final static public int NO_OPTION = JOptionPane.NO_OPTION;
-	
+
+	/** Local message center */
+	protected MessageCenter MESSAGE_CENTER;
+
     /** indicates whether the document has changes that need saving */
     private boolean _hasChanges;
 
@@ -41,16 +44,15 @@ abstract class XalAbstractDocument implements Pageable {
 
 	/** The persistent storage URL for the document */
     protected URL source;
-    
-    // messaging
-    protected MessageCenter _messageCenter;      // The local message center
-    
+
     
     /** Constructor for new documents */
     public XalAbstractDocument() {
-        setHasChanges(false);
+		MESSAGE_CENTER = new MessageCenter("Xal Document Messaging");
+
+        setHasChanges( false );
         registerEvents();
-        setSource(null);
+        setSource( null );
     }
     
     
@@ -67,9 +69,7 @@ abstract class XalAbstractDocument implements Pageable {
     
     
     /** Register this document as a source of DocumentListener events. */
-    public void registerEvents() {
-        _messageCenter = new MessageCenter("Xal Document Messaging");
-    }
+    public void registerEvents() {}
     
     
     /** Construct the main window and associate it with this document. */
@@ -358,7 +358,7 @@ abstract class XalAbstractDocument implements Pageable {
 	 */
 	public void freeResources() {
 		freeCustomResources();
-		_messageCenter = null;
+		MESSAGE_CENTER = null;
 	}
 	
 	
