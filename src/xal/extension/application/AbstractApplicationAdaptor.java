@@ -70,14 +70,14 @@ abstract public class AbstractApplicationAdaptor implements ApplicationListener 
     
     
     /** Determine whether this application can open documents */
-    final protected boolean canOpenDocuments() {
+    final public boolean canOpenDocuments() {
         final String[] documentTypes = readableDocumentTypes();
         return documentTypes != null && documentTypes.length > 0;
     }
     
     
     /** Indicates whether the welcome dialog should be displayed at launch. By default, this returns true if the application can open documents. */
-    protected boolean showsWelcomeDialogAtLaunch() {
+    public boolean showsWelcomeDialogAtLaunch() {
         return canOpenDocuments();
     }
     
@@ -121,7 +121,7 @@ abstract public class AbstractApplicationAdaptor implements ApplicationListener 
      * @param commander The commander with which to register commands.
      * @see Commander#registerAction(Action)
      */
-    protected void customizeCommands(Commander commander) {
+    public void customizeCommands(Commander commander) {
     }
     
 	
@@ -129,7 +129,7 @@ abstract public class AbstractApplicationAdaptor implements ApplicationListener 
 	 * Define some flags for launching the application, such as pre-load a default accelerator.
      * todo: this code needs to be reviewed to determine its value and logic
      */
-    protected static void setOptions( String[] args ){
+    public static void setOptions( String[] args ){
         if (args.length > 0){
             
             final java.util.ArrayList<String> docPaths = new java.util.ArrayList<String>();
@@ -216,7 +216,7 @@ abstract public class AbstractApplicationAdaptor implements ApplicationListener 
 	 * Convenience method to set the location of the resources directory by specifying the parent directory of resources. The resources directory is assumed to be named "resources". This is really used for script based applications that don't reside in a jar file.
 	 * @param resourcesParentDirectory normal file system directory specifying the location of the parent directory of the resources
 	 */
-	protected void setResourcesParentDirectory( final File resourcesParentDirectory ) {
+	public void setResourcesParentDirectory( final File resourcesParentDirectory ) {
 		if ( resourcesParentDirectory != null ) {
 			setResourcesDirectory( new File( resourcesParentDirectory, "resources" ) );
 		}
@@ -230,7 +230,7 @@ abstract public class AbstractApplicationAdaptor implements ApplicationListener 
 	 * Convenience method to set the location of the resources directory by specifying the parent directory of resources. The resources directory is assumed to be named "resources". This is really used for script based applications that don't reside in a jar file.
 	 * @param resourcesParentDirectoryPath full file system directory path specifying the location of the parent directory of the resources
 	 */
-	protected void setResourcesParentDirectoryWithPath( final String resourcesParentDirectoryPath ) {
+	public void setResourcesParentDirectoryWithPath( final String resourcesParentDirectoryPath ) {
 		if ( resourcesParentDirectoryPath != null ) {
 			setResourcesParentDirectory( new File( resourcesParentDirectoryPath ) );
 		}
@@ -241,7 +241,7 @@ abstract public class AbstractApplicationAdaptor implements ApplicationListener 
 
 
 	/** Subclasses can set the location of the resources directory. Setting it to null will use the default resource manager. */
-	protected void setResourcesLocation( final URL resourcesLocation ) {
+	public void setResourcesLocation( final URL resourcesLocation ) {
 		if ( resourcesLocation != null ) {
 			_resourceManager = new LocationApplicationResourceManager( resourcesLocation );
 		}
