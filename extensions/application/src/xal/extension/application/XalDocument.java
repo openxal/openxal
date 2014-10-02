@@ -67,7 +67,7 @@ abstract public class XalDocument extends XalAbstractDocument {
 	void setupMainWindow() {
         makeMainWindow();
         addXalDocumentListener( mainWindow );
-        mainWindow.titleChanged(this, title);
+        mainWindow.titleChanged( this, getTitle() );
     }
  	
 	
@@ -83,7 +83,7 @@ abstract public class XalDocument extends XalAbstractDocument {
      */
     public void setTitle( final String newTitle ) {
 		super.setTitle( newTitle );
-        documentListenerProxy.titleChanged(this, title);
+        documentListenerProxy.titleChanged( this, newTitle );
     }	
     
     
@@ -92,9 +92,9 @@ abstract public class XalDocument extends XalAbstractDocument {
      * @param changeStatus Status to set whether this document has changes that need saving.
      */
     public void setHasChanges( final boolean changeStatus ) {
-        if ( changeStatus != hasChanges ) {
-            hasChanges = changeStatus;
-            documentListenerProxy.hasChangesChanged(this, hasChanges);
+        if ( changeStatus != hasChanges() ) {
+			super.setHasChanges( changeStatus );
+            documentListenerProxy.hasChangesChanged( this, changeStatus );
         }
     }
 

@@ -75,7 +75,7 @@ abstract public class XalInternalDocument extends XalAbstractDocument {
 		_windowEventHandler = new WindowEventHandler();
 		_mainWindow.addInternalFrameListener( _windowEventHandler );
         addXalInternalDocumentListener( _mainWindow );
-        _mainWindow.titleChanged( this, title );
+        _mainWindow.titleChanged( this, getTitle() );
     }
 	
 	
@@ -109,7 +109,7 @@ abstract public class XalInternalDocument extends XalAbstractDocument {
      */
     public void setTitle( final String newTitle ) {
 		super.setTitle( newTitle );
-        _documentListenerProxy.titleChanged( this, title );
+        _documentListenerProxy.titleChanged( this, newTitle );
     }	
     
     
@@ -118,9 +118,9 @@ abstract public class XalInternalDocument extends XalAbstractDocument {
      * @param changeStatus Status to set whether this document has changes that need saving.
      */
     public void setHasChanges( final boolean changeStatus ) {
-        if ( changeStatus != hasChanges ) {
-            hasChanges = changeStatus;
-            _documentListenerProxy.hasChangesChanged( this, hasChanges );
+        if ( changeStatus != hasChanges() ) {
+			super.setHasChanges( changeStatus );
+            _documentListenerProxy.hasChangesChanged( this, changeStatus );
         }
     }
 	

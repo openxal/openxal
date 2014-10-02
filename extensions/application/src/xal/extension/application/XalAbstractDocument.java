@@ -33,10 +33,14 @@ abstract class XalAbstractDocument implements Pageable {
 	final static public int YES_OPTION = JOptionPane.YES_OPTION;
 	final static public int NO_OPTION = JOptionPane.NO_OPTION;
 	
-    // basic document instance variables
-    protected boolean hasChanges;       // whether the document has changes that need saving
-    protected String title;             // The title of the document
-    protected URL source;               // The persistent storage URL for the document
+    /** indicates whether the document has changes that need saving */
+    private boolean _hasChanges;
+
+	/** this document's title */
+    private String _title;
+
+	/** The persistent storage URL for the document */
+    protected URL source;
     
     // messaging
     protected MessageCenter _messageCenter;      // The local message center
@@ -106,7 +110,7 @@ abstract class XalAbstractDocument implements Pageable {
      * @return The title of the document.
      */
     public String getTitle() {
-        return title;
+        return _title;
     }
     
     
@@ -115,7 +119,7 @@ abstract class XalAbstractDocument implements Pageable {
      * @param newTitle The new title for this document.
      */
     public void setTitle(String newTitle) {
-        title = newTitle;
+        _title = newTitle;
     }
     
     
@@ -252,16 +256,18 @@ abstract class XalAbstractDocument implements Pageable {
 	* @return Status of whether this document has changes that need saving.
 	*/
     public boolean hasChanges() {
-        return hasChanges;
+        return _hasChanges;
     }
-    
-    
-    /**
+
+
+	/**
 	 * Set the whether this document has changes.
-     * @param changeStatus Status to set whether this document has changes that need saving.
-     */
-    abstract public void setHasChanges( final boolean changeStatus );
-    
+	 * @param changeStatus Status to set whether this document has changes that need saving.
+	 */
+	public void setHasChanges( final boolean changeStatus ) {
+		_hasChanges = changeStatus;
+	}
+
     
     /**
 	 * Subclasses need to implement this method for saving the document to a URL.
