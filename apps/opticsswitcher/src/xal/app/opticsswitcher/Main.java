@@ -74,7 +74,7 @@ public class Main extends ApplicationAdaptor {
     
     
     /** Indicates whether the welcome dialog should be displayed at launch. */
-    protected boolean showsWelcomeDialogAtLaunch() {
+    public boolean showsWelcomeDialogAtLaunch() {
         return false;
     }
     
@@ -87,7 +87,7 @@ public class Main extends ApplicationAdaptor {
      * if those actions are document specific.  Here the actions are application wide.
      * @param commander The commander with which to register the custom commands.
      */
-    protected void customizeCommands(Commander commander) {
+    public void customizeCommands(Commander commander) {
     }
 
     
