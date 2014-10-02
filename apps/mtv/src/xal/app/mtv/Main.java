@@ -76,7 +76,7 @@ public class Main extends ApplicationAdaptor {
     /**
      * Register actions for the Special menu items
      */
-    protected void customizeCommands(Commander commander) {
+    public void customizeCommands(Commander commander) {
     }
     
     
