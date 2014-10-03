@@ -296,15 +296,15 @@ public final class AppProperties extends PropertiesManager  {
         DAQ_ACQUIRE("IconDaqAcquire"), //$NON-NLS-1$
 
         
-        /** Computational analysis - Analyze Courant-Snyder parameters */
-        ANL_TWISS("IconAnlCourantSnyder"),
-        
-        
         /** Computational progress */
-        CMP_PROGRESS("IconCmpProgress"),
+        CMP_TORUS("IconCmpTorus"),
+        
         
         /** Computational analysis - Estimate Courant-Snyder parameters */
-        CMP_TWISS("IconCmpCourantSnyder"),
+        TWS_ANALYZE("IconTwsAnalyze"),
+        
+        /** Computational analysis - Analyze Courant-Snyder parameters */
+        TWS_COMPUTE("IconTwsCompute"),
         
 
         /** Data Analysis - select for the head of the beam */

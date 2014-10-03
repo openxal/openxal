@@ -7,14 +7,14 @@
 package xal.app.pta.view.analysis;
 
 import java.awt.Color;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.swing.Box;
-import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
 
 import xal.app.pta.tools.swing.NumberTextField;
 import xal.app.pta.tools.swing.NumberTextField.FMT;
@@ -43,10 +43,10 @@ import xal.tools.beam.Twiss;
     private static final NumberTextField.FMT        FMT_DISPLAY = FMT.DEC_4;
     
     /** String length of each label */
-    private static final int        INT_LABEL_LEN = 10;
+    private static final int        INT_LABEL_LEN = 11;
     
     /** (Default) Number of columns in the text field displays */
-    private static final int        INT_TEXT_LEN = 7;
+    private static final int        INT_TEXT_LEN = 9;
     
     
     /*
@@ -56,10 +56,14 @@ import xal.tools.beam.Twiss;
     /** Map of signal property to text field display component */
     private final Map<Twiss.PROP, NumberTextField>   mapPrpToDspl;
     
-    
 
+    /*
+     * Initialize
+     */
+    
     /**
-     * Create a new <code>SingleSignalDisplay</code> object.
+     * Creates a new <code>TwissValuesDispayPanel</code> with empty 
+     * text fields.
      *
      * @since  Dec 13, 2011
      * @author Christopher K. Allen
@@ -70,6 +74,39 @@ import xal.tools.beam.Twiss;
         this.guiBuildComponents();
         this.guiLayoutComponents();
     }
+    
+    /**
+     * Enables or disables the edit capabilities of the text fields
+     * used to display the Courant-Snyder parameters.
+     * 
+     * @param bolEdit   enables text box editing if <code>true</code>,
+     *                  disables if <code>false</code>
+     *
+     * @author Christopher K. Allen
+     * @since  Oct 3, 2014
+     */
+    public void setEditable(boolean bolEdit) {
+        
+        if (bolEdit) 
+            for (Twiss.PROP prop : Twiss.PROP.values()) {
+                NumberTextField     txtProp = this.mapPrpToDspl.get(prop);
+                
+                txtProp.setEditable(true);
+                txtProp.setBackground(Color.WHITE);
+            }
+        else
+            for (Twiss.PROP prop : Twiss.PROP.values()) {
+                NumberTextField     txtProp = this.mapPrpToDspl.get(prop);
+                
+                txtProp.setEditable(false);
+                txtProp.setBackground(Color.GRAY);
+            }
+    }
+    
+    
+    /*
+     * Operations
+     */
     
     /**
      * Displays the Courant-Snyder parameters of the given <code>Twiss</code> object. 
@@ -88,6 +125,26 @@ import xal.tools.beam.Twiss;
             
             txtPrpDspl.setDisplayValueSilently(dblPrpVal);
         }
+    }
+    
+    /**
+     * Retrieves the currently displayed Courant-Snyder parameters from the text
+     * fields, creates a new <code>Twiss</code> object from them and returns it.
+     *   
+     * @return  a Courant-Snyder parameter set corresponding to the currently displayed values
+     *
+     * @author Christopher K. Allen
+     * @since  Oct 3, 2014
+     */
+    public Twiss    getDisplayValues() {
+        
+        double  dblAlpha = this.mapPrpToDspl.get(Twiss.PROP.ALPHA).getDisplayValue().doubleValue();
+        double  dblBeta  = this.mapPrpToDspl.get(Twiss.PROP.BETA).getDisplayValue().doubleValue();
+        double  dblEmit  = this.mapPrpToDspl.get(Twiss.PROP.EMIT).getDisplayValue().doubleValue();
+        
+        Twiss   twsVals = new Twiss(dblAlpha, dblBeta, dblEmit);
+
+        return twsVals;
     }
     
     /**
@@ -121,7 +178,7 @@ import xal.tools.beam.Twiss;
             NumberTextField txtPrpDspl = new NumberTextField(FMT_DISPLAY, INT_TEXT_LEN);
             
             txtPrpDspl.setEditable(false);
-            txtPrpDspl.setBkgndEditColor(Color.WHITE);
+            txtPrpDspl.setBkgndEditColor(Color.GRAY);
             
             this.mapPrpToDspl.put(prop, txtPrpDspl);
         }
@@ -134,21 +191,48 @@ import xal.tools.beam.Twiss;
      * @author Christopher K. Allen
      */
     private void guiLayoutComponents() {
-        BoxLayout       mgrLayout = new BoxLayout(this, BoxLayout.Y_AXIS);
-        this.setLayout(mgrLayout);
+//        BoxLayout       mgrLayout = new BoxLayout(this, BoxLayout.Y_AXIS);
+//        this.setLayout(mgrLayout);
+        this.setLayout( new GridBagLayout() );
+        
+        GridBagConstraints       gbcLayout = new GridBagConstraints();
+
+        gbcLayout.insets = new Insets(0,0,5,5);
+        
+        gbcLayout.gridx = 0;
+        gbcLayout.gridy = 0;
+        gbcLayout.gridwidth  = 1;
+        gbcLayout.gridheight = 1;
+        gbcLayout.fill    = GridBagConstraints.NONE;
+        gbcLayout.weightx = 0.0;
+        gbcLayout.weighty = 0.0;
+        gbcLayout.anchor = GridBagConstraints.LINE_END;
         
         for (Twiss.PROP prop : Twiss.PROP.values()) {
-            JTextField txtPrpDspl = this.mapPrpToDspl.get(prop);
+            NumberTextField txtPrpDspl = this.mapPrpToDspl.get(prop);
 
-            String     strPrpName = prop.getPropertyLabel();
+            String     strPrpName = " " + prop.getPropertyLabel();
             String     strPrpLbl  = this.pad( strPrpName );
             JLabel     lblPrpNm   = new JLabel( strPrpLbl );
+            
 
-            Box  boxPrpDspl = Box.createHorizontalBox();
-            boxPrpDspl.add( lblPrpNm );
-            boxPrpDspl.add( Box.createHorizontalStrut(5) );
-            boxPrpDspl.add( txtPrpDspl );
-            this.add(boxPrpDspl);
+//            Box  boxPrpDspl = Box.createHorizontalBox();
+//            boxPrpDspl.add( lblPrpNm );
+//            boxPrpDspl.add( Box.createHorizontalStrut(5) );
+//            boxPrpDspl.add( txtPrpDspl );
+//            this.add(boxPrpDspl);
+
+            gbcLayout.gridx  = 0;
+            gbcLayout.fill   = GridBagConstraints.NONE;
+            gbcLayout.anchor = GridBagConstraints.LINE_END; 
+            this.add( lblPrpNm, gbcLayout );
+            
+            gbcLayout.gridx   = 1;
+            gbcLayout.fill    = GridBagConstraints.HORIZONTAL;
+            gbcLayout.anchor  = GridBagConstraints.LINE_START;
+            this.add( txtPrpDspl, gbcLayout );
+            
+            gbcLayout.gridy++;
         }
     }
     

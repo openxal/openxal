@@ -14,18 +14,23 @@
  */
 package xal.app.pta.view;
 
+import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
 import javax.swing.Box;
-import javax.swing.JButton;
+import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.SwingConstants;
+import javax.swing.border.Border;
+import javax.swing.border.EtchedBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -34,7 +39,10 @@ import xal.app.pta.IDocView;
 import xal.app.pta.MainConfiguration;
 import xal.app.pta.MainDocument;
 import xal.app.pta.daq.MeasurementData;
-import xal.app.pta.view.analysis.CompCsFixedPtPanel;
+import xal.app.pta.rscmgt.AppProperties;
+import xal.app.pta.rscmgt.PtaResourceManager;
+import xal.app.pta.view.analysis.CsFixedPtControlPanel;
+import xal.app.pta.view.analysis.Twiss3PlaneDisplayPanel;
 import xal.app.pta.view.cmn.DeviceSelectorList;
 import xal.app.pta.view.cmn.DeviceSelectorPanel;
 import xal.app.pta.view.cmn.DeviceSelectorPanel.IDeviceSelectionListener;
@@ -43,8 +51,6 @@ import xal.extension.twissobserver.MeasurementCurve;
 import xal.extension.widgets.plot.FunctionGraphsJPanel;
 import xal.smf.Accelerator;
 import xal.smf.AcceleratorNode;
-import xal.smf.impl.WireHarp;
-import xal.smf.impl.WireScanner;
 import xal.smf.impl.profile.ProfileDevice.IProfileData;
 
 /**
@@ -62,7 +68,7 @@ import xal.smf.impl.profile.ProfileDevice.IProfileData;
  * @since   Dec 15, 2011
  * @version Sep 30, 2014
  */
-public class CompCourantSnyderView extends JPanel implements IDocView, IConfigView, IDeviceSelectionListener, ListSelectionListener {
+public class CourantSnyderView extends JPanel implements IDocView, IConfigView, IDeviceSelectionListener, ListSelectionListener {
 
     
     /*
@@ -111,8 +117,11 @@ public class CompCourantSnyderView extends JPanel implements IDocView, IConfigVi
     private DeviceSelectorList          lbxMmtData;
     
     /** The fixed point reconstruction algorithm interface */
-    private CompCsFixedPtPanel       pnlFxdPtCltr;
+    private CsFixedPtControlPanel       pnlFxdPtCltr;
 
+    
+    /** The computed Courant-Snyder parameters display */
+    private Twiss3PlaneDisplayPanel     pnlTws3d;
     
     /** The profile signal plots */
     private FunctionGraphsJPanel        pltEnvs;
@@ -121,17 +130,13 @@ public class CompCourantSnyderView extends JPanel implements IDocView, IConfigVi
     private MeasurementCurve            pltMmts;
     
     
-    /** User action for reconstructing the Courant-Snyder parameters */
-    private JButton                     butRecon;
- 
-
     
     /*
      * Initialization
      */
     
     /**
-     * Creates a new <code>CompCourantSnyderView</code> panel attached to
+     * Creates a new <code>CourantSnyderView</code> panel attached to
      * the given data document.
      * 
      * @param docMain   main application document
@@ -139,7 +144,7 @@ public class CompCourantSnyderView extends JPanel implements IDocView, IConfigVi
      * @author  Christopher K. Allen
      * @since   Dec 16, 2011
      */
-    public CompCourantSnyderView(MainDocument docMain) {
+    public CourantSnyderView(MainDocument docMain) {
         super();
         this.docMain = docMain;
         
@@ -251,21 +256,30 @@ public class CompCourantSnyderView extends JPanel implements IDocView, IConfigVi
      */
     private void computeCourantSnyder() {
         
+    }
+    
+    private ArrayList<Measurement>  processMsmtData() {
+        
         List<String>    lstDevIds = this.lbxMmtData.getSelectedDevices();
 
-        this.lstMmtsRec.clear();
+//        this.lstMmtsRec.clear();
+        
+        ArrayList<Measurement>   lstMsmts = new ArrayList<>();
         for (String strDevId : lstDevIds) {
             
             IProfileData    datMsmt = this.setMsmt.getDataForDeviceId(strDevId);
             
-            Measurement mmt = new Measurement();
-            mmt.strDevId  = strDevId;
-            mmt.dblSigHor = datMsmt.getDataAttrs().hor.stdev;
-            mmt.dblSigVer = datMsmt.getDataAttrs().ver.stdev;
-            mmt.dblSigLng = 0.0;
-            
-            this.lstMmtsRec.add(mmt);
+            Measurement msmt = new Measurement();
+            msmt.strDevId  = strDevId;
+            msmt.dblSigHor = datMsmt.getDataAttrs().hor.stdev;
+            msmt.dblSigVer = datMsmt.getDataAttrs().ver.stdev;
+            msmt.dblSigLng = 0.0;
+  
+            lstMsmts.add(msmt);
+//            this.lstMmtsRec.add(mmt);
         }
+        
+        return lstMsmts;
     }
     
     /**
@@ -275,6 +289,8 @@ public class CompCourantSnyderView extends JPanel implements IDocView, IConfigVi
      * @author Christopher K. Allen
      */
     private void guiBuildComponents() {
+        
+        // The reconstruction location GUI
         this.pnlRecLoc = new DeviceSelectorPanel(this.docMain.getAccelerator(), AcceleratorNode.class);
         this.pnlRecLoc.registerDeviceSelectedListener(this);
         this.pnlRecLoc.setSingleSelectionMode(true);
@@ -284,16 +300,18 @@ public class CompCourantSnyderView extends JPanel implements IDocView, IConfigVi
         this.lbxMmtData.setMultiSelectionMode(true);
         this.lbxMmtData.registerSelectionListener(this);
         
-        this.pnlFxdPtCltr = new CompCsFixedPtPanel();
+        this.pnlFxdPtCltr = new CsFixedPtControlPanel();
         
         this.pltEnvs = new FunctionGraphsJPanel();
         this.pltEnvs.setLegendVisible(true);
         this.pltEnvs.setLegendKeyString("");
+        
+        Border  bdrTws3d = new EtchedBorder();
+//        Border  bdrTws3d = BorderFactory.createTitledBorder("Computed Courant-Snyder Parameters");
+        this.pnlTws3d = new Twiss3PlaneDisplayPanel();
+        this.pnlTws3d.setEditable(false);
+        this.pnlTws3d.setBorder(bdrTws3d);
 
-//      String      strLocIcn = AppProperties.ICON.CMP_TWISS.getValue().asString();
-//      ImageIcon   icnRecon = PtaResourceManager.getImageIcon(strLocIcn);
-//      this.butRecon = new JButton(icnRecon);
-      this.butRecon = new JButton("Compute");
     }
     
     /**
@@ -303,16 +321,17 @@ public class CompCourantSnyderView extends JPanel implements IDocView, IConfigVi
      * @since  Sep 30, 2014
      */
     private void guiBuildActions() {
-        
-        // The compute CS parameters button
-        ActionListener  actCompute = new ActionListener() {
+
+        // Respond to the "compute" button in the CsFixedPtControlPanel
+        ActionListener  lsnCmp = new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                CompCourantSnyderView.this.computeCourantSnyder();
+                CourantSnyderView.this.computeCourantSnyder();
             }
         };
-        this.butRecon.addActionListener(actCompute);
+        
+        this.pnlFxdPtCltr.addComputeButtonListener(lsnCmp);
     }
     
     /**
@@ -338,6 +357,27 @@ public class CompCourantSnyderView extends JPanel implements IDocView, IConfigVi
         gbcLayout.weighty = 0.9;
         gbcLayout.anchor = GridBagConstraints.CENTER;
         this.add( this.pltEnvs, gbcLayout );
+        
+        // Courant-Snyder parameters display panel
+        String      strUrlIcon = AppProperties.ICON.TWS_ANALYZE.getValue().asString();
+        ImageIcon   imgTitle = PtaResourceManager.getImageIcon(strUrlIcon);
+        JLabel      lblTwiss = new JLabel("Computed Courant-Snyder Parameters", imgTitle, SwingConstants.LEADING);
+        lblTwiss.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        Box boxTwiss = Box.createVerticalBox();
+        boxTwiss.add(lblTwiss);
+        boxTwiss.add(Box.createVerticalStrut(10));
+        boxTwiss.add(this.pnlTws3d);
+        
+        gbcLayout.gridx = 3;
+        gbcLayout.gridy = 0;
+        gbcLayout.gridwidth  = 1;
+        gbcLayout.gridheight = 1;
+        gbcLayout.fill    = GridBagConstraints.NONE;
+        gbcLayout.weightx = 0.0;
+        gbcLayout.weighty = 0.1;
+        gbcLayout.anchor = GridBagConstraints.LINE_END;
+        this.add( boxTwiss, gbcLayout );
         
         // Device data selection list
         Box     boxReconData = Box.createVerticalBox();
@@ -375,28 +415,29 @@ public class CompCourantSnyderView extends JPanel implements IDocView, IConfigVi
         gbcLayout.anchor = GridBagConstraints.LINE_START;
         this.add( boxReconLoc, gbcLayout );
 
-        gbcLayout.gridx = 2;
+        // The Courant-Snyder computation controller
+        gbcLayout.gridx = 3;
         gbcLayout.gridy = 1;
         gbcLayout.gridwidth  = 1;
         gbcLayout.gridheight = 1;
-        gbcLayout.fill    = GridBagConstraints.VERTICAL;
+        gbcLayout.fill    = GridBagConstraints.BOTH;
         gbcLayout.weightx = 0.0;
         gbcLayout.weighty = 0.1;
-        gbcLayout.anchor = GridBagConstraints.CENTER;
+        gbcLayout.anchor = GridBagConstraints.LINE_START;
         this.add( this.pnlFxdPtCltr, gbcLayout );
 
         
-        // Compute button
-        gbcLayout.gridx = 2;
-        gbcLayout.gridy = 2;
-        gbcLayout.gridwidth  = 1;
-        gbcLayout.gridheight = 1;
-        gbcLayout.fill    = GridBagConstraints.HORIZONTAL;
-        gbcLayout.weightx = 0.1;
-        gbcLayout.weighty = 0.0;
-        gbcLayout.anchor = GridBagConstraints.CENTER;
-        this.add( this.butRecon, gbcLayout );
-        
+//        // Compute button
+//        gbcLayout.gridx = 3;
+//        gbcLayout.gridy = 2;
+//        gbcLayout.gridwidth  = 1;
+//        gbcLayout.gridheight = 1;
+//        gbcLayout.fill    = GridBagConstraints.NONE;
+//        gbcLayout.weightx = 0.1;
+//        gbcLayout.weighty = 0.0;
+//        gbcLayout.anchor = GridBagConstraints.CENTER;
+//        this.add( this.butRecon, gbcLayout );
+//        
     }
     
     /**

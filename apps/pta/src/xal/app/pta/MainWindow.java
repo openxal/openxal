@@ -22,7 +22,7 @@ import xal.app.pta.tools.swing.PersistentTextEditorPane;
 import xal.app.pta.tools.swing.TextEditorPane;
 import xal.app.pta.view.ConfigHarpView;
 import xal.app.pta.view.ConfigScanView;
-import xal.app.pta.view.CompCourantSnyderView;
+import xal.app.pta.view.CourantSnyderView;
 import xal.app.pta.view.HarpAcquisitionView;
 import xal.app.pta.view.ConfigMachineView;
 import xal.app.pta.view.ConfigRemotePrcgView;
@@ -225,7 +225,7 @@ public class MainWindow extends XalWindow implements IDocView, ComponentListener
     private DataAnalysisView            viewMsmtAnal;
     
     /** The Courant-Snyder reconstruction from Measurements view */
-    private CompCourantSnyderView    viewMsmtTwiss;
+    private CourantSnyderView    viewMsmtTwiss;
     
     
     //
@@ -739,7 +739,7 @@ public class MainWindow extends XalWindow implements IDocView, ComponentListener
         MainConfiguration.getInstance().registerView(this.viewMsmtAnal);
         
         // Courant-Snyder reconstruction view
-        this.viewMsmtTwiss = new CompCourantSnyderView(this.getDocument());
+        this.viewMsmtTwiss = new CourantSnyderView(this.getDocument());
         this.getDocument().registerView(this.viewMsmtTwiss);
         MainConfiguration.getInstance().registerView(this.viewMsmtTwiss);
         

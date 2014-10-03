@@ -1,5 +1,5 @@
 /**
- * CompCsFixedPtPanel.java
+ * CsFixedPtControlPanel.java
  *
  * Author  : Christopher K. Allen
  * Since   : Oct 2, 2014
@@ -13,10 +13,14 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.LinkedList;
+import java.util.List;
 
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JProgressBar;
 import javax.swing.SwingConstants;
 
 import xal.app.pta.rscmgt.AppProperties;
@@ -31,13 +35,13 @@ import xal.extension.twissobserver.TransferMatrixGenerator;
      * from profile measurement data. This class is responsible for initiating the
      * calculations and grabbing some numerical parameters input from the user.
      * The actually calculations are done elsewhere.  In particular, the actions
-     * here are delegated to class <code>CompCourantSnyderView</code>. 
+     * here are delegated to class <code>CourantSnyderView</code>. 
      *
      *
      * @author Christopher K. Allen
      * @since  Sep 30, 2014
      */
-    public class CompCsFixedPtPanel extends JPanel {
+    public class CsFixedPtControlPanel extends JPanel {
         
         /* 
          * Global Constants
@@ -82,6 +86,10 @@ import xal.extension.twissobserver.TransferMatrixGenerator;
             private NumberTextField             txtCurAlpha;
             
             
+            /** A progress bar showing convergence to tolerable error level */
+            private JProgressBar                barCurErr;
+            
+            
             /*
              * Initialization
              */
@@ -99,6 +107,31 @@ import xal.extension.twissobserver.TransferMatrixGenerator;
                 this.guiBuildComponents();
                 this.guiLayoutComponents();
             }
+            
+            /**
+             * <p>
+             * Initializes the progress bar for displaying the residual error
+             * in the current solution iterate.  Nothing else to do at this point.
+             * </p>
+             * <p>
+             * <h4>NOTE</h4>
+             * &middot; This method should be called just before the fixed point Courant-Snyder
+             * algorithm is started.
+             * </p>
+             *
+             * @author Christopher K. Allen
+             * @since  Oct 3, 2014
+             */
+            public void initializeDisplay() {
+
+                Double  dblMaxErr = AppProperties.NUMERIC.CSFP_MAXERROR.getValue().asDouble();
+                double  dblLogMax = Math.log10( dblMaxErr );
+                int     intLogMax = (int)Math.floor( dblLogMax );
+                
+                this.barCurErr.setMinimum(0);
+                this.barCurErr.setMaximum(-intLogMax);
+            }
+            
             /*
              * IProgressListener Interface
              */
@@ -117,6 +150,10 @@ import xal.extension.twissobserver.TransferMatrixGenerator;
                 this.txtCurIter.setDisplayValue(cntIter);
                 this.txtCurErr.setDisplayValue(dblError);
                 this.txtCurAlpha.setDisplayValue(dblAlpha);
+                
+                double  dblLogErr = Math.log10(dblError);
+                int     intLogErr = (int) Math.floor(dblLogErr);
+                this.barCurErr.setValue(-intLogErr);
             }
 
             
@@ -142,6 +179,8 @@ import xal.extension.twissobserver.TransferMatrixGenerator;
                 this.txtCurAlpha = new NumberTextField(FMT.DEC_3);
                 this.txtCurAlpha.setEditable(false);
                 this.txtCurAlpha.setBackground(Color.GRAY);
+                
+                this.barCurErr = new JProgressBar(JProgressBar.HORIZONTAL);
             }
             
             /**
@@ -158,9 +197,10 @@ import xal.extension.twissobserver.TransferMatrixGenerator;
                 gbcLayout.insets = new Insets(0,0,5,5);
                 
                 // The Title
-                String      strUrlIcon = AppProperties.ICON.CMP_PROGRESS.getValue().asString();
-                ImageIcon   imgTitle = PtaResourceManager.getImageIcon(strUrlIcon);
-                JLabel      lblTitle = new JLabel("Algorithm Progress", imgTitle, SwingConstants.CENTER);
+//                String      strUrlIcon = AppProperties.ICON.CMP_TORUS.getValue().asString();
+//                ImageIcon   imgTitle = PtaResourceManager.getImageIcon(strUrlIcon);
+//                JLabel      lblTitle = new JLabel("Algorithm Progress", imgTitle, SwingConstants.CENTER);
+                JLabel      lblTitle = new JLabel("Algorithm Progress");
                 lblTitle.setFont( lblTitle.getFont().deriveFont(Font.BOLD) );
                 
                 gbcLayout.gridx = 0;
@@ -173,8 +213,28 @@ import xal.extension.twissobserver.TransferMatrixGenerator;
                 gbcLayout.anchor = GridBagConstraints.CENTER;
                 this.add( lblTitle, gbcLayout );
                 
+                // The progress bar
+                gbcLayout.gridx = 0;
+                gbcLayout.gridy++;
+                gbcLayout.gridwidth  = 1;
+                gbcLayout.gridheight = 1;
+                gbcLayout.fill    = GridBagConstraints.NONE;
+                gbcLayout.weightx = 0.0;
+                gbcLayout.weighty = 0.0;
+                gbcLayout.anchor = GridBagConstraints.LINE_END;
+                this.add( new JLabel("Rel. Error "), gbcLayout );
+
+                gbcLayout.gridx = 1;
+                gbcLayout.gridwidth  = 2;
+                gbcLayout.gridheight = 1;
+                gbcLayout.fill    = GridBagConstraints.BOTH;
+                gbcLayout.weightx = 0.0;
+                gbcLayout.weighty = 0.0;
+                gbcLayout.anchor = GridBagConstraints.CENTER;
+                this.add( this.barCurErr, gbcLayout );
+
                 // The progress parameters labels row
-                gbcLayout.gridy = 1;
+                gbcLayout.gridy++;
                 gbcLayout.gridwidth  = 1;
                 gbcLayout.gridheight = 1;
                 gbcLayout.fill    = GridBagConstraints.NONE;
@@ -193,7 +253,7 @@ import xal.extension.twissobserver.TransferMatrixGenerator;
                 
                 
                 // The progress parameters themselves
-                gbcLayout.gridy = 2;
+                gbcLayout.gridy++;
                 gbcLayout.gridwidth  = 1;
                 gbcLayout.gridheight = 1;
                 gbcLayout.fill    = GridBagConstraints.BOTH;
@@ -216,6 +276,10 @@ import xal.extension.twissobserver.TransferMatrixGenerator;
          * Local Attributes
          */
         
+        //
+        // GUI Components
+        //
+        
         /** The beam current */
         private NumberTextField             txtBmCurr;
         
@@ -237,19 +301,33 @@ import xal.extension.twissobserver.TransferMatrixGenerator;
         private ProgressUpdatePanel         pnlSolnProg;
         
         
+        /** User action for reconstructing the Courant-Snyder parameters */
+        private JButton                     butCmp;
+     
+
+        //
+        // Event Response
+        //
+        
+        /** List of objects monitoring requests for computation (the button event) */
+        private final List<ActionListener>  lstCmpLsrs;
+        
+        
         /*
          * Initialization
          */
         
         /**
-         * Constructor for CompCsFixedPtPanel.
+         * Constructor for CsFixedPtControlPanel.
          *
          *
          * @author Christopher K. Allen
          * @since  Sep 30, 2014
          */
-        public CompCsFixedPtPanel() {
+        public CsFixedPtControlPanel() {
             super();
+            
+            this.lstCmpLsrs = new LinkedList<>();
             
             this.guiBuildComponents();
             this.guiBuildActions();
@@ -261,6 +339,49 @@ import xal.extension.twissobserver.TransferMatrixGenerator;
         /*
          * Operations
          */
+        
+        /**
+         * Add the given listener to the list of listeners monitoring the
+         * "Compute" button event.
+         * 
+         * @param lsnCmpBut     new compute button event listener
+         *
+         * @author Christopher K. Allen
+         * @since  Oct 3, 2014
+         */
+        public void addComputeButtonListener(ActionListener lsnCmpBut) {
+            this.lstCmpLsrs.add(lsnCmpBut);
+        }
+        
+        /**
+         * Returns the value of bunch arrival frequency as displayed in the GUI.
+         * 
+         * @return      beam bunch arrival frequency (in Hz)
+         *
+         * @author Christopher K. Allen
+         * @since  Oct 3, 2014
+         */
+        public double   getBunchFreq() {
+            
+            Double      dblBnchFreq = this.txtBnchFreq.getDisplayValue().doubleValue();
+            
+            return dblBnchFreq;
+        }
+        
+        /**
+         * Returns the value of beam curren display in the GUI.
+         * 
+         * @return      beam current in Amperes
+         *
+         * @author Christopher K. Allen
+         * @since  Oct 3, 2014
+         */
+        public double   getBeamCurrent() {
+            
+            Double      dblBmCurr = this.txtBmCurr.getDisplayValue().doubleValue();
+            
+            return dblBmCurr;
+        }
         
         /**
          * This method creates and returns a new <code>CsFixedPtEstimator</code> 
@@ -284,6 +405,18 @@ import xal.extension.twissobserver.TransferMatrixGenerator;
             
             return cseFxdPt;
         }
+        
+//        public CovarianceMatrix computeCourantSnyder(TransferMatrixGenerator tmgSeq) {
+//            
+//            Integer     intMaxIter = this.txtMaxIter.getDisplayValue().intValue();
+//            Double      dblMaxErr  = this.txtMaxErr.getDisplayValue().doubleValue();
+//            Double      dblFpAlpha = this.txtFpAlpha.getDisplayValue().doubleValue();
+//            
+//            CsFixedPtEstimator  cseFxdPt = new CsFixedPtEstimator(intMaxIter, dblMaxErr, dblFpAlpha, tmgSeq);
+//            
+//            Double      dblBnchFreq = this.txtBnchFreq.getDisplayValue().doubleValue();
+//            Double      dblBmCurr = this.txtBmCurr.getDisplayValue().doubleValue();
+//        }
         
         
         /*
@@ -314,6 +447,11 @@ import xal.extension.twissobserver.TransferMatrixGenerator;
             this.txtFpAlpha = new NumberTextField(FMT.DEC_3, dblAlpha);
             
             this.pnlSolnProg = new ProgressUpdatePanel();
+            
+//          String      strLocIcn = AppProperties.ICON.TWS_COMPUTE.getValue().asString();
+//          ImageIcon   icnRecon = PtaResourceManager.getImageIcon(strLocIcn);
+//          this.butCmp = new JButton("Compute", icnRecon);
+            this.butCmp = new JButton("Compute");
         }
         
         /**
@@ -329,7 +467,7 @@ import xal.extension.twissobserver.TransferMatrixGenerator;
 
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    Number  nmbBnchFreq = CompCsFixedPtPanel.this.txtBnchFreq.getDisplayValue();
+                    Number  nmbBnchFreq = CsFixedPtControlPanel.this.txtBnchFreq.getDisplayValue();
                     String  strBnchFreq = nmbBnchFreq.toString();
                     AppProperties.SIM.BNCHFREQ.getValue().set(strBnchFreq);
                 }
@@ -341,7 +479,7 @@ import xal.extension.twissobserver.TransferMatrixGenerator;
 
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    Number  nmbBmCurr = CompCsFixedPtPanel.this.txtBmCurr.getDisplayValue();
+                    Number  nmbBmCurr = CsFixedPtControlPanel.this.txtBmCurr.getDisplayValue();
                     String  strBmCurr = nmbBmCurr.toString();
                     AppProperties.SIM.BMCURR.getValue().set(strBmCurr);
                 }
@@ -353,7 +491,7 @@ import xal.extension.twissobserver.TransferMatrixGenerator;
 
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    Number nmbMaxIter = CompCsFixedPtPanel.this.txtMaxIter.getDisplayValue();
+                    Number nmbMaxIter = CsFixedPtControlPanel.this.txtMaxIter.getDisplayValue();
                     String strMaxIter = nmbMaxIter.toString();
                     AppProperties.NUMERIC.CSFP_MAXITER.getValue().set(strMaxIter);
                 }
@@ -365,7 +503,7 @@ import xal.extension.twissobserver.TransferMatrixGenerator;
 
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    Number nmbMaxErr = CompCsFixedPtPanel.this.txtMaxErr.getDisplayValue();
+                    Number nmbMaxErr = CsFixedPtControlPanel.this.txtMaxErr.getDisplayValue();
                     String strMaxErr = nmbMaxErr.toString();
                     AppProperties.NUMERIC.CSFP_MAXERROR.getValue().set(strMaxErr);
                 }
@@ -377,12 +515,32 @@ import xal.extension.twissobserver.TransferMatrixGenerator;
 
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    Number nmbFpAlpha = CompCsFixedPtPanel.this.txtFpAlpha.getDisplayValue();
+                    Number nmbFpAlpha = CsFixedPtControlPanel.this.txtFpAlpha.getDisplayValue();
                     String strFpAlpha = nmbFpAlpha.toString();
                     AppProperties.NUMERIC.CSFP_MAXERROR.getValue().set(strFpAlpha);
+                    
+                    CsFixedPtControlPanel.this.pnlSolnProg.initializeDisplay();
                 }
             };
             this.txtFpAlpha.addActionListener(actFpAlpha);
+            
+            // The compute CS parameters button
+            ActionListener  actCompute = new ActionListener() {
+
+                /** Fire an action event to all the listeners of the compute button event */
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    for (ActionListener lsn : CsFixedPtControlPanel.this.lstCmpLsrs)
+                        lsn.actionPerformed(
+                                new ActionEvent(
+                                        CsFixedPtControlPanel.this, 
+                                        ActionEvent.ACTION_PERFORMED, 
+                                        "Compute"
+                                        )
+                                );
+                }
+            };
+            this.butCmp.addActionListener(actCompute);
         }
         
         /**
@@ -399,7 +557,7 @@ import xal.extension.twissobserver.TransferMatrixGenerator;
             gbcLayout.insets = new Insets(0,0,5,5);
             
             // The Title
-            String      strUrlIcon = AppProperties.ICON.CMP_TWISS.getValue().asString();
+            String      strUrlIcon = AppProperties.ICON.CMP_TORUS.getValue().asString();
             ImageIcon   imgTitle = PtaResourceManager.getImageIcon(strUrlIcon);
             JLabel      lblTitle = new JLabel("Courant-Snyder Fixed-Point Reconstruction", imgTitle, SwingConstants.CENTER);
             
@@ -416,7 +574,7 @@ import xal.extension.twissobserver.TransferMatrixGenerator;
             
             // The bunch arrival frequency
             gbcLayout.gridx = 0;
-            gbcLayout.gridy = 1;
+            gbcLayout.gridy++;
             gbcLayout.gridwidth  = 1;
             gbcLayout.gridheight = 1;
             gbcLayout.fill    = GridBagConstraints.NONE;
@@ -426,7 +584,6 @@ import xal.extension.twissobserver.TransferMatrixGenerator;
             this.add( new JLabel("Bunch freq. (Hz)"), gbcLayout );
 
             gbcLayout.gridx = 1;
-            gbcLayout.gridy = 1;
             gbcLayout.gridwidth  = 1;
             gbcLayout.gridheight = 1;
             gbcLayout.fill    = GridBagConstraints.HORIZONTAL;
@@ -437,17 +594,16 @@ import xal.extension.twissobserver.TransferMatrixGenerator;
             
             // The beam current
             gbcLayout.gridx = 0;
-            gbcLayout.gridy = 2;
+            gbcLayout.gridy++;
             gbcLayout.gridwidth  = 1;
             gbcLayout.gridheight = 1;
             gbcLayout.fill    = GridBagConstraints.NONE;
             gbcLayout.weightx = 0.0;
             gbcLayout.weighty = 0.0;
             gbcLayout.anchor = GridBagConstraints.LINE_END;
-            this.add( new JLabel("Beam current (Amps)"), gbcLayout );
+            this.add( new JLabel("Beam current (A)"), gbcLayout );
 
             gbcLayout.gridx = 1;
-            gbcLayout.gridy = 2;
             gbcLayout.gridwidth  = 1;
             gbcLayout.gridheight = 1;
             gbcLayout.fill    = GridBagConstraints.HORIZONTAL;
@@ -458,7 +614,7 @@ import xal.extension.twissobserver.TransferMatrixGenerator;
             
             // A buffer
             gbcLayout.gridx = 0;
-            gbcLayout.gridy = 3;
+            gbcLayout.gridy++;
             gbcLayout.gridwidth  = 2;
             gbcLayout.gridheight = 1;
             gbcLayout.fill    = GridBagConstraints.HORIZONTAL;
@@ -469,17 +625,16 @@ import xal.extension.twissobserver.TransferMatrixGenerator;
             
             // The maximum iterations 
             gbcLayout.gridx = 0;
-            gbcLayout.gridy = 4;
+            gbcLayout.gridy++;
             gbcLayout.gridwidth  = 1;
             gbcLayout.gridheight = 1;
             gbcLayout.fill    = GridBagConstraints.NONE;
             gbcLayout.weightx = 0.0;
             gbcLayout.weighty = 0.0;
             gbcLayout.anchor = GridBagConstraints.LINE_END;
-            this.add( new JLabel("Maximum Iterations "), gbcLayout );
+            this.add( new JLabel("Max. Iterations "), gbcLayout );
             
             gbcLayout.gridx = 1;
-            gbcLayout.gridy = 4;
             gbcLayout.gridwidth  = 1;
             gbcLayout.gridheight = 1;
             gbcLayout.fill    = GridBagConstraints.HORIZONTAL;
@@ -490,7 +645,7 @@ import xal.extension.twissobserver.TransferMatrixGenerator;
             
             // The maximum error tolerance
             gbcLayout.gridx = 0;
-            gbcLayout.gridy = 5;
+            gbcLayout.gridy++;
             gbcLayout.gridwidth  = 1;
             gbcLayout.gridheight = 1;
             gbcLayout.fill    = GridBagConstraints.NONE;
@@ -500,7 +655,6 @@ import xal.extension.twissobserver.TransferMatrixGenerator;
             this.add( new JLabel("Maximum Error"), gbcLayout );
             
             gbcLayout.gridx = 1;
-            gbcLayout.gridy = 5;
             gbcLayout.gridwidth  = 1;
             gbcLayout.gridheight = 1;
             gbcLayout.fill    = GridBagConstraints.HORIZONTAL;
@@ -511,17 +665,16 @@ import xal.extension.twissobserver.TransferMatrixGenerator;
             
             // The alpha tuning parameter
             gbcLayout.gridx = 0;
-            gbcLayout.gridy = 6;
+            gbcLayout.gridy++;
             gbcLayout.gridwidth  = 1;
             gbcLayout.gridheight = 1;
             gbcLayout.fill    = GridBagConstraints.NONE;
             gbcLayout.weightx = 0.0;
             gbcLayout.weighty = 0.0;
             gbcLayout.anchor = GridBagConstraints.LINE_END;
-            this.add( new JLabel("Tuning Parameter"), gbcLayout );
+            this.add( new JLabel("Initial Alpha"), gbcLayout );
 
             gbcLayout.gridx = 1;
-            gbcLayout.gridy = 6;
             gbcLayout.gridwidth  = 1;
             gbcLayout.gridheight = 1;
             gbcLayout.fill    = GridBagConstraints.HORIZONTAL;
@@ -532,7 +685,7 @@ import xal.extension.twissobserver.TransferMatrixGenerator;
 
             // A buffer
             gbcLayout.gridx = 0;
-            gbcLayout.gridy = 7;
+            gbcLayout.gridy++;
             gbcLayout.gridwidth  = 2;
             gbcLayout.gridheight = 1;
             gbcLayout.fill    = GridBagConstraints.HORIZONTAL;
@@ -543,14 +696,24 @@ import xal.extension.twissobserver.TransferMatrixGenerator;
             
             // The progress update panel
             gbcLayout.gridx = 0;
-            gbcLayout.gridy = 8;
-            gbcLayout.gridwidth  = 2;
-            gbcLayout.gridheight = 2;
+            gbcLayout.gridy++;
+            gbcLayout.gridwidth  = 1;
+            gbcLayout.gridheight = 1;
             gbcLayout.fill    = GridBagConstraints.BOTH;
             gbcLayout.weightx = 0.0;
             gbcLayout.weighty = 0.0;
             gbcLayout.anchor = GridBagConstraints.CENTER;
             this.add( this.pnlSolnProg, gbcLayout );
+            
+            // Compute button
+            gbcLayout.gridx = 1;
+            gbcLayout.gridwidth  = 1;
+            gbcLayout.gridheight = 1;
+            gbcLayout.fill    = GridBagConstraints.HORIZONTAL;
+            gbcLayout.weightx = 0.1;
+            gbcLayout.weighty = 0.0;
+            gbcLayout.anchor = GridBagConstraints.LINE_END;
+            this.add( this.butCmp, gbcLayout );
             
         }
         
