@@ -15,95 +15,95 @@ import java.util.*;
 public class BPMTableModel extends AbstractTableModel{
 	/** serial version required by Serializable */
 	private static final long serialVersionUID = 1L;
-	
-    /**  the PV handle names */
-    private String[] columnNames;
 
-    /** number of devices in the seqence + header + trailer for plot buttons */
-    private int nRows;
+	/**  the PV handle names */
+	private String[] columnNames;
 
-    /** number of table columns */
-    private int nColumns;
+	/** number of devices in the seqence + header + trailer for plot buttons */
+	private int nRows;
 
-    /** The data holders */
-    private Object[][] dataMatrix;
+	/** number of table columns */
+	private int nColumns;
 
-    /** Container for the JButtons */
-    private ArrayList jButtons;
+	/** The data holders */
+	private Object[][] dataMatrix;
 
-    /** Container for row labels */
-    private ArrayList rowNames;
+	/** Container for the JButtons */
+	private ArrayList<JButton> jButtons;
 
-    /** constructor */
-    public BPMTableModel(String[] colNames, int numRows){
-	columnNames = colNames;
-	nRows = numRows;
-	nColumns = colNames.length;
-	dataMatrix = new Object[numRows][nColumns];
-	rowNames = new ArrayList(nRows);
-	jButtons = new ArrayList(nRows);
-    }
-    
-    //** method to store the JButtons */
-    
-    public void addJButton(int rowNumber, JButton button) { 
-	jButtons.add(rowNumber, button);
-    }
-	
-    /** method to add a row name */
-    public void addRowName(String name, int row) {
-	rowNames.add(row, name);
-    }
+	/** Container for row labels */
+	private ArrayList<String> rowNames;
 
-    // The table model interface methods:
-
-    public boolean isCellEditable(int row, int col) {
-	if(col < 1){
-	    return false;
+	/** constructor */
+	public BPMTableModel(String[] colNames, int numRows){
+		columnNames = colNames;
+		nRows = numRows;
+		nColumns = colNames.length;
+		dataMatrix = new Object[numRows][nColumns];
+		rowNames = new ArrayList<>(nRows);
+		jButtons = new ArrayList<>(nRows);
 	}
-	else{
-	    return true;
+
+	//** method to store the JButtons */
+
+	public void addJButton(int rowNumber, JButton button) {
+		jButtons.add(rowNumber, button);
 	}
-    }
 
-    public String getColumnName(int col){ 
-	return columnNames[col]; 
-    }
+	/** method to add a row name */
+	public void addRowName(String name, int row) {
+		rowNames.add(row, name);
+	}
 
-    public int getRowCount(){ 
-    	return nRows; 
-    }
-    
-    public int getColumnCount(){ 
-    	return nColumns; 
-    }
-    
+	// The table model interface methods:
+
+	public boolean isCellEditable(int row, int col) {
+		if(col < 1){
+			return false;
+		}
+		else{
+			return true;
+		}
+	}
+
+	public String getColumnName(int col){
+		return columnNames[col];
+	}
+
+	public int getRowCount(){
+		return nRows;
+	}
+
+	public int getColumnCount(){
+		return nColumns;
+	}
 
 
-    public Object getValueAt(int row, int col) 
-    { 
-	return (dataMatrix[row][col]); 
-         
-    }
-    
-    public void setValueAt(Object value, int row, int col)
-    {
-	dataMatrix[row][col] = value;
-    }
-    
-    public void setTableData(int rows, Object data[][]){
-	nRows = rows;
-	dataMatrix=data;
-	fireTableDataChanged();
-    }	
-    
-    public void updateCell(int row, int col){
-	fireTableCellUpdated(row, col);
-    }
-    
-    public Class getColumnClass(int c) {
-	return getValueAt(0, c).getClass();
-    }
+
+	public Object getValueAt(int row, int col)
+	{
+		return (dataMatrix[row][col]);
+
+	}
+
+	public void setValueAt(Object value, int row, int col)
+	{
+		dataMatrix[row][col] = value;
+	}
+
+	public void setTableData(int rows, Object data[][]){
+		nRows = rows;
+		dataMatrix=data;
+		fireTableDataChanged();
+	}
+
+	public void updateCell(int row, int col){
+		fireTableCellUpdated(row, col);
+	}
+
+	public Class<?> getColumnClass(int c) {
+		return getValueAt(0, c).getClass();
+	}
 
 }
 
