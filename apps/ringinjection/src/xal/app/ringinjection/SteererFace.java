@@ -49,7 +49,9 @@ import xal.tools.data.*;
 import java.text.NumberFormat;
 
 public class SteererFace extends JPanel implements InjSpotListener {
-    
+	/** serial version required by Serializable */
+	private static final long serialVersionUID = 1L;
+
     public JPanel mainPanel;
     public JPanel resultsPanel;
     public JPanel requestPanel;
@@ -137,7 +139,7 @@ public class SteererFace extends JPanel implements InjSpotListener {
      
     DecimalField maxtime = new DecimalField();
     DecimalField initsptm = new DecimalField();
-    HashMap lastfields = new HashMap();
+    HashMap<String,Double> lastfields = new HashMap<>();
     
     double[] inj_params = new double[4];
 	    

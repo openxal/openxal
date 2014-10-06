@@ -15,108 +15,108 @@ import java.util.*;
 public class ResultsTableModel extends AbstractTableModel{
 	/** serial version required by Serializable */
 	private static final long serialVersionUID = 1L;
-	
-    /**  the PV handle names */
-    private String[] columnNames;
 
-    /** number of devices in the seqence + header + trailer for plot buttons */
-    private int nRows;
+	/**  the PV handle names */
+	private String[] columnNames;
 
-    /** number of table columns */
-    private int nColumns;
+	/** number of devices in the seqence + header + trailer for plot buttons */
+	private int nRows;
 
-    /** The data holders */
-    private Object[][] dataMatrix;
+	/** number of table columns */
+	private int nColumns;
 
-    /** Container for the JButtons */
-    private ArrayList jButtons;
+	/** The data holders */
+	private Object[][] dataMatrix;
 
-    /** Container for row labels */
-    private ArrayList rowNames;
-    
-    /** Container for BPM agents **/
-    private ArrayList agents;
+	/** Container for the JButtons */
+	private ArrayList<JButton> jButtons;
 
-    /** constructor */
-    public ResultsTableModel(String[] colNames, int numRows){
-	columnNames = colNames;
-	nRows = numRows;
-	nColumns = colNames.length;
-	dataMatrix = new Object[numRows][nColumns];
-	rowNames = new ArrayList(nRows);
-	jButtons = new ArrayList(nRows);
-	agents = new ArrayList(nRows);
-    }
-    
-    //** method to store the JButtons */
-    
-    public void addJButton(int rowNumber, JButton button) { 
-	jButtons.add(rowNumber, button);
-    }
-	
-    /** method to add a row name */
-    public void addRowName(String name, int row) {
-	rowNames.add(row, name);
-    }
+	/** Container for row labels */
+	private ArrayList<String> rowNames;
 
-    // The table model interface methods:
+	/** Container for BPM agents **/
+	private ArrayList<BpmAgent> agents;
 
-    public boolean isCellEditable(int row, int col) {
-	if(col < 5){
-	    return false;
+	/** constructor */
+	public ResultsTableModel(String[] colNames, int numRows){
+		columnNames = colNames;
+		nRows = numRows;
+		nColumns = colNames.length;
+		dataMatrix = new Object[numRows][nColumns];
+		rowNames = new ArrayList<>(nRows);
+		jButtons = new ArrayList<>(nRows);
+		agents = new ArrayList<>(nRows);
 	}
-	else{
-	    return true;
+
+	//** method to store the JButtons */
+
+	public void addJButton(int rowNumber, JButton button) {
+		jButtons.add(rowNumber, button);
 	}
-    }
 
-    public String getColumnName(int col){ 
-	return columnNames[col]; 
-    }
-
-    public int getRowCount(){ 
-    	return nRows; 
-    }
-    
-    public int getColumnCount(){ 
-    	return nColumns; 
-    }
-    
-
-
-    public Object getValueAt(int row, int col) 
-    { 
-	//BPMAgent bpmagent = new BPMAgent();
-	//bpmagent = (BpmAgent)agents.get(row);
-	if(col == nColumns-1) {
-	    return ((BpmAgent) agents.get(row));
-	    //return bpmagent;
+	/** method to add a row name */
+	public void addRowName(String name, int row) {
+		rowNames.add(row, name);
 	}
-	else {
-	return (dataMatrix[row][col]); 
-	}	
-	     
-    }
-    
-    public void setValueAt(Object value, int row, int col)
-    {
-	dataMatrix[row][col] = value;
-    }
-    
-    public void setTableData(int rows, Object data[][], ArrayList agentlist){
-	nRows = rows;
-	dataMatrix=data;
-	agents = agentlist;
-	fireTableDataChanged();
-    }	
-    
-    public void updateCell(int row, int col){
-	fireTableCellUpdated(row, col);
-    }
-    
-    public Class getColumnClass(int c) {
-	return getValueAt(0, c).getClass();
-    }
+
+	// The table model interface methods:
+
+	public boolean isCellEditable(int row, int col) {
+		if(col < 5){
+			return false;
+		}
+		else{
+			return true;
+		}
+	}
+
+	public String getColumnName(int col){
+		return columnNames[col];
+	}
+
+	public int getRowCount(){
+		return nRows;
+	}
+
+	public int getColumnCount(){
+		return nColumns;
+	}
+
+
+
+	public Object getValueAt(int row, int col)
+	{
+		//BPMAgent bpmagent = new BPMAgent();
+		//bpmagent = (BpmAgent)agents.get(row);
+		if(col == nColumns-1) {
+			return ((BpmAgent) agents.get(row));
+			//return bpmagent;
+		}
+		else {
+			return (dataMatrix[row][col]);
+		}
+
+	}
+
+	public void setValueAt(Object value, int row, int col)
+	{
+		dataMatrix[row][col] = value;
+	}
+
+	public void setTableData(int rows, Object data[][], ArrayList<BpmAgent> agentlist){
+		nRows = rows;
+		dataMatrix=data;
+		agents = agentlist;
+		fireTableDataChanged();
+	}
+
+	public void updateCell(int row, int col){
+		fireTableCellUpdated(row, col);
+	}
+
+	public Class<?> getColumnClass(int c) {
+		return getValueAt(0, c).getClass();
+	}
 
 }
 

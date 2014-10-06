@@ -129,12 +129,12 @@ public class BpmAgent{
     
     
     /** Return a list of BPM nodes associated with the list of bpmAgents */
-    static public List getNodes(List bpmAgents) {
-        int count = bpmAgents.size();
-        List bpmNodes = new ArrayList(count);
+    static public List<BPM> getNodes( final List<BpmAgent> bpmAgents ) {
+        final int count = bpmAgents.size();
+        final List<BPM> bpmNodes = new ArrayList<>(count);
         
         for ( int index = 0 ; index < count ; index++ ) {
-            BpmAgent bpmAgent = (BpmAgent)bpmAgents.get(index);
+            final BpmAgent bpmAgent = bpmAgents.get(index);
             bpmNodes.add( bpmAgent.getNode() );
         }
         return bpmNodes;
