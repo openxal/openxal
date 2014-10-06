@@ -59,7 +59,6 @@ public class OneTurnFit extends JPanel{
 	protected Channel channel;
 	protected BpmAgent localagent;
 
-	public ArrayList fitparams;
 	private Accelerator accl = new Accelerator();
 	private FunctionGraphsJPanel hdatapanel;
 	private FunctionGraphsJPanel vdatapanel;
@@ -92,18 +91,15 @@ public class OneTurnFit extends JPanel{
 
 
 
-	public double[] xbpmFit(ArrayList bpms) {
+	public double[] xbpmFit(ArrayList<BpmAgent> bpms) {
 
 		int size = bpms.size();
 		int i = 0;
 		double[] snewdata = new double[size];
 		double[] xnewdata = new double[size];
 
-		Iterator itr = bpms.iterator();
-
-		while(itr.hasNext()){
+		for ( final BpmAgent bpmagent : bpms ) {
 			//Do the fit for all active BPM Agents
-			BpmAgent bpmagent = (BpmAgent)itr.next();
 			snewdata[i] = bpmagent.getPosition();
 			xnewdata[i] = bpmagent.getXAvgTBTArray()[0] - bpmagent.getXAvg();
 			//xnewdata[i] = bpmagent.getXAvgTBTArray()[0];
@@ -167,18 +163,15 @@ public class OneTurnFit extends JPanel{
 
 
 
-	public double[] ybpmFit(ArrayList bpms) {
+	public double[] ybpmFit(ArrayList<BpmAgent> bpms) {
 
 		int size = bpms.size();
 		int i = 0;
 		double[] snewdata = new double[size];
 		double[] ynewdata = new double[size];
 
-		Iterator itr = bpms.iterator();
-
-		while(itr.hasNext()){
+		for ( final BpmAgent bpmagent : bpms ) {
 			//Do the fit for all active BPM Agents
-			BpmAgent bpmagent = (BpmAgent)itr.next();
 			snewdata[i] = bpmagent.getPosition();
 			ynewdata[i] = bpmagent.getYAvgTBTArray()[0] - bpmagent.getYAvg();
 			//ynewdata[i] = bpmagent.getYAvgTBTArray()[0];
@@ -277,7 +270,7 @@ public class OneTurnFit extends JPanel{
 			scenario.setStartElementId("Ring_Inj:Foil");
 			scenario.resync();
 			scenario.run();
-			traj = (Trajectory<TransferMapState>)scenario.getTrajectory();
+			traj = scenario.<TransferMapState>getTrajectory();
 		}
 		catch(Exception exception){
 			exception.printStackTrace();
@@ -285,7 +278,7 @@ public class OneTurnFit extends JPanel{
 	}
 
 
-	void refreshHPlot(ArrayList bpms){
+	void refreshHPlot(ArrayList<BpmAgent> bpms){
 		hdatapanel.removeAllGraphData();
 
 		BasicGraphData rawgraphdata = new BasicGraphData();
@@ -296,12 +289,10 @@ public class OneTurnFit extends JPanel{
 		double[] sdata = new double[size];
 		double[] data = new double[size];
 
-		Iterator itr = bpms.iterator();
 		double smax = 0.0;
 
-		while(itr.hasNext()){
+		for ( final BpmAgent bpmagent : bpms ) {
 			//Do the fit for all active BPM Agents
-			BpmAgent bpmagent = (BpmAgent)itr.next();
 			sdata[i] = bpmagent.getPosition();
 			if(sdata[i] > smax) smax = sdata[i];
 			data[i] = bpmagent.getXAvgTBTArray()[0] - bpmagent.getXAvg();
@@ -329,24 +320,24 @@ public class OneTurnFit extends JPanel{
 		double x = 0.0;
 		double s = 0.0;
 
-		Iterator iterState = ((TransferMapTrajectory)traj).stateIterator();
-		ArrayList posList = new ArrayList();
-		ArrayList BetaList = new ArrayList();
-		ArrayList PhaseList = new ArrayList();
-		ArrayList OrbitList = new ArrayList();
+		Iterator<TransferMapState> iterState = traj.stateIterator();
+		ArrayList<Double> posList = new ArrayList<>();
+		ArrayList<Double> BetaList = new ArrayList<>();
+		ArrayList<Double> PhaseList = new ArrayList<>();
+		ArrayList<Double> OrbitList = new ArrayList<>();
 
 		while(iterState.hasNext()){
-			state = (TransferMapState)iterState.next();
+			state = iterState.next();
 			s = state.getPosition();
 			twiss = state.getTwiss();
 			phase = state.getBetatronPhase();
 			fixedorbit = state.getFixedOrbit();
 
-			posList.add(new Double(s));
-			BetaList.add(new Double(twiss[0].getBeta()));
+			posList.add( s );
+			BetaList.add( twiss[0].getBeta() );
 			//System.out.println("Twiss here is " + twiss[0] + " " + state.getElementId());
-			PhaseList.add(new Double(phase.getx()));
-			OrbitList.add(new Double(fixedorbit.getx()));
+			PhaseList.add( phase.getx() );
+			OrbitList.add( fixedorbit.getx() );
 		}
 
 		double[] pos = new double[posList.size()];
@@ -378,7 +369,7 @@ public class OneTurnFit extends JPanel{
 	}
 
 
-	void refreshVPlot(ArrayList bpms){
+	void refreshVPlot(ArrayList<BpmAgent> bpms){
 		vdatapanel.removeAllGraphData();
 
 		BasicGraphData rawgraphdata = new BasicGraphData();
@@ -389,12 +380,10 @@ public class OneTurnFit extends JPanel{
 		double[] sdata = new double[size];
 		double[] data = new double[size];
 
-		Iterator itr = bpms.iterator();
 		double smax = 0.0;
 
-		while(itr.hasNext()){
+		for ( final BpmAgent bpmagent : bpms ) {
 			//Do the fit for all active BPM Agents
-			BpmAgent bpmagent = (BpmAgent)itr.next();
 			sdata[i] = bpmagent.getPosition();
 			if(sdata[i] > smax) smax = sdata[i];
 			data[i] = bpmagent.getYAvgTBTArray()[0] - bpmagent.getYAvg();
@@ -423,12 +412,12 @@ public class OneTurnFit extends JPanel{
 		double x = 0.0;
 		double s = 0.0;
 
-		Iterator iterState = ((TransferMapTrajectory)traj).stateIterator();
-		ArrayList posList = new ArrayList();
-		ArrayList BetaList = new ArrayList();
-		ArrayList PhaseList = new ArrayList();
-		ArrayList OrbitList = new ArrayList();
-		ArrayList CoordList = new ArrayList();
+		Iterator<TransferMapState> iterState = traj.stateIterator();
+		ArrayList<Double> posList = new ArrayList<>();
+		ArrayList<Double> BetaList = new ArrayList<>();
+		ArrayList<Double> PhaseList = new ArrayList<>();
+		ArrayList<Double> OrbitList = new ArrayList<>();
+		ArrayList<Double> CoordList = new ArrayList<>();
 
 		while(iterState.hasNext()){
 			state = (TransferMapState)iterState.next();
@@ -438,11 +427,11 @@ public class OneTurnFit extends JPanel{
 			coordinates = state.phaseCoordinates();
 			fixedorbit = state.getFixedOrbit();
 
-			posList.add(new Double(s));
-			BetaList.add(new Double(twiss[1].getBeta()));
-			PhaseList.add(new Double(phase.gety()));
-			OrbitList.add(new Double(fixedorbit.gety()));
-			CoordList.add(new Double(coordinates.getx()));
+			posList.add( s );
+			BetaList.add( twiss[1].getBeta() );
+			PhaseList.add( phase.gety() );
+			OrbitList.add( fixedorbit.gety() );
+			CoordList.add( coordinates.getx() );
 		}
 
 		double[] pos = new double[posList.size()];
