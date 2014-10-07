@@ -42,6 +42,7 @@ import xal.sim.scenario.*;
 import xal.tools.math.r3.R3;
 import xal.extension.widgets.plot.*;
 import xal.model.alg.*;
+import xal.extension.fit.DampedSinusoidFit;
 
 /**
  * Performs the fit for the turn-by-turn signal on a BPM.  Records the 
@@ -54,7 +55,6 @@ public class CalculateFit{
     protected Channel channel;
     protected BpmAgent localagent;
     
-    public ArrayList fitparams;
     private Accelerator accl = new Accelerator();
     private AcceleratorSeqCombo seq;
     private TransferMapProbe probe;
@@ -110,50 +110,27 @@ public class CalculateFit{
 		}
 		
 		
-		Cosine xcs = new Cosine();
-		
-		xcs.clear();
-		xcs.use_slope_positive = true;
-		xcs.setData(iarr, xarr);
-		xcs.fitParameter(Cosine.TUNE, true);
-		xcs.fitParameter(Cosine.PHASE, true);
-		xcs.fitParameter(Cosine.SLOPE, true);
-		xcs.fitParameter(Cosine.AMP, true);
-		xcs.fitParameter(Cosine.OFFSET, false);
-		
-		int iterations = 1;
-		System.out.println("Here about to call guess and fit.");
-		boolean result = xcs.guessAndFit(iterations);
-		
-		System.out.println("Guessed Slope = " + xcs.getParameter(Cosine.SLOPE) + " +- " + xcs.getParameterError(Cosine.SLOPE));	
-		
-		xcs.setParameter(Cosine.TUNE, xcs.getParameter(Cosine.TUNE));
-		xcs.setParameter(Cosine.PHASE, xcs.getParameter(Cosine.PHASE));
-		xcs.setParameter(Cosine.SLOPE, xcs.getParameter(Cosine.SLOPE));
-		xcs.setParameter(Cosine.AMP, xcs.getParameter(Cosine.AMP));       
-		xcs.setParameter(Cosine.OFFSET, xcs.getParameter(Cosine.OFFSET));
-		
-		iterations=35;
-		result = xcs.fit();
-		
-		
+		final DampedSinusoidFit sineFit = new DampedSinusoidFit( xarr, points );
+		sineFit.solveWithNoiseMaxEvaluations( 0.0, 1000 );	// solve using the default noise estimation
+
+		xtune = sineFit.getFrequency();
+		xphase = sineFit.getCosineLikePhase();
+		xslope = - sineFit.getGrowthRate();
+		xamp = sineFit.getCosineLikeAmplitude();
+		xoffset = sineFit.getOffset();
+
+		final double xtune_err = Math.sqrt( sineFit.getInitialFrequencyVariance() );
+		final double xslope_err = Math.sqrt( sineFit.getInitialGrowthRateVariance() );
+		final double xoffset_err = Math.sqrt( sineFit.getInitialOffsetVariance() );
+
 		System.out.println("\nHorizontal fit results for BPM " + localagent.name());
-		System.out.println("Tune = " + xcs.getParameter(Cosine.TUNE) + " +- " + xcs.getParameterError(Cosine.TUNE));		
-		System.out.println("Phase = " + xcs.getParameter(Cosine.PHASE) + " +- " + xcs.getParameterError(Cosine.PHASE));
-		System.out.println("Slope = " + xcs.getParameter(Cosine.SLOPE) + " +- " + xcs.getParameterError(Cosine.SLOPE));		
-		System.out.println("Amp = " + xcs.getParameter(Cosine.AMP) + " +- " + xcs.getParameterError(Cosine.AMP));
-		System.out.println("Offset = " + xcs.getParameter(Cosine.OFFSET) + " +- " + xcs.getParameterError(Cosine.OFFSET) + "\n");
+		System.out.println("Tune = " + xtune + " +- " + xtune_err );
+		System.out.println("Phase = " + xphase + " +- ?" );
+		System.out.println("Slope = " + xslope + " +- " + xslope_err );
+		System.out.println("Amp = " + xamp + " +- ?" );
+		System.out.println("Offset = " + xoffset + " +- " + xoffset_err + "\n");
 		
-		
-		xtune = xcs.getParameter(Cosine.TUNE);
-		xphase = xcs.getParameter(Cosine.PHASE);
-		xslope = xcs.getParameter(Cosine.SLOPE);
-		xamp = xcs.getParameter(Cosine.AMP);
-		xoffset = xcs.getParameter(Cosine.OFFSET);
-		
-		xamp_err = xcs.getParameterError(Cosine.AMP);
-		xphase_err = xcs.getParameterError(Cosine.PHASE);
-		
+
 		//Store the fit data and results in the bpm agent class.
 		
 		double[] xfitparams = new double[5];
@@ -188,47 +165,26 @@ public class CalculateFit{
 			//System.out.println(iarr[i] + " " + yarr[i]);
 		}
 		
-		Cosine ycs = new Cosine();
-		
-		ycs.clear();
-		
-		ycs.setData(iarr, yarr);
-		ycs.fitParameter(Cosine.TUNE, true);
-		ycs.fitParameter(Cosine.PHASE, true);
-		ycs.fitParameter(Cosine.SLOPE, true);
-		ycs.fitParameter(Cosine.AMP, true);
-		ycs.fitParameter(Cosine.OFFSET, true);
-		
-		int iterations = 1;
-		boolean result = ycs.guessAndFit(iterations);
-		
-		ycs.setParameter(Cosine.TUNE, ycs.getParameter(Cosine.TUNE));
-		ycs.setParameter(Cosine.PHASE, ycs.getParameter(Cosine.PHASE));
-		ycs.setParameter(Cosine.SLOPE, ycs.getParameter(Cosine.SLOPE));
-		ycs.setParameter(Cosine.AMP, ycs.getParameter(Cosine.AMP)); 
-		ycs.setParameter(Cosine.OFFSET, ycs.getParameter(Cosine.OFFSET)); 
-		
-		iterations=35;
-		result = ycs.fit();
-		
-		
+		final DampedSinusoidFit sineFit = new DampedSinusoidFit( yarr, points );
+		sineFit.solveWithNoiseMaxEvaluations( 0.0, 1000 );	// solve using the default noise estimation
+
+		ytune = sineFit.getFrequency();
+		yphase = sineFit.getCosineLikePhase();
+		yslope = - sineFit.getGrowthRate();
+		yamp = sineFit.getCosineLikeAmplitude();
+		yoffset = sineFit.getOffset();
+
+		final double ytune_err = Math.sqrt( sineFit.getInitialFrequencyVariance() );
+		final double yslope_err = Math.sqrt( sineFit.getInitialGrowthRateVariance() );
+		final double yoffset_err = Math.sqrt( sineFit.getInitialOffsetVariance() );
+
 		System.out.println("\nVertical fit results for BPM " + localagent.name());
-		System.out.println("Tune = " + ycs.getParameter(Cosine.TUNE) + " +- " + ycs.getParameterError(Cosine.TUNE));		
-		System.out.println("Phase = " + ycs.getParameter(Cosine.PHASE) + " +- " + ycs.getParameterError(Cosine.PHASE));
-		System.out.println("Slope = " + ycs.getParameter(Cosine.SLOPE) + " +- " + ycs.getParameterError(Cosine.SLOPE));		
-		System.out.println("Amp = " + ycs.getParameter(Cosine.AMP) + " +- " + ycs.getParameterError(Cosine.AMP));
-		System.out.println("Offset = " + ycs.getParameter(Cosine.OFFSET) + " +- " + ycs.getParameterError(Cosine.OFFSET) + "\n");
-		
-		
-		ytune = ycs.getParameter(Cosine.TUNE);
-		yphase = ycs.getParameter(Cosine.PHASE);
-		yslope = ycs.getParameter(Cosine.SLOPE);
-		yamp = ycs.getParameter(Cosine.AMP);
-		yoffset = ycs.getParameter(Cosine.OFFSET);
-		
-		yamp_err = ycs.getParameterError(Cosine.AMP);
-		yphase_err = ycs.getParameterError(Cosine.PHASE);
-		
+		System.out.println("Tune = " + ytune + " +- " + ytune_err );
+		System.out.println("Phase = " + yphase + " +- ?" );
+		System.out.println("Slope = " + yslope + " +- " + yslope_err );
+		System.out.println("Amp = " + yamp + " +- ?" );
+		System.out.println("Offset = " + yoffset + " +- " + yoffset_err + "\n");
+
 		//Store the fit data and results in the bpm agent class.
 		
 		double[] yfitparams = new double[5];
@@ -268,7 +224,7 @@ public class CalculateFit{
 			scenario.setStartElementId("Ring_Inj:Foil");
 			scenario.resync();
 			scenario.run();
-			traj = (TransferMapTrajectory)scenario.getTrajectory();
+			traj = probe.getTrajectory();
 		}
 		catch(Exception exception){
 			exception.printStackTrace();
