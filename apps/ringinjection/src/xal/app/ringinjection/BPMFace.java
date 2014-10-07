@@ -222,7 +222,7 @@ public class BPMFace extends JPanel{
 		    if(((Boolean)bpmtable.getValueAt(i, 1)).booleanValue() == true){
 			if(bpmagent.isConnected()){
 			    activebpmagents.add(bpmagent);
-			    if(points.getValue() > 50) points.setValue(50);
+			    if( points.getDoubleValue() > 50 ) points.setValue(50);
 			    bpmfit.bpmXFit(bpmagent, (int)points.getValue());
 			    bpmfit.bpmYFit(bpmagent, (int)points.getValue());
 			}
@@ -318,10 +318,10 @@ public class BPMFace extends JPanel{
 	//Stores the average results as the current accepted result
 	storebutton.addActionListener(new ActionListener(){
 	    public void actionPerformed(ActionEvent ae){
-		inj_params[0]=x.getValue();
-		inj_params[1]=xp.getValue();
-		inj_params[2]=y.getValue();
-		inj_params[3]=yp.getValue();
+		inj_params[0]=x.getDoubleValue();
+		inj_params[1]=xp.getDoubleValue();
+		inj_params[2]=y.getDoubleValue();
+		inj_params[3]=yp.getDoubleValue();
 		doc.setInjSpot(inj_params);	
 		injectionProxy.updateInjSpot(inj_params);
 	    }
