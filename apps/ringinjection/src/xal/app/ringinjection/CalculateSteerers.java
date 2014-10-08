@@ -17,14 +17,13 @@ import xal.smf.impl.*;
 import xal.smf.proxy.ElectromagnetPropertyAccessor;
 import xal.model.*;
 import xal.model.alg.*;
-import xal.sim.scenario.Scenario;
+import xal.sim.scenario.*;
+import xal.tools.beam.calc.*;
 import xal.model.probe.*;
 import xal.model.probe.traj.*;
 import xal.sim.sync.SynchronizationException;
 import xal.model.xml.*;
 import xal.tools.optimizer.*;
-import xal.tools.beam.Twiss;
-import xal.extension.widgets.plot.*;
 
 import xal.tools.data.*;
 import xal.tools.xml.XmlDataAdaptor;
@@ -111,7 +110,7 @@ public class CalculateSteerers{
 		// set up the Scenario and initial probe
 		try {
 			ParticleTracker tracker = new ParticleTracker();
-			myProbe = ProbeFactory.getParticleProbe(accSeq, tracker);
+			myProbe = ProbeFactory.createParticleProbe(accSeq, tracker);
 			scenario = Scenario.newScenarioFor(accSeq);
 			scenario.setProbe(myProbe);
 		}
@@ -120,11 +119,11 @@ public class CalculateSteerers{
 		}
 		if(syncstate == "Live"){
 			System.out.println("Switching to Live Lattice");
-			scenario.setSynchronizationMode(scenario.SYNC_MODE_RF_DESIGN);
+			scenario.setSynchronizationMode( Scenario.SYNC_MODE_RF_DESIGN );
 		}
 		else{
 			System.out.println("Switching to Design Lattice");
-			scenario.setSynchronizationMode(scenario.SYNC_MODE_DESIGN);
+			scenario.setSynchronizationMode( Scenario.SYNC_MODE_DESIGN );
 		}
 		try{
 			scenario.resync();
@@ -244,10 +243,11 @@ public class CalculateSteerers{
 			System.out.println(e);
 		}
 
-		Trajectory traj = scenario.getTrajectory();
-		ParticleProbeState finalstate = (ParticleProbeState)traj.stateForElement("Ring_Inj:Foil");
+		Trajectory<ParticleProbeState> traj = myProbe.getTrajectory();
+		final SimpleSimResultsAdaptor resultsAdaptor = new SimpleSimResultsAdaptor( traj );
+		ParticleProbeState finalstate = traj.stateForElement("Ring_Inj:Foil");
 
-		PhaseVector finalcoords = finalstate.phaseCoordinates();
+		PhaseVector finalcoords = resultsAdaptor.computeCoordinatePosition( finalstate );
 		foil_init[0] = finalcoords.getx(); foil_init[1] = finalcoords.getxp();
 		foil_init[2] = finalcoords.gety(); foil_init[3] = finalcoords.getyp();
 		target_params[0] = foil_init[0] + params_delta[0]/1000.0;
@@ -317,9 +317,10 @@ public class CalculateSteerers{
 
 		//Calculate parameters at the foil
 
-		Trajectory traj = scenario.getTrajectory();
-		ParticleProbeState finalstate = (ParticleProbeState)traj.stateForElement("Ring_Inj:Foil");
-		PhaseVector finalcoords = finalstate.phaseCoordinates();
+		Trajectory<ParticleProbeState> traj = myProbe.getTrajectory();
+		final SimpleSimResultsAdaptor resultsAdaptor = new SimpleSimResultsAdaptor( traj );
+		ParticleProbeState finalstate = traj.stateForElement("Ring_Inj:Foil");
+		PhaseVector finalcoords = resultsAdaptor.computeCoordinatePosition( finalstate );
 
 		double xfoil;
 		double xpfoil;
