@@ -139,7 +139,7 @@ public class OneTurnFit extends JPanel{
 
 
 		double position = scenario.getPositionRelativeToStart(0.0);
-		TransferMapState injstate = (TransferMapState)traj.statesInPositionRange(position - 0.00001, position + 0.00001).get(0);
+		TransferMapState injstate = traj.statesInPositionRange(position - 0.00001, position + 0.00001).get(0);
 		Twiss[] injtwiss = _simulationResultsAdaptor.computeTwissParameters( injstate );
 		R3 phase = _simulationResultsAdaptor.computeBetatronPhase( injstate );
 		PhaseVector orbit = _simulationResultsAdaptor.computeFixedOrbit( injstate );

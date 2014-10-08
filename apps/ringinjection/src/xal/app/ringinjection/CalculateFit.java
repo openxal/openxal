@@ -23,6 +23,7 @@ import xal.extension.application.*;
 import xal.ca.*;
 import xal.tools.*;
 import xal.tools.beam.*;
+import xal.tools.beam.calc.*;
 import xal.tools.xml.*;
 import xal.extension.fit.lsm.*;
 import xal.tools.data.*;
@@ -60,6 +61,7 @@ public class CalculateFit{
     private TransferMapProbe probe;
     private Scenario scenario;
     private Trajectory<TransferMapState> traj;
+	private SimpleSimResultsAdaptor _simulationResultsAdaptor;
     private String syncstate;
 	
     double xtune;
@@ -225,6 +227,7 @@ public class CalculateFit{
 			scenario.resync();
 			scenario.run();
 			traj = probe.getTrajectory();
+			_simulationResultsAdaptor = new SimpleSimResultsAdaptor( traj );
 		}
 		catch(Exception exception){
 			exception.printStackTrace();
@@ -237,23 +240,22 @@ public class CalculateFit{
      	//ProbeState injstate = traj.stateForElement("Ring_Inj:Foil");
 		double position = scenario.getPositionRelativeToStart(0.0);
 		//TransferMapState injstate = (TransferMapState)traj.statesInPositionRange(position - 0.00001, position + 0.00001)[0];
-		TransferMapState injstate = (TransferMapState)traj.stateForElement("Ring_Inj:Foil");
-		Twiss[] injtwiss=injstate.getTwiss();
-		R3 injphase = injstate.getBetatronPhase();
-		PhaseVector injorbit = injstate.getFixedOrbit();
-		double beta_x_i = injtwiss[0].getBeta(); 
+		TransferMapState injstate = traj.stateForElement("Ring_Inj:Foil");
+		Twiss[] injtwiss = _simulationResultsAdaptor.computeTwissParameters( injstate );
+		R3 injphase = _simulationResultsAdaptor.computeBetatronPhase( injstate );
+		PhaseVector injorbit = _simulationResultsAdaptor.computeFixedOrbit( injstate );
+		double beta_x_i = injtwiss[0].getBeta();
 		double alpha_x_i = injtwiss[0].getAlpha();
 		double beta_y_i = injtwiss[1].getBeta(); 
 		double alpha_y_i = injtwiss[1].getAlpha();
 		
 		//System.out.println("At position " + position + ", beta x, alpha_x, beta y, and alphay are "+ beta_x_i + " " + alpha_x_i + " " + beta_y_i + " " + alpha_y_i + "\n");
-		
-		
-		TransferMapState localstate = (TransferMapState)traj.statesForElement(localagent.getNode().getId())[0];
-		Twiss[] localtwiss=localstate.getTwiss();
-		R3 localphase = localstate.getBetatronPhase();
-		PhaseVector localorbit = localstate.getFixedOrbit();
-		double beta_x = localtwiss[0].getBeta(); 
+
+		TransferMapState localstate = traj.statesForElement(localagent.getNode().getId()).get(0);
+		Twiss[] localtwiss = _simulationResultsAdaptor.computeTwissParameters( localstate );
+		R3 localphase = _simulationResultsAdaptor.computeBetatronPhase( localstate );
+		PhaseVector localorbit = _simulationResultsAdaptor.computeFixedOrbit( localstate );
+		double beta_x = localtwiss[0].getBeta();
 		double alpha_x = localtwiss[0].getAlpha();
 		double beta_y = localtwiss[1].getBeta(); 
 		double alpha_y = localtwiss[1].getAlpha();
