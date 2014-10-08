@@ -454,10 +454,10 @@ public class SteererFace extends JPanel implements InjSpotListener {
 		calcbutton.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent ae) {
 				//calculateInitConditions();
-				new_params[0]=xnew.getValue();
-				new_params[1]=xpnew.getValue();
-				new_params[2]=ynew.getValue();
-				new_params[3]=ypnew.getValue();
+				new_params[0]=xnew.getDoubleValue();
+				new_params[1]=xpnew.getDoubleValue();
+				new_params[2]=ynew.getDoubleValue();
+				new_params[3]=ypnew.getDoubleValue();
 				//System.out.println("inits are " +xnew.getValue() +  " " + xpnew.getValue());
 
 				ArrayList<String> correctorlist = new ArrayList<>();
@@ -469,7 +469,7 @@ public class SteererFace extends JPanel implements InjSpotListener {
 					}
 				}
 
-				CalculateSteerers calcsteerers = new CalculateSteerers(doc, latticestate, correctorlist, maxtime.getValue());
+				CalculateSteerers calcsteerers = new CalculateSteerers(doc, latticestate, correctorlist, maxtime.getDoubleValue());
 
 				calcsteerers.run(new_params);
 

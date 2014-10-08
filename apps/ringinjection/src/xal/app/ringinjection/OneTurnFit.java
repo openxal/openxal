@@ -29,6 +29,7 @@ import xal.model.*;
 import xal.ca.*;
 import xal.tools.*;
 import xal.tools.beam.*;
+import xal.tools.beam.calc.*;
 import xal.tools.xml.*;
 import xal.tools.data.*;
 import xal.tools.messaging.*;
@@ -66,6 +67,7 @@ public class OneTurnFit extends JPanel{
 	private TransferMapProbe probe;
 	private Scenario scenario;
 	private Trajectory<TransferMapState> traj;
+	private SimpleSimResultsAdaptor _simulationResultsAdaptor;
 
 	double[] xfitparams = new double[4];
 	double[] yfitparams = new double[4];
@@ -137,10 +139,11 @@ public class OneTurnFit extends JPanel{
 
 
 		double position = scenario.getPositionRelativeToStart(0.0);
-		TransferMapState injstate = (TransferMapState)traj.statesInPositionRange(position - 0.00001, position + 0.00001)[0];
-		Twiss[] injtwiss=injstate.getTwiss();
-		R3 phase = injstate.getBetatronPhase();
-		PhaseVector orbit = injstate.getFixedOrbit();
+		TransferMapState injstate = (TransferMapState)traj.statesInPositionRange(position - 0.00001, position + 0.00001).get(0);
+		Twiss[] injtwiss = _simulationResultsAdaptor.computeTwissParameters( injstate );
+		R3 phase = _simulationResultsAdaptor.computeBetatronPhase( injstate );
+		PhaseVector orbit = _simulationResultsAdaptor.computeFixedOrbit( injstate );
+
 		double beta_0=injtwiss[0].getBeta();
 		double alpha_0=injtwiss[0].getAlpha();
 
@@ -209,10 +212,10 @@ public class OneTurnFit extends JPanel{
 
 
 		double position = scenario.getPositionRelativeToStart(0.0);
-		TransferMapState injstate = (TransferMapState)traj.statesInPositionRange(position- 0.00001, position + 0.00001)[0];
-		Twiss[] injtwiss=injstate.getTwiss();
-		R3 phase = injstate.getBetatronPhase();
-		PhaseVector orbit = injstate.getFixedOrbit();
+		TransferMapState injstate = (TransferMapState)traj.statesInPositionRange(position- 0.00001, position + 0.00001).get(0);
+		Twiss[] injtwiss = _simulationResultsAdaptor.computeTwissParameters( injstate );
+		R3 phase = _simulationResultsAdaptor.computeBetatronPhase( injstate );
+		PhaseVector orbit = _simulationResultsAdaptor.computeFixedOrbit( injstate );
 		double beta_0=injtwiss[1].getBeta();
 		double alpha_0=injtwiss[1].getAlpha();
 
@@ -271,6 +274,7 @@ public class OneTurnFit extends JPanel{
 			scenario.resync();
 			scenario.run();
 			traj = scenario.<TransferMapState>getTrajectory();
+			_simulationResultsAdaptor = new SimpleSimResultsAdaptor( traj );
 		}
 		catch(Exception exception){
 			exception.printStackTrace();
@@ -329,9 +333,9 @@ public class OneTurnFit extends JPanel{
 		while(iterState.hasNext()){
 			state = iterState.next();
 			s = state.getPosition();
-			twiss = state.getTwiss();
-			phase = state.getBetatronPhase();
-			fixedorbit = state.getFixedOrbit();
+			twiss = _simulationResultsAdaptor.computeTwissParameters( state );
+			phase = _simulationResultsAdaptor.computeBetatronPhase( state );
+			fixedorbit = _simulationResultsAdaptor.computeFixedOrbit( state );
 
 			posList.add( s );
 			BetaList.add( twiss[0].getBeta() );
@@ -420,12 +424,12 @@ public class OneTurnFit extends JPanel{
 		ArrayList<Double> CoordList = new ArrayList<>();
 
 		while(iterState.hasNext()){
-			state = (TransferMapState)iterState.next();
+			state = iterState.next();
 			s = state.getPosition();
-			twiss=state.getTwiss();
-			phase = state.getBetatronPhase();
-			coordinates = state.phaseCoordinates();
-			fixedorbit = state.getFixedOrbit();
+			twiss = _simulationResultsAdaptor.computeTwissParameters( state );
+			phase = _simulationResultsAdaptor.computeBetatronPhase( state );
+			coordinates = _simulationResultsAdaptor.computeCoordinatePosition( state );
+			fixedorbit = _simulationResultsAdaptor.computeFixedOrbit( state );
 
 			posList.add( s );
 			BetaList.add( twiss[1].getBeta() );

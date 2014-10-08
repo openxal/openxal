@@ -290,10 +290,10 @@ public class OneTurnFace extends JPanel{
 
 		storebutton.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent ae){
-				inj_params[0]=x.getValue();
-				inj_params[1]=xp.getValue();
-				inj_params[2]=y.getValue();
-				inj_params[3]=yp.getValue();
+				inj_params[0]=x.getDoubleValue();
+				inj_params[1]=xp.getDoubleValue();
+				inj_params[2]=y.getDoubleValue();
+				inj_params[3]=yp.getDoubleValue();
 				doc.setInjSpot(inj_params);
 				injectionProxy.updateInjSpot(inj_params);
 			}
