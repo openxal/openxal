@@ -85,9 +85,9 @@ class PV_Data_Reader_Setter:
 		return curr_integral
 		
 	def setRFQ_PW(self,pw):
-		""" ?????? """
-		#self.pv_rfq_PW.putVal(pw)
-		pass
+		#""" ?????? """
+		self.pv_rfq_PW.putVal(pw)
+		#pass
 		
 	def getRFQ_PW(self):
 		self.pw = self.pv_rfq_PW.getValDbl()
@@ -118,11 +118,11 @@ class Keeper_Runner(Runnable):
 				st = "Running!"+" extra PW= %5.1 "%pw_addition_new
 				statusTextField.setText(st)
 				#-----------debug section START
-				print "debug current_integral =",self.rfq_keeper_controller.pv_data_reader_setter.current_integral
-				print "debug beam_on =",self.rfq_keeper_controller.pv_data_reader_setter.beam_on
-				print "debug continuous =",self.rfq_keeper_controller.pv_data_reader_setter.continuous
-				print "debug reprate =",self.rfq_keeper_controller.pv_data_reader_setter.reprate
-				print "debug pw =",self.rfq_keeper_controller.pv_data_reader_setter.pw
+				#print "debug current_integral =",self.rfq_keeper_controller.pv_data_reader_setter.current_integral
+				#print "debug beam_on =",self.rfq_keeper_controller.pv_data_reader_setter.beam_on
+				#print "debug continuous =",self.rfq_keeper_controller.pv_data_reader_setter.continuous
+				#print "debug reprate =",self.rfq_keeper_controller.pv_data_reader_setter.reprate
+				#print "debug pw =",self.rfq_keeper_controller.pv_data_reader_setter.pw
 				#-----------debug section STOP
 				if(self.rfq_keeper_controller.keeperShouldStop): return
 			except:
@@ -180,7 +180,7 @@ class StartStopKeeper_Panel(JPanel):
 		#---------------------------------------------
 		buttons_panel.add(start_keeper_button)
 		buttons_panel.add(stop_keeper_button)
-		self.keeper_status_text = JTextField(20)
+		self.keeper_status_text = JTextField(30)
 		self.keeper_status_text.setText("Scan status")
 		self.keeper_status_text.setHorizontalAlignment(JTextField.LEFT)
 		self.keeper_status_text.setForeground(Color.red)
@@ -253,11 +253,11 @@ class Init_Keeper_Button_Listener(ActionListener):
 		try:
 			pv_data_reader_setter = self.rfq_keeper_controller.pv_data_reader_setter
 			pv_data_reader_setter.readData()
-			print "debug current_integral =",pv_data_reader_setter.current_integral
-			print "debug beam_on =",pv_data_reader_setter.beam_on
-			print "debug continuous =",pv_data_reader_setter.continuous
-			print "debug reprate =",pv_data_reader_setter.reprate
-			print "debug pw =",pv_data_reader_setter.pw
+			#print "debug current_integral =",pv_data_reader_setter.current_integral
+			#print "debug beam_on =",pv_data_reader_setter.beam_on
+			#print "debug continuous =",pv_data_reader_setter.continuous
+			#print "debug reprate =",pv_data_reader_setter.reprate
+			#print "debug pw =",pv_data_reader_setter.pw
 			init_keeper_panel.current_integral_text.setValue(pv_data_reader_setter.current_integral)
 			init_keeper_panel.reprate_text.setValue(pv_data_reader_setter.reprate)
 			init_keeper_panel.rfq_pw_text.setValue(pv_data_reader_setter.pw)
