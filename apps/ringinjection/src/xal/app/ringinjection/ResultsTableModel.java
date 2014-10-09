@@ -89,7 +89,7 @@ public class ResultsTableModel extends AbstractTableModel{
 		//BPMAgent bpmagent = new BPMAgent();
 		//bpmagent = (BpmAgent)agents.get(row);
 		if(col == nColumns-1) {
-			return ((BpmAgent) agents.get(row));
+			return agents.get(row);
 			//return bpmagent;
 		}
 		else {

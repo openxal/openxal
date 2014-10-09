@@ -98,7 +98,7 @@ public class BPMFace extends JPanel{
 	
 	doc=aDocument;
 	
-	injectionProxy=(InjSpotListener)messageCenter.registerSource(this, InjSpotListener.class);
+	injectionProxy=messageCenter.registerSource(this, InjSpotListener.class);
 	
 	setPreferredSize(new Dimension(950,500));
 	setLayout(layout);
@@ -239,7 +239,7 @@ public class BPMFace extends JPanel{
 		int count = activebpmagents.size();
 		for(int k=0; k < count; k++){
 		    
-		    BpmAgent bpmagent = (BpmAgent)activebpmagents.get(k); 
+		    BpmAgent bpmagent = activebpmagents.get(k);
 		    xparams = bpmagent.getXFoilResults();
 		    yparams = bpmagent.getYFoilResults();
 
@@ -350,7 +350,7 @@ public class BPMFace extends JPanel{
 	int i =0;
 	boolean initial = true;
 	while(itr.hasNext()){
-	    BpmAgent bpmagent = (BpmAgent)itr.next();   
+	    BpmAgent bpmagent = itr.next();   
 	    bpmtablemodel.setValueAt(bpmagent.name(), i, 0);
 	    bpmtablemodel.setValueAt(new Boolean(false), i, 1);
 	    i++;

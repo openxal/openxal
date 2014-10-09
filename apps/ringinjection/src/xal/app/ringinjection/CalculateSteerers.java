@@ -23,7 +23,7 @@ import xal.model.probe.*;
 import xal.model.probe.traj.*;
 import xal.sim.sync.SynchronizationException;
 import xal.model.xml.*;
-import xal.tools.optimizer.*;
+import xal.extension.solver.*;
 
 import xal.tools.data.*;
 import xal.tools.xml.XmlDataAdaptor;
@@ -39,14 +39,14 @@ public class CalculateSteerers{
 	private Scenario scenario;
 	private ParticleProbe myProbe;
 
-	private ParameterProxy varDCH22;
-	private ParameterProxy varDCH24;
-	private ParameterProxy varDCH28;
-	private ParameterProxy varDCH30;
-	private ParameterProxy varSptm;
+	private ValueRef varDCH22;
+	private ValueRef varDCH24;
+	private ValueRef varDCH28;
+	private ValueRef varDCH30;
+	private ValueRef varSptm;
 
-	private ParameterProxy varDCV29;
-	private ParameterProxy varDCV31;
+	private ValueRef varDCV29;
+	private ValueRef varDCV31;
 
 	// steerers to use for matching
 	private String[] hebt2HSteerers = {"HEBT_Mag:DCH22","HEBT_Mag:DCH24","HEBT_Mag:DCH28", "HEBT_Mag:DCH30", "HEBT_Mag:InjSptm"};
@@ -68,10 +68,10 @@ public class CalculateSteerers{
 	private double[] llimits = new double[4];
 	private double[] ulimits = new double[2];
 
-	private ArrayList xvariable_list = new ArrayList();
-	private ArrayList yvariable_list = new ArrayList();
-	private Solver xsolver = new Solver();
-	private Solver ysolver = new Solver();
+	private ArrayList<Variable> xvariable_list = new ArrayList<>();
+	private ArrayList<Variable> yvariable_list = new ArrayList<>();
+	private Solver xsolver;
+	private Solver ysolver;
 	private int xarg = 0;
 	private int yarg = 1;
 
@@ -156,49 +156,88 @@ public class CalculateSteerers{
 			e.printStackTrace();
 		}
 
-		varDCH22 = new ParameterProxy(hebt2HSteerers[0]+"_field", hlivefields[0], 0.0001, -0.027, 0.027);
-		varDCH24 = new ParameterProxy(hebt2HSteerers[1]+"_field", hlivefields[1], 0.0001, -0.027, 0.027);
-		varDCH28 = new ParameterProxy(hebt2HSteerers[2]+"_field", hlivefields[2], 0.0001, -0.027, 0.027);
-		varDCH30 = new ParameterProxy(hebt2HSteerers[3]+"_field", hlivefields[3], 0.0001, -0.027, 0.027);
-		varDCV29 = new ParameterProxy(hebt2VSteerers[0]+"_field", vlivefields[0], 0.0001, -0.027, 0.027);
-		varDCV31 = new ParameterProxy(hebt2VSteerers[1]+"_field", vlivefields[1], 0.0001, -0.027, 0.027);
+		xsolver = new Solver( SolveStopperFactory.maxElapsedTimeStopper(1.0) );
+		xsolver.setProblem( new Problem() );
+
+		ysolver = new Solver( SolveStopperFactory.maxElapsedTimeStopper(1.0) );
+		ysolver.setProblem( new Problem() );
 
 		for(int j = 0; j<4; j++) final_steerers[j] = hlivefields[j];
 		for(int j = 0; j<2; j++) final_steerers[j] = vlivefields[j];
 
+		final double MAX_FIELD = 0.027;
+		final double MIN_FIELD = -MAX_FIELD;
+
 		if(correctorlist.contains((String)hebt2HSteerers[0])){
-			xvariable_list.add(varDCH22);
+			final Variable variable = new Variable( hebt2HSteerers[0]+"_field", hlivefields[0], MIN_FIELD, MAX_FIELD );
+			xvariable_list.add( variable );
+			xsolver.getProblem().addVariable( variable );
+			varDCH22 = xsolver.getProblem().getValueReference( variable );
 			solvex=true;
 		}
+		else {
+			varDCH22 = new ConstantValueRef( hlivefields[0] );
+		}
+
 		if(correctorlist.contains((String)hebt2HSteerers[1])){
-			xvariable_list.add(varDCH24);
+			final Variable variable = new Variable( hebt2HSteerers[1]+"_field", hlivefields[1], MIN_FIELD, MAX_FIELD );
+			xvariable_list.add( variable );
+			xsolver.getProblem().addVariable( variable );
+			varDCH24 = xsolver.getProblem().getValueReference( variable );
 			solvex=true;
 		}
+		else {
+			varDCH24 = new ConstantValueRef( hlivefields[1] );
+		}
+
 		if(correctorlist.contains((String)hebt2HSteerers[2])){
-			xvariable_list.add(varDCH28);
+			final Variable variable = new Variable( hebt2HSteerers[2]+"_field", hlivefields[2], MIN_FIELD, MAX_FIELD );
+			xvariable_list.add( variable );
+			xsolver.getProblem().addVariable( variable );
+			varDCH28 = xsolver.getProblem().getValueReference( variable );
 			solvex=true;
 		}
+		else {
+			varDCH28 = new ConstantValueRef( hlivefields[2] );
+		}
+
 		if(correctorlist.contains((String)hebt2HSteerers[3])){
-			xvariable_list.add(varDCH30);
+			final Variable variable = new Variable( hebt2HSteerers[3]+"_field", hlivefields[3], MIN_FIELD, MAX_FIELD );
+			xvariable_list.add( variable );
+			xsolver.getProblem().addVariable( variable );
+			varDCH30 = xsolver.getProblem().getValueReference( variable );
 			solvex=true;
 		}
+		else {
+			varDCH30 = new ConstantValueRef( hlivefields[3] );
+		}
+
 		if(correctorlist.contains((String)hebt2VSteerers[0])){
-			yvariable_list.add(varDCV29);
+			final Variable variable = new Variable( hebt2VSteerers[0]+"_field", vlivefields[0], MIN_FIELD, MAX_FIELD );
+			yvariable_list.add( variable );
+			ysolver.getProblem().addVariable( variable );
+			varDCV29 = ysolver.getProblem().getValueReference( variable );
 			solvey=true;
 		}
+		else {
+			varDCV29 = new ConstantValueRef( vlivefields[0] );
+		}
+
 		if(correctorlist.contains((String)hebt2VSteerers[1])){
-			yvariable_list.add(varDCV31);
+			final Variable variable = new Variable( hebt2VSteerers[1]+"_field", vlivefields[1], MIN_FIELD, MAX_FIELD );
+			yvariable_list.add( variable );
+			ysolver.getProblem().addVariable( variable );
+			varDCV31 = ysolver.getProblem().getValueReference( variable );
 			solvey=true;
+		}
+		else {
+			varDCV31 = new ConstantValueRef( vlivefields[1] );
 		}
 
 		System.out.println("Varlist " + yvariable_list + " " + varDCV29);
 		//Set up and run the X solver.
 
-		final SimplexSearchAlgorithm algorithm = new SimplexSearchAlgorithm();
 		if(solvex==true){
-			xsolver.setSearchAlgorithm(algorithm);
-			xsolver.setVariables(xvariable_list);
-
 			SimpleEvaluatorX sex = new CalculateSteerers.SimpleEvaluatorX();
 			xsolver.setScorer(sex);
 			xsolver.setStopper(SolveStopperFactory.targetStopperWithMaxTime(0.00001, solvetime));
@@ -388,6 +427,16 @@ public class CalculateSteerers{
 		return final_steerers;
 	}
 
+}
+
+
+
+/** Value Reference to a constant value */
+class ConstantValueRef extends ValueRef {
+	/** Constructor */
+	public ConstantValueRef( final double value ) {
+		_value = value;
+	}
 }
 
 

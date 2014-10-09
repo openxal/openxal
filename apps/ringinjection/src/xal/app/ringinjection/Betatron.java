@@ -119,7 +119,7 @@ public class Betatron {
 			public double getValue(double s, double[] a) {
 				double res=0.0;
 				double[] twiss = new double[6];
-				twiss = (double[])getTwiss(s);
+				twiss = getTwiss(s);
 
 				if (a.length != 2) {
 					return 0.0;
@@ -139,7 +139,7 @@ public class Betatron {
 			public double getDerivative(double s, double[] a, int a_index) {
 				double res = 0.0;
 				double[] twiss = new double[6];
-				twiss = (double[])getTwiss(s);
+				twiss = getTwiss(s);
 
 				if (a.length != 2) {
 					return 0.;
@@ -500,7 +500,7 @@ public class Betatron {
 	 *@return    The Gauss function value
 	 */
 	public double getValue(double x) {
-		return ((ModelFunction1D) mf).getValue(x, a);
+		return mf.getValue(x, a);
 	}
 
 

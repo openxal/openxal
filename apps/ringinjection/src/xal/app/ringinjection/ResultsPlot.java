@@ -76,7 +76,7 @@ public class ResultsPlot extends JPanel{
 
 	BasicGraphData rawgraphdata = new BasicGraphData();
 	BasicGraphData fitgraphdata = new BasicGraphData();	
-	BpmAgent agent = (BpmAgent)bpmagent;
+	BpmAgent agent = bpmagent;
 	size=agent.getDataSize();
 
 	
@@ -142,7 +142,7 @@ public class ResultsPlot extends JPanel{
 
 	BasicGraphData rawgraphdata = new BasicGraphData();
 	BasicGraphData fitgraphdata = new BasicGraphData();	
-	BpmAgent agent = (BpmAgent)bpmagent;
+	BpmAgent agent = bpmagent;
 	size=agent.getDataSize();
 
 	//Plot the raw data

@@ -194,7 +194,7 @@ public class GenDocument extends AcceleratorDocument implements SettingListener,
 		for ( final BPM bpm : bpms ) {
 			BpmAgent agent = new BpmAgent( asequence, bpm );
 			if( agent.isOkay() ) {
-				bpmagents.add((BpmAgent)agent);
+				bpmagents.add(agent);
 			}
 
 			System.out.println("This is BPM is " + agent.name() + " in sequence " + asequence + ", and status is " + agent.isOkay());
