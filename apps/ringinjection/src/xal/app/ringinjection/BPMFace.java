@@ -223,8 +223,8 @@ public class BPMFace extends JPanel{
 			if(bpmagent.isConnected()){
 			    activebpmagents.add(bpmagent);
 			    if( points.getDoubleValue() > 50 ) points.setValue(50);
-			    bpmfit.bpmXFit(bpmagent, (int)points.getValue());
-			    bpmfit.bpmYFit(bpmagent, (int)points.getValue());
+			    bpmfit.bpmXFit(bpmagent, (int)points.getDoubleValue());
+			    bpmfit.bpmYFit(bpmagent, (int)points.getDoubleValue());
 			}
 		    }
 		    i++;
