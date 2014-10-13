@@ -194,139 +194,139 @@ public class BPMFace extends JPanel{
 	yperr = new DecimalField(0.0, 6, avgFor);
     } 
 
-    public void setAction(){
-	
-	syncstate.addActionListener(new ActionListener(){ 
-	    public void actionPerformed(ActionEvent e) {
-		if(syncstate.getSelectedIndex() == 0){
+	public void setAction(){
+
+		syncstate.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e) {
+				if(syncstate.getSelectedIndex() == 0){
 		   latticestate="Live";
 		   bpmfit.changeSyncState(latticestate);
-		}
-		if(syncstate.getSelectedIndex() == 1){
+				}
+				if(syncstate.getSelectedIndex() == 1){
 		   latticestate="Design";
 		   bpmfit.changeSyncState(latticestate);
-		}
-	    }
-	});  
-	
-	//Does the fit for all seleced BPMs
-	calcbutton.addActionListener(new ActionListener(){
-	    public void actionPerformed(ActionEvent ae) {
-		int i = 0;
-		activebpmagents.clear();
-		Iterator itr = (doc.bpmagents).iterator();
-		
-			while(itr.hasNext() && i <= bpmtable.getRowCount()-1){
-
-				BpmAgent bpmagent = (BpmAgent)itr.next();
-				if(((Boolean)bpmtable.getValueAt(i, 1)).booleanValue() == true){
-					if(bpmagent.isConnected()){
-						activebpmagents.add(bpmagent);
-						if( points.getDoubleValue() > 50 ) points.setValue(50);
-						bpmfit.bpmXFit(bpmagent, (int)points.getDoubleValue());
-						bpmfit.bpmYFit(bpmagent, (int)points.getDoubleValue());
-					}
 				}
-				i++;
 			}
-		//Make the results table.
-		Object[][] tabledata = new Object[activebpmagents.size()][9];
+		});
 
-		double xparams[];
-		double yparams[];
-		DecimalFormat decfor =  new DecimalFormat("###.000");
-		
-		int count = activebpmagents.size();
-		for(int k=0; k < count; k++){
-		    
-		    BpmAgent bpmagent = activebpmagents.get(k);
-		    xparams = bpmagent.getXFoilResults();
-		    yparams = bpmagent.getYFoilResults();
+		//Does the fit for all seleced BPMs
+		calcbutton.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent ae) {
+				int i = 0;
+				activebpmagents.clear();
+				Iterator itr = (doc.bpmagents).iterator();
 
-		    System.out.println("xparams = " + xparams[0] + " " + xparams[1] + " " + xparams[2] + " "+ xparams[3]);
-		    System.out.println("yparams = " + yparams[0] + " " + yparams[1] + " " + yparams[2] + " "+ yparams[3]);
-		    tabledata[k][0]=bpmagent.name();
+				while(itr.hasNext() && i <= bpmtable.getRowCount()-1){
 
-		    String xval = new String(decfor.format(xparams[0]) + " +- " + decfor.format(xparams[1]));
-		    tabledata[k][1] = new String(xval);
-		    String xpval = new String(decfor.format(xparams[2]) + " +- " + decfor.format(xparams[3]));
-		    tabledata[k][2] = new String(xpval);
-		    String yval = new String(decfor.format(yparams[0]) + " +- " + decfor.format(yparams[1]));
-		    tabledata[k][3] = new String(yval);
-		    String ypval = new String(decfor.format(yparams[2]) + " +- " + decfor.format(yparams[3]));
-		    tabledata[k][4] = new String(ypval);
-		    tabledata[k][5] = new Boolean(false);
-		}		resultstablemodel.setTableData(activebpmagents.size(),tabledata,activebpmagents);
-	    }
-	});
-	
-	//Gets the average results for accepted individual BPM results
-	avgbutton.addActionListener(new ActionListener(){
-	    public void actionPerformed(ActionEvent ae){
-		int i=0, count=0;
-		double sum_x=0.0, sum_xp=0.0, sum_y=0.0, sum_yp=0.0;
-		double avg_x=0.0, avg_xp=0.0, avg_y=0.0, avg_yp=0.0;
-		double sum_xerr=0.0, sum_xperr=0.0, sum_yerr=0.0, sum_yperr=0.0;
-		double avg_xerr=0.0, avg_xperr=0.0, avg_yerr=0.0, avg_yperr=0.0;
-		Iterator itr = (doc.bpmagents).iterator();
-		
-		while(itr.hasNext() && i <= resultstable.getRowCount()-1){
-		    BpmAgent bpmagent = (BpmAgent)itr.next();   
-		    if(((Boolean)resultstable.getValueAt(i, resultstable.getColumnCount()-2)).booleanValue() == true){
-			String[] xstring = (new String((String)resultstable.getValueAt(i,1))).split("\\s");
-			String[] xpstring = (new String((String)resultstable.getValueAt(i,2))).split("\\s");
-			String[] ystring = (new String((String)resultstable.getValueAt(i,3))).split("\\s");
-			String[] ypstring = (new String((String)resultstable.getValueAt(i,4))).split("\\s");
-			sum_x += (new Double(Double.parseDouble(xstring[0]))).doubleValue();
-			sum_xp += (new Double(Double.parseDouble(xpstring[0]))).doubleValue();
-			sum_y += (new Double(Double.parseDouble(ystring[0]))).doubleValue();
-			sum_yp += (new Double(Double.parseDouble(ypstring[0]))).doubleValue();
-			sum_xerr += Math.pow((new Double(Double.parseDouble(xstring[2]))).doubleValue(), 2);
-			sum_xperr += Math.pow((new Double(Double.parseDouble(xpstring[2]))).doubleValue(), 2);
-			sum_yerr += Math.pow((new Double(Double.parseDouble(ystring[2]))).doubleValue(), 2);
-			sum_yperr += Math.pow((new Double(Double.parseDouble(ypstring[2]))).doubleValue(), 2);
-			count++;
-		    }
-		    i++;
-		}
-		if(count != 0){
-		    avg_x=sum_x/((new Integer(count)).doubleValue());
-		    avg_xp=sum_xp/((new Integer(count)).doubleValue());
-		    avg_y=sum_y/((new Integer(count)).doubleValue());
-		    avg_yp=sum_yp/((new Integer(count)).doubleValue());
-		    avg_xerr=Math.sqrt(sum_xerr)/((new Integer(count)).doubleValue());
-		    avg_xperr=Math.sqrt(sum_xperr)/((new Integer(count)).doubleValue());
-		    avg_yerr=Math.sqrt(sum_yerr)/((new Integer(count)).doubleValue());
-		    avg_yperr=Math.sqrt(sum_yperr)/((new Integer(count)).doubleValue());
-		}
-		
-		x.setValue(avg_x);
-		xp.setValue(avg_xp);
-		y.setValue(avg_y);
-		yp.setValue(avg_yp);
-		xerr.setValue(avg_xerr);
-		xperr.setValue(avg_xperr);
-		yerr.setValue(avg_yerr);
-		yperr.setValue(avg_yperr);
-		inj_params[0]=avg_x;
-		inj_params[1]=avg_xp;
-		inj_params[2]=avg_y;
-		inj_params[3]=avg_yp;
-	    }	
-	});
-	
-	//Stores the average results as the current accepted result
-	storebutton.addActionListener(new ActionListener(){
-	    public void actionPerformed(ActionEvent ae){
-		inj_params[0]=x.getDoubleValue();
-		inj_params[1]=xp.getDoubleValue();
-		inj_params[2]=y.getDoubleValue();
-		inj_params[3]=yp.getDoubleValue();
-		doc.setInjSpot(inj_params);	
-		injectionProxy.updateInjSpot(inj_params);
-	    }
-	});
-    }
+					BpmAgent bpmagent = (BpmAgent)itr.next();
+					if(((Boolean)bpmtable.getValueAt(i, 1)).booleanValue() == true){
+						if(bpmagent.isConnected()){
+							activebpmagents.add(bpmagent);
+							if( points.getDoubleValue() > 50 ) points.setValue(50);
+							bpmfit.bpmXFit(bpmagent, (int)points.getDoubleValue());
+							bpmfit.bpmYFit(bpmagent, (int)points.getDoubleValue());
+						}
+					}
+					i++;
+				}
+				//Make the results table.
+				Object[][] tabledata = new Object[activebpmagents.size()][9];
+
+				double xparams[];
+				double yparams[];
+				DecimalFormat decfor =  new DecimalFormat("###.000");
+
+				int count = activebpmagents.size();
+				for(int k=0; k < count; k++){
+
+					BpmAgent bpmagent = activebpmagents.get(k);
+					xparams = bpmagent.getXFoilResults();
+					yparams = bpmagent.getYFoilResults();
+
+					System.out.println("xparams = " + xparams[0] + " " + xparams[1] + " " + xparams[2] + " "+ xparams[3]);
+					System.out.println("yparams = " + yparams[0] + " " + yparams[1] + " " + yparams[2] + " "+ yparams[3]);
+					tabledata[k][0]=bpmagent.name();
+
+					String xval = new String(decfor.format(xparams[0]) + " +- " + decfor.format(xparams[1]));
+					tabledata[k][1] = new String(xval);
+					String xpval = new String(decfor.format(xparams[2]) + " +- " + decfor.format(xparams[3]));
+					tabledata[k][2] = new String(xpval);
+					String yval = new String(decfor.format(yparams[0]) + " +- " + decfor.format(yparams[1]));
+					tabledata[k][3] = new String(yval);
+					String ypval = new String(decfor.format(yparams[2]) + " +- " + decfor.format(yparams[3]));
+					tabledata[k][4] = new String(ypval);
+					tabledata[k][5] = new Boolean(false);
+				}		resultstablemodel.setTableData(activebpmagents.size(),tabledata,activebpmagents);
+			}
+		});
+
+		//Gets the average results for accepted individual BPM results
+		avgbutton.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent ae){
+				int i=0, count=0;
+				double sum_x=0.0, sum_xp=0.0, sum_y=0.0, sum_yp=0.0;
+				double avg_x=0.0, avg_xp=0.0, avg_y=0.0, avg_yp=0.0;
+				double sum_xerr=0.0, sum_xperr=0.0, sum_yerr=0.0, sum_yperr=0.0;
+				double avg_xerr=0.0, avg_xperr=0.0, avg_yerr=0.0, avg_yperr=0.0;
+				Iterator itr = (doc.bpmagents).iterator();
+
+				while(itr.hasNext() && i <= resultstable.getRowCount()-1){
+					BpmAgent bpmagent = (BpmAgent)itr.next();
+					if(((Boolean)resultstable.getValueAt(i, resultstable.getColumnCount()-2)).booleanValue() == true){
+						String[] xstring = (new String((String)resultstable.getValueAt(i,1))).split("\\s");
+						String[] xpstring = (new String((String)resultstable.getValueAt(i,2))).split("\\s");
+						String[] ystring = (new String((String)resultstable.getValueAt(i,3))).split("\\s");
+						String[] ypstring = (new String((String)resultstable.getValueAt(i,4))).split("\\s");
+						sum_x += (new Double(Double.parseDouble(xstring[0]))).doubleValue();
+						sum_xp += (new Double(Double.parseDouble(xpstring[0]))).doubleValue();
+						sum_y += (new Double(Double.parseDouble(ystring[0]))).doubleValue();
+						sum_yp += (new Double(Double.parseDouble(ypstring[0]))).doubleValue();
+						sum_xerr += Math.pow((new Double(Double.parseDouble(xstring[2]))).doubleValue(), 2);
+						sum_xperr += Math.pow((new Double(Double.parseDouble(xpstring[2]))).doubleValue(), 2);
+						sum_yerr += Math.pow((new Double(Double.parseDouble(ystring[2]))).doubleValue(), 2);
+						sum_yperr += Math.pow((new Double(Double.parseDouble(ypstring[2]))).doubleValue(), 2);
+						count++;
+					}
+					i++;
+				}
+				if(count != 0){
+					avg_x=sum_x/((new Integer(count)).doubleValue());
+					avg_xp=sum_xp/((new Integer(count)).doubleValue());
+					avg_y=sum_y/((new Integer(count)).doubleValue());
+					avg_yp=sum_yp/((new Integer(count)).doubleValue());
+					avg_xerr=Math.sqrt(sum_xerr)/((new Integer(count)).doubleValue());
+					avg_xperr=Math.sqrt(sum_xperr)/((new Integer(count)).doubleValue());
+					avg_yerr=Math.sqrt(sum_yerr)/((new Integer(count)).doubleValue());
+					avg_yperr=Math.sqrt(sum_yperr)/((new Integer(count)).doubleValue());
+				}
+
+				x.setValue(avg_x);
+				xp.setValue(avg_xp);
+				y.setValue(avg_y);
+				yp.setValue(avg_yp);
+				xerr.setValue(avg_xerr);
+				xperr.setValue(avg_xperr);
+				yerr.setValue(avg_yerr);
+				yperr.setValue(avg_yperr);
+				inj_params[0]=avg_x;
+				inj_params[1]=avg_xp;
+				inj_params[2]=avg_y;
+				inj_params[3]=avg_yp;
+			}
+		});
+
+		//Stores the average results as the current accepted result
+		storebutton.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent ae){
+				inj_params[0]=x.getDoubleValue();
+				inj_params[1]=xp.getDoubleValue();
+				inj_params[2]=y.getDoubleValue();
+				inj_params[3]=yp.getDoubleValue();
+				doc.setInjSpot(inj_params);	
+				injectionProxy.updateInjSpot(inj_params);
+			}
+		});
+	}
     
     
     public void makeBPMTable(){
