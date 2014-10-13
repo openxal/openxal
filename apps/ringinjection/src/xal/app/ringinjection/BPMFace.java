@@ -216,19 +216,19 @@ public class BPMFace extends JPanel{
 		activebpmagents.clear();
 		Iterator itr = (doc.bpmagents).iterator();
 		
-		while(itr.hasNext() && i <= bpmtable.getRowCount()-1){
-		    
-		    BpmAgent bpmagent = (BpmAgent)itr.next();   
-		    if(((Boolean)bpmtable.getValueAt(i, 1)).booleanValue() == true){
-			if(bpmagent.isConnected()){
-			    activebpmagents.add(bpmagent);
-			    if( points.getDoubleValue() > 50 ) points.setValue(50);
-			    bpmfit.bpmXFit(bpmagent, (int)points.getDoubleValue());
-			    bpmfit.bpmYFit(bpmagent, (int)points.getDoubleValue());
+			while(itr.hasNext() && i <= bpmtable.getRowCount()-1){
+
+				BpmAgent bpmagent = (BpmAgent)itr.next();
+				if(((Boolean)bpmtable.getValueAt(i, 1)).booleanValue() == true){
+					if(bpmagent.isConnected()){
+						activebpmagents.add(bpmagent);
+						if( points.getDoubleValue() > 50 ) points.setValue(50);
+						bpmfit.bpmXFit(bpmagent, (int)points.getDoubleValue());
+						bpmfit.bpmYFit(bpmagent, (int)points.getDoubleValue());
+					}
+				}
+				i++;
 			}
-		    }
-		    i++;
-		}
 		//Make the results table.
 		Object[][] tabledata = new Object[activebpmagents.size()][9];
 
