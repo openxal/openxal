@@ -168,7 +168,7 @@ public class CalculateSteerers{
 		final double MAX_FIELD = 0.027;
 		final double MIN_FIELD = -MAX_FIELD;
 
-		if(correctorlist.contains((String)hebt2HSteerers[0])){
+		if(correctorlist.contains( hebt2HSteerers[0] )){
 			final Variable variable = new Variable( hebt2HSteerers[0]+"_field", hlivefields[0], MIN_FIELD, MAX_FIELD );
 			xvariable_list.add( variable );
 			xsolver.getProblem().addVariable( variable );
@@ -179,7 +179,7 @@ public class CalculateSteerers{
 			varDCH22 = new ConstantValueRef( hlivefields[0] );
 		}
 
-		if(correctorlist.contains((String)hebt2HSteerers[1])){
+		if(correctorlist.contains( hebt2HSteerers[1] )){
 			final Variable variable = new Variable( hebt2HSteerers[1]+"_field", hlivefields[1], MIN_FIELD, MAX_FIELD );
 			xvariable_list.add( variable );
 			xsolver.getProblem().addVariable( variable );
@@ -190,7 +190,7 @@ public class CalculateSteerers{
 			varDCH24 = new ConstantValueRef( hlivefields[1] );
 		}
 
-		if(correctorlist.contains((String)hebt2HSteerers[2])){
+		if(correctorlist.contains( hebt2HSteerers[2] )){
 			final Variable variable = new Variable( hebt2HSteerers[2]+"_field", hlivefields[2], MIN_FIELD, MAX_FIELD );
 			xvariable_list.add( variable );
 			xsolver.getProblem().addVariable( variable );
@@ -201,7 +201,7 @@ public class CalculateSteerers{
 			varDCH28 = new ConstantValueRef( hlivefields[2] );
 		}
 
-		if(correctorlist.contains((String)hebt2HSteerers[3])){
+		if(correctorlist.contains( hebt2HSteerers[3] )){
 			final Variable variable = new Variable( hebt2HSteerers[3]+"_field", hlivefields[3], MIN_FIELD, MAX_FIELD );
 			xvariable_list.add( variable );
 			xsolver.getProblem().addVariable( variable );
@@ -212,7 +212,7 @@ public class CalculateSteerers{
 			varDCH30 = new ConstantValueRef( hlivefields[3] );
 		}
 
-		if(correctorlist.contains((String)hebt2VSteerers[0])){
+		if(correctorlist.contains( hebt2VSteerers[0] )){
 			final Variable variable = new Variable( hebt2VSteerers[0]+"_field", vlivefields[0], MIN_FIELD, MAX_FIELD );
 			yvariable_list.add( variable );
 			ysolver.getProblem().addVariable( variable );
@@ -223,7 +223,7 @@ public class CalculateSteerers{
 			varDCV29 = new ConstantValueRef( vlivefields[0] );
 		}
 
-		if(correctorlist.contains((String)hebt2VSteerers[1])){
+		if(correctorlist.contains( hebt2VSteerers[1] )){
 			final Variable variable = new Variable( hebt2VSteerers[1]+"_field", vlivefields[1], MIN_FIELD, MAX_FIELD );
 			yvariable_list.add( variable );
 			ysolver.getProblem().addVariable( variable );
@@ -235,15 +235,14 @@ public class CalculateSteerers{
 		}
 
 		System.out.println("Varlist " + yvariable_list + " " + varDCV29);
-		//Set up and run the X solver.
 
 		if(solvex==true){
+			//Set up and run the X solver.
 			SimpleEvaluatorX sex = new CalculateSteerers.SimpleEvaluatorX();
-			xsolver.setScorer(sex);
-			xsolver.setStopper(SolveStopperFactory.targetStopperWithMaxTime(0.00001, solvetime));
+			xsolver.getProblem().setEvaluator(sex);
 
-			xsolver.solve();
-			Scoreboard xscoreboard = xsolver.getScoreboard();
+			xsolver.solve( xsolver.getProblem() );
+			ScoreBoard xscoreboard = xsolver.getScoreBoard();
 			System.out.println(xscoreboard.toString());
 			//Calculate and store final values.
 			updateModel();
@@ -256,15 +255,11 @@ public class CalculateSteerers{
 
 		if(solvey==true){
 			//Set up and run the Y solver.
-			ysolver.setSearchAlgorithm(algorithm);
-			ysolver.setVariables(yvariable_list);
-
 			SimpleEvaluatorY sey = new CalculateSteerers.SimpleEvaluatorY();
-			ysolver.setScorer(sey);
-			ysolver.setStopper(SolveStopperFactory.targetStopperWithMaxTime(0.00001, solvetime));
+			ysolver.getProblem().setEvaluator(sey);
 
-			ysolver.solve();
-			Scoreboard yscoreboard = ysolver.getScoreboard();
+			ysolver.solve( ysolver.getProblem() );
+			ScoreBoard yscoreboard = ysolver.getScoreBoard();
 			System.out.println(yscoreboard.toString());
 			//Calculate and store final values.
 			updateModel();
@@ -401,20 +396,18 @@ public class CalculateSteerers{
 	}
 
 
-	class SimpleEvaluatorX implements Scorer{
-		public double score() {
+	class SimpleEvaluatorX implements Evaluator{
+		public void evaluate( final Trial trial ) {
 			updateModel();
 			double myScore = calcError(xarg, 0);
-			return myScore;
 		}
 
 	}
 
-	class SimpleEvaluatorY implements Scorer{
-		public double score() {
+	class SimpleEvaluatorY implements Evaluator{
+		public void evaluate( final Trial trial ) {
 			updateModel();
 			double myScore = calcError(yarg, 0);
-			return myScore;
 		}
 
 	}

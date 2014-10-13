@@ -558,7 +558,7 @@ public class SteererFace extends JPanel implements InjSpotListener {
 
 		for(int i=0; i<steerers.length; i++){
 			double field = 0.0;
-			String name = (String)steerers[i];
+			String name = steerers[i];
 			Dipole corrector=(Dipole)seq.getNodeWithId(name);
 			try{
 				field = corrector.getField();
@@ -599,7 +599,7 @@ public class SteererFace extends JPanel implements InjSpotListener {
 		for(int i=0; i <= steerertablemodel.getRowCount()-1; i++){
 			if(((Boolean)steerertable.getValueAt(i, 3)).booleanValue() == true){
 				String name = (String)steerertable.getValueAt(i,0);
-				Double value = (Double)lastfields.get(name);
+				Double value = lastfields.get(name);
 				//System.out.println("Assigning " + name + " field value of " + value.doubleValue());
 				try{
 					((Dipole)seq.getNodeWithId(name)).setField(value.doubleValue());

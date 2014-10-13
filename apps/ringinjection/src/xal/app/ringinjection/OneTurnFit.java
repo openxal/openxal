@@ -212,7 +212,7 @@ public class OneTurnFit extends JPanel{
 
 
 		double position = scenario.getPositionRelativeToStart(0.0);
-		TransferMapState injstate = (TransferMapState)traj.statesInPositionRange(position- 0.00001, position + 0.00001).get(0);
+		TransferMapState injstate = traj.statesInPositionRange(position- 0.00001, position + 0.00001).get(0);
 		Twiss[] injtwiss = _simulationResultsAdaptor.computeTwissParameters( injstate );
 		R3 phase = _simulationResultsAdaptor.computeBetatronPhase( injstate );
 		PhaseVector orbit = _simulationResultsAdaptor.computeFixedOrbit( injstate );
@@ -351,10 +351,10 @@ public class OneTurnFit extends JPanel{
 		double[] yfit = new double[posList.size()];
 
 		for(i=0; i<posList.size(); i++) {
-			pos[i] = ((Double) posList.get(i)).doubleValue();
-			beta[i] = ((Double) BetaList.get(i)).doubleValue();
-			betaphi[i] = ((Double) PhaseList.get(i)).doubleValue();
-			orbit[i] = ((Double) OrbitList.get(i)).doubleValue();
+			pos[i] = posList.get(i).doubleValue();
+			beta[i] = BetaList.get(i).doubleValue();
+			betaphi[i] = PhaseList.get(i).doubleValue();
+			orbit[i] = OrbitList.get(i).doubleValue();
 		}
 
 		for(i=0; i<posList.size(); i++) {
@@ -446,11 +446,11 @@ public class OneTurnFit extends JPanel{
 		double[] yfit = new double[posList.size()];
 
 		for(i=0; i<posList.size(); i++) {
-			pos[i] = ((Double) posList.get(i)).doubleValue();
-			beta[i] = ((Double) BetaList.get(i)).doubleValue();
-			betaphi[i] = ((Double) PhaseList.get(i)).doubleValue();
-			orbit[i] = ((Double) OrbitList.get(i)).doubleValue();
-			coords[i] = ((Double) CoordList.get(i)).doubleValue();
+			pos[i] = posList.get(i).doubleValue();
+			beta[i] = BetaList.get(i).doubleValue();
+			betaphi[i] = PhaseList.get(i).doubleValue();
+			orbit[i] = OrbitList.get(i).doubleValue();
+			coords[i] = CoordList.get(i).doubleValue();
 		}
 
 		for(i=0; i<posList.size(); i++) {

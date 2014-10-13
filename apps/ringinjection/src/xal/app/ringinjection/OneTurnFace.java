@@ -99,7 +99,7 @@ public class OneTurnFace extends JPanel{
 
 		doc=aDocument;
 
-		injectionProxy=(InjSpotListener)messageCenter.registerSource(this, InjSpotListener.class);
+		injectionProxy = messageCenter.registerSource(this, InjSpotListener.class);
 
 		setPreferredSize(new Dimension(900,500));
 		setLayout(layout);
@@ -342,7 +342,7 @@ public class OneTurnFace extends JPanel{
 
 		final Iterator<BpmAgent> itr = doc.bpmagents.iterator();
 		while(itr.hasNext() && i <= bpmtable.getRowCount()-1){
-			BpmAgent bpmagent = (BpmAgent)itr.next();
+			BpmAgent bpmagent = itr.next();
 			double value = 0.0;
 			orbitmap.put( bpmagent.name(), value );
 		}
