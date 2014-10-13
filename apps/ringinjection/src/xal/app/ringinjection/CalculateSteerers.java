@@ -72,8 +72,8 @@ public class CalculateSteerers{
 	private ArrayList<Variable> yvariable_list = new ArrayList<>();
 	private Solver xsolver;
 	private Solver ysolver;
-	private int xarg = 0;
-	private int yarg = 1;
+	final private int xarg = 0;
+	final private int yarg = 1;
 
 	private double[] final_spot = new double[4];
 	private double[] final_steerers = new double[6];
@@ -157,10 +157,10 @@ public class CalculateSteerers{
 		}
 
 		xsolver = new Solver( SolveStopperFactory.maxElapsedTimeStopper(1.0) );
-		xsolver.setProblem( new Problem() );
+		final Problem xProblem = new Problem();
 
 		ysolver = new Solver( SolveStopperFactory.maxElapsedTimeStopper(1.0) );
-		ysolver.setProblem( new Problem() );
+		final Problem yProblem = new Problem();
 
 		for(int j = 0; j<4; j++) final_steerers[j] = hlivefields[j];
 		for(int j = 0; j<2; j++) final_steerers[j] = vlivefields[j];
@@ -171,8 +171,8 @@ public class CalculateSteerers{
 		if(correctorlist.contains( hebt2HSteerers[0] )){
 			final Variable variable = new Variable( hebt2HSteerers[0]+"_field", hlivefields[0], MIN_FIELD, MAX_FIELD );
 			xvariable_list.add( variable );
-			xsolver.getProblem().addVariable( variable );
-			varDCH22 = xsolver.getProblem().getValueReference( variable );
+			xProblem.addVariable( variable );
+			varDCH22 = xProblem.getValueReference( variable );
 			solvex=true;
 		}
 		else {
@@ -182,8 +182,8 @@ public class CalculateSteerers{
 		if(correctorlist.contains( hebt2HSteerers[1] )){
 			final Variable variable = new Variable( hebt2HSteerers[1]+"_field", hlivefields[1], MIN_FIELD, MAX_FIELD );
 			xvariable_list.add( variable );
-			xsolver.getProblem().addVariable( variable );
-			varDCH24 = xsolver.getProblem().getValueReference( variable );
+			xProblem.addVariable( variable );
+			varDCH24 = xProblem.getValueReference( variable );
 			solvex=true;
 		}
 		else {
@@ -193,8 +193,8 @@ public class CalculateSteerers{
 		if(correctorlist.contains( hebt2HSteerers[2] )){
 			final Variable variable = new Variable( hebt2HSteerers[2]+"_field", hlivefields[2], MIN_FIELD, MAX_FIELD );
 			xvariable_list.add( variable );
-			xsolver.getProblem().addVariable( variable );
-			varDCH28 = xsolver.getProblem().getValueReference( variable );
+			xProblem.addVariable( variable );
+			varDCH28 = xProblem.getValueReference( variable );
 			solvex=true;
 		}
 		else {
@@ -204,8 +204,8 @@ public class CalculateSteerers{
 		if(correctorlist.contains( hebt2HSteerers[3] )){
 			final Variable variable = new Variable( hebt2HSteerers[3]+"_field", hlivefields[3], MIN_FIELD, MAX_FIELD );
 			xvariable_list.add( variable );
-			xsolver.getProblem().addVariable( variable );
-			varDCH30 = xsolver.getProblem().getValueReference( variable );
+			xProblem.addVariable( variable );
+			varDCH30 = xProblem.getValueReference( variable );
 			solvex=true;
 		}
 		else {
@@ -215,8 +215,8 @@ public class CalculateSteerers{
 		if(correctorlist.contains( hebt2VSteerers[0] )){
 			final Variable variable = new Variable( hebt2VSteerers[0]+"_field", vlivefields[0], MIN_FIELD, MAX_FIELD );
 			yvariable_list.add( variable );
-			ysolver.getProblem().addVariable( variable );
-			varDCV29 = ysolver.getProblem().getValueReference( variable );
+			yProblem.addVariable( variable );
+			varDCV29 = yProblem.getValueReference( variable );
 			solvey=true;
 		}
 		else {
@@ -226,8 +226,8 @@ public class CalculateSteerers{
 		if(correctorlist.contains( hebt2VSteerers[1] )){
 			final Variable variable = new Variable( hebt2VSteerers[1]+"_field", vlivefields[1], MIN_FIELD, MAX_FIELD );
 			yvariable_list.add( variable );
-			ysolver.getProblem().addVariable( variable );
-			varDCV31 = ysolver.getProblem().getValueReference( variable );
+			yProblem.addVariable( variable );
+			varDCV31 = yProblem.getValueReference( variable );
 			solvey=true;
 		}
 		else {
@@ -238,10 +238,11 @@ public class CalculateSteerers{
 
 		if(solvex==true){
 			//Set up and run the X solver.
-			SimpleEvaluatorX sex = new CalculateSteerers.SimpleEvaluatorX();
-			xsolver.getProblem().setEvaluator(sex);
+			final SimpleEvaluator sex = new CalculateSteerers.SimpleEvaluator( xarg );
+			xProblem.addObjective( sex.getErrorObjective() );
+			xProblem.setEvaluator(sex);
 
-			xsolver.solve( xsolver.getProblem() );
+			xsolver.solve( xProblem );
 			ScoreBoard xscoreboard = xsolver.getScoreBoard();
 			System.out.println(xscoreboard.toString());
 			//Calculate and store final values.
@@ -255,10 +256,11 @@ public class CalculateSteerers{
 
 		if(solvey==true){
 			//Set up and run the Y solver.
-			SimpleEvaluatorY sey = new CalculateSteerers.SimpleEvaluatorY();
-			ysolver.getProblem().setEvaluator(sey);
+			final SimpleEvaluator sey = new CalculateSteerers.SimpleEvaluator( yarg );
+			xProblem.addObjective( sey.getErrorObjective() );
+			yProblem.setEvaluator(sey);
 
-			ysolver.solve( ysolver.getProblem() );
+			ysolver.solve( yProblem );
 			ScoreBoard yscoreboard = ysolver.getScoreBoard();
 			System.out.println(yscoreboard.toString());
 			//Calculate and store final values.
@@ -396,21 +398,59 @@ public class CalculateSteerers{
 	}
 
 
-	class SimpleEvaluatorX implements Evaluator{
-		public void evaluate( final Trial trial ) {
-			updateModel();
-			double myScore = calcError(xarg, 0);
+
+	/** computes a score based on the calculated error */
+	class ErrorObjective extends Objective {
+		/** x or y plane */
+		final private int PLANE;
+
+
+		/** Constructor */
+		public ErrorObjective( final int plane ) {
+			super( "Error-" + ( plane == xarg ? "X" : "Y" ) );
+			PLANE = plane;
 		}
 
-	}
 
-	class SimpleEvaluatorY implements Evaluator{
-		public void evaluate( final Trial trial ) {
-			updateModel();
-			double myScore = calcError(yarg, 0);
+		/** calculate the score */
+		public double calcScore() {
+			return calcError( PLANE, 0 );
 		}
 
+
+		/** compute the satisfaction for the given score */
+		public double satisfaction( final double score ) {
+			return SatisfactionCurve.inverseSatisfaction( score, 0.0001 );
+		}
 	}
+
+
+	/** simple evaluator */
+	class SimpleEvaluator implements Evaluator{
+		/** objective */
+		final private ErrorObjective ERROR_OBJECTIVE;
+
+
+		/** Constructor */
+		public SimpleEvaluator( final int plane ) {
+			ERROR_OBJECTIVE = new ErrorObjective( plane );
+		}
+
+
+		/** get the error objective */
+		public ErrorObjective getErrorObjective() {
+			return ERROR_OBJECTIVE;
+		}
+
+
+		/** evaluate the specified trial */
+		public void evaluate( final Trial trial ) {
+			updateModel();
+			double errorScore = ERROR_OBJECTIVE.calcScore();
+			trial.setScore( ERROR_OBJECTIVE, errorScore );
+		}
+	}
+	
 
 	public double[] getFinalSpot(){
 		return final_spot;
