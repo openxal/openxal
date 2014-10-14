@@ -10,6 +10,7 @@ import xal.sim.scenario.ModelInput;
 import xal.sim.sync.SynchronizationManager;
 import xal.smf.AcceleratorNode;
 import xal.smf.impl.Electromagnet;
+import xal.smf.impl.PermanentMagnet;
 import xal.smf.impl.RfCavity;
 import xal.smf.impl.RfGap;
 import xal.ca.*;
@@ -306,6 +307,7 @@ abstract class BatchPropertyAccessor {
 		registerAccessorInstance( Electromagnet.class, new ElectromagnetPropertyAccessor() );
 		registerAccessorInstance( RfGap.class, new RfGapPropertyAccessor() );
 		registerAccessorInstance( RfCavity.class, new RfCavityPropertyAccessor() );
+		registerAccessorInstance( PermanentMagnet.class, new PermanentMagnetPropertyAccessor() );
 	}
 
 
