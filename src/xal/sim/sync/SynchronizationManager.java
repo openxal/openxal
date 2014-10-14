@@ -11,6 +11,7 @@ import xal.model.IElement;
 import xal.model.elem.IElectromagnet;
 import xal.model.elem.IRfCavity;
 import xal.model.elem.IRfGap;
+import xal.model.elem.IdealPermMagQuad;
 import xal.sim.scenario.ModelInput;
 import xal.sim.scenario.Scenario;
 import xal.smf.AcceleratorNode;
@@ -43,6 +44,7 @@ public class SynchronizationManager {
 		registerSynchronizer(IElectromagnet.class, new ElectromagnetSynchronizer());
 		registerSynchronizer(IRfGap.class, new RfGapSynchronizer());
 		registerSynchronizer(IRfCavity.class, new RfCavitySynchronizer());
+		registerSynchronizer( IdealPermMagQuad.class, new PermanentMagnetSynchronizer() );
 
 		// Synch mode registration
 		SynchronizationManager.syncModes.add(Scenario.SYNC_MODE_LIVE);

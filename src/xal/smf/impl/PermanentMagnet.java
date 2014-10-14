@@ -17,7 +17,10 @@ import xal.ca.*;
  * @author  tap
  */
 abstract public class PermanentMagnet extends Magnet {
+	/** accessible properties */
+	public enum Property { FIELD }
 
+	
     static {
         registerType();
     }
@@ -47,6 +50,57 @@ abstract public class PermanentMagnet extends Magnet {
     public boolean isPermanent() {
         return true;
     }
+
+
+	/** Get the design value for the specified property */
+	public double getDesignPropertyValue( final String propertyName ) {
+		try {
+			final Property property = Property.valueOf( propertyName );		// throws IllegalArgumentException if no matching property
+			switch( property ) {
+				case FIELD:
+					return getDesignField();
+				default:
+					throw new IllegalArgumentException( "Unsupported Electromagnet design value property: " + propertyName );
+			}
+		}
+		catch ( IllegalArgumentException exception ) {
+			return super.getDesignPropertyValue( propertyName );
+		}
+	}
+
+
+	/** Get the live property value for the corresponding array of channel values in the order given by getLivePropertyChannels() */
+	public double getLivePropertyValue( final String propertyName, final double[] channelValues ) {
+		try {
+			final Property property = Property.valueOf( propertyName );		// throws IllegalArgumentException if no matching property
+			switch( property ) {
+				case FIELD:
+					return getDesignField();	// design same as live for permanent magnets
+				default:
+					throw new IllegalArgumentException( "Unsupported Electromagnet live value property: " + propertyName );
+			}
+		}
+		catch( IllegalArgumentException exception ) {
+			return super.getLivePropertyValue( propertyName, channelValues );
+		}
+	}
+
+
+	/** Get the array of channels for the specified property */
+	public Channel[] getLivePropertyChannels( final String propertyName ) {
+		try {
+			final Property property = Property.valueOf( propertyName );		// throws IllegalArgumentException if no matching property
+			switch( property ) {
+				case FIELD:
+					return new Channel[0];
+				default:
+					throw new IllegalArgumentException( "Unsupported Electromagnet live channels property: " + propertyName );
+			}
+		}
+		catch( IllegalArgumentException exception ) {
+			return super.getLivePropertyChannels( propertyName );
+		}
+	}
 
     
     /** 
