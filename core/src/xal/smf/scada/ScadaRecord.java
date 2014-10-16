@@ -237,9 +237,18 @@ public abstract class ScadaRecord implements DataListener, Cloneable {
      */
     @Override
     public void update(DataAdaptor daptSrc) throws MissingResourceException, BadStructException {
+        
+        // Find the appropriate data adaptor according to version
         String          strLabel = this.dataLabel();
         DataAdaptor     daptVals = daptSrc.childAdaptor(strLabel);
 
+        if (daptVals == null) {
+            strLabel = "gov.sns." + strLabel;
+            daptVals = daptSrc.childAdaptor(strLabel);
+        }
+        if (daptVals == null) 
+            daptVals = daptSrc;
+        
         // Read in the data structure field values one by one
         //      the field names are the attributes in the data adaptor
         for (ScadaFieldDescriptor pktFld : this.lstFldDscr) {

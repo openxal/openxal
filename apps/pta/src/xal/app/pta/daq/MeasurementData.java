@@ -10,6 +10,7 @@ import xal.app.pta.MainApplication;
 import xal.ca.BadChannelException;
 import xal.ca.ConnectionException;
 import xal.ca.GetException;
+import xal.extension.application.Application;
 import xal.tools.data.DataAdaptor;
 import xal.tools.data.DataListener;
 import xal.service.pvlogger.PvLoggerException;
@@ -25,6 +26,7 @@ import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -149,7 +151,7 @@ public class MeasurementData implements DataListener {
      */
 
     /**  Data format version */
-    private static final double         DBL_VER_FMT = 1.2;
+    private static final long           LNG_VER_FMT = 3;  // or 1.3
 
     
     
@@ -343,6 +345,28 @@ public class MeasurementData implements DataListener {
      * DataListener Interface
      */
     
+//    /**
+//     * Returns the data label used to store data for the given
+//     * version number.  The current label  will be returned for
+//     * all version greater than or equal to the current version number. 
+//     * 
+//     * @param lngVersion    storage version number for the parent data node
+//     * 
+//     * @return              data label used for the given storage format version
+//     *
+//     * @author Christopher K. Allen
+//     * @since  Oct 13, 2014
+//     */
+//    public String dataLabel(long lngVersion) {
+//        String  strLblVer = this.dataLabel();
+//        
+//        if (lngVersion < 2) {
+//            strLblVer = MainApplication.convertPtaDataLabelToVer3(strLblVer);
+//        }
+//        
+//        return strLblVer;
+//    }
+    
     /** 
      * dataLabel() provides the name used to identify the class in an 
      * external data source.
@@ -363,13 +387,137 @@ public class MeasurementData implements DataListener {
      */
     public void update(DataAdaptor daptSrc) throws IllegalArgumentException {
         
+        // THis is the parent PTA level data adaptor
+        // Get the data adaptor node for the measurements
+        String  strLblMsmts = this.dataLabel();
+        
+        DataAdaptor     daptMsmts = daptSrc.childAdaptor(strLblMsmts);
+        
+        // Check to make sure we have the current data label and 
+        //  bail out if we don't.  Needed because of an inconsistency in versioning
+        //  introduced when porting to Open XAL
+        if (daptMsmts == null) {
+            
+            strLblMsmts = MainApplication.convertPtaDataLabelToVer3(strLblMsmts);
+            daptMsmts   = daptSrc.childAdaptor(strLblMsmts);
+        }
+        
+        if (daptMsmts == null)
+            throw new IllegalArgumentException("Unreadable data - Bad version number on data node " + this.dataLabel());
+        
+        
+        // Get the version information
+        //  Must account for the earlier mistake of using decimal versions (i.e., non-integer)
+        long         lngVerMsmt = 0;
+        
+        if (daptMsmts.hasAttribute("ver")) {
+            String  strVerMsmt = daptSrc.stringValue("ver");
+
+            try { 
+
+                lngVerMsmt = Long.parseLong(strVerMsmt);
+
+            } catch (NumberFormatException e) {
+
+                lngVerMsmt = 2;  // for "1.2"
+            };
+        }
+        
+        if (lngVerMsmt > LNG_VER_FMT)
+            throw new IllegalArgumentException("Unknown data format (format version is unknown)");
+        
+        // Get the PV Logger snapshot ID
+        if (daptMsmts.hasAttribute("pvlogid"))
+            this.lngPvLogId = daptMsmts.longValue("pvlogid");
+        
+        // Get the time stamp
+        if (daptMsmts.hasAttribute("time")) {
+            String      strTime = daptMsmts.stringValue("time");
+            
+            try {
+                if (lngVerMsmt < 1) 
+                    this.datTmStmp = DateFormat.getDateTimeInstance().parse(strTime);
+                else
+                    this.datTmStmp = FMT_TM_STMP.parse(strTime);
+                
+            } catch (ParseException e) {
+
+                this.datTmStmp = new Date(0L);
+                System.err.println("Data file format error - Bad time stamp; " + e.getMessage());
+                Application.displayWarning("Bad Time Stamp", "Unable to parse data set time stamp", e);
+            }
+        }
+        
+        // Get Comment string
+        if (daptMsmts.hasAttribute("comment")) 
+            this.strNotes = daptMsmts.stringValue("comment");
+        
+
+        // Get the measurement data for each wire scanner
+        //  First check the data labels for each version
+        //  If no data is found either the format is bad or there is not wire scanner
+        //  data.  In the later can just create an empty list of data adaptors
+        //  to keep flow control simple.
+        String  strLblScanData = ScannerData.STR_LBL_PARENT;
+        
+        List<DataAdaptor>      lstScanDapts = daptMsmts.childAdaptors(strLblScanData);
+
+        // Again, check to make sure we have the right version of data label
+        if (lstScanDapts.size() == 0) {
+            strLblScanData = MainApplication.convertPtaDataLabelToVer3(strLblScanData);
+            strLblScanData = strLblScanData.replace("ScannerData", "DeviceData");
+        
+            lstScanDapts = daptMsmts.childAdaptors(strLblScanData);
+        }
+//        if (lstScanDapts.size() == 0) { 
+//        
+//            Application.displayWarning("Warning", "No wire scanner data found in file");
+//
+//        }
+        for (DataAdaptor daptMsmt : lstScanDapts) {
+            ScannerData  datMsmt = ScannerData.load(daptMsmt);
+            
+            String           strDevId = datMsmt.strDevId;
+            this.mapMsmtData.put(strDevId, datMsmt);
+        }
+        
+        // Get the measurement data for each harp
+        //  Again, check the data label for each version and proceed accordingly
+        String  strLblHarpData = HarpData.STR_LBL_PARENT;
+        
+        List<DataAdaptor>   lstHarpDapts = daptMsmts.childAdaptors(strLblHarpData);
+        
+        if (lstHarpDapts.size() == 0) {
+            strLblHarpData = MainApplication.convertPtaDataLabelToVer3(strLblHarpData);
+
+            lstHarpDapts = daptMsmts.childAdaptors(strLblHarpData);
+        }
+        
+        for (DataAdaptor daptMsmt : lstHarpDapts) {
+            HarpData    datMsmt = HarpData.load(daptMsmt);
+            
+            String      strDevId = datMsmt.strDevId;
+            this.mapMsmtData.put(strDevId, datMsmt);
+        }
+    }
+    
+    /**
+     * Instructs the receiver to update its data based on the given adaptor.
+     * 
+     * @param daptSrc   data source populating this data structure
+     * 
+     * @throws IllegalArgumentException  the format version of the given data source is unknown 
+     * 
+     */
+    public void update_old(DataAdaptor daptSrc) throws IllegalArgumentException {
+        
         DataAdaptor     daptDataSet = daptSrc.childAdaptor(this.dataLabel());
         
         // Get the version information
         double          dblVer = 0;
         if (daptDataSet.hasAttribute("ver"))
             dblVer = daptDataSet.doubleValue("ver");
-        if (dblVer > DBL_VER_FMT)
+        if (dblVer > LNG_VER_FMT)
             throw new IllegalArgumentException("Unknown data format (format version is unknown)");
         
         // Get the PV Logger snapshot ID
@@ -381,7 +529,7 @@ public class MeasurementData implements DataListener {
             String      strTime = daptDataSet.stringValue("time");
             
             try {
-                if (dblVer < DBL_VER_FMT) 
+                if (dblVer < LNG_VER_FMT) 
                     this.datTmStmp = DateFormat.getDateTimeInstance().parse(strTime);
                 else
                     this.datTmStmp = FMT_TM_STMP.parse(strTime);
@@ -428,7 +576,7 @@ public class MeasurementData implements DataListener {
     public void write(DataAdaptor daptSink) {
         DataAdaptor     daptData = daptSink.createChild(this.dataLabel());
         
-        daptData.setValue("ver", DBL_VER_FMT);
+        daptData.setValue("ver", LNG_VER_FMT);
         daptData.setValue("pvlogid", this.lngPvLogId);
 //        daptData.setValue("time", MainApplication.getTimeStampFormat().format(this.datTmStmp));
         daptData.setValue("time", FMT_TM_STMP.format(this.datTmStmp));
@@ -444,6 +592,23 @@ public class MeasurementData implements DataListener {
     /*
      * Support Methods
      */
+    
+//    /**
+//     * Used to convert an XML label within a PTA data file to version 2
+//     * from version 1 format.
+//     * 
+//     * @param strLblVer1    a PTA data file XML label in the version 1 format
+//     * 
+//     * @return              the corresponding PTA data file label in version 2 format
+//     *
+//     * @author Christopher K. Allen
+//     * @since  Oct 8, 2014
+//     */
+//    private String  convertVersionedXmlLabel(String strLblVer1) {
+//        String  strLblVer2 = strLblVer1.replace("xal.app", "gov.sns.apps");
+//        
+//        return strLblVer2;
+//    }
     
     /**
      * <p>

@@ -611,6 +611,42 @@ public class MainApplication extends ApplicationAdaptor {
         }
     }
 
+    /**
+     * Used to convert an data formatting label within a PTA data file to version 3
+     * from version 2 format.  This applies to the data of classes with the
+     * <code>xal.apps.pta</code> package.
+     * 
+     * @param strLblVer2    a PTA data file XML label in the version 1 format
+     * 
+     * @return              the corresponding PTA data label in version 2 format
+     *
+     * @author Christopher K. Allen
+     * @since  Oct 8, 2014
+     */
+    public static String  convertPtaDataLabelToVer3(String strLblVer2) {
+        String  strLblVer3 = strLblVer2.replace("xal.app", "gov.sns.apps");
+        
+        return strLblVer3;
+    }
+    
+    /**
+     * Used to convert an data formatting label within a PTA data file to version 3
+     * from version 2 format.  This applies to the data of classes with the
+     * <code>xal.smf.imple</code> package.
+     * 
+     * @param strLblVer2    a PTA data file XML label in the version 2 format
+     * 
+     * @return              the corresponding PTA data label in version 3 format
+     *
+     * @author Christopher K. Allen
+     * @since  Oct 8, 2014
+     */
+    public static String  convertSmfDataLabelToVer3(String strLblVer2) {
+        String  strLblVer3 = "gov.sns." + strLblVer2;
+        
+        return strLblVer3;
+    }
+    
 
 
     /*

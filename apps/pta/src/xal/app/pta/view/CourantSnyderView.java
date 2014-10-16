@@ -20,9 +20,11 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 import javax.swing.Box;
 import javax.swing.ImageIcon;
@@ -36,6 +38,7 @@ import javax.swing.event.ListSelectionListener;
 
 import xal.app.pta.IConfigView;
 import xal.app.pta.IDocView;
+import xal.app.pta.MainApplication;
 import xal.app.pta.MainConfiguration;
 import xal.app.pta.MainDocument;
 import xal.app.pta.daq.MeasurementData;
@@ -46,12 +49,15 @@ import xal.app.pta.view.analysis.Twiss3PlaneDisplayPanel;
 import xal.app.pta.view.cmn.DeviceSelectorList;
 import xal.app.pta.view.cmn.DeviceSelectorPanel;
 import xal.app.pta.view.cmn.DeviceSelectorPanel.IDeviceSelectionListener;
-import xal.extension.twissobserver.Measurement;
+import xal.extension.twissobserver.ConvergenceException;
 import xal.extension.twissobserver.MeasurementCurve;
 import xal.extension.widgets.plot.FunctionGraphsJPanel;
+import xal.model.ModelException;
 import xal.smf.Accelerator;
 import xal.smf.AcceleratorNode;
-import xal.smf.impl.profile.ProfileDevice.IProfileData;
+import xal.smf.AcceleratorSeq;
+import xal.smf.AcceleratorSeqCombo;
+import xal.tools.beam.CovarianceMatrix;
 
 /**
  * Panel for computing and displaying the Courant-Snyder parameters.  These
@@ -101,10 +107,19 @@ public class CourantSnyderView extends JPanel implements IDocView, IConfigView, 
     // Application Resources
     
     /** The measurement data set being displayed */
-    private MeasurementData             setMsmt;
+    private MeasurementData             setMsmts;
     
-    /** The list of measurements we are using for reconstruction */
-    private List<Measurement>           lstMmtsRec;
+//    /** The accelerator sequence, or combo sequence, containing all the measurement points and reconstruction location */
+//    private AcceleratorSeq              smfSeqRecon;
+//    
+//    /** A bunch length simulator used to approximate the longitudinal size long the reconstruction region */
+//    private BunchLengthSimulator        blsMsmtDataLng;
+//    
+//    /** A fixed-point method Courant-Snyder estimator */
+//    private CsFixedPtEstimator          cseFixedPtRecon;
+//    
+//    /** The list of measurements we are using for reconstruction */
+//    private List<Measurement>           lstMmtsRec;
     
     
     //
@@ -148,7 +163,7 @@ public class CourantSnyderView extends JPanel implements IDocView, IConfigView, 
         super();
         this.docMain = docMain;
         
-        this.lstMmtsRec = new LinkedList<>();
+//        this.lstMmtsRec = new LinkedList<>();
         
         this.guiBuildComponents();
         this.guiBuildActions();
@@ -162,7 +177,7 @@ public class CourantSnyderView extends JPanel implements IDocView, IConfigView, 
      */
     
     /**
-     * Want to catchs the events that come from our own device selection listener (from the
+     * Want to catch the events that come from our own device selection listener (from the
      * user).  This is the device defining the reconstruction location.
      * 
      * @since Dec 15, 2011
@@ -235,10 +250,10 @@ public class CourantSnyderView extends JPanel implements IDocView, IConfigView, 
     public void updateMeasurementData(MainDocument docMain) {
         this.clearAll();
         
-        this.setMsmt = docMain.getMeasurementData();
+        this.setMsmts = docMain.getMeasurementData();
         
-        if (this.setMsmt != null) 
-            this.lbxMmtData.setDeviceList( this.setMsmt.getDeviceIdSet() );
+        if (this.setMsmts != null) 
+            this.lbxMmtData.setDeviceList( this.setMsmts.getDeviceIdSet() );
     }
 
     
@@ -256,30 +271,119 @@ public class CourantSnyderView extends JPanel implements IDocView, IConfigView, 
      */
     private void computeCourantSnyder() {
         
+        // Get the beamline where the computations are made
+        //  This object will be used by many of the support methods below
+        List<String>    lstDevIdMsmts = this.lbxMmtData.getSelectedDevices();
+        String          strDevIdRecon = this.pnlRecLoc.getSelectedDevice().getId();
+        AcceleratorSeq  smfSeqRecon   = this.identifyReconstructionBeamline();
+
+        try {
+            CovarianceMatrix    matRecon = this.pnlFxdPtCltr.estimateCovariance(strDevIdRecon, lstDevIdMsmts, smfSeqRecon, this.setMsmts);
+
+
+            this.pnlTws3d.display(matRecon);
+            
+        } catch (ModelException e) {
+            MainApplication.getEventLogger().logError(this.getClass(), "Courant-Snyder estimation failure - online model exception");;
+            e.printStackTrace();
+            
+        } catch (ConvergenceException e) {
+            MainApplication.getEventLogger().logError(this.getClass(), "Courant-Snyder estimation failure - no convergence in algorithm");
+            e.printStackTrace();
+        };
     }
     
-    private ArrayList<Measurement>  processMsmtData() {
+//    /**
+//     * Creates a Courant-Snyder parameter estimator for the current reconstruction
+//     * accelerator sector and current measurement set (PV logger ID) by consulting
+//     * the Courant-Snyder Fixed Point Estimator control panel.  The panel contains 
+//     * the numeric parameters to run the search.
+//     * 
+//     * @return  fixed point Courant-Snyder estimator object for current measurements 
+//     * 
+//     * @throws ModelException error in instantiating the machine model
+//     *
+//     * @author Christopher K. Allen
+//     * @since  Oct 7, 2014
+//     */
+//    private CsFixedPtEstimator createCsEstimator() throws ModelException {
+//        
+//        long                    lngPvLogId  = this.setMsmt.getPvLoggerId();
+//        TransferMatrixGenerator trxRecon    = new TransferMatrixGenerator(this.smfSeqRecon, lngPvLogId);
+//        CsFixedPtEstimator      cseFxdPt    = this.pnlFxdPtCltr.createEstimator(trxRecon);
+//        
+//        return cseFxdPt;
+//    }
+//    
+    /**
+     * Determines all the necessary accelerator sequences to perform the 
+     * Courant-Snyder parameter computation.  If the data and reconstruction
+     * location are contained in multiple sequences then a <code>AcceleratorSeqCombo</code>
+     * is constructed that minimally contains all the locations.
+     * 
+     * @return  an accelerator sequence (or combo sequence) containing all measurement and 
+     *          reconstruction locations
+     *
+     * @author Christopher K. Allen
+     * @since  Oct 6, 2014
+     */
+    private AcceleratorSeq identifyReconstructionBeamline() {
         
-        List<String>    lstDevIds = this.lbxMmtData.getSelectedDevices();
+        // Identify all the accelerator sequences containing measurement locations
+        //  and the reconstruction location.
+        //
+        //  We store all the sequences into an ordered Set container since it does not
+        //  allow duplicate entries.
+        Comparator<AcceleratorSeq> cmpSeqOrder = new Comparator<AcceleratorSeq>() {
+            @Override
+            public int compare(AcceleratorSeq smfSeq1, AcceleratorSeq smfSeq2) {
+                
+                if (smfSeq1.getPosition() < smfSeq2.getPosition())
+                    return -1;
+                else if (smfSeq1.getPosition() > smfSeq2.getPosition())
+                    return +1;
+                else
+                    return 0;
+            }
+        };
+        Set<AcceleratorSeq> setSeqMsmts = new TreeSet<>(cmpSeqOrder);
 
-//        this.lstMmtsRec.clear();
-        
-        ArrayList<Measurement>   lstMsmts = new ArrayList<>();
+        // The measurement devices identifying the measurement locations.
+        //  Get their parent sequence and store that sequence in the set of sequences
+        Accelerator                smfAccel    = this.docMain.getAccelerator();
+        List<String>               lstDevIds   = this.lbxMmtData.getSelectedDevices();
+
         for (String strDevId : lstDevIds) {
+            AcceleratorNode smfDevMsmt = smfAccel.getNode(strDevId);
+            AcceleratorSeq  smfSeqMsmt = smfDevMsmt.getParent();
             
-            IProfileData    datMsmt = this.setMsmt.getDataForDeviceId(strDevId);
-            
-            Measurement msmt = new Measurement();
-            msmt.strDevId  = strDevId;
-            msmt.dblSigHor = datMsmt.getDataAttrs().hor.stdev;
-            msmt.dblSigVer = datMsmt.getDataAttrs().ver.stdev;
-            msmt.dblSigLng = 0.0;
-  
-            lstMsmts.add(msmt);
-//            this.lstMmtsRec.add(mmt);
+            setSeqMsmts.add(smfSeqMsmt);
         }
+
+        // Add the reconstruction location into the mix
+        AcceleratorNode     smfDevRecon = this.pnlRecLoc.getSelectedDevice();
+        AcceleratorSeq      smfSeqRecon = smfDevRecon.getParent();
         
-        return lstMsmts;
+        setSeqMsmts.add(smfSeqRecon);
+        
+        
+        // If the measurement data lives in only one sequence we are done
+        int     cntSeqs = setSeqMsmts.size();
+        if (cntSeqs == 1)
+            return smfSeqRecon;
+        
+        // Else the measurement data lives in more than one sequence and we must glue
+        //  them together into a combo sequence
+        List<AcceleratorSeq>    lstSeqMsmts = new LinkedList<>();
+        for (AcceleratorSeq smfSeqMsmt : setSeqMsmts) 
+            lstSeqMsmts.add(smfSeqMsmt);
+ 
+        String              strCmbId1   = lstSeqMsmts.get( 0 ).getId();
+        String              strCmbId2   = lstSeqMsmts.get( cntSeqs - 1 ).getId();
+        String              strCmbId    = strCmbId1 + "-" + strCmbId2;
+        AcceleratorSeqCombo smfCmbMsmts = new AcceleratorSeqCombo(strCmbId, lstSeqMsmts);
+        
+        return smfCmbMsmts;
     }
     
     /**
@@ -449,8 +553,8 @@ public class CourantSnyderView extends JPanel implements IDocView, IConfigView, 
      */
     private void guiInitialize() {
         
-        if (this.setMsmt != null)
-            this.lbxMmtData.setDeviceList( this.setMsmt.getDeviceIdSet() );
+        if (this.setMsmts != null)
+            this.lbxMmtData.setDeviceList( this.setMsmts.getDeviceIdSet() );
     }
     
     /**
@@ -461,7 +565,7 @@ public class CourantSnyderView extends JPanel implements IDocView, IConfigView, 
      */
     private void clearAll() {
         this.lbxMmtData.clear();
-        this.lstMmtsRec.clear();
+//        this.lstMmtsRec.clear();
         this.pltEnvs.removeAllGraphData();
         
     }
