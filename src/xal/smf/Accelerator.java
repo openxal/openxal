@@ -62,12 +62,15 @@ public class Accelerator extends AcceleratorSeq implements /* IElement, */ DataL
      */
     public void update( final DataAdaptor adaptor ) throws NumberFormatException {
         // only the primary optics should supply this data
-        if ( adaptor.hasAttribute("System") ) {
-            m_strSysId = adaptor.stringValue("system");
+        if ( adaptor.hasAttribute( "system" ) ) {
+            m_strSysId = adaptor.stringValue( "system" );
         }
-        if ( adaptor.hasAttribute("ver") ) {
-            m_strVer = adaptor.stringValue("ver");
+        if ( adaptor.hasAttribute( "ver" ) ) {
+            m_strVer = adaptor.stringValue( "ver" );
         }
+		if ( adaptor.hasAttribute( "date") ) {
+			m_strDate = adaptor.stringValue( "date" );
+		}
         
         DataAdaptor powerSuppliesAdaptor = adaptor.childAdaptor("powersupplies");
         if ( powerSuppliesAdaptor != null ) {
