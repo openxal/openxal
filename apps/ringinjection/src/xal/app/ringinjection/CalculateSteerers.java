@@ -24,6 +24,7 @@ import xal.model.probe.traj.*;
 import xal.sim.sync.SynchronizationException;
 import xal.model.xml.*;
 import xal.extension.solver.*;
+import xal.extension.solver.algorithm.*;
 
 import xal.tools.data.*;
 import xal.tools.xml.XmlDataAdaptor;
@@ -156,10 +157,10 @@ public class CalculateSteerers{
 			e.printStackTrace();
 		}
 
-		xsolver = new Solver( SolveStopperFactory.maxElapsedTimeStopper(1.0) );
+		xsolver = new Solver( new SimplexSearchAlgorithm(), SolveStopperFactory.maxElapsedTimeStopper(1.0) );
 		final Problem xProblem = new Problem();
 
-		ysolver = new Solver( SolveStopperFactory.maxElapsedTimeStopper(1.0) );
+		ysolver = new Solver( new SimplexSearchAlgorithm(), SolveStopperFactory.maxElapsedTimeStopper(1.0) );
 		final Problem yProblem = new Problem();
 
 		for(int j = 0; j<4; j++) final_steerers[j] = hlivefields[j];
