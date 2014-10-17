@@ -6,7 +6,7 @@
 
 package xal.app.pasta;
 
-import java.awt.*;
+import java.awt.Toolkit;
 import java.util.*;
 import javax.swing.table.*;
 import java.text.*;
@@ -811,19 +811,19 @@ public class AnalysisStuff {
 	    variableList.clear();
 	    
 	    if( ((Boolean) variableActiveFlags.get(1)).booleanValue()) {
-		    Variable varWIn = new Variable(WIN_VAR_NAME, WIn, WIn*0.975, WIn*1.025);
+		    Variable varWIn = new Variable(WIN_VAR_NAME, WIn, WIn*0.90, WIn*1.1);
 		    variableList.put("WIn",varWIn);
 	    }
 	    
 	    if( ((Boolean) variableActiveFlags.get(0)).booleanValue()) {
-		    Variable varCavPhaseOffset = new Variable(PHASE_VAR_NAME, cavPhaseOffset, cavPhaseOffset-20.,cavPhaseOffset+20.);
+		    Variable varCavPhaseOffset = new Variable(PHASE_VAR_NAME, cavPhaseOffset, cavPhaseOffset-30.,cavPhaseOffset+30.);
 		    variableList.put("PhaseOffset", varCavPhaseOffset);
 	    }
 	    
 	    if( ((Boolean) variableActiveFlags.get(2)).booleanValue()) {
 		    double val = cavityVoltage;
 		    //String name = "Amp fac " +(new Integer(i+1)).toString();
-		    Variable pp = new Variable(AMP_VAR_NAME, val, val*0.85, val*1.15);
+		    Variable pp = new Variable(AMP_VAR_NAME, val, val*0.7, val*1.3);
 		    variableList.put("AmpFac", pp);
 	    }
 	    
@@ -832,11 +832,15 @@ public class AnalysisStuff {
             variableList.put("Fudge", varFF);
 	    }
         
-        Problem problem = ProblemFactory.getInverseSquareMinimizerProblem( new ArrayList<Variable>( variableList.values()), theScorer, 0.001 );
-	    solver = new Solver(SolveStopperFactory.minMaxTimeSatisfactionStopper(0, timeoutPeriod, SatisfactionCurve.inverseSquareSatisfaction( 0.001, 0.1 )));
-        
-        //solver.setStopper(SolveStopperFactory.targetStopperWithMaxTime(.1, timeoutPeriod));
-        
+
+		final Problem problem = new Problem();
+		final ErrorObjective objective = new ErrorObjective( "Pasta Error", 0.001 );
+		problem.addObjective( objective );
+		problem.setVariables( new ArrayList<Variable>( variableList.values() ) );
+		problem.setEvaluator( new PastaEvaluator( theScorer, objective, problem.getVariables() ) );
+
+	    solver = new Solver( new SimplexSearchAlgorithm(), SolveStopperFactory.minMaxTimeSatisfactionStopper( 0, timeoutPeriod, SatisfactionCurve.inverseSquareSatisfaction( 0.001, 0.1 ) ) );
+
         solverReady = true;
         
 	    solver.solve( problem );
@@ -1126,11 +1130,56 @@ public class AnalysisStuff {
 	    }
 	    return -1;
     }
-    
+
+
+	/** method to come up with an initial guess for cavity offset, amplitude, and input beam energy */
+	protected void initialGuess() {
+		double minPhase, maxPhase, avgPhase, dPhase;
+		BasicGraphData someMeasuredData = null;
+		// start with beam energy - set it to design:
+		WIn = defaultEnergy;
+		// same with amplitude:
+		cavityVoltage = theDoc.theDesignAmp;
+		//assume the cavity phase setpoint is in the center of the scan range:
+		if(theDoc.myWindow().useBPM1Box.isSelected())
+			someMeasuredData = theDoc.scanStuff.BPM1AmpMV.getDataContainer(0);
+		if(theDoc.myWindow().useBPM2Box.isSelected())
+			someMeasuredData = theDoc.scanStuff.BPM2AmpMV.getDataContainer(0);
+		if(someMeasuredData == null) {
+			String errText = "Hey - give me some measured data first!!!: ";
+			Toolkit.getDefaultToolkit().beep();
+			theDoc.myWindow().errorText.setText(errText);
+			System.err.println(errText);
+			return;
+		}
+		Vector<Double> phaseCavMeasured = phasesCavMeasured.get(new Integer(0));
+		minPhase = (phaseCavMeasured.get(0)).doubleValue();
+		maxPhase = (phaseCavMeasured.get(phaseCavMeasured.size()-1)).doubleValue();
+		//minPhase = someMeasuredData.getX(0);
+		//int np = someMeasuredData.getNumbOfPoints();
+		//maxPhase = someMeasuredData.getX(np-1);
+		avgPhase = (minPhase + maxPhase)/2.;
+		dPhase = maxPhase - minPhase;
+		System.out.println("Phases " + minPhase + "  " + maxPhase);
+
+		cavPhaseOffset = avgPhase - theDoc.theDesignPhase  + theDoc.DTLPhaseOffset;
+
+		// give some margin away from the scan endpoints for analysis range:
+		theDoc.analysisStuff.phaseModelMax = maxPhase - 0.1 * dPhase;
+		theDoc.myWindow().maxScanPhaseField.setValue(phaseModelMax);
+		theDoc.analysisStuff.phaseModelMin = minPhase + 0.1 * dPhase;
+		theDoc.myWindow().minScanPhaseField.setValue(phaseModelMin);
+		theDoc.analysisStuff.makeCalcPoints();
+		analysisTableModel.fireTableDataChanged();
+
+	}
+
+
+
     /** class to do solver function evaluation */
 	private class PastaScorer  implements Scorer {
 		public PastaScorer() {}
-		
+
 		public double  score( final Trial trial, final java.util.List<Variable> variables ) {
 			final TrialPoint trialPoint = trial.getTrialPoint();
 
@@ -1165,46 +1214,50 @@ public class AnalysisStuff {
 		}
 		
 	}
-    /** method to come up with an initial guess for cavity offset, amplitude, and input beam energy */
-    protected void initialGuess() {
-        double minPhase, maxPhase, avgPhase, dPhase;
-        BasicGraphData someMeasuredData = null;
-        // start with beam energy - set it to design:
-        WIn = defaultEnergy;
-        // same with amplitude:
-        cavityVoltage = theDoc.theDesignAmp;
-        //assume the cavity phase setpoint is in the center of the scan range:
-        if(theDoc.myWindow().useBPM1Box.isSelected())
-            someMeasuredData = theDoc.scanStuff.BPM1AmpMV.getDataContainer(0);
-        if(theDoc.myWindow().useBPM2Box.isSelected())
-            someMeasuredData = theDoc.scanStuff.BPM2AmpMV.getDataContainer(0);
-        if(someMeasuredData == null) {
-            String errText = "Hey - give me some measured data first!!!: ";
-			Toolkit.getDefaultToolkit().beep();
-			theDoc.myWindow().errorText.setText(errText);
-			System.err.println(errText);
-            return;
-        }
-        Vector<Double> phaseCavMeasured = phasesCavMeasured.get(new Integer(0));
-        minPhase = (phaseCavMeasured.get(0)).doubleValue();
-        maxPhase = (phaseCavMeasured.get(phaseCavMeasured.size()-1)).doubleValue();
-        //minPhase = someMeasuredData.getX(0);
-        //int np = someMeasuredData.getNumbOfPoints();
-        //maxPhase = someMeasuredData.getX(np-1);
-        avgPhase = (minPhase + maxPhase)/2.;
-        dPhase = maxPhase - minPhase;
-        System.out.println("Phases " + minPhase + "  " + maxPhase);
-        
-        cavPhaseOffset = avgPhase - theDoc.theDesignPhase  + theDoc.DTLPhaseOffset;
-        
-        // give some margin away from the scan endpoints for analysis range:
-        theDoc.analysisStuff.phaseModelMax = maxPhase - 0.1 * dPhase;
-        theDoc.myWindow().maxScanPhaseField.setValue(phaseModelMax);
-        theDoc.analysisStuff.phaseModelMin = minPhase + 0.1 * dPhase;
-        theDoc.myWindow().minScanPhaseField.setValue(phaseModelMin);
-		theDoc.analysisStuff.makeCalcPoints();
-        analysisTableModel.fireTableDataChanged();
-        
-    }
-	
+
+
+
+	//Evaluates beam properties for a trial point
+	class PastaEvaluator implements Evaluator {
+		private final Objective OBJECTIVE;
+		private final List<Variable> VARIABLES;
+		private final Scorer SCORER;
+
+
+		// Constructor
+		public PastaEvaluator( final PastaScorer scorer, final Objective objective, final List<Variable> variables ) {
+			SCORER = scorer;
+			OBJECTIVE = objective;
+			VARIABLES = variables;
+		}
+
+
+		// evaluate the trial
+		public void evaluate( final Trial trial ){
+			final double score = SCORER.score( trial, VARIABLES );
+			trial.setScore( OBJECTIVE, score );
+		}
+	}
+
+
+
+	// objective class for solver.
+	class ErrorObjective extends Objective{
+		// error tolerance
+		final private double TOLERANCE;
+
+		// Constructor
+		public ErrorObjective( final String name, final double tolerance ){
+			super( name );
+			TOLERANCE = tolerance;
+		}
+
+		// compute the satisfaction for the given (positive) square error
+		public double satisfaction( final double squareError ){
+			return 1.0 / ( TOLERANCE * TOLERANCE + squareError );
+		}
+		
+	}
+
 }
+
