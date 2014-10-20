@@ -163,8 +163,8 @@ public class AccCalculator {
         Scenario scenario = null;
         ParticleProbe probe = null;
         try{
-            scenario = Scenario.newScenarioFor(accSeqTotal);
-            scenario.setSynchronizationMode(Scenario.SYNC_MODE_DESIGN);
+            scenario = Scenario.newScenarioFor(accSeqTotal);  // TODO CKA - calling a static method on a null value!
+            scenario.setSynchronizationMode(Scenario.SYNC_MODE_DESIGN); // TODO CKA - Is this right??
             
             try{
                 ParticleTracker tracker =  AlgorithmFactory.createParticleTracker(accSeqTotal);
