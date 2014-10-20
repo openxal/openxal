@@ -34,8 +34,15 @@ public interface IProbe {
     /*
      *  Particle Species Parameters
      */
-    
-    /** 
+
+	/**
+	 * returns the species name
+	 * @return species name
+	 */
+	public String getSpeciesName();
+
+	
+    /**
      *  Returns the charge of probe's particle species 
      *  
      *  @return     particle species charge in units of positive electron charge
