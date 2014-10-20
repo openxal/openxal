@@ -92,6 +92,9 @@ public abstract class Probe<S extends ProbeState<S>> implements IProbe, IArchive
     /** Time stamp associated with probe */
     private Date    m_dateStamp = new Date();
 
+	/** Species name */
+	private String m_speciesName = "";
+
     /** toggle trajHist tracking for a probe */
     private boolean         bolTrack = true;
     
@@ -430,9 +433,12 @@ public abstract class Probe<S extends ProbeState<S>> implements IProbe, IArchive
      */
     public void setTimestamp(Date dateStamp)    { m_dateStamp = dateStamp; };
 
-    
-
-
+	
+	/**
+	 * Set the species name
+	 * @param name the species name
+	 */
+	public void setSpeciesName(String name) {m_speciesName = name; }
 
 
     /**
@@ -498,9 +504,15 @@ public abstract class Probe<S extends ProbeState<S>> implements IProbe, IArchive
     /*
      *  IProbe Interface
      */
-    
-    /** 
-     *  Returns the charge of probe's particle species 
+
+	/**
+	 * returns the species name
+	 * @return species name
+	 */
+	public String getSpeciesName() { return m_speciesName; }
+
+    /**
+     *  Returns the charge of probe's particle species
      *  
      *  @return     particle species charge (<b>Coulombs</b>)
      */

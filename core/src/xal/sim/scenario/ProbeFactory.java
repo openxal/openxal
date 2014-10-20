@@ -356,7 +356,9 @@ public class ProbeFactory {
 		final GenericRecord speciesRecord = speciesTable.record( SPECIES_NAME_PARAM, species );
 		final double mass = speciesRecord.doubleValueForKey( MASS_PARAM );
 		final double charge = speciesRecord.doubleValueForKey( CHARGE_PARAM );
+		final String name = speciesRecord.stringValueForKey(SPECIES_NAME_PARAM);
 
+		probe.setSpeciesName(name);
 		probe.setSpeciesRestEnergy( mass );
 		probe.setSpeciesCharge( charge );
 		probe.setKineticEnergy( kineticEnergy );
