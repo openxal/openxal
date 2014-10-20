@@ -107,8 +107,14 @@ public class Scenario {
     public void setSynchronizationMode( final String newMode ) {
         syncManager.setSynchronizationMode(newMode);
     }
-    
+
 	
+	/** get the synchronization mode */
+	public String getSynchronizationMode() {
+		return syncManager.getSynchronizationMode();
+	}
+
+
     /**
      * Synchronizes each lattice element to the appropriate data source.
      * @throws SynchronizationException if an error is encountered reading a data source
