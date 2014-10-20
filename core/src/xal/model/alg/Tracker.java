@@ -13,12 +13,10 @@ import xal.tools.data.DataTable;
 import xal.tools.data.EditContext;
 import xal.tools.data.GenericRecord;
 import xal.tools.data.IArchive;
-
 import xal.model.IAlgorithm;
 import xal.model.IElement;
 import xal.model.IProbe;
 import xal.model.ModelException;
-
 import xal.sim.scenario.AlgorithmFactory;
 import xal.smf.AcceleratorSeq;
 
@@ -476,20 +474,7 @@ public abstract class Tracker implements IAlgorithm, IArchive {
         this.m_bolDebug = bolDebug;
     }
     
-    /**
-     * Sets the flag that determines whether or not the
-     * propagation stops at the entrance of the stop element (if set),
-     * or at the exit of the stop node.  The later case is the default.
-     *  
-     * @param bolInclStopElem    propagation stops after stop element if <code>true</code>,
-     *                           before the stop element if <code>false</code>
-     *
-     * @author Christopher K. Allen
-     * @since  Oct 20, 2014
-     */
-    public void setIncludeStopElement(boolean bolInclStopElem) {
-        this.bolInclStopElem = bolInclStopElem; 
-    }
+    
     
     
     
@@ -642,6 +627,22 @@ public abstract class Tracker implements IAlgorithm, IArchive {
         this.m_bolIsStopped = false;
     }
     
+    /**
+     * Sets the flag that determines whether or not the
+     * propagation stops at the entrance of the stop element (if set),
+     * or at the exit of the stop node.  The later case is the default.
+     *  
+     * @param bolInclStopElem    propagation stops after stop element if <code>true</code>,
+     *                           before the stop element if <code>false</code>
+     *
+     * @author Christopher K. Allen
+     * @since  Oct 20, 2014
+     */
+    @Override
+    public void setIncludeStopElement(boolean bolInclStopElem) {
+        this.bolInclStopElem = bolInclStopElem; 
+    }
+
     /**
      * reset the Start Element Id to null
      */
