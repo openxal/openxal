@@ -76,11 +76,18 @@ public class SynchronizationManager {
 
 	// Public State ============================================================
 	
+	/** Set the synchronization mode */
 	public void setSynchronizationMode( final String newMode ) {
 		if ( !SynchronizationManager.syncModes.contains( newMode ) )  throw new IllegalArgumentException( "unknown synchronization mode: " + newMode );
 		syncMode = newMode;
 	}
-	
+
+
+	/** Get the synchronization mode */
+	public String getSynchronizationMode() {
+		return syncMode;
+	}
+
 	
 	// Constructors ============================================================
 	
