@@ -8,6 +8,7 @@ package xal.extension.twissobserver;
 
 import java.util.ArrayList;
 
+import oracle.net.aso.e;
 import xal.tools.beam.CovarianceMatrix;
 import xal.extension.twissobserver.TransferMatrixGenerator.SYNC;
 import xal.model.ModelException;
@@ -16,6 +17,7 @@ import xal.model.probe.EnvelopeProbe;
 import xal.model.probe.traj.EnvelopeProbeState;
 import xal.model.probe.traj.Trajectory;
 import xal.service.pvlogger.sim.PVLoggerDataSource;
+import xal.sim.scenario.AlgorithmFactory;
 import xal.sim.scenario.ProbeFactory;
 import xal.sim.scenario.Scenario;
 import xal.smf.AcceleratorSeq;
@@ -90,7 +92,7 @@ public class BunchLengthSimulator {
      * @param smfSeq       the desired sequence for bunch length computation
      * @param enmSyn       source of machine parameters
 
-     * @throws ModelException  and error occurred when instantiating the machine model
+     * @throws ModelException           an error occurred when instantiating the machine model
      */
     public BunchLengthSimulator(AcceleratorSeq  smfSeq, SYNC enmSyn) throws ModelException {
         
@@ -98,13 +100,19 @@ public class BunchLengthSimulator {
         this.smfSeq = smfSeq;
         
         // Create the finite space charge probe
-        EnvTrackerAdapt    algEnvTrk = new EnvTrackerAdapt();
-        algEnvTrk.setMaxIterations(1000);
-//      algEnvTrk.setDebugMode(true);
-        
-        // Create and initialize the envelope probe
-        this.mdlProbe = ProbeFactory.getEnvelopeProbe(this.smfSeq, algEnvTrk);
+        try {
+            EnvTrackerAdapt    algEnvTrk = AlgorithmFactory.createEnvTrackerAdapt(smfSeq);
+//            algEnvTrk.setMaxIterations(1000);
+//            algEnvTrk.setDebugMode(true);
 
+            // Create and initialize the envelope probe
+            this.mdlProbe = ProbeFactory.getEnvelopeProbe(this.smfSeq, algEnvTrk);
+
+        } catch (InstantiationException e) {
+
+            throw new ModelException("Unable to instantial algorithm ", e);
+        }
+        
         // Create the model and load the parameters from the saved PV Logger data
         this.mdlBeamline = Scenario.newScenarioFor(smfSeq);
         this.setSynchronizationMode(enmSyn);

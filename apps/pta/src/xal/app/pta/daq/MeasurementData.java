@@ -645,7 +645,7 @@ public class MeasurementData implements DataListener {
 
                 WireScanner     smfScan  = (WireScanner)smfDev;
                 String          strDevId = smfScan.getId();
-                ScannerData    datDev   = ScannerData.acquire(smfScan);
+                ScannerData     datDev   = ScannerData.acquire(smfScan);
 
                 mapMmtData.put(strDevId, datDev);
                 
@@ -653,7 +653,7 @@ public class MeasurementData implements DataListener {
                 
                 WireHarp    smfHarp  = (WireHarp)smfDev;
                 String      strDevId = smfHarp.getId();
-                HarpData   datDev   = HarpData.acquire(smfHarp);
+                HarpData    datDev   = HarpData.acquire(smfHarp);
                 
                 mapMmtData.put(strDevId, datDev);
                 

@@ -41,6 +41,7 @@ import xal.app.pta.IDocView;
 import xal.app.pta.MainApplication;
 import xal.app.pta.MainConfiguration;
 import xal.app.pta.MainDocument;
+import xal.app.pta.MainWindow;
 import xal.app.pta.daq.MeasurementData;
 import xal.app.pta.rscmgt.AppProperties;
 import xal.app.pta.rscmgt.PtaResourceManager;
@@ -274,11 +275,25 @@ public class CourantSnyderView extends JPanel implements IDocView, IConfigView, 
         // Get the beamline where the computations are made
         //  This object will be used by many of the support methods below
         List<String>    lstDevIdMsmts = this.lbxMmtData.getSelectedDevices();
-        String          strDevIdRecon = this.pnlRecLoc.getSelectedDevice().getId();
-        AcceleratorSeq  smfSeqRecon   = this.identifyReconstructionBeamline();
+        AcceleratorNode smfDevRecon   = this.pnlRecLoc.getSelectedDevice();
 
+        // Check that data has been selected
+        if (lstDevIdMsmts.size() == 0) {
+            MainApplication.getApplicationDocument().displayWarning("No Data", "You must select a data set");
+            
+            return;
+        }
+        if (smfDevRecon == null) { 
+            MainApplication.getApplicationDocument().displayWarning("No Reconstruction Location", "You must select a beamline location");
+        
+            return;
+        }
+        
+        // We have the data and the reconstruction location, now make the beamline and solve
+        String          strDevReconId = smfDevRecon.getId();
+        AcceleratorSeq  smfSeqRecon   = this.identifyReconstructionBeamline();
         try {
-            CovarianceMatrix    matRecon = this.pnlFxdPtCltr.estimateCovariance(strDevIdRecon, lstDevIdMsmts, smfSeqRecon, this.setMsmts);
+            CovarianceMatrix    matRecon = this.pnlFxdPtCltr.estimateCovariance(strDevReconId, lstDevIdMsmts, smfSeqRecon, this.setMsmts);
 
 
             this.pnlTws3d.display(matRecon);

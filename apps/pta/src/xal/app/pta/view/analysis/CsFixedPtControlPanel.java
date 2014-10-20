@@ -493,6 +493,7 @@ public class CsFixedPtControlPanel extends JPanel {
         Double      dblFpAlpha = this.txtFpAlpha.getDisplayValue().doubleValue();
 
         CsFixedPtEstimator  cseFxdPt = new CsFixedPtEstimator(intMaxIter, dblMaxErr, dblFpAlpha, trxRecon);
+        cseFxdPt.setDebug(true);
 
         return cseFxdPt;
     }
@@ -533,15 +534,18 @@ public class CsFixedPtControlPanel extends JPanel {
      */
     private ArrayList<Measurement>  processMeasurementData(List<String> lstDevIdMsmts, MeasurementData setMsmts) {
 
-        ArrayList<Measurement>   lstMsmts = new ArrayList<>();
+        // Create the array for measurement data and get the measurement scaling factor
+        double                  dblScaleStd = AppProperties.MSMT.SCALE_STD_WIRE.getValue().asDouble();
+        ArrayList<Measurement>  lstMsmts    = new ArrayList<>();
+        
         for (String strDevId : lstDevIdMsmts) {
 
             IProfileData    datMsmt = setMsmts.getDataForDeviceId(strDevId);
 
             Measurement msmt = new Measurement();
             msmt.strDevId  = strDevId;
-            msmt.dblSigHor = datMsmt.getDataAttrs().hor.stdev;
-            msmt.dblSigVer = datMsmt.getDataAttrs().ver.stdev;
+            msmt.dblSigHor = datMsmt.getDataAttrs().hor.stdev * dblScaleStd;
+            msmt.dblSigVer = datMsmt.getDataAttrs().ver.stdev * dblScaleStd;
             msmt.dblSigLng = 0.0;
 
             lstMsmts.add(msmt);

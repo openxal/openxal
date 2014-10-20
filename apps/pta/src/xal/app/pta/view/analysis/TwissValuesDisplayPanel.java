@@ -40,7 +40,7 @@ import xal.tools.beam.Twiss;
 
     
     /** The display format of the field values */
-    private static final NumberTextField.FMT        FMT_DISPLAY = FMT.DEC_4;
+    private static final NumberTextField.FMT        FMT_DISPLAY = FMT.ENGR_3;
     
     /** String length of each label */
     private static final int        INT_LABEL_LEN = 11;
