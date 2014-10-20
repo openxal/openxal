@@ -371,6 +371,12 @@ public abstract class Tracker implements IAlgorithm, IArchive {
      */
     private String      m_strElemStop = null;
     
+    /**
+     * Flag indicating that propagation should stop at the entrance of
+     * the stop element.
+     */
+    private boolean     bolInclStopElem = true;
+    
     /** 
      * have we started propagating 
      */
@@ -470,6 +476,21 @@ public abstract class Tracker implements IAlgorithm, IArchive {
         this.m_bolDebug = bolDebug;
     }
     
+    /**
+     * Sets the flag that determines whether or not the
+     * propagation stops at the entrance of the stop element (if set),
+     * or at the exit of the stop node.  The later case is the default.
+     *  
+     * @param bolInclStopElem    propagation stops after stop element if <code>true</code>,
+     *                           before the stop element if <code>false</code>
+     *
+     * @author Christopher K. Allen
+     * @since  Oct 20, 2014
+     */
+    public void setIncludeStopElement(boolean bolInclStopElem) {
+        this.bolInclStopElem = bolInclStopElem; 
+    }
+    
     
     
     /*
@@ -494,25 +515,30 @@ public abstract class Tracker implements IAlgorithm, IArchive {
     public boolean getDebugMode()   {
         return this.m_bolDebug;
     }
-     
+    
     /**
-     * Get the modeling element string identifier where propagation is to start.
+     * Returns the flag that indicates whether or not the stop
+     * element is propagated through.
      * 
-     * @return  string id if element is defined, null otherwise
+     * @return  <code>true</code> indicates propagation stops after the stop element,
+     *          <code>false</code> indicates propagation stops before the stop element (entrance)
+     *
+     * @author Christopher K. Allen
+     * @since  Oct 20, 2014
      */
-    public String getStartElementId() {
-        return m_strElemStart;
+    public boolean  isStopElementIncluded() {
+        return this.bolInclStopElem;
     }
-
+    
     /**
-     * Get the modeling element string identifier where propagation is to stop.
+     * TODO CKA - Remove, never used.
      * 
-     * @return  string id if element is defined, null otherwise
+     * @author Christopher K. Allen
+     * @since  Oct 20, 2014
      */
-    public String getStopElementId() {
-        return m_strElemStop;
+    public Class<? extends IProbe> getProbeType() {
+        return probeType;
     }
-
     
     
     /*
@@ -526,22 +552,16 @@ public abstract class Tracker implements IAlgorithm, IArchive {
      * 
      * @return <code>true</code> if phase calculations are made, <code>false</code> otherwise
      */
+    @Override
     public boolean useRfGapPhaseCalculation() { return m_bolCalcRfGapPhase;}
 
 
-    /** 
-     * Toggle the RF phase calculation on or off. 
-     * 
-     * @param   tf  flag for turning on/off the phase calculations
-     */
-    public void setRfGapPhaseCalculation(boolean tf) { m_bolCalcRfGapPhase=tf;}
-    
-    
     /**
      *  Return the algorithm type.
      *  
      *  @return     name of the integration algorithm
      */
+    @Override
     public String getType() { return m_strType; };
     
     /** 
@@ -549,11 +569,8 @@ public abstract class Tracker implements IAlgorithm, IArchive {
      *
      *  @return     version number of the integration algorithm 
      */
+    @Override
     public int getVersion() { return m_intVersion; };
-    
-    public Class<? extends IProbe> getProbeType() {
-        return probeType;
-    }
     
     /**  
      *  Check if probe can be handled by this algorithm.
@@ -566,10 +583,41 @@ public abstract class Tracker implements IAlgorithm, IArchive {
     }
     
     /**
+     * Get the modeling element string identifier where propagation is to start.
+     * 
+     * @return  string id if element is defined, null otherwise
+     */
+    @Override
+    public String getStartElementId() {
+        return m_strElemStart;
+    }
+
+    /**
+     * Get the modeling element string identifier where propagation is to stop.
+     * 
+     * @return  string id if element is defined, null otherwise
+     */
+    @Override
+    public String getStopElementId() {
+        return m_strElemStop;
+    }
+
+    
+    
+    /** 
+     * Toggle the RF phase calculation on or off. 
+     * 
+     * @param   tf  flag for turning on/off the phase calculations
+     */
+    @Override
+    public void setRfGapPhaseCalculation(boolean tf) { m_bolCalcRfGapPhase=tf;}
+
+    /**
      * Sets the element from which to start propagation.
      * 
      * @param id <code>String</code> id of the element from which to start propagation
      */
+    @Override
     public void setStartElementId(String id) {
         this.m_strElemStart = id;
         
@@ -588,16 +636,34 @@ public abstract class Tracker implements IAlgorithm, IArchive {
      * 
      * @param id <code>String</code> id of the element at which to stop propagation
      */
+    @Override
     public void setStopElementId(String id) {
         this.m_strElemStop = id;
         this.m_bolIsStopped = false;
     }
     
     /**
+     * reset the Start Element Id to null
+     */
+    @Override
+    public void unsetStartElementId() {
+        setStartElementId(null);
+    }
+
+    /**
+     * reset the Stop Element Id to null
+     */
+    @Override
+    public void unsetStopElementId() {
+        setStopElementId(null);
+    }
+
+    /**
      * Initializes the algorithm to begin a new propagation cycle.
      * 
      * @see xal.model.IAlgorithm#initialize()
      */
+    @Override
     public void initialize()    {
         if (this.getStartElementId() == null)   {
             this.m_bolIsStarted = false;
@@ -629,6 +695,7 @@ public abstract class Tracker implements IAlgorithm, IArchive {
      *
      *  @exception  ModelException  invalid probe type or error in advancing probe
      */
+    @Override
     public void propagate(IProbe probe, IElement elem) throws ModelException {
         
 //        if (!this.validProbe(probe))        // wrong probe type for algorithm
@@ -670,6 +737,7 @@ public abstract class Tracker implements IAlgorithm, IArchive {
      * 
      * @see xal.tools.data.IContextAware#load(String, EditContext)
      */
+    @Override
     public void load(final String strPrimKeyVal, final EditContext ecTableData) throws DataFormatException {
         
         // Get the algorithm class name from the EditContext
@@ -708,6 +776,7 @@ public abstract class Tracker implements IAlgorithm, IArchive {
      * 
      * @see xal.tools.data.IArchive#load(xal.tools.data.DataAdaptor)
      */
+    @Override
     public void load(DataAdaptor daSource) throws DataFormatException {
         
         // Make sure we have proper data source
@@ -740,6 +809,7 @@ public abstract class Tracker implements IAlgorithm, IArchive {
      * 
      * @see xal.tools.data.IArchive#save(xal.tools.data.DataAdaptor)
      */
+    @Override
     public void save(DataAdaptor daptArchive) {
         
         DataAdaptor daptAlg = daptArchive.createChild(NODETAG_ALG);
@@ -906,9 +976,12 @@ public abstract class Tracker implements IAlgorithm, IArchive {
         if (this.getStopElementId() != null )
             if (this.getStopElementId().equals(elem.getId())) {
                 this.m_bolIsStopped = true;
+                
+                if(this.isStopElementIncluded() == false)
+                    return false;
             }
         
-        // No stopping critereon encountered
+        // No stopping criterion encountered
         return true;
     }
         
@@ -952,20 +1025,6 @@ public abstract class Tracker implements IAlgorithm, IArchive {
      */
     public void setElemPosition(double dblPosElem) {
         this.m_dblPosElem = dblPosElem;
-    }
-    
-    /**
-     * reset the Start Element Id to null
-     */
-    public void unsetStartElementId() {
-        setStartElementId(null);
-    }    
-    
-    /**
-     * reset the Stop Element Id to null
-     */
-    public void unsetStopElementId() {
-        setStopElementId(null);
     }
 
 }
