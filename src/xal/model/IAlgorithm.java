@@ -98,6 +98,19 @@ public interface IAlgorithm extends java.rmi.Remote, IContextAware, IArchive {
      */
     public void setStopElementId(String id);
     
+    /**
+     * Sets the flag that determines whether or not the
+     * propagation stops at the entrance of the stop element (if set),
+     * or at the exit of the stop node.  The later case is the default.
+     *  
+     * @param bolInclStopElem    propagation stops after stop element if <code>true</code>,
+     *                           before the stop element if <code>false</code>
+     *
+     * @author Christopher K. Allen
+     * @since  Oct 20, 2014
+     */
+    public void setIncludeStopElement(boolean bolInclStopElem);
+    
 	
     /**
      * reset Stop point to the end of the sequence

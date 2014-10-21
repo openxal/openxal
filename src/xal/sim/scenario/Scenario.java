@@ -43,6 +43,12 @@ public class Scenario {
     /** element at which to stop propagation */
     private String idElemStop = null;
     
+    /**
+     * Flag indicating that propagation should stop at the entrance of
+     * the stop element.
+     */
+    private boolean     bolInclStopElem = true;
+    
     
     /** Constructor */
     protected Scenario( final AcceleratorSeq aSeq, final Lattice aLattice, final SynchronizationManager aSyncMgr ) {
@@ -215,6 +221,21 @@ public class Scenario {
         idElemStop = stop.getId();
     }
 	
+    /**
+     * Sets the flag that determines whether or not the
+     * propagation stops at the entrance of the stop element (if set),
+     * or at the exit of the stop node.  The later case is the default.
+     *  
+     * @param bolInclStopElem    propagation stops after stop element if <code>true</code>,
+     *                           before the stop element if <code>false</code>
+     *
+     * @author Christopher K. Allen
+     * @since  Oct 20, 2014
+     */
+    public void setIncludeStopElement(boolean bolInclStopElem) {
+        this.bolInclStopElem = bolInclStopElem; 
+    }
+    
 	
 	/**
 	 * Convert the position of a location in the sequence to a position in a trajectory due to 
@@ -255,9 +276,10 @@ public class Scenario {
         else
             alg.unsetStartElementId();
             
-        if (this.getStopElementId() != null)
+        if (this.getStopElementId() != null) {
             alg.setStopElementId( this.getStopElementId() );
-        else
+            alg.setIncludeStopElement(this.bolInclStopElem);
+        } else
             alg.unsetStopElementId();
         
         // Propagate probe
