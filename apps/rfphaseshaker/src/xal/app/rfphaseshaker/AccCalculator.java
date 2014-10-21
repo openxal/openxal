@@ -168,8 +168,8 @@ public class AccCalculator {
             
             try{
                 ParticleTracker tracker =  AlgorithmFactory.createParticleTracker(accSeqTotal);
-// TODO: Need to reintroduce setStopNodeInclusive when it is added within the core. 
-                //tracker.setStopNodeInclusive(false);
+                scenario.setIncludeStopElement(false);
+                
                 tracker.setRfGapPhaseCalculation(true);
                 probe = ProbeFactory.createParticleProbe(accSeqTotal,tracker);
                 scenario.setProbe(probe);
