@@ -46,7 +46,7 @@ public class DynacGenerator {
     protected String myLatticeName = null;
     
     private boolean mebtInd = false;        // TODO: CKA - NEVER USED
-    
+
     private AcceleratorSeq myAccSeq;
     private Scenario myScenario;
     private String mySrcSelector = Scenario.SYNC_MODE_DESIGN;
@@ -98,7 +98,7 @@ public class DynacGenerator {
                                                                       myProbe.getKineticEnergy());
         // for Dynac header
         CovarianceMatrix covarianceMatrix = myProbe.getCovariance();
-        
+
         Twiss[] twiss = covarianceMatrix.computeTwiss();
         String dynac_header =
         "SNS " + myLatticeName + " " + today.toString() + "\n"
