@@ -52,7 +52,7 @@ public class MadGenerator {
     
 	/** Probe for initial condition */
 	protected Probe<?> myProbe;
-
+    
 	protected java.util.List<AcceleratorSeq> _sequenceChain = null;
     
 	/** for design values */
@@ -181,7 +181,7 @@ public class MadGenerator {
 		final FileWriter MAD_WRITER = new FileWriter( mad_file );
 		final Date today = new Date();
         
-		// TODO: CKA - NEVER USED
+		// TODO: CKA - NEVER USED		
 		TraceXalUnitConverter uc = TraceXalUnitConverter.newConverter( 402500000., myProbe.getSpeciesRestEnergy(), myProbe.getKineticEnergy() );
         
 		double momentum = RelativisticParameterConverter.computeMomentumFromEnergies( myProbe.getKineticEnergy(), myProbe.getSpeciesRestEnergy() ) / 1.e9;
