@@ -31,7 +31,7 @@ public class ImpactGenerator {
     
 	/** Probe for initial condition */
 	protected Probe<?> myProbe;
-    
+
 	protected java.util.List<AcceleratorSeq> _sequenceChain = null;
     
 	/** for design values */
@@ -224,8 +224,12 @@ public class ImpactGenerator {
 			}
 		}
 		
+		// output format
+		final StringBuffer footerBuffer = new StringBuffer();
 		
-        
+		
+		IMPACT_WRITER.write( footerBuffer.toString() );
+
 		IMPACT_WRITER.close();
 	}
 
