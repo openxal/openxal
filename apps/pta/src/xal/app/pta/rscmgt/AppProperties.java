@@ -725,6 +725,9 @@ public final class AppProperties extends PropertiesManager  {
         /** Computational analysis - Analyze Courant-Snyder parameters */
         TWS_COMPUTE("IconTwsCompute"),
         
+        /** "Include space charge" button icon (for computing CS paramters) */
+        TWS_SCHEFF("IconTwsScheff"),
+        
     
         /** Data Analysis - select for the head of the beam */
         PRCG_BMHEAD("IconPrcgSelBeamHead"),
@@ -810,6 +813,9 @@ public final class AppProperties extends PropertiesManager  {
         
         /** The default numerical tuning parameter used in the fixed point Courant-Snyder reconstruction method */
         CSFP_ALPHA("NumCsFixedPtAlpha"),
+        
+        /** The number of solution iterations before some intermediate action */
+        CSFP_ITER_MOD("NumCsFixedPtIterModulo"),
         
         
         /** The numeric format to display position values (typically in mm)  */

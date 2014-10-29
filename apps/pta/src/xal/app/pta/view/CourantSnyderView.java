@@ -20,14 +20,18 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
 import javax.swing.Box;
 import javax.swing.ImageIcon;
+import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
@@ -41,7 +45,6 @@ import xal.app.pta.IDocView;
 import xal.app.pta.MainApplication;
 import xal.app.pta.MainConfiguration;
 import xal.app.pta.MainDocument;
-import xal.app.pta.MainWindow;
 import xal.app.pta.daq.MeasurementData;
 import xal.app.pta.rscmgt.AppProperties;
 import xal.app.pta.rscmgt.PtaResourceManager;
@@ -51,13 +54,25 @@ import xal.app.pta.view.cmn.DeviceSelectorList;
 import xal.app.pta.view.cmn.DeviceSelectorPanel;
 import xal.app.pta.view.cmn.DeviceSelectorPanel.IDeviceSelectionListener;
 import xal.extension.twissobserver.ConvergenceException;
+import xal.extension.twissobserver.Measurement;
 import xal.extension.twissobserver.MeasurementCurve;
+import xal.extension.widgets.olmplot.EnvelopeCurve;
+import xal.extension.widgets.olmplot.PLANE;
 import xal.extension.widgets.plot.FunctionGraphsJPanel;
 import xal.model.ModelException;
+import xal.model.alg.EnvTrackerAdapt;
+import xal.model.probe.EnvelopeProbe;
+import xal.model.probe.traj.EnvelopeProbeState;
+import xal.model.probe.traj.Trajectory;
+import xal.service.pvlogger.sim.PVLoggerDataSource;
+import xal.sim.scenario.AlgorithmFactory;
+import xal.sim.scenario.ProbeFactory;
+import xal.sim.scenario.Scenario;
 import xal.smf.Accelerator;
 import xal.smf.AcceleratorNode;
 import xal.smf.AcceleratorSeq;
 import xal.smf.AcceleratorSeqCombo;
+import xal.smf.impl.profile.ProfileDevice.IProfileData;
 import xal.tools.beam.CovarianceMatrix;
 
 /**
@@ -82,8 +97,244 @@ public class CourantSnyderView extends JPanel implements IDocView, IConfigView, 
      * Internal Classes
      */
     
+//    public interface PhasePlaneSelectionAction
     
+    /**
+     * Data structure containing all the data required to solve the 
+     * Courant-Snyder reconstruction
+     * problem as well as the reconstruction (i.e., the covariance matrix) itself.
+     *
+     * @author Christopher K. Allen
+     * @since  Oct 23, 2014
+     */
+    public static class SolutionSet {
+
+        /** PV Logger ID of the machine state during the measurement operation */
+        public long                    lngPvLogId;
+        
+        /** The accelerator node at which the C-S parameters are being reconstructed */
+        public AcceleratorNode         smfDevRecon;
+        
+        /** 
+         * The accelerator sequence just large enough to contain the measurement 
+         * locations and the reconstruction location.
+         */
+        public AcceleratorSeq          smfSeqRecon;
+        
+        /** The measurement data used in the reconstruction */ 
+        public ArrayList<Measurement>  arrMsmts;
+
+        
+        /** The solution to the reconstruction problem */
+        public CovarianceMatrix        matRecon;
+
+        
+        /*
+         * Initialization
+         */
+        
+        /**
+         * Constructor for data structure <code>SolutionSet</code>.
+         * Creates an empty data structure, fields having null values.
+         *
+         * @author Christopher K. Allen
+         * @since  Oct 23, 2014
+         */
+        public SolutionSet() {
+            this.lngPvLogId  = -1;
+            this.smfDevRecon = null;
+            this.smfSeqRecon = null;
+            this.arrMsmts    = null;
+            
+            this.matRecon    = null;
+        }
+        
+        /*
+         * Operations
+         */
+        
+        /**
+         * Check that we have data to the problem.  Does not indicate whether or
+         * not the data is good however.
+         * 
+         * @return
+         *
+         * @author Christopher K. Allen
+         * @since  Oct 23, 2014
+         */
+        public boolean  hasAllData() {
+            if (lngPvLogId==-1    || 
+                    smfDevRecon==null || 
+                    smfSeqRecon==null || 
+                    arrMsmts==null
+                    )
+                return false;
+            
+            return true;
+        }
+        
+        /**
+         * Clears out all the problem data and solution.
+         *
+         * @author Christopher K. Allen
+         * @since  Oct 28, 2014
+         */
+        public void clear() {
+            this.lngPvLogId = -1;
+            this.smfDevRecon = null;
+            this.smfSeqRecon = null;
+            this.arrMsmts    = null;
+            this.matRecon    = null;
+        }
+    }
+
     
+    /**
+     * Class <code>CourantSnyderView</code> is a panel presenting a set of check
+     * boxes for selecting phase planes.  The developer can determine which phase
+     * planes the use has selected from the GUI with the method
+     * <code>{@link #isSelected()}</code>.  
+     *
+     * @author Christopher K. Allen
+     * @since  Oct 23, 2014
+     */
+    private class PhasePlaneSelectorPanel extends JPanel {
+        
+
+        /*
+         * Global Constants
+         */
+        
+        /** Serialization version ID  */
+        private static final long serialVersionUID = 1L;
+        
+        
+        /*
+         * Local Attributes
+         */
+        
+        /** Selection box for the horizontal envelope */
+        private final Map<PLANE, JCheckBox>     mapPlnToChk;
+        
+//        /** The internal listener that catches selection events from the user */
+//        private final ActionListener            lsnEvtChk;
+//        
+//        /** The set of external listeners that want to be informed of user selection events */
+//        private final List<ActionListener>      lstChkLnrs;
+        
+        /*
+         * Initialization
+         */
+        
+        /**
+         * Constructs a new <code>PhasePlaneSelectorPanel</code>, creates all
+         * the internal check boxes and initializes them to checked.
+         *
+         * @author Christopher K. Allen
+         * @since  Oct 23, 2014
+         */
+        public PhasePlaneSelectorPanel() {
+            this.mapPlnToChk = new HashMap<>();
+            
+            for (PLANE plane : PLANE.values()) {
+                String      strLabel = plane.name();
+                JCheckBox   chkPlane = new JCheckBox(strLabel, true);
+                
+                this.mapPlnToChk.put(plane, chkPlane);
+            }
+            
+            this.guiLayoutComponents();
+        }
+        
+        /**
+         * Sets all the check boxes (for all planes) to the given value.
+         * 
+         * @param bolChecked    all phase plane check boxes are checked if <code>true</code>,
+         *                      unchecked if <code>false</code>
+         *
+         * @author Christopher K. Allen
+         * @since  Oct 23, 2014
+         */
+        public void     setAll(boolean bolChecked) {
+            for (PLANE plane : PLANE.values()) {
+                JCheckBox   chkPlane = this.mapPlnToChk.get(plane);
+              
+                chkPlane.setSelected(bolChecked);
+            }
+        }
+        
+        /**
+         * Register the given listener object to receive notifications whenever
+         * one of the check boxes is changed by the user.
+         * 
+         * @param lsnChkEvt object to receive check box changed events
+         *
+         * @author Christopher K. Allen
+         * @since  Oct 23, 2014
+         */
+        public void     addActionLister(ActionListener lsnChkEvt) {
+            for (PLANE plane : PLANE.values()) {
+                JCheckBox   chkPlane = this.mapPlnToChk.get(plane);
+              
+                chkPlane.addActionListener(lsnChkEvt);
+            }
+        }
+        
+        // 
+        // Operations
+        //
+        
+        /**
+         * Returns the current state of the given check box.  
+         * 
+         * @param plane     gets the state for the check box corresponding to this phase plane
+         * 
+         * @return          <code>true</code> if the check box for the given phase plane is selected.
+         *
+         * @author Christopher K. Allen
+         * @since  Oct 23, 2014
+         */
+        public boolean  isSelected(PLANE plane) {
+            JCheckBox       chkPlane = this.mapPlnToChk.get(plane);
+            boolean         bolPlane = chkPlane.isSelected();
+            
+            return bolPlane;
+        }
+        
+        /**
+         * Clears all the check boxes in the display
+         *
+         * @author Christopher K. Allen
+         * @since  Oct 23, 2014
+         */
+        public void     clearAll() {
+            this.setAll(false);
+        }
+       
+        
+        /*
+         * Support Methods
+         */
+        
+        /**
+         * Lays out all the check boxes on the GUI front panel.
+         *
+         * @author Christopher K. Allen
+         * @since  Oct 23, 2014
+         */
+        private void guiLayoutComponents() {
+            Box boxPanel = Box.createVerticalBox();
+            
+            for (PLANE plane : PLANE.values() ) {
+                JCheckBox   chkPlane = this.mapPlnToChk.get(plane);
+                
+                boxPanel.add(chkPlane);
+                boxPanel.add(Box.createVerticalStrut(10));
+            }
+            
+            this.add(boxPanel);
+        }
+    }
     
     
     /*
@@ -92,7 +343,6 @@ public class CourantSnyderView extends JPanel implements IDocView, IConfigView, 
     
     /** Serialization version */
     private static final long serialVersionUID = 1L;
-
     
     
     
@@ -110,6 +360,12 @@ public class CourantSnyderView extends JPanel implements IDocView, IConfigView, 
     /** The measurement data set being displayed */
     private MeasurementData             setMsmts;
     
+    /** The CS reconstruction solution and all its data */
+    private SolutionSet                 setSoln;
+    
+//    /** The solution to the reconstruction problem */
+//    private CovarianceMatrix            matRecon;
+//    
 //    /** The accelerator sequence, or combo sequence, containing all the measurement points and reconstruction location */
 //    private AcceleratorSeq              smfSeqRecon;
 //    
@@ -136,15 +392,14 @@ public class CourantSnyderView extends JPanel implements IDocView, IConfigView, 
     private CsFixedPtControlPanel       pnlFxdPtCltr;
 
     
+    /** Phase plane selector for solution display */
+    private PhasePlaneSelectorPanel     pnlPhsSel;
+    
     /** The computed Courant-Snyder parameters display */
     private Twiss3PlaneDisplayPanel     pnlTws3d;
     
-    /** The profile signal plots */
+    /** The envelopes resulting to the reconstructed Courant-Snyder parameters */
     private FunctionGraphsJPanel        pltEnvs;
-    
-    /** The measurement data plots */
-    private MeasurementCurve            pltMmts;
-    
     
     
     /*
@@ -164,6 +419,7 @@ public class CourantSnyderView extends JPanel implements IDocView, IConfigView, 
         super();
         this.docMain = docMain;
         
+        this.setSoln = new SolutionSet();
 //        this.lstMmtsRec = new LinkedList<>();
         
         this.guiBuildComponents();
@@ -258,6 +514,26 @@ public class CourantSnyderView extends JPanel implements IDocView, IConfigView, 
     }
 
     
+//    /*
+//     * ActionListener Interface
+//     */
+//
+//    /**
+//     * Catches the change state notifications coming from the phase plane selection
+//     * panel which tells use which envelopes to plot. 
+//     *
+//     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+//     *
+//     * @author Christopher K. Allen
+//     * @since  Oct 23, 2014
+//     */
+//    @Override
+//    public void actionPerformed(ActionEvent e) {
+//        // TODO Auto-generated method stub
+//
+//    }
+//
+//
     /*
      * Support Methods
      */
@@ -272,31 +548,26 @@ public class CourantSnyderView extends JPanel implements IDocView, IConfigView, 
      */
     private void computeCourantSnyder() {
         
-        // Get the beamline where the computations are made
-        //  This object will be used by many of the support methods below
-        List<String>    lstDevIdMsmts = this.lbxMmtData.getSelectedDevices();
-        AcceleratorNode smfDevRecon   = this.pnlRecLoc.getSelectedDevice();
-
-        // Check that data has been selected
-        if (lstDevIdMsmts.size() == 0) {
-            MainApplication.getApplicationDocument().displayWarning("No Data", "You must select a data set");
-            
-            return;
-        }
-        if (smfDevRecon == null) { 
-            MainApplication.getApplicationDocument().displayWarning("No Reconstruction Location", "You must select a beamline location");
-        
-            return;
-        }
-        
         // We have the data and the reconstruction location, now make the beamline and solve
-        String          strDevReconId = smfDevRecon.getId();
-        AcceleratorSeq  smfSeqRecon   = this.identifyReconstructionBeamline();
+//        long                    lngPvLogId    = this.setMsmts.getPvLoggerId();
+//        AcceleratorNode         smfDevRecon   = this.identifyReconstructionLocation();
+//        AcceleratorSeq          smfSeqRecon   = this.identifyReconstructionBeamline();
+//        ArrayList<Measurement>  arrMsmts      = this.processMeasurementData();
+        this.setSoln.lngPvLogId    = this.setMsmts.getPvLoggerId();
+        this.setSoln.smfDevRecon   = this.identifyReconstructionLocation();
+        this.setSoln.smfSeqRecon   = this.identifyReconstructionBeamline();
+        this.setSoln.arrMsmts      = this.processMeasurementData();
+
+        // Bail out if there is a problem
+        if (this.setSoln.hasAllData() == false)
+            return;
+        
+        // Compute the Courant-Snyder parameters via the C-S control panel then display
+        //  the solution
         try {
-            CovarianceMatrix    matRecon = this.pnlFxdPtCltr.estimateCovariance(strDevReconId, lstDevIdMsmts, smfSeqRecon, this.setMsmts);
+            this.pnlFxdPtCltr.estimateCovariance(this.setSoln);
 
-
-            this.pnlTws3d.display(matRecon);
+            this.displayReconSolution();
             
         } catch (ModelException e) {
             MainApplication.getEventLogger().logError(this.getClass(), "Courant-Snyder estimation failure - online model exception");;
@@ -305,7 +576,12 @@ public class CourantSnyderView extends JPanel implements IDocView, IConfigView, 
         } catch (ConvergenceException e) {
             MainApplication.getEventLogger().logError(this.getClass(), "Courant-Snyder estimation failure - no convergence in algorithm");
             e.printStackTrace();
-        };
+            
+        } catch (Exception e) {
+            MainApplication.getEventLogger().logError(this.getClass(), "Courant-Snyder estimation failure - general computation failure in base class");
+            e.printStackTrace();
+            
+        }
     }
     
 //    /**
@@ -330,6 +606,30 @@ public class CourantSnyderView extends JPanel implements IDocView, IConfigView, 
 //        return cseFxdPt;
 //    }
 //    
+    /**
+     * Returns the SMF accelerator node where the Courant-Snyder reconstruction is
+     * to take place.
+     * 
+     * @return  reconstruction location or <code>null</code> if none is selected
+     *
+     * @author Christopher K. Allen
+     * @since  Oct 22, 2014
+     */
+    private AcceleratorNode identifyReconstructionLocation() {
+        
+        // Get the beamline where the computations are made
+        //  This object will be used by many of the support methods below
+        AcceleratorNode smfDevRecon   = this.pnlRecLoc.getSelectedDevice();
+
+        if (smfDevRecon == null) { 
+            MainApplication.getApplicationDocument().displayWarning("No Reconstruction Location", "You must select a beamline location");
+        
+            return null;
+        }
+        
+        return smfDevRecon;
+    }
+    
     /**
      * Determines all the necessary accelerator sequences to perform the 
      * Courant-Snyder parameter computation.  If the data and reconstruction
@@ -402,6 +702,129 @@ public class CourantSnyderView extends JPanel implements IDocView, IConfigView, 
     }
     
     /**
+     * Retrieve the RMS beam sizes from the current application measurement
+     * data.
+     *  
+     * @return  an array list of RMS beam sizes for each measurement device
+     *
+     * @throws ModelException   an error occurred while instantiating machine model
+     *  
+     * @author Christopher K. Allen
+     * @since  Oct 6, 2014
+     */
+    private ArrayList<Measurement>  processMeasurementData() {
+    
+        List<String>    lstDevIdMsmts = this.lbxMmtData.getSelectedDevices();
+        
+        // Check that data has been selected
+        if (lstDevIdMsmts.size() == 0) {
+            MainApplication.getApplicationDocument().displayWarning("No Data", "You must select a data set");
+            
+            return null;
+        }
+        
+        // Create the array for measurement data and get the measurement scaling factor
+        double                  dblScaleStd = AppProperties.MSMT.SCALE_STD_WIRE.getValue().asDouble();
+        ArrayList<Measurement>  lstMsmts    = new ArrayList<>();
+        
+        for (String strDevId : lstDevIdMsmts) {
+    
+            IProfileData    datMsmt = this.setMsmts.getDataForDeviceId(strDevId);
+    
+            Measurement msmt = new Measurement();
+            msmt.strDevId  = strDevId;
+            msmt.dblSigHor = datMsmt.getDataAttrs().hor.stdev * dblScaleStd;
+            msmt.dblSigVer = datMsmt.getDataAttrs().ver.stdev * dblScaleStd;
+            msmt.dblSigLng = 0.0;
+    
+            lstMsmts.add(msmt);
+        }
+    
+        return lstMsmts;
+    }
+
+    /**
+     * Simulations the envelope trajectories for the given accelerator sequence using the
+     * given initial covariance matrix for the RMS beam envelopes.  The simulation solution
+     * is then drawn in the GUI graph panel along with the original measurements.
+     * 
+     * @param seqRecon  the accelerator sequence containing measurements and simulation 
+     * @param matRecon  the initial covariance matrix for the RMS beam envelopes, 
+     *                  i.e., to start the simulation
+     *
+     * @author Christopher K. Allen
+     * @since  Oct 22, 2014
+     */
+    private void    displayReconSolution() {
+        
+        // Check if there is a solution to display
+        if (this.setSoln.matRecon == null)
+            return;
+        
+        long                    lngPvLogId = this.setSoln.lngPvLogId;
+        AcceleratorSeq          seqRecon   = this.setSoln.smfSeqRecon;
+        ArrayList<Measurement>  arrMsmts   = this.setSoln.arrMsmts;
+        CovarianceMatrix        matRecon   = this.setSoln.matRecon;
+
+        // Create an online model synchronized to the given pv logger machine state
+        //  Run the model then display the resulting solution envelopes on the screen 
+        try {
+            
+            Scenario        modRecon = Scenario.newScenarioFor(seqRecon);
+            EnvelopeProbe   prbRecon = this.pnlFxdPtCltr.createEnvelopeProbe(seqRecon, matRecon);
+            
+            PVLoggerDataSource  pvlMachState = new PVLoggerDataSource(lngPvLogId);
+            modRecon = pvlMachState.setModelSource(seqRecon, modRecon);
+            modRecon.setProbe(prbRecon);
+            
+            modRecon.resync();
+            modRecon.run();
+            
+            Trajectory<EnvelopeProbeState>  trjSoln = modRecon.getTrajectory();
+            
+            // Clear the graph
+            this.pltEnvs.removeAllGraphData();
+            
+            // Display the computed solution on the GUI graph
+            for (PLANE plane : PLANE.values()) 
+                if (this.pnlPhsSel.isSelected(plane)) {
+                    EnvelopeCurve   crvSoln = new EnvelopeCurve(plane, trjSoln);
+
+                    crvSoln.setGraphProperty("", plane.name() ); 
+                    this.pltEnvs.addGraphData(crvSoln);
+                }
+            
+            // Add the measurement points to the graph
+            for (PLANE plane : PLANE.values()) 
+                if (this.pnlPhsSel.isSelected(plane)) {
+                    MeasurementCurve    crvMsmts = new MeasurementCurve(plane, seqRecon, arrMsmts);
+
+                    crvMsmts.setGraphProperty("", plane.name() ); 
+                    this.pltEnvs.addGraphData(crvMsmts);
+                }
+
+        } catch (ModelException e) {
+            MainApplication.getApplicationDocument().displayError(
+                    "Data Error", 
+                    "Unable to display simulation data obtained from the C-S parameter reconstruction"
+                    );
+            MainApplication.getEventLogger().logWarning(getClass(), 
+                    "Unable to display simulation data obtained from the C-S parameter reconstruction"
+                    );
+            e.printStackTrace();
+        }
+
+        // Update the Courant-Snyder parameter display and the graph display
+        this.pnlTws3d.display(matRecon);
+        this.pltEnvs.refreshGraphJPanel();
+    }
+    
+    
+    // 
+    //  GUI Construction
+    //
+    
+    /**
      * Creates the individual GUI components.
      * 
      * @since  Dec 13, 2011
@@ -420,6 +843,9 @@ public class CourantSnyderView extends JPanel implements IDocView, IConfigView, 
         this.lbxMmtData.registerSelectionListener(this);
         
         this.pnlFxdPtCltr = new CsFixedPtControlPanel();
+        
+        this.pnlPhsSel = new PhasePlaneSelectorPanel();
+        this.pnlPhsSel.setAll(true);
         
         this.pltEnvs = new FunctionGraphsJPanel();
         this.pltEnvs.setLegendVisible(true);
@@ -449,8 +875,18 @@ public class CourantSnyderView extends JPanel implements IDocView, IConfigView, 
                 CourantSnyderView.this.computeCourantSnyder();
             }
         };
-        
         this.pnlFxdPtCltr.addComputeButtonListener(lsnCmp);
+        
+        // Respond to the changing of phase plane solutions to display
+        ActionListener  lsnEvtChk = new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                CourantSnyderView.this.displayReconSolution();
+            }
+            
+        };
+        this.pnlPhsSel.addActionLister(lsnEvtChk);
     }
     
     /**
@@ -534,6 +970,24 @@ public class CourantSnyderView extends JPanel implements IDocView, IConfigView, 
         gbcLayout.anchor = GridBagConstraints.LINE_START;
         this.add( boxReconLoc, gbcLayout );
 
+        // The phase plane solution envelopes choser location
+        Box     boxSolnChk = Box.createVerticalBox();
+        JLabel  lblSolnChk = new JLabel("Solutions from CS Estimates");
+        
+        boxSolnChk.add(lblSolnChk);
+        boxSolnChk.add(Box.createVerticalStrut(10));
+        boxSolnChk.add(this.pnlPhsSel);
+        
+        gbcLayout.gridx = 2;
+        gbcLayout.gridy = 1;
+        gbcLayout.gridwidth  = 1;
+        gbcLayout.gridheight = 1;
+        gbcLayout.fill    = GridBagConstraints.VERTICAL;
+        gbcLayout.weightx = 0.0;
+        gbcLayout.weighty = 0.1;
+        gbcLayout.anchor = GridBagConstraints.LINE_START;
+        this.add( boxSolnChk, gbcLayout );
+
         // The Courant-Snyder computation controller
         gbcLayout.gridx = 3;
         gbcLayout.gridy = 1;
@@ -579,10 +1033,14 @@ public class CourantSnyderView extends JPanel implements IDocView, IConfigView, 
      * @author Christopher K. Allen
      */
     private void clearAll() {
+        this.setSoln.clear();
+
+        this.pnlRecLoc.clearSelections();
         this.lbxMmtData.clear();
-//        this.lstMmtsRec.clear();
+        this.pnlFxdPtCltr.clearAll();
         this.pltEnvs.removeAllGraphData();
-        
+        this.pnlTws3d.clearDisplay();
+        this.pltEnvs.removeAllGraphData();
     }
 
 }

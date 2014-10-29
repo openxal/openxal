@@ -624,7 +624,7 @@ public class NumberTextField extends JTextField {
         try{
             String  strInput = this.getText();
             Number  numInput = this.fmtDispl.parse(strInput);
-            String  strDispl = this.fmtDispl.format(numInput);
+//            String  strDispl = this.fmtDispl.format(numInput);
 
             // TODO: Clean this up
 //            setText(strDispl);
