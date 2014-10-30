@@ -22,7 +22,6 @@ import xal.smf.AcceleratorSeqCombo;
 import xal.tools.beam.PhaseVector;
 import xal.tools.beam.Twiss;
 import xal.tools.beam.calc.CalculationsOnRings;
-import xal.tools.beam.calc.SimpleSimResultsAdaptor;
 import xal.tools.math.r3.R3;
 
 /**
@@ -41,8 +40,7 @@ public class CalculateFit{
     private TransferMapProbe probe;
     private Scenario scenario;
     private Trajectory<TransferMapState> traj;
-	private SimpleSimResultsAdaptor    simRingCalcEngine;
-//    private CalculationsOnRings simRingCalcEngine;
+    private CalculationsOnRings simRingCalcEngine;
     private String syncstate;
 	
     double xtune;
@@ -220,8 +218,7 @@ public class CalculateFit{
 			scenario.resync();
 			scenario.run();
 			traj = probe.getTrajectory();
-//			simRingCalcEngine = new CalculationsOnRings( traj );
-            simRingCalcEngine = new SimpleSimResultsAdaptor( traj );
+			simRingCalcEngine = new CalculationsOnRings( traj );
 		}
 		catch(Exception exception){
 			exception.printStackTrace();
