@@ -7,15 +7,17 @@
 package xal.app.ringinjection;
 import java.util.*;
 import java.util.*;
-import java.util.HashMap;
+import java.util.List;
 import java.lang.*;
 import java.net.*;
 import java.io.*;
-import java.io.File;
 import java.awt.*;
+
 import javax.swing.*;
 import javax.swing.text.*;
+
 import java.awt.event.*;
+
 import javax.swing.event.*;
 
 import xal.ca.*;
@@ -29,7 +31,6 @@ import xal.extension.fit.lsm.*;
 import xal.tools.data.*;
 import xal.tools.messaging.*;
 import xal.tools.xml.XmlDataAdaptor;
-
 import xal.smf.*;
 import xal.smf.impl.*;
 import xal.extension.application.smf.*;
@@ -209,12 +210,20 @@ public class CalculateFit{
 		accl = doc.getAccelerator();
 		seq = accl.getComboSequence("Ring");
 		
+		AcceleratorNode smfFoil = seq.getNodeWithId("Ring_Inj:Foil");
+		
 		try{
-			TransferMapTracker tracker = new TransferMapTracker();
+		    // CKA 10/29/2014 - Open XAL must use AlgorithmFactory
+//			TransferMapTracker tracker = new TransferMapTracker();
+		    TransferMapTracker tracker = AlgorithmFactory.createTransferMapTracker(seq);
 			System.out.println("TransferMapTracker is " + tracker + " " + seq.getId());
+			
 			probe = ProbeFactory.getTransferMapProbe(seq, tracker);
+			probe.initialize();      // CKA 10/29/2014
+			
 			scenario = Scenario.newScenarioFor(seq);
 			scenario.setProbe(probe);
+			
 			if(syncstate == "Live"){
 				scenario.setSynchronizationMode( Scenario.SYNC_MODE_RF_DESIGN );
 			}
@@ -251,14 +260,19 @@ public class CalculateFit{
 		
 		//System.out.println("At position " + position + ", beta x, alpha_x, beta y, and alphay are "+ beta_x_i + " " + alpha_x_i + " " + beta_y_i + " " + alpha_y_i + "\n");
 
-		TransferMapState localstate = traj.statesForElement(localagent.getNode().getId()).get(0);
+		// CKA - let's make this readable
+//        TransferMapState localstate = traj.statesForElement(localagent.getNode().getId()).get(0);
+		String    strBpmId = this.localagent.getNode().getId();
+		List<TransferMapState> lstStates = this.traj.statesForElement(strBpmId);
+		TransferMapState localstate = lstStates.get(0);
+		
 		Twiss[] localtwiss = _simulationResultsAdaptor.computeTwissParameters( localstate );
 		R3 localphase = _simulationResultsAdaptor.computeBetatronPhase( localstate );
-		PhaseVector localorbit = _simulationResultsAdaptor.computeFixedOrbit( localstate );
+		PhaseVector localorbit = _simulationResultsAdaptor.computeFixedOrbit( localstate );  // TODO CKA - never used
 		double beta_x = localtwiss[0].getBeta();
-		double alpha_x = localtwiss[0].getAlpha();
+		double alpha_x = localtwiss[0].getAlpha();    // TODO CKA - never used
 		double beta_y = localtwiss[1].getBeta(); 
-		double alpha_y = localtwiss[1].getAlpha();
+		double alpha_y = localtwiss[1].getAlpha();    // TODO CKA - never used
 		double phase_x = localphase.getx();
 		double phase_y = localphase.gety();
 		
