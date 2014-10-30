@@ -118,7 +118,7 @@ public class CalculateFit{
 		xtune = sineFit.getFrequency();
 		xphase = sineFit.getCosineLikePhase();
 		xslope = - sineFit.getGrowthRate();
-		xamp = sineFit.getCosineLikeAmplitude();
+		xamp = sineFit.getAmplitude();
 		xoffset = sineFit.getOffset();
 
 		final double xtune_err = Math.sqrt( sineFit.getInitialFrequencyVariance() );
@@ -173,7 +173,7 @@ public class CalculateFit{
 		ytune = sineFit.getFrequency();
 		yphase = sineFit.getCosineLikePhase();
 		yslope = - sineFit.getGrowthRate();
-		yamp = sineFit.getCosineLikeAmplitude();
+		yamp = sineFit.getAmplitude();
 		yoffset = sineFit.getOffset();
 
 		final double ytune_err = Math.sqrt( sineFit.getInitialFrequencyVariance() );
