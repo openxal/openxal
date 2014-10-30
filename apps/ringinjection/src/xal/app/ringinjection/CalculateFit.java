@@ -5,45 +5,24 @@
  */
 
 package xal.app.ringinjection;
-import java.util.*;
-import java.util.*;
-import java.util.HashMap;
-import java.lang.*;
-import java.net.*;
-import java.io.*;
-import java.io.File;
-import java.awt.*;
-import javax.swing.*;
-import javax.swing.text.*;
-import java.awt.event.*;
-import javax.swing.event.*;
+import java.util.List;
 
-import xal.ca.*;
-import xal.extension.application.*;
-import xal.ca.*;
-import xal.tools.*;
-import xal.tools.beam.*;
-import xal.tools.beam.calc.*;
-import xal.tools.xml.*;
-import xal.extension.fit.lsm.*;
-import xal.tools.data.*;
-import xal.tools.messaging.*;
-import xal.tools.xml.XmlDataAdaptor;
-
-import xal.smf.*;
-import xal.smf.impl.*;
-import xal.extension.application.smf.*;
-import xal.smf.data.*;
-import xal.model.*;
-import xal.smf.proxy.*;
-import xal.model.probe.traj.*;
-import xal.model.probe.*; 
-import xal.model.xml.*; 
-import xal.sim.scenario.*;
-import xal.tools.math.r3.R3;
-import xal.extension.widgets.plot.*;
-import xal.model.alg.*;
+import xal.ca.Channel;
 import xal.extension.fit.DampedSinusoidFit;
+import xal.model.alg.TransferMapTracker;
+import xal.model.probe.TransferMapProbe;
+import xal.model.probe.traj.Trajectory;
+import xal.model.probe.traj.TransferMapState;
+import xal.sim.scenario.AlgorithmFactory;
+import xal.sim.scenario.ProbeFactory;
+import xal.sim.scenario.Scenario;
+import xal.smf.Accelerator;
+import xal.smf.AcceleratorNode;
+import xal.smf.AcceleratorSeqCombo;
+import xal.tools.beam.PhaseVector;
+import xal.tools.beam.Twiss;
+import xal.tools.beam.calc.CalculationsOnRings;
+import xal.tools.math.r3.R3;
 
 /**
  * Performs the fit for the turn-by-turn signal on a BPM.  Records the 
@@ -61,7 +40,7 @@ public class CalculateFit{
     private TransferMapProbe probe;
     private Scenario scenario;
     private Trajectory<TransferMapState> traj;
-	private SimpleSimResultsAdaptor _simulationResultsAdaptor;
+    private CalculationsOnRings simRingCalcEngine;
     private String syncstate;
 	
     double xtune;
@@ -118,7 +97,7 @@ public class CalculateFit{
 		xtune = sineFit.getFrequency();
 		xphase = sineFit.getCosineLikePhase();
 		xslope = - sineFit.getGrowthRate();
-		xamp = sineFit.getCosineLikeAmplitude();
+		xamp = sineFit.getAmplitude();
 		xoffset = sineFit.getOffset();
 
 		final double xtune_err = Math.sqrt( sineFit.getInitialFrequencyVariance() );
@@ -173,7 +152,7 @@ public class CalculateFit{
 		ytune = sineFit.getFrequency();
 		yphase = sineFit.getCosineLikePhase();
 		yslope = - sineFit.getGrowthRate();
-		yamp = sineFit.getCosineLikeAmplitude();
+		yamp = sineFit.getAmplitude();
 		yoffset = sineFit.getOffset();
 
 		final double ytune_err = Math.sqrt( sineFit.getInitialFrequencyVariance() );
@@ -209,12 +188,20 @@ public class CalculateFit{
 		accl = doc.getAccelerator();
 		seq = accl.getComboSequence("Ring");
 		
+		AcceleratorNode smfFoil = seq.getNodeWithId("Ring_Inj:Foil");  // TODO CKA - never used
+		
 		try{
-			TransferMapTracker tracker = new TransferMapTracker();
+		    // CKA 10/29/2014 - Open XAL must use AlgorithmFactory
+//			TransferMapTracker tracker = new TransferMapTracker();
+		    TransferMapTracker tracker = AlgorithmFactory.createTransferMapTracker(seq);
 			System.out.println("TransferMapTracker is " + tracker + " " + seq.getId());
+			
 			probe = ProbeFactory.getTransferMapProbe(seq, tracker);
+			probe.initialize();      // CKA 10/29/2014
+			
 			scenario = Scenario.newScenarioFor(seq);
 			scenario.setProbe(probe);
+			
 			if(syncstate == "Live"){
 				scenario.setSynchronizationMode( Scenario.SYNC_MODE_RF_DESIGN );
 			}
@@ -223,11 +210,15 @@ public class CalculateFit{
 			}
 			
 			//scenario.setSynchronizationMode(Scenario.SYNC_MODE_RF_DESIGN);
-			scenario.setStartElementId("Ring_Inj:Foil");
+			
+			// CKA 10/30/2014 - Must simulate the entire ring then choose location
+			//   of ring parameter calculations.  Cannot start within the ring.
+//			scenario.setStartElementId("Ring_Inj:Foil");
+			
 			scenario.resync();
 			scenario.run();
 			traj = probe.getTrajectory();
-			_simulationResultsAdaptor = new SimpleSimResultsAdaptor( traj );
+			simRingCalcEngine = new CalculationsOnRings( traj );
 		}
 		catch(Exception exception){
 			exception.printStackTrace();
@@ -238,12 +229,12 @@ public class CalculateFit{
     void getFoilParams(){
 		
      	//ProbeState injstate = traj.stateForElement("Ring_Inj:Foil");
-		double position = scenario.getPositionRelativeToStart(0.0);
+		double position = scenario.getPositionRelativeToStart(0.0);               // TODO CKA - never used
 		//TransferMapState injstate = (TransferMapState)traj.statesInPositionRange(position - 0.00001, position + 0.00001)[0];
 		TransferMapState injstate = traj.stateForElement("Ring_Inj:Foil");
-		Twiss[] injtwiss = _simulationResultsAdaptor.computeTwissParameters( injstate );
-		R3 injphase = _simulationResultsAdaptor.computeBetatronPhase( injstate );
-		PhaseVector injorbit = _simulationResultsAdaptor.computeFixedOrbit( injstate );
+		Twiss[] injtwiss = simRingCalcEngine.computeTwissParameters( injstate );
+		R3 injphase = simRingCalcEngine.computeBetatronPhase( injstate );         // TODO CKA - never used
+		PhaseVector injorbit = simRingCalcEngine.computeFixedOrbit( injstate );   // TODO CKA - never used
 		double beta_x_i = injtwiss[0].getBeta();
 		double alpha_x_i = injtwiss[0].getAlpha();
 		double beta_y_i = injtwiss[1].getBeta(); 
@@ -251,14 +242,19 @@ public class CalculateFit{
 		
 		//System.out.println("At position " + position + ", beta x, alpha_x, beta y, and alphay are "+ beta_x_i + " " + alpha_x_i + " " + beta_y_i + " " + alpha_y_i + "\n");
 
-		TransferMapState localstate = traj.statesForElement(localagent.getNode().getId()).get(0);
-		Twiss[] localtwiss = _simulationResultsAdaptor.computeTwissParameters( localstate );
-		R3 localphase = _simulationResultsAdaptor.computeBetatronPhase( localstate );
-		PhaseVector localorbit = _simulationResultsAdaptor.computeFixedOrbit( localstate );
+		// CKA - let's make this readable for debugging
+//        TransferMapState localstate = traj.statesForElement(localagent.getNode().getId()).get(0);
+		String    strBpmId = this.localagent.getNode().getId();
+		List<TransferMapState> lstStates = this.traj.statesForElement(strBpmId);
+		TransferMapState localstate = lstStates.get(0);
+		
+		Twiss[] localtwiss = simRingCalcEngine.computeTwissParameters( localstate );
+		R3 localphase = simRingCalcEngine.computeBetatronPhase( localstate );
+		PhaseVector localorbit = simRingCalcEngine.computeFixedOrbit( localstate );  // TODO CKA - never used
 		double beta_x = localtwiss[0].getBeta();
-		double alpha_x = localtwiss[0].getAlpha();
+		double alpha_x = localtwiss[0].getAlpha();    // TODO CKA - never used
 		double beta_y = localtwiss[1].getBeta(); 
-		double alpha_y = localtwiss[1].getAlpha();
+		double alpha_y = localtwiss[1].getAlpha();    // TODO CKA - never used
 		double phase_x = localphase.getx();
 		double phase_y = localphase.gety();
 		

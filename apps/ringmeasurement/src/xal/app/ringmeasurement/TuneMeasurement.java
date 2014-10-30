@@ -297,7 +297,7 @@ public class TuneMeasurement implements Runnable {
 		double[] y = new double[1000];
 		double del = len / 1000.;
         
-		System.out.println("A = " + fitter.getInitialCosineLikeAmplitude());
+		System.out.println("A = " + fitter.getInitialAmplitude());
 		System.out.println("c = " + -fitter.getInitialGrowthRate());
 		System.out.println("w = " + fitter.getInitialFrequency());
 		System.out.println("b = " + fitter.getInitialCosineLikePhase());
@@ -305,7 +305,7 @@ public class TuneMeasurement implements Runnable {
         
 		for (int i = 0; i < x.length; i++) {
 			x[i] = i * del;
-			y[i] = fitter.getInitialCosineLikeAmplitude() * Math.exp(-1. * -fitter.getInitialGrowthRate() * x[i]) * Math.sin(2. * Math.PI * (tune * x[i] + fitter.getInitialCosineLikePhase())) + fitter.getInitialOffset();
+			y[i] = fitter.getInitialAmplitude() * Math.exp(-1. * -fitter.getInitialGrowthRate() * x[i]) * Math.sin(2. * Math.PI * (tune * x[i] + fitter.getInitialCosineLikePhase())) + fitter.getInitialOffset();
 		}
 		graphData.addPoint(x, y);
         
