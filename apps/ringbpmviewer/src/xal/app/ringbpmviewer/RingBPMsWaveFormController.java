@@ -750,7 +750,7 @@ public class RingBPMsWaveFormController {
 		resStrB.append(System.getProperty("line.separator"));
 
 		resStrB.append("Ampl. = ");
-		resStrB.append(fmt.format(fitter.getInitialCosineLikeAmplitude()));
+		resStrB.append(fmt.format(fitter.getInitialAmplitude()));
 		//resStrB.append(" +- ");
 		//resStrB.append(fmt.format(fitter.getParameterError(fitter.AMP)));
         //TODO: Add amplitude error
@@ -786,7 +786,7 @@ public class RingBPMsWaveFormController {
 		rbpmPV.setAnalysisString(resStrB.toString());
 
 		HashMap<String, Double> resultsMap = new HashMap<String, Double>();
-		resultsMap.put("AMP", new Double(fitter.getInitialCosineLikeAmplitude()));
+		resultsMap.put("AMP", new Double(fitter.getInitialAmplitude()));
 		resultsMap.put("TUNE", new Double(fitter.getInitialFrequency()));
 		resultsMap.put("PHASE", new Double(fitter.getInitialCosineLikePhase()));
 		resultsMap.put("DAMPINGRATE", new Double(-fitter.getInitialGrowthRate()));

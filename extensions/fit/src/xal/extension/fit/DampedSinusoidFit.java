@@ -668,9 +668,9 @@ final public class DampedSinusoidFit {
 	}
 	
 	
-	/** Get the optimized cosine-like phase. */
+	/** Get the optimized cosine-like phase (equivalent phase if the fitted equation were of the form of A * damping * cos( mu + phase ) ). */
 	public double getCosineLikePhase() {
-		return Math.PI / 2.0 + getPhase();
+		return toCosineLikePhase( getPhase() );
 	}
 	
 	
@@ -694,7 +694,14 @@ final public class DampedSinusoidFit {
 	
 	/** Get the cosine-like phase calculating it if necessary. Note that this estimation is relatively poor. */
 	public double getInitialCosineLikePhase() {
-		return Math.PI / 2.0 + getInitialPhase();
+		return toCosineLikePhase( getInitialPhase() );
+	}
+
+
+	/** Convert a sine like phase (default) to a cosine like phase (equivalent phase if the fitted equation were of the form of A * damping * cos( mu + phase )) */
+	private double toCosineLikePhase( final double sineLikePhase ) {
+		final double rawCosinePhase = sineLikePhase + Math.PI / 2.0;	// shift by pi/2
+		return rawCosinePhase > Math.PI ? rawCosinePhase - 2 * Math.PI : rawCosinePhase;		// force the phase to be between -pi and pi
 	}
 	
 	
@@ -706,37 +713,13 @@ final public class DampedSinusoidFit {
 		
 		return _initialAmplitude;
 	}
-	
-	
-	/** Get the sine-like amplitude calculating it if necessary. Note that this estimation is relatively poor. */
-	public double getInitialSineLikeAmplitude() {
-		return getInitialAmplitude();
-	}
-	
-	
-	/** Get the cosine-like amplitude calculating it if necessary. Note that this estimation is relatively poor. */
-	public double getInitialCosineLikeAmplitude() {
-		return - getInitialAmplitude();
-	}
-	
+
 	
 	/** Get the optimized sine-like amplitude */
 	public double getAmplitude() {
 		return _amplitude;
 	}
-	
-	
-	/** Get the optimized sine-like amplitude. */
-	public double getSineLikeAmplitude() {
-		return getAmplitude();
-	}
-	
-	
-	/** Get the optimized cosine-like amplitude. */
-	public double getCosineLikeAmplitude() {
-		return - getAmplitude();
-	}
-	
+
 	
 	/** calculate the constant offset */
 	private void fitInitialOffset() {        
