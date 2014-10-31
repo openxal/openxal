@@ -7,7 +7,7 @@ import xal.app.experimentautomator.core.EADocument;
 import xal.extension.application.Application;
 import xal.extension.application.ApplicationAdaptor;
 import xal.extension.application.XalDocument;
-import xal.extension.smf.application.AcceleratorApplication;
+import xal.extension.application.smf.AcceleratorApplication;
 
 /**
  * Main is a demo concrete subclass of ApplicationAdaptor. This demo application

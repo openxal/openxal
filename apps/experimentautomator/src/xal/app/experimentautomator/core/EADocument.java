@@ -32,7 +32,7 @@ import xal.app.experimentautomator.table.AcquisitionList;
 import xal.app.experimentautomator.table.BoundTable;
 import xal.app.experimentautomator.table.ElementScan;
 import xal.app.experimentautomator.table.ProbeScan;
-import xal.extension.smf.application.AcceleratorDocument;
+import xal.extension.application.smf.AcceleratorDocument;
 import xal.model.ModelException;
 import xal.model.alg.EnvTrackerAdapt;
 import xal.model.probe.EnvelopeProbe;

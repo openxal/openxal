@@ -37,7 +37,7 @@ import xal.app.experimentautomator.listeners.StartButtonActionListener;
 import xal.app.experimentautomator.listeners.StepButtonActionListener;
 import xal.app.experimentautomator.listeners.StopButtonActionListener;
 import xal.extension.application.Commander;
-import xal.extension.smf.application.AcceleratorWindow;
+import xal.extension.application.smf.AcceleratorWindow;
 
 public class EAWindow extends AcceleratorWindow {
 
