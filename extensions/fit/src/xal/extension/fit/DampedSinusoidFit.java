@@ -349,7 +349,13 @@ final public class DampedSinusoidFit {
 			};
 						
 //			System.out.println( "Algorithm: " + trial.getAlgorithm().getLabel() );
-//			System.out.println( "Scoring trial with offset: " + offset + ", cosmu: " + cosmu + ", growth: " + growthFactor + ", Square Score: " + sumSquareError ); 
+//			System.out.println( "Scoring trial with offset: " + offset + ", cosmu: " + cosmu + ", growth: " + growthFactor + ", Square Score: " + sumSquareError );
+
+			if ( Double.isNaN( sumSquareError ) ) {
+				trial.vetoTrial( new TrialVeto( trial, null, "error is NaN" ) );
+				return Double.POSITIVE_INFINITY;
+			}
+
 			return Math.sqrt( sumSquareError / waveformErrors.length );
 		}
 	}
@@ -700,8 +706,8 @@ final public class DampedSinusoidFit {
 
 	/** Convert a sine like phase (default) to a cosine like phase (equivalent phase if the fitted equation were of the form of A * damping * cos( mu + phase )) */
 	private double toCosineLikePhase( final double sineLikePhase ) {
-		final double rawCosinePhase = sineLikePhase + Math.PI / 2.0;	// shift by pi/2
-		return rawCosinePhase > Math.PI ? rawCosinePhase - 2 * Math.PI : rawCosinePhase;		// force the phase to be between -pi and pi
+		final double rawCosinePhase = sineLikePhase - Math.PI / 2.0;	// shift by pi/2
+		return rawCosinePhase < -Math.PI ? rawCosinePhase + 2 * Math.PI : rawCosinePhase;		// force the phase to be between -pi and pi
 	}
 	
 	
