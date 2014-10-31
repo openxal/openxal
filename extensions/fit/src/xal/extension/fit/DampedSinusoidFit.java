@@ -349,7 +349,13 @@ final public class DampedSinusoidFit {
 			};
 						
 //			System.out.println( "Algorithm: " + trial.getAlgorithm().getLabel() );
-//			System.out.println( "Scoring trial with offset: " + offset + ", cosmu: " + cosmu + ", growth: " + growthFactor + ", Square Score: " + sumSquareError ); 
+//			System.out.println( "Scoring trial with offset: " + offset + ", cosmu: " + cosmu + ", growth: " + growthFactor + ", Square Score: " + sumSquareError );
+
+			if ( Double.isNaN( sumSquareError ) ) {
+				trial.vetoTrial( new TrialVeto( trial, null, "error is NaN" ) );
+				return Double.POSITIVE_INFINITY;
+			}
+
 			return Math.sqrt( sumSquareError / waveformErrors.length );
 		}
 	}
