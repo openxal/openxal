@@ -700,8 +700,8 @@ final public class DampedSinusoidFit {
 
 	/** Convert a sine like phase (default) to a cosine like phase (equivalent phase if the fitted equation were of the form of A * damping * cos( mu + phase )) */
 	private double toCosineLikePhase( final double sineLikePhase ) {
-		final double rawCosinePhase = sineLikePhase + Math.PI / 2.0;	// shift by pi/2
-		return rawCosinePhase > Math.PI ? rawCosinePhase - 2 * Math.PI : rawCosinePhase;		// force the phase to be between -pi and pi
+		final double rawCosinePhase = sineLikePhase - Math.PI / 2.0;	// shift by pi/2
+		return rawCosinePhase < -Math.PI ? rawCosinePhase + 2 * Math.PI : rawCosinePhase;		// force the phase to be between -pi and pi
 	}
 	
 	
