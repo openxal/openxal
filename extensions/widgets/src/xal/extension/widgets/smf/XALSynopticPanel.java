@@ -18,18 +18,7 @@ import xal.smf.Accelerator;
 import xal.smf.AcceleratorNode;
 import xal.smf.AcceleratorSeq;
 import xal.smf.data.XMLDataManager;
-import xal.smf.impl.BPM;
-import xal.smf.impl.ProfileMonitor;
-import xal.smf.impl.Bend;
-import xal.smf.impl.Dipole;
-import xal.smf.impl.HDipoleCorr;
-import xal.smf.impl.PermQuadrupole;
-import xal.smf.impl.Quadrupole;
-//import xal.smf.impl.RfCavity;
-//import xal.smf.impl.RfGap;
-import xal.smf.impl.Solenoid;
-import xal.smf.impl.VDipoleCorr;
-import xal.smf.impl.Marker;
+import xal.smf.impl.*;
 
 import java.awt.Color;
 import java.awt.Graphics;
@@ -214,11 +203,7 @@ public class XALSynopticPanel extends JPanel {
 			//        .lastIndexOf('.') + 1));
 
 			if (pos >= startPosition && pos <= endPosition) {
-				if (el instanceof Bend || el instanceof Quadrupole
-				    || el instanceof PermQuadrupole 
-//                    || el instanceof RfGap
-//				    || el instanceof RfCavityStruct
-                    ) {
+				if ( el instanceof Bend || el instanceof Quadrupole || el instanceof PermQuadrupole || el instanceof RfGap || el instanceof RfCavity ) {
 					newThick.add(el);
 				} else {
 					newThin.add(el);
@@ -366,34 +351,34 @@ public class XALSynopticPanel extends JPanel {
 					addLabel(i, name);
 				}
 			}
-//			else if (el instanceof RfGap) {
-//				g.setColor(Color.gray);
-//				
-//				if (l < 3) {
-//					g.fillRect(ex, margin.top, l, height);
-//				} else {
-//					g.fillRoundRect(ex, margin.top, l, height, height / 5,
-//									height / 5);
-//				}
-//				
-//				for (int i = ex - x; i < ex - x + l; i++) {
-//					addLabel(i, name);
-//				}
-//			} 
-//			else if (el instanceof RfCavityStruct) {
-//				g.setColor(Color.gray);
-//				
-//				if (l < 3) {
-//					g.drawRect(ex, margin.top - 1, l, height + 1);
-//				} else {
-//					g.drawRoundRect(ex, margin.top - 1, l, height + 1,
-//									height / 10, height / 10);
-//				}
-//				
-//				for (int i = ex - x; i < ex - x + l; i++) {
-//					addLabel(i, name);
-//				}
-//			}
+			else if (el instanceof RfGap) {
+				g.setColor(Color.gray);
+				
+				if (l < 3) {
+					g.fillRect(ex, margin.top, l, height);
+				} else {
+					g.fillRoundRect(ex, margin.top, l, height, height / 5,
+									height / 5);
+				}
+				
+				for (int i = ex - x; i < ex - x + l; i++) {
+					addLabel(i, name);
+				}
+			} 
+			else if (el instanceof RfCavity) {
+				g.setColor(Color.gray);
+				
+				if (l < 3) {
+					g.drawRect(ex, margin.top - 1, l, height + 1);
+				} else {
+					g.drawRoundRect(ex, margin.top - 1, l, height + 1,
+									height / 10, height / 10);
+				}
+				
+				for (int i = ex - x; i < ex - x + l; i++) {
+					addLabel(i, name);
+				}
+			}
 		}
 		
 		// Draw thin elements
