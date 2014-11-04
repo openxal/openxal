@@ -6,9 +6,9 @@
  */
 package xal.tools.beam.calc;
 
-import xal.model.probe.traj.ProbeState;
 import xal.model.probe.traj.Trajectory;
 import xal.model.probe.traj.TransferMapState;
+import xal.tools.beam.PhaseMap;
 import xal.tools.beam.PhaseMatrix;
 import xal.tools.beam.PhaseVector;
 import xal.tools.beam.Twiss;
@@ -19,7 +19,18 @@ import xal.tools.math.r3.R3;
  * Class for computing ring parameters from simulation data.
  * Accepts a <code>TransferMapTrajectory</code> as ring simulation data
  * (from the online model) and computes the ring parameters from the 
- * transfer maps stored around the ring.
+ * transfer maps stored around the ring.  Thus, the trajectory provided 
+ * <b>must</b> be the end-to-end simulation results of the ring.  The entrance
+ * of the first state in the trajectory and the exit of the last state in the
+ * trajectory will be treated as the same point, <i>s</i> = 0.
+ * </p>
+ * Do not supply partial simulations!  Use the trajectory for the full ring
+ * unless it is your intent to create a sub-ring.  That is, do not use the start element
+ * and stop element features of the online model unless you wish to simulate
+ * a smaller ring that excludes all elements before the stop element and all 
+ * elements after the stop element.  In such a case the entrance of the start
+ * element and the exit of the stop element would close the ring and be given
+ * the point <i>s</i> = 0.
  * </p>
  * <p>
  * The method names are those of interfaces <code>ICoordinateState</code>
@@ -29,6 +40,10 @@ import xal.tools.math.r3.R3;
  * since the current naming scheme conflicts with Javabeans, specifically,
  * the <code>get</code> prefix indicates a property of this class where in 
  * actuality it is a computation.
+ * </p>
+ * <p>
+ * Do not hesitate to request new features and computations that could be provided
+ * by this class, it is by no means complete.
  * </p>
  *
  * @author Christopher K. Allen
@@ -54,19 +69,24 @@ public class CalculationsOnRings extends CalculationsOnMachines {
     
     /**
      * <p>
-     * Constructor for CalculationsOnRings.  Accepts the <code>TransferMapTrajectory</code>
-     * object and extracts the final state and one-turn map.  Parameters that are 
-     * required for subsequent ring parameter calculations are also computed, such as
-     * entrance position phase advance, entrance position fixed orbit, and entrance position
-     * matched envelope.
+     * Constructor for CalculationsOnRings. The the ring is closed by identifying 
+     * the first and last states in the provided trajectory.
+     * </p>
+     * <p>  
+     * Parameters that are required for subsequent ring parameter calculations are 
+     * computed, such as "entrance" position phase advance, "entrance" position 
+     * fixed orbit, and "entrance" position matched envelope. By entrance position
+     * we imply the location <i>s</i> = 0, the location of ring closure.  Once these
+     * quantities are computed we can propagate them to other ring locations as needed.
      * </p>
      * <p>
-     * The entrance of the ring is assume to be at the first and last states in the 
-     * provided trajectory.  For example, the transfer matrix of the last state
-     * is the full turn map of the ring at the entrance position. 
+     * For example, the transfer map of the last state in the trajectory
+     * is the full turn map of the ring at the entrance position.  By conjugation
+     * with transfer map of any other state we can form the transfer map at that
+     * state location.
      * </p>
      *
-     * @param  trjSimFull  the simulation data for the ring, a "transfer map trajectory" object
+     * @param  trjSimFull  the simulation data for <em>entire</em> ring, a "transfer map trajectory" object
      * 
      * @throws IllegalArgumentException the trajectory does not contain <code>TransferMapState</code> objects
      *
@@ -161,9 +181,9 @@ public class CalculationsOnRings extends CalculationsOnMachines {
     
     /**
      * <p>
-     * Returns the matched Courant-Snyder parameters at the entrance of the ring. These
-     * are the "envelopes" taken from the "closed envelope" solution at the beginning
-     * of the ring.
+     * Returns the matched Courant-Snyder parameters at the "entrance" of the ring. These
+     * are the envelopes taken from the "closed envelope" solution at the beginning
+     * of the ring, <i>s</i> = 0.
      * </p>
      * <p>
      * Note that emittance &epsilon; is the parameter used to describe the extend of
@@ -184,11 +204,67 @@ public class CalculationsOnRings extends CalculationsOnMachines {
     public Twiss[]  ringMatchedTwiss() {
         return super.getMatchedTwiss();
     }
+    
+    /**
+     * Returns the one-turn map <b>&Phi;</b><sub>0</sub> for the ring at the location
+     * <i>s</i> = 0.
+     *  
+     * @return      ring one-turn map at join location
+     *
+     * @author Christopher K. Allen
+     * @since  Nov 4, 2014
+     */
+    public PhaseMap  getOneTurnMap() {
+        return super.getFullTransferMap();
+    }
+    
+    /**
+     * <p>
+     * Calculates the fractional phase tune for the ring from its one-turn matrix.
+     * The Courant-Snyder parameters 
+     * of the machine (beam) must be invariant under the action of the one-turn matrix 
+     * (this indicates a periodic focusing structure 
+     * where the beam envelope is modulated by that structure) for the returned values
+     * to be accurate.  One tune parameter
+     * is provided for each phase plane, i.e., 
+     * (&nu;<sub><i>x</i></sub>, &nu;<sub><i>y</i></sub>, &nu;<sub><i>z</i></sub>).  
+     * The betatron phase advances for the ring are then given by 
+     * (2&pi;&nu;<sub><i>x</i></sub>, 2&pi;&nu;<sub><i>y</i></sub>, 2&pi;&nu;<sub><i>z</i></sub>).  
+     * Specifically, the above values are the sinusoidal phase that a particle
+     * advances after each completion of a ring traversal, modulo 2&pi; 
+     * (that is, we only take the fractional part).
+     * </p>
+     * <p>
+     * The basic computation is 
+     * <br/>
+     * <br/>
+     * &nbsp; &nbsp;  &nu; = (1/2&pi;) cos<sup>-1</sup>[&frac12; Tr <b>&Phi;</b><sub>&alpha;&alpha;</sub>] ,
+     * <br/>
+     * <br/>
+     * where <b>&Phi;</b></b><sub>&alpha;&alpha;</sub> is the 2&times;2 block diagonal 
+     * of the the provided transfer matrix for the &alpha; phase plane, 
+     * and Tr <b>&Phi;</b></b><sub>&alpha;&alpha;</sub> indicates the trace of matrix 
+     * <b>&Phi;</b></b><sub>&alpha;&alpha;</sub>.
+     * </p>
+     * 
+     * @return  vector of fractional tunes (&nu;<sub><i>x</i></sub>, &nu;<sub><i>y</i></sub>, &nu;<sub><i>z</i></sub>)
+     *
+     * @author Christopher K. Allen
+     * @since  Nov 4, 2014
+     */
+    public R3   computeFractionalTunes() {
+        
+        PhaseMatrix matPhi   = this.getOneTurnMap().getFirstOrder();
+        R3          vecSigma = super.calculatePhaseAdvPerCell(matPhi);
+        R3          vecNu    = vecSigma.times(1/(2.0*Math.PI));
+        
+        return vecNu;
+    }
 
 
     /**
      * <p>
-     * Calculates and returns the full tune around the ring include the integer portion.
+     * Calculates and returns the full tune around the ring including the integer portion.
      * The tunes are computed for the start of the ring.
      * The tune for each phase plane is returned in the 3-dimensional vector.
      * </p>
@@ -207,7 +283,7 @@ public class CalculationsOnRings extends CalculationsOnMachines {
      * @author Christopher K. Allen
      * @since  Oct 24, 2013
      */
-    public R3 calculateFullTurnFullTunes() {
+    public R3 computeFullTunes() {
 
         // Initialize the vector of full tunes
         R3  vecPhsAdv = new R3();
@@ -247,6 +323,276 @@ public class CalculationsOnRings extends CalculationsOnMachines {
         vecPhsAdv.timesEquals( 1.0/(2.0*Math.PI) );
         
         return vecPhsAdv;
+    }
+    
+    /**
+     * Computes the one-turn matrix of the ring at the given state location.
+     * Let <i>S<sub>n</sub></i> be the given state object at
+     * location <i>s<sub>n</sub></i>, and let <b>T</b><sub><i>n</i></sub> be the
+     * transfer matrix between locations <i>s</i><sub>0</sub> and <i>s<sub>n</sub></i> ,
+     * where <i>s</i><sub>0</sub> is the location of the full one-turn matrix 
+     * <b>&Phi;</b><sub>0</sub> for this machine at position <i>s</i> = 0 (which is the
+     * beginning and the end of the trajectory object used to construct this class
+     * instance).  Then the full turn matrix 
+     * <b>&Phi;</b><sub><i>n</i></sub> for the machine at location <i>s<sub>n</sub></i>
+     * is given by
+     * <br/>
+     * <br/>
+     * &nbsp; &nbsp; <b>&Phi;</b><sub><i>n</i></sub> = <b>T</b><sub><i>n</i></sub> &sdot; <b>&Phi;</b><sub>0</sub>
+     *               &sdot; <b>T</b><sub><i>n</i></sub><sup>-1</sup> .
+     * <br/>
+     * <br/>
+     * That is, we conjugate the full transfer map for this machine by the transfer map 
+     * for the given state.
+     * </p> 
+     *       
+     * @param state     state <i>S<sub>n</sub></i> identifying the position <i>s<sub>n</sub></i>
+     *   
+     * @return          The one-turn matrix <b>&Phi;</b><sub><i>n</i></sub> of the ring at <i>s<sub>n</sub></i>
+     *
+     * @author Christopher K. Allen
+     * @since  Nov 4, 2014
+     */
+    public PhaseMatrix  computeRingFullTurnMatrixAt(TransferMapState state) {
+        PhaseMatrix     matFull = super.calculateFullLatticeMatrixAt(state);
+        
+        return matFull;
+    }
+    
+    /**
+     * <p>
+     * Returns the transfer matrix <b>&Phi;</b><sub>2,1</sub> taking phase 
+     * coordinates from state position 
+     * <i>S</i><sub>1</sub> to state position <i>S</i><sub>2</sub> within the ring.
+     * This is the first-order portion of the ring's transfer map <b>T</b><sub>2,1</sub>
+     * between states <i>S</i><sub>1</sub> and <i>S</i><sub>2</sub> 
+     * (see method 
+     * <code>{@link #computeTransferMap(TransferMapState, TransferMapState)}</code>). 
+     * </p>
+     * <p>
+     * Because of the ring topology, position <i>s</i><sub>1</sub> of state 
+     * <i>S</i><sub>1</sub> and position  <i>s</i><sub>2</sub> of state 
+     * <i>S</i><sub>2</sub> are really equivalence classes of real numbers
+     * [<i>s</i><sub>1</sub>] &sub; <b>R</b> and [<i>s</i><sub>2</sub>] &sub; <b>R</b>,
+     * respectively.  Each equivalence class can be represented
+     * <br/>
+     * <br/>
+     * &nbsp; &nbsp; [<i>s<sub>i</sub></i> ] = { <i>s<sub>i</sub></i> + <i>nL</i> | <i>n</i> &in; <b>Z</b><sub>+</sub> } 
+     * <br/>
+     * <br/>
+     * where <i>L</i> is the circumference of the ring.  Because of the way the ring
+     * is represented as a data structure, we have <i>s</i> &in; [0,<i>L</i>]. 
+     * However, we must enforce the condition that <i>s</i><sub>2</sub> is always
+     * "down stream" of <i>s</i><sub>1</sub>.  Specifically,
+     * we do not reverse directions when computing the transfer matrix.
+     * Here we describe the calculations in practical detail.
+     * </p>
+     * <p>
+     * If while traveling downstream from position <i>s</i><sub>1</sub> we need to
+     * determine whether or not we pass the position <i>s</i> = 0 before we encounter
+     * the position <i>s</i><sub>2</sub>. If so we to represent the position of 
+     * state <i>S</i><sub>2</sub> as 
+     * <i>s</i><sub>2</sub> + <i>L</i> &in; [<i>s</i><sub>2</sub>], since 
+     * <i>s</i><sub>2</sub> &lt; <i>s</i></sub>1</sub> indicating <i>s</i><sub>2</sub>
+     * is upstream of <i>s</i><sub>1</sub> (according to our model).  This condition
+     * requires that we must include the ring full turn matrix <b>&Phi;</b><sub>0</sub>
+     * when computing the transfer matrix.  Recall that <b>&Phi;</b><sub>0</sub> takes
+     * phase coordinates from position <i>s</i> = 0
+     * to position <i>s</i = 0 going all the way around the ring. 
+     * </p>
+     * <p>
+     * Collecting all of the above, if <i>s</i><sub>2</sub> &lt; <i>s</i><sub>1</sub> 
+     * then we have a propagation through point <i>s</i> = 0 and we must include the
+     * full turn matrix according to
+     * <br/>
+     * <br/>
+     * &nbsp; &nbsp; <b>&Phi;</b><sub>2,1</sub> = <b>&Phi;</b><sub>2</sub><b>&Phi;</b><sub>0</sub><b>&Phi;</b><sub>1</sub><sup>-1</sup> .
+     * <br/>
+     * <br/> 
+     * If <i>s</i><sub>2</sub> &gt; <i>s</i><sub>1</sub> then we can compute the transfer
+     * matrix <b>&Phi;</b><sub>2,1</sub> in the usual fashion
+     * <br/>
+     * <br/>
+     * &nbsp; &nbsp; <b>&Phi;</b><sub>2,1</sub> = <b>&Phi;</b><sub>2</sub><b>&Phi;</b><sub>1</sub><sup>-1</sup> .
+     * <br/>
+     * <br/> 
+     * </p>
+     * 
+     * @param state1    phase state <i>S</i><sub>1</sub> defining ring position <i>s</i><sub>1</sub>
+     * @param state2    phase state <i>S</i><sub>2</sub> defining ring position <i>s</i><sub>2</sub>
+     * 
+     * @return  the transfer matrix <b>&Phi;</b><sub>2,1</sub> taking phase coordinates <b>z</b> from
+     *          position <i>s</i><sub>1</sub> on the ring to position <i>s</i><sub>2</sub>
+     *
+     * @author Christopher K. Allen
+     * @since  Nov 3, 2014
+     */
+    public PhaseMatrix  computeRingTransferMatrix(TransferMapState state1, TransferMapState state2) {
+        
+        double      dblPos1 = state1.getPosition();
+        double      dblPos2 = state2.getPosition();
+        
+        if (dblPos1 < dblPos2) {
+        
+            PhaseMatrix matTrn = CalculationsOnMachines.computeTransferMatrix(state1, state2);
+        
+            return matTrn;
+            
+        } else {
+            
+            PhaseMatrix matPhi1 = state1.getTransferMap().getFirstOrder();
+            PhaseMatrix matPhi2 = state2.getTransferMap().getFirstOrder();
+            PhaseMatrix matFull = this.getFullTransferMap().getFirstOrder();
+            
+            PhaseMatrix matTrn = matPhi2.times( matFull.times( matPhi1.inverse() ) );
+            
+            return matTrn;
+
+        }
+    }
+
+    /**
+     * <p>
+     * Returns the transfer map <b>T</b><sub>2,1</sub> taking phase 
+     * coordinates from state position 
+     * <i>S</i><sub>1</sub> to state position <i>S</i><sub>2</sub> within the ring.
+     * </p>
+     * <p>
+     * Because of the ring topology, position <i>s</i><sub>1</sub> of state 
+     * <i>S</i><sub>1</sub> and position  <i>s</i><sub>2</sub> of state 
+     * <i>S</i><sub>2</sub> are really equivalence classes of real numbers
+     * [<i>s</i><sub>1</sub>] &sub; <b>R</b> and [<i>s</i><sub>2</sub>] &sub; <b>R</b>,
+     * respectively.  Each equivalence class can be represented
+     * <br/>
+     * <br/>
+     * &nbsp; &nbsp; [<i>s<sub>i</sub></i> ] = { <i>s<sub>i</sub></i> + <i>nL</i> | <i>n</i> &in; <b>Z</b><sub>+</sub> } 
+     * <br/>
+     * <br/>
+     * where <i>L</i> is the circumference of the ring.  Because of the way the ring
+     * is represented as a data structure, we have <i>s</i> &in; [0,<i>L</i>]. 
+     * However, we must enforce the condition that <i>s</i><sub>2</sub> is always
+     * "down stream" of <i>s</i><sub>1</sub>.  Specifically,
+     * we do not reverse directions when computing the transfer map.
+     * Here we describe the calculations in practical detail.
+     * </p>
+     * <p>
+     * If while traveling downstream from position <i>s</i><sub>1</sub> we need to
+     * determine whether or not we pass the position <i>s</i> = 0 before we encounter
+     * the position <i>s</i><sub>2</sub>. If so we to represent the position of 
+     * state <i>S</i><sub>2</sub> as 
+     * <i>s</i><sub>2</sub> + <i>L</i> &in; [<i>s</i><sub>2</sub>], since 
+     * <i>s</i><sub>2</sub> &lt; <i>s</i></sub>1</sub> indicating <i>s</i><sub>2</sub>
+     * is upstream of <i>s</i><sub>1</sub> (according to our model).  This condition
+     * requires that we must include the ring full turn map <b>T</b><sub>0</sub>
+     * when computing the transfer map.  Recall that <b>T</b><sub>0</sub> takes
+     * phase coordinates from position <i>s</i> = 0
+     * to position <i>s</i = 0 going all the way around the ring. 
+     * </p>
+     * <p>
+     * Collecting all of the above, if <i>s</i><sub>2</sub> &lt; <i>s</i><sub>1</sub> 
+     * then we have a propagation through point <i>s</i> = 0 and we must include the
+     * full turn map according to
+     * <br/>
+     * <br/>
+     * &nbsp; &nbsp; <b>T</b><sub>2,1</sub> = <b>T</b><sub>2</sub><b>T</b><sub>0</sub><b>T</b><sub>1</sub><sup>-1</sup> .
+     * <br/>
+     * <br/> 
+     * If <i>s</i><sub>2</sub> &gt; <i>s</i><sub>1</sub> then we can compute the transfer
+     * map <b>T</b><sub>2,1</sub> in the usual fashion
+     * <br/>
+     * <br/>
+     * &nbsp; &nbsp; <b>T</b><sub>2,1</sub> = <b>T</b><sub>2</sub><b>T</b><sub>1</sub><sup>-1</sup> .
+     * <br/>
+     * <br/> 
+     * </p>
+     * 
+     * @param state1    phase state <i>S</i><sub>1</sub> defining ring position <i>s</i><sub>1</sub>
+     * @param state2    phase state <i>S</i><sub>2</sub> defining ring position <i>s</i><sub>2</sub>
+     * 
+     * @return  the transfer map <b>T</b><sub>2,1</sub> taking phase coordinates <b>z</b> from
+     *          position <i>s</i><sub>1</sub> on the ring to position <i>s</i><sub>2</sub>
+     *
+     * @author Christopher K. Allen
+     * @since  Nov 3, 2014
+     */
+    public PhaseMap computeRingTransferMap(TransferMapState state1, TransferMapState state2) {
+        
+        double      dblPos1 = state1.getPosition();
+        double      dblPos2 = state2.getPosition();
+        
+        if (dblPos1 < dblPos2) {
+        
+            PhaseMap mapTrn = CalculationsOnMachines.computeTransferMap(state1, state2);
+        
+            return mapTrn;
+            
+        } else {
+            
+            PhaseMap    mapPhi1 = state1.getTransferMap();
+            PhaseMap    mapPhi2 = state2.getTransferMap();
+            PhaseMap    mapFull = this.getFullTransferMap();
+
+            PhaseMap mapTrn = mapPhi2.compose( mapFull.compose( mapPhi1.inverse() ) );
+            
+            return mapTrn;
+        }
+    }
+    
+    /**
+     * <p>
+     * Computes and returns the turn-by-turn phase positions 
+     * {<b>z</b><sub><i>n</i></sub> &in; <b>R</b><sup>6</sup> &times; {1} | <i>n</i>=0,...,<i>N</i>-1 }
+     * at the given location <i>s</i><sub>obs</sub> of state <i>S</i><sub>obs</sub> resulting 
+     * from a particle injected
+     * at location <i>s</i><sub>inj</sub> &in; <i>S</i><sub>inj</sub> with initial phase 
+     * coordinates <b>z</b><sub>inj</sub>.
+     * </p>
+     * <p>
+     * Currently the computation is entirely matrix based.  Only transfer matrices
+     * are used and not transfer maps.  Specifically, let <b>&Phi;</b><sub>2,1</sub> be the
+     * transfer matrix from <i>s</i><sub>1</sub> &#8796; <i>s</i><sub>inj</sub> to 
+     * <i>s</i><sub>2</sub> &#8796; <i>s</i><sub>obs</sub> and let 
+     * <b>&Phi;</b><sub>2,2</sub> be the one-turn map at position <i>s</i><sub>2</sub> in 
+     * the ring. Then the returned array of phase vectors {<b>z</b><sub><i>n</i></sub> } is
+     * given by
+     * <br/>
+     * <br/>
+     * &nbsp; &nbsp; <b>z</b><sub><i>n</i></sub> = [<b>&Phi;</b><sub>2,2</sub>]<sup><i>n</i></sup> 
+     *                                             <b>&Phi;</b><sub>2,1</sub> <b>z</b><sub>inj</sub> .
+     * <br/>
+     * <br/>
+     * Note that <b>z</b><sub>0</sub> is <b>&Phi;</b><sub>2,1</sub> <b>z</b><sub>inj</sub> , the
+     * phase coordinates of the particle after propagating from the injection location to the
+     * observation location.                                     
+     * </p>
+     *  
+     * @param stateInj  trajectory state at the injection location
+     * @param stateObs  trajectory state at the observation location
+     * @param cntTurns  number of turns <i>N</i> to observe particle
+     * @param vecInj    the initial phase coordinates of the particle at the injection location
+     * 
+     * @return  an array of phase coordinates
+     *
+     * @author Christopher K. Allen
+     * @since  Nov 4, 2014
+     */
+    public PhaseVector[] computeTurnByTurnResponse(TransferMapState stateInj, TransferMapState stateObs, int cntTurns, PhaseVector vecInj) {
+
+        PhaseMatrix     matPhi = this.computeRingTransferMatrix(stateInj, stateObs);
+        PhaseMatrix     matFull = this.computeRingFullTurnMatrixAt(stateObs);
+        
+        PhaseVector vec1 = matPhi.times( vecInj );
+        
+        PhaseVector[]   arrPosVec = new PhaseVector[cntTurns];
+        arrPosVec[0] = vec1;
+        for (int i=1; i<cntTurns; i++) {
+            PhaseVector vec2 = matFull.times(vec1);
+            
+            arrPosVec[i] = vec2;
+            vec1 = vec2;
+        }
+        
+        return arrPosVec;
     }
     
 //    /**
