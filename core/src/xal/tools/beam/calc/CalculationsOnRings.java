@@ -12,6 +12,7 @@ import xal.tools.beam.PhaseMap;
 import xal.tools.beam.PhaseMatrix;
 import xal.tools.beam.PhaseVector;
 import xal.tools.beam.Twiss;
+import xal.tools.beam.Twiss3D;
 import xal.tools.math.r3.R3;
 
 /**
@@ -282,8 +283,155 @@ public class CalculationsOnRings extends CalculationsOnMachines {
      *
      * @author Christopher K. Allen
      * @since  Oct 24, 2013
+     * 
+     * @deprecated  I still cannot get this computation to work correctly.  Use
+     *              {@link #computeFractionalTunes()} to get the fractional tunes.
+     * 
      */
+    @Deprecated
     public R3 computeFullTunes() {
+
+        // Initialize the vector of full tunes
+        R3  vecPhsAdv = new R3();
+        
+        // Initialize the loop
+        Twiss[]     arrTwsPrv = super.getMatchedTwiss();
+        Twiss[]     arrTwsCur;
+        
+        PhaseMatrix matXfrPrv = PhaseMatrix.identity();
+        PhaseMatrix matXfrCur;
+        
+        // We sum up the partial phase advance from each trajectory state
+        for (TransferMapState state : super.getTrajectory()) {
+            
+//            String strElemId = state.getElementId();
+            
+            // Compute the full-turn map at this state location
+            //TransferMapState    tmsCurr = (TransferMapState)state;
+            PhaseMatrix         matFull = this.calculateFullLatticeMatrixAt(state);
+            
+            // For this state location, compute the matched twiss parameters and 
+            //  the transfer matrix from the previous state to here. 
+            arrTwsCur = super.calculateMatchedTwiss(matFull);
+            matXfrCur = state.getTransferMap().getFirstOrder();
+            
+            PhaseMatrix matXfrStep = matXfrCur.times(  matXfrPrv.inverse()  );
+            
+            // Compute the phase advance through this state then add it to the sum
+            R3          vecDelPhs = super.calculatePhaseAdvance(matXfrStep, arrTwsPrv, arrTwsCur);
+
+            vecPhsAdv.plusEquals( vecDelPhs );
+            
+            // Reset the loop
+            arrTwsPrv = arrTwsCur;
+            matXfrPrv = matXfrCur;
+            
+//            // Type out
+//            System.out.println("Element ID " + state.getElementId() + " phase advance=" + vecPhsAdv);
+        }
+        
+        //  Normalize the phase in radians to unitless tunes then return
+        vecPhsAdv.timesEquals( 1.0/(2.0*Math.PI) );
+        
+        return vecPhsAdv;
+    }
+
+    /**
+     * <p>
+     * Calculates and returns the full tune around the ring including the integer portion.
+     * The tunes are computed for the start of the ring.
+     * The tune for each phase plane is returned in the 3-dimensional vector.
+     * </p>
+     * <p>
+     * The full tunes are computed by summing all the partial phase advances
+     * through each of the trajectory states (see 
+     * <code>{@link #calculatePhaseAdvance(PhaseMatrix, Twiss[], Twiss[])}</code>).  
+     * Thus, the partial phase advance
+     * through each state must also be computed so this can be a somewhat
+     * expensive operation.
+     * </p>
+     * 
+     * @return  the number <i>n.&nu;</i> for each phase plane where <i>n</i> is the 
+     *          integer portion and <i>&nu;</i> is the fractional phase advance.
+     *
+     * @author Christopher K. Allen
+     * @since  Oct 24, 2013
+     * 
+     * @deprecated  The integration technique employed is not accurate enough,
+     *              it cannot track the beta function through long elements.
+     */
+    @Deprecated
+    public R3 computeFullTunes_integration() {
+
+        // Initialize the vector of full tunes
+        R3  vecPhsAdv = R3.zero();
+        
+        // Initialize the loop
+        Twiss[]     arrTws = super.getMatchedTwiss();
+        
+        double      dblPos1 = 0.0;
+        double      dblPos2;
+        
+        // We sum up the partial phase advance from each trajectory state
+        for (TransferMapState state : super.getTrajectory()) {
+            
+            dblPos2 = state.getPosition();
+            double  dblDelPos = dblPos2 - dblPos1;
+            
+            // Compute the change in phase advance and add it in
+            for (Twiss3D.IND_3D index : Twiss3D.IND_3D.values()) {
+                Twiss   twsMatched = arrTws[index.val()];
+                double  dblBetaMch = twsMatched.getBeta();
+                double  dblDelPhs  = (1.0/dblBetaMch)*dblDelPos;
+                double  dblPhsCur  = vecPhsAdv.getElem(index.val());
+                double  dblPhsNew  = dblPhsCur + dblDelPhs;
+                
+                vecPhsAdv.set(index.val(), dblPhsNew);
+            }
+
+            //
+            // Compute the values for the next iteration
+            
+            // Compute the full-turn map at this state location
+            PhaseMatrix         matFull = this.computeRingFullTurnMatrixAt(state);
+            
+            // For this state location, compute the matched twiss parameters
+            dblPos1 = dblPos2;
+            arrTws  = super.calculateMatchedTwiss(matFull);
+        }
+        
+        //  Normalize the phase in radians to unitless tunes then return
+        vecPhsAdv.timesEquals( 1.0/(2.0*Math.PI) );
+        
+        return vecPhsAdv;
+    }
+    
+    /**
+     * <p>
+     * Calculates and returns the full tune around the ring including the integer portion.
+     * The tunes are computed for the start of the ring.
+     * The tune for each phase plane is returned in the 3-dimensional vector.
+     * </p>
+     * <p>
+     * The full tunes are computed by summing all the partial phase advances
+     * through each of the trajectory states (see 
+     * <code>{@link #calculatePhaseAdvance(PhaseMatrix, Twiss[], Twiss[])}</code>).  
+     * Thus, the partial phase advance
+     * through each state must also be computed so this can be a somewhat
+     * expensive operation.
+     * </p>
+     * 
+     * @return  the number <i>n.&nu;</i> for each phase plane where <i>n</i> is the 
+     *          integer portion and <i>&nu;</i> is the fractional phase advance.
+     *
+     * @author Christopher K. Allen
+     * @since  Oct 24, 2013
+     * 
+     * @deprecated  The method uses {@link CalculationEngine#calculatePhaseAdvance(PhaseMatrix, Twiss[], Twiss[])}
+     *              which does not give accurate results
+     */
+    @Deprecated
+    public R3 computeFullTunes_old() {
 
         // Initialize the vector of full tunes
         R3  vecPhsAdv = new R3();
@@ -324,7 +472,7 @@ public class CalculationsOnRings extends CalculationsOnMachines {
         
         return vecPhsAdv;
     }
-    
+
     /**
      * Computes the one-turn matrix of the ring at the given state location.
      * Let <i>S<sub>n</sub></i> be the given state object at
@@ -593,6 +741,57 @@ public class CalculationsOnRings extends CalculationsOnMachines {
         }
         
         return arrPosVec;
+    }
+    
+    /**
+     * <p>
+     * Calculates the matched Courant-Snyder parameters for the given
+     * state location.  The computed Twiss parameters are the matched
+     * envelopes for the ring at that point.
+     * </p>
+     * <p>
+     * Internally, the array of phase advances 
+     * {&sigma;<sub><i>x</i></sub>, &sigma;<sub><i>y</i></sub>, &sigma;<sub><i>x</i></sub>}
+     * are assumed to be the particle phase advances through the ring for the matched 
+     * solution.   These are computed with the base class method 
+     * <code>{@link #calculatePhaseAdvPerCell(PhaseMatrix)}</code>.
+     * </p> 
+     * <p>
+     * The returned Courant-Snyder parameters (&alpha;, &beta;, &epsilon;) are invariant
+     * under the action of the one-turn matrix at the state location, that is, 
+     * they are matched.  All that 
+     * is required are &alpha; and &beta; since &epsilon; specifies the size of the beam
+     * envelope.  Consequently the returned &epsilon; is <code>NaN</code>.
+     * </p>
+     * The following are the calculations used for the Courant-Snyder parameters of a 
+     * single phase plane:
+     * <br/>
+     * <br/>
+     * &nbsp; &nbsp; &alpha; &equiv; -<i>ww'</i> = (&phi;<sub>11</sub> - &phi;<sub>22</sub>)/(2 sin &sigma;) ,
+     * <br/>
+     * <br/>
+     * &nbsp; &nbsp; &beta; &equiv; <i>w</i><sup>2</sup> = &phi;<sub>12</sub>/sin &sigma;
+     * <br/>
+     * <br/>
+     * where &phi;<sub><i>ij</i></sub> are the elements of the 2&times;2 diagonal blocks of
+     * the one-turn matrix <b>&Phi;</b> for the the particular phase plane. The particle 
+     * amplitude function <i>w</i>
+     * is taken from Reiser, and &sigma; is the phase advance through the cell for the 
+     * particular phase plane.
+     * </p>
+     * 
+     * @param state     state defining the location for computing the matched Twiss parameters
+     * 
+     * @return          matched Twiss parameters at the given state location
+     *
+     * @author Christopher K. Allen
+     * @since  Nov 5, 2014
+     */
+    public Twiss[]  computeMatchedTwissAt(TransferMapState state) {
+        PhaseMatrix matPhi = this.computeRingFullTurnMatrixAt(state);
+        Twiss[]     arrTws = super.calculateMatchedTwiss(matPhi);
+        
+        return arrTws;
     }
     
 //    /**
