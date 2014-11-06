@@ -82,6 +82,50 @@ public class CalculationsOnMachines extends CalculationEngine  implements ISimLo
         
         return matPhi21;
     }
+    
+    /**
+     * Convenience method for computing the transfer map between two state locations, say <i>S</i><sub>1</sub>
+     * and <i>S</i><sub>2</sub>.  Let <i>s</i><sub>0</sub> be the axis location of the beamline
+     * entrance, <i>s</i><sub>1</sub> the location of state <i>S</i><sub>1</sub>, and 
+     * <i>s</i><sub>2</sub> the location of state <i>S</i><sub>2</sub>.  Each state object <i>S<sub>n</sub></i>
+     * contains the transfer map <b>T</b>(<i>s<sub>n</sub></i>,<i>s</i><sub>0</sub>)
+     * which takes phases coordinates at the beamline entrance to the position of state <i>S<sub>n</sub></i>. 
+     * The transfer map
+     * <b>T</b>(<i>s</i><sub>2</sub>,<i>s</i><sub>1</sub>) taking phase coordinates <b>z</b><sub>1</sub>
+     * (and covariance matrix <b>&sigma;</b><sub>1</sub>)
+     * from position <i>s</i><sub>1</sub> to position <i>s</i><sub>2</sub> is then given
+     * by
+     * <br/>
+     * <br/>
+     * &nbsp; &nbsp; <b>T</b>(<i>s</i><sub>2</sub>,<i>s</i><sub>1</sub>) = 
+     *                  <b>T</b>(<i>s</i><sub>2</sub>,<i>s</i><sub>0</sub>) &#x2218;
+     *                  <b>T</b>(<i>s</i><sub>1</sub>,<i>s</i><sub>0</sub>)<sup>-1</sup> ,
+     * <br/>
+     * <br/>
+     * where <b>T</b>(<i>s</i><sub>2</sub>,<i>s</i><sub>0</sub>) is the transfer map between
+     * the beamline entrance <i>s</i><sub>0</sub> and the position <i>s</i><sub>2</sub>
+     * of state <i>S</i><sub>2</sub>, and <b>T</b>(<i>s</i><sub>1</sub>,<i>s</i><sub>0</sub>) is the
+     * transfer map between the beamline entrance <i>s</i><sub>0</sub> and the position <i>s</i><sub>1</sub>
+     * of state <i>S</i><sub>1</sub>.
+     * 
+     * @param state1    trajectory state <i>S</i><sub>1</sub> of starting location <i>s</i><sub>1</sub> 
+     * @param state2    trajectory state <i>S</i><sub>2</sub> of final location <i>s</i><sub>2</sub>
+     * 
+     * @return          transfer map <b>T</b>(<i>s</i><sub>2</sub>,<i>s</i><sub>1</sub>) between
+     *                  locations <i>s</i><sub>1</sub> and <i>s</i><sub>2</sub>
+     *                  
+     * @author Christopher K. Allen
+     * @since  Nov 4, 2014
+     */
+    public static PhaseMap  computeTransferMap(TransferMapState state1, TransferMapState state2) {
+        PhaseMap    mapPhi1 = state1.getStateTransferMap();
+        PhaseMap    mapPhi2 = state2.getStateTransferMap();
+        
+        PhaseMap    mapPhi1inv = mapPhi1.inverse();
+        PhaseMap    mapPhi21   = mapPhi2.compose( mapPhi1inv );
+        
+        return mapPhi21;
+    }
 
 
     /*
