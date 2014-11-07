@@ -417,20 +417,6 @@ public class PhaseVector extends BaseVector<PhaseVector> implements java.io.Seri
         this.setVector(strTokens);
     }
     
-    /**
-     * Handles object creation required by the base class.
-     *  
-     * @see xal.tools.math.BaseVector#newInstance()
-     *
-     * @author Ivo List
-     * @author Christopher K. Allen
-     * @since  Jun 17, 2014
-     */
-    @Override
-    protected PhaseVector newInstance() {
-        return new PhaseVector();
-    }
-
 //    /** 
 //     * Return a deep copy object of the current <code>PhaseVector<code> object.
 //     * Thus, the current object is unmodified and unreferenced.
@@ -562,7 +548,7 @@ public class PhaseVector extends BaseVector<PhaseVector> implements java.io.Seri
         
         // Set the elements of this array to that given by the corresponding 
         //  argument entries
-        for (int i=0; i<6; i++) {
+        for (int i=0; i<=6; i++) {
             double dblVal = arrVector[i];
 
             this.setElem(i, dblVal);
@@ -921,11 +907,44 @@ public class PhaseVector extends BaseVector<PhaseVector> implements java.io.Seri
         return matRes;
     }
     
-    
-    
     /*
-     *  Topological Operations
+     * BaseVector Overrides
      */
+    
+    /**
+     * Handles object creation required by the base class.
+     *  
+     * @see xal.tools.math.BaseVector#newInstance()
+     *
+     * @author Ivo List
+     * @author Christopher K. Allen
+     * @since  Jun 17, 2014
+     */
+    @Override
+    protected PhaseVector newInstance() {
+        return new PhaseVector();
+    }
+
+    /**
+     * We need to redefine this method in order to set the
+     * homogeneous coordinate back to unity.
+     * 
+     * @see xal.tools.math.BaseVector#assignZero()
+     *
+     * @author Christopher K. Allen
+     * @since  Nov 6, 2014
+     */
+    @Override
+    public void assignZero() {
+        super.assignZero();
+        this.setElem(IND.HOM, 1.0);
+        
+    }
+
+    
+    //
+    //  Topological Operations
+    //
     
     /**
      * Return the <i>l</i><sub>1</sub> norm of the vector.
@@ -997,6 +1016,23 @@ public class PhaseVector extends BaseVector<PhaseVector> implements java.io.Seri
         return dblMax;
     }
     
+    
+    /*
+     * Object Method Overrides
+     */
+    
+    /**
+     * Creates and returns a deep copy of <b>this</b> vector.
+     * 
+     * @see xal.tools.math.BaseVector#clone()
+     * 
+     * @author Jonathan M. Freed
+     * @since Jul 3, 2014
+     */
+    @Override
+    public PhaseVector clone(){
+        return new PhaseVector(this);
+    }
     
     
     /*
@@ -1077,25 +1113,6 @@ public class PhaseVector extends BaseVector<PhaseVector> implements java.io.Seri
         strVec = strVec + this.getElem(6);
         return strVec;
     }
-    
-    /*
-     * Object Method Overrides
-     */
-    
-    /**
-     * Creates and returns a deep copy of <b>this</b> vector.
-     * 
-     * @see xal.tools.math.BaseVector#clone()
-     * 
-     * @author Jonathan M. Freed
-     * @since Jul 3, 2014
-     */
-    @Override
-    public PhaseVector clone(){
-    	return new PhaseVector(this);
-    }
-    
-    
     
     /**
      *  Test driver
