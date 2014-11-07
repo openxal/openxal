@@ -200,13 +200,13 @@ public abstract class SquareMatrix<M extends SquareMatrix<M>> extends BaseMatrix
      * The returned value is equivalent to 
      * <br/>
      * <br/>
-     * &nbsp; &nbsp; <b>y</b> = <b>A</b><sup>-1</sup><b>x</b> ,
+     * &nbsp; &nbsp; <b>x</b> = <b>A</b><sup>-1</sup><b>y</b> ,
      * <br/>
      * <br/>
-     * that is, the value of vector <b>y</b>.  
+     * that is, the value of vector <b>x</b>.  
      * <p>
      * </p>
-     * The vector <b>x</b> is left
+     * The vector <b>y</b> is left
      * unchanged.  However, this is somewhat expensive in that the solution
      * vector must be created through reflection and exceptions may occur.
      * For a safer implementation, but where the solution is returned within the
@@ -229,7 +229,7 @@ public abstract class SquareMatrix<M extends SquareMatrix<M>> extends BaseMatrix
      * @author Christopher K. Allen
      * @since  Oct 11, 2013
      */
-    public <V extends BaseVector<V>> V solve(V vecObs) throws IllegalArgumentException {
+    public <V extends BaseVector<V>> V solve(final V vecObs) throws IllegalArgumentException {
         
         // Check sizes
         if ( vecObs.getSize() != this.getSize() ) 
@@ -273,13 +273,13 @@ public abstract class SquareMatrix<M extends SquareMatrix<M>> extends BaseMatrix
      * The returned value is equivalent to 
      * <br/>
      * <br/>
-     * &nbsp; &nbsp; <b>y</b> = <b>A</b><sup>-1</sup><b>x</b> ,
+     * &nbsp; &nbsp; <b>x</b> = <b>A</b><sup>-1</sup><b>y</b> ,
      * <br/>
      * <br/>
      * that is, the value of vector <b>y</b>.  
      * </p>
      * <p> 
-     * The value of <b>y</b> is returned within the argument vector.  Thus,
+     * The value of <b>x</b> is returned within the argument vector.  Thus,
      * the argument cannot be immutable.
      * <p>
      * Note that the inverse matrix

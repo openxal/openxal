@@ -294,7 +294,7 @@ public class CalculationsOnMachines extends CalculationEngine  implements ISimLo
      * where <i>n</i> is the index of the given state <i>S<sub>n</sub></i>.  This is the
      * image &Delta;<b>z</b> of the value 
      * <b>0</b> &in; <b>P</b><sup>6</sup> &cong; <b>R</b><sup>6</sup> &times; {1}.  
-     * That is the value &Delta;<b>z</b> = &phi;(<b>0</b>).
+     * That is the value &Delta;<b>z</b> = &phi;<sub><i>n</i></sub>(<b>0</b>).
      * </p>
      * <p>
      * Recall that the transfer
@@ -361,7 +361,7 @@ public class CalculationsOnMachines extends CalculationEngine  implements ISimLo
      * has final row that represents the translation <b>&Delta;</b> of the particle
      * for the circuit around the ring.  The 6&times;6 sub-matrix of <b>&Phi;</b> represents
      * the (linear) action of the bending magnetics and quadrupoles and corresponds to the
-     * matrix <b>T</b> &in; <b>R</b><sup>6&times;</sup> (here <b>T</b> is linear). 
+     * matrix <b>T</b> &in; <b>R</b><sup>6&times;6</sup> (here <b>T</b> is linear). 
      * Thus, we can write the linear operator <b>&Phi;</b>
      * as the augmented system 
      * <br/>
@@ -372,7 +372,6 @@ public class CalculationsOnMachines extends CalculationEngine  implements ISimLo
      * </pre> 
      * where <b>p</b> is the projection of <b>z</b> onto the ambient phase space
      * <b>R</b><sup>6</sup> (without homogeneous the homogeneous coordinate).
-     * coordinates). 
      * </p>
      * <p>
      * Putting this together we get

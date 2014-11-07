@@ -42,7 +42,10 @@ public abstract class CalculationEngine {
 
 
     /** small number used to determine the conditioning of the linear system */
-    static final private double         DBL_EPS = 1.0e-6;
+    static final private double         DBL_CND_MIN = 1.0e12;
+    
+    /** small number used to define a zero phase advance */
+    static final private double         DBL_EPS_PHSADV = 1.0e-2;
     
     /** the number 2&pi; */
     static final private double         DBL_2PI = 2 * Math.PI;
@@ -178,34 +181,33 @@ public abstract class CalculationEngine {
 
         R6x6    matT = matPhi.projectR6x6();
         R6x6    matI = R6x6.newIdentity();
-        R6x6    matR = matT.minus( matI );
+        R6x6    matR = matI.minus( matT );
 
-        R6      vecd = matPhi.projectColumn(IND.HOM);
-        vecd.negate();
+        R6      vecdZ = matPhi.projectColumn(IND.HOM);
 
-        if (matR.det() > DBL_EPS) {
+        double  dblCndNum = matR.conditionNumber();
+        if (dblCndNum < DBL_CND_MIN) {
 
-            R6          vecp = matR.solve(vecd);
+            R6          vecp = matR.solve(vecdZ);
             PhaseVector vecP = PhaseVector.embed(vecp);
 
             return vecP;
         }
 
-
         // The system is indeterminant in full 6D phase space
         //   So compute the solution for the transverse phase plane
         R4x4     matTt = matPhi.projectR4x4();
         R4x4     matIt = R4x4.newIdentity();
-        R4x4     matRt = matTt.minus( matIt );
+        R4x4     matRt = matIt.minus( matTt );
 
-        R4       vecdt = new R4();
-        vecd.projectOnto(vecdt);
+        R4       vecZt = new R4();
+        vecdZ.projectOnto(vecZt);
 
         // Solve system and return it
-        R4       vecpt = matRt.solve(vecdt);
+        R4      vecPt    = matRt.solve(vecZt);
 
         PhaseVector     vecP = PhaseVector.newZero();
-        vecpt.embedIn(vecP);
+        vecPt.embedIn(vecP);
 
         return  vecP;
     }
@@ -443,19 +445,19 @@ public abstract class CalculationEngine {
             double  dblRtBetas = Math.sqrt( dblBetaFnl * dblBetaInt );
 
             double dblSinPhs = dblM12 / dblRtBetas;
-            double dblCosPhs = (dblM11*dblBetaInt + dblM12*dblAlphInt) / dblRtBetas;
+            double dblCosPhs = (dblM11*dblBetaInt - dblM12*dblAlphInt) / dblRtBetas;
             
             dblSinPhs = Math.max( Math.min( dblSinPhs, 1.0 ), -1.0 );     // make sure it is in the range [-1, 1]
             dblCosPhs = Math.max( Math.min( dblCosPhs, 1.0 ), -1.0);
 
-            // This returns a value phi in the domain [-pi,pi]
+            // atan() returns a value phi in the domain [-pi,pi]
+            //  Put it in the range [0, 2pi]
             double   dblPhsAdv  = Math.atan2(dblSinPhs, dblCosPhs);
 
-            if (dblPhsAdv < DBL_EPS)
-                if (dblPhsAdv > -0.001)
+            if (dblPhsAdv<0.0 && dblPhsAdv>-DBL_EPS_PHSADV)
                     dblPhsAdv = 0.0;
-                else
-                    dblPhsAdv += DBL_2PI;
+            if (dblPhsAdv < 0.0)
+                dblPhsAdv += DBL_2PI;
             
             arrPhsAdv[mode] = dblPhsAdv;
         }
@@ -676,7 +678,8 @@ public abstract class CalculationEngine {
         for ( int mode = 0 ; mode < NUM_MODES ; mode++ ) {
             final int index = 2 * mode;
             
-            final double sinMu = Math.sin( DBL_2PI * vecPhsCell.getElem(mode) );// _tunes could be NaN
+//            final double sinMu = Math.sin( DBL_2PI * vecPhsCell.getElem(mode) );// _tunes could be NaN
+            final double sinMu = Math.sin( vecPhsCell.getElem(mode) );// _tunes could be NaN
             final double m11 = matPhiCell.getElem( index, index );
             final double m12 = matPhiCell.getElem( index, index + 1 );
             final double m22 = matPhiCell.getElem( index + 1, index + 1 );

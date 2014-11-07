@@ -31,9 +31,11 @@ import xal.sim.scenario.ProbeFactory;
 import xal.sim.scenario.Scenario;
 import xal.smf.Accelerator;
 import xal.smf.AcceleratorSeq;
+import xal.tools.beam.PhaseMatrix;
 import xal.tools.beam.PhaseVector;
 import xal.tools.beam.Twiss;
 import xal.tools.beam.Twiss3D;
+import xal.tools.beam.PhaseMatrix.IND;
 import xal.tools.math.r3.R3;
 
 /**
@@ -239,14 +241,18 @@ public class TestCalculationsOnRings {
     public void testComputeTwissParameters() throws IOException {
 
         // Do computations on the transfer map trajectory
-        OWTR_OUTPUT.write("\nTransferMapTrajectory: computeTwissParameters");
+        OWTR_OUTPUT.write("\nCalculationsOnRings: computeTwissParameters() and computeMatchedTwissAt()");
         OWTR_OUTPUT.write("\n");
         Trajectory<TransferMapState> trjXfer = PROBE_XFER_TEST.getTrajectory();
         for (TransferMapState state : trjXfer) {
-            Twiss[] arrTwiss = this.calXferRing.computeTwissParameters(state);
-            Twiss3D t3dMach  = new Twiss3D(arrTwiss);
+            Twiss[] arrTwissMt = this.calXferRing.computeMatchedTwissAt(state);
+            Twiss[] arrTwissAt = this.calXferRing.computeTwissParameters(state);
+            Twiss3D t3dMach  = new Twiss3D(arrTwissMt);
+            Twiss3D t3dAt    = new Twiss3D(arrTwissAt);
 
-            OWTR_OUTPUT.write(state.getElementId() + ": " + t3dMach.toString());
+            OWTR_OUTPUT.write(state.getElementId() + "\n");
+            OWTR_OUTPUT.write("  Generic = " + t3dAt.toString() + "\n");
+            OWTR_OUTPUT.write("  Matched = " + t3dMach.toString());
             OWTR_OUTPUT.write("\n");
         }
         OWTR_OUTPUT.write("\n");
@@ -269,6 +275,33 @@ public class TestCalculationsOnRings {
             OWTR_OUTPUT.write(state.getElementId() + ": " + vecPhase.toString());
             OWTR_OUTPUT.write("\n");
         }
+        OWTR_OUTPUT.write("\n");
+    }
+    
+    /**
+     * Test method for {@link xal.tools.beam.calc.SimResultsAdaptor#computeBetatronPhase(xal.model.probe.traj.ProbeState)}.
+     */
+    @Test
+    public void testComputePhaseAdvance() throws IOException {
+
+        // Do computations on the transfer map trajectory
+        OWTR_OUTPUT.write("\nComputationsOnRings: computePhaseAdvance");
+        OWTR_OUTPUT.write("\n");
+        Trajectory<TransferMapState>  trjXfer = PROBE_XFER_TEST.getTrajectory();
+
+        R3                  vecPhsTot = R3.zero();
+        TransferMapState    state1    = trjXfer.initialState();
+        for (TransferMapState state2 : trjXfer) {
+            R3  vecPhsAdv = this.calXferRing.computePhaseAdvanceBetween(state1, state2);
+
+            OWTR_OUTPUT.write(state1.getElementId() + "-" + state2.getElementId() + ": " + vecPhsAdv.toString());
+            OWTR_OUTPUT.write("\n");
+            
+            state1 = state2;
+            vecPhsTot.plusEquals(vecPhsAdv);
+        }
+        OWTR_OUTPUT.write("Total phase advance = " + vecPhsTot);
+        OWTR_OUTPUT.write("\n");
         OWTR_OUTPUT.write("\n");
     }
     
@@ -315,12 +348,12 @@ public class TestCalculationsOnRings {
         OWTR_OUTPUT.write(" full tunes: " + vecFullTunes.toString());
         OWTR_OUTPUT.write("\n");
         
-        OWTR_OUTPUT.write("\nRing Computation: computeFullTunes via integration");
-        OWTR_OUTPUT.write("\n");
-        vecFullTunes = this.calXferRing.computeFullTunes_integration();
-        OWTR_OUTPUT.write(" full tunes: " + vecFullTunes.toString());
-        OWTR_OUTPUT.write("\n");
-        
+//        OWTR_OUTPUT.write("\nRing Computation: computeFullTunes via integration");
+//        OWTR_OUTPUT.write("\n");
+//        vecFullTunes = this.calXferRing.computeFullTunes_integration();
+//        OWTR_OUTPUT.write(" full tunes: " + vecFullTunes.toString());
+//        OWTR_OUTPUT.write("\n");
+//        
         OWTR_OUTPUT.write("\n");
     }
     
@@ -337,7 +370,7 @@ public class TestCalculationsOnRings {
         String  strElemId1 = "Ring_Inj:Foil";
         String  strElemId2 = "BEGIN_Ring";
         int     cntTurns   = 50;
-        PhaseVector vecInit = new PhaseVector(0.001,0, 0,0, 0,0);
+        PhaseVector vecInit = new PhaseVector(0.00,0, 0,0, 0,0);
 
         Trajectory<TransferMapState>  trjXfer = PROBE_XFER_TEST.getTrajectory();
         TransferMapState    state1 = trjXfer.stateForElement(strElemId1);
@@ -356,7 +389,50 @@ public class TestCalculationsOnRings {
             cnt++;
         }
         OWTR_OUTPUT.write("\n");
+    }
+    
+    /**
+     * Do some experiments with fixed orbit vectors
+     * @throws IOException
+     *
+     * @author Christopher K. Allen
+     * @since  Nov 6, 2014
+     */
+    @Test
+    public void testFixedPointOrbit() throws IOException {
+        Trajectory<TransferMapState>  trjXfer = PROBE_XFER_TEST.getTrajectory();
         
+        String  strElemId = "Ring_Inj:Foil";
+        TransferMapState    state = trjXfer.stateForElement(strElemId);
+        
+        PhaseVector vecFxdOrb = this.calXferRing.computeFixedOrbit(state);
+        PhaseMatrix matFull   = this.calXferRing.computeRingFullTurnMatrixAt(state);
+        
+        OWTR_OUTPUT.write("\nFull Turn Matrix \n");
+        OWTR_OUTPUT.write(matFull.toStringMatrix());
+        OWTR_OUTPUT.write("\n");
+        OWTR_OUTPUT.write("\nProjected Full Turn Matrix \n");
+        OWTR_OUTPUT.write(matFull.projectR6x6().toStringMatrix());
+        OWTR_OUTPUT.write("\n");
+        OWTR_OUTPUT.write("\nProjected Displacement Vector \n");
+        OWTR_OUTPUT.write(matFull.projectColumn(IND.HOM).toString());
+        OWTR_OUTPUT.write("\n");
+        
+        
+        PhaseVector vec1      = matFull.times( vecFxdOrb );
+        PhaseVector vec2      = matFull.inverse().times( vec1 );
+        PhaseVector vec3      = matFull.solve( vec1 );
+        
+        OWTR_OUTPUT.write("\nRing Fixed Point Experiments ");
+        OWTR_OUTPUT.write("\n  Fixed point vector : " + vecFxdOrb.toString());
+        OWTR_OUTPUT.write("\n  After one turn     : " + vec1.toString());
+        OWTR_OUTPUT.write("\n  Applying inverse   : " + vec2.toString());
+        OWTR_OUTPUT.write("\n  Using linear solve : " + vec3.toString());
+        OWTR_OUTPUT.write("\n");
+    }
+    
+    @Test
+    public void testLinearSolve() {
         
     }
     
