@@ -19,8 +19,7 @@ import xal.sim.scenario.Scenario;
 import xal.smf.Accelerator;
 import xal.smf.AcceleratorNode;
 import xal.smf.AcceleratorSeqCombo;
-import xal.tools.beam.PhaseVector;
-import xal.tools.beam.Twiss;
+import xal.tools.beam.*;
 import xal.tools.beam.calc.CalculationsOnRings;
 import xal.tools.math.r3.R3;
 
@@ -179,7 +178,7 @@ public class CalculateFit{
 		localagent.saveYTBTData(yarr);  
 		localagent.setYTBTFitParams(yfitparams);
 		
-		getFoilParams();
+		calcFoilParams();
 		
 	}
 	
@@ -226,40 +225,51 @@ public class CalculateFit{
     }
     
     
-    void getFoilParams(){
+    private void calcFoilParams(){
 		
-     	//ProbeState injstate = traj.stateForElement("Ring_Inj:Foil");
-		double position = scenario.getPositionRelativeToStart(0.0);               // TODO CKA - never used
-		//TransferMapState injstate = (TransferMapState)traj.statesInPositionRange(position - 0.00001, position + 0.00001)[0];
 		TransferMapState injstate = traj.stateForElement("Ring_Inj:Foil");
 		Twiss[] injtwiss = simRingCalcEngine.computeTwissParameters( injstate );
-		R3 injphase = simRingCalcEngine.computeBetatronPhase( injstate );         // TODO CKA - never used
-		PhaseVector injorbit = simRingCalcEngine.computeFixedOrbit( injstate );   // TODO CKA - never used
 		double beta_x_i = injtwiss[0].getBeta();
 		double alpha_x_i = injtwiss[0].getAlpha();
 		double beta_y_i = injtwiss[1].getBeta(); 
 		double alpha_y_i = injtwiss[1].getAlpha();
-		
-		//System.out.println("At position " + position + ", beta x, alpha_x, beta y, and alphay are "+ beta_x_i + " " + alpha_x_i + " " + beta_y_i + " " + alpha_y_i + "\n");
+		final PhaseVector injCoords = simRingCalcEngine.computeFixedOrbit( injstate );
+//		System.out.println( "injection coordinates: " + injCoords.printString() );
+
+		//System.out.println("At injection: ", beta x, alpha_x, beta y, and alphay are "+ beta_x_i + " " + alpha_x_i + " " + beta_y_i + " " + alpha_y_i + "\n");
 
 		// CKA - let's make this readable for debugging
-//        TransferMapState localstate = traj.statesForElement(localagent.getNode().getId()).get(0);
 		String    strBpmId = this.localagent.getNode().getId();
 		List<TransferMapState> lstStates = this.traj.statesForElement(strBpmId);
 		TransferMapState localstate = lstStates.get(0);
 		
 		Twiss[] localtwiss = simRingCalcEngine.computeTwissParameters( localstate );
 		R3 localphase = simRingCalcEngine.computeBetatronPhase( localstate );
-		PhaseVector localorbit = simRingCalcEngine.computeFixedOrbit( localstate );  // TODO CKA - never used
 		double beta_x = localtwiss[0].getBeta();
-		double alpha_x = localtwiss[0].getAlpha();    // TODO CKA - never used
-		double beta_y = localtwiss[1].getBeta(); 
-		double alpha_y = localtwiss[1].getAlpha();    // TODO CKA - never used
+		double beta_y = localtwiss[1].getBeta();
 		double phase_x = localphase.getx();
 		double phase_y = localphase.gety();
 		
 		//Calculate the position and angle at the foil.
+		final PhaseMatrix localFullTurnMatrix = simRingCalcEngine.computeRingFullTurnMatrixAt( localstate );
+		final double m00 = localFullTurnMatrix.getElem( 0, 0 );
+		final double m01 = localFullTurnMatrix.getElem( 0, 1 );
+
+		// transfer matrix from local state to injection state
+		final PhaseMatrix transferMatrixToInj = simRingCalcEngine.computeRingTransferMatrix( injstate, localstate ).inverse();
 		
+//		System.out.println( "Calculating transfer matrix between elements of position: " + localstate.getPosition() + " to " + injstate.getPosition() );
+//		System.out.println( "Transfer matrix: " + transferMatrixToInj );
+
+		final double sim_xt0 = xamp * Math.cos( xphase );	// just the betatron oscillation
+		final double sim_xt1 = xamp * Math.cos( 2 * Math.PI * xtune + xphase );		// just the betatron oscillation
+		final double sim_xpt0 = ( sim_xt1 - m00 * sim_xt0 ) / m01;		// just the betatron oscillation
+		final double x0_i = sim_xt0 * transferMatrixToInj.getElem( 0, 0 ) + sim_xpt0 * transferMatrixToInj.getElem( 0, 1 );
+		final double x0p_i = sim_xt0 * transferMatrixToInj.getElem( 1, 0 ) + sim_xpt0 * transferMatrixToInj.getElem( 1, 1 );
+
+		System.out.println( "x0_i: " + x0_i +  ", x0p_i: " + x0p_i );
+
+
       	double[] xfinalParams = new double[4];
 		double[] yfinalParams = new double[4];
 		double xarg = phase_x - xphase;
