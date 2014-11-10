@@ -74,8 +74,8 @@ public class CalculationsOnMachines extends CalculationEngine  implements ISimLo
      * @since  Jun 23, 2014
      */
     public static PhaseMatrix  computeTransferMatrix(TransferMapState state1, TransferMapState state2) {
-        PhaseMatrix matPhi1 = state1.getStateTransferMap().getFirstOrder();
-        PhaseMatrix matPhi2 = state2.getStateTransferMap().getFirstOrder();
+        PhaseMatrix matPhi1 = state1.getTransferMap().getFirstOrder();
+        PhaseMatrix matPhi2 = state2.getTransferMap().getFirstOrder();
         
         PhaseMatrix matPhi1inv = matPhi1.inverse();
         PhaseMatrix matPhi21   = matPhi2.times( matPhi1inv );
@@ -118,8 +118,8 @@ public class CalculationsOnMachines extends CalculationEngine  implements ISimLo
      * @since  Nov 4, 2014
      */
     public static PhaseMap  computeTransferMap(TransferMapState state1, TransferMapState state2) {
-        PhaseMap    mapPhi1 = state1.getStateTransferMap();
-        PhaseMap    mapPhi2 = state2.getStateTransferMap();
+        PhaseMap    mapPhi1 = state1.getTransferMap();
+        PhaseMap    mapPhi2 = state2.getTransferMap();
         
         PhaseMap    mapPhi1inv = mapPhi1.inverse();
         PhaseMap    mapPhi21   = mapPhi2.compose( mapPhi1inv );
@@ -431,8 +431,11 @@ public class CalculationsOnMachines extends CalculationEngine  implements ISimLo
     @Override
     public PhaseVector computeChromAberration(TransferMapState state) {
         double          dblGamma = state.getGamma();
-        PhaseMap        mapPhi   = state.getStateTransferMap();
-        PhaseMatrix     matPhi   = mapPhi.getFirstOrder();
+//        PhaseMap        mapPhi   = state.getTransferMap();
+//        PhaseMap        mapPhi   = state.getStateTransferMap();
+//      PhaseMatrix     matPhi   = mapPhi.getFirstOrder();
+        PhaseMatrix     matPhi   = this.calculateFullLatticeMatrixAt(state);
+        
         R6              vecDel   = super.calculateAberration(matPhi, dblGamma);
 
         return PhaseVector.embed(vecDel);
