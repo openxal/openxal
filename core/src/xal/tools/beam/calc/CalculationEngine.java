@@ -42,7 +42,10 @@ public abstract class CalculationEngine {
 
 
     /** small number used to determine the conditioning of the linear system */
-    static final private double         DBL_EPS = 1.0e-6;
+    static final private double         DBL_CND_MIN = 1.0e12;
+    
+    /** small number used to define a zero phase advance */
+    static final private double         DBL_EPS_PHSADV = 1.0e-2;
     
     /** the number 2&pi; */
     static final private double         DBL_2PI = 2 * Math.PI;
@@ -178,34 +181,33 @@ public abstract class CalculationEngine {
 
         R6x6    matT = matPhi.projectR6x6();
         R6x6    matI = R6x6.newIdentity();
-        R6x6    matR = matT.minus( matI );
+        R6x6    matR = matI.minus( matT );
 
-        R6      vecd = matPhi.projectColumn(IND.HOM);
-        vecd.negate();
+        R6      vecdZ = matPhi.projectColumn(IND.HOM);
 
-        if (matR.det() > DBL_EPS) {
+        double  dblCndNum = matR.conditionNumber();
+        if (dblCndNum < DBL_CND_MIN) {
 
-            R6          vecp = matR.solve(vecd);
+            R6          vecp = matR.solve(vecdZ);
             PhaseVector vecP = PhaseVector.embed(vecp);
 
             return vecP;
         }
 
-
         // The system is indeterminant in full 6D phase space
         //   So compute the solution for the transverse phase plane
         R4x4     matTt = matPhi.projectR4x4();
         R4x4     matIt = R4x4.newIdentity();
-        R4x4     matRt = matTt.minus( matIt );
+        R4x4     matRt = matIt.minus( matTt );
 
-        R4       vecdt = new R4();
-        vecd.projectOnto(vecdt);
+        R4       vecZt = new R4();
+        vecdZ.projectOnto(vecZt);
 
         // Solve system and return it
-        R4       vecpt = matRt.solve(vecdt);
+        R4      vecPt    = matRt.solve(vecZt);
 
         PhaseVector     vecP = PhaseVector.newZero();
-        vecpt.embedIn(vecP);
+        vecPt.embedIn(vecP);
 
         return  vecP;
     }
@@ -432,6 +434,102 @@ public abstract class CalculationEngine {
         final double[] arrPhsAdv = new double[3];
         
         for ( int mode = 0 ; mode < 3; mode++ ) {
+            final double dblAlphInt = twsInt[mode].getAlpha();
+            final double dblBetaInt = twsInt[mode].getBeta();
+            final double dblBetaFnl = twsFnl[mode].getBeta();
+            
+            final double dblM11 = matPhi.getElem( 2*mode, 2*mode );
+            final double dblM12 = matPhi.getElem( 2*mode, 2*mode + 1 );
+
+            // Compute the sine and cosine of phase advance for this plane
+            double  dblRtBetas = Math.sqrt( dblBetaFnl * dblBetaInt );
+
+            double dblSinPhs = dblM12 / dblRtBetas;
+            double dblCosPhs = (dblM11*dblBetaInt - dblM12*dblAlphInt) / dblRtBetas;
+            
+            dblSinPhs = Math.max( Math.min( dblSinPhs, 1.0 ), -1.0 );     // make sure it is in the range [-1, 1]
+            dblCosPhs = Math.max( Math.min( dblCosPhs, 1.0 ), -1.0);
+
+            // atan() returns a value phi in the domain [-pi,pi]
+            //  Put it in the range [0, 2pi]
+            double   dblPhsAdv  = Math.atan2(dblSinPhs, dblCosPhs);
+
+            if (dblPhsAdv<0.0 && dblPhsAdv>-DBL_EPS_PHSADV)
+                    dblPhsAdv = 0.0;
+            if (dblPhsAdv < 0.0)
+                dblPhsAdv += DBL_2PI;
+            
+            arrPhsAdv[mode] = dblPhsAdv;
+        }
+
+        // Pack into vector format and return
+        R3 vecPhases = new R3( arrPhsAdv );
+
+        return vecPhases;
+    }
+
+    /** 
+     * <p>
+     * Taken from <code>TransferMapState</code>.
+     * </p>
+     * <p>
+     * Compute and return the particle phase advance for under the action
+     * of the given phase matrix when used as a transfer matrix.
+     * </p>
+     * <p>
+     * Calculates the phase advances given the initial and final 
+     * Courant-Snyder &alpha; and &beta; values provided. This is the general
+     * phase advance of the particle through the transfer matrix <b>&Phi;</b>, and no special
+     * requirements are placed upon <b>&Phi;</b>.   One phase
+     * advance is provided for each phase plane, i.e., 
+     * (&sigma;<sub><i>x</i></sub>, &sigma;<sub><i>z</i></sub>, &sigma;<sub><i>z</i></sub>).  
+     * </p>
+     * <p>
+     * The definition of phase advance &sigma; is given by
+     * <br/>
+     * <br/>
+     * &nbsp; &nbsp; &sigma;(<i>s</i>) &equiv; &int;<sup><i>s</i></sup> [1/&beta;(<i>t</i>)]<i>dt</i> ,
+     * <br/>
+     * <br/>
+     * where &beta;(<i>s</i>) is the Courant-Snyder, envelope function, and the integral 
+     * is taken along the interval between the initial and final Courant-Snyder 
+     * parameters.
+     * </p>
+     * <p>
+     * The basic relation used to compute &sigma; is the following:
+     * <br/>
+     * <br/>
+     * &nbsp; &nbsp;  &sigma; = sin<sup>-1</sup> &phi;<sub>12</sub>/(&beta;<sub>1</sub>&beta;<sub>2</sub>)<sup>&frac12;</sup> ,
+     * <br/>
+     * <br/>
+     * where &phi;<sub>12</sub> is the element of <b>&Phi;</b> in the upper right corner of each 
+     * 2&times;2 diagonal block, &beta;<sub>1</sub> is the initial beta function value (provided)
+     * and &beta;<sub>2</sub> is the final beta function value (provided).
+     * </p>
+     * 
+     * @param   matPhi    the transfer matrix that propagated the Twiss parameters
+     * @param   twsInit   initial Twiss parameter before application of matrix
+     * @param   twsFinal  final Twiss parameter after application of matrix
+     * 
+     * @return      the array of betatron tunes (&sigma;<sub><i>x</i></sub>, &sigma;<sub><i>z</i></sub>, &sigma;<sub><i>z</i></sub>)
+     * 
+     * @author  Christopher K. Allen
+     * @author  Thomas Pelaia
+     * @since   Jun, 2004
+     * @version Oct, 2013
+     * 
+     * @deprecated  Does not determine the phase quadrants correctly and therefore cannot produce
+     *              an accurate phase advance
+     */
+    @Deprecated
+    protected R3 calculatePhaseAdvance_old(PhaseMatrix matPhi, Twiss[] twsInit, Twiss[] twsFinal) {
+
+        final Twiss[] twsFnl = twsFinal;
+        final Twiss[] twsInt = twsInit;
+
+        final double[] arrPhsAdv = new double[3];
+        
+        for ( int mode = 0 ; mode < 3; mode++ ) {
             final double dblBetaFnl = twsFnl[mode].getBeta();
             final double dblBetaInt = twsInt[mode].getBeta();
             
@@ -444,6 +542,7 @@ public abstract class CalculationEngine {
             double dblSinPhs = dblM12 / Math.sqrt( dblBetaFnl * dblBetaInt );
             dblSinPhs = Math.max( Math.min( dblSinPhs, 1.0 ), -1.0 );     // make sure it is in the range [-1, 1]
 
+            // This returns a value phi in the domain [-pi/2,pi/2]
             final double   dblPhsAdv  = Math.asin( dblSinPhs );
             
             // Compute the cosine of phase advance for identifying the phase quadrant
@@ -579,7 +678,8 @@ public abstract class CalculationEngine {
         for ( int mode = 0 ; mode < NUM_MODES ; mode++ ) {
             final int index = 2 * mode;
             
-            final double sinMu = Math.sin( DBL_2PI * vecPhsCell.getElem(mode) );// _tunes could be NaN
+//            final double sinMu = Math.sin( DBL_2PI * vecPhsCell.getElem(mode) );// _tunes could be NaN
+            final double sinMu = Math.sin( vecPhsCell.getElem(mode) );// _tunes could be NaN
             final double m11 = matPhiCell.getElem( index, index );
             final double m12 = matPhiCell.getElem( index, index + 1 );
             final double m22 = matPhiCell.getElem( index + 1, index + 1 );
