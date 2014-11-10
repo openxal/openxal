@@ -82,6 +82,50 @@ public class CalculationsOnMachines extends CalculationEngine  implements ISimLo
         
         return matPhi21;
     }
+    
+    /**
+     * Convenience method for computing the transfer map between two state locations, say <i>S</i><sub>1</sub>
+     * and <i>S</i><sub>2</sub>.  Let <i>s</i><sub>0</sub> be the axis location of the beamline
+     * entrance, <i>s</i><sub>1</sub> the location of state <i>S</i><sub>1</sub>, and 
+     * <i>s</i><sub>2</sub> the location of state <i>S</i><sub>2</sub>.  Each state object <i>S<sub>n</sub></i>
+     * contains the transfer map <b>T</b>(<i>s<sub>n</sub></i>,<i>s</i><sub>0</sub>)
+     * which takes phases coordinates at the beamline entrance to the position of state <i>S<sub>n</sub></i>. 
+     * The transfer map
+     * <b>T</b>(<i>s</i><sub>2</sub>,<i>s</i><sub>1</sub>) taking phase coordinates <b>z</b><sub>1</sub>
+     * (and covariance matrix <b>&sigma;</b><sub>1</sub>)
+     * from position <i>s</i><sub>1</sub> to position <i>s</i><sub>2</sub> is then given
+     * by
+     * <br/>
+     * <br/>
+     * &nbsp; &nbsp; <b>T</b>(<i>s</i><sub>2</sub>,<i>s</i><sub>1</sub>) = 
+     *                  <b>T</b>(<i>s</i><sub>2</sub>,<i>s</i><sub>0</sub>) &#x2218;
+     *                  <b>T</b>(<i>s</i><sub>1</sub>,<i>s</i><sub>0</sub>)<sup>-1</sup> ,
+     * <br/>
+     * <br/>
+     * where <b>T</b>(<i>s</i><sub>2</sub>,<i>s</i><sub>0</sub>) is the transfer map between
+     * the beamline entrance <i>s</i><sub>0</sub> and the position <i>s</i><sub>2</sub>
+     * of state <i>S</i><sub>2</sub>, and <b>T</b>(<i>s</i><sub>1</sub>,<i>s</i><sub>0</sub>) is the
+     * transfer map between the beamline entrance <i>s</i><sub>0</sub> and the position <i>s</i><sub>1</sub>
+     * of state <i>S</i><sub>1</sub>.
+     * 
+     * @param state1    trajectory state <i>S</i><sub>1</sub> of starting location <i>s</i><sub>1</sub> 
+     * @param state2    trajectory state <i>S</i><sub>2</sub> of final location <i>s</i><sub>2</sub>
+     * 
+     * @return          transfer map <b>T</b>(<i>s</i><sub>2</sub>,<i>s</i><sub>1</sub>) between
+     *                  locations <i>s</i><sub>1</sub> and <i>s</i><sub>2</sub>
+     *                  
+     * @author Christopher K. Allen
+     * @since  Nov 4, 2014
+     */
+    public static PhaseMap  computeTransferMap(TransferMapState state1, TransferMapState state2) {
+        PhaseMap    mapPhi1 = state1.getStateTransferMap();
+        PhaseMap    mapPhi2 = state2.getStateTransferMap();
+        
+        PhaseMap    mapPhi1inv = mapPhi1.inverse();
+        PhaseMap    mapPhi21   = mapPhi2.compose( mapPhi1inv );
+        
+        return mapPhi21;
+    }
 
 
     /*
@@ -250,7 +294,7 @@ public class CalculationsOnMachines extends CalculationEngine  implements ISimLo
      * where <i>n</i> is the index of the given state <i>S<sub>n</sub></i>.  This is the
      * image &Delta;<b>z</b> of the value 
      * <b>0</b> &in; <b>P</b><sup>6</sup> &cong; <b>R</b><sup>6</sup> &times; {1}.  
-     * That is the value &Delta;<b>z</b> = &phi;(<b>0</b>).
+     * That is the value &Delta;<b>z</b> = &phi;<sub><i>n</i></sub>(<b>0</b>).
      * </p>
      * <p>
      * Recall that the transfer
@@ -317,7 +361,7 @@ public class CalculationsOnMachines extends CalculationEngine  implements ISimLo
      * has final row that represents the translation <b>&Delta;</b> of the particle
      * for the circuit around the ring.  The 6&times;6 sub-matrix of <b>&Phi;</b> represents
      * the (linear) action of the bending magnetics and quadrupoles and corresponds to the
-     * matrix <b>T</b> &in; <b>R</b><sup>6&times;</sup> (here <b>T</b> is linear). 
+     * matrix <b>T</b> &in; <b>R</b><sup>6&times;6</sup> (here <b>T</b> is linear). 
      * Thus, we can write the linear operator <b>&Phi;</b>
      * as the augmented system 
      * <br/>
@@ -328,7 +372,6 @@ public class CalculationsOnMachines extends CalculationEngine  implements ISimLo
      * </pre> 
      * where <b>p</b> is the projection of <b>z</b> onto the ambient phase space
      * <b>R</b><sup>6</sup> (without homogeneous the homogeneous coordinate).
-     * coordinates). 
      * </p>
      * <p>
      * Putting this together we get
