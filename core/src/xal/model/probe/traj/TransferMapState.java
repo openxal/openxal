@@ -171,9 +171,17 @@ public class TransferMapState extends ProbeState<TransferMapState> {
     }
     
     /**
+     * <p>
      * Returns the partial transfer map that transports particle
      * phase coordinates through the space occupied by this state.
-     * 
+     * </p>
+     * <p>
+     * Get the partial transfer map that maps particle phase coordinates from
+     * the previous state exit to this state's exit.  The product of all these
+     * partial transfer maps from the first state to this state would yield
+     * the returned value of <code>{@link #getTransferMap()}</code>.
+     * </p>
+     *  
      * @return      partial transfer map through this state
      *
      * @author Christopher K. Allen
@@ -183,17 +191,17 @@ public class TransferMapState extends ProbeState<TransferMapState> {
         return this.mapPhiPart;
     }
     
-    /**
-     * Get the partial transfer map that maps particle phase coordinates from
-     * the previous state exit to this state's exit.  The product of all these
-     * partial transfer maps from the first state to this state would yield
-     * the returned value of <code>{@link #getTransferMap()}</code>. 
-     * 
-     * @return partial transfer map in homogeneous phase space coordinates
-     */
-    public PhaseMap getStateTransferMap()  {
-        return this.mapPhiPart;
-    }
+//    /**
+//     * Get the partial transfer map that maps particle phase coordinates from
+//     * the previous state exit to this state's exit.  The product of all these
+//     * partial transfer maps from the first state to this state would yield
+//     * the returned value of <code>{@link #getTransferMap()}</code>. 
+//     * 
+//     * @return partial transfer map in homogeneous phase space coordinates
+//     */
+//    public PhaseMap getStateTransferMap()  {
+//        return this.mapPhiPart;
+//    }
     
 
 
