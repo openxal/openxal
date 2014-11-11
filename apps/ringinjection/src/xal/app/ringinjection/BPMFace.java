@@ -270,6 +270,8 @@ public class BPMFace extends JPanel{
 				double avg_xerr=0.0, avg_xperr=0.0, avg_yerr=0.0, avg_yperr=0.0;
 				Iterator itr = (doc.bpmagents).iterator();
 
+				/* optimal statistical average over q_n with error sigma_n is sum( weight_n * q_n ) / sum( weight_n ) where weight_n = 1/sigma_n^2
+				 * Error estimate for average is 1 / sqrt( sum( weight_n ) ) */
 				while(itr.hasNext() && i <= resultstable.getRowCount()-1){
 					BpmAgent bpmagent = (BpmAgent)itr.next();
 					if(((Boolean)resultstable.getValueAt(i, resultstable.getColumnCount()-2)).booleanValue() == true){
