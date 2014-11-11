@@ -53,7 +53,9 @@ public class CalculateFit{
     double yslope;
     double yamp; 
     double yoffset;
-    
+
+	double xSignalVariance;
+	double ySignalVariance;
     double xamp_err;
     double yamp_err;
     double xphase_err;
@@ -98,6 +100,7 @@ public class CalculateFit{
 		xslope = - sineFit.getGrowthRate();
 		xamp = sineFit.getAmplitude();
 		xoffset = sineFit.getOffset();
+		xSignalVariance = sineFit.getSignalVariance();
 
 		final double xtune_err = Math.sqrt( sineFit.getInitialFrequencyVariance() );
 		final double xslope_err = Math.sqrt( sineFit.getInitialGrowthRateVariance() );
@@ -153,6 +156,7 @@ public class CalculateFit{
 		yslope = - sineFit.getGrowthRate();
 		yamp = sineFit.getAmplitude();
 		yoffset = sineFit.getOffset();
+		ySignalVariance = sineFit.getSignalVariance();
 
 		final double ytune_err = Math.sqrt( sineFit.getInitialFrequencyVariance() );
 		final double yslope_err = Math.sqrt( sineFit.getInitialGrowthRateVariance() );
@@ -279,11 +283,17 @@ public class CalculateFit{
 		final double x0_i = sim_xt0 * transferMatrixToInj.getElem( 0, 0 ) + sim_xpt0 * transferMatrixToInj.getElem( 0, 1 );
 		final double x0p_i = sim_xt0 * transferMatrixToInj.getElem( 1, 0 ) + sim_xpt0 * transferMatrixToInj.getElem( 1, 1 );
 
+		// estimate the error in x0_i and x0p_i (this error estimate will be high as the errors in these elements should be lower than the noise in the original waveform)
+		final double xt0_error = Math.sqrt( xSignalVariance );
+		final double xpt0_error = xt0_error * Math.sqrt( m00 * m00 + 1.0 ) / m01;	// assumes xt1_error = xt0_error
+		final double x0_i_error = Math.sqrt( xt0_error * xt0_error * transferMatrixToInj.getElem( 0, 0 ) * transferMatrixToInj.getElem( 0, 0 ) +  xpt0_error * xpt0_error * transferMatrixToInj.getElem( 0, 1 ) * transferMatrixToInj.getElem( 0, 1 ) );
+		final double x0p_i_error = Math.sqrt( xt0_error * xt0_error * transferMatrixToInj.getElem( 1, 0 ) * transferMatrixToInj.getElem( 1, 0 ) +  xpt0_error * xpt0_error * transferMatrixToInj.getElem( 1, 1 ) * transferMatrixToInj.getElem( 1, 1 ) );
+
 		System.out.println( "x0_i: " + x0_i +  ", x0p_i: " + x0p_i );
-		xfinalParams[0] = x0_i;		// x position at injection point (relative to closed orbit)
-		xfinalParams[1] = 0.0;		// error in x position at injection point (relative to closed orbit)
-		xfinalParams[2] = x0p_i;	// x angle at injection point (relative to closed orbit)
-		xfinalParams[3] = 0.0;		// error in x angle at injection point (relative to closed orbit)
+		xfinalParams[0] = x0_i;			// x position at injection point (relative to closed orbit)
+		xfinalParams[1] = x0_i_error;	// error in x position at injection point (relative to closed orbit)
+		xfinalParams[2] = x0p_i;		// x angle at injection point (relative to closed orbit)
+		xfinalParams[3] = x0p_i_error;	// error in x angle at injection point (relative to closed orbit)
 
 		final double sim_yt0 = yamp * Math.cos( yphase );	// just the betatron oscillation
 		final double sim_yt1 = yamp * Math.cos( 2 * Math.PI * ytune + yphase );		// just the betatron oscillation
@@ -291,11 +301,17 @@ public class CalculateFit{
 		final double y0_i = sim_yt0 * transferMatrixToInj.getElem( 2, 2 ) + sim_ypt0 * transferMatrixToInj.getElem( 2, 3 );
 		final double y0p_i = sim_yt0 * transferMatrixToInj.getElem( 3, 2 ) + sim_ypt0 * transferMatrixToInj.getElem( 3, 3 );
 
+		// estimate the error in y0_i and y0p_i (this error estimate will be high as the errors in these elements should be lower than the noise in the original waveform)
+		final double yt0_error = Math.sqrt( ySignalVariance );
+		final double ypt0_error = yt0_error * Math.sqrt( m22 * m22 + 1.0 ) / m23;	// assumes yt1_error = yt0_error
+		final double y0_i_error = Math.sqrt( yt0_error * yt0_error * transferMatrixToInj.getElem( 2, 2 ) * transferMatrixToInj.getElem( 2, 2 ) +  ypt0_error * ypt0_error * transferMatrixToInj.getElem( 2, 3 ) * transferMatrixToInj.getElem( 2, 3 ) );
+		final double y0p_i_error = Math.sqrt( yt0_error * yt0_error * transferMatrixToInj.getElem( 3, 2 ) * transferMatrixToInj.getElem( 3, 2 ) +  ypt0_error * ypt0_error * transferMatrixToInj.getElem( 3, 3 ) * transferMatrixToInj.getElem( 3, 3 ) );
+
 		System.out.println( "y0_i: " + y0_i +  ", y0p_i: " + y0p_i );
-		yfinalParams[0] = y0_i;		// y position at injection point (relative to closed orbit)
-		yfinalParams[1] = 0.0;		// error in y position at injection point (relative to closed orbit)
-		yfinalParams[2] = y0p_i;	// y angle at injection point (relative to closed orbit)
-		yfinalParams[3] = 0.0;		// error in y angle at injection point (relative to closed orbit)
+		yfinalParams[0] = y0_i;			// y position at injection point (relative to closed orbit)
+		yfinalParams[1] = y0_i_error;	// error in y position at injection point (relative to closed orbit)
+		yfinalParams[2] = y0p_i;		// y angle at injection point (relative to closed orbit)
+		yfinalParams[3] = y0p_i_error;	// error in y angle at injection point (relative to closed orbit)
 
 
 		/*
