@@ -254,6 +254,8 @@ public class CalculateFit{
 		final PhaseMatrix localFullTurnMatrix = simRingCalcEngine.computeRingFullTurnMatrixAt( localstate );
 		final double m00 = localFullTurnMatrix.getElem( 0, 0 );
 		final double m01 = localFullTurnMatrix.getElem( 0, 1 );
+		final double m22 = localFullTurnMatrix.getElem( 2, 2 );
+		final double m23 = localFullTurnMatrix.getElem( 2, 3 );
 
 		// transfer matrix from local state to injection state
 		final PhaseMatrix transferMatrixToInj = simRingCalcEngine.computeRingTransferMatrix( injstate, localstate ).inverse();
@@ -268,6 +270,14 @@ public class CalculateFit{
 		final double x0p_i = sim_xt0 * transferMatrixToInj.getElem( 1, 0 ) + sim_xpt0 * transferMatrixToInj.getElem( 1, 1 );
 
 		System.out.println( "x0_i: " + x0_i +  ", x0p_i: " + x0p_i );
+
+		final double sim_yt0 = yamp * Math.cos( yphase );	// just the betatron oscillation
+		final double sim_yt1 = yamp * Math.cos( 2 * Math.PI * ytune + yphase );		// just the betatron oscillation
+		final double sim_ypt0 = ( sim_yt1 - m22 * sim_yt0 ) / m23;		// just the betatron oscillation
+		final double y0_i = sim_yt0 * transferMatrixToInj.getElem( 2, 2 ) + sim_ypt0 * transferMatrixToInj.getElem( 2, 3 );
+		final double y0p_i = sim_yt0 * transferMatrixToInj.getElem( 3, 2 ) + sim_ypt0 * transferMatrixToInj.getElem( 3, 3 );
+
+		System.out.println( "y0_i: " + y0_i +  ", y0p_i: " + y0p_i );
 
 
       	double[] xfinalParams = new double[4];
