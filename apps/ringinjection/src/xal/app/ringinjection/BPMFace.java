@@ -266,38 +266,59 @@ public class BPMFace extends JPanel{
 				int i=0, count=0;
 				double sum_x=0.0, sum_xp=0.0, sum_y=0.0, sum_yp=0.0;
 				double avg_x=0.0, avg_xp=0.0, avg_y=0.0, avg_yp=0.0;
-				double sum_xerr=0.0, sum_xperr=0.0, sum_yerr=0.0, sum_yperr=0.0;
+				double sum_x_weight=0.0, sum_xp_weight=0.0, sum_y_weight=0.0, sum_yp_weight=0.0;
 				double avg_xerr=0.0, avg_xperr=0.0, avg_yerr=0.0, avg_yperr=0.0;
 				Iterator itr = (doc.bpmagents).iterator();
 
 				while(itr.hasNext() && i <= resultstable.getRowCount()-1){
 					BpmAgent bpmagent = (BpmAgent)itr.next();
 					if(((Boolean)resultstable.getValueAt(i, resultstable.getColumnCount()-2)).booleanValue() == true){
+
 						String[] xstring = (new String((String)resultstable.getValueAt(i,1))).split("\\s");
 						String[] xpstring = (new String((String)resultstable.getValueAt(i,2))).split("\\s");
 						String[] ystring = (new String((String)resultstable.getValueAt(i,3))).split("\\s");
 						String[] ypstring = (new String((String)resultstable.getValueAt(i,4))).split("\\s");
-						sum_x += (new Double(Double.parseDouble(xstring[0]))).doubleValue();
-						sum_xp += (new Double(Double.parseDouble(xpstring[0]))).doubleValue();
-						sum_y += (new Double(Double.parseDouble(ystring[0]))).doubleValue();
-						sum_yp += (new Double(Double.parseDouble(ypstring[0]))).doubleValue();
-						sum_xerr += Math.pow((new Double(Double.parseDouble(xstring[2]))).doubleValue(), 2);
-						sum_xperr += Math.pow((new Double(Double.parseDouble(xpstring[2]))).doubleValue(), 2);
-						sum_yerr += Math.pow((new Double(Double.parseDouble(ystring[2]))).doubleValue(), 2);
-						sum_yperr += Math.pow((new Double(Double.parseDouble(ypstring[2]))).doubleValue(), 2);
+
+						final double x = Double.parseDouble(xstring[0]);
+						final double xp = Double.parseDouble(xpstring[0]);
+						final double y = Double.parseDouble(ystring[0]);
+						final double yp = Double.parseDouble(ypstring[0]);
+
+						final double x_err = Double.parseDouble(xstring[2]);
+						final double xp_err = Double.parseDouble(xpstring[2]);
+						final double y_err = Double.parseDouble(ystring[2]);
+						final double yp_err = Double.parseDouble(ypstring[2]);
+
+						final double x_weight = 1 / ( x_err * x_err );
+						sum_x += x_weight * x;
+						sum_x_weight += x_weight;
+
+						final double xp_weight = 1 / ( xp_err * xp_err );
+						sum_xp += xp_weight * xp;
+						sum_xp_weight += xp_weight;
+
+						final double y_weight = 1 / ( y_err * y_err );
+						sum_y += y_weight * y;
+						sum_y_weight += y_weight;
+
+						final double yp_weight = 1 / ( yp_err * yp_err );
+						sum_yp += yp_weight * yp;
+						sum_yp_weight += yp_weight;
+
 						count++;
 					}
 					i++;
 				}
 				if(count != 0){
-					avg_x=sum_x/((new Integer(count)).doubleValue());
-					avg_xp=sum_xp/((new Integer(count)).doubleValue());
-					avg_y=sum_y/((new Integer(count)).doubleValue());
-					avg_yp=sum_yp/((new Integer(count)).doubleValue());
-					avg_xerr=Math.sqrt(sum_xerr)/((new Integer(count)).doubleValue());
-					avg_xperr=Math.sqrt(sum_xperr)/((new Integer(count)).doubleValue());
-					avg_yerr=Math.sqrt(sum_yerr)/((new Integer(count)).doubleValue());
-					avg_yperr=Math.sqrt(sum_yperr)/((new Integer(count)).doubleValue());
+					avg_x = sum_x / sum_x_weight;
+					avg_xp = sum_xp / sum_xp_weight;
+					avg_y = sum_y / sum_y_weight;
+					avg_yp = sum_yp / sum_yp_weight;
+
+					avg_xerr = 1.0 / Math.sqrt( sum_x_weight );
+					avg_xperr = 1.0 / Math.sqrt( sum_xp_weight );
+					avg_yerr = 1.0 / Math.sqrt( sum_y_weight );
+					avg_yperr = 1.0 / Math.sqrt( sum_yp_weight );
 				}
 
 				x.setValue(avg_x);
