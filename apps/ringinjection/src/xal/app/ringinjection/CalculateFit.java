@@ -228,12 +228,12 @@ public class CalculateFit{
     private void calcFoilParams(){
 		
 		TransferMapState injstate = traj.stateForElement("Ring_Inj:Foil");
-		Twiss[] injtwiss = simRingCalcEngine.computeTwissParameters( injstate );
-		double beta_x_i = injtwiss[0].getBeta();
-		double alpha_x_i = injtwiss[0].getAlpha();
-		double beta_y_i = injtwiss[1].getBeta(); 
-		double alpha_y_i = injtwiss[1].getAlpha();
-		final PhaseVector injCoords = simRingCalcEngine.computeFixedOrbit( injstate );
+//		Twiss[] injtwiss = simRingCalcEngine.computeTwissParameters( injstate );
+//		double beta_x_i = injtwiss[0].getBeta();
+//		double alpha_x_i = injtwiss[0].getAlpha();
+//		double beta_y_i = injtwiss[1].getBeta(); 
+//		double alpha_y_i = injtwiss[1].getAlpha();
+//		final PhaseVector injCoords = simRingCalcEngine.computeFixedOrbit( injstate );
 //		System.out.println( "injection coordinates: " + injCoords.printString() );
 
 		//System.out.println("At injection: ", beta x, alpha_x, beta y, and alphay are "+ beta_x_i + " " + alpha_x_i + " " + beta_y_i + " " + alpha_y_i + "\n");
@@ -243,13 +243,13 @@ public class CalculateFit{
 		List<TransferMapState> lstStates = this.traj.statesForElement(strBpmId);
 		TransferMapState localstate = lstStates.get(0);
 		
-		Twiss[] localtwiss = simRingCalcEngine.computeTwissParameters( localstate );
-		R3 localphase = simRingCalcEngine.computeBetatronPhase( localstate );
-		double beta_x = localtwiss[0].getBeta();
-		double beta_y = localtwiss[1].getBeta();
-		double phase_x = localphase.getx();
-		double phase_y = localphase.gety();
-		
+//		Twiss[] localtwiss = simRingCalcEngine.computeTwissParameters( localstate );
+//		R3 localphase = simRingCalcEngine.computeBetatronPhase( localstate );
+//		double beta_x = localtwiss[0].getBeta();
+//		double beta_y = localtwiss[1].getBeta();
+//		double phase_x = localphase.getx();
+//		double phase_y = localphase.gety();
+
 		//Calculate the position and angle at the foil.
 		final PhaseMatrix localFullTurnMatrix = simRingCalcEngine.computeRingFullTurnMatrixAt( localstate );
 		final double m00 = localFullTurnMatrix.getElem( 0, 0 );
@@ -263,13 +263,27 @@ public class CalculateFit{
 //		System.out.println( "Calculating transfer matrix between elements of position: " + localstate.getPosition() + " to " + injstate.getPosition() );
 //		System.out.println( "Transfer matrix: " + transferMatrixToInj );
 
-		final double sim_xt0 = xamp * Math.cos( xphase );	// just the betatron oscillation
+		// arrays that will hold the calculated injection position and angle data
+		double[] xfinalParams = new double[4];
+		double[] yfinalParams = new double[4];
+
+		/* **********************************************************************************************************
+		 * The coordinate angle can be computed from two turns of position data and the full turn matrix as follows:
+		 * q1 = M11 * q0 + M12 * q0'
+		 * => q0' = ( q1 - M11 * q0 ) / M12
+		 * **********************************************************************************************************/
+
+		final double sim_xt0 = xamp * Math.cos( xphase );	// compute turn 0 just the betatron oscillation
 		final double sim_xt1 = xamp * Math.cos( 2 * Math.PI * xtune + xphase );		// just the betatron oscillation
 		final double sim_xpt0 = ( sim_xt1 - m00 * sim_xt0 ) / m01;		// just the betatron oscillation
 		final double x0_i = sim_xt0 * transferMatrixToInj.getElem( 0, 0 ) + sim_xpt0 * transferMatrixToInj.getElem( 0, 1 );
 		final double x0p_i = sim_xt0 * transferMatrixToInj.getElem( 1, 0 ) + sim_xpt0 * transferMatrixToInj.getElem( 1, 1 );
 
 		System.out.println( "x0_i: " + x0_i +  ", x0p_i: " + x0p_i );
+		xfinalParams[0] = x0_i;		// x position at injection point (relative to closed orbit)
+		xfinalParams[1] = 0.0;		// error in x position at injection point (relative to closed orbit)
+		xfinalParams[2] = x0p_i;	// x angle at injection point (relative to closed orbit)
+		xfinalParams[3] = 0.0;		// error in x angle at injection point (relative to closed orbit)
 
 		final double sim_yt0 = yamp * Math.cos( yphase );	// just the betatron oscillation
 		final double sim_yt1 = yamp * Math.cos( 2 * Math.PI * ytune + yphase );		// just the betatron oscillation
@@ -278,10 +292,13 @@ public class CalculateFit{
 		final double y0p_i = sim_yt0 * transferMatrixToInj.getElem( 3, 2 ) + sim_ypt0 * transferMatrixToInj.getElem( 3, 3 );
 
 		System.out.println( "y0_i: " + y0_i +  ", y0p_i: " + y0p_i );
+		yfinalParams[0] = y0_i;		// y position at injection point (relative to closed orbit)
+		yfinalParams[1] = 0.0;		// error in y position at injection point (relative to closed orbit)
+		yfinalParams[2] = y0p_i;	// y angle at injection point (relative to closed orbit)
+		yfinalParams[3] = 0.0;		// error in y angle at injection point (relative to closed orbit)
 
 
-      	double[] xfinalParams = new double[4];
-		double[] yfinalParams = new double[4];
+		/*
 		double xarg = phase_x - xphase;
 		double yarg = phase_y - yphase;
 		
@@ -306,6 +323,7 @@ public class CalculateFit{
 		term2 = yamp*(Math.cos(yarg) + alpha_y_i*Math.sin(yarg)) * yphase_err;
 		
 		yfinalParams[3]=Math.abs(1/(Math.sqrt(beta_y_i*beta_y)) * (term1 - term2));
+		 */
 		
        	localagent.setXFoilResults(xfinalParams);
 		localagent.setYFoilResults(yfinalParams);
