@@ -55,6 +55,9 @@ import java.util.MissingResourceException;
  */
 public abstract class SignalSet implements DataListener {
 
+    /*
+     * Internal Classes
+     */
     
     /*
      * Global Operations
@@ -196,6 +199,26 @@ public abstract class SignalSet implements DataListener {
         }
     }
 
+//    /**
+//     * Chooses the appropriate signal for this signal constant
+//     * from the given signal set.
+//     * 
+//     * @param setSignals    set of signals to choose from
+//     * 
+//     * @return              the signal corresponding to this signal constant
+//     *
+//     * @author Christopher K. Allen
+//     * @since  Oct 14, 2014
+//     */
+//    public Signal   getSignal(Signal.WIRE enmWire) {
+//        switch (enmWire) {
+//        case HOR: return this.hor; 
+//        case VER: return this.ver;
+//        case DIA: return this.dia;
+//        default: return null;
+//        }
+//    }
+//    
     /**
      * Sets the signal for the given measurement angle to the given signal
      * object.
@@ -282,7 +305,7 @@ public abstract class SignalSet implements DataListener {
      * from the persistent store behind the 
      * <code>DataListener</code> interface.
      * 
-     * @param adaptor       data source
+     * @param daptSrc       data source
      *
      * @throws  MissingResourceException        a data field was missing from the data source
      * @throws BadStructException  data structure fields are ill-defined/incompatible
@@ -293,12 +316,54 @@ public abstract class SignalSet implements DataListener {
      * @see gov.sns.tools.data.DataListener#update(gov.sns.tools.data.DataAdaptor)
      */
     @Override
-    public void update(DataAdaptor adaptor) throws MissingResourceException, BadStructException {
-        DataAdaptor daptSig = adaptor.childAdaptor( this.dataLabel() );
+    public void update(DataAdaptor daptSrc) throws MissingResourceException, BadStructException {
+        
+        // Assume we are given the parent node then get this data node from the parent node
+        String  strLabel = this.dataLabel();
+        
+        DataAdaptor daptSgnls = daptSrc.childAdaptor( strLabel );
 
-        hor.update(daptSig);
-        ver.update(daptSig);
-        dia.update(daptSig);
+        // Check if these data is in XAL format
+        if (daptSgnls == null) {
+            strLabel = "gov.sns." + strLabel;
+            daptSgnls  = daptSrc.childAdaptor(strLabel);
+        }
+
+        // Turns out we were given the data adaptor for this node
+        if (daptSgnls == null)
+            daptSgnls = daptSrc;
+
+        // Look for the middle version format - Open XAL before the format correction
+        //  was made. This one is problematic, we must guess at the order.  
+        String              strLblOld = Signal.class.getCanonicalName();
+
+        List<DataAdaptor>   lstDaptOld = daptSgnls.childAdaptors(strLblOld);
+        
+        // If we are in the middle format, we load sequentially according to index and return.
+        if (lstDaptOld.size() > 0)  {
+            for (ProfileDevice.ANGLE angle : ProfileDevice.ANGLE.values()) {
+                int         index = angle.getIndex();
+                DataAdaptor dapt  = lstDaptOld.get(index);
+                Signal      sgnl  = this.getSignal(angle);
+
+                sgnl.update(dapt);
+            }
+
+            return;
+        }
+
+        // Assume that we have the XAL format or the current format   
+        // Read in each signal using the current data format
+        for (ProfileDevice.ANGLE angle : ProfileDevice.ANGLE.values()) {
+            DataAdaptor     dapt = daptSgnls.childAdaptor( angle.getLabel() );
+            Signal          sgnl = this.getSignal(angle);
+
+            sgnl.update(dapt);
+        }
+
+//        hor.update(daptSgnls);
+//        ver.update(daptSgnls);
+//        dia.update(daptSgnls);
     }
 
     /**
@@ -314,11 +379,14 @@ public abstract class SignalSet implements DataListener {
      */
     @Override
     public void write(DataAdaptor adaptor) {
-        DataAdaptor daptSig = adaptor.createChild( this.dataLabel() );
+        DataAdaptor daptSgnls = adaptor.createChild( this.dataLabel() );
 
-        hor.write(daptSig);
-        ver.write(daptSig);
-        dia.write(daptSig);
+        for (ProfileDevice.ANGLE angle : ProfileDevice.ANGLE.values()) {
+            DataAdaptor     daptSgnl = daptSgnls.createChild( angle.getLabel() );
+            Signal          sigAngle = this.getSignal(angle);
+
+            sigAngle.write(daptSgnl);
+        }
     }
 
     /*
@@ -369,6 +437,10 @@ public abstract class SignalSet implements DataListener {
         // Check for annotation by the SignalSet annotation.  If none then this is a
         //  "blank" data structure and there is nothing to do.  
         if (!this.getClass().isAnnotationPresent(ASignal.ASet.class)) {
+
+//            this.hor = new Signal(ProfileDevice.ANGLE.HOR);
+//            this.ver = new Signal(ProfileDevice.ANGLE.VER);
+//            this.dia = new Signal(ProfileDevice.ANGLE.DIA);
 
             this.hor = new Signal();
             this.ver = new Signal();

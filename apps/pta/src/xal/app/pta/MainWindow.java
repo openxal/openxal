@@ -20,10 +20,11 @@ import xal.app.pta.rscmgt.PtaResourceManager;
 import xal.app.pta.tools.logging.IEventLogger;
 import xal.app.pta.tools.swing.PersistentTextEditorPane;
 import xal.app.pta.tools.swing.TextEditorPane;
-import xal.app.pta.view.HarpConfigView;
-import xal.app.pta.view.ScanConfigView;
+import xal.app.pta.view.ConfigHarpView;
+import xal.app.pta.view.ConfigScanView;
+import xal.app.pta.view.CourantSnyderView;
 import xal.app.pta.view.HarpAcquisitionView;
-import xal.app.pta.view.MachineConfigView;
+import xal.app.pta.view.ConfigMachineView;
 import xal.app.pta.view.ConfigRemotePrcgView;
 import xal.app.pta.view.ConfigTriggeringView;
 import xal.app.pta.view.ScanAcquisitionView;
@@ -176,19 +177,12 @@ public class MainWindow extends XalWindow implements IDocView, ComponentListener
     /*
      * Instance Attributes
      */
-
     
-//    /** The main application instance */
-//    private final MainApplication       appMain;
     
     /** The application logger object */
     private final IEventLogger          logMain;
     
-//    /** The manager for all the persistent application commands */
-//    private CommandManager              mgrWinCmds;
-//    
-//    /** The set of global application commands */
-//    private ToolBarCommands             cmdsTBar;
+
     
     /** Collection of all the command sets supported by this window 
      * and registered with the <code>Commander</code> object.
@@ -196,6 +190,13 @@ public class MainWindow extends XalWindow implements IDocView, ComponentListener
     private Collection<CommandSet>      setCmds;
     
     
+
+    //
+    // GUI Interface
+    //
+    
+    // 
+    // Main User Frame
     
     /** This is the main window SWING object */
     private JPanel                      appMainPanel;
@@ -204,11 +205,18 @@ public class MainWindow extends XalWindow implements IDocView, ComponentListener
     private JTabbedPane                 paneMainTab;
  
     
+    // 
+    // Data acquisition frames
+    
     /** The wire scanner data acquisition view       */
-    private ScanAcquisitionView         viewWsDaq;
+    private ScanAcquisitionView         viewDaqScan;
     
     /** The harp acquisition view */
-    private HarpAcquisitionView         viewHarpDaq;
+    private HarpAcquisitionView         viewDaqHarp;
+    
+    
+    //
+    // Data analysis frames
     
     /** The measurement data inspection view */
     private DataInspectionView          viewMsmtInsp;
@@ -216,22 +224,31 @@ public class MainWindow extends XalWindow implements IDocView, ComponentListener
     /** The measurement data analysis view */
     private DataAnalysisView            viewMsmtAnal;
     
+    /** The Courant-Snyder reconstruction from Measurements view */
+    private CourantSnyderView    viewMsmtTwiss;
     
-    /** The device configuration panel */
-    private ScanConfigView              viewScanCfg;
+    
+    //
+    // Device configuration frames
+    
+    /** The scanner configuration panel */
+    private ConfigScanView              viewCfgScan;
     
     /** The harp configuration/status panel */
-    private HarpConfigView              viewHarpCfg;
+    private ConfigHarpView              viewCfgHarp;
     
     /** The machine configuration panel */
-    private MachineConfigView           viewMachCfg;
+    private ConfigMachineView           viewCfgMach;
     
     /** The timing configuration panel */
-    private ConfigTriggeringView        viewTrgCfg;
+    private ConfigTriggeringView        viewCfgTime;
     
     /** The data processing window configuration view */
-    private ConfigRemotePrcgView        viewPrcCfg;
+    private ConfigRemotePrcgView        viewCfgPrcg;
     
+    
+    //
+    // Auxiliary tools
     
     /** the notes window */
     private TextEditorPane              paneNotes;
@@ -405,7 +422,7 @@ public class MainWindow extends XalWindow implements IDocView, ComponentListener
      * @author Christopher K. Allen
      */
     public void toggleScanConfigPanel() {
-        this.toggleTabbedView(this.viewScanCfg, "Scan Configuration", "Configure scanner operation parameters");
+        this.toggleTabbedView(this.viewCfgScan, "Scan Configuration", "Configure scanner operation parameters");
     }
     
     /**
@@ -415,7 +432,7 @@ public class MainWindow extends XalWindow implements IDocView, ComponentListener
      * @since  May 2, 2014
      */
     public void toggleHarpConfigPanel() {
-        this.toggleTabbedView(this.viewHarpCfg, "Harp Configuration", "Configure harp operation parameters");
+        this.toggleTabbedView(this.viewCfgHarp, "Harp Configuration", "Configure harp operation parameters");
     }
     
 //    /**
@@ -433,7 +450,7 @@ public class MainWindow extends XalWindow implements IDocView, ComponentListener
      * 
      */
     public void toggleMachConfigPanel() {
-        this.toggleTabbedView(this.viewMachCfg,"Machine Configuration", "Save/Restore configuration of machine configuration");
+        this.toggleTabbedView(this.viewCfgMach,"Machine Configuration", "Save/Restore configuration of machine configuration");
     }
 
     /**
@@ -444,8 +461,8 @@ public class MainWindow extends XalWindow implements IDocView, ComponentListener
      * @since  Feb 1, 2010
      * @author Christopher K. Allen
      */
-    public void toggleTrgConfigPanel() {
-        this.toggleTabbedView(this.viewTrgCfg, "DAQ Triggering", "Configure acquisition timing");
+    public void toggleTimeConfigPanel() {
+        this.toggleTabbedView(this.viewCfgTime, "DAQ Triggering", "Configure acquisition timing");
     }
 
     /**
@@ -456,8 +473,8 @@ public class MainWindow extends XalWindow implements IDocView, ComponentListener
      * @since  Feb 1, 2010
      * @author Christopher K. Allen
      */
-    public void togglePrcConfigPanel() {
-        this.toggleTabbedView(this.viewPrcCfg, "Data Processing", "Configure data processing window");
+    public void togglePrcgConfigPanel() {
+        this.toggleTabbedView(this.viewCfgPrcg, "Data Processing", "Configure data processing window");
     }
 
     
@@ -682,18 +699,35 @@ public class MainWindow extends XalWindow implements IDocView, ComponentListener
         this.paneMainTab = new JTabbedPane(SwingConstants.TOP);
 
         
-        // Data acquisition view
-        this.viewWsDaq = new ScanAcquisitionView(this.getDocument());
-        this.getDocument().registerView(this.viewWsDaq);
-//        MainApplication.getApplicationDocument().registerView(viewWsDaq);
-        MainConfiguration.getInstance().registerView(this.viewWsDaq);
+        //
+        // Auxiliary Tools
+        
+        // Build the measurement notes editor
+        this.initNotesEditor();
+      
+        // Build the bug report editor
+        this.initBugReport();
+
+        
+        //
+        // Data Acquisition Views 
+        
+        // Wire scanner data acquisition view
+        this.viewDaqScan = new ScanAcquisitionView(this.getDocument());
+        this.getDocument().registerView(this.viewDaqScan);
+//        MainApplication.getApplicationDocument().registerView(viewDaqScan);
+        MainConfiguration.getInstance().registerView(this.viewDaqScan);
 //        MainApplication.getDaqController().registerControllerListener(this.viewDaq);
         
         // Harp data acquisition view
-        this.viewHarpDaq = new HarpAcquisitionView(this.getDocument());
-        this.getDocument().registerView(this.viewHarpDaq);
-        MainConfiguration.getInstance().registerView(viewHarpDaq);;
+        this.viewDaqHarp = new HarpAcquisitionView(this.getDocument());
+        this.getDocument().registerView(this.viewDaqHarp);
+        MainConfiguration.getInstance().registerView(viewDaqHarp);;
 
+        
+        // 
+        // Data Processing Views
+        
         // Measurement data inspection view
         this.viewMsmtInsp = new DataInspectionView(this.getDocument());
         this.getDocument().registerView(this.viewMsmtInsp);
@@ -704,47 +738,44 @@ public class MainWindow extends XalWindow implements IDocView, ComponentListener
         this.getDocument().registerView(this.viewMsmtAnal);
         MainConfiguration.getInstance().registerView(this.viewMsmtAnal);
         
+        // Courant-Snyder reconstruction view
+        this.viewMsmtTwiss = new CourantSnyderView(this.getDocument());
+        this.getDocument().registerView(this.viewMsmtTwiss);
+        MainConfiguration.getInstance().registerView(this.viewMsmtTwiss);
+        
+        
+        //
+        // Device Configuration Views
+        
+        // Build the wire scanner configuration window
+        this.viewCfgScan = new ConfigScanView( MainConfiguration.getInstance() );
+//        this.getDocument().registerView(this.viewDevCfg);
+        MainConfiguration.getInstance().registerView(this.viewCfgScan);
+        
+        // Build the harp configuration window
+        this.viewCfgHarp = new ConfigHarpView( MainConfiguration.getInstance() );
+        MainConfiguration.getInstance().registerView(this.viewCfgHarp);
+        
+        // Build the machine configuration panel
+        this.viewCfgMach = new ConfigMachineView( MainConfiguration.getInstance() );
+//        this.getDocument().registerView(this.viewMachCfg);
+        MainConfiguration.getInstance().registerView(this.viewCfgMach);
+
         
         // Create the accelerator hardware views
         //
          Accelerator smfAccel = this.getDocument().getAccelerator();
         
-        // Build the wire scanner configuration window
-        this.viewScanCfg = new ScanConfigView( MainConfiguration.getInstance() );
-//        this.getDocument().registerView(this.viewDevCfg);
-        MainConfiguration.getInstance().registerView(this.viewScanCfg);
-        
-        // Build the harp configuration window
-        this.viewHarpCfg = new HarpConfigView( MainConfiguration.getInstance() );
-        MainConfiguration.getInstance().registerView(this.viewHarpCfg);
-        
-        // Build the machine configuration panel
-        this.viewMachCfg = new MachineConfigView( MainConfiguration.getInstance() );
-//        this.getDocument().registerView(this.viewMachCfg);
-        MainConfiguration.getInstance().registerView(this.viewMachCfg);
-
         // Build the timing configuration window
-        this.viewTrgCfg = new ConfigTriggeringView(smfAccel);
+        this.viewCfgTime = new ConfigTriggeringView(smfAccel);
 //        this.getDocument().registerView(this.viewTrgCfg);
-        MainConfiguration.getInstance().registerView(this.viewTrgCfg);
+        MainConfiguration.getInstance().registerView(this.viewCfgTime);
 
         // Build the remote processing parameter view (for setting up the device controller)
-        this.viewPrcCfg = new ConfigRemotePrcgView(smfAccel);
-//        try {
-//            
-//		} catch (Exception e) {
-//		    
-//			e.printStackTrace();
-//		}
-        
+        this.viewCfgPrcg = new ConfigRemotePrcgView(smfAccel);
 //        this.getDocument().registerView(this.viewPrcCfg);
-        MainConfiguration.getInstance().registerView(this.viewPrcCfg);
+        MainConfiguration.getInstance().registerView(this.viewCfgPrcg);
 
-        // Build the measurement notes editor
-        this.initNotesEditor();
-      
-        // Build the bug report editor
-        this.initBugReport();
     }
     
     /**
@@ -854,11 +885,12 @@ public class MainWindow extends XalWindow implements IDocView, ComponentListener
     private void buildMainGui() {
 
         // Create tabs 
-        this.paneMainTab.addTab("Wire Scanner Acquisition", this.viewWsDaq);
-        this.paneMainTab.addTab("Harp Acquisition", this.viewHarpDaq);
+        this.paneMainTab.addTab("Wire Scanner Acquisition", this.viewDaqScan);
+        this.paneMainTab.addTab("Harp Acquisition", this.viewDaqHarp);
         
         this.paneMainTab.addTab("Data Inspection", this.viewMsmtInsp);
         this.paneMainTab.addTab("Data Analysis", this.viewMsmtAnal);
+        this.paneMainTab.addTab("Courant-Snyder", this.viewMsmtTwiss);
 
 //        SignalProcessingView viewSigPrc = new SignalProcessingView(this);
 //        this.getDocument().registerView(viewSigPrc);

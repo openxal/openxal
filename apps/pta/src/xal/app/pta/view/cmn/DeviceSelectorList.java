@@ -2,6 +2,8 @@ package xal.app.pta.view.cmn;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
 
 import javax.swing.AbstractListModel;
 import javax.swing.BoxLayout;
@@ -14,8 +16,9 @@ import javax.swing.event.ListSelectionListener;
 
 /**
  * GUI component providing the display of a list of selectable
- * SMF devices.  The user may choose a single instance amongst 
- * this list.  
+ * SMF devices by device ID (presumably).  The default behavior is to allow only a single
+ * selection, however, a multiple selection mode may be specified by invoking the
+ * <code>{@link #setMultiSelectionMode(boolean)}</code> method. 
  * 
  * <p>
  * <b>Ported from XAL on Jul 18, 2014.</b><br>
@@ -24,6 +27,7 @@ import javax.swing.event.ListSelectionListener;
  *
  *
  * @since  Jan 20, 2010
+ * @version Sep30, 2014
  * @author Christopher K. Allen
  */
 public class DeviceSelectorList extends JPanel {
@@ -162,6 +166,22 @@ public class DeviceSelectorList extends JPanel {
     }
 
     /**
+     * Sets the selection mode of the device list box to single selection if
+     * argument is <code>false</code> and multi-mode if argument is <code>true</code>.
+     * 
+     * @param bolMultiSel   selection of devices is unrestricted if <code>true</code>,
+     *                      only one device may be selected if <code>false</code>.
+     *
+     * @author Christopher K. Allen
+     * @since  Sep 30, 2014
+     */
+    public void setMultiSelectionMode(boolean bolMultiSel) {
+        if (bolMultiSel == true)
+            this.lbxDevs.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+        else
+            this.lbxDevs.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+    }
+    /**
      * Set the list of displayed device IDs.  The current
      * selection is cleared.
      *
@@ -200,7 +220,9 @@ public class DeviceSelectorList extends JPanel {
     
     /**
      * Return the user-selected profile device from the 
-     * GUI's list box.
+     * GUI's list box.  This is a convenience method for use when
+     * only one selection is expected.  It will return the first selection
+     * in the list box if multiple selection are possible.
      * 
      * @return      desired profile device, 
      *              or <code>null</code> if there was an initialization error
@@ -216,6 +238,28 @@ public class DeviceSelectorList extends JPanel {
             return (String)objSel;
 
         return null;
+    }
+    
+    /**
+     * Returns all the selections within the list box.  If only single
+     * selections are possible then the list will contain that single
+     * selection.
+     * 
+     * @return  all currently selected entries in the list box
+     *
+     * @author Christopher K. Allen
+     * @since  Sep 30, 2014
+     */
+    public List<String> getSelectedDevices() {
+        List<Object>    lstObjSel = this.lbxDevs.getSelectedValuesList();
+        
+        List<String> lstDevIds = new LinkedList<>();
+        for (Object objSel : lstObjSel) {
+            if (objSel instanceof String)
+                lstDevIds.add( (String) objSel );
+        }
+        
+        return lstDevIds;
     }
 
     /**

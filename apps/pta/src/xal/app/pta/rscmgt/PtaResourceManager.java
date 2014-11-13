@@ -6,20 +6,17 @@
  */
 package xal.app.pta.rscmgt;
 
-import xal.app.pta.MainApplication;
-import xal.tools.ResourceManager;
-import xal.tools.IconLib;
-
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URI;
 import java.net.URL;
 import java.util.Properties;
 import java.util.prefs.Preferences;
 
 import javax.swing.ImageIcon;
+
+import xal.app.pta.MainApplication;
+import xal.tools.IconLib;
+import xal.tools.ResourceManager;
 
 /**
 /**

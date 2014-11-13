@@ -1,5 +1,5 @@
 /*
- * MachineConfigView.java
+ * ConfigMachineView.java
  *
  * @author Christopher K. Allen
  * @since  Apr 30, 2012
@@ -73,7 +73,7 @@ import javax.swing.event.ListSelectionListener;
  * @author  Christopher K. Allen
  * @since   Apr 30, 2012
  */
-public class MachineConfigView extends JPanel implements IConfigView {
+public class ConfigMachineView extends JPanel implements IConfigView {
 
     
     /*
@@ -315,7 +315,7 @@ public class MachineConfigView extends JPanel implements IConfigView {
      */
     
     /**
-     * Create a new <code>MachineConfigView</code> object for configuration management of 
+     * Create a new <code>ConfigMachineView</code> object for configuration management of 
      * all the wire scanner devices in the given accelerator.
      * 
      * @param cfgMain  we manager the profile devices of this machine configuration
@@ -323,7 +323,7 @@ public class MachineConfigView extends JPanel implements IConfigView {
      * @author  Christopher K. Allen
      * @since   Apr 30, 2012
      */
-    public MachineConfigView(MainConfiguration cfgMain) {
+    public ConfigMachineView(MainConfiguration cfgMain) {
         this.mgrDevCfg = cfgMain;
         this.smfAccel  = cfgMain.getAccelerator();
 
@@ -438,7 +438,7 @@ public class MachineConfigView extends JPanel implements IConfigView {
      * currently selected devices have their configuration saved to 
      * a location that the user specifies.
      * 
-     * @see MachineConfigView#saveConfigurationTo(URL)
+     * @see ConfigMachineView#saveConfigurationTo(URL)
      *
      * @author Christopher K. Allen
      * @since  May 18, 2012
@@ -598,7 +598,7 @@ public class MachineConfigView extends JPanel implements IConfigView {
             @Override
             @SuppressWarnings("synthetic-access")
             public void actionPerformed(ActionEvent arg0) {
-                MachineConfigView.this.evtRestoreAnyConfiguration();
+                ConfigMachineView.this.evtRestoreAnyConfiguration();
             }
         };
         this.butLoadAny.addActionListener(actLoad);
@@ -609,7 +609,7 @@ public class MachineConfigView extends JPanel implements IConfigView {
             @Override
             @SuppressWarnings("synthetic-access")
             public void actionPerformed(ActionEvent arg0) {
-                MachineConfigView.this.evtRestoreRecentConfiguration();
+                ConfigMachineView.this.evtRestoreRecentConfiguration();
             }
         };
         this.butLoadRct.addActionListener(actLoadRct);
@@ -620,7 +620,7 @@ public class MachineConfigView extends JPanel implements IConfigView {
             @Override
             @SuppressWarnings("synthetic-access")
             public void valueChanged(ListSelectionEvent e) {
-                MachineConfigView.this.evtRestoreRecentConfiguration();
+                ConfigMachineView.this.evtRestoreRecentConfiguration();
             }
         };
         this.pnlFileRec.addDoubleClickListener(lsnLoadRct);
@@ -631,7 +631,7 @@ public class MachineConfigView extends JPanel implements IConfigView {
             @SuppressWarnings("synthetic-access")
             @Override
             public void actionPerformed(ActionEvent arg0) {
-                MachineConfigView   cmvOwner = MachineConfigView.this;
+                ConfigMachineView   cmvOwner = ConfigMachineView.this;
                 
                 cmvOwner.nmsConfigFiles.clearCache();
                 cmvOwner.pnlFileRec.resetFileSelection( cmvOwner.nmsConfigFiles.getRecentURLSpecs() );
@@ -645,7 +645,7 @@ public class MachineConfigView extends JPanel implements IConfigView {
             @Override
             @SuppressWarnings("synthetic-access")
             public void actionPerformed(ActionEvent e) {
-                MachineConfigView.this.evtSaveConfiguration();
+                ConfigMachineView.this.evtSaveConfiguration();
             }
         };
         this.butSave.addActionListener(actSave);
@@ -656,7 +656,7 @@ public class MachineConfigView extends JPanel implements IConfigView {
             @Override
             @SuppressWarnings("synthetic-access")
             public void actionPerformed(ActionEvent arg0) {
-                MachineConfigView.this.evtSaveAsConfiguration();
+                ConfigMachineView.this.evtSaveAsConfiguration();
             }
         };
         this.butSaveAs.addActionListener(actSaveAs);
