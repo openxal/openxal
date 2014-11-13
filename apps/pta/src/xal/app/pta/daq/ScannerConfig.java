@@ -6,6 +6,7 @@
  */
 package xal.app.pta.daq;
 
+import xal.app.pta.MainApplication;
 import xal.ca.ConnectionException;
 import xal.ca.GetException;
 import xal.tools.data.DataAdaptor;
@@ -383,6 +384,29 @@ public class ScannerConfig extends DeviceConfig implements DataListener, Seriali
      */
     
 //    /**
+//     * Returns the data label used to store data for the given
+//     * version number.  The current label  will be returned for
+//     * all version greater than or equal to the current version number. 
+//     * 
+//     * @param lngVersion    storage version number
+//     * 
+//     * @return              data label used for the given storage format version
+//     *
+//     * @author Christopher K. Allen
+//     * @since  Oct 13, 2014
+//     */
+//    public String dataLabel(long lngVersion) {
+//        String  strLblVer = this.dataLabel();
+//        
+//        if (lngVersion < 3) {
+//            strLblVer = MainApplication.convertPtaDataLabelToVer3(strLblVer);
+//            strLblVer = strLblVer.replace("ScannerConfig", "DeviceConfig");
+//        }
+//        
+//        return strLblVer;
+//    }
+//    
+//    /**
 //     * Returns the string label used to identify
 //     * stored data for this data structure.
 //     *
@@ -435,14 +459,26 @@ public class ScannerConfig extends DeviceConfig implements DataListener, Seriali
     @Override
     public void update(DataAdaptor daptSrc) {
 
+        // Get the version number
+        long        lngVersion = 0;
+        if (daptSrc.hasAttribute("ver"))
+            lngVersion = daptSrc.intValue("ver");
+        
+        // Get the correct the data label for back versions
+        String      strLblCfg = this.dataLabel();
+        
+        DataAdaptor     daptDev = daptSrc.childAdaptor(strLblCfg);
+        if (daptDev == null) {
+          strLblCfg = MainApplication.convertPtaDataLabelToVer3(strLblCfg);
+          strLblCfg = strLblCfg.replace("ScannerConfig", "DeviceConfig");
+          
+          daptDev = daptSrc.childAdaptor(strLblCfg);
+        }
         // Account for the first version of the ScannerData class where ScannerConfig
         //  was not a separate class (thus, no child node here)
-        DataAdaptor     daptDev = daptSrc.childAdaptor(this.dataLabel());
         if (daptDev == null)
             daptDev = daptSrc;
         
-//        this.strDevId = daptDev.stringValue(STR_ATTR_DEVID);
-  
         super.update(daptDev);
         
         this.cfgActr.update(daptDev);

@@ -1252,6 +1252,25 @@ public class DeviceSelectorPanel extends JPanel implements TreeSelectionListener
     public List<AcceleratorNode> getSelectedDevices() {
         return this.lstSelNodes;
     }
+    
+    /**
+     * Convenience method for returning the single selected device
+     * when only one is expected, that is, when the device selection panel
+     * is in single selection mode.  Calling this method in multi-selection
+     * mode will return the first selected device. 
+     *  
+     * @return  the single selected device whenever the panel is in single selction mode,
+     *          returns <code>null</code> if nothing is selected.
+     *
+     * @author Christopher K. Allen
+     * @since  Oct 6, 2014
+     */
+    public AcceleratorNode      getSelectedDevice() {
+        if (this.lstSelNodes.size() > 0)
+            return this.lstSelNodes.get(0);
+        else
+            return null;
+    }
 
     /**
      * Returns the device color map used to create legends for the
@@ -1611,7 +1630,7 @@ public class DeviceSelectorPanel extends JPanel implements TreeSelectionListener
      */
     private boolean     validDevice(AcceleratorNode nodeDev) {
         for (Class<?> typeValidDev : this.arrDevTypes) {
-            if (nodeDev.getClass() == typeValidDev)
+            if ( typeValidDev.isInstance(nodeDev) )
                 return true;
         }
         

@@ -14,8 +14,8 @@ import xal.app.pta.MainDocument;
 import xal.app.pta.daq.ScannerData;
 import xal.app.pta.daq.MeasurementData;
 import xal.app.pta.tools.logging.IEventLogger;
+import xal.app.pta.view.analysis.ProfileAttrsDisplayPanel;
 import xal.app.pta.view.cmn.DeviceSelectorList;
-import xal.app.pta.view.cmn.ProfileAttrsDisplayPanel;
 import xal.app.pta.view.plt.MultiGraphDisplayPanel;
 import xal.smf.impl.profile.ProfileDevice.IProfileData;
 

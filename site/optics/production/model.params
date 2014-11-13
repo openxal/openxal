@@ -48,7 +48,7 @@
     
     
     <table name="Algorithm">
-        <!-- This table is going to be deprecated.  We should not support a "default algorithm" for every probe -->
+        <!-- The attribute "type" should be removed.  We should not support a "default algorithm." -->
 	    <schema>
 			<attribute isPrimaryKey="true"  name="name"           type="java.lang.String" />
 			<attribute isPrimaryKey="false" name="type"           type="java.lang.String" defaultValue="xal.model.alg.EnvTrackerAdapt" />

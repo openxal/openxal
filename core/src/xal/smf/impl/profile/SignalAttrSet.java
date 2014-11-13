@@ -319,7 +319,7 @@ public abstract class SignalAttrSet implements DataListener {
      * from the persistent store behind the 
      * <code>DataListener</code> interface.
      * 
-     * @param adaptor       data source
+     * @param daptSrc       data source
      *
      * @since       Mar 4, 2010
      * @author  Christopher K. Allen
@@ -327,12 +327,53 @@ public abstract class SignalAttrSet implements DataListener {
      * @see gov.sns.tools.data.DataListener#update(gov.sns.tools.data.DataAdaptor)
      */
     @Override
-    public void update(DataAdaptor adaptor) {
-        DataAdaptor daptSig = adaptor.childAdaptor( this.dataLabel() );
+    public void update(DataAdaptor daptSrc) {
+        
+        // Get the node containing this data from the given parent node
+        String      strLabel = this.dataLabel();
+        DataAdaptor daptSgnl = daptSrc.childAdaptor( strLabel );
+        
+        // Check the format is from the XAL version
+        if (daptSgnl == null) {
+            strLabel = "gov.sns." + strLabel;
+            daptSgnl  = daptSrc.childAdaptor(strLabel);
+        }
 
-        hor.update(daptSig);
-        ver.update(daptSig);
-        dia.update(daptSig);
+        // Were we given the current data node, not the parent node?
+        if (daptSgnl == null) 
+            daptSgnl = daptSrc;
+        
+        // Look for the middle version format - Open XAL before the format correction
+        //  was made. This one is problematic, we must guess at the order.  
+        String              strLblOld = SignalAttrs.class.getCanonicalName();
+
+        List<DataAdaptor>   lstDaptOld = daptSgnl.childAdaptors(strLblOld);
+        
+        // If we are in the middle format, we load sequentially according to index and return.
+        if (lstDaptOld.size() > 0)  {
+            for (ProfileDevice.ANGLE angle : ProfileDevice.ANGLE.values()) {
+                int         index = angle.getIndex();
+                DataAdaptor dapt  = lstDaptOld.get(index);
+                SignalAttrs attr  = this.getSignalAttrs(angle);
+
+                attr.update(dapt);
+            }
+
+            return;
+        }
+
+        // Assume that we have the XAL format or the current format   
+        // Read in each signal using the current data format
+        for (ProfileDevice.ANGLE angle : ProfileDevice.ANGLE.values()) {
+            DataAdaptor     dapt = daptSgnl.childAdaptor( angle.getLabel() );
+            SignalAttrs     attr = this.getSignalAttrs(angle);
+
+            attr.update(dapt);
+        }
+
+//        hor.update(daptSgnl);
+//        ver.update(daptSgnl);
+//        dia.update(daptSgnl);
     }
 
     /**
@@ -348,11 +389,20 @@ public abstract class SignalAttrSet implements DataListener {
      */
     @Override
     public void write(DataAdaptor adaptor) {
-        DataAdaptor daptSig = adaptor.createChild( this.dataLabel() );
+        DataAdaptor daptSgnls = adaptor.createChild( this.dataLabel() );
 
-        hor.write(daptSig);
-        ver.write(daptSig);
-        dia.write(daptSig);
+        for (ProfileDevice.ANGLE angle : ProfileDevice.ANGLE.values()) {
+            DataAdaptor     dapt  = daptSgnls.createChild( angle.getLabel() );
+            SignalAttrs     attr = this.getSignalAttrs(angle);
+
+            attr.write(dapt);
+        }
+        
+//        DataAdaptor daptSig = adaptor.createChild( this.dataLabel() );
+//
+//        hor.write(daptSig);
+//        ver.write(daptSig);
+//        dia.write(daptSig);
     }
 
 

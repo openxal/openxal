@@ -8,22 +8,23 @@ package xal.app.pta.view;
 
 import xal.app.pta.IConfigView;
 import xal.app.pta.MainConfiguration;
-import xal.app.pta.MainScanController;
 import xal.app.pta.rscmgt.AppProperties;
 import xal.app.pta.view.cmn.DeviceSelectorPanel;
-import xal.app.pta.view.cmn.ScannerStatusPanel;
-import xal.app.pta.view.cmn.ScannerTestingPanel;
 import xal.app.pta.view.devcfg.DeviceConfigBasePanel;
-import xal.app.pta.view.devcfg.ScannerConfigDisplay;
+import xal.app.pta.view.devcfg.HarpConfigDisplay;
+import xal.app.pta.view.diag.HarpStatusPanel;
+import xal.app.pta.view.plt.LiveDisplayBase.FORMAT;
+import xal.app.pta.view.plt.LiveHarpDisplayPanel;
 import xal.smf.Accelerator;
 import xal.smf.AcceleratorNode;
-import xal.smf.impl.WireScanner;
+import xal.smf.impl.WireHarp;
 import xal.smf.impl.profile.ParameterSet;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.LayoutManager;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.swing.JPanel;
@@ -33,7 +34,7 @@ import javax.swing.border.TitledBorder;
 
 
 /**
- * Displays the configuration parameters for each wire scanner
+ * Displays the configuration parameters for each harp
  * device, along with its current status.  Allow the user to make
  * changes to these configuration parameters.
  * 
@@ -45,7 +46,7 @@ import javax.swing.border.TitledBorder;
  * @since  Nov 12, 2009
  * @author Christopher K. Allen
  */
-public class ScanConfigView extends JPanel 
+public class ConfigHarpView extends JPanel 
     implements IConfigView, DeviceSelectorPanel.IDeviceSelectionListener 
 {
 
@@ -82,23 +83,23 @@ public class ScanConfigView extends JPanel
     
 
     //
-    // Device Status
-    
-    /** The device status monitoring panel */
-    private ScannerStatusPanel           pnlScanStatus;
-    
-    
-    //
     // Device Configuration
     
     /** The device configuration parameter GUI component */
-    private ScannerConfigDisplay         pnlDevConfig;
+    private HarpConfigDisplay           pnlDevConfig;
+    
+    //
+    // Device Status
+    
+    /** The device status monitoring panel */
+    private HarpStatusPanel             pnlDevStatus;
+    
     
     //
     // Device Testing
     
     /** The panel used for doing scan tests for the currently selected device */
-    private ScannerTestingPanel          pnlDevTester;
+    private LiveHarpDisplayPanel          pnlDevTester;
     
 
     
@@ -111,7 +112,7 @@ public class ScanConfigView extends JPanel
      * @since     Nov 12, 2009
      * @author    Christopher K. Allen
      */
-    public ScanConfigView(MainConfiguration cfgMain) {
+    public ConfigHarpView(MainConfiguration cfgMain) {
         this.smfAccel = cfgMain.getAccelerator();
         
         this.buildGuiComponents();
@@ -145,38 +146,38 @@ public class ScanConfigView extends JPanel
         }
         
         AcceleratorNode smfNode = lstDevs.get(0);
-        if (smfNode == null || !(smfNode instanceof WireScanner)) {
+        if (smfNode == null || !(smfNode instanceof WireHarp)) {
             this.clearAllPanels();
             return;
         }
-        WireScanner     ws = (WireScanner)smfNode;
-
+        WireHarp        smfHarp = (WireHarp)smfNode;
+        List<WireHarp>  lstHarps = new LinkedList<WireHarp>();
+        lstHarps.add( smfHarp);
+        
         // Directly set the devices for the panels if there is no connection testing
         if (! BOL_DO_CONNTEST ) {
-//            for (DeviceConfigBasePanel<? extends ParameterSet> pnl : this.lstCfgPnls) 
-//                pnl.setDevice(ws);
-            this.pnlDevConfig.setDevice(ws);
-            this.pnlScanStatus.setDevice(ws);
-            this.pnlDevTester.setDevice(ws);
-            return;
+            this.pnlDevConfig.setDevice(smfHarp);
+            this.pnlDevStatus.setDevice(smfHarp);
+            this.pnlDevTester.setProfileDevices( lstHarps );
         }
 
         // Do connection testing before associating the device to the panel
         DeviceConfigBasePanel<? extends ParameterSet>   pnlFocus = this.pnlDevConfig.getPanelInFocus();
         
-        if (pnlFocus.connectionTest(ws))
-            this.pnlDevConfig.setDevice(ws);
+        if (pnlFocus.connectionTest(smfHarp))
+            this.pnlDevConfig.setDevice(smfHarp);
         else
             this.pnlDevConfig.clearDevice();
         
-        if (this.pnlScanStatus.testConnection(ws)) {            
+        if (this.pnlDevStatus.testConnection(smfHarp)) {            
           
-            this.pnlScanStatus.setDevice(ws);
-            this.pnlDevTester.setDevice(ws);
+            this.pnlDevStatus.setDevice(smfHarp);
+            this.pnlDevTester.setProfileDevices(lstHarps);
             
         } else {
-            this.pnlScanStatus.clearDevice();
-            this.pnlDevTester.clearDevice();
+            this.pnlDevStatus.clearDevice();
+            this.pnlDevTester.setLiveData(false);
+            this.pnlDevTester.clearGraphs();
         }
     }
 
@@ -205,7 +206,7 @@ public class ScanConfigView extends JPanel
      */
     @Override
     public void updateConfiguration(MainConfiguration cfgMain) {
-        this.pnlDevConfig.refreshDisplay();
+//        this.pnlDevConfig.refreshDisplay();
     }
 
 
@@ -226,28 +227,27 @@ public class ScanConfigView extends JPanel
     private void buildGuiComponents(){
 
         // The device selector panel
-        this.pnlDevSelector = new DeviceSelectorPanel(this.smfAccel,
-//                        ProfileMonitor.class,
-                        WireScanner.class
-                        );
+        this.pnlDevSelector = new DeviceSelectorPanel(this.smfAccel, WireHarp.class);
         this.pnlDevSelector.setSingleSelectionMode(true);
         this.pnlDevSelector.setDeviceTableVisible(false);
         this.pnlDevSelector.registerDeviceSelectedListener(this);
-//        this.pnlDevSelector.setPreferredSize(new Dimension(200, 300));
         this.pnlDevSelector.setBorder(new TitledBorder("Current Devices"));
-        
 
-        // The device status monitor panel
-        this.pnlScanStatus = new ScannerStatusPanel();
-        this.pnlScanStatus.setBorder( new TitledBorder( this.pnlScanStatus.getTitle() ) );
-        
         
         // Create the device configuration panels
-        this.pnlDevConfig = new ScannerConfigDisplay("Device Configuration", SwingConstants.RIGHT);
+        this.pnlDevConfig = new HarpConfigDisplay("Device Configuration", SwingConstants.RIGHT);
+
         
-        // Create the device testing panel
-        this.pnlDevTester = new ScannerTestingPanel();
-        this.pnlDevTester.setDaqController( MainScanController.getInstance() );
+        // The device status monitor panel
+        this.pnlDevStatus = new HarpStatusPanel();
+        this.pnlDevStatus.setBorder( new TitledBorder( this.pnlDevStatus.getTitle() ) );
+        
+        
+        // Create the device live display
+        this.pnlDevTester = new LiveHarpDisplayPanel(FORMAT.MULTIGRAPH_HOR);
+        this.pnlDevTester.setLiveDataButtonVisible(true);
+        this.pnlDevTester.setLiveData(false);
+        this.pnlDevTester.setClearDataButton(true);
         this.pnlDevTester.setBorder( new TitledBorder( "Device Testing") );
     }
     
@@ -294,7 +294,7 @@ public class ScanConfigView extends JPanel
         gbcLayout.weightx = 0.1;
         gbcLayout.anchor = GridBagConstraints.LINE_END;
         gbcLayout.fill  = GridBagConstraints.BOTH;
-        this.add(this.pnlScanStatus, gbcLayout);
+        this.add(this.pnlDevStatus, gbcLayout);
         
         gbcLayout.gridx = 0;
         gbcLayout.gridy = 1;
@@ -317,9 +317,11 @@ public class ScanConfigView extends JPanel
      * @author Christopher K. Allen
      */
     private void clearAllPanels() {
-        this.pnlScanStatus.clearDevice();
+        this.pnlDevStatus.clearDevice();
         this.pnlDevConfig.clearDevice();
-        this.pnlDevTester.clearDevice();
+        
+        this.pnlDevTester.setLiveData(false);
+        this.pnlDevTester.clearGraphs();
     }
 
 }

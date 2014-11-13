@@ -96,6 +96,10 @@ public class SignalAnalyzer {
     public static final double      DBL_SQRT_2PI = 2.50662827463;
     
     
+    /*
+     * Inner Classes
+     */
+    
     /**
      * Enumeration of all the computed signal properties.  These
      * are included to expedite GUI displays.
