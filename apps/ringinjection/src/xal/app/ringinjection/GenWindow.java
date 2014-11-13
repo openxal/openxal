@@ -46,7 +46,7 @@ public class GenWindow extends XalWindow {
 	mainPanel.setVisible(true);
 	BorderLayout layout = new BorderLayout();
 	mainPanel.setLayout(layout);
-	mainPanel.setPreferredSize(new Dimension(950, 550));
+	mainPanel.setPreferredSize(new Dimension(1000, 550));
 	this.getContentPane().add(mainPanel);
 	makeContent();
     }
