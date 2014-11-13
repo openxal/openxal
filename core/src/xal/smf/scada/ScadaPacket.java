@@ -31,7 +31,10 @@ import java.util.MissingResourceException;
  *
  * @since  Dec 16, 2009
  * @author Christopher K. Allen
+ * 
+ * @deprecated  Never used, replaced
  */
+@Deprecated
 public abstract class ScadaPacket implements DataListener {
     
 
@@ -257,7 +260,7 @@ public abstract class ScadaPacket implements DataListener {
     
     /**
      * <p>
-     * This method returns data of the <code>{@link Scada.Field}</code> annotation
+     * This method returns data of the <code>{@link AScada.Field}</code> annotation
      * used to identify fields in data structures as Supervisory Control And Data
      * Acquisition (SCADA) fields.  The data is taken from each field annotation and
      * is used to populate a <code>FieldDescriptor</code> object.  The sum of all
@@ -286,10 +289,10 @@ public abstract class ScadaPacket implements DataListener {
         for (Field fld : arrFlds) {
             
             //Process only data structure fields which are marked as process variables
-            if (! fld.isAnnotationPresent(Scada.Field.class) )
+            if (! fld.isAnnotationPresent(AScada.Field.class) )
                 continue;
             
-            Scada.Field  annFld = fld.getAnnotation(Scada.Field.class);
+            AScada.Field  annFld = fld.getAnnotation(AScada.Field.class);
 
             String      strFldNm  = fld.getName();
             Class<?>    clsType   = annFld.type(); 
@@ -330,7 +333,7 @@ public abstract class ScadaPacket implements DataListener {
             return true;
         
         // Check that data structure is tagged for channel access
-        if (! clsScada.isAnnotationPresent(Scada.class) )
+        if (! clsScada.isAnnotationPresent(AScada.class) )
             throw new BadStructException("The data structure is not annotated as 'Scada'");
         
         // Here is where we store all the requests

@@ -496,8 +496,8 @@ public class MainScanController {
             int         intVal = recValue.intValue();
 
             if (intVal == 1) {
-//                System.out.println("Rev. Limit switch activated for " + mon.getDevice().getId());
-//
+//                System.out.println("MainScanController.RevLimitAction#valueChanged() - Rev. Limit switch activated for " + mon.getDevice().getId());
+
 //                // Re-block - we are not going to fire again.
 //                this.bolBlocked = true;
 
@@ -638,6 +638,8 @@ public class MainScanController {
             
             synchronized (BOL_SCAN_ACTIVE) {
                 
+//                System.out.println("MainScanController.ActuatorParkedThread#run() - flagged park for device " + this.smfDev.getId());
+
                 // Remove the device from active device list
                 //  If the device was not in the list (???)
                 //  then something is wrong - just ignore it for now.
@@ -1458,12 +1460,20 @@ public class MainScanController {
      */
     private void devicesParked() {
     
+//        System.out.println("\nMainScanController#devicesParked() - entered");
+//        this.printDeviceQueues();
+//        this.printScanIds(lstDevCompleted);
+    
         // Empty the active monitor pool
         mplScanEvts.emptyPool();
     
+//        System.out.println("\nMainScanController#devicesParked() - past this.mplScanEvts.emptyPool()");
+        
         // String notification
         getLogger().logInfo(this.getClass(), "Actuators parked: " + Calendar.getInstance().getTime().toString());
-    
+
+//        System.out.println("\nMainScanController#devicesParked() - past getLogger().logInfo()");
+        
         // Notify the registered scan complete event handlers
         for (IScanControllerListener hndlr : lstLsnCtlEvts)
             hndlr.scanActuatorsParked();
@@ -1497,7 +1507,7 @@ public class MainScanController {
 
             // Create the reverse limit switch monitor
 //            PvDescriptor        pvdLimRev = WireScanner.DevStatus.PARAM.LIM_REV.getPvDescriptor();
-            XalPvDescriptor        pvdLimRev = WireScanner.DevStatus.FLD_MAP.get("limRev");
+            XalPvDescriptor     pvdLimRev = WireScanner.DevStatus.FLD_MAP.get("limRev");
             RevLimitAction      actLimRev = new RevLimitAction();
             SmfPvMonitor        monLimRev = new SmfPvMonitor(smfDev, pvdLimRev);
             
@@ -1629,12 +1639,12 @@ public class MainScanController {
      */
     private void    scanCompleted() {
 
-//        System.out.println("\nscanCompleted()");
+//        System.out.println("\nMainScanController#scanCompleted()");
 //        this.printDeviceQueues();
 //        this.printScanIds(lstDevCompleted);
     
-        // Clear out all monitors
-        this.mplScanEvts.emptyPool();   // CKA April 25, 2014
+//        // Clear out all monitors
+//        this.mplScanEvts.emptyPool();   // CKA April 25, 2014
         
         // String notification
         getLogger().logInfo(this.getClass(), "DAQ CTRL - Scan completed and event notification: " + Calendar.getInstance().getTime().toString());

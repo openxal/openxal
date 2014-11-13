@@ -6,7 +6,6 @@
  */
 package xal.tools.beam.calc;
 
-import xal.model.probe.traj.ProbeState;
 import xal.model.probe.traj.Trajectory;
 import xal.model.probe.traj.TransferMapState;
 import xal.tools.beam.PhaseMatrix;

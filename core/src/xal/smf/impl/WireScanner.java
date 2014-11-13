@@ -3047,7 +3047,7 @@ public class WireScanner extends ProfileDevice {
      * @since  Dec 17, 2009
      * @author Christopher K. Allen
      */
-    public void configureHardware(ParameterSet datPvFlds) 
+    public synchronized void configureHardware(ParameterSet datPvFlds) 
         throws PutException, ConnectionException 
     {
         datPvFlds.setHardwareValues(this);

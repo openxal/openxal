@@ -745,7 +745,7 @@ public abstract class ScadaRecord implements DataListener, Cloneable {
                 
             } else {
                 String  strType = clsFldType.getName();
-                String  strMsg  = "DataSet#setPv: " + //$NON-NLS-1$
+                String  strMsg  = "ScadaRecord#setPv: " + //$NON-NLS-1$
                 "Unknown data type " + strType +  //$NON-NLS-1$
                 " for channel handle " + strHndPv; //$NON-NLS-1$
                 System.err.println(strMsg);
@@ -755,16 +755,16 @@ public abstract class ScadaRecord implements DataListener, Cloneable {
             
             
         } catch (SecurityException e) {
-            throw new BadStructException("ScadaStruct#getPv(): Security Exception: inaccessible field " + strFldName); //$NON-NLS-1$
+            throw new BadStructException("ScadaRecord#getPv(): Security Exception: inaccessible field " + strFldName); //$NON-NLS-1$
             
         } catch (NoSuchFieldException e) {
-            throw new BadStructException("ScadaStruct#getPv(): ERROR: No such field " + strFldName); //$NON-NLS-1$
+            throw new BadStructException("ScadaRecord#getPv(): ERROR: No such field " + strFldName); //$NON-NLS-1$
             
         } catch (IllegalArgumentException e) {
-            throw new BadStructException("ScadaStruct#getPv(): Illegal type conversion for field " + strFldName); //$NON-NLS-1$
+            throw new BadStructException("ScadaRecord#getPv(): Illegal type conversion for field " + strFldName); //$NON-NLS-1$
 
         } catch (IllegalAccessException e) {
-            throw new BadStructException("ScadaStruct#getPv(): Illegal access attempt for field " + strFldName); //$NON-NLS-1$
+            throw new BadStructException("ScadaRecord#getPv(): Illegal access attempt for field " + strFldName); //$NON-NLS-1$
 
         }
     }

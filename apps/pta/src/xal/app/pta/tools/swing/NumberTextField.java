@@ -521,6 +521,9 @@ public class NumberTextField extends JTextField {
      * @author Christopher K. Allen
      */
     public void setDisplayValueSilently(Number numVal){
+        
+//        System.out.println("NumberTextField#setDisplayValueSilently: numVal = " + numVal);
+        
         try {
             String  strVal = this.fmtDispl.format(numVal);
             
@@ -602,6 +605,8 @@ public class NumberTextField extends JTextField {
      */
     @Override
     protected void fireActionPerformed(){
+        
+//        System.out.println("NumberTextField#fireActionPerformed: display value = " + getDisplayValue());
         this.updateDisplay();
         super.fireActionPerformed();
     } 
@@ -625,8 +630,8 @@ public class NumberTextField extends JTextField {
             String  strInput = this.getText();
             Number  numInput = this.fmtDispl.parse(strInput);
             
-            System.out.println("NumberTextField#updateDisplay: numInput = " + numInput);
-            System.out.println();
+//            System.out.println("NumberTextField#updateDisplay: numInput = " + numInput);
+//            System.out.println();
             
 //            String  strDispl = this.fmtDispl.format(numInput);
 

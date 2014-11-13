@@ -358,13 +358,10 @@ public class MainConfiguration {
         return this.lstDirtyDevs;
     }
     
-     
-    
 
     /*
      * Operations
      */
-    
     
     /**
      * Sets the dirty flag; that is, indicate that the configuration of the machine devices

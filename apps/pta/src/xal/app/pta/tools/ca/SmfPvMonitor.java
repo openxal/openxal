@@ -325,14 +325,16 @@ public class SmfPvMonitor implements IEventSinkValue {
      * @author Christopher K. Allen
      */
     public void clear() {
-//        if (!this.bolMonitoring)
-//            return;
+        if (!this.bolMonitoring)
+            return;
 
+//        System.out.println("SmfPvMonitor#clear() - clearing monitor for " + this.dscrPv.toString());
+        
 //        this.chanDevice.disconnect();  // CKA April 30, 2014
 //        this.chanDevice = null;
 
         this.monDevice.clear();
-//        this.monDevice = null;
+        this.monDevice = null;
         
         this.bolMonitoring = false;
     }
