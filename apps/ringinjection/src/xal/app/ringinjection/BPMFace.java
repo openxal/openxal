@@ -377,18 +377,20 @@ public class BPMFace extends JPanel{
 	public void makeResultsTable(){
 //		String[] colnames = {"Device", "X (mm)", "X' (mrad)", "Y (mm)", "Y' (mrad)", "Accept", "Plot"};
 
-		resultstablemodel = new KeyValueTableModel<BPMBeamInjectionFit>( _beamInjectionFits, "bpmAgent.name", "formattedX", "formattedXAngle", "formattedY", "formattedYAngle", "accepted", "bpmAgent" );
-		resultstablemodel.setColumnEditable( "accepted", true );
-		resultstablemodel.setColumnClass( "accepted", Boolean.class );
+		resultstablemodel = new KeyValueTableModel<BPMBeamInjectionFit>( _beamInjectionFits, "bpmAgent.name", "formattedX", "formattedXAngle", "formattedY", "formattedYAngle", "accepted", "plotInfo" );
 		resultstablemodel.setColumnName( "bpmAgent.name", "BPM" );
 		resultstablemodel.setColumnName( "formattedX", "X (mm)" );
 		resultstablemodel.setColumnName( "formattedXAngle", "X\' (mrad)" );
 		resultstablemodel.setColumnName( "formattedX", "Y (mm)" );
 		resultstablemodel.setColumnName( "formattedXAngle", "Y\' (mrad)" );
+		
 		resultstablemodel.setColumnName( "accepted", "Accept" );
-		resultstablemodel.setColumnName( "bpmAgent", "Plot" );
-		resultstablemodel.setColumnEditable( "bpmAgent", true );
-		resultstablemodel.setColumnClass( "bpmAgent", BpmAgent.class );
+		resultstablemodel.setColumnEditable( "accepted", true );
+		resultstablemodel.setColumnClass( "accepted", Boolean.class );
+
+		resultstablemodel.setColumnName( "plotInfo", "Plot" );
+		resultstablemodel.setColumnEditable( "plotInfo", true );
+		resultstablemodel.setColumnClass( "plotInfo", BpmAgent.class );
 
 		resultstable = new JTable(resultstablemodel);
 		resultstable.getColumnModel().getColumn(0).setMinWidth(128);
@@ -507,8 +509,14 @@ class BPMBeamInjectionFit {
 	}
 
 
-	/** Dummy method to "set" the BPM Agent (needed for the Plot button table cell editor) */
-	public void setBpmAgent( final String dummy ) {}
+	/** Get the plot info as a BPM agent */
+	public BpmAgent getPlotInfo() {
+		return BPM_AGENT;
+	}
+
+
+	/** Dummy method to "set" the plot info (needed for the Plot button table cell editor) */
+	public void setPlotInfo( final String dummy ) {}
 
 
 	/** Gets whether the user accepted this fit */
