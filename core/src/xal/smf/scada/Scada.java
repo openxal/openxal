@@ -38,7 +38,10 @@ import java.lang.annotation.Target;
  * @since   Feb 8, 2011
  * 
  * @see ScadaPacket
+ * 
+ * @deprecated  Replaced by <code>AScada</code>
  */
+@Deprecated
 @Documented
 @Inherited
 @Retention(RetentionPolicy.RUNTIME)

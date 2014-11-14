@@ -214,7 +214,12 @@ public class MeasurementData implements DataListener {
         
         this.mapMsmtData = this.acquireData(lstDevs);
         this.datTmStmp   = MainApplication.timeStamp();
+        
+//        System.out.println("MeasurementData(List<ProfileDevice>) - before PV Logger snapshot");
+        
         this.lngPvLogId  = MainApplication.pvLoggerSnapshot(strCmt);
+        
+//        System.out.println("MeasurementData(List<ProfileDevice>) - after PV Logger snapshot");
     }
     
     /**

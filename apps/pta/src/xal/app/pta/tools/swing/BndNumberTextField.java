@@ -327,7 +327,7 @@ public class BndNumberTextField extends NumberTextField {
         try{
             Number  numInput = super.getDisplayValue();
             
-            System.out.println("BndNumberTextField#updateDisplay: numInput = " + numInput);
+//            System.out.println("BndNumberTextField#updateDisplay: numInput = " + numInput);
             
             if ( this.isValidValue(numInput) ) {
                 this.numVal = numInput;
@@ -362,7 +362,7 @@ public class BndNumberTextField extends NumberTextField {
         try {
             Number  numInput = super.getDisplayValue();
             
-            System.out.println("BndNumberTextField#fireActionPerformed: numInput = " + numInput);
+//            System.out.println("BndNumberTextField#fireActionPerformed: numInput = " + numInput);
             
             if ( this.isValidValue(numInput) ) {
                 this.numVal = numInput;

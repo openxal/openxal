@@ -424,29 +424,29 @@ public class ScanControlPanel extends JPanel implements IScanControllerListener 
         this.updateStatusComment("Scan completed");
 
         //
-        // Save the measurement data to the main application document
-        try {
-            
-            // First loosen the device data type to fit into MeasurementData DAQ process
-            List<ProfileDevice> lstDevProf = new LinkedList<ProfileDevice>( lstDevScan );
-            
-            MeasurementData  setMsmt = MeasurementData.acquire(lstDevProf);
-
-            this.docMain.setMeasurementData(setMsmt);
-            
-        } catch (ConnectionException e) {
-            getLogger().logException(getClass(), e, "DAQ Failure: unable to connect to a device in " + this.lstSelDevs);
-            JOptionPane.showMessageDialog(this, "Error in data qcquisition - see log", "WARNING", JOptionPane.WARNING_MESSAGE);
-            
-        } catch (GetException e) {
-            getLogger().logException(getClass(), e, "DAQ Failure: unable to read from a device in " + this.lstSelDevs);
-            JOptionPane.showMessageDialog(this, "Error in data qcquisition - see log", "WARNING", JOptionPane.WARNING_MESSAGE);
-            
-        } catch (PvLoggerException e) {
-            getLogger().logException(getClass(), e, "Unable to take PV Logger snapshot for measurement " + this.lstSelDevs);
-            JOptionPane.showMessageDialog(this, "Error in PV Logger capture - see log", "WARNING", JOptionPane.WARNING_MESSAGE);
-            
-        }
+//        // Save the measurement data to the main application document
+//        try {
+//            
+//            // First loosen the device data type to fit into MeasurementData DAQ process
+//            List<ProfileDevice> lstDevProf = new LinkedList<ProfileDevice>( lstDevScan );
+//            
+//            MeasurementData  setMsmt = MeasurementData.acquire(lstDevProf);
+//
+//            this.docMain.setMeasurementData(setMsmt);
+//            
+//        } catch (ConnectionException e) {
+//            getLogger().logException(getClass(), e, "DAQ Failure: unable to connect to a device in " + this.lstSelDevs);
+//            JOptionPane.showMessageDialog(this, "Error in data qcquisition - see log", "WARNING", JOptionPane.WARNING_MESSAGE);
+//            
+//        } catch (GetException e) {
+//            getLogger().logException(getClass(), e, "DAQ Failure: unable to read from a device in " + this.lstSelDevs);
+//            JOptionPane.showMessageDialog(this, "Error in data qcquisition - see log", "WARNING", JOptionPane.WARNING_MESSAGE);
+//            
+//        } catch (PvLoggerException e) {
+//            getLogger().logException(getClass(), e, "Unable to take PV Logger snapshot for measurement " + this.lstSelDevs);
+//            JOptionPane.showMessageDialog(this, "Error in PV Logger capture - see log", "WARNING", JOptionPane.WARNING_MESSAGE);
+//            
+//        }
     }
 
     /**
@@ -464,8 +464,12 @@ public class ScanControlPanel extends JPanel implements IScanControllerListener 
     @Override
     public void scanActuatorsParked() {
 
+//        System.out.println("ScanControlPanel#scanActuatorsParked() - method called");
+        
         this.mplScan.emptyPool();
 
+//        System.out.println("ScanControlPanel#scanActuatorsParked() - past this.mplScan.emptyPool()");
+        
         // String notification
         this.updateStatusComment("Scan actuators parked");
 

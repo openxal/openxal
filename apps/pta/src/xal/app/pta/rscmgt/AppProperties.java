@@ -342,14 +342,17 @@ public final class AppProperties extends PropertiesManager  {
      */
     public enum DEVICE implements xal.app.pta.tools.property.Property.IProperty {
     
-        /** Time out before a scan is interrupted and terminated */
+        /** Time out before a scan is interrupted and terminated (in seconds) */
         TMO_SCAN("DevScanTmOut"), //$NON-NLS-1$
         
-        /** Time out before a Channel access connection test is aborted (in milliseconds) */
+        /** Time out before a Channel access connection test is aborted (in seconds) */
         TMO_CONNTEST("DevConnTestTmOut"), //$NON-NLS-1$
         
-        /**  Wait between sending a device command then clearing the command buffer */
-        CMD_LATENCY("DevCmdLatency"), //$NON-NLS-1$
+        /**  Wait between sending a device command then clearing the command buffer (in milliseconds) */
+        LATENCY_CMD("DevLatencyCmd"), //$NON-NLS-1$
+        
+        /** Wait after sending a CAPUT value, usually to allow LabView time to process even (in milliseconds) */
+        LATENCY_PUT("DevLatencyPut"),
         
         /** Ignore scan errors and continue to save data */
         IGNR_ERR("DevIgnoreError"), //$NON-NLS-1$
