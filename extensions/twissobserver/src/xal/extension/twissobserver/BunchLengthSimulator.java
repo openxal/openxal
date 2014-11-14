@@ -89,7 +89,6 @@ public class BunchLengthSimulator {
      * 
      * @param smfSeq       the desired sequence for bunch length computation
      * @param enmSyn       source of machine parameters
-
      * @throws ModelException  and error occurred when instantiating the machine model
      */
     public BunchLengthSimulator(AcceleratorSeq  smfSeq, SYNC enmSyn) throws ModelException {

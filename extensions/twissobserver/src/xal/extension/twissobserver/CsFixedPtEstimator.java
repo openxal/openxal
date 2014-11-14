@@ -57,13 +57,13 @@ import Jama.Matrix;
  */
 public class CsFixedPtEstimator extends CourantSnyderEstimator {
 
-    
+
     /*
      * Internal Classes
      */
     
     /**
-     * Convenience class for storing circular buffers of moment vector objects 
+     * Convenience class for storing circular buffers of moment vector objects
      * by their phase plane.
      *
      * @author Christopher K. Allen
@@ -217,7 +217,7 @@ public class CsFixedPtEstimator extends CourantSnyderEstimator {
     
     /** Maximum residual error allowed */
     protected double dblMaxError;
-    
+
     
     /** Fixed point tuning parameter - normalized distance along convex hull between current iterate and next */
     private double  dblAlpha;
@@ -235,7 +235,7 @@ public class CsFixedPtEstimator extends CourantSnyderEstimator {
     private int                 cntCurrIters;
     
     
-    
+
 	/*
 	 * Initialization
 	 */
@@ -351,7 +351,7 @@ public class CsFixedPtEstimator extends CourantSnyderEstimator {
         return this.cntCurrIters;
     }
     
-    
+
     /*
      * Operations
      */
@@ -463,7 +463,7 @@ public class CsFixedPtEstimator extends CourantSnyderEstimator {
             super.dblResErr   = super.computeResidualError(matSig1, strRecDevId, arrData);
             
             dblErr = super.dblConvErr;
-            
+
             //  Type out debug info
             if (super.isDebuggingOn()) {
                 System.out.println("  Iteration Method:  At iteration# " + cntIter ); 
@@ -536,7 +536,7 @@ public class CsFixedPtEstimator extends CourantSnyderEstimator {
         //  Algorithm for generating new covariance matrix from old
         double              dblAlpha = this.computeAlpha();
         
-        PhaseMatrix         matSig1  = covF1.times(dblAlpha).plus( matSig0.times( 1.0 - dblAlpha ) ); 
+        PhaseMatrix         matSig1  = covF1.times(dblAlpha).plus( matSig0.times( 1.0 - dblAlpha ) );
         CovarianceMatrix   covSig1  = new CovarianceMatrix( matSig1 );
 
         //  Recurse through all the phase planes computing the change in the recursion function from
@@ -569,7 +569,7 @@ public class CsFixedPtEstimator extends CourantSnyderEstimator {
     /**
      * Computes the iteration tuning parameter from the previous changes in the covariance
      * moments and the correpsonding changes in the recursion function.
-     * 
+     *
      * @return  new value of the tuning parameter that accelerates convergence
      *
      * @author Christopher K. Allen
