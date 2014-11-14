@@ -728,6 +728,32 @@ public class Trajectory<S extends ProbeState<S>> implements IArchive, Iterable<S
 	    return this._history.toList();
 	}
 	
+//	public Trajectory<S> subTrajectory(String strSmfNodeId1, String strSmfNodeId2) {
+//	    S      state1 = this.stateForElement(strSmfNodeId1);
+//	    List<S> lstStates2 = this.statesForElement(strSmfNodeId2);
+//	    S      state2 = lstStates2.get(lstStates2.size() - 1);
+//	    
+//	    boolean        bolState1 = false;
+//	    boolean        bolState2 = false;
+//	    
+//	    Trajectory<S>  trjSub = new Trajectory(this.clsStates);
+//	    
+//	    for (S state : this) {
+//	        if ( state.getHardwareNodeId().equals(strSmfNodeId1) ) {
+//	            bolState1 = true;
+//	        }
+//	        if ( state.getHardwareNodeId().equals(strSmfNodeId2) ) {
+//	            bolState2 = true;
+//	            
+//	            trjSub.saveState(state);
+//	            continue;
+//	        }
+//	        if ()
+//	        
+//	        
+//	    }
+//	}
+	
     /**
      * Returns the probe state at the specified position.  Returns null if there
      * is no state for the specified position.
@@ -1056,6 +1082,19 @@ public class Trajectory<S extends ProbeState<S>> implements IArchive, Iterable<S
 
 }
 
+/**
+ * This class realized equivalences classes of hardware identifier
+ * strings.  Since modeling elements for hardware devices could have
+ * many difference names, it is necessary to identify all these names
+ * into a single equivalence class for the hardware ID.
+ *
+ * @author Christopher K. Allen
+ * @since  Nov 13, 2014
+ * 
+ * @deprecated  This class is no longer needed since the probe state
+ *              implementation now incorporates a hardware ID attribute. 
+ */
+@Deprecated
 class IdEquivClass implements Comparator<IdEquivClass> { 
     
     /*
