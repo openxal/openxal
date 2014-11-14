@@ -10,14 +10,17 @@ import xal.ca.ConnectionException;
 import xal.ca.GetException;
 import xal.smf.AcceleratorNode;
 import xal.smf.scada.AScada;
+import xal.smf.scada.BadStructException;
 import xal.smf.scada.ScadaFieldDescriptor;
 import xal.smf.scada.ScadaRecord;
+import xal.tools.data.DataAdaptor;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.MissingResourceException;
 
 /**
  * Quantitative properties of a signal.
@@ -301,24 +304,6 @@ public class SignalAttrs extends ScadaRecord {
 
 
     /*
-     * DataListener Interface
-     */
-
-    /**
-     * Label used for parameter set identification. 
-     *
-     * @since       Mar 4, 2010
-     * @author  Christopher K. Allen
-     *
-     * @see gov.sns.tools.data.DataListener#dataLabel()
-     */
-    @Override
-    public String dataLabel() {
-        return this.getClass().getCanonicalName();
-    }
-
-
-    /*
      * Data Fields
      */
 
@@ -439,6 +424,63 @@ public class SignalAttrs extends ScadaRecord {
         double      dblAvgVal = dblAddend*dblAddend*dblWtFac + dblAccum*dblAccum*(1.0 - dblWtFac);
         
         this.stdev = Math.sqrt(dblAvgVal);
+    }
+
+
+    /*
+     * DataListener Interface
+     */
+
+    /**
+     * Label used for parameter set identification. 
+     *
+     * @since       Mar 4, 2010
+     * @author  Christopher K. Allen
+     *
+     * @see gov.sns.tools.data.DataListener#dataLabel()
+     */
+    @Override
+    public String dataLabel() {
+        return this.getClass().getCanonicalName();
+    }
+
+    /**
+     * Loads the data structure from the given data source while respecting
+     * the various data format versions.
+     *
+     * @see xal.smf.scada.ScadaRecord#update(xal.tools.data.DataAdaptor)
+     *
+     * @author Christopher K. Allen
+     * @since  Oct 15, 2014
+     */
+    @Override
+    public void update(DataAdaptor daptSrc) throws MissingResourceException, BadStructException {
+        // New format - Get the data adaptor node corresponding to this signal from the 
+        //  provided parent node
+        String            strLabel    = this.dataLabel();
+        DataAdaptor       daptSgnl = daptSrc.childAdaptor(strLabel);
+        
+        if (daptSgnl == null) { // this is XAL version
+            strLabel  = "gov.sns." + strLabel;
+            daptSgnl  = daptSrc.childAdaptor(strLabel);
+        }
+        
+        if (daptSgnl == null) // we were given the data node itself
+            daptSgnl = daptSrc;
+
+        super.update(daptSgnl);
+    }
+
+    /**
+     *
+     * @see xal.smf.scada.ScadaRecord#write(xal.tools.data.DataAdaptor)
+     *
+     * @author Christopher K. Allen
+     * @since  Oct 15, 2014
+     */
+    @Override
+    public void write(DataAdaptor daptSink) throws BadStructException {
+        super.write(daptSink);
     }
     
   
