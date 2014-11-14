@@ -8,7 +8,6 @@ package xal.smf.scada;
 
 import xal.smf.scada.ScadaFieldDescriptor;
 import xal.smf.scada.BadStructException;
-
 import xal.ca.Channel;
 import xal.ca.ChannelRecord;
 import xal.ca.ConnectionException;
@@ -44,7 +43,33 @@ import java.util.MissingResourceException;
 public abstract class ScadaRecord implements DataListener, Cloneable {
     
 
+    /*
+     * Internal Classes
+     */
     
+    /**
+     * Used by enumerations in data structures 
+     * to indicate that they known aspects
+     * of the data fields they represent.
+     *
+     * @since  Dec 16, 2009
+     * @author Christopher K. Allen
+     */
+    public interface IFieldDescriptor  extends XalPvDescriptor.IPvDescriptor {
+        
+        /**
+         * Returns the name of the field in the data structure.
+         *
+         * @return      data structure field name
+         * 
+         * @since  Dec 16, 2009
+         * @author Christopher K. Allen
+         */
+        public String   getFieldName();
+        
+    }
+
+
 
     /** The set of PV field descriptors for this data set */
     private List<ScadaFieldDescriptor>        lstFldDscr; 
