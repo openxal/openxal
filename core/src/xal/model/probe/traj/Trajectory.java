@@ -729,6 +729,146 @@ public class Trajectory<S extends ProbeState<S>> implements IArchive, Iterable<S
 	}
 	
     /**
+     * Creates and returns a "sub-trajectory" object built from the contiguous
+     * state objects of this trajectory between the start node <code>strSmfNodeId1</code>
+     * and the stop node <code>strSmfNodeId2</code>.  The returned trajectory contains
+     * references to the same states contained in this trajectory, <i>they are not
+     * duplicates</i>.  So any modifications made on the returned object will
+     * be reflected here.  Also, it is important to note that the returned sub-trajectory
+     * <i>excludes</i> all states belonging to the stop hardware node 
+     * <code>strSmfNodeId2</code>.  That is, the returned value contains states from,
+     * and including, node 1 up to, but not including, state 2.  If you wish to include
+     * the states of both hardware nodes see 
+     * <code>{@link #subTrajectoryInclusive(String, String)}</code>.
+     * 
+     * @param strSmfNodeId1 hardware node ID defining the first state object in sub-trajectory
+     * @param strSmfNodeId2 hardware node ID defining the last state object in sub-trajectory
+     * 
+     * @return  sub-trajectory of this trajectory defined by the above hardware nodes
+     *
+     * @author Christopher K. Allen
+     * @since  Nov 14, 2014
+     * 
+     * @see #subTrajectoryInclusive(String, String)
+     */
+    public Trajectory<S> subTrajectory(String strSmfNodeId1, String strSmfNodeId2) {
+        boolean        bolStart1 = false;
+
+        // The returned sub-trajectory
+        Trajectory<S>  trjSub = new Trajectory<S>(this.clsStates);
+        
+        // For every state in this trajectory...
+        for (S state : this) {
+            
+            String     strStateId = state.getHardwareNodeId();
+
+            // Look for the first state, set the "start state found" flag if so
+            if ( strStateId.equals(strSmfNodeId1) ) {
+                bolStart1 = true;
+            }
+            
+            // We have not encountered the first state, skip to loop beginning
+            if ( bolStart1==false ) {
+                continue;
+            }
+            
+            // Check for the stop state. 
+            //   If found, set the "stop state found" flag and save the current
+            //   state to the sub trajectory (if the sub-trajectory contains states
+            //   all the way through the last hardware node).
+            // If no longer at stop state we pass through and the
+            //   "stop state found" flag is left at true.   
+            if ( strStateId.equals(strSmfNodeId2) ) {
+                break;
+            }
+            
+            trjSub.saveState(state);
+        }
+        
+        return trjSub;
+    }
+    
+	/**
+     * Creates and returns a "sub-trajectory" object built from the contiguous
+     * state objects of this trajectory between the start node <code>strSmfNodeId1</code>
+     * and the stop node <code>strSmfNodeId2</code>.  The returned trajectory contains
+     * references to the same states contained in this trajectory, <i>they are not
+     * duplicates</i>.  So any modifications made on the returned object will
+     * be reflected here.  Also, it is important to note that the returned sub-trajectory
+     * <i>includes</i> all states belonging to the stop hardware node 
+     * <code>strSmfNodeId2</code>.  That is, the returned value contains states from,
+     * and including, node 1 up to and including state 2.  If you wish to exclude
+     * the states of both hardware nodes see 
+     * <code>{@link #subTrajectory(String, String)}</code>.
+     * 
+     * @param strSmfNodeId1 hardware node ID defining the first state object in sub-trajectory
+     * @param strSmfNodeId2 hardware node ID defining the last state object in sub-trajectory
+     * 
+     * @return  sub-trajectory of this trajectory defined by the above hardware nodes
+	 * 
+	 * @author Christopher K. Allen
+	 * @since  Nov 14, 2014
+	 * 
+	 * @see    #subTrajectory(String, String)
+	 */
+	public Trajectory<S> subTrajectoryInclusive(String strSmfNodeId1, String strSmfNodeId2) {
+	    boolean        bolStart1 = false;
+	    boolean        bolStop2  = false;
+
+	    // The returned sub-trajectory
+	    Trajectory<S>  trjSub = new Trajectory<S>(this.clsStates);
+	    
+	    // For every state in this trajectory...
+	    for (S state : this) {
+	        
+	        String     strStateId = state.getHardwareNodeId();
+
+	        // Look for the first state, set the "start state found" flag if so
+	        if ( strStateId.equals(strSmfNodeId1) ) {
+	            bolStart1 = true;
+	        }
+	        
+	        // We have not encountered the first state, skip to loop beginning
+	        if ( bolStart1==false ) {
+	            continue;
+	        }
+	        
+	        // Check for the stop state. 
+	        //   If found, set the "stop state found" flag and save the current
+	        //   state to the sub trajectory (if the subtrajectory contains states
+	        //   all the way through the last hardware node).
+	        // If no longer at stop state we pass through and the
+	        //   "stop state found" flag is left at true.   
+	        if ( strStateId.equals(strSmfNodeId2) ) {
+	            bolStop2 = true;
+	            
+	            trjSub.saveState(state);
+	            continue;
+	        }
+	        
+	        // If we have made it this far we have
+	        //     bolStart1 = true
+	        //   and bolStop2 depends upon whether or not the above
+	        //   if conditional set it.  If not, than we have not hit
+	        //   the last element yet.
+	        if ( bolStop2 == false ) {
+	            trjSub.saveState(state);
+	        }
+	        
+	        // We have 
+	        //     bolStart1 = true
+	        //     bolStop2  = true;
+	        // We have started and stopped.  All the states of the
+	        //     subtrajectory have been collected and we are done.
+	        if ( bolStop2 == true) {
+	            break;
+	        }
+	    }
+
+	    return trjSub;
+	}
+	
+    /**
      * Returns the probe state at the specified position.  Returns null if there
      * is no state for the specified position.
      */
@@ -1056,6 +1196,19 @@ public class Trajectory<S extends ProbeState<S>> implements IArchive, Iterable<S
 
 }
 
+/**
+ * This class realized equivalences classes of hardware identifier
+ * strings.  Since modeling elements for hardware devices could have
+ * many difference names, it is necessary to identify all these names
+ * into a single equivalence class for the hardware ID.
+ *
+ * @author Christopher K. Allen
+ * @since  Nov 13, 2014
+ * 
+ * @deprecated  This class is no longer needed since the probe state
+ *              implementation now incorporates a hardware ID attribute. 
+ */
+@Deprecated
 class IdEquivClass implements Comparator<IdEquivClass> { 
     
     /*
