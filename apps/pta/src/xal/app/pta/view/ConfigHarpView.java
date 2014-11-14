@@ -61,8 +61,8 @@ public class ConfigHarpView extends JPanel
     /** Check channel connections to devices before proceeding */
     protected static final boolean BOL_DO_CONNTEST = AppProperties.DEVICE.EPICS_CA_CHK.getValue().asBoolean();
     
-    /** Time out to use when checking connections to the device */
-    protected static final double DBL_TMO_CONNTEST = AppProperties.DEVICE.TMO_CONNTEST.getValue().asDouble();
+//    /** Time out to use when checking connections to the device */
+//    protected static final double DBL_TMO_CONNTEST = AppProperties.DEVICE.TMO_CONNTEST.getValue().asDouble();
 
     
     

@@ -191,6 +191,12 @@ public abstract class DeviceConfigBasePanel<PSet extends ParameterSet> extends J
     /** Time out to use when checking connections to the device */
     protected static final double DBL_TMO_CONNTEST = AppProperties.DEVICE.TMO_CONNTEST.getValue().asDouble();
     
+    /** 
+     * Time delay used when setting new values - i.e., #setDeviceVals(). 
+     * Necessary for CrapView to process new values and reflect on the IOC get side. 
+     */
+    protected static final int      INT_CAPUT_DELAY = AppProperties.DEVICE.LATENCY_PUT.getValue().asInteger();
+    
     
     
     /**  Number of columns in the input text fields */
@@ -325,6 +331,8 @@ public abstract class DeviceConfigBasePanel<PSet extends ParameterSet> extends J
      */
     public void setDevice(ProfileDevice smfDev) {
 
+//        System.out.println("DeviceConfigBase#setDevice: smfDev = " + smfDev);
+        
         // Check that the given wire scanner is not null
         if (smfDev == null) 
             return;
@@ -399,6 +407,10 @@ public abstract class DeviceConfigBasePanel<PSet extends ParameterSet> extends J
         
         try {
             this.datParamSet = this.getDeviceParameters(this.smfDevice);
+            
+//            System.out.println("DeviceConfigBase#refreshDisplay: this.datParamSet");
+//            System.out.println(this.datParamSet);
+            
             this.displayParameterVals(this.datParamSet);
             
         } catch (ConnectionException e) {
@@ -743,9 +755,16 @@ public abstract class DeviceConfigBasePanel<PSet extends ParameterSet> extends J
             if (setParams == null)
                 return null;
     
+//            System.out.println("DeviceConfigBase#setDeviceVals() - setParams = " + setParams.toString());
+//            System.out.println();
+            
             // Set the device parameters then flag the configuration object
             //  that the configuration has changed
             this.smfDevice.configureHardware(setParams);
+            
+            // Allow LabView time to process the new values from the IOC (major kluge)
+            Thread.sleep(INT_CAPUT_DELAY);
+
             MainConfiguration.getInstance().setDirty(this, this.smfDevice);
             
             return setParams;
@@ -761,6 +780,10 @@ public abstract class DeviceConfigBasePanel<PSet extends ParameterSet> extends J
         } catch (NoSuchChannelException e) {
             appLogger().logError(this.getClass(), "Unknown channel for device " + this.smfDevice.getId()); //$NON-NLS-1$
             return null;
+            
+        } catch (InterruptedException e) {
+            appLogger().logError(this.getClass(), "Thread interrupt while waiting for put completion for device " + this.smfDevice.getId()); //$NON-NLS-1$
+            return null;
         }
     }
 
@@ -774,6 +797,10 @@ public abstract class DeviceConfigBasePanel<PSet extends ParameterSet> extends J
      * @author Christopher K. Allen
      */
     protected void displayParameterVals(PSet setVals) {
+        
+//        System.out.println("DeviceConfigBase#displayParameterVals: setVals = ");
+//        System.out.println(setVals);
+//        Thread.dumpStack();
         
         for (ScadaFieldDescriptor dscFld : this.getParamDescriptors()) {
             try {

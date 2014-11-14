@@ -8,7 +8,6 @@ package xal.smf.scada;
 
 import xal.smf.scada.ScadaFieldDescriptor;
 import xal.smf.scada.BadStructException;
-
 import xal.ca.Channel;
 import xal.ca.ChannelRecord;
 import xal.ca.ConnectionException;
@@ -44,7 +43,33 @@ import java.util.MissingResourceException;
 public abstract class ScadaRecord implements DataListener, Cloneable {
     
 
+    /*
+     * Internal Classes
+     */
     
+    /**
+     * Used by enumerations in data structures 
+     * to indicate that they known aspects
+     * of the data fields they represent.
+     *
+     * @since  Dec 16, 2009
+     * @author Christopher K. Allen
+     */
+    public interface IFieldDescriptor  extends XalPvDescriptor.IPvDescriptor {
+        
+        /**
+         * Returns the name of the field in the data structure.
+         *
+         * @return      data structure field name
+         * 
+         * @since  Dec 16, 2009
+         * @author Christopher K. Allen
+         */
+        public String   getFieldName();
+        
+    }
+
+
 
     /** The set of PV field descriptors for this data set */
     private List<ScadaFieldDescriptor>        lstFldDscr; 
@@ -745,7 +770,7 @@ public abstract class ScadaRecord implements DataListener, Cloneable {
                 
             } else {
                 String  strType = clsFldType.getName();
-                String  strMsg  = "DataSet#setPv: " + //$NON-NLS-1$
+                String  strMsg  = "ScadaRecord#setPv: " + //$NON-NLS-1$
                 "Unknown data type " + strType +  //$NON-NLS-1$
                 " for channel handle " + strHndPv; //$NON-NLS-1$
                 System.err.println(strMsg);
@@ -755,16 +780,16 @@ public abstract class ScadaRecord implements DataListener, Cloneable {
             
             
         } catch (SecurityException e) {
-            throw new BadStructException("ScadaStruct#getPv(): Security Exception: inaccessible field " + strFldName); //$NON-NLS-1$
+            throw new BadStructException("ScadaRecord#getPv(): Security Exception: inaccessible field " + strFldName); //$NON-NLS-1$
             
         } catch (NoSuchFieldException e) {
-            throw new BadStructException("ScadaStruct#getPv(): ERROR: No such field " + strFldName); //$NON-NLS-1$
+            throw new BadStructException("ScadaRecord#getPv(): ERROR: No such field " + strFldName); //$NON-NLS-1$
             
         } catch (IllegalArgumentException e) {
-            throw new BadStructException("ScadaStruct#getPv(): Illegal type conversion for field " + strFldName); //$NON-NLS-1$
+            throw new BadStructException("ScadaRecord#getPv(): Illegal type conversion for field " + strFldName); //$NON-NLS-1$
 
         } catch (IllegalAccessException e) {
-            throw new BadStructException("ScadaStruct#getPv(): Illegal access attempt for field " + strFldName); //$NON-NLS-1$
+            throw new BadStructException("ScadaRecord#getPv(): Illegal access attempt for field " + strFldName); //$NON-NLS-1$
 
         }
     }

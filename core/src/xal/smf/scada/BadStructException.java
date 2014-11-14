@@ -8,7 +8,7 @@
 
 package xal.smf.scada;
 
-import xal.smf.scada.ScadaPacket.IFieldDescriptor;
+import xal.smf.scada.ScadaRecord.IFieldDescriptor;
 
 
 /**

@@ -8,7 +8,6 @@ package xal.extension.twissobserver;
 
 import java.util.ArrayList;
 
-import oracle.net.aso.e;
 import xal.tools.beam.CovarianceMatrix;
 import xal.extension.twissobserver.TransferMatrixGenerator.SYNC;
 import xal.model.ModelException;

@@ -13,6 +13,7 @@ import xal.app.pta.MainApplication;
 import xal.app.pta.MainConfiguration;
 import xal.app.pta.MainScanController;
 import xal.app.pta.MainDocument;
+import xal.app.pta.MainScanController.SCAN_MODE;
 import xal.app.pta.daq.MeasurementData;
 import xal.app.pta.tools.logging.IEventLogger;
 import xal.app.pta.view.cmn.DeviceSelectorPanel;
@@ -21,8 +22,12 @@ import xal.app.pta.view.daq.ScanModeIndicatorPanel;
 import xal.app.pta.view.daq.ScanModeIndicatorPanel.LAYOUT;
 import xal.app.pta.view.plt.LiveScanDisplayPanel;
 import xal.app.pta.view.plt.LiveDisplayBase.FORMAT;
+import xal.ca.ConnectionException;
+import xal.ca.GetException;
+import xal.service.pvlogger.PvLoggerException;
 import xal.smf.AcceleratorNode;
 import xal.smf.impl.WireScanner;
+import xal.smf.impl.profile.ProfileDevice;
 
 import java.awt.Color;
 import java.awt.GridBagConstraints;
@@ -32,6 +37,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.border.TitledBorder;
 
@@ -48,7 +54,12 @@ import javax.swing.border.TitledBorder;
  * @since  Jun 10, 2009
  * @author Christopher K. Allen
  */
-public class ScanAcquisitionView extends JPanel implements IDocView, IConfigView, DeviceSelectorPanel.IDeviceSelectionListener {
+public class ScanAcquisitionView extends JPanel 
+    implements IDocView, 
+                IConfigView, 
+                DeviceSelectorPanel.IDeviceSelectionListener, 
+                MainScanController.IScanControllerListener 
+    {
 
 
     /*
@@ -244,13 +255,116 @@ public class ScanAcquisitionView extends JPanel implements IDocView, IConfigView
 //            this.pnlDevSel.setDeviceSelected(strDevId);
     }
 
-
     
+    /*
+     * IScanControllerListener Interface
+     */
+
+    /**
+     * Nothing to do.
+     *
+     * @see xal.app.pta.MainScanController.IScanControllerListener#scanInitiated(java.util.List, xal.app.pta.MainScanController.SCAN_MODE)
+     *
+     * @author Christopher K. Allen
+     * @since  Nov 13, 2014
+     */
+    @Override
+    public void scanInitiated(List<WireScanner> lstDevs, SCAN_MODE mode) {
+    }
+
+    /**
+     * We acquire the data from the profile devices while also involves taking
+     * a PV logger snapshot.
+     *
+     * @see xal.app.pta.MainScanController.IScanControllerListener#scanCompleted(java.util.List)
+     *
+     * @author Christopher K. Allen
+     * @since  Nov 13, 2014
+     */
+    @Override
+    public void scanCompleted(List<WireScanner> lstDevs) {
+
+        // Save the measurement data to the main application document
+        try {
+            
+            // First loosen the device data type to fit into MeasurementData DAQ process
+            List<ProfileDevice> lstDevProf = new LinkedList<ProfileDevice>( lstDevs );
+            
+            MeasurementData  setMsmt = MeasurementData.acquire(lstDevProf);
+
+            this.docMain.setMeasurementData(setMsmt);
+            
+//            System.out.println("ScanAquisitionView#scanCompleted() - DAQ measurements");
+            
+        } catch (ConnectionException e) {
+            getLogger().logException(getClass(), e, "DAQ Failure: unable to connect to a device in " + lstDevs);
+            JOptionPane.showMessageDialog(this, "Error in data qcquisition - see log", "WARNING", JOptionPane.WARNING_MESSAGE);
+            
+        } catch (GetException e) {
+            getLogger().logException(getClass(), e, "DAQ Failure: unable to read from a device in " + lstDevs);
+            JOptionPane.showMessageDialog(this, "Error in data qcquisition - see log", "WARNING", JOptionPane.WARNING_MESSAGE);
+            
+        } catch (PvLoggerException e) {
+            getLogger().logException(getClass(), e, "Unable to take PV Logger snapshot for measurement " + lstDevs);
+            JOptionPane.showMessageDialog(this, "Error in PV Logger capture - see log", "WARNING", JOptionPane.WARNING_MESSAGE);
+            
+        }
+    }
+
+    /**
+     * Nothing to do.
+     *
+     * @see xal.app.pta.MainScanController.IScanControllerListener#scanAborted()
+     *
+     * @author Christopher K. Allen
+     * @since  Nov 13, 2014
+     */
+    @Override
+    public void scanAborted() {
+    }
+
+    /**
+     * Nothing to do.
+     *
+     * @see xal.app.pta.MainScanController.IScanControllerListener#scanActuatorsStopped()
+     *
+     * @author Christopher K. Allen
+     * @since  Nov 13, 2014
+     */
+    @Override
+    public void scanActuatorsStopped() {
+    }
+
+    /**
+     * Nothing to do.
+     *
+     * @see xal.app.pta.MainScanController.IScanControllerListener#scanActuatorsParked()
+     *
+     * @author Christopher K. Allen
+     * @since  Nov 13, 2014
+     */
+    @Override
+    public void scanActuatorsParked() {
+    }
+
+    /**
+     * Nothing to do.
+     *
+     * @see xal.app.pta.MainScanController.IScanControllerListener#scanDeviceFailure(xal.smf.impl.WireScanner)
+     *
+     * @author Christopher K. Allen
+     * @since  Nov 13, 2014
+     */
+    @Override
+    public void scanDeviceFailure(WireScanner smfDev) {
+    }
+
+
     /*
      * GUI Support Methods
      */
-    
-    
+
+
     /**
      * Initializes all the components of the
      * GUI display.
@@ -259,7 +373,6 @@ public class ScanAcquisitionView extends JPanel implements IDocView, IConfigView
      * @since  Aug 19, 2009
      * @author Christopher K. Allen
      */
-    @SuppressWarnings("unchecked")
     private void buildGuiComponents()   {
 
         
@@ -352,7 +465,7 @@ public class ScanAcquisitionView extends JPanel implements IDocView, IConfigView
         gbcLayout.gridwidth = 2;
         this.add(this.pnlAcqDatPlt, gbcLayout);
     }
-    
+
 }
 
 
