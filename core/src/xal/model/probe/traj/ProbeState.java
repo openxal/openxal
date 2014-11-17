@@ -87,6 +87,7 @@ public abstract class ProbeState<S extends ProbeState<S>> implements IProbeState
     /** Probe's relativistic gamma */
     private double  m_dblGamma = Double.NaN;
     
+    /** Probe velocity with respect to the speed of light */
     private double m_dblBeta = 0.0;
     
 //  CKA This does not belong here

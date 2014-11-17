@@ -34,39 +34,77 @@ import xal.tools.math.poly.UnivariateRealPolynomial;
 public class IdealRfGap extends ThinElement implements IRfGap {
 
 	/*
-	 *  Global Attributes
+	 *  Global Constants
 	 */
-	/**
+	
+    /**
 	 *  the string type identifier for all IdealRfGap objects
 	 */
 	public final static String s_strType = "IdealRfGap"; //$NON-NLS-1$
 
+	
 	/**
 	 *  Parameters for XAL MODEL LATTICE dtd
 	 */
 	public final static String s_strParamETL = "ETL"; //$NON-NLS-1$
+	
 	/**
 	 *  Description of the Field
 	 */
 	public final static String s_strParamPhase = "Phase"; //$NON-NLS-1$
+	
 	/**
 	 *  Description of the Field
 	 */
 	public final static String s_strParamFreq = "Frequency"; //$NON-NLS-1$
 	
+	
+	/*
+	 * Global Attributes
+	 */
+	
 	/**
 	 * Don't know what this is? CKA
 	 */
-	public static double coeffX = 1.0;
+	public static double COEFF_X = 1.0;
 
 	/**
      * Don't know what this is? CKA
 	 */
-	public static double coeffY = 1.0;	
+	public static double COEFF_Y = 1.0;	
+	
+
+	/*
+	 * Class Dynamic Variables???
+	 */
+	
+    /**
+     *  These are kluge jobs for RF cavities.  Very dangerous since
+     *  they are class variables. 
+     */
+    private static double FIRST_GAP_PHASE_CORR = 0.;
+    
+    /**
+     *  These are kluge jobs for RF cavities.  Very dangerous since
+     *  they are class variables. 
+     */
+    private static double STRUCTURE_PHASE = 0.;
+    
+    /**
+     *  These are kluge jobs for RF cavities.  Very dangerous since
+     *  they are class variables. 
+     */
+    private static double UPSTREAM_EXIT_TIME = 0.;
+
+    /** the phase kick correction applied at the gap center [rad]*/
+    private static double DELTA_PHASE_CORRECTION = 0.;
+
+	
 	
 	/*
-	 *  Defining Attributes
+	 *  Local Attributes
 	 */
+	
 	/**
 	 *  ETL product of gap
 	 */
@@ -94,28 +132,9 @@ public class IdealRfGap extends ThinElement implements IRfGap {
 	private double gapOffset = 0.;
 	
 	/**
-	 *  These are kluge jobs for RF cavities.  Very dangerous since
-	 *  they are class variables. 
-	 */
-	private static double firstGapPhaseCorr = 0.;
-    /**
-     *  These are kluge jobs for RF cavities.  Very dangerous since
-     *  they are class variables. 
-     */
-	private static double structurePhase = 0.;
-    /**
-     *  These are kluge jobs for RF cavities.  Very dangerous since
-     *  they are class variables. 
-     */
-	private static double upstreamExitTime = 0.;
-
-  /** the phase kick correction applied at the gap center [rad]*/
-  static private double deltaPhaseCorrection = 0.;
-
-	/**
 	 *  the on axis accelerating field (V)
 	 */
-	private double E0 = 0.;
+	private double dblFieldE0 = 0.;
 
 	/**
 	 *  the accelerating cell length
@@ -136,23 +155,28 @@ public class IdealRfGap extends ThinElement implements IRfGap {
 	/**
 	 *  fit of the TTF vs. beta
 	 */
-	private UnivariateRealPolynomial TTFFit;
+	private UnivariateRealPolynomial fitTTF;
 
 	/**
 	 *  fit of the TTF-prime vs. beta
 	 */
-	private UnivariateRealPolynomial TTFPrimeFit;
+	private UnivariateRealPolynomial fitTTFPrime;
 
 	/**
 	 *  fit of the S factor vs. beta
 	 */
-	private UnivariateRealPolynomial SFit;
+	private UnivariateRealPolynomial fitSTF;
 
 	/**
 	 *  fit of the S-prime vs. beta
 	 */
-	private UnivariateRealPolynomial SPrimeFit;
+	private UnivariateRealPolynomial fitSTFPrime;
 
+	
+	/*
+	 * Initialization
+	 */
+	
 	/**
 	 *  Creates a new instance of IdealRfGap
 	 *
@@ -177,99 +201,18 @@ public class IdealRfGap extends ThinElement implements IRfGap {
 		super(s_strType);
 	}
 
+
 	/*
-	 *  IRfGap Interface
+	 * Attribute Query
 	 */
+	
 	/**
-	 *  Return the ETL product of the gap, where E is the longitudinal electric
-	 *  field, T is the transit time factor, and L is the gap length.
-	 *
-	 *@return    the ETL product of the gap (in <bold>volts</bold> ).
-	 */
-	public double getETL() {
-		return m_dblETL;
-	}
-
-	/**
-	 *  Return the RF phase delay of the gap with respect to the synchronous
-	 *  particle.
-	 *
-	 *@return    phase delay w.r.t. synchronous particle (in <bold>radians</bold> ).
-	 */
-	public double getPhase() {
-		return m_dblPhase;
-	}
-
-	/**
-	 *  Get the operating frequency of the RF gap.
-	 *
-	 *@return    frequency of RF gap (in <bold>Hertz</bold> )
-	 */
-	public double getFrequency() {
-		return m_dblFreq;
-	}
-
-
-	/**
-	 *  return wheteher this gap is the initial gap of a cavity
+	 *  return whether this gap is the initial gap of a cavity
 	 *
 	 *@return    The firstGap value
 	 */
 	public boolean isFirstGap() {
-		return initialGap;
-	}
-
-	/**
-	 *  Set the ETL product of the RF gap where E is the longitudinal electric
-	 *  field of the gap, T is the transit time factor of the gap, L is the length
-	 *  of the gap. <p>
-	 *
-	 *  The maximum energy gain from the gap is given by qETL where q is the charge
-	 *  (in coulombs) of the species particle.
-	 *
-	 *@param  dblETL  ETL product of gap (in <bold>volts</bold> ).
-	 */
-	public void setETL(double dblETL) {
-		m_dblETL = dblETL;
-	}
-
-	/**
-	 *  Set the phase delay of the RF in gap with respect to the synchronous
-	 *  particle. The actual energy gain from the gap is given by qETLcos(dblPhi)
-	 *  where dbkPhi is the phase delay.
-	 *
-	 *@param  dblPhase  phase delay of the RF w.r.t. synchonouse particle (in
-	 *      <bold>radians</bold> ).
-	 */
-	public void setPhase(double dblPhase) {
-		m_dblPhase = dblPhase;
-	}
-
-	/**
-	 *  Set the operating frequency of the RF gap.
-	 *
-	 *@param  dblFreq  frequency of RF gap (in <bold>Hertz</bold> )
-	 */
-	public void setFrequency(double dblFreq) {
-		m_dblFreq = dblFreq;
-	}
-
-	/**
-	 *  Set the on accelerating field @ param E - the on axis field (V/m)
-	 *
-	 *@param  E  The new e0 value
-	 */
-	public void setE0(double E) {
-		E0 = E;
-	}
-
-	/**
-	 *  Get the on accelerating field (V/m)
-	 *
-	 *@return    The e0 value
-	 */
-	public double getE0() {
-		return E0;
+	    return initialGap;
 	}
 
 	/**
@@ -277,12 +220,10 @@ public class IdealRfGap extends ThinElement implements IRfGap {
 	 *
 	 *@return    The cellLength value
 	 */
-	public double getCellLength() {
-		return cellLength;
-	}
+    public double getCellLength() {
+	    return cellLength;
+    }
 
-	
-	
     /*
      * Operations
      */
@@ -330,360 +271,471 @@ public class IdealRfGap extends ThinElement implements IRfGap {
         return beta;
     }
     
-	/*
-	 *  IElement Interface
-	 */
 
+    /**
+     *  a method that is called once by transferMatrix to calculate the energy
+     *  gain. This prevents energy gain calculation from being repeated many times.
+     *  Importantly it provides a workaround from the eneryGain being calculated
+     *  after the upstreamExitPhase is updated elsewhere
+     *
+     *@param  probe  The Parameter
+     *@return        The Return Value
+     */
+    /*
+     *  public double compEnergyGain(IProbe probe) {
+     *  }
+     */
+    /**
+     *  Get the transverse focusing constant for a particular probe. The focusing
+     *  constant is used in the construction of the transfer matrix for the RF gap.
+     *  A gap provides longitudinal focusing and transverse defocusing as well as a
+     *  gain in beam energy. This focusing constant describes the effect in the
+     *  transverse direction, which is defocusing and, therefore, negative. <p>
+     *
+     *  The value represents the thin lens focusing constant for an ideal RF gap
+     *  (this is the inverse of the focal length). To compute the focusing action
+     *  for the lens we must include beam energy, which is changing through the
+     *  gap. We use the value of beta for which the beam has received half the
+     *  total energy gain.
+     *
+     *@param  probe  beam energy and particle charge are taken from the probe
+     *@return        (de)focusing constant (<b>in radians/meter</b> )
+     */
+    public double compTransFocusing(IProbe probe) {
+
+//        double  q = IElement.UnitCharge;
+        double c = IElement.LightSpeed;
+
+        double Q = Math.abs(probe.getSpeciesCharge());
+        double Er = probe.getSpeciesRestEnergy();
+        double Wi = probe.getKineticEnergy();
+
+        double Wbar = Wi + this.energyGain(probe) / 2.0;
+        double gbar = Wbar / Er + 1.0;
+        double bbar = Math.sqrt(1.0 - 1.0 / (gbar * gbar));
+        double bgbar = bbar * gbar;
+
+        double ETL = this.getETL();
+        double phi = this.getPhase();
+        double f = this.getFrequency();
+
+//        double   kr = Math.PI*Q*ETL*f*Math.sin(-phi)/(q*c*Er*bgbar*bgbar);
+        double kr = Math.PI * Q * ETL * f * Math.sin(-phi) / (c * Er * bgbar * bgbar);
+
+        return kr;
+    }
+
+    /**
+     *  Get the longitudinal focusing constant for a particular probe. The focusing
+     *  constant is used in the construction of the transfer matrix for the RF gap.
+     *  A gap provides longitudinal focusing and transverse defocusing as well as a
+     *  gain in beam energy. This focusing constant describes the effect in the
+     *  longitudinal direction, which is focusing and, therefore, positive. <p>
+     *
+     *  The value represents the thin lens focusing constant for an ideal RF gap
+     *  (this is the inverse of the focal length). To compute the focusing action
+     *  for the lens we must include beam energy, which is changing through the
+     *  gap. We use the value of beta for which the beam has received half the
+     *  total energy gain.
+     *
+     *@param  probe  beam energy and particle charge are taken from the probe
+     *@return        (de)focusing constant (<b>in radians/meter</b> )
+     */
+    public double compLongFocusing(IProbe probe) {
+
+        double Er = probe.getSpeciesRestEnergy();
+        double Wi = probe.getKineticEnergy();
+
+        double Wbar = Wi + this.energyGain(probe) / 2.0;
+        double gbar = Wbar / Er + 1.0;
+
+        double kr = this.compTransFocusing(probe);
+        double kz = -2.0 * kr * gbar * gbar;
+
+        return kz;
+    }
+
+
+    /*
+	 *  IRfGap Interface
+	 */
+	
 	/**
-	 *  Returns the time taken for the probe to propagate through element.
+	 *  Return the ETL product of the gap, where E is the longitudinal electric
+	 *  field, T is the transit time factor, and L is the gap length.
 	 *
-	 *@param  probe  propagating probe
-	 *@return        value of zero
+	 *@return    the ETL product of the gap (in <bold>volts</bold> ).
 	 */
 	@Override
+	public double getETL() {
+		return m_dblETL;
+	}
+
+	/**
+	 *  Return the RF phase delay of the gap with respect to the synchronous
+	 *  particle.
+	 *
+	 *@return    phase delay w.r.t. synchronous particle (in <bold>radians</bold> ).
+	 */
+    @Override
+	public double getPhase() {
+		return m_dblPhase;
+	}
+
+	/**
+	 *  Get the operating frequency of the RF gap.
+	 *
+	 *@return    frequency of RF gap (in <bold>Hertz</bold> )
+	 */
+    @Override
+	public double getFrequency() {
+		return m_dblFreq;
+	}
+
+	/**
+	 *  Set the ETL product of the RF gap where E is the longitudinal electric
+	 *  field of the gap, T is the transit time factor of the gap, L is the length
+	 *  of the gap. <p>
+	 *
+	 *  The maximum energy gain from the gap is given by qETL where q is the charge
+	 *  (in coulombs) of the species particle.
+	 *
+	 *@param  dblETL  ETL product of gap (in <bold>volts</bold> ).
+	 */
+    @Override
+	public void setETL(double dblETL) {
+		m_dblETL = dblETL;
+	}
+
+	/**
+	 *  Set the phase delay of the RF in gap with respect to the synchronous
+	 *  particle. The actual energy gain from the gap is given by qETLcos(dblPhi)
+	 *  where dbkPhi is the phase delay.
+	 *
+	 *@param  dblPhase  phase delay of the RF w.r.t. synchonouse particle (in
+	 *      <bold>radians</bold> ).
+	 */
+    @Override
+	public void setPhase(double dblPhase) {
+		m_dblPhase = dblPhase;
+	}
+
+	/**
+	 *  Set the operating frequency of the RF gap.
+	 *
+	 *@param  dblFreq  frequency of RF gap (in <bold>Hertz</bold> )
+	 */
+    @Override
+	public void setFrequency(double dblFreq) {
+		m_dblFreq = dblFreq;
+	}
+
+	/**
+	 *  Set the on accelerating field @ param E - the on axis field (V/m)
+	 *
+	 *@param  E  The new e0 value
+	 */
+    @Override
+	public void setE0(double E) {
+		dblFieldE0 = E;
+	}
+
+	/**
+	 *  Get the on accelerating field (V/m)
+	 *
+	 *@return    The e0 value
+	 */
+    @Override
+	public double getE0() {
+		return dblFieldE0;
+	}
+
+	
+    /*
+     *  IElement Interface
+     */
+
+    /**
+     *  Returns the time taken for the probe to propagate through element.
+     *
+     *@param  probe  propagating probe
+     *@return        value of zero
+     */
+    @Override
     public double elapsedTime(IProbe probe) {
 
-		// Initial energy parameters
-		double Er = probe.getSpeciesRestEnergy();
-		double Wi = probe.getKineticEnergy();
-		double bi = probe.getBeta();
-//		double gi = probe.getGamma();
-		double dW = this.energyGain(probe);
+        // Initial energy parameters
+        double Er = probe.getSpeciesRestEnergy();
+        double Wi = probe.getKineticEnergy();
+        double bi = probe.getBeta();
+//      double gi = probe.getGamma();
+        double dW = this.energyGain(probe);
 
-		// Final energy parameters
-		double Wf = Wi + dW;
-		double gf = Wf / Er + 1.0;
-		double bf = Math.sqrt(1.0 - 1.0 / (gf * gf));
+        // Final energy parameters
+        double Wf = Wi + dW;
+        double gf = Wf / Er + 1.0;
+        double bf = Math.sqrt(1.0 - 1.0 / (gf * gf));
 
-		// update the elapsed time to account for the phase correction term
-		double dT = ((deltaPhaseCorrection) / (this.getFrequency() * 2.0 * Math.PI));
+        // update the elapsed time to account for the phase correction term
+        double dT = ((DELTA_PHASE_CORRECTION) / (this.getFrequency() * 2.0 * Math.PI));
 
-		//the gap offset correction
-		dT = dT + gapOffset * (1. / (bi * IElement.LightSpeed) - 1. / (bf * IElement.LightSpeed));
+        //the gap offset correction
+        dT = dT + gapOffset * (1. / (bi * IElement.LightSpeed) - 1. / (bf * IElement.LightSpeed));
 
-		//the time when probe will exit this gap
-		upstreamExitTime = probe.getTime() + dT + (getCellLength()/2.) / (bf * IElement.LightSpeed);
+        //the time when probe will exit this gap
+        UPSTREAM_EXIT_TIME = probe.getTime() + dT + (getCellLength()/2.) / (bf * IElement.LightSpeed);
 
-		return dT;
-	}
+        return dT;
+    }
 
 //    /** the interface method to provide the energy gain.
 //    * since this calculation has gotten complicated it is done
 //    * in the TransferMap method and the answer is returned here. */
 //
-	/**
-	 *  Compute the energy gain of the RF gap for a probe including the effects of
-	 *  calculating the phase advance.
-	 *
-	 *@param  probe  uses the particle species charge
-	 *@return        energy gain for this probe (<b>in electron-volts</b> )
-	 */
-
-	@Override
+    /**
+     *  Compute the energy gain of the RF gap for a probe including the effects of
+     *  calculating the phase advance.
+     *
+     *@param  probe  uses the particle species charge
+     *@return        energy gain for this probe (<b>in electron-volts</b> )
+     */
+    @Override
     public double energyGain(IProbe probe) {
-		return theEnergyGain;
-	}
+        return theEnergyGain;
+    }
 
-	/**
-	 *  Routine to calculate the energy gain along with the phase advance. 
-	 *  A
-	 *  method that is called once by transferMatrix to calculate the energy gain.
-	 *  This prevents energy gain calculation from being repeated many times.
-	 *  Importantly it provides a workaround from the eneryGain being calculated
-	 *  after the upstreamExitPhase is updated elsewhere
-	 *
-	 * @param  probe  The Parameter
-	 */
-	private void compEnergyGain(IProbe probe) {
-		double EL = getE0() * getCellLength();
+    /**
+     * Conversion method to be provided by the user
+     * 
+     * @param latticeElement the SMF node to convert
+     */
+    @Override
+    public void initializeFrom(LatticeElement element) {
+        super.initializeFrom(element);      
+        RfGap rfgap = (RfGap) element.getNode();
+        
+        // Initialize from source values
+        initialGap = rfgap.isFirstGap();
+        cellLength = rfgap.getGapLength();
+        gapOffset = rfgap.getGapOffset();
+        fitTTFPrime = rfgap.getTTFPrimeFit();
+        fitTTF = rfgap.getTTFFit(); 
+        fitSTFPrime = rfgap.getSPrimeFit();
+        fitSTF = rfgap.getSFit();
+        structureMode = rfgap.getStructureMode();
+    }
 
-		// Initial energy parameters
-		double Er = probe.getSpeciesRestEnergy();		
-		double bi = probe.getBeta();
-//		double gi = probe.getGamma();		
-		double Wi = probe.getKineticEnergy();
-		
-		double phi0 = 0.;
-
-		double arrival_time = probe.getTime();
-
-		//the correction for the gap offset needed
-		arrival_time = arrival_time + gapOffset / (bi * IElement.LightSpeed);
-
-		// get phase at the gap center:
-		if(!isFirstGap()) {
-			phi0 = 2. * Math.PI * arrival_time * getFrequency() - firstGapPhaseCorr;
-			double driftTime = probe.getTime() - ((getCellLength()/2.)/(bi * IElement.LightSpeed) + upstreamExitTime);
-			int nLabmda = (int) Math.round(2*structureMode*driftTime*getFrequency());
-			structurePhase = structurePhase + Math.PI*nLabmda;
-			phi0 = phi0 + structurePhase;
-			//phi0 = Math.IEEEremainder(phi0, (2. * Math.PI * (1.0 - structureMode / 2.0)));
-			setPhase(phi0);
-		}
-		// for first gap use input for phase at the gap center
-		else {
-			structurePhase = 0.;
-			firstGapPhaseCorr = 2. * Math.PI * arrival_time * getFrequency() - getPhase();
-			phi0 = getPhase();
-		}
-
-		double Q = Math.abs(probe.getSpeciesCharge());
-		theEnergyGain = Q * EL * Math.cos(phi0) * TTFFit.evaluateAt(bi);
-
-		structurePhase = structurePhase - (2 - structureMode) * Math.PI;
-		structurePhase = Math.IEEEremainder(structurePhase , (2. * Math.PI));
-		
-		//phase change from center correction factor for future time calculations
-		//in PARMILA TTFPrime and SPrime are in [1/cm] units, we use [m]
-		deltaPhaseCorrection = 0;
-		double ttf = TTFFit.evaluateAt(bi);
-		double ttf_prime = 0.01*TTFPrimeFit.evaluateAt(bi);
-		double stf = SFit.evaluateAt(bi);
-		double stf_prime = 0.01*SPrimeFit.evaluateAt(bi);
-		double freq = getFrequency();
-//		double phi_gap = phi0;
-		double dE_gap = Q*EL*(ttf*Math.cos(phi0) + stf*Math.sin(phi0))/2.0;
-		double b_gap0 = Math.sqrt(1.-Er*Er/((Er+Wi+dE_gap)*(Er+Wi+dE_gap)));	
-		double k_gap0 = 2*Math.PI*freq/(b_gap0*IElement.LightSpeed);	
-		double gamma_gap = Math.sqrt(1./(1.-b_gap0*b_gap0));
-		double b_gap = b_gap0;
-		double k_gap = k_gap0;
-		double dlt_phi = (Q*EL/(Er*gamma_gap*gamma_gap*gamma_gap*b_gap*b_gap))*k_gap*(ttf_prime*Math.sin(phi0) - stf_prime*Math.cos(phi0))/2.0;
-    for( int i = 0; i < 3; i++){
-			b_gap = Math.sqrt(1.-Er*Er/((Er+Wi+dE_gap)*(Er+Wi+dE_gap)));	
-			k_gap = 2*Math.PI*freq/(b_gap*IElement.LightSpeed);	
-			gamma_gap = Math.sqrt(1./(1.-b_gap*b_gap));
-			dE_gap = Q*EL*((ttf + ttf_prime*(k_gap - k_gap0))*Math.cos(phi0+dlt_phi) + (stf + stf_prime*(k_gap - k_gap0))*Math.sin(phi0+dlt_phi))/2.0;
-			dlt_phi = (Q*EL/(Er*gamma_gap*gamma_gap*gamma_gap*b_gap*b_gap))*k_gap*(ttf_prime*Math.sin(phi0+dlt_phi) - stf_prime*Math.cos(phi0+dlt_phi))/2.0;
-		}
-		//System.out.println("Stop "+this.getId() + "dlt_phi ="+(180*dlt_phi/Math.PI)+" bi="+bi+" b_gap="+b_gap+" dE_gap="+dE_gap+" Wi="+Wi);
-		//the energy gaine and phase are known
-		//now we calculate the total energy gain and phase
-		theEnergyGain = Q*EL*((ttf + ttf_prime*(k_gap - k_gap0))*Math.cos(phi0+dlt_phi));
-		deltaPhaseCorrection = (Q*EL/(Er*gamma_gap*gamma_gap*gamma_gap*b_gap*b_gap))*k_gap*(ttf_prime*Math.sin(phi0+dlt_phi));		
-		
-		//System.out.println(this.getId() + " " + (Math.IEEEremainder(phi0 * 57.295779, 360.)) + "  " + Wi + "  " + theEnergyGain);
-	}
-
-	/**
-	 * Compute the transfer map for an ideal RF gap.
-	 *
-	 * @param  probe               compute transfer map using parameters from this probe
-	 *
-	 * @return                     transfer map for the probe
-	 *
-	 * @exception  ModelException  this should not occur
-	 */
-	@Override
+    /**
+     * Compute the transfer map for an ideal RF gap.
+     *
+     * @param  probe               compute transfer map using parameters from this probe
+     *
+     * @return                     transfer map for the probe
+     *
+     * @exception  ModelException  this should not occur
+     */
+    @Override
     protected PhaseMap transferMap(IProbe probe) throws ModelException {
 
-//    	System.out.println("This is " + this.getId());
-//    	System.out.println("E0 is   " + this.getE0());
-//    	System.out.println("ETL is  " + this.getETL());
-//    	System.out.println("");
-    	
+//      System.out.println("This is " + this.getId());
+//      System.out.println("dblFieldE0 is   " + this.getE0());
+//      System.out.println("ETL is  " + this.getETL());
+//      System.out.println("");
+        
 
-		// Get probe parameters at initial energy
-		double Er = probe.getSpeciesRestEnergy();
-		double Wi = probe.getKineticEnergy();
-		double bi = probe.getBeta();
-		double gi = probe.getGamma();
+        // Get probe parameters at initial energy
+        double Er = probe.getSpeciesRestEnergy();
+        double Wi = probe.getKineticEnergy();
+        double bi = probe.getBeta();
+        double gi = probe.getGamma();
 
-// Determine the current energy gain and focusing constants for the gap
+        // Determine the current energy gain and focusing constants for the gap
 
-		// the following section is to calculate the phase of the beam at each gap, rather than use hardwired phases.
+        // the following section is to calculate the phase of the beam at each gap, rather than use hardwired phases.
 
-// update the energy gain first:
-		if(probe.getAlgorithm().useRfGapPhaseCalculation()) {
-			compEnergyGain(probe);
-		} else {
-			simpleEnergyGain(probe);
-		}
+        // update the energy gain first:
+        if(probe.getAlgorithm().useRfGapPhaseCalculation()) {
+            compEnergyGain(probe);
+        } else {
+            simpleEnergyGain(probe);
+        }
 
-		double dW = this.energyGain(probe);
+        double dW = this.energyGain(probe);
 
-		double kz = this.compLongFocusing(probe);
-		double kt = this.compTransFocusing(probe);
+        double kz = this.compLongFocusing(probe);
+        double kt = this.compTransFocusing(probe);
 
-		// Compute final energy parameters
-		double Wf = Wi + dW;
-		double gf = Wf / Er + 1.0;
-		double bf = Math.sqrt(1.0 - 1.0 / (gf * gf));
+        // Compute final energy parameters
+        double Wf = Wi + dW;
+        double gf = Wf / Er + 1.0;
+        double bf = Math.sqrt(1.0 - 1.0 / (gf * gf));
 
-		// Compute average energy parameters
-//		double Wb = (Wf + Wi) / 2.0;
-//		double gb = Wb / Er + 1.0;
+        // Compute average energy parameters
+//      double Wb = (Wf + Wi) / 2.0;
+//      double gb = Wb / Er + 1.0;
 //        double bg = Math.sqrt(1.0 - 1.0/(gb*gb));
 
 
-		// Compute component block matrices then full transfer matrix
-		double arrTranX[][] = new double[][]{{1.0, 0.0}, {kt*coeffX / (bf * gf), bi * gi / (bf * gf)}};
-		double arrTranY[][] = new double[][]{{1.0, 0.0}, {kt*coeffY / (bf * gf), bi * gi / (bf * gf)}};
-		
-		// CKA - Corrected 7/14/2010
-		//  Additional factor gbar^2 in the longitudinal focusing term 
-//		double arrLong[][] = new double[][]{{1.0, 0.0}, {(kz / (bf * gf)) * gb * gb / (gf * gf), gi * gi * gi * bi / (gf * gf * gf * bf)}};
+        // Compute component block matrices then full transfer matrix
+        double arrTranX[][] = new double[][]{{1.0, 0.0}, {kt*COEFF_X / (bf * gf), bi * gi / (bf * gf)}};
+        double arrTranY[][] = new double[][]{{1.0, 0.0}, {kt*COEFF_Y / (bf * gf), bi * gi / (bf * gf)}};
+        
+        // CKA - Corrected 7/14/2010
+        //  Additional factor gbar^2 in the longitudinal focusing term 
+//      double arrLong[][] = new double[][]{{1.0, 0.0}, {(kz / (bf * gf)) * gb * gb / (gf * gf), gi * gi * gi * bi / (gf * gf * gf * bf)}};
         double arrLong[][] = new double[][]{{1.0, 0.0}, { kz / (bf * gf * gf * gf), gi * gi * gi * bi / (gf * gf * gf * bf)}};
 
-		PhaseMatrix matPhi = new PhaseMatrix();
+        PhaseMatrix matPhi = new PhaseMatrix();
 
-		matPhi.setElem(6, 6, 1.0);
-		matPhi.setSubMatrix(0, 1, 0, 1, arrTranX);
-		matPhi.setSubMatrix(2, 3, 2, 3, arrTranY);
-		matPhi.setSubMatrix(4, 5, 4, 5, arrLong);
+        matPhi.setElem(6, 6, 1.0);
+        matPhi.setSubMatrix(0, 1, 0, 1, arrTranX);
+        matPhi.setSubMatrix(2, 3, 2, 3, arrTranY);
+        matPhi.setSubMatrix(4, 5, 4, 5, arrLong);
 
-		// Do the phase update if this is desired:
-		// do it here to resuse the bi, bf, etc. factors
-//	if(probe.getAlgorithm().useRfGapPhaseCalculation()) advancePhase(probe);
+        // Do the phase update if this is desired:
+        // do it here to resuse the bi, bf, etc. factors
+//  if(probe.getAlgorithm().useRfGapPhaseCalculation()) advancePhase(probe);
 
 //        PrintWriter os = new PrintWriter(System.out);
 //        matPhi.print(os);
 //        os.close();
 
-		return new PhaseMap(matPhi);
-	}
+        return new PhaseMap(matPhi);
+    }
 
-
-	/*
-	 *  Support Methods
-	 */
-	/**
-	 *  Compute the energy gain of the RF gap for a probe assuming a fixed default
-	 *  phase at the gap center.
-	 *
-	 *@param  probe  uses the particle species charge
-	 *@return        energy gain for this probe (<b>in electron-volts</b> )
-	 */
-	public double simpleEnergyGain(IProbe probe) {
-//
-//        System.out.println("simpleEnergyGain()");
-//
-		double ETL = this.getETL();
-		double Q = Math.abs(probe.getSpeciesCharge());
-		double phi = this.getPhase();
-		return theEnergyGain = Q * ETL * Math.cos(phi);
-	}
-
-	/**
-	 *  a method that is called once by transferMatrix to calculate the energy
-	 *  gain. This prevents energy gain calculation from being repeated many times.
-	 *  Importantly it provides a workaround from the eneryGain being calculated
-	 *  after the upstreamExitPhase is updated elsewhere
-	 *
-	 *@param  probe  The Parameter
-	 *@return        The Return Value
-	 */
-	/*
-	 *  public double compEnergyGain(IProbe probe) {
-	 *  }
-	 */
-	/**
-	 *  Get the transverse focusing constant for a particular probe. The focusing
-	 *  constant is used in the construction of the transfer matrix for the RF gap.
-	 *  A gap provides longitudinal focusing and transverse defocusing as well as a
-	 *  gain in beam energy. This focusing constant describes the effect in the
-	 *  transverse direction, which is defocusing and, therefore, negative. <p>
-	 *
-	 *  The value represents the thin lens focusing constant for an ideal RF gap
-	 *  (this is the inverse of the focal length). To compute the focusing action
-	 *  for the lens we must include beam energy, which is changing through the
-	 *  gap. We use the value of beta for which the beam has received half the
-	 *  total energy gain.
-	 *
-	 *@param  probe  beam energy and particle charge are taken from the probe
-	 *@return        (de)focusing constant (<b>in radians/meter</b> )
-	 */
-	public double compTransFocusing(IProbe probe) {
-
-//        double  q = IElement.UnitCharge;
-		double c = IElement.LightSpeed;
-
-		double Q = Math.abs(probe.getSpeciesCharge());
-		double Er = probe.getSpeciesRestEnergy();
-		double Wi = probe.getKineticEnergy();
-
-		double Wbar = Wi + this.energyGain(probe) / 2.0;
-		double gbar = Wbar / Er + 1.0;
-		double bbar = Math.sqrt(1.0 - 1.0 / (gbar * gbar));
-		double bgbar = bbar * gbar;
-
-		double ETL = this.getETL();
-		double phi = this.getPhase();
-		double f = this.getFrequency();
-
-//        double   kr = Math.PI*Q*ETL*f*Math.sin(-phi)/(q*c*Er*bgbar*bgbar);
-		double kr = Math.PI * Q * ETL * f * Math.sin(-phi) / (c * Er * bgbar * bgbar);
-
-		return kr;
-	}
-
-	/**
-	 *  Get the longitudinal focusing constant for a particular probe. The focusing
-	 *  constant is used in the construction of the transfer matrix for the RF gap.
-	 *  A gap provides longitudinal focusing and transverse defocusing as well as a
-	 *  gain in beam energy. This focusing constant describes the effect in the
-	 *  longitudinal direction, which is focusing and, therefore, positive. <p>
-	 *
-	 *  The value represents the thin lens focusing constant for an ideal RF gap
-	 *  (this is the inverse of the focal length). To compute the focusing action
-	 *  for the lens we must include beam energy, which is changing through the
-	 *  gap. We use the value of beta for which the beam has received half the
-	 *  total energy gain.
-	 *
-	 *@param  probe  beam energy and particle charge are taken from the probe
-	 *@return        (de)focusing constant (<b>in radians/meter</b> )
-	 */
-	public double compLongFocusing(IProbe probe) {
-
-		double Er = probe.getSpeciesRestEnergy();
-		double Wi = probe.getKineticEnergy();
-
-		double Wbar = Wi + this.energyGain(probe) / 2.0;
-		double gbar = Wbar / Er + 1.0;
-
-		double kr = this.compTransFocusing(probe);
-		double kz = -2.0 * kr * gbar * gbar;
-
-		return kz;
-	}
-
-	/*
-	 *  Testing and Debugging
-	 */
-	/**
-	 *  Dump current state and content to output stream.
-	 *
-	 *@param  os  output stream object
-	 */
-	@Override
-    public void print(PrintWriter os) {
-		super.print(os);
-
-		os.println("  Gap ETL product    : " + this.getETL()); //$NON-NLS-1$
-		os.println("  Gap phase shift    : " + this.getPhase()); //$NON-NLS-1$
-		os.println("  RF frequency       : " + this.getFrequency()); //$NON-NLS-1$
-		os.println("  Axial field E0     : " + this.getE0() );
-	}
 	
-	/**
-	 * Conversion method to be provided by the user
-	 * 
-	 * @param latticeElement the SMF node to convert
-	 */
-	@Override
-	public void initializeFrom(LatticeElement element) {
-		super.initializeFrom(element);		
-		RfGap rfgap = (RfGap) element.getNode();
-		
-	    // Initialize from source values
-	    initialGap = rfgap.isFirstGap();
-	    cellLength = rfgap.getGapLength();
-	    gapOffset = rfgap.getGapOffset();
-	    TTFPrimeFit = rfgap.getTTFPrimeFit();
-	    TTFFit = rfgap.getTTFFit();	
-	    SPrimeFit = rfgap.getSPrimeFit();
-	    SFit = rfgap.getSFit();
-	    structureMode = rfgap.getStructureMode();
-	}
+    /*
+     *  Object Overrides
+     */
+
+    /**
+     *  Dump current state and content to output stream.
+     *
+     *@param  os  output stream object
+     */
+    @Override
+    public void print(PrintWriter os) {
+    	super.print(os);
+    
+    	os.println("  Gap ETL product    : " + this.getETL()); //$NON-NLS-1$
+    	os.println("  Gap phase shift    : " + this.getPhase()); //$NON-NLS-1$
+    	os.println("  RF frequency       : " + this.getFrequency()); //$NON-NLS-1$
+    	os.println("  Axial field dblFieldE0     : " + this.getE0() );
+    }
+
+    
+    /*
+     *  Support Methods
+     */
+    /**
+     *  Compute the energy gain of the RF gap for a probe assuming a fixed default
+     *  phase at the gap center.
+     *
+     *@param  probe  uses the particle species charge
+     *@return        energy gain for this probe (<b>in electron-volts</b> )
+     */
+    private double simpleEnergyGain(IProbe probe) {
+        //
+        //        System.out.println("simpleEnergyGain()");
+        //
+        double ETL = this.getETL();
+        double Q = Math.abs(probe.getSpeciesCharge());
+        double phi = this.getPhase();
+        return theEnergyGain = Q * ETL * Math.cos(phi);
+    }
+
+    /**
+     *  <p> 
+     *  Routine to calculate the energy gain along with the phase advance.
+     *  </p>
+     *  <p> 
+     *  A method that is called once by transferMatrix to calculate the energy gain.
+     *  This prevents energy gain calculation from being repeated many times.
+     *  Importantly it provides a workaround from the eneryGain being calculated
+     *  after the upstreamExitPhase is updated elsewhere
+     *  </p>
+     *  <p>
+     *  <h4>CKA NOTES: 11/17/2014</h4>
+     *  &middot; This method is at the heart of some major architectural issues.
+     *  <br/>
+     *  &middot; We have a state-dependent situation, the computed results being
+     *  dependent upon the state of <b>class</b> variables.
+     *  <br/>
+     *  &middot; These class state variables should most likely be local properties
+     *  of the probe objects.
+     *  </p>
+     *
+     * @param  probe  The Parameter
+     */
+    private void compEnergyGain(IProbe probe) {
+        double EL = getE0() * getCellLength();
+
+        // Initial energy parameters
+        double Er = probe.getSpeciesRestEnergy();		
+        double bi = probe.getBeta();
+        //		double gi = probe.getGamma();		
+        double Wi = probe.getKineticEnergy();
+
+        double phi0 = 0.;
+
+        double arrival_time = probe.getTime();
+
+        //the correction for the gap offset needed
+        arrival_time = arrival_time + gapOffset / (bi * IElement.LightSpeed);
+
+        // get phase at the gap center:
+        if(!isFirstGap()) {
+            phi0 = 2. * Math.PI * arrival_time * getFrequency() - FIRST_GAP_PHASE_CORR;
+            double driftTime = probe.getTime() - ((getCellLength()/2.)/(bi * IElement.LightSpeed) + UPSTREAM_EXIT_TIME);
+            int nLabmda = (int) Math.round(2*structureMode*driftTime*getFrequency());
+            STRUCTURE_PHASE = STRUCTURE_PHASE + Math.PI*nLabmda;
+            phi0 = phi0 + STRUCTURE_PHASE;
+            //phi0 = Math.IEEEremainder(phi0, (2. * Math.PI * (1.0 - structureMode / 2.0)));
+            setPhase(phi0);
+        }
+        // for first gap use input for phase at the gap center
+        else {
+            STRUCTURE_PHASE = 0.;
+            FIRST_GAP_PHASE_CORR = 2. * Math.PI * arrival_time * getFrequency() - getPhase();
+            phi0 = getPhase();
+        }
+
+        double Q = Math.abs(probe.getSpeciesCharge());
+        theEnergyGain = Q * EL * Math.cos(phi0) * fitTTF.evaluateAt(bi);
+
+        STRUCTURE_PHASE = STRUCTURE_PHASE - (2 - structureMode) * Math.PI;
+        STRUCTURE_PHASE = Math.IEEEremainder(STRUCTURE_PHASE , (2. * Math.PI));
+
+        //phase change from center correction factor for future time calculations
+        //in PARMILA TTFPrime and SPrime are in [1/cm] units, we use [m]
+        DELTA_PHASE_CORRECTION = 0;
+        double ttf = fitTTF.evaluateAt(bi);
+        double ttf_prime = 0.01*fitTTFPrime.evaluateAt(bi);
+        double stf = fitSTF.evaluateAt(bi);
+        double stf_prime = 0.01*fitSTFPrime.evaluateAt(bi);
+        double freq = getFrequency();
+        //		double phi_gap = phi0;
+        double dE_gap = Q*EL*(ttf*Math.cos(phi0) + stf*Math.sin(phi0))/2.0;
+        double b_gap0 = Math.sqrt(1.-Er*Er/((Er+Wi+dE_gap)*(Er+Wi+dE_gap)));	
+        double k_gap0 = 2*Math.PI*freq/(b_gap0*IElement.LightSpeed);	
+        double gamma_gap = Math.sqrt(1./(1.-b_gap0*b_gap0));
+        double b_gap = b_gap0;
+        double k_gap = k_gap0;
+        double dlt_phi = (Q*EL/(Er*gamma_gap*gamma_gap*gamma_gap*b_gap*b_gap))*k_gap*(ttf_prime*Math.sin(phi0) - stf_prime*Math.cos(phi0))/2.0;
+        for( int i = 0; i < 3; i++){
+            b_gap = Math.sqrt(1.-Er*Er/((Er+Wi+dE_gap)*(Er+Wi+dE_gap)));	
+            k_gap = 2*Math.PI*freq/(b_gap*IElement.LightSpeed);	
+            gamma_gap = Math.sqrt(1./(1.-b_gap*b_gap));
+            dE_gap = Q*EL*((ttf + ttf_prime*(k_gap - k_gap0))*Math.cos(phi0+dlt_phi) + (stf + stf_prime*(k_gap - k_gap0))*Math.sin(phi0+dlt_phi))/2.0;
+            dlt_phi = (Q*EL/(Er*gamma_gap*gamma_gap*gamma_gap*b_gap*b_gap))*k_gap*(ttf_prime*Math.sin(phi0+dlt_phi) - stf_prime*Math.cos(phi0+dlt_phi))/2.0;
+        }
+        //System.out.println("Stop "+this.getId() + "dlt_phi ="+(180*dlt_phi/Math.PI)+" bi="+bi+" b_gap="+b_gap+" dE_gap="+dE_gap+" Wi="+Wi);
+        //the energy gaine and phase are known
+        //now we calculate the total energy gain and phase
+        theEnergyGain = Q*EL*((ttf + ttf_prime*(k_gap - k_gap0))*Math.cos(phi0+dlt_phi));
+        DELTA_PHASE_CORRECTION = (Q*EL/(Er*gamma_gap*gamma_gap*gamma_gap*b_gap*b_gap))*k_gap*(ttf_prime*Math.sin(phi0+dlt_phi));		
+
+        //System.out.println(this.getId() + " " + (Math.IEEEremainder(phi0 * 57.295779, 360.)) + "  " + Wi + "  " + theEnergyGain);
+    }
 }
 
