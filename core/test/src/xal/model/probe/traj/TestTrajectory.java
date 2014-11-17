@@ -291,6 +291,31 @@ public class TestTrajectory {
             System.out.println("  " + state.getElementId() + " at position " + state.getPosition());
         }
     }
+    
+    /**
+     * Test the sub-trajectories methods of the <code>Trajectory</code> class.
+     *
+     * @author Christopher K. Allen
+     * @since  Nov 17, 2014
+     */
+    @Test
+    public final void testSubTrajectory() {
+        Trajectory<TransferMapState>    trjXfer  = this.runModel(PROBE_XFER);
+        
+        Trajectory<TransferMapState>    trjSubEx = trjXfer.subTrajectory(STR_DH1_ID, STR_DH2_ID);
+        System.out.println();
+        System.out.println("SUBTRAJECTORY (EXCLUSIVE): STATES between " + STR_DH1_ID + " and " + STR_DH2_ID);
+        for (TransferMapState state : trjSubEx) {
+            System.out.println("  " + state.getElementId() + " at position " + state.getPosition());
+        }
+
+        Trajectory<TransferMapState>    trjSubIn = trjXfer.subTrajectoryInclusive(STR_DH1_ID, STR_DH2_ID);
+        System.out.println();
+        System.out.println("SUBTRAJECTORY (INCLUSIVE): STATES between " + STR_DH1_ID + " and " + STR_DH2_ID);
+        for (TransferMapState state : trjSubIn) {
+            System.out.println("  " + state.getElementId() + " at position " + state.getPosition());
+        }
+    }
 
     /**
      * Test method for {@link xal.model.probe.traj.Trajectory#statesForElement(java.lang.String)}.
