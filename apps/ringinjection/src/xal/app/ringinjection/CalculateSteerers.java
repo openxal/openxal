@@ -258,7 +258,7 @@ public class CalculateSteerers{
 		if(solvey==true){
 			//Set up and run the Y solver.
 			final SimpleEvaluator sey = new CalculateSteerers.SimpleEvaluator( yarg );
-			xProblem.addObjective( sey.getErrorObjective() );
+			yProblem.addObjective( sey.getErrorObjective() );
 			yProblem.setEvaluator(sey);
 
 			ysolver.solve( yProblem );
