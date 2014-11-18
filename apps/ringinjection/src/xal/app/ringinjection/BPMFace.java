@@ -264,13 +264,14 @@ public class BPMFace extends JPanel{
 			public void actionPerformed(ActionEvent ae){
 				int i=0, count=0;
 				double sum_x=0.0, sum_xp=0.0, sum_y=0.0, sum_yp=0.0;
+				double sum_x_square=0.0, sum_xp_square=0.0, sum_y_square=0.0, sum_yp_square=0.0;
 				double avg_x=0.0, avg_xp=0.0, avg_y=0.0, avg_yp=0.0;
 				double sum_x_weight=0.0, sum_xp_weight=0.0, sum_y_weight=0.0, sum_yp_weight=0.0;
 				double avg_xerr=0.0, avg_xperr=0.0, avg_yerr=0.0, avg_yperr=0.0;
 				Iterator itr = (doc.bpmagents).iterator();
 
 				/* optimal statistical average over q_n with error sigma_n is sum( weight_n * q_n ) / sum( weight_n ) where weight_n = 1/sigma_n^2
-				 * Error estimate for average is 1 / sqrt( sum( weight_n ) ) */
+				 * Error estimate on the mean is sqrt( sum( weight_n * q_n ^2 ) / sum( weight_n ) ) - mean^2 ) */
 				for ( final BPMBeamInjectionFit bpmInjectionFit : _beamInjectionFits ) {
 					if ( bpmInjectionFit.getAccepted() ) {
 						final double x = bpmInjectionFit.getX();
@@ -285,18 +286,22 @@ public class BPMFace extends JPanel{
 
 						final double x_weight = 1 / ( x_err * x_err );
 						sum_x += x_weight * x;
+						sum_x_square += x_weight * x * x;
 						sum_x_weight += x_weight;
 
 						final double xp_weight = 1 / ( xp_err * xp_err );
 						sum_xp += xp_weight * xp;
+						sum_xp_square += xp_weight * xp * xp;
 						sum_xp_weight += xp_weight;
 
 						final double y_weight = 1 / ( y_err * y_err );
 						sum_y += y_weight * y;
+						sum_y_square += y_weight * y * y;
 						sum_y_weight += y_weight;
 
 						final double yp_weight = 1 / ( yp_err * yp_err );
 						sum_yp += yp_weight * yp;
+						sum_yp_square += yp_weight * yp * yp;
 						sum_yp_weight += yp_weight;
 
 						count++;
@@ -309,10 +314,19 @@ public class BPMFace extends JPanel{
 					avg_y = sum_y / sum_y_weight;
 					avg_yp = sum_yp / sum_yp_weight;
 
-					avg_xerr = 1.0 / Math.sqrt( sum_x_weight );
-					avg_xperr = 1.0 / Math.sqrt( sum_xp_weight );
-					avg_yerr = 1.0 / Math.sqrt( sum_y_weight );
-					avg_yperr = 1.0 / Math.sqrt( sum_yp_weight );
+					// if count is identically 1
+					if ( count == 1 ) {
+						// note that the sum is the value since there is only one sample
+						avg_xerr = 1.0 / Math.sqrt( sum_x_weight );
+						avg_xperr = 1.0 / Math.sqrt( sum_xp_weight );
+						avg_yerr = 1.0 / Math.sqrt( sum_y_weight );
+						avg_yperr = 1.0 / Math.sqrt( sum_yp_weight );
+					} else {
+						avg_xerr = Math.sqrt( sum_x_square / sum_x_weight - avg_x * avg_x );
+						avg_xperr = Math.sqrt( sum_xp_square / sum_xp_weight - avg_xp * avg_xp );
+						avg_yerr = Math.sqrt( sum_y_square / sum_y_weight - avg_y * avg_y );
+						avg_yperr = Math.sqrt( sum_yp_square / sum_yp_weight - avg_yp * avg_yp );
+					}
 				}
 
 				x.setValue(avg_x);
