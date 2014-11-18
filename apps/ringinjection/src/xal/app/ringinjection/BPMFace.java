@@ -395,8 +395,8 @@ public class BPMFace extends JPanel{
 		resultstablemodel.setColumnName( "bpmAgent.name", "BPM" );
 		resultstablemodel.setColumnName( "formattedX", "X (mm)" );
 		resultstablemodel.setColumnName( "formattedXAngle", "X\' (mrad)" );
-		resultstablemodel.setColumnName( "formattedX", "Y (mm)" );
-		resultstablemodel.setColumnName( "formattedXAngle", "Y\' (mrad)" );
+		resultstablemodel.setColumnName( "formattedY", "Y (mm)" );
+		resultstablemodel.setColumnName( "formattedYAngle", "Y\' (mrad)" );
 		
 		resultstablemodel.setColumnName( "accepted", "Accept" );
 		resultstablemodel.setColumnEditable( "accepted", true );
