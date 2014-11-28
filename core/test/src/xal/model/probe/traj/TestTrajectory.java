@@ -278,7 +278,7 @@ public class TestTrajectory {
     }
     
     /**
-     * Test method for {@link xal.model.probe.traj.Trajectory#statesForElement_OLD(java.lang.String)}.
+     * Test method for {@link xal.model.probe.traj.Trajectory#statesForElement(java.lang.String)}.
      */
     @Test
     public final void testStatesForElement_OLD() {

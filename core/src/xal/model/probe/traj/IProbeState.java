@@ -60,14 +60,38 @@ public interface IProbeState extends IArchive {
 	
 	
     /**
-	*  Set the current kinetic energy of the probe.
+     * <p>
+     * Set the longitudinal phase of this probe with respect to the RF phase.  
+     * Typically used to account for phase delay/advance in cavities incurred due to 
+     * finite propagation time.  For example  
+     * <br/>
+     * <br/>
+     * &nbsp; &nbsp; &phi; &#8796; &phi;<sub>0</sub> - &Delta;&phi; 
+     * <br/>
+     * <br/>
+     * where &Delta;&phi; =  2&pi;<i>f</i>&Delta;<i/>t</i> is the phase delay due 
+     * to elapsed time &Delta;<i>t</i>, <i>f</i> is the cavity 
+     * resonant frequency, and &phi;<sub>0</sub> is the operating phase of the cavity (w.r.t.
+     * the synchronous particle).
+     * </p>
+     * 
+     * @param dblPhsLng     the phase delay &Delta;&phi; incurred from probe
+     *                          propagate between RF cavities
+     *
+     * @author Christopher K. Allen
+     * @since  Nov 23, 2014
+     */
+    public void setLongitudinalPhase(double dblPhsLng);
+    
+    /**
+     *  Set the current kinetic energy of the probe.
      *
      *  @param  W       new probe kinetic energy (<b>electron-volts</b>)
      *
      *  @see    #getKineticEnergy
      */
     public void setKineticEnergy(double W);
-	
+
     
     /**
 	 * Set the lattice element id associated with this state.
@@ -125,7 +149,30 @@ public interface IProbeState extends IArchive {
     
 	
     /**
-	*  Return the kinetic energy of the probe.  Depending upon the probe type,
+     * <p>
+     * Returns the longitudinal phase of this probe with respect to the RF phase.  
+     * Typically used to account for phase delay/advance in cavities incurred due to 
+     * finite propagation time.  For example  
+     * <br/>
+     * <br/>
+     * &nbsp; &nbsp; &phi; &#8796; &phi;<sub>0</sub> - &Delta;&phi; 
+     * <br/>
+     * <br/>
+     * where &Delta;&phi; =  2&pi;<i>f</i>&Delta;<i/>t</i> is the phase delay due 
+     * to elapsed time &Delta;<i>t</i>, <i>f</i> is the cavity 
+     * resonant frequency, and &phi;<sub>0</sub> is the operating phase of the cavity (w.r.t.
+     * the synchronous particle).
+     * </p>
+     * 
+     * @return      the probe phase &phi; with respect to the machine RF frequency
+     * 
+     * @author Christopher K. Allen
+     * @since  Nov 23, 2014
+     */
+    public double   getLongitudinalPhase();
+    
+    /**
+     *  Return the kinetic energy of the probe.  Depending upon the probe type,
      *  this could be the actual kinetic energy of a single constituent particle,
      *  the average kinetic energy of an ensemble, the design energy, etc.
      *

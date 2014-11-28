@@ -478,22 +478,23 @@ public class Trajectory<S extends ProbeState<S>> implements IArchive, Iterable<S
      */
      
     /** any user comments regard the trajectory */
-    private String description = "";
+    private String                  description = "";
     
+    /** time stamp of trajectory */
+    private Date                    timestamp = new Date();
+
+    
+    /** Type class of the underlying state objects */
+    private final Class<S>           clsStates;
+    
+
     /** the history of probe states along the trajectory */
-    private RealNumericIndexer<S>      _history;
+    private RealNumericIndexer<S>    _history;
     
     /** Probe states by element name */
 //    private final ElementStateMap<S>   mapIdToStates;
     private final NodeIdToElemStates     mapIdToStates;
     
-    /** Type class of the underlying state objects */
-    private final Class<S>            clsStates;
-    
-    /** time stamp of trajectory */
-    private Date                      timestamp = new Date();
-
-
 
 
 

@@ -6,8 +6,6 @@
 
 package xal.sim.scenario;
 
-import java.lang.reflect.Method;
-
 import xal.model.IComponent;
 import xal.model.elem.IdealDrift;
 import xal.model.elem.IdealEDipole;

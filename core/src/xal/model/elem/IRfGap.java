@@ -10,7 +10,8 @@ package xal.model.elem;
 /**
  *  This interface defines the common properties of all RF Gap structures.
  *
- * @author  CKAllen
+ * @author  Christopher K. Allen
+ * @since   Nov 4, 2002
  */
 public interface IRfGap /*extends gov.sns.xal.model.IElement*/ {
     

@@ -14,7 +14,6 @@
  */
 package xal.model.elem;
 
-import xal.smf.Accelerator;
 
 /**
  * Represents an ideal magnetic steering dipole in the vertical

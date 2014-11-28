@@ -106,8 +106,10 @@ public class UnivariateRealPolynomial {
      */
 
     /**
-     * Evaluate the polynomial for the specifed value of the indeterminate.
-     * If the coefficient vector has not been specified this
+     * Evaluate the polynomial for the specified value of the indeterminate.
+     * If the coefficient vector has not been specified this method returns
+     * zero.
+     * 
      * @param   dblVal      indeterminate value to evaluate the polynomial
      *
      * @author Chris Allen
@@ -123,6 +125,36 @@ public class UnivariateRealPolynomial {
 		dblAccum += this.getCoef(n) * Math.pow(dblVal, n);
 
         return dblAccum;
+    }
+
+    /**
+     * Evaluate the polynomial derivative for the specified value of the indeterminate.
+     * If the coefficient vector has not been specified this method returns zero.
+     * Note that the result has one less order of accuracy than the underlying
+     * polynomial.
+     * 
+     * @param   dblVal      indeterminate value to evaluate the polynomial
+     *
+     * @author Christopher Allen
+     * @since Nov 26, 2014
+     */
+    public double derivativeAt(double dblVal) {
+        if (this.m_arrCoef == null)
+            return 0.0;
+
+        int     N = this.m_arrCoef.length;      // number of coefficients
+        double  dblPow = 1.0;                 // the the nomial
+        double  dblSum = 0.0;                 // accumulator
+
+        for (int n=1; n<N; n++) {
+            double      dblCoef = n * this.getCoef(n);
+            
+            dblSum += dblCoef*dblPow;
+            
+            dblPow *= dblVal;
+        }
+
+        return dblSum;
     }
 
     /**
@@ -150,13 +182,13 @@ public class UnivariateRealPolynomial {
     /**
      * Nondestructively add two polynomials.  The current polynomial and the
      * argument are added according to standard definitions (i.e., the
-     * coefficient array is added vectorily).
+     * coefficient array is added vectorally).
      *
      * @param   polyAddend  polynomial to be added to this
      * @return              a new polynomial object representing the sum
      */
     public UnivariateRealPolynomial plus(UnivariateRealPolynomial polyAddend)  {
-        UnivariateRealPolynomial    polySum;
+//        UnivariateRealPolynomial    polySum;
 
         int nLen = Math.max(polyAddend.getDegree(), this.getDegree()) + 1;
         double[]  arrCoef = new double[nLen];
@@ -176,7 +208,7 @@ public class UnivariateRealPolynomial {
      * @return          a new polynomial object representing the product
      */
     public UnivariateRealPolynomial times(UnivariateRealPolynomial polyFac) {
-        UnivariateRealPolynomial    polyProd;
+//        UnivariateRealPolynomial    polyProd;
 
         int nLen = polyFac.getDegree() * this.getDegree() + 1;
         double[]  arrCoef = new double[nLen];
@@ -198,8 +230,6 @@ public class UnivariateRealPolynomial {
     /*
      * Testing and Debugging
      */
-
-
 
     /**
      * Construct and return a textual representation of the contents of this

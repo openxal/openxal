@@ -44,6 +44,9 @@ public abstract class ProbeState<S extends ProbeState<S>> implements IProbeState
     /** attribute tag for probe position */
     private final static String POSITION_LABEL = "s";
     
+    /** attribute tag for phase correction parameter (due to finite time propagation between cavities) */
+    private final static String LNG_PHASE_LABEL = "phase";
+    
     /** attribute tag for probe kinetic energy */
     private final static String KINETICENERGY_LABEL = "W";
     
@@ -62,6 +65,13 @@ public abstract class ProbeState<S extends ProbeState<S>> implements IProbeState
      * Local Attributes
      */
      
+    /** element id */
+    private String m_strElemId = "";
+    
+    /** hardware node ID */
+    private String  strSmfId = "";
+
+
     /** Species charge */
     private double  m_dblParQ = 0.0;
     
@@ -69,18 +79,16 @@ public abstract class ProbeState<S extends ProbeState<S>> implements IProbeState
     private double  m_dblParEr = 0.0;
     
 
-    /** element id */
-    private String m_strElemId = "";
-    
-    /** hardware node ID */
-    private String  strSmfId = "";
-
     /** Current probe position in beamline */
     private double m_dblPos = 0.0;
     	    
     /** The time elapsed from the beginning of the tracking (sec) */
      private double m_dblTime = 0.0;
 
+     /** The longitudinal phase due to propagation and accelerating cavities */
+     private double dblPhsLng = 0.0;
+     
+     
     /** Probe's average kinetic Energy */
     private double  m_dblW = 0.0;
 
@@ -134,12 +142,17 @@ public abstract class ProbeState<S extends ProbeState<S>> implements IProbeState
      */
     public ProbeState(final S state) {
         
-        this.m_dblParQ = state.getSpeciesCharge();
-        this.m_dblParEr = state.getSpeciesRestEnergy();
         this.m_strElemId = state.getElementId();
         this.strSmfId = state.getHardwareNodeId();
+
+        this.m_dblParQ = state.getSpeciesCharge();
+        this.m_dblParEr = state.getSpeciesRestEnergy();
+
         this.m_dblPos = state.getPosition();
         this.m_dblTime = state.getTime();
+        
+        this.dblPhsLng = state.getLongitudinalPhase();
+
         this.m_dblW = state.getKineticEnergy();
         this.m_dblGamma = state.getGamma();
         this.m_dblBeta = state.getBeta();
@@ -152,83 +165,18 @@ public abstract class ProbeState<S extends ProbeState<S>> implements IProbeState
      * @param probe     <code>Probe</code> object containing initial values
      */
     public ProbeState(final Probe<S> probe) {
-        this.setSpeciesCharge( probe.getSpeciesCharge() );
-        this.setSpeciesRestEnergy( probe.getSpeciesRestEnergy() );
-
         this.setElementId( probe.getCurrentElement() );
         this.setHardwareNodeId( probe.getCurrentHardwareId() );
+
+        this.setSpeciesCharge( probe.getSpeciesCharge() );
+        this.setSpeciesRestEnergy( probe.getSpeciesRestEnergy() );
+        
         this.setPosition( probe.getPosition() );
         this.setTime( probe.getTime() );
-        this.setKineticEnergy( probe.getKineticEnergy() );
-    }
-    
-    
-    
-    /*
-     * Property Accessors
-     */
-    
-    /** 
-     *  Set the charge of the particle species in the beam 
-     *  
-     *  @param  q       species particle charge (<b>Coulombs</b>)
-     */
-    public void setSpeciesCharge(double q) { 
-       this.m_dblParQ = q; 
-    }
-    
-    
-    /** 
-     *  Set the rest energy of a single particle in the beam 
-     *
-     *  @param  Er      particle rest energy (<b>electron-volts</b>)
-     */
-    public void setSpeciesRestEnergy(double Er) { 
-        this.m_dblParEr = Er; 
-    }
 
-    
-    /** 
-     *  Set the current position of the probe along the beamline.
-     *
-     *  @param  s       new probe position (<b>meters</b>)
-     *
-     *  @see    #getPosition
-     */
-    public void setPosition(double s) {
-    	this.m_dblPos = s;
-    }
-    
-    /** 
-     * Set the current probe time elapsed from the start of the probe tracking.
-     *  
-     * @param   dblTime     elapsed time in <b>seconds</b>
-     */
-    public void setTime(double dblTime) {
-        this.m_dblTime = dblTime; 
-     }
-
-    /**
-     *  Set the current kinetic energy of the probe.
-     *
-     *  @param  W       new probe kinetic energy (<b>electron-volts</b>)
-     *
-     *  @see    #getKineticEnergy
-     */
-    public void setKineticEnergy(double W) {
-        this.m_dblW = W;
+        this.setLongitudinalPhase( this.getLongitudinalPhase() );
         
-        this.m_dblGamma = this.computeGammaFromW(m_dblW);
-        this.m_dblBeta = this.computeBetaFromGamma(m_dblGamma);
-    }
-    
-    /**
-     * Set the lattice element id associated with this state.
-     * 
-     * @param id  element id of current lattice element
-     */
-    public void setElementId(String id) {
-        m_strElemId = id;
+        this.setKineticEnergy( probe.getKineticEnergy() );
     }
     
     /**
@@ -243,6 +191,8 @@ public abstract class ProbeState<S extends ProbeState<S>> implements IProbeState
         this.strSmfId = strSmfId;
     }
     
+    
+    
 //    //sako
 //    public void setUseTwiss(boolean bool) {
 //        bolSaveTwiss = bool;
@@ -255,42 +205,9 @@ public abstract class ProbeState<S extends ProbeState<S>> implements IProbeState
 //    }
 //
 
-    /** 
-     *  Returns the charge of probe's particle species 
-     *  
-     *  @return     particle species charge (<b>Coulombs</b>)
+    /*
+     * Attribute Queries
      */
-    public double getSpeciesCharge() { 
-    	return m_dblParQ; 
-    }
-    
-    /** 
-     *  Returns the rest energy of particle species 
-     *
-     *  @return     particle species rest energy (<b>electron-volts</b>)
-     */
-    public double getSpeciesRestEnergy() { 
-    	return m_dblParEr; 
-    }
-    
-
-    /** Returns the momentum
-     * 
-     * @return particle momentum
-     */
-    public double getMomentum() {
-    	return (getSpeciesRestEnergy()*getGamma()*getBeta());
-    }
-    
-
-    /**
-     * Returns the id of the lattice element associated with this state.
-     * 
-     * @return  string ID of associated lattice element
-     */
-    public String getElementId() {
-        return m_strElemId;
-    }
     
     /**
      * Returns the identifier of the hardware node modeled by the
@@ -306,32 +223,12 @@ public abstract class ProbeState<S extends ProbeState<S>> implements IProbeState
     }
     
     /** 
-     *  Returns the current beam-line position of the probe 
-     *  
-     *  @return     probe position (<b>meters</b>)
-     */
-    public double getPosition() {
-        return m_dblPos;
-    }
-    
-    /** 
-     * Return the time elapsed from the start of the probe tracking
+     * Returns the momentum
      * 
-     * @return      time elapsed since probe began tracking, in <b>seconds</b> 
+     * @return particle momentum
      */
-    public double getTime() { 
-        return m_dblTime;
-    }
-    
-    /**
-     *  Return the kinetic energy of the probe.  Depending upon the probe type,
-     *  this could be the actual kinetic energy of a single constituent particle,
-     *  the average kinetic energy of an ensemble, the design energy, etc.
-     *
-     *  @return     probe kinetic energy    (<b>electron-volts</b>)
-     */
-    public double getKineticEnergy() {
-    	return m_dblW;
+    public double getMomentum() {
+        return (getSpeciesRestEnergy()*getGamma()*getBeta());
     }
     
     /** 
@@ -340,7 +237,7 @@ public abstract class ProbeState<S extends ProbeState<S>> implements IProbeState
      *  @return     normalized probe velocity v/c (<b>unitless</b>
      */
     public double getBeta() { 
-    	return m_dblBeta;  
+        return m_dblBeta;  
     }
     
     /**
@@ -361,6 +258,195 @@ public abstract class ProbeState<S extends ProbeState<S>> implements IProbeState
     }
 
     
+    
+    /*
+     * IProbe Interface
+     */
+    
+    /** 
+     *  Set the charge of the particle species in the beam 
+     *  
+     *  @param  q       species particle charge (<b>Coulombs</b>)
+     */
+    @Override
+    public void setSpeciesCharge(double q) { 
+       this.m_dblParQ = q; 
+    }
+    
+    
+    /** 
+     *  Set the rest energy of a single particle in the beam 
+     *
+     *  @param  Er      particle rest energy (<b>electron-volts</b>)
+     */
+    @Override
+    public void setSpeciesRestEnergy(double Er) { 
+        this.m_dblParEr = Er; 
+    }
+
+    
+    /** 
+     *  Set the current position of the probe along the beamline.
+     *
+     *  @param  s       new probe position (<b>meters</b>)
+     *
+     *  @see    #getPosition
+     */
+    @Override
+    public void setPosition(double s) {
+    	this.m_dblPos = s;
+    }
+    
+    /** 
+     * Set the current probe time elapsed from the start of the probe tracking.
+     *  
+     * @param   dblTime     elapsed time in <b>seconds</b>
+     */
+    @Override
+    public void setTime(double dblTime) {
+        this.m_dblTime = dblTime; 
+     }
+
+    /**
+     * <p>
+     * Set the longitudinal phase of this probe with respect to the RF phase.  
+     * Typically used to account for phase delay/advance in cavities incurred due to 
+     * finite propagation time.  For example  
+     * <br/>
+     * <br/>
+     * &nbsp; &nbsp; &phi; &#8796; &phi;<sub>0</sub> - &Delta;&phi; 
+     * <br/>
+     * <br/>
+     * where &Delta;&phi; =  2&pi;<i>f</i>&Delta;<i/>t</i> is the phase delay due 
+     * to elapsed time &Delta;<i>t</i>, <i>f</i> is the cavity 
+     * resonant frequency, and &phi;<sub>0</sub> is the operating phase of the cavity (w.r.t.
+     * the synchronous particle).
+     * </p>
+     * 
+     * @param dblPhsLng     the phase delay &Delta;&phi; incurred from probe
+     *                          propagate between RF cavities
+     *
+     * @author Christopher K. Allen
+     * @since  Nov 17, 2014
+     */
+    @Override
+    public void setLongitudinalPhase(double dblPhsLng) {
+        this.dblPhsLng = dblPhsLng;
+    }
+
+    /**
+     *  Set the current kinetic energy of the probe.
+     *
+     *  @param  W       new probe kinetic energy (<b>electron-volts</b>)
+     *
+     *  @see    #getKineticEnergy
+     */
+    @Override
+    public void setKineticEnergy(double W) {
+        this.m_dblW = W;
+        
+        this.m_dblGamma = this.computeGammaFromW(m_dblW);
+        this.m_dblBeta = this.computeBetaFromGamma(m_dblGamma);
+    }
+    
+    /**
+     * Set the lattice element id associated with this state.
+     * 
+     * @param id  element id of current lattice element
+     */
+    @Override
+    public void setElementId(String id) {
+        m_strElemId = id;
+    }
+    
+    /** 
+     *  Returns the charge of probe's particle species 
+     *  
+     *  @return     particle species charge (<b>Coulombs</b>)
+     */
+    @Override
+    public double getSpeciesCharge() { 
+    	return m_dblParQ; 
+    }
+    
+    /** 
+     *  Returns the rest energy of particle species 
+     *
+     *  @return     particle species rest energy (<b>electron-volts</b>)
+     */
+    @Override
+    public double getSpeciesRestEnergy() { 
+    	return m_dblParEr; 
+    }
+    
+    /**
+     * Returns the id of the lattice element associated with this state.
+     * 
+     * @return  string ID of associated lattice element
+     */
+    @Override
+    public String getElementId() {
+        return m_strElemId;
+    }
+    
+    /** 
+     *  Returns the current beam-line position of the probe 
+     *  
+     *  @return     probe position (<b>meters</b>)
+     */
+    @Override
+    public double getPosition() {
+        return m_dblPos;
+    }
+    
+    /** 
+     * Return the time elapsed from the start of the probe tracking
+     * 
+     * @return      time elapsed since probe began tracking, in <b>seconds</b> 
+     */
+    @Override
+    public double getTime() { 
+        return m_dblTime;
+    }
+    
+    /**
+     * <p>
+     * Returns the longitudinal phase of this probe with respect to the RF phase.  
+     * Typically used to account for phase delay/advance in cavities incurred due to 
+     * finite propagation time.  For example  
+     * <br/>
+     * <br/>
+     * &nbsp; &nbsp; &phi; &#8796; &phi;<sub>0</sub> - &Delta;&phi; 
+     * <br/>
+     * <br/>
+     * where &Delta;&phi; =  2&pi;<i>f</i>&Delta;<i/>t</i> is the phase delay due 
+     * to elapsed time &Delta;<i>t</i>, <i>f</i> is the cavity 
+     * resonant frequency, and &phi;<sub>0</sub> is the operating phase of the cavity (w.r.t.
+     * the synchronous particle).
+     * </p>
+     * 
+     * @return      the probe phase &phi; with respect to the machine RF frequency
+     *
+     * @author Christopher K. Allen
+     * @since  Nov 17, 2014
+     */
+    @Override
+    public double   getLongitudinalPhase() {
+        return this.dblPhsLng;
+    }
+
+    /**
+     *  Return the kinetic energy of the probe.  Depending upon the probe type,
+     *  this could be the actual kinetic energy of a single constituent particle,
+     *  the average kinetic energy of an ensemble, the design energy, etc.
+     *
+     *  @return     probe kinetic energy    (<b>electron-volts</b>)
+     */
+    @Override
+    public double getKineticEnergy() {
+    	return m_dblW;
+    }
+    
     /*
      * Object Overrides
      */
@@ -375,7 +461,8 @@ public abstract class ProbeState<S extends ProbeState<S>> implements IProbeState
     	return " elem: "     + getElementId() +
                " s=" + getPosition() + 
                " t=" + getTime() + 
-               " W=" + getKineticEnergy();
+               " W=" + getKineticEnergy() +
+    	       " phi=" + getLongitudinalPhase();
     }
     
     
@@ -498,6 +585,7 @@ public abstract class ProbeState<S extends ProbeState<S>> implements IProbeState
         DataAdaptor locNode = container.createChild(LOCATION_LABEL);
         locNode.setValue(ELEMENT_LABEL, getElementId());
         locNode.setValue(POSITION_LABEL, getPosition());
+        locNode.setValue(LNG_PHASE_LABEL, this.getLongitudinalPhase());
         locNode.setValue(TIME_LABEL, getTime());
         locNode.setValue(KINETICENERGY_LABEL, getKineticEnergy());
     }
@@ -534,6 +622,8 @@ public abstract class ProbeState<S extends ProbeState<S>> implements IProbeState
             setPosition(locNode.doubleValue(POSITION_LABEL));
         if (locNode.hasAttribute(TIME_LABEL))
             setTime( locNode.doubleValue(TIME_LABEL));
+        if (locNode.hasAttribute(LNG_PHASE_LABEL))
+            this.setLongitudinalPhase( locNode.doubleValue(LNG_PHASE_LABEL) );
         if (locNode.hasAttribute(KINETICENERGY_LABEL))
             setKineticEnergy(locNode.doubleValue(KINETICENERGY_LABEL));
 

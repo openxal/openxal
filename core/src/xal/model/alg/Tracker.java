@@ -17,6 +17,8 @@ import xal.model.IAlgorithm;
 import xal.model.IElement;
 import xal.model.IProbe;
 import xal.model.ModelException;
+import xal.model.elem.IdealRfGap;
+import xal.model.probe.Probe;
 import xal.sim.scenario.AlgorithmFactory;
 import xal.smf.AcceleratorSeq;
 
@@ -80,36 +82,6 @@ import java.util.List;
 public abstract class Tracker implements IAlgorithm, IArchive {
 
 
-    /*
-     *  Abstract Methods
-     */
-    
-    /**
-     * <p>
-     * The implementation must propagate the probe through the element 
-     * according to the dynamics of the 
-     * specific algorithm.  Derived classes must implement this method but the
-     * <code>Tracker</code> base provided convenient methods for this implementation.
-     * </p>
-     * <p>
-     * NOTE:
-     * <br/>The protected method 
-     * <code>advanceProbe(IProbe, IElement, double)</code>
-     * is available for derived classes.  It is a convenience method
-     * for performing many of the common tasks in the forward propagation 
-     * of any probe.  Thus, its use is not required.
-     * </p>
-     *
-     *  @param  probe   probe to propagate
-     *  @param  elem    element acting on probe
-     *
-     *  @exception  ModelException  invalid probe type or error in advancing probe
-     * 
-     *  @see  Tracker#validProbe(IProbe)
-     */
-    public abstract void doPropagation(IProbe probe, IElement elem) throws ModelException;
-  
-  
 
     /*
      * Global Constants
@@ -327,28 +299,41 @@ public abstract class Tracker implements IAlgorithm, IArchive {
     }
     
     
-
-    
     /*
      * Local Attributes
      */
 
+    //
+    //  Tracker Properties
+    //
     /** string type identifier of this algorithm */
     private String              m_strType;
     
     /** version of this algorithm */
     private int                 m_intVersion;
     
-    /** list of all probe classes recognized by this algorithm */
+    /**
+     * Class type of the current probe.
+     * @deprecated This property is never used 
+     */
+    @Deprecated
+    private Class<? extends IProbe>         probeType;
+
+    /** 
+     * List of all probe classes recognized by this algorithm 
+     */
     private List<Class<? extends IProbe>>   m_lstProbes;
 
-     /** flag to track the beam phase in multi gap cavities */
-     private boolean            m_bolCalcRfGapPhase = false;
-
-    /*
-     * Tracker Settings
-     */
      
+    //
+    // Tracker Settings
+    //
+     
+    /** 
+     * flag to track the beam phase in multi gap cavities 
+     */
+    private boolean            m_bolCalcRfGapPhase = false;
+
     /**
      * The frequency of storing probe states
      */
@@ -385,27 +370,21 @@ public abstract class Tracker implements IAlgorithm, IArchive {
      */
     private boolean     m_bolIsStopped = false;
     
-    
 
-    /*
-     * Tracker State 
-     */    
+    //
+    // Tracker State 
+    //    
      
     /** 
      * The tracking position of the within the current element    
      */
-    private double      m_dblPosElem = 0;
+    private double      m_dblPosElem = 0.0;
     
-    /**
-     * Class type of the probe
-     */
-    private Class<? extends IProbe> probeType;
     
     /*
      * Initialization
      */
-    
-    
+   
     /**
      *  <p>Creates a new, empty, instance of Tracker.</p>
      *
@@ -447,9 +426,9 @@ public abstract class Tracker implements IAlgorithm, IArchive {
         this.m_dblPosElem = sourceTracker.m_dblPosElem;
     }
     
-    /**
-     * Creates a deep copy of Tracker
-     */
+//    /**
+//     * Creates a deep copy of Tracker
+//     */
 //    @Override
 //    public Tracker copy() {
 //        return new Tracker( this );
@@ -474,15 +453,21 @@ public abstract class Tracker implements IAlgorithm, IArchive {
         this.m_bolDebug = bolDebug;
     }
     
+    /**
+     * Set the current position within the element though which the 
+     * probe is being propagated.
+     * 
+     * @param dblPosElem    current element position in <b>meters</b>
+     */
+    public void setElemPosition(double dblPosElem) {
+        this.m_dblPosElem = dblPosElem;
+    }
     
-    
-    
-    
+
     /*
      * Accessing
      */
-    
-    
+
     /**
      * Return the probe trajectory updating policy.
      * 
@@ -515,17 +500,47 @@ public abstract class Tracker implements IAlgorithm, IArchive {
         return this.bolInclStopElem;
     }
     
-    /**
-     * TODO CKA - Remove, never used.
-     * 
-     * @author Christopher K. Allen
-     * @since  Oct 20, 2014
+//    /**
+//     * TODO CKA - Remove, never used.
+//     * 
+//     * @author Christopher K. Allen
+//     * @since  Oct 20, 2014
+//     */
+//    public Class<? extends IProbe> getProbeType() {
+//        return probeType;
+//    }
+    
+    
+    /*
+     *  Abstract Methods
      */
-    public Class<? extends IProbe> getProbeType() {
-        return probeType;
-    }
     
-    
+    /**
+     * <p>
+     * The implementation must propagate the probe through the element 
+     * according to the dynamics of the 
+     * specific algorithm.  Derived classes must implement this method but the
+     * <code>Tracker</code> base provided convenient methods for this implementation.
+     * </p>
+     * <p>
+     * NOTE:
+     * <br/>The protected method 
+     * <code>advanceProbe(IProbe, IElement, double)</code>
+     * is available for derived classes.  It is a convenience method
+     * for performing many of the common tasks in the forward propagation 
+     * of any probe.  Thus, its use is not required.
+     * </p>
+     *
+     *  @param  probe   probe to propagate
+     *  @param  elem    element acting on probe
+     *
+     *  @exception  ModelException  invalid probe type or error in advancing probe
+     * 
+     *  @see  Tracker#validProbe(IProbe)
+     */
+    public abstract void doPropagation(IProbe probe, IElement elem) throws ModelException;
+  
+  
     /*
      *  IAlgorithm Interface
      */
@@ -715,6 +730,21 @@ public abstract class Tracker implements IAlgorithm, IArchive {
               
         doPropagation(probe, elem);
         
+        // Temporary (hopefully) Kluge
+        //  If the element is an RF gap we record the time at which the probe
+        //  exited the element.
+        if (elem instanceof IdealRfGap) {
+            IdealRfGap      elmRfGap = (IdealRfGap)elem;
+            
+            double  dblTime   = probe.getTime();
+            double  dblCavPhs = probe.getCoupledCavityPhase();
+            
+            dblCavPhs += elmRfGap.compCoupledCavityPhaseShift(probe);
+            
+            probe.setRfGapExitTime(dblTime);
+            probe.setCoupledCavityPhaseShift(dblCavPhs);
+        }
+        
         if ((this.getProbeUpdatePolicy() & Tracker.UPDATE_EXIT) == Tracker.UPDATE_EXIT)
             probe.update();
     };
@@ -850,26 +880,31 @@ public abstract class Tracker implements IAlgorithm, IArchive {
     {
 
         // Initial conditions of the probe
-        double  s0 = probe.getPosition();
-        double  t0 = probe.getTime();
-        double  W0 = probe.getKineticEnergy();
+        double  s0   = probe.getPosition();
+        double  t0   = probe.getTime();
+        double  phi0 = probe.getLongitinalPhase();
+        double  W0   = probe.getKineticEnergy();
         
         // Properties of the element
-        double  L  = dblLen;
-        double  dT = elem.elapsedTime(probe, dblLen);
-        double  dW = elem.energyGain(probe, dblLen);
+        double  L    = dblLen;
+        double  dT   = elem.elapsedTime(probe, dblLen);
+        double  dphi = elem.longitudinalPhaseAdvance(probe, dblLen);
+        double  dW   = elem.energyGain(probe, dblLen);
         
         // Advance the probe position and energy
-        double  s1 = s0 + L;
-        double  t1 = t0 + dT;
-        double  W1 = W0 + dW;
+        double  s1   = s0 + L;
+        double  t1   = t0 + dT;
+        double  phi1 = phi0 + dphi;
+        double  W1   = W0 + dW;
         
         probe.setPosition(s1);
         probe.setTime(t1);
+        probe.setLongitudinalPhase(phi1);
         probe.setKineticEnergy(W1);
         
-        // Update probe trajectory
         this.setElemPosition(this.getElemPosition() + L);
+
+        // Update probe trajectory
         if (this.getProbeUpdatePolicy() == Tracker.UPDATE_ALWAYS)
             probe.update();
     };
@@ -1018,16 +1053,6 @@ public abstract class Tracker implements IAlgorithm, IArchive {
         return m_dblPosElem;
     }
     
-    /**
-     * Set the current position within the element though which the 
-     * probe is being propagated.
-     * 
-     * @param dblPosElem    current element position in <b>meters</b>
-     */
-    public void setElemPosition(double dblPosElem) {
-        this.m_dblPosElem = dblPosElem;
-    }
-
 }
 
 

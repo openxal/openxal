@@ -79,6 +79,23 @@ public abstract class ThinElement extends Element {
     protected abstract PhaseMap transferMap(IProbe probe) throws ModelException;
         
     
+    /**
+     * Again, this is a kluge just as in the base class <code>Element</code>.
+     * We return zero since the notion of frequency is not defined for most 
+     * elements.  For those elements that due create a phase advance they
+     * need to override this method.
+     * 
+     * @param probe     probe experiencing a phase advance through this element
+     * 
+     * @return          the change in phase while going through the element
+     *
+     * @author Christopher K. Allen
+     * @since  Nov 23, 2014
+     */
+    protected double longitudinalPhaseAdvance(IProbe probe) {
+        return 0.0;
+    }
+    
     /*
      *  IElement Interface
      */
@@ -116,6 +133,20 @@ public abstract class ThinElement extends Element {
     @Override
     public double energyGain(IProbe probe, double dblLen) {
     	return energyGain(probe);
+    }
+    
+    /**
+     * Calculate the longitudinal phase advance through this element ignoring the
+     * length parameter.
+     *
+     * @see xal.model.elem.Element#longitudinalPhaseAdvance(xal.model.IProbe, double)
+     *
+     * @author Christopher K. Allen
+     * @since  Nov 23, 2014
+     */
+    @Override
+    public double longitudinalPhaseAdvance(IProbe probe, double dblLen) {
+        return longitudinalPhaseAdvance(probe);
     }
     
     /**

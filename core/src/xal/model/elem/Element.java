@@ -92,7 +92,7 @@ public abstract class Element implements IElement {
     
     
     /*
-     *  Abstract Methods
+     *  IElement Interface - Abstract Methods
      */
     
     /**
@@ -140,6 +140,19 @@ public abstract class Element implements IElement {
     public abstract PhaseMap transferMap(IProbe probe, double dblLen) throws ModelException;   
 
 
+    /**
+     * This is a kluge to make RF gaps work, since frequency is not defined for most
+     * modeling elements.  For such elements we simply return 0 phase advance.  For
+     * elements where frequency is defined, we can override this.
+     *
+     * @see xal.model.IElement#longitudinalPhaseAdvance(xal.model.IProbe, double)
+     *
+     * @author Christopher K. Allen
+     * @since  Nov 23, 2014
+     */
+    public double   longitudinalPhaseAdvance(IProbe probe, double dblLen) {
+        return 0.0;
+    }
 
     /*
      * Initialization
@@ -429,7 +442,7 @@ public abstract class Element implements IElement {
         alg = probe.getAlgorithm();
         if (alg instanceof Tracker) {
         	Tracker tracker = (Tracker)alg;
-        	System.out.println("tracker.setElemPosition to "+pos);
+//        	System.out.println("tracker.setElemPosition to "+pos);
         	tracker.setElemPosition(pos);
         }
         alg.propagate(probe, this);
