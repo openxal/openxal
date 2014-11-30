@@ -8,7 +8,6 @@ package xal.model.probe;
 
 import xal.tools.annotation.AProperty.NoEdit;
 import xal.tools.beam.PhaseMap;
-import xal.tools.beam.PhaseVector;
 import xal.tools.data.DataAdaptor;
 import xal.model.probe.traj.EnvelopeProbeState;
 import xal.model.probe.traj.Trajectory;
@@ -46,7 +45,7 @@ public class TransferMapProbe extends Probe<TransferMapState> {
         this.setTransferMap(PhaseMap.identity());
         this.setPartialTransferMap(PhaseMap.identity());
         
-        this.setPhaseCoordinates(new PhaseVector());
+//        this.setPhaseCoordinates(new PhaseVector());
     }
 
 //    /**
@@ -75,7 +74,7 @@ public class TransferMapProbe extends Probe<TransferMapState> {
         this.setTransferMap( new PhaseMap( probe.getTransferMap()) );
         this.setPartialTransferMap(new PhaseMap(probe.getPartialTransferMap()));
         
-        this.setPhaseCoordinates( new PhaseVector(probe.getPhaseCoordinates()) );
+//        this.setPhaseCoordinates( new PhaseVector(probe.getPhaseCoordinates()) );
     }
     
     @Override
@@ -129,30 +128,30 @@ public class TransferMapProbe extends Probe<TransferMapState> {
      }
     
      
-    /** 
-     *  Returns homogeneous phase space coordinates of the particle.  The units
-     *  are meters and radians.
-     *  @return vector (x,x',y,y',z,z',1) of phase space coordinates
-     *  
-     *  @deprecated Transfer maps do not have phase coordinates
-     */
-	@Deprecated
-    public PhaseVector getPhaseCoordinates()  { 
-		return this.stateCurrent.getPhaseCoordinates();
-    }
-    
-    
-    /** 
-     *  Set the phase coordinates of the probe.  
-     *  @param  vecPhase new homogeneous phase space coordinate vector
-     *  
-     *  @deprecated Transfer maps do not have phase coordinates
-     */
-    @Deprecated
-    public void setPhaseCoordinates( final PhaseVector vecPhase ) {
-        this.stateCurrent.setPhaseCoordinates(vecPhase);
-    }
-    
+//    /** 
+//     *  Returns homogeneous phase space coordinates of the particle.  The units
+//     *  are meters and radians.
+//     *  @return vector (x,x',y,y',z,z',1) of phase space coordinates
+//     *  
+//     *  @deprecated Transfer maps do not have phase coordinates
+//     */
+//	@Deprecated
+//    public PhaseVector getPhaseCoordinates()  { 
+//		return this.stateCurrent.getPhaseCoordinates();
+//    }
+//    
+//    
+//    /** 
+//     *  Set the phase coordinates of the probe.  
+//     *  @param  vecPhase new homogeneous phase space coordinate vector
+//     *  
+//     *  @deprecated Transfer maps do not have phase coordinates
+//     */
+//    @Deprecated
+//    public void setPhaseCoordinates( final PhaseVector vecPhase ) {
+//        this.stateCurrent.setPhaseCoordinates(vecPhase);
+//    }
+//    
      /*
       * Probe Overrides
       */

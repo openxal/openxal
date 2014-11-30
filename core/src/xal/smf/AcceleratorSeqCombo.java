@@ -1,15 +1,16 @@
 package xal.smf;
 
-import xal.smf.impl.qualify.*;
-import xal.tools.data.*;
-import xal.smf.attr.*;
-
 import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.ListIterator;
-import java.util.List;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+
+import xal.smf.impl.qualify.KindQualifier;
+import xal.smf.impl.qualify.NotTypeQualifier;
+import xal.smf.impl.qualify.TypeQualifier;
+import xal.tools.data.DataAdaptor;
 
 
 /** 
@@ -33,7 +34,7 @@ public class AcceleratorSeqCombo extends AcceleratorSeq {
     /** total length of all primary sequences combined */
     private double totalLen;
 
-    /** the names of the constitiuent seqences */
+    /** the names of the constituent sequences */
     private List<String> constituentNames;
 	
 	/** list of base constituents */

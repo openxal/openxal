@@ -669,7 +669,7 @@ public class CovarianceMatrix extends PhaseMatrix {
         ax = -matSig.getElem(0, 1) / ex;
         twissX = new Twiss(ax, bx, ex);
 
-        // Compute the X plane twiss parameters
+        // Compute the Y plane twiss parameters
         double ay, by, ey; // y plane twiss parameters
         Twiss twissY; // twiss parameter object
         ey = arrEmit[1];
