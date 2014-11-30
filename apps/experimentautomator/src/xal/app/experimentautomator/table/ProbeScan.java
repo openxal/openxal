@@ -20,6 +20,9 @@ public class ProbeScan extends AbstractScan {
 
 	// String so "SKIP" can be used
 	Map<String, Integer> map = new HashMap<String, Integer>() {
+	    /** serialization ID */
+	    private static final long serialVersionUID = 1L;
+
 		{
 			put("KE", 0);
 			put("alphaX", 1);

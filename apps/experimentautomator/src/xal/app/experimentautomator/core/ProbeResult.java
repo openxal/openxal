@@ -30,19 +30,19 @@ import xal.model.probe.traj.EnvelopeProbeState;
 import xal.model.probe.traj.ProbeState;
 import xal.model.probe.traj.Trajectory;
 import xal.sim.scenario.Scenario;
-import xal.smf.Accelerator;
 import xal.smf.AcceleratorNode;
 import xal.smf.AcceleratorSeq;
 import xal.tools.beam.CovarianceMatrix;
 
 public class ProbeResult extends AbstractTableModel {
-
-	private static final int DECIMAL_PLACES = 8;
+    /** serialization ID */
+    private static final long serialVersionUID = 1L;
+    // private static final int DECIMAL_PLACES = 8;
 	private CovarianceMatrix correlationMatrix;
 	private String[] probeList;
 	AcceleratorSeq seq;
 	Scenario model;
-	private Accelerator accel;
+	// private Accelerator accel;
 	// private EADocument EADoc;
 	private SortedMap<Integer, Map<String, Double[]>> resultMap;
 	List<String> nodeList;
@@ -81,8 +81,8 @@ public class ProbeResult extends AbstractTableModel {
 
 	public void fillCurrentStepResults(Integer stepNumber)
 			throws NotificationException {
-		Probe probe = model.getProbe();
-		Trajectory traj = probe.getTrajectory();
+		Probe<?> probe = model.getProbe();
+		Trajectory<?> traj = probe.getTrajectory();
 		SortedMap<String, Double[]> currentStepResultMap = new TreeMap<String, Double[]>();
 
 		for (String device : nodeList) {
@@ -97,7 +97,7 @@ public class ProbeResult extends AbstractTableModel {
 						"No elements associated with node: " + device);
 			Object elem = elems.get(elems.size() - 1);
 
-			ProbeState state = traj.stateForElement(((Element) elem).getId());
+			ProbeState<?> state = traj.stateForElement(((Element) elem).getId());
 
 			correlationMatrix = ((EnvelopeProbeState) state)
 					.getCovarianceMatrix();
@@ -200,10 +200,7 @@ public class ProbeResult extends AbstractTableModel {
 		String dateString = new SimpleDateFormat("yyyy-MM-dd-HHmmss")
 				.format(config.getExperimentTime());
 		File saveLocation = new File(config.getElementScanTablePath()
-				.toString() + "." + dateString + ".probe" + ".csv"); // TODO
-																		// make
-																		// this
-																		// cleaner
+				.toString() + "." + dateString + ".probe" + ".csv"); 
 
 		// Write data to CSV
 		PrintWriter writer;

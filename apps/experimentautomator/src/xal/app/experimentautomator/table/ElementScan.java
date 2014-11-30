@@ -39,6 +39,7 @@ public class ElementScan extends AbstractScan {
 	private List<Integer> useAcquisition;
 
 	private HashMap<String, Double> initialSetpointValues;
+	@SuppressWarnings("unused") // To be implemented in the future
 	private HashMap<String, Double> initialReadbackValues;
 
 	public ElementScan(ExperimentConfig config) throws NotificationException {
@@ -95,7 +96,7 @@ public class ElementScan extends AbstractScan {
 		// System.out.println(initialSetpointValues.toString());
 
 		/** Read the initial readback values of corresponding PVs */
-		HashMap<String, Double> readbackValues = PVConnection
+		initialReadbackValues = PVConnection
 				.readPvValues(thresholdPVs);
 	}
 

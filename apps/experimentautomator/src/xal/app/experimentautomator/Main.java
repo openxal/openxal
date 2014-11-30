@@ -18,16 +18,6 @@ import xal.extension.application.smf.AcceleratorApplication;
  * @see git test
  */
 public class Main extends ApplicationAdaptor {
-	// --------- Variables specific to this application ------------------------
-
-	// simple instance variable to hold state for the Demo application
-	private boolean isRunning;
-	private boolean isPaused;
-
-	// private Action startAction;
-	// private Action stopAction;
-	// private Action pauseAction;
-	//
 
 	// --------- Document management -------------------------------------------
 
@@ -85,8 +75,7 @@ public class Main extends ApplicationAdaptor {
 	 * Constructor
 	 */
 	public Main() {
-		isRunning = false;
-		isPaused = false;
+
 	}
 
 	/**

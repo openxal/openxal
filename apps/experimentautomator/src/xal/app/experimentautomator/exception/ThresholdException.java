@@ -1,7 +1,9 @@
 package xal.app.experimentautomator.exception;
 
 public class ThresholdException extends Exception {
-
+    /** serialization ID */
+    private static final long serialVersionUID = 1L;
+    
 	public Double expected;
 	public Double actual;
 	public String pvName;

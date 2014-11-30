@@ -25,10 +25,11 @@ import javax.swing.table.AbstractTableModel;
 import xal.app.experimentautomator.exception.ChannelAccessException;
 import xal.app.experimentautomator.exception.NotificationException;
 
-@SuppressWarnings("serial")
 public class PVResult extends AbstractTableModel {
 
-	private static final int DECIMAL_PLACES = 8;
+    /** serialization ID */
+    private static final long serialVersionUID = 1L;
+//	private static final int DECIMAL_PLACES = 8;
 	private SortedMap<Integer, Map<String, Double>> resultMap;
 	private ArrayList<ArrayList<String>> data;
 	private List<String> pvList;

@@ -38,8 +38,9 @@ public abstract class PVConnection {
 			Double pvValue = pvPair.getValue();
 			Channel ch = cf.getChannel(pvPair.getKey());
 
-			for (int i = 0; i <= ATTEMPT_LIMIT; i++) {
+			for (int i = 0; i <= ATTEMPT_LIMIT; ) {
 
+				i++;
 				if (i >= ATTEMPT_LIMIT)
 					throw new ChannelAccessException(
 							"Cannot Connect to and/or set " + pvName);
