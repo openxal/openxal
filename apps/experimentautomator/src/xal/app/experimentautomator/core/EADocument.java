@@ -42,6 +42,12 @@ import xal.smf.Accelerator;
 import xal.smf.AcceleratorSeq;
 import xal.smf.data.XMLDataManager;
 
+/**
+ * This class acts as the controller and top-level container for experiment automator.
+ * 
+ * @author robinnewhouse
+ *
+ */
 public class EADocument extends AcceleratorDocument {
 
 	public static final Integer ACQUISITION_CASE_FALSE = 0;

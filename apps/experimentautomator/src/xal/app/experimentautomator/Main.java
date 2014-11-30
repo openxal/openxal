@@ -10,12 +10,10 @@ import xal.extension.application.XalDocument;
 import xal.extension.application.smf.AcceleratorApplication;
 
 /**
- * Main is a demo concrete subclass of ApplicationAdaptor. This demo application
- * is a simple plain text editor that demonstrates how to build a simple
- * application using the application framework.
+ * This is the main class for the experiment automator application.
  * 
- * @author t6p
- * @see git test
+ * @version   0.1  30 Nov 2014
+ * @author robinnewhouse
  */
 public class Main extends ApplicationAdaptor {
 
