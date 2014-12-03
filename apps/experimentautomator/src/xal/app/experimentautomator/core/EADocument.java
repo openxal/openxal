@@ -195,7 +195,7 @@ public class EADocument extends AcceleratorDocument {
 	}
 
 	private PrefWindow prefWindow() {
-		return (PrefWindow) prefWindow;
+		return prefWindow;
 	}
 
 	/**
