@@ -49,6 +49,7 @@ import xal.model.ModelException;
  * 
  * @see xal.model.elem.IdealMagSectorDipole2
  * @see xal.model.elem.ThickDipole
+ * 
  */
 public class IdealMagSectorDipole2 extends ThickElectromagnet {
 
@@ -858,7 +859,7 @@ public class IdealMagSectorDipole2 extends ThickElectromagnet {
      *  
      *  @author Christopher K. Allen
      *  
-     *  @see    IdealMagSectorDipole#compCurrentAngle(doube)
+     *  @see    IdealMagSectorDipole2#compCurrentAngle(doube)
      */
     @SuppressWarnings("unused")
     private double approxCurrentAngle(double s) {

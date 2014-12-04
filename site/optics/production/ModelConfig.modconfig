@@ -4,6 +4,7 @@
 	<elements>
 		<default type="xal.model.elem.Marker"/>
 		<drift type="xal.model.elem.IdealDrift"/>
+        <drift_rfcav type="xal.model.elem.IdealRfCavityDrift"/>
 	</elements>
 
 	<associations>

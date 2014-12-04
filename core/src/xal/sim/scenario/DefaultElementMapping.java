@@ -15,6 +15,7 @@ import xal.model.elem.IdealMagSextupole;
 import xal.model.elem.IdealMagSkewQuad3;
 import xal.model.elem.IdealMagSteeringDipole;
 import xal.model.elem.IdealMagWedgeDipole2;
+import xal.model.elem.IdealRfCavityDrift;
 import xal.model.elem.IdealRfGap;
 import xal.model.elem.Marker;
 
@@ -43,18 +44,42 @@ public class DefaultElementMapping extends ElementMapping {
 	}
 	
 	
+	/*
+	 * ElementMapping Requirements
+	 */
+	
 	@Override
-	public Class<? extends IComponent> getDefaultConverter() {
+	public Class<? extends IComponent> getDefaultClassType() {
 		return Marker.class;
 	}
 
 
+	/**
+	 * Creates a new, general drift space.
+	 *
+	 * @see xal.sim.scenario.ElementMapping#createDrift(java.lang.String, double)
+	 *
+	 * @since  Dec 3, 2014
+	 */
 	@Override
 	public IComponent createDrift(String name, double len) {
 		return new IdealDrift(name, len);
 	}
 	
-	protected void initialize() {
+	/**
+	 * Creates a drift space within an RF cavity.
+     *
+     * @see xal.sim.scenario.ElementMapping#createCavityDrift(java.lang.String, double, double, double)
+     *
+     * @author Christopher K. Allen
+     * @since  Dec 3, 2014
+     */
+    @Override
+    public IComponent createCavityDrift(String name, double len, double freq, double mode) {
+        return new IdealRfCavityDrift(name, len, freq, mode);
+    }
+
+    protected void initialize() {
 		putMap("dh",IdealMagWedgeDipole2.class);
 		putMap(xal.smf.impl.EDipole.s_strType, IdealEDipole.class);
 		putMap("QSC", IdealMagSkewQuad3.class);		

@@ -28,7 +28,9 @@ import xal.smf.impl.Bend;
  * @see xal.model.elem#IdealMagSectorDipole
  * @see xal.model.elem#IdealMagDipoleFace
  *
+ * @deprecated  This class has been replaced by <code>IdealMagWedgeDipole2</code>
  */
+@Deprecated
 public class IdealMagWedgeDipole extends ElectromagnetSeq {
 
 

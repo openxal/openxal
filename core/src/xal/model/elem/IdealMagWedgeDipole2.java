@@ -261,7 +261,7 @@ public class IdealMagWedgeDipole2 extends ElectromagnetSeq {
      * 
      * @param   dblFldInt   fringe field integral (<b>unitless</b>)
      *  
-     * @see IdealMagDipoleFace#setFringeIntegral
+     * @see IdealMagDipoleFace2#setFringeIntegral
      */
     public void setEntrFringeIntegral(double dblFldInt) {
         this.getFaceEntr().setFringeIntegral(dblFldInt);
@@ -274,7 +274,7 @@ public class IdealMagWedgeDipole2 extends ElectromagnetSeq {
      * 
      * @param   dblFldInt   fringe field integral (<b>unitless</b>)
      *  
-     * @see IdealMagDipoleFace#setFringeIntegral
+     * @see IdealMagDipoleFace2#setFringeIntegral
      */
     public void setExitFringeIntegral(double dblFldInt) {
         this.getFaceExit().setFringeIntegral(dblFldInt);
@@ -409,7 +409,7 @@ public class IdealMagWedgeDipole2 extends ElectromagnetSeq {
      * 
      * @return  fringe field integral (<b>unitless</b>)
      *  
-     * @see IdealMagDipoleFace#getFringeIntegral
+     * @see IdealMagDipoleFace2#getFringeIntegral
      */
     public double   getExitFringeIntegral() {
         return this.getFaceExit().getFringeIntegral();

@@ -748,7 +748,6 @@ public abstract class Tracker implements IAlgorithm, IArchive {
         if ((this.getProbeUpdatePolicy() & Tracker.UPDATE_EXIT) == Tracker.UPDATE_EXIT)
             probe.update();
     };
-
     
 
     /*
@@ -789,11 +788,9 @@ public abstract class Tracker implements IAlgorithm, IArchive {
     }    
 
     
-
     /*
      * IArchive Interface
      */
-     
 
     /**
      * Load the state and settings of this algorithm from a data source
@@ -944,25 +941,29 @@ public abstract class Tracker implements IAlgorithm, IArchive {
     {
 
         // Initial conditions of the probe
-        double  h0 = this.getElemPosition();    // position within element
-        double  s0 = probe.getPosition();       // position within sequence
-        double  t0 = probe.getTime();           // time in sequence
-        double  W0 = probe.getKineticEnergy();  // total kinetic energy
+        double  h0   = this.getElemPosition();    // position within element
+        double  s0   = probe.getPosition();       // position within sequence
+        double  t0   = probe.getTime();           // time in sequence
+        double  phi0 = probe.getLongitinalPhase();// longitudinal phase position
+        double  W0   = probe.getKineticEnergy();  // total kinetic energy
 
         // Properties of the element
-        double  dh  = dblLen;                           // change in position
-        double  dt = elem.elapsedTime(probe, dblLen);   // change in time
-        double  dW = elem.energyGain(probe, dblLen);    // change in energy
+        double  dh   = dblLen;                           // change in position
+        double  dt   = elem.elapsedTime(probe, dblLen);   // change in time
+        double  dphi = elem.longitudinalPhaseAdvance(probe, dblLen);
+        double  dW   = elem.energyGain(probe, dblLen);    // change in energy
 
         // Retreat the probe position and energy
-        double  h1 = h0 - dh;
-        double  s1 = s0 - dh;
-        double  t1 = t0 - dt;
-        double  W1 = W0 - dW;
+        double  h1   = h0 - dh;
+        double  s1   = s0 - dh;
+        double  t1   = t0 - dt;
+        double  phi1 = phi0 + dphi;
+        double  W1   = W0 - dW;
 
         this.setElemPosition(h1);
         probe.setPosition(s1);
         probe.setTime(t1);
+        probe.setLongitudinalPhase(phi1);
         probe.setKineticEnergy(W1);
         
         // Update probe trajectory
@@ -970,8 +971,6 @@ public abstract class Tracker implements IAlgorithm, IArchive {
             probe.update();
     }
 
-
-    
     /**
      * <p>
      * Check if the specified element is requires probe propagating.  That is,
@@ -1021,11 +1020,6 @@ public abstract class Tracker implements IAlgorithm, IArchive {
         return true;
     }
         
-
-    
-    
-    
-
     
     /*
      *  Support Functions
@@ -1042,7 +1036,6 @@ public abstract class Tracker implements IAlgorithm, IArchive {
         m_lstProbes.add(clsProbeType);
     }
     
-    
      /**
       * Return the current position within the element through which
       * the probe is being propagated
@@ -1056,12 +1049,9 @@ public abstract class Tracker implements IAlgorithm, IArchive {
 }
 
 
-
 /*
  *  Storage
  */
-
-
     
 ///**
 //*  All derived algorithms must implement this method for advancing the state

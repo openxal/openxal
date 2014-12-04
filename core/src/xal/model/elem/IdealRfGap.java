@@ -178,11 +178,11 @@ public class IdealRfGap extends ThinElement implements IRfGap {
      */
     private static double STRUCTURE_PHASE = 0.;
     
-    /**
-     *  These are kluge jobs for RF cavities.  Very dangerous since
-     *  they are class variables. 
-     */
-    private static double UPSTREAM_EXIT_TIME = 0.;
+//    /**
+//     *  These are kluge jobs for RF cavities.  Very dangerous since
+//     *  they are class variables. 
+//     */
+//    private static double UPSTREAM_EXIT_TIME = 0.;
 
     /** the phase kick correction applied at the gap center [rad]*/
     private static double DELTA_PHASE_CORRECTION = 0.;
@@ -635,7 +635,7 @@ public class IdealRfGap extends ThinElement implements IRfGap {
 
 //        //the time when probe will exit this gap
         // TODO Delete this!
-        UPSTREAM_EXIT_TIME = probe.getTime() + dT + (getCellLength()/2.) / (bf*c);
+//        UPSTREAM_EXIT_TIME = probe.getTime() + dT + (getCellLength()/2.) / (bf*c);
 
         return dT;
     }
@@ -647,11 +647,10 @@ public class IdealRfGap extends ThinElement implements IRfGap {
     /**
      *  Compute the energy gain of the RF gap for a probe including the effects of
      *  calculating the phase advance.
-     *  
-     *  TODO: CKA - Compute the energy gain as needed
      *
-     *@param  probe  uses the particle species charge
-     *@return        energy gain for this probe (<b>in electron-volts</b> )
+     * @param  probe  uses the particle species charge
+     * 
+     * @return        energy gain for this probe (<b>in electron-volts</b> )
      */
     @Override
     public double energyGain(IProbe probe) {
@@ -844,7 +843,7 @@ public class IdealRfGap extends ThinElement implements IRfGap {
      * @author Christopher K. Allen
      * @since  Nov 19, 2014
      */
-    private double   compCavityPhaseCorrection(IProbe probe) {
+    private double   compFirstGapPhaseCorrection(IProbe probe) {
     
         if (!this.isFirstGap())
             return 0.0;
@@ -894,6 +893,11 @@ public class IdealRfGap extends ThinElement implements IRfGap {
         double  D_phi   =  nCycles*Math.PI;
         
         return D_phi;
+
+        // TODO - Figure this out??
+        //  applied after the above is computed and then added on the next call
+//        STRUCTURE_PHASE = STRUCTURE_PHASE - (2 - dblCavModeConst) * Math.PI;
+//        STRUCTURE_PHASE = Math.IEEEremainder(STRUCTURE_PHASE , (2. * Math.PI));
     }
     
     /**
@@ -1131,6 +1135,9 @@ public class IdealRfGap extends ThinElement implements IRfGap {
         double bi = probe.getBeta();
         double Wi = probe.getKineticEnergy();
 
+        //
+        //  IMPORTANT!!!!
+        //
         //  TODO: We need to check that the probe is giving the correct phase here.
         //        The phase must be set with respect to the first gap 
         //
@@ -1211,99 +1218,99 @@ public class IdealRfGap extends ThinElement implements IRfGap {
         return new EnergyVariables(d_phi, dW);
     }
 
-    /**
-     *  <p> 
-     *  Routine to calculate the energy gain along with the phase advance.
-     *  </p>
-     *  <p> 
-     *  A method that is called once by transferMatrix to calculate the energy gain.
-     *  This prevents energy gain calculation from being repeated many times.
-     *  Importantly it provides a workaround from the eneryGain being calculated
-     *  after the upstreamExitPhase is updated elsewhere
-     *  </p>
-     *  <p>
-     *  <h4>CKA NOTES: 11/17/2014</h4>
-     *  &middot; This method is at the heart of some major architectural issues.
-     *  <br/>
-     *  &middot; We have a state-dependent situation, the computed results being
-     *  dependent upon the state of <b>class</b> variables.
-     *  <br/>
-     *  &middot; These class state variables should most likely be local properties
-     *  of the probe objects.
-     *  </p>
-     *
-     * @param  probe  The Parameter
-     */
-    private void compEnergyGain_old(final IProbe probe) {
-        double EL = getE0() * getCellLength();
-
-        // Initial energy parameters
-        double Er = probe.getSpeciesRestEnergy();		
-        double bi = probe.getBeta();
-        //		double gi = probe.getGamma();		
-        double Wi = probe.getKineticEnergy();
-
-        double phi0 = 0.;
-
-        double arrival_time = probe.getTime();
-
-        //the correction for the gap offset needed
-        arrival_time = arrival_time + gapOffset / (bi * IElement.LightSpeed);
-
-        // get phase at the gap center:
-        if(!isFirstGap()) {
-            phi0 = 2. * Math.PI * arrival_time * getFrequency() - FIRST_GAP_PHASE_CORR;
-            double driftTime = probe.getTime() - ((getCellLength()/2.)/(bi * IElement.LightSpeed) + UPSTREAM_EXIT_TIME);
-            int nLabmda = (int) Math.round(2*dblCavModeConst*driftTime*getFrequency());
-            STRUCTURE_PHASE = STRUCTURE_PHASE + Math.PI*nLabmda;
-            phi0 = phi0 + STRUCTURE_PHASE;
-            //phi0 = Math.IEEEremainder(phi0, (2. * Math.PI * (1.0 - dblCavModeConst / 2.0)));
-            setPhase(phi0);
-        }
-        // for first gap use input for phase at the gap center
-        else {
-            STRUCTURE_PHASE = 0.0;
-            FIRST_GAP_PHASE_CORR = 2.0 * Math.PI * arrival_time * getFrequency() - getPhase();
-            phi0 = getPhase();
-        }
-
-        // CKA - I don't see that the value "theEnergyGain" computed here is every used ??? 
-        double Q = Math.abs(probe.getSpeciesCharge());
-        theEnergyGain = Q * EL * Math.cos(phi0) * fitTTF.evaluateAt(bi);
-
-        STRUCTURE_PHASE = STRUCTURE_PHASE - (2 - dblCavModeConst) * Math.PI;
-        STRUCTURE_PHASE = Math.IEEEremainder(STRUCTURE_PHASE , (2. * Math.PI));
-
-        //phase change from center correction factor for future time calculations
-        //in PARMILA TTFPrime and SPrime are in [1/cm] units, we use [m]
-        DELTA_PHASE_CORRECTION = 0;
-        double ttf = fitTTF.evaluateAt(bi);
-        double ttf_prime = 0.01*fitTTFPrime.evaluateAt(bi);
-        double stf = fitSTF.evaluateAt(bi);
-        double stf_prime = 0.01*fitSTFPrime.evaluateAt(bi);
-        double freq = getFrequency();
-        //		double phi_gap = phi0;
-        double dE_gap = Q*EL*(ttf*Math.cos(phi0) + stf*Math.sin(phi0))/2.0;
-        double b_gap0 = Math.sqrt(1.-Er*Er/((Er+Wi+dE_gap)*(Er+Wi+dE_gap)));	
-        double k_gap0 = 2*Math.PI*freq/(b_gap0*IElement.LightSpeed);	
-        double gamma_gap = Math.sqrt(1./(1.-b_gap0*b_gap0));
-        double b_gap = b_gap0;
-        double k_gap = k_gap0;
-        double dlt_phi = (Q*EL/(Er*gamma_gap*gamma_gap*gamma_gap*b_gap*b_gap))*k_gap*(ttf_prime*Math.sin(phi0) - stf_prime*Math.cos(phi0))/2.0;
-        for( int i = 0; i < 3; i++){
-            b_gap = Math.sqrt(1.-Er*Er/((Er+Wi+dE_gap)*(Er+Wi+dE_gap)));	
-            k_gap = 2*Math.PI*freq/(b_gap*IElement.LightSpeed);	
-            gamma_gap = Math.sqrt(1./(1.-b_gap*b_gap));
-            dE_gap = Q*EL*((ttf + ttf_prime*(k_gap - k_gap0))*Math.cos(phi0+dlt_phi) + (stf + stf_prime*(k_gap - k_gap0))*Math.sin(phi0+dlt_phi))/2.0;
-            dlt_phi = (Q*EL/(Er*gamma_gap*gamma_gap*gamma_gap*b_gap*b_gap))*k_gap*(ttf_prime*Math.sin(phi0+dlt_phi) - stf_prime*Math.cos(phi0+dlt_phi))/2.0;
-        }
-        //System.out.println("Stop "+this.getId() + "dlt_phi ="+(180*dlt_phi/Math.PI)+" bi="+bi+" b_gap="+b_gap+" dE_gap="+dE_gap+" Wi="+Wi);
-        //the energy gain and phase are known
-        //now we calculate the total energy gain and phase
-        theEnergyGain = Q*EL*((ttf + ttf_prime*(k_gap - k_gap0))*Math.cos(phi0+dlt_phi));
-        DELTA_PHASE_CORRECTION = (Q*EL/(Er*gamma_gap*gamma_gap*gamma_gap*b_gap*b_gap))*k_gap*(ttf_prime*Math.sin(phi0+dlt_phi));		
-    
-        //System.out.println(this.getId() + " " + (Math.IEEEremainder(phi0 * 57.295779, 360.)) + "  " + Wi + "  " + theEnergyGain);
-    }
+//    /**
+//     *  <p> 
+//     *  Routine to calculate the energy gain along with the phase advance.
+//     *  </p>
+//     *  <p> 
+//     *  A method that is called once by transferMatrix to calculate the energy gain.
+//     *  This prevents energy gain calculation from being repeated many times.
+//     *  Importantly it provides a workaround from the eneryGain being calculated
+//     *  after the upstreamExitPhase is updated elsewhere
+//     *  </p>
+//     *  <p>
+//     *  <h4>CKA NOTES: 11/17/2014</h4>
+//     *  &middot; This method is at the heart of some major architectural issues.
+//     *  <br/>
+//     *  &middot; We have a state-dependent situation, the computed results being
+//     *  dependent upon the state of <b>class</b> variables.
+//     *  <br/>
+//     *  &middot; These class state variables should most likely be local properties
+//     *  of the probe objects.
+//     *  </p>
+//     *
+//     * @param  probe  The Parameter
+//     */
+//    private void compEnergyGain_old(final IProbe probe) {
+//        double EL = getE0() * getCellLength();
+//
+//        // Initial energy parameters
+//        double Er = probe.getSpeciesRestEnergy();		
+//        double bi = probe.getBeta();
+//        //		double gi = probe.getGamma();		
+//        double Wi = probe.getKineticEnergy();
+//
+//        double phi0 = 0.;
+//
+//        double arrival_time = probe.getTime();
+//
+//        //the correction for the gap offset needed
+//        arrival_time = arrival_time + gapOffset / (bi * IElement.LightSpeed);
+//
+//        // get phase at the gap center:
+//        if(!isFirstGap()) {
+//            phi0 = 2. * Math.PI * arrival_time * getFrequency() - FIRST_GAP_PHASE_CORR;
+//            double driftTime = probe.getTime() - ((getCellLength()/2.)/(bi * IElement.LightSpeed) + UPSTREAM_EXIT_TIME);
+//            int nLabmda = (int) Math.round(2*dblCavModeConst*driftTime*getFrequency());
+//            STRUCTURE_PHASE = STRUCTURE_PHASE + Math.PI*nLabmda;
+//            phi0 = phi0 + STRUCTURE_PHASE;
+//            //phi0 = Math.IEEEremainder(phi0, (2. * Math.PI * (1.0 - dblCavModeConst / 2.0)));
+//            setPhase(phi0);
+//        }
+//        // for first gap use input for phase at the gap center
+//        else {
+//            STRUCTURE_PHASE = 0.0;
+//            FIRST_GAP_PHASE_CORR = 2.0 * Math.PI * arrival_time * getFrequency() - getPhase();
+//            phi0 = getPhase();
+//        }
+//
+//        // CKA - theEnergyGain is dangling, cannot be used by getEnergyGain() until this is called 
+//        double Q = Math.abs(probe.getSpeciesCharge());
+//        theEnergyGain = Q * EL * Math.cos(phi0) * fitTTF.evaluateAt(bi);
+//
+//        STRUCTURE_PHASE = STRUCTURE_PHASE - (2 - dblCavModeConst) * Math.PI;
+//        STRUCTURE_PHASE = Math.IEEEremainder(STRUCTURE_PHASE , (2. * Math.PI));
+//
+//        //phase change from center correction factor for future time calculations
+//        //in PARMILA TTFPrime and SPrime are in [1/cm] units, we use [m]
+//        DELTA_PHASE_CORRECTION = 0;
+//        double ttf = fitTTF.evaluateAt(bi);
+//        double ttf_prime = 0.01*fitTTFPrime.evaluateAt(bi);
+//        double stf = fitSTF.evaluateAt(bi);
+//        double stf_prime = 0.01*fitSTFPrime.evaluateAt(bi);
+//        double freq = getFrequency();
+//        //		double phi_gap = phi0;
+//        double dE_gap = Q*EL*(ttf*Math.cos(phi0) + stf*Math.sin(phi0))/2.0;
+//        double b_gap0 = Math.sqrt(1.-Er*Er/((Er+Wi+dE_gap)*(Er+Wi+dE_gap)));	
+//        double k_gap0 = 2*Math.PI*freq/(b_gap0*IElement.LightSpeed);	
+//        double gamma_gap = Math.sqrt(1./(1.-b_gap0*b_gap0));
+//        double b_gap = b_gap0;
+//        double k_gap = k_gap0;
+//        double dlt_phi = (Q*EL/(Er*gamma_gap*gamma_gap*gamma_gap*b_gap*b_gap))*k_gap*(ttf_prime*Math.sin(phi0) - stf_prime*Math.cos(phi0))/2.0;
+//        for( int i = 0; i < 3; i++){
+//            b_gap = Math.sqrt(1.-Er*Er/((Er+Wi+dE_gap)*(Er+Wi+dE_gap)));	
+//            k_gap = 2*Math.PI*freq/(b_gap*IElement.LightSpeed);	
+//            gamma_gap = Math.sqrt(1./(1.-b_gap*b_gap));
+//            dE_gap = Q*EL*((ttf + ttf_prime*(k_gap - k_gap0))*Math.cos(phi0+dlt_phi) + (stf + stf_prime*(k_gap - k_gap0))*Math.sin(phi0+dlt_phi))/2.0;
+//            dlt_phi = (Q*EL/(Er*gamma_gap*gamma_gap*gamma_gap*b_gap*b_gap))*k_gap*(ttf_prime*Math.sin(phi0+dlt_phi) - stf_prime*Math.cos(phi0+dlt_phi))/2.0;
+//        }
+//        //System.out.println("Stop "+this.getId() + "dlt_phi ="+(180*dlt_phi/Math.PI)+" bi="+bi+" b_gap="+b_gap+" dE_gap="+dE_gap+" Wi="+Wi);
+//        //the energy gain and phase are known
+//        //now we calculate the total energy gain and phase
+//        theEnergyGain = Q*EL*((ttf + ttf_prime*(k_gap - k_gap0))*Math.cos(phi0+dlt_phi));
+//        DELTA_PHASE_CORRECTION = (Q*EL/(Er*gamma_gap*gamma_gap*gamma_gap*b_gap*b_gap))*k_gap*(ttf_prime*Math.sin(phi0+dlt_phi));		
+//    
+//        //System.out.println(this.getId() + " " + (Math.IEEEremainder(phi0 * 57.295779, 360.)) + "  " + Wi + "  " + theEnergyGain);
+//    }
 }
 

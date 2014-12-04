@@ -36,8 +36,11 @@ import xal.model.ModelException;
  * @author Christopher K. Allen
  * 
  * @see D.C. Carey, The Optics of Charged Particle Beams (Harwood, 1987)
- * @see H. Wiedemann, Particle Accelerator Physics I, 2nd Ed. (Springer, 1999)    
+ * @see H. Wiedemann, Particle Accelerator Physics I, 2nd Ed. (Springer, 1999)
+ *     
+ * @deprecated  This class has been replaced by <code>IdealMagSectorDipole2</code>
  */
+@Deprecated
 public class IdealMagSectorDipole extends ThickElectromagnet {
 
 

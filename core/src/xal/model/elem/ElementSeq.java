@@ -182,11 +182,150 @@ public abstract class ElementSeq implements IComposite {
 
     
     /*
-     * Probe Propagation
+     *  Sequence Properties
      */
 
+    /**
+     *  Get any user comments regarding this sequence.  Returns the null string if none.
+     *
+     *  @return         string containing user comments
+     */
+    public String   getComments()   { return m_strComment; };
+    
+    /**
+     *  Get the number of <code>IElement</code> derived objects contained
+     *  in this sequence.
+     * 
+     * @return          number of <code>Element</code> object w/in sequence
+     */
+    public int  getLeafCount()   {
+        Iterator<IComponent> iter = this.childIterator();
+        
+        int cntElem = 0;
+        while (iter.hasNext())  {
+            IComponent    ifcComp = iter.next();
+            
+            if (ifcComp instanceof ElementSeq) {
+                cntElem += ((ElementSeq)ifcComp).getLeafCount();
 
+            } else if (ifcComp instanceof IElement)  {
+                cntElem++;
+                
+            } else  {
+                continue;
+                
+            }
+        }
+        
+        return cntElem;
+    }
 
+    /**
+     * Return the list of <code>IElement</code> objects contained
+     * in this sequence.
+     * 
+     * @return  list of elements composing this sequence
+     */
+    public  List<IComponent> getElementList()    {
+        return  this.m_lstCompsForward;
+    }
+    
+    /**
+     * Returns a list of <em>all</em> elements contained in this
+     * sequence, more specifically, all leaf elements.
+     * 
+     * @return  list containing all <code>IComponent</code> class 
+     *          elements in this sequence
+     *
+     * @author Christopher K. Allen
+     * @since  Sep 11, 2014
+     */
+    public List<IComponent> getAllElements() {
+        List<IComponent>        lstCmps = new ArrayList<>();
+        Iterator<IComponent>    itrCmps =  this.globalIterator();
+        
+        while (itrCmps.hasNext()) {
+            IComponent cmp = itrCmps.next();
+            
+            lstCmps.add(cmp);
+        }
+        
+        return lstCmps;
+    }
+    
+    
+    /*
+     *  Operations
+     */
+    
+    /**
+     * Return an <code>Iterator</code> object that iterates over the direct
+     * descendants only of this composite element, in reverse order.
+     * 
+     * @return  interface to iterator object
+     * 
+     * @author Christopher K. Allen
+     * @since Feb 27, 2009
+     * 
+     * @see     java.util.Iterator
+     */ 
+    public Iterator<IComponent> localBackIterator() {
+        return this.getReverseCompList().iterator();
+    }
+     
+    /**
+     * Return an <code>Iterator</code> object that iterates over <b>every</b> 
+     * <code>IComponent</code> object in this composite.  For 
+     * <code>IComponent</code> which are also composite the parent is 
+     * returned first, then all its children.  This would be in reverse
+     * order.
+     * 
+     * @return  <code>Iterator</code> interface to iterator object
+     * 
+     * @see     java.util.Iterator
+     */
+    public Iterator<IComponent> globalBackIterator()  {
+        Iterator<IComponent> flatListIter = new CompositeGlobalIterator(this);
+        List<IComponent> reverseFlatList = new ArrayList<IComponent>();
+        
+        while (flatListIter.hasNext()) {
+            IComponent comp = flatListIter.next();
+            
+            reverseFlatList.add(0, comp);
+        }
+        
+        return reverseFlatList.iterator();
+    }
+    
+    /**
+     *  Return an <code>Iterator</code> object that cycles through
+     *  all the direct children of the sequence.  Note that any child
+     *  may have children itself.
+     * 
+     * @return  iterator of <code>IElement</code> interfaces
+     */
+    public Iterator<IComponent> childIterator() {
+        return this.getCompList().iterator();
+    }
+    
+    
+    /**
+     *  Concatenate the indicated <code>ElementSeq</code> object
+     *  to the tail of this sequence.
+     * 
+     *  @param  seq     object to conjoin to this one
+     */
+    public void concatenateEquals(ElementSeq seq)   {
+        Iterator<IComponent> iter = seq.childIterator();
+        
+        while (iter.hasNext()) {
+            IElement    ifcNext = (IElement)iter.next();
+            
+            this.addChild(ifcNext);
+        }
+    }
+    
+    
     /*
      *  IComponent Interface
      */
@@ -342,44 +481,9 @@ public abstract class ElementSeq implements IComposite {
         return new CompositeGlobalIterator(this);
     }
     
-    /**
-     * Return an <code>Iterator</code> object that iterates over the direct
-     * descendants only of this composite element, in reverse order.
-     * 
-     * @return  interface to iterator object
-     * 
-     * @author Christopher K. Allen
-     * @since Feb 27, 2009
-     * 
-     * @see     java.util.Iterator
-     */ 
-    public Iterator<IComponent> localBackIterator() {
-        return this.getReverseCompList().iterator();
-    }
-     
-    /**
-     * Return an <code>Iterator</code> object that iterates over <b>every</b> 
-     * <code>IComponent</code> object in this composite.  For 
-     * <code>IComponent</code> which are also composite the parent is 
-     * returned first, then all its children.  This would be in reverse
-     * order.
-     * 
-     * @return  <code>Iterator</code> interface to iterator object
-     * 
-     * @see     java.util.Iterator
+    /*
+     * IComposite Interface
      */
-    public Iterator<IComponent> globalBackIterator()  {
-        Iterator<IComponent> flatListIter = new CompositeGlobalIterator(this);
-        List<IComponent> reverseFlatList = new ArrayList<IComponent>();
-        
-        while (flatListIter.hasNext()) {
-            IComponent comp = flatListIter.next();
-            
-            reverseFlatList.add(0, comp);
-        }
-        
-        return reverseFlatList.iterator();
-    }
     
     /**
      * Get the number of direct children in this sequence.  Note that this is 
@@ -454,7 +558,6 @@ public abstract class ElementSeq implements IComposite {
     };
     
 
-    
     
 //    /**
 //     *  Return total time to propagate through all elements in this sequence 
@@ -569,108 +672,6 @@ public abstract class ElementSeq implements IComposite {
 //        
 //        return mapPhi;
 //    }
-    
-    
-    /*
-     *  Sequence Operations
-     */
-
-    /**
-     *  Get any user comments regarding this sequence.  Returns the null string if none.
-     *
-     *  @return         string containing user comments
-     */
-    public String   getComments()   { return m_strComment; };
-    
-    /**
-     *  Get the number of <code>IElement</code> derived objects contained
-     *  in this sequence.
-     * 
-     * @return          number of <code>Element</code> object w/in sequence
-     */
-    public int  getLeafCount()   {
-        Iterator<IComponent> iter = this.childIterator();
-        
-        int cntElem = 0;
-        while (iter.hasNext())  {
-            IComponent    ifcComp = iter.next();
-            
-            if (ifcComp instanceof ElementSeq) {
-                cntElem += ((ElementSeq)ifcComp).getLeafCount();
-
-            } else if (ifcComp instanceof IElement)  {
-                cntElem++;
-                
-            } else  {
-                continue;
-                
-            }
-        }
-        
-        return cntElem;
-    }
-    
-    /**
-     *  Return an <code>Iterator</code> object that cycles through
-     *  all the direct children of the sequence.  Note that any child
-     *  may have children itself.
-     * 
-     * @return  iterator of <code>IElement</code> interfaces
-     */
-    public Iterator<IComponent> childIterator() {
-        return this.getCompList().iterator();
-    }
-    
-    /**
-     * Return the list of <code>IElement</code> objects contained
-     * in this sequence.
-     * 
-     * @return  list of elements composing this sequence
-     */
-    public  List<IComponent> getElementList()    {
-        return  this.m_lstCompsForward;
-    }
-    
-    /**
-     * Returns a list of <em>all</em> elements contained in this
-     * sequence, more specifically, all leaf elements.
-     * 
-     * @return  list containing all <code>IComponent</code> class 
-     *          elements in this sequence
-     *
-     * @author Christopher K. Allen
-     * @since  Sep 11, 2014
-     */
-    public List<IComponent> getAllElements() {
-        List<IComponent>        lstCmps = new ArrayList<>();
-        Iterator<IComponent>    itrCmps =  this.globalIterator();
-        
-        while (itrCmps.hasNext()) {
-            IComponent cmp = itrCmps.next();
-            
-            lstCmps.add(cmp);
-        }
-        
-        return lstCmps;
-    }
-    
-    
-    /**
-     *  Concatenate the indicated <code>ElementSeq</code> object
-     *  to the tail of this sequence.
-     * 
-     *  @param  seq     object to conjoin to this one
-     */
-    public void concatenateEquals(ElementSeq seq)   {
-        Iterator<IComponent> iter = seq.childIterator();
-        
-        while (iter.hasNext()) {
-            IElement    ifcNext = (IElement)iter.next();
-            
-            this.addChild(ifcNext);
-        }
-    }
-    
     
     
     /*

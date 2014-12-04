@@ -22,15 +22,27 @@ import xal.smf.AcceleratorNode;
  *
  */
 public abstract class ElementMapping {
+    
+    /*
+     * Local Attributes
+     */
+    
+    // CKA: Why we are not using a Map container directly?
+    /** The list of hardware type identifier string to modeling element class types. */
 	protected List<Entry<String, Class<? extends IComponent>>> elementMapping = new ArrayList<>();
 
+	
+	/*
+	 * Base Class Requirements
+	 */
+	
 	/**
 	 * Default converter should produce a general model element like a Marker.
 	 * It is used when no other converters have been found.
 	 *   
 	 * @return default converter
 	 */
-	public abstract Class<? extends IComponent> getDefaultConverter();
+	public abstract Class<? extends IComponent> getDefaultClassType();
 
 	/**
 	 * Different model may have different implementation of the drift element.
@@ -38,7 +50,30 @@ public abstract class ElementMapping {
 	 * @return drift model element
 	 * @throws ModelException 
 	 */
-	public abstract IComponent createDrift(String name, double len) throws ModelException;	
+	public abstract IComponent createDrift(String name, double len) throws ModelException;
+
+	/**
+	 * Creates a drift space within an RF cavity structure.  Such drifts have extra parameters
+	 * needed to compute the probe's longitudinal phase advance.  These parameters are derived
+	 * from the cavity's design parameters and do not need to be synchronized.
+	 * 
+	 * @param name     string identifier of the drift space
+	 * @param len      length of drift space (meters)
+	 * @param freq     design frequency of the enclosing RF cavity
+	 * @param mode     structure mode coupling the cavities within the tank
+	 *  
+	 * @return         a new RF cavity drift space
+	 *  
+	 * @throws         ModelException  an exception occurred while constructing the element
+	 *
+	 * @since  Dec 3, 2014     @author Christopher K. Allen
+	 */
+	public abstract IComponent createCavityDrift(String name, double len, double freq, double mode) throws ModelException;
+	
+	
+	/*
+	 * Operations
+	 */
 	
 	/**
 	 * Returns converter for the given node.
@@ -49,12 +84,12 @@ public abstract class ElementMapping {
 	 * @throws IllegalAccessException 
 	 * @throws InstantiationException 
 	 */
-	public Class<? extends IComponent> getConverter(AcceleratorNode node) {
+	public Class<? extends IComponent> getClassType(AcceleratorNode node) {
 		for (Entry<String, Class<? extends IComponent>> tc : elementMapping) {
 			if (node.isKindOf(tc.getKey()))
 				return tc.getValue();
 		}
-		return getDefaultConverter();
+		return getDefaultClassType();
 		// throw new RuntimeException("No converter for class "+element.getNode().getClass()+", type "+element.getNode().getType());
 	}
 

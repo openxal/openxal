@@ -27,7 +27,10 @@ import xal.model.IProbe;
  * transport/accelerator system.
  *
  * @author Jeff Holmes
+ * 
+ * @deprecated  This class has been replaced by <code>IdealMagSkewQuad3</code>
  */
+@Deprecated
 public class IdealMagSkewQuad extends IdealMagQuad {
     /** string type identifier for all IdealMagSkewQuad objects */
     public static final String s_strType = "IdealMagSkewQuad";
