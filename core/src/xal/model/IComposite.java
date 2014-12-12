@@ -18,6 +18,38 @@ import java.util.Iterator;
  *
  */
 public interface IComposite extends IComponent {
+    
+    
+//    /*
+//     * Initialization
+//     */
+//    
+//    /**
+//     * <p>
+//     * Initializes the components parameters from the given hardware
+//     * node proxy.  
+//     * </p>
+//     * <p>
+//     * <h4>CKA NOTES</h4>
+//     * &middot; Since we are expected to do this by accessing the
+//     * SMF hardware node associated with the proxy, we are now coupled
+//     * with the SMF component of Open XAL. The objective has been to 
+//     * move away from this condition.
+//     * <br/>
+//     * <br/>
+//     * &middot; This system must be refactored to decouple the online model and
+//     * SMF.
+//     * </p> 
+//     * 
+//     * @param latticeElement the SMF node to convert
+//     */
+//    public void initializeFrom(LatticeElement latticeElement);
+//
+//    
+    /*
+     * Operations
+     */
+    
     /**
      * Return iterator over direct descendants only of this composite element
      * in sequence.
@@ -100,6 +132,5 @@ public interface IComposite extends IComponent {
      *  @see    IComponent#propagate(IProbe)
      */
     public void propagate(IProbe probe) throws ModelException;
-    
     
 }

@@ -450,8 +450,8 @@ public class IdealMagFringeQuad extends ElectromagnetSeq {
 	public void initializeFrom(LatticeElement element) {
 		super.initializeFrom(element);
 		
-		Bend magnet = (Bend) element.getNode();
-		setPosition(element.getCenter(), element.getLength());
+		Bend magnet = (Bend) element.getHardwareNode();
+		setPosition(element.getCenterPosition(), element.getLength());
 
 		// gov.sns.xal.model.elem.ThickDipole xalDipole =
 		// new gov.sns.xal.model.elem.ThickDipole();

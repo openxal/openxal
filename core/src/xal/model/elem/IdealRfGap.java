@@ -782,7 +782,7 @@ public class IdealRfGap extends ThinElement implements IRfGap {
     @Override
     public void initializeFrom(LatticeElement element) {
         super.initializeFrom(element);      
-        RfGap rfgap = (RfGap) element.getNode();
+        RfGap rfgap = (RfGap) element.getHardwareNode();
 
         // Initialize from source values
         initialGap = rfgap.isFirstGap();

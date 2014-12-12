@@ -67,7 +67,6 @@ public abstract class ElementSeq implements IComposite {
     /** user comments regarding this sequence */
     private String      m_strComment;
 
-
     
     /** 
      * List of IComponent objects composing composite sequence
@@ -81,11 +80,6 @@ public abstract class ElementSeq implements IComposite {
      */
     private List<IComponent>        m_lstCompsBackward;
     
-
-
-
-    
-
 
     /*
      * Initialization
@@ -133,14 +127,14 @@ public abstract class ElementSeq implements IComposite {
 
     
 	/**
-	 * Conversion method to be provided by the user
+	 * Initialization method to be provided by the user
 	 * 
 	 * @param latticeElement the SMF node to convert
 	 */
 	public void initializeFrom(LatticeElement latticeElement)
 	{
         String  strElemId = latticeElement.getModelingElementId();
-        String  strSmfId  = latticeElement.getNode().getId();
+        String  strSmfId  = latticeElement.getHardwareNode().getId();
         
         setId( strElemId != null ? strElemId : strSmfId);
         setHardwareNodeId(strSmfId);
@@ -329,7 +323,7 @@ public abstract class ElementSeq implements IComposite {
     /*
      *  IComponent Interface
      */
-
+    
     /**  
      *  Get the type identifier for the composite element.
      *

@@ -311,7 +311,7 @@ public class IdealMagWedgeDipole extends ElectromagnetSeq {
 	public void initializeFrom(LatticeElement element) {
 		super.initializeFrom(element);
 		
-		Bend magnet = (Bend) element.getNode();		
+		Bend magnet = (Bend) element.getHardwareNode();		
 
 		// gov.sns.xal.model.elem.ThickDipole xalDipole =
 		// new gov.sns.xal.model.elem.ThickDipole();

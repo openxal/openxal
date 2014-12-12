@@ -6,6 +6,10 @@
  */
 package xal.model.elem;
 
+import xal.sim.scenario.LatticeElement;
+import xal.smf.AcceleratorNode;
+import xal.smf.impl.RfCavity;
+
 /**
  * <p>
  * This class represents a general RF cavity being an composition of
@@ -25,6 +29,13 @@ package xal.model.elem;
 public class IdealRfCavity extends ElementSeq {
 
     
+    /*
+     *  Global Constants
+     */
+    
+    /** the string type identifier for all Sector objects */
+    public static final String      STR_TYPEID = "RfCavity";
+    
     
     /*
      * Local Attributes
@@ -42,45 +53,41 @@ public class IdealRfCavity extends ElementSeq {
      */
     
     /**
-     * Constructor for IdealRfCavity.
+     * Zero constructor for <code>IdealRfCavity</code>.
      *
      * @param strType
      *
      * @author Christopher K. Allen
      * @since  Dec 3, 2014
      */
-    public IdealRfCavity(String strType) {
-        super(strType);
-        // TODO Auto-generated constructor stub
+    public IdealRfCavity() {
+        super(STR_TYPEID);
+    }
+
+    /**
+     * Constructor for <code>IdealRfCavity</code> with string identifier.
+     *
+     * @param strId     string identifier for the RF cavity
+     *
+     * @author Christopher K. Allen
+     * @since  Dec 3, 2014
+     */
+    public IdealRfCavity(String strId) {
+        super(STR_TYPEID, strId);
     }
 
     /**
      * Constructor for IdealRfCavity.
      *
-     * @param strType
-     * @param strId
+     * @param strId     string identifier for the RF cavity
+     * @param szReserve number of initial element positions to allocate 
+     *                  (marginally increases performance, maybe)
      *
      * @author Christopher K. Allen
      * @since  Dec 3, 2014
      */
-    public IdealRfCavity(String strType, String strId) {
-        super(strType, strId);
-        // TODO Auto-generated constructor stub
-    }
-
-    /**
-     * Constructor for IdealRfCavity.
-     *
-     * @param strType
-     * @param strId
-     * @param szReserve
-     *
-     * @author Christopher K. Allen
-     * @since  Dec 3, 2014
-     */
-    public IdealRfCavity(String strType, String strId, int szReserve) {
-        super(strType, strId, szReserve);
-        // TODO Auto-generated constructor stub
+    public IdealRfCavity(String strId, int szReserve) {
+        super(STR_TYPEID, strId, szReserve);
     }
 
     /**
@@ -148,5 +155,34 @@ public class IdealRfCavity extends ElementSeq {
         return dblModeConst;
     }
 
+
+    /*
+     * IComposite Interface
+     */
+    
+    /**
+     * Initializes the frequency and cavity mode constant from the given proxy
+     * element.  The SMF node is taken from the proxy then queried directly.
+     * Eh, I don't like this.
+     *
+     * @see xal.model.elem.ElementSeq#initializeFrom(xal.sim.scenario.LatticeElement)
+     *
+     * @since  Dec 5, 2014  @author Christopher K. Allen
+     */
+    @Override
+    public void initializeFrom(LatticeElement latticeElement) {
+        super.initializeFrom(latticeElement);
+        
+        AcceleratorNode smfNode = latticeElement.getHardwareNode();
+        
+        // If this the underlying node is not an RF Cavity there is nothing we can do
+        if ( !(smfNode instanceof RfCavity) ) 
+            return;
+        
+        RfCavity    smfRfCav = (RfCavity)smfNode;
+        
+        this.setFrequency( smfRfCav.getCavFreq() );
+        this.setCavityModeConstant( smfRfCav.getStructureMode() );
+    }
 
 }

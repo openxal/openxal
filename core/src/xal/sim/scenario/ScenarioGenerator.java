@@ -13,10 +13,13 @@ import java.util.Date;
 import java.util.List;
 
 import xal.model.IComponent;
+import xal.model.IComposite;
 import xal.model.IElement;
 import xal.model.Lattice;
 import xal.model.ModelException;
 import xal.model.Sector;
+import xal.model.elem.ElementSeq;
+import xal.model.elem.IdealRfCavity;
 import xal.model.xml.LatticeXmlParser;
 import xal.sim.sync.SynchronizationManager;
 import xal.smf.AcceleratorNode;
@@ -54,7 +57,7 @@ class ScenarioGenerator {
 	private AcceleratorSeq smfSequence;
 	
 	/** The associative mapping being hardware nodes and modeling elements */
-    private ElementMapping elementMapping;
+    private ElementMapping mapNodeToModCls;
 
     
     //	private SynchronizationManager syncManager;
@@ -63,9 +66,9 @@ class ScenarioGenerator {
     //
     //  Internal State
     
-	private boolean halfMag = true;
-	private boolean debug = false;
-	private boolean verbose = false;
+	private boolean bolDivMags = true;
+	private boolean bolDebug = false;
+	private boolean bolVerbose = false;
 	private PrintStream cout = System.out;
 	
 	
@@ -83,10 +86,10 @@ class ScenarioGenerator {
 	 * Creates an empty Lattice, uses arbitrary ElementMapping.
 	 * 
 	 * @param aSequence accelerator smfSequence to create scenario for
-	 * @param elementMapping element mapping
+	 * @param mapNodeToModCls element mapping
 	 */
 	public ScenarioGenerator( final AcceleratorSeq aSequence, final ElementMapping elementMapping ) {
-		this.elementMapping = elementMapping;
+		this.mapNodeToModCls = elementMapping;
 		smfSequence = aSequence;		
 	}
 
@@ -97,48 +100,54 @@ class ScenarioGenerator {
 	 * @param halfmag <code>true</code> yes put the middle marker (default), else <code>false</code>
 	 * for no middle markers.
 	 */
-	public void setHalfMag(boolean halfMag)
-	{
-		this.halfMag = halfMag;
+	public void setDivideMagnetFlag(boolean halfMag)	{
+		this.bolDivMags = halfMag;
 	}
 	
+    
+    /**
+     * Set debugging output to stdout.
+     * 
+     * @param bolDebug <code>true</code> for output else <code>false</code>.
+     */
+    public void setDebug(boolean bolDebug) {
+        this.bolDebug = bolDebug;
+    }
+    
+    /**
+     * Set debugging output to bolVerbose.
+     * 
+     * @param bolVerbose <code>true</code> for bolVerbose output else <code>false</code>.
+     */
+    public void setVerbose(boolean bolVerbose) {
+        this.bolVerbose = bolVerbose;
+    }
+    
+    
+    /*
+     * Attribute Queries
+     */
+    
 	/**
 	 * @return the flag to force lattice generator to place a permanent marker in the middle of every
-	 * thick element.
+	 *         thick element.
 	 */
-	public boolean getHalfMag()
-	{
-		return halfMag;
-	}
-	
-	/**
-	 * Set debugging output to stdout.
-	 * @param debug <code>true</code> for output else <code>false</code>.
-	 */
-	public void setDebug(boolean debug) {
-		this.debug = debug;
+	public boolean isMagnetDivided()	{
+		return bolDivMags;
 	}
 	
 	/**
 	 * @return the flag for debugging output to stdout.
 	 * */
-	public boolean getDebug() {
-		return debug;
+	public boolean isDebugging() {
+		return bolDebug;
 	}	
 
 	/**
-	 * Set debugging output to verbose.
-	 * @param verbose <code>true</code> for verbose output else <code>false</code>.
+	 * @return the flag for debugging output to bolVerbose.
 	 */
-	public void setVerbose(boolean verbose) {
-		this.verbose = verbose;
-	}
-	
-	/**
-	 * @return the flag for debugging output to verbose.
-	 */
-	public boolean getVerbose() {
-		return verbose;
+	public boolean getVerboseFlag() {
+		return bolVerbose;
 	}
 
 	
@@ -149,7 +158,7 @@ class ScenarioGenerator {
 	 * @return a Scenario for the supplied accelerator smfSequence
 	 * @throws ModelException if there is an error building the Scenario
 	 */		
-	public Scenario generateScenario() throws ModelException {
+	public Scenario generateScenario_old() throws ModelException {
 		// collects all elements		
 		List<LatticeElement> elements = collectElements(this.smfSequence);
 
@@ -168,6 +177,173 @@ class ScenarioGenerator {
 		return model;
 	}
 	
+    /**
+     * CKA
+     * <p>
+     * Generates a Scenario from the given AcceleratorSeq supplied in the 
+     * constructor using supplied ElementMapping.
+     * </p>
+     * <p>
+     * This method will create a hierarchical model with the analogous structure
+     * of the hardware object being provided.  That is, the model returns is not a
+     * "flattened" version of the provided hardware representation. For example, 
+     * if the hardware sequence contains nested sequences such as an <code>
+     * AcceleratorSeqCombo</code> object would, then the returned model has nested
+     * <code>ElementSeq</code> objects representing them.  This is convenient,
+     * and necessary, for correct treatment of RF cavities.
+     * </p>
+     * 
+     * @param   smfSeq      the hardware sequence to be modeled.
+     * 
+     * @return              new model Scenario for the supplied accelerator sequence
+     * 
+     * @throws ModelException if there is an error building the Scenario
+     * 
+     * @since Dec 5, 2014     @author Christopher K. Allen
+     */     
+    public Scenario generateScenario(AcceleratorSeq smfSeq) throws ModelException {
+
+        // Create a synchronization manager for the model
+        SynchronizationManager mgrSync = new SynchronizationManager();
+        
+        // Create a model lattice generator object for the given accelerator hardware sequence
+        LatticeSequence latSeq = new LatticeSequence(smfSeq, this.mapNodeToModCls);
+        
+        // Create a model lattice for the given accelerator hardware sequence
+        latSeq.setDebug( this.isDebugging() );
+        latSeq.setDivideMagnetFlag( this.isMagnetDivided() );
+        
+        Lattice         mdlLat = latSeq.createModelLattice(mgrSync);
+        
+
+        // convert splitElements to mapped elements and adds drift spaces
+        Scenario        mdlScenario   = new Scenario(smfSequence, mdlLat, mgrSync);
+        
+        return mdlScenario;
+    }
+    
+    
+    /*
+     * Support Methods
+     */
+    
+//    /**
+//     * <p>
+//     * CKA : I have modified the original method so that it is now recursive.  It calls
+//     * itself whenever it finds a hardware node within the given accelerator sequence
+//     * which is actually another accelerator sequence.  In that case another 
+//     * lattice sequence is created (which is also a lattice element) and added to the
+//     * current lattice sequence as a lattice element.
+//     * </p>
+//     * <p>
+//     * Collects all elements in the smfSequence into a single list, recording element's original position.
+//     * </p>
+//     *  <p>
+//     *  Adds begin and end marker.
+//     *  </p>
+//     *  <p>
+//     *  If <code>bolDivMags</code> is set, also adds a center marker for each magnet.
+//     *  </p>
+//     *  
+//     * @return collected elements with begin, end, and possibly center markers
+//     */
+//    private LatticeSequence generateLatticeSeq(SynchronizationManager mgrSync, AcceleratorSeq smfSeq) {
+//
+//        // Loop variables
+//        int     indPosition = 0;                  // used to record original position 
+//        double  dblLenSeq   = smfSeq.getLength(); // workaround for sequences that don't have length set
+//        
+//        // The returned modeling element sequence
+//        //  First check for an RfCavity, this is a special case which requires a 
+//        //  special element sequence
+//        String                      strSeqId  = smfSeq.getId();
+//        double                      dblSeqPos = smfSeq.getParent().getPosition(smfSeq);
+//        Class<? extends IComposite> clsSeqTyp = this.mapNodeToModCls.getModelSequenceType(smfSeq);
+//
+//        LatticeSequence latSeqParent = new LatticeSequence(smfSeq, dblSeqPos, clsSeqTyp, 0);
+//        
+//        
+//        // This is pretty klugey: (See below for the complement action) 
+//        //  We are creating a nonexistent marker hardware object,
+//        //  then creating a lattice element association, so that we may 
+//        //  ensure the drift space from the beginning of the sequence to the first 
+//        //  hardware node is modeled correctly.  There must be a better way??
+//        AcceleratorNode             smfBegMrkr = new Marker( "BEGIN_" + strSeqId );
+//        Class<? extends IComponent> clsMrkrTyp = this.mapNodeToModCls.getDefaultElementType();
+//        LatticeElement              latBegElem = new LatticeElement(smfBegMrkr, 0, clsMrkrTyp, indPosition++);
+//
+//        latSeqParent.addLatticeElement(latBegElem);
+//
+//        
+//        // Now we generate association objects for every hardware node (including sequences)
+//        //  in the accelerator sequence which is marked as having good status
+//        for ( AcceleratorNode smfNode : smfSeq.getNodes( true ) ) {
+//
+//            
+////            // The RF cavity is currently a special case
+////            //     Since the RF cavity is an accelerator sequence must check for it first
+////            if (smfNode instanceof RfCavity) {
+////                RfCavity   smfRfCav = (RfCavity)smfNode;
+////                
+////            }
+//            
+//            // Recursively call this method to drill down and get any sub sequences
+//            if (smfNode instanceof AcceleratorSeq) {
+//                AcceleratorSeq    smfSubSeq = (AcceleratorSeq)smfNode;
+//                
+//                LatticeSequence latSeqChild = this.generateLatticeSeq(mgrSync, smfSubSeq);
+//                
+//                latSeqParent.addLatticeElement(latSeqChild);;
+//                continue;
+//            }
+//            
+//            // Create a new lattice element for the accelerator node and add it to the lattice sequence
+//            double                      dblNodePos = smfSeq.getPosition(smfNode);
+//            Class<? extends IComponent> clsElemTyp = this.mapNodeToModCls.getModelElementType(smfNode);
+//            LatticeElement              latElem    = new LatticeElement(smfNode, dblNodePos, clsElemTyp, indPosition++);
+//
+//            latSeqParent.addLatticeElement(latElem);
+//            
+//            if (bolDebug) {
+//                cout.println("ScenarioGenerator#generateLatticeSequence(): " + latElem.toString() + ", thin=" + latElem.isThin());                      
+//            }
+//            
+//            if (latElem.getEndPosition() > dblLenSeq) 
+//                dblLenSeq = latElem.getEndPosition();
+//            
+//            
+//            // We need to add a thin element marker to the center of any magnet if the
+//            //  divide magnets flag is true.  Thus, check if the current hardware node
+//            //  is a magnet, the flag is true, and the hardware node modeling element is
+//            //  not a thin element.  If so, add the center marker.
+//            if (bolDivMags && (smfNode instanceof Magnet) && !latElem.isThin()) {
+//
+//                String                      strNodeId   = smfNode.getId();
+//                double                      dblPosCtr   = latElem.getCenterPosition();
+//                AcceleratorNode             smfCntrMrkr = new Marker( strNodeId + "-Center" );
+//                
+//                LatticeElement  latCtrElem  = new LatticeElement(smfCntrMrkr, dblPosCtr, clsMrkrTyp, 0); 
+//                latCtrElem.setModelingElementId("CENTER:" + smfNode.getId());    // CKA Sep 5, 2014
+//                latSeqParent.addLatticeElement(latCtrElem);
+//            }
+//        }
+//        
+//        // This is pretty klugey, but c'est lie vie. We are creating a nonexistent marker
+//        //  hardware object, then creating a lattice element association, so that we may 
+//        //  ensure the drift space from the last element to the end of the sequence is modeled
+//        //  correctly.  There must be a better way??
+//        AcceleratorNode             smfEndMrkr = new Marker( "END_" + strSeqId );
+//        LatticeElement              latEndElem = new LatticeElement(smfEndMrkr, dblLenSeq, clsMrkrTyp, indPosition++);
+//
+//        latSeqParent.addLatticeElement(latEndElem);
+//        
+////      elements.add(new LatticeElement(new Marker("END_" + smfSequence.getId()), sequenceLength,
+////              mapNodeToModCls.getDefaultConverter(), originalPosition++));
+//        
+//        return latSeqParent;
+//    }
+    
+    
 	
 	/*
 	 * Support Methods
@@ -176,7 +352,7 @@ class ScenarioGenerator {
 	/**
 	 *  <p>Collects all elements in the smfSequence into a single list, recording element's original position.</p>
 	 *  <p>Adds begin and end marker.</p>
-	 *  <p>If halfMag is set, also adds a center maker for each magnet.</p>
+	 *  <p>If bolDivMags is set, also adds a center maker for each magnet.</p>
 	 *  
 	 * @return collected elements with begin, end and possibly center markers
 	 */
@@ -190,7 +366,7 @@ class ScenarioGenerator {
 		List<LatticeElement> lstElems = new ArrayList<LatticeElement>();		
 		
 //		lstElems.add(new LatticeElement(new Marker("BEGIN_" + sequence.getId()), 0.0, 
-//				elementMapping.getDefaultClassType(), originalPosition++));
+//				mapNodeToModCls.getDefaultClassType(), originalPosition++));
 
 		// generate elements for every node in the smfSequence which is marked as having good status
 //		for ( AcceleratorNode node : sequence.getAllNodes( true ) ) {
@@ -198,7 +374,7 @@ class ScenarioGenerator {
 
 //		    if (node instanceof AcceleratorSeq) {
 //				elements.add(new LatticeElement(new Marker("BEGIN_" + node.getId()), smfSequence.getPosition(node), 
-//						elementMapping.getDefaultConverter(), originalPosition++));			
+//						mapNodeToModCls.getDefaultConverter(), originalPosition++));			
 //				continue; 
 //			}
 		    
@@ -220,25 +396,25 @@ class ScenarioGenerator {
 			
 			LatticeElement element = new LatticeElement(node, 
 			                                            sequence.getPosition(node), 
-			                                            elementMapping.getClassType(node), 
+			                                            mapNodeToModCls.getModelElementType(node), 
 			                                            originalPosition++
 			                                            );
 			lstElems.add(element);
 			
-			if (debug) {
+			if (bolDebug) {
 				cout.println("collectElements: " + element.toString() + ", thin=" + element.isThin());						
 			}
 			
 			if (element.getEndPosition() > sequenceLength) 
 			    sequenceLength = element.getEndPosition();
 			
-			if (halfMag && node instanceof Magnet && !element.isThin()) {
+			if (bolDivMags && node instanceof Magnet && !element.isThin()) {
 
 			    // CKA Oct, 2014
 			    //				LatticeElement center = new LatticeElement(new Marker("ELEMENT_CENTER:" + node.getId()), element.getCenter(),
 			    LatticeElement center = new LatticeElement(new Marker(node.getId()), 
-			            element.getCenter(),
-			            elementMapping.getDefaultClassType(), 
+			            element.getCenterPosition(),
+			            mapNodeToModCls.getDefaultElementType(), 
 			            0
 			            );
 			    center.setModelingElementId("ELEMENT_CENTER:" + node.getId());    // CKA Sep 5, 2014
@@ -246,16 +422,10 @@ class ScenarioGenerator {
 			}
 		}
 //		elements.add(new LatticeElement(new Marker("END_" + smfSequence.getId()), sequenceLength,
-//				elementMapping.getDefaultConverter(), originalPosition++));
+//				mapNodeToModCls.getDefaultConverter(), originalPosition++));
 		
 		return lstElems;
 	}
-	
-	private void addSplitElement(List<LatticeElement> splitElements, LatticeElement element)
-	{
-		if (element.getLength() > EPS || element.getParts() <= 1) splitElements.add(element);
-	}
-	
 	
 	/**
 	 * <p>Splits all thick elements by thin ones, keeping the order.</p>
@@ -283,17 +453,17 @@ class ScenarioGenerator {
 					else
 						lastThick = currentElement;
 				} else if (currentElement.isThin()) { // we have a thick & thin element intersection
-					if (debug && verbose) {
+					if (bolDebug && bolVerbose) {
 						cout.println("splitElements: replacing " + lastThick.toString() + " with");
 					}
 					
-					LatticeElement secondPart = lastThick.split(currentElement);
+					LatticeElement secondPart = lastThick.splitElementAt(currentElement);
 					
-					if (debug && verbose) {
+					if (bolDebug && bolVerbose) {
 						cout.println("\t" + lastThick.toString());
 						if (secondPart != null) cout.println("\t" + secondPart.toString());
 					}					
-					if (lastThick.getEndPosition() <= currentElement.getCenter()) {
+					if (lastThick.getEndPosition() <= currentElement.getCenterPosition()) {
 						addSplitElement(splitElements, lastThick);						
 						lastThick = null;
 					}
@@ -320,6 +490,22 @@ class ScenarioGenerator {
 		return splitElements;
 	}
 	
+    /**
+     * Called by <code>{@link #splitElements(List)}</code> to add the given proxy
+     * element into the given list of split element.  The given element must meet 1
+     * of 2 criteria: 1) it has finite length or 2) it represents no more than one
+     * modeling element.
+     *  
+     * @param splitElements     list of elements being split
+     * @param element           element to be added to above list
+     *
+     * @since  Dec 5, 2014
+     */
+    private void addSplitElement(List<LatticeElement> splitElements, LatticeElement element)
+    {
+        if (element.getLength() > EPS || element.getParts() <= 1) splitElements.add(element);
+    }
+    
 	/**
 	 * <p>Visits each element and invokes conversion on it, using element mapper on it.</p>
 	 * <p>Hooks synchronization manager to each element.</p>
@@ -339,24 +525,24 @@ class ScenarioGenerator {
 		
 		for (LatticeElement element : splitElements) {
 			
-		    double driftLength = (element.isThin() ? element.getCenter() : element.getStartPosition()) - position;
+		    double driftLength = (element.isThin() ? element.getCenterPosition() : element.getStartPosition()) - position;
 			
 			if (driftLength > EPS) {
 			    String       strDriftId = "DR" + (++driftCount);
-			    IComponent   modDrift   = elementMapping.createDrift(strDriftId, driftLength);
+			    IComponent   modDrift   = mapNodeToModCls.createDefaultDrift(strDriftId, driftLength);
 				sector.addChild(modDrift);
-				//sector.addChild(elementMapping.createDrift("DRFT", driftLength));
+				//sector.addChild(mapNodeToModCls.createDrift("DRFT", driftLength));
 			}
 			
-			IComponent modelElement = element.convert();
+			IComponent modelElement = element.createModelingElement();
 			sector.addChild(modelElement);
 			if (modelElement instanceof IElement) 
-				syncMgr.synchronize((IElement) modelElement, element.getNode());			
+				syncMgr.synchronize((IElement) modelElement, element.getHardwareNode());			
 			position = element.getEndPosition();
 			
-			if (debug)
-				cout.println(element.getNode().getId() + ": ==mapped to==>\t" + modelElement.getType()
-						+ ": s= " + element.getCenter());			
+			if (bolDebug)
+				cout.println(element.getHardwareNode().getId() + ": ==mapped to==>\t" + modelElement.getType()
+						+ ": s= " + element.getCenterPosition());			
 		}
 		
 		// Create new lattice modeling object

@@ -18,9 +18,34 @@ import xal.sim.scenario.LatticeElement;
 public interface IComponent {
 
 
-
     /*
-     *  Element Identification
+     * Initialization
+     */
+    
+    /**
+     * <p>
+     * Initializes the components parameters from the given hardware
+     * node proxy.  
+     * </p>
+     * <p>
+     * <h4>CKA NOTES</h4>
+     * &middot; Since we are expected to do this by accessing the
+     * SMF hardware node associated with the proxy, we are now coupled
+     * with the SMF component of Open XAL. The objective has been to 
+     * move away from this condition.
+     * <br/>
+     * <br/>
+     * &middot; This system must be refactored to decouple the online model and
+     * SMF.
+     * </p> 
+     * 
+     * @param latticeElement the SMF node to convert
+     */
+    public void initializeFrom(LatticeElement latticeElement);
+
+    
+    /*
+     *  Attributes
      */
     
     /**
@@ -45,24 +70,17 @@ public interface IComponent {
      */
     public String   getHardwareNodeId();
     
-
-	/**
-	 * Conversion method to be provided by the user
-	 * 
-	 * @param latticeElement the SMF node to convert
-	 */
-	public void initializeFrom(LatticeElement latticeElement);
-
-    /*
-     * Component Operations
-     */
-    
     /**
      *  Return the total length of the composite element.
      *
      *  @return     length of the element (in <bold>meters</bold>)
      */
     double   getLength();
+    
+
+	/*
+     * Dynamics
+     */
     
     /** 
      * Propagates the Probe object through this component. 
@@ -120,4 +138,5 @@ public interface IComponent {
      * @exception  ModelException    error advancing the probe state
      */
     void backPropagate(IProbe probe, double d) throws ModelException;
+ 
 }

@@ -7,6 +7,8 @@
 package xal.sim.scenario;
 
 import xal.model.IComponent;
+import xal.model.IComposite;
+import xal.model.Sector;
 import xal.model.elem.IdealDrift;
 import xal.model.elem.IdealEDipole;
 import xal.model.elem.IdealEQuad;
@@ -48,34 +50,53 @@ public class DefaultElementMapping extends ElementMapping {
 	 * ElementMapping Requirements
 	 */
 	
+	/**
+	 * Currently returns the type <code>xal.model.elem.Marker</code> 
+	 *
+	 * @see xal.sim.scenario.ElementMapping#getDefaultElementType()
+	 * 
+	 * @since  Dec 5, 2014  @author Christopher K. Allen
+	 */
 	@Override
-	public Class<? extends IComponent> getDefaultClassType() {
+	public Class<? extends IComponent> getDefaultElementType() {
 		return Marker.class;
 	}
 
+	/**
+	 * Currently returns the type <code>xal.model.Sector</code>
+	 *
+	 * @see xal.sim.scenario.ElementMapping#getDefaultSequenceType()
+	 *
+	 * @author Christopher K. Allen
+	 * @since  Dec 5, 2014
+	 */
+	@Override
+	public Class<? extends IComposite> getDefaultSequenceType() {
+	    return Sector.class;
+	}
 
 	/**
 	 * Creates a new, general drift space.
 	 *
-	 * @see xal.sim.scenario.ElementMapping#createDrift(java.lang.String, double)
+	 * @see xal.sim.scenario.ElementMapping#createDefaultDrift(java.lang.String, double)
 	 *
 	 * @since  Dec 3, 2014
 	 */
 	@Override
-	public IComponent createDrift(String name, double len) {
+	public IComponent createDefaultDrift(String name, double len) {
 		return new IdealDrift(name, len);
 	}
 	
 	/**
 	 * Creates a drift space within an RF cavity.
      *
-     * @see xal.sim.scenario.ElementMapping#createCavityDrift(java.lang.String, double, double, double)
+     * @see xal.sim.scenario.ElementMapping#createRfCavityDrift(java.lang.String, double, double, double)
      *
      * @author Christopher K. Allen
      * @since  Dec 3, 2014
      */
     @Override
-    public IComponent createCavityDrift(String name, double len, double freq, double mode) {
+    public IComponent createRfCavityDrift(String name, double len, double freq, double mode) {
         return new IdealRfCavityDrift(name, len, freq, mode);
     }
 

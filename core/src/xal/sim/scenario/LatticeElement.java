@@ -15,7 +15,11 @@ import xal.smf.impl.Magnet;
 
 /**
  * <p>
- * This is a proxy for SMF hardware nodes which generates its modeling element 
+ * This class is essentially an association class between accelerator hardware
+ * nodes and modeling elements of the XAL online model.
+ * </p>
+ * <p> 
+ * This can also be a proxy for SMF hardware nodes and can generates its modeling element 
  * counterpart.  Currently it represents one atomic hardware node, but I believe
  * it can represent many modeling elements (see <code>{@link #getParts()}</code>).
  * </p>
@@ -51,39 +55,80 @@ import xal.smf.impl.Magnet;
  * @since    Oct 3, 2013
  * @version  Sep 5, 2014
  */
-/**
- * Class <code></code>.
- *
- *
- * @author Christopher K. Allen
- * @since  Dec 4, 2014
- */
-/**
- * Class <code></code>.
- *
- *
- * @author Christopher K. Allen
- * @since  Dec 4, 2014
- */
 public class LatticeElement implements Comparable<LatticeElement> {
 	
 
-	private double position;
-	private double length;
-	private double start, end;
-	private AcceleratorNode node;
-	private int partnr = 0, parts = 1;	
-	private Class<? extends IComponent> elementClass;
-	private int originalPosition;
-	
-	/** CKA Modeling element identifier, which can be different that the Accelerator node's ID */
-	private String     strElemId;
+    /*
+     * Local Attributes
+     */
+    
+    //
+    // Accelerator Node
+    //
+    
+    /** the associated hardware node */
+    private AcceleratorNode smfNode;
 
+    /** original index position of the hardware within its accelerator sequence - this is used to order the elements */
+    private int        indNodeOrigPos;
+    
+
+    //
+    //  Modeling Element
+    //
+    
+    /** CKA: Modeling element identifier, which can be different that the Accelerator node's ID */
+    private String     strElemId;
+
+    /** the associated modeling element class type */
+    private Class<? extends IComponent> clsModElem;
+    
+
+    /** length of the modeling element */
+    private double dblElemLen;
+    
+    /** center position of the modeling element within its parent sequence */
+	private double dblElemCntrPos;
 	
+	/** axial position of the modeling element entrance */
+	private double dblElemEntrPos; 
+	
+    /** axial position of the modeling element exit */
+	private double dblElemExitPos;
+	
+	
+	//
+	// State Variables
+	//
+	
+    /** I don't know */
+	/** part number of the lattice element used in the representation of a hardware node */
+    private int     partnr = 0;
+    
+    /** The number of lattice elements used to represent the associated hardware node */
+    private int     parts = 1;  
+    
+	
+	/*
+	 * Initialization
+	 */
+	
+	/**
+	 * Initializing constructor for <code>LatticeElement</code>. The hardware node
+	 * entrance and exit positions are initialized using the given center position
+	 * and length attribute.
+	 *
+     * @param node             associated hardware node
+     * @param position         center position of hardware node within accelerator sequence
+     * @param elementClass     class type of the modeling element for associated hardware
+     * @param originalPosition index position of the hardware node within its sequence (used to sort elements)
+	 *
+	 * @since  Dec 8, 2014
+	 */
 	public LatticeElement(AcceleratorNode node, double position, Class<? extends IComponent> elementClass, int originalPosition) {
 	    this.strElemId = null;
-		this.node = node;
-		this.position = position;
+		this.smfNode = node;
+		this.dblElemCntrPos = position;
 
 		double length = node.getLength();
 		double effLength = 0.0;
@@ -94,44 +139,74 @@ public class LatticeElement implements Comparable<LatticeElement> {
 				effLength = ((Magnet) node).getEffLength();
 		} else if (node instanceof xal.smf.impl.Electrostatic)
 			effLength = length;
-		this.length = effLength;
+		this.dblElemLen = effLength;
 
-		this.elementClass = elementClass;
+		this.clsModElem = elementClass;
 				
 		if (isThin())
-			start = end = position;
+			dblElemEntrPos = dblElemExitPos = position;
 		else {
-			start = position - 0.5*this.length;
-			end = start + this.length;
+			dblElemEntrPos = position - 0.5*this.dblElemLen;
+			dblElemExitPos = dblElemEntrPos + this.dblElemLen;
 		}
 		
-		this.originalPosition = originalPosition;
+		this.indNodeOrigPos = originalPosition;
 	}
 
+	/**
+	 * Initializing constructor for <code>LatticeElement</code>.  The entrance and exit
+	 * positions are given directly for this constructor, which is called only within
+	 * this class.  This constructor is used when splitting lattice elements.
+	 *
+	 * @param node             associated hardware node
+	 * @param start            entrance location of this lattice element within sequence
+	 * @param end              exit location of this lattice element within sequence
+	 * @param elementClass     class type of the modeling element for associated hardware
+	 * @param originalPosition original index position of hardware node within its sequence
+	 *
+	 * @since  Dec 8, 2014
+	 */
 	private LatticeElement(AcceleratorNode node, double start, double end, Class<? extends IComponent> elementClass, int originalPosition) {
 	    this.strElemId = null;
-		this.node = node;	
-		this.elementClass = elementClass;
+		this.smfNode = node;	
+		this.clsModElem = elementClass;
 				
-		this.start = start;
-		this.end = end;
-		this.length = 1.0;
+		this.dblElemEntrPos = start;
+		this.dblElemExitPos = end;
+		this.dblElemLen = 1.0;
 		
-		this.originalPosition = originalPosition;
+		this.indNodeOrigPos = originalPosition;
 	}
 
 	
 	/**
 	 * Sets the (optional) string identifier for the modeling element that
-	 * this object will create.
+	 * this object will create.  Typically used when splitting up modeling
+	 * elements associated with the proxied hardware node.
 	 * 
-     * @param strElemId     identifier for the modeling element created
+     * @param strElemId     identifier for the modeling element to be created
      * 
-     * @author Christopher K. Allen
      * @since  Sep 5, 2014
      */
     public void setModelingElementId(String strElemId) {
         this.strElemId = strElemId;
+    }
+    
+    
+    /*
+     * Attribute Queries
+     */
+
+    /**
+     * Returns the hardware node associated with this lattice element
+     * proxy.
+     * 
+     * @return accelerator hardware node proxied by this lattice element 
+     *
+     * @since  Dec 9, 2014  
+     */
+    public AcceleratorNode getHardwareNode() {
+        return smfNode;
     }
 
     /**
@@ -146,69 +221,177 @@ public class LatticeElement implements Comparable<LatticeElement> {
     public String getModelingElementId() {
         return strElemId;
     }
+    
+    /**
+     * Returns the class type of the modeling element used to represent the
+     * associated hardware node.
+     * 
+     * @return  class type of the modeling element to be created
+     *
+     * @author Christopher K. Allen
+     * @since  Dec 9, 2014
+     */
+    public Class<? extends IComponent>  getModelingClass() {
+        return this.clsModElem;
+    }
 
+    /**
+     * <p>
+     * Returns the length associated with the <em>hardware node</em>.  This length is
+     * depends upon the length of the hardware node and how many times it has
+     * been split to create the appropriate modeling element.
+     * </p>
+     * <p>
+     * Note that the <em>effective</em> length of the associated hardware node
+     * is used.
+     * If the hardware is a bending magnet then this is the path length.  If
+     * the hardware node <em>is not</em> a magnet then the physical length is
+     * returned.  These values are determined in the <code>LatticeElement</code>
+     * constructor.
+     * </p>
+     * 
+     * @return  length of this lattice element based upon hardware length and splitting 
+     *
+     * @since  Dec 9, 2014
+     */
+    public double getLength() {
+        if (isThin())
+            return dblElemLen;
+        else
+            return dblElemExitPos - dblElemEntrPos;
+    }
+
+    /**
+     * Returns the entrance location within its parent element sequence
+     * of the modeling element to be created. 
+     * This value is derived from the associated hardware position and the splitting
+     * of the representative lattice elements.
+     *  
+     * @return  entrance position of the modeling element w.r.t. the parent sequence
+     *
+     * @since  Dec 9, 2014
+     */
     public double getStartPosition() {
-		return start;
-	}
+        return dblElemEntrPos;
+    }
 
-	public double getLength() {
-		if (isThin())
-			return length;
-		else
-			return end - start;
-	}
+    /**
+     * Returns the center location of the modeling element to be created. 
+     * This value is derived from the associated hardware position and the splitting
+     * of the representative lattice elements.
+     * 
+     * @return axial center position within the parent sequence 
+     *
+     * @since  Dec 9, 2014 
+     */
+    public double getCenterPosition() {
+        if (isThin())
+            return dblElemCntrPos;
+        else
+            return dblElemEntrPos + 0.5 * (dblElemExitPos - dblElemEntrPos);
+    }
 
-	public AcceleratorNode getNode() {
-		return node;
-	}
-
-	public double getCenter() {
-		if (isThin())
-			return position;
-		else
-			return start + 0.5 * (end - start);
-	}
-
+    /**
+     * Returns the exit location of the modeling element to be created within its
+     * parent accelerator sequence.
+     * 
+     * @return  exit position of the modeling element w.r.t. the parent sequence
+     *
+     * @since  Dec 9, 2014
+     */
 	public double getEndPosition() {
-		return end;
+		return dblElemExitPos;
 	}
 
+    /**
+     * <p>
+     * I think it returns the current number of modeling elements used to represent the 
+     * associated hardware node. If so the method name <code>getNumberOfParts()</code>
+     * might be appropriate.
+     * </p>  
+     * <p>
+     * Note that this number doubles every time that <code>{@link #splitElementAt(LatticeElement)}</code>
+     * is called. You would think it increases by one given the explanation I provided??
+     * </p>
+     * 
+     * @return     I think it is the number modeling elements that map back to the associate hardware node,
+     *             but I am not sure.  
+     *
+     * @since  Dec 4, 2014
+     */
+    public int getParts() {
+        return parts;
+    }
+    
+    /**
+     * I don't know.  I think it is the part number (e.g., serial number) of a
+     * multi-lattice element representation of single hardware node.  In such a
+     * case the method name <code>getPartNumber()</code> might be appropriate.
+     * 
+     * @return      the part number of this lattice element for a multi-element 
+     *              hardware representation ??
+     *
+     * @since  Dec 4, 2014
+     */
+    public int getPartNr() {
+        return partnr;
+    }
+
+    /**
+     * Determines whether or not the hardware accelerator node will be represented with a
+     * thin modeling element.  Looks at both the <em>effective length</em>
+     * of the hardware node  and the class type of the modeling element used to 
+     * represent it.
+     * 
+     * @return     <code>true</code> if a modeling element derived from 
+     *             <code>ThinElement</code> will be returned, <code>false</code> otherwise
+     *
+     * @since  Dec 4, 2014
+     */
+    public boolean isThin() {
+        return dblElemLen == 0.0 || ThinElement.class.isAssignableFrom(clsModElem);
+    }
+
+    
+    /*
+     * Operations
+     */
+    
 	/**
-	 * Appears to split this hardware proxy element into two parts, presumably at the 
-	 * position of the given proxy element.  The number of parts is doubled and I can't 
+	 * <p>
+	 * Appears to split this lattice element into two parts, presumably at the 
+	 * center position of the given element, returning the second part.  
+	 * </p>
+	 * <p>
+	 * The number of parts is doubled and I can't 
 	 * figure this out??  I assume "parts" is the number of modeling elements used
 	 * to represent the hardware.
+	 * </p>  
+	 * <p>
+	 * In any event, this lattice element is modified,
+	 * its position now lives only up to the center position of the given element.
+	 * </p>
+	 * <p>
+	 * I am guessing that the given lattice element should be a proxy for a thin
+	 * element, but it is not enforced here.
+	 * </p>
 	 * 
-	 * @param splitter     the hardware proxy element doing the splitting
+	 * @param elemSplitPos the lattice element defining the splitting position
 	 *  
-	 * @return             a new proxy element apparently at the given proxy element's location??? 
+	 * @return             a new lattice element which is the second part of this original lattice element 
 	 *
 	 * @author Christopher K. Allen
 	 * @since  Dec 4, 2014
 	 */
-	public LatticeElement split(LatticeElement splitter) {
-		if (splitter.position == start || splitter.position == end) return null;
+	public LatticeElement splitElementAt(final LatticeElement elemSplitPos) {
+		if (elemSplitPos.dblElemCntrPos == dblElemEntrPos || elemSplitPos.dblElemCntrPos == dblElemExitPos) return null;
 		parts *= 2;
 		partnr *= 2;
-		LatticeElement secondPart = new LatticeElement(node, splitter.position, end, elementClass, originalPosition);
-		end = splitter.position;
+		LatticeElement secondPart = new LatticeElement(smfNode, elemSplitPos.dblElemCntrPos, dblElemExitPos, clsModElem, indNodeOrigPos);
+		dblElemExitPos = elemSplitPos.dblElemCntrPos;
 		secondPart.parts = parts;
 		secondPart.partnr = partnr + 1;		
 		return secondPart;
-	}
-
-	/**
-	 * Determines whether or not the hardware node will be represented with a
-	 * thin modeling element.  Looks at both the length of the hardware node
-	 * and the class type of the modeling element used to represent it.
-	 * 
-	 * @return     <code>true</code> if a modeling element derived from 
-	 *             <code>ThinElement</code> will be returned, <code>false</code> otherwise
-	 *
-	 * @since  Dec 4, 2014
-	 */
-	public boolean isThin() {
-		return length == 0.0 || ThinElement.class.isAssignableFrom(elementClass);
 	}
 
 	/**
@@ -226,52 +409,22 @@ public class LatticeElement implements Comparable<LatticeElement> {
 	 * systems should be independent, able to function without each other.
 	 * </p>
 	 * 
-	 * @return                 a new modeling element for the hardware proxied by this object
+	 * @return    a new modeling element for the hardware proxied by this object
 	 * 
-	 * @throws ModelException  Java reflect threw an <code>InstantiationException</code>
+	 * @throws ModelException  Java reflection threw an <code>InstantiationException</code>
 	 *
 	 * @since  Dec 4, 2014
 	 */
-	public IComponent convert() throws ModelException {		 
+	public IComponent createModelingElement() throws ModelException {		 
 		try {
-			IComponent component = elementClass.newInstance();		
+			IComponent component = clsModElem.newInstance();		
 			component.initializeFrom(this);
 			
 			return component;
 		} catch (InstantiationException | IllegalAccessException e) {
-			throw new ModelException("Exception while instantiating class "+elementClass.getName()+" for node "+node.getId(), e);
+			throw new ModelException("Exception while instantiating class "+clsModElem.getName()+" for node "+smfNode.getId(), e);
 		}
 	}
-
-	/**
-	 * <p>
-	 * Returns the current number of modeling elements used to represent the hardware
-	 * node.
-	 * </p>  
-	 * Note that this number doubles every time that <code>{@link #split(LatticeElement)}</code>
-	 * is called. You would think it increases by one given the explanation I provided??
-	 * </p>
-	 * 
-	 * @return     I think it is the number modeling elements that map back to the associate hardware node,
-	 *             but I am not sure
-	 *
-	 * @since  Dec 4, 2014
-	 */
-	public int getParts() {
-		return parts;
-	}
-	
-    /**
-     * I don't know.
-     * 
-     * @return
-     *
-     * @author Christopher K. Allen
-     * @since  Dec 4, 2014
-     */
-    public int getPartNr() {
-        return partnr;
-    }
 
 	
 	/*
@@ -279,7 +432,9 @@ public class LatticeElement implements Comparable<LatticeElement> {
 	 */
 	
     /**
-     * Compare by looking at hardware node positions.
+     * Compare by looking at hardware node positions.  If the positions
+     * are equal and the elements are both thin then we look at the
+     * position index within the sequence.
      *
      * @see java.lang.Comparable#compareTo(java.lang.Object)
      *
@@ -287,12 +442,12 @@ public class LatticeElement implements Comparable<LatticeElement> {
      */
     @Override
     public int compareTo(LatticeElement e2) {
-        double p1 = isThin() ? position : start;
-        double p2 = e2.isThin() ? e2.position : e2.start;
+        double p1 = isThin() ? dblElemCntrPos : dblElemEntrPos;
+        double p2 = e2.isThin() ? e2.dblElemCntrPos : e2.dblElemEntrPos;
         int d = Double.compare(p1, p2);
         if (d == 0) {
             if (isThin() && e2.isThin())
-                d = originalPosition - e2.originalPosition;
+                d = indNodeOrigPos - e2.indNodeOrigPos;
             else
                 d = isThin() ? -1 : 1;
         }
@@ -313,7 +468,7 @@ public class LatticeElement implements Comparable<LatticeElement> {
 	 */
 	@Override
 	public String toString() { 		
-		return getNode().getId() + " I=["+getStartPosition()+","+getEndPosition()+"]" +
-				", p=" + getCenter() + ", l= " + getLength();
+		return getHardwareNode().getId() + " I=["+getStartPosition()+","+getEndPosition()+"]" +
+				", p=" + getCenterPosition() + ", l= " + getLength();
 	}
 }

@@ -3,6 +3,8 @@
 	xsi:noNamespaceSchemaLocation="http://sourceforge.net/p/xaldev/openxal/ci/master/tree/core/resources/xal/schemas/ModelConfig.xsd?format=raw">
 	<elements>
 		<default type="xal.model.elem.Marker"/>
+		<default_seq type="xal.model.Sector"/>
+		
 		<drift type="xal.model.elem.IdealDrift"/>
 		<drift_rfcav type="xal.model.elem.IdealRfCavityDrift"/>
 	</elements>
@@ -33,6 +35,11 @@
 		<map smf="ws" model="xal.model.elem.Marker"/>
 		<map smf="harp" model="xal.model.elem.Marker"/>
 		<map smf="marker" model="xal.model.elem.Marker"/>
+		
+		<map smf="DTLTank" model="xal.model.elem.IdealRfCavity"/>
+        <map smf="CCL" model="xal.model.elem.IdealRfCavity"/>
+        <map smf="SCLCavity" model="xal.model.elem.IdealRfCavity"/>
+        <map smf="Bnch" model="xal.model.elem.IdealRfCavity"/>
 	</associations>
 
 </configuration>

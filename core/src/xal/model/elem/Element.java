@@ -189,11 +189,11 @@ public abstract class Element implements IElement {
     @Override
 	public void initializeFrom(LatticeElement latticeElement) {
         String  strElemId = latticeElement.getModelingElementId();
-        String  strSmfId  = latticeElement.getNode().getId();
+        String  strSmfId  = latticeElement.getHardwareNode().getId();
         
     	setId( strElemId != null ? strElemId : strSmfId);
     	setHardwareNodeId(strSmfId);
-		setPosition(latticeElement.getCenter());
+		setPosition(latticeElement.getCenterPosition());
 		
 //        // CKA: Added to include hardware ID attribute for the new element.
 //        //   This is bound to ScenarioGenerator#collectElements(). 
