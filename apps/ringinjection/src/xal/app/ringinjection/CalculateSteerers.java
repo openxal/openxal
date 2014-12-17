@@ -245,7 +245,7 @@ public class CalculateSteerers{
 
 			xsolver.solve( xProblem );
 			ScoreBoard xscoreboard = xsolver.getScoreBoard();
-			System.out.println(xscoreboard.toString());
+			System.out.println(xscoreboard);
 			//Calculate and store final values.
 			updateModel();
 			final_steerers[0]=varDCH22.getValue();
@@ -263,7 +263,7 @@ public class CalculateSteerers{
 
 			ysolver.solve( yProblem );
 			ScoreBoard yscoreboard = ysolver.getScoreBoard();
-			System.out.println(yscoreboard.toString());
+			System.out.println(yscoreboard);
 			//Calculate and store final values.
 			updateModel();
 			final_steerers[4]=varDCV29.getValue();
