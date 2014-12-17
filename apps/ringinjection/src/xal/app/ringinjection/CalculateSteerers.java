@@ -249,7 +249,6 @@ public class CalculateSteerers{
 			//Calculate and store final values by evaluating the best solution
 			Trial solution = xscoreboard.getBestSolution();
 			xProblem.evaluate(solution);
-			updateModel();
 			final_steerers[0]=varDCH22.getValue();
 			final_steerers[1]=varDCH24.getValue();
 			final_steerers[2]=varDCH28.getValue();
@@ -269,7 +268,6 @@ public class CalculateSteerers{
 			//Calculate and store final values by evaluating the best solution
 			Trial solution = yscoreboard.getBestSolution();
 			yProblem.evaluate(solution);
-			updateModel();
 			final_steerers[4]=varDCV29.getValue();
 			final_steerers[5]=varDCV31.getValue();
 			calcError(yarg, 1);
