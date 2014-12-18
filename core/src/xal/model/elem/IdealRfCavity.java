@@ -6,6 +6,8 @@
  */
 package xal.model.elem;
 
+import xal.model.IProbe;
+import xal.model.ModelException;
 import xal.sim.scenario.LatticeElement;
 import xal.smf.AcceleratorNode;
 import xal.smf.impl.RfCavity;
@@ -41,8 +43,14 @@ public class IdealRfCavity extends ElementSeq {
      * Local Attributes
      */
     
-    /** The frequency of the enclosing cavity */
-    private double dblFreq;
+    /** The current operating phase with respect to the arriving particle (in radians) */
+    private double  dblPhase;
+    
+    /** The amplitude of the RF signal at the cavity RF window, i.e., the klystron amplitude (in Volts) */
+    private double  dblAmp;
+    
+    /** The frequency of the enclosing cavity (in Hertz) */
+    private double  dblFreq;
     
     /** The mode constant (1/2 the mode number) of the cavity which we are exciting */
     private double  dblModeConst;
@@ -91,12 +99,37 @@ public class IdealRfCavity extends ElementSeq {
     }
 
     /**
-     * Set the frequency of the RF cavity containing this drift space.
+     * Set the operating frequency of the RF cavity in Hertz.
      * 
-     * @param dblFreq   fundamental RF frequency of the enclosing RF cavity
+     * @param dblFreq   fundamental RF frequency of the RF cavity (in Hertz)
      */
     public void setFrequency(double dblFreq) {
         this.dblFreq = dblFreq;
+    }
+    
+    /**
+     * Sets the amplitude of the RF signal feeding the cavity.  Specifically,
+     * the voltage of the RF at the cavity RF window.
+     * 
+     * @param dblAmp    high-power signal level at the cavity (in Volts)
+     *
+     * @since  Dec 16, 2014   by Christopher K. Allen
+     */
+    public void setAmplitude(double dblAmp) {
+        this.dblAmp = dblAmp;
+    }
+    
+    /**
+     * Sets the RF phase of the cavity with respect to the propagating probe.
+     * Specifically, this is the RF phase seen by the probe as it first enters
+     * the cavity.
+     * 
+     * @param dblPhase      RF phase of the cavity upon probe arrival (in radians)
+     *
+     * @since  Dec 16, 2014   by Christopher K. Allen
+     */
+    public void setPhase(double dblPhase) {
+        this.dblPhase = dblPhase;
     }
 
     /**
@@ -126,12 +159,37 @@ public class IdealRfCavity extends ElementSeq {
      */
     
     /**
-     * Get the operating frequency of the RF cavity.
+     * Get the operating frequency of the RF cavity in Hertz.
      * 
-     * @return  the fundamental mode frequency <i>f</i><sub>0</sub> of the enclosing RF cavity 
+     * @return  the fundamental mode frequency <i>f</i><sub>0</sub> of the RF cavity 
      */
     public double getFrequency() {
-        return dblFreq;
+        return this.dblFreq;
+    }
+
+    /**
+     * Get the amplitude of the RF signal feeding the cavity.  Specifically,
+     * the voltage of the RF at the cavity RF window.
+     * 
+     * @return  high-power signal level at the cavity (in Volts)
+     *
+     * @since  Dec 16, 2014   by Christopher K. Allen
+     */
+    public double   getAmplitude() {
+        return this.dblAmp;
+    }
+
+    /**
+     * Get the RF phase of the cavity with respect to the propagating probe.
+     * Specifically, this is the RF phase seen by the probe as it first enters
+     * the cavity.
+     * 
+     * @return  RF phase of the cavity upon probe arrival (in radians)
+     *
+     * @since  Dec 16, 2014   by Christopher K. Allen
+     */
+    public double   getPhase() {
+        return this.dblPhase;
     }
 
     /**
@@ -152,10 +210,10 @@ public class IdealRfCavity extends ElementSeq {
      * @return  the operating mode constant &lambda; for the cavity drift
      */
     public double getCavityModeConstant() {
-        return dblModeConst;
+        return this.dblModeConst;
     }
 
-
+    
     /*
      * IComposite Interface
      */
@@ -181,8 +239,77 @@ public class IdealRfCavity extends ElementSeq {
         
         RfCavity    smfRfCav = (RfCavity)smfNode;
         
-        this.setFrequency( smfRfCav.getCavFreq() );
-        this.setCavityModeConstant( smfRfCav.getStructureMode() );
+        double  dblFreq  = 1.0e6 * smfRfCav.getCavFreq();    // convert to Hertz
+        double  dblAmp   = 1.0e3 * smfRfCav.getDfltCavAmp(); // convert to Volts
+        double  dblPhase = (Math.PI/180.0) * smfRfCav.getDfltCavPhase(); // convert to radians
+        double  dblModeConst = smfRfCav.getStructureMode();
+        
+        this.setFrequency( dblFreq );
+        this.setAmplitude( dblAmp );
+        this.setPhase( dblPhase );
+        this.setCavityModeConstant( dblModeConst );
+    }
+
+    /**
+     * <p>
+     * Sets the probes longitudinal phase to the phase of this cavity
+     * upon entrance.  Then we propagate the probe through the 
+     * composite structure as usual by calling the base class
+     * <code>propagate</code> method.
+     * </p>
+     * <p>
+     * It is unnecessary to override the <code>{@link #propagate(IProbe, double)}</code>
+     * method since that method simply defers to the 
+     * <code>{@link #propagate(IProbe)}</code> method ignoring the 
+     * position parameter.
+     * </p>
+     *
+     * @see xal.model.elem.ElementSeq#propagate(xal.model.IProbe)
+     *
+     * @since  Dec 16, 2014   by Christopher K. Allen
+     */
+    @Override
+    public void propagate(IProbe probe) throws ModelException {
+        
+        // This is the non-preferred way to do things - modeling elements 
+        //  should not modify probes.  But right now I need to get my foot
+        //  into this RF cavity door.
+        //  TODO : modify this to conform to the Element/Algorithm/Probe design
+        probe.setLongitudinalPhase( this.getPhase() );
+        
+        super.propagate(probe);
+    }
+
+    /**
+     * <p>
+     * I am overriding this method even though a proper back propagation
+     * <b>is impossible</b>.  We set the longitudinal phase of the probe to the
+     * phase of the cavity as it backs into the exit.  The true phase
+     * should be the phase of the particle as it leaves the cavity when
+     * forward propagating, however, we have no way of knowing that 
+     * phase a priori. 
+     * </p>
+     * <p>
+     * It may be useful to use this setup during back propagations to 
+     * explore various beam exit times and their effect.
+     * </p>
+     * <p>
+     * It is unnecessary to override the 
+     * <code>{@link #backPropagate(IProbe, double)}</code>
+     * method since that method simply defers to the 
+     * <code>{@link #backPropagate(IProbe)}</code> method ignoring the 
+     * position parameter.
+     * </p>
+     *
+     * @see xal.model.elem.ElementSeq#backPropagate(xal.model.IProbe)
+     *
+     * @since  Dec 16, 2014   by Christopher K. Allen
+     */
+    @Override
+    public void backPropagate(IProbe probe) throws ModelException {
+        probe.setLongitudinalPhase( this.getPhase() );
+        
+        super.backPropagate(probe);
     }
 
 }

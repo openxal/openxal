@@ -721,6 +721,7 @@ public abstract class Tracker implements IAlgorithm, IArchive {
             return;
         
        probe.setCurrentElement(elem.getId());
+       probe.setCurrentElementTypeId(elem.getType());
        probe.setCurrentHardwareId(elem.getHardwareNodeId());
 //     sako *** IMPORTANT CHANGES
 //        this is now moved to Element.propagate this.setElemPosition(0.0);
@@ -734,6 +735,9 @@ public abstract class Tracker implements IAlgorithm, IArchive {
         //  If the element is an RF gap we record the time at which the probe
         //  exited the element.
         if (elem instanceof IdealRfGap) {
+            
+//            ERROR!
+            
             IdealRfGap      elmRfGap = (IdealRfGap)elem;
             
             double  dblTime   = probe.getTime();
@@ -741,7 +745,7 @@ public abstract class Tracker implements IAlgorithm, IArchive {
             
             dblCavPhs += elmRfGap.compCoupledCavityPhaseShift(probe);
             
-            probe.setRfGapExitTime(dblTime);
+//            probe.setRfGapExitTime(dblTime);
             probe.setCoupledCavityPhaseShift(dblCavPhs);
         }
         
@@ -883,13 +887,13 @@ public abstract class Tracker implements IAlgorithm, IArchive {
         double  W0   = probe.getKineticEnergy();
         
         // Properties of the element
-        double  L    = dblLen;
+        double  dL   = dblLen;
         double  dT   = elem.elapsedTime(probe, dblLen);
         double  dphi = elem.longitudinalPhaseAdvance(probe, dblLen);
         double  dW   = elem.energyGain(probe, dblLen);
         
         // Advance the probe position and energy
-        double  s1   = s0 + L;
+        double  s1   = s0 + dL;
         double  t1   = t0 + dT;
         double  phi1 = phi0 + dphi;
         double  W1   = W0 + dW;
@@ -899,7 +903,8 @@ public abstract class Tracker implements IAlgorithm, IArchive {
         probe.setLongitudinalPhase(phi1);
         probe.setKineticEnergy(W1);
         
-        this.setElemPosition(this.getElemPosition() + L);
+        // The algorithm "element position" is also set in Element#propagate() ??!!
+        this.setElemPosition(this.getElemPosition() + dL);
 
         // Update probe trajectory
         if (this.getProbeUpdatePolicy() == Tracker.UPDATE_ALWAYS)

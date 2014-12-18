@@ -168,8 +168,11 @@ public class IdealRfCavityDrift extends IdealDrift {
      */
     @Override
     public double longitudinalPhaseAdvance(IProbe probe, double dblLen) {
-        // TODO Auto-generated method stub
-        return super.longitudinalPhaseAdvance(probe, dblLen);
+        double  dt  = super.elapsedTime(probe, dblLen);
+        double  w   = 2.0 * Math.PI * this.getFrequency();
+        double dphi = w * dt;
+        
+        return dphi;
     }
 
     

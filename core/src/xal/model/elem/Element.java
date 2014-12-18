@@ -92,69 +92,6 @@ public abstract class Element implements IElement {
     
     
     /*
-     *  IElement Interface - Abstract Methods
-     */
-    
-    /**
-     *  Return the length of this element.  Derived class must
-     *  implement this because it is undetermined whether or not this is a thin
-     *  or thick element.
-     */
-    public abstract double getLength();
-    
-    /**
-     * Returns the time taken for the probe <code>probe</code> to propagate 
-     * through a subsection of the element with length <code>dblLen</code>.
-     * 
-     *  @param  probe   determine energy gain for this probe
-     *  @param  dblLen  length of subsection to calculate energy gain for
-     *  
-     *  @return         the elapsed time through section<bold>Units: seconds</bold> 
-     */
-    public abstract double elapsedTime(IProbe probe, double dblLen);
-    
-    /** 
-     *  Returns energy gain for <b>subsection</b> of this element of length 
-     *  <code>dblLen</code> for the specified given probe.
-     *
-     *  @param  probe   determine energy gain for this probe
-     *
-     *  @return         the energy gain provided by this element <bold>Units: eV</bold> 
-     */
-    public abstract double energyGain(IProbe probe, double dblLen);
-
-    /**
-     *  Compute the transfer matrix for <b>subsection</b> of this element of length 
-     *  <code>dblLen</code> for the specified given probe.  That is, this method should 
-     *  return the incremental transfer matrix.
-     *
-     *  @param  dblLen      length of sub-element
-     *  @param  probe       probe containing parameters for the sub-sectional transfer matrix
-     *
-     *  @return             transfer map for an element of length dblLen
-     *
-     *  @exception  ModelException    unable to compute transfer map
-     *
-     *  @see    xal.model.IElement#transferMap(IProbe,double)
-     */
-    public abstract PhaseMap transferMap(IProbe probe, double dblLen) throws ModelException;   
-
-
-    /**
-     * This is a kluge to make RF gaps work, since frequency is not defined for most
-     * modeling elements.  For such elements we simply return 0 phase advance.  For
-     * elements where frequency is defined, we can override this.
-     *
-     * @see xal.model.IElement#longitudinalPhaseAdvance(xal.model.IProbe, double)
-     *
-     * @author Christopher K. Allen
-     * @since  Nov 23, 2014
-     */
-    public double   longitudinalPhaseAdvance(IProbe probe, double dblLen) {
-        return 0.0;
-    }
-
-    /*
      * Initialization
      */
                 
@@ -180,29 +117,6 @@ public abstract class Element implements IElement {
         this.strSmfId = "";
         this.dblLatPos = 0.0;
     };
-    
-	/**
-	 * Conversion method to be provided by the user
-	 * 
-	 * @param latticeElement the SMF node to convert
-	 */
-    @Override
-	public void initializeFrom(LatticeElement latticeElement) {
-        String  strElemId = latticeElement.getModelingElementId();
-        String  strSmfId  = latticeElement.getHardwareNode().getId();
-        
-    	setId( strElemId != null ? strElemId : strSmfId);
-    	setHardwareNodeId(strSmfId);
-		setPosition(latticeElement.getCenterPosition());
-		
-//        // CKA: Added to include hardware ID attribute for the new element.
-//        //   This is bound to ScenarioGenerator#collectElements(). 
-//        //   If "ELEMENT_CENTER" is changed you must modify both!
-//        if ( this instanceof Marker && 
-//             this.getId().startsWith("ELEMENT_CENTER")
-//             )
-//            setHardwareNodeId(this.getId().replace("ELEMENT_SEQUENCE:", "") );
-	}
     
     /**
      *  Set the string identifier for the element.
@@ -238,7 +152,6 @@ public abstract class Element implements IElement {
         dblLatPos = dblPos;
     }
     
-    
     /**
      * Set the alignment parameters all at once.
      * 
@@ -253,39 +166,39 @@ public abstract class Element implements IElement {
     }
     
     
+    /**
+     * Set the horizontal misalignment
+     * 
+     * @param x     misalignment (in m)
+     *
+     * @since  Dec 17, 2014   by Christopher K. Allen
+     */
     public void setAlignX(double x) {
         alignx = x;
     }
+
+    /**
+     * Set the vertical misalignment
+     * 
+     * @param y     misalignment (in m)
+     *
+     * @since  Dec 17, 2014   by Christopher K. Allen
+     */
     public void setAlignY(double y) {
         aligny = y;
     }
+
+    /**
+     * Set the longitudinal misalignment
+     * 
+     * @param z     misalignment (in m)
+     *
+     * @since  Dec 17, 2014   by Christopher K. Allen
+     */
     public void setAlignZ(double z) {
         alignz = z;
     }
-    
-    public double getAlignX() {
-        return alignx;
-    }
-    public double getAlignY() {
-        return aligny;
-    }
-    public double getAlignZ() {
-        return alignz;
-    }
-    
-    /**
-     * Add an element to the list of nearest neighbor elements used when
-     * considering the effects of PMQs
-     * 
-     * @param closeElem     an adjacent element
-     */
-    public void addCloseElements(Element closeElem) {
-        if (closeElements == null) {
-            closeElements = new ArrayList<Element>();
-        }
-        closeElements.add(closeElem);
-    }
-    
+
     
     /*
      *  Property Queries
@@ -299,12 +212,67 @@ public abstract class Element implements IElement {
     public int  getUID()  { 
         return m_intUID; 
     };
-        
+    
+    /**
+     * Return the center position of the element along the design trajectory.
+     * This is the position with the containing lattice.
+     * 
+     * @return  center position of the element (meters)
+     */
+    public double getPosition() {
+        return dblLatPos;
+    }
+
+    /**
+     * Get the horizontal misalignment
+     * 
+     * @return  the misalignment (in meters)
+     *
+     * @since  Dec 17, 2014   by Christopher K. Allen
+     */
+    public double getAlignX() {
+        return alignx;
+    }
+
+    /**
+     * Get the vertical misalignment
+     * 
+     * @return  the misalignment (in meters)
+     *
+     * @since  Dec 17, 2014   by Christopher K. Allen
+     */
+    public double getAlignY() {
+        return aligny;
+    }
+    
+    /**
+     * Get the longitudinal misalignment
+     * 
+     * @return  the misalignment (in meters)
+     *
+     * @since  Dec 17, 2014   by Christopher K. Allen
+     */
+    public double getAlignZ() {
+        return alignz;
+    }
+    
     
     /*
-     * Dynamic Parameters
+     * Operations
      */
     
+    /**
+     * Add an element to the list of nearest neighbor elements used when
+     * considering the effects of PMQs
+     * 
+     * @param closeElem     an adjacent element
+     */
+    public void addCloseElements(Element closeElem) {
+        if (closeElements == null) {
+            closeElements = new ArrayList<Element>();
+        }
+        closeElements.add(closeElem);
+    }
     
     /**
      * Returns the given transfer matrix adjusted by the
@@ -341,7 +309,6 @@ public abstract class Element implements IElement {
          return Phidx;
      }
      
-     
     /**
      * <p>This method is intended to return the location of the probe within
      * the current element.  Actually, we compute and return the distance of 
@@ -375,8 +342,106 @@ public abstract class Element implements IElement {
     }
     
     
+    //
+    // Methods for PMQ Support
+    //
+    
+    /**
+     * Return the list of nearest adjacent elements to this element.
+     * THis is used primarily in permanent magnet quadrupole considerations.
+     * 
+     * @return  List of adjacent modeling elements
+     */
+    public ArrayList<Element> getCloseElements() {
+        return closeElements;
+    }
+    
+    /** 
+     * Compute the time the probe <code>probe</code> spends drifting a
+     * a distance <code>dblLen</code>.
+     *  
+     * @param   probe       interface to drifting probe
+     * @param   dblLen      length of drift in <b>meters</b>  
+     * 
+     * @return              time interval during drift in <b>seconds</b>
+     */
+    
+    public double compDriftingTime(IProbe probe, double dblLen) {
+
+        double dblTime = 0.0;                // the time interval
+        double dblBeta = probe.getBeta();    // normalized probe velocity
+     
+        dblTime = dblLen / (IConstants.LightSpeed * dblBeta);
+        
+        return dblTime;
+    }
+    
+    
     /*
-     *  IElement Interface
+     *  IElement Interface - Abstract Methods
+     */
+    
+    /**
+     *  Return the length of this element.  Derived class must
+     *  implement this because it is undetermined whether or not this is a thin
+     *  or thick element.
+     */
+    public abstract double getLength();
+    
+    /**
+     * Returns the time taken for the probe <code>probe</code> to propagate 
+     * through a subsection of the element with length <code>dblLen</code>.
+     * 
+     *  @param  probe   determine energy gain for this probe
+     *  @param  dblLen  length of subsection to calculate energy gain for
+     *  
+     *  @return         the elapsed time through section<bold>Units: seconds</bold> 
+     */
+    public abstract double elapsedTime(IProbe probe, double dblLen);
+    
+    /** 
+     *  Returns energy gain for <b>subsection</b> of this element of length 
+     *  <code>dblLen</code> for the specified given probe.
+     *
+     *  @param  probe   determine energy gain for this probe
+     *
+     *  @return         the energy gain provided by this element <bold>Units: eV</bold> 
+     */
+    public abstract double energyGain(IProbe probe, double dblLen);
+
+    /**
+     * This is a kluge to make RF gaps work, since frequency is not defined for most
+     * modeling elements.  For such elements we simply return 0 phase advance.  For
+     * elements where frequency is defined, we can override this.
+     *
+     * @see xal.model.IElement#longitudinalPhaseAdvance(xal.model.IProbe, double)
+     *
+     * @author Christopher K. Allen
+     * @since  Nov 23, 2014
+     */
+    public double   longitudinalPhaseAdvance(IProbe probe, double dblLen) {
+        return 0.0;
+    }
+
+    /**
+     *  Compute the transfer matrix for <b>subsection</b> of this element of length 
+     *  <code>dblLen</code> for the specified given probe.  That is, this method should 
+     *  return the incremental transfer matrix.
+     *
+     *  @param  dblLen      length of sub-element
+     *  @param  probe       probe containing parameters for the sub-sectional transfer matrix
+     *
+     *  @return             transfer map for an element of length dblLen
+     *
+     *  @exception  ModelException    unable to compute transfer map
+     *
+     *  @see    xal.model.IElement#transferMap(IProbe,double)
+     */
+    public abstract PhaseMap transferMap(IProbe probe, double dblLen) throws ModelException;   
+
+
+    /*
+     *  IComponent Interface
      */
     
     /**
@@ -411,6 +476,29 @@ public abstract class Element implements IElement {
         return this.strSmfId;
     }
 
+    /**
+     * Conversion method to be provided by the user
+     * 
+     * @param latticeElement the SMF node to convert
+     */
+    @Override
+    public void initializeFrom(LatticeElement latticeElement) {
+        String  strElemId = latticeElement.getModelingElementId();
+        String  strSmfId  = latticeElement.getHardwareNode().getId();
+        
+        setId( strElemId != null ? strElemId : strSmfId);
+        setHardwareNodeId(strSmfId);
+        setPosition(latticeElement.getCenterPosition());
+        
+//        // CKA: Added to include hardware ID attribute for the new element.
+//        //   This is bound to ScenarioGenerator#collectElements(). 
+//        //   If "ELEMENT_CENTER" is changed you must modify both!
+//        if ( this instanceof Marker && 
+//             this.getId().startsWith("ELEMENT_CENTER")
+//             )
+//            setHardwareNodeId(this.getId().replace("ELEMENT_SEQUENCE:", "") );
+    }
+    
     /** 
      * <p>
      * Override of {@link xal.model.IComponent#propagate(xal.model.IProbe, double)}
@@ -443,6 +531,8 @@ public abstract class Element implements IElement {
         if (alg instanceof Tracker) {
         	Tracker tracker = (Tracker)alg;
 //        	System.out.println("tracker.setElemPosition to "+pos);
+        	
+        	// The algorithm "element position" is also set in Tracker#advanceProbe() ??!!
         	tracker.setElemPosition(pos);
         }
         alg.propagate(probe, this);
@@ -469,6 +559,8 @@ public abstract class Element implements IElement {
         alg = probe.getAlgorithm();
         if (alg instanceof Tracker) {
         	Tracker tracker = (Tracker)alg;
+
+            // The algorithm "element position" is also set in Tracker#advanceProbe() ??!!
         	tracker.setElemPosition(0);
         }
         alg.propagate(probe, this);
@@ -515,18 +607,18 @@ public abstract class Element implements IElement {
         if (alg instanceof Tracker) {
         	Tracker tracker = (Tracker)alg;
         	System.out.println("tracker.setElemPosition to "+pos);
+
+            // The algorithm "element position" is also set in Tracker#advanceProbe() ??!!
         	tracker.setElemPosition(pos);
         }
         alg.propagate(probe, this);
     }
-
 
     /** 
      * <p>
      * Back propagates the Probe object through this element based on the 
      * associated algorithm.
      * </p>  
-     *
      * <p>
      * <strong>NOTES</strong>: CKA
      * <br/>
@@ -554,66 +646,14 @@ public abstract class Element implements IElement {
     
             // set position at the exit of the element
             double pos = this.getLength();
-        	tracker.setElemPosition(pos);
+
+            // The algorithm "element position" is also set in Tracker#advanceProbe() ??!!
+            tracker.setElemPosition(pos);
         }
         alg.propagate(probe, this);
     }
 
-
-    /*
-     * Methods for PMQs
-     */
-    /**
-     * Return the center position of the element along the design trajectory.
-     * This is the position with the containing lattice.
-     * 
-     * @return  center position of the element (meters)
-     */
-    public double getPosition() {
-        return dblLatPos;
-    }
-
-    /**
-     * Return the list of nearest adjacent elements to this element.
-     * THis is used primarily in permenant magnet quadrupole considerations.
-     * 
-     * @return  List of adjacent modeling elements
-     */
-    public ArrayList<Element> getCloseElements() {
-        return closeElements;
-    }
-    
-
-    
-    
-    
-    
-    /*
-     * Subclass Support 
-     */
      
-    /** 
-     * Compute the time the probe <code>probe</code> spends drifting a
-     * a distance <code>dblLen</code>.
-     *  
-     * @param   probe       interface to drifting probe
-     * @param   dblLen      length of drift in <b>meters</b>  
-     * 
-     * @return              time interval during drift in <b>seconds</b>
-     */
-    
-    public double compDriftingTime(IProbe probe, double dblLen) {
-
-        double dblTime = 0.0;                // the time interval
-        double dblBeta = probe.getBeta();    // normalized probe velocity
-     
-        dblTime = dblLen / (IConstants.LightSpeed * dblBeta);
-        
-        return dblTime;
-    }
-     
-    
-    
     /*
      *  Testing and Debugging
      */

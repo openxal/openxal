@@ -333,7 +333,12 @@ public class Scenario {
             alg.unsetStopElementId();
         
         // Propagate probe
-	lattice.propagate(probe);
+        probe.initialize();
+        probe.update();
+        
+        lattice.propagate(probe);
+
+        probe.performPostProcessing();
     }
     
 	

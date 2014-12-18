@@ -100,6 +100,17 @@ public interface IProbeState extends IArchive {
      */
     public void setElementId(String id);
     
+    /**
+     * Sets the type identifier string of the modeling element where this
+     * state was created. Note that all modeling elements have a static string
+     * identifier defined in their class definition.
+     * 
+     * @param strTypeId     static identifier string of the modeling element class
+     *
+     * @since  Dec 16, 2014   by Christopher K. Allen
+     */
+    public void setElementTypeId(String strTypeId);
+    
 	
 	
     /*
@@ -130,6 +141,17 @@ public interface IProbeState extends IArchive {
      * @return  string ID of associated lattice element
      */
     public String getElementId();
+    
+    /**
+     * Gets the type identifier string of the modeling element where this
+     * state was created. Note that all modeling elements have a static string
+     * identifier defined in their class definition.
+     * 
+     * @return  static identifier string of the modeling element class
+     *
+     * @since  Dec 16, 2014   by Christopher K. Allen
+     */
+    public String getElementTypeId();
     
 	
     /** 

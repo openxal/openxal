@@ -4,6 +4,7 @@ import xal.tools.beam.PhaseMap;
 
 
 /** 
+ * <p>
  * The defining interface for atomic accelerator modeling components.
  * (for example, quadrupoles, foil, and others). According to the 
  * Element-Algorithm-Probe design pattern, the <code>IElement</code>

@@ -92,6 +92,17 @@ public interface IProbe {
     public String getCurrentElement();
     
     /**
+     * Get the type identifier string of the modeling element where this
+     * probe currently exists. Note that all modeling elements have a static string
+     * identifier defined in their class definition.
+     * 
+     * @param strTypeId     static identifier string of the modeling element class
+     *
+     * @since  Dec 16, 2014   by Christopher K. Allen
+     */
+    public String getCurrentElementTypeId();
+    
+    /**
      * Returns the identifier of the hardware being modeling
      * by the current element.
      * 
@@ -166,15 +177,15 @@ public interface IProbe {
      */
     public double   getGamma();
     
-    /**
-     * Returns the time at which the probe being tracked exited the last RF gap.
-     * 
-     * @return      probe time at which the last RF gap was exited (in seconds)
-     *
-     * @author Christopher K. Allen
-     * @since  Nov 24, 2014
-     */
-    public double   getRfGapExitTime();
+//    /**
+//     * Returns the time at which the probe being tracked exited the last RF gap.
+//     * 
+//     * @return      probe time at which the last RF gap was exited (in seconds)
+//     *
+//     * @author Christopher K. Allen
+//     * @since  Nov 24, 2014
+//     */
+//    public double   getRfGapExitTime();
     
     /**
      * Returns the machine RF phase at the last gap through which the probe propagated.
@@ -188,6 +199,20 @@ public interface IProbe {
      */
     public double   getCoupledCavityPhase();
     
+    /**
+     * Looks up the last probe state created by a modeling
+     * element of the given identifier.  The history of the probe (i.e., a
+     * <code>Trajectory</code> object is searched for the last state with
+     * the modeling type ID equal to the given value.  
+     * 
+     * @param strElemTypeId     modeling element type identification string
+     * 
+     * @return                  the last state created by such a modeling element
+     *
+     * @since  Dec 17, 2014   by Christopher K. Allen
+     */
+    public ProbeState<?>   lookupLastStateFor(String strElemTypeId);
+    
     /*
      * State Initialization
      */
@@ -198,6 +223,17 @@ public interface IProbe {
      * @param id <code>String</code> id of current lattice element.
      */
     public void setCurrentElement(String id);
+    
+    /**
+     * Sets the type identifier string of the modeling element where this
+     * probe currently exists. Note that all modeling elements have a static string
+     * identifier defined in their class definition.
+     * 
+     * @param strTypeId     static identifier string of the modeling element class
+     *
+     * @since  Dec 16, 2014   by Christopher K. Allen
+     */
+    public void setCurrentElementTypeId(String strTypeId);
     
     /**
      * Sets the string identifier of the hardware node modeled by
@@ -278,17 +314,17 @@ public interface IProbe {
      */
     public void setSpeciesRestEnergy(double m);
    
-    /**
-     * Sets the time at which the currently tracked probe exited the
-     * last RF gap structure it propagated through.
-     * 
-     * @param dblRfGapExitTime      gap exit time (in seconds)
-     *
-     * @author Christopher K. Allen
-     * @since  Nov 24, 2014
-     */
-    public void setRfGapExitTime(double dblRfGapExitTime);
-
+//    /**
+//     * Sets the time at which the currently tracked probe exited the
+//     * last RF gap structure it propagated through.
+//     * 
+//     * @param dblRfGapExitTime      gap exit time (in seconds)
+//     *
+//     * @author Christopher K. Allen
+//     * @since  Nov 24, 2014
+//     */
+//    public void setRfGapExitTime(double dblRfGapExitTime);
+//
     /**
      * Returns the RF phase at the last gap through which the probe propagated.
      * This value accounts for the RF cavity structure, specifically the phase shifts
@@ -341,8 +377,12 @@ public interface IProbe {
 	
 	
 	/**
-	 * Perform any required post processing upon completion of algorithm processing. 
+	 * Perform any required post processing upon completion of algorithm processing.
+	 * 
+	 *  @deprecated    This has a zero implementation in <code>Probe</code> but never does
+	 *                 anything.
 	 */
+    @Deprecated
 	public void performPostProcessing();
     
 

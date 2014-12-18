@@ -68,6 +68,9 @@ public abstract class ProbeState<S extends ProbeState<S>> implements IProbeState
     /** element id */
     private String m_strElemId = "";
     
+    /** The element type identifier string */
+    private String  strElemTypeId = "";
+    
     /** hardware node ID */
     private String  strSmfId = "";
 
@@ -359,6 +362,17 @@ public abstract class ProbeState<S extends ProbeState<S>> implements IProbeState
         m_strElemId = id;
     }
     
+    /**
+     *
+     * @see xal.model.probe.traj.IProbeState#setElementTypeId(java.lang.String)
+     *
+     * @since  Dec 16, 2014   by Christopher K. Allen
+     */
+    @Override
+    public void setElementTypeId(String strTypeId) {
+        this.strElemTypeId = strTypeId;
+    }
+    
     /** 
      *  Returns the charge of probe's particle species 
      *  
@@ -387,6 +401,20 @@ public abstract class ProbeState<S extends ProbeState<S>> implements IProbeState
     @Override
     public String getElementId() {
         return m_strElemId;
+    }
+    
+    /**
+     * Returns the modeling element type identifier string 
+     * for the modeling element where this
+     * probe state was created.
+     *
+     * @see xal.model.probe.traj.IProbeState#getElementTypeId()
+     *
+     * @since  Dec 16, 2014   by Christopher K. Allen
+     */
+    @Override
+    public String   getElementTypeId() {
+        return this.strElemTypeId;
     }
     
     /** 

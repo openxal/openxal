@@ -20,7 +20,9 @@ import xal.model.probe.TransferMapProbe;
 /**
  * @author Christopher K. Allen
  *
+ * @deprecated This class is never used
  */
+@Deprecated
 public class RingModel extends ElementSeq {
     /** default number of element positions to reserve in list array */
     public static final int    s_szDefReserve = 100;

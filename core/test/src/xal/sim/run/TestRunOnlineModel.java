@@ -33,6 +33,7 @@ import xal.smf.data.XMLDataManager;
  *
  * @author Christopher K. Allen
  * @since   Jul 30, 2012
+ * @version Dec 15, 2014
  */
 public class TestRunOnlineModel {
 

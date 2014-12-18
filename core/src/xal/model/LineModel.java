@@ -13,7 +13,10 @@ import xal.model.elem.ElementSeq;
  * Or in other words, and accelerator <em>line</em>.
  * 
  * @author Christopher K. Allen
+ * 
+ * @deprecated  This class is never used
  */
+@Deprecated
 public class LineModel extends ElementSeq {
     
 

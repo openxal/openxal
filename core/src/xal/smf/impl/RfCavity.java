@@ -58,10 +58,9 @@ public class RfCavity extends AcceleratorSeq {
      * container of the enclosed RfGap(s) in this cavity sorted by position 
      * </p>
      * <p>
-     * <h4>NOTE:</h4> I don't understand the point of this, an 
-     * <code>RfCavityStruct</code> is an <code>AcceleratorSeq</code> which is
-     * already an ordered list of <code>AcceleratorNode</code>s.  This
-     * attribute and any reliance on it seems dangerously redundant.
+     * <h4>NOTE:</h4>
+     * This appears to be used to process the gaps and only the gaps within this
+     * cavity structure. 
      * </p>
      */
     protected List<RfGap> _gaps;  // rf gaps within this multi-gap device

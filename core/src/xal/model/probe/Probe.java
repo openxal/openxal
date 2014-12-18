@@ -605,6 +605,17 @@ public abstract class Probe<S extends ProbeState<S>> implements IProbe, IArchive
     }
     
     /**
+     *
+     * @see xal.model.IProbe#getCurrentElementTypeId()
+     *
+     * @since  Dec 16, 2014   by Christopher K. Allen
+     */
+    @Override
+    public String getCurrentElementTypeId() {
+        return this.stateCurrent.getElementTypeId();
+    }
+    
+    /**
      * Returns the identifier of the hardware modeled by the
      * element associated with this state.
      * 
@@ -641,7 +652,7 @@ public abstract class Probe<S extends ProbeState<S>> implements IProbe, IArchive
     public double   getTime()   {
         return this.stateCurrent.getTime();
     }
-    
+	
     /**
      *  Return the kinetic energy of the probe.  Depending upon the probe type,
      *  this could be the actual kinetic energy of a single constituent particle,
@@ -681,19 +692,19 @@ public abstract class Probe<S extends ProbeState<S>> implements IProbe, IArchive
     	return this.stateCurrent.getGamma();
     }
 
-    /**
-     * Returns the time at which the probe being tracked exited the last RF gap.
-     * 
-     * @return      probe time at which the last RF gap was exited (in seconds)
-     *
-     * @author Christopher K. Allen
-     * @since  Nov 24, 2014
-     */
-    @Override
-    public double   getRfGapExitTime() {
-        return this.dblRfGapExitTime;
-    }
-    
+//    /**
+//     * Returns the time at which the probe being tracked exited the last RF gap.
+//     * 
+//     * @return      probe time at which the last RF gap was exited (in seconds)
+//     *
+//     * @author Christopher K. Allen
+//     * @since  Nov 24, 2014
+//     */
+//    @Override
+//    public double   getRfGapExitTime() {
+//        return this.dblRfGapExitTime;
+//    }
+//    
     /**
      * Returns the RF phase shift at the last gap through which the probe propagated.
      * This value accounts for the RF cavity structure, specifically the phase shifts
@@ -709,6 +720,18 @@ public abstract class Probe<S extends ProbeState<S>> implements IProbe, IArchive
         return this.dblCavPhsShft;
     }
     
+    /**
+     *
+     * @see xal.model.IProbe#lookupLastStateFor(java.lang.String)
+     *
+     * @since  Dec 17, 2014   by Christopher K. Allen
+     */
+    public ProbeState<?> lookupLastStateFor(String strElemTypeId) {
+        Trajectory<S>   trjProbe  = this.getTrajectory();
+        ProbeState<?>   stateLast = trjProbe.peakLastByType(strElemTypeId);
+        
+        return stateLast;
+    }
 
     /**
      * Set the current lattice element id.
@@ -718,6 +741,17 @@ public abstract class Probe<S extends ProbeState<S>> implements IProbe, IArchive
     @Override
     public void setCurrentElement(String id) {
     	this.stateCurrent.setElementId(id);
+    }
+    
+    /**
+     *
+     * @see xal.model.IProbe#setCurrentElementTypeId(java.lang.String)
+     *
+     * @since  Dec 16, 2014   by Christopher K. Allen
+     */
+    @Override
+    public void setCurrentElementTypeId(String strTypeId) {
+        this.stateCurrent.setElementTypeId(strTypeId);
     }
     
     /**
@@ -818,20 +852,20 @@ public abstract class Probe<S extends ProbeState<S>> implements IProbe, IArchive
         this.stateCurrent.setSpeciesRestEnergy(Er); 
     }
 
-    /**
-     * Sets the time at which the currently tracked probe exited the
-     * last RF gap structure it propagated through.
-     * 
-     * @param dblRfGapExitTime      gap exit time (in seconds)
-     *
-     * @author Christopher K. Allen
-     * @since  Nov 24, 2014
-     */
-    @Override
-    public void setRfGapExitTime(double dblRfGapExitTime) {
-        this.dblRfGapExitTime = dblRfGapExitTime;
-    }
-
+//    /**
+//     * Sets the time at which the currently tracked probe exited the
+//     * last RF gap structure it propagated through.
+//     * 
+//     * @param dblRfGapExitTime      gap exit time (in seconds)
+//     *
+//     * @author Christopher K. Allen
+//     * @since  Nov 24, 2014
+//     */
+//    @Override
+//    public void setRfGapExitTime(double dblRfGapExitTime) {
+//        this.dblRfGapExitTime = dblRfGapExitTime;
+//    }
+//
     /**
      * Returns the RF phase at the last gap through which the probe propagated.
      * This value accounts for the RF cavity structure, specifically the phase shifts
@@ -920,7 +954,8 @@ public abstract class Probe<S extends ProbeState<S>> implements IProbe, IArchive
      * Subclasses should override this method to perform any required post processing upon completion 
      * of algorithm processing.  This method implementation does nothing.
      * 
-     * @deprecated     I don't think this gets used.
+     * @deprecated     This method is called in several places I don't think it ever is implemented
+     *                 to do anything.
      */
     @Deprecated
     @Override

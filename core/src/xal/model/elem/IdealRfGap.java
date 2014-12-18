@@ -7,11 +7,11 @@ package xal.model.elem;
 
 import java.io.PrintWriter;
 
-import xal.model.IAlgorithm;
 import xal.model.IElement;
 import xal.model.IProbe;
 import xal.model.ModelException;
-import xal.model.alg.Tracker;
+import xal.model.probe.traj.ProbeState;
+import xal.model.probe.traj.Trajectory;
 import xal.sim.scenario.LatticeElement;
 import xal.smf.impl.RfGap;
 import xal.tools.beam.PhaseMap;
@@ -350,6 +350,8 @@ public class IdealRfGap extends ThinElement implements IRfGap {
      * &nbsp; &nbsp; <i>q</i> = 1/2 &rArr; &pi;/2 mode
      * <br/>
      * &nbsp; &nbsp; <i>q</i> = 1  &nbsp; &nbsp; &rAarr;  &pi; mode
+     * <br/>
+     * <br/>
      * </p>
      * 
      * @return  the cavity mode constant for this gap
@@ -824,41 +826,40 @@ public class IdealRfGap extends ThinElement implements IRfGap {
     
     /**
      * <p>
-     * Returns the phase correction needed to synchronize the particle's unknown pre-cavity history when
-     * this gap is the first gap of an RF cavity.
-     * The correction is simply the difference between the entrance phase of the probe
-     * &phi;<sub><i>i</i></sub> = &omega;<i>t<sub>i</sub></i> and the operating phase &phi;<sub>0</sub> of the
+     * Returns the phase correction due to an offset between the gap's
+     * electrical center and geometric center.
+     * The correction is simply the time of flight &Delta;<i>t</i> needed to propagate
+     * to the electrical center times the angular frequency &omega; &#8796 2&pi;<i>f</i>
+     * of the cavity (<i>f</i> is the fundamental cavity frequency).
+     * Specifically,
+     * <br/>
+     * <br/>
+     * &nbsp; &nbsp; &Delta;&phi; = &omega;&Delta;<i>t</i>
+     * <br/>
+     * <br/>
+     * where &Delta;&phi; is the change in phase due to the offset.
      * cavity.
-     * </p>
-     * <p>If this gap is the fist gap in the RG cavity 
-     * (see <code>{@link #isFirstGap()}</code>) then the method returns the correction
-     * &Delta;&phi;<sub><i>cav</i></sub> &#8796; &omega;<i>t<sub>i</sub></i> - &phi;<sub>0</sub>.
-     * Otherwise the value 0 is returned. 
      * 
      * @param probe     probe object arriving at the gap
      * 
-     * @return          the value  &Delta;&phi;<sub><i>cav</i></sub> if this is the first gap,
-     *                  0 otherwise
+     * @return          the value  &Delta;&phi; caused by gap offset from the geometric center
      *
      * @author Christopher K. Allen
      * @since  Nov 19, 2014
      */
-    private double   compFirstGapPhaseCorrection(IProbe probe) {
+    private double   compGapOffsetPhase(IProbe probe) {
     
         if (!this.isFirstGap())
             return 0.0;
         
         double c  = IElement.LightSpeed;       // speed of light
         double bi = probe.getBeta();           // initial probe velocity
-        double ti = probe.getTime();           // cavity arrival time for the probe
         double dl = this.getGapOffset();       // offset of the model gap from cell center
     
         //the correction for the gap offset needed
-        ti += dl / (bi * c);
+        double dt = dl / (bi * c);
     
-        double  phi_0 = this.getPhase();        // cavity phase (for this gap)
-        double  phi_i = DBL_2PI * this.getFrequency() * ti;
-        double  dphi  =  phi_i - phi_0;
+        double dphi = DBL_2PI * this.getFrequency() * dt;
         
         return dphi;
     }
@@ -877,10 +878,12 @@ public class IdealRfGap extends ThinElement implements IRfGap {
      */
     public double  compCoupledCavityPhaseShift(IProbe probe) {
         
-        // Compute the drifting time from last gap
-        double  t_exit0 = probe.getRfGapExitTime();     // the exit time of the previous gap
-        double  t_entr1 = probe.getTime();              // the entrance time of this gap
-        double  t_drift = t_entr1 - t_exit0;            // drifting time between two gaps
+        // Compute the drifting time since the last gap
+        ProbeState<?>   stateLastGap = probe.lookupLastStateFor( this.getType() );
+        
+        double  t_prev  = stateLastGap.getTime();   // the exit time of the previous gap
+        double  t_curr  = probe.getTime();          // the entrance time of this gap
+        double  t_drift = t_curr - t_prev;          // drifting time between two gaps
         
         // Compute the RF frequency of the operating mode
         double  f_0     = this.getFrequency();

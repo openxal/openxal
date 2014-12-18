@@ -22,6 +22,7 @@ import xal.model.IElement;
 import xal.model.Lattice;
 import xal.model.ModelException;
 import xal.model.Sector;
+import xal.model.elem.IdealRfGap;
 import xal.model.xml.LatticeXmlParser;
 import xal.sim.sync.SynchronizationManager;
 import xal.smf.Accelerator;
@@ -289,10 +290,18 @@ public class LatticeSequence extends LatticeElement implements Iterable<LatticeE
      */
     
     /**
-     * @param mgrSync
-     * @param mapHwToMdl
-     * @return
-     * @throws ModelException
+     * Creates a new model lattice object according to the configuration of this lattice
+     * sequence.  The given synchronization manager is populated with synchronization 
+     * associations for the returned model lattice.  However, the synchronization manager
+     * is still unbound to any scenario.
+     *   
+     * @param mgrSync       synchronization manager to receive synchronization associations 
+     *                      for the model elements in the returned model lattice
+     *                      
+     * @return              new model lattice with the configuration provided by this
+     *                      lattice sequence
+     *                      
+     * @throws ModelException   problem instantiating modeling elements
      *
      * @author Christopher K. Allen
      * @since  Dec 11, 2014
@@ -314,6 +323,13 @@ public class LatticeSequence extends LatticeElement implements Iterable<LatticeE
         //  Recall that this lattice sequence must be a top-level sequence
         //  since users do not have access to the sub-lattice constructor
         Sector      secRoot = this.createModelSector(mgrSync);
+        
+        // Identify the first gaps in any RF Cavity and sub-cavities, then do any
+        //  processing as necessary.  Right now this method does nothing since the
+        //  only action, setting the isFirstGap flag, is accomplished via the XDXF
+        //  configuration file.
+        this.markFirstCavityGap(secRoot);
+        
         
         // Create new lattice modeling object
         Lattice mdlLattice = new Lattice();
@@ -777,6 +793,11 @@ public class LatticeSequence extends LatticeElement implements Iterable<LatticeE
      */
     private Sector createModelSector(SynchronizationManager syncMgr) throws ModelException {
 
+        //
+        //  Need to set up the loop state variables and parameters
+        //
+
+        // Running position of the last processed element
         // TODO Check that this is right
         double dblPosLast = this.getStartPosition();
 
@@ -851,8 +872,8 @@ public class LatticeSequence extends LatticeElement implements Iterable<LatticeE
                 mdlSecParent.addChild(mdlElemCurr);
 
                 if (mdlElemCurr instanceof IElement) 
-                    syncMgr.synchronize((IElement) mdlElemCurr, smfNodeCurr);            
-
+                    syncMgr.synchronize((IElement) mdlElemCurr, smfNodeCurr);
+                
                 // Advance the position of the last processed element
                 // TODO I think this will work for sequences - otherwise add sequence length
                 //  to last position.
@@ -864,10 +885,55 @@ public class LatticeSequence extends LatticeElement implements Iterable<LatticeE
                 ostrDebug.println(latElemCurr.getHardwareNode().getId() + ": ==mapped to==>\t" + smfNodeCurr.getType()
                         + ": s= " + latElemCurr.getCenterPosition());           
         }
-
+        
         return mdlSecParent;
     }
 
+
+    /**
+     * <p>
+     * Currently this method is just a skeleton, it is nothing but a placeholder for 
+     * future modifications and upgrades.
+     * </p>
+     * <p>  
+     * In many modeling applications it
+     * is necessary to identify the first gap in an RF cavity in order to synchronize
+     * incoming particle phases.  At the moment there is a flag in the Open XAL 
+     * XDXF configuration file that identifies a gap as the first gap in a cavity.
+     * This flag is not needed since it is self evident which gap is first simply by
+     * its position within the cavity.  This method can identify first gaps and do
+     * whatever processing is necessary.
+     * </p>
+     *  
+     * @param mdlSec    model sequence object to process RF Cavity first gaps
+     *
+     * @since  Dec 15, 2014   @author Christopher K. Allen
+     */
+    private void markFirstCavityGap(IComposite mdlSec) {
+
+        // We are going to search every direct child element of this model sequence
+        Iterator<IComponent>    iterElems = mdlSec.localIterator();
+        while ( iterElems.hasNext() ) {
+            IComponent mdlElem = iterElems.next();
+            
+            // If we find a composite element then we must check all of its elements (recursively)
+            if ( mdlElem instanceof IComposite ) {
+                IComposite  mdlComp = (IComposite)mdlElem;
+                
+                this.markFirstCavityGap( mdlComp );
+                
+            // We have found an RF gap, and it must be the first one because
+            //  we have not returned yet
+            } else if ( mdlElem instanceof IdealRfGap ) {
+                IdealRfGap  mdlFirstRfGap = (IdealRfGap)mdlElem;
+
+                // TODO: Do something necessary with the first gap
+                // mdlFirstRfGap.set
+                return;
+            }
+        }
+
+    }
     
     /**
      * <p>
