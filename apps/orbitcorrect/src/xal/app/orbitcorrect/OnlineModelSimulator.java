@@ -73,6 +73,7 @@ public class OnlineModelSimulator extends MappedSimulator {
 		    } else {
 //		        ParticleTracker       algPart = AlgorithmFactory.createParticleTracker(_sequence);
 //		        probe = ProbeFactory.createParticleProbe(_sequence, algPart);
+				// switched from particle probe to envelope probe since there is an issue with particle probe always returing a fixed orbit of zero -tap 12/22/2014
 				EnvTrackerAdapt tracker = AlgorithmFactory.createEnvTrackerAdapt( _sequence );
 				probe = ProbeFactory.getEnvelopeProbe(_sequence, tracker);
 		    }
