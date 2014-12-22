@@ -71,9 +71,10 @@ public class OnlineModelSimulator extends MappedSimulator {
 		        probe = ProbeFactory.getTransferMapProbe(_sequence, algXferMap);
 		                
 		    } else {
-		        ParticleTracker       algPart = AlgorithmFactory.createParticleTracker(_sequence);
-		        probe = ProbeFactory.createParticleProbe(_sequence, algPart);
-		        
+//		        ParticleTracker       algPart = AlgorithmFactory.createParticleTracker(_sequence);
+//		        probe = ProbeFactory.createParticleProbe(_sequence, algPart);
+				EnvTrackerAdapt tracker = AlgorithmFactory.createEnvTrackerAdapt( _sequence );
+				probe = ProbeFactory.getEnvelopeProbe(_sequence, tracker);
 		    }
 
 			final Scenario scenario = Scenario.newScenarioFor( _sequence );
@@ -122,7 +123,7 @@ public class OnlineModelSimulator extends MappedSimulator {
 				final double trialField = initialField + TRIAL_FIELD_EXCURSION;
 				for ( CorrectorAgent correctorAgent : correctorAgents ) {
 					final double magnetField = correctorAgent.getCorrector().toFieldFromCA( trialField );
-					//System.out.println( "Corrector:  " + correctorAgent + ", Magnet Field:  " + magnetField + ", Supply Field:  " + trialField );
+//					System.out.println( "Corrector:  " + correctorAgent + ", Magnet Field:  " + magnetField + ", Supply Field:  " + trialField );
 					scenario.setModelInput( correctorAgent.getCorrector(), FIELD_PROPERTY, magnetField );
 				}
 				probe.reset();
@@ -152,11 +153,12 @@ public class OnlineModelSimulator extends MappedSimulator {
 						
 						// need factor of 1000 to convert from meters to mm
 						final double xResponse = 1000 * ( coordinates.getx() - xInitial[bpmIndex] ) / TRIAL_FIELD_EXCURSION;
-						//System.out.println( "BPM:  " + bpmAgent.getID() + ", response: " + xResponse );
+//						System.out.println( "BPM:  " + bpmAgent.getID() + ", X response: " + xResponse + ", current position: " + coordinates.getx() );
 						_xResponseMap.setResponse( supply, bpmAgent, xResponse );
 						
 						final double yResponse = 1000 * ( coordinates.gety() - yInitial[bpmIndex] ) / TRIAL_FIELD_EXCURSION;
-						_yResponseMap.setResponse( supply, bpmAgent, yResponse );						
+//						System.out.println( "BPM:  " + bpmAgent.getID() + ", Y response: " + yResponse + ", current position: " + coordinates.gety() );
+						_yResponseMap.setResponse( supply, bpmAgent, yResponse );
 					}
 					else {		// the response of upstream BPMs must be 0
 						_xResponseMap.setResponse( supply, bpmAgent, 0.0 );
