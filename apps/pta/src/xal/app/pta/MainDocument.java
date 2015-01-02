@@ -54,7 +54,7 @@ public class MainDocument extends AcceleratorDocument implements DataListener{
 
 
     /**  Data format version */
-    private static final long           LNG_VAL_FMTVER = 1L;
+    private static final long           LNG_VAL_FMTVER = 2L;
 
     /** The data label used to identify profile persistent data in external storage */
     public static final String          STR_TAG_DATA = "pta"; //$NON-NLS-1$
@@ -650,13 +650,15 @@ public class MainDocument extends AcceleratorDocument implements DataListener{
     public void update(DataAdaptor daptSrc) throws IllegalArgumentException {
 
         // Check the version information
-        int     iVer = 0;
+        long     lngVer = 0;
+        
         if (daptSrc.hasAttribute("ver")) //$NON-NLS-1$
-            iVer = daptSrc.intValue("ver"); //$NON-NLS-1$
-        if (iVer > LNG_VAL_FMTVER)
-            throw new IllegalArgumentException("Unknown format version " + iVer); //$NON-NLS-1$
+            lngVer = daptSrc.longValue("ver"); //$NON-NLS-1$
+        
+        if (lngVer > LNG_VAL_FMTVER)
+            throw new IllegalArgumentException("Unknown format version " + lngVer); //$NON-NLS-1$
 
-//        // Get the notes
+//        // Get the notes - These are part of the data now
 //        this.docNotes.update(daptSrc);
 
         // Get the data

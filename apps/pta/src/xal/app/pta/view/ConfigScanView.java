@@ -11,10 +11,10 @@ import xal.app.pta.MainConfiguration;
 import xal.app.pta.MainScanController;
 import xal.app.pta.rscmgt.AppProperties;
 import xal.app.pta.view.cmn.DeviceSelectorPanel;
-import xal.app.pta.view.cmn.ScannerStatusPanel;
-import xal.app.pta.view.cmn.ScannerTestingPanel;
 import xal.app.pta.view.devcfg.DeviceConfigBasePanel;
 import xal.app.pta.view.devcfg.ScannerConfigDisplay;
+import xal.app.pta.view.diag.ScannerStatusPanel;
+import xal.app.pta.view.diag.ScannerTestingPanel;
 import xal.smf.Accelerator;
 import xal.smf.AcceleratorNode;
 import xal.smf.impl.WireScanner;
@@ -45,7 +45,7 @@ import javax.swing.border.TitledBorder;
  * @since  Nov 12, 2009
  * @author Christopher K. Allen
  */
-public class ScanConfigView extends JPanel 
+public class ConfigScanView extends JPanel 
     implements IConfigView, DeviceSelectorPanel.IDeviceSelectionListener 
 {
 
@@ -111,7 +111,7 @@ public class ScanConfigView extends JPanel
      * @since     Nov 12, 2009
      * @author    Christopher K. Allen
      */
-    public ScanConfigView(MainConfiguration cfgMain) {
+    public ConfigScanView(MainConfiguration cfgMain) {
         this.smfAccel = cfgMain.getAccelerator();
         
         this.buildGuiComponents();

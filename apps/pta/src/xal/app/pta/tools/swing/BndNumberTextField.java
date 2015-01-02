@@ -37,7 +37,7 @@ public class BndNumberTextField extends NumberTextField {
      * Local Attributes
      */
     
-    /** The current value - need to reject bad inputs */
+    /** The current value - needed to reject bad inputs */
     private Number      numVal;
     
     /** Minimum value for display */
@@ -327,6 +327,8 @@ public class BndNumberTextField extends NumberTextField {
         try{
             Number  numInput = super.getDisplayValue();
             
+//            System.out.println("BndNumberTextField#updateDisplay: numInput = " + numInput);
+            
             if ( this.isValidValue(numInput) ) {
                 this.numVal = numInput;
                 super.updateDisplay();
@@ -359,6 +361,8 @@ public class BndNumberTextField extends NumberTextField {
         
         try {
             Number  numInput = super.getDisplayValue();
+            
+//            System.out.println("BndNumberTextField#fireActionPerformed: numInput = " + numInput);
             
             if ( this.isValidValue(numInput) ) {
                 this.numVal = numInput;

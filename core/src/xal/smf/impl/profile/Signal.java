@@ -11,11 +11,13 @@ import xal.smf.scada.BadStructException;
 import xal.smf.scada.ScadaAnnotationException;
 import xal.smf.scada.ScadaFieldDescriptor;
 import xal.smf.scada.ScadaRecord;
+import xal.tools.data.DataAdaptor;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.MissingResourceException;
 
 /**
  * <p>
@@ -55,6 +57,83 @@ public class Signal extends ScadaRecord {
      * Internal Classes
      */
     
+//    /**
+//     * Enumerates all the signals contained within this signal set
+//     * and provides labels for their data storage.
+//     *
+//     * @author Christopher K. Allen
+//     * @since  Oct 14, 2014
+//     */
+//    public enum WIRE {
+//
+//        /** Horizontal signal identifier constant */
+//        HOR("Horizontal"),
+//        
+//        /** Vertical signal identifier constant */
+//        VER("Vertical"),
+//
+//        /** Horizontal signal identifier constant */
+//        DIA("Diagonal");
+//        
+//        /*
+//         * Operations
+//         */
+//        
+//        /**
+//         * Returns the data label used for the signal associated with this 
+//         * constant.
+//         * 
+//         * @return      data label for signal
+//         *
+//         * @author Christopher K. Allen
+//         * @since  Oct 14, 2014
+//         */
+//        public String   getLabel() {
+//            return this.strLabel;
+//        }
+//        
+////        /**
+////         * Chooses the appropriate signal for this signal constant
+////         * from the given signal set.
+////         * 
+////         * @param setSignals    set of signals to choose from
+////         * 
+////         * @return              the signal corresponding to this signal constant
+////         *
+////         * @author Christopher K. Allen
+////         * @since  Oct 14, 2014
+////         */
+////        public Signal   getSignal(SignalSet setSignals) {
+////            switch (this) {
+////            case HOR: return setSignals.hor; 
+////            case VER: return setSignals.ver;
+////            case DIA: return setSignals.dia;
+////            }
+////            
+////            return null;
+////        }
+////        
+//        /*
+//         * Local Attributes
+//         */
+//        
+//        /** Data label associated with signal */
+//        private final String    strLabel;
+//        
+//        /** Constructor */
+//        private WIRE(String strLabel) {
+//            this.strLabel = strLabel;
+//        }
+//    }
+    
+    
+    /*
+     * Global Constants
+     */
+    
+//    /** The data storage node attribute tag  for the string identifier of this signal */
+//    private static final String STR_ATTR_ID = "id";
+
     /**
      * <p>
      * Field names of the <code>{@link Signal}</code> class.
@@ -272,6 +351,14 @@ public class Signal extends ScadaRecord {
      * Local Attributes
      */
     
+//    //
+//    // Identification
+//    //
+//    
+//    /** Optional identifier string (used in data storage) */
+//    public String   strId = null;
+    
+    
     //
     // Data Fields
     //
@@ -311,6 +398,20 @@ public class Signal extends ScadaRecord {
         super();
     }
     
+//    /**
+//     * Creates a new, uninitialized instance of <code>Signal</code> which is not connected
+//     * to any XAL channels.
+//     * 
+//     * @throws  BadStructException no SCADA fields (@AScada.Field) were found in data structure
+//     *
+//     * @author Christopher K. Allen
+//     * @since  Feb 7, 2013
+//     */
+//    public Signal(ProfileDevice.ANGLE ang) throws BadStructException {
+//        this();
+//        this.strId = ang.name();
+//    }
+    
     /**
      * Creates a new instance of Signal and initializes the SCADA operations with the
      * given field descriptors.
@@ -324,6 +425,7 @@ public class Signal extends ScadaRecord {
      */
     protected Signal(List<ScadaFieldDescriptor> lstFldDscr) throws BadStructException {
         super(lstFldDscr);
+//        this.strId = ang.name();
     }
     
     
@@ -394,6 +496,59 @@ public class Signal extends ScadaRecord {
     public String dataLabel() {
         return this.getClass().getCanonicalName();
     }
+
+    /**
+     *
+     * @see xal.smf.scada.ScadaRecord#update(xal.tools.data.DataAdaptor)
+     *
+     * @author Christopher K. Allen
+     * @since  Oct 14, 2014
+     */
+    @Override
+    public void update(DataAdaptor daptSrc) throws MissingResourceException, BadStructException {
+
+        // New format - Get the data adaptor node corresponding to this signal from the 
+        //  provided parent node
+        String            strLabel    = this.dataLabel();
+        DataAdaptor       daptSgnl = daptSrc.childAdaptor(strLabel);
+        
+        if (daptSgnl == null) { // this is XAL version
+            strLabel  = "gov.sns." + strLabel;
+            daptSgnl  = daptSrc.childAdaptor(strLabel);
+        }
+        
+        if (daptSgnl == null) // we were given the data node itself
+            daptSgnl = daptSrc;
+
+        // Check if we have the old attribute tags
+        if (daptSgnl.hasAttribute("sgnl_cnt")) {
+            this.updateWithOldFormat(daptSgnl);
+            
+            return;
+        }
+        
+//        // If we are have a revised data format version we can use the default 
+//        //  loading mechanism
+//        if (daptSgnl.hasAttribute(STR_ATTR_ID))
+//            this.strId = daptSrc.stringValue(STR_ATTR_ID);
+
+        super.update(daptSgnl);
+    }
+
+    /**
+     *
+     * @see xal.smf.scada.ScadaRecord#write(xal.tools.data.DataAdaptor)
+     *
+     * @author Christopher K. Allen
+     * @since  Oct 14, 2014
+     */
+    @Override
+    public void write(DataAdaptor daptSink) throws BadStructException {
+//        daptSink.setValue(STR_ATTR_ID, this.strId);
+        super.write(daptSink);
+    }
+
+
     
     
     /*
@@ -458,4 +613,30 @@ public class Signal extends ScadaRecord {
         return sigCopy;
     }
     
+    
+    /*
+     * Support Methods
+     */
+    
+    /**
+     * Upate the attribute values from the given data source
+     * assume the data source is formatted using the first version.
+     * 
+     * @param daptSrc   data source containing attribute values
+     *
+     * @author Christopher K. Allen
+     * @since  Oct 15, 2014
+     */
+    private void updateWithOldFormat(DataAdaptor daptSrc) {
+        
+        // We have the old format, need to do this piece meal.
+        this.cnt = daptSrc.intValue("sgnl_cnt");
+        this.pos = daptSrc.doubleArray("sgnl_pos");
+        this.val = daptSrc.doubleArray("sgnl_val");
+        
+        if (daptSrc.hasAttribute("noise_avg"))
+            this.navg = daptSrc.doubleValue("noise_avg");
+        if (daptSrc.hasAttribute("noise_var"))
+            this.nvar = daptSrc.doubleValue("noise_var");
+    }
 }

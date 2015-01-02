@@ -4,7 +4,7 @@
  *  Created	: Jan 21, 2010
  *  Author      : Christopher K. Allen 
  */
-package xal.app.pta.view.cmn;
+package xal.app.pta.view.diag;
 
 import xal.app.pta.MainApplication;
 import xal.app.pta.rscmgt.AppProperties;

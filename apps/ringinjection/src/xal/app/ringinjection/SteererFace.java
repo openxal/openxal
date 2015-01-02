@@ -249,29 +249,41 @@ public class SteererFace extends JPanel implements InjSpotListener {
 		solvePanel.setLayout(solvegrid);
 		GridBagConstraints e = new GridBagConstraints();
 		e.gridwidth=1;
+
 		e.gridx=0; e.gridy=1;
 		e.insets=new Insets(10,2,0,2);
 		solvegrid.setConstraints(xlabelsolve, e);
 		solvePanel.add(xlabelsolve);
+
 		e.gridx=1; e.gridy=1;
+		spot[0].setMinimumSize( spot[0].getPreferredSize() );
 		solvegrid.setConstraints(spot[0], e);
 		solvePanel.add(spot[0]);
+
 		e.gridx=0; e.gridy=2;
 		solvegrid.setConstraints(xplabelsolve, e);
 		solvePanel.add(xplabelsolve);
+
 		e.gridx=1; e.gridy=2;
+		spot[1].setMinimumSize( spot[1].getPreferredSize() );
 		solvegrid.setConstraints(spot[1], e);
 		solvePanel.add(spot[1]);
+
 		e.gridx=0; e.gridy=3;
 		solvegrid.setConstraints(ylabelsolve, e);
 		solvePanel.add(ylabelsolve);
+
 		e.gridx=1; e.gridy=3;
+		spot[2].setMinimumSize( spot[2].getPreferredSize() );
 		solvegrid.setConstraints(spot[2], e);
 		solvePanel.add(spot[2]);
+
 		e.gridx=0; e.gridy=4;
 		solvegrid.setConstraints(yplabelsolve, e);
 		solvePanel.add(yplabelsolve);
+
 		e.gridx=1; e.gridy=4;
+		spot[3].setMinimumSize( spot[3].getPreferredSize() );
 		solvegrid.setConstraints(spot[3], e);
 		solvePanel.add(spot[3]);
 
@@ -417,14 +429,29 @@ public class SteererFace extends JPanel implements InjSpotListener {
 		syncstate = new JComboBox<>(syncstates);
 
 		x = new DecimalField(0.0, 6, avgFor);
+		x.setMinimumSize( x.getPreferredSize() );
+
 		xp = new DecimalField(0.0, 6, avgFor);
+		xp.setMinimumSize( xp.getPreferredSize() );
+
 		y = new DecimalField(0.0, 6, avgFor);
+		y.setMinimumSize( y.getPreferredSize() );
+
 		yp = new DecimalField(0.0, 6, avgFor);
+		yp.setMinimumSize( yp.getPreferredSize() );
 
 		xnew = new DecimalField(0.0, 6, avgFor);
+		xnew.setMinimumSize( xnew.getPreferredSize() );
+
 		xpnew = new DecimalField(0.0, 6, avgFor);
+		xpnew.setMinimumSize( xpnew.getPreferredSize() );
+
 		ynew = new DecimalField(0.0, 6, avgFor);
+		ynew.setMinimumSize( ynew.getPreferredSize() );
+
 		ypnew = new DecimalField(0.0, 6, avgFor);
+		ypnew.setMinimumSize( ypnew.getPreferredSize() );
+
 
 		maxtime= new DecimalField(100.0, 3, avgFor);
 		initsptm= new DecimalField(0.20469, 4, avgFor);

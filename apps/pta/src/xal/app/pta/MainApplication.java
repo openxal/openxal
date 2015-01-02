@@ -24,7 +24,6 @@ import xal.app.pta.tools.logging.JavaLogger;
 import xal.app.pta.tools.logging.NullLogger;
 import xal.app.pta.tools.swing.SplashWindow;
 import xal.service.pvlogger.RemoteLoggingCenter;
-import xal.tools.ResourceManager;
 import xal.extension.application.smf.AcceleratorApplication;
 
 import java.awt.Dimension;
@@ -612,6 +611,42 @@ public class MainApplication extends ApplicationAdaptor {
         }
     }
 
+    /**
+     * Used to convert an data formatting label within a PTA data file to version 3
+     * from version 2 format.  This applies to the data of classes with the
+     * <code>xal.apps.pta</code> package.
+     * 
+     * @param strLblVer2    a PTA data file XML label in the version 1 format
+     * 
+     * @return              the corresponding PTA data label in version 2 format
+     *
+     * @author Christopher K. Allen
+     * @since  Oct 8, 2014
+     */
+    public static String  convertPtaDataLabelToVer3(String strLblVer2) {
+        String  strLblVer3 = strLblVer2.replace("xal.app", "gov.sns.apps");
+        
+        return strLblVer3;
+    }
+    
+    /**
+     * Used to convert an data formatting label within a PTA data file to version 3
+     * from version 2 format.  This applies to the data of classes with the
+     * <code>xal.smf.imple</code> package.
+     * 
+     * @param strLblVer2    a PTA data file XML label in the version 2 format
+     * 
+     * @return              the corresponding PTA data label in version 3 format
+     *
+     * @author Christopher K. Allen
+     * @since  Oct 8, 2014
+     */
+    public static String  convertSmfDataLabelToVer3(String strLblVer2) {
+        String  strLblVer3 = "gov.sns." + strLblVer2;
+        
+        return strLblVer3;
+    }
+    
 
 
     /*
@@ -918,6 +953,18 @@ public class MainApplication extends ApplicationAdaptor {
             return;
         }
         
+        if (this.docMain.hasChanges()) {
+            int iResp = this.docMain.displayConfirmDialog(
+                    "WARNING!", 
+                    "Overwrite existing data in " + docMain.getSource().toString() + "?"
+                    );
+            if (iResp == XalDocument.NO_OPTION) {
+                this.menuFileSaveAs();
+                return;
+            }
+        }
+        
+        // Overwrite the current data set
         this.docMain.saveDocument();
     }
     
@@ -963,6 +1010,10 @@ public class MainApplication extends ApplicationAdaptor {
     public void menuFileExport() {
         // Get the measurement data
         MeasurementData     datMsmt = this.docMain.getMeasurementData();
+        
+        // Check if there is any data to export
+        if (datMsmt.getDataSet().size() == 0)
+            this.docMain.displayError("ERROR", "No measurement data to export.");
         
         //Initialize the file chooser
         AcceleratorApplication  appGbl  = AcceleratorApplication.getAcceleratorApp();

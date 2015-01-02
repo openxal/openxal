@@ -4,7 +4,7 @@
  *  Created	: Apr 23, 2010
  *  Author      : Christopher K. Allen 
  */
-package xal.app.pta.view.cmn;
+package xal.app.pta.view.analysis;
 
 import xal.app.pta.tools.swing.NumberTextField;
 import xal.app.pta.tools.swing.NumberTextField.FMT;

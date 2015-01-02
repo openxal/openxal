@@ -101,6 +101,33 @@ public class ScannerData implements ProfileDevice.IProfileData, Serializable {
     }
 
     
+    /*
+     * Global Methods
+     */
+    
+    /**
+     * Returns the data label used to store data for the given
+     * version number.  The current label  will be returned for
+     * all version greater than or equal to the current version number. 
+     * 
+     * @param lngVersion    storage version number
+     * 
+     * @return              data label used for the given storage format version
+     *
+     * @author Christopher K. Allen
+     * @since  Oct 13, 2014
+     */
+    public static String dataLabel(long lngVersion) {
+        String  strLblVer = STR_LBL_PARENT;
+        
+        if (lngVersion < 2) {
+            strLblVer = MainApplication.convertPtaDataLabelToVer3(strLblVer);
+            strLblVer = strLblVer.replace("ScannerData", "DeviceData");
+        }
+        
+        return strLblVer;
+    }
+    
     /**
      * Check that all the data acquisition channels are available for
      * the given device.   
@@ -212,7 +239,7 @@ public class ScannerData implements ProfileDevice.IProfileData, Serializable {
     private final WireScanner.DataRaw        datRaw;
     
     /** The fitted profile data from the diagnostics */
-    private  final WireScanner.DataFit        datFit;
+    private  final WireScanner.DataFit       datFit;
     
     /** The raw measurement trace generating measurement data */ 
     private final WireScanner.Trace          datTrace;
@@ -502,10 +529,10 @@ public class ScannerData implements ProfileDevice.IProfileData, Serializable {
     /*
      * DataListener Interface
      */
-    
+
     /**
      * Returns the string label used to identify
-     * stored data for this data structure.
+     * stored data for this data structure for the current version.
      *
      * @since   Mar 17, 2010
      * @author  Christopher K. Allen
@@ -516,7 +543,7 @@ public class ScannerData implements ProfileDevice.IProfileData, Serializable {
     public String dataLabel() {
         return STR_LBL_PARENT;
     }
-
+    
     /**
      * Save the contents of this data structure to the
      * data sink behind the <code>DataAdaptor</code>
@@ -585,12 +612,6 @@ public class ScannerData implements ProfileDevice.IProfileData, Serializable {
             this.strTypId = daptDev.stringValue(STR_ATTR_TYPID);
         else
             this.strTypId = "unknown";
-        
-//        this.cfgActr.update(daptDev);
-//        this.cfgPrcg.update(daptDev);
-//        this.cfgSmp.update(daptDev);
-//        this.cfgScan.update(daptDev);
-//        this.cfgTmg.update(daptDev);
         
         this.datRaw.update(daptDev);
         this.datFit.update(daptDev);

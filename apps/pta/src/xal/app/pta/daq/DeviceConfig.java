@@ -6,6 +6,7 @@
  */
 package xal.app.pta.daq;
 
+import xal.app.pta.MainApplication;
 import xal.ca.BadChannelException;
 import xal.ca.ConnectionException;
 import xal.ca.GetException;
@@ -50,7 +51,7 @@ public abstract class DeviceConfig implements DataListener {
 
     
     /** The format version for persistent storage */
-    protected static final long  LNG_VAL_FMTVER = 2;
+    protected static final long  LNG_VAL_FMTVER = 3;
 
     /** The data format version attribute used in <code>DataListener</code> implementation */
     protected static final String STR_ATTR_FMTVER = "ver";
@@ -319,6 +320,29 @@ public abstract class DeviceConfig implements DataListener {
      * DataListener Interface
      */
 
+    /**
+     * Returns the data label used to store data for the given
+     * version number.  The current label  will be returned for
+     * all version greater than or equal to the current version number. 
+     * 
+     * @param lngVersion    storage version number
+     * 
+     * @return              data label used for the given storage format version
+     *
+     * @author Christopher K. Allen
+     * @since  Oct 13, 2014
+     */
+    public String dataLabel(long lngVersion) {
+        String  strLblVer = this.dataLabel();
+        
+        if (lngVersion < 3) {
+            strLblVer = MainApplication.convertPtaDataLabelToVer3(strLblVer);
+            strLblVer = strLblVer.replace("ScannerConfig", "DeviceConfig");
+        }
+        
+        return strLblVer;
+    }
+    
     /**
      * Returns the string label used to identify
      * stored data for this data structure.

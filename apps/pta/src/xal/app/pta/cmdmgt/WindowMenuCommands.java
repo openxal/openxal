@@ -427,7 +427,7 @@ public class WindowMenuCommands extends CommandSet {
         @Override
         @SuppressWarnings("synthetic-access")
         public void actionPerformed(ActionEvent e) {
-            winMain.toggleTrgConfigPanel();
+            winMain.toggleTimeConfigPanel();
         }
         
     }
@@ -467,7 +467,7 @@ public class WindowMenuCommands extends CommandSet {
         @Override
         @SuppressWarnings("synthetic-access")
         public void actionPerformed(ActionEvent e) {
-            winMain.togglePrcConfigPanel();
+            winMain.togglePrcgConfigPanel();
         }
         
     }

@@ -14,6 +14,8 @@ import xal.model.ModelException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import Jama.Matrix;
@@ -57,10 +59,117 @@ import Jama.Matrix;
  */
 public class CsFixedPtEstimator extends CourantSnyderEstimator {
 
+    /*
+     * Interface Definitions
+     */
+    
+    /**
+     * Interface defining the methods to implement for a class that wishes to
+     * monitor the progress of solution computation. 
+     *
+     * @author Christopher K. Allen
+     * @since  Oct 2, 2014
+     */
+    public interface IProgressListener {
+        
+        /**
+         * Notifies the listener of the residual error at the current iteration.  Thus,
+         * this method is fired at every iteration.  Note that the tuning parameter
+         * &alpha; is dynamic, its value changes throughout the iteration based upon an
+         * algorithm for stabilizing the convergence.
+         * 
+         * @param cntIter  the current iteration count
+         * @param dblError the residual solution error at the current iteration
+         * @param dblAlpha the current tuning parameter value
+         *
+         * @author Christopher K. Allen
+         * @since  Oct 2, 2014
+         */
+        public void iterationUpdate(int cntIter, double dblAlpha, double dblError);
+        
+        /**
+         * Signals the listener object that the search has terminated and provides
+         * the covariance matrix where the search stopped.  It is up to the 
+         * listener to check the error tolerance and iteration count to determine
+         * whether or not the given covariance matrix is acceptable.
+         * 
+         * @param matRecon  the covariance matrix where the search ended.
+         *
+         * @author Christopher K. Allen
+         * @since  Oct 23, 2014
+         */
+        public void searchComplete(CovarianceMatrix matRecon);
+
+    }
+    
     
     /*
      * Internal Classes
      */
+    
+    /**
+     * This class is a
+     * <br/>
+     * <br/>
+     * This idea probably won't work. 
+     *
+     * @author Christopher K. Allen
+     * @since  Oct 22, 2014
+     */
+    private class   ProgressUpdateThread extends Thread {
+        
+        /*
+         * Local Attributes
+         */
+        
+        /** Current number of iterations */
+        private int     cntIter;
+        
+        /** Current residual error */
+        private double  dblError;
+        
+        /** Fixed point tuning parameter - normalized distance along convex hull between current iterate and next */
+        private double  dblAlpha;
+
+        
+        /** The listener object to receive the update */
+        private IProgressListener   lsnUpdate;
+        
+        
+        /*
+         * Initialization
+         */
+        
+        /**
+         * Constructor for ProgressUpdateThread.
+         *
+         * @param lsnUpdate     listener object to be updated
+         * @param cntIter       current number of iterations 
+         * @param dblError      current error 
+         * @param dblAlpha      current tuning parameter
+         *
+         * @author Christopher K. Allen
+         * @since  Oct 22, 2014
+         */
+        public ProgressUpdateThread(IProgressListener lsnUpdate, int cntIter, double dblError, double dblAlpha) {
+            this.lsnUpdate = lsnUpdate;
+            this.cntIter   = cntIter;
+            this.dblError  = dblError;
+            this.dblAlpha  = dblAlpha;
+        }
+        
+        /**
+         * Calls the listener's update method.
+         * 
+         * @see java.lang.Thread#run()
+         *
+         * @author Christopher K. Allen
+         * @since  Oct 22, 2014
+         */
+        public void run() {
+            this.lsnUpdate.iterationUpdate(this.cntIter, this.dblError, this.dblAlpha);
+        }
+    }
     
     /**
      * Convenience class for storing circular buffers of moment vector objects 
@@ -216,7 +325,7 @@ public class CsFixedPtEstimator extends CourantSnyderEstimator {
     private int     cntMaxIter;
     
     /** Maximum residual error allowed */
-    protected double dblMaxError;
+    private double  dblMaxError;
     
     
     /** Fixed point tuning parameter - normalized distance along convex hull between current iterate and next */
@@ -234,6 +343,13 @@ public class CsFixedPtEstimator extends CourantSnyderEstimator {
 	/** The number of iterations used to compute the last solution */
     private int                 cntCurrIters;
     
+    
+    //
+    //  External
+    //
+    
+    /** List of objects waiting for progress updates */
+    private List<IProgressListener>  lstProgLsns;
     
     
 	/*
@@ -276,6 +392,8 @@ public class CsFixedPtEstimator extends CourantSnyderEstimator {
 
         this.mapDeltaF   = new MomentVectorBuffer();
         this.mapDeltaSig = new MomentVectorBuffer();
+        
+        this.lstProgLsns = new LinkedList<>();
     }
     
     /**
@@ -335,7 +453,7 @@ public class CsFixedPtEstimator extends CourantSnyderEstimator {
     
     
     /*
-     * Queries
+     * Operations
      */
     
     /**
@@ -349,6 +467,19 @@ public class CsFixedPtEstimator extends CourantSnyderEstimator {
      */
     public int  getSolnIterations() {
         return this.cntCurrIters;
+    }
+    
+    /**
+     * Adds the current <code>IProgressListener</code> exposing object
+     * to the list of objects receiving solution progress updates.
+     * 
+     * @param lsnProg   object to receive solution progress updates
+     *
+     * @author Christopher K. Allen
+     * @since  Oct 2, 2014
+     */
+    public void addProgressListener(IProgressListener lsnProg) {
+        this.lstProgLsns.add(lsnProg);
     }
     
     
@@ -463,6 +594,7 @@ public class CsFixedPtEstimator extends CourantSnyderEstimator {
             super.dblResErr   = super.computeResidualError(matSig1, strRecDevId, arrData);
             
             dblErr = super.dblConvErr;
+//            dblErr = super.dblResErr;
             
             //  Type out debug info
             if (super.isDebuggingOn()) {
@@ -471,6 +603,8 @@ public class CsFixedPtEstimator extends CourantSnyderEstimator {
                 System.out.print( matSig1.toStringMatrix(this.fmtMatrix, 12) );
                 System.out.println("  -------------------------------------------------\n");
             }
+            
+            this.fireProgressUpdate(cntIter, this.dblCurrAlpha, dblErr);
 
             // Record the iteration count
             this.cntCurrIters = cntIter;
@@ -536,8 +670,8 @@ public class CsFixedPtEstimator extends CourantSnyderEstimator {
         //  Algorithm for generating new covariance matrix from old
         double              dblAlpha = this.computeAlpha();
         
-        PhaseMatrix         matSig1  = covF1.times(dblAlpha).plus( matSig0.times( 1.0 - dblAlpha ) ); 
-        CovarianceMatrix   covSig1  = new CovarianceMatrix( matSig1 );
+        PhaseMatrix         matSig1 = covF1.times(dblAlpha).plus( matSig0.times( 1.0 - dblAlpha ) ); 
+        CovarianceMatrix    covSig1 = new CovarianceMatrix( matSig1 );
 
         //  Recurse through all the phase planes computing the change in the recursion function from
         //      this iteration and the last iteration, and the change in the moment vectors that 
@@ -558,7 +692,7 @@ public class CsFixedPtEstimator extends CourantSnyderEstimator {
         }
         
         // Record the current solution iterates
-        this.dblCurrAlpha = dblAlpha;
+        this.dblCurrAlpha  = dblAlpha;
         super.matCurrF     = covF1;
         super.matCurrSigma = covSig1;
         
@@ -568,7 +702,7 @@ public class CsFixedPtEstimator extends CourantSnyderEstimator {
     
     /**
      * Computes the iteration tuning parameter from the previous changes in the covariance
-     * moments and the correpsonding changes in the recursion function.
+     * moments and the corresponding changes in the recursion function.
      * 
      * @return  new value of the tuning parameter that accelerates convergence
      *
@@ -628,4 +762,24 @@ public class CsFixedPtEstimator extends CourantSnyderEstimator {
 //        return this.dblAlpha;
     }
     
+    /**
+     * Fires an iteration completed event to all the progress update listeners
+     * while providing them will the current progress parameters.
+     * 
+     * @param cntIter   the current iteration count
+     * @param dblAlpha  the current value of the tuning parameter &alpha;
+     * @param dblError  the current solution residual error
+     *
+     * @author Christopher K. Allen
+     * @since  Oct 2, 2014
+     */
+    private void    fireProgressUpdate(int cntIter, double dblAlpha, double dblError) {
+        if (this.lstProgLsns.size() > 0)
+            for (IProgressListener lsnProg : this.lstProgLsns) {
+//                ProgressUpdateThread    thdUpdate = new ProgressUpdateThread(lsnProg, cntIter, dblError, dblAlpha);
+//                
+//                thdUpdate.start();
+                lsnProg.iterationUpdate(cntIter, dblAlpha, dblError);
+            }
+    }
 }

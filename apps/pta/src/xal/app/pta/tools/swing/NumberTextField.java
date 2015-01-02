@@ -252,7 +252,7 @@ public class NumberTextField extends JTextField {
             if(this.cmpParent.isEditable()) { 
                 this.cmpParent.updateDisplay();
                 this.cmpParent.setBackground( getBkgndNormalColor() );
-                this.cmpParent.postActionEvent();
+//                this.cmpParent.postActionEvent();
             }
         } 
     }
@@ -521,6 +521,9 @@ public class NumberTextField extends JTextField {
      * @author Christopher K. Allen
      */
     public void setDisplayValueSilently(Number numVal){
+        
+//        System.out.println("NumberTextField#setDisplayValueSilently: numVal = " + numVal);
+        
         try {
             String  strVal = this.fmtDispl.format(numVal);
             
@@ -602,6 +605,8 @@ public class NumberTextField extends JTextField {
      */
     @Override
     protected void fireActionPerformed(){
+        
+//        System.out.println("NumberTextField#fireActionPerformed: display value = " + getDisplayValue());
         this.updateDisplay();
         super.fireActionPerformed();
     } 
@@ -624,7 +629,11 @@ public class NumberTextField extends JTextField {
         try{
             String  strInput = this.getText();
             Number  numInput = this.fmtDispl.parse(strInput);
-            String  strDispl = this.fmtDispl.format(numInput);
+            
+//            System.out.println("NumberTextField#updateDisplay: numInput = " + numInput);
+//            System.out.println();
+            
+//            String  strDispl = this.fmtDispl.format(numInput);
 
             // TODO: Clean this up
 //            setText(strDispl);

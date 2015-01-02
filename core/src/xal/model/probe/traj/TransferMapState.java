@@ -7,7 +7,6 @@
 package xal.model.probe.traj;
 
 import xal.tools.beam.PhaseMap;
-import xal.tools.beam.PhaseVector;
 import xal.tools.data.DataAdaptor;
 import xal.model.probe.Probe;
 import xal.model.probe.TransferMapProbe;
@@ -63,9 +62,9 @@ public class TransferMapState extends ProbeState<TransferMapState> {
     private PhaseMap        mapPhiPart;
 
 
-    /** phase coordinates of the particle location */
-    @Deprecated
-    private PhaseVector[] _phaseCoordinates;
+//    /** phase coordinates of the particle location */
+//    @Deprecated
+//    private PhaseVector[] _phaseCoordinates;
 
 
 
@@ -83,7 +82,7 @@ public class TransferMapState extends ProbeState<TransferMapState> {
         this.setTransferMap( PhaseMap.identity() );
         this.setPartialTransferMap( PhaseMap.identity() );
         
-        this.setPhaseCoordinates( PhaseVector.newZero() );
+//        this.setPhaseCoordinates( PhaseVector.newZero() );
     }
     
     /**
@@ -99,7 +98,7 @@ public class TransferMapState extends ProbeState<TransferMapState> {
     public TransferMapState(final TransferMapState transferMapState){
     	super(transferMapState);
     	
-    	this._phaseCoordinates	= transferMapState._phaseCoordinates.clone();
+//    	this._phaseCoordinates	= transferMapState._phaseCoordinates.clone();
     	this.mapPhiCmp	= transferMapState.mapPhiCmp.copy();
     	this.mapPhiPart	= transferMapState.mapPhiPart.copy();
     }
@@ -113,7 +112,7 @@ public class TransferMapState extends ProbeState<TransferMapState> {
 	public TransferMapState( final TransferMapProbe probe ) {
         super( probe );
 
-        this.setPhaseCoordinates( probe.getPhaseCoordinates().clone() );
+//        this.setPhaseCoordinates( probe.getPhaseCoordinates().clone() );
         this.setTransferMap( probe.getTransferMap().copy() );
         this.setPartialTransferMap( probe.getPartialTransferMap().copy() );
     }
@@ -172,9 +171,17 @@ public class TransferMapState extends ProbeState<TransferMapState> {
     }
     
     /**
+     * <p>
      * Returns the partial transfer map that transports particle
      * phase coordinates through the space occupied by this state.
-     * 
+     * </p>
+     * <p>
+     * Get the partial transfer map that maps particle phase coordinates from
+     * the previous state exit to this state's exit.  The product of all these
+     * partial transfer maps from the first state to this state would yield
+     * the returned value of <code>{@link #getTransferMap()}</code>.
+     * </p>
+     *  
      * @return      partial transfer map through this state
      *
      * @author Christopher K. Allen
@@ -184,44 +191,44 @@ public class TransferMapState extends ProbeState<TransferMapState> {
         return this.mapPhiPart;
     }
     
-    /**
-     * Get the partial transfer map that maps particle phase coordinates from
-     * the previous state exit to this state's exit.  The product of all these
-     * partial transfer maps from the first state to this state would yield
-     * the returned value of <code>{@link #getTransferMap()}</code>. 
-     * 
-     * @return partial transfer map in homogeneous phase space coordinates
-     */
-    public PhaseMap getStateTransferMap()  {
-        return this.mapPhiPart;
-    }
+//    /**
+//     * Get the partial transfer map that maps particle phase coordinates from
+//     * the previous state exit to this state's exit.  The product of all these
+//     * partial transfer maps from the first state to this state would yield
+//     * the returned value of <code>{@link #getTransferMap()}</code>. 
+//     * 
+//     * @return partial transfer map in homogeneous phase space coordinates
+//     */
+//    public PhaseMap getStateTransferMap()  {
+//        return this.mapPhiPart;
+//    }
     
 
 
-    /** 
-     *  Returns homogeneous phase space coordinates of the closed orbit.  The units are meters and radians.
-     *  @return vector (x,x',y,y',z,z',1) of phase space coordinates
-     * @deprecated Moved to xal.tools.beam.calc 
-     */
-	@Deprecated
-    public PhaseVector getPhaseCoordinates() {
-        return _phaseCoordinates[0];
-    }
-
-
-
-
-    /** 
-     *  Set the phase coordinates of the probe.  
-     *  @param  vecPhase new homogeneous phase space coordinate vector
-     *  
-     *  @deprecated TransferMapProbes do not have phase vectors
-     */
-    @Deprecated
-    public void setPhaseCoordinates( final PhaseVector vecPhase ) {
-        _phaseCoordinates = new PhaseVector[] { vecPhase != null ? new PhaseVector( vecPhase ) : new PhaseVector() };
-    }
-
+//    /** 
+//     *  Returns homogeneous phase space coordinates of the closed orbit.  The units are meters and radians.
+//     *  @return vector (x,x',y,y',z,z',1) of phase space coordinates
+//     * @deprecated Moved to xal.tools.beam.calc 
+//     */
+//	@Deprecated
+//    public PhaseVector getPhaseCoordinates() {
+//        return _phaseCoordinates[0];
+//    }
+//
+//
+//
+//
+//    /** 
+//     *  Set the phase coordinates of the probe.  
+//     *  @param  vecPhase new homogeneous phase space coordinate vector
+//     *  
+//     *  @deprecated TransferMapProbes do not have phase vectors
+//     */
+//    @Deprecated
+//    public void setPhaseCoordinates( final PhaseVector vecPhase ) {
+//        _phaseCoordinates = new PhaseVector[] { vecPhase != null ? new PhaseVector( vecPhase ) : new PhaseVector() };
+//    }
+//
 
 
     /*

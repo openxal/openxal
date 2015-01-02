@@ -10,9 +10,9 @@ import xal.app.pta.IConfigView;
 import xal.app.pta.MainConfiguration;
 import xal.app.pta.rscmgt.AppProperties;
 import xal.app.pta.view.cmn.DeviceSelectorPanel;
-import xal.app.pta.view.cmn.HarpStatusPanel;
 import xal.app.pta.view.devcfg.DeviceConfigBasePanel;
 import xal.app.pta.view.devcfg.HarpConfigDisplay;
+import xal.app.pta.view.diag.HarpStatusPanel;
 import xal.app.pta.view.plt.LiveDisplayBase.FORMAT;
 import xal.app.pta.view.plt.LiveHarpDisplayPanel;
 import xal.smf.Accelerator;
@@ -46,7 +46,7 @@ import javax.swing.border.TitledBorder;
  * @since  Nov 12, 2009
  * @author Christopher K. Allen
  */
-public class HarpConfigView extends JPanel 
+public class ConfigHarpView extends JPanel 
     implements IConfigView, DeviceSelectorPanel.IDeviceSelectionListener 
 {
 
@@ -61,8 +61,8 @@ public class HarpConfigView extends JPanel
     /** Check channel connections to devices before proceeding */
     protected static final boolean BOL_DO_CONNTEST = AppProperties.DEVICE.EPICS_CA_CHK.getValue().asBoolean();
     
-    /** Time out to use when checking connections to the device */
-    protected static final double DBL_TMO_CONNTEST = AppProperties.DEVICE.TMO_CONNTEST.getValue().asDouble();
+//    /** Time out to use when checking connections to the device */
+//    protected static final double DBL_TMO_CONNTEST = AppProperties.DEVICE.TMO_CONNTEST.getValue().asDouble();
 
     
     
@@ -112,7 +112,7 @@ public class HarpConfigView extends JPanel
      * @since     Nov 12, 2009
      * @author    Christopher K. Allen
      */
-    public HarpConfigView(MainConfiguration cfgMain) {
+    public ConfigHarpView(MainConfiguration cfgMain) {
         this.smfAccel = cfgMain.getAccelerator();
         
         this.buildGuiComponents();
