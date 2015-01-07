@@ -252,32 +252,41 @@ public class OrbitModel implements DataListener {
 
 
 	/**
-	 * Make a new probe off of the base probe.
+	 * Make a new probe off of the base probe by performing a deep copy.
 	 * @return a new probe or null if one cannot be made (e.g. no selected sequence)
 	 */
 	public Probe<?> makeProbe() {
-		if ( _baseProbe == null ) {
-			if ( _sequence != null ) {
-				try {
-					if ( _sequence instanceof Ring ) {
-						final TransferMapTracker algXferMap = AlgorithmFactory.createTransferMapTracker(_sequence);
-						_baseProbe = ProbeFactory.getTransferMapProbe(_sequence, algXferMap);
+		final Probe<?> baseProbe = getBaseProbe();
+		return baseProbe != null ? baseProbe.copy() : null;
+	}
 
-					} else {
-//						final ParticleTracker  tracker = AlgorithmFactory.createParticleTracker(_sequence);
-//						probe = ProbeFactory.createParticleProbe(_sequence, tracker);
-						// switched from particle probe to envelope probe since there is an issue with particle probe always returing a fixed orbit of zero -tap 12/22/2014
-						final EnvTrackerAdapt tracker = AlgorithmFactory.createEnvTrackerAdapt( _sequence );
-						_baseProbe = ProbeFactory.getEnvelopeProbe(_sequence, tracker);
-					}
+
+	/**
+	 * Get the base probe for configuration. It should never be run! Instead use makeProbe() to make a copy which you can run.
+	 * @return the base probe generating it if necessary or null if one cannot be generated (e.g. no selected sequence)
+	 */
+	Probe<?> getBaseProbe() {
+		// if there is no base probe and the sequence is not null then generate a new base probe for the sequence
+		if ( _baseProbe == null && _sequence != null ) {
+			try {
+				if ( _sequence instanceof Ring ) {
+					final TransferMapTracker tracker = AlgorithmFactory.createTransferMapTracker( _sequence );
+					_baseProbe = ProbeFactory.getTransferMapProbe( _sequence, tracker );
+
+				} else {
+//					final ParticleTracker  tracker = AlgorithmFactory.createParticleTracker( _sequence );
+//					probe = ProbeFactory.createParticleProbe( _sequence, tracker );
+					// switched from particle probe to envelope probe since there is an issue with particle probe always returing a fixed orbit of zero -tap 12/22/2014
+					final EnvTrackerAdapt tracker = AlgorithmFactory.createEnvTrackerAdapt( _sequence );
+					_baseProbe = ProbeFactory.getEnvelopeProbe( _sequence, tracker );
 				}
-				catch (Exception exception) {
-					throw new RuntimeException( "Exception making a new probe.", exception );
-				}
+			}
+			catch (Exception exception) {
+				throw new RuntimeException( "Exception making a new probe.", exception );
 			}
 		}
 
-		return _baseProbe != null ? _baseProbe.copy() : null;
+		return _baseProbe;
 	}
 
 
