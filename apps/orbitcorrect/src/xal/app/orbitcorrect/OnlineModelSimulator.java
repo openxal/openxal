@@ -99,6 +99,8 @@ public class OnlineModelSimulator extends MappedSimulator {
 //				PhaseVector coordinates = state.getFixedOrbit();
                 ProbeState<?>  state = initialTrajectory.stateForElement( bpmAgent.getID() );
                 PhaseVector coordinates = cmpCalcEngine.computeFixedOrbit(state);
+                
+                System.out.println("OrbitCorrect.OnlineModelSimulator#calculateResponse() - SimpleSimResultsAdaptor#computeFixedOrbit(state) = " + coordinates);
 				
 				xInitial[bpmIndex] = coordinates.getx();
 				yInitial[bpmIndex] = coordinates.gety();
