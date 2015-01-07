@@ -60,6 +60,8 @@ public class OnlineModelSimulator extends MappedSimulator {
 	 * @return true if updated and false if interrupted
 	 */
 	protected boolean calculateResponse( final List<CorrectorSupply> supplies, final List<BpmAgent> bpmAgents ) {
+		System.out.println( "Calculating the BPM response..." );
+
 		final int supplyCount = supplies.size();
 		final int bpmCount = bpmAgents.size();
 		

@@ -139,6 +139,18 @@ public class OrbitModel implements DataListener {
 		}
 		return _flattener;
 	}
+
+
+	/** clear the flattener's simulator */
+	public void clearFlattenSimulator() {
+		final Flattener flattener = _flattener;
+		if ( flattener != null ) {
+			final MachineSimulator simulator = flattener.getSimulator();
+			if ( simulator != null ) {
+				simulator.clear();
+			}
+		}
+	}
 	
 	
 	/** Create the model's orbit sources. */
