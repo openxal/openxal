@@ -23,14 +23,12 @@ import xal.extension.application.*;
 import xal.extension.application.smf.*;
 import xal.extension.bricks.WindowReference;
 import xal.tools.data.*;
-import xal.extension.widgets.apputils.SimpleProbeEditor;
 import xal.extension.widgets.plot.*;
 import xal.extension.widgets.swing.KeyValueRecordSelector;
 import xal.tools.text.FormattedNumber;
 import xal.tools.xml.XmlDataAdaptor;
 import xal.smf.*;
 import xal.smf.data.XMLDataManager;
-import xal.model.probe.Probe;
 
 /**
  * Document for the orbit correction application
@@ -369,28 +367,6 @@ public class OrbitDocument extends AcceleratorDocument implements DataListener, 
 	 * @param commander  The commander with which to register the custom commands.
 	 */
 	public void customizeCommands( final Commander commander ) {
-		final Action editProbeAction = new AbstractAction( "edit-probe" ) {
-
-			private static final long serialVersionUID = 1L;
-
-			public void actionPerformed( ActionEvent event ) {
-				System.out.println( "Edit the probe..." );
-				try {
-					final Probe<?> probe = _model.getBaseProbe();
-					if ( probe != null ) {
-						new SimpleProbeEditor( mainWindow, probe );
-						_model.clearFlattenSimulator();		// mark it to regenerate maps as necessary
-					} else {
-						displayError( "Error Editing Probe", "There is no probe to edit. Please verify that you have selected an accelerator sequence." );
-					}
-				}
-				catch( Exception exception ) {
-					displayError( "Error Editing Probe", "Exception while attempting to edit the probe.", exception );
-				}
-			}
-		};
-		commander.registerAction( editProbeAction );
-
 		final Action addLiveOrbitAction = new AbstractAction( "add-live-orbit" ) {
             
             private static final long serialVersionUID = 1L;
