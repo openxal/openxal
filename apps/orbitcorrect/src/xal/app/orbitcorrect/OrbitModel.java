@@ -15,6 +15,9 @@ import xal.smf.*;
 import xal.smf.impl.*;
 import xal.smf.impl.qualify.MagnetType;
 import xal.tools.data.*;
+import xal.model.alg.*;
+import xal.model.probe.Probe;
+import xal.sim.scenario.*;
 
 import java.util.*;
 
@@ -62,6 +65,9 @@ public class OrbitModel implements DataListener {
 	
 	/** the modification store */
 	protected ModificationStore _modificationStore;
+
+	/* Base probe from which others are copied for model calculations. Only copies of it should ever be run. */
+	private Probe<?> _baseProbe;
 	
 	
 	/**
@@ -74,9 +80,10 @@ public class OrbitModel implements DataListener {
 		EVENT_PROXY = MESSAGE_CENTER.registerSource( this, OrbitModelListener.class );
 		
 		BEAM_EXCURSION_ORBIT_ADAPTOR = new BeamExcursionOrbitAdaptor( sequence, new ArrayList<BpmAgent>() );
-		
+
+		_baseProbe = null;
 		_modificationStore = modificationStore;
-		
+
 		AVAILABLE_BPM_AGENTS = new ArrayList<BpmAgent>();
 		
 		createOrbitSources();
@@ -222,6 +229,10 @@ public class OrbitModel implements DataListener {
 	 */
 	public void setSequence( final AcceleratorSeq sequence ) {
 		_sequence = sequence;
+
+		// clear the probe since a new one will need to be made for the new sequence
+		_baseProbe = null;
+
 		loadBPMs();
 		loadCorrectors();
 		useSetpoints( sequence );
@@ -238,8 +249,38 @@ public class OrbitModel implements DataListener {
 		_modificationStore.postModification( this );
 		EVENT_PROXY.sequenceChanged(this, sequence);
 	}
-	
-	
+
+
+	/**
+	 * Make a new probe off of the base probe.
+	 * @return a new probe or null if one cannot be made (e.g. no selected sequence)
+	 */
+	public Probe<?> makeProbe() {
+		if ( _baseProbe == null ) {
+			if ( _sequence != null ) {
+				try {
+					if ( _sequence instanceof Ring ) {
+						final TransferMapTracker algXferMap = AlgorithmFactory.createTransferMapTracker(_sequence);
+						_baseProbe = ProbeFactory.getTransferMapProbe(_sequence, algXferMap);
+
+					} else {
+//						final ParticleTracker  tracker = AlgorithmFactory.createParticleTracker(_sequence);
+//						probe = ProbeFactory.createParticleProbe(_sequence, tracker);
+						// switched from particle probe to envelope probe since there is an issue with particle probe always returing a fixed orbit of zero -tap 12/22/2014
+						final EnvTrackerAdapt tracker = AlgorithmFactory.createEnvTrackerAdapt( _sequence );
+						_baseProbe = ProbeFactory.getEnvelopeProbe(_sequence, tracker);
+					}
+				}
+				catch (Exception exception) {
+					throw new RuntimeException( "Exception making a new probe.", exception );
+				}
+			}
+		}
+
+		return _baseProbe != null ? _baseProbe.copy() : null;
+	}
+
+
 	/** determine whether the model is using a beam event trigger for live orbit snapshots */
 	public boolean usesBeamEventTrigger() {
 		return _useBeamEventTrigger;
