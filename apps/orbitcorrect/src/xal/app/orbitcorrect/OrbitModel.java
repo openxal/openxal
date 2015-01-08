@@ -286,11 +286,8 @@ public class OrbitModel implements DataListener {
 					_baseProbe = ProbeFactory.getTransferMapProbe( _sequence, tracker );
 
 				} else {
-//					final ParticleTracker  tracker = AlgorithmFactory.createParticleTracker( _sequence );
-//					probe = ProbeFactory.createParticleProbe( _sequence, tracker );
-					// switched from particle probe to envelope probe since there is an issue with particle probe always returing a fixed orbit of zero -tap 12/22/2014
-					final EnvTrackerAdapt tracker = AlgorithmFactory.createEnvTrackerAdapt( _sequence );
-					_baseProbe = ProbeFactory.getEnvelopeProbe( _sequence, tracker );
+					final ParticleTracker  tracker = AlgorithmFactory.createParticleTracker( _sequence );
+					_baseProbe = ProbeFactory.createParticleProbe( _sequence, tracker );
 				}
 			}
 			catch (Exception exception) {
