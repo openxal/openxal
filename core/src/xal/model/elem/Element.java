@@ -600,6 +600,39 @@ public abstract class Element implements IElement {
     }
      
     
+    /*
+     * Object Overrides
+     */
+    
+    /**
+     * Writes a general parameters description of this modeling element to the
+     * returned string.
+     *
+     * @see java.lang.Object#toString()
+     *
+     * @since  Jan 5, 2015   by Christopher K. Allen
+     */
+    @Override 
+    public String   toString() {
+        StringBuffer    bufOutput = new StringBuffer(); 
+        
+        bufOutput.append("  Element - " + this.getId() );
+        bufOutput.append('\n');
+        
+        bufOutput.append("  element type       : " + this.getType() );
+        bufOutput.append('\n');
+        
+        bufOutput.append("  element UID        : " + this.getUID() );
+        bufOutput.append('\n');
+        
+        bufOutput.append("  element position   : " + this.getPosition() );
+        bufOutput.append('\n');
+
+        bufOutput.append("  element length     : " + this.getLength() );
+        bufOutput.append('\n');
+        
+        return bufOutput.toString();
+    }
     
     /*
      *  Testing and Debugging
