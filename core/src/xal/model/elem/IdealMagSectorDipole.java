@@ -12,11 +12,10 @@ import xal.tools.beam.PhaseMap;
 import xal.tools.beam.PhaseMatrix;
 import xal.tools.beam.optics.BendingMagnet;
 import xal.tools.beam.optics.QuadrupoleLens;
-
 import xal.tools.math.ElementaryFunction;
-
 import xal.model.IProbe;
 import xal.model.ModelException;
+import xal.model.elem.sync.IElectromagnet;
 
 /**
  * Represents a thick magnetic dipole magnet for a beam in a sector 

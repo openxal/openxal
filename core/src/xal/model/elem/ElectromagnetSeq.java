@@ -1,5 +1,6 @@
 package xal.model.elem;
 
+import xal.model.elem.sync.IElectromagnet;
 import xal.sim.scenario.LatticeElement;
 import xal.smf.impl.Magnet;
 

@@ -6,8 +6,7 @@ package xal.sim.sync;
 import java.util.Map;
 
 import xal.model.IElement;
-import xal.model.elem.IElectromagnet;
-
+import xal.model.elem.sync.IElectromagnet;
 import xal.smf.proxy.ElectromagnetPropertyAccessor;
 
 /**

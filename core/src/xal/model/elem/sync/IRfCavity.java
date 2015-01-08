@@ -1,7 +1,7 @@
 /*
  * Created on Mar 17, 2004
  */
-package xal.model.elem;
+package xal.model.elem.sync;
 
 /**
  * @author Craig McChesney

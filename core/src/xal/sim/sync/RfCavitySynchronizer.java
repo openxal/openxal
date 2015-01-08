@@ -6,7 +6,7 @@ package xal.sim.sync;
 import java.util.Map;
 
 import xal.model.IElement;
-import xal.model.elem.IRfCavity;
+import xal.model.elem.sync.IRfCavity;
 import xal.smf.proxy.RfCavityPropertyAccessor;
 
 /**

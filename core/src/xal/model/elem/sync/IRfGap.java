@@ -4,7 +4,7 @@
  * Created on November 4, 2002, 3:44 PM
  */
 
-package xal.model.elem;
+package xal.model.elem.sync;
 
 
 /**

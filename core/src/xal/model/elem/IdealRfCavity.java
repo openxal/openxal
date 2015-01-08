@@ -6,6 +6,9 @@
  */
 package xal.model.elem;
 
+import java.util.Iterator;
+
+import xal.model.IComponent;
 import xal.model.IProbe;
 import xal.model.ModelException;
 import xal.sim.scenario.LatticeElement;
@@ -312,4 +315,12 @@ public class IdealRfCavity extends ElementSeq {
         super.backPropagate(probe);
     }
 
+    
+    /*
+     * Support Methods
+     */
+    
+    private void    distributeCavityProperties() {
+        Iterator<IComponent>    iterCmps = super.localIterator();
+    }
 }

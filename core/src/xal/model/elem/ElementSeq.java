@@ -503,7 +503,8 @@ public abstract class ElementSeq implements IComposite {
     
     /**
      *  <p>
-     *  Add a component object at the tail of the sequence.
+     *  Add a component object at the tail of the sequence list and at the
+     *  head of the reverse sequence list.
      *  </p>
      * <p>
      * <strong>NOTES</strong>: CKA

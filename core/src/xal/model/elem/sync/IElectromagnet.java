@@ -4,7 +4,7 @@
  * Created on November 1, 2002, 4:53 PM
  */
 
-package xal.model.elem;
+package xal.model.elem.sync;
 
 /**
  *  This interface defines the common properties of all electromagnet elements.

@@ -10,6 +10,7 @@ import java.io.PrintWriter;
 import xal.model.IElement;
 import xal.model.IProbe;
 import xal.model.ModelException;
+import xal.model.elem.sync.IRfGap;
 import xal.model.probe.traj.ProbeState;
 import xal.model.probe.traj.Trajectory;
 import xal.sim.scenario.LatticeElement;
@@ -193,6 +194,10 @@ public class IdealRfGap extends ThinElement implements IRfGap {
 	 *  Local Attributes
 	 */
 	
+    //
+    // Operating Parameters
+    //
+    
 	/**
 	 *  ETL product of gap
 	 */
@@ -203,62 +208,84 @@ public class IdealRfGap extends ThinElement implements IRfGap {
 	 */
 	private double m_dblPhase = 0.0;
 
+    /**
+     *  the on axis accelerating field (V)
+     */
+    private double dblFieldE0 = 0.;
+
 	/**
 	 *  operating frequency of the gap
 	 */
 	private double m_dblFreq = 0.0;
 
-	/**
+	
+	//
+	// Gap Properties
+	//
+	
+    /**
+     *  the separation of the gap center from the cell center (m)
+     */
+    private double gapOffset = 0.;
+    
+    /**
+     *  the accelerating cell length
+     */
+    private double cellLength = 0.;
+
+    /**
+     *  fit of the TTF vs. beta
+     */
+    private UnivariateRealPolynomial fitTTF;
+
+    /**
+     *  fit of the TTF-prime vs. beta
+     */
+    private UnivariateRealPolynomial fitTTFPrime;
+
+    /**
+     *  fit of the S factor vs. beta
+     */
+    private UnivariateRealPolynomial fitSTF;
+
+    /**
+     *  fit of the S-prime vs. beta
+     */
+    private UnivariateRealPolynomial fitSTFPrime;
+
+
+    //
+    // RF Cavity Properties
+    // 
+    
+    /**
+     *  = 0 if the gap is part of a 0 mode cavity structure (e.g. DTL) = 1 if the
+     *  gap is part of a pi mode cavity (e.g. Super-conducting)
+     */
+    private double dblCavModeConst = 0.;
+
+    /** 
+     * The index of the cavity cell (within the parent cavity) containing this gap.
+     */
+    private int     indCell = 0;
+    
+    //
+    // Legacy
+    //
+    
+    /**
+	 * TODO CKA - Remove
+	 * 
 	 *  flag indicating that this is the leading gap of a cavity
 	 */
 	private boolean initialGap = false;
 
-
 	/**
-	 *  the separation of the gap center from the cell center (m)
-	 */
-	private double gapOffset = 0.;
-	
-	/**
-	 *  the on axis accelerating field (V)
-	 */
-	private double dblFieldE0 = 0.;
-
-	/**
-	 *  the accelerating cell length
-	 */
-	private double cellLength = 0.;
-
-	/**
+	 * TODO CKA - Remove
+	 * 
 	 *  the energy gained in this gap (eV)
 	 */
 	private double theEnergyGain = 0.;
-
-	/**
-	 *  = 0 if the gap is part of a 0 mode cavity structure (e.g. DTL) = 1 if the
-	 *  gap is part of a pi mode cavity (e.g. CCL, Super-conducting)
-	 */
-	private double dblCavModeConst = 0.;
-
-	/**
-	 *  fit of the TTF vs. beta
-	 */
-	private UnivariateRealPolynomial fitTTF;
-
-	/**
-	 *  fit of the TTF-prime vs. beta
-	 */
-	private UnivariateRealPolynomial fitTTFPrime;
-
-	/**
-	 *  fit of the S factor vs. beta
-	 */
-	private UnivariateRealPolynomial fitSTF;
-
-	/**
-	 *  fit of the S-prime vs. beta
-	 */
-	private UnivariateRealPolynomial fitSTFPrime;
 
 	
 	/*
@@ -342,7 +369,8 @@ public class IdealRfGap extends ThinElement implements IRfGap {
      * <p>
      * Returns the structure mode <b>number</b> <i>q</i> for the cavity in which this 
      * gap belongs.  Here the structure mode number is defined in terms of
-     * half integers rather than the usual integer definition.  To make this explicit
+     * the fractional phase advance between cells, with respect to &pi;.  
+     * To make this explicit
      * <br/>
      * <br/>
      * &nbsp; &nbsp; <i>q</i> = 0  &nbsp; &nbsp; &rAarr;  0 mode
@@ -352,9 +380,18 @@ public class IdealRfGap extends ThinElement implements IRfGap {
      * &nbsp; &nbsp; <i>q</i> = 1  &nbsp; &nbsp; &rAarr;  &pi; mode
      * <br/>
      * <br/>
+     * Thus, a cavity mode constant of <i>q</i> = 1/2 indicates a &pi;/2
+     * phase advance between adjacent cells and a corresponding cell amplitude
+     * function <i>A<sub>n</sub></i> of
+     * <br/>
+     * <br/>
+     * &nbsp; &nbsp; <i>A<sub>n</sub></i> = cos(<i>nq</i>&pi;)
+     * <br/>
+     * <br/>
+     * where <i>n</i> is the index of the cell within the coupled cavity.
      * </p>
      * 
-     * @return  the cavity mode constant for this gap
+     * @return  the cavity mode constant for the cell containing this gap
      *
      * @see <i>RF Linear Accelerators</i>, Thomas P. Wangler (Wiley, 2008).
      * 
