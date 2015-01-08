@@ -30,7 +30,6 @@ import xal.tools.xml.XmlDataAdaptor;
 import xal.smf.*;
 import xal.smf.data.XMLDataManager;
 
-
 /**
  * Document for the orbit correction application
  * @author  t6p

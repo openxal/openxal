@@ -29,12 +29,19 @@ import xal.tools.beam.calc.SimpleSimResultsAdaptor;
  * @since    Sep 07, 2004
  */
 public class OnlineModelSimulator extends MappedSimulator {
+	/* orbit model */
+	final private OrbitModel ORBIT_MODEL;
+
+
 	/**
 	 * Constructor
 	 * @param orbitModel    The orbit model.
 	 */
 	public OnlineModelSimulator( final OrbitModel orbitModel ) {
 		super( orbitModel.getModificationStore(), orbitModel.getSequence(), orbitModel.getBPMAgents(), orbitModel.getCorrectorSupplies() );
+
+		ORBIT_MODEL = orbitModel;
+
 		_responseNeedsUpdate = true;
 	}
 	
@@ -60,24 +67,7 @@ public class OnlineModelSimulator extends MappedSimulator {
 		final String FIELD_PROPERTY = ElectromagnetPropertyAccessor.PROPERTY_FIELD;
 		
 		try {
-
-		    // CKA - Nov 25, 2013
-		    // Create the probe according to the sequence type then run an online model
-//            final Probe probe = (_sequence instanceof Ring) ? ProbeFactory.getTransferMapProbe( _sequence, AlgorithmFactory.createTransferMapTracker(_sequence) ) : ProbeFactory.createParticleProbe(_sequence, AlgorithmFactory.createParticleTracker(_sequence));
-		
-		    final Probe<?> probe;
-		    if (_sequence instanceof Ring) {
-		        TransferMapTracker    algXferMap = AlgorithmFactory.createTransferMapTracker(_sequence);
-		        probe = ProbeFactory.getTransferMapProbe(_sequence, algXferMap);
-		                
-		    } else {
-//		        ParticleTracker       algPart = AlgorithmFactory.createParticleTracker(_sequence);
-//		        probe = ProbeFactory.createParticleProbe(_sequence, algPart);
-				// switched from particle probe to envelope probe since there is an issue with particle probe always returing a fixed orbit of zero -tap 12/22/2014
-				EnvTrackerAdapt tracker = AlgorithmFactory.createEnvTrackerAdapt( _sequence );
-				probe = ProbeFactory.getEnvelopeProbe(_sequence, tracker);
-		    }
-
+			final Probe<?> probe = ORBIT_MODEL.makeProbe();
 			final Scenario scenario = Scenario.newScenarioFor( _sequence );
 			scenario.setProbe( probe );
 			scenario.setSynchronizationMode( Scenario.SYNC_MODE_RF_DESIGN );
@@ -99,6 +89,8 @@ public class OnlineModelSimulator extends MappedSimulator {
 //				PhaseVector coordinates = state.getFixedOrbit();
                 ProbeState<?>  state = initialTrajectory.stateForElement( bpmAgent.getID() );
                 PhaseVector coordinates = cmpCalcEngine.computeFixedOrbit(state);
+                
+                System.out.println("OrbitCorrect.OnlineModelSimulator#calculateResponse() - SimpleSimResultsAdaptor#computeFixedOrbit(state) = " + coordinates);
 				
 				xInitial[bpmIndex] = coordinates.getx();
 				yInitial[bpmIndex] = coordinates.gety();
