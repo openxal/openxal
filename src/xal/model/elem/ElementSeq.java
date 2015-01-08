@@ -672,6 +672,34 @@ public abstract class ElementSeq implements IComposite {
     }
     
     
+    /*
+     * Object Overrides
+     */
+    
+    /**
+     * Writes out the modeling elements in this element sequence
+     * structure.
+     *
+     * @see java.lang.Object#toString()
+     *
+     * @since  Jan 5, 2015   by Christopher K. Allen
+     */
+    @Override
+    public String   toString() {
+
+        StringBuffer         bufOutput = new StringBuffer();
+        Iterator<IComponent> iterCmps  = this.getCompList().iterator();
+        
+        while (iterCmps.hasNext())  {
+            IComponent iCmp = iterCmps.next();
+            
+            bufOutput.append( iCmp.toString() );
+            bufOutput.append('\n');
+        }
+        
+        return bufOutput.toString();
+    }
+
     
     /*
      *  Testing and Debugging
