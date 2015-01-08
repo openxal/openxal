@@ -1,473 +1,440 @@
 <?xml version = '1.0' encoding = 'UTF-8'?>
-<BricksDocument date="Tue Jan 31 11:04:44 EST 2012" version="1.0.0">
+<BricksDocument date="Wed Jan 07 13:38:44 EST 2015" version="1.0.0">
     <RootBrick>
-        <ViewNode customBeanClass="xal.extension.application.smf.DefaultAcceleratorWindow" height="764" tag="MainWindow" width="1134">
-            <ViewProxy type="javax.swing.JFrame" />
-            <BeanProperty name="title" value="Orbit Correction" />
+        <ViewNode customBeanClass="xal.extension.application.smf.DefaultAcceleratorWindow" height="838" tag="MainWindow" width="1233">
+            <ViewProxy type="javax.swing.JFrame"/>
+            <BeanProperty name="title" value="Orbit Correction"/>
             <ViewNode tag="Main View">
-                <ViewProxy type="javax.swing.Box_Vertical" />
+                <ViewProxy type="javax.swing.Box_Vertical"/>
                 <ViewNode tag="Main Tab Pane">
-                    <ViewProxy type="javax.swing.JTabbedPane" />
+                    <ViewProxy type="javax.swing.JTabbedPane"/>
                     <ViewNode tag="Orbit View">
-                        <ViewProxy type="javax.swing.Box_Vertical" />
-                        <BeanProperty name="name" value="Orbit Plot" />
+                        <ViewProxy type="javax.swing.Box_Vertical"/>
+                        <BeanProperty name="name" value="Orbit Plot"/>
                         <ViewNode tag="Control Box">
-                            <ViewProxy type="javax.swing.Box_Horizontal" />
+                            <ViewProxy type="javax.swing.Box_Horizontal"/>
                             <ViewNode tag="Filter View">
-                                <ViewProxy type="javax.swing.Box_Horizontal" />
-                                <BeanProperty height="60" name="maximumSize" width="10000" />
+                                <ViewProxy type="javax.swing.Box_Horizontal"/>
+                                <BeanProperty height="60" name="maximumSize" width="10000"/>
                                 <BorderNode tag="Titled Border">
-                                    <BorderProxy type="javax.swing.border.TitledBorder" />
-                                    <BeanProperty name="title" value="Trace Filter" />
+                                    <BorderProxy type="javax.swing.border.TitledBorder"/>
+                                    <BeanProperty name="title" value="Trace Filter"/>
                                 </BorderNode>
                                 <ViewNode tag="HorizontalDisplayCheckbox">
-                                    <ViewProxy type="javax.swing.JCheckBox" />
-                                    <BeanProperty name="text" value="Horizontal" />
-                                    <BeanProperty name="selected" value="true" />
-                                    <BeanProperty name="toolTipText" value="Toggle display of horizontal orbit" />
+                                    <ViewProxy type="javax.swing.JCheckBox"/>
+                                    <BeanProperty name="text" value="Horizontal"/>
+                                    <BeanProperty name="selected" value="true"/>
+                                    <BeanProperty name="toolTipText" value="Toggle display of horizontal orbit"/>
                                 </ViewNode>
                                 <ViewNode tag="VerticalDisplayCheckbox">
-                                    <ViewProxy type="javax.swing.JCheckBox" />
-                                    <BeanProperty name="text" value="Vertical" />
-                                    <BeanProperty name="selected" value="true" />
-                                    <BeanProperty name="toolTipText" value="Toggle display of vertical orbit" />
+                                    <ViewProxy type="javax.swing.JCheckBox"/>
+                                    <BeanProperty name="text" value="Vertical"/>
+                                    <BeanProperty name="selected" value="true"/>
+                                    <BeanProperty name="toolTipText" value="Toggle display of vertical orbit"/>
                                 </ViewNode>
                                 <ViewNode tag="AmplitudeDisplayCheckbox">
-                                    <ViewProxy type="javax.swing.JCheckBox" />
-                                    <BeanProperty name="text" value="Amplitude" />
-                                    <BeanProperty name="selected" value="true" />
-                                    <BeanProperty name="toolTipText" value="Toggle display of the BPM amplitudes" />
+                                    <ViewProxy type="javax.swing.JCheckBox"/>
+                                    <BeanProperty name="text" value="Amplitude"/>
+                                    <BeanProperty name="selected" value="true"/>
+                                    <BeanProperty name="toolTipText" value="Toggle display of the BPM amplitudes"/>
                                 </ViewNode>
                                 <ViewNode tag="Horizontal Glue">
-                                    <ViewProxy type="javax.swing.Box_HorizontalGlue" />
+                                    <ViewProxy type="javax.swing.Box_HorizontalGlue"/>
                                 </ViewNode>
                                 <ViewNode tag="LegendCheckbox">
-                                    <ViewProxy type="javax.swing.JCheckBox" />
-                                    <BeanProperty name="text" value="Legend" />
-                                    <BeanProperty name="selected" value="true" />
-                                    <BeanProperty name="toolTipText" value="Toggle the Legend display" />
+                                    <ViewProxy type="javax.swing.JCheckBox"/>
+                                    <BeanProperty name="text" value="Legend"/>
+                                    <BeanProperty name="selected" value="true"/>
+                                    <BeanProperty name="toolTipText" value="Toggle the Legend display"/>
                                 </ViewNode>
                                 <ViewNode tag="GridCheckbox">
-                                    <ViewProxy type="javax.swing.JCheckBox" />
-                                    <BeanProperty name="text" value="Grid" />
-                                    <BeanProperty name="selected" value="true" />
-                                    <BeanProperty name="toolTipText" value="Toggle the grid display" />
+                                    <ViewProxy type="javax.swing.JCheckBox"/>
+                                    <BeanProperty name="text" value="Grid"/>
+                                    <BeanProperty name="selected" value="true"/>
+                                    <BeanProperty name="toolTipText" value="Toggle the grid display"/>
                                 </ViewNode>
-                                <BorderNode tag="Titled Border">
-                                    <BorderProxy type="javax.swing.border.TitledBorder" />
-                                    <BeanProperty name="title" value="Trace Filter" />
-                                </BorderNode>
                             </ViewNode>
                             <ViewNode tag="OrbitsButton">
-                                <ViewProxy type="javax.swing.JButton" />
-                                <BeanProperty name="text" value="Orbits..." />
-                                <BeanProperty name="toolTipText" value="Manage Orbits" />
+                                <ViewProxy type="javax.swing.JButton"/>
+                                <BeanProperty name="text" value="Orbits..."/>
+                                <BeanProperty name="toolTipText" value="Manage Orbits"/>
                             </ViewNode>
                         </ViewNode>
                         <ViewNode tag="OrbitPlot">
-                            <ViewProxy type="xal.extension.widgets.plot.FunctionGraphsJPanel" />
+                            <ViewProxy type="xal.extension.widgets.plot.FunctionGraphsJPanel"/>
                         </ViewNode>
                         <ViewNode tag="SynopticContainer">
-                            <ViewProxy type="javax.swing.Box_Horizontal" />
-                            <BeanProperty name="inheritsPopupMenu" value="false" />
-                            <BeanProperty height="39" name="minimumSize" width="100" />
-                            <BeanProperty height="40" name="preferredSize" width="25000" />
-                            <BeanProperty height="41" name="maximumSize" width="30000" />
+                            <ViewProxy type="javax.swing.Box_Horizontal"/>
+                            <BeanProperty name="inheritsPopupMenu" value="false"/>
+                            <BeanProperty height="39" name="minimumSize" width="100"/>
+                            <BeanProperty height="40" name="preferredSize" width="25000"/>
+                            <BeanProperty height="41" name="maximumSize" width="30000"/>
                         </ViewNode>
                     </ViewNode>
                     <ViewNode tag="BPM View">
-                        <ViewProxy type="javax.swing.JScrollPane" />
-                        <BeanProperty name="name" value="Orbit Table" />
+                        <ViewProxy type="javax.swing.JScrollPane"/>
+                        <BeanProperty name="name" value="Orbit Table"/>
                         <ViewNode tag="BPMTable">
-                            <ViewProxy type="javax.swing.JTable" />
+                            <ViewProxy type="javax.swing.JTable"/>
                         </ViewNode>
                     </ViewNode>
                     <ViewNode tag="Flatten View">
-                        <ViewProxy type="javax.swing.Box_Vertical" />
-                        <BeanProperty name="name" value="Flatten" />
+                        <ViewProxy type="javax.swing.Box_Vertical"/>
+                        <BeanProperty name="name" value="Flatten"/>
                         <ViewNode tag="Flatten Configuration Box">
-                            <ViewProxy type="javax.swing.Box_Horizontal" />
-                            <BeanProperty height="60" name="maximumSize" width="98511" />
+                            <ViewProxy type="javax.swing.Box_Horizontal"/>
+                            <BeanProperty height="60" name="maximumSize" width="98511"/>
                             <ViewNode tag="Orbit Box">
-                                <ViewProxy type="javax.swing.Box_Horizontal" />
+                                <ViewProxy type="javax.swing.Box_Horizontal"/>
                                 <BorderNode tag="Titled Border">
-                                    <BorderProxy type="javax.swing.border.TitledBorder" />
-                                    <BeanProperty name="title" value="Orbit Target" />
+                                    <BorderProxy type="javax.swing.border.TitledBorder"/>
+                                    <BeanProperty name="title" value="Orbit Target"/>
                                 </BorderNode>
                                 <ViewNode tag="Label">
-                                    <ViewProxy type="javax.swing.JLabel" />
-                                    <BeanProperty name="text" value="Flatten:" />
+                                    <ViewProxy type="javax.swing.JLabel"/>
+                                    <BeanProperty name="text" value="Flatten:"/>
                                 </ViewNode>
                                 <ViewNode tag="Orbit Source Menu">
-                                    <ViewProxy type="javax.swing.JComboBox" />
+                                    <ViewProxy type="javax.swing.JComboBox"/>
                                 </ViewNode>
                                 <ViewNode tag="Label">
-                                    <ViewProxy type="javax.swing.JLabel" />
-                                    <BeanProperty name="text" value=" To:" />
+                                    <ViewProxy type="javax.swing.JLabel"/>
+                                    <BeanProperty name="text" value=" To:"/>
                                 </ViewNode>
                                 <ViewNode tag="Orbit Reference Menu">
-                                    <ViewProxy type="javax.swing.JComboBox" />
+                                    <ViewProxy type="javax.swing.JComboBox"/>
                                 </ViewNode>
-                                <BorderNode tag="Titled Border">
-                                    <BorderProxy type="javax.swing.border.TitledBorder" />
-                                    <BeanProperty name="title" value="Orbit Target" />
-                                </BorderNode>
                             </ViewNode>
                             <ViewNode tag="Simulator Box">
-                                <ViewProxy type="javax.swing.Box_Horizontal" />
+                                <ViewProxy type="javax.swing.Box_Horizontal"/>
                                 <BorderNode tag="Titled Border">
-                                    <BorderProxy type="javax.swing.border.TitledBorder" />
-                                    <BeanProperty name="title" value="Simulator" />
+                                    <BorderProxy type="javax.swing.border.TitledBorder"/>
+                                    <BeanProperty name="title" value="Simulator"/>
                                 </BorderNode>
                                 <ViewNode tag="Machine Simulator Menu">
-                                    <ViewProxy type="javax.swing.JComboBox" />
+                                    <ViewProxy type="javax.swing.JComboBox"/>
+                                </ViewNode>
+                                <ViewNode tag="ProbeEditButton">
+                                    <ViewProxy type="javax.swing.JButton"/>
+                                    <BeanProperty name="text" value="Edit Probe..."/>
+                                    <BeanProperty name="toolTipText" value="Edit the probe used to calculate the orbit response map"/>
                                 </ViewNode>
                                 <ViewNode tag="ResetSimulatorButton">
-                                    <ViewProxy type="javax.swing.JButton" />
-                                    <BeanProperty name="text" value="Reset" />
-                                    <BeanProperty name="toolTipText" value="Reset the simulator by clearing its data" />
+                                    <ViewProxy type="javax.swing.JButton"/>
+                                    <BeanProperty name="text" value="Reset"/>
+                                    <BeanProperty name="toolTipText" value="Reset the simulator by clearing its data"/>
                                 </ViewNode>
                                 <ViewNode tag="ConfigureSimulatorButton">
-                                    <ViewProxy type="javax.swing.JButton" />
-                                    <BeanProperty name="text" value="Configure..." />
-                                    <BeanProperty name="toolTipText" value="Configure the simulator" />
+                                    <ViewProxy type="javax.swing.JButton"/>
+                                    <BeanProperty name="text" value="Configure..."/>
+                                    <BeanProperty name="toolTipText" value="Configure the simulator"/>
                                 </ViewNode>
-                                <BorderNode tag="Titled Border">
-                                    <BorderProxy type="javax.swing.border.TitledBorder" />
-                                    <BeanProperty name="title" value="Simulator" />
-                                </BorderNode>
                             </ViewNode>
                         </ViewNode>
                         <ViewNode tag="Flatten Main Split Pane">
-                            <ViewProxy type="javax.swing.JSplitPane" />
-                            <BeanProperty name="orientation" value="0" />
-                            <BeanProperty height="163" name="minimumSize" width="320000" />
-                            <BeanProperty height="729" name="preferredSize" width="979" />
-                            <BeanProperty name="dividerLocation" value="100" />
+                            <ViewProxy type="javax.swing.JSplitPane"/>
+                            <BeanProperty name="orientation" value="0"/>
+                            <BeanProperty height="163" name="minimumSize" width="320000"/>
+                            <BeanProperty height="729" name="preferredSize" width="979"/>
+                            <BeanProperty name="dividerLocation" value="100"/>
                             <ViewNode tag="Objectives Config Box">
-                                <ViewProxy type="javax.swing.Box_Vertical" />
-                                <BeanProperty height="55" name="minimumSize" width="35000" />
-                                <BeanProperty height="478" name="maximumSize" width="320779" />
+                                <ViewProxy type="javax.swing.Box_Vertical"/>
+                                <BeanProperty height="55" name="minimumSize" width="35000"/>
+                                <BeanProperty height="478" name="maximumSize" width="320779"/>
                                 <BorderNode tag="Titled Border">
-                                    <BorderProxy type="javax.swing.border.TitledBorder" />
-                                    <BeanProperty name="title" value="Objectives" />
+                                    <BorderProxy type="javax.swing.border.TitledBorder"/>
+                                    <BeanProperty name="title" value="Objectives"/>
                                 </BorderNode>
                                 <ViewNode tag="Objectives Scrollpane">
-                                    <ViewProxy type="javax.swing.JScrollPane" />
-                                    <BeanProperty height="200" name="preferredSize" width="469" />
-                                    <BeanProperty height="45000" name="maximumSize" width="32767" />
+                                    <ViewProxy type="javax.swing.JScrollPane"/>
+                                    <BeanProperty height="200" name="preferredSize" width="469"/>
+                                    <BeanProperty height="45000" name="maximumSize" width="32767"/>
                                     <ViewNode tag="ObjectivesTable">
-                                        <ViewProxy type="javax.swing.JTable" />
+                                        <ViewProxy type="javax.swing.JTable"/>
                                     </ViewNode>
                                 </ViewNode>
-                                <BorderNode tag="Titled Border">
-                                    <BorderProxy type="javax.swing.border.TitledBorder" />
-                                    <BeanProperty name="title" value="Objectives" />
-                                </BorderNode>
                             </ViewNode>
                             <ViewNode tag="Corrector BPM Split Pane">
-                                <ViewProxy type="javax.swing.JSplitPane" />
-                                <BeanProperty height="95" name="minimumSize" width="32000" />
-                                <BeanProperty name="dividerLocation" value="550" />
+                                <ViewProxy type="javax.swing.JSplitPane"/>
+                                <BeanProperty height="95" name="minimumSize" width="32000"/>
+                                <BeanProperty name="dividerLocation" value="550"/>
                                 <ViewNode tag="Correctors Config Box">
-                                    <ViewProxy type="javax.swing.Box_Vertical" />
+                                    <ViewProxy type="javax.swing.Box_Vertical"/>
                                     <BorderNode tag="Titled Border">
-                                        <BorderProxy type="javax.swing.border.TitledBorder" />
-                                        <BeanProperty name="title" value="Correctors" />
+                                        <BorderProxy type="javax.swing.border.TitledBorder"/>
+                                        <BeanProperty name="title" value="Correctors"/>
                                     </BorderNode>
                                     <ViewNode tag="Filter Bar">
-                                        <ViewProxy type="javax.swing.Box_Horizontal" />
+                                        <ViewProxy type="javax.swing.Box_Horizontal"/>
                                         <ViewNode tag="Label">
-                                            <ViewProxy type="javax.swing.JLabel" />
-                                            <BeanProperty name="text" value="Filter:" />
+                                            <ViewProxy type="javax.swing.JLabel"/>
+                                            <BeanProperty name="text" value="Filter:"/>
                                         </ViewNode>
                                         <ViewNode tag="Corrector Filter Field">
-                                            <ViewProxy type="javax.swing.JTextField" />
-                                            <BeanProperty name="text" value="" />
-                                            <BeanProperty height="60" name="maximumSize" width="2147483647" />
+                                            <ViewProxy type="javax.swing.JTextField"/>
+                                            <BeanProperty name="text" value=""/>
+                                            <BeanProperty height="60" name="maximumSize" width="2147483647"/>
                                         </ViewNode>
                                         <ViewNode tag="Corrector Filter Clear Button">
-                                            <ViewProxy type="javax.swing.JButton" />
-                                            <BeanProperty group="custom" iconName="Clear24.gif" name="icon" />
-                                            <BeanProperty name="text" value="" />
-                                            <BeanProperty name="toolTipText" value="Clear Corrector Filter" />
+                                            <ViewProxy type="javax.swing.JButton"/>
+                                            <BeanProperty group="custom" iconName="Clear24.gif" name="icon"/>
+                                            <BeanProperty name="text" value=""/>
+                                            <BeanProperty name="toolTipText" value="Clear Corrector Filter"/>
                                         </ViewNode>
                                         <ViewNode tag="Corrector Disable Button">
-                                            <ViewProxy type="javax.swing.JButton" />
-                                            <BeanProperty name="text" value="Disable" />
-                                            <BeanProperty name="toolTipText" value="Disable the selected correctors" />
+                                            <ViewProxy type="javax.swing.JButton"/>
+                                            <BeanProperty name="text" value="Disable"/>
+                                            <BeanProperty name="toolTipText" value="Disable the selected correctors"/>
                                         </ViewNode>
                                         <ViewNode tag="Corrector Enable Button">
-                                            <ViewProxy type="javax.swing.JButton" />
-                                            <BeanProperty name="text" value="Enable" />
-                                            <BeanProperty name="toolTipText" value="Enable the selected correctors" />
+                                            <ViewProxy type="javax.swing.JButton"/>
+                                            <BeanProperty name="text" value="Enable"/>
+                                            <BeanProperty name="toolTipText" value="Enable the selected correctors"/>
                                         </ViewNode>
                                         <ViewNode tag="Corrector Setting Button">
-                                            <ViewProxy type="javax.swing.JButton" />
-                                            <BeanProperty name="label" value="Setting" />
-                                            <BeanProperty name="toolTipText" value="Apply a common field setting to the selected correctors." />
-                                            <BeanProperty name="verifyInputWhenFocusTarget" value="true" />
+                                            <ViewProxy type="javax.swing.JButton"/>
+                                            <BeanProperty name="label" value="Setting"/>
+                                            <BeanProperty name="toolTipText" value="Apply a common field setting to the selected correctors."/>
+                                            <BeanProperty name="verifyInputWhenFocusTarget" value="true"/>
                                         </ViewNode>
                                         <ViewNode tag="Corrector Limits Button">
-                                            <ViewProxy type="javax.swing.JButton" />
-                                            <BeanProperty name="text" value="Limits" />
-                                            <BeanProperty name="toolTipText" value="Edit the limits for the selected correctors" />
+                                            <ViewProxy type="javax.swing.JButton"/>
+                                            <BeanProperty name="text" value="Limits"/>
+                                            <BeanProperty name="toolTipText" value="Edit the limits for the selected correctors"/>
                                         </ViewNode>
                                     </ViewNode>
                                     <ViewNode tag="Correctors Scroll Pane">
-                                        <ViewProxy type="javax.swing.JScrollPane" />
+                                        <ViewProxy type="javax.swing.JScrollPane"/>
                                         <ViewNode tag="Corrector Table">
-                                            <ViewProxy type="javax.swing.JTable" />
+                                            <ViewProxy type="javax.swing.JTable"/>
                                         </ViewNode>
                                     </ViewNode>
-                                    <BorderNode tag="Titled Border">
-                                        <BorderProxy type="javax.swing.border.TitledBorder" />
-                                        <BeanProperty name="title" value="Correctors" />
-                                    </BorderNode>
                                 </ViewNode>
                                 <ViewNode tag="BPMs Config Box">
-                                    <ViewProxy type="javax.swing.Box_Vertical" />
+                                    <ViewProxy type="javax.swing.Box_Vertical"/>
                                     <BorderNode tag="Titled Border">
-                                        <BorderProxy type="javax.swing.border.TitledBorder" />
-                                        <BeanProperty name="title" value="Beam Position Monitors" />
+                                        <BorderProxy type="javax.swing.border.TitledBorder"/>
+                                        <BeanProperty name="title" value="Beam Position Monitors"/>
                                     </BorderNode>
                                     <ViewNode tag="Filter Bar">
-                                        <ViewProxy type="javax.swing.Box_Horizontal" />
+                                        <ViewProxy type="javax.swing.Box_Horizontal"/>
                                         <ViewNode tag="Label">
-                                            <ViewProxy type="javax.swing.JLabel" />
-                                            <BeanProperty name="text" value="Filter:" />
+                                            <ViewProxy type="javax.swing.JLabel"/>
+                                            <BeanProperty name="text" value="Filter:"/>
                                         </ViewNode>
                                         <ViewNode tag="BPM Filter Field">
-                                            <ViewProxy type="javax.swing.JTextField" />
-                                            <BeanProperty name="text" value="" />
-                                            <BeanProperty height="60" name="maximumSize" width="2147483647" />
+                                            <ViewProxy type="javax.swing.JTextField"/>
+                                            <BeanProperty name="text" value=""/>
+                                            <BeanProperty height="60" name="maximumSize" width="2147483647"/>
                                         </ViewNode>
                                         <ViewNode tag="BPM Filter Clear Button">
-                                            <ViewProxy type="javax.swing.JButton" />
-                                            <BeanProperty group="custom" iconName="Clear24.gif" name="icon" />
-                                            <BeanProperty name="text" value="" />
-                                            <BeanProperty name="toolTipText" value="Clear BPM Filter" />
+                                            <ViewProxy type="javax.swing.JButton"/>
+                                            <BeanProperty group="custom" iconName="Clear24.gif" name="icon"/>
+                                            <BeanProperty name="text" value=""/>
+                                            <BeanProperty name="toolTipText" value="Clear BPM Filter"/>
                                         </ViewNode>
                                         <ViewNode tag="BPM Disable Button">
-                                            <ViewProxy type="javax.swing.JButton" />
-                                            <BeanProperty name="text" value="Disable" />
-                                            <BeanProperty name="toolTipText" value="Disable the selected BPMs" />
+                                            <ViewProxy type="javax.swing.JButton"/>
+                                            <BeanProperty name="text" value="Disable"/>
+                                            <BeanProperty name="toolTipText" value="Disable the selected BPMs"/>
                                         </ViewNode>
                                         <ViewNode tag="BPM Enable Button">
-                                            <ViewProxy type="javax.swing.JButton" />
-                                            <BeanProperty name="text" value="Enable" />
-                                            <BeanProperty name="toolTipText" value="Enable the selected BPMs" />
+                                            <ViewProxy type="javax.swing.JButton"/>
+                                            <BeanProperty name="text" value="Enable"/>
+                                            <BeanProperty name="toolTipText" value="Enable the selected BPMs"/>
                                         </ViewNode>
                                     </ViewNode>
                                     <ViewNode tag="BPM Flatten Scroll Pane">
-                                        <ViewProxy type="javax.swing.JScrollPane" />
+                                        <ViewProxy type="javax.swing.JScrollPane"/>
                                         <ViewNode tag="BPM Flatten Table">
-                                            <ViewProxy type="javax.swing.JTable" />
+                                            <ViewProxy type="javax.swing.JTable"/>
                                         </ViewNode>
                                     </ViewNode>
-                                    <BorderNode tag="Titled Border">
-                                        <BorderProxy type="javax.swing.border.TitledBorder" />
-                                        <BeanProperty name="title" value="Beam Position Monitors" />
-                                    </BorderNode>
                                 </ViewNode>
                             </ViewNode>
                         </ViewNode>
                     </ViewNode>
                     <ViewNode tag="Configuration View">
-                        <ViewProxy type="javax.swing.Box_Vertical" />
-                        <BeanProperty name="name" value="Beam Event" />
+                        <ViewProxy type="javax.swing.Box_Vertical"/>
+                        <BeanProperty name="name" value="Beam Event"/>
                         <ViewNode tag="Beam Event Checkbox">
-                            <ViewProxy type="javax.swing.JCheckBox" />
-                            <BeanProperty name="selected" value="true" />
-                            <BeanProperty name="label" value="Use Beam Event Trigger" />
-                            <BeanProperty name="toolTipText" value="Check to use the diagnostic slow beam event to trigger orbit correlations" />
+                            <ViewProxy type="javax.swing.JCheckBox"/>
+                            <BeanProperty name="selected" value="true"/>
+                            <BeanProperty name="label" value="Use Beam Event Trigger"/>
+                            <BeanProperty name="toolTipText" value="Check to use the diagnostic slow beam event to trigger orbit correlations"/>
                         </ViewNode>
                     </ViewNode>
                 </ViewNode>
                 <ViewNode tag="Flatten Control Box">
-                    <ViewProxy type="javax.swing.Box_Horizontal" />
-                    <BeanProperty height="60" name="maximumSize" width="65793" />
+                    <ViewProxy type="javax.swing.Box_Horizontal"/>
+                    <BeanProperty height="60" name="maximumSize" width="65793"/>
                     <BorderNode tag="Etched Border">
-                        <BorderProxy type="javax.swing.border.EtchedBorder" />
+                        <BorderProxy type="javax.swing.border.EtchedBorder"/>
                     </BorderNode>
                     <ViewNode tag="Progress Bar">
-                        <ViewProxy type="javax.swing.JProgressBar" />
-                        <BeanProperty name="stringPainted" value="true" />
+                        <ViewProxy type="javax.swing.JProgressBar"/>
+                        <BeanProperty name="stringPainted" value="true"/>
                     </ViewNode>
                     <ViewNode tag="FlattenDurationSpinner">
-                        <ViewProxy type="javax.swing.JSpinner" />
-                        <BeanProperty height="28" name="minimumSize" width="75" />
-                        <BeanProperty height="28" name="preferredSize" width="100" />
-                        <BeanProperty height="32767" name="maximumSize" width="200" />
-                        <BeanProperty name="toolTipText" value="Set the duration of the flatten search" />
+                        <ViewProxy type="javax.swing.JSpinner"/>
+                        <BeanProperty height="28" name="minimumSize" width="75"/>
+                        <BeanProperty height="28" name="preferredSize" width="100"/>
+                        <BeanProperty height="32767" name="maximumSize" width="200"/>
+                        <BeanProperty name="toolTipText" value="Set the duration of the flatten search"/>
                     </ViewNode>
                     <ViewNode tag="FlattenRunButton">
-                        <ViewProxy type="javax.swing.JButton" />
-                        <BeanProperty name="enabled" value="false" />
-                        <BeanProperty name="text" value="Flatten" />
-                        <BeanProperty name="toolTipText" value="Flatten the orbit" />
+                        <ViewProxy type="javax.swing.JButton"/>
+                        <BeanProperty name="enabled" value="false"/>
+                        <BeanProperty name="text" value="Flatten"/>
+                        <BeanProperty name="toolTipText" value="Flatten the orbit"/>
                     </ViewNode>
                     <ViewNode tag="FlattenStopButton">
-                        <ViewProxy type="javax.swing.JButton" />
-                        <BeanProperty name="enabled" value="false" />
-                        <BeanProperty name="text" value="Stop" />
-                        <BeanProperty name="toolTipText" value="Stop the flatten run" />
+                        <ViewProxy type="javax.swing.JButton"/>
+                        <BeanProperty name="enabled" value="false"/>
+                        <BeanProperty name="text" value="Stop"/>
+                        <BeanProperty name="toolTipText" value="Stop the flatten run"/>
                     </ViewNode>
                     <ViewNode tag="FlattenApplyButton">
-                        <ViewProxy type="javax.swing.JButton" />
-                        <BeanProperty name="enabled" value="false" />
-                        <BeanProperty name="text" value="Apply..." />
-                        <BeanProperty name="toolTipText" value="Apply flatten corrections" />
+                        <ViewProxy type="javax.swing.JButton"/>
+                        <BeanProperty name="enabled" value="false"/>
+                        <BeanProperty name="text" value="Apply..."/>
+                        <BeanProperty name="toolTipText" value="Apply flatten corrections"/>
                     </ViewNode>
-                    <BorderNode tag="Etched Border">
-                        <BorderProxy type="javax.swing.border.EtchedBorder" />
-                    </BorderNode>
                 </ViewNode>
             </ViewNode>
         </ViewNode>
         <ViewNode height="169" tag="EmpiricalSimulatorEditorDialog" width="327">
-            <ViewProxy type="javax.swing.JDialog" />
-            <BeanProperty name="title" value="Empirical Simulator Editor" />
-            <BeanProperty name="resizable" value="false" />
+            <ViewProxy type="javax.swing.JDialog"/>
+            <BeanProperty name="title" value="Empirical Simulator Editor"/>
+            <BeanProperty name="resizable" value="false"/>
             <ViewNode tag="Main Vertical Box">
-                <ViewProxy type="javax.swing.Box_Vertical" />
+                <ViewProxy type="javax.swing.Box_Vertical"/>
                 <ViewNode tag="Beam Settle Time Box">
-                    <ViewProxy type="javax.swing.Box_Horizontal" />
+                    <ViewProxy type="javax.swing.Box_Horizontal"/>
                     <ViewNode tag="Horizontal Glue">
-                        <ViewProxy type="javax.swing.Box_HorizontalGlue" />
+                        <ViewProxy type="javax.swing.Box_HorizontalGlue"/>
                     </ViewNode>
                     <ViewNode tag="Label">
-                        <ViewProxy type="javax.swing.JLabel" />
-                        <BeanProperty name="text" value="Beam Settle Time (msec): " />
+                        <ViewProxy type="javax.swing.JLabel"/>
+                        <BeanProperty name="text" value="Beam Settle Time (msec): "/>
                     </ViewNode>
                     <ViewNode tag="Beam Settle Time Field">
-                        <ViewProxy type="javax.swing.JTextField" />
-                        <BeanProperty name="horizontalAlignment" value="4" />
-                        <BeanProperty name="text" value="3000" />
-                        <BeanProperty height="28" name="preferredSize" width="150" />
-                        <BeanProperty height="2147483647" name="maximumSize" width="250" />
-                        <BeanProperty name="columns" value="0" />
+                        <ViewProxy type="javax.swing.JTextField"/>
+                        <BeanProperty name="horizontalAlignment" value="4"/>
+                        <BeanProperty name="text" value="3000"/>
+                        <BeanProperty height="28" name="preferredSize" width="150"/>
+                        <BeanProperty height="2147483647" name="maximumSize" width="250"/>
+                        <BeanProperty name="columns" value="0"/>
                     </ViewNode>
                 </ViewNode>
                 <ViewNode tag="Field Excursion Box">
-                    <ViewProxy type="javax.swing.Box_Horizontal" />
+                    <ViewProxy type="javax.swing.Box_Horizontal"/>
                     <ViewNode tag="Horizontal Glue">
-                        <ViewProxy type="javax.swing.Box_HorizontalGlue" />
+                        <ViewProxy type="javax.swing.Box_HorizontalGlue"/>
                     </ViewNode>
                     <ViewNode tag="Label">
-                        <ViewProxy type="javax.swing.JLabel" />
-                        <BeanProperty name="text" value="Field Excursion (%): " />
+                        <ViewProxy type="javax.swing.JLabel"/>
+                        <BeanProperty name="text" value="Field Excursion (%): "/>
                     </ViewNode>
                     <ViewNode tag="Field Excursion Field">
-                        <ViewProxy type="javax.swing.JTextField" />
-                        <BeanProperty name="horizontalAlignment" value="4" />
-                        <BeanProperty name="text" value="5.0" />
-                        <BeanProperty height="28" name="preferredSize" width="150" />
-                        <BeanProperty height="2147483647" name="maximumSize" width="250" />
+                        <ViewProxy type="javax.swing.JTextField"/>
+                        <BeanProperty name="horizontalAlignment" value="4"/>
+                        <BeanProperty name="text" value="5.0"/>
+                        <BeanProperty height="28" name="preferredSize" width="150"/>
+                        <BeanProperty height="2147483647" name="maximumSize" width="250"/>
                     </ViewNode>
                 </ViewNode>
                 <ViewNode tag="Samples per Corrector Box">
-                    <ViewProxy type="javax.swing.Box_Horizontal" />
+                    <ViewProxy type="javax.swing.Box_Horizontal"/>
                     <ViewNode tag="Horizontal Glue">
-                        <ViewProxy type="javax.swing.Box_HorizontalGlue" />
+                        <ViewProxy type="javax.swing.Box_HorizontalGlue"/>
                     </ViewNode>
                     <ViewNode tag="Label">
-                        <ViewProxy type="javax.swing.JLabel" />
-                        <BeanProperty name="text" value="Samples per Corrector: " />
+                        <ViewProxy type="javax.swing.JLabel"/>
+                        <BeanProperty name="text" value="Samples per Corrector: "/>
                     </ViewNode>
                     <ViewNode tag="Samples Per Corrector Field">
-                        <ViewProxy type="javax.swing.JTextField" />
-                        <BeanProperty name="horizontalAlignment" value="4" />
-                        <BeanProperty name="text" value="4" />
-                        <BeanProperty height="28" name="preferredSize" width="150" />
-                        <BeanProperty height="2147483647" name="maximumSize" width="250" />
+                        <ViewProxy type="javax.swing.JTextField"/>
+                        <BeanProperty name="horizontalAlignment" value="4"/>
+                        <BeanProperty name="text" value="4"/>
+                        <BeanProperty height="28" name="preferredSize" width="150"/>
+                        <BeanProperty height="2147483647" name="maximumSize" width="250"/>
                     </ViewNode>
                 </ViewNode>
                 <ViewNode tag="ButtonBar">
-                    <ViewProxy type="javax.swing.Box_Horizontal" />
+                    <ViewProxy type="javax.swing.Box_Horizontal"/>
                     <BorderNode tag="Etched Border">
-                        <BorderProxy type="javax.swing.border.EtchedBorder" />
+                        <BorderProxy type="javax.swing.border.EtchedBorder"/>
                     </BorderNode>
                     <ViewNode tag="Horizontal Glue">
-                        <ViewProxy type="javax.swing.Box_HorizontalGlue" />
+                        <ViewProxy type="javax.swing.Box_HorizontalGlue"/>
                     </ViewNode>
                     <ViewNode tag="CancelButton">
-                        <ViewProxy type="javax.swing.JButton" />
-                        <BeanProperty name="text" value="Cancel" />
+                        <ViewProxy type="javax.swing.JButton"/>
+                        <BeanProperty name="text" value="Cancel"/>
                     </ViewNode>
                     <ViewNode tag="ApplyButton">
-                        <ViewProxy type="javax.swing.JButton" />
-                        <BeanProperty name="text" value="Apply" />
+                        <ViewProxy type="javax.swing.JButton"/>
+                        <BeanProperty name="text" value="Apply"/>
                     </ViewNode>
-                    <BorderNode tag="Etched Border">
-                        <BorderProxy type="javax.swing.border.EtchedBorder" />
-                    </BorderNode>
                 </ViewNode>
             </ViewNode>
         </ViewNode>
         <ViewNode height="148" tag="BulkCorrectorLimitsDialog" width="567">
-            <ViewProxy type="javax.swing.JDialog" />
-            <BeanProperty name="title" value="Common Corrector Limits" />
-            <BeanProperty name="modal" value="true" />
+            <ViewProxy type="javax.swing.JDialog"/>
+            <BeanProperty name="title" value="Common Corrector Limits"/>
+            <BeanProperty name="modal" value="true"/>
             <ViewNode tag="Main Tabbed Pane">
-                <ViewProxy type="javax.swing.JTabbedPane" />
+                <ViewProxy type="javax.swing.JTabbedPane"/>
                 <ViewNode tag="Common Percent Limits Container">
-                    <ViewProxy type="javax.swing.Box_Horizontal" />
-                    <BeanProperty name="name" value="Percent" />
+                    <ViewProxy type="javax.swing.Box_Horizontal"/>
+                    <BeanProperty name="name" value="Percent"/>
                     <BorderNode tag="Titled Border">
-                        <BorderProxy type="javax.swing.border.TitledBorder" />
-                        <BeanProperty name="title" value="Custom Limits as a Percent of the Operational Limits" />
+                        <BorderProxy type="javax.swing.border.TitledBorder"/>
+                        <BeanProperty name="title" value="Custom Limits as a Percent of the Operational Limits"/>
                     </BorderNode>
                     <ViewNode tag="PercentLimitsSlider">
-                        <ViewProxy type="javax.swing.JSlider" />
-                        <BeanProperty name="majorTickSpacing" value="5" />
-                        <BeanProperty name="paintTicks" value="true" />
-                        <BeanProperty name="paintLabels" value="true" />
-                        <BeanProperty name="minorTickSpacing" value="1" />
-                        <BeanProperty name="snapToTicks" value="true" />
-                        <BeanProperty name="maximum" value="100" />
-                        <BeanProperty name="value" value="100" />
+                        <ViewProxy type="javax.swing.JSlider"/>
+                        <BeanProperty name="majorTickSpacing" value="5"/>
+                        <BeanProperty name="paintTicks" value="true"/>
+                        <BeanProperty name="paintLabels" value="true"/>
+                        <BeanProperty name="minorTickSpacing" value="1"/>
+                        <BeanProperty name="snapToTicks" value="true"/>
+                        <BeanProperty name="maximum" value="100"/>
+                        <BeanProperty name="value" value="100"/>
                     </ViewNode>
                     <ViewNode tag="PercentLimitsApplyButton">
-                        <ViewProxy type="javax.swing.JButton" />
-                        <BeanProperty name="text" value="Apply" />
-                        <BeanProperty name="toolTipText" value="Apply the custom percent limits" />
+                        <ViewProxy type="javax.swing.JButton"/>
+                        <BeanProperty name="text" value="Apply"/>
+                        <BeanProperty name="toolTipText" value="Apply the custom percent limits"/>
                     </ViewNode>
-                    <BorderNode tag="Titled Border">
-                        <BorderProxy type="javax.swing.border.TitledBorder" />
-                        <BeanProperty name="title" value="Custom Limits as a Percent of the Operational Limits" />
-                    </BorderNode>
                 </ViewNode>
                 <ViewNode tag="Common Absolute Limits Container">
-                    <ViewProxy type="javax.swing.Box_Horizontal" />
-                    <BeanProperty name="name" value="Absolute" />
+                    <ViewProxy type="javax.swing.Box_Horizontal"/>
+                    <BeanProperty name="name" value="Absolute"/>
                     <BorderNode tag="Titled Border">
-                        <BorderProxy type="javax.swing.border.TitledBorder" />
-                        <BeanProperty name="title" value="Common Absolute Limits" />
+                        <BorderProxy type="javax.swing.border.TitledBorder"/>
+                        <BeanProperty name="title" value="Common Absolute Limits"/>
                     </BorderNode>
                     <ViewNode tag="Lower Limit Field">
-                        <ViewProxy type="javax.swing.JTextField" />
-                        <BeanProperty name="horizontalAlignment" value="4" />
-                        <BeanProperty name="text" value="-0.001" />
+                        <ViewProxy type="javax.swing.JTextField"/>
+                        <BeanProperty name="horizontalAlignment" value="4"/>
+                        <BeanProperty name="text" value="-0.001"/>
                     </ViewNode>
                     <ViewNode tag="Label">
-                        <ViewProxy type="javax.swing.JLabel" />
-                        <BeanProperty name="text" value=" to " />
+                        <ViewProxy type="javax.swing.JLabel"/>
+                        <BeanProperty name="text" value=" to "/>
                     </ViewNode>
                     <ViewNode tag="Upper Limit Field">
-                        <ViewProxy type="javax.swing.JTextField" />
-                        <BeanProperty name="horizontalAlignment" value="4" />
-                        <BeanProperty name="text" value="0.001" />
+                        <ViewProxy type="javax.swing.JTextField"/>
+                        <BeanProperty name="horizontalAlignment" value="4"/>
+                        <BeanProperty name="text" value="0.001"/>
                     </ViewNode>
                     <ViewNode tag="AbsoluteLimitsApplyButton">
-                        <ViewProxy type="javax.swing.JButton" />
-                        <BeanProperty name="text" value="Apply" />
-                        <BeanProperty name="toolTipText" value="Apply the custom absolute limits" />
+                        <ViewProxy type="javax.swing.JButton"/>
+                        <BeanProperty name="text" value="Apply"/>
+                        <BeanProperty name="toolTipText" value="Apply the custom absolute limits"/>
                     </ViewNode>
-                    <BorderNode tag="Titled Border">
-                        <BorderProxy type="javax.swing.border.TitledBorder" />
-                        <BeanProperty name="title" value="Common Absolute Limits" />
-                    </BorderNode>
                 </ViewNode>
             </ViewNode>
         </ViewNode>
