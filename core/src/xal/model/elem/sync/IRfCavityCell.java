@@ -35,10 +35,6 @@ package xal.model.elem.sync;
  */
 public interface IRfCavityCell {
 
-    /*
-     * 
-     */
-    
     /**
      * <p>
      * Set the index <i>n</i> of this cell within the enclosing RF cavity.  The 
@@ -101,13 +97,13 @@ public interface IRfCavityCell {
      * where <i>n</i> is the index of the cell within the coupled cavity.
      * </p>
      * 
-     * @return  the cavity mode structure constant for the cavity containing this cell 
+     * @param   dblCavModeConst the cavity mode structure constant for the cavity containing this cell 
      *
      * @see <i>RF Linear Accelerators</i>, Thomas P. Wangler (Wiley, 2008).
      * 
      * @since  Jan 8, 2015   by Christopher K. Allen
      */
-    public void setCavityModeConstant(double dblModeConst);
+    public void setCavityModeConstant(double dblCavModeConst);
     
     
     /**

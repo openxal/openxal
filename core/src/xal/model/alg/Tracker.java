@@ -736,7 +736,7 @@ public abstract class Tracker implements IAlgorithm, IArchive {
         //  exited the element.
         if (elem instanceof IdealRfGap) {
             
-//            ERROR!
+            ERROR!
             
             IdealRfGap      elmRfGap = (IdealRfGap)elem;
             

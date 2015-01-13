@@ -537,7 +537,6 @@ public abstract class Element implements IElement {
         }
         alg.propagate(probe, this);
     };
-
     
     /** 
      * <p>
@@ -565,7 +564,6 @@ public abstract class Element implements IElement {
         }
         alg.propagate(probe, this);
     };
-
     
     /** 
      *  <p>

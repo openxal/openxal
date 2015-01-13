@@ -11,6 +11,7 @@ import java.util.Iterator;
 import xal.model.IComponent;
 import xal.model.IProbe;
 import xal.model.ModelException;
+import xal.model.elem.sync.IRfCavityCell;
 import xal.sim.scenario.LatticeElement;
 import xal.smf.AcceleratorNode;
 import xal.smf.impl.RfCavity;
@@ -280,6 +281,13 @@ public class IdealRfCavity extends ElementSeq {
         //  TODO : modify this to conform to the Element/Algorithm/Probe design
         probe.setLongitudinalPhase( this.getPhase() );
         
+        // This action is okay - it distributes parameters to the child
+        //  modeling ELEMENTS of this cavity.  We are not acting on the
+        //  probe component.
+        this.distributeCavityProperties();
+        
+        // Now we propagate the probe through this composite modeling element
+        //  as usual.
         super.propagate(probe);
     }
 
@@ -312,6 +320,7 @@ public class IdealRfCavity extends ElementSeq {
     public void backPropagate(IProbe probe) throws ModelException {
         probe.setLongitudinalPhase( this.getPhase() );
         
+        this.distributeCavityProperties();
         super.backPropagate(probe);
     }
 
@@ -320,7 +329,42 @@ public class IdealRfCavity extends ElementSeq {
      * Support Methods
      */
     
+    /**
+     * Iterate through each direct child modeling element and check if it
+     * exposes the <code>IRfCavityCell</code> interface.  If so, then
+     * it is an accelerating cell within this cavity and we need to set
+     * its index within the cavity and the cavity structure mode
+     * constant for the cell.  Together these parameters allow the cavity
+     * cell to adjust its field spatially in order to account for its position
+     * in the cavity and the operating mode field structure.
+     *
+     * @since  Jan 9, 2015   by Christopher K. Allen
+     */
     private void    distributeCavityProperties() {
+        
+        //  Initialize the loop
+        int                     cntCells = 0;
         Iterator<IComponent>    iterCmps = super.localIterator();
+        while ( iterCmps.hasNext() ) {
+            IComponent cmp = iterCmps.next();
+            
+            // The child component is a cavity cell
+            if (cmp instanceof IRfCavityCell) {
+                IRfCavityCell   iCavCell = (IRfCavityCell)cmp;
+                
+                iCavCell.setCavityCellIndex( cntCells );
+                iCavCell.setCavityModeConstant( this.getCavityModeConstant() );
+                cntCells++;
+            }
+            
+            // The child component is a drift space within an RF cavity
+            if (cmp instanceof IdealRfCavityDrift) {
+                IdealRfCavityDrift  modDrift = (IdealRfCavityDrift)cmp;
+                
+                modDrift.setFrequency( this.getFrequency() );
+                modDrift.setCavityModeConstant( this.getCavityModeConstant() );
+            }
+            
+        }
     }
 }
