@@ -89,13 +89,15 @@ public class VADocument extends AcceleratorDocument implements ActionListener, P
     
 	/** For on-line model */
 	protected Scenario modelScenario;
-    
-	private Probe<?> myProbe;
+
+	/* template probe which may be configured and then copied as the currentProbe for use in the simulation */
+	private Probe<?> baseProbe;
+
+	/* probe which was copied from the base probe and is being used in the simulation */
+	private Probe<?> currentProbe;
     
 	String dataSource = Scenario.SYNC_MODE_LIVE;
-    
-	protected String theProbeFile;
-    
+
 	int runT3d_OK = 0;
     
 	private JDialog setNoise = new JDialog();
@@ -212,8 +214,7 @@ public class VADocument extends AcceleratorDocument implements ActionListener, P
 	public VADocument( final java.net.URL url ) {
 		setSource( url );
         
-		// queue to synchronize readbacks with setpoints as well as the online model
-		final DispatchQueue modelSyncQueue = DispatchQueue.createSerialQueue( "Model Sync Queue" );  // TODO: CKA - NEVER USED
+		// timer to synchronize readbacks with setpoints as well as the online model
 		MODEL_SYNC_TIMER = DispatchTimer.getCoalescingInstance( DispatchQueue.createSerialQueue( "" ), getOnlineModelSynchronizer() );
         
 		// set the default model sync period to 1 second
@@ -412,12 +413,7 @@ public class VADocument extends AcceleratorDocument implements ActionListener, P
 		//save accelerator file
 		DataAdaptor daXMLFile = daLevel1.createChild("accelerator");
 		daXMLFile.setValue("xmlFile", this.getAcceleratorFilePath());
-		//save probe file
-//		if (theProbeFile != null) {
-//			DataAdaptor envProbeXMLFile = daLevel1.createChild("env_probe");
-//			envProbeXMLFile.setValue("probeXmlFile", theProbeFile);
-//		}
-        
+
 		// save selected sequences
 		List<String> sequenceNames;
 		if ( getSelectedSequence() != null ) {
@@ -472,16 +468,10 @@ public class VADocument extends AcceleratorDocument implements ActionListener, P
 	private void createDefaultProbe() {
 		if ( selectedSequence != null ) {
             try {
-                myProbe = ( selectedSequence instanceof xal.smf.Ring ) ? createRingProbe( selectedSequence ) : createEnvelopeProbe( selectedSequence );
-                
-//                if ( selectedSequence instanceof xal.smf.Ring ) {
-//                    final TransferMapState state = (TransferMapState) myProbe.createProbeState();
-//                    // set initial x, y slightly off-axis to introduce betatron oscillation.
-//                    state.setPhaseCoordinates( new PhaseVector( 0.01, 0., 0.01, 0., 0., 0. ) );
-//                    myProbe.applyState( state );
-//                }
-
-                modelScenario.setProbe( myProbe );
+                baseProbe = ( selectedSequence instanceof xal.smf.Ring ) ? createRingProbe( selectedSequence ) : createEnvelopeProbe( selectedSequence );
+				currentProbe = baseProbe.copy();
+				currentProbe.initialize();
+                modelScenario.setProbe( currentProbe );
             }
             catch ( Exception exception ) {
                 displayError( "Error Creating Probe", "Probe Error", exception );
@@ -505,89 +495,26 @@ public class VADocument extends AcceleratorDocument implements ActionListener, P
     
     
 	public void customizeCommands(Commander commander) {
-        
-		// action for probe XML file open
-        //Remove probe file functionality
-//		Action openprobeAction = new AbstractAction() {
-//			static final long serialVersionUID = 0;
-//			public void actionPerformed(ActionEvent event) {
-//				final String currentDirectory = _probeFileTracker.getRecentFolderPath();
-//                
-//				JFileChooser fileChooser = new JFileChooser( currentDirectory );
-//				fileChooser.addChoosableFileFilter( new ProbeFileFilter() );
-//                
-//				int status = fileChooser.showOpenDialog( getMainWindow() );
-//				if (status == JFileChooser.APPROVE_OPTION) {
-//					_probeFileTracker.cacheURL( fileChooser.getSelectedFile() );
-//					File file = fileChooser.getSelectedFile();
-//					theProbeFile = file.getPath();
-//					try {
-//						myProbe = ProbeXmlParser.parse( theProbeFile );
-//						model.setProbe( myProbe );
-//					} catch (ParsingException e) {
-//						System.err.println(e);
-//					}
-//				}
-//			}
-//		};
-		//openprobeAction.putValue(Action.NAME, "openprobe");
-		//commander.registerAction(openprobeAction);
-        
 		// open probe editor
         // TODO: implement probe editor support
 		Action probeEditorAction = new AbstractAction("probe-editor") {
 			static final long serialVersionUID = 0;
 			public void actionPerformed(ActionEvent event) {
-                //                displayError( "Probe Editor Error", "Probe Editor is not implemented." );
-                //                throw new RuntimeException( "Probe editor is not implemented." );
-                
-				SimpleProbeEditor spe;//
-                
-                
-                if( modelScenario != null ) {
-                    // if model has a probe
-                    if (modelScenario.getProbe() != null) {
-                        //reset the probe to initial state
-                        modelScenario.resetProbe();
-                        spe = new SimpleProbeEditor(getMainWindow(), modelScenario.getProbe());
-                        
-                        myProbe = spe.getProbe();
-                        modelScenario.setProbe(myProbe);
-                        //spe.createSimpleProbeEditor(model.getProbe());
-                        // if model has no probe
-                    }
+				if ( baseProbe != null ) {
+					stopServer();
+					final SimpleProbeEditor probeEditor = new SimpleProbeEditor( getMainWindow(), baseProbe );
+					baseProbe = probeEditor.getProbe();
+
+					currentProbe = baseProbe.copy();
+					currentProbe.initialize();
+					if ( modelScenario != null ) {
+						modelScenario.setProbe(currentProbe);
+					}
                 }
                 else {
                     //Sequence has not been selected
                     displayError("Probe Editor Error", "You must select a sequence before attempting to edit the probe.");
                 }
-                //                else {
-                //
-                //					// if a probe file exists, start with existing probe file
-                //					if (theProbeFile != null) {
-                //						spe.createSimpleProbeEditor(new File(theProbeFile));
-                //						// if no probe file exitst, start with an empty one
-                //					} else {
-                //						spe.createSimpleProbeEditor();
-                //					}
-                //				}
-                //                if(spe != null) {
-                //                    myProbe = spe.getProbe();
-                //                    model.setProbe(myProbe);
-                //                }
-                //
-                //				// update the model probe with the one from probe editor
-                //				if (spe.probeHasChanged()) {
-                //					//			  mxProxy.setNewProbe(spe.getProbe());
-                //					if (myProbe instanceof EnvelopeProbe)
-                //						myProbe = (EnvelopeProbe) spe.getProbe();
-                //					else if (myProbe instanceof TransferMapProbe)
-                //						myProbe = (TransferMapProbe) spe.getProbe();
-                //					else
-                //						myProbe = spe.getProbe();
-                //
-                //					model.setProbe(myProbe);
-                //				}
 			}
 		};
 		probeEditorAction.putValue(Action.NAME, "probe-editor");
@@ -671,9 +598,9 @@ public class VADocument extends AcceleratorDocument implements ActionListener, P
 					}
 					// use online model
 					else {
-						if ( theProbeFile == null && myProbe == null ) {
+						if ( currentProbe == null ) {
 							createDefaultProbe();
-							if ( myProbe == null ) {
+							if ( currentProbe == null ) {
 								displayWarning( "Warning!", "You need to select probe file first." );
 								return;
 							}
@@ -690,6 +617,7 @@ public class VADocument extends AcceleratorDocument implements ActionListener, P
 						putSetPVs();
 						
 						// continuously loop through the next 3 steps
+						System.out.println( "Setup to synchronize the online model periodically..." );
 						MODEL_SYNC_TIMER.setEventHandler( getOnlineModelSynchronizer() );
 					}
 					
@@ -776,28 +704,10 @@ public class VADocument extends AcceleratorDocument implements ActionListener, P
 				setSelectedSequence(new AcceleratorSeqCombo(seqName, seqs));
 			
 			setSelectedSequenceList(seqs.subList(0, seqs.size()));
-            
-			//restore probe file
-            //Remove probe file functionality
-//			if (da1.hasAttribute("env_probe")) {
-//				DataAdaptor probeFile = da1.childAdaptor("env_probe");
-//				theProbeFile = probeFile.stringValue("probeXmlFile");
-//				if (theProbeFile.length() > 1) {
-//					try {
-//						myProbe = (EnvelopeProbe) ProbeXmlParser.parse(theProbeFile);
-//					} catch (ParsingException e) {
-//						// if we have trouble restore the probe, just create from default
-//						createDefaultProbe();
-//					}
-//				}
-//			}
-//			else {
-//				createDefaultProbe();
-//			}
-            
+
             createDefaultProbe();
             
-			modelScenario.setProbe(myProbe);
+			modelScenario.setProbe(currentProbe);
             
 			if ( da1.hasAttribute( "modelSyncPeriod" ) ) {
 				_modelSyncPeriod = da1.longValue( "modelSyncPeriod" );
@@ -1055,7 +965,7 @@ public class VADocument extends AcceleratorDocument implements ActionListener, P
 	protected void putDiagPVs() {
 	    // CKA Nov 25, 2013
 	    SimpleSimResultsAdaptor    cmpCalcEngine = new SimpleSimResultsAdaptor( modelScenario.getTrajectory() );
-	    
+
 		/**temporary list data for getting the array bpm and ws datas*/
 		int i = 0;
 		List<Double> tempBPMx = new ArrayList<Double>();
@@ -1155,7 +1065,7 @@ public class VADocument extends AcceleratorDocument implements ActionListener, P
 				// hardwired BPM amplitude noise and offset to 5% and 0.1mm (randomly) respectively
 				bpmAmpAvgChannel.putVal( NoiseGenerator.setValForPV( 20., 5., 0.1 ) );
 				// calculate the BPM phase (for linac only)
-				if ( !( myProbe instanceof TransferMapProbe ) && !( bpm instanceof RingBPM ) ) {
+				if ( !( currentProbe instanceof TransferMapProbe ) && !( bpm instanceof RingBPM ) ) {
 					final Channel bpmPhaseAvgChannel = bpm.getChannel( BPM.PHASE_AVG_HANDLE );
 					bpmPhaseAvgChannel.putValCallback( probeState.getTime() * 360. * ( ( (BPMBucket)bpm.getBucket("bpm") ).getFrequency() * 1.e6 ) % 360.0, this );
 				}
@@ -1262,7 +1172,7 @@ public class VADocument extends AcceleratorDocument implements ActionListener, P
 				if (bpmAmpMap.containsKey(bpmAmp.getId()))
 					bpmAmp.putVal( NoiseGenerator.setValForPV( bpmAmpMap.get( bpmAmp.getId() ).doubleValue(), 5., 0.1) );
 				// BPM phase (for linac only)
-				if ( !( myProbe instanceof TransferMapProbe ) ) {
+				if ( !( currentProbe instanceof TransferMapProbe ) ) {
 					Channel bpmPhase = bpm.getChannel( BPM.PHASE_AVG_HANDLE );
 					if ( bpmPhaseMap.containsKey( bpmPhase.getId() ) ) {
 						bpmPhase.putVal( bpmPhaseMap.get( bpmPhase.getId() ).doubleValue() );
@@ -1368,10 +1278,15 @@ public class VADocument extends AcceleratorDocument implements ActionListener, P
 	public void acceleratorChanged() {
 		if (accelerator != null) {
 			stopServer();
+
+			baseProbe = null;
+			currentProbe = null;
+
 			_repRateChannel = accelerator.getTimingCenter().findChannel( TimingCenter.REP_RATE_HANDLE );
 			beamOnEvent = accelerator.getTimingCenter().findChannel( TimingCenter.BEAM_ON_EVENT_HANDLE );
 			beamOnEventCount = accelerator.getTimingCenter().findChannel( TimingCenter.BEAM_ON_EVENT_COUNT_HANDLE );
 			slowDiagEvent = accelerator.getTimingCenter().findChannel( TimingCenter.SLOW_DIAGNOSTIC_EVENT_HANDLE );
+
 			setHasChanges( true );
 		}
 	}
@@ -1424,7 +1339,8 @@ public class VADocument extends AcceleratorDocument implements ActionListener, P
 		}
         else {
             modelScenario = null;
-            myProbe = null;
+			baseProbe = null;
+            currentProbe = null;
         }
 	}
     
@@ -1467,8 +1383,8 @@ public class VADocument extends AcceleratorDocument implements ActionListener, P
 			// re-sync lattice and run model
 			buildOnlineModel();     
 			try {
-				myProbe.reset();
-				modelScenario.run();				
+				modelScenario.getProbe().reset();
+				modelScenario.run();
 				// put diagnostic node PVs
 				putDiagPVs();
 			}
@@ -1548,51 +1464,6 @@ class ReadbackSetRecordPositionComparator implements Comparator<ReadbackSetRecor
 	}
 }
 
-//Remove probe file functionality
-//class ProbeFileFilter extends javax.swing.filechooser.FileFilter {
-//	//Accept xml files.
-//	public boolean accept(File f) {
-//		if (f.isDirectory()) {
-//			return true;
-//		}
-//        
-//		String extension = Utils.getExtension(f);
-//		if (extension != null) {
-//			if (extension.equals(Utils.probe)) {
-//				return true;
-//			} else {
-//				return false;
-//			}
-//		}
-//        
-//		return false;
-//	}
-//    
-//	//The description of this filter
-//	public String getDescription() {
-//		return "Probe File";
-//	}
-//    
-//}
-//
-//
-//class Utils {
-//	public final static String probe = "probe";
-//    
-//	/**
-//	 * Get the extension of a file.
-//	 */
-//	public static String getExtension(File f) {
-//		String ext = null;
-//		String s = f.getName();
-//		int i = s.lastIndexOf('.');
-//        
-//		if (i > 0 && i < s.length() - 1) {
-//			ext = s.substring(i + 1).toLowerCase();
-//		}
-//		return ext;
-//	}
-//}
 
 /**show bpm and ws plots*/
 class DiagPlot {
@@ -1702,4 +1573,3 @@ class DiagPlot {
 	}
 	
 }
-
