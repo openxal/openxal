@@ -501,6 +501,7 @@ public class VADocument extends AcceleratorDocument implements ActionListener, P
 			static final long serialVersionUID = 0;
 			public void actionPerformed(ActionEvent event) {
 				if ( baseProbe != null ) {
+					stopServer();
 					final SimpleProbeEditor probeEditor = new SimpleProbeEditor( getMainWindow(), baseProbe );
 					baseProbe = probeEditor.getProbe();
 
