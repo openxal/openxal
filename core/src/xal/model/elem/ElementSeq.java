@@ -690,6 +690,8 @@ public abstract class ElementSeq implements IComposite {
         StringBuffer         bufOutput = new StringBuffer();
         Iterator<IComponent> iterCmps  = this.getCompList().iterator();
         
+        bufOutput.append("Sequence ID: " + this.getId() + '\n');
+        
         while (iterCmps.hasNext())  {
             IComponent iCmp = iterCmps.next();
             
