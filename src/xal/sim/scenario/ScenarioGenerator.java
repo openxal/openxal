@@ -13,6 +13,7 @@ import java.util.Date;
 import java.util.List;
 
 import xal.model.IComponent;
+import xal.model.IComposite;
 import xal.model.IElement;
 import xal.model.Lattice;
 import xal.model.ModelException;
@@ -277,9 +278,17 @@ class ScenarioGenerator {
 				//sector.addChild(elementMapping.createDrift("DRFT", driftLength));
 			}
 			IComponent modelElement = element.convert();
+			
 			sector.addChild(modelElement);
+
+			// CKA January 14, 2015
+			// The modeling element is added to the synchronization manager
+			//   We need to consider the cases of both a component element 
+			//   and a composite element
 			if (modelElement instanceof IElement) 
-				syncManager.synchronize((IElement) modelElement, element.getNode());			
+				syncManager.synchronize((IElement) modelElement, element.getNode());
+			if (modelElement instanceof IComposite)
+			    syncManager.synchronize((IComposite) modelElement, element.getNode());            
 			position = element.getEndPosition();
 			
 			if (debug)
