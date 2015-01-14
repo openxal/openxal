@@ -269,7 +269,13 @@ public class OrbitModel implements DataListener {
 	 */
 	public Probe<?> makeProbe() {
 		final Probe<?> baseProbe = getBaseProbe();
-		return baseProbe != null ? baseProbe.copy() : null;
+		if ( baseProbe != null ) {
+			final Probe<?> probe = baseProbe.copy();
+			probe.initialize();
+			return probe;
+		} else {
+			return null;
+		}
 	}
 
 
