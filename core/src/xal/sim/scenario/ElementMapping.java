@@ -129,7 +129,11 @@ public abstract class ElementMapping {
 			if (node.isKindOf(tc.getKey()))
 				return tc.getValue();
 		}
-		return getDefaultElementType();
+		
+		if (node instanceof AcceleratorSeq)
+		    return getDefaultSequenceType();
+		else
+		    return getDefaultElementType();
 		// throw new RuntimeException("No converter for class "+element.getNode().getClass()+", type "+element.getNode().getType());
 	}
 	

@@ -56,6 +56,93 @@ public class Scenario {
 	
     
     /*
+     * Global Variables
+     */
+    
+    /** Debugging flag - debugging type outs sent to standard output */
+    private static boolean  BOL_DEBUG = false;
+    
+
+    /*
+     * Global Operations
+     */
+    
+    /**
+     * Toggle the debugging type out feature.
+     * 
+     * @param bolDebug  if <code>true</code> debugging information is sent to standard output,
+     *                  if <code>false</code> operation is quiet
+     *
+     * @since  Jan 15, 2015   by Christopher K. Allen
+     */
+    public static void setDebugging(boolean bolDebug) {
+        BOL_DEBUG = bolDebug;
+    }
+    
+    /**
+     * Creates a new Scenario for the supplied accelerator sequence.
+     * 
+     * @param smfSeq    the accelerator sequence to build a scenario for
+     * @return          a new Scenario for the supplied accelerator sequence
+     * 
+     * @throws          ModelException error building Scenario
+     */
+    public static Scenario newScenarioFor( final AcceleratorSeq smfSeq ) throws ModelException {
+
+        // We have a linear accelerator/transport line - process as such
+        Accelerator         smfAccel      = smfSeq.getAccelerator();
+        ElementMapping      mapNodeToElem = smfAccel.getElementMapping();
+        ScenarioGenerator   mdlGenScnr    = new ScenarioGenerator(mapNodeToElem);
+        
+        mdlGenScnr.setDebug(BOL_DEBUG);
+
+        return mdlGenScnr.generateScenario(smfSeq);
+    }
+
+    /**
+     * Creates a new Scenario for the supplied accelerator sequence and element mapping.
+     *   
+     * @param smfSeq        the accelerator sequence to build a scenario for
+     * @param mapNodeToElem the element mapping to build a scenario with
+     * @return              a new model <code>Scenario</code> for the supplied accelerator sequence
+     * @throws ModelException   general error building model lattice
+     */
+    public static Scenario newScenarioFor( final AcceleratorSeq smfSeq, ElementMapping mapNodeToElem ) throws ModelException {
+
+        // We have a linear accelerator/transport line - process as such
+        ScenarioGenerator mdlGenScnr = new ScenarioGenerator(mapNodeToElem);
+
+        mdlGenScnr.setDebug(BOL_DEBUG);
+
+        return mdlGenScnr.generateScenario(smfSeq);
+    }
+
+
+    /**
+     * Creates a new <code>Scenario</code> object for the explicit case where
+     * the <code>AcceleratorSeq</code> object is of type 
+     * <code>gov.sns.xal.smf.Ring</code>.
+     * 
+     * @param   smfRing     target hardware (SMF) ring object 
+     * @return              <code>Scenario</code> object encapsulating ring
+     * 
+     * @throws ModelException   unable to build modeling scenario
+     */
+    public static Scenario  newScenarioFor( final Ring smfRing ) throws ModelException {
+
+        // We have a ring structure
+        Accelerator         smfAccel      = smfRing.getAccelerator();
+        ElementMapping      mapNodeToElem = smfAccel.getElementMapping();
+        ScenarioGenerator   mdlGenScnr    = new ScenarioGenerator( mapNodeToElem );
+
+        mdlGenScnr.setDebug(BOL_DEBUG);
+
+        return mdlGenScnr.generateScenario( smfRing ); 
+    }
+
+
+    
+    /*
      * Local Attributes
      */
     
@@ -95,62 +182,6 @@ public class Scenario {
         this.mgrSync = mgrSync;
     }
     
-	 /**
-     * Creates a new Scenario for the supplied accelerator sequence.
-     * 
-     * @param smfSeq    the accelerator sequence to build a scenario for
-     * @return          a new Scenario for the supplied accelerator sequence
-     * 
-     * @throws          ModelException error building Scenario
-     */
-    public static Scenario newScenarioFor( final AcceleratorSeq smfSeq ) throws ModelException {
-
-        // We have a linear accelerator/transport line - process as such
-        Accelerator         smfAccel      = smfSeq.getAccelerator();
-        ElementMapping      mapNodeToElem = smfAccel.getElementMapping();
-        ScenarioGenerator   mdlGenScnr    = new ScenarioGenerator(mapNodeToElem);
-        
-        return mdlGenScnr.generateScenario(smfSeq);
-    }
-	
-	 /**
-     * Creates a new Scenario for the supplied accelerator sequence and element mapping.
-     * 	 
-     * @param smfSeq        the accelerator sequence to build a scenario for
-	 * @param mapNodeToElem the element mapping to build a scenario with
-     * @return              a new model <code>Scenario</code> for the supplied accelerator sequence
-     * @throws ModelException   general error building model lattice
-     */
-    public static Scenario newScenarioFor( final AcceleratorSeq smfSeq, ElementMapping mapNodeToElem ) throws ModelException {
-
-        // We have a linear accelerator/transport line - process as such
-        ScenarioGenerator mdlGenScnr = new ScenarioGenerator(mapNodeToElem);
-        
-        return mdlGenScnr.generateScenario(smfSeq);
-    }
-
-
-    /**
-     * Creates a new <code>Scenario</code> object for the explicit case where
-     * the <code>AcceleratorSeq</code> object is of type 
-     * <code>gov.sns.xal.smf.Ring</code>.
-     * 
-     * @param   smfRing     target hardware (SMF) ring object 
-     * @return              <code>Scenario</code> object encapsulating ring
-     * 
-     * @throws ModelException   unable to build modeling scenario
-     */
-    public static Scenario  newScenarioFor( final Ring smfRing ) throws ModelException {
-        
-        // We have a ring structure
-        Accelerator         smfAccel      = smfRing.getAccelerator();
-        ElementMapping      mapNodeToElem = smfAccel.getElementMapping();
-        ScenarioGenerator   genScen       = new ScenarioGenerator( mapNodeToElem );
-
-        return genScen.generateScenario( smfRing ); 
-    }
-
-
     // Model Operations ========================================================
     
     /**

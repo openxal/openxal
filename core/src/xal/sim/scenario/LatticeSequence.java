@@ -7,11 +7,9 @@
 package xal.sim.scenario;
 
 import java.io.PrintStream;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -21,9 +19,7 @@ import xal.model.IComposite;
 import xal.model.IElement;
 import xal.model.Lattice;
 import xal.model.ModelException;
-import xal.model.Sector;
 import xal.model.elem.IdealRfGap;
-import xal.model.xml.LatticeXmlParser;
 import xal.sim.sync.SynchronizationManager;
 import xal.smf.Accelerator;
 import xal.smf.AcceleratorNode;
@@ -283,7 +279,7 @@ public class LatticeSequence extends LatticeElement implements Iterable<LatticeE
         
         return clsSeqMdl;
     }
-
+    
 
     /*
      * Operations
@@ -322,19 +318,19 @@ public class LatticeSequence extends LatticeElement implements Iterable<LatticeE
         // Create the modeling element representing this lattice sequence.
         //  Recall that this lattice sequence must be a top-level sequence
         //  since users do not have access to the sub-lattice constructor
-        Sector      secRoot = this.createModelSector(mgrSync);
+        IComposite seqRoot = this.createModelSequence(mgrSync);
         
         // Identify the first gaps in any RF Cavity and sub-cavities, then do any
         //  processing as necessary.  Right now this method does nothing since the
         //  only action, setting the isFirstGap flag, is accomplished via the XDXF
         //  configuration file.
-        this.markFirstCavityGap(secRoot);
+        this.markFirstCavityGap(seqRoot);
         
         
         // Create new lattice modeling object
         Lattice mdlLattice = new Lattice();
         
-        mdlLattice.addChild(secRoot);
+        mdlLattice.addChild(seqRoot);
 
         // Fill in the meta data and comments for the lattice
         AcceleratorSeq  smfSeqRoot = this.getHardwareNode();
@@ -425,6 +421,35 @@ public class LatticeSequence extends LatticeElement implements Iterable<LatticeE
         return smfSeq;
     }
     
+    /**
+     * <p>
+     * Creates and initializes a new modeling composite sequence represented by this
+     * object.  Java reflection is used to create a new instance from the sequence's
+     * class type.  There must be a zero constructor for the element.
+     * </p>  
+     * <p>
+     * <h4>CKA Notes</h4>
+     * &middot; The parameter initialization is done by calling the 
+     * <code>{@link IComponent#initializeFrom(LatticeElement)}</code>.  This design
+     * effectively couples the <code>xal.model</code> online model subsystem to the 
+     * <code>xal.smf</code> hardware representation subsystem.  These
+     * systems should be independent, able to function without each other.
+     * </p>
+     * 
+     * @return    a new modeling sequence for the hardware proxied by this object
+     * 
+     * @throws ModelException  Java reflection threw an <code>InstantiationException</code>
+     *
+     * @since  Jan 16, 2015
+     */
+    @Override
+    public IComposite createModelingElement() throws ModelException {        
+        IComponent component = super.createModelingElement();        
+        IComposite mdlSeq = (IComposite)component;
+
+        return mdlSeq;
+    }
+
 //    /**
 //     *
 //     * @see xal.sim.scenario.LatticeElement#createModelingElement()
@@ -687,7 +712,7 @@ public class LatticeSequence extends LatticeElement implements Iterable<LatticeE
                 //  the lattice sequence.  This should not normally occur so we throw
                 //  up an exception if we find this is so.
                 //  TODO Check that this is right
-                if (latSeqLast.getEndPosition() - latElemCurr.getStartPosition() <= EPS)
+                if (latElemCurr.getStartPosition() - latSeqLast.getEndPosition() <= EPS)
                     throw new ModelException("Collision between a nested sequence " + 
                             latSeqLast.getHardwareNode().getId() +
                             " and its parent child node " +
@@ -791,7 +816,7 @@ public class LatticeSequence extends LatticeElement implements Iterable<LatticeE
      * 
      * @throws ModelException  not sure why this is thrown 
      */
-    private Sector createModelSector(SynchronizationManager syncMgr) throws ModelException {
+    private IComposite createModelSequence(SynchronizationManager syncMgr) throws ModelException {
 
         //
         //  Need to set up the loop state variables and parameters
@@ -806,7 +831,7 @@ public class LatticeSequence extends LatticeElement implements Iterable<LatticeE
         int cntDrifts = 0;
 
         // The new model sector to be returned
-        Sector mdlSecParent = new Sector();
+        IComposite mdlSeqParent = this.createModelingElement();
 
         // Loop through each lattice element in this lattice sequence
         for (LatticeElement latElemCurr : this) {
@@ -828,13 +853,13 @@ public class LatticeSequence extends LatticeElement implements Iterable<LatticeE
                 if (this.isRfCavity()) {
                     IComponent mdlDrift = this.mapNodeToMdl.createRfCavityDrift(strDriftId, dblLenDrift, this.dblCavFreq, this.dblCavMode);
 
-                    mdlSecParent.addChild(mdlDrift);
+                    mdlSeqParent.addChild(mdlDrift);
 
                     // Else we use a regular drift space
                 } else {
                     IComponent   modDrift   = this.mapNodeToMdl.createDefaultDrift(strDriftId, dblLenDrift);
 
-                    mdlSecParent.addChild(modDrift);
+                    mdlSeqParent.addChild(modDrift);
                 }
             }
 
@@ -853,10 +878,17 @@ public class LatticeSequence extends LatticeElement implements Iterable<LatticeE
             if (latElemCurr instanceof LatticeSequence) {
                 LatticeSequence latSeqCurr = (LatticeSequence)latElemCurr;
 
-                Sector mdlSecChild = latSeqCurr.createModelSector(syncMgr);
+                IComposite mdlSeqChild = latSeqCurr.createModelSequence(syncMgr);
 
-                if (mdlSecChild instanceof IElement) 
-                    syncMgr.synchronize((IElement) mdlSecChild, smfNodeCurr);
+                mdlSeqParent.addChild(mdlSeqChild);
+                syncMgr.synchronize((IComposite)mdlSeqChild, smfNodeCurr);
+
+//                if (mdlSeqChild instanceof IElement) 
+//                    syncMgr.synchronize((IElement) mdlSeqChild, smfNodeCurr);
+//                
+//                if (mdlSeqChild instanceof IComposite)
+//                    syncMgr.synchronize((IComposite)mdlSeqChild, smfNodeCurr);
+//                
 
                 // Advance the position of the last processed element
                 // TODO I think this will work for sequences - otherwise 
@@ -869,7 +901,7 @@ public class LatticeSequence extends LatticeElement implements Iterable<LatticeE
             } else {
 
                 IComponent mdlElemCurr = latElemCurr.createModelingElement();
-                mdlSecParent.addChild(mdlElemCurr);
+                mdlSeqParent.addChild(mdlElemCurr);
 
                 if (mdlElemCurr instanceof IElement) 
                     syncMgr.synchronize((IElement) mdlElemCurr, smfNodeCurr);
@@ -886,7 +918,7 @@ public class LatticeSequence extends LatticeElement implements Iterable<LatticeE
                         + ": s= " + latElemCurr.getCenterPosition());           
         }
         
-        return mdlSecParent;
+        return mdlSeqParent;
     }
 
 
@@ -908,7 +940,10 @@ public class LatticeSequence extends LatticeElement implements Iterable<LatticeE
      * @param mdlSec    model sequence object to process RF Cavity first gaps
      *
      * @since  Dec 15, 2014   @author Christopher K. Allen
+     * @deprecated  The first gap in any cavity does not need a special flag, you can
+     *              identify it as the first cavity in the sequence (i.e., by it's index).
      */
+    @Deprecated
     private void markFirstCavityGap(IComposite mdlSec) {
 
         // We are going to search every direct child element of this model sequence

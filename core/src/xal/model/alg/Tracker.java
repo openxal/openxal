@@ -17,8 +17,6 @@ import xal.model.IAlgorithm;
 import xal.model.IElement;
 import xal.model.IProbe;
 import xal.model.ModelException;
-import xal.model.elem.IdealRfGap;
-import xal.model.probe.Probe;
 import xal.sim.scenario.AlgorithmFactory;
 import xal.smf.AcceleratorSeq;
 
@@ -734,20 +732,20 @@ public abstract class Tracker implements IAlgorithm, IArchive {
         // Temporary (hopefully) Kluge
         //  If the element is an RF gap we record the time at which the probe
         //  exited the element.
-        if (elem instanceof IdealRfGap) {
-            
-            ERROR!
-            
-            IdealRfGap      elmRfGap = (IdealRfGap)elem;
-            
-            double  dblTime   = probe.getTime();
-            double  dblCavPhs = probe.getCoupledCavityPhase();
-            
-            dblCavPhs += elmRfGap.compCoupledCavityPhaseShift(probe);
-            
-//            probe.setRfGapExitTime(dblTime);
-            probe.setCoupledCavityPhaseShift(dblCavPhs);
-        }
+//        if (elem instanceof IdealRfGap) {
+//            
+//            ERROR!
+//            
+//            IdealRfGap      elmRfGap = (IdealRfGap)elem;
+//            
+//            double  dblTime   = probe.getTime();
+//            double  dblCavPhs = probe.getCoupledCavityPhase();
+//            
+//            dblCavPhs += elmRfGap.compCoupledCavityPhaseShift(probe);
+//            
+////            probe.setRfGapExitTime(dblTime);
+//            probe.setCoupledCavityPhaseShift(dblCavPhs);
+//        }
         
         if ((this.getProbeUpdatePolicy() & Tracker.UPDATE_EXIT) == Tracker.UPDATE_EXIT)
             probe.update();

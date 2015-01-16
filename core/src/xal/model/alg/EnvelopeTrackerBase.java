@@ -2181,7 +2181,7 @@ public abstract class EnvelopeTrackerBase extends Tracker {
             double lambda = elem.wavelengthRF();
             
             // Compute the mid-gap velocity 
-            double beta = elem.betaMidGap(probe);
+            double beta = elem.compMidGapBeta(probe);
     
             // Compute the mid-gap wave number
             double k    = (2.0*Math.PI)/(beta*lambda);
