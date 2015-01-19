@@ -1,4 +1,4 @@
-# Timer filed class
+# Timer field class
 
 import sys
 import math
