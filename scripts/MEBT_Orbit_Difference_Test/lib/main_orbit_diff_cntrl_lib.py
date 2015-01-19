@@ -54,7 +54,8 @@ class Magnet_Wrapper:
 		
 	def readField(self):
 		if(not self.magnet.isPermanent()):
-			self.field = self.magnet.getFieldReadback()
+			#self.field = self.magnet.getFieldReadback()
+			self.field = self.magnet.getField()
 			if(self.inverted):
 				self.field = - self.field
 		return self.field
@@ -85,7 +86,7 @@ class Magnet_Wrapper:
 	def getUpperFieldLimit(self):
 		return self.magnet.upperFieldLimit()
 		
-	def setFiledToDesign(self):
+	def setFieldToDesign(self):
 		self.magnet.setDfltField(self.field)
 		
 	def setFieldToEPICS(self,field):
@@ -216,7 +217,7 @@ class BPM_Orbit_Holder:
 			self.bpm_x_y_dict[bpm_wrapper] = [[bpm_wrapper.x_avg,bpm_wrapper.x_err],[bpm_wrapper.y_avg,bpm_wrapper.y_err]]
 
 	def getXY_and_Err(self,bpm_wrapper):
-		[[x_avg,x_err],[y_avg,y_err]]	= 	self.bpm_x_y_dict[bpm_wrapper]
+		[[x_avg,x_err],[y_avg,y_err]] = self.bpm_x_y_dict[bpm_wrapper]
 		return (x_avg,x_err,y_avg,y_err)
 
 
@@ -242,9 +243,9 @@ class Orbit_Measurer:
 			
 	def calcStatistics(self,index):
 		if(index == 0):
-			self.bpm_orbit_holder_0.	calcStatistics()
+			self.bpm_orbit_holder_0.calcStatistics()
 		else:
-			self.bpm_orbit_holder_1.	calcStatistics()
+			self.bpm_orbit_holder_1.calcStatistics()
 			
 	def runModel(self,index):
 		if(index == 0):
@@ -278,9 +279,10 @@ class Measure_Runner(Runnable):
 			messageTextField.setText("Please select Dipole Corrector from the table first!")
 			return
 		dc_wrapper = self.mebt_main_orbit_diff_cntrl.dc_wrappers[dc_index]
+		field_old = dc_wrapper.getField()
 		orbit_measurer_cotroller_panel = self.mebt_main_orbit_diff_cntrl.orbit_measurer_cotroller_panel
-		dc_field0 = orbit_measurer_cotroller_panel.orbit_index_info_panel_0.dc_filed_txt.getValue()
-		dc_field1 = orbit_measurer_cotroller_panel.orbit_index_info_panel_1.dc_filed_txt.getValue()
+		dc_field0 = orbit_measurer_cotroller_panel.orbit_index_info_panel_0.dc_field_txt.getValue()
+		dc_field1 = orbit_measurer_cotroller_panel.orbit_index_info_panel_1.dc_field_txt.getValue()
 		n_avg = int(orbit_measurer_cotroller_panel.avg_number_txt.getValue())
 		if(n_avg <= 0): return
 		time_step = orbit_measurer_cotroller_panel.time_step_txt.getValue()
@@ -288,8 +290,12 @@ class Measure_Runner(Runnable):
 		orbit_measurer = self.mebt_main_orbit_diff_cntrl.orbit_measurer
 		#---------------------------------------------
 		count = 0
-		if(self.mebt_main_orbit_diff_cntrl.measure_running):		
-			dc_wrapper.setFieldToEPICS(dc_field0)
+		if(self.mebt_main_orbit_diff_cntrl.measure_running):	
+			try:
+				dc_wrapper.setFieldToEPICS(dc_field0)
+			except:
+				messageTextField.setText("Cannot setup Corrector's "+dc_wrapper.magnet.getId()+" field!")
+				return				
 			orbit_measurer.init(0)
 			for it in range(n_avg):
 				time.sleep(time_step)
@@ -299,7 +305,11 @@ class Measure_Runner(Runnable):
 				orbit_measurer.accountSignal(0)
 			if(self.mebt_main_orbit_diff_cntrl.measure_running):	
 				orbit_measurer.calcStatistics(0)
-				dc_wrapper.setFieldToEPICS(dc_field1)
+				try:
+					dc_wrapper.setFieldToEPICS(dc_field1)
+				except:
+					messageTextField.setText("Cannot setup Corrector's "+dc_wrapper.magnet.getId()+" field!")
+					return					
 				time.sleep(time_step)
 				if(self.mebt_main_orbit_diff_cntrl.measure_running):
 					orbit_measurer.init(1)
@@ -311,12 +321,12 @@ class Measure_Runner(Runnable):
 						orbit_measurer.accountSignal(1)
 					orbit_measurer.calcStatistics(1)
 		#--------------------------------	
-		field_old = dc_wrapper.getField()
 		dc_wrapper.setField(dc_field0)
 		orbit_measurer.runModel(0)
 		dc_wrapper.setField(dc_field1)
 		orbit_measurer.runModel(1)
 		dc_wrapper.setRawField(field_old)
+		dc_wrapper.setFieldToEPICS(field_old)
 		self.mebt_main_orbit_diff_cntrl.orbit_diff_graphs_panel.updateGraphData()		
 		
 #------------------------------------------------
@@ -326,7 +336,7 @@ class Magnet_Table_Model(AbstractTableModel):
 	def __init__(self,mebt_main_orbit_diff_cntrl,magnet_wrappers):
 		self.mebt_main_orbit_diff_cntrl = mebt_main_orbit_diff_cntrl
 		self.magnet_wrappers = magnet_wrappers
-		self.columnNames = ["Magnet","Z[m]","Filed","Rev. Polarity"]	
+		self.columnNames = ["Magnet","Z[m]","Field","Rev. Polarity"]	
 		self.string_class = String().getClass()
 		self.boolean_class = Boolean(true).getClass()
 		
@@ -470,7 +480,7 @@ class Correction_Coeffs_Panel(JPanel):
 		self.dtl_cav_coeff_wheel.setFormat("+#.####")
 		self.dtl_cav_coeff_wheel.setValue(1.)
 		self.dtl_cav_coeff_wheel.addPropertyChangeListener("value", DTL_Cav_Coeffs_Wheel_Listener(self.mebt_main_orbit_diff_cntrl))	
-		quad_label = JLabel("DTL Quad Filed Coeffs:",JLabel.RIGHT)
+		quad_label = JLabel("DTL Quad Field Coeffs:",JLabel.RIGHT)
 		cav_label = JLabel("      DTL Cav. Amp. Coeffs:",JLabel.RIGHT)
 		self.add(quad_label)
 		self.add(self.dtl_quad_coeff_wheel)
@@ -682,8 +692,8 @@ class Orbit_Diff_Graphs_Panel(JPanel):
 				self.x_model_diff_gd.addPoint(pos,x1-x0)
 				self.y_model_diff_gd.addPoint(pos,y1-y0)
 		#----------------------------------------------
-		bpm_orbit_holder_0.calcStatistics()
-		bpm_orbit_holder_1.calcStatistics()
+		#bpm_orbit_holder_0.calcStatistics()
+		#bpm_orbit_holder_1.calcStatistics()
 		for bpm_wrapper in bpm_wrappers:
 			if(bpm_wrapper.use):		
 				(x0,x0_err,y0,y0_err) = bpm_orbit_holder_0.getXY_and_Err(bpm_wrapper)
@@ -715,13 +725,13 @@ class Orbit_Index_Info_Panel(JPanel):
 		label = JLabel("Orbit #"+str(index)+"  ",JLabel.LEFT)
 		self.dc_label = JLabel("Dipole Corr.: none  ",JLabel.RIGHT)
 		field_label = JLabel("  field[T]=",JLabel.RIGHT)
-		self.dc_filed_txt = DoubleInputTextField(0.0,FortranNumberFormat("G8.5"),10)
+		self.dc_field_txt = DoubleInputTextField(0.0,FortranNumberFormat("G8.5"),10)
 		percent_label = JLabel("   % of Max Field=",JLabel.RIGHT)
 		self.percent_txt = DoubleInputTextField(90.0,FortranNumberFormat("G3.0"),5)
 		self.add(label)
 		self.add(self.dc_label)
 		self.add(field_label)
-		self.add(self.dc_filed_txt)
+		self.add(self.dc_field_txt)
 		self.add(percent_label)
 		self.add(self.percent_txt)
 		
@@ -775,11 +785,11 @@ class Orbit_Measurer_Controller_Panel(JPanel):
 				return
 			dc_wrapper = self.mebt_main_orbit_diff_cntrl.dc_wrappers[dc_index]
 			field_old = dc_wrapper.getField()			
-			dc_field = self.orbit_index_info_panel_0.dc_filed_txt.getValue()
+			dc_field = self.orbit_index_info_panel_0.dc_field_txt.getValue()
 			dc_wrapper.setField(dc_field)
 			orbit_measurer = self.mebt_main_orbit_diff_cntrl.orbit_measurer
 			orbit_measurer.runModel(0)
-			dc_field = self.orbit_index_info_panel_1.dc_filed_txt.getValue()
+			dc_field = self.orbit_index_info_panel_1.dc_field_txt.getValue()
 			dc_wrapper.setField(dc_field)
 			orbit_measurer.runModel(1)
 			dc_wrapper.setRawField(field_old)
@@ -829,8 +839,8 @@ class DCs_Table_Selection_Listener(ListSelectionListener):
 		coeff1 = orbit_index_info_panel_1.percent_txt.getValue()/100.
 		field0 = - dc_wrapper.getUpperFieldLimit()*coeff0 
 		field1 = dc_wrapper.getUpperFieldLimit()*coeff1 
-		orbit_index_info_panel_0.dc_filed_txt.setValue(field0)
-		orbit_index_info_panel_1.dc_filed_txt.setValue(field1)
+		orbit_index_info_panel_0.dc_field_txt.setValue(field0)
+		orbit_index_info_panel_1.dc_field_txt.setValue(field1)
 		
 
 class Replot_Button_Listener(ActionListener):
@@ -891,7 +901,7 @@ class DTL_Quad_Coeffs_Wheel_Listener	(PropertyChangeListener):
 		val = wheel.getValue()	
 		for quad_wrapper in self.mebt_main_orbit_diff_cntrl.perm_quads_wrappers:
 			quad_wrapper.scale(val)
-			quad_wrapper.setFiledToDesign()
+			quad_wrapper.setFieldToDesign()
 			#print "debug quad=",quad_wrapper.magnet.getId()," dfltF=",quad_wrapper.magnet.getDfltField()," DesgnF=",quad_wrapper.magnet.getDesignField()
 		orbit_measurer_cotroller_panel = self.mebt_main_orbit_diff_cntrl.orbit_measurer_cotroller_panel
 		orbit_measurer_cotroller_panel.runModel()			
