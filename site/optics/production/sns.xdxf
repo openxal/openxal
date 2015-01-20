@@ -1,6 +1,6 @@
 <?xml version = '1.0' encoding = 'UTF-8'?>
 <!DOCTYPE xdxf SYSTEM "xdxf.dtd">
-<xdxf system="sns" ver="2.0.0" date="Wed Jul 23 10:35:06 EDT 2014">
+<xdxf system="sns" ver="2.0.0" date="Tue Jan 20 11:07:11 EST 2015">
   <comboseq id="MEBT-DTL">
 	  <sequence id="MEBT"/>
 	  <sequence id="DTL1"/>
@@ -31153,25 +31153,53 @@
        <attributes>
           <align x="0.0" y="0.0" z="0.0" pitch="0" yaw="0" roll="0"/>
        </attributes>
-		<channelsuite name="harpsuite">
-			<channel handle="xAmp" signal="RTBT_Diag:Harp30:AmpX_Rb" settable="false"/>
-			<channel handle="yAmp" signal="RTBT_Diag:Harp30:AmpY_Rb" settable="false"/>
-			<channel handle="diagAmp" signal="RTBT_Diag:Harp30:AmpZ_Rb" settable="false"/>
-			<channel handle="xSigma" signal="RTBT_Diag:Harp30:SigmaX_Rb" settable="false"/>
-			<channel handle="ySigma" signal="RTBT_Diag:Harp30:SigmaY_Rb" settable="false"/>
-			<channel handle="diagSigma" signal="RTBT_Diag:Harp30:SigmaZ_Rb" settable="false"/>
-			<channel handle="xOffset" signal="RTBT_Diag:Harp30:OffsetX_Rb" settable="false"/>
-			<channel handle="yOffset" signal="RTBT_Diag:Harp30:OffsetY_Rb" settable="false"/>
-			<channel handle="diagOffset" signal="RTBT_Diag:Harp30:OffsetZ_Rb" settable="false"/>
-			<channel handle="xRMS" signal="RTBT_Diag:Harp30:RMSX_Rb" settable="false"/>
-			<channel handle="yRMS" signal="RTBT_Diag:Harp30:RMSY_Rb" settable="false"/>
-			<channel handle="diagRMS" signal="RTBT_Diag:Harp30:RMSZ_Rb" settable="false"/>
-			<channel handle="xRMS1" signal="RTBT_Diag:Harp30:RMS1X_Rb" settable="false"/>
-			<channel handle="yRMS1" signal="RTBT_Diag:Harp30:RMS1Y_Rb" settable="false"/>
-			<channel handle="diagRMS1" signal="RTBT_Diag:Harp30:RMS1Z_Rb" settable="false"/>
-			<channel handle="xPosAvg" signal="RTBT_Diag:Harp30:RMSPX_Rb" settable="false"/>
-			<channel handle="yPosAvg" signal="RTBT_Diag:Harp30:RMSPY_Rb" settable="false"/>
-			<channel handle="diagPosAvg" signal="RTBT_Diag:Harp30:RMSPZ_Rb" settable="false"/>
+       <channelsuite name="harpsuite">
+          <channel handle="Command" signal="RTBT_Diag:Harp30:Command" settable="true"/>
+          <channel handle="CommandResult" signal="RTBT_Diag:Harp30:CommandResult" settable="false"/>
+          <channel handle="StatDevStatus" signal="RTBT_Diag:Harp30:Status" settable="false"/>
+          <channel handle="StatCtrlStatus" signal="RTBT_Diag:Harp30:ManualCtrlStatus_Rb" settable="false"/>
+          <channel handle="StatMpsStatus" signal="RTBT_Diag:Harp30:MPSstatus_Rb" settable="false"/>
+          <channel handle="StatHarpInsert" signal="RTBT_Diag:Harp30:insert_Rb" settable="false"/>
+          <channel handle="StatHarpRetract" signal="RTBT_Diag:Harp30:retract_Rb" settable="false"/>
+          <channel handle="StatHarpStop" signal="RTBT_Diag:Harp30:stop_Rb" settable="false"/>
+          <channel handle="StatCmdResult" signal="RTBT_Diag:Harp30:CommandResult" settable="false"/>
+          <channel handle="StatFitType" signal="RTBT_Diag:Harp30:Fit_Type" settable="false"/>
+          <channel handle="StatRecHorWires" signal="RTBT_Diag:Harp30:WireXEnable_Rb" settable="false"/>
+          <channel handle="StatRecVerWires" signal="RTBT_Diag:Harp30:WireYEnable_Rb" settable="false"/>
+          <channel handle="StatRecDiaWires" signal="RTBT_Diag:Harp30:WireZEnable_Rb" settable="false"/>
+          <channel handle="CfgGainCmnRb" signal="RTBT_Diag:Harp30:Gain_Rb" settable="false"/>
+          <channel handle="CfgGainCmnSet" signal="RTBT_Diag:Harp30:Gain" settable="true"/>
+          <channel handle="CfgTrgDelayRb" signal="RTBT_Diag:Harp30:Delay_Rb" settable="false"/>
+          <channel handle="CfgTrgDelaySet" signal="RTBT_Diag:Harp30:Delay" settable="true"/>
+          <channel handle="CfgTrgEventRb" signal="RTBT_Diag:Harp30:Event_Rb" settable="false"/>
+          <channel handle="CfgTrgEventSet" signal="RTBT_Diag:Harp30:Event" settable="true"/>
+          <channel handle="FitAttrHorAmp" signal="RTBT_Diag:Harp30:AmpX_Rb" settable="false"/>
+          <channel handle="FitAttrVerAmp" signal="RTBT_Diag:Harp30:AmpY_Rb" settable="false"/>
+          <channel handle="FitAttrDiaAmp" signal="RTBT_Diag:Harp30:AmpZ_Rb" settable="false"/>
+          <channel handle="FitAttrHorArea" signal="RTBT_Diag:Harp30:IntX_Rb" settable="false"/>
+          <channel handle="FitAttrVerArea" signal="RTBT_Diag:Harp30:IntY_Rb" settable="false"/>
+          <channel handle="FitAttrDiaArea" signal="RTBT_Diag:Harp30:IntZ_Rb" settable="false"/>
+          <channel handle="FitAttrHorMean" signal="RTBT_Diag:Harp30:CentX_Rb" settable="false"/>
+          <channel handle="FitAttrVerMean" signal="RTBT_Diag:Harp30:CentY_Rb" settable="false"/>
+          <channel handle="FitAttrDiaMean" signal="RTBT_Diag:Harp30:CentZ_Rb" settable="false"/>
+          <channel handle="FitAttrHorOffset" signal="RTBT_Diag:Harp30:OffsetX_Rb" settable="false"/>
+          <channel handle="FitAttrVerOffset" signal="RTBT_Diag:Harp30:OffsetY_Rb" settable="false"/>
+          <channel handle="FitAttrDiaOffset" signal="RTBT_Diag:Harp30:OffsetZ_Rb" settable="false"/>
+          <channel handle="FitAttrHorStd" signal="RTBT_Diag:Harp30:RMSX_Rb" settable="false"/>
+          <channel handle="FitAttrVerStd" signal="RTBT_Diag:Harp30:RMSY_Rb" settable="false"/>
+          <channel handle="FitAttrDiaStd" signal="RTBT_Diag:Harp30:RMSZ_Rb" settable="false"/>
+          <channel handle="DatHorRawPositions" signal="RTBT_Diag:Harp30:PosX_Rb" settable="false"/>
+          <channel handle="DatVerRawPositions" signal="RTBT_Diag:Harp30:PosY_Rb" settable="false"/>
+          <channel handle="DatDiaRawPositions" signal="RTBT_Diag:Harp30:PosZ_Rb" settable="false"/>
+          <channel handle="DatHorRawSignal" signal="RTBT_Diag:Harp30:SignalX_Rb" settable="false"/>
+          <channel handle="DatVerRawSignal" signal="RTBT_Diag:Harp30:SignalY_Rb" settable="false"/>
+          <channel handle="DatDiaRawSignal" signal="RTBT_Diag:Harp30:SignalZ_Rb" settable="false"/>
+          <channel handle="DatHorFitPositions" signal="RTBT_Diag:Harp30:A_PosX_Rb" settable="false"/>
+          <channel handle="DatVerFitPositions" signal="RTBT_Diag:Harp30:A_PosY_Rb" settable="false"/>
+          <channel handle="DatDiaFitPositions" signal="RTBT_Diag:Harp30:A_PosZ_Rb" settable="false"/>
+          <channel handle="DatHorFitSignal" signal="RTBT_Diag:Harp30:A_SignalX_Rb" settable="false"/>
+          <channel handle="DatVerFitSignal" signal="RTBT_Diag:Harp30:A_SignalY_Rb" settable="false"/>
+          <channel handle="DatDiaFitSignal" signal="RTBT_Diag:Harp30:A_SignalZ_Rb" settable="false"/>
        </channelsuite>
     </node>
     <node type="RBPM" id="RTBT_Diag:BPM30" pos="88.810507" len="0.0" status="true">
