@@ -2,6 +2,40 @@
 <!DOCTYPE xdxf SYSTEM "xdxf.dtd">
 <!-- adjust corrector polarities to match the calibration -->
 <xdxf date="08.25.2011" system="sns" ver="3.0.0">
+    <sequence id="MEBT">
+	<node id="MEBT_Mag:DCH01">
+		<attributes>
+			<magnet polarity="-1" />
+		</attributes>
+	</node>
+	<node id="MEBT_Mag:DCV01">
+		<attributes>
+			<magnet polarity="-1" />
+		</attributes>
+	</node> 
+	<node id="MEBT_Mag:DCV04">
+		<attributes>
+			<magnet polarity="-1" />
+		</attributes>
+	</node> 
+   	<node id="MEBT_Mag:DCH05">
+		<attributes>
+			<magnet polarity="-1" />
+		</attributes>
+	</node> 
+	<node id="MEBT_Mag:DCH10">
+		<attributes>
+			<magnet polarity="-1" />
+		</attributes>
+	</node> 
+	<node id="MEBT_Mag:DCH11">
+		<attributes>
+			<magnet polarity="-1" />
+		</attributes>
+	</node> 
+    </sequence>
+
+
     <sequence id="Ring1">
         <node id="Ring_Mag:DCH_A13">
             <attributes>

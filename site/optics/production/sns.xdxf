@@ -1,6 +1,6 @@
 <?xml version = '1.0' encoding = 'UTF-8'?>
 <!DOCTYPE xdxf SYSTEM "xdxf.dtd">
-<xdxf system="sns" ver="2.0.0" date="Tue Jan 20 11:07:11 EST 2015">
+<xdxf system="sns" ver="2.0.0" date="Tue Jan 20 11:13:31 EST 2015">
   <comboseq id="MEBT-DTL">
 	  <sequence id="MEBT"/>
 	  <sequence id="DTL1"/>
