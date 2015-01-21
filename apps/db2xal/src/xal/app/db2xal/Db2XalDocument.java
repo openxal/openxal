@@ -10,17 +10,15 @@ package xal.app.db2xal;
 
 //import java.sql.*;
 import java.io.*;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.sql.SQLException;
-
 import java.net.URL;
-
 import java.util.*;
 import java.awt.event.*;
+
 import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.text.*;
@@ -29,10 +27,8 @@ import javax.swing.JToggleButton.ToggleButtonModel;
 import xal.extension.application.smf.*;
 import xal.tools.xml.*;
 import xal.tools.data.*;
-
 import xal.extension.application.*;
 import xal.tools.apputils.NonConsecutiveSeqSelector; 
-
 import xal.tools.database.ConnectionDictionary;
 //import gov.sns.tools.database.*;
 
@@ -1104,30 +1100,97 @@ public class Db2XalDocument extends AcceleratorDocument implements DataListener 
 							chSuiteTag = false;
 						} 
 						else if (rset.getString("DVC_TYPE_ID").equals("Harp")) {
-							str = str.concat( "\t\t<channelsuite name=\"harpsuite\">\n"
-							+ "\t\t\t<channel handle=\"xAmp\" signal=\"" + deviceID + ":AmpX_Rb\" settable=\"false\"/>\n"
-							+ "\t\t\t<channel handle=\"yAmp\" signal=\"" + deviceID + ":AmpY_Rb\" settable=\"false\"/>\n"
-							+ "\t\t\t<channel handle=\"diagAmp\" signal=\"" + deviceID + ":AmpZ_Rb\" settable=\"false\"/>\n"
-							+ "\t\t\t<channel handle=\"xSigma\" signal=\"" + deviceID + ":SigmaX_Rb\" settable=\"false\"/>\n"
-						    + "\t\t\t<channel handle=\"ySigma\" signal=\"" + deviceID + ":SigmaY_Rb\" settable=\"false\"/>\n"
-						    + "\t\t\t<channel handle=\"diagSigma\" signal=\"" + deviceID + ":SigmaZ_Rb\" settable=\"false\"/>\n"
-						    + "\t\t\t<channel handle=\"xOffset\" signal=\"" + deviceID + ":OffsetX_Rb\" settable=\"false\"/>\n"
-						    + "\t\t\t<channel handle=\"yOffset\" signal=\"" + deviceID + ":OffsetY_Rb\" settable=\"false\"/>\n"
-						    + "\t\t\t<channel handle=\"diagOffset\" signal=\"" + deviceID + ":OffsetZ_Rb\" settable=\"false\"/>\n"
-							+ "\t\t\t<channel handle=\"xRMS\" signal=\"" + deviceID + ":RMSX_Rb\" settable=\"false\"/>\n"
-							+ "\t\t\t<channel handle=\"yRMS\" signal=\"" + deviceID + ":RMSY_Rb\" settable=\"false\"/>\n"
-							+ "\t\t\t<channel handle=\"diagRMS\" signal=\"" + deviceID + ":RMSZ_Rb\" settable=\"false\"/>\n"
-							+ "\t\t\t<channel handle=\"xRMS1\" signal=\"" + deviceID + ":RMS1X_Rb\" settable=\"false\"/>\n"
-							+ "\t\t\t<channel handle=\"yRMS1\" signal=\"" + deviceID + ":RMS1Y_Rb\" settable=\"false\"/>\n"
-							+ "\t\t\t<channel handle=\"diagRMS1\" signal=\"" + deviceID + ":RMS1Z_Rb\" settable=\"false\"/>\n"
-							+ "\t\t\t<channel handle=\"xPosAvg\" signal=\"" + deviceID + ":RMSPX_Rb\" settable=\"false\"/>\n"
-							+ "\t\t\t<channel handle=\"yPosAvg\" signal=\"" + deviceID + ":RMSPY_Rb\" settable=\"false\"/>\n"
-							+ "\t\t\t<channel handle=\"diagPosAvg\" signal=\"" + deviceID + ":RMSPZ_Rb\" settable=\"false\"/>\n"
-							);
-							chSuiteTag = true;
+
+
+						    if ( softType != null && softType.toLowerCase().contains( "version 2.0.0" ) ) {
+						        final Map<String,String> signalTable = fetchSignals( SIGNAL_FETCH, deviceID );
+						        str += "       <channelsuite name=\"harpsuite\">\n";
+
+						        str += channelEntry( "Command", "Command", signalTable, true );
+						        str += channelEntry( "CommandResult", "CommandResult", signalTable, false );
+
+						        str += channelEntry( "StatDevStatus", "Status", signalTable, false);
+						        str += channelEntry( "StatCtrlStatus", "ManualCtrlStatus_Rb", signalTable, false);
+						        str += channelEntry( "StatMpsStatus", "MPSstatus_Rb", signalTable, false);
+						        str += channelEntry( "StatHarpInsert", "insert_Rb", signalTable, false);
+						        str += channelEntry( "StatHarpRetract", "retract_Rb", signalTable, false);
+						        str += channelEntry( "StatHarpStop", "stop_Rb", signalTable, false);
+						        str += channelEntry( "StatCmdResult", "CommandResult", signalTable, false);
+
+						        str += channelEntry( "StatFitType", "Fit_Type", signalTable, false);
+						        str += channelEntry( "StatRecHorWires", "WireXEnable_Rb", signalTable, false);
+						        str += channelEntry( "StatRecVerWires", "WireYEnable_Rb", signalTable, false);
+						        str += channelEntry( "StatRecDiaWires", "WireZEnable_Rb", signalTable, false);
+
+						        str += channelEntry( "CfgGainCmnRb", "Gain_Rb", signalTable, false);
+						        str += channelEntry( "CfgGainCmnSet", "Gain", signalTable, true);
+//						        str += channelEntry( "CfgGainHorRb", "GainX", signalTable, false);
+//						        str += channelEntry( "CfgGainHorSet", "GainX", signalTable, true);
+//						        str += channelEntry( "CfgGainVerRb", "GainY", signalTable, false);
+//						        str += channelEntry( "CfgGainVerSet", "GainY", signalTable, true);
+//						        str += channelEntry( "CfgGainDiaRb", "GainZ", signalTable, false);
+//						        str += channelEntry( "CfgGainDiaSet", "GainZ", signalTable, true);
+						        str += channelEntry( "CfgTrgDelayRb", "Delay_Rb", signalTable, false);
+						        str += channelEntry( "CfgTrgDelaySet", "Delay", signalTable, true);
+						        str += channelEntry( "CfgTrgEventRb", "Event_Rb", signalTable, false);
+						        str += channelEntry( "CfgTrgEventSet", "Event", signalTable, true);
+
+						        str += channelEntry( "FitAttrHorAmp", "AmpX_Rb", signalTable, false);
+						        str += channelEntry( "FitAttrVerAmp", "AmpY_Rb", signalTable, false);
+						        str += channelEntry( "FitAttrDiaAmp", "AmpZ_Rb", signalTable, false);
+						        str += channelEntry( "FitAttrHorArea", "IntX_Rb", signalTable, false);
+						        str += channelEntry( "FitAttrVerArea", "IntY_Rb", signalTable, false);
+						        str += channelEntry( "FitAttrDiaArea", "IntZ_Rb", signalTable, false);
+						        str += channelEntry( "FitAttrHorMean", "CentX_Rb", signalTable, false);
+						        str += channelEntry( "FitAttrVerMean", "CentY_Rb", signalTable, false);
+						        str += channelEntry( "FitAttrDiaMean", "CentZ_Rb", signalTable, false);
+						        str += channelEntry( "FitAttrHorOffset", "OffsetX_Rb", signalTable, false);
+						        str += channelEntry( "FitAttrVerOffset", "OffsetY_Rb", signalTable, false);
+						        str += channelEntry( "FitAttrDiaOffset", "OffsetZ_Rb", signalTable, false);
+						        str += channelEntry( "FitAttrHorStd", "RMSX_Rb", signalTable, false);
+						        str += channelEntry( "FitAttrVerStd", "RMSY_Rb", signalTable, false);
+						        str += channelEntry( "FitAttrDiaStd", "RMSZ_Rb", signalTable, false);
+
+						        str += channelEntry( "DatHorRawPositions", "PosX_Rb", signalTable, false);
+						        str += channelEntry( "DatVerRawPositions", "PosY_Rb", signalTable, false);
+						        str += channelEntry( "DatDiaRawPositions", "PosZ_Rb", signalTable, false);
+						        str += channelEntry( "DatHorRawSignal", "SignalX_Rb", signalTable, false);
+						        str += channelEntry( "DatVerRawSignal", "SignalY_Rb", signalTable, false);
+						        str += channelEntry( "DatDiaRawSignal", "SignalZ_Rb", signalTable, false);
+
+						        str += channelEntry( "DatHorFitPositions", "A_PosX_Rb", signalTable, false);
+						        str += channelEntry( "DatVerFitPositions", "A_PosY_Rb", signalTable, false);
+						        str += channelEntry( "DatDiaFitPositions", "A_PosZ_Rb", signalTable, false);
+						        str += channelEntry( "DatHorFitSignal", "A_SignalX_Rb", signalTable, false);
+						        str += channelEntry( "DatVerFitSignal", "A_SignalY_Rb", signalTable, false);
+						        str += channelEntry( "DatDiaFitSignal", "A_SignalZ_Rb", signalTable, false);
+
+						    } else {
+						        str = str.concat( "\t\t<channelsuite name=\"harpsuite\">\n"
+						                + "\t\t\t<channel handle=\"xAmp\" signal=\"" + deviceID + ":AmpX_Rb\" settable=\"false\"/>\n"
+						                + "\t\t\t<channel handle=\"yAmp\" signal=\"" + deviceID + ":AmpY_Rb\" settable=\"false\"/>\n"
+						                + "\t\t\t<channel handle=\"diagAmp\" signal=\"" + deviceID + ":AmpZ_Rb\" settable=\"false\"/>\n"
+						                + "\t\t\t<channel handle=\"xSigma\" signal=\"" + deviceID + ":SigmaX_Rb\" settable=\"false\"/>\n"
+						                + "\t\t\t<channel handle=\"ySigma\" signal=\"" + deviceID + ":SigmaY_Rb\" settable=\"false\"/>\n"
+						                + "\t\t\t<channel handle=\"diagSigma\" signal=\"" + deviceID + ":SigmaZ_Rb\" settable=\"false\"/>\n"
+						                + "\t\t\t<channel handle=\"xOffset\" signal=\"" + deviceID + ":OffsetX_Rb\" settable=\"false\"/>\n"
+						                + "\t\t\t<channel handle=\"yOffset\" signal=\"" + deviceID + ":OffsetY_Rb\" settable=\"false\"/>\n"
+						                + "\t\t\t<channel handle=\"diagOffset\" signal=\"" + deviceID + ":OffsetZ_Rb\" settable=\"false\"/>\n"
+						                + "\t\t\t<channel handle=\"xRMS\" signal=\"" + deviceID + ":RMSX_Rb\" settable=\"false\"/>\n"
+						                + "\t\t\t<channel handle=\"yRMS\" signal=\"" + deviceID + ":RMSY_Rb\" settable=\"false\"/>\n"
+						                + "\t\t\t<channel handle=\"diagRMS\" signal=\"" + deviceID + ":RMSZ_Rb\" settable=\"false\"/>\n"
+						                + "\t\t\t<channel handle=\"xRMS1\" signal=\"" + deviceID + ":RMS1X_Rb\" settable=\"false\"/>\n"
+						                + "\t\t\t<channel handle=\"yRMS1\" signal=\"" + deviceID + ":RMS1Y_Rb\" settable=\"false\"/>\n"
+						                + "\t\t\t<channel handle=\"diagRMS1\" signal=\"" + deviceID + ":RMS1Z_Rb\" settable=\"false\"/>\n"
+						                + "\t\t\t<channel handle=\"xPosAvg\" signal=\"" + deviceID + ":RMSPX_Rb\" settable=\"false\"/>\n"
+						                + "\t\t\t<channel handle=\"yPosAvg\" signal=\"" + deviceID + ":RMSPY_Rb\" settable=\"false\"/>\n"
+						                + "\t\t\t<channel handle=\"diagPosAvg\" signal=\"" + deviceID + ":RMSPZ_Rb\" settable=\"false\"/>\n"
+						                );
+						    }
+						    chSuiteTag = true;
 						}
 						else {
-							chSuiteTag = false;
+						    chSuiteTag = false;
 						}
 						tmpCounter++;
 					}
