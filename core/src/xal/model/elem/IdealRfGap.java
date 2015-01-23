@@ -898,7 +898,7 @@ public class IdealRfGap extends ThinElement implements IRfGap, IRfCavityCell {
     public double energyGain(IProbe probe) {
         double  dW = this.compGapPhaseAndEnergyGain(probe).W;
 
-        System.out.println("IdealRfGap#energyGain() - " + this.getId() + " index=" + this.indCell + ", dW = " + dW);
+//        System.out.println("IdealRfGap#energyGain() - " + this.getId() + " index=" + this.indCell + ", dW = " + dW);
         
         return dW;
     }
