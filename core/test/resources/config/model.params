@@ -26,13 +26,13 @@
     
     
     <table name="Algorithm">
-        <!-- This table is going to be deprecated.  We should not support a "default algorithm" for every probe -->
+        <!-- This table's function has been updated.  We should not support a "default algorithm" for every probe -->
 	    <schema>
-			<attribute isPrimaryKey="true"  name="name"           type="java.lang.String" />
-			<attribute isPrimaryKey="false" name="type"           type="java.lang.String" defaultValue="xal.model.alg.EnvTrackerAdapt" />
+			<attribute isPrimaryKey="true"  name="name"           type="java.lang.String"/>
+			<!-- attribute isPrimaryKey="false" name="type"           type="java.lang.String" defaultValue="xal.model.alg.EnvTrackerAdapt" -->
 			<attribute isPrimaryKey="false" name="update" 		  type="java.lang.Integer" defaultValue="2" />
 			<attribute isPrimaryKey="false" name="debug"          type="java.lang.Boolean" defaultValue="false" />
-			<attribute isPrimaryKey="false" name="calcRfGapPhase" type="java.lang.Boolean" defaultValue="false" />
+			<attribute isPrimaryKey="true" name="calcRfGapPhase" type="java.lang.Boolean" defaultValue="true" />
 		</schema>
 		<record name="default" />
     </table>

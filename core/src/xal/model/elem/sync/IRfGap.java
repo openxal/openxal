@@ -30,6 +30,13 @@ public interface IRfGap /*extends gov.sns.xal.model.IElement*/ {
     public void setETL(double dblETL);
     
     /**
+     *  Set the on accelerating field
+     *  
+     * @param E - the on axis field (V/m)
+     */
+    public void setE0(double E);
+
+    /**
      *  Set the phase delay of the RF in gap with respect to the synchronous particle.
      *  The actual energy gain from the gap is given by qETLcos(dblPhi) where dbkPhi is 
      *  the phase delay.
@@ -69,16 +76,19 @@ public interface IRfGap /*extends gov.sns.xal.model.IElement*/ {
      */
     public double getFrequency();
 
-    /**
-     *  Set the on accelerating field
-     *  
-     * @param E - the on axis field (V/m)
-     */
-    public void setE0(double E);
-
     /** 
      * Get the on accelerating field (V/m)
      */   
     public double getE0();
+    
+    /**
+     * Indicates whether or not this gap is in the first cell of an RF cavity.
+     * 
+     * @return  <code>true</code> if this is the first gap in an RF cavity,
+     *          <code>false</code> otherwise
+     *
+     * @since  Jan 23, 2015   by Christopher K. Allen
+     */
+    public boolean isFirstGap();
 
 };

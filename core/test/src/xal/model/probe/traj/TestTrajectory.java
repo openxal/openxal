@@ -19,6 +19,7 @@ import xal.model.IAlgorithm;
 import xal.model.IComponent;
 import xal.model.Lattice;
 import xal.model.ModelException;
+import xal.model.elem.Element;
 import xal.model.probe.EnvelopeProbe;
 import xal.model.probe.ParticleProbe;
 import xal.model.probe.Probe;
@@ -156,7 +157,10 @@ public class TestTrajectory {
         System.out.println("ELEMENTS contained in MODEL");
         while (itrCmps.hasNext()) {
             IComponent cmp = itrCmps.next();
-            System.out.println("  " + index + " " + cmp.getId());
+            if (cmp instanceof Element)
+                System.out.println("  " + index + " " + (Element)cmp);
+            else
+                System.out.println("  " + index + " " + cmp.getId());
             index++;
         }
     }

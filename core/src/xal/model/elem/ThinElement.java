@@ -80,9 +80,9 @@ public abstract class ThinElement extends Element {
         
     
     /**
-     * Again, this is a kluge just as in the base class <code>Element</code>.
-     * We return zero since the notion of frequency is not defined for most 
-     * elements.  For those elements that due create a phase advance they
+     * Again, this is a kluge.
+     * We return zero since the notion of frequency is not defined for every
+     * element.  For those elements that do create a phase advance they
      * need to override this method.
      * 
      * @param probe     probe experiencing a phase advance through this element
@@ -97,7 +97,7 @@ public abstract class ThinElement extends Element {
     }
     
     /*
-     *  IElement Interface
+     *  IComponent Interface
      */
     
     /** 
@@ -107,6 +107,11 @@ public abstract class ThinElement extends Element {
      */
     @Override
     public double getLength() { return 0.0; };
+
+    
+    /*
+     *  IElement Interface
+     */
     
     /**
      * Returns the time taken for the probe to drift through part of the
@@ -137,7 +142,10 @@ public abstract class ThinElement extends Element {
     
     /**
      * Calculate the longitudinal phase advance through this element ignoring the
-     * length parameter.
+     * length parameter (or lack thereof). We simply return
+     * 0 assume the zero length of this element allows no phase advance.  Of course
+     * there are thin elements which do create a finite phase advance (e.g., an
+     * RF gap), those element must override this method.
      *
      * @see xal.model.elem.Element#longitudinalPhaseAdvance(xal.model.IProbe, double)
      *

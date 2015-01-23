@@ -13,6 +13,7 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 
 import xal.model.IAlgorithm;
+import xal.model.IComposite;
 import xal.model.IElement;
 import xal.model.IProbe;
 import xal.model.ModelException;
@@ -46,6 +47,14 @@ public abstract class Element implements IElement {
     
     
     /*
+     *  Class loader initialization
+     */
+    static {
+        s_cntInstances = 0;
+    };
+    
+    
+    /*
      *  Local Attributes
      */
 
@@ -61,6 +70,8 @@ public abstract class Element implements IElement {
     /** Identifier string of the model hardware node */
     private String      strSmfId;
     
+    /** the parent composite structure that owns this element */
+    private IComposite  cpsParent;
     
 //  sako
     //position in s (m)
@@ -69,7 +80,7 @@ public abstract class Element implements IElement {
     
     //sako closeElements (for fringe field calculations)
     /** 
-     * This is a containger of nearest-neighbor elements used for computing
+     * This is a container of nearest-neighbor elements used for computing
      * transfer maps in the presence of permanent magnet quadrupoles.
      */
     private ArrayList<Element> closeElements = null;
@@ -80,17 +91,7 @@ public abstract class Element implements IElement {
     private double aligny = 0.0;
     private double alignz = 0.0;
     
-    
-  
-    
-    /*
-     *  Class loader initialization
-     */
-    static {
-        s_cntInstances = 0;
-    };
-    
-    
+
     /*
      * Initialization
      */
@@ -116,6 +117,7 @@ public abstract class Element implements IElement {
         this.m_strId   = strId;
         this.strSmfId = "";
         this.dblLatPos = 0.0;
+        this.cpsParent = null;
     };
     
     /**
@@ -378,69 +380,6 @@ public abstract class Element implements IElement {
     
     
     /*
-     *  IElement Interface - Abstract Methods
-     */
-    
-    /**
-     *  Return the length of this element.  Derived class must
-     *  implement this because it is undetermined whether or not this is a thin
-     *  or thick element.
-     */
-    public abstract double getLength();
-    
-    /**
-     * Returns the time taken for the probe <code>probe</code> to propagate 
-     * through a subsection of the element with length <code>dblLen</code>.
-     * 
-     *  @param  probe   determine energy gain for this probe
-     *  @param  dblLen  length of subsection to calculate energy gain for
-     *  
-     *  @return         the elapsed time through section<bold>Units: seconds</bold> 
-     */
-    public abstract double elapsedTime(IProbe probe, double dblLen);
-    
-    /** 
-     *  Returns energy gain for <b>subsection</b> of this element of length 
-     *  <code>dblLen</code> for the specified given probe.
-     *
-     *  @param  probe   determine energy gain for this probe
-     *
-     *  @return         the energy gain provided by this element <bold>Units: eV</bold> 
-     */
-    public abstract double energyGain(IProbe probe, double dblLen);
-
-    /**
-     * This is a kluge to make RF gaps work, since frequency is not defined for most
-     * modeling elements.  For such elements we simply return 0 phase advance.  For
-     * elements where frequency is defined, we can override this.
-     *
-     * @see xal.model.IElement#longitudinalPhaseAdvance(xal.model.IProbe, double)
-     *
-     * @author Christopher K. Allen
-     * @since  Nov 23, 2014
-     */
-    public double   longitudinalPhaseAdvance(IProbe probe, double dblLen) {
-        return 0.0;
-    }
-
-    /**
-     *  Compute the transfer matrix for <b>subsection</b> of this element of length 
-     *  <code>dblLen</code> for the specified given probe.  That is, this method should 
-     *  return the incremental transfer matrix.
-     *
-     *  @param  dblLen      length of sub-element
-     *  @param  probe       probe containing parameters for the sub-sectional transfer matrix
-     *
-     *  @return             transfer map for an element of length dblLen
-     *
-     *  @exception  ModelException    unable to compute transfer map
-     *
-     *  @see    xal.model.IElement#transferMap(IProbe,double)
-     */
-    public abstract PhaseMap transferMap(IProbe probe, double dblLen) throws ModelException;   
-
-
-    /*
      *  IComponent Interface
      */
     
@@ -499,6 +438,37 @@ public abstract class Element implements IElement {
 //            setHardwareNodeId(this.getId().replace("ELEMENT_SEQUENCE:", "") );
     }
     
+    /**
+     *  Return the length of this element.  Derived class must
+     *  implement this because it is undetermined whether or not this is a thin
+     *  or thick element.
+     */
+    public abstract double getLength();
+    
+    /**
+     * @return  returns the composite structure owning this element, 
+     *          or <code>null</code> if this component is isolated
+     *
+     * @see xal.model.IComponent#getParent()
+     *
+     * @since  Jan 22, 2015   by Christopher K. Allen
+     */
+    @Override
+    public IComposite getParent() {
+        return this.cpsParent;
+    }
+
+    /**
+     *
+     * @see xal.model.IComponent#setParent(xal.model.IComposite)
+     *
+     * @since  Jan 22, 2015   by Christopher K. Allen
+     */
+    @Override
+    public void setParent(IComposite cpsParent) {
+        this.cpsParent = cpsParent;
+    }
+
     /** 
      * <p>
      * Override of {@link xal.model.IComponent#propagate(xal.model.IProbe, double)}
@@ -529,11 +499,11 @@ public abstract class Element implements IElement {
         
         alg = probe.getAlgorithm();
         if (alg instanceof Tracker) {
-        	Tracker tracker = (Tracker)alg;
-//        	System.out.println("tracker.setElemPosition to "+pos);
-        	
-        	// The algorithm "element position" is also set in Tracker#advanceProbe() ??!!
-        	tracker.setElemPosition(pos);
+            Tracker tracker = (Tracker)alg;
+//          System.out.println("tracker.setElemPosition to "+pos);
+            
+            // The algorithm "element position" is also set in Tracker#advanceProbe() ??!!
+            tracker.setElemPosition(pos);
         }
         alg.propagate(probe, this);
     };
@@ -557,10 +527,10 @@ public abstract class Element implements IElement {
         
         alg = probe.getAlgorithm();
         if (alg instanceof Tracker) {
-        	Tracker tracker = (Tracker)alg;
+            Tracker tracker = (Tracker)alg;
 
             // The algorithm "element position" is also set in Tracker#advanceProbe() ??!!
-        	tracker.setElemPosition(0);
+            tracker.setElemPosition(0);
         }
         alg.propagate(probe, this);
     };
@@ -603,11 +573,11 @@ public abstract class Element implements IElement {
         
         alg = probe.getAlgorithm();
         if (alg instanceof Tracker) {
-        	Tracker tracker = (Tracker)alg;
-        	System.out.println("tracker.setElemPosition to "+pos);
+            Tracker tracker = (Tracker)alg;
+            System.out.println("tracker.setElemPosition to "+pos);
 
             // The algorithm "element position" is also set in Tracker#advanceProbe() ??!!
-        	tracker.setElemPosition(pos);
+            tracker.setElemPosition(pos);
         }
         alg.propagate(probe, this);
     }
@@ -651,11 +621,94 @@ public abstract class Element implements IElement {
         alg.propagate(probe, this);
     }
 
+    
+    /*
+     * IElement Interface
+     */
+    
+    /**
+     * Returns the time taken for the probe <code>probe</code> to propagate 
+     * through a subsection of the element with length <code>dblLen</code>.
+     * 
+     *  @param  probe   determine energy gain for this probe
+     *  @param  dblLen  length of subsection to calculate energy gain for
+     *  
+     *  @return         the elapsed time through section<bold>Units: seconds</bold> 
+     */
+    public abstract double elapsedTime(IProbe probe, double dblLen);
+    
+    /** 
+     *  Returns energy gain for <b>subsection</b> of this element of length 
+     *  <code>dblLen</code> for the specified given probe.
+     *
+     *  @param  probe   determine energy gain for this probe
+     *
+     *  @return         the energy gain provided by this element <bold>Units: eV</bold> 
+     */
+    public abstract double energyGain(IProbe probe, double dblLen);
+
+    /**
+     * This is a kluge to make RF gaps work, since frequency is not defined for most
+     * modeling elements.  For such elements we simply return 0 phase advance.  For
+     * elements where frequency is defined, we can override this.
+     *
+     * @see xal.model.IElement#longitudinalPhaseAdvance(xal.model.IProbe, double)
+     *
+     * @author Christopher K. Allen
+     * @since  Nov 23, 2014
+     */
+    public abstract double   longitudinalPhaseAdvance(IProbe probe, double dblLen);
+
+    /**
+     *  Compute the transfer matrix for <b>subsection</b> of this element of length 
+     *  <code>dblLen</code> for the specified given probe.  That is, this method should 
+     *  return the incremental transfer matrix.
+     *
+     *  @param  dblLen      length of sub-element
+     *  @param  probe       probe containing parameters for the sub-sectional transfer matrix
+     *
+     *  @return             transfer map for an element of length dblLen
+     *
+     *  @exception  ModelException    unable to compute transfer map
+     *
+     *  @see    xal.model.IElement#transferMap(IProbe,double)
+     */
+    public abstract PhaseMap transferMap(IProbe probe, double dblLen) throws ModelException;   
+
+
+    /*
+     * Object Overrides
+     */
+    
+    /**
+     *
+     * @see java.lang.Object#toString()
+     *
+     * @since  Jan 22, 2015   by Christopher K. Allen
+     */
+    @Override
+    public String toString() {
+        StringBuffer    bufOut = new StringBuffer();
+        
+        bufOut.append("  Element - " + this.getId());
+        bufOut.append('\n');
+        
+        bufOut.append("  element type       : " + this.getType() );
+        bufOut.append('\n');
+
+        bufOut.append("  element UID        : " + this.getUID() );
+        bufOut.append('\n');
+
+        bufOut.append("  element length     : " + this.getLength() );
+        bufOut.append('\n');
+
+        return bufOut.toString();
+    }
+
      
     /*
      *  Testing and Debugging
      */
-    
     
     /**
      *  Dump current state and content to output stream.
@@ -663,10 +716,11 @@ public abstract class Element implements IElement {
      *  @param  os      output stream object
      */
     public void print(PrintWriter os)    {
-        os.println("  Element - " + this.getId());
-        os.println("  element type       : " + this.getType() );
-        os.println("  element UID        : " + this.getUID() );
-        os.println("  element length     : " + this.getLength() );
+//        os.println("  Element - " + this.getId());
+//        os.println("  element type       : " + this.getType() );
+//        os.println("  element UID        : " + this.getUID() );
+//        os.println("  element length     : " + this.getLength() );
+        os.println(this.toString());
     };
 
 };

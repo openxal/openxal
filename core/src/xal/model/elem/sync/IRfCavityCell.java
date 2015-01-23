@@ -137,5 +137,27 @@ public interface IRfCavityCell {
      */
     public double getCavityModeConstant();
     
+    /**
+     * Returns whether or not the cell is the first or last in a string of cells within an
+     * RF cavity.  This is particularly important in structures operating outside
+     * 0 mode where the cell phasing may change.
+     * 
+     * @return  <code>true</code> if this cell is at either end in a bank of cells,
+     *          <code>false</code> otherwise
+     *
+     * @since  Jan 23, 2015   by Christopher K. Allen
+     */
+    public boolean  isEndCell();
+    
+    /**
+     * Indicates whether or not this cell is the first cell of an RF cavity.
+     * 
+     * @return  <code>true</code> if this is the initial cell in an RF cavity,
+     *          <code>false</code> otherwise
+     *
+     * @since  Jan 23, 2015   by Christopher K. Allen
+     */
+    public boolean isFirstCell();
+
 
 }

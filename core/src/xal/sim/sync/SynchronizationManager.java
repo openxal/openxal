@@ -150,41 +150,41 @@ public class SynchronizationManager {
 	}
 	
 	
-    /**
-     * <p>Creates a synchronization association between the specified composite
-     * modeling element and accelerator hardware node.  A synchronization
-     * association is created for each modeling element in the composite
-     * element.  Thus, the method is implemented by iterating over the 
-     * composite elements of the argument and calling the method
-     * <code>synchronize(IElement,AcceleratorNode)</code>.
-     * </p>
-     * 
-     * NOTE:
-     * <p>Within the composite, a synchronization associate request is ignored 
-     * if there is no synchronizer for the specified sub-element type.  Request 
-     * is also ignored if there is no accessor for the specified hardware node 
-     * type, because the system does not know how to access data from the hardware
-     * object.
-     * </p>
-     * 
-     * @param comp  composite modeling element requiring synchronization 
-     * @param node  hardware node providing synchronization
-     * 
-     * @author  Christopher K. Allen
-     * 
-     * @see SynchronizationManager#synchronize(IElement, AcceleratorNode)
-     */
-    public void synchronize( final IComposite comp, final AcceleratorNode node ) {
-       final Iterator<IComponent> iterComp = comp.globalIterator();
-        while (iterComp.hasNext())  {
-            final IElement elem = (IElement)iterComp.next();
-            
-            if ((hasSynchronizerFor(elem)) && (propertyAccessor.hasAccessorFor(node)))
-                addSynchronizedElementMappedTo(elem, node);
-            addElementMappedTo(elem, node);
-            
-        }
-    }
+//    /**
+//     * <p>Creates a synchronization association between the specified composite
+//     * modeling element and accelerator hardware node.  A synchronization
+//     * association is created for each modeling element in the composite
+//     * element.  Thus, the method is implemented by iterating over the 
+//     * composite elements of the argument and calling the method
+//     * <code>synchronize(IElement,AcceleratorNode)</code>.
+//     * </p>
+//     * 
+//     * NOTE:
+//     * <p>Within the composite, a synchronization associate request is ignored 
+//     * if there is no synchronizer for the specified sub-element type.  Request 
+//     * is also ignored if there is no accessor for the specified hardware node 
+//     * type, because the system does not know how to access data from the hardware
+//     * object.
+//     * </p>
+//     * 
+//     * @param comp  composite modeling element requiring synchronization 
+//     * @param node  hardware node providing synchronization
+//     * 
+//     * @author  Christopher K. Allen
+//     * 
+//     * @see SynchronizationManager#synchronize(IElement, AcceleratorNode)
+//     */
+//    public void synchronize( final IComposite comp, final AcceleratorNode node ) {
+//       final Iterator<IComponent> iterComp = comp.globalIterator();
+//        while (iterComp.hasNext())  {
+//            final IElement elem = (IElement)iterComp.next();
+//            
+//            if ((hasSynchronizerFor(elem)) && (propertyAccessor.hasAccessorFor(node)))
+//                addSynchronizedElementMappedTo(elem, node);
+//            addElementMappedTo(elem, node);
+//            
+//        }
+//    }
     
 
 // Queries =================================================================

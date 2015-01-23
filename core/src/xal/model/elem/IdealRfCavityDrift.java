@@ -25,6 +25,15 @@ public class IdealRfCavityDrift extends IdealDrift {
 
     
     /*
+     *  Global Constants
+     */
+    
+    /** string type identifier for all IdealDrift objects */
+    public static final String      STR_TYPEID = "IdealRfCavityDrift";
+    
+    
+    
+    /*
      * Local Attributes
      */
     
@@ -53,7 +62,8 @@ public class IdealRfCavityDrift extends IdealDrift {
      * @since  Dec 3, 2014
      */
     public IdealRfCavityDrift(String strId, double dblLen, double dblFreq, double dblModeConst) {
-        super(strId, dblLen);
+        super(STR_TYPEID, strId, dblLen);
+//        super(strId, dblLen);
         
         this.dblFreq = dblFreq;
         this.dblModeConst = dblModeConst;
@@ -169,12 +179,38 @@ public class IdealRfCavityDrift extends IdealDrift {
     @Override
     public double longitudinalPhaseAdvance(IProbe probe, double dblLen) {
         double  dt  = super.elapsedTime(probe, dblLen);
-        double  w   = 2.0 * Math.PI * this.getFrequency();
+        double  f   = this.getFrequency();
+        double  w   = 2.0 * Math.PI * f;
         double dphi = w * dt;
         
         return dphi;
     }
 
+    
+    /*
+     * Object Overrides
+     */
+    
+    /**
+     *
+     * @see xal.model.elem.Element#toString()
+     *
+     * @since  Jan 22, 2015   by Christopher K. Allen
+     */
+    @Override
+    public String toString() {
+        StringBuffer    bufOut = new StringBuffer();
+        
+        bufOut.append(super.toString());
+        
+        bufOut.append("  Frequency          : " + this.getFrequency());
+        bufOut.append('\n');
+
+        bufOut.append("  Cavity mode const. : " + this.getCavityModeConstant());
+        bufOut.append('\n');
+        
+        return bufOut.toString();
+    }
     
     
 }

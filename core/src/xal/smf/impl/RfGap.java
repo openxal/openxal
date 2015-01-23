@@ -461,7 +461,7 @@ public class RfGap extends AcceleratorNode {
     /** returns whether this is the first gap of a cavity string */
     public boolean isFirstGap() {return firstGap;}
 
-    /** returns whether this is the first gap of a cavity string */
+    /** returns whether this is the <b>last</b> gap of a cavity string */
     public boolean isEndCell() {
 	    if (m_bucRfGap.getEndCell() == 1)
 		    return true;

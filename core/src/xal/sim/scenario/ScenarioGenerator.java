@@ -10,6 +10,7 @@ import xal.model.Lattice;
 import xal.model.ModelException;
 import xal.sim.sync.SynchronizationManager;
 import xal.smf.AcceleratorSeq;
+import xal.smf.AcceleratorSeqCombo;
 
 /**
  * <p>
@@ -192,7 +193,16 @@ class ScenarioGenerator {
         
         // Create a model lattice generator object for the given accelerator hardware sequence,
         //  set any generation parameters, then create the model lattice
-        LatticeSequence latSeq = new LatticeSequence(smfSeq, this.mapNodeToModCls);
+        LatticeSequence latSeq;
+        if (smfSeq instanceof AcceleratorSeqCombo) {
+            AcceleratorSeqCombo smfSeqCombo = (AcceleratorSeqCombo)smfSeq;
+            
+            latSeq = new LatticeSequenceCombo(smfSeqCombo, this.mapNodeToModCls);
+            
+        } else {
+            
+            latSeq = new LatticeSequence(smfSeq, this.mapNodeToModCls);
+        }
         
         latSeq.setDebug( this.isDebugging() );
         latSeq.setDivideMagnetFlag( this.isMagnetDivided() );
@@ -205,7 +215,6 @@ class ScenarioGenerator {
         
         return mdlScenario;
     }
-    
     
 //	/**
 //	 * Generates a Scenario from AcceleratorSeq supplied in the constructor using supplied ElementMapping.

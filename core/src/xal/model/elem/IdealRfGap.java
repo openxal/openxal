@@ -12,8 +12,6 @@ import xal.model.IProbe;
 import xal.model.ModelException;
 import xal.model.elem.sync.IRfCavityCell;
 import xal.model.elem.sync.IRfGap;
-import xal.model.probe.traj.ProbeState;
-import xal.model.probe.traj.Trajectory;
 import xal.sim.scenario.LatticeElement;
 import xal.smf.impl.RfGap;
 import xal.tools.beam.PhaseMap;
@@ -140,7 +138,7 @@ public class IdealRfGap extends ThinElement implements IRfGap, IRfCavityCell {
 
     
     /** Error tolerance in the iterative search for phase change through RF gap */
-    private static final double DBL_PHASECALC_CNVERR = 1.0e-6;
+    private static final double DBL_PHASECALC_CNVERR = 1.0e-12;
 
     /** Maximum number of allowable iterations in the phase change search */
     private static final int INT_PHASECALC_MAXITER = 50;
@@ -187,6 +185,7 @@ public class IdealRfGap extends ThinElement implements IRfGap, IRfCavityCell {
 	 * 
 	 * Don't know what this is? CKA
 	 */
+    @Deprecated
 	public static double COEFF_X = 1.0;
 
 	/**
@@ -194,6 +193,7 @@ public class IdealRfGap extends ThinElement implements IRfGap, IRfCavityCell {
 	 * 
      * Don't know what this is? CKA
 	 */
+    @Deprecated
 	public static double COEFF_Y = 1.0;	
 	
 
@@ -207,6 +207,7 @@ public class IdealRfGap extends ThinElement implements IRfGap, IRfCavityCell {
      *  These are kluge jobs for RF cavities.  Very dangerous since
      *  they are class variables. 
      */
+	@Deprecated
     private static double FIRST_GAP_PHASE_CORR = 0.;
     
     /**
@@ -215,6 +216,7 @@ public class IdealRfGap extends ThinElement implements IRfGap, IRfCavityCell {
      *  These are kluge jobs for RF cavities.  Very dangerous since
      *  they are class variables. 
      */
+    @Deprecated
     private static double STRUCTURE_PHASE = 0.;
     
 //    /**
@@ -228,6 +230,7 @@ public class IdealRfGap extends ThinElement implements IRfGap, IRfCavityCell {
      * 
      * the phase kick correction applied at the gap center [rad]
      * */
+    @Deprecated
     private static double DELTA_PHASE_CORRECTION = 0.;
 
 	
@@ -262,7 +265,7 @@ public class IdealRfGap extends ThinElement implements IRfGap, IRfCavityCell {
 
 	
 	//
-	// Gap Properties
+	// Geometric Properties
 	//
 	
     /**
@@ -274,6 +277,16 @@ public class IdealRfGap extends ThinElement implements IRfGap, IRfCavityCell {
      *  <del>the accelerating cell length</del> No, this is the effective length of the gap
      */
     private double dblGapLength = 0.;
+
+    /**
+     *  flag indicating that this gap is in the leading cell of an RF cavity
+     */
+    private boolean bolStartCell = false;
+    
+    /**
+     * flag indicating that this gap is in the end cell of an RF cavity
+     */
+    private boolean bolEndCell = false;
 
     /**
      *  fit of the TTF vs. beta
@@ -297,7 +310,7 @@ public class IdealRfGap extends ThinElement implements IRfGap, IRfCavityCell {
 
 
     //
-    // RF Cavity Properties
+    // Parent RF Cavity Properties
     // 
     
     /**
@@ -315,14 +328,6 @@ public class IdealRfGap extends ThinElement implements IRfGap, IRfCavityCell {
     // Legacy
     //
     
-    /**
-	 * TODO CKA - Remove
-	 * 
-	 *  flag indicating that this is the leading gap of a cavity
-	 */
-    @Deprecated
-	private boolean initialGap = false;
-
 	/**
 	 * TODO CKA - Remove
 	 * 
@@ -365,15 +370,6 @@ public class IdealRfGap extends ThinElement implements IRfGap, IRfCavityCell {
 	 * Attribute Query
 	 */
 	
-	/**
-	 *  return whether this gap is the initial gap of a cavity
-	 *
-	 *@return    The firstGap value
-	 */
-	public boolean isFirstGap() {
-	    return initialGap;
-	}
-
 	/**
 	 *  <del>Returns the cell length (m)</del>
      *
@@ -423,7 +419,6 @@ public class IdealRfGap extends ThinElement implements IRfGap, IRfCavityCell {
     public double getGapOffset() {
         return this.gapOffset;
     }
-    
     
 
     /*
@@ -713,6 +708,23 @@ public class IdealRfGap extends ThinElement implements IRfGap, IRfCavityCell {
      * IRfCavityCell Interface
      */
 
+    /*
+     * Attribute Query
+     */
+
+    /**
+     *  return whether this gap is the initial gap of a cavity
+     *
+     *@return    The firstGap value
+     */
+    @Override
+    public boolean isFirstGap() {
+        //	    boolean    bolInitialGap = this.getCavityCellIndex() == 0;
+        //	    
+        //	    return bolInitialGap;
+        return bolStartCell;
+    }
+
     /**
      *
      * @see xal.model.elem.sync.IRfCavityCell#setCavityCellIndex(int)
@@ -781,6 +793,31 @@ public class IdealRfGap extends ThinElement implements IRfGap, IRfCavityCell {
      */
     public double getCavityModeConstant() {
         return this.dblCavModeConst;
+    }
+
+    /**
+     * Returns flag indicating whether or not this gap is in the initial or terminal cell
+     * in a string of cells within an RF cavity.
+     * 
+     * @return     <code>true</code> if this gap is in a cavity cell at either end of a cavity cell bank,
+     *             <code>false</code> otherwise
+     *
+     * @since  Jan 23, 2015   by Christopher K. Allen
+     */
+    @Override
+    public boolean isEndCell() {
+        return this.bolEndCell;
+    }
+
+    /**
+     *
+     * @see xal.model.elem.sync.IRfCavityCell#isFirstCell()
+     *
+     * @since  Jan 23, 2015   by Christopher K. Allen
+     */
+    @Override
+    public boolean isFirstCell() {
+        return this.bolStartCell;
     }
 
 
@@ -861,6 +898,8 @@ public class IdealRfGap extends ThinElement implements IRfGap, IRfCavityCell {
     public double energyGain(IProbe probe) {
         double  dW = this.compGapPhaseAndEnergyGain(probe).W;
 
+        System.out.println("IdealRfGap#energyGain() - " + this.getId() + " index=" + this.indCell + ", dW = " + dW);
+        
         return dW;
     }
 
@@ -876,9 +915,24 @@ public class IdealRfGap extends ThinElement implements IRfGap, IRfCavityCell {
     @Override
     public double longitudinalPhaseAdvance(IProbe probe) {
 
-        double dphi = this.compGapPhaseAndEnergyGain(probe).phi;
+        // We trick the algorithm into resetting the probe's phase to the phase
+        //  of this gap, which is the klystron phase of this cavity
+        if ( this.isFirstGap() ) {
+            double phi0 = this.getPhase();
+            double  phi = probe.getLongitinalPhase();
+            double dphi = this.compGapPhaseAndEnergyGain(probe).phi;
+            
+            double phi_reset = -phi + phi0 + dphi;
+            
+            return phi_reset;
+
+        // We're just a plain ole gap, advance the probe phase by the phase gain
+        } else {
         
-        return dphi;
+            double dphi = this.compGapPhaseAndEnergyGain(probe).phi;
+            
+            return dphi;
+        }
     }
     
 //    /**
@@ -990,7 +1044,8 @@ public class IdealRfGap extends ThinElement implements IRfGap, IRfCavityCell {
         RfGap rfgap = (RfGap) element.getHardwareNode();
 
         // Initialize from source values
-        initialGap = rfgap.isFirstGap();
+        bolStartCell = rfgap.isFirstGap();
+        bolEndCell = rfgap.isEndCell();
         dblGapLength = rfgap.getGapLength();
         gapOffset = rfgap.getGapOffset();
         fitTTFPrime = rfgap.getTTFPrimeFit();
@@ -1000,12 +1055,39 @@ public class IdealRfGap extends ThinElement implements IRfGap, IRfCavityCell {
         dblCavModeConst = rfgap.getStructureMode();
     }
 
-
-
 	
     /*
      *  Object Overrides
      */
+
+    /**
+     *
+     * @see xal.model.elem.Element#toString()
+     *
+     * @since  Jan 22, 2015   by Christopher K. Allen
+     */
+    @Override
+    public String toString() {
+        StringBuffer    bufOut = new StringBuffer();
+        
+        bufOut.append(super.toString());
+        
+        bufOut.append("  Gap ETL product    : " + this.getETL()); //$NON-NLS-1$
+        bufOut.append('\n');
+        bufOut.append("  Gap phase shift    : " + this.getPhase()); //$NON-NLS-1$
+        bufOut.append('\n');
+        
+        bufOut.append("  RF frequency       : " + this.getFrequency()); //$NON-NLS-1$
+        bufOut.append('\n');
+
+        bufOut.append("  Axial field dblFieldE0     : " + this.getE0() );
+        bufOut.append('\n');
+        
+        bufOut.append("  Gap offset         : " + this.getGapOffset() );
+        bufOut.append('\n');
+        
+        return bufOut.toString();
+    }
 
     /**
      *  Dump current state and content to output stream.
@@ -1059,6 +1141,9 @@ public class IdealRfGap extends ThinElement implements IRfGap, IRfCavityCell {
         final int       n = this.getCavityCellIndex();
         final double    q = this.getCavityModeConstant();
         
+//        double nkluge = Math.IEEEremainder(n, 9);
+        
+//        final double    A = Math.cos(nkluge*q*Math.PI);
         final double    A = Math.cos(n*q*Math.PI);
         
         return A;
@@ -1246,8 +1331,8 @@ public class IdealRfGap extends ThinElement implements IRfGap, IRfCavityCell {
     private double  compGapEntrancePhase(IProbe probe) {
         
         // Get the phase of the probe at the gap geometric center
-//        double phi0 = this.isFirstGap() ? this.getPhase() : probe.getLongitinalPhase();
-        double phi0 = probe.getLongitinalPhase();
+        double phi0 = this.isFirstGap() ? this.getPhase() : probe.getLongitinalPhase();
+//        double phi0 = probe.getLongitinalPhase();
     
         // Correct the phase as needed for any difference from electrical center
         double  bi  = probe.getBeta();
@@ -1547,9 +1632,6 @@ public class IdealRfGap extends ThinElement implements IRfGap, IRfCavityCell {
      */
     private EnergyVariables compGapPhaseAndEnergyGainIndirect(IProbe probe) {
 
-        // General parameters
-        //        double c = IElement.LightSpeed;
-
         // Initial probe parameters
         double Q  = Math.abs(probe.getSpeciesCharge());
         double Er = probe.getSpeciesRestEnergy();       
@@ -1631,14 +1713,15 @@ public class IdealRfGap extends ThinElement implements IRfGap, IRfCavityCell {
             // Update the value for phase change to the gap center
             d_T   = this.fitTTF.derivativeAt(b_mid);
             d_S   = this.fitSTF.derivativeAt(b_mid);
+            
             d_phi = -(qAEL/Er)*r_mid*b_mid*( d_T*Math.sin(phi) - d_S*Math.cos(phi) );
 
             dblCnvErr = Math.abs( d_phi - 2.0*(phi - phi0) );
             cntIter++;
         }
 
-        if (d_phi > DBL_PHASECALC_CNVERR) 
-            System.err.println("WARNING! IdealRfGap#compGapPhaseChange() did not converge.");
+        if (dblCnvErr > DBL_PHASECALC_CNVERR) 
+            System.err.println("WARNING! IdealRfGap#compGapPhaseChange() did not converge for element " + this.getId());
 
         return new EnergyVariables(d_phi, dW);
     }

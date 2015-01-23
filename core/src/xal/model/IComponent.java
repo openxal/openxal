@@ -53,14 +53,14 @@ public interface IComponent {
      *
      *  @return     type identifier for this element
      */
-    String   getType();
+    public String   getType();
     
     /**
      *  Get the string identifier of the composite element
      *
      *  @return     string identifier
      */
-    String  getId();
+    public String  getId();
     
     /**
      * Get the string identifier of the hardware node being modeled
@@ -70,12 +70,36 @@ public interface IComponent {
      */
     public String   getHardwareNodeId();
     
+    
+    /*
+     * Structure
+     */
+    
     /**
      *  Return the total length of the composite element.
      *
      *  @return     length of the element (in <bold>meters</bold>)
      */
-    double   getLength();
+    public double   getLength();
+    
+    /**
+     * Returns the composite structure (if any) that owns this component.
+     * 
+     * @return  higher level composite structure built from this component
+     *
+     * @since  Jan 22, 2015   by Christopher K. Allen
+     */
+    public IComposite  getParent();
+    
+    /**
+     * Sets the parent structure containing this component.  The parent is
+     * assumed to be a composite structure built from component elements.
+     * 
+     * @param cpsParent the composite structure built from this component
+     *
+     * @since  Jan 22, 2015   by Christopher K. Allen
+     */
+    public void setParent(IComposite cpsParent);
     
 
 	/*

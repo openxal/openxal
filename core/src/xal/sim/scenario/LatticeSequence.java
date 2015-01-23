@@ -280,6 +280,20 @@ public class LatticeSequence extends LatticeElement implements Iterable<LatticeE
         return clsSeqMdl;
     }
     
+    /**
+     * Returns the map of SMF hardware nodes to online modeling elements, or more
+     * specifically, modeling element class types.  This map is used when creating
+     * a modeling element for any given hardware node.
+     * 
+     * @return  mapping between hardware nodes and modeling elements used to 
+     *          generate the model lattice
+     *
+     * @since  Jan 21, 2015   by Christopher K. Allen
+     */
+    public ElementMapping   getNodeToElementMap() {
+        return this.mapNodeToMdl;
+    }
+    
 
     /*
      * Operations
@@ -294,8 +308,8 @@ public class LatticeSequence extends LatticeElement implements Iterable<LatticeE
      * @param mgrSync       synchronization manager to receive synchronization associations 
      *                      for the model elements in the returned model lattice
      *                      
-     * @return              new model lattice with the configuration provided by this
-     *                      lattice sequence
+     * @return              new model lattice with the configuration provided by the 
+     *                      accelerator sequence given to the public constructor
      *                      
      * @throws ModelException   problem instantiating modeling elements
      *
@@ -303,50 +317,18 @@ public class LatticeSequence extends LatticeElement implements Iterable<LatticeE
      * @since  Dec 11, 2014
      */
     public xal.model.Lattice createModelLattice(SynchronizationManager mgrSync) throws ModelException {
-        
-        // Clear out any lattice elements from previous calls
-        this.lstLatElems.clear();
-        
-        // Create the lattice elements to populate this sequence and any subsequences
-        //  The sequence elements are also sorted in this step
-        this.populateLatticeSeq();
-        
-        // Split any thick lattice elements where a thin element intersects it.
-        //  If two thick elements intersect then we bail out with a ModelException
-        this.splitSequenceElements();
-        
-        // Create the modeling element representing this lattice sequence.
-        //  Recall that this lattice sequence must be a top-level sequence
-        //  since users do not have access to the sub-lattice constructor
-        IComposite seqRoot = this.createModelSequence(mgrSync);
-        
-        // Identify the first gaps in any RF Cavity and sub-cavities, then do any
-        //  processing as necessary.  Right now this method does nothing since the
-        //  only action, setting the isFirstGap flag, is accomplished via the XDXF
-        //  configuration file.
-        this.markFirstCavityGap(seqRoot);
-        
-        
-        // Create new lattice modeling object
-        Lattice mdlLattice = new Lattice();
-        
-        mdlLattice.addChild(seqRoot);
+       
+        // Create the online model element sequence corresponding to this lattice sequence
+        IComposite  mdlSeq = this.createModelSequence(mgrSync);
 
-        // Fill in the meta data and comments for the lattice
-        AcceleratorSeq  smfSeqRoot = this.getHardwareNode();
-        Accelerator     smfAccel   = smfSeqRoot.getAccelerator();
         
-        String  strComment = "Accelerator ID:" + smfAccel.getId() + ", "; 
-        strComment += "Sequence ID: " + smfSeqRoot.getId() + ", ";
-        strComment += "Date: " + Calendar.getInstance().getTime() + ", ";
-        strComment += "Version soft type: " + smfSeqRoot.getSoftType() + ", ";
-        strComment += "Generated from : " + this.getClass().getName();
+        // Create new lattice modeling object then add the sequence 
+        Lattice mdlLattice = this.createParentLattice();
+        
+        mdlLattice.addChild(mdlSeq);
 
-        mdlLattice.setId(smfSeqRoot.getId());
-        mdlLattice.setHardwareNodeId(smfSeqRoot.getEntranceID());
-        mdlLattice.setVersion("Version soft type: " + smfSeqRoot.getSoftType());
-        mdlLattice.setComments(strComment);
         
+        // Return the lattice object
         return mdlLattice;
     }
     
@@ -507,7 +489,90 @@ public class LatticeSequence extends LatticeElement implements Iterable<LatticeE
 
 
     /*
-     * Support Methods
+     * Child Class Support
+     */
+    
+    /**
+     * Builds an online model element sequence for the accelerator sequence provided to
+     * the public constructor of this class.  This is done by calling the private methods
+     * {@link #populateLatticeSeq()}, {@link #splitSequenceElements()}, and 
+     * {@link #createModelElements(SynchronizationManager)} in that order.  When the
+     * actual modeling elements are instantiated (via {@link #createModelElements(SynchronizationManager)})
+     * they are connected to the given synchronization manager.
+     *  
+     * @param mgrSync       synchronization manager to receive synchronization associations 
+     *                      for the new created model elements 
+     *                      
+     * @return              new online model sequence with the configuration provided by the 
+     *                      accelerator sequence given to the public constructor
+     *                      
+     * @throws ModelException   problem instantiating modeling elements
+     *
+     * @since  Jan 21, 2015   by Christopher K. Allen
+     */
+    protected IComposite createModelSequence(SynchronizationManager mgrSync) throws ModelException {
+        
+        // Clear out any lattice elements from previous calls
+        this.lstLatElems.clear();
+        
+        // Create the lattice elements to populate this sequence and any subsequences
+        //  The sequence elements are also sorted in this step
+        this.populateLatticeSeq();
+        
+        // Split any thick lattice elements where a thin element intersects it.
+        //  If two thick elements intersect then we bail out with a ModelException
+        this.splitSequenceElements();
+        
+        // Create the modeling element representing this lattice sequence.
+        //  Recall that this lattice sequence must be a top-level sequence
+        //  since users do not have access to the sub-lattice constructor
+        IComposite mdlSeq = this.createModelElements(mgrSync);
+        
+        // Identify the first gaps in any RF Cavity and sub-cavities, then do any
+        //  processing as necessary.  Right now this method does nothing since the
+        //  only action, setting the isFirstGap flag, is accomplished via the XDXF
+        //  configuration file.
+        this.markFirstCavityGap(mdlSeq);
+        
+        return mdlSeq;
+    }
+    
+    /**
+     * Creates the actual model lattice object from the given element sequence.
+     * Some of the cursory fields of the lattice are populated.
+     * 
+     * @param modSeqRoot    primary modeling element sequence
+     * 
+     * @return              model lattice object containing the given root sequence
+     *
+     * @since  Jan 20, 2015   by Christopher K. Allen
+     */
+    protected Lattice createParentLattice() {
+        
+        // Create new lattice modeling object
+        Lattice mdlLattice = new Lattice();
+        
+        // Fill in the meta data and comments for the lattice
+        AcceleratorSeq  smfSeqRoot = this.getHardwareNode();
+        Accelerator     smfAccel   = smfSeqRoot.getAccelerator();
+        
+        String  strComment = "Accelerator ID:" + smfAccel.getId() + ", "; 
+        strComment += "Sequence ID: " + smfSeqRoot.getId() + ", ";
+        strComment += "Date: " + Calendar.getInstance().getTime() + ", ";
+        strComment += "Version soft type: " + smfSeqRoot.getSoftType() + ", ";
+        strComment += "Generated from : " + this.getClass().getName();
+
+        mdlLattice.setId(smfSeqRoot.getId());
+        mdlLattice.setHardwareNodeId(smfSeqRoot.getEntranceID());
+        mdlLattice.setVersion("Version soft type: " + smfSeqRoot.getSoftType());
+        mdlLattice.setComments(strComment);
+        
+        return mdlLattice;
+    }
+    
+    
+    /*
+     * Internal Support 
      */
 
     /**
@@ -644,7 +709,6 @@ public class LatticeSequence extends LatticeElement implements Iterable<LatticeE
 //      elements.add(new LatticeElement(new Marker("END_" + smfSequence.getId()), sequenceLength,
 //              mapNodeToModCls.getDefaultConverter(), originalPosition++));
     }
-    
     
     /**
      * <p>Splits all thick elements by thin ones, keeping the order.</p>
@@ -811,12 +875,12 @@ public class LatticeSequence extends LatticeElement implements Iterable<LatticeE
      * element that is actually a lattice sequence.
      * </p>
      * 
-     * @param syncMgr          manager used to synchronize modeling elements with live hardware
+     * @param mgrSync          manager used to synchronize modeling elements with live hardware
      * @param mapNodeToMdlCls  the mapping association between hardware node types and modeling element clas types
      * 
      * @throws ModelException  not sure why this is thrown 
      */
-    private IComposite createModelSequence(SynchronizationManager syncMgr) throws ModelException {
+    private IComposite createModelElements(SynchronizationManager mgrSync) throws ModelException {
 
         //
         //  Need to set up the loop state variables and parameters
@@ -878,10 +942,10 @@ public class LatticeSequence extends LatticeElement implements Iterable<LatticeE
             if (latElemCurr instanceof LatticeSequence) {
                 LatticeSequence latSeqCurr = (LatticeSequence)latElemCurr;
 
-                IComposite mdlSeqChild = latSeqCurr.createModelSequence(syncMgr);
+                IComposite mdlSeqChild = latSeqCurr.createModelSequence(mgrSync);
 
                 mdlSeqParent.addChild(mdlSeqChild);
-                syncMgr.synchronize((IComposite)mdlSeqChild, smfNodeCurr);
+//                mgrSync.synchronize((IComposite)mdlSeqChild, smfNodeCurr);
 
 //                if (mdlSeqChild instanceof IElement) 
 //                    syncMgr.synchronize((IElement) mdlSeqChild, smfNodeCurr);
@@ -904,7 +968,7 @@ public class LatticeSequence extends LatticeElement implements Iterable<LatticeE
                 mdlSeqParent.addChild(mdlElemCurr);
 
                 if (mdlElemCurr instanceof IElement) 
-                    syncMgr.synchronize((IElement) mdlElemCurr, smfNodeCurr);
+                    mgrSync.synchronize((IElement) mdlElemCurr, smfNodeCurr);
                 
                 // Advance the position of the last processed element
                 // TODO I think this will work for sequences - otherwise add sequence length
@@ -920,7 +984,6 @@ public class LatticeSequence extends LatticeElement implements Iterable<LatticeE
         
         return mdlSeqParent;
     }
-
 
     /**
      * <p>
@@ -967,9 +1030,8 @@ public class LatticeSequence extends LatticeElement implements Iterable<LatticeE
                 return;
             }
         }
-
     }
-    
+
     /**
      * <p>
      * Sorts the <code>LatticeElement</code> objects contained in this lattice 

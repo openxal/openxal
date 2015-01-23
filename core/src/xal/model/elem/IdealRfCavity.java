@@ -11,7 +11,9 @@ import java.util.Iterator;
 import xal.model.IComponent;
 import xal.model.IProbe;
 import xal.model.ModelException;
+import xal.model.elem.sync.IRfCavity;
 import xal.model.elem.sync.IRfCavityCell;
+import xal.model.elem.sync.IRfGap;
 import xal.sim.scenario.LatticeElement;
 import xal.smf.AcceleratorNode;
 import xal.smf.impl.RfCavity;
@@ -32,7 +34,7 @@ import xal.smf.impl.RfCavity;
  * @author Christopher K. Allen
  * @since  Dec 3, 2014
  */
-public class IdealRfCavity extends ElementSeq {
+public class IdealRfCavity extends ElementSeq  implements IRfCavity {
 
     
     /*
@@ -103,40 +105,6 @@ public class IdealRfCavity extends ElementSeq {
     }
 
     /**
-     * Set the operating frequency of the RF cavity in Hertz.
-     * 
-     * @param dblFreq   fundamental RF frequency of the RF cavity (in Hertz)
-     */
-    public void setFrequency(double dblFreq) {
-        this.dblFreq = dblFreq;
-    }
-    
-    /**
-     * Sets the amplitude of the RF signal feeding the cavity.  Specifically,
-     * the voltage of the RF at the cavity RF window.
-     * 
-     * @param dblAmp    high-power signal level at the cavity (in Volts)
-     *
-     * @since  Dec 16, 2014   by Christopher K. Allen
-     */
-    public void setAmplitude(double dblAmp) {
-        this.dblAmp = dblAmp;
-    }
-    
-    /**
-     * Sets the RF phase of the cavity with respect to the propagating probe.
-     * Specifically, this is the RF phase seen by the probe as it first enters
-     * the cavity.
-     * 
-     * @param dblPhase      RF phase of the cavity upon probe arrival (in radians)
-     *
-     * @since  Dec 16, 2014   by Christopher K. Allen
-     */
-    public void setPhase(double dblPhase) {
-        this.dblPhase = dblPhase;
-    }
-
-    /**
      * <p>
      * Set the operating mode constant &lambda; for the RF cavity design. The constant
      * is half of the mode number <i>q</i>.  Specifically,
@@ -163,40 +131,6 @@ public class IdealRfCavity extends ElementSeq {
      */
     
     /**
-     * Get the operating frequency of the RF cavity in Hertz.
-     * 
-     * @return  the fundamental mode frequency <i>f</i><sub>0</sub> of the RF cavity 
-     */
-    public double getFrequency() {
-        return this.dblFreq;
-    }
-
-    /**
-     * Get the amplitude of the RF signal feeding the cavity.  Specifically,
-     * the voltage of the RF at the cavity RF window.
-     * 
-     * @return  high-power signal level at the cavity (in Volts)
-     *
-     * @since  Dec 16, 2014   by Christopher K. Allen
-     */
-    public double   getAmplitude() {
-        return this.dblAmp;
-    }
-
-    /**
-     * Get the RF phase of the cavity with respect to the propagating probe.
-     * Specifically, this is the RF phase seen by the probe as it first enters
-     * the cavity.
-     * 
-     * @return  RF phase of the cavity upon probe arrival (in radians)
-     *
-     * @since  Dec 16, 2014   by Christopher K. Allen
-     */
-    public double   getPhase() {
-        return this.dblPhase;
-    }
-
-    /**
      * <p>
      * Get the operating mode constant &lambda; for the RF cavity design. The constant
      * is half of the mode number <i>q</i>.  Specifically,
@@ -215,6 +149,85 @@ public class IdealRfCavity extends ElementSeq {
      */
     public double getCavityModeConstant() {
         return this.dblModeConst;
+    }
+
+
+    /*
+     * IRfCavity Interface
+     */
+    
+    /**
+     * Get the operating frequency of the RF cavity in Hertz.
+     * 
+     * @return  the fundamental mode frequency <i>f</i><sub>0</sub> of the RF cavity 
+     */
+    @Override
+    public double getCavFrequency() {
+        return this.dblFreq;
+    }
+
+    /**
+     * Get the amplitude of the RF signal feeding the cavity.  Specifically,
+     * the voltage of the RF at the cavity RF window.
+     * 
+     * @return  high-power signal level at the cavity (in Volts)
+     *
+     * @since  Dec 16, 2014   by Christopher K. Allen
+     */
+    @Override
+    public double   getCavAmp() {
+        return this.dblAmp;
+    }
+
+    /**
+     * Get the RF phase of the cavity with respect to the propagating probe.
+     * Specifically, this is the RF phase seen by the probe as it first enters
+     * the cavity.
+     * 
+     * @return  RF phase of the cavity upon probe arrival (in radians)
+     *
+     * @since  Dec 16, 2014   by Christopher K. Allen
+     */
+    @Override
+    public double   getCavPhase() {
+        return this.dblPhase;
+    }
+
+    /**
+     * Set the operating frequency of the RF cavity in Hertz.
+     * 
+     * @param dblFreq   fundamental RF frequency of the RF cavity (in Hertz)
+     */
+    @Override
+    public void setCavFrequency(double dblFreq) {
+        this.dblFreq = dblFreq;
+    }
+    
+    /**
+     * Sets the amplitude of the RF signal feeding the cavity.  Specifically,
+     * the voltage of the RF at the cavity RF window.
+     * 
+     * @param dblAmp    high-power signal level at the cavity (in Volts)
+     *
+     * @since  Dec 16, 2014   by Christopher K. Allen
+     */
+    @Override
+    public void setCavAmp(double dblAmp) {
+        this.dblAmp = dblAmp;
+    }
+    
+    /**
+     * Sets the RF phase of the cavity with respect to the propagating probe.
+     * Specifically, this is the RF phase seen by the probe as it first enters
+     * the cavity.
+     * 
+     * @param dblPhase      RF phase of the cavity upon probe arrival (in radians)
+     *
+     * @since  Dec 16, 2014   by Christopher K. Allen
+     */
+    @Override
+    public void setCavPhase(double dblPhase) {
+        this.dblPhase = dblPhase;
     }
 
     
@@ -248,9 +261,9 @@ public class IdealRfCavity extends ElementSeq {
         double  dblPhase = (Math.PI/180.0) * smfRfCav.getDfltCavPhase(); // convert to radians
         double  dblModeConst = smfRfCav.getStructureMode();
         
-        this.setFrequency( dblFreq );
-        this.setAmplitude( dblAmp );
-        this.setPhase( dblPhase );
+        this.setCavFrequency( dblFreq );
+        this.setCavAmp( dblAmp );
+        this.setCavPhase( dblPhase );
         this.setCavityModeConstant( dblModeConst );
     }
 
@@ -279,12 +292,13 @@ public class IdealRfCavity extends ElementSeq {
         //  should not modify probes.  But right now I need to get my foot
         //  into this RF cavity door.
         //  TODO : modify this to conform to the Element/Algorithm/Probe design
-        probe.setLongitudinalPhase( this.getPhase() );
+//        probe.setLongitudinalPhase( this.getPhase() );
         
         // This action is okay - it distributes parameters to the child
         //  modeling ELEMENTS of this cavity.  We are not acting on the
         //  probe component.
         this.distributeCavityProperties();
+        this.distributeCellIndices();
         
         // Now we propagate the probe through this composite modeling element
         //  as usual.
@@ -318,9 +332,10 @@ public class IdealRfCavity extends ElementSeq {
      */
     @Override
     public void backPropagate(IProbe probe) throws ModelException {
-        probe.setLongitudinalPhase( this.getPhase() );
+        probe.setLongitudinalPhase( this.getCavPhase() );
         
         this.distributeCavityProperties();
+        this.distributeCellIndices();
         super.backPropagate(probe);
     }
 
@@ -343,28 +358,84 @@ public class IdealRfCavity extends ElementSeq {
     private void    distributeCavityProperties() {
         
         //  Initialize the loop
-        int                     cntCells = 0;
         Iterator<IComponent>    iterCmps = super.localIterator();
         while ( iterCmps.hasNext() ) {
             IComponent cmp = iterCmps.next();
             
             // The child component is a cavity cell
             if (cmp instanceof IRfCavityCell) {
-                IRfCavityCell   iCavCell = (IRfCavityCell)cmp;
+                IRfCavityCell   mdlCavCell = (IRfCavityCell)cmp;
+
+                mdlCavCell.setCavityModeConstant( this.getCavityModeConstant() );
+            }
+            
+            // The child component is the first RF gap
+            if (cmp instanceof IRfGap) {
+                IRfGap  mdlCavGap = (IRfGap)cmp;
                 
-                iCavCell.setCavityCellIndex( cntCells );
-                iCavCell.setCavityModeConstant( this.getCavityModeConstant() );
-                cntCells++;
+                if (mdlCavGap.isFirstGap())
+                    mdlCavGap.setPhase( this.getCavPhase() );
             }
             
             // The child component is a drift space within an RF cavity
             if (cmp instanceof IdealRfCavityDrift) {
-                IdealRfCavityDrift  modDrift = (IdealRfCavityDrift)cmp;
+                IdealRfCavityDrift  mdlCavDrift = (IdealRfCavityDrift)cmp;
                 
-                modDrift.setFrequency( this.getFrequency() );
-                modDrift.setCavityModeConstant( this.getCavityModeConstant() );
+                mdlCavDrift.setFrequency( this.getCavFrequency() );
+                mdlCavDrift.setCavityModeConstant( this.getCavityModeConstant() );
             }
+        }
+    }
+    
+    /**
+     *  Compute the indices of the component cavity cells and distribute the values
+     *  across all the children. The indices are computed according to the cell order,
+     *  its position within a cell bank (e.g., and end cell), and its position within 
+     *  the entire cavity (e.g., the first cell). 
+     *
+     * @since  Jan 23, 2015   by Christopher K. Allen
+     */
+    private void    distributeCellIndices() {
+        boolean                 bolInCellBank = false;
+        int                     indCell = 0;
+        
+        Iterator<IComponent>    iterCmps = super.localIterator();
+        while ( iterCmps.hasNext() ) {
+            IComponent cmp = iterCmps.next();
             
+            // If the child component is not a cavity cell skip it
+            if (!(cmp instanceof IRfCavityCell) )
+                continue;
+
+            IRfCavityCell   mdlCavCell = (IRfCavityCell)cmp;
+
+            // SET THE CELL INDEX
+            mdlCavCell.setCavityCellIndex( indCell );
+
+            
+            //
+            // Compute next index
+            //
+
+            // We are at either end of a bank of cavity cells
+            if (mdlCavCell.isEndCell()) 
+
+                // We've hit the last cell in a cell bank
+                if (bolInCellBank) {
+
+                    indCell += 2;
+                    bolInCellBank = false;
+
+                // We've hit the first cell in a cell bank
+                } else { 
+
+                    indCell++;   
+                    bolInCellBank = true;
+                }
+            
+            // We are in the middle of a cell bank
+            else
+                indCell++;
         }
     }
 }

@@ -67,6 +67,9 @@ public abstract class ElementSeq implements IComposite {
     /** user comments regarding this sequence */
     private String      m_strComment;
 
+    /** the parent composite structure that owns this composite element */
+    private IComposite  cpsParent;
+    
     
     /** 
      * List of IComponent objects composing composite sequence
@@ -370,6 +373,35 @@ public abstract class ElementSeq implements IComposite {
         return len;
     }
     
+    /**
+     * @return  returns the composite structure owning this composite structure, 
+     *          or <code>null</code> if this structure is top level
+     *
+     * @see xal.model.IComponent#getParent()
+     *
+     * @since  Jan 22, 2015   by Christopher K. Allen
+     */
+    @Override
+    public IComposite getParent() {
+        return this.cpsParent;
+    }
+
+    /**
+     * Sets the parent structure containing this composite structure. 
+     * The parent is assumed to be a composite structure built from component 
+     * elements.
+     * 
+     * @return the composite structure built from this structure
+     *
+     * @see xal.model.IComponent#setParent(xal.model.IComposite)
+     *
+     * @since  Jan 22, 2015   by Christopher K. Allen
+     */
+    @Override
+    public void setParent(IComposite cpsParent) {
+        this.cpsParent = cpsParent;
+    }
+
     
     /** 
      * <p>Override of {@link xal.model.IComponent#propagate(xal.model.IProbe, double)}</p>
@@ -512,13 +544,14 @@ public abstract class ElementSeq implements IComposite {
      * &middot; Added support for backward propagation
      * February, 2009
      * </p>
-
+     *
      *  @param  iComp   new component object
      */
     @Override
     public void addChild(IComponent iComp)   {
         this.getCompList().add(iComp);
         this.getReverseCompList().add(0, iComp);
+        iComp.setParent(this);
     }
     
     /**
