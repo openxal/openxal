@@ -22,7 +22,11 @@ import xal.extension.widgets.olmplot.GraphFrame;
 import xal.extension.widgets.olmplot.PLANE;
 import xal.extension.widgets.olmplot.ParticleCurve;
 import xal.extension.widgets.plot.FunctionGraphsJPanel;
+import xal.model.IComponent;
+import xal.model.Lattice;
+import xal.model.ModelException;
 import xal.model.alg.ParticleTracker;
+import xal.model.elem.Element;
 import xal.model.probe.ParticleProbe;
 import xal.sim.scenario.AlgorithmFactory;
 import xal.sim.scenario.ProbeFactory;
@@ -51,10 +55,10 @@ public class TestParticleProbeTrajectory {
     private static final boolean        BOL_TYPE_STOUT = true;
     
     /** Flag used for running tests involving live accelerator */
-    private static final boolean        BOL_MAKE_PLOTS = false;
+    private static final boolean        BOL_MAKE_PLOTS = true;
     
     /** Flag used for comparing the design and production trajectories (otherwise just compute design) */
-    private static final boolean        BOL_COMPARE = false;
+    private static final boolean        BOL_COMPARE = true;
     
 
     /** Location of the design accelerator configuration */
@@ -265,6 +269,36 @@ public class TestParticleProbeTrajectory {
     }
 
     /**
+     * Prints out all the element in the online model.
+     *
+     * @throws ModelException 
+     *
+     * @author Christopher K. Allen
+     * @since  Aug 26, 2014
+     */
+    @Test
+    public final void testModel() throws ModelException {
+        Lattice              latTest = MOD_DSGN.getLattice();
+        Iterator<IComponent> itrCmps = latTest.globalIterator();
+        
+        int index = 0;
+        System.out.println();
+        System.out.println("ELEMENTS contained in MODEL");
+        while (itrCmps.hasNext()) {
+            IComponent cmp = itrCmps.next();
+            if (cmp instanceof Element)
+                System.out.println("  " + index + " " + (Element)cmp);
+            else
+                System.out.println("  " + index + " " + cmp.getId());
+            index++;
+        }
+    }
+ 
+    /*
+     * Support Methods
+     */
+    
+    /**
      * Make plots of the design and production particle trajectories for
      * all the phase planes.
      *
@@ -280,22 +314,22 @@ public class TestParticleProbeTrajectory {
         
         Trajectory<ParticleProbeState>  trjDsgn = MOD_DSGN.getTrajectory();
         Trajectory<ParticleProbeState>  trjProd = MOD_PROD.getTrajectory();
-
+    
         for (PLANE plane : PLANE.values()) {
             final ParticleCurve crvDsgn = new ParticleCurve(plane, trjDsgn);
             final ParticleCurve crvProd = new ParticleCurve(plane, trjProd);
-
+    
             FunctionGraphsJPanel pltPlane = new FunctionGraphsJPanel();
             pltPlane.addGraphData(crvDsgn);
             pltPlane.addGraphData(crvProd);
             pltPlane.setLegendVisible(true);
-            pltPlane.setPreferredSize(new Dimension(850,650));
+            pltPlane.setPreferredSize(new Dimension(1000,750));
             
             
             final GraphFrame  frmPlotTraj = new GraphFrame("Particle Trajectory for Plane " + plane.name(), pltPlane);
             frmPlotTraj.display();
         }
-       
+    
         while (true);
     }
 

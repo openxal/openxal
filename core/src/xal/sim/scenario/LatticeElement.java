@@ -81,7 +81,7 @@ public class LatticeElement implements Comparable<LatticeElement> {
     private String     strElemId;
 
     /** the associated modeling element class type */
-    private Class<? extends IComponent> clsModElem;
+    private Class<? extends IComponent> clsModElemType;
     
 
     /** length of the modeling element */
@@ -118,35 +118,35 @@ public class LatticeElement implements Comparable<LatticeElement> {
 	 * entrance and exit positions are initialized using the given center position
 	 * and length attribute.
 	 *
-     * @param node             associated hardware node
-     * @param position         center position of hardware node within accelerator sequence
-     * @param elementClass     class type of the modeling element for associated hardware
+     * @param smfNode             associated hardware node
+     * @param dblPosCtr         center position of hardware node within accelerator sequence
+     * @param clsModElemType     class type of the modeling element for associated hardware
      * @param originalPosition index position of the hardware node within its sequence (used to sort elements)
 	 *
 	 * @since  Dec 8, 2014
 	 */
-	public LatticeElement(AcceleratorNode node, double position, Class<? extends IComponent> elementClass, int originalPosition) {
+	public LatticeElement(AcceleratorNode smfNode, double dblPosCtr, Class<? extends IComponent> clsModElemType, int originalPosition) {
 	    this.strElemId = null;
-		this.smfNode = node;
-		this.dblElemCntrPos = position;
+		this.smfNode = smfNode;
+		this.dblElemCntrPos = dblPosCtr;
 
-		double length = node.getLength();
+		double length = smfNode.getLength();
 		double effLength = 0.0;
-		if (node instanceof Magnet) {
-			if (node instanceof Bend)
-				effLength = ((Bend) node).getDfltPathLength();
+		if (smfNode instanceof Magnet) {
+			if (smfNode instanceof Bend)
+				effLength = ((Bend) smfNode).getDfltPathLength();
 			else
-				effLength = ((Magnet) node).getEffLength();
-		} else if (node instanceof xal.smf.impl.Electrostatic)
+				effLength = ((Magnet) smfNode).getEffLength();
+		} else if (smfNode instanceof xal.smf.impl.Electrostatic)
 			effLength = length;
 		this.dblElemLen = effLength;
 
-		this.clsModElem = elementClass;
+		this.clsModElemType = clsModElemType;
 				
 		if (isThin())
-			dblElemEntrPos = dblElemExitPos = position;
+			dblElemEntrPos = dblElemExitPos = dblPosCtr;
 		else {
-			dblElemEntrPos = position - 0.5*this.dblElemLen;
+			dblElemEntrPos = dblPosCtr - 0.5*this.dblElemLen;
 			dblElemExitPos = dblElemEntrPos + this.dblElemLen;
 		}
 		
@@ -158,21 +158,21 @@ public class LatticeElement implements Comparable<LatticeElement> {
 	 * positions are given directly for this constructor, which is called only within
 	 * this class.  This constructor is used when splitting lattice elements.
 	 *
-	 * @param node             associated hardware node
-	 * @param start            entrance location of this lattice element within sequence
-	 * @param end              exit location of this lattice element within sequence
-	 * @param elementClass     class type of the modeling element for associated hardware
+	 * @param smfNode             associated hardware node
+	 * @param dblPosStart            entrance location of this lattice element within sequence
+	 * @param dblPosEnd              exit location of this lattice element within sequence
+	 * @param clsModElemType     class type of the modeling element for associated hardware
 	 * @param originalPosition original index position of hardware node within its sequence
 	 *
 	 * @since  Dec 8, 2014
 	 */
-	private LatticeElement(AcceleratorNode node, double start, double end, Class<? extends IComponent> elementClass, int originalPosition) {
+	private LatticeElement(AcceleratorNode smfNode, double dblPosStart, double dblPosEnd, Class<? extends IComponent> clsModElemType, int originalPosition) {
 	    this.strElemId = null;
-		this.smfNode = node;	
-		this.clsModElem = elementClass;
+		this.smfNode = smfNode;	
+		this.clsModElemType = clsModElemType;
 				
-		this.dblElemEntrPos = start;
-		this.dblElemExitPos = end;
+		this.dblElemEntrPos = dblPosStart;
+		this.dblElemExitPos = dblPosEnd;
 		this.dblElemLen = 1.0;
 		
 		this.indNodeOrigPos = originalPosition;
@@ -232,7 +232,7 @@ public class LatticeElement implements Comparable<LatticeElement> {
      * @since  Dec 9, 2014
      */
     public Class<? extends IComponent>  getModelingClass() {
-        return this.clsModElem;
+        return this.clsModElemType;
     }
 
     /**
@@ -349,7 +349,7 @@ public class LatticeElement implements Comparable<LatticeElement> {
      * @since  Dec 4, 2014
      */
     public boolean isThin() {
-        return dblElemLen == 0.0 || ThinElement.class.isAssignableFrom(clsModElem);
+        return dblElemLen == 0.0 || ThinElement.class.isAssignableFrom(clsModElemType);
     }
 
     
@@ -387,7 +387,7 @@ public class LatticeElement implements Comparable<LatticeElement> {
 		if (elemSplitPos.dblElemCntrPos == dblElemEntrPos || elemSplitPos.dblElemCntrPos == dblElemExitPos) return null;
 		parts *= 2;
 		partnr *= 2;
-		LatticeElement secondPart = new LatticeElement(smfNode, elemSplitPos.dblElemCntrPos, dblElemExitPos, clsModElem, indNodeOrigPos);
+		LatticeElement secondPart = new LatticeElement(smfNode, elemSplitPos.dblElemCntrPos, dblElemExitPos, clsModElemType, indNodeOrigPos);
 		dblElemExitPos = elemSplitPos.dblElemCntrPos;
 		secondPart.parts = parts;
 		secondPart.partnr = partnr + 1;		
@@ -417,12 +417,12 @@ public class LatticeElement implements Comparable<LatticeElement> {
 	 */
 	public IComponent createModelingElement() throws ModelException {		 
 		try {
-			IComponent component = clsModElem.newInstance();		
+			IComponent component = clsModElemType.newInstance();		
 			component.initializeFrom(this);
 			
 			return component;
 		} catch (InstantiationException | IllegalAccessException e) {
-			throw new ModelException("Exception while instantiating class "+clsModElem.getName()+" for node "+smfNode.getId(), e);
+			throw new ModelException("Exception while instantiating class "+clsModElemType.getName()+" for node "+smfNode.getId(), e);
 		}
 	}
 

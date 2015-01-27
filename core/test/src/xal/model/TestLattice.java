@@ -8,12 +8,17 @@ package xal.model;
 
 import static org.junit.Assert.fail;
 
+import java.awt.Dimension;
 import java.util.Iterator;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import xal.extension.widgets.olmplot.GraphFrame;
+import xal.extension.widgets.olmplot.PLANE;
+import xal.extension.widgets.olmplot.ParticleCurve;
+import xal.extension.widgets.plot.FunctionGraphsJPanel;
 import xal.model.elem.Element;
 import xal.model.probe.EnvelopeProbe;
 import xal.model.probe.ParticleProbe;
@@ -29,6 +34,7 @@ import xal.sim.sync.SynchronizationException;
 import xal.smf.Accelerator;
 import xal.smf.AcceleratorSeq;
 import xal.smf.data.XMLDataManager;
+import xal.tools.beam.PhaseVector;
 
 /**
  * Class of test cases for class <code>{@link Trajectory}</code>.
@@ -48,6 +54,8 @@ public class TestLattice {
 //    public static final String     STR_ACCL_SEQ_ID = "SCLMed";
     public static final String     STR_ACCL_SEQ_ID = "CCL1";
     
+    /** Flag for making plots of the simulation */
+    public static final boolean BOL_MAKE_PLOTS  = true;    
     
     /** Bending Dipole ID */
     public static final String      STR_DH1_ID = "HEBT_Mag:DH11";
@@ -147,7 +155,7 @@ public class TestLattice {
      * @since  Aug 26, 2014
      */
     @Test
-    public final void TestModel() throws ModelException {
+    public final void testModel() throws ModelException {
         Lattice              latTest = MODEL_TEST.getLattice();
         Iterator<IComponent> itrCmps = latTest.globalIterator();
         
@@ -190,6 +198,38 @@ public class TestLattice {
         }
     }
 
+    /**
+     * Make plots of the design and production particle trajectories for
+     * all the phase planes.
+     *
+     * @author Christopher K. Allen
+     * @since  Sep 12, 2014
+     */
+    @SuppressWarnings("unused")
+    @Test
+    public final void testPlotDesignAndProduction() {
+        if (BOL_MAKE_PLOTS == false)
+            return;
+        
+        
+        Trajectory<ParticleProbeState>  trjDsgn = runModel(PROBE_PARTC);
+    
+        for (PLANE plane : PLANE.values()) {
+            final ParticleCurve crvSim = new ParticleCurve(plane, trjDsgn);
+    
+            FunctionGraphsJPanel pltPlane = new FunctionGraphsJPanel();
+            pltPlane.addGraphData(crvSim);
+            pltPlane.setLegendVisible(true);
+            pltPlane.setPreferredSize(new Dimension(1000,750));
+            
+            
+            final GraphFrame  frmPlotTraj = new GraphFrame("Particle Trajectory for Plane " + plane.name(), pltPlane);
+            frmPlotTraj.display();
+        }
+    
+        while (true);
+    }
+
     
     /*
      * Support Methods
@@ -208,9 +248,16 @@ public class TestLattice {
      * @since  Aug 25, 2014
      */
     private <S extends ProbeState<S>> Trajectory<S>   runModel(Probe<S> prbTest) {
+
+        prbTest.reset();
+        
+        if (prbTest instanceof ParticleProbe) {
+            
+            PhaseVector     vecInit = new PhaseVector(0.001, 0.0,  0.0, 0.010,  0.0, 0.0);
+            ((ParticleProbe)prbTest).setPhaseCoordinates(vecInit);
+        }
         
         try {
-            prbTest.reset();
             MODEL_TEST.setProbe( prbTest );
             MODEL_TEST.resync();
             MODEL_TEST.run();

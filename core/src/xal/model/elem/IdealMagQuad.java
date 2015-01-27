@@ -269,6 +269,31 @@ public class IdealMagQuad extends ThickElectromagnet {
 	
 	   return new PhaseMap( matPhi );
    }
+    
+    /*
+     * Object Overrides
+     */
+    
+    /**
+     *
+     * @see xal.model.elem.Element#toString()
+     *
+     * @since  Jan 27, 2015   by Christopher K. Allen
+     */
+    @Override
+    public String   toString() {
+
+        StringBuffer    bufOut = new StringBuffer();
+        
+        bufOut.append( super.toString() );
+
+        bufOut.append("  magnetic field     : " + this.getMagField() );
+        bufOut.append('\n');
+        bufOut.append("  magnet orientation : " + this.getOrientation() );
+        bufOut.append('\n');
+        
+        return bufOut.toString();
+    }
 
 
     /*
