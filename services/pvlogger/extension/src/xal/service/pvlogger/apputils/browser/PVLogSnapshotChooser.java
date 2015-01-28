@@ -244,7 +244,7 @@ public class PVLogSnapshotChooser {
                  * @param source the controller sending the event
                  * @param selectedSignals the new collection of selected signals
                  */
-                public void selectedSignalsChanged(BrowserController source, Collection selectedSignals) {}
+                public void selectedSignalsChanged(BrowserController source, Collection<String> selectedSignals) {}
         });
         JSplitPane mainPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, commentTextView, tableBox);
 
