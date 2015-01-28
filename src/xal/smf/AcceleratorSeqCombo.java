@@ -484,8 +484,15 @@ public class AcceleratorSeqCombo extends AcceleratorSeq {
 		// check that the ID's are equal
 		if ( !compSequence.getId().equals( getId() ) )  return false;
 		
-		// check whether the two combo sequences share the same base constituents
+		// check whether the two combo sequences share the same65536 base constituents
 		return compSequence.getBaseConstituents().equals( getBaseConstituents() );
+	}
+
+
+	/** Override hashCode() as required when overriding equals() */
+	public int hashCode() {
+		// hashCode must be consistent with equality which is based on base constituents
+		return _baseConstituents.hashCode();
 	}
 }
 
