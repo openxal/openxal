@@ -126,6 +126,12 @@ public class ServiceRef {
 	public boolean equals(Object other) {
 		return _serviceInfo.equals( ((ServiceRef)other)._serviceInfo); 
 	}
+
+
+	/** override hashCode as required for consistency with equals */
+	public int hashCode() {
+		return _serviceInfo.hashCode();
+	}
 	
 	
 	/**
