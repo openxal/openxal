@@ -435,7 +435,7 @@ class StreamByteReader {
 	static public class StreamPrematurelyClosedException extends Exception {
 		/** required serial version ID */
 		static final long serialVersionUID = 0L;
-
+		
 		
 		/** Constructor */
 		public StreamPrematurelyClosedException( final String message ) {
