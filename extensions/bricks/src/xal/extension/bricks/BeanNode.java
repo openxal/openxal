@@ -359,7 +359,7 @@ abstract public class BeanNode<T> extends Brick implements DataListener {
 			 * @param adaptor The adaptor to which the receiver's data is written
 			 */
 			public void write( final DataAdaptor adaptor ) {
-				final PropertyValueEditor editor = PropertyValueEditorManager.getDefaultManager().getEditor( value.getClass() );
+				final PropertyValueEditor<?> editor = PropertyValueEditorManager.getDefaultManager().getEditor( value.getClass() );
 				editor.writeValue( name, value, adaptor );
 			}			
 		};

@@ -110,8 +110,8 @@ public class ViewProxyFactory {
 	static public <T extends Component> ViewProxy<T> getViewProxy( final Class<T> viewClass, final String name, final String text, final boolean isContainer, final boolean makeIcon ) {
 		return new ViewProxy<T>( viewClass, isContainer, makeIcon ) {
 			/** Get the array of constructor arguments */
-			public Class[] getConstructorParameterTypes() {
-				return new Class[] { String.class };
+			public Class<?>[] getConstructorParameterTypes() {
+				return new Class<?>[] { String.class };
 			}
 			
 			
@@ -167,7 +167,7 @@ public class ViewProxyFactory {
 	static public ViewProxy<JTabbedPane> getTabbedPaneProxy() {
 		return new ViewProxy<JTabbedPane>( JTabbedPane.class, true, false ) {
 			/** handle child node property change */
-			public void handleChildNodePropertyChange( final ViewNode node, final BeanNode beanNode, final PropertyDescriptor propertyDescriptor, final Object value ) {
+			public void handleChildNodePropertyChange( final ViewNode node, final BeanNode<?> beanNode, final PropertyDescriptor propertyDescriptor, final Object value ) {
 				if ( beanNode instanceof ViewNode && propertyDescriptor.getName().equals( "name" ) ) {
 					final int viewIndex = node.getViewIndex( (ViewNode)beanNode );
 					if ( viewIndex >= 0 ) {
@@ -252,7 +252,7 @@ public class ViewProxyFactory {
 						}
 					}
 					
-					public Class getColumnClass( final int column ) {
+					public Class<?> getColumnClass( final int column ) {
 						return Number.class;
 					}
 					
@@ -343,8 +343,8 @@ public class ViewProxyFactory {
 	static public ViewProxy<JSplitPane> getSplitPaneProxy() {
 		return new ViewProxy<JSplitPane>( JSplitPane.class, true, false ) {
 			/** Get the array of constructor arguments */
-			public Class[] getConstructorParameterTypes() {
-				return new Class[] { Integer.TYPE };
+			public Class<?>[] getConstructorParameterTypes() {
+				return new Class<?>[] { Integer.TYPE };
 			}
 			
 			
@@ -366,8 +366,8 @@ public class ViewProxyFactory {
 	static public ViewProxy<Box> getHorizontalBoxProxy() {
 		return new ViewProxy<Box>( Box.class, true, false ) {
 			/** Get the array of constructor arguments */
-			public Class[] getConstructorParameterTypes() {
-				return new Class[] { Integer.TYPE };
+			public Class<?>[] getConstructorParameterTypes() {
+				return new Class<?>[] { Integer.TYPE };
 			}
 			
 			
@@ -395,8 +395,8 @@ public class ViewProxyFactory {
 	static public ViewProxy<Box> getVerticalBoxProxy() {
 		return new ViewProxy<Box>( Box.class, true, false ) {
 			/** Get the array of constructor arguments */
-			public Class[] getConstructorParameterTypes() {
-				return new Class[] { Integer.TYPE };
+			public Class<?>[] getConstructorParameterTypes() {
+				return new Class<?>[] { Integer.TYPE };
 			}
 			
 			
@@ -511,8 +511,8 @@ public class ViewProxyFactory {
 	static public ViewProxy<JFrame> getFrameProxy( final String title ) {
 		return new ViewProxy<JFrame>( JFrame.class, true, false ) {
 			/** Get the array of constructor arguments */
-			public Class[] getConstructorParameterTypes() {
-				return new Class[] { String.class };
+			public Class<?>[] getConstructorParameterTypes() {
+				return new Class<?>[] { String.class };
 			}
 			
 			
@@ -536,7 +536,7 @@ public class ViewProxyFactory {
 			
 			
 			/** get the java reference snippet */
-			public String getJavaReferenceSnippet( final BeanNode node ) {
+			public String getJavaReferenceSnippet( final BeanNode<?> node ) {
 				final StringBuffer buffer = new StringBuffer();
 				buffer.append( "WindowReference windowReference = new WindowReference( url, " );
 				buffer.append( "\"" + node.getTag() + "\", arg1, arg2 );" );
@@ -547,7 +547,7 @@ public class ViewProxyFactory {
 			
 			
 			/** get the java reference snippet */
-			public String getXALReferenceSnippet( final BeanNode node ) {
+			public String getXALReferenceSnippet( final BeanNode<JFrame> node ) {
 				final StringBuffer buffer = new StringBuffer();
 				buffer.append( "WindowReference windowReference = Application.getAdaptor().getDefaultWindowReference( " );
 				buffer.append( "\"" + node.getTag() + "\", arg1, arg2 );" );
@@ -558,7 +558,7 @@ public class ViewProxyFactory {
 			
 			
 			/** get the java reference snippet */
-			public String getJythonReferenceSnippet( final BeanNode node ) {
+			public String getJythonReferenceSnippet( final BeanNode<?> node ) {
 				final StringBuffer buffer = new StringBuffer();
 				buffer.append( "window_reference = WindowReference( url, " );
 				buffer.append( "\"" + node.getTag() + "\", [arg1, arg2] )" );
@@ -581,7 +581,7 @@ public class ViewProxyFactory {
 			 * Get the reference snippet method arguments
 			 * @return the method arguments
 			 */
-			protected String getReferenceSnippetFetchMethodArgumentsString( final BeanNode node ) {
+			protected String getReferenceSnippetFetchMethodArgumentsString( final BeanNode<?> node ) {
 				return "";
 			}
 		};
@@ -606,7 +606,7 @@ public class ViewProxyFactory {
 			
 			
 			/** get the java reference snippet */
-			public String getJavaReferenceSnippet( final BeanNode node ) {
+			public String getJavaReferenceSnippet( final BeanNode<?> node ) {
 				final StringBuffer buffer = new StringBuffer();
 				buffer.append( "WindowReference windowReference = new WindowReference( url, " );
 				buffer.append( "\"" + node.getTag() + "\", arg1, arg2 );" );
@@ -617,7 +617,7 @@ public class ViewProxyFactory {
 			
 			
 			/** get the java reference snippet */
-			public String getXALReferenceSnippet( final BeanNode node ) {
+			public String getXALReferenceSnippet( final BeanNode<JDialog> node ) {
 				final StringBuffer buffer = new StringBuffer();
 				buffer.append( "WindowReference windowReference = Application.getAdaptor().getDefaultWindowReference( " );
 				buffer.append( "\"" + node.getTag() + "\", arg1, arg2 );" );
@@ -628,7 +628,7 @@ public class ViewProxyFactory {
 			
 			
 			/** get the java reference snippet */
-			public String getJythonReferenceSnippet( final BeanNode node ) {
+			public String getJythonReferenceSnippet( final BeanNode<?> node ) {
 				final StringBuffer buffer = new StringBuffer();
 				buffer.append( "window_reference = WindowReference( url, " );
 				buffer.append( "\"" + node.getTag() + "\", [arg1, arg2] )" );
@@ -651,7 +651,7 @@ public class ViewProxyFactory {
 			 * Get the reference snippet method arguments
 			 * @return the method arguments
 			 */
-			protected String getReferenceSnippetFetchMethodArgumentsString( final BeanNode node ) {
+			protected String getReferenceSnippetFetchMethodArgumentsString( final BeanNode<?> node ) {
 				return "";
 			}
 		};
