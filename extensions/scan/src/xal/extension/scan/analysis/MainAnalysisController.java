@@ -737,10 +737,10 @@ public class MainAnalysisController {
 		incrColorGlobalButton.addActionListener(
 			new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					Vector gdV = graphAnalysis.getAllGraphData();
+					Vector<BasicGraphData> gdV = graphAnalysis.getAllGraphData();
 					int count = 0;
 					for (int i = 0, n = gdV.size(); i < n; i++) {
-						BasicGraphData gd = (BasicGraphData) gdV.get(i);
+						BasicGraphData gd = gdV.get(i);
 						if (gd != graphDataLocal) {
 							gd.setGraphColor(IncrementalColor.getColor(count));
 							count++;
@@ -774,9 +774,9 @@ public class MainAnalysisController {
 		phaseShiftGlobalButton.addActionListener(
 			new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					Vector gdV = graphAnalysis.getAllGraphData();
+					Vector<BasicGraphData> gdV = graphAnalysis.getAllGraphData();
 					for (int i = 0, n = gdV.size(); i < n; i++) {
-						BasicGraphData gd = (BasicGraphData) gdV.get(i);
+						BasicGraphData gd = gdV.get(i);
 						if (gd != graphDataLocal) {
 							shiftGraphData(gd, 25.);
 						}
@@ -790,9 +790,9 @@ public class MainAnalysisController {
 		removePhaseShiftGlobalButton.addActionListener(
 			new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					Vector gdV = graphAnalysis.getAllGraphData();
+					Vector<BasicGraphData> gdV = graphAnalysis.getAllGraphData();
 					for (int i = 0, n = gdV.size(); i < n; i++) {
-						BasicGraphData gd = (BasicGraphData) gdV.get(i);
+						BasicGraphData gd = gdV.get(i);
 						if (gd != graphDataLocal) {
 							unShiftGraphData(gd);
 						}
