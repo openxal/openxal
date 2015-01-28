@@ -63,8 +63,8 @@ public class BorderProxyFactory {
 	static public BorderProxy<TitledBorder> getTitledBorderProxy( final String name ) {
 		return new BorderProxy<TitledBorder>( TitledBorder.class ) {			
 			/** Get the array of constructor arguments */
-			public Class[] getConstructorParameterTypes() {
-				return new Class[] { String.class };
+			public Class<?>[] getConstructorParameterTypes() {
+				return new Class<?>[] { String.class };
 			}
 			
 			
@@ -85,8 +85,8 @@ public class BorderProxyFactory {
 	static public BorderProxy<BevelBorder> getLoweredBevelBorderProxy( final String name ) {
 		return new BorderProxy<BevelBorder>( BevelBorder.class ) {
 			/** Get the array of constructor arguments */
-			public Class[] getConstructorParameterTypes() {
-				return new Class[] { Integer.TYPE };
+			public Class<?>[] getConstructorParameterTypes() {
+				return new Class<?>[] { Integer.TYPE };
 			}
 			
 			
@@ -113,8 +113,8 @@ public class BorderProxyFactory {
 	static public BorderProxy<BevelBorder> getRaisedBevelBorderProxy( final String name ) {
 		return new BorderProxy<BevelBorder>( BevelBorder.class ) {
 			/** Get the array of constructor arguments */
-			public Class[] getConstructorParameterTypes() {
-				return new Class[] { Integer.TYPE };
+			public Class<?>[] getConstructorParameterTypes() {
+				return new Class<?>[] { Integer.TYPE };
 			}
 			
 			
