@@ -155,9 +155,9 @@ public class DataTable {
                 final List<DataAdaptor> recordAdaptors = adaptor.childAdaptors( "record" );
                 for ( final DataAdaptor recordAdaptor : recordAdaptors ) {
                     try {
-                        Constructor constructor = _recordClass.getConstructor( new Class[] {DataTable.class} );
+                        final Constructor<GenericRecord> constructor = (Constructor<GenericRecord>)_recordClass.getConstructor( new Class<?>[] {DataTable.class} );
 
-                        GenericRecord record = (GenericRecord)constructor.newInstance(new Object[] {DataTable.this});
+                        GenericRecord record = constructor.newInstance( new Object[] {DataTable.this} );
                         record.update( recordAdaptor );
                         add( record );
                     }

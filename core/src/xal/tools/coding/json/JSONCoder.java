@@ -1957,8 +1957,8 @@ class MutableConversionAdaptorStore extends ConversionAdaptorStore {
             
             /** convert the JSON representation construct into the custom type */
             @SuppressWarnings( "unchecked" )    // list can represent any type
-            public ArrayList toNative( final Object[] array ) {
-                final ArrayList list = new ArrayList( array.length );
+            public ArrayList<?> toNative( final Object[] array ) {
+                final ArrayList<Object> list = new ArrayList<>( array.length );
                 for ( final Object item : array ) {
                     list.add( item );
                 }
@@ -1976,7 +1976,7 @@ class MutableConversionAdaptorStore extends ConversionAdaptorStore {
             /** convert the JSON representation construct into the custom type */
             @SuppressWarnings( "unchecked" )    // list can represent any type
             public Vector<?> toNative( final Object[] array ) {
-                final Vector list = new Vector( array.length );
+                final Vector<Object> list = new Vector<>( array.length );
                 for ( final Object item : array ) {
                     list.add( item );
                 }
@@ -1988,14 +1988,14 @@ class MutableConversionAdaptorStore extends ConversionAdaptorStore {
             /** convert the custom type to a representation in terms of representation JSON constructs */
             @SuppressWarnings( "unchecked" )
             public HashMap<String,?> toRepresentation( final Hashtable<String,?> table ) {
-                return new HashMap( table );
+                return new HashMap<>( table );
             }
             
             
             /** convert the JSON representation construct into the custom type */
             @SuppressWarnings( "unchecked" )
             public Hashtable<String,?> toNative( final HashMap<String,?> map ) {
-                return new Hashtable( map );
+                return new Hashtable<>( map );
             }
         });
         
@@ -2003,7 +2003,7 @@ class MutableConversionAdaptorStore extends ConversionAdaptorStore {
             /** convert the custom type to a representation in terms of representation JSON constructs */
             @SuppressWarnings( "unchecked" ) 
             public HashMap<String,?> toRepresentation( final StackTraceElement traceElement ) {
-                final HashMap traceElementMap = new HashMap( 3 );
+                final HashMap<String,Object> traceElementMap = new HashMap<>( 3 );
                 traceElementMap.put( "className", traceElement.getClassName() );
                 traceElementMap.put( "methodName", traceElement.getMethodName() );
                 traceElementMap.put( "fileName", traceElement.getFileName() );
@@ -2028,7 +2028,7 @@ class MutableConversionAdaptorStore extends ConversionAdaptorStore {
             @SuppressWarnings( "unchecked" )
             public HashMap<String,?> toRepresentation( final RuntimeException exception ) {
                 final String rawMessage = exception.getMessage();
-                final HashMap exceptionMap = new HashMap( 3 );
+                final HashMap<String,Object> exceptionMap = new HashMap<>( 3 );
                 exceptionMap.put( "message", rawMessage != null ? rawMessage : exception.toString() );
                 exceptionMap.put( "stackTrace", exception.getStackTrace() );
                 return exceptionMap;
