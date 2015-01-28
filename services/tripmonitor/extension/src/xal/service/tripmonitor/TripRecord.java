@@ -95,6 +95,12 @@ public class TripRecord {
 			return false;
 		}
 	}
+
+
+	/** override hashCode to be consistent with equals() */
+	public int hashCode() {
+		return TIME_STAMP.hashCode() + PV.hashCode();
+	}
 	
 	
 	/** get the timestamp based comparator */
