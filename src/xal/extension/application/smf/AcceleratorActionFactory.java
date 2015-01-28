@@ -69,9 +69,7 @@ public class AcceleratorActionFactory {
                     comboSequences.add( (AcceleratorSeqCombo)selectedSequence );
                 }
 				
-				final Iterator comboIter = comboSequences.iterator();
-                while ( comboIter.hasNext() ) {
-                    final AcceleratorSeq sequence = (AcceleratorSeq)comboIter.next();
+				for ( final AcceleratorSeq sequence : comboSequences ) {
                     final JMenuItem sequenceItem = selectSequenceMenuItem( sequence, document );
                     menu.add(sequenceItem);
                     sequenceGroup.add( sequenceItem );

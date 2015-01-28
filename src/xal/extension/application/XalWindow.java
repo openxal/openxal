@@ -28,6 +28,9 @@ import xal.tools.apputils.ImageCaptureManager;
  * @author  t6p
  */
 public abstract class XalWindow extends JFrame implements XalDocumentView, XalDocumentListener {
+	/** serial version ID required for Serializable */
+	static final long serialVersionUID = 1L;
+
 	// public static constants for confirmation dialogs
 	final static public int YES_OPTION = JOptionPane.YES_OPTION;
 	final static public int NO_OPTION = JOptionPane.NO_OPTION;
