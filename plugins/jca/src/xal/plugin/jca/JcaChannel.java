@@ -1274,7 +1274,7 @@ class JcaChannel extends Channel {
      */
     public xal.ca.Monitor addMonitorValTime(IEventSinkValTime ifcSink, int intMaskFire) throws ConnectionException, MonitorException {
         this.checkConnection("addMonitorValTime()");
-        return JcaMonitorValTime.newMonitor(this, ifcSink, intMaskFire);
+        return JcaMonitor.newValueTimeMonitor( this, ifcSink, intMaskFire );
     }
 
     
@@ -1287,8 +1287,8 @@ class JcaChannel extends Channel {
      *  @return             MonitorSrc object associated with this event
      */
     public xal.ca.Monitor addMonitorValStatus(IEventSinkValStatus ifcSink, int intMaskFire) throws ConnectionException, MonitorException {
-        this.checkConnection("addMonitorValTime()");
-        return JcaMonitorValStatus.newMonitor(this, ifcSink, intMaskFire);
+        this.checkConnection("addMonitorValStatus()");
+        return JcaMonitor.newValueStatusMonitor( this, ifcSink, intMaskFire );
     }
     
     
@@ -1302,7 +1302,7 @@ class JcaChannel extends Channel {
      */
     public xal.ca.Monitor addMonitorValue(IEventSinkValue ifcSink, int intMaskFire) throws ConnectionException, MonitorException {
         this.checkConnection("addMonitorValue()");
-        return JcaMonitorValue.newMonitor(this, ifcSink, intMaskFire);
+        return JcaMonitor.newValueMonitor( this, ifcSink, intMaskFire );
     }
     
     
