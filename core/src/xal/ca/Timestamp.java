@@ -151,6 +151,12 @@ public class Timestamp implements Comparable<Timestamp> {
 			return false;
 		}
 	}
+
+
+	/** Override the hashcode as required when overriding equals. Equality implies equality of the underlying _timestamp instance variables. */
+	public int hashCode() {
+		return _timestamp.hashCode();
+	}
 	
 	
 	/**
