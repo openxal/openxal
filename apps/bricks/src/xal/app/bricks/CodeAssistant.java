@@ -81,7 +81,7 @@ public class CodeAssistant {
             private static final long serialVersionUID = 1L;
             
             public void actionPerformed( final ActionEvent event ) {
-				final BeanNode node = TreeUtility.getSelectedBeanNode( _viewTree );
+				final BeanNode<?> node = TreeUtility.getSelectedBeanNode( _viewTree );
 				if ( node != null ) {
 					final StringSelection stringSelection = new StringSelection( node.getTag() );
 					Toolkit.getDefaultToolkit().getSystemClipboard().setContents( stringSelection, stringSelection );
@@ -96,10 +96,10 @@ public class CodeAssistant {
             private static final long serialVersionUID = 1L;
             
             public void actionPerformed( final ActionEvent event ) {
-				final BeanNode[] nodes = TreeUtility.getSelectedBeanNodes( _viewTree );
+				final BeanNode<?>[] nodes = TreeUtility.getSelectedBeanNodes( _viewTree );
 				if ( nodes.length > 0 ) {
 					final StringBuffer buffer = new StringBuffer();
-					for ( final BeanNode node : nodes ) {
+					for ( final BeanNode<?> node : nodes ) {
 						buffer.append( node.getJavaDeclarationSnippet() );
 						buffer.append( System.getProperty( "line.separator" ) );
 					}
@@ -116,10 +116,10 @@ public class CodeAssistant {
             private static final long serialVersionUID = 1L;
             
             public void actionPerformed( final ActionEvent event ) {
-				final BeanNode[] nodes = TreeUtility.getSelectedBeanNodes( _viewTree );
+				final BeanNode<?>[] nodes = TreeUtility.getSelectedBeanNodes( _viewTree );
 				if ( nodes.length > 0 ) {
 					final StringBuffer buffer = new StringBuffer();
-					for ( final BeanNode node : nodes ) {
+					for ( final BeanNode<?> node : nodes ) {
 						buffer.append( node.getJavaReferenceSnippet() );
 						buffer.append( System.getProperty( "line.separator" ) );
 					}
@@ -136,10 +136,10 @@ public class CodeAssistant {
             private static final long serialVersionUID = 1L;
             
             public void actionPerformed( final ActionEvent event ) {
-				final BeanNode[] nodes = TreeUtility.getSelectedBeanNodes( _viewTree );
+				final BeanNode<?>[] nodes = TreeUtility.getSelectedBeanNodes( _viewTree );
 				if ( nodes.length > 0 ) {
 					final StringBuffer buffer = new StringBuffer();
-					for ( final BeanNode node : nodes ) {
+					for ( final BeanNode<?> node : nodes ) {
 						buffer.append( node.getXALReferenceSnippet() );
 						buffer.append( System.getProperty( "line.separator" ) );
 					}
@@ -156,10 +156,10 @@ public class CodeAssistant {
             private static final long serialVersionUID = 1L;
             
             public void actionPerformed( final ActionEvent event ) {
-				final BeanNode[] nodes = TreeUtility.getSelectedBeanNodes( _viewTree );
+				final BeanNode<?>[] nodes = TreeUtility.getSelectedBeanNodes( _viewTree );
 				if ( nodes.length > 0 ) {
 					final StringBuffer buffer = new StringBuffer();
-					for ( final BeanNode node : nodes ) {
+					for ( final BeanNode<?> node : nodes ) {
 						buffer.append( node.getJythonReferenceSnippet() );
 						buffer.append( System.getProperty( "line.separator" ) );
 					}

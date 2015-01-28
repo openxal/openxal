@@ -27,10 +27,9 @@ public class TreeUtility {
 
 	
 	/** get the selected bean nodes */
-	@SuppressWarnings( "rawtypes" )		// generics are not compatible with arrays
-	static BeanNode[] getSelectedBeanNodes( final JTree tree ) {
+	static BeanNode<?>[] getSelectedBeanNodes( final JTree tree ) {
 		final TreePath[] selectionPaths = tree.getSelectionPaths();
-		if ( selectionPaths == null )  return new BeanNode[0];
+		if ( selectionPaths == null )  return new BeanNode<?>[0];
 		final List<BeanNode<?>> nodes = new ArrayList<BeanNode<?>>( selectionPaths.length );
 		for ( final TreePath treePath : selectionPaths ) {
 			final BeanNode<?> node = getBeanNode( treePath );
@@ -39,7 +38,7 @@ public class TreeUtility {
 			}
 		}
 		
-		return nodes.toArray( new BeanNode[ nodes.size() ] );
+		return nodes.toArray( new BeanNode<?>[ nodes.size() ] );
 	}
 	
 	
