@@ -175,4 +175,10 @@ public class ImageEntry {
 			return false;
 		}
 	}
+
+
+	/** override hashCode() as required to be consistent with equals() */
+	public int hashCode() {
+		return IMAGE_FILE.hashCode();
+	}
 }

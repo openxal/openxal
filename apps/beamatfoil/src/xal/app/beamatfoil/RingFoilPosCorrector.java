@@ -829,7 +829,7 @@ public class RingFoilPosCorrector {
             /** ID for serializable version */
             private static final long serialVersionUID = 1L;
             
-            public Class getColumnClass(int columnIndex) {
+            public Class<?> getColumnClass(int columnIndex) {
                 return String.class;
             }
             

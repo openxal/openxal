@@ -84,4 +84,10 @@ public class ChannelRef {
 			return false;
 		}
 	}
+
+
+	/** override hashCode() as required to be consistent with equals() */
+	public int hashCode() {
+		return PV.hashCode();
+	}
 }

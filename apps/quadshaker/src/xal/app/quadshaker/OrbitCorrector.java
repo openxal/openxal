@@ -920,7 +920,7 @@ public class OrbitCorrector {
                 /** ID for serializable version */
                 private static final long serialVersionUID = 1L;
                 
-				public Class getColumnClass(int columnIndex) {
+				public Class<?> getColumnClass(int columnIndex) {
 					if(columnIndex == 0 || columnIndex == 1) {
 						return String.class;
 					}
@@ -979,7 +979,7 @@ public class OrbitCorrector {
                 /** ID for serializable version */
                 private static final long serialVersionUID = 1L;
                 
-				public Class getColumnClass(int columnIndex) {
+				public Class<?> getColumnClass(int columnIndex) {
 					if(columnIndex == 0 || columnIndex == 1) {
 						return String.class;
 					}

@@ -378,9 +378,9 @@ public class BeamPositionFace extends JPanel{
                 }
                 else{
                     //First clear out old background values.
-                    Iterator itr = agents.iterator();   // CKA - Raw Type
+                    Iterator<BpmAgent> itr = agents.iterator();   // CKA - Raw Type
                     while(itr.hasNext()){
-                        BpmAgent bpmagent = (BpmAgent)itr.next();
+                        BpmAgent bpmagent = itr.next();
                         (bpmxaverages.get(bpmagent.name())).clear();
                         (bpmyaverages.get(bpmagent.name())).clear();
                     }
