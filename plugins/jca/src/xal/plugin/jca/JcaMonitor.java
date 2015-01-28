@@ -39,8 +39,26 @@ abstract class JcaMonitor extends Monitor implements gov.aps.jca.event.MonitorLi
         _jcaChannel = ((JcaChannel)chan)._jcaChannel;
         _jcaMonitor = null;
     }
-	
-    
+
+
+	/** factory method to create a monitor which provides value, status and timestamp */
+	static public JcaMonitor newValueTimeMonitor( final JcaChannel chan, final IEventSinkValTime ifcSink, final int intMaskFire ) throws ConnectionException, MonitorException {
+		return JcaMonitorValTime.newMonitor( chan, ifcSink, intMaskFire );
+	}
+
+
+	/** factory method to create a monitor which provides value and status */
+	static public JcaMonitorValStatus newValueStatusMonitor( final JcaChannel chan, final IEventSinkValStatus ifcSink, final int intMaskFire ) throws ConnectionException, MonitorException {
+		return JcaMonitorValStatus.newMonitor( chan, ifcSink, intMaskFire );
+	}
+
+
+	/** factory method to create a monitor which provides value */
+	static public JcaMonitorValue newValueMonitor( final JcaChannel chan, final IEventSinkValue ifcSink, final int intMaskFire ) throws ConnectionException, MonitorException {
+		return JcaMonitorValue.newMonitor( chan, ifcSink, intMaskFire );
+	}
+
+
     /**
      *  Derived monitor objects must override this event hook.  Derived class
      *  will catch the jca.MonitorEvent, convert to appropriate data type, and
