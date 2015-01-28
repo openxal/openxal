@@ -219,11 +219,11 @@ public class BPMFace extends JPanel{
 			public void actionPerformed(ActionEvent ae) {
 				int i = 0;
 				activebpmagents.clear();
-				Iterator itr = (doc.bpmagents).iterator();
+				Iterator<BpmAgent> itr = (doc.bpmagents).iterator();
 
 				while(itr.hasNext() && i <= bpmtable.getRowCount()-1){
 
-					BpmAgent bpmagent = (BpmAgent)itr.next();
+					BpmAgent bpmagent = itr.next();
 					if(((Boolean)bpmtable.getValueAt(i, 1)).booleanValue() == true){
 						if(bpmagent.isConnected()){
 							activebpmagents.add(bpmagent);
@@ -267,7 +267,7 @@ public class BPMFace extends JPanel{
 				double avg_x=0.0, avg_xp=0.0, avg_y=0.0, avg_yp=0.0;
 				double sum_x_weight=0.0, sum_xp_weight=0.0, sum_y_weight=0.0, sum_yp_weight=0.0;
 				double avg_xerr=0.0, avg_xperr=0.0, avg_yerr=0.0, avg_yperr=0.0;
-				Iterator itr = (doc.bpmagents).iterator();
+//				Iterator itr = (doc.bpmagents).iterator();
 
 				/* optimal statistical average over q_n with error sigma_n is sum( weight_n * q_n ) / sum( weight_n ) where weight_n = 1/sigma_n^2
 				 * Error estimate for average is 1 / sqrt( sum( weight_n ) ) */

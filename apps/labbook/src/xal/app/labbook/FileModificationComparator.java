@@ -38,4 +38,10 @@ public class FileModificationComparator implements Comparator<File> {
 	public boolean equals( final Object comparator ) {
 		return this == comparator;
 	}
+
+
+	/** Override hashCode() as required for consistency with equals() */
+	public int hashCode() {
+		return super.hashCode();
+	}
 }

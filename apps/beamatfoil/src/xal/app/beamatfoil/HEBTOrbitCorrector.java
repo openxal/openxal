@@ -745,7 +745,7 @@ public class HEBTOrbitCorrector {
                 /** ID for serializable version */
                 private static final long serialVersionUID = 1L;
                 
-				public Class getColumnClass(int columnIndex) {  // TODO: CKA - Unchecked Conversion
+				public Class<?> getColumnClass(int columnIndex) {  // TODO: CKA - Unchecked Conversion
 					if(columnIndex == 0 || columnIndex == 1 || columnIndex == 2) {
 						return String.class;
 					}

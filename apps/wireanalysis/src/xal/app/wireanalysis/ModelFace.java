@@ -356,12 +356,12 @@ public class ModelFace extends JPanel{
                 NonConsecutiveSeqSelector selector = new NonConsecutiveSeqSelector();
                 selector.selectSequence();
                 seqlistnames = selector.getSeqList();
-                Iterator itr = seqlistnames.iterator();     // TODO: CKA - Raw Type
+                Iterator<Object> itr = seqlistnames.iterator();
                 seqlist.clear();
                 nodes.clear();
                 
                 while(itr.hasNext()){
-                    AcceleratorSeq sequence = accl.getSequence((String)itr.next());
+                    AcceleratorSeq sequence = accl.getSequence( itr.next().toString() );
                     seqlist.add(sequence);
                     nodes.addAll(sequence.getAllNodes(true));
                 }

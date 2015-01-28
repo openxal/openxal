@@ -392,13 +392,13 @@ public class ControlFace extends JPanel {
                 selector.selectSequence();
                 magnetseqlistnames = selector.getSeqList();
                 System.out.println("magnetseqlistnames is " + magnetseqlistnames);
-                Iterator itr = magnetseqlistnames.iterator();
+                Iterator<Object> itr = magnetseqlistnames.iterator();
                 magnetseqlistnames = selector.getSeqList();
                 magnetseqlist.clear();
                 magnetnodes.clear();
                 magnetmodel.clearAllData();
                 while(itr.hasNext()){
-                    AcceleratorSeq seq = accl.getSequence((String)itr.next());
+                    AcceleratorSeq seq = accl.getSequence( itr.next().toString() );
                     magnetseqlist.add(seq);
                 }
                 
@@ -432,12 +432,12 @@ public class ControlFace extends JPanel {
                 NonConsecutiveSeqSelector selector = new NonConsecutiveSeqSelector();
                 selector.selectSequence();
                 targetseqlistnames = selector.getSeqList();
-                Iterator itr = targetseqlistnames.iterator();
+                Iterator<Object> itr = targetseqlistnames.iterator();
                 targetseqlistnames = selector.getSeqList();
                 targetseqlist.clear();
                 targetnodes.clear();
                 while(itr.hasNext()){
-                    AcceleratorSeq seq = accl.getSequence((String)itr.next());
+                    AcceleratorSeq seq = accl.getSequence( itr.next().toString() );
                     targetseqlist.add(seq);
                     targetnodes.addAll(seq.getAllNodes());
                 }

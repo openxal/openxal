@@ -237,9 +237,9 @@ public class OneTurnFace extends JPanel{
 		loadbutton.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent ae){
 				int i=0;
-				Iterator itr = (doc.bpmagents).iterator();
+				Iterator<BpmAgent> itr = (doc.bpmagents).iterator();
 				while(itr.hasNext() && i <= bpmtable.getRowCount()-1){
-					BpmAgent bpmagent = (BpmAgent)itr.next();
+					BpmAgent bpmagent = itr.next();
 					if(bpmagent.isConnected()){
 		    System.out.println("BPM agent " + bpmagent.name() + " has " + bpmagent.getXAvg());
 		    bpmtablemodel.setValueAt(new Double(bpmagent.getXAvgTBTArray()[0]), i, 1);
@@ -265,11 +265,11 @@ public class OneTurnFace extends JPanel{
 			public void actionPerformed(ActionEvent ae) {
 				int i = 0;
 				activebpmagents.clear();
-				Iterator itr = (doc.bpmagents).iterator();
+				Iterator<BpmAgent> itr = (doc.bpmagents).iterator();
 
 				while(itr.hasNext() && i <= bpmtable.getRowCount()-1){
 					//Do the fit for all active BPM Agents
-					BpmAgent bpmagent = (BpmAgent)itr.next();
+					BpmAgent bpmagent = itr.next();
 					if(((Boolean)bpmtable.getValueAt(i, 5)).booleanValue() == true){
 						activebpmagents.add(bpmagent);
 					}
