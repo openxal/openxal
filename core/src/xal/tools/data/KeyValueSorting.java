@@ -46,7 +46,7 @@ public class KeyValueSorting {
 			/** compares the two items for order */
             @SuppressWarnings( "unchecked" )    // no way to predetermine the value types
 			public int compare( final RecordType record1, final RecordType record2 ) {
-				final Comparable value1 = (Comparable)adaptor.valueForKeyPath( record1, keyPath );
+				final Comparable<Object> value1 = (Comparable<Object>)adaptor.valueForKeyPath( record1, keyPath );
 				final Object value2 = adaptor.valueForKeyPath( record2, keyPath );
 				return order * value1.compareTo( value2 );
 			}
