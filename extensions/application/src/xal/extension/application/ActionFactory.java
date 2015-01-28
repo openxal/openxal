@@ -794,9 +794,7 @@ public class ActionFactory {
             public void menuSelected( final MenuEvent event ) {
                 JMenu menu = (JMenu)event.getSource();
                 menu.removeAll();
-                Iterator documentIter = Application.getApp().getDocuments().iterator();
-                while ( documentIter.hasNext() ) {
-                    XalAbstractDocument document = (XalAbstractDocument)documentIter.next();
+				for ( final XalAbstractDocument document : Application.getApp().getDocuments() ) {
                     String title = document.getTitle();
                     JMenuItem menuItem = new JMenuItem( title );
                     menu.add( menuItem );
