@@ -18,6 +18,9 @@ import xal.tools.data.*;
  */
 
 public abstract class AttributeBucket implements java.io.Serializable, DataListener {
+	/** required for Serializable */
+	static final private long serialVersionUID = 1L;
+	
     /** map of attributes keyed by value */
     private Map<String,Attribute> m_mapAttrs;
     

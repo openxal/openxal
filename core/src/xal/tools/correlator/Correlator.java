@@ -284,7 +284,7 @@ abstract public class Correlator<SourceType, RecordType, SourceAgentType extends
 		
 		final TimedBroadcaster<RecordType> timedBroadcaster = (broadcaster instanceof TimedBroadcaster) ? (TimedBroadcaster<RecordType>)broadcaster : new TimedBroadcaster<RecordType>( localCenter, timeout );
 		final CorrelationNotice<RecordType> correlationListener = new CorrelationNotice<RecordType>() {
-			public void newCorrelation( final Object sender, final Correlation correlation ) {
+			public void newCorrelation( final Object sender, final Correlation<RecordType> correlation ) {
 				stopMonitoring();
 				timedBroadcaster.removeCorrelationNoticeListener( this );
 			}
