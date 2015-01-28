@@ -15,7 +15,10 @@ import xal.extension.application.*;
  * @author  tap
  */
 abstract public class AcceleratorWindow extends XalWindow {
-    
+	/** serial version ID required for Serializable */
+	static final long serialVersionUID = 1L;
+
+
     /** Creates a new instance of AcceleratorWindow */
     public AcceleratorWindow(XalDocument aDocument) {
         super(aDocument);
