@@ -188,7 +188,7 @@ class BricksWindow extends XalWindow implements SwingConstants, BrickListener {
 	
 	
 	/** get the selected bean nodes */
-	private BeanNode[] getSelectedBeanNodes() {
+	private BeanNode<?>[] getSelectedBeanNodes() {
 		return TreeUtility.getSelectedBeanNodes( VIEW_TREE );
 	}
 	
@@ -202,7 +202,7 @@ class BricksWindow extends XalWindow implements SwingConstants, BrickListener {
 	
 	/** move the selected item down */
 	private void moveDownSelection( final JTree tree ) {
-		final BeanNode[] beanNodes = TreeUtility.getSelectedBeanNodes( tree );
+		final BeanNode<?>[] beanNodes = TreeUtility.getSelectedBeanNodes( tree );
 		if ( beanNodes != null && beanNodes.length > 0 ) {
 			if ( beanNodes[0] instanceof ViewNode ) {
 				final ViewNodeContainer container = ((ViewNode)beanNodes[0]).getViewNodeContainer();
@@ -230,7 +230,7 @@ class BricksWindow extends XalWindow implements SwingConstants, BrickListener {
 	
 	/** move the selected item up */
 	private void moveUpSelection( final JTree tree ) {
-		final BeanNode[] beanNodes = TreeUtility.getSelectedBeanNodes( tree );
+		final BeanNode<?>[] beanNodes = TreeUtility.getSelectedBeanNodes( tree );
 		if ( beanNodes != null && beanNodes.length > 0 ) {
 			if ( beanNodes[0] instanceof ViewNode ) {
 				final ViewNodeContainer container = ((ViewNode)beanNodes[0]).getViewNodeContainer();
