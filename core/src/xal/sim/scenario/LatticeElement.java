@@ -10,6 +10,7 @@ import xal.model.IComponent;
 import xal.model.ModelException;
 import xal.model.elem.ThinElement;
 import xal.smf.AcceleratorNode;
+import xal.smf.AcceleratorSeq;
 import xal.smf.impl.Bend;
 import xal.smf.impl.Magnet;
 
@@ -69,7 +70,7 @@ public class LatticeElement implements Comparable<LatticeElement> {
     /** the associated hardware node */
     private AcceleratorNode smfNode;
 
-    /** original index position of the hardware within its accelerator sequence - this is used to order the elements */
+    /** original index position of the hardware within its accelerator sequence - this is used to sort thin elements */
     private int        indNodeOrigPos;
     
 
@@ -130,16 +131,25 @@ public class LatticeElement implements Comparable<LatticeElement> {
 		this.smfNode = smfNode;
 		this.dblElemCntrPos = dblPosCtr;
 
-		double length = smfNode.getLength();
-		double effLength = 0.0;
+		// Determine the element length - special cases
+		double dblLenElem  = smfNode.getLength();
+		double dblLenEffec = 0.0;
+
 		if (smfNode instanceof Magnet) {
-			if (smfNode instanceof Bend)
-				effLength = ((Bend) smfNode).getDfltPathLength();
+
+		    if (smfNode instanceof Bend)
+				dblLenEffec = ((Bend) smfNode).getDfltPathLength();
 			else
-				effLength = ((Magnet) smfNode).getEffLength();
-		} else if (smfNode instanceof xal.smf.impl.Electrostatic)
-			effLength = length;
-		this.dblElemLen = effLength;
+				dblLenEffec = ((Magnet) smfNode).getEffLength();
+		    
+		} else if (smfNode instanceof xal.smf.impl.Electrostatic) {
+			dblLenEffec = dblLenElem;
+			
+		} else if (smfNode instanceof AcceleratorSeq) {
+		    dblLenEffec = dblLenElem;
+		    
+		}
+		this.dblElemLen = dblLenEffec;
 
 		this.clsModElemType = clsModElemType;
 				
@@ -351,11 +361,49 @@ public class LatticeElement implements Comparable<LatticeElement> {
     public boolean isThin() {
         return dblElemLen == 0.0 || ThinElement.class.isAssignableFrom(clsModElemType);
     }
+    
+    /**
+     * Determines whether or not the given lattice element contains this element
+     * with respect to the axial positions.  Specifically, if the entrance location 
+     * of this element is greater than or equal to the entrance location of the given
+     * element, and the exit location of this element is less than or equal to the
+     * exit location of the given element, this method returns <code>true</code>.
+     * 
+     * @param lem   lattice element to compare against
+     * 
+     * @return      <code>true</code> if this element is contained within the axial 
+     *              position occupied by the given element, <code>false</code> otherwise
+     *
+     * @since  Jan 28, 2015   by Christopher K. Allen
+     */
+    public boolean isContainedIn(LatticeElement lem) {
+        if (   this.getStartPosition() >= lem.getStartPosition()
+            && this.getEndPosition()   <= lem.getEndPosition()
+            )
+            return true;
+        else
+            return false;
+    }
 
     
     /*
      * Operations
      */
+    
+    /**
+     * Translates the element by the given amount along the beamline
+     * axis (of which sequence it belongs).
+     * 
+     * @param dblOffset distance by which this element is translated 
+     *                  (either positive or negative)
+     *
+     * @since  Jan 29, 2015   by Christopher K. Allen
+     */
+    public void axialTranslation(double dblOffset) {
+        this.dblElemEntrPos += dblOffset;
+        this.dblElemCntrPos += dblOffset;
+        this.dblElemExitPos += dblOffset;
+    }
     
 	/**
 	 * <p>

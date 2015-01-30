@@ -9,6 +9,7 @@ package xal.sim.scenario;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -65,7 +66,10 @@ public class LatticeSequence extends LatticeElement implements Iterable<LatticeE
      */
     
     /** container list of lattice element associations (some may be lattice sequences) */
-    private List<LatticeElement>       lstLatElems;
+    private       List<LatticeElement>       lstLatElems;
+    
+    /** convenience container of direct lattice subsequences */
+    private final List<LatticeSequence>       lstSubSeqs;
     
     
     //
@@ -78,7 +82,10 @@ public class LatticeSequence extends LatticeElement implements Iterable<LatticeE
     /** create center markers for thick magnets when true */
     private boolean                     bolDivMags;
 
-
+    /** indicates whether or not axis coordinate have origin at sequence center */
+    private boolean                     bolCtrOrigin;
+    
+    
     //
     // RF Cavity Parameters
     //
@@ -129,9 +136,11 @@ public class LatticeSequence extends LatticeElement implements Iterable<LatticeE
         super(smfSeqRoot, 0.0, mapNodeToElem.getModelSequenceType(smfSeqRoot), 0);
         
         this.lstLatElems = new LinkedList<>();
+        this.lstSubSeqs  = new LinkedList<>();
 
         this.mapNodeToMdl = mapNodeToElem;
         this.bolDivMags   = true;
+        this.bolCtrOrigin = false;
         
         this.bolDebug  = false;
         this.ostrDebug = System.out;
@@ -181,9 +190,11 @@ public class LatticeSequence extends LatticeElement implements Iterable<LatticeE
         super(smfSeqChild, dblPos, latSeqParent.getSequenceModelType(smfSeqChild), indOrgPos);
 
         this.lstLatElems = new LinkedList<>();
+        this.lstSubSeqs  = new LinkedList<>();
 
         this.mapNodeToMdl = latSeqParent.mapNodeToMdl;
         this.bolDivMags   = latSeqParent.bolDivMags;
+        this.bolCtrOrigin = false;
 
         this.bolDebug     = latSeqParent.bolDebug;
         this.ostrDebug    = latSeqParent.ostrDebug;
@@ -265,6 +276,19 @@ public class LatticeSequence extends LatticeElement implements Iterable<LatticeE
     }
     
     /**
+     * Returns whether or the origin of the axis is at the center of the 
+     * sequence, normally it is located at the entrance of the sequence.
+     * 
+     * @return  <code>true</code> if the axis origin is at the center of the sequence,
+     *          <code>false</code> otherwise (likely at the sequence entrance)
+     *
+     * @since  Jan 29, 2015   by Christopher K. Allen
+     */
+    public boolean isAxisOriginCentered() {
+        return this.bolCtrOrigin;
+    }
+    
+    /**
      * Convenience method for getting the modeling element type for the given
      * accelerator sequence according to the current node to element mapping.
      * 
@@ -330,6 +354,18 @@ public class LatticeSequence extends LatticeElement implements Iterable<LatticeE
         
         // Return the lattice object
         return mdlLattice;
+    }
+    
+    /**
+     * Returns an iterator that will visit all the direct subsequences of this 
+     * sequence.
+     * 
+     * @return  iterator for all the <b>direct</b> subsequences of this sequence
+     *
+     * @since  Jan 29, 2015   by Christopher K. Allen
+     */
+    public final List<LatticeSequence>    getSubSequences() {
+        return this.lstSubSeqs;
     }
     
     
@@ -512,12 +548,17 @@ public class LatticeSequence extends LatticeElement implements Iterable<LatticeE
      */
     protected IComposite createModelSequence(SynchronizationManager mgrSync) throws ModelException {
         
-        // Clear out any lattice elements from previous calls
-        this.lstLatElems.clear();
-        
         // Create the lattice elements to populate this sequence and any subsequences
         //  The sequence elements are also sorted in this step
         this.populateLatticeSeq();
+        
+        // Make sure the axis origin of this sequence is at the entrance.
+        this.enforceAxisOrigin();
+        
+        // Move any orphaned elements to their direct parents.  Any hanging elements are
+        //  pushed down to sequences where they live within the axial location of the 
+        //  parent.
+        this.placeOrphanedElements();
         
         // Split any thick lattice elements where a thin element intersects it.
         //  If two thick elements intersect then we bail out with a ModelException
@@ -597,9 +638,6 @@ public class LatticeSequence extends LatticeElement implements Iterable<LatticeE
      */
     private void    populateLatticeSeq() {
 
-        // Clear out any lattice elements from previous calls
-        this.lstLatElems.clear();
-        
         // Retrieve the accelerator sequence
         AcceleratorSeq  smfSeqParent = this.getHardwareNode();
         
@@ -704,10 +742,82 @@ public class LatticeSequence extends LatticeElement implements Iterable<LatticeE
         this.addLatticeElement(latEndElem);
         
         // Sort the elements in this sequence and return
-        this.sort();
+        this.sortElements();
         
 //      elements.add(new LatticeElement(new Marker("END_" + smfSequence.getId()), sequenceLength,
 //              mapNodeToModCls.getDefaultConverter(), originalPosition++));
+    }
+    
+    /**
+     * If this sequence has its axial origin at the center of the sequence
+     * then all the elements are translated such that the new origin is at
+     * the entrance of the sequence.
+     *
+     * @since  Jan 29, 2015   by Christopher K. Allen
+     */
+    private void enforceAxisOrigin() {
+        
+        // Check if the origin is at the sequence center and if so move it to the entrance
+        if (this.bolCtrOrigin == true) {
+    
+            double dblOffset = this.getLength()/2.0;
+            
+            for (LatticeElement lem : this) 
+                lem.axialTranslation(dblOffset);
+        }
+        
+        // Now do the same thing for all the child sequences
+        for (LatticeSequence lsq : this.getSubSequences()) 
+                lsq.enforceAxisOrigin();
+        
+        this.bolCtrOrigin = false;
+    }
+
+
+    /**
+     * Looks for all the grand children of this sequence who are in direct ownership of
+     * this sequence.  The method pushes them down the family tree until they are living with
+     * their direct parents.  This is also a recursive method where each sequence pushes
+     * the orphaned elements down one level until the recursion stops at the last 
+     * lattice sequence in a branch.
+     *
+     * @since  Jan 28, 2015   by Christopher K. Allen
+     */
+    private void placeOrphanedElements() {
+
+        List<LatticeElement>    lstElemsToRemove = new LinkedList<LatticeElement>();
+        List<LatticeSequence>   lstSeqsToCheck = new LinkedList<LatticeSequence>();
+        
+        // Identify all the child sequences of this sequence
+        lstSeqsToCheck.addAll(this.getSubSequences());
+        
+
+        // Now check if any of my children are actually grand children
+        for (LatticeElement lemChild : this) {
+
+            // Looking through all my child sequences, see if the current child is
+            //  contained in one.  If so we add it to the sequence and place it in the
+            //  list of my child elements to be removed from my direct ownership 
+            for (LatticeSequence lsqChildSeq : lstSeqsToCheck) 
+                if ( lemChild != lsqChildSeq && lemChild.isContainedIn(lsqChildSeq) ) {
+
+                    // Change coordinates to that of the new parent sequence
+                    double  dblOffset = lemChild.getStartPosition() - lsqChildSeq.getStartPosition();
+                    lemChild.axialTranslation(dblOffset);
+                    
+                    lsqChildSeq.addLatticeElement(lemChild);
+                    lstElemsToRemove.add(lemChild);
+                    
+                    continue;
+                }
+        }
+        
+        // Remove all the lattice elements that have been moved to my child sequences
+        this.removeAllLatticeElements(lstElemsToRemove);
+        
+        // Now we recursively call this method on all my child sequences.
+        for (LatticeSequence lsqChild : lstSeqsToCheck)
+            lsqChild.placeOrphanedElements();
     }
     
     /**
@@ -734,9 +844,9 @@ public class LatticeSequence extends LatticeElement implements Iterable<LatticeE
         //  we call this method on it (recursion).
 
         // Initialize the loop by setting the last element of the sequence to null
-        LatticeElement  latElemLastThick = null;
+        LatticeElement  lemLastThick = null;
 
-        for (LatticeElement latElemCurr : this) {
+        for (LatticeElement lemCurr : this) {
 
             // loop invariant: 
             //   scanline is at elemCurr.startPosition()
@@ -745,17 +855,17 @@ public class LatticeSequence extends LatticeElement implements Iterable<LatticeE
             //   if there is one.
 
             // First check if there is a thick element to be processed. 
-            if (latElemLastThick == null) {
+            if (lemLastThick == null) {
 
                 // If none and the current element is thin add it directly to  
                 //  the list of split elements.
-                if (latElemCurr.isThin()) 
-                    lstSplitElems.add(latElemCurr);
+                if (lemCurr.isThin()) 
+                    lstSplitElems.add(lemCurr);
 
                 // If none and the current element is thick then set it up for processing 
                 //  next round. 
                 else 
-                    latElemLastThick = latElemCurr;
+                    lemLastThick = lemCurr;
 
                 // Now skip everything else and continue on to the next lattice element in 
                 //  the lattice sequence.
@@ -767,95 +877,95 @@ public class LatticeSequence extends LatticeElement implements Iterable<LatticeE
             // There are four cases to process:
 
             // 1) The last thick element is actually a lattice sequence.
-            if (latElemLastThick instanceof LatticeSequence) {
+            if (lemLastThick instanceof LatticeSequence) {
 
                 // Down cast it to its true type
-                LatticeSequence latSeqLast = (LatticeSequence)latElemLastThick;
+                LatticeSequence lsqLast = (LatticeSequence)lemLastThick;
 
                 // Check if there is a collision between the current element and 
                 //  the lattice sequence.  This should not normally occur so we throw
                 //  up an exception if we find this is so.
                 //  TODO Check that this is right
-                if (latElemCurr.getStartPosition() - latSeqLast.getEndPosition() <= EPS)
+                if (lemCurr.getStartPosition() - lsqLast.getEndPosition() <= EPS)
                     throw new ModelException("Collision between a nested sequence " + 
-                            latSeqLast.getHardwareNode().getId() +
+                            lsqLast.getHardwareNode().getId() +
                             " and its parent child node " +
-                            latElemCurr.getHardwareNode().getId()
+                            lemCurr.getHardwareNode().getId()
                             ); 
 
                 // Recursively split up the elements of the child sequence then add it 
                 //  to the list of split elements. Null out the last thick element.
-                latSeqLast.splitSequenceElements();
-                lstSplitElems.add(latSeqLast);
-                latElemLastThick = null;
+                lsqLast.splitSequenceElements();
+                lstSplitElems.add(lsqLast);
+                lemLastThick = null;
 
                 // If the current lattice element is thin we add it to the list of sequence
                 //  elements.
-                if (latElemCurr.isThin())
-                    this.addSplitElementTo(lstSplitElems, latElemCurr);
+                if (lemCurr.isThin())
+                    this.addSplitElementTo(lstSplitElems, lemCurr);
                 // Or if it is a thick element we set the last thick element to it.
                 else
-                    latElemLastThick = latElemCurr;
+                    lemLastThick = lemCurr;
 
             // 2) The current element lives outside the last thick element.
-            } else if (latElemLastThick.getEndPosition() - latElemCurr.getStartPosition() <= EPS) {
+            } else if (lemLastThick.getEndPosition() - lemCurr.getStartPosition() <= EPS) {
 
                 // If so then add the last thick element to the list of split element and 
                 //  zero out the last thick element reference.
-                this.addSplitElementTo(lstSplitElems, latElemLastThick);
-                latElemLastThick = null;
+                this.addSplitElementTo(lstSplitElems, lemLastThick);
+                lemLastThick = null;
 
                 // Also, if the current element is thin, it too goes in the list of 
                 //  split elements,
-                if (latElemCurr.isThin())
-                    this.addSplitElementTo(lstSplitElems, latElemCurr);                     
+                if (lemCurr.isThin())
+                    this.addSplitElementTo(lstSplitElems, lemCurr);                     
 
                 // Or if it is thick it becomes the new last lattice element.
                 else
-                    latElemLastThick = latElemCurr;
+                    lemLastThick = lemCurr;
 
             // 3) The current element is inside the last thick element and it is a thin element.
-            } else if (latElemCurr.isThin()) { 
+            } else if (lemCurr.isThin()) { 
 
                 if (this.isDebugging()) {
-                    ostrDebug.println("splitElements: replacing " + latElemLastThick.toString() + " with");
+                    ostrDebug.println("splitElements: replacing " + lemLastThick.toString() + " with");
                 }
 
                 // Split the last thick element
                 //  We split the last thick element at the current element's center position
-                LatticeElement elemSplitPartEnd = latElemLastThick.splitElementAt(latElemCurr);
+                LatticeElement elemSplitPartEnd = lemLastThick.splitElementAt(lemCurr);
 
                 if ( this.isDebugging() ) {
-                    ostrDebug.println("\t" + latElemLastThick.toString());
+                    ostrDebug.println("\t" + lemLastThick.toString());
                     if (elemSplitPartEnd != null) ostrDebug.println("\t" + elemSplitPartEnd.toString());
                 }                   
 
                 // Add the first part of the newly split element to the list of split elements
                 //  then null out the last thick element reference.
-                if (latElemLastThick.getEndPosition() <= latElemCurr.getCenterPosition()) {
-                    addSplitElementTo(lstSplitElems, latElemLastThick);                      
-                    latElemLastThick = null;
+                if (lemLastThick.getEndPosition() <= lemCurr.getCenterPosition()) {
+                    addSplitElementTo(lstSplitElems, lemLastThick);                      
+                    lemLastThick = null;
                 }
 
                 // Add the current element to the list of split elements (remember, it is thin) 
-                lstSplitElems.add(latElemCurr);
+                lstSplitElems.add(lemCurr);
 
                 // The second part of the split thick element becomes the new last thick element. 
                 if (elemSplitPartEnd != null)
-                    latElemLastThick = elemSplitPartEnd;
+                    lemLastThick = elemSplitPartEnd;
 
             // 4) There exists a non-zero intersection between two thick elements. 
             //  We cannot process this case so just throw up out hands.
             } else {               
 
-                throw new ModelException("Two covering thick elements: " + latElemLastThick.toString() + 
-                        " and " + latElemCurr.toString());                           
+                throw new ModelException("Two covering thick elements: " + lemLastThick.toString() + 
+                        " and " + lemCurr.toString());                           
             }
         }
 
         // If we have a thick element left over we add it to the list of lattice elements.
-        if (latElemLastThick != null)
-            addSplitElementTo(lstSplitElems, latElemLastThick);          
+        if (lemLastThick != null)
+            addSplitElementTo(lstSplitElems, lemLastThick);          
 
         // Replace our list of unsplit lattice elements with the new list of split ones.
         this.lstLatElems = lstSplitElems;
@@ -1045,10 +1155,13 @@ public class LatticeSequence extends LatticeElement implements Iterable<LatticeE
      * 
      * @since  Dec 10, 2014  @author Christopher K. Allen
      */
-    private void sort() {
+    private void sortElements() {
         Collections.sort(this.lstLatElems);
+        
+        for (LatticeSequence lsq : this.getSubSequences()) 
+                lsq.sortElements();
     }
-
+    
 
     //
     // These methods are called by the support methods above
@@ -1058,13 +1171,52 @@ public class LatticeSequence extends LatticeElement implements Iterable<LatticeE
      * Adds a <code>LatticeElement</code> association class to the tail of this sequence
      * of lattices elements. 
      * 
-     * @param latElem   lattice element association class to become element in this sequence
+     * @param lem   lattice element association class to become element in this sequence
      *
      * @author Christopher K. Allen
      * @since  Dec 9, 2014
      */
-    private void addLatticeElement(LatticeElement latElem) {
-        this.lstLatElems.add(latElem);
+    private void addLatticeElement(LatticeElement lem) {
+        
+        // Add to the list of elements
+        this.lstLatElems.add(lem);
+        
+        // Check if the element is actually a sequence, 
+        //  if so add it to the list of subsequences
+        if (lem instanceof LatticeSequence)
+            this.lstSubSeqs.add( (LatticeSequence)lem );
+        
+        // check if we have an element position less than zero, indicating an axis origin
+        //  at the center of the sequence
+        if (lem.getStartPosition() < 0.0 || 
+            lem.getCenterPosition() < 0.0 || 
+            lem.getEndPosition() < 0
+            )
+            this.bolCtrOrigin = true;
+    }
+    
+    /**
+     * Removes the given <code>LatticeElement</code> from the list of such elements
+     * in this sequence.
+     * 
+     * @param lem
+     *
+     * @since  Jan 28, 2015   by Christopher K. Allen
+     */
+    private void removeLatticeElement(LatticeElement lem) {
+        this.lstLatElems.remove(lem);
+    }
+    
+    /**
+     * Removes all the elements in the given set of elements from the contained set
+     * of lattice element in this sequence;
+     * 
+     * @param setLems   set of lattice elements to be removed from this sequence
+     *
+     * @since  Jan 29, 2015   by Christopher K. Allen
+     */
+    private void removeAllLatticeElements(Collection<LatticeElement> setLems) {
+        this.lstLatElems.removeAll(setLems);
     }
 
     /**
