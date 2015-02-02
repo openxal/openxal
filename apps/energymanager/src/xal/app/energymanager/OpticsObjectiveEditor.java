@@ -128,6 +128,9 @@ public class OpticsObjectiveEditor extends Box implements OpticsObjectiveListene
 
 /** Value and tolerance objective editor */
 abstract class TargetToleranceObjectiveEditor extends OpticsObjectiveEditor {
+	/** provide the required serial version ID */
+	private static final long serialVersionUID = 1L;
+
 	protected JFormattedTextField _targetField;
 	protected JFormattedTextField _toleranceField;
 	

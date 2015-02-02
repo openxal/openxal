@@ -149,9 +149,7 @@ public class SolverConfigDialog extends JDialog implements SolverSessionListener
 		designButton.addActionListener( new ActionListener() {
 			public void actionPerformed( final ActionEvent event ) {
 				final Simulation designSimulation = _solverSession.getDesignSimulation();
-				final Iterator objectiveIter = _objectiveEditors.iterator();
-				while ( objectiveIter.hasNext() ) {
-					final OpticsObjectiveEditor editor = (OpticsObjectiveEditor)objectiveIter.next();
+				for ( final OpticsObjectiveEditor editor : _objectiveEditors ) {
 					editor.initializeWithDesign( designSimulation );
 				}
 			}

@@ -721,7 +721,7 @@ public class Simulation {
 			@Override
             public ProbeState<?>[] findStates( final List<AcceleratorNode> nodes, final Trajectory<?> trajectory ) {
 				final Iterator<? extends ProbeState<?>> stateIter = trajectory.stateIterator();
-				final ProbeState<?>[] states = new ProbeState[ nodes.size() ];
+				final ProbeState<?>[] states = new ProbeState<?>[ nodes.size() ];
 				
 				int index = 0;
 				for ( final AcceleratorNode node : nodes ) {
