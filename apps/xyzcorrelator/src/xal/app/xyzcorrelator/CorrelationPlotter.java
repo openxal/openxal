@@ -63,6 +63,12 @@ abstract class CorrelationPlotter {
 		
 		return plotter;
 	}
+
+
+	/** create and return a new instance of EmptyCorrelationPlotter */
+	static public CorrelationPlotter getEmptyCorrelationPlotterInstance() {
+		return new EmptyCorrelationPlotter();
+	}
 	
 	
 	/** plot the new correlation point */
