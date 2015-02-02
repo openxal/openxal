@@ -281,7 +281,7 @@ public class BpmAgent extends BeamMarker<BPM> implements RepRateListener {
 			 * @param sender       The poster of the correlation event.
 			 * @param correlation  The correlation that was posted.
 			 */
-			public void newCorrelation( Object sender, Correlation correlation ) {
+			public void newCorrelation( Object sender, Correlation<ChannelTimeRecord> correlation ) {
 				final Date timestamp = correlation.meanDate();
 
 				// post a BPM record if all valid channels in the BPM have an entry in the correlation, otherwise ignore this correlation
@@ -326,11 +326,11 @@ public class BpmAgent extends BeamMarker<BPM> implements RepRateListener {
 			 * @param correlation  the correlation with the correlated data for the BPM event
 			 * @return             the correlation's BPM field value corresponding to the handle
 			 */
-			private double getValue( final String handle, final Correlation correlation ) {
+			private double getValue( final String handle, final Correlation<ChannelTimeRecord> correlation ) {
 				final Channel channel = getChannel( handle );
 				if ( channel.isValid() ) {
 					final String channelID = channel.getId();
-					final ChannelTimeRecord record = (ChannelTimeRecord)correlation.getRecord( channelID );
+					final ChannelTimeRecord record = correlation.getRecord( channelID );
 					return ( record != null ) ? record.doubleValue() : Double.NaN;
 				}
 				else {

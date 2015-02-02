@@ -59,5 +59,11 @@ public class BPMComparator implements Comparator<BpmAgent> {
 	public boolean equals( final Object comparator ) {
 		return comparator == this;
 	}
+
+
+	/** Override hashCode as required for consistency with equals() */
+	public int hashCode() {
+		return super.hashCode();
+	}
 }
 
