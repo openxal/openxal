@@ -503,7 +503,7 @@ public class ScopeModel implements CorrelationNotice<ChannelTimeRecord>, Channel
         final String channelName = channel.channelName();
         correlator.addChannel( channel, source.getRecordFilter() );
         correlator.setCorrelationFilter( new CorrelationFilter<ChannelTimeRecord>() {
-            public boolean accept( final Correlation correlation, final int fullCount ) {
+            public boolean accept( final Correlation<ChannelTimeRecord> correlation, final int fullCount ) {
                 return correlation.isCorrelated( channelName ) && ( correlation.numRecords() > 1 );
             }
         });
