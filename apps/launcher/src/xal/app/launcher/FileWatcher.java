@@ -236,4 +236,10 @@ class FileNameComparator implements Comparator<File> {
 	public boolean equals( final Object comparator ) {
 		return this == comparator;
 	}
+
+
+	/** override hashCode() as required to be consistent with equals() */
+	public int hashCode() {
+		return 1;	// an instance of this class is equivalent to any other
+	}
 }
