@@ -364,7 +364,7 @@ public class FlattenController implements FlattenListener, OrbitModelListener {
 		CORRECTOR_TABLE_MODEL.setColumnClass( "upperFieldLimit", Double.class );
 		
 		CORRECTOR_TABLE_MODEL.addKeyValueRecordListener( new KeyValueRecordListener<KeyValueTableModel<CorrectorSupply>,CorrectorSupply>() {
-			public void recordModified( final KeyValueTableModel tableModel, final CorrectorSupply supply, final String keyPath, final Object value ) {
+			public void recordModified( final KeyValueTableModel<CorrectorSupply> tableModel, final CorrectorSupply supply, final String keyPath, final Object value ) {
                 System.out.println( "Corrector modified..." );
                 
 				final MachineSimulator simulator = FLATTENER.getSimulator();
@@ -447,7 +447,7 @@ public class FlattenController implements FlattenListener, OrbitModelListener {
 		BPM_TABLE_MODEL.setColumnClass( "latestRecord.formattedYAvg", Number.class );
 		
 		BPM_TABLE_MODEL.addKeyValueRecordListener( new KeyValueRecordListener<KeyValueTableModel<BpmAgent>,BpmAgent>() {
-			public void recordModified( final KeyValueTableModel tableModel, final BpmAgent bpmAgent, final String keyPath, final Object value ) {
+			public void recordModified( final KeyValueTableModel<BpmAgent> tableModel, final BpmAgent bpmAgent, final String keyPath, final Object value ) {
 				final MachineSimulator simulator = FLATTENER.getSimulator();
 				if ( simulator != null )  simulator.bpmFlattenEnableChanged( bpmAgent );
                 
