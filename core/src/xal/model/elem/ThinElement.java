@@ -52,7 +52,7 @@ public abstract class ThinElement extends Element {
     
     
     /*
-     *  Abstact Protocol for concrete ThinElements
+     *  Abstract Protocol for concrete ThinElements
      */
      
     /**

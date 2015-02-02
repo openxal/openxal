@@ -133,7 +133,7 @@ public class LatticeSequence extends LatticeElement implements Iterable<LatticeE
      * @since  Dec 8, 2014  @author Christopher K. Allen
      */
     public LatticeSequence(AcceleratorSeq smfSeqRoot, ElementMapping mapNodeToElem) {
-        super(smfSeqRoot, 0.0, mapNodeToElem.getModelSequenceType(smfSeqRoot), 0);
+        super(smfSeqRoot, smfSeqRoot.getLength()/2.0, mapNodeToElem.getModelSequenceType(smfSeqRoot), 0);
         
         this.lstLatElems = new LinkedList<>();
         this.lstSubSeqs  = new LinkedList<>();
@@ -560,9 +560,16 @@ public class LatticeSequence extends LatticeElement implements Iterable<LatticeE
         //  parent.
         this.placeOrphanedElements();
         
+        // Sort the elements in this sequence and all subsequences recursively
+        this.sortElements();
+        
         // Split any thick lattice elements where a thin element intersects it.
         //  If two thick elements intersect then we bail out with a ModelException
         this.splitSequenceElements();
+        
+        // Search the sequence for all the artificial element that do not have hardware
+        //  counterparts and remove them before the modeling elements are created.
+        this.removeArtificialElements();
         
         // Create the modeling element representing this lattice sequence.
         //  Recall that this lattice sequence must be a top-level sequence
@@ -642,7 +649,7 @@ public class LatticeSequence extends LatticeElement implements Iterable<LatticeE
         AcceleratorSeq  smfSeqParent = this.getHardwareNode();
         
         // Loop variables
-        int     indPosition = 0;                        // used to record original position 
+        int     indSeqPosition = 0;                        // used to record original position 
         double  dblLenSeq   = smfSeqParent.getLength(); // workaround for sequences that don't have length set
                                                         //  This is also the location of the sequence end marker
         
@@ -659,11 +666,16 @@ public class LatticeSequence extends LatticeElement implements Iterable<LatticeE
         //  then creating a lattice element association, so that we may 
         //  ensure the drift space from the beginning of the sequence to the first 
         //  hardware node is modeled correctly.  There must be a better way??
+        //  I have added an "artificial node" property to LatticeElement - can remove them
+        //  after lattice creation
         String                      strSeqId   = smfSeqParent.getId();
-        AcceleratorNode             smfMrkrBeg = new Marker( "BEGIN_" + strSeqId );
-        Class<? extends IComponent> clsMrkrTyp = this.mapNodeToMdl.getDefaultElementType();
-        LatticeElement              latElemBeg = new LatticeElement(smfMrkrBeg, 0, clsMrkrTyp, indPosition++);
+//        AcceleratorNode             smfMrkrBeg = new Marker( "BEGIN_" + strSeqId );
+//        Class<? extends IComponent> clsMrkrTyp = this.mapNodeToMdl.getDefaultElementType();
+//        LatticeElement              latElemBeg = new LatticeElement(smfMrkrBeg, 0, clsMrkrTyp, indPosition++);
 
+        LatticeElement  latElemBeg = LatticeElement.createMarker("BEGIN_" + strSeqId, 0.0, indSeqPosition);
+        indSeqPosition++;
+        
         this.addLatticeElement(latElemBeg);
 
         
@@ -680,7 +692,7 @@ public class LatticeSequence extends LatticeElement implements Iterable<LatticeE
                 AcceleratorSeq    smfSeqChild = (AcceleratorSeq)smfNodeCurr;
                 
                 double          dblSubSeqPos = smfSeqParent.getPosition(smfSeqChild);  // TODO Check that this is right
-                LatticeSequence latSeqChild  = new LatticeSequence(this, smfSeqChild, dblSubSeqPos, indPosition++);
+                LatticeSequence latSeqChild  = new LatticeSequence(this, smfSeqChild, dblSubSeqPos, indSeqPosition++);
                 
                 // Now generate the lattice structure for the child sequence and all
                 //  its children
@@ -698,7 +710,7 @@ public class LatticeSequence extends LatticeElement implements Iterable<LatticeE
             //  this lattice sequence
             double                      dblNodePos = smfSeqParent.getPosition(smfNodeCurr);
             Class<? extends IComponent> clsElemTyp = this.mapNodeToMdl.getModelElementType(smfNodeCurr);
-            LatticeElement              latElem    = new LatticeElement(smfNodeCurr, dblNodePos, clsElemTyp, indPosition++);
+            LatticeElement              latElem    = new LatticeElement(smfNodeCurr, dblNodePos, clsElemTyp, indSeqPosition++);
 
             this.addLatticeElement(latElem);
             
@@ -724,6 +736,7 @@ public class LatticeSequence extends LatticeElement implements Iterable<LatticeE
 
                 String                      strNodeId   = smfNodeCurr.getId();
                 double                      dblPosCtr   = latElem.getCenterPosition();
+                Class<? extends IComponent> clsMrkrTyp  = this.mapNodeToMdl.getDefaultElementType();
                 AcceleratorNode             smfCntrMrkr = new Marker( strNodeId + "-Center" );
                 
                 LatticeElement  latCtrElem  = new LatticeElement(smfCntrMrkr, dblPosCtr, clsMrkrTyp, 0); 
@@ -736,13 +749,12 @@ public class LatticeSequence extends LatticeElement implements Iterable<LatticeE
         //  hardware object, then creating a lattice element association, so that we may 
         //  ensure the drift space from the last element to the end of the sequence is modeled
         //  correctly.  There must be a better way??
-        AcceleratorNode             smfEndMrkr = new Marker( "END_" + strSeqId );
-        LatticeElement              latEndElem = new LatticeElement(smfEndMrkr, dblLenSeq, clsMrkrTyp, indPosition++);
-
-        this.addLatticeElement(latEndElem);
+//        AcceleratorNode             smfEndMrkr = new Marker( "END_" + strSeqId );
+//        LatticeElement              latEndElem = new LatticeElement(smfEndMrkr, dblLenSeq, clsMrkrTyp, indSeqPosition++);
         
-        // Sort the elements in this sequence and return
-        this.sortElements();
+        LatticeElement latElemEnd = LatticeElement.createMarker("END_" + strSeqId, dblLenSeq, indSeqPosition);
+
+        this.addLatticeElement(latElemEnd);
         
 //      elements.add(new LatticeElement(new Marker("END_" + smfSequence.getId()), sequenceLength,
 //              mapNodeToModCls.getDefaultConverter(), originalPosition++));
@@ -758,17 +770,20 @@ public class LatticeSequence extends LatticeElement implements Iterable<LatticeE
     private void enforceAxisOrigin() {
         
         // Check if the origin is at the sequence center and if so move it to the entrance
-        if (this.bolCtrOrigin == true) {
-    
-            double dblOffset = this.getLength()/2.0;
-            
-            for (LatticeElement lem : this) 
+        if (!this.isAxisOriginCentered())
+            return;
+
+        // Compute the translation 
+        double dblOffset = this.getLength()/2.0;
+
+        // Translate all the non-artificial element along the sequence axis
+        for (LatticeElement lem : this) 
+            if (!lem.isArtificial())
                 lem.axialTranslation(dblOffset);
-        }
         
-        // Now do the same thing for all the child sequences
-        for (LatticeSequence lsq : this.getSubSequences()) 
-                lsq.enforceAxisOrigin();
+//        // Now do the same thing for all the child sequences
+//        for (LatticeSequence lsq : this.getSubSequences()) 
+//                lsq.enforceAxisOrigin();
         
         this.bolCtrOrigin = false;
     }
@@ -786,38 +801,53 @@ public class LatticeSequence extends LatticeElement implements Iterable<LatticeE
     private void placeOrphanedElements() {
 
         List<LatticeElement>    lstElemsToRemove = new LinkedList<LatticeElement>();
-        List<LatticeSequence>   lstSeqsToCheck = new LinkedList<LatticeSequence>();
         
-        // Identify all the child sequences of this sequence
-        lstSeqsToCheck.addAll(this.getSubSequences());
-        
-
         // Now check if any of my children are actually grand children
-        for (LatticeElement lemChild : this) {
+        for (LatticeSequence lsqChild : this.getSubSequences()) 
 
             // Looking through all my child sequences, see if the current child is
             //  contained in one.  If so we add it to the sequence and place it in the
             //  list of my child elements to be removed from my direct ownership 
-            for (LatticeSequence lsqChildSeq : lstSeqsToCheck) 
-                if ( lemChild != lsqChildSeq && lemChild.isContainedIn(lsqChildSeq) ) {
+            for (LatticeElement lemChild : this) {
+                if ( lemChild != lsqChild && lemChild.isContainedIn(lsqChild) ) {
 
                     // Change coordinates to that of the new parent sequence
-                    double  dblOffset = lemChild.getStartPosition() - lsqChildSeq.getStartPosition();
+                    double  dblOffset = - lsqChild.getStartPosition();
                     lemChild.axialTranslation(dblOffset);
-                    
-                    lsqChildSeq.addLatticeElement(lemChild);
+
+                    lsqChild.addLatticeElement(lemChild);
                     lstElemsToRemove.add(lemChild);
-                    
+
                     continue;
                 }
-        }
-        
+            }
+
         // Remove all the lattice elements that have been moved to my child sequences
         this.removeAllLatticeElements(lstElemsToRemove);
         
-        // Now we recursively call this method on all my child sequences.
-        for (LatticeSequence lsqChild : lstSeqsToCheck)
-            lsqChild.placeOrphanedElements();
+//        // Now we recursively call this method on all my child sequences.
+//        for (LatticeSequence lsqChild : this.getSubSequences())
+//            lsqChild.placeOrphanedElements();
+    }
+    
+    /**
+     * <p>
+     * Sorts the <code>LatticeElement</code> objects contained in this lattice 
+     * sequence according to the natural ordering defined in <code>LatticeElement</code>.
+     * </p>
+     * <p>
+     * Note that the natural ordering is defined by the 
+     * <code>{@link LatticeElement#compareTo(LatticeElement)}</code> method required
+     * by the <code>{@link java.lang.Comparable}</code> interface.
+     * </p>
+     * 
+     * @since  Dec 10, 2014  @author Christopher K. Allen
+     */
+    private void sortElements() {
+        Collections.sort(this.lstLatElems);
+        
+//        for (LatticeSequence lsq : this.getSubSequences()) 
+//                lsq.sortElements();
     }
     
     /**
@@ -969,6 +999,23 @@ public class LatticeSequence extends LatticeElement implements Iterable<LatticeE
 
         // Replace our list of unsplit lattice elements with the new list of split ones.
         this.lstLatElems = lstSplitElems;
+    }
+    
+    /**
+     *  Removes all the artificial lattice elements in this sequence.  These are the
+     *  lattice elements without a hardware association and were used only in the
+     *  lattice generation process.
+     *
+     * @since  Jan 30, 2015   by Christopher K. Allen
+     */
+    private void removeArtificialElements() {
+        List<LatticeElement>    lstElemsToRemove = new LinkedList<>();
+        
+        for (LatticeElement lem : this) 
+            if (lem.isArtificial())
+                lstElemsToRemove.add(lem);
+        
+        this.removeAllLatticeElements(lstElemsToRemove);
     }
 
     /**
@@ -1142,26 +1189,6 @@ public class LatticeSequence extends LatticeElement implements Iterable<LatticeE
         }
     }
 
-    /**
-     * <p>
-     * Sorts the <code>LatticeElement</code> objects contained in this lattice 
-     * sequence according to the natural ordering defined in <code>LatticeElement</code>.
-     * </p>
-     * <p>
-     * Note that the natural ordering is defined by the 
-     * <code>{@link LatticeElement#compareTo(LatticeElement)}</code> method required
-     * by the <code>{@link java.lang.Comparable}</code> interface.
-     * </p>
-     * 
-     * @since  Dec 10, 2014  @author Christopher K. Allen
-     */
-    private void sortElements() {
-        Collections.sort(this.lstLatElems);
-        
-        for (LatticeSequence lsq : this.getSubSequences()) 
-                lsq.sortElements();
-    }
-    
 
     //
     // These methods are called by the support methods above
