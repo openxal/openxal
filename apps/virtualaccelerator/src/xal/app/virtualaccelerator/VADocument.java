@@ -1458,9 +1458,15 @@ class ReadbackSetRecordPositionComparator implements Comparator<ReadbackSetRecor
 	}
 	
 	
-	/** */
+	/** all comparators of this class are the same */
 	public boolean equals( final Object object ) {
-		return true;
+		return object instanceof ReadbackSetRecordPositionComparator;
+	}
+
+
+	/** override hashCode() as required for consistency with equals() */
+	public int hashCode() {
+		return 1;	// constant since all comparators of this class are equivalent
 	}
 }
 
