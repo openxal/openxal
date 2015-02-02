@@ -73,7 +73,7 @@ public class CorrelationController implements DataListener {
 		CORRELATION_PLOT.setName( "Channel Correlations" );
 		SimpleChartPopupMenu.addPopupMenuTo( CORRELATION_PLOT );
 		
-		_correlationPlotter = new EmptyCorrelationPlotter();
+		_correlationPlotter = CorrelationPlotter.getEmptyCorrelationPlotterInstance();
 		
 		BUFFER_SPINNER = (JSpinner)windowReference.getView( "BufferSpinner" );
 		FIT_ORDER_SPINNER = (JSpinner)windowReference.getView( "FitOrderSpinner" );
