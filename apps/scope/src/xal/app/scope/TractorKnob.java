@@ -251,6 +251,9 @@ class ThumbWheelModel {
  * monitors and reflects the phase of the model.
  */
 abstract class ThumbWheel extends JPanel implements ThumbWheelListener, SwingConstants {
+	/** include the serial version ID as required for serializable */
+	private static final long serialVersionUID = 1L;
+
     protected ThumbWheelModel model;
     protected volatile int lastPos;
     protected volatile boolean active;
