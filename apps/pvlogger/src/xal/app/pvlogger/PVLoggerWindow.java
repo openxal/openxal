@@ -236,7 +236,7 @@ class PVLoggerWindow extends AcceleratorWindow implements SwingConstants, Scroll
 			 * @param model the document model managing selections
 			 * @param channelRefs the latest channel refs containing the channel information
 			 */
-			public void channelsChanged(DocumentModel model, java.util.List channelRefs) {
+			public void channelsChanged(DocumentModel model, java.util.List<ChannelRef> channelRefs) {
 				updateChannelsInspector();
 			}
 			
