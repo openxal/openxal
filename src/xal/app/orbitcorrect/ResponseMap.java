@@ -102,16 +102,16 @@ final public class ResponseMap {
 			public void write( final DataAdaptor adaptor ) {
 				adaptor.setValue( "version", "1.0.0" );
 				adaptor.setValue( "axis", axis );
-				final Iterator correctorIter = _responseMap.keySet().iterator();
+				final Iterator<String> correctorIter = _responseMap.keySet().iterator();
 				while ( correctorIter.hasNext() ) {
-					final String correctorID = (String)correctorIter.next();
+					final String correctorID = correctorIter.next();
 					final DataAdaptor correctorResponseAdaptor = adaptor.createChild( CORRECTOR_RESPONSE_TAG );
 					correctorResponseAdaptor.setValue( "corrector", correctorID );
 					
-					final Map responseMap = getResponseMap( correctorID );
-					final Iterator bpmIter = responseMap.keySet().iterator();
+					final Map<String,Double> responseMap = getResponseMap( correctorID );
+					final Iterator<String> bpmIter = responseMap.keySet().iterator();
 					while ( bpmIter.hasNext() ) {
-						final String bpmID = (String)bpmIter.next();
+						final String bpmID = bpmIter.next();
 						final double response = getResponse( correctorID, bpmID );
 						final DataAdaptor bpmResponseAdaptor = correctorResponseAdaptor.createChild( BPM_RESPONSE_TAG );
 						bpmResponseAdaptor.setValue( "bpm", bpmID );
