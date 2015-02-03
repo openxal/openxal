@@ -161,6 +161,9 @@ public class LatticeElement implements Comparable<LatticeElement> {
 	public LatticeElement(AcceleratorNode smfNode, double dblPosCtr, Class<? extends IComponent> clsModElemType, int originalPosition) {
 	    this.strElemId = smfNode.getId();
 		this.smfNode = smfNode;
+        this.clsModElemType = clsModElemType;
+        
+        this.indNodeOrigPos = originalPosition;
 		this.dblElemCntrPos = dblPosCtr;
 
 		// Determine the element length - special cases
@@ -183,16 +186,13 @@ public class LatticeElement implements Comparable<LatticeElement> {
 		}
 		this.dblElemLen = dblLenEffec;
 
-		this.clsModElemType = clsModElemType;
-				
+		// Set the entrance and exit positions according to the determined length
 		if (isThin())
 			dblElemEntrPos = dblElemExitPos = dblPosCtr;
 		else {
 			dblElemEntrPos = dblPosCtr - 0.5*this.dblElemLen;
 			dblElemExitPos = dblElemEntrPos + this.dblElemLen;
 		}
-		
-		this.indNodeOrigPos = originalPosition;
 	}
 
 	/**
@@ -606,7 +606,15 @@ public class LatticeElement implements Comparable<LatticeElement> {
 	 */
 	@Override
 	public String toString() { 		
-		return getHardwareNode().getId() + " I=["+getStartPosition()+","+getEndPosition()+"]" +
-				", p=" + getCenterPosition() + ", l= " + getLength();
+		String strDescr =  this.getModelingElementId();
+		
+		if (this.getHardwareNode() != null)
+		           strDescr += ": Hardware ID=" + this.getHardwareNode().getId();
+		strDescr += " I=[" + getStartPosition() + 
+		            "," + getEndPosition() + "]" +
+		            ", p=" + getCenterPosition() + 
+		            ", l= " + getLength();
+		
+		return strDescr;
 	}
 }

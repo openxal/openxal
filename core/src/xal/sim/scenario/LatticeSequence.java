@@ -646,11 +646,11 @@ public class LatticeSequence extends LatticeElement implements Iterable<LatticeE
     private void    populateLatticeSeq() {
 
         // Retrieve the accelerator sequence
-        AcceleratorSeq  smfSeqParent = this.getHardwareNode();
+        AcceleratorSeq  smfSeqRoot = this.getHardwareNode();
         
         // Loop variables
         int     indSeqPosition = 0;                        // used to record original position 
-        double  dblLenSeq   = smfSeqParent.getLength(); // workaround for sequences that don't have length set
+        double  dblLenSeq   = smfSeqRoot.getLength(); // workaround for sequences that don't have length set
                                                         //  This is also the location of the sequence end marker
         
         // The returned modeling element sequence
@@ -668,7 +668,7 @@ public class LatticeSequence extends LatticeElement implements Iterable<LatticeE
         //  hardware node is modeled correctly.  There must be a better way??
         //  I have added an "artificial node" property to LatticeElement - can remove them
         //  after lattice creation
-        String                      strSeqId   = smfSeqParent.getId();
+        String                      strSeqId   = smfSeqRoot.getId();
 //        AcceleratorNode             smfMrkrBeg = new Marker( "BEGIN_" + strSeqId );
 //        Class<? extends IComponent> clsMrkrTyp = this.mapNodeToMdl.getDefaultElementType();
 //        LatticeElement              latElemBeg = new LatticeElement(smfMrkrBeg, 0, clsMrkrTyp, indPosition++);
@@ -682,7 +682,7 @@ public class LatticeSequence extends LatticeElement implements Iterable<LatticeE
         // Now we generate lattice association objects for every hardware node 
         //  (including sequences) in the accelerator sequence which is marked as 
         //  having good status.
-        for ( AcceleratorNode smfNodeCurr : smfSeqParent.getNodes( true ) ) {
+        for ( AcceleratorNode smfNodeCurr : smfSeqRoot.getNodes( true ) ) {
 
             
             // Recursively call this method to drill down and get any sub sequences
@@ -691,7 +691,7 @@ public class LatticeSequence extends LatticeElement implements Iterable<LatticeE
                 // Create a new lattice subsequence for this accelerator hardware node
                 AcceleratorSeq    smfSeqChild = (AcceleratorSeq)smfNodeCurr;
                 
-                double          dblSubSeqPos = smfSeqParent.getPosition(smfSeqChild);  // TODO Check that this is right
+                double          dblSubSeqPos = smfSeqRoot.getPosition(smfSeqChild);  
                 LatticeSequence latSeqChild  = new LatticeSequence(this, smfSeqChild, dblSubSeqPos, indSeqPosition++);
                 
                 // Now generate the lattice structure for the child sequence and all
@@ -708,11 +708,12 @@ public class LatticeSequence extends LatticeElement implements Iterable<LatticeE
             // The current hardware node is atomic with no children.
             //  Create a new lattice element for the accelerator node and add it to the 
             //  this lattice sequence
-            double                      dblNodePos = smfSeqParent.getPosition(smfNodeCurr);
+            double                      dblNodePos = smfSeqRoot.getPosition(smfNodeCurr);
             Class<? extends IComponent> clsElemTyp = this.mapNodeToMdl.getModelElementType(smfNodeCurr);
-            LatticeElement              latElem    = new LatticeElement(smfNodeCurr, dblNodePos, clsElemTyp, indSeqPosition++);
+            LatticeElement              latElem    = new LatticeElement(smfNodeCurr, dblNodePos, clsElemTyp, indSeqPosition);
 
             this.addLatticeElement(latElem);
+            indSeqPosition++;
             
             if (bolDebug) {
                 this.ostrDebug.println("ScenarioGenerator#generateLatticeSequence(): " + 
@@ -745,7 +746,7 @@ public class LatticeSequence extends LatticeElement implements Iterable<LatticeE
             }
         }
         
-        // This is pretty klugey, but c'est lie vie. We are creating a nonexistent marker
+        // This is pretty klugey, but c'est la vie. We are creating a nonexistent marker
         //  hardware object, then creating a lattice element association, so that we may 
         //  ensure the drift space from the last element to the end of the sequence is modeled
         //  correctly.  There must be a better way??
@@ -770,22 +771,27 @@ public class LatticeSequence extends LatticeElement implements Iterable<LatticeE
     private void enforceAxisOrigin() {
         
         // Check if the origin is at the sequence center and if so move it to the entrance
-        if (!this.isAxisOriginCentered())
-            return;
+        if (this.isAxisOriginCentered()) {
 
-        // Compute the translation 
-        double dblOffset = this.getLength()/2.0;
+            // Compute the translation 
+            double dblOffset = this.getLength()/2.0;
 
-        // Translate all the non-artificial element along the sequence axis
-        for (LatticeElement lem : this) 
-            if (!lem.isArtificial())
-                lem.axialTranslation(dblOffset);
+            // Translate all the non-artificial element along the sequence axis
+            for (LatticeElement lem : this) { 
+                
+                // If no artificial has central coordinates, so skip them
+                if (!lem.isArtificial())
+                    lem.axialTranslation(dblOffset);
+
+            }
+                
+            this.bolCtrOrigin = false;
+        }
         
-//        // Now do the same thing for all the child sequences
-//        for (LatticeSequence lsq : this.getSubSequences()) 
-//                lsq.enforceAxisOrigin();
-        
-        this.bolCtrOrigin = false;
+        // We must recursively translate all elements of all subsequences as well
+        for (LatticeSequence lsq : this.lstSubSeqs) 
+            lsq.enforceAxisOrigin();
+
     }
 
 
@@ -846,8 +852,8 @@ public class LatticeSequence extends LatticeElement implements Iterable<LatticeE
     private void sortElements() {
         Collections.sort(this.lstLatElems);
         
-//        for (LatticeSequence lsq : this.getSubSequences()) 
-//                lsq.sortElements();
+        for (LatticeSequence lsq : this.getSubSequences()) 
+                lsq.sortElements();
     }
     
     /**
@@ -1009,13 +1015,21 @@ public class LatticeSequence extends LatticeElement implements Iterable<LatticeE
      * @since  Jan 30, 2015   by Christopher K. Allen
      */
     private void removeArtificialElements() {
+        
+        // Identify and collect all my direct childtren that are 
+        //  artificial elements.
         List<LatticeElement>    lstElemsToRemove = new LinkedList<>();
         
         for (LatticeElement lem : this) 
             if (lem.isArtificial())
                 lstElemsToRemove.add(lem);
         
+        // Remove all the artificial element children 
         this.removeAllLatticeElements(lstElemsToRemove);
+        
+        // Recursively remove all the artificial elements in my subsequences
+        for (LatticeSequence lsq : this.lstSubSeqs)
+            lsq.removeArtificialElements();
     }
 
     /**
@@ -1044,15 +1058,15 @@ public class LatticeSequence extends LatticeElement implements Iterable<LatticeE
         //
 
         // Running position of the last processed element
-        // TODO Check that this is right
-        double dblPosLast = this.getStartPosition();
+//        double dblPosLast = this.getStartPosition();
+        double dblPosLast = 0.0;
 
         //        double position = smfAccelSeq.getPosition(); // always 0.0
         // Running count of the number of drift spaces
         int cntDrifts = 0;
 
         // The new model sector to be returned
-        IComposite mdlSeqParent = this.createModelingElement();
+        IComposite mdlSeqRoot = this.createModelingElement();
 
         // Loop through each lattice element in this lattice sequence
         for (LatticeElement latElemCurr : this) {
@@ -1074,13 +1088,13 @@ public class LatticeSequence extends LatticeElement implements Iterable<LatticeE
                 if (this.isRfCavity()) {
                     IComponent mdlDrift = this.mapNodeToMdl.createRfCavityDrift(strDriftId, dblLenDrift, this.dblCavFreq, this.dblCavMode);
 
-                    mdlSeqParent.addChild(mdlDrift);
+                    mdlSeqRoot.addChild(mdlDrift);
 
                     // Else we use a regular drift space
                 } else {
                     IComponent   modDrift   = this.mapNodeToMdl.createDefaultDrift(strDriftId, dblLenDrift);
 
-                    mdlSeqParent.addChild(modDrift);
+                    mdlSeqRoot.addChild(modDrift);
                 }
             }
 
@@ -1101,7 +1115,7 @@ public class LatticeSequence extends LatticeElement implements Iterable<LatticeE
 
                 IComposite mdlSeqChild = latSeqCurr.createModelSequence(mgrSync);
 
-                mdlSeqParent.addChild(mdlSeqChild);
+                mdlSeqRoot.addChild(mdlSeqChild);
 //                mgrSync.synchronize((IComposite)mdlSeqChild, smfNodeCurr);
 
 //                if (mdlSeqChild instanceof IElement) 
@@ -1122,7 +1136,7 @@ public class LatticeSequence extends LatticeElement implements Iterable<LatticeE
             } else {
 
                 IComponent mdlElemCurr = latElemCurr.createModelingElement();
-                mdlSeqParent.addChild(mdlElemCurr);
+                mdlSeqRoot.addChild(mdlElemCurr);
 
                 if (mdlElemCurr instanceof IElement) 
                     mgrSync.synchronize((IElement) mdlElemCurr, smfNodeCurr);
@@ -1139,7 +1153,7 @@ public class LatticeSequence extends LatticeElement implements Iterable<LatticeE
                         + ": s= " + latElemCurr.getCenterPosition());           
         }
         
-        return mdlSeqParent;
+        return mdlSeqRoot;
     }
 
     /**

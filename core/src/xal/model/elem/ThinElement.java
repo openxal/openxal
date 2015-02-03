@@ -80,10 +80,19 @@ public abstract class ThinElement extends Element {
         
     
     /**
+     * <p>
      * Again, this is a kluge.
      * We return zero since the notion of frequency is not defined for every
-     * element.  For those elements that do create a phase advance they
+     * element (perhaps if this element is the child of an RF cavity).  
+     * For those elements that do create a phase advance they
      * need to override this method.
+     * </p>
+     * <p>
+     * There is some legitimacy in returning zero since a thin element generally 
+     * has no phase advance. That is, there is no propagation therefore no elapsed
+     * time and no phase advance.  Only if there is energy gain must there be a
+     * corresponding conjugate phase advance.  
+     * </p>
      * 
      * @param probe     probe experiencing a phase advance through this element
      * 
