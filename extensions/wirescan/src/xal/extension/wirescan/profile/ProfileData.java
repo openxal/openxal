@@ -854,12 +854,9 @@ public class ProfileData {
     }
 
     
-    
-    
     /*
-     * Debugging
+     * Object Overrides
      */
-    
     
     /**
      * Check to see that given object is either this object, or contains
@@ -903,6 +900,17 @@ public class ProfileData {
         }
         
         return true;
+    }
+
+    /**
+     *
+     * @see java.lang.Object#hashCode()
+     *
+     * @since  Feb 3, 2015   by Christopher K. Allen
+     */
+    @Override
+    public int hashCode() {
+        return this.intPvLogId;
     }
 
     /**
