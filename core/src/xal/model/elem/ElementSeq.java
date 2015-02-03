@@ -8,6 +8,7 @@ package xal.model.elem;
 
 
 import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -703,6 +704,30 @@ public abstract class ElementSeq implements IComposite {
     
     
     /*
+     * Object Overrides
+     */
+    
+    
+    
+    /**
+     *
+     * @see java.lang.Object#toString()
+     *
+     * @since  Feb 3, 2015   by Christopher K. Allen
+     */
+    @Override
+    public String toString() {
+
+        StringPrinter   sprnOut = new StringPrinter();
+        PrintWriter     pwtrOut = new PrintWriter(sprnOut);
+        
+        this.print(pwtrOut);
+        
+        return sprnOut.toString();
+    }
+
+    
+    /*
      *  Testing and Debugging
      */
 
@@ -712,6 +737,10 @@ public abstract class ElementSeq implements IComposite {
      *  @param  os      output stream
      */
     public void print(PrintWriter os)    {
+        os.println(this.m_strId + " modeling HWID=" + this.strSmfId);
+        os.println("  type code=" + this.m_strType + ", class type=" + this.getClass().getName());
+        os.println();
+        
         Iterator<IComponent> iter = this.getCompList().iterator();
         
         while (iter.hasNext())  {
@@ -799,6 +828,32 @@ public abstract class ElementSeq implements IComposite {
 
 
     
+/*
+ * Auxiliary Classes
+ */
+
+/**
+ * String buffer that mimics the Java writer functions.
+ * 
+ *
+ * @author Christopher K. Allen
+ * @since  Feb 3, 2015
+ */
+class StringPrinter extends StringWriter {
+    
+    /**
+     * The print line function.  Prints the given string and terminates with a 
+     * new line character.
+     * 
+     * @param strLine   text line 
+     *
+     * @since  Feb 3, 2015   by Christopher K. Allen
+     */
+    public void println(String strLine) {
+        this.append(strLine);
+        this.append('\n');
+    }
+}
     
     
     

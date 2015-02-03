@@ -576,11 +576,11 @@ public class LatticeSequence extends LatticeElement implements Iterable<LatticeE
         //  since users do not have access to the sub-lattice constructor
         IComposite mdlSeq = this.createModelElements(mgrSync);
         
-        // Identify the first gaps in any RF Cavity and sub-cavities, then do any
-        //  processing as necessary.  Right now this method does nothing since the
-        //  only action, setting the isFirstGap flag, is accomplished via the XDXF
-        //  configuration file.
-        this.markFirstCavityGap(mdlSeq);
+//        // Identify the first gaps in any RF Cavity and sub-cavities, then do any
+//        //  processing as necessary.  Right now this method does nothing since the
+//        //  only action, setting the isFirstGap flag, is accomplished via the XDXF
+//        //  configuration file.
+//        this.markFirstCavityGap(mdlSeq);
         
         return mdlSeq;
     }
@@ -655,7 +655,7 @@ public class LatticeSequence extends LatticeElement implements Iterable<LatticeE
         
         // The returned modeling element sequence
 //        String                      strSeqId  = smfSeqParent.getId();
-//        double                      dblSeqPos = smfSeqParent.getParent().getPosition(smfSeqParent);  // TODO Check that this is right
+//        double                      dblSeqPos = smfSeqParent.getParent().getPosition(smfSeqParent);  
 //        Class<? extends IComposite> clsSeqTyp = this.mapNodeToMdl.getModelSequenceType(smfSeqParent);
 //
 //        LatticeSequence latSeqParent = new LatticeSequence(smfSeqParent, dblSeqPos, clsSeqTyp, 0);
@@ -921,7 +921,6 @@ public class LatticeSequence extends LatticeElement implements Iterable<LatticeE
                 // Check if there is a collision between the current element and 
                 //  the lattice sequence.  This should not normally occur so we throw
                 //  up an exception if we find this is so.
-                //  TODO Check that this is right
                 if (lemCurr.getStartPosition() - lsqLast.getEndPosition() <= EPS)
                     throw new ModelException("Collision between a nested sequence " + 
                             lsqLast.getHardwareNode().getId() +
@@ -1063,7 +1062,7 @@ public class LatticeSequence extends LatticeElement implements Iterable<LatticeE
 
         //        double position = smfAccelSeq.getPosition(); // always 0.0
         // Running count of the number of drift spaces
-        int cntDrifts = 0;
+        int cntDrifts = 1;
 
         // The new model sector to be returned
         IComposite mdlSeqRoot = this.createModelingElement();
@@ -1080,22 +1079,24 @@ public class LatticeSequence extends LatticeElement implements Iterable<LatticeE
 
             // Test if the length of the drift is numerically significant
             if (dblLenDrift > EPS) { 
-
-                // Create the drift element identifier string
-                String       strDriftId = "DR" + (++cntDrifts);
-
-                // If this lattice sequence represents an RF cavity we need an RF cavity drift
-                if (this.isRfCavity()) {
-                    IComponent mdlDrift = this.mapNodeToMdl.createRfCavityDrift(strDriftId, dblLenDrift, this.dblCavFreq, this.dblCavMode);
-
-                    mdlSeqRoot.addChild(mdlDrift);
-
-                    // Else we use a regular drift space
-                } else {
-                    IComponent   modDrift   = this.mapNodeToMdl.createDefaultDrift(strDriftId, dblLenDrift);
-
-                    mdlSeqRoot.addChild(modDrift);
-                }
+                this.createAndAppendDrift(cntDrifts, dblLenDrift, mdlSeqRoot);
+                cntDrifts++;
+                
+//                // Create the drift element identifier string
+//                String       strDriftId = "DR" + (++cntDrifts);
+//
+//                // If this lattice sequence represents an RF cavity we need an RF cavity drift
+//                if (this.isRfCavity()) {
+//                    IComponent mdlDrift = this.mapNodeToMdl.createRfCavityDrift(strDriftId, dblLenDrift, this.dblCavFreq, this.dblCavMode);
+//
+//                    mdlSeqRoot.addChild(mdlDrift);
+//
+//                    // Else we use a regular drift space
+//                } else {
+//                    IComponent   modDrift   = this.mapNodeToMdl.createDefaultDrift(strDriftId, dblLenDrift);
+//
+//                    mdlSeqRoot.addChild(modDrift);
+//                }
             }
 
             // Fetch the associated hardware node of the current element for later use 
@@ -1104,9 +1105,6 @@ public class LatticeSequence extends LatticeElement implements Iterable<LatticeE
             // 
             // Must check whether or not the current element is a lattice sequence or
             //  lattice element.
-            // TODO Determine whether or not this part belongs above the
-            //  drift space test.
-
             // If the current element is actually a lattice sequence then we ask it to
             //  create a new model sector which we add to our parent sector and the
             //  synchronization manager.
@@ -1126,13 +1124,11 @@ public class LatticeSequence extends LatticeElement implements Iterable<LatticeE
 //                
 
                 // Advance the position of the last processed element
-                // TODO I think this will work for sequences - otherwise 
-                //  try the same thing as for lattice elements, use the end position.
-                dblPosLast += latSeqCurr.getLength();
+                dblPosLast = latSeqCurr.getEndPosition();
 
-                // The current element is just a lattice element.  
-                //  Create a modeling element for it and add it to the parent sector and
-                //  the synchronization manager
+            // The current element is just a lattice element.  
+            //  Create a modeling element for it and add it to the parent sector and
+            //  the synchronization manager
             } else {
 
                 IComponent mdlElemCurr = latElemCurr.createModelingElement();
@@ -1142,8 +1138,6 @@ public class LatticeSequence extends LatticeElement implements Iterable<LatticeE
                     mgrSync.synchronize((IElement) mdlElemCurr, smfNodeCurr);
                 
                 // Advance the position of the last processed element
-                // TODO I think this will work for sequences - otherwise add sequence length
-                //  to last position.
                 dblPosLast = latElemCurr.getEndPosition();
             }
 
@@ -1153,55 +1147,63 @@ public class LatticeSequence extends LatticeElement implements Iterable<LatticeE
                         + ": s= " + latElemCurr.getCenterPosition());           
         }
         
+        // Determine if there is a drift space between the last element and the end
+        //  of this sequence.  If so create it.
+        double dblLenDrift = this.getLength() - dblPosLast;
+
+        if (dblLenDrift > EPS) 
+            this.createAndAppendDrift(cntDrifts, dblLenDrift, mdlSeqRoot);
+        
+        
         return mdlSeqRoot;
     }
 
-    /**
-     * <p>
-     * Currently this method is just a skeleton, it is nothing but a placeholder for 
-     * future modifications and upgrades.
-     * </p>
-     * <p>  
-     * In many modeling applications it
-     * is necessary to identify the first gap in an RF cavity in order to synchronize
-     * incoming particle phases.  At the moment there is a flag in the Open XAL 
-     * XDXF configuration file that identifies a gap as the first gap in a cavity.
-     * This flag is not needed since it is self evident which gap is first simply by
-     * its position within the cavity.  This method can identify first gaps and do
-     * whatever processing is necessary.
-     * </p>
-     *  
-     * @param mdlSec    model sequence object to process RF Cavity first gaps
-     *
-     * @since  Dec 15, 2014   @author Christopher K. Allen
-     * @deprecated  The first gap in any cavity does not need a special flag, you can
-     *              identify it as the first cavity in the sequence (i.e., by it's index).
-     */
-    @Deprecated
-    private void markFirstCavityGap(IComposite mdlSec) {
-
-        // We are going to search every direct child element of this model sequence
-        Iterator<IComponent>    iterElems = mdlSec.localIterator();
-        while ( iterElems.hasNext() ) {
-            IComponent mdlElem = iterElems.next();
-            
-            // If we find a composite element then we must check all of its elements (recursively)
-            if ( mdlElem instanceof IComposite ) {
-                IComposite  mdlComp = (IComposite)mdlElem;
-                
-                this.markFirstCavityGap( mdlComp );
-                
-            // We have found an RF gap, and it must be the first one because
-            //  we have not returned yet
-            } else if ( mdlElem instanceof IdealRfGap ) {
-                IdealRfGap  mdlFirstRfGap = (IdealRfGap)mdlElem;
-
-                // TODO: Do something necessary with the first gap
-                // mdlFirstRfGap.set
-                return;
-            }
-        }
-    }
+//    /**
+//     * <p>
+//     * Currently this method is just a skeleton, it is nothing but a placeholder for 
+//     * future modifications and upgrades.
+//     * </p>
+//     * <p>  
+//     * In many modeling applications it
+//     * is necessary to identify the first gap in an RF cavity in order to synchronize
+//     * incoming particle phases.  At the moment there is a flag in the Open XAL 
+//     * XDXF configuration file that identifies a gap as the first gap in a cavity.
+//     * This flag is not needed since it is self evident which gap is first simply by
+//     * its position within the cavity.  This method can identify first gaps and do
+//     * whatever processing is necessary.
+//     * </p>
+//     *  
+//     * @param mdlSec    model sequence object to process RF Cavity first gaps
+//     *
+//     * @since  Dec 15, 2014   @author Christopher K. Allen
+//     * @deprecated  The first gap in any cavity does not need a special flag, you can
+//     *              identify it as the first cavity in the sequence (i.e., by it's index).
+//     */
+//    @Deprecated
+//    private void markFirstCavityGap(IComposite mdlSec) {
+//
+//        // We are going to search every direct child element of this model sequence
+//        Iterator<IComponent>    iterElems = mdlSec.localIterator();
+//        while ( iterElems.hasNext() ) {
+//            IComponent mdlElem = iterElems.next();
+//            
+//            // If we find a composite element then we must check all of its elements (recursively)
+//            if ( mdlElem instanceof IComposite ) {
+//                IComposite  mdlComp = (IComposite)mdlElem;
+//                
+//                this.markFirstCavityGap( mdlComp );
+//                
+//            // We have found an RF gap, and it must be the first one because
+//            //  we have not returned yet
+//            } else if ( mdlElem instanceof IdealRfGap ) {
+//                IdealRfGap  mdlFirstRfGap = (IdealRfGap)mdlElem;
+//
+//                // TODO: Do something necessary with the first gap
+//                // mdlFirstRfGap.set
+//                return;
+//            }
+//        }
+//    }
 
 
     //
@@ -1271,9 +1273,43 @@ public class LatticeSequence extends LatticeElement implements Iterable<LatticeE
      *
      * @since  Dec 5, 2014
      */
-    private void addSplitElementTo(List<LatticeElement> lstSplitElems, LatticeElement latElemAddend)
-    {
-        if (latElemAddend.getLength() > EPS || latElemAddend.getParts() <= 1) lstSplitElems.add(latElemAddend);
+    private void addSplitElementTo(List<LatticeElement> lstSplitElems, LatticeElement latElemAddend) {
+        
+        if (latElemAddend.getLength() > EPS || latElemAddend.getParts() <= 1) 
+            lstSplitElems.add(latElemAddend);
+    }
+    
+    /**
+     * Creates a new drift space of the appropriate length and type 
+     * (w.r.t. the hardware that this lattice sequence represents) 
+     * and appends it to the end of the given modeling
+     * composite structure.
+     * 
+     * @param indId             used as an identifier index for the drift, e.g., "DR-indId"
+     * @param dblLen            length of the drift space
+     * @param mdlSeqRoot        the model sequence to be appended
+     * 
+     * @throws ModelException   the drift space could not be created
+     *
+     * @since  Feb 3, 2015   by Christopher K. Allen
+     */
+    private void createAndAppendDrift(int indId, double dblLen, IComposite mdlSeqRoot) throws ModelException {
+        
+        // Create the drift element identifier string
+        String       strDriftId = "DR" + (indId);
+
+        // If this lattice sequence represents an RF cavity we need an RF cavity drift
+        if (this.isRfCavity()) {
+            IComponent mdlDrift = this.mapNodeToMdl.createRfCavityDrift(strDriftId, dblLen, this.dblCavFreq, this.dblCavMode);
+
+            mdlSeqRoot.addChild(mdlDrift);
+
+            // Else we use a regular drift space
+        } else {
+            IComponent   modDrift   = this.mapNodeToMdl.createDefaultDrift(strDriftId, dblLen);
+
+            mdlSeqRoot.addChild(modDrift);
+        }
     }
     
 }
