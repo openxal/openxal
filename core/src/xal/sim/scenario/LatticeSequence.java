@@ -1113,7 +1113,7 @@ public class LatticeSequence extends LatticeElement implements Iterable<LatticeE
             if (latElemCurr instanceof LatticeSequence) {
                 LatticeSequence latSeqCurr = (LatticeSequence)latElemCurr;
 
-                IComposite mdlSeqChild = latSeqCurr.createModelSequence(mgrSync);
+                IComposite mdlSeqChild = latSeqCurr.createModelElements(mgrSync);
 
                 mdlSeqRoot.addChild(mdlSeqChild);
 //                mgrSync.synchronize((IComposite)mdlSeqChild, smfNodeCurr);
