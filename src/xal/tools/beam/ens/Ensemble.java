@@ -82,17 +82,35 @@ public class Ensemble implements Serializable {
             else          return +1;
         };
         
+        
+        /*
+         * Object Overrides
+         */
+        
         /**
-         * Equality of comparitors.
+         * Equality of comparitors. This is also part of the <code>Comparitor</code>
+         * interface.
          * 
          * @since Apr 19, 2011
          * @see java.lang.Object#equals(java.lang.Object)
          */
         @Override
-        public boolean equals(Object o) {
-            if (this.equals(o)) return true;
-            else return false;
+        public boolean equals(Object obj) {
+            return super.equals(obj);
+        }
+
+        /**
+         *
+         * @see java.lang.Object#hashCode()
+         *
+         * @since  Feb 3, 2015   by Christopher K. Allen
+         */
+        @Override
+        public int hashCode() {
+            return super.hashCode();
         };
+        
+        
     };
     
     
