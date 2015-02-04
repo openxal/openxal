@@ -17,7 +17,10 @@ public class BatchGetValueTimeRequest extends AbstractBatchGetRequest<ChannelTim
 	final protected RequestHandler REQUEST_HANDLER;
 	
 	
-	/** Primary Constructor */
+	/** 
+	 * Primary Constructor 
+	 * @param channels for which to request the value, status and timestamp
+	 */
 	public BatchGetValueTimeRequest( final Collection<Channel> channels ) {
 		super( channels );
 		

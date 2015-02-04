@@ -17,7 +17,10 @@ public class BatchGetValueRequest extends AbstractBatchGetRequest<ChannelRecord>
 	final protected RequestHandler REQUEST_HANDLER;
 
 	
-	/** Primary Constructor */
+	/** 
+	 * Primary Constructor 
+	 * @param channels for which to request the value
+	 */
 	public BatchGetValueRequest( final Collection<Channel> channels ) {
 		super( channels );
 				
