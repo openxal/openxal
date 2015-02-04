@@ -23,7 +23,7 @@ public interface BatchGetRequestListener<RecordType extends ChannelRecord> {
 	 * Event indicating that an exception has been thrown for a channel 
 	 * @param request in which the event occurred
 	 * @param channel for which the exception occured
-	 * @param exception that ocurred
+	 * @param exception that occurred
 	 */
 	public void exceptionInBatch( AbstractBatchGetRequest<RecordType> request, Channel channel, Exception exception );
 	
