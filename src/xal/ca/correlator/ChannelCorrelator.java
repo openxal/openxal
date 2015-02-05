@@ -27,9 +27,12 @@ import java.text.DateFormat;
  * @author  tap
  */
 public class ChannelCorrelator extends Correlator<Channel,ChannelTimeRecord,ChannelAgent> {
-    /** Creates new ChannelCorrelator */
-    public ChannelCorrelator(double aBinTimespan) {
-        this(aBinTimespan, null);
+    /** 
+	 * Creates new ChannelCorrelator 
+	 * @param aBinTimespan timespan for the bins
+	 */
+    public ChannelCorrelator( final double aBinTimespan ) {
+        this( aBinTimespan, null );
     }
     
     
@@ -158,12 +161,10 @@ public class ChannelCorrelator extends Correlator<Channel,ChannelTimeRecord,Chan
     
     
     /** 
-     * Add a channel to monitor.  If we already monitor a channel, do nothing. 
-     * The record filter is used to determine whether or not to accept the 
-     * reading of the specified channel when the event is handled.
-     * This method allows channels to be specified with an alternate id than 
-     * the default one.
+     * Add a channel to monitor.  If we already monitor a channel, do nothing. The record filter is used to determine whether or not to accept the
+     * reading of the specified channel when the event is handled. This method allows channels to be specified with an alternate id than the default one.
      * @param channel The channel to monitor for correlations.
+	 * @param channelId ID to associate with the channel.
      * @param recordFilter The filter to apply to the channel's records.
      */
     synchronized final public void addChannel( final Channel channel, final String channelId, final RecordFilter<ChannelTimeRecord> recordFilter ) {

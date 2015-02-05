@@ -54,7 +54,10 @@ public class BatchConnectionRequest extends java.lang.Object {
 	private volatile boolean _isCanceled;
 
 	
-	/** Constructor */
+	/** 
+	 * Constructor 
+	 * @param channels for which the connections will be requrested
+	 */
     public BatchConnectionRequest( final Collection<Channel> channels ) {
 		MESSAGE_CENTER = new MessageCenter( "BatchConnectionRequest" );
 		EVENT_PROXY = MESSAGE_CENTER.registerSource( this, BatchConnectionRequestListener.class );
@@ -85,25 +88,37 @@ public class BatchConnectionRequest extends java.lang.Object {
 	}
 	
 	
-	/** add the specified listener as a receiver of batch connection request events from this instance */
+	/** 
+	 * add the specified listener as a receiver of batch connection request events from this instance 
+	 * @param listener to receive connection events
+	 */
 	public void addBatchConnectionRequestListener( final BatchConnectionRequestListener listener ) {
 		MESSAGE_CENTER.registerTarget( listener, this, BatchConnectionRequestListener.class );
 	}
 	
 	
-	/** remove the specified listener from receiving batch connection request events from this instance */
+	/** 
+	 * remove the specified listener from receiving batch connection request events from this instance 
+	 * @param listener to remove from receiving connection events
+	 */
 	public void removeBatchConnectionRequestListener( final BatchConnectionRequestListener listener ) {
 		MESSAGE_CENTER.removeTarget( listener, this, BatchConnectionRequestListener.class );
 	}
 	
 	
-	/** get a copy of the channels to connect */
+	/** 
+	 * Get a copy of the channels to connect
+	 * @return channels for which connections are requested
+	 */
 	public Set<Channel> getChannels() {
 		return Collections.unmodifiableSet( CHANNELS );
 	}
 	
 	
-	/** get the number of channels requested */
+	/** 
+	 * Get the number of channels requested 
+	 * @return the number of channels for which connections are requested
+	 */
 	public int getChannelCount() {
 		return RESOURCE_SYNC_QUEUE.dispatchSync( new Callable<Integer>() {
 			public Integer call() {
@@ -113,7 +128,10 @@ public class BatchConnectionRequest extends java.lang.Object {
 	}
 	
 	
-	/** get the channels that were connected */
+	/** 
+	 * Get the channels that were connected 
+	 * @return set of connected channels
+	 */
 	public Set<Channel> getConnectedChannels() {
 		return RESOURCE_SYNC_QUEUE.dispatchSync( new Callable<HashSet<Channel>>() {
 			public HashSet<Channel> call() {
@@ -123,7 +141,10 @@ public class BatchConnectionRequest extends java.lang.Object {
 	}
 	
 	
-	/** get the number of channels that were connected */
+	/** 
+	 * Get the number of channels that were connected
+	 * @return the number of channels that were connected
+	 */
 	public int getConnectedCount() {
 		return RESOURCE_SYNC_QUEUE.dispatchSync( new Callable<Integer>() {
 			public Integer call() {
@@ -133,7 +154,10 @@ public class BatchConnectionRequest extends java.lang.Object {
 	}
 	
 	
-	/** get the channels that were connected */
+	/** 
+	 * Get the channels that were connected 
+	 * @return set of channels that were connected
+	 */
 	public Set<Channel> getDisconnectedChannels() {
 		return RESOURCE_SYNC_QUEUE.dispatchSync( new Callable<HashSet<Channel>>() {
 			public HashSet<Channel> call() {
@@ -143,7 +167,10 @@ public class BatchConnectionRequest extends java.lang.Object {
 	}
 	
 	
-	/** get the number of channels that were connected */
+	/** 
+	 * Get the number of channels that were connected 
+	 * @return the number of disconnected channels
+	 */
 	public int getDisconnectedCount() {
 		return RESOURCE_SYNC_QUEUE.dispatchSync( new Callable<Integer>() {
 			public Integer call() {
@@ -153,7 +180,10 @@ public class BatchConnectionRequest extends java.lang.Object {
 	}
 	
 	
-	/** get the channels pending connection */
+	/** 
+	 * Get the channels pending connection 
+	 * @return set of channels that are pending connection
+	 */
 	public Set<Channel> getPendingChannels() {
 		return RESOURCE_SYNC_QUEUE.dispatchSync( new Callable<HashSet<Channel>>() {
 			public HashSet<Channel> call() {
@@ -163,7 +193,11 @@ public class BatchConnectionRequest extends java.lang.Object {
 	}
 	
 	
-	/** get the exception if any for the specified channel */
+	/** 
+	 * get the exception if any for the specified channel 
+	 * @param channel for which to get the exception if any
+	 * @return the exception for the specified channel or null if none
+	 */
 	public Exception getException( final Channel channel ) {
 		return RESOURCE_SYNC_QUEUE.dispatchSync( new Callable<Exception>() {
 			public Exception call() {
@@ -173,7 +207,10 @@ public class BatchConnectionRequest extends java.lang.Object {
 	}
 	
 	
-	/** get the failed channels */
+	/** 
+	 * Get the failed channels
+	 * @return set of channels that failed to connect
+	 */
 	public Set<Channel> getFailedChannels() {
 		return RESOURCE_SYNC_QUEUE.dispatchSync( new Callable<HashSet<Channel>>() {
 			public HashSet<Channel> call() {
@@ -183,7 +220,10 @@ public class BatchConnectionRequest extends java.lang.Object {
 	}
 	
 	
-	/** get the number of exceptions */
+	/** 
+	 * Get the number of exceptions 
+	 * @return the number of channels that had exceptions connecting
+	 */
 	public int getExceptionCount() {
 		return RESOURCE_SYNC_QUEUE.dispatchSync( new Callable<Integer>() {
 			public Integer call() {
@@ -222,6 +262,7 @@ public class BatchConnectionRequest extends java.lang.Object {
 	 * Note that if this is called, within a channel access callback, requests will not be processed until the 
 	 * callback completes, so it is useless to wait. Instead, call waitForCompletion separately outside of the callback.
 	 * @param timeout the maximum time in seconds to wait for completion
+	 * @return true upon completion and false if not complete
 	 */
 	public boolean submitAndWait( final double timeout ) {
 		submit();
@@ -232,6 +273,7 @@ public class BatchConnectionRequest extends java.lang.Object {
 	/** 
 	 * Wait up to the specified timeout for completion. This method may be called many times as needed.
 	 * @param timeout the maximum time in seconds to wait for completion
+	 * @return true upon completion and false if not complete
 	 */
 	public boolean await( final double timeout ) {
 		final long milliTimeout = (long) ( 1000 * timeout );		// timeout in milliseconds
@@ -255,7 +297,10 @@ public class BatchConnectionRequest extends java.lang.Object {
 	}
 	
 	
-	/** Determine whether this request has been caceled */
+	/** 
+	 * Determine whether this request has been caceled 
+	 * @return true if canceled and false otherwise
+	 */
 	public boolean isCanceled() {
 		return _isCanceled;
 	}
@@ -294,7 +339,10 @@ public class BatchConnectionRequest extends java.lang.Object {
 	}
 	
 	
-	/** determine if there are any channels pending for either an exception or a completed get request */
+	/** 
+	 * Determine if there are any channels pending for either an exception or a completed get request 
+	 * @return true if complete and false otherwise
+	 */
 	public boolean isComplete() {
 		return RESOURCE_SYNC_QUEUE.dispatchSync( new Callable<Boolean>() {
 			public Boolean call() {

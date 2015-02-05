@@ -24,7 +24,10 @@ public class ChannelRecord {
     protected ArrayValue _store;
 
 	
-    /** Constructor */
+    /** 
+	 * Constructor 
+	 * @param adaptor from which to generate a record
+	 */
     public ChannelRecord( final ValueAdaptor adaptor ) {
         _store = adaptor.getStore();
     }

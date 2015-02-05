@@ -16,82 +16,142 @@ abstract public class ChannelServerPV {
 	protected ChannelServerPV() {}
 
 
-	/** get the units */
+	/** 
+	 * Get the units 
+	 * @return units
+	 */
 	abstract public String getUnits();
 
 
-	/** set the units */
+	/** 
+	 * Set the units
+	 * @param units to apply
+	 */
 	abstract public void setUnits( final String units );
 
 
-	/** get the precision */
+	/** 
+	 * Get the precision 
+	 * @return precision
+	 */
 	abstract public short getPrecision();
 
 
-	/** set the precision */
+	/** 
+	 * Set the precision 
+	 * @param precision to apply
+	 */
 	abstract public void setPrecision( final short precision );
 
 
-	/** get the lower display limit */
+	/** 
+	 * Get the lower display limit 
+	 * @return lower display limit
+	 */
 	abstract public Number getLowerDispLimit();
 
 
-	/** set the lower display limit */
+	/** 
+	 * Set the lower display limit 
+	 * @param lowerLimit to apply
+	 */
 	abstract public void setLowerDispLimit( final Number lowerLimit );
 
 
-	/** get the upper display limit */
+	/** 
+	 * Get the upper display limit 
+	 * @return upper display limit
+	 */
 	abstract public Number getUpperDispLimit();
 
 
-	/** set the upper display limit */
+	/** 
+	 * Set the upper display limit 
+	 * @param upperLimit to apply
+	 */
 	abstract public void setUpperDispLimit( final Number upperLimit );
 
 
-	/** get the lower alarm limit */
+	/** 
+	 * Get the lower alarm limit 
+	 * @return lower alarm limit
+	 */
 	abstract public Number getLowerAlarmLimit();
 
 
-	/** set the lower alarm limit */
+	/** 
+	 * Set the lower alarm limit 
+	 * @param lowerLimit to apply
+	 */
 	abstract public void setLowerAlarmLimit( final Number lowerLimit );
 
 
-	/** get the upper alarm limit */
+	/** 
+	 * Get the upper alarm limit 
+	 * @return upper alarm limit
+	 */
 	abstract public Number getUpperAlarmLimit();
 
 
-	/** set the upper alarm limit */
+	/** 
+	 * Set the upper alarm limit 
+	 * @param upperLimit to apply
+	 */
 	abstract public void setUpperAlarmLimit( final Number upperLimit );
 
 
-	/** get the lower control limit */
+	/** 
+	 * Get the lower control limit 
+	 * @return lower control limit
+	 */
 	abstract public Number getLowerCtrlLimit();
 
 
-	/** set the lower control limit */
+	/** 
+	 * Set the lower control limit 
+	 * @param lowerLimit to apply
+	 */
 	abstract public void setLowerCtrlLimit( final Number lowerLimit );
 
 
-	/** get the upper control limit */
+	/** 
+	 * Get the upper control limit 
+	 * @return upper control limit
+	 */
 	abstract public Number getUpperCtrlLimit();
 
 
-	/** set the upper control limit */
+	/** 
+	 * Set the upper control limit 
+	 * @param upperLimit to apply
+	 */
 	abstract public void setUpperCtrlLimit( final Number upperLimit );
 
 
-	/** get the lower warning limit */
+	/** 
+	 * Get the lower warning limit 
+	 * @return lower warning limit
+	 */
 	abstract public Number getLowerWarningLimit();
 
 
-	/** set the lower warning limit */
+	/** 
+	 * Set the lower warning limit 
+	 * @param lowerLimit to apply
+	 */
 	abstract public void setLowerWarningLimit( final Number lowerLimit );
 
 
-	/** get the upper warning limit */
+	/** 
+	 * Get the upper warning limit 
+	 * @return upper warning limit
+	 */
 	abstract public Number getUpperWarningLimit();
 
 
-	/** set the upper warning limit */
+	/** 
+	 * Set the upper warning limit 
+	 * @param upperLimit to apply
+	 */
 	abstract public void setUpperWarningLimit( final Number upperLimit );
 }

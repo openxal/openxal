@@ -37,7 +37,10 @@ public class MonitorCache {
 	volatile protected ChannelTimeRecord _latestRecord;
 	
 	
-	/** Constructor */
+	/** 
+	 * Constructor 
+	 * @param channel to monitor
+	 */
 	public MonitorCache( final Channel channel ) {
 		_channel = channel;
 		_monitor = null;
@@ -67,13 +70,19 @@ public class MonitorCache {
 	}
 	
 	
-	/** Register the listener to receive IEventSinkValTime events from the monitor */
+	/** 
+	 * Register the listener to receive IEventSinkValTime events from the monitor 
+	 * @param listener to receive events
+	 */
 	public void addMonitorListener( final IEventSinkValTime listener ) {
 		_messageCenter.registerTarget( listener, this, IEventSinkValTime.class );
 	}
 	
 	
-	/** Remove the listener from receiving IEventSinkValTime events from this monitor */
+	/** 
+	 * Remove the listener from receiving IEventSinkValTime events from this monitor 
+	 * @param listener to remove from receiving events
+	 */
 	public void removeMonitorListener( final IEventSinkValTime listener ) {
 		_messageCenter.removeTarget( listener, this, IEventSinkValTime.class );
 	}
@@ -85,19 +94,28 @@ public class MonitorCache {
 	}
 	
 	
-	/** Get the channel. */
+	/** 
+	 * Get the channel. 
+	 * @return wrapped channel
+	 */
 	public Channel getChannel() {
 		return _channel;
 	}
 	
 	
-	/** Determine if the channel is connected. */
+	/** 
+	 * Determine if the channel is connected. 
+	 * @return true if the channel is connected and false if not
+	 */
 	public boolean isConnected() {
 		return _channel.isConnected();
 	}
 	
 	
-	/** Get the latest record. */
+	/** 
+	 * Get the latest record. 
+	 * @return latest record
+	 */
 	public ChannelTimeRecord getLatestRecord() {
 		return _latestRecord;
 	}
