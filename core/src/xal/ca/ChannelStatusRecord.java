@@ -16,7 +16,10 @@ public class ChannelStatusRecord extends ChannelRecord {
     protected int status;
     protected int severity;
 
-    /** Creates new ChannelStatusRecord */
+    /** 
+	 * Creates new ChannelStatusRecord 
+	 * @param adaptor from which to create the record
+	 */
     public ChannelStatusRecord(StatusAdaptor adaptor) {
         super(adaptor);
         status = adaptor.status();

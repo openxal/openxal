@@ -27,7 +27,11 @@ abstract public class ChannelSystem {
     abstract public void setDebugMode( final boolean debugFlag );
 
 
-	/** Create a new channel server */
+	/** 
+	 * Create a new channel server 
+	 * @return new channel server
+	 * @throws java.lang.Exception as appropriate
+	 */
 	abstract public ChannelServer newChannelServer() throws Exception;
 	
 	
@@ -38,6 +42,7 @@ abstract public class ChannelSystem {
 	/**
 	 * Schedule an IO request with the specified timeout
 	 * @param timeout the maximum time to wait for a successful pend IO 
+	 * @return true upon success and false upon failure
 	 */
     abstract public boolean pendIO( final double timeout );
 	

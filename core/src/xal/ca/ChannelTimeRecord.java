@@ -21,7 +21,10 @@ public class ChannelTimeRecord extends ChannelStatusRecord {
     protected Timestamp timestamp;
 	
     
-    /** Creates new ChannelTimeRecord */
+    /** 
+	 * Creates new ChannelTimeRecord 
+	 * @param adaptor from which to generate the record
+	 */
     public ChannelTimeRecord(TimeAdaptor adaptor) {
         super(adaptor);
         timestamp = new Timestamp( adaptor.getTimestamp() );
