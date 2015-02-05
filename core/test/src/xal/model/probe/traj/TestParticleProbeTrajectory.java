@@ -58,10 +58,10 @@ public class TestParticleProbeTrajectory {
     private static final boolean        BOL_MAKE_PLOTS = true;
     
     /** Flag used for comparing the design and production trajectories (otherwise just compute design) */
-    private static final boolean        BOL_COMPARE = true;
+    private static final boolean        BOL_COMPARE = false;
     
     /** Toggle lattice generator debugging output */
-    private static final boolean        BOL_LATGEN_DEBUG = true;
+    private static final boolean        BOL_LATGEN_DEBUG = false;
     
 
     /** Location of the design accelerator configuration */
@@ -78,6 +78,7 @@ public class TestParticleProbeTrajectory {
     
     /** The sequence we are testing in both accelerator configurations */
     static final private String         STR_ID_TESTSEQ = "SCLMed";
+//    static final private String         STR_ID_TESTSEQ = "CCL1";
 
     
     /*
@@ -92,7 +93,7 @@ public class TestParticleProbeTrajectory {
     
     
     /** The design Accelerator Sequence under test */
-    static private AcceleratorSeq     SEQ_PROD;
+    static private AcceleratorSeq       SEQ_PROD;
 
     /** The design Accelerator Sequence under test */
     static private AcceleratorSeq     SEQ_DSGN;
@@ -238,8 +239,8 @@ public class TestParticleProbeTrajectory {
             ACCEL_PROD = loadAccelerator();
         }
 
-        SEQ_DSGN = ACCEL_DSGN.getSequence(STR_ID_TESTSEQ);
-        SEQ_PROD = ACCEL_PROD.getSequence(STR_ID_TESTSEQ);
+        SEQ_DSGN = ACCEL_DSGN.findSequence(STR_ID_TESTSEQ);
+        SEQ_PROD = ACCEL_PROD.findSequence(STR_ID_TESTSEQ);
         
         Scenario.setDebugging(BOL_LATGEN_DEBUG);
         
@@ -312,7 +313,7 @@ public class TestParticleProbeTrajectory {
      */
     @Test
     public final void testPlotDesignAndProduction() {
-        if (BOL_MAKE_PLOTS == false)
+        if (!BOL_MAKE_PLOTS)
             return;
         
         runModels();
@@ -353,8 +354,10 @@ public class TestParticleProbeTrajectory {
             Trajectory<ParticleProbeState>  trjDsgn = MOD_DSGN.getTrajectory();
             this.writeTrajectory("DESIGN TRAJECTORY", trjDsgn);
             
-            Trajectory<ParticleProbeState>  trjProd = MOD_PROD.getTrajectory();
-            this.writeTrajectory("PRODUCTION TRACTORY", trjProd);
+            if (BOL_COMPARE) {
+                Trajectory<ParticleProbeState>  trjProd = MOD_PROD.getTrajectory();
+                this.writeTrajectory("PRODUCTION TRAJECTORY", trjProd);
+            }
 
         } catch (Exception e) {
             
@@ -388,9 +391,10 @@ public class TestParticleProbeTrajectory {
             ParticleProbeState  state     = itr.next();
             String              strElemId = state.getElementId();
             double              dblPos    = state.getPosition();
+            double              dblNrg    = state.getKineticEnergy();
             PhaseVector         vecState  = state.getPhaseCoordinates();
 
-            String strLine = strElemId + " " + dblPos + " " + vecState.toString();
+            String strLine = strElemId + " s=" + dblPos + ", W=" + dblNrg + ", z=" + vecState.toString();
             prs.println(strLine);
         }
         prs.println();

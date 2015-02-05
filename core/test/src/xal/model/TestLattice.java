@@ -51,8 +51,8 @@ public class TestLattice {
     
     /** Accelerator sequence used for testing */
 //    public static final String     STR_ACCL_SEQ_ID = "HEBT2";
-//    public static final String     STR_ACCL_SEQ_ID = "SCLMed";
-    public static final String     STR_ACCL_SEQ_ID = "CCL1";
+    public static final String     STR_ACCL_SEQ_ID = "SCLMed";
+//    public static final String     STR_ACCL_SEQ_ID = "CCL1";
     
     /** Flag for making plots of the simulation */
     public static final boolean BOL_MAKE_PLOTS  = true;    
@@ -184,7 +184,7 @@ public class TestLattice {
         Trajectory<ParticleProbeState>  trjPartc = this.runModel(PROBE_PARTC);
         
         System.out.println();
-        System.out.println("PARTICLE PROBE STATES retrieved iteratation using the Iterable<> interface");
+        System.out.println("PARTICLE PROBE STATES retrieved iteration using the Iterable<> interface");
         int index = 0;
         for (ParticleProbeState state : trjPartc) {
             System.out.println("  " + index 
