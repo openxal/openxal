@@ -64,9 +64,9 @@ abstract public class SourceAgent<RecordType> implements StateNotice<RecordType>
     
     
     /**
-     * Subclasses implement this method to handle the monitoring of its sources 
-     * in a way specific to the particular SourceAgent subclass.  When an event 
-     * is captured and it passes the filter test, this method should call postEvent().
+     * Subclasses implement this method to handle the monitoring of its sources in a way specific to the particular SourceAgent subclass.
+	 * When an event is captured and it passes the filter test, this method should call postEvent().
+	 * @param recordFilter filter for records to accept or reject
      * @see #postEvent
      */
     abstract protected void setupEventHandler(RecordFilter<RecordType> recordFilter);
@@ -80,7 +80,10 @@ abstract public class SourceAgent<RecordType> implements StateNotice<RecordType>
     }
     
 
-    /** set the timespan to each bin */
+    /** 
+	 * Set the timespan to each bin 
+	 * @param timespan for each bin
+	 */
     public void setBinTimespan( final double timespan ) {
 		final List<BinAgent<RecordType>> binAgents = new ArrayList<BinAgent<RecordType>>();
 		synchronized( _binAgents ) {		// need to synchronize since nextBin() modifies _binAgents
@@ -149,10 +152,10 @@ abstract public class SourceAgent<RecordType> implements StateNotice<RecordType>
     
     
     /**
-     * This method is used to advertise a new event record received by the event handler 
-     * of the SourceAgent subclass.  When an event record has passed the the filter 
-     * test it should be posted via this method so that other stakeholders 
-     * (i.e. the bin agents) can handle the event properly.
+     * This method is used to advertise a new event record received by the event handler of the SourceAgent subclass.  When an event record has passed the the filter
+     * test it should be posted via this method so that other stakeholders (i.e. the bin agents) can handle the event properly.
+	 * @param record for which the event was posted
+	 * @param timestamp for which the event was posted
      */
     final protected void postEvent( final RecordType record, final double timestamp ) {
         nextBin().resetWithRecord( name(), record, timestamp );
@@ -162,13 +165,19 @@ abstract public class SourceAgent<RecordType> implements StateNotice<RecordType>
     }
 
     
-    /** Name of the managed source */
+    /** 
+	 * Name of the managed source 
+	 * @return name of the managed source
+	 */
     public String name() {
         return _name;
     }
     
     
-    /** Start monitoring the channel */
+    /** 
+	 * Start monitoring the channel 
+	 * @return true upon success and false upon failure
+	 */
     abstract public boolean startMonitor();
     
     

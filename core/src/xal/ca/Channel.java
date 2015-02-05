@@ -134,6 +134,7 @@ abstract public class Channel {
 	/**
 	 * From the default channel factory, get a channel for the specified signal name and value transform.
 	 * @param signalName the PV for which to get the channel
+	 * @param transform to transfrom the value between raw and physical
 	 * @return a channel for the specified PV
 	 */
 	static public Channel getInstance( final String signalName, final ValueTransform transform ) {
@@ -141,13 +142,19 @@ abstract public class Channel {
 	}
 
 
-	/** set whether this channel is valid */
+	/** 
+	 * set whether this channel is valid 
+	 * @param valid marks whether the channel is valid (true) or not (false)
+	 */
 	public void setValid( final boolean valid ) {
 		_valid = valid;
 	}
 
 
-	/** determine whether this channel is valid */
+	/** 
+	 * determine whether this channel is valid 
+	 * @return true if it the channel is valid and false if not
+	 */
 	public boolean isValid() {
 		return _valid;
 	}
@@ -171,8 +178,11 @@ abstract public class Channel {
     }
     
     
-    /** Add a listener of connection changes */
-    public void addConnectionListener(ConnectionListener listener) {
+    /** 
+	 * Add a listener of connection changes 
+	 * @param listener to register for connection events
+	 */
+    public void addConnectionListener( final ConnectionListener listener ) {
         if ( connectionProxy == null ) {
             connectionProxy = messageCenter.registerSource(this, ConnectionListener.class);
         }
@@ -181,8 +191,11 @@ abstract public class Channel {
     }
     
     
-    /** Remove a listener of connection changes */
-    public void removeConnectionListener(ConnectionListener listener) {
+    /** 
+	 * Remove a listener of connection changes 
+	 * @param listener to remove from receiving connection events
+	 */
+    public void removeConnectionListener( final ConnectionListener listener ) {
         messageCenter.removeTarget(listener, this, ConnectionListener.class);
     }
     
@@ -298,7 +311,10 @@ abstract public class Channel {
     }
 
     
-    /** Checks for process variable channel connection and throws a ConnectionException if absent. */
+    /** 
+	 * Checks for process variable channel connection and throws a ConnectionException if absent. 
+	 * @throws xal.ca.ConnectionException accordingly
+	 */
     public void checkConnection() throws ConnectionException  {
         if ( !connectAndWait() ) {
             throw new ConnectionException(this, "Channel Error - The channel \"" + m_strId + "\" must be connected to use this feature.");
@@ -307,8 +323,9 @@ abstract public class Channel {
     
 
     /**
-     *  Checks for process variable channel connection and throws a ConnectionException if absent after attempting a connection if necessary.
-     *  @param  methodName     name of method using connection
+     * Checks for process variable channel connection and throws a ConnectionException if absent after attempting a connection if necessary.
+     * @param  methodName     name of method using connection
+	 * @throws xal.ca.ConnectionException accordingly
      */
     protected void checkConnection( final String methodName ) throws ConnectionException  {
 		checkConnection( methodName, true );
@@ -319,6 +336,7 @@ abstract public class Channel {
 	 * Checks for process variable channel connection and throws a ConnectionException if absent.
      * @param methodName     name of method using connection
 	 * @param attemptConnection indicates whether or not to attempt a blocking connection request
+	 * @throws xal.ca.ConnectionException accordingly
      */
     protected void checkConnection( final String methodName, final boolean attemptConnection ) throws ConnectionException  {
 		if ( !isConnected() ) {
@@ -338,13 +356,18 @@ abstract public class Channel {
      */
     
     
-    /** get the Java class associated with the native type of this channel */
+    /** 
+	 * get the Java class associated with the native type of this channel 
+	 * @return the native element type
+	 * @throws xal.ca.ConnectionException accordingly
+	 */
     abstract public Class<?> elementType() throws ConnectionException;
     
     
     /**
-     *  Return size of value array associated with process variable
-     *  @return     number of values in process variable
+     * Return size of value array associated with process variable
+     * @return     number of values in process variable
+	 * @throws xal.ca.ConnectionException accordingly
      */
     abstract public int elementCount() throws ConnectionException;
 
@@ -368,7 +391,12 @@ abstract public class Channel {
     abstract public boolean writeAccess() throws ConnectionException;
 
     
-    /** Convenience method which returns the units for this channel. */
+    /** 
+	 * Convenience method which returns the units for this channel. 
+	 * @return the units
+	 * @throws xal.ca.ConnectionException accordingly
+	 * @throws xal.ca.GetException	accordingly
+	 */
     abstract public String getUnits() throws ConnectionException, GetException;
     
     
@@ -400,88 +428,168 @@ abstract public class Channel {
     abstract public String[] getDriveLimitPVs();
     
 
-    /** Convenience method which returns the upper display limit. */
+    /** 
+	 * Convenience method which returns the upper display limit. 
+	 * @return the raw upper display limit
+	 * @throws xal.ca.ConnectionException accordingly
+	 * @throws xal.ca.GetException accordingly
+	 */
     abstract public Number rawUpperDisplayLimit() throws ConnectionException, GetException;
     
     
-    /** Convenience method which returns the lower display limit. */
+    /** 
+	 * Convenience method which returns the lower display limit. 
+	 * @return the raw lower display limit
+	 * @throws xal.ca.ConnectionException accordingly
+	 * @throws xal.ca.GetException accordingly
+	 */
     abstract public Number rawLowerDisplayLimit() throws ConnectionException, GetException;
     
     
-    /** Convenience method which returns the upper alarm limit. */
+    /** 
+	 * Convenience method which returns the upper alarm limit. 
+	 * @return the raw upper alarm limit
+	 * @throws xal.ca.ConnectionException accordingly
+	 * @throws xal.ca.GetException accordingly
+	 */
     abstract public Number rawUpperAlarmLimit() throws ConnectionException, GetException;
     
     
-    /** Convenience method which returns the lower alarm limit. */
+    /** 
+	 * Convenience method which returns the lower alarm limit. 
+	 * @return the raw lower alarm limit
+	 * @throws xal.ca.ConnectionException accordingly
+	 * @throws xal.ca.GetException accordingly
+	 */
     abstract public Number rawLowerAlarmLimit() throws ConnectionException, GetException;
     
     
-    /** Convenience method which returns the upper warning limit. */
+    /** 
+	 * Convenience method which returns the upper warning limit. 
+	 * @return the raw upper warning limit
+	 * @throws xal.ca.ConnectionException accordingly
+	 * @throws xal.ca.GetException accordingly
+	 */
     abstract public Number rawUpperWarningLimit() throws ConnectionException, GetException;
     
     
-    /** Convenience method which returns the lower warning limit. */
+    /** 
+	 * Convenience method which returns the lower warning limit. 
+	 * @return the raw lower warning limit
+	 * @throws xal.ca.ConnectionException accordingly
+	 * @throws xal.ca.GetException accordingly
+	 */
     abstract public Number rawLowerWarningLimit() throws ConnectionException, GetException;
     
     
-    /** Convenience method which returns the upper control limit. */
+    /** 
+	 * Convenience method which returns the upper control limit. 
+	 * @return the raw upper control limit
+	 * @throws xal.ca.ConnectionException accordingly
+	 * @throws xal.ca.GetException accordingly
+	 */
     abstract public Number rawUpperControlLimit() throws ConnectionException, GetException;
     
     
-    /** Convenience method which returns the lower control limit. */
+    /** 
+	 * Convenience method which returns the lower control limit. 
+	 * @return the raw lower control limit
+	 * @throws xal.ca.ConnectionException accordingly
+	 * @throws xal.ca.GetException accordingly
+	 */
     abstract public Number rawLowerControlLimit() throws ConnectionException, GetException;
     
     
-    /** Convenience method which returns the upper display limit. */
+    /** 
+	 * Convenience method which returns the upper display limit. 
+	 * @return the upper display limit
+	 * @throws xal.ca.ConnectionException accordingly
+	 * @throws xal.ca.GetException accordingly
+	 */
     final public Number upperDisplayLimit() throws ConnectionException, GetException {
         ArrayValue rawValue = ArrayValue.numberStore( rawUpperDisplayLimit() );
         return valueTransform.convertFromRaw(rawValue);
     }
     
     
-    /** Convenience method which returns the lower display limit. */
+    /** 
+	 * Convenience method which returns the lower display limit. 
+	 * @return the lower display limit
+	 * @throws xal.ca.ConnectionException accordingly
+	 * @throws xal.ca.GetException accordingly
+	 */
     final public Number lowerDisplayLimit() throws ConnectionException, GetException {
         ArrayValue rawValue = ArrayValue.numberStore( rawLowerDisplayLimit() );
         return valueTransform.convertFromRaw(rawValue);
     }
     
     
-    /** Convenience method which returns the upper alarm limit. */
+    /** 
+	 * Convenience method which returns the upper alarm limit. 
+	 * @return the upper alarm limit
+	 * @throws xal.ca.ConnectionException accordingly
+	 * @throws xal.ca.GetException accordingly
+	 */
     final public Number upperAlarmLimit() throws ConnectionException, GetException {
         ArrayValue rawValue = ArrayValue.numberStore( rawUpperAlarmLimit() );
         return valueTransform.convertFromRaw(rawValue);
     }
     
     
-    /** Convenience method which returns the lower alarm limit. */
+    /** 
+	 * Convenience method which returns the lower alarm limit. 
+	 * @return the lower alarm limit
+	 * @throws xal.ca.ConnectionException accordingly
+	 * @throws xal.ca.GetException accordingly
+	 */
     final public Number lowerAlarmLimit() throws ConnectionException, GetException {
         ArrayValue rawValue = ArrayValue.numberStore( rawLowerAlarmLimit() );
         return valueTransform.convertFromRaw(rawValue);
     }
     
     
-    /** Convenience method which returns the upper warning limit. */
+    /** 
+	 * Convenience method which returns the upper warning limit. 
+	 * @return the upper warning limit
+	 * @throws xal.ca.ConnectionException accordingly
+	 * @throws xal.ca.GetException accordingly
+	 */
     final public Number upperWarningLimit() throws ConnectionException, GetException {
         ArrayValue rawValue = ArrayValue.numberStore( rawUpperWarningLimit() );
         return valueTransform.convertFromRaw(rawValue);
     }
     
     
-    /** Convenience method which returns the lower warning limit. */
+    /** 
+	 * Convenience method which returns the lower warning limit. 
+	 * @return the lower warning limit
+	 * @throws xal.ca.ConnectionException accordingly
+	 * @throws xal.ca.GetException accordingly
+	 */
     final public Number lowerWarningLimit() throws ConnectionException, GetException {
         ArrayValue rawValue = ArrayValue.numberStore( rawLowerWarningLimit() );
         return valueTransform.convertFromRaw(rawValue);
     }
     
     
-    /** Convenience method which returns the upper control limit. */
+    /** 
+	 * Convenience method which returns the upper control limit. 
+	 * @return upper control limit
+	 * @throws xal.ca.ConnectionException accordingly
+	 * @throws xal.ca.GetException accordingly
+	 */
     final public Number upperControlLimit() throws ConnectionException, GetException {
         ArrayValue rawValue = ArrayValue.numberStore( rawUpperControlLimit() );
         return valueTransform.convertFromRaw(rawValue);
     }
     
     
-    /** Convenience method which returns the lower control limit. */
+    /** 
+	 * Convenience method which returns the lower control limit. 
+	 * @return the lower control limit
+	 * @throws xal.ca.ConnectionException accordingly
+	 * @throws xal.ca.GetException accordingly
+	 */
     final public Number lowerControlLimit() throws ConnectionException, GetException {
         ArrayValue rawValue = ArrayValue.numberStore( rawLowerControlLimit() );
         return valueTransform.convertFromRaw(rawValue);
@@ -550,6 +658,9 @@ abstract public class Channel {
     
     /**
      * Fetch the data value for the channel and return it as an ArrayValue.
+	 * @return channel's array value
+	 * @throws xal.ca.ConnectionException accordingly
+	 * @throws xal.ca.GetException accordingly
      */
     public ArrayValue getArrayValue() throws ConnectionException, GetException {
         return getValueRecord().arrayValue();
@@ -558,8 +669,10 @@ abstract public class Channel {
     
     /**
      * Return a raw <code>ChannelRecord</code> representing the fetched record for the 
-     * native type of this channel.  This is a convenient way to get the value of
-     * the PV.
+     * native type of this channel.  This is a convenient way to get the value of the PV.
+	 * @return raw channel record
+	 * @throws xal.ca.ConnectionException accordingly
+	 * @throws xal.ca.GetException accordingly
      */
     abstract public ChannelRecord getRawValueRecord()  throws ConnectionException, GetException;
 	
@@ -567,6 +680,8 @@ abstract public class Channel {
 	/**
 	 * Get a <code>ChannelRecord</code> representing the fetched record for the specified type.
 	 * @return the channel record
+	 * @throws xal.ca.ConnectionException accordingly
+	 * @throws xal.ca.GetException accordingly
      */
 	abstract protected ChannelRecord getRawStringValueRecord()  throws ConnectionException, GetException;
 	
@@ -574,6 +689,8 @@ abstract public class Channel {
 	/**
 	 * Get a <code>ChannelStatusRecord</code> representing the fetched record for the specified type.
 	 * @return the channel record
+	 * @throws xal.ca.ConnectionException accordingly
+	 * @throws xal.ca.GetException accordingly
      */
 	abstract protected ChannelStatusRecord getRawStringStatusRecord()  throws ConnectionException, GetException;
 	
@@ -581,6 +698,8 @@ abstract public class Channel {
 	/**
 	 * Get a <code>ChannelTimeRecord</code> representing the fetched record for the specified type.
 	 * @return the channel record
+	 * @throws xal.ca.ConnectionException accordingly
+	 * @throws xal.ca.GetException accordingly
      */
 	abstract protected ChannelTimeRecord getRawStringTimeRecord()  throws ConnectionException, GetException;
 	
@@ -589,6 +708,9 @@ abstract public class Channel {
      * Return a raw <code>ChannelStatusRecord</code> representing the fetched record for the 
      * native type of this channel.  This is a convenient way to get the value of
      * the PV along with status.
+	 * @return raw channel record
+	 * @throws xal.ca.ConnectionException accordingly
+	 * @throws xal.ca.GetException accordingly
      */
     abstract public ChannelStatusRecord getRawStatusRecord()  throws ConnectionException, GetException;
 
@@ -597,33 +719,53 @@ abstract public class Channel {
      * Return a raw <code>ChannelTimeRecord</code> representing the fetched record for the 
      * native type of this channel.  This is a convenient way to get the value of
      * the PV along with status and timestamp.
+	 * @return raw channel record
+	 * @throws xal.ca.ConnectionException accordingly
+	 * @throws xal.ca.GetException accordingly
      */
     abstract public ChannelTimeRecord getRawTimeRecord()  throws ConnectionException, GetException;
 
     
     /**
      * Return a <code>ChannelRecord</code> representing the fetched record for the 
-     * native type of this channel.  This is a convenient way to get the value of
-     * the PV.
+     * native type of this channel.  This is a convenient way to get the value of the PV.
+	 * @return channel record
+	 * @throws xal.ca.ConnectionException accordingly
+	 * @throws xal.ca.GetException accordingly
      */
     final public ChannelRecord getValueRecord()  throws ConnectionException, GetException {
         return getRawValueRecord().applyTransform( valueTransform );
     }
 	
     
-    /** Get a <code>ChannelRecord</code> representing the fetched record for the native type of this channel. */
+    /**
+	 * Get a <code>ChannelRecord</code> representing the fetched record for the native type of this channel. 
+	 * @return channel record
+	 * @throws xal.ca.ConnectionException accordingly
+	 * @throws xal.ca.GetException accordingly
+	 */
     final public ChannelRecord getStringValueRecord()  throws ConnectionException, GetException {
         return getRawStringValueRecord().applyTransform( valueTransform );
     }
 	
     
-    /** Get a <code>ChannelStatusRecord</code> representing the fetched record for the native type of this channel. */
+    /** 
+	 * Get a <code>ChannelStatusRecord</code> representing the fetched record for the native type of this channel. 
+	 * @return channel record
+	 * @throws xal.ca.ConnectionException accordingly
+	 * @throws xal.ca.GetException accordingly
+	 */
     final public ChannelRecord getStringStatusRecord()  throws ConnectionException, GetException {
         return getRawStringStatusRecord().applyTransform( valueTransform );
     }
 	
     
-    /** Get a <code>ChannelTimeRecord</code> representing the fetched record for the native type of this channel. */
+    /** 
+	 * Get a <code>ChannelTimeRecord</code> representing the fetched record for the native type of this channel. 
+	 * @return channel record
+	 * @throws xal.ca.ConnectionException accordingly
+	 * @throws xal.ca.GetException accordingly
+	 */
     final public ChannelRecord getStringTimeRecord()  throws ConnectionException, GetException {
         return getRawStringTimeRecord().applyTransform( valueTransform );
     }
@@ -631,8 +773,10 @@ abstract public class Channel {
     
     /**
      * Return a <code>ChannelStatusRecord</code> representing the fetched record for the 
-     * native type of this channel.  This is a convenient way to get the value of
-     * the PV along with status.
+     * native type of this channel.  This is a convenient way to get the value of the PV along with status.
+	 * @return channel record
+	 * @throws xal.ca.ConnectionException accordingly
+	 * @throws xal.ca.GetException accordingly
      */
     final public ChannelStatusRecord getStatusRecord()  throws ConnectionException, GetException {
         ChannelStatusRecord record = getRawStatusRecord();
@@ -642,9 +786,11 @@ abstract public class Channel {
 
     
     /**
-     * Return a <code>ChannelTimeRecord</code> representing the fetched record for the 
-     * native type of this channel.  This is a convenient way to get the value of
-     * the PV along with status and timestamp.
+     * Return a <code>ChannelTimeRecord</code> representing the fetched record for the native type of this channel.
+     * This is a convenient way to get the value of the PV along with status and timestamp.
+	 * @return channel record
+	 * @throws xal.ca.ConnectionException accordingly
+	 * @throws xal.ca.GetException accordingly
      */
     final public ChannelTimeRecord getTimeRecord()  throws ConnectionException, GetException {
         ChannelTimeRecord record = getRawTimeRecord();
@@ -656,8 +802,8 @@ abstract public class Channel {
     /**
 	 * Handle a callback for getting the raw value for the channel.
      * @param listener The receiver of the callback.
-     * @throws xal.ca.ConnectionException
-     * @throws xal.ca.GetException
+	 * @throws xal.ca.ConnectionException accordingly
+	 * @throws xal.ca.GetException accordingly
      */
     abstract protected void getRawValueCallback( final IEventSinkValue listener ) throws ConnectionException, GetException;
 	
@@ -666,13 +812,19 @@ abstract public class Channel {
      * Handle a callback for getting the raw value for the channel.
      * @param listener The receiver of the callback.
 	 * @param attemptConnection indicates whether or not to attempt a blocking connection if this channel is not connected
-     * @throws xal.ca.ConnectionException
-     * @throws xal.ca.GetException
+	 * @throws xal.ca.ConnectionException accordingly
+	 * @throws xal.ca.GetException accordingly
      */
     abstract protected void getRawValueCallback( final IEventSinkValue listener, final boolean attemptConnection ) throws ConnectionException, GetException;
 	
 	
-	/** Submit a non-blocking Get request with callback */
+	/** 
+	 * Submit a non-blocking Get request with callback 
+	 * @param listener to receive callback upon completion
+	 * @param attemptConnection true to attempt connection and false not to attempt connection
+	 * @throws xal.ca.ConnectionException accordingly
+	 * @throws xal.ca.GetException accordingly
+	 */
 	abstract public void getRawValueTimeCallback( final IEventSinkValTime listener, final boolean attemptConnection ) throws ConnectionException, GetException;
 
     
@@ -707,8 +859,8 @@ abstract public class Channel {
 	 * Get the value time record of the process variable via a callback to the specified listener.
      * @param  listener     receiver of the callback event.
 	 * @param attemptConnection indicates whether or not to attempt a blocking connection if this channel is not connected
-     * @throws  gov.sns.ca.ConnectionException     channel is not connected
-     * @throws  gov.sns.ca.GetException            general channel access failure
+     * @throws  xal.ca.ConnectionException     channel is not connected
+     * @throws  xal.ca.GetException            general channel access failure
      */
     final public void getValueTimeCallback( final IEventSinkValTime listener, final boolean attemptConnection ) throws ConnectionException, GetException {
         getRawValueTimeCallback( new IEventSinkValTime() {
