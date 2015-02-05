@@ -29,7 +29,14 @@ public class ChannelAgent extends SourceAgent<ChannelTimeRecord> {
 	private ConnectionListener _connectionHandler;
 
     
-    /** Creates new ChannelAgent */
+    /** 
+	 * Creates new ChannelAgent 
+	 * @param localCenter local shared message center
+	 * @param newChannel channel to monitor
+	 * @param newName name
+	 * @param recordFilter filter for records
+	 * @param tester correlation tester
+	 */
     public ChannelAgent( final MessageCenter localCenter, final Channel newChannel, final String newName, final RecordFilter<ChannelTimeRecord> recordFilter, final CorrelationTester<ChannelTimeRecord> tester ) {
         super( localCenter, newName, recordFilter, tester );
         _channel = newChannel;

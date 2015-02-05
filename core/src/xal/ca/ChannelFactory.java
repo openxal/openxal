@@ -88,6 +88,7 @@ abstract public class ChannelFactory {
     
     /** 
 	 * Create a concrete channel which makes an appropriate low level channel
+	 * @param signalName PV for which to create a new channel
 	 * @return a new channel for the specified signal name
 	 */
     abstract protected Channel newChannel( final String signalName );
