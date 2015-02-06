@@ -315,7 +315,7 @@ public class TestParticleProbeTrajectory {
             this.writeTrajectory("DESIGN TRAJECTORY", trjDsgn);
             
             Trajectory<ParticleProbeState>  trjProd = MOD_PROD.getTrajectory();
-            this.writeTrajectory("PRODUCTION TRACTORY", trjProd);
+            this.writeTrajectory("PRODUCTION TRAJECTORY", trjProd);
 
         } catch (Exception e) {
             

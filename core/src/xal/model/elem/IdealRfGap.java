@@ -410,6 +410,9 @@ public class IdealRfGap extends ThinElement implements IRfGap {
 		//the correction for the gap offset needed
 		arrival_time = arrival_time + gapOffset / (bi * IElement.LightSpeed);
 
+		// TODO Remove Type Out
+		System.out.println("IdealRfGap.compEnergyGain(): " + this.getId() ); 
+		        
 		// get phase at the gap center:
 		if(!isFirstGap()) {
 			phi0 = 2. * Math.PI * arrival_time * getFrequency() - firstGapPhaseCorr;
@@ -419,12 +422,18 @@ public class IdealRfGap extends ThinElement implements IRfGap {
 			phi0 = phi0 + structurePhase;
 			//phi0 = Math.IEEEremainder(phi0, (2. * Math.PI * (1.0 - structureMode / 2.0)));
 			setPhase(phi0);
+			
+			// TODO - remove type out
+			System.out.println("    " + " midgap phi=" + (phi0*180.0/Math.PI)%360.0 + ", cos(phi)=" + Math.cos(phi0));
 		}
 		// for first gap use input for phase at the gap center
 		else {
 			structurePhase = 0.;
 			firstGapPhaseCorr = 2. * Math.PI * arrival_time * getFrequency() - getPhase();
 			phi0 = getPhase();
+
+			// TODO - remove type out
+            System.out.println("    " + "firstgap phi=" + (phi0*180.0/Math.PI)%360.0 + ", cos(phi)=" + Math.cos(phi0));
 		}
 
 		double Q = Math.abs(probe.getSpeciesCharge());
@@ -449,7 +458,17 @@ public class IdealRfGap extends ThinElement implements IRfGap {
 		double b_gap = b_gap0;
 		double k_gap = k_gap0;
 		double dlt_phi = (Q*EL/(Er*gamma_gap*gamma_gap*gamma_gap*b_gap*b_gap))*k_gap*(ttf_prime*Math.sin(phi0) - stf_prime*Math.cos(phi0))/2.0;
-    for( int i = 0; i < 3; i++){
+		
+		// TODO Remove type out
+		System.out.println("    " + "T(b)=" + ttf + ", T'=" + ttf_prime + ", S(b)=" + stf + ", S'=" + stf_prime);
+		
+		// TODO Remove computation and type out
+        double    db = 0.05*bi;
+        double    dT = (TTFFit.evaluateAt(bi + db) - ttf)/(db);
+        double    dS = (SFit.evaluateAt(bi + db) - stf)/(db);
+        System.out.println("    Numeric: " + "T'=" + dT + ", S'=" + dS);
+
+        for( int i = 0; i < 3; i++){
 			b_gap = Math.sqrt(1.-Er*Er/((Er+Wi+dE_gap)*(Er+Wi+dE_gap)));	
 			k_gap = 2*Math.PI*freq/(b_gap*IElement.LightSpeed);	
 			gamma_gap = Math.sqrt(1./(1.-b_gap*b_gap));
@@ -457,11 +476,13 @@ public class IdealRfGap extends ThinElement implements IRfGap {
 			dlt_phi = (Q*EL/(Er*gamma_gap*gamma_gap*gamma_gap*b_gap*b_gap))*k_gap*(ttf_prime*Math.sin(phi0+dlt_phi) - stf_prime*Math.cos(phi0+dlt_phi))/2.0;
 		}
 		//System.out.println("Stop "+this.getId() + "dlt_phi ="+(180*dlt_phi/Math.PI)+" bi="+bi+" b_gap="+b_gap+" dE_gap="+dE_gap+" Wi="+Wi);
-		//the energy gaine and phase are known
+		//the energy gain and phase are known
 		//now we calculate the total energy gain and phase
 		theEnergyGain = Q*EL*((ttf + ttf_prime*(k_gap - k_gap0))*Math.cos(phi0+dlt_phi));
 		deltaPhaseCorrection = (Q*EL/(Er*gamma_gap*gamma_gap*gamma_gap*b_gap*b_gap))*k_gap*(ttf_prime*Math.sin(phi0+dlt_phi));		
 		
+        // TODO - remove type out
+        System.out.println("    " + "Tcos(phi)-Ssin(phi)=" + (ttf*Math.cos(phi0) - stf*Math.sin(phi0)) + ", dW=" + theEnergyGain + ", W=" + Wi);
 		//System.out.println(this.getId() + " " + (Math.IEEEremainder(phi0 * 57.295779, 360.)) + "  " + Wi + "  " + theEnergyGain);
 	}
 
