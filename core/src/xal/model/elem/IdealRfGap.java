@@ -451,7 +451,10 @@ public class IdealRfGap extends ThinElement implements IRfGap {
 		double stf_prime = 0.01*SPrimeFit.evaluateAt(bi);
 		double freq = getFrequency();
 //		double phi_gap = phi0;
-		double dE_gap = Q*EL*(ttf*Math.cos(phi0) + stf*Math.sin(phi0))/2.0;
+
+//		double dE_gap = Q*EL*(ttf*Math.cos(phi0) - stf*Math.sin(phi0))/2.0;
+		double dE_gap = Q*EL*(ttf*Math.cos(phi0) + stf*Math.sin(phi0))/2.0;  // TODO CKA - original line 
+
 		double b_gap0 = Math.sqrt(1.-Er*Er/((Er+Wi+dE_gap)*(Er+Wi+dE_gap)));	
 		double k_gap0 = 2*Math.PI*freq/(b_gap0*IElement.LightSpeed);	
 		double gamma_gap = Math.sqrt(1./(1.-b_gap0*b_gap0));
@@ -469,11 +472,19 @@ public class IdealRfGap extends ThinElement implements IRfGap {
         System.out.println("    Numeric: " + "T'=" + dT + ", S'=" + dS);
 
         for( int i = 0; i < 3; i++){
-			b_gap = Math.sqrt(1.-Er*Er/((Er+Wi+dE_gap)*(Er+Wi+dE_gap)));	
+            
+            // CKA: Change to b_gap/2, use mid-gap values not end-gap values
+//			b_gap = Math.sqrt(1.-Er*Er/((Er+Wi+dE_gap/2.0)*(Er+Wi+dE_gap/2.0)));	
+            b_gap = Math.sqrt(1.-Er*Er/((Er+Wi+dE_gap)*(Er+Wi+dE_gap)));  // TODO CKA - original line
 			k_gap = 2*Math.PI*freq/(b_gap*IElement.LightSpeed);	
 			gamma_gap = Math.sqrt(1./(1.-b_gap*b_gap));
-			dE_gap = Q*EL*((ttf + ttf_prime*(k_gap - k_gap0))*Math.cos(phi0+dlt_phi) + (stf + stf_prime*(k_gap - k_gap0))*Math.sin(phi0+dlt_phi))/2.0;
-			dlt_phi = (Q*EL/(Er*gamma_gap*gamma_gap*gamma_gap*b_gap*b_gap))*k_gap*(ttf_prime*Math.sin(phi0+dlt_phi) - stf_prime*Math.cos(phi0+dlt_phi))/2.0;
+
+			dE_gap = Q*EL*((ttf + ttf_prime*(k_gap - k_gap0))*Math.cos(phi0+dlt_phi) + (stf + stf_prime*(k_gap - k_gap0))*Math.sin(phi0+dlt_phi))/2.0; // TODO CKA - original line
+//            dE_gap = Q*EL*((ttf + ttf_prime*(k_gap - k_gap0))*Math.cos(phi0+dlt_phi) - (stf + stf_prime*(k_gap - k_gap0))*Math.sin(phi0+dlt_phi))/2.0;
+
+            // TODO CKA This looks like it actually is the mid-gap d_phi
+            dlt_phi = (Q*EL/(Er*gamma_gap*gamma_gap*gamma_gap*b_gap*b_gap))*k_gap*(ttf_prime*Math.sin(phi0+dlt_phi) - stf_prime*Math.cos(phi0+dlt_phi))/2.0; // TODO CKA - original line
+//            dlt_phi = (Q*EL/(Er*gamma_gap*gamma_gap*gamma_gap*b_gap*b_gap))*k_gap*(ttf_prime*Math.sin(phi0+dlt_phi) + stf_prime*Math.cos(phi0+dlt_phi))/2.0;
 			
 			// TODO Remove type out
 			System.out.println("    iter #" + i + ": b_gap=" + b_gap + ", dlt_phi=" + dlt_phi + ", dE_gap=" + dE_gap);
@@ -487,7 +498,7 @@ public class IdealRfGap extends ThinElement implements IRfGap {
         // TODO - remove type out
 		System.out.println("    ki=" + k_gap0);
         System.out.println("    kf=" + k_gap);
-        System.out.println("    " + "Tcos(phi)-Ssin(phi)=" + (ttf*Math.cos(phi0) - stf*Math.sin(phi0)) + ", dphi=" + dlt_phi + ", dW=" + theEnergyGain + ", W=" + Wi);
+        System.out.println("    " + "Tcos(phi)-Ssin(phi)=" + (ttf*Math.cos(phi0) - stf*Math.sin(phi0)) + ", dphi=" + dlt_phi + ", dW=" + theEnergyGain + ", W=" + (Wi+theEnergyGain) + " ");
         System.out.println();
 		//System.out.println(this.getId() + " " + (Math.IEEEremainder(phi0 * 57.295779, 360.)) + "  " + Wi + "  " + theEnergyGain);
 	}
