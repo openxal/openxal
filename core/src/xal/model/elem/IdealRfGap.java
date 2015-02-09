@@ -424,7 +424,7 @@ public class IdealRfGap extends ThinElement implements IRfGap {
 			setPhase(phi0);
 			
 			// TODO - remove type out
-			System.out.println("    " + " midgap phi=" + (phi0*180.0/Math.PI)%360.0 + ", cos(phi)=" + Math.cos(phi0));
+			System.out.println("    " + " entrance phi=" + (phi0*180.0/Math.PI)%360.0 + ", cos(phi)=" + Math.cos(phi0));
 		}
 		// for first gap use input for phase at the gap center
 		else {
@@ -433,7 +433,7 @@ public class IdealRfGap extends ThinElement implements IRfGap {
 			phi0 = getPhase();
 
 			// TODO - remove type out
-            System.out.println("    " + "firstgap phi=" + (phi0*180.0/Math.PI)%360.0 + ", cos(phi)=" + Math.cos(phi0));
+            System.out.println("    " + "firstgap entrance phi=" + (phi0*180.0/Math.PI)%360.0 + ", cos(phi)=" + Math.cos(phi0));
 		}
 
 		double Q = Math.abs(probe.getSpeciesCharge());
@@ -474,6 +474,9 @@ public class IdealRfGap extends ThinElement implements IRfGap {
 			gamma_gap = Math.sqrt(1./(1.-b_gap*b_gap));
 			dE_gap = Q*EL*((ttf + ttf_prime*(k_gap - k_gap0))*Math.cos(phi0+dlt_phi) + (stf + stf_prime*(k_gap - k_gap0))*Math.sin(phi0+dlt_phi))/2.0;
 			dlt_phi = (Q*EL/(Er*gamma_gap*gamma_gap*gamma_gap*b_gap*b_gap))*k_gap*(ttf_prime*Math.sin(phi0+dlt_phi) - stf_prime*Math.cos(phi0+dlt_phi))/2.0;
+			
+			// TODO Remove type out
+			System.out.println("    iter #" + i + ": b_gap=" + b_gap + ", dlt_phi=" + dlt_phi + ", dE_gap=" + dE_gap);
 		}
 		//System.out.println("Stop "+this.getId() + "dlt_phi ="+(180*dlt_phi/Math.PI)+" bi="+bi+" b_gap="+b_gap+" dE_gap="+dE_gap+" Wi="+Wi);
 		//the energy gain and phase are known
@@ -482,7 +485,10 @@ public class IdealRfGap extends ThinElement implements IRfGap {
 		deltaPhaseCorrection = (Q*EL/(Er*gamma_gap*gamma_gap*gamma_gap*b_gap*b_gap))*k_gap*(ttf_prime*Math.sin(phi0+dlt_phi));		
 		
         // TODO - remove type out
-        System.out.println("    " + "Tcos(phi)-Ssin(phi)=" + (ttf*Math.cos(phi0) - stf*Math.sin(phi0)) + ", dW=" + theEnergyGain + ", W=" + Wi);
+		System.out.println("    ki=" + k_gap0);
+        System.out.println("    kf=" + k_gap);
+        System.out.println("    " + "Tcos(phi)-Ssin(phi)=" + (ttf*Math.cos(phi0) - stf*Math.sin(phi0)) + ", dphi=" + dlt_phi + ", dW=" + theEnergyGain + ", W=" + Wi);
+        System.out.println();
 		//System.out.println(this.getId() + " " + (Math.IEEEremainder(phi0 * 57.295779, 360.)) + "  " + Wi + "  " + theEnergyGain);
 	}
 
