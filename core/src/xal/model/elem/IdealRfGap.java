@@ -1687,6 +1687,7 @@ public class IdealRfGap extends ThinElement implements IRfGap, IRfCavityCell {
      * @author Christopher K. Allen
      * @since  Nov 26, 2014
      */
+    private boolean bolMethodCalled = false;
     private EnergyVariables compGapPhaseAndEnergyGainIndirect(IProbe probe) {
 
         // Initial probe parameters
@@ -1732,7 +1733,7 @@ public class IdealRfGap extends ThinElement implements IRfGap, IRfCavityCell {
         double phi = phi0;
 //        double dW  = qEL*(ttf*Math.cos(phi0) - stf*Math.sin(phi0))/2.0;
         double dW  = qAEL*( ttf*Math.cos(phi0) - stf*Math.sin(phi0) );
-
+        
         // CKA - If we are using the standard definition of S(k) it should be negative
         //      double dE_gap = qEL*(ttf*Math.cos(phi0) + stf*Math.sin(phi0))/2.0; 
 
@@ -1747,6 +1748,20 @@ public class IdealRfGap extends ThinElement implements IRfGap, IRfCavityCell {
         double d_T   = this.fitTTF.derivativeAt(b_mid);
         double d_S   = this.fitSTF.derivativeAt(b_mid);
         double d_phi = -(qAEL/Er)*r_mid*b_mid*( d_T*Math.sin(phi) - d_S*Math.cos(phi) );
+
+        // TODO Remove type out
+        if (!this.bolMethodCalled) {
+            double ki = DBL_2PI /(bi*IElement.LightSpeed/this.getFrequency());
+            double db = 0.03*bi;
+            double dT = (this.fitTTF.evaluateAt(bi + db) - ttf)/db;
+            double dS = (this.fitSTF.evaluateAt(bi + db) - stf)/db;
+            System.out.println("IdealRfGap#compEnergyGainIndirect: " + this.getId());
+            System.out.println("    phi=" + phi*(180/Math.PI) + ", cos(phi)=" + Math.cos(phi) + ", Acos(phi)=" + A*Math.cos(phi));
+            System.out.println("    T(b)=" + ttf + ", T'=" + d_T + ", S(b)=" + stf + ", S'=" + d_S);
+            System.out.println("    dT/dk=" + d_T*(bi/ki) + ", dS/dk=" + d_S*(bi/ki));
+            System.out.println("    Numeric: T'=" + dT + ", S'=" + dS);
+            System.out.println("    ki=" + ki);
+        }
 
         int         cntIter   = 0;
         double      dblCnvErr = 10 * DBL_PHASECALC_CNVERR;
@@ -1780,6 +1795,17 @@ public class IdealRfGap extends ThinElement implements IRfGap, IRfCavityCell {
         if (dblCnvErr > DBL_PHASECALC_CNVERR) 
             System.err.println("WARNING! IdealRfGap#compGapPhaseChange() did not converge for element " + this.getId());
 
+        // TODO Remove type out
+        if (!this.bolMethodCalled) {
+            double  bf = RelativisticParameterConverter.computeBetaFromEnergies(Wi + dW, Er);
+            double  kf = DBL_2PI /(bf*IElement.LightSpeed/this.getFrequency());
+            System.out.println("    kf=" + kf);
+            System.out.println("    Tcos(phi)-Ssin(phi)=" + (ttf*Math.cos(phi)-stf*Math.sin(phi)) + ", dphi=" + d_phi + ", dW=" + dW + ", W=" + Wi+dW);
+            System.out.println();
+            
+            this.bolMethodCalled = true;
+        }
+        
         return new EnergyVariables(d_phi, dW);
     }
 
