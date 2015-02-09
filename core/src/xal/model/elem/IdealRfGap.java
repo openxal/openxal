@@ -1763,6 +1763,7 @@ public class IdealRfGap extends ThinElement implements IRfGap, IRfCavityCell {
             System.out.println("    ki=" + ki);
         }
 
+        // Initialize serach variables
         int         cntIter   = 0;
         double      dblCnvErr = 10 * DBL_PHASECALC_CNVERR;
         while ( dblCnvErr > DBL_PHASECALC_CNVERR && cntIter < INT_PHASECALC_MAXITER) {
@@ -1788,6 +1789,10 @@ public class IdealRfGap extends ThinElement implements IRfGap, IRfCavityCell {
             
             d_phi = -(qAEL/Er)*r_mid*b_mid*( d_T*Math.sin(phi) - d_S*Math.cos(phi) );
 
+            // TODO Remove type outs
+            if (!this.bolMethodCalled) 
+                System.out.println("    iter#" + cntIter + ": b_mid=" + b_mid + ", d_phi=" + d_phi + ", dW=" + dW);
+            
             dblCnvErr = Math.abs( d_phi - 2.0*(phi - phi0) );
             cntIter++;
         }
