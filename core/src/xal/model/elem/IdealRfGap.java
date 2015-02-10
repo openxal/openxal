@@ -1752,7 +1752,7 @@ public class IdealRfGap extends ThinElement implements IRfGap, IRfCavityCell {
         // TODO Remove type out
         if (!this.bolMethodCalled) {
             double ki = DBL_2PI /(bi*IElement.LightSpeed/this.getFrequency());
-            double db = 0.03*bi;
+            double db = 0.01*bi;
             double dT = (this.fitTTF.evaluateAt(bi + db) - ttf)/db;
             double dS = (this.fitSTF.evaluateAt(bi + db) - stf)/db;
             System.out.println("IdealRfGap#compEnergyGainIndirect: " + this.getId());
@@ -1765,7 +1765,7 @@ public class IdealRfGap extends ThinElement implements IRfGap, IRfCavityCell {
 
         // Initialize serach variables
         int         cntIter   = 0;
-        double      dblCnvErr = 10 * DBL_PHASECALC_CNVERR;
+        double      dblCnvErr = 10.0 * DBL_PHASECALC_CNVERR;
         while ( dblCnvErr > DBL_PHASECALC_CNVERR && cntIter < INT_PHASECALC_MAXITER) {
 
             // Use the newly computed transit time factors and mid gap phase
