@@ -411,11 +411,17 @@ public class IdealRfGap extends ThinElement implements IRfGap {
 		arrival_time = arrival_time + gapOffset / (bi * IElement.LightSpeed);
 
 		// TODO Remove Type Out
-		System.out.println("IdealRfGap.compEnergyGain(): " + this.getId() ); 
+		System.out.println("IdealRfGap.compEnergyGain(): " + this.getId() );
+		double phi_raw = 2.0*Math.PI*this.getFrequency()*(arrival_time -  gapOffset / (bi * IElement.LightSpeed)); 
+        System.out.println("    " + "raw entrance phi=" + (phi_raw*(180.0/Math.PI))%360.0 + " ");
 		        
 		// get phase at the gap center:
 		if(!isFirstGap()) {
 			phi0 = 2. * Math.PI * arrival_time * getFrequency() - firstGapPhaseCorr;
+
+            // TODO - remove type out
+            System.out.println("    " + " entrance phi no structure=" + (phi0*180.0/Math.PI)%360.0 + ", cos(phi)=" + Math.cos(phi0));
+			
 			double driftTime = probe.getTime() - ((getCellLength()/2.)/(bi * IElement.LightSpeed) + upstreamExitTime);
 			int nLabmda = (int) Math.round(2*structureMode*driftTime*getFrequency());
 			structurePhase = structurePhase + Math.PI*nLabmda;
@@ -424,7 +430,7 @@ public class IdealRfGap extends ThinElement implements IRfGap {
 			setPhase(phi0);
 			
 			// TODO - remove type out
-			System.out.println("    " + " entrance phi=" + (phi0*180.0/Math.PI)%360.0 + ", cos(phi)=" + Math.cos(phi0));
+			System.out.println("    " + " entrance phi w/structure=" + (phi0*180.0/Math.PI)%360.0 + ", cos(phi)=" + Math.cos(phi0));
 		}
 		// for first gap use input for phase at the gap center
 		else {
