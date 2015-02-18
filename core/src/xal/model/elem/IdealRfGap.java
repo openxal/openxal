@@ -1635,7 +1635,9 @@ public class IdealRfGap extends ThinElement implements IRfGap, IRfCavityCell {
 
         return varGain;
     }
-    
+
+    // TODO Remove this after debugging
+    private boolean bolMethodCalled = false;
     /**
      * <p>
      * Computes and returns the longitudinal phase change &delta;&phi; energy 
@@ -1687,7 +1689,6 @@ public class IdealRfGap extends ThinElement implements IRfGap, IRfCavityCell {
      * @author Christopher K. Allen
      * @since  Nov 26, 2014
      */
-    private boolean bolMethodCalled = false;
     private EnergyVariables compGapPhaseAndEnergyGainIndirect(IProbe probe) {
 
         // Initial probe parameters
@@ -1717,8 +1718,10 @@ public class IdealRfGap extends ThinElement implements IRfGap, IRfCavityCell {
         double L    = this.getGapLength();
         double qAEL = Q * A * E0 * L;
 
-        double ttf = this.fitTTF.evaluateAt(bi);        // cosine transit time factor
-        double stf = this.fitSTF.evaluateAt(bi);        // sine transit time factor
+//        double ttf = this.fitTTF.evaluateAt(bi);        // cosine transit time factor
+//        double stf = this.fitSTF.evaluateAt(bi);        // sine transit time factor
+        double ttf = this.T(bi);        // cosine transit time factor
+        double stf = this.S(bi);        // sine transit time factor
 
         // CKA - Now I believe the object is to compute the mid-gap wave number k_mid
         //       and phase change d_phi. All other gap parameters can be computed
@@ -1745,16 +1748,20 @@ public class IdealRfGap extends ThinElement implements IRfGap, IRfCavityCell {
 
         // The derivative dT(k)/dk occures in Lapostolle's formula, we have T(b)
         //  Thus, we must use dT(k)/dk = db(k)/dk dT[b(k)]/db = -(b/k)T'(b)
-        double d_T   = this.fitTTF.derivativeAt(b_mid);
-        double d_S   = this.fitSTF.derivativeAt(b_mid);
+//        double d_T   = this.fitTTF.derivativeAt(b_mid);
+//        double d_S   = this.fitSTF.derivativeAt(b_mid);
+        double d_T   = this.Tp(b_mid);
+        double d_S   = this.Sp(b_mid);
         double d_phi = -(qAEL/Er)*r_mid*b_mid*( d_T*Math.sin(phi) - d_S*Math.cos(phi) );
 
         // TODO Remove type out
         if (!this.bolMethodCalled) {
             double ki = DBL_2PI /(bi*IElement.LightSpeed/this.getFrequency());
             double db = 0.01*bi;
-            double dT = (this.fitTTF.evaluateAt(bi + db) - ttf)/db;
-            double dS = (this.fitSTF.evaluateAt(bi + db) - stf)/db;
+//            double dT = (this.fitTTF.evaluateAt(bi + db) - ttf)/db;
+//            double dS = (this.fitSTF.evaluateAt(bi + db) - stf)/db;
+            double dT = (this.T(bi + db) - ttf)/db;
+            double dS = (this.S(bi + db) - stf)/db;
             System.out.println("IdealRfGap#compEnergyGainIndirect: " + this.getId());
             System.out.println("    phi=" + phi*(180/Math.PI) + ", cos(phi)=" + Math.cos(phi) + ", Acos(phi)=" + A*Math.cos(phi));
             System.out.println("    T(b)=" + ttf + ", T'=" + d_T + ", S(b)=" + stf + ", S'=" + d_S);
@@ -1771,8 +1778,10 @@ public class IdealRfGap extends ThinElement implements IRfGap, IRfCavityCell {
             // Use the newly computed transit time factors and mid gap phase
             //  We use the previous mid-gap beta as an approximation
             phi = phi0 + d_phi/2.0; 
-            ttf = this.fitTTF.evaluateAt(b_mid);
-            stf = this.fitSTF.evaluateAt(b_mid);
+//            ttf = this.fitTTF.evaluateAt(b_mid);
+//            stf = this.fitSTF.evaluateAt(b_mid);
+            ttf = this.T(b_mid);
+            stf = this.S(b_mid);
 
             dW = qAEL*( ttf*Math.cos(phi) - stf*Math.sin(phi) );
 
@@ -1784,8 +1793,10 @@ public class IdealRfGap extends ThinElement implements IRfGap, IRfCavityCell {
             r_mid = (1/(b_mid*b_mid*g_mid*g_mid*g_mid)); // relativistic effects (energy)
 
             // Update the value for phase change to the gap center
-            d_T   = this.fitTTF.derivativeAt(b_mid);
-            d_S   = this.fitSTF.derivativeAt(b_mid);
+//            d_T   = this.fitTTF.derivativeAt(b_mid);
+//            d_S   = this.fitSTF.derivativeAt(b_mid);
+            d_T   = this.Tp(b_mid);
+            d_S   = this.Sp(b_mid);
             
             d_phi = -(qAEL/Er)*r_mid*b_mid*( d_T*Math.sin(phi) - d_S*Math.cos(phi) );
 
@@ -1961,6 +1972,182 @@ public class IdealRfGap extends ThinElement implements IRfGap, IRfCavityCell {
         }
     
 
+        /*
+         * Functions
+         */
+        
+        /**
+         * <p>
+         * Compute and return the standard transit time factor <i>T</i>(&beta;) which
+         * includes any gap "offsets", from the given particle velocity.  The value
+         * is computed from the symmetric transit time factor <i>T</i><sub>0</sub> which
+         * is evaluated with the coordinate origin at the point of field symmetry.
+         * </p>
+         * <p>
+         * The returned value <i>T</i>(&beta;) has the expression
+         * <br/>
+         * <br/>
+         * &nbsp; &nbsp; <i>T</i>(&beta;) = <i>T</i><sub>0</sub>(&beta;) cos <i>k</i>&Delta;<i>z</i> ,
+         * <br/>
+         * <br/>
+         * where <i>T</i><sub>0</sub> is the cosine transit time factor taken with 
+         * origin at point of field symmetry, <i>k</i> &trie; 2&pi;/&beta;&lambda; 
+         * is the wave number, and &Delta;<i>z</i> is the offset of the point of field
+         * symmetry from the origin.
+         * </p>
+         * 
+         * @param beta      normalized probe velocity
+         * 
+         * @return          the transit time factor (Fourier cosine transform) evaluated at <code>beta</code>
+         *
+         * @since  Feb 13, 2015   by Christopher K. Allen
+         */
+        private double  T(double beta) {
+            double k   = this.waveNumber(beta);
+            double dz  = this.getGapOffset();
+            double cos = Math.cos(k*dz);
+
+            double T0  = this.fitTTF.evaluateAt(beta);
+            double T   = T0*cos;
+            
+            return T;
+        }
+        
+        /**
+         * <p>
+         * Compute and return the derivative of the standard transit time factor 
+         * <i>T'</i>(&beta;) with respect to &beta; including any gap "offsets." 
+         * The value is given by
+         * <br/>
+         * <br/>
+         * &nbsp; &nbsp; <i>T</i>'(&beta;) = (-&beta;/<i>k</i>)<i>T</i>'<sub>0</sub>(&beta;) cos <i>k</i>&Delta;<i>z</i> 
+         *                                 - <i>S</i>(&beta;) &Delta;<i>z</i> ,
+         * <br/>
+         * <br/>
+         * where <i>T</i>'<sub>0</sub> is the derivative of the symmetric cosine transit time factor, 
+         * <i>S</i>(&beta;) is the (asymmetric) sine transit time factor, 
+         * <i>k</i> &trie; 2&pi;/&beta;&lambda; 
+         * is the wave number, and &Delta;<i>z</i> is the offset of the point of field
+         * symmetry from the origin.
+         * </p>
+         * 
+         * @param beta      normalized probe velocity
+         * 
+         * @return          the derivate of cosine transit time factor w.r.t. velocity &beta;
+         *
+         * @since  Feb 16, 2015   by Christopher K. Allen
+         */
+        private double  Tp(double beta) {
+            double k   = this.waveNumber(beta);
+            double dz  = this.getGapOffset();
+            double cos = Math.cos(k*dz);
+            
+            double T0p = this.fitTTF.derivativeAt(beta);
+            double S   = this.S(beta);
+            double Tp  = (-beta/k)*T0p*cos - S*dz;
+            
+            return Tp;
+        }
+        
+        /**
+         * <p>
+         * Compute and return the standard transit time factor <i>S</i>(&beta;) which
+         * includes any gap "offsets", from the given particle velocity.  The value
+         * is computed from the symmetric transit time factor <i>S</i><sub>0</sub> which
+         * is evaluated with the coordinate origin at the point of field symmetry.
+         * </p>
+         * <p>
+         * The returned value <i>S</i>(&beta;) has the expression
+         * <br/>
+         * <br/>
+         * &nbsp; &nbsp; <i>T</i>(&beta;) = <i>T</i><sub>0</sub>(&beta;) sin <i>k</i>&Delta;<i>z</i> ,
+         * <br/>
+         * <br/>
+         * where <i>T</i><sub>0</sub> is the cosine transit time factor taken with 
+         * origin at point of field symmetry, <i>k</i> &trie; 2&pi;/&beta;&lambda; 
+         * is the wave number, and &Delta;<i>z</i> is the offset of the point of field
+         * symmetry from the origin. Note that the transit time factor <i>S</i><sub>0</sub>
+         * is zero since it is taken about the point of field symmetric.
+         * </p>
+         * 
+         * @param beta      normalized probe velocity
+         * 
+         * @return          the transit time factor (Fourier sine transform) evaluated at <code>beta</code>
+         *
+         * @since  Feb 16, 2015   by Christopher K. Allen
+         */
+        private double  S(double beta) {
+            double k   = this.waveNumber(beta);
+            double dz  = this.getGapOffset();
+            double sin = Math.sin(k*dz);
+
+            double T0  = this.fitTTF.evaluateAt(beta);
+            double T   = T0*sin;
+            
+            return T;
+        }
+        
+        /**
+         * <p>
+         * Compute and return the derivative of the standard transit time factor 
+         * <i>S'</i>(&beta;) with respect to &beta; including any gap "offsets." 
+         * The value is given by
+         * <br/>
+         * <br/>
+         * &nbsp; &nbsp; <i>S</i>'(&beta;) = (-&beta;/<i>k</i>)<i>T</i>'<sub>0</sub>(&beta;) sin <i>k</i>&Delta;<i>z</i> 
+         *                                 + <i>T</i>(&beta;) &Delta;<i>z</i> ,
+         * <br/>
+         * <br/>
+         * where <i>T</i>'<sub>0</sub> is the derivative of the symmetric cosine transit time factor, 
+         * <i>T</i>(&beta;) is the (asymmetric) cosine transit time factor, 
+         * <i>k</i> &trie; 2&pi;/&beta;&lambda; 
+         * is the wave number, and &Delta;<i>z</i> is the offset of the point of field
+         * symmetry from the origin.
+         * </p>
+         * 
+         * @param beta      normalized probe velocity
+         * 
+         * @return          the derivate of sine transit time factor w.r.t. velocity &beta;
+         *
+         * @since  Feb 16, 2015   by Christopher K. Allen
+         */
+        private double  Sp(double beta) {
+            double k   = this.waveNumber(beta);
+            double dz  = this.getGapOffset();
+            double sin = Math.sin(k*dz);
+            
+            double T0p = this.fitTTF.derivativeAt(beta);
+            double T   = this.T(beta);
+            double Tp  = (-beta/k)*T0p*sin + T*dz;
+            
+            return Tp;
+        }
+        
+        /**
+         * <p>
+         * Compute and return the particle wave number <i>k</i> for the given normalized 
+         * particle velocity &beta;.  The formula is
+         * <br/>
+         * <br/>
+         * &nbsp; &nbsp; <i>k</i> = 2&pi;/&beta;&lambda; ,
+         * <br/>
+         * <br/>
+         * where &lambda; is the wavelength of the accelerating RF.
+         * </p>
+         * 
+         * @param beta      normalized probe velocity
+         * 
+         * @return          particle wave number with respect to the RF
+         *
+         * @since  Feb 16, 2015   by Christopher K. Allen
+         */
+        private double waveNumber(double beta) {
+            double lambda = LightSpeed/this.getFrequency();
+            double k      = DBL_2PI/(beta*lambda);
+
+            return k;
+        }
+        
 //    /**
 //     *  <p> 
 //     *  Routine to calculate the energy gain along with the phase advance.
