@@ -224,12 +224,13 @@ public class GenDocument extends AcceleratorDocument implements DataListener{
 		createAgents(rtbtseq);
 		//nbpmagents=rtbtagents.size();
 		harp = rtbtseq.getNodesOfType( "Harp" ).get(0);
-		harpxch=harp.getChannel("xRMS");
-		harpych=harp.getChannel("yRMS");
+		//TODO: now that there is a WireHarp class, we really need to get the handles from a constant instead of hard coding
+		harpxch=harp.getChannel("FitAttrHorStd");
+		harpych=harp.getChannel("FitAttrVerStd");
 		harpxch.requestConnection();
 		harpych.requestConnection();
-		repratech = accl.getTimingCenter().getChannel( "repRate" );
-		energych = accl.getTimingCenter().getChannel( "ringEnergy" );
+		repratech = accl.getTimingCenter().getChannel( TimingCenter.REP_RATE_HANDLE );
+		energych = accl.getTimingCenter().getChannel( TimingCenter.RING_ENERGY );
 		repratech.requestConnection();
 		energych.requestConnection();
 		Channel.flushIO();
