@@ -933,11 +933,17 @@ public class WireHarp extends ProfileDevice {
      * @since  Mar 19, 2014
      */
     @ASignalAttrs.ASet(
-            attrHor = @ASignalAttrs( hndAmpRb = "FitAttrHorAmp", hndAreaRb = "FitAttrHorArea", hndMeanRb = "FitAttrHorMean", hndOffsetRb = "FitAttrHorOffset", hndStdevRb = "FitAttrHorStd"), 
-            attrVer = @ASignalAttrs( hndAmpRb = "FitAttrVerAmp", hndAreaRb = "FitAttrVerArea", hndMeanRb = "FitAttrVerMean", hndOffsetRb = "FitAttrVerOffset", hndStdevRb = "FitAttrVerStd"),
+            attrHor = @ASignalAttrs( hndAmpRb = "FitAttrHorAmp", hndAreaRb = "FitAttrHorArea", hndMeanRb = "FitAttrHorMean", hndOffsetRb = "FitAttrHorOffset", hndStdevRb = FitAttrSet.X_RMS_HANDLE),
+            attrVer = @ASignalAttrs( hndAmpRb = "FitAttrVerAmp", hndAreaRb = "FitAttrVerArea", hndMeanRb = "FitAttrVerMean", hndOffsetRb = "FitAttrVerOffset", hndStdevRb = FitAttrSet.Y_RMS_HANDLE),
             attrDia = @ASignalAttrs( hndAmpRb = "FitAttrDiaAmp", hndAreaRb = "FitAttrDiaArea", hndMeanRb = "FitAttrDiaMean", hndOffsetRb = "FitAttrDiaOffset", hndStdevRb = "FitAttrDiaStd")
             )
     public static class FitAttrSet extends SignalAttrSet {
+		/** handle to the X RMS PV */
+		public static final String X_RMS_HANDLE = "FitAttrHorStd";
+
+		/** handle to the Y RMS PV */
+		public static final String Y_RMS_HANDLE = "FitAttrVerStd";
+
 
         /**
          * Convenience method for retrieving a new, initialized data
