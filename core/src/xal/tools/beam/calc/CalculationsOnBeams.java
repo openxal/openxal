@@ -9,9 +9,9 @@ package xal.tools.beam.calc;
 import xal.tools.beam.calc.ISimulationResults.ISimLocResults;
 import xal.tools.beam.calc.ISimulationResults.ISimEnvResults;
 import xal.model.probe.traj.EnvelopeProbeState;
-import xal.model.probe.traj.EnvelopeTrajectory;
 import xal.model.probe.traj.ParticleProbeState;
 import xal.model.probe.traj.ProbeState;
+import xal.model.probe.traj.Trajectory;
 import xal.tools.beam.CovarianceMatrix;
 import xal.tools.beam.PhaseMatrix;
 import xal.tools.beam.PhaseVector;
@@ -24,7 +24,8 @@ import xal.tools.math.r6.R6;
  * Class for performing calculations on data obtained from simulating linacs and
  * beam transport systems.  The class performs the calculation exposed in the
  * <code>ISimEnvResults</code> interface.  They are performed in the context
- * of a linear accelerator or transport system.
+ * of a linear accelerator or transport system acting upon a beam bunch, the
+ * simulation data being a trajectory of <code>EnvelopeProbeStates</code>.
  *
  *
  * @author Christopher K. Allen
@@ -38,7 +39,7 @@ public class CalculationsOnBeams extends CalculationEngine implements ISimLocRes
      */
     
     /** The trajectory around one turn of the ring */
-    private final EnvelopeTrajectory        trjSimul;
+    private final Trajectory<EnvelopeProbeState> trjSimul;
     
     /** The initial envelope probe state (at the start of the simulation) */
     private final EnvelopeProbeState        staInit;
@@ -73,19 +74,19 @@ public class CalculationsOnBeams extends CalculationEngine implements ISimLocRes
      * @author Christopher K. Allen
      * @since  Oct 22, 2013
      */
-    public CalculationsOnBeams(EnvelopeTrajectory trjBeam) {
-        ProbeState  pstFinal = trjBeam.finalState();
+    public CalculationsOnBeams(Trajectory<EnvelopeProbeState> datSim) {
+//        EnvelopeProbeState  pstFinal = datSim.finalState();
+//        
+//        // Check for correct probe types
+//        if ( !( pstFinal instanceof EnvelopeProbeState) )
+//            throw new IllegalArgumentException(
+//                    "Trajectory states are not EnvelopeProbeStates? - " 
+//                    + pstFinal.getClass().getName()
+//                    );
         
-        // Check for correct probe types
-        if ( !( pstFinal instanceof EnvelopeProbeState) )
-            throw new IllegalArgumentException(
-                    "Trajectory states are not EnvelopeProbeStates? - " 
-                    + pstFinal.getClass().getName()
-                    );
-        
-        this.trjSimul  = trjBeam;
-        this.staInit   = (EnvelopeProbeState)trjBeam.initialState();
-        this.staFinal  = (EnvelopeProbeState)pstFinal;
+        this.trjSimul  = datSim;
+        this.staInit   = datSim.initialState();
+        this.staFinal  = datSim.finalState();
         this.matResp   = this.staFinal.getResponseMatrix();
         
         this.vecPhsAdv = super.calculatePhaseAdvPerCell(this.matResp);
@@ -107,7 +108,7 @@ public class CalculationsOnBeams extends CalculationEngine implements ISimLocRes
      * @author Christopher K. Allen
      * @since  Nov 7, 2013
      */
-    public EnvelopeTrajectory   getTrajectory() {
+    public Trajectory<EnvelopeProbeState> getTrajectory() {
         return this.trjSimul;
     }
     
@@ -198,6 +199,50 @@ public class CalculationsOnBeams extends CalculationEngine implements ISimLocRes
      */
     public Twiss[]  periodMatchedTwiss() {
         return this.arrTwsMch;
+    }
+    
+    
+    /*
+     * Local Operations
+     */
+
+    /**
+     * Returns the state response matrix calculated from the front face of
+     * elemFrom to the back face of elemTo. This is a convenience wrapper to
+     * the real method in the trajectory class
+     * 
+     * @param elemFrom  String identifying starting lattice element
+     * @param elemTo    String identifying ending lattice element
+     * 
+     * @return      response matrix from elemFrom to elemTo
+     * 
+     * @see EnvelopeTrajectory#computeTransferMatrix(String, String)
+     */
+    public PhaseMatrix computeTransferMatrix(String elemFrom, String elemTo) {
+        
+        Trajectory<EnvelopeProbeState> trajectory = this.getTrajectory();
+        
+        // find starting index
+        int[] arrIndFrom = trajectory.indicesForElement(elemFrom);
+
+        int[] arrIndTo = trajectory.indicesForElement(elemTo);
+
+        if (arrIndFrom.length == 0 || arrIndTo.length == 0)
+            throw new IllegalArgumentException("unknown element id");
+
+        int indFrom, indTo;
+        indTo = arrIndTo[arrIndTo.length - 1]; // use last state before start element
+
+        EnvelopeProbeState stateTo = trajectory.stateWithIndex(indTo);
+        PhaseMatrix matTo = stateTo.getResponseMatrix();
+        
+        indFrom = arrIndFrom[0] - 1;
+        if (indFrom < 0) return matTo; // response from beginning of machine
+        
+        EnvelopeProbeState stateFrom = trajectory.stateWithIndex(indFrom);
+        PhaseMatrix matFrom = stateFrom.getResponseMatrix();
+        
+        return matTo.times(matFrom.inverse());
     }
 
 

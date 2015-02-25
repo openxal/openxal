@@ -100,9 +100,9 @@ public class ScanFace extends JPanel{
                 NonConsecutiveSeqSelector selector = new NonConsecutiveSeqSelector();
                 selector.selectSequence();
                 ArrayList<Object> seqlistnames = selector.getSeqList();
-                Iterator itr = seqlistnames.iterator();
+                Iterator<Object> itr = seqlistnames.iterator();
                 while(itr.hasNext()){
-                    AcceleratorSeq seq = accl.getSequence((String)itr.next());
+                    AcceleratorSeq seq = accl.getSequence( itr.next().toString() );
                     ArrayList<AcceleratorNode> wirelist = (ArrayList<AcceleratorNode>)seq.getNodesOfType("WS");
                     for(AcceleratorNode node : wirelist){
                         if (node instanceof WireScanner ) {
@@ -111,10 +111,10 @@ public class ScanFace extends JPanel{
                     }
                 }
                 wiretablemodel.clearAllData();
-                itr = openwires.iterator();
-                while(itr.hasNext()){
+
+				for ( final AcceleratorNode wireNode : openwires ) {
                     tabledata.clear();
-                    WireScanner wire = (WireScanner)itr.next();
+                    WireScanner wire = (WireScanner)wireNode;
                     tabledata.add(new String(wire.getId()));
                     tabledata.add(new Boolean(true));
                     tabledata.add(new String("null"));
@@ -165,7 +165,7 @@ public class ScanFace extends JPanel{
             WireScanner ws = itr.next();
             try{
                 //					ws.runCommand(ws.SCAN_COMMAND);
-                ws.runCommand(WireScanner.CMD.SCAN);
+                ws.runCommand(WireScanner.CMD.XPRT_SCAN);
             }
             catch(ConnectionException ce){
                 System.out.println("Can not connect to " + ws.getId());

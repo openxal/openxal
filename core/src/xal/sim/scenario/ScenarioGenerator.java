@@ -13,6 +13,7 @@ import java.util.Date;
 import java.util.List;
 
 import xal.model.IComponent;
+import xal.model.IComposite;
 import xal.model.IElement;
 import xal.model.Lattice;
 import xal.model.ModelException;
@@ -171,8 +172,13 @@ class ScenarioGenerator {
 			if (element.getEndPosition() > sequenceLength) sequenceLength = element.getEndPosition();
 			
 			if (halfMag && node instanceof Magnet && !element.isThin()) {
-				LatticeElement center = new LatticeElement(new Marker("ELEMENT_CENTER:" + node.getId()), element.getCenter(),
+			    
+			    // CKA: NOTE that "ELEMENT_CENTER" is bound to Element#initializeFrom() in order \
+			    //   to set Element's hardware ID attribute.  If changed you must modify both!
+//				LatticeElement center = new LatticeElement(new Marker("ELEMENT_CENTER:" + node.getId()), element.getCenter(),
+              LatticeElement center = new LatticeElement(new Marker(node.getId()), element.getCenter(),
 						elementMapping.getDefaultConverter(), 0);
+              center.setModelingElementId("ELEMENT_CENTER:" + node.getId());    // CKA Sep 5, 2014
 				elements.add(center);
 			}
 		}
@@ -272,9 +278,17 @@ class ScenarioGenerator {
 				//sector.addChild(elementMapping.createDrift("DRFT", driftLength));
 			}
 			IComponent modelElement = element.convert();
+			
 			sector.addChild(modelElement);
+
+			// CKA January 14, 2015
+			// The modeling element is added to the synchronization manager
+			//   We need to consider the cases of both a component element 
+			//   and a composite element
 			if (modelElement instanceof IElement) 
-				syncManager.synchronize((IElement) modelElement, element.getNode());			
+				syncManager.synchronize((IElement) modelElement, element.getNode());
+			if (modelElement instanceof IComposite)
+			    syncManager.synchronize((IComposite) modelElement, element.getNode());            
 			position = element.getEndPosition();
 			
 			if (debug)
@@ -284,6 +298,7 @@ class ScenarioGenerator {
 		
 		Lattice lattice = new Lattice();
 		lattice.setId(sequence.getId());
+		lattice.setHardwareNodeId(sequence.getEntranceID());
 		lattice.setVersion(" ");
 		lattice.setAuthor("W.-D. Klotz");		
 		lattice.setComments(lattice.getAuthor() + LatticeXmlParser.s_strAttrSep + new Date() 

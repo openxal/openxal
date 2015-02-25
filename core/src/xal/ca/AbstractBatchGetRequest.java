@@ -50,7 +50,10 @@ abstract public class AbstractBatchGetRequest<RecordType extends ChannelRecord> 
 	private BatchConnectionRequest _batchConnectionRequest;
 	
 	
-	/** Primary Constructor */
+	/** 
+	 * Primary Constructor 
+	 * @param channels the channels for which get requests will be handled
+	 */
 	@SuppressWarnings( "unchecked" )	// No way to pass BatchGetRequestListener.class with the specified RecordType
 	public AbstractBatchGetRequest( final Collection<Channel> channels ) {
 		MESSAGE_CENTER = new MessageCenter( "BatchGetRequest" );
@@ -79,19 +82,28 @@ abstract public class AbstractBatchGetRequest<RecordType extends ChannelRecord> 
 	}
 
 	
-	/** add the specified listener as a receiver of batch get request events from this instance */
+	/** 
+	 * add the specified listener as a receiver of batch get request events from this instance 
+	 * @param listener a receiver which will receive events
+	 */
 	public void addBatchGetRequestListener( final BatchGetRequestListener<RecordType> listener ) {
 		MESSAGE_CENTER.registerTarget( listener, this, BatchGetRequestListener.class );
 	}
 	
 	
-	/** remove the specified listener from receiving batch get request events from this instance */
+	/** 
+	 * remove the specified listener from receiving batch get request events from this instance 
+	 * @param listener receiver to remove from receiving events
+	 */
 	public void removeBatchGetRequestListener( final BatchGetRequestListener<RecordType> listener ) {
 		MESSAGE_CENTER.removeTarget( listener, this, BatchGetRequestListener.class );
 	}
 	
 	
-	/** add a new channel to the batch request */
+	/** 
+	 * add a new channel to the batch request 
+	 * @param channel a channel to add to the batch request
+	 */
 	public void addChannel( final Channel channel ) {
 		synchronized ( CHANNELS ) {
 			CHANNELS.add( channel );
@@ -99,7 +111,10 @@ abstract public class AbstractBatchGetRequest<RecordType extends ChannelRecord> 
 	}
 	
 	
-	/** get the collection of channels to process */
+	/** 
+	 * get the collection of channels to process 
+	 * @return a copy of the list of channels in the batch request
+	 */
 	public Collection<Channel> getChannels() {
 		return copyChannels();
 	}
@@ -152,6 +167,7 @@ abstract public class AbstractBatchGetRequest<RecordType extends ChannelRecord> 
 	 * Note that if this is called, within a channel access callback, requests will not be processed until the 
 	 * callback completes, so it is useless to wait. Instead, call waitForCompletion separately outside of the callback.
 	 * @param timeout the maximum time in seconds to wait for completion
+	 * @return true if complete or false if not
 	 */
 	public boolean submitAndWait( final double timeout ) {
 		submit();
@@ -197,11 +213,18 @@ abstract public class AbstractBatchGetRequest<RecordType extends ChannelRecord> 
 	}
 	
 	
-	/** request to get the data for the channel */
+	/** 
+	 * Request to get the data for the channel 
+	 * @param channel the channel for which to request data
+	 * @throws Exception when the request fails
+	 */
 	abstract protected void requestChannelData( final Channel channel ) throws Exception;
 	
 	
-	/** process the get request for a single channel */
+	/** 
+	 * Process the get request for a single channel 
+	 * @param channel the channel for which to process the request
+	 */
 	protected void processRequest( final Channel channel ) {
 		try {
 			if ( channel.isConnected() ) {
@@ -224,7 +247,10 @@ abstract public class AbstractBatchGetRequest<RecordType extends ChannelRecord> 
 	}
 	
 	
-	/** determine if there are any channels pending for either an exception or a completed get request */
+	/** 
+	 * determine if there are any channels pending for either an exception or a completed get request 
+	 * @return true if complete and false if not
+	 */
 	public boolean isComplete() {
 		synchronized ( PENDING_CHANNELS ) {
 			return PENDING_CHANNELS.isEmpty();
@@ -232,7 +258,10 @@ abstract public class AbstractBatchGetRequest<RecordType extends ChannelRecord> 
 	}
 	
 	
-	/** determine if there were any exceptions */
+	/** 
+	 * determine if there were any exceptions 
+	 * @return true if there are any exceptions and false if not
+	 */
 	public boolean hasExceptions() {
 		synchronized ( EXCEPTIONS ) {
 			return !EXCEPTIONS.isEmpty();
@@ -240,7 +269,10 @@ abstract public class AbstractBatchGetRequest<RecordType extends ChannelRecord> 
 	}
 	
 	
-	/** get the number of records */
+	/** 
+	 * get the number of records 
+	 * @return the number of records
+	 */
 	public int getRecordCount() {
 		synchronized ( RECORDS ) {
 			return RECORDS.size();
@@ -248,7 +280,10 @@ abstract public class AbstractBatchGetRequest<RecordType extends ChannelRecord> 
 	}
 	
 	
-	/** get the number of exceptions */
+	/** 
+	 * Get the number of exceptions
+	 * @return the number of channels for which there was an exception during the request
+	 */
 	public int getExceptionCount() {
 		synchronized ( EXCEPTIONS ) {
 			return EXCEPTIONS.size();
@@ -256,7 +291,11 @@ abstract public class AbstractBatchGetRequest<RecordType extends ChannelRecord> 
 	}
 	
 	
-	/** get the record if any for the specified channel */
+	/** 
+	 * Get the record if any for the specified channel 
+	 * @param channel the channel for which the record is fetched
+	 * @return the record for the specified channel or null if there is none
+	 */
 	public RecordType getRecord( final Channel channel ) {
 		synchronized ( RECORDS ) {
 			return RECORDS.get( channel );
@@ -264,7 +303,11 @@ abstract public class AbstractBatchGetRequest<RecordType extends ChannelRecord> 
 	}
 	
 	
-	/** get the exception if any for the specified channel */
+	/** 
+	 * Get the exception if any for the specified channel 
+	 * @param channel the channel for which the exception is fetched
+	 * @return the exception for the specified channel or null if there is none
+	 */
 	public Exception getException( final Channel channel ) {
 		synchronized ( EXCEPTIONS ) {
 			return  EXCEPTIONS.get( channel );
@@ -272,7 +315,10 @@ abstract public class AbstractBatchGetRequest<RecordType extends ChannelRecord> 
 	}
 	
 	
-	/** get the failed channels */
+	/** 
+	 * Get the failed channels for which exceptions were thrown during the request
+	 * @return the set of failed channels
+	 */
 	public Set<Channel> getFailedChannels() {
 		synchronized ( EXCEPTIONS ) {
 			return new HashSet<Channel>( EXCEPTIONS.keySet() );
@@ -280,7 +326,10 @@ abstract public class AbstractBatchGetRequest<RecordType extends ChannelRecord> 
 	}
 	
 	
-	/** get the channels which produced a result */
+	/** 
+	 * Get the channels which produced a result 
+	 * @return the set of channels each for which a record was successfully fetched
+	 */
 	public Set<Channel> getResultChannels() {
 		synchronized( RECORDS ) {
 			return new HashSet<Channel>( RECORDS.keySet() );
@@ -296,7 +345,11 @@ abstract public class AbstractBatchGetRequest<RecordType extends ChannelRecord> 
 	}
 
 
-	/** process the receipt of a new record event */
+	/** 
+	 * Process the receipt of a new record event 
+	 * @param channel the channel for which the event will be processed
+	 * @param record the fetched record
+	 */
 	protected void processRecordEvent( final Channel channel, final RecordType record ) {
 		synchronized ( RECORDS ) {
 			RECORDS.put( channel, record );

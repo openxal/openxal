@@ -32,21 +32,27 @@ abstract class XalAbstractDocument implements Pageable {
 	// public static constants for confirmation dialogs
 	final static public int YES_OPTION = JOptionPane.YES_OPTION;
 	final static public int NO_OPTION = JOptionPane.NO_OPTION;
-	
-    // basic document instance variables
-    protected boolean hasChanges;       // whether the document has changes that need saving
-    protected String title;             // The title of the document
-    protected URL source;               // The persistent storage URL for the document
-    
-    // messaging
-    protected MessageCenter _messageCenter;      // The local message center
-    
+
+	/** Local message center */
+	protected MessageCenter MESSAGE_CENTER;
+
+    /** indicates whether the document has changes that need saving */
+    private boolean _hasChanges;
+
+	/** this document's title */
+    private String _title;
+
+	/** The persistent storage URL for the document */
+    protected URL source;
+
     
     /** Constructor for new documents */
     public XalAbstractDocument() {
-        setHasChanges(false);
+		MESSAGE_CENTER = new MessageCenter("Xal Document Messaging");
+
+        setHasChanges( false );
         registerEvents();
-        setSource(null);
+        setSource( null );
     }
     
     
@@ -63,9 +69,7 @@ abstract class XalAbstractDocument implements Pageable {
     
     
     /** Register this document as a source of DocumentListener events. */
-    protected void registerEvents() {
-        _messageCenter = new MessageCenter("Xal Document Messaging");
-    }
+    public void registerEvents() {}
     
     
     /** Construct the main window and associate it with this document. */
@@ -73,7 +77,7 @@ abstract class XalAbstractDocument implements Pageable {
     
     
     /** Subclasses must implement this method to make their custom main window. */
-    abstract protected void makeMainWindow();
+    abstract public void makeMainWindow();
     
     
     /**
@@ -85,7 +89,7 @@ abstract class XalAbstractDocument implements Pageable {
      * @param commander The commander that manages commands.
      * @see Commander#registerAction(Action)
      */
-    protected void customizeCommands( final Commander commander ) {
+    public void customizeCommands( final Commander commander ) {
     }
     
     
@@ -96,7 +100,7 @@ abstract class XalAbstractDocument implements Pageable {
 	 * application wide definitions for this document.  By default this method returns null.
      * @return The menu definition properties file name
      */
-    protected String getCustomMenuDefinitionResource() {
+    public String getCustomMenuDefinitionResource() {
 		return null;
     }
 	
@@ -106,7 +110,7 @@ abstract class XalAbstractDocument implements Pageable {
      * @return The title of the document.
      */
     public String getTitle() {
-        return title;
+        return _title;
     }
     
     
@@ -115,7 +119,7 @@ abstract class XalAbstractDocument implements Pageable {
      * @param newTitle The new title for this document.
      */
     public void setTitle(String newTitle) {
-        title = newTitle;
+        _title = newTitle;
     }
     
     
@@ -132,7 +136,7 @@ abstract class XalAbstractDocument implements Pageable {
 	 * Get the default document folder.
 	 * @return the default folder for documents or null if none has been set.
 	 */
-	protected java.io.File getDefaultFolder() {
+	public java.io.File getDefaultFolder() {
 		return Application.getApp().getDefaultDocumentFolder();
 	}
     
@@ -141,7 +145,7 @@ abstract class XalAbstractDocument implements Pageable {
 	 * Get the default document folder as a URL.
 	 * @return the default folder for documents as a URL or null if none has been set.
 	 */
-	protected URL getDefaultFolderURL() {
+	public URL getDefaultFolderURL() {
 		return Application.getApp().getDefaultDocumentFolderURL();
 	}
 	
@@ -172,7 +176,7 @@ abstract class XalAbstractDocument implements Pageable {
 	 * the file path of the document or the default empty document file path if the document
 	 * does not have a file store.
 	 */
-	protected void generateDocumentTitle() {
+	public void generateDocumentTitle() {
 		setTitle( getDisplayFilePath() );
 	}
 	
@@ -183,7 +187,7 @@ abstract class XalAbstractDocument implements Pageable {
 	 * a file store.
 	 * @return the file path of the document or the default empty document file path as appropriate
 	 */
-	protected String getDisplayFilePath() {		
+	public String getDisplayFilePath() {
 		return (source != null) ? source.getPath() : getEmptyDocumentPath();
 	}
 	
@@ -192,7 +196,7 @@ abstract class XalAbstractDocument implements Pageable {
 	 * Get the base file name to use when saving a new file.
 	 * @return the new file name for new documents and the source's file path for existing documents
 	 */
-	protected String getFileNameForSaving() {
+	public String getFileNameForSaving() {
 		return source != null ? new File( source.getPath() ).getName() : getNewFileName();
 	}	
 	
@@ -201,7 +205,7 @@ abstract class XalAbstractDocument implements Pageable {
 	 * Get the prefix for a new file (precedes timestamp) defaulting to the application name. Subclasses can override this method to provide an alternative prefix.
 	 * @return prefix for a new file
 	 */
-	protected String getNewFileNamePrefix() {
+	public String getNewFileNamePrefix() {
 		return Application.getApp().getApplicationAdaptor().applicationName();
 	}
 	
@@ -210,7 +214,7 @@ abstract class XalAbstractDocument implements Pageable {
 	 * Get the file name (including extension but without path) for a new file. Subclasses can override this method to provide an alternative name.
 	 * @return file name for a new file
 	 */
-	protected String getNewFileName() {
+	public String getNewFileName() {
 		return getNewDocumentName( "Untitled" );
 	}
 	
@@ -220,7 +224,7 @@ abstract class XalAbstractDocument implements Pageable {
 	 * @param baseName the base name to use for an empty document
 	 * @return "{baseName}." + the first writable document type or simply "{baseName}" if there are none 
 	 */
-	protected String getNewDocumentName( final String baseName ) {
+	public String getNewDocumentName( final String baseName ) {
 		String[] writableTypes = writableDocumentTypes();
 		String[] readableTypes = Application.getAdaptor().readableDocumentTypes();
 		
@@ -242,7 +246,7 @@ abstract class XalAbstractDocument implements Pageable {
 	 * Get the default file path to use for empty documents
 	 * @return "Untitled." + the first writable document type or simply "Untitled" if there are none 
 	 */
-	protected String getEmptyDocumentPath() {
+	public String getEmptyDocumentPath() {
 		return getNewDocumentName( "Untitled" );
 	}
     
@@ -252,16 +256,18 @@ abstract class XalAbstractDocument implements Pageable {
 	* @return Status of whether this document has changes that need saving.
 	*/
     public boolean hasChanges() {
-        return hasChanges;
+        return _hasChanges;
     }
-    
-    
-    /**
+
+
+	/**
 	 * Set the whether this document has changes.
-     * @param changeStatus Status to set whether this document has changes that need saving.
-     */
-    abstract public void setHasChanges( final boolean changeStatus );
-    
+	 * @param changeStatus Status to set whether this document has changes that need saving.
+	 */
+	public void setHasChanges( final boolean changeStatus ) {
+		_hasChanges = changeStatus;
+	}
+
     
     /**
 	 * Subclasses need to implement this method for saving the document to a URL.
@@ -283,7 +289,7 @@ abstract class XalAbstractDocument implements Pageable {
      * @param dataRoot DataListener root of the document to save
      * @param url The URL to which the document should be saved.
      */
-    protected void writeDataTo( final DataListener dataRoot, final URL url ) {
+    public void writeDataTo( final DataListener dataRoot, final URL url ) {
         try {
             final XmlDataAdaptor documentAdaptor = XmlDataAdaptor.newEmptyDocumentAdaptor();
             documentAdaptor.writeNode( dataRoot );
@@ -317,7 +323,7 @@ abstract class XalAbstractDocument implements Pageable {
      * @param dataRoot DataListener root of the document to save
      * @param url The URL to which the document should be saved.
      */
-    protected void handleDataWrittenTo( final DataListener dataRoot, final URL url ) {}
+    public void handleDataWrittenTo( final DataListener dataRoot, final URL url ) {}
  	
 	
     /**
@@ -333,7 +339,7 @@ abstract class XalAbstractDocument implements Pageable {
      * user is given an opportunity to not close the document so they can save 
      * the changes.
      */
-    abstract protected boolean closeDocument();
+    abstract public boolean closeDocument();
 	
 	
 	/**
@@ -350,9 +356,9 @@ abstract class XalAbstractDocument implements Pageable {
 	/**
 	 * Free document resources.
 	 */
-	protected void freeResources() {
+	public void freeResources() {
 		freeCustomResources();
-		_messageCenter = null;
+		MESSAGE_CENTER = null;
 	}
 	
 	
@@ -360,22 +366,22 @@ abstract class XalAbstractDocument implements Pageable {
 	 * Dispose of custom document resources.  Subclasses should override this method
 	 * to provide custom disposal of resources.  The default implementation does nothing.
 	 */
-	protected void freeCustomResources() {}
+	public void freeCustomResources() {}
     
     
     /**
 	 * Called when the document will be closed.  The default implementation does nothing.
      * Subclasses should override this method if they need to handle this event.
      */
-    protected void willClose() {}
+    public void willClose() {}
     
     
     /** Hook indicating that the window will be opened. Called after the window is created but before it is displayed by the document. */
-    protected void windowWillOpen() {}
+    public void windowWillOpen() {}
     
     
     /** Hook indicating that the window was opened. */
-    protected void windowOpened() {}
+    public void windowOpened() {}
     
     
     /**

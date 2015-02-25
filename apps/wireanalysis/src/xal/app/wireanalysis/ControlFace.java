@@ -14,8 +14,11 @@ import javax.swing.event.*;
 import javax.swing.border.*;
 import javax.swing.JOptionPane;
 import javax.swing.table.*;
+
 import java.awt.*;
+
 import javax.swing.*;
+
 import java.awt.event.*;
 import java.util.*;
 import java.util.Timer.*;
@@ -36,10 +39,11 @@ import xal.tools.beam.*;
 import xal.tools.xml.*;
 import xal.tools.data.*;
 import xal.tools.messaging.*;
+
 import java.util.HashMap;
+
 import xal.tools.xml.XmlDataAdaptor;
 import xal.tools.apputils.*;
-
 import xal.model.probe.traj.*;
 import xal.model.probe.*;
 import xal.model.xml.*;
@@ -47,13 +51,17 @@ import xal.sim.scenario.*;
 import xal.model.alg.*;
 import xal.service.pvlogger.*;
 import xal.extension.solver.*;
+
 import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.border.*;
 import javax.swing.JOptionPane;
 import javax.swing.table.*;
+
 import java.awt.*;
+
 import javax.swing.*;
+
 import java.awt.event.*;
 import java.util.*;
 import java.util.Timer.*;
@@ -61,17 +69,23 @@ import java.net.URL;
 import java.util.List;
 import java.io.*;
 import java.lang.*;
+
 import xal.extension.widgets.swing.*;
 import xal.tools.statistics.*;
 import xal.tools.apputils.EdgeLayout;
 import xal.tools.apputils.files.RecentFileTracker;
 import xal.extension.widgets.plot.*;
 import xal.tools.data.*;
+
 import java.text.NumberFormat;
+
 import xal.tools.messaging.*;
 import xal.ca.*;
+
 import java.text.NumberFormat;
 import java.text.DecimalFormat;
+
+
 //import com.sun.org.apache.xpath.internal.operations.Variable;
 import xal.tools.apputils.NonConsecutiveSeqSelector;
 import xal.extension.widgets.apputils.SimpleProbeEditor;
@@ -378,13 +392,13 @@ public class ControlFace extends JPanel {
                 selector.selectSequence();
                 magnetseqlistnames = selector.getSeqList();
                 System.out.println("magnetseqlistnames is " + magnetseqlistnames);
-                Iterator itr = magnetseqlistnames.iterator();
+                Iterator<Object> itr = magnetseqlistnames.iterator();
                 magnetseqlistnames = selector.getSeqList();
                 magnetseqlist.clear();
                 magnetnodes.clear();
                 magnetmodel.clearAllData();
                 while(itr.hasNext()){
-                    AcceleratorSeq seq = accl.getSequence((String)itr.next());
+                    AcceleratorSeq seq = accl.getSequence( itr.next().toString() );
                     magnetseqlist.add(seq);
                 }
                 
@@ -418,12 +432,12 @@ public class ControlFace extends JPanel {
                 NonConsecutiveSeqSelector selector = new NonConsecutiveSeqSelector();
                 selector.selectSequence();
                 targetseqlistnames = selector.getSeqList();
-                Iterator itr = targetseqlistnames.iterator();
+                Iterator<Object> itr = targetseqlistnames.iterator();
                 targetseqlistnames = selector.getSeqList();
                 targetseqlist.clear();
                 targetnodes.clear();
                 while(itr.hasNext()){
-                    AcceleratorSeq seq = accl.getSequence((String)itr.next());
+                    AcceleratorSeq seq = accl.getSequence( itr.next().toString() );
                     targetseqlist.add(seq);
                     targetnodes.addAll(seq.getAllNodes());
                 }
@@ -574,8 +588,8 @@ public class ControlFace extends JPanel {
             model.run();
         } catch(Exception e){}
 		
-        EnvelopeTrajectory traj = (EnvelopeTrajectory)tempprobe.getTrajectory();
-		EnvelopeProbeState newstate = (EnvelopeProbeState)traj.stateForElement(init);
+        Trajectory<EnvelopeProbeState> traj = tempprobe.getTrajectory();
+		EnvelopeProbeState newstate = traj.stateForElement(init);
 		initprobe.setKineticEnergy(newstate.getKineticEnergy());
 		System.out.println("Current Energy in update probe is " + newstate.getKineticEnergy());
 		initprobe.setPosition(seq.getPosition(seq.getNodeWithId(init)));
@@ -690,8 +704,8 @@ public class ControlFace extends JPanel {
             localmodel.run();
         }catch(Exception e){}
 		
-        EnvelopeTrajectory traj = (EnvelopeTrajectory)localprobe.getTrajectory();
-		EnvelopeProbeState newstate = (EnvelopeProbeState)traj.statesForElement(Id)[0];
+        Trajectory<EnvelopeProbeState> traj = localprobe.getTrajectory();
+		EnvelopeProbeState newstate = traj.statesForElement(Id).get(0);
 		
         CovarianceMatrix covarianceMatrix = newstate.getCovarianceMatrix();
         Twiss[] twiss = covarianceMatrix.computeTwiss();
@@ -932,7 +946,7 @@ public class ControlFace extends JPanel {
     
 	public double calcError2(){
 		
-        EnvelopeTrajectory traj= (EnvelopeTrajectory) solverprobe.getTrajectory();
+        Trajectory<EnvelopeProbeState> traj = solverprobe.getTrajectory();
         ArrayList<EnvelopeProbeState> state = new ArrayList<EnvelopeProbeState>();
         ArrayList<Double> AlphaX = new ArrayList<Double>();
         ArrayList<Double> AlphaY = new ArrayList<Double>();
@@ -941,7 +955,7 @@ public class ControlFace extends JPanel {
         
 		//Creates and array of Twiss values that we are trying to control
         for(int i = 0; i < controltables.size(); i++){
-			state.add((EnvelopeProbeState) traj.statesForElement(controltables.get(i).getColumnName(0))[0]);
+			state.add(traj.statesForElement(controltables.get(i).getColumnName(0)).get(0));
             CovarianceMatrix covarianceMatrix = state.get(i).getCovarianceMatrix();
             Twiss[] twiss = covarianceMatrix.computeTwiss();
             
@@ -1033,9 +1047,9 @@ public class ControlFace extends JPanel {
     
 	
 	public void showTargetVals(){
-        Probe probe=solvermodel.getProbe();
-		EnvelopeTrajectory traj= (EnvelopeTrajectory) probe.getTrajectory();
-        EnvelopeProbeState target = (EnvelopeProbeState)traj.statesForElement((String)targetlist.getSelectedItem())[0];
+        EnvelopeProbe probe = (EnvelopeProbe) solvermodel.getProbe();
+		Trajectory<EnvelopeProbeState> traj = probe.getTrajectory();
+        EnvelopeProbeState target = traj.statesForElement((String)targetlist.getSelectedItem()).get(0);
 	}
 	
 	
@@ -1050,19 +1064,19 @@ public class ControlFace extends JPanel {
 		BasicGraphData xgraphdata = new BasicGraphData();
 		BasicGraphData ygraphdata = new BasicGraphData();
 		
-		EnvelopeTrajectory traj= (EnvelopeTrajectory)solverprobe.getTrajectory();
-		Iterator<ProbeState> iterState= traj.stateIterator();
+		Trajectory<EnvelopeProbeState> traj = solverprobe.getTrajectory();
+		Iterator<EnvelopeProbeState> iterState = traj.stateIterator();
 		boolean firstpos = true;
 		double offset = 0.0;
 		
 		while(iterState.hasNext()){
 			if(firstpos){
-				EnvelopeProbeState firststate= (EnvelopeProbeState)iterState.next();
+				EnvelopeProbeState firststate= iterState.next();
 				offset = firststate.getPosition();
 				firstpos = false;
 			}
 			if(betaplot){
-				EnvelopeProbeState state= (EnvelopeProbeState)iterState.next();
+				EnvelopeProbeState state= iterState.next();
 				sdata.add(state.getPosition()-offset);
                 CovarianceMatrix covarianceMatrix = state.getCovarianceMatrix();
                 Twiss[] twiss = covarianceMatrix.computeTwiss();
@@ -1075,7 +1089,7 @@ public class ControlFace extends JPanel {
 			}
 			//Plot Alphas
 			if(alphaplot){
-				EnvelopeProbeState state= (EnvelopeProbeState)iterState.next();
+				EnvelopeProbeState state= iterState.next();
 				sdata.add(state.getPosition()-offset);
                 CovarianceMatrix covarianceMatrix = state.getCovarianceMatrix();
                 Twiss[] twiss = covarianceMatrix.computeTwiss();
@@ -1086,7 +1100,7 @@ public class ControlFace extends JPanel {
 				vdata.add(ry);
 			}
 			if(sizeplot){
-				EnvelopeProbeState state= (EnvelopeProbeState)iterState.next();
+				EnvelopeProbeState state= iterState.next();
 				sdata.add(state.getPosition()-offset);
                 CovarianceMatrix covarianceMatrix = state.getCovarianceMatrix();
                 Twiss[] twiss = covarianceMatrix.computeTwiss();
@@ -1124,7 +1138,7 @@ public class ControlFace extends JPanel {
 		double[] srdata = new double[datasize];
 		double[] xrdata = new double[datasize];
 		double[] yrdata = new double[datasize];
-		traj= (EnvelopeTrajectory)solverprobe.getTrajectory();
+		traj= solverprobe.getTrajectory();
 		EnvelopeProbeState newstate;
 		Twiss[] newtwiss;
 		double rx, ry;
@@ -1139,7 +1153,7 @@ public class ControlFace extends JPanel {
 		}
 		
 		for(int i = 0; i<datasize; i++){
-			newstate = (EnvelopeProbeState)traj.statesForElement(controltables.get(i).getColumnName(0))[0];
+			newstate = traj.statesForElement(controltables.get(i).getColumnName(0)).get(0);
 			srdata[i]=newstate.getPosition()-offset;
             if(betaplot){
 				if((Boolean)controltables.get(i).getValueAt(0,4)){
@@ -1203,11 +1217,11 @@ public class ControlFace extends JPanel {
 	
 	
 	public void resetControlTables(){
-		EnvelopeTrajectory traj= (EnvelopeTrajectory)solverprobe.getTrajectory();
+		Trajectory<EnvelopeProbeState> traj = solverprobe.getTrajectory();
 		EnvelopeProbeState state;
 		
 		for(int i = 0; i < controltables.size(); i++){
-			state = (EnvelopeProbeState) traj.statesForElement(controltables.get(i).getColumnName(0))[0];
+			state = traj.statesForElement(controltables.get(i).getColumnName(0)).get(0);
             CovarianceMatrix covarianceMatrix = state.getCovarianceMatrix();
             Twiss[] twiss = covarianceMatrix.computeTwiss();
             
@@ -1222,7 +1236,7 @@ public class ControlFace extends JPanel {
 	
 	
 	void resetResultsTable(){
-		EnvelopeTrajectory traj= (EnvelopeTrajectory)solverprobe.getTrajectory();
+		Trajectory<EnvelopeProbeState> traj = solverprobe.getTrajectory();
 		resultsdatatablemodel.clearAllData();
 		
 		boolean beginrecord = false;
@@ -1235,7 +1249,7 @@ public class ControlFace extends JPanel {
 			if(beginrecord){
 				ArrayList<Object> tabledata = new ArrayList<Object>();
 				System.out.println("name is " + name);
-				EnvelopeProbeState state = (EnvelopeProbeState)traj.stateForElement(name);
+				EnvelopeProbeState state = traj.stateForElement(name);
                 CovarianceMatrix covarianceMatrix = state.getCovarianceMatrix();
                 Twiss[] twiss = covarianceMatrix.computeTwiss();
                 

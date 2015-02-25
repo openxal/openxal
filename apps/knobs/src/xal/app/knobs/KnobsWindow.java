@@ -89,7 +89,7 @@ public class KnobsWindow extends AcceleratorWindow {
 	 * Register actions specific to this document instance.  
      * @param commander The commander with which to register the custom commands.
      */
-    protected void customizeCommands( final Commander commander ) {		
+    public void customizeCommands( final Commander commander ) {
         final Action PROPORTIONAL_COEFFICIENTS_ACTION = new AbstractAction( "make-proportional-coefficents" ) {
             /** serialization identifier */
             private static final long serialVersionUID = 1L;

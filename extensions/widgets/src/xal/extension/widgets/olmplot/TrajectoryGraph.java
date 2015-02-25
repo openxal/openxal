@@ -23,6 +23,8 @@ import xal.extension.widgets.olmplot.ParticleCurve;
 import xal.extension.widgets.olmplot.TrajectoryGraph;
 import xal.extension.widgets.plot.BasicGraphData;
 import xal.extension.widgets.plot.FunctionGraphsJPanel;
+import xal.model.probe.traj.EnvelopeProbeState;
+import xal.model.probe.traj.ParticleProbeState;
 import xal.model.probe.traj.Trajectory;
 
 /**
@@ -73,7 +75,7 @@ public class TrajectoryGraph extends FunctionGraphsJPanel {
      * @author Christopher K. Allen
      * @since  Nov 26, 2012
      */
-    public static TrajectoryGraph createParticleGraph(Trajectory trjPar) throws IllegalArgumentException {
+    public static TrajectoryGraph createParticleGraph(Trajectory<ParticleProbeState> trjPar) throws IllegalArgumentException {
         TrajectoryGraph   graph = new TrajectoryGraph();
         graph.loadParticleCurves(trjPar);
         
@@ -93,7 +95,7 @@ public class TrajectoryGraph extends FunctionGraphsJPanel {
      * @author Christopher K. Allen
      * @since  Nov 26, 2012
      */
-    public static TrajectoryGraph createEnvelopeGraph(Trajectory trjEnv) throws IllegalArgumentException {
+    public static TrajectoryGraph createEnvelopeGraph(Trajectory<EnvelopeProbeState> trjEnv) throws IllegalArgumentException {
         TrajectoryGraph   graph = new TrajectoryGraph();
         graph.loadEnvelopeCurves(trjEnv);
         
@@ -158,7 +160,7 @@ public class TrajectoryGraph extends FunctionGraphsJPanel {
      * @author Christopher K. Allen
      * @since  Nov 26, 2012
      */
-    private void    loadParticleCurves(Trajectory trjPar) throws IllegalArgumentException {
+    private void    loadParticleCurves(Trajectory<ParticleProbeState> trjPar) throws IllegalArgumentException {
         
         // Create particle trajectory curves
         for (PLANE plane : PLANE.values()) {
@@ -179,7 +181,7 @@ public class TrajectoryGraph extends FunctionGraphsJPanel {
      * @author Christopher K. Allen
      * @since  Nov 26, 2012
      */
-    private void    loadEnvelopeCurves(Trajectory trjEnv) throws IllegalArgumentException {
+    private void    loadEnvelopeCurves(Trajectory<EnvelopeProbeState> trjEnv) throws IllegalArgumentException {
 
         // Get the legend key string
         String      strKeyLgnd = super.getLegendKeyString();

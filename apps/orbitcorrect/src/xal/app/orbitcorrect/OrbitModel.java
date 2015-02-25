@@ -15,6 +15,9 @@ import xal.smf.*;
 import xal.smf.impl.*;
 import xal.smf.impl.qualify.MagnetType;
 import xal.tools.data.*;
+import xal.model.alg.*;
+import xal.model.probe.Probe;
+import xal.sim.scenario.*;
 
 import java.util.*;
 
@@ -62,6 +65,9 @@ public class OrbitModel implements DataListener {
 	
 	/** the modification store */
 	protected ModificationStore _modificationStore;
+
+	/* Base probe from which others are copied for model calculations. Only copies of it should ever be run. */
+	private Probe<?> _baseProbe;
 	
 	
 	/**
@@ -74,9 +80,10 @@ public class OrbitModel implements DataListener {
 		EVENT_PROXY = MESSAGE_CENTER.registerSource( this, OrbitModelListener.class );
 		
 		BEAM_EXCURSION_ORBIT_ADAPTOR = new BeamExcursionOrbitAdaptor( sequence, new ArrayList<BpmAgent>() );
-		
+
+		_baseProbe = null;
 		_modificationStore = modificationStore;
-		
+
 		AVAILABLE_BPM_AGENTS = new ArrayList<BpmAgent>();
 		
 		createOrbitSources();
@@ -131,6 +138,18 @@ public class OrbitModel implements DataListener {
 			_modificationStore.postModification( this );
 		}
 		return _flattener;
+	}
+
+
+	/** clear the flattener's simulator */
+	public void clearFlattenSimulator() {
+		final Flattener flattener = _flattener;
+		if ( flattener != null ) {
+			final MachineSimulator simulator = flattener.getSimulator();
+			if ( simulator != null ) {
+				simulator.clear();
+			}
+		}
 	}
 	
 	
@@ -222,6 +241,10 @@ public class OrbitModel implements DataListener {
 	 */
 	public void setSequence( final AcceleratorSeq sequence ) {
 		_sequence = sequence;
+
+		// clear the probe since a new one will need to be made for the new sequence
+		_baseProbe = null;
+
 		loadBPMs();
 		loadCorrectors();
 		useSetpoints( sequence );
@@ -238,8 +261,50 @@ public class OrbitModel implements DataListener {
 		_modificationStore.postModification( this );
 		EVENT_PROXY.sequenceChanged(this, sequence);
 	}
-	
-	
+
+
+	/**
+	 * Make a new probe off of the base probe by performing a deep copy.
+	 * @return a new probe or null if one cannot be made (e.g. no selected sequence)
+	 */
+	public Probe<?> makeProbe() {
+		final Probe<?> baseProbe = getBaseProbe();
+		if ( baseProbe != null ) {
+			final Probe<?> probe = baseProbe.copy();
+			probe.initialize();
+			return probe;
+		} else {
+			return null;
+		}
+	}
+
+
+	/**
+	 * Get the base probe for configuration. It should never be run! Instead use makeProbe() to make a copy which you can run.
+	 * @return the base probe generating it if necessary or null if one cannot be generated (e.g. no selected sequence)
+	 */
+	Probe<?> getBaseProbe() {
+		// if there is no base probe and the sequence is not null then generate a new base probe for the sequence
+		if ( _baseProbe == null && _sequence != null ) {
+			try {
+				if ( _sequence instanceof Ring ) {
+					final TransferMapTracker tracker = AlgorithmFactory.createTransferMapTracker( _sequence );
+					_baseProbe = ProbeFactory.getTransferMapProbe( _sequence, tracker );
+
+				} else {
+					final ParticleTracker  tracker = AlgorithmFactory.createParticleTracker( _sequence );
+					_baseProbe = ProbeFactory.createParticleProbe( _sequence, tracker );
+				}
+			}
+			catch (Exception exception) {
+				throw new RuntimeException( "Exception making a new probe.", exception );
+			}
+		}
+
+		return _baseProbe;
+	}
+
+
 	/** determine whether the model is using a beam event trigger for live orbit snapshots */
 	public boolean usesBeamEventTrigger() {
 		return _useBeamEventTrigger;

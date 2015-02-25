@@ -92,7 +92,7 @@ class LabbookDocument extends XalDocument implements ControllerListener {
 	 * Register custom commands. 
      * @param commander The commander with which to register the custom commands.
      */
-    protected void customizeCommands( final Commander commander ) {
+    public void customizeCommands( final Commander commander ) {
 		DetailsController.registerCommands( commander );
 	}
 	

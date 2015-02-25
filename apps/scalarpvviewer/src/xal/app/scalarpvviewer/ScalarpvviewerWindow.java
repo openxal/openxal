@@ -114,7 +114,7 @@ public class ScalarpvviewerWindow extends XalWindow {
      *  Dispose of ScalarpvviewerWindow resources. This method overrides an empty
      *  superclass method.
      */
-    protected void freeCustomResources() {
+    public void freeCustomResources() {
         mainPanel = null;
     }
 }

@@ -32,6 +32,9 @@ import xal.tools.apputils.ImageCaptureManager;
  * @author  t6p
  */
 abstract public class XalInternalWindow extends JInternalFrame implements XalDocumentView, XalInternalDocumentListener {
+	/** serial version ID required for Serializable */
+	static final long serialVersionUID = 1L;
+
 	// public static constants for confirmation dialogs
 	final static public int YES_OPTION = JOptionPane.YES_OPTION;
 	final static public int NO_OPTION = JOptionPane.NO_OPTION;
@@ -71,7 +74,7 @@ abstract public class XalInternalWindow extends JInternalFrame implements XalDoc
     
 	
     /** Register the event handlers */
-    protected void registerEvents() {
+    public void registerEvents() {
     }
 	
 	
@@ -85,7 +88,7 @@ abstract public class XalInternalWindow extends JInternalFrame implements XalDoc
     
     
     /** Make the frame and populate the menubar and toolbar. */
-    protected void makeFrame() {
+    public void makeFrame() {
         setDefaultCloseOperation( WindowConstants.DO_NOTHING_ON_CLOSE );
         makeLayout();
         
@@ -107,7 +110,7 @@ abstract public class XalInternalWindow extends JInternalFrame implements XalDoc
     
     
     /** Subclasses should override this method to provide a custom Commander. */
-    protected Commander makeCommander() {
+    public Commander makeCommander() {
         // create a document commander off of the application commander and a document
         return new Commander( _document );
     }
@@ -123,7 +126,7 @@ abstract public class XalInternalWindow extends JInternalFrame implements XalDoc
 	
 	
     /** Override this method to register custom commands. */
-    protected void customizeCommands( final Commander commander ) {}
+    public void customizeCommands( final Commander commander ) {}
     
 	
     /** Make the window layout. */
@@ -136,7 +139,7 @@ abstract public class XalInternalWindow extends JInternalFrame implements XalDoc
 	 * Close this window.  Check to see if the document has unsaved changes and 
      * if so warn the user and allow them to cancel the close operation.
      */
-    protected void closeWindow() {
+    public void closeWindow() {
         releaseWindow();
     }
 	
@@ -198,7 +201,7 @@ abstract public class XalInternalWindow extends JInternalFrame implements XalDoc
     /**
 	 * Dispose of this window and remove its association with the document.
      */
-    final protected void releaseWindow() {
+    final public void releaseWindow() {
 		freeCustomResources();
 		
         dispose();
@@ -212,7 +215,7 @@ abstract public class XalInternalWindow extends JInternalFrame implements XalDoc
 	 * Dispose of custom window resources.  Subclasses should override this method
 	 * to provide custom disposal of resources.  The default implementation does nothing.
 	 */
-	protected void freeCustomResources() {
+	public void freeCustomResources() {
 	}
 	
 	
@@ -221,7 +224,7 @@ abstract public class XalInternalWindow extends JInternalFrame implements XalDoc
 	 * The title displays the application name, the document title if any and an asterisk
 	 * if the document has unsaved changes.
 	 */
-	protected void generateWindowTitle() {
+	public void generateWindowTitle() {
 		String windowTitle = "Untitled";
 		final String documentTitle = _document.getTitle();
 		

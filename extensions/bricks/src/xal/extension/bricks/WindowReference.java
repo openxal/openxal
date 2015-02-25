@@ -211,7 +211,7 @@ public class WindowReference {
 	
 	/** determine if the constructor can take the specified parameters */
 	private static boolean constructorCanOperateOn( final Constructor<?> constructor, final Object[] parameters ) {
-		final Class[] constructorParameterTypes = constructor.getParameterTypes();
+		final Class<?>[] constructorParameterTypes = constructor.getParameterTypes();
 		if ( parameters.length != constructorParameterTypes.length ) {
 			return false;
 		}

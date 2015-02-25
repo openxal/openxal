@@ -17,6 +17,7 @@ import xal.extension.solver.algorithm.*;
 import xal.extension.solver.market.*;
 import xal.extension.solver.solutionjudge.*;
 import xal.model.probe.Probe;
+import xal.model.probe.traj.ProbeState;
 import xal.smf.*;
 import xal.smf.impl.*;
 
@@ -69,7 +70,7 @@ public class OpticsOptimizer implements ScoreBoardListener, SolverSessionListene
 	/**
 	 * Constructor
 	 */
-	public OpticsOptimizer( final AcceleratorSeq sequence, final List<AcceleratorNode> evaluationNodes, final Probe entranceProbe, final ParameterStore parameterStore ) {
+	public OpticsOptimizer( final AcceleratorSeq sequence, final List<AcceleratorNode> evaluationNodes, final Probe<?> entranceProbe, final ParameterStore parameterStore ) {
 		this( new SolverSession( sequence.getId(), sequence, evaluationNodes, entranceProbe, parameterStore.getCoreParameters() ) );
 	}
 	
@@ -169,7 +170,7 @@ public class OpticsOptimizer implements ScoreBoardListener, SolverSessionListene
 	 * Set the entrance probe.
 	 * @param entranceProbe the new entrance probe
 	 */
-	public void setEntranceProbe( final Probe entranceProbe ) {
+	public void setEntranceProbe( final Probe<?> entranceProbe ) {
 		if ( !isRunning() ) {
 			_activeSolverSession.setEntranceProbe( entranceProbe );			
 		}

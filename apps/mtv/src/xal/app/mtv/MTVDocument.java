@@ -109,7 +109,7 @@ public class MTVDocument extends AcceleratorDocument {
 
 	// ------- the commands to listen to ------
 
-	protected void customizeCommands(Commander commander) {
+	public void customizeCommands(Commander commander) {
 
 	}
 

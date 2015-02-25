@@ -24,6 +24,7 @@ public class ConnectionException extends ChannelException {
 
     /**
      * Constructs an <code>ConnectionException</code> with the specified detail message.
+	 * @param channel for which the exception was thrown
      * @param msg the detail message.
      */
     public ConnectionException(Channel channel, String msg) {

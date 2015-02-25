@@ -27,7 +27,7 @@ import xal.model.xml.ParsingException;
  * @version $id:
  * 
  */
-public abstract class BunchProbeState extends ProbeState /* implements IPhaseState */ {
+public abstract class BunchProbeState<S extends BunchProbeState<S>> extends ProbeState<S>  {
 
 
     /*
@@ -59,31 +59,6 @@ public abstract class BunchProbeState extends ProbeState /* implements IPhaseSta
     /** Beam current */
     private double  dblBmCurr = 0.0;
     
-//    /** betatron phase of bunch in three phase planes */
-//    protected R3    vecPhsBeta;
-
-
-//  /** Beam charge */
-//  private double m_dblBmQ = 0.0;
-//
-
-    /*
-     * Required Implementation
-     */    
-    
-//    /** 
-//     *  Abstract - Returns the correlation matrix (sigma matrix) in homogeneous
-//     *  phase space coordinates.
-//     *
-//     *  @return         <zz^T> =| <x*x>  <x*xp>  <x*y>  <x*yp>  <x*z>  <x*zp>  <x>  |
-//     *                          | <xp*x> <xp*xp> <xp*y> <xp*yp> <xp*z> <xp*zp> <xp> |
-//     *                            ...
-//     *
-//     *  @see    gov.sns.tools.beam.PhaseMatrix
-//     */
-//    public abstract CovarianceMatrix phaseCorrelation();
-
-
 
     /*
      * Initialization
@@ -94,7 +69,27 @@ public abstract class BunchProbeState extends ProbeState /* implements IPhaseSta
      *
      */
     public BunchProbeState() {
-//        this.vecPhsBeta = new R3();
+    	super();
+        this.dblBmCurr = 0.0;
+        this.dlbBunFreq = 0.0;
+    }
+    
+    /**
+     * Copy constructor for BunchProbeState.  Initializes the new
+     * <code>BunchProbeState</code> objects with the state attributes
+     * of the given <code>BunchProbeState</code>.
+     *
+     * @param state     initializing state
+     *
+     * @author Christopher K. Allen
+     * @author Jonathan M. Freed
+     * @since  Jun 26, 2014
+     */
+    public BunchProbeState(final S state){
+    	super(state);
+    	
+    	this.dblBmCurr	= state.getBeamCurrent();
+    	this.dlbBunFreq	= state.getBunchFrequency();
     }
     
     /**
@@ -103,14 +98,16 @@ public abstract class BunchProbeState extends ProbeState /* implements IPhaseSta
      * 
      * @param probe     probe object with which to initialize this state
      */
-    public BunchProbeState(BunchProbe probe) {
+    public BunchProbeState(final BunchProbe<S> probe) {
         super(probe);
         this.setBunchFrequency(probe.getBunchFrequency());
         this.setBeamCurrent(probe.getBeamCurrent());
 //        this.setBetatronPhase(probe.getBetatronPhase());
     }
-
     
+    /*
+     * Property Accessors
+     */
     
     /**
      * Set the bunch arrival time frequency.
@@ -129,30 +126,6 @@ public abstract class BunchProbeState extends ProbeState /* implements IPhaseSta
     public void setBeamCurrent(double I) {
         dblBmCurr = I;
     }
-    
-//    /**
-//     * Set the betatron phase of the bunch centroid for each phase plane.
-//     * 
-//     * @param   vecPhase vector (psix,psiy,psiz) of betratron phases in <b>radians</b>
-//     */
-//    public void setBetatronPhase(R3 vecPhase) {
-//        this.vecPhsBeta = vecPhase;
-//    }
-
-//    /**
-//     *  Set the total beam charge 
-//     * 
-//     *  @param  Q   beam charge in <bold>Coulombs</bold>
-//     */
-//    public void setBeamCharge(double Q) {
-//        m_dblBmQ = Q;
-//    }
-
-    
-    
-    /*
-     * Attribute Query
-     */
     
     /**
      * <p>
@@ -216,6 +189,46 @@ public abstract class BunchProbeState extends ProbeState /* implements IPhaseSta
             return 0.0;
             
         }
+    }
+    
+    /** 
+     * <p>
+     *  Returns the generalized, three-dimensional beam perveance <i>K</i>.  
+     *  This value is defined to be
+     *  </p>
+     *  
+     *      <i>K</i> = (<i>Q</i>/4*&pi;*<i>&epsilon;</i><sub>0</sub>)(1/&gamma;<sup>3</sup>&beta;<sup>2</sup>)(|<i>q</i>|/<i>E<sub>R</sub></i>) 
+     *  
+     *  <p>
+     *  where <i>Q</i> is the bunch charge, <i>&epsilon;</i><sub>0</sub> is the permittivity
+     *  of free space, <i>&gamma;</i> is the relativistic factor, <i>&beta;</i> is 
+     *  the normalized design velocity, <i>q</i> is the individual particle charge 
+     *  and <i>E<sub>R</sub></i> is the rest energy of the beam particles.
+     *  </p>
+     *  
+     *  <p>
+     *  <h4>NOTES:</h4>
+     *  - The value (1/4&pi;&epsilon;<sub>0</sub>) is equal to 10<sup>-7</sup><i>c</i><sup>2</sup>
+     *  where <i>c</i> is the speed of light.
+     *  </p> 
+     *  
+     *  @return generalized beam perveance <b>Units: radians^2/meter</b>
+     *  
+     *  @author Christopher K. Allen
+     */
+    public double beamPerveance() {
+    	
+        // Get some shorthand
+        double c     = LightSpeed;
+        double gamma = this.getGamma();
+        double bg2   = gamma*gamma - 1.0;
+
+        // Compute independent terms
+        double  dblPermT = 1.0e-7*c*c*this.bunchCharge();
+        double  dblRelaT = 1.0/(gamma*bg2);
+        double  dblEnerT = Math.abs(super.getSpeciesCharge())/super.getSpeciesRestEnergy();
+        
+        return dblPermT*dblRelaT*dblEnerT;  
     }
 
 //

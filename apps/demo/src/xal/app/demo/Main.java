@@ -107,7 +107,7 @@ public class Main extends ApplicationAdaptor {
      * if those actions are document specific.  Here the actions are application wide.
      * @param commander The commander with which to register the custom commands.
      */
-    protected void customizeCommands(Commander commander) {
+    public void customizeCommands(Commander commander) {
         // define the "start run" demo action
         startAction = new AbstractAction( "start-run" ) {
             /** serialization identifier */

@@ -18,6 +18,7 @@ import xal.sim.scenario.*;
 import xal.model.probe.traj.*;
 import xal.smf.impl.*;
 import xal.tools.beam.PhaseMatrix;
+import xal.tools.beam.calc.*;
 
 
 /** maps coordinates from two nodes to a third node */
@@ -58,7 +59,7 @@ public class CoordinateMap {
 	 * @param trajectory initial online model trajectory to use for generating the maps to the target node
 	 * @param sequence accelerator sequence which is necessary to handle the ring correctly
 	 */
-	public CoordinateMap( final AcceleratorNode targetNode, final AcceleratorNode nodeA, final AcceleratorNode nodeB, final Trajectory trajectory, final AcceleratorSeq sequence ) {
+	public CoordinateMap( final AcceleratorNode targetNode, final AcceleratorNode nodeA, final AcceleratorNode nodeB, final Trajectory<TransferMapState> trajectory, final AcceleratorSeq sequence ) {
 		SEQUENCE = sequence;
 
 		TARGET_NODE = targetNode;
@@ -83,7 +84,7 @@ public class CoordinateMap {
 	 * @param nodeB second accelerator node for which we have a position
 	 * @param trajectory online model trajectory to use for generating the maps to the target node
 	 */
-	public CoordinateMap( final AcceleratorNode targetNode, final AcceleratorNode nodeA, final AcceleratorNode nodeB, final Trajectory trajectory ) {
+	public CoordinateMap( final AcceleratorNode targetNode, final AcceleratorNode nodeA, final AcceleratorNode nodeB, final Trajectory<TransferMapState> trajectory ) {
 		this( targetNode, nodeA, nodeB, trajectory, null );
 	}
 
@@ -151,7 +152,7 @@ public class CoordinateMap {
 
 
 	/** set the trajectory */
-	public void setTrajectory( final Trajectory trajectory ) {
+	public void setTrajectory( final Trajectory<TransferMapState> trajectory ) {
 		// get the transfer matrix from A to B
 		final PhaseMatrix transferAB = getTransferMatrix( trajectory, NODE_A, NODE_B );
 
@@ -244,15 +245,12 @@ public class CoordinateMap {
 
 
 	/** get the transfer matrix from the transfer map trajectory */
-	private PhaseMatrix getTransferMatrix( final Trajectory trajectory, final AcceleratorNode fromNode, final AcceleratorNode toNode ) {
-		if ( trajectory instanceof EnvelopeTrajectory ) {
-			return getTransferMatrix( (EnvelopeTrajectory)trajectory, fromNode, toNode );
-		}
-		else if ( trajectory instanceof TransferMapTrajectory ) {
-			return getTransferMatrix( (TransferMapTrajectory)trajectory, fromNode, toNode );
+	private PhaseMatrix getTransferMatrix( final Trajectory<TransferMapState> trajectory, final AcceleratorNode fromNode, final AcceleratorNode toNode ) {
+		if ( SEQUENCE.isLinear() ) {
+			return getLinearTransferMatrix( trajectory, fromNode, toNode );
 		}
 		else {
-			throw new RuntimeException( "Trajectory must be either TransferMap or Envelope, but instead it is:  " + trajectory.getClass() );
+			return getRingTransferMatrix( trajectory, fromNode, toNode );
 		}
 	}
 
@@ -276,24 +274,36 @@ public class CoordinateMap {
 
 
 	/** get the envelope probe state in the trajectory for the specified node */
-	private EnvelopeProbeState getProbeState( final EnvelopeTrajectory trajectory, final AcceleratorNode node ) {
-		final String elementID = getElementIdForNode( node );
-		return elementID != null ? (EnvelopeProbeState)trajectory.stateForElement( elementID ) : null;
-	}
+	private TransferMapState getProbeState( final Trajectory<TransferMapState> trajectory, final AcceleratorNode node ) {
+//		final Iterator<TransferMapState> stateIter = trajectory.stateIterator();
+//		while( stateIter.hasNext() ) {
+//			TransferMapState state = stateIter.next();
+//			System.out.println( "state ID: " + state.getElementId() );
+//		}
 
-
-	/** get the transfer map probe state in the trajectory for the specified node */
-	private TransferMapState getProbeState( final TransferMapTrajectory trajectory, final AcceleratorNode node ) {
 		final String elementID = getElementIdForNode( node );
-		return elementID != null ? (TransferMapState)trajectory.stateForElement( elementID ) : null;
+//		System.out.println( "Getting state for element: " + elementID );
+//		System.out.println( "State for element: " + elementID + " = " + trajectory.stateForElement( elementID ) );
+		final TransferMapState state = elementID != null ? trajectory.stateForElement( elementID ) : null;
+		return state;
+
+//		if ( elementID != null ) {
+//			final ProbeState[] states = trajectory.statesForElement_OLD( elementID );
+//			final TransferMapState state = (TransferMapState)states[0];
+//			return state;
+//		}
+//		else {
+//			return null;
+//		}
 	}
 
 
 	/** get the transfer matrix from the  envelope trajectory */
-	private PhaseMatrix getTransferMatrix( final EnvelopeTrajectory trajectory, final AcceleratorNode fromNode, final AcceleratorNode toNode ) {
-		final PhaseMatrix fromMatrix = getProbeState( trajectory, fromNode ).getResponseMatrix();
-		final PhaseMatrix toMatrix = getProbeState( trajectory, toNode ).getResponseMatrix();
-		return getTransferMatrix( fromMatrix, toMatrix );
+	private PhaseMatrix getLinearTransferMatrix( final Trajectory<TransferMapState> trajectory, final AcceleratorNode fromNode, final AcceleratorNode toNode ) {
+		final TransferMapState fromState = getProbeState( trajectory, fromNode );
+		final TransferMapState toState = getProbeState( trajectory, toNode );
+
+		return CalculationsOnMachines.computeTransferMatrix( fromState, toState	);
 	}
 
 
@@ -304,7 +314,7 @@ public class CoordinateMap {
 	 * @param fromNode starting node
 	 * @param toNode ending node
 	 */
-	private PhaseMatrix getTransferMatrix( final TransferMapTrajectory trajectory, final AcceleratorNode fromNode, final AcceleratorNode toNode ) {
+	private PhaseMatrix getRingTransferMatrix( final Trajectory<TransferMapState> trajectory, final AcceleratorNode fromNode, final AcceleratorNode toNode ) {
 		final PhaseMatrix fromMatrix = getProbeState( trajectory, fromNode ).getTransferMap().getFirstOrder();
 		final PhaseMatrix toMatrix = getProbeState( trajectory, toNode ).getTransferMap().getFirstOrder();
 
@@ -324,12 +334,15 @@ public class CoordinateMap {
 		// Xf = Tf * Xo, Xt = Tt * Xo
 		if ( fromPath < 0.0 ) {	// "from" node is across the origin near the end of the sequence, and the "to" node is near the front of the sequence
 			// Xo = F * Xp, Xf = Tf * Xp, Xt = Tt * Xo  ->  Xp = Tf^-1 * Xf  ->  Xo = F * Tf^-1 * Xf  ->  Tft = Tt * F * Tf^-1
-			final PhaseMatrix fullTurnOriginMatrix = trajectory.getFullTurnMapAtOrigin().getFirstOrder();
+			final PhaseMatrix fullTurnOriginMatrix = new CalculationsOnRings( trajectory ).getFullTransferMap().getFirstOrder();
+			//final PhaseMatrix fullTurnOriginMatrix = trajectory.getFullTurnMapAtOrigin().getFirstOrder();
 			return toMatrix.times( fullTurnOriginMatrix ).times( fromMatrix.inverse() );
 		}
 		else if ( fromPath > SEQUENCE.getLength() ) { // "from" node is across the origin near the front of the sequence, and the "to" node is near the end of the sequence
 			// Xo = F * Xp, Xf = Tf * Xo, Xt = Tt * Xp  ->  Xf = Tf * F * Xp  ->  Xp = (Tf * F)^-1 * Xf  ->  Xt = Tt * (Tf * F)^-1 * Xf  ->  Tft = Tt * (Tf * F)^-1
-			final PhaseMatrix fullTurnOriginMatrix = trajectory.getFullTurnMapAtOrigin().getFirstOrder();
+			final TransferMapState originState = trajectory.initialState();
+			final PhaseMatrix fullTurnOriginMatrix = new CalculationsOnRings( trajectory ).getFullTransferMap().getFirstOrder();
+			//final PhaseMatrix fullTurnOriginMatrix = trajectory.getFullTurnMapAtOrigin().getFirstOrder();
 			return toMatrix.times( fromMatrix.times( fullTurnOriginMatrix ).inverse() );
 		}
 		else {  // "from" and "to" nodes are on the same side of the origin (i.e. shortest path between them along the ring does not cross the origin of the sequence)

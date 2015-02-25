@@ -7,7 +7,6 @@
 package xal.sim.scenario;
 
 import java.lang.reflect.InvocationTargetException;
-import java.net.URL;
 import java.util.List;
 
 import xal.model.IComponent;

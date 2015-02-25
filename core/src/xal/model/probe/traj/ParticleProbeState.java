@@ -14,7 +14,7 @@ import xal.model.xml.ParsingException;
  * @version $id:
  * 
  */
-public class ParticleProbeState extends ProbeState /*implements ICoordinateState */ {
+public class ParticleProbeState extends ProbeState<ParticleProbeState> /*implements ICoordinateState */ {
 
 
 
@@ -59,8 +59,27 @@ public class ParticleProbeState extends ProbeState /*implements ICoordinateState
      * Default constructor.  Creates a new, empty <code>ParticleProbeState</code> object.
      */	
     public ParticleProbeState() {
-        this.m_vecCoords = PhaseVector.newZero();
-        this.matResp = PhaseMatrix.identity();
+    	super();
+        this.m_vecCoords	= PhaseVector.newZero();
+        this.matResp		= PhaseMatrix.identity();
+    }
+    
+    
+    /**
+     * Copy constructor for ParticleProbeState.  Initializes the new
+     * <code>ParticleProbeState</code> objects with the state attributes
+     * of the given <code>ParticleProbeState</code>.
+     *
+     * @param particleProbeState     initializing state
+     *
+     * @author Christopher K. Allen, Jonathan M. Freed
+     * @since  Jun 26, 2014
+     */
+    public ParticleProbeState(final ParticleProbeState particleProbeState){
+    	super(particleProbeState);
+    	
+    	this.m_vecCoords	= particleProbeState.m_vecCoords.clone();
+    	this.matResp		= particleProbeState.matResp.clone();
     }
     
     /**
@@ -69,11 +88,16 @@ public class ParticleProbeState extends ProbeState /*implements ICoordinateState
      * 
      * @param probe     <code>ParticleProbe</code> containing cloned initial state data
      */
-    public ParticleProbeState(ParticleProbe probe) {
+    public ParticleProbeState(final ParticleProbe probe) {
         super(probe);
-        this.setPhaseCoordinates( new PhaseVector(probe.getPhaseCoordinates()) );
-        this.setResponseMatrix( new PhaseMatrix(probe.getResponseMatrix()) );
+        this.setPhaseCoordinates( new PhaseVector(probe.getPhaseCoordinates().clone()) );
+        this.setResponseMatrix( new PhaseMatrix(probe.getResponseMatrix().clone()) );
     }
+    
+    
+    /*
+     * Property Accessors
+     */
     
     /** 
      *  Set the phase space coordinates of the probe.  This is the location <b>z</b>
@@ -108,11 +132,6 @@ public class ParticleProbeState extends ProbeState /*implements ICoordinateState
     public void setResponseMatrix(PhaseMatrix matResp) {
         this.matResp = matResp;
     }
-
-    
-    /*
-     * Data Query
-     */    
     
     /** 
      *  <p>
@@ -170,7 +189,6 @@ public class ParticleProbeState extends ProbeState /*implements ICoordinateState
      * Object Overrides
      */
      
-     
     /**
      * Write out the state information in text form.
      * 
@@ -185,6 +203,17 @@ public class ParticleProbeState extends ProbeState /*implements ICoordinateState
     /*
      * ProbeState Overrides
      */    
+     
+    /**
+     * Copies and returns a new, identical instance of <b>this</b> 
+     * <code>ParticleProbeState</code>.
+     * 
+     * @returns a copy of <b>this</b> <code>ParticleProbeState</code>
+     */
+    @Override
+    public ParticleProbeState copy(){
+        return new ParticleProbeState(this);
+    }
      
     /**
      * Save the state values particular to <code>BunchProbeState</code> objects

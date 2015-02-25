@@ -507,7 +507,7 @@ public class LV2Window extends AcceleratorWindow implements SwingConstants {
         ((Main)Application.getAdaptor()).changeNormalizationBCM(newValue);
     }
     
-    protected void customizeCommands(Commander c) {
+    public void customizeCommands(Commander c) {
 
         c.registerAction(new AbstractAction("export-action") {
             private static final long serialVersionUID = 4377386270269629176L;

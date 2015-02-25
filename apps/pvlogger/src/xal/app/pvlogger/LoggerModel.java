@@ -136,6 +136,7 @@ public class LoggerModel {
 				REMOTE_LOGGERS_ACCESS_QUEUE.dispatchBarrierAsync( new Runnable() {
 					public void run() {
 						final RemoteLoggerRecord remoteRecord = REMOTE_LOGGERS_TABLE.get( name );
+						remoteRecord.setUpdateListener( null );		// stop observing updates
 						REMOTE_LOGGERS_TABLE.remove( name );
 						REMOTE_LOGGERS.remove( remoteRecord );
 					}

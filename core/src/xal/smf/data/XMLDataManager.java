@@ -6,29 +6,29 @@
 
 package xal.smf.data;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.prefs.Preferences;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.DocumentType;
+
 import xal.sim.scenario.DefaultElementMapping;
 import xal.sim.scenario.ElementMapping;
 import xal.sim.scenario.FileBasedElementMapping;
 import xal.smf.Accelerator;
 import xal.smf.AcceleratorNodeFactory;
 import xal.smf.TimingCenter;
-import xal.tools.xml.*;
-import xal.tools.xml.XmlDataAdaptor.ParseException;
-import xal.tools.xml.XmlDataAdaptor.ResourceNotFoundException;
-import xal.tools.data.*;
 import xal.tools.URLUtil;
-
-import org.w3c.dom.*;
-
-import java.util.*;
-import java.util.prefs.Preferences;
-import java.net.*;
-
-import javax.xml.XMLConstants;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.validation.Schema;
-import javax.xml.validation.SchemaFactory;
-import javax.xml.validation.Validator;
+import xal.tools.data.DataAdaptor;
+import xal.tools.data.EditContext;
+import xal.tools.xml.XmlDataAdaptor;
+import xal.tools.xml.XmlTableIO;
 
 
 /*****************************************************************************

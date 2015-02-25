@@ -162,7 +162,7 @@ public class ScoreDocument extends XalDocument implements HandleErrorMessage{
 	
 	
 	/** Override the inherited method to simply display the application name */
-	protected void generateDocumentTitle() {
+	public void generateDocumentTitle() {
 		setTitle( null );	// the window title should just be the application name
 	}
 	
@@ -187,7 +187,7 @@ public class ScoreDocument extends XalDocument implements HandleErrorMessage{
     }
     
     /** configure commands to handle */
-    protected void customizeCommands( final Commander commander ) {
+    public void customizeCommands( final Commander commander ) {
 		// Action handler for the restore command        
         final Action restoreAction = new AbstractAction() {
             /** ID for serializable version */

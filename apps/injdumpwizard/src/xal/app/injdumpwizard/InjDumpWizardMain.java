@@ -48,7 +48,7 @@ public class InjDumpWizardMain extends ApplicationAdaptor {
 
     
     /** Indicates whether the welcome dialog should be displayed at launch. */
-    protected boolean showsWelcomeDialogAtLaunch() {
+    public boolean showsWelcomeDialogAtLaunch() {
         return false;
     }
 

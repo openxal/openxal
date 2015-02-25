@@ -19,6 +19,8 @@ import xal.tools.math.IIndex;
  * passing an array which allows for runtime errors.
  * 
  * @author Christopher K. Allen
+ * @since  Dec, 2006
+ * @version Nov 5, 2013
  *
  */
 /**
@@ -37,7 +39,7 @@ public class Twiss3D implements IArchive {
     /** 
      * Enumeration for the element position indices of three-dimensional objects. 
      * 
-     * @author  Christopher K. Alen
+     * @author  Christopher K. Allen
      */
     public enum IND_3D implements IIndex {
 
@@ -169,6 +171,19 @@ public class Twiss3D implements IArchive {
      */
     public Twiss3D(DataAdaptor daSource) throws DataFormatException {
         this.load(daSource);
+    }
+    
+
+    /**
+     * Creates a new, cloned instance of <b>this</b> <code>Twiss3D</code>.
+     *
+     * @return a clone of <b>this</b> <code>Twiss3D</code>
+     * 
+     * @author Jonathan M. Freed
+     * @since Jul 9, 2014
+     */
+    public Twiss3D copy(){
+    	return new Twiss3D(this);
     }
     
     /**

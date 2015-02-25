@@ -16,6 +16,9 @@ import java.lang.reflect.Array;
  * @author  tap
  */
 public abstract class ArrayValue extends Number {
+	/** required for Serializable */
+	static final private long serialVersionUID = 1L;
+
 	/** the array of data */
     protected Object array;
     
@@ -256,6 +259,11 @@ public abstract class ArrayValue extends Number {
  *  each numeric type.
  */
 abstract class NumericStore extends ArrayValue {
+	/** required for Serializable */
+	static final private long serialVersionUID = 1L;
+
+
+	/** Constructor */
     public NumericStore( final Object newArray ) {
         super( newArray );
     }

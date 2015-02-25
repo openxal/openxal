@@ -74,7 +74,7 @@ public class EventBufferWindow extends XalWindow implements SwingConstants {
 	 * Dispose of custom window resources.  Subclasses should override this method
 	 * to provide custom disposal of resources.  The default implementation does nothing.
 	 */
-	protected void freeCustomResources() {
+	public void freeCustomResources() {
 		_eventContainer.removeAll();
 		_mpsEvents.clear();
 		_mpsEvents = null;
@@ -110,7 +110,7 @@ public class EventBufferWindow extends XalWindow implements SwingConstants {
      * Register actions specific to this window instance.
      * @param commander The commander with which to register the custom commands.
      */
-    protected void customizeCommands(Commander commander) {
+    public void customizeCommands(Commander commander) {
 		// define the "refresh events" action
         commander.registerAction( new AbstractAction("refresh-events") {
             

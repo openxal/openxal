@@ -71,5 +71,11 @@ public class CorrectorComparator implements Comparator<Dipole> {
 	public boolean equals( final Object comparator ) {
 		return comparator == this;
 	}
+
+
+	/** Override hashCode as required for consistency with equals() */
+	public int hashCode() {
+		return super.hashCode();
+	}
 }
 

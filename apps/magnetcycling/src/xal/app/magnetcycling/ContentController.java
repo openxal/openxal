@@ -188,7 +188,7 @@ public class ContentController {
 					return false;
 				}
 
-				public Class getColumnClass(int c) {
+				public Class<?> getColumnClass(int c) {
 					if(c == 1) {
 						return (new Boolean(true)).getClass();
 					}

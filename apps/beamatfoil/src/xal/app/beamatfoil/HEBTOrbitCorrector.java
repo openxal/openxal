@@ -3,11 +3,13 @@ package xal.app.beamatfoil;
 import java.text.*;
 import java.awt.*;
 import java.awt.event.*;
+
 import javax.swing.*;
 import javax.swing.table.*;
 import javax.swing.text.*;
 import javax.swing.event.*;
 import javax.swing.border.*;
+
 import java.util.*;
 import java.io.*;
 import java.util.List;
@@ -15,23 +17,17 @@ import java.beans.*;
 
 import xal.extension.widgets.swing.Wheelswitch;
 import xal.tools.text.FortranNumberFormat;
-
 import xal.ca.*;
-
 import xal.extension.widgets.plot.*;
 import xal.tools.apputils.*;
 import xal.extension.widgets.swing.*;
 import xal.tools.xml.*;
-
 import xal.service.pvlogger.*;
 import xal.tools.database.*;
-
 import xal.smf.proxy.ElectromagnetPropertyAccessor;
-
 import xal.smf.*;
 import xal.smf.impl.*;
 import xal.smf.impl.qualify.*;
-
 import xal.model.*;
 import xal.sim.scenario.*;
 import xal.service.pvlogger.sim.PVLoggerDataSource;
@@ -40,13 +36,13 @@ import xal.model.probe.*;
 //import xal.model.probe.resp.*;
 import xal.model.probe.traj.*;
 import xal.sim.sync.*;
-//import xal.model.probe.resp.traj.*;
-
 import xal.tools.beam.*;
+import xal.tools.beam.calc.CalculationsOnBeams;
 //import xal.tools.optimizer.*;
 import xal.extension.solver.*;
 import xal.extension.solver.algorithm.*;
 import xal.extension.solver.hint.InitialDelta;
+// TODO: CKA - Over half the imports are unused
 
 /**
  *  Description of the Class
@@ -61,7 +57,7 @@ public class HEBTOrbitCorrector {
 	//The dipole correctors Vector
 	private Vector<Corr_Element> corrV = new Vector<Corr_Element>();
 	private Vector<Corr_Element> corrOptV = new Vector<Corr_Element>();	
-	private Vector<Variable> corrProxyV = new Vector<Variable>();	
+	private Vector<ValueRef> corrProxyV = new Vector<ValueRef>();
 
 	//left panel elements
 	private TitledBorder corrTableBorder = null;
@@ -115,7 +111,7 @@ public class HEBTOrbitCorrector {
 	//message text field. It is actually message text field from Window
 	private JTextField messageTextLocal = new JTextField();
 
-	private double min_sum = 10.0e+20;
+	private double min_sum = 10.0e+20;     // TODO: CKA - NEVER USED
     
     
     //create a problem for solver
@@ -565,21 +561,26 @@ public class HEBTOrbitCorrector {
 			 return false;
 		 }
 		 
-		 EnvelopeTrajectory trajectory = (EnvelopeTrajectory) probe.getTrajectory();
+		 Trajectory<EnvelopeProbeState> trajectory = probe.getTrajectory();
+         CalculationsOnBeams            cobCalcEng = new CalculationsOnBeams(trajectory);
 		 
 		 AcceleratorNode foil = accSeq.getNodeWithId("Ring_Inj:Foil");
 		 
 		 for(int i = 0, n = corrV.size(); i < n; i++) {
 			 Corr_Element corrElm = corrV.get(i);
 			 Electromagnet corr_mag = corrElm.getMagnet();
-			 ProbeState probeState = trajectory.statesForElement(corr_mag.getId())[0];
+			 EnvelopeProbeState probeState = trajectory.statesForElement(corr_mag.getId()).get(0);
 			 double W0 = probeState.getSpeciesRestEnergy();
 			 double gamma = probeState.getGamma();
 			 double beta = Math.sqrt(1.0 - 1.0 / (gamma * gamma));
 			 double L = corr_mag.getEffLength();
 			 double c = 2.997924E+8;
 			 double res_coeff = (L * c) / (W0 * beta * gamma);
-			 PhaseMatrix phMatr = trajectory.stateResponse(corrElm.getName(),foil.getId());
+			 
+			// CKA 8/22/2014
+//			 PhaseMatrix phMatr = probe.stateResponse(corrElm.getName(),foil.getId()); 
+			 PhaseMatrix phMatr = cobCalcEng.computeTransferMatrix(corrElm.getName(), foil.getId());
+			 
 			 double mPos = 0.;
 			 double mAngle = 0.;
 			 if(corrElm.getName().indexOf(":DCH") > 0) {
@@ -610,32 +611,33 @@ public class HEBTOrbitCorrector {
 		final double pos_goal = posWheel.getValue();
 		final double angle_goal = angleWheel.getValue();
 
-    corrOptV.clear();	
+		corrOptV.clear();
 		corrProxyV.clear();
         
         problem = new Problem();
-        
-		
+		final Objective objective = new MinimizingObjective( 0.01 );
+		problem.addObjective( objective	);
+
 		for(int i = 0, n = corrV.size(); i < n; i++) {
 			Corr_Element corrElm = corrV.get(i);
 			if(corrElm.isActive()){
 				double initVal = corrElm.getIntermedField();
 				double lowerLimit = corrElm.getLowerFieldLimit();
 				double upperLimit = corrElm.getUpperFieldLimit();
-				//Variable proxy = new Variable(corrElm.getName(),initVal,upperLimit/20.0);
-				Variable proxy = new Variable(corrElm.getName(), initVal, lowerLimit , upperLimit);
+				Variable variable = new Variable( corrElm.getName(), initVal, lowerLimit , upperLimit );
                 
                 InitialDelta hint = new InitialDelta( upperLimit/20.0 );
                 
-                problem.addVariable(proxy);
-                problem.addHint(hint);
+                problem.addVariable( variable );
+                problem.addHint( hint );
+				ValueRef proxy = problem.getValueReference( variable );
                 
                 
-                corrProxyV.add(proxy);
-				corrOptV.add(corrElm);
+                corrProxyV.add( proxy );
+				corrOptV.add( corrElm );
 			}
-		}		
-		
+		}
+
 		if(corrOptV.size() == 0){
 			messageTextLocal.setText("No correctors to use!");
 			return false;
@@ -645,7 +647,7 @@ public class HEBTOrbitCorrector {
 		
 		min_sum = 10.0e+20;
 		
-		Scorer scorer = new Scorer(){
+		Scorer scorer = new Scorer(){     // TODO: CKA - The value is NEVER USED
 			public double score(Trial trial, List<Variable> scoreVariables){
 				//sum calculations
 				double sum_fields = 0.;
@@ -653,9 +655,9 @@ public class HEBTOrbitCorrector {
 				double pos_new = 0.;
 				double angle_new = 0.;
 				for(int i = 0, n = corrProxyV.size(); i < n; i++) {
-					Variable proxy = corrProxyV.get(i);
+					final ValueRef proxy = corrProxyV.get(i);
 					Corr_Element corrElm = corrOptV.get(i);
-					double value = proxy.getInitialValue();
+					double value = proxy.getValue();
 					double upperLimit = corrElm.getUpperFieldLimit();
 					double lowerLimit = corrElm.getLowerFieldLimit();
 					if(value > 0.95*upperLimit){
@@ -684,7 +686,8 @@ public class HEBTOrbitCorrector {
 				//System.out.println("debug angle_new="+angle_new+" angle_goal="+angle_goal);
 				d_pos = d_pos*d_pos*posWeightTextField.getValue();
 				d_angle = d_angle*d_angle*angleWeightTextField.getValue();
-				double sum = sum_limits + d_pos + d_angle + sum_fields;	
+				double sum = sum_limits + d_pos + d_angle + sum_fields;
+				//System.out.println( "sum_limits: " + sum_limits + ", sum_fields: " + sum_fields + ", dpos: " + d_pos + ", d_angle: " + d_angle + ", sum: " + sum );
 				//System.out.println("debug sum="+sum);
 				//if(min_sum > sum){
 				//	min_sum = sum;
@@ -698,30 +701,27 @@ public class HEBTOrbitCorrector {
 				return sum;
 			}
 		};
-		
-		int maxIter = 1000;
-		//SolveStopper stopper = SolveStopperFactory.maxIterationStopper(maxIter);
-		//SearchAlgorithm algorithm = new SimplexSearchAlgorithm();
-	  Solver solver = new Solver(SolveStopperFactory.maxEvaluationsStopper(maxIter));
-	  //solver.setScorer(scorer);
-	  //solver.setSearchAlgorithm(algorithm);
-	  //solver.setStopper(stopper);
-		//solver.setVariables(corrProxyV);
-		
-		solver.solve(problem);
-		
+
+		problem.setEvaluator( new ScoringEvaluator( scorer, objective, problem.getVariables() ) );
+		Solver solver = new Solver( new SimplexSearchAlgorithm(), SolveStopperFactory.maxEvaluationsStopper( 5000 ) );
+		solver.solve( problem );
+
+		// get the best solution and evaluate the problem using it to update the value references for the best solution
+		final Trial bestSolution = solver.getScoreBoard().getBestSolution();
+		problem.evaluate( bestSolution );
 
 		double pos_new = 0.;
 		double angle_new = 0.;
 		for(int i = 0, n = corrProxyV.size(); i < n; i++) {
-					Variable proxy = corrProxyV.get(i);
-					Corr_Element corrElm = corrOptV.get(i);
-					double value = proxy.getInitialValue();
-					corrElm.setIntermedField(value);				
-					//System.out.println("debug best var="+proxy.getName()+" val="+value);
-					pos_new += corrElm.getPosCoeff()*(value - corrElm.getFieldFromMemory());
-					angle_new += corrElm.getAngleCoeff()*(value - corrElm.getFieldFromMemory());
-					corrElm.setLiveField(value);
+			final Variable variable = problem.getVariables().get( i );
+			ValueRef proxy = corrProxyV.get(i);
+			Corr_Element corrElm = corrOptV.get(i);
+			double value = proxy.getValue();
+			corrElm.setIntermedField(value);				
+			System.out.println("debug best var="+variable.getName()+" val="+value);
+			pos_new += corrElm.getPosCoeff()*(value - corrElm.getFieldFromMemory());
+			angle_new += corrElm.getAngleCoeff()*(value - corrElm.getFieldFromMemory());
+			corrElm.setLiveField(value);
 		}
 		posResTextField.setValue(pos_new);
 		angleResTextField.setValue(angle_new);
@@ -745,7 +745,7 @@ public class HEBTOrbitCorrector {
                 /** ID for serializable version */
                 private static final long serialVersionUID = 1L;
                 
-				public Class getColumnClass(int columnIndex) {
+				public Class<?> getColumnClass(int columnIndex) {  // TODO: CKA - Unchecked Conversion
 					if(columnIndex == 0 || columnIndex == 1 || columnIndex == 2) {
 						return String.class;
 					}
@@ -803,5 +803,56 @@ public class HEBTOrbitCorrector {
 
 	}
 
+}
+
+
+
+/** objective for performing minimization */
+class MinimizingObjective extends Objective {
+	/** tolerance */
+	final private double TOLERANCE;
+
+
+	/** Constructor */
+	public MinimizingObjective( final double tolerance ) {
+		super( "Minimizing Objective" );
+		TOLERANCE = tolerance;
+	}
+
+
+	/** compute the statisfaction for the specified score */
+	public double satisfaction( final double score ) {
+		final double satisfaction = SatisfactionCurve.inverseSatisfaction( score, TOLERANCE );
+		//System.out.println( "Score: " + score + ", Satisfaction: " + satisfaction );
+		return satisfaction;
+	}
+}
+
+
+/** evaluator for scoring trials */
+class ScoringEvaluator implements Evaluator {
+	/** objective */
+	final private Objective OBJECTIVE;
+
+	/** objective */
+	final private List<Variable> VARIABLES;
+
+	/** scorer */
+	final private Scorer SCORER;
+
+
+	/** Constructor */
+	public ScoringEvaluator( final Scorer scorer, final Objective objective, final List<Variable> variables ) {
+		SCORER = scorer;
+		OBJECTIVE = objective;
+		VARIABLES = variables;
+	}
+
+
+	/** evaluate the trial */
+	public void evaluate( final Trial trial ) {
+		final double score = SCORER.score( trial, VARIABLES );
+		trial.setScore( OBJECTIVE, score );
+	}
 }
 

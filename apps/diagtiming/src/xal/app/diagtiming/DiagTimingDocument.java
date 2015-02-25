@@ -46,7 +46,7 @@ public class DiagTimingDocument extends AcceleratorDocument {
 			return;
 	}
 
-	protected void makeMainWindow() {
+	public void makeMainWindow() {
 		mainWindow = new DiagTimingWindow(this);
 		// restore from saved document
 		if (getSource() != null) {

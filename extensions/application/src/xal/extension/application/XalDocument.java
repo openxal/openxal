@@ -32,10 +32,10 @@ abstract public class XalDocument extends XalAbstractDocument {
 	final static public int NO_OPTION = XalAbstractDocument.NO_OPTION;
 	
     // basic document instance variables
-    protected XalWindow mainWindow;     // The main window for the document
+    public XalWindow mainWindow;     // The main window for the document
     
-    // messaging
-    protected XalDocumentListener documentListenerProxy;    // The proxy for document events
+    /** proxy for dispatching document events */
+    private XalDocumentListener DOCUMENT_LISTENER_PROXY;    //
     
     
     /** Constructor for new documents */
@@ -45,21 +45,21 @@ abstract public class XalDocument extends XalAbstractDocument {
     
     
     /** Register this document as a source of DocumentListener events. */
-    protected void registerEvents() {
+    public void registerEvents() {
 		super.registerEvents();
-        documentListenerProxy = _messageCenter.registerSource(this, XalDocumentListener.class);
+        DOCUMENT_LISTENER_PROXY = MESSAGE_CENTER.registerSource( this, XalDocumentListener.class );
     }
     
     
     /** Add the listener for events from this document. */
     public void addXalDocumentListener( final XalDocumentListener listener ) {
-        _messageCenter.registerTarget( listener, this, XalDocumentListener.class );
+        MESSAGE_CENTER.registerTarget( listener, this, XalDocumentListener.class );
     }
     
     
     /** Remove the listener from event from this document. */
     public void removeXalDocumentListener( final XalDocumentListener listener ) {
-        _messageCenter.removeTarget( listener, this, XalDocumentListener.class );
+        MESSAGE_CENTER.removeTarget( listener, this, XalDocumentListener.class );
     }
     
     
@@ -67,7 +67,7 @@ abstract public class XalDocument extends XalAbstractDocument {
 	void setupMainWindow() {
         makeMainWindow();
         addXalDocumentListener( mainWindow );
-        mainWindow.titleChanged(this, title);
+        mainWindow.titleChanged( this, getTitle() );
     }
  	
 	
@@ -83,7 +83,7 @@ abstract public class XalDocument extends XalAbstractDocument {
      */
     public void setTitle( final String newTitle ) {
 		super.setTitle( newTitle );
-        documentListenerProxy.titleChanged(this, title);
+        if ( DOCUMENT_LISTENER_PROXY != null )  DOCUMENT_LISTENER_PROXY.titleChanged( this, newTitle );
     }	
     
     
@@ -92,9 +92,9 @@ abstract public class XalDocument extends XalAbstractDocument {
      * @param changeStatus Status to set whether this document has changes that need saving.
      */
     public void setHasChanges( final boolean changeStatus ) {
-        if ( changeStatus != hasChanges ) {
-            hasChanges = changeStatus;
-            documentListenerProxy.hasChangesChanged(this, hasChanges);
+        if ( changeStatus != hasChanges() ) {
+			super.setHasChanges( changeStatus );
+            if ( DOCUMENT_LISTENER_PROXY != null )  DOCUMENT_LISTENER_PROXY.hasChangesChanged( this, changeStatus );
         }
     }
 
@@ -112,13 +112,14 @@ abstract public class XalDocument extends XalAbstractDocument {
      * user is given an opportunity to not close the document so they can save 
      * the changes.
      */
-    protected boolean closeDocument() {
+    public boolean closeDocument() {
 		if ( warnUserOfUnsavedChangesWhenClosing() && hasChanges() ) {
 			if ( !mainWindow.userPermitsCloseWithUnsavedChanges() )  return false;
 		}
-        documentListenerProxy.documentWillClose(this);
+		
+        DOCUMENT_LISTENER_PROXY.documentWillClose(this);
         willClose();
-        documentListenerProxy.documentHasClosed(this);
+        DOCUMENT_LISTENER_PROXY.documentHasClosed(this);
 		
 		freeResources();
 		
@@ -129,10 +130,10 @@ abstract public class XalDocument extends XalAbstractDocument {
 	/**
 	 * Free document resources.
 	 */
-	final protected void freeResources() {
+	final public void freeResources() {
 		super.freeResources();
 		
-		documentListenerProxy = null;
+		DOCUMENT_LISTENER_PROXY = null;
 		mainWindow = null;		
 	}
     

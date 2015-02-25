@@ -514,6 +514,12 @@ final class SignalEntry {
 	 * @return true if the two signal entries have the same signal
 	 */
 	final public boolean equals( final Object anObject ) {
-		return _signal.equals( ((SignalEntry)anObject).getSignal());
+		return anObject instanceof SignalEntry && _signal.equals( ((SignalEntry)anObject).getSignal());
+	}
+
+
+	/** Override hashCode() as required for consistency with equals() */
+	final public int hashCode() {
+		return _signal.hashCode();
 	}
 }

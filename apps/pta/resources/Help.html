@@ -1,0 +1,126 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+     
+  <style type="text/css">
+P.warning {font-size: large; font-weight: bold;}        
+</style>
+  <title>PTA Application Help</title>
+</head>
+  <body>
+    
+<center><u>PTA Application Help</u></center>
+    
+<p align="Center"> <a href="#intro_ref" target="_self">Introduction</a>
+  -  <a href="#release_notes" target="_self">Release Notes</a>
+  -  <a href="#features" target="_self">Features</a>
+  -  <a href="#startup_ref" target="_self">Startup</a>
+  -  <a href="#acknowledgements_ref" target="_self">Acknowledgements</a>
+  </p>
+    
+<p class="warning"></p>
+    
+<hr><br>
+<p>
+  <a name="intro_ref"><b>Introduction:</b></a>
+   This application is operation of the SNS profile measurement devices, including wire scanners
+   and wire harps.  The application performs both data acquisition and supervisory control, as well
+   as device and machine configuration management.
+  </a>
+</p>
+<p>
+<h4>Concerning PTA Data Files</h4>
+During the porting of PTA to Open XAL the version mechanism for PTA formatted data files
+was corrupted.  Unfortunately PTA was deployed for several months while this condition
+persisted and the current version of PTA is unable to read these files.  However, the
+data within these files are recoverable.  If you have such a file where you wish to retrieve
+the data please see me.
+</p>
+<p>
+The data files saved while PTA was on the XAL platform are correctly versioned and can be
+read by PTA on the Open XAL platform.  If you are experiencing any difficulties there please
+inform me.
+<br>
+Christopher Allen 
+</p>
+<br/>
+<br/>
+
+<h4> Under Construction </h4>
+    
+<tt> &nbsp; &nbsp; Ignore the following... </tt> 
+
+
+<h2>Matching Cheat Sheet</h2>
+1) Make sure the lattice is set to design quad values, or whatever lattice state you desire
+<br>
+2) Scan wires in the wirestation with the wirescanner application and export the file.
+<br>
+3) Using the first and second tabs, load the file and analyze and store the wire profile rms.
+<br>
+4) In the Twiss Fitting tab, load your stored results.  Switch the toggle button to "Use User RMS". Choose the section of the machine where
+you would like to do your initial Twiss fit.  This point should be upstream of whichever quadrupoles
+you are going to use to do the matching.
+<br>
+5) Solve the Twiss fit at the desired location for matching so that you can see what you have right now.
+(out of curiousity).  Store if you want to keep it.
+<br>
+6) Now choose a point upstream before the quads you will want to vary, and match the wires again beginning at this point.  If this point is in the linac, you should run a Single Pass first, then check the Probe using Edit Probe button to confirm the energy is correct.  If the initial point is at the end of the SCL for instance, you will need to overwrite the default energy probe value.
+<br>
+7) Now run the solver.  Continue to run until the lines go through the points and no further improvement is seen.  Store the solution.
+<br>
+8) Now change to the Twiss Control tab and load the stored data.  Select the dataset which has the correct initial condition (the point upstream if the quadrupoles).
+<br>
+9) Select the sequence which contains the point you want to match add.
+<br>
+10) Select and add the correct point for matching from the list which appears.  Again check the energy in the Edit Probe button.  If it is incorrect, fix it, then clear the matching point you just added using the "Clear Control Table Button" and re-add it. 
+<br>
+11) Now select the sequence(s) which contain the magnets you want to vary.
+<br>
+12) Select the magnets to vary.  Change the initial condition or % of variation if desired. 
+<br>
+13) Run the solver first with "Start From PV Logger State".  Iterate with the solver, and switch to Start From Last Solution".
+<br>
+14) Once you find a solution, load in the quad values and do another scan.
+<br>
+15) Back on the Load tab, clear the old data if desired and load the new file.
+<br>
+16) Analyze profiles, and refit the Twiss data at the point of interest to see what changes have occured.
+<br>
+<br>
+From here, there are two different approaches:
+<br>
+<br>
+Method I:
+<br>
+17) Fit the data at the upstream point again and store the fit.
+<br>
+18) Go back to the control panel and select the most recent lattice state and fit.
+<br>
+19) Clear the control table and reload your desired match point.  
+<br>
+20) Again request the matching solution and solve.
+<br>
+21) Load up quad values and take another scan.
+<br>
+<br>
+Method II:
+<br>
+17) Go back to the control panel and change the state to the new file.  Overwrite the initial Twiss with the original ones.
+<br>
+18) Now enter your new request in the control panel, this time asking for delta amounts instead of absolute values.  For instance, if the original was betax = 6.0, and the desired value was betax=10.0, but the new value fit on the previous page gave only betax=8.0, then you would ask the model for and absolute value of 12.0 in the control request, i.e., a delta of +2 more than the previous request.
+<br>
+19) Perform the control fit, and load up the new quad values
+<\br>
+
+<p><br>
+
+<p> </p>
+
+
+
+
+<p>  </p>
+    
+</body>
+</html>

@@ -186,9 +186,6 @@ class PVLoggerWindow extends AcceleratorWindow implements SwingConstants, Scroll
 				DispatchQueue.getMainQueue().dispatchAsync( new Runnable() {
 					public void run() {
 						updateLoggerTable();
-						for ( final RemoteLoggerRecord record : records ) {
-							record.setUpdateListener( PVLoggerWindow.this );
-						}
 					}
 				});
 			}
@@ -198,7 +195,12 @@ class PVLoggerWindow extends AcceleratorWindow implements SwingConstants, Scroll
 
 	/** update the logger table */
 	private void updateLoggerTable() {
-		LOGGER_TABLE_MODEL.setRecords( _mainModel.getRemoteLoggers() );
+		final java.util.List<RemoteLoggerRecord> records = _mainModel.getRemoteLoggers();
+		for ( final RemoteLoggerRecord record : records ) {
+			record.setUpdateListener( PVLoggerWindow.this );
+		}
+
+		LOGGER_TABLE_MODEL.setRecords( records );
 	}
 	
 	
@@ -234,7 +236,7 @@ class PVLoggerWindow extends AcceleratorWindow implements SwingConstants, Scroll
 			 * @param model the document model managing selections
 			 * @param channelRefs the latest channel refs containing the channel information
 			 */
-			public void channelsChanged(DocumentModel model, java.util.List channelRefs) {
+			public void channelsChanged(DocumentModel model, java.util.List<ChannelRef> channelRefs) {
 				updateChannelsInspector();
 			}
 			
@@ -312,10 +314,14 @@ class PVLoggerWindow extends AcceleratorWindow implements SwingConstants, Scroll
 	
 	/** Update information about the remote logger including logging period and logger state. */
 	protected void updateLoggerInfo() {
-		LoggerSessionHandler session = _model.getSelectedSessionHandler();
+		final LoggerSessionHandler session = _model.getSelectedSessionHandler();
 		
-		String status = (session != null) ? String.valueOf( session.isLogging() ) : "false";
-		_loggingStatusField.setText(status);
+		final String status = session != null ? String.valueOf( session.isLogging() ) : "false";
+		_loggingStatusField.setText( status );
+
+
+		final String periodText = session != null ? String.valueOf( session.getLoggingPeriod() ) : "0";
+		_loggingPeriodField.setText( periodText );
 	}
 	
 	
@@ -662,7 +668,7 @@ class PVLoggerWindow extends AcceleratorWindow implements SwingConstants, Scroll
      * Register actions specific to this window instance. 
      * @param commander The commander with which to register the custom commands.
      */
-    protected void customizeCommands(Commander commander) {		
+    public void customizeCommands(Commander commander) {
 		// setup the start logging selection action
         resumeLoggingSelectionAction = new AbstractAction("resume-logging-selections") {
 			/** required UID for serialization */

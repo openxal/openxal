@@ -129,7 +129,7 @@ public class InjDumpWizardWindow extends XalWindow {
    *  Dispose of InjDumpWizardWindow resources. This method overrides an empty
    *  superclass method.
    */
-  protected void freeCustomResources() {
+  public void freeCustomResources() {
     mainPanel = null;
   }
 }

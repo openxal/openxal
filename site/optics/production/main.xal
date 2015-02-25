@@ -9,7 +9,7 @@
 	<timing_source name="timing" url="timing_pvs.tim"/>
 	<tablegroup_source name="modelparams" url="model.params"/>	
 	<optics_extra name="alignment" url="alignment.xdxf" />
-	<optics_extra name="Corrector Calibration" url="ring-correctors.xdxf"/>
+	<optics_extra name="Corrector Calibration" url="corrector-polarities.xdxf"/>
 	<optics_extra name="Orbit Response Matrix" url="orm-quad.xdxf"/>
 	<optics_extra name="General Device Modifications" url="device-mods.xdxf" />
 	<optics_extra name="SCL 930 MeV" url="SCL.xdxf"/>

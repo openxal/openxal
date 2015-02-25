@@ -68,8 +68,8 @@ abstract public class Correlator<SourceType, RecordType, SourceAgentType extends
     
     
     /**
-     * Register the listener as a receiver of Correlation notices from this 
-     * correlator.
+     * Register the listener as a receiver of Correlation notices from this correlator.
+	 * @param listener to register for receiving events
      */
     public void addListener( final CorrelationNotice<RecordType> listener ) {
         poster.addCorrelationNoticeListener( listener );
@@ -77,8 +77,8 @@ abstract public class Correlator<SourceType, RecordType, SourceAgentType extends
     
     
     /**
-     * Unregister the listener as a receiver of Correlation notices from this 
-     * correlator.
+     * Unregister the listener as a receiver of Correlation notices from this correlator.
+	 * @param listener to remove from receiving events
      */
     public void removeListener( final CorrelationNotice<RecordType> listener ) {
         poster.removeCorrelationNoticeListener( listener );
@@ -163,13 +163,19 @@ abstract public class Correlator<SourceType, RecordType, SourceAgentType extends
 	}
     
     
-    /** maximum time span allowed for events to be considered correlated */
+    /** 
+	 * Maximum time span allowed for events to be considered correlated
+	 * @return the bin timespan
+	 */
     public double binTimespan() {
         return _binTimespan;
     }
     
     
-    /** Set the maximum time span allowed for events to be considered correlated */
+    /** 
+	 * Set the maximum time span allowed for events to be considered correlated 
+	 * @param timespan of the bins
+	 */
     public void setBinTimespan(double timespan) {
         _binTimespan = timespan;
         stateProxy.binTimespanChanged(this, timespan);
@@ -186,7 +192,10 @@ abstract public class Correlator<SourceType, RecordType, SourceAgentType extends
     }
     
     
-    /** Get all of the channel agents managed by this correlator */
+    /** 
+	 * Get all of the channel agents managed by this correlator 
+	 * @return collection of source agents
+	 */
     protected Collection<SourceAgentType> getSourceAgents() {
         return sourceAgentTable.values();
     }
@@ -198,19 +207,29 @@ abstract public class Correlator<SourceType, RecordType, SourceAgentType extends
     }
     
     
-    /** Get all the names of all the sources managed by this correlator */
+    /** 
+	 * Get all the names of all the sources managed by this correlator 
+	 * @return names of the sources
+	 */
     synchronized public Collection<String> getNamesOfSources() {
         return sourceAgentTable.keySet();
     }
     
     
-    /** Number of channels being managed */
+    /**
+	 * Number of channels being managed 
+	 * @return number of sources
+	 */
     public int numSources() {
         return sourceAgentTable.size();
     }
     
     
-    /** See if we already manage this channel */
+    /** 
+	 * See if we already manage this channel 
+	 * @param sourceName name of source to test
+	 * @return true if the named source is in this correlator and false if not
+	 */
     public boolean hasSource( final String sourceName ) {
         return sourceAgentTable.containsKey( sourceName );
     }
@@ -219,6 +238,8 @@ abstract public class Correlator<SourceType, RecordType, SourceAgentType extends
     /** 
      * Add a source to monitor.  The name provided with each source must be unique to that source.
      * Subclasses need to wrap this method to enforce the source type.
+	 * @param source to add
+	 * @param sourceName name of source to add
      */
     protected void addSource( final SourceType source, final String sourceName ) {
         addSource( source, sourceName, null );
@@ -226,12 +247,12 @@ abstract public class Correlator<SourceType, RecordType, SourceAgentType extends
     
     
     /** 
-     * Add a source to monitor.  If we already monitor a source as determined
-     * by the source name, then do nothing.
-     * The record filter is used to determine whether or not to accept a  
-     * reading of the specified source when the event is handled.  You can 
-     * create your own custom filter or use a pre-built one.
-     * Subclasses need to wrap this method to enforce the source type.
+     * Add a source to monitor.  If we already monitor a source as determined by the source name, then do nothing.
+     * The record filter is used to determine whether or not to accept a reading of the specified source when the event is handled.  You can
+     * create your own custom filter or use a pre-built one. Subclasses need to wrap this method to enforce the source type.
+	 * @param source to add
+	 * @param sourceName name of source to add
+	 * @param recordFilter filter for the source
      */
     synchronized protected void addSource( final SourceType source, final String sourceName, final RecordFilter<RecordType> recordFilter ) {
         if ( hasSource(sourceName) )  return;
@@ -252,13 +273,16 @@ abstract public class Correlator<SourceType, RecordType, SourceAgentType extends
     abstract protected SourceAgentType newSourceAgent( final SourceType source, final String sourceName, final RecordFilter<RecordType> recordFilter );
     
 
-    /** Stop managing the specified source. */
-    synchronized public void removeSource(String sourceName) {
-        SourceAgentType sourceAgent = getSourceAgent(sourceName);
+    /** 
+	 * Stop managing the specified source. 
+	 * @param sourceName name of source to remove
+	 */
+    synchronized public void removeSource( final String sourceName ) {
+        final SourceAgentType sourceAgent = getSourceAgent(sourceName);
         sourceAgentTable.remove(sourceName);
-        int numSources = numSources();
-        stateProxy.sourceRemoved(this, sourceName, numSources);
-        correlationTester.setFullCount(numSources);
+        final int numSources = numSources();
+        stateProxy.sourceRemoved( this, sourceName, numSources );
+        correlationTester.setFullCount( numSources );
         sourceAgent.shutdown();
     }
     
@@ -284,7 +308,7 @@ abstract public class Correlator<SourceType, RecordType, SourceAgentType extends
 		
 		final TimedBroadcaster<RecordType> timedBroadcaster = (broadcaster instanceof TimedBroadcaster) ? (TimedBroadcaster<RecordType>)broadcaster : new TimedBroadcaster<RecordType>( localCenter, timeout );
 		final CorrelationNotice<RecordType> correlationListener = new CorrelationNotice<RecordType>() {
-			public void newCorrelation( final Object sender, final Correlation correlation ) {
+			public void newCorrelation( final Object sender, final Correlation<RecordType> correlation ) {
 				stopMonitoring();
 				timedBroadcaster.removeCorrelationNoticeListener( this );
 			}
@@ -368,12 +392,11 @@ abstract public class Correlator<SourceType, RecordType, SourceAgentType extends
     
     
     /** 
-     * <code>fetchCorrelationWithTimeout()</code> is a convenience method that 
-     * allows the user a simple way to fetch a correlation without handling 
-     * events and implementing a listener.  The method spawns a fetch and 
-     * blocks until a correlation is retrieved or the timeout has expired.
-     * The resulting correlation is returned.  If no correlation was found  
-     * within the timeout, null is returned.
+     * <code>fetchCorrelationWithTimeout()</code> is a convenience method that allows the user a simple way to fetch a correlation without handling
+     * events and implementing a listener.  The method spawns a fetch and blocks until a correlation is retrieved or the timeout has expired.
+     * The resulting correlation is returned.  If no correlation was found  within the timeout, null is returned.
+	 * @param aTimeout timeout for fetching a correlation
+	 * @return fetched correlation or null if none within the timeout
      */
     public Correlation<RecordType> fetchCorrelationWithTimeout( final double aTimeout ) {
         return new WaitingListener().listenWithTimeout( aTimeout );

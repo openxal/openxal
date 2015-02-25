@@ -13,8 +13,11 @@ import javax.swing.event.*;
 import javax.swing.border.*;
 import javax.swing.JOptionPane;
 import javax.swing.table.*;
+
 import java.awt.*;
+
 import javax.swing.*;
+
 import java.awt.event.*;
 import java.util.*;
 import java.util.Timer.*;
@@ -29,11 +32,15 @@ import xal.tools.apputils.EdgeLayout;
 import xal.tools.apputils.files.RecentFileTracker;
 import xal.extension.widgets.plot.*;
 import xal.tools.data.*;
+
 import java.text.NumberFormat;
+
 import xal.tools.messaging.*;
 import xal.ca.*;
+
 import java.text.NumberFormat;
 import java.text.DecimalFormat;
+
 import xal.tools.apputils.NonConsecutiveSeqSelector;
 import xal.extension.widgets.apputils.SimpleProbeEditor;
 import xal.extension.widgets.apputils.SimpleChartPopupMenu;
@@ -65,6 +72,7 @@ import xal.extension.application.*;
 import xal.sim.scenario.AlgorithmFactory;
 import xal.sim.scenario.ProbeFactory;
 import xal.tools.beam.CovarianceMatrix;
+//TODO: CKA - OVER HALF THE IMPORTS ARE NEVER USED
 
 public class ModelFace extends JPanel{
     
@@ -82,8 +90,8 @@ public class ModelFace extends JPanel{
 	private EnvelopeProbe initprobe;
     private Scenario scenario;
 	private Scenario solvermodel;
-    private EnvelopeTrajectory traj;
-    private ArrayList<AcceleratorSeq> sectionnames = new ArrayList<AcceleratorSeq>();
+    private Trajectory<EnvelopeProbeState> traj;
+    private ArrayList<AcceleratorSeq> sectionnames = new ArrayList<AcceleratorSeq>();   // TODO: CKA - NEVER USED
     private ArrayList<AcceleratorSeq> seqlist = new ArrayList<AcceleratorSeq>();
     private ArrayList<AcceleratorNode> nodes = new ArrayList<AcceleratorNode>();
     private AcceleratorSeqCombo solveforseq;
@@ -97,7 +105,7 @@ public class ModelFace extends JPanel{
     private JButton solvebutton;
     private JButton loadbutton;
     private JButton probeeditbutton;
-    private JButton pvloggerbutton;
+    private JButton pvloggerbutton;     // TODO: CKA - NEVER USED
     private JButton store;
     private JButton average;
 	private JButton clearbutton;
@@ -119,7 +127,7 @@ public class ModelFace extends JPanel{
     private ArrayList<String> filesloaded;
     ArrayList<Object> seqlistnames = new ArrayList<Object>();
     
-    private String lastusedelement;
+    private String lastusedelement;     // TODO: CKA - NEVER USED
     private JLabel machinestatelabel;
     private JLabel usepvlabel;
     private JLabel errorlabel;
@@ -138,11 +146,11 @@ public class ModelFace extends JPanel{
     private boolean useHEBT = false;
     private boolean useRTBT = false;
     
-    private boolean plotable = false;
-    private boolean edmrms = true;
-    private boolean userrms = true;
+    private boolean plotable = false;       // TODO: CKA - NEVER USED
+    private boolean edmrms = true;          // TODO: CKA - NEVER USED
+    private boolean userrms = true;         // TODO: CKA - NEVER USED
     private boolean elementchanged = true;
-    private boolean probeedited = false;
+    private boolean probeedited = false;    // TODO: CKA - NEVER USED
     
     private JButton exportbutton;
     private JFileChooser fc;
@@ -216,8 +224,8 @@ public class ModelFace extends JPanel{
 		fitresultsdatatable = doc.resultsdatatable;
 		pvloggermap = doc.masterpvloggermap;
         
-		double alphax=currenttwiss[0]; double betax=currenttwiss[1];
-		double alphay=currenttwiss[3]; double betay=currenttwiss[4];
+		double alphax=currenttwiss[0]; double betax=currenttwiss[1];      // TODO: CKA - NEVER USED
+		double alphay=currenttwiss[3]; double betay=currenttwiss[4];      // TODO: CKA - NEVER USED
         
 		makeComponents(); //Creation of all GUI components
 		addComponents();  //Add all components to the layout and panels
@@ -348,18 +356,18 @@ public class ModelFace extends JPanel{
                 NonConsecutiveSeqSelector selector = new NonConsecutiveSeqSelector();
                 selector.selectSequence();
                 seqlistnames = selector.getSeqList();
-                Iterator itr = seqlistnames.iterator();
+                Iterator<Object> itr = seqlistnames.iterator();
                 seqlist.clear();
                 nodes.clear();
                 
                 while(itr.hasNext()){
-                    AcceleratorSeq sequence = accl.getSequence((String)itr.next());
+                    AcceleratorSeq sequence = accl.getSequence( itr.next().toString() );
                     seqlist.add(sequence);
                     nodes.addAll(sequence.getAllNodes(true));
                 }
                 solveforseq = new AcceleratorSeqCombo("choosen",seqlist);
                 ArrayList<AcceleratorSeq> sequences =(ArrayList<AcceleratorSeq>) accl.getSequences();
-                int p=sequences.indexOf(accl.getSequence((String)seqlistnames.iterator().next()));
+                int p=sequences.indexOf(accl.getSequence((String)seqlistnames.iterator().next()));  // TODO: CKA - NEVER USED
                 for(int i=0;i<nodes.size();i++)
                 {
                     elementList.addItem(nodes.get(i).getId());
@@ -529,7 +537,7 @@ public class ModelFace extends JPanel{
         
         probeeditbutton.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e) {
-                SimpleProbeEditor spe = new SimpleProbeEditor(doc.getAcceleratorWindow(), scenario.getProbe());
+                SimpleProbeEditor spe = new SimpleProbeEditor(doc.getAcceleratorWindow(), scenario.getProbe());  // TODO: CKA - NEVER USED
                 //		spe.createSimpleProbeEditor(scenario.getProbe());
                 System.out.println("In probe and beam current is " + initprobe.getBeamCurrent());
                 
@@ -665,11 +673,11 @@ public class ModelFace extends JPanel{
                     plds.closeConnection();
                 }catch(Exception ex){}
                 
-                EnvelopeTrajectory traj = (EnvelopeTrajectory) tempprobe.getTrajectory();
-                Iterator iterState= traj.stateIterator();
-                EnvelopeProbeState state = (EnvelopeProbeState)iterState.next();
+                Trajectory<EnvelopeProbeState> traj = tempprobe.getTrajectory();
+                Iterator<EnvelopeProbeState> iterState= traj.stateIterator();
+                EnvelopeProbeState state = iterState.next();
                 CovarianceMatrix covarianceMatrix = state.getCovarianceMatrix();
-                Twiss[] twiss = covarianceMatrix.computeTwiss();
+                Twiss[] twiss = covarianceMatrix.computeTwiss();    // TODO: CKA - NEVER USED
                 
                 limitdialog.add(set);
                 limitdialog.pack();
@@ -970,8 +978,8 @@ public class ModelFace extends JPanel{
 			e.printStackTrace();
 		}
 		
-		EnvelopeTrajectory traj = (EnvelopeTrajectory)tempprobe.getTrajectory();
-		EnvelopeProbeState newstate = (EnvelopeProbeState)traj.stateForElement(init);
+		Trajectory<EnvelopeProbeState> traj = tempprobe.getTrajectory();
+		EnvelopeProbeState newstate = traj.stateForElement(init);
 		initprobe.applyState(newstate);
 		modelinitialized = true;
         
@@ -1177,8 +1185,8 @@ public class ModelFace extends JPanel{
 			e.printStackTrace();
 		}
 		
-		EnvelopeTrajectory traj = (EnvelopeTrajectory) tempprobe.getTrajectory();
-        Iterator<ProbeState> iterState= traj.stateIterator();
+		Trajectory<EnvelopeProbeState> traj = tempprobe.getTrajectory();
+        Iterator<?> iterState= traj.stateIterator();
         EnvelopeProbeState state= (EnvelopeProbeState)iterState.next();
         
         CovarianceMatrix covarianceMatrix = state.getCovarianceMatrix();
@@ -1237,14 +1245,14 @@ public class ModelFace extends JPanel{
 			exception.printStackTrace();
 		}
         
-		EnvelopeTrajectory traj= (EnvelopeTrajectory)solverprobe.getTrajectory();
+		Trajectory<EnvelopeProbeState> traj= solverprobe.getTrajectory();
 		double error = 0.0;
 		int size = Wirenamelist.size();
 		double rx=0;
 		double ry=0;
 		
 		for(int i =0; i<size; i++){
-			EnvelopeProbeState state = (EnvelopeProbeState)traj.statesForElement(Wirenamelist.get(i))[0];
+			EnvelopeProbeState state = traj.statesForElement(Wirenamelist.get(i)).get(0);
             
             CovarianceMatrix covarianceMatrix = state.getCovarianceMatrix();
             Twiss[] twiss = covarianceMatrix.computeTwiss();
@@ -1274,7 +1282,7 @@ public class ModelFace extends JPanel{
 			exception.printStackTrace();
 		}
 		
-		EnvelopeTrajectory traj= (EnvelopeTrajectory)solverprobe.getTrajectory();
+		Trajectory<EnvelopeProbeState> traj= solverprobe.getTrajectory();
 		double xerror = 0.0;
 		double yerror = 0.0;
 		int size = Wirenamelist.size();
@@ -1282,7 +1290,7 @@ public class ModelFace extends JPanel{
 		double ry=0;
 		
 		for(int i =0; i<size; i++){
-			EnvelopeProbeState state = (EnvelopeProbeState)traj.statesForElement(Wirenamelist.get(i))[0];
+			EnvelopeProbeState state = traj.statesForElement(Wirenamelist.get(i)).get(0);
             
             CovarianceMatrix covarianceMatrix = state.getCovarianceMatrix();
             Twiss[] twiss = covarianceMatrix.computeTwiss();
@@ -1320,12 +1328,12 @@ public class ModelFace extends JPanel{
 		ArrayList<Double> hdata = new ArrayList<Double>();
 		ArrayList<Double> vdata = new ArrayList<Double>();
         
-		EnvelopeTrajectory traj= (EnvelopeTrajectory)solverprobe.getTrajectory();
-		Iterator<ProbeState> iterState= traj.stateIterator();
+		Trajectory<EnvelopeProbeState> traj= solverprobe.getTrajectory();
+		Iterator<EnvelopeProbeState> iterState= traj.stateIterator();
         
         
 		while(iterState.hasNext()){
-			EnvelopeProbeState state= (EnvelopeProbeState)iterState.next();
+			EnvelopeProbeState state= iterState.next();
 			sdata.add(state.getPosition());
             
             CovarianceMatrix covarianceMatrix = state.getCovarianceMatrix();
@@ -1371,13 +1379,13 @@ public class ModelFace extends JPanel{
 		double[] srdata = new double[datasize];
 		double[] xrdata = new double[datasize];
 		double[] yrdata = new double[datasize];
-		traj= (EnvelopeTrajectory)solverprobe.getTrajectory();
+		traj= solverprobe.getTrajectory();
 		EnvelopeProbeState newstate;
-		Twiss[] newtwiss;
-		double rx, ry;
+		Twiss[] newtwiss;         // TODO: CKA - NEVER USED
+		double rx, ry;            // TODO: CKA - NEVER USED
 		
 		for(int i =0; i<datasize; i++){
-			newstate = (EnvelopeProbeState)traj.statesForElement(Wirenamelist.get(i))[0];
+			newstate = traj.statesForElement(Wirenamelist.get(i)).get(0);
 			srdata[i]=newstate.getPosition();
 			if(rmschooser.getSelectedIndex()==0){
 				xrdata[i]=(xEdmdatalist.get(i)).doubleValue();
@@ -1412,11 +1420,11 @@ public class ModelFace extends JPanel{
 		double[] srdata = new double[datasize];
 		double[] xrdata = new double[datasize];
 		double[] yrdata = new double[datasize];
-		traj= (EnvelopeTrajectory)solverprobe.getTrajectory();
+		traj= solverprobe.getTrajectory();
 		EnvelopeProbeState newstate;
         
 		for(int i =0; i<datasize; i++){
-			newstate = (EnvelopeProbeState)traj.statesForElement(Wirenamelist.get(i))[0];
+			newstate = traj.statesForElement(Wirenamelist.get(i)).get(0);
             srdata[i]=newstate.getPosition();
 			if(rmschooser.getSelectedIndex()==0){
                 xrdata[i]=(xEdmdatalist.get(i)).doubleValue();
@@ -1454,11 +1462,11 @@ public class ModelFace extends JPanel{
         catch(Exception exception){
 			exception.printStackTrace();
         }
-        EnvelopeTrajectory traj= (EnvelopeTrajectory)solverprobe.getTrajectory();
-        Iterator<ProbeState> iterState= traj.stateIterator();
+        Trajectory<EnvelopeProbeState> traj= solverprobe.getTrajectory();
+        Iterator<EnvelopeProbeState> iterState= traj.stateIterator();
         
         while(iterState.hasNext()){
-            EnvelopeProbeState state= (EnvelopeProbeState)iterState.next();
+            EnvelopeProbeState state= iterState.next();
             CovarianceMatrix covarianceMatrix = state.getCovarianceMatrix();
             Twiss[] twiss = covarianceMatrix.computeTwiss();
             
@@ -1484,8 +1492,8 @@ public class ModelFace extends JPanel{
     
     public void resetTwissTable(ArrayList<Variable> vars, Trial trial){
 		Iterator<Variable> itr = vars.iterator();
-		traj= (EnvelopeTrajectory)solverprobe.getTrajectory();
-		EnvelopeProbeState newstate = (EnvelopeProbeState)traj.statesForElement((String)elementList.getSelectedItem())[0];
+		traj= solverprobe.getTrajectory();
+		EnvelopeProbeState newstate = traj.statesForElement((String)elementList.getSelectedItem()).get(0);
 		
 		double T = newstate.getKineticEnergy();
 		double m = newstate.getSpeciesRestEnergy();
@@ -1735,7 +1743,14 @@ public class ModelFace extends JPanel{
             while(itr.hasNext()){
                 TargetObjective objective = (TargetObjective)itr.next();
                 error = calcError(_variables, trial);
-                trial.setScore(objective, error);
+				if ( Double.isNaN( error ) ) {
+//					System.out.println( "Veto trial with NaN error..." );
+					trial.vetoTrial( new TrialVeto( trial, null, "NaN error" ) );
+				}
+				else {
+//					System.out.println( "Setting score for error: " + error );
+					trial.setScore(objective, error);
+				}
             }
             
         }

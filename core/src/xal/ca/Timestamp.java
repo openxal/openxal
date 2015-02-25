@@ -123,7 +123,11 @@ public class Timestamp implements Comparable<Timestamp> {
 	}
 	
 	
-	/** Generate a string representation of this timestamp using the specified time format for the time format up to seconds. Subsecond time is appended using a decimal point. */
+	/** 
+	 * Generate a string representation of this timestamp using the specified time format for the time format up to seconds. Subsecond time is appended using a decimal point. 
+	 * @param timeFormat format for which to generate the string
+	 * @return formatted string representation
+	 */
 	public String toString( final DateFormat timeFormat ) {
 		final long nanoseconds = _timestamp.subtract( _timestamp.setScale( 0, BigDecimal.ROUND_DOWN ) ).movePointRight(9).longValue();
 		return timeFormat.format( getDate() ) + "." + NANOSECOND_FORMATTER.format( nanoseconds );
@@ -150,6 +154,12 @@ public class Timestamp implements Comparable<Timestamp> {
 		else {
 			return false;
 		}
+	}
+
+
+	/** Override the hashcode as required when overriding equals. Equality implies equality of the underlying _timestamp instance variables. */
+	public int hashCode() {
+		return _timestamp.hashCode();
 	}
 	
 	

@@ -14,11 +14,11 @@ import xal.ca.Channel;
 import xal.smf.impl.*;
 import xal.smf.*;
 import xal.tools.data.*;
-//import xal.tools.apputils.iconlib.IconLib;
-//import xal.extension.widgets.swing.patternfilter.*;
+import xal.extension.widgets.apputils.SimpleProbeEditor;
 import xal.extension.widgets.swing.KeyValueTableModel;
 import xal.extension.widgets.swing.KeyValueFilteredTableModel;
 import xal.tools.text.FormattedNumber;
+import xal.model.probe.Probe;
 
 import javax.swing.*;
 import javax.swing.border.*;
@@ -175,6 +175,13 @@ public class FlattenController implements FlattenListener, OrbitModelListener {
 				loadSimulator( selectedIndex );
 			}
 		});
+
+		final JButton probeEditButton = (JButton)windowReference.getView( "ProbeEditButton" );
+		probeEditButton.addActionListener( new ActionListener() {
+			public void actionPerformed( final ActionEvent event ) {
+				editBaseProbe();
+			}
+		});
 		
 		final JButton resetSimulatorButton = (JButton)windowReference.getView( "ResetSimulatorButton" );
 		resetSimulatorButton.addActionListener( new ActionListener() {
@@ -200,7 +207,28 @@ public class FlattenController implements FlattenListener, OrbitModelListener {
 			}
 		});
 	}
-	
+
+
+	/** Edit the base probe */
+	private void editBaseProbe() {
+		try {
+			final Probe<?> probe = ORBIT_MODEL.getBaseProbe();
+			if ( probe != null ) {
+				new SimpleProbeEditor( (JFrame)WINDOW_REFERENCE.getWindow(), probe );
+				ORBIT_MODEL.clearFlattenSimulator();		// mark it to regenerate maps as necessary
+			} else {
+				final String title = "Error Editing Probe";
+				final String message = "There is no probe to edit. Please verify that you have selected an accelerator sequence.";
+				JOptionPane.showMessageDialog( (JFrame)WINDOW_REFERENCE.getWindow(), message, title, JOptionPane.WARNING_MESSAGE );
+			}
+		}
+		catch( Exception exception ) {
+			final String title = "Error Editing Probe";
+			final String message = "Exception while attempting to edit the probe.";
+			JOptionPane.showMessageDialog( (JFrame)WINDOW_REFERENCE.getWindow(), message, title, JOptionPane.WARNING_MESSAGE );
+		}
+	}
+
 
 	/** configure the empirical simulator */
 	private void configureEmpiricalSimulator( final WindowReference windowReference, final JButton configureSimulatorButton ) {
@@ -336,7 +364,7 @@ public class FlattenController implements FlattenListener, OrbitModelListener {
 		CORRECTOR_TABLE_MODEL.setColumnClass( "upperFieldLimit", Double.class );
 		
 		CORRECTOR_TABLE_MODEL.addKeyValueRecordListener( new KeyValueRecordListener<KeyValueTableModel<CorrectorSupply>,CorrectorSupply>() {
-			public void recordModified( final KeyValueTableModel tableModel, final CorrectorSupply supply, final String keyPath, final Object value ) {
+			public void recordModified( final KeyValueTableModel<CorrectorSupply> tableModel, final CorrectorSupply supply, final String keyPath, final Object value ) {
                 System.out.println( "Corrector modified..." );
                 
 				final MachineSimulator simulator = FLATTENER.getSimulator();
@@ -419,7 +447,7 @@ public class FlattenController implements FlattenListener, OrbitModelListener {
 		BPM_TABLE_MODEL.setColumnClass( "latestRecord.formattedYAvg", Number.class );
 		
 		BPM_TABLE_MODEL.addKeyValueRecordListener( new KeyValueRecordListener<KeyValueTableModel<BpmAgent>,BpmAgent>() {
-			public void recordModified( final KeyValueTableModel tableModel, final BpmAgent bpmAgent, final String keyPath, final Object value ) {
+			public void recordModified( final KeyValueTableModel<BpmAgent> tableModel, final BpmAgent bpmAgent, final String keyPath, final Object value ) {
 				final MachineSimulator simulator = FLATTENER.getSimulator();
 				if ( simulator != null )  simulator.bpmFlattenEnableChanged( bpmAgent );
                 
@@ -653,7 +681,7 @@ public class FlattenController implements FlattenListener, OrbitModelListener {
 			}
 		});
 	}
-	
+
 	
 	/**
 	 * Flatten the selected orbit.

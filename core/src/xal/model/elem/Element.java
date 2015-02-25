@@ -55,8 +55,12 @@ public abstract class Element implements IElement {
     /** the element type identifier */
     private String      m_strType;
     
-    /** element instance identifier of element */
+    /** modeling element string identifier (not necessarily unique) */
     private String      m_strId;
+    
+    /** Identifier string of the model hardware node */
+    private String      strSmfId;
+    
     
 //  sako
     //position in s (m)
@@ -157,10 +161,11 @@ public abstract class Element implements IElement {
      *  @param  strId       string identifier of the element
      */
     public Element(String strType, String strId)    {
-        m_intUID  = s_cntInstances++;
-        m_strType = strType;
-        m_strId   = strId;
-        dblLatPos = 0.0;
+        this.m_intUID  = s_cntInstances++;
+        this.m_strType = strType;
+        this.m_strId   = strId;
+        this.strSmfId = "";
+        this.dblLatPos = 0.0;
     };
     
 	/**
@@ -170,8 +175,20 @@ public abstract class Element implements IElement {
 	 */
     @Override
 	public void initializeFrom(LatticeElement latticeElement) {
-    	setId(latticeElement.getNode().getId());
+        String  strElemId = latticeElement.getModelingElementId();
+        String  strSmfId  = latticeElement.getNode().getId();
+        
+    	setId( strElemId != null ? strElemId : strSmfId);
+    	setHardwareNodeId(strSmfId);
 		setPosition(latticeElement.getCenter());
+		
+//        // CKA: Added to include hardware ID attribute for the new element.
+//        //   This is bound to ScenarioGenerator#collectElements(). 
+//        //   If "ELEMENT_CENTER" is changed you must modify both!
+//        if ( this instanceof Marker && 
+//             this.getId().startsWith("ELEMENT_CENTER")
+//             )
+//            setHardwareNodeId(this.getId().replace("ELEMENT_SEQUENCE:", "") );
 	}
     
     /**
@@ -182,8 +199,22 @@ public abstract class Element implements IElement {
     public void setId(String strId) {
         m_strId = strId;
     };
-
     
+    /**
+     * Sets the string identifier of the hardware node which this
+     * element models.  Node that this element may only model part
+     * of the underlying hardware node or simply some aspect of it.
+     * Thus, this is not a unique value amount all modeling elements.
+     * 
+     * @param strSmfId  identifier for the modeled hardware node (SMF object)
+     *
+     * @author Christopher K. Allen
+     * @since  Sep 2, 2014
+     */
+    public void setHardwareNodeId(String strSmfId) {
+        this.strSmfId = strSmfId;
+    }
+
     /**
      * Set the center position of the element with the containing
      * lattice.
@@ -252,10 +283,10 @@ public abstract class Element implements IElement {
      *
      *  @return     the unique identifier of this object
      */
-    public int  getUID()  { return m_intUID; };
-    
-
-    
+    public int  getUID()  { 
+        return m_intUID; 
+    };
+        
     
     /*
      * Dynamic Parameters
@@ -340,6 +371,7 @@ public abstract class Element implements IElement {
      *
      *  @return     element type string
      */
+    @Override
     public String   getType()   { return m_strType; };
     
     /**
@@ -347,8 +379,25 @@ public abstract class Element implements IElement {
      *
      *  @return     string identifier
      */
+    @Override
     public String   getId()     { return m_strId; };
     
+    /**
+     * Returns the string identifier of the hardware node which this
+     * element models.  Note that the element may model only a 
+     * portion of the hardware object or simply an aspect of it.
+     * Thus, this is not a unique values among modeling elements.
+     * 
+     * @return      the identifier string of the hardware this element models
+     *
+     * @author Christopher K. Allen
+     * @since  Sep 2, 2014
+     */
+    @Override
+    public String   getHardwareNodeId() {
+        return this.strSmfId;
+    }
+
     /** 
      * <p>
      * Override of {@link xal.model.IComponent#propagate(xal.model.IProbe, double)}
@@ -372,6 +421,7 @@ public abstract class Element implements IElement {
      *  @see xal.model.IComponent#propagate(xal.model.IProbe, double)
      *  @see xal.model.alg.Tracker#propagate(IProbe, IElement)
      */
+    @Override
     public void propagate(IProbe probe, double pos) throws ModelException {
         
         IAlgorithm      alg;    // algorithm for the probe
@@ -398,6 +448,7 @@ public abstract class Element implements IElement {
      *  
      *  @see xal.model.IComponent#propagate(xal.model.IProbe, double)
      */
+    @Override
     public void propagate(IProbe probe) throws ModelException {
         
         IAlgorithm      alg;    // algorithm for the probe
@@ -442,6 +493,7 @@ public abstract class Element implements IElement {
      *  @see xal.model.IComponent#propagate(xal.model.IProbe, double)
      *  @see xal.model.alg.Tracker#propagate(IProbe, IElement)
      */
+    @Override
     public void backPropagate(IProbe probe, double pos) throws ModelException {
         
         IAlgorithm      alg;    // algorithm for the probe
@@ -478,6 +530,7 @@ public abstract class Element implements IElement {
      *  
      *  @see xal.model.IComponent#propagate(xal.model.IProbe, double)
      */
+    @Override
     public void backPropagate(IProbe probe) throws ModelException {
         
         IAlgorithm      alg;    // algorithm for the probe
@@ -494,6 +547,9 @@ public abstract class Element implements IElement {
     }
 
 
+    /*
+     * Methods for PMQs
+     */
     /**
      * Return the center position of the element along the design trajectory.
      * This is the position with the containing lattice.
@@ -544,6 +600,39 @@ public abstract class Element implements IElement {
     }
      
     
+    /*
+     * Object Overrides
+     */
+    
+    /**
+     * Writes a general parameters description of this modeling element to the
+     * returned string.
+     *
+     * @see java.lang.Object#toString()
+     *
+     * @since  Jan 5, 2015   by Christopher K. Allen
+     */
+    @Override 
+    public String   toString() {
+        StringBuffer    bufOutput = new StringBuffer(); 
+        
+        bufOutput.append("  Element - " + this.getId() );
+        bufOutput.append('\n');
+        
+        bufOutput.append("  element type       : " + this.getType() );
+        bufOutput.append('\n');
+        
+        bufOutput.append("  element UID        : " + this.getUID() );
+        bufOutput.append('\n');
+        
+        bufOutput.append("  element position   : " + this.getPosition() );
+        bufOutput.append('\n');
+
+        bufOutput.append("  element length     : " + this.getLength() );
+        bufOutput.append('\n');
+        
+        return bufOutput.toString();
+    }
     
     /*
      *  Testing and Debugging

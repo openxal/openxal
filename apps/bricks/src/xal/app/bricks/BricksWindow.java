@@ -133,7 +133,7 @@ class BricksWindow extends XalWindow implements SwingConstants, BrickListener {
 	 * Register actions for the custom menu items.
      * @param commander The commander with which to register the custom commands.
      */
-    protected void customizeCommands( final Commander commander ) {		
+    public void customizeCommands( final Commander commander ) {
         final Action moveDownViewAction = new AbstractAction( "move-down-view" ) {
             /** serialization identifier */
             private static final long serialVersionUID = 1L;
@@ -170,7 +170,7 @@ class BricksWindow extends XalWindow implements SwingConstants, BrickListener {
     
 	
 	/** Dispose of custom window resources. */
-	protected void freeCustomResources() {
+	public void freeCustomResources() {
 		ROOT_BRICK.disposeAllWindows();
 	}
 	
@@ -188,7 +188,7 @@ class BricksWindow extends XalWindow implements SwingConstants, BrickListener {
 	
 	
 	/** get the selected bean nodes */
-	private BeanNode[] getSelectedBeanNodes() {
+	private BeanNode<?>[] getSelectedBeanNodes() {
 		return TreeUtility.getSelectedBeanNodes( VIEW_TREE );
 	}
 	
@@ -202,7 +202,7 @@ class BricksWindow extends XalWindow implements SwingConstants, BrickListener {
 	
 	/** move the selected item down */
 	private void moveDownSelection( final JTree tree ) {
-		final BeanNode[] beanNodes = TreeUtility.getSelectedBeanNodes( tree );
+		final BeanNode<?>[] beanNodes = TreeUtility.getSelectedBeanNodes( tree );
 		if ( beanNodes != null && beanNodes.length > 0 ) {
 			if ( beanNodes[0] instanceof ViewNode ) {
 				final ViewNodeContainer container = ((ViewNode)beanNodes[0]).getViewNodeContainer();
@@ -230,7 +230,7 @@ class BricksWindow extends XalWindow implements SwingConstants, BrickListener {
 	
 	/** move the selected item up */
 	private void moveUpSelection( final JTree tree ) {
-		final BeanNode[] beanNodes = TreeUtility.getSelectedBeanNodes( tree );
+		final BeanNode<?>[] beanNodes = TreeUtility.getSelectedBeanNodes( tree );
 		if ( beanNodes != null && beanNodes.length > 0 ) {
 			if ( beanNodes[0] instanceof ViewNode ) {
 				final ViewNodeContainer container = ((ViewNode)beanNodes[0]).getViewNodeContainer();

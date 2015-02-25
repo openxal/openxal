@@ -6,7 +6,7 @@
 
 package xal.app.pasta;
 
-import java.awt.*;
+import java.awt.Toolkit;
 import java.util.*;
 import javax.swing.table.*;
 import java.text.*;
@@ -77,7 +77,7 @@ public class AnalysisStuff {
     protected double minBPMAmp = 5.;
     
     /** a multiplier used to get evaluation points more dense near the scan edges */
-    private double stepMultiplier = 1.1;
+    private double stepMultiplier = 1.1;        // CKA - NEVER USED
     private double rad2deg = 180./Math.PI;
     
     /** defines the phase quadrant to work in */
@@ -137,7 +137,7 @@ public class AnalysisStuff {
     
     // model stuff
     /** the probe to use for the model */
-    protected Probe theProbe;
+    protected Probe<?> theProbe;
     /** the default file for the probe file */
     protected File probeFile;
     /** the default filename for the probe file */
@@ -468,8 +468,11 @@ public class AnalysisStuff {
 	    theDoc.myWindow().plotModelData();
     }
     
-    /** this method returns the phase of a node in a trajectory, relative to the first point in the model run for this state. */
-    private double getPhase( ProbeState state, BPM bpm) {
+    /** this method returns the phase of a node in a trajectory, relative to the first point in the model run for this state. 
+     * 
+     * CKA - NEVER USED
+     */
+    private double getPhase( ProbeState<? extends ProbeState<?>> state, BPM bpm) {
 	    double freq = bpm.getBPMBucket().getFrequency() * 1.e6;
 	    
 	    // correction time for electrode being offset from the BPM center:
@@ -495,7 +498,7 @@ public class AnalysisStuff {
 	    return phase;
     }
     
-    private double getTime(ProbeState state, BPM bpm) {
+    private double getTime(ProbeState<?> state, BPM bpm) {
 	    
 	    // correction time for electrode being offset from the BPM center:
 	    double gamma = 1. + state.getKineticEnergy()/state.getSpeciesRestEnergy();
@@ -509,10 +512,10 @@ public class AnalysisStuff {
     private void cavOffCalc() {
         
 	    // some model stuff
-	    Trajectory traj;
+	    Trajectory<?> traj;
 	    //EnvelopeProbeState state0, state1, state2;
-	    ProbeState state0, state1, state2;
-	    ProbeState[] states;
+	    ProbeState<?> state0, state1, state2;
+	    java.util.List<? extends ProbeState<?>> states;
 	    double time0;
 	    
 	    theDoc.theCavity.updateDesignAmp(0.); // turn off the cavity
@@ -536,17 +539,17 @@ public class AnalysisStuff {
 		    RfGap gap0 = al.get(0);
 		    states = traj.statesForElement(gap0.getId());
 		    //state0 = (EnvelopeProbeState) states[0];
-		    state0 = states[0];
+		    state0 = states.get(0);
 		    //System.out.println("time0 = " + state0.getElementId() + " " + state0.getTime());
 		    time0 = state0.getTime();
 		    
 		    states = traj.statesForElement(theDoc.BPM1.getId());
 		    //state1 = (EnvelopeProbeState) states[0];
-		    state1 = states[0];
+		    state1 = states.get(0);
 		    
 		    states = traj.statesForElement(theDoc.BPM2.getId());
 		    //state2 = (EnvelopeProbeState) states[0];
-		    state2 = states[0];
+		    state2 = states.get(0);
             
 		    BPM1TimeCavOff = getTime(state1, theDoc.BPM1) - time0;
 		    BPM2TimeCavOff = getTime(state2, theDoc.BPM2) - time0;
@@ -590,6 +593,8 @@ public class AnalysisStuff {
 	    
 	    // calculate phasesCavModelScaledV and phaseDiffsBPMModelV here
 	    
+        // CKA - The values of betaZ1, betaZ2, sigmaz1, sigmaz2 are never used
+        
 	    boolean firstPass = true;
 	    double time0, time1, time2, deltaPhi, deltaPhi0, diff0;
 	    double cavPhase, cavPhaseScaled, betaZ1, betaZ2, phase1, phase2, diff;
@@ -601,10 +606,10 @@ public class AnalysisStuff {
 	    cavPhaseScaledMax = (phaseCavMeasured.get(phaseCavMeasured.size()-1)).doubleValue();
         
 	    // some model stuff
-	    Trajectory traj;
+	    Trajectory<? extends ProbeState<?>> traj;
 	    //EnvelopeProbeState state0, state1, state2;
-	    ProbeState state0, state1, state2;
-	    ProbeState[] states;
+	    ProbeState<? extends ProbeState<?>> state0, state1, state2;
+	    java.util.List<? extends ProbeState<?>> states;
 	    Twiss[] twiss1, twiss2;
 	    
 	    double ampModel = (ampValueV.get(i)).doubleValue();
@@ -645,19 +650,19 @@ public class AnalysisStuff {
 				    RfGap gap0 = al.get(0);
 				    states = traj.statesForElement(gap0.getId());
 				    //state0 = (EnvelopeProbeState) states[0];
-				    state0 = states[0];
+				    state0 = states.get(0);
 				    //System.out.println("time0 = " + state0.getElementId() + " " + state0.getTime());
 				    time0 = state0.getTime();
 				    
 				    states =traj.statesForElement(firstBPM.getId()); //traj.statesForElement(theDoc.BPM1.getId());
 				    //state1 = (EnvelopeProbeState) states[0];
-				    state1 = states[0];
+				    state1 = states.get(0);
 				    //twiss1 = state1.phaseCorrelation().twissParameters();
 				    //betaZ1 = twiss1[2].getBeta();
 				    
 				    states = traj.statesForElement(secondBPM.getId()); //traj.statesForElement(theDoc.BPM2.getId());
 				    //state2 = (EnvelopeProbeState) states[0];
-				    state2 = states[0];
+				    state2 = states.get(0);
 				    //twiss2 = state2.phaseCorrelation().twissParameters();
 				    //betaZ2 = twiss2[2].getBeta();
 				    WOut = state1.getKineticEnergy()/1.e6;
@@ -806,19 +811,19 @@ public class AnalysisStuff {
 	    variableList.clear();
 	    
 	    if( ((Boolean) variableActiveFlags.get(1)).booleanValue()) {
-		    Variable varWIn = new Variable(WIN_VAR_NAME, WIn, WIn*0.975, WIn*1.025);
+		    Variable varWIn = new Variable(WIN_VAR_NAME, WIn, WIn*0.90, WIn*1.1);
 		    variableList.put("WIn",varWIn);
 	    }
 	    
 	    if( ((Boolean) variableActiveFlags.get(0)).booleanValue()) {
-		    Variable varCavPhaseOffset = new Variable(PHASE_VAR_NAME, cavPhaseOffset, cavPhaseOffset-20.,cavPhaseOffset+20.);
+		    Variable varCavPhaseOffset = new Variable(PHASE_VAR_NAME, cavPhaseOffset, cavPhaseOffset-30.,cavPhaseOffset+30.);
 		    variableList.put("PhaseOffset", varCavPhaseOffset);
 	    }
 	    
 	    if( ((Boolean) variableActiveFlags.get(2)).booleanValue()) {
 		    double val = cavityVoltage;
 		    //String name = "Amp fac " +(new Integer(i+1)).toString();
-		    Variable pp = new Variable(AMP_VAR_NAME, val, val*0.85, val*1.15);
+		    Variable pp = new Variable(AMP_VAR_NAME, val, val*0.7, val*1.3);
 		    variableList.put("AmpFac", pp);
 	    }
 	    
@@ -827,11 +832,15 @@ public class AnalysisStuff {
             variableList.put("Fudge", varFF);
 	    }
         
-        Problem problem = ProblemFactory.getInverseSquareMinimizerProblem( new ArrayList<Variable>( variableList.values()), theScorer, 0.001 );
-	    solver = new Solver(SolveStopperFactory.minMaxTimeSatisfactionStopper(0, timeoutPeriod, SatisfactionCurve.inverseSquareSatisfaction( 0.001, 0.1 )));
-        
-        //solver.setStopper(SolveStopperFactory.targetStopperWithMaxTime(.1, timeoutPeriod));
-        
+
+		final Problem problem = new Problem();
+		final ErrorObjective objective = new ErrorObjective( "Pasta Error", 0.001 );
+		problem.addObjective( objective );
+		problem.setVariables( new ArrayList<Variable>( variableList.values() ) );
+		problem.setEvaluator( new PastaEvaluator( theScorer, objective, problem.getVariables() ) );
+
+	    solver = new Solver( new SimplexSearchAlgorithm(), SolveStopperFactory.minMaxTimeSatisfactionStopper( 0, timeoutPeriod, SatisfactionCurve.inverseSquareSatisfaction( 0.001, 0.1 ) ) );
+
         solverReady = true;
         
 	    solver.solve( problem );
@@ -1024,7 +1033,7 @@ public class AnalysisStuff {
     /** method to estimate the phase and amplitude settings from present state of analysis */
     
     protected void updateSetpoints() {
-	    double  WOutModel0, WOutModel1;
+	    double  WOutModel0, WOutModel1;    // CKA - these variables are never used
 	    
 	    if ( theDoc.BPM1 == null ||
             paramMeasuredVals.size() < 1 || ampValueV.size() < 1) {
@@ -1058,9 +1067,9 @@ public class AnalysisStuff {
 	    cavAmpSetpoint = pvs[ind] + (theDoc.theDesignAmp - svs[ind])*slope;
         
         runModel(cavityVoltage, theDoc.theDesignPhase, WIn*1.e6);
-        Trajectory traj = theModel.getProbe().getTrajectory();
-        ProbeState[] states =traj.statesForElement(firstBPM.getId());
-        ProbeState state = states[0];
+        Trajectory<?> traj = theModel.getProbe().getTrajectory();
+        java.util.List<? extends ProbeState<?>> states =traj.statesForElement(firstBPM.getId());
+        ProbeState<?> state = states.get(0);
         WOutCalc = state.getKineticEnergy()/1.e6;
         /*
          
@@ -1121,11 +1130,56 @@ public class AnalysisStuff {
 	    }
 	    return -1;
     }
-    
+
+
+	/** method to come up with an initial guess for cavity offset, amplitude, and input beam energy */
+	protected void initialGuess() {
+		double minPhase, maxPhase, avgPhase, dPhase;
+		BasicGraphData someMeasuredData = null;
+		// start with beam energy - set it to design:
+		WIn = defaultEnergy;
+		// same with amplitude:
+		cavityVoltage = theDoc.theDesignAmp;
+		//assume the cavity phase setpoint is in the center of the scan range:
+		if(theDoc.myWindow().useBPM1Box.isSelected())
+			someMeasuredData = theDoc.scanStuff.BPM1AmpMV.getDataContainer(0);
+		if(theDoc.myWindow().useBPM2Box.isSelected())
+			someMeasuredData = theDoc.scanStuff.BPM2AmpMV.getDataContainer(0);
+		if(someMeasuredData == null) {
+			String errText = "Hey - give me some measured data first!!!: ";
+			Toolkit.getDefaultToolkit().beep();
+			theDoc.myWindow().errorText.setText(errText);
+			System.err.println(errText);
+			return;
+		}
+		Vector<Double> phaseCavMeasured = phasesCavMeasured.get(new Integer(0));
+		minPhase = (phaseCavMeasured.get(0)).doubleValue();
+		maxPhase = (phaseCavMeasured.get(phaseCavMeasured.size()-1)).doubleValue();
+		//minPhase = someMeasuredData.getX(0);
+		//int np = someMeasuredData.getNumbOfPoints();
+		//maxPhase = someMeasuredData.getX(np-1);
+		avgPhase = (minPhase + maxPhase)/2.;
+		dPhase = maxPhase - minPhase;
+		System.out.println("Phases " + minPhase + "  " + maxPhase);
+
+		cavPhaseOffset = avgPhase - theDoc.theDesignPhase  + theDoc.DTLPhaseOffset;
+
+		// give some margin away from the scan endpoints for analysis range:
+		theDoc.analysisStuff.phaseModelMax = maxPhase - 0.1 * dPhase;
+		theDoc.myWindow().maxScanPhaseField.setValue(phaseModelMax);
+		theDoc.analysisStuff.phaseModelMin = minPhase + 0.1 * dPhase;
+		theDoc.myWindow().minScanPhaseField.setValue(phaseModelMin);
+		theDoc.analysisStuff.makeCalcPoints();
+		analysisTableModel.fireTableDataChanged();
+
+	}
+
+
+
     /** class to do solver function evaluation */
 	private class PastaScorer  implements Scorer {
 		public PastaScorer() {}
-		
+
 		public double  score( final Trial trial, final java.util.List<Variable> variables ) {
 			final TrialPoint trialPoint = trial.getTrialPoint();
 
@@ -1160,46 +1214,50 @@ public class AnalysisStuff {
 		}
 		
 	}
-    /** method to come up with an initial guess for cavity offset, amplitude, and input beam energy */
-    protected void initialGuess() {
-        double minPhase, maxPhase, avgPhase, dPhase;
-        BasicGraphData someMeasuredData = null;
-        // start with beam energy - set it to design:
-        WIn = defaultEnergy;
-        // same with amplitude:
-        cavityVoltage = theDoc.theDesignAmp;
-        //assume the cavity phase setpoint is in the center of the scan range:
-        if(theDoc.myWindow().useBPM1Box.isSelected())
-            someMeasuredData = theDoc.scanStuff.BPM1AmpMV.getDataContainer(0);
-        if(theDoc.myWindow().useBPM2Box.isSelected())
-            someMeasuredData = theDoc.scanStuff.BPM2AmpMV.getDataContainer(0);
-        if(someMeasuredData == null) {
-            String errText = "Hey - give me some measured data first!!!: ";
-			Toolkit.getDefaultToolkit().beep();
-			theDoc.myWindow().errorText.setText(errText);
-			System.err.println(errText);
-            return;
-        }
-        Vector<Double> phaseCavMeasured = phasesCavMeasured.get(new Integer(0));
-        minPhase = (phaseCavMeasured.get(0)).doubleValue();
-        maxPhase = (phaseCavMeasured.get(phaseCavMeasured.size()-1)).doubleValue();
-        //minPhase = someMeasuredData.getX(0);
-        //int np = someMeasuredData.getNumbOfPoints();
-        //maxPhase = someMeasuredData.getX(np-1);
-        avgPhase = (minPhase + maxPhase)/2.;
-        dPhase = maxPhase - minPhase;
-        System.out.println("Phases " + minPhase + "  " + maxPhase);
-        
-        cavPhaseOffset = avgPhase - theDoc.theDesignPhase  + theDoc.DTLPhaseOffset;
-        
-        // give some margin away from the scan endpoints for analysis range:
-        theDoc.analysisStuff.phaseModelMax = maxPhase - 0.1 * dPhase;
-        theDoc.myWindow().maxScanPhaseField.setValue(phaseModelMax);
-        theDoc.analysisStuff.phaseModelMin = minPhase + 0.1 * dPhase;
-        theDoc.myWindow().minScanPhaseField.setValue(phaseModelMin);
-		theDoc.analysisStuff.makeCalcPoints();
-        analysisTableModel.fireTableDataChanged();
-        
-    }
-	
+
+
+
+	//Evaluates beam properties for a trial point
+	class PastaEvaluator implements Evaluator {
+		private final Objective OBJECTIVE;
+		private final List<Variable> VARIABLES;
+		private final Scorer SCORER;
+
+
+		// Constructor
+		public PastaEvaluator( final PastaScorer scorer, final Objective objective, final List<Variable> variables ) {
+			SCORER = scorer;
+			OBJECTIVE = objective;
+			VARIABLES = variables;
+		}
+
+
+		// evaluate the trial
+		public void evaluate( final Trial trial ){
+			final double score = SCORER.score( trial, VARIABLES );
+			trial.setScore( OBJECTIVE, score );
+		}
+	}
+
+
+
+	// objective class for solver.
+	class ErrorObjective extends Objective{
+		// error tolerance
+		final private double TOLERANCE;
+
+		// Constructor
+		public ErrorObjective( final String name, final double tolerance ){
+			super( name );
+			TOLERANCE = tolerance;
+		}
+
+		// compute the satisfaction for the given (positive) square error
+		public double satisfaction( final double squareError ){
+			return 1.0 / ( TOLERANCE * TOLERANCE + squareError );
+		}
+		
+	}
+
 }
+

@@ -9,8 +9,8 @@ package xal.tools.beam.calc;
 import xal.tools.beam.calc.ISimulationResults.ISimLocResults;
 import xal.tools.beam.calc.ISimulationResults.ISimEnvResults;
 import xal.model.probe.traj.ProbeState;
+import xal.model.probe.traj.Trajectory;
 import xal.model.probe.traj.TransferMapState;
-import xal.model.probe.traj.TransferMapTrajectory;
 import xal.tools.beam.PhaseMap;
 import xal.tools.beam.PhaseMatrix;
 import xal.tools.beam.PhaseVector;
@@ -36,11 +36,104 @@ public class CalculationsOnMachines extends CalculationEngine  implements ISimLo
 
     
     /*
+     * Global Operations
+     */
+    
+    /**
+     * Convenience method for computing the transfer matrix between two state locations, say <i>S</i><sub>1</sub>
+     * and <i>S</i><sub>2</sub>.  Let <i>s</i><sub>0</sub> be the axis location of the beamline
+     * entrance, <i>s</i><sub>1</sub> the location of state <i>S</i><sub>1</sub>, and 
+     * <i>s</i><sub>2</sub> the location of state <i>S</i><sub>2</sub>.  Each state object <i>S<sub>n</sub></i>
+     * contains the transfer matrix <b>&Phi;</b>(<i>s<sub>n</sub></i>,<i>s</i><sub>0</sub>)
+     * which takes phases coordinates at the beamline entrance to the position of state <i>S<sub>n</sub></i>. 
+     * The transfer matrix
+     * <b>&Phi;</b>(<i>s</i><sub>2</sub>,<i>s</i><sub>1</sub>) taking phase coordinates <b>z</b><sub>1</sub>
+     * (and covariance matrix <b>&sigma;</b><sub>1</sub>)
+     * from position <i>s</i><sub>1</sub> to position <i>s</i><sub>2</sub> is then given
+     * by
+     * <br/>
+     * <br/>
+     * &nbsp; &nbsp; <b>&Phi;</b>(<i>s</i><sub>2</sub>,<i>s</i><sub>1</sub>) = 
+     *                  <b>&Phi;</b>(<i>s</i><sub>2</sub>,<i>s</i><sub>0</sub>)
+     *                  <b>&Phi;</b>(<i>s</i><sub>1</sub>,<i>s</i><sub>0</sub>)<sup>-1</sup> ,
+     * <br/>
+     * <br/>
+     * where <b>&Phi;</b>(<i>s</i><sub>2</sub>,<i>s</i><sub>0</sub>) is the transfer matrix between
+     * the beamline entrance <i>s</i><sub>0</sub> and the position <i>s</i><sub>2</sub>
+     * of state <i>S</i><sub>2</sub>, and <b>&Phi;</b>(<i>s</i><sub>1</sub>,<i>s</i><sub>0</sub>) is the
+     * transfer matrix between the beamline entrance <i>s</i><sub>0</sub> and the position <i>s</i><sub>1</sub>
+     * of state <i>S</i><sub>1</sub>.
+     * 
+     * @param state1    trajectory state <i>S</i><sub>1</sub> of starting location <i>s</i><sub>1</sub> 
+     * @param state2    trajectory state <i>S</i><sub>2</sub> of final location <i>s</i><sub>2</sub>
+     * 
+     * @return          transfer matrix <b>&Phi;</b>(<i>s</i><sub>2</sub>,<i>s</i><sub>1</sub>) between
+     *                  locations <i>s</i><sub>1</sub> and <i>s</i><sub>2</sub>
+     *
+     * @author Christopher K. Allen
+     * @since  Jun 23, 2014
+     */
+    public static PhaseMatrix  computeTransferMatrix(TransferMapState state1, TransferMapState state2) {
+        PhaseMatrix matPhi1 = state1.getTransferMap().getFirstOrder();
+        PhaseMatrix matPhi2 = state2.getTransferMap().getFirstOrder();
+        
+        PhaseMatrix matPhi1inv = matPhi1.inverse();
+        PhaseMatrix matPhi21   = matPhi2.times( matPhi1inv );
+        
+        return matPhi21;
+    }
+    
+    /**
+     * Convenience method for computing the transfer map between two state locations, say <i>S</i><sub>1</sub>
+     * and <i>S</i><sub>2</sub>.  Let <i>s</i><sub>0</sub> be the axis location of the beamline
+     * entrance, <i>s</i><sub>1</sub> the location of state <i>S</i><sub>1</sub>, and 
+     * <i>s</i><sub>2</sub> the location of state <i>S</i><sub>2</sub>.  Each state object <i>S<sub>n</sub></i>
+     * contains the transfer map <b>T</b>(<i>s<sub>n</sub></i>,<i>s</i><sub>0</sub>)
+     * which takes phases coordinates at the beamline entrance to the position of state <i>S<sub>n</sub></i>. 
+     * The transfer map
+     * <b>T</b>(<i>s</i><sub>2</sub>,<i>s</i><sub>1</sub>) taking phase coordinates <b>z</b><sub>1</sub>
+     * (and covariance matrix <b>&sigma;</b><sub>1</sub>)
+     * from position <i>s</i><sub>1</sub> to position <i>s</i><sub>2</sub> is then given
+     * by
+     * <br/>
+     * <br/>
+     * &nbsp; &nbsp; <b>T</b>(<i>s</i><sub>2</sub>,<i>s</i><sub>1</sub>) = 
+     *                  <b>T</b>(<i>s</i><sub>2</sub>,<i>s</i><sub>0</sub>) &#x2218;
+     *                  <b>T</b>(<i>s</i><sub>1</sub>,<i>s</i><sub>0</sub>)<sup>-1</sup> ,
+     * <br/>
+     * <br/>
+     * where <b>T</b>(<i>s</i><sub>2</sub>,<i>s</i><sub>0</sub>) is the transfer map between
+     * the beamline entrance <i>s</i><sub>0</sub> and the position <i>s</i><sub>2</sub>
+     * of state <i>S</i><sub>2</sub>, and <b>T</b>(<i>s</i><sub>1</sub>,<i>s</i><sub>0</sub>) is the
+     * transfer map between the beamline entrance <i>s</i><sub>0</sub> and the position <i>s</i><sub>1</sub>
+     * of state <i>S</i><sub>1</sub>.
+     * 
+     * @param state1    trajectory state <i>S</i><sub>1</sub> of starting location <i>s</i><sub>1</sub> 
+     * @param state2    trajectory state <i>S</i><sub>2</sub> of final location <i>s</i><sub>2</sub>
+     * 
+     * @return          transfer map <b>T</b>(<i>s</i><sub>2</sub>,<i>s</i><sub>1</sub>) between
+     *                  locations <i>s</i><sub>1</sub> and <i>s</i><sub>2</sub>
+     *                  
+     * @author Christopher K. Allen
+     * @since  Nov 4, 2014
+     */
+    public static PhaseMap  computeTransferMap(TransferMapState state1, TransferMapState state2) {
+        PhaseMap    mapPhi1 = state1.getTransferMap();
+        PhaseMap    mapPhi2 = state2.getTransferMap();
+        
+        PhaseMap    mapPhi1inv = mapPhi1.inverse();
+        PhaseMap    mapPhi21   = mapPhi2.compose( mapPhi1inv );
+        
+        return mapPhi21;
+    }
+
+
+    /*
      * Local Attributes
      */
     
     /** The trajectory around one turn of the ring */
-    private final TransferMapTrajectory trjSimFull;
+    private final Trajectory<TransferMapState> trjSimFull;
     
     /** The final transfer map probe state (at the end of the ring) */
     private final TransferMapState      staFinal;
@@ -70,25 +163,18 @@ public class CalculationsOnMachines extends CalculationEngine  implements ISimLo
      * for a periodic cell.
      * </p>
      *
-     * @param  trjSim  the simulation data for the ring, a "transfer map trajectory" object
+     * @param  datSim  the simulation data for the ring, a "transfer map trajectory" object
      *
      * @throws IllegalArgumentException the trajectory does not contain <code>TransferMapState</code> objects
      *
      * @author Christopher K. Allen
      * @since  Nov 7, 2013
      */
-    public CalculationsOnMachines(TransferMapTrajectory trjSim) throws IllegalArgumentException {
-        ProbeState  pstFinal = trjSim.finalState();
+    public CalculationsOnMachines(Trajectory<TransferMapState> datSim) throws IllegalArgumentException {
+        TransferMapState  pstFinal = datSim.finalState();
         
-        // Check for correct probe types
-        if ( !( pstFinal instanceof TransferMapState) )
-            throw new IllegalArgumentException(
-                    "Trajectory states are not TransferMapStates? - " 
-                    + pstFinal.getClass().getName()
-                    );
-        
-        this.trjSimFull = trjSim;
-        this.staFinal   = (TransferMapState)pstFinal;
+        this.trjSimFull = datSim;
+        this.staFinal   = pstFinal;
         this.mapPhiFull = this.staFinal.getTransferMap();
         this.arrTwsMch  = super.calculateMatchedTwiss(this.mapPhiFull.getFirstOrder()); 
     }
@@ -107,7 +193,7 @@ public class CalculationsOnMachines extends CalculationEngine  implements ISimLo
      * @author Christopher K. Allen
      * @since  Nov 7, 2013
      */
-    public TransferMapTrajectory   getTrajectory() {
+    public Trajectory<TransferMapState>   getTrajectory() {
         return this.trjSimFull;
     }
     
@@ -146,6 +232,56 @@ public class CalculationsOnMachines extends CalculationEngine  implements ISimLo
         return this.arrTwsMch;
     }
     
+    /*
+     * Local Operations
+     */
+    
+    /**
+     * <p>
+     * Returns the state response matrix calculated from the front face of
+     * elemFrom to the back face of elemTo. This is a convenience wrapper to
+     * the real method in the trajectory class
+     * </p>
+     * <p>
+     * This method was moved here from EnvelopeTrajectory/EnvelopeProbe where
+     * it was eliminated since <code>Trajectory</code> was genericized.
+     * </p>
+     * 
+     * @param strIdElemFrom  String identifying starting lattice element
+     * @param strIdElemTo    String identifying ending lattice element
+     * 
+     * @return      response matrix from elemFrom to elemTo
+     * 
+     * @see EnvelopeTrajectory#computeTransferMatrix(String, String)
+     * 
+     */
+    public PhaseMatrix computeTransferMatrix(String strIdElemFrom, String strIdElemTo) {
+        
+        Trajectory<TransferMapState> trajectory = this.getTrajectory();
+        
+        // find starting index
+        int[] arrIndFrom = trajectory.indicesForElement(strIdElemFrom);
+
+        int[] arrIndTo = trajectory.indicesForElement(strIdElemTo);
+
+        if (arrIndFrom.length == 0 || arrIndTo.length == 0)
+            throw new IllegalArgumentException("unknown element id");
+
+        int indFrom, indTo;
+        indTo = arrIndTo[arrIndTo.length - 1]; // use last state before start element
+
+        TransferMapState stateTo = trajectory.stateWithIndex(indTo);
+        PhaseMatrix matTo = stateTo.getTransferMap().getFirstOrder();
+        
+        indFrom = arrIndFrom[0] - 1;
+        if (indFrom < 0) return matTo; // response from beginning of machine
+        
+        TransferMapState stateFrom = trajectory.stateWithIndex(indFrom);
+        PhaseMatrix matFrom = stateFrom.getTransferMap().getFirstOrder();
+        
+        return matTo.times(matFrom.inverse());
+    }
+
     
     /*
      * ISimLocResults Interface
@@ -158,7 +294,7 @@ public class CalculationsOnMachines extends CalculationEngine  implements ISimLo
      * where <i>n</i> is the index of the given state <i>S<sub>n</sub></i>.  This is the
      * image &Delta;<b>z</b> of the value 
      * <b>0</b> &in; <b>P</b><sup>6</sup> &cong; <b>R</b><sup>6</sup> &times; {1}.  
-     * That is the value &Delta;<b>z</b> = &phi;(<b>0</b>).
+     * That is the value &Delta;<b>z</b> = &phi;<sub><i>n</i></sub>(<b>0</b>).
      * </p>
      * <p>
      * Recall that the transfer
@@ -225,7 +361,7 @@ public class CalculationsOnMachines extends CalculationEngine  implements ISimLo
      * has final row that represents the translation <b>&Delta;</b> of the particle
      * for the circuit around the ring.  The 6&times;6 sub-matrix of <b>&Phi;</b> represents
      * the (linear) action of the bending magnetics and quadrupoles and corresponds to the
-     * matrix <b>T</b> &in; <b>R</b><sup>6&times;</sup> (here <b>T</b> is linear). 
+     * matrix <b>T</b> &in; <b>R</b><sup>6&times;6</sup> (here <b>T</b> is linear). 
      * Thus, we can write the linear operator <b>&Phi;</b>
      * as the augmented system 
      * <br/>
@@ -236,7 +372,6 @@ public class CalculationsOnMachines extends CalculationEngine  implements ISimLo
      * </pre> 
      * where <b>p</b> is the projection of <b>z</b> onto the ambient phase space
      * <b>R</b><sup>6</sup> (without homogeneous the homogeneous coordinate).
-     * coordinates). 
      * </p>
      * <p>
      * Putting this together we get
@@ -296,8 +431,11 @@ public class CalculationsOnMachines extends CalculationEngine  implements ISimLo
     @Override
     public PhaseVector computeChromAberration(TransferMapState state) {
         double          dblGamma = state.getGamma();
-        PhaseMap        mapPhi   = state.getStateTransferMap();
-        PhaseMatrix     matPhi   = mapPhi.getFirstOrder();
+//        PhaseMap        mapPhi   = state.getTransferMap();
+//        PhaseMap        mapPhi   = state.getStateTransferMap();
+//      PhaseMatrix     matPhi   = mapPhi.getFirstOrder();
+        PhaseMatrix     matPhi   = this.calculateFullLatticeMatrixAt(state);
+        
         R6              vecDel   = super.calculateAberration(matPhi, dblGamma);
 
         return PhaseVector.embed(vecDel);
@@ -365,6 +503,7 @@ public class CalculationsOnMachines extends CalculationEngine  implements ISimLo
      */
     @Override
     public Twiss[] computeTwissParameters(TransferMapState state) {
+    	
         PhaseMatrix matFullTrn = this.calculateFullLatticeMatrixAt(state);
         Twiss[]     arrTwsMtch = super.calculateMatchedTwiss(matFullTrn);
         

@@ -1,9 +1,8 @@
 package xal.tools.beam;
 
+import xal.tools.annotation.AProperty.NoEdit;
 import xal.tools.beam.Twiss3D.IND_3D;
 import xal.tools.math.r3.R3x3;
-import xal.tools.annotation.AProperty.NoEdit;
-import Jama.Matrix;
 
 
 /**
@@ -185,21 +184,26 @@ public class CovarianceMatrix extends PhaseMatrix {
     };
 
     /**
+     * <p>
      *  Create a CovarianceMatrix corresponding to the given Twiss parameters and 
-     *  having the given mean values (centroid location).  
-     *
-     *  NOTE:
+     *  having the given mean values (centroid location).
+     *  </p>  
+     * <p>
+     *  <h4>NOTE:</h4>
      *  The returned matrix is in homogeneous coordinates of the block 
      *  diagonal form
-     *
-     *      | Rxx   0   0  &lt;x&gt; |
-     *      |   0 Ryy   0  &lt;y&gt; |
-     *      |   0   0 Rzz  &lt;z&gt; |
-     *      | &lt;x> &lt;y> &lt;z&gt;   1  |
-     *
+     *  <br/>
+     *  <br/>
+     *      | Rxx   0   0  &lt;x&gt; | <br/>
+     *      |   0 Ryy   0  &lt;y&gt; | <br/>
+     *      |   0   0 Rzz  &lt;z&gt; | <br/>
+     *      | &lt;x> &lt;y> &lt;z&gt;   1  | 
+     *  <br/>
+     *  <br/>
      *  where Rii are 2x2 symmetric blocks corresponding to each phase
      *  plane, and &lt;i&gt; is shorthand for the vector of phase averages
      *  for the i plane, eg. &lt;x&gt; = (&lt;x&gt;, &lt;x'&gt;).
+     *  </p>
      *
      *  @param  twissX  twiss parameters of the x phase plane
      *  @param  twissY  twiss parameters of the y phase plane
@@ -229,6 +233,24 @@ public class CovarianceMatrix extends PhaseMatrix {
 
 
 
+    /*
+     * Object Overrides
+     */
+    
+    /**
+     * Creates and returns a deep copy of this matrix.
+     *
+     * @see xal.tools.math.BaseMatrix#clone()
+     *
+     * @author Christopher K. Allen
+     * @since  Jul 3, 2014
+     */
+    @Override
+    public CovarianceMatrix clone() {
+        return new CovarianceMatrix(this);
+    }
+
+    
 
     /*
      *  Initialization
@@ -647,7 +669,7 @@ public class CovarianceMatrix extends PhaseMatrix {
         ax = -matSig.getElem(0, 1) / ex;
         twissX = new Twiss(ax, bx, ex);
 
-        // Compute the X plane twiss parameters
+        // Compute the Y plane twiss parameters
         double ay, by, ey; // y plane twiss parameters
         Twiss twissY; // twiss parameter object
         ey = arrEmit[1];

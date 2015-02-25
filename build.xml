@@ -249,7 +249,7 @@
 		&lt;mkdir dir="${build.javadoc.root}" /&gt;
 		&lt;javadoc destdir="${build.javadoc.root}" packagenames="xal.*" author="false" version="false" maxmemory="512m"&gt;
 			&lt;sourcepath&gt;
-			&lt;pathelement location="${core.root}/src" /&gt;
+				&lt;pathelement location="${core.root}/src" /&gt;
 		</echo>
 
 		<!-- loop over every extension directory and add the source path -->
@@ -261,6 +261,13 @@
 		</subant>
 		<echo file="${doc.builder}" append="true">
 			&lt;/sourcepath&gt;
+
+			&lt;classpath&gt;
+				&lt;fileset dir="${build.jar.lib.root}"&gt;
+					&lt;include name="xal-shared.jar" /&gt;
+				&lt;/fileset&gt;
+			&lt;/classpath&gt;
+
 		&lt;/javadoc&gt;
 	&lt;/target&gt;
 &lt;/project&gt;&#10;</echo>
@@ -269,7 +276,7 @@
 
     <!-- Append the extension source for constructing the javadoc. -->
     <target name="append-extension-source">
-		<echo file="${doc.builder}" append="true">&lt;pathelement location="${basedir}/src" /&gt;
+		<echo file="${doc.builder}" append="true">		&lt;pathelement location="${basedir}/src" /&gt;
 		</echo>
 		<echo message="Appending extension: ${basedir}" />
     </target>

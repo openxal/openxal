@@ -392,9 +392,9 @@ class MPSWindow extends XalWindow implements SwingConstants, DataKeys, ScrollPan
 				updateLog();
 			}
 
-			public void mpsChannelsUpdated(RemoteMPSRecord handler, int mpsTypeIndex, java.util.List channelRefs) {}
+			public void mpsChannelsUpdated(RemoteMPSRecord handler, int mpsTypeIndex, java.util.List<ChannelRef> channelRefs) {}
 
-			public void inputChannelsUpdated(RemoteMPSRecord handler, int mpsTypeIndex, java.util.List channelRefs) {}
+			public void inputChannelsUpdated(RemoteMPSRecord handler, int mpsTypeIndex, java.util.List<ChannelRef> channelRefs) {}
 			
 			public void mpsEventsUpdated(RemoteMPSRecord handler, int mpsTypeIndex) {
 				updateLog();
@@ -480,9 +480,9 @@ class MPSWindow extends XalWindow implements SwingConstants, DataKeys, ScrollPan
 				updateLog();
 			}
 
-			public void mpsChannelsUpdated(RemoteMPSRecord handler, int mpsTypeIndex, java.util.List channelRefs) {}
+			public void mpsChannelsUpdated(RemoteMPSRecord handler, int mpsTypeIndex, java.util.List<ChannelRef> channelRefs) {}
 
-			public void inputChannelsUpdated(RemoteMPSRecord handler, int mpsTypeIndex, java.util.List channelRefs) {}
+			public void inputChannelsUpdated(RemoteMPSRecord handler, int mpsTypeIndex, java.util.List<ChannelRef> channelRefs) {}
 			
 			public void mpsEventsUpdated(RemoteMPSRecord handler, int mpsTypeIndex) {
 				updateLog();
@@ -553,9 +553,9 @@ class MPSWindow extends XalWindow implements SwingConstants, DataKeys, ScrollPan
 				updateLog();
 			}
 
-			public void mpsChannelsUpdated(RemoteMPSRecord handler, int mpsTypeIndex, java.util.List channelRefs) {}
+			public void mpsChannelsUpdated(RemoteMPSRecord handler, int mpsTypeIndex, java.util.List<ChannelRef> channelRefs) {}
 
-			public void inputChannelsUpdated(RemoteMPSRecord handler, int mpsTypeIndex, java.util.List channelRefs) {}
+			public void inputChannelsUpdated(RemoteMPSRecord handler, int mpsTypeIndex, java.util.List<ChannelRef> channelRefs) {}
 			
 			public void mpsEventsUpdated(RemoteMPSRecord handler, int mpsTypeIndex) {
 				updateLog();
@@ -621,11 +621,11 @@ class MPSWindow extends XalWindow implements SwingConstants, DataKeys, ScrollPan
 						updatePVs( this );
 					}
 	
-					public void mpsChannelsUpdated(RemoteMPSRecord handler, int mpsTypeIndex, java.util.List channelRefs) {
+					public void mpsChannelsUpdated(RemoteMPSRecord handler, int mpsTypeIndex, java.util.List<ChannelRef> channelRefs) {
 						updatePVs( this );
 					}
 	
-					public void inputChannelsUpdated(RemoteMPSRecord handler, int mpsTypeIndex, java.util.List channelRefs) {}
+					public void inputChannelsUpdated(RemoteMPSRecord handler, int mpsTypeIndex, java.util.List<ChannelRef> channelRefs) {}
 					
 					public void mpsEventsUpdated(RemoteMPSRecord handler, int mpsTypeIndex) {}
 					
@@ -709,9 +709,9 @@ class MPSWindow extends XalWindow implements SwingConstants, DataKeys, ScrollPan
 						updatePVs( this );
 					}
 	
-					public void mpsChannelsUpdated( RemoteMPSRecord handler, int mpsTypeIndex, java.util.List channelRefs ) {}
+					public void mpsChannelsUpdated( RemoteMPSRecord handler, int mpsTypeIndex, java.util.List<ChannelRef> channelRefs ) {}
 	
-					public void inputChannelsUpdated( RemoteMPSRecord handler, int mpsTypeIndex, java.util.List channelRefs ) {
+					public void inputChannelsUpdated( RemoteMPSRecord handler, int mpsTypeIndex, java.util.List<ChannelRef> channelRefs ) {
                         System.out.println("INPUT CHANNELS UPDATED");
                         updatePVs( this );
 					}
@@ -844,7 +844,7 @@ class MPSWindow extends XalWindow implements SwingConstants, DataKeys, ScrollPan
      * Register actions specific to this window instance. 
      * @param commander The commander with which to register the custom commands.
      */
-    protected void customizeCommands(Commander commander) {
+    public void customizeCommands(Commander commander) {
 		// setup the "reload signals" action
         _reloadSignalsAction = new AbstractAction("reload-signals") {
             

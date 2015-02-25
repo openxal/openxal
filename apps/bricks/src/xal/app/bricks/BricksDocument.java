@@ -95,7 +95,7 @@ class BricksDocument extends XalDocument implements DataListener, BrickListener 
      * @param dataRoot DataListener root of the document to save
      * @param url The URL to which the document should be saved.
      */
-    protected void handleDataWrittenTo( final DataListener dataRoot, final URL url ) {
+    public void handleDataWrittenTo( final DataListener dataRoot, final URL url ) {
         CONTEXT.setSourceURL( url );
     }
 

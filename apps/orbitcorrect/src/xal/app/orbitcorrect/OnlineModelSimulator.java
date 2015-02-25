@@ -29,12 +29,19 @@ import xal.tools.beam.calc.SimpleSimResultsAdaptor;
  * @since    Sep 07, 2004
  */
 public class OnlineModelSimulator extends MappedSimulator {
+	/* orbit model */
+	final private OrbitModel ORBIT_MODEL;
+
+
 	/**
 	 * Constructor
 	 * @param orbitModel    The orbit model.
 	 */
 	public OnlineModelSimulator( final OrbitModel orbitModel ) {
 		super( orbitModel.getModificationStore(), orbitModel.getSequence(), orbitModel.getBPMAgents(), orbitModel.getCorrectorSupplies() );
+
+		ORBIT_MODEL = orbitModel;
+
 		_responseNeedsUpdate = true;
 	}
 	
@@ -60,28 +67,13 @@ public class OnlineModelSimulator extends MappedSimulator {
 		final String FIELD_PROPERTY = ElectromagnetPropertyAccessor.PROPERTY_FIELD;
 		
 		try {
-
-		    // CKA - Nov 25, 2013
-		    // Create the probe according to the sequence type then run an online model
-//            final Probe probe = (_sequence instanceof Ring) ? ProbeFactory.getTransferMapProbe( _sequence, AlgorithmFactory.createTransferMapTracker(_sequence) ) : ProbeFactory.createParticleProbe(_sequence, AlgorithmFactory.createParticleTracker(_sequence));
-		
-		    final Probe probe;
-		    if (_sequence instanceof Ring) {
-		        TransferMapTracker    algXferMap = AlgorithmFactory.createTransferMapTracker(_sequence);
-		        probe = ProbeFactory.getTransferMapProbe(_sequence, algXferMap);
-		                
-		    } else {
-		        ParticleTracker       algPart = AlgorithmFactory.createParticleTracker(_sequence);
-		        probe = ProbeFactory.createParticleProbe(_sequence, algPart);
-		        
-		    }
-
+			final Probe<?> probe = ORBIT_MODEL.makeProbe();
 			final Scenario scenario = Scenario.newScenarioFor( _sequence );
 			scenario.setProbe( probe );
 			scenario.setSynchronizationMode( Scenario.SYNC_MODE_RF_DESIGN );
 			scenario.resync();
 			scenario.run();
-			final Trajectory initialTrajectory = probe.getTrajectory();
+			final Trajectory<?> initialTrajectory = probe.getTrajectory();
 			
             // CKA - Nov 25, 2013
 			SimpleSimResultsAdaptor  cmpCalcEngine = new SimpleSimResultsAdaptor(initialTrajectory);
@@ -95,8 +87,10 @@ public class OnlineModelSimulator extends MappedSimulator {
 	            // CKA - Nov 25, 2013
 //				ICoordinateState state = (ICoordinateState)initialTrajectory.stateForElement( bpmAgent.getID() );
 //				PhaseVector coordinates = state.getFixedOrbit();
-                ProbeState  state = initialTrajectory.stateForElement( bpmAgent.getID() );
+                ProbeState<?>  state = initialTrajectory.stateForElement( bpmAgent.getID() );
                 PhaseVector coordinates = cmpCalcEngine.computeFixedOrbit(state);
+                
+                System.out.println("OrbitCorrect.OnlineModelSimulator#calculateResponse() - SimpleSimResultsAdaptor#computeFixedOrbit(state) = " + coordinates);
 				
 				xInitial[bpmIndex] = coordinates.getx();
 				yInitial[bpmIndex] = coordinates.gety();
@@ -122,14 +116,14 @@ public class OnlineModelSimulator extends MappedSimulator {
 				final double trialField = initialField + TRIAL_FIELD_EXCURSION;
 				for ( CorrectorAgent correctorAgent : correctorAgents ) {
 					final double magnetField = correctorAgent.getCorrector().toFieldFromCA( trialField );
-					//System.out.println( "Corrector:  " + correctorAgent + ", Magnet Field:  " + magnetField + ", Supply Field:  " + trialField );
+//					System.out.println( "Corrector:  " + correctorAgent + ", Magnet Field:  " + magnetField + ", Supply Field:  " + trialField );
 					scenario.setModelInput( correctorAgent.getCorrector(), FIELD_PROPERTY, magnetField );
 				}
 				probe.reset();
 				scenario.resyncFromCache();
 				scenario.run();
 				
-				final Trajectory trajectory = probe.getTrajectory();
+				final Trajectory<?> trajectory = probe.getTrajectory();
 				
 				// CKA - Nov 25, 2013
 				final SimpleSimResultsAdaptor cmpCalcEngineResp = new SimpleSimResultsAdaptor(trajectory);
@@ -147,16 +141,17 @@ public class OnlineModelSimulator extends MappedSimulator {
 					    // CKA - Nov 25, 2013
 //						final ICoordinateState state = (ICoordinateState)trajectory.stateForElement( bpmAgent.getID() );
 //						final PhaseVector coordinates = state.getFixedOrbit();
-					    final ProbeState  state       = trajectory.stateForElement( bpmAgent.getID() );
+					    final ProbeState<?>  state       = trajectory.stateForElement( bpmAgent.getID() );
 					    final PhaseVector coordinates = cmpCalcEngineResp.computeFixedOrbit(state);
 						
 						// need factor of 1000 to convert from meters to mm
 						final double xResponse = 1000 * ( coordinates.getx() - xInitial[bpmIndex] ) / TRIAL_FIELD_EXCURSION;
-						//System.out.println( "BPM:  " + bpmAgent.getID() + ", response: " + xResponse );
+//						System.out.println( "BPM:  " + bpmAgent.getID() + ", X response: " + xResponse + ", current position: " + coordinates.getx() );
 						_xResponseMap.setResponse( supply, bpmAgent, xResponse );
 						
 						final double yResponse = 1000 * ( coordinates.gety() - yInitial[bpmIndex] ) / TRIAL_FIELD_EXCURSION;
-						_yResponseMap.setResponse( supply, bpmAgent, yResponse );						
+//						System.out.println( "BPM:  " + bpmAgent.getID() + ", Y response: " + yResponse + ", current position: " + coordinates.gety() );
+						_yResponseMap.setResponse( supply, bpmAgent, yResponse );
 					}
 					else {		// the response of upstream BPMs must be 0
 						_xResponseMap.setResponse( supply, bpmAgent, 0.0 );

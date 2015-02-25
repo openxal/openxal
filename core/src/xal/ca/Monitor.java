@@ -68,8 +68,8 @@ abstract public class Monitor {
     
     
     /**
-     *  Make sure monitoring is shut down before destruction
-     * @throws Throwable 
+     * Make sure monitoring is shut down before destruction
+     * @throws Throwable upon failure
      */
     protected void finalize() throws Throwable  {
 		try {

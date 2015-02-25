@@ -32,16 +32,22 @@ public class Scenario {
     public static final String SYNC_MODE_DESIGN = "DESIGN";
 	public static final String SYNC_MODE_RF_DESIGN = "RF_DESIGN";
 	
-    private Lattice lattice;
-    private Probe probe;
-    private final SynchronizationManager syncManager;
-    private final AcceleratorSeq _sequence;
+    private Lattice                         lattice;
+    private Probe<?>                        probe;
+    private final SynchronizationManager    syncManager;
+    private final AcceleratorSeq            _sequence;
     
     /** element from which to start propagation */
     private String idElemStart = null;
     
     /** element at which to stop propagation */
     private String idElemStop = null;
+    
+    /**
+     * Flag indicating that propagation should stop at the entrance of
+     * the stop element.
+     */
+    private boolean     bolInclStopElem = true;
     
     
     /** Constructor */
@@ -107,8 +113,14 @@ public class Scenario {
     public void setSynchronizationMode( final String newMode ) {
         syncManager.setSynchronizationMode(newMode);
     }
-    
+
 	
+	/** get the synchronization mode */
+	public String getSynchronizationMode() {
+		return syncManager.getSynchronizationMode();
+	}
+
+
     /**
      * Synchronizes each lattice element to the appropriate data source.
      * @throws SynchronizationException if an error is encountered reading a data source
@@ -209,6 +221,21 @@ public class Scenario {
         idElemStop = stop.getId();
     }
 	
+    /**
+     * Sets the flag that determines whether or not the
+     * propagation stops at the entrance of the stop element (if set),
+     * or at the exit of the stop node.  The later case is the default.
+     *  
+     * @param bolInclStopElem    propagation stops after stop element if <code>true</code>,
+     *                           before the stop element if <code>false</code>
+     *
+     * @author Christopher K. Allen
+     * @since  Oct 20, 2014
+     */
+    public void setIncludeStopElement(boolean bolInclStopElem) {
+        this.bolInclStopElem = bolInclStopElem; 
+    }
+    
 	
 	/**
 	 * Convert the position of a location in the sequence to a position in a trajectory due to 
@@ -249,9 +276,10 @@ public class Scenario {
         else
             alg.unsetStartElementId();
             
-        if (this.getStopElementId() != null)
+        if (this.getStopElementId() != null) {
             alg.setStopElementId( this.getStopElementId() );
-        else
+            alg.setIncludeStopElement(this.bolInclStopElem);
+        } else
             alg.unsetStopElementId();
         
         // Propagate probe
@@ -277,17 +305,36 @@ public class Scenario {
     }
 	
     /**
+     * <p>
      * Returns the trajectory obtained by running the model.
+     * <h4>NOTE</h4>
+     * &middot; The type of the object returned is actually <code>Trajectory<?></code>
+     * since the actual type of the trajectory is not known.  Any type of probe
+     * may be used to run the scenario.  
+     * <br/>
+     * <br/>
+     * &middot; This is simply a convenient way to avoid the clumsy Java
+     * type casting, however, it is essentially the same thing.
+     * <br/>
+     * <br/>
+     * &middot; A runtime cast exception will be thrown if the trajectory does
+     * not match the probe type currently run.  
+     * </p>
      * 
      * @return the Trajectory obtained by running the model
      * @throws IllegalStateException if the probe or trajectory is null
      */
-    public Trajectory getTrajectory() {
+    public <S extends ProbeState<S>> Trajectory<S> getTrajectory() {
         if (probe == null)
             throw new IllegalStateException("scenario doesn't contain a probe");
         if (probe.getTrajectory() == null)
             throw new IllegalStateException("model not yet run");
-        return probe.getTrajectory();
+        
+        @SuppressWarnings("unchecked")
+        Trajectory<S>   trj = (Trajectory<S>) probe.getTrajectory();
+        return trj;
+        
+//        return  probe.getTrajectory();
     }
         
     
@@ -338,7 +385,7 @@ public class Scenario {
      * @return array of trajectory states for specified element id
      * @throws ModelException if the probe is not yet propagated
      */
-    public ProbeState[] trajectoryStatesForElement( final String id ) throws ModelException {
+    public List<? extends ProbeState<?>> trajectoryStatesForElement( final String id ) throws ModelException {
         if (probe == null)
             throw new ModelException("Probe is null");
         return probe.getTrajectory().statesForElement(id);
@@ -426,7 +473,7 @@ public class Scenario {
      * 
      * @param aProbe the probe to be used by the scenario
      */
-    public void setProbe( final Probe aProbe ) {
+    public void setProbe( final Probe<?> aProbe ) {
         probe = aProbe;
     }
     
@@ -436,7 +483,7 @@ public class Scenario {
      * 
      * @return the scenario's current probe or null
      */
-    public Probe getProbe() {
+    public Probe<?> getProbe() {
         return probe;
     }
     

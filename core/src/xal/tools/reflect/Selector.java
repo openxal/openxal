@@ -29,7 +29,7 @@ public class Selector {
     protected String _methodName;
 
 	/** argument classes */
-    protected Class[] _argumentTypes;
+    protected Class<?>[] _argumentTypes;
 
     
     /** Constructor for a method that takes multiple arguments */
@@ -173,7 +173,7 @@ public class Selector {
      * Invoke a multi-argument method on the target.  This is a convenience static
      * method that creates an internal Selector on the fly.
      */
-    static public Object invokeMethod( final String methodName, final Class[] argumentTypes, final Object target, final Object[] arguments )
+    static public Object invokeMethod( final String methodName, final Class<?>[] argumentTypes, final Object target, final Object[] arguments )
     throws IllegalArgumentException, AccessException, InvocationException, MethodNotFoundException {
         Selector selector = new Selector(methodName, argumentTypes);
         return selector.invoke(target, arguments);
@@ -181,7 +181,7 @@ public class Selector {
     
     
     /** Invoke the static method with the specified arguments on the specified target class */
-    static public <TargetType> Object invokeStaticMethod( final String methodName, final Class[] argumentTypes, final Class<TargetType> targetClass, final Object[] arguments ) 
+    static public <TargetType> Object invokeStaticMethod( final String methodName, final Class<?>[] argumentTypes, final Class<TargetType> targetClass, final Object[] arguments )
     throws IllegalArgumentException, AccessException, InvocationException, MethodNotFoundException {
         Selector selector = new Selector(methodName, argumentTypes);
         return selector.invokeStatic( targetClass, arguments );

@@ -18,6 +18,9 @@ import java.util.*;
  * @author  tap
  */
 abstract class MessageHandler<ProtocolType> implements InvocationHandler, java.io.Serializable {
+	/** required for Serializable */
+	static final private long serialVersionUID = 1L;
+	
     protected Class<ProtocolType> _protocol;
     protected Object source;
     protected ProtocolType proxy;

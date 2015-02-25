@@ -188,7 +188,7 @@ public class RFPhaseShakerDocument extends AcceleratorDocument {
 	 *  Dispose of RFPhaseShakerDocument resources. This method overrides an empty
 	 *  superclass method.
 	 */
-	protected void freeCustomResources() {
+	public void freeCustomResources() {
 		cleanUp();
 	}
 
@@ -453,7 +453,7 @@ public class RFPhaseShakerDocument extends AcceleratorDocument {
 	 *@param  commander  Description of the Parameter
 	 */
 
-	protected void customizeCommands(Commander commander) {
+	public void customizeCommands(Commander commander) {
 	}
 
 

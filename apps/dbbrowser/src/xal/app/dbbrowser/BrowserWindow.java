@@ -98,7 +98,7 @@ class BrowserWindow extends XalWindow implements SwingConstants {
 	 *
 	 * @param commander  The commander with which to register the custom commands.
 	 */
-	protected void customizeCommands( Commander commander ) {
+	public void customizeCommands( Commander commander ) {
 		// define the "database connect" action
 		Action connectAction =
 			new AbstractAction( "connect-database" ) {
@@ -202,8 +202,9 @@ class BrowserWindow extends XalWindow implements SwingConstants {
 						return;
 					}
 					try {
-						JList list = (JList)event.getSource();
-						Object selectedTable = list.getSelectedValue();
+						@SuppressWarnings( "unchecked" )	// have no choice but to cast since event returns an Object
+						final JList<Object> list = (JList<Object>)event.getSource();
+						final Object selectedTable = list.getSelectedValue();
 						if ( selectedTable != null ) {
 							_model.setTable( list.getSelectedValue().toString() );
 						}

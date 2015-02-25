@@ -206,7 +206,7 @@ public class BeamAtFoilDocument extends AcceleratorDocument {
 	 *  Dispose of BeamAtFoilDocument resources. This method overrides an empty
 	 *  superclass method.
 	 */
-	protected void freeCustomResources() {
+	public void freeCustomResources() {
 		cleanUp();
 	}
 
@@ -330,7 +330,7 @@ public class BeamAtFoilDocument extends AcceleratorDocument {
 	 *@param  commander  Description of the Parameter
 	 */
 
-	protected void customizeCommands(Commander commander) {
+	public void customizeCommands(Commander commander) {
 		// define custom action
 	}
 
