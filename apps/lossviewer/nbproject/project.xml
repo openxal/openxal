@@ -38,26 +38,31 @@ auxiliary.show.customizer.message=<message>
             </folders>
             <ide-actions>
                 <action name="build">
+                    <script>nbproject/nbjdk.xml</script>
                     <target>build</target>
                 </action>
                 <action name="clean">
+                    <script>nbproject/nbjdk.xml</script>
                     <target>clean</target>
                 </action>
                 <action name="run">
+                    <script>nbproject/nbjdk.xml</script>
                     <target>run</target>
                 </action>
                 <action name="rebuild">
+                    <script>nbproject/nbjdk.xml</script>
                     <target>clean</target>
                     <target>build</target>
                 </action>
                 <action name="debug">
-                    <script>nbproject/ide-file-targets.xml</script>
+                    <script>nbproject/nbjdk.xml</script>
                     <target>debug-nb</target>
                 </action>
             </ide-actions>
             <export>
                 <type>folder</type>
                 <location>../../build/intermediates/apps/lossviewer/compile</location>
+                <script>nbproject/nbjdk.xml</script>
                 <build-target>build</build-target>
             </export>
             <view>
@@ -84,16 +89,16 @@ auxiliary.show.customizer.message=<message>
             </view>
             <subprojects/>
         </general-data>
-        <java-data xmlns="http://www.netbeans.org/ns/freeform-project-java/3">
+        <java-data xmlns="http://www.netbeans.org/ns/freeform-project-java/4">
             <compilation-unit>
                 <package-root>src</package-root>
                 <classpath mode="compile">../../build/products/lib/xal-shared.jar:lib/jcommon.jar:lib/jfreechart.jar:../../core/src</classpath>
                 <built-to>../../build/intermediates/apps/lossviewer/compile</built-to>
-                <source-level>1.7</source-level>
+                <source-level>1.8</source-level>
             </compilation-unit>
             <compilation-unit>
                 <package-root>resources</package-root>
-                <source-level>1.7</source-level>
+                <source-level>1.8</source-level>
             </compilation-unit>
         </java-data>
     </configuration>
