@@ -10,7 +10,7 @@ package xal.app.knobs;
 
 import xal.model.probe.traj.ProbeState;
 import xal.model.probe.traj.Trajectory;
-import xal.tools.beam.calc.*;
+import xal.tools.beam.calc.SimResultsAdaptor;
 
 
 
@@ -21,9 +21,6 @@ abstract public class BumpShapeAdaptor {
 	
 	/** bump angle adaptor */
 	static protected BumpAngleAdaptor _bumpAngleAdaptor;
-
-	/** the simulation data processor */
-	protected SimResultsAdaptor simulator;
 
 
 	/** get the bump offset adaptor instance */
@@ -58,25 +55,12 @@ abstract public class BumpShapeAdaptor {
     
     
     /** get the orbit */
-    abstract public double[] getOrbit( final PlaneAdaptor planeAdaptor, final ProbeState<?> bumpState, final ProbeState<?> endState, final int elementCount );
+    abstract public double[] getOrbit( final SimResultsAdaptor simulator, final PlaneAdaptor planeAdaptor, final ProbeState<?> bumpState, final ProbeState<?> endState, final int elementCount );
 
     
     /** get the orbit size for the specified element count */
     public int getOrbitSize( final int elementCount ) {
         return Math.min( elementCount, 4 );
-    }
-
-
-    /**
-     * Every time a new set of simulation results is going to be processed, this method must first be called to reset the simulation processor.
-     * 
-     * @param traj  simulation data to be processed using the methods of this object
-     *
-     * @author Christopher K. Allen
-     * @since  Nov 12, 2013
-     */
-    public void resetTrajectory( Trajectory<?> trajectory ) {
-        simulator = new SimpleSimResultsAdaptor( trajectory );
     }
 }
 
@@ -103,7 +87,7 @@ class BumpOffsetAdaptor extends BumpShapeAdaptor {
 	
 	
     /** get the orbit */
-    public double[] getOrbit( final PlaneAdaptor planeAdaptor, final ProbeState<?> bumpState, final ProbeState<?> endState, final int elementCount ) {
+    public double[] getOrbit( final SimResultsAdaptor simulator, final PlaneAdaptor planeAdaptor, final ProbeState<?> bumpState, final ProbeState<?> endState, final int elementCount ) {
         final int orbitSize = getOrbitSize( elementCount );
         final double[] orbit = new double[orbitSize];   // bump offset, end offset and end angle and possibly the bump angle
         
@@ -142,7 +126,7 @@ class BumpAngleAdaptor extends BumpShapeAdaptor {
 	
 	
     /** get the orbit */
-    public double[] getOrbit( final PlaneAdaptor planeAdaptor, final ProbeState<?> bumpState, final ProbeState<?> endState, final int elementCount ) {
+    public double[] getOrbit( final SimResultsAdaptor simulator, final PlaneAdaptor planeAdaptor, final ProbeState<?> bumpState, final ProbeState<?> endState, final int elementCount ) {
         final int orbitSize = getOrbitSize( elementCount );
         final double[] orbit = new double[orbitSize];   // bump angle, end offset and end angle and possibly bump offset
         
