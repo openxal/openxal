@@ -278,8 +278,6 @@ public class BumpGenerator {
 			// Reset the simulation data processor
 			this._bumpShapeAdaptor.resetTrajectory(trajectory);
 			
-//			final IPhaseState bumpState = (IPhaseState)trajectory.statesForElement( bumpNode.getId() )[0];
-//			final IPhaseState endState = (IPhaseState)trajectory.statesForElement( endNode.getId() )[0];
             final ProbeState<?> bumpState = trajectory.statesForElement( bumpNode.getId() ).get(0);
             final ProbeState<?> endState  = trajectory.statesForElement( endNode.getId() ).get(0);
 			
