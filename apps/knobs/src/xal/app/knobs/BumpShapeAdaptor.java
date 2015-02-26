@@ -10,7 +10,7 @@ package xal.app.knobs;
 
 import xal.model.probe.traj.ProbeState;
 import xal.model.probe.traj.Trajectory;
-import xal.tools.beam.calc.SimpleSimResultsAdaptor;
+import xal.tools.beam.calc.*;
 
 
 
@@ -21,8 +21,11 @@ abstract public class BumpShapeAdaptor {
 	
 	/** bump angle adaptor */
 	static protected BumpAngleAdaptor _bumpAngleAdaptor;
-	
-	
+
+	/** the simulation data processor */
+	protected SimResultsAdaptor simulator;
+
+
 	/** get the bump offset adaptor instance */
 	static public BumpOffsetAdaptor getBumpOffsetAdaptor() {
 		if ( _bumpOffsetAdaptor == null ) {
@@ -57,30 +60,24 @@ abstract public class BumpShapeAdaptor {
     /** get the orbit */
     abstract public double[] getOrbit( final PlaneAdaptor planeAdaptor, final ProbeState<?> bumpState, final ProbeState<?> endState, final int elementCount );
 
-
-    /** the simulation data processor */
-    protected SimpleSimResultsAdaptor prcSimData;
-    
     
     /** get the orbit size for the specified element count */
     public int getOrbitSize( final int elementCount ) {
         return Math.min( elementCount, 4 );
     }
-    
+
+
     /**
-     * Every time a new set of simulation results is going to be
-     * processed, this method must first be called to reset the
-     * simulation processor.
+     * Every time a new set of simulation results is going to be processed, this method must first be called to reset the simulation processor.
      * 
      * @param traj  simulation data to be processed using the methods of this object
      *
      * @author Christopher K. Allen
      * @since  Nov 12, 2013
      */
-    public void resetTrajectory(Trajectory<?> traj) {
-        this.prcSimData = new SimpleSimResultsAdaptor(traj);
+    public void resetTrajectory( Trajectory<?> trajectory ) {
+        simulator = new SimpleSimResultsAdaptor( trajectory );
     }
-    
 }
 
 
@@ -110,12 +107,12 @@ class BumpOffsetAdaptor extends BumpShapeAdaptor {
         final int orbitSize = getOrbitSize( elementCount );
         final double[] orbit = new double[orbitSize];   // bump offset, end offset and end angle and possibly the bump angle
         
-        orbit[0] = planeAdaptor.getOffset( this.prcSimData.computeFixedOrbit(bumpState) );
-        orbit[1] = planeAdaptor.getOffset( this.prcSimData.computeFixedOrbit(endState) );
-        orbit[2] = planeAdaptor.getAngle( this.prcSimData.computeFixedOrbit(endState) );
+        orbit[0] = planeAdaptor.getOffset( simulator.computeFixedOrbit( bumpState ) );
+        orbit[1] = planeAdaptor.getOffset( simulator.computeFixedOrbit( endState ) );
+        orbit[2] = planeAdaptor.getAngle( simulator.computeFixedOrbit( endState ) );
         
         if ( orbitSize > 3 ) {
-            orbit[3] = planeAdaptor.getAngle( this.prcSimData.computeFixedOrbit(bumpState) );
+            orbit[3] = planeAdaptor.getAngle( simulator.computeFixedOrbit( bumpState ) );
         }
         
         return orbit;
@@ -149,12 +146,12 @@ class BumpAngleAdaptor extends BumpShapeAdaptor {
         final int orbitSize = getOrbitSize( elementCount );
         final double[] orbit = new double[orbitSize];   // bump angle, end offset and end angle and possibly bump offset
         
-        orbit[0] = planeAdaptor.getAngle( this.prcSimData.computeFixedOrbit(bumpState) );
-        orbit[1] = planeAdaptor.getOffset( this.prcSimData.computeFixedOrbit(endState) );
-        orbit[2] = planeAdaptor.getAngle( this.prcSimData.computeFixedOrbit(endState) );
+        orbit[0] = planeAdaptor.getAngle( simulator.computeFixedOrbit( bumpState ) );
+        orbit[1] = planeAdaptor.getOffset( simulator.computeFixedOrbit( endState ) );
+        orbit[2] = planeAdaptor.getAngle( simulator.computeFixedOrbit( endState ) );
         
         if ( orbitSize > 3 ) {
-            orbit[3] = planeAdaptor.getOffset( this.prcSimData.computeFixedOrbit(bumpState) );
+            orbit[3] = planeAdaptor.getOffset( simulator.computeFixedOrbit( bumpState ) );
         }
         
         return orbit;
