@@ -16,22 +16,12 @@ import xal.tools.beam.calc.SimpleSimResultsAdaptor;
 
 /** adaptor for generating bumps of specific shapes */
 abstract public class BumpShapeAdaptor {
-
-
-    /*
-     * Global Attributes
-     */
-    
     /** bump offset adaptor */
 	static protected BumpOffsetAdaptor _bumpOffsetAdaptor;
 	
 	/** bump angle adaptor */
 	static protected BumpAngleAdaptor _bumpAngleAdaptor;
 	
-	
-	/*
-	 * Global Methods
-	 */
 	
 	/** get the bump offset adaptor instance */
 	static public BumpOffsetAdaptor getBumpOffsetAdaptor() {
@@ -52,10 +42,6 @@ abstract public class BumpShapeAdaptor {
 	}
 	
 	
-    /*
-     * Abstract Methods
-     */
-    
     /** get the label */
     abstract public String getLabel();
     
@@ -69,22 +55,13 @@ abstract public class BumpShapeAdaptor {
     
     
     /** get the orbit */
-//    abstract public double[] getOrbit( final PlaneAdaptor planeAdaptor, final IPhaseState bumpState, final IPhaseState endState, final int elementCount );
     abstract public double[] getOrbit( final PlaneAdaptor planeAdaptor, final ProbeState<?> bumpState, final ProbeState<?> endState, final int elementCount );
 
 
-    /*
-     * Local Attributes
-     */
-    
     /** the simulation data processor */
     protected SimpleSimResultsAdaptor prcSimData;
     
     
-	/*
-	 * Local Methods
-	 */
-	
     /** get the orbit size for the specified element count */
     public int getOrbitSize( final int elementCount ) {
         return Math.min( elementCount, 4 );
@@ -128,22 +105,6 @@ class BumpOffsetAdaptor extends BumpShapeAdaptor {
 	}
 	
 	
-//	/** get the orbit */
-//	public double[] getOrbit( final PlaneAdaptor planeAdaptor, final IPhaseState bumpState, final IPhaseState endState, final int elementCount ) {
-//		final int orbitSize = getOrbitSize( elementCount );
-//		final double[] orbit = new double[orbitSize];	// bump offset, end offset and end angle and possibly the bump angle
-//		
-//		orbit[0] = planeAdaptor.getOffset( bumpState.getFixedOrbit() );
-//		orbit[1] = planeAdaptor.getOffset( endState.getFixedOrbit() );
-//		orbit[2] = planeAdaptor.getAngle( endState.getFixedOrbit() );
-//		
-//		if ( orbitSize > 3 ) {
-//			orbit[3] = planeAdaptor.getAngle( bumpState.getFixedOrbit() );
-//		}
-//		
-//		return orbit;
-//	}
-
     /** get the orbit */
     public double[] getOrbit( final PlaneAdaptor planeAdaptor, final ProbeState<?> bumpState, final ProbeState<?> endState, final int elementCount ) {
         final int orbitSize = getOrbitSize( elementCount );
@@ -183,22 +144,6 @@ class BumpAngleAdaptor extends BumpShapeAdaptor {
 	}
 	
 	
-//	/** get the orbit */
-//	public double[] getOrbit( final PlaneAdaptor planeAdaptor, final IPhaseState bumpState, final IPhaseState endState, final int elementCount ) {
-//		final int orbitSize = getOrbitSize( elementCount );
-//		final double[] orbit = new double[orbitSize];	// bump angle, end offset and end angle and possibly bump offset
-//		
-//		orbit[0] = planeAdaptor.getAngle( bumpState.getFixedOrbit() );
-//		orbit[1] = planeAdaptor.getOffset( endState.getFixedOrbit() );
-//		orbit[2] = planeAdaptor.getAngle( endState.getFixedOrbit() );
-//		
-//		if ( orbitSize > 3 ) {
-//			orbit[3] = planeAdaptor.getOffset( bumpState.getFixedOrbit() );
-//		}
-//		
-//		return orbit;
-//	}
-
     /** get the orbit */
     public double[] getOrbit( final PlaneAdaptor planeAdaptor, final ProbeState<?> bumpState, final ProbeState<?> endState, final int elementCount ) {
         final int orbitSize = getOrbitSize( elementCount );
