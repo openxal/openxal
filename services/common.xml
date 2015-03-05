@@ -82,7 +82,7 @@
 		<attribute name="flag" default="-Xlint:none" />
 		<sequential>
             <mkdir dir="${service.compile.root}" />
-            <javac srcdir="${service.src.root}/${source.code.dir}" includes="**" destdir="${service.compile.root}" debug="true" source="${build.compile.java.source}" target="${build.compile.java.target}" includeAntRuntime="no" deprecation="true">
+            <javac srcdir="${service.src.root}/${source.code.dir}" includes="**" destdir="${service.compile.root}" debug="true" source="${build.compile.java.source}" target="${build.compile.java.target}" bootclasspath="${xal.bootclasspath}" includeAntRuntime="no" deprecation="true">
                 <compilerarg value="@{flag}" />
                 
                 <!-- compile against the common libraries (e.g. xal-shared.jar) -->
