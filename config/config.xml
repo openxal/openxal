@@ -34,6 +34,11 @@
 	<property name="build.intermediates.services" value="${build.intermediates.root}/services" />
 	<property name="build.intermediates.shared" value="${build.intermediates.root}/shared" />
 
+	<!-- Determine the bootstrap class path using the environment variable if defined to avoid a warning due to the compiler target. -->
+	<condition property="xal.bootclasspath" value="${env.XAL_BOOTCLASSPATH}">
+		<isset property="env.XAL_BOOTCLASSPATH" />
+	</condition>
+
 	<!-- Configure build compilation -->
 	<property name="build.compile.java.source" value="1.7" />
 	<property name="build.compile.java.target" value="${build.compile.java.source}" />
