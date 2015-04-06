@@ -829,13 +829,19 @@ public class IdealMagSectorDipole2 extends ThickElectromagnet {
         double den = Math.sqrt( R0*R0 + s*(s - L0) );
         double ratio = num/den;
 
-        if (ratio>1) {
-            
-            ratio = 1;
+//        if (ratio>1) {
+//            
+//            ratio = 1;
+//        
+//        } else if (ratio<-1) {
+//        
+//            ratio = -1;
+//        }
         
-        } else if (ratio<-1) {
+        // Correcting the above conditional
+        if (ratio<-1) {
         
-            ratio = -1;
+            ratio *= -1;
         }
         
         double theta = Math.acos(ratio);
