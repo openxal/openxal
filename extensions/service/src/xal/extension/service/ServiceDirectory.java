@@ -15,6 +15,7 @@ import xal.tools.coding.*;
 
 import java.io.IOException;
 import java.lang.reflect.Proxy;
+import java.net.InetAddress;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -71,7 +72,7 @@ final public class ServiceDirectory {
 		
 		try {
 			try {
-				_bonjour = JmDNS.create();
+				_bonjour = JmDNS.create( InetAddress.getLocalHost() );
 				_isLoopback = false;
 			}
 			catch( Exception exception ) {
@@ -79,7 +80,7 @@ final public class ServiceDirectory {
 				Logger.getLogger("global").log( Level.WARNING, message, exception );
 				System.err.println( message );
 				_isLoopback = true;
-				_bonjour = JmDNS.create( java.net.InetAddress.getByName( "127.0.0.1" ) );
+				_bonjour = JmDNS.create( InetAddress.getByName( "127.0.0.1" ) );
 			}
 			
 			// shutdown the service directory when quitting the process

@@ -1,4 +1,7 @@
 <project name="config">
+	<!-- Import site specific configuration properties if any giving preference to site specific ones. -->
+	<import file="../site/config/config.xml" optional="true" />
+
     <!-- XAL Home is where this file resides -->
     <dirname property="config.home" file="${ant.file.config}" />
     <property name="xal.home" value="${config.home}/.." />
@@ -30,6 +33,11 @@
 	<property name="build.intermediates.extensions" value="${build.intermediates.root}/extensions" />
 	<property name="build.intermediates.services" value="${build.intermediates.root}/services" />
 	<property name="build.intermediates.shared" value="${build.intermediates.root}/shared" />
+
+	<!-- Determine the bootstrap class path using the environment variable if defined to avoid a warning due to the compiler target. -->
+	<condition property="xal.bootclasspath" value="${env.XAL_BOOTCLASSPATH}">
+		<isset property="env.XAL_BOOTCLASSPATH" />
+	</condition>
 
 	<!-- Configure build compilation -->
 	<property name="build.compile.java.source" value="1.7" />
@@ -69,7 +77,11 @@
     <property name="apps.root" value="${xal.home}/apps" />
     <property name="apps.build.jar.root" value="${build.jar.root}/apps" />
     <property name="apps.install.root" value="${install.root}/apps" />
-    
+
+	<echo message="install root: ${install.root}" />
+	<echo message="install lib root: ${install.lib.root}" />
+	<echo message="apps install root: ${apps.install.root}" />
+
     <!-- Configure paths for scripts  -->
     <property name="scripts.build.root" value="${build.products.root}/scripts" />
     <property name="scripts.install.root" value="${install.root}/scripts" />

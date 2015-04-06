@@ -49,6 +49,8 @@ public class BLMAxisFactory {
             axes[index] = typeAxes.get(det.getType());
             index++;
         }
+        
+        @SuppressWarnings("rawtypes")
         SymbolAxis axis = new SymbolAxis("", names) {
             private static final long serialVersionUID = -2911592900608877261L;
 

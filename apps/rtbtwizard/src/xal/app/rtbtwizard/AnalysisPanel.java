@@ -782,8 +782,8 @@ public class AnalysisPanel extends JPanel{
 
 		double solvetime=1.0;
 		Stopper maxSolutionStopper = SolveStopperFactory.minMaxTimeSatisfactionStopper(1, solvetime, 0.999);
-		//Solver solver = new Solver(new RandomShrinkSearch(), maxSolutionStopper);
-		Solver solver = new Solver( maxSolutionStopper);
+		Solver solver = new Solver(new RandomShrinkSearch(), maxSolutionStopper);
+		//Solver solver = new Solver( maxSolutionStopper);
 
 		solver.solve(problem);
 		System.out.println("SuperGauss Fit Routine Results");

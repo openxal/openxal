@@ -218,7 +218,7 @@
 &lt;project basedir="." default="compile" name="xal.extension-compiler"&gt;
 	&lt;target name="compile"&gt;
 		&lt;mkdir dir="${extensions.compile.root}" /&gt;
-		&lt;javac debug="true" source="${build.compile.java.source}" target="${build.compile.java.target}" includeAntRuntime="no" deprecation="true" destdir="${extensions.compile.root}" includes="**" sourcepath=""&gt;
+		&lt;javac debug="true" source="${build.compile.java.source}" target="${build.compile.java.target}" bootclasspath="${xal.bootclasspath}" includeAntRuntime="no" deprecation="true" destdir="${extensions.compile.root}" includes="**" sourcepath=""&gt;
 
 			&lt;classpath&gt;
 				&lt;pathelement location="${build.intermediates.shared}/xal-core.jar" /&gt;

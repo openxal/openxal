@@ -159,6 +159,9 @@ public class TimingCenter implements DataListener {
 	
 	/** Machine Mode */
 	public static final String MACHINE_MODE_HANDLE = "machineMode";
+
+	/** Ring Energy */
+	public static final String RING_ENERGY = "ringEnergy";
 	
     /**
      * <p> 
