@@ -19,7 +19,11 @@
 		<map smf="EQuad" model="xal.model.elem.IdealEQuad"/>
 		<map smf="pq" model="xal.model.elem.IdealMagQuad"/>
 		<map smf="S" model="xal.model.elem.IdealMagSextupole"/>
+		
+		<--! This next entry is suspicious, shouldn't we map to a solenoid model? --> 
 		<map smf="SOL" model="xal.model.elem.IdealMagQuad"/>
+        <--!     --> 
+
 		<map smf="rfgap" model="xal.model.elem.IdealRfGap"/>
 
 		<map smf="bcm" model="xal.model.elem.Marker"/>

@@ -1744,7 +1744,7 @@ public class IdealRfGap extends ThinElement implements IRfGap, IRfCavityCell {
         double g_mid = W_mid/Er + 1.0;
         double b_mid = Math.sqrt(1.0 - 1.0/(g_mid*g_mid));
 
-        double r_mid = (1/(b_mid*b_mid*g_mid*g_mid*g_mid)); // relativistic effects (energy)
+        double r_mid = (1.0/(b_mid*b_mid*g_mid*g_mid*g_mid)); // relativistic effects (energy)
 
         // The derivative dT(k)/dk occures in Lapostolle's formula, we have T(b)
         //  Thus, we must use dT(k)/dk = db(k)/dk dT[b(k)]/db = -(b/k)T'(b)
@@ -1753,6 +1753,10 @@ public class IdealRfGap extends ThinElement implements IRfGap, IRfCavityCell {
         double d_T   = this.Tp(b_mid);
         double d_S   = this.Sp(b_mid);
         double d_phi = -(qAEL/Er)*r_mid*b_mid*( d_T*Math.sin(phi) - d_S*Math.cos(phi) );
+        
+        // TODO Remove this
+        double k_mid = DBL_2PI /(b_mid*IElement.LightSpeed/this.getFrequency());
+        double d_phi_new = -(qAEL/Er)*r_mid*k_mid*(this.getGapOffset() - this.getGapLength()/2.0);
 
         // TODO Remove type out
         if (!this.bolMethodCalled) {
@@ -2004,7 +2008,7 @@ public class IdealRfGap extends ThinElement implements IRfGap, IRfCavityCell {
          */
         private double  T(double beta) {
             double k   = this.waveNumber(beta);
-            double dz  = this.getGapOffset();
+            double dz  = - this.getGapOffset();
             double cos = Math.cos(k*dz);
 
             double T0  = this.fitTTF.evaluateAt(beta);
@@ -2039,7 +2043,7 @@ public class IdealRfGap extends ThinElement implements IRfGap, IRfCavityCell {
          */
         private double  Tp(double beta) {
             double k   = this.waveNumber(beta);
-            double dz  = this.getGapOffset();
+            double dz  = - this.getGapOffset();
             double cos = Math.cos(k*dz);
             
             double T0p = this.fitTTF.derivativeAt(beta);
@@ -2078,7 +2082,7 @@ public class IdealRfGap extends ThinElement implements IRfGap, IRfCavityCell {
          */
         private double  S(double beta) {
             double k   = this.waveNumber(beta);
-            double dz  = this.getGapOffset();
+            double dz  = - this.getGapOffset();
             double sin = Math.sin(k*dz);
 
             double T0  = this.fitTTF.evaluateAt(beta);
@@ -2113,7 +2117,7 @@ public class IdealRfGap extends ThinElement implements IRfGap, IRfCavityCell {
          */
         private double  Sp(double beta) {
             double k   = this.waveNumber(beta);
-            double dz  = this.getGapOffset();
+            double dz  = - this.getGapOffset();
             double sin = Math.sin(k*dz);
             
             double T0p = this.fitTTF.derivativeAt(beta);
