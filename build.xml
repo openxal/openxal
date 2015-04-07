@@ -28,7 +28,7 @@
 		<attribute name="flag" default="-Xlint:none" />
 		<sequential>
 			<mkdir dir="${core.compile.root}" />
-			<javac debug="true" source="${build.compile.java.source}" target="${build.compile.java.target}" includeAntRuntime="no" deprecation="true" destdir="${core.compile.root}" srcdir="${srcroot}/${source.code.dir}" includes="**" sourcepath="">
+			<javac debug="true" source="${build.compile.java.source}" target="${build.compile.java.target}" bootclasspath="${xal.bootclasspath}" includeAntRuntime="no" deprecation="true" destdir="${core.compile.root}" srcdir="${srcroot}/${source.code.dir}" includes="**" sourcepath="">
 				<classpath>
 					<pathelement location="${build.intermediates.core}/lib.jar" />
 				</classpath>
