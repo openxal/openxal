@@ -196,7 +196,10 @@ public interface IProbe {
      *
      * @author Christopher K. Allen
      * @since  Nov 25, 2014
+     * 
+     * @deprecated  This method was part of an old design
      */
+    @Deprecated
     public double   getCoupledCavityPhase();
     
     /**
@@ -334,7 +337,10 @@ public interface IProbe {
      *
      * @author Christopher K. Allen
      * @since  Nov 25, 2014
+     * 
+     * @deprecated This was part of an old design
      */
+    @Deprecated
     public void setCoupledCavityPhaseShift(double dblCavPhsShft);
     
     

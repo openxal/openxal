@@ -322,6 +322,8 @@ public class RfCavity extends AcceleratorSeq {
 	
     
     /**
+     * CKA - Never used
+     * 
      * @return default (design) average cavity TTF 
      * (averaged over all RF gaps in the cavity)
      */
