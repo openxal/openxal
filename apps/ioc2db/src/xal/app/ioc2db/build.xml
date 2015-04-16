@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- Build the application whose name matches that of the project. -->
+<project name="ioc2db" basedir="." default="all">
+    <property environment="env"/>
+	
+	<import file="${env.XAL_HOME}/app_base.xml"/>
+    
+    <target name="custom-init">
+		<property name="mainclass" value="${apps}.${ant.project.name}.MainApplication"/>
+	</target>
+	
+    <target name="init" depends="custom-init, app_base.init"/>
+</project>
+
