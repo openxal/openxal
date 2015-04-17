@@ -81,6 +81,10 @@
 	<macrodef name="compile-flagged">
 		<attribute name="flag" default="-Xlint:none" />
 		<sequential>
+			<!-- Verify that the main class file exists for the app, otherwise it is an error. -->
+			<available file="${app.src.root}/${source.code.dir}/${app.relative.path}/${mainclass.base}.java" property="has.main.class" />
+			<fail message="${appname} is missing main class, ${mainclass.base}. You may need to specify the &quot;mainclass.base&quot; property in the app's build file to identify the correct main class." unless="has.main.class" />
+
             <mkdir dir="${app.compile.root}" />
             <javac srcdir="${app.src.root}/${source.code.dir}" includes="**" destdir="${app.compile.root}" debug="true" source="${build.compile.java.source}" target="${build.compile.java.target}" bootclasspath="${xal.bootclasspath}" includeAntRuntime="no" deprecation="true">
                 <compilerarg value="@{flag}" />
