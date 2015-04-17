@@ -172,7 +172,7 @@ public class EnvelopeBacktracker extends EnvelopeTrackerBase {
         int     cntSteps;   // number of steps through element
         double  dblStep;    // step size through element
         
-        if(this.getSpaceChargeFlag())
+        if(this.getUseSpacecharge())
             cntSteps = (int) Math.max(Math.ceil(propLen / getStepSize()), 1);
         else 
             cntSteps = 1;
@@ -221,7 +221,7 @@ public class EnvelopeBacktracker extends EnvelopeTrackerBase {
         PhaseMatrix         matTau0  = probe.getCovariance();
 
         // Remove the emittance growth
-        if (this.getEmittanceGrowthFlag())   
+        if (this.getEmittanceGrowth())   
             matTau0 = this.removeEmittanceGrowth(probe, ifcElem, matTau0);
         
         // Compute the transfer matrix
@@ -303,7 +303,7 @@ public class EnvelopeBacktracker extends EnvelopeTrackerBase {
             probe.setKineticEnergy(W-dW);
             PhaseMatrix matPhiI = elemRfGap.transferMap(probe, dblLen).getFirstOrder();
             
-            if (this.getEmittanceGrowthFlag()) {
+            if (this.getEmittanceGrowth()) {
                 double      dphi     = this.effPhaseSpread(probe, elemRfGap);
                 
                 matPhiI = super.modTransferMatrixForEmitGrowth(dphi, matPhiI);
@@ -322,7 +322,7 @@ public class EnvelopeBacktracker extends EnvelopeTrackerBase {
         }
          
         // Check for easy case of no space charge
-        if (!this.getSpaceChargeFlag())    {
+        if (!this.getUseSpacecharge())    {
             matPhi = ifcElem.transferMap(probe, dblLen).getFirstOrder();
             
         // we must treat space charge
@@ -547,7 +547,7 @@ public class EnvelopeBacktracker extends EnvelopeTrackerBase {
         if (!(iElem instanceof IdealRfGap))
             return matTau;
         
-        if (!this.getEmittanceGrowthFlag())
+        if (!this.getEmittanceGrowth())
             return matTau;
     
         

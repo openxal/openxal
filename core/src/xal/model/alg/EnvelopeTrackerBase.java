@@ -376,8 +376,13 @@ public abstract class EnvelopeTrackerBase extends Tracker {
      * 
      * @return  true if space charge forces are used, false otherwise
      */
+    public boolean getUseSpacecharge() {
+    	return this.bolScheff;
+    }
+    
+    @Deprecated
     public boolean getSpaceChargeFlag() {
-        return this.bolScheff;
+        return getUseSpacecharge();
     }
 
     /**
@@ -387,10 +392,15 @@ public abstract class EnvelopeTrackerBase extends Tracker {
      * 
      * @see EnvelopeTracker#setEmittanceGrowth(boolean)
      */
-    public boolean getEmittanceGrowthFlag() {
+    public boolean getEmittanceGrowth() {
         return this.bolEmitGrowth;
     }
 
+    @Deprecated
+    public boolean getEmittanceGrowthFlag() {
+        return getEmittanceGrowth();
+    }
+    
     /**
      * <h2>Return the emittance growth model</h2>
      * <p>
@@ -539,10 +549,10 @@ public abstract class EnvelopeTrackerBase extends Tracker {
         DataAdaptor daptAlg = daptArchive.childAdaptor(NODETAG_ALG);
 
         DataAdaptor daptOpt = daptAlg.createChild(LABEL_OPTIONS);
-        daptOpt.setValue(ATTR_SCHEFF, this.getSpaceChargeFlag());
+        daptOpt.setValue(ATTR_SCHEFF, this.getUseSpacecharge());
         daptOpt.setValue(ATTR_STEPSIZE, this.getStepSize());
-        daptOpt.setValue(ATTR_EMITGROWTH, this.getEmittanceGrowthFlag());
-        daptOpt.setValue(ATTR_USESPACECHARGE, this.getSpaceChargeFlag());
+        daptOpt.setValue(ATTR_EMITGROWTH, this.getEmittanceGrowth());
+        daptOpt.setValue(ATTR_USESPACECHARGE, this.getUseSpacecharge());
 
     }
 
@@ -688,7 +698,7 @@ public abstract class EnvelopeTrackerBase extends Tracker {
         throws ModelException
     {
         
-        if (!this.getEmittanceGrowthFlag())
+        if (!this.getEmittanceGrowth())
             return matPhi;
 
         // Compute auxiliary parameters

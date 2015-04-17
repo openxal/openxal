@@ -123,8 +123,11 @@ public interface IAlgorithm extends java.rmi.Remote, IContextAware, IArchive {
      * (a la Parmila) rather than use default values (a  la Trace   3D)
      * @author jdg 3/20/03
      */
+    public boolean getRfGapPhaseCalculation();
+    
+    @Deprecated
     public boolean useRfGapPhaseCalculation();
-       
+   
     /** 
      * indicates whether to calculate the beam phase in multi gap Rf cavities,
      * (a la Parmila) rather than use default values (a  la Trace   3D)
