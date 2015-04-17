@@ -15,6 +15,7 @@ import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 import java.util.Properties;
 
 import javax.swing.JOptionPane;
@@ -22,6 +23,7 @@ import javax.swing.JTable;
 
 import xal.app.ioc2db.cred.DbCredentials;
 import xal.app.ioc2db.cred.IocCredentials;
+import xal.tools.ResourceManager;
 import xal.tools.database.ConnectionDialog;
 import xal.tools.database.ConnectionDictionary;
 
@@ -375,7 +377,9 @@ public class MainApplication  implements Runnable {
         
         try {
             // Load the database properties file
-            InputStream isConfigFile = MainDocument.class.getResourceAsStream(STR_CONFIG_FILE);
+            URL urlConfigFile = ResourceManager.getResourceURL(this.getClass(), STR_CONFIG_FILE);
+            InputStream isConfigFile = urlConfigFile.openStream();
+//            InputStream isConfigFile = MainDocument.class.getResourceAsStream(STR_CONFIG_FILE);
             Properties  prpDbConfig  = new Properties();
             prpDbConfig.load(isConfigFile);
             
