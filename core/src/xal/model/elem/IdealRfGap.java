@@ -1722,6 +1722,9 @@ public class IdealRfGap extends ThinElement implements IRfGap, IRfCavityCell {
 //        double stf = this.fitSTF.evaluateAt(bi);        // sine transit time factor
         double ttf = this.T(bi);        // cosine transit time factor
         double stf = this.S(bi);        // sine transit time factor
+        //
+        // TODO CKA - I BELIEVE T and S in the XDXF files are in centimeters!!!!
+        //            That is they are dT(b)/dk and dS(b)/dk NEED TO DEAL WITH THIS!!!
 
         // CKA - Now I believe the object is to compute the mid-gap wave number k_mid
         //       and phase change d_phi. All other gap parameters can be computed
