@@ -51,11 +51,14 @@ public class SimpleProbeEditor extends JDialog {
 	/** model column for the value in the property table */
 	final private int PROPERTY_TABLE_VALUE_COLUMN;
 
-	
+	 public SimpleProbeEditor( final Frame owner, final Probe<?> probe ) {
+		 this(owner, probe, true);
+	 }
+	 
     /* Constructor that takes a window parent
      * and a probe to fetch properties from
      */
-    public SimpleProbeEditor( final Frame owner, final Probe<?> probe ) {
+    public SimpleProbeEditor( final Frame owner, final Probe<?> probe, boolean visible ) {
         super( owner, "Probe Editor", true );	//Set JDialog's owner, title, and modality
         
         PROBE = probe;					// Set the probe to edit
@@ -75,7 +78,7 @@ public class SimpleProbeEditor extends JDialog {
         setSize( 600, 600 );			// Set the window size
         initializeComponents();			// Set up each component in the editor
         setLocationRelativeTo( owner );	// Center the editor in relation to the frame that constructed the editor
-        setVisible(true);				// Make the window visible
+        setVisible(visible);				// Make the window visible
     }
 	
     
