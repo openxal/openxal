@@ -18,6 +18,7 @@ import javax.xml.validation.SchemaFactory;
 
 import org.w3c.dom.*;
 
+import xal.tools.ResourceManager;
 import xal.tools.data.*;
 import xal.tools.StringJoiner;
 
@@ -551,9 +552,10 @@ public class XmlDataAdaptor implements DataAdaptor {
     /**
      * Generate an XmlDataAdaptor from a urlPath, given dtd validating option, and given schemaUrl
      */
-    static public XmlDataAdaptor adaptorForUrl( final String urlPath, final boolean isValidating, String schemaUrl) throws ParseException, ResourceNotFoundException {
+    static public XmlDataAdaptor adaptorForUrl( final String urlPath, final boolean isValidating, final String schemaPath ) throws ParseException, ResourceNotFoundException {
         try {
-            DocumentBuilder builder = newDocumentBuilder( isValidating, XmlDataAdaptor.class.getResource(schemaUrl) );
+			final URL schemaURL = ResourceManager.getResourceURL( XmlDataAdaptor.class, schemaPath );
+            DocumentBuilder builder = newDocumentBuilder( isValidating, schemaURL );
             Document document = builder.parse( urlPath );
 
             return new XmlDataAdaptor( document );
