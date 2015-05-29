@@ -283,7 +283,11 @@ public class RfGap extends AcceleratorNode {
     public double getGapTTF() {
         return m_bucRfGap.getTTF();
     }
-
+    
+    //JAMES CODE: sets the gap TTF value for the given gap
+    public void setGapTTF(double gapTTFval) {
+    	m_bucRfGap.setTTF(gapTTFval);
+    }
 	
     /** 
      *  Set the RF amplitude in the  (kV/m) 
