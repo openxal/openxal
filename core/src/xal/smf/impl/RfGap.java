@@ -57,6 +57,8 @@ public class RfGap extends AcceleratorNode {
     /** The rf  gap bucket containing the length, ampFactor, phaseFactor and TTF*/
     
     protected RfGapBucket           m_bucRfGap;           // RfGap parameters
+    
+//    private TPBucket        bucTp;
 
     /**  The RF Field in the gap (kV/m) */
     private double ampAvg;
@@ -310,16 +312,28 @@ public class RfGap extends AcceleratorNode {
  // the RfGapDataSource interface methods:
 
    /** return a polynomial fit of the transit time factor as a function of beta */  
-    public UnivariateRealPolynomial getTTFFit() { 
+    public UnivariateRealPolynomial getTTFFit() {
+        
+//        if (this.bucTp != null) {
+//
+//            double[] arrCoeffs = this.bucTp.getTCoefficients();
+//            UnivariateRealPolynomial polyTtf = new UnivariateRealPolynomial(arrCoeffs);
+//            return polyTtf;
+//        }
+        
+        // Default - to to cavity TTF function
         RfCavity rfCav = (RfCavity) this.getParent();
-	if(isEndCell()) {
-		return rfCav.getTTFFitEnd();
-		//return rfCav.getTTFFit();
-	}
-	else
-		return rfCav.getTTFFit();
+        if(isEndCell()) {
+            return rfCav.getTTFFitEnd();
+            //return rfCav.getTTFFit();
+        }
+        else
+            return rfCav.getTTFFit();
     }
-   /** return a polynomial fit of the TTF-prime factor as a function of beta */  
+    
+   /** 
+    * return a polynomial fit of the TTF-prime factor as a function of beta 
+    */  
     public UnivariateRealPolynomial getTTFPrimeFit() { 
         RfCavity rfCav = (RfCavity) this.getParent();
 	if (isEndCell())

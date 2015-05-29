@@ -1514,7 +1514,19 @@
        </channelsuite>
        <node type="RG" id="MEBT_RF:Bnch03:Rg01" pos="0">
          <attributes>
-          <rfgap length="0.13" phaseFactor="0" ampFactor="1" TTF="0.342" endCell="0" gapOffset="0.0"/>
+          <rfgap 
+                 length="0.13" 
+                 phaseFactor="0"  
+                 ampFactor="1" 
+                 TTF="0.342" 
+                 endCell="0" 
+                 gapOffset="0.0"
+
+                 ttfCoefs=".342, 0, 0"
+                 ttfpCoefs="0, 0, 0"
+                 stfCoefs="0, 0, 0"
+                 stfpCoefs="0, 0, 0"
+             />
          </attributes>
        </node>
     </sequence>
