@@ -109,6 +109,8 @@ public class RfGapBucket extends AttributeBucket {
     public RfGapBucket() {
         super();
         
+        // 
+        //  Instantiate the original attributes for RF gap
         m_attLength = new Attribute(0.0);
         m_attPhaseFactor = new Attribute(0.0);
         m_attAmpFactor = new Attribute(0.0);
@@ -120,7 +122,16 @@ public class RfGapBucket extends AttributeBucket {
         m_attTestPhaseFactor = new Attribute(0.0);
         m_attEndCell = new Attribute(0);
         m_attGapOffset = new Attribute(0.);
+        
+        // Instantiate the fits for the transit time factors
+        //  and derivatives
+        attTCoeffs  = new Attribute(new double[] {});
+        attTpCoeffs = new Attribute(new double[] {});
+        attSCoeffs  = new Attribute(new double[] {});
+        attSpCoeffs = new Attribute(new double[] {});
     
+        // Register the attributes with the attribute manager in the
+        //  base class.
         super.registerAttribute(c_arrNames[0], m_attLength);
         super.registerAttribute(c_arrNames[1], m_attPhaseFactor);
         super.registerAttribute(c_arrNames[2], m_attAmpFactor);
@@ -131,7 +142,14 @@ public class RfGapBucket extends AttributeBucket {
         super.registerAttribute(c_arrNames[7], m_attTestAmpFactor);
         super.registerAttribute(c_arrNames[8], m_attTestPhaseFactor);
         super.registerAttribute(c_arrNames[9], m_attEndCell);
-        super.registerAttribute(c_arrNames[10], m_attGapOffset);    
+        super.registerAttribute(c_arrNames[10], m_attGapOffset);
+        
+        // Register the fits for the transit time factors with the
+        //  base class attribute manager.
+        super.registerAttribute(c_arrNames[11], attTCoeffs);
+        super.registerAttribute(c_arrNames[12], attTpCoeffs);
+        super.registerAttribute(c_arrNames[13], attSCoeffs);
+        super.registerAttribute(c_arrNames[14], attSpCoeffs);
     }
     
     public void setLength(double Val)  { m_attLength.set(Val); ;}

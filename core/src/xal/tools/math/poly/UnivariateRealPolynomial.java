@@ -106,11 +106,11 @@ public class UnivariateRealPolynomial {
      */
 
     /**
-     * Evaluate the polynomial for the specifed value of the indeterminate.
+     * Evaluate the polynomial for the specified value of the indeterminate.
      * If the coefficient vector has not been specified this
      * @param   dblVal      indeterminate value to evaluate the polynomial
      *
-     * @author Chris Allen
+     * @author Christopher Allen
      */
     public double evaluateAt(double dblVal) {
         if (this.m_arrCoef == null)

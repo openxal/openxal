@@ -7,4 +7,5 @@
 	<hardware_status name="Hardware Status" url="hardware_status.xdxf"/>
 	<timing_source name="timing" url="timing_pvs.tim"/>
 	<tablegroup_source name="modelparams" url="model.params"/>	
+    <optics_extra name="RFGap TTFs" url="rfgap_ttfs.xdxf"/>
 </sources>

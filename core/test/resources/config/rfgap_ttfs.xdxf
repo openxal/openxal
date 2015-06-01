@@ -1,0 +1,172 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<!DOCTYPE xdxf SYSTEM "xdxf.dtd">
+<xdxf date="02.04.2014" system="sns" ver="2.0.0">
+    <sequence id="SCLMed">
+        <sequence id="SCL_RF:Cav01a">
+            <attributes>
+                <rfcavity amp="21.799135083505437" phase="-83.86290726410061" />
+            </attributes>
+        </sequence>
+        <sequence id="SCL_RF:Cav01b">
+            <attributes>
+                <rfcavity amp="18.25326207920769" phase="-76.32075493208595" />
+            </attributes>
+        </sequence>
+        <sequence id="SCL_RF:Cav01c">
+            <attributes>
+                <rfcavity amp="19.070713176194516" phase="-70.71362616115402" />
+            </attributes>
+        </sequence>
+        <sequence id="SCL_RF:Cav02a">
+            <attributes>
+                <rfcavity amp="14.316973508971735" phase="-64.96246543657799" />
+            </attributes>
+        </sequence>
+        <sequence id="SCL_RF:Cav02b">
+            <attributes>
+                <rfcavity amp="17.076386212953167" phase="-60.468828019613284" />
+            </attributes>
+        </sequence>
+        <sequence id="SCL_RF:Cav02c">
+            <attributes>
+                <rfcavity amp="15.058975358323751" phase="-55.14026893488699" />
+            </attributes>
+        </sequence>
+        <sequence id="SCL_RF:Cav03a">
+            <attributes>
+                <rfcavity amp="20.11108183462219" phase="-50.56182484047894" />
+            </attributes>
+        </sequence>
+        <sequence id="SCL_RF:Cav03b">
+            <attributes>
+                <rfcavity amp="20.03765095901109" phase="-44.1015913709416" />
+            </attributes>
+        </sequence>
+        <sequence id="SCL_RF:Cav03c">
+            <attributes>
+                <rfcavity amp="20.59961332665356" phase="-38.11796685012815" />
+            </attributes>
+        </sequence>
+        <sequence id="SCL_RF:Cav04a">
+            <attributes>
+                <rfcavity amp="17.537142717368294" phase="-33.050570726984006" />
+            </attributes>
+        </sequence>
+        <sequence id="SCL_RF:Cav04b">
+            <attributes>
+                <rfcavity amp="20.95254362987567" phase="-28.16707893795684" />
+            </attributes>
+        </sequence>
+        <sequence id="SCL_RF:Cav04c">
+            <attributes>
+                <rfcavity amp="18.175273423718338" phase="-22.432975620744394" />
+            </attributes>
+        </sequence>
+        <sequence id="SCL_RF:Cav05a">
+            <attributes>
+                <rfcavity amp="9.075377912226468" phase="-20.372159195714627" />
+            </attributes>
+        </sequence>
+        <sequence id="SCL_RF:Cav05b">
+            <attributes>
+                <rfcavity amp="19.88912694820462" phase="-14.381591290963128" />
+            </attributes>
+        </sequence>
+        <sequence id="SCL_RF:Cav05c">
+            <attributes>
+                <rfcavity amp="19.301754185448225" phase="-11.241423162442517" />
+            </attributes>
+        </sequence>
+        <sequence id="SCL_RF:Cav06a">
+            <attributes>
+                <rfcavity amp="18.329791552160266" phase="-6.609915814711737" />
+            </attributes>
+        </sequence>
+        <sequence id="SCL_RF:Cav06b">
+            <attributes>
+                <rfcavity amp="21.076998715424033" phase="-2.995305163101936" />
+            </attributes>
+        </sequence>
+        <sequence id="SCL_RF:Cav06c">
+            <attributes>
+                <rfcavity amp="20.33820828148331" phase="2.421456994554352" />
+            </attributes>
+        </sequence>
+        <sequence id="SCL_RF:Cav07a">
+            <attributes>
+                <rfcavity amp="20.342503050227684" phase="5.02449666951722" />
+            </attributes>
+        </sequence>
+        <sequence id="SCL_RF:Cav07b">
+            <attributes>
+                <rfcavity amp="19.65630377171069" phase="8.16082371934315" />
+            </attributes>
+        </sequence>
+        <sequence id="SCL_RF:Cav07c">
+            <attributes>
+                <rfcavity amp="15.012855528536964" phase="12.735614286735661" />
+            </attributes>
+        </sequence>
+        <sequence id="SCL_RF:Cav08a">
+            <attributes>
+                <rfcavity amp="16.378394570783403" phase="15.259438383291139" />
+            </attributes>
+        </sequence>
+        <sequence id="SCL_RF:Cav08b">
+            <attributes>
+                <rfcavity amp="17.766424634743096" phase="15.538319966406556" />
+            </attributes>
+        </sequence>
+        <sequence id="SCL_RF:Cav08c">
+            <attributes>
+                <rfcavity amp="21.602198248143903" phase="19.90431079582776" />
+            </attributes>
+        </sequence>
+        <sequence id="SCL_RF:Cav09a">
+            <attributes>
+                <rfcavity amp="20.921950015281006" phase="23.867387584672542" />
+            </attributes>
+        </sequence>
+        <sequence id="SCL_RF:Cav09b">
+            <attributes>
+                <rfcavity amp="16.763120660535463" phase="23.671252384519903" />
+            </attributes>
+        </sequence>
+        <sequence id="SCL_RF:Cav09c">
+            <attributes>
+                <rfcavity amp="18.33856397526209" phase="26.696318837814037" />
+            </attributes>
+        </sequence>
+        <sequence id="SCL_RF:Cav10a">
+            <attributes>
+                <rfcavity amp="18.669379654796742" phase="28.957236914575322" />
+            </attributes>
+        </sequence>
+        <sequence id="SCL_RF:Cav10b">
+            <attributes>
+                <rfcavity amp="19.12108521868467" phase="28.240934169269163" />
+            </attributes>
+        </sequence>
+        <sequence id="SCL_RF:Cav10c">
+            <attributes>
+                <rfcavity amp="14.42430263305596" phase="32.12006777932402" />
+            </attributes>
+        </sequence>
+        <sequence id="SCL_RF:Cav11a">
+            <attributes>
+                <rfcavity amp="18.168621377226064" phase="33.60701735442853" />
+            </attributes>
+        </sequence>
+        <sequence id="SCL_RF:Cav11b">
+            <attributes>
+                <rfcavity amp="0.0" phase="0.0" />
+            </attributes>
+        </sequence>
+        <sequence id="SCL_RF:Cav11c">
+            <attributes>
+                <rfcavity amp="19.242401658525864" phase="37.25626111438032" />
+            </attributes>
+        </sequence>
+    </sequence>
+    </sequence>
+</xdxf>
