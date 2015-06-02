@@ -4,13 +4,22 @@
  * Author  : Christopher K. Allen
  * Since   : Jun 1, 2015
  */
-package xal.smf.data;
+package xal.smf.attr;
 
 import static org.junit.Assert.*;
+
+import java.io.PrintStream;
+import java.util.List;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import xal.smf.Accelerator;
+import xal.smf.AcceleratorSeq;
+import xal.smf.impl.RfGap;
+import xal.test.ResourceManager;
+import xal.tools.math.poly.UnivariateRealPolynomial;
 
 /**
  * Class <code></code>.
@@ -20,14 +29,29 @@ import org.junit.Test;
  * @since  Jun 1, 2015
  */
 public class TestRfGapBucket {
+    
+    /*
+     * Global Variables
+     */
+    
+    /** The accelerator object containing the bucket structure under test */
+    private static Accelerator        ACCL_TEST;
+    
+    /** Stream where output is directed */
+    private static PrintStream        OSTR_TYPEOUT;
+    
 
     /**
+     * Sets up the global variables used in tests.
+     * 
      * @throws java.lang.Exception
      *
      * @since  Jun 1, 2015   by Christopher K. Allen
      */
     @BeforeClass
     public static void setUpBeforeClass() throws Exception {
+       ACCL_TEST = ResourceManager.getTestAccelerator();
+       OSTR_TYPEOUT = System.out;
     }
 
     /**
@@ -44,7 +68,22 @@ public class TestRfGapBucket {
      */
     @Test
     public final void testGetTCoefficients() {
-        fail("Not yet implemented"); // TODO
+        AcceleratorSeq  seqMebt = ACCL_TEST.getSequence("MEBT");
+        
+        
+        List<RfGap>   lstGaps = seqMebt.getNodesOfClassWithStatus(RfGap.class, true);
+        for (RfGap smfGap : lstGaps) {
+            UnivariateRealPolynomial polyTFit = smfGap.getTTFFit();
+            UnivariateRealPolynomial polySFit = smfGap.getSFit();
+            UnivariateRealPolynomial polyTpFit = smfGap.getTTFPrimeFit();
+            UnivariateRealPolynomial polySpFit = smfGap.getSPrimeFit();
+            
+            OSTR_TYPEOUT.println("\nNODE: " + smfGap.getId());
+            OSTR_TYPEOUT.println("T(x) = " + polyTFit.toString());
+            OSTR_TYPEOUT.println("T'(x) = " + polyTpFit.toString());
+            OSTR_TYPEOUT.println("S(x) = " + polySFit.toString());
+            OSTR_TYPEOUT.println("S'(x) = " + polySpFit.toString());
+        }
     }
 
     /**

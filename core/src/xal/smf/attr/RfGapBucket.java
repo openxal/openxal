@@ -7,7 +7,7 @@ package xal.smf.attr;
  * A set of RF gap attributes.
  * </p>
  * <p>
- * This bucket contains information about a specific gap withing a resonating cavity such as a DTL
+ * This bucket contains information about a specific gap within a resonate cavity such as a DTL
  * or CCL, which is driven by a common RF source.
  * </p>
  * <p>
