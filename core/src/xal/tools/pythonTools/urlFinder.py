@@ -12,7 +12,6 @@ This function finds the URL of the file in question in the OpenXal project.
 
 inputs:
     filename: Name of the file being searched for.
-    top: Basepath of the file you are looking for. Example: If you know the file is somewhere in /Users/you/Documents, use that.
 outputs:
     URL: File URL
 '''
@@ -40,5 +39,31 @@ def fetchURL(filename):
             
         if not file_found:
             print("Error: No file of that name found in current directory tree.")
+    else:
+        print("Error: No folder in file system named openxal")
+
+'''
+This function finds the URL of the file in question in the OpenXal project.
+
+inputs:
+    filename: Name of the file being searched for.
+    top: Basepath of the file you are looking for. Example: If you know the file is somewhere in /Users/you/Documents, use that.
+outputs:
+    URL: File URL
+'''
+def fetchURL2(filename,top):
+
+    file_found=False
+    xal_exists=False
+
+    for root, dirs, files in os.walk(top,topdown=False):
+            
+        if filename in files:
+            url=root+"/"+filename
+            file_found=True
+            return url
+            
+    if not file_found:
+        print("Error: No file of that name found in current directory tree.")
     else:
         print("Error: No folder in file system named openxal")
