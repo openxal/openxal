@@ -216,7 +216,7 @@ public class UnivariateRealPolynomial {
         String  strPoly = Double.toString(this.getCoef(0));
 
         for (int n=1; n<=N; n++)
-            strPoly += " + " + this.getCoef(n) + "x^" + n;
+            strPoly += " + " + this.getCoef(n) + "*x^" + n;
 
         return strPoly;
     }

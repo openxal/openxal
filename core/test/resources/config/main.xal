@@ -8,4 +8,5 @@
 	<timing_source name="timing" url="timing_pvs.tim"/>
 	<tablegroup_source name="modelparams" url="model.params"/>	
     <optics_extra name="RFGap TTFs" url="rfgap_ttfs.xdxf"/>
+    <optics_extra name="SCL 930 MeV" url="SCL.xdxf"/>
 </sources>

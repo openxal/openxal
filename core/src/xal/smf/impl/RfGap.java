@@ -415,6 +415,15 @@ public class RfGap extends AcceleratorNode {
     * @version June 1, 2015
     */  
     public UnivariateRealPolynomial getSPrimeFit() { 
+        double[] arrCoeffs = this.m_bucRfGap.getSpCoefficients();
+
+        if (arrCoeffs != null) {
+            UnivariateRealPolynomial polyFit = new UnivariateRealPolynomial(arrCoeffs);
+            return polyFit;
+        }
+
+        // Defaults to the RF cavity transit time factor derivative if none is 
+        //  defined for this gap.
         RfCavity rfCav = (RfCavity) this.getParent();
 	if (isEndCell()) 
 		return rfCav.getSTFPrimeFitEnd();

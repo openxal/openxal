@@ -50,8 +50,11 @@ public class TestRfGapBucket {
      */
     @BeforeClass
     public static void setUpBeforeClass() throws Exception {
+        OSTR_TYPEOUT = System.out;
+        
+       OSTR_TYPEOUT.println("Loading Test Accelerator");
        ACCL_TEST = ResourceManager.getTestAccelerator();
-       OSTR_TYPEOUT = System.out;
+       OSTR_TYPEOUT.println("Test Accelerator Loaded");
     }
 
     /**
@@ -71,7 +74,7 @@ public class TestRfGapBucket {
         AcceleratorSeq  seqMebt = ACCL_TEST.getSequence("MEBT");
         
         
-        List<RfGap>   lstGaps = seqMebt.getNodesOfClassWithStatus(RfGap.class, true);
+        List<RfGap>   lstGaps = seqMebt.getAllNodesOfType("RG");
         for (RfGap smfGap : lstGaps) {
             UnivariateRealPolynomial polyTFit = smfGap.getTTFFit();
             UnivariateRealPolynomial polySFit = smfGap.getSFit();
