@@ -90,6 +90,28 @@ public class TestRfGapBucket {
     }
 
     /**
+     * Test method for {@link xal.smf.attr.RfGapBucket#getTCoefficients()}.
+     */
+    @Test
+    public final void testGetTCoefficientsCCL() {
+        AcceleratorSeq  seqDtl = ACCL_TEST.getComboSequence("CCL");
+        
+        
+        List<RfGap>   lstGaps = seqDtl.getAllNodesOfType("RG");
+        for (RfGap smfGap : lstGaps) {
+            UnivariateRealPolynomial polyTFit = smfGap.getTTFFit();
+            UnivariateRealPolynomial polySFit = smfGap.getSFit();
+            UnivariateRealPolynomial polyTpFit = smfGap.getTTFPrimeFit();
+            UnivariateRealPolynomial polySpFit = smfGap.getSPrimeFit();
+            
+            OSTR_TYPEOUT.println("\nNODE: " + smfGap.getId());
+            OSTR_TYPEOUT.println("T(x) = " + polyTFit.toString());
+            OSTR_TYPEOUT.println("T'(x) = " + polyTpFit.toString());
+            OSTR_TYPEOUT.println("S(x) = " + polySFit.toString());
+            OSTR_TYPEOUT.println("S'(x) = " + polySpFit.toString());
+        }
+    }
+    /**
      * Test method for {@link xal.smf.attr.RfGapBucket#getTpCoefficients()}.
      */
     @Test
