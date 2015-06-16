@@ -94,7 +94,7 @@ public class TestRfGapBucket {
      */
     @Test
     public final void testGetTCoefficientsCCL() {
-        AcceleratorSeq  seqDtl = ACCL_TEST.getComboSequence("SCL");
+        AcceleratorSeq  seqDtl = ACCL_TEST.getComboSequence("CCL");
         
         
         List<RfGap>   lstGaps = seqDtl.getAllNodesOfType("RG");
@@ -111,44 +111,45 @@ public class TestRfGapBucket {
             OSTR_TYPEOUT.println("S'(x) = " + polySpFit.toString());
         }
     }
-    /**
-     * Test method for {@link xal.smf.attr.RfGapBucket#getTpCoefficients()}.
-     */
-    @Test
-    public final void testGetTpCoefficients() {
-        fail("Not yet implemented"); // TODO
-    }
-
-    /**
-     * Test method for {@link xal.smf.attr.RfGapBucket#getSCoefficients()}.
-     */
-    @Test
-    public final void testGetSCoefficients() {
-        fail("Not yet implemented"); // TODO
-    }
-
-    /**
-     * Test method for {@link xal.smf.attr.RfGapBucket#getSpCoefficients()}.
-     */
-    @Test
-    public final void testGetSpCoefficients() {
-        fail("Not yet implemented"); // TODO
-    }
-
-    /**
-     * Test method for {@link xal.smf.attr.RfGapBucket#setTCoefficients(double[])}.
-     */
-    @Test
-    public final void testSetTCoefficients() {
-        fail("Not yet implemented"); // TODO
-    }
-
-    /**
-     * Test method for {@link xal.smf.attr.RfCavityBucket#setTpCoefficients(double[])}.
-     */
-    @Test
-    public final void testSetTpCoefficients() {
-        fail("Not yet implemented"); // TODO
-    }
-
+    
+//    /**
+//     * Test method for {@link xal.smf.attr.RfGapBucket#getTpCoefficients()}.
+//     */
+//    @Test
+//    public final void testGetTpCoefficients() {
+//        fail("Not yet implemented"); // TODO
+//    }
+//
+//    /**
+//     * Test method for {@link xal.smf.attr.RfGapBucket#getSCoefficients()}.
+//     */
+//    @Test
+//    public final void testGetSCoefficients() {
+//        fail("Not yet implemented"); // TODO
+//    }
+//
+//    /**
+//     * Test method for {@link xal.smf.attr.RfGapBucket#getSpCoefficients()}.
+//     */
+//    @Test
+//    public final void testGetSpCoefficients() {
+//        fail("Not yet implemented"); // TODO
+//    }
+//
+//    /**
+//     * Test method for {@link xal.smf.attr.RfGapBucket#setTCoefficients(double[])}.
+//     */
+//    @Test
+//    public final void testSetTCoefficients() {
+//        fail("Not yet implemented"); // TODO
+//    }
+//
+//    /**
+//     * Test method for {@link xal.smf.attr.RfCavityBucket#setTpCoefficients(double[])}.
+//     */
+//    @Test
+//    public final void testSetTpCoefficients() {
+//        fail("Not yet implemented"); // TODO
+//    }
+//
 }
