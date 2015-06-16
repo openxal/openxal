@@ -4670,7 +4670,7 @@
                  STFCoefs=".5868, -.9839, 1.0454"
                  STFPrimeCoefs=".0716, -.1095, .1285"
                  TTF_endCoefs=".6664, .885, -.8694"
-                 TTFPrime_EndCoefs=".1037, -.2907, .29185"
+                 TTFPrime_EndCoefs=".1037, -.2907, .2985"
                  STF_endCoefs=".6628, -1.2996, 1.3841"
                  STFPrime_endCoefs=".0577, -.0499, .0636"
                  structureMode="1"/>
