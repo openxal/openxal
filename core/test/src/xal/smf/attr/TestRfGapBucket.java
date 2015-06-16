@@ -94,7 +94,7 @@ public class TestRfGapBucket {
      */
     @Test
     public final void testGetTCoefficientsCCL() {
-        AcceleratorSeq  seqDtl = ACCL_TEST.getComboSequence("CCL");
+        AcceleratorSeq  seqDtl = ACCL_TEST.getComboSequence("SCL");
         
         
         List<RfGap>   lstGaps = seqDtl.getAllNodesOfType("RG");

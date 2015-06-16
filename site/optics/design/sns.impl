@@ -1,5 +1,5 @@
 <?xml version = '1.0' encoding = 'UTF-8'?>
-<!DOCTYPE deviceMapping SYSTEM "xdxf.dtd">
+<!-- DOCTYPE deviceMapping SYSTEM "xdxf.dtd" -->
 <deviceMapping>
    <device type="DH" class="xal.smf.impl.Bend"/>
    <device type="BCM" class="xal.smf.impl.CurrentMonitor"/>
