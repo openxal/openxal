@@ -13,7 +13,7 @@ from xal.smf import AcceleratorNode
 from xal.smf.data import XMLDataManager
 from xal.smf.proxy import ElectromagnetPropertyAccessor
 
-strSeqID = 'MEBT'
+strSeqID = 'DTL1'
 gblAccelerator = XMLDataManager.loadDefaultAccelerator()
 gblSeqTarget = gblAccelerator.getSequence(strSeqID)
 

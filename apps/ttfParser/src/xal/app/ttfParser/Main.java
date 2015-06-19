@@ -1,5 +1,5 @@
 /*
- * Main.java
+ * Main.java - Main file for the ttfParser application, sets up the GUI and its functions
  * @author James Ghawaly Jr.
  * Created on Mon June 15 13:23:35 EDT 2015
  *
@@ -14,8 +14,18 @@ import java.awt.Container;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
 import javax.swing.*;
+
+import xal.tools.data.DataAdaptor;
+import xal.tools.xml.XmlDataAdaptor.ParseException;
+import xal.tools.xml.XmlDataAdaptor.ResourceNotFoundException;
+
 import java.io.File;
+import java.net.MalformedURLException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 
 /**
@@ -33,17 +43,44 @@ public class Main extends JFrame {
     }
 	// This method initializes the Graphical user Interface (GUI)
     private void initUI() {
+    	
+    	Parser parser = new Parser();
+    	
     	// Create a button with the title Browse
-        JButton fileSelectorButton = new JButton("Browse");          
-        // When hovering cursor over the button, display button's purpose
+        JButton fileSelectorButton = new JButton("Browse");  
+        
+        // Create a button with the title "Run"
+        JButton runButton = new JButton("Run");
+        
+        JButton analyzeButton = new JButton("Analyze");
+        
+        JTextField fileLabel = new JTextField("File to Parse");
+        fileLabel.setEditable(false);
+        
+        JTextField valueLabel = new JTextField("Value");
+        
+        JLabel resultLabel = new JLabel("Result: ");
+        
+        JTextField resultText = new JTextField("...");
+        resultText.setEditable(false);
+        
+        JLabel gapLabel = new JLabel("Choose RF Gap: ");
+        
+        JComboBox gapChooser = new JComboBox();
+
+     // When hovering cursor over the buttons, display the selected button's purpose
         fileSelectorButton.setToolTipText("Select File from Directory Browser");  
+        runButton.setToolTipText("Run the Parser and Create New File");
+        analyzeButton.setToolTipText("Retrieve the specified data from the specified gap");
+        gapChooser.setToolTipText("Choose a Gap From the Drop-down Menu to Analyze");
+        valueLabel.setToolTipText("Type the Tag of the Value You Want to Get From the Selected Gap; options: ttf, stf, ttfp, stfp");
         
         // This is the file chooser menu
         final JFileChooser fileSelector = new JFileChooser();
         
-        // We add an action listener to the button, which is signaled when the button is clicked
+        // We add an action listener to the file selector button, which signals the method actionPerformed when clicked
         fileSelectorButton.addActionListener(new ActionListener() {
-            @Override // This method is called when the button is clicked, and executes the required operations
+            @Override 
             public void actionPerformed(ActionEvent event) {
             	
             	// choice is an integer that corresponds to the action selected by the user
@@ -55,13 +92,44 @@ public class Main extends JFrame {
                 	File file = fileSelector.getSelectedFile();
                 	// print the name of the file we are opening
                 	System.out.println("Opening File: " + file.getName() + "\n");
+                	fileLabel.setEditable(true);
+                	fileLabel.setText(file.getName());
+
                 } else {
-                	// If the user did not select a file, print the following line
+                	// If the user closes the file chooser before selecting a file, print the following line
                 	System.out.println("File Selection Aborted by User\n");
                 }
+            fileLabel.setEditable(false);
             }
+            
         });
         
+        // We add an action listener to the run button, which signals the method actionPerformed when clicked
+        runButton.addActionListener(new ActionListener() {
+            @Override 
+            public void actionPerformed(ActionEvent event) {
+            	//Parser parser = new Parser();
+        		try {
+					parser.parse(fileSelector.getSelectedFile());
+				} catch (ParseException | ResourceNotFoundException
+						| MalformedURLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+        		System.out.println("File Parsed");
+        		ArrayList<String> gapList = parser.getGapList();
+        		for (String str : gapList) {
+        			gapChooser.addItem(str);
+        		}
+            }
+        });
+        analyzeButton.addActionListener(new ActionListener() {
+            @Override 
+            public void actionPerformed(ActionEvent event) {
+            	String data = parser.getValue((String)gapChooser.getSelectedItem(), valueLabel.getText());
+            	resultText.setText(data);
+            }
+        });
         /* 
          * The following four lines of code format the actual GUI container
          * setTitle sets the title of the GUI that is displayed on the top bar
@@ -70,12 +138,14 @@ public class Main extends JFrame {
          * setDefaultCloseOperation sets the default method for exiting the application, which in this case is clicking X.
          */
         setTitle("TTF Parser");
-        setSize(500, 100);
+        setSize(700, 125);
+        setResizable(false);
         setLocationRelativeTo(null);                              // This line centers the GUI on the screen
         setDefaultCloseOperation(EXIT_ON_CLOSE);                  // Exits application upon clicking the X button on the GUI
         
         // This line calls the createLayout method, which formats how items are displayed on the GUI
-        createLayout(fileSelectorButton);
+        createLayout(fileSelectorButton, runButton, fileLabel, gapLabel, gapChooser, valueLabel, analyzeButton, resultLabel, resultText);
+
     }
     
     // This method defines how the GUI component will be formatted. In this case we use a GroupLayout setup, as it is robust
@@ -84,24 +154,57 @@ public class Main extends JFrame {
         Container pane = getContentPane();
         GroupLayout gl = new GroupLayout(pane);
         pane.setLayout(gl);
-
+        gl.setAutoCreateGaps(true);
         gl.setAutoCreateContainerGaps(true);
 
-        gl.setHorizontalGroup(gl.createSequentialGroup()
-                .addComponent(arg[0])
+        gl.setHorizontalGroup(
+        		gl.createSequentialGroup()
+                .addGroup(gl.createParallelGroup(GroupLayout.Alignment.CENTER)
+                		.addComponent(arg[0])
+                		.addComponent(arg[3])
+                		.addComponent(arg[7])
+                		)
+                .addGroup(gl.createParallelGroup(GroupLayout.Alignment.CENTER)
+                		.addComponent(arg[2],GroupLayout.PREFERRED_SIZE, 400,GroupLayout.PREFERRED_SIZE)
+                		.addComponent(arg[4])
+                		.addComponent(arg[8])
+                )
+                .addGroup(gl.createParallelGroup(GroupLayout.Alignment.CENTER)
+                		.addComponent(arg[1])
+                		.addComponent(arg[5])
+                )
+                
+                .addComponent(arg[6])
         );
 
-        gl.setVerticalGroup(gl.createSequentialGroup()
-                .addComponent(arg[0])
+        gl.setVerticalGroup(
+        		gl.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                .addGroup(gl.createSequentialGroup()
+                		.addComponent(arg[0])
+                		.addComponent(arg[3])
+                		.addComponent(arg[7])
+                		)
+                .addGroup(gl.createSequentialGroup()
+                		.addComponent(arg[2], GroupLayout.PREFERRED_SIZE, 25, GroupLayout.PREFERRED_SIZE)
+                		.addComponent(arg[4])
+                		.addComponent(arg[8], GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+                		)
+                .addGroup(gl.createSequentialGroup()
+                		.addComponent(arg[1])
+                		.addComponent(arg[5], GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                )
+                .addGroup(gl.createSequentialGroup()
+                		.addComponent(arg[6])
+                		)
         );
+
+
     }
     
     public static void main(String[] args) {
     	
     	try {
     		System.out.println("Launching Application ttfParser...");
-    		Parser parseer = new Parser();
-    		//System.out.println(parseer.main("sns_pyobit_linac_structure_untested.xml"));
     		// This line prevents the application from having UI update concurrency issues
 	        EventQueue.invokeLater(new Runnable() {               
 	        
@@ -112,7 +215,7 @@ public class Main extends JFrame {
 	            }
 	        });
 	        System.out.println("Application Launched");
-    
+
     	}
     	catch (Exception exception){
             System.err.println( exception.getMessage() );
