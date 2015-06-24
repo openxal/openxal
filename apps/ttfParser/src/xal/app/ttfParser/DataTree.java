@@ -17,17 +17,41 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * The Class DataTree.
+ */
 public class DataTree {
-	// create a new map
+	
+	/** Create a new map */
 	static Map<String,List<String>> map = new HashMap<String, List<String>>();
+	
+	/**
+	 * The main method.
+	 *
+	 * @param args the arguments
+	 */
 	public static void main(String[] args){
 		
 	}
+	
+	/**
+	 * This method adds a field to the current map, which matches the gap_id key to the values pertaining to that key
+	 *
+	 * @param gapID the gap id
+	 * @param lstStr a list of string values mapped to the gap ID
+	 */
 	// This method adds a field to the current map, which matches the gap_id key to the values pertaining to that key
 	public void addListToTree(String gapID,List<String> lstStr){
 		map.put(gapID,lstStr);
 	}
-	// This method is used to get a certain value for a certain gap
+	
+	/**
+	 * This method is used to get a certain value for a certain gap
+	 *
+	 * @param key the key of which the data value belongs to
+	 * @param valueIdentifier the value identifier, can be ttf, stf, ttfp, or stfp
+	 * @return the value
+	 */
 	// Example: To get the ttf polynomial of MEBT3 RF Gap 1, use dataTree.getValue("MEBT3:Rg1","ttf")
 	public String getValue(String key,String valueIdentifier){
 		int index = 0;
@@ -58,9 +82,16 @@ public class DataTree {
 		return value;
 	}
 	
+	/**
+	 * Return an array list of gaps
+	 *
+	 * @return the array list of gaps
+	 */
 	public ArrayList<String> getGaps() {
 		ArrayList keyList = new ArrayList();
 		Set keys = map.keySet();
+		
+		//create an iterator to go through each entry of the data tree
 		for (Iterator i = keys.iterator(); i.hasNext();){
 			String key = i.next().toString();
 			keyList.add(key);

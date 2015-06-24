@@ -29,18 +29,24 @@ import java.util.List;
 
 
 /**
- * This is the main class for the transit time factor parsing application  
+ * This is the main class for the transit time factor parsing application  .
  *
- * @version   0.1  15 June 2015
  * @author  James Ghawaly Jr.
+ * @version   0.1  15 June 2015
  */
-
 public class Main extends JFrame {
 
+	/**
+	 * Instantiates a new main.
+	 */
 	public Main() {
 
         initUI();
     }
+	
+	/**
+	 * Initiates the user interface
+	 */
 	// This method initializes the Graphical user Interface (GUI)
     private void initUI() {
     	
@@ -48,17 +54,19 @@ public class Main extends JFrame {
     	
     	// Create a button with the title Browse
         JButton fileSelectorButton = new JButton("Browse");  
-        
-        // Create a button with the title "Run"
+
         JButton runButton = new JButton("Run");
+        
+        JButton saveButton = new JButton("Save As");
         
         JButton analyzeButton = new JButton("Analyze");
         
-        JTextField fileLabel = new JTextField("File to Parse");
-        fileLabel.setEditable(false);
+        //create a text field with a default file name
+        JTextField fileLabel = new JTextField("defaultFile.txt");
         
         JTextField valueLabel = new JTextField("Value");
         
+        //create a label for the results of a value point analysis
         JLabel resultLabel = new JLabel("Result: ");
         
         JTextField resultText = new JTextField("...");
@@ -66,17 +74,22 @@ public class Main extends JFrame {
         
         JLabel gapLabel = new JLabel("Choose RF Gap: ");
         
+        //create a drop down menu that eventually contains all of the gaps in the accelerator
         JComboBox gapChooser = new JComboBox();
 
      // When hovering cursor over the buttons, display the selected button's purpose
         fileSelectorButton.setToolTipText("Select File from Directory Browser");  
         runButton.setToolTipText("Run the Parser and Create New File");
+        saveButton.setToolTipText("Save Parsed Data to File");
         analyzeButton.setToolTipText("Retrieve the specified data from the specified gap");
         gapChooser.setToolTipText("Choose a Gap From the Drop-down Menu to Analyze");
         valueLabel.setToolTipText("Type the Tag of the Value You Want to Get From the Selected Gap; options: ttf, stf, ttfp, stfp");
         
-        // This is the file chooser menu
+        // This is the file chooser menu, it brings up a directory explorer
         final JFileChooser fileSelector = new JFileChooser();
+        
+        final JFileChooser saveSelector = new JFileChooser();
+        saveSelector.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
         
         // We add an action listener to the file selector button, which signals the method actionPerformed when clicked
         fileSelectorButton.addActionListener(new ActionListener() {
@@ -91,26 +104,51 @@ public class Main extends JFrame {
                 	// grab the selected file using java's io File class
                 	File file = fileSelector.getSelectedFile();
                 	// print the name of the file we are opening
-                	System.out.println("Opening File: " + file.getName() + "\n");
-                	fileLabel.setEditable(true);
-                	fileLabel.setText(file.getName());
+                	System.out.println("Opening File: " + file.getName());
 
                 } else {
                 	// If the user closes the file chooser before selecting a file, print the following line
                 	System.out.println("File Selection Aborted by User\n");
                 }
-            fileLabel.setEditable(false);
             }
             
         });
         
-        // We add an action listener to the run button, which signals the method actionPerformed when clicked
+        /**
+         * Upon clicking the save as button, we create a JFileChooser so that the user can easily select the file directory to save the file too. The name of the file is in the label
+         */
+        saveButton.addActionListener(new ActionListener() {
+
+            @Override 
+            public void actionPerformed(ActionEvent event) {
+            	
+            	// choice is an integer that corresponds to the action selected by the user
+                int choice = saveSelector.showOpenDialog(Main.this);
+                
+                // if the choice is valid
+                if (choice == JFileChooser.APPROVE_OPTION) {
+                	// grab the selected file using java's io File class
+                	File file = saveSelector.getSelectedFile();
+                	// print the name of the file we are opening
+                	System.out.println("Saving to File: " + file.getName());
+                	String filename = fileLabel.getText();
+                	parser.pack(new File(file,filename));
+                } else {
+                	// If the user closes the file chooser before selecting a file, print the following line
+                	System.out.println("File Selection Aborted by User");
+                }
+            }
+            
+        });
+        
+        /** We add an action listener to the run button, which signals the method actionPerformed when clicked */
         runButton.addActionListener(new ActionListener() {
             @Override 
             public void actionPerformed(ActionEvent event) {
             	//Parser parser = new Parser();
         		try {
 					parser.parse(fileSelector.getSelectedFile());
+					
 				} catch (ParseException | ResourceNotFoundException
 						| MalformedURLException e) {
 					// TODO Auto-generated catch block
@@ -123,6 +161,7 @@ public class Main extends JFrame {
         		}
             }
         });
+        /** This action listener is called when the "Analyze" button is clicked*/
         analyzeButton.addActionListener(new ActionListener() {
             @Override 
             public void actionPerformed(ActionEvent event) {
@@ -138,16 +177,21 @@ public class Main extends JFrame {
          * setDefaultCloseOperation sets the default method for exiting the application, which in this case is clicking X.
          */
         setTitle("TTF Parser");
-        setSize(700, 125);
+        setSize(750, 150);
         setResizable(false);
         setLocationRelativeTo(null);                              // This line centers the GUI on the screen
         setDefaultCloseOperation(EXIT_ON_CLOSE);                  // Exits application upon clicking the X button on the GUI
         
         // This line calls the createLayout method, which formats how items are displayed on the GUI
-        createLayout(fileSelectorButton, runButton, fileLabel, gapLabel, gapChooser, valueLabel, analyzeButton, resultLabel, resultText);
+        createLayout(fileSelectorButton, runButton, fileLabel, gapLabel, gapChooser, valueLabel, analyzeButton, resultLabel, resultText, saveButton);
 
     }
     
+    /**
+     * Creates the layout.
+     *
+     * @param arg the arg
+     */
     // This method defines how the GUI component will be formatted. In this case we use a GroupLayout setup, as it is robust
     private void createLayout(JComponent... arg) {
 
@@ -172,9 +216,10 @@ public class Main extends JFrame {
                 .addGroup(gl.createParallelGroup(GroupLayout.Alignment.CENTER)
                 		.addComponent(arg[1])
                 		.addComponent(arg[5])
+                		.addComponent(arg[6])
                 )
                 
-                .addComponent(arg[6])
+                .addComponent(arg[9])
         );
 
         gl.setVerticalGroup(
@@ -192,15 +237,30 @@ public class Main extends JFrame {
                 .addGroup(gl.createSequentialGroup()
                 		.addComponent(arg[1])
                 		.addComponent(arg[5], GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                		.addComponent(arg[6])
                 )
                 .addGroup(gl.createSequentialGroup()
-                		.addComponent(arg[6])
+                		.addComponent(arg[9])
                 		)
         );
 
 
     }
     
+    /**
+     * Help file.
+     *
+     * @param args the args
+     */
+    public static void helpFile(String[] args) {
+    	
+    }
+    
+    /**
+     * The main method.
+     *
+     * @param args the arguments
+     */
     public static void main(String[] args) {
     	
     	try {
@@ -215,7 +275,6 @@ public class Main extends JFrame {
 	            }
 	        });
 	        System.out.println("Application Launched");
-
     	}
     	catch (Exception exception){
             System.err.println( exception.getMessage() );
