@@ -141,12 +141,18 @@ public class Parser {
 		
 		int ii = 0;
 		
+		// go through all the keys and values in the datatree
 		for (Entry<String, List<String>> entry : dataTree.map.entrySet()) {
-
+			
+			// get the current value from the datatree
 			List<String> value = entry.getValue();
+			// get the primary sequence that this key belongs too
 			String localPrimary = value.get(0);
+			// get the cavity that this key belongs too, and convert it into a form readable by the accelerator
 			String localSecondary = getSecondaryName(localPrimary,value.get(1));
+			// get the name of the current gap and convert it into a form readable by the accelerator
 			String localGapName = getFullName(localSecondary, entry.getKey());
+			// get the ttf, stf, ttfp, and stfp of the current gap
 			String localTTF = value.get(2);
 			String localTTFP = value.get(3);
 			String localSTF = value.get(4);
@@ -157,6 +163,7 @@ public class Parser {
 			DataAdaptor fileGap = null;
 			
 			Boolean done = false;
+			// while the program is not done (done = false), continue looping
 			while (!done){
 				//System.out.println("Currently Analyzing: "+localGapName);
 				if (sequences.contains(localPrimary)){ //check if this primary sequence has already been made
@@ -169,7 +176,7 @@ public class Parser {
 						if (gaps.contains(localGapName)){ //check if this gap has already been made, if it has, there is a problem
 							
 						}
-						else { //create a new gap
+						else { //create a new gap, special handling is required for MEBT and SCL
 							if (!localPrimary.startsWith("SCL") || !localPrimary.startsWith("MEBT")){
 								fileGap = filePrimary.createChild("node");
 							}
@@ -181,6 +188,7 @@ public class Parser {
 							
 							DataAdaptor att = fileGap.createChild("attributes");
 							DataAdaptor dataPlace = att.createChild("rfgap");
+							// set the values of the information, trim off the leading and trailing whitespace and replace all of the remaining whitespace with commas
 							dataPlace.setValue("ttfCoeffs",localTTF.trim().replaceAll("\\s+", ","));
 							dataPlace.setValue("ttfpCoeffs",localTTFP.trim().replaceAll("\\s+", ","));
 							dataPlace.setValue("stfCoeffs",localSTF.trim().replaceAll("\\s+", ","));
@@ -303,10 +311,10 @@ public class Parser {
 	/**
 	 * The main method.
 	 *
-	 * @param args the arguments
+	 * @param args There are no methods
 	 */
 	public static void main(String[] args){
-		
+		// nothing to do here
 		}
 	
 }

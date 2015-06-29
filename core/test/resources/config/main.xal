@@ -9,6 +9,6 @@
 	<tablegroup_source name="modelparams" url="model.params"/>	
     <!-- optics_extra name="RFGap TTFs" url="rfgap_ttfs.xdxf"/ -->
     <!-- optics_extra name="RFGap TTFs" url="snsTTFpolys.xdxf"/ -->
-    <optics_extra name="RFGap TTFs" url="catsInTheCradle.xdxf"/>
+    <optics_extra name="RFGap TTFs" url="snsPolysStuff.xdxf"/>
     <optics_extra name="SCL 930 MeV" url="SCL.xdxf"/>
 </sources>

@@ -53,7 +53,7 @@ public class DataTree {
 	 * @return the value
 	 */
 	// Example: To get the ttf polynomial of MEBT3 RF Gap 1, use dataTree.getValue("MEBT3:Rg1","ttf")
-	public String getValue(String key,String valueIdentifier){
+	public String getValue(String key,String valueIdentifier) throws ArrayIndexOutOfBoundsException {
 		int index = 0;
 		List<String> values;
 		String value;

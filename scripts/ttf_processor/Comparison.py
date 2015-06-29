@@ -13,25 +13,34 @@ from xal.smf import AcceleratorNode
 from xal.smf.data import XMLDataManager
 from xal.smf.proxy import ElectromagnetPropertyAccessor
 
-strSeqID = 'DTL1'
+import os
+
+strSeqID = 'DTL'
 gblAccelerator = XMLDataManager.loadDefaultAccelerator()
-gblSeqTarget = gblAccelerator.getSequence(strSeqID)
+
+gblSeqTarget = gblAccelerator.findSequence(strSeqID)
 
 algorithm = AlgorithmFactory.createEnvTrackerAdapt(gblSeqTarget)
-
-probe = ProbeFactory.getEnvelopeProbe(gblSeqTarget,algorithm)
+algorithm.setMaxIterations(30000)
 
 model = Scenario.newScenarioFor(gblSeqTarget)
 
+
+probe = ProbeFactory.getEnvelopeProbe(gblSeqTarget,algorithm)
+
 model.setProbe(probe)
 model.setSynchronizationMode(Scenario.SYNC_MODE_DESIGN)
-
+model.resync()
 model.run()
 
 probe = model.getProbe()
 trajectory = probe.getTrajectory()
 
 dataFinal = trajectory.finalState()
-print(str(dataFinal))
-for state in trajectory:
-    print(str(state))
+#print(str(dataFinal.getSigmaX()))
+
+comparisonFile = os.getcwd() + "/" + strSeqID + "_SigmaX_withTESTING.txt"
+with open(comparisonFile, 'w') as f2r:
+    for state in trajectory:
+        covariance = state.getCovarianceMatrix()
+        f2r.write(str(covariance.getSigmaX()) + "\n")

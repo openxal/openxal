@@ -2,6 +2,5 @@
 
 <!-- Build the application whose name matches that of the project. -->
 <project name="ttfParser" basedir="." default="all">	
-    <property name="exclude.install" value="true" />
 	<import file="../common.xml"/>
 </project>
