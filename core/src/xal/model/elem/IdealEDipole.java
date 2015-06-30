@@ -816,7 +816,7 @@ public class IdealEDipole extends ThickElectrostatic
 	double len_path = R_bend0 * ang_bend;
 	
 	setPathLength(len_path);		
-	setDesignBendAngle(ang_bend0);
+	setDesignBendAngle(ang_bend);
 	
   }
   
