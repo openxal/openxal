@@ -40,7 +40,7 @@
 	</condition>
 
 	<!-- Configure build compilation -->
-	<property name="build.compile.java.source" value="1.7" />
+	<property name="build.compile.java.source" value="1.8" />
 	<property name="build.compile.java.target" value="${build.compile.java.source}" />
 
 	<!-- Configure build products  -->
