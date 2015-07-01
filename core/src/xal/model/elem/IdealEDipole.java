@@ -20,6 +20,8 @@ import java.io.PrintWriter;
 
 import xal.model.IProbe;
 import xal.model.ModelException;
+import xal.sim.scenario.LatticeElement;
+import xal.smf.impl.EDipole;
 import xal.tools.beam.PhaseMap;
 import xal.tools.beam.PhaseMatrix;
 import xal.tools.beam.optics.BendingMagnet;
@@ -296,7 +298,7 @@ public class IdealEDipole extends ThickElectrostatic
    *
    */
 
-  public void setReferenceBendAngle(double dblAng)
+  public void setDesignBendAngle(double dblAng)
   {
     this.referenceBendAngle = dblAng;
   }
@@ -307,7 +309,7 @@ public class IdealEDipole extends ThickElectrostatic
    *
    */
 
-  public double getReferenceBendAngle()
+  public double getDesignBendAngle()
   {
     return referenceBendAngle;
   }
@@ -500,7 +502,7 @@ public class IdealEDipole extends ThickElectrostatic
 
     // Magnet parameters
 
-    double angle = getReferenceBendAngle() * dL / this.getLength();
+    double angle = getDesignBendAngle() * dL / this.getLength();
     System.out.println("Element " + this.getId() + " theta " + angle);
     //angle = -angle;
     
@@ -800,4 +802,29 @@ public class IdealEDipole extends ThickElectrostatic
     os.println("  magnet orientation : " + this.getOrientation());
   }
 
+  @Override
+  public void initializeFrom(LatticeElement element) {
+	super.initializeFrom(element);				
+	 
+	EDipole edp = (EDipole) element.getNode();
+	double len_sect = element.getLength();		
+	double len_path0 = edp.getDfltPathLength();
+	double ang_bend0 = edp.getDfltBendAngle() * Math.PI / 180.0;
+
+	double R_bend0 = len_path0 / ang_bend0;
+	double ang_bend = ang_bend0 * (len_sect / len_path0);
+	double len_path = R_bend0 * ang_bend;
+	
+	setPathLength(len_path);		
+	setDesignBendAngle(ang_bend);
+	
+  }
+  
+  public void setPathLength(double dblPathLen)  {
+	  pathLength = dblPathLen;
+  }
+  
+  public double getPathLength() {
+	  return pathLength;
+  }
 };
