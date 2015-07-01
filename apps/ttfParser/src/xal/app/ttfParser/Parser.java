@@ -308,13 +308,4 @@ public class Parser {
 		return secName + ":Rg" + gapNum;
 	}
 	
-	/**
-	 * The main method.
-	 *
-	 * @param args There are no methods
-	 */
-	public static void main(String[] args){
-		// nothing to do here
-		}
-	
 }

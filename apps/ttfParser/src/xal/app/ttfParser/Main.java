@@ -65,10 +65,10 @@ public class Main extends JFrame {
         //create a text field with a default file name
         JTextField fileLabel = new JTextField("name of file to save to.xdxf");
         
-        JTextField valueLabel = new JTextField("Value");
+        JTextField valueLabel = new JTextField("Value Tag");
         
         //create a text area with instructions for how to use the program
-        JTextArea infoBox = new JTextArea("To Parse a file, select the 'Browse' button and choose your file, then select 'Run.' To retrieve a particular value from a specific gap; after running the parser, type your value that you want to retrieve into the 'value id' text area, choose the gap and select 'Analyze.' Possible choices are: ttf, stf, ttfp, stfp. See the README for more information.");
+        JTextArea infoBox = new JTextArea("- To Parse a file, select the 'Browse' button and choose your file, then select 'Run.' An option to save the new file will be given.\n \n- To retrieve a particular value from a specific gap; after running the parser, type the tag of the value that you want to retrieve into the 'Value Tag' text area, choose the gap from the drop down menu and select 'Analyze.'\n \n- Possible choices are: ttf, stf, ttfp, stfp.\n \n- See the README for more information.");
         infoBox.setEditable(false);
         infoBox.setWrapStyleWord(true);
         infoBox.setLineWrap(true);
@@ -186,7 +186,7 @@ public class Main extends JFrame {
          * setDefaultCloseOperation sets the default method for exiting the application, which in this case is clicking X.
          */
         setTitle("TTF Parser");
-        setSize(750, 160); //300
+        setSize(750, 255); //160
         setResizable(false);
         setLocationRelativeTo(null);                              // This line centers the GUI on the screen
         setDefaultCloseOperation(EXIT_ON_CLOSE);                  // Exits application upon clicking the X button on the GUI
@@ -226,7 +226,7 @@ public class Main extends JFrame {
         );
         gl.setVerticalGroup(
         		gl.createSequentialGroup()
-        		.addComponent(arg[9],GroupLayout.PREFERRED_SIZE, 60,GroupLayout.PREFERRED_SIZE)
+        		.addComponent(arg[9],GroupLayout.PREFERRED_SIZE, 150,GroupLayout.PREFERRED_SIZE)
                 .addGroup(gl.createParallelGroup()
                 		.addComponent(arg[0]) // browse button
                 		.addComponent(arg[2]) // file chosen label
@@ -237,12 +237,11 @@ public class Main extends JFrame {
                 		.addComponent(arg[4]) // gapChooser
                 		.addComponent(arg[5]) // 
                 		)
-
         );
     }
     
     /**
-     * The main method.
+     * The main method. Sets up the GUI
      *
      * @param args There are no arguments
      */

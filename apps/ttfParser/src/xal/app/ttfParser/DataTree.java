@@ -26,15 +26,6 @@ public class DataTree {
 	static Map<String,List<String>> map = new HashMap<String, List<String>>();
 	
 	/**
-	 * The main method.
-	 *
-	 * @param args the arguments
-	 */
-	public static void main(String[] args){
-		
-	}
-	
-	/**
 	 * This method adds a field to the current map, which matches the gap_id key to the values pertaining to that key
 	 *
 	 * @param gapID the gap id

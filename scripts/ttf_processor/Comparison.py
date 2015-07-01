@@ -39,7 +39,7 @@ trajectory = probe.getTrajectory()
 dataFinal = trajectory.finalState()
 #print(str(dataFinal.getSigmaX()))
 
-comparisonFile = os.getcwd() + "/" + strSeqID + "_SigmaX_withTESTING.txt"
+comparisonFile = os.getcwd() + "/" + strSeqID + "_SigmaX_without.txt"
 with open(comparisonFile, 'w') as f2r:
     for state in trajectory:
         covariance = state.getCovarianceMatrix()
