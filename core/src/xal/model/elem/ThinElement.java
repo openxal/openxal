@@ -60,7 +60,7 @@ public abstract class ThinElement extends Element {
      * 
      *  @param  probe   propagating probe
      *  
-     *  @return         elapsed time through element <bold>Units: seconds</bold> 
+     *  @return         elapsed time through element <b>Units: seconds</b> 
      */
     protected abstract double elapsedTime(IProbe probe);
     
@@ -98,7 +98,7 @@ public abstract class ThinElement extends Element {
      *  @param  probe   propagating probe
      *  @param  dblLen  length of subsection to propagate through <b>meters</b>
      *  
-     *  @return         the elapsed time through section<bold>Units: seconds</bold> 
+     *  @return         the elapsed time through section<b>Units: seconds</b> 
      */
     @Override
     public double elapsedTime(IProbe probe, double dblLen)  {

@@ -97,7 +97,7 @@ public abstract class BunchProbe<S extends BunchProbeState<S>> extends Probe<S> 
     /**
      *  Set the total beam current.
      * 
-     * @param   I   new beam current in <bold>Amperes</bold>
+     * @param   I   new beam current in <b>Amperes</b>
      */
     public void setBeamCurrent(double I)    { 
         this.stateCurrent.setBeamCurrent(I);
@@ -107,7 +107,7 @@ public abstract class BunchProbe<S extends BunchProbeState<S>> extends Probe<S> 
 //    /**
 //     *  Set the total beam charge 
 //     * 
-//     *  @param  Q   beam charge in <bold>Coulombs</bold>
+//     *  @param  Q   beam charge in <b>Coulombs</b>
 //     */
 //    public void setBeamCharge(double Q)     { m_dblBmQ = Q; };
     

@@ -37,7 +37,7 @@ import java.util.List;
  * Tracking algorithm objects are  classes that implement the 
  * <code>IAlgorithm</code> interface.  This class provides default implementations
  * for all methods of the <code>IAlgorithm</code> interface.  Derived classes
- * must implement the <bold>doPropagation()</bold> abstract method in order to 
+ * must implement the <b>doPropagation()</b> abstract method in order to 
  * provide the actual dynamics of the algorithm.  Note that derived classes may 
  * wish to override the <code>propagate(IProbe, IElement)</code> method directly
  * for complete control of the propagation mechanism. 

@@ -60,7 +60,7 @@ public interface IComponent {
     /**
      *  Return the total length of the composite element.
      *
-     *  @return     length of the element (in <bold>meters</bold>)
+     *  @return     length of the element (in <b>meters</b>)
      */
     double   getLength();
     

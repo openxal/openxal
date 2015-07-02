@@ -109,7 +109,7 @@ public abstract class Element implements IElement {
      *  @param  probe   determine energy gain for this probe
      *  @param  dblLen  length of subsection to calculate energy gain for
      *  
-     *  @return         the elapsed time through section<bold>Units: seconds</bold> 
+     *  @return         the elapsed time through section<b>Units: seconds</b> 
      */
     public abstract double elapsedTime(IProbe probe, double dblLen);
     
@@ -119,7 +119,7 @@ public abstract class Element implements IElement {
      *
      *  @param  probe   determine energy gain for this probe
      *
-     *  @return         the energy gain provided by this element <bold>Units: eV</bold> 
+     *  @return         the energy gain provided by this element <b>Units: eV</b> 
      */
     public abstract double energyGain(IProbe probe, double dblLen);
 

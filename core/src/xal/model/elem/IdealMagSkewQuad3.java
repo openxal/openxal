@@ -314,7 +314,7 @@ public class IdealMagSkewQuad3 extends ThickElectromagnet {
      *  @param  probe   propagating probe
      *  @param  dblLen  length of subsection to propagate through <b>meters</b>
      *  
-     *  @return         the elapsed time through section<bold>Units: seconds</bold>
+     *  @return         the elapsed time through section<b>Units: seconds</b>
      *   
      * @since   Mar 13, 2008
      * @author  Christopher K. Allen

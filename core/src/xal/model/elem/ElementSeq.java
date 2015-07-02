@@ -226,7 +226,7 @@ public abstract class ElementSeq implements IComposite {
      *  Return the length of the sequence.  The length of the sequence is determined but
      *  summing the lengths of all the contained IElement objects.
      *
-     *  @return     total length of the sequence (in <bold>meters</bold>)
+     *  @return     total length of the sequence (in <b>meters</b>)
      */
     @Override
     public double getLength() {
@@ -469,7 +469,7 @@ public abstract class ElementSeq implements IComposite {
 //     *  @param  probe   propagating probe
 //     *  @param  dblLen  length of subsection to propagate through <b>meters</b>
 //     *  
-//     *  @return         total elapsed time through section<bold>Units: seconds</bold> 
+//     *  @return         total elapsed time through section<b>Units: seconds</b> 
 //     */
 //    public double elapsedTime(IProbe probe, double dblLen)  {
 //        double     dblTime;    // total energy gain of sequence
@@ -507,7 +507,7 @@ public abstract class ElementSeq implements IComposite {
 //     *  @param  probe   determine energy gain for this probe
 //     *  @param  dblLen  length of sequence subsection to calculate energy gain
 //     *
-//     *  @return         total energy gain provided by sequence <bold>Units: eV</bold>
+//     *  @return         total energy gain provided by sequence <b>Units: eV</b>
 //     */
 //    public double energyGain(IProbe probe, double dblLen) {
 //        double     dblDelW;    // total energy gain of sequence

@@ -331,7 +331,7 @@ public class CovarianceMatrix extends PhaseMatrix {
      *
      *
      *  @param  arrEmitNew  three element vector of rms emittances for X,Y,Z planes, respectively
-     *                      <bold>Units radian-meters</bold>
+     *                      <b>Units radian-meters</b>
      * 
      *  @author C.K. Allen
      */

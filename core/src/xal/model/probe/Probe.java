@@ -31,7 +31,7 @@ import java.util.Date;
  * <p>
  *  Provides a base class implementation of the IProbe interface that is useful for
  *  most standard probe types.  This class provides most of the functionality necessary
- *  for the implementation of the IProbe interface, <bold>except</bold> a definition
+ *  for the implementation of the IProbe interface, <b>except</b> a definition
  *  and implementation of a probe "state".  Thus, it is up to base classes to provide
  *  and implement the particular aspect of a beam the probe represents.
  *  </p>

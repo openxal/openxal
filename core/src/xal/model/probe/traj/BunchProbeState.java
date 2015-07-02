@@ -121,7 +121,7 @@ public abstract class BunchProbeState<S extends BunchProbeState<S>> extends Prob
     /**
      *  Set the total beam current 
      * 
-     * @param   I   new beam current in <bold>Amperes</bold>
+     * @param   I   new beam current in <b>Amperes</b>
      */
     public void setBeamCurrent(double I) {
         dblBmCurr = I;

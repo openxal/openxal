@@ -85,7 +85,7 @@ public class IdealMagSkewQuad extends IdealMagQuad {
     /**
      *  Get the rotation angle of the electromagnet.
      *
-     *  @return     rotation angle (in <bold>degrees</bold>).
+     *  @return     rotation angle (in <b>degrees</b>).
      */
     public double getSkewAngle() {
         return m_dblSkewAngle;
@@ -95,7 +95,7 @@ public class IdealMagSkewQuad extends IdealMagQuad {
     /**
      *  Set the rotation angle of the electromagnet.
      *
-     *  @param  dblAngle    rotation angle (in <bold>degrees</bold>).
+     *  @param  dblAngle    rotation angle (in <b>degrees</b>).
      */
     public void setSkewAngle(double dblAngle) {
         m_dblSkewAngle = dblAngle;
