@@ -45,9 +45,8 @@ public class Main extends JFrame {
     }
 	
 	/**
-	 * Initiates the user interface
+	 * This method initializes the Graphical user Interface (GUI)
 	 */
-	// This method initializes the Graphical user Interface (GUI)
     private void initUI() {
 
     	Parser parser = new Parser();
@@ -65,7 +64,9 @@ public class Main extends JFrame {
         //create a text field with a default file name
         JTextField fileLabel = new JTextField("name of file to save to.xdxf");
         
-        JTextField valueLabel = new JTextField("Value Tag");
+        //JTextField valueLabel = new JTextField("Value Tag");
+        String[] tagOptions = {"ttf", "stf", "ttfp", "stfp"};
+        JComboBox valueLabel = new JComboBox(tagOptions);
         
         //create a text area with instructions for how to use the program
         JTextArea infoBox = new JTextArea("- To Parse a file, select the 'Browse' button and choose your file, then select 'Run.' An option to save the new file will be given.\n \n- To retrieve a particular value from a specific gap; after running the parser, type the tag of the value that you want to retrieve into the 'Value Tag' text area, choose the gap from the drop down menu and select 'Analyze.'\n \n- Possible choices are: ttf, stf, ttfp, stfp.\n \n- See the README for more information.");
@@ -112,8 +113,6 @@ public class Main extends JFrame {
                 	// print the name of the file we are opening
                 	System.out.println("Opening File: " + file.getName());
                 	runButton.setEnabled(true);
-                    analyzeButton.setEnabled(true);
-
                 } else {
                 	// If the user closes the file chooser before selecting a file, print the following line
                 	System.out.println("File Selection Aborted by User\n");
@@ -138,11 +137,13 @@ public class Main extends JFrame {
 	        		}
 	        		
 	        		int optionResult = JOptionPane.showConfirmDialog(getContentPane(), "Would you like to save the parsed data to a new file?");
-	        		
+	        		// allow the analyze button to be pressed
+                    analyzeButton.setEnabled(true);
+                    getContentPane().revalidate();
+                    
 	        		// If the user chooses to save the parsed data to a file, run this block of code
 	        		if (optionResult == JOptionPane.YES_OPTION) {
 	                    int choice = saveSelector.showOpenDialog(Main.this);
-	                    
 	                    // if the choice is valid
 	                    if (choice == JFileChooser.APPROVE_OPTION) {
 	                    	// grab the selected file using java's io File class
@@ -155,6 +156,7 @@ public class Main extends JFrame {
 	                    	// If the user closes the file chooser before selecting a file, print the following line
 	                    	System.out.println("File Selection Aborted by User");
 	                    }
+	                    
 	        		}
 	        		// The following code block creates an error dialog box if an error of the types listed below is encountered
 				} catch (ParseException | ResourceNotFoundException
@@ -169,13 +171,13 @@ public class Main extends JFrame {
         analyzeButton.addActionListener(new ActionListener() {
             @Override 
             public void actionPerformed(ActionEvent event) {
-            	try {
-            	String data = parser.getValue((String)gapChooser.getSelectedItem(), valueLabel.getText());
+            	String valueChoice = (String) valueLabel.getSelectedItem();
+            	String gapChoice = (String) gapChooser.getSelectedItem();
+            	String data = parser.getValue(gapChoice, valueChoice);
             	resultText.setText(data);
-            	JOptionPane.showMessageDialog(getContentPane(), data);
-            	} catch (ArrayIndexOutOfBoundsException e) {
-            		JOptionPane.showMessageDialog(getContentPane(), "The Value ID chosen does not exist, valid IDs are: ttf, stf, ttfp, stfp", e.getClass().getName() + " ERROR", JOptionPane.ERROR_MESSAGE);
-            	}
+            	JTextField infoText = new JTextField(data);
+            	infoText.setEditable(false);
+            	JOptionPane.showMessageDialog(getContentPane(), infoText,valueChoice + " for " + gapChoice,JOptionPane.INFORMATION_MESSAGE);
             }
         });
         /* 

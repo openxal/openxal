@@ -15,7 +15,7 @@ from xal.smf.proxy import ElectromagnetPropertyAccessor
 
 import os
 
-strSeqID = 'DTL'
+strSeqID = "DTL"
 gblAccelerator = XMLDataManager.loadDefaultAccelerator()
 
 gblSeqTarget = gblAccelerator.findSequence(strSeqID)
@@ -39,8 +39,9 @@ trajectory = probe.getTrajectory()
 dataFinal = trajectory.finalState()
 #print(str(dataFinal.getSigmaX()))
 
-comparisonFile = os.getcwd() + "/" + strSeqID + "_SigmaX_without.txt"
+comparisonFile = os.getcwd() + "/" + strSeqID + "_SigmaY_without.txt"
 with open(comparisonFile, 'w') as f2r:
     for state in trajectory:
         covariance = state.getCovarianceMatrix()
-        f2r.write(str(covariance.getSigmaX()) + "\n")
+        f2r.write(str(covariance.getSigmaY()) + "\n")
+print("DONE")
