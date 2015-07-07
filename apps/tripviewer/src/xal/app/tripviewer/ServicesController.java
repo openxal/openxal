@@ -232,7 +232,7 @@ public class ServicesController {
 			synchronizeWithSelectedServiceIfNeeded();
 			
 			final List<String> monitorNames = serviceHandler.getTripMonitorNameList();
-			monitorsList.setListData( (Vector<String>)monitorNames );
+			monitorsList.setListData( new Vector<String>( monitorNames ) );
 		}
 		else {
 			monitorsList.setListData( new Vector<String>() );
