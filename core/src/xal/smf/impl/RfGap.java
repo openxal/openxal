@@ -330,18 +330,22 @@ public class RfGap extends AcceleratorNode {
 
         double[] arrCoeffs = this.m_bucRfGap.getTCoefficients();
 
-        if (arrCoeffs != null) {
-            UnivariateRealPolynomial polyFit = new UnivariateRealPolynomial(arrCoeffs);
-            return polyFit;
-        }
-
         // Defaults to the RF cavity transit time factor if none is 
         //  defined for this gap.
-        RfCavity rfCav = (RfCavity) this.getParent();
-        if(isEndCell()) 
-            return rfCav.getTTFFitEnd();
-        else
-            return rfCav.getTTFFit();
+        if (arrCoeffs == null || arrCoeffs.length == 0) {
+            RfCavity rfCav = (RfCavity) this.getParent();
+            if(isEndCell()) 
+                return rfCav.getTTFFitEnd();
+            else
+                return rfCav.getTTFFit();
+        }
+
+        // A set of coefficients is defined for this fit.
+        //  Create the fitting function and return it.
+        UnivariateRealPolynomial polyFit = new UnivariateRealPolynomial(arrCoeffs);
+
+        return polyFit;
+
     }
     
    /** 
@@ -360,19 +364,23 @@ public class RfGap extends AcceleratorNode {
 
         double[] arrCoeffs = this.m_bucRfGap.getTpCoefficients();
 
-        if (arrCoeffs != null) {
-            UnivariateRealPolynomial polyFit = new UnivariateRealPolynomial(arrCoeffs);
-            return polyFit;
-        }
-
         // Defaults to the RF cavity transit time factor if none is 
         //  defined for this gap.
-        RfCavity rfCav = (RfCavity) this.getParent();
-        if (isEndCell())
-            return rfCav.getTTFPrimeFitEnd();
-        else
-            return rfCav.getTTFPrimeFit();
-    } 
+        if (arrCoeffs == null || arrCoeffs.length == 0) {
+            RfCavity rfCav = (RfCavity) this.getParent();
+            if (isEndCell())
+                return rfCav.getTTFPrimeFitEnd();
+            else
+                return rfCav.getTTFPrimeFit();
+        }
+        
+        // A set of coefficients is defined for this fit.
+        //  Create the fitting function and return it.
+        UnivariateRealPolynomial polyFit = new UnivariateRealPolynomial(arrCoeffs);
+        
+        return polyFit;
+
+    }
  
     /** 
      * Return a polynomial fit of the sine transit time factor <i>S</i>(&beta;)
@@ -388,18 +396,21 @@ public class RfGap extends AcceleratorNode {
 
         double[] arrCoeffs = this.m_bucRfGap.getSCoefficients();
 
-        if (arrCoeffs != null) {
-            UnivariateRealPolynomial polyFit = new UnivariateRealPolynomial(arrCoeffs);
-            return polyFit;
-        }
-
         // Defaults to the RF cavity transit time factor if none is 
         //  defined for this gap.
-        RfCavity rfCav = (RfCavity) this.getParent();
-        if (isEndCell())
-            return rfCav.getSTFFitEnd();
-        else
-            return rfCav.getSTFFit();
+        if (arrCoeffs == null || arrCoeffs.length == 0) {
+            RfCavity rfCav = (RfCavity) this.getParent();
+            if (isEndCell())
+                return rfCav.getSTFFitEnd();
+            else
+                return rfCav.getSTFFit();
+        }
+
+        // A set of coefficients is defined for this fit.
+        //  Create the fitting function and return it.
+        UnivariateRealPolynomial polyFit = new UnivariateRealPolynomial(arrCoeffs);
+
+        return polyFit;
     }
     
    /** 
@@ -417,20 +428,23 @@ public class RfGap extends AcceleratorNode {
     public UnivariateRealPolynomial getSPrimeFit() { 
         double[] arrCoeffs = this.m_bucRfGap.getSpCoefficients();
 
-        if (arrCoeffs != null) {
-            UnivariateRealPolynomial polyFit = new UnivariateRealPolynomial(arrCoeffs);
-            return polyFit;
-        }
-
         // Defaults to the RF cavity transit time factor derivative if none is 
         //  defined for this gap.
-        RfCavity rfCav = (RfCavity) this.getParent();
-	if (isEndCell()) 
-		return rfCav.getSTFPrimeFitEnd();
-		//return rfCav.getSTFPrimeFit();
-	
-	else
-		return rfCav.getSTFPrimeFit();
+        if (arrCoeffs == null || arrCoeffs.length == 0) {
+            RfCavity rfCav = (RfCavity) this.getParent();
+            if (isEndCell()) 
+                return rfCav.getSTFPrimeFitEnd();
+            //return rfCav.getSTFPrimeFit();
+
+            else
+                return rfCav.getSTFPrimeFit();
+        }
+        
+        // A set of coefficients is defined for this fit.
+        //  Create the fitting function and return it.
+        UnivariateRealPolynomial polyFit = new UnivariateRealPolynomial(arrCoeffs);
+
+        return polyFit;
     }    
     
  

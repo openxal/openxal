@@ -39,9 +39,9 @@ trajectory = probe.getTrajectory()
 dataFinal = trajectory.finalState()
 #print(str(dataFinal.getSigmaX()))
 
-comparisonFile = os.getcwd() + "/" + strSeqID + "_SigmaY_without.txt"
-with open(comparisonFile, 'w') as f2r:
-    for state in trajectory:
-        covariance = state.getCovarianceMatrix()
-        f2r.write(str(covariance.getSigmaY()) + "\n")
-print("DONE")
+# comparisonFile = os.getcwd() + "/" + strSeqID + "_SigmaY_without.txt"
+# with open(comparisonFile, 'w') as f2r:
+#     for state in trajectory:
+#         covariance = state.getCovarianceMatrix()
+#         f2r.write(str(covariance.getSigmaY()) + "\n")
+# print("DONE")
