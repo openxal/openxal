@@ -2,6 +2,7 @@ package xal.app.mpsclient;
 
 import java.util.concurrent.Callable;
 import java.util.*;
+import java.math.BigDecimal;
 
 import xal.tools.messaging.MessageCenter;
 import xal.service.mpstool.MPSPortal;
@@ -259,9 +260,17 @@ public class RemoteMPSRecord implements UpdateListener {
             Map<String, Object> eventsTable = getLatestMPSEvents(mpsType).get(0);
             MPSEvent event;
             
-            Date eventTimeStamp = (Date)eventsTable.get(MPSPortal.TIMESTAMP_KEY);
-            List<SignalEvent> signalEvents = (List<SignalEvent>)eventsTable.get(MPSPortal.SIGNAL_EVENTS_KEY);
-            
+            final Date eventTimeStamp = (Date)eventsTable.get(MPSPortal.TIMESTAMP_KEY);
+			final List<Map<String, Object>> rawSignalEvents = (List<Map<String, Object>>)eventsTable.get(MPSPortal.SIGNAL_EVENTS_KEY);
+			final List<SignalEvent> signalEvents = new ArrayList<>();
+			for ( final Map<String,Object> rawSignalEvent : rawSignalEvents ) {
+				final String signal = (String)rawSignalEvent.get( MPSPortal.CHANNEL_PV_KEY );
+				final String timestampSecondsString = (String)rawSignalEvent.get( MPSPortal.TIMESTAMP_KEY );
+				final BigDecimal timestampSeconds = new BigDecimal( timestampSecondsString );
+				final SignalEvent signalEvent = new SignalEvent( signal, timestampSeconds );
+				signalEvents.add( signalEvent );
+			}
+
             event = new MPSEvent(eventTimeStamp, signalEvents);
             
             return event;
