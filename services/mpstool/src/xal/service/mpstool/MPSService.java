@@ -300,18 +300,6 @@ public class MPSService implements MPSPortal {
 
 
 	/**
-	 * Generate a string representation of a string.
-	 * @param date  The date to represent with a string.
-	 * @return      The string representation of the date.
-	 */
-	static protected String asString( Date date ) {
-		synchronized(DATE_FORMATTER) {      // date format access must be synchronized
-			return DATE_FORMATTER.format( date );
-		}
-	}
-
-
-	/**
 	 * Get the list of processed MPS events packaged for delivery
 	 * @param mpsEvents  The input list of MPS events
 	 * @return           the processed MPS events
@@ -323,7 +311,7 @@ public class MPSService implements MPSPortal {
 			final MPSEvent event = iter.next();
 			final List<Map<String, Object>> signalEvents = packageMPSEvent( event );
 			final Map<String, Object> info = new HashMap<String, Object>();
-			info.put( TIMESTAMP_KEY, asString(event.getTimestamp()) );
+			info.put( TIMESTAMP_KEY, event.getTimestamp() );
 			info.put( SIGNAL_EVENTS_KEY, signalEvents );
 			eventList.add( info );
 		}
