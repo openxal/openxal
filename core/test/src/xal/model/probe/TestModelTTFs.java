@@ -1,6 +1,5 @@
 package xal.model.probe;
 
-import static org.junit.Assert.*;
 
 import java.io.PrintStream;
 import java.util.Iterator;
@@ -85,9 +84,9 @@ public class TestModelTTFs {
 		
 		Probe<?> newProbe = model.getProbe();
 		
-		Trajectory trajectory = newProbe.getTrajectory();
+		Trajectory<?> trajectory = newProbe.getTrajectory();
 
-		Iterator dataFinal = trajectory.iterator();
+		Iterator<?> dataFinal = trajectory.iterator();
 		
 		while ( dataFinal.hasNext()) {
 			Object state = dataFinal.next();

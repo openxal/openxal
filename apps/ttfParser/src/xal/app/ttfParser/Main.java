@@ -17,15 +17,12 @@ import java.awt.event.ActionListener;
 
 import javax.swing.*;
 
-import xal.tools.data.DataAdaptor;
 import xal.tools.xml.XmlDataAdaptor.ParseException;
 import xal.tools.xml.XmlDataAdaptor.ResourceNotFoundException;
 
 import java.io.File;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 
 
 /**
@@ -35,6 +32,11 @@ import java.util.List;
  * @version   0.1  15 June 2015
  */
 public class Main extends JFrame {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
 	/**
 	 * Instantiates a new main.
@@ -49,41 +51,41 @@ public class Main extends JFrame {
 	 */
     private void initUI() {
 
-    	Parser parser = new Parser();
+    	final Parser parser = new Parser();
     	
     	// Create a button with the title Browse
-        JButton fileSelectorButton = new JButton("Browse");  
+        final JButton fileSelectorButton = new JButton("Browse");  
 
-        JButton runButton = new JButton("Run");
+        final JButton runButton = new JButton("Run");
         
-        JButton analyzeButton = new JButton("Analyze");
+        final JButton analyzeButton = new JButton("Analyze");
         
         runButton.setEnabled(false);
         analyzeButton.setEnabled(false);
         
         //create a text field with a default file name
-        JTextField fileLabel = new JTextField("name of file to save to.xdxf");
+        final JTextField fileLabel = new JTextField("name of file to save to.xdxf");
         
         //JTextField valueLabel = new JTextField("Value Tag");
         String[] tagOptions = {"ttf", "stf", "ttfp", "stfp"};
-        JComboBox valueLabel = new JComboBox(tagOptions);
+        final JComboBox<String> valueLabel = new JComboBox<String>(tagOptions);
         
         //create a text area with instructions for how to use the program
-        JTextArea infoBox = new JTextArea("- To Parse a file, select the 'Browse' button and choose your file, then select 'Run.' An option to save the new file will be given.\n \n- To retrieve a particular value from a specific gap; after running the parser, type the tag of the value that you want to retrieve into the 'Value Tag' text area, choose the gap from the drop down menu and select 'Analyze.'\n \n- Possible choices are: ttf, stf, ttfp, stfp.\n \n- See the README for more information.");
+        final JTextArea infoBox = new JTextArea("- To Parse a file, select the 'Browse' button and choose your file, then select 'Run.' An option to save the new file will be given.\n \n- To retrieve a particular value from a specific gap; after running the parser, type the tag of the value that you want to retrieve into the 'Value Tag' text area, choose the gap from the drop down menu and select 'Analyze.'\n \n- Possible choices are: ttf, stf, ttfp, stfp.\n \n- See the README for more information.");
         infoBox.setEditable(false);
         infoBox.setWrapStyleWord(true);
         infoBox.setLineWrap(true);
         
         //create a label for the results of a value point analysis
-        JLabel resultLabel = new JLabel("Result: ");
+        final JLabel resultLabel = new JLabel("Result: ");
         
-        JTextField resultText = new JTextField("...");
+        final JTextField resultText = new JTextField("...");
         resultText.setEditable(false);
         
-        JLabel gapLabel = new JLabel("Choose RF Gap: ");
+        final JLabel gapLabel = new JLabel("Choose RF Gap: ");
         
         //create a drop down menu that eventually contains all of the gaps in the accelerator
-        JComboBox gapChooser = new JComboBox();
+        final JComboBox<String> gapChooser = new JComboBox<String>();
 
      // When hovering cursor over the buttons, display the selected button's purpose
         fileSelectorButton.setToolTipText("Select File from Directory Browser");  

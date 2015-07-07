@@ -11,7 +11,6 @@
 package xal.app.ttfParser;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -135,14 +134,14 @@ public class Parser {
 		primary.setValue("system","sns");
 		primary.setValue("ver","2.0.0");
 		
-		ArrayList<String> sequences = new ArrayList();
-		ArrayList<String> cavities = new ArrayList();
-		ArrayList<String> gaps = new ArrayList();
+		ArrayList<String> sequences = new ArrayList<String>();
+		ArrayList<String> cavities = new ArrayList<String>();
+		ArrayList<String> gaps = new ArrayList<String>();
 		
 		int ii = 0;
 		
 		// go through all the keys and values in the datatree
-		for (Entry<String, List<String>> entry : dataTree.map.entrySet()) {
+		for (Entry<String, List<String>> entry : DataTree.map.entrySet()) {
 			
 			// get the current value from the datatree
 			List<String> value = entry.getValue();
@@ -300,7 +299,6 @@ public class Parser {
 	 * @return the full new name readable by the accelerator
 	 */
 	public String getFullName(String secName, String origName) {
-		String postName = null;
 		String gapNum = origName.substring(origName.lastIndexOf("g") + 1);
 		if (gapNum.length() == 1) {
 			gapNum = "0" + gapNum;

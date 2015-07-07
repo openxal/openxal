@@ -79,11 +79,11 @@ public class DataTree {
 	 * @return the array list of gaps
 	 */
 	public ArrayList<String> getGaps() {
-		ArrayList keyList = new ArrayList();
-		Set keys = map.keySet();
+		ArrayList<String> keyList = new ArrayList<String>();
+		Set<String> keys = map.keySet();
 		
 		//create an iterator to go through each entry of the data tree
-		for (Iterator i = keys.iterator(); i.hasNext();){
+		for (Iterator<String> i = keys.iterator(); i.hasNext();){
 			String key = i.next().toString();
 			keyList.add(key);
 		}
