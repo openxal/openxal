@@ -1254,7 +1254,7 @@ public class AnalysisStuff {
 
 		// compute the satisfaction for the given (positive) square error
 		public double satisfaction( final double squareError ){
-			return 1.0 / ( TOLERANCE * TOLERANCE + squareError );
+			return SatisfactionCurve.inverseSquareSatisfaction( Math.sqrt( squareError ), TOLERANCE );
 		}
 		
 	}
