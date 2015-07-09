@@ -42,8 +42,8 @@
             <attribute isPrimaryKey="false" name="phase" type="java.lang.String" />
             <attribute isPrimaryKey="false" name="charge" type="java.lang.Double" />
 		</schema>
-		<record name="default" current="0.038" bunchFreq="402.5e6" phase="(0,0,0)" charge="4.96894E-11" />
-		<record name="IDmp+" current="0.0" bunchFreq="1.0" phase="(0,0,0)" charge="4.96894E-11" />
+		<record name="default" current="0.038" bunchFreq="402.5e6" phase="(0,0,0)" charge="9.440994E-11" />
+		<record name="IDmp+" current="0.0" bunchFreq="1.0" phase="(0,0,0)" charge="9.440994E-11" />
 	</table>
     
     
