@@ -10,6 +10,9 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.LinkedList;
 import java.util.StringTokenizer;
 
 import xal.tools.beam.PhaseMatrix;
@@ -17,6 +20,7 @@ import xal.tools.data.DataAdaptor;
 import xal.tools.data.DataFormatException;
 import xal.tools.data.IArchive;
 import Jama.Matrix;
+import Jama.SingularValueDecomposition;
 
 /**
  * <p>
@@ -355,7 +359,42 @@ public abstract class BaseMatrix<M extends BaseMatrix<M>> implements IArchive {
      * @since  Oct 16, 2013
      */
     public double conditionNumber() {
-        return this.matImpl.cond();
+//        double dblCondNum = this.matImpl.cond();
+        
+        // Do a singular value decomposition 
+        SingularValueDecomposition  svd = this.matImpl.svd();
+        double[] arrDblSv = svd.getSingularValues();
+        
+        // Make a list of singular values
+        LinkedList<Double>   lstDblSv = new LinkedList<Double>();
+        for (double dblSv : arrDblSv)
+            lstDblSv.add(dblSv);
+
+        // Create a comparator to sort the singular values from
+        //  smallest to largest
+        Comparator<Double> ifcSorter = new Comparator<Double>() {
+            @Override
+            public int compare(Double d1, Double d2) {
+                
+                if (d1 < d2)
+                    return -1;
+                
+                if (d1 == d2)
+                    return 0;
+                //else (d1 > d2)
+                return +1;
+            }
+        };
+        
+        // Sort the singular values the get the largest and smallest
+        lstDblSv.sort(ifcSorter);
+        double  dblMaxSv = lstDblSv.getLast();
+        double  dblMinSv = lstDblSv.getFirst();
+        
+        // Compute the condition number, ratio of largest to smallest singular values
+        double dblCndNum = dblMaxSv/dblMinSv;
+        
+        return dblCndNum;
     }
     
     
