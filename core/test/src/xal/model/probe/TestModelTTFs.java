@@ -66,6 +66,7 @@ public class TestModelTTFs {
 	 * @throws ModelException the model exception
 	 * @since  July 6, 2015   by James M. Ghawaly Jr.
 	 */
+	
 	@Test
 	public final void test() throws InstantiationException, ModelException {
 
@@ -87,11 +88,39 @@ public class TestModelTTFs {
 		Trajectory<?> trajectory = newProbe.getTrajectory();
 
 		Iterator<?> dataFinal = trajectory.iterator();
-		
+		OSTR_TYPEOUT.println("Sigma X-------------------------------------------------");
 		while ( dataFinal.hasNext()) {
 			Object state = dataFinal.next();
+			double statePosition = ((EnvelopeProbeState) state).getPosition();
 			CovarianceMatrix covMat = ((EnvelopeProbeState) state).getCovarianceMatrix();
-			System.out.println(covMat.getSigmaX());
+			OSTR_TYPEOUT.println(statePosition);
+			OSTR_TYPEOUT.println(covMat.getSigmaX());
+		}
+		Iterator<?> dataFinal2 = trajectory.iterator();
+		OSTR_TYPEOUT.println("");
+		OSTR_TYPEOUT.println("");
+		OSTR_TYPEOUT.println("Sigma Y-------------------------------------------------");
+		OSTR_TYPEOUT.println("");
+		OSTR_TYPEOUT.println("");
+		while ( dataFinal2.hasNext()) {
+			Object state = dataFinal2.next();
+			double statePosition = ((EnvelopeProbeState) state).getPosition();
+			CovarianceMatrix covMat = ((EnvelopeProbeState) state).getCovarianceMatrix();
+			OSTR_TYPEOUT.println(statePosition);
+			OSTR_TYPEOUT.println(covMat.getSigmaY());
+		}
+		Iterator<?> dataFinal3 = trajectory.iterator();
+		OSTR_TYPEOUT.println("");
+		OSTR_TYPEOUT.println("");
+		OSTR_TYPEOUT.println("Sigma Z-------------------------------------------------");
+		OSTR_TYPEOUT.println("");
+		OSTR_TYPEOUT.println("");
+		while ( dataFinal3.hasNext()) {
+			Object state = dataFinal3.next();
+			double statePosition = ((EnvelopeProbeState) state).getPosition();
+			CovarianceMatrix covMat = ((EnvelopeProbeState) state).getCovarianceMatrix();
+			OSTR_TYPEOUT.println(statePosition);
+			OSTR_TYPEOUT.println(covMat.getSigmaZ());
 		}
 	}
 	
