@@ -2,8 +2,6 @@ package xal.model.probe;
 
 
 import java.io.PrintStream;
-import java.util.Iterator;
-
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -29,7 +27,7 @@ public class TestModelTTFs {
      * Global Variables
      */
 	/** The seq id. */
-	private static String seqID = "MEBT";  // To choose a different sequence or combosequence, change the seqID string
+	private static String seqID = "DTL1";  // To choose a different sequence or combosequence, change the seqID string
 	
 	/** The ostr typeout. */
 	private static PrintStream        OSTR_TYPEOUT;
@@ -56,7 +54,7 @@ public class TestModelTTFs {
 		OSTR_TYPEOUT.println("Launching Model RF Gap TTF tester...");
 		ACCL_TEST = XMLDataManager.loadDefaultAccelerator();
 		SEQ_TEST = ACCL_TEST.findSequence(seqID);
-		ALGORITHM = AlgorithmFactory.createEnvTrackerAdapt(SEQ_TEST);
+        ALGORITHM = AlgorithmFactory.createEnvTrackerAdapt(SEQ_TEST);
 	}
 	
 	/**
@@ -69,12 +67,15 @@ public class TestModelTTFs {
 	@Test
 	public final void test() throws InstantiationException, ModelException {
 
+	    // Increase the number of adaptive steps for stiff systems
 		ALGORITHM.setMaxIterations(30000);
 		
-		Scenario model = Scenario.newScenarioFor(SEQ_TEST);
-
+		// Create the simulation probe
+        EnvelopeProbe probe = ProbeFactory.getEnvelopeProbe(SEQ_TEST,ALGORITHM);
+        probe.reset();
 		
-		EnvelopeProbe probe = ProbeFactory.getEnvelopeProbe(SEQ_TEST,ALGORITHM);
+        // Create the simulation scenario, assign the probe, and run
+		Scenario model = Scenario.newScenarioFor(SEQ_TEST);
 		
 		model.setProbe(probe);
 		model.setSynchronizationMode(Scenario.SYNC_MODE_DESIGN);
@@ -82,16 +83,20 @@ public class TestModelTTFs {
 		model.run();
 
 		
-		Probe<?> newProbe = model.getProbe();
-		
-		Trajectory<?> trajectory = newProbe.getTrajectory();
+		// Extract the simulation data and type out
+		Trajectory<EnvelopeProbeState> trjData = probe.getTrajectory();
 
-		Iterator<?> dataFinal = trajectory.iterator();
-		
-		while ( dataFinal.hasNext()) {
-			Object state = dataFinal.next();
-			CovarianceMatrix covMat = ((EnvelopeProbeState) state).getCovarianceMatrix();
-			System.out.println(covMat.getSigmaX());
+		for ( EnvelopeProbeState state : trjData ) {
+            CovarianceMatrix matCov  = state.getCovarianceMatrix();
+
+            double          dblPos  = state.getPosition();
+            double          dblSigX = matCov.getSigmaX();
+            double          dblSigY = matCov.getSigmaY();
+            double          dblSigZ = matCov.getSigmaZ();
+			
+            String      strLine = "" + dblPos + '\t' + dblSigX + '\t' + dblSigY + '\t' + dblSigZ;
+            
+			System.out.println(strLine);
 		}
 	}
 	
