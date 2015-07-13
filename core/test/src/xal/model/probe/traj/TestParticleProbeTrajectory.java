@@ -42,10 +42,10 @@ import xal.tools.beam.PhaseVector;
  */
 public class TestParticleProbeTrajectory {
 
+    
     /*
      * Global Constants
      */
-    
     
     /** Flag used for indicating whether to type out to stout or file */
     private static final boolean        BOL_TYPE_STOUT = true;
