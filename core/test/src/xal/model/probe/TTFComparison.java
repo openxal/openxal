@@ -18,6 +18,7 @@ import java.util.List;
 
 import xal.model.IElement;
 import xal.model.ModelException;
+import xal.model.probe.traj.EnvelopeProbeState;
 import xal.model.probe.traj.ProbeState;
 import xal.sim.scenario.ProbeFactory;
 import xal.sim.scenario.Scenario;
@@ -87,10 +88,11 @@ public class TTFComparison {
 		List<RfGap> lstGaps = SEQ_TEST.getAllNodesOfType("RG");
 		for (RfGap gap : lstGaps) {
 			List<IElement> lstElems = model.elementsMappedTo(gap);
-			List<? extends ProbeState<?>> lstStates = model.trajectoryStatesForElement( lstElems.get(lstElems.size()-1).getId());
+			IElement       elemLast = lstElems.get( lstElems.size() - 1 );
+			List<EnvelopeProbeState> lstStates = (List<EnvelopeProbeState>) model.trajectoryStatesForElement( elemLast.getId() );
 			
 			//gets the last state
-		    ProbeState<?> state = lstStates.get(lstStates.size()-1);
+		    EnvelopeProbeState state = lstStates.get(lstStates.size()-1);
 		    
 		    //gets the kinetic energy at this state
 		    Double W = state.getKineticEnergy();
@@ -105,13 +107,25 @@ public class TTFComparison {
 		    String name = gap.getId();
 		    
 		    //creates a polynomial from the TTF Fit
-		    UnivariateRealPolynomial poly1 = gap.getTTFFit();
+		    UnivariateRealPolynomial polyT = gap.getTTFFit();
+		    UnivariateRealPolynomial polyS = gap.getSFit();
+		    UnivariateRealPolynomial polyTp = gap.getTTFPrimeFit();
+		    UnivariateRealPolynomial polySp = gap.getSPrimeFit();
 		    
 		    //evaluate beta at the polynomial
-		    Double evalBeta = poly1.evaluateAt(beta);
+		    Double evalBeta = polyT.evaluateAt(beta);
+		    Double dblS = polyS.evaluateAt(beta);
+		    Double dblTp = polyTp.evaluateAt(beta);
+		    Double dblSp = polySp.evaluateAt(beta);
 		    
 		    //print information to standard output
-		    OSTR_TYPEOUT.println("ID: " + name +" Energy: " + W + " Beta: " + beta + " TTF_at_Beta: " + evalBeta);
+		    OSTR_TYPEOUT.println("ID: " + name +" Energy: " + W + " Beta: " + beta 
+		            + " Design T: " + dblTtf
+		            + " T(b): " + evalBeta
+		            + " T'(b): " + dblTp
+		            + " S(b): " + dblS
+		            + " S'(b): " + dblSp
+		            );
 		}
 		
 		
