@@ -93,7 +93,6 @@ public class TTFComparison {
 			
 			//gets the last state
             EnvelopeProbeState state = lstStates.get(0);
-//		    EnvelopeProbeState state = lstStates.get(lstStates.size()-1);
 		    
 		    //gets the kinetic energy at this state
 		    Double W = state.getKineticEnergy();
@@ -112,11 +111,11 @@ public class TTFComparison {
 		    UnivariateRealPolynomial polyS = gap.getSFit();
 		    UnivariateRealPolynomial polyTp = gap.getTTFPrimeFit();
 		    UnivariateRealPolynomial polySp = gap.getSPrimeFit();
+
+		    Double k = calculateK(seqID,beta);
 		    
-		    Double k = (2*Math.PI*402500000)/(beta*299792458);
-		    
-		    //evaluate beta at the polynomial
-		    Double evalBeta = polyT.evaluateAt(k);
+		    //evaluate the polynomial at k
+		    Double dblT = polyT.evaluateAt(k);
 		    Double dblS = polyS.evaluateAt(k);
 		    Double dblTp = polyTp.evaluateAt(k);
 		    Double dblSp = polySp.evaluateAt(k);
@@ -124,10 +123,10 @@ public class TTFComparison {
 		    //print information to standard output
 		    OSTR_TYPEOUT.println("ID: " + name +" Energy: " + W + " Beta: " + beta 
 		            + " Design T: " + dblTtf
-		            + " T(b): " + evalBeta
-		            + " T'(b): " + dblTp
-		            + " S(b): " + dblS
-		            + " S'(b): " + dblSp
+		            + " T(k): " + dblT
+		            + " T'(k): " + dblTp
+		            + " S(k): " + dblS
+		            + " S'(k): " + dblSp
 		            );
 		}
 		
@@ -144,5 +143,23 @@ public class TTFComparison {
     public static void tearDownAfterClass() throws Exception {
 		OSTR_TYPEOUT.println("Test Complete");
     }
+	
+	/**
+	 * Calculate k.
+	 *
+	 * @param seqName the name of the sequence
+	 * @param beTA Double: Beta
+	 * @return k as double
+	 */
+	public double calculateK(String seqName,Double beTA) {
+		Double frequency = null;
+		if(seqName.startsWith("SCL")||seqName.startsWith("CCL")) {
+			frequency = 805000000.0;
+		}
+		else {
+			frequency = 402500000.0;
+		}
+		return (2*Math.PI*frequency)/(beTA*299792458);
+	}
 
 }
