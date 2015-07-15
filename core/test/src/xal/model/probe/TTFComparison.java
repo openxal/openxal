@@ -113,11 +113,13 @@ public class TTFComparison {
 		    UnivariateRealPolynomial polyTp = gap.getTTFPrimeFit();
 		    UnivariateRealPolynomial polySp = gap.getSPrimeFit();
 		    
+		    Double k = (2*Math.PI*402500000)/(beta*299792458);
+		    
 		    //evaluate beta at the polynomial
-		    Double evalBeta = polyT.evaluateAt(beta);
-		    Double dblS = polyS.evaluateAt(beta);
-		    Double dblTp = polyTp.evaluateAt(beta);
-		    Double dblSp = polySp.evaluateAt(beta);
+		    Double evalBeta = polyT.evaluateAt(k);
+		    Double dblS = polyS.evaluateAt(k);
+		    Double dblTp = polyTp.evaluateAt(k);
+		    Double dblSp = polySp.evaluateAt(k);
 		    
 		    //print information to standard output
 		    OSTR_TYPEOUT.println("ID: " + name +" Energy: " + W + " Beta: " + beta 
