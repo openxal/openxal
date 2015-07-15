@@ -92,7 +92,8 @@ public class TTFComparison {
 			List<EnvelopeProbeState> lstStates = (List<EnvelopeProbeState>) model.trajectoryStatesForElement( elemLast.getId() );
 			
 			//gets the last state
-		    EnvelopeProbeState state = lstStates.get(lstStates.size()-1);
+            EnvelopeProbeState state = lstStates.get(0);
+//		    EnvelopeProbeState state = lstStates.get(lstStates.size()-1);
 		    
 		    //gets the kinetic energy at this state
 		    Double W = state.getKineticEnergy();
