@@ -30,7 +30,7 @@ public class TTFComparison {
      * Global Variables
      */
 	/** The seq id. */
-	private static String seqID = "DTL1";  // To choose a different sequence or combosequence, change the seqID string
+	private static String seqID = "CCL";  // To choose a different sequence or combosequence, change the seqID string
 	
 	/** The ostr typeout. */
 	private static PrintStream        OSTR_TYPEOUT;
