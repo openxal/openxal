@@ -68,8 +68,8 @@ import xal.tools.dispatch.*;
  * is created in the case of a ring.  The method <code>TransferMapState#setPhaseCoordinates</code>
  * is called to create an initial offset.  This does nothing because transfer map probes
  * do not have phase coordinates any longer, the method is deprecated.
- * <br/>
- * <br/>
+ * <br>
+ * <br>
  * - The offset for the above call is hard coded.  As are many features in this class.
  * </p>
  * 
