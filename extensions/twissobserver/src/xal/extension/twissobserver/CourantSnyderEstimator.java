@@ -405,11 +405,11 @@ public abstract class CourantSnyderEstimator {
      * given phase plane.  This
      * is the vector of second-order moments of the beam distribution.  The returned value is
      * a 3&times;1 matrix of real numbers having the form
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * &nbsp; &nbsp; <b>&sigma;</b> = ( &lt;<i>x</i><sup>2</sup>&gt;, &lt;<i>xx'</i>&gt;, &lt;<i>x'</i><sup>2</sup>&gt; )<sup>T</sup>
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * where the moments are taken from the horizontal plane.  The vertical plane computation returns an
      * analogous set.  The three phase planes are treated independently and solutions for each plane 
      * returned separately.
@@ -427,7 +427,7 @@ public abstract class CourantSnyderEstimator {
      * &middot;  <em>IMPORTANT</em>: The moments are computed using the transfer matrices currently stored in the
      * internal transfer matrix generator object.  Thus, whatever generation was used prior to
      * this call is used to compute the recursion sub-function.
-     * <br/>
+     * <br>
      * &middot;  If the reconstruction device has non-zero length the location of the moments corresponds 
      * to the exit of the device.
      * </p>
