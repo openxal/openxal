@@ -104,7 +104,7 @@ public class ElementFactory {
      *  returned by the <code>IElement</code> method <code>getType():String</code>.  
      *  The argument <code>clsType</code> is the <code>Class</code> class of the
      *  class being registered with this factory.  The class must expose the <code>
-     *  IElement<code> interface.
+     *  IElement</code> interface.
      *  </p>
      *  <p>
      *  Example:

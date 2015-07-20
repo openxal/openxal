@@ -52,7 +52,7 @@ public class EnsembleProbeState extends BunchProbeState<EnsembleProbeState> {
 
 
     /**
-     * Default constructor.  Create a new, empty <code>EnsembleProbeState<code> object.
+     * Default constructor.  Create a new, empty <code>EnsembleProbeState</code> object.
      */    
     public EnsembleProbeState() {
         m_ensPhase = new Ensemble();

@@ -8,7 +8,7 @@ import xal.tools.beam.PhaseMap;
  * (for example, quadrupoles, foil, and others). According to the 
  * Element-Algorithm-Probe design pattern, the <code>IElement</code>
  * exposed objects may interact with physical aspects of the particle
- * beam which are expressed by the </code>IProbe</code> interface. 
+ * beam which are expressed by the <code>IProbe</code> interface. 
  * <p>
  * These interactions between <code>IElement</code> objects and 
  * <code>IProbe</code> objects are defined by dynamics objects exposing

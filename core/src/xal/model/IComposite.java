@@ -12,7 +12,7 @@ import java.util.Iterator;
  * Represents a composite modeling structure.  Such a structure is typically
  * build from <code>IElement</code> objects and other composites exposing
  * the <code>IComposite</code> interface.  Both interfaces are derived from
- * the base interface <code>IComponent<code>.
+ * the base interface <code>IComponent</code>.
  * 
  * @author Christopher K. Allen
  *

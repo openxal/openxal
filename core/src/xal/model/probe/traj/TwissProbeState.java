@@ -84,7 +84,7 @@ public class TwissProbeState extends BunchProbeState<TwissProbeState> {
 
 
     /**
-     * Default constructor.  Create a new, empty <code>EnvelopeProbeState<code> object.
+     * Default constructor.  Create a new, empty <code>EnvelopeProbeState</code> object.
      */    
     public TwissProbeState() {
         super();

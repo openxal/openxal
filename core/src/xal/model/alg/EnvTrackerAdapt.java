@@ -735,7 +735,7 @@ public class EnvTrackerAdapt extends EnvelopeTrackerBase {
      * Load the parameters of the algorithm from a data source exposing the
      * <code>IArchive</code> interface.
      * The superclass <code>load</code> method is called first, then the properties
-     * particular to <code>EnvTrackerAdapt<code> are loaded.
+     * particular to <code>EnvTrackerAdapt</code> are loaded.
      * 
      * @see xal.tools.data.IArchive#load(xal.tools.data.DataAdaptor)
      */
@@ -770,7 +770,7 @@ public class EnvTrackerAdapt extends EnvelopeTrackerBase {
     /**
      * Save the settings particular to this subclass of <code>Tracker</code>.
      * The superclass <code>save</code> method is called first, then the properties
-     * particular to <code>EnvTrackerAdapt<code> are saved.
+     * particular to <code>EnvTrackerAdapt</code> are saved.
      * 
      * @param   daptArchive     data sink exposing <code>IArchive</code> interface
      * 

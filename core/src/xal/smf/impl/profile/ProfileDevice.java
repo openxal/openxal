@@ -230,7 +230,7 @@ public abstract class ProfileDevice extends AcceleratorNode {
          * <p>
          * If the profile device has no method of validating wire operation
          * then the method will return <code>true</code> regardless of 
-         * the argument, rather than a blanket <code>false</code for all
+         * the argument, rather than a blanket <code>false</code> for all
          * wires.
          * </p>
          * 

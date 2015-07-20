@@ -122,7 +122,7 @@ public class EnvelopeProbeState extends BunchProbeState<EnvelopeProbeState> {
 
 
     /**
-     * Default constructor.  Create a new, empty <code>EnvelopeProbeState<code> object.
+     * Default constructor.  Create a new, empty <code>EnvelopeProbeState</code> object.
      */    
     public EnvelopeProbeState() {
         super();

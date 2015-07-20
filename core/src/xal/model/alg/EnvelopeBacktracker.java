@@ -642,7 +642,7 @@ public class EnvelopeBacktracker extends EnvelopeTrackerBase {
 
     /**
      * <p>
-     * Test for a <code>ChargeExchangeFoil<code> element.
+     * Test for a <code>ChargeExchangeFoil</code> element.
      * If found, the probe represent an H<sup>+</sup> beam, the electrons 
      * are added and the beam becomes H<sup>-</sup>.
      * </p>

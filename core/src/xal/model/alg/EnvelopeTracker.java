@@ -566,7 +566,7 @@ public class EnvelopeTracker extends EnvelopeTrackerBase {
     }
 
     /**
-     * Test for a <code>{ChargeExchangeFoil<code> element.
+     * Test for a <code>ChargeExchangeFoil</code> element.
      * If found, the probe represent an H<sup>-</sup> beam, the electrons 
      * are stripped and the beam becomes H<sup>+</sup>.
      * 
