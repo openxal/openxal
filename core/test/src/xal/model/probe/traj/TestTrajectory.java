@@ -132,7 +132,7 @@ public class TestTrajectory {
 
             algor = AlgorithmFactory.createTransferMapTracker(SEQ_TEST);
             PROBE_XFER = ProbeFactory.getTransferMapProbe(SEQ_TEST, algor);
-            PROBE_ENV.initialize();
+            PROBE_XFER.initialize();
             
         } catch (ModelException | InstantiationException e) {
 
@@ -349,6 +349,24 @@ public class TestTrajectory {
         PSTR_OUTPUT.println("PARTICLE PROBE STATES");
         for (ParticleProbeState state : trjPartc.getStatesViaIndexer()) {
             PSTR_OUTPUT.println("  " + state.getElementId() + " at position " + state.getPosition() + ": z = " + state.getPhaseCoordinates());
+        }
+        
+    }
+    
+    /**
+     * Test method for {@link xal.model.probe.traj.Trajectory#statesForElement(java.lang.String)}.
+     */
+    @Test
+    public final void testEnvelopeProbe() {
+//        PROBE_ENV.setPhaseCoordinates(new PhaseVector(0.001, 0, 0, 0, 0, 0) );
+//        PROBE_ENV.initialize();
+        
+        Trajectory<EnvelopeProbeState>    trjEnv = this.runModel(PROBE_ENV);
+        
+        PSTR_OUTPUT.println();
+        PSTR_OUTPUT.println("ENVELOPE PROBE STATES");
+        for (EnvelopeProbeState state : trjEnv.getStatesViaIndexer()) {
+            PSTR_OUTPUT.println("  " + state.getElementId() + " at position " + state.getPosition() + ": sigma = " + state.getCovarianceMatrix());
         }
         
     }
