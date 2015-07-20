@@ -60,11 +60,11 @@ package xal.tools.math;
  * Spherical Bessel functions <i>j<sub>n</sub></i>(<i>x</i>)
  * can be represented as cylindrical Bessel functions
  * with half-integer order.  Specifically, we have
- * <br/>
- * <br/>
+ * <br>
+ * <br>
  * &nbsp; <i>j<sub>n</sub></i>(<i>x</i>) = (&pi;/2<i>x</i>)<sup>1/2</sup><i>J<sub>n</i>+&frac12;</sub>(<i>x</i>).
- * <br/>
- * <br/>
+ * <br>
+ * <br>
  * However, since half-order cylindrical Bessel functions are not included in 
  * this class
  * (they are more difficult to implement), an implementation based upon the
@@ -75,29 +75,29 @@ package xal.tools.math;
  * </p>
  * <p>
  * <strong>NOTES</strong>: (CKA)
- * <br/>
+ * <br>
  * &middot; There exists a recurrence relationship between Bessel functions of
  * different orders.  For example, if <i>B<sub>n</sub></i>(<i>x</i>) is any
  * cylindrical Bessel function of order <i>n</i>, we have the following:
- * <br/>
- * <br/>
+ * <br>
+ * <br>
  * &nbsp;  <i>B<sub>n</i>+1</sub>(<i>x</i>) = (2<i>n</i>/<i>x</i>)<i>B<sub>n</sub></i>(<i>x</i>) - 
  *                                            <i>B<sub>n</i>-1</sub>(<i>x</i>).
- * <br/>
- * <br/>
+ * <br>
+ * <br>
  * However, this formula is numerically unstable for Bessel functions of the first
  * kind <i>J<sub>n</sub></i>(<i>x</i>). Thus, it cannot be used to compute the 
  * higher order <i>J<sub>n</sub></i>(<i>x</i>) using recursion over lower orders.
- * <br/>
+ * <br>
  * &middot; We can apply the above recurrence relation to spherical Bessel 
  * functions by expressing them in terms of cylindrical Bessel functions.  Letting
  * <i>b<sub>n</sub></i>(<i>x</i>) represent any spherical Bessel function we have
- * <br/>
- * <br/>
+ * <br>
+ * <br>
  * &nbsp; <i>b<sub>n</i>+1</sub>(<i>x</i>) = [(2<i>n</i>+1)/<i>x</i>]<i>b<sub>n</sub></i>(<i>x</i>)
  *                                         - <i>b<sub>n</i>-1</sub>(<i>x</i>).
- * <br/>
- * <br/>
+ * <br>
+ * <br>
  * Again, this formula is numerically unstable for the Bessel functions of the first 
  * kind <i>j<sub>n</sub></i>(<i>x</i>).  However, it can be used to determine the
  * representation of each Bessel function in terms of trigonometric functions.
@@ -105,7 +105,7 @@ package xal.tools.math;
  * <p>
  * <h2>References</h2>
  * [1] <a href="http://www.koders.com">www.koders.com</a>
- * <br/>
+ * <br>
  * [2]<a href="http://www.nr.com/"><i>Numerical Recipes, The Art of Scientific
  *                                    Computing, Third Edition,</i>
  *                                    W.H. Press,
@@ -114,7 +114,7 @@ package xal.tools.math;
  *                                    B.P. Flannery
  *                                    (Cambridge University Press, Cambridge, 2007).
  *                                    </a>
- * <br/>
+ * <br>
  * </p>
  *                                    
  * @author  Christopher K. Allen
@@ -433,11 +433,11 @@ public final class BesselFunction {
      *  The sinc function arises frequency in engineering
      *  applications, especially communications and signal
      *  processing.  It is defined as follows:
-     *  <br/>
-     *  <br/>
+     *  <br>
+     *  <br>
      *  &nbsp; sinc(<i>x</i>) &equiv; sin(<i>x</i>)/<i>x</i>.
-     *  <br/>
-     *  <br/>
+     *  <br>
+     *  <br>
      *  The function is <strong>not</strong> singular at 
      *  <i>x</i> = 0, which may easily be verified with 
      *  L'hopital's rule.
@@ -446,20 +446,20 @@ public final class BesselFunction {
      *  To avoid numerical instability, for small values of 
      *  <i>x</i> we Taylor expand sinc(<i>x</i>) 
      *  to sixth order about <i>x</i> = 0.  
-     *  <br/>
-     *  <br/>
+     *  <br>
+     *  <br>
      *  &nbsp;  sinc(x) &asymp; 1 - <i>x</i><sup>2</sup>/6 + 
      *                               <i>x</i><sup>4</sup>/120 - 
      *                               <i>x</i><sup>6</sup>/5040 + 
      *                               <i>O</i>(<i>x</i><sup>8</sup>).
-     *  <br/>
-     *  <br/>
+     *  <br>
+     *  <br>
      *  otherwise we return sin(<i>x</i>)/<i>x</i>.
      *  </p>
      *  
      *  <p>
      *  <strong>NOTE</strong>: (CKA)
-     *  <br/>
+     *  <br>
      *  &middot; The sinc function is the zero<sup>th</sup> order
      *  spherical bessel function <i>j</i><sub>0</sub>.
      *  </p>
@@ -514,19 +514,19 @@ public final class BesselFunction {
      * To avoid numerical instability, for small values of 
      * <i>x</i> we Taylor expand <i>j</i><sub>1</sub>(<i>x</i>) 
      * to seventh order about <i>x</i> = 0.  
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * &nbsp;  <i>j</i><sub>1</sub>(<i>x</i>) &asymp; 
      *                         <i>x</i>/3 - 
      *                         <i>x</i><sup>3</sup>/30 + 
      *                         <i>x</i><sup>5</sup>/840 - 
      *                         <i>x</i><sup>7</sup>/45360 + 
      *                         <i>O</i>(<i>x</i><sup>9</sup>).
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * otherwise we return 
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * <i>j</i><sub>1</sub>(<i>x</i>) = sin(<i>x</i>)/<i>x</i><sup>2</sup> - 
      *                                  cos(<i>x</i>)/<i>x</i>.
      * </p>
@@ -569,19 +569,19 @@ public final class BesselFunction {
      * To avoid numerical instability, for small values of 
      * <i>x</i> we Taylor expand <i>j</i><sub>2</sub>(<i>x</i>) 
      * to eighth order about <i>x</i> = 0.  
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * &nbsp;  <i>j</i><sub>2</sub>(<i>x</i>) &asymp; 
      *                         <i>x</i><sup>2</sup>/15 - 
      *                         <i>x</i><sup>4</sup>/210 + 
      *                         <i>x</i><sup>6</sup>/7560 - 
      *                         <i>x</i><sup>8</sup>/498960 + 
      *                         <i>O</i>(<i>x</i><sup>10</sup>).
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * otherwise we return 
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * <i>j</i><sub>2</sub>(<i>x</i>) = (3/<i>x</i> - 1)sin(<i>x</i>)/<i>x</i> - 
      *                                  3cos(<i>x</i>)/<i>x</i><sup>2</sup>.
      * </p>
@@ -623,18 +623,18 @@ public final class BesselFunction {
      * To avoid numerical instability, for small values of 
      * <i>x</i> we Taylor expand <i>j</i><sub>3</sub>(<i>x</i>) 
      * to seventh order about <i>x</i> = 0.  
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * &nbsp;  <i>j</i><sub>3</sub>(<i>x</i>) &asymp; 
      *                         <i>x</i><sup>3</sup>/105 + 
      *                         <i>x</i><sup>5</sup>/1890 - 
      *                         <i>x</i><sup>7</sup>/83160 + 
      *                         <i>O</i>(<i>x</i><sup>9</sup>).
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * otherwise we return 
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * <i>j</i><sub>3</sub>(<i>x</i>) = 
      *            (15/<i>x</i><sup>3</sup> - 6/<i>x</i>)sin(<i>x</i>)/<i>x</i> - 
      *            (1 - 15/<i>x</i><sup>2</sup>)cos(<i>x</i>)/<i>x</i>.
@@ -678,18 +678,18 @@ public final class BesselFunction {
      * To avoid numerical instability, for small values of 
      * <i>x</i> we Taylor expand <i>j</i><sub>4</sub>(<i>x</i>) 
      * to eighth order about <i>x</i> = 0.  
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * &nbsp;  <i>j</i><sub>2</sub>(<i>x</i>) &asymp; 
      *                         <i>x</i><sup>4</sup>/945 - 
      *                         <i>x</i><sup>6</sup>/20790 + 
      *                         <i>x</i><sup>8</sup>/1081080 + 
      *                         <i>O</i>(<i>x</i><sup>10</sup>).
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * otherwise we return 
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * <i>j</i><sub>4</sub>(<i>x</i>) = 
      *    (1 - 45/<i>x</i><sup>2</sup> + 105/<i>x</i><sup>4</sup>)sin(<i>x</i>)/<i>x</i> 
      *  + (10/<i>x</i> - 105/<i>x</i><sup>3</sup>)cos(<i>x</i>)/<i>x</i>.

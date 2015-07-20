@@ -42,8 +42,8 @@ import xal.tools.math.r3.R3;
  * ProbeFactory is a factory for generating probes.
  * 
  * TODO 
- *    <br/> &middot; Let's do the proper type of the probe species on the methods
- *    <br/> &middot; Perhaps we could rename the <code>get</code>-prefixed methods to
+ *    <br> &middot; Let's do the proper type of the probe species on the methods
+ *    <br> &middot; Perhaps we could rename the <code>get</code>-prefixed methods to
  *                   a more conventional naming (e.g., <code>create</code>-)
  *
  * @author   tap

@@ -384,11 +384,11 @@ public class SignalAttrs extends ScadaRecord {
      * place with that of the given signal attributes structure.  Letting &lambda; denote the 
      * provided averaging factor, which is in the interval [0,1], the new values of this
      * structure, say <i>v'</i> are given by the formula
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * &nbsp; &nbsp; <i>v'</i> = &lambda;<i>u</i> + (1 - &lambda;)<i>v</i>
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * where <i>v</i> is the previous value of <i>v'</i> and <i>u</i> is the new value
      * of <i>v</i> in <code>sigAcq</code>. 
      * </p>  

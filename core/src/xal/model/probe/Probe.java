@@ -403,8 +403,8 @@ public abstract class Probe<S extends ProbeState<S>> implements IProbe, IArchive
     * <h4>CKA NOTES:</h4>
     * These notes concern the refactoring of the probe component
     * in order to tighten the typing.
-    * <br/>
-    * <br/>
+    * <br>
+    * <br>
     * &middot; The new behavior should be the same as before, only 
     * the implementation differs.  The current state is set to a clone
     * of the (previously saved) initial state.
@@ -729,23 +729,23 @@ public abstract class Probe<S extends ProbeState<S>> implements IProbe, IArchive
      * <h4>CKA NOTES:</h4>
      * These notes concern the refactoring of the probe component
      * in order to tighten the typing.
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * &middot; In order to make this method compatible with the previous
      * behavior it must set the saved "initial state" to the current
      * probe state.  The previous incarnation assigned the new initial
      * state by calling the {@link #createProbeState()} method to which
      * created a new probe state representing the current state of the probe.
-     * <br/>
+     * <br>
      * &middot; The trajectory is cleared, that is, there is no longer
      * any history in the probe
      * </br>
      * &middot; Thus, <tt>initialize()</tt> is really a poor choice, since
      * all that is done is
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * &nbsp; &nbsp; - The initial state is reset to the current state
-     * <br/>
+     * <br>
      * &nbsp; &nbsp; - The trajectory is cleared
      * </p>
      * 

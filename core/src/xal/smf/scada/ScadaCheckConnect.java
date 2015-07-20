@@ -111,9 +111,9 @@ public class ScadaCheckConnect {
         /**
          * <p>
          * The requested connection was made.  Consequently, 
-         * <br/>
+         * <br>
          * &nbsp; &sdot; We remove ourself from the channel's set of connection listeners
-         * <br/>
+         * <br>
          * &nbsp; &sdot; We remove the channel from the list of open requests
          * </p>
          * 

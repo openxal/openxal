@@ -518,11 +518,11 @@ public class R2x2 extends SquareMatrix<R2x2> implements java.io.Serializable {
     /**
      *  Non-destructive Matrix-Vector multiplication. Specifically, the
      *  vector <b>y</b> given by
-     *  <br/>
-     *  <br/>
+     *  <br>
+     *  <br>
      *  &nbsp; &nbsp; <b>y</b> = <b>Ax</b>
-     *  <br/>
-     *  <br/>
+     *  <br>
+     *  <br>
      *  where <b>A</b> is this matrix and <b>x</b> is the given vector.
      *  
      *  @param vec	the vector factor <b>x</bx>

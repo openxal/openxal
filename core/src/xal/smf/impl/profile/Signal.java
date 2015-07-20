@@ -440,11 +440,11 @@ public class Signal extends ScadaRecord {
      * place with that of the given signal structure.  Letting &lambda; denote the 
      * provided averaging factor, which is in the interval [0,1], the new values of this
      * signal, say <i>v'</i> are given by the formula
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * &nbsp; &nbsp; <i>v'</i> = &lambda;<i>u</i> + (1 - &lambda;)<i>v</i>
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * where <i>v</i> is the previous value of <i>v'</i> and <i>u</i> is the new value
      * of <i>v</i> in <code>sigAcq</code>. 
      * </p>  
@@ -452,7 +452,7 @@ public class Signal extends ScadaRecord {
      * <h4>NOTES:</h4>
      * &middot; Nothing is done to the position values in the signal, they are unchanged of
      * current writing.
-     * <br/>
+     * <br>
      * &middot; The standard deviation is weighted vectorally.
      * </p>
      * 

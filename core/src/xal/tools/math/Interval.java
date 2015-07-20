@@ -321,7 +321,7 @@ public class Interval implements java.io.Serializable {
       * of a point <i>x</i> &isin; <i>I</i> 
       * can computed by solving the following linear equation
       * for the {&lambda;<i><sub>i</sub></i>} :
-      * <br/>
+      * <br>
       * &nbsp;<table>
       *         <td>
       *         <table>

@@ -158,8 +158,8 @@ public class ProbeStateTest extends TestCase {
 
     /**
      * Tests the ensemble probe state object.
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * Note, however, that the <code>EnsembleProbe</code>
      *  class is not implemented.
      *

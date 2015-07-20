@@ -59,10 +59,10 @@ import java.util.concurrent.RejectedExecutionException;
  * occur in the network.  To prevent the command from being issued
  * multiple times it is necessary to clear the command buffer after
  * issuing a command.
- * <br/>
+ * <br>
  * &middot; The time between the issuing of a command and the clearing
  * of the command buffer is call the <i>command latency</i>.
- * <br/>
+ * <br>
  * &middot; Currently the command buffer is not reset - the new controller
  * software appears to correct the EPICS quirk. 
  * <br>
@@ -450,11 +450,11 @@ public class WireScanner extends ProfileDevice {
          * Returns the argument of this command.  
          * This method is actually a shortcut for the 
          * method call
-         * <br/>
-         * <br/>
+         * <br>
+         * <br>
          *  &nbsp; &nbsp; <code>{@link #getArgument(int)}</code>
-         * <br/>
-         * <br/>
+         * <br>
+         * <br>
          * for the argument of 0.  Specially, use this method
          * if there is only one argument to the command.
          * 
@@ -1053,7 +1053,7 @@ public class WireScanner extends ProfileDevice {
          * Thus, this is the maximum possible distance the
          * wire can travel while taking data.  It is a mechanical
          * limitation. 
-         * <br/> <br/>
+         * <br> <br>
          * The product of <code>stepLength</code> &times; 
          * <code>stepCount</code> must be less than this value. 
          * This is a read-only quantity.
@@ -1539,8 +1539,8 @@ public class WireScanner extends ProfileDevice {
         /**
          * Alarm flag for wire signal; it indicates a
          * saturation condition.
-         * <br/>
-         * <br/>
+         * <br>
+         * <br>
          *  status: 0=OK, 1=Saturated
          */
         @AScada.Field(
@@ -1582,8 +1582,8 @@ public class WireScanner extends ProfileDevice {
 
         /** 
          * Horizontal wire damage
-         * <br/>
-         * <br/>
+         * <br>
+         * <br>
          *  status: 0=OK, 1=MPS trip
          */
         @AScada.Field(
@@ -1595,8 +1595,8 @@ public class WireScanner extends ProfileDevice {
 
         /** 
          * Vertical wire damage 
-         * <br/>
-         * <br/>
+         * <br>
+         * <br>
          *  status: 0=OK, 1=MPS trip
          */
         @AScada.Field(
@@ -1608,8 +1608,8 @@ public class WireScanner extends ProfileDevice {
 
         /** 
          * Diagonal wire damage
-         * <br/>
-         * <br/>
+         * <br>
+         * <br>
          *  status: 0=OK, 1=Damage 
          */
         @AScada.Field(
@@ -1632,8 +1632,8 @@ public class WireScanner extends ProfileDevice {
 
         /** 
          * MPS 0 trip 
-         * <br/>
-         * <br/>
+         * <br>
+         * <br>
          *  status: 0=OK, 1=MPS trip
          */
         @AScada.Field(
@@ -1645,8 +1645,8 @@ public class WireScanner extends ProfileDevice {
 
         /** 
          * MPS 1 trip 
-         * <br/>
-         * <br/>
+         * <br>
+         * <br>
          *  status: 0=OK, 1=MPS trip
          */
         @AScada.Field(
@@ -1658,8 +1658,8 @@ public class WireScanner extends ProfileDevice {
 
         /** 
          * General power supply error 
-         * <br/>
-         * <br/>
+         * <br>
+         * <br>
          *  status: 0=OK, 1=Error condition
          */
         @AScada.Field(
@@ -1671,8 +1671,8 @@ public class WireScanner extends ProfileDevice {
         
         /** 
          * General error during scan 
-         * <br/>
-         * <br/>
+         * <br>
+         * <br>
          *  status: 0=OK, 1=Error condition
          */
         @AScada.Field(
@@ -1685,8 +1685,8 @@ public class WireScanner extends ProfileDevice {
         /** 
          * Actuator collision error. Motion was disabled 
          * to prevent collision with another device. 
-         * <br/>
-         * <br/>
+         * <br>
+         * <br>
          *  status: 0=OK, 1=collision detected
          */
         @AScada.Field( 
@@ -1710,8 +1710,8 @@ public class WireScanner extends ProfileDevice {
 
         /** 
          * Movement state of the wire.
-         * <br/>
-         * <br/>
+         * <br>
+         * <br>
          * Values: 0=stationary, 1=moving, 2=failure
          */
         @AScada.Field( 
@@ -2995,11 +2995,11 @@ public class WireScanner extends ProfileDevice {
      * One can specify the event type which fires the monitor using
      * the argument <arg>intEvtType</arg>.  Any combination of the following
      * event types can be specified with a logical OR operation:
-     * <br/>
-     * <br/> &nbsp; <code>Monitor.VALUE</code> - fire upon PV value change
-     * <br/> &nbsp; <code>Monitor.LOG  </code> - 
-     * <br/> &nbsp; <code>Monitor.ALARM</code> - fire upon PV alarm value
-     * <br/>
+     * <br>
+     * <br> &nbsp; <code>Monitor.VALUE</code> - fire upon PV value change
+     * <br> &nbsp; <code>Monitor.LOG  </code> - 
+     * <br> &nbsp; <code>Monitor.ALARM</code> - fire upon PV alarm value
+     * <br>
      * The default value (i.e., no argument) is <code>Monitor.VALUE</code>.
      * </p> 
      *   

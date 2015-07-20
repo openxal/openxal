@@ -55,7 +55,7 @@ import xal.tools.math.r3.R3;
  * <p>
  * <h4>NOTES:</h4>
  * &middot; Completed: Replace <code>EllipsoidalCharge</code> with <code>BeamEllipsoid</code>.
- * <br/>
+ * <br>
  * &middot; The default value for step size is 0.01 meters (1 cm).
  * </p>
  * 
@@ -338,7 +338,7 @@ public class Trace3dTracker extends Tracker {
      * <h4>NOTE:</h4>
      *  <em>&middot; This currently works only for upright beam ellipses
      *  in configuration space!</em>
-     *  <br/>
+     *  <br>
      *  &middot; This method was converted from the use of <code>EllipsoidalCharge</code>
      *  to class <code>BeamEllipsoid</code> to make the space charge calculations. 
      *  Hopefully there are no side effects.

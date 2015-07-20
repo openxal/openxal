@@ -288,8 +288,8 @@ public class RfGap extends AcceleratorNode {
     /** 
      *  Set the RF amplitude in the  (kV/m) 
      *  should be done by the parent cavity (e.g. DTL tank)
-     *  <br/>
-     *  <br/>
+     *  <br>
+     *  <br>
      *  <em>Currently this method does nothing!</em>  
      *  
      *     

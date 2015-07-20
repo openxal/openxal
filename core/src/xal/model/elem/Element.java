@@ -405,7 +405,7 @@ public abstract class Element implements IElement {
      * </p>  
      *  
      *  <p>NOTE: CKA
-     *  <br/>
+     *  <br>
      *  The position of the probe within the element appears to be kept as a
      *  field of the algorithm object.  I am not exactly sure of any 
      *  side-effects of this implementation when using the
@@ -469,16 +469,16 @@ public abstract class Element implements IElement {
      *  </p>
      * <p>
      * <strong>NOTES</strong>: CKA
-     *  <br/>
+     *  <br>
      *  The position of the probe within the element appears to be kept as a
      *  field of the algorithm object.  I am not exactly sure of any 
      *  side-effects of this implementation when using the
      *  <code>{@link Tracker#propagate(IProbe, IElement)}</code> of the 
      *  <code>{@link Tracker}</code> class.  Careful when modifying.
-     * <br/>
+     * <br>
      * &middot; Support for backward propagation
      * February, 2009.
-     * <br/>
+     * <br>
      * &middot; You must use the <em>proper algorithm</em> object
      * for this method to work correctly!
      * </p>
@@ -516,10 +516,10 @@ public abstract class Element implements IElement {
      *
      * <p>
      * <strong>NOTES</strong>: CKA
-     * <br/>
+     * <br>
      * &middot; Support for backward propagation
      * February, 2009.
-     * <br/>
+     * <br>
      * &middot; You must use the <em>proper algorithm</em> object
      * for this method to work correctly!
      * </p>

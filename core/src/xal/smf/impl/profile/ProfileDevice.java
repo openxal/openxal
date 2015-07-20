@@ -872,11 +872,11 @@ public abstract class ProfileDevice extends AcceleratorNode {
      * One can specify the event type which fires the monitor using
      * the argument <arg>intEvtType</arg>.  Any combination of the following
      * event types can be specified with a logical OR operation:
-     * <br/>
-     * <br/> &nbsp; <code>Monitor.VALUE</code> - fire upon PV value change
-     * <br/> &nbsp; <code>Monitor.LOG  </code> - 
-     * <br/> &nbsp; <code>Monitor.ALARM</code> - fire upon PV alarm value
-     * <br/>
+     * <br>
+     * <br> &nbsp; <code>Monitor.VALUE</code> - fire upon PV value change
+     * <br> &nbsp; <code>Monitor.LOG  </code> - 
+     * <br> &nbsp; <code>Monitor.ALARM</code> - fire upon PV alarm value
+     * <br>
      * The default value (i.e., no argument) is <code>Monitor.VALUE</code>.
      * </p> 
      *   

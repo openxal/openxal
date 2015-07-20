@@ -53,17 +53,17 @@ import java.util.List;
  * </p>  
  * <p>
  * <strong>NOTES:</strong> &nbsp; CKA
- * <br/>
+ * <br>
  * &middot; We might get a significant performance upgrade by 
  * eliminating the calls to <code>validElement(IElement)</code>
  * and <code>validProbe(IProbe)</code> within the method
  * <code>propagate(IProbe, IElement)</code>.
- * <br/>
+ * <br>
  * &middot; Derived classes should call <code>registerProbeType(Class)</code>
  * in order that the 
  * the <code>validProbe()</code> method function properly, 
  * that is, identify all probes that this class recognizes.
- * <br/>
+ * <br>
  * &middot; Perhaps it's better to eliminate <code>validProbe</code>
  * as a safety measure since, in the
  * current implementation, each probe carries it's own algorithm object.
@@ -93,7 +93,7 @@ public abstract class Tracker implements IAlgorithm, IArchive {
      * </p>
      * <p>
      * NOTE:
-     * <br/>The protected method 
+     * <br>The protected method 
      * <code>advanceProbe(IProbe, IElement, double)</code>
      * is available for derived classes.  It is a convenience method
      * for performing many of the common tasks in the forward propagation 
@@ -681,11 +681,11 @@ public abstract class Tracker implements IAlgorithm, IArchive {
      * 
      * <p>
      * <strong>NOTE:</strong> &nbsp; CKA
-     * <br/>
+     * <br>
      * &middot; We might get a significant performance upgrade by 
      * eliminating the internal call to 
      * <code>{@link #validProbe(IProbe)}</code>.
-     * <br/>
+     * <br>
      * &middot; The method <code>validElement(IElement)}</code>
      * needs to be called here in the current implementation.  It is 
      * called for every element - Is there a better (faster) way?
@@ -887,7 +887,7 @@ public abstract class Tracker implements IAlgorithm, IArchive {
      * </p>
      * <p>
      * NOTES: CKA
-     * <br/>
+     * <br>
      * &middot; In order to use this method the derived class
      * must override the <code>propagate</code> method, since it default
      * implementation forward propagates the probe.
@@ -945,7 +945,7 @@ public abstract class Tracker implements IAlgorithm, IArchive {
      * </p>
      * <p>
      * NOTE: CKA
-     * <br/>
+     * <br>
      * &middot; Maybe there is a better way of using start and stop
      * elements.
      * </p>

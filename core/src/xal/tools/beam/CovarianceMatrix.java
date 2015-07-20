@@ -144,14 +144,14 @@ public class CovarianceMatrix extends PhaseMatrix {
      *  <p>
      *  The returned matrix is in homogeneous coordinates of the block 
      *  diagonal form
-     *  <br/>
-     *  <br/>
-     *  <br/>    | R<sub><i>xx</i></sub>   0   0   0 |
-     *  <br/>    |   0 R<sub><i>yy</i></sub>   0   0 |
-     *  <br/>    |   0   0 R<sub><i>zz</i></sub>   0 |
-     *  <br/>    |   0   0   0   1 |
-     *  <br/>
-     *  <br/>
+     *  <br>
+     *  <br>
+     *  <br>    | R<sub><i>xx</i></sub>   0   0   0 |
+     *  <br>    |   0 R<sub><i>yy</i></sub>   0   0 |
+     *  <br>    |   0   0 R<sub><i>zz</i></sub>   0 |
+     *  <br>    |   0   0   0   1 |
+     *  <br>
+     *  <br>
      *  where R<sub><i>ii</i></sub> are 2x2 symmetric blocks corresponding to each phase
      *  plane.  Clearly the phase planes are uncoupled.
      *  </p>
@@ -192,14 +192,14 @@ public class CovarianceMatrix extends PhaseMatrix {
      *  <h4>NOTE:</h4>
      *  The returned matrix is in homogeneous coordinates of the block 
      *  diagonal form
-     *  <br/>
-     *  <br/>
-     *      | Rxx   0   0  &lt;x&gt; | <br/>
-     *      |   0 Ryy   0  &lt;y&gt; | <br/>
-     *      |   0   0 Rzz  &lt;z&gt; | <br/>
+     *  <br>
+     *  <br>
+     *      | Rxx   0   0  &lt;x&gt; | <br>
+     *      |   0 Ryy   0  &lt;y&gt; | <br>
+     *      |   0   0 Rzz  &lt;z&gt; | <br>
      *      | &lt;x> &lt;y> &lt;z&gt;   1  | 
-     *  <br/>
-     *  <br/>
+     *  <br>
+     *  <br>
      *  where Rii are 2x2 symmetric blocks corresponding to each phase
      *  plane, and &lt;i&gt; is shorthand for the vector of phase averages
      *  for the i plane, eg. &lt;x&gt; = (&lt;x&gt;, &lt;x'&gt;).

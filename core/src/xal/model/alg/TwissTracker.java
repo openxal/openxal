@@ -46,7 +46,7 @@ import xal.model.probe.TwissProbe;
  * <h4>NOTES:</h4>
  * &middot; There is necessarily no coupling between the phase planes from hardware elements.  There
  * can be, however, coupling from space charge effects
- * <br/>
+ * <br>
  * &middot; Something else?
  * </p> 
  * 

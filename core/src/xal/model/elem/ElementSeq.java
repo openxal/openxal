@@ -270,10 +270,10 @@ public abstract class ElementSeq implements IComposite {
      *
      * <p>
      * <strong>NOTES</strong>: CKA
-     * <br/>
+     * <br>
      * &middot; Support for backward propagation
      * February, 2009.
-     * <br/>
+     * <br>
      * &middot; You must use the <em>proper algorithm</em> object
      * for this method to work correctly!
      * </p>
@@ -294,10 +294,10 @@ public abstract class ElementSeq implements IComposite {
      * </p>
      * <p>
      * <strong>NOTES</strong>: CKA
-     * <br/>
+     * <br>
      * &middot; Support for backward propagation
      * February, 2009.
-     * <br/>
+     * <br>
      * &middot; You must use the <em>proper algorithm</em> object
      * for this method to work correctly!
      * </p>
@@ -409,7 +409,7 @@ public abstract class ElementSeq implements IComposite {
      *  </p>
      * <p>
      * <strong>NOTES</strong>: CKA
-     * <br/>
+     * <br>
      * &middot; Added support for backward propagation
      * February, 2009
      * </p>
@@ -759,7 +759,7 @@ public abstract class ElementSeq implements IComposite {
      * </p>
      * <p>
      * <strong>NOTES</strong>: CKA
-     * <br/>
+     * <br>
      * &middot; Added support for backward propagation
      * February, 2009
      * </p>
@@ -780,7 +780,7 @@ public abstract class ElementSeq implements IComposite {
 	 * </p>
 	 * <p>
 	 * <strong>NOTES</strong>: CKA
-	 * <br/>
+	 * <br>
 	 * &middot; Added support for backward propagation
 	 * February, 2009
 	 * </p>

@@ -88,7 +88,7 @@ public interface IComposite extends IComponent {
      * 
      * <p>
      * <strong>NOTES</strong>: CKA
-     * <br/>
+     * <br>
      * &middot; This looks to be redundant!  It is overriding the 
      * same method in the super interface <code>IComponent</code>.
      * </p>

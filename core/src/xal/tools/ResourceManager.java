@@ -19,11 +19,11 @@ import java.util.regex.*;
  * <p>
  * Provide normalized methods for getting resources 
  * There are two separate mechanisms for getting resources (jar based and file based)
- * <br/>
- * <br/>
+ * <br>
+ * <br>
  * - The jar based resource manager is the standard mechanism and it searches for resources in the binary's jar files. This the only option that should be used in production.
- * <br/>
- * <br/>
+ * <br>
+ * <br>
  * - The file based resource manager can be set as the default if the environment variable OPENXAL_FIND_RESOURCES_IN_ROOT is set to true. The OPENXAL_HOME environment variable must be set to the root of the project. The file based resource manager searches for resources directly on the file system relative to the project. This may be useful in development for IDE's that compile code in real time and do not generate the usual jar files. This option should not be used in production.
  * </p>
  */

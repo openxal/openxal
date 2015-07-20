@@ -275,7 +275,7 @@ public abstract class BaseMatrix<M extends BaseMatrix<M>> implements IArchive {
      * &middot; It is expected that the
      * object exposing the <code>IIndex</code> interface is an enumeration
      * class restricting the number of possible index values.
-     * <br/>
+     * <br>
      * &middot; Consequently we do not declare a thrown exception assuming
      * that that enumeration class eliminates the possibility of an out of
      * bounds error.
@@ -429,11 +429,11 @@ public abstract class BaseMatrix<M extends BaseMatrix<M>> implements IArchive {
      * Return the maximum absolute value of all matrix elements.  This can
      * be considered a norm on matrices, but it is not sub-multiplicative.
      * That is,
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * ||<b>AB</b>||<sub>max</sub> is not necessarily bound by ||<b>A</b>||<sub>max</sub> ||<b>B</b>||<sub>max</sub> .    
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * </p>
      * 
      * @return  max<sub><i>i,j</i></sub> | <b>A</b><sub><i>i,j</i></sub> | 
@@ -456,11 +456,11 @@ public abstract class BaseMatrix<M extends BaseMatrix<M>> implements IArchive {
      *  <p>
      *  The matrix norm || &middot; ||<sub>1</sub> <b>induced</b> from 
      *  the <i>l</i><sub>1</sub> vector norm on <b>R</b><sup><i>n</i></sup>.  That is,
-     *  <br/>
-     *  <br/>
+     *  <br>
+     *  <br>
      *  &nbsp; &nbsp; ||<b>A</b>||<sub>1</sub> &equiv; max<sub><b>x</b>&in;<b>R</b><sup><i>n</i></sup></sub> ||<b>Ax</b>||<sub>1</sub>
-     *  <br/>
-     *  <br/>
+     *  <br>
+     *  <br>
      *  where, by context, the second occurrence of ||&middot;||<sub>1</sub> is the 
      *  Lesbeque 1-norm on <b>R</b><sup><i>n</i><sup>. 
      *  </p>
@@ -468,8 +468,8 @@ public abstract class BaseMatrix<M extends BaseMatrix<M>> implements IArchive {
      *  <h4>NOTES:</h4>
      *  &middot; For square matrices induced norms are sub-multiplicative, that is
      *  ||<b>AB</b>|| &le; ||<b>A</b>|| ||<b>B</b>||.
-     *  <br/>
-     *  <br/>
+     *  <br>
+     *  <br>
      *  &middot; The ||&middot;||<sub>1</sub> induced norm equates to the 
      *  the maximum absolute column sum.
      *  </p>
@@ -483,13 +483,13 @@ public abstract class BaseMatrix<M extends BaseMatrix<M>> implements IArchive {
      *  Returns the <i>l</i><sub>2</sub> induced norm of this matrix, 
      *  which is the maximum, which turns out to be the spectral radius
      *  of the matrix. Specifically,
-     *  <br/>
-     *  <br/>
+     *  <br>
+     *  <br>
      *  &nbsp; &nbsp; ||<b>A</b>||<sub>2</sub> &equiv; [ max &lambda;(<b>A</b><sup><i>T</i></sup><b>A</b>) ]<sup>1/2</sup> ,
-     *  <br/>
+     *  <br>
      *  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; = max &rho;(<b>A</b>) ,                                 
-     *  <br/>
-     *  <br/>
+     *  <br>
+     *  <br>
      *  where &lambda;(&middot;) is the eigenvalue operator and &rho;(&middot;) is the 
      *  singular value operator.
      *  </p>
@@ -502,12 +502,12 @@ public abstract class BaseMatrix<M extends BaseMatrix<M>> implements IArchive {
      *  <p>
      *  The matrix norm || &middot; ||<sub>&infin;</sub> <b>induced</b> from 
      *  the <i>l</i><sub>&infin;</sub> vector norm on <b>R</b><sup><i>n</i></sup>.  That is,
-     *  <br/>
-     *  <br/>
+     *  <br>
+     *  <br>
      *  &nbsp; &nbsp; ||<b>A</b>||<sub>&infin;</sub> &equiv; max<sub><b>x</b>&in;<b>R</b><sup><i>n</i></sup></sub> 
      *                                                      ||<b>Ax</b>||<sub>&infin;</sub>
-     *  <br/>
-     *  <br/>
+     *  <br>
+     *  <br>
      *  where, by context, the second occurrence of ||&middot;||<sub>&infin;</sub> is the 
      *  Lesbeque &infin;-norm on <b>R</b><sup><i>n</i><sup>. 
      *  </p>
@@ -515,8 +515,8 @@ public abstract class BaseMatrix<M extends BaseMatrix<M>> implements IArchive {
      *  <h4>NOTES:</h4>
      *  &middot; For square matrices induced norms are sub-multiplicative, that is
      *  ||<b>AB</b>|| &le; ||<b>A</b>|| ||<b>B</b>||.
-     *  <br/>
-     *  <br/>
+     *  <br>
+     *  <br>
      *  &middot; The ||&middot;||<sub>&infin;</sub> induced norm equates to the 
      *  the maximum absolute column sum.
      *  </p>
@@ -530,13 +530,13 @@ public abstract class BaseMatrix<M extends BaseMatrix<M>> implements IArchive {
      * Return the Frobenius norm ||<b>A</b>||<sub><i>F</i></sub> . 
      * The Frobenius norm has the property that it is 
      * both the element-wise Lebesgue 2-norm the Schatten 2-norm.  Thus we have
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * &nbsp; &nbsp; ||<b>A</b>||<sub><i>F</i></sub> = [ &Sigma;<sub><i>i</i></sub> &Sigma;<sub><i>j</i></sub> <i>A</i><sub><i>i,j</i></sub><sup>2</sup> ]<sup>1/2</sup>
      *                  = [ Tr(<b>A</b><sup><i>T</i></sup><b>A</b>) ]<sup>1/2</sup> 
      *                  = [ &Sigma;<sub><i>i</i></sub> &sigma;<sub><i>i</i></sub><sup>2</sup> ]<sup>1/2</sup>
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * where Tr is the trace operator and &sigma;<sub><i>i</i></sub> are the singular values of
      * matrix <b>A</b>.  
      * </p>
@@ -544,8 +544,8 @@ public abstract class BaseMatrix<M extends BaseMatrix<M>> implements IArchive {
      * <h4>NOTES</h4>
      * &middot; Since the Schatten norms are sub-multiplicative, the Frobenius norm
      * is sub-multiplicative.
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * &middot; The Frobenius norm is invariant under rotations by elements of 
      * <i>O</i>(2) &sub; <b>R</b><sup><i>n</i>&times;<i>n</i></sup> .
      * </p>
@@ -632,10 +632,10 @@ public abstract class BaseMatrix<M extends BaseMatrix<M>> implements IArchive {
     /**
      *  Convert the contents of the matrix to a string representation.
      *  The format is similar to that of Mathematica. Specifically,
-     *  <br/>
-     *  <br/>
+     *  <br>
+     *  <br>
      *      { {a b }{c d } }
-     *  <br/>
+     *  <br>
      *
      *  @return     string representation of the matrix
      */

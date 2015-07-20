@@ -19,11 +19,11 @@ import  Jama.EigenvalueDecomposition;
  *  </p>
  *  <p>
  *  If the matrix <b>A</b> is invertible it can be decomposed as
- *  <br/>
- *  <br/>
+ *  <br>
+ *  <br>
  *  &nbsp; &nbsp; <b>A</b> = <b>VDV</b><sup>-1</sup>
- *  <br/>
- *  <br/>
+ *  <br>
+ *  <br>
  *  where <b>V</b> is an invertible matrix in the special linear group 
  *  <i>SL</i>(3) &sub; <b>R</b><sup>3&times;3</sup> and <b>D</b> is the
  *  the real matrix with 2&times;2 blocks consisting of the real and imaginary parts

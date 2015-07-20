@@ -25,7 +25,7 @@ import xal.model.xml.ParsingException;
  * Interface <code>ICoordinateState</code> extends <code>IProbeState</code>.
  * Well, <code>TransferMapState</code> inherits from <code>ProbeState</code>
  * which implements <code>IProbeState</code>.  It's getting dicey.
- * <br/>
+ * <br>
  * &middot; The <code>TransferMapState</code> is really meant to compute
  * transfer maps only, and be very light weight.  If you want to compute
  * closed orbit maps we should make a different probe.

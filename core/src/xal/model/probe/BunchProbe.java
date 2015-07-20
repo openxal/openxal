@@ -26,8 +26,8 @@ import xal.model.probe.traj.BunchProbeState;
  *  <h4>Note:</h4>
  *  The bunch charge <i>Q</i> is computed from the beam current <i>I</i> and 
  *  bunch frequency <i>f</i> as 
- *  <br/>
- *  <br/>
+ *  <br>
+ *  <br>
  *  &nbsp; &nbsp;  <i>Q</i> = <i>I/f</i>
  * </p>
  * 

@@ -39,7 +39,7 @@ import xal.model.ModelException;
  * <p>
  * <h4>References</h4>
  * [1] D.C. Carey, The Optics of Charged Particle Beams (Harwood, 1987)
- * <br/>
+ * <br>
  * [2] H. Wiedemann, Particle Accelerator Physics I, 2nd Ed. (Springer, 1999)
  * </p>
  * 
@@ -263,11 +263,11 @@ public class IdealMagSectorDipole2 extends ThickElectromagnet {
     /**
      * Return the magnetic field index of the magnet evaluated at the design
      * orbit.   The field index is defined as
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      *      n := -(R0/B0)(dB/dR)
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * where R0 is the radius of the design orbit, B0 is the field at the
      * design orbit (see IdealMagSectorDipole#getField), and dB/dR is the
      * derivative of the field with respect to the path deflection - evaluated
@@ -437,19 +437,19 @@ public class IdealMagSectorDipole2 extends ThickElectromagnet {
      * synchronous particle path length expands or contracts about the design path length when
      * considering the effects of dipole field strength other than the design value.
      * Denoting this quantity as <i>w</i> then it can be expressed
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * &nbsp; &nbsp; <i>w</i> = 1 - <i>h</i>/<i>h</i><sub>0</sub> ,
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * where <i>h</i><sub>0</sub> is the bending curvature of the design field and <i>h</i> is the
      * bending curvature of the current field strength.  Thus, for a distance &Delta;<i>s</i><sub>0</sub>
      * along the design path, the synchronous particle actually travels a distance
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * &nbsp; &nbsp; &Delta;<i>s</i> = <i>w</i>&Delta;<i>s</i><sub>0</sub>
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * along the actual path. 
      * </p>
      *  

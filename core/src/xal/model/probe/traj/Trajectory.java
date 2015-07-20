@@ -71,11 +71,11 @@ public class Trajectory<S extends ProbeState<S>> implements IArchive, Iterable<S
      * <h4>NOTES:</h4>
      * &middot; I am not sure if we have to explicitly consider the empty identifier string.
      * This empty ID is a substring of all IDs.  
-     * <br/>
+     * <br>
      * &middot; But we use the 
      * <code>{@link TreeMap#ceilingEntry(Object)}</code> for access so that may
      * circumvent things.
-     * <br/>
+     * <br>
      * &middot; The easy thing to do might be just to reject empty strings in 
      * <code>{@link #putState(String, ProbeState)}</code>
      * </p>
@@ -948,11 +948,11 @@ public class Trajectory<S extends ProbeState<S>> implements IArchive, Iterable<S
 	/**
 	 * <p>
 	 * The old comment read
-	 * <br/>
-	 * <br/> 
+	 * <br>
+	 * <br> 
 	 * &nbsp; &nbsp; "Get the probe state for the specified element ID."
-	 * <br/>
-	 * <br/>
+	 * <br>
+	 * <br>
 	 * which is now inaccurate.  The returned state is actual the first
 	 * state for the given identifier which is treated as that for an
 	 * SMF hardware node.  The "first state" is the state with the smallest

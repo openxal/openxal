@@ -25,20 +25,20 @@ import xal.tools.data.DataAdaptor;
  * homogeneous phase
  * space moments up to, and including second order. This is the covariance
  * matrix for the beam and is represented as
- * <br/>
- * <br/>
+ * <br>
+ * <br>
  * &nbsp; <b>&tau;</b> &equiv; &lt;<b>z*z</b><i><sup>T</sup></i>&gt;
- * <br/>
- * <br/>
+ * <br>
+ * <br>
  * where <b>z</b>=(<i>x,x',y,y',z,z'</i>,1) is the vector of homogeneous phase space
  * coordinates, and &lt; &middot; &gt; is the moment operator with respect to the beam
  * distribution.  We reserve the symbol <b>&sigma;</b> for the <em>central</em>
  * covariance matrix, which is defined
- * <br/>
- * <br/>
+ * <br>
+ * <br>
  * &nbsp; <b>&sigma;</b> &equiv; <b>&tau;</b> - &lt<b>z</b>&gt;&lt<b>z</b>&gt;<i><sup>T</sup></i>
- * <br/>
- * <br/>
+ * <br>
+ * <br>
  * Note that the centroid position = &lt;<b>z</b>&gt; is carried in the last row
  * and column of <b>&tau;</b> 
  * </p>
@@ -90,16 +90,16 @@ public class EnvelopeProbe extends BunchProbe<EnvelopeProbeState> {
 //     * </p>
 //     * <p>
 //     * <strong>NOTES</strong>: (CKA)
-//     * <br/>
+//     * <br>
 //     * &middot; This attribute is redundant in the sense that all "Twiss parameter"
 //     * information is contained within the correlation matrix.  The correlation
 //     * matrix was intended as the primary attribute for an <code>EnvelopeProbe</code>.
-//     * <br/>
+//     * <br>
 //     * &middot; The dynamics of this attribute are computed from transfer matrices,
 //     * however, with space charge the transfer matrices are computed using the
 //     * correlation matrix.  Thus, these parameters are inconsistent in the 
 //     * presence of space charge.
-//     * <br/>
+//     * <br>
 //     * &middot; I have made a separate Probe class, <code>TwissProbe</code> which has
 //     * Twiss parameters as its primary state.
 //     * </p>
@@ -221,10 +221,10 @@ public class EnvelopeProbe extends BunchProbe<EnvelopeProbeState> {
      * <h4>CKA Notes:</h4>
      * - This is clearly a kluge; use this method with caution.
      * It is provided to maintain backward compatibility.
-     * <br/>
+     * <br>
      * - There is another version of code (this version) where the
      * correlation matrix is saved as three sets of Twiss parameters.
-     * <br/>
+     * <br>
      * o This can be dangerous as we have the 
      * potential to loose a lot of information.  In particular,
      * if the probe has pasted through a bend or a steering

@@ -136,11 +136,11 @@ public abstract class BunchProbeState<S extends BunchProbeState<S>> extends Prob
      * <p>
      * The bunch frequency <i>f</i> is related to the beam current 
      * <i>I</i> and bunch charge <i>Q</i> as 
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * &nbsp; &nbsp; <i>f</i> = <i>I/Q</i>
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * </p>
      *      
      * @return  bunch frequency in Hertz

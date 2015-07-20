@@ -116,11 +116,11 @@ public class ParticleProbeState extends ProbeState<ParticleProbeState> /*impleme
      * state location <b>z</b>.  The response matrix represents the sensitivity of
      * the current phase coordinate position <b>z</b> to the initial phase coordinate
      * location <b>z</b><sub>0</sub> at the start of the simulation.  That is,
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * &nbsp; &nbsp; <b>&Phi;</b> &equiv; &part;<b>z</b>/&part;<b>z</b><sub>0</sub>
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * so that small changes &Delta;<b>z</b><sub>0</sub> in the initial phase position
      * yield a corresponding change &Delta;<b>z</b> = <b>&Phi;</b>&Delta;<b>z</b><sub>0</sub>
      * in the current particle location.
@@ -154,11 +154,11 @@ public class ParticleProbeState extends ProbeState<ParticleProbeState> /*impleme
 	 * state location <b>z</b>.  The response matrix represents the sensitivity of
 	 * the current phase coordinate position <b>z</b> to the initial phase coordinate
 	 * location <b>z</b><sub>0</sub> at the start of the simulation.  That is,
-	 * <br/>
-	 * <br/>
+	 * <br>
+	 * <br>
 	 * &nbsp; &nbsp; <b>&Phi;</b> &equiv; &part;<b>z</b>/&part;<b>z</b><sub>0</sub>
-	 * <br/>
-	 * <br/>
+	 * <br>
+	 * <br>
 	 * so that small changes &Delta;<b>z</b><sub>0</sub> in the initial phase position
 	 * yield a corresponding change &Delta;<b>z</b> = <b>&Phi;</b>&Delta;<b>z</b><sub>0</sub>
 	 * in the current particle location.

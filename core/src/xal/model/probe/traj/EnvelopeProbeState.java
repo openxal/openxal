@@ -215,7 +215,7 @@ public class EnvelopeProbeState extends BunchProbeState<EnvelopeProbeState> {
      * if the probe has pasted through a bend or a steering
      * magnet, the Twiss parameters do not contain enough information
      * to restart the probe.
-     * <br/> 
+     * <br> 
      * - This is clearly a kluge; use this method with caution.
      * It is provided to maintain backward compatibility.
      * </p>
@@ -629,18 +629,18 @@ public class EnvelopeProbeState extends BunchProbeState<EnvelopeProbeState> {
 //	 * TODO This method should override an abstract method in the base class
 //	 * <code>Probe</code>.  If <code>Probe</code> is refactored so that it
 //	 * has a type template parameter <code>S</code>, say
-//	 * <br/>
-//	 * <br/>
+//	 * <br>
+//	 * <br>
 //	 * &nbsp; &nbsp; <code>class Probe&lt;S extends ProbeState&gt;</code>
-//	 * <br/>
-//	 * <br/>
+//	 * <br>
+//	 * <br>
 //	 * then this method simply creates the typed probe state and exactly fills
 //	 * out the virtual method, which should have a signature
-//     * <br/>
-//     * <br/>
+//     * <br>
+//     * <br>
 //     * &nbsp; &nbsp; <code>public S ProbeState#create()</code>
-//     * <br/>
-//     * <br/>
+//     * <br>
+//     * <br>
 //	 *  
 //	 * @return new, uninitialized probe state
 //	 *
@@ -682,7 +682,7 @@ public class EnvelopeProbeState extends BunchProbeState<EnvelopeProbeState> {
 //     * <p>
 //     * <h4>CKA NOTE:</h4>
 //     *  &middot; This method simply returns the value of EnvelopeProbeState#phaseMean()
-//     *  <br/>
+//     *  <br>
 //     *  &middot; This method really has no context unless we are in a ring and then
 //     *  it would represent the fixed-orbit position at this state (position), otherwise
 //     *  ???
@@ -712,15 +712,15 @@ public class EnvelopeProbeState extends BunchProbeState<EnvelopeProbeState> {
 //     * - This attribute is redundant in the sense that all "Twiss parameter"
 //     * information is contained within the covariance matrix.  The covariance
 //     * matrix was intended as the primary attribute of an <code>EnvelopeProbe</code>.
-//     * <br/> 
+//     * <br> 
 //     * - The dynamics of this attribute are computed from transfer matrices,
 //     * however, with space charge the transfer matrices are computed using the
 //     * covariance matrix.  Thus these parameters are inconsistent in the 
 //     * presence of space charge.
-//     * <br/>
+//     * <br>
 //     * - I have made a separate Probe class, <code>TwissProbe</code> which has
 //     * Twiss parameters as its primary state.
-//     * <br/>
+//     * <br>
 //     * - Now this method returns the same quantities as <code>{@link #twissParameters()}</code>
 //     * - For all these reason I am deprecating this method
 //     * </p>

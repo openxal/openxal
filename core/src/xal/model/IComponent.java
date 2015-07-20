@@ -89,7 +89,7 @@ public interface IComponent {
      * </p> 
      * <p>
      * <strong>NOTES</strong>: CKA
-     * <br/>
+     * <br>
      * &middot; Support for backward propagation
      * February, 2009.
      * </p>
@@ -106,7 +106,7 @@ public interface IComponent {
      * </p>
      * <p> 
      * <strong>NOTES</strong>: CKA
-     * <br/>
+     * <br>
      * &middot; Support for backward propagation
      * February, 2009.
      * </p>
