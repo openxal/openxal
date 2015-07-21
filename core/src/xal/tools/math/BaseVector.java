@@ -201,9 +201,13 @@ public abstract class BaseVector<V extends BaseVector<V>> implements IArchive, j
 //                arrVec[i] = getElem(i);
 //            
 //            return arrVec;
-            double[][] arrInt = this.matVectImpl.getArrayCopy();
-            
-            return arrInt[0];
+
+//            double[][] arrInt = this.matVectImpl.getArrayCopy();
+//            return arrInt[0];
+
+            double[]    arrVec = this.matVectImpl.getColumnPackedCopy();
+
+            return arrVec;
         }
      
         
