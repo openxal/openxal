@@ -8,6 +8,7 @@ package xal.tools.beam;
 
 import java.util.EnumSet;
 
+import Jama.Matrix;
 import xal.tools.data.DataAdaptor;
 import xal.tools.data.DataFormatException;
 import xal.tools.math.IIndex;
@@ -524,6 +525,22 @@ public class PhaseMatrix extends SquareMatrix<PhaseMatrix> implements java.io.Se
     protected PhaseMatrix newInstance() {
         return new PhaseMatrix();
     }
+
+//    /**
+//     *
+//     * @see xal.tools.math.BaseMatrix#newInstance(Jama.Matrix)
+//     *
+//     * @since  Jul 17, 2015   by Christopher K. Allen
+//     */
+//    @Override
+//    protected PhaseMatrix newInstance(Matrix impInit) {
+//        
+//        M   matNewInst = this.newInstance();
+//        
+//        ((BaseMatrix<M>)matNewInst).assignMatrix(impInit);
+//        
+//        return matNewInst;
+//    }
 
     /** 
      *  Creates a new instance of PhaseMatrix initialized to zero.

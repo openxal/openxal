@@ -7,14 +7,12 @@
 package xal.tools.math;
 
 import java.io.PrintWriter;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.StringTokenizer;
 
+import Jama.Matrix;
 import xal.tools.data.DataAdaptor;
 import xal.tools.data.DataFormatException;
 import xal.tools.data.IArchive;
-import Jama.Matrix;
 
 
 /**
@@ -124,6 +122,19 @@ public abstract class BaseVector<V extends BaseVector<V>> implements IArchive, j
         }
         
         /**
+         * Copy constructor for <code>JVector</code>.  Creates a clone of the given
+         * vector object.
+         *
+         * @param vecHost   vector to be cloned   
+         *
+         * @since  Jul 17, 2015   by Christopher K. Allen
+         */
+        public JVector(JVector vecHost) {
+            this.intSize = vecHost.intSize;
+            this.matVectImpl = new Matrix(vecHost.matVectImpl.getArrayCopy());
+        }
+        
+        /**
          * Sets the vector element at the given index to the given value. The index
          * origin is 0.
          * 
@@ -138,6 +149,7 @@ public abstract class BaseVector<V extends BaseVector<V>> implements IArchive, j
         public void setElem(int i, double dblVal) throws ArrayIndexOutOfBoundsException {
             this.matVectImpl.set(i, 0, dblVal);
         }
+        
         
         /*
          * Vector Attributes
@@ -171,22 +183,6 @@ public abstract class BaseVector<V extends BaseVector<V>> implements IArchive, j
             return this.matVectImpl.get(i, 0);
         }
         
-//        /**
-//         * Return the vector element at the given index enumeration.
-//         * 
-//         * @param i     index into the vector (starting at 0)
-//         * 
-//         * @return      vector element at given index
-//         * 
-//         * @throws ArrayIndexOutOfBoundsException   the index is larger than the vector
-//         *
-//         * @author Christopher K. Allen
-//         * @since  Oct 9, 2013
-//         */
-//        public double   getElem(IIndex i) throws ArrayIndexOutOfBoundsException {
-//            return this.matVectImpl.get(i.val(), 0);
-//        }
-        
         /**
          * Creates and returns a Java array containing the element values
          * of this vector.  The returned value is a duplicate of the
@@ -199,11 +195,18 @@ public abstract class BaseVector<V extends BaseVector<V>> implements IArchive, j
          * @since  Oct 16, 2013
          */
         public double[] getArrayCopy() {
-            double[]    arrVec = new double[ this.getSize() ];
-            
-            for (int i=0; i<this.getSize(); i++)
-                arrVec[i] = getElem(i);
-            
+//            double[]    arrVec = new double[ this.getSize() ];
+//            
+//            for (int i=0; i<this.getSize(); i++)
+//                arrVec[i] = getElem(i);
+//            
+//            return arrVec;
+
+//            double[][] arrInt = this.matVectImpl.getArrayCopy();
+//            return arrInt[0];
+
+            double[]    arrVec = this.matVectImpl.getColumnPackedCopy();
+
             return arrVec;
         }
      
@@ -222,11 +225,14 @@ public abstract class BaseVector<V extends BaseVector<V>> implements IArchive, j
          * @since  Oct 10, 2013
          */
         public JVector negate() {
-            JVector     vecNeg = new JVector(this.getSize());
+//            JVector     vecNeg = new JVector(this.getSize());
+//            
+//            for (int i=0; i<this.getSize(); i++)
+//                vecNeg.setElem(i,  -this.getElem(i));
             
-            for (int i=0; i<this.getSize(); i++)
-                vecNeg.setElem(i,  -this.getElem(i));
-
+            Jama.Matrix jmaNeg = this.matVectImpl.times(-1.0);
+            JVector     vecNeg = new JVector(jmaNeg);
+            
             return vecNeg;
         }
         
@@ -250,13 +256,15 @@ public abstract class BaseVector<V extends BaseVector<V>> implements IArchive, j
                 throw new IllegalArgumentException("argument vector must be same size");
             
             // Create the new vector, pack it, and return it
-            JVector vecSum = new JVector(this.getSize());
-            
-            for (int i = 0; i < this.getSize(); i++) {
-                double      dblSum = this.getElem(i) + vecAdd.getElem(i);
-                
-                vecSum.setElem(i, dblSum);;
-            }
+//            JVector vecSum = new JVector(this.getSize());
+//            
+//            for (int i = 0; i < this.getSize(); i++) {
+//                double      dblSum = this.getElem(i) + vecAdd.getElem(i);
+//                
+//                vecSum.setElem(i, dblSum);;
+//            }
+            Jama.Matrix jmaSum = this.matVectImpl.plus( vecAdd.matVectImpl );
+            JVector     vecSum = new JVector(jmaSum);
             
             return vecSum;
         }
@@ -289,13 +297,16 @@ public abstract class BaseVector<V extends BaseVector<V>> implements IArchive, j
                 throw new IllegalArgumentException("argument vector must be same size");
 
             // Create the new vector, pack it, and return it
-            JVector vecDif = new JVector(this.getSize());
-
-            for (int i = 0; i < this.getSize(); i++) {
-                double      dblSum = this.getElem(i) - vecSub.getElem(i);
-
-                vecDif.setElem(i, dblSum);;
-            }
+//            JVector vecDif = new JVector(this.getSize());
+//
+//            for (int i = 0; i < this.getSize(); i++) {
+//                double      dblSum = this.getElem(i) - vecSub.getElem(i);
+//
+//                vecDif.setElem(i, dblSum);;
+//            }
+            
+            Jama.Matrix jmaDif = this.matVectImpl.minus( vecSub.matVectImpl );
+            JVector     vecDif = new JVector( jmaDif );
 
             return vecDif;
         }
@@ -314,15 +325,36 @@ public abstract class BaseVector<V extends BaseVector<V>> implements IArchive, j
         public JVector times(double s) {
 
             // Create the new vector, compute the sum, and return it
-            JVector vecSum = new JVector(this.getSize());
+//            JVector vecSum = new JVector(this.getSize());
+//
+//            for (int i = 0; i < this.getSize(); i++) {
+//                double      dblSum = s*this.getElem(i);
+//
+//                vecSum.setElem(i, dblSum);
+//            }
+            
+            Jama.Matrix jmaProd = this.matVectImpl.times( s );
+            JVector     vecProd = new JVector(jmaProd);
 
-            for (int i = 0; i < this.getSize(); i++) {
-                double      dblSum = s*this.getElem(i);
-
-                vecSum.setElem(i, dblSum);
-            }
-
-            return vecSum;
+            return vecProd;
+        }
+        
+        
+        /*
+         * Support Methods
+         */
+        
+        /**
+         * Encapsulating constructor for <code>JVector</code>.  A new <code>JVector</code>
+         * object is create which is supported by the given implementation image.
+         *
+         * @param jmaImage  implementation object which this class encapsulates 
+         *
+         * @since  Jul 17, 2015   by Christopher K. Allen
+         */
+        private JVector(Jama.Matrix jmaImage) {
+            this.intSize = jmaImage.getRowDimension();
+            this.matVectImpl = jmaImage;
         }
 
     }

@@ -99,8 +99,9 @@ public abstract class BaseMatrix<M extends BaseMatrix<M>> implements IArchive {
     /** number of matrix columns */
     private final int               cntCols;
     
+    
     /** internal matrix implementation */
-    protected final Jama.Matrix     matImpl;
+    protected Jama.Matrix     matImpl;
 
     
     /*
@@ -793,7 +794,8 @@ public abstract class BaseMatrix<M extends BaseMatrix<M>> implements IArchive {
 
     /**
      * Sets the internal matrix value to that given in the argument. This
-     * is a deep copy operation.
+     * is a deep copy operation.  Note that the complete matrix is copy,
+     * thus the dimensions and other parameters are assigned as well.
      * 
      * @param matValue  internal implementation of matrix values
      *
@@ -801,12 +803,15 @@ public abstract class BaseMatrix<M extends BaseMatrix<M>> implements IArchive {
      * @since  Oct 1, 2013
      */
     protected void assignMatrix(Jama.Matrix matValue) {
-        for (int i=0; i<this.getRowCnt(); i++)
-            for (int j=0; j<this.getColCnt(); j++) {
-                double dblVal = matValue.get(i, j);
-                
-                this.matImpl.set(i, j, dblVal);
-            }
+//        for (int i=0; i<this.getRowCnt(); i++)
+//            for (int j=0; j<this.getColCnt(); j++) {
+//                double dblVal = matValue.get(i, j);
+//                
+//                this.matImpl.set(i, j, dblVal);
+//            }
+        double[][]  arrInternal = matValue.getArrayCopy();
+        
+        this.matImpl = new Jama.Matrix(arrInternal);
     }
 
     /**
@@ -843,6 +848,7 @@ public abstract class BaseMatrix<M extends BaseMatrix<M>> implements IArchive {
 //        }
 //    }
     
+    
     /**
      * Creates a new instance of this matrix type initialized to the given
      * implementation matrix.
@@ -854,7 +860,7 @@ public abstract class BaseMatrix<M extends BaseMatrix<M>> implements IArchive {
      * @author Christopher K. Allen
      * @since  Oct 1, 2013
      */
-    protected M newInstance(Jama.Matrix impInit) {
+    protected M newInstance(Jama.Matrix impInit)     {
         
         M   matNewInst = this.newInstance();
         
@@ -900,7 +906,8 @@ public abstract class BaseMatrix<M extends BaseMatrix<M>> implements IArchive {
      * @since  Sep 25, 2013
      */
     protected BaseMatrix(M matParent) {
-        this(matParent.getRowCnt(), matParent.getColCnt());
+        this.cntRows = matParent.getRowCnt();
+        this.cntCols = matParent.getColCnt();
         
         BaseMatrix<M> matBase = (BaseMatrix<M>)matParent;
         this.assignMatrix(matBase.getMatrix()); 
@@ -965,9 +972,10 @@ public abstract class BaseMatrix<M extends BaseMatrix<M>> implements IArchive {
      * @since  Oct 4, 2013
      */
     protected BaseMatrix(int cntRows, int cntCols, double[][] arrVals) throws ArrayIndexOutOfBoundsException {
-        this(cntRows, cntCols);
+        this.cntRows = cntRows;
+        this.cntCols = cntCols;
         
-        this.setMatrix(arrVals);;
+        this.matImpl = new Jama.Matrix(arrVals);
     }
 
 
