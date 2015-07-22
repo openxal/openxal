@@ -90,13 +90,13 @@ public abstract class BaseMatrix<M extends BaseMatrix<M>> implements IArchive {
      */
     
     /** number of matrix rows */
-    private final int               cntRows;
+    private int               cntRows;
     
     /** number of matrix columns */
-    private final int               cntCols;
+    private int               cntCols;
     
     /** internal matrix implementation */
-    protected final Jama.Matrix     matImpl;
+    protected Jama.Matrix     matImpl;
 
     
     /*
@@ -155,36 +155,6 @@ public abstract class BaseMatrix<M extends BaseMatrix<M>> implements IArchive {
             
                 this.getMatrix().setMatrix(i0,i1,j0,j1, matSub);
             }
-
-    /**
-     * Sets the entire matrix to the values given in the Java primitive type 
-     * double array.
-     * 
-     * @param arrMatrix Java primitive array containing new matrix values
-     * 
-     * @exception  ArrayIndexOutOfBoundsException  the argument must have the same dimensions as this matrix
-     *
-     * @author Christopher K. Allen
-     * @since  Oct 4, 2013
-     */
-    public void setMatrix(double[][] arrMatrix) throws ArrayIndexOutOfBoundsException {
-        
-        // Check the dimensions of the argument double array
-        if (this.getRowCnt() != arrMatrix.length  ||  arrMatrix[0].length != this.getColCnt() )
-            throw new ArrayIndexOutOfBoundsException(
-                    "Dimensions of argument do not correspond to size of this matrix = " 
-                   + this.getRowCnt() + "x" + this.getColCnt()
-                   );
-        
-        // Set the elements of this array to that given by the corresponding 
-        //  argument entries
-        for (int i=0; i<this.getRowCnt(); i++) 
-            for (int j=0; j<this.getColCnt(); j++) {
-                double dblVal = arrMatrix[i][j];
-                
-                this.setElem(i, j, dblVal);
-            }
-    }
 
     /**
      *  Parsing assignment - set the <code>PhaseMatrix</code> value
@@ -753,6 +723,49 @@ public abstract class BaseMatrix<M extends BaseMatrix<M>> implements IArchive {
     }
 
     /**
+     * Sets the entire matrix to the values given in the Java primitive type 
+     * double array.  The given array is packed by rows, for example,
+     * <code>arrMatrix[0]</code> refers to the first row of the matrix.
+     * Note that a new Jama matrix is instantiated to encapsulate the given array.
+     * 
+     * @param arrMatrix Java primitive array containing new matrix values
+     * 
+     * @exception  IllegalArgumentException  the argument must have the same dimensions as this matrix
+     *
+     * @author Christopher K. Allen
+     * @since  Oct 4, 2013
+     */
+    protected void assignMatrix(double[][] arrMatrix) throws IllegalArgumentException {
+
+        //        // Check the dimensions of the argument double array
+        //        if (this.getRowCnt() != arrMatrix.length  ||  arrMatrix[0].length != this.getColCnt() )
+        //            throw new ArrayIndexOutOfBoundsException(
+        //                    "Dimensions of argument do not correspond to size of this matrix = " 
+        //                   + this.getRowCnt() + "x" + this.getColCnt()
+        //                   );
+
+        //        // Set the elements of this array to that given by the corresponding 
+        //        //  argument entries
+        //        for (int i=0; i<this.getRowCnt(); i++) 
+        //            for (int j=0; j<this.getColCnt(); j++) {
+        //                double dblVal = arrMatrix[i][j];
+        //                
+        //                this.setElem(i, j, dblVal);
+        //            }
+
+        //      // Check the dimensions of the argument double array 
+        //  We need to have a valid allocated double array
+        if (arrMatrix.length < 1 || arrMatrix[0].length < 1)
+            throw new ArrayIndexOutOfBoundsException(
+                    "The argument array is not of full rank, it is not fully allocated." 
+                    );
+
+        this.cntRows = arrMatrix.length;
+        this.cntCols = arrMatrix[0].length;
+        this.matImpl = new Jama.Matrix(arrMatrix);
+    }
+
+    /**
      * Sets the internal matrix value to that given in the argument. This
      * is a deep copy operation.
      * 
@@ -762,12 +775,16 @@ public abstract class BaseMatrix<M extends BaseMatrix<M>> implements IArchive {
      * @since  Oct 1, 2013
      */
     protected void assignMatrix(Jama.Matrix matValue) {
-        for (int i=0; i<this.getRowCnt(); i++)
-            for (int j=0; j<this.getColCnt(); j++) {
-                double dblVal = matValue.get(i, j);
-                
-                this.matImpl.set(i, j, dblVal);
-            }
+//        for (int i=0; i<this.getRowCnt(); i++)
+//            for (int j=0; j<this.getColCnt(); j++) {
+//                double dblVal = matValue.get(i, j);
+//                
+//                this.matImpl.set(i, j, dblVal);
+//            }
+        
+        double[][]  arrCopy = matValue.getArrayCopy();
+        
+        this.matImpl = new Jama.Matrix(arrCopy);
     }
 
     /**
@@ -861,7 +878,7 @@ public abstract class BaseMatrix<M extends BaseMatrix<M>> implements IArchive {
      * @since  Sep 25, 2013
      */
     protected BaseMatrix(M matParent) {
-        this(matParent.getRowCnt(), matParent.getColCnt());
+//        this(matParent.getRowCnt(), matParent.getColCnt());
         
         BaseMatrix<M> matBase = (BaseMatrix<M>)matParent;
         this.assignMatrix(matBase.getMatrix()); 
@@ -908,27 +925,25 @@ public abstract class BaseMatrix<M extends BaseMatrix<M>> implements IArchive {
      * <p>
      * Initializing constructor for bases class <code>SquareMatrix</code>.  
      * Sets the entire matrix to the values given in the Java primitive type 
-     * double array. The argument itself remains unchanged. 
+     * double array. The matrix is shaped according to the (row-packed) arguement. 
      * </p>
      * <p>
-     * The dimensions of the given Java double array must be 
-     * consistent with the size of the matrix.  Thus, if the arguments are
+     * The dimensions of the given Java double array determine the size of the matrix.
+     * An <i>m</i>x<i>n</i> Java double array creates an <i>m</i>x<i>n</i> 
+     * <code>BaseMatrix</code> array.  If the argument is not fully allocated or 
      * inconsistent, an exception is thrown.
      * </p>
      * 
-     * @param cntRows     the matrix row size of this object
-     * @param cntCols     the matrix column size of this object
      * @param arrMatrix   Java primitive array containing new matrix values
      * 
-     * @exception  ArrayIndexOutOfBoundsException  the argument must have the same dimensions as this matrix
+     * @exception  IllegalArgumentException  the argument is not consistent with a matrix representation
      *
      * @author Christopher K. Allen
      * @since  Oct 4, 2013
      */
-    protected BaseMatrix(int cntRows, int cntCols, double[][] arrVals) throws ArrayIndexOutOfBoundsException {
-        this(cntRows, cntCols);
-        
-        this.setMatrix(arrVals);;
+    protected BaseMatrix(double[][] arrVals) throws ArrayIndexOutOfBoundsException {
+//        this(matParent.getRowCnt(), matParent.getColCnt());
+        this.assignMatrix(arrVals);;
     }
 
 

@@ -32,9 +32,6 @@ public abstract class SquareMatrix<M extends SquareMatrix<M>> extends BaseMatrix
 
 
     
-    
-
-    
     /*
      *  Local Attributes
      */
@@ -42,9 +39,6 @@ public abstract class SquareMatrix<M extends SquareMatrix<M>> extends BaseMatrix
     /** size of the the square matrix */
     private final int   intSize;
     
-    
-
-
 
 
     /*
@@ -113,6 +107,10 @@ public abstract class SquareMatrix<M extends SquareMatrix<M>> extends BaseMatrix
      */
     public boolean isSymmetric()   {
     
+        System.out.println("SquareMatrix#isSymmetric() : class " + this.getClass().getName());
+        System.out.print(this);
+        System.out.println();
+        
         for (int i=0; i<this.getSize(); i++)
             for (int j=i; j<this.getSize(); j++) {
                 if (getElem(i,j) != getElem(j,i) )
@@ -507,11 +505,6 @@ public abstract class SquareMatrix<M extends SquareMatrix<M>> extends BaseMatrix
     };
     
     
-    
-
-    
-
-
 
     /*
      * Child Class Support
@@ -578,7 +571,8 @@ public abstract class SquareMatrix<M extends SquareMatrix<M>> extends BaseMatrix
      * <p>
      * Initializing constructor for bases class <code>SquareMatrix</code>.  
      * Sets the entire matrix to the values given in the Java primitive type 
-     * double array. The argument itself remains unchanged. 
+     * double array. Warning! The argument becomes the internal matrix representation
+     * and, thus, is not immutable. 
      * </p>
      * <p>
      * The dimensions of the given Java double array must be 
@@ -586,19 +580,21 @@ public abstract class SquareMatrix<M extends SquareMatrix<M>> extends BaseMatrix
      * inconsistent, an exception is thrown.
      * </p>
      * 
-     * @param cntRows     the matrix row size of this object
-     * @param cntCols     the matrix column size of this object
      * @param arrMatrix   Java primitive array containing new matrix values
      * 
      * @exception  ArrayIndexOutOfBoundsException  the argument must have the same dimensions as this matrix
+     * @exception  IllegalArgumentException        the argument is degenerate, not fully allocated
      *
      * @author Christopher K. Allen
      * @since  Oct 4, 2013
      */
-    protected SquareMatrix(int intSize, double[][] arrVals) throws ArrayIndexOutOfBoundsException {
-        super(intSize, intSize, arrVals);
+    protected SquareMatrix(double[][] arrVals) throws ArrayIndexOutOfBoundsException {
+        super(arrVals);
+
+        if (arrVals.length != arrVals[0].length)
+            throw new ArrayIndexOutOfBoundsException("The given array is not square " + arrVals);
         
-        this.intSize = intSize;
+        this.intSize = arrVals.length;
     }
 
 

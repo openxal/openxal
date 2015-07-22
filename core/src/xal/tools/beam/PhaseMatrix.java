@@ -614,7 +614,7 @@ public class PhaseMatrix extends SquareMatrix<PhaseMatrix> implements java.io.Se
      * @since  Oct 7, 2013
      */
     public PhaseMatrix(double[][] arrValues) throws ArrayIndexOutOfBoundsException {
-        super(INT_SIZE, arrValues);
+        super(arrValues);
         this.setElem(IND.HOM, IND.HOM, 1.0);
     }
     
