@@ -104,9 +104,9 @@ public abstract class SquareMatrix<M extends SquareMatrix<M>> extends BaseMatrix
      */
     public boolean isSymmetric()   {
     
-        System.out.println("SquareMatrix#isSymmetric() : class " + this.getClass().getName());
-        System.out.print(this);
-        System.out.println();
+//        System.out.println("SquareMatrix#isSymmetric() : class " + this.getClass().getName());
+//        System.out.println(this);
+//        System.out.println();
         
         for (int i=0; i<this.getSize(); i++)
             for (int j=i; j<this.getSize(); j++) {

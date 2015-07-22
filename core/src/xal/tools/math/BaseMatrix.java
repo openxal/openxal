@@ -10,17 +10,16 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.StringTokenizer;
 
+import Jama.Matrix;
+import Jama.SingularValueDecomposition;
 import xal.tools.beam.PhaseMatrix;
 import xal.tools.data.DataAdaptor;
 import xal.tools.data.DataFormatException;
 import xal.tools.data.IArchive;
-import Jama.Matrix;
-import Jama.SingularValueDecomposition;
 
 /**
  * <p>
@@ -367,6 +366,40 @@ public abstract class BaseMatrix<M extends BaseMatrix<M>> implements IArchive {
         return dblCndNum;
     }
     
+    /**
+     * Returns the transpose of this matrix.
+     * 
+     * @return      matrix <b>A</b><sup><i>T</i></sup> where <b>A</b> is this matrix
+     *
+     * @since  Jul 22, 2015   by Christopher K. Allen
+     */
+    public M transpose() {
+        Jama.Matrix implTrans = this.getMatrix().transpose();
+        M            matTrans = this.newInstance(implTrans);
+        
+        return matTrans;
+    }
+    
+    /**
+     * Computes the inverse of this matrix assuming that it is square.  A invocation on
+     * a non-square matrix will result in a runtime exception.
+     * 
+     * @return  the matrix <b>A</b><sup>-1</sup> where <b>A</b> is this matrix
+     * 
+     * @throws UnsupportedOperationException
+     *
+     * @since  Jul 22, 2015   by Christopher K. Allen
+     */
+    public M inverse() throws UnsupportedOperationException {
+        if (this.cntRows != this.cntCols)
+            throw new UnsupportedOperationException("Cannot compute the inverse of a non-square matrix.");
+
+        Jama.Matrix implInv = this.getMatrix().inverse();
+        M           matInv  = this.newInstance(implInv);
+        
+        return matInv;
+    }
+    
     
     /*
      *  Algebraic Operations
@@ -428,6 +461,21 @@ public abstract class BaseMatrix<M extends BaseMatrix<M>> implements IArchive {
         this.getMatrix().minusEquals( matBase.getMatrix() );
     }
 
+    /**
+     *  Non-destructive scalar multiplication.  This matrix is unaffected.
+     *
+     *  @param  s   multiplier
+     *
+     *  @return     new matrix equal to the element-wise product of <i>s</i> and this matrix,
+     *                      or <code>null</code> if an error occurred
+     */
+    public M    times(double s) {
+        Jama.Matrix impPrd = this.getMatrix().times(s);
+        M           matAns = this.newInstance(impPrd);
+        
+        return matAns;
+    }
+    
 
     /*
      *  Topological Operations
@@ -909,26 +957,29 @@ public abstract class BaseMatrix<M extends BaseMatrix<M>> implements IArchive {
      * copy of the given object.  The dimensions are set and the 
      * internal array is cloned. 
      *
-     * @param matParent     the matrix to be cloned
+     * @param matTemplate     the matrix to be cloned
      *
      * @throws UnsupportedOperationException  base class has not defined a public, zero-argument constructor
      *  
      * @author Christopher K. Allen
      * @since  Sep 25, 2013
      */
-    protected BaseMatrix(M matParent) {
+    protected BaseMatrix(M matTemplate) {
 //        this(matParent.getRowCnt(), matParent.getColCnt());
         
-        BaseMatrix<M> matBase = (BaseMatrix<M>)matParent;
+        BaseMatrix<M> matBase = (BaseMatrix<M>)matTemplate;
         this.assignMatrix(matBase.getMatrix()); 
     }
     
     /**
+     *  <p>
      *  Parsing Constructor - creates an instance of the child class and initialize it
      *  according to a token string of element values.  
-     *
+     *  </p>
+     *  <p>
      *  The token string argument is assumed to be one-dimensional and packed by
      *  column (ala FORTRAN).
+     *  </p>
      *
      *  @param  cntRows     the matrix row size of this object
      *  @param  cntCols     the matrix column size of this object
@@ -962,7 +1013,7 @@ public abstract class BaseMatrix<M extends BaseMatrix<M>> implements IArchive {
     
     /**
      * <p>
-     * Initializing constructor for bases class <code>SquareMatrix</code>.  
+     * Initializing constructor for base class <code>BaseMatrix</code>.  
      * Sets the entire matrix to the values given in the Java primitive type 
      * double array. The matrix is shaped according to the (row-packed) arguement. 
      * </p>
