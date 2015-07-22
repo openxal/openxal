@@ -2,6 +2,7 @@ package xal.app.mpsclient;
 
 import java.util.concurrent.Callable;
 import java.util.*;
+import java.math.BigDecimal;
 
 import xal.tools.messaging.MessageCenter;
 import xal.service.mpstool.MPSPortal;
@@ -257,13 +258,7 @@ public class RemoteMPSRecord implements UpdateListener {
         int mpsEvents = getLatestMPSEvents(mpsType).size();
         if(mpsEvents > 0) {
             Map<String, Object> eventsTable = getLatestMPSEvents(mpsType).get(0);
-            MPSEvent event;
-            
-            Date eventTimeStamp = (Date)eventsTable.get(MPSPortal.TIMESTAMP_KEY);
-            List<SignalEvent> signalEvents = (List<SignalEvent>)eventsTable.get(MPSPortal.SIGNAL_EVENTS_KEY);
-            
-            event = new MPSEvent(eventTimeStamp, signalEvents);
-            
+			final MPSEvent event = toMPSEvent( eventsTable );
             return event;
         }
         else {
@@ -273,26 +268,44 @@ public class RemoteMPSRecord implements UpdateListener {
 
     
 	@SuppressWarnings( "unchecked" )	// have to cast
-    public List<MPSEvent> processMPSEvents(int mpsType) {
+    public List<MPSEvent> processMPSEvents( final int mpsType ) {
         _selectedMPSType = mpsType;
         List<MPSEvent> mpsEvents = new ArrayList<MPSEvent>();
         
         int mpsEventCount = getLatestMPSEvents(mpsType).size();
         
-        for(int mpsTypeIndex = 0; mpsTypeIndex < mpsEventCount; mpsTypeIndex++) {
-            Map<String, Object> eventsTable = getLatestMPSEvents(mpsType).get(mpsTypeIndex);
-            MPSEvent event;
-            
-            Date eventTimeStamp = (Date)eventsTable.get(MPSPortal.TIMESTAMP_KEY);
-            List<SignalEvent> signalEvents = (List<SignalEvent>)eventsTable.get(MPSPortal.SIGNAL_EVENTS_KEY);
-            
-           mpsEvents.add(new MPSEvent(eventTimeStamp, signalEvents));
+        for( int mpsTypeIndex = 0; mpsTypeIndex < mpsEventCount; mpsTypeIndex++ ) {
+            Map<String, Object> eventsTable = getLatestMPSEvents( mpsType ).get( mpsTypeIndex );
+			final MPSEvent event = toMPSEvent( eventsTable );
+			mpsEvents.add( event );
         }
 
         return mpsEvents.size() > 0 ? mpsEvents : null;
         
     }
-    
+
+
+	/* convert raw MPS event info to MPSEvent instance */
+	final private MPSEvent toMPSEvent( final Map<String, Object> eventInfo ) {
+		final Date eventTimeStamp = (Date)eventInfo.get( MPSPortal.TIMESTAMP_KEY );
+
+		@SuppressWarnings( "unchecked" )	// have to cast
+		final List<Map<String, Object>> rawSignalEvents = (List<Map<String, Object>>)eventInfo.get( MPSPortal.SIGNAL_EVENTS_KEY );
+
+		final List<SignalEvent> signalEvents = new ArrayList<>();
+		for ( final Map<String,Object> rawSignalEvent : rawSignalEvents ) {
+			final String signal = (String)rawSignalEvent.get( MPSPortal.CHANNEL_PV_KEY );
+			final String timestampSecondsString = (String)rawSignalEvent.get( MPSPortal.TIMESTAMP_KEY );
+			final BigDecimal timestampSeconds = new BigDecimal( timestampSecondsString );
+			final SignalEvent signalEvent = new SignalEvent( signal, timestampSeconds );
+			signalEvents.add( signalEvent );
+		}
+
+		final MPSEvent event = new MPSEvent( eventTimeStamp, signalEvents );
+		return event;
+	}
+
+
     public List<Map<String, Object>> getLatestMPSEvents(int mpsType) {
         _selectedMPSType = mpsType;
         return REMOTE_PROXY.getLatestMPSEvents( mpsType );

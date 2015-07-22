@@ -53,6 +53,18 @@ public class EDipole extends Electrostatic {
     }          
       
     /**
+     * Get the dipole bend magnet bending angle.
+     */
+    public double getDfltBendAngle() {
+        return m_bucMagnet.getBendAngle();
+    }
+    
+    /** returns design path length in meters */
+    public double getDfltPathLength() {
+        return m_bucMagnet.getPathLength();
+    }
+    
+    /**
      * Update the instance with data from the data adaptor.  Overrides the default implementation to 
 	 * set the quadrupole type since a quadrupole type can be either "QHE" or "QVE".
      * @param adaptor The data provider.

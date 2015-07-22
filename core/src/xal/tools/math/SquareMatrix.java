@@ -6,9 +6,6 @@
  */
 package xal.tools.math;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-
 /**
  * <p>
  * Class <code>SquareMatrix</code> is the abstract base class for square matrix

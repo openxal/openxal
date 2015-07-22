@@ -14,17 +14,19 @@
  */
 package xal.model.probe;
 
-import static org.junit.Assert.fail;
+import java.io.File;
+import java.io.PrintStream;
 
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import xal.model.alg.EnvTrackerAdapt;
-import xal.test.ResourceManager;
+import xal.sim.run.TestRunOnlineModel;
 import xal.sim.scenario.ProbeFactory;
 import xal.smf.Accelerator;
 import xal.smf.AcceleratorSeq;
+import xal.test.ResourceManager;
 import xal.tools.beam.CovarianceMatrix;
 
 /**
@@ -36,14 +38,62 @@ import xal.tools.beam.CovarianceMatrix;
 public class TestProbeFactory {
     
     
+
+    /*
+     * Global Constants
+     */
+    
+    /** Flag used for indicating whether to type out to stout or file */
+    private static final boolean        BOL_TYPE_STOUT = false;
+
+    
     /** Accelerator sequence used for testing */
     public static final String     STR_ACCL_SEQ_ID = "MEBT";
-    
     
     /** The Accelerator Sequence object used to create probe - it is created once */ 
     private static AcceleratorSeq     SEQ_TEST;
 
     
+    /*
+     * Global Attributes
+     */
+    
+    /** Output file location */
+    static private String           STR_FILE_OUTPUT = TestRunOnlineModel.class.getName().replace('.', '/') + ".txt";
+    
+    
+    /** URL where we are dumping the output */
+    static public File              FILE_OUTPUT    = ResourceManager.getOutputFile(STR_FILE_OUTPUT);
+    
+    
+    /** Persistent storage for test output */
+    private static PrintStream     OSTR_OUTPUT;
+    
+    
+
+    /*
+     * Global Methods
+     */
+    
+    /**
+     * Creates a new output file in the testing output directory with the 
+     * given file name.
+     * 
+     * @param strFileName   name of the output file
+     * 
+     * @return              new output file object
+     *
+     * @author Christopher K. Allen
+     * @since  Sep 11, 2014
+     */
+    private static File createOutputFile(String strFileName) {
+        String  strPack     = TestProbeFactory.class.getPackage().getName();
+        String  strPathRel  = strPack.replace('.', '/');
+        String  strPathFile = strPathRel + '/' + strFileName; 
+        File    fileOutput  = xal.test.ResourceManager.getOutputFile(strPathFile);
+        
+        return fileOutput;
+    }
     
     /**
      *
@@ -57,15 +107,16 @@ public class TestProbeFactory {
 
         Accelerator     accel   = ResourceManager.getTestAccelerator();
         SEQ_TEST = accel.getSequence(STR_ACCL_SEQ_ID);
+        
+        if (BOL_TYPE_STOUT) {
+            OSTR_OUTPUT = System.out;
+            
+        } else {
+            File       fileOut = createOutputFile(STR_FILE_OUTPUT);
+            
+            OSTR_OUTPUT = new PrintStream(fileOut);
+        }
     }
-
-    /**
-     * xal.model.probe
-     *
-     * @author Christopher K. Allen
-     * @since  Nov 9, 2011
-     *
-     */
 
     /**
      *
@@ -104,7 +155,7 @@ public class TestProbeFactory {
         
         CovarianceMatrix matCov = prbTest.getCovariance();
         
-        System.out.println(matCov);
+        OSTR_OUTPUT.println(matCov);
         
     }
 

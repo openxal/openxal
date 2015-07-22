@@ -338,7 +338,7 @@ public abstract class Element implements IElement {
      * NOTE
      * <p> This method will always return a value regardless of 
      * whether or not the probe is within the element domain.  The
-     * returned value is the distance fromt the entrance location.
+     * returned value is the distance from the entrance location.
      * Thus, negative values indicate an upstream position and values
      * larger than the element length indicate positions downstream.
      * </p>

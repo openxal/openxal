@@ -130,7 +130,7 @@ class JcaMonitorValTime extends JcaMonitor {
 		if ( dbr != null ) {
 			synchronized(dbr) {
 				final TimeAdaptor adaptor = new DbrTimeAdaptor( dbr );
-				post( m_ifcSink, adaptor );
+				postTimeRecord( m_ifcSink, adaptor );
 			}			
 		}
     }
@@ -173,7 +173,7 @@ class JcaMonitorValStatus extends JcaMonitor {
 		if ( dbr != null ) {
 			synchronized(dbr) {
 				final StatusAdaptor adaptor = new DbrStatusAdaptor( dbr );
-				post( m_ifcSink, adaptor );
+				postStatusRecord( m_ifcSink, adaptor );
 			}			
 		}
     }
@@ -218,7 +218,7 @@ class JcaMonitorValue extends JcaMonitor {
 		if ( dbr != null ) {
 			synchronized(dbr) {
 				final ValueAdaptor adaptor = new DbrValueAdaptor( dbr );
-				post( m_ifcSink, adaptor );
+				postValueRecord( m_ifcSink, adaptor );
 			}			
 		}
     }
