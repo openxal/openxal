@@ -76,7 +76,7 @@ import Jama.Matrix;
  * and <code>{@link #setMomentDerivativeStepPercent(double)}</code>. 
  * </p>
  *
- * <h4>NOTES:</h4>
+ * <h3>NOTES:</h3>
  * &middot; Bunch charge <i>Q</i> is given by beam current <i>I</i> divided by
  *          machine frequency <i>f</i>.  Specifically, <i>Q</i> = <i>I</i>/<i>f</i>.
  * <br>
@@ -640,8 +640,8 @@ public class CsContinuationEstimator extends CourantSnyderEstimator {
      *                                                 &part;<b>F</b>/&part;&sigma;<sub>3</sub> 
      *                                                )
      * </p>
+     * <h3>NOTES:</h3>
      * <p>
-     * <h4>NOTES:</h4>
      * &middot; This method assumes the phase planes to be independent.  Specifically it does not
      * currently consider the partials of the moments in one phase plane with respect to the
      * variation of moments in a different phase plane.

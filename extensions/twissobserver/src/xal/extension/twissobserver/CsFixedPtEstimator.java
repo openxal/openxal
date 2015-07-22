@@ -40,8 +40,8 @@ import Jama.Matrix;
  * generator.  It is safer to require pre-construction of the matrix
  * generator rather than offer all the opions for such generation here.
  * </p>
+ * <h3>NOTES:</h3>
  * <p>
- * <h4>NOTES:</h4>
  * &middot; Bunch charge <i>Q</i> is given by beam current <i>I</i> divided by
  *          machine frequency <i>f</i>.  Specifically, <i>Q</i> = <i>I</i>/<i>f</i>.
  * <br>
@@ -437,8 +437,8 @@ public class CsFixedPtEstimator extends CourantSnyderEstimator {
      * <br>
      * <br>
      * </p>
+     * <h3>NOTES:</h3>
      * <p>
-     * <h4>NOTES:</h4>
      * &middot; A &lambda; value near 1 can cause a type of "super convergence" instability.  
      * </p>
      *
@@ -496,8 +496,8 @@ public class CsFixedPtEstimator extends CourantSnyderEstimator {
      * covariance matrix is passed to the method 
      * <code>{@link #computeCovarianceFiniteCurrent(String, double, CovarianceMatrix, ArrayList)}</code>.
      * </p>
+     * <h3>NOTE:</h3>
      * <p>
-     * <h4>NOTE:</h4>
      * &middot; Bunch charge <i>Q</i> is given by beam current <i>I</i> divided by
      *          machine frequency <i>f</i>.  Specifically, <i>Q</i> = <i>I</i>/<i>f</i>.
      * </p> 
@@ -537,8 +537,8 @@ public class CsFixedPtEstimator extends CourantSnyderEstimator {
      * initial guess.  Thus, the closer <var>matSigInit</var> is to the solution (using the
      * Frobenius norm) the faster the algorithm converges. 
      * </p>
+     * <h3>NOTE:</h3>
      * <p>
-     * <h4>NOTE:</h4>
      * &middot; Bunch charge <i>Q</i> is given by beam current <i>I</i> divided by
      *          machine frequency <i>f</i>.  Specifically, <i>Q</i> = <i>I</i>/<i>f</i>.
      * </p> 
