@@ -413,8 +413,8 @@ public class BeamEllipsoid {
      * laboratory coordinate axes.  Thus, no rotations are necessary and the process
      * of computing the space charge effects is expedited.
      * </p>
+     * <h3>NOTES:</h3>
      * <p>
-     * <h4>NOTES:</h4>
      * This constructor has not yet been tested and debugged!
      * </p>
      * 
@@ -785,8 +785,8 @@ public class BeamEllipsoid {
      * is the rotation that aligns the ellipsoid semi-axes to the coorinates axes 
      * putting it into standard position.
      * </p>
+     * <h3>NOTES:</h3>
      * <p>
-     * <h4>NOTES:</h4>
      * One should provide the three-dimensional value for the generalized beam perveance.
      * This value <i>K</i> is defined as
      * <br>
@@ -862,8 +862,8 @@ public class BeamEllipsoid {
      * is the rotation that aligns the ellipsoid semi-axes to the coorinates axes 
      * putting it into standard position.
      * </p>
+     * <h3>NOTES:</h3>
      * <p>
-     * <h4>NOTES:</h4>
      * One should provide the three-dimensional value for the generalized beam perveance.
      * This value <i>K</i> is defined as
      * <br>

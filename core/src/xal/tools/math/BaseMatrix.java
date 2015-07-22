@@ -270,8 +270,8 @@ public abstract class BaseMatrix<M extends BaseMatrix<M>> implements IArchive {
      * Returns the matrix element at the position indicated by the
      * given row and column index sources.  
      * </p>
+     * <h3>NOTES</h3>
      * <p>
-     * <h4>NOTES</h4>
      * &middot; It is expected that the
      * object exposing the <code>IIndex</code> interface is an enumeration
      * class restricting the number of possible index values.
@@ -464,8 +464,8 @@ public abstract class BaseMatrix<M extends BaseMatrix<M>> implements IArchive {
      *  where, by context, the second occurrence of ||&middot;||<sub>1</sub> is the 
      *  Lesbeque 1-norm on <b>R</b><sup><i>n</i><sup>. 
      *  </p>
+     *  <h3>NOTES:</h3>
      *  <p>
-     *  <h4>NOTES:</h4>
      *  &middot; For square matrices induced norms are sub-multiplicative, that is
      *  ||<b>AB</b>|| &le; ||<b>A</b>|| ||<b>B</b>||.
      *  <br>
@@ -511,8 +511,8 @@ public abstract class BaseMatrix<M extends BaseMatrix<M>> implements IArchive {
      *  where, by context, the second occurrence of ||&middot;||<sub>&infin;</sub> is the 
      *  Lesbeque &infin;-norm on <b>R</b><sup><i>n</i><sup>. 
      *  </p>
+     *  <h3>NOTES:</h3>
      *  <p>
-     *  <h4>NOTES:</h4>
      *  &middot; For square matrices induced norms are sub-multiplicative, that is
      *  ||<b>AB</b>|| &le; ||<b>A</b>|| ||<b>B</b>||.
      *  <br>
@@ -540,8 +540,8 @@ public abstract class BaseMatrix<M extends BaseMatrix<M>> implements IArchive {
      * where Tr is the trace operator and &sigma;<sub><i>i</i></sub> are the singular values of
      * matrix <b>A</b>.  
      * </p>
+     * <h3>NOTES</h3>
      * <p>
-     * <h4>NOTES</h4>
      * &middot; Since the Schatten norms are sub-multiplicative, the Frobenius norm
      * is sub-multiplicative.
      * <br>

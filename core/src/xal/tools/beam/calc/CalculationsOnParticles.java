@@ -127,8 +127,8 @@ public class CalculationsOnParticles extends CalculationEngine implements ISimLo
      * and thus assumes simulation trajectory is that for at least one period of 
      * a periodic structure.
      * </p>
+     * <h3>NOTES:</h3>
      * <p>  
-     * <h4>NOTES:</h4>
      * &middot; The betatron phase advances are given in the range [0,2&pi];.
      * <br>
      * </p>
@@ -157,8 +157,8 @@ public class CalculationsOnParticles extends CalculationEngine implements ISimLo
      * It is invariant under 
      * the action of <b>&Phi;</b>, that is, <b>&Phi;z</b> = <b>z</b>. 
      * </p>
+     * <h3>NOTES:</h3>
      * <p>  
-     * <h4>NOTES:</h4>
      * &middot; The entrance and exit of the beamline should have the same fixed point
      * value.
      * </p>
@@ -184,8 +184,8 @@ public class CalculationsOnParticles extends CalculationEngine implements ISimLo
      * the actual beam (rather than the normalized size &beta;), or "acceptance".  Thus it
      * cannot be computed here and <code>NaN</code> is returned instead.
      * </p>
+     * <h3>NOTES:</h3>
      * <p>  
-     * <h4>NOTES:</h4>
      * &middot; The entrance of the simulation is assumed to be the location of the
      * first and last states of the solution trajectory.
      * </p>
@@ -221,8 +221,8 @@ public class CalculationsOnParticles extends CalculationEngine implements ISimLo
     }
 
     /**
+     * <h3>IMPORTANT NOTE</h3>
      * <p>
-     * <h4>IMPORTANT NOTE</h4>
      * This method has been modified so it returns exactly the same value as 
      * {@link #computeCoordinatePosition(ParticleProbeState)}.  This modification is
      * maintain compatibility with the previous use of <code>computeFixedOrbit()</code>

@@ -600,8 +600,8 @@ public abstract class BaseVector<V extends BaseVector<V>> implements IArchive, j
      * interface belongs to the <code>BaseMatrix<M></code> namespace.  
      * In this way matrix indices can be used to get vector component values.
      * </p>
+     * <h3>NOTES</h3>
      * <p>
-     * <h4>NOTES</h4>
      * &middot; It is expected that the
      * object exposing the <code>IIndex</code> interface is an enumeration
      * class restricting the number of possible index values.

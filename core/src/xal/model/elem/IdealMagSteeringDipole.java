@@ -210,7 +210,7 @@ public class IdealMagSteeringDipole extends ThinElectromagnet {
      *
      *  @param  probe   probe interface from which we get rest energy and kinetic energy
      *
-     *  @return         7&times7 transfer matrix in homogeneous coordinates
+     *  @return         7&times;7 transfer matrix in homogeneous coordinates
      *
      *  @exception  ModelException    bad orientation code
      */
@@ -301,7 +301,7 @@ public class IdealMagSteeringDipole extends ThinElectromagnet {
 	/**
 	 * Conversion method to be provided by the user
 	 * 
-	 * @param latticeElement the SMF node to convert
+	 * @param element the SMF node to convert
 	 */
 	@Override
 	public void initializeFrom(LatticeElement element) {

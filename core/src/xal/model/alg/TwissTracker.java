@@ -42,8 +42,8 @@ import xal.model.probe.TwissProbe;
  * Moreover, currently the dynamics are not coupled between phase planes.  The
  * values of the Twiss parameter propagated according to  formula 2.54 from S.Y. Lee's book.
  * </p>
+ * <h3>NOTES:</h3>
  * <p>
- * <h4>NOTES:</h4>
  * &middot; There is necessarily no coupling between the phase planes from hardware elements.  There
  * can be, however, coupling from space charge effects
  * <br>

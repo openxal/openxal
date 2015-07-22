@@ -140,8 +140,8 @@ public class CalculationsOnRings extends CalculationsOnMachines {
      * <code>{@link #calculatePhaseAdvPerCell(PhaseMatrix)}</code> given the
      * full turn matrix at the ring entrance.
      * </p>
+     * <h3>NOTES:</h3>
      * <p>  
-     * <h4>NOTES:</h4>
      * &middot; The ring tunes and betatron phase advances differ by a factor 2&pi;.
      * <br>
      * &middot; The entrance of the ring is assumed to be the location of the
@@ -165,8 +165,8 @@ public class CalculationsOnRings extends CalculationsOnMachines {
      * full turn matrix <b>&Phi;</b> at the ring entrance. It is invariant under 
      * the action of <b>&Phi;</b>, that is, <b>&Phi;z</b> = <b>z</b>. 
      * </p>
+     * <h3>NOTES:</h3>
      * <p>  
-     * <h4>NOTES:</h4>
      * &middot; The entrance of the ring is assumed to be the location of the
      * first and last states of the solution trajectory.
      * </p>
@@ -191,8 +191,8 @@ public class CalculationsOnRings extends CalculationsOnMachines {
      * the actual beam (rather than the normalized size &beta;), or "acceptance".  Thus it
      * cannot be computed here and <code>NaN</code> is returned instead.
      * </p>
+     * <h3>NOTES:</h3>
      * <p>  
-     * <h4>NOTES:</h4>
      * &middot; The entrance of the ring is assumed to be the location of the
      * first and last states of the solution trajectory.
      * </p>

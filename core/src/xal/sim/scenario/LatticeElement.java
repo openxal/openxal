@@ -14,8 +14,8 @@ import xal.smf.impl.Bend;
 import xal.smf.impl.Magnet;
 
 /**
+ * <h3>CKA NOTES:</h3>
  * <p>
- * <h4>CKA NOTES:</h4>
  * &middot; I have modified this objects so it carries the additional attribute
  * of the <em>modeling element</em> identifier.  This is in contrast to the hardware node
  * identifier from which it maps.

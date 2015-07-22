@@ -110,6 +110,7 @@ public class ElementFactory {
      *  Example:
      *      For the derived class <code>ThinLens</code> the static block should
      *      include the following:
+     *  </p>
      *      <pre>
      *      static { 
      *      ...
@@ -117,7 +118,6 @@ public class ElementFactory {
      *      ...
      *      }
      *      </pre>
-     *  </p>
      *
      *  @param  strType     type identifier of the class 
      *  @param  clsType     <code>Class</code> class for registered class

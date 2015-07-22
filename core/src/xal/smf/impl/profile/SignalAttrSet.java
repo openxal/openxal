@@ -278,7 +278,7 @@ public abstract class SignalAttrSet implements DataListener {
      * See <code>Signal{@link SignalAttrs#average(Signal, double)}</code> for additional information.
      * 
      * @param setAvg    signal set to average into this one
-     * @param dblWtFac     averaging magnitude &lambda; &in; [0,1]
+     * @param dblWtFac     averaging magnitude &lambda; &isin; [0,1]
      *
      * @throws IllegalArgumentException the provided signal is not the same size as this signal
      *

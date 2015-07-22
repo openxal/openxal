@@ -129,7 +129,7 @@ public abstract class ThinElement extends Element {
     }
     
     /**
-     * Return a version string wo the cvs keyword (i.e. <dollar>Id<dollar>).
+     * Return a version string wo the cvs keyword (i.e. $Id$).
      */
     public static String version() {
         String st=" ";

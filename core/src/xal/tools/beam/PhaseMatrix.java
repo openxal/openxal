@@ -890,8 +890,8 @@ public class PhaseMatrix extends SquareMatrix<PhaseMatrix> implements java.io.Se
      *  Non-destructive matrix addition.  The homogeneous pivot
      *  element on the diagonal is unchanged at value 1.
      *  </p>
+     *  <h3>NOTE:</h3>
      *  <p>
-     *  <h4>NOTE:</h4>
      *  BE VERY CAREFUL when using this function.  The homogeneous coordinates
      *  are not meant for addition operations.
      *  </p>
@@ -911,8 +911,8 @@ public class PhaseMatrix extends SquareMatrix<PhaseMatrix> implements java.io.Se
      *  In-place matrix addition. The homogeneous pivot
      *  element on the diagonal is unchanged at value 1.
      *  </p>
+     *  <h3>NOTE:<h3>
      *  <p>
-     *  <h4>NOTE:<h4>
      *  BE VERY CAREFUL when using this function.  The homogeneous coordinates
      *  are not meant for addition operations.
      *  </p>
@@ -929,8 +929,8 @@ public class PhaseMatrix extends SquareMatrix<PhaseMatrix> implements java.io.Se
      *  Non-destructive matrix subtraction.  The homogeneous pivot
      *  element on the diagonal is unchanged at value 1.
      *  </p>
+     *  <h3>NOTE:</h3>
      *  <p>
-     *  <h4>NOTE:</h4>
      *  BE VERY CAREFUL when using this function.  The homogeneous coordinates
      *  are not meant for subtraction operations.
      *  </p>
@@ -950,8 +950,8 @@ public class PhaseMatrix extends SquareMatrix<PhaseMatrix> implements java.io.Se
      *  In-place matrix subtraction. The homogeneous pivot
      *  element on the diagonal is unchanged at value 1.
      *  </p>
+     *  <h3>NOTE:<h3>
      *  <p>
-     *  <h4>NOTE:<h4>
      *  BE VERY CAREFUL when using this function.  The homogeneous coordinates
      *  are not meant for addition operations.
      *  </p>

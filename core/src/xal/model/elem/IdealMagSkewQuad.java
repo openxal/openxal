@@ -53,8 +53,8 @@ public class IdealMagSkewQuad extends IdealMagQuad {
      *  @param  dblFld    field gradient strength (in <b>Tesla/meter</b>)
      *  @param  dblLen    length of the skew quadrupole
      *  @param  dblAng    angle of the skew quadrupole:
-     *                    dblAng > 0 -> focuses in quadrants 1 and 3
-     *                    dblAng < 0 -> focuses in quadrants 2 and 4
+     *                    dblAng &gt; 0 -&gt; focuses in quadrants 1 and 3
+     *                    dblAng &lt; 0 -&gt; focuses in quadrants 2 and 4
      */
     public IdealMagSkewQuad(
         String strId,

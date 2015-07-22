@@ -225,8 +225,8 @@ public class Twiss implements java.io.Serializable {
      * as a KV (Kapchinsky-Vladimirsky) beam having a distinct envelope size (radius) and a
      * distinct envelope slope (this value is related to the divergence angle).
      * </p>
+     * <h3>NOTE</h3>
      * <p>
-     * <h4>NOTE</h4>
      * &middot; <em>We do not scale the emittance!</em>  It is common practice to multiply the
      * RMS emittance by 4 for 2D beams and other values for 3D beams with various distributions.
      * We assume the same second moments which yield the same RMS emittance.  Specially, the

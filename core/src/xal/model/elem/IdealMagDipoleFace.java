@@ -23,7 +23,7 @@ import xal.model.ModelException;
  *   
  * @author Christopher K. Allen
  *
- *  @see    D.C. Carey, The Optics of Charged Particle Beams (Harwood, 1987)
+ *  @see    "D.C. Carey, The Optics of Charged Particle Beams (Harwood, 1987)"
  */
 public class IdealMagDipoleFace extends ThinElectromagnet {
 

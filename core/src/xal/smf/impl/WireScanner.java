@@ -51,8 +51,8 @@ import java.util.concurrent.RejectedExecutionException;
  * device API interfaced with the <tt>SMF</tt> class
  * <code>{@link ProfileMonitor}</code>.
  * </p>
+ * <h3>NOTES:</h3>
  * <p>
- * <h4>NOTES:</h4>
  * &middot; After a command is issued to a wire scanner device the command
  * buffer must be cleared back to zero.  This is due to a "quirk"
  * in the current EPICS installation where command signal echos
@@ -97,7 +97,7 @@ public class WireScanner extends ProfileDevice {
      */
 
     /**
-     * <h4>Wire Scanner Commands</h4>
+     * <h3>Wire Scanner Commands</h3>
      * <p>
      * The commands below represent the possible values for the first argument 
      * in the command array.  It provides the
@@ -2279,13 +2279,13 @@ public class WireScanner extends ProfileDevice {
      * Data structure contain the profile data available
      * during data acquisition in a point-by-point fashion 
      * (i.e., as the scan progress).
-     * <p/>
+     * </p>
      * <p>
      * This appears to be then entire profile available after every
      * measurement sample.  This is different than the addition point
      * value after each sample.  The connected Process Variables are different,
      * so it is likely that this should work.
-     * <p/>
+     * </p>
      * <p>
      * However, it is <b>never used</b> as of yet.
      * </p>
@@ -2993,7 +2993,7 @@ public class WireScanner extends ProfileDevice {
      * </p>
      * <p>
      * One can specify the event type which fires the monitor using
-     * the argument <arg>intEvtType</arg>.  Any combination of the following
+     * the argument intEvtType.  Any combination of the following
      * event types can be specified with a logical OR operation:
      * <br>
      * <br> &nbsp; <code>Monitor.VALUE</code> - fire upon PV value change

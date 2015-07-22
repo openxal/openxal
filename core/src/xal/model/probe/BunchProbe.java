@@ -22,8 +22,8 @@ import xal.model.probe.traj.BunchProbeState;
  *  Abstract base class for all probes having beam properties.  That is derived classes should
  *  represent probes with collective beam dynamics.
  *  </p>
+ *  <h3>Note:</h3>
  *  <p>
- *  <h4>Note:</h4>
  *  The bunch charge <i>Q</i> is computed from the beam current <i>I</i> and 
  *  bunch frequency <i>f</i> as 
  *  <br>

@@ -67,8 +67,8 @@ public class Trajectory<S extends ProbeState<S>> implements IArchive, Iterable<S
      * The idea is that each element ID class is then representative of probe states associated
      * with a single hardware node.  See {@link IdentifierEquivClass} for another explanation.  
      * </p>
+     * <h3>NOTES:</h3>
      * <p>
-     * <h4>NOTES:</h4>
      * &middot; I am not sure if we have to explicitly consider the empty identifier string.
      * This empty ID is a substring of all IDs.  
      * <br>
@@ -1078,7 +1078,7 @@ public class Trajectory<S extends ProbeState<S>> implements IArchive, Iterable<S
     
     /**
      * Returns an iterator over all the probe states in the trajectory.  This is 
-     * the single method in the <code>Iterable<T></code> interface which facilitates
+     * the single method in the <code>Iterable&lt;T&gt;</code> interface which facilitates
      * the "for each" statement.  States are traversed in their order along the
      * beamline.
      * 

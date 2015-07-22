@@ -42,8 +42,8 @@ import xal.tools.beam.PhaseMatrix;
  * <br>
  * where <i>e</i><sup><b>A</b></sup> is the matrix exponential.  
  * </p>
+ * <h3>NOTE:</h3>
  * <p>
- * <h4>NOTE:</h4>
  * Currently the class implements the matrix exponential only to 
  * second order.  Therefore 
  * <br>

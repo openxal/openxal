@@ -30,6 +30,7 @@ import xal.tools.beam.optics.QuadrupoleLens;
  * </p>
  * <p>
  * <h3>NOTE</h3>
+ * <p>
  * This class has been modified to accommodate PMQs by acting as quadrupoles
  * with diminishing fields when placed next to a PMQ element.  I'm not sure
  * this is the best implementation as it is tightly coupled with several other

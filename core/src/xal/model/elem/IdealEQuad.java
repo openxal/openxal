@@ -265,7 +265,7 @@ public class IdealEQuad extends ThickElectrostatic {
     /**
 	 * Conversion method to be provided by the user
 	 * 
-	 * @param latticeElement the SMF node to convert
+	 * @param element the SMF node to convert
 	 */
 	@Override
 	public void initializeFrom(LatticeElement element) {

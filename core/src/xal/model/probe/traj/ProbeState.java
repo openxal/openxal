@@ -463,7 +463,7 @@ public abstract class ProbeState<S extends ProbeState<S>> implements IProbeState
      *  Convenience function for computing the probe's velocity beta (w.r.t. the 
      *  speed of light) from the relatistic factor gamma.
      *
-     *  @param beta     relatavistic factor gamma
+     *  @param gamma     relatavistic factor gamma
      *  @return         speed of probe (w.r.t. speed of light)
      */
     protected double computeBetaFromGamma(double gamma) {

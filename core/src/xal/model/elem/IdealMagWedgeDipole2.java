@@ -183,7 +183,7 @@ public class IdealMagWedgeDipole2 extends ElectromagnetSeq {
      * 
      * <p>The physical length of this element is not set when invoking
      * this method.  That must be done separately with a call to 
-     * <code>setPhysicalLength(double></code>.
+     * <code>setPhysicalLength(double)</code>.
      * </p>
      * 
      * @param   dblPos      lattice position of element center (meters)
@@ -578,7 +578,7 @@ public class IdealMagWedgeDipole2 extends ElectromagnetSeq {
 	/**
 	 * Conversion method to be provided by the user
 	 * 
-	 * @param latticeElement the SMF node to convert
+	 * @param element the SMF node to convert
 	 */
 	@Override
 	public void initializeFrom(LatticeElement element) {

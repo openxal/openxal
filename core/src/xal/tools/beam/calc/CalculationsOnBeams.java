@@ -133,8 +133,8 @@ public class CalculationsOnBeams extends CalculationEngine implements ISimLocRes
      * and thus assumes simulation trajectory is that for at least one period of 
      * a periodic structure.
      * </p>
+     * <h3>NOTES:</h3>
      * <p>  
-     * <h4>NOTES:</h4>
      * &middot; The betatron phase advances are given in the range [0,2&pi];.
      * <br>
      * </p>
@@ -159,8 +159,8 @@ public class CalculationsOnBeams extends CalculationEngine implements ISimLocRes
      * It is invariant under 
      * the action of <b>&Phi;</b>, that is, <b>&Phi;z</b> = <b>z</b>. 
      * </p>
+     * <h3>NOTES:</h3>
      * <p>  
-     * <h4>NOTES:</h4>
      * &middot; The entrance of the ring is assumed to be the location of the
      * first and last states of the solution trajectory.
      * </p>
@@ -186,8 +186,8 @@ public class CalculationsOnBeams extends CalculationEngine implements ISimLocRes
      * the actual beam (rather than the normalized size &beta;), or "acceptance".  Thus it
      * cannot be computed here and <code>NaN</code> is returned instead.
      * </p>
+     * <h3>NOTES:</h3>
      * <p>  
-     * <h4>NOTES:</h4>
      * &middot; The entrance of the simulation is assumed to be the location of the
      * first and last states of the solution trajectory.
      * </p>
@@ -270,8 +270,8 @@ public class CalculationsOnBeams extends CalculationEngine implements ISimLocRes
     }
 
     /**
+     * <h3>IMPORTANT NOTE</h3>
      * <p>
-     * <h4>IMPORTANT NOTE</h4>
      * This method has been modified so it returns exactly the same value as 
      * {@link #computeCoordinatePosition(ParticleProbeState)}.  This modification is
      * maintain compatibility with the previous use of <code>computeFixedOrbit()</code>
@@ -480,8 +480,8 @@ public class CalculationsOnBeams extends CalculationEngine implements ISimLocRes
      * by a unit momentum offset (&delta;<i>p</i> = 1).  See the documentation in 
      * {@link ISimLocResults#computeChromAberration(ProbeState)} for a more detailed
      * exposition.
+     * <h3>NOTE:</h3>
      * <p>
-     * <h4>NOTE:</h4>
      * - Reference text D.C. Carey, "The Optics of Charged Particle Beams"
      * </p>
      * 

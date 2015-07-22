@@ -140,7 +140,7 @@ public class ParticleProbeState extends ProbeState<ParticleProbeState> /*impleme
      *  </p>
      *  This is the location <b>z</b>
      *  in homogeneous phase space coordinates <b>R</b><sup>6</sup> &times; {1}.
-     *  </p>
+     *
      *
      *  @return     vector <b>z</b> = (<i>x,x',y,y',z,z',</i>1)<sup><i>T</i></sup> of phase space coordinates
      */
@@ -208,7 +208,7 @@ public class ParticleProbeState extends ProbeState<ParticleProbeState> /*impleme
      * Copies and returns a new, identical instance of <b>this</b> 
      * <code>ParticleProbeState</code>.
      * 
-     * @returns a copy of <b>this</b> <code>ParticleProbeState</code>
+     * @return a copy of <b>this</b> <code>ParticleProbeState</code>
      */
     @Override
     public ParticleProbeState copy(){

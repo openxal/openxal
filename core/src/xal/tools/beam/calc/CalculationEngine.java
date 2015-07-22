@@ -760,8 +760,8 @@ public abstract class CalculationEngine {
      * <br>
      * For the longitudinal plane no such normalization is necessary. 
      * </p>
+     * <h3>NOTE:</h3>
      * <p>
-     * <h4>NOTE:</h4>
      * - Reference text D.C. Carey, "The Optics of Charged Particle Beams"
      * </p>
      * 
@@ -936,8 +936,8 @@ public abstract class CalculationEngine {
      * Advance the twiss parameters using the given transfer matrix based upon
      * formula 2.54 from S.Y. Lee's book.  
      * </p>
+     * <h3>CKA NOTES:</h3>
      * <p>
-     * <h4>CKA NOTES:</h4>
      * - This method will only work correctly for a beam that is
      * unccorrelated in the phase planes.
      * </p>

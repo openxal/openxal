@@ -32,7 +32,7 @@ public interface IRfCavity  {
     /**
      *  Set the RF cavity field phase.
      *
-     *  @param  dblAmp    cavity phase (in <b>Rad</b>).
+     *  @param  dblPhase    cavity phase (in <b>Rad</b>).
      */
     public void setCavPhase(double dblPhase);
 }

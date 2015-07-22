@@ -45,7 +45,7 @@ import xal.tools.math.r3.R3;
  * correlation matrix.  The linear fit is weighted by the beam distribution itself, so it is 
  * more accurate in regions of higher charged density.  For a complete description see the reference
  * below.
- * </P
+ * </p>
  * <p>
  * <strong>NOTES</strong>: (CKA)
  * <br>

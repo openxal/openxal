@@ -149,8 +149,8 @@ public abstract class Probe<S extends ProbeState<S>> implements IProbe, IArchive
      * Clone factory method.  Creates a new <code>Probe</code> object, of the appropriate
      * type, initialized to the argument <code>Probe</code>.
      * </p>
+     * <h3>NOTE:</h3>
      * <p>
-     * <h4>NOTE:</h4>
      * There is now a reset() method that is preferable to this one.  It
      * clears the probe trajHist and restores the initial state saved in the
      * initialize() method, without creating a new probe instance.
@@ -399,8 +399,8 @@ public abstract class Probe<S extends ProbeState<S>> implements IProbe, IArchive
     * Resets the probe to the saved initial state, if there is one and clears
     * the trajHist.
     * </p>
+    * <h3>CKA NOTES:</h3>
     * <p>
-    * <h4>CKA NOTES:</h4>
     * These notes concern the refactoring of the probe component
     * in order to tighten the typing.
     * <br>
@@ -725,8 +725,8 @@ public abstract class Probe<S extends ProbeState<S>> implements IProbe, IArchive
      * <p>
      * Initializes the probe, resetting state as necessary.
      * </p>
+     * <h3>CKA NOTES:</h3>
      * <p>
-     * <h4>CKA NOTES:</h4>
      * These notes concern the refactoring of the probe component
      * in order to tighten the typing.
      * <br>
@@ -739,7 +739,7 @@ public abstract class Probe<S extends ProbeState<S>> implements IProbe, IArchive
      * <br>
      * &middot; The trajectory is cleared, that is, there is no longer
      * any history in the probe
-     * </br>
+     * <br>
      * &middot; Thus, <tt>initialize()</tt> is really a poor choice, since
      * all that is done is
      * <br>

@@ -138,7 +138,7 @@ public class EnvelopeProbeState extends BunchProbeState<EnvelopeProbeState> {
      * <code>EnvelopeProbeState</code> objects with the state attributes
      * of the given <code>EnvelopeProbeState</code>.
      *
-     * @param EnvelopeProbeState     initializing state
+     * @param prsEnv     initializing state
      *
      * @author Christopher K. Allen, Jonathan M. Freed
      * @since  Jun 26, 2014
@@ -208,8 +208,8 @@ public class EnvelopeProbeState extends BunchProbeState<EnvelopeProbeState> {
      * interface rather that the full correlation matrix.  The default behavior for this class
      * is to save the correlation matrix.
      * </p>
+     * <h3>CKA Notes:</h3>
      * <p>
-     * <h4>CKA Notes:</h4>
      * - This can be dangerous as we have the 
      * potential to loose a lot of information.  In particular,
      * if the probe has pasted through a bend or a steering
@@ -330,7 +330,7 @@ public class EnvelopeProbeState extends BunchProbeState<EnvelopeProbeState> {
      *  phase space coordinates.  This is the primary state attribute
      *  for <code>EnvelopeProbe</code> objects.
      * 
-     * @return  7x7 matrix <zz^T> in homogeneous coordinates
+     * @return  7x7 matrix &lt;zz^T&gt; in homogeneous coordinates
      */
     public CovarianceMatrix getCovarianceMatrix()   {
         return matCov;
@@ -398,8 +398,8 @@ public class EnvelopeProbeState extends BunchProbeState<EnvelopeProbeState> {
      * Return the twiss parameters for this state calculated from the 
      * covariance matrix.
      * </p>
+     * <h3>CKA Notes:</h3>
      * <p>
-     * <h4>CKA Notes:</h4>
      * - Use this method with caution.  The returned information is incomplete,
      * it is taken only from the three 2&times;2 diagonal blocks of the correlation
      * matrix and, therefore, does not contain the full state of the beam.  In
@@ -450,8 +450,8 @@ public class EnvelopeProbeState extends BunchProbeState<EnvelopeProbeState> {
      * to the data sink.  In particular we save only the data in the 2x2 diagonal
      * blocks of the correlation matrix, and as Twiss parameters.
      * </p>
+     * <h3>CKA NOTE:</h3>
      * <p>
-     * <h4>CKA NOTE:</h4>
      * - <strong>Be careful</strong> when using this method!  It is here as a convenience only!  
      * It saves the <code>EnvelopeProbeState</code> information in the save format as
      * the load()/save() methods do, but you cannot restore an <code>EnvelopeProbe</code>

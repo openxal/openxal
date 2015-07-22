@@ -106,7 +106,6 @@ public abstract class EnvelopeTrackerBase extends Tracker {
      * is simply more accurate.
      * </p>
      * <p>
-     * <p>
      * <strong>VALUES</strong>:
      * <br>
      * Currently there are two supported mechanisms for emittance
@@ -117,7 +116,8 @@ public abstract class EnvelopeTrackerBase extends Tracker {
      * <br>
      * <code>CKAllen</code>: use the mechanism described by C.K. Allen, 
      * <i>et. al.</i> (see below).
-     * </p> 
+     * </p>
+     * <p>
      * <strong>References</strong>
      * <br>
      * [1] M. Weiss,
@@ -625,7 +625,7 @@ public abstract class EnvelopeTrackerBase extends Tracker {
      * <br>
      * (C.K. Allen)
      * <br>
-     * &middot; The &lt;x'|x&gt transfer matrix element is modified by 
+     * &middot; The &lt;x'|x&gt; transfer matrix element is modified by 
      * the formula
      * <br>
      * <br>
@@ -999,7 +999,7 @@ public abstract class EnvelopeTrackerBase extends Tracker {
      * <br>
      * &nbsp;  &Delta;<i>&epsilon;<sub>t,f</sub></i><sup>2</sup> &equiv; 
      *        &Delta;&lt;<i>x'<sub>f</sub></i><sup>2</sup>&gt;
-     *        &lt;<i>x<sub>f</sub></i></i><sup>2</sup>&gt;<sup>2</sup>.
+     *        &lt;<i>x<sub>f</sub></i><sup>2</sup>&gt;<sup>2</sup>.
      * <br>
      * <br>
      * where
@@ -1008,7 +1008,7 @@ public abstract class EnvelopeTrackerBase extends Tracker {
      * &nbsp;  &Delta;&lt;<i>x'<sub>f</sub></i><sup>2</sup>&gt; &equiv; 
      *        <i>k<sub>t</sub></i><sup>2</sup>
      *        <i>G<sub>t</sub></i>(<i>&phi;<sub>s</sub></i>,&Delta;<i>&phi;</i>)
-     *        &lt;<i>x<sub>i</sub></i></i><sup>2</sup>&gt;.
+     *        &lt;<i>x<sub>i</sub></i><sup>2</sup>&gt;.
      * <br>
      * <br>
      * and where <i>x'<sub>f</sub></i> and <i>x<sub>i</sub></i> represent the 
@@ -1142,7 +1142,7 @@ public abstract class EnvelopeTrackerBase extends Tracker {
      * <br>
      * <br>
      * where <i>f</i> is the density distribution, 
-     * <i>J<sub>n</i></sub>(<i>s</i>) is the <i>n</i><sup>th</sup>-order
+     * <i>J<sub>n</sub></i>(<i>s</i>) is the <i>n</i><sup>th</sup>-order
      * cylindrical Bessel function of the first kind,
      * &Delta;<i>&phi;</i> is the effective phase spread of the equivalent
      * uniform beam,
@@ -1171,7 +1171,7 @@ public abstract class EnvelopeTrackerBase extends Tracker {
      * <br>
      * <br>
      * where <i>f</i> is the density distribution, 
-     * <i>j<sub>n</i></sub>(<i>s</i>) is the <i>n</i><sup>th</sup>-order
+     * <i>j<sub>n</sub></i>(<i>s</i>) is the <i>n</i><sup>th</sup>-order
      * spherical Bessel function of the first kind,
      * &Delta;<i>&phi;</i> is the effective phase spread of the equivalent
      * uniform beam, and
@@ -1322,7 +1322,7 @@ public abstract class EnvelopeTrackerBase extends Tracker {
      * <br>
      * <br>
      * where <i>f</i> is the density distribution, 
-     * <i>J<sub>n</i></sub>(<i>s</i>) is the <i>n</i><sup>th</sup>-order
+     * <i>J<sub>n</sub></i>(<i>s</i>) is the <i>n</i><sup>th</sup>-order
      * cylindrical Bessel function of the first kind,
      * &Delta;<i>&phi;</i> is the effective phase spread of the equivalent
      * uniform beam,
@@ -1357,7 +1357,7 @@ public abstract class EnvelopeTrackerBase extends Tracker {
      * <br>
      * <br>
      * where <i>f</i> is the density distribution, 
-     * <i>j<sub>n</i></sub>(<i>s</i>) is the <i>n</i><sup>th</sup>-order
+     * <i>j<sub>n</sub></i>(<i>s</i>) is the <i>n</i><sup>th</sup>-order
      * spherical Bessel function of the first kind,
      * &Delta;<i>&phi;</i> is the effective phase spread of the equivalent
      * uniform beam,
@@ -1527,11 +1527,11 @@ public abstract class EnvelopeTrackerBase extends Tracker {
      * </p>
      * <p>
      * See K.R. Crandall and D.P. Rusthoi, 
-     *          <ul>
+     * </p>
+     *          <ul><li>
      *          "Trace 3-D Documentation", 
      *          LANL Report LA-UR-97-887 (1997), Appendix F.
-     *          </ul>
-     * </p>
+     *          </li></ul>
      * 
      *
      * @param   dphi    effective phase spread &Delta;<i>&phi;</i> (half-width) 
@@ -2211,14 +2211,14 @@ public abstract class EnvelopeTrackerBase extends Tracker {
      * <p>
      * Compute the phase spread of the bunch for a probe (based on Trace3D RfGap.f)
      * </p>
+     * <h3>CKA Notes:</h3>
      * <p>
-     * <h4>CKA Notes:</h4>
      * - This method needs to be optimized now that I understand what it is doing.
      * In XAL, longitundinal coordinate <i>z</i> is the "phase spread", but in meters. 
      * To convert to phase spread <i>&delta;&phi;</i> in radians we have
      * <br>
      * <br>
-     * &nbsp; &nbsp; &delta;&phi; = 2&pi;<i>z</i/>/(&beta;&lambda;) ,
+     * &nbsp; &nbsp; &delta;&phi; = 2&pi;<i>z</i>/(&beta;&lambda;) ,
      * <br>
      * <br>
      * where &lambda; is the wavelength of the RF.  So, for &lt;&delta;&phi;<sup>2</sup>&gt;
@@ -2233,7 +2233,7 @@ public abstract class EnvelopeTrackerBase extends Tracker {
      * <br>
      * <br>
      * - For the optional computation <b>phaseSpreadT3d</b> (which apparently is not
-     * used) I am not sure what is happening, or why <y'y'> is significant?
+     * used) I am not sure what is happening, or why &lt;y'y'&gt; is significant?
      * </p>
      * 
      *  @param  probe   we are computing the phase spread for this probe at the current
@@ -2392,8 +2392,8 @@ public abstract class EnvelopeTrackerBase extends Tracker {
      * <p>
      * Used in EnvTrackerAdapt, EnvelopeTracker
      * </p>
+     * <h3>CKA Notes:</h3>
      * <p>
-     * <h4>CKA Notes:</h4>
      * - I think this should go in the <b>Algorithm</b> class.
      * It expects an <code>EnvelopeProbe</code> - element objects
      * should really not be concerned with the type of probe.
@@ -2458,8 +2458,8 @@ public abstract class EnvelopeTrackerBase extends Tracker {
      * <p>
      * used in EnvTrackerAdapt, EnvelopeTracker
      * </p>
+     * <h3>CKA Notes:</h3>
      * <p>
-     * <h4>CKA Notes:</h4>
      * - I think this should go in the <b>Algorithm</b> class.
      * It expects an <code>EnvelopeProbe</code> - element objects
      * should really not be concerned with the type of probe.

@@ -206,8 +206,8 @@ public abstract class BunchProbeState<S extends BunchProbeState<S>> extends Prob
      *  and <i>E<sub>R</sub></i> is the rest energy of the beam particles.
      *  </p>
      *  
+     *  <h3>NOTES:</h3>
      *  <p>
-     *  <h4>NOTES:</h4>
      *  - The value (1/4&pi;&epsilon;<sub>0</sub>) is equal to 10<sup>-7</sup><i>c</i><sup>2</sup>
      *  where <i>c</i> is the speed of light.
      *  </p> 

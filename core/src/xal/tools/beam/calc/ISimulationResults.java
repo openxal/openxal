@@ -57,8 +57,8 @@ public interface ISimulationResults {
          *  whatever "beam" means in the context.  The units
          *  are meters and radians.
          *  </p>
+         * <h3>NOTE:</h3>
          * <p>
-         * <h4>NOTE:</h4>
          *  This quantity is obtuse and not well defined - PhaseCoordinates of what?
          *  <br>  
          *              &nbsp; &nbsp; &middot; Is this a centroid location?
@@ -92,8 +92,8 @@ public interface ISimulationResults {
          * <b>&phi;</b> : <b>P</b><sup>6</sup> &rarr; <b>P</b><sup>6</sup> representing the 
          * dynamics of the system. 
          * </p>
+         * <h3>IMPORTANT NOTE</h3>
          * <p>
-         * <h4>IMPORTANT NOTE</h4>
          * This method is provided to
          * maintain compatibility with the previous use of <code>computeFixedOrbit()</code>
          * presented by the trajectory classes for particles, beam envelopes, etc.  (This method

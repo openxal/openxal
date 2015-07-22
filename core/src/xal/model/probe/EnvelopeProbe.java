@@ -36,7 +36,7 @@ import xal.tools.data.DataAdaptor;
  * covariance matrix, which is defined
  * <br>
  * <br>
- * &nbsp; <b>&sigma;</b> &equiv; <b>&tau;</b> - &lt<b>z</b>&gt;&lt<b>z</b>&gt;<i><sup>T</sup></i>
+ * &nbsp; <b>&sigma;</b> &equiv; <b>&tau;</b> - &lt;<b>z</b>&gt;&lt;<b>z</b>&gt;<i><sup>T</sup></i>
  * <br>
  * <br>
  * Note that the centroid position = &lt;<b>z</b>&gt; is carried in the last row
@@ -209,7 +209,7 @@ public class EnvelopeProbe extends BunchProbe<EnvelopeProbeState> {
 
     /**
      * Set the Twiss parameters storage flag.
-     * </p>
+     *
      * <p>
      * Changes the behavior of the save state methods.
      * By setting this flag to <code>true</code> the Twiss
@@ -217,8 +217,8 @@ public class EnvelopeProbe extends BunchProbe<EnvelopeProbeState> {
      * the correlation matrix.  The default behavior for this class
      * is to save the correlation matrix.
      * </p>
+     * <h3>CKA Notes:</h3>
      * <p>
-     * <h4>CKA Notes:</h4>
      * - This is clearly a kluge; use this method with caution.
      * It is provided to maintain backward compatibility.
      * <br>
@@ -253,7 +253,7 @@ public class EnvelopeProbe extends BunchProbe<EnvelopeProbeState> {
 	 * Set the correlation matrix for this probe (7x7 matrix in homogeneous
 	 * coordinates).
 	 * 
-	 * @param matSigam  new phase space covariance matrix of this probe
+	 * @param matTau  new phase space covariance matrix of this probe
 	 * 
 	 * @see xal.tools.beam.CovarianceMatrix
 	 */
@@ -328,7 +328,7 @@ public class EnvelopeProbe extends BunchProbe<EnvelopeProbeState> {
      * phase space coordinates.  This is the primary state object for
      * an <code>EnvelopeProbe</code> object.
      * 
-     * @return  the 7x7 matrix <z*z^T> in homogeneous coordinates
+     * @return  the 7x7 matrix &lt;z*z^T&gt; in homogeneous coordinates
      */
     public CovarianceMatrix getCovariance() {
         return this.stateCurrent.getCovarianceMatrix();
@@ -426,7 +426,7 @@ public class EnvelopeProbe extends BunchProbe<EnvelopeProbeState> {
      *  from the correlation matrix in homogeneous coordinates since the mean values are 
      *  included in that case.
      *
-     *  @return     <(z-<z>)*(z-<z>)^T> = <z*z^T> - <z>*<z>^T
+     *  @return     &lt;(z-&lt;z&gt;)*(z-&lt;z&gt;)^T&gt; = &lt;z*z^T&gt; - &lt;z&gt;*&lt;z&gt;^T
      */
     public CovarianceMatrix  phaseCovariance() {
         return this.stateCurrent.centralCovariance();
@@ -435,7 +435,7 @@ public class EnvelopeProbe extends BunchProbe<EnvelopeProbeState> {
     /** 
      *  Return the phase space coordinates of the centroid in homogeneous coordinates 
      *
-     *  @return         <z> = (<x>, <xp>, <y>, <yp>, <z>, <zp>, 1)^T
+     *  @return         &lt;z&gt; = (&lt;x&gt;, &lt;xp&gt;, &lt;y&gt;, &lt;yp&gt;, &lt;z&gt;, &lt;zp&gt;, 1)^T
      */
     public PhaseVector phaseMean()  {
     	return this.stateCurrent.phaseMean();

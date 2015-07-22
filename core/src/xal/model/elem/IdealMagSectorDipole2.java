@@ -36,8 +36,8 @@ import xal.model.ModelException;
  * where only the quadrupole effects varied, and in contract with the
  * class <code>ThickDipole</code> where only the dipole effects varied.
  * </p>
+ * <h3>References</h3>
  * <p>
- * <h4>References</h4>
  * [1] D.C. Carey, The Optics of Charged Particle Beams (Harwood, 1987)
  * <br>
  * [2] H. Wiedemann, Particle Accelerator Physics I, 2nd Ed. (Springer, 1999)
@@ -403,7 +403,7 @@ public class IdealMagSectorDipole2 extends ThickElectromagnet {
      * 
      * <l>
      *  K_quad := (1/R)(1/B)(dB/dR)
-     * </l
+     * </l>
      * <l>
      *          = - h^2 * n0
      * </l>

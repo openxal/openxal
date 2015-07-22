@@ -483,7 +483,6 @@ public abstract class Element implements IElement {
      * for this method to work correctly!
      * </p>
      * 
-     *  </p>
      *
      *  @param  probe       probe object to propagate
      *  @param  pos         I think it is position of the probe within this element

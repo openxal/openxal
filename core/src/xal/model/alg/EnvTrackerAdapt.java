@@ -806,7 +806,6 @@ public class EnvTrackerAdapt extends EnvelopeTrackerBase {
      *
      *  @param  ifcElem     interface to the beam element
      *  @param  probe    interface to the probe
-     *  @param  dblLen      length of element subsection to advance through
      *
      *  @exception ModelException     bad element transfer matrix/corrupt probe state
      */

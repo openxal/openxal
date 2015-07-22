@@ -231,8 +231,8 @@ public abstract class Tracker implements IAlgorithm, IArchive {
      * <code>AcceleratorSeq</code> name. 
      * </p>
      * 
+     * <h3>NOTE</h3>
      * <p>
-     * <h4>NOTE</h4>
      * &middot; The returned algorithm type is that specified by the <tt>"type"</tt> attribute
      * of the <code>&lt;Algorithm&gt;</code> table contained in the 
      * <code>model.params</code> file.  The developer must ensure that the <tt>Probe</tt>
@@ -246,7 +246,7 @@ public abstract class Tracker implements IAlgorithm, IArchive {
      * @throws DataFormatException  bad data format, error reading data
      * 
      * @author Christopher K. Allen
-     * @since  > Oct 17, 2012
+     * @since  &gt; Oct 17, 2012
      * 
      * @deprecated  I want to discourage use of this method since it return the same "default"
      *              algorithm regardless the type of probe being used.  Please refer to
@@ -269,8 +269,8 @@ public abstract class Tracker implements IAlgorithm, IArchive {
      * have the given value of the argument <code>strLocationId</code>.
      * </p>
      * 
+     * <h3>NOTE</h3>
      * <p>
-     * <h4>NOTE</h4>
      * &middot; The returned algorithm type is that specified by the <tt>"type"</tt> attribute
      * of the <code>&lt;Algorithm&gt;</code> table contained in the 
      * <code>model.params</code> file.  The developer must ensure that the <tt>Probe</tt>
@@ -285,7 +285,7 @@ public abstract class Tracker implements IAlgorithm, IArchive {
      * @throws DataFormatException  bad data format, error reading data
      * 
      * @author Christopher K. Allen
-     * @since  > Oct 17, 2012
+     * @since  &gt; Oct 17, 2012
      * 
      * @deprecated  I want to discourage use of this method since it return the same "default"
      *              algorithm regardless the type of probe being used.  Please refer to

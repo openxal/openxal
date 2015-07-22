@@ -296,8 +296,8 @@ public class TwissProbeState extends BunchProbeState<TwissProbeState> {
      *  Returns homogeneous phase space coordinates of the centroid.  The units
      *  are meters and radians.
      *  </p>
+     *  <h3>CKA NOTE:</h3>
      *  <p>
-     *  <h4>CKA NOTE:</h4>
      *  - This method simply returns the value of TwissProbeState#getCentroid()
      *  <br>
      *  - It is included to support the <code>IPhaseState</code> interface

@@ -36,8 +36,8 @@ import xal.smf.scada.ScadaRecord;
  * fixed, physical (carbon) wires used to measure the profile of
  * the particle beam.  This class implements the device API.  
  * </p>
+ * <h3>NOTES:</h3>
  * <p>
- * <h4>NOTES:</h4>
  * &middot; There is a pretty egregious kluge on the attribute 
  * <code>DaqConfig.cntWires</code>.  The value is hard coded with the constant
  * <code>DaqConfig.CNT_WIRES</code> since there is no way to dynamically
@@ -60,7 +60,7 @@ public class WireHarp extends ProfileDevice {
      */
 
     /**
-     * <h4>Wire Scanner Commands</h4>
+     * <h3>Wire Scanner Commands</h3>
      * <p>
      * The commands below represent the possible values for the first argument 
      * in the command array.  It provides the
@@ -299,8 +299,8 @@ public class WireHarp extends ProfileDevice {
      * there are status records for the operation of each wire within each 
      * measurement plane (eg., horizontal, vertical, diagonal). 
      * <br>
+     * <h3>NOTE</h3>
      * <br>
-     * <h4>NOTE</h4>
      * &middot; There is a pretty egregious kluge on the attribute 
      * <code>DaqConfig.cntWires</code>.  The value is hard coded with the constant
      * <code>DaqConfig.CNT_WIRES</code> since there is no way to dynamically
@@ -392,7 +392,7 @@ public class WireHarp extends ProfileDevice {
          * Bit record indicating operation status for each wire of the
          * horizontal wire set.
          * <br> <br>
-         * &nbsp; &nbsp; bolStatus = 2<sup>n</sup> & statWireHor
+         * &nbsp; &nbsp; bolStatus = 2<sup>n</sup> &amp; statWireHor
          * <br> <br>
          * where <i>n</i>=0,1,... is the index of the wire.
          * <br><br>
@@ -409,7 +409,7 @@ public class WireHarp extends ProfileDevice {
          * Bit record indicating operation status for each wire
          * of the vertical wire set.
          * <br> <br>
-         * &nbsp; &nbsp; bolStatus = 2<sup>n</sup> & statWireVer
+         * &nbsp; &nbsp; bolStatus = 2<sup>n</sup> &amp; statWireVer
          * <br> <br>
          * where <i>n</i>=0,1,... is the index of the wire.  
          * <br><br>
@@ -426,7 +426,7 @@ public class WireHarp extends ProfileDevice {
          * Bit record indicating operation status for each wire
          * of the diagonal wire set.
          * <br> <br>
-         * &nbsp; &nbsp; bolStatus = 2<sup>n</sup> & statWireDia
+         * &nbsp; &nbsp; bolStatus = 2<sup>n</sup> &amp; statWireDia
          * <br> <br>
          * where <i>n</i>=0,1,... is the index of the wire.  
          * <br><br>
