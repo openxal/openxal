@@ -21,8 +21,8 @@ import java.util.List;
  * annotation data for each field is returned as a map of the data structure field
  * name to the actual field descriptor.
  * </p>
+ * <h3>NOTE:</h3>
  * <p>
- * <h4>NOTE:</h4>
  * This whole mechanism of <code>ScadaFieldDescriptor</code> usage is (hopefully) going
  * to be eradicated.  It is too clumsy and the Java Annotation mechanism seems
  * more appropriate.
@@ -88,8 +88,8 @@ public class ScadaFieldMap extends HashMap<String, ScadaFieldDescriptor> {
      * Create a new SCADA field map object which contains the fields
      * in the given list.
      * </p>
+     * <h3>NOTE:</h3>
      * <p>
-     * <h4>NOTE:</h4>
      * The class <code>ScadaFieldList</code> is derived from the type
      * <code>List<ScadaFieldDescriptor></code>.  Thus, objects of that type
      * maybe be used as arguments.

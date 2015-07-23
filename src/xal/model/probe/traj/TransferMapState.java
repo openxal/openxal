@@ -17,15 +17,15 @@ import xal.model.xml.ParsingException;
  * <p>
  * Probe state for the transfer map tracker.
  * </p>
+ * <h3>NOTES: CKA</h3>
  * <p>
- * <h4>NOTES: CKA</h4>
  * &middot; I noticed a very brittle situation with this implementation.  
  * <code>ICoordinateState</code> requires the methods 
  * <code>@link ICoordinateState#getPhaseCoordinates()}</code> etc.
  * Interface <code>ICoordinateState</code> extends <code>IProbeState</code>.
  * Well, <code>TransferMapState</code> inherits from <code>ProbeState</code>
  * which implements <code>IProbeState</code>.  It's getting dicey.
- * <br/>
+ * <br>
  * &middot; The <code>TransferMapState</code> is really meant to compute
  * transfer maps only, and be very light weight.  If you want to compute
  * closed orbit maps we should make a different probe.

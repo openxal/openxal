@@ -60,7 +60,7 @@ public interface IComponent {
     /**
      *  Return the total length of the composite element.
      *
-     *  @return     length of the element (in <bold>meters</bold>)
+     *  @return     length of the element (in <b>meters</b>)
      */
     double   getLength();
     
@@ -89,7 +89,7 @@ public interface IComponent {
      * </p> 
      * <p>
      * <strong>NOTES</strong>: CKA
-     * <br/>
+     * <br>
      * &middot; Support for backward propagation
      * February, 2009.
      * </p>
@@ -106,7 +106,7 @@ public interface IComponent {
      * </p>
      * <p> 
      * <strong>NOTES</strong>: CKA
-     * <br/>
+     * <br>
      * &middot; Support for backward propagation
      * February, 2009.
      * </p>

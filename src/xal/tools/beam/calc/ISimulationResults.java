@@ -57,14 +57,14 @@ public interface ISimulationResults {
          *  whatever "beam" means in the context.  The units
          *  are meters and radians.
          *  </p>
+         * <h3>NOTE:</h3>
          * <p>
-         * <h4>NOTE:</h4>
          *  This quantity is obtuse and not well defined - PhaseCoordinates of what?
-         *  <br/>  
+         *  <br>  
          *              &nbsp; &nbsp; &middot; Is this a centroid location?
-         *  <br/>  
+         *  <br>  
          *              &nbsp; &nbsp; &middot; From which starting orbit?  
-         *  <br/>  
+         *  <br>  
          *              &nbsp; &nbsp; &middot; Not all simulation results have quantities 
          *                                      naturally associated with phase coordinates
          * </p>
@@ -92,8 +92,8 @@ public interface ISimulationResults {
          * <b>&phi;</b> : <b>P</b><sup>6</sup> &rarr; <b>P</b><sup>6</sup> representing the 
          * dynamics of the system. 
          * </p>
+         * <h3>IMPORTANT NOTE</h3>
          * <p>
-         * <h4>IMPORTANT NOTE</h4>
          * This method is provided to
          * maintain compatibility with the previous use of <code>computeFixedOrbit()</code>
          * presented by the trajectory classes for particles, beam envelopes, etc.  (This method
@@ -133,12 +133,12 @@ public interface ISimulationResults {
         /**
          * Compute and return the aberration at the given state location 
          * due to energy spread.  The returned value <b>&Delta;</b> is the vector
-         * <br/>
-         * <br/>
+         * <br>
+         * <br>
          * &nbsp; &nbsp; <b>&Delta;</b> &equiv; 
          * (&Delta;<i>x</i>, &Delta;<i>x'</i>, &Delta;<i>y</i>, &Delta;<i>y'</i>, 0, 0, 1)
-         * <br/>
-         * <br/>
+         * <br>
+         * <br>
          * where, when multiplied by momentum spread &delta; &equiv; &Delta;<i>p</i>/<i>p</i> yields
          * the change in fixed orbit position.  That is <b>z</b> = <b>z</b><sub>0</sub> + &delta;<b>&Delta;</b>.
          * 
@@ -210,11 +210,11 @@ public interface ISimulationResults {
          * Let the full-turn map a the state location be denoted <b>&Phi;</b><sub><i>n</i></sub> (or the transfer
          * matrix from entrance to location <i>s<sub>n</sub></i> for a linac).
          * The transverse plane dispersion vector <b>&Delta;</b> is defined  
-         * <br/>
-         * <br/> 
+         * <br>
+         * <br> 
          * &nbsp; &nbsp; <b>&Delta;</b><sub><i>t</i></sub> &equiv; -(1/&gamma;<sup>2</sup>)[d<i>x</i>/d<i>z'</i>, d<i>x'</i>/d<i>z'</i>, d<i>y</i>/d<i>z'</i>, d<i>y'</i>/d<i>z'</i>]<sup><i>T</i></sup> .
-         * <br/>
-         * <br/>  
+         * <br>
+         * <br>  
          * It can be identified as the first 4 entries of the 6<sup><i>th</i></sup> 
          * column in the transfer matrix <b>&Phi;</b></b><sub><i>n</i></sub>. The above vector
          * quantifies the change in the transverse particle phase 
@@ -222,17 +222,17 @@ public interface ISimulationResults {
          * The factor -(1/&gamma;<sup>2</sup>) is needed to convert from longitudinal divergence
          * angle <i>z'</i> used by XAL to momentum &delta;<i>p</i> &equiv; &Delta;<i>p</i>/<i>p</i> used in 
          * the dispersion definition.  Specifically,
-         * <br/>
-         * <br/>
+         * <br>
+         * <br>
          * &nbsp; &nbsp; &delta;<i>p</i> &equiv; &Delta;<i>p</i>/<i>p</i> = &gamma;<sup>2</sup><i>z</i>'
-         * <br/>
-         * <br/>
+         * <br>
+         * <br>
          * As such, the above vector can be better described
-         * <br/>
-         * <br/> 
+         * <br>
+         * <br> 
          * &nbsp; &nbsp; <b>&Delta;</b><sub><i>t</i></sub> &equiv; [&Delta;<i>x</i>/&delta;<i>p</i>, &Delta;<i>x'</i>/&delta;<i>p</i>, &Delta;<i>y</i>/&delta;<i>p</i>, &Delta;<i>y'</i>/&delta;<i>p</i>]<sup><i>T</i></sup>
-         * <br/>
-         * <br/>
+         * <br>
+         * <br>
          * explicitly describing the change in transverse phase coordinate for fractional
          * change in momentum &delta;<i>p</i>.  
          * </p>
@@ -250,24 +250,24 @@ public interface ISimulationResults {
          * &delta;<i>p</i>.  That is, the particle ends up
          * in the same location each revolution. With a finite momentum spread of &delta;<i>p</i> &gt; 0
          * we require this require that
-         * <br/>
-         * <br/>
+         * <br>
+         * <br>
          * &nbsp; &nbsp; <b>T</b><sub><i>n</i><b></sub>z</b><sub><i>t</i></sub> + &delta;<i>p</i><b>&Delta;</b><sub><i>t</i></sub> = <b>z</b><sub><i>t</i></sub> ,
-         * <br/>
-         * <br/>
+         * <br>
+         * <br>
          * which can be written
-         * <br/>
-         * <br/>
+         * <br>
+         * <br>
          * &nbsp; <b>z</b><sub><i>t</i></sub> = &delta;<i>p</i>(<b>T</b></b><sub><i>n</i></sub> - <b>I</b>)<sup>-1</sup><b>&Delta;</b><sub><i>t</i></sub> ,
-         * <br/>
-         * <br/>
+         * <br>
+         * <br>
          * where <b>I</b> is the identity matrix.  Dividing both sides by &delta;<i>p</i> yields the final
          * result
-         * <br/>
-         * <br/>
+         * <br>
+         * <br>
          * &nbsp; <b>z</b><sub>0</sub> &equiv; <b>z</b><sub><i>t</i></sub>/&delta;<i>p</i> = (<b>T</b></b><sub><i>n</i></sub> - <b>I</b>)<sup>-1</sup><b>&Delta;</b><sub><i>t</i></sub> ,
-         * <br/>
-         * <br/>
+         * <br>
+         * <br>
          * which is the returned value of this method.  It is normalized by
          * &delta;<i>p</i> so that we can compute the closed orbit for any given momentum spread.
          * </p>

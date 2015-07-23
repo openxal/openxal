@@ -121,7 +121,7 @@ public class IdealEQuad extends ThickElectrostatic {
     /**  
      *  Get the voltage applied to the electrostatic quad pole tips.
      *
-     *  @return     Voltage (in <bold>kV</bold>).
+     *  @return     Voltage (in <b>kV</b>).
      */
     public double getVoltage() {
         return m_dblVoltage;
@@ -141,7 +141,7 @@ public class IdealEQuad extends ThickElectrostatic {
     /**  
      *  Set the applied Voltage on the electrostatic quad.
      *
-     *  @param  dblVoltage    Voltage (in <bold>kV</bold>).
+     *  @param  dblVoltage    Voltage (in <b>kV</b>).
      */
     public void setVoltage(double dblVoltage) {
         m_dblVoltage = dblVoltage;
@@ -150,7 +150,7 @@ public class IdealEQuad extends ThickElectrostatic {
     /**  
      *  Get the Aperture radius of the electrostatic quad.
      *
-     *  @return     Aperture Radius (in <bold>m</bold>).
+     *  @return     Aperture Radius (in <b>m</b>).
      */
     
     public double getAperture() {
@@ -160,7 +160,7 @@ public class IdealEQuad extends ThickElectrostatic {
     /**  
      *  Set the Aperture radius of the electrostatic quad.
      *
-     *  @param  dblAperture     Aperture Radius (in <bold>m</bold>).
+     *  @param  dblAperture     Aperture Radius (in <b>m</b>).
      */
     public void setAperture(double dblAperture) {
         m_dblAperture = dblAperture;
@@ -177,7 +177,7 @@ public class IdealEQuad extends ThickElectrostatic {
      *  @param  probe   propagating probe
      *  @param  dblLen  length of subsection to propagate through <b>meters</b>
      *  
-     *  @return         the elapsed time through section<bold>Units: seconds</bold> 
+     *  @return         the elapsed time through section<b>Units: seconds</b> 
      */
     public double elapsedTime(IProbe probe, double dblLen)  {
         return super.compDriftingTime(probe, dblLen);
@@ -265,7 +265,7 @@ public class IdealEQuad extends ThickElectrostatic {
     /**
 	 * Conversion method to be provided by the user
 	 * 
-	 * @param latticeElement the SMF node to convert
+	 * @param element the SMF node to convert
 	 */
 	@Override
 	public void initializeFrom(LatticeElement element) {

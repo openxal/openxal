@@ -140,10 +140,10 @@ public class CalculationsOnRings extends CalculationsOnMachines {
      * <code>{@link #calculatePhaseAdvPerCell(PhaseMatrix)}</code> given the
      * full turn matrix at the ring entrance.
      * </p>
+     * <h3>NOTES:</h3>
      * <p>  
-     * <h4>NOTES:</h4>
      * &middot; The ring tunes and betatron phase advances differ by a factor 2&pi;.
-     * <br/>
+     * <br>
      * &middot; The entrance of the ring is assumed to be the location of the
      * first and last states of the solution trajectory.
      * </p>
@@ -165,8 +165,8 @@ public class CalculationsOnRings extends CalculationsOnMachines {
      * full turn matrix <b>&Phi;</b> at the ring entrance. It is invariant under 
      * the action of <b>&Phi;</b>, that is, <b>&Phi;z</b> = <b>z</b>. 
      * </p>
+     * <h3>NOTES:</h3>
      * <p>  
-     * <h4>NOTES:</h4>
      * &middot; The entrance of the ring is assumed to be the location of the
      * first and last states of the solution trajectory.
      * </p>
@@ -191,8 +191,8 @@ public class CalculationsOnRings extends CalculationsOnMachines {
      * the actual beam (rather than the normalized size &beta;), or "acceptance".  Thus it
      * cannot be computed here and <code>NaN</code> is returned instead.
      * </p>
+     * <h3>NOTES:</h3>
      * <p>  
-     * <h4>NOTES:</h4>
      * &middot; The entrance of the ring is assumed to be the location of the
      * first and last states of the solution trajectory.
      * </p>
@@ -261,11 +261,11 @@ public class CalculationsOnRings extends CalculationsOnMachines {
      * </p>
      * <p>
      * The basic computation is 
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * &nbsp; &nbsp;  &nu; = (1/2&pi;) cos<sup>-1</sup>[&frac12; Tr <b>&Phi;</b><sub>&alpha;&alpha;</sub>] ,
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * where <b>&Phi;</b></b><sub>&alpha;&alpha;</sub> is the 2&times;2 block diagonal 
      * of the the provided transfer matrix for the &alpha; phase plane, 
      * and Tr <b>&Phi;</b></b><sub>&alpha;&alpha;</sub> indicates the trace of matrix 
@@ -503,12 +503,12 @@ public class CalculationsOnRings extends CalculationsOnMachines {
      * instance).  Then the full turn matrix 
      * <b>&Phi;</b><sub><i>n</i></sub> for the machine at location <i>s<sub>n</sub></i>
      * is given by
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * &nbsp; &nbsp; <b>&Phi;</b><sub><i>n</i></sub> = <b>T</b><sub><i>n</i></sub> &sdot; <b>&Phi;</b><sub>0</sub>
      *               &sdot; <b>T</b><sub><i>n</i></sub><sup>-1</sup> .
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * That is, we conjugate the full transfer map for this machine by the transfer map 
      * for the given state.
      * </p> 
@@ -542,11 +542,11 @@ public class CalculationsOnRings extends CalculationsOnMachines {
      * <i>S</i><sub>2</sub> are really equivalence classes of real numbers
      * [<i>s</i><sub>1</sub>] &sub; <b>R</b> and [<i>s</i><sub>2</sub>] &sub; <b>R</b>,
      * respectively.  Each equivalence class can be represented
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * &nbsp; &nbsp; [<i>s<sub>i</sub></i> ] = { <i>s<sub>i</sub></i> + <i>nL</i> | <i>n</i> &in; <b>Z</b><sub>+</sub> } 
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * where <i>L</i> is the circumference of the ring.  Because of the way the ring
      * is represented as a data structure, we have <i>s</i> &in; [0,<i>L</i>]. 
      * However, we must enforce the condition that <i>s</i><sub>2</sub> is always
@@ -571,18 +571,18 @@ public class CalculationsOnRings extends CalculationsOnMachines {
      * Collecting all of the above, if <i>s</i><sub>2</sub> &lt; <i>s</i><sub>1</sub> 
      * then we have a propagation through point <i>s</i> = 0 and we must include the
      * full turn matrix according to
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * &nbsp; &nbsp; <b>&Phi;</b><sub>2,1</sub> = <b>&Phi;</b><sub>2</sub><b>&Phi;</b><sub>0</sub><b>&Phi;</b><sub>1</sub><sup>-1</sup> .
-     * <br/>
-     * <br/> 
+     * <br>
+     * <br> 
      * If <i>s</i><sub>2</sub> &gt; <i>s</i><sub>1</sub> then we can compute the transfer
      * matrix <b>&Phi;</b><sub>2,1</sub> in the usual fashion
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * &nbsp; &nbsp; <b>&Phi;</b><sub>2,1</sub> = <b>&Phi;</b><sub>2</sub><b>&Phi;</b><sub>1</sub><sup>-1</sup> .
-     * <br/>
-     * <br/> 
+     * <br>
+     * <br> 
      * </p>
      * 
      * @param state1    phase state <i>S</i><sub>1</sub> defining ring position <i>s</i><sub>1</sub>
@@ -630,11 +630,11 @@ public class CalculationsOnRings extends CalculationsOnMachines {
      * <i>S</i><sub>2</sub> are really equivalence classes of real numbers
      * [<i>s</i><sub>1</sub>] &sub; <b>R</b> and [<i>s</i><sub>2</sub>] &sub; <b>R</b>,
      * respectively.  Each equivalence class can be represented
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * &nbsp; &nbsp; [<i>s<sub>i</sub></i> ] = { <i>s<sub>i</sub></i> + <i>nL</i> | <i>n</i> &in; <b>Z</b><sub>+</sub> } 
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * where <i>L</i> is the circumference of the ring.  Because of the way the ring
      * is represented as a data structure, we have <i>s</i> &in; [0,<i>L</i>]. 
      * However, we must enforce the condition that <i>s</i><sub>2</sub> is always
@@ -659,18 +659,18 @@ public class CalculationsOnRings extends CalculationsOnMachines {
      * Collecting all of the above, if <i>s</i><sub>2</sub> &lt; <i>s</i><sub>1</sub> 
      * then we have a propagation through point <i>s</i> = 0 and we must include the
      * full turn map according to
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * &nbsp; &nbsp; <b>T</b><sub>2,1</sub> = <b>T</b><sub>2</sub><b>T</b><sub>0</sub><b>T</b><sub>1</sub><sup>-1</sup> .
-     * <br/>
-     * <br/> 
+     * <br>
+     * <br> 
      * If <i>s</i><sub>2</sub> &gt; <i>s</i><sub>1</sub> then we can compute the transfer
      * map <b>T</b><sub>2,1</sub> in the usual fashion
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * &nbsp; &nbsp; <b>T</b><sub>2,1</sub> = <b>T</b><sub>2</sub><b>T</b><sub>1</sub><sup>-1</sup> .
-     * <br/>
-     * <br/> 
+     * <br>
+     * <br> 
      * </p>
      * 
      * @param state1    phase state <i>S</i><sub>1</sub> defining ring position <i>s</i><sub>1</sub>
@@ -728,12 +728,12 @@ public class CalculationsOnRings extends CalculationsOnMachines {
      * <b>&Phi;</b><sub>2,2</sub> be the one-turn map at position <i>s</i><sub>2</sub> in 
      * the ring. Then the returned array of phase vectors {<b>z</b><sub><i>n</i></sub> } is
      * given by
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * &nbsp; &nbsp; <b>z</b><sub><i>n</i></sub> = [<b>&Phi;</b><sub>2,2</sub>]<sup><i>n</i></sup> 
      *                                             <b>&Phi;</b><sub>2,1</sub> <b>z</b><sub>inj</sub> .
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * Note that <b>z</b><sub>0</sub> is <b>&Phi;</b><sub>2,1</sub> <b>z</b><sub>inj</sub> , the
      * phase coordinates of the particle after propagating from the injection location to the
      * observation location.                                     
@@ -799,12 +799,12 @@ public class CalculationsOnRings extends CalculationsOnMachines {
      * <b>&Phi;</b><sub>2,2</sub> be the one-turn map at position <i>s</i><sub>2</sub> in 
      * the ring. Then the returned array of phase vectors {<b>z</b><sub><i>n</i></sub> } is
      * given by
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * &nbsp; &nbsp; <b>z</b><sub><i>n</i></sub> = [<b>&Phi;</b><sub>2,2</sub>]<sup><i>n</i></sup> 
      *                                             <b>&Phi;</b><sub>2,1</sub> <b>z</b><sub>inj</sub> .
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * Note that <b>z</b><sub>0</sub> is <b>&Phi;</b><sub>2,1</sub> <b>z</b><sub>inj</sub> , the
      * phase coordinates of the particle after propagating from the injection location to the
      * observation location.                                     
@@ -879,14 +879,14 @@ public class CalculationsOnRings extends CalculationsOnMachines {
      * </p>
      * The following are the calculations used for the Courant-Snyder parameters of a 
      * single phase plane:
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * &nbsp; &nbsp; &alpha; &equiv; -<i>ww'</i> = (&phi;<sub>11</sub> - &phi;<sub>22</sub>)/(2 sin &sigma;) ,
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * &nbsp; &nbsp; &beta; &equiv; <i>w</i><sup>2</sup> = &phi;<sub>12</sub>/sin &sigma;
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * where &phi;<sub><i>ij</i></sub> are the elements of the 2&times;2 diagonal blocks of
      * the one-turn matrix <b>&Phi;</b> for the the particular phase plane. The particle 
      * amplitude function <i>w</i>
@@ -916,11 +916,11 @@ public class CalculationsOnRings extends CalculationsOnMachines {
 //     * <p>
 //     * Let the full-turn map a the state location be denoted <b>&Phi;</b>.
 //     * The transverse plane dispersion vector <b>&Delta;</b> is defined  
-//     * <br/>
-//     * <br/> 
+//     * <br>
+//     * <br> 
 //     * &nbsp; &nbsp; <b>&Delta;</b><sub><i>t</i></sub> &equiv; -(1/&gamma;<sup>2</sup>)[d<i>x</i>/d<i>z'</i>, d<i>x'</i>/d<i>z'</i>, d<i>y</i>/d<i>z'</i>, d<i>y'</i>/d<i>z'</i>]<sup><i>T</i></sup> .
-//     * <br/>
-//     * <br/>  
+//     * <br>
+//     * <br>  
 //     * It can be identified as the first 4 entries of the 6<sup><i>th</i></sup> 
 //     * column in the transfer matrix <b>&Phi;</b>. The above vector
 //     * quantifies the change in the transverse particle phase 
@@ -928,17 +928,17 @@ public class CalculationsOnRings extends CalculationsOnMachines {
 //     * The factor -(1/&gamma;<sup>2</sup>) is needed to convert from longitudinal divergence
 //     * angle <i>z'</i> used by XAL to momentum &delta;<i>p</i> &equiv; &Delta;<i>p</i>/<i>p</i> used in 
 //     * the dispersion definition.  Specifically,
-//     * <br/>
-//     * <br/>
+//     * <br>
+//     * <br>
 //     * &nbsp; &nbsp; &delta;<i>p</i> &equiv; &Delta;<i>p</i>/<i>p</i> = &gamma;<sup>2</sup><i>z</i>'
-//     * <br/>
-//     * <br/>
+//     * <br>
+//     * <br>
 //     * As such, the above vector can be better described
-//     * <br/>
-//     * <br/> 
+//     * <br>
+//     * <br> 
 //     * &nbsp; &nbsp; <b>&Delta;</b><sub><i>t</i></sub> &equiv; [&Delta;<i>x</i>/&delta;<i>p</i>, &Delta;<i>x'</i>/&delta;<i>p</i>, &Delta;<i>y</i>/&delta;<i>p</i>, &Delta;<i>y'</i>/&delta;<i>p</i>]<sup><i>T</i></sup>
-//     * <br/>
-//     * <br/>
+//     * <br>
+//     * <br>
 //     * explicitly describing the change in transverse phase coordinate for fractional
 //     * change in momentum &delta;<i>p</i>.  
 //     * </p>
@@ -956,24 +956,24 @@ public class CalculationsOnRings extends CalculationsOnMachines {
 //     * &delta;<i>p</i>.  That is, the particle ends up
 //     * in the same location each revolution. With a finite momentum spread of &delta;<i>p</i> &gt; 0
 //     * we require this require that
-//     * <br/>
-//     * <br/>
+//     * <br>
+//     * <br>
 //     * &nbsp; &nbsp; <b>Tz</b><sub><i>t</i></sub> + &delta;<i>p</i><b>&Delta;</b><sub><i>t</i></sub> = <b>z</b><sub><i>t</i></sub> ,
-//     * <br/>
-//     * <br/>
+//     * <br>
+//     * <br>
 //     * which can be written
-//     * <br/>
-//     * <br/>
+//     * <br>
+//     * <br>
 //     * &nbsp; <b>z</b><sub><i>t</i></sub> = &delta;<i>p</i>(<b>T</b> - <b>I</b>)<sup>-1</sup><b>&Delta;</b><sub><i>t</i></sub> ,
-//     * <br/>
-//     * <br/>
+//     * <br>
+//     * <br>
 //     * where <b>I</b> is the identity matrix.  Dividing both sides by &delta;<i>p</i> yields the final
 //     * result
-//     * <br/>
-//     * <br/>
+//     * <br>
+//     * <br>
 //     * &nbsp; <b>z</b><sub>0</sub> &equiv; <b>z</b><sub><i>t</i></sub>/&delta;<i>p</i> = (<b>T</b> - <b>I</b>)<sup>-1</sup><b>&Delta;</b><sub><i>t</i></sub> ,
-//     * <br/>
-//     * <br/>
+//     * <br>
+//     * <br>
 //     * which is the returned value of this method.  It is normalized by
 //     * &delta;<i>p</i> so that we can compute the closed orbit for any given momentum spread.
 //     * </p>

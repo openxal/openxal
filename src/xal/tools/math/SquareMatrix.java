@@ -187,19 +187,19 @@ public abstract class SquareMatrix<M extends SquareMatrix<M>> extends BaseMatrix
      * Solves the linear matrix-vector system without destroying the given
      * data vector.  Say the linear system can be represented algebraically
      * as
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * &nbsp; &nbsp; <b>Ax</b> = <b>y</b> ,
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * where <b>A</b> is this matrix, <b>x</b> is the solution matrix to be
      * determined, and <b>y</b> is the data vector provided as the argument.
      * The returned value is equivalent to 
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * &nbsp; &nbsp; <b>x</b> = <b>A</b><sup>-1</sup><b>y</b> ,
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * that is, the value of vector <b>x</b>.  
      * <p>
      * </p>
@@ -260,19 +260,19 @@ public abstract class SquareMatrix<M extends SquareMatrix<M>> extends BaseMatrix
      * Solves the linear matrix-vector system and returns the solution in
      * the given data vector.  Say the linear system can be represented 
      * algebraically as
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * &nbsp; &nbsp; <b>Ax</b> = <b>y</b> ,
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * where <b>A</b> is this matrix, <b>x</b> is the solution matrix to be
      * determined, and <b>y</b> is the data vector provided as the argument.
      * The returned value is equivalent to 
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * &nbsp; &nbsp; <b>x</b> = <b>A</b><sup>-1</sup><b>y</b> ,
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * that is, the value of vector <b>y</b>.  
      * </p>
      * <p> 
@@ -370,11 +370,11 @@ public abstract class SquareMatrix<M extends SquareMatrix<M>> extends BaseMatrix
      * usual product of the given vector pre-multiplied by this matrix.  Specifically,
      * denote by <b>A</b> this matrix and by <b>x</b> the argument vector, then
      * the components {<i>y<sub>i</sub></i>} of the returned vector <b>y</b> are given by
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * &nbsp; &nbsp; <i>y</i><sub><i>i</i></sub> = &Sigma;<sub><i>j</i></sub> <i>A<sub>ij</sub>x<sub>j</sbu></i>
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * </p>
      * <p>
      * The returned vector must be created using Java reflection, so this operation
@@ -452,11 +452,11 @@ public abstract class SquareMatrix<M extends SquareMatrix<M>> extends BaseMatrix
      *  Denote by <b>&sigma;</b><sub>0</sub> this matrix object, and denote 
      *  the argument matrix as <b>&Phi;</b>.  Then the returned matrix,
      *  <b>&sigma;</b><sub>1</sub> is given by
-     *  <br/>
-     *  <br/>
+     *  <br>
+     *  <br>
      *  &nbsp; &nbsp; <b>&sigma;</b><sub>1</sub> = <b>&Phi;</b><b>&sigma;</b><sub>0</sub><b>&Phi;</b><sup><i>T</i></sup>
-     *  <br/>
-     *  <br/> 
+     *  <br>
+     *  <br> 
      *  </p>
      *
      *  @param  matPhi      conjugating matrix <b>&Phi;</b> (typically a transfer matrix)
@@ -482,11 +482,11 @@ public abstract class SquareMatrix<M extends SquareMatrix<M>> extends BaseMatrix
      *  Denote by <b>&sigma;</b><sub>0</sub> this matrix object, and denote 
      *  the argument matrix as <b>&Phi;</b>.  Then the returned matrix,
      *  <b>&sigma;</b><sub>1</sub> is given by
-     *  <br/>
-     *  <br/>
+     *  <br>
+     *  <br>
      *  &nbsp; &nbsp; <b>&sigma;</b><sub>1</sub> = <b>&Phi;</b><b>&sigma;</b><sub>0</sub><b>&Phi;</b><sup><i>-1</i></sup>
-     *  <br/>
-     *  <br/> 
+     *  <br>
+     *  <br> 
      *  </p>
      *
      *  @param  matPhi      conjugating matrix <b>&Phi;</b> (typically a transfer matrix)

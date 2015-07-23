@@ -43,7 +43,7 @@ public interface IElectrostatic /*extends IElement*/ {
     /**
      *  Get the voltage applied to the electrostatic device
      *
-     *  @return     Voltage (in <bold>kV</bold>).
+     *  @return     Voltage (in <b>kV</b>).
      */
     public double getVoltage();
     
@@ -61,7 +61,7 @@ public interface IElectrostatic /*extends IElement*/ {
     /**
      *  Set the voltage applied to the electrostatic device.
      *
-     *  @param  dblVoltage    Voltage (in <bold>kV</bold>).
+     *  @param  dblVoltage    Voltage (in <b>kV</b>).
      */
     public void setVoltage(double dblVoltage);
     

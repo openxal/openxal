@@ -280,9 +280,7 @@ public class Interval implements java.io.Serializable {
      }
 
      /**
-      * <p>
-      * <h4>Contains Almost Everywhere - &sub; a.e.</h4>
-      * </p>
+      * <h3>Contains Almost Everywhere - &sub; a.e.</h3>
       * <p>
       * Checks whether or not the given interval is a proper subset
       * of this interval, modulo the endpoints.  Specifically, <var>I</var>
@@ -321,7 +319,7 @@ public class Interval implements java.io.Serializable {
       * of a point <i>x</i> &isin; <i>I</i> 
       * can computed by solving the following linear equation
       * for the {&lambda;<i><sub>i</sub></i>} :
-      * <br/>
+      * <br>
       * &nbsp;<table>
       *         <td>
       *         <table>
@@ -381,8 +379,8 @@ public class Interval implements java.io.Serializable {
       * where <b>p</b> = 
       * <i>x</i> &isin; <i>R</i>.
       * </p>
+      * <h3>NOTES:</h3>
       * <p>
-      * <h4>NOTES:</h4>
       * &middot; After solving the above equation for the 
       * {&lambda;<sub>1</sub>,&lambda;<sub>2</sub>}
       * if there is a &lambda;<sub>i</sub> such that 

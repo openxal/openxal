@@ -127,7 +127,7 @@ public class ThinLens extends ThinElement {
      *      Negative values indicate focusing effect
      *      Positive values indicate defocusing effect
      *
-     *  @return     lens focal length (in <bold>meters</bold>)
+     *  @return     lens focal length (in <b>meters</b>)
      */
     double getFocalLengthX() { return m_dblFocX; };
     
@@ -136,7 +136,7 @@ public class ThinLens extends ThinElement {
      *      Negative values indicate focusing effect
      *      Positive values indicate defocusing effect
      *
-     *  @return     lens focal length (in <bold>meters</bold>)
+     *  @return     lens focal length (in <b>meters</b>)
      */
     double getFocalLengthY() { return m_dblFocY; };
     
@@ -145,7 +145,7 @@ public class ThinLens extends ThinElement {
      *      Negative values indicate focusing effect
      *      Positive values indicate defocusing effect
      *
-     *  @return     lens focal length (in <bold>meters</bold>)
+     *  @return     lens focal length (in <b>meters</b>)
      */
     double getFocalLengthZ() { return m_dblFocZ; };
     

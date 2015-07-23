@@ -35,8 +35,8 @@ import xal.model.ModelException;
  * @author jdg
  * @author Christopher K. Allen
  * 
- * @see D.C. Carey, The Optics of Charged Particle Beams (Harwood, 1987)
- * @see H. Wiedemann, Particle Accelerator Physics I, 2nd Ed. (Springer, 1999)    
+ * @see "D.C. Carey, The Optics of Charged Particle Beams (Harwood, 1987)"
+ * @see "H. Wiedemann, Particle Accelerator Physics I, 2nd Ed. (Springer, 1999)"   
  */
 public class IdealMagSectorDipole extends ThickElectromagnet {
 
@@ -104,11 +104,11 @@ public class IdealMagSectorDipole extends ThickElectromagnet {
      *  Creates a new instance of IdealMagSectorDipole 
      *
      *  @param  strId  identifier for this IdealMagSectorDipole object
-     *  @param  fld    field gradient strength (in <b>Tesla</b>)
-     *  @param  len    pathLength of the dipole (in m)
+     *  @param  dblFld    field gradient strength (in <b>Tesla</b>)
+     *  @param  dblLen    pathLength of the dipole (in m)
      *  @param  entAng entrance angle of the dipole (in rad)
      *  @param  exitAng exit angle of the dipole (in rad)
-     *  @param  gap    full pole gap of the dipole (in m)
+     *  @param  dblGap    full pole gap of the dipole (in m)
      *  @param  fInt   The dimensionless integral term for the extended fringe field focsing, Should be = 1/6 for linear drop off, ~ 0.4 for clamped Rogowski coil, or 0.7 for an unclamped Rogowski coil. (dimensionless)
      *
     */
@@ -255,7 +255,7 @@ public class IdealMagSectorDipole extends ThickElectromagnet {
      *  @param  probe   propagating probe
      *  @param  dblLen  length of subsection to propagate through <b>meters</b>
      *  
-     *  @return         the elapsed time through section<bold>Units: seconds</bold> 
+     *  @return         the elapsed time through section<b>Units: seconds</b> 
      */
     @Override
     public double elapsedTime(IProbe probe, double dblLen)  {

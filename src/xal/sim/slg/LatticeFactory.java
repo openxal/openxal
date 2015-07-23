@@ -626,7 +626,7 @@ public class LatticeFactory {
 	}
 
 	/**
-	 * Return a version string w/o the cvs keyword (i.e. <dollar>Id<dollar>).
+	 * Return a version string w/o the cvs keyword (i.e. $Id$).
 	 */
 	public static String version() {
 		String st = " ";

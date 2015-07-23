@@ -183,7 +183,7 @@ public class IdealMagWedgeDipole2 extends ElectromagnetSeq {
      * 
      * <p>The physical length of this element is not set when invoking
      * this method.  That must be done separately with a call to 
-     * <code>setPhysicalLength(double></code>.
+     * <code>setPhysicalLength(double)</code>.
      * </p>
      * 
      * @param   dblPos      lattice position of element center (meters)
@@ -200,11 +200,11 @@ public class IdealMagWedgeDipole2 extends ElectromagnetSeq {
     /**
      * Set the magnetic field index of the magnet evaluated at the design
      * orbit.   The field index is defined as
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * &nbsp; &nbsp;   n &equiv; -(R0/B0)(dB/dR)
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * where R0 is the radius of the design orbit, B0 is the field at the
      * design orbit (@see IdealMagSectorDipole#getField), and dB/dR is the
      * derivative of the field with respect to the path deflection - evaluated
@@ -421,11 +421,11 @@ public class IdealMagWedgeDipole2 extends ElectromagnetSeq {
      * <p>
      * Return the magnetic field index of the magnet evaluated at the design
      * orbit.   The field index is defined as
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * &nbsp; &nbsp; <i>n</i> &equiv; -(<i>R</i><sub>0</sub>/<i>B</i><sub>0</sub>)(<i>dB/dR</i>)
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * where <i>R</i><sub>0</sub> is the radius of the design orbit, <i>B</i><sub>0</sub>
      * is the field at the
      * design orbit (see {@link IdealMagSectorDipole2#getFieldIndex()}), and <i>dB/dR</i> is the
@@ -507,7 +507,7 @@ public class IdealMagWedgeDipole2 extends ElectromagnetSeq {
     /**  
      *  Get the magnetic field strength of the dipole electromagnet
      *
-     *  @return     magnetic field (in <bold>Tesla</bold>).
+     *  @return     magnetic field (in <b>Tesla</b>).
      */
     public double getMagField() {
         return this.getMagBody().getMagField();
@@ -531,7 +531,7 @@ public class IdealMagWedgeDipole2 extends ElectromagnetSeq {
     /**  
      *  Set the magnetic field strength of the dipole electromagnet.
      *
-     *  @param  dblField    magnetic field (in <bold>Tesla</bold>).
+     *  @param  dblField    magnetic field (in <b>Tesla</b>).
      */
     public void setMagField(double dblField) {
         this.getFaceEntr().setMagField(dblField);
@@ -578,7 +578,7 @@ public class IdealMagWedgeDipole2 extends ElectromagnetSeq {
 	/**
 	 * Conversion method to be provided by the user
 	 * 
-	 * @param latticeElement the SMF node to convert
+	 * @param element the SMF node to convert
 	 */
 	@Override
 	public void initializeFrom(LatticeElement element) {

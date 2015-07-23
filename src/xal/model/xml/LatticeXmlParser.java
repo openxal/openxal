@@ -295,7 +295,7 @@ public class LatticeXmlParser {
     /**
      *  Load an ElementSeq object with it's components
      *
-     *  @param  seqNew      ElementSeq object to be loaded
+     *  @param  secNew      ElementSeq object to be loaded
      *  @param  daptSeq     data adaptor containing sequence information
      *  
      *  @exception  ClassNotFoundException  an unknown Element type was encountered

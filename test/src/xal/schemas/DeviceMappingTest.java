@@ -19,7 +19,7 @@ import org.w3c.dom.Element;
 public class DeviceMappingTest extends AbstractXMLValidation {
 	
 	/**
-	 * Progressive XML schema validation method.<br/>
+	 * Progressive XML schema validation method.<br>
 	 * This method retrieves the XML schema by calling {@link #getSchema()}
 	 * and then builds a test XML {@link Document} from scratch,
 	 * testing it against the schema after each step in the building procedure.
@@ -77,8 +77,8 @@ public class DeviceMappingTest extends AbstractXMLValidation {
 	}
 	
 	/**
-	 * Tests the <code>deviceMapping</code> element and returns it.<br/>
-	 * Provided DOM {@link Document} gets updated in the process.<br/>
+	 * Tests the <code>deviceMapping</code> element and returns it.<br>
+	 * Provided DOM {@link Document} gets updated in the process.<br>
 	 * Test checks against invalid root element tag and against invalid child elements.
 	 * @param document {@link Document} DOM document built for testing.
 	 * @param validator {@link Validator} for the tested XML {@link Schema}.
@@ -123,8 +123,8 @@ public class DeviceMappingTest extends AbstractXMLValidation {
 	}
 	
 	/**
-	 * Tests the <code>device</code> elements.<br/>
-	 * Provided DOM {@link Document} gets updated in the process.<br/>
+	 * Tests the <code>device</code> elements.<br>
+	 * Provided DOM {@link Document} gets updated in the process.<br>
 	 * Test checks against premature root element completion, against missing required attributes
 	 * and adding optional attributes.
 	 * @param document {@link Document} DOM document built for testing.

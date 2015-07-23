@@ -117,11 +117,11 @@ public abstract class CalculationEngine {
      * Let <b>&Phi;</b> denote the one-turn map for a ring.  The fixed point 
      * <b>z</b> &in; <b>R</b><sup>6</sup>&times;{1} in homogeneous phase space coordinates
      * is that which is invariant under <b>&Phi;</b>, that is,
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * &nbsp; &nbsp; <b>&Phi;z</b> = <b>z</b> .
-     * <br/>
-     * <br/> 
+     * <br>
+     * <br> 
      * This method returns that vector <b>z</b>.  
      * </p>
      * <p>
@@ -132,8 +132,8 @@ public abstract class CalculationEngine {
      * matrix <b>T</b> &in; <b>R</b><sup>6&times;</sup> (here <b>T</b> is linear). 
      * Thus, we can write the linear operator <b>&Phi;</b>
      * as the augmented system 
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * <pre>
      * &nbsp; &nbsp; <b>&Phi;</b> = |<b>T</b> <b>&Delta;</b> |,   <b>z</b> &equiv; |<b>p</b>| ,
      *         |<b>0</b> 1 |        |1|
@@ -144,17 +144,17 @@ public abstract class CalculationEngine {
      * </p>
      * <p>
      * Putting this together we get
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * &nbsp; &nbsp; <b>&Phi;z</b> = <b>Tp</b> + <b>&Delta;</b> = <b>p</b> , 
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * to which the solution is
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * &nbsp; &nbsp; <b>p</b> = -(<b>T</b> - <b>I</b>)<sup>-1</sup><b>&Delta;</b>
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * assuming it exists.  The question of solution existence falls upon the
      * resolvent <b>R</b> &equiv; (<b>T</b> - <b>I</b>)<sup>-1</sup> of <b>T</b>.
      * By inspection we can see that <b>p</b> is defined so long as the eigenvalues
@@ -270,11 +270,11 @@ public abstract class CalculationEngine {
      * </p>
      * <p>
      * The basic computation is 
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * &nbsp; &nbsp;  &sigma; = cos<sup>-1</sup>[&frac12; Tr <b>&Phi;</b><sub>&alpha;&alpha;</sub>] ,
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * where <b>&Phi;</b></b><sub>&alpha;&alpha;</sub> is the 2&times;2 block diagonal 
      * of the the provided transfer matrix for the &alpha; phase plane, 
      * and Tr <b>&Phi;</b></b><sub>&alpha;&alpha;</sub> indicates the trace of matrix 
@@ -337,11 +337,11 @@ public abstract class CalculationEngine {
      * </p>
      * <p>
      * The basic computation is 
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * &nbsp; &nbsp;  &nu; = (1/2&pi;) cos<sup>-1</sup>[&frac12; Tr <b>&Phi;</b>] ,
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * where <b>&Phi;</b> is the 2&times;2 diagonal block of the transfer matrix 
      * corresponding to the phase plane of interest.
      * </p>
@@ -394,22 +394,22 @@ public abstract class CalculationEngine {
      * </p>
      * <p>
      * The definition of phase advance &sigma; is given by
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * &nbsp; &nbsp; &sigma;(<i>s</i>) &equiv; &int;<sup><i>s</i></sup> [1/&beta;(<i>t</i>)]<i>dt</i> ,
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * where &beta;(<i>s</i>) is the Courant-Snyder, envelope function, and the integral 
      * is taken along the interval between the initial and final Courant-Snyder 
      * parameters.
      * </p>
      * <p>
      * The basic relation used to compute &sigma; is the following:
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * &nbsp; &nbsp;  &sigma; = sin<sup>-1</sup> &phi;<sub>12</sub>/(&beta;<sub>1</sub>&beta;<sub>2</sub>)<sup>&frac12;</sup> ,
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * where &phi;<sub>12</sub> is the element of <b>&Phi;</b> in the upper right corner of each 
      * 2&times;2 diagonal block, &beta;<sub>1</sub> is the initial beta function value (provided)
      * and &beta;<sub>2</sub> is the final beta function value (provided).
@@ -486,22 +486,22 @@ public abstract class CalculationEngine {
      * </p>
      * <p>
      * The definition of phase advance &sigma; is given by
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * &nbsp; &nbsp; &sigma;(<i>s</i>) &equiv; &int;<sup><i>s</i></sup> [1/&beta;(<i>t</i>)]<i>dt</i> ,
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * where &beta;(<i>s</i>) is the Courant-Snyder, envelope function, and the integral 
      * is taken along the interval between the initial and final Courant-Snyder 
      * parameters.
      * </p>
      * <p>
      * The basic relation used to compute &sigma; is the following:
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * &nbsp; &nbsp;  &sigma; = sin<sup>-1</sup> &phi;<sub>12</sub>/(&beta;<sub>1</sub>&beta;<sub>2</sub>)<sup>&frac12;</sup> ,
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * where &phi;<sub>12</sub> is the element of <b>&Phi;</b> in the upper right corner of each 
      * 2&times;2 diagonal block, &beta;<sub>1</sub> is the initial beta function value (provided)
      * and &beta;<sub>2</sub> is the final beta function value (provided).
@@ -642,14 +642,14 @@ public abstract class CalculationEngine {
      * </p>
      * The following are the calculations used for the Courant-Snyder parameters of a 
      * single phase plane:
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * &nbsp; &nbsp; &alpha; &equiv; -<i>ww'</i> = (&phi;<sub>11</sub> - &phi;<sub>22</sub>)/(2 sin &sigma;) ,
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * &nbsp; &nbsp; &beta; &equiv; <i>w</i><sup>2</sup> = &phi;<sub>12</sub>/sin &sigma;
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * where &phi;<sub><i>ij</i></sub> are the elements of the 2&times;2 diagonal blocks of
      * <b>&Phi;</b> corresponding the the particular phase plane, the function <i>w</i>
      * is taken from Reiser, and &sigma; is the phase advance through the cell for the 
@@ -705,14 +705,14 @@ public abstract class CalculationEngine {
      * change in position &Delta;<i>x</i>
      * and the change in divergence angle &Delta;<i>x'</i>
      * due to chromatic dispersion &delta; within the beam, or
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * &nbsp; &nbsp; &Delta;<i>x</i> = (<i>dx</i>/<i>d</i>&delta;) &sdot; &delta; ,
-     * <br/>
-     * <br/> 
+     * <br>
+     * <br> 
      * &nbsp; &nbsp; &Delta;<i>x'</i> = (<i>dx'</i>/<i>d</i>&delta;) &sdot; &delta; .
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * That is, (<i>dx</i>/<i>d</i>&delta;) and (<i>dx'</i>/<i>d</i>&delta;) are the dispersion
      * coefficients for the horizontal plane position and horizontal plane divergence
      * angle, respectively.  The vector returned by this method contains all the analogous
@@ -726,42 +726,42 @@ public abstract class CalculationEngine {
      * in the 6<sup><i>th</i></sup> column (i.e., the <i>z'</i> column) corresponding 
      * to this positions as &phi;<sub>1,6</sub> and &phi;<sub>2,6</sub>, we can write
      * them as
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * &nbsp; &nbsp; &phi;<sub>1,6</sub> = &part;<i>x</i>/&part;<i>z'</i> ,
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * &nbsp; &nbsp; &phi;<sub>2,6</sub> = &part;<i>x'</i>/&part;<i>z'</i> .
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * Now consider the relationship
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * &nbsp; &nbsp; &delta; &equiv; (<i>p</i> - <i>p</i><sub>0</sub>)/<i>p</i><sub>0</sub>
      *               = &gamma;<sup>2</sup><i>z</i>'= &gamma;<sup>2</sup><i>dz</i>/<i>ds</i>
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * or
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * &nbsp; &nbsp; &part;<i>z'</i>/&part;&delta; = 1/&gamma;<sup>2</sup> .
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * Thus, it is necessary to multiply the transfer plane elements of 
      * <i>Row</i><sub>6</sub>&Phi; by 1/&gamma;<sup>2</sup> to covert to 
      * the conventional dispersion coefficients.  Specifically, for the horizontal plane
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * &nbsp; &nbsp; &Delta;<sub><i>x</i></sub> = (<i>dx</i>/<i>d</i>&delta;) = &phi;<sub>6,1</sub>/&gamma;<sup>2</sup> ,
-     * <br/>
-     * <br/> 
+     * <br>
+     * <br> 
      * &nbsp; &nbsp; &Delta;<sub><i>x'</i></sub> = (<i>dx'</i>/<i>d</i>&delta;) = &phi;<sub>6,2</sub>/&gamma;<sup>2</sup> ,
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * For the longitudinal plane no such normalization is necessary. 
      * </p>
+     * <h3>NOTE:</h3>
      * <p>
-     * <h4>NOTE:</h4>
      * - Reference text D.C. Carey, "The Optics of Charged Particle Beams"
      * </p>
      * 
@@ -808,11 +808,11 @@ public abstract class CalculationEngine {
          * </p>
          * <p>
          * The transverse plane dispersion vector <b>&Delta;</b> is defined  
-         * <br/>
-         * <br/> 
+         * <br>
+         * <br> 
          * &nbsp; &nbsp; <b>&Delta;</b><sub><i>t</i></sub> &equiv; -(1/&gamma;<sup>2</sup>)[d<i>x</i>/d<i>z'</i>, d<i>x'</i>/d<i>z'</i>, d<i>y</i>/d<i>z'</i>, d<i>y'</i>/d<i>z'</i>]<sup><i>T</i></sup> .
-         * <br/>
-         * <br/>  
+         * <br>
+         * <br>  
          * It can be identified as the first 4 entries of the 6<sup><i>th</i></sup> 
          * column in the transfer matrix <b>&Phi;</b>. The above vector
          * quantifies the change in the transverse particle phase 
@@ -820,17 +820,17 @@ public abstract class CalculationEngine {
          * The factor -(1/&gamma;<sup>2</sup>) is needed to convert from longitudinal divergence
          * angle <i>z'</i> used by XAL to momentum &delta;<i>p</i> &equiv; &Delta;<i>p</i>/<i>p</i> used in 
          * the dispersion definition.  Specifically,
-         * <br/>
-         * <br/>
+         * <br>
+         * <br>
          * &nbsp; &nbsp; &delta;<i>p</i> &equiv; &Delta;<i>p</i>/<i>p</i> = &gamma;<sup>2</sup><i>z</i>'
-         * <br/>
-         * <br/>
+         * <br>
+         * <br>
          * As such, the above vector can be better described
-         * <br/>
-         * <br/> 
+         * <br>
+         * <br> 
          * &nbsp; &nbsp; <b>&Delta;</b><sub><i>t</i></sub> &equiv; [&Delta;<i>x</i>/&delta;<i>p</i>, &Delta;<i>x'</i>/&delta;<i>p</i>, &Delta;<i>y</i>/&delta;<i>p</i>, &Delta;<i>y'</i>/&delta;<i>p</i>]<sup><i>T</i></sup>
-         * <br/>
-         * <br/>
+         * <br>
+         * <br>
          * explicitly describing the change in transverse phase coordinate for fractional
          * change in momentum &delta;<i>p</i>.  
          * </p>
@@ -848,24 +848,24 @@ public abstract class CalculationEngine {
          * &delta;<i>p</i>.  That is, the particle ends up
          * in the same location each revolution. With a finite momentum spread of &delta;<i>p</i> &gt; 0
          * we require this require that
-         * <br/>
-         * <br/>
+         * <br>
+         * <br>
          * &nbsp; &nbsp; <b>Tz</b><sub><i>t</i></sub> + &delta;<i>p</i><b>&Delta;</b><sub><i>t</i></sub> = <b>z</b><sub><i>t</i></sub> ,
-         * <br/>
-         * <br/>
+         * <br>
+         * <br>
          * which can be written
-         * <br/>
-         * <br/>
+         * <br>
+         * <br>
          * &nbsp; <b>z</b><sub><i>t</i></sub> = &delta;<i>p</i>(<b>I</b> - <b>T</b>)<sup>-1</sup><b>&Delta;</b><sub><i>t</i></sub> ,
-         * <br/>
-         * <br/>
+         * <br>
+         * <br>
          * where <b>I</b> is the identity matrix.  Dividing both sides by &delta;<i>p</i> yields the final
          * result
-         * <br/>
-         * <br/>
+         * <br>
+         * <br>
          * &nbsp; <b>z</b><sub>0</sub> &equiv; <b>z</b><sub><i>t</i></sub>/&delta;<i>p</i> = (<b>I</b> - <b>T</b>)<sup>-1</sup><b>&Delta;</b><sub><i>t</i></sub> ,
-         * <br/>
-         * <br/>
+         * <br>
+         * <br>
          * which is the returned value of this method.  It is normalized by
          * &delta;<i>p</i> so that we can compute the closed orbit for any given momentum spread.
          * </p>
@@ -936,8 +936,8 @@ public abstract class CalculationEngine {
      * Advance the twiss parameters using the given transfer matrix based upon
      * formula 2.54 from S.Y. Lee's book.  
      * </p>
+     * <h3>CKA NOTES:</h3>
      * <p>
-     * <h4>CKA NOTES:</h4>
      * - This method will only work correctly for a beam that is
      * unccorrelated in the phase planes.
      * </p>
