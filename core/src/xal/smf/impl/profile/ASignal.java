@@ -49,11 +49,11 @@ public @interface ASignal {
      * </p>
      * <p>
      * The contents of the array for each plane are the following parameters:
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * &nbsp; &nbsp; {<tt>hndPosRb, hndValRb, (hndNseAvg), (hndNseStd), (hndSigSz)</tt>}
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * where <tt>hndPosRb</tt> is the XAL channel handle of the sample position array read back,
      * <tt>hndValRb</tt> is the XAL channel handle of the signal value array read back,
      * <tt>hndNseAvg</tt> is the (optional) XAL channel handle of the noise average read back,

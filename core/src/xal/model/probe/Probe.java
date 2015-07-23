@@ -31,7 +31,7 @@ import java.util.Date;
  * <p>
  *  Provides a base class implementation of the IProbe interface that is useful for
  *  most standard probe types.  This class provides most of the functionality necessary
- *  for the implementation of the IProbe interface, <bold>except</bold> a definition
+ *  for the implementation of the IProbe interface, <b>except</b> a definition
  *  and implementation of a probe "state".  Thus, it is up to base classes to provide
  *  and implement the particular aspect of a beam the probe represents.
  *  </p>
@@ -149,8 +149,8 @@ public abstract class Probe<S extends ProbeState<S>> implements IProbe, IArchive
      * Clone factory method.  Creates a new <code>Probe</code> object, of the appropriate
      * type, initialized to the argument <code>Probe</code>.
      * </p>
+     * <h3>NOTE:</h3>
      * <p>
-     * <h4>NOTE:</h4>
      * There is now a reset() method that is preferable to this one.  It
      * clears the probe trajHist and restores the initial state saved in the
      * initialize() method, without creating a new probe instance.
@@ -399,12 +399,12 @@ public abstract class Probe<S extends ProbeState<S>> implements IProbe, IArchive
     * Resets the probe to the saved initial state, if there is one and clears
     * the trajHist.
     * </p>
+    * <h3>CKA NOTES:</h3>
     * <p>
-    * <h4>CKA NOTES:</h4>
     * These notes concern the refactoring of the probe component
     * in order to tighten the typing.
-    * <br/>
-    * <br/>
+    * <br>
+    * <br>
     * &middot; The new behavior should be the same as before, only 
     * the implementation differs.  The current state is set to a clone
     * of the (previously saved) initial state.
@@ -725,27 +725,27 @@ public abstract class Probe<S extends ProbeState<S>> implements IProbe, IArchive
      * <p>
      * Initializes the probe, resetting state as necessary.
      * </p>
+     * <h3>CKA NOTES:</h3>
      * <p>
-     * <h4>CKA NOTES:</h4>
      * These notes concern the refactoring of the probe component
      * in order to tighten the typing.
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * &middot; In order to make this method compatible with the previous
      * behavior it must set the saved "initial state" to the current
      * probe state.  The previous incarnation assigned the new initial
      * state by calling the {@link #createProbeState()} method to which
      * created a new probe state representing the current state of the probe.
-     * <br/>
+     * <br>
      * &middot; The trajectory is cleared, that is, there is no longer
      * any history in the probe
-     * </br>
+     * <br>
      * &middot; Thus, <tt>initialize()</tt> is really a poor choice, since
      * all that is done is
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * &nbsp; &nbsp; - The initial state is reset to the current state
-     * <br/>
+     * <br>
      * &nbsp; &nbsp; - The trajectory is cleared
      * </p>
      * 

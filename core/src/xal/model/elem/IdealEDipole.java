@@ -366,7 +366,7 @@ public class IdealEDipole extends ThickElectrostatic
    *
    *  Sets the magnetic field strength.
    *
-   *  @param  voltage    pole tip voltage (in <bold>kV</bold>).
+   *  @param  voltage    pole tip voltage (in <b>kV</b>).
    *
    */
 
@@ -379,7 +379,7 @@ public class IdealEDipole extends ThickElectrostatic
    *
    *  Returns the applied voltage.
    *
-   *  @return     voltage at the pole tips (in <bold>kV</bold>).
+   *  @return     voltage at the pole tips (in <b>kV</b>).
    *
    */
 
@@ -404,7 +404,7 @@ public class IdealEDipole extends ThickElectrostatic
    *  @param  probe   propagating probe
    *  @param  dblLen  subsection propagation length <b>meters</b>
    *
-   *  @return         elapsed propagaton time<bold>Units: seconds</bold>
+   *  @return         elapsed propagaton time<b>Units: seconds</b>
    *
    */
 

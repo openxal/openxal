@@ -191,7 +191,7 @@ public class TrnsPhaseMatrix extends SquareMatrix<TrnsPhaseMatrix> {
      * returned <code>TransPhaseMatrix</code> object is equivalent to
      * translation by the given <code>PhaseVector</code> argument.
      * Specifically, if the argument <b>dv</b> has coordinates
-     * <br/>
+     * <br>
      * <pre>
      * 
      *      <b>dv</b> = (dx,dx',dy,dy',1)<sup><i>T</i></sup>

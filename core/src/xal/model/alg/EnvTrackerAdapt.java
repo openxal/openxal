@@ -735,7 +735,7 @@ public class EnvTrackerAdapt extends EnvelopeTrackerBase {
      * Load the parameters of the algorithm from a data source exposing the
      * <code>IArchive</code> interface.
      * The superclass <code>load</code> method is called first, then the properties
-     * particular to <code>EnvTrackerAdapt<code> are loaded.
+     * particular to <code>EnvTrackerAdapt</code> are loaded.
      * 
      * @see xal.tools.data.IArchive#load(xal.tools.data.DataAdaptor)
      */
@@ -770,7 +770,7 @@ public class EnvTrackerAdapt extends EnvelopeTrackerBase {
     /**
      * Save the settings particular to this subclass of <code>Tracker</code>.
      * The superclass <code>save</code> method is called first, then the properties
-     * particular to <code>EnvTrackerAdapt<code> are saved.
+     * particular to <code>EnvTrackerAdapt</code> are saved.
      * 
      * @param   daptArchive     data sink exposing <code>IArchive</code> interface
      * 
@@ -806,7 +806,6 @@ public class EnvTrackerAdapt extends EnvelopeTrackerBase {
      *
      *  @param  ifcElem     interface to the beam element
      *  @param  probe    interface to the probe
-     *  @param  dblLen      length of element subsection to advance through
      *
      *  @exception ModelException     bad element transfer matrix/corrupt probe state
      */
@@ -1444,9 +1443,9 @@ public class EnvTrackerAdapt extends EnvelopeTrackerBase {
 //     * &middot; This method was converted from using the deprecated 
 //     * <code>EllipsoidalCharge</code> class to the newer <code>BeamEllipsoid</code>
 //     * class.  CKA: Aug, 2011.
-//     * <br/>
+//     * <br>
 //     * &middot; Since then this method has not yet been tested and debugged!
-//     * <br/>
+//     * <br>
 //     * The functionality has now been incorporated into <code>EnvelopeTrackerBase.CompScheffTransMatri()</code>
 //     * </p>
 //     *

@@ -52,10 +52,10 @@ import xal.tools.math.r3.R3;
  * is contained in <code>EnvelopeTracker</code> so it is no longer supported.  However, I am not
  * deprecated this class since it can be used as a light-weight substitute.
  * </p>
+ * <h3>NOTES:</h3>
  * <p>
- * <h4>NOTES:</h4>
  * &middot; Completed: Replace <code>EllipsoidalCharge</code> with <code>BeamEllipsoid</code>.
- * <br/>
+ * <br>
  * &middot; The default value for step size is 0.01 meters (1 cm).
  * </p>
  * 
@@ -133,7 +133,7 @@ public class Trace3dTracker extends Tracker {
     /**
      * Copy constructor for Trace3dTracker
      *
-     * @param       sourceTracker   Tracker that is being copied
+     * @param       copy   Tracker that is being copied
      */
     public Trace3dTracker( Trace3dTracker copy ) {
         super( copy );
@@ -245,7 +245,7 @@ public class Trace3dTracker extends Tracker {
      * Load the parameters of the algorithm from a data source exposing the
      * <code>IArchive</code> interface.
      * The superclass <code>load</code> method is called first, then the properties
-     * particular to <code>EnvTrackerAdapt<code> are loaded.
+     * particular to <code>EnvTrackerAdapt</code> are loaded.
      * 
      * @see xal.tools.data.IArchive#load(xal.tools.data.DataAdaptor)
      */
@@ -334,11 +334,11 @@ public class Trace3dTracker extends Tracker {
      * <p>
      * Calculates the transfer matrix for a space charge kick.
      * </p>
+     * <h3>NOTE:</h3>
      * <p>
-     * <h4>NOTE:</h4>
      *  <em>&middot; This currently works only for upright beam ellipses
      *  in configuration space!</em>
-     *  <br/>
+     *  <br>
      *  &middot; This method was converted from the use of <code>EllipsoidalCharge</code>
      *  to class <code>BeamEllipsoid</code> to make the space charge calculations. 
      *  Hopefully there are no side effects.

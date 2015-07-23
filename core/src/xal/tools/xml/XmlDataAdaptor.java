@@ -35,8 +35,8 @@ import xal.tools.StringJoiner;
  * </p>
  * <p>
  * To create a new, empty XML document simply invoke:
- * <br/>
- * <br/>
+ * <br>
+ * <br>
  * <code> document_adaptor = XmlDataAdaptor.newEmptyDocumentAdaptor(); </code>
  * </p>
  * <p>
@@ -44,19 +44,19 @@ import xal.tools.StringJoiner;
  * top document node, but otherwise you can add and nest as many nodes as needed. Each 
  * such node is returned as a DataAdaptor.  For example, to add a node to the top 
  * document node, invoke:
- * <br/>
- * <br/>
+ * <br>
+ * <br>
  * <code> childAdaptor = document_adaptor.createChild("nodeName") </code>
- * <br/>
+ * <br>
  * </p>
  * <p>
  * You can set attributes of nodes with some basic types such as boolean, integer, double
  * and string where you supply the name of the attribute and the value.  If you add an Object
  * as a value, then toString() is invoked to fetch the value as a string.  Some examples:
- * <br/>
- * <br/>
+ * <br>
+ * <br>
  * <code> adaptor.setValue("attribute", "some string"); </code>
- * <br/>
+ * <br>
  * <code> adaptor.setValue("attr2", 3.14); </code>
  * </p>
  * <p>
@@ -72,24 +72,24 @@ import xal.tools.StringJoiner;
  * </p>
  * <p>
  * You can fetch named child nodes from a parent node.  Some examples are:
- * <br/>
- * <br/>
+ * <br>
+ * <br>
  * <code> List<DataAdaptor> xAdaptors = parentAdaptor.childAdaptors("X") </code>
- * <br/>
+ * <br>
  * <code> List<DataAdaptor> allAdaptors = parentAdaptor.childAdaptors() </code>
- * <br/>
+ * <br>
  * <code> DataAdaptor yAdaptor = parentAdaptor.childAdaptor("Y") </code>
  * </p>
  * <p>
  * You can test if a node defines an attribute:
- * <br/>
- * <br/>
+ * <br>
+ * <br>
  * <code> boolean status = adaptor.hasAttribute("attribute"); </code>
  * </p>
  * <p>
  * You can read the value of an attribute:
- * <br/>
- * <br/>
+ * <br>
+ * <br>
  * <code> double value = adaptor.doubleValue("attr2"); </code>
  * </p>
  * <p>

@@ -109,7 +109,7 @@ public abstract class Element implements IElement {
      *  @param  probe   determine energy gain for this probe
      *  @param  dblLen  length of subsection to calculate energy gain for
      *  
-     *  @return         the elapsed time through section<bold>Units: seconds</bold> 
+     *  @return         the elapsed time through section<b>Units: seconds</b> 
      */
     public abstract double elapsedTime(IProbe probe, double dblLen);
     
@@ -119,7 +119,7 @@ public abstract class Element implements IElement {
      *
      *  @param  probe   determine energy gain for this probe
      *
-     *  @return         the energy gain provided by this element <bold>Units: eV</bold> 
+     *  @return         the energy gain provided by this element <b>Units: eV</b> 
      */
     public abstract double energyGain(IProbe probe, double dblLen);
 
@@ -405,7 +405,7 @@ public abstract class Element implements IElement {
      * </p>  
      *  
      *  <p>NOTE: CKA
-     *  <br/>
+     *  <br>
      *  The position of the probe within the element appears to be kept as a
      *  field of the algorithm object.  I am not exactly sure of any 
      *  side-effects of this implementation when using the
@@ -469,21 +469,20 @@ public abstract class Element implements IElement {
      *  </p>
      * <p>
      * <strong>NOTES</strong>: CKA
-     *  <br/>
+     *  <br>
      *  The position of the probe within the element appears to be kept as a
      *  field of the algorithm object.  I am not exactly sure of any 
      *  side-effects of this implementation when using the
      *  <code>{@link Tracker#propagate(IProbe, IElement)}</code> of the 
      *  <code>{@link Tracker}</code> class.  Careful when modifying.
-     * <br/>
+     * <br>
      * &middot; Support for backward propagation
      * February, 2009.
-     * <br/>
+     * <br>
      * &middot; You must use the <em>proper algorithm</em> object
      * for this method to work correctly!
      * </p>
      * 
-     *  </p>
      *
      *  @param  probe       probe object to propagate
      *  @param  pos         I think it is position of the probe within this element
@@ -516,10 +515,10 @@ public abstract class Element implements IElement {
      *
      * <p>
      * <strong>NOTES</strong>: CKA
-     * <br/>
+     * <br>
      * &middot; Support for backward propagation
      * February, 2009.
-     * <br/>
+     * <br>
      * &middot; You must use the <em>proper algorithm</em> object
      * for this method to work correctly!
      * </p>

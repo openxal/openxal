@@ -17,7 +17,7 @@ import java.text.*;
  *  -1.23E-101. If user will choose N < F + 7 the formatting still will work,
  *  but the length of the resulting string may be more that N. The property
  *  fixedLength can be used to fill out the resulting string with leading
- *  spaces. This property can be set with <code> setFixedLength <code/>
+ *  spaces. This property can be set with <code> setFixedLength </code>
  *  method or by using a proper constructor
  *
  *@author     shishlo

@@ -35,24 +35,24 @@ import xal.tools.beam.PhaseMatrix;
  * <p>
  * Denoting the generator matrix as <b>A</b>, then the transfer matrix 
  * <b>M</b>(<i>s</i>) for a section of length <i>s</i> is given by
- * <br/>
- * <br/>
+ * <br>
+ * <br>
  * &nbsp; &nbsp; <b>M</b>(<i>s</i>) = <i>e</i><sup><i>s</i><b>A</b></sup>
- * <br/>
- * <br/>
+ * <br>
+ * <br>
  * where <i>e</i><sup><b>A</b></sup> is the matrix exponential.  
  * </p>
+ * <h3>NOTE:</h3>
  * <p>
- * <h4>NOTE:</h4>
  * Currently the class implements the matrix exponential only to 
  * second order.  Therefore 
- * <br/>
- * <br/>
+ * <br>
+ * <br>
  * &nbsp; &nbsp;  <b>M</b>(<i>s</i>) = <b>I</b> + <i>s</i><b>A</b>  
  *                                     + &frac12;<i>s</i><sup>2</sup><b>A</b><sup>2</sup> 
  *                                     ( + <i>O</i>(<i>s</i><sup>3</sup>) )  
- * <br/>
- * <br/>
+ * <br>
+ * <br>
  * </p>
  * 
  *
@@ -191,7 +191,7 @@ public class ThickMatrix extends ThickElement {
      *  @param  probe   dummy argument
      *  @param  dblLen  length of subsection to propagate through <b>meters</b>
      *  
-     *  @return         the elapsed time through section<bold>Units: seconds</bold> 
+     *  @return         the elapsed time through section<b>Units: seconds</b> 
      */
     @Override
     public double elapsedTime(IProbe probe, double dblLen)  {

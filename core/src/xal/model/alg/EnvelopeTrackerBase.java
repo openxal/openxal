@@ -106,29 +106,29 @@ public abstract class EnvelopeTrackerBase extends Tracker {
      * is simply more accurate.
      * </p>
      * <p>
-     * <p>
      * <strong>VALUES</strong>:
-     * <br/>
+     * <br>
      * Currently there are two supported mechanisms for emittance
      * growth.
-     * <br/>
+     * <br>
      * <code>Trace3D</code>: use the same mechanism described in the 
      * Trace3D manual.
-     * <br/>
+     * <br>
      * <code>CKAllen</code>: use the mechanism described by C.K. Allen, 
      * <i>et. al.</i> (see below).
-     * </p> 
+     * </p>
+     * <p>
      * <strong>References</strong>
-     * <br/>
+     * <br>
      * [1] M. Weiss,
      *      "Bunching of Intense Proton Beams with Six-Dimensional
      *       Matching to the Linac Acceptance", CERN/MPS/LI report 73-2,
      *       Geneva, Switzerland (1978).
-     * <br/>
+     * <br>
      * [2] K.R. Crandall and D.P. Rusthoi, 
      *          "Trace 3-D Documentation", 
      *          LANL Report LA-UR-97-887 (1997), Appendix F.
-     * <br/>
+     * <br>
      * [3] C.K. Allen, H. Sako, M. Ikegami, and G. Shen, "Emittance Growth
      *         Due to Phase Spread 
      *         for Proton Beams in Radio Frequency Accelerating Gaps", 
@@ -289,7 +289,7 @@ public abstract class EnvelopeTrackerBase extends Tracker {
      * </p>
      * <p>
      * <strong>NOTE</strong>: (CKA)
-     * <br/>
+     * <br>
      * &middot; If set, the dynamics will no longer be consistent since
      * the response matrix and betatron phases will not reproduce
      * the current Twiss parameters.
@@ -327,22 +327,22 @@ public abstract class EnvelopeTrackerBase extends Tracker {
      * </p>
      * <p>
      * <strong>NOTES</strong>: (CKA)
-     * <br/>
+     * <br>
      * &middot; This flag only has an effect when the 
      * <code>setEmittanceGrowth()</code> feature is set to <code>true</code>.
      * </p>
      * <p>
      * <strong>References</strong>
-     * <br/>
+     * <br>
      * [1] M. Weiss,
      *      "Bunching of Intense Proton Beams with Six-Dimensional
      *       Matching to the Linac Acceptance", CERN/MPS/LI report 73-2,
      *       Geneva, Switzerland (1978).
-     * <br/>
+     * <br>
      * [2] K.R. Crandall and D.P. Rusthoi, 
      *          "Trace 3-D Documentation", 
      *          LANL Report LA-UR-97-887 (1997), Appendix F.
-     * <br/>
+     * <br>
      * [3] C.K. Allen, H. Sako, M. Ikegami, and G. Shen, "Emittance Growth
      *         Due to Phase Spread 
      *         for Proton Beams in Radio Frequency Accelerating Gaps", 
@@ -414,22 +414,22 @@ public abstract class EnvelopeTrackerBase extends Tracker {
      * </p>
      * <p>
      * <strong>NOTES</strong>: (CKA)
-     * <br/>
+     * <br>
      * &middot; This flag only has an effect when the 
      * <code>setEmittanceGrowth()</code> feature is set to <code>true</code>.
      * </p>
      * <p>
      * <strong>References</strong>
-     * <br/>
+     * <br>
      * [1] M. Weiss,
      *      "Bunching of Intense Proton Beams with Six-Dimensional
      *       Matching to the Linac Acceptance", CERN/MPS/LI report 73-2,
      *       Geneva, Switzerland (1978).
-     * <br/>
+     * <br>
      * [2] K.R. Crandall and D.P. Rusthoi, 
      *          "Trace 3-D Documentation", 
      *          LANL Report LA-UR-97-887 (1997), Appendix F.
-     * <br/>
+     * <br>
      * [3] C.K. Allen, H. Sako, M. Ikegami, and G. Shen, "Emittance Growth
      *         Due to Phase Spread 
      *         for Proton Beams in Radio Frequency Accelerating Gaps", 
@@ -488,7 +488,7 @@ public abstract class EnvelopeTrackerBase extends Tracker {
      * Load the parameters of the algorithm from a data source exposing the
      * <code>IArchive</code> interface.
      * The superclass <code>load</code> method is called first, then the properties
-     * particular to <code>EnvTrackerAdapt<code> are loaded.
+     * particular to <code>EnvTrackerAdapt</code> are loaded.
      * 
      * @see xal.tools.data.IArchive#load(xal.tools.data.DataAdaptor)
      */
@@ -554,14 +554,14 @@ public abstract class EnvelopeTrackerBase extends Tracker {
      * transfer matrix.  The returned matrix is the
      * original transfer matrix conjugated by the displacement
      * matrix representing the displacement vector <b>&Delta;r</b>
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * &nbsp; <b>&Delta;r</b> &equiv; (<i>dx,dy,dz</i>).
-     * <br/>
+     * <br>
      * </p>
      * <p>
      * <strong>NOTES</strong>: (H. SAKO)
-     * <br/>
+     * <br>
      * &middot; added alignment error in sigma matrix
      * </p>
      * 
@@ -618,52 +618,52 @@ public abstract class EnvelopeTrackerBase extends Tracker {
      * 
      * <p>
      * <strong>NOTES</strong>: (H. SAKO)
-     *  <br/>
+     *  <br>
      *  &middot; Increase emittance using same (nonlinear) procedure on the second
      *  moments as in Trace3D. 
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * (C.K. Allen)
-     * <br/>
-     * &middot; The &lt;x'|x&gt transfer matrix element is modified by 
+     * <br>
+     * &middot; The &lt;x'|x&gt; transfer matrix element is modified by 
      * the formula
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * &nbsp;  &lt;x'|x&gt; = &lt;x'|x&gt;<i>F<sub>t</sub></i>(&Delta;<i>&phi;</i>)
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * where &Delta;<i>&phi;</i> is the longitudial phase spread and 
      * <i>F<sub>t</sub></i>(&Delta;<i>&phi;</i>)
      * is an approximation to &lt;sin(<i>&phi;</i>)&gt;. 
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * &middot; Originally, the &lt;z'|z&gt; transfer matrix element is modified 
      * by the formula
-     * <br/>
-     * <br/> &nbsp;   &lt;z'|z&gt; = &lt;z'|z&gt;(1 - &Delta;<i>&phi;</i><sup>2</sup>/12)
-     * <br/>
-     * <br/>
+     * <br>
+     * <br> &nbsp;   &lt;z'|z&gt; = &lt;z'|z&gt;(1 - &Delta;<i>&phi;</i><sup>2</sup>/12)
+     * <br>
+     * <br>
      * This approximation is given in the Trace3D manualThis formula is accurate only 
      * for <i>d&phi;</i> &lt;&lt;.  Even then, the results
      * are questionable. For a more in depth treatment of longitudinal emittance 
      * growth see the reference below.
-     * <br/>
+     * <br>
      * &middot; The two-term expansion for 
      * <i>F<sub>z</sub></i>(&Delta;<i>&phi;</i>) 
      * (see {@link #compLongFourierTransform(double)})
      * is given as
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * &nbsp; <i>F<sub>z</sub></i>(&Delta;<i>&phi;</i>) &asymp;
      *        1 - 3&Delta;<i>&phi;</i><sup>2</sup>/14
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * which does not correspond to the Trace3D manual.  So I do not know where they
      * got the number.
      * </p>
      * <p>
      * <strong>Reference</strong>
-     * <br/>
+     * <br>
      * C.K. Allen, Hiroyuki Sako, et. al., 
      * "Emittance Growth Due to Phase Spread for Proton Beams 
      * in a Radio Frequency Accelerating Gap"
@@ -938,33 +938,33 @@ public abstract class EnvelopeTrackerBase extends Tracker {
      * The emittance growth function 
      * <i>G<sub>t</sub></i>(<i>&phi;<sub>s</sub></i>,&Delta;<i>&phi;</i>)
      * for the transverse plane is defined as
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * &nbsp; <i>G<sub>t</sub></i>(<i>&phi;<sub>s</sub></i>,&Delta;<i>&phi;</i>)
      * &equiv; <i>S<sub>t</sub></i>(&Delta;<i>&phi;</i>) -
      *         sin<sup>2</sup> <i>&phi;<sub>s</sub></i>
      *         <i>T<sub>t</sub></i>(&Delta;<i>&phi;</i>)
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * where <i>&phi;<sub>s</sub></i> is the synchronous particle phase,
      * &Delta;<i>&phi;</i> is the <em>effective</em> phase spread,
      * and functions <i>S<sub>t</sub></i>(&Delta;<i>&phi;</i>) and
      * <i>T<sub>t</sub></i>(&Delta;<i>&phi;</i>) are given by
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * &nbsp; <i>S<sub>t</sub></i>(&Delta;<i>&phi;</i>) 
      *        &equiv; &frac12;[1 - <i>F<sub>t</sub></i>(2&Delta;<i>&phi;</i>)]
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * and
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * &nbsp; <i>T<sub>t</sub></i>(&Delta;<i>&phi;</i>) 
      *        &equiv;  
      *        <i>F<sub>t</sub></i><sup>2</sup>(&Delta;<i>&phi;</i>)
      *        - <i>F<sub>t</sub></i>(2&Delta;<i>&phi;</i>)
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * respectively.  There are analogous formulas for the longitudinal
      * emittance growth function 
      * <i>G<sub>z</sub></i>(<i>&phi;<sub>s</sub></i>,&Delta;<i>&phi;</i>)
@@ -980,37 +980,37 @@ public abstract class EnvelopeTrackerBase extends Tracker {
      * <i>&epsilon;<sub>t,i</sub></i> and 
      * <i>&epsilon;<sub>t,f</sub></i>, respectively, 
      * are related by the following formula:
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * &nbsp; <i>&epsilon;<sub>t,f</sub></i><sup>2</sup> = 
      *        <i>&eta;</i><sup>2</sup><i>&epsilon;<sub>t,i</sub></i><sup>2</sup> +
      *        &Delta;<i>&epsilon;<sub>t,f</sub></i><sup>2</sup>
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * where <i>&eta;</i> is the momentum compaction due to acceleration
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      *  <i>&eta;</i> &equiv; 
      *    <i>&beta;<sub>i</sub>&gamma;<sub>i</sub></i>/<i>&beta;<sub>f</sub>&gamma;<sub>f</sub></i>
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * and &Delta;<i>&epsilon;<sub>t,f</sub></i> is the emittance increase term 
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * &nbsp;  &Delta;<i>&epsilon;<sub>t,f</sub></i><sup>2</sup> &equiv; 
      *        &Delta;&lt;<i>x'<sub>f</sub></i><sup>2</sup>&gt;
-     *        &lt;<i>x<sub>f</sub></i></i><sup>2</sup>&gt;<sup>2</sup>.
-     * <br/>
-     * <br/>
+     *        &lt;<i>x<sub>f</sub></i><sup>2</sup>&gt;<sup>2</sup>.
+     * <br>
+     * <br>
      * where
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * &nbsp;  &Delta;&lt;<i>x'<sub>f</sub></i><sup>2</sup>&gt; &equiv; 
      *        <i>k<sub>t</sub></i><sup>2</sup>
      *        <i>G<sub>t</sub></i>(<i>&phi;<sub>s</sub></i>,&Delta;<i>&phi;</i>)
-     *        &lt;<i>x<sub>i</sub></i></i><sup>2</sup>&gt;.
-     * <br/>
-     * <br/>
+     *        &lt;<i>x<sub>i</sub></i><sup>2</sup>&gt;.
+     * <br>
+     * <br>
      * and where <i>x'<sub>f</sub></i> and <i>x<sub>i</sub></i> represent the 
      * after-gap divergence angle and before-gap position for <em>either</em>
      * transverse phase plane, respectively.
@@ -1026,7 +1026,7 @@ public abstract class EnvelopeTrackerBase extends Tracker {
      * </p> 
      * <p>
      * <strong>NOTES</strong>: CKA
-     * <br/>
+     * <br>
      * &middot; Since we are modeling the RF gap as a thin lens, only the 
      * momentum (divergance angle) is modified, &lt;<i>x</i><sup>2</sup>&gt;,
      * &lt;<i>y</i><sup>2</sup>&gt;, and &lt;<i>z</i><sup>2</sup>&gt; remain
@@ -1037,16 +1037,16 @@ public abstract class EnvelopeTrackerBase extends Tracker {
      * as such in the above.
      * <p>
      * <strong>References</strong>
-     * <br/>
+     * <br>
      * [1] M. Weiss,
      *      "Bunching of Intense Proton Beams with Six-Dimensional
      *       Matching to the Linac Acceptance", CERN/MPS/LI report 73-2,
      *       Geneva, Switzerland (1978).
-     * <br/>
+     * <br>
      * [2] K.R. Crandall and D.P. Rusthoi, 
      *          "Trace 3-D Documentation", 
      *          LANL Report LA-UR-97-887 (1997), Appendix F.
-     * <br/>
+     * <br>
      * [3] C.K. Allen, H. Sako, M. Ikegami, and G. Shen, "Emittance Growth
      *         Due to Phase Spread 
      *         for Proton Beams in Radio Frequency Accelerating Gaps", 
@@ -1133,27 +1133,27 @@ public abstract class EnvelopeTrackerBase extends Tracker {
      * transform 
      * <i>F<sub>t</sub></i>(&Delta;<i>&phi;</i>)
      * evaluated here is given as follows:
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * &nbsp; <i>F<sub>t</sub></i>(&Delta;<i>&phi;</i>) &equiv; 
      *        (2/<i>f</i><sub>1</sub>)
      *          &int;<i>J</i><sub>0</sub>(&Delta;<i>&phi;s</i>) 
      *          <i>f</i>(<i>s</i><sup>2</sup>)<i>s</i><sup></sup> <i>ds</i>,
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * where <i>f</i> is the density distribution, 
-     * <i>J<sub>n</i></sub>(<i>s</i>) is the <i>n</i><sup>th</sup>-order
+     * <i>J<sub>n</sub></i>(<i>s</i>) is the <i>n</i><sup>th</sup>-order
      * cylindrical Bessel function of the first kind,
      * &Delta;<i>&phi;</i> is the effective phase spread of the equivalent
      * uniform beam,
      * <i>s</i> is the transform variable.
      * and <i>f<sub>k</sub></i> is the number
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * &nbsp; <i>f<sub>k</sub></i> &equiv; 
      *                 &int; <i>f</i>(<i>s</i>)<i>s<sup>k</sup></i> <i>ds</i>.
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * Both integrals are taken from 0 to &infin;.
      * </p>
      * <p>
@@ -1161,17 +1161,17 @@ public abstract class EnvelopeTrackerBase extends Tracker {
      * the transform 
      * <i>F<sub>t</sub></i>(&Delta;<i>&phi;</i>)
      * evaluated here is given as follows:
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * &nbsp; <i>F<sub>t</sub></i>(&Delta;<i>&phi;</i>) &equiv; 
      *        (2/<i>f</i><sub>3/2</sub>)
      *          &int;[<i>j</i><sub>0</sub>(&Delta;<i>&phi;s</i>) 
      *        + <i>j</i><sub>2</sub>(&Delta;<i>&phi;s</i>)]
      *          <i>f</i>(<i>s</i><sup>2</sup>)<i>s</i><sup>4</sup> <i>ds</i>,
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * where <i>f</i> is the density distribution, 
-     * <i>j<sub>n</i></sub>(<i>s</i>) is the <i>n</i><sup>th</sup>-order
+     * <i>j<sub>n</sub></i>(<i>s</i>) is the <i>n</i><sup>th</sup>-order
      * spherical Bessel function of the first kind,
      * &Delta;<i>&phi;</i> is the effective phase spread of the equivalent
      * uniform beam, and
@@ -1180,57 +1180,57 @@ public abstract class EnvelopeTrackerBase extends Tracker {
      * </p>
      * <p>
      * <strong>NOTES</strong>: (CKA)
-     * <br/>
+     * <br>
      * &middot; This method actually falls out of the calculation
      * for &lt;x<sup>2</sup>sin <i>&phi;</i>(<i>z</i>)&gt;. 
      * The assumption that <i>x</i> and <i>z</i> are uncorrelated 
      * yields the result
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      *  &nbsp; &lt;x<sup>2</sup>sin <i>&phi;</i>(<i>z</i>)&gt; = 
      *     &lt;x<sup>2</sup>&gt; 
      *     sin <i>&phi;<sub>s</sub></i> 
      *     <i>F<sub>t</sub></i>(&Delta;<i>&phi;</i>)
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * where <i>F<sub>t</sub></i>(<i>d&phi;</i>) = &lt;sin(&Delta;<i>&phi;</i>)&gt; 
      * is this method, 
      * sin <i>&phi;<sub>s</sub></i> is the synchronous particle phase, 
      * and &Delta;<i>&phi;</i> is the <em>effective</em> phase spread of
      * the distribution.
-     * <br/>  
+     * <br>  
      * &middot; The value of 
      * &lt;sin<sup>2</sup> <i>&phi;</i>)(<i>z</i>)&gt; can also be
      * computed from this method.  The formula is
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * &nbsp; &lt;sin<sup>2</sup> <i>&phi;</i>(<i>z</i>)&gt;  
      *        = <i>S<sub>t</sub></i>(&Delta;<i>&phi;</i>)
      *        + sin<sup>2</sup> <i>&phi;<sub>s</sub></i> 
      *          <i>F<sub>t</sub></i>(2&Delta;<i>&phi;</i>)
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * where 
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * &nbsp; <i>S<sub>t</sub></i>(&Delta;<i>&phi;</i>) 
      *        &equiv; &frac12;[1 - <i>F<sub>t</sub></i>(2&Delta;<i>&phi;</i>)]
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * has analogy with sin<sup>2</sup> &Delta;<i>&phi;</i> 
      * </p>
      * <p>
      * <strong>References</strong>
-     * <br/>
+     * <br>
      * [1] M. Weiss,
      *      "Bunching of Intense Proton Beams with Six-Dimensional
      *       Matching to the Linac Acceptance", CERN/MPS/LI report 73-2,
      *       Geneva, Switzerland (1978).
-     * <br/>
+     * <br>
      * [2] K.R. Crandall and D.P. Rusthoi, 
      *          "Trace 3-D Documentation", 
      *          LANL Report LA-UR-97-887 (1997), Appendix F.
-     * <br/>
+     * <br>
      * [3] C.K. Allen, H. Sako, M. Ikegami, and G. Shen, "Emittance Growth
      *         Due to Phase Spread 
      *         for Proton Beams in Radio Frequency Accelerating Gaps", 
@@ -1312,28 +1312,28 @@ public abstract class EnvelopeTrackerBase extends Tracker {
      * transform 
      * <i>F<sub>z</sub></i>(&Delta;<i>&phi;</i>)
      * evaluated here is given as follows:
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * &nbsp; <i>F<sub>z</sub></i>(&Delta;<i>&phi;</i>) &equiv; 
      *        (2/<i>f</i><sub>1</sub>)
      *          &int; [<i>J</i><sub>0</sub>(&Delta;<i>&phi;s</i>) -
      *                 <i>J</i><sub>2</sub>(&Delta;<i>&phi;s</i>)]
      *          <i>f</i>(<i>s</i><sup>2</sup>)<i>s</i><sup>3</sup> <i>ds</i>,
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * where <i>f</i> is the density distribution, 
-     * <i>J<sub>n</i></sub>(<i>s</i>) is the <i>n</i><sup>th</sup>-order
+     * <i>J<sub>n</sub></i>(<i>s</i>) is the <i>n</i><sup>th</sup>-order
      * cylindrical Bessel function of the first kind,
      * &Delta;<i>&phi;</i> is the effective phase spread of the equivalent
      * uniform beam,
      * <i>s</i> is the transform variable.
      * and <i>f<sub>k</sub></i> is the number
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * &nbsp; <i>f<sub>k</sub></i> &equiv; 
      *                 &int; <i>f</i>(<i>s</i>)<i>s<sup>k</sup></i> <i>ds</i>.
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * Both integrals are taken from 0 to &infin;.
      * </p>
      * <p>
@@ -1341,23 +1341,23 @@ public abstract class EnvelopeTrackerBase extends Tracker {
      * the transform 
      * <i>F<sub>z</sub></i>(&Delta;<i>&phi;</i>)
      * evaluated here is given as follows:
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * &nbsp; <i>F<sub>z</sub></i>(&Delta;<i>&phi;</i>) &equiv; 
      *        (2/<i>f</i><sub>3/2</sub>)
      *          &int;[<i>j</i><sub>0</sub>(&Delta;<i>&phi;s</i>) 
      *        - 2<i>j</i><sub>2</sub>(&Delta;<i>&phi;s</i>)]
      *          <i>f</i>(<i>s</i><sup>2</sup>)<i>s</i><sup>4</sup> <i>ds</i>,
-     * <br/>
+     * <br>
      * &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; =        
      *          <i>F<sub>t</sub></i>(&Delta;<i>&phi;</i>)  -
      *          (2/<i>f</i><sub>3/2</sub>)
      *          &int;<i>j</i><sub>2</sub>(&Delta;<i>&phi;s</i>)]
      *          <i>f</i>(<i>s</i><sup>2</sup>)<i>s</i><sup>4</sup> <i>ds</i>,
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * where <i>f</i> is the density distribution, 
-     * <i>j<sub>n</i></sub>(<i>s</i>) is the <i>n</i><sup>th</sup>-order
+     * <i>j<sub>n</sub></i>(<i>s</i>) is the <i>n</i><sup>th</sup>-order
      * spherical Bessel function of the first kind,
      * &Delta;<i>&phi;</i> is the effective phase spread of the equivalent
      * uniform beam,
@@ -1366,46 +1366,46 @@ public abstract class EnvelopeTrackerBase extends Tracker {
      * </p>
      * <p>
      * <strong>NOTES</strong>: (CKA)
-     * <br/>
+     * <br>
      * &middot; This method falls out of the computation
      * for &lt;x<sup>2</sup>sin <i>&phi;</i>(<i>z</i>)&gt;. 
      * At least when considering the longitudinal phase plane independly, 
      * it can be shown that 
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      *  &nbsp; &lt;z<sup>2</sup>sin <i>&phi;</i>(<i>z</i>)&gt; = 
      *     &lt;z<sup>2</sup>&gt; 
      *     sin <i>&phi;<sub>s</sub></i> 
      *     <i>F<sub>z</sub></i>(&Delta;<i>&phi;</i>)
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * where <i>F<sub>z</sub></i>(<i>d&phi;</i>) = &lt;sin(&Delta;<i>&phi;</i>)&gt; 
      * is this method, 
      * sin <i>&phi;<sub>s</sub></i> is the synchronous particle phase, 
      * and &Delta;<i>&phi;</i> is the <em>effective</em> phase spread of
      * the distribution.  
-     * <br/>
+     * <br>
      * &middot; The technique for computing longitudinal emittance growth
      * is not covered in the Trace3D manual.  A two-term power series
      * expansion for this function is simply stated, 
      * but no development is presented.  
-     * <br/>
+     * <br>
      * &middot; The result returned by this method has a different
      * power series expansion about &Delta;<i>&phi;</i> = 0 than 
      * that presented in the Trace3D manual.
      * </p>
      * <p>
      * <strong>References</strong>
-     * <br/>
+     * <br>
      * [1] M. Weiss,
      *      "Bunching of Intense Proton Beams with Six-Dimensional
      *       Matching to the Linac Acceptance", CERN/MPS/LI report 73-2,
      *       Geneva, Switzerland (1978).
-     * <br/>
+     * <br>
      * [2] K.R. Crandall and D.P. Rusthoi, 
      *          "Trace 3-D Documentation", 
      *          LANL Report LA-UR-97-887 (1997), Appendix F.
-     * <br/>
+     * <br>
      * [3] C.K. Allen, H. Sako, M. Ikegami, and G. Shen, "Emittance Growth
      *         Due to Phase Spread 
      *         for Proton Beams in Radio Frequency Accelerating Gaps", 
@@ -1503,35 +1503,35 @@ public abstract class EnvelopeTrackerBase extends Tracker {
      * in an RF gap due to a finite phase spread in the beam.
      * <p>
      * <strong>NOTES</strong>: (CKA)
-     * <br/>
+     * <br>
      * &middot; This method is used to approximate &lt;x<sup>2</sup>sin(&phi;)&gt;, 
      * which is at least third order in the phase coordinates.
-     * <br/>
+     * <br>
      * 
      * &middot; The assumption that <i>x</i> and <i>z</i> are not correlated 
      * yields the result
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      *  &nbsp; &lt;x<sup>2</sup>sin(&phi;)&gt; = &lt;x<sup>2</sup>&gt; <i>f</i>(<i>d&phi;</i>)
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * where <i>f</i>(<i>d&phi;</i>) &equiv; &lt;sin(<i>d&phi;</i>)is this method, 
      * and <i>d&phi;</i> is the "<em>phase spread</em>" of
      * the distribution.  The phase spread is defined
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * &nbsp;   <i>d&phi;</i> = &lt;(<i>&phi; - &phi;<sub>s</sub></i>)<sup>2</sup>&gt;<sup>1/2</sup>
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * where <i>&phi;<sub>s</sub></i> is the synchronous particle phase.
      * </p>
      * <p>
      * See K.R. Crandall and D.P. Rusthoi, 
-     *          <ul>
+     * </p>
+     *          <ul><li>
      *          "Trace 3-D Documentation", 
      *          LANL Report LA-UR-97-887 (1997), Appendix F.
-     *          </ul>
-     * </p>
+     *          </li></ul>
      * 
      *
      * @param   dphi    effective phase spread &Delta;<i>&phi;</i> (half-width) 
@@ -1581,12 +1581,12 @@ public abstract class EnvelopeTrackerBase extends Tracker {
      * <p>The returned 
      * value (which is not derived or explained in the Trace3D
      * manual) is
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      *  &nbsp; <i>F<sub>z</sub></i>(&Delta;<i>&phi;</i>) = 
      *          1 - &Delta;<i>&phi;</i><sup>2</sup>/12
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * This value is taken from the Trace3D code.  The manual actually
      * quotes it as  
      * 1 + &Delta;<i>&phi;</i><sup>2</sup>/12.
@@ -1596,16 +1596,16 @@ public abstract class EnvelopeTrackerBase extends Tracker {
      * </p>
      * <p>
      * <strong>References</strong>
-     * <br/>
+     * <br>
      * [1] M. Weiss,
      *      "Bunching of Intense Proton Beams with Six-Dimensional
      *       Matching to the Linac Acceptance", CERN/MPS/LI report 73-2,
      *       Geneva, Switzerland (1978).
-     * <br/>
+     * <br>
      * [2] K.R. Crandall and D.P. Rusthoi, 
      *          "Trace 3-D Documentation", 
      *          LANL Report LA-UR-97-887 (1997), Appendix F.
-     * <br/>
+     * <br>
      * [3] C.K. Allen, H. Sako, M. Ikegami, and G. Shen, "Emittance Growth
      *         Due to Phase Spread 
      *         for Proton Beams in Radio Frequency Accelerating Gaps", 
@@ -1648,24 +1648,24 @@ public abstract class EnvelopeTrackerBase extends Tracker {
      * Here we consider the case when the beam is uniformly distributed 
      * over three spatial dimensions.
      * For this distribution <i>f</i>(<i>s</i>), we find that 
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * &nbsp; <i>F<sub>z</sub></i>(&Delta;<i>&phi;</i>) = 
      * 15 <i>j</i><sub>2</sub>(&Delta;<i>&phi;</i>)/&Delta;<i>&phi;</i><sup>2</sup> -
      * 15 <i>j</i><sub>3</sub>(&Delta;<i>&phi;</i>)/&Delta;<i>&phi;</i> 
-     * <br/>
-     * <br/> 
+     * <br>
+     * <br> 
      * For small arguments we avoid any numerically singular behavior 
      * at &Delta;<i>&phi;</i> = 0 by Taylor
      * expanding.  We have
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * &nbsp; <i>F<sub>z</sub></i>(&Delta;<i>&phi;</i>) &asymp; 
      *        1 - <i>x</i><sup>2</sup>/7 + <i>x</i><sup>4</sup>/168 -
      *        <i>x</i><sup>6</sup>/8316 + 5<i>x</i><sup>8</sup>/3459456 +
      *        O(<i>x</i><sup>17/2</sup>)
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * Currently we are expanding to sixth order.
      * </p>
      * <p>
@@ -1714,23 +1714,23 @@ public abstract class EnvelopeTrackerBase extends Tracker {
      * Here we consider the case when the beam is uniformly distributed 
      * over three spatial dimensions.
      * For this distribution <i>f</i>(<i>s</i>), we find that 
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * &nbsp; <i>F<sub>t</sub></i>(&Delta;<i>&phi;</i>) = 
      * 15 <i>j</i><sub>2</sub>(&Delta;<i>&phi;</i>)/&Delta;<i>&phi;</i><sup>2</sup>
-     * <br/>
-     * <br/> 
+     * <br>
+     * <br> 
      * For small arguments we avoid any numerically singular behavior 
      * at &Delta;<i>&phi;</i> = 0 by Taylor
      * expanding.  We have
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * &nbsp; <i>F<sub>t</sub></i>(&Delta;<i>&phi;</i>) &asymp; 
      *        1 - <i>x</i><sup>2</sup>/14 + <i>x</i><sup>4</sup>/504 -
      *        <i>x</i><sup>6</sup>/33264 + <i>x</i><sup>8</sup>/3459456 +
      *        O(<i>x</i><sup>17/2</sup>)
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * Currently we are expanding to sixth order.
      * </p>
      * <p>
@@ -1781,12 +1781,12 @@ public abstract class EnvelopeTrackerBase extends Tracker {
      * Here we consider the case when the beam has a Gaussian distribution 
      * over three spatial dimensions.
      * For this distribution <i>f</i>(<i>s</i>), we find that 
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * &nbsp; <i>F<sub>t</sub></i>(&Delta;<i>&phi;</i>) = 
      * <i>e</i><sup>-&Delta;<i>&phi;</i><sup>2</sup>/10</sup>
-     * <br/>
-     * <br/> 
+     * <br>
+     * <br> 
      * There is no need for a small argument expansion since the
      * above expression is numerically stable.
      * </p>
@@ -1826,13 +1826,13 @@ public abstract class EnvelopeTrackerBase extends Tracker {
      * Here we consider the case when the beam has a Gaussian distribution
      * over the three spatial dimensions.
      * For this distribution <i>f</i>(<i>s</i>), we find that 
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * &nbsp; <i>F<sub>z</sub></i>(&Delta;<i>&phi;</i>) = 
      *   (1 - &Delta;<i>&phi;</i><sup>2</sup>/5)
      *   <i>e</i><sup>-&Delta;<i>&phi;</i><sup>2</sup>/10</sup>
-     * <br/>
-     * <br/> 
+     * <br>
+     * <br> 
      * There is no need for a small argument expansion since the
      * above expression is numerically stable.
      * </p>
@@ -1880,23 +1880,23 @@ public abstract class EnvelopeTrackerBase extends Tracker {
      * Here we consider the case when the beam is uniformly distributed 
      * in one transverse phase plane.
      * For this distribution <i>f</i>(<i>s</i>), we find that 
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * &nbsp; <i>F<sub>t</sub></i>(&Delta;<i>&phi;</i>) = 
      *      2 <i>J</i><sub>1</sub>(&Delta;<i>&phi;</i>)/&Delta;<i>&phi;</i> 
-     * <br/>
-     * <br/> 
+     * <br>
+     * <br> 
      * For small arguments we avoid any numerically singular behavior 
      * at &Delta;<i>&phi;</i> = 0 by Taylor
      * expanding.  We have
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * &nbsp; <i>F<sub>t</sub></i>(&Delta;<i>&phi;</i>) &asymp; 
      *        1 - <i>x</i><sup>2</sup>/8 + <i>x</i><sup>4</sup>/192 -
      *        <i>x</i><sup>6</sup>/9216 + <i>x</i><sup>8</sup>/737280 +
      *        O(<i>x</i><sup>9</sup>)
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * Currently we are expanding to sixth order.
      * <p>
      * <strong>NOTES</strong>: (CKA)
@@ -1946,24 +1946,24 @@ public abstract class EnvelopeTrackerBase extends Tracker {
      * Here we consider the case when the beam is uniformly distributed 
      * in one transverse phase plane.
      * For this distribution <i>f</i>(<i>s</i>), we find that 
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * &nbsp; <i>F<sub>z</sub></i>(&Delta;<i>&phi;</i>) = 
      *      8 <i>J</i><sub>2</sub>(&Delta;<i>&phi;</i>)/&Delta;<i>&phi;</i><sup>2</sup> -  
      *      8 <i>J</i><sub>3</sub>(&Delta;<i>&phi;</i>)/&Delta;<i>&phi;</i> 
-     * <br/>
-     * <br/> 
+     * <br>
+     * <br> 
      * For small arguments we avoid any numerically singular behavior 
      * at &Delta;<i>&phi;</i> = 0 by Taylor
      * expanding.  We have
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * &nbsp; <i>F<sub>z</sub></i>(&Delta;<i>&phi;</i>) &asymp; 
      *        1 - <i>x</i><sup>2</sup>/4 + 5<i>x</i><sup>4</sup>/384 -
      *        7<i>x</i><sup>6</sup>/23040 + <i>x</i><sup>8</sup>/245760 +
      *        O(<i>x</i><sup>9</sup>)
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * Currently we are expanding to sixth order.
      * <p>
      * <strong>NOTES</strong>: (CKA)
@@ -2014,12 +2014,12 @@ public abstract class EnvelopeTrackerBase extends Tracker {
      * Here we consider the case when the beam is Gaussian distributed in
      * each (uncorrelated) phase plane.
      * For this distribution <i>f</i>(<i>s</i>), we find that 
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * &nbsp; <i>F<sub>t</sub></i>(&Delta;<i>&phi;</i>) = 
      * <i>e</i><sup>-&Delta;<i>&phi;</i><sup>2</sup>/8</sup>
-     * <br/>
-     * <br/> 
+     * <br>
+     * <br> 
      * There is no need for a small argument expansion since the
      * above expression is numerically stable.
      * </p>
@@ -2059,13 +2059,13 @@ public abstract class EnvelopeTrackerBase extends Tracker {
      * Here we consider the case when the beam is Gaussian distributed 
      * in each (uncorrelated) phase plane.
      * For this distribution <i>f</i>(<i>s</i>), we find that 
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * &nbsp; <i>F<sub>z</sub></i>(&Delta;<i>&phi;</i>) = 
      *   (1 - &Delta;<i>&phi;</i><sup>2</sup>/4)
      *   <i>e</i><sup>-&Delta;<i>&phi;</i><sup>2</sup>/8</sup>
-     * <br/>
-     * <br/> 
+     * <br>
+     * <br> 
      * There is no need for a small argument expansion since the
      * above expression is numerically stable.
      * </p>
@@ -2108,24 +2108,24 @@ public abstract class EnvelopeTrackerBase extends Tracker {
      * <p>
      * In XAL, longitundinal coordinate <i>z</i> is the "phase spread", but in meters. 
      * To convert to phase spread <i>d&phi;</i> in radians we have
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * &nbsp;   <i>d&phi;</i> = 2&pi;<i>z</i>/(&beta;&lambda;)
-     * <br/>
-     * <br/>     
+     * <br>
+     * <br>     
      * where &lambda; is the wavelength of the RF.  To simplify matters make the definition
-     * <br/> 
-     * <br/>
+     * <br> 
+     * <br>
      * &nbsp; <i>k</i> &equiv; 2&pi;/&beta;&lambda;,
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * which is the synchronous particle wave number.
      * So, for &lt;<i>d&phi;</i><sup>2</sup>&gt; we get
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * &nbsp; &lt;<i>d&phi;</i><sup>2</sup>&gt; = <i>k</i><sup>2</sup>&lt;<i>z</i><sup>2</sup>&gt;.
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * Note then that &lt;<i>d&phi;</i><sup>2</sup>&gt;<sup>1/2</sup> is the 
      * <em>RMS</em> phase spread.
      * </p>
@@ -2143,25 +2143,25 @@ public abstract class EnvelopeTrackerBase extends Tracker {
      * Putting this all together gives the following value for the 
      * <em>effective</em> phase phase spread for the equivalent uniform beam, 
      * &Delta;<i>&phi;</i>:
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * &nbsp; &Delta;<i>&phi;</i> = <i>k</i>&lt;5<i>z</i><sup>2</sup>&gt;<sup>1/2</sup>.
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * The above is the value returned by this method.  Note that &Delta;<i>&phi;</i>
      * is also referred to as the beam <em>half-length</em> (with respect to the
      * RF phase).
      * </p>
      * <p>
      * <strong>NOTES</strong>: (CKA)
-     * <br/>
+     * <br>
      * <br>
      * &middot; Note that the RMS phase spread can also be represented as
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * &nbsp;   <i>d&phi;</i> = &lt;[<i>&phi;(<i>s</i>) - &phi;<sub>s</sub></i>]<sup>2</sup>&gt;<sup>1/2</sup>
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * where <i>&phi;<sub>s</sub></i> is the synchronous particle phase.
      * </p>
      *
@@ -2211,29 +2211,29 @@ public abstract class EnvelopeTrackerBase extends Tracker {
      * <p>
      * Compute the phase spread of the bunch for a probe (based on Trace3D RfGap.f)
      * </p>
+     * <h3>CKA Notes:</h3>
      * <p>
-     * <h4>CKA Notes:</h4>
      * - This method needs to be optimized now that I understand what it is doing.
      * In XAL, longitundinal coordinate <i>z</i> is the "phase spread", but in meters. 
      * To convert to phase spread <i>&delta;&phi;</i> in radians we have
-     * <br/>
-     * <br/>
-     * &nbsp; &nbsp; &delta;&phi; = 2&pi;<i>z</i/>/(&beta;&lambda;) ,
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
+     * &nbsp; &nbsp; &delta;&phi; = 2&pi;<i>z</i>/(&beta;&lambda;) ,
+     * <br>
+     * <br>
      * where &lambda; is the wavelength of the RF.  So, for &lt;&delta;&phi;<sup>2</sup>&gt;
      * we get
-     * <br/>
-     * <br/> 
+     * <br>
+     * <br> 
      * &nbsp; &nbsp; &lt;&delta;&phi;<sup>2</sup>&gt; = &lt;<i>z</i><sup>2</sup>&gt;2&pi;<i>f</i>
      *                                                /(&beta;<i>c</i>) ,
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * where <i>f</i> is the RF frequency of the gap and c is the speed of light.
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * - For the optional computation <b>phaseSpreadT3d</b> (which apparently is not
-     * used) I am not sure what is happening, or why <y'y'> is significant?
+     * used) I am not sure what is happening, or why &lt;y'y'&gt; is significant?
      * </p>
      * 
      *  @param  probe   we are computing the phase spread for this probe at the current
@@ -2392,8 +2392,8 @@ public abstract class EnvelopeTrackerBase extends Tracker {
      * <p>
      * Used in EnvTrackerAdapt, EnvelopeTracker
      * </p>
+     * <h3>CKA Notes:</h3>
      * <p>
-     * <h4>CKA Notes:</h4>
      * - I think this should go in the <b>Algorithm</b> class.
      * It expects an <code>EnvelopeProbe</code> - element objects
      * should really not be concerned with the type of probe.
@@ -2458,8 +2458,8 @@ public abstract class EnvelopeTrackerBase extends Tracker {
      * <p>
      * used in EnvTrackerAdapt, EnvelopeTracker
      * </p>
+     * <h3>CKA Notes:</h3>
      * <p>
-     * <h4>CKA Notes:</h4>
      * - I think this should go in the <b>Algorithm</b> class.
      * It expects an <code>EnvelopeProbe</code> - element objects
      * should really not be concerned with the type of probe.
@@ -2547,7 +2547,7 @@ public abstract class EnvelopeTrackerBase extends Tracker {
 //     * </p>
 //     * <p>
 //     * <strong>References</strong>
-//     * <br/>
+//     * <br>
 //     * [1] M. Weiss,
 //     *      "Bunching of Intense Proton Beams with Six-Dimensional
 //     *       Matching to the Linac Acceptance", CERN/MPS/LI report 73-2,
@@ -2603,12 +2603,12 @@ public abstract class EnvelopeTrackerBase extends Tracker {
 //         * </p>
 //         * <p>
 //         * <strong>NOTES</strong>: (CKA)
-//         * <br/>
+//         * <br>
 //         * &middot; <strong>Important</strong>: This method returns a second-order
 //         * Taylor expansion about the point &Delta;&phi; = 0.  Because this type
 //         * of approximation is parabolic in the phase spread &Delta;&phi; it has no 
 //         * limit as &Delta;&phi; &rarr; &infin;.
-//         * <br/>
+//         * <br>
 //         * &middot; The method for calculating this result is not explained in the
 //         * Trace3D manual, only presented.
 //         * &middot; There is a descrepancy between the manual
@@ -2669,26 +2669,26 @@ public abstract class EnvelopeTrackerBase extends Tracker {
 //     * in an RF gap due to a finite phase spread in the beam.
 //     * <p>
 //     * <strong>NOTES</strong>: (CKA)
-//     * <br/>
+//     * <br>
 //     * &middot; This method is used to approximate &lt;x<sup>2</sup>sin(&phi;)&gt;, 
 //     * which is at least third order in the phase coordinates.
-//     * <br/>
+//     * <br>
 //     * 
 //     * &middot; The assumption that <i>x</i> and <i>z</i> are not correlated 
 //     * yields the result
-//     * <br/>
-//     * <br/>
+//     * <br>
+//     * <br>
 //     *  &nbsp; &lt;x<sup>2</sup>sin(&phi;)&gt; = &lt;x<sup>2</sup>&gt; <i>f</i>(<i>d&phi;</i>)
-//     * <br/>
-//     * <br/>
+//     * <br>
+//     * <br>
 //     * where <i>f</i>(<i>d&phi;</i>) &equiv; &lt;sin(<i>d&phi;</i>)is this method, 
 //     * and <i>d&phi;</i> is the "<em>phase spread</em>" of
 //     * the distribution.  The phase spread is defined
-//     * <br/>
-//     * <br/>
+//     * <br>
+//     * <br>
 //     * &nbsp;   <i>d&phi;</i> = &lt;(<i>&phi; - &phi;<sub>s</sub></i>)<sup>2</sup>&gt;<sup>1/2</sup>
-//     * <br/>
-//     * <br/>
+//     * <br>
+//     * <br>
 //     * where <i>&phi;<sub>s</sub></i> is the synchronous particle phase.
 //     * </p>
 //     * <p>
@@ -2747,27 +2747,27 @@ public abstract class EnvelopeTrackerBase extends Tracker {
 //     * <p>
 //     * <p>
 //     * <strong>NOTES</strong>: (CKA)
-//     * <br/>
+//     * <br>
 //     * &middot; This method is used to approximate
 //     * &lt;<i>x</i><sup>2</sup>sin<sup>2</sup>(<i>&phi;</i>)&gt;, which
 //     * is at least fourth order in the phase coordinates
-//     * <br/>
+//     * <br>
 //     * &middot; The assumption that <i>x</i> and <i>z</i> are not correlated 
 //     * yields the result
-//     * <br/>
-//     * <br/>
+//     * <br>
+//     * <br>
 //     * &nbsp;  &lt;<i>x</i><sup>2</sup>sin<sup>2</sup>(<i>&phi;</i>)> = &lt;<i>x</i><sup>2</sup>&gt;<i>g</i>(<i>d&phi;</i>)
-//     * <br/>
-//     * <br/>
+//     * <br>
+//     * <br>
 //     * where <i>g</i>(<i>d&phi;</i>) &equiv; &lt;sin<sup>2</sup>(<i>&phi;</i>)&gt; 
 //     * is this method, and <i>d&phi;</i> is the 
 //     * "<em>phase spread</em>" of
 //     * the distribution.  The phase spread is given by
-//     * <br/>
-//     * <br/>
+//     * <br>
+//     * <br>
 //     * &nbsp; <i>d&phi;</i> = &lt;(<i>&phi; - &phi;<sub>s</sub></i>)<sup>2</sup>&gt;<sup>1/2</sup>
-//     * <br/>
-//     * <br/>
+//     * <br>
+//     * <br>
 //     * where <i>&phi;<sub>s</sub></i> is the synchronous particle phase.
 //     * </p>
 //     *

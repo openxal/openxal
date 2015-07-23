@@ -6,8 +6,8 @@ import java.util.Properties;
 import org.junit.Assert;
 
 /**
- * Wrapper for properties for XML and XML schema JUnit test classes.<br/>
- * Properties are read from file {@value #FILE_TEST_PROPERTIES}.<br/>
+ * Wrapper for properties for XML and XML schema JUnit test classes.<br>
+ * Properties are read from file {@value #FILE_TEST_PROPERTIES}.<br>
  * Key constants are provided for easier access to any known property.
  * @author <a href='jakob.battelino@cosylab.com'>Jakob Battelino Prelog</a>
  */
@@ -36,7 +36,7 @@ public final class SchemaProperties {
 	}
 	
 	/**
-	 * Returns the test properties, or loads them from a file, if they have not been accessed yet.<br/>
+	 * Returns the test properties, or loads them from a file, if they have not been accessed yet.<br>
 	 * Properties are read from file {@value #FILE_TEST_PROPERTIES}.
 	 * If there is an exception while loading properties, empty properties are returned.
 	 * @return {@link Properties} loaded from {@value #FILE_TEST_PROPERTIES}.

@@ -49,7 +49,7 @@ public abstract class ThinElectromagnet extends ThinElement implements IElectrom
     /**  
      *  Get the magnetic field strength of the associated dipole
      *
-     *  @return     magnetic field (in <bold>Tesla</bold>).
+     *  @return     magnetic field (in <b>Tesla</b>).
      */
     public double getMagField() {
         return this.dblField;
@@ -70,7 +70,7 @@ public abstract class ThinElectromagnet extends ThinElement implements IElectrom
     /**  
      *  Set the magnetic field strength of the dipole electromagnet.
      *
-     *  @param  dblField    magnetic field (in <bold>Tesla</bold>).
+     *  @param  dblField    magnetic field (in <b>Tesla</b>).
      */
     public void setMagField(double dblField) {
         this.dblField = dblField;

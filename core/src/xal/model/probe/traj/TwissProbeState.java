@@ -84,7 +84,7 @@ public class TwissProbeState extends BunchProbeState<TwissProbeState> {
 
 
     /**
-     * Default constructor.  Create a new, empty <code>EnvelopeProbeState<code> object.
+     * Default constructor.  Create a new, empty <code>EnvelopeProbeState</code> object.
      */    
     public TwissProbeState() {
         super();
@@ -296,10 +296,10 @@ public class TwissProbeState extends BunchProbeState<TwissProbeState> {
      *  Returns homogeneous phase space coordinates of the centroid.  The units
      *  are meters and radians.
      *  </p>
+     *  <h3>CKA NOTE:</h3>
      *  <p>
-     *  <h4>CKA NOTE:</h4>
      *  - This method simply returns the value of TwissProbeState#getCentroid()
-     *  <br/>
+     *  <br>
      *  - It is included to support the <code>IPhaseState</code> interface
      *  </p>
      *
@@ -364,8 +364,8 @@ public class TwissProbeState extends BunchProbeState<TwissProbeState> {
 //     * For X and Y coordinates We convert to the conventional definition of 
 //     * dispersion dx/(dp/p) by dividing the (x|z') element of the first-order response 
 //     * matrix by relativistic gamma squared.
-//     * <br/>
-//     * <br/>
+//     * <br>
+//     * <br>
 //     * See D.C. Carey, "The Optics of Charged Particle Beams".
 //     * </p> 
 //     * 
@@ -395,8 +395,8 @@ public class TwissProbeState extends BunchProbeState<TwissProbeState> {
 //    /**
 //     * Set the "Chromatic dispersion" element of the response matrix.  That is
 //     * we set the (index,z') element of the response matrix to the given value.
-//     * <br/>
-//     * <br/>
+//     * <br>
+//     * <br>
 //     *  See D.C. Carey, "The Optics of Charged Particle Beams".
 //     *  
 //     * @param   index   phase coordinate index of desired "dispersion"

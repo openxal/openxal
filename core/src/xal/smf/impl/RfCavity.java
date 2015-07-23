@@ -57,8 +57,9 @@ public class RfCavity extends AcceleratorSeq {
     /**<p> 
      * container of the enclosed RfGap(s) in this cavity sorted by position 
      * </p>
+     * <h3>NOTE:</h3>
      * <p>
-     * <h4>NOTE:</h4> I don't understand the point of this, an 
+     *  I don't understand the point of this, an 
      * <code>RfCavityStruct</code> is an <code>AcceleratorSeq</code> which is
      * already an ordered list of <code>AcceleratorNode</code>s.  This
      * attribute and any reliance on it seems dangerously redundant.

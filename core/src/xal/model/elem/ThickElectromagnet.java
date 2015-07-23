@@ -57,7 +57,7 @@ public abstract class ThickElectromagnet extends ThickElement implements IElectr
    /**  
     *  Get the magnetic field strength of the electromagnet
     *
-    *  @return     magnetic field (in <bold>Tesla/meter</bold> for quads, <bold>Tesla</bold> for dipoles).
+    *  @return     magnetic field (in <b>Tesla/meter</b> for quads, <b>Tesla</b> for dipoles).
     */
    public double getMagField() {
        return this.dblField;
@@ -77,7 +77,7 @@ public abstract class ThickElectromagnet extends ThickElement implements IElectr
    /**  
     *  Set the magnetic field strength of the electromagnet.
     *
-    *  @param  dblField    magnetic field (in <bold>Tesla/meter</bold> for quads, <bold>Tesla</bold> for dipoles).
+    *  @param  dblField    magnetic field (in <b>Tesla/meter</b> for quads, <b>Tesla</b> for dipoles).
     */
    public void setMagField(double dblField) {
        this.dblField = dblField;

@@ -21,12 +21,12 @@ import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
 /**
- * Abstract test case for validation of XML schemas or XML files.<br/>
+ * Abstract test case for validation of XML schemas or XML files.<br>
  * Test case implements one JUnit test method {@link #basicSchemaValidation()}
- * which can test validity of both XML schema or an XML file.<br/>
+ * which can test validity of both XML schema or an XML file.<br>
  * Extending classes must implement {@link #getTestDocument()}
  * and {@link #getSchema()} methods, so generally speaking, each extending JUnit test
- * will test one XML file - XML schema pair.<br/>
+ * will test one XML file - XML schema pair.<br>
  * Some <code>protected</code> utility methods for reading documents and schemas are also provided.
  * @author <a href='jakob.battelino@cosylab.com'>Jakob Battelino Prelog</a>
  */
@@ -40,10 +40,10 @@ public abstract class AbstractXMLValidation {
 	protected static final String DIR_TEST_XMLS = SchemaProperties.getProperty(SchemaProperties.KEY_DIR_TEST_XMLS);
 	
 	/**
-	 * Basic XML schema validation method.<br/>
+	 * Basic XML schema validation method.<br>
 	 * This method retrieves a test XMl document and an appropriate XML schema
 	 * by calling {@link #getTestDocument()} and {@link #getSchema()} methods
-	 * and then performs document validation against the provided schema.<br/>
+	 * and then performs document validation against the provided schema.<br>
 	 * Test fails, if any exceptions are caught, or if either retrieved document or schema is <code>null</code>.
 	 * @see #getTestDocument()
 	 * @see #getSchema()
@@ -72,7 +72,7 @@ public abstract class AbstractXMLValidation {
 	}
 	
 	/**
-	 * Progressive XML schema validation method.<br/>
+	 * Progressive XML schema validation method.<br>
 	 * Since these tests should all be specific for each schema,
 	 * the declaration is made <code>abstract</code>.
 	 */
@@ -80,10 +80,10 @@ public abstract class AbstractXMLValidation {
 	public abstract void progressiveSchemaValidation();
 	
 	/**
-	 * External XML validation method.<br/>
+	 * External XML validation method.<br>
 	 * This method retrieves an external XMl document and an appropriate XML schema
 	 * by calling {@link #getExternalDocument()} and {@link #getSchema()} methods
-	 * and then performs document validation against the provided schema.<br/>
+	 * and then performs document validation against the provided schema.<br>
 	 * Test fails, if any exceptions are caught, or if either retrieved document or schema is <code>null</code>.
 	 * @see #getExternalDocument()
 	 * @see #getSchema()
@@ -136,7 +136,7 @@ public abstract class AbstractXMLValidation {
 	protected abstract Document getExternalDocument() throws Exception;
 	
 	/**
-	 * Validates the provided DOM document against the provided XML schema.<br/>
+	 * Validates the provided DOM document against the provided XML schema.<br>
 	 * Returns <code>true</code>, if the document has been successfully validated.
 	 * @param document {@link Document} DOM document to be validated.
 	 * @param schema {@link Schema} XML schema against which the document will be validated.
@@ -170,7 +170,7 @@ public abstract class AbstractXMLValidation {
 	}
 	
 	/**
-	 * Reads an XML {@link Schema} from a file with the specified name.<br/>
+	 * Reads an XML {@link Schema} from a file with the specified name.<br>
 	 * {@link SchemaFactory} used for creating the schema uses the specified schema language.
 	 * See {@link XMLConstants} for a list of valid schema language Namespace URIs.
 	 * @param schemaFileName {@link String} that is the name of the XML schema file to be read.
@@ -186,7 +186,7 @@ public abstract class AbstractXMLValidation {
 	}
 	
 	/**
-	 * Returns a {@link DocumentBuilder} created with default settings.<br/>
+	 * Returns a {@link DocumentBuilder} created with default settings.<br>
 	 * {@link DocumentBuilderFactory} used for creating the {@link DocumentBuilder}
 	 * is set to ignore comments, ignore element content white space and to be Namespace aware.
 	 * @return {@link DocumentBuilder} created with default settings.

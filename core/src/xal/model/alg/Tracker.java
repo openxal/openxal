@@ -37,7 +37,7 @@ import java.util.List;
  * Tracking algorithm objects are  classes that implement the 
  * <code>IAlgorithm</code> interface.  This class provides default implementations
  * for all methods of the <code>IAlgorithm</code> interface.  Derived classes
- * must implement the <bold>doPropagation()</bold> abstract method in order to 
+ * must implement the <b>doPropagation()</b> abstract method in order to 
  * provide the actual dynamics of the algorithm.  Note that derived classes may 
  * wish to override the <code>propagate(IProbe, IElement)</code> method directly
  * for complete control of the propagation mechanism. 
@@ -53,17 +53,17 @@ import java.util.List;
  * </p>  
  * <p>
  * <strong>NOTES:</strong> &nbsp; CKA
- * <br/>
+ * <br>
  * &middot; We might get a significant performance upgrade by 
  * eliminating the calls to <code>validElement(IElement)</code>
  * and <code>validProbe(IProbe)</code> within the method
  * <code>propagate(IProbe, IElement)</code>.
- * <br/>
+ * <br>
  * &middot; Derived classes should call <code>registerProbeType(Class)</code>
  * in order that the 
  * the <code>validProbe()</code> method function properly, 
  * that is, identify all probes that this class recognizes.
- * <br/>
+ * <br>
  * &middot; Perhaps it's better to eliminate <code>validProbe</code>
  * as a safety measure since, in the
  * current implementation, each probe carries it's own algorithm object.
@@ -93,7 +93,7 @@ public abstract class Tracker implements IAlgorithm, IArchive {
      * </p>
      * <p>
      * NOTE:
-     * <br/>The protected method 
+     * <br>The protected method 
      * <code>advanceProbe(IProbe, IElement, double)</code>
      * is available for derived classes.  It is a convenience method
      * for performing many of the common tasks in the forward propagation 
@@ -231,8 +231,8 @@ public abstract class Tracker implements IAlgorithm, IArchive {
      * <code>AcceleratorSeq</code> name. 
      * </p>
      * 
+     * <h3>NOTE</h3>
      * <p>
-     * <h4>NOTE</h4>
      * &middot; The returned algorithm type is that specified by the <tt>"type"</tt> attribute
      * of the <code>&lt;Algorithm&gt;</code> table contained in the 
      * <code>model.params</code> file.  The developer must ensure that the <tt>Probe</tt>
@@ -246,7 +246,7 @@ public abstract class Tracker implements IAlgorithm, IArchive {
      * @throws DataFormatException  bad data format, error reading data
      * 
      * @author Christopher K. Allen
-     * @since  > Oct 17, 2012
+     * @since  &gt; Oct 17, 2012
      * 
      * @deprecated  I want to discourage use of this method since it return the same "default"
      *              algorithm regardless the type of probe being used.  Please refer to
@@ -269,8 +269,8 @@ public abstract class Tracker implements IAlgorithm, IArchive {
      * have the given value of the argument <code>strLocationId</code>.
      * </p>
      * 
+     * <h3>NOTE</h3>
      * <p>
-     * <h4>NOTE</h4>
      * &middot; The returned algorithm type is that specified by the <tt>"type"</tt> attribute
      * of the <code>&lt;Algorithm&gt;</code> table contained in the 
      * <code>model.params</code> file.  The developer must ensure that the <tt>Probe</tt>
@@ -285,7 +285,7 @@ public abstract class Tracker implements IAlgorithm, IArchive {
      * @throws DataFormatException  bad data format, error reading data
      * 
      * @author Christopher K. Allen
-     * @since  > Oct 17, 2012
+     * @since  &gt; Oct 17, 2012
      * 
      * @deprecated  I want to discourage use of this method since it return the same "default"
      *              algorithm regardless the type of probe being used.  Please refer to
@@ -681,11 +681,11 @@ public abstract class Tracker implements IAlgorithm, IArchive {
      * 
      * <p>
      * <strong>NOTE:</strong> &nbsp; CKA
-     * <br/>
+     * <br>
      * &middot; We might get a significant performance upgrade by 
      * eliminating the internal call to 
      * <code>{@link #validProbe(IProbe)}</code>.
-     * <br/>
+     * <br>
      * &middot; The method <code>validElement(IElement)}</code>
      * needs to be called here in the current implementation.  It is 
      * called for every element - Is there a better (faster) way?
@@ -887,7 +887,7 @@ public abstract class Tracker implements IAlgorithm, IArchive {
      * </p>
      * <p>
      * NOTES: CKA
-     * <br/>
+     * <br>
      * &middot; In order to use this method the derived class
      * must override the <code>propagate</code> method, since it default
      * implementation forward propagates the probe.
@@ -945,7 +945,7 @@ public abstract class Tracker implements IAlgorithm, IArchive {
      * </p>
      * <p>
      * NOTE: CKA
-     * <br/>
+     * <br>
      * &middot; Maybe there is a better way of using start and stop
      * elements.
      * </p>

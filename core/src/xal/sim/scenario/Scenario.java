@@ -305,18 +305,19 @@ public class Scenario {
     }
 	
     /**
+     * <h3>NOTE</h3>
      * <p>
      * Returns the trajectory obtained by running the model.
-     * <h4>NOTE</h4>
-     * &middot; The type of the object returned is actually <code>Trajectory<?></code>
+     *
+     * &middot; The type of the object returned is actually <code>Trajectory&lt;?&gt;</code>
      * since the actual type of the trajectory is not known.  Any type of probe
      * may be used to run the scenario.  
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * &middot; This is simply a convenient way to avoid the clumsy Java
      * type casting, however, it is essentially the same thing.
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * &middot; A runtime cast exception will be thrown if the trajectory does
      * not match the probe type currently run.  
      * </p>
