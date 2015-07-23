@@ -422,9 +422,9 @@ public abstract class SquareMatrix<M extends SquareMatrix<M>> extends BaseMatrix
      *                      or <code>null</code> if an error occurred
      */
     public M    times(M matRight) {
-        BaseMatrix<M> matBase = (BaseMatrix<M>)matRight;
+        BaseMatrix<M>   matBase = (BaseMatrix<M>)matRight;
         Jama.Matrix     impMult = matBase.getMatrix();
-        Jama.Matrix     impProd = this.getMatrix().times( impMult);
+        Jama.Matrix     impProd = this.getMatrix().times(impMult);
         M               matAns  = this.newInstance(impProd);
 
         return matAns;
