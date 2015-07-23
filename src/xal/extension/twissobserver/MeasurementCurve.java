@@ -17,7 +17,7 @@ import java.util.ArrayList;
 
 /**
  * This class represents a curve within a graph 
- * (see <code>{@link FunctionGrpahsJPanel}<code> and
+ * (see <code>{@link FunctionGraphsJPanel}</code> and
  * child class <code>{@link TrajectoryGraph}</code>) containing
  * measurement data.  The curve is composed of unconnected data points for the
  * beam size measurements of a particular phase plane.

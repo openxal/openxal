@@ -78,8 +78,8 @@ public class CsZeroCurrentEstimator extends CourantSnyderEstimator {
      * the minimum norm (or "least energy") solution; specifically, the solution that has the smallest
      * Lebesgue 2-norm.  If we have 3 data points for the phase plane then the unique solution is returned.
      * </p>
+     * <h3>NOTE</h3>
      * <p>
-     * <h4>NOTE</h4>
      * &middot;  If the reconstruction device has non-zero length the location of the moments corresponds 
      * to the exit of the device.
      * </p>
