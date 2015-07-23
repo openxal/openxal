@@ -121,7 +121,7 @@ public abstract class BunchProbeState<S extends BunchProbeState<S>> extends Prob
     /**
      *  Set the total beam current 
      * 
-     * @param   I   new beam current in <bold>Amperes</bold>
+     * @param   I   new beam current in <b>Amperes</b>
      */
     public void setBeamCurrent(double I) {
         dblBmCurr = I;
@@ -136,11 +136,11 @@ public abstract class BunchProbeState<S extends BunchProbeState<S>> extends Prob
      * <p>
      * The bunch frequency <i>f</i> is related to the beam current 
      * <i>I</i> and bunch charge <i>Q</i> as 
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * &nbsp; &nbsp; <i>f</i> = <i>I/Q</i>
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * </p>
      *      
      * @return  bunch frequency in Hertz
@@ -206,8 +206,8 @@ public abstract class BunchProbeState<S extends BunchProbeState<S>> extends Prob
      *  and <i>E<sub>R</sub></i> is the rest energy of the beam particles.
      *  </p>
      *  
+     *  <h3>NOTES:</h3>
      *  <p>
-     *  <h4>NOTES:</h4>
      *  - The value (1/4&pi;&epsilon;<sub>0</sub>) is equal to 10<sup>-7</sup><i>c</i><sup>2</sup>
      *  where <i>c</i> is the speed of light.
      *  </p> 

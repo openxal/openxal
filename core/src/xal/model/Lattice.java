@@ -174,10 +174,10 @@ public class Lattice extends ElementSeq {
      *  </p>
      * <p>
      * <strong>NOTES</strong>: CKA
-     * <br/>
+     * <br>
      * &middot; Support for backward propagation
      * February, 2009.
-     * <br/>
+     * <br>
      * &middot; You must use the <em>proper algorithm</em> object
      * for this method to work correctly!
      * </p>

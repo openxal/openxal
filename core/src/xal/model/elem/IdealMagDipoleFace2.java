@@ -23,8 +23,8 @@ import xal.model.ModelException;
  * </p>
  * <p>  
  * The model for the pole face effect is taken from D.C. Carey's book.
- * <br/>
- * <br/>
+ * <br>
+ * <br>
  *  D.C. Carey, <i>The Optics of Charged Particle Beams</i> (Harwood, 1987)
  * </p>
  * 

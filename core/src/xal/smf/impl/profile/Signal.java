@@ -175,8 +175,8 @@ public class Signal extends ScadaRecord {
          * this enumeration constant.  The data
          * to create the field descriptor is taken from the provided annotation.  
          * </p>
+         * <h3>NOTE:</h3>
          * <p>
-         * <h4>NOTE:</h4>
          * &middot; If the annotation field corresponding to this enumeration is 
          * set to the empty string <tt>""</tt>, the method will return a <code>null</code> value.
          * Since it is not necessary for all handles to be specified this is not necessarily a failure
@@ -310,8 +310,8 @@ public class Signal extends ScadaRecord {
      * <code>{@link ScadaRecord}</code> and can automatically acquire data from the
      * connected device.
      * </p>
+     * <h3>NOTES:</h3>
      * <p>
-     * <h4>NOTES:</h4>
      * &middot; The returned <code>Signal</code> object may not have all fields connected.
      * Only those fields for which the given annotation has non-empty values will be
      * connected.  This could cause complications for signals requiring such fields and
@@ -440,19 +440,19 @@ public class Signal extends ScadaRecord {
      * place with that of the given signal structure.  Letting &lambda; denote the 
      * provided averaging factor, which is in the interval [0,1], the new values of this
      * signal, say <i>v'</i> are given by the formula
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * &nbsp; &nbsp; <i>v'</i> = &lambda;<i>u</i> + (1 - &lambda;)<i>v</i>
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * where <i>v</i> is the previous value of <i>v'</i> and <i>u</i> is the new value
      * of <i>v</i> in <code>sigAcq</code>. 
      * </p>  
+     * <h3>NOTES:</h3>
      * <p>
-     * <h4>NOTES:</h4>
      * &middot; Nothing is done to the position values in the signal, they are unchanged of
      * current writing.
-     * <br/>
+     * <br>
      * &middot; The standard deviation is weighted vectorally.
      * </p>
      * 

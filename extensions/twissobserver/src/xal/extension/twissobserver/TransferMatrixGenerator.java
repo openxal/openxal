@@ -262,8 +262,8 @@ public class TransferMatrixGenerator {
 	 * case.  The model is run using a transfer map probe which only
 	 * collects machine data.
 	 * </p>
+	 * <h3>NOTE:</h3>
 	 * <p>
-	 * <h4>NOTE:</h4>
 	 * &middot; This simulation always starts with the first element in the sequence
 	 * since the transfer matrices are not dependent upon beam state.
 	 * </p>
@@ -300,8 +300,8 @@ public class TransferMatrixGenerator {
      * <code>{@link #generateWithSpaceCharge(String, double, CovarianceMatrix)}</code>
      * using <code>null</code> as the first argument.
      * </p>
+     * <h3>NOTE</h3>
      * <p>
-     * <h4>NOTE</h4>
      * &middot; Bunch charge (the target parameter) is given by beam current divided
      * by bunch frequency.
      * </p>
@@ -337,8 +337,8 @@ public class TransferMatrixGenerator {
 	 * effects and the beam size.  Thus, the transfer matrices will typically be 
 	 * different for different starting configurations of the beam.
 	 * </p>
+	 * <h3>NOTE:</h3>
 	 * <p>
-	 * <h4>NOTE:</h4>
 	 * &middot; Bunch charge <i>Q</i> is given by beam current <i>I</i> divided by
 	 *          bunch frequency <i>f</i>.  Specifically, <i>Q</i> = <i>I</i>/<i>f</i>.
 	 * </p> 

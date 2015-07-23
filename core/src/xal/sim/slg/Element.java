@@ -383,7 +383,7 @@ public abstract class Element implements VisitorListener, Cloneable {
     }
     
     /**
-     * Return a version string wo the cvs keyword (i.e. <dollar>Id<dollar>).
+     * Return a version string wo the cvs keyword (i.e. $Id$).
      */
     public static String version() {
         String st="";

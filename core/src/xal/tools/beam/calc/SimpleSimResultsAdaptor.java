@@ -28,8 +28,8 @@ import xal.model.probe.traj.TransferMapState;
  * that the type <code>TransferMapTrajectory</code> and 
  * <code>EnvelopeTrajectory</code>.
  * </p>
+ * <h3>NOTE:</h3>
  * <p>
- * <h4>NOTE:</h4>
  * - Calculations for the <code>ParticleProbeTrajectory</code> have been added.  The
  * calculation engine is <code>CalculationsOnParticles</code>.  Note that only the
  * methods of interface <code>ISimLocResults</code> will be recognized.  Methods of

@@ -51,13 +51,13 @@ public class CalculationsOnMachines extends CalculationEngine  implements ISimLo
      * (and covariance matrix <b>&sigma;</b><sub>1</sub>)
      * from position <i>s</i><sub>1</sub> to position <i>s</i><sub>2</sub> is then given
      * by
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * &nbsp; &nbsp; <b>&Phi;</b>(<i>s</i><sub>2</sub>,<i>s</i><sub>1</sub>) = 
      *                  <b>&Phi;</b>(<i>s</i><sub>2</sub>,<i>s</i><sub>0</sub>)
      *                  <b>&Phi;</b>(<i>s</i><sub>1</sub>,<i>s</i><sub>0</sub>)<sup>-1</sup> ,
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * where <b>&Phi;</b>(<i>s</i><sub>2</sub>,<i>s</i><sub>0</sub>) is the transfer matrix between
      * the beamline entrance <i>s</i><sub>0</sub> and the position <i>s</i><sub>2</sub>
      * of state <i>S</i><sub>2</sub>, and <b>&Phi;</b>(<i>s</i><sub>1</sub>,<i>s</i><sub>0</sub>) is the
@@ -95,13 +95,13 @@ public class CalculationsOnMachines extends CalculationEngine  implements ISimLo
      * (and covariance matrix <b>&sigma;</b><sub>1</sub>)
      * from position <i>s</i><sub>1</sub> to position <i>s</i><sub>2</sub> is then given
      * by
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * &nbsp; &nbsp; <b>T</b>(<i>s</i><sub>2</sub>,<i>s</i><sub>1</sub>) = 
      *                  <b>T</b>(<i>s</i><sub>2</sub>,<i>s</i><sub>0</sub>) &#x2218;
      *                  <b>T</b>(<i>s</i><sub>1</sub>,<i>s</i><sub>0</sub>)<sup>-1</sup> ,
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * where <b>T</b>(<i>s</i><sub>2</sub>,<i>s</i><sub>0</sub>) is the transfer map between
      * the beamline entrance <i>s</i><sub>0</sub> and the position <i>s</i><sub>2</sub>
      * of state <i>S</i><sub>2</sub>, and <b>T</b>(<i>s</i><sub>1</sub>,<i>s</i><sub>0</sub>) is the
@@ -305,17 +305,17 @@ public class CalculationsOnMachines extends CalculationEngine  implements ISimLo
      * translation operations on a phase vector 
      * <b>z</b> &in; <b>P</b><sup>6</sup> &sub; <b>R</b><sup>6</sup> &times; {1} since
      * <b>z</b> &in; <b>P</b><sup>6</sup> is represented 
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * &nbsp; &nbsp; <b>z</b> = (<i>x, x', y, y', z, z', </i>1)<sup><i>T</i></sup> .
-     * <br/>
-     * <br/>  
+     * <br>
+     * <br>  
      * Thus, the action of <b>&Phi;</b> can be (loosely) decomposed as 
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * &nbsp; &nbsp; <b>&Phi; &sdot; z</b> = <b>Mz</b> + &Delta;<b>z</b> ,
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * where <b>M</b> &in; <i>Sp</i>(6), the symplectic group.  This method returns the
      * component &Delta;<b>z</b> of the transfer map.
      * </p>
@@ -349,11 +349,11 @@ public class CalculationsOnMachines extends CalculationEngine  implements ISimLo
      * Let <b>&Phi;</b> denote the one-turn map for a ring.  The fixed point 
      * <b>z</b> &in; <b>R</b><sup>6</sup>&times;{1} in homogeneous phase space coordinates
      * is that which is invariant under <b>&Phi;</b>, that is,
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * &nbsp; &nbsp; <b>&Phi;z</b> = <b>z</b> .
-     * <br/>
-     * <br/> 
+     * <br>
+     * <br> 
      * This method returns that vector <b>z</b>.  
      * </p>
      * <p>
@@ -364,8 +364,8 @@ public class CalculationsOnMachines extends CalculationEngine  implements ISimLo
      * matrix <b>T</b> &in; <b>R</b><sup>6&times;6</sup> (here <b>T</b> is linear). 
      * Thus, we can write the linear operator <b>&Phi;</b>
      * as the augmented system 
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * <pre>
      * &nbsp; &nbsp; <b>&Phi;</b> = |<b>T</b> <b>&Delta;</b> |,   <b>z</b> &equiv; |<b>p</b>| ,
      *         |<b>0</b> 1 |        |1|
@@ -375,17 +375,17 @@ public class CalculationsOnMachines extends CalculationEngine  implements ISimLo
      * </p>
      * <p>
      * Putting this together we get
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * &nbsp; &nbsp; <b>&Phi;z</b> = <b>Tp</b> + <b>&Delta;</b> = <b>p</b> , 
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * to which the solution is
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * &nbsp; &nbsp; <b>p</b> = -(<b>T</b> - <b>I</b>)<sup>-1</sup><b>&Delta;</b>
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * assuming it exists.  The question of solution existence falls upon the
      * resolvent <b>R</b> &equiv; (<b>T</b> - <b>I</b>)<sup>-1</sup> of <b>T</b>.
      * By inspection we can see that <b>p</b> is defined so long as the eigenvalues
@@ -480,14 +480,14 @@ public class CalculationsOnMachines extends CalculationEngine  implements ISimLo
      * </p>
      * The following are the calculations used for the Courant-Snyder parameters of a 
      * single phase plane:
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * &nbsp; &nbsp; &alpha; &equiv; -<i>ww'</i> = (&phi;<sub>11</sub> - &phi;<sub>22</sub>)/(2 sin &sigma;) ,
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * &nbsp; &nbsp; &beta; &equiv; <i>w</i><sup>2</sup> = &phi;<sub>12</sub>/sin &sigma;
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * where &phi;<sub><i>ij</i></sub> are the elements of the 2&times;2 diagonal blocks of
      * <b>&Phi;</b> corresponding the the particular phase plane, the function <i>w</i>
      * is taken from Reiser, and &sigma; is the phase advance through the cell for the 
@@ -535,22 +535,22 @@ public class CalculationsOnMachines extends CalculationEngine  implements ISimLo
      * </p>
      * <p>
      * The definition of phase advance &sigma; is given by
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * &nbsp; &nbsp; &sigma;(<i>s</i>) &equiv; &int;<sup><i>s</i></sup> [1/&beta;(<i>t</i>)]<i>dt</i> ,
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * where &beta;(<i>s</i>) is the Courant-Snyder, envelope function, and the integral 
      * is taken along the interval between the initial and final Courant-Snyder 
      * parameters.
      * </p>
      * <p>
      * The basic relation used to compute &sigma; is the following:
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * &nbsp; &nbsp;  &sigma; = sin<sup>-1</sup> &phi;<sub>12</sub>/(&beta;<sub>1</sub>&beta;<sub>2</sub>)<sup>&frac12;</sup> ,
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * where &phi;<sub>12</sub> is the element of <b>&Phi;</b> in the upper right corner of each 
      * 2&times;2 diagonal block, &beta;<sub>1</sub> is the initial beta function value (provided)
      * and &beta;<sub>2</sub> is the final beta function value (provided).
@@ -583,11 +583,11 @@ public class CalculationsOnMachines extends CalculationEngine  implements ISimLo
      * <p>
      * Let the full-turn map a the state location be denoted <b>&Phi;</b>.
      * The transverse plane dispersion vector <b>&Delta;</b> is defined  
-     * <br/>
-     * <br/> 
+     * <br>
+     * <br> 
      * &nbsp; &nbsp; <b>&Delta;</b><sub><i>t</i></sub> &equiv; -(1/&gamma;<sup>2</sup>)[d<i>x</i>/d<i>z'</i>, d<i>x'</i>/d<i>z'</i>, d<i>y</i>/d<i>z'</i>, d<i>y'</i>/d<i>z'</i>]<sup><i>T</i></sup> .
-     * <br/>
-     * <br/>  
+     * <br>
+     * <br>  
      * It can be identified as the first 4 entries of the 6<sup><i>th</i></sup> 
      * column in the transfer matrix <b>&Phi;</b>. The above vector
      * quantifies the change in the transverse particle phase 
@@ -595,17 +595,17 @@ public class CalculationsOnMachines extends CalculationEngine  implements ISimLo
      * The factor -(1/&gamma;<sup>2</sup>) is needed to convert from longitudinal divergence
      * angle <i>z'</i> used by XAL to momentum &delta;<i>p</i> &equiv; &Delta;<i>p</i>/<i>p</i> used in 
      * the dispersion definition.  Specifically,
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * &nbsp; &nbsp; &delta;<i>p</i> &equiv; &Delta;<i>p</i>/<i>p</i> = &gamma;<sup>2</sup><i>z</i>'
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * As such, the above vector can be better described
-     * <br/>
-     * <br/> 
+     * <br>
+     * <br> 
      * &nbsp; &nbsp; <b>&Delta;</b><sub><i>t</i></sub> &equiv; [&Delta;<i>x</i>/&delta;<i>p</i>, &Delta;<i>x'</i>/&delta;<i>p</i>, &Delta;<i>y</i>/&delta;<i>p</i>, &Delta;<i>y'</i>/&delta;<i>p</i>]<sup><i>T</i></sup>
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * explicitly describing the change in transverse phase coordinate for fractional
      * change in momentum &delta;<i>p</i>.  
      * </p>
@@ -623,24 +623,24 @@ public class CalculationsOnMachines extends CalculationEngine  implements ISimLo
      * &delta;<i>p</i>.  That is, the particle ends up
      * in the same location each revolution. With a finite momentum spread of &delta;<i>p</i> &gt; 0
      * we require this require that
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * &nbsp; &nbsp; <b>Tz</b><sub><i>t</i></sub> + &delta;<i>p</i><b>&Delta;</b><sub><i>t</i></sub> = <b>z</b><sub><i>t</i></sub> ,
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * which can be written
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * &nbsp; <b>z</b><sub><i>t</i></sub> = &delta;<i>p</i>(<b>T</b> - <b>I</b>)<sup>-1</sup><b>&Delta;</b><sub><i>t</i></sub> ,
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * where <b>I</b> is the identity matrix.  Dividing both sides by &delta;<i>p</i> yields the final
      * result
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * &nbsp; <b>z</b><sub>0</sub> &equiv; <b>z</b><sub><i>t</i></sub>/&delta;<i>p</i> = (<b>T</b> - <b>I</b>)<sup>-1</sup><b>&Delta;</b><sub><i>t</i></sub> ,
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * which is the returned value of this method.  It is normalized by
      * &delta;<i>p</i> so that we can compute the closed orbit for any given momentum spread.
      * </p>
@@ -684,12 +684,12 @@ public class CalculationsOnMachines extends CalculationEngine  implements ISimLo
      * <b>&Phi;</b><sub>0</sub> for this machine (end to end).  Then the full turn matrix 
      * <b>&Phi;</b><sub><i>n</i></sub> for the machine at location <i>s<sub>n</sub></i>
      * is given by
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * &nbsp; &nbsp; <b>&Phi;</b><sub><i>n</i></sub> = <b>T</b><sub><i>n</i></sub> &sdot; <b>&Phi;</b><sub>0</sub>
      *               &sdot; <b>T</b><sub><i>n</i></sub><sup>-1</sup> .
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * That is, we conjugate the full transfer map for this machine by the transfer map 
      * for the given state.
      * </p> 

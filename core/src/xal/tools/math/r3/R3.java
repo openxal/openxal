@@ -214,11 +214,11 @@ public class R3 extends BaseVector<R3> implements java.io.Serializable {
      * </p>  
      * <p>
      *  The string should be formatted as
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      *  "(x,y,z)"
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * where x, y, z are floating point representations.
      * </p>
      * 

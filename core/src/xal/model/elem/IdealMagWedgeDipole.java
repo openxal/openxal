@@ -18,8 +18,8 @@ import xal.smf.impl.Bend;
  * <code>IdealDipoleFace</code> elements that provided the thin lens
  * dynamics of the tilted pole faces.
  * </p>
+ * <h3>NOTE:</h3>
  * <p>
- * <h4>NOTE:</h4>
  * A rectangle dipole can be specified by setting equal exit and entrance
  * pole face angles.
  * </p>
@@ -267,7 +267,7 @@ public class IdealMagWedgeDipole extends ElectromagnetSeq {
     /**  
      *  Get the magnetic field strength of the dipole electromagnet
      *
-     *  @return     magnetic field (in <bold>Tesla</bold>).
+     *  @return     magnetic field (in <b>Tesla</b>).
      */
     public double getMagField() {
         return this.getMagBody().getMagField();
@@ -291,7 +291,7 @@ public class IdealMagWedgeDipole extends ElectromagnetSeq {
     /**  
      *  Set the magnetic field strength of the dipole electromagnet.
      *
-     *  @param  dblField    magnetic field (in <bold>Tesla</bold>).
+     *  @param  dblField    magnetic field (in <b>Tesla</b>).
      */
     public void setMagField(double dblField) {
         this.getEntrFace().setMagField(dblField);
@@ -303,7 +303,7 @@ public class IdealMagWedgeDipole extends ElectromagnetSeq {
 	/**
 	 * Conversion method to be provided by the user
 	 * 
-	 * @param latticeElement the SMF node to convert
+	 * @param element the SMF node to convert
 	 */
 	@Override
 	public void initializeFrom(LatticeElement element) {

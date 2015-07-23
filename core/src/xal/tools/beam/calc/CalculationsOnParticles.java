@@ -127,10 +127,10 @@ public class CalculationsOnParticles extends CalculationEngine implements ISimLo
      * and thus assumes simulation trajectory is that for at least one period of 
      * a periodic structure.
      * </p>
+     * <h3>NOTES:</h3>
      * <p>  
-     * <h4>NOTES:</h4>
      * &middot; The betatron phase advances are given in the range [0,2&pi];.
-     * <br/>
+     * <br>
      * </p>
      * 
      * @return  vector particle betatron phase advances (in radians)
@@ -157,8 +157,8 @@ public class CalculationsOnParticles extends CalculationEngine implements ISimLo
      * It is invariant under 
      * the action of <b>&Phi;</b>, that is, <b>&Phi;z</b> = <b>z</b>. 
      * </p>
+     * <h3>NOTES:</h3>
      * <p>  
-     * <h4>NOTES:</h4>
      * &middot; The entrance and exit of the beamline should have the same fixed point
      * value.
      * </p>
@@ -184,8 +184,8 @@ public class CalculationsOnParticles extends CalculationEngine implements ISimLo
      * the actual beam (rather than the normalized size &beta;), or "acceptance".  Thus it
      * cannot be computed here and <code>NaN</code> is returned instead.
      * </p>
+     * <h3>NOTES:</h3>
      * <p>  
-     * <h4>NOTES:</h4>
      * &middot; The entrance of the simulation is assumed to be the location of the
      * first and last states of the solution trajectory.
      * </p>
@@ -221,16 +221,16 @@ public class CalculationsOnParticles extends CalculationEngine implements ISimLo
     }
 
     /**
+     * <h3>IMPORTANT NOTE</h3>
      * <p>
-     * <h4>IMPORTANT NOTE</h4>
      * This method has been modified so it returns exactly the same value as 
      * {@link #computeCoordinatePosition(ParticleProbeState)}.  This modification is
      * maintain compatibility with the previous use of <code>computeFixedOrbit()</code>
      * presented by the trajectory classes for particles, beam envelopes, etc.  They
      * responded differently depending upon whether the structure producing the simulation
      * data was from a ring or a linear transport/accelerator structure.
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * Thus, <em>ignore all commenting below!</em>
      * </p>
      * 
@@ -249,8 +249,8 @@ public class CalculationsOnParticles extends CalculationEngine implements ISimLo
      * matrix <b>T</b> &in; <b>R</b><sup>6&times;6</sup> (here <b>T</b> is linear). 
      * Thus, we can write the linear operator <b>&Phi;</b>
      * as the augmented system 
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * <pre>
      * &nbsp; &nbsp; <b>&Phi;</b> = |<b>T</b> <b>&Delta;</b> |,   <b>z</b> &equiv; |<b>p</b>| ,
      *         |<b>0</b> 1 |        |1|
@@ -261,17 +261,17 @@ public class CalculationsOnParticles extends CalculationEngine implements ISimLo
      * </p>
      * <p>
      * Putting this together we get
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * &nbsp; &nbsp; <b>&Phi;z</b> = <b>Tp</b> + <b>&Delta;</b> = <b>p</b> , 
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * to which the solution is
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * &nbsp; &nbsp; <b>p</b> = -(<b>T</b> - <b>I</b>)<sup>-1</sup><b>&Delta;</b>
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * assuming it exists.  The question of solution existence falls upon the
      * resolvent <b>R</b> &equiv; (<b>T</b> - <b>I</b>)<sup>-1</sup> of <b>T</b>.
      * By inspection we can see that <b>p</b> is defined so long as the eigenvalues

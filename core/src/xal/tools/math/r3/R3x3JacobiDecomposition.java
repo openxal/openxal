@@ -20,11 +20,11 @@ import xal.tools.math.r3.R3x3.POS;
  *  </p>
  * <p>
  *  If the matrix is symmetric it can be factored as
- * <br/>
- * <br/>
+ * <br>
+ * <br>
  * &nbsp; &nbsp; <b>A</b> = <b>RDR</b><sup>T</sup>
- * <br/>
- * <br/>
+ * <br>
+ * <br>
  *  where <b>A</b> is the target matrix, <b>R</b> is an orthogonal 
  *  matrix in <i>SO</i>(3), and <b>D</b> is the diagonal matrix of real 
  *  eigenvales of <b>A</b>.
@@ -207,11 +207,11 @@ public class R3x3JacobiDecomposition {
     /** 
      * <p>
      * Decomposes the given matrix <b>&sigma;</b> into the product
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * &nbsp; &nbsp; <b>&sigma;</b> = <b>RDR</b><sup><i>T</i></sup> ,
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * where <b>R</b> &in; <i>O</i>(3) is the conjugating rotation matrix and
      * <b>D</b> &in; <b>R</b><sub>+</sub><sup>3&times;3</sup> is the diagonal
      * matrix of eigenvalues of <b>&sigma;</b>.

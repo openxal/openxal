@@ -129,7 +129,7 @@ public class IdealMagFringeQuad extends ElectromagnetSeq {
      * 
      * <p>The physical length of this element is not set when invoking
      * this method.  That must be done separately with a call to 
-     * <code>setPhysicalLength(double></code>.
+     * <code>setPhysicalLength(double)</code>.
      * </p>
      * 
      * @param   dblPos      lattice position of element center (meters)
@@ -373,7 +373,7 @@ public class IdealMagFringeQuad extends ElectromagnetSeq {
     /**  
      *  Get the magnetic field strength of the dipole electromagnet
      *
-     *  @return     magnetic field (in <bold>Tesla</bold>).
+     *  @return     magnetic field (in <b>Tesla</b>).
      */
     public double getMagField() {
         return this.getMagBody().getMagField();
@@ -397,7 +397,7 @@ public class IdealMagFringeQuad extends ElectromagnetSeq {
     /**  
      *  Set the magnetic field strength of the dipole electromagnet.
      *
-     *  @param  dblField    magnetic field (in <bold>Tesla</bold>).
+     *  @param  dblField    magnetic field (in <b>Tesla</b>).
      */
     public void setMagField(double dblField) {
         this.getFaceEntr().setMagField(dblField);
@@ -444,7 +444,7 @@ public class IdealMagFringeQuad extends ElectromagnetSeq {
 	/**
 	 * Conversion method to be provided by the user
 	 * 
-	 * @param latticeElement the SMF node to convert
+	 * @param element the SMF node to convert
 	 */
 	@Override
 	public void initializeFrom(LatticeElement element) {

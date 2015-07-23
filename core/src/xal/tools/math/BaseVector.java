@@ -273,11 +273,11 @@ public abstract class BaseVector<V extends BaseVector<V>> implements IArchive, j
          * Computes and returns the difference of this vector and the given
          * vector.  The argument (subtrahend) is subtracted from this vector
          * (minuend) so that the returned value is
-         * <br/>
-         * <br/>
+         * <br>
+         * <br>
          * &nbsp; &nbsp; <b>v</b> = <b>v</b><sub>1</sub> - <b>v</b><sub>2</sub>
-         * <br/>
-         * <br/>
+         * <br>
+         * <br>
          * where <b>v</b> is the returned value, <b>v</b><sub>1</sub> is this
          * vector, and <b>v</b><sub>2</sub> is the argument vector. 
          * 
@@ -605,7 +605,7 @@ public abstract class BaseVector<V extends BaseVector<V>> implements IArchive, j
 //     * &middot; It is expected that the
 //     * object exposing the <code>IIndex</code> interface is an enumeration
 //     * class restricting the number of possible index values.
-//     * <br/>
+//     * <br>
 //     * &middot; Consequently we do not declare a thrown exception assuming
 //     * that that enumeration class eliminates the possibility of an out of
 //     * bounds error.
@@ -632,12 +632,12 @@ public abstract class BaseVector<V extends BaseVector<V>> implements IArchive, j
      * interface belongs to the <code>BaseMatrix<M></code> namespace.  
      * In this way matrix indices can be used to get vector component values.
      * </p>
+     * <h3>NOTES</h3>
      * <p>
-     * <h4>NOTES</h4>
      * &middot; It is expected that the
      * object exposing the <code>IIndex</code> interface is an enumeration
      * class restricting the number of possible index values.
-     * <br/>
+     * <br>
      * &middot; Consequently we do not declare a thrown exception assuming
      * that that enumeration class eliminates the possibility of an out of
      * bounds error.
@@ -706,10 +706,10 @@ public abstract class BaseVector<V extends BaseVector<V>> implements IArchive, j
     /**
      *  Convert the contents of the matrix to a string representation.
      *  The format is similar to that of Mathematica. Specifically,
-     *  <br/>
-     *  <br/>
+     *  <br>
+     *  <br>
      *      { a b c d }
-     *  <br/>
+     *  <br>
      *
      *  @return     string representation of the matrix
      */
@@ -1287,7 +1287,7 @@ public abstract class BaseVector<V extends BaseVector<V>> implements IArchive, j
 //     * &middot; It is expected that the
 //     * object exposing the <code>IIndex</code> interface is an enumeration
 //     * class restricting the number of possible index values.
-//     * <br/>
+//     * <br>
 //     * &middot; Consequently we do not declare a thrown exception assuming
 //     * that that enumeration class eliminates the possibility of an out of
 //     * bounds error.
@@ -1348,17 +1348,17 @@ public abstract class BaseVector<V extends BaseVector<V>> implements IArchive, j
      *  by any of the characters <tt>" ,()[]{}"</tt>  Repeated, contiguous delimiters 
      *  are parsed together.  This conditions allows a variety of parseable string
      *  representations. For example,
-     *  <br/>
-     *  <br/>
+     *  <br>
+     *  <br>
      *  &nbsp; &nbsp; { 1, 2, 3, 4 }
-     *  <br/>
-     *  <br/>
+     *  <br>
+     *  <br>
      *  and
-     *  <br/>
-     *  <br/>
+     *  <br>
+     *  <br>
      *  &nbsp; &nbsp; [1 2 3 4]
-     *  <br/>
-     *  <br/>
+     *  <br>
+     *  <br>
      *  would parse to the same homogeneous vector (1, 2, 3, 4 | 1).
      *  </p>
      *

@@ -14,7 +14,7 @@ package xal.sim.slg;
  * class the possibility to construct complex operations on a collection
  * of VisitorListeners.
  *
- * P.S.: I hope this explanation is clear and understandable *&^% (wdk).
+ * P.S.: I hope this explanation is clear and understandable *^&amp;^% (wdk).
  *
  * @author  wdklotz
  */
