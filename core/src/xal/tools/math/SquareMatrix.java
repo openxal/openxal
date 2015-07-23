@@ -110,7 +110,7 @@ public abstract class SquareMatrix<M extends SquareMatrix<M>> extends BaseMatrix
         
         for (int i=0; i<this.getSize(); i++)
             for (int j=i; j<this.getSize(); j++) {
-                if (getElem(i,j) != getElem(j,i) )
+                if (!ElementaryFunction.approxEq( getElem(i,j), getElem(j,i) ) )
                     return false;
             }
         return true;

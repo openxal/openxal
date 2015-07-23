@@ -61,8 +61,14 @@ public abstract class BaseMatrix<M extends BaseMatrix<M>> implements IArchive {
 
     /** Attribute marker for data managed by IArchive interface */
     public static final String ATTR_DATA = "values";
-    
 
+    
+    /** A small number used in comparing matrix elements (e.g., #isEqual() ) */
+    protected static final double DBL_EPS  = 1.0e-12;
+
+    /** number of Units in the Last Place (ULPs) used for bracketing approximately equal values */
+    protected static final int    ULPS_BRACKET = 100;
+    
     /*
      * Global Attributes
      */
@@ -287,6 +293,65 @@ public abstract class BaseMatrix<M extends BaseMatrix<M>> implements IArchive {
     /*
      * Matrix Operations
      */
+    
+    /**
+     * <p>
+     * Tests whether the given matrix is approximately equal to this matrix.
+     * The idea is that we ignore any numerical noise when comparing if the two
+     * matrices are equal.
+     * </p>
+     * <p>
+     * This is a convenience class for the method 
+     * <code>{@link #isApproxEqual(BaseMatrix,int)}</code> where the number of ULPs
+     * is set to <code>ULPS_BRACKET</code>.
+     * </p>
+     * <p>
+     * The matrices are compared element by element using 
+     * <code>{@link ElementaryFunction#approxEq(double, double)}</code>.
+     * </p>
+     *   
+     * @return  <code>true</code> if the given matrix is equal to this one with the
+     *          given number of significant digits, <code>false</code> otherwise.
+     *
+     * @since  Jul 22, 2015   by Christopher K. Allen
+     */
+    public boolean  isApproxEqual(M matTest) {
+        return this.isApproxEqual(matTest, ULPS_BRACKET);
+    }
+    
+    /**
+     * <p>
+     * Tests whether the given matrix is approximately equal to this matrix.
+     * The idea is that we ignore any numerical noise when comparing if the two
+     * matrices are equal.  This is done by ignoring the number of Units in the
+     * Last Place in the machine representation.  The larger this number the 
+     * more least significant digits we ignore.
+     * </p>
+     * <p>
+     * The matrices are compared element by element using 
+     * <code>{@link ElementaryFunction#approxEq(double, double, int)}</code>.
+     * </p>
+     *   
+     * @param   matTest the matrix being compared to this one.
+     * @param   the number of Units in the Last Place to ignore
+     * 
+     * @return  <code>true</code> if the given matrix is equal to this one with the
+     *          given number of significant digits, <code>false</code> otherwise.
+     *
+     * @since  Jul 22, 2015   by Christopher K. Allen
+     */
+    public boolean  isApproxEqual(M matTest, int cntUlp) {
+        for (int i=0; i<this.cntRows; i++)
+            for (int j=0; j<this.cntCols; j++) {
+                double  dblVal = this.getElem(i, j);
+                double  dblCmp = matTest.getElem(i, j);
+                
+                if ( !ElementaryFunction.approxEq(dblVal, dblCmp, cntUlp) )
+                    return false;
+            }
+        
+        return true;
+    }
     
     /**
      * Create a deep copy of the this matrix object.  The returned 
@@ -815,14 +880,14 @@ public abstract class BaseMatrix<M extends BaseMatrix<M>> implements IArchive {
      * <code>arrMatrix[0]</code> refers to the first row of the matrix.
      * Note that a new Jama matrix is instantiated to encapsulate the given array.
      * 
-     * @param arrMatrix Java primitive array containing new matrix values
+     * @param arrMatrix Java primitive array containing new matrix internal representation
      * 
-     * @exception  IllegalArgumentException  the argument must have the same dimensions as this matrix
+     * @exception  IllegalArgumentException  the argument is degenerate and cannot represent a matrix
      *
      * @author Christopher K. Allen
      * @since  Oct 4, 2013
      */
-    protected void assignMatrix(double[][] arrMatrix) throws IllegalArgumentException {
+    protected void assignMatrix(double[][] arrMatrix)  {
 
         //        // Check the dimensions of the argument double array
         //        if (this.getRowCnt() != arrMatrix.length  ||  arrMatrix[0].length != this.getColCnt() )
@@ -872,6 +937,8 @@ public abstract class BaseMatrix<M extends BaseMatrix<M>> implements IArchive {
         double[][]  arrCopy = matValue.getArrayCopy();
         
         this.matImpl = new Jama.Matrix(arrCopy);
+        this.cntCols = this.matImpl.getColumnDimension();
+        this.cntRows = this.matImpl.getRowDimension();
     }
 
     /**
@@ -1014,8 +1081,9 @@ public abstract class BaseMatrix<M extends BaseMatrix<M>> implements IArchive {
     /**
      * <p>
      * Initializing constructor for base class <code>BaseMatrix</code>.  
-     * Sets the entire matrix to the values given in the Java primitive type 
-     * double array. The matrix is shaped according to the (row-packed) arguement. 
+     * Initializes the matrix to the values given in the Java primitive type 
+     * double array by setting the internal matrix representation to the given
+     * Java array. The matrix is shaped according to the (row-packed) arguement. 
      * </p>
      * <p>
      * The dimensions of the given Java double array determine the size of the matrix.
@@ -1023,19 +1091,33 @@ public abstract class BaseMatrix<M extends BaseMatrix<M>> implements IArchive {
      * <code>BaseMatrix</code> array.  If the argument is not fully allocated or 
      * inconsistent, an exception is thrown.
      * </p>
+     * <p>
+     * As an example consider the following Java array
+     * <pre>
+     * <code>
+     * double[][] arrInternal = new double[][] { 
+     *                               {1.1, 1.2, 1.3, 1.4, 1.5},
+     *                               {2.1, 2.2, 2.3, 2.0, 2.5},
+     *                               {3.1, 3.2, 3.3, 3.4, 3.0}
+     *                                };
+     * </code>
+     * </pre>
+     * This array would produce a 3&times;5 matrix.  Note that the given argument becomes
+     * the internal representation of the matrix object.  Thus, the Java array 
+     * <code>arrInternal</code> will be changed by the the encapsulating matrix object
+     * so should no longer be referenced after presenting it to this constructor.
+     * </p>
      * 
-     * @param arrMatrix   Java primitive array containing new matrix values
+     * @param arrMatrix   Java primitive array to be new internal matrix value representation
      * 
-     * @exception  IllegalArgumentException  the argument is not consistent with a matrix representation
+     * @exception  IllegalArgumentException  the argument is degenerate and cannot represent a matrix
      *
-     * @author Christopher K. Allen
-     * @since  Oct 4, 2013
+     * @since  Oct 4, 2013  by Christopher K. Allen
      */
-    protected BaseMatrix(double[][] arrVals) throws ArrayIndexOutOfBoundsException {
+    protected BaseMatrix(double[][] arrVals) {
 //        this(matParent.getRowCnt(), matParent.getColCnt());
         this.assignMatrix(arrVals);;
     }
 
 
-    
 }

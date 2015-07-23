@@ -23,6 +23,31 @@ public class Rmxn extends BaseMatrix<Rmxn> {
 
     
     /*
+     * Global Methods
+     */
+    
+    /**
+     * Creates and returns a new instance of the identity matrix with the
+     * given dimensions.
+     * 
+     * @param cntSize   the size of the identity matrix (i.e., row and column count)
+     * @return
+     *
+     * @since  Jul 23, 2015   by Christopher K. Allen
+     */
+    public static Rmxn  newIdentity(int cntSize) {
+        double  arrInternal[][] = new double[cntSize][cntSize];
+        
+        for (int i=0; i<cntSize; i++)
+            arrInternal[i][i] = 1.0;
+        
+        Rmxn    matId = new Rmxn(arrInternal);
+        
+        return matId;
+    }
+    
+    
+    /*
      * Initialization
      */
     
@@ -42,8 +67,9 @@ public class Rmxn extends BaseMatrix<Rmxn> {
     /**
      * <p>
      * Initializing constructor for class <code>Rmxn</code>.  
-     * Sets the entire matrix to the values given in the Java primitive type 
-     * double array. The matrix is shaped according to the (row-packed) argument. 
+     * Initializes the matrix to the values given in the Java primitive type 
+     * double array by setting the internal matrix representation to the given
+     * Java array.  The matrix is shaped according to the (row-packed) argument. 
      * </p>
      * <p>
      * The dimensions of the given Java double array determine the size of the matrix.
@@ -51,10 +77,26 @@ public class Rmxn extends BaseMatrix<Rmxn> {
      * <code>Rmxn</code> array.  If the argument is not fully allocated or 
      * inconsistent, an exception is thrown.
      * </p>
+     * <p>
+     * As an example consider the following Java array
+     * <pre>
+     * <code>
+     * double[][] arrInternal = new double[][] { 
+     *                               {1.1, 1.2, 1.3, 1.4, 1.5},
+     *                               {2.1, 2.2, 2.3, 2.0, 2.5},
+     *                               {3.1, 3.2, 3.3, 3.4, 3.0}
+     *                                };
+     * </code>
+     * </pre>
+     * This array would produce a 3&times;5 matrix.  Note that the given argument becomes
+     * the internal representation of the matrix object.  Thus, the Java array 
+     * <code>arrInternal</code> will be changed by the the encapsulating matrix object
+     * so should no longer be referenced after presenting it to this constructor.
+     * </p>
      * 
-     * @param arrMatrix   Java primitive array containing new matrix values
+     * @param arrMatrix   Java primitive array to be new internal matrix value representation
      * 
-     * @exception  IllegalArgumentException  the argument is not consistent with a matrix representation
+     * @exception  IllegalArgumentException  the argument is degenerate and cannot represent a matrix
      *
      * @since  Jul 21, 2015   by Christopher K. Allen
      */
