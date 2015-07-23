@@ -113,7 +113,7 @@ public class UpDownButton extends JComponent
 
   /**
    * This method was overridden to implement correct 
-   * <code>UpDownButton<code> placement inside the 
+   * <code>UpDownButton</code> placement inside the 
    * <code>Wheelswitch</code> container.
    * 
    * @see JComponent#getPreferredSize()
@@ -125,7 +125,7 @@ public class UpDownButton extends JComponent
 	
   /**
    * This method was overridden to implement correct 
-   * <code>UpDownButton<code> placement inside the 
+   * <code>UpDownButton</code> placement inside the 
    * <code>Wheelswitch</code> container.
    * 
    * @see JComponent#getMinimumSize()
