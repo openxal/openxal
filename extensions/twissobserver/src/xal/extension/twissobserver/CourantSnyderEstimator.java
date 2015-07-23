@@ -207,8 +207,8 @@ public abstract class CourantSnyderEstimator {
      * The returned value is then the last value of the solution before the algorithm was 
      * terminated.
      * </p>
+     * <h3>NOTE:</h3>
      * <p>
-     * <h4>NOTE:</h4>
      * &middot; It is the responsibility of the subclass to keep this value up to date.
      * </p>
      *
@@ -226,8 +226,8 @@ public abstract class CourantSnyderEstimator {
      * Returns the residual error of the last solution, i.e., the solution returned by
      * <code>{@link #getReconstruction()}</code>.  The numerical value is the Frobenius norm
      * of the solution residual matrix.
+     * <h3>NOTE:</h3>
      * <p>
-     * <h4>NOTE:</h4>
      * &middot; It is the responsibility of the subclass to keep this value up to date.
      * </p>
      *
@@ -247,8 +247,8 @@ public abstract class CourantSnyderEstimator {
      * the solution returned by <code>{@link #getReconstruction()}</code> and the solution previous.  
      * The numerical value is the Frobenius norm
      * of the distance between iterates.
+     * <h3>NOTE:</h3>
      * <p>
-     * <h4>NOTE:</h4>
      * &middot; It is the responsibility of the subclass to keep this value up to date.
      * </p>
      *
@@ -348,8 +348,8 @@ public abstract class CourantSnyderEstimator {
      * matrices on the diagonal (where <i>n</i> is the number of data locations), 
      * one for each phase plane, horizontal, vertical, diagonal, respectively.
      * </p>
+     * <h3>NOTES:</h3>
      * <p>
-     * <h4>NOTES:</h4>
      * &middot; The transfer matrix generator object is accessed to retrieve whatever
      * transfer matrices it contains when this method is called.  <b>BE CAREFUL</b> to
      * generate the appropriate transfer matrices before this method is called. 
@@ -405,11 +405,11 @@ public abstract class CourantSnyderEstimator {
      * given phase plane.  This
      * is the vector of second-order moments of the beam distribution.  The returned value is
      * a 3&times;1 matrix of real numbers having the form
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * &nbsp; &nbsp; <b>&sigma;</b> = ( &lt;<i>x</i><sup>2</sup>&gt;, &lt;<i>xx'</i>&gt;, &lt;<i>x'</i><sup>2</sup>&gt; )<sup>T</sup>
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * where the moments are taken from the horizontal plane.  The vertical plane computation returns an
      * analogous set.  The three phase planes are treated independently and solutions for each plane 
      * returned separately.
@@ -422,12 +422,12 @@ public abstract class CourantSnyderEstimator {
      * the minimum norm (or "least energy") solution; specifically, the solution that has the smallest
      * Lebesgue 2-norm.  If we have three data points then the unique solution is returned.
      * </p>
+     * <h3>NOTES:</h3>
      * <p>
-     * <h4>NOTES:</h4>
      * &middot;  <em>IMPORTANT</em>: The moments are computed using the transfer matrices currently stored in the
      * internal transfer matrix generator object.  Thus, whatever generation was used prior to
      * this call is used to compute the recursion sub-function.
-     * <br/>
+     * <br>
      * &middot;  If the reconstruction device has non-zero length the location of the moments corresponds 
      * to the exit of the device.
      * </p>
@@ -472,8 +472,8 @@ public abstract class CourantSnyderEstimator {
      * Computes the observation matrix from the given data and accelerator node ID
      * of the reconstruction location.
      * </p>
+     * <h3>NOTES:</h3>
      * <p>
-     * <h4>NOTES:</h4>
      * &middot; The transfer matrix generator object is accessed to retrieve whatever
      * transfer matrices it contains when this method is called.  <b>BE CAREFUL</b> to
      * generate the appropriate transfer matrices before this method is called. 
