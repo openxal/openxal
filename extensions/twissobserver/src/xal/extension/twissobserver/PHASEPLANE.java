@@ -121,12 +121,12 @@ public enum PHASEPLANE {
      * of the 4&times;4 diagonal block occupied by this phase space within <b>phase
      * matrices</b>. Restricting to one block diagonal we have
      * </p>
-     * <br/>
+     * <br>
      * <table>
      *     <tr><td><b>e</b><sub>0</sub></td><td>&equiv;</td><td>| 1 0 |</td></tr>
      *     <tr><td/><td/><td>| 0 0 |</td></tr>
      * </table>
-     * <br/>   
+     * <br>   
      * <table>
      *     <tr><td><b>e</b><sub>1</sub></td><td>&equiv;</td><td>| 0 1 |</td></tr>
      *     <tr><td/><td/><td>| 0 0 |</td></tr>
@@ -136,12 +136,12 @@ public enum PHASEPLANE {
      *     <tr><td><b>e</b><sub>2</sub></td><td>&equiv;</td><td>| 0 0 |</td></tr>
      *     <tr><td/><td/><td>| 1 0 |</td></tr>
      * </table>
-     * <br/>
+     * <br>
      * <table>
      *     <tr><td><b>e</b><sub>3</sub></td><td>&equiv;</td><td>| 0 0 |</td></tr>
      *     <tr><td/><td/><td>| 0 1 |</td></tr>
      * </table>
-     * <br/>
+     * <br>
      * The argument <var>indBasis</var> is the index <i>i</i> of <b>e</b><sub><i>i</i></sub>.
      *   
      * @param indBasis  The index of the basis vector
@@ -179,12 +179,12 @@ public enum PHASEPLANE {
      * there are only three independent basis vectors.
      * Restricting attention to one block diagonal we have
      * </p>
-     * <br/>
+     * <br>
      * <table>
      *     <tr><td><b>c</b><sub>0</sub></td><td>&equiv;</td><td>| 1 0 |</td></tr>
      *     <tr><td/><td/><td>| 0 0 |</td></tr>
      * </table>
-     * <br/>   
+     * <br>   
      * <table>
      *     <tr><td><b>c</b><sub>1</sub></td><td>&equiv;</td><td>| 0 1 |</td></tr>
      *     <tr><td/><td/><td>| 1 0 |</td></tr>
@@ -194,7 +194,7 @@ public enum PHASEPLANE {
      *     <tr><td><b>c</b><sub>2</sub></td><td>&equiv;</td><td>| 0 0 |</td></tr>
      *     <tr><td/><td/><td>| 0 1 |</td></tr>
      * </table>
-     * <br/>
+     * <br>
      * The argument <var>indBasis</var> is the index <i>i</i> of <b>c</b><sub><i>i</i></sub>.
      *   
      * @param indBasis  The index of the basis vector

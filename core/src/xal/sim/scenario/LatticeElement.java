@@ -14,18 +14,18 @@ import xal.smf.impl.Bend;
 import xal.smf.impl.Magnet;
 
 /**
+ * <h3>CKA NOTES:</h3>
  * <p>
- * <h4>CKA NOTES:</h4>
  * &middot; I have modified this objects so it carries the additional attribute
  * of the <em>modeling element</em> identifier.  This is in contrast to the hardware node
  * identifier from which it maps.
- * <br/>
- * <br/>
+ * <br>
+ * <br>
  * &middot; The idea is that probes states produced by simulation will carry this attribute
  * <b>if</b> it has been set.  If not, then the probe state will have the same attribute
  * ID as the hardware node.
- * <br/>
- * <br/>
+ * <br>
+ * <br>
  * &middot; Note that probe states now carry two identifier attributes, one for the modeling
  * element, and one for the SMF hardware node from which it came.
  * </p>

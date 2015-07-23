@@ -99,8 +99,8 @@ public class IdentifierEquivClass implements Comparable<IdentifierEquivClass> {
     /**
      * Tests whether or not the given equivalence class object is the same as
      * this, w.r.t. equivalence of the element ID class.  Returns the result
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * &nbsp; &nbsp;    ElementIdClass.isMember(<var>idCmp.strClassId)</var>
      * 
      * @param idCmp     element ID class object to compare
@@ -245,15 +245,15 @@ public class IdentifierEquivClass implements Comparable<IdentifierEquivClass> {
      * <tt>s</tt> the given argument string and by <tt>r</tt> the representative string of this
      * equivalence class (so that the equivalence class is represented as [<tt>r</tt>]).  Then the follow
      * results are returned:
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * &nbsp; &nbsp;  -1 &#8658; <tt>s</tt> &sub; <tt>r</tt> ,
-     * <br/>
+     * <br>
      * &nbsp; &nbsp; &nbsp;  0 &#8658; <tt>s</tt> = <tt>r</tt> ,
-     * <br/>
+     * <br>
      * &nbsp; &nbsp; +1 &#8658; <tt>s</tt> &sup; <tt>r</tt> ,
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * where all strings are compared starting from the head, i.e., <tt>s</tt>[0] == <tt>r</tt>[0] must
      * hold in every case since neither is the empty string.
      * </p>

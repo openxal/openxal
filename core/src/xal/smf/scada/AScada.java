@@ -80,7 +80,7 @@ public @interface AScada {
          *  controllable as an EPICS PV.  That is,
          *  is it a "read/write" channel.
          *  
-         * @return  <code>true</code if the corresponding PV can be set
+         * @return  <code>true</code> if the corresponding PV can be set
          *          <code>false</code> if the PV is read only
          *
          * @author Christopher K. Allen

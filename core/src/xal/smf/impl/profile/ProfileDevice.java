@@ -76,7 +76,7 @@ public abstract class ProfileDevice extends AcceleratorNode {
          * Returns the number of signal samples in the profile data, that is,
          * the number of data points in the domain.
          * 
-         * @parameter   angle   the projection angle of the data set
+         * @param   angle   the projection angle of the data set
          * 
          * @return              number of data samples of the given angle
          *
@@ -102,7 +102,7 @@ public abstract class ProfileDevice extends AcceleratorNode {
          * Return the left-most position of the projection interval, that is, 
          * the minimum valued endpoint.
          *  
-         * @parameter   angle   the projection angle of the data set
+         * @param   angle   the projection angle of the data set
          * 
          * @return              left endpoint of the projection interval
          *
@@ -230,7 +230,7 @@ public abstract class ProfileDevice extends AcceleratorNode {
          * <p>
          * If the profile device has no method of validating wire operation
          * then the method will return <code>true</code> regardless of 
-         * the argument, rather than a blanket <code>false</code for all
+         * the argument, rather than a blanket <code>false</code> for all
          * wires.
          * </p>
          * 
@@ -870,13 +870,13 @@ public abstract class ProfileDevice extends AcceleratorNode {
      * </p>
      * <p>
      * One can specify the event type which fires the monitor using
-     * the argument <arg>intEvtType</arg>.  Any combination of the following
+     * the argument intEvtType.  Any combination of the following
      * event types can be specified with a logical OR operation:
-     * <br/>
-     * <br/> &nbsp; <code>Monitor.VALUE</code> - fire upon PV value change
-     * <br/> &nbsp; <code>Monitor.LOG  </code> - 
-     * <br/> &nbsp; <code>Monitor.ALARM</code> - fire upon PV alarm value
-     * <br/>
+     * <br>
+     * <br> &nbsp; <code>Monitor.VALUE</code> - fire upon PV value change
+     * <br> &nbsp; <code>Monitor.LOG  </code> - 
+     * <br> &nbsp; <code>Monitor.ALARM</code> - fire upon PV alarm value
+     * <br>
      * The default value (i.e., no argument) is <code>Monitor.VALUE</code>.
      * </p> 
      *   

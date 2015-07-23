@@ -669,10 +669,10 @@ public class TraceXalUnitConverter {
      *
      * @param matCorrel     correlation matrix &lt;zz<sup>T</sup>&gt; in MKS units
      *
-     *  @return     array of Twiss with length 3 where<br/>
-     *              array[0] = Twiss parameters in x plane<br/>
-     *              array[1] = Twiss parameters in y plane<br/>
-     *              array[2] = Twiss parameters in z plane<br/>
+     *  @return     array of Twiss with length 3 where<br>
+     *              array[0] = Twiss parameters in x plane<br>
+     *              array[1] = Twiss parameters in y plane<br>
+     *              array[2] = Twiss parameters in z plane<br>
      *
      */
     public Twiss[]  twissParametersFromXal(CovarianceMatrix mat) {

@@ -52,32 +52,32 @@
  * exposes at least one of the above interfaces, depending upon their function.  
  * A class may also provide additional methods which are appropriate to their context.
  * The computation classes and their function are listed below
- * <br/>
- * <br/>
+ * <br>
+ * <br>
  * <b><code>CalculationsOnParticles</code></b>: Provides processing functions appropriate 
  * for single particle simulation data.  Also has methods available for processing data
  * that was taken for a periodic system between two period locations.  The simulation data
  * is of type <code>Trajectory&lt;ParticleProbeState&gt;</code>.
- * <br/>
- * <br/>
+ * <br>
+ * <br>
  * <b><code>CalculationsOnMachines</code></b>: This class is concerned with the calculation of
  * machine properties without regard to any beam propagation.  The simulation data is
  * of type <code>Trajectory&lt;TransferMapState&gt;</code>. 
- * <br/>
- * <br/>
+ * <br>
+ * <br>
  * <b><code>CalculationsOnRings</code></b>: Computes ring properties and parameters.
  * This class is a super class of 
  * <code>CalculationsOnMachines</code>, since a ring is a machine.  Consequently
  * the simulation data is also of type <code>Trajectory&lt;TransferMapState&gt;</code>.
  * However, it is necessary that the simulation data be produced by a machine with
  * the topology of a ring for the calculations to have context.
- * <br/>
- * <br/>
+ * <br>
+ * <br>
  * <b><code>CalculationsOnBeams</code></b>: Computes parameters for a beam itself.
  * These include collective properties of a beam bunch.  The simulation data for
  * this class is of type <code>Trajectory&lt;EnvelopeProbeState&gt</code>.
- * <br/>
- * <br/>
+ * <br>
+ * <br>
  * Of the 4 classes only 2 operate on the same simulation data type, 
  * <code>CalculationsOnMachines</code> and <code>CalculationsOnRings</code>.
  * </p>

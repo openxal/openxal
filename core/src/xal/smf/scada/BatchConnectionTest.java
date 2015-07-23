@@ -83,9 +83,9 @@ public class BatchConnectionTest {
         /**
          * <p>
          * The requested connection was made.  Consequently, 
-         * <br/>
+         * <br>
          * &nbsp; &sdot; We remove ourself from the channel's set of connection listeners
-         * <br/>
+         * <br>
          * &nbsp; &sdot; We remove the channel from the list of open requests
          * </p>
          * 
@@ -335,8 +335,8 @@ public class BatchConnectionTest {
      * Add the given channel to the list of channels pending 
      * connectivity test.
      * </p>
+     * <h3>NOTE:</h3>
      * <p>
-     * <h4>NOTE:</h4>
      * &mdot; Only channel that are not previously connected
      * are added to the list.  That is, if the 
      * <code>@link Channel#isConnected}</code> returns true then

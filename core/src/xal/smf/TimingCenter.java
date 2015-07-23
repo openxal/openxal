@@ -169,15 +169,15 @@ public class TimingCenter implements DataListener {
      * </p>
      * <p>
      * String values: 
-     * <br/>    "Off", 
-     * <br/>    "Standby", 
-     * <br/>    "MPS Test", 
-     * <br/>    "10 uSec", 
-     * <br/>    "50 uSec", 
-     * <br/>    "100 uSec",
-     * <br/>    "1 mSec", 
-     * <br/>    "Full Power", 
-     * <br/>    "Unknown!"
+     * <br>    "Off", 
+     * <br>    "Standby", 
+     * <br>    "MPS Test", 
+     * <br>    "10 uSec", 
+     * <br>    "50 uSec", 
+     * <br>    "100 uSec",
+     * <br>    "1 mSec", 
+     * <br>    "Full Power", 
+     * <br>    "Unknown!"
      * </p>
      */
 	public static final String BEAM_MODE_HANDLE ="beamMode";

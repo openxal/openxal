@@ -79,8 +79,8 @@ public class SignalAttrs extends ScadaRecord {
          * this enumeration constant.  The data
          * to create the field descriptor is taken from the provided annotation.  
          * </p>
+         * <h3>NOTE:</h3>
          * <p>
-         * <h4>NOTE:</h4>
          * &middot; If the annotation field corresponding to this enumeration is left blank or
          * set to the empty string <tt>""</tt>, the method will throw a <code>NoSuchFieldException</code>.
          * Since it is not necessary for all handles to be specified this is not necessarily a failure
@@ -384,16 +384,16 @@ public class SignalAttrs extends ScadaRecord {
      * place with that of the given signal attributes structure.  Letting &lambda; denote the 
      * provided averaging factor, which is in the interval [0,1], the new values of this
      * structure, say <i>v'</i> are given by the formula
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * &nbsp; &nbsp; <i>v'</i> = &lambda;<i>u</i> + (1 - &lambda;)<i>v</i>
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * where <i>v</i> is the previous value of <i>v'</i> and <i>u</i> is the new value
      * of <i>v</i> in <code>sigAcq</code>. 
      * </p>  
+     * <h3>NOTES:</h3>
      * <p>
-     * <h4>NOTES:</h4>
      * &middot; The standard deviation is weighted vectorally.
      * </p>
      * 

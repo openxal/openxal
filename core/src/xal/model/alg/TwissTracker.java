@@ -42,11 +42,11 @@ import xal.model.probe.TwissProbe;
  * Moreover, currently the dynamics are not coupled between phase planes.  The
  * values of the Twiss parameter propagated according to  formula 2.54 from S.Y. Lee's book.
  * </p>
+ * <h3>NOTES:</h3>
  * <p>
- * <h4>NOTES:</h4>
  * &middot; There is necessarily no coupling between the phase planes from hardware elements.  There
  * can be, however, coupling from space charge effects
- * <br/>
+ * <br>
  * &middot; Something else?
  * </p> 
  * 
@@ -323,7 +323,7 @@ public class TwissTracker extends Tracker {
      * Load the parameters of the algorithm from a data source exposing the
      * <code>IArchive</code> interface.
      * The superclass <code>load</code> method is called first, then the properties
-     * particular to <code>EnvTrackerAdapt<code> are loaded.
+     * particular to <code>EnvTrackerAdapt</code> are loaded.
      * 
      * @param   daSource     data source containing state data
      * 

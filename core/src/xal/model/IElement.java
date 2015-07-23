@@ -8,7 +8,7 @@ import xal.tools.beam.PhaseMap;
  * (for example, quadrupoles, foil, and others). According to the 
  * Element-Algorithm-Probe design pattern, the <code>IElement</code>
  * exposed objects may interact with physical aspects of the particle
- * beam which are expressed by the </code>IProbe</code> interface. 
+ * beam which are expressed by the <code>IProbe</code> interface. 
  * <p>
  * These interactions between <code>IElement</code> objects and 
  * <code>IProbe</code> objects are defined by dynamics objects exposing
@@ -54,7 +54,7 @@ public interface IElement extends IComponent {
      *  @param  probe   propagating probe
      *  @param  dblLen  length of subsection to propagate through <b>meters</b>
      *  
-     *  @return         the elapsed time through section<bold>Units: seconds</bold> 
+     *  @return         the elapsed time through section<b>Units: seconds</b> 
      */
     public double elapsedTime(IProbe probe, double dblLen);
     
@@ -65,7 +65,7 @@ public interface IElement extends IComponent {
      *  @param  probe   determine energy gain for this probe
      *  @param  dblLen  length of subsection to calculate energy gain 
      *
-     *  @return         the energy gain provided by this element <bold>Units: eV</bold> 
+     *  @return         the energy gain provided by this element <b>Units: eV</b> 
      */
     public double energyGain(IProbe probe, double dblLen);
     

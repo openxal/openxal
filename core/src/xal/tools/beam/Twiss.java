@@ -19,17 +19,17 @@ import xal.tools.math.r2.R2;
  * <p>
  *  Convenience class for dealing with Courant-Snyder (or Twiss) parameters.  These
  *  parameters represent an ellipse in phase space given by
- *  <br/>
- *  <br/> 
+ *  <br>
+ *  <br> 
  *  &nbsp; &nbsp; &gamma;<i>x</i><sup>2</sup> + 2&alpha;<i>xx'</i> + &beta;<i>x</i>'<sup>2</sup> = &epsilon;
- *  <br/>
- *  <br/>
+ *  <br>
+ *  <br>
  *  where &alpha;, &beta;, &gamma;, and &epsilon; are the Courant-Snyder parameters and (<i>x,x'</i>) are
  *  coordinates on the horizontal phase plane.  (There are analogous equations for the other phase planes.)
  *  Recall that the Courant-Snyder parameters are not independent but related by the
  *  fact
- *  <br/>
- *  <br/>
+ *  <br>
+ *  <br>
  *  &nbsp; &nbsp;  &beta;&gamma; - &alpha;<sup>2</sup> = 1
  *</p>
  *
@@ -196,7 +196,7 @@ public class Twiss implements java.io.Serializable {
      * Create a new set of <code>Twiss</code> parameters from the given covariance matrix.
      * The covariance matrix is simply the second-order moments packaged up as a symmetric
      * matrix.  The form of this matrix <b>&sigma;</b> is
-     * <br/>
+     * <br>
      * <pre>
      * &nbsp; &nbsp; <b>&sigma;</b> &cong; | &lt;x<sup>2</sup>&gt; &lt;xx'&gt; |
      *         | &lt;xx'&gt; &lt;x'<sup>2</sup>&gt; |
@@ -225,8 +225,8 @@ public class Twiss implements java.io.Serializable {
      * as a KV (Kapchinsky-Vladimirsky) beam having a distinct envelope size (radius) and a
      * distinct envelope slope (this value is related to the divergence angle).
      * </p>
+     * <h3>NOTE</h3>
      * <p>
-     * <h4>NOTE</h4>
      * &middot; <em>We do not scale the emittance!</em>  It is common practice to multiply the
      * RMS emittance by 4 for 2D beams and other values for 3D beams with various distributions.
      * We assume the same second moments which yield the same RMS emittance.  Specially, the

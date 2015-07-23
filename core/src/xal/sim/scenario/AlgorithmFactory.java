@@ -273,8 +273,8 @@ public final class AlgorithmFactory {
      * sequence object.  The returned <code>Trace3dTracker</code> algorithm will
      * propagate an <code>EnvelopeProbe</code> object.
      * </p>
+     * <h3>NOTES:</h3>
      * <p>
-     * <h4>NOTES:</h4>
      * &middot;  The <code>Trace3dTracker</code> algorithm is all but deprecated.  Use of this
      * method is discouraged except for benchmarking purposes.
      * </p>

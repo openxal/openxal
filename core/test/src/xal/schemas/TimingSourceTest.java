@@ -20,7 +20,7 @@ import org.w3c.dom.Element;
 public class TimingSourceTest extends AbstractXMLValidation {
 	
 	/**
-	 * Progressive XML schema validation method.<br/>
+	 * Progressive XML schema validation method.<br>
 	 * This method retrieves the XML schema by calling {@link #getSchema()}
 	 * and then builds a test XML {@link Document} from scratch,
 	 * testing it against the schema after each step in the building procedure.
@@ -78,8 +78,8 @@ public class TimingSourceTest extends AbstractXMLValidation {
 	}
 	
 	/**
-	 * Tests the <code>timing</code> element and returns it.<br/>
-	 * Provided DOM {@link Document} gets updated in the process.<br/>
+	 * Tests the <code>timing</code> element and returns it.<br>
+	 * Provided DOM {@link Document} gets updated in the process.<br>
 	 * Test checks against invalid root element tag and against invalid child elements.
 	 * @param document {@link Document} DOM document built for testing.
 	 * @param validator {@link Validator} for the tested XML {@link Schema}.
@@ -124,8 +124,8 @@ public class TimingSourceTest extends AbstractXMLValidation {
 	}
 	
 	/**
-	 * Tests the <code>channelsuite</code> elements.<br/>
-	 * Provided DOM {@link Document} gets updated in the process.<br/>
+	 * Tests the <code>channelsuite</code> elements.<br>
+	 * Provided DOM {@link Document} gets updated in the process.<br>
 	 * Test checks adding optional attributes and then tests channels in a separate method.
 	 * See {@link #testChannels(Document, Element, Validator)} for details on channel testing.
 	 * @param document {@link Document} DOM document built for testing.
@@ -158,8 +158,8 @@ public class TimingSourceTest extends AbstractXMLValidation {
 	}
 	
 	/**
-	 * Tests the <code>channel</code> elements.<br/>
-	 * Provided DOM {@link Document} gets updated in the process.<br/>
+	 * Tests the <code>channel</code> elements.<br>
+	 * Provided DOM {@link Document} gets updated in the process.<br>
 	 * Test checks against missing required attributes, against adding optional attributes,
 	 * uniqueness of the attributes and then tests transforms in a separate method.
 	 * See {@link #testTransforms(Document, Element, Validator)} for details on transform testing.
@@ -220,8 +220,8 @@ public class TimingSourceTest extends AbstractXMLValidation {
 	}
 	
 	/**
-	 * Tests the <code>transform</code> elements.<br/>
-	 * Provided DOM {@link Document} gets updated in the process.<br/>
+	 * Tests the <code>transform</code> elements.<br>
+	 * Provided DOM {@link Document} gets updated in the process.<br>
 	 * Test checks against missing required attributes, against against element-to-element references
 	 * and correct attribute content types.
 	 * @param document {@link Document} DOM document built for testing.

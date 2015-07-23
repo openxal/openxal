@@ -160,7 +160,7 @@ public class SynchronousState extends ProbeState<SynchronousState> {
      * Save the probe state values to a data store represented by the 
      * <code>DataAdaptor</code> interface.
      * 
-     * @param daptState     data sink to receive state information
+     * @param daptSink     data sink to receive state information
      * 
      * @see gov.sns.xal.model.probe.traj.ProbeState#addPropertiesTo(gov.DataAdaptor.tools.data.IDataAdaptor)
      */

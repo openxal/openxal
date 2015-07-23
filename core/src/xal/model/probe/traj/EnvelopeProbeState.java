@@ -122,7 +122,7 @@ public class EnvelopeProbeState extends BunchProbeState<EnvelopeProbeState> {
 
 
     /**
-     * Default constructor.  Create a new, empty <code>EnvelopeProbeState<code> object.
+     * Default constructor.  Create a new, empty <code>EnvelopeProbeState</code> object.
      */    
     public EnvelopeProbeState() {
         super();
@@ -138,7 +138,7 @@ public class EnvelopeProbeState extends BunchProbeState<EnvelopeProbeState> {
      * <code>EnvelopeProbeState</code> objects with the state attributes
      * of the given <code>EnvelopeProbeState</code>.
      *
-     * @param EnvelopeProbeState     initializing state
+     * @param prsEnv     initializing state
      *
      * @author Christopher K. Allen, Jonathan M. Freed
      * @since  Jun 26, 2014
@@ -208,14 +208,14 @@ public class EnvelopeProbeState extends BunchProbeState<EnvelopeProbeState> {
      * interface rather that the full correlation matrix.  The default behavior for this class
      * is to save the correlation matrix.
      * </p>
+     * <h3>CKA Notes:</h3>
      * <p>
-     * <h4>CKA Notes:</h4>
      * - This can be dangerous as we have the 
      * potential to loose a lot of information.  In particular,
      * if the probe has pasted through a bend or a steering
      * magnet, the Twiss parameters do not contain enough information
      * to restart the probe.
-     * <br/> 
+     * <br> 
      * - This is clearly a kluge; use this method with caution.
      * It is provided to maintain backward compatibility.
      * </p>
@@ -330,7 +330,7 @@ public class EnvelopeProbeState extends BunchProbeState<EnvelopeProbeState> {
      *  phase space coordinates.  This is the primary state attribute
      *  for <code>EnvelopeProbe</code> objects.
      * 
-     * @return  7x7 matrix <zz^T> in homogeneous coordinates
+     * @return  7x7 matrix &lt;zz^T&gt; in homogeneous coordinates
      */
     public CovarianceMatrix getCovarianceMatrix()   {
         return matCov;
@@ -398,8 +398,8 @@ public class EnvelopeProbeState extends BunchProbeState<EnvelopeProbeState> {
      * Return the twiss parameters for this state calculated from the 
      * covariance matrix.
      * </p>
+     * <h3>CKA Notes:</h3>
      * <p>
-     * <h4>CKA Notes:</h4>
      * - Use this method with caution.  The returned information is incomplete,
      * it is taken only from the three 2&times;2 diagonal blocks of the correlation
      * matrix and, therefore, does not contain the full state of the beam.  In
@@ -450,8 +450,8 @@ public class EnvelopeProbeState extends BunchProbeState<EnvelopeProbeState> {
      * to the data sink.  In particular we save only the data in the 2x2 diagonal
      * blocks of the correlation matrix, and as Twiss parameters.
      * </p>
+     * <h3>CKA NOTE:</h3>
      * <p>
-     * <h4>CKA NOTE:</h4>
      * - <strong>Be careful</strong> when using this method!  It is here as a convenience only!  
      * It saves the <code>EnvelopeProbeState</code> information in the save format as
      * the load()/save() methods do, but you cannot restore an <code>EnvelopeProbe</code>
@@ -629,18 +629,18 @@ public class EnvelopeProbeState extends BunchProbeState<EnvelopeProbeState> {
 //	 * TODO This method should override an abstract method in the base class
 //	 * <code>Probe</code>.  If <code>Probe</code> is refactored so that it
 //	 * has a type template parameter <code>S</code>, say
-//	 * <br/>
-//	 * <br/>
+//	 * <br>
+//	 * <br>
 //	 * &nbsp; &nbsp; <code>class Probe&lt;S extends ProbeState&gt;</code>
-//	 * <br/>
-//	 * <br/>
+//	 * <br>
+//	 * <br>
 //	 * then this method simply creates the typed probe state and exactly fills
 //	 * out the virtual method, which should have a signature
-//     * <br/>
-//     * <br/>
+//     * <br>
+//     * <br>
 //     * &nbsp; &nbsp; <code>public S ProbeState#create()</code>
-//     * <br/>
-//     * <br/>
+//     * <br>
+//     * <br>
 //	 *  
 //	 * @return new, uninitialized probe state
 //	 *
@@ -682,7 +682,7 @@ public class EnvelopeProbeState extends BunchProbeState<EnvelopeProbeState> {
 //     * <p>
 //     * <h4>CKA NOTE:</h4>
 //     *  &middot; This method simply returns the value of EnvelopeProbeState#phaseMean()
-//     *  <br/>
+//     *  <br>
 //     *  &middot; This method really has no context unless we are in a ring and then
 //     *  it would represent the fixed-orbit position at this state (position), otherwise
 //     *  ???
@@ -712,15 +712,15 @@ public class EnvelopeProbeState extends BunchProbeState<EnvelopeProbeState> {
 //     * - This attribute is redundant in the sense that all "Twiss parameter"
 //     * information is contained within the covariance matrix.  The covariance
 //     * matrix was intended as the primary attribute of an <code>EnvelopeProbe</code>.
-//     * <br/> 
+//     * <br> 
 //     * - The dynamics of this attribute are computed from transfer matrices,
 //     * however, with space charge the transfer matrices are computed using the
 //     * covariance matrix.  Thus these parameters are inconsistent in the 
 //     * presence of space charge.
-//     * <br/>
+//     * <br>
 //     * - I have made a separate Probe class, <code>TwissProbe</code> which has
 //     * Twiss parameters as its primary state.
-//     * <br/>
+//     * <br>
 //     * - Now this method returns the same quantities as <code>{@link #twissParameters()}</code>
 //     * - For all these reason I am deprecating this method
 //     * </p>

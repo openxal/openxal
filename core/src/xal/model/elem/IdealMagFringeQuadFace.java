@@ -23,7 +23,7 @@ import xal.model.ModelException;
  *   
  * @author Christopher K. Allen
  *
- *  @see    D.C. Carey, The Optics of Charged Particle Beams (Harwood, 1987)
+ *  @see    "D.C. Carey, The Optics of Charged Particle Beams (Harwood, 1987)"
  */
 public class IdealMagFringeQuadFace extends ThinElectromagnet {
 
@@ -102,7 +102,7 @@ public class IdealMagFringeQuadFace extends ThinElectromagnet {
     
     /**
      * K1 (T/m)
-     * @return
+     * @return K1
      */
     public double getK1() {
     	return K1;
@@ -110,7 +110,6 @@ public class IdealMagFringeQuadFace extends ThinElectromagnet {
     
     /**
      * K1 (T/m)
-     * @return
      */
     public void setK1(double dbl) {
     	K1 = dbl;

@@ -25,13 +25,13 @@ import xal.tools.data.IArchive;
  * The action of the linear map 
  * <b>&phi;</b><sub>0</sub> : <b>R</b><sup>6</sup> &times; {1} &rarr; <b>R</b><sup>6</sup> &times; {1} 
  * on a phase vector <b>z</b> &in; <b>R</b><sup>6</sup> &times; {1} is given by
- * <br/>
- * <br/>
+ * <br>
+ * <br>
  * &nbsp; &nbsp; <b>&phi;</b><sub>0</sub>(<b>z</b>) = <b>&Phi;</b><sub>0</sub> &sdot; 
  *                                       (<b>z</b> - <b>z</b><sub>0</sub>) 
  *                                       + <b>&Delta;</b><sub>0</sub> ,
- * <br/>
- * <br/>
+ * <br>
+ * <br>
  * where <b>&Phi;</b><sub>0</sub> &in; <b>R</b><sup>7&times;7</sup> is the linear part of the map
  * (a matrix representation), <b>z</b><sub>0</sub> is the evaluation point or center, and
  * <b>&Delta;</b><sub>0</sub> is the value or offset of 
@@ -46,13 +46,13 @@ import xal.tools.data.IArchive;
  * Say we wish to expand <b>F</b><sub>0</sub> about the point <b>z</b><sub>0</sub> &in; <b>R</b><sup>6</sup>.
  * The Taylor expansion of <b>F</b><sub>0</sub> at the point <b>z</b> &in; <b>R</b><sup>6</sup> is
  * given by
- * <br/>
- * <br/>
+ * <br>
+ * <br>
  * &nbsp; &nbsp; <b>F</b><sub>0</sub>(<b>z</b>) = <b>F</b>(<b>z</b><sub>0</sub>) 
  *                                  + <b>F</b><sub>0</sub>'(<b>z</b><sub>0</sub>) &sdot; (<b>z</b> - <b>z</b><sub>0</sub>) 
  *                                  + <i>O</i>(||<b>z</b> - <b>z</b><sub>0</sub>||<sup>2</sup>) ,
- * <br/>
- * <br/>
+ * <br>
+ * <br>
  * where <b>F</b><sub>0</sub>'(<b>z</b><sub>0</sub>) is the matrix of first partial derivatives of <b>F</b> evaluated at the
  * point <b>z</b><sub>0</sub> &in; <b>R</b><sup>6</sup>&times;{1}.  By identifying <b>z</b><sub>0</sub>,
  * <b>&Delta;</b><sub>0</sub>,  
@@ -391,25 +391,25 @@ public class PhaseMap implements IArchive {
 	 * </p>
 	 * <p>
 	 * Consider linear maps <b>&phi;</b> defined according to the class documentation
-	 * <br/>
-	 * <br/>
+	 * <br>
+	 * <br>
 	 * &nbsp; &nbsp; <b>&phi;</b>(<b>z</b>) = <b>&Phi;</b> &sdot; 
 	 *                                       (<b>z</b> - <b>z</b><sub>0</sub>) 
 	 *                                       + <b>&Delta;</b><sub>0</sub> ,
-	 * <br/>
-	 * <br/>
+	 * <br>
+	 * <br>
 	 * where <b>&Phi;</b> &in; <b>R</b><sup>7&times;7</sup> is the linear part of the map
 	 * (a matrix representation), <b>z</b><sub>0</sub> is the evaluation point or center, and
 	 * <b>&Delta;</b><sub>0</sub> is the value or offset of the mapping.  Then the inverse
 	 * map <b>&phi;</b><sup>-1</sup> : <b>R</b><sup>6</sup>&times;{1} &rarr; <b>R</b><sup>6</sup>&times;{1}
 	 * is given by
-	 * <br/>
-	 * <br/>
+	 * <br>
+	 * <br>
 	 * &nbsp; &nbsp; <b>&phi;</b><sup>-1</sup>(<b>y</b>) = <b>&Phi;</b><sub>0</sub><sup>-1</sup>
 	 *                                                   &sdot; (<b>y</b> - <b>&Delta;</b><sub>0</sub>)
 	 *                                                   + <b>z</b><sub>0</sub> ,
-	 * <br/>
-	 * <br/>                                                  
+	 * <br>
+	 * <br>                                                  
 	 * which can be derived by solving the equation <b>&phi;</b>(<b>z</b>) = <b>y</b> for
 	 * <b>y</b>.
 	 * </p>  	  
@@ -438,23 +438,23 @@ public class PhaseMap implements IArchive {
      *  <code>{@link PhaseMap}</code>, the composition 
      *  <b>&phi;</b> &equiv; <b>&phi;</b><sub>2</sub> &sdot; <b>&phi;</b><sub>1</sub> is determined
      *  by its action on an element <b>z</b> &in; <b>R</b><sup>6</sup>&times;{1} 
-     *  <br/>
-     *  <br/>
+     *  <br>
+     *  <br>
      *  &nbsp; &nbsp; <b>&phi;</b>(<b>z</b>) = <b>&phi;</b><sub>2</sub> &sdot; <b>&phi;</b><sub>1</sub>(<b>z</b>) ,  
-     *  <br/>
-     *  <br/>
+     *  <br>
+     *  <br>
      *  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; = <b>&phi;</b><sub>2</sub> 
      *                                         [ <b>&Phi;</b><sub>1</sub>&sdot;(<b>z</b> - <b>z</b><sub>1</sub>) 
      *                                         + <b>&Delta;</b><sub>1</sub> - <b>z</b><sub>2</sub>] ,
      *  
-     *  <br/>
-     *  <br/>
+     *  <br>
+     *  <br>
      *  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; = <b>&Phi;</b><sub>2</sub>&sdot;<b>&Phi;</b><sub>1</sub>
      *                               (<b>z</b> - <b>z</b><sub>1</sub>)
      *                               + <b>&Phi;</b><sub>2</sub> &sdot; (<b>&Delta;</b><sub>1</sub> - <b>z</b><sub>2</sub>)
      *                               + <b>&Delta;</b><sub>2</sub>                                          
-     *  <br/>
-     *  <br/>
+     *  <br>
+     *  <br>
      *  where <b>&Phi;</b><sub>1</sub> and <b>&Phi;</b><sub>2</sub> are the linear parts (matrices)
      *  of maps <b>&phi;</b><sub>1</sub> and <b>&phi;</b><sub>2</sub>, respectively, 
      *  <b>&Delta;</b><sub>1</sub> and <b>&Delta;</b><sub>2</sub> are the (range) offsets 
@@ -467,19 +467,19 @@ public class PhaseMap implements IArchive {
      *  linear part <b>&Phi;</b><sub>3</sub> of the new composite map 
      *  <b>&phi;</b><sub>3</sub> &equiv; <b>&phi;</b><sub>2</sub> &sdot; <b>&phi;</b><sub>1</sub>
      *  are respectively given by 
-     *  <br/>
-     *  <br/>
+     *  <br>
+     *  <br>
      *  &nbsp; &nbsp; <b>z</b><sub>3</sub> = <b>z</b><sub>1</sub> ,
-     *  <br/>
-     *  <br/>
+     *  <br>
+     *  <br>
      *  &nbsp; &nbsp; <b>&Delta;</b><sub>3</sub> = <b>&Phi;</b><sub>2</sub> &sdot; 
      *                                          (<b>&Delta;</b><sub>1</sub> - <b>z</b><sub>2</sub>) 
      *                                          + <b>&Delta;</b><sub>2</sub> ,
-     *  <br/>
-     *  <br/>
+     *  <br>
+     *  <br>
      *  &nbsp; &nbsp; <b>&Phi;</b><sub>3</sub> = <b>&Phi;</b><sub>2</sub> &sdot; <b>&Phi;</b><sub>1</sub> ,
-     *  <br/>
-     *  <br/>
+     *  <br>
+     *  <br>
      *  The above equations are the formulas for the returned map.
      *  </p>
      *
@@ -513,11 +513,11 @@ public class PhaseMap implements IArchive {
      *  In-place map composition, binary composition of two <code>PhaseMap</code>
      *  objects where this map 
      *  This map <b>&phi;</b><sub>2</sub> is replaced by
-     *  <br/>
-     *  <br/>
+     *  <br>
+     *  <br>
      *  &nbsp; &nbsp; <b>&phi;</b><sub>2</sub> &larr; <b>&phi;</b><sub>2</sub> &sdot; <b>&phi;</b><sub>1</sub>
-     *  <br/>
-     *  <br/>
+     *  <br>
+     *  <br>
      *  where <b>&phi;</b><sub>1</sub> the argument
      *  map.  See method <code>{@link #compose(PhaseMap)}</code> for details of the
      *  computation.
@@ -538,12 +538,12 @@ public class PhaseMap implements IArchive {
      *  Apply this map to the given phase vector.  Denoting the given 
      *  phase vector as <b>z</b>, currently for the linear map <b>&phi;</b>
      *  the result is 
-     *  <br/>
-     *  <br/>
+     *  <br>
+     *  <br>
      *  &nbsp; &nbsp; <b>&phi;</b>(<b>z</b>) = <b>&Phi;</b> &sdot; (<b>z</b> - <b>z</b><sub>0</sub>)
      *                                       + <b>&Delta;</b> ,
-     *  <br/>
-     *  <br/>
+     *  <br>
+     *  <br>
      *  where <b>z</b><sub>0</sub> is the center of <b>&phi;</b>, <b>&Delta;</b> is the
      *  range offset of <b>&phi;</b>, and <b>&Phi;</b> is the linear part of 
      *  <b>&phi;</b>.                                       

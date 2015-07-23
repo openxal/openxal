@@ -136,22 +136,22 @@ public class CovarianceMatrix extends PhaseMatrix {
      *  for a centered beam (on axis).  Thus, the correlation matrix is actually
      *  the covariance matrix.
      *  </p>
+     *  <h3>NOTE:</h3>
      *  <p>
-     *  <h4>NOTE:</h4>
      *  No unit conversion is done, the correlation matrix has the same
      *  unit system as the Twiss parameters.
      *  </p>
      *  <p>
      *  The returned matrix is in homogeneous coordinates of the block 
      *  diagonal form
-     *  <br/>
-     *  <br/>
-     *  <br/>    | R<sub><i>xx</i></sub>   0   0   0 |
-     *  <br/>    |   0 R<sub><i>yy</i></sub>   0   0 |
-     *  <br/>    |   0   0 R<sub><i>zz</i></sub>   0 |
-     *  <br/>    |   0   0   0   1 |
-     *  <br/>
-     *  <br/>
+     *  <br>
+     *  <br>
+     *  <br>    | R<sub><i>xx</i></sub>   0   0   0 |
+     *  <br>    |   0 R<sub><i>yy</i></sub>   0   0 |
+     *  <br>    |   0   0 R<sub><i>zz</i></sub>   0 |
+     *  <br>    |   0   0   0   1 |
+     *  <br>
+     *  <br>
      *  where R<sub><i>ii</i></sub> are 2x2 symmetric blocks corresponding to each phase
      *  plane.  Clearly the phase planes are uncoupled.
      *  </p>
@@ -188,18 +188,18 @@ public class CovarianceMatrix extends PhaseMatrix {
      *  Create a CovarianceMatrix corresponding to the given Twiss parameters and 
      *  having the given mean values (centroid location).
      *  </p>  
+     *  <h3>NOTE:</h3>
      * <p>
-     *  <h4>NOTE:</h4>
      *  The returned matrix is in homogeneous coordinates of the block 
      *  diagonal form
-     *  <br/>
-     *  <br/>
-     *      | Rxx   0   0  &lt;x&gt; | <br/>
-     *      |   0 Ryy   0  &lt;y&gt; | <br/>
-     *      |   0   0 Rzz  &lt;z&gt; | <br/>
+     *  <br>
+     *  <br>
+     *      | Rxx   0   0  &lt;x&gt; | <br>
+     *      |   0 Ryy   0  &lt;y&gt; | <br>
+     *      |   0   0 Rzz  &lt;z&gt; | <br>
      *      | &lt;x> &lt;y> &lt;z&gt;   1  | 
-     *  <br/>
-     *  <br/>
+     *  <br>
+     *  <br>
      *  where Rii are 2x2 symmetric blocks corresponding to each phase
      *  plane, and &lt;i&gt; is shorthand for the vector of phase averages
      *  for the i plane, eg. &lt;x&gt; = (&lt;x&gt;, &lt;x'&gt;).
@@ -331,7 +331,7 @@ public class CovarianceMatrix extends PhaseMatrix {
      *
      *
      *  @param  arrEmitNew  three element vector of rms emittances for X,Y,Z planes, respectively
-     *                      <bold>Units radian-meters</bold>
+     *                      <b>Units radian-meters</b>
      * 
      *  @author C.K. Allen
      */
