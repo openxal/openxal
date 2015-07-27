@@ -494,7 +494,7 @@ public class IdealRfGap extends ThinElement implements IRfGap {
 		// the following section is to calculate the phase of the beam at each gap, rather than use hardwired phases.
 
 // update the energy gain first:
-		if(probe.getAlgorithm().useRfGapPhaseCalculation()) {
+		if(probe.getAlgorithm().getRfGapPhaseCalculation()) {
 			compEnergyGain(probe);
 		} else {
 			simpleEnergyGain(probe);
