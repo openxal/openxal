@@ -124,9 +124,6 @@ public interface IAlgorithm extends java.rmi.Remote, IContextAware, IArchive {
      * @author jdg 3/20/03
      */
     public boolean getRfGapPhaseCalculation();
-    
-    @Deprecated
-    public boolean useRfGapPhaseCalculation();
    
     /** 
      * indicates whether to calculate the beam phase in multi gap Rf cavities,

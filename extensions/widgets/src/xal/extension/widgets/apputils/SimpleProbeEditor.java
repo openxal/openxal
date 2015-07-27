@@ -230,6 +230,9 @@ public class SimpleProbeEditor extends JDialog {
         //Set the table to allow one-click edit
         ((DefaultCellEditor) propertyTable.getDefaultEditor(Object.class)).setClickCountToStart(1);
         propertyTable.setDefaultRenderer(Double.class, new DefaultTableCellRenderer() {
+			/** Private serializable version ID */
+			private static final long serialVersionUID = 1L;
+
         	{
         		setHorizontalAlignment(JLabel.RIGHT);
         	}

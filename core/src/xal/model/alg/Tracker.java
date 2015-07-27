@@ -529,16 +529,6 @@ public abstract class Tracker implements IAlgorithm, IArchive {
     /*
      *  IAlgorithm Interface
      */
-    
-    
-    /** 
-     * Indicates whether to calculate the beam phase in multi gap Rf cavities,
-     * (a la Parmila) rather than use default values (a  la Trace   3D)
-     * 
-     * @return <code>true</code> if phase calculations are made, <code>false</code> otherwise
-     */
-    @Override
-    public boolean useRfGapPhaseCalculation() { return getRfGapPhaseCalculation();}
 
     /** 
      * Indicates whether to calculate the beam phase in multi gap Rf cavities,
