@@ -162,7 +162,7 @@ public class EnvelopeTracker extends EnvelopeTrackerBase {
         	return;
         }
   
-        if(this.getSpaceChargeFlag())
+        if(this.getUseSpacecharge())
             cntSteps = (int) Math.max(Math.ceil(propLen / getStepSize()), 1);
         else 
             cntSteps = 1;
@@ -226,7 +226,7 @@ public class EnvelopeTracker extends EnvelopeTrackerBase {
         PhaseMatrix matTau1  = matTau0.conjugateTrans( matPhi_sc );
         
         
-        if (this.getEmittanceGrowthFlag())   
+        if (this.getEmittanceGrowth())   
             matTau1 = this.addEmittanceGrowth(probe, iElem, matTau1);
         
         
@@ -289,7 +289,7 @@ public class EnvelopeTracker extends EnvelopeTrackerBase {
 
         
         // Check for easy case of no space charge
-        if (this.getSpaceChargeFlag()==false || dblLen==0.0)    {
+        if (this.getUseSpacecharge()==false || dblLen==0.0)    {
             matPhi = ifcElem.transferMap(probe, dblLen).getFirstOrder();
 
         // we must treat space charge
@@ -338,7 +338,7 @@ public class EnvelopeTracker extends EnvelopeTrackerBase {
         
         
         // Check for exceptional circumstance and modify transfer matrix accordingly
-        if (this.getEmittanceGrowthFlag() && ifcElem instanceof IdealRfGap) {
+        if (this.getEmittanceGrowth() && ifcElem instanceof IdealRfGap) {
             IdealRfGap elemRfGap = (IdealRfGap)ifcElem;
             double      dphi     = this.effPhaseSpread(probe, elemRfGap);
             
@@ -507,7 +507,7 @@ public class EnvelopeTracker extends EnvelopeTrackerBase {
         if (!(iElem instanceof IdealRfGap))
             return matTau;
         
-        if (!this.getEmittanceGrowthFlag())
+        if (!this.getEmittanceGrowth())
             return matTau;
   
         

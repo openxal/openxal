@@ -279,7 +279,7 @@ public class TestSynchronizationManager {
         // Write out header line
         String  strSimType = MODEL_TEST.getProbe().getClass().getName();
         WTR_OUTPUT.println("DATA FOR SIMULATION WITH " + strSimType);
-        WTR_OUTPUT.println("  RF Gap Phases " + MODEL_TEST.getProbe().getAlgorithm().useRfGapPhaseCalculation() );
+        WTR_OUTPUT.println("  RF Gap Phases " + MODEL_TEST.getProbe().getAlgorithm().getRfGapPhaseCalculation() );
         
         // Write out the simulation data
 //        Trajectory<?> trjData = MODEL_TEST.getTrajectory();
@@ -303,7 +303,7 @@ public class TestSynchronizationManager {
 
         // Print out the kinetic energy profile to stdout
         System.out.println("DATA FOR SIMULATION WITH " + MODEL_TEST.getProbe().getClass().getName());
-        System.out.println("  RF Gap Phases " + MODEL_TEST.getProbe().getAlgorithm().useRfGapPhaseCalculation() );
+        System.out.println("  RF Gap Phases " + MODEL_TEST.getProbe().getAlgorithm().getRfGapPhaseCalculation() );
 //        Trajectory<?> trjData = MODEL_TEST.getTrajectory();
         
         for (S state : trjData) {

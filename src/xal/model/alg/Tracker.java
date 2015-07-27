@@ -529,16 +529,14 @@ public abstract class Tracker implements IAlgorithm, IArchive {
     /*
      *  IAlgorithm Interface
      */
-    
-    
+
     /** 
      * Indicates whether to calculate the beam phase in multi gap Rf cavities,
      * (a la Parmila) rather than use default values (a  la Trace   3D)
      * 
      * @return <code>true</code> if phase calculations are made, <code>false</code> otherwise
-     */
-    @Override
-    public boolean useRfGapPhaseCalculation() { return m_bolCalcRfGapPhase;}
+     */  
+    public boolean getRfGapPhaseCalculation() { return m_bolCalcRfGapPhase;}
 
 
     /**
@@ -820,7 +818,7 @@ public abstract class Tracker implements IAlgorithm, IArchive {
         DataAdaptor daptTrack = daptAlg.createChild(NODETAG_TRACKER);
         daptTrack.setValue(ATTRTAG_DEBUG, this.getDebugMode());
         daptTrack.setValue(ATTRTAG_UPDATE, this.getProbeUpdatePolicy());
-        daptTrack.setValue(ATTRTAG_RFGAP_PHASE, this.useRfGapPhaseCalculation());
+        daptTrack.setValue(ATTRTAG_RFGAP_PHASE, this.getRfGapPhaseCalculation());
     }
      
     
