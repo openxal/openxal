@@ -14,7 +14,6 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.BorderLayout;
-import java.awt.GridLayout;         // TODO: CKA - NEVER USED
 import java.awt.Frame;
 
 import javax.swing.*;
@@ -24,9 +23,10 @@ import java.util.*;
 
 import xal.tools.annotation.AProperty.NoEdit;
 import xal.tools.annotation.AProperty.Units;
+import xal.tools.beam.CovarianceMatrix;
+import xal.tools.beam.PhaseVector;
+import xal.tools.beam.Twiss;
 import xal.model.probe.Probe;
-import xal.model.probe.traj.ProbeState;
-import xal.model.IAlgorithm;        // TODO: CKA - NEVER USED
 import xal.extension.widgets.swing.*;
 import xal.tools.data.*;
 
@@ -51,11 +51,14 @@ public class SimpleProbeEditor extends JDialog {
 	/** model column for the value in the property table */
 	final private int PROPERTY_TABLE_VALUE_COLUMN;
 
-	
+	 public SimpleProbeEditor( final Frame owner, final Probe<?> probe ) {
+		 this(owner, probe, true);
+	 }
+	 
     /* Constructor that takes a window parent
      * and a probe to fetch properties from
      */
-    public SimpleProbeEditor( final Frame owner, final Probe<?> probe ) {
+    public SimpleProbeEditor( final Frame owner, final Probe<?> probe, boolean visible ) {
         super( owner, "Probe Editor", true );	//Set JDialog's owner, title, and modality
         
         PROBE = probe;					// Set the probe to edit
@@ -75,7 +78,7 @@ public class SimpleProbeEditor extends JDialog {
         setSize( 600, 600 );			// Set the window size
         initializeComponents();			// Set up each component in the editor
         setLocationRelativeTo( owner );	// Center the editor in relation to the frame that constructed the editor
-        setVisible(true);				// Make the window visible
+        setVisible(visible);				// Make the window visible
     }
 	
     
@@ -226,6 +229,15 @@ public class SimpleProbeEditor extends JDialog {
         
         //Set the table to allow one-click edit
         ((DefaultCellEditor) propertyTable.getDefaultEditor(Object.class)).setClickCountToStart(1);
+        propertyTable.setDefaultRenderer(Double.class, new DefaultTableCellRenderer() {
+        	{
+        		setHorizontalAlignment(JLabel.RIGHT);
+        	}
+        	
+            public void setValue(Object value) {                
+                setText((value == null) ? "" : String.format(Locale.ROOT, "%10.7g", value));
+            }
+        });
         
         //Resize the last column
         propertyTable.setAutoResizeMode( JTable.AUTO_RESIZE_LAST_COLUMN);
@@ -888,15 +900,23 @@ class EditablePropertyContainer extends EditableProperty {
 				return;
 			}
 			else {
+				Object target = generateChildTarget( CHILD_TARGET, descriptor );
+				
+				if ( propertyType.equals(CovarianceMatrix.class) )
+				{
+					target =  new TwissCovarianceMatrixBridge((CovarianceMatrix)target);
+				}
+				
 				// property is a plain container
-				if ( !ANCESTORS.contains( CHILD_TARGET ) ) {	// only propagate down the branch if the targets are unique (avoid cycles)
+				if ( !ANCESTORS.contains( target ) ) {	// only propagate down the branch if the targets are unique (avoid cycles)
 					final Set<Object> ancestors = new HashSet<Object>( ANCESTORS );
-					ancestors.add( CHILD_TARGET );
-					final EditablePropertyContainer container = new EditablePropertyContainer( PATH, CHILD_TARGET, descriptor, ancestors );
+					ancestors.add( target );
+					final EditablePropertyContainer container = new EditablePropertyContainer( PATH, CHILD_TARGET, descriptor, target, ancestors );
 					if ( container.getChildCount() > 0 ) {	// only care about containers that lead to editable properties
 						_childPropertyContainers.add( container );
 					}
 				}
+			
 				return;
 			}
 		}
@@ -924,4 +944,102 @@ class EditableArrayProperty extends EditablePropertyContainer {
 	}
 
 	// TODO: complete implementation of array property
+}
+
+class TwissCovarianceMatrixBridge {
+	Twiss[] twiss;
+	PhaseVector mean;
+	CovarianceMatrix m;
+	
+	public TwissCovarianceMatrixBridge(CovarianceMatrix m) {
+		twiss = m.computeTwiss();
+		mean = m.getMean();
+		this.m = m;
+	}
+	
+	protected void update()
+	{
+		m.setMatrix( CovarianceMatrix.buildCovariance(twiss[0], twiss[1], twiss[2], mean).getArrayCopy() );
+	}
+	
+	public double getAlphaX() {
+		return twiss[0].getAlpha();
+	}
+	
+	public double getAlphaY() {
+		return twiss[1].getAlpha();
+	}
+	
+	public double getAlphaZ() {
+		return twiss[2].getAlpha();
+	}
+	
+	public void setAlphaX(double alpha) {
+		twiss[0].setTwiss(alpha, twiss[0].getBeta(), twiss[0].getEmittance());
+		update();
+	}
+	
+	public void setAlphaY(double alpha) {
+		twiss[1].setTwiss(alpha, twiss[1].getBeta(), twiss[1].getEmittance());
+		update();
+	}
+
+	public void setAlphaZ(double alpha) {
+		twiss[2].setTwiss(alpha, twiss[2].getBeta(), twiss[2].getEmittance());
+		update();
+	}
+	
+	public double getBetaX() {
+		return twiss[0].getBeta();
+	}
+	
+	public double getBetaY() {
+		return twiss[1].getBeta();
+	}
+	
+	public double getBetaZ() {
+		return twiss[2].getBeta();
+	}
+	
+	public void setBetaX(double beta) {
+		twiss[0].setTwiss(twiss[0].getAlpha(), beta, twiss[0].getEmittance());
+		update();
+	}
+	
+	public void setBetaY(double beta) {
+		twiss[1].setTwiss(twiss[1].getAlpha(), beta, twiss[1].getEmittance());
+		update();
+	}
+
+	public void setBetaZ(double beta) {
+		twiss[2].setTwiss(twiss[2].getAlpha(), beta, twiss[2].getEmittance());
+		update();
+	}
+	
+	public double getEmitX() {
+		return twiss[0].getEmittance();
+	}
+	
+	public double getEmitY() {
+		return twiss[1].getEmittance();
+	}
+	
+	public double getEmitZ() {
+		return twiss[2].getEmittance();
+	}
+	
+	public void setEmitX(double emit) {
+		twiss[0].setTwiss(twiss[0].getAlpha(), twiss[0].getBeta(), emit);
+		update();
+	}
+	
+	public void setEmitY(double emit) {
+		twiss[1].setTwiss(twiss[1].getAlpha(), twiss[1].getBeta(), emit);
+		update();
+	}
+
+	public void setEmitZ(double emit) {
+		twiss[2].setTwiss(twiss[2].getAlpha(), twiss[2].getBeta(), emit);
+		update();
+	}	
 }

@@ -129,7 +129,7 @@ public class EnvelopeTrackerPmqDipole extends EnvelopeTracker {
         } else if (elem instanceof IdealDrift) {
             nSteps = (int)Math.max(Math.ceil(propLen / getStepSize()), 1);
             
-        }else if(this.getSpaceChargeFlag()) {
+        }else if(this.getUseSpacecharge()) {
             nSteps = (int) Math.max(Math.ceil(propLen / getStepSize()), 1);
         
         } else { 
