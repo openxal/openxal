@@ -477,7 +477,7 @@ public class Main extends JFrame {
 		double betaMax = Double.parseDouble(betaTree.getValue(parsedName, "beta_max"));
 		double frequency = Double.parseDouble(betaTree.getValue(parsedName, "frequency"));
 		
-		double[] betaList = ttfT.linspace(betaMin, betaMax , 1000000); //x
+		double[] betaList = ttfT.linspace(betaMin, betaMax , 100); //x
 		double[] ttfList = ttfT.getTTFForBetaRange(ZData, EFdata, true, frequency, betaList); 
 		
 		//System.out.println("ZData: " + ZData.toString());

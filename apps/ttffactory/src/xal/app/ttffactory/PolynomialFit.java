@@ -13,8 +13,8 @@ package xal.app.ttffactory;
 
 import xal.extension.solver.*;
 import xal.extension.solver.algorithm.*;
-import xal.tools.math.Rn.Rmxn;
-import xal.tools.math.Rn.Rn;
+import xal.tools.math.rn.Rmxn;
+import xal.tools.math.rn.Rn;
 
 import java.lang.*;
 import java.util.*;

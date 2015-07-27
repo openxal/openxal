@@ -12,8 +12,8 @@ package xal.app.ttffactory;
 import java.util.Arrays;
 
 import xal.app.ttffactory.PolynomialFitter.Polynomial;
-import xal.tools.math.Rn.Rmxn;
-import xal.tools.math.Rn.Rn;
+import xal.tools.math.rn.Rmxn;
+import xal.tools.math.rn.Rn;
 
 
 /**

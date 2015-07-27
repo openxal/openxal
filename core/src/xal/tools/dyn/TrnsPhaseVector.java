@@ -302,4 +302,11 @@ public class TrnsPhaseVector extends BaseVector<TrnsPhaseVector> {
 		return new TrnsPhaseVector();
 	}
 
+
+	@Override
+	protected TrnsPhaseVector newInstance(double[] arrVecInt) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

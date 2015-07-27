@@ -4,7 +4,7 @@
  * Author  : Christopher K. Allen
  * Since   : Jul 22, 2015
  */
-package xal.tools.math.Rn;
+package xal.tools.math.rn;
 
 import static org.junit.Assert.fail;
 
