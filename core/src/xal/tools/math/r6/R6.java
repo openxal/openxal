@@ -221,4 +221,16 @@ public class R6 extends BaseVector<R6> {
 		return new R6();
 	}
 
+
+    /**
+     *
+     * @see xal.tools.math.BaseVector#newInstance(double[])
+     *
+     * @since  Jul 24, 2015   by Christopher K. Allen
+     */
+    @Override
+    protected R6 newInstance(double[] arrVecInt) {
+        return new R6(arrVecInt);
+    }
+
 }

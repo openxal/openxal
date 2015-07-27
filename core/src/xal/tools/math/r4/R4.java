@@ -209,4 +209,16 @@ public class R4 extends BaseVector<R4> {
 	protected R4 newInstance() {
 		return new R4();
 	}
+
+
+    /**
+     *
+     * @see xal.tools.math.BaseVector#newInstance(double[])
+     *
+     * @since  Jul 24, 2015   by Christopher K. Allen
+     */
+    @Override
+    protected R4 newInstance(double[] arrVecInt) {
+        return new R4(arrVecInt);
+    }
 }

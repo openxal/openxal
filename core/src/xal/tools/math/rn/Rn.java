@@ -4,7 +4,7 @@
  * Author  : Christopher K. Allen
  * Since   : Jul 22, 2015
  */
-package xal.tools.math.Rn;
+package xal.tools.math.rn;
 
 import xal.tools.data.DataAdaptor;
 import xal.tools.math.BaseVector;
@@ -162,6 +162,17 @@ public class Rn extends BaseVector<Rn> {
         int intSize = this.getSize();
         
         return new Rn(intSize);
+    }
+
+    /**
+     *
+     * @see xal.tools.math.BaseVector#newInstance(double[])
+     *
+     * @since  Jul 24, 2015   by Christopher K. Allen
+     */
+    @Override
+    protected Rn newInstance(double[] arrVecInt) {
+        return new Rn(arrVecInt);
     }
 
 }

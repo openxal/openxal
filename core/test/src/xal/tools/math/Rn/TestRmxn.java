@@ -12,6 +12,9 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import xal.tools.math.rn.Rmxn;
+import xal.tools.math.rn.Rn;
+
 /**
  * Test cases for class <code>Rmxn</code>
  *
@@ -120,7 +123,7 @@ public class TestRmxn {
      */
     
     /**
-     * Test method for {@link xal.tools.math.Rn.Rmxn#plus(xal.tools.math.Rn.Rmxn)}.
+     * Test method for {@link xal.tools.math.rn.Rmxn#plus(xal.tools.math.rn.Rmxn)}.
      * 
      * This also indirectly tests the method <code>{@link Rmxn#times(double)}</code>.
      */
@@ -144,7 +147,7 @@ public class TestRmxn {
     }
     
     /**
-     * Test method for {@link xal.tools.math.Rn.Rmxn#minus(xal.tools.math.Rn.Rmxn)}.
+     * Test method for {@link xal.tools.math.rn.Rmxn#minus(xal.tools.math.rn.Rmxn)}.
      */
     @Test
     public final void testMinusRmxn() {
@@ -164,7 +167,7 @@ public class TestRmxn {
     }
 
     /**
-     * Test method for {@link xal.tools.math.Rn.Rmxn#times(xal.tools.math.Rn.Rmxn)}.
+     * Test method for {@link xal.tools.math.rn.Rmxn#times(xal.tools.math.rn.Rmxn)}.
      */
     @Test
     public final void testTimesRmxn() {
@@ -201,7 +204,7 @@ public class TestRmxn {
     }
 
     /**
-     * Test method for {@link xal.tools.math.Rn.Rmxn#times(xal.tools.math.Rn.Rn)}.
+     * Test method for {@link xal.tools.math.rn.Rmxn#times(xal.tools.math.rn.Rn)}.
      */
     @Test
     public final void testTimesRn() {
@@ -217,7 +220,7 @@ public class TestRmxn {
     }
 
     /**
-     * Test method for {@link xal.tools.math.Rn.Rmxn#clone()}.
+     * Test method for {@link xal.tools.math.rn.Rmxn#clone()}.
      */
     @Test
     public final void testClone() {

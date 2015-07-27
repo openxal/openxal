@@ -618,7 +618,7 @@ public abstract class BaseVector<V extends BaseVector<V>> implements IArchive, j
      *  @exception  ArrayIndexOutOfBoundsException  iIndex is larger than vector size
      */
     public double getElem(int iIndex) throws ArrayIndexOutOfBoundsException {
-        return this.getVector().getElem(iIndex);
+        return this.vecImpl.getElem(iIndex);
     };
     
 //    /**
@@ -1497,6 +1497,18 @@ public abstract class BaseVector<V extends BaseVector<V>> implements IArchive, j
      * @since  Oct 1, 2013
      */
     protected abstract V newInstance();
+    
+    /**
+     * Creates a new instance of this vector type with the given Java
+     * array as the internal representation.
+     * 
+     * @param arrVecInt     new vector's guts
+     * 
+     * @return              new instance of this vector type with the internal representation
+     *
+     * @since  Jul 24, 2015   by Christopher K. Allen
+     */
+    protected abstract V newInstance(double[] arrVecInt);
     
     /**
      * Creates a new instance of this vector type initialized to the given

@@ -244,9 +244,14 @@ public class PhaseMatrix extends SquareMatrix<PhaseMatrix> implements java.io.Se
      *  @return         7x7 real identity matrix
      */
     public static PhaseMatrix  identity()   {
-        PhaseMatrix matIden = new PhaseMatrix();
-        matIden.assignIdentity();
-        matIden.setElem(IND.HOM, IND.HOM, 1.0);
+//        PhaseMatrix matIden = new PhaseMatrix();
+//        matIden.assignIdentity();
+//        matIden.setElem(IND.HOM, IND.HOM, 1.0);
+        double[][]  arrInternal = new double[INT_SIZE][INT_SIZE];
+        for (int i=0; i<INT_SIZE; i++)
+            arrInternal[i][i] = 1.0;
+        
+        PhaseMatrix matIden = new PhaseMatrix( arrInternal );
         return matIden;
     }
     

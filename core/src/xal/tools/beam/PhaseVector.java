@@ -363,9 +363,10 @@ public class PhaseVector extends BaseVector<PhaseVector> implements java.io.Seri
      *  @exception  IllegalArgumentException  argument must be a length-six array
      */
     public PhaseVector(double arrVals[])    {
-        super(INT_SIZE);
-        
-        this.setVector(arrVals);
+//        super(INT_SIZE);
+//      this.setVector(arrVals);
+        super(arrVals);
+        this.setElem(IND.HOM, 1.0);
     }
     
     /**
@@ -928,6 +929,17 @@ public class PhaseVector extends BaseVector<PhaseVector> implements java.io.Seri
     @Override
     protected PhaseVector newInstance() {
         return new PhaseVector();
+    }
+
+    /**
+     *
+     * @see xal.tools.math.BaseVector#newInstance(double[])
+     *
+     * @since  Jul 24, 2015   by Christopher K. Allen
+     */
+    @Override
+    protected PhaseVector newInstance(double[] arrVecInt) {
+        return new PhaseVector(arrVecInt);
     }
 
     /**

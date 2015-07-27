@@ -21,4 +21,4 @@
  * @author Christopher K. Allen
  * @since  Jul 21, 2015
  */
-package xal.tools.math.Rn;
+package xal.tools.math.rn;

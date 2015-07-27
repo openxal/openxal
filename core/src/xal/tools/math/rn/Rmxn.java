@@ -4,7 +4,7 @@
  * Author  : Christopher K. Allen
  * Since   : Jul 21, 2015
  */
-package xal.tools.math.Rn;
+package xal.tools.math.rn;
 
 import xal.tools.math.BaseMatrix;
 import xal.tools.math.BaseVector;

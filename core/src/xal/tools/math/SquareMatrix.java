@@ -393,7 +393,8 @@ public abstract class SquareMatrix<M extends SquareMatrix<M>> extends BaseMatrix
         if ( vecFac.getSize() != this.getSize() ) 
             throw new IllegalArgumentException(vecFac.getClass().getName() + " vector must have compatible size");
     
-        V   vecSoln = vecFac.newInstance();
+//        V   vecSoln = vecFac.newInstance();
+        double[]    arrVec = new double[vecFac.getSize()];
         
         for (int i=0; i<this.getSize(); i++) {
             double dblSum = 0.0;
@@ -404,8 +405,11 @@ public abstract class SquareMatrix<M extends SquareMatrix<M>> extends BaseMatrix
                 dblSum += dblFac;
             }
             
-            vecSoln.setElem(i,  dblSum);
+            arrVec[i] = dblSum;
+//            vecSoln.setElem(i,  dblSum);
         }
+        
+        V vecSoln   = vecFac.newInstance(arrVec);
         
         return vecSoln;
     }
