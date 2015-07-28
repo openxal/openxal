@@ -484,11 +484,11 @@ public class Main extends JFrame {
 		//System.out.println("EFData: " + EFdata.toString() + "\n");
 		//System.out.println("Betas: " + Arrays.toString(betaList));
 		//System.out.println("TTFs: " + Arrays.toString(ttfList)+ "\n");
-		
-		
-		System.out.println(tools.initValues(betaList,  ttfList));
+
 		PolynomialFit polyFit = new PolynomialFit(betaList,ttfList);
-		//polyFit.run(ttfList, betaList);
+		double[] consts = polyFit.getPolyConstants();
+		System.out.println(polyFit.toString(consts));
+
 
     }
     

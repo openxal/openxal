@@ -11,7 +11,6 @@ package xal.app.ttffactory;
 
 import java.util.Arrays;
 
-import xal.app.ttffactory.PolynomialFitter.Polynomial;
 import xal.tools.math.rn.Rmxn;
 import xal.tools.math.rn.Rn;
 
@@ -125,19 +124,5 @@ public class Tools {
 		
 		return postMat;
 	}
-	
-    public String initValues(double[] data, double[] positionArray) {
-    	
-    	PolynomialFitter polyFitter = new PolynomialFitter(4);
-    	int i = 0;
-    	for(double dbl: data) {
-    		polyFitter.addPoint(dbl, positionArray[i]);
-    		i++;
-    	}
-    	
-    	Polynomial init = polyFitter.getBestFit();
-		return init.toString();
-    	
-    }
 	
 }
