@@ -1643,7 +1643,7 @@ public class IdealRfGap extends ThinElement implements IRfGap, IRfCavityCell {
      * Computes and returns the longitudinal phase change &delta;&phi; energy 
      * gain &Delta;<i>W</i> through 
      * the gap due to acceleration.  Although this is a thin lens the longitudinal
-     * phase must have a impulsive change sympletically conjugate to the change
+     * phase must have a impulsive change symplectically conjugate to the change
      * &Delta;<i>W</i> in longitudinal energy. 
      * </p>
      * <p>
@@ -1705,8 +1705,8 @@ public class IdealRfGap extends ThinElement implements IRfGap, IRfCavityCell {
         //
         double phi0 = this.compGapEntrancePhase(probe); // phase at gap "electrical" entrance
 
-        //phase change from center correction factor for future time calculations
-        //in PARMILA TTFPrime and SPrime are in [1/cm] units, we use [m]
+        // phase change from center correction factor for future time calculations
+        // in PARMILA TTFPrime and SPrime are in [1/cm] units, we use [m]
         //  CKA - I will try to eliminate these quantities because I cannot
         //        determine that they are correct
         //        double ttf_prime = 0.01*this.fitTTFPrime.evaluateAt(bi);
