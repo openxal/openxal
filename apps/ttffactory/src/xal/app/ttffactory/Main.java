@@ -480,10 +480,10 @@ public class Main extends JFrame {
 		double[] betaList = ttfT.linspace(betaMin, betaMax , 100); //x
 		double[] ttfList = ttfT.getTTFForBetaRange(ZData, EFdata, true, frequency, betaList); 
 		
-		//System.out.println("ZData: " + ZData.toString());
+		System.out.println("ZData: " + ZData.toString());
 		//System.out.println("EFData: " + EFdata.toString() + "\n");
 		System.out.println("\nBetas: " + Arrays.toString(betaList) + "\n");
-		//System.out.println("TTFs: " + Arrays.toString(ttfList)+ "\n");
+		System.out.println("TTFs: " + Arrays.toString(ttfList)+ "\n");
 
 		PolynomialFit polyFit = new PolynomialFit(betaList,ttfList);
 		double[] consts = polyFit.getPolyConstants();

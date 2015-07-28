@@ -551,8 +551,6 @@ public abstract class BaseVector<V extends BaseVector<V>> implements IArchive, j
         }
     }
 
-    
-    
     /** 
      * Set individual element of a vector to given value
      * 
