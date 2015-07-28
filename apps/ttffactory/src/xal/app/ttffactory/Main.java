@@ -467,7 +467,7 @@ public class Main extends JFrame {
 			EFdata.set(i, -1.0*dbl);
 			i++;
 		}
-			//END SCl ONly	
+		//END SCL Only	
 		TTFTools ttfT = new TTFTools();
 		Tools tools = new Tools();
 		
@@ -482,7 +482,7 @@ public class Main extends JFrame {
 		
 		//System.out.println("ZData: " + ZData.toString());
 		//System.out.println("EFData: " + EFdata.toString() + "\n");
-		//System.out.println("Betas: " + Arrays.toString(betaList));
+		System.out.println("\nBetas: " + Arrays.toString(betaList) + "\n");
 		//System.out.println("TTFs: " + Arrays.toString(ttfList)+ "\n");
 
 		PolynomialFit polyFit = new PolynomialFit(betaList,ttfList);

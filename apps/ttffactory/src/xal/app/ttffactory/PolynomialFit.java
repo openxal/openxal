@@ -55,6 +55,8 @@ public class PolynomialFit{
     	
     	Rmxn xMat = new Rmxn(x2D.clone());               //K
     	
+    	System.out.println("\n" + xMat.toStringMatrix() + "\n");
+    	
     	Rmxn yMat = new Rmxn(y.length,1);                //T
     	
     	i = 0;
