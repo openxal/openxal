@@ -19,6 +19,7 @@ import xal.model.IProbe;
 import xal.model.ModelException;
 import xal.model.alg.Tracker;
 import xal.sim.scenario.LatticeElement;
+import xal.smf.attr.AlignmentBucket;
 import xal.tools.beam.IConstants;
 import xal.tools.beam.PhaseMap;
 import xal.tools.beam.PhaseMatrix;
@@ -120,6 +121,7 @@ public abstract class Element implements IElement {
         this.cpsParent = null;
     };
     
+
     /**
      *  Set the string identifier for the element.
      *
@@ -418,6 +420,11 @@ public abstract class Element implements IElement {
         setId( strElemId != null ? strElemId : strSmfId);
         setHardwareNodeId(strSmfId);
         setPosition(latticeElement.getCenterPosition());
+        
+        AlignmentBucket alignmentBucket = latticeElement.getNode().getAlign(); 
+        setAlignX(alignmentBucket.getX());
+        setAlignY(alignmentBucket.getY());
+        setAlignZ(alignmentBucket.getZ());
         
 //        // CKA: Added to include hardware ID attribute for the new element.
 //        //   This is bound to ScenarioGenerator#collectElements(). 
