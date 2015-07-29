@@ -20,6 +20,7 @@ import javax.swing.event.*;
 
 import xal.extension.application.smf.*;
 import xal.smf.impl.MagnetMainSupply;
+import xal.smf.impl.MagnetPowerSupply;
 import xal.extension.application.*;
 import xal.ca.*;
 import xal.tools.xml.*;
@@ -231,6 +232,8 @@ public class GenDocument extends AcceleratorDocument implements SettingListener,
     public double[] quad_k = new double[6];
     public double[] quad_k_llimit = new double[6];
     public double[] quad_k_ulimit = new double[6];
+
+	// unfortunately the sextupole arrays are sometimes fields and other times currents
     public double[] sext_k = new double[4];
     public double[] sext_k_llimit = new double[4];
     public double[] sext_k_ulimit = new double[4];
@@ -245,6 +248,7 @@ public class GenDocument extends AcceleratorDocument implements SettingListener,
 
     public ChannelAgent[] quad_ch = new ChannelAgent[6];
     public ChannelAgent[] sext_ch = new ChannelAgent[4];
+	private ChannelAgent[] sextCurrentChannel = new ChannelAgent[4];
    
     public int i;
     public int nQuads = 6;
@@ -272,6 +276,12 @@ public class GenDocument extends AcceleratorDocument implements SettingListener,
         sext_ch[2] = fieldSetChannelAgentForSupply( "Ring_Mag:PS_SV05" );
         sext_ch[3] = fieldSetChannelAgentForSupply( "Ring_Mag:PS_SH06" );
 
+		// unfortunately we need to get the current channels for the sextupoles
+		sextCurrentChannel[0] = currentSetChannelAgentForSupply("Ring_Mag:PS_SV03a07");
+		sextCurrentChannel[1] = currentSetChannelAgentForSupply("Ring_Mag:PS_SH04");
+		sextCurrentChannel[2] = currentSetChannelAgentForSupply("Ring_Mag:PS_SV05");
+		sextCurrentChannel[3] = currentSetChannelAgentForSupply("Ring_Mag:PS_SH06");
+
 		brho_nom = 5.65737;
 		mass = 0.938272310;
 		c = 2.99792458e8;
@@ -291,6 +301,12 @@ public class GenDocument extends AcceleratorDocument implements SettingListener,
 	private ChannelAgent fieldSetChannelAgentForSupply( final String supplyID ) {
 		return new ChannelAgent( accelerator.getMagnetMainSupply( supplyID ).getChannel( MagnetMainSupply.FIELD_SET_HANDLE ) );
 	}
+
+	/** Get the magnet current channel agent for the specified magnet power supply */
+	private ChannelAgent currentSetChannelAgentForSupply( final String supplyID ) {
+		return new ChannelAgent( accelerator.getMagnetMainSupply( supplyID ).getChannel( MagnetPowerSupply.CURRENT_SET_HANDLE ) );
+	}
+
 
     //Methods for the tune setting tab:
    
@@ -398,21 +414,34 @@ public class GenDocument extends AcceleratorDocument implements SettingListener,
 	    range[1]=max;
 	    return range;
 	}
-    }    
-
-    public void setSextChannelAccess(){
-	if((sext_k[0] >= sext_k_llimit[0] && sext_k[0] <= sext_k_ulimit[0])
-	   &&(sext_k[1] >= sext_k_llimit[1] && sext_k[1] <= sext_k_ulimit[1])
-	   &&(sext_k[2] >= sext_k_llimit[2] && sext_k[2] <= sext_k_ulimit[2])
-	   &&(sext_k[3] >= sext_k_llimit[3] && sext_k[3] <= sext_k_ulimit[3]))
-	    {
-		for(i=0; i<=nSexts-1; i++) sext_ch[i].setValue(sext_k[i]);
-		this.setMessage("Sextupole strengths submitted to machine.");
-	    }
-	else{
-	    this.setMessage("One or more magnet settings out of range. No assignment made.");
-	}
     }
+
+
+	/* Submit the sextupole magnet currents to the machine */
+	public void setSextChannelAccess(){
+		for( int index = 0; index < sext_k.length; index++ ) {
+			final double current = sext_k[index];
+			final ChannelAgent channelAgent = sextCurrentChannel[index];
+			System.out.println( "Setting " + channelAgent.theChannel.channelName() + " to " + current + " Amps" );
+			channelAgent.setValue( current );
+		}
+		this.setMessage("Sextupole strengths submitted to machine.");
+	}
+
+	/********** This method is confused since sext_k is in Amps and the comparison is to field limits ********/
+//    public void setSextChannelAccess(){
+//	if((sext_k[0] >= sext_k_llimit[0] && sext_k[0] <= sext_k_ulimit[0])
+//	   &&(sext_k[1] >= sext_k_llimit[1] && sext_k[1] <= sext_k_ulimit[1])
+//	   &&(sext_k[2] >= sext_k_llimit[2] && sext_k[2] <= sext_k_ulimit[2])
+//	   &&(sext_k[3] >= sext_k_llimit[3] && sext_k[3] <= sext_k_ulimit[3]))
+//	    {
+//		for(i=0; i<=nSexts-1; i++) sext_ch[i].setValue(sext_k[i]);
+//		this.setMessage("Sextupole strengths submitted to machine.");
+//	    }
+//	else{
+//	    this.setMessage("One or more magnet settings out of range. No assignment made.");
+//	}
+//    }
 
     public double[] getSextK(){
 	return sext_k;

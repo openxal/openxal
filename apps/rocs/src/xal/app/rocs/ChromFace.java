@@ -297,7 +297,7 @@ public class ChromFace extends JPanel implements OpticsListener{
 	dField.setEnabled(true);
 	doc.sext_k_llimit[i]=sext_ch.getMagLowLimit();
 	doc.sext_k_ulimit[i]=sext_ch.getMagUpLimit();
-	//System.out.println("Sext control limits are = " + doc.sext_k_llimit[i] + " " + doc.sext_k_ulimit[i]);
+	System.out.println("Sextupole " + sext_ch.theChannel.channelName() + " control limits are = " + doc.sext_k_llimit[i] + " to " + doc.sext_k_ulimit[i]);
 	pvcounter++;
 	refreshSubmitStatus();
     }
